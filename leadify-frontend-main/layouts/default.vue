@@ -1,5 +1,8 @@
 <template lang="pug">
   section
+      //- Spotlight Search Component
+      Spotlight
+      
       #allTheNav
         .nav
           Menu
@@ -14,10 +17,6 @@
                   el-breadcrumb-item(to="/") Dashboard
                   el-breadcrumb-item(v-for="(route, index) in breadcrumbRoutes",  :key="index", @click="getPath(route)" , class="cursor-pointer",  :class="{ 'last': index === breadcrumbRoutes.length - 1 }"  ) {{ route }}
             .flex.gap-3.items-center
-              //- el-input.search-input(v-model="searchInput", placeholder="Search", :prefix-icon="Search" class="!w-[200] !md:w-[300px]")
-              //- .flex.justify-center.items-center.bg-white.rounded-full.cursor-pointer.relative(class="!min-w-[48px] !min-h-[48px]")
-              //-   Icon.text-neutral-800(name="IconNotifications"  size="20")
-              //-   span.absolute.rounded-full.w-2.h-2.bg-red-500(class="top-[10px] right-[15px] ")
               .tools.flex.items-center(class="p-2 bg-white rounded-full gap-2.5" )
                 el-dropdown(class="outline-0")
                       div.flex.gap-3.items-center.outline-0.border-0
@@ -45,6 +44,11 @@ import { storeToRefs } from "pinia";
 import { useMain } from "~/stores/common";
 import { ArrowRight, Search, Plus } from "@element-plus/icons-vue";
 import { ElNotification } from "element-plus";
+
+// Initialize Spotlight (keyboard listener)
+import { useSpotlight } from "~/composables/useSpotlight";
+useSpotlight();
+
 const mainData = useMain();
 const { fullNav, mobile, hideNav } = storeToRefs(mainData);
 const { width, height } = useWindowSize();
