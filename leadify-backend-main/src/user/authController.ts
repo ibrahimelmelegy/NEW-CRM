@@ -32,6 +32,7 @@ const transporter = nodemailer.createTransport({
 
 export const loginUser = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
   const { email, password } = req.body;
+  console.log('Login attempt:', { email, passwordReceived: !!password, emailType: typeof email, emailLen: email?.length });
 
   try {
     // Check recent login failures
@@ -104,6 +105,7 @@ export const getUserProfile = async (req: Request, res: Response, next: NextFunc
 
     res.status(200).json({ user });
   } catch (error) {
+    console.error('Profile fetch error:', error);
     res.status(500).json({ message: 'Failed to retrieve user data', error: error instanceof Error ? error.message : 'Server error' });
   }
 };

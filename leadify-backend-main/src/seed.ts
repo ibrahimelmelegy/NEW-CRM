@@ -2,44 +2,72 @@ import { sequelize } from './config/db';
 import User from './user/userModel';
 import Role from './role/roleModel';
 import bcrypt from 'bcryptjs';
+import { getAllPermissions } from './role/roleEnum';
 
 async function seed() {
     try {
         await sequelize.authenticate();
-        console.log('Connected to database for seeding.');
+        console.log('✅ Connected to database for seeding.');
 
-        // 1. Create Default Roles
-        // Cast Role as any to bypass strictly missing static method type if inheritance is tricky
+        // Get ALL permissions from the system
+        const allPermissions = getAllPermissions();
+        console.log(`📋 Found ${allPermissions.length} permissions in the system.`);
+
+        // 1. Create/Update Default Roles
         const roleModel = Role as any;
-        const [adminRole] = await roleModel.findOrCreate({
-            where: { name: 'SUPER_ADMIN' },
-            defaults: {
+
+        // First, try to find existing SUPER_ADMIN role
+        let adminRole = await roleModel.findOne({ where: { name: 'SUPER_ADMIN' } });
+
+        if (adminRole) {
+            // Update existing role with all permissions
+            await adminRole.update({ permissions: allPermissions });
+            console.log('✅ Updated existing SUPER_ADMIN role with all permissions.');
+        } else {
+            // Create new role with all permissions
+            adminRole = await roleModel.create({
+                name: 'SUPER_ADMIN',
                 description: 'System Administrator with full access',
-                permissions: ['*'] // wildcard for all permissions
-            }
+                permissions: allPermissions
+            });
+            console.log('✅ Created new SUPER_ADMIN role with all permissions.');
+        }
+
+        console.log(`   SUPER_ADMIN Role ID: ${adminRole.id}`);
+
+        // 2. DELETE ALL EXISTING USERS (Complete cleanup)
+        const userModel = User as any;
+        const deletedCount = await userModel.destroy({ where: {} });
+        console.log(`🗑️  Deleted ${deletedCount} existing user(s) from database.`);
+
+        // 3. Create Fresh Super Admin
+        const adminEmail = 'admin@hp-tech.com';
+        const adminPassword = 'Heroo@1502';
+
+        const hashedPassword = await bcrypt.hash(adminPassword, 10);
+        const newAdmin = await userModel.create({
+            name: 'System Admin',
+            email: adminEmail,
+            password: hashedPassword,
+            roleId: adminRole.id,
+            status: 'ACTIVE'
         });
 
-        console.log('Roles initialized.');
+        console.log('🚀 Super Admin created successfully!');
+        console.log(`   ID: ${newAdmin.id}`);
+        console.log(`   Email: ${adminEmail}`);
+        console.log(`   Password: ${adminPassword}`);
+        console.log(`   Role ID: ${newAdmin.roleId}`);
+        console.log(`   Status: ${newAdmin.status}`);
 
-        // 2. Create Super Admin User
-        const adminEmail = process.env.ADMIN_EMAIL || 'admin@hpt-crm.com';
-        const adminPassword = process.env.ADMIN_PASSWORD || 'Admin@123456';
-
-        const userModel = User as any;
-        const existingAdmin = await userModel.findOne({ where: { email: adminEmail } });
-
-        if (!existingAdmin) {
-            const hashedPassword = await bcrypt.hash(adminPassword, 10);
-            await userModel.create({
-                name: 'System Admin',
-                email: adminEmail,
-                password: hashedPassword,
-                roleId: adminRole.id,
-                status: 'ACTIVE'
-            });
-            console.log(`🚀 Super Admin created: ${adminEmail} / ${adminPassword}`);
+        // 4. Verify the user was created correctly
+        const verifyUser = await userModel.findOne({ where: { email: adminEmail } });
+        if (verifyUser) {
+            console.log('✅ Verification passed - User exists in database!');
+            const passwordMatch = await bcrypt.compare(adminPassword, verifyUser.password);
+            console.log(`✅ Password verification: ${passwordMatch ? 'CORRECT' : 'FAILED'}`);
         } else {
-            console.log('✅ Super Admin already exists.');
+            console.log('❌ Verification failed - User not found!');
         }
 
         console.log('🌱 Seeding completed successfully.');

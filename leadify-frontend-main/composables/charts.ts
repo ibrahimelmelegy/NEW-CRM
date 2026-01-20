@@ -421,127 +421,214 @@ export const statsLoading = ref(false);
 
 export async function getLeadsStatics() {
   statsLoading.value = true;
-  const { body, success, message } = await useApiFetch("insights/leads-sales");
-  statsLoading.value = false;
-  if (!success) {
-    throw new Error(message || "Failed to fetch lead statistics");
+  try {
+    const { body, success, message } = await useApiFetch("insights/leads-sales");
+    statsLoading.value = false;
+
+    if (!success) {
+      console.warn("Failed to fetch lead statistics:", message);
+      return getDefaultLeadsStats();
+    }
+
+    const toNameValueArray = (obj: Record<string, number>): { name: string; value: number }[] =>
+      Object.entries(obj || {}).map(([name, value]) => ({ name: capitalizeName(name), value }));
+
+    const {
+      leadCount = 0,
+      leadConversionRate = 0,
+      opportunityCount = 0,
+      dealsCount = 0,
+      revenueFromDeals = 0,
+      opportunityStages = {},
+      dealsPipeline = {},
+      salesPerformance = [],
+    } = body || {};
+
+    return {
+      firstCards: [
+        { name: "Total Leads Assigned", value: Number(leadCount) },
+        { name: "Lead Conversion Rate", value: `${leadConversionRate?.toFixed(2)}%` },
+        { name: "Total Opportunities", value: Number(opportunityCount) },
+      ],
+      secondCards: [
+        { name: "Total Deals Closed", value: formatLargeNumber(dealsCount) },
+        { name: "Revenue from Won Deals", value: `SAR ${formatLargeNumber(revenueFromDeals)}` },
+      ],
+      opportunityStages: toNameValueArray(opportunityStages),
+      dealsPipeline: toNameValueArray(dealsPipeline),
+      salesPerformance: (salesPerformance || []).map(({ date, revenue }: any) => ({
+        name: date,
+        value: revenue,
+      })),
+    };
+  } catch (error) {
+    statsLoading.value = false;
+    console.error("Error fetching lead statistics:", error);
+    return getDefaultLeadsStats();
   }
+}
 
-  const toNameValueArray = (obj: Record<string, number>): { name: string; value: number }[] =>
-    Object.entries(obj).map(([name, value]) => ({ name: capitalizeName(name), value }));
-  const {
-    leadCount = 0,
-    leadConversionRate = 0,
-    opportunityCount = 0,
-    dealsCount = 0,
-    revenueFromDeals = 0,
-    opportunityStages = {},
-    dealsPipeline = {},
-    salesPerformance = [],
-  } = body || {};
-
+function getDefaultLeadsStats() {
   return {
-    ...body,
     firstCards: [
-      { name: "Total Leads Assigned", value: Number(leadCount) },
-      { name: "Lead Conversion Rate", value: `${leadConversionRate?.toFixed(2)}%` },
-      { name: "Total Opportunities", value: Number(opportunityCount) },
+      { name: "Total Leads Assigned", value: 0 },
+      { name: "Lead Conversion Rate", value: "0.00%" },
+      { name: "Total Opportunities", value: 0 },
     ],
     secondCards: [
-      { name: "Total Deals Closed", value: formatLargeNumber(dealsCount) },
-      { name: "Revenue from Won Deals", value: `SAR ${formatLargeNumber(revenueFromDeals)}` },
+      { name: "Total Deals Closed", value: "0" },
+      { name: "Revenue from Won Deals", value: "SAR 0" },
     ],
-    opportunityStages: toNameValueArray(opportunityStages),
-    dealsPipeline: toNameValueArray(dealsPipeline),
-    salesPerformance: salesPerformance.map(({ date, revenue }: any) => ({
-      name: date,
-      value: revenue,
-    })),
+    opportunityStages: [],
+    dealsPipeline: [],
+    salesPerformance: [],
   };
 }
 
 export async function getProjectOperationsStatics() {
   statsLoading.value = true;
-  const { body, success, message } = await useApiFetch("insights/projects-operations");
-  statsLoading.value = false;
+  try {
+    const { body, success, message } = await useApiFetch("insights/projects-operations");
+    statsLoading.value = false;
 
-  if (!success) {
-    throw new Error(message || "Failed to fetch project operations statistics");
+    if (!success) {
+      console.warn("Failed to fetch project operations statistics:", message);
+      return getDefaultProjectStats();
+    }
+
+    const toNameValueArray = (obj: Record<string, number>): { name: string; value: number }[] =>
+      Object.entries(obj || {}).map(([name, value]) => ({ name: formatSnakeCase(name), value }));
+
+    const {
+      projectCount = 0,
+      usedAssetPercentage = 0,
+      usedManpowerPercentage = 0,
+      eitmadProjectsCount = 0,
+      projectsByStatus = {},
+    } = body || {};
+
+    return {
+      firstCards: [
+        { name: "Total Projects", value: formatLargeNumber(projectCount) },
+        { name: "Eitmad Projects Overview", value: formatLargeNumber(eitmadProjectsCount) },
+      ],
+      pieChart_one: {
+        title: "Assets Percentage",
+        options: [
+          { name: "Used Assets Percentage", value: usedAssetPercentage?.toFixed(2) },
+          { name: "Unused Assets Percentage", value: (100 - usedAssetPercentage)?.toFixed(2) },
+        ],
+      },
+      pieChart_two: {
+        title: "Manpower Percentage",
+        options: [
+          { name: "Used Manpower Percentage", value: usedManpowerPercentage?.toFixed(2) },
+          { name: "Unused Manpower Percentage", value: (100 - usedManpowerPercentage)?.toFixed(2) },
+        ],
+      },
+      projectsByStatus: toNameValueArray(projectsByStatus),
+    };
+  } catch (error) {
+    statsLoading.value = false;
+    console.error("Error fetching project operations statistics:", error);
+    return getDefaultProjectStats();
   }
+}
 
-  const toNameValueArray = (obj: Record<string, number>): { name: string; value: number }[] =>
-    Object.entries(obj).map(([name, value]) => ({ name: formatSnakeCase(name), value }));
-  const {
-    projectCount = 0,
-    usedAssetPercentage = 0,
-    usedManpowerPercentage = 0,
-    eitmadProjectsCount = 0,
-    projectsByStatus = {},
-  } = body || {};
-
+function getDefaultProjectStats() {
   return {
-    ...body,
     firstCards: [
-      { name: "Total Projects", value: formatLargeNumber(projectCount) },
-      { name: "Eitmad Projects Overview", value: formatLargeNumber(eitmadProjectsCount) },
-      // { name: "Total Opportunities", value: Number(opportunityCount) },
+      { name: "Total Projects", value: "0" },
+      { name: "Eitmad Projects Overview", value: "0" },
     ],
     pieChart_one: {
       title: "Assets Percentage",
       options: [
-        { name: "Used Assets Percentage", value: usedAssetPercentage?.toFixed(2) },
-        { name: "Unused Assets Percentage", value: (100 - usedAssetPercentage)?.toFixed(2) },
+        { name: "Used Assets Percentage", value: "0.00" },
+        { name: "Unused Assets Percentage", value: "100.00" },
       ],
     },
     pieChart_two: {
       title: "Manpower Percentage",
       options: [
-        { name: "Used Manpower Percentage", value: usedManpowerPercentage?.toFixed(2) },
-        { name: "Unused Manpower Percentage", value: (100 - usedManpowerPercentage)?.toFixed(2) },
+        { name: "Used Manpower Percentage", value: "0.00" },
+        { name: "Unused Manpower Percentage", value: "100.00" },
       ],
     },
-    projectsByStatus: toNameValueArray(projectsByStatus),
+    projectsByStatus: [],
   };
 }
 
 export async function getBussinesStatics() {
   statsLoading.value = true;
-  const { body, success, message } = await useApiFetch("insights/financial-business-metrics");
-  statsLoading.value = false;
+  try {
+    const { body, success, message } = await useApiFetch("insights/financial-business-metrics");
+    statsLoading.value = false;
 
-  if (!success) {
-    throw new Error(message || "Failed to fetch project business statistics");
+    if (!success) {
+      console.warn("Failed to fetch business statistics:", message);
+      return getDefaultBusinessStats();
+    }
+
+    const { revenueFromDeals = 0, outstandingInvoicesCount = 0, collectedPaymentsCount = 0 } = body || {};
+
+    return {
+      firstCards: [
+        { name: "Total Deals Revenue", value: formatLargeNumber(revenueFromDeals) },
+        { name: "Outstanding Invoices", value: formatLargeNumber(outstandingInvoicesCount) },
+        { name: "Collected Payments", value: formatLargeNumber(collectedPaymentsCount) },
+      ],
+    };
+  } catch (error) {
+    statsLoading.value = false;
+    console.error("Error fetching business statistics:", error);
+    return getDefaultBusinessStats();
   }
+}
 
-  const { revenueFromDeals = 0, outstandingInvoicesCount = 0, collectedPaymentsCount = 0 } = body || {};
-
+function getDefaultBusinessStats() {
   return {
-    ...body,
     firstCards: [
-      { name: "Total Deals Revenue", value: formatLargeNumber(revenueFromDeals) },
-      { name: "Outstanding Invoices", value: formatLargeNumber(outstandingInvoicesCount) },
-      { name: "Collected Payments", value: formatLargeNumber(collectedPaymentsCount) },
+      { name: "Total Deals Revenue", value: "0" },
+      { name: "Outstanding Invoices", value: "0" },
+      { name: "Collected Payments", value: "0" },
     ],
   };
 }
 
 export async function getPerformanceStatics() {
   statsLoading.value = true;
-  const { body, success, message } = await useApiFetch("insights/performance-hr");
-  statsLoading.value = false;
+  try {
+    const { body, success, message } = await useApiFetch("insights/performance-hr");
+    statsLoading.value = false;
 
-  if (!success) {
-    throw new Error(message || "Failed to fetch project performance hr statistics");
+    if (!success) {
+      console.warn("Failed to fetch performance statistics:", message);
+      return getDefaultPerformanceStats();
+    }
+
+    const { leadCount = 0, percentageOfOpportunitiesBecameDeals = 0, dealsCount = 0 } = body || {};
+
+    return {
+      firstCards: [
+        { name: "Total Leads", value: formatLargeNumber(leadCount) },
+        { name: "Opportunities Became Deals", value: `${percentageOfOpportunitiesBecameDeals?.toFixed(2)}%` },
+        { name: "Total Deals", value: formatLargeNumber(dealsCount) },
+      ],
+    };
+  } catch (error) {
+    statsLoading.value = false;
+    console.error("Error fetching performance statistics:", error);
+    return getDefaultPerformanceStats();
   }
+}
 
-  const { leadCount = 0, percentageOfOpportunitiesBecameDeals = 0, dealsCount = 0 } = body || {};
-
+function getDefaultPerformanceStats() {
   return {
-    ...body,
     firstCards: [
-      { name: "Total Leads", value: formatLargeNumber(leadCount) },
-      { name: "Opportunities Became Deals", value: `${percentageOfOpportunitiesBecameDeals?.toFixed(2)}%` },
-      { name: "Total Deals", value: formatLargeNumber(dealsCount) },
+      { name: "Total Leads", value: "0" },
+      { name: "Opportunities Became Deals", value: "0.00%" },
+      { name: "Total Deals", value: "0" },
     ],
   };
 }

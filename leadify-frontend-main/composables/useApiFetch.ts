@@ -70,6 +70,15 @@ export const useApiFetch = async (
       console.error(`[API Error] ${url}:`, message);
     }
 
+    // Auto-logout on Auth failures
+    if ([401, 403, 404, 500].includes(code) && (message === 'User not found' || message === 'Failed to retrieve user data' || message === 'Invalid or expired token' || message === 'No token provided')) {
+      if (process.client) {
+        accessToken.value = null; // Clear cookie
+        localStorage.removeItem('access_token'); // Clear local storage
+        navigateTo('/login');
+      }
+    }
+
     return {
       data: null,
       status: false,
