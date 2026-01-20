@@ -9,77 +9,98 @@ export interface SpotlightItem {
     path?: string;
     action?: () => void;
     keywords?: string[];
+    // Permissions required to see this item (any of these permissions allows access)
+    permissions?: string[];
 }
 
 // State
 const isOpen = ref(false);
 const searchQuery = ref('');
 const selectedIndex = ref(0);
+const userPermissions = ref<string[]>([]);
+const isAdmin = ref(false);
 
-// All available items
+// All available items with permissions
 const spotlightItems: SpotlightItem[] = [
     // ========== PAGES ==========
 
-    // Dashboard
+    // Dashboard - everyone can see
     { id: 'dashboard', title: 'Dashboard', icon: 'ph:house-bold', category: 'page', path: '/', keywords: ['home', 'main'] },
 
     // Sales Pages
-    { id: 'leads', title: 'Leads', icon: 'ph:users-bold', category: 'page', path: '/sales/leads', keywords: ['sales', 'prospects'] },
-    { id: 'clients', title: 'Clients', icon: 'ph:user-circle-bold', category: 'page', path: '/sales/clients', keywords: ['customers'] },
-    { id: 'opportunities', title: 'Opportunities', icon: 'ph:target-bold', category: 'page', path: '/sales/opportunity', keywords: ['chance', 'deal'] },
-    { id: 'deals', title: 'Deals', icon: 'ph:handshake-bold', category: 'page', path: '/sales/deals', keywords: ['contracts'] },
-    { id: 'proposals', title: 'Proposals', icon: 'ph:file-text-bold', category: 'page', path: '/sales/proposals', keywords: ['quotes'] },
+    { id: 'leads', title: 'Leads', icon: 'ph:users-bold', category: 'page', path: '/sales/leads', keywords: ['sales', 'prospects'], permissions: ['VIEW_OWN_LEADS', 'VIEW_GLOBAL_LEADS'] },
+    { id: 'clients', title: 'Clients', icon: 'ph:user-circle-bold', category: 'page', path: '/sales/clients', keywords: ['customers'], permissions: ['VIEW_OWN_CLIENTS', 'VIEW_GLOBAL_CLIENTS'] },
+    { id: 'opportunities', title: 'Opportunities', icon: 'ph:target-bold', category: 'page', path: '/sales/opportunity', keywords: ['chance', 'deal'], permissions: ['VIEW_OWN_OPPORTUNITIES', 'VIEW_GLOBAL_OPPORTUNITIES'] },
+    { id: 'deals', title: 'Deals', icon: 'ph:handshake-bold', category: 'page', path: '/sales/deals', keywords: ['contracts'], permissions: ['VIEW_OWN_DEALS', 'VIEW_GLOBAL_DEALS'] },
+    { id: 'proposals', title: 'Proposals', icon: 'ph:file-text-bold', category: 'page', path: '/sales/proposals', keywords: ['quotes'], permissions: ['VIEW_OWN_PROPOSALS', 'VIEW_GLOBAL_PROPOSALS'] },
 
     // Operations Pages
-    { id: 'projects', title: 'Projects', icon: 'ph:folder-bold', category: 'page', path: '/operations/projects', keywords: ['project'] },
-    { id: 'daily-tasks', title: 'Daily Tasks', icon: 'ph:check-square-bold', category: 'page', path: '/operations/daily-task', keywords: ['tasks', 'todo'] },
-    { id: 'manpower', title: 'Manpower', icon: 'ph:users-three-bold', category: 'page', path: '/operations/manpower', keywords: ['employees', 'workers'] },
-    { id: 'vehicles', title: 'Vehicles', icon: 'ph:car-bold', category: 'page', path: '/operations/vehicle', keywords: ['cars', 'trucks'] },
-    { id: 'assets', title: 'Assets', icon: 'ph:cube-bold', category: 'page', path: '/operations/assets', keywords: ['equipment'] },
-    { id: 'services', title: 'Services', icon: 'ph:wrench-bold', category: 'page', path: '/operations/services', keywords: ['service'] },
-    { id: 'additional-material', title: 'Additional Materials', icon: 'ph:package-bold', category: 'page', path: '/operations/additional-material', keywords: ['materials'] },
+    { id: 'projects', title: 'Projects', icon: 'ph:folder-bold', category: 'page', path: '/operations/projects', keywords: ['project'], permissions: ['VIEW_OWN_PROJECTS', 'VIEW_GLOBAL_PROJECTS'] },
+    { id: 'daily-tasks', title: 'Daily Tasks', icon: 'ph:check-square-bold', category: 'page', path: '/operations/daily-task', keywords: ['tasks', 'todo'], permissions: ['VIEW_OWN_PROJECTS', 'VIEW_GLOBAL_PROJECTS'] },
+    { id: 'manpower', title: 'Manpower', icon: 'ph:users-three-bold', category: 'page', path: '/operations/manpower', keywords: ['employees', 'workers'], permissions: ['VIEW_MANPOWER'] },
+    { id: 'vehicles', title: 'Vehicles', icon: 'ph:car-bold', category: 'page', path: '/operations/vehicle', keywords: ['cars', 'trucks'], permissions: ['VIEW_VEHICLES'] },
+    { id: 'assets', title: 'Assets', icon: 'ph:cube-bold', category: 'page', path: '/operations/assets', keywords: ['equipment'], permissions: ['VIEW_ASSETS'] },
+    { id: 'services', title: 'Services', icon: 'ph:wrench-bold', category: 'page', path: '/operations/services', keywords: ['service'], permissions: ['VIEW_SERVICES'] },
+    { id: 'additional-material', title: 'Additional Materials', icon: 'ph:package-bold', category: 'page', path: '/operations/additional-material', keywords: ['materials'], permissions: ['VIEW_ADDITIONAL_MATERIAL'] },
 
     // Staff & Roles
-    { id: 'staff', title: 'Staff', icon: 'ph:identification-badge-bold', category: 'page', path: '/staff', keywords: ['employees', 'team'] },
-    { id: 'roles', title: 'Roles & Permissions', icon: 'ph:shield-check-bold', category: 'page', path: '/roles', keywords: ['permissions'] },
+    { id: 'staff', title: 'Staff', icon: 'ph:identification-badge-bold', category: 'page', path: '/staff', keywords: ['employees', 'team'], permissions: ['VIEW_OWN_STAFF', 'VIEW_GLOBAL_STAFF'] },
+    { id: 'roles', title: 'Roles & Permissions', icon: 'ph:shield-check-bold', category: 'page', path: '/roles', keywords: ['permissions'], permissions: ['VIEW_ROLES'] },
 
     // Reports
-    { id: 'reports', title: 'Reports', icon: 'ph:chart-bar-bold', category: 'page', path: '/reports', keywords: ['analytics', 'statistics'] },
+    { id: 'reports', title: 'Reports', icon: 'ph:chart-bar-bold', category: 'page', path: '/reports', keywords: ['analytics', 'statistics'], permissions: ['EXPORT_OWN_REPORTS', 'EXPORT_GLOBAL_REPORTS', 'EXPORT_SALES_REPORTS', 'EXPORT_PROJECT_REPORTS'] },
 
-    // Notifications
+    // Notifications - everyone can see
     { id: 'notifications', title: 'Notifications', icon: 'ph:bell-bold', category: 'page', path: '/notification', keywords: ['alerts'] },
 
     // ========== QUICK ACTIONS ==========
 
     // Sales Actions
-    { id: 'add-lead', title: 'Create New Lead', icon: 'ph:user-plus-bold', category: 'action', path: '/sales/leads/add-lead', keywords: ['create', 'new', 'add'] },
-    { id: 'add-client', title: 'Create New Client', icon: 'ph:user-circle-plus-bold', category: 'action', path: '/sales/clients/add-client', keywords: ['create', 'new', 'add'] },
-    { id: 'add-opportunity', title: 'Create New Opportunity', icon: 'ph:plus-circle-bold', category: 'action', path: '/sales/opportunity/add-opportunity', keywords: ['create', 'new', 'add'] },
-    { id: 'add-deal', title: 'Create New Deal', icon: 'ph:handshake-bold', category: 'action', path: '/sales/deals/add-deal', keywords: ['create', 'new', 'add'] },
-    { id: 'add-proposal', title: 'Create New Proposal', icon: 'ph:file-plus-bold', category: 'action', path: '/sales/proposals/add-proposal', keywords: ['create', 'new', 'add', 'quote'] },
+    { id: 'add-lead', title: 'Create New Lead', icon: 'ph:user-plus-bold', category: 'action', path: '/sales/leads/add-lead', keywords: ['create', 'new', 'add'], permissions: ['CREATE_LEADS'] },
+    { id: 'add-client', title: 'Create New Client', icon: 'ph:user-circle-plus-bold', category: 'action', path: '/sales/clients/add-client', keywords: ['create', 'new', 'add'], permissions: ['CREATE_CLIENTS'] },
+    { id: 'add-opportunity', title: 'Create New Opportunity', icon: 'ph:plus-circle-bold', category: 'action', path: '/sales/opportunity/add-opportunity', keywords: ['create', 'new', 'add'], permissions: ['CREATE_OPPORTUNITIES'] },
+    { id: 'add-deal', title: 'Create New Deal', icon: 'ph:handshake-bold', category: 'action', path: '/sales/deals/add-deal', keywords: ['create', 'new', 'add'], permissions: ['CREATE_DEALS'] },
+    { id: 'add-proposal', title: 'Create New Proposal', icon: 'ph:file-plus-bold', category: 'action', path: '/sales/proposals/add-proposal', keywords: ['create', 'new', 'add', 'quote'], permissions: ['CREATE_PROPOSALS'] },
 
     // Operations Actions
-    { id: 'add-project', title: 'Create New Project', icon: 'ph:folder-plus-bold', category: 'action', path: '/operations/projects/add-project', keywords: ['create', 'new', 'add'] },
-    { id: 'add-task', title: 'Create New Task', icon: 'ph:check-square-bold', category: 'action', path: '/operations/daily-task/add-daily-task', keywords: ['create', 'new', 'add', 'todo'] },
-    { id: 'add-manpower', title: 'Create New Manpower', icon: 'ph:user-plus-bold', category: 'action', path: '/operations/manpower/add-manpower', keywords: ['create', 'new', 'add'] },
-    { id: 'add-vehicle', title: 'Create New Vehicle', icon: 'ph:car-bold', category: 'action', path: '/operations/vehicle/add-vehicle', keywords: ['create', 'new', 'add'] },
-    { id: 'add-asset', title: 'Create New Asset', icon: 'ph:cube-bold', category: 'action', path: '/operations/assets/add-asset', keywords: ['create', 'new', 'add'] },
-    { id: 'add-service', title: 'Create New Service', icon: 'ph:wrench-bold', category: 'action', path: '/operations/services/add-service', keywords: ['create', 'new', 'add'] },
-    { id: 'add-material', title: 'Create New Material', icon: 'ph:package-bold', category: 'action', path: '/operations/additional-material/add-additional-material', keywords: ['create', 'new', 'add'] },
+    { id: 'add-project', title: 'Create New Project', icon: 'ph:folder-plus-bold', category: 'action', path: '/operations/projects/add-project', keywords: ['create', 'new', 'add'], permissions: ['CREATE_PROJECTS'] },
+    { id: 'add-task', title: 'Create New Task', icon: 'ph:check-square-bold', category: 'action', path: '/operations/daily-task/add-daily-task', keywords: ['create', 'new', 'add', 'todo'], permissions: ['CREATE_PROJECTS'] },
+    { id: 'add-manpower', title: 'Create New Manpower', icon: 'ph:user-plus-bold', category: 'action', path: '/operations/manpower/add-manpower', keywords: ['create', 'new', 'add'], permissions: ['CREATE_MANPOWER'] },
+    { id: 'add-vehicle', title: 'Create New Vehicle', icon: 'ph:car-bold', category: 'action', path: '/operations/vehicle/add-vehicle', keywords: ['create', 'new', 'add'], permissions: ['CREATE_VEHICLES'] },
+    { id: 'add-asset', title: 'Create New Asset', icon: 'ph:cube-bold', category: 'action', path: '/operations/assets/add-asset', keywords: ['create', 'new', 'add'], permissions: ['CREATE_ASSETS'] },
+    { id: 'add-service', title: 'Create New Service', icon: 'ph:wrench-bold', category: 'action', path: '/operations/services/add-service', keywords: ['create', 'new', 'add'], permissions: ['CREATE_SERVICES'] },
+    { id: 'add-material', title: 'Create New Material', icon: 'ph:package-bold', category: 'action', path: '/operations/additional-material/add-additional-material', keywords: ['create', 'new', 'add'], permissions: ['CREATE_ADDITIONAL_MATERIAL'] },
 
     // Staff & Roles Actions
-    { id: 'add-staff', title: 'Create New Staff Member', icon: 'ph:user-plus-bold', category: 'action', path: '/staff/add-staff', keywords: ['create', 'new', 'add', 'employee'] },
-    { id: 'add-role', title: 'Create New Role', icon: 'ph:shield-plus-bold', category: 'action', path: '/roles/add-role', keywords: ['create', 'new', 'add', 'permission'] },
+    { id: 'add-staff', title: 'Create New Staff Member', icon: 'ph:user-plus-bold', category: 'action', path: '/staff/add-staff', keywords: ['create', 'new', 'add', 'employee'], permissions: ['CREATE_STAFF'] },
+    { id: 'add-role', title: 'Create New Role', icon: 'ph:shield-plus-bold', category: 'action', path: '/roles/add-role', keywords: ['create', 'new', 'add', 'permission'], permissions: ['CREATE_ROLES'] },
 ];
+
+// Check if user has permission for an item
+function hasPermissionForItem(item: SpotlightItem): boolean {
+    // Admins can see everything
+    if (isAdmin.value) return true;
+
+    // No permissions required = everyone can see
+    if (!item.permissions || item.permissions.length === 0) return true;
+
+    // Check if user has any of the required permissions
+    return item.permissions.some(perm => userPermissions.value.includes(perm));
+}
+
+// Items filtered by permissions
+const permittedItems = computed(() => {
+    return spotlightItems.filter(item => hasPermissionForItem(item));
+});
 
 // Filtered items based on search
 const filteredItems = computed(() => {
     if (!searchQuery.value.trim()) {
-        return spotlightItems;
+        return permittedItems.value;
     }
 
     const query = searchQuery.value.toLowerCase();
-    return spotlightItems.filter(item => {
+    return permittedItems.value.filter(item => {
         const matchTitle = item.title.toLowerCase().includes(query);
         const matchKeywords = item.keywords?.some(k => k.toLowerCase().includes(query));
         const matchSubtitle = item.subtitle?.toLowerCase().includes(query);
@@ -103,6 +124,28 @@ const flatItems = computed(() => {
 
 export function useSpotlight() {
     const router = useRouter();
+
+    // Load user permissions on init
+    async function loadPermissions() {
+        try {
+            const { hasPermission, hasAnyPermission } = await usePermissions();
+
+            // Get role info to check if admin
+            const userResponse = await useApiFetch('auth/me');
+            const user = userResponse?.user;
+
+            if (user?.roleId) {
+                const roleResponse = await useApiFetch(`role/${user.roleId}`);
+                if (roleResponse?.body) {
+                    userPermissions.value = roleResponse.body.permissions || [];
+                    // Check if this is a Super Admin (has all permissions or role name is SUPER_ADMIN)
+                    isAdmin.value = roleResponse.body.name === 'SUPER_ADMIN' || userPermissions.value.length > 50;
+                }
+            }
+        } catch (error) {
+            console.warn('Failed to load Spotlight permissions:', error);
+        }
+    }
 
     function open() {
         isOpen.value = true;
@@ -158,8 +201,11 @@ export function useSpotlight() {
     }
 
     function handleKeydown(event: KeyboardEvent) {
-        // Open with Alt+K or / key
-        if ((event.altKey && event.key === 'k') || (event.key === '/' && !isOpen.value && document.activeElement?.tagName !== 'INPUT' && document.activeElement?.tagName !== 'TEXTAREA')) {
+        // Open with Alt+K or / key (when not in input)
+        if ((event.altKey && event.key.toLowerCase() === 'k') ||
+            (event.key === '/' && !isOpen.value &&
+                document.activeElement?.tagName !== 'INPUT' &&
+                document.activeElement?.tagName !== 'TEXTAREA')) {
             event.preventDefault();
             toggle();
             return;
@@ -167,10 +213,15 @@ export function useSpotlight() {
 
         if (!isOpen.value) return;
 
+        // Handle Escape - always close
+        if (event.key === 'Escape') {
+            event.preventDefault();
+            event.stopPropagation();
+            close();
+            return;
+        }
+
         switch (event.key) {
-            case 'Escape':
-                close();
-                break;
             case 'ArrowUp':
                 event.preventDefault();
                 moveUp();
@@ -193,11 +244,12 @@ export function useSpotlight() {
 
     // Setup keyboard listeners
     onMounted(() => {
-        window.addEventListener('keydown', handleKeydown);
+        window.addEventListener('keydown', handleKeydown, true); // Use capture phase
+        loadPermissions();
     });
 
     onUnmounted(() => {
-        window.removeEventListener('keydown', handleKeydown);
+        window.removeEventListener('keydown', handleKeydown, true);
     });
 
     return {
@@ -207,6 +259,7 @@ export function useSpotlight() {
         filteredItems,
         groupedItems,
         flatItems,
+        isAdmin,
         open,
         close,
         toggle,
@@ -214,5 +267,6 @@ export function useSpotlight() {
         selectCurrent,
         moveUp,
         moveDown,
+        loadPermissions,
     };
 }
