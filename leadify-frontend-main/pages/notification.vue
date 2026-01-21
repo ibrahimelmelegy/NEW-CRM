@@ -17,7 +17,7 @@
                  span {{notify?.body_ar}}
                  p.text-neutral-500.text-xs.mb-4.font-medium {{ notify?.createdAt }}
              div.rounded-full.bg-red-500.w-2.h-2(v-if="notify?.read == 'UN_READ'")
-       .pagination.mt-5.flex.items-center.flex-wrap.gap-2.px-6(class="sm:justify-between justify-center" v-if="!withoutPagination ")
+       .pagination.mt-auto.flex.items-center.flex-wrap.gap-2.px-6(class="sm:justify-between justify-center" v-if="!withoutPagination ")
          .flex.items-center.gap-3
            span.text-sm.text-neutral-400 Show
              el-select(size="medium"  v-model="limit" :placeholder="limit"  style="width: 65px" @change="handleSizeChange")

@@ -1,7 +1,7 @@
 <template lang="pug">
 .relative
-  .toggle-indicator.cursor-pointer.flex.items-center.justify-center.absolute.rounded-full.w-10.h-10.bg-white.z-100.shadow.border(v-if="!mobile" @click="openNav" :class="{ 'right-[-7%]' : fullNav, 'right-[-22%]' : !fullNav }" class="top-[2%] z-10")
-    Icon.text-neutral-800(:name="fullNav ? 'material-symbols:arrow-left-alt-rounded' : 'material-symbols:arrow-right-alt-rounded'" size="20")
+  .toggle-indicator.cursor-pointer.flex.items-center.justify-center.absolute.rounded-full.w-10.h-10.bg-sidebar.z-100.shadow.border(v-if="!mobile" @click="openNav" :class="{ 'right-[-7%]' : fullNav, 'right-[-22%]' : !fullNav }" class="top-[2%] z-10")
+    Icon.text-white(:name="fullNav ? 'material-symbols:arrow-left-alt-rounded' : 'material-symbols:arrow-right-alt-rounded'" size="20")
 
   div.background-overlay.fixed.top-0.left-0.w-screen.h-full(class='z-[-1]' v-if="mobile && !hideNav" @click="hideNav = true")
   transition(:name='mobile ? "side" : "none"')
@@ -19,10 +19,16 @@
             span {{navLink.name}}
           el-menu-items(v-for="(subLink, subIndex) in navLink.submenu")
             NuxtLink(:to="subLink.link" v-if="subLink.link == '/operations/daily-task' && user.id == 1")
-              el-menu-item(:index="subLink.link" @click="mobileNavigate(subLink.link)" :class="{'is-active': route.fullPath.includes(subLink.link) && subLink.link == '/'}") {{subLink.name}}
-            el-menu-item(:index="`${index+1}-${subIndex+1}`" :class="{'disabled-link' : getDisabled(subLink.role)}" v-else-if="getDisabled(subLink.role) && subLink.link !== '/operations/daily-task'") {{subLink.name}}
+              el-menu-item(:index="subLink.link" @click="mobileNavigate(subLink.link)" :class="{'is-active': route.fullPath.includes(subLink.link) && subLink.link == '/'}")
+                 Icon.mr-2(size="18" :name="subLink.icon" v-if="subLink.icon" style="color: var(--accent-purple)")
+                 span {{subLink.name}}
+            el-menu-item(:index="`${index+1}-${subIndex+1}`" :class="{'disabled-link' : getDisabled(subLink.role)}" v-else-if="getDisabled(subLink.role) && subLink.link !== '/operations/daily-task'")
+                 Icon.mr-2(size="18" :name="subLink.icon" v-if="subLink.icon" style="color: var(--accent-purple)")
+                 span {{subLink.name}}
             NuxtLink(:to="subLink.link" v-else-if="subLink.link !== '/operations/daily-task'")
-              el-menu-item(:index="subLink.link" @click="mobileNavigate(subLink.link)" :class="{'is-active': route.fullPath.includes(subLink.link) && subLink.link !== '/'}") {{subLink.name}}
+              el-menu-item(:index="subLink.link" @click="mobileNavigate(subLink.link)" :class="{'is-active': route.fullPath.includes(subLink.link) && subLink.link !== '/'}")
+                 Icon.mr-2(size="18" :name="subLink.icon" v-if="subLink.icon" style="color: var(--accent-purple)")
+                 span {{subLink.name}}
         template(v-else)
           el-menu-item(:index='`${index+1}`' :class="{'disabled-link': getDisabled(navLink.role)}" v-if="navLink.link !== '/' && getDisabled(navLink.role)")
             el-icon
@@ -57,9 +63,9 @@ function mobileNavigate(link: string) {
   }
 }
 
-function getDisabled(role) {
-  if (permissions.value.length) {
-    return !permissions.value?.includes(role);
+function getDisabled(role: string) {
+  if (permissions.value && Array.isArray(permissions.value) && permissions.value.length) {
+    return !(permissions.value as string[])?.includes(role);
   } else {
     return false;
   }
@@ -78,22 +84,27 @@ const menu = [
       {
         link: "/sales/leads",
         name: "Leads",
+        icon: "ph:users-three",
       },
       {
         link: "/sales/clients",
         name: "Clients",
+        icon: "ph:briefcase",
       },
       {
         link: "/sales/opportunity",
         name: "Opportunity",
+        icon: "ph:lightbulb",
       },
       {
         link: "/sales/deals",
         name: "Deals",
+        icon: "ph:handshake",
       },
       {
         link: "/sales/proposals",
         name: "Proposals",
+        icon: "ph:file-text",
       },
     ],
     name: "Sales",
@@ -105,30 +116,37 @@ const menu = [
       {
         link: "/operations/projects",
         name: "Projects",
+        icon: "ph:projector-screen-chart",
       },
       {
         link: "/operations/daily-task",
         name: "Daily Tasks",
+        icon: "ph:check-square",
       },
       {
         link: "/operations/vehicle",
         name: "Vehicle",
+        icon: "ph:car",
       },
       {
         link: "/operations/manpower",
         name: "Manpower",
+        icon: "ph:users-four",
       },
       {
         link: "/operations/additional-material",
         name: "Additional Materials",
+        icon: "ph:cube",
       },
       {
         link: "/operations/services",
         name: "Services",
+        icon: "ph:wrench",
       },
       {
         link: "/operations/assets",
         name: "Assets",
+        icon: "ph:bank",
       },
     ],
     name: "Operations",

@@ -136,7 +136,7 @@ watch(isOpen, (value) => {
 
 .spotlight-fab-icon {
   font-size: 24px;
-  color: white;
+  color: #FFFFFF !important;
   font-weight: 300;
 }
 
@@ -144,7 +144,7 @@ watch(isOpen, (value) => {
 .spotlight-overlay {
   position: fixed;
   inset: 0;
-  background: rgba(0, 0, 0, 0.5);
+  background: rgba(0, 0, 0, 0.7); // Darker overlay
   backdrop-filter: blur(4px);
   z-index: 9998;
 }
@@ -163,9 +163,10 @@ watch(isOpen, (value) => {
 .spotlight-modal {
   width: 100%;
   max-width: 600px;
-  background: white;
+  background: #16151F; // --bg-card
+  border: 1px solid rgba(255, 255, 255, 0.08); // --border-glass
   border-radius: 16px;
-  box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
+  box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
   overflow: hidden;
   pointer-events: auto;
   margin: 0 16px;
@@ -175,13 +176,13 @@ watch(isOpen, (value) => {
   display: flex;
   align-items: center;
   padding: 16px 20px;
-  border-bottom: 1px solid #e5e7eb;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
   gap: 12px;
 }
 
 .spotlight-search-icon {
   font-size: 20px;
-  color: #9ca3af;
+  color: #94A3B8; // --text-secondary
   flex-shrink: 0;
 }
 
@@ -190,11 +191,11 @@ watch(isOpen, (value) => {
   border: none;
   outline: none;
   font-size: 16px;
-  color: #1f2937;
+  color: #FFFFFF; // --text-primary
   background: transparent;
   
   &::placeholder {
-    color: #9ca3af;
+    color: #64748B; // --text-muted
   }
 }
 
@@ -210,12 +211,12 @@ watch(isOpen, (value) => {
   min-width: 24px;
   height: 24px;
   padding: 0 6px;
-  background: #f3f4f6;
-  border: 1px solid #e5e7eb;
+  background: rgba(255, 255, 255, 0.1);
+  border: 1px solid rgba(255, 255, 255, 0.1);
   border-radius: 6px;
   font-size: 12px;
   font-weight: 500;
-  color: #6b7280;
+  color: #94A3B8;
 }
 
 .spotlight-results {
@@ -231,7 +232,7 @@ watch(isOpen, (value) => {
   padding: 8px 12px;
   font-size: 12px;
   font-weight: 600;
-  color: #6b7280;
+  color: #94A3B8;
   text-transform: uppercase;
   letter-spacing: 0.05em;
 }
@@ -259,7 +260,7 @@ watch(isOpen, (value) => {
 
 .spotlight-item-icon {
   font-size: 20px;
-  color: #7c3aed;
+  color: #8B5CF6; // --accent-purple
   flex-shrink: 0;
 }
 
@@ -273,12 +274,12 @@ watch(isOpen, (value) => {
 .spotlight-item-title {
   font-size: 14px;
   font-weight: 500;
-  color: #1f2937;
+  color: #FFFFFF;
 }
 
 .spotlight-item-arrow {
   font-size: 16px;
-  color: #9ca3af;
+  color: #64748B;
   opacity: 0;
   transition: opacity 0.15s ease;
   
@@ -299,20 +300,20 @@ watch(isOpen, (value) => {
 
 .spotlight-empty-icon {
   font-size: 48px;
-  color: #d1d5db;
+  color: #2D2B3B; // --border-stroke
   margin-bottom: 16px;
 }
 
 .spotlight-empty p {
   font-size: 14px;
   font-weight: 500;
-  color: #6b7280;
+  color: #94A3B8;
   margin: 0 0 4px 0;
 }
 
 .spotlight-empty span {
   font-size: 12px;
-  color: #9ca3af;
+  color: #64748B;
 }
 
 .spotlight-footer {
@@ -321,8 +322,8 @@ watch(isOpen, (value) => {
   justify-content: center;
   gap: 24px;
   padding: 12px 20px;
-  background: #f9fafb;
-  border-top: 1px solid #e5e7eb;
+  background: #111019; // --bg-sidebar
+  border-top: 1px solid rgba(255, 255, 255, 0.08);
 }
 
 .spotlight-footer-item {
@@ -330,7 +331,7 @@ watch(isOpen, (value) => {
   align-items: center;
   gap: 6px;
   font-size: 12px;
-  color: #6b7280;
+  color: #94A3B8;
   
   .key {
     min-width: 20px;

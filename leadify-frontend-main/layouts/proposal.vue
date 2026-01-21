@@ -1,5 +1,6 @@
 <template lang="pug">
 section
+
   #allTheNav
     .nav
       Menu
@@ -121,7 +122,7 @@ async function logout() {
   }
 }
 
-const user = ref({});
+const user = ref<any>({});
 const proposal = await getProposal(route.params.slug);
 
 if (!user.value?.id) {
@@ -174,7 +175,7 @@ const handlePrint = async () => {
   left: 0;
   .nav {
     top: 0;
-    background: #ffffff !important;
+    background: #ffffff;
     z-index: 100;
     left: 0;
     position: fixed;
@@ -187,7 +188,7 @@ const handlePrint = async () => {
   height: 80px;
   align-content: center;
   transition: all 0.2s ease-in;
-  background: #ffffff !important;
+  background: #ffffff;
   top: 0;
   left: 0;
   border-bottom: 1px solid #e7e6e9 !important;

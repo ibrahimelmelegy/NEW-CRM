@@ -2,6 +2,7 @@
   section
       //- Spotlight Search Component
       Spotlight
+
       
       #allTheNav
         .nav
@@ -17,9 +18,10 @@
                   el-breadcrumb-item(to="/") Dashboard
                   el-breadcrumb-item(v-for="(route, index) in breadcrumbRoutes",  :key="index", @click="getPath(route)" , class="cursor-pointer",  :class="{ 'last': index === breadcrumbRoutes.length - 1 }"  ) {{ route }}
             .flex.gap-3.items-center
-              .tools.flex.items-center(class="p-2 bg-white rounded-full gap-2.5" )
+              .tools.flex.items-center(class="p-2 rounded-full gap-2.5" )
+                ColorModeToggle
                 el-dropdown(class="outline-0")
-                      div.flex.gap-3.items-center.outline-0.border-0
+                      div.profile-trigger.flex.gap-3.items-center.outline-0.border-0.cursor-pointer
                             Avatar(:src="user?.profilePicture", small)
                             p.mb-0.text-base.font-medium.text-neutral-800 {{user?.name}}
                                 //- p.text-xs.font-medium.opacity-50 {{ user?.email }}
@@ -30,10 +32,10 @@
                             //-     p.text-xs profile
                             el-dropdown-item(@click="logout")
                                 p.text-xs logout
-              .notification(class="p-2 bg-white rounded-full")
-               NuxtLink.flex.items-center(:to="`/notification`" )
-                Icon.text-md(name="IconNotifications" )
-                div.border.rounded-xl(v-if="response?.unreadNotificationsCount > 0" class="h-[10px] w-[10px] bg-[red]" style="margin-left:-5px ; margin-top:-30px")
+              .notification.notification-btn(class="rounded-full relative flex items-center justify-center w-10 h-10")
+               NuxtLink.flex.items-center.justify-center.w-full.h-full(:to="`/notification`" )
+                Icon.text-xl(name="ph:bell-bold")
+                div.notification-badge(v-if="response?.unreadNotificationsCount > 0")
           .mt-4
         .slot-content(class="!mt-24" :class="{'!pl-[32px] !pr-[50px]' : !mobile, '!px-[20px] '  : mobile}")
             slot
@@ -122,7 +124,7 @@ watch(width, () => {
   checkwidth();
 });
 
-const user = ref({});
+const user = ref<any>({});
 
 if (!user.value?.id) {
   const response = await useApiFetch("auth/me");
@@ -166,7 +168,7 @@ const getPath = (routeName: string) => {
 <style lang="scss" scoped>
 .website-body {
   .slot-content {
-    background: #f8f7fa !important;
+    background: transparent !important;
     padding: 0 !important;
     margin-top: 4rem !important;
   }
@@ -192,7 +194,6 @@ const getPath = (routeName: string) => {
   left: 0;
   .nav {
     top: 0;
-    background: #f8f7fa !important;
     z-index: 100;
     left: 0;
     position: fixed;
@@ -203,10 +204,9 @@ const getPath = (routeName: string) => {
   position: fixed;
   width: 100%;
   transition: all 0.2s ease-in;
-  background: #f8f7fa !important;
   top: 0;
   left: 0;
-  border-bottom: 1px solid $border;
+  // border-bottom: 1px solid $border;
 }
 
 .top {

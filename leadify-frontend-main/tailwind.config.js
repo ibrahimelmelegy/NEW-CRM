@@ -4,6 +4,16 @@ module.exports = {
   theme: {
     extend: {
       colors: {
+        obsidian: '#0B0A12',
+        sidebar: '#111019',
+        'card-surface': '#16151F',
+        'accent-purple': '#8B5CF6',
+        'success-green': '#34D399',
+        'gradient-start': '#7C3AED',
+        'gradient-end': '#C026D3',
+        'border-stroke': '#2D2B3B',
+        'text-secondary': '#94A3B8',
+        'text-muted': '#64748B',
         primary: {
           purple: {
             50: '#E9E6F3',
