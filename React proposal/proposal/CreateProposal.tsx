@@ -1,33 +1,39 @@
 
 import React, { useState, useEffect, useRef } from 'react';
-import { 
-  Save, ChevronLeft, ChevronRight, CheckCircle, 
-  Palette, User, Layers, DollarSign, CheckSquare,
-  Maximize2, ZoomOut, ZoomIn, Eye, EyeOff, Printer, Sparkles,
-  ImageIcon, Calculator, Plus, X, Cpu, Shield, Zap, PenTool as Pen,
-  FileText, Trash2, ArrowUp, ArrowDown, Download, Loader2, AlertCircle
+import {
+    Save, ChevronLeft, ChevronRight, CheckCircle,
+    Palette, User, Layers, DollarSign, CheckSquare,
+    Maximize2, ZoomOut, ZoomIn, Eye, EyeOff, Printer, Sparkles,
+    ImageIcon, Calculator, Plus, X, Cpu, Shield, Zap, PenTool as Pen,
+    FileText, Trash2, ArrowUp, ArrowDown, Download, Loader2, AlertCircle
 } from 'lucide-react';
 import { ProposalData, ProposalItem, ProposalPhase, CustomSection } from './types';
 import { ProposalPrintTemplate } from './ProposalPrintTemplate';
 import { RichTextEditor } from './RichTextEditor';
+import { CRMEntitySelector, SelectedEntity } from './components/CRMEntitySelector';
+import { FileUploader, UploadedFile } from './components/FileUploader';
 
 export const CreateProposal: React.FC<{
     initialData?: ProposalData,
     onSave: (data: ProposalData) => void,
     onCancel: () => void
 }> = ({ initialData, onSave, onCancel }) => {
-    
+
     const [activeStep, setActiveStep] = useState('branding');
     const [showPreview, setShowPreview] = useState(true); // Split view toggle
     const [zoom, setZoom] = useState(0.6); // Initial Zoom
     const [isGeneratingPdf, setIsGeneratingPdf] = useState(false);
     const [errors, setErrors] = useState<Record<string, string>>({});
-    
+
     // Custom Section State
     const [isAddingSection, setIsAddingSection] = useState(false);
     const [newSectionTitle, setNewSectionTitle] = useState('');
-    
+
     const [globalMargin, setGlobalMargin] = useState<number>(0);
+
+    // CRM Entity & File State
+    const [selectedEntity, setSelectedEntity] = useState<SelectedEntity | null>(null);
+    const [attachments, setAttachments] = useState<UploadedFile[]>([]);
 
     const defaultStepOrder = ['branding', 'executive', 'solution', 'financial', 'legal'];
 
@@ -74,12 +80,29 @@ export const CreateProposal: React.FC<{
         if (!formData.stepOrder || formData.stepOrder.length === 0) {
             setFormData(prev => ({
                 ...prev,
-                stepOrder: prev.customSections && prev.customSections.length > 0 
+                stepOrder: prev.customSections && prev.customSections.length > 0
                     ? ['branding', 'executive', 'solution', ...prev.customSections.map(s => s.id), 'financial', 'legal']
                     : defaultStepOrder
             }));
         }
     }, []);
+
+    // Auto-fill client data when CRM entity is selected
+    useEffect(() => {
+        if (selectedEntity) {
+            setFormData(prev => ({
+                ...prev,
+                clientCompany: selectedEntity.clientCompany || prev.clientCompany || '',
+                clientName: selectedEntity.clientName || prev.clientName || '',
+                clientEmail: selectedEntity.clientEmail || prev.clientEmail || ''
+            }));
+            // Clear any existing errors for auto-filled fields
+            setErrors(prev => ({
+                ...prev,
+                clientCompany: ''
+            }));
+        }
+    }, [selectedEntity]);
 
     const handleChange = (field: keyof ProposalData, value: any) => {
         setFormData(prev => ({ ...prev, [field]: value }));
@@ -104,11 +127,11 @@ export const CreateProposal: React.FC<{
         if (id === 'solution') return { id, label: formData.stepLabels?.solution || 'Solution & Scope', icon: <Layers size={18} />, isCustom: false };
         if (id === 'financial') return { id, label: formData.stepLabels?.financial || 'Investment', icon: <DollarSign size={18} />, isCustom: false };
         if (id === 'legal') return { id, label: formData.stepLabels?.legal || 'Terms & Legal', icon: <CheckSquare size={18} />, isCustom: false };
-        
+
         // Custom Steps
         const custom = formData.customSections?.find(s => s.id === id);
         if (custom) return { id, label: custom.title, icon: <FileText size={18} />, isCustom: true };
-        
+
         return { id, label: 'Unknown Step', icon: <FileText size={18} />, isCustom: false };
     };
 
@@ -123,7 +146,7 @@ export const CreateProposal: React.FC<{
             title: newSectionTitle,
             content: ''
         };
-        
+
         // Insert at position 4 (index 3) per user request
         const newOrder = [...(formData.stepOrder || defaultStepOrder)];
         newOrder.splice(3, 0, newId);
@@ -176,16 +199,16 @@ export const CreateProposal: React.FC<{
             setFormData(prev => ({
                 ...prev,
                 // Only remove from customSections array if it's actually a custom section ID
-                customSections: id.startsWith('custom-') 
-                    ? (prev.customSections || []).filter(s => s.id !== id) 
+                customSections: id.startsWith('custom-')
+                    ? (prev.customSections || []).filter(s => s.id !== id)
                     : prev.customSections,
                 // Always remove from order list to hide it
                 stepOrder: prev.stepOrder.filter(sId => sId !== id)
             }));
-            
+
             // Switch back to a safe step if we deleted the active one
             if (activeStep === id) {
-                setActiveStep('branding'); 
+                setActiveStep('branding');
             }
         }
     };
@@ -195,20 +218,20 @@ export const CreateProposal: React.FC<{
         const newItems = formData.items.map(item => {
             if (item.id === id) {
                 const updates: any = { [field]: value };
-                
+
                 // Auto-calc logic:
                 // 1. If Cost changes -> Recalculate Rate based on current Margin
                 if (field === 'cost') {
                     const cost = Number(value) || 0;
                     const margin = item.margin || 0;
                     updates.rate = cost * (1 + margin / 100);
-                } 
+                }
                 // 2. If Margin changes -> Recalculate Rate based on Cost
                 else if (field === 'margin') {
                     const margin = Number(value) || 0;
                     const cost = item.cost || 0;
                     updates.rate = cost * (1 + margin / 100);
-                } 
+                }
                 // 3. If Rate (Price) changes -> Recalculate Margin based on Cost (if Cost > 0)
                 else if (field === 'rate') {
                     const rate = Number(value) || 0;
@@ -260,12 +283,12 @@ export const CreateProposal: React.FC<{
 
         setIsGeneratingPdf(true);
         const element = document.getElementById('proposal-print-container');
-        
+
         if (element) {
             // Temporarily show the element for capture
             const originalStyle = element.style.display;
             element.style.display = 'block';
-            
+
             const opt = {
                 margin: 0,
                 filename: `${formData.title.replace(/\s+/g, '_')}_Proposal.pdf`,
@@ -333,26 +356,35 @@ export const CreateProposal: React.FC<{
         const newErrors: Record<string, string> = {};
         if (!formData.title.trim()) newErrors.title = 'Title is required';
         if (!formData.clientCompany.trim()) {
-            newErrors.clientCompany = 'Client Company is required';
+            newErrors.clientCompany = 'Client Company is required. Please enter manually or select from CRM Entity.';
             // Also switch to branding tab to show error if not active
             if (activeStep !== 'branding') setActiveStep('branding');
         }
-        
+
         setErrors(newErrors);
         return Object.keys(newErrors).length === 0;
     };
 
+    // Toast notification state
+    const [showErrorToast, setShowErrorToast] = useState(false);
+    const [errorToastMessage, setErrorToastMessage] = useState('');
+
     const handleSave = () => {
         if (validate()) {
+            setShowErrorToast(false);
             onSave(formData);
         } else {
-            alert('Please fix the errors before saving.');
+            // Show toast notification instead of alert
+            setErrorToastMessage('Please fill in the required fields before saving.');
+            setShowErrorToast(true);
+            // Auto-hide after 5 seconds
+            setTimeout(() => setShowErrorToast(false), 5000);
         }
     };
 
     // Status Workflow Color Map
     const getStatusColor = (status: string) => {
-        switch(status) {
+        switch (status) {
             case 'Draft': return 'bg-gray-100 text-gray-600 border-gray-200';
             case 'In Review': return 'bg-amber-50 text-amber-700 border-amber-200';
             case 'Approved': return 'bg-emerald-50 text-emerald-700 border-emerald-200';
@@ -421,6 +453,39 @@ export const CreateProposal: React.FC<{
                 }
             `}</style>
 
+            {/* Error Toast Notification */}
+            {showErrorToast && (
+                <div className="fixed top-4 right-4 z-50 animate-in slide-in-from-top-4 fade-in duration-300">
+                    <div className="bg-red-50 border border-red-200 rounded-2xl shadow-xl shadow-red-100/50 p-4 max-w-md flex items-start gap-3">
+                        <div className="flex-shrink-0 w-10 h-10 bg-red-100 rounded-xl flex items-center justify-center">
+                            <AlertCircle size={20} className="text-red-600" />
+                        </div>
+                        <div className="flex-1">
+                            <h4 className="font-bold text-red-800 text-sm">Validation Error</h4>
+                            <p className="text-red-600 text-xs mt-1">{errorToastMessage}</p>
+                            {errors.clientCompany && (
+                                <p className="text-red-500 text-xs mt-2 flex items-center gap-1">
+                                    <span className="w-1.5 h-1.5 bg-red-400 rounded-full"></span>
+                                    Client Company is required
+                                </p>
+                            )}
+                            {errors.title && (
+                                <p className="text-red-500 text-xs mt-1 flex items-center gap-1">
+                                    <span className="w-1.5 h-1.5 bg-red-400 rounded-full"></span>
+                                    Proposal Title is required
+                                </p>
+                            )}
+                        </div>
+                        <button
+                            onClick={() => setShowErrorToast(false)}
+                            className="text-red-400 hover:text-red-600 p-1 hover:bg-red-100 rounded-lg transition-colors"
+                        >
+                            <X size={16} />
+                        </button>
+                    </div>
+                </div>
+            )}
+
             {/* --- EDITOR UI (Wrapped in print:hidden to hide completely) --- */}
             <div className="flex flex-col h-full print:hidden">
                 {/* --- TOP BAR --- */}
@@ -455,11 +520,11 @@ export const CreateProposal: React.FC<{
                         <div className="h-8 w-px bg-gray-200 mx-1"></div>
 
                         {/* Preview Toggle */}
-                        <button 
-                            onClick={() => setShowPreview(!showPreview)} 
+                        <button
+                            onClick={() => setShowPreview(!showPreview)}
                             className={`flex items-center gap-2 px-4 py-2 rounded-xl text-xs font-bold transition-all shadow-sm ${showPreview ? 'bg-violet-50 text-violet-700 border border-violet-100 shadow-violet-100' : 'bg-white text-gray-600 border border-gray-200 hover:bg-gray-50'}`}
                         >
-                            {showPreview ? <Eye size={16} /> : <EyeOff size={16} />} 
+                            {showPreview ? <Eye size={16} /> : <EyeOff size={16} />}
                             {showPreview ? 'Hide Preview' : 'Show Preview'}
                         </button>
 
@@ -467,10 +532,10 @@ export const CreateProposal: React.FC<{
                             <Printer size={20} />
                         </button>
 
-                        <button 
-                            onClick={handleDownloadPDF} 
+                        <button
+                            onClick={handleDownloadPDF}
                             disabled={isGeneratingPdf}
-                            className="p-2.5 text-gray-500 hover:text-gray-900 hover:bg-gray-100 rounded-xl transition-colors flex items-center gap-2 disabled:opacity-50" 
+                            className="p-2.5 text-gray-500 hover:text-gray-900 hover:bg-gray-100 rounded-xl transition-colors flex items-center gap-2 disabled:opacity-50"
                             title="Download PDF"
                         >
                             {isGeneratingPdf ? <Loader2 size={20} className="animate-spin" /> : <Download size={20} />}
@@ -484,7 +549,7 @@ export const CreateProposal: React.FC<{
 
                 {/* --- MAIN BUILDER AREA --- */}
                 <div className="flex flex-1 overflow-hidden relative">
-                    
+
                     {/* 1. LEFT SIDEBAR (Creative Timeline Navigation) */}
                     <div className={`w-72 bg-white border-r border-gray-200 flex flex-col flex-shrink-0 relative z-10 transition-all duration-300 ${!showPreview ? 'w-80' : ''}`}>
                         {/* ... (sidebar content remains same) ... */}
@@ -499,15 +564,13 @@ export const CreateProposal: React.FC<{
                                     return (
                                         <div key={step.id} className="relative z-10 flex items-center gap-2 w-full group cursor-pointer" onClick={() => setActiveStep(step.id)}>
                                             <div
-                                                className={`flex-1 flex items-center gap-4 px-3 py-3 text-sm font-medium rounded-2xl transition-all ${
-                                                    isActive ? 'bg-violet-50/80 text-violet-700 shadow-sm ring-1 ring-violet-100' : 'text-gray-500 hover:bg-gray-50 hover:text-gray-900'
-                                                }`}
+                                                className={`flex-1 flex items-center gap-4 px-3 py-3 text-sm font-medium rounded-2xl transition-all ${isActive ? 'bg-violet-50/80 text-violet-700 shadow-sm ring-1 ring-violet-100' : 'text-gray-500 hover:bg-gray-50 hover:text-gray-900'
+                                                    }`}
                                             >
-                                                <div className={`w-8 h-8 rounded-full flex items-center justify-center text-xs font-bold transition-all border-2 flex-shrink-0 ${
-                                                    isActive ? 'bg-violet-600 text-white border-violet-600 shadow-md shadow-violet-200' : 
+                                                <div className={`w-8 h-8 rounded-full flex items-center justify-center text-xs font-bold transition-all border-2 flex-shrink-0 ${isActive ? 'bg-violet-600 text-white border-violet-600 shadow-md shadow-violet-200' :
                                                     isPast ? 'bg-violet-100 text-violet-600 border-violet-100' :
-                                                    'bg-white text-gray-400 border-gray-200 group-hover:border-gray-300'
-                                                }`}>
+                                                        'bg-white text-gray-400 border-gray-200 group-hover:border-gray-300'
+                                                    }`}>
                                                     {isPast ? <CheckCircle size={14} /> : idx + 1}
                                                 </div>
                                                 <div className="text-left w-full truncate">
@@ -543,21 +606,21 @@ export const CreateProposal: React.FC<{
                     {/* 2. MIDDLE (Editor Form - Clean & Modern) */}
                     <div className={`flex-1 overflow-y-auto bg-slate-50/50 p-8 custom-scrollbar ${showPreview ? 'max-w-[45%]' : 'max-w-full mx-auto'} transition-all duration-300`}>
                         <div className="max-w-3xl mx-auto space-y-8 pb-20">
-                            
+
                             {/* Dynamic Custom Section Editor */}
                             {activeCustomSection && (
                                 <div className="space-y-8 animate-in fade-in slide-in-from-bottom-6 duration-500">
-                                     <div className="bg-white p-8 rounded-[2rem] shadow-xl shadow-slate-200/60 border border-white">
+                                    <div className="bg-white p-8 rounded-[2rem] shadow-xl shadow-slate-200/60 border border-white">
                                         <div className="flex justify-between items-center mb-6">
                                             <div className="flex-1 mr-4">
                                                 <label className="block text-xs font-bold text-gray-400 uppercase tracking-wider mb-1">Section Title</label>
                                                 <input value={activeCustomSection.title} onChange={(e) => handleUpdateCustomSectionTitle(activeCustomSection.id, e.target.value)} className="text-xl font-bold text-gray-900 border-none focus:ring-0 p-0 w-full bg-transparent outline-none placeholder-gray-300" placeholder="Section Name" />
                                             </div>
-                                            <button type="button" onClick={() => handleDeleteStep(activeCustomSection.id)} className="text-red-400 hover:bg-red-50 hover:text-red-600 p-2 rounded-lg transition-colors flex items-center gap-2 text-xs font-bold"><Trash2 size={16}/> Delete</button>
+                                            <button type="button" onClick={() => handleDeleteStep(activeCustomSection.id)} className="text-red-400 hover:bg-red-50 hover:text-red-600 p-2 rounded-lg transition-colors flex items-center gap-2 text-xs font-bold"><Trash2 size={16} /> Delete</button>
                                         </div>
                                         <p className="text-sm text-gray-500 mb-6">Add your custom content for this section.</p>
                                         <RichTextEditor value={activeCustomSection.content} onChange={(val) => handleUpdateCustomSection(activeCustomSection.id, val)} placeholder={`Enter details for ${activeCustomSection.title}...`} className="bg-gray-50" minHeight="400px" />
-                                     </div>
+                                    </div>
                                 </div>
                             )}
 
@@ -568,7 +631,7 @@ export const CreateProposal: React.FC<{
                                             <div className="w-10 h-10 rounded-2xl bg-violet-100 flex items-center justify-center text-violet-600"><Palette size={20} /></div>
                                             <input value={formData.stepLabels?.branding || 'Branding & Details'} onChange={(e) => handleStepLabelChange('branding', e.target.value)} className="text-xl font-bold text-gray-900 border-none focus:ring-0 bg-transparent outline-none flex-1" />
                                         </h3>
-                                        
+
                                         <div className="space-y-8">
                                             {/* Logo Upload */}
                                             <div>
@@ -611,8 +674,8 @@ export const CreateProposal: React.FC<{
                                                 <label className="block text-sm font-bold text-gray-700 mb-4">Cover Page Style</label>
                                                 <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
                                                     {[
-                                                        'corporate', 'business', 'creative', 'enterprise', 'minimal', 'tech', 
-                                                        'modern-art', 'geometric', 'bold-typography', 'gradient-splash', 
+                                                        'corporate', 'business', 'creative', 'enterprise', 'minimal', 'tech',
+                                                        'modern-art', 'geometric', 'bold-typography', 'gradient-splash',
                                                         'swiss', 'dark-mode', 'architectural', 'abstract',
                                                         'neon-night', 'brutalist', 'nature', 'japanese-minimal', 'retro-pop', 'futuristic-grid',
                                                         'ethereal', 'aurora',
@@ -757,7 +820,7 @@ export const CreateProposal: React.FC<{
                                                                 )}
                                                                 {style === 'terminal' && (
                                                                     <div className="absolute inset-0 bg-black p-2 font-mono text-[8px] text-green-500">
-                                                                        &gt; INIT...<br/>&gt; LOAD
+                                                                        &gt; INIT...<br />&gt; LOAD
                                                                     </div>
                                                                 )}
                                                                 {style === 'brush-stroke' && (
@@ -774,7 +837,7 @@ export const CreateProposal: React.FC<{
                                                                     </div>
                                                                 )}
                                                                 {style === 'blueprint-dark' && (
-                                                                    <div className="absolute inset-0 bg-[#00509d] p-1" style={{backgroundImage: 'radial-gradient(white 1px, transparent 1px)', backgroundSize: '10px 10px'}}>
+                                                                    <div className="absolute inset-0 bg-[#00509d] p-1" style={{ backgroundImage: 'radial-gradient(white 1px, transparent 1px)', backgroundSize: '10px 10px' }}>
                                                                         <div className="border border-white w-full h-full"></div>
                                                                     </div>
                                                                 )}
@@ -830,8 +893,16 @@ export const CreateProposal: React.FC<{
                                                 <input type="date" value={formData.date} onChange={(e) => handleChange('date', e.target.value)} className="w-full px-4 py-3 bg-gray-50 border-2 border-transparent rounded-xl focus:bg-white focus:border-violet-500 outline-none text-sm font-medium transition-all" />
                                             </div>
 
+                                            {/* CRM Entity Selector */}
+                                            <div className="col-span-12">
+                                                <CRMEntitySelector
+                                                    value={selectedEntity}
+                                                    onChange={setSelectedEntity}
+                                                />
+                                            </div>
+
                                             <div className="col-span-12 pt-6 mt-4 border-t border-gray-100 bg-violet-50/50 p-6 rounded-2xl border border-violet-100">
-                                                <h4 className="text-sm font-bold text-violet-800 mb-4 flex items-center gap-2"><User size={16}/> Client Information (Prepared For)</h4>
+                                                <h4 className="text-sm font-bold text-violet-800 mb-4 flex items-center gap-2"><User size={16} /> Client Information (Prepared For)</h4>
                                                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                                                     <div>
                                                         <label className="block text-xs font-bold text-gray-500 uppercase mb-2">Client Company <span className="text-red-500">*</span></label>
@@ -848,7 +919,7 @@ export const CreateProposal: React.FC<{
                                                     </div>
                                                 </div>
                                             </div>
-                                            
+
                                             <div className="col-span-12 border-t border-gray-100 pt-6 mt-2">
                                                 <label className="block text-xs font-bold text-gray-500 uppercase mb-4">Client Branding (Optional)</label>
                                                 <div className="flex items-center gap-5 p-4 border-2 border-dashed border-gray-200 rounded-2xl bg-gray-50/50 hover:bg-white hover:border-violet-300 transition-all group">
@@ -864,6 +935,14 @@ export const CreateProposal: React.FC<{
                                                     </div>
                                                 </div>
                                             </div>
+
+                                            {/* File Attachments */}
+                                            <div className="col-span-12 border-t border-gray-100 pt-6 mt-2">
+                                                <FileUploader
+                                                    files={attachments}
+                                                    onChange={setAttachments}
+                                                />
+                                            </div>
                                         </div>
                                     </div>
                                 </div>
@@ -876,7 +955,7 @@ export const CreateProposal: React.FC<{
                                             <h3 className="text-xl font-bold text-gray-900 flex-1">
                                                 <input value={formData.stepLabels?.executive || 'Executive Summary'} onChange={(e) => handleStepLabelChange('executive', e.target.value)} className="font-bold text-gray-900 border-none focus:ring-0 bg-transparent outline-none w-full" />
                                             </h3>
-                                            <button type="button" onClick={() => handleDeleteStep('executive')} className="text-red-300 hover:bg-red-50 hover:text-red-500 p-2 rounded-lg transition-colors" title="Delete Section"><Trash2 size={18}/></button>
+                                            <button type="button" onClick={() => handleDeleteStep('executive')} className="text-red-300 hover:bg-red-50 hover:text-red-500 p-2 rounded-lg transition-colors" title="Delete Section"><Trash2 size={18} /></button>
                                         </div>
                                         <p className="text-sm text-gray-500 mb-6">A high-level overview of the proposal.</p>
                                         <RichTextEditor value={formData.introduction} onChange={(val) => handleChange('introduction', val)} placeholder="We are pleased to submit this proposal..." className="bg-gray-50" minHeight="250px" />
@@ -894,7 +973,7 @@ export const CreateProposal: React.FC<{
                                     <div className="bg-white p-8 rounded-[2rem] shadow-xl shadow-slate-200/60 border border-white">
                                         <div className="flex justify-between items-center mb-6">
                                             <h3 className="text-xl font-bold text-gray-900 flex-1"><input value={formData.stepLabels?.solution || 'Solution & Scope'} onChange={(e) => handleStepLabelChange('solution', e.target.value)} className="font-bold text-gray-900 border-none focus:ring-0 bg-transparent outline-none w-full" /></h3>
-                                            <button type="button" onClick={() => handleDeleteStep('solution')} className="text-red-300 hover:bg-red-50 hover:text-red-500 p-2 rounded-lg transition-colors" title="Delete Section"><Trash2 size={18}/></button>
+                                            <button type="button" onClick={() => handleDeleteStep('solution')} className="text-red-300 hover:bg-red-50 hover:text-red-500 p-2 rounded-lg transition-colors" title="Delete Section"><Trash2 size={18} /></button>
                                         </div>
                                         <RichTextEditor value={formData.scopeOfWork} onChange={(val) => handleChange('scopeOfWork', val)} className="bg-gray-50" minHeight="400px" />
                                     </div>
@@ -907,7 +986,7 @@ export const CreateProposal: React.FC<{
                                         <div className="space-y-4">
                                             {formData.phases.map((phase) => (
                                                 <div key={phase.id} className="p-6 border border-gray-100 rounded-2xl bg-gray-50/30 relative group hover:border-violet-200 transition-all">
-                                                    <button onClick={() => removePhase(phase.id)} className="absolute top-4 right-4 text-gray-300 hover:text-red-500 opacity-0 group-hover:opacity-100 transition-all p-2 bg-white rounded-lg shadow-sm"><X size={16}/></button>
+                                                    <button onClick={() => removePhase(phase.id)} className="absolute top-4 right-4 text-gray-300 hover:text-red-500 opacity-0 group-hover:opacity-100 transition-all p-2 bg-white rounded-lg shadow-sm"><X size={16} /></button>
                                                     <div className="grid grid-cols-2 gap-4">
                                                         <input value={phase.name} onChange={(e) => handlePhaseChange(phase.id, 'name', e.target.value)} placeholder="Phase Name" className="bg-white border-2 border-transparent p-3 rounded-xl text-sm font-bold focus:border-violet-500 outline-none transition-all" />
                                                         <input value={phase.duration} onChange={(e) => handlePhaseChange(phase.id, 'duration', e.target.value)} placeholder="Duration" className="bg-white border-2 border-transparent p-3 rounded-xl text-sm font-medium focus:border-violet-500 outline-none transition-all" />
@@ -925,7 +1004,7 @@ export const CreateProposal: React.FC<{
                                     <div className="bg-white p-8 rounded-[2rem] shadow-xl shadow-slate-200/60 border border-white">
                                         <div className="flex justify-between items-center mb-6">
                                             <h3 className="text-xl font-bold text-gray-900 flex-1"><input value={formData.stepLabels?.financial || 'Investment'} onChange={(e) => handleStepLabelChange('financial', e.target.value)} className="font-bold text-gray-900 border-none focus:ring-0 bg-transparent outline-none w-full" /></h3>
-                                            <button type="button" onClick={() => handleDeleteStep('financial')} className="text-red-300 hover:bg-red-50 hover:text-red-500 p-2 rounded-lg transition-colors" title="Delete Section"><Trash2 size={18}/></button>
+                                            <button type="button" onClick={() => handleDeleteStep('financial')} className="text-red-300 hover:bg-red-50 hover:text-red-500 p-2 rounded-lg transition-colors" title="Delete Section"><Trash2 size={18} /></button>
                                         </div>
                                         <div className="bg-gradient-to-r from-violet-600 to-indigo-600 rounded-2xl p-6 mb-8 shadow-lg shadow-violet-200 text-white flex items-center justify-between">
                                             <div className="flex items-center gap-4">
@@ -956,7 +1035,7 @@ export const CreateProposal: React.FC<{
                                                             <td className="py-3"><div className="relative mx-2"><input type="number" value={item.margin !== undefined ? Number(item.margin).toFixed(1) : 0} onChange={(e) => handleItemChange(item.id, 'margin', parseFloat(e.target.value))} className="w-full bg-blue-50/50 rounded-lg border-none outline-none text-xs p-2 text-right text-blue-600 font-bold focus:ring-2 focus:ring-blue-100 transition-all" /></div></td>
                                                             <td className="py-3"><input type="number" value={item.rate !== undefined ? Number(item.rate).toFixed(2) : 0} onChange={(e) => handleItemChange(item.id, 'rate', parseFloat(e.target.value))} className="w-full bg-transparent outline-none text-sm p-2 text-right font-bold text-gray-900" /></td>
                                                             <td className="py-3 text-right text-sm font-extrabold text-gray-800 pr-4">{(item.quantity * item.rate).toLocaleString(undefined, { maximumFractionDigits: 0 })}</td>
-                                                            <td className="py-3 text-center"><button onClick={() => removeItem(item.id)} className="text-gray-300 hover:text-red-500 p-1.5 rounded-md hover:bg-red-50 transition-all"><X size={14}/></button></td>
+                                                            <td className="py-3 text-center"><button onClick={() => removeItem(item.id)} className="text-gray-300 hover:text-red-500 p-1.5 rounded-md hover:bg-red-50 transition-all"><X size={14} /></button></td>
                                                         </tr>
                                                     ))}
                                                 </tbody>
@@ -977,7 +1056,7 @@ export const CreateProposal: React.FC<{
                                     <div className="bg-white p-8 rounded-[2rem] shadow-xl shadow-slate-200/60 border border-white">
                                         <div className="flex justify-between items-center mb-6">
                                             <h3 className="text-xl font-bold text-gray-900 flex-1"><input value={formData.stepLabels?.legal || 'Terms & Legal'} onChange={(e) => handleStepLabelChange('legal', e.target.value)} className="font-bold text-gray-900 border-none focus:ring-0 bg-transparent outline-none w-full" /></h3>
-                                            <button type="button" onClick={() => handleDeleteStep('legal')} className="text-red-300 hover:bg-red-50 hover:text-red-500 p-2 rounded-lg transition-colors" title="Delete Section"><Trash2 size={18}/></button>
+                                            <button type="button" onClick={() => handleDeleteStep('legal')} className="text-red-300 hover:bg-red-50 hover:text-red-500 p-2 rounded-lg transition-colors" title="Delete Section"><Trash2 size={18} /></button>
                                         </div>
                                         <h3 className="text-lg font-bold text-gray-700 mb-4">Payment Terms</h3>
                                         <RichTextEditor value={formData.paymentTerms} onChange={(val) => handleChange('paymentTerms', val)} minHeight="150px" />
@@ -994,11 +1073,11 @@ export const CreateProposal: React.FC<{
 
                     {/* 3. RIGHT (Live Preview - Only visible if showPreview is true) */}
                     {showPreview && (
-                        <div className="flex-1 bg-slate-100 overflow-y-auto flex flex-col items-center p-12 relative print:hidden border-l border-gray-200/50 shadow-inner" 
-                             style={{ 
-                                 backgroundImage: 'radial-gradient(#cbd5e1 1.5px, transparent 1.5px)', 
-                                 backgroundSize: '24px 24px' 
-                             }}>
+                        <div className="flex-1 bg-slate-100 overflow-y-auto flex flex-col items-center p-12 relative print:hidden border-l border-gray-200/50 shadow-inner"
+                            style={{
+                                backgroundImage: 'radial-gradient(#cbd5e1 1.5px, transparent 1.5px)',
+                                backgroundSize: '24px 24px'
+                            }}>
                             <div style={{ transform: `scale(${zoom})`, transformOrigin: 'top center', paddingBottom: '100px' }} className="transition-transform duration-200">
                                 <ProposalPrintTemplate data={formData} />
                             </div>
@@ -1006,7 +1085,7 @@ export const CreateProposal: React.FC<{
                     )}
                 </div>
             </div>
-            
+
             {/* Hidden Print Area - Only visible during print via global styles */}
             <div id="proposal-print-container" className="hidden print:block">
                 <ProposalPrintTemplate data={formData} />

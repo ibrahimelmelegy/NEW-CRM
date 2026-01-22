@@ -1,32 +1,35 @@
 
 import React, { useState, useMemo } from 'react';
-import { 
-  FileText, Plus, Search, TrendingUp, Filter, Edit, Trash2, Eye, Send, Percent, DollarSign,
-  Folder, FolderOpen, FolderSearch, Archive, CheckCircle, XCircle, Clock, AlertCircle, MoreHorizontal, ArrowUpRight
+import {
+    FileText, Plus, Search, TrendingUp, Filter, Edit, Trash2, Eye, Send, Percent, DollarSign,
+    Folder, FolderOpen, FolderSearch, Archive, CheckCircle, XCircle, Clock, AlertCircle, MoreHorizontal, ArrowUpRight
 } from 'lucide-react';
 import { PieChart, Pie, Cell, Tooltip, ResponsiveContainer, Legend } from 'recharts';
 import { ProposalData } from './types';
 
 // MIU Vibrant Palette
 const STATUS_COLORS = {
-  'Draft': '#94a3b8',     // Slate
-  'In Review': '#f59e0b', // Amber
-  'Sent': '#3b82f6',      // Blue
-  'Approved': '#10b981',  // Emerald
-  'Rejected': '#ef4444',  // Red (Canceled)
-  'Archived': '#64748b'   // Slate Dark
+    'Draft': '#94a3b8',     // Slate
+    'In Review': '#f59e0b', // Amber
+    'Sent': '#3b82f6',      // Blue
+    'Approved': '#10b981',  // Emerald
+    'Rejected': '#ef4444',  // Red (Canceled)
+    'Archived': '#64748b'   // Slate Dark
 };
 
 const CHART_COLORS = ['#94a3b8', '#f59e0b', '#3b82f6', '#10b981', '#ef4444'];
 
-export const ProposalsTable: React.FC<{ 
-    proposals: ProposalData[], 
-    onAdd: () => void, 
+export const ProposalsTable: React.FC<{
+    proposals: ProposalData[],
+    onAdd: () => void,
     onEdit: (p: ProposalData) => void,
     onDelete: (id: number) => void,
-    onArchive: (id: number) => void
-}> = ({ proposals, onAdd, onEdit, onDelete, onArchive }) => {
-    
+    onArchive: (id: number) => void,
+    onView?: (p: ProposalData) => void,
+    onApprove?: (id: number) => void,
+    onReject?: (id: number, reason: string) => void
+}> = ({ proposals, onAdd, onEdit, onDelete, onArchive, onView, onApprove, onReject }) => {
+
     const [searchTerm, setSearchTerm] = useState('');
     const [statusFilter, setStatusFilter] = useState('All'); // 'All', 'Sent', 'Pending', 'Draft', 'Canceled'
 
@@ -41,7 +44,7 @@ export const ProposalsTable: React.FC<{
         proposals.forEach(p => {
             const date = new Date(p.date);
             if (isNaN(date.getTime())) return;
-            
+
             const year = date.getFullYear().toString();
             const month = (date.getMonth() + 1).toString().padStart(2, '0');
             const day = date.getDate().toString().padStart(2, '0');
@@ -50,7 +53,7 @@ export const ProposalsTable: React.FC<{
             if (!tree[year][month]) tree[year][month] = [];
             if (!tree[year][month].includes(day)) tree[year][month].push(day);
         });
-        
+
         // Sort keys descending
         const sortedTree: Record<string, Record<string, string[]>> = {};
         Object.keys(tree).sort().reverse().forEach(year => {
@@ -59,13 +62,13 @@ export const ProposalsTable: React.FC<{
                 sortedTree[year][month] = tree[year][month].sort().reverse();
             });
         });
-        
+
         return sortedTree;
     }, [proposals]);
 
     const filtered = useMemo(() => proposals.filter(p => {
         // Search Logic
-        const matchesSearch = 
+        const matchesSearch =
             p.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
             p.clientName.toLowerCase().includes(searchTerm.toLowerCase()) ||
             p.refNumber.toLowerCase().includes(searchTerm.toLowerCase());
@@ -99,19 +102,19 @@ export const ProposalsTable: React.FC<{
         const total = proposals.length;
         // Pipeline Value: Sum of Sent, In Review, and Draft
         const pipelineValue = proposals.reduce((sum, p) => {
-            if(p.status === 'Sent' || p.status === 'Draft' || p.status === 'In Review') {
+            if (p.status === 'Sent' || p.status === 'Draft' || p.status === 'In Review') {
                 const sub = p.items.reduce((s, i) => s + (i.quantity * i.rate), 0);
                 return sum + sub;
             }
             return sum;
         }, 0);
-        
+
         const approvedCount = proposals.filter(p => p.status === 'Approved').length;
         const rejectedCount = proposals.filter(p => p.status === 'Rejected').length;
         // Simple win rate calculation
         const closedCount = approvedCount + rejectedCount;
         const winRate = closedCount > 0 ? (approvedCount / closedCount) * 100 : 0;
-        
+
         const statusDist = [
             { name: 'Draft', value: proposals.filter(p => p.status === 'Draft').length },
             { name: 'Pending', value: proposals.filter(p => p.status === 'In Review').length },
@@ -120,10 +123,10 @@ export const ProposalsTable: React.FC<{
             { name: 'Canceled', value: rejectedCount },
         ].filter(d => d.value > 0);
 
-        return { 
-            total, 
-            pipelineValue, 
-            winRate, 
+        return {
+            total,
+            pipelineValue,
+            winRate,
             statusDist,
             counts: {
                 draft: proposals.filter(p => p.status === 'Draft').length,
@@ -164,13 +167,13 @@ export const ProposalsTable: React.FC<{
 
             {/* Main Content Layout */}
             <div className="flex flex-col lg:flex-row gap-8 items-start">
-                
+
                 {/* LEFT COLUMN: Main Dashboard Area */}
                 <div className="flex-1 w-full space-y-8">
-                    
+
                     {/* KPI Cards */}
                     <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-                        
+
                         {/* Pipeline Value Card */}
                         <div className="md:col-span-1 bg-gradient-to-br from-violet-600 to-indigo-700 rounded-[2rem] p-8 text-white shadow-xl shadow-violet-200 relative overflow-hidden group hover:scale-[1.02] transition-transform duration-300">
                             <div className="absolute top-0 right-0 p-6 opacity-10 group-hover:opacity-20 transition-opacity">
@@ -188,7 +191,7 @@ export const ProposalsTable: React.FC<{
 
                         {/* Win Rate Card */}
                         <div className="bg-white p-8 rounded-[2rem] border border-gray-100 shadow-sm relative overflow-hidden group hover:shadow-md transition-shadow">
-                             <div className="absolute right-0 top-0 p-6 opacity-5 group-hover:opacity-10 transition-opacity"><Percent size={64} /></div>
+                            <div className="absolute right-0 top-0 p-6 opacity-5 group-hover:opacity-10 transition-opacity"><Percent size={64} /></div>
                             <p className="text-gray-400 text-xs font-bold uppercase tracking-wider mb-2">Win Rate</p>
                             <h3 className="text-4xl font-extrabold text-gray-900">{stats.winRate.toFixed(1)}%</h3>
                             <div className="mt-6 w-full bg-gray-100 rounded-full h-2 overflow-hidden">
@@ -199,7 +202,7 @@ export const ProposalsTable: React.FC<{
 
                         {/* Action Needed / Pending Card */}
                         <div className="bg-white p-8 rounded-[2rem] border border-gray-100 shadow-sm relative overflow-hidden group hover:shadow-md transition-shadow">
-                             <div className="absolute right-0 top-0 p-6 opacity-5 group-hover:opacity-10 transition-opacity"><Clock size={64} /></div>
+                            <div className="absolute right-0 top-0 p-6 opacity-5 group-hover:opacity-10 transition-opacity"><Clock size={64} /></div>
                             <p className="text-gray-400 text-xs font-bold uppercase tracking-wider mb-2">Action Needed</p>
                             <h3 className="text-4xl font-extrabold text-amber-500">{stats.counts.pending}</h3>
                             <p className="text-gray-900 font-bold mt-1">Pending Proposals</p>
@@ -212,21 +215,20 @@ export const ProposalsTable: React.FC<{
 
                     {/* Table Section */}
                     <div className="bg-white rounded-[2rem] shadow-sm border border-gray-100 overflow-hidden min-w-0">
-                        
+
                         {/* Table Header / Filters */}
                         <div className="p-6 border-b border-gray-100 flex flex-col md:flex-row justify-between items-center gap-4 bg-white">
-                            
+
                             {/* Status Tabs */}
                             <div className="flex bg-gray-100/80 p-1 rounded-xl overflow-x-auto max-w-full no-scrollbar">
                                 {['All', 'Sent', 'Pending', 'Draft', 'Approved', 'Canceled'].map(status => (
                                     <button
                                         key={status}
                                         onClick={() => setStatusFilter(status)}
-                                        className={`px-4 py-2 rounded-lg text-xs font-bold transition-all whitespace-nowrap ${
-                                            statusFilter === status 
-                                            ? 'bg-white text-gray-900 shadow-sm' 
-                                            : 'text-gray-500 hover:text-gray-700 hover:bg-gray-200/50'
-                                        }`}
+                                        className={`px-4 py-2 rounded-lg text-xs font-bold transition-all whitespace-nowrap ${statusFilter === status
+                                                ? 'bg-white text-gray-900 shadow-sm'
+                                                : 'text-gray-500 hover:text-gray-700 hover:bg-gray-200/50'
+                                            }`}
                                     >
                                         {status}
                                     </button>
@@ -237,12 +239,12 @@ export const ProposalsTable: React.FC<{
                             <div className="flex gap-3 items-center w-full md:w-auto">
                                 <div className="relative flex-1 md:flex-initial">
                                     <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" size={16} />
-                                    <input 
-                                        type="text" 
-                                        placeholder="Search title, client, ref..." 
+                                    <input
+                                        type="text"
+                                        placeholder="Search title, client, ref..."
                                         value={searchTerm}
                                         onChange={(e) => setSearchTerm(e.target.value)}
-                                        className="pl-10 pr-4 py-2.5 border border-gray-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-violet-500 w-full md:w-64 bg-gray-50/50 focus:bg-white transition-all font-medium" 
+                                        className="pl-10 pr-4 py-2.5 border border-gray-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-violet-500 w-full md:w-64 bg-gray-50/50 focus:bg-white transition-all font-medium"
                                     />
                                 </div>
                                 <button className="p-2.5 text-gray-500 hover:bg-gray-100 rounded-xl border border-gray-200 bg-white transition-colors">
@@ -268,7 +270,7 @@ export const ProposalsTable: React.FC<{
                                         const subtotal = p.items.reduce((sum, item) => sum + (item.quantity * item.rate), 0);
                                         const discount = p.discountType === 'percent' ? subtotal * (p.discount / 100) : p.discount;
                                         const total = (subtotal - discount) * (1 + p.taxRate / 100);
-                                        
+
                                         // Status Badge Logic
                                         let statusColor = 'bg-gray-100 text-gray-600 border-gray-200';
                                         let displayStatus: string = p.status;
@@ -304,12 +306,36 @@ export const ProposalsTable: React.FC<{
                                                 </td>
                                                 <td className="px-8 py-5 text-right">
                                                     <div className="flex justify-end gap-2 opacity-0 group-hover:opacity-100 transition-opacity">
+                                                        {/* View */}
+                                                        {onView && (
+                                                            <button onClick={() => onView(p)} className="p-2 text-gray-400 hover:text-blue-600 hover:bg-blue-50 rounded-xl transition-all" title="View">
+                                                                <Eye size={16} />
+                                                            </button>
+                                                        )}
+                                                        {/* Approve - Only for In Review status */}
+                                                        {onApprove && p.status === 'In Review' && (
+                                                            <button onClick={() => onApprove(p.id)} className="p-2 text-gray-400 hover:text-emerald-600 hover:bg-emerald-50 rounded-xl transition-all" title="Approve">
+                                                                <CheckCircle size={16} />
+                                                            </button>
+                                                        )}
+                                                        {/* Reject - Only for In Review status */}
+                                                        {onReject && p.status === 'In Review' && (
+                                                            <button onClick={() => {
+                                                                const reason = prompt('Enter rejection reason:');
+                                                                if (reason) onReject(p.id, reason);
+                                                            }} className="p-2 text-gray-400 hover:text-red-600 hover:bg-red-50 rounded-xl transition-all" title="Reject">
+                                                                <XCircle size={16} />
+                                                            </button>
+                                                        )}
+                                                        {/* Edit */}
                                                         <button onClick={() => onEdit(p)} className="p-2 text-gray-400 hover:text-violet-600 hover:bg-violet-50 rounded-xl transition-all" title="Edit">
                                                             <Edit size={16} />
                                                         </button>
+                                                        {/* Archive */}
                                                         <button onClick={() => onArchive && onArchive(p.id)} className="p-2 text-gray-400 hover:text-amber-600 hover:bg-amber-50 rounded-xl transition-all" title="Archive">
                                                             <Archive size={16} />
                                                         </button>
+                                                        {/* Delete */}
                                                         <button onClick={() => onDelete(p.id)} className="p-2 text-gray-400 hover:text-red-600 hover:bg-red-50 rounded-xl transition-all" title="Delete">
                                                             <Trash2 size={16} />
                                                         </button>
@@ -335,7 +361,7 @@ export const ProposalsTable: React.FC<{
 
                 {/* RIGHT COLUMN: Sidebar (Archive & Chart) */}
                 <div className="w-full lg:w-80 space-y-8 flex-shrink-0">
-                    
+
                     {/* Status Distribution Chart */}
                     <div className="bg-white p-6 rounded-[2rem] border border-gray-100 shadow-sm relative overflow-hidden">
                         <div className="flex justify-between items-center mb-6">
@@ -345,13 +371,13 @@ export const ProposalsTable: React.FC<{
                         <div className="h-56 w-full relative">
                             <ResponsiveContainer width="100%" height="100%">
                                 <PieChart>
-                                    <Pie 
-                                        data={stats.statusDist} 
-                                        cx="50%" 
-                                        cy="50%" 
-                                        innerRadius={60} 
-                                        outerRadius={80} 
-                                        paddingAngle={5} 
+                                    <Pie
+                                        data={stats.statusDist}
+                                        cx="50%"
+                                        cy="50%"
+                                        innerRadius={60}
+                                        outerRadius={80}
+                                        paddingAngle={5}
                                         dataKey="value"
                                         cornerRadius={6}
                                     >
@@ -388,7 +414,7 @@ export const ProposalsTable: React.FC<{
                                 <div className="p-1.5 bg-violet-50 text-violet-600 rounded-lg"><FolderOpen size={16} /></div>
                                 <h3>Archive</h3>
                             </div>
-                            <button 
+                            <button
                                 onClick={() => { setSelectedYear(null); setSelectedMonth(null); setSelectedDay(null); }}
                                 className="text-[10px] font-bold text-violet-600 hover:bg-violet-50 px-2 py-1 rounded transition-colors"
                             >
@@ -399,11 +425,11 @@ export const ProposalsTable: React.FC<{
                             {Object.keys(archiveTree).length > 0 ? (
                                 Object.keys(archiveTree).map(year => (
                                     <div key={year} className="space-y-1">
-                                        <button 
-                                            onClick={() => { 
-                                                setSelectedYear(selectedYear === year ? null : year); 
-                                                setSelectedMonth(null); 
-                                                setSelectedDay(null); 
+                                        <button
+                                            onClick={() => {
+                                                setSelectedYear(selectedYear === year ? null : year);
+                                                setSelectedMonth(null);
+                                                setSelectedDay(null);
                                             }}
                                             className={`flex items-center gap-3 w-full text-left px-3 py-2 rounded-xl text-sm font-bold transition-colors ${selectedYear === year ? 'bg-gray-900 text-white shadow-md' : 'text-gray-600 hover:bg-gray-50'}`}
                                         >
@@ -414,8 +440,8 @@ export const ProposalsTable: React.FC<{
                                             <div className="ml-4 pl-3 border-l-2 border-gray-100 space-y-1 mt-1">
                                                 {Object.keys(archiveTree[year]).map(month => (
                                                     <div key={month}>
-                                                        <button 
-                                                            onClick={() => { 
+                                                        <button
+                                                            onClick={() => {
                                                                 setSelectedMonth(selectedMonth === month ? null : month);
                                                                 setSelectedDay(null);
                                                             }}
@@ -426,7 +452,7 @@ export const ProposalsTable: React.FC<{
                                                         {selectedMonth === month && (
                                                             <div className="ml-3 pl-3 border-l-2 border-gray-100 space-y-1 mt-1 mb-1">
                                                                 {archiveTree[year][month].map(day => (
-                                                                    <button 
+                                                                    <button
                                                                         key={day}
                                                                         onClick={() => setSelectedDay(selectedDay === day ? null : day)}
                                                                         className={`block w-full text-left px-3 py-1 text-[10px] font-bold rounded-lg transition-colors ${selectedDay === day ? 'text-white bg-violet-500 shadow-sm' : 'text-gray-400 hover:text-violet-600'}`}

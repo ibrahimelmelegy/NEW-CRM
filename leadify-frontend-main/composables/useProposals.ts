@@ -154,12 +154,12 @@ export async function updateProposalFinanceTable(values: any, id: number, propos
   }
 }
 
-export async function updateProposalFinanceTableitem(values: any, id: number, type?: string = 'all'): Promise<void> {
+export async function updateProposalFinanceTableitem(values: any, id: number, type: string = 'all'): Promise<void> {
   try {
     // Prepare the client data
     const ProposalFinanceTableData = {
-      customColumns :values?.customColumns , 
-      qty :values?.qty,
+      customColumns: values?.customColumns,
+      qty: values?.qty,
     };
     // Call API to create the client
     const response = await useApiFetch(`proposal-finance-table-item/${id}`, 'PUT', ProposalFinanceTableData);
@@ -171,7 +171,7 @@ export async function updateProposalFinanceTableitem(values: any, id: number, ty
         console.log(type);
         handleSuccess('proposal finance table item update successfully');
       } else {
-        handleSuccess('proposal finance table item update successfully', ProposalFinanceTableData?.proposalId);
+        handleSuccess('proposal finance table item update successfully', values?.proposalId);
       }
 
     } else {
@@ -183,7 +183,7 @@ export async function updateProposalFinanceTableitem(values: any, id: number, ty
   }
 }
 
-export async function createProposalFinanceTableitem(values: any, type?: string = 'all'): Promise<void> {
+export async function createProposalFinanceTableitem(values: any, type: string = 'all'): Promise<void> {
   try {
     // Prepare the client data
     const ProposalFinanceTableData = {
@@ -255,9 +255,10 @@ export async function deleteCustomColumn(idFinanceTable: number, columnKey: stri
  */
 export async function createProposal(values: ProposalInfoPayload): Promise<void> {
   try {
-    let formattedValues = {
+    const valuesAny = values as any;
+    let formattedValues: any = {
       ...values,
-      fileAttachments: values?.file?.map((el: any) => el?.response),
+      fileAttachments: valuesAny?.file?.map((el: any) => el?.response),
       relatedEntityId: values?.relatedEntityId == "" ? undefined : values?.relatedEntityId,
       relatedEntityType: values?.relatedEntityType == "" ? undefined : values?.relatedEntityType
     };
@@ -374,5 +375,106 @@ export async function updateProposal(values: any): Promise<void> {
       message: errorMessage,
     });
     throw new Error(errorMessage); // Re-throw the error to propagate it to the calling function
+  }
+}
+
+/**
+ * Submit proposal for approval
+ * @param id - Proposal ID
+ */
+export async function submitForApproval(id: string | number): Promise<boolean> {
+  try {
+    const response = await useApiFetch(`proposal/waiting-approval/${id}`, 'PUT');
+    if (response?.success) {
+      ElNotification({
+        type: 'success',
+        title: 'Success',
+        message: 'Proposal submitted for approval',
+      });
+      return true;
+    }
+    handleError(response?.message || 'Failed to submit proposal');
+    return false;
+  } catch (error) {
+    handleError(error instanceof Error ? error.message : 'Unknown error');
+    return false;
+  }
+}
+
+/**
+ * Approve proposal
+ * @param id - Proposal ID
+ */
+export async function approveProposal(id: string | number): Promise<boolean> {
+  try {
+    const response = await useApiFetch(`proposal/approve/${id}`, 'PUT');
+    if (response?.success) {
+      ElNotification({
+        type: 'success',
+        title: 'Success',
+        message: 'Proposal approved successfully',
+      });
+      return true;
+    }
+    handleError(response?.message || 'Failed to approve proposal');
+    return false;
+  } catch (error) {
+    handleError(error instanceof Error ? error.message : 'Unknown error');
+    return false;
+  }
+}
+
+/**
+ * Reject proposal
+ * @param id - Proposal ID
+ * @param reason - Rejection reason
+ */
+export async function rejectProposal(id: string | number, reason: string): Promise<boolean> {
+  try {
+    const response = await useApiFetch(`proposal/reject/${id}`, 'PUT', {
+      rejectionReason: reason,
+    });
+    if (response?.success) {
+      ElNotification({
+        type: 'success',
+        title: 'Success',
+        message: 'Proposal rejected',
+      });
+      return true;
+    }
+    handleError(response?.message || 'Failed to reject proposal');
+    return false;
+  } catch (error) {
+    handleError(error instanceof Error ? error.message : 'Unknown error');
+    return false;
+  }
+}
+
+/**
+ * Get proposal finance tables with items
+ * @param proposalId - Proposal ID
+ */
+export async function getProposalFinanceTable(proposalId: string | number): Promise<any[]> {
+  try {
+    const { body: tables } = await useApiFetch(`proposal-finance-table/?page=1&limit=100&proposalId=${proposalId}`);
+    if (!tables?.financeTable?.length) return [];
+
+    // Fetch items for each table
+    const tablesWithItems = await Promise.all(
+      tables.financeTable.map(async (table: any) => {
+        const { body: items } = await useApiFetch(`proposal-finance-table-item/?page=1&limit=1000&financeTableId=${table.id}`);
+        return {
+          ...table,
+          items: items?.items || [],
+          subtotal: items?.items?.reduce((sum: number, item: any) => sum + (item.totalPrice || 0), 0) || 0,
+          total: table.totalPrice || items?.items?.reduce((sum: number, item: any) => sum + (item.totalPrice || 0), 0) || 0,
+        };
+      })
+    );
+
+    return tablesWithItems;
+  } catch (error) {
+    console.error('Error fetching finance tables:', error);
+    return [];
   }
 }

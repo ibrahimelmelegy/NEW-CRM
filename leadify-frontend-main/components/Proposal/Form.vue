@@ -172,7 +172,7 @@ const formSchema = yup.object({
   relatedEntityId: yup.string().trim().nullable().label("Related to"),
   title: yup.string().trim().required().min(2).max(50).label("Proposal title"),
   version: yup.string().required().min(1).label("Proposal Version"),
-  date: yup.date().required().label("Proposal date"),
+  date: yup.date().nullable().label("Proposal date"),
   type: yup.string().trim().required().min(2).max(100).label("Proposal type"),
   reference: yup.string().trim().required().min(2).max(50).label("Proposal reference"),
   proposalFor: yup.string().trim().required().min(2).max(100).label("Proposal for"),
@@ -193,8 +193,9 @@ const optionStaus = [
 ];
 const onSubmit = () => {
   try {
-    const createAt = String(getYear(new Date()));
-    const data: any = { ...values, date: createAt };
+    // Use ISO date format for backend compatibility
+    const today = new Date().toISOString().split('T')[0]; // Format: YYYY-MM-DD
+    const data: any = { ...values, date: today };
     props?.data ? updateProposal({ ...data, id: props?.data?.id }) : createProposal(data);
   } catch (error) {
     console.error("Proposal creation failed", error);

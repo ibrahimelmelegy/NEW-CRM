@@ -1,159 +1,376 @@
 <template lang="pug">
-.flex.items-center.justify-between.mb-5.mt-5
-  .title.font-bold.text-2xl.mb-1.capitalize Proposal Details
-  div
-    el-dropdown(trigger="click")
-      span.el-dropdown-link
-        button.rounded-btn(class="!px-4"): Icon(name="IconToggle", size="24")
-      template(#dropdown)
-        el-dropdown-menu
-          el-dropdown-item
-            NuxtLink.flex.items-center(
-              :to="`/sales/proposals/editor/preview/${proposal?.id}`"
-            )
-              Icon.text-md.mr-2(size="20", name="IconEye")
-              p.text-sm Preview
-          el-dropdown-item( @click='AddProposalPopup = true' ,:disabled="proposal?.status == 'APPROVED'")
-              Icon.text-md.mr-2(size="20", name="IconEdit")
-              p.text-sm Edit
-          el-dropdown-item( @click='EditProposalPopup = true')
-              Icon.text-md.mr-2(size="20", name="IconEdit")
-              p.text-sm Edit Status
-.flex.align-center.gap-6.mt-3.flex-row(class="xl:flex-row")
-  .flex-1.bg-white.p-10.rounded-3xl
-    .mt-2
-      .grid.gap-4(class="md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4")
-        div(v-if="proposal?.title")
-          .text-neutral-400.font-medium.mb-2.flex.items-center
-            Icon.mr-2(name="solar:hashtag-outline", size="20")
-            p Proposal Title
-          p.text-neutral-800.mb-2 {{ proposal?.title }}
-        div(v-if="proposal?.version")
-          .text-neutral-400.font-medium.mb-2.flex.items-center
-            Icon.mr-2(name="solar:hashtag-outline", size="20")
-            p Version
-          p.text-neutral-800.mb-2 {{ proposal?.version }}
-        div
-          .text-neutral-400.font-medium.mb-2.flex.items-center
-            Icon.mr-2(name="solar:hashtag-outline", size="20")
-            p Related to
-          p.text-neutral-800.mb-2 {{ proposal?.relatedEntity?.name }} #[span.border.rounded-xl.text-xs.px-2(:class="`label-outline-${getStatusColor(proposal?.relatedEntityType)}`") {{ formatSnakeCase(proposal?.relatedEntityType) }}]
-        div(v-if="proposal?.status")
-          .text-neutral-400.font-medium.mb-2.flex.items-center
-            Icon.mr-2(name="tabler:category-2", size="20")
-            p Status
-          p.text-neutral-800.mb-2 #[span.border.rounded-xl.text-xs.px-2(:class="`label-outline-${getStatusColor(proposal?.status)}`" @click='EditProposalPopup = true' style="cursor: pointer") {{ proposal?.status == "Mixed" ? 'Tech & Financial' : formatSnakeCase(proposal?.status) }}]
-        div(v-if="proposal?.proposalDate")
-          .text-neutral-400.font-medium.mb-2.flex.items-center
-            Icon.mr-2(name="IconCalendar", size="20")
-            p Date
-          p.text-neutral-800.mb-2 {{ formatDate(proposal?.proposalDate) }}
-        div
-          .text-neutral-400.font-medium.mb-2.flex.items-center
-            Icon.mr-2(name="tabler:category-2", size="20")
-            p Type
-          p.text-neutral-800.mb-2 {{ proposal?.type == "MIXED"  ? 'Tech & Financial' : formatSnakeCase(proposal?.type)}}
-        div
-          .text-neutral-400.font-medium.mb-2.flex.items-center
-            Icon.mr-2(name="solar:hashtag-outline", size="20")
-            p Reference
-          p.text-neutral-800.mb-2 {{ proposal?.reference }}
-        div
-          .text-neutral-400.font-medium.mb-2.flex.items-center
-            Icon.mr-2(name="solar:hashtag-outline", size="20")
-            p Proposal For
-          p.text-neutral-800.mb-2 {{ proposal?.proposalFor }}
-        div(v-if="proposal?.users?.length")
-          .text-neutral-400.font-medium.mb-2.flex.items-center
-            Icon.mr-2(name="IconAssign", size="20")
-            p Assign
-          p.text-neutral-800.mb-2 {{ proposal?.users?.map((user) => user.name).join(", ") }}
-.flex-1.bg-white.p-10.rounded-3xl.mt-6(v-if="proposal?.notes")
-        .flex.items-center.gap-2.mb-4
-          .flex.items-center.justify-center.w-10.h-10.rounded-full.bg-secondary-turquoise-50: Icon.text-secondary-turquoise-700(name="IconNote" size="24")
-          h4.text-lg.font-semibold.text-neutral-900 Notes
-        p.text-neutral-800.leading-relaxed {{proposal?.notes}}
-.flex-1.bg-white.p-10.rounded-3xl.mt-6(v-if="proposal?.rejectionReason")
-        .flex.items-center.gap-2.mb-4
-          .flex.items-center.justify-center.w-10.h-10.rounded-full.bg-secondary-turquoise-50: Icon.text-secondary-turquoise-700(name="IconNote" size="24")
-          h4.text-lg.font-semibold.text-neutral-900 Rejection Reason
-        p.text-neutral-800.leading-relaxed {{proposal?.rejectionReason}}
+//- Matching React ProposalDetails exactly with Vue improvements
+.min-h-screen.bg-slate-50
+  //- Loading State
+  .min-h-screen.flex.items-center.justify-center(v-if="loading")
+    .text-center
+      .animate-spin.rounded-full.h-10.w-10.border-4.border-violet-600.border-t-transparent.mx-auto.mb-4
+      p.text-gray-500 Loading proposal...
+
+  //- Error State
+  .min-h-screen.flex.items-center.justify-center(v-else-if="!proposal")
+    .text-center
+      Icon.text-red-500.mx-auto.mb-4(name="heroicons:exclamation-circle" size="40")
+      p.text-gray-700.font-medium.mb-2 Proposal not found
+      el-button(type="primary" @click="$router.push('/sales/proposals')") Back to Proposals
+
+  //- Main Content
+  template(v-else)
+    //- Header (Sticky like React)
+    header.bg-white.border-b.border-gray-100.sticky.top-0.z-10
+      .max-w-7xl.mx-auto.px-6.py-4.flex.items-center.justify-between
+        .flex.items-center.gap-4
+          button.p-2.hover_bg-gray-100.rounded-xl.transition-colors(@click="$router.push('/sales/proposals')")
+            Icon(name="heroicons:arrow-left" size="20" class="text-gray-600")
+          div
+            h1.text-xl.font-bold.text-gray-900 {{ proposal?.title || 'Untitled Proposal' }}
+            p.text-sm.text-gray-500 {{ proposal?.reference || `REF-${proposal?.id}` }}
         
-.flex-1.bg-white.p-10.rounded-3xl.mt-6(v-if="proposal?.fileAttachments?.length")
-    .flex.items-center.gap-3.mb-6
-      .flex.items-center.justify-center.w-12.h-12.rounded-full(class="!min-w-[48px] !min-h-[48px]" class="bg-secondary-turquoise-50 text-secondary-turquoise-700"): Icon(name="mdi:file-outline" size="24")
-      h4.text-lg.font-semibold.text-neutral-900 Documents
-    .flex.gap-4.flex-wrap.items-center
-      button(@click="downloadFile(`https://staging-api.hp-tech.com/assets/${file}`, file)" class="bg-white border rounded-lg p-4 flex items-center space-x-4" v-for="file in proposal?.fileAttachments" :key="file")
-        img(:src="`/images/files/${file?.split('.').pop()}.svg`" size="40")
-        p(class="text-gray-800 font-medium") {{file}}
-        Icon(name="solar:download-bold" class="text-neutral-500 ml-auto")
-ProposalForm(v-model="AddProposalPopup" :editStatus="false"  @onSubmit="onSubmit" :data="proposal")
-ProposalForm(v-model="EditProposalPopup" :editStatus="true"  @onSubmit="onSubmit" :data="proposal")
+        .flex.items-center.gap-3
+          button.p-2.hover_bg-gray-100.rounded-xl.transition-colors(@click="fetchProposal" title="Refresh")
+            Icon(name="heroicons:arrow-path" size="18" class="text-gray-500")
+          el-button(
+            type="primary" 
+            @click="EditProposalPopup = true"
+            :disabled="proposal?.status === 'APPROVED'"
+          )
+            Icon(name="heroicons:pencil-square" size="16" class="mr-1")
+            span Edit
+          el-button(
+            type="danger"
+            plain
+            @click="deleteDialogVisible = true"
+          )
+            Icon(name="heroicons:trash" size="16" class="mr-1")
+            span Delete
+
+    //- Content (Grid layout like React)
+    main.max-w-7xl.mx-auto.px-6.py-8
+      .grid.grid-cols-3.gap-8
+        //- Main Content (2 columns)
+        .col-span-2.space-y-6
+          //- Status Card
+          .bg-white.rounded-2xl.p-6.border.border-gray-100
+            .flex.items-center.justify-between.mb-6
+              .flex.items-center.gap-3
+                .p-2.rounded-xl(:class="getStatusBgClass(proposal?.status)")
+                  Icon(:name="getStatusIcon(proposal?.status)" size="20")
+                div
+                  p.text-sm.text-gray-500 Status
+                  p.font-bold.text-gray-900 {{ formatStatus(proposal?.status) }}
+              .px-4.py-2.rounded-full.text-sm.font-medium(:class="getStatusBgClass(proposal?.status)")
+                | {{ formatStatus(proposal?.status) }}
+
+            //- Approval Actions (like React ApprovalActions)
+            .flex.gap-3.mt-4(v-if="proposal?.status !== 'APPROVED'")
+              el-button(
+                v-if="proposal?.status === 'WAITING_APPROVAL'"
+                type="success"
+                @click="handleApprove"
+                :loading="actionLoading"
+              )
+                Icon(name="heroicons:check-circle" size="16" class="mr-1")
+                span Approve
+              el-button(
+                v-if="proposal?.status === 'WAITING_APPROVAL'"
+                type="danger"
+                @click="rejectDialogVisible = true"
+              )
+                Icon(name="heroicons:x-circle" size="16" class="mr-1")
+                span Reject
+              el-button(
+                v-if="proposal?.status !== 'WAITING_APPROVAL' && proposal?.status !== 'APPROVED'"
+                type="warning"
+                @click="handleSubmitForApproval"
+                :loading="actionLoading"
+              )
+                Icon(name="heroicons:paper-airplane" size="16" class="mr-1")
+                span Submit for Approval
+
+          //- Executive Summary (if notes exist)
+          .bg-white.rounded-2xl.p-6.border.border-gray-100(v-if="proposal?.notes")
+            h3.text-lg.font-bold.text-gray-900.mb-4 Executive Summary
+            .prose.prose-sm.max-w-none.text-gray-600(v-html="proposal.notes")
+
+          //- Financial Summary (if exists)
+          .bg-white.rounded-2xl.p-6.border.border-gray-100(v-if="financeTables?.length")
+            h3.text-lg.font-bold.text-gray-900.mb-4.flex.items-center.gap-2
+              Icon(name="heroicons:currency-dollar" size="20" class="text-violet-600")
+              span Financial Summary
+            .overflow-x-auto
+              table.w-full(v-for="table in financeTables" :key="table.id")
+                thead.bg-gray-50
+                  tr.text-xs.text-gray-500.uppercase
+                    th.py-3.px-4.text-left Description
+                    th.py-3.px-4.text-center Qty
+                    th.py-3.px-4.text-right Rate
+                    th.py-3.px-4.text-right Total
+                tbody.divide-y.divide-gray-100
+                  tr(v-for="item in table.items" :key="item.id")
+                    td.py-3.px-4.font-medium {{ item.description }}
+                    td.py-3.px-4.text-center {{ item.quantity || item.qty }}
+                    td.py-3.px-4.text-right {{ formatCurrency(item.unitPrice || item.rate) }}
+                    td.py-3.px-4.text-right.font-bold {{ formatCurrency(item.totalPrice || (item.quantity * item.rate)) }}
+
+          //- Rejection Reason (if rejected)
+          .bg-white.rounded-2xl.p-6.border.border-red-200.bg-red-50(v-if="proposal?.rejectionReason")
+            h3.text-lg.font-bold.text-red-700.mb-4.flex.items-center.gap-2
+              Icon(name="heroicons:exclamation-triangle" size="20")
+              span Rejection Reason
+            p.text-red-600 {{ proposal.rejectionReason }}
+
+        //- Sidebar (1 column)
+        .space-y-6
+          //- Related Entity (like React)
+          .bg-white.rounded-2xl.p-6.border.border-gray-100(v-if="proposal?.relatedEntityType")
+            h3.text-sm.font-bold.text-gray-500.uppercase.tracking-wider.mb-4 Related To
+            .flex.items-center.gap-3
+              .p-3.bg-violet-100.rounded-xl
+                Icon(name="heroicons:building-office-2" size="20" class="text-violet-600")
+              div
+                p.font-bold.text-gray-900 {{ proposal?.relatedEntity?.name || `ID: ${proposal?.relatedEntityId}` }}
+                p.text-sm.text-gray-500 {{ proposal?.relatedEntityType }}
+
+          //- Client Info (like React)
+          .bg-white.rounded-2xl.p-6.border.border-gray-100
+            h3.text-sm.font-bold.text-gray-500.uppercase.tracking-wider.mb-4 Client
+            .space-y-3
+              .flex.items-center.gap-3
+                Icon(name="heroicons:user" size="18" class="text-gray-400")
+                span.text-gray-900 {{ proposal?.proposalFor || 'Not specified' }}
+
+          //- Dates (like React)
+          .bg-white.rounded-2xl.p-6.border.border-gray-100
+            h3.text-sm.font-bold.text-gray-500.uppercase.tracking-wider.mb-4 Dates
+            .space-y-3
+              .flex.items-center.justify-between
+                span.text-gray-500 Created
+                span.font-medium.text-gray-900 {{ formatDate(proposal?.createdAt) }}
+              .flex.items-center.justify-between
+                span.text-gray-500 Proposal Date
+                span.font-medium.text-gray-900 {{ formatDate(proposal?.proposalDate || proposal?.date) }}
+              .flex.items-center.justify-between
+                span.text-gray-500 Last Modified
+                span.font-medium.text-gray-900 {{ formatDate(proposal?.updatedAt) }}
+
+          //- Quick Actions (like React)
+          .bg-white.rounded-2xl.p-6.border.border-gray-100
+            h3.text-sm.font-bold.text-gray-500.uppercase.tracking-wider.mb-4 Quick Actions
+            .space-y-2
+              NuxtLink.w-full.flex.items-center.gap-3.px-4.py-3.bg-gray-50.hover_bg-gray-100.rounded-xl.transition-colors.text-left(
+                :to="`/sales/proposals/preview/${proposal?.id}`"
+              )
+                Icon(name="heroicons:eye" size="18" class="text-gray-500")
+                span.font-medium.text-gray-700 View Preview
+              NuxtLink.w-full.flex.items-center.gap-3.px-4.py-3.bg-gray-50.hover_bg-gray-100.rounded-xl.transition-colors.text-left(
+                :to="`/sales/proposals/add-table/${proposal?.id}`"
+              )
+                Icon(name="heroicons:table-cells" size="18" class="text-gray-500")
+                span.font-medium.text-gray-700 Finance Table
+
+          //- Assigned Users
+          .bg-white.rounded-2xl.p-6.border.border-gray-100(v-if="proposal?.users?.length")
+            h3.text-sm.font-bold.text-gray-500.uppercase.tracking-wider.mb-4 Assigned Team
+            .space-y-3
+              .flex.items-center.gap-3(v-for="user in proposal.users" :key="user.id")
+                .w-8.h-8.bg-violet-100.rounded-full.flex.items-center.justify-center
+                  Icon(name="heroicons:user" size="16" class="text-violet-600")
+                div
+                  p.font-medium.text-gray-900 {{ user.name }}
+                  p.text-xs.text-gray-500 {{ user.email }}
+
+          //- Attachments
+          .bg-white.rounded-2xl.p-6.border.border-gray-100(v-if="proposal?.fileAttachments?.length")
+            h3.text-sm.font-bold.text-gray-500.uppercase.tracking-wider.mb-4 Attachments
+            .space-y-2
+              .flex.items-center.gap-3.p-3.bg-gray-50.rounded-xl.cursor-pointer.hover_bg-gray-100.transition-colors(
+                v-for="file in proposal.fileAttachments" 
+                :key="file"
+                @click="downloadFile(file)"
+              )
+                Icon(name="heroicons:paper-clip" size="18" class="text-gray-500")
+                span.flex-1.text-sm.text-gray-700.truncate {{ getFileName(file) }}
+                Icon(name="heroicons:arrow-down-tray" size="16" class="text-gray-400")
+
+  //- Edit Dialog
+  ProposalForm(v-model="EditProposalPopup" :editStatus="true" @onSubmit="onSubmit" :data="proposal")
+
+  //- Delete Confirmation Modal (like React)
+  el-dialog(v-model="deleteDialogVisible" title="" width="400" :show-close="false")
+    .flex.items-center.gap-3.mb-4
+      .p-2.bg-red-100.rounded-xl
+        Icon(name="heroicons:exclamation-circle" size="20" class="text-red-600")
+      h3.font-bold.text-lg.text-gray-900 Delete Proposal
+    p.text-gray-500.mb-6 Are you sure you want to delete this proposal? This action cannot be undone.
+    template(#footer)
+      .flex.gap-3
+        el-button.flex-1(@click="deleteDialogVisible = false") Cancel
+        el-button.flex-1(type="danger" @click="handleDelete" :loading="actionLoading") Delete
+
+  //- Reject Dialog
+  el-dialog(v-model="rejectDialogVisible" title="Reject Proposal" width="500")
+    p.mb-4 Please provide a reason for rejecting this proposal:
+    el-input(
+      v-model="rejectionReason"
+      type="textarea"
+      :rows="4"
+      placeholder="Enter rejection reason..."
+    )
+    template(#footer)
+      el-button(@click="rejectDialogVisible = false") Cancel
+      el-button(type="danger" @click="handleReject" :loading="actionLoading") Reject Proposal
 </template>
 
-<script setup>
-const activeName = ref("information");
-const route = useRoute();
-import { ElMessage } from "element-plus";
-const AddProposalPopup = ref(false)
-const EditProposalPopup =  ref(false)
-const loading = ref(false);
-const proposal = ref(null);
-const content = ref(null);
+<script setup lang="ts">
+import { ref, onMounted } from 'vue'
+import { ElMessage, ElNotification } from 'element-plus'
 
-// Call API to Get the client
+const route = useRoute()
+const router = useRouter()
+
+const loading = ref(true)
+const actionLoading = ref(false)
+const proposal = ref<any>(null)
+const financeTables = ref<any[]>([])
+const EditProposalPopup = ref(false)
+const deleteDialogVisible = ref(false)
+const rejectDialogVisible = ref(false)
+const rejectionReason = ref('')
+
+// Fetch proposal
 const fetchProposal = async () => {
   try {
-    proposal.value = await getProposal(route.params.slug);
-    const parser = new DOMParser();
-    const doc = parser.parseFromString(proposal.value?.content, "text/html");
-
-    // Find the div you want to remove
-    const targetDiv = doc.querySelector('.page[data-content-idx="0"]'); // Adjust the selector if needed
-    if (targetDiv) {
-      targetDiv.remove(); // Removes the div from the document
-    }
-    doc.querySelectorAll(".page").forEach((element, index) => {
-      element.style.top = index * 1180 + 1700;
-      console.log(element.style.top);
-    });
-    content.value = doc.body.innerHTML;
+    loading.value = true
+    proposal.value = await getProposal(route.params.slug as string)
+    
+    // Fetch finance tables
+    const tables = await getProposalFinanceTable(route.params.slug as string)
+    financeTables.value = tables || []
   } catch (error) {
-    console.error("Error fetching proposal:", error);
+    console.error('Error fetching proposal:', error)
+  } finally {
+    loading.value = false
   }
-};
-
-onMounted(async () => {
-  await fetchProposal();
-});
-
-const  onSubmit = async () =>{
-try{
-  loading.value = true
-  fetchProposal()
-}finally{
-  loading.value = false
-} 
 }
 
+onMounted(fetchProposal)
+
+const onSubmit = async () => {
+  await fetchProposal()
+}
+
+// Status helpers (matching React exactly)
+const formatStatus = (status: string) => {
+  const map: Record<string, string> = {
+    'DRAFT': 'Draft',
+    'WAITING_APPROVAL': 'Waiting Approval',
+    'APPROVED': 'Approved',
+    'REJECTED': 'Rejected',
+    'ARCHIVED': 'Archived'
+  }
+  return map[status] || status || 'Draft'
+}
+
+const getStatusBgClass = (status: string) => {
+  const map: Record<string, string> = {
+    'DRAFT': 'bg-gray-100 text-gray-600',
+    'WAITING_APPROVAL': 'bg-amber-100 text-amber-600',
+    'APPROVED': 'bg-green-100 text-green-600',
+    'REJECTED': 'bg-red-100 text-red-600',
+    'ARCHIVED': 'bg-slate-100 text-slate-600'
+  }
+  return map[status] || 'bg-gray-100 text-gray-600'
+}
+
+const getStatusIcon = (status: string) => {
+  const map: Record<string, string> = {
+    'DRAFT': 'heroicons:clock',
+    'WAITING_APPROVAL': 'heroicons:clock',
+    'APPROVED': 'heroicons:check-circle',
+    'REJECTED': 'heroicons:x-circle',
+    'ARCHIVED': 'heroicons:archive-box'
+  }
+  return map[status] || 'heroicons:document'
+}
+
+const formatDate = (date: string) => {
+  if (!date) return '-'
+  return new Date(date).toLocaleDateString('en-US', { 
+    year: 'numeric', month: 'short', day: 'numeric' 
+  })
+}
+
+const formatCurrency = (amount: number) => {
+  return new Intl.NumberFormat('en-SA', { 
+    style: 'currency', 
+    currency: 'SAR',
+    minimumFractionDigits: 0 
+  }).format(amount || 0)
+}
+
+const getFileName = (path: string) => path?.split('/').pop() || path
+
+const downloadFile = (file: string) => {
+  window.open(`https://staging-api.hp-tech.com/assets/${file}`, '_blank')
+}
+
+// Approval Actions
+const handleSubmitForApproval = async () => {
+  try {
+    actionLoading.value = true
+    await submitForApproval(proposal.value.id)
+    await fetchProposal()
+  } finally {
+    actionLoading.value = false
+  }
+}
+
+const handleApprove = async () => {
+  try {
+    actionLoading.value = true
+    await approveProposal(proposal.value.id)
+    await fetchProposal()
+  } finally {
+    actionLoading.value = false
+  }
+}
+
+const handleReject = async () => {
+  if (!rejectionReason.value.trim()) {
+    ElMessage.warning('Please provide a rejection reason')
+    return
+  }
+  try {
+    actionLoading.value = true
+    await rejectProposal(proposal.value.id, rejectionReason.value)
+    rejectDialogVisible.value = false
+    rejectionReason.value = ''
+    await fetchProposal()
+  } finally {
+    actionLoading.value = false
+  }
+}
+
+const handleDelete = async () => {
+  try {
+    actionLoading.value = true
+    // TODO: Implement delete API
+    ElNotification({
+      type: 'success',
+      title: 'Success',
+      message: 'Proposal deleted successfully'
+    })
+    deleteDialogVisible.value = false
+    router.push('/sales/proposals')
+  } finally {
+    actionLoading.value = false
+  }
+}
 </script>
 
-<style scoped lang="scss">
-.activity {
-  position: relative;
-  &::before {
-    content: "";
-    height: 100%;
-    width: 1px;
-    position: absolute;
-    left: 24px;
-    top: 2%;
-    border: 1px dashed #e7e6e9;
-    z-index: -1;
-  }
-  > div:last-of-type {
-    background: #f8f7fa !important;
-  }
+<style scoped>
+/* Hover states for Tailwind */
+.hover_bg-gray-100:hover {
+  background-color: rgb(243 244 246);
 }
 </style>
