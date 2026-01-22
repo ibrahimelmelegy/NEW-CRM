@@ -36,7 +36,7 @@ class ProposalFinanceTable extends Model {
   })
   public proposalId!: string;
 
-  @BelongsTo(() => Proposal)
+  @BelongsTo(() => Proposal, { onDelete: 'CASCADE' })
   public proposal!: Proposal;
 
   @Column({
@@ -74,7 +74,7 @@ class ProposalFinanceTable extends Model {
   })
   public finalTotalPrice!: number; // Calculated as Grand Total Price  - Discount + VAT
 
-  @HasMany(() => ProposalFinanceTableItem)
+  @HasMany(() => ProposalFinanceTableItem, { onDelete: 'CASCADE' })
   public items!: ProposalFinanceTableItem[];
 }
 

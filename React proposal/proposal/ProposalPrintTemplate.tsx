@@ -154,7 +154,7 @@ export const ProposalPrintTemplate: React.FC<{ data: ProposalData }> = ({ data }
                             {data.objectives && (
                                 <div className="bg-gray-50 p-8 rounded-xl border-l-4" style={{ borderColor: color }}>
                                     <h3 className="font-bold text-gray-900 mb-4 flex items-center gap-2">
-                                        <CheckCircle size={18} style={{ color: color }} /> Key Objectives
+                                        <CheckCircle size={18} style={{ color: color }} /> Objectives
                                     </h3>
                                     <div className="proposal-rich-text" dangerouslySetInnerHTML={{ __html: data.objectives }}></div>
                                 </div>
@@ -174,10 +174,12 @@ export const ProposalPrintTemplate: React.FC<{ data: ProposalData }> = ({ data }
                                 <span className="text-gray-200 font-mono">0{index}</span>
                                 {labels.solution}
                             </h2>
-                            <div className="mb-8">
-                                <h3 className="text-sm font-bold text-gray-400 uppercase tracking-widest mb-4">Scope of Work</h3>
-                                <div className="proposal-rich-text" dangerouslySetInnerHTML={{ __html: data.scopeOfWork }}></div>
-                            </div>
+                            {data.scopeOfWork && (
+                                <div className="mb-8">
+                                    <h3 className="text-sm font-bold text-gray-400 uppercase tracking-widest mb-4">Scope of Work</h3>
+                                    <div className="proposal-rich-text" dangerouslySetInnerHTML={{ __html: data.scopeOfWork }}></div>
+                                </div>
+                            )}
                             {data.methodology && (
                                 <div className="mb-8">
                                     <h3 className="text-sm font-bold text-gray-400 uppercase tracking-widest mb-4">Methodology</h3>
@@ -283,18 +285,22 @@ export const ProposalPrintTemplate: React.FC<{ data: ProposalData }> = ({ data }
                             {labels.legal}
                         </h2>
                         <div className="grid grid-cols-1 gap-12 flex-1">
-                            <div>
-                                <h3 className="font-bold text-gray-900 mb-4 flex items-center gap-2">
-                                    <FileText size={18} className="text-gray-400" /> Terms & Conditions
-                                </h3>
-                                <div className="proposal-rich-text text-sm text-gray-600" dangerouslySetInnerHTML={{ __html: data.termsAndConditions }}></div>
-                            </div>
-                            <div>
-                                <h3 className="font-bold text-gray-900 mb-4 flex items-center gap-2">
-                                    <Clock size={18} className="text-gray-400" /> Payment Schedule
-                                </h3>
-                                <div className="proposal-rich-text text-sm text-gray-600" dangerouslySetInnerHTML={{ __html: data.paymentTerms }}></div>
-                            </div>
+                            {data.termsAndConditions && (
+                                <div>
+                                    <h3 className="font-bold text-gray-900 mb-4 flex items-center gap-2">
+                                        <FileText size={18} className="text-gray-400" /> Terms & Conditions
+                                    </h3>
+                                    <div className="proposal-rich-text text-sm text-gray-600" dangerouslySetInnerHTML={{ __html: data.termsAndConditions }}></div>
+                                </div>
+                            )}
+                            {data.paymentTerms && (
+                                <div>
+                                    <h3 className="font-bold text-gray-900 mb-4 flex items-center gap-2">
+                                        <Clock size={18} className="text-gray-400" /> Payment Schedule
+                                    </h3>
+                                    <div className="proposal-rich-text text-sm text-gray-600" dangerouslySetInnerHTML={{ __html: data.paymentTerms }}></div>
+                                </div>
+                            )}
                         </div>
                     </div>
                 </Page>
@@ -924,15 +930,15 @@ export const ProposalPrintTemplate: React.FC<{ data: ProposalData }> = ({ data }
                                         {data.title}
                                     </h1>
                                     <div className="flex flex-col gap-2">
-                                        <div className={`px-4 py-2 border-2 border-black text-xs font-bold uppercase tracking-widest ${data.type === 'FINANCIAL' ? 'bg-green-500 text-white' : data.type === 'TECHNICAL' ? 'bg-blue-600 text-white' : 'bg-gray-100'}`}>
+                                        <div className={`px-4 py-2 border-2 border-black text-xs font-bold uppercase tracking-widest bg-white`} style={{ backgroundColor: color }}>
                                             {typeInfo.label}
                                         </div>
-                                        <div className="px-2 py-1 bg-red-600 text-white text-[10px] font-bold text-center uppercase tracking-widest">
+                                        <div className="px-2 py-1 text-white text-[10px] font-bold text-center uppercase tracking-widest" style={{ backgroundColor: color }}>
                                             v{data.version}.0
                                         </div>
                                     </div>
                                 </div>
-                                <div className="w-32 h-2 bg-red-600 mb-8"></div>
+                                <div className="w-32 h-2 mb-8" style={{ backgroundColor: color }}></div>
                                 <div className="flex justify-between items-end border-b border-black pb-4">
                                     <span className="text-sm font-bold uppercase tracking-[0.2em]">Strategy Documentation</span>
                                     {data.clientLogo && <img src={data.clientLogo} className="h-8 w-auto grayscale contrast-200" alt="Client Logo" />}
@@ -976,8 +982,8 @@ export const ProposalPrintTemplate: React.FC<{ data: ProposalData }> = ({ data }
                 <Page isCover>
                     <div className="flex-1 flex flex-col p-20 bg-slate-950 text-white relative overflow-hidden">
                         {/* Glow effects */}
-                        <div className="absolute top-0 right-0 w-[500px] h-[500px] bg-violet-600 rounded-full blur-[120px] opacity-20"></div>
-                        <div className="absolute bottom-0 left-0 w-[400px] h-[400px] bg-blue-600 rounded-full blur-[100px] opacity-10"></div>
+                        <div className="absolute top-0 right-0 w-[500px] h-[500px] rounded-full blur-[120px] opacity-20" style={{ backgroundColor: color }}></div>
+                        <div className="absolute bottom-0 left-0 w-[400px] h-[400px] rounded-full blur-[100px] opacity-10" style={{ backgroundColor: color }}></div>
 
                         <div className="relative z-10 flex justify-between items-start mb-12">
                             <div className="mb-12">
@@ -991,7 +997,7 @@ export const ProposalPrintTemplate: React.FC<{ data: ProposalData }> = ({ data }
                         </div>
 
                         <div className="relative z-10 flex-1 flex flex-col justify-center">
-                            <div className="border-l-2 pl-8 border-violet-500">
+                            <div className="border-l-2 pl-8" style={{ borderColor: color }}>
                                 <span className="text-violet-400 font-mono text-sm tracking-widest uppercase mb-4 block">
                                   // Project Proposal // V{data.version}.0 // {typeInfo.label}
                                 </span>
@@ -1142,8 +1148,8 @@ export const ProposalPrintTemplate: React.FC<{ data: ProposalData }> = ({ data }
                         <div className="absolute top-0 left-0 w-full h-2 bg-gradient-to-r from-cyan-400 via-pink-500 to-yellow-500"></div>
                         <div className="absolute bottom-0 right-0 w-2/3 h-1 bg-gradient-to-l from-cyan-400 to-transparent"></div>
 
-                        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[600px] rounded-full border border-pink-500/20 blur-sm"></div>
-                        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[580px] h-[580px] rounded-full border border-cyan-400/20 blur-sm"></div>
+                        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[600px] rounded-full border blur-sm" style={{ borderColor: `${color}30` }}></div>
+                        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[580px] h-[580px] rounded-full border blur-sm" style={{ borderColor: `${color}20` }}></div>
 
                         <div className="relative z-10 flex justify-between items-start mb-24">
                             {data.logo ? <img src={data.logo} className="h-10 w-auto brightness-0 invert shadow-[0_0_15px_rgba(255,255,255,0.2)]" alt="Logo" /> : <div className="font-bold text-2xl tracking-tighter shadow-cyan-400/50">HP.NEON</div>}
@@ -1158,8 +1164,8 @@ export const ProposalPrintTemplate: React.FC<{ data: ProposalData }> = ({ data }
                                 {data.title}
                             </h1>
                             <div className="flex items-center gap-4 mb-8">
-                                <div className="h-1 w-32 bg-pink-500 shadow-[0_0_15px_rgba(236,72,153,0.8)]"></div>
-                                <span className="text-xs font-bold tracking-widest uppercase text-cyan-400 border border-cyan-400 px-2 py-0.5 rounded shadow-[0_0_8px_rgba(34,211,238,0.5)]">
+                                <div className="h-1 w-32 shadow-[0_0_15px_rgba(236,72,153,0.8)]" style={{ backgroundColor: color }}></div>
+                                <span className="text-xs font-bold tracking-widest uppercase border px-2 py-0.5 rounded shadow-[0_0_8px_rgba(34,211,238,0.5)]" style={{ color: color, borderColor: color }}>
                                     {typeInfo.label} V{data.version}.0
                                 </span>
                             </div>
@@ -1303,16 +1309,16 @@ export const ProposalPrintTemplate: React.FC<{ data: ProposalData }> = ({ data }
                 <Page isCover>
                     <div className="flex-1 flex bg-[#f9f7f2] relative p-16 h-full">
                         {/* Vertical text layout simulation */}
-                        <div className="absolute right-24 top-24 bottom-24 w-24 border-l border-red-600/30 flex flex-col justify-between items-center py-8">
-                            <div className="w-1.5 h-1.5 rounded-full bg-red-600"></div>
+                        <div className="absolute right-24 top-24 bottom-24 w-24 border-l flex flex-col justify-between items-center py-8" style={{ borderColor: `${color}30` }}>
+                            <div className="w-1.5 h-1.5 rounded-full" style={{ backgroundColor: color }}></div>
                             <span className="text-[10px] text-gray-400 uppercase tracking-[0.5em] vertical-rl rotate-180 font-light">
                                 REF#{data.refNumber} • {data.date} • V{data.version}.0
                             </span>
-                            <div className="w-1.5 h-1.5 rounded-full bg-red-600 opacity-20"></div>
+                            <div className="w-1.5 h-1.5 rounded-full opacity-20" style={{ backgroundColor: color }}></div>
                         </div>
 
                         <div className="flex-1 flex flex-col justify-center items-center z-10 relative h-full">
-                            <div className="w-32 h-32 rounded-full bg-red-600 mb-16 shadow-2xl shadow-red-200/50 flex items-center justify-center">
+                            <div className="w-32 h-32 rounded-full mb-16 shadow-2xl flex items-center justify-center" style={{ backgroundColor: color, boxShadow: `0 25px 50px -12px ${color}50` }}>
                                 <div className="w-16 h-px bg-white/20 rotate-45"></div>
                             </div>
 
@@ -1419,7 +1425,7 @@ export const ProposalPrintTemplate: React.FC<{ data: ProposalData }> = ({ data }
                         {/* Grid */}
                         <div className="absolute inset-0 opacity-20"
                             style={{
-                                backgroundImage: 'linear-gradient(rgba(34, 211, 238, 0.5) 1px, transparent 1px), linear-gradient(90deg, rgba(34, 211, 238, 0.5) 1px, transparent 1px)',
+                                backgroundImage: `linear-gradient(${color}80 1px, transparent 1px), linear-gradient(90deg, ${color}80 1px, transparent 1px)`,
                                 backgroundSize: '40px 40px'
                             }}>
                         </div>
@@ -2111,8 +2117,8 @@ export const ProposalPrintTemplate: React.FC<{ data: ProposalData }> = ({ data }
                                 )}
 
                                 <div className="absolute bottom-12 left-12 z-20">
-                                    <div className="bg-white p-8 shadow-2xl border-l-[12px] border-pink-500 max-w-sm">
-                                        <p className="text-xs font-black uppercase tracking-widest text-pink-500 mb-4 italic">Corporate Dossier // Issue {data.version}.0</p>
+                                    <div className="bg-white p-8 shadow-2xl border-l-[12px] max-w-sm" style={{ borderLeftColor: color }}>
+                                        <p className="text-xs font-black uppercase tracking-widest mb-4 italic" style={{ color: color }}>Corporate Dossier // Issue {data.version}.0</p>
                                         <p className="text-sm font-bold text-gray-500 uppercase leading-snug tracking-tighter">Certified Strategic Proposal for high-value organizational transformation, specifically curated for {data.clientCompany}.</p>
                                     </div>
                                 </div>
@@ -2190,7 +2196,7 @@ export const ProposalPrintTemplate: React.FC<{ data: ProposalData }> = ({ data }
                         </div>
 
                         <div className="flex-1 flex flex-col justify-center max-w-3xl">
-                            <div className={`inline-block px-4 py-1.5 rounded-sm bg-${typeInfo.color}-100 text-${typeInfo.color}-800 text-xs font-bold uppercase tracking-widest mb-10`}>
+                            <div className={`inline-block px-4 py-1.5 rounded-sm text-white text-xs font-bold uppercase tracking-widest mb-10`} style={{ backgroundColor: color }}>
                                 {typeInfo.fullLabel} // v{data.version}.0
                             </div>
                             <h1 className="text-7xl font-bold text-slate-900 leading-[1.1] tracking-tight mb-12 break-words">

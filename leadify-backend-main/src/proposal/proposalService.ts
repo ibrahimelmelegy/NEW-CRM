@@ -171,16 +171,16 @@ class ProposalService {
         }),
         ...(query.status &&
           query.status.length > 0 && {
-            status: {
-              [Op.in]: query.status // Matches any value in the array
-            }
-          }),
+          status: {
+            [Op.in]: query.status // Matches any value in the array
+          }
+        }),
         ...(query.type &&
           query.type.length > 0 && {
-            type: {
-              [Op.in]: query.type // Matches any value in the array
-            }
-          })
+          type: {
+            [Op.in]: query.type // Matches any value in the array
+          }
+        })
       },
       include: [
         {
@@ -321,9 +321,9 @@ class ProposalService {
     proposalData.relatedEntity =
       proposalData.opportunity || proposalData.deal || proposalData.project
         ? {
-            id: proposalData.opportunity?.id || proposalData.deal?.id || proposalData.project?.id,
-            name: proposalData.opportunity?.name || proposalData.deal?.name || proposalData.project?.name
-          }
+          id: proposalData.opportunity?.id || proposalData.deal?.id || proposalData.project?.id,
+          name: proposalData.opportunity?.name || proposalData.deal?.name || proposalData.project?.name
+        }
         : null;
 
     // Remove raw related entity fields
@@ -489,6 +489,35 @@ class ProposalService {
         content: attachment
       }
     });
+  }
+
+  public async archiveProposal(id: string, user: User): Promise<Proposal> {
+    if (!user.role.permissions.includes(ProposalPermissionsEnum.ARCHIVE_PROPOSALS) &&
+      !user.role.permissions.includes('SUPER_ADMIN')) {
+      throw new BaseError(ERRORS.ACCESS_DENIED);
+    }
+    await this.validateProposalAccess(id, user);
+    const proposal = await this.proposalOrError({ id });
+    if (proposal.status === ProposalStatusEnum.ARCHIVED) throw new BaseError(ERRORS.PROPOSAL_ALREADY_ARCHIVED);
+
+    await proposal.update({ status: ProposalStatusEnum.ARCHIVED });
+    await proposalLogService.createProposalLog(user.id, proposal.id, ProposalActionEnum.PROPOSAL_ARCHIVED);
+
+    return proposal;
+  }
+
+  public async deleteProposal(id: string, user: User): Promise<void> {
+    if (!user.role.permissions.includes(ProposalPermissionsEnum.DELETE_PROPOSALS) &&
+      !user.role.permissions.includes('SUPER_ADMIN')) {
+      throw new BaseError(ERRORS.ACCESS_DENIED);
+    }
+    await this.validateProposalAccess(id, user);
+    const proposal = await this.proposalOrError({ id });
+
+    // Log before deletion
+    await proposalLogService.createProposalLog(user.id, proposal.id, ProposalActionEnum.PROPOSAL_DELETED);
+
+    await proposal.destroy();
   }
 }
 

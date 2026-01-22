@@ -429,6 +429,11 @@ export async function approveProposal(id: string | number): Promise<boolean> {
  * @param id - Proposal ID
  * @param reason - Rejection reason
  */
+/**
+ * Reject proposal
+ * @param id - Proposal ID
+ * @param reason - Rejection reason
+ */
 export async function rejectProposal(id: string | number, reason: string): Promise<boolean> {
   try {
     const response = await useApiFetch(`proposal/reject/${id}`, 'PUT', {
@@ -443,6 +448,52 @@ export async function rejectProposal(id: string | number, reason: string): Promi
       return true;
     }
     handleError(response?.message || 'Failed to reject proposal');
+    return false;
+  } catch (error) {
+    handleError(error instanceof Error ? error.message : 'Unknown error');
+    return false;
+  }
+}
+
+/**
+ * Archive proposal
+ * @param id - Proposal ID
+ */
+export async function archiveProposal(id: string | number): Promise<boolean> {
+  try {
+    const response = await useApiFetch(`proposal/archive/${id}`, 'PUT');
+    if (response?.success) {
+      ElNotification({
+        type: 'success',
+        title: 'Success',
+        message: 'Proposal archived successfully',
+      });
+      return true;
+    }
+    handleError(response?.message || 'Failed to archive proposal');
+    return false;
+  } catch (error) {
+    handleError(error instanceof Error ? error.message : 'Unknown error');
+    return false;
+  }
+}
+
+/**
+ * Delete proposal
+ * @param id - Proposal ID
+ */
+export async function deleteProposal(id: string | number): Promise<boolean> {
+  try {
+    const response = await useApiFetch(`proposal/${id}`, 'DELETE');
+    if (response?.success) {
+      ElNotification({
+        type: 'success',
+        title: 'Success',
+        message: 'Proposal deleted successfully',
+      });
+      return true;
+    }
+    handleError(response?.message || 'Failed to delete proposal');
     return false;
   } catch (error) {
     handleError(error instanceof Error ? error.message : 'Unknown error');

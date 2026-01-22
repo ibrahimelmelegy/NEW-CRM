@@ -123,13 +123,13 @@ class Proposal extends Model {
   })
   public rejectionReason?: string;
 
-  // @HasMany(() => ProposalContent)
-  // public contents!: ProposalContent[];
+  @HasMany(() => ProposalContent, { onDelete: 'CASCADE', foreignKey: 'proposalId' })
+  public contents!: ProposalContent[];
 
-  @HasOne(() => ProposalFinanceTable)
+  @HasOne(() => ProposalFinanceTable, { onDelete: 'CASCADE', foreignKey: 'proposalId' })
   public financeTable!: ProposalFinanceTable;
 
-  @HasMany(() => ProposalLog)
+  @HasMany(() => ProposalLog, { onDelete: 'CASCADE', foreignKey: 'proposalId' })
   public logs!: ProposalLog[];
 
   @AllowNull(true)

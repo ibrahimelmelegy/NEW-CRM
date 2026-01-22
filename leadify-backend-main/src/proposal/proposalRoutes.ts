@@ -258,10 +258,9 @@ router.put(
 
 /**
  * @swagger
- * /api/proposal/{id}:
+ * /api/proposal/archive/{id}:
  *   put:
- *     summary: Update proposal
- *     description: Updates an existing proposal based on the provided fields. Requires authentication.
+ *     summary: Archive proposal
  *     tags: [Proposal]
  *     security:
  *       - bearerAuth: []
@@ -271,70 +270,10 @@ router.put(
  *         required: true
  *         schema:
  *           type: string
- *         description: The ID of the proposal to update
- *     requestBody:
- *       required: true
- *       content:
- *         application/json:
- *           schema:
- *             type: object
- *             properties:
- *               relatedEntityId :
- *                 type: string
- *                 description: ID of the Opportunity, Deal, or Project associated with the proposal.
- *                 example: "123e4567-e89b-12d3-a456-426614174000"
- *               relatedEntityType:
- *                 type: string
- *                 enum: ["Project", "Opportunity", "Deal"]
- *                 description: relatedEntityType of the proposal.
- *                 example: "Project"
- *               title:
- *                 type: string
- *                 description: Title of the proposal.
- *                 example: "Proposal for Website Redesign"
- *               version:
- *                 type: string
- *                 description: Version of the proposal (auto-generated for new proposals).
- *                 example: "1.0"
- *               date:
- *                 type: string
- *                 format: date
- *                 description: Date of the proposal.
- *                 example: "2023-10-15"
- *               type:
- *                 type: string
- *                 enum: ["FINANCIAL", "TECHNICAL", "MIXED"]
- *                 description: Type of the proposal.
- *                 example: "TECHNICAL"
- *               reference:
- *                 type: string
- *                 description: Unique reference for the proposal.
- *                 maxLength: 50
- *                 example: "PROP-2023-001"
- *               proposalFor:
- *                 type: string
- *                 description: Entity or client the proposal is for.
- *                 maxLength: 100
- *                 example: "Tech Solutions Inc."
- *               companyLogo:
- *                 type: string
- *                 format: binary
- *                 description: Company companyLogo for the proposal.
- *               notes:
- *                 type: string
- *                 maxLength: 500
- *                 description: Initial remarks or notes regarding the proposal.
- *               fileAttachments:
- *                 type: array
- *                 items:
- *                   type: string
- *                 description: List of fileAttachments to the proposal.
- *                 example: ["path1", "path2"]
- *               content:
- *                 type: string
+ *         description: The ID of the proposal to archive
  *     responses:
  *       200:
- *         description: Proposal updated successfully.
+ *         description: Proposal archived successfully
  *       400:
  *         description: Validation error
  *       623:
@@ -342,13 +281,34 @@ router.put(
  *       500:
  *         description: Internal server error
  */
-router.put(
-  '/:id',
-  authenticateUser,
-  HasPermission([ProposalPermissionsEnum.EDIT_PROPOSALS]),
-  validateBody(UpdateProposalInput),
-  proposalController.updateProposal
-);
+router.put('/archive/:id', authenticateUser, HasPermission([ProposalPermissionsEnum.EDIT_PROPOSALS]), proposalController.archiveProposal);
+
+// ** --------------------- DELETE --------------------- **/
+
+/**
+ * @swagger
+ * /api/proposal/{id}:
+ *   delete:
+ *     summary: Delete proposal
+ *     tags: [Proposal]
+ *     security:
+ *       - bearerAuth: []
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         schema:
+ *           type: string
+ *         description: The ID of the proposal to delete
+ *     responses:
+ *       200:
+ *         description: Proposal deleted successfully
+ *       623:
+ *         description: Proposal not found
+ *       500:
+ *         description: Internal server error
+ */
+router.delete('/:id', authenticateUser, HasPermission([ProposalPermissionsEnum.EDIT_PROPOSALS]), proposalController.deleteProposal);
 
 // ** --------------------- GET --------------------- **/
 

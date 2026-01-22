@@ -7,7 +7,7 @@ export default defineNuxtRouteMiddleware(async (to, from) => {
     let response: any = { user: null };
 
     if (accessToken.value) {
-      response = await useApiFetch("auth/me");
+      response = await useApiFetch("auth/me", "GET", {}, true);
     }
     // If user is not authenticated
     if (!response?.user?.id) {

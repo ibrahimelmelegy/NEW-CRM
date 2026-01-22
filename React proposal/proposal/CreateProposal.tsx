@@ -112,10 +112,13 @@ export const CreateProposal: React.FC<{
     };
 
     // Update labels for standard steps
-    const handleStepLabelChange = (key: keyof typeof formData.stepLabels, value: string) => {
+    const handleStepLabelChange = (key: string, value: string) => {
         setFormData(prev => ({
             ...prev,
-            stepLabels: { ...prev.stepLabels, [key]: value }
+            stepLabels: {
+                ...(prev.stepLabels || {}),
+                [key]: value
+            }
         }));
     };
 
@@ -203,7 +206,7 @@ export const CreateProposal: React.FC<{
                     ? (prev.customSections || []).filter(s => s.id !== id)
                     : prev.customSections,
                 // Always remove from order list to hide it
-                stepOrder: prev.stepOrder.filter(sId => sId !== id)
+                stepOrder: (prev.stepOrder || ['branding', 'executive', 'solution', 'financial', 'legal']).filter(sId => sId !== id)
             }));
 
             // Switch back to a safe step if we deleted the active one
@@ -215,59 +218,83 @@ export const CreateProposal: React.FC<{
 
     // Item Handlers with Margin Logic
     const handleItemChange = (id: number, field: keyof ProposalItem, value: any) => {
-        const newItems = formData.items.map(item => {
-            if (item.id === id) {
-                const updates: any = { [field]: value };
+        setFormData(prev => ({
+            ...prev,
+            items: prev.items.map(item => {
+                if (item.id === id) {
+                    const updates: any = { [field]: value };
 
-                // Auto-calc logic:
-                // 1. If Cost changes -> Recalculate Rate based on current Margin
-                if (field === 'cost') {
-                    const cost = Number(value) || 0;
-                    const margin = item.margin || 0;
-                    updates.rate = cost * (1 + margin / 100);
-                }
-                // 2. If Margin changes -> Recalculate Rate based on Cost
-                else if (field === 'margin') {
-                    const margin = Number(value) || 0;
-                    const cost = item.cost || 0;
-                    updates.rate = cost * (1 + margin / 100);
-                }
-                // 3. If Rate (Price) changes -> Recalculate Margin based on Cost (if Cost > 0)
-                else if (field === 'rate') {
-                    const rate = Number(value) || 0;
-                    const cost = item.cost || 0;
-                    if (cost > 0) {
-                        updates.margin = ((rate - cost) / cost) * 100;
+                    // Auto-calc logic:
+                    // 1. If Cost changes -> Recalculate Rate based on current Margin
+                    if (field === 'cost') {
+                        const cost = Number(value) || 0;
+                        const margin = item.margin || 0;
+                        updates.rate = cost * (1 + margin / 100);
                     }
+                    // 2. If Margin changes -> Recalculate Rate based on Cost
+                    else if (field === 'margin') {
+                        const margin = Number(value) || 0;
+                        const cost = item.cost || 0;
+                        updates.rate = cost * (1 + margin / 100);
+                    }
+                    // 3. If Rate (Price) changes -> Recalculate Margin based on Cost (if Cost > 0)
+                    else if (field === 'rate') {
+                        const rate = Number(value) || 0;
+                        const cost = item.cost || 0;
+                        if (cost > 0) {
+                            updates.margin = ((rate - cost) / cost) * 100;
+                        }
+                    }
+                    return { ...item, ...updates };
                 }
-                return { ...item, ...updates };
-            }
-            return item;
-        });
-        handleChange('items', newItems);
+                return item;
+            })
+        }));
     };
 
     // Apply Global Margin to ALL items
     const applyGlobalMargin = () => {
-        const newItems = formData.items.map(item => {
-            const cost = item.cost || 0;
-            return {
+        setFormData(prev => ({
+            ...prev,
+            items: prev.items.map(item => ({
                 ...item,
                 margin: globalMargin,
-                rate: cost * (1 + globalMargin / 100)
-            };
-        });
-        handleChange('items', newItems);
+                rate: (item.cost || 0) * (1 + globalMargin / 100)
+            }))
+        }));
     };
 
-    const addItem = () => handleChange('items', [...formData.items, { id: Date.now(), description: '', quantity: 1, unit: 'Unit', cost: 0, margin: globalMargin, rate: 0 }]);
-    const removeItem = (id: number) => handleChange('items', formData.items.filter(i => i.id !== id));
+    const addItem = () => {
+        setFormData(prev => ({
+            ...prev,
+            items: [...prev.items, { id: Date.now(), description: '', quantity: 1, unit: 'Unit', cost: 0, margin: globalMargin, rate: 0 }]
+        }));
+    };
+    const removeItem = (id: number) => {
+        setFormData(prev => ({
+            ...prev,
+            items: prev.items.filter(i => i.id !== id)
+        }));
+    };
 
     // Phase Handlers
-    const addPhase = () => handleChange('phases', [...formData.phases, { id: Date.now(), name: '', duration: '', deliverables: '' }]);
-    const removePhase = (id: number) => handleChange('phases', formData.phases.filter(p => p.id !== id));
+    const addPhase = () => {
+        setFormData(prev => ({
+            ...prev,
+            phases: [...prev.phases, { id: Date.now(), name: '', duration: '', deliverables: '' }]
+        }));
+    };
+    const removePhase = (id: number) => {
+        setFormData(prev => ({
+            ...prev,
+            phases: prev.phases.filter(p => p.id !== id)
+        }));
+    };
     const handlePhaseChange = (id: number, field: keyof ProposalPhase, value: any) => {
-        handleChange('phases', formData.phases.map(p => p.id === id ? { ...p, [field]: value } : p));
+        setFormData(prev => ({
+            ...prev,
+            phases: prev.phases.map(p => p.id === id ? { ...p, [field]: value } : p)
+        }));
     };
 
     const handlePrint = () => {
@@ -372,7 +399,15 @@ export const CreateProposal: React.FC<{
     const handleSave = () => {
         if (validate()) {
             setShowErrorToast(false);
-            onSave(formData);
+
+            // Increment version on save if it's an edit
+            const updatedData = {
+                ...formData,
+                version: initialData ? (Number(formData.version) + 0.1) : 1,
+                lastModified: new Date().toISOString()
+            };
+
+            onSave(updatedData);
         } else {
             // Show toast notification instead of alert
             setErrorToastMessage('Please fill in the required fields before saving.');

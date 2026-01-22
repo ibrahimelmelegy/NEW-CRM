@@ -193,8 +193,14 @@ const ProposalsListPage: React.FC = () => {
     };
 
     const handleArchive = async (id: number) => {
-        if (confirm('Are you sure you want to archive this proposal?')) {
-            await archive.mutateAsync(id);
+        const proposal = proposals.find(p => p.id === id);
+        const isCurrentlyArchived = proposal?.status === 'Archived';
+
+        const action = isCurrentlyArchived ? 'unarchive' : 'archive';
+        if (confirm(`Are you sure you want to ${action} this proposal?`)) {
+            // If unarchiving, set to DRAFT or WAITING_APPROVAL? Let's use DRAFT as fallback.
+            const newStatus = isCurrentlyArchived ? 'DRAFT' : 'ARCHIVED';
+            await archive.mutateAsync({ id, status: newStatus });
             refetch();
         }
     };
@@ -290,7 +296,7 @@ const EditProposalPage: React.FC = () => {
     const { data: proposalsData } = useProposals();
 
     // Find the proposal to edit
-    const proposal = proposalsData?.docs?.find((p: any) => p.id === parseInt(id || '0'));
+    const proposal = proposalsData?.docs?.find((p: any) => p.id === id);
 
     const handleSave = async (data: any) => {
         try {
@@ -301,7 +307,7 @@ const EditProposalPage: React.FC = () => {
             if (window.parent !== window) {
                 window.parent.postMessage({
                     action: 'PROPOSAL_SAVED',
-                    id: parseInt(id || '0'),
+                    id: id,
                     mode: 'edit'
                 }, '*');
             } else {
@@ -368,16 +374,17 @@ function transformToApiPayload(data: any): any {
     return {
         title: data.title || 'New Proposal',
         version: String(data.version || '1'),
-        date: data.date || new Date().toISOString().split('T')[0], // Backend expects 'date' not 'proposalDate'
+        date: data.date || new Date().toISOString().split('T')[0],
         type: data.type || 'MIXED',
         reference: data.refNumber || `REF-${Date.now()}`,
         proposalFor: data.clientName || 'Client',
-        companyLogo: data.logo || '/default-logo.png', // Required field
-        users: data.users || [], // Required field - array of user IDs
+        companyLogo: data.logo || '/default-logo.png',
+        users: data.users || [],
         notes: data.executiveSummary || '',
         content: JSON.stringify({
             branding: {
                 logo: data.logo,
+                clientLogo: data.clientLogo,
                 themeColor: data.themeColor,
                 typography: data.typography,
                 coverStyle: data.coverStyle,
@@ -392,6 +399,8 @@ function transformToApiPayload(data: any): any {
                 executiveSummary: data.executiveSummary,
                 solutionScope: data.solutionScope,
                 customSections: data.customSections,
+                stepLabels: data.stepLabels,
+                stepOrder: data.stepOrder,
             },
             finance: {
                 items: data.items,
@@ -416,18 +425,21 @@ function transformApiToFormData(apiData: any): any {
         id: apiData.id,
         title: apiData.title || 'New Project Proposal',
         refNumber: apiData.reference || '',
-        date: apiData.proposalDate || new Date().toISOString().split('T')[0],
-        clientName: apiData.proposalFor || '',
-        clientCompany: content.client?.company || '',
+        date: apiData.proposalDate || apiData.date || new Date().toISOString().split('T')[0],
+        clientName: apiData.proposalFor || apiData.relatedEntity?.name || '',
+        clientCompany: content.client?.company || apiData.relatedEntity?.name || apiData.proposalFor || '',
         clientEmail: content.client?.email || '',
         clientPhone: content.client?.phone || '',
-        logo: content.branding?.logo || '',
+        logo: content.branding?.logo || apiData.companyLogo || '',
+        clientLogo: content.branding?.clientLogo || '',
         themeColor: content.branding?.themeColor || '#7c3aed',
         typography: content.branding?.typography || 'Sans',
         coverStyle: content.branding?.coverStyle || 'corporate',
-        executiveSummary: content.sections?.executiveSummary || '',
+        executiveSummary: content.sections?.executiveSummary || apiData.notes || '',
         solutionScope: content.sections?.solutionScope || '',
         customSections: content.sections?.customSections || [],
+        stepLabels: content.sections?.stepLabels || {},
+        stepOrder: content.sections?.stepOrder || ['branding', 'executive', 'solution', 'financial', 'legal'],
         items: content.finance?.items || [],
         discount: content.finance?.discount || 0,
         discountType: content.finance?.discountType || 'percent',
@@ -436,6 +448,7 @@ function transformApiToFormData(apiData: any): any {
         phases: content.timeline || [],
         termsConditions: content.terms || '',
         status: apiData.status || 'DRAFT',
+        version: apiData.version || 1,
     };
 }
 

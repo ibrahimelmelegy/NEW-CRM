@@ -188,9 +188,8 @@ export function useDeleteProposal() {
     const queryClient = useQueryClient();
 
     return useMutation({
-        mutationFn: async (id: number) => {
-            // Note: Using update with archive status since backend may not have delete endpoint
-            const response = await proposalApi.updateProposal(id.toString(), { status: 'ARCHIVED' } as any);
+        mutationFn: async (id: string) => {
+            const response = await proposalApi.deleteProposal(id);
             if (!response.success) {
                 throw new Error(response.message || 'Failed to delete proposal');
             }
@@ -223,8 +222,8 @@ export function useApprovalWorkflow() {
     const queryClient = useQueryClient();
 
     const archive = useMutation({
-        mutationFn: async (id: number) => {
-            const response = await proposalApi.updateProposal(id.toString(), { status: 'ARCHIVED' } as any);
+        mutationFn: async ({ id }: { id: string }) => {
+            const response = await proposalApi.archiveProposal(id);
             if (!response.success) {
                 throw new Error(response.message || 'Failed to archive proposal');
             }

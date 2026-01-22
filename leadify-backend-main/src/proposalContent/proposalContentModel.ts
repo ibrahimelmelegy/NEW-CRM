@@ -22,7 +22,7 @@ class ProposalContent extends Model {
   })
   public proposalId!: string;
 
-  @BelongsTo(() => Proposal)
+  @BelongsTo(() => Proposal, { onDelete: 'CASCADE' })
   public proposal!: Proposal;
 
   @Column({

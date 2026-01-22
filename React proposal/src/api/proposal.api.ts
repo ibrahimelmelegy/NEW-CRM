@@ -159,6 +159,22 @@ export const proposalApi = {
         return response.data;
     },
 
+    /**
+     * Archive proposal
+     */
+    async archiveProposal(id: string): Promise<ApiResponse<CRMProposal>> {
+        const response = await apiClient.put<ApiResponse<CRMProposal>>(`/proposal/archive/${id}`);
+        return response.data;
+    },
+
+    /**
+     * Delete proposal
+     */
+    async deleteProposal(id: string): Promise<ApiResponse> {
+        const response = await apiClient.delete<ApiResponse>(`/proposal/${id}`);
+        return response.data;
+    },
+
     // Finance Table APIs
     async getFinanceTables(proposalId: string): Promise<ApiResponse<PaginatedResponse<ProposalFinanceTable>>> {
         const response = await apiClient.get<ApiResponse<PaginatedResponse<ProposalFinanceTable>>>(

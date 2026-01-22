@@ -63,28 +63,18 @@ el-form.mb-24( autocomplete="off"   @submit.prevent='onSubmit'   ref="myForm" la
       category: yup.string().trim().required().min(2).max(100).label("Category"),
       client: yup.string().nullable().trim().max(100).label("Client"),
       startDate: yup
-        .mixed()
+        .date()
         .nullable()
         .notRequired()
-        .test("is-valid-date", "Start Date must be a valid date", (value: any) => {
-          if (!value) return true; // Skip if empty
-          return !isNaN(new Date(value).getTime());
-        })
+        .typeError("Start Date must be a valid date")
         .label("Start Date"),
 
       endDate: yup
-        .mixed()
+        .date()
         .nullable()
         .notRequired()
-        .test("is-valid-date", "End Date must be a valid date", (value: any) => {
-          if (!value) return true; // Skip if empty
-          return !isNaN(new Date(value).getTime());
-        })
-        .test("is-after-start-date", "End Date must be after Start Date", function (value: any) {
-          const { startDate } = this.parent;
-          if (!value || !startDate) return true; // Only check if both exist
-          return new Date(value) >= new Date(startDate);
-        })
+        .typeError("End Date must be a valid date")
+        .min(yup.ref('startDate'), "End Date must be after Start Date")
         .label("End Date"),
       duration: yup
         .string()

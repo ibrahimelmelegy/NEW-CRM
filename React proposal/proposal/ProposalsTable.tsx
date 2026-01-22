@@ -62,12 +62,20 @@ export const ProposalsTable: React.FC<{
 
         if (!matchesSearch) return false;
 
-        if (statusFilter !== 'All') {
+        // Status Filtering
+        if (statusFilter === 'Archived') {
+            if (p.status !== 'Archived') return false;
+        } else if (statusFilter === 'All') {
+            // Hide archived by default in "All" view
+            if (p.status === 'Archived') return false;
+        } else {
             if (statusFilter === 'Pending' && p.status !== 'In Review') return false;
             if (statusFilter === 'Canceled' && p.status !== 'Rejected') return false;
             if (statusFilter === 'Sent' && p.status !== 'Sent') return false;
             if (statusFilter === 'Draft' && p.status !== 'Draft') return false;
             if (statusFilter === 'Approved' && p.status !== 'Approved') return false;
+            // Also hide archived if any other active filter is on
+            if (p.status === 'Archived') return false;
         }
 
         const date = new Date(p.date);
@@ -103,6 +111,7 @@ export const ProposalsTable: React.FC<{
             { name: 'Sent', value: proposals.filter(p => p.status === 'Sent').length },
             { name: 'Approved', value: approvedCount },
             { name: 'Canceled', value: rejectedCount },
+            { name: 'Archived', value: proposals.filter(p => p.status === 'Archived').length },
         ].filter(d => d.value > 0);
 
         return {
@@ -187,7 +196,7 @@ export const ProposalsTable: React.FC<{
                     <div className="bg-white rounded-[2rem] shadow-sm border border-gray-100 overflow-hidden min-w-0">
                         <div className="p-6 border-b border-gray-100 flex flex-col md:flex-row justify-between items-center gap-4 bg-white">
                             <div className="flex bg-gray-100/80 p-1 rounded-xl overflow-x-auto max-w-full no-scrollbar">
-                                {['All', 'Sent', 'Pending', 'Draft', 'Approved', 'Canceled'].map(status => (
+                                {['All', 'Sent', 'Pending', 'Draft', 'Approved', 'Canceled', 'Archived'].map(status => (
                                     <button
                                         key={status}
                                         onClick={() => setStatusFilter(status)}
@@ -287,9 +296,15 @@ export const ProposalsTable: React.FC<{
                                                         <button onClick={() => onEdit(p)} className="p-2 text-gray-400 hover:text-violet-600 hover:bg-violet-50 rounded-xl transition-all" title="Edit">
                                                             <Edit size={16} />
                                                         </button>
-                                                        <button onClick={() => onArchive && onArchive(p.id)} className="p-2 text-gray-400 hover:text-amber-600 hover:bg-amber-50 rounded-xl transition-all" title="Archive">
-                                                            <Archive size={16} />
-                                                        </button>
+                                                        {p.status !== 'Archived' ? (
+                                                            <button onClick={() => onArchive && onArchive(p.id)} className="p-2 text-gray-400 hover:text-amber-600 hover:bg-amber-50 rounded-xl transition-all" title="Archive">
+                                                                <Archive size={16} />
+                                                            </button>
+                                                        ) : (
+                                                            <button onClick={() => onArchive && onArchive(p.id)} className="p-2 text-amber-600 hover:text-amber-800 hover:bg-amber-50 rounded-xl transition-all" title="Unarchive">
+                                                                <Archive size={16} />
+                                                            </button>
+                                                        )}
                                                         <button onClick={() => onDelete(p.id)} className="p-2 text-gray-400 hover:text-red-600 hover:bg-red-50 rounded-xl transition-all" title="Delete">
                                                             <Trash2 size={16} />
                                                         </button>

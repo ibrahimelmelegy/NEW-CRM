@@ -77,6 +77,25 @@ class ProposalController {
     }
   }
 
+  public async archiveProposal(req: AuthenticatedRequest, res: Response, next: NextFunction): Promise<void> {
+    try {
+      console.log('--- DEBUG: ARCHIVE REQUEST RECEIVED for ID:', req.params.id);
+      const responseFromService = await proposalService.archiveProposal(req.params.id as string, req.user as User);
+      wrapResult(res, responseFromService);
+    } catch (error) {
+      next(error);
+    }
+  }
+
+  public async deleteProposal(req: AuthenticatedRequest, res: Response, next: NextFunction): Promise<void> {
+    try {
+      await proposalService.deleteProposal(req.params.id as string, req.user as User);
+      wrapResult(res);
+    } catch (error) {
+      next(error);
+    }
+  }
+
   public async sendProposalsExcelByEmail(req: AuthenticatedRequest, res: Response, next: NextFunction): Promise<void> {
     try {
       await proposalService.sendProposalsExcelByEmail(req.query, req.user as User, req.params.email as string);

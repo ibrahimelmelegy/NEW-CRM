@@ -131,7 +131,7 @@ export interface ProjectManpower {
   [key: string]: any;
 }
 
-export interface CombinedProjectValues extends BasicInfoValues, EtimadProjectInfoValues {}
+export interface CombinedProjectValues extends BasicInfoValues, EtimadProjectInfoValues { }
 export interface ProjectInfo {
   projectId?: string;
   basicInfo: BasicInfoValues;
@@ -140,7 +140,7 @@ export interface ProjectInfo {
 export const project = ref<CombinedProjectValues>({});
 export const projectId = ref<string | null>();
 
-export async function getProjects(all?:false): Promise<CombinedProjectValues> {
+export async function getProjects(all?: false): Promise<CombinedProjectValues> {
   try {
     // Make the API call
     const { body, success, message } = all ? await useApiFetch('project?limit=1000') : await useApiFetch('project');
@@ -179,13 +179,28 @@ export async function getProjects(all?:false): Promise<CombinedProjectValues> {
 export const fetchExistingProject = async () => {
   let existingProject;
   const route = useRoute();
+
   if (route.params.slug) {
     existingProject = await getProject(route.params.slug.toString());
     if (existingProject?.id) project.value = existingProject;
+  } else if (route.query.opportunityId) {
+    // Transition from Opportunity
+    const opp = await getOpportunity(route.query.opportunityId as string);
+    if (opp) {
+      project.value = {
+        name: opp.name,
+        clientId: opp.clientId,
+        description: opp.description,
+        type: opp.type,
+        status: 'ACTIVE',
+        category: 'Direct', // Default or map from opp
+      };
+    }
   } else {
     existingProject = await getProjectDraft();
     if (existingProject?.project?.id) project.value = { ...existingProject.project, step: existingProject.step };
   }
+
   if (project.value?.id) {
     projectId.value = project.value.id;
   }
@@ -294,7 +309,7 @@ export async function updateProject(values: any): Promise<void> {
   try {
     // Call API to create the project
     console.log(values)
-    const response = await useApiFetch(`project/create`, 'POST',values );
+    const response = await useApiFetch(`project/create`, 'POST', values);
 
     // Handle the API response
     if (!response?.success) {

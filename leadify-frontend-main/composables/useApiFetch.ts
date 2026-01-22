@@ -1,3 +1,5 @@
+import { user } from './useUser';
+
 export type apiEndpoints =
   | 'auth/forgot-password'
   | 'users'
@@ -47,6 +49,8 @@ export const useApiFetch = async (
         Authorization: `${url.includes('reset-password') ? '' : 'Bearer'} ${accessToken.value
           }`,
       }),
+      // Multi-tenant header
+      ...(user.value?.tenantId && { 'X-Tenant-ID': user.value.tenantId }),
     },
   };
 
@@ -55,7 +59,7 @@ export const useApiFetch = async (
     return response;
   } catch (error: any) {
     const errorData = error?.response?._data || {};
-    const message = errorData.message || 'Something went wrong';
+    const message = errorData.message || error.message || 'Something went wrong';
     const code = errorData.code || 500;
 
     if (!silence) {
