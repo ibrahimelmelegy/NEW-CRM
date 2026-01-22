@@ -21,7 +21,7 @@
         :src="reactAppUrl"
         class="react-iframe"
         @load="onFrameLoad"
-        allow="clipboard-write"
+        allow="clipboard-write; downloads"
       />
       <div v-if="loading" class="loading-overlay">
         <el-icon class="is-loading" :size="40"><Loading /></el-icon>

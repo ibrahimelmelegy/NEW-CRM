@@ -1,11 +1,12 @@
 
 import React, { useState, useEffect } from 'react';
+import html2pdf from 'html2pdf.js';
 import {
     Save, ChevronLeft, ChevronRight, CheckCircle,
     Palette, User, Layers, DollarSign, CheckSquare,
-    Maximize2, ZoomOut, ZoomIn, Eye, EyeOff, Printer,
+    Maximize2, ZoomOut, ZoomIn, Eye, EyeOff,
     ImageIcon, Calculator, Plus, X, Cpu,
-    FileText, Trash2, ArrowUp, ArrowDown, Download, Loader2, AlertCircle
+    FileText, Trash2, ArrowUp, ArrowDown, Loader2, AlertCircle
 } from 'lucide-react';
 import { ProposalData, ProposalItem, ProposalPhase, CustomSection } from './types';
 import { ProposalPrintTemplate } from './ProposalPrintTemplate';
@@ -270,17 +271,8 @@ export const CreateProposal: React.FC<{
         handleChange('phases', formData.phases.map(p => p.id === id ? { ...p, [field]: value } : p));
     };
 
-    const handlePrint = () => {
-        window.print();
-    };
 
     const handleDownloadPDF = async () => {
-        // @ts-ignore
-        if (typeof window.html2pdf === 'undefined') {
-            alert('PDF generation library not loaded. Please try printing to PDF instead.');
-            return;
-        }
-
         setIsGeneratingPdf(true);
         const element = document.getElementById('proposal-print-container');
 
@@ -292,15 +284,14 @@ export const CreateProposal: React.FC<{
             const opt = {
                 margin: 0,
                 filename: `${formData.title.replace(/\s+/g, '_')}_Proposal.pdf`,
-                image: { type: 'jpeg', quality: 0.98 },
+                image: { type: 'jpeg' as const, quality: 0.98 },
                 html2canvas: { scale: 2, useCORS: true, logging: false },
-                jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' },
-                pagebreak: { mode: 'css', avoid: '.print\\:break-after-page' }
+                jsPDF: { unit: 'mm' as const, format: 'a4', orientation: 'portrait' as const },
+                pagebreak: { mode: 'css' as const, avoid: '.print\\:break-after-page' }
             };
 
             try {
-                // @ts-ignore
-                await window.html2pdf().set(opt).from(element).save();
+                await html2pdf().set(opt).from(element).save();
             } catch (err) {
                 console.error('PDF generation failed:', err);
                 alert('Failed to generate PDF. Please use the Print option.');
@@ -528,17 +519,14 @@ export const CreateProposal: React.FC<{
                             {showPreview ? 'Hide Preview' : 'Show Preview'}
                         </button>
 
-                        <button onClick={handlePrint} className="p-2.5 text-gray-500 hover:text-gray-900 hover:bg-gray-100 rounded-xl transition-colors" title="Print/PDF">
-                            <Printer size={20} />
-                        </button>
-
                         <button
                             onClick={handleDownloadPDF}
                             disabled={isGeneratingPdf}
-                            className="p-2.5 text-gray-500 hover:text-gray-900 hover:bg-gray-100 rounded-xl transition-colors flex items-center gap-2 disabled:opacity-50"
-                            title="Download PDF"
+                            className={`flex items-center gap-2 px-4 py-2.5 rounded-xl text-xs font-bold transition-all shadow-sm ${isGeneratingPdf ? 'bg-gray-100 text-gray-400' : 'bg-gray-100 text-gray-700 hover:bg-gray-200 border border-gray-200'}`}
+                            title="Export to PDF"
                         >
-                            {isGeneratingPdf ? <Loader2 size={20} className="animate-spin" /> : <Download size={20} />}
+                            {isGeneratingPdf ? <Loader2 size={16} className="animate-spin" /> : <FileText size={16} />}
+                            {isGeneratingPdf ? 'Generating...' : 'Export PDF'}
                         </button>
 
                         <button onClick={handleSave} className="bg-gray-900 text-white px-6 py-2.5 rounded-xl text-sm font-bold hover:bg-black flex items-center gap-2 shadow-lg shadow-gray-200/50 transition-all active:scale-95 hover:-translate-y-0.5">

@@ -66,9 +66,9 @@ const Page: React.FC<PageProps> = ({ children, pageNum, data, isCover, className
         {!isCover && (
             <>
                 {/* Header Section */}
-                <div className="absolute top-0 left-0 right-0 h-32 px-12 z-50">
+                <div className="absolute top-0 left-0 right-0 h-32 z-50">
                     <div className="h-1.5 w-full bg-gradient-to-r from-violet-600 to-blue-600"></div>
-                    <div className="flex justify-between items-center h-28 border-b border-gray-100">
+                    <div className="flex justify-between items-center h-28 border-b border-gray-100 px-12">
                         <div className="h-10">
                             <img
                                 src="/assets/header-logo.png"
@@ -2233,7 +2233,7 @@ export const ProposalPrintTemplate: React.FC<{ data: ProposalData }> = ({ data }
     };
 
     return (
-        <div className={`bg-transparent w-full flex flex-col gap-8 items-center text-black ${fontClass} relative print:block print:gap-0 min-h-screen`}>
+        <div id="proposal-print-container" className={`bg-transparent w-full flex flex-col gap-8 items-center text-black ${fontClass} relative print:block print:gap-0 min-h-screen`}>
             <PrintStyles />
 
             {/* 1. Cover Page */}
