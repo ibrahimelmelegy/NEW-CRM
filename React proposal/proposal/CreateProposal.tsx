@@ -1,10 +1,10 @@
 
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect } from 'react';
 import {
     Save, ChevronLeft, ChevronRight, CheckCircle,
     Palette, User, Layers, DollarSign, CheckSquare,
-    Maximize2, ZoomOut, ZoomIn, Eye, EyeOff, Printer, Sparkles,
-    ImageIcon, Calculator, Plus, X, Cpu, Shield, Zap, PenTool as Pen,
+    Maximize2, ZoomOut, ZoomIn, Eye, EyeOff, Printer,
+    ImageIcon, Calculator, Plus, X, Cpu,
     FileText, Trash2, ArrowUp, ArrowDown, Download, Loader2, AlertCircle
 } from 'lucide-react';
 import { ProposalData, ProposalItem, ProposalPhase, CustomSection } from './types';
@@ -306,7 +306,7 @@ export const CreateProposal: React.FC<{
                 alert('Failed to generate PDF. Please use the Print option.');
             } finally {
                 // Restore hidden state
-                element.style.display = '';
+                element.style.display = originalStyle;
                 setIsGeneratingPdf(false);
             }
         } else {
@@ -645,6 +645,34 @@ export const CreateProposal: React.FC<{
                                                         <button className="bg-white border border-gray-200 text-gray-700 px-4 py-2 rounded-xl text-sm font-bold hover:bg-gray-50 transition-colors shadow-sm relative overflow-hidden"><input type="file" className="absolute inset-0 opacity-0 cursor-pointer" accept="image/*" onChange={handleLogoUpload} />Upload New Logo</button>
                                                         <p className="text-xs text-gray-400">Recommended size: 200x200px (PNG)</p>
                                                     </div>
+                                                </div>
+                                            </div>
+
+                                            {/* Proposal Type Selection */}
+                                            <div>
+                                                <label className="block text-sm font-bold text-gray-700 mb-3">Proposal Type</label>
+                                                <div className="grid grid-cols-3 gap-4">
+                                                    {[
+                                                        { id: 'FINANCIAL', label: 'Financial', icon: <DollarSign size={18} />, desc: 'Budget & Costing focus' },
+                                                        { id: 'TECHNICAL', label: 'Technical', icon: <Cpu size={18} />, desc: 'Specs & Scope focus' },
+                                                        { id: 'MIXED', label: 'Mixed', icon: <Layers size={18} />, desc: 'Complete proposal' }
+                                                    ].map((type) => (
+                                                        <button
+                                                            key={type.id}
+                                                            onClick={() => handleChange('type', type.id)}
+                                                            className={`flex flex-col items-center justify-center p-4 rounded-xl border-2 transition-all ${(formData.type || 'MIXED') === type.id
+                                                                ? 'border-violet-600 bg-violet-50 text-violet-700 shadow-md ring-1 ring-violet-200'
+                                                                : 'border-gray-200 bg-white text-gray-500 hover:border-gray-300 hover:bg-gray-50'
+                                                                }`}
+                                                        >
+                                                            <div className={`w-10 h-10 rounded-full flex items-center justify-center mb-2 ${(formData.type || 'MIXED') === type.id ? 'bg-violet-200 text-violet-700' : 'bg-gray-100 text-gray-400'
+                                                                }`}>
+                                                                {type.icon}
+                                                            </div>
+                                                            <span className="text-sm font-bold">{type.label}</span>
+                                                            <span className="text-[10px] opacity-70 mt-1">{type.desc}</span>
+                                                        </button>
+                                                    ))}
                                                 </div>
                                             </div>
 

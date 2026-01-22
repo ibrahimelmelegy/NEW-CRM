@@ -47,6 +47,11 @@ export interface CRMProposal {
     rejectionReason?: string;
     relatedEntityId?: string;
     relatedEntityType?: RelatedEntityType;
+    relatedEntity?: {
+        id: string | number;
+        name: string;
+        type?: string;
+    };
     users?: number[];
     fileAttachments?: string[];
     financeTables?: ProposalFinanceTable[];

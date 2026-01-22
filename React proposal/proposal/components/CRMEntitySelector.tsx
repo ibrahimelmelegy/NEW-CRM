@@ -162,7 +162,7 @@ export const CRMEntitySelector: React.FC<CRMEntitySelectorProps> = ({
                 <div className="absolute z-50 w-full mt-2 bg-white rounded-2xl shadow-xl border border-gray-100 overflow-hidden animate-in fade-in slide-in-from-top-2 duration-200">
                     {/* Entity Type Tabs */}
                     <div className="flex border-b border-gray-100 p-2 gap-1">
-                        {entityTypes.map(({ type, icon: Icon, label, color }) => (
+                        {entityTypes.map(({ type, icon: Icon, label }) => (
                             <button
                                 key={type}
                                 onClick={() => setEntityType(type)}

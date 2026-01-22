@@ -1,21 +1,12 @@
 
 import React, { useState, useMemo } from 'react';
 import {
-    FileText, Plus, Search, TrendingUp, Filter, Edit, Trash2, Eye, Send, Percent, DollarSign,
-    Folder, FolderOpen, FolderSearch, Archive, CheckCircle, XCircle, Clock, AlertCircle, MoreHorizontal, ArrowUpRight
+    FileText, Plus, Search, TrendingUp, Filter, Edit, Trash2, Eye, Percent, DollarSign,
+    Folder, FolderOpen, FolderSearch, Archive, CheckCircle, XCircle, Clock, AlertCircle, MoreHorizontal
 } from 'lucide-react';
-import { PieChart, Pie, Cell, Tooltip, ResponsiveContainer, Legend } from 'recharts';
+import { PieChart, Pie, Cell, Tooltip, ResponsiveContainer } from 'recharts';
 import { ProposalData } from './types';
 
-// MIU Vibrant Palette
-const STATUS_COLORS = {
-    'Draft': '#94a3b8',     // Slate
-    'In Review': '#f59e0b', // Amber
-    'Sent': '#3b82f6',      // Blue
-    'Approved': '#10b981',  // Emerald
-    'Rejected': '#ef4444',  // Red (Canceled)
-    'Archived': '#64748b'   // Slate Dark
-};
 
 const CHART_COLORS = ['#94a3b8', '#f59e0b', '#3b82f6', '#10b981', '#ef4444'];
 
@@ -25,20 +16,18 @@ export const ProposalsTable: React.FC<{
     onEdit: (p: ProposalData) => void,
     onDelete: (id: number) => void,
     onArchive: (id: number) => void,
-    onView?: (p: ProposalData) => void,
-    onApprove?: (id: number) => void,
-    onReject?: (id: number, reason: string) => void
+    onView: (p: ProposalData) => void,
+    onApprove: (id: number) => void,
+    onReject: (id: number, reason: string) => void
 }> = ({ proposals, onAdd, onEdit, onDelete, onArchive, onView, onApprove, onReject }) => {
 
     const [searchTerm, setSearchTerm] = useState('');
-    const [statusFilter, setStatusFilter] = useState('All'); // 'All', 'Sent', 'Pending', 'Draft', 'Canceled'
+    const [statusFilter, setStatusFilter] = useState('All');
 
-    // Archive State
     const [selectedYear, setSelectedYear] = useState<string | null>(null);
     const [selectedMonth, setSelectedMonth] = useState<string | null>(null);
     const [selectedDay, setSelectedDay] = useState<string | null>(null);
 
-    // Archive Tree Generation
     const archiveTree = useMemo(() => {
         const tree: Record<string, Record<string, string[]>> = {};
         proposals.forEach(p => {
@@ -54,7 +43,6 @@ export const ProposalsTable: React.FC<{
             if (!tree[year][month].includes(day)) tree[year][month].push(day);
         });
 
-        // Sort keys descending
         const sortedTree: Record<string, Record<string, string[]>> = {};
         Object.keys(tree).sort().reverse().forEach(year => {
             sortedTree[year] = {};
@@ -67,7 +55,6 @@ export const ProposalsTable: React.FC<{
     }, [proposals]);
 
     const filtered = useMemo(() => proposals.filter(p => {
-        // Search Logic
         const matchesSearch =
             p.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
             p.clientName.toLowerCase().includes(searchTerm.toLowerCase()) ||
@@ -75,7 +62,6 @@ export const ProposalsTable: React.FC<{
 
         if (!matchesSearch) return false;
 
-        // Status Tab Filter Logic
         if (statusFilter !== 'All') {
             if (statusFilter === 'Pending' && p.status !== 'In Review') return false;
             if (statusFilter === 'Canceled' && p.status !== 'Rejected') return false;
@@ -84,7 +70,6 @@ export const ProposalsTable: React.FC<{
             if (statusFilter === 'Approved' && p.status !== 'Approved') return false;
         }
 
-        // Date Filter Logic (Archive Sidebar)
         const date = new Date(p.date);
         const year = date.getFullYear().toString();
         const month = (date.getMonth() + 1).toString().padStart(2, '0');
@@ -97,10 +82,8 @@ export const ProposalsTable: React.FC<{
         return true;
     }), [proposals, searchTerm, selectedYear, selectedMonth, selectedDay, statusFilter]);
 
-    // Dashboard Statistics Calculation
     const stats = useMemo(() => {
         const total = proposals.length;
-        // Pipeline Value: Sum of Sent, In Review, and Draft
         const pipelineValue = proposals.reduce((sum, p) => {
             if (p.status === 'Sent' || p.status === 'Draft' || p.status === 'In Review') {
                 const sub = p.items.reduce((s, i) => s + (i.quantity * i.rate), 0);
@@ -111,7 +94,6 @@ export const ProposalsTable: React.FC<{
 
         const approvedCount = proposals.filter(p => p.status === 'Approved').length;
         const rejectedCount = proposals.filter(p => p.status === 'Rejected').length;
-        // Simple win rate calculation
         const closedCount = approvedCount + rejectedCount;
         const winRate = closedCount > 0 ? (approvedCount / closedCount) * 100 : 0;
 
@@ -139,7 +121,6 @@ export const ProposalsTable: React.FC<{
 
     const monthNames = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
 
-    // Custom Tooltip for Recharts
     const CustomTooltip = ({ active, payload }: any) => {
         if (active && payload && payload.length) {
             return (
@@ -154,7 +135,6 @@ export const ProposalsTable: React.FC<{
 
     return (
         <div className="p-8 max-w-[1600px] mx-auto space-y-8 font-sans">
-            {/* Header */}
             <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
                 <div>
                     <h2 className="text-2xl font-extrabold text-gray-900 tracking-tight">Proposals Dashboard</h2>
@@ -165,16 +145,9 @@ export const ProposalsTable: React.FC<{
                 </button>
             </div>
 
-            {/* Main Content Layout */}
             <div className="flex flex-col lg:flex-row gap-8 items-start">
-
-                {/* LEFT COLUMN: Main Dashboard Area */}
                 <div className="flex-1 w-full space-y-8">
-
-                    {/* KPI Cards */}
                     <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-
-                        {/* Pipeline Value Card */}
                         <div className="md:col-span-1 bg-gradient-to-br from-violet-600 to-indigo-700 rounded-[2rem] p-8 text-white shadow-xl shadow-violet-200 relative overflow-hidden group hover:scale-[1.02] transition-transform duration-300">
                             <div className="absolute top-0 right-0 p-6 opacity-10 group-hover:opacity-20 transition-opacity">
                                 <DollarSign size={80} />
@@ -189,7 +162,6 @@ export const ProposalsTable: React.FC<{
                             </div>
                         </div>
 
-                        {/* Win Rate Card */}
                         <div className="bg-white p-8 rounded-[2rem] border border-gray-100 shadow-sm relative overflow-hidden group hover:shadow-md transition-shadow">
                             <div className="absolute right-0 top-0 p-6 opacity-5 group-hover:opacity-10 transition-opacity"><Percent size={64} /></div>
                             <p className="text-gray-400 text-xs font-bold uppercase tracking-wider mb-2">Win Rate</p>
@@ -200,7 +172,6 @@ export const ProposalsTable: React.FC<{
                             <p className="text-xs text-gray-400 mt-2 font-medium">Based on approved vs rejected</p>
                         </div>
 
-                        {/* Action Needed / Pending Card */}
                         <div className="bg-white p-8 rounded-[2rem] border border-gray-100 shadow-sm relative overflow-hidden group hover:shadow-md transition-shadow">
                             <div className="absolute right-0 top-0 p-6 opacity-5 group-hover:opacity-10 transition-opacity"><Clock size={64} /></div>
                             <p className="text-gray-400 text-xs font-bold uppercase tracking-wider mb-2">Action Needed</p>
@@ -213,29 +184,22 @@ export const ProposalsTable: React.FC<{
                         </div>
                     </div>
 
-                    {/* Table Section */}
                     <div className="bg-white rounded-[2rem] shadow-sm border border-gray-100 overflow-hidden min-w-0">
-
-                        {/* Table Header / Filters */}
                         <div className="p-6 border-b border-gray-100 flex flex-col md:flex-row justify-between items-center gap-4 bg-white">
-
-                            {/* Status Tabs */}
                             <div className="flex bg-gray-100/80 p-1 rounded-xl overflow-x-auto max-w-full no-scrollbar">
                                 {['All', 'Sent', 'Pending', 'Draft', 'Approved', 'Canceled'].map(status => (
                                     <button
                                         key={status}
                                         onClick={() => setStatusFilter(status)}
                                         className={`px-4 py-2 rounded-lg text-xs font-bold transition-all whitespace-nowrap ${statusFilter === status
-                                                ? 'bg-white text-gray-900 shadow-sm'
-                                                : 'text-gray-500 hover:text-gray-700 hover:bg-gray-200/50'
+                                            ? 'bg-white text-gray-900 shadow-sm'
+                                            : 'text-gray-500 hover:text-gray-700 hover:bg-gray-200/50'
                                             }`}
                                     >
                                         {status}
                                     </button>
                                 ))}
                             </div>
-
-                            {/* Search */}
                             <div className="flex gap-3 items-center w-full md:w-auto">
                                 <div className="relative flex-1 md:flex-initial">
                                     <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" size={16} />
@@ -253,7 +217,6 @@ export const ProposalsTable: React.FC<{
                             </div>
                         </div>
 
-                        {/* Data Table */}
                         <div className="overflow-x-auto">
                             <table className="w-full text-left">
                                 <thead className="bg-gray-50/50 border-b border-gray-100">
@@ -271,7 +234,6 @@ export const ProposalsTable: React.FC<{
                                         const discount = p.discountType === 'percent' ? subtotal * (p.discount / 100) : p.discount;
                                         const total = (subtotal - discount) * (1 + p.taxRate / 100);
 
-                                        // Status Badge Logic
                                         let statusColor = 'bg-gray-100 text-gray-600 border-gray-200';
                                         let displayStatus: string = p.status;
                                         if (p.status === 'Sent') statusColor = 'bg-blue-50 text-blue-600 border-blue-100';
@@ -306,36 +268,28 @@ export const ProposalsTable: React.FC<{
                                                 </td>
                                                 <td className="px-8 py-5 text-right">
                                                     <div className="flex justify-end gap-2 opacity-0 group-hover:opacity-100 transition-opacity">
-                                                        {/* View */}
-                                                        {onView && (
-                                                            <button onClick={() => onView(p)} className="p-2 text-gray-400 hover:text-blue-600 hover:bg-blue-50 rounded-xl transition-all" title="View">
-                                                                <Eye size={16} />
-                                                            </button>
+                                                        <button onClick={() => onView(p)} className="p-2 text-gray-400 hover:text-blue-600 hover:bg-blue-50 rounded-xl transition-all" title="View">
+                                                            <Eye size={16} />
+                                                        </button>
+                                                        {p.status === 'In Review' && (
+                                                            <>
+                                                                <button onClick={() => onApprove(p.id)} className="p-2 text-emerald-400 hover:text-emerald-600 hover:bg-emerald-50 rounded-xl transition-all" title="Approve">
+                                                                    <CheckCircle size={16} />
+                                                                </button>
+                                                                <button onClick={() => {
+                                                                    const reason = prompt('Reason for rejection:');
+                                                                    if (reason) onReject(p.id, reason);
+                                                                }} className="p-2 text-red-400 hover:text-red-600 hover:bg-red-50 rounded-xl transition-all" title="Reject">
+                                                                    <XCircle size={16} />
+                                                                </button>
+                                                            </>
                                                         )}
-                                                        {/* Approve - Only for In Review status */}
-                                                        {onApprove && p.status === 'In Review' && (
-                                                            <button onClick={() => onApprove(p.id)} className="p-2 text-gray-400 hover:text-emerald-600 hover:bg-emerald-50 rounded-xl transition-all" title="Approve">
-                                                                <CheckCircle size={16} />
-                                                            </button>
-                                                        )}
-                                                        {/* Reject - Only for In Review status */}
-                                                        {onReject && p.status === 'In Review' && (
-                                                            <button onClick={() => {
-                                                                const reason = prompt('Enter rejection reason:');
-                                                                if (reason) onReject(p.id, reason);
-                                                            }} className="p-2 text-gray-400 hover:text-red-600 hover:bg-red-50 rounded-xl transition-all" title="Reject">
-                                                                <XCircle size={16} />
-                                                            </button>
-                                                        )}
-                                                        {/* Edit */}
                                                         <button onClick={() => onEdit(p)} className="p-2 text-gray-400 hover:text-violet-600 hover:bg-violet-50 rounded-xl transition-all" title="Edit">
                                                             <Edit size={16} />
                                                         </button>
-                                                        {/* Archive */}
                                                         <button onClick={() => onArchive && onArchive(p.id)} className="p-2 text-gray-400 hover:text-amber-600 hover:bg-amber-50 rounded-xl transition-all" title="Archive">
                                                             <Archive size={16} />
                                                         </button>
-                                                        {/* Delete */}
                                                         <button onClick={() => onDelete(p.id)} className="p-2 text-gray-400 hover:text-red-600 hover:bg-red-50 rounded-xl transition-all" title="Delete">
                                                             <Trash2 size={16} />
                                                         </button>
@@ -359,10 +313,7 @@ export const ProposalsTable: React.FC<{
                     </div>
                 </div>
 
-                {/* RIGHT COLUMN: Sidebar (Archive & Chart) */}
                 <div className="w-full lg:w-80 space-y-8 flex-shrink-0">
-
-                    {/* Status Distribution Chart */}
                     <div className="bg-white p-6 rounded-[2rem] border border-gray-100 shadow-sm relative overflow-hidden">
                         <div className="flex justify-between items-center mb-6">
                             <h3 className="text-sm font-bold text-gray-900">Pipeline Distribution</h3>
@@ -381,14 +332,13 @@ export const ProposalsTable: React.FC<{
                                         dataKey="value"
                                         cornerRadius={6}
                                     >
-                                        {stats.statusDist.map((entry, index) => (
+                                        {stats.statusDist.map((_, index) => (
                                             <Cell key={`cell-${index}`} fill={CHART_COLORS[index % CHART_COLORS.length]} strokeWidth={0} />
                                         ))}
                                     </Pie>
                                     <Tooltip content={<CustomTooltip />} />
                                 </PieChart>
                             </ResponsiveContainer>
-                            {/* Center Count */}
                             <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 text-center">
                                 <span className="block text-3xl font-extrabold text-gray-900">{stats.total}</span>
                                 <span className="text-[10px] text-gray-400 font-bold uppercase tracking-wider">Total</span>
@@ -407,7 +357,6 @@ export const ProposalsTable: React.FC<{
                         </div>
                     </div>
 
-                    {/* Archive Tree */}
                     <div className="bg-white rounded-[2rem] border border-gray-100 shadow-sm p-6 max-h-[500px] overflow-y-auto custom-scrollbar">
                         <div className="flex items-center justify-between mb-6 pb-4 border-b border-gray-100">
                             <div className="flex items-center gap-2 text-gray-900 font-bold text-sm">
@@ -473,7 +422,6 @@ export const ProposalsTable: React.FC<{
                             )}
                         </div>
                     </div>
-
                 </div>
             </div>
         </div>

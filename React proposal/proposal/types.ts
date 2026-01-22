@@ -32,35 +32,36 @@ export interface ProposalData {
   date: string;
   validUntil: string;
   status: 'Draft' | 'In Review' | 'Approved' | 'Sent' | 'Rejected' | 'Archived';
-  
+  type?: 'FINANCIAL' | 'TECHNICAL' | 'MIXED';
+
   // Design & Branding
   themeColor: string;
   coverStyle: 'business' | 'corporate' | 'creative' | 'enterprise' | 'minimal' | 'tech' | 'modern-art' | 'geometric' | 'bold-typography' | 'gradient-splash' | 'swiss' | 'dark-mode' | 'architectural' | 'abstract' | 'neon-night' | 'brutalist' | 'nature' | 'japanese-minimal' | 'retro-pop' | 'futuristic-grid' | 'ethereal' | 'aurora' | 'midnight-gradient' | 'art-deco' | 'newspaper' | 'terminal' | 'brush-stroke' | 'mondrian' | 'blueprint-dark' | 'warm-boho' | 'glassmorphism' | 'magazine-editorial';
   font: 'sans' | 'serif' | 'mono'; // New
   logo?: string; // Company Logo
   clientLogo?: string; // Client Logo
-  
+
   // Order of sections
   stepOrder: string[];
 
   // Dynamic Step Labels
   stepLabels: {
-      branding: string;
-      executive: string;
-      solution: string;
-      financial: string;
-      legal: string;
+    branding: string;
+    executive: string;
+    solution: string;
+    financial: string;
+    legal: string;
   };
 
   // Content - Executive
   introduction: string;
   objectives: string;
-  
+
   // Content - Technical
   scopeOfWork: string;
   methodology: string;
   phases: ProposalPhase[];
-  
+
   // Content - Custom
   customSections: CustomSection[];
 
@@ -71,10 +72,10 @@ export interface ProposalData {
   discount: number;
   discountType: 'percent' | 'fixed';
   paymentTerms: string;
-  
+
   // Legal
   termsAndConditions: string;
-  
+
   // Enterprise Features
   version: number;
   lastModified: string;

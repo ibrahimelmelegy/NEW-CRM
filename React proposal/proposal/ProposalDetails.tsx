@@ -8,7 +8,7 @@ import { useParams, useNavigate } from 'react-router-dom';
 import {
     ArrowLeft, Edit, Trash2, Download, Clock, CheckCircle,
     XCircle, Send, Building2, User, DollarSign,
-    ExternalLink, AlertCircle, Loader2, RefreshCw
+    ExternalLink, AlertCircle, Loader2, RefreshCw, FileText
 } from 'lucide-react';
 import { useProposal, useDeleteProposal, useApprovalWorkflow } from '../src/hooks/useProposals';
 import { ApprovalActions, ProposalStatus } from './components/ApprovalActions';
@@ -316,6 +316,13 @@ export const ProposalDetails: React.FC<ProposalDetailsProps> = ({ proposalId: pr
                                 Quick Actions
                             </h3>
                             <div className="space-y-2">
+                                <button
+                                    onClick={() => window.open(`/document/${proposalId}`, '_blank')}
+                                    className="w-full flex items-center gap-3 px-4 py-3 bg-violet-50 hover:bg-violet-100 rounded-xl transition-colors text-left"
+                                >
+                                    <FileText size={18} className="text-violet-600" />
+                                    <span className="font-medium text-violet-700">View Proposal Page</span>
+                                </button>
                                 <button className="w-full flex items-center gap-3 px-4 py-3 bg-gray-50 hover:bg-gray-100 rounded-xl transition-colors text-left">
                                     <Download size={18} className="text-gray-500" />
                                     <span className="font-medium text-gray-700">Download PDF</span>

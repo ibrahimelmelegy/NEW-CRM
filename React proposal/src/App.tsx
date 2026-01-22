@@ -10,6 +10,7 @@ import { useAuthStore } from './stores';
 import { CreateProposal } from '../proposal/CreateProposal';
 import { ProposalsTable } from '../proposal/ProposalsTable';
 import { ProposalDetails } from '../proposal/ProposalDetails';
+import { ViewProposalDocument } from '../proposal/ViewProposalDocument';
 
 // Protected Route component
 const ProtectedRoute: React.FC<{ children: React.ReactNode }> = ({ children }) => {
@@ -135,6 +136,16 @@ const App: React.FC = () => {
                     element={
                         <ProtectedRoute>
                             <ViewProposalPage />
+                        </ProtectedRoute>
+                    }
+                />
+
+                {/* Print/Document View */}
+                <Route
+                    path="/document/:id"
+                    element={
+                        <ProtectedRoute>
+                            <ViewDocumentPage />
                         </ProtectedRoute>
                     }
                 />
@@ -328,6 +339,11 @@ const EditProposalPage: React.FC = () => {
 // View Proposal Page - Uses ProposalDetails component
 const ViewProposalPage: React.FC = () => {
     return <ProposalDetails />;
+};
+
+// View Document Page - Uses ViewProposalDocument component
+const ViewDocumentPage: React.FC = () => {
+    return <ViewProposalDocument />;
 };
 
 // ============================================
