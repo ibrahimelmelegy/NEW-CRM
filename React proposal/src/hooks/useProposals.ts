@@ -222,19 +222,30 @@ export function useApprovalWorkflow() {
     const queryClient = useQueryClient();
 
     const archive = useMutation({
-        mutationFn: async ({ id }: { id: string }) => {
-            const response = await proposalApi.archiveProposal(id);
+        mutationFn: async ({ id, action }: { id: string; action?: 'archive' | 'unarchive' }) => {
+            // Default to archive if no action specified
+            const act = action || 'archive';
+
+            let response;
+            if (act === 'unarchive') {
+                response = await proposalApi.unarchiveProposal(id);
+            } else {
+                response = await proposalApi.archiveProposal(id);
+            }
+
             if (!response.success) {
-                throw new Error(response.message || 'Failed to archive proposal');
+                throw new Error(response.message || `Failed to ${act} proposal`);
             }
             return id;
         },
-        onSuccess: () => {
+        onSuccess: (_data, variables) => {
+            const action = variables.action || 'archive';
             queryClient.invalidateQueries({ queryKey: proposalKeys.lists() });
-            toast.success('Proposal archived');
+            toast.success(`Proposal ${action}d`); // archived or unarchived
         },
-        onError: (error: Error) => {
-            toast.error(error.message || 'Failed to archive proposal');
+        onError: (error: Error, variables) => {
+            const action = variables.action || 'archive';
+            toast.error(error.message || `Failed to ${action} proposal`);
         },
     });
 

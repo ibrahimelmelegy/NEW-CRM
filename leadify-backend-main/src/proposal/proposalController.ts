@@ -87,6 +87,15 @@ class ProposalController {
     }
   }
 
+  public async unarchiveProposal(req: AuthenticatedRequest, res: Response, next: NextFunction): Promise<void> {
+    try {
+      const responseFromService = await proposalService.unarchiveProposal(req.params.id as string, req.user as User);
+      wrapResult(res, responseFromService);
+    } catch (error) {
+      next(error);
+    }
+  }
+
   public async deleteProposal(req: AuthenticatedRequest, res: Response, next: NextFunction): Promise<void> {
     try {
       await proposalService.deleteProposal(req.params.id as string, req.user as User);

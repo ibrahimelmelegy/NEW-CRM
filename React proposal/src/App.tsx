@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { BrowserRouter, Routes, Route, Navigate, useParams } from 'react-router-dom';
 import { setToken, getToken } from './api';
 import { authApi } from './api';
-import { useProposals, useCreateProposal, useUpdateProposal, useDeleteProposal } from './hooks/useProposals';
+import { useProposals, useProposal, useCreateProposal, useUpdateProposal, useDeleteProposal } from './hooks/useProposals';
 import { useApprovalWorkflow } from './hooks/useProposals';
 import { useAuthStore } from './stores';
 
@@ -187,20 +187,19 @@ const ProposalsListPage: React.FC = () => {
 
     const handleDelete = async (id: number) => {
         if (confirm('Are you sure you want to delete this proposal?')) {
-            await deleteProposal.mutateAsync(id);
+            await deleteProposal.mutateAsync(id.toString());
             refetch();
         }
     };
 
     const handleArchive = async (id: number) => {
         const proposal = proposals.find(p => p.id === id);
+        // Compare with mapped UI status 'Archived' (case sensitive based on mapApiStatusToUI)
         const isCurrentlyArchived = proposal?.status === 'Archived';
 
         const action = isCurrentlyArchived ? 'unarchive' : 'archive';
         if (confirm(`Are you sure you want to ${action} this proposal?`)) {
-            // If unarchiving, set to DRAFT or WAITING_APPROVAL? Let's use DRAFT as fallback.
-            const newStatus = isCurrentlyArchived ? 'DRAFT' : 'ARCHIVED';
-            await archive.mutateAsync({ id, status: newStatus });
+            await archive.mutateAsync({ id: id.toString(), action });
             refetch();
         }
     };
@@ -293,10 +292,10 @@ const CreateProposalPage: React.FC = () => {
 const EditProposalPage: React.FC = () => {
     const { id } = useParams<{ id: string }>();
     const updateProposal = useUpdateProposal();
-    const { data: proposalsData } = useProposals();
 
-    // Find the proposal to edit
-    const proposal = proposalsData?.docs?.find((p: any) => p.id === id);
+    // Fetch the specific proposal details using the ID
+    // valid ID check to prevent unnecessary requests if ID is missing (though router handles this)
+    const { data: proposal, isLoading, isError, error } = useProposal(id || '');
 
     const handleSave = async (data: any) => {
         try {
@@ -329,6 +328,31 @@ const EditProposalPage: React.FC = () => {
             window.location.href = '/';
         }
     };
+
+    if (isLoading) {
+        return (
+            <div className="min-h-screen flex items-center justify-center bg-slate-50">
+                <div className="spinner"></div>
+                <p className="ml-3 text-gray-600">Loading proposal details...</p>
+            </div>
+        );
+    }
+
+    if (isError) {
+        return (
+            <div className="min-h-screen flex items-center justify-center bg-slate-50">
+                <div className="text-center">
+                    <p className="text-red-500 mb-4">Error loading proposal: {(error as Error)?.message || 'Unknown error'}</p>
+                    <button
+                        onClick={handleCancel}
+                        className="px-4 py-2 bg-gray-200 rounded hover:bg-gray-300"
+                    >
+                        Go Back
+                    </button>
+                </div>
+            </div>
+        );
+    }
 
     // Transform API data to CreateProposal format
     const initialData = proposal ? transformApiToFormData(proposal) : undefined;

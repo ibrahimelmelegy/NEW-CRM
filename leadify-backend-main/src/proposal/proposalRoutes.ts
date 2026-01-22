@@ -283,6 +283,33 @@ router.put(
  */
 router.put('/archive/:id', authenticateUser, HasPermission([ProposalPermissionsEnum.EDIT_PROPOSALS]), proposalController.archiveProposal);
 
+/**
+ * @swagger
+ * /api/proposal/unarchive/{id}:
+ *   put:
+ *     summary: Unarchive proposal
+ *     tags: [Proposal]
+ *     security:
+ *       - bearerAuth: []
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         schema:
+ *           type: string
+ *         description: The ID of the proposal to unarchive
+ *     responses:
+ *       200:
+ *         description: Proposal unarchived successfully
+ *       400:
+ *         description: Validation error
+ *       623:
+ *         description: Proposal not found
+ *       500:
+ *         description: Internal server error
+ */
+router.put('/unarchive/:id', authenticateUser, HasPermission([ProposalPermissionsEnum.EDIT_PROPOSALS]), proposalController.unarchiveProposal);
+
 // ** --------------------- DELETE --------------------- **/
 
 /**

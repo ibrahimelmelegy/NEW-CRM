@@ -168,6 +168,14 @@ export const proposalApi = {
     },
 
     /**
+     * Unarchive proposal
+     */
+    async unarchiveProposal(id: string): Promise<ApiResponse<CRMProposal>> {
+        const response = await apiClient.put<ApiResponse<CRMProposal>>(`/proposal/unarchive/${id}`);
+        return response.data;
+    },
+
+    /**
      * Delete proposal
      */
     async deleteProposal(id: string): Promise<ApiResponse> {

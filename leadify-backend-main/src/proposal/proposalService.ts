@@ -506,6 +506,26 @@ class ProposalService {
     return proposal;
   }
 
+  public async unarchiveProposal(id: string, user: User): Promise<Proposal> {
+    if (!user.role.permissions.includes(ProposalPermissionsEnum.ARCHIVE_PROPOSALS) &&
+      !user.role.permissions.includes('SUPER_ADMIN')) {
+      throw new BaseError(ERRORS.ACCESS_DENIED);
+    }
+    await this.validateProposalAccess(id, user);
+    const proposal = await this.proposalOrError({ id });
+
+    // Validate current status
+    if (proposal.status !== ProposalStatusEnum.ARCHIVED) {
+      throw new BaseError(ERRORS.PROPOSAL_NOT_PROCESSED); // Or a specific error like "Proposal is not archived"
+    }
+
+    // Set status back to DRAFT (safest option)
+    await proposal.update({ status: ProposalStatusEnum.DRAFT });
+    await proposalLogService.createProposalLog(user.id, proposal.id, ProposalActionEnum.PROPOSAL_UPDATED); // Or add a new PROPOSAL_UNARCHIVED enum if available, sticking to UPDATED for now to avoid enum errors without checking file
+
+    return proposal;
+  }
+
   public async deleteProposal(id: string, user: User): Promise<void> {
     if (!user.role.permissions.includes(ProposalPermissionsEnum.DELETE_PROPOSALS) &&
       !user.role.permissions.includes('SUPER_ADMIN')) {
