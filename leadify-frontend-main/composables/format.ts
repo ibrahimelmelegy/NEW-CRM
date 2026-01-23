@@ -1,11 +1,11 @@
-export function capitalizeFirstLetter(str) {
+export function capitalizeFirstLetter(str: string) {
   if (str) {
     str = str.toLowerCase();
     return str.charAt(0).toUpperCase() + str.slice(1);
   }
   return "";
 }
-export function fromCamelCase(camelCaseStr) {
+export function fromCamelCase(camelCaseStr: string) {
   const spacedStr = camelCaseStr.replace(/([A-Z])/g, " $1");
   return spacedStr.charAt(0).toUpperCase() + spacedStr.slice(1);
 }
@@ -48,7 +48,7 @@ export function formatIso(dateText: any) {
   const formattedDate = year + "-" + month + "-" + day;
   return dateText ? formattedDate : "Not Mentioned";
 }
-export function formatSaudiIso(dateText = new Date()) {
+export function formatSaudiIso(dateText: any = new Date()) {
   const date = new Date(dateText); // Create a Date object from the timestamp
   const formattedDate = date.toLocaleString("af-ZA", {
     timeZone: "Asia/Riyadh",
@@ -65,7 +65,7 @@ export function formatSaudiIso(dateText = new Date()) {
   // return formattedDate;
 }
 
-function getDaySuffix(day) {
+function getDaySuffix(day: number) {
   if (day >= 11 && day <= 13) {
     return "th";
   }
@@ -81,7 +81,7 @@ function getDaySuffix(day) {
   }
 }
 
-export function formatTime(days, hours, minutes, seconds) {
+export function formatTime(days: any, hours: any, minutes: any, seconds: any) {
   let timeParts = [];
 
   if (days) {
@@ -105,7 +105,7 @@ export function formatTime(days, hours, minutes, seconds) {
     return timeParts.join("");
   }
 }
-export function calculateAge(year, month, days) {
+export function calculateAge(year: any, month: any, days: any) {
   let age = [];
 
   if (year) {
@@ -121,17 +121,17 @@ export function calculateAge(year, month, days) {
   }
 }
 
-export function formatTextWithUnderscore(input) {
+export function formatTextWithUnderscore(input: string) {
   if (input) {
     const words = input.split("_");
 
-    const formattedWords = words.map((word) => word.charAt(0).toUpperCase() + word.slice(1).toLowerCase());
+    const formattedWords = words.map((word: string) => word.charAt(0).toUpperCase() + word.slice(1).toLowerCase());
     return formattedWords.join(" ");
   }
   return " ";
 }
 
-export function formatTextWithyphen(input) {
+export function formatTextWithyphen(input: string) {
   if (input.includes("_")) {
     const route = removeIdPart(input);
 
@@ -144,23 +144,23 @@ export function formatTextWithyphen(input) {
     }
   }
   let words = input.split("-");
-  let formattedWords = words.map((word) => word.charAt(0).toUpperCase() + word.slice(1).toLowerCase());
+  let formattedWords = words.map((word: string) => word.charAt(0).toUpperCase() + word.slice(1).toLowerCase());
   return formattedWords.join(" ");
 }
-export function removeIdPart(input) {
+export function removeIdPart(input: string) {
   let words = input.split("_");
   words.pop();
 
   return words.join(" ");
 }
 
-export function formatName(input) {
+export function formatName(input: string) {
   let words = input.split(" ");
-  let formattedWords = words.map((word) => word.charAt(0).toUpperCase() + word.slice(1).toLowerCase());
+  let formattedWords = words.map((word: string) => word.charAt(0).toUpperCase() + word.slice(1).toLowerCase());
   return formattedWords.join(" ");
 }
 
-export function timestampToHour(timestamp) {
+export function timestampToHour(timestamp: any) {
   const time = new Date(timestamp).toLocaleTimeString("en-SA", {
     timeZone: "Asia/Riyadh",
     hour: "numeric",
@@ -169,7 +169,7 @@ export function timestampToHour(timestamp) {
 
   return timestamp ? time : "Not mentioned";
 }
-export function getDateandTime(timeStamp) {
+export function getDateandTime(timeStamp: any) {
   const time = new Date(timeStamp).toLocaleTimeString("en-SA", {
     timeZone: "Asia/Riyadh",
     hour: "numeric",
@@ -200,7 +200,7 @@ export function checkEmpty(text: any) {
   return text ? text : "Not mentioned";
 }
 
-export function checkDateLength(date) {
+export function checkDateLength(date: any) {
   return String(date).length > 1 ? String(date) : `0${date}`;
 }
 // Helper function to normalize phone numbers
@@ -216,4 +216,20 @@ export function getYear(dateInput: any) {
   const day = String(date.getDate()).padStart(2, "0"); // Extract day and pad with 0
 
   return `${year}-${month}-${day}`; // Format as YYYY-MM-DD
+}
+
+export function capitalizeName(name: string) {
+  if (!name) return "";
+  return name.charAt(0).toUpperCase() + name.slice(1);
+}
+
+export function formatLargeNumber(num: number | string) {
+  const n = Number(num);
+  if (n >= 1000000) {
+    return (n / 1000000).toFixed(1) + 'M';
+  }
+  if (n >= 1000) {
+    return (n / 1000).toFixed(1) + 'k';
+  }
+  return n.toString();
 }

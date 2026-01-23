@@ -10,7 +10,6 @@ export type apiEndpoints =
   | 'auth/me'
   | 'lead'
   | 'users'
-  // | `users/${string}`
   | 'role'
   | `lead/${string}`
   | `lead?${string}`
@@ -31,13 +30,11 @@ export const useApiFetch = async (
   [x: string]: any;
   data?: any;
   status?: boolean;
-  code?: number;
   message?: string;
   error?: any;
 }> => {
   const config = useRuntimeConfig();
   const accessToken = useCookie('access_token');
-
   const defaultOptions = {
     method,
     body: method === 'GET' ? null : data,
@@ -53,40 +50,18 @@ export const useApiFetch = async (
       ...(user.value?.tenantId && { 'X-Tenant-ID': user.value.tenantId }),
     },
   };
-
   try {
-    const response: any = await $fetch(config.public.API_BASE_URL + url, defaultOptions);
-    return response;
+    return await $fetch(config.public.API_BASE_URL + url, defaultOptions);
   } catch (error: any) {
     const errorData = error?.response?._data || {};
     const message = errorData.message || error.message || 'Something went wrong';
     const code = errorData.code || 500;
-
     if (!silence) {
-      // ElMessage is auto-imported by @element-plus/nuxt
-      if (process.client) {
-        ElMessage({
-          message: message,
-          type: 'error',
-          duration: 5000,
-        });
-      }
-      console.error(`[API Error] ${url}:`, message);
+      console.error(message);
     }
-
-    // Auto-logout on Auth failures
-    if ([401, 403, 404, 500].includes(code) && (message === 'User not found' || message === 'Failed to retrieve user data' || message === 'Invalid or expired token' || message === 'No token provided')) {
-      if (process.client) {
-        accessToken.value = null; // Clear cookie
-        localStorage.removeItem('access_token'); // Clear local storage
-        navigateTo('/login');
-      }
-    }
-
     return {
       data: null,
       status: false,
-      code,
       message,
       error,
     };
