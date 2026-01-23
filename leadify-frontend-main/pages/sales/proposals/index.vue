@@ -33,7 +33,7 @@ import { ref, onMounted, onUnmounted } from 'vue'
 import { Refresh, Loading } from '@element-plus/icons-vue'
 
 definePageMeta({
-  layout: 'default',
+  layout: 'default-no-padding',
   // You might want to adjust permissions based on your needs
   middleware: ['permissions'],
   permission: 'VIEW_OWN_PROPOSALS' 

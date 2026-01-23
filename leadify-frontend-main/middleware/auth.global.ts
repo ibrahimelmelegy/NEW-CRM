@@ -3,12 +3,7 @@ export default defineNuxtRouteMiddleware(async (to, from) => {
     // Define public routes that do not require authentication
     const publicRoutes = ["/login", "/forget-password", "/reset-password", "/reset-complete"];
     // Fetch authentication status
-    const accessToken = useCookie('access_token');
-    let response: any = { user: null };
-
-    if (accessToken.value) {
-      response = await useApiFetch("auth/me");
-    }
+    const response = await useApiFetch("auth/me");
     // If user is not authenticated
     if (!response?.user?.id) {
       // Allow access to public routes
