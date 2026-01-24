@@ -1,40 +1,65 @@
-@use "./input.scss" ;
-@use "./menu.scss" ;
-@use "./popper.scss" ;
-@use "./pagintation.scss" ;
-@use "./tag.scss" ;
-@use "./tab.scss" ;
-@use "./table.scss" ;
-@use "./button.scss" ;
-@use "./dialog.scss" ;
-@use "./collapse.scss" ;
-@use '@/assets/styles/variables.scss' as *;
+/* -------------------------------------------------------------------------- */
+/* 1. Component Imports (المكونات الفردية)                                     */
+/* -------------------------------------------------------------------------- */
+@use "./input.scss";
+@use "./menu.scss";
+@use "./popper.scss";
+@use "./pagination.scss";
+@use "./tag.scss";
+@use "./tab.scss";
+@use "./table.scss";
+@use "./button.scss";
+@use "./dialog.scss";
+@use "./collapse.scss";
+@use "./card.scss";
 
+/* -------------------------------------------------------------------------- */
+/* 2. 💎 PREMIUM THEME CORE (The New Design)                                 */
+/* -------------------------------------------------------------------------- */
+/* المسار يخرج مرتين للوصول لمجلد scss الرئيسي */
+@use "../../scss/premium-theme.scss";
 
+/* -------------------------------------------------------------------------- */
+/* 3. RTL Support (يجب أن يكون الأخير لضمان قلب الاتجاهات)                       */
+/* -------------------------------------------------------------------------- */
+/* المسار يخرج مرة واحدة لمجلد styles الرئيسي */
+@use "../rtl.scss";
 
+/* -------------------------------------------------------------------------- */
+/* 4. Element Plus Global Overrides                                          */
+/* -------------------------------------------------------------------------- */
 :root {
---el-menu-base-level-padding : 30px !important;
---el-color-primary : #{$primary} !important;
---el-menu-hover-bg-color : #{$primary-light} !important ;
---el-input-border-radius: #{$raduis-base} !important;
---el-upload-size : 160px !important ;
---el-border-radius-round : #{$raduis-base} !important;
---el-border-radius-base : #{$raduis-base} !important;
---el-color-primary-light-3 : #{$primary-light-hover} !important;
---el-color-primary-dark-2 : #{$primary} !important;
---el-border-color : #{$border} !important;
---el-text-color-secondary:  : #4B4B4B !important;
+    // --- 📐 Layout & Borders ---
+    --el-menu-base-level-padding: 30px !important;
+    --el-input-border-radius: var(--radius-btn, 12px) !important;
+    --el-upload-size: 160px !important;
+    --el-border-radius-round: var(--radius-card, 20px) !important;
+    --el-border-radius-base: var(--radius-btn, 12px) !important;
 
+    // --- 🎨 Brand Colors (Violet Theme) ---
+    --el-color-primary: var(--accent-purple) !important;
+    --el-color-primary-light-3: #9360ff !important;
+    --el-color-primary-dark-2: #553485 !important;
+
+    // --- 🌑 UI Dark Mode Tuning ---
+    --el-menu-hover-bg-color: rgba(139, 92, 246, 0.1) !important;
+    --el-border-color: var(--border-stroke) !important;
+    --el-text-color-secondary: var(--text-secondary) !important;
+    --el-fill-color-blank: transparent !important;
 }
 
-.is-hovering{
-    color: $primary !important;
+/* -------------------------------------------------------------------------- */
+/* 5. Global Helpers                                                          */
+/* -------------------------------------------------------------------------- */
+.is-hovering {
+    color: var(--accent-purple) !important;
 }
 
-.is-error{
-    --el-border-color : #{$error} !important;
+.is-error {
+    --el-border-color: #bf2c24 !important;
 }
 
-
-
-// remove aligning
+// تحسين مظهر السهم في القوائم المنسدلة للوضع الليلي
+.el-icon.el-sub-menu__icon-arrow {
+    color: var(--text-secondary) !important;
+}

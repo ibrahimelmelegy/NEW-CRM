@@ -1,0 +1,34 @@
+// ✅ إعادة تفعيل الاستدعاء (للتوحيد وضمان الأمان)
+@use '@/assets/styles/variables.scss' as *;
+
+.el-pagination {
+  --el-pagination-border-radius: 0.5rem !important;
+  --el-pagination-button-width: 32px !important;
+  --el-pagination-button-height: 32px !important;
+
+  // الأزرار غير النشطة وأزرار السابق/التالي
+  .number:not(.is-active),
+  .btn-prev,
+  .btn-next {
+    background: transparent !important;
+    border: 1px solid var(--border-stroke) !important;
+    color: var(--text-secondary) !important;
+
+    &:hover {
+      border-color: var(--accent-purple) !important;
+      color: var(--accent-purple) !important;
+    }
+
+    &:disabled {
+      background-color: transparent !important;
+      opacity: 0.5;
+    }
+  }
+
+  // الزر النشط
+  .number.is-active {
+    background-color: var(--accent-purple) !important;
+    color: white !important;
+    border: none !important;
+  }
+}

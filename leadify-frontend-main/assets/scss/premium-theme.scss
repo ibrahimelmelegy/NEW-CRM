@@ -97,7 +97,6 @@ body,
 }
 
 // Cards & Containers
-// Cards & Containers
 .card,
 .el-card,
 .stats-card,
@@ -140,8 +139,6 @@ body,
 }
 
 // Inputs & Selects
-
-// RADICAL FIX: Force transparent containers to prevent corner artifacts & double borders
 .el-input,
 .el-select,
 .el-form-item,
@@ -152,7 +149,6 @@ body,
     box-shadow: none !important;
 }
 
-// Ensure the actual wrapper is the only thing with color
 .el-input__wrapper,
 .el-select__wrapper,
 .el-textarea__inner {
@@ -169,7 +165,6 @@ body,
     }
 }
 
-// Zero Tolerance to Inner Borders
 .el-input__inner,
 input {
     border: none !important;
@@ -179,7 +174,6 @@ input {
     outline: none !important;
 }
 
-// Input Group Append/Prepend (Fixes white corners on grouped inputs)
 .el-input-group__append,
 .el-input-group__prepend {
     background-color: rgba(22, 21, 31, 0.5) !important;
@@ -291,34 +285,24 @@ label,
     --el-tag-text-color: var(--success-green) !important;
 }
 
-// ------------------------------------------
-// 🔧 Compatibility Overrides
-// ------------------------------------------
-
-// Force white backgrounds to be dark cards
+// Compatibility Overrides
 .bg-white {
     background-color: var(--bg-card) !important;
     border: 1px solid var(--border-glass) !important;
     color: var(--text-primary) !important;
 }
 
-// Force neutral text to be readable
 [class*="text-neutral-"],
 [class*="text-gray-"],
 [class*="text-slate-"] {
     color: var(--text-secondary) !important;
 }
 
-// Force specific text-white to be white
 .text-white {
     color: #FFFFFF !important;
 }
 
-// ------------------------------------------
-// ☢️ NUCLEAR OPTION: Overlays & Complex Components
-// ------------------------------------------
-
-// Date/Time Pickers & Autocomplete
+// Complex Components
 .el-picker-panel,
 .el-time-panel,
 .el-autocomplete-suggestion__wrap,
@@ -360,7 +344,7 @@ label,
     }
 }
 
-// Message Box & Alerts
+// Message Box
 .el-message-box {
     background-color: var(--bg-card) !important;
     border: 1px solid var(--border-glass) !important;
@@ -395,11 +379,7 @@ label,
     background-color: var(--border-stroke) !important;
 }
 
-// ------------------------------------------
-// 📄 Filter Drawer & Collapses
-// ------------------------------------------
-
-// Drawers (Filters)
+// Drawers & Filters
 .el-drawer {
     background-color: var(--bg-card) !important;
     border-left: 1px solid var(--border-glass) !important;
@@ -419,7 +399,6 @@ label,
         background-color: var(--bg-card) !important;
         padding-top: 20px !important;
 
-        // Fix for white form backgrounds in drawers
         form,
         .el-form {
             background-color: transparent !important;
@@ -433,7 +412,6 @@ label,
     }
 }
 
-// Collapse (Accordion in Filters)
 .el-collapse {
     border: none !important;
     background-color: transparent !important;
@@ -464,7 +442,6 @@ label,
     }
 }
 
-// Checkboxes in Filters
 .el-checkbox {
     color: var(--text-secondary) !important;
     --el-checkbox-text-color: var(--text-secondary) !important;
@@ -482,23 +459,17 @@ label,
     }
 }
 
-// ------------------------------------------
-//  Light Mode Theme
-// ------------------------------------------
-
+// Light Mode
 body.light-mode {
     --bg-obsidian: #F1F5F9;
     --bg-sidebar: #FFFFFF;
     --bg-card: #FFFFFF;
     --bg-header: rgba(255, 255, 255, 0.85);
-
     --text-primary: #0F172A;
     --text-secondary: #475569;
     --text-muted: #94A3B8;
-
     --border-stroke: #E2E8F0;
     --border-glass: rgba(0, 0, 0, 0.06);
-
     --shadow-active: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
 
     .el-input__wrapper,

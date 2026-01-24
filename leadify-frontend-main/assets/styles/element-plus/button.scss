@@ -1,11 +1,27 @@
+// ✅ تم تفعيل الاستدعاء (ضروري جداً للمتغيرات)
 @use '@/assets/styles/variables.scss' as *;
 
 .el-button--large {
   --el-button-size: #{$height-button} !important;
   padding: 1rem 2rem !important;
+  // ✅ إضافة: توحيد الحواف مع باقي عناصر الموقع
+  border-radius: var(--radius-btn, 12px) !important;
 }
+
 .el-button--info {
-  --el-button-text-color: black !important ;
-  --el-button-hover-text-color: black !important ;
+  // ✅ تعديل للوضع الليلي: النص أبيض بدلاً من الأسود
+  --el-button-text-color: var(--text-primary) !important;
+  --el-button-hover-text-color: white !important;
+
+  // تحديد اللون الأساسي (كما كان)
   --el-color-info: #{$info} !important;
+
+  // ✅ تحسين إضافي: جعل الخلفية شفافة "Glassy" لتناسب الثيم الأسود
+  background-color: transparent !important;
+  border: 1px solid var(--border-stroke) !important;
+
+  &:hover {
+    background-color: rgba(255, 255, 255, 0.1) !important;
+    border-color: var(--text-secondary) !important;
+  }
 }

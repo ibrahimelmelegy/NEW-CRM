@@ -22,6 +22,7 @@ import { ProposalPermissionsEnum } from '../role/roleEnum';
 import ProposalUsers from './models/proposal_UsersModel';
 import * as ExcelJS from 'exceljs';
 import { sendEmail } from '../utils/emailHelper';
+import Client from '../client/clientModel';
 
 class ProposalService {
   public async createProposal(data: any, user: User): Promise<Proposal> {
@@ -169,6 +170,14 @@ class ProposalService {
             ...(query.toDate && { [Op.lte]: new Date(query.toDate) })
           }
         }),
+        ...((query.year && query.month) && {
+          createdAt: {
+            [Op.and]: [
+              { [Op.gte]: new Date(`${query.year}-${query.month}-01T00:00:00.000Z`) },
+              { [Op.lt]: new Date(new Date(`${query.year}-${query.month}-01T00:00:00.000Z`).setMonth(parseInt(query.month))) }
+            ]
+          }
+        }),
         ...(query.status &&
           query.status.length > 0 && {
           status: {
@@ -262,19 +271,22 @@ class ProposalService {
         model: Opportunity,
         as: 'opportunity',
         attributes: ['id', 'name'], // Include Opportunity details
-        required: false // Allow for null opportunities
+        required: false, // Allow for null opportunities
+        include: [{ model: Client, as: 'client', attributes: ['id', 'clientName'] }]
       },
       {
         model: Deal,
         as: 'deal',
         attributes: ['id', 'name'], // Include Deal details
-        required: false // Allow for null deals
+        required: false, // Allow for null deals
+        include: [{ model: Client, as: 'client', attributes: ['id', 'clientName'] }]
       },
       {
         model: Project,
         as: 'project',
         attributes: ['id', 'name'], // Include Project details
-        required: false // Allow for null projects
+        required: false, // Allow for null projects
+        include: [{ model: Client, as: 'client', attributes: ['id', 'clientName'] }]
       },
       {
         model: User,
@@ -318,13 +330,20 @@ class ProposalService {
     let proposalData = proposal?.toJSON();
 
     // Dynamically determine the related entity and assign it
-    proposalData.relatedEntity =
-      proposalData.opportunity || proposalData.deal || proposalData.project
-        ? {
-          id: proposalData.opportunity?.id || proposalData.deal?.id || proposalData.project?.id,
-          name: proposalData.opportunity?.name || proposalData.deal?.name || proposalData.project?.name
-        }
-        : null;
+    // CRITICAL FIX: Populate client information from the related entity
+    const related = proposalData.opportunity || proposalData.deal || proposalData.project;
+
+    proposalData.client = related?.client
+      ? { id: related.client.id, name: related.client.clientName }
+      : { id: '', name: related?.name || proposalData.proposalFor || '' };
+
+    proposalData.relatedEntity = related
+      ? {
+        id: related.id,
+        name: related.name,
+        client: related.client ? { id: related.client.id, name: related.client.clientName } : null
+      }
+      : null;
 
     // Remove raw related entity fields
     delete proposalData.opportunity;
@@ -492,9 +511,11 @@ class ProposalService {
   }
 
   public async archiveProposal(id: string, user: User): Promise<Proposal> {
-    if (!user.role.permissions.includes(ProposalPermissionsEnum.ARCHIVE_PROPOSALS) &&
-      !user.role.permissions.includes('SUPER_ADMIN')) {
-      throw new BaseError(ERRORS.ACCESS_DENIED);
+    const isSuperAdmin = user.role?.name === 'Super Admin' || user.role?.name === 'SUPER_ADMIN' || user.role?.permissions?.includes('SUPER_ADMIN');
+    const hasPermission = user.role?.permissions?.includes(ProposalPermissionsEnum.ARCHIVE_PROPOSALS);
+
+    if (!isSuperAdmin && !hasPermission) {
+      throw new BaseError(ERRORS.ACCESS_DENIED, 403);
     }
     await this.validateProposalAccess(id, user);
     const proposal = await this.proposalOrError({ id });
@@ -507,9 +528,11 @@ class ProposalService {
   }
 
   public async unarchiveProposal(id: string, user: User): Promise<Proposal> {
-    if (!user.role.permissions.includes(ProposalPermissionsEnum.ARCHIVE_PROPOSALS) &&
-      !user.role.permissions.includes('SUPER_ADMIN')) {
-      throw new BaseError(ERRORS.ACCESS_DENIED);
+    const isSuperAdmin = user.role?.name === 'Super Admin' || user.role?.name === 'SUPER_ADMIN' || user.role?.permissions?.includes('SUPER_ADMIN');
+    const hasPermission = user.role?.permissions?.includes(ProposalPermissionsEnum.ARCHIVE_PROPOSALS);
+
+    if (!isSuperAdmin && !hasPermission) {
+      throw new BaseError(ERRORS.ACCESS_DENIED, 403);
     }
     await this.validateProposalAccess(id, user);
     const proposal = await this.proposalOrError({ id });
@@ -527,8 +550,10 @@ class ProposalService {
   }
 
   public async deleteProposal(id: string, user: User): Promise<void> {
-    if (!user.role.permissions.includes(ProposalPermissionsEnum.DELETE_PROPOSALS) &&
-      !user.role.permissions.includes('SUPER_ADMIN')) {
+    const isSuperAdmin = user.role?.name === 'Super Admin' || user.role?.name === 'SUPER_ADMIN' || user.role?.permissions?.includes('SUPER_ADMIN');
+    const hasPermission = user.role?.permissions?.includes(ProposalPermissionsEnum.DELETE_PROPOSALS);
+
+    if (!isSuperAdmin && !hasPermission) {
       throw new BaseError(ERRORS.ACCESS_DENIED);
     }
     await this.validateProposalAccess(id, user);

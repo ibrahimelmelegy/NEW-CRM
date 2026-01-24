@@ -1,14 +1,36 @@
+// ✅ إعادة تفعيل الاستدعاء (للتوحيد وضمان الأمان)
 @use '@/assets/styles/variables.scss' as *;
 
 .el-tabs__nav {
-  float: unset !important;
+  float: none !important;
 
   &-wrap {
+
+    // إخفاء الخط الرمادي الطويل أسفل التبويبات
     &::after {
-      background: transparent !important;
+      background-color: transparent !important;
     }
+
     &.is-top {
       width: fit-content !important;
+    }
+  }
+
+  // ✅ تحسين ألوان التبويبات للـ Dark Mode
+  .el-tabs__item {
+    color: var(--text-secondary) !important;
+    transition: color 0.3s ease; // إضافة حركة ناعمة
+
+    &:hover {
+      color: var(--accent-purple) !important;
+    }
+
+    &.is-active {
+      color: var(--accent-purple) !important;
+      font-weight: 600;
+
+      // اختياري: إضافة خط تحت التبويب النشط بلون الثيم
+      border-bottom: 2px solid var(--accent-purple);
     }
   }
 }

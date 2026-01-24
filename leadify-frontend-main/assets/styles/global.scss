@@ -1,530 +1,160 @@
-@use '/assets/styles/element-plus';
-@use '/assets/styles/element-plus/card.scss';
-@use '/assets/styles/rtl.scss';
-@use '/assets/scss/premium-theme';
+/* -------------------------------------------------------------------------- */
+/* 1. Imports & Core Theme                                                    */
+/* -------------------------------------------------------------------------- */
+@use './element-plus' as *;
+@use "../scss/premium-theme" as *; // 🔥 المسار الصحيح للثيم الفخم
 
-@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@200;300;400;500;600;700;800&display=swap');
+/* Fonts */
 @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@200;300;400;500;600;700;800&family=Tajawal:wght@200;300;400;500;700;800&display=swap');
-@import url('https://fonts.googleapis.com/css2?family=Tajawal:wght@200;300;400;500;700;800&display=swap');
 
-* {
-  box-sizing: border-box;
+/* -------------------------------------------------------------------------- */
+/* 2. Base Setup                                                              */
+/* -------------------------------------------------------------------------- */
+
+body {
+  font-family: 'Poppins', 'Tajawal', sans-serif;
   margin: 0;
   padding: 0;
-  font-family: 'Poppins', 'Tajawal', sans-serif !important;
+  // ✅ الخلفية الآن تعتمد على Obsidian Dark
+  background-color: var(--bg-obsidian) !important;
+  color: var(--text-primary) !important;
+  -webkit-font-smoothing: antialiased;
 }
 
-.nuxt-loading-indicator {
-  height: 4px !important;
-  opacity: 1 !important;
-  background: repeating-linear-gradient(to right,
-      $primary 0%,
-      $primary 50%,
-      $primary 100%) !important;
+input,
+button,
+select,
+textarea,
+.el-input__inner {
+  font-family: 'Poppins', 'Tajawal', sans-serif;
 }
 
-.heading {
-  scroll-margin-top: 100px;
+// تخصيص السكرول بار العام ليناسب الثيم المظلم
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
 }
 
-ul {
-  list-style: none;
+::-webkit-scrollbar-track {
+  background: var(--bg-obsidian);
+}
 
-  li {
-    text-decoration: none;
+::-webkit-scrollbar-thumb {
+  background: var(--border-stroke);
+  border-radius: 10px;
+
+  &:hover {
+    background: var(--accent-purple);
   }
 }
 
-.fade-enter-active,
-.fade-leave-active {
-  transition: opacity 0.3s ease;
+/* -------------------------------------------------------------------------- */
+/* 3. Nuxt Transitions (Premium Feel)                                         */
+/* -------------------------------------------------------------------------- */
+
+.nuxt-loading-indicator {
+  background: var(--gradient-primary) !important;
+  height: 3px !important;
 }
 
-.fade-enter-from,
-.fade-leave-to {
-  opacity: 0;
-}
-
+/* Page Transitions */
 .page-enter-active,
 .page-leave-active {
-  transition: all 0.4s;
+  transition: all 0.3s ease-out;
 }
 
 .page-enter-from,
 .page-leave-to {
   opacity: 0;
-  filter: blur(1rem);
+  transform: translateY(10px);
+  filter: blur(10px);
 }
 
-.top-enter-from {
-  opacity: 0;
-  transform: translatey(-5px);
-}
-
-.top-enter-to {
-  transform: translatey(0);
-}
-
-.top-enter-active {
-  transition: all 0.2s ease;
-}
-
-.top-leave-from {
-  transform: translatey(0);
-}
-
-.top-leave-to {
-  transform: translatey(-5px);
-  opacity: 0;
-}
-
-.top-leave-active {
-  transition: all 0s ease-in-out;
-}
-
-.slide-enter-active,
-.slide-leave-active {
-  transition: all 0.5s ease-in-out;
-}
-
-.slide-enter-from {
-  transform: translateY(-3%);
-}
-
-.slide-enter-to,
-.slide-leave-from {
-  transform: translateY(0);
-}
-
-.slide-leave-to {
-  transform: translateY(-3%);
-}
-
-.list-enter-active,
-.list-leave-active {
-  transition: all 1s ease;
-}
-
-.list-enter-from,
-.list-leave-to {
-  opacity: 0;
-  transform: translateY(30px);
-}
-
-.card-auto {
-  overflow-y: scroll;
-
-  &::-webkit-scrollbar {
-    width: 5px;
-  }
-
-  &::-webkit-scrollbar-track {
-    border-radius: 15px;
-  }
-
-  &::-webkit-scrollbar-thumb {
-    background: $primary-light;
-    border-radius: 10px;
-  }
-}
-
-.toggle-icon {
-  outline: none !important;
-
-  svg {
-    transition: all 0.5s ease;
-  }
-
-  padding: 0.4rem;
-  border-radius: 50%;
-  cursor: pointer;
-  display: flex;
-  border: 1px solid transparent;
-  transition: all 0.5s ease;
-
-  &:hover {
-    box-shadow: 0 0 0px 3px $border;
-    border: 1px solid $primary;
-
-    svg {
-      color: $primary !important;
-    }
-
-    color: $primary !important;
-    background-color: white;
-  }
-}
-
-.myChart {
-  div {
-    img {
-      width: 100% !important;
-      height: 100% !important;
-    }
-  }
-}
-
-.disabled {
-  pointer-events: none;
-  opacity: 0.5;
-}
-
-#main,
-.navbar {
-  @media (max-width: 600px) {
-    padding: 0 1rem;
-  }
-}
-
-@media screen and (max-width: 992px) {
-  .el-menu-vertical-demo {
-    z-index: 100000 !important;
-  }
-
-  #main {
-    width: 100%;
-    margin-left: 0 !important;
-  }
-
-  nav.navbar {
-    width: 100%;
-    margin-left: 0 !important;
-  }
-}
-
-.p-invali-input {
-  border-color: $error !important;
-}
-
-.hide-increment {
-  input[type='number'] {
-    -moz-appearance: textfield;
-  }
-
-  input::-webkit-outer-spin-button,
-  input::-webkit-inner-spin-button {
-    -webkit-appearance: none;
-    margin: 0;
-  }
-}
-
-.rounded-btn {
-  background-color: white;
-  border-radius: 50%;
-  display: flex;
-  gap: 3px;
-  align-items: center;
-  transition: all 0.4s ease;
-  border: 1px solid transparent;
-  cursor: pointer;
-  border-radius: 1rem;
-  padding: 5px 18px;
-  height: 50px;
-  color: rgb(53, 53, 53);
-  font-weight: 500;
-
-  &:hover {
-    border-color: $primary;
-    color: $primary;
-    box-shadow: 0 0 0px 4px $primary-light;
-  }
-
-  &.bg-colored {
-    background-color: $primary;
-    color: white;
-  }
-}
-
-.router-link-active {
-  color: $primary !important;
-  background-color: rgb(204 204 204 / 17%);
-  transition: all 0.5s ease;
-  border-radius: 0.5rem;
-
-  li {
-    color: $primary !important;
-  }
-}
-
-.disabled {
-  pointer-events: none;
-}
-
-.error-msg {
-  color: $error !important;
-  transition: opacity 0.5s;
-  opacity: 1 !important;
-}
-
-// .pagination {
-//   padding-top: 0.5rem;
-//   padding-bottom: 1rem;
-// }
+/* -------------------------------------------------------------------------- */
+/* 4. Layout & Sidebar Sync                                                   */
+/* -------------------------------------------------------------------------- */
 
 .marginedStart {
   margin-left: 260px;
   width: calc(100% - 260px);
-}
-
-.notmargined {
-  margin-left: 0px;
-  width: 100% !important;
-}
-
-.background-overlay {
-  &::before {
-    content: '';
-    background-color: rgba(0, 0, 0, 0.411);
-    position: absolute;
-    width: 100%;
-    height: 100%;
-  }
-}
-
-.word-break {
-  word-break: break-word;
-}
-
-.myicon {
-  width: 24px !important;
-  height: 25px !important;
-  margin-left: -7px !important;
-
-  &.home-icon {
-    background-image: url('/assets/icon/chart.svg');
-  }
-
-  &.setting-icon {
-    background-image: url('/assets/icon/setting.svg');
-  }
-
-  &.users-icon {
-    background-image: url('/assets/icon/users.svg');
-  }
-
-  &.course-icon {
-    background-image: url('/assets/icon/course.svg');
-  }
-}
-
-.endBar {
-  position: fixed;
-  bottom: 0;
-  background-color: white;
-  width: 100vw;
-  display: flex;
-  right: 0;
-  // border-top: 1px solid $border;
-  z-index: 2;
-
-  &>* {
-    padding: 1rem 3rem;
-  }
-}
-
-.marginedStart {
-  .endBar {
-    padding-left: 260px;
-  }
+  transition: all 0.3s ease;
 }
 
 .collapseMargin {
-  .endBar {
-    padding-left: 80px;
+  margin-left: 80px;
+  width: calc(100% - 80px);
+}
+
+@media screen and (max-width: 992px) {
+
+  .marginedStart,
+  .collapseMargin {
+    margin-left: 0 !important;
+    width: 100% !important;
   }
 }
 
-.no-tabs {
-  .tabsLayout {
-    display: none;
+// شريط الأزرار السفلي (EndBar) - تم تحويله ليكون Glassy
+.endBar {
+  position: fixed;
+  bottom: 0;
+  background: var(--bg-header) !important;
+  backdrop-filter: blur(10px);
+  border-top: 1px solid var(--border-glass);
+  width: 100%;
+  z-index: 10;
+  padding: 1rem 2rem;
+}
+
+/* -------------------------------------------------------------------------- */
+/* 5. Custom UI Components                                                    */
+/* -------------------------------------------------------------------------- */
+
+// كرت بستايل زجاجي شفاف
+.glass-card {
+  background: var(--bg-card) !important;
+  border: 1px solid var(--border-glass) !important;
+  backdrop-filter: blur(5px);
+  border-radius: var(--radius-card);
+}
+
+// أزرار دائرية محسنة
+.rounded-btn {
+  background-color: var(--bg-card);
+  border: 1px solid var(--border-stroke);
+  color: var(--text-primary);
+  border-radius: var(--radius-btn);
+  padding: 8px 20px;
+  transition: all 0.3s ease;
+
+  &:hover {
+    border-color: var(--accent-purple);
+    box-shadow: var(--shadow-active);
+  }
+
+  &.bg-colored {
+    background: var(--gradient-primary) !important;
+    border: none;
+    color: white;
   }
 }
 
-body {
-  background: transparent;
+/* -------------------------------------------------------------------------- */
+/* 6. Fixes & Utilities                                                       */
+/* -------------------------------------------------------------------------- */
+
+.error-msg {
+  color: #EF4444 !important; // Red-500
+  font-size: 0.85rem;
 }
 
-.el-breadcrumb__inner a,
-.el-breadcrumb__inner.is-link {
-  font-weight: 400 !important;
+.router-link-active {
+  color: var(--accent-purple) !important;
+  background: rgba(139, 92, 246, 0.1) !important;
 }
 
-.el-breadcrumb__inner {
-  color: #5f5a6a !important;
-}
-
-.last .el-breadcrumb__inner {
-  font-weight: 500 !important;
-  color: #1a112f !important;
-  cursor: pointer !important;
-}
-
-.el-menu--collapse {
-  width: calc(var(--el-menu-icon-width) + var(--el-menu-base-level-padding) * 2.5) !important;
-}
-
-.search-input {
-  --el-input-border-color: none !important;
-
-  .el-input__wrapper {
-    padding: 9px 16px !important;
-    border-radius: 30px !important;
-  }
-}
-
-.el-table--fit {
-  border-radius: 1.5rem !important;
-}
-
-.el-dialog__headerbtn {
-  top: 5% !important;
-  right: 5% !important;
-  border: 1px solid #e7e6e9 !important;
-  width: 28px !important;
-  height: 28px !important;
-  display: flex !important;
-  justify-content: center !important;
-  align-items: center !important;
-  border-radius: 10px !important;
-}
-
-.manpower-module,
-.material {
-  .el-dialog__headerbtn {
-    top: 2% !important;
-  }
-}
-
-.el-tabs__nav-wrap:after {
-  background-color: var(--el-border-color-light) !important;
-}
-
-.el-tabs__nav {
-  padding: 0.5rem !important;
-
-  .el-tabs__item {
-    font-size: 1rem !important;
-  }
-}
-
-.table-search {
-  .el-input__wrapper {
-    border-radius: 1.5rem !important;
-  }
-}
-
-.el-drawer.rtl {
-  right: 2rem !important;
-  border-radius: 1rem !important;
-  height: calc(100% - 3rem) !important;
-  margin-top: 1.5rem !important;
-  width: 30% !important;
-
-  @media screen and (min-width: 1400px) {
-    width: 22% !important;
-  }
-}
-
-.el-drawer__header {
-  margin-bottom: 0 !important;
-}
-
-.el-collapse-item__header {
-  color: #2e293b !important;
-  font-weight: 600 !important;
-  font-size: 16px !important;
-}
-
-.wrap-text .cell {
-  white-space: normal !important;
-  word-wrap: break-word !important;
-  word-break: break-word !important;
-}
-
-.el-step__line {
-  border-color: $primary !important;
-}
-
-.el-step__head.is-success {
-  .el-step__icon.is-text {
-    color: $primary !important;
-    border-color: $primary !important;
-  }
-}
-
-.el-step__title.is-finish {
-  color: $primary !important;
-  font-weight: 600 !important;
-}
-
-.icon {
-  &.is-xl {
-    font-size: 2.2em;
-  }
-
-  &.is-lg {
-    font-size: 1.8em;
-  }
-
-  &.is-md {
-    font-size: 1.4em;
-  }
-
-  &.is-sm {
-    font-size: 1.2em;
-  }
-}
-
-.max {
-  &-3xl {
-    max-width: 1200px;
-  }
-
-  &-2xl {
-    max-width: 1000px;
-  }
-
-  &-xl {
-    max-width: 800px;
-  }
-
-  &-2lg {
-    max-width: 730px;
-  }
-
-  &-lg {
-    max-width: 630px;
-  }
-
-  &-md {
-    max-width: 500px;
-  }
-
-  &-mm {
-    max-width: 400px;
-  }
-
-  &-sm {
-    max-width: 320px;
-  }
-
-  &-110 {
-    max-width: 110px;
-  }
-
-  &-100 {
-    max-width: 100px;
-  }
-
-  &-60 {
-    max-width: 60px;
-  }
-
-  &-xs {
-    max-width: 80px;
-  }
-
-  &-xxs {
-    max-width: 40px;
-  }
+// مسح الحدود المزعجة
+.el-menu,
+.navbar {
+  border-color: transparent !important;
 }

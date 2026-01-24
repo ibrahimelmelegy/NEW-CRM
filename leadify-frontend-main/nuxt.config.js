@@ -1,4 +1,5 @@
 import { defineNuxtConfig } from 'nuxt/config';
+import { visualizer } from 'rollup-plugin-visualizer';
 
 export default defineNuxtConfig({
   app: {
@@ -16,25 +17,74 @@ export default defineNuxtConfig({
     },
   },
 
+  // Fix Content-Length Mismatch in Dev
+  nitro: {
+    compressPublicAssets: false,
+    timing: false
+  },
+
   css: ['@/assets/styles/global.scss'],
+  sourcemap: {
+    server: false,
+    client: false
+  },
   vite: {
     css: {
       preprocessorOptions: {
         scss: {
-          additionalData: `@use "@/assets/styles/variables.scss" as *;`,
+          additionalData: `@use "@/assets/styles/_injected.scss" as *;`,
         },
       },
     },
+    optimizeDeps: {
+      force: true, // FORCE re-bundling of dependencies
+      include: [
+        'vue',
+        'element-plus',
+        '@element-plus/icons-vue',
+        'echarts',
+        'vue-echarts',
+        'resize-detector',
+        'date-fns',
+        'lodash',
+        '@tiptap/vue-3',
+        '@tiptap/starter-kit',
+        '@tiptap/extension-image',
+        '@tiptap/extension-table',
+        '@tiptap/extension-table-row',
+        '@tiptap/extension-table-cell',
+        '@tiptap/extension-table-header',
+        'axios',
+        'pinia'
+      ]
+    },
+    build: {
+      chunkSizeWarningLimit: 1000,
+      rollupOptions: {
+        output: {
+          manualChunks(id) {
+            if (id.includes('node_modules')) {
+              if (id.includes('element-plus')) return 'ui-vendor';
+              if (id.includes('echarts') || id.includes('vue-echarts')) return 'charts-vendor';
+              if (id.includes('@tiptap') || id.includes('prosemirror')) return 'editor-vendor';
+              return 'vendor';
+            }
+          }
+        }
+      }
+    },
+    plugins: [visualizer({ open: false, filename: 'stats.html' })],
   },
 
-  modules: ['@element-plus/nuxt', 'nuxt-icon', '@nuxtjs/tailwindcss', '@pinia/nuxt', '@nuxt/image', 'nuxt-tiptap-editor'],
-  tiptap: {
-    prefix: 'Tiptap', //prefix for Tiptap imports, composables not included
+  modules: ['@element-plus/nuxt', 'nuxt-icon', '@nuxtjs/tailwindcss', '@pinia/nuxt', '@nuxt/image'],
+  image: {
+    format: ['webp'],
+    quality: 80,
   },
   runtimeConfig: {
     public: {
-      API_BASE_URL: process.env.API_BASE_URL || '',
-      BASE_URL: process.env.BASE_URL || 'http://localhost:3000/',
+      API_BASE_URL: process.env.API_BASE_URL || 'http://localhost:5000/api/',
+      BASE_URL: process.env.BASE_URL || 'http://localhost:3060/',
       BUCKET_URL: process.env.BUCKET_URL || 'http://localhost:3000/',
     },
   },

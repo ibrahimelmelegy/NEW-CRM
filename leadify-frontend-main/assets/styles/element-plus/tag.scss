@@ -1,9 +1,25 @@
+// ✅ إعادة تفعيل الاستدعاء (للتوحيد وضمان الأمان)
 @use '@/assets/styles/variables.scss' as *;
 
+// إعداد عام لكل التاجز (عشان نوحد الشكل)
+.el-tag {
+  border-radius: var(--radius-btn, 2rem) !important;
+  font-weight: 600 !important;
+}
+
+// تخصيص التاج من نوع Info (ليصبح بلون الثيم البنفسجي)
 .el-tag.el-tag--info {
-  --el-tag-bg-color: #{$primary-light} !important;
-  --el-tag-border-color: #{$primary-light} !important;
-  --el-tag-hover-color: #{$primary-light-hover} !important ;
-  --el-tag-text-color: #{$primary} !important;
-  border-radius: $raduis-base !important;
+  // ✅ خلفية بنفسجية شفافة (Glassy)
+  --el-tag-bg-color: rgba(139, 92, 246, 0.1) !important;
+
+  // حدود خفيفة جداً
+  --el-tag-border-color: rgba(139, 92, 246, 0.2) !important;
+
+  // لون النص
+  --el-tag-text-color: var(--accent-purple) !important;
+
+  // لون التفاعل
+  --el-tag-hover-color: #9360ff !important;
+
+  border: 1px solid var(--el-tag-border-color) !important;
 }

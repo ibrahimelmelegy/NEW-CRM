@@ -8,7 +8,9 @@ export enum ProposalStatusEnum {
   WAITING_APPROVAL = 'WAITING_APPROVAL',
   APPROVED = 'APPROVED',
   REJECTED = 'REJECTED',
-  ARCHIVED = 'ARCHIVED'
+  ARCHIVED = 'ARCHIVED',
+  DRAFT = 'DRAFT',
+  SENT = 'SENT'
 }
 
 export enum ProposalModelEnum {

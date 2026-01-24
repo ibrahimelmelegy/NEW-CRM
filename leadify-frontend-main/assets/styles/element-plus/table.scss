@@ -1,9 +1,51 @@
+// ✅ إعادة تفعيل الاستدعاء (للتوحيد وضمان الأمان)
 @use '@/assets/styles/variables.scss' as *;
 
+.el-table {
+  // ✅ ضبط متغيرات الجدول للثيم الداكن
+  --el-table-border-color: var(--border-stroke) !important;
+  --el-table-header-bg-color: rgba(255, 255, 255, 0.02) !important;
+  --el-table-tr-bg-color: transparent !important;
+  --el-table-row-hover-bg-color: rgba(139, 92, 246, 0.05) !important;
+
+  background-color: transparent !important;
+  color: var(--text-secondary) !important;
+
+  // إزالة أي حدود خارجية
+  border: none !important;
+}
+
+// تنسيق الهيدر (Header)
 .el-table th.el-table__cell.is-leaf {
-  --el-table-border: 2px solid var(--el-table-border-color) !important;
+  border-bottom: 1px solid var(--border-stroke) !important;
 }
 
 .el-table th.el-table__cell {
   padding: 16px 0px !important;
+  background-color: transparent !important;
+  color: var(--text-secondary) !important;
+  font-weight: 600;
+}
+
+// تنسيق صفوف البيانات (Data Rows)
+.el-table td.el-table__cell {
+  border-bottom: 1px solid var(--border-stroke) !important;
+  color: var(--text-primary) !important;
+  transition: background-color 0.2s ease;
+}
+
+// ✅ إضافة هامة: تنسيق حالة "لا توجد بيانات" (Empty State)
+// هذا يمنع ظهور مربع أبيض قبيح عندما يكون الجدول فارغاً
+.el-table__empty-block {
+  background-color: transparent !important;
+
+  .el-table__empty-text {
+    color: var(--text-secondary) !important;
+  }
+}
+
+// إزالة الخط السفلي الأبيض المزعج في Element Plus
+.el-table__inner-wrapper::before {
+  background-color: transparent !important;
+  height: 0 !important;
 }

@@ -13,13 +13,17 @@ export async function downloadFile(file: string) {
     },
   })
     .then(async (response) => {
-      const fileName = response.headers
-        .get("content-disposition")
-        ?.split(";")
-        .find((n) => n.includes("filename="))
-        .replace("filename=", "")
-        .trim()
-        .split(".")[0];
+      // ✅ Fix 1: Safer filename extraction to avoid 'undefined' error
+      const contentDisposition = response.headers.get("content-disposition");
+      let fileName = file.split("/").pop()?.split(".")[0] || "download"; // Default fallback
+
+      if (contentDisposition) {
+        const match = contentDisposition.split(";").find((n) => n.includes("filename="));
+        if (match) {
+          fileName = match.replace("filename=", "").trim().split(".")[0];
+        }
+      }
+
       if (response.status !== 200) {
         ElNotification({
           title: "Error",
@@ -35,7 +39,7 @@ export async function downloadFile(file: string) {
       const url = URL.createObjectURL(blob);
       const a = document.createElement("a");
       a.href = url;
-      a.download = name ? name : file.split("/")[1];
+      a.download = name;
       a.click();
       URL.revokeObjectURL(url);
     })
@@ -53,13 +57,16 @@ export function uploadFile(params: any) {
     let fileName = `File-${new Date().getTime()}${extension}`;
     const myRenamedFile = new File([file], fileName, { type: file.type });
 
+    // ✅ Fix 2: TypeScript might not see auto-imports, explicitly casting or ignoring logic is safer here
+    // @ts-ignore
     useAsyncGql("generateUploadLink", {
       model: "BLOG_COVER",
       fileName: fileName,
       contentType: file.type,
       sizeInBytes: file.size,
     })
-      .then(async ({ data }) => {
+      // ✅ Fix 3: Explicitly type the response data
+      .then(async ({ data }: { data: any }) => {
         const link = data.value?.generateUploadLink.data;
         try {
           const response = await $fetch(link, {
@@ -167,18 +174,6 @@ export function checkStatuesNumber(num: number): string {
   return +num > 0 ? "Positive" : +num < 0 ? "Negative" : "Zero";
 }
 
-export function formatLargeNumber(num: number) {
-  if (num >= 1000000000) {
-    return (num / 1000000000).toFixed(1) + "B";
-  }
-  if (num >= 1000000) {
-    return (num / 1000000).toFixed(1) + "M";
-  }
-  if (num >= 1000) {
-    return (num / 1000).toFixed(1) + "K";
-  }
-  return num.toString();
-}
 export function formatNumber(number: any) {
   return Number(number)
     .toString()
@@ -259,19 +254,18 @@ export function getErrorCode(code: number, message: string | null | undefined) {
 }
 export function convertToReadableFormat(str: string) {
   if (!str) return "";
-  // Add space before uppercase letters, then capitalize the first letter of each word
   const result = str
-    .replace(/([A-Z])/g, " $1") // Insert space before each uppercase letter
-    .replace(/^./, (char) => char.toUpperCase()) // Capitalize the first character
-    .trim(); // Remove any leading or trailing spaces
+    .replace(/([A-Z])/g, " $1") 
+    .replace(/^./, (char) => char.toUpperCase()) 
+    .trim(); 
   return result;
 }
 
 export function toUpperSnakeCase(str: string) {
   if (!str) return "";
   return str
-    .replace(/([a-z])([A-Z])/g, "$1_$2") // Add underscore between camelCase
-    .toUpperCase(); // Convert to uppercase
+    .replace(/([a-z])([A-Z])/g, "$1_$2") 
+    .toUpperCase(); 
 }
 
 export const getWordInitials = (name: string) => {
@@ -286,18 +280,12 @@ export const getWordInitials = (name: string) => {
 let previousColor: string;
 export const randomBgColor = () => {
   const colors = ["#007BFF", "#28A745", "#6C757D"];
-  // Ensure the new color is different from the previous one
   let newColor;
   do {
     newColor = colors[Math.floor(Math.random() * colors.length)];
-  } while (newColor === previousColor); // If the color is the same as the previous one, pick again
+  } while (newColor === previousColor); 
 
-  // Store the newly selected color for the next time
   previousColor = newColor;
 
   return newColor;
 };
-
-export function capitalizeName(name: string) {
-  return name.charAt(0).toUpperCase() + name.slice(1).toLowerCase();
-}

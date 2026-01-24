@@ -13,8 +13,17 @@ async function seed() {
         const allPermissions = getAllPermissions();
         console.log(`📋 Found ${allPermissions.length} permissions in the system.`);
 
-        // 1. Create/Update Default Roles
+        // 0. RESET ALL ROLES (Delete all roles except SUPER_ADMIN if needed, or just delete ALL and recreate)
         const roleModel = Role as any;
+
+        // Delete all roles NOT named SUPER_ADMIN
+        const { Op } = require('sequelize');
+        await roleModel.destroy({
+            where: {
+                name: { [Op.ne]: 'SUPER_ADMIN' }
+            }
+        });
+        console.log('🗑️  Deleted all non-SUPER_ADMIN roles.');
 
         // First, try to find existing SUPER_ADMIN role
         let adminRole = await roleModel.findOne({ where: { name: 'SUPER_ADMIN' } });

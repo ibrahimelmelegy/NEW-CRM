@@ -32,9 +32,11 @@ export const useApiFetch = async (
   status?: boolean;
   message?: string;
   error?: any;
+  code?: number;
 }> => {
   const config = useRuntimeConfig();
   const accessToken = useCookie('access_token');
+
   const defaultOptions = {
     method,
     body: method === 'GET' ? null : data,
@@ -43,27 +45,32 @@ export const useApiFetch = async (
       ...(!isFd && { 'Content-Type': 'application/json' }),
       ...(!isFd && { Accept: 'application/json' }),
       ...(accessToken.value && {
-        Authorization: `${url.includes('reset-password') ? '' : 'Bearer'} ${accessToken.value
-          }`,
+        Authorization: `${url.includes('reset-password') ? '' : 'Bearer'} ${accessToken.value}`,
       }),
       // Multi-tenant header
       ...(user.value?.tenantId && { 'X-Tenant-ID': user.value.tenantId }),
     },
   };
+
   try {
     return await $fetch(config.public.API_BASE_URL + url, defaultOptions);
   } catch (error: any) {
     const errorData = error?.response?._data || {};
     const message = errorData.message || error.message || 'Something went wrong';
-    const code = errorData.code || 500;
+
+    // ✅ FIX: Get the Status Code correctly from the HTTP Response first
+    const code = error?.response?.status || error?.statusCode || errorData.code || 500;
+
     if (!silence) {
-      console.error(message);
+      console.error(`API Error (${code}):`, message);
     }
+
     return {
       data: null,
       status: false,
       message,
-      error,
+      error, // Returning the raw error object helps debugging
+      code,  // Now this will correctly be 422, 403, 500 etc.
     };
   }
 };

@@ -1,16 +1,42 @@
+// ✅ إعادة تفعيل الاستدعاء (للتوحيد وضمان الأمان)
 @use '@/assets/styles/variables.scss' as *;
 
 .el-menu {
-  --el-menu-item-height: 40px !important;
+  --el-menu-item-height: 48px !important;
   --el-menu-sub-item-height: 40px !important;
+  --el-menu-bg-color: transparent !important; // جعل الخلفية شفافة لتأخذ لون الـ Sidebar
+
+  border-right: none !important;
+
   .el-menu-item,
   .el-sub-menu__title {
     margin-bottom: 5px;
-    border-radius: $raduis-base;
-    // height:$height-input ;
+    border-radius: var(--radius-btn, 12px) !important;
     line-height: 22px !important;
+    color: var(--text-secondary) !important;
+    transition: all 0.3s ease;
+
+    // لضمان تناسق الأيقونات
+    .el-icon {
+      color: inherit !important;
+      font-size: 18px;
+    }
+
+    &:hover {
+      background-color: rgba(255, 255, 255, 0.05) !important;
+      color: var(--text-primary) !important;
+    }
   }
+
   .el-menu-item.is-active {
-    background-color: $primary-light;
+    background-color: rgba(139, 92, 246, 0.15) !important;
+    color: var(--accent-purple) !important;
+    font-weight: 600;
+    box-shadow: 0 0 10px rgba(139, 92, 246, 0.1);
+
+    // تمييز الأيقونة في الحالة النشطة
+    .el-icon {
+      color: var(--accent-purple) !important;
+    }
   }
 }

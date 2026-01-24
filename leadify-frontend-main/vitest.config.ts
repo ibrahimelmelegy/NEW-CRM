@@ -18,6 +18,10 @@ export default defineConfig({
             reporter: ['text', 'json', 'html'],
         },
         include: ['test/**/*.test.ts'],
+        ui: true,
+        api: {
+            port: 51204,
+        },
     },
     resolve: {
         alias: {

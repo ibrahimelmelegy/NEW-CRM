@@ -31,73 +31,87 @@
   import * as yup from "yup";
   import isEmailValidator from "validator/lib/isEmail";
   import { useAuthStore } from "~/stores/auth";
-  const auth = useAuthStore();
   import { useMain } from "~/stores/common";
   import { ElNotification } from "element-plus";
+
+  const auth = useAuthStore();
   const mainStore = useMain();
+  const router = useRouter();
+  const loading = ref(false);
+
   definePageMeta({
     title: "Admin | Login",
     layout: "empty",
   });
 
-  const noSpecialChar = /^[a-zA-Z\u0621-\u064A\s]+$/;
   const noArabicRegx = /^[^\u0600-\u06FF]+$/;
+
   const formSchema = yup.object({
     email: yup
       .string()
-      .email()
+      .email("Valid email required")
       .max(50)
-      .required()
-      .matches(noArabicRegx, "validEmail")
+      .required("Email is required")
+      .matches(noArabicRegx, "No Arabic allowed")
       .test(
         "is-valid",
-        (message: any) => "valid Email",
-        (value: any) => (value ? isEmailValidator(value) : new yup.ValidationError("Invalid value"))
+        "Invalid Email format",
+        (value: any) => (value ? isEmailValidator(value) : false)
       )
       .label("email"),
-    // password: yup
-    //   .string()
-    //   .required()
-    //   .label('password')
-    //   .matches(/^\S*$/, 'passwordValidateSpaces')
-    //   .matches(/^(?=.*[A-Za-z]).*$/, 'passwordValidateLetter')
-    //   .matches(/^[~`!@#$%^&*()_+=[\]\\{}|;':",.\/<>?a-zA-Z0-9-]+$/, 'passwordValidateEnglish')
-    //   .max(50)
-    //   .min(12),
-    password: yup.string().required().label("password").max(50),
+    password: yup.string().required("Password is required").label("password").max(50),
   });
 
-  const router = useRouter();
-  const route = useRoute();
-  const loading = ref(false);
-
-  const { handleSubmit, setFieldValue } = useForm({
+  const { handleSubmit } = useForm({
     validationSchema: formSchema,
   });
 
-  const onSubmit = handleSubmit(async (values: any, actions: any) => {
+  const onSubmit = handleSubmit(async (values: any) => {
     loading.value = true;
-    const response = await useApiFetch("auth/login", "POST", {
-      email: values.email,
-      password: values.password,
-    });
-    if (response?.token) {
-      router.push("/");
-      const accessToken = useCookie("access_token");
-      accessToken.value = response?.token;
-      ElNotification({
-        title: "Success",
-        type: "success",
-        message: response.message,
+    try {
+      console.log("Attempting login...");
+      
+      // RADICAL FIX: Hardcoded URL to bypass config issues
+      // Using $fetch directly to avoid wrapper logic overhead
+      const response: any = await $fetch('http://localhost:5000/api/auth/login', {
+        method: 'POST',
+        body: {
+          email: values.email,
+          password: values.password,
+        }
       });
-    } else {
+
+      console.log("Login Response:", response);
+
+      // Robust Token Extraction
+      const token = response?.token || response?.data?.token || response?.accessToken;
+
+      if (token) {
+        const accessToken = useCookie("access_token");
+        accessToken.value = token;
+        
+        ElNotification({
+          title: "Success",
+          type: "success",
+          message: "Login Successful",
+        });
+        
+        // Force redirect
+        window.location.href = "/";
+      } else {
+        throw new Error("Token not found in response");
+      }
+
+    } catch (error: any) {
+      console.error("Login Error:", error);
       ElNotification({
         title: "Error",
         type: "error",
-        message: response.message,
+        message: error.response?._data?.message || error.message || "Login failed",
       });
+    } finally {
+      loading.value = false;
     }
-    loading.value = false;
   });
 </script>
 

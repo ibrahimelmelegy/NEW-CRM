@@ -1,3 +1,4 @@
+// ✅ إعادة تفعيل الاستدعاء (للتوحيد مع باقي الملفات)
 @use '@/assets/styles/variables.scss' as *;
 
 .el-collapse.custom-collapse {
@@ -6,10 +7,24 @@
   --el-collapse-content-bg-color: transparent !important;
 
   --el-collapse-header-font-size: 24px !important;
+
+  // ✅ ضبط لون السهم
   .el-collapse-item__arrow {
     font-size: 16px !important;
+    color: var(--text-secondary) !important;
   }
+
   .el-collapse-item__header {
-    border-bottom: 1px solid $border !important;
+    border-bottom: 1px solid var(--border-stroke) !important;
+
+    // ✅ ضروري جداً: ضبط لون عنوان القائمة ليظهر باللون الأبيض
+    color: var(--text-primary) !important;
+    font-weight: 600;
+  }
+
+  // ✅ ضبط لون المحتوى الداخلي
+  .el-collapse-item__content {
+    color: var(--text-secondary) !important;
+    padding-bottom: 25px !important;
   }
 }

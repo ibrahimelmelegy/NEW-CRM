@@ -143,7 +143,7 @@ export const ProposalsTable: React.FC<{
     };
 
     return (
-        <div className="p-8 max-w-[1600px] mx-auto space-y-8 font-sans">
+        <div className="p-8 w-full mx-auto space-y-8 font-sans">
             <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
                 <div>
                     <h2 className="text-2xl font-extrabold text-gray-900 tracking-tight">Proposals Dashboard</h2>
