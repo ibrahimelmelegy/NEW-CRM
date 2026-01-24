@@ -65,9 +65,17 @@ const props = defineProps({
     type: Number,
     default: null,
   },
+  multiple: {
+    type: Boolean,
+    default: false,
+  },
   innerClass: {
     type: String,
     default: "!mb-6",
+  },
+  type: {
+    type: String,
+    default: "",
   },
 });
 
@@ -98,14 +106,8 @@ const handlePictureCardPreview = (file: UploadFile) => {
 const handleUploadSuccess: UploadProps["onSuccess"] = (response, uploadFile) => {};
 
 const { value: inputValue, errorMessage, handleBlur, handleChange, meta } = useField(
-  props.name,
-  undefined,
-  {
-    multiple: {
-      type: Boolean,
-      default: false,
-    },
-  }
+  props.name || "",
+  undefined
 );
 
 watch(
@@ -167,7 +169,7 @@ const handleUploadRequest = async (params: any) => {
 };
 
 const handleRemove = (file: UploadFile) => {
-  inputValue.value = inputValue.value?.filter((f: any) => f.uid !== file.uid);
+  inputValue.value = (inputValue.value as any[])?.filter((f: any) => f.uid !== file.uid);
 };
 </script>
 
@@ -175,7 +177,7 @@ const handleRemove = (file: UploadFile) => {
 .el-upload-list {
   &--picture-card {
     .el-upload-list__item {
-      border-radius: $raduis-base;
+      border-radius: $radius-base;
     }
   }
 }

@@ -16,7 +16,7 @@ export default defineConfig({
         cors: true,       // 🚀 أهم سطر: يسمح للنكست بسحب البيانات بدون Error
         proxy: {
             '/api': {
-                target: 'http://localhost:5000',
+                target: 'http://127.0.0.1:5000',
                 changeOrigin: true,
                 secure: false,
             },

@@ -9,7 +9,8 @@
         "start": "nuxt preview",
         "test": "vitest",
         "test:coverage": "vitest run --coverage",
-        "health:ui": "node scripts/health-dashboard.js"
+        "health:ui": "node scripts/health-dashboard.js",
+        "monitor": "pm2 monit"
     },
     "devDependencies": {
         "@nuxt/kit": "^3.3.1",

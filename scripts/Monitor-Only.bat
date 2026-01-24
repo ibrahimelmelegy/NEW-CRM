@@ -1,0 +1,3 @@
+@echo off
+echo OPENING PM2 MONITOR...
+call npx pm2 monit
