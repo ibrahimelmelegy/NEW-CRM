@@ -27,19 +27,24 @@ RoleForm( :loading="loading" @submit="submitForm" :data="role")
     permission: "EDIT_ROLES",
   });
 
-  const role = await getRole(route.params.slug);
+  const slug = (Array.isArray(route.params.slug) ? route.params.slug[0] : route.params.slug) as string;
+  const role = await getRole(slug);
 
   async function submitForm(values: any) {
     loading.value = true;
-    await updateRole({ ...values, id: route.params.slug as string, permissions: Object.values(checkList.value).flat() });
+    await updateRole({ ...values, id: slug, permissions: Object.values(checkList.value).flat() });
     loading.value = false;
   }
 
-  const permissionsData = ref({
+  interface PermissionsData {
+    [key: string]: string[];
+  }
+
+  const permissionsData: PermissionsData = {
     leads: ["VIEW_OWN_LEADS", "VIEW_GLOBAL_LEADS", "CREATE_LEADS", "EDIT_LEADS"],
     opportunities: ["VIEW_OWN_OPPORTUNITIES", "VIEW_GLOBAL_OPPORTUNITIES", "CREATE_OPPORTUNITIES", "EDIT_OPPORTUNITIES"],
     deals: ["VIEW_OWN_DEALS", "VIEW_GLOBAL_DEALS", "CREATE_DEALS", "EDIT_DEALS"],
-    proposals: ["VIEW_OWN_PROPOSALS", "VIEW_GLOBAL_PROPOSALS", "CREATE_PROPOSALS", "EDIT_PROPOSALS"],
+    proposals: ["VIEW_OWN_PROPOSALS", "VIEW_GLOBAL_PROPOSALS", "CREATE_PROPOSALS", "EDIT_PROPOSALS", "APPROVE_PROPOSALS", "REJECT_PROPOSALS", "WAITING_APPROVAL_PROPOSALS"],
     projects: ["VIEW_OWN_PROJECTS", "VIEW_GLOBAL_PROJECTS", "CREATE_PROJECTS", "EDIT_PROJECTS"],
     vehicles: ["VIEW_VEHICLES", "CREATE_VEHICLES", "EDIT_VEHICLES"],
     manpower: ["VIEW_MANPOWER", "CREATE_MANPOWER", "EDIT_MANPOWER"],
@@ -60,9 +65,11 @@ RoleForm( :loading="loading" @submit="submitForm" :data="role")
     projectWidgets: ["VIEW_OWN_PROJECTS_OPERATIONS_WIDGETS", "VIEW_GLOBAL_PROJECTS_OPERATIONS_WIDGETS"],
     financialWidgets: ["VIEW_OWN_FINANCIAL_BUSINESS_METRICS_WIDGETS", "VIEW_GLOBAL_FINANCIAL_BUSINESS_METRICS_WIDGETS"],
     performanceWidgets: ["VIEW_OWN_PERFORMANCE_HR_WIDGETS", "VIEW_GLOBAL_PERFORMANCE_HR_WIDGETS"],
-  });
+  };
 
-  const checkList = ref(Object.fromEntries(Object.keys(permissionsData.value).map((key) => [key, []])));
+  const checkList = ref<Record<string, string[]>>(
+    Object.fromEntries(Object.keys(permissionsData).map((key) => [key, []]))
+  );
 
   function formatKeyLabel(key: string) {
     return key.replace(/([A-Z])/g, " $1").replace(/^./, (str) => str.toUpperCase());
@@ -79,11 +86,15 @@ RoleForm( :loading="loading" @submit="submitForm" :data="role")
     if (permission.includes("EXPORT_SALES")) return "Export Sales Reports";
     if (permission.includes("EXPORT_PROJECT")) return "Export Project Reports";
     if (permission.includes("EXPORT_PERFORMANCE")) return "Export Performance Reports";
+    if (permission.includes("APPROVE")) return "Approve";
+    if (permission.includes("REJECT")) return "Reject";
+    if (permission.includes("WAITING_APPROVAL")) return "Waiting Approval";
     return permission.replace(/_/g, " ").toLowerCase();
   }
 
   function handleMutuallyExclusive(permission: string, key: string) {
     const list = checkList.value[key];
+    if (!list) return;
 
     const isOwn = permission.includes("OWN");
     const isGlobal = permission.includes("GLOBAL");
@@ -100,14 +111,14 @@ RoleForm( :loading="loading" @submit="submitForm" :data="role")
     const globalPermission = `${prefix}_GLOBAL_${base}`;
 
     if (permission === ownPermission && list.includes(globalPermission)) {
-      checkList.value[key] = list.filter((p) => p !== globalPermission);
+      checkList.value[key] = list.filter((p: string) => p !== globalPermission);
     } else if (permission === globalPermission && list.includes(ownPermission)) {
-      checkList.value[key] = list.filter((p) => p !== ownPermission);
+      checkList.value[key] = list.filter((p: string) => p !== ownPermission);
     }
   }
 
   const applySelectedPermissions = (selected: string[]) => {
-    for (const [key, permissions] of Object.entries(permissionsData.value)) {
+    for (const [key, permissions] of Object.entries(permissionsData)) {
       checkList.value[key] = permissions?.filter((p) => selected.includes(p));
     }
   };

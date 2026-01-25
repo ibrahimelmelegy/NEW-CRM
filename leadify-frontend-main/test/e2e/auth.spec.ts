@@ -11,13 +11,13 @@ test.describe('Authentication Flow', () => {
 
     test('User can login with valid credentials', async ({ page }) => {
         // 1. Fill Email
-        await page.getByPlaceholder('Email').fill('admin@hp-tech.com');
+        await page.getByPlaceholder('name@company.com').fill('admin@hp-tech.com');
 
         // 2. Fill Password
-        await page.getByPlaceholder('Password').fill('Heroo@1502');
+        await page.getByPlaceholder('••••••••').fill('Heroo@1502');
 
         // 3. Click Login Button
-        await page.getByRole('button', { name: /login/i }).click();
+        await page.getByRole('button', { name: /sign in/i }).click();
 
         // 4. Verification - wait for submission
         await page.waitForTimeout(1500);
@@ -29,11 +29,11 @@ test.describe('Authentication Flow', () => {
 
     test('User sees error with invalid credentials', async ({ page }) => {
         // 1. Fill Wrong Data
-        await page.getByPlaceholder('Email').fill('wrong@test.com');
-        await page.getByPlaceholder('Password').fill('wrongpass');
+        await page.getByPlaceholder('name@company.com').fill('wrong@test.com');
+        await page.getByPlaceholder('••••••••').fill('wrongpass');
 
         // 2. Click Login
-        await page.getByRole('button', { name: /login/i }).click();
+        await page.getByRole('button', { name: /sign in/i }).click();
 
         // 3. Verify Error Toast/Message or stay on login page
         await page.waitForTimeout(1000);

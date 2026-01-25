@@ -47,15 +47,15 @@ class NotificationService {
   }
 
   async updateNotificationToClicked(id: string, user: User): Promise<any> {
-    const notifacation = await Notification.findOne({
+    const notification = await Notification.findOne({
       where: { userId: user.id, id }
     });
-    if (!notifacation) throw new BaseError(ERRORS.NOTIFICATION_NOT_FOUND);
-    notifacation.read = NotificationReadEnums.CLICKED;
-    await notifacation.save();
+    if (!notification) throw new BaseError(ERRORS.NOTIFICATION_NOT_FOUND);
+    notification.read = NotificationReadEnums.CLICKED;
+    await notification.save();
   }
 
-  async sendAssignLeadNotificatiom(input: any): Promise<any> {
+  async sendAssignLeadNotification(input: any): Promise<any> {
     const notification = await Notification.create({
       ...input,
       body_en: 'New Lead assigned to you.',

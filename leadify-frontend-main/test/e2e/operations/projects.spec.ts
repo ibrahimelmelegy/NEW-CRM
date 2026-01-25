@@ -6,9 +6,9 @@ test.describe('Operations - Project Management', () => {
     test.beforeEach(async ({ page }) => {
         // Login
         await page.goto('/login');
-        await page.getByPlaceholder('Email').fill('admin@hp-tech.com');
-        await page.getByPlaceholder('Password').fill('Heroo@1502');
-        await page.getByRole('button', { name: /login/i }).click();
+        await page.getByPlaceholder('name@company.com').fill('admin@hp-tech.com');
+        await page.getByPlaceholder('••••••••').fill('Heroo@1502');
+        await page.getByRole('button', { name: /sign in/i }).click();
         // Wait for either redirect or form submission
         await page.waitForTimeout(2000);
     });

@@ -220,7 +220,7 @@ el-form-item( :label="label" :error='errorMessage' class="!mb-0")
 <style lang="scss">
   .avatar-uploader .el-upload {
     border: 1px dashed #d5c7ff;
-    border-radius: $raduis-base;
+    border-radius: $radius-base;
     cursor: pointer;
     position: relative;
     overflow: hidden;
@@ -249,6 +249,6 @@ el-form-item( :label="label" :error='errorMessage' class="!mb-0")
     text-align: center;
   }
   .el-upload-list__item-thumbnail {
-    border-radius: $raduis-base;
+    border-radius: $radius-base;
   }
 </style>

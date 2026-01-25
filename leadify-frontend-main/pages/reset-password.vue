@@ -144,7 +144,7 @@
     confirmPassword: yup
       .string()
       .required("Please confirm your password")
-      .oneOf([yup.ref("password"), null], "Passwords do not match")
+      .oneOf([yup.ref("password")], "Passwords do not match")
       .label("Confirm Password"),
   });
 

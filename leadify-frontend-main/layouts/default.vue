@@ -142,7 +142,7 @@ const breadcrumbRoutes = computed(() => {
     const lastSegment = pathSegments[pathSegments.length - 1];
 
     // Check for UUID or numeric formats
-    if (uuidRegex.test(lastSegment) || !isNaN(Number(lastSegment))) {
+    if (lastSegment && (uuidRegex.test(lastSegment) || !isNaN(Number(lastSegment)))) {
       pathSegments.pop(); // Remove the last item
     }
   }
@@ -157,9 +157,9 @@ const breadcrumbRoutes = computed(() => {
 const getPath = (routeName: string) => {
   const pathSegments = route.path.split("/").filter(Boolean);
   let pathGo = "";
-  const indexStop = pathSegments.findIndex((route) => route ==routeName )
-  pathSegments.forEach((el , indes) => {
-    if (indes <= indexStop  ) pathGo = pathGo + "/" + el;
+  const indexStop = pathSegments.findIndex((segment) => segment == routeName)
+  pathSegments.forEach((el , index) => {
+    if (index <= indexStop  ) pathGo = pathGo + "/" + el;
   });
  if(pathGo !== "/sales" && pathGo !== "/operations") router.push(pathGo);
 };
@@ -225,7 +225,7 @@ const getPath = (routeName: string) => {
 .myicon {
   color: white;
   background-color: $primary;
-  padding: 0.5rem;
+  padding: 0.3rem;
   border-radius: 50%;
 }
 .marginedStart {

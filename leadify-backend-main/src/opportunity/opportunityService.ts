@@ -25,7 +25,7 @@ class OpportunityService {
     try {
       if (input.clientId) {
         client = await Client.findByPk(input.clientId);
-        if (!client) throw new BaseError(ERRORS.CLIENT_ALREADY_FOUND);
+        if (!client) throw new BaseError(ERRORS.CLIENT_NOT_FOUND);
       } else if (input.lead) {
         input.lead.status = LeadStatusEnums.CONVERTED;
         lead = await leadService.createLead(input.lead, admin.id, transaction);
@@ -86,9 +86,9 @@ class OpportunityService {
     if (input.users && Array.isArray(input.users)) await opportunity.$set('users', input.users);
 
     await leadService.updateLead(input.leadId, { status: LeadStatusEnums.CONVERTED }, admin);
-    input.users.forEach(async (userId: Number) => {
+    for (const userId of input.users) {
       await notificationService.sendAssignOpportunityNotification({ userId, target: opportunity.id }, opportunity, admin);
-    });
+    }
     await createActivityLog('opportunity', 'create', opportunity.id, admin.id, undefined, 'Opportunity created succesfully with convert lead');
 
     return opportunity;
@@ -102,9 +102,9 @@ class OpportunityService {
     const users = input.users?.filter((item: number) => !opportunity.users?.map(e => e.id).includes(item));
 
     if (users?.length) {
-      users.forEach(async (userId: number) => {
+      for (const userId of users) {
         await notificationService.sendAssignOpportunityNotification({ userId, target: opportunity.id }, opportunity, user);
-      });
+      }
     }
 
     opportunity.set(input);
@@ -244,27 +244,27 @@ class OpportunityService {
       ...(query.priority?.length && { priority: { [Op.in]: query.priority } }),
       ...(query.fromDate || query.toDate
         ? {
-            createdAt: {
-              ...(query.fromDate && { [Op.gte]: new Date(query.fromDate) }),
-              ...(query.toDate && { [Op.lte]: new Date(query.toDate) })
-            }
+          createdAt: {
+            ...(query.fromDate && { [Op.gte]: new Date(query.fromDate) }),
+            ...(query.toDate && { [Op.lte]: new Date(query.toDate) })
           }
+        }
         : {}),
       ...(query.fromExpectedCloseDate || query.toExpectedCloseDate
         ? {
-            expectedCloseDate: {
-              ...(query.fromExpectedCloseDate && { [Op.gte]: new Date(query.fromExpectedCloseDate) }),
-              ...(query.toExpectedCloseDate && { [Op.lte]: new Date(query.toExpectedCloseDate) })
-            }
+          expectedCloseDate: {
+            ...(query.fromExpectedCloseDate && { [Op.gte]: new Date(query.fromExpectedCloseDate) }),
+            ...(query.toExpectedCloseDate && { [Op.lte]: new Date(query.toExpectedCloseDate) })
           }
+        }
         : {}),
       ...(query.fromEstimatedValue || query.toEstimatedValue
         ? {
-            estimatedValue: {
-              ...(query.fromEstimatedValue && { [Op.gte]: query.fromEstimatedValue }),
-              ...(query.toEstimatedValue && { [Op.lte]: query.toEstimatedValue })
-            }
+          estimatedValue: {
+            ...(query.fromEstimatedValue && { [Op.gte]: query.fromEstimatedValue }),
+            ...(query.toEstimatedValue && { [Op.lte]: query.toEstimatedValue })
           }
+        }
         : {}),
       ...((query.fromProfit || query.toProfit) && {
         profit: {

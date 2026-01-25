@@ -114,9 +114,9 @@ class ProjectService {
       // Add relation to the project
       await project.$set('assignedUsers', users, { transaction });
       if (users?.length) {
-        users.forEach(async (item: User) => {
+        for (const item of users) {
           await notificationService.sendAssignProjectNotification({ userId: item.id, target: project.id }, project, admin);
-        });
+        }
       }
       if (input.basicInfo.category === ProjectCategoryEnum.Etimad) {
         if (existingProject) {
@@ -422,22 +422,22 @@ class ProjectService {
         }),
         ...(query.status &&
           query.status.length > 0 && {
-            status: {
-              [Op.in]: query.status
-            }
-          }),
+          status: {
+            [Op.in]: query.status
+          }
+        }),
         ...(query.type &&
           query.type.length > 0 && {
-            status: {
-              [Op.in]: query.type
-            }
-          }),
+          status: {
+            [Op.in]: query.type
+          }
+        }),
         ...(query.category &&
           query.category.length > 0 && {
-            category: {
-              [Op.in]: query.category
-            }
-          })
+          category: {
+            [Op.in]: query.category
+          }
+        })
       },
       limit,
       offset,
@@ -494,12 +494,12 @@ class ProjectService {
     const step = project.materialMargin
       ? 5
       : project.projectAssets.length
-      ? 6
-      : project.projectManpowerResources.length
-      ? 4
-      : project.vehicles.length
-      ? 3
-      : 2;
+        ? 6
+        : project.projectManpowerResources.length
+          ? 4
+          : project.vehicles.length
+            ? 3
+            : 2;
 
     return { project, step }; //{ project: this.Mapper(project), step };
   }
@@ -604,26 +604,26 @@ class ProjectService {
       }),
       ...(query.fromStartDate || query.toStartDate
         ? {
-            startDate: {
-              ...(query.fromStartDate && { [Op.gte]: new Date(query.fromStartDate) }),
-              ...(query.toStartDate && { [Op.lte]: new Date(query.toStartDate) })
-            }
+          startDate: {
+            ...(query.fromStartDate && { [Op.gte]: new Date(query.fromStartDate) }),
+            ...(query.toStartDate && { [Op.lte]: new Date(query.toStartDate) })
           }
+        }
         : {}),
       ...(query.fromEndDate || query.toEndDate
         ? {
-            endDate: {
-              ...(query.fromEndDate && { [Op.gte]: new Date(query.fromEndDate) }),
-              ...(query.toEndDate && { [Op.lte]: new Date(query.toEndDate) })
-            }
+          endDate: {
+            ...(query.fromEndDate && { [Op.gte]: new Date(query.fromEndDate) }),
+            ...(query.toEndDate && { [Op.lte]: new Date(query.toEndDate) })
           }
+        }
         : {}),
       ...(query.category &&
         query.category.length > 0 && {
-          category: {
-            [Op.in]: query.category
-          }
-        })
+        category: {
+          [Op.in]: query.category
+        }
+      })
     };
 
     if (!user.role.permissions.includes(ProjectPermissionsEnum.VIEW_GLOBAL_PROJECTS)) {

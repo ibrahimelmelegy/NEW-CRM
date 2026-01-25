@@ -7,15 +7,15 @@ test.describe('Proposal Module (Micro-frontend Wrapper)', () => {
         await page.goto('/login', { waitUntil: 'networkidle', timeout: 60000 });
 
         // 2. الانتظار المرن للحقول باستخدام partial matches لضمان عدم التأثر بتغيير الـ UI البسيط
-        const emailInput = page.locator('input[placeholder*="email"]');
-        const passwordInput = page.locator('input[placeholder*="password"]');
+        const emailInput = page.locator('input[placeholder*="company"]');
+        const passwordInput = page.locator('input[placeholder*="••"]');
 
         await emailInput.waitFor({ state: 'visible', timeout: 20000 });
         await emailInput.fill('admin@hp-tech.com');
         await passwordInput.fill('Heroo@1502');
 
         // 3. الضغط على زر الدخول والانتظار حتى استجابة السيرفر
-        await page.getByRole('button', { name: /login/i }).click();
+        await page.getByRole('button', { name: /sign in/i }).click();
 
         // 4. الحل الجذري: ننتظر حتى يختفي مسار اللوجن تماماً من الرابط
         // ده أضمن حل في الـ Micro-frontends لضمان عبور مرحلة الـ Redirection

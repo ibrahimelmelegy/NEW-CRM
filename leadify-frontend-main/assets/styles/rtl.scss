@@ -20,8 +20,8 @@
     margin-right: 260px !important;
 
     .endBar {
-      padding-right: 260px;
-      padding-left: 0 !important;
+      padding-right: calc(260px + 2rem) !important;
+      padding-left: 2rem !important;
     }
   }
 
@@ -30,8 +30,8 @@
     margin-right: 80px !important;
 
     .endBar {
-      padding-right: 80px;
-      padding-left: 0 !important;
+      padding-right: calc(80px + 2rem) !important;
+      padding-left: 2rem !important;
     }
   }
 

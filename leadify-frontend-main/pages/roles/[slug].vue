@@ -49,13 +49,18 @@
   const { hasPermission } = await usePermissions();
 
   // Call API to Get the role
-  const role = await getRole(route.params.slug);
+  const slug = (Array.isArray(route.params.slug) ? route.params.slug[0] : route.params.slug) as string;
+  const role = await getRole(slug);
 
-  const permissionsData = ref({
+  interface PermissionsData {
+    [key: string]: string[];
+  }
+
+  const permissionsData = ref<PermissionsData>({
     leads: ["VIEW_OWN_LEADS", "VIEW_GLOBAL_LEADS", "CREATE_LEADS", "EDIT_LEADS"],
     opportunities: ["VIEW_OWN_OPPORTUNITIES", "VIEW_GLOBAL_OPPORTUNITIES", "CREATE_OPPORTUNITIES", "EDIT_OPPORTUNITIES"],
     deals: ["VIEW_OWN_DEALS", "VIEW_GLOBAL_DEALS", "CREATE_DEALS", "EDIT_DEALS"],
-    proposals: ["VIEW_OWN_PROPOSALS", "VIEW_GLOBAL_PROPOSALS", "CREATE_PROPOSALS", "EDIT_PROPOSALS"],
+    proposals: ["VIEW_OWN_PROPOSALS", "VIEW_GLOBAL_PROPOSALS", "CREATE_PROPOSALS", "EDIT_PROPOSALS", "APPROVE_PROPOSALS", "REJECT_PROPOSALS", "WAITING_APPROVAL_PROPOSALS"],
     projects: ["VIEW_OWN_PROJECTS", "VIEW_GLOBAL_PROJECTS", "CREATE_PROJECTS", "EDIT_PROJECTS"],
     vehicles: ["VIEW_VEHICLES", "CREATE_VEHICLES", "EDIT_VEHICLES"],
     manpower: ["VIEW_MANPOWER", "CREATE_MANPOWER", "EDIT_MANPOWER"],
@@ -94,18 +99,22 @@
     if (permission.includes("EXPORT_SALES")) return "Export Sales Reports";
     if (permission.includes("EXPORT_PROJECT")) return "Export Project Reports";
     if (permission.includes("EXPORT_PERFORMANCE")) return "Export Performance Reports";
+    if (permission.includes("APPROVE")) return "Approve";
+    if (permission.includes("REJECT")) return "Reject";
+    if (permission.includes("WAITING_APPROVAL")) return "Waiting Approval";
     return permission.replace(/_/g, " ").toLowerCase();
   }
 
   // Get displayed permissions
   function getEffectivePermissions(section: string): string[] {
     const available = permissionsData.value[section];
-    const assigned = role?.permissions?.filter((p) => available.includes(p)) || [];
+    if (!available) return [];
+    const assigned = role?.permissions?.filter((p: string) => available.includes(p)) || [];
 
     if (assigned.length > 0) return assigned;
 
     // fallback to first VIEW_OWN_* if available
-    const fallback = available.find((p) => p.includes("VIEW_OWN"));
+    const fallback = available.find((p: string) => p.includes("VIEW_OWN"));
     return fallback ? [fallback] : [];
   }
 </script>

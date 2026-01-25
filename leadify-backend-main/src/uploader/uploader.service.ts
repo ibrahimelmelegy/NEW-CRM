@@ -62,7 +62,7 @@ class UploaderService {
     //TODO : enable on production
     //if (files.length !== paths.length) throw new BaseError(ERRORS.FILE_ERROR);
 
-    Uploader.update(
+    await Uploader.update(
       { hasReference: true },
       {
         where: {
@@ -72,7 +72,7 @@ class UploaderService {
     );
   }
   public async removeFileReferences(paths: string[]): Promise<void> {
-    Uploader.update(
+    await Uploader.update(
       { hasReference: false },
       {
         where: {

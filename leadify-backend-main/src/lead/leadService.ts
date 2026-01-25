@@ -44,7 +44,7 @@ class LeadService {
     }
 
     if (foundUsers.length !== 1) {
-      await notificationService.sendAssignLeadNotificatiom({
+      await notificationService.sendAssignLeadNotification({
         userId: adminId,
         target: lead.id
       });
@@ -72,14 +72,14 @@ class LeadService {
     const users = input.users?.filter((item: number) => !lead.users?.map(e => e.id).includes(item));
 
     if (users?.length) {
-      users.forEach(async (item: number) => {
-        await notificationService.sendAssignLeadNotificatiom({ userId: item, target: lead.id });
-      });
+      for (const item of users) {
+        await notificationService.sendAssignLeadNotification({ userId: item, target: lead.id });
+      }
     }
     if (input.users && Array.isArray(input.users)) await lead.$set('users', input.users);
     lead.set(input);
     await createActivityLog('lead', 'update', lead.id, user.id, null, `New updates added suucesfully`);
-    users?.length && (await notificationService.sendAssignLeadNotificatiom({ userId: user.id, target: lead.id }));
+    users?.length && (await notificationService.sendAssignLeadNotification({ userId: user.id, target: lead.id }));
     return await lead.save();
   }
 

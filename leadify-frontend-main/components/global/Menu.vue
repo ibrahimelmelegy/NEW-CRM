@@ -9,12 +9,12 @@
       .py-5.px-12.flex.items-center.gap-3(v-if="fullNav")
         img(class="cursor-pointer" src="/images/Logo.png" @click="router.push('/')")
       .py-5.px-5.flex.items-center.gap-3.relative.z-10(v-if="!fullNav")
-        img(class="cursor-pointer !h-[40px] !max-h-[40px]" src="/images/logo-shape.png" @click="router.push('/')")
+        img(class="cursor-pointer !h-[50px] !max-h-[50px]" src="/images/logo-shape.png" @click="router.push('/')")
       template(v-for="(navLink, index) in menu")
         el-sub-menu(:index='`${index+1}`' v-if="navLink.submenu")
           template(#title)
             div
-              Icon.myicon(size="20" :name="navLink.icon")
+              Icon.myicon(size="32" :name="navLink.icon")
             .mr-2
             span {{navLink.name}}
           div(v-for="(subLink, subIndex) in navLink.submenu")
@@ -36,7 +36,7 @@
             template(#title) {{navLink.name}}
           NuxtLink(:to="navLink.link" v-else)
             el-menu-item(:index="navLink.link" @click="mobileNavigate(navLink.link)" :class="{'is-active': route?.fullPath?.includes(navLink.link) && navLink.link !== '/'}")
-              Icon.myicon.mr-2(size="20" :name="navLink.icon")
+              Icon.myicon.mr-2(size="32" :name="navLink.icon")
               template(#title) {{navLink.name}}
 
 
