@@ -33,7 +33,7 @@ import { ref, onMounted, onUnmounted } from 'vue'
 import { Refresh, Loading } from '@element-plus/icons-vue'
 
 definePageMeta({
-  layout: 'default-no-padding',
+  layout: 'full-width',
   // You might want to adjust permissions based on your needs
   middleware: ['permissions'],
   permission: 'VIEW_OWN_PROPOSALS' 
@@ -92,10 +92,11 @@ const refreshFrame = () => {
 .react-proposal-container {
   display: flex;
   flex-direction: column;
-  /* Adjust height calculation if needed, assuming standard layout header */
+  /* Top spacing is 80px defined in layout */
   height: calc(100vh - 80px); 
   background: white;
   width: 100%;
+  overflow: hidden; 
 }
 
 .header {

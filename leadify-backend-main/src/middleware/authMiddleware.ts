@@ -68,7 +68,14 @@ export const authenticateUser = async (req: AuthenticatedRequest, res: Response,
 export const HasPermission = (requiredPermissions: string[]) => {
   return (req: AuthenticatedRequest, res: Response, next: NextFunction): void => {
     try {
-      if (!req.user || !req.user.role || !req.user.role.permissions) throw new BaseError(ERRORS.ACCESS_DENIED);
+      if (!req.user || !req.user.role) throw new BaseError(ERRORS.ACCESS_DENIED);
+
+      // Bypass check if user is SUPER_ADMIN
+      if (req.user.role.name === 'SUPER_ADMIN') {
+        return next();
+      }
+
+      if (!req.user.role.permissions) throw new BaseError(ERRORS.ACCESS_DENIED);
 
       const userPermissions = new Set(req.user.role.permissions);
       const hasAnyPermission = requiredPermissions.some(permission => userPermissions.has(permission));

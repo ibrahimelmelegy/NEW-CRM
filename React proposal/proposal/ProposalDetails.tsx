@@ -55,7 +55,7 @@ export const ProposalDetails: React.FC<ProposalDetailsProps> = ({ proposalId: pr
     };
 
     const handleDelete = async () => {
-        await deleteProposal.mutateAsync(parseInt(proposalId));
+        await deleteProposal.mutateAsync(proposalId);
         navigate('/');
     };
 

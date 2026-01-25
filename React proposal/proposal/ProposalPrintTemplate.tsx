@@ -33,9 +33,9 @@ const PrintStyles = () => (
             }
         }
         /* Rich Text Normalization */
-        .proposal-rich-text h1 { font-size: 1.5em; font-weight: 800; margin-top: 1em; margin-bottom: 0.5em; color: #111827; }
-        .proposal-rich-text h2 { font-size: 1.25em; font-weight: 700; margin-top: 1em; margin-bottom: 0.5em; color: #1f2937; }
-        .proposal-rich-text h3 { font-size: 1.1em; font-weight: 600; margin-top: 0.8em; margin-bottom: 0.4em; color: #374151; }
+        .proposal-rich-text h1 { font-size: 2.25rem; font-weight: 800; margin-top: 1.5rem; margin-bottom: 1rem; color: #111827; line-height: 1.2; }
+        .proposal-rich-text h2 { font-size: 1.875rem; font-weight: 700; margin-top: 1.25rem; margin-bottom: 0.75rem; color: #1f2937; line-height: 1.3; }
+        .proposal-rich-text h3 { font-size: 1.5rem; font-weight: 600; margin-top: 1rem; margin-bottom: 0.5rem; color: #374151; line-height: 1.4; }
         .proposal-rich-text p { margin-bottom: 0.8em; line-height: 1.6; color: #4b5563; }
         .proposal-rich-text ul { list-style-type: disc; margin-left: 1.5em; margin-bottom: 0.8em; }
         .proposal-rich-text table { width: 100%; border-collapse: collapse; margin: 1em 0; }

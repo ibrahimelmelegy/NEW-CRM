@@ -20,6 +20,10 @@ export default defineConfig({
                 changeOrigin: true,
                 secure: false,
             },
+            '/assets': {
+                target: 'http://localhost:5000',
+                changeOrigin: true,
+            },
         },
     },
     build: {
