@@ -41,10 +41,19 @@
     height: 80px !important;
   }
   .avatar {
-    transition: all 0.3s ease;
-    border: 1px solid transparent;
+    transition: var(--transition-smooth);
+    border: 1px solid var(--border-glass) !important;
+    background: var(--bg-surface-elevated) !important;
+    overflow: hidden;
+    
     &:hover {
-      border-color: $primary;
+      border-color: var(--accent-purple) !important;
+      transform: scale(1.05);
+      box-shadow: var(--shadow-active);
     }
+  }
+  
+  .text p {
+    color: var(--text-primary);
   }
 </style>

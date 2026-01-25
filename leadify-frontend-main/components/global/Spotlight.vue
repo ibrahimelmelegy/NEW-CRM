@@ -114,7 +114,7 @@ watch(isOpen, (value) => {
   right: 24px;
   width: 56px;
   height: 56px;
-  background: linear-gradient(135deg, #7c3aed 0%, #a855f7 100%);
+  background: var(--gradient-primary);
   border-radius: 16px;
   display: flex;
   align-items: center;
@@ -126,7 +126,7 @@ watch(isOpen, (value) => {
   
   &:hover {
     transform: translateY(-2px);
-    box-shadow: 0 12px 32px rgba(124, 58, 237, 0.5);
+    box-shadow: var(--shadow-active);
   }
   
   &:active {
@@ -248,12 +248,12 @@ watch(isOpen, (value) => {
   
   &:hover,
   &.active {
-    background: linear-gradient(135deg, #7c3aed 0%, #a855f7 100%);
+    background: var(--gradient-primary);
     
     .spotlight-item-icon,
     .spotlight-item-title,
     .spotlight-item-arrow {
-      color: white;
+      color: white !important;
     }
   }
 }

@@ -1,7 +1,7 @@
 <template lang="pug">
-.bg-white.rounded-3xl.py-6
+.glass-table-container.glass-card.py-8.animate-entrance
     .flex.justify-end.mx-2
-      el-button(v-if="exportButton"  @click="()=> $emit('exportClick')" size='large'   class="!bg-primary-purple-50 !text-primary-purple-500 !rounded-2xl")
+      el-button(v-if="exportButton"  @click="()=> $emit('exportClick')" size='large'   class="premium-btn-secondary")
        Icon(  name="IconExport" size="20")
        p.mx-1 Export
     .px-6.flex.items-center.flex-wrap.gap-2.mb-6.justify-start
@@ -13,10 +13,10 @@
                 :prefix-icon="Search"
                 @input="searchTimeOut"
             )
-        button.rounded-btn.flex.items-center(class="!text-primary-purple-700 !border-neutral-100 !rounded-3xl font-medium !px-4 !py-2.5" v-if="!withoutFilters" @click="filterBar = true")
+        button.rounded-btn.flex.items-center(class="premium-btn-outline" v-if="!withoutFilters" @click="filterBar = true")
             Icon(  name="IconFilter" size="20")
             span.mr-2 Filters
-            span.font-bold.rounded-full.w-6.h-6.bg-primary-purple-50.flex.items-center.justify-center(v-if="numberOfFilters") {{ numberOfFilters }}
+            span.font-bold.rounded-full.w-6.h-6.bg-accent-purple.text-white.flex.items-center.justify-center(v-if="numberOfFilters") {{ numberOfFilters }}
     div(:class="{ 'mt-4': !withoutSearch || !withoutFilters }")
         el-table(:data='finalData || []' stripe v-loading="isLoading || loading" ref="tableRef" style='width:100%' :row-style="{cursor:'pointer'}" @current-change="(val)=> $emit('handleRowClick' , val)"   @sort-change="handleSortChange" @filter-change="handleFilterChange"  :default-sort="sort" @selection-change="handleSelectionChange")
             el-table-column(type="index", width="50" :index="calculateIndex")
@@ -43,23 +43,23 @@
         .pagination.mt-5.flex.items-center.flex-wrap.gap-2.px-6(class=" sm:justify-between justify-center" v-if="!withoutPagination")
 
             .flex.items-center.gap-3
-              span.text-sm.text-neutral-400 Show
-              el-select(size="medium"  v-model="limit" :placeholder="limit"  style="width: 65px" @change="handleSizeChange")
+              span.text-xs.font-bold.text-muted.uppercase.tracking-widest Show
+              el-select(size="default"  v-model="limit" :placeholder="limit"  style="width: 75px" @change="handleSizeChange")
                 el-option( v-for="item in [10,25,50]" :key="item" :label="item" :value="item" )
-              span.text-sm.text-neutral-400 entries
+              span.text-xs.font-bold.text-muted.uppercase.tracking-widest entries
             el-pagination( background style="direction:ltr"  :pager-count="4"  :page-count="pagintaion?.totalPages" v-model:current-page='currentPage' :page-size='limit'  layout=' prev, pager, next' :total='pagintaion?.totalItems' )
     TableFilter(v-model="filterBar" v-if="!withoutFilters" :filterOptions="filterOptions" @filter="handleFilter" @reset="handleReset")
 </template>
 
 <script setup lang="ts">
   import { Calendar, Search } from "@element-plus/icons-vue";
-  import { fa } from "element-plus/es/locale/index.mjs";
+  import type { ElTable } from 'element-plus';
   const filterBar = ref(false);
   const route = useRoute();
   const router = useRouter();
   const isLoading = ref(false);
 
-  const tableRef = ref(null);
+  const tableRef = ref<InstanceType<typeof ElTable> | null>(null);
   const props = defineProps({
     columns: {
       type: Array,

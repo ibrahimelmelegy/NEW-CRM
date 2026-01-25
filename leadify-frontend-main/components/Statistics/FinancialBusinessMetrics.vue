@@ -1,21 +1,35 @@
 <template lang="pug">
-  .projects-operations.bg-white.rounded-2xl.p-6
-    .header.mb-4
-      h2(class="text-xl font-bold text-neutral-800 mb-4") Financial & Business Metrics Widgets
-      //- StatisticsHeader
+.financial-metrics.chromatic-dashboard
+  .header.mb-8
+    h2(class="text-2xl font-bold text-primary mb-2") Financial & Business Metrics
+    p.text-muted Tracking revenue flow, outstanding invoices, and payment collections.
 
-    .cards.grid.grid-cols-3.gap-4.mb-4
-      StatisticsCard(:name="i.name" :data="i.value" v-for="i in bussinesStats.firstCards")
+  //- Core Financial Row
+  .cards.grid.grid-cols-3.gap-6.mb-8
+    StatisticsCard(
+      name="Total Deals Revenue" 
+      :data="bussinesStats.firstCards[0].value" 
+      icon="ph:currency-circle-dollar-bold" 
+      colorType="rose"
+    )
+    StatisticsCard(
+      name="Outstanding Invoices" 
+      :data="bussinesStats.firstCards[1].value" 
+      icon="ph:receipt-bold" 
+      colorType="amber"
+    )
+    StatisticsCard(
+      name="Collected Payments" 
+      :data="bussinesStats.firstCards[2].value" 
+      icon="ph:check-circle-bold" 
+      colorType="emerald"
+    )
 </template>
 
 <script lang="ts" setup>
-  import VChart from "vue-echarts";
-
-  // fake data
-  const colorPalette = ["#7849ff", "#9360ff", "#9360ff"];
-
   const bussinesStats = ref(await getBussinesStatics());
-
-  // const barChartOptions = getBarHorizontalChartData(bussinesStats.value?.projectsByStatus, colorPalette);
-  // const pieChartOptions = getPieChartsData(dummyBarChartData, colorPalette);
 </script>
+
+<style lang="scss" scoped>
+.chromatic-dashboard { padding: 10px; }
+</style>

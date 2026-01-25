@@ -1,66 +1,76 @@
 <template lang="pug">
-  .projects-operations.bg-white.rounded-2xl.p-6
-    .header.mb-4
-      h2(class="text-xl font-bold text-neutral-800 mb-4") Projects & Operations Widgets
-      //- StatisticsHeader
+.projects-operations.chromatic-dashboard
+  .header.mb-8
+    h2(class="text-2xl font-bold text-primary mb-2") Projects & Operations Overview
+    p.text-muted Monitor project lifecycles, asset utilization, and manpower efficiency.
 
-    .cards.grid.grid-cols-2.gap-4.mb-4
-      StatisticsCard(:name="i.name" :data="i.value" v-for="i in projectStats.firstCards")
+  //- First Row: Essential Project Metrics
+  .cards.grid.grid-cols-2.gap-6.mb-8
+    StatisticsCard(
+      name="Total Projects" 
+      :data="projectStats.firstCards[0].value" 
+      icon="ph:projector-screen-chart-bold" 
+      colorType="indigo"
+    )
+    StatisticsCard(
+      name="Eitmad Projects Overview" 
+      :data="projectStats.firstCards[1].value" 
+      icon="ph:certificate-bold" 
+      colorType="cyan"
+    )
 
-    .bar-horizontal-chart.mb-4
-      el-card.p-6.col-span-8(v-loading="loading" class='h-[400px]')
-        h3(class="text-base font-semibold text-black") Projects by Status
-        v-chart.bar-chart(:option='barChartOptions' autoresize)
-    //- .bar-chart-cards.grid.grid-cols-12.gap-4.mb-4
-    //-   el-card.p-6.col-span-9(v-loading="statsLoading" class='h-400px]')
-    //-     h3(class="text-base font-semibold text-black") Projects by Status
-    //-     v-chart.bar-chart(:option='barChartOptions' autoresize)
-    //-   .col-span-3.gap-y-4.grid
-    //-     StatisticsCard(:name="i.name" :data="i.value" v-for="i in projectStats.secondCards")
-    //- .pie-chart.grid.grid-cols-2.gap-4
-    //-   el-card.p-6(v-loading="loading" class='h-[600px]')
-    //-     .flex.items-center.justify-between.mb-4
-    //-       h3(class="text-base font-semibold text-black") Manpower Resource Allocation
+  //- Second Row: Horizontal Status Overview
+  .bar-horizontal-chart.mb-8
+    el-card.glass-container(v-loading="statsLoading" class="h-[420px]")
+      template(#header)
+        .flex.items-center.gap-2
+          .w-2.h-6.bg-accent-indigo.rounded-full
+          h3(class="text-lg font-semibold text-primary") Projects by Status
+      
+      div(class="h-[320px]")
+        v-chart.bar-chart(:option="barChartOptions" autoresize)
 
-    //-       //- el-select(size="large" @change="setCardsFilter('custom')"  class="!w-[120px]" )
-    //-       //-   template(#prefix)
-    //-       //-     Icon.text-lg.text-main(name="solar:calendar-minimalistic-linear")
-    //-       //-   el-option(v-for="item in yearsFilterOptionTime" :key="item" :label="item.value" :value="item")
+  //- Third Row: Resource Allocations (Pie Charts)
+  .pie-chart.grid.grid-cols-2.gap-6
+    el-card.glass-container(v-loading="statsLoading" class="h-[550px]")
+      template(#header)
+        .flex.items-center.gap-2
+          .w-2.h-6.bg-accent-emerald.rounded-full
+          h3(class="text-lg font-semibold text-primary") {{ projectStats?.pieChart_one?.title }}
+      
+      div(class="h-[430px]")
+        v-chart.pie-chart(:option="getPieChartsData(projectStats?.pieChart_one?.options, vibrantPalette)" autoresize)
 
-    //-     v-chart.pie-chart(:option='pieChartOptions' autoresize)
-
-    //-   el-card.p-6(v-loading="loading" class='h-[600px]')
-    //-     .flex.items-center.justify-between.mb-4
-    //-       h3(class="text-base font-semibold text-black") Manpower Resource Allocation
-
-    //-       //- el-select(size="large" @change="setCardsFilter('custom')"  class="!w-[120px]" )
-    //-       //-   template(#prefix)
-    //-       //-     Icon.text-lg.text-main(name="solar:calendar-minimalistic-linear")
-    //-       //-   el-option(v-for="item in yearsFilterOptionTime" :key="item" :label="item.value" :value="item")
-
-    //-     v-chart.pie-chart(:option='pieChartOptions' autoresize)
-    .pie-chart.grid.grid-cols-2.gap-4
-      el-card.p-6(v-loading="loading" class='h-[600px]')
-        .flex.items-center.justify-between.mb-4
-          h3(class="text-base font-semibold text-black") {{projectStats?.pieChart_one?.title}}
-
-        v-chart.pie-chart(:option='getPieChartsData(projectStats?.pieChart_one?.options, colorPalette)' autoresize)
-
-      el-card.p-6(v-loading="loading" class='h-[600px]')
-        .flex.items-center.justify-between.mb-4
-          h3(class="text-base font-semibold text-black") {{projectStats?.pieChart_two?.title}}
-
-        v-chart.pie-chart(:option='getPieChartsData(projectStats?.pieChart_two?.options, colorPalette)' autoresize)
-
+    el-card.glass-container(v-loading="statsLoading" class="h-[550px]")
+      template(#header)
+        .flex.items-center.gap-2
+          .w-2.h-6.bg-accent-amber.rounded-full
+          h3(class="text-lg font-semibold text-primary") {{ projectStats?.pieChart_two?.title }}
+      
+      div(class="h-[430px]")
+        v-chart.pie-chart(:option="getPieChartsData(projectStats?.pieChart_two?.options, vibrantPalette)" autoresize)
 </template>
 
 <script lang="ts" setup>
   import VChart from "vue-echarts";
 
-  // fake data
-  const colorPalette = ["#7849ff", "#9360ff", "#9360ff"];
-
+  const vibrantPalette = ["#F59E0B", "#10B981", "#F97316", "#0EA5E9", "#6366F1", "#F43F5E"];
+  
   const projectStats = ref(await getProjectOperationsStatics());
-
-  const barChartOptions = getBarHorizontalChartData(projectStats.value?.projectsByStatus, colorPalette);
+  const barChartOptions = getBarHorizontalChartData(projectStats.value?.projectsByStatus, vibrantPalette);
 </script>
+
+<style lang="scss" scoped>
+.chromatic-dashboard { padding: 10px; }
+.glass-container {
+  background: var(--bg-card) !important;
+  background-image: var(--gradient-glass) !important;
+  border: 1px solid var(--border-glass) !important;
+  border-radius: var(--radius-card) !important;
+  backdrop-filter: blur(10px);
+  :deep(.el-card__header) {
+    border-bottom: 1px solid var(--border-stroke);
+    padding: 20px 24px;
+  }
+}
+</style>

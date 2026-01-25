@@ -15,29 +15,36 @@
                 button.toggle-icon(@click="openNav" :class="{'margined' : !fullNav}"): Icon.text-sm(name="ph:list-bold")
               div(class="breadcrumb")
                 el-breadcrumb(:separator-icon="ArrowRight")      
-                  el-breadcrumb-item(to="/") Dashboard
-                  el-breadcrumb-item(v-for="(route, index) in breadcrumbRoutes",  :key="index", @click="getPath(route)" , class="cursor-pointer",  :class="{ 'last': index === breadcrumbRoutes.length - 1 }"  ) {{ route }}
+                  el-breadcrumb-item(to="/") 
+                    span.breadcrumb-home Dashboard
+                  el-breadcrumb-item(v-for="(route, index) in breadcrumbRoutes",  :key="index", @click="getPath(route)" , class="cursor-pointer",  :class="{ 'last': index === breadcrumbRoutes.length - 1 }"  ) 
+                    span.breadcrumb-text {{ route }}
             .flex.gap-3.items-center
               .tools.flex.items-center(class="p-2 rounded-full gap-2.5" )
+                //- Circular Spotlight Button (⌘)
+                button.premium-nav-btn.spotlight-btn(@click="open" title="Search (Alt+K)")
+                  Icon(name="ph:command-bold")
+                
                 ColorModeToggle
+                
+                //- Circular Notification Button
+                .notification.premium-nav-btn
+                  NuxtLink.flex.items-center.justify-center.w-full.h-full(:to="`/notification`" )
+                    Icon.text-xl(name="ph:bell-bold")
+                    div.notification-badge(v-if="response?.unreadNotificationsCount > 0")
+                
+                //- Profile Dropdown
                 el-dropdown(class="outline-0")
-                      div.profile-trigger.flex.gap-3.items-center.outline-0.border-0.cursor-pointer
-                            Avatar(:src="user?.profilePicture", small)
-                            p.mb-0.text-base.font-medium.text-neutral-800 {{user?.name}}
-                                //- p.text-xs.font-medium.opacity-50 {{ user?.email }}
-                            Icon.text-xl(name="iconamoon:arrow-down-2")
-                      template(#dropdown='')
-                        el-dropdown-menu
-                            //- NuxtLink(:to="'/profile'"): el-dropdown-item
-                            //-     p.text-xs profile
-                            el-dropdown-item(@click="logout")
-                                p.text-xs logout
-              .notification.notification-btn(class="rounded-full relative flex items-center justify-center w-10 h-10")
-               NuxtLink.flex.items-center.justify-center.w-full.h-full(:to="`/notification`" )
-                Icon.text-xl(name="ph:bell-bold")
-                div.notification-badge(v-if="response?.unreadNotificationsCount > 0")
+                    div.profile-trigger.flex.gap-3.items-center.outline-0.border-0.cursor-pointer
+                          Avatar(:src="user?.profilePicture", small)
+                          p.mb-0.text-base.font-medium {{user?.name}}
+                          Icon.text-xl(name="iconamoon:arrow-down-2")
+                    template(#dropdown='')
+                      el-dropdown-menu
+                          el-dropdown-item(@click="logout")
+                              p.text-xs logout
           .mt-4
-        .slot-content(class="!mt-24" :class="{'!pl-[32px] !pr-[50px]' : !mobile, '!px-[20px] '  : mobile}")
+        .slot-content(class="!mt-24 animate-entrance" :class="{'!pl-[32px] !pr-[50px]' : !mobile, '!px-[20px] '  : mobile}")
             slot
   </template>
 <script setup lang="ts">
@@ -47,9 +54,8 @@ import { useMain } from "~/stores/common";
 import { ArrowRight, Search, Plus } from "@element-plus/icons-vue";
 import { ElNotification } from "element-plus";
 
-// Initialize Spotlight (keyboard listener)
-import { useSpotlight } from "~/composables/useSpotlight";
-useSpotlight();
+// Initialize Spotlight
+const { open } = useSpotlight();
 
 const mainData = useMain();
 const { fullNav, mobile, hideNav } = storeToRefs(mainData);
@@ -247,12 +253,6 @@ const getPath = (routeName: string) => {
     position: absolute;
     width: 100%;
     height: 100%;
-  }
-}
-.breadcrumb {
-  display: none;
-  @media screen and (min-width: 991px) {
-    display: block;
   }
 }
 </style>

@@ -1,19 +1,19 @@
 import { defineStore } from 'pinia';
+// @ts-ignore
 import ImageUploader from 'quill-image-uploader';
 import { ElNotification } from 'element-plus';
 
-const runtimeConfig = useRuntimeConfig();
-
 export const useMain = defineStore('Main', {
   state: () => ({
-    filereturned: '',
-    contentImagesUrls: [],
+    filereturned: '' as string,
+    contentImagesUrls: [] as string[], // تعريف النوع كـ string[] بدلاً من never[]
 
     openedNav: true,
     mobile: false,
     fullNav: true,
     hideNav: false,
-    permissions: [],
+    permissions: [] as string[],
+    isLight: false,
 
     months: [
       { label: 'January', value: 1 },
@@ -32,46 +32,57 @@ export const useMain = defineStore('Main', {
   }),
 
   actions: {
-    async uploadFile(model, file) {
+    async uploadFile(model: string, file: File) {
       const extension = file.name.slice(file.name.lastIndexOf('.'));
-
-      let fileName = `Tatmeen-${new Date().getTime()}${extension}`;
+      let fileName = `HPT-${new Date().getTime()}${extension}`;
+      const runtimeConfig = useRuntimeConfig();
 
       const myRenamedFile = new File([file], fileName, { type: file.type });
-      const { data } = await useAsyncGql('generateUploadLink', {
-        model: model.toUpperCase(),
-        fileName: fileName,
-        contentType: file.type,
-        sizeInBytes: file.size,
-      });
-      const link = data.value?.generateUploadLink.data;
+
+      // حل مشكلة useAsyncGql: تأكد من تثبيت nuxt-graphql-client
+      // واستخدمها بهذا الشكل أو استبدلها بـ Gql-prefix لو متاحة
       try {
-        const response = await $fetch(link, {
+        // @ts-ignore
+        const { data } = await useAsyncGql('generateUploadLink', {
+          model: model.toUpperCase(),
+          fileName: fileName,
+          contentType: file.type,
+          sizeInBytes: file.size,
+        });
+
+        const link = data.value?.generateUploadLink.data;
+
+        await $fetch(link, {
           method: 'PUT',
           body: myRenamedFile,
         });
+
         const filereturned = link?.split('?')[0].split(runtimeConfig.public.BUCKET_URL)[1];
         return filereturned;
-      } catch (error) {
+      } catch (error: any) {
         ElNotification({
           title: 'Error',
           type: 'error',
-          message: error,
+          message: error?.message || 'Upload failed',
         });
+        throw error;
       }
     },
+
     uploadImagEditor() {
+      const runtimeConfig = useRuntimeConfig();
       return {
         name: 'imageUploader',
         module: ImageUploader,
         options: {
-          upload: async (filename) => {
+          upload: async (file: File) => {
             return new Promise(async (resolve, reject) => {
               try {
-                const fileAdded = await this.uploadFile('BLOG_COVER', filename);
-                this.contentImagesUrls.push(fileAdded);
-
-                resolve(runtimeConfig.public.BUCKET_URL + fileAdded);
+                const fileAdded = await this.uploadFile('BLOG_COVER', file);
+                if (fileAdded) {
+                  this.contentImagesUrls.push(fileAdded);
+                  resolve(runtimeConfig.public.BUCKET_URL + fileAdded);
+                }
               } catch (error) {
                 reject('Upload failed');
                 console.error('Error:', error);
@@ -84,7 +95,8 @@ export const useMain = defineStore('Main', {
   },
 });
 
-function fileToDataUrl(file) {
+// تحويل الدالة لـ Typed Function
+function fileToDataUrl(file: File): Promise<string | ArrayBuffer | null> {
   return new Promise((resolve, reject) => {
     if (!file) {
       reject('No file provided.');
@@ -93,11 +105,10 @@ function fileToDataUrl(file) {
 
     const reader = new FileReader();
     reader.onload = function (event) {
-      const dataUrl = reader.result;
-      resolve(dataUrl);
+      resolve(event.target?.result || null);
     };
 
-    reader.onerror = function (event) {
+    reader.onerror = function () {
       reject('Error reading the file.');
     };
 

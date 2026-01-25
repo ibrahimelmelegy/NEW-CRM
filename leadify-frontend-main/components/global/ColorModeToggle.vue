@@ -5,16 +5,20 @@ button.mode-toggle(@click="toggleTheme" :title="isDark ? 'Switch to Light Mode' 
 </template>
 
 <script setup lang="ts">
-const isDark = ref(true);
+import { useMain } from "~/stores/common";
+const mainStore = useMain();
+
+// State is global via mainStore.isLight
+const isDark = computed(() => !mainStore.isLight);
 
 const toggleTheme = () => {
-    isDark.value = !isDark.value;
+    mainStore.isLight = !mainStore.isLight;
     updateTheme();
 };
 
 const updateTheme = () => {
     const body = document.querySelector('body');
-    if (isDark.value) {
+    if (!mainStore.isLight) {
         body?.classList.remove('light-mode');
         localStorage.setItem('theme', 'dark');
     } else {
@@ -26,11 +30,11 @@ const updateTheme = () => {
 onMounted(() => {
     const savedTheme = localStorage.getItem('theme');
     if (savedTheme === 'light') {
-        isDark.value = false;
+        mainStore.isLight = true;
         updateTheme();
     } else {
         // Default to dark
-        isDark.value = true;
+        mainStore.isLight = false;
         document.querySelector('body')?.classList.remove('light-mode');
     }
 });

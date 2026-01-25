@@ -1,21 +1,35 @@
 <template lang="pug">
-  .projects-operations.bg-white.rounded-2xl.p-6
-    .header.mb-4
-      h2(class="text-xl font-bold text-neutral-800 mb-4") Performance & HR Widgets
-      //- StatisticsHeader
+.performance-hr.chromatic-dashboard
+  .header.mb-8
+    h2(class="text-2xl font-bold text-primary mb-2") Performance & HR Metrics
+    p.text-muted Analyze team productivity, conversion efficiency, and success rates.
 
-    .cards.grid.grid-cols-3.gap-4.mb-4
-      StatisticsCard(:name="i.name" :data="i.value" v-for="i in preformanceStats.firstCards")
+  //- Team Performance Row
+  .cards.grid.grid-cols-3.gap-6.mb-8
+    StatisticsCard(
+      name="Total Leads" 
+      :data="preformanceStats.firstCards[0].value" 
+      icon="ph:users-four-bold" 
+      colorType="indigo"
+    )
+    StatisticsCard(
+      name="Opp -> Deal Conv." 
+      :data="preformanceStats.firstCards[1].value" 
+      icon="ph:trend-up-bold" 
+      colorType="cyan"
+    )
+    StatisticsCard(
+      name="Total Deals" 
+      :data="preformanceStats.firstCards[2].value" 
+      icon="ph:medal-bold" 
+      colorType="emerald"
+    )
 </template>
 
 <script lang="ts" setup>
-  import VChart from "vue-echarts";
-
-  // fake data
-  const colorPalette = ["#7849ff", "#9360ff", "#9360ff"];
-
   const preformanceStats = ref(await getPerformanceStatics());
-
-  // const barChartOptions = getBarHorizontalChartData(bussinesStats.value?.projectsByStatus, colorPalette);
-  // const pieChartOptions = getPieChartsData(dummyBarChartData, colorPalette);
 </script>
+
+<style lang="scss" scoped>
+.chromatic-dashboard { padding: 10px; }
+</style>

@@ -41,7 +41,7 @@
         <div class="toolbar-group">
           <input 
             type="color" 
-            @input="editor.chain().focus().setColor($event.target.value).run()"
+            @input="editor.chain().focus().setColor(($event.target as HTMLInputElement).value).run()"
             :value="editor.getAttributes('textStyle').color || '#000000'"
             title="Text Color"
             class="color-picker"
@@ -146,22 +146,22 @@
 <script setup lang="ts">
 import { useEditor, EditorContent, BubbleMenu } from '@tiptap/vue-3'
 import StarterKit from '@tiptap/starter-kit'
-import Image from '@tiptap/extension-image'
-import Table from '@tiptap/extension-table'
-import TableRow from '@tiptap/extension-table-row'
-import TableCell from '@tiptap/extension-table-cell'
-import TableHeader from '@tiptap/extension-table-header'
-import TextAlign from '@tiptap/extension-text-align'
-import TextStyle from '@tiptap/extension-text-style'
+import { Image } from '@tiptap/extension-image'
+import { Table } from '@tiptap/extension-table'
+import { TableRow } from '@tiptap/extension-table-row'
+import { TableCell } from '@tiptap/extension-table-cell'
+import { TableHeader } from '@tiptap/extension-table-header'
+import { TextAlign } from '@tiptap/extension-text-align'
+import { TextStyle } from '@tiptap/extension-text-style'
 import { Color } from '@tiptap/extension-color'
-import Highlight from '@tiptap/extension-highlight'
-import TaskList from '@tiptap/extension-task-list'
-import TaskItem from '@tiptap/extension-task-item'
-import Link from '@tiptap/extension-link'
-import Underline from '@tiptap/extension-underline'
-import Subscript from '@tiptap/extension-subscript'
-import Superscript from '@tiptap/extension-superscript'
-import Placeholder from '@tiptap/extension-placeholder'
+import { Highlight } from '@tiptap/extension-highlight'
+import { TaskList } from '@tiptap/extension-task-list'
+import { TaskItem } from '@tiptap/extension-task-item'
+import { Link } from '@tiptap/extension-link'
+import { Underline } from '@tiptap/extension-underline'
+import { Subscript } from '@tiptap/extension-subscript'
+import { Superscript } from '@tiptap/extension-superscript'
+import { Placeholder } from '@tiptap/extension-placeholder'
 
 // Props & Emits
 const props = defineProps<{
@@ -211,7 +211,7 @@ const editor = useEditor({
 watch(() => props.modelValue, (newValue) => {
   const isSame = editor.value?.getHTML() === newValue
   if (!isSame && editor.value) {
-    editor.value.commands.setContent(newValue, false)
+    editor.value.commands.setContent(newValue || '', { emitUpdate: false })
   }
 })
 
@@ -261,24 +261,25 @@ const setHeading = (event: Event) => {
 .ultimate-editor-container {
   display: flex;
   flex-direction: column;
-  background-color: #f3f4f6; /* Gray background behind paper */
+  background-color: var(--bg-obsidian) !important;
   height: 100%;
   min-height: 500px;
-  border-radius: 8px;
+  border-radius: var(--radius-card);
   overflow: hidden;
   position: relative;
+  border: 1px solid var(--border-glass);
 }
 
 /* --- TOOLBAR STYLES --- */
 .toolbar-wrapper {
-  background: #ffffff;
-  border-bottom: 1px solid #e5e7eb;
-  padding: 8px 16px;
+  background: var(--bg-sidebar) !important;
+  border-bottom: 1px solid var(--border-stroke);
+  padding: 12px 20px;
   display: flex;
   flex-direction: column;
   gap: 8px;
   z-index: 10;
-  box-shadow: 0 2px 4px rgba(0,0,0,0.02);
+  backdrop-filter: blur(10px);
 }
 
 .sticky-top {
@@ -290,19 +291,19 @@ const setHeading = (event: Event) => {
   display: flex;
   flex-wrap: wrap;
   align-items: center;
-  gap: 8px;
+  gap: 12px;
 }
 
 .toolbar-group {
   display: flex;
   align-items: center;
-  gap: 4px;
+  gap: 6px;
 }
 
 .divider {
   width: 1px;
   height: 24px;
-  background-color: #e5e7eb;
+  background-color: var(--border-stroke);
   margin: 0 4px;
   
   &.small {
@@ -313,33 +314,33 @@ const setHeading = (event: Event) => {
 button {
   background: transparent;
   border: 1px solid transparent;
-  border-radius: 4px;
-  padding: 6px;
+  border-radius: 8px;
+  padding: 8px;
   cursor: pointer;
-  color: #374151;
+  color: var(--text-secondary);
   display: flex;
   align-items: center;
   justify-content: center;
-  transition: all 0.2s;
+  transition: var(--transition-smooth);
 
   &:hover {
-    background-color: #f3f4f6;
-    color: #000;
+    background-color: rgba(255, 255, 255, 0.05);
+    color: var(--text-primary);
   }
 
   &.is-active {
-    background-color: #e0e7ff; /* Indigo-100 */
-    color: #4f46e5; /* Indigo-600 */
-    border-color: #c7d2fe;
+    background-color: rgba(124, 58, 237, 0.15); 
+    color: var(--accent-purple); 
+    border-color: rgba(124, 58, 237, 0.3);
   }
 
   &:disabled {
-    opacity: 0.5;
+    opacity: 0.3;
     cursor: not-allowed;
   }
 
   i {
-     font-size: 18px;
+     font-size: 20px;
   }
 }
 
@@ -348,22 +349,25 @@ button {
   width: 32px;
   height: 32px;
   padding: 0;
-  border: none;
-  border-radius: 4px;
+  border: 2px solid var(--border-glass);
+  border-radius: 6px;
   cursor: pointer;
   overflow: hidden;
+  background: transparent;
 }
 
 .heading-select {
-  border: 1px solid #d1d5db;
-  border-radius: 4px;
-  padding: 4px 8px;
+  background: var(--bg-card);
+  border: 1px solid var(--border-stroke);
+  border-radius: 8px;
+  padding: 6px 12px;
   font-size: 14px;
-  color: #374151;
+  color: var(--text-primary);
   outline: none;
+  cursor: pointer;
   
   &:focus {
-     border-color: #4f46e5;
+     border-color: var(--accent-purple);
   }
 }
 
@@ -371,29 +375,36 @@ button {
 .sub-toolbar {
    display: flex;
    align-items: center;
-   gap: 6px;
-   background: #f9fafb;
-   padding: 4px 8px;
-   border-radius: 4px;
-   font-size: 12px;
+   gap: 8px;
+   background: rgba(0, 0, 0, 0.2);
+   padding: 8px 16px;
+   border-radius: 8px;
+   font-size: 13px;
    flex-wrap: wrap;
+   margin-top: 4px;
 
    .label {
       font-weight: 600;
-      color: #6b7280;
+      color: var(--text-muted);
       margin-right: 4px;
    }
 
    button {
-      padding: 2px 6px;
-      font-size: 11px;
-      border: 1px solid #d1d5db;
-      background: white;
+      padding: 4px 10px;
+      font-size: 12px;
+      border: 1px solid var(--border-stroke);
+      background: var(--bg-card);
+      color: var(--text-secondary);
       
       &.danger {
          color: #ef4444;
-         border-color: #fecaca;
-         &:hover { background: #fee2e2; }
+         border-color: rgba(239, 68, 68, 0.2);
+         &:hover { background: rgba(239, 68, 68, 0.1); }
+      }
+      
+      &:hover {
+          background: rgba(255,255,255,0.05);
+          color: var(--text-primary);
       }
    }
 }
@@ -402,9 +413,10 @@ button {
 .editor-viewport {
   flex: 1;
   overflow-y: auto;
-  padding: 40px 20px;
+  padding: 60px 20px;
   display: flex;
   justify-content: center;
+  background: var(--bg-obsidian);
 }
 
 .ultimum-paper {
@@ -414,19 +426,19 @@ button {
   width: 210mm; 
   min-height: 297mm;
   
-  background: white;
-  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+  background: #FFFFFF;
+  border-radius: 4px;
+  box-shadow: var(--shadow-premium);
   padding: 25mm; /* Standard margins */
   margin-bottom: 40px;
   
   /* Typography basics */
-  font-family: 'Inter', sans-serif;
-  color: #1f2937;
-  line-height: 1.6;
+  font-family: 'Poppins', sans-serif;
+  color: #1a1a1a;
+  line-height: 1.7;
   font-size: 11pt;
 
-  /* RTL Support - Default to auto, but can be forced if needed */
-  direction: ltr; /* Elements will define their own dir via textAlign usually, or global 'dir="auto"' */
+  direction: ltr; 
   
   /* Placeholder Logic */
   .ProseMirror p.is-editor-empty:first-child::before {
@@ -438,69 +450,77 @@ button {
   }
 }
 
-/* --- TIPTAP CONTENT STYLES (Make it look like Word) --- */
+/* --- TIPTAP CONTENT STYLES --- */
 .ProseMirror {
   outline: none;
 
   > * + * {
-    margin-top: 0.75em;
+    margin-top: 1em;
   }
 
   ul, ol {
     padding: 0 1rem;
-    padding-inline-start: 1.5rem; /* Better RTL support */
+    padding-inline-start: 1.5rem;
   }
 
   h1, h2, h3, h4, h5, h6 {
-    line-height: 1.1;
+    line-height: 1.2;
     font-weight: 700;
-    color: #111827;
+    color: #111111;
+    margin-top: 1.5em;
+    margin-bottom: 0.5em;
   }
 
   code {
-    background-color: rgba(#616161, 0.1);
-    color: #616161;
+    background-color: #f1f1f1;
+    color: #e83e8c;
+    padding: 0.2em 0.4em;
+    border-radius: 4px;
   }
 
   pre {
-    background: #0D0D0D;
-    color: #FFF;
+    background: #1e1e1e;
+    color: #d4d4d4;
     font-family: 'JetBrainsMono', monospace;
-    padding: 0.75rem 1rem;
-    border-radius: 0.5rem;
+    padding: 1rem;
+    border-radius: 8px;
+    overflow-x: auto;
 
     code {
       color: inherit;
       padding: 0;
       background: none;
-      font-size: 0.8rem;
+      font-size: 0.9rem;
     }
   }
 
   img {
     max-width: 100%;
     height: auto;
-    border-radius: 4px;
+    border-radius: 8px;
     display: block;
-    margin: 1rem auto; /* Center by default */
+    margin: 2rem auto;
+    box-shadow: 0 10px 20px rgba(0,0,0,0.1);
 
     &.ProseMirror-selectednode {
-      outline: 3px solid #68CEF8;
+      outline: 3px solid var(--accent-purple);
     }
   }
 
   blockquote {
-    padding-left: 1rem;
-    border-left: 3px solid #d1d5db; /* Gray-300 */
-    border-inline-start: 3px solid #d1d5db;
-    border-inline-end: none;
-    color: #4b5563;
+    padding-left: 1.5rem;
+    border-left: 4px solid var(--accent-purple);
+    color: #555555;
+    font-style: italic;
+    background: #f9f9f9;
+    padding: 1rem 1.5rem;
+    border-radius: 0 8px 8px 0;
   }
 
   hr {
     border: none;
-    border-top: 2px solid rgba(#0D0D0D, 0.1);
-    margin: 2rem 0;
+    border-top: 2px solid #eeeeee;
+    margin: 3rem 0;
   }
   
   /* --- TABLES --- */
@@ -508,13 +528,14 @@ button {
     border-collapse: collapse;
     table-layout: fixed;
     width: 100%;
-    margin: 0;
+    margin: 1.5rem 0;
     overflow: hidden;
+    border: 1px solid #dddddd;
 
     td, th {
       min-width: 1em;
-      border: 2px solid #ced4da;
-      padding: 3px 5px;
+      border: 1px solid #cccccc;
+      padding: 12px 15px;
       vertical-align: top;
       box-sizing: border-box;
       position: relative;
@@ -525,9 +546,9 @@ button {
     }
 
     th {
-      font-weight: bold;
+      font-weight: 700;
       text-align: left;
-      background-color: #f1f3f5;
+      background-color: #f8f9fa;
     }
 
     .selectedCell:after {
@@ -535,7 +556,7 @@ button {
       position: absolute;
       content: "";
       left: 0; right: 0; top: 0; bottom: 0;
-      background: rgba(200, 200, 255, 0.4);
+      background: rgba(124, 58, 237, 0.1);
       pointer-events: none;
     }
 
@@ -545,7 +566,7 @@ button {
       top: 0;
       bottom: 0;
       width: 4px;
-      background-color: #adf;
+      background-color: var(--accent-purple);
       pointer-events: none;
     }
   }
@@ -557,13 +578,13 @@ button {
 
     li {
       display: flex;
-      gap: 0.5rem;
+      gap: 1rem;
       align-items: flex-start;
-      margin-bottom: 0.5rem;
+      margin-bottom: 0.75rem;
 
       > label {
         flex: 0 0 auto;
-        margin-top: 0.2rem;
+        margin-top: 0.3rem;
         user-select: none;
       }
 
@@ -574,8 +595,9 @@ button {
     
     input[type="checkbox"] {
         cursor: pointer;
-        width: 1.1em;
-        height: 1.1em;
+        width: 1.2em;
+        height: 1.2em;
+        accent-color: var(--accent-purple);
     }
   }
 }
@@ -583,23 +605,25 @@ button {
 /* --- BUBBLE MENU --- */
 .bubble-menu-content {
   display: flex;
-  background-color: #0D0D0D;
-  padding: 0.2rem;
-  border-radius: 0.5rem;
+  background-color: var(--bg-surface-elevated);
+  padding: 6px;
+  border-radius: 12px;
+  box-shadow: var(--shadow-premium);
+  border: 1px solid var(--border-glass);
+  backdrop-filter: blur(15px);
+  gap: 4px;
 
   button {
     border: none;
     background: none;
-    color: #FFF;
-    font-size: 0.85rem;
-    font-weight: 500;
-    padding: 0 0.2rem;
-    opacity: 0.6;
+    color: var(--text-secondary);
+    padding: 6px;
+    border-radius: 6px;
 
     &:hover,
     &.is-active {
-      opacity: 1;
-      background: rgba(255,255,255,0.2);
+      background: rgba(255, 255, 255, 0.1);
+      color: var(--accent-purple);
     }
   }
 }

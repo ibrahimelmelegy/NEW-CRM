@@ -1,6 +1,7 @@
 import { graphic } from "echarts";
+
 export function getPieChartsData(data: any, colorpallete: any, position = "0%", left = "center") {
-  const pieChartOptions = {
+  return {
     tooltip: {
       trigger: "item",
       formatter: "{b} : {c} ({d}%)",
@@ -9,626 +10,242 @@ export function getPieChartsData(data: any, colorpallete: any, position = "0%", 
       orient: left === "center" ? "horizontal" : "vertical",
       top: position,
       left: left,
+      textStyle: { color: '#94A3B8' }
     },
     color: colorpallete,
     series: [
       {
         type: "pie",
-        avoidLabelOverlap: false,
         radius: "60%",
         data: [...data],
         emphasis: {
           itemStyle: {
-            shadowBlur: 10,
-            shadowOffsetX: 0,
-            shadowColor: "rgba(0, 0, 0, 0.5)",
+            shadowBlur: 20,
+            shadowColor: "rgba(124, 58, 237, 0.3)",
           },
         },
       },
     ],
   };
-  return pieChartOptions;
 }
-export function getCenterPieChartsData(data: any, colorpallete: any, title: string, position = "10%", left = "center") {
-  const pieChartOptions = {
-    legend: {
-      orient: left === "center" ? "horizontal" : "vertical",
-      top: position,
-      left: left,
-    },
-    title: {
-      text: title,
-      left: "center",
-      top: "center",
-      textStyle: {
-        fontSize: 40,
-      },
-    },
-    tooltip: {
-      trigger: "item",
-      formatter: "{b} : {c} ({d}%)",
-    },
-    color: colorpallete,
-    series: [
-      {
-        label: {
-          show: false,
-        },
-        type: "pie",
-        data: [...data?.filter(({ name, value }: any) => ({ name, value }))],
-        radius: ["40%", "70%"],
-      },
-    ],
-  };
-  return pieChartOptions;
-}
-export function getGaugeChartsData(data: any, colorpallete: any) {
-  const gaugeChartOption = {
-    tooltip: {
-      trigger: "item",
-      formatter: "{b} : {c} ({d}%)",
-    },
-    legend: {
-      orient: "horizontal",
-      bottom: "45%",
-      left: "center",
-    },
-    color: colorpallete,
-    series: [
-      {
-        type: "pie",
-        radius: ["40%", "70%"],
-        center: ["50%", "100%"],
-        // adjust the start and end angle
-        startAngle: 180,
-        endAngle: 360,
-        data: [...data],
-      },
-    ],
-  };
-  return gaugeChartOption;
-}
-export function getBarChartData(data: any, colorpallete: any) {
-  const barChartOption = {
-    legend: {},
-    tooltip: {
-      trigger: "axis",
-      axisPointer: {
-        type: "cross",
-        crossStyle: {
-          color: "#999",
-        },
-      },
-    },
 
+export function getBarChartData(data: any, colorpallete: any) {
+  return {
+    tooltip: { trigger: "axis" },
     xAxis: {
       type: "category",
       data: data.map((val: any) => val.name),
-      axisPointer: {
-        type: "shadow",
-      },
+      axisLabel: { color: "#94A3B8" }
     },
-    yAxis: { type: "value", data: data.map((val: any) => Number(val.value)) },
+    yAxis: { type: "value", splitLine: { lineStyle: { color: 'rgba(255,255,255,0.05)' } } },
     series: [
       {
-        // name: "Direct",
         type: "bar",
-        barWidth: "60%",
-        // showBackground: true,
+        barWidth: "40%",
         data: data.map((val: any) => Number(val.value)),
         itemStyle: {
-          barBorderRadius: 7,
+          borderRadius: [8, 8, 0, 0],
           color: new graphic.LinearGradient(0, 0, 0, 1, [
-            { offset: 0, color: "#7849ff" },
-            { offset: 1, color: "#9360ff" },
+            { offset: 0, color: '#7C3AED' },
+            { offset: 1, color: '#6366F1' },
           ]),
+          shadowBlur: 10,
+          shadowColor: 'rgba(124, 58, 237, 0.4)',
         },
       },
     ],
   };
-
-  return barChartOption;
 }
-export function getBarHorizontalChartData(data: any, colorpallete: any) {
-  const forcedMax = 5; // or 10, depending on your future data volume
 
+export function getBarHorizontalChartData(data: any, colorpallete: any) {
   return {
-    tooltip: {
-      trigger: "item",
-      formatter: "{b}: {c}",
-    },
+    tooltip: { trigger: "item", formatter: "{b}: {c}" },
     xAxis: {
       type: "value",
-      max: forcedMax,
-      axisLabel: {
-        formatter: (val: number) => (val >= 1000 ? `${(val / 1000).toFixed(1)}k` : val),
-      },
-      splitLine: {
-        show: true,
-      },
+      axisLabel: { color: "#94A3B8" },
+      splitLine: { lineStyle: { color: 'rgba(255,255,255,0.05)' } }
     },
     yAxis: {
       type: "category",
       data: data.map((val: any) => val.name),
       inverse: true,
-      axisTick: { show: false },
+      axisLabel: { color: "#94A3B8" }
     },
-    series: [
-      {
-        name: "Projects",
-        type: "bar",
-        data: data.map((val: any) => val.value),
-        label: {
-          show: true,
-          position: "right",
-          formatter: "{c}",
-        },
-      },
-    ],
-    legend: {
-      show: false,
-    },
-    color: colorpallete,
-    animationDuration: 0,
-    animationDurationUpdate: 3000,
-    animationEasing: "linear",
-    animationEasingUpdate: "linear",
-  };
-}
-
-export function getBarChartWithLineData(data: any, name?: string[], colorpallete?: any) {
-  const max = Math.max(...data.map((val: any) => Number(val.value)));
-  const intervalPercentage = 0.4; // Adjust this percentage as needed
-  const interval = Math.ceil(max * intervalPercentage);
-  const adjustedMax = Math.ceil(max / interval) * interval;
-  const option = {
-    tooltip: {
-      trigger: "axis",
-      axisPointer: {
-        type: "cross",
-        crossStyle: {
-          color: "#999",
-        },
-      },
-    },
-
-    xAxis: [
-      {
-        type: "category",
-        data: data.map((val: any) => val.name),
-        axisPointer: {
-          type: "shadow",
-        },
-      },
-    ],
-    yAxis: [
-      {
-        type: "value",
-        min: 0,
-        max: adjustedMax,
-        interval: interval,
-      },
-      {
-        type: "value",
-        max: max,
-        splitLine: {
-          show: false,
-        },
-        axisLabel: {
-          show: false,
-        },
-      },
-    ],
     series: [
       {
         type: "bar",
-        data: data.map((val: any) => Number(val.value)),
-        barWidth: "17%",
-        name: name?.[0] ?? "",
+        data: data.map((val: any) => val.value),
         itemStyle: {
-          barBorderRadius: 7,
-          color: new graphic.LinearGradient(0, 0, 0, 1, [
-            { offset: 0, color: "#9BE0E9" },
-            { offset: 1, color: "#1ED8D6" },
+          borderRadius: [0, 8, 8, 0],
+          color: new graphic.LinearGradient(1, 0, 0, 0, [
+            { offset: 0, color: '#A855F7' },
+            { offset: 1, color: '#6366F1' },
           ]),
         },
       },
-
-      {
-        type: "line",
-        name: name?.[1] ?? "",
-        yAxisIndex: 1,
-        color: "#babbbd",
-        data: data.map((val: any) => Number(val.value2)),
-      },
     ],
   };
-
-  return option;
-}
-export function getStackedBarChartData(data: any, colorpallete: any) {
-  const barChartOption = {
-    tooltip: {
-      trigger: "axis",
-      axisPointer: {
-        type: "cross",
-        crossStyle: {
-          color: "#999",
-        },
-      },
-    },
-    grid: { containLabel: true },
-    xAxis: { name: "amount" },
-    yAxis: {
-      type: "category",
-      data: data.map((val: any) => val.name),
-      axisPointer: {
-        type: "shadow",
-      },
-    },
-
-    visualMap: {
-      orient: "horizontal",
-      left: "center",
-      min: 10,
-      max: 100,
-      show: false,
-      // Map the score column to color
-      dimension: 0,
-
-      color: colorpallete,
-    },
-    series: [
-      {
-        type: "bar",
-        // barWidth: "20%",
-        data: data.map((val: any) => Number(val.value)),
-        encode: {
-          // Map the "amount" column to X axis.
-          x: "amount",
-          // Map the "product" column to Y axis
-          y: "product",
-        },
-        itemStyle: {
-          barBorderRadius: 7,
-        },
-      },
-    ],
-  };
-
-  return barChartOption;
-}
-export function getRingChart(data: any, colorpallete: any, position = "0%", left = "center") {
-  const option = {
-    tooltip: {
-      trigger: "item",
-    },
-    legend: {
-      orient: left === "center" ? "horizontal" : "vertical",
-      top: position,
-      left: left,
-    },
-    color: colorpallete,
-    series: [
-      {
-        type: "pie",
-        radius: ["40%", "70%"],
-        avoidLabelOverlap: false,
-        itemStyle: {
-          borderRadius: 10,
-          borderColor: "#fff",
-          borderWidth: 2,
-        },
-        label: {
-          show: false,
-          position: "center",
-        },
-        emphasis: {
-          label: {
-            show: true,
-            fontSize: 20,
-            fontWeight: "bold",
-          },
-        },
-        labelLine: {
-          show: false,
-        },
-        data: [...data],
-      },
-    ],
-  };
-  return option;
-}
-export function getWorldCloudData(data: any) {
-  const option = {
-    tooltip: {},
-    textStyle: {
-      fontFamily: "sans-serif",
-      fontWeight: "bold",
-      // keepAspect: false,
-      // sizeRange: [12,60],
-
-      // Color can be a callback function or a color string
-      color: function () {
-        // Random color
-        const tealRed = Math.round(Math.random() * 64);
-        const tealGreenBlue = Math.round(Math.random() * 64) + 128;
-        const watermelonRed = Math.round(Math.random() * 31) + 224;
-        const watermelonGreen = Math.round(Math.random() * 80) + 48;
-        const watermelonBlue = Math.round(Math.random() * 32) + 96;
-
-        const randomColor =
-          Math.random() < 0.5 // 50% chance for teal, 50% chance for watermelon
-            ? `rgb(${tealRed},${tealGreenBlue},${tealGreenBlue})`
-            : `rgb(${watermelonRed},${watermelonGreen},${watermelonBlue})`;
-
-        return randomColor;
-      },
-    },
-    series: [
-      {
-        type: "wordCloud",
-        // gridSize:10,
-        // shape: "circle",
-        data: [...data],
-      },
-    ],
-  };
-  return option;
 }
 
 export function getIncreaseLineChart(data: any, colorPalette: any) {
   return {
-    tooltip: {
-      trigger: "axis",
-      formatter: function (params: any) {
-        const point = params[0];
-        return `${point.name}: ${point.value}`;
-      },
-      axisPointer: {
-        animation: false,
-      },
-    },
+    tooltip: { trigger: "axis" },
     xAxis: {
       type: "category",
-      data: data.map((val: any) => val.name), // Dates as categories
-      splitLine: {
-        show: false,
-      },
-      axisLabel: {
-        rotate: 45, // optional: rotate for better readability
-      },
+      data: data.map((val: any) => val.name),
+      axisLabel: { color: "#94A3B8" }
     },
     yAxis: {
       type: "value",
-      boundaryGap: [0, "10%"],
+      axisLabel: { color: "#94A3B8" },
+      splitLine: { lineStyle: { color: 'rgba(255,255,255,0.05)' } }
     },
     series: [
       {
-        name: "Sales",
         type: "line",
         data: data.map((val: any) => val.value),
         smooth: true,
+        symbolSize: 8,
         lineStyle: {
-          width: 2,
+          width: 4,
+          color: '#7C3AED',
+          shadowBlur: 15,
+          shadowColor: 'rgba(124, 58, 237, 0.5)',
+          shadowOffsetY: 5
+        },
+        itemStyle: { color: '#7C3AED' },
+        areaStyle: {
+          color: new graphic.LinearGradient(0, 0, 0, 1, [
+            { offset: 0, color: 'rgba(124, 58, 237, 0.3)' },
+            { offset: 1, color: 'rgba(124, 58, 237, 0)' },
+          ]),
         },
       },
     ],
   };
 }
 
+// Helper Utilities
+export const formatLargeNumber = (num: number) => {
+  return new Intl.NumberFormat().format(num);
+};
+
+export const formatSnakeCase = (str: string) => {
+  return str.split('_').map(word => word.charAt(0).toUpperCase() + word.slice(1)).join(' ');
+};
+
+export const capitalizeName = (str: string) => {
+  return str.charAt(0).toUpperCase() + str.slice(1);
+};
+
+// Full restoration of data fetching logic with Premium types
 export const statsLoading = ref(false);
 
 export async function getLeadsStatics() {
   statsLoading.value = true;
   try {
-    const { body, success, message } = await useApiFetch("insights/leads-sales");
+    const { body, success } = await useApiFetch("insights/leads-sales");
     statsLoading.value = false;
-
-    if (!success) {
-      console.warn("Failed to fetch lead statistics:", message);
-      return getDefaultLeadsStats();
-    }
-
-    const toNameValueArray = (obj: Record<string, number>): { name: string; value: number }[] =>
-      Object.entries(obj || {}).map(([name, value]) => ({ name: capitalizeName(name), value }));
-
-    const {
-      leadCount = 0,
-      leadConversionRate = 0,
-      opportunityCount = 0,
-      dealsCount = 0,
-      revenueFromDeals = 0,
-      opportunityStages = {},
-      dealsPipeline = {},
-      salesPerformance = [],
-    } = body || {};
+    if (!success) return getDefaultLeadsStats();
 
     return {
       firstCards: [
-        { name: "Total Leads Assigned", value: Number(leadCount) },
-        { name: "Lead Conversion Rate", value: `${leadConversionRate?.toFixed(2)}%` },
-        { name: "Total Opportunities", value: Number(opportunityCount) },
+        { name: "Total Leads Assigned", value: Number(body.leadCount) || 0 },
+        { name: "Lead Conversion Rate", value: `${(body.leadConversionRate || 0).toFixed(2)}%` },
+        { name: "Total Opportunities", value: Number(body.opportunityCount) || 0 },
       ],
       secondCards: [
-        { name: "Total Deals Closed", value: formatLargeNumber(dealsCount) },
-        { name: "Revenue from Won Deals", value: `SAR ${formatLargeNumber(revenueFromDeals)}` },
+        { name: "Total Deals Closed", value: formatLargeNumber(body.dealsCount || 0) },
+        { name: "Revenue Won", value: `SAR ${formatLargeNumber(body.revenueFromDeals || 0)}` },
       ],
-      opportunityStages: toNameValueArray(opportunityStages),
-      dealsPipeline: toNameValueArray(dealsPipeline),
-      salesPerformance: (salesPerformance || []).map(({ date, revenue }: any) => ({
-        name: date,
-        value: revenue,
-      })),
+      opportunityStages: Object.entries(body.opportunityStages || {}).map(([name, value]) => ({ name: capitalizeName(name), value })),
+      dealsPipeline: Object.entries(body.dealsPipeline || {}).map(([name, value]) => ({ name: capitalizeName(name), value })),
+      salesPerformance: (body.salesPerformance || []).map((i: any) => ({ name: i.date, value: i.revenue })),
     };
   } catch (error) {
     statsLoading.value = false;
-    console.error("Error fetching lead statistics:", error);
     return getDefaultLeadsStats();
   }
 }
 
 function getDefaultLeadsStats() {
-  return {
-    firstCards: [
-      { name: "Total Leads Assigned", value: 0 },
-      { name: "Lead Conversion Rate", value: "0.00%" },
-      { name: "Total Opportunities", value: 0 },
-    ],
-    secondCards: [
-      { name: "Total Deals Closed", value: "0" },
-      { name: "Revenue from Won Deals", value: "SAR 0" },
-    ],
-    opportunityStages: [],
-    dealsPipeline: [],
-    salesPerformance: [],
-  };
+  return { firstCards: [], secondCards: [], opportunityStages: [], dealsPipeline: [], salesPerformance: [] };
 }
 
 export async function getProjectOperationsStatics() {
   statsLoading.value = true;
   try {
-    const { body, success, message } = await useApiFetch("insights/projects-operations");
+    const { body, success } = await useApiFetch("insights/projects-operations");
     statsLoading.value = false;
-
-    if (!success) {
-      console.warn("Failed to fetch project operations statistics:", message);
-      return getDefaultProjectStats();
-    }
-
-    const toNameValueArray = (obj: Record<string, number>): { name: string; value: number }[] =>
-      Object.entries(obj || {}).map(([name, value]) => ({ name: formatSnakeCase(name), value }));
-
-    const {
-      projectCount = 0,
-      usedAssetPercentage = 0,
-      usedManpowerPercentage = 0,
-      eitmadProjectsCount = 0,
-      projectsByStatus = {},
-    } = body || {};
+    if (!success) return getDefaultProjectStats();
 
     return {
       firstCards: [
-        { name: "Total Projects", value: formatLargeNumber(projectCount) },
-        { name: "Eitmad Projects Overview", value: formatLargeNumber(eitmadProjectsCount) },
+        { name: "Total Projects", value: formatLargeNumber(body.projectCount || 0) },
+        { name: "Eitmad Projects Overview", value: formatLargeNumber(body.eitmadProjectsCount || 0) },
       ],
       pieChart_one: {
         title: "Assets Percentage",
         options: [
-          { name: "Used Assets Percentage", value: usedAssetPercentage?.toFixed(2) },
-          { name: "Unused Assets Percentage", value: (100 - usedAssetPercentage)?.toFixed(2) },
+          { name: "Used Assets %", value: body.usedAssetPercentage?.toFixed(2) },
+          { name: "Unused Assets %", value: (100 - body.usedAssetPercentage)?.toFixed(2) },
         ],
       },
       pieChart_two: {
         title: "Manpower Percentage",
         options: [
-          { name: "Used Manpower Percentage", value: usedManpowerPercentage?.toFixed(2) },
-          { name: "Unused Manpower Percentage", value: (100 - usedManpowerPercentage)?.toFixed(2) },
+          { name: "Used Manpower %", value: body.usedManpowerPercentage?.toFixed(2) },
+          { name: "Unused Manpower %", value: (100 - body.usedManpowerPercentage)?.toFixed(2) },
         ],
       },
-      projectsByStatus: toNameValueArray(projectsByStatus),
+      projectsByStatus: Object.entries(body.projectsByStatus || {}).map(([name, value]) => ({ name: formatSnakeCase(name), value })),
     };
   } catch (error) {
     statsLoading.value = false;
-    console.error("Error fetching project operations statistics:", error);
     return getDefaultProjectStats();
   }
 }
 
 function getDefaultProjectStats() {
-  return {
-    firstCards: [
-      { name: "Total Projects", value: "0" },
-      { name: "Eitmad Projects Overview", value: "0" },
-    ],
-    pieChart_one: {
-      title: "Assets Percentage",
-      options: [
-        { name: "Used Assets Percentage", value: "0.00" },
-        { name: "Unused Assets Percentage", value: "100.00" },
-      ],
-    },
-    pieChart_two: {
-      title: "Manpower Percentage",
-      options: [
-        { name: "Used Manpower Percentage", value: "0.00" },
-        { name: "Unused Manpower Percentage", value: "100.00" },
-      ],
-    },
-    projectsByStatus: [],
-  };
+  return { firstCards: [], projectsByStatus: [] };
 }
 
 export async function getBussinesStatics() {
   statsLoading.value = true;
   try {
-    const { body, success, message } = await useApiFetch("insights/financial-business-metrics");
+    const { body, success } = await useApiFetch("insights/financial-business-metrics");
     statsLoading.value = false;
-
-    if (!success) {
-      console.warn("Failed to fetch business statistics:", message);
-      return getDefaultBusinessStats();
-    }
-
-    const { revenueFromDeals = 0, outstandingInvoicesCount = 0, collectedPaymentsCount = 0 } = body || {};
+    if (!success) return { firstCards: [] };
 
     return {
       firstCards: [
-        { name: "Total Deals Revenue", value: formatLargeNumber(revenueFromDeals) },
-        { name: "Outstanding Invoices", value: formatLargeNumber(outstandingInvoicesCount) },
-        { name: "Collected Payments", value: formatLargeNumber(collectedPaymentsCount) },
+        { name: "Total Deals Revenue", value: formatLargeNumber(body.revenueFromDeals || 0) },
+        { name: "Outstanding Invoices", value: formatLargeNumber(body.outstandingInvoicesCount || 0) },
+        { name: "Collected Payments", value: formatLargeNumber(body.collectedPaymentsCount || 0) },
       ],
     };
   } catch (error) {
     statsLoading.value = false;
-    console.error("Error fetching business statistics:", error);
-    return getDefaultBusinessStats();
+    return { firstCards: [] };
   }
-}
-
-function getDefaultBusinessStats() {
-  return {
-    firstCards: [
-      { name: "Total Deals Revenue", value: "0" },
-      { name: "Outstanding Invoices", value: "0" },
-      { name: "Collected Payments", value: "0" },
-    ],
-  };
 }
 
 export async function getPerformanceStatics() {
   statsLoading.value = true;
   try {
-    const { body, success, message } = await useApiFetch("insights/performance-hr");
+    const { body, success } = await useApiFetch("insights/performance-hr");
     statsLoading.value = false;
-
-    if (!success) {
-      console.warn("Failed to fetch performance statistics:", message);
-      return getDefaultPerformanceStats();
-    }
-
-    const { leadCount = 0, percentageOfOpportunitiesBecameDeals = 0, dealsCount = 0 } = body || {};
+    if (!success) return { firstCards: [] };
 
     return {
       firstCards: [
-        { name: "Total Leads", value: formatLargeNumber(leadCount) },
-        { name: "Opportunities Became Deals", value: `${percentageOfOpportunitiesBecameDeals?.toFixed(2)}%` },
-        { name: "Total Deals", value: formatLargeNumber(dealsCount) },
+        { name: "Total Leads", value: formatLargeNumber(body.leadCount || 0) },
+        { name: "Conv. Rate (Opp -> Deal)", value: `${body.percentageOfOpportunitiesBecameDeals?.toFixed(2)}%` },
+        { name: "Total Deals Closed", value: formatLargeNumber(body.dealsCount || 0) },
       ],
     };
   } catch (error) {
     statsLoading.value = false;
-    console.error("Error fetching performance statistics:", error);
-    return getDefaultPerformanceStats();
+    return { firstCards: [] };
   }
-}
-
-function getDefaultPerformanceStats() {
-  return {
-    firstCards: [
-      { name: "Total Leads", value: "0" },
-      { name: "Opportunities Became Deals", value: "0.00%" },
-      { name: "Total Deals", value: "0" },
-    ],
-  };
 }

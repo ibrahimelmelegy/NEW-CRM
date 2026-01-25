@@ -1,13 +1,13 @@
 <template lang="pug">
 .relative
-  .toggle-indicator.cursor-pointer.flex.items-center.justify-center.absolute.rounded-full.w-10.h-10.bg-sidebar.z-100.shadow.border(v-if="!mobile" @click="openNav" :class="{ 'right-[-7%]' : fullNav, 'right-[-22%]' : !fullNav }" class="top-[2%] z-10")
-    Icon.text-white(:name="fullNav ? 'material-symbols:arrow-left-alt-rounded' : 'material-symbols:arrow-right-alt-rounded'" size="20")
+  .toggle-indicator.cursor-pointer.flex.items-center.justify-center.absolute.rounded-full.w-9.h-9.z-100.glass-card(@click="openNav" v-if="!mobile" :class="{ 'right-[-18px]' : fullNav, 'right-[-18px]' : !fullNav }" class="top-[100px] z-20")
+    Icon.text-white(:name="fullNav ? 'ph:caret-left-bold' : 'ph:caret-right-bold'" size="18")
 
   div.background-overlay.fixed.top-0.left-0.w-screen.h-full(class='z-[-1]' v-if="mobile && !hideNav" @click="hideNav = true")
   transition(:name='mobile ? "side" : "none"')
     el-menu.el-menu-vertical-demo.relative(class='!pl-[5px] h-[100vh] card-auto ' :class="{'overflow-x-hidden' : !fullNav }" v-if="mobile ? !hideNav : true" :collapse='mobile ? false : !fullNav' :default-openeds="defaultOpenMenus")
       .py-5.px-12.flex.items-center.gap-3(v-if="fullNav")
-        img(class="cursor-pointer" src="/images/Logo.png" @click="router.push('/')")
+        img(class="cursor-pointer max-h-[50px] w-auto" :src="logoSrc" @click="router.push('/')")
       .py-5.px-5.flex.items-center.gap-3.relative.z-10(v-if="!fullNav")
         img(class="cursor-pointer !h-[50px] !max-h-[50px]" src="/images/logo-shape.png" @click="router.push('/')")
       template(v-for="(navLink, index) in menu")
@@ -43,6 +43,7 @@
 </template>
 
 <script lang="ts" setup>
+import { ref, computed } from 'vue';
 import { storeToRefs } from "pinia";
 import { useMain } from "~/stores/common";
 
@@ -56,6 +57,10 @@ const user = ref();
 
 const response = await useApiFetch("auth/me");
 user.value = response?.user;
+
+const logoSrc = computed(() => {
+  return mainStore.isLight ? '/images/Logo.png' : '/images/lOGO-DARDK-MODE.png';
+});
 
 function mobileNavigate(link: string) {
   if (mobile.value) {
@@ -197,5 +202,22 @@ function openNav() {
   @media screen and (min-width: 991px) {
     display: flex;
   }
+}
+
+.myicon {
+  width: 24px !important;
+  height: 25px !important;
+  margin-left: -7px !important;
+}
+
+[dir='rtl'] .myicon {
+  margin-left: 5px !important;
+  margin-right: -6px !important;
+}
+
+.el-menu--collapse {
+  width: calc(
+    var(--el-menu-icon-width) + var(--el-menu-base-level-padding) * 2.5
+  ) !important;
 }
 </style>
