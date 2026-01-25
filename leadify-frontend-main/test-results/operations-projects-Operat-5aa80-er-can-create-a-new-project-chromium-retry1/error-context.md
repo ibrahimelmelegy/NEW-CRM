@@ -1,0 +1,54 @@
+# Page snapshot
+
+```yaml
+- generic [active] [ref=e1]:
+  - generic [ref=e4]:
+    - generic [ref=e5]:
+      - generic [ref=e7]:
+        - heading "Welcome back 👋" [level=1] [ref=e8]
+        - paragraph [ref=e9]: Login to your account
+      - generic [ref=e10]:
+        - generic [ref=e11]:
+          - generic:
+            - paragraph
+          - textbox [ref=e15]:
+            - /placeholder: email
+            - text: admin@test.com
+        - generic [ref=e16]:
+          - generic:
+            - paragraph
+          - generic [ref=e19]:
+            - textbox [ref=e20]:
+              - /placeholder: password
+              - text: password123
+            - img [ref=e23] [cursor=pointer]
+        - paragraph
+        - generic [ref=e26]:
+          - generic [ref=e27] [cursor=pointer]:
+            - generic [ref=e28]:
+              - checkbox "Remember me"
+            - generic [ref=e30]: Remember me
+          - link "Forgot password?" [ref=e31] [cursor=pointer]:
+            - /url: /forget-password
+        - button "Login" [ref=e34] [cursor=pointer]:
+          - generic [ref=e35]: Login
+    - generic [ref=e36]:
+      - img "login" [ref=e37]
+      - img [ref=e39]
+  - generic:
+    - img
+  - generic:
+    - generic:
+      - generic:
+        - button "Go to parent" [disabled]
+        - button "Open in editor"
+        - button "Close"
+  - generic [ref=e41]:
+    - button "Toggle Nuxt DevTools" [ref=e42] [cursor=pointer]:
+      - img [ref=e43]
+    - generic "Page load time" [ref=e46]:
+      - generic [ref=e47]: "104"
+      - generic [ref=e48]: ms
+    - button "Toggle Component Inspector" [ref=e50] [cursor=pointer]:
+      - img [ref=e51]
+```
