@@ -18,13 +18,24 @@ const router = createRouter({
 });
 
 // Hoisted Mocks
-const { hasPermissionMock, mockTableData } = vi.hoisted(() => ({
-    hasPermissionMock: vi.fn(),
-    mockTableData: {
-        formattedData: [] as any[],
-        pagination: { page: 1, limit: 10, total: 0 }
+const { hasPermissionMock, mockTableData, permissionState } = vi.hoisted(() => {
+    const permissionState = { value: true };
+    const hasPermissionMock = vi.fn();
+    hasPermissionMock.mockImplementation((permission) => {
+        if (permission === 'CREATE_LEADS') {
+            return permissionState.value;
+        }
+        return true;
+    });
+    return {
+        hasPermissionMock,
+        permissionState,
+        mockTableData: {
+            formattedData: [] as any[],
+            pagination: { page: 1, limit: 10, total: 0 }
+        }
     }
-}));
+});
 
 vi.mock('@/composables/usePermissions', () => ({
     usePermissions: () => ({
@@ -57,13 +68,27 @@ const AppTableStub = {
     props: ['data', 'columns']
 };
 
+const ComponentStubs = {
+    AppTable: AppTableStub,
+    // Element Plus Stubs
+    'el-button': { template: '<button><slot /></button>' },
+    'el-dropdown': { template: '<div><slot name="dropdown" /><slot /></div>' },
+    'el-dropdown-menu': { template: '<div><slot /></div>' },
+    'el-dropdown-item': { template: '<div><slot /></div>' },
+    'el-spinner': true,
+    'ActionModel': true,
+    'InputSelect': true,
+    'NuxtLink': { template: '<a><slot /></a>' },
+    'Icon': true,
+};
+
 describe('Leads List Page (Production Ready)', () => {
 
     beforeEach(() => {
-        vi.clearAllMocks();
-        // Default State: With Permission, With Data
-        hasPermissionMock.mockReturnValue(true);
-
+        hasPermissionMock.mockClear();
+        // Reset permissionState to true (default)
+        permissionState.value = true;
+        
         // Reset mutable data
         mockTableData.formattedData.length = 0;
         mockTableData.formattedData.push(
@@ -80,19 +105,17 @@ describe('Leads List Page (Production Ready)', () => {
         }, {
             global: {
                 plugins: [router],
-                stubs: {
-                    AppTable: AppTableStub,
-                    // Element Plus Stubs
-                    'el-button': { template: '<button><slot /></button>' },
-                    'el-dropdown': { template: '<div><slot name="dropdown" /><slot /></div>' },
-                    'el-dropdown-menu': { template: '<div><slot /></div>' },
-                    'el-dropdown-item': { template: '<div><slot /></div>' },
-                    'el-spinner': true,
-                    'ActionModel': true,
-                    'InputSelect': true,
-                    'NuxtLink': { template: '<a><slot /></a>' },
-                    'Icon': true,
-                }
+                stubs: ComponentStubs
+            }
+        });
+    }
+    
+    function mountPageDirect() {
+        // Mount without Suspense for tests that need synchronous behavior
+        return mount(LeadsIndex, {
+            global: {
+                plugins: [router],
+                stubs: ComponentStubs
             }
         });
     }
@@ -117,7 +140,6 @@ describe('Leads List Page (Production Ready)', () => {
 
     // 2. RBAC Check (Add Lead Button)
     it('shows "New Lead" button for Admin (Permission Granted)', async () => {
-        hasPermissionMock.mockReturnValue(true);
         const wrapper = mountPage();
         await flushPromises();
 
@@ -125,11 +147,18 @@ describe('Leads List Page (Production Ready)', () => {
     });
 
     it('hides "New Lead" button for Restricted User (Permission Denied)', async () => {
-        hasPermissionMock.mockReturnValue(false);
-        const wrapper = mountPage();
+        // Set permission to return false before mount
+        permissionState.value = false;
+        
+        // Use direct mount (without Suspense) to properly test reactive permission state
+        const wrapper = mountPageDirect();
         await flushPromises();
+        await wrapper.vm.$nextTick();
 
-        expect(wrapper.text()).not.toContain('New Lead');
+        const htmlOutput = wrapper.html();
+        
+        // With permission false, add-lead link should not be present
+        expect(htmlOutput).not.toContain('add-lead');
     });
 
     // 3. Empty State

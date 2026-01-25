@@ -4,8 +4,9 @@ div
   .flex.items-center.justify-between.mb-8
     .title.font-bold.text-2xl.mb-1.capitalize Leads
     .flex.items-center.gap-x-3
-      NuxtLink(to="/sales/leads/add-lead")
-        el-button(   size='large' :loading="loading" v-if="hasPermission('CREATE_LEADS')" native-type="submit" type="primary" :icon="Plus" class="w-full !my-4 !rounded-2xl")  New Lead
+      template(v-if="canCreateLeads")
+        NuxtLink(to="/sales/leads/add-lead")
+          el-button(size='large' :loading="loading" native-type="submit" type="primary" :icon="Plus" class="w-full !my-4 !rounded-2xl")  New Lead
       el-dropdown(trigger="click")
           span.el-dropdown-link
               button.rounded-btn(class="!px-4"): Icon(  name="IconToggle" size="24")
@@ -61,12 +62,17 @@ div
   import { Plus } from "@element-plus/icons-vue";
   import { leadStates, leadSources } from '@/composables/useLeads';
   import useTableFilter from '@/composables/useTableFilter';
+  import { computed, ref, watch, unref, shallowRef, isRef, onMounted, onBeforeMount } from 'vue';
   const { hasPermission } = await usePermissions();
   const loadingAction = ref(false);
   const loading = ref(false);
   const present = ref("");
   const select = ref();
   const qualifiedLeadPopup = ref(false);
+  
+  // Create computed property for CREATE_LEADS permission
+  // This ensures the v-if updates reactively when permissions change
+  const canCreateLeads = computed(() => hasPermission('CREATE_LEADS') === true);
 
   const leadPresent = [
     {
