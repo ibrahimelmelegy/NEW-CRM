@@ -10,7 +10,11 @@
         "test": "vitest",
         "test:coverage": "vitest run --coverage",
         "health:ui": "node scripts/health-dashboard.js",
-        "monitor": "pm2 monit"
+        "monitor": "pm2 monit",
+        "// --- الأوامر الجديدة الخاصة بالـ Dashboard ---": "",
+        "test:e2e": "npx playwright test",
+        "test:e2e:report": "npx playwright show-report --port 9323",
+        "test:dashboard": "npx playwright test --reporter=json > test-results/results.json && nuxt dev"
     },
     "devDependencies": {
         "@nuxt/kit": "^3.3.1",

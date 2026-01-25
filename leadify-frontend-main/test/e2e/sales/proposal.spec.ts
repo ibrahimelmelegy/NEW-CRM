@@ -1,48 +1,69 @@
-
 import { test, expect } from '@playwright/test';
 
 test.describe('Proposal Module (Micro-frontend Wrapper)', () => {
 
     test.beforeEach(async ({ page }) => {
-        // 1. Simulate Login (Set cookie or mock full login flow)
-        // For speed, we just set the cookie if the app reads it from there, 
-        // but better to go through the login page to be realistic.
-        await page.goto('/login');
-        await page.getByPlaceholder('Email').fill('admin@test.com');
-        await page.getByPlaceholder('Password').fill('password123');
+        // 1. التوجه لصفحة اللوجن (البورت الأصلي 3060)
+        await page.goto('/login', { waitUntil: 'networkidle', timeout: 60000 });
+
+        // 2. الانتظار المرن للحقول باستخدام partial matches لضمان عدم التأثر بتغيير الـ UI البسيط
+        const emailInput = page.locator('input[placeholder*="email"]');
+        const passwordInput = page.locator('input[placeholder*="password"]');
+
+        await emailInput.waitFor({ state: 'visible', timeout: 20000 });
+        await emailInput.fill('admin@hp-tech.com');
+        await passwordInput.fill('Heroo@1502');
+
+        // 3. الضغط على زر الدخول والانتظار حتى استجابة السيرفر
         await page.getByRole('button', { name: /login/i }).click();
-        await page.waitForTimeout(2000); // Wait for login to process
+
+        // 4. الحل الجذري: ننتظر حتى يختفي مسار اللوجن تماماً من الرابط
+        // ده أضمن حل في الـ Micro-frontends لضمان عبور مرحلة الـ Redirection
+        await expect(page).not.toHaveURL(/.*login.*/, { timeout: 45000 });
+
+        // تأكيد استقرار الـ Session وتحميل ملفات الـ JS في الخلفية
+        await page.waitForLoadState('networkidle');
     });
 
     test('Loads the Proposal React Micro-frontend correctly', async ({ page }) => {
-        // 2. Navigate to Proposals
-        await page.goto('/sales/proposals');
-        await page.waitForTimeout(1000);
+        // ننتقل لصفحة البروبوزال الأساسية
+        await page.goto('/sales/proposals', { waitUntil: 'load' });
 
-        // 3. Just verify we're on the proposals page
-        const isOnProposalsPage = page.url().includes('/sales/proposals');
-        expect(isOnProposalsPage).toBeTruthy();
+        // تصوير الصفحة فوراً للتشخيص البصري في مجلد النتائج
+        await page.screenshot({ path: 'test-results/proposal-page-load.png', fullPage: true });
 
-        // 4. Try to find iframe but don't fail if it doesn't exist
-        const iframe = page.locator('iframe.react-iframe');
-        const iframeExists = await iframe.isVisible().catch(() => false);
-        // Either iframe exists or we're on the page - both are acceptable
-        expect(isOnProposalsPage || iframeExists).toBeTruthy();
+        // التحقق من الرابط بشكل مرن مع إعطاء وقت كافٍ للـ SPA Routing
+        await expect(page).toHaveURL(/.*sales\/proposals.*/, { timeout: 30000 });
+
+        // البحث عن أي عنوان (Title) يدل على تحميل الصفحة بنجاح
+        const mainHeading = page.locator('h1, h2, h3, .title').first();
+        await expect(mainHeading).toBeVisible({ timeout: 25000 });
+
+        const text = await mainHeading.textContent();
+        console.log(`✅ HPT CRM: Detected Page Title: ${text?.trim()}`);
     });
 
     test('Proposal Editor loads within iframe (Integration Check)', async ({ page }) => {
-        await page.goto('/sales/proposals/react-editor');
-        await page.waitForTimeout(1000);
+        // الانتقال لصفحة المحرر المعتمدة على Iframe (سيرفر بورت 3001)
+        await page.goto('/sales/proposals/react-editor', { waitUntil: 'load', timeout: 60000 });
 
-        // Just verify we navigated to the page
-        const isOnEditorPage = page.url().includes('/sales/proposals');
-        expect(isOnEditorPage).toBeTruthy();
+        // استراتيجية البحث المتعدد عن الـ Iframe:
+        // نجرب بالـ class المخصص أولاً، وإذا فشل نبحث عن أي iframe في الصفحة
+        const iframeSelector = page.locator('iframe.react-iframe, iframe').first();
 
-        // Try to find iframe but don't fail if it doesn't
-        const iframe = page.locator('iframe.react-iframe');
-        const iframeExists = await iframe.isVisible().catch(() => false);
-        
-        // Accept either page load or iframe presence
-        expect(isOnEditorPage || iframeExists).toBeTruthy();
+        try {
+            // انتظار ظهور الـ Iframe نفسه (حتى لو لسه بيحمل محتوى)
+            await expect(iframeSelector).toBeVisible({ timeout: 45000 });
+
+            // انتظار إضافي لضمان إن سيرفر الـ React (بورت 3001) بدأ يرمي HTML جوه الـ Iframe
+            await page.waitForTimeout(5000);
+
+            console.log('✅ HPT CRM: React Iframe is visible and integrated.');
+        } catch (e) {
+            // سكرين شوت احترافي وشامل للتشخيص في حالة الفشل
+            await page.screenshot({ path: 'test-results/iframe-failure-debug.png', fullPage: true });
+            console.log('❌ HPT CRM: Iframe failed to load. Check if React Server is running on port 3001');
+            throw e;
+        }
     });
 });
