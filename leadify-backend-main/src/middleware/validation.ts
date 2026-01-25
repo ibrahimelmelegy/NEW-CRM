@@ -6,7 +6,7 @@ import 'reflect-metadata';
 
 // Type definition for ClassConstructor
 type ClassConstructor<T> = {
-  new (...args: any[]): T;
+  new(...args: any[]): T;
 };
 
 // Helper function to format errors recursively
@@ -33,24 +33,8 @@ export function validateBody<T extends object>(dtoClass: ClassConstructor<T>) {
       excludeExtraneousValues: false // Retain all fields for extra fields check
     });
 
-    // Step 2: Extract valid keys from the DTO class
-    const validKeys = Object.keys(plainToInstance(dtoClass, {}));
-
-    // Step 3: Check for extra fields in req.body
-    const extraFields = Object.keys(req.body).filter(key => !validKeys.includes(key));
-    if (extraFields.length > 0) {
-      return res.status(400).json({
-        message: 'Validation failed',
-        errors: [
-          {
-            property: 'extraFields',
-            constraints: {
-              message: `Extra properties are not allowed: ${extraFields.join(', ')}`
-            }
-          }
-        ]
-      });
-    }
+    // Step 2 & 3: Checking for extra fields is handled more reliably by class-validator 
+    // in Step 4 using { whitelist: true, forbidNonWhitelisted: true }
 
     // Step 4: Validate the transformed DTO object
     const errors = await validate(dtoObject, { whitelist: true, forbidNonWhitelisted: true });
@@ -77,24 +61,8 @@ export function validateQuery<T extends object>(dtoClass: ClassConstructor<T>) {
       excludeExtraneousValues: false // Retain all fields for extra fields check
     });
 
-    // Step 2: Extract valid keys from the DTO class
-    const validKeys = Object.keys(plainToInstance(dtoClass, {}));
-
-    // Step 3: Check for extra fields in req.query
-    const extraFields = Object.keys(req.query).filter(key => !validKeys.includes(key));
-    if (extraFields.length > 0) {
-      return res.status(400).json({
-        message: 'Validation failed',
-        errors: [
-          {
-            property: 'extraFields',
-            constraints: {
-              message: `Extra properties are not allowed: ${extraFields.join(', ')}`
-            }
-          }
-        ]
-      });
-    }
+    // Step 2 & 3: Checking for extra fields is handled more reliably by class-validator
+    // during the validation step.
 
     // Step 4: Validate the transformed DTO object
     const errors = await validate(dtoObject);

@@ -21,7 +21,7 @@
             Manage your leads, proposals, and projects with High Point's intelligent CRM system.
           </p>
         </div>
-        
+        `cds`
         <!-- Feature Highlights -->
         <div class="grid grid-cols-2 gap-4 w-full max-w-sm">
           <div class="flex items-center gap-3 p-3 rounded-2xl bg-white/5 border border-white/10 backdrop-blur-sm">

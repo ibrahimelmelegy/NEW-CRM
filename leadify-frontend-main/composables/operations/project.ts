@@ -26,8 +26,8 @@ enum projectCategory {
   Etimad = 'Etimad',
 }
 export const projectCategories = [
-  { label: 'Direct Project', value: projectCategory.Direct },
-  { label: 'Etimad Project', value: projectCategory.Etimad },
+  { label: 'Direct', value: projectCategory.Direct },
+  { label: 'Etimad', value: projectCategory.Etimad },
 ];
 
 enum projectStatus {
@@ -40,7 +40,7 @@ export const projectStatuses = [
   { label: 'Active', value: projectStatus.active },
   { label: 'Cancelled', value: projectStatus.cancelled },
   { label: 'On Hold', value: projectStatus.onHold },
-  { label: 'Completed', value: projectStatus.completed },
+  { label: 'Complete', value: projectStatus.completed },
 ];
 
 enum contractType {

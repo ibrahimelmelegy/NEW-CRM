@@ -2,14 +2,17 @@ import { Expose } from 'class-transformer';
 import { ArrayMinSize, IsInt, IsOptional, IsUUID, IsObject, IsDefined, ValidateNested, IsPositive, Max, Min } from 'class-validator';
 import { Type } from 'class-transformer';
 class MaterialItem {
+  @Expose()
   @IsInt()
   @IsPositive()
   id!: number;
 
+  @Expose()
   @IsInt()
   @IsPositive()
   quantity!: number;
 
+  @Expose()
   @IsOptional()
   @IsInt()
   @IsPositive()

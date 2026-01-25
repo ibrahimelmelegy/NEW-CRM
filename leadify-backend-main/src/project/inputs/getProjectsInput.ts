@@ -4,12 +4,14 @@ import { SortEnum } from '../../lead/leadEnum';
 import { ProjectCategoryEnum, ProjectSortByEnum, ProjectStatusEnum, ProjectTypeEnum } from '../projectEnum';
 
 export class GetProjectsInput {
+  @Expose()
   @Transform(({ value }) => (value ? parseInt(value, 10) : 1), { toClassOnly: true }) // Default to 1 if not provided
   @IsOptional()
   @IsInt({ message: 'Page must be an integer' })
   @Min(1, { message: 'Page must be at least 1' })
   page: number = 1;
 
+  @Expose()
   @Transform(({ value }) => (value ? parseInt(value, 10) : 10), { toClassOnly: true }) // Default to 10 if not provided
   @IsOptional()
   @IsInt({ message: 'Limit must be an integer' })

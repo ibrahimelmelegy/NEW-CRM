@@ -40,7 +40,6 @@ el-form.mb-24( autocomplete="off"   @submit.prevent='onSubmit'   ref="myForm" la
 <script lang="ts" setup>
   import { useForm } from "vee-validate";
   import * as yup from "yup";
-  import { defineExpose } from 'vue';
   const route = useRoute();
   const router = useRouter();
   const props = defineProps({
@@ -52,7 +51,7 @@ el-form.mb-24( autocomplete="off"   @submit.prevent='onSubmit'   ref="myForm" la
     },
   });
 
-  const activeStep = defineModel();
+  const activeStep = defineModel<number>({ required: true });
   const emit = defineEmits(["submit", "cancel"]);
   const isCancelled = ref(false);
   const isEtimadProject = ref(false);
@@ -155,7 +154,7 @@ el-form.mb-24( autocomplete="off"   @submit.prevent='onSubmit'   ref="myForm" la
    * Checks if the deal stage has been set to 'Cancelled'.
    */
   function checkIfCancelled(value: any) {
-    if (value.label === "Cancelled") {
+    if (value.value === "CANCELLED") {
       isCancelled.value = true;
     } else {
       isCancelled.value = false;
@@ -170,7 +169,7 @@ el-form.mb-24( autocomplete="off"   @submit.prevent='onSubmit'   ref="myForm" la
    * Checks if the project category has been set to 'ETIMAD Project'.
    */
   function checkIfEtimadProject(value: any) {
-    if (value.label === "Etimad Project") {
+    if (value.label === "Etimad") {
       isEtimadProject.value = true;
     } else {
       isEtimadProject.value = false;

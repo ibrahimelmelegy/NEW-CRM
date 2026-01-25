@@ -22,18 +22,22 @@ import { IsNotBlank } from '../../utils/custom-validators/not-bank.validator';
 import { ApplicationStatusEnum, ContractTypeEnum, ProjectCategoryEnum, ProjectStatusEnum, ProposalStatusEnum } from '../projectEnum';
 
 export class CreateEtimadProjectInput {
+  @Expose()
   @IsNotEmpty()
   @MaxLength(255)
   abbreviation!: string;
 
+  @Expose()
   @IsNotEmpty()
   @MaxLength(255)
   organizationName!: string;
 
+  @Expose()
   @IsNotEmpty()
   @MaxLength(255)
   rfpName!: string;
 
+  @Expose()
   @IsNotEmpty()
   @IsEnum(ContractTypeEnum)
   contractType!: ContractTypeEnum;
@@ -57,14 +61,17 @@ export class CreateEtimadProjectInput {
   @Max(100)
   companyMargin?: number;
 
+  @Expose()
   @IsOptional()
   @IsDateString()
   submissionDate?: string;
 
+  @Expose()
   @IsNotEmpty()
   @IsEnum(ProposalStatusEnum)
   proposalStatus!: ProposalStatusEnum;
 
+  @Expose()
   @IsNotEmpty()
   @IsEnum(ApplicationStatusEnum)
   applicationStatus!: ApplicationStatusEnum;
@@ -125,6 +132,7 @@ export class CreateProjectInfoInput {
   @IsDateString()
   endDate?: string;
 
+  @Expose()
   @IsInt()
   @IsPositive()
   duration!: number;
