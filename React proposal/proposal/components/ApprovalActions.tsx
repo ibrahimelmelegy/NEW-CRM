@@ -5,6 +5,7 @@
 
 import React, { useState } from 'react';
 import { CheckCircle, XCircle, Clock, Send, AlertCircle, Loader2, MessageSquare } from 'lucide-react';
+import { usePermissions } from '../../src/hooks/usePermissions';
 
 export type ProposalStatus = 'DRAFT' | 'WAITING_APPROVAL' | 'APPROVED' | 'REJECTED' | 'SENT' | 'ARCHIVED';
 
@@ -15,7 +16,6 @@ interface ApprovalActionsProps {
     onApprove: (id: number) => Promise<void>;
     onReject: (id: number, reason: string) => Promise<void>;
     onSendToClient: (id: number) => Promise<void>;
-    canApprove?: boolean;
     disabled?: boolean;
 }
 
@@ -26,9 +26,9 @@ export const ApprovalActions: React.FC<ApprovalActionsProps> = ({
     onApprove,
     onReject,
     onSendToClient,
-    canApprove = true,
     disabled = false
 }) => {
+    const { hasPermission } = usePermissions();
     const [loading, setLoading] = useState(false);
     const [showRejectModal, setShowRejectModal] = useState(false);
     const [rejectReason, setRejectReason] = useState('');
@@ -110,7 +110,7 @@ export const ApprovalActions: React.FC<ApprovalActionsProps> = ({
                 )}
 
                 {/* Waiting Approval - Can approve or reject */}
-                {currentStatus === 'WAITING_APPROVAL' && canApprove && (
+                {currentStatus === 'WAITING_APPROVAL' && hasPermission('APPROVE_PROPOSALS') && (
                     <>
                         <button
                             onClick={() => handleAction('approve', () => onApprove(proposalId))}

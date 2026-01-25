@@ -13,6 +13,7 @@ export const PROPOSAL_PERMISSIONS = {
     VIEW_GLOBAL: 'VIEW_GLOBAL_PROPOSALS',
     CREATE: 'CREATE_PROPOSALS',
     EDIT: 'EDIT_PROPOSALS',
+    APPROVE: 'APPROVE_PROPOSALS',
 } as const;
 
 export function usePermissions() {
@@ -82,6 +83,13 @@ export function usePermissions() {
         return hasPermission(PROPOSAL_PERMISSIONS.EDIT);
     };
 
+    /**
+     * Check if user can approve/reject proposals
+     */
+    const canApproveProposals = (): boolean => {
+        return hasPermission(PROPOSAL_PERMISSIONS.APPROVE);
+    };
+
     return {
         permissions,
         isLoading,
@@ -91,6 +99,7 @@ export function usePermissions() {
         canViewGlobalProposals,
         canCreateProposals,
         canEditProposals,
+        canApproveProposals,
     };
 }
 

@@ -178,7 +178,7 @@ router.put(
  *       500:
  *         description: Internal server error
  */
-router.put('/approve/:id', authenticateUser, HasPermission([ProposalPermissionsEnum.EDIT_PROPOSALS]), proposalController.approveProposal);
+router.put('/approve/:id', authenticateUser, HasPermission([ProposalPermissionsEnum.APPROVE_PROPOSALS]), proposalController.approveProposal);
 
 /**
  * @swagger
@@ -219,7 +219,7 @@ router.put('/approve/:id', authenticateUser, HasPermission([ProposalPermissionsE
 router.put(
   '/reject/:id',
   authenticateUser,
-  HasPermission([ProposalPermissionsEnum.EDIT_PROPOSALS]),
+  HasPermission([ProposalPermissionsEnum.APPROVE_PROPOSALS]),
   validateBody(RejectProposalInput),
   proposalController.rejectProposal
 );
