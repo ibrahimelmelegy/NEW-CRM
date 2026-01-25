@@ -21,7 +21,7 @@
 </template>
 
 <script setup lang="ts">
-import { defineProps, defineEmits, ref, defineModel } from 'vue';
+import { ref } from 'vue';
 
 const props = defineProps({
   title: String,

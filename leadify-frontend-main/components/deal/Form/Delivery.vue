@@ -28,7 +28,7 @@ el-form(
 <script lang="ts" setup>
 import { useForm } from 'vee-validate';
 import * as yup from 'yup';
-import { defineProps, defineEmits, defineModel, defineExpose } from 'vue';
+import { defineExpose } from 'vue';
 import { Delete } from '@element-plus/icons-vue';
 
 // Props

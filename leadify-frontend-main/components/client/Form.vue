@@ -26,7 +26,7 @@ el-form.mb-24(  autocomplete="off"   @submit.prevent='onSubmit'   ref="myForm" l
   import { useForm } from "vee-validate";
   import * as yup from "yup";
   import isEmailValidator from "validator/lib/isEmail";
-  import { defineEmits, defineProps } from "vue";
+  ;
   import { v4 as uuidv4 } from "uuid"; // To generate unique IDs
   const route = useRoute();
   const props = defineProps({

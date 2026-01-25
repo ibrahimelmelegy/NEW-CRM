@@ -10,7 +10,7 @@ el-dialog(v-model='dialog' width='750' title="Add New Service Module" append-to-
 
 <script setup lang="ts">
 const loading = ref(false);
-import { defineProps, defineModel, defineEmits } from 'vue';
+;
 
 const props = defineProps({
   service: Object as () => Service,

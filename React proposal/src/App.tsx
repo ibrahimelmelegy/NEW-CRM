@@ -65,7 +65,7 @@ const ProtectedRoute: React.FC<{ children: React.ReactNode }> = ({ children }) =
             <div className="min-h-screen flex items-center justify-center bg-slate-50">
                 <div className="text-center">
                     <div className="spinner"></div>
-                    <p className="text-gray-600">Loading...</p>
+                    <p className="text-gray-600 dark:text-gray-300">Loading...</p>
                 </div>
             </div>
         );
@@ -77,7 +77,7 @@ const ProtectedRoute: React.FC<{ children: React.ReactNode }> = ({ children }) =
             return (
                 <div className="min-h-screen flex items-center justify-center bg-slate-50">
                     <div className="text-center">
-                        <p className="text-gray-600">Session expired. Please refresh the parent page.</p>
+                        <p className="text-gray-600 dark:text-gray-300">Session expired. Please refresh the parent page.</p>
                         <button
                             onClick={() => window.parent.location.reload()}
                             className="mt-4 px-4 py-2 bg-violet-600 text-white rounded-lg hover:bg-violet-700"

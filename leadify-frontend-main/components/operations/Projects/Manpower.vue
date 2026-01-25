@@ -31,7 +31,7 @@ ActionModel(v-model="isDelete" v-if="isDelete" :loading="loadingAction" @confirm
 <script lang="ts" setup>
 import { useForm } from 'vee-validate';
 import * as yup from 'yup';
-import { defineEmits, defineProps, defineModel } from 'vue';
+;
 import { Plus } from '@element-plus/icons-vue';
 const route = useRoute();
 const props = defineProps({

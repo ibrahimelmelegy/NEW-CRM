@@ -22,7 +22,7 @@
 </template>
 
 <script>
-import { defineCustomElement, defineAsyncComponent } from "vue";
+import { defineCustomElement, defineAsyncComponent } from 'vue';
 import {
   move_children_forward_recursively,
   move_children_backwards_with_merging,

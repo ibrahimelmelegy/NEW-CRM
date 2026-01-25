@@ -27,7 +27,7 @@
   </template>
   
   <script lang="ts" setup>
-  import { ref, defineProps, defineEmits, onMounted } from "vue";
+  import { ref, onMounted } from 'vue';
   import { v4 as uuidv4 } from "uuid";
   import { ElMessage } from "element-plus";
   

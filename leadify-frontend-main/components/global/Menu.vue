@@ -17,16 +17,16 @@
               Icon.myicon(size="20" :name="navLink.icon")
             .mr-2
             span {{navLink.name}}
-          el-menu-items(v-for="(subLink, subIndex) in navLink.submenu")
-            NuxtLink(:to="subLink.link" v-if="subLink.link == '/operations/daily-task' && user.id == 1")
-              el-menu-item(:index="subLink.link" @click="mobileNavigate(subLink.link)" :class="{'is-active': route.fullPath.includes(subLink.link) && subLink.link == '/'}")
+          div(v-for="(subLink, subIndex) in navLink.submenu")
+            NuxtLink(:to="subLink.link" v-if="subLink.link == '/operations/daily-task' && user?.id == 1")
+              el-menu-item(:index="subLink.link" @click="mobileNavigate(subLink.link)" :class="{'is-active': route?.fullPath?.includes(subLink.link) && subLink.link == '/'}")
                  Icon.mr-2(size="18" :name="subLink.icon" v-if="subLink.icon" style="color: var(--accent-purple)")
                  span {{subLink.name}}
             el-menu-item(:index="`${index+1}-${subIndex+1}`" :class="{'disabled-link' : getDisabled(subLink.role)}" v-else-if="getDisabled(subLink.role) && subLink.link !== '/operations/daily-task'")
                  Icon.mr-2(size="18" :name="subLink.icon" v-if="subLink.icon" style="color: var(--accent-purple)")
                  span {{subLink.name}}
             NuxtLink(:to="subLink.link" v-else-if="subLink.link !== '/operations/daily-task'")
-              el-menu-item(:index="subLink.link" @click="mobileNavigate(subLink.link)" :class="{'is-active': route.fullPath.includes(subLink.link) && subLink.link !== '/'}")
+              el-menu-item(:index="subLink.link" @click="mobileNavigate(subLink.link)" :class="{'is-active': route?.fullPath?.includes(subLink.link) && subLink.link !== '/'}")
                  Icon.mr-2(size="18" :name="subLink.icon" v-if="subLink.icon" style="color: var(--accent-purple)")
                  span {{subLink.name}}
         template(v-else)
@@ -35,7 +35,7 @@
               Setting
             template(#title) {{navLink.name}}
           NuxtLink(:to="navLink.link" v-else)
-            el-menu-item(:index="navLink.link" @click="mobileNavigate(navLink.link)" :class="{'is-active': route.fullPath.includes(navLink.link) && navLink.link !== '/'}")
+            el-menu-item(:index="navLink.link" @click="mobileNavigate(navLink.link)" :class="{'is-active': route?.fullPath?.includes(navLink.link) && navLink.link !== '/'}")
               Icon.myicon.mr-2(size="20" :name="navLink.icon")
               template(#title) {{navLink.name}}
 
@@ -65,6 +65,7 @@ function mobileNavigate(link: string) {
 
 function getDisabled(role: string) {
   if (permissions.value && Array.isArray(permissions.value) && permissions.value.length) {
+    if (!role) return false; 
     return !(permissions.value as string[])?.includes(role);
   } else {
     return false;

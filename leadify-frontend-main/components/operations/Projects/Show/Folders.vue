@@ -111,7 +111,7 @@ el-dialog(
 </template>
   
 <script lang="ts" setup>
-import { defineProps, defineEmits, ref, onMounted, watch } from "vue";
+import { ref, onMounted, watch } from 'vue';
 interface Project {
   id: string;
   files: any[];

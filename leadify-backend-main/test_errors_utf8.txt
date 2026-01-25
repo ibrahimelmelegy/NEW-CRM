@@ -1,0 +1,392 @@
+﻿node.exe : ts-jest[config] (WARN) 
+At line:1 char:1
++ & "C:\Program Files\nodejs/node.exe" "C:\Program 
+Files\nodejs/node_mo ...
++ ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+~~~~~~~~~~~
+    + CategoryInfo          : NotSpecified: (ts-jest[config 
+   ] (WARN) :String) [], RemoteException
+    + FullyQualifiedErrorId : NativeCommandError
+ 
+    The "ts-jest" config option "isolatedModules" is 
+deprecated and will be removed in v30.0.0. Please use 
+"isolatedModules: true" in D:/SAUD - HPT 
+CRM/leadify-backend-main/tsconfig.json instead, see 
+https://www.typescriptlang.org/tsconfig/#isolatedModules
+  
+ts-jest[config] (WARN) 
+    The "ts-jest" config option "isolatedModules" is 
+deprecated and will be removed in v30.0.0. Please use 
+"isolatedModules: true" in D:/SAUD - HPT 
+CRM/leadify-backend-main/tsconfig.json instead, see 
+https://www.typescriptlang.org/tsconfig/#isolatedModules
+  
+ts-jest[config] (WARN) 
+    The "ts-jest" config option "isolatedModules" is 
+deprecated and will be removed in v30.0.0. Please use 
+"isolatedModules: true" in D:/SAUD - HPT 
+CRM/leadify-backend-main/tsconfig.json instead, see 
+https://www.typescriptlang.org/tsconfig/#isolatedModules
+  
+ts-jest[config] (WARN) 
+    The "ts-jest" config option "isolatedModules" is 
+deprecated and will be removed in v30.0.0. Please use 
+"isolatedModules: true" in D:/SAUD - HPT 
+CRM/leadify-backend-main/tsconfig.json instead, see 
+https://www.typescriptlang.org/tsconfig/#isolatedModules
+  
+ts-jest[config] (WARN) 
+    The "ts-jest" config option "isolatedModules" is 
+deprecated and will be removed in v30.0.0. Please use 
+"isolatedModules: true" in D:/SAUD - HPT 
+CRM/leadify-backend-main/tsconfig.json instead, see 
+https://www.typescriptlang.org/tsconfig/#isolatedModules
+  
+ts-jest[config] (WARN) 
+    The "ts-jest" config option "isolatedModules" is 
+deprecated and will be removed in v30.0.0. Please use 
+"isolatedModules: true" in D:/SAUD - HPT 
+CRM/leadify-backend-main/tsconfig.json instead, see 
+https://www.typescriptlang.org/tsconfig/#isolatedModules
+  
+ts-jest[config] (WARN) 
+    The "ts-jest" config option "isolatedModules" is 
+deprecated and will be removed in v30.0.0. Please use 
+"isolatedModules: true" in D:/SAUD - HPT 
+CRM/leadify-backend-main/tsconfig.json instead, see 
+https://www.typescriptlang.org/tsconfig/#isolatedModules
+  
+PASS tests/user/authController.test.ts
+  ΓùÅ Console
+
+    console.log
+      Login attempt: {
+        email: 'test@test.com',
+        passwordReceived: true,
+        emailType: 'string',
+        emailLen: 13
+      }
+
+      at log (src/user/authController.ts:35:11)
+
+    console.log
+      Login attempt: {
+        email: 'test@test.com',
+        passwordReceived: true,
+        emailType: 'string',
+        emailLen: 13
+      }
+
+      at log (src/user/authController.ts:35:11)
+
+    console.log
+      Login attempt: {
+        email: 'test@test.com',
+        passwordReceived: true,
+        emailType: 'string',
+        emailLen: 13
+      }
+
+      at log (src/user/authController.ts:35:11)
+
+    console.log
+      Login attempt: {
+        email: 'test@test.com',
+        passwordReceived: true,
+        emailType: 'string',
+        emailLen: 13
+      }
+
+      at log (src/user/authController.ts:35:11)
+
+PASS tests/lead/leadController.test.ts
+PASS tests/proposal/proposalService.test.ts
+PASS tests/lead/leadService.test.ts
+(node:8840) [SEQUELIZE0002] DeprecationWarning: The 
+logging-option should be either a function or false. 
+Default: console.log
+(Use `node --trace-deprecation ...` to show where the 
+warning was created)
+PASS tests/opportunity/opportunityController.test.ts
+FAIL tests/project/projectService.test.ts
+  ΓùÅ ProjectService ΓÇ║ createProject ΓÇ║ should create a 
+new project and assign users
+
+    TypeError: 
+projectModel_1.default.findOne.mockResolvedValue is not a 
+function
+
+    [0m [90m 82 |[39m             }[33m;[39m
+     [90m 83 |[39m
+    [31m[1m>[22m[39m[90m 84 |[39m             
+([33mProject[39m[33m.[39mfindOne [36mas[39m jest[33m.
+[39m[33mMock[39m)[33m.[39mmockResolvedValue([36mnull[
+39m)[33m;[39m [90m// No existing incomplete project[39m
+     [90m    |[39m                                        
+    [31m[1m^[22m[39m
+     [90m 85 |[39m             
+([33mProject[39m[33m.[39mcreate [36mas[39m jest[33m.
+[39m[33mMock[39m)[33m.[39mmockResolvedValue(mockProjectD
+ata)[33m;[39m
+     [90m 86 |[39m             
+([33mUser[39m[33m.[39mfindAll [36mas[39m jest[33m.[3
+9m[33mMock[39m)[33m.[39mmockResolvedValue([{ 
+id[33m:[39m [35m1[39m }[33m,[39m { id[33m:[39m 
+[35m2[39m }])[33m;[39m
+     [90m 87 |[39m             
+([33mProject[39m[33m.[39mfindByPk [36mas[39m jest[33m
+.[39m[33mMock[39m)[33m.[39mmockResolvedValue(mockProjec
+tData)[33m;[39m[0m
+
+      at Object.<anonymous> 
+(tests/project/projectService.test.ts:84:44)
+
+  ΓùÅ ProjectService ΓÇ║ createProject ΓÇ║ should rollback 
+transaction on error
+
+    TypeError: 
+projectModel_1.default.findOne.mockRejectedValue is not a 
+function
+
+    [0m [90m  99 |[39m         it([32m'should rollback 
+transaction on error'[39m[33m,[39m [36masync[39m () 
+[33m=>[39m {
+     [90m 100 |[39m             [36mconst[39m 
+input[33m:[39m any [33m=[39m { basicInfo[33m:[39m {} 
+}[33m;[39m
+    [31m[1m>[22m[39m[90m 101 |[39m             
+([33mProject[39m[33m.[39mfindOne [36mas[39m jest[33m.
+[39m[33mMock[39m)[33m.[39mmockRejectedValue([36mnew[3
+9m [33mError[39m([32m'DB Error'[39m))[33m;[39m
+     [90m     |[39m                                       
+     [31m[1m^[22m[39m
+     [90m 102 |[39m
+     [90m 103 |[39m             [36mawait[39m expect(pro
+jectService[33m.[39mcreateProject(input[33m,[39m 
+mockAdmin))
+     [90m 104 |[39m                 
+[33m.[39mrejects[33m.[39mtoThrow()[33m;[39m[0m
+
+      at Object.<anonymous> 
+(tests/project/projectService.test.ts:101:44)
+
+  ΓùÅ ProjectService ΓÇ║ completeProjectCreation ΓÇ║ should 
+calculate VAT, margin, and total cost correctly
+
+    TypeError: 
+projectModel_1.default.findOne.mockResolvedValue is not a 
+function
+
+    [0m [90m 118 |[39m             [90m// Total = 200 + 
+30 + 20 = 250[39m
+     [90m 119 |[39m
+    [31m[1m>[22m[39m[90m 120 |[39m             
+([33mProject[39m[33m.[39mfindOne [36mas[39m jest[33m.
+[39m[33mMock[39m)[33m.[39mmockResolvedValue(mockProject
+Data)[33m;[39m
+     [90m     |[39m                                       
+     [31m[1m^[22m[39m
+     [90m 121 |[39m
+     [90m 122 |[39m             [90m// Act[39m
+     [90m 123 |[39m             [36mawait[39m projectSer
+vice[33m.[39mcompleteProjectCreation([32m'proj-1'[39m[3
+3m,[39m input[33m,[39m mockAdmin)[33m;[39m[0m
+
+      at Object.<anonymous> 
+(tests/project/projectService.test.ts:120:44)
+
+FAIL tests/opportunity/opportunityService.test.ts
+  ΓùÅ OpportunityService ΓÇ║ createOpportunity ΓÇ║ should 
+create opportunity and NEW Lead if input.lead is present
+
+    expect(jest.fn()).toHaveBeenCalledWith(...expected)
+
+    - Expected
+    + Received
+
+    - ObjectContaining {"status": "Converted"},
+    + {"name": "New Lead", "status": "CONVERTED"},
+      1,
+      {"afterCommit": [Function mockConstructor], "commit": 
+[Function mockConstructor], "rollback": [Function 
+mockConstructor]},
+
+    Number of calls: 1
+
+    [0m [90m 103 |[39m
+     [90m 104 |[39m             [90m// Assert[39m
+    [31m[1m>[22m[39m[90m 105 |[39m             expect(
+leadService[33m.[39mcreateLead)[33m.[39mtoHaveBeenCalled
+With(
+     [90m     |[39m                                       
+     [31m[1m^[22m[39m
+     [90m 106 |[39m                 
+expect[33m.[39mobjectContaining({ status[33m:[39m 
+[32m'Converted'[39m })[33m,[39m [90m// 
+LeadStatusEnums.CONVERTED[39m
+     [90m 107 |[39m                 
+mockAdminUser[33m.[39mid[33m,[39m
+     [90m 108 |[39m                 mockTransaction[0m
+
+      at Object.<anonymous> 
+(tests/opportunity/opportunityService.test.ts:105:44)
+
+  ΓùÅ OpportunityService ΓÇ║ convertLeadToOpportunity ΓÇ║ 
+should convert lead successfully
+
+    expect(jest.fn()).toHaveBeenCalledWith(...expected)
+
+    - Expected
+    + Received
+
+      "lead-to-convert",
+      Object {
+    -   "status": "Converted",
+    +   "status": "CONVERTED",
+      },
+      {"email": "admin@test.com", "id": 1, "role": 
+{"permissions": ["VIEW_GLOBAL_OPPORTUNITIES"]}},
+
+    Number of calls: 1
+
+    [0m [90m 146 |[39m             [90m// Assert[39m
+     [90m 147 |[39m             expect([33mOpportunity[3
+9m[33m.[39mcreate)[33m.[39mtoHaveBeenCalled()[33m;[39m
+    [31m[1m>[22m[39m[90m 148 |[39m             expect(
+leadService[33m.[39mupdateLead)[33m.[39mtoHaveBeenCalled
+With(
+     [90m     |[39m                                       
+     [31m[1m^[22m[39m
+     [90m 149 |[39m                 
+[32m'lead-to-convert'[39m[33m,[39m
+     [90m 150 |[39m                 { status[33m:[39m 
+[32m'Converted'[39m }[33m,[39m
+     [90m 151 |[39m                 mockAdminUser[0m
+
+      at Object.<anonymous> 
+(tests/opportunity/opportunityService.test.ts:148:44)
+
+-----------------------------------|---------|----------|---------|---------|---------------------------------------------
+File                               | % Stmts | % Branch | % Funcs | % Lines | Uncovered Line #s                           
+-----------------------------------|---------|----------|---------|---------|---------------------------------------------
+All files                          |   72.61 |    40.87 |   65.19 |   73.91 |                                             
+ ProposalFinanceTableItem          |     100 |     62.5 |     100 |     100 |                                             
+  proposalFinanceTableItemModel.ts |     100 |     62.5 |     100 |     100 | 26-33                                       
+ activity-logs                     |   61.53 |        0 |       0 |   61.53 |                                             
+  activityService.ts               |   61.53 |        0 |       0 |   61.53 | 25-34,37-48                                 
+ activity-logs/model               |     100 |       75 |     100 |     100 |                                             
+  activities.ts                    |     100 |       75 |     100 |     100 | 33                                          
+  clientActivities.ts              |     100 |       75 |     100 |     100 | 19                                          
+  dealActivities.ts                |     100 |       75 |     100 |     100 | 19                                          
+  leadActivities.ts                |     100 |       75 |     100 |     100 | 19                                          
+  opportunityActivities.ts         |     100 |       75 |     100 |     100 | 19                                          
+  projectActivities.ts             |     100 |       75 |     100 |     100 | 22                                          
+ additionalMaterial/model          |     100 |      100 |     100 |     100 |                                             
+  additional-material.model.ts     |     100 |      100 |     100 |     100 |                                             
+ asset                             |     100 |      100 |     100 |     100 |                                             
+  assetModel.ts                    |     100 |      100 |     100 |     100 |                                             
+ client                            |   54.97 |    13.82 |   45.83 |   58.22 |                                             
+  clientEnum.ts                    |     100 |      100 |     100 |     100 |                                             
+  clientModel.ts                   |     100 |       75 |     100 |     100 | 102                                         
+  clientService.ts                 |   18.08 |        0 |       0 |   20.48 | 21-262                                      
+  client_UsersModel.ts             |     100 |      100 |     100 |     100 |                                             
+ config                            |   98.07 |    85.71 |     100 |   98.07 |                                             
+  db.ts                            |   98.07 |    85.71 |     100 |   98.07 | 54                                          
+ dailyTask                         |     100 |    79.16 |     100 |     100 |                                             
+  dailyTaskEnum.ts                 |     100 |      100 |     100 |     100 |                                             
+  dailyTaskModel.ts                |     100 |       75 |     100 |     100 | 29-66                                       
+ deal                              |     100 |      100 |     100 |     100 |                                             
+  dealEnum.ts                      |     100 |      100 |     100 |     100 |                                             
+ deal/model                        |     100 |    70.45 |     100 |     100 |                                             
+  dealDeliveryMode copy.ts         |     100 |     62.5 |     100 |     100 | 17-27                                       
+  dealModel.ts                     |     100 |       75 |     100 |     100 | 34-79                                       
+  deal_UsersModel.ts               |     100 |      100 |     100 |     100 |                                             
+  invoiceMode.ts                   |     100 |    66.66 |     100 |     100 | 20-36                                       
+ lead                              |   66.33 |    32.85 |   63.63 |    68.5 |                                             
+  leadController.ts                |   85.71 |      100 |     100 |   85.71 | 22,31,40,59                                 
+  leadEnum.ts                      |     100 |      100 |     100 |     100 |                                             
+  leadModel.ts                     |     100 |       75 |     100 |     100 | 72                                          
+  leadService.ts                   |    49.6 |    27.34 |   42.85 |   50.46 | 25-26,47,93-245,262-349                     
+ lead/model                        |     100 |      100 |     100 |     100 |                                             
+  lead_UsersModel.ts               |     100 |      100 |     100 |     100 |                                             
+ manpower                          |     100 |      100 |     100 |     100 |                                             
+  manpowerEnum.ts                  |     100 |      100 |     100 |     100 |                                             
+  manpowerModel.ts                 |     100 |      100 |     100 |     100 |                                             
+ material                          |     100 |     87.5 |     100 |     100 |                                             
+  material.model.ts                |     100 |     87.5 |     100 |     100 | 55                                          
+ notification                      |   51.47 |    29.16 |   26.66 |   51.51 |                                             
+  notificationEnum.ts              |     100 |      100 |     100 |     100 |                                             
+  notificationModel.ts             |     100 |       75 |     100 |     100 | 32                                          
+  notificationService.ts           |   15.38 |        0 |       0 |   15.78 | 15-148                                      
+ opportunity                       |   78.53 |    42.94 |   82.75 |   80.44 |                                             
+  opportunityController.ts         |   81.48 |      100 |     100 |   81.48 | 22,31,40,49,58                              
+  opportunityEnum.ts               |     100 |      100 |     100 |     100 |                                             
+  opportunityModel.ts              |     100 |       75 |     100 |     100 | 35-71                                       
+  opportunityService.ts            |   68.14 |    37.68 |   64.28 |   70.58 | 32-34,39-40,81,83,105-106,206-222,238-342   
+ opportunity/model                 |     100 |      100 |     100 |     100 |                                             
+  oppotyunity_UsersModel.ts        |     100 |      100 |     100 |     100 |                                             
+ project                           |   29.79 |     8.47 |   17.39 |   32.95 |                                             
+  projectEnum.ts                   |     100 |      100 |     100 |     100 |                                             
+  projectService.ts                |   20.54 |     0.61 |    2.56 |   23.04 | 74-528,575-693                              
+ project/models                    |     100 |       75 |     100 |     100 |                                             
+  etimadProjectModel.ts            |     100 |       70 |     100 |     100 | 40-99                                       
+  peojectMaterial.ts               |     100 |     87.5 |     100 |     100 | 48                                          
+  projectAdditionalMaterialItem.ts |     100 |       75 |     100 |     100 | 24                                          
+  projectModel.ts                  |     100 |       75 |     100 |     100 | 52-293                                      
+  projectUsersModel.ts             |     100 |      100 |     100 |     100 |                                             
+ projectAsset                      |     100 |     87.5 |     100 |     100 |                                             
+  projectAssetModel.ts             |     100 |     87.5 |     100 |     100 | 36                                          
+ projectManpower                   |   89.28 |       70 |   66.66 |   88.88 |                                             
+  projectManpowerModel.ts          |   89.28 |       70 |   66.66 |   88.88 | 57-61                                       
+ proposal                          |   40.88 |    26.45 |   37.93 |   42.85 |                                             
+  proposalEnum.ts                  |     100 |      100 |     100 |     100 |                                             
+  proposalService.ts               |   33.33 |    22.44 |      28 |   34.59 | 33-34,48-77,100-147,238-244,267-370,397-565 
+ proposal/models                   |   91.52 |    52.94 |    90.9 |   91.22 |                                             
+  proposalModel.ts                 |   89.58 |    52.94 |   88.88 |   89.36 | 141-149                                     
+  proposal_UsersModel.ts           |     100 |      100 |     100 |     100 |                                             
+ proposalContent                   |     100 |       75 |     100 |     100 |                                             
+  proposalContentModel.ts          |     100 |       75 |     100 |     100 | 26                                          
+ proposalFinanceTable              |     100 |      100 |     100 |     100 |                                             
+  proposalFinanceTableModel.ts     |     100 |      100 |     100 |     100 |                                             
+ proposalLog                       |   87.23 |    64.28 |   71.42 |   86.95 |                                             
+  proposalLogEnum.ts               |     100 |      100 |     100 |     100 |                                             
+  proposalLogModel.ts              |     100 |     87.5 |     100 |     100 | 30                                          
+  proposalLogService.ts            |   45.45 |        0 |       0 |   45.45 | 8-35                                        
+ role                              |    92.3 |      100 |   86.95 |   92.23 |                                             
+  roleEnum.ts                      |   91.39 |      100 |   86.36 |   91.39 | 145-147,152-157                             
+  roleModel.ts                     |     100 |      100 |     100 |     100 |                                             
+ service                           |     100 |      100 |     100 |     100 |                                             
+  serviceModel.ts                  |     100 |      100 |     100 |     100 |                                             
+ setting                           |   57.69 |        0 |       0 |      56 |                                             
+  settingModel.ts                  |     100 |      100 |     100 |     100 |                                             
+  settingService.ts                |   21.42 |        0 |       0 |   21.42 | 8-25                                        
+ uploader                          |   52.38 |    41.66 |   14.28 |      50 |                                             
+  uploader.enum.ts                 |     100 |      100 |     100 |     100 |                                             
+  uploader.model.ts                |     100 |       75 |     100 |     100 | 25                                          
+  uploader.service.ts              |   25.92 |        0 |       0 |   25.92 | 12-75                                       
+ user                              |   50.34 |    35.41 |   41.66 |   47.82 |                                             
+  authController.ts                |   40.86 |       25 |   16.66 |   37.61 | 74,79-109,114-126,131-169,174-218,223-241   
+  userEnum.ts                      |     100 |      100 |     100 |     100 |                                             
+  userModel.ts                     |   81.81 |       75 |      50 |   80.95 | 63-70                                       
+ user/models                       |   94.59 |       75 |       0 |   93.93 |                                             
+  loginFailureModel.ts             |     100 |       75 |     100 |     100 | 41                                          
+  passwordResetLogModel.ts         |     100 |       75 |     100 |     100 | 43                                          
+  resetTokenModel.ts               |      90 |       75 |       0 |   88.88 | 12                                          
+  sessionModel.ts                  |      90 |       75 |       0 |   88.88 | 12                                          
+ utils                             |   57.14 |        0 |       0 |   61.53 |                                             
+  constants.ts                     |     100 |      100 |     100 |     100 |                                             
+  emailHelper.ts                   |   53.84 |        0 |       0 |   58.33 | 32-45                                       
+ utils/error                       |     100 |    77.77 |     100 |     100 |                                             
+  base-http-exception.ts           |     100 |    71.42 |     100 |     100 | 10-13                                       
+  errors.ts                        |     100 |      100 |     100 |     100 |                                             
+ utils/response                    |      30 |        0 |       0 |      25 |                                             
+  responseWrapper.ts               |      30 |        0 |       0 |      25 | 11-18                                       
+ vehicle                           |     100 |     87.5 |     100 |     100 |                                             
+  vahicle.model.ts                 |     100 |       75 |     100 |     100 | 26                                          
+  vehivle.enum.ts                  |     100 |      100 |     100 |     100 |                                             
+-----------------------------------|---------|----------|---------|---------|---------------------------------------------
+Test Suites: 2 failed, 5 passed, 7 total
+Tests:       5 failed, 43 passed, 48 total
+Snapshots:   0 total
+Time:        6.529 s, estimated 10 s
+Ran all test suites.

@@ -57,7 +57,7 @@ el-form.mt-6(  autocomplete="off"   @submit.prevent='onSubmit'   ref="myForm" la
 <script lang="ts" setup>
 import { useForm } from 'vee-validate';
 import * as yup from 'yup';
-import { defineEmits, defineProps, defineModel } from 'vue';
+;
 import { Plus } from '@element-plus/icons-vue';
 const route = useRoute();
 const props = defineProps({

@@ -57,6 +57,8 @@ div
 <script setup lang="ts">
   const router = useRouter();
   import { Plus } from "@element-plus/icons-vue";
+  import { stageOptions, priorityOptions } from '@/composables/useOpportunity';
+  import useTableFilter from '@/composables/useTableFilter';
   const { hasPermission } = await usePermissions();
   const loadingAction = ref(false);
   const deleteLeadPopup = ref(false);

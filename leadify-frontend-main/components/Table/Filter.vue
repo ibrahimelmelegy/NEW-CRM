@@ -25,7 +25,7 @@ el-drawer(v-model="drawer", direction="rtl", :show-close="false" destroy-on-clos
 </template>
 
 <script lang="ts" setup>
-  import { ref, computed, defineModel, defineProps, defineEmits } from "vue";
+  import { ref, computed } from 'vue';
   const route = useRoute();
   const query = { ...route.query };
   const router = useRouter();

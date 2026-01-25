@@ -30,7 +30,7 @@ div(class="pt-4")
 </template>
 
 <script lang="ts" setup>
-  import { ref } from "vue";
+  import { ref } from 'vue';
   const { hasPermission } = await usePermissions();
   const props = defineProps({
     user: {

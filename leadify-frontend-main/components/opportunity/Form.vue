@@ -34,7 +34,7 @@ el-form(  autocomplete="off"   @submit.prevent='onSubmit'   ref="myForm" label-p
   import { useForm } from "vee-validate";
   import * as yup from "yup";
   import isEmailValidator from "validator/lib/isEmail";
-  import { defineEmits, defineProps } from "vue";
+  ;
   const route = useRoute();
   const props = defineProps({
     loading: Boolean,

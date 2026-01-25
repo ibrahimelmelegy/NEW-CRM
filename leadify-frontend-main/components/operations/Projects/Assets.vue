@@ -25,7 +25,7 @@ OperationsProjectsModalAsset(v-model="addAsset"  @confirm="fetchAssets" :asset="
 <script lang="ts" setup>
   import { useForm } from "vee-validate";
   import * as yup from "yup";
-  import { defineEmits, defineProps, defineModel } from "vue";
+  ;
   import { Plus } from "@element-plus/icons-vue";
   import { ElNotification } from "element-plus";
 

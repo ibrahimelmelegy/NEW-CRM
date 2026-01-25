@@ -59,6 +59,8 @@ div
   const router = useRouter();
   import { ElNotification } from "element-plus";
   import { Plus } from "@element-plus/icons-vue";
+  import { leadStates, leadSources } from '@/composables/useLeads';
+  import useTableFilter from '@/composables/useTableFilter';
   const { hasPermission } = await usePermissions();
   const loadingAction = ref(false);
   const loading = ref(false);

@@ -10,7 +10,7 @@ el-dialog.manpower-module(v-model='dialog' width='750' align-center='' title="Ad
 </template>
 
 <script setup lang="ts">
-import { ref, defineProps, defineEmits, defineModel } from 'vue';
+import { ref } from 'vue';
 const props = defineProps({
   title: String,
   descriptionOne: String,

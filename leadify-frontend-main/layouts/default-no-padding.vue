@@ -139,7 +139,7 @@ const breadcrumbRoutes = computed(() => {
 
   // Check if the last item is a valid ID (UUID or numeric)
   if (pathSegments.length > 0) {
-    const lastSegment = pathSegments[pathSegments.length - 1];
+    const lastSegment = pathSegments[pathSegments.length - 1] || "";
 
     // Check for UUID or numeric formats
     if (uuidRegex.test(lastSegment) || !isNaN(Number(lastSegment))) {

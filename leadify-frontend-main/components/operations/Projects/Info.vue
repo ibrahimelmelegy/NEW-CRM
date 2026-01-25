@@ -40,7 +40,7 @@ el-form.mb-24( autocomplete="off"   @submit.prevent='onSubmit'   ref="myForm" la
 <script lang="ts" setup>
   import { useForm } from "vee-validate";
   import * as yup from "yup";
-  import { defineEmits, defineProps, defineExpose, defineModel } from "vue";
+  import { defineExpose } from 'vue';
   const route = useRoute();
   const router = useRouter();
   const props = defineProps({

@@ -134,7 +134,7 @@
   </template>
 
 <script setup>
-import { ref, reactive } from "vue";
+import { ref, reactive } from 'vue';
 import { ElMessage } from "element-plus";
 
 const activeName = ref("info");

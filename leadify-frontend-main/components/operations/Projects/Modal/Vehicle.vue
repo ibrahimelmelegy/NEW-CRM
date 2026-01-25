@@ -10,7 +10,7 @@ el-dialog(v-model='dialog' width='800' align-center='' title="Add New Vehicle" d
 </template>
 
 <script setup lang="ts">
-import { ref, defineProps, defineEmits, defineModel } from 'vue';
+import { ref } from 'vue';
 const props = defineProps({
   title: String,
   descriptionOne: String,

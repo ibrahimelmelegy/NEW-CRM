@@ -34,7 +34,7 @@
 
 <script lang="ts" setup>
   const { hasPermission } = await usePermissions();
-  import { ref } from "vue";
+  import { ref } from 'vue';
   const props = defineProps({
     user: {
       type: Object,

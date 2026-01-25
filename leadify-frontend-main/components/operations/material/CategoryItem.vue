@@ -40,7 +40,7 @@ OperationsMaterialFormCategoryItem(
 </template>
 
 <script lang="ts" setup>
-import { ref, defineExpose, defineEmits } from 'vue';
+import { ref, defineExpose } from 'vue';
 import { v4 as uuidv4 } from 'uuid'; // To generate unique IDs
 import { ElMessage } from 'element-plus';
 import { Delete, Plus } from '@element-plus/icons-vue';

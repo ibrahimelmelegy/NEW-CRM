@@ -25,7 +25,7 @@ OperationsProjectsModalMaterial(v-model="addMaterial" :data="material" :allAddMa
 <script lang="ts" setup>
   import { useForm } from "vee-validate";
   import * as yup from "yup";
-  import { defineEmits, defineProps, defineModel, ref, computed, onMounted } from "vue";
+  import { ref, computed, onMounted } from 'vue';
   import { Plus } from "@element-plus/icons-vue";
 
   const props = defineProps({

@@ -44,8 +44,6 @@ export default defineNuxtConfig({
         '@element-plus/icons-vue',
         'echarts',
         'vue-echarts',
-        'resize-detector',
-        'date-fns',
         'lodash',
         '@tiptap/vue-3',
         '@tiptap/starter-kit',
@@ -55,7 +53,14 @@ export default defineNuxtConfig({
         '@tiptap/extension-table-cell',
         '@tiptap/extension-table-header',
         'axios',
-        'pinia'
+        'pinia',
+        // Add frequently re-bundled deps to prevent reload loop
+        '@vueup/vue-quill',
+        'vue-tel-input',
+        'vue-advanced-cropper',
+        'vue-animated-counter',
+        '@vueuse/core',
+        'quill-image-uploader'
       ]
     },
     build: {

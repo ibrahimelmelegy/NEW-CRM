@@ -22,7 +22,7 @@ OperationsProjectsModalVehicle(v-model="addVehicle"  @confirm="fetchVehicles" :v
 <script lang="ts" setup>
   import { useForm } from "vee-validate";
   import * as yup from "yup";
-  import { defineEmits, defineProps, defineModel } from "vue";
+  ;
   import { Plus } from "@element-plus/icons-vue";
   const route = useRoute();
   const props = defineProps({

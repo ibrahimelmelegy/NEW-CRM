@@ -25,7 +25,7 @@
 <script lang="ts" setup>
 import { useForm } from "vee-validate";
 import * as yup from "yup";
-import { defineEmits, defineProps } from "vue";
+;
 const router = useRouter();
 const route = useRoute();
 const props = defineProps({

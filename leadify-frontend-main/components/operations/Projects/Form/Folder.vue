@@ -39,7 +39,7 @@
   <script lang="ts" setup>
   import { useForm } from "vee-validate";
   import * as yup from "yup";
-  import { defineProps, defineEmits, defineModel, defineExpose, ref, watch } from "vue";
+  import { defineExpose, ref, watch } from 'vue';
   // import { Delete } from '@element-plus/icons-vue';
   
   // Props

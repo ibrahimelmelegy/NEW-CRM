@@ -42,7 +42,7 @@ el-form-item( :label="label" :error='errorMessage' class="!mb-0")
 </template>
 
 <script lang="ts" setup>
-  import { computed, ref, watch, defineProps } from "vue";
+  import { computed, ref, watch } from 'vue';
   import { Delete, Download, Plus, ZoomIn, Crop } from "@element-plus/icons-vue";
   import type { UploadProps, UploadFile } from "element-plus";
   import { ElMessage } from "element-plus";

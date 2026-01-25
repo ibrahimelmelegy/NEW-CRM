@@ -11,7 +11,7 @@
 </template>
 
 <script lang="ts" setup>
-  import { ref } from "vue";
+  import { ref } from 'vue';
   const loading = ref(false);
   const categoryRef = ref();
   const categoryItemRef = ref();
