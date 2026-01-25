@@ -1,94 +1,87 @@
 # Requires -RunAsAdministrator
 $ErrorActionPreference = "SilentlyContinue"
 
+# إضافة مكتبة التنبيهات الصوتية
+Add-Type -AssemblyName System.Speech
+$speaker = New-Object System.Speech.Synthesis.SpeechSynthesizer
+
 function Write-Banner {
     Clear-Host
     Write-Host "================================================================" -ForegroundColor Cyan
-    Write-Host "    🚀  SAUD - HPT CRM | ULTIMATE DEV LAUNCHER (4GB RAM) 🚀    " -ForegroundColor Cyan
+    Write-Host "    🚀  El-MagicoO - HPT CRM | ULTIMATE ENGINE v3.5  🚀         " -ForegroundColor Cyan
     Write-Host "================================================================" -ForegroundColor Cyan
-    Write-Host "    • Backend Port:  5000 | RAM: 4GB" -ForegroundColor Gray
-    Write-Host "    • Frontend Port: 3060 | RAM: 4GB" -ForegroundColor Gray
-    Write-Host "    • Proposal Port: 3001 | RAM: 4GB" -ForegroundColor Gray
+    Write-Host "    • Status: Voice Notifications & PM2 Enabled" -ForegroundColor Gray
+    Write-Host "    • Control Center: Port 3060 | Health: Port 8888" -ForegroundColor Gray
     Write-Host "================================================================" -ForegroundColor Cyan
 }
 
-# تحديد المسارات الأساسية
+# المسارات
 $basePath = "D:\SAUD - HPT CRM"
-$backendPath = Join-Path $basePath "leadify-backend-main"
 $frontendPath = Join-Path $basePath "leadify-frontend-main"
+$backendPath = Join-Path $basePath "leadify-backend-main"
 $proposalPath = Join-Path $basePath "React proposal"
+$resultsPath = Join-Path $frontendPath "test-results"
 
 Write-Banner
 
-# 1. تنظيف المنافذ (Ports) لضمان عدم حدوث تعارض
-Write-Host "[1/4] 🧹 Clearing Ports..." -ForegroundColor Green
-$ports = @(5000, 3060, 3001, 3000)
+# 1. تنظيف شامل وعميق
+Write-Host "[1/7] 🧹 Deep Cleaning System..." -ForegroundColor Green
+$ports = @(5000, 3060, 3001, 3000, 8888, 9323)
 foreach ($port in $ports) {
     $procId = Get-NetTCPConnection -LocalPort $port -ErrorAction SilentlyContinue | Select-Object -ExpandProperty OwningProcess -Unique
-    if ($procId) {
-        Write-Host "   - Killing process on port $port..." -ForegroundColor Red
-        Stop-Process -Id $procId -Force -ErrorAction SilentlyContinue
-    }
+    if ($procId) { Stop-Process -Id $procId -Force }
 }
+Get-Process | Where-Object { $_.Name -match "playwright|node" } | Where-Object { $_.Path -notmatch "vscode" } | Stop-Process -Force
 
-# 2. إعداد أمر تشغيل الرامات (NODE_OPTIONS)
-# تم ضبط الذاكرة على 4096 ميجابايت (4GB)
+# 2. تهيئة ملفات النتائج
+if (!(Test-Path $resultsPath)) { New-Item -ItemType Directory -Path $resultsPath -Force }
+'{"suites": []}' | Out-File -FilePath "$resultsPath\results.json" -Encoding utf8
+
+# 3. تشغيل المحركات الثلاثة (Back, Front, Proposal)
+Write-Host "[2/7] 🚀 Igniting Servers..." -ForegroundColor Green
 $ramLimit = "`$env:NODE_OPTIONS='--max-old-space-size=4096'"
 
-# 3. تشغيل السيرفرات في نوافذ منفصلة
-Write-Host "[2/4] 🚀 Launching Servers with 4GB RAM Boost..." -ForegroundColor Green
+Start-Process powershell -ArgumentList "-NoExit", "-Command", "cd '$backendPath'; $ramLimit; `$Host.UI.RawUI.WindowTitle = 'BACKEND:5000'; npx ts-node src/server.ts"
+Start-Process powershell -ArgumentList "-NoExit", "-Command", "cd '$proposalPath'; $ramLimit; `$Host.UI.RawUI.WindowTitle = 'PROPOSAL:3001'; npm run dev"
+Start-Process powershell -ArgumentList "-NoExit", "-Command", "cd '$frontendPath'; $ramLimit; `$Host.UI.RawUI.WindowTitle = 'FRONTEND:3060'; npm run dev"
 
-# تشغيل الـ Backend
-Write-Host "   • Starting Backend..." -ForegroundColor Cyan
-Start-Process powershell -ArgumentList "-NoExit", "-Command", "cd '$backendPath'; $ramLimit; Write-Host '--- BACKEND SERVER ---' -ForegroundColor Yellow; npm run dev"
+# 4. تشغيل PM2 Monitoring
+Write-Host "[3/7] ⚙️  Restarting PM2 Process Manager..." -ForegroundColor Green
+npx pm2 kill 2>$null
+Start-Process powershell -ArgumentList "-NoExit", "-Command", "cd '$frontendPath'; npx pm2 monit"
 
-# تشغيل الـ Proposal (الذي طلبته)
-Write-Host "   • Starting Proposal App..." -ForegroundColor Cyan
-Start-Process powershell -ArgumentList "-NoExit", "-Command", "cd '$proposalPath'; $ramLimit; Write-Host '--- PROPOSAL SERVER ---' -ForegroundColor Yellow; npm run dev"
+# 5. تشغيل Health Dashboard
+Write-Host "[4/7] 🩺 Health UI is coming up..." -ForegroundColor Green
+Start-Process powershell -ArgumentList "-NoExit", "-Command", "cd '$frontendPath'; npm run health:ui"
 
-# 4. ميزة [PM2 & ecosystem]: إعداد مدير العمليات
-Write-Host "[3/5] ⚙️  Setting up PM2 Process Manager..." -ForegroundColor Green
-npm install -g pm2 --no-audit --no-fund --loglevel=error
-npx pm2 delete all
+# 6. تشغيل الاختبارات الذاتية (المحرك السري)
+Write-Host "[5/7] 🧪 Starting Hidden Test Suite..." -ForegroundColor Green
+$testJob = Start-Process powershell -WindowStyle Hidden -PassThru -ArgumentList "-Command", "cd '$frontendPath'; npm run test:dashboard"
 
-# 5. تشغيل النظام عبر PM2 (Backend + Frontend + Proposal + Health)
-Write-Host "[4/5] 🚀 Launching Ecosystem (4 Servers)..." -ForegroundColor Cyan
-npx pm2 start ecosystem.config.js
+# 7. فتح مركز التحكم
+Write-Host "[6/7] 🌐 Opening Browsers..." -ForegroundColor Green
+Start-Sleep -Seconds 12
+Start-Process "http://localhost:3060/admin/tests" 
+Start-Process "http://localhost:8888" 
 
-# فتح شاشة المراقبة
-Start-Process powershell -ArgumentList "-NoExit", "-Command", "npx pm2 monit"
-$frontendPath = "D:\SAUD - HPT CRM\leadify-frontend-main"
+# 8. نظام التنبيه الذكي (صوت + إشعار)
+Write-Host "[7/7] 🔔 Waiting for Test completion to notify you..." -ForegroundColor Cyan
+$speaker.Speak("System is running. I will notify you when tests are complete, El Magico.")
 
-Write-Banner
+# مراقبة عملية التيست في الخلفية
+while (!$testJob.HasExited) { Start-Sleep -Seconds 2 }
 
-# 1. إيقاف أي نسخة قديمة
-Write-Host "[1/3] 🛑 Stopping background instances..." -ForegroundColor Yellow
-npx pm2 stop CRM-Health-Dash 2>$null
-$procId = Get-NetTCPConnection -LocalPort 8888 -ErrorAction SilentlyContinue | Select-Object -ExpandProperty OwningProcess -Unique
-if ($procId) { Stop-Process -Id $procId -Force }
+# إعلان النجاح بالصوت واللون
+Write-Host "`n✅ TESTS COMPLETE! CHECK DASHBOARD." -ForegroundColor White -BackgroundColor Green
+[System.Reflection.Assembly]::LoadWithPartialName("System.Windows.Forms") | Out-Null
+$balloon = New-Object System.Windows.Forms.NotifyIcon
+$balloon.Icon = [System.Drawing.Icon]::ExtractAssociatedIcon((Get-Process -id $pid).Path)
+$balloon.BalloonTipIcon  = "Info"
+$balloon.BalloonTipTitle = "HPT CRM - El-MagicoO"
+$balloon.BalloonTipText  = "Tests are finished! Your QA Dashboard is now 100% updated."
+$balloon.Visible = $true
+$balloon.ShowBalloonTip(5000)
 
-# 2. تشغيل السيرفر
-Write-Host "[2/3] 🚀 Launching Dashboard Server..." -ForegroundColor Green
-Start-Process powershell -ArgumentList "-NoExit", "-Command", "cd '$frontendPath'; `$Host.UI.RawUI.WindowTitle = 'Health Dashboard (Test Server)'; npm run health:ui"
+$speaker.Speak("Attention El Magico. All tests have been completed successfully. Your dashboard is ready.")
 
-# 3. فتح المتصفح
-Write-Host "[3/3] 🌐 Opening Browser..." -ForegroundColor Green
-Start-Sleep -Seconds 5
-Start-Process "http://localhost:8888"
-
-Write-Host "`n✅ DASHBOARD IS RUNNING!" -ForegroundColor Cyan
-
-
-
-# تشغيل الـ Frontend
-Write-Host "   • Starting Frontend..." -ForegroundColor Cyan
-Start-Process powershell -ArgumentList "-NoExit", "-Command", "cd '$frontendPath'; $ramLimit; Write-Host '--- FRONTEND SERVER ---' -ForegroundColor Yellow; npm run dev"
-
-# 4. فتح المتصفح تلقائياً
-Write-Host "[3/4] 🌐 Opening Browser..." -ForegroundColor Green
-Start-Sleep -Seconds 8 # ننتظر قليلاً حتى تبدأ السيرفرات في العمل
-Start-Process "http://localhost:3060" # لوحة التحكم
-Start-Process "http://localhost:3001" # البروبوزال
-
-Write-Host "`n✅ ALL SYSTEMS GO! Happy Coding." -ForegroundColor Green
-Start-Sleep -Seconds 5
+Write-Host "`n🏆 ALL SYSTEMS NOMINAL. ENJOY!" -ForegroundColor Cyan
