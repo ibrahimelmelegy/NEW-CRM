@@ -1,23 +1,117 @@
-<template lang="pug">
-.p-4(class="w-[100vw] h-[100vh] flex xl:gap-20 gap-8 flex-col md:flex-row md:items-center justify-between")
-  .form.flex-1(class="xl:ms-28 lg:p-12 p-4")
-      .form-sec.text-center
-        .mb-8.m-auto(class="md:mb-14")
-            h1.text-neutral-900.text-2xl.font-semibold(class="md:text-3xl") Reset Password
-            p.mt-2.font-medium.text-lg.text-neutral-500 Please kindly write your email to recieve a reset <br> password link
-      el-form( autocomplete="off"   @submit.prevent='onSubmit' ref="myForm" label-position="top" :validationSchema="formSchema")
-          InputText(placeholder="email"  name="email" )
-          el-form-item.mt-6
-            el-button(   size='large' :loading="loading" native-type="submit" type="primary"  class="w-full !my-4 !rounded-xl") Send Email
-  .bg-black.rounded-3xl.py-8(class="order-first md:order-last md:flex-1 md:h-full" )
-    img.ms-auto.px-6.mb-6(src="/images/light-logo.png" alt="login")
-    div(class="shape")
-      svg.max-w-full(xmlns="http://www.w3.org/2000/svg", width="612", height="570", viewBox="0 0 612 570", fill="none")
-        path(fill-rule="evenodd", clip-rule="evenodd", d="M2.03168 70.6018C2.03168 31.6095 33.6411 0 72.6357 0H108.293C143.322 0 171.905 27.6096 173.464 62.255H368.996C384.095 62.255 396.328 74.4906 396.328 89.5834C396.328 104.676 384.095 116.912 368.996 116.912H289.838C273.019 116.912 258.494 126.697 251.629 140.884H325.726C364.718 140.884 396.328 172.493 396.328 211.486V294.384H542.146C580.306 294.384 611.238 325.318 611.238 363.478C611.238 401.637 580.306 432.571 542.146 432.571H420.186C382.879 432.571 352.639 462.812 352.639 500.116C352.639 538.192 321.77 569.059 283.694 569.059H-91.4299C-91.8158 569.059 -92.1289 568.745 -92.1289 568.36C-92.1289 567.974 -91.8158 567.661 -91.4299 567.661H283.694C321.001 567.661 351.241 537.42 351.241 500.116C351.241 462.04 382.11 431.173 420.186 431.173H542.146C579.53 431.173 609.84 400.865 609.84 363.478C609.84 326.09 579.53 295.782 542.146 295.782H396.328V301.765C396.328 339.985 427.309 370.968 465.532 370.968H574.504C574.888 370.968 575.203 371.281 575.203 371.667C575.203 372.053 574.888 372.367 574.504 372.367H465.532C426.54 372.367 394.93 340.756 394.93 301.765V211.486C394.93 173.266 363.949 142.282 325.726 142.282H250.986C248.7 147.497 247.428 153.261 247.428 159.321V172.505C247.428 189.419 233.713 203.129 216.803 203.129C199.88 203.129 186.179 189.164 186.179 172.258C186.179 155.077 200.104 140.884 217.3 140.884H250.084C257.047 125.901 272.23 115.514 289.838 115.514H368.996C383.319 115.514 394.93 103.904 394.93 89.5834C394.93 75.2624 383.319 63.653 368.996 63.653H173.513C173.527 64.18 173.534 64.7084 173.534 65.2384V95.7516C173.534 114.938 157.666 130.477 138.498 130.477C119.666 130.477 104.085 115.213 104.085 96.3654C104.085 77.5265 119.352 62.255 138.191 62.255H172.066C170.507 28.382 142.553 1.39806 108.293 1.39806H72.6357C34.4135 1.39806 3.42975 32.3816 3.42975 70.6018V164.124C3.42975 180.784 -10.0755 194.29 -26.7354 194.29C-43.3954 194.29 -56.9013 180.784 -56.9013 164.124V135.305C-56.9013 118.291 -70.6939 104.499 -87.7083 104.499C-104.723 104.499 -118.515 118.291 -118.515 135.305V140.167C-118.515 160.638 -135.11 177.233 -155.581 177.233H-270.301C-270.687 177.233 -271 176.92 -271 176.534C-271 176.148 -270.687 175.835 -270.301 175.835H-155.581C-135.883 175.835 -119.913 159.866 -119.913 140.167V135.305C-119.913 117.519 -105.494 103.101 -87.7083 103.101C-69.9215 103.101 -55.5033 117.519 -55.5033 135.305V164.124C-55.5033 180.013 -42.6237 192.892 -26.7354 192.892C-10.8479 192.892 2.03168 180.013 2.03168 164.124V70.6018ZM172.115 63.653H138.191C120.128 63.653 105.483 78.299 105.483 96.3654C105.483 114.424 120.421 129.079 138.498 129.079C156.911 129.079 172.136 114.149 172.136 95.7516V65.2384C172.136 64.7084 172.129 64.1799 172.115 63.653ZM249.462 142.282H217.3C200.894 142.282 187.577 155.834 187.577 172.258C187.577 188.407 200.67 201.731 216.803 201.731C232.944 201.731 246.03 188.646 246.03 172.505V159.321C246.03 153.278 247.253 147.52 249.462 142.282Z", fill="url(#paint0_linear_4753_4133)")
-        defs
-          linearGradient#paint0_linear_4753_4133(x1="233.07", y1="-90.425", x2="130.676", y2="506.398", gradientUnits="userSpaceOnUse")
-            stop(offset="0.0020097", stop-color="#0572EC")
-            stop(offset="0.973958", stop-color="#F17BA5")
+<template>
+  <div class="login-page forgot-password relative w-full h-screen overflow-hidden flex items-center justify-center bg-obsidian">
+    <!-- Immersive Background Elements -->
+    <div class="absolute inset-0 z-0">
+      <div class="absolute top-[-10%] left-[-10%] w-[40%] h-[40%] bg-primary/20 rounded-full blur-[120px] animate-pulse"></div>
+      <div class="absolute bottom-[-10%] right-[-10%] w-[40%] h-[40%] bg-gradient-end/10 rounded-full blur-[120px] animate-pulse" style="animation-delay: 2s;"></div>
+      <div class="absolute inset-0 opacity-[0.05]" style="background-image: radial-gradient(circle at 2px 2px, rgba(255,255,255,0.15) 1px, transparent 0); background-size: 40px 40px;"></div>
+    </div>
+
+    <!-- Glassmorphism Container -->
+    <div class="relative z-10 w-full max-w-[1200px] px-4 flex flex-col md:flex-row items-center justify-between gap-12 lg:gap-20">
+      
+      <!-- Brand & Visual Section -->
+      <div class="hidden md:flex flex-1 flex-col items-start space-y-8 animate-fade-in-left">
+        <img src="/images/light-logo.png" alt="High Point CRM" class="h-16 w-auto drop-shadow-2xl" />
+        <div class="space-y-4">
+          <h2 class="text-4xl lg:text-5xl font-bold leading-tight text-white line-clamp-2">
+            Stay Connected to your <span class="text-transparent bg-clip-text bg-gradient-to-r from-primary to-gradient-end">Success</span>
+          </h2>
+          <p class="text-text-secondary text-lg max-w-md leading-relaxed">
+            Quickly recover your account access and get back to managing your business operations.
+          </p>
+        </div>
+      </div>
+
+      <!-- Forgot Password Form Card -->
+      <div class="w-full max-w-[480px] animate-fade-in-right">
+        <div class="glass-card p-8 md:p-12 rounded-[32px] border border-white/10 bg-white/[0.03] backdrop-blur-[20px] shadow-2xl relative overflow-hidden group">
+          <!-- Subtle glow effect -->
+          <div class="absolute -top-24 -right-24 w-48 h-48 bg-primary/20 rounded-full blur-[60px] group-hover:bg-primary/30 transition-all duration-700"></div>
+          
+          <div class="relative z-10">
+            <!-- State 1: Request Form -->
+            <div v-if="!isSubmitted">
+              <div class="mb-10">
+                <h1 class="text-3xl font-bold text-white mb-2">Reset Password</h1>
+                <p class="text-text-muted leading-relaxed">Enter the email associated with your account to receive a secure reset link.</p>
+              </div>
+
+              <el-form 
+                autocomplete="off" 
+                @submit.prevent="onSubmit" 
+                ref="myForm" 
+                label-position="top" 
+                :validationSchema="formSchema"
+                class="modern-form"
+              >
+                <div class="space-y-6">
+                  <div class="form-group flex flex-col gap-2">
+                    <InputText 
+                      label="Email Address"
+                      placeholder="name@company.com" 
+                      name="email" 
+                      class="modern-input"
+                    />
+                  </div>
+                </div>
+
+                <div class="mt-8 flex flex-col gap-4">
+                  <el-button 
+                    size="large" 
+                    :loading="loading" 
+                    native-type="submit" 
+                    type="primary" 
+                    class="w-full !h-[56px] !rounded-2xl !bg-primary hover:!bg-primary-hover !border-none !text-lg !font-bold shadow-lg shadow-primary/20 transition-all"
+                  >
+                    Send Link
+                  </el-button>
+                  
+                  <el-button 
+                    size="large" 
+                    @click="router.push('/login')"
+                    class="w-full !h-[56px] !rounded-2xl !bg-transparent hover:!bg-white/5 !border-white/10 !text-text-secondary hover:!text-white transition-all"
+                  >
+                    Back to Login
+                  </el-button>
+                </div>
+              </el-form>
+            </div>
+
+            <!-- State 2: Success Message -->
+            <div v-else class="text-center py-6 animate-fade-in">
+              <div class="w-20 h-20 bg-success/20 rounded-full flex items-center justify-center mx-auto mb-8 shadow-lg shadow-success/10 border border-success/30">
+                <Icon name="ph:check-circle-bold" class="text-success text-4xl" />
+              </div>
+              
+              <h1 class="text-3xl font-bold text-white mb-4">Check Your Inbox</h1>
+              <p class="text-text-muted mb-10 leading-relaxed">
+                We've sent a password reset link to <br>
+                <span class="text-white font-medium">{{ submittedEmail }}</span>
+              </p>
+
+              <el-button 
+                size="large" 
+                type="primary"
+                @click="router.push('/login')"
+                class="w-full !h-[56px] !rounded-2xl !bg-primary hover:!bg-primary-hover !border-none !text-lg !font-bold shadow-lg shadow-primary/20 transition-all"
+              >
+                Return to Login
+              </el-button>
+              
+              <button 
+                @click="isSubmitted = false"
+                class="mt-6 text-sm text-text-muted hover:text-white transition-colors"
+              >
+                Didn't receive email? <span class="text-primary font-medium">Try again</span>
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
 </template>
 
 <script lang="ts" setup>
@@ -25,9 +119,19 @@ import { useForm } from 'vee-validate';
 import * as yup from 'yup';
 import isEmailValidator from 'validator/lib/isEmail';
 import { useAuthStore } from '~/stores/auth';
-const auth = useAuthStore();
 import { useMain } from '~/stores/common';
+import { ElNotification } from "element-plus";
+
+const auth = useAuthStore();
 const mainStore = useMain();
+const router = useRouter();
+const route = useRoute();
+const loading = ref(false);
+
+// State for success message
+const isSubmitted = ref(false);
+const submittedEmail = ref('');
+
 definePageMeta({
   title: 'Admin | Forget Password',
   layout: 'empty',
@@ -37,55 +141,67 @@ const noArabicRegx = /^[^\u0600-\u06FF]+$/;
 const formSchema = yup.object({
   email: yup
     .string()
-    .email()
+    .email("Valid email required")
     .max(70)
-    .required()
+    .required("Email is required")
     .matches(noArabicRegx, 'validEmail')
     .test(
       'is-valid',
-      (message: any) => 'valid Email',
-      (value: any) => (value ? isEmailValidator(value) : new yup.ValidationError('Invalid value'))
+      'Invalid Email format',
+      (value: any) => (value ? isEmailValidator(value) : false)
     )
     .label('email'),
 });
 
-const router = useRouter();
-const route = useRoute();
-const loading = ref(false);
-
-const { handleSubmit, setFieldValue, resetForm } = useForm({
+const { handleSubmit, resetForm } = useForm({
   validationSchema: formSchema,
 });
 
-const onSubmit = handleSubmit(async (values: any, actions: any) => {
+const onSubmit = handleSubmit(async (values: any) => {
   loading.value = true;
-  const response = await useApiFetch('auth/forgot-password', 'POST', {
-    email: values.email,
-  });
-  if (response?.message === 'Password reset link sent to your email.') {
-    // router.push('/reset-password');
-    resetForm();
-    ElNotification({
-      title: 'Success',
-      type: 'success',
-      message: response.message,
+  try {
+    const response: any = await useApiFetch('auth/forgot-password', 'POST', {
+      email: values.email,
     });
-  } else {
+
+    if (response?.message === 'Password reset link sent to your email.') {
+      submittedEmail.value = values.email;
+      isSubmitted.value = true;
+      resetForm();
+      ElNotification({
+        title: 'Success',
+        type: 'success',
+        message: response.message,
+      });
+    } else {
+      ElNotification({
+        title: 'Error',
+        type: 'error',
+        message: response?.message || 'Something went wrong',
+      });
+    }
+  } catch (error: any) {
     ElNotification({
       title: 'Error',
       type: 'error',
-      message: response.message,
+      message: error.message || 'Failed to send reset link',
     });
+  } finally {
+    loading.value = false;
   }
-  loading.value = false;
 });
 </script>
 
 <style lang="scss">
-.shape {
-  display: block;
-  @media screen and (max-width: 768px) {
-    display: none;
+// Inherit global styles from login page redesign
+.forgot-password {
+  .animate-fade-in {
+    animation: fadeIn 0.5s ease-out forwards;
+  }
+
+  @keyframes fadeIn {
+    from { opacity: 0; transform: translateY(10px); }
+    to { opacity: 1; transform: translateY(0); }
   }
 }
 </style>
