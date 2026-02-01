@@ -42,7 +42,7 @@ export const ViewProposalDocument: React.FC = () => {
             clientCompany: content.client?.company || '',
             clientEmail: content.client?.email || '',
             clientPhone: content.client?.phone || '',
-            logo: content.branding?.logo || '',
+            logo: content.branding?.logo || '/assets/header-logo.png',
             themeColor: content.branding?.themeColor || '#7c3aed',
             typography: content.branding?.typography || 'Sans',
             coverStyle: content.branding?.coverStyle || 'corporate',

@@ -15,31 +15,39 @@ const PrintStyles = () => (
             margin: 0 !important;
         }
         @media print {
-            body {
+            html, body {
                 margin: 0 !important;
                 padding: 0 !important;
-                -webkit-print-color-adjust: exact;
-                print-color-adjust: exact;
-                background-color: white !important;
+                height: 297mm !important;
+                width: 210mm !important;
+                -webkit-print-color-adjust: exact !important;
+                print-color-adjust: exact !important;
             }
             .page-container {
                 margin: 0 !important;
                 padding: 0 !important;
                 width: 210mm !important;
-                height: 297mm !important;
+                height: 297.1mm !important;
                 page-break-after: always !important;
+                page-break-inside: avoid !important;
                 position: relative !important;
                 overflow: hidden !important;
+                background-color: white !important;
             }
+            .no-print { display: none !important; }
         }
-        /* Rich Text Normalization */
-        .proposal-rich-text h1 { font-size: 2.25rem; font-weight: 800; margin-top: 1.5rem; margin-bottom: 1rem; color: #111827; line-height: 1.2; }
-        .proposal-rich-text h2 { font-size: 1.875rem; font-weight: 700; margin-top: 1.25rem; margin-bottom: 0.75rem; color: #1f2937; line-height: 1.3; }
-        .proposal-rich-text h3 { font-size: 1.5rem; font-weight: 600; margin-top: 1rem; margin-bottom: 0.5rem; color: #374151; line-height: 1.4; }
-        .proposal-rich-text p { margin-bottom: 0.8em; line-height: 1.6; color: #4b5563; }
-        .proposal-rich-text ul { list-style-type: disc; margin-left: 1.5em; margin-bottom: 0.8em; }
-        .proposal-rich-text table { width: 100%; border-collapse: collapse; margin: 1em 0; }
-        .proposal-rich-text th, .proposal-rich-text td { border: 1px solid #e5e7eb; padding: 0.6em; }
+        /* Design enhancements */
+        .proposal-header-bg {
+            background: linear-gradient(to bottom, #fcfaff 0%, #ffffff 100%);
+        }
+        .proposal-rich-text { font-size: 11pt; }
+        .proposal-rich-text h1 { font-size: 24pt; font-weight: 800; margin-top: 20pt; margin-bottom: 12pt; color: #111827; }
+        .proposal-rich-text h2 { font-size: 18pt; font-weight: 700; margin-top: 15pt; margin-bottom: 10pt; color: #1f2937; }
+        .proposal-rich-text h3 { font-size: 14pt; font-weight: 600; margin-top: 12pt; margin-bottom: 8pt; color: #374151; }
+        .proposal-rich-text p { margin-bottom: 10pt; line-height: 1.6; color: #4b5563; }
+        .proposal-rich-text ul { list-style-type: disc; margin-left: 20pt; margin-bottom: 10pt; }
+        .proposal-rich-text table { width: 100%; border-collapse: collapse; margin: 15pt 0; }
+        .proposal-rich-text th, .proposal-rich-text td { border: 1px solid #e5e7eb; padding: 8pt; }
     `}</style>
 );
 
@@ -52,55 +60,83 @@ interface PageProps {
 }
 
 const Page: React.FC<PageProps> = ({ children, pageNum, data, isCover, className = '' }) => (
-    <div className={`page-container bg-white shadow-2xl mx-auto print:shadow-none ${className}`}
+    <div className={`page-container bg-white shadow-2xl mx-auto print:shadow-none print:m-0 ${className}`}
         style={{
             width: '210mm',
             height: '297mm',
             position: 'relative',
-            overflow: 'hidden'
+            overflow: 'hidden',
+            boxSizing: 'border-box'
         }}>
 
-        {/* Background Helper */}
-        <div className="absolute inset-0 -z-10 bg-white"></div>
+        {/* Technical Background Elements */}
+        <div className="absolute inset-0 z-0 pointer-events-none opacity-[0.03]">
+            <div className="absolute inset-0" style={{ backgroundImage: 'radial-gradient(#000 0.5px, transparent 0.5px)', backgroundSize: '20px 20px' }}></div>
+        </div>
+
+        {/* Side Accent Line */}
+        {!isCover && (
+            <div className="absolute left-0 top-0 bottom-0 w-1 z-10" style={{ backgroundColor: data?.themeColor || '#7c3aed', opacity: 0.1 }}></div>
+        )}
 
         {!isCover && (
             <>
                 {/* Header Section */}
-                <div className="absolute top-0 left-0 right-0 h-32 z-50">
-                    <div className="h-1.5 w-full bg-gradient-to-r from-violet-600 to-blue-600"></div>
-                    <div className="flex justify-between items-center h-28 border-b border-gray-100 px-12">
-                        <div className="h-10">
-                            <img
-                                src="/assets/header-logo.png"
-                                className="h-full w-auto object-contain"
-                                alt="High Point"
-                                onError={(e) => {
-                                    e.currentTarget.style.display = 'none';
-                                    e.currentTarget.parentElement!.innerHTML = '<span class="text-xs font-bold text-violet-700 uppercase tracking-tighter">High Point Technology</span>';
-                                }}
-                            />
+                <div className="absolute top-0 left-0 right-0 h-[38mm] z-50 bg-white/80 backdrop-blur-sm">
+                    <div className="h-1.5 w-full bg-gradient-to-r from-violet-600 via-blue-600 to-violet-600"></div>
+                    <div className="flex justify-between items-center h-[34mm] border-b border-gray-100 px-12">
+                        <div className="flex items-center gap-6">
+                            <div className="h-16 flex items-center">
+                                <img
+                                    src="/assets/header-logo.png"
+                                    className="h-full w-auto object-contain"
+                                    alt="Logo"
+                                    onError={(e) => {
+                                        e.currentTarget.style.display = 'none';
+                                    }}
+                                />
+                            </div>
+                            <div className="h-10 w-px bg-gray-100 italic"></div>
                         </div>
                         <div className="text-right">
-                            <div className="text-[10px] uppercase font-bold text-gray-400 tracking-widest">Ref: {data?.refNumber}</div>
-                            <div className="text-xs font-bold text-violet-600 mt-1 uppercase">Version {data?.version}.0</div>
+                            <div className="text-[10px] uppercase font-black text-gray-300 tracking-[0.2em] mb-1">PROPOSAL_SPEC</div>
+                            <div className="text-[11px] font-mono font-bold text-gray-500">ID: {data?.refNumber.split('-').pop()}</div>
                         </div>
+                    </div>
+                </div>
+
+                {/* Vertical Sidebar Numbering */}
+                <div className="absolute left-6 top-1/2 -translate-y-1/2 z-30 pointer-events-none select-none">
+                    <div className="flex flex-col items-center gap-4">
+                        <div className="w-px h-12 bg-gray-100"></div>
+                        <div className="text-[40px] font-black text-gray-50/50 transform -rotate-90 leading-none">
+                            {pageNum?.toString().padStart(2, '0')}
+                        </div>
+                        <div className="w-px h-12 bg-gray-100"></div>
                     </div>
                 </div>
 
                 {/* Footer Section */}
-                <div className="absolute bottom-0 left-0 right-0 h-20 px-12 flex justify-between items-center z-50">
-                    <div className="absolute top-0 left-12 right-12 h-px bg-gray-100"></div>
-                    <div className="flex items-center gap-3">
-                        <span className="text-[10px] font-bold text-gray-400 uppercase tracking-widest text-opacity-50">Confidential</span>
+                <div className="absolute bottom-0 left-0 right-0 h-[25mm] px-12 pb-6 flex justify-between items-end z-50 bg-white">
+                    <div className="absolute top-0 left-12 right-12 h-px bg-gray-50"></div>
+                    <div className="flex flex-col gap-0.5">
+                        <span className="text-[9px] font-bold text-gray-300 uppercase tracking-[0.4em]">Confidential Strategic Asset</span>
+                        <span className="text-[8px] text-gray-400 font-medium tracking-tight">V.{data?.version}.0 // Generated {new Date().toLocaleDateString()}</span>
                     </div>
-                    <div className="text-[10px] font-mono text-gray-400">Page {pageNum}</div>
+                    <div className="text-[10px] font-mono font-bold text-gray-300">
+                        PAGE // <span className="text-gray-900">{pageNum}</span>
+                    </div>
                 </div>
             </>
         )}
 
-        {/* Content Box */}
-        <div className={`absolute inset-0 ${!isCover ? 'pt-36 pb-20' : 'flex flex-col'}`}>
-            {children}
+        {/* Content Area */}
+        <div className={`absolute inset-0 z-20 ${!isCover ? 'pt-[45mm] pb-[35mm] px-[20mm]' : ''}`}>
+            {!isCover ? (
+                <div className="h-full w-full relative">
+                    {children}
+                </div>
+            ) : children}
         </div>
     </div>
 );
@@ -139,12 +175,11 @@ export const ProposalPrintTemplate: React.FC<{ data: ProposalData }> = ({ data }
 
     // --- Content Renderers ---
     const renderSectionContent = (id: string, index: number) => {
-        const commonPadding = "px-4"; // Minimal padding, relying on Page's structural padding
 
         if (id === 'executive') {
             return (
                 <Page key={id} pageNum={index} data={data}>
-                    <div className={`flex-1 ${commonPadding}`}>
+                    <div className="flex-1">
                         <div className="mb-10">
                             <h2 className="text-3xl font-bold text-gray-900 mb-8 flex items-center gap-3">
                                 <span className="text-gray-200 font-mono">0{index}</span>
@@ -168,7 +203,7 @@ export const ProposalPrintTemplate: React.FC<{ data: ProposalData }> = ({ data }
         if (id === 'solution') {
             return (
                 <Page key={id} pageNum={index} data={data}>
-                    <div className={`flex-1 ${commonPadding}`}>
+                    <div className="flex-1">
                         <div className="mb-10">
                             <h2 className="text-3xl font-bold text-gray-900 mb-8 flex items-center gap-3">
                                 <span className="text-gray-200 font-mono">0{index}</span>
@@ -217,7 +252,7 @@ export const ProposalPrintTemplate: React.FC<{ data: ProposalData }> = ({ data }
         if (id === 'financial') {
             return (
                 <Page key={id} pageNum={index} data={data}>
-                    <div className={`flex-1 ${commonPadding}`}>
+                    <div className="flex-1">
                         <h2 className="text-3xl font-bold text-gray-900 mb-10 flex items-center gap-3">
                             <span className="text-gray-200 font-mono">0{index}</span>
                             {labels.financial}
@@ -279,7 +314,7 @@ export const ProposalPrintTemplate: React.FC<{ data: ProposalData }> = ({ data }
         if (id === 'legal') {
             return (
                 <Page key={id} pageNum={index} data={data}>
-                    <div className={`flex-1 ${commonPadding} flex flex-col`}>
+                    <div className="flex-1 flex flex-col">
                         <h2 className="text-3xl font-bold text-gray-900 mb-10 flex items-center gap-3">
                             <span className="text-gray-200 font-mono">0{index}</span>
                             {labels.legal}
@@ -311,7 +346,7 @@ export const ProposalPrintTemplate: React.FC<{ data: ProposalData }> = ({ data }
         if (customSection) {
             return (
                 <Page key={id} pageNum={index} data={data}>
-                    <div className={`flex-1 ${commonPadding}`}>
+                    <div className="flex-1">
                         <h2 className="text-3xl font-bold text-gray-900 mb-8 flex items-center gap-3">
                             <span className="text-gray-200 font-mono">0{index}</span>
                             {customSection.title}
@@ -336,9 +371,9 @@ export const ProposalPrintTemplate: React.FC<{ data: ProposalData }> = ({ data }
                         <div className="w-1/3 bg-slate-800 text-white p-12 flex flex-col justify-between border-r-8" style={{ borderColor: color }}>
                             <div className="space-y-12">
                                 {data.logo ? (
-                                    <img src={data.logo} className="h-12 w-auto brightness-0 invert" alt="Logo" />
+                                    <img src={data.logo} className="h-16 w-auto brightness-0 invert object-contain" alt="Logo" />
                                 ) : (
-                                    <div className="text-3xl font-bold tracking-tighter">HP.</div>
+                                    <img src="/assets/header-logo.png" className="h-16 w-auto brightness-0 invert object-contain" alt="Logo" />
                                 )}
 
                                 <div className="space-y-8">
@@ -408,9 +443,9 @@ export const ProposalPrintTemplate: React.FC<{ data: ProposalData }> = ({ data }
                         <div className="w-1/3 bg-gray-900 text-white p-12 flex flex-col justify-between">
                             <div className="space-y-12">
                                 {data.logo ? (
-                                    <img src={data.logo} className="h-10 w-auto brightness-0 invert opacity-80" alt="Logo" />
+                                    <img src={data.logo} className="h-10 w-auto brightness-0 invert opacity-80 object-contain" alt="Logo" />
                                 ) : (
-                                    <div className="text-2xl font-bold tracking-tight">HIGH POINT</div>
+                                    <img src="/assets/header-logo.png" className="h-10 w-auto brightness-0 invert opacity-80 object-contain" alt="Logo" />
                                 )}
                                 <div className="space-y-8">
                                     <div>
@@ -525,7 +560,11 @@ export const ProposalPrintTemplate: React.FC<{ data: ProposalData }> = ({ data }
 
                         <div className="flex justify-between items-start mb-24">
                             <div>
-                                {data.logo ? <img src={data.logo} className="h-12 w-auto" alt="Logo" /> : <div className="font-bold text-2xl text-gray-800">High Point</div>}
+                                {data.logo ? (
+                                    <img src={data.logo} className="h-12 w-auto object-contain" alt="Logo" />
+                                ) : (
+                                    <img src="/assets/header-logo.png" className="h-12 w-auto object-contain" alt="Logo" />
+                                )}
                             </div>
                             <div className="flex items-center gap-6">
                                 {data.clientLogo && <img src={data.clientLogo} className="h-8 w-auto grayscale opacity-50" alt="Client Logo" />}
@@ -554,7 +593,7 @@ export const ProposalPrintTemplate: React.FC<{ data: ProposalData }> = ({ data }
                                 <div className="flex justify-between items-end border-t border-gray-200 pt-6">
                                     <div>
                                         <span className="block text-xs font-bold text-gray-400 uppercase tracking-wider mb-1">Prepared By</span>
-                                        <p className="text-sm font-bold text-gray-900">High Point Technology</p>
+                                        <p className="text-sm font-bold text-gray-900"></p>
                                     </div>
                                     <div className="text-right">
                                         <span className="block text-[10px] font-bold text-gray-400 uppercase tracking-wider">Version</span>
@@ -622,7 +661,7 @@ export const ProposalPrintTemplate: React.FC<{ data: ProposalData }> = ({ data }
                         <div className="relative z-10 border-t border-slate-800 pt-8 flex justify-between items-end">
                             <div>
                                 <p className="text-xs text-slate-500 mb-1">Generated By</p>
-                                <p className="font-bold">High Point Tech Algo</p>
+                                <p className="font-bold"></p>
                             </div>
                             <div className="text-right">
                                 <p className="text-xs text-slate-500 mb-1">Timestamp</p>
@@ -645,7 +684,11 @@ export const ProposalPrintTemplate: React.FC<{ data: ProposalData }> = ({ data }
                             </div>
                         )}
                         <div className="mb-16">
-                            {data.logo ? <img src={data.logo} className="h-20 w-auto object-contain mx-auto opacity-80" alt="Logo" /> : <div className="text-xl font-bold tracking-widest uppercase">High Point</div>}
+                            {data.logo ? (
+                                <img src={data.logo} className="h-20 w-auto object-contain mx-auto" alt="Logo" />
+                            ) : (
+                                <img src="/assets/header-logo.png" className="h-20 w-auto object-contain mx-auto" alt="Logo" />
+                            )}
                         </div>
 
                         <div className="w-16 h-1 bg-gray-900 mb-12"></div>
@@ -685,11 +728,13 @@ export const ProposalPrintTemplate: React.FC<{ data: ProposalData }> = ({ data }
 
                         <div className="relative z-10">
                             <div className="flex justify-between items-start mb-12">
-                                {data.logo ? (
-                                    <img src={data.logo} className="h-12 w-auto" alt="Logo" />
-                                ) : (
-                                    <div className="text-2xl font-bold">High Point</div>
-                                )}
+                                <div className="h-12">
+                                    {data.logo ? (
+                                        <img src={data.logo} className="h-full w-auto object-contain" alt="Logo" />
+                                    ) : (
+                                        <img src="/assets/header-logo.png" className="h-full w-auto object-contain" alt="Logo" />
+                                    )}
+                                </div>
                                 {data.clientLogo && (
                                     <img src={data.clientLogo} className="h-12 w-auto opacity-20 grayscale" alt="Client Logo" />
                                 )}
@@ -1131,7 +1176,7 @@ export const ProposalPrintTemplate: React.FC<{ data: ProposalData }> = ({ data }
                         </div>
 
                         <div className="absolute bottom-12 left-0 w-full text-center flex flex-col items-center gap-2">
-                            <p className="text-[10px] text-gray-300 uppercase tracking-[0.5em]">High Point Technology Strategic Asset</p>
+                            <p className="text-[10px] text-gray-300 uppercase tracking-[0.5em]"></p>
                             <div className="w-1.5 h-1.5 rounded-full bg-red-400 animate-pulse"></div>
                         </div>
                     </div>
@@ -1188,7 +1233,7 @@ export const ProposalPrintTemplate: React.FC<{ data: ProposalData }> = ({ data }
                                 </div>
                             </div>
                             <div className="text-right">
-                                <p className="text-[10px] text-gray-600 font-mono uppercase">© {new Date().getFullYear()} High Point Technology</p>
+                                <p className="text-[10px] text-gray-600 font-mono uppercase">© {new Date().getFullYear()}</p>
                                 <p className="text-[10px] text-gray-700 font-mono">Valid_Till: {data.validUntil}</p>
                             </div>
                         </div>
@@ -1208,7 +1253,7 @@ export const ProposalPrintTemplate: React.FC<{ data: ProposalData }> = ({ data }
                             </div>
 
                             <div className="flex justify-between items-start border-b-4 border-black pb-8 relative z-10">
-                                {data.logo ? <img src={data.logo} className="h-16 grayscale contrast-200" alt="Logo" /> : <h2 className="text-4xl font-black uppercase tracking-tighter">High Point</h2>}
+                                {data.logo ? <img src={data.logo} className="h-16 grayscale contrast-200" alt="Logo" /> : <h2 className="text-4xl font-black uppercase tracking-tighter"></h2>}
                                 {data.clientLogo && <img src={data.clientLogo} className="h-16 w-auto grayscale contrast-200 opacity-80" alt="Client Logo" />}
                             </div>
 
@@ -1498,7 +1543,7 @@ export const ProposalPrintTemplate: React.FC<{ data: ProposalData }> = ({ data }
                             style={{ background: `linear-gradient(45deg, ${color}30 0%, ${color}05 100%)` }}></div>
 
                         <div className="relative z-10 flex justify-between items-center mb-24 px-4">
-                            {data.logo ? <img src={data.logo} className="h-10 w-auto opacity-70" alt="Logo" /> : <span className="font-serif text-2xl" style={{ color: color }}>High Point</span>}
+                            {data.logo ? <img src={data.logo} className="h-10 w-auto opacity-70" alt="Logo" /> : <span className="font-serif text-2xl" style={{ color: color }}></span>}
                             {data.clientLogo && <img src={data.clientLogo} className="h-12 w-auto opacity-20 grayscale shadow-sm" alt="Client Logo" />}
                         </div>
 
@@ -1554,7 +1599,7 @@ export const ProposalPrintTemplate: React.FC<{ data: ProposalData }> = ({ data }
                         <div className="absolute top-0 right-0 w-[80%] h-[80%] rounded-full blur-3xl opacity-20 bg-fuchsia-500"></div>
 
                         <div className="relative z-10 flex justify-between items-center mb-24">
-                            {data.logo ? <img src={data.logo} className="h-12 w-auto brightness-0 invert opacity-90" alt="Logo" /> : <span className="font-light tracking-wider text-2xl">High Point</span>}
+                            {data.logo ? <img src={data.logo} className="h-12 w-auto brightness-0 invert opacity-90" alt="Logo" /> : <span className="font-light tracking-wider text-2xl"></span>}
                             {data.clientLogo && <img src={data.clientLogo} className="h-12 w-auto brightness-0 invert opacity-30 shadow-2xl" alt="Client Logo" />}
                         </div>
 
@@ -1644,7 +1689,7 @@ export const ProposalPrintTemplate: React.FC<{ data: ProposalData }> = ({ data }
                                 {data.logo ? (
                                     <img src={data.logo} className="h-20 w-auto brightness-0 sepia-[100%] hue-rotate-[5deg] saturate-[400%]" alt="Logo" />
                                 ) : (
-                                    <div className="text-3xl font-serif tracking-[0.2em] border-b border-[#D4AF37] pb-2">HIGH POINT</div>
+                                    <div className="text-3xl font-serif tracking-[0.2em] border-b border-[#D4AF37] pb-2"></div>
                                 )}
                                 {data.clientLogo && <img src={data.clientLogo} className="h-10 w-auto grayscale brightness-0 sepia-[100%] opacity-40" alt="Client Logo" />}
                             </div>
@@ -2229,7 +2274,7 @@ export const ProposalPrintTemplate: React.FC<{ data: ProposalData }> = ({ data }
                         </div>
 
                         <div className="mt-auto flex justify-between items-center text-[10px] font-bold uppercase tracking-[0.4em] text-slate-300">
-                            <p>© {new Date().getFullYear()} High Point Technology Worldwide</p>
+                            <p>© {new Date().getFullYear()}</p>
                             <p>Confidential Business Intelligence</p>
                         </div>
                     </div>
