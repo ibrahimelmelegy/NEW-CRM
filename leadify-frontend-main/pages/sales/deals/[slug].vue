@@ -28,7 +28,7 @@
             //-     p.text-sm Delete
 el-tabs.demo-tabs(v-model="activeName", @tab-click="handleClick")
   el-tab-pane(label="Summary", name="summary")
-    .flex-1.bg-white.p-10.rounded-3xl.mt-3
+    .flex-1.glass-card.p-10.rounded-3xl.mt-3
       .flex.align-center.gap-3(class="flex-col md:flex-row")
         //- Avatar(src="/images/avatar.png")
         div
@@ -78,13 +78,13 @@ el-tabs.demo-tabs(v-model="activeName", @tab-click="handleClick")
               p Signature Date
             p.text-neutral-800.mb-2 {{getYear(deal?.signatureDate)}}
   el-tab-pane(label="Invoices", name="invoices" v-if="deal?.invoice?.length")
-    .bg-white.p-10.rounded-3xl.mt-3
+    .glass-card.p-10.rounded-3xl.mt-3
       AppTable(without-filters without-search without-action without-pagination :columns="invoicesTable.columns" :data="invoicesTable.data" class="!py-0")
   el-tab-pane(label="Deliveries", name="deliveries" v-if="deal?.deliveryDetails?.length")
-    .bg-white.p-10.rounded-3xl.mt-3
+    .glass-card.p-10.rounded-3xl.mt-3
       AppTable(without-filters without-search without-action without-pagination :columns="deliveriesTable.columns" :data="deliveriesTable.data" class="!py-0")
   el-tab-pane(label="Proposal" , name="proposal")
-    .bg-white.rounded-3xl.mt-3.border.px-2
+    .glass-card.rounded-3xl.mt-3.border.px-2
      .title.font-bold.text-xl.capitalize.flex-1.mt-8 Proposal
        AppTable(
         without-filters,
@@ -102,7 +102,7 @@ el-tabs.demo-tabs(v-model="activeName", @tab-click="handleClick")
          .mt-2
              h4.text-neutral-800.font-semibold.text-sm.mb-1 {{  item?.status == 'assigned'? 'Assigned User' : item?.status == 'create' ?'Create New Deal'  :item?.status?.toString()?.toUpperCase() }}
              p.text-neutral-500.text-xs.mb-4.font-medium {{ formatDate(item?.createdAt) }}
-             .bg-white.p-5.rounded-3xl(class="w-[65vw]")
+             .glass-card.p-5.rounded-3xl(class="w-[65vw]")
                p.text-neutral-700.text-xs {{ item?.descripion?.toString()?.toUpperCase() }}
                .flex.items-center.gap-3.gap-x-2.mt-4
                  Avatar(:src="item?.user?.profilePicture ?? '/images/avatar.png'" small)

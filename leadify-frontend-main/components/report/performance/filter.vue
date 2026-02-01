@@ -1,6 +1,6 @@
 <template lang="pug">
 .flex.align-center.gap-6.mt-3(class="flex-col ")
-  .flex-1.bg-white.rounded-3xl
+  .flex-1.glass-card.rounded-3xl
     div.w-full.p-4
      .flex.items-center.justify-between.mb-5.mt-5
       .title.font-bold.text-xl.mb-1.capitalize Staff Performance
@@ -12,7 +12,7 @@
       .flex.justify-end
        el-button.my-2(native-type="submit" size='large' type="primary"  class="!rounded-2xl")  Show Filter Result
        el-button.mt-2(@click="ResetFilter" size='large'   class="!rounded-2xl text-col")  Reset Filter
-  .flex-1.bg-white.rounded-3xl
+  .flex-1.glass-card.rounded-3xl
     div.w-full.p-4
      .flex.justify-center.items-center.h-64(v-if="isLoading")
       .animate-spin.rounded-full.h-12.w-12.border-4.border-primary-purple-400.border-t-transparent

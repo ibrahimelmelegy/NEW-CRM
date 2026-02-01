@@ -1,0 +1,537 @@
+// ============================================
+// 🧩 THEME COMPONENTS - Element Plus Overrides
+// ============================================
+
+// ========================================
+// 🎛️ ELEMENT PLUS CSS VARIABLES
+// ========================================
+:root {
+    // Colors
+    --el-color-primary: var(--purple);
+    --el-color-primary-light-3: var(--purple-light);
+    --el-color-primary-dark-2: var(--purple-dark);
+
+    // Backgrounds
+    --el-bg-color: var(--bg-body);
+    --el-bg-color-overlay: var(--bg-card);
+    --el-bg-color-page: var(--bg-body);
+
+    // Fills
+    --el-fill-color: var(--bg-input);
+    --el-fill-color-light: var(--bg-elevated);
+    --el-fill-color-lighter: var(--bg-hover);
+    --el-fill-color-blank: var(--bg-input);
+
+    // Text
+    --el-text-color-primary: var(--text-primary);
+    --el-text-color-regular: var(--text-secondary);
+    --el-text-color-secondary: var(--text-muted);
+    --el-text-color-placeholder: var(--text-disabled);
+
+    // Borders
+    --el-border-color: var(--border-default);
+    --el-border-color-light: var(--border-light);
+
+    // Misc
+    --el-border-radius-base: var(--radius-md);
+    --el-border-radius-small: var(--radius-sm);
+    --el-border-radius-large: var(--radius-lg);
+}
+
+// ========================================
+// 📝 INPUTS
+// ========================================
+.el-input__wrapper,
+.el-textarea__inner {
+    background-color: rgba(45, 45, 60, 0.4) !important; // Glassy Gray for Inputs
+    backdrop-filter: blur(10px);
+    box-shadow: none !important;
+    border: 1px solid var(--glass-border) !important;
+    border-radius: var(--radius-md) !important;
+    transition: all var(--transition-fast) !important;
+
+    &:hover {
+        background-color: rgba(45, 45, 60, 0.6) !important;
+        border-color: rgba(255, 255, 255, 0.2) !important;
+    }
+
+    &.is-focus,
+    &:focus-within {
+        background-color: rgba(45, 45, 60, 0.7) !important;
+        border-color: var(--purple) !important;
+        box-shadow: 0 0 0 3px rgba(124, 58, 237, 0.2) !important;
+    }
+}
+
+.el-input__inner {
+    color: var(--text-primary) !important;
+
+    &::placeholder {
+        color: var(--text-disabled) !important;
+    }
+}
+
+// ========================================
+// 🔽 SELECT
+// ========================================
+.el-select__wrapper {
+    background-color: rgba(45, 45, 60, 0.4) !important;
+    backdrop-filter: blur(10px);
+    box-shadow: none !important;
+    border: 1px solid var(--glass-border) !important;
+    border-radius: var(--radius-md) !important;
+
+    &:hover {
+        background-color: rgba(45, 45, 60, 0.6) !important;
+        border-color: rgba(255, 255, 255, 0.2) !important;
+    }
+
+    &.is-focus {
+        background-color: rgba(45, 45, 60, 0.7) !important;
+        border-color: var(--purple) !important;
+        box-shadow: 0 0 0 3px rgba(124, 58, 237, 0.2) !important;
+    }
+}
+
+.el-select-dropdown {
+    background-color: rgba(30, 30, 40, 0.9) !important;
+    backdrop-filter: blur(20px);
+    border: 1px solid var(--glass-border) !important;
+    border-radius: var(--radius-md) !important;
+}
+
+// ========================================
+// 🔘 BUTTONS
+// ========================================
+.el-button {
+    border-radius: var(--radius-md) !important;
+    font-weight: 500 !important;
+    transition: all var(--transition-fast) !important;
+
+    &--default {
+        background-color: var(--bg-input) !important;
+        border-color: var(--border-default) !important;
+        color: var(--text-primary) !important;
+
+        &:hover {
+            background-color: var(--bg-hover) !important;
+            border-color: var(--purple) !important;
+            color: var(--purple) !important;
+        }
+    }
+
+    &--primary {
+        background: var(--gradient-purple-pink) !important;
+        border: none !important;
+        color: white !important;
+
+        &:hover {
+            opacity: 0.9;
+            box-shadow: var(--glow-purple);
+        }
+    }
+}
+
+// ========================================
+// 📊 TABLES
+// ========================================
+.el-table {
+    background-color: transparent !important;
+    --el-table-bg-color: transparent !important;
+    --el-table-tr-bg-color: transparent !important;
+    --el-table-header-bg-color: var(--bg-elevated) !important;
+    --el-table-row-hover-bg-color: var(--bg-hover) !important;
+    --el-table-row-hover-bg-color: var(--bg-hover) !important;
+    --el-table-border-color: var(--border-default) !important;
+    border-radius: var(--radius-md);
+    overflow: hidden;
+
+    .el-table__header-wrapper {
+        border-bottom: none !important;
+        position: relative;
+
+        &::after {
+            content: '';
+            position: absolute;
+            left: 0;
+            bottom: 0;
+            width: 100%;
+            height: 1px;
+            background: var(--gradient-purple-pink);
+            z-index: 20; // High z-index to ensure visibility
+        }
+    }
+
+    th.el-table__cell {
+        background-color: var(--bg-elevated) !important;
+        color: var(--text-primary) !important;
+        font-weight: 600 !important;
+        border-bottom: none !important;
+        position: relative;
+    }
+
+    td.el-table__cell {
+        color: var(--text-secondary) !important;
+        border-bottom: 1px solid var(--border-default) !important;
+    }
+
+    .el-table__row:hover td {
+        background-color: var(--bg-hover) !important;
+    }
+}
+
+// ========================================
+// 📂 MENU / SIDEBAR
+// ========================================
+.el-menu {
+    background-color: transparent !important;
+
+    .el-sub-menu__title {
+        border: none !important;
+    }
+
+    .el-menu-item,
+    .el-sub-menu__title {
+        color: var(--text-secondary) !important;
+        border-radius: var(--radius-md) !important;
+        margin: 4px 8px !important;
+        transition: all var(--transition-fast) !important;
+
+        &:hover {
+            background-color: var(--bg-hover) !important;
+            color: var(--text-primary) !important;
+        }
+    }
+
+    .el-menu-item.is-active {
+        background: linear-gradient(135deg, rgba(124, 58, 237, 0.15) 0%, rgba(236, 72, 153, 0.1) 100%) !important;
+        color: var(--purple) !important;
+        font-weight: 500;
+
+        &::before {
+            content: '';
+            position: absolute;
+            left: 0;
+            top: 50%;
+            transform: translateY(-50%);
+            width: 3px;
+            height: 60%;
+            background: var(--gradient-purple-pink);
+            border-radius: 0 4px 4px 0;
+        }
+    }
+
+    .el-sub-menu .el-menu {
+        background-color: transparent !important;
+        border: none !important;
+    }
+}
+
+.el-menu--inline,
+.el-sub-menu,
+.el-menu-item,
+.el-sub-menu__title {
+    border: none !important;
+}
+
+// 🧭 NAVBAR
+.navbar {
+    &::after {
+        content: '';
+        position: absolute;
+        bottom: 0;
+        left: 0;
+        width: 100%;
+        height: 1px;
+        background: linear-gradient(90deg, rgba(124, 58, 237, 0.8) 0%, rgba(236, 72, 153, 0.8) 100%);
+        z-index: 100;
+    }
+}
+
+// 🌟 GLASSY SIDEBAR
+.sidebar-glass {
+    background: linear-gradient(180deg, rgba(124, 58, 237, 0.15) 0%, rgba(236, 72, 153, 0.15) 100%) !important;
+    backdrop-filter: blur(20px) !important;
+    -webkit-backdrop-filter: blur(20px) !important;
+    border-right: none !important;
+    box-shadow: 4px 0 24px rgba(0, 0, 0, 0.2) !important;
+    position: relative;
+
+    &::after {
+        content: '';
+        position: absolute;
+        top: 100px;
+        right: 0;
+        width: 1px;
+        height: calc(100% - 100px);
+        background: linear-gradient(180deg, rgba(124, 58, 237, 0.8) 0%, rgba(236, 72, 153, 0.8) 100%);
+        z-index: 10;
+    }
+}
+
+// ========================================
+// 🪜 STEPS
+// ========================================
+.el-steps {
+    background-color: var(--bg-card) !important;
+    border-radius: var(--radius-lg) !important;
+    padding: 16px 24px !important;
+    border: 1px solid var(--border-default) !important;
+}
+
+.el-step__title {
+    color: var(--text-muted) !important;
+
+    &.is-process,
+    &.is-finish {
+        color: var(--text-primary) !important;
+    }
+}
+
+.el-step__icon {
+    background-color: var(--bg-elevated) !important;
+    border-color: var(--border-default) !important;
+}
+
+.el-step__icon.is-process {
+    background: var(--gradient-purple-pink) !important;
+    border: none !important;
+    color: white !important;
+}
+
+.el-step__icon.is-finish {
+    background: var(--purple) !important;
+    border: none !important;
+    color: white !important;
+}
+
+.el-step__line {
+    background-color: var(--border-default) !important;
+}
+
+// ========================================
+// 📝 FORMS
+// ========================================
+.el-form-item__label {
+    color: var(--text-secondary) !important;
+    font-weight: 500 !important;
+}
+
+.el-form-item__error {
+    color: #EF4444 !important;
+}
+
+// ========================================
+// 🏷️ TAGS
+// ========================================
+.el-tag {
+    background-color: var(--bg-elevated) !important;
+    border-color: var(--border-default) !important;
+    color: var(--text-primary) !important;
+    border-radius: var(--radius-sm) !important;
+}
+
+// ========================================
+// 📄 CARDS
+// ========================================
+.el-card {
+    background: rgba(30, 30, 40, 0.6) !important; // Glassy Gray Container
+    backdrop-filter: blur(20px) !important;
+    border: 1px solid var(--glass-border) !important;
+    border-radius: var(--radius-card) !important; // Increased to 24px
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3) !important;
+    color: var(--text-primary) !important; // Ensure text is light
+    overflow: hidden; // Ensure children match rounded corners
+}
+
+// Ensure card body is transparent
+.el-card__body {
+    background: transparent !important;
+}
+
+// ========================================
+// ✅ CHECKBOX / RADIO
+// ========================================
+.el-checkbox__inner,
+.el-radio__inner {
+    background-color: var(--bg-input) !important;
+    border-color: var(--border-default) !important;
+}
+
+.el-checkbox__input.is-checked .el-checkbox__inner,
+.el-radio__input.is-checked .el-radio__inner {
+    background-color: var(--purple) !important;
+    border-color: var(--purple) !important;
+}
+
+// ========================================
+// 📱 PAGINATION
+// ========================================
+.el-pagination {
+
+    button,
+    .el-pager li {
+        background-color: var(--bg-input) !important;
+        color: var(--text-secondary) !important;
+        border: 1px solid var(--border-default) !important;
+        border-radius: var(--radius-sm) !important;
+
+        &:hover,
+        &.is-active {
+            color: var(--purple) !important;
+            border-color: var(--purple) !important;
+        }
+    }
+}
+
+// ========================================
+// 📂 UPLOAD
+// ========================================
+.el-upload-dragger,
+.el-upload--text {
+    background-color: var(--bg-input) !important;
+    border: 1px dashed var(--border-light) !important;
+    border-radius: var(--radius-lg) !important;
+    transition: all var(--transition-fast) !important;
+
+    &:hover {
+        border-color: var(--purple) !important;
+        background-color: var(--bg-hover) !important;
+    }
+}
+
+// ========================================
+// 📞 PHONE INPUT
+// ========================================
+.vue-tel-input {
+    background-color: var(--bg-input) !important;
+    border: 1px solid var(--border-default) !important;
+    border-radius: var(--radius-md) !important;
+
+    input {
+        background-color: transparent !important;
+        color: var(--text-primary) !important;
+    }
+
+    .vti__dropdown-list {
+        background-color: var(--bg-card) !important;
+        border: 1px solid var(--border-default) !important;
+    }
+}
+
+// ========================================
+// 🎚️ TABS
+// ========================================
+.el-tabs__item {
+    color: var(--text-muted) !important;
+
+    &:hover {
+        color: var(--text-primary) !important;
+    }
+
+    &.is-active {
+        color: var(--purple) !important;
+    }
+}
+
+.el-tabs__active-bar {
+    background-color: var(--purple) !important;
+}
+
+// ========================================
+// 📦 COLLAPSE
+// ========================================
+.el-collapse-item__header,
+.el-collapse-item__wrap {
+    background-color: transparent !important;
+    border-color: var(--border-default) !important;
+}
+
+.el-collapse-item__header {
+    color: var(--text-primary) !important;
+}
+
+.el-collapse-item__content {
+    color: var(--text-secondary) !important;
+}
+
+// ========================================
+// 📋 DIALOGS & DRAWERS
+// ========================================
+.el-dialog {
+    background: rgba(30, 30, 40, 0.85) !important; // Glassy Gray Dialog
+    backdrop-filter: blur(20px) !important;
+    border: 1px solid var(--glass-border) !important;
+    border-radius: var(--radius-xl) !important;
+    box-shadow: 0 25px 80px rgba(0, 0, 0, 0.5) !important;
+}
+
+.el-drawer {
+    background: rgba(30, 30, 40, 0.85) !important; // Glassy Gray Drawer
+    backdrop-filter: blur(20px) !important;
+    border-left: 1px solid var(--glass-border) !important;
+    box-shadow: -10px 0 30px rgba(0, 0, 0, 0.5) !important;
+    height: 100vh !important; // Full Page Height
+    max-height: 100vh !important;
+    margin: 0 !important;
+    border-radius: 32px 0 0 32px !important; // Rounded Left Side
+    top: 0 !important;
+    bottom: 0 !important;
+
+    .el-drawer__header {
+        padding: 20px 24px !important;
+        border-bottom: 1px solid rgba(255, 255, 255, 0.05) !important;
+        margin-bottom: 0 !important;
+        color: var(--text-primary) !important;
+    }
+
+    .el-drawer__title {
+        color: var(--text-primary) !important;
+    }
+
+    .el-drawer__body {
+        padding: 24px !important;
+    }
+}
+
+// ========================================
+// 🎈 POPOVERS & DROPDOWNS
+// ========================================
+.el-popper,
+.el-popover,
+.el-dropdown-menu {
+    background: rgba(30, 30, 40, 0.9) !important;
+    backdrop-filter: blur(20px) !important;
+    border: 1px solid var(--glass-border) !important;
+    border-radius: var(--radius-md) !important;
+    box-shadow: 0 10px 40px rgba(0, 0, 0, 0.4) !important;
+
+    .el-popper__arrow::before {
+        background: rgba(30, 30, 40, 0.9) !important;
+        border: 1px solid var(--glass-border) !important;
+    }
+
+    .el-dropdown-menu__item {
+        color: var(--text-secondary) !important;
+
+        &:hover,
+        &:focus {
+            background-color: var(--bg-hover) !important;
+            color: var(--purple) !important;
+        }
+    }
+}
+
+// ========================================
+// 🔔 NOTIFICATIONS
+// ========================================
+.el-message-box {
+    background-color: var(--bg-card) !important;
+    border: 1px solid var(--border-default) !important;
+    border-radius: var(--radius-lg) !important;
+}
+
+.el-notification {
+    background-color: var(--bg-card) !important;
+    border: 1px solid var(--border-default) !important;
+}

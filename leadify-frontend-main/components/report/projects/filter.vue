@@ -1,9 +1,9 @@
 <template lang="pug">
   .flex.align-center.gap-6.mt-3(class="flex-col xl:flex-row")
-    .flex-1.bg-white.rounded-3xl
+    .flex-1.glass-card.rounded-3xl
       div.w-full
        div(class="flex border-b-2 border-gray-200")
-        button(v-for="(tab, index) in tabs" :key="index"  @click="activeTab = tab" class="py-2 px-4 rounded-[999px] m-2"  :class="{ 'bg-primary-purple-50 text-primary-purple-500': activeTab === tab, 'bg-white text-gray-600  hover:text-primary-purple-500': activeTab !== tab }") {{ tab }}
+        button(v-for="(tab, index) in tabs" :key="index"  @click="activeTab = tab" class="py-2 px-4 rounded-[999px] m-2"  :class="{ 'bg-primary-purple-50 text-primary-purple-500': activeTab === tab, 'glass-card text-gray-600  hover:text-primary-purple-500': activeTab !== tab }") {{ tab }}
       div(class="p-4")
           div(v-if= "activeTab === 'Projects'")
            ReportProjectsProjectFilter(@showFilter = "(val) => showFilter(val)")

@@ -31,7 +31,7 @@
             //-     Icon.text-md.mr-2(size="20" name="IconDelete" )
             //-     p.text-sm Delete
 .flex.align-center.gap-6.mt-3(class="flex-col xl:flex-row")
-    .flex-1.bg-white.p-10.rounded-3xl
+    .flex-1.glass-card.p-10.rounded-3xl
       .title.font-bold.text-xl.capitalize {{material?.name}}
       AppTable(without-filters without-search without-action without-pagination :columns="table.columns" :data="table.data" class="!py-0")
       //- .grid.gap-4(class="md:grid-cols-2 lg:grid-cols-3  xl:grid-cols-4")

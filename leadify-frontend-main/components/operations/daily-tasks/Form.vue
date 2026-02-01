@@ -1,7 +1,7 @@
 <template lang="pug">
     el-form(  autocomplete="off"   @submit.prevent='onSubmit'   ref="myForm" label-position="top"  :validationSchema="formSchema" )
       slot
-      div(:class="{'2xl:w-1/2 w-[90%]  card m-auto bg-white p-10 rounded-3xl': !isModal}")
+      div(:class="{'2xl:w-1/2 w-[90%]  card m-auto glass-card p-10 rounded-3xl': !isModal}")
         .grid.grid-cols-2.gap-3
           InputText.mt-4(label="Name"  placeholder="Enter Name" name="name" :value="data?.name" )
           InputSelect.mt-4(label="Priority" name="priority" :options="taskPriorityOptions" :value="data?.priority" )

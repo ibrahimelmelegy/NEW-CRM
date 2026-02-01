@@ -1,6 +1,6 @@
 <template lang="pug">
 el-form.mt-6(  autocomplete="off"   @submit.prevent='onSubmit'   ref="myForm" label-position="top"  :validationSchema="formSchema" )
-  .card.m-auto.bg-white.p-10.rounded-3xl.mb-3(class="w-[90%] ")
+  .glass-card.m-auto.p-10.mb-3(class="w-[90%] ")
       .grid.gap-4(class="md:grid-cols-3 grid-cols-1")
         div
           .text-neutral-400.font-medium.mb-2.flex.items-center
@@ -17,7 +17,7 @@ el-form.mt-6(  autocomplete="off"   @submit.prevent='onSubmit'   ref="myForm" la
             Icon(name="IconCalendar" size="20" class="mr-2")
             p Project Duration
           p.text-neutral-800.mb-2  {{project?.duration || 0}} Days
-  .card.m-auto.bg-white.p-10.rounded-3xl.mb-24(class="w-[90%] ")
+  .card.m-auto.glass-card.p-10.rounded-3xl.mb-24(class="w-[90%] ")
     .title.font-bold.text-xl.capitalize.flex-1.mt-8 Final Costs Table
     .rounded-3xl.mt-3.border.mt-8
       AppTable(without-filters without-search without-action without-pagination :columns="finalCost.columns" :data="finalCost.data" class="!py-0")

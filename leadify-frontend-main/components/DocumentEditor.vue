@@ -1,7 +1,7 @@
 <template>
   <!-- Toolbar -->
   <div
-    class="bg-white shadow-md rounded-md py-2 px-6 flex flex-wrap gap-2 items-center"
+    class="glass-panel shadow-md rounded-md py-2 px-6 flex flex-wrap gap-2 items-center"
     style="width: 100vw; position: fixed; z-index: 2"
   >
     <button @click="toggleBold" :class="buttonClass(isBold)">

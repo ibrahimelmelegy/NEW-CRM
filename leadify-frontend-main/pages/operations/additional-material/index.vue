@@ -45,7 +45,7 @@
     </el-dropdown>
     --></div>
   </div>
-  <div class="bg-white rounded-3xl py-6">
+  <div class="glass-card rounded-3xl py-6">
     <el-table
       :data="finalData || []"
       style="width: 100%"

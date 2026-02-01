@@ -15,7 +15,7 @@
               //-     Icon.text-md.mr-2(size="20" name="IconDelete" )
               //-     p.text-sm Delete
 
-  .flex-1.bg-white.p-10.rounded-3xl
+  .flex-1.glass-card.p-10.rounded-3xl
     .flex.align-center.gap-3(class="flex-col md:flex-row")
       Avatar(:src="staff.profilePicture" v-if="staff.profilePicture" size="large" )
       .text(v-else-if="staff.name" :style="{ backgroundColor: randomBgColor() }")

@@ -33,7 +33,7 @@
 el-tabs.demo-tabs(v-model="activeName", @tab-click="handleClick")
   el-tab-pane(label="Summary", name="summary")
     .flex.align-center.gap-6.mt-3(class="flex-col xl:flex-row")
-        .flex-1.bg-white.p-10.rounded-3xl
+        .flex-1.glass-card.p-10.rounded-3xl
           .grid.gap-4(class="md:grid-cols-2 lg:grid-cols-3  xl:grid-cols-4")
             div
               .text-neutral-400.font-medium.mb-2.flex.items-center

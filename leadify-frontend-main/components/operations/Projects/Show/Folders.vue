@@ -3,7 +3,7 @@
   el-skeleton(:loading="isLoading", animated)
     template(#template)
       .grid.grid-cols-4.gap-4.grid-cols-1(class="md:grid-cols-2 lg:grid-cols-4")
-        .rounded-3xl.m-3.p-5.bg-white(v-for="i in 4", :key="i")
+        .rounded-3xl.m-3.p-5.glass-card(v-for="i in 4", :key="i")
           .text-neutral-600
             .flex.flex-row.justify-between
               el-skeleton-item(
@@ -21,7 +21,7 @@
         v-if="project?.files",
         class="md:grid-cols-2 lg:grid-cols-4"
       )
-        .rounded-3xl.m-3.p-5.bg-white(
+        .rounded-3xl.m-3.p-5.glass-card(
           v-for="(folder, index) in project?.files",
           :key="index"
         )
@@ -85,7 +85,7 @@ el-dialog(
   class="!shadow-none xl:!w-1/3 lg:!w-1/3 sm:!w-[90%] !w-full",
   align-center=""
 )
-  .flex-1.bg-white.rounded-3xl(v-if="fileFolder?.length")
+  .flex-1.glass-card.rounded-3xl(v-if="fileFolder?.length")
     .flex.items-center.gap-3.mb-6
       .flex.items-center.justify-center.w-12.h-12.rounded-full.bg-secondary-turquoise-50.text-secondary-turquoise-700(
         class="!min-w-[48px] !min-h-[48px]"
@@ -100,7 +100,7 @@ el-dialog(
       |
       |
       |
-      button.bg-white.border.rounded-lg.p-4.flex.items-center.space-x-4(
+      button.glass-card.border.rounded-lg.p-4.flex.items-center.space-x-4(
         @click="downloadFile(`assets/${file}`, file)",
         v-for="file in fileFolder",
         :key="file"

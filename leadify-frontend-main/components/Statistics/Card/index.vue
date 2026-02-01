@@ -35,7 +35,6 @@
 .stats-card-container {
   background: var(--bg-card);
   background-image: var(--gradient-glass);
-  border: 1px solid var(--border-glass);
   border-radius: var(--radius-card);
   padding: 30px;
   position: relative;
@@ -43,17 +42,53 @@
   transition: var(--transition-smooth);
   backdrop-filter: blur(15px);
 
-  &.border-purple { border-top: 5px solid var(--accent-purple); }
-  &.border-indigo { border-top: 5px solid var(--accent-indigo); }
-  &.border-cyan { border-top: 5px solid var(--accent-cyan); }
-  &.border-rose { border-top: 5px solid var(--accent-rose); }
-  &.border-emerald { border-top: 5px solid var(--accent-emerald); }
-  &.border-amber { border-top: 5px solid var(--accent-amber); }
+  // Gradient border stroke (thin line around the card)
+  &::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    border-radius: var(--radius-card);
+    padding: 2px; // Border thickness
+    background: linear-gradient(135deg, #7C3AED, #EC4899, #F97316, #7C3AED); // Default aurora gradient
+    -webkit-mask: 
+      linear-gradient(#fff 0 0) content-box, 
+      linear-gradient(#fff 0 0);
+    -webkit-mask-composite: xor;
+    mask: 
+      linear-gradient(#fff 0 0) content-box, 
+      linear-gradient(#fff 0 0);
+    mask-composite: exclude;
+    pointer-events: none;
+    transition: var(--transition-smooth);
+  }
+
+  // Gradient border colors by type
+  &.border-purple::before { 
+    background: linear-gradient(135deg, #7C3AED, #EC4899, #F97316, #7C3AED); 
+  }
+  &.border-indigo::before { 
+    background: linear-gradient(135deg, #6366F1, #A855F7, #EC4899, #6366F1); 
+  }
+  &.border-cyan::before { 
+    background: linear-gradient(135deg, #06B6D4, #22D3EE, #06B6D4); 
+  }
+  &.border-rose::before { 
+    background: linear-gradient(135deg, #F43F5E, #F97316, #F43F5E); 
+  }
+  &.border-emerald::before { 
+    background: linear-gradient(135deg, #10B981, #34D399, #10B981); 
+  }
+  &.border-amber::before { 
+    background: linear-gradient(135deg, #F97316, #FBBF24, #F97316); 
+  }
 
   &:hover {
     transform: translateY(-8px);
-    border-color: var(--border-highlight);
     box-shadow: var(--shadow-premium);
+    
+    &::before {
+      padding: 3px; // Thicker border on hover
+    }
     
     .aurora-blur {
         opacity: 0.15;

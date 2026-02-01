@@ -1,7 +1,7 @@
 <template lang="pug">
 el-form(  autocomplete="off"   @submit.prevent='onSubmit'   ref="myForm" label-position="top"  :validationSchema="formSchema" )
   slot
-  .card.m-auto.bg-white.p-10.rounded-3xl(class="2xl:w-1/2 w-[90%] ")
+  .glass-card.m-auto.p-10(class="2xl:w-1/2 w-[90%] ")
       .grid.grid-cols-2.gap-3
         InputText(label="Lead Name"  name="leadName" :value="data?.name" )
         InputText(label="Company Name"  name="companyName" :value="data?.companyName" )

@@ -25,7 +25,7 @@
 
       <!-- Success Card -->
       <div class="w-full max-w-[480px] animate-fade-in-right">
-        <div class="glass-card p-8 md:p-12 rounded-[32px] border border-white/10 bg-white/[0.03] backdrop-blur-[20px] shadow-2xl relative overflow-hidden text-center">
+        <div class="glass-card p-8 md:p-12 rounded-[32px] border border-white/10 .glass-card/[0.03] backdrop-blur-[20px] shadow-2xl relative overflow-hidden text-center">
           <div class="relative z-10">
             <div class="w-24 h-24 bg-success/20 rounded-full flex items-center justify-center mx-auto mb-8 shadow-lg shadow-success/10 border border-success/30 animate-bounce-subtle">
               <Icon name="ph:seal-check-bold" class="text-success text-5xl" />

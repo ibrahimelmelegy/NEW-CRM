@@ -1,7 +1,7 @@
 <template lang="pug">
 el-form.mb-24( autocomplete="off"   @submit.prevent='onSubmit'   ref="myForm" label-position="top"  :validationSchema="formSchema" :key="project" )
   slot
-  .card.m-auto.bg-white.p-10.rounded-3xl(class="w-[90%] ")
+  .glass-card.m-auto.p-10(class="w-[90%] ")
     .grid.grid-cols-2.gap-3
       InputText.mt-4(label="Project Name"  placeholder="Enter Project Name" name="name" :value="project?.name" )
       InputText.mt-4(label=" Project Type" placeholder="Enter Project Type" name="type" :value="project?.type"  )

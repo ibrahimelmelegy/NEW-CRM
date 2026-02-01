@@ -1,8 +1,6 @@
 <template lang="pug">
 Teleport(to="body")
-  //- Floating Action Button (Bottom Right)
-  .spotlight-fab(@click="open" title="Search (Alt+K or /)")
-    .spotlight-fab-icon ⌘
+  //- FAB removed - using navbar button only
   
   //- Overlay
   Transition(name="spotlight-overlay")

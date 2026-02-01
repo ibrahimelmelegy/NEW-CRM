@@ -1,8 +1,8 @@
 <template lang="pug">
 el-form.mt-6.mb-24(  autocomplete="off"   @submit.prevent='onSubmit'   ref="myForm" label-position="top"  :validationSchema="formSchema" )
-  .card.m-auto.bg-white.p-10.rounded-3xl(class="w-[90%] ")
+  .card.m-auto.glass-card.p-10.rounded-3xl(class="w-[90%] ")
     InputText.mt-4(label="Material Margin" placeholder="Enter Material Margin %" name="materialMargin" :value="project?.materialMargin" @value="getMaterialMargin" )
-    .bg-white.rounded-3xl.mt-3.border.mt-8
+    .glass-card.rounded-3xl.mt-3.border.mt-8
       .flex.justify-justify-between.items-center.p-10.pb-0
         .title.font-bold.text-xl.capitalize.flex-1 Material Info
         el-button(class="!rounded-2xl" type='primary' @click='addMaterial = true, material = {}, selectedAddMaterialItem = {}' :icon="Plus" size="large" :loading="loading") Add
@@ -10,7 +10,7 @@ el-form.mt-6.mb-24(  autocomplete="off"   @submit.prevent='onSubmit'   ref="myFo
         .flex.items-center.py-2(@click.stop)
           el-button(class="!rounded-2xl" type='danger' link @click="deleteMaterial(data.id)"): Icon(name="IconDelete" size="20")
           el-button(class="!rounded-2xl" type='primary' link @click="addMaterial = true, material = materials.find((material: Material) => material.id === data.id), selectedAddMaterialItem = { [data.additionalMaterialId]: addMaterialItems[data.additionalMaterialId] }"): Icon(name="IconEdit" size="20")
-    .bg-white.rounded-3xl.mt-3.border.mt-8
+    .glass-card.rounded-3xl.mt-3.border.mt-8
       .p-10.pb-0.title.font-bold.text-xl.capitalize.flex-1 preview
       AppTable(without-filters without-search without-action without-pagination :columns="preview.columns" :data="preview.data" :key="preview.data" class="!py-0")
   .endBar

@@ -15,7 +15,7 @@ el-dialog(v-model='dialog' width='800' align-center='' :class="{ 'material': isA
         el-button(size='medium' v-if="addMaterialId" :icon="Select" native-type="button" @click='AdditionalMaterialItem = true' class="!rounded-2xl !border-[#e9e8eb] !color-[#e9e8eb] !py-7 !px-4 !m-0")
         el-button(size='medium' :icon="Plus" native-type="button" @click='selectedMaterial= {},addAdditionMaterial = true' class="!rounded-2xl !border-[#e9e8eb] !color-[#e9e8eb] !py-7 !px-4 !m-0")
         el-button(size='medium' :icon="Edit" native-type="button" @click='selectedMaterial=addMaterials?.find((item: any) => item.id === addMaterialId),addAdditionMaterial = true' v-if="addMaterialId" class="!rounded-2xl !border-[#e9e8eb] !color-[#e9e8eb] !py-7 !px-4 !m-0")
-      .bg-white.rounded-3xl.my-3.border.p-5
+      .glass-card.rounded-3xl.my-3.border.p-5
         .flex.justify-justify-between.items-center
           .title.font-bold.text-base.capitalize.flex-1 Items
         AppTable(without-filters without-search without-action without-pagination :columns="items.columns" :data="items.data" class="!py-0" :key="items.data")

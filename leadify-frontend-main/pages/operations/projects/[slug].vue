@@ -34,7 +34,7 @@
         //-     p.text-sm Delete
 el-tabs.demo-tabs(v-model="activeName", @tab-click="handleClick")
   el-tab-pane(label="Information", name="information")
-    .flex-1.bg-white.p-10.rounded-3xl
+    .flex-1.glass-card.p-10.rounded-3xl
       .grid.gap-4.grid-cols-1(class="md:grid-cols-2 lg:grid-cols-4")
         div
           .text-neutral-400.font-medium.mb-2.flex.items-center
@@ -80,7 +80,7 @@ el-tabs.demo-tabs(v-model="activeName", @tab-click="handleClick")
           p.text-neutral-800.mb-2 {{ project?.assignedUsers?.map((user: any) => user?.name).join(", ") }}
 
     .flex.align-center.gap-6.mt-3.flex-col(class="xl:flex-row")
-      .flex-1.bg-white.p-10.rounded-3xl(v-if="project?.etimadProject")
+      .flex-1.glass-card.p-10.rounded-3xl(v-if="project?.etimadProject")
         h4.text-lg.font-semibold.text-neutral-900.mb-4 Etimad Project
         .grid.gap-4.grid-cols-1(class="md:grid-cols-2 lg:grid-cols-4")
           div
@@ -148,10 +148,10 @@ el-tabs.demo-tabs(v-model="activeName", @tab-click="handleClick")
               p Submission Date
             p.text-neutral-800.mb-2 {{ getYear(project?.etimadProject?.submissionDate) }}
     .flex.align-center.gap-6.mt-3.flex-col(class="xl:flex-row")
-      .flex-1.bg-white.p-10.rounded-3xl(v-if="project?.description")
+      .flex-1.glass-card.p-10.rounded-3xl(v-if="project?.description")
         h4.text-lg.font-semibold.text-neutral-900.mb-4 Project Description
         p.text-neutral-800.leading-relaxed {{ project?.description }}
-      .bg-white.p-10.rounded-3xl
+      .glass-card.p-10.rounded-3xl
         p.text-lg.font-semibold.text-neutral-900.mb-3 Summary
         .flex.justify-between.items-center.gap-60.mb-4
           p.text-base.text-neutral-400 Subtotal :
@@ -169,7 +169,7 @@ el-tabs.demo-tabs(v-model="activeName", @tab-click="handleClick")
           p.text-base.text-neutral-900 Total Project Cost :
           p.text-base.text-neutral-900 {{ project?.totalCost || 0 }} SAR
   el-tab-pane(label="Vehicles", name="vehicles")
-    .bg-white.p-10.rounded-3xl.mt-3
+    .glass-card.p-10.rounded-3xl.mt-3
       AppTable(
         without-filters,
         without-search,
@@ -180,7 +180,7 @@ el-tabs.demo-tabs(v-model="activeName", @tab-click="handleClick")
         class="!py-0"
       )
   el-tab-pane(label="Manpower", name="project")
-    .bg-white.p-10.rounded-3xl.mt-3
+    .glass-card.p-10.rounded-3xl.mt-3
       AppTable(
         without-filters,
         without-search,
@@ -191,7 +191,7 @@ el-tabs.demo-tabs(v-model="activeName", @tab-click="handleClick")
         class="!py-0"
       )
     .title.font-bold.text-xl.capitalize.flex-1.mt-8 Perview
-    .bg-white.rounded-3xl.mt-3.border
+    .glass-card.rounded-3xl.mt-3.border
       AppTable(
         without-filters,
         without-search,
@@ -201,7 +201,7 @@ el-tabs.demo-tabs(v-model="activeName", @tab-click="handleClick")
         :data="manPowerPreview.data",
         class="!py-0"
       )
-    .bg-white.p-10.rounded-3xl.mt-3
+    .glass-card.p-10.rounded-3xl.mt-3
       AppTable(
         without-filters,
         without-search,
@@ -212,7 +212,7 @@ el-tabs.demo-tabs(v-model="activeName", @tab-click="handleClick")
         class="!py-0"
       )
   el-tab-pane(label="Materials", name="materials")
-    .bg-white.p-10.rounded-3xl.mt-3
+    .glass-card.p-10.rounded-3xl.mt-3
       AppTable(
         without-filters,
         without-search,
@@ -222,7 +222,7 @@ el-tabs.demo-tabs(v-model="activeName", @tab-click="handleClick")
         :data="materials.data",
         class="!py-0"
       )
-    .bg-white.p-10.rounded-3xl.mt-3
+    .glass-card.p-10.rounded-3xl.mt-3
       AppTable(
         without-filters,
         without-search,
@@ -233,7 +233,7 @@ el-tabs.demo-tabs(v-model="activeName", @tab-click="handleClick")
         class="!py-0"
       )
   el-tab-pane(label="Assets", name="assets")
-    .bg-white.p-10.rounded-3xl.mt-3
+    .glass-card.p-10.rounded-3xl.mt-3
       AppTable(
         without-filters,
         without-search,
@@ -243,7 +243,7 @@ el-tabs.demo-tabs(v-model="activeName", @tab-click="handleClick")
         :data="assets.data",
         class="!py-0"
       )
-    .bg-white.p-10.rounded-3xl.mt-3
+    .glass-card.p-10.rounded-3xl.mt-3
       AppTable(
         without-filters,
         without-search,
@@ -259,7 +259,7 @@ el-tabs.demo-tabs(v-model="activeName", @tab-click="handleClick")
       :manPowerPreview="finalCost"
     )
   el-tab-pane(label="proposal", name="proposal")
-    .bg-white.rounded-3xl.mt-3.border.px-2
+    .glass-card.rounded-3xl.mt-3.border.px-2
       .title.font-bold.text-xl.capitalize.flex-1.mt-8 proposal
         AppTable(
           without-filters,
@@ -275,7 +275,7 @@ el-tabs.demo-tabs(v-model="activeName", @tab-click="handleClick")
       el-skeleton(:loading="loading" animated)
         template(#template)
           .grid.grid-cols-4.gap-4.grid-cols-1(class="md:grid-cols-2 lg:grid-cols-4")
-            .rounded-3xl.m-3.p-5.bg-white(v-for="i in 4" :key="i")
+            .rounded-3xl.m-3.p-5.glass-card(v-for="i in 4" :key="i")
               .text-neutral-600
                 .flex.flex-row.justify-between
                   el-skeleton-item(variant="image" style="width: 40px; height: 40px")
@@ -304,7 +304,7 @@ el-tabs.demo-tabs(v-model="activeName", @tab-click="handleClick")
         .mt-2
           h4.text-neutral-800.font-semibold.text-sm.mb-1 {{ item?.status == "assigned" ? "Assigned User" : item?.status == "create" ? "Create New Project" : item?.status?.toString()?.toUpperCase() }}
           p.text-neutral-500.text-xs.mb-4.font-medium {{ formatDate(item?.createdAt) }}
-          .bg-white.p-5.rounded-3xl(class="w-[65vw]")
+          .glass-card.p-5.rounded-3xl(class="w-[65vw]")
             p.text-neutral-700.text-xs {{ item?.descripion?.toString()?.toUpperCase() }}
             .flex.items-center.gap-3.gap-x-2.mt-4
               Avatar(

@@ -1,5 +1,5 @@
 <template lang="pug">
-    .leads-sales.bg-white.rounded-2xl.p-6(class="min-h-[70vh]")
+    .leads-sales.glass-card.rounded-2xl.p-6(class="min-h-[70vh]")
       .header.mb-4.flex.gap-2
         Icon.text-2xl.text-main(name="bx:line-chart")
         h2(class="text-xl font-bold text-neutral-800 mb-4") Information Dashboard 

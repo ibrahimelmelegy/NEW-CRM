@@ -33,7 +33,7 @@
 el-tabs.demo-tabs(v-model="activeName", @tab-click="handleClick")
   el-tab-pane(label="Summary", name="summary")
     .flex.align-center.gap-6.mt-3(class="flex-col xl:flex-row")
-      .flex-1.bg-white.p-10.rounded-3xl
+      .flex-1.glass-card.p-10.rounded-3xl
         .flex.align-center.gap-3(class="flex-col md:flex-row")
           //- Avatar(src="/images/avatar.png")
           div(v-if="manpower?.role?.length")
@@ -117,7 +117,7 @@ el-tabs.demo-tabs(v-model="activeName", @tab-click="handleClick")
                 Icon(name="solar:hashtag-outline" size="20" class="mr-2")
                 p Daily Cost
               p.text-neutral-800.mb-2 {{manpower?.dailyCost}}
-      .flex-1.bg-white.p-10.rounded-3xl(v-if="manpower?.notes")
+      .flex-1.glass-card.p-10.rounded-3xl(v-if="manpower?.notes")
         .flex.items-center.gap-2.mb-4
           .flex.items-center.justify-center.w-10.h-10.rounded-full.bg-secondary-turquoise-50: Icon.text-secondary-turquoise-700(name="IconNote" size="24")
           h4.text-lg.font-semibold.text-neutral-900 Notes
@@ -129,7 +129,7 @@ el-tabs.demo-tabs(v-model="activeName", @tab-click="handleClick")
   //-       .mt-2
   //-         h4.text-neutral-800.font-semibold.text-sm.mb-1 {{ item.type }}
   //-         p.text-neutral-500.text-xs.mb-4.font-medium {{ item.date }}
-  //-         .bg-white.p-5.rounded-3xl
+  //-         .glass-card.p-5.rounded-3xl
   //-           p.text-neutral-700.text-xs {{ item.description }}
   //-           .flex.items-center.gap-3.gap-x-2.mt-4
   //-             Avatar(:src="item.imageUrl" small)

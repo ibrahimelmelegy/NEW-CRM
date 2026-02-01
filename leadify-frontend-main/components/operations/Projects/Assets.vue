@@ -1,17 +1,17 @@
 <template lang="pug">
 el-form.mt-6.mb-24(  autocomplete="off"   @submit.prevent='onSubmit'   ref="myForm" label-position="top"  :validationSchema="formSchema" )
-  .card.m-auto.bg-white.p-10.rounded-3xl(class="w-[90%] ")
+  .card.m-auto.glass-card.p-10.rounded-3xl(class="w-[90%] ")
     .title.font-bold.text-xl.capitalize.mb-8 Assets Info
     .flex.align-center.gap-1
       InputSelect.flex-1(label=" Assets" isMultiple name="assetIds" :options="assetsOptions"  :value="filteredAssets.map((asset: any) => asset.value)" :key="filteredAssets  || assetsOptions" @change="toggleAssetSelection")
       el-button.mt-7(size='medium' :icon="Plus" native-type="button" @click="addAsset = true" class="!rounded-2xl !border-[#e9e8eb] !color-[#e9e8eb] !py-7 !px-4")
-    .bg-white.rounded-3xl.mt-3.border
+    .glass-card.rounded-3xl.mt-3.border
       .title.font-bold.text-xl.capitalize.flex-1.p-10.pb-0 Perview
       AppTable(v-slot="{data}" without-filters without-search without-pagination :columns="table.columns" :key="table.data" :data="table.data" class="!py-0")
         .flex.items-center.py-2(@click.stop)
           el-button(class="!rounded-2xl" type='danger' link @click="toggleAssetSelection(data.id)"): Icon(name="IconDelete" size="20")
           el-button(class="!rounded-2xl" type='primary' link @click="selectAssetForEdit(data.id)"): Icon(name="IconEdit" size="20")
-    .bg-white.rounded-3xl.mt-3.border
+    .glass-card.rounded-3xl.mt-3.border
       AppTable(without-filters without-search without-action without-pagination :columns="assetsTotal.columns" :data="assetsTotal.data" :key="assetsTotal.data" class="!py-0")
   .endBar
       .flex.justify-between.w-full

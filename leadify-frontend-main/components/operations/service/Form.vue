@@ -1,7 +1,7 @@
 <template lang="pug">
 el-form(  autocomplete="off"   @submit.prevent='onSubmit'   ref="myForm" label-position="top"  :validationSchema="formSchema" )
   slot
-  div(:class="{'2xl:w-1/2 w-[90%] p-10  card m-auto bg-white rounded-3xl': !isModal}")
+  div(:class="{'2xl:w-1/2 w-[90%] p-10  card m-auto glass-card rounded-3xl': !isModal}")
     .grid.grid-cols-2.gap-3
       InputText(label=" Service Type" name="type" placeholder="Enter Service Type" :value="data?.type" )
       InputText(label="Service Price"  placeholder="Enter Service Price SAR" name="price" :value="data?.price" )

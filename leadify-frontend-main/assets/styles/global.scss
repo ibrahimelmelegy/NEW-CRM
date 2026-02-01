@@ -1,171 +1,18 @@
-/* -------------------------------------------------------------------------- */
-/* 1. Imports & Core Theme                                                    */
-/* -------------------------------------------------------------------------- */
-@use './element-plus' as *;
-@use "../scss/premium-theme" as *; // 🔥 المسار الصحيح للثيم الفخم
+// ============================================
+// 🎨 GLOBAL STYLES - Main Entry Point
+// ============================================
 
-/* Fonts */
+// 1. Core Theme Files (Must be @used first)
+@use '../scss/theme-variables.scss' as *;
+@use '../scss/theme-base.scss';
+@use '../scss/theme-components.scss';
+@use '../scss/theme-utilities.scss';
+
+// 2. Element Plus Component Overrides (Handled by theme-components.scss)
+// @use './element-plus' as *;
+
+// 3. RTL Support
+@use './rtl.scss';
+
+// 4. Fonts (CSS Import - Must come after Sass modules)
 @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@200;300;400;500;600;700;800&family=Tajawal:wght@200;300;400;500;700;800&display=swap');
-
-/* -------------------------------------------------------------------------- */
-/* 2. Base Setup                                                              */
-/* -------------------------------------------------------------------------- */
-
-body {
-  font-family: 'Poppins', 'Tajawal', sans-serif;
-  margin: 0;
-  padding: 0;
-  // ✅ الخلفية الآن تعتمد على Obsidian Dark
-  background-color: var(--bg-obsidian) !important;
-  color: var(--text-primary) !important;
-  -webkit-font-smoothing: antialiased;
-}
-
-input,
-button,
-select,
-textarea,
-.el-input__inner {
-  font-family: 'Poppins', 'Tajawal', sans-serif;
-}
-
-// تخصيص السكرول بار العام ليناسب الثيم المظلم
-::-webkit-scrollbar {
-  width: 6px;
-  height: 6px;
-}
-
-::-webkit-scrollbar-track {
-  background: var(--bg-obsidian);
-}
-
-::-webkit-scrollbar-thumb {
-  background: var(--border-stroke);
-  border-radius: 10px;
-
-  &:hover {
-    background: var(--accent-purple);
-  }
-}
-
-/* -------------------------------------------------------------------------- */
-/* 3. Nuxt Transitions (Premium Feel)                                         */
-/* -------------------------------------------------------------------------- */
-
-.nuxt-loading-indicator {
-  background: var(--gradient-primary) !important;
-  height: 3px !important;
-}
-
-/* Page Transitions */
-.page-enter-active,
-.page-leave-active {
-  transition: all 0.3s ease-out;
-}
-
-.page-enter-from,
-.page-leave-to {
-  opacity: 0;
-  transform: translateY(10px);
-  filter: blur(10px);
-}
-
-/* -------------------------------------------------------------------------- */
-/* 4. Layout & Sidebar Sync                                                   */
-/* -------------------------------------------------------------------------- */
-
-.marginedStart {
-  margin-left: 260px;
-  width: calc(100% - 260px);
-  transition: all 0.3s ease;
-}
-
-.collapseMargin {
-  margin-left: 80px;
-  width: calc(100% - 80px);
-}
-
-@media screen and (max-width: 992px) {
-
-  .marginedStart,
-  .collapseMargin {
-    margin-left: 0 !important;
-    width: 100% !important;
-  }
-}
-
-// شريط الأزرار السفلي (EndBar) - تم تحويله ليكون Glassy
-.endBar {
-  position: fixed;
-  bottom: 0;
-  left: 0;
-  right: 0;
-  background: var(--bg-header) !important;
-  backdrop-filter: blur(10px);
-  border-top: 1px solid var(--border-glass);
-  z-index: 1000;
-  padding: 1rem 2rem;
-  transition: all 0.3s ease;
-
-  // Respect Sidebar Width in LTR
-  .marginedStart & {
-    padding-left: calc(260px + 2rem);
-  }
-
-  .collapseMargin & {
-    padding-left: calc(80px + 2rem);
-  }
-}
-
-/* -------------------------------------------------------------------------- */
-/* 5. Custom UI Components                                                    */
-/* -------------------------------------------------------------------------- */
-
-// كرت بستايل زجاجي شفاف
-.glass-card {
-  background: var(--bg-card) !important;
-  border: 1px solid var(--border-glass) !important;
-  backdrop-filter: blur(5px);
-  border-radius: var(--radius-card);
-}
-
-// أزرار دائرية محسنة
-.rounded-btn {
-  background-color: var(--bg-card);
-  border: 1px solid var(--border-stroke);
-  color: var(--text-primary);
-  border-radius: var(--radius-btn);
-  padding: 8px 20px;
-  transition: all 0.3s ease;
-
-  &:hover {
-    border-color: var(--accent-purple);
-    box-shadow: var(--shadow-active);
-  }
-
-  &.bg-colored {
-    background: var(--gradient-primary) !important;
-    border: none;
-    color: white;
-  }
-}
-
-/* -------------------------------------------------------------------------- */
-/* 6. Fixes & Utilities                                                       */
-/* -------------------------------------------------------------------------- */
-
-.error-msg {
-  color: #EF4444 !important; // Red-500
-  font-size: 0.85rem;
-}
-
-.router-link-active {
-  color: var(--accent-purple) !important;
-  background: rgba(139, 92, 246, 0.1) !important;
-}
-
-// مسح الحدود المزعجة
-.el-menu,
-.navbar {
-  border-color: transparent !important;
-}

@@ -1,5 +1,11 @@
 <template lang="pug">
   section
+      //- Aurora Background Orbs (Ambient Effect)
+      .aurora-background
+        .aurora-orb.aurora-orb-1
+        .aurora-orb.aurora-orb-2
+        .aurora-orb.aurora-orb-3
+      
       //- Spotlight Search Component
       Spotlight
 
@@ -253,6 +259,68 @@ const getPath = (routeName: string) => {
     position: absolute;
     width: 100%;
     height: 100%;
+  }
+}
+
+// Aurora Background Orbs
+.aurora-background {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  pointer-events: none;
+  z-index: 0;
+  overflow: hidden;
+}
+
+.aurora-orb {
+  position: absolute;
+  border-radius: 50%;
+  filter: blur(80px);
+  opacity: 0.12;
+  animation: auroraFloat 20s ease-in-out infinite;
+}
+
+.aurora-orb-1 {
+  width: 500px;
+  height: 500px;
+  background: radial-gradient(circle, #7C3AED 0%, transparent 70%);
+  top: -150px;
+  right: -100px;
+  animation-delay: 0s;
+}
+
+.aurora-orb-2 {
+  width: 400px;
+  height: 400px;
+  background: radial-gradient(circle, #EC4899 0%, transparent 70%);
+  bottom: -100px;
+  left: 20%;
+  animation-delay: -7s;
+}
+
+.aurora-orb-3 {
+  width: 350px;
+  height: 350px;
+  background: radial-gradient(circle, #F97316 0%, transparent 70%);
+  top: 40%;
+  right: 10%;
+  animation-delay: -14s;
+}
+
+@keyframes auroraFloat {
+  0%, 100% {
+    transform: translate(0, 0) scale(1);
+    opacity: 0.12;
+  }
+  33% {
+    transform: translate(40px, -40px) scale(1.15);
+    opacity: 0.18;
+  }
+  66% {
+    transform: translate(-30px, 30px) scale(0.9);
+    opacity: 0.1;
   }
 }
 </style>

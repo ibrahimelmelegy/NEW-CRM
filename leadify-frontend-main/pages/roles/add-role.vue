@@ -5,12 +5,12 @@ RoleForm( :loading="loading" @submit="submitForm")
     .flex.items-center.gap-x-2
       el-button(   size='large' plain type="primary" class="w-full !rounded-2xl" @click="router.back()") Cancel
       el-button(   size='large' type="primary" native-type="submit" :loading="loading"  :disabled="loading" class="w-full !px-5 !rounded-2xl") Save
-.card.m-auto.bg-white.rounded-3xl(class="mt-4 p-10")
+.card.m-auto.glass-card.rounded-3xl(class="mt-4 p-10")
   h3.text-2xl.font-bold.mb-5 Permissions
   .flex.flex-col.gap-y-4
     div.flex.gap-x-4.rounded-2xl.items-center.border.border-neutral-100.divide-x.mb-4.bg-neutral-100(v-for="(permissions, key) in permissionsData" :key="key")
       p.ps-4.h-full.text-sm.text-neutral-600.font-medium.py-3(class="w-[190px] min-w-[190px]") {{ formatKeyLabel(key) }}
-      el-checkbox-group.grid.gap-4.w-full.text-sm.text-neutral-500.font-medium.bg-white.py-3.rounded-r-2xl.divide-x(v-model="checkList[key]" class="grid-cols-2 xl:grid-cols-4")
+      el-checkbox-group.grid.gap-4.w-full.text-sm.text-neutral-500.font-medium.glass-card.py-3.rounded-r-2xl.divide-x(v-model="checkList[key]" class="grid-cols-2 xl:grid-cols-4")
         el-checkbox.px-4.w-full(v-for="permission in permissions" :key="permission"
           :label="permission"
           @change="handleMutuallyExclusive(permission, key)") {{ formatPermissionLabel(permission) }}

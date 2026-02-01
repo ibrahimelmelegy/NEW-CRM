@@ -1,5 +1,5 @@
 <template lang="pug">
-.card.m-auto.bg-white.p-10.rounded-3xl(class="2xl:w-1/2 w-[90%]")
+.glass-card.m-auto.p-10(class="2xl:w-1/2 w-[90%]")
   .flex.justify-between.items-center.mb-4
     span
     el-button(size='medium' plain type="primary" :icon="Plus" native-type="button" @click="AddInvoice" class="!rounded-2xl !py-2.5 !px-4") Add Invoice

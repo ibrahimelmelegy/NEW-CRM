@@ -1,11 +1,11 @@
 <template lang="pug">
-.relative
-  .toggle-indicator.cursor-pointer.flex.items-center.justify-center.absolute.rounded-full.w-9.h-9.z-100.glass-card(@click="openNav" v-if="!mobile" :class="{ 'right-[-18px]' : fullNav, 'right-[-18px]' : !fullNav }" class="top-[100px] z-20")
+.relative.inline-block
+  .toggle-indicator.cursor-pointer.flex.items-center.justify-center.absolute.rounded-full.w-9.h-9.z-100.glass-card(@click="openNav" v-if="!mobile" :class="{ 'left-full -translate-x-1/2' : true }" class="top-[50px] z-20")
     Icon.text-white(:name="fullNav ? 'ph:caret-left-bold' : 'ph:caret-right-bold'" size="18")
 
   div.background-overlay.fixed.top-0.left-0.w-screen.h-full(class='z-[-1]' v-if="mobile && !hideNav" @click="hideNav = true")
   transition(:name='mobile ? "side" : "none"')
-    el-menu.el-menu-vertical-demo.relative(class='!pl-[5px] h-[100vh] card-auto ' :class="{'overflow-x-hidden' : !fullNav }" v-if="mobile ? !hideNav : true" :collapse='mobile ? false : !fullNav' :default-openeds="defaultOpenMenus")
+    el-menu.el-menu-vertical-demo.relative.sidebar-glass(class='!pl-[5px] h-[100vh] card-auto ' :class="{'overflow-x-hidden' : !fullNav }" v-if="mobile ? !hideNav : true" :collapse='mobile ? false : !fullNav' :default-openeds="defaultOpenMenus")
       .py-5.px-12.flex.items-center.gap-3(v-if="fullNav")
         img(class="cursor-pointer max-h-[50px] w-auto" :src="logoSrc" @click="router.push('/')")
       .py-5.px-5.flex.items-center.gap-3.relative.z-10(v-if="!fullNav")

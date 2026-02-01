@@ -1,0 +1,125 @@
+// ============================================
+// 🏗️ THEME BASE - Global Styles
+// ============================================
+
+@use './theme-variables.scss';
+
+// ========================================
+// 📄 HTML & BODY
+// ========================================
+html {
+    font-size: 16px;
+    scroll-behavior: smooth;
+}
+
+body {
+    margin: 0;
+    padding: 0;
+    background-color: #030014 !important; // Deep space black-purple
+    color: var(--text-primary);
+    font-family: 'Poppins', 'Tajawal', -apple-system, BlinkMacSystemFont, sans-serif;
+    background-image:
+        radial-gradient(circle at 50% 0%, rgba(124, 58, 237, 0.12) 0%, transparent 60%),
+        /* Subtle central purple glow */
+        radial-gradient(circle at 100% 0%, rgba(236, 72, 153, 0.08) 0%, transparent 50%),
+        /* Hints of pink on right */
+        linear-gradient(180deg, rgba(255, 255, 255, 0.01) 0%, transparent 100%)
+        /* Vertical depth */
+        !important;
+    background-attachment: fixed !important;
+    font-size: 14px;
+    line-height: 1.5;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+}
+
+// ========================================
+// 🔤 TYPOGRAPHY
+// ========================================
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+    font-family: 'Poppins', sans-serif;
+    font-weight: 600;
+    color: var(--text-primary);
+    margin: 0;
+}
+
+a {
+    color: var(--purple);
+    text-decoration: none;
+    transition: color var(--transition-fast);
+
+    &:hover {
+        color: var(--purple-light);
+    }
+}
+
+// ========================================
+// 📜 SCROLLBAR
+// ========================================
+::-webkit-scrollbar {
+    width: 8px;
+    height: 8px;
+}
+
+::-webkit-scrollbar-track {
+    background: var(--bg-body);
+}
+
+::-webkit-scrollbar-thumb {
+    background: var(--border-light);
+    border-radius: var(--radius-full);
+
+    &:hover {
+        background: var(--purple);
+    }
+}
+
+// ========================================
+// 🎭 SELECTION
+// ========================================
+::selection {
+    background-color: var(--purple);
+    color: white;
+}
+
+// ========================================
+// 🔄 TRANSITIONS
+// ========================================
+.page-enter-active,
+.page-leave-active {
+    transition: all 0.3s ease-out;
+}
+
+.page-enter-from,
+.page-leave-to {
+    opacity: 0;
+    transform: translateY(10px);
+}
+
+// ========================================
+// 📐 LAYOUT HELPERS
+// ========================================
+.marginedStart {
+    margin-left: 260px;
+    width: calc(100% - 260px);
+    transition: all 0.3s ease;
+}
+
+.collapseMargin {
+    margin-left: 80px;
+    width: calc(100% - 80px);
+}
+
+@media screen and (max-width: 992px) {
+
+    .marginedStart,
+    .collapseMargin {
+        margin-left: 0 !important;
+        width: 100% !important;
+    }
+}

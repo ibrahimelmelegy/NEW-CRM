@@ -1,11 +1,11 @@
 <template lang="pug">
 el-form.mt-6.mb-24(  autocomplete="off"   @submit.prevent='onSubmit'   ref="myForm" label-position="top"  :validationSchema="formSchema" )
-  .card.m-auto.bg-white.p-10.rounded-3xl(class="w-[90%] ")
+  .card.m-auto.glass-card.p-10.rounded-3xl(class="w-[90%] ")
     .title.font-bold.text-xl.capitalize.mb-8 Vehicles Info
     .flex.align-center.gap-1
       InputSelect.flex-1(label=" Vehicles" isMultiple name="vehicles" :options="vehiclesOptions"  :value="filteredVehicles.map((vehicle: any) => vehicle.value)" :key="filteredVehicles.length  || vehiclesOptions.length" @change="toggleVehicleSelection")
       el-button.mt-7(size='medium' :icon="Plus" native-type="button" @click="vehicle = {}, addVehicle = true" class="!rounded-2xl !border-[#e9e8eb] !color-[#e9e8eb] !py-7 !px-4")
-    .bg-white.rounded-3xl.mt-3.border
+    .glass-card.rounded-3xl.mt-3.border
       AppTable(v-slot="{data}" without-filters without-search without-pagination :columns="table.columns" :data="table.data" :key="table.data" class="!py-0")
         .flex.items-center.py-2(@click.stop)
           el-button(class="!rounded-2xl" type='danger' link @click="toggleVehicleSelection(data.id)"): Icon(name="IconDelete" size="20")

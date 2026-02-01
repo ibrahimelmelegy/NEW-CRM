@@ -3,7 +3,7 @@
     el-tab-pane(label="Information Dashboard", name="info")
       OperationsDailyTasksStatistics
     el-tab-pane(label="Active Projects", name="active")
-      .bg-white.p-10.rounded-3xl.mt-3
+      .glass-card.p-10.rounded-3xl.mt-3
         .flex.items-center.justify-between.m-5
           .title.font-bold.text-2xl.mb-1.capitalize Active Projects
           .flex.items-center.gap-2
@@ -47,7 +47,7 @@
                         p.text-sm Edit
   
     el-tab-pane(label="Completed Projects", name="completed")
-      .bg-white.p-10.rounded-3xl.mt-3
+      .glass-card.p-10.rounded-3xl.mt-3
         .flex.items-center.justify-between.m-5
           .title.font-bold.text-2xl.mb-1.capitalize Completed Projects
           .flex.items-center.gap-2
@@ -90,7 +90,7 @@
                         Icon.text-md.mr-2(name="IconEdit" )
                         p.text-sm Edit
     el-tab-pane(label="Granted Projects", name="granted")
-      .bg-white.p-10.rounded-3xl.mt-3
+      .glass-card.p-10.rounded-3xl.mt-3
         .flex.items-center.justify-between.m-5
           .title.font-bold.text-2xl.mb-1.capitalize Granted Projects
           .flex.items-center.gap-2

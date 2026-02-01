@@ -15,7 +15,7 @@
               //-     Icon.text-md.mr-2(size="20" name="IconDelete" )
               //-     p.text-sm Delete
 
-  .flex-1.bg-white.p-10.rounded-3xl
+  .flex-1.glass-card.p-10.rounded-3xl
       p.text-neutral-900.font-semibold.mb-6.text-lg Information
       .grid.gap-4(class="lg:grid-cols-4 grid-cols-1")
         div(v-if="role?.name")
@@ -33,14 +33,14 @@
             Icon(name="solar:hashtag-outline" size="20" class="mr-2")
             p Description
           p.text-neutral-800.mb-2 {{role.description}}
-  .card.m-auto.bg-white.rounded-3xl.p-10
+  .card.m-auto.glass-card.rounded-3xl.p-10
     h3.text-2xl.font-bold.mb-5 Permissions
 
     .flex.flex-col.gap-y-6
       template(v-for="(permissions, key) in permissionsData" :key="key")
         div.flex.gap-x-4.rounded-2xl.items-center.border.border-neutral-100.divide-x.mb-4.bg-neutral-100(v-if="getEffectivePermissions(key)?.length")
           p.ps-4.h-full.text-sm.text-neutral-600.font-medium.py-3(class="w-[190px] min-w-[190px]") {{ formatKeyLabel(key) }}
-          .grid.gap-4.w-full.text-sm.text-neutral-500.font-medium.bg-white.py-3.rounded-r-2xl.divide-x(class="grid-cols-2 xl:grid-cols-4")
+          .grid.gap-4.w-full.text-sm.text-neutral-500.font-medium.glass-card.py-3.rounded-r-2xl.divide-x(class="grid-cols-2 xl:grid-cols-4")
             .px-4.w-full(v-for="permission in getEffectivePermissions(key)" :key="permission") {{ formatPermissionLabel(permission) }}
 </template>
 

@@ -1,11 +1,11 @@
 <template lang="pug">
 el-form.mt-6.mb-24(  autocomplete="off"   @submit.prevent='onSubmit'   ref="myForm" label-position="top"  :validationSchema="formSchema" )
-  .card.m-auto.bg-white.p-10.rounded-3xl(class="w-[90%] ")
+  .card.m-auto.glass-card.p-10.rounded-3xl(class="w-[90%] ")
     .grid.grid-cols-2.gap-3
       InputText.mt-4(label="Accommodation Cost"  placeholder="Enter Accommodation Cost SAR" name="accommodationCost" :value="project?.accommodationCost" )
       InputText.mt-4(label="Food Cost Per Day"  placeholder="Enter Food Cost Per Day SAR" name="foodCost" :value="project?.foodCostPerDay" )
     InputText.mt-4(label="Management Addition Percentage"  placeholder="Enter Management Addition Percentage %" name="managementAddition" :value="project?.managementAdditionPercentage" )
-    .bg-white.rounded-3xl.mt-3.border.mt-8
+    .glass-card.rounded-3xl.mt-3.border.mt-8
       .flex.justify-justify-between.items-center.p-10.pb-0
         .title.font-bold.text-xl.capitalize.flex-1 Manpower Info
         el-button(class="!rounded-2xl" type='primary' @click='selectedManpower = {} ,addManpower = true' :icon="Plus" size="large" :loading="loading") Add
@@ -14,9 +14,9 @@ el-form.mt-6.mb-24(  autocomplete="off"   @submit.prevent='onSubmit'   ref="myFo
           el-button(class="!rounded-2xl" type='danger' link @click="selectedManpower = data, isDelete = true"): Icon(name="IconDelete" size="20")
           el-button(class="!rounded-2xl" type='primary' link @click="editManpower(data.id)"): Icon(name="IconEdit" size="20")
     .title.font-bold.text-xl.capitalize.flex-1.mt-8 Perview
-    .bg-white.rounded-3xl.mt-3.border
+    .glass-card.rounded-3xl.mt-3.border
       AppTable(without-filters without-search without-action without-pagination :columns="manPowerPreview.columns" :data="manPowerPreview.data" :key="manPowerPreview.data" class="!py-0")
-    .bg-white.rounded-3xl.mt-3.border
+    .glass-card.rounded-3xl.mt-3.border
       AppTable(without-filters without-search without-action without-pagination :columns="manPowertotal.columns" :data="manPowertotal.data" :key="manPowertotal.data" class="!py-0")
   .endBar
       .flex.justify-between.w-full

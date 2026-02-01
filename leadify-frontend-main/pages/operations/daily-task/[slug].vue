@@ -2,7 +2,7 @@
     .flex.items-center.justify-between.mb-5.mt-5
       .title.font-bold.text-2xl.mb-1.capitalize Daily Task Details
     .flex.align-center.gap-6.mt-3(class="flex-col xl:flex-row")
-            .flex-1.bg-white.p-10.rounded-3xl
+            .flex-1.glass-card.p-10.rounded-3xl
               .grid.gap-4(class="md:grid-cols-2 lg:grid-cols-3  xl:grid-cols-4")
                 div
                   .text-neutral-400.font-medium.mb-2.flex.items-center
@@ -64,7 +64,7 @@
                     Icon(name="solar:hashtag-outline" size="20" class="mr-2")
                     p End Date
                   p.text-neutral-800.mb-2 {{getYear(dailyTask?.endDate)}}
-            .flex-1.bg-white.p-10.rounded-3xl(v-if="dailyTask?.notes")
+            .flex-1.glass-card.p-10.rounded-3xl(v-if="dailyTask?.notes")
              .flex.items-center.gap-2.mb-4
                .flex.items-center.justify-center.w-10.h-10.rounded-full.bg-secondary-turquoise-50: Icon.text-secondary-turquoise-700(name="IconNote" size="24")
              h4.text-lg.font-semibold.text-neutral-900 Notes

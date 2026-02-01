@@ -25,7 +25,7 @@
 
       <!-- Reset Password Form Card -->
       <div class="w-full max-w-[480px] animate-fade-in-right">
-        <div class="glass-card p-8 md:p-12 rounded-[32px] border border-white/10 bg-white/[0.03] backdrop-blur-[20px] shadow-2xl relative overflow-hidden group">
+        <div class="glass-card p-8 md:p-12 rounded-[32px] border border-white/10 glass-card/[0.03] backdrop-blur-[20px] shadow-2xl relative overflow-hidden group">
           <!-- Subtle glow effect -->
           <div class="absolute -top-24 -right-24 w-48 h-48 bg-primary/20 rounded-full blur-[60px] group-hover:bg-primary/30 transition-all duration-700"></div>
           

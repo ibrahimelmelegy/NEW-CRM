@@ -1,5 +1,5 @@
 <template lang="pug">
-el-drawer(v-model="drawer", direction="rtl", :show-close="true" destroy-on-close size="440px")
+el-drawer(v-model="drawer", direction="rtl", :show-close="true" destroy-on-close size="440px" append-to-body)
   template(#header)
     h4(class="text-xl font-bold") Filter
   template(#default)

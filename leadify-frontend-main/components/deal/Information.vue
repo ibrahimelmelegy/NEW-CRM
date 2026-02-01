@@ -1,6 +1,6 @@
 <template lang="pug">
 el-form(  autocomplete="off"   @submit.prevent='onSubmit'   ref="myForm" label-position="top"  :validationSchema="formSchema" )
-  .card.m-auto.bg-white.p-10.rounded-3xl(class="2xl:w-1/2 w-[90%] ")
+  .glass-card.m-auto.p-10(class="2xl:w-1/2 w-[90%] ")
       el-switch.my-4(v-if="!editMode" v-model="switchType", size="large" inline-prompt, style="--el-switch-on-color: #7849FF; --el-switch-off-color: #918E98", active-text="Select Client", inactive-text="Select Lead")
       .flex.justify-between.items-center.mb-6(v-if="switchType")
         h3.text-xl.font-semibold Client Information

@@ -2,7 +2,7 @@
   el-form(autocomplete="off" @submit.prevent='onSubmit' ref="myForm" label-position="top" :validationSchema="formSchema")
     slot
 
-    .card.m-auto.bg-white.p-10.rounded-3xl(class="2xl:w-1/2 w-[90%]")
+    .glass-card.m-auto.p-10(class="2xl:w-1/2 w-[90%]")
         .upload-img-staff.flex.items-center.gap-3.mb-6
           InputUploadImage(name="profilePicture" type="image" sizeLook="small" :value="data?.profilePicture" :isEdit="route.path.includes('edit')" model="USER")
           .label

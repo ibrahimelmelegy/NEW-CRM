@@ -1,7 +1,7 @@
 <template lang="pug">
 el-form.mb-24(  autocomplete="off"   @submit.prevent='onSubmit'   ref="myForm" label-position="top"  :validationSchema="formSchema" )
   slot
-  .card.m-auto.bg-white.rounded-3xl(class="2xl:w-1/2 w-[90%] " :class="!withoutPading ? 'p-10' : 'p-[0px]'")
+  .glass-card.m-auto(class="2xl:w-1/2 w-[90%] " :class="!withoutPading ? 'p-10' : 'p-[0px]'")
     .flex.align-center.justify-between
       span
       el-switch.my-4(v-if="!editMode && mappedLeads?.length" v-model="switchValue", size="large" inline-prompt, style="--el-switch-on-color: #7849FF; --el-switch-off-color: #918E98", active-text="Existing Lead", inactive-text="New Client")

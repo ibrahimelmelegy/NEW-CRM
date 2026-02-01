@@ -8,7 +8,7 @@
     )
       Icon(name="IconExport", size="20")
       p.mx-1 Export
-  .card.m-auto.bg-white.p-10.rounded-3xl.mb-3(class="w-[90%]", ref="contentToPrint")
+  .card.m-auto.glass-card.p-10.rounded-3xl.mb-3(class="w-[90%]", ref="contentToPrint")
     .grid.gap-4.grid-cols-1(class="md:grid-cols-3")
       div
         .text-neutral-400.font-medium.mb-2.flex.items-center
@@ -25,7 +25,7 @@
           Icon.mr-2(name="IconCalendar", size="20")
           p Project Duration
         p.text-neutral-800.mb-2 {{ project?.duration || 0 }} Days
-  .card.m-auto.bg-white.p-10.rounded-3xl.mb-24(class="w-[90%]")
+  .card.m-auto.glass-card.p-10.rounded-3xl.mb-24(class="w-[90%]")
     .title.font-bold.text-xl.capitalize.flex-1.mt-8 Final Costs Table
     .rounded-3xl.mt-3.border.mt-8
       AppTable(

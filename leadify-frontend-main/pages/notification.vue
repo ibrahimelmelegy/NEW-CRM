@@ -5,7 +5,7 @@
         .title.font-bold.text-2xl.capitalize Notifications
         .title.font-medium.text-lg.capitalize(v-if="unreadNotificationsCount == 0" style ="color : #6D42E8;cursor: pointer" ) Mark all as read
         .title.font-medium.text-lg.capitalize( v-if = "unreadNotificationsCount > 0" style ="color : #ff0000;cursor: pointer" @click = "readNotifications") marking notification as unread {{unreadNotificationsCount}}
-      .notify.bg-white(class="h-[75vh] mb-2 p-[16px]")
+      .notify.glass-card(class="h-[75vh] mb-2 p-[16px]")
        el-spinner(size="large" v-if="isLoading" class="nuxt-loading-indicator")
        el-empty(v-if="finalData?.length ==  0 || !finalData " description="No notifications yet." image="/images/emptyNotify.png")
        .item.flex.flex-wrap.gap-2.items-center.justify-center(v-else-if="finalData && finalData?.length > 0")

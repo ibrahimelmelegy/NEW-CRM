@@ -143,7 +143,7 @@ export default {
 
     const buttonClass = (active) =>
       `px-3 py-1 border rounded ${
-        active ? "bg-blue-500 text-white" : "bg-white text-black hover:bg-gray-100"
+        active ? "bg-blue-500 text-white" : "glass-panel text-white hover:bg-gray-700"
       }`;
     return {
       fontSizes,
