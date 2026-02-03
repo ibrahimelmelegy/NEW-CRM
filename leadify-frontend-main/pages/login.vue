@@ -8,39 +8,39 @@
       
       <!-- Brand & Visual Section -->
       <div class="hidden md:flex flex-1 flex-col items-start space-y-8 animate-fade-in-left">
-        <img src="/images/light-logo.png" alt="High Point CRM" class="h-16 w-auto drop-shadow-[0_0_15px_rgba(255,255,255,0.3)]" />
+        <img src="/images/light-logo.png" alt="High Point CRM" class="h-16 w-auto drop-shadow-[0_0_15px_rgba(255,255,255,0.3)] transition-all duration-500 light-logo-shadow" />
         <div class="space-y-4">
-          <h2 class="text-4xl lg:text-5xl font-bold leading-tight text-white">
+          <h2 class="text-4xl lg:text-5xl font-bold leading-tight text-[var(--text-primary)]">
             Elevate Your <span class="text-transparent bg-clip-text bg-gradient-to-r from-[#7849ff] to-[#ff7b00]">Experience</span>
           </h2>
-          <p class="text-white/70 text-lg max-w-md leading-relaxed">
+          <p class="text-[var(--text-secondary)] text-lg max-w-md leading-relaxed">
             Harness the power of intelligence with our professional CRM solutions.
           </p>
         </div>
         
         <!-- Feature Highlights -->
         <div class="grid grid-cols-2 gap-4 w-full max-w-sm">
-          <div class="flex items-center gap-3 p-4 rounded-2xl bg-white/5 border border-white/10 backdrop-blur-md hover:bg-white/10 transition-all duration-300">
+          <div class="flex items-center gap-3 p-4 rounded-2xl glass-effect hover:bg-white/10 transition-all duration-300">
             <div class="p-2 rounded-xl bg-[#7849ff]/20"><Icon name="ph:lightning-bold" class="text-[#7849ff] text-xl" /></div>
-            <span class="text-sm font-medium text-white/90">Fast Workflow</span>
+            <span class="text-sm font-medium text-[var(--text-primary)] opacity-90">Fast Workflow</span>
           </div>
-          <div class="flex items-center gap-3 p-4 rounded-2xl bg-white/5 border border-white/10 backdrop-blur-md hover:bg-white/10 transition-all duration-300">
+          <div class="flex items-center gap-3 p-4 rounded-2xl glass-effect hover:bg-white/10 transition-all duration-300">
             <div class="p-2 rounded-xl bg-[#ff7b00]/20"><Icon name="ph:chart-line-up-bold" class="text-[#ff7b00] text-xl" /></div>
-            <span class="text-sm font-medium text-white/90">Smart Analytics</span>
+            <span class="text-sm font-medium text-[var(--text-primary)] opacity-90">Smart Analytics</span>
           </div>
         </div>
       </div>
 
       <!-- Login Form Card -->
       <div class="w-full max-w-[480px] animate-fade-in-right">
-        <div class="glass-card p-8 md:p-12 rounded-[32px] border border-white/20 bg-white/[0.05] backdrop-blur-[40px] shadow-[0_22px_70px_4px_rgba(0,0,0,0.56)] relative overflow-hidden group">
+        <div class="glass-card-premium p-8 md:p-12 relative overflow-hidden group">
           <!-- Subtle hover interaction glow -->
           <div class="absolute -top-24 -right-24 w-64 h-64 bg-[#7849ff]/10 rounded-full blur-[80px] group-hover:bg-[#7849ff]/20 transition-all duration-1000"></div>
           
           <div class="relative z-10">
             <div class="mb-10 text-center md:text-left">
-              <h1 class="text-3xl font-bold text-white mb-2 tracking-tight">Welcome Back</h1>
-              <p class="text-white/50 text-sm">Enter your credentials to access your dashboard</p>
+              <h1 class="text-3xl font-bold text-[var(--text-primary)] mb-2 tracking-tight">Welcome Back</h1>
+              <p class="text-[var(--text-muted)] text-sm">Enter your credentials to access your dashboard</p>
             </div>
 
             <el-form 
@@ -53,7 +53,7 @@
             >
               <div class="space-y-6">
                 <div class="form-group flex flex-col gap-2">
-                  <span class="text-xs font-semibold text-white/40 uppercase tracking-wider ml-1">Email Address</span>
+                  <span class="text-xs font-semibold text-[var(--text-muted)] opacity-60 uppercase tracking-wider ml-1">Email Address</span>
                   <InputText 
                     placeholder="name@company.com" 
                     name="email" 
@@ -95,8 +95,8 @@
           </div>
         </div>
         
-        <p class="text-center mt-8 text-white/40 text-sm">
-          Don't have an account? <span class="text-white hover:text-[#7849ff] font-medium cursor-pointer transition-colors">Contact Administrator</span>
+        <p class="text-center mt-8 text-[var(--text-muted)] text-sm">
+          Don't have an account? <span class="text-[var(--text-primary)] hover:text-[#7849ff] font-medium cursor-pointer transition-colors">Contact Administrator</span>
         </p>
       </div>
 
@@ -244,21 +244,32 @@
         transform: translateY(-2px);
         box-shadow: 0 8px 16px -4px rgba(120, 73, 255, 0.2) !important;
       }
+
+      :global(body.light-mode) & {
+        background-color: rgba(0, 0, 0, 0.02) !important;
+        border-color: rgba(0, 0, 0, 0.05) !important;
+        
+        &.is-focus, &:hover {
+          background-color: rgba(120, 73, 255, 0.03) !important;
+          border-color: #7849ff !important;
+        }
+      }
     }
     
     .el-input__inner {
-      color: white !important;
+      color: var(--text-primary) !important;
       font-size: 15px !important;
       height: 48px !important;
       &::placeholder {
-        color: rgba(255, 255, 255, 0.25) !important;
+        color: var(--text-muted) !important;
+        opacity: 0.5;
       }
     }
   }
 
   .custom-checkbox {
     .el-checkbox__label {
-      color: rgba(255, 255, 255, 0.5) !important;
+      color: var(--text-muted) !important;
       font-size: 13px;
       padding-left: 10px;
     }
@@ -269,6 +280,11 @@
       border-radius: 6px;
       width: 18px;
       height: 18px;
+
+      :global(body.light-mode) & {
+        background-color: rgba(0, 0, 0, 0.03) !important;
+        border-color: rgba(0, 0, 0, 0.1) !important;
+      }
       
       &::after {
         border-width: 2px !important;
@@ -277,7 +293,7 @@
     
     &.is-checked {
       .el-checkbox__label {
-        color: white !important;
+        color: var(--text-primary) !important;
       }
       .el-checkbox__inner {
         background-color: #7849ff !important;

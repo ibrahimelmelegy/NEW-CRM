@@ -172,3 +172,37 @@
     --shadow-premium: 0 25px 50px -12px rgba(168, 85, 247, 0.25);
     --border-glass: rgba(168, 85, 247, 0.2);
 }
+
+// ============================================
+// 🌤️ LIGHT MODE OVERRIDES (Microsoft Style)
+// ============================================
+body.light-mode {
+    // Backgrounds
+    --bg-primary: #F3F4F6;
+    --bg-secondary: #FFFFFF;
+    --bg-tertiary: #E5E7EB;
+    --bg-card: rgba(255, 255, 255, 0.7);
+    --bg-card-hover: rgba(255, 255, 255, 0.9);
+
+    // Text Colors
+    --text-primary: #1F2937;
+    --text-secondary: #4B5563;
+    --text-muted: #6B7280;
+    --text-disabled: #9CA3AF;
+
+    // Borders
+    --border-primary: rgba(168, 85, 247, 0.1);
+    --border-secondary: rgba(249, 115, 22, 0.1);
+    --border-default: #E5E7EB;
+    --border-light: #F3F4F6;
+
+    // Glassmorphism (Microsoft Acrylic Style)
+    --glass-bg: rgba(255, 255, 255, 0.6);
+    --glass-border: rgba(255, 255, 255, 0.5);
+    --glass-blur: blur(30px);
+
+    // Shadows
+    --shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.05);
+    --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.05);
+    --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.05);
+}

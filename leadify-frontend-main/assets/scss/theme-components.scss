@@ -43,13 +43,13 @@
 // ========================================
 .el-input__wrapper,
 .el-textarea__inner {
-    background-color: rgba(20, 20, 30, 0.6) !important; // Darker, less transparent
+    background-color: var(--bg-card) !important;
     backdrop-filter: blur(10px);
     box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05) !important;
-    border: 1px solid rgba(255, 255, 255, 0.1) !important; // Subtle border
-    border-radius: 10px !important; // Cleaner radius
+    border: 1px solid var(--border-light) !important;
+    border-radius: 10px !important;
     padding: 4px 16px !important;
-    height: 48px !important; // Standard Standard height
+    height: 48px !important;
     transition: all 0.2s ease-in-out !important;
 
     // Icon color
@@ -93,10 +93,10 @@
 // 🔽 SELECT (Clean Professional)
 // ========================================
 .el-select__wrapper {
-    background-color: rgba(20, 20, 30, 0.6) !important;
+    background-color: var(--bg-card) !important;
     backdrop-filter: blur(10px);
     box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05) !important;
-    border: 1px solid rgba(255, 255, 255, 0.1) !important;
+    border: 1px solid var(--border-light) !important;
     border-radius: 10px !important; // Match Inputs
     padding: 4px 16px !important;
     min-height: 48px !important; // Match Input Height
@@ -117,8 +117,8 @@
 }
 
 .el-select-dropdown {
-    background-color: #1a1a24 !important; // Solid dark for better readability
-    border: 1px solid rgba(255, 255, 255, 0.1) !important;
+    background-color: var(--bg-secondary) !important;
+    border: 1px solid var(--border-light) !important;
     border-radius: 12px !important;
     padding: 6px !important;
     box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5) !important;
@@ -297,10 +297,10 @@
 
 // 🧭 NAVBAR
 .navbar {
-    background: rgba(30, 20, 50, 0.4) !important;
+    background: var(--bg-card) !important;
     backdrop-filter: blur(20px) !important;
     -webkit-backdrop-filter: blur(20px) !important;
-    border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+    border-bottom: 1px solid var(--border-light);
 
     &::after {
         content: '';
@@ -317,11 +317,11 @@
 
 // 🌟 GLASSY SIDEBAR
 .sidebar-glass {
-    background: linear-gradient(180deg, rgba(30, 20, 50, 0.6) 0%, rgba(30, 20, 50, 0.8) 100%) !important;
+    background: linear-gradient(180deg, var(--bg-card) 0%, var(--bg-card-hover) 100%) !important;
     backdrop-filter: blur(20px) !important;
     -webkit-backdrop-filter: blur(20px) !important;
     border-right: none !important;
-    box-shadow: 4px 0 24px rgba(0, 0, 0, 0.2) !important;
+    box-shadow: 4px 0 24px rgba(0, 0, 0, 0.1) !important;
     position: relative;
 
     // Ensure icons in collapsed menu are visible (Safe Fix)
@@ -502,7 +502,7 @@
 // 📄 CARDS - High Point Gold with Gradient Border
 // ========================================
 .el-card {
-    background: rgba(30, 18, 48, 0.4) !important;
+    background: var(--bg-card) !important;
     backdrop-filter: blur(20px) !important;
     -webkit-backdrop-filter: blur(20px) !important;
     border: none !important;
@@ -537,7 +537,7 @@
         left: 1px;
         right: 1px;
         bottom: 1px;
-        background: rgba(30, 18, 48, 0.95);
+        background: var(--bg-card);
         border-radius: 19px;
         z-index: -1;
     }
@@ -727,7 +727,7 @@
 // 📋 DIALOGS & DRAWERS - High Point Gold
 // ========================================
 .el-dialog {
-    background: rgba(30, 18, 48, 0.85) !important; // Purple-tinted glass
+    background: var(--bg-card) !important; // Use variable for mode reaction
     backdrop-filter: blur(20px) !important;
     -webkit-backdrop-filter: blur(20px) !important;
     border: 1px solid rgba(168, 85, 247, 0.2) !important;
@@ -740,7 +740,7 @@
 }
 
 .el-drawer {
-    background: rgba(30, 30, 40, 0.85) !important; // Glassy Gray Drawer
+    background: var(--bg-card) !important; // Reacts to mode
     backdrop-filter: blur(20px) !important;
     border-left: 1px solid var(--glass-border) !important;
     box-shadow: -10px 0 30px rgba(0, 0, 0, 0.5) !important;
@@ -773,14 +773,14 @@
 .el-popper,
 .el-popover,
 .el-dropdown-menu {
-    background: rgba(30, 30, 40, 0.9) !important;
+    background: var(--bg-card) !important;
     backdrop-filter: blur(20px) !important;
     border: 1px solid var(--glass-border) !important;
     border-radius: var(--radius-md) !important;
     box-shadow: 0 10px 40px rgba(0, 0, 0, 0.4) !important;
 
     .el-popper__arrow::before {
-        background: rgba(30, 30, 40, 0.9) !important;
+        background: var(--bg-card) !important;
         border: 1px solid var(--glass-border) !important;
     }
 

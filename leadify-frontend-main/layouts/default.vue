@@ -19,9 +19,9 @@
               div(class="breadcrumb")
                 el-breadcrumb(:separator-icon="ArrowRight")      
                   el-breadcrumb-item(to="/") 
-                    span.breadcrumb-home Dashboard
+                    span.breadcrumb-home(class="!text-[var(--text-primary)] opacity-80") Dashboard
                   el-breadcrumb-item(v-for="(route, index) in breadcrumbRoutes",  :key="index", @click="getPath(route)" , class="cursor-pointer",  :class="{ 'last': index === breadcrumbRoutes.length - 1 }"  ) 
-                    span.breadcrumb-text {{ route }}
+                    span.breadcrumb-text(class="!text-[var(--text-primary)]") {{ route }}
             .flex.gap-3.items-center
               .tools.flex.items-center(class="p-2 rounded-full gap-2.5" )
                 //- Circular Spotlight Button (⌘)
@@ -38,7 +38,7 @@
                 
                 //- Profile Dropdown
                 el-dropdown(class="outline-0")
-                    div.profile-trigger
+                    div.profile-trigger(class="!text-[var(--text-primary)]")
                           Avatar(:src="user?.profilePicture", small)
                           p.mb-0 {{user?.name}}
                           Icon.text-xl(name="iconamoon:arrow-down-2")
