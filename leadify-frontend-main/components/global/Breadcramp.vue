@@ -61,13 +61,13 @@ ol {
     }
 
     a {
-      color: black;
+      color: var(--text-primary);
     }
   }
 }
 .breadcrumb {
   .router-link-active {
-    color: black !important;
+    color: var(--text-primary) !important;
     background-color: transparent !important;
     font-weight: 600;
   }

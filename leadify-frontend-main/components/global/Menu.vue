@@ -1,7 +1,7 @@
 <template lang="pug">
 .relative.inline-block
   .toggle-indicator.cursor-pointer.flex.items-center.justify-center.absolute.rounded-full.w-9.h-9.z-100.glass-card(@click="openNav" v-if="!mobile" :class="{ 'left-full -translate-x-1/2' : true }" class="top-[50px] z-20")
-    Icon.text-white(:name="fullNav ? 'ph:caret-left-bold' : 'ph:caret-right-bold'" size="18")
+    Icon(:name="fullNav ? 'ph:caret-left-bold' : 'ph:caret-right-bold'" size="18" class="text-[var(--text-primary)]")
 
   div.background-overlay.fixed.top-0.left-0.w-screen.h-full(class='z-[-1]' v-if="mobile && !hideNav" @click="hideNav = true")
   transition(:name='mobile ? "side" : "none"')

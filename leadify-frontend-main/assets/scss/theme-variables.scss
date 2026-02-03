@@ -166,6 +166,11 @@
     --accent-emerald: #10B981;
     --accent-amber: #F59E0B;
 
+    // Layout Defaults
+    --bg-obsidian: #0b0a12;
+    --border-stroke: rgba(168, 85, 247, 0.15);
+    --bg-surface-elevated: #1e1230;
+
     // ========================================
     // ✨ PREMIUM SHADOWS
     // ========================================
@@ -200,6 +205,11 @@ body.light-mode {
     --glass-bg: rgba(255, 255, 255, 0.6);
     --glass-border: rgba(255, 255, 255, 0.5);
     --glass-blur: blur(30px);
+
+    // Layout Defaults
+    --bg-obsidian: #f3f4f6;
+    --border-stroke: #E5E7EB;
+    --bg-surface-elevated: #F9FAFB;
 
     // Shadows
     --shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.05);
