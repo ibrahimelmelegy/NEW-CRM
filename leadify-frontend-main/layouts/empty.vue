@@ -1,5 +1,6 @@
 <template>
-  <div class="empty-layout">
+  <div class="empty-layout relative">
+    <ProfessionalBackground />
     <slot />
   </div>
 </template>

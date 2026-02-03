@@ -1,5 +1,5 @@
 // ============================================
-// 🏗️ THEME BASE - Global Styles
+// 🏗️ THEME BASE - High Point Gold Design System
 // ============================================
 
 @use './theme-variables.scss';
@@ -15,22 +15,46 @@ html {
 body {
     margin: 0;
     padding: 0;
-    background-color: #030014 !important; // Deep space black-purple
+    background-color: #0b0a12 !important;
     color: var(--text-primary);
-    font-family: 'Poppins', 'Tajawal', -apple-system, BlinkMacSystemFont, sans-serif;
-    background-image:
-        radial-gradient(circle at 50% 0%, rgba(124, 58, 237, 0.12) 0%, transparent 60%),
-        /* Subtle central purple glow */
-        radial-gradient(circle at 100% 0%, rgba(236, 72, 153, 0.08) 0%, transparent 50%),
-        /* Hints of pink on right */
-        linear-gradient(180deg, rgba(255, 255, 255, 0.01) 0%, transparent 100%)
-        /* Vertical depth */
-        !important;
-    background-attachment: fixed !important;
+    font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Display', 'SF Pro Text', system-ui, 'Segoe UI', Roboto, sans-serif;
     font-size: 14px;
-    line-height: 1.5;
+    line-height: 1.6;
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
+    overflow-x: hidden;
+    min-height: 100vh;
+}
+
+// Global Glassmorphism Utility
+.glass-effect {
+    background: rgba(255, 255, 255, 0.03);
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.37);
+}
+
+.glass-card-premium {
+    background: rgba(255, 255, 255, 0.03);
+    backdrop-filter: blur(40px);
+    -webkit-backdrop-filter: blur(40px);
+    border: 1px solid rgba(255, 255, 255, 0.15);
+    box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
+    border-radius: 24px;
+    transition: all 0.4s cubic-bezier(0.165, 0.84, 0.44, 1);
+
+    &:hover {
+        background: rgba(255, 255, 255, 0.05);
+        border-color: rgba(255, 255, 255, 0.25);
+        transform: translateY(-4px);
+        box-shadow: 0 40px 80px -10px rgba(0, 0, 0, 0.6);
+    }
+}
+
+// Arabic RTL Font
+[dir="rtl"] body {
+    font-family: 'IBM Plex Sans Arabic', 'Inter', -apple-system, sans-serif;
 }
 
 // ========================================
@@ -42,24 +66,34 @@ h3,
 h4,
 h5,
 h6 {
-    font-family: 'Poppins', sans-serif;
-    font-weight: 600;
+    font-family: 'Space Grotesk', 'Poppins', sans-serif;
+    font-weight: 700;
+    letter-spacing: -0.02em;
     color: var(--text-primary);
     margin: 0;
 }
 
+[dir="rtl"] h1,
+[dir="rtl"] h2,
+[dir="rtl"] h3,
+[dir="rtl"] h4,
+[dir="rtl"] h5,
+[dir="rtl"] h6 {
+    font-family: 'IBM Plex Sans Arabic', 'Space Grotesk', sans-serif;
+}
+
 a {
-    color: var(--purple);
+    color: var(--purple-400);
     text-decoration: none;
     transition: color var(--transition-fast);
 
     &:hover {
-        color: var(--purple-light);
+        color: var(--purple-300);
     }
 }
 
 // ========================================
-// 📜 SCROLLBAR
+// 📜 SCROLLBAR - Gradient Style
 // ========================================
 ::-webkit-scrollbar {
     width: 8px;
@@ -67,15 +101,15 @@ a {
 }
 
 ::-webkit-scrollbar-track {
-    background: var(--bg-body);
+    background: var(--bg-secondary);
 }
 
 ::-webkit-scrollbar-thumb {
-    background: var(--border-light);
-    border-radius: var(--radius-full);
+    background: var(--gradient-primary);
+    border-radius: 10px;
 
     &:hover {
-        background: var(--purple);
+        background: var(--gradient-accent);
     }
 }
 
@@ -83,7 +117,7 @@ a {
 // 🎭 SELECTION
 // ========================================
 ::selection {
-    background-color: var(--purple);
+    background-color: var(--purple-500);
     color: white;
 }
 

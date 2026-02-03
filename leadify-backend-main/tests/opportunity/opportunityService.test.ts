@@ -29,6 +29,7 @@ const mockTransaction = {
     commit: jest.fn(),
     rollback: jest.fn(),
     afterCommit: jest.fn((cb: any) => cb()),
+    LOCK: {} as any,
 };
 jest.mock('../../src/config/db', () => ({
     sequelize: {
@@ -50,13 +51,13 @@ describe('OpportunityService', () => {
         role: { permissions: [] },
     };
 
-    const mockOppData = {
+    const mockOppData: any = {
         id: 'opp-1',
         name: 'Deal 1',
         users: [],
         $set: jest.fn(),
         set: jest.fn(),
-        save: jest.fn().mockResolvedValue(true),
+        save: (jest.fn() as jest.Mock<any>).mockResolvedValue(true),
     };
 
     beforeEach(() => {

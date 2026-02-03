@@ -32,13 +32,13 @@ jest.mock('../../src/project/models/peojectMaterial');
 jest.mock('../../src/notification/notificationService');
 jest.mock('../../src/activity-logs/activityService');
 jest.mock('../../src/lead/leadService', () => ({
-    leadOrError: jest.fn().mockResolvedValue({ status: 'NEW', update: jest.fn() })
+    leadOrError: (jest.fn() as jest.Mock<any>).mockResolvedValue({ status: 'NEW', update: jest.fn() })
 }));
 jest.mock('../../src/opportunity/opportunityService', () => ({
-    opportunityOrError: jest.fn().mockResolvedValue({ stage: 'NEW', update: jest.fn() })
+    opportunityOrError: (jest.fn() as jest.Mock<any>).mockResolvedValue({ stage: 'NEW', update: jest.fn() })
 }));
 jest.mock('../../src/deal/dealService', () => ({
-    dealOrError: jest.fn().mockResolvedValue({ stage: 'NEW', update: jest.fn() })
+    dealOrError: (jest.fn() as jest.Mock<any>).mockResolvedValue({ stage: 'NEW', update: jest.fn() })
 }));
 
 // Transaction Mock

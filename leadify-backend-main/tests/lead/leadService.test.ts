@@ -50,7 +50,7 @@ describe('LeadService', () => {
         role: { permissions: [] },
     };
 
-    const mockLeadData = {
+    const mockLeadData: any = {
         id: 'lead-123',
         name: 'Test Lead',
         email: 'lead@test.com',
@@ -60,7 +60,7 @@ describe('LeadService', () => {
         // Mock instance methods
         $set: jest.fn(),
         set: jest.fn(),
-        save: jest.fn().mockResolvedValue(true),
+        save: (jest.fn() as jest.Mock<any>).mockResolvedValue(true),
     };
 
     beforeEach(() => {
@@ -133,11 +133,11 @@ describe('LeadService', () => {
             (LeadUsers.findOne as jest.Mock<any>).mockResolvedValue({ userId: mockStandardUser.id, leadId: mockLeadData.id });
 
             // 2. LeadOrError: Find the lead (Ensure $set is present)
-            const mockLeadInstance = {
+            const mockLeadInstance: any = {
                 ...mockLeadData,
                 $set: jest.fn(), // Explicitly re-mock
                 set: jest.fn(),
-                save: jest.fn().mockResolvedValue(true)
+                save: (jest.fn() as jest.Mock<any>).mockResolvedValue(true)
             };
             (Lead.findOne as jest.Mock<any>).mockResolvedValue(mockLeadInstance);
 
@@ -150,7 +150,7 @@ describe('LeadService', () => {
             expect(mockLeadInstance.$set).toHaveBeenCalled(); // Verifies usage
 
             // Check notification dispatch for new assigned user [3]
-            expect(notificationService.sendAssignLeadNotificatiom).toHaveBeenCalled();
+            expect(notificationService.sendAssignLeadNotification).toHaveBeenCalled();
         });
 
         it('should throw ACCESS_DENIED when standard user tries to update unassigned lead', async () => {
@@ -205,13 +205,13 @@ describe('LeadService', () => {
         });
 
         it('should throw ACCESS_DENIED for standard user not assigned', async () => {
-            (LeadUsers.findOne as jest.Mock).mockResolvedValue(null);
+            (LeadUsers.findOne as jest.Mock<any>).mockResolvedValue(null);
             await expect(leadService.validateLeadAccess('any-id', mockStandardUser))
                 .rejects.toThrow(new BaseError(ERRORS.ACCESS_DENIED));
         });
 
         it('should return void for standard user who IS assigned', async () => {
-            (LeadUsers.findOne as jest.Mock).mockResolvedValue({ userId: mockStandardUser.id });
+            (LeadUsers.findOne as jest.Mock<any>).mockResolvedValue({ userId: mockStandardUser.id });
             await expect(leadService.validateLeadAccess('any-id', mockStandardUser))
                 .resolves.not.toThrow();
         });

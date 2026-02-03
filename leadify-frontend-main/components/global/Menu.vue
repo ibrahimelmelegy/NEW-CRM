@@ -7,9 +7,9 @@
   transition(:name='mobile ? "side" : "none"')
     el-menu.el-menu-vertical-demo.relative.sidebar-glass(class='!pl-[5px] h-[100vh] card-auto ' :class="{'overflow-x-hidden' : !fullNav }" v-if="mobile ? !hideNav : true" :collapse='mobile ? false : !fullNav' :default-openeds="defaultOpenMenus")
       .py-5.px-12.flex.items-center.gap-3(v-if="fullNav")
-        img(class="cursor-pointer max-h-[50px] w-auto" :src="logoSrc" @click="router.push('/')")
+        img(class="cursor-pointer max-h-[50px] w-auto object-contain" :src="logoSrc" @click="router.push('/')")
       .py-5.px-5.flex.items-center.gap-3.relative.z-10(v-if="!fullNav")
-        img(class="cursor-pointer !h-[50px] !max-h-[50px]" src="/images/logo-shape.png" @click="router.push('/')")
+        img(class="cursor-pointer h-[50px] w-auto object-contain" src="/images/logo-shape.png" @click="router.push('/')")
       template(v-for="(navLink, index) in menu")
         el-sub-menu(:index='`${index+1}`' v-if="navLink.submenu")
           template(#title)
@@ -206,13 +206,15 @@ function openNav() {
 
 .myicon {
   width: 24px !important;
-  height: 25px !important;
-  margin-left: -7px !important;
+  height: 24px !important;
+  margin-left: -5px !important; /* Adjusted for centering */
+  display: inline-block;
+  vertical-align: middle;
 }
 
 [dir='rtl'] .myicon {
   margin-left: 5px !important;
-  margin-right: -6px !important;
+  margin-right: -5px !important;
 }
 
 .el-menu--collapse {

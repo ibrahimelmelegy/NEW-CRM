@@ -42,12 +42,13 @@ async function seed() {
             console.log('✅ Created new SUPER_ADMIN role with all permissions.');
         }
 
-        console.log(`   SUPER_ADMIN Role ID: ${adminRole.id}`);
+        // 2. DELETE ALL EXISTING USERS (Complete cleanup with Cascade)
+        // using TRUNCATE CASCADE to handle all foreign key constraints automatically
+        await sequelize.query('TRUNCATE TABLE "Users" RESTART IDENTITY CASCADE');
+        console.log(`🗑️  Truncated Users table and all dependent records.`);
 
-        // 2. DELETE ALL EXISTING USERS (Complete cleanup)
         const userModel = User as any;
-        const deletedCount = await userModel.destroy({ where: {} });
-        console.log(`🗑️  Deleted ${deletedCount} existing user(s) from database.`);
+
 
         // 3. Create Fresh Super Admin
         const adminEmail = 'admin@hp-tech.com';

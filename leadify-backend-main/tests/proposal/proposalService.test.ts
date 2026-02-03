@@ -34,7 +34,7 @@ describe('ProposalService', () => {
         role: { permissions: ['VIEW_GLOBAL_PROPOSALS'] }
     };
 
-    const mockProposalData = {
+    const mockProposalData: any = {
         id: 'prop-1',
         title: 'Website Redesign',
         reference: 'REF-001',
@@ -43,8 +43,8 @@ describe('ProposalService', () => {
         $set: jest.fn(),
         $add: jest.fn(),
         $remove: jest.fn(),
-        update: jest.fn().mockResolvedValue(true),
-        save: jest.fn().mockResolvedValue(true),
+        update: (jest.fn() as jest.Mock<any>).mockResolvedValue(true),
+        save: (jest.fn() as jest.Mock<any>).mockResolvedValue(true),
         toJSON: jest.fn().mockReturnValue({})
     };
 

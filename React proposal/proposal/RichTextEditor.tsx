@@ -23,7 +23,7 @@ import FontFamily from '@tiptap/extension-font-family';
 import Placeholder from '@tiptap/extension-placeholder';
 import CharacterCount from '@tiptap/extension-character-count';
 // @ts-ignore
-import { FontSize } from 'tiptap-extension-font-size';
+import FontSize from 'tiptap-extension-font-size';
 
 import Mention from '@tiptap/extension-mention';
 import { Markdown } from 'tiptap-markdown';

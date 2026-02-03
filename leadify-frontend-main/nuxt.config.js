@@ -164,7 +164,12 @@ export default defineNuxtConfig({
 
 
 
-  modules: ['@element-plus/nuxt', 'nuxt-icon', '@nuxtjs/tailwindcss', '@pinia/nuxt', '@nuxt/image'],
+  modules: ['@element-plus/nuxt', '@nuxt/icon', '@nuxtjs/tailwindcss', '@pinia/nuxt', '@nuxt/image', '@vueuse/nuxt'],
+
+  icon: {
+    componentName: 'NuxtIcon',
+    class: 'nuxt-icon'
+  },
 
   image: {
 

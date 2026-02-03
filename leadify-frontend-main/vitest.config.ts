@@ -22,11 +22,18 @@ export default defineConfig({
         api: {
             port: 51204,
         },
+        server: {
+            deps: {
+                inline: ['nuxt-icon']
+            }
+        }
     },
     resolve: {
         alias: {
             '@': path.resolve(__dirname, './'),
             '~': path.resolve(__dirname, './'),
+            '#imports': path.resolve(__dirname, './test/mocks/nuxt-imports.ts'),
+            '#app': path.resolve(__dirname, './test/mocks/nuxt-app.ts'),
         },
     },
 });
