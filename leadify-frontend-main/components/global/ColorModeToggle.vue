@@ -8,36 +8,12 @@ button.mode-toggle(@click="toggleTheme" :title="isDark ? 'Switch to Light Mode' 
 import { useMain } from "~/stores/common";
 const mainStore = useMain();
 
-// State is global via mainStore.isLight
 const isDark = computed(() => !mainStore.isLight);
 
 const toggleTheme = () => {
     mainStore.isLight = !mainStore.isLight;
-    updateTheme();
+    // The plugin watcher will handle the DOM class and localStorage
 };
-
-const updateTheme = () => {
-    const body = document.querySelector('body');
-    if (!mainStore.isLight) {
-        body?.classList.remove('light-mode');
-        localStorage.setItem('theme', 'dark');
-    } else {
-        body?.classList.add('light-mode');
-        localStorage.setItem('theme', 'light');
-    }
-};
-
-onMounted(() => {
-    const savedTheme = localStorage.getItem('theme');
-    if (savedTheme === 'light') {
-        mainStore.isLight = true;
-        updateTheme();
-    } else {
-        // Default to dark
-        mainStore.isLight = false;
-        document.querySelector('body')?.classList.remove('light-mode');
-    }
-});
 </script>
 
 <style lang="scss" scoped>

@@ -15,7 +15,7 @@ html {
 body {
     margin: 0;
     padding: 0;
-    background-color: #0b0a12 !important;
+    background-color: var(--bg-primary) !important;
     color: var(--text-primary);
     font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Display', 'SF Pro Text', system-ui, 'Segoe UI', Roboto, sans-serif;
     font-size: 14px;
