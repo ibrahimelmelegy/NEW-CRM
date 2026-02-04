@@ -2,68 +2,31 @@ import { defineStore } from 'pinia'
 import { ref } from 'vue'
 
 export const useThemeStore = defineStore('theme', () => {
-  // State
-  const currentTheme = ref<'light' | 'dark'>('dark')
-  const systemPreference = ref<'light' | 'dark'>('dark')
+  const isLight = ref(false)
 
-  // Getters
-  const isDarkMode = () => currentTheme.value === 'dark'
-  const isLightMode = () => currentTheme.value === 'light'
-
-  // Actions
   const initializeTheme = () => {
-    // Check localStorage first
     const saved = localStorage.getItem('theme')
-    if (saved === 'light' || saved === 'dark') {
-      currentTheme.value = saved
-    } else {
-      // Fall back to system preference
-      const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches
-      currentTheme.value = prefersDark ? 'dark' : 'light'
-    }
-
-    applyTheme()
-  }
-
-  const setTheme = (theme: 'light' | 'dark') => {
-    currentTheme.value = theme
-    localStorage.setItem('theme', theme)
+    isLight.value = saved === 'light'
     applyTheme()
   }
 
   const toggleTheme = () => {
-    const newTheme = isDarkMode() ? 'light' : 'dark'
-    setTheme(newTheme)
+    isLight.value = !isLight.value
+    localStorage.setItem('theme', isLight.value ? 'light' : 'dark')
+    applyTheme()
   }
 
   const applyTheme = () => {
-    const html = document.documentElement
-    
-    // Remove both classes first
-    html.classList.remove('light-mode', 'dark-mode')
-    
-    // Add the appropriate class
-    if (currentTheme.value === 'dark') {
-      html.classList.add('dark-mode')
-      html.style.colorScheme = 'dark'
+    if (isLight.value) {
+      document.body.classList.add('light-mode')
     } else {
-      html.classList.add('light-mode')
-      html.style.colorScheme = 'light'
+      document.body.classList.remove('light-mode')
     }
   }
 
   return {
-    // State
-    currentTheme,
-    systemPreference,
-    
-    // Getters
-    isDarkMode,
-    isLightMode,
-    
-    // Actions
+    isLight,
     initializeTheme,
-    setTheme,
     toggleTheme,
     applyTheme,
   }

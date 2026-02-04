@@ -2,10 +2,11 @@ import { useMain } from "~/stores/common";
 import { useAuthStore } from "~/stores/auth";
 import { ElNotification } from "element-plus";
 
-const runtimeConfig = useRuntimeConfig();
+// ✅ Removed top-level useRuntimeConfig to prevent Nuxt context errors
 
 export async function downloadFile(file: string) {
   const authStore = useAuthStore();
+  const runtimeConfig = useRuntimeConfig();
 
   await fetch(`${runtimeConfig.public.BASE_URL + file}`, {
     headers: {
@@ -20,7 +21,7 @@ export async function downloadFile(file: string) {
       if (contentDisposition) {
         const match = contentDisposition.split(";").find((n) => n.includes("filename="));
         if (match) {
-          fileName = match.replace("filename=", "").trim().split(".")[0];
+          fileName = match.replace("filename=", "").trim().split(".")[0] || "download";
         }
       }
 
@@ -43,7 +44,7 @@ export async function downloadFile(file: string) {
       a.click();
       URL.revokeObjectURL(url);
     })
-    .catch((error) => {});
+    .catch((error) => { });
 }
 
 export function uploadFile(params: any) {
@@ -56,6 +57,7 @@ export function uploadFile(params: any) {
 
     let fileName = `File-${new Date().getTime()}${extension}`;
     const myRenamedFile = new File([file], fileName, { type: file.type });
+    const runtimeConfig = useRuntimeConfig();
 
     // ✅ Fix 2: TypeScript might not see auto-imports, explicitly casting or ignoring logic is safer here
     // @ts-ignore
@@ -255,17 +257,17 @@ export function getErrorCode(code: number, message: string | null | undefined) {
 export function convertToReadableFormat(str: string) {
   if (!str) return "";
   const result = str
-    .replace(/([A-Z])/g, " $1") 
-    .replace(/^./, (char) => char.toUpperCase()) 
-    .trim(); 
+    .replace(/([A-Z])/g, " $1")
+    .replace(/^./, (char) => char.toUpperCase())
+    .trim();
   return result;
 }
 
 export function toUpperSnakeCase(str: string) {
   if (!str) return "";
   return str
-    .replace(/([a-z])([A-Z])/g, "$1_$2") 
-    .toUpperCase(); 
+    .replace(/([a-z])([A-Z])/g, "$1_$2")
+    .toUpperCase();
 }
 
 export const getWordInitials = (name: string) => {
@@ -277,13 +279,13 @@ export const getWordInitials = (name: string) => {
     .join("");
 };
 
-let previousColor: string;
+let previousColor: string | undefined;
 export const randomBgColor = () => {
   const colors = ["#007BFF", "#28A745", "#6C757D"];
-  let newColor;
+  let newColor: string = colors[0] as string;
   do {
-    newColor = colors[Math.floor(Math.random() * colors.length)];
-  } while (newColor === previousColor); 
+    newColor = colors[Math.floor(Math.random() * colors.length)] as string;
+  } while (newColor === previousColor);
 
   previousColor = newColor;
 

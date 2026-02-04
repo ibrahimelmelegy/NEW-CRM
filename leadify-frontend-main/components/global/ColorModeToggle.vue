@@ -1,53 +1,64 @@
-<template lang="pug">
-button.mode-toggle(@click="toggleTheme" :title="isDark ? 'Switch to Light Mode' : 'Switch to Dark Mode'")
-    Icon.text-xl(v-if="isDark" name="ph:sun-bold")
-    Icon.text-xl(v-else name="ph:moon-bold")
+<template>
+    <button class="mode-toggle" @click="toggleTheme" :title="isLight ? 'Dark Mode' : 'Light Mode'">
+        <span class="icon">{{ isLight ? '🌙' : '☀️' }}</span>
+    </button>
 </template>
 
 <script setup lang="ts">
-import { useMain } from "~/stores/common";
-const mainStore = useMain();
+import { ref, onMounted } from 'vue';
 
-const isDark = computed(() => !mainStore.isLight);
+const isLight = ref(false);
+
+const enableLightMode = () => {
+    document.body.classList.add('light-theme');
+    localStorage.setItem('theme', 'light');
+};
+
+const disableLightMode = () => {
+    document.body.classList.remove('light-theme');
+    localStorage.setItem('theme', 'dark');
+};
 
 const toggleTheme = () => {
-    mainStore.isLight = !mainStore.isLight;
-    // The plugin watcher will handle the DOM class and localStorage
+    isLight.value = !isLight.value;
+    if (isLight.value) {
+        enableLightMode();
+    } else {
+        disableLightMode();
+    }
 };
+
+onMounted(() => {
+    const saved = localStorage.getItem('theme');
+    if (saved === 'light') {
+        isLight.value = true;
+        enableLightMode();
+    } else {
+        isLight.value = false;
+        disableLightMode();
+    }
+});
 </script>
 
-<style lang="scss" scoped>
+<style scoped lang="scss">
 .mode-toggle {
-    background-color: rgba(22, 21, 31, 0.5);
-    border: 1px solid var(--border-glass);
-    color: #FFFFFF;
-    transition: all 0.3s ease;
-    border-radius: 50%;
-    width: 40px;
-    height: 40px;
     display: flex;
     align-items: center;
     justify-content: center;
+    width: 40px;
+    height: 40px;
+    border: none;
+    border-radius: 50%;
+    background: var(--bg-card);
     cursor: pointer;
+    transition: all 0.3s ease;
 
-    &:hover {
-        background-color: rgba(139, 92, 246, 0.1);
-        border-color: var(--accent-purple);
-        color: var(--accent-purple);
-        box-shadow: 0 0 10px rgba(139, 92, 246, 0.2);
+    .icon {
+        font-size: 20px;
     }
-}
-
-// Light mode overrides for the button itself (contained here or rely on global)
-:global(body.light-mode) .mode-toggle {
-    background-color: white;
-    color: #64748B;
-    border-color: #E2E8F0;
 
     &:hover {
-        background-color: #F8FAFC;
-        color: var(--accent-purple);
-        border-color: var(--accent-purple);
+        transform: scale(1.1);
     }
 }
 </style>

@@ -8,7 +8,8 @@
       
       <!-- Brand & Visual Section -->
       <div class="hidden md:flex flex-1 flex-col items-start space-y-8 animate-fade-in-left">
-        <img src="/images/light-logo.png" alt="High Point CRM" class="h-16 w-auto drop-shadow-[0_0_15px_rgba(255,255,255,0.3)] transition-all duration-500 light-logo-shadow" />
+        <!-- ✅ FIX: Using NuxtImg for optimized WebP images -->
+        <NuxtImg src="/images/light-logo.png" alt="High Point CRM" format="webp" quality="80" class="h-16 w-auto drop-shadow-[0_0_15px_rgba(255,255,255,0.3)] transition-all duration-500 light-logo-shadow" />
         <div class="space-y-4">
           <h2 class="text-4xl lg:text-5xl font-bold leading-tight text-[var(--text-primary)]">
             Elevate Your <span class="text-transparent bg-clip-text bg-gradient-to-r from-[#7849ff] to-[#ff7b00]">Experience</span>
@@ -50,21 +51,25 @@
               label-position="top" 
               :validationSchema="formSchema"
               class="modern-form"
+              aria-label="Login form"
+              role="form"
             >
               <div class="space-y-6">
                 <div class="form-group flex flex-col gap-2">
-                  <span class="text-xs font-semibold text-[var(--text-muted)] opacity-60 uppercase tracking-wider ml-1">Email Address</span>
+                  <label for="email-input" class="text-xs font-semibold text-[var(--text-muted)] opacity-60 uppercase tracking-wider ml-1">Email Address</label>
                   <InputText 
                     placeholder="name@company.com" 
                     name="email" 
                     class="modern-input"
+                    aria-label="Email address"
+                    aria-required="true"
                   />
                 </div>
 
                 <div class="form-group relative flex flex-col gap-2">
                   <div class="flex justify-between items-center px-1">
-                    <span class="text-xs font-semibold text-white/40 uppercase tracking-wider">Password</span>
-                    <nuxt-link to="/forget-password" class="text-xs text-[#7849ff] hover:text-[#906dff] transition-colors">
+                    <label for="password-input" class="text-xs font-semibold text-white/40 uppercase tracking-wider">Password</label>
+                    <nuxt-link to="/forget-password" class="text-xs text-[#7849ff] hover:text-[#906dff] transition-colors" aria-label="Forgot your password? Click here to reset">
                       Forgot Password?
                     </nuxt-link>
                   </div>
@@ -73,12 +78,14 @@
                     name="password" 
                     type="password" 
                     class="modern-input"
+                    aria-label="Password"
+                    aria-required="true"
                   />
                 </div>
               </div>
 
               <div class="flex items-center mt-6">
-                <el-checkbox label="Keep me logged in" class="custom-checkbox" />
+                <el-checkbox label="Keep me logged in" class="custom-checkbox" aria-label="Keep me logged in checkbox" />
               </div>
 
               <el-form-item class="mt-8 mb-0">
@@ -87,6 +94,8 @@
                   :loading="loading" 
                   native-type="submit" 
                   class="login-btn w-full !h-[58px] !rounded-2xl !bg-[#7849ff] hover:!bg-[#6a3ae0] !border-none !text-lg !font-bold !text-white shadow-[0_10px_20px_-5px_rgba(120,73,255,0.5)] active:scale-[0.98] transition-all"
+                  aria-label="Sign in to your account"
+                  :aria-busy="loading"
                 >
                   Sign In
                 </el-button>
@@ -149,9 +158,9 @@
     try {
       console.log("Attempting login...");
       
-      // RADICAL FIX: Hardcoded URL to bypass config issues
-      // Using $fetch directly to avoid wrapper logic overhead
-      const response: any = await $fetch('http://localhost:5000/api/auth/login', {
+      // ✅ FIX: Using runtimeConfig instead of hardcoded URL
+      const config = useRuntimeConfig();
+      const response: any = await $fetch(`${config.public.API_BASE_URL}auth/login`, {
         method: 'POST',
         body: {
           email: values.email,

@@ -58,9 +58,29 @@ const user = ref();
 const response = await useApiFetch("auth/me");
 user.value = response?.user;
 
+// Dynamic Logo Logic
+const isLightMode = ref(false);
 const logoSrc = computed(() => {
-  return mainStore.isLight ? '/images/Logo.png' : '/images/lOGO-DARDK-MODE.png';
+    return isLightMode.value ? '/images/Logo.png' : '/images/lOGO-DARDK-MODE.png';
 });
+
+onMounted(() => {
+    // Check initial state
+    isLightMode.value = document.body.classList.contains('light-theme');
+
+    // Watch for class changes on body
+    const observer = new MutationObserver((mutations) => {
+        mutations.forEach((mutation) => {
+            if (mutation.attributeName === 'class') {
+                isLightMode.value = document.body.classList.contains('light-theme');
+            }
+        });
+    });
+    
+    observer.observe(document.body, { attributes: true });
+});
+
+
 
 function mobileNavigate(link: string) {
   if (mobile.value) {

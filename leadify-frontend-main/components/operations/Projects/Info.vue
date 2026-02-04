@@ -84,7 +84,7 @@ el-form.mb-24( autocomplete="off"   @submit.prevent='onSubmit'   ref="myForm" la
         .label("Project Duration"),
       assignUser: yup.array().of(yup.number()).required().min(1).label("Assign User"),
       status: yup.string().trim().required().label("Status"),
-      description: yup.string().trim().nullable().max(500).label("Project Description"),
+      description: yup.string().trim().required().min(1).max(500).label("Project Description"),
       cancelReason: yup.string().when([], {
         is: () => isCancelled.value,
         then: () => yup.string().required().min(2).max(250).label("Cancellation Reason"),

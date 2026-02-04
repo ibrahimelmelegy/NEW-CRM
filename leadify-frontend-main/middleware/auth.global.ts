@@ -1,44 +1,85 @@
+import { user } from '~/composables/useUser';
+
+/**
+ * Global Authentication Middleware
+ * Handles auth state, permission checks, and route protection
+ */
 export default defineNuxtRouteMiddleware(async (to, from) => {
+  // Public routes that don't require authentication
+  const publicRoutes = ['/login', '/forget-password', '/reset-password', '/reset-complete'];
+
+  // Routes that require specific permissions (can be extended)
+  const protectedRoutes: Record<string, string[]> = {
+    '/roles': ['manage_roles'],
+    '/staff': ['manage_staff'],
+    '/reports': ['view_reports'],
+  };
+
   try {
-    // Define public routes that do not require authentication
-    const publicRoutes = ["/login", "/forget-password", "/reset-password", "/reset-complete"];
-    // Fetch authentication status
     const accessToken = useCookie('access_token');
-    let response: any = { user: null };
+    let authResponse: any = { user: null };
 
+    // Fetch user if token exists
     if (accessToken.value) {
-      response = await useApiFetch("auth/me", "GET", {}, true);
+      authResponse = await useApiFetch('auth/me', 'GET', {}, true);
 
-      // RADICAL FIX: If token is invalid (no user returned), DESTROY IT immediately.
-      // This prevents the app from checking the same bad token infinitely on the login page.
-      if (!response?.user?.id) {
+      // Invalid token - clear it immediately
+      if (!authResponse?.user?.id) {
         accessToken.value = null;
-        response = { user: null }; // Ensure downstream logic sees it as unauth
+        authResponse = { user: null };
+      } else {
+        // ✅ Store user data globally for other composables
+        user.value = authResponse.user;
       }
     }
-    // If user is not authenticated
-    if (!response?.user?.id) {
-      // Allow access to public routes
-      if (publicRoutes.some((route) => to.path.startsWith(route))) {
-        return; // Allow navigation to public route
-      }
-      // Redirect to login ONLY if not already there
+
+    const isAuthenticated = !!authResponse?.user?.id;
+    const isPublicRoute = publicRoutes.some(route => to.path.startsWith(route));
+
+    // CASE 1: Unauthenticated user
+    if (!isAuthenticated) {
+      // Clear user state
+      user.value = null;
+
+      // Allow public routes
+      if (isPublicRoute) return;
+
+      // Redirect to login (avoid loop)
       if (to.path !== '/login') {
-        return navigateTo("/login");
+        return navigateTo('/login');
       }
       return;
     }
-    // If user is authenticated
-    if (publicRoutes.some((route) => to.path.startsWith(route))) {
-      // Redirect authenticated users away from public routes (e.g., to homepage)
-      return navigateTo("/");
+
+    // CASE 2: Authenticated user on public route -> redirect to home
+    if (isPublicRoute) {
+      return navigateTo('/');
     }
-    // Allow navigation to the target route
+
+    // CASE 3: Permission-based route protection
+    const requiredPermissions = Object.entries(protectedRoutes)
+      .find(([route]) => to.path.startsWith(route))?.[1];
+
+    if (requiredPermissions && requiredPermissions.length > 0) {
+      const userPermissions: string[] = authResponse.user.permissions || [];
+      const hasPermission = requiredPermissions.some(perm => userPermissions.includes(perm));
+
+      if (!hasPermission) {
+        // ✅ User doesn't have required permission
+        console.warn(`[Auth] Access denied to ${to.path}. Required: ${requiredPermissions.join(', ')}`);
+
+        // Redirect to unauthorized page or dashboard
+        return navigateTo('/');
+      }
+    }
+
+    // Allow navigation
   } catch (error) {
-    console.error("Middleware error:", error); // Log unexpected errors
-    // Prevent loop: If error happens on login page, DO NOT redirect to login again
+    console.error('[Auth Middleware] Error:', error);
+
+    // Prevent infinite loop
     if (to.path !== '/login') {
-      return navigateTo("/login");
+      return navigateTo('/login');
     }
   }
 });

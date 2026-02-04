@@ -1,35 +1,40 @@
-import { useMain } from "~/stores/common";
+/**
+ * 🎨 Theme Initialization Plugin
+ * Applies the saved theme class IMMEDIATELY on client-side load
+ * This runs before components mount, preventing theme flash on refresh
+ * 
+ * IMPORTANT: This plugin only manages the class. All styling is handled by:
+ * - assets/css/microsoft-light.css (Glass theme)
+ * - assets/scss/theme-variables.scss (Base theme variables)
+ */
 
 export default defineNuxtPlugin((nuxtApp) => {
-    // Only run on client side
+    // Run only on client side
     if (process.client) {
-        const mainStore = useMain();
-
-        // Function to apply theme to body
-        const applyTheme = (isLight: boolean) => {
-            if (isLight) {
-                document.body.classList.add('light-mode');
-                localStorage.setItem('theme', 'light');
+        const applyTheme = () => {
+            const savedTheme = localStorage.getItem('theme');
+            if (savedTheme === 'light') {
+                document.body.classList.add('light-theme');
             } else {
-                document.body.classList.remove('light-mode');
-                localStorage.setItem('theme', 'dark');
+                document.body.classList.remove('light-theme');
             }
         };
 
-        // Initialize from localStorage
-        const savedTheme = localStorage.getItem('theme');
-        if (savedTheme === 'light') {
-            mainStore.isLight = true;
-            applyTheme(true);
-        } else {
-            mainStore.isLight = false;
-            applyTheme(false);
-        }
+        // Apply theme immediately
+        applyTheme();
 
-        // Watch for store changes to keep body class in sync
-        // This handles changes from ANY component
-        watch(() => mainStore.isLight, (isLight) => {
-            applyTheme(isLight);
+        // Also apply on app:mounted to ensure consistency
+        nuxtApp.hook('app:mounted', applyTheme);
+
+        // Provide toggle functions globally
+        nuxtApp.provide('enableLightMode', () => {
+            document.body.classList.add('light-theme');
+            localStorage.setItem('theme', 'light');
+        });
+
+        nuxtApp.provide('disableLightMode', () => {
+            document.body.classList.remove('light-theme');
+            localStorage.setItem('theme', 'dark');
         });
     }
 });

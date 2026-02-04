@@ -1,39 +1,44 @@
 import { user } from './useUser';
 
-export type apiEndpoints =
+// ✅ FIX: Proper TypeScript interface for API responses
+export interface ApiResponse<T = any> {
+  data: T | null;
+  status: boolean;
+  message: string;
+  error?: any;
+  code: number;
+}
+
+export type HttpMethod = 'GET' | 'POST' | 'PUT' | 'DELETE' | 'PATCH';
+
+export type ApiEndpoints =
   | 'auth/forgot-password'
-  | 'users'
   | 'auth/reset-password'
   | 'auth/check-reset-token'
   | 'auth/logout'
   | 'auth/login'
   | 'auth/me'
-  | 'lead'
+  | 'auth/change-password'
   | 'users'
   | 'role'
+  | 'lead'
+  | 'opportunity'
+  | 'proposal'
   | `lead/${string}`
   | `lead?${string}`
-  | `${string}?${string}`
-  | `opportunity`
   | `opportunity/${string}`
   | `opportunity?${string}`
-  | `${string}`
-  | 'proposal';
+  | `users/${string}`
+  | `${string}?${string}`
+  | `${string}`;
 
-export const useApiFetch = async (
-  url: apiEndpoints,
-  method: 'GET' | 'POST' | 'PUT' | 'DELETE' | 'PATCH' = 'GET',
-  data = {},
+export const useApiFetch = async <T = any>(
+  url: ApiEndpoints,
+  method: HttpMethod = 'GET',
+  data: Record<string, any> = {},
   silence: boolean = false,
   isFd: boolean = false
-): Promise<{
-  [x: string]: any;
-  data?: any;
-  status?: boolean;
-  message?: string;
-  error?: any;
-  code?: number;
-}> => {
+): Promise<ApiResponse<T>> => {
   const config = useRuntimeConfig();
   const accessToken = useCookie('access_token');
 

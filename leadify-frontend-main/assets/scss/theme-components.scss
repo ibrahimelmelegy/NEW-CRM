@@ -280,6 +280,11 @@
             background: var(--gradient-purple-pink);
             border-radius: 0 4px 4px 0;
         }
+
+        :global(body.light-mode) & {
+            background: rgba(124, 58, 237, 0.08) !important;
+            color: var(--purple-700) !important;
+        }
     }
 
     .el-sub-menu .el-menu {
@@ -313,6 +318,11 @@
         z-index: 100;
         opacity: 0.5;
     }
+
+    :global(body.light-mode) & {
+        background: rgba(255, 255, 255, 0.8) !important;
+        border-bottom-color: rgba(0, 0, 0, 0.05);
+    }
 }
 
 // 🌟 GLASSY SIDEBAR
@@ -323,6 +333,16 @@
     border-right: none !important;
     box-shadow: 4px 0 24px rgba(0, 0, 0, 0.1) !important;
     position: relative;
+
+    :global(body.light-mode) & {
+        background: #FFFFFF !important;
+        border-right: 1px solid #E2E8F0 !important;
+        box-shadow: 2px 0 10px rgba(0, 0, 0, 0.02) !important;
+
+        &::after {
+            display: none; // Remove the gradient border in light mode for cleaner look
+        }
+    }
 
     // Ensure icons in collapsed menu are visible (Safe Fix)
     // Element Plus tries to hide spans in collapsed mode, we must override this for our custom icons.
@@ -389,6 +409,17 @@
         font-size: 14px;
         color: var(--text-primary);
     }
+
+    :global(body.light-mode) & {
+        background: white;
+        border-color: #E2E8F0;
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+
+        &:hover {
+            background: #F8FAFC;
+            border-color: var(--accent-purple);
+        }
+    }
 }
 
 // 🔘 NAVBAR ICONS
@@ -409,6 +440,18 @@
         background: rgba(168, 85, 247, 0.2);
         color: white;
         transform: translateY(-2px);
+    }
+
+    :global(body.light-mode) & {
+        background: white;
+        border-color: #E2E8F0;
+        color: #64748B;
+
+        &:hover {
+            background: #F8FAFC;
+            color: var(--accent-purple);
+            border-color: var(--accent-purple);
+        }
     }
 
     // ========================================

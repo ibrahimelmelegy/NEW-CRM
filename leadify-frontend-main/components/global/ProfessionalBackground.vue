@@ -16,7 +16,12 @@
 
 <style lang="scss" scoped>
 .professional-background {
-  position: fixed; // Ensure it stays behind everything even when scrolling
+  position: fixed; 
+  z-index: -1; // Ensure it stays behind everything
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
   background-color: #0b0a12;
   transition: background-color 0.5s ease;
   
@@ -43,25 +48,6 @@
   @keyframes pulse {
     0%, 100% { opacity: 0.5; transform: scale(1); }
     50% { opacity: 0.8; transform: scale(1.1); }
-  }
-
-  // Light Mode Overrides
-  :global(body.light-mode) & {
-    background-color: #f3f4f6;
-    
-    .mesh-gradient {
-      background: 
-        radial-gradient(at 0% 0%, hsla(253,16%,95%,1) 0, transparent 50%), 
-        radial-gradient(at 50% 0%, hsla(255,100%,80%,0.4) 0, transparent 50%), 
-        radial-gradient(at 100% 0%, hsla(29,100%,80%,0.3) 0, transparent 50%),
-        radial-gradient(at 0% 100%, hsla(255,100%,80%,0.3) 0, transparent 50%),
-        radial-gradient(at 50% 100%, hsla(253,16%,95%,1) 0, transparent 50%),
-        radial-gradient(at 100% 100%, hsla(29,100%,80%,0.4) 0, transparent 50%);
-    }
-
-    .glow-1 { background-color: rgba(120, 73, 255, 0.1); }
-    .glow-2 { background-color: rgba(255, 123, 0, 0.1); }
-    .noise-overlay { opacity: 0.02; }
   }
 }
 </style>

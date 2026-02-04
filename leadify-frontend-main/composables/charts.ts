@@ -125,18 +125,7 @@ export function getIncreaseLineChart(data: any, colorPalette: any) {
   };
 }
 
-// Helper Utilities
-export const formatLargeNumber = (num: number) => {
-  return new Intl.NumberFormat().format(num);
-};
-
-export const formatSnakeCase = (str: string) => {
-  return str.split('_').map(word => word.charAt(0).toUpperCase() + word.slice(1)).join(' ');
-};
-
-export const capitalizeName = (str: string) => {
-  return str.charAt(0).toUpperCase() + str.slice(1);
-};
+// Helper Utilities are now provided by format.ts and utils.ts via Nuxt auto-imports
 
 // Full restoration of data fetching logic with Premium types
 export const statsLoading = ref(false);
