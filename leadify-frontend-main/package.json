@@ -7,36 +7,22 @@
         "dev": "nuxt dev",
         "generate": "nuxt generate",
         "start": "nuxt preview",
-        "test": "vitest",
-        "test:coverage": "vitest run --coverage",
         "health:ui": "node scripts/health-dashboard.js",
-        "monitor": "pm2 monit",
-        "// --- الأوامر الجديدة الخاصة بالـ Dashboard ---": "",
-        "test:e2e": "npx playwright test",
-        "test:e2e:report": "npx playwright show-report --port 9323",
-        "test:dashboard": "npx playwright test --reporter=json > test-results/results.json && nuxt dev"
+        "monitor": "pm2 monit"
     },
     "devDependencies": {
         "@nuxt/icon": "^2.2.1",
         "@nuxt/kit": "^4.3.0",
         "@nuxtjs/tailwindcss": "^6.14.0",
-        "@playwright/test": "^1.58.1",
         "@types/validator": "^13.15.10",
-        "@vitest/coverage-v8": "^4.0.18",
-        "@vitest/ui": "^4.0.18",
-        "@vue/test-utils": "^2.4.6",
         "@vueuse/core": "^14.2.0",
         "@vueuse/nuxt": "^14.2.0",
-        "happy-dom": "^20.5.0",
-        "jsdom": "^28.0.0",
-        "msw": "^2.12.7",
         "nuxt": "^4.3.0",
         "pug": "^3.0.3",
         "pug-plain-loader": "^1.1.0",
         "rollup-plugin-visualizer": "^6.0.5",
         "sass": "^1.97.3",
-        "sass-loader": "^16.0.6",
-        "vitest": "^4.0.18"
+        "sass-loader": "^16.0.6"
     },
     "dependencies": {
         "@element-plus/nuxt": "^1.1.4",
