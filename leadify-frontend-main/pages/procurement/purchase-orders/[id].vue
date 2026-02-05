@@ -133,7 +133,7 @@
       el-input(
         v-model="rejectionReason", 
         type="textarea", 
-        rows="4", 
+        :rows="4", 
         placeholder="e.g. Price exceeds budget, missing documents...",
         class="premium-input-textarea"
       )

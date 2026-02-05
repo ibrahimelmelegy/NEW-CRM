@@ -3,7 +3,8 @@ module.exports = {
         {
             name: "CRM-Backend",
             cwd: "./leadify-backend-main",
-            script: "npm",
+            script: "npm.cmd",
+            interpreter: "none",
             args: "run dev",
             env: {
                 NODE_ENV: "development",
@@ -13,7 +14,8 @@ module.exports = {
         {
             name: "CRM-Frontend",
             cwd: "./leadify-frontend-main",
-            script: "npm",
+            script: "npm.cmd",
+            interpreter: "none",
             args: "run dev",
             env: {
                 NODE_ENV: "development",
@@ -25,7 +27,8 @@ module.exports = {
         {
             name: "CRM-Proposal",
             cwd: "./React proposal",
-            script: "npm",
+            script: "npm.cmd",
+            interpreter: "none",
             args: "run dev -- --host 0.0.0.0 --port 3001",
             env: {
                 PORT: 3001
@@ -34,7 +37,8 @@ module.exports = {
         {
             name: "CRM-Health-Dash",
             cwd: "./leadify-frontend-main",
-            script: "npm",
+            script: "npm.cmd",
+            interpreter: "none",
             args: "run health:ui",
             env: {
                 PORT: 8888

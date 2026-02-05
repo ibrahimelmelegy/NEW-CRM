@@ -61,10 +61,10 @@
             >
               <div class="space-y-6">
                 <div class="form-group flex flex-col gap-2">
-                  <label for="email-input" class="text-xs font-semibold theme-text-muted uppercase tracking-wider ml-1">Email Address</label>
                   <InputText 
                     placeholder="name@company.com" 
                     name="email" 
+                    label="Email Address"
                     class="modern-input"
                     aria-label="Email address"
                     aria-required="true"
@@ -73,7 +73,6 @@
 
                 <div class="form-group relative flex flex-col gap-2">
                   <div class="flex justify-between items-center px-1">
-                    <label for="password-input" class="text-xs font-semibold theme-text-muted uppercase tracking-wider">Password</label>
                     <nuxt-link to="/forget-password" class="text-xs text-[#7849ff] hover:text-[#906dff] transition-colors" aria-label="Forgot your password? Click here to reset">
                       Forgot Password?
                     </nuxt-link>
@@ -82,6 +81,7 @@
                     placeholder="••••••••" 
                     name="password" 
                     type="password" 
+                    label="Password"
                     class="modern-input"
                     aria-label="Password"
                     aria-required="true"
@@ -176,6 +176,7 @@
       console.log("Attempting login...");
       
       // ✅ FIX: Using runtimeConfig instead of hardcoded URL
+      // ✅ FIX: Using runtimeConfig for clean architecture
       const config = useRuntimeConfig();
       const response: any = await $fetch(`${config.public.API_BASE_URL}auth/login`, {
         method: 'POST',

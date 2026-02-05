@@ -11,7 +11,7 @@ export default defineConfig({
     },
     server: {
         port: 3001,
-        strictPort: true, // 🚀 يمنع السيرفر إنه يهرب لبورت تاني لو 3001 مشغول
+        strictPort: true, // 🚀 Port for Proposal server - MUST be 3001 for iframe integration
         host: '0.0.0.0',  // 🚀 يفتح السيرفر لكل الشبكة الداخلية عشان النكست يشوفه
         cors: true,       // 🚀 أهم سطر: يسمح للنكست بسحب البيانات بدون Error
         proxy: {
