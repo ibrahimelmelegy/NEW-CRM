@@ -114,12 +114,19 @@ html.light-mode {
   box-sizing: border-box;
 }
 
+html {
+  background-color: var(--bg-primary);
+  min-height: 100vh;
+}
+
 body {
   font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Display', 'SF Pro Text', system-ui, 'Segoe UI', Roboto, sans-serif;
-  background: var(--bg-primary);
+  background: transparent;
+  /* Fix for Fog Issue: Allow gradient in ::before to show over html-bg */
   color: var(--text-primary);
   line-height: 1.6;
   overflow-x: hidden;
+  min-height: 100vh;
 }
 
 /* Arabic RTL Font */
@@ -127,9 +134,8 @@ body {
   font-family: 'IBM Plex Sans Arabic', 'Inter', sans-serif;
 }
 
-/* Animated Background */
-body::before {
-  content: '';
+/* Animated Background (Moved to explicit element for Cross-Browser fix) */
+#global-background {
   position: fixed;
   top: 0;
   left: 0;
@@ -142,6 +148,7 @@ body::before {
     radial-gradient(circle at 30% 70%, rgba(168, 85, 247, 0.1) 0%, transparent 40%);
   pointer-events: none;
   z-index: -1;
+  /* Behind everything */
   animation: bg-pulse 10s ease-in-out infinite;
 }
 
@@ -158,7 +165,7 @@ body::before {
 }
 
 /* Light Mode - Subtle Background */
-html.light-mode body::before {
+html.light-mode #global-background {
   background:
     radial-gradient(circle at 20% 20%, rgba(168, 85, 247, 0.03) 0%, transparent 50%),
     radial-gradient(circle at 80% 80%, rgba(249, 115, 22, 0.02) 0%, transparent 50%),

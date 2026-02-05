@@ -1,4 +1,5 @@
 <template>
+  <div id="global-background"></div>
   <NuxtLayout>
     <NuxtPage />
   </NuxtLayout>

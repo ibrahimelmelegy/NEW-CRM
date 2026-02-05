@@ -17,6 +17,10 @@
     el-tab-pane(label='Performance & HR' name='performanceHr')
       ClientOnly
         StatisticsPerformanceHr(v-if="selectedTab === 'performanceHr'")
+
+    el-tab-pane(label='Procurement & Supply Chain' name='procurement')
+      ClientOnly
+        StatisticsProcurement(v-if="selectedTab === 'procurement'")
 </template>
 
 <script setup lang="ts">

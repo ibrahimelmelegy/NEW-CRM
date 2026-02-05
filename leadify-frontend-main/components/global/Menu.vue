@@ -20,14 +20,14 @@
           div(v-for="(subLink, subIndex) in navLink.submenu")
             NuxtLink(:to="subLink.link" v-if="subLink.link == '/operations/daily-task' && user?.id == 1")
               el-menu-item(:index="subLink.link" @click="mobileNavigate(subLink.link)" :class="{'is-active': route?.fullPath?.includes(subLink.link) && subLink.link == '/'}")
-                 Icon.mr-2(size="18" :name="subLink.icon" v-if="subLink.icon" style="color: var(--accent-purple)")
+                 Icon.mr-2.submenu-icon(size="18" :name="subLink.icon" v-if="subLink.icon")
                  span {{subLink.name}}
             el-menu-item(:index="`${index+1}-${subIndex+1}`" :class="{'disabled-link' : getDisabled(subLink.role)}" v-else-if="getDisabled(subLink.role) && subLink.link !== '/operations/daily-task'")
-                 Icon.mr-2(size="18" :name="subLink.icon" v-if="subLink.icon" style="color: var(--accent-purple)")
+                 Icon.mr-2.submenu-icon(size="18" :name="subLink.icon" v-if="subLink.icon")
                  span {{subLink.name}}
             NuxtLink(:to="subLink.link" v-else-if="subLink.link !== '/operations/daily-task'")
               el-menu-item(:index="subLink.link" @click="mobileNavigate(subLink.link)" :class="{'is-active': route?.fullPath?.includes(subLink.link) && subLink.link !== '/'}")
-                 Icon.mr-2(size="18" :name="subLink.icon" v-if="subLink.icon" style="color: var(--accent-purple)")
+                 Icon.mr-2.submenu-icon(size="18" :name="subLink.icon" v-if="subLink.icon")
                  span {{subLink.name}}
         template(v-else)
           el-menu-item(:index='`${index+1}`' :class="{'disabled-link': getDisabled(navLink.role)}" v-if="navLink.link !== '/' && getDisabled(navLink.role)")
@@ -48,6 +48,10 @@ import { storeToRefs } from "pinia";
 import { useMain } from "~/stores/common";
 
 import { Document, Menu as IconMenu, Location, Setting } from "@element-plus/icons-vue";
+import { useApiFetch } from "~/composables/useApiFetch";
+import { useThemeStore } from "~/stores/theme";
+
+const themeStore = useThemeStore();
 const mainStore = useMain();
 const { fullNav, mobile, hideNav } = storeToRefs(mainStore);
 const { permissions } = storeToRefs(mainStore);
@@ -55,29 +59,17 @@ const route = useRoute();
 const router = useRouter();
 const user = ref();
 
+// ✅ Use themeStore for logo logic
+const logoSrc = computed(() => {
+    return themeStore.isLight ? '/images/Logo.png' : '/images/lOGO-DARDK-MODE.png';
+});
+
+// ✅ Fetch user data
 const response = await useApiFetch("auth/me");
 user.value = response?.user;
 
-// Dynamic Logo Logic
-const isLightMode = ref(false);
-const logoSrc = computed(() => {
-    return isLightMode.value ? '/images/Logo.png' : '/images/lOGO-DARDK-MODE.png';
-});
-
 onMounted(() => {
-    // Check initial state
-    isLightMode.value = document.body.classList.contains('light-theme');
-
-    // Watch for class changes on body
-    const observer = new MutationObserver((mutations) => {
-        mutations.forEach((mutation) => {
-            if (mutation.attributeName === 'class') {
-                isLightMode.value = document.body.classList.contains('light-theme');
-            }
-        });
-    });
-    
-    observer.observe(document.body, { attributes: true });
+    themeStore.initializeTheme();
 });
 
 
@@ -193,6 +185,48 @@ const menu = [
     isOpen: false, // Open this submenu
   },
   {
+    submenu: [
+      {
+        link: "/procurement/vendors",
+        name: "Vendors",
+        icon: "ph:storefront",
+      },
+      {
+        link: "/procurement/distributors",
+        name: "Distributors",
+        icon: "ph:truck",
+      },
+      {
+        link: "/procurement/local-suppliers",
+        name: "Local Suppliers",
+        icon: "ph:handshake",
+      },
+      {
+        link: "/procurement/showrooms",
+        name: "Show Rooms",
+        icon: "ph:buildings",
+      },
+      {
+        link: "/procurement/purchase-orders",
+        name: "Purchase Orders",
+        icon: "ph:shopping-cart",
+      },
+      {
+        link: "/procurement/rfq",
+        name: "Requests for Quotation",
+        icon: "ph:files",
+      },
+      {
+        link: "/procurement/statistics",
+        name: "Statistics",
+        icon: "ph:chart-bar",
+      },
+    ],
+    name: "Procurement",
+    icon: "ph:shopping-bag",
+    isOpen: true,
+  },
+  {
     link: "/reports",
     name: "Report",
     icon: "IconReport",
@@ -214,6 +248,28 @@ function openNav() {
 </script>
 
 <style lang="scss">
+.sidebar-glass {
+  background: var(--bg-sidebar) !important;
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border-right: 1px solid var(--border-default) !important;
+  
+  :global(html.light-mode) & {
+    background: var(--bg-sidebar) !important;
+    border-right-color: var(--border-default) !important;
+    box-shadow: 10px 0 30px -10px rgba(120, 73, 255, 0.08);
+  }
+}
+
+.submenu-icon {
+  color: #7849ff;
+  transition: all 0.3s ease;
+  
+  :global(body.light-theme) & {
+    color: #6a3ae0;
+  }
+}
+
 .el-menu-vertical-demo:not(.el-menu--collapse) {
   width: 260px;
 }

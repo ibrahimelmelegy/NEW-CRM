@@ -8,13 +8,18 @@
       
       <!-- Brand & Visual Section -->
       <div class="hidden md:flex flex-1 flex-col items-start space-y-8 animate-fade-in-left">
-        <!-- ✅ FIX: Using NuxtImg for optimized WebP images -->
-        <NuxtImg src="/images/light-logo.png" alt="High Point CRM" format="webp" quality="80" class="h-16 w-auto drop-shadow-[0_0_15px_rgba(255,255,255,0.3)] transition-all duration-500 light-logo-shadow" />
+        <!-- ✅ FIX: Reliable theme-based logo switch -->
+        <template v-if="themeStore.isLight">
+            <NuxtImg src="/images/Logo.png" alt="High Point CRM" format="webp" quality="80" class="h-16 w-auto drop-shadow-[0_0_15px_rgba(0,0,0,0.1)] transition-all duration-500" />
+        </template>
+        <template v-else>
+            <NuxtImg src="/images/light-logo.png" alt="High Point CRM" format="webp" quality="80" class="h-16 w-auto drop-shadow-[0_0_15px_rgba(255,255,255,0.3)] transition-all duration-500 light-logo-shadow" />
+        </template>
         <div class="space-y-4">
-          <h2 class="text-4xl lg:text-5xl font-bold leading-tight text-[var(--text-primary)]">
+          <h2 class="text-4xl lg:text-5xl font-bold leading-tight theme-text-primary">
             Elevate Your <span class="text-transparent bg-clip-text bg-gradient-to-r from-[#7849ff] to-[#ff7b00]">Experience</span>
           </h2>
-          <p class="text-[var(--text-secondary)] text-lg max-w-md leading-relaxed">
+          <p class="theme-text-secondary text-lg max-w-md leading-relaxed">
             Harness the power of intelligence with our professional CRM solutions.
           </p>
         </div>
@@ -40,8 +45,8 @@
           
           <div class="relative z-10">
             <div class="mb-10 text-center md:text-left">
-              <h1 class="text-3xl font-bold text-[var(--text-primary)] mb-2 tracking-tight">Welcome Back</h1>
-              <p class="text-[var(--text-muted)] text-sm">Enter your credentials to access your dashboard</p>
+              <h1 class="text-3xl font-bold theme-text-primary mb-2 tracking-tight">Welcome Back</h1>
+              <p class="theme-text-muted text-sm">Enter your credentials to access your dashboard</p>
             </div>
 
             <el-form 
@@ -56,7 +61,7 @@
             >
               <div class="space-y-6">
                 <div class="form-group flex flex-col gap-2">
-                  <label for="email-input" class="text-xs font-semibold text-[var(--text-muted)] opacity-60 uppercase tracking-wider ml-1">Email Address</label>
+                  <label for="email-input" class="text-xs font-semibold theme-text-muted uppercase tracking-wider ml-1">Email Address</label>
                   <InputText 
                     placeholder="name@company.com" 
                     name="email" 
@@ -68,7 +73,7 @@
 
                 <div class="form-group relative flex flex-col gap-2">
                   <div class="flex justify-between items-center px-1">
-                    <label for="password-input" class="text-xs font-semibold text-white/40 uppercase tracking-wider">Password</label>
+                    <label for="password-input" class="text-xs font-semibold theme-text-muted uppercase tracking-wider">Password</label>
                     <nuxt-link to="/forget-password" class="text-xs text-[#7849ff] hover:text-[#906dff] transition-colors" aria-label="Forgot your password? Click here to reset">
                       Forgot Password?
                     </nuxt-link>
@@ -104,8 +109,8 @@
           </div>
         </div>
         
-        <p class="text-center mt-8 text-[var(--text-muted)] text-sm">
-          Don't have an account? <span class="text-[var(--text-primary)] hover:text-[#7849ff] font-medium cursor-pointer transition-colors">Contact Administrator</span>
+        <p class="text-center mt-8 theme-text-muted text-sm">
+          Don't have an account? <span class="theme-text-primary hover:text-[#7849ff] font-medium cursor-pointer transition-colors">Contact Administrator</span>
         </p>
       </div>
 
@@ -121,10 +126,22 @@
   import { useMain } from "~/stores/common";
   import { ElNotification } from "element-plus";
 
+  import { useThemeStore } from "~/stores/theme";
+  const themeStore = useThemeStore();
+
   const auth = useAuthStore();
   const mainStore = useMain();
   const router = useRouter();
   const loading = ref(false);
+
+  // Dynamic Logo Logic
+  const logoSrc = computed(() => {
+      return themeStore.isLight ? '/images/Logo.png' : '/images/light-logo.png';
+  });
+
+  onMounted(() => {
+      themeStore.initializeTheme();
+  });
 
   definePageMeta({
     title: "Admin | Login",
@@ -238,29 +255,95 @@
     }
   }
 
+  // ✅ GLOBAL LIGHT THEME OVERRIDES (High specificity)
+  :global(body.light-theme) & {
+    .theme-text-primary, h1, h2, h3, .text-\[var\(--text-primary\)\] { color: #1a1a2e !important; }
+    .theme-text-secondary, p, .text-\[var\(--text-secondary\)\] { color: #4a4a6a !important; }
+    .theme-text-muted, label, span, .text-\[var\(--text-muted\)\], .text-white\/40, .text-white\/60 { color: #6a6a8a !important; opacity: 1 !important; }
+    
+    .glass-card-premium {
+      background: rgba(255, 255, 255, 0.7) !important;
+      border-color: rgba(120, 73, 255, 0.3) !important;
+      box-shadow: 0 10px 40px -10px rgba(120, 73, 255, 0.2) !important;
+    }
+
+    .modern-input .el-input__wrapper {
+      background-color: rgba(255, 255, 255, 0.95) !important;
+      border-color: rgba(120, 73, 255, 0.4) !important;
+      
+      &.is-focus, &:hover {
+        background-color: #ffffff !important;
+        box-shadow: 0 4px 15px rgba(120, 73, 255, 0.2) !important;
+      }
+
+      .el-input__inner {
+        color: #1a1a2e !important;
+        &::placeholder {
+           color: #8a8aa8 !important;
+           opacity: 0.7 !important;
+        }
+      }
+    }
+  }
+
+  .theme-text-primary { color: #FFFFFF !important; }
+  .theme-text-secondary { color: #F3E8FF !important; }
+  .theme-text-muted { color: #D8B4FE !important; }
+
+  :global(body.light-theme) & {
+    .theme-text-primary { color: #1a1a2e !important; }
+    .theme-text-secondary { color: #4a4a6a !important; }
+    .theme-text-muted { color: #6a6a8a !important; }
+
+    .glass-card-premium {
+      background: rgba(255, 255, 255, 0.7);
+      border-color: rgba(120, 73, 255, 0.2);
+      box-shadow: 0 10px 40px -10px rgba(120, 73, 255, 0.15);
+    }
+  }
+
+  .glass-card-premium {
+    backdrop-filter: blur(15px);
+    border: 1px solid rgba(255, 255, 255, 0.12);
+    background: rgba(255, 255, 255, 0.03);
+    box-shadow: 
+      0 8px 32px 0 rgba(0, 0, 0, 0.2),
+      inset 0 0 0 1px rgba(255, 255, 255, 0.05);
+    border-radius: 24px;
+    transition: all 0.5s ease;
+  }
+
   .modern-input {
     .el-input__wrapper {
-      background-color: rgba(255, 255, 255, 0.04) !important;
-      border: 1px solid rgba(255, 255, 255, 0.08) !important;
+      background-color: rgba(255, 255, 255, 0.05) !important;
+      border: 1px solid rgba(255, 255, 255, 0.1) !important;
       box-shadow: none !important;
       border-radius: 16px !important;
       padding: 6px 16px !important;
-      transition: all 0.4s cubic-bezier(0.165, 0.84, 0.44, 1) !important;
+      transition: all 0.3s ease !important;
 
       &.is-focus, &:hover {
         border-color: #7849ff !important;
-        background-color: rgba(120, 73, 255, 0.06) !important;
-        transform: translateY(-2px);
-        box-shadow: 0 8px 16px -4px rgba(120, 73, 255, 0.2) !important;
+        background-color: rgba(120, 73, 255, 0.08) !important;
+        box-shadow: 0 0 0 4px rgba(120, 73, 255, 0.1) !important;
       }
 
-      :global(body.light-mode) & {
-        background-color: rgba(0, 0, 0, 0.02) !important;
-        border-color: rgba(0, 0, 0, 0.05) !important;
+      :global(body.light-theme) & {
+        background-color: rgba(255, 255, 255, 0.95) !important;
+        border-color: rgba(120, 73, 255, 0.4) !important;
         
         &.is-focus, &:hover {
-          background-color: rgba(120, 73, 255, 0.03) !important;
+          background-color: #ffffff !important;
           border-color: #7849ff !important;
+          box-shadow: 0 4px 15px rgba(120, 73, 255, 0.2) !important;
+        }
+
+        .el-input__inner {
+            color: #1a1a2e !important;
+            &::placeholder {
+                color: #8a8aa8 !important;
+                opacity: 0.7;
+            }
         }
       }
     }
@@ -269,6 +352,9 @@
       color: var(--text-primary) !important;
       font-size: 15px !important;
       height: 48px !important;
+      background: transparent !important; // ✅ FIX: Ensure transparent background
+      box-shadow: none !important;
+      border: none !important;
       &::placeholder {
         color: var(--text-muted) !important;
         opacity: 0.5;
@@ -280,30 +366,20 @@
     .el-checkbox__label {
       color: var(--text-muted) !important;
       font-size: 13px;
-      padding-left: 10px;
     }
     
     .el-checkbox__inner {
       background-color: rgba(255, 255, 255, 0.05) !important;
       border-color: rgba(255, 255, 255, 0.1) !important;
       border-radius: 6px;
-      width: 18px;
-      height: 18px;
 
       :global(body.light-mode) & {
-        background-color: rgba(0, 0, 0, 0.03) !important;
+        background-color: rgba(0, 0, 0, 0.05) !important;
         border-color: rgba(0, 0, 0, 0.1) !important;
-      }
-      
-      &::after {
-        border-width: 2px !important;
       }
     }
     
     &.is-checked {
-      .el-checkbox__label {
-        color: var(--text-primary) !important;
-      }
       .el-checkbox__inner {
         background-color: #7849ff !important;
         border-color: #7849ff !important;

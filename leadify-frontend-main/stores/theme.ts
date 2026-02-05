@@ -6,7 +6,7 @@ export const useThemeStore = defineStore('theme', () => {
 
   const initializeTheme = () => {
     const saved = localStorage.getItem('theme')
-    isLight.value = saved === 'light'
+    isLight.value = saved === 'light' || saved === 'true' // support legacy values
     applyTheme()
   }
 
@@ -18,9 +18,9 @@ export const useThemeStore = defineStore('theme', () => {
 
   const applyTheme = () => {
     if (isLight.value) {
-      document.body.classList.add('light-mode')
+      document.documentElement.classList.add('light-mode')
     } else {
-      document.body.classList.remove('light-mode')
+      document.documentElement.classList.remove('light-mode')
     }
   }
 

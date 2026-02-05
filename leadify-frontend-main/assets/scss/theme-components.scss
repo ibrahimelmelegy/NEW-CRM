@@ -281,7 +281,7 @@
             border-radius: 0 4px 4px 0;
         }
 
-        :global(body.light-mode) & {
+        :global(body.light-theme) & {
             background: rgba(124, 58, 237, 0.08) !important;
             color: var(--purple-700) !important;
         }
@@ -319,7 +319,7 @@
         opacity: 0.5;
     }
 
-    :global(body.light-mode) & {
+    :global(body.light-theme) & {
         background: rgba(255, 255, 255, 0.8) !important;
         border-bottom-color: rgba(0, 0, 0, 0.05);
     }
@@ -334,7 +334,7 @@
     box-shadow: 4px 0 24px rgba(0, 0, 0, 0.1) !important;
     position: relative;
 
-    :global(body.light-mode) & {
+    :global(body.light-theme) & {
         background: #FFFFFF !important;
         border-right: 1px solid #E2E8F0 !important;
         box-shadow: 2px 0 10px rgba(0, 0, 0, 0.02) !important;
@@ -410,7 +410,7 @@
         color: var(--text-primary);
     }
 
-    :global(body.light-mode) & {
+    :global(body.light-theme) & {
         background: white;
         border-color: #E2E8F0;
         box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
@@ -442,7 +442,7 @@
         transform: translateY(-2px);
     }
 
-    :global(body.light-mode) & {
+    :global(body.light-theme) & {
         background: white;
         border-color: #E2E8F0;
         color: #64748B;

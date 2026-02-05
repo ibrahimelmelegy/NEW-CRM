@@ -27,17 +27,18 @@ body {
 }
 
 // Global Glassmorphism Utility
+// Global Glassmorphism Utility
 .glass-effect {
-    background: rgba(255, 255, 255, 0.03);
+    background: var(--glass-bg);
     backdrop-filter: blur(20px);
     -webkit-backdrop-filter: blur(20px);
-    border: 1px solid rgba(255, 255, 255, 0.1);
+    border: 1px solid var(--glass-border);
     box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.37);
     transition: all 0.3s ease;
 
-    :global(body.light-mode) & {
-        background: rgba(255, 255, 255, 0.4);
-        border-color: rgba(255, 255, 255, 0.5);
+    :global(html.light-mode) & {
+        background: var(--glass-bg);
+        border-color: var(--glass-border);
         box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.07);
     }
 }
@@ -58,7 +59,7 @@ body {
         box-shadow: 0 40px 80px -10px rgba(0, 0, 0, 0.6);
     }
 
-    :global(body.light-mode) & {
+    :global(html.light-mode) & {
         background: rgba(255, 255, 255, 0.6);
         border-color: rgba(255, 255, 255, 0.8);
         backdrop-filter: blur(20px) !important;
@@ -110,6 +111,20 @@ a {
     &:hover {
         color: var(--purple-300);
     }
+}
+
+// ============================================
+// 🏗️ THEME BASE - Core Reset & Layout
+// ============================================
+
+body {
+    background-color: var(--bg-body);
+    color: var(--text-primary);
+    transition: background-color var(--transition-normal), color var(--transition-normal);
+}
+
+html.light-mode body {
+    background-color: var(--bg-body); // Will use the light value
 }
 
 // ========================================

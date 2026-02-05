@@ -1,5 +1,5 @@
 <template>
-  <div class="professional-background absolute inset-0 z-0 overflow-hidden bg-[#0b0a12] isolate">
+  <div class="professional-background absolute inset-0 z-0 overflow-hidden isolate" :class="themeStore.isLight ? 'bg-[#f8f7fa]' : 'bg-[#0b0a12]'">
     <!-- Mesh Gradient Layer -->
     <div class="mesh-gradient absolute inset-0 opacity-80"></div>
     
@@ -13,6 +13,10 @@
     </div>
   </div>
 </template>
+<script setup lang="ts">
+import { useThemeStore } from '~/stores/theme';
+const themeStore = useThemeStore();
+</script>
 
 <style lang="scss" scoped>
 .professional-background {
@@ -24,6 +28,10 @@
   height: 100vh;
   background-color: #0b0a12;
   transition: background-color 0.5s ease;
+
+  :global(body.light-theme) & {
+    background-color: #f8f7fa;
+  }
   
   .mesh-gradient {
     background: 
@@ -35,6 +43,13 @@
       radial-gradient(at 100% 100%, hsla(29,100%,50%,0.15) 0, transparent 50%);
     filter: blur(40px);
     transition: all 0.5s ease;
+
+    :global(body.light-theme) & {
+      opacity: 0.15;
+      background: 
+        radial-gradient(at 0% 0%, hsla(255,100%,64%,0.3) 0, transparent 50%), 
+        radial-gradient(at 100% 100%, hsla(29,100%,50%,0.2) 0, transparent 50%);
+    }
   }
 
   .noise-overlay {

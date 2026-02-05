@@ -123,7 +123,7 @@ export default defineNuxtConfig({
 
   runtimeConfig: {
     public: {
-      API_BASE_URL: process.env.API_BASE_URL || 'http://localhost:5000/api/',
+      API_BASE_URL: '/api/',
       BASE_URL: process.env.BASE_URL || 'http://localhost:3060/',
       BUCKET_URL: process.env.BUCKET_URL || 'http://localhost:3000/',
     },
@@ -146,4 +146,14 @@ export default defineNuxtConfig({
   },
 
   compatibilityDate: '2024-11-16',
+
+  nitro: {
+    devProxy: {
+      "/api": {
+        target: "http://localhost:5000",
+        changeOrigin: true,
+        prependPath: true,
+      }
+    }
+  }
 });

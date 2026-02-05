@@ -7,8 +7,8 @@
 /* ============================================
    CORE OVERRIDES
    ============================================ */
-body.light-mode,
-html.light-mode body,
+body.light-theme,
+html.light-theme body,
 body[data-theme="light"],
 html[data-theme="light"] body {
     background-color: #f5f5f5 !important;
@@ -19,43 +19,43 @@ html[data-theme="light"] body {
 /* ============================================
    SIDEBAR / NAVIGATION
    ============================================ */
-body.light-mode .nav,
-body.light-mode #allTheNav,
-body.light-mode #allTheNav>*,
-body.light-mode aside,
-body.light-mode [class*="sidebar"],
-body.light-mode [class*="Sidebar"],
-body.light-mode .menu-container {
+body.light-theme .nav,
+body.light-theme #allTheNav,
+body.light-theme #allTheNav>*,
+body.light-theme aside,
+body.light-theme [class*="sidebar"],
+body.light-theme [class*="Sidebar"],
+body.light-theme .menu-container {
     background: #ffffff !important;
     background-color: #ffffff !important;
     border-color: #e0e0e0 !important;
 }
 
-body.light-mode .nav *,
-body.light-mode #allTheNav *,
-body.light-mode aside *,
-body.light-mode [class*="sidebar"] *,
-body.light-mode [class*="menu"] * {
+body.light-theme .nav *,
+body.light-theme #allTheNav *,
+body.light-theme aside *,
+body.light-theme [class*="sidebar"] *,
+body.light-theme [class*="menu"] * {
     color: #1a1a1a !important;
 }
 
-body.light-mode .nav a,
-body.light-mode .menu a,
-body.light-mode .nav-item,
-body.light-mode .menu-item {
+body.light-theme .nav a,
+body.light-theme .menu a,
+body.light-theme .nav-item,
+body.light-theme .menu-item {
     color: #1a1a1a !important;
 }
 
-body.light-mode .nav a:hover,
-body.light-mode .menu a:hover,
-body.light-mode .nav-item:hover,
-body.light-mode .menu-item:hover {
+body.light-theme .nav a:hover,
+body.light-theme .menu a:hover,
+body.light-theme .nav-item:hover,
+body.light-theme .menu-item:hover {
     background: #f0f0f0 !important;
 }
 
-body.light-mode .nav .router-link-active,
-body.light-mode .nav .active,
-body.light-mode .menu .active {
+body.light-theme .nav .router-link-active,
+body.light-theme .nav .active,
+body.light-theme .menu .active {
     background: #e8f0fe !important;
     color: #1a73e8 !important;
 }
@@ -63,10 +63,10 @@ body.light-mode .menu .active {
 /* ============================================
    TOP NAVBAR
    ============================================ */
-body.light-mode .navbar,
-body.light-mode nav.navbar,
-body.light-mode header,
-body.light-mode .header {
+body.light-theme .navbar,
+body.light-theme nav.navbar,
+body.light-theme header,
+body.light-theme .header {
     background: rgba(255, 255, 255, 0.95) !important;
     background-color: rgba(255, 255, 255, 0.95) !important;
     backdrop-filter: blur(10px) !important;
@@ -82,12 +82,12 @@ body.light-mode header * {
 /* ============================================
    MAIN CONTENT AREA
    ============================================ */
-body.light-mode #main,
-body.light-mode main,
-body.light-mode .main-content,
-body.light-mode .slot-content,
-body.light-mode .content,
-body.light-mode section {
+body.light-theme #main,
+body.light-theme main,
+body.light-theme .main-content,
+body.light-theme .slot-content,
+body.light-theme .content,
+body.light-theme section {
     background: transparent !important;
     color: #1a1a1a !important;
 }
@@ -95,39 +95,39 @@ body.light-mode section {
 /* ============================================
    ALL TEXT
    ============================================ */
-body.light-mode h1,
-body.light-mode h2,
-body.light-mode h3,
-body.light-mode h4,
-body.light-mode h5,
-body.light-mode h6 {
+body.light-theme h1,
+body.light-theme h2,
+body.light-theme h3,
+body.light-theme h4,
+body.light-theme h5,
+body.light-theme h6 {
     color: #1a1a1a !important;
 }
 
-body.light-mode p,
-body.light-mode span:not(.iconify):not([class*="icon"]),
-body.light-mode label,
-body.light-mode div:not([class*="icon"]):not([class*="gradient"]) {
+body.light-theme p,
+body.light-theme span:not(.iconify):not([class*="icon"]),
+body.light-theme label,
+body.light-theme div:not([class*="icon"]):not([class*="gradient"]) {
     color: #1a1a1a !important;
 }
 
-body.light-mode .text-muted,
-body.light-mode [class*="muted"] {
+body.light-theme .text-muted,
+body.light-theme [class*="muted"] {
     color: #666666 !important;
 }
 
-body.light-mode .text-secondary {
+body.light-theme .text-secondary {
     color: #5f6368 !important;
 }
 
 /* ============================================
    CARDS
    ============================================ */
-body.light-mode .card,
-body.light-mode .el-card,
-body.light-mode [class*="card"]:not([class*="icon"]),
-body.light-mode .box,
-body.light-mode .panel {
+body.light-theme .card,
+body.light-theme .el-card,
+body.light-theme [class*="card"]:not([class*="icon"]),
+body.light-theme .box,
+body.light-theme .panel {
     background: #ffffff !important;
     background-color: #ffffff !important;
     border: 1px solid #e0e0e0 !important;
@@ -135,37 +135,37 @@ body.light-mode .panel {
     color: #1a1a1a !important;
 }
 
-body.light-mode .card *,
-body.light-mode .el-card *,
-body.light-mode .box *,
-body.light-mode .panel * {
+body.light-theme .card *,
+body.light-theme .el-card *,
+body.light-theme .box *,
+body.light-theme .panel * {
     color: #1a1a1a !important;
 }
 
-body.light-mode .card:hover,
-body.light-mode .el-card:hover {
+body.light-theme .card:hover,
+body.light-theme .el-card:hover {
     box-shadow: 0 2px 8px rgba(0, 0, 0, 0.12) !important;
 }
 
 /* ============================================
    BUTTONS
    ============================================ */
-body.light-mode button,
-body.light-mode .btn,
-body.light-mode .el-button {
+body.light-theme button,
+body.light-theme .btn,
+body.light-theme .el-button {
     background: #f5f5f5 !important;
     color: #1a1a1a !important;
     border-color: #d0d0d0 !important;
 }
 
-body.light-mode button:hover,
-body.light-mode .btn:hover,
-body.light-mode .el-button:hover {
+body.light-theme button:hover,
+body.light-theme .btn:hover,
+body.light-theme .el-button:hover {
     background: #e8e8e8 !important;
 }
 
-body.light-mode .el-button--primary,
-body.light-mode .btn-primary {
+body.light-theme .el-button--primary,
+body.light-theme .btn-primary {
     background: #1a73e8 !important;
     color: #ffffff !important;
     border-color: #1a73e8 !important;
@@ -174,13 +174,13 @@ body.light-mode .btn-primary {
 /* ============================================
    INPUTS
    ============================================ */
-body.light-mode input,
-body.light-mode textarea,
-body.light-mode select,
-body.light-mode .el-input__wrapper,
-body.light-mode .el-input__inner,
-body.light-mode .el-textarea__inner,
-body.light-mode .el-select .el-input__wrapper {
+body.light-theme input,
+body.light-theme textarea,
+body.light-theme select,
+body.light-theme .el-input__wrapper,
+body.light-theme .el-input__inner,
+body.light-theme .el-textarea__inner,
+body.light-theme .el-select .el-input__wrapper {
     background: #ffffff !important;
     background-color: #ffffff !important;
     color: #1a1a1a !important;

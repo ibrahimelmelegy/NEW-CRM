@@ -1,44 +1,13 @@
+<script setup lang="ts">
+import { useThemeStore } from '@/stores/theme';
+const themeStore = useThemeStore();
+</script>
+
 <template>
-    <button class="mode-toggle" @click="toggleTheme" :title="isLight ? 'Dark Mode' : 'Light Mode'">
-        <span class="icon">{{ isLight ? '🌙' : '☀️' }}</span>
+    <button class="mode-toggle" @click="themeStore.toggleTheme" :title="themeStore.isLight ? 'Dark Mode' : 'Light Mode'">
+        <span class="icon">{{ themeStore.isLight ? '🌙' : '☀️' }}</span>
     </button>
 </template>
-
-<script setup lang="ts">
-import { ref, onMounted } from 'vue';
-
-const isLight = ref(false);
-
-const enableLightMode = () => {
-    document.body.classList.add('light-theme');
-    localStorage.setItem('theme', 'light');
-};
-
-const disableLightMode = () => {
-    document.body.classList.remove('light-theme');
-    localStorage.setItem('theme', 'dark');
-};
-
-const toggleTheme = () => {
-    isLight.value = !isLight.value;
-    if (isLight.value) {
-        enableLightMode();
-    } else {
-        disableLightMode();
-    }
-};
-
-onMounted(() => {
-    const saved = localStorage.getItem('theme');
-    if (saved === 'light') {
-        isLight.value = true;
-        enableLightMode();
-    } else {
-        isLight.value = false;
-        disableLightMode();
-    }
-});
-</script>
 
 <style scoped lang="scss">
 .mode-toggle {

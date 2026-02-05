@@ -3,7 +3,7 @@
    Unified Glassmorphism, Gradient Background, No Opaque Separators.
 */
 
-body.light-theme {
+html.light-mode body {
     /* ========================================
        BACKGROUNDS (Gradient & Glass)
        ======================================== */
@@ -63,12 +63,12 @@ body.light-theme {
    ======================================== */
 
 /* 1. APPLY GLASS EFFECT TO EVERYTHING */
-body.light-theme .card,
-body.light-theme .el-card,
-body.light-theme .navbar,
-body.light-theme .surface,
-body.light-theme .glass-container,
-body.light-theme .box {
+html.light-mode .card,
+html.light-mode .el-card,
+html.light-mode .navbar,
+html.light-mode .surface,
+html.light-mode .glass-container,
+html.light-mode .box {
     background: rgba(255, 255, 255, 0.4) !important;
     background-image: none !important;
     /* Kill opaque images */
@@ -82,9 +82,9 @@ body.light-theme .box {
 
 /* 2. SIDEBAR - SEAMLESS INTEGRATION */
 /* No white line separator, just pure glass */
-body.light-theme .sidebar-glass,
-body.light-theme .nav,
-body.light-theme aside {
+html.light-mode .sidebar-glass,
+html.light-mode .nav,
+html.light-mode aside {
     background: rgba(255, 255, 255, 0.4) !important;
     backdrop-filter: blur(25px) !important;
     -webkit-backdrop-filter: blur(25px) !important;
@@ -95,12 +95,12 @@ body.light-theme aside {
 }
 
 /* 3. MENU ITEMS */
-body.light-theme .el-menu-item:hover,
-body.light-theme .el-sub-menu__title:hover {
+html.light-mode .el-menu-item:hover,
+html.light-mode .el-sub-menu__title:hover {
     background: rgba(255, 255, 255, 0.3) !important;
 }
 
-body.light-theme .el-menu-item.is-active {
+html.light-mode .el-menu-item.is-active {
     background: linear-gradient(90deg, rgba(243, 232, 255, 0.8) 0%, rgba(252, 231, 243, 0.8) 100%) !important;
     color: #1f1f1f !important;
     border-radius: 8px !important;
@@ -108,7 +108,7 @@ body.light-theme .el-menu-item.is-active {
 }
 
 /* 4. STATISTICS CARDS (Colored Borders + Glass) */
-body.light-theme .stats-card-container {
+html.light-mode .stats-card-container {
     background: rgba(255, 255, 255, 0.4) !important;
     border-radius: 20px !important;
     border: none !important;
@@ -119,7 +119,7 @@ body.light-theme .stats-card-container {
 }
 
 /* Restore the gradient border */
-body.light-theme .stats-card-container::before {
+html.light-mode .stats-card-container::before {
     content: '' !important;
     position: absolute !important;
     inset: 0 !important;
@@ -135,54 +135,54 @@ body.light-theme .stats-card-container::before {
 }
 
 /* Matches component colors */
-body.light-theme .stats-card-container.border-indigo::before {
+html.light-mode .stats-card-container.border-indigo::before {
     background: linear-gradient(135deg, #6366F1, #A855F7, #EC4899) !important;
 }
 
-body.light-theme .stats-card-container.border-cyan::before {
+html.light-mode .stats-card-container.border-cyan::before {
     background: linear-gradient(135deg, #06B6D4, #22D3EE, #06B6D4) !important;
 }
 
-body.light-theme .stats-card-container.border-amber::before {
+html.light-mode .stats-card-container.border-amber::before {
     background: linear-gradient(135deg, #F97316, #FBBF24, #F97316) !important;
 }
 
-body.light-theme .stats-card-container.border-purple::before {
+html.light-mode .stats-card-container.border-purple::before {
     background: linear-gradient(135deg, #7C3AED, #EC4899, #F97316) !important;
 }
 
-body.light-theme .stats-card-container.border-rose::before {
+html.light-mode .stats-card-container.border-rose::before {
     background: linear-gradient(135deg, #F43F5E, #F97316, #F43F5E) !important;
 }
 
-body.light-theme .stats-card-container.border-emerald::before {
+html.light-mode .stats-card-container.border-emerald::before {
     background: linear-gradient(135deg, #10B981, #34D399, #10B981) !important;
 }
 
 /* 5. TRANSPARENT WRAPPERS (Fix for "White Connected Lines") */
 /* Force all layout containers to be transparent so the body gradient shows through */
-body.light-theme #__nuxt,
-body.light-theme #__layout,
-body.light-theme #app,
-body.light-theme #main,
-body.light-theme .main-content,
-body.light-theme .page-wrapper,
-body.light-theme .el-container,
-body.light-theme .el-main,
-body.light-theme .common-layout {
+html.light-mode #__nuxt,
+html.light-mode #__layout,
+html.light-mode #app,
+html.light-mode #main,
+html.light-mode .main-content,
+html.light-mode .page-wrapper,
+html.light-mode .el-container,
+html.light-mode .el-main,
+html.light-mode .common-layout {
     background: transparent !important;
     background-color: transparent !important;
 }
 
 /* Fix Chart Backgrounds */
-body.light-theme .echarts {
+html.light-mode .echarts {
     background: transparent !important;
 }
 
 /* 6. CLEAN UP */
-body.light-theme .professional-background,
-body.light-theme .mesh-gradient,
-body.light-theme .noise-overlay {
+html.light-mode .professional-background,
+html.light-mode .mesh-gradient,
+html.light-mode .noise-overlay {
     opacity: 0 !important;
     pointer-events: none !important;
 }
@@ -192,29 +192,29 @@ body.light-theme .noise-overlay {
    ======================================== */
 
 /* VUE-TEL-INPUT (Phone Number) */
-body.light-theme .vue-tel-input {
+html.light-mode .vue-tel-input {
     background: rgba(255, 255, 255, 0.9) !important;
     border: 1px solid rgba(0, 0, 0, 0.1) !important;
 }
 
-body.light-theme .vue-tel-input:focus-within {
+html.light-mode .vue-tel-input:focus-within {
     border-color: #7c3aed !important;
 }
 
-body.light-theme .vti__input {
+html.light-mode .vti__input {
     background: transparent !important;
     color: #1f1f1f !important;
 }
 
-body.light-theme .vti__input::placeholder {
+html.light-mode .vti__input::placeholder {
     color: #8b8b8b !important;
 }
 
-body.light-theme .vti__dropdown {
+html.light-mode .vti__dropdown {
     background: transparent !important;
 }
 
-body.light-theme .vti__dropdown-list {
+html.light-mode .vti__dropdown-list {
     background: #ffffff !important;
     border: 1px solid rgba(0, 0, 0, 0.1) !important;
     box-shadow: 0 10px 40px rgba(0, 0, 0, 0.15) !important;
@@ -222,162 +222,162 @@ body.light-theme .vti__dropdown-list {
     position: absolute !important;
 }
 
-body.light-theme .vti__dropdown-item {
+html.light-mode .vti__dropdown-item {
     color: #1f1f1f !important;
 }
 
-body.light-theme .vti__dropdown-item:hover {
+html.light-mode .vti__dropdown-item:hover {
     background: rgba(124, 58, 237, 0.1) !important;
 }
 
-body.light-theme .vti__search_box {
+html.light-mode .vti__search_box {
     background: #ffffff !important;
     color: #1f1f1f !important;
     border-color: rgba(0, 0, 0, 0.1) !important;
 }
 
 /* EL-UPLOAD (File Upload) */
-body.light-theme .el-upload {
+html.light-mode .el-upload {
     background: rgba(255, 255, 255, 0.8) !important;
     border: 2px dashed rgba(0, 0, 0, 0.15) !important;
     border-radius: 12px !important;
 }
 
-body.light-theme .el-upload:hover {
+html.light-mode .el-upload:hover {
     border-color: #7c3aed !important;
     background: rgba(124, 58, 237, 0.05) !important;
 }
 
-body.light-theme .el-upload .el-icon {
+html.light-mode .el-upload .el-icon {
     color: #7c3aed !important;
 }
 
-body.light-theme .el-upload-dragger {
+html.light-mode .el-upload-dragger {
     background: rgba(255, 255, 255, 0.8) !important;
     border: 2px dashed rgba(0, 0, 0, 0.15) !important;
 }
 
-body.light-theme .el-upload-dragger:hover {
+html.light-mode .el-upload-dragger:hover {
     border-color: #7c3aed !important;
 }
 
-body.light-theme .el-upload-list__item {
+html.light-mode .el-upload-list__item {
     background: rgba(255, 255, 255, 0.9) !important;
     border: 1px solid rgba(0, 0, 0, 0.1) !important;
 }
 
-body.light-theme .el-upload__tip {
+html.light-mode .el-upload__tip {
     color: #8b8b8b !important;
 }
 
 /* EL-SELECT DROPDOWNS */
-body.light-theme .el-select-dropdown {
+html.light-mode .el-select-dropdown {
     background: #ffffff !important;
     border: 1px solid rgba(0, 0, 0, 0.1) !important;
     box-shadow: 0 10px 40px rgba(0, 0, 0, 0.1) !important;
 }
 
-body.light-theme .el-select-dropdown__item {
+html.light-mode .el-select-dropdown__item {
     color: #1f1f1f !important;
 }
 
-body.light-theme .el-select-dropdown__item:hover,
-body.light-theme .el-select-dropdown__item.hover {
+html.light-mode .el-select-dropdown__item:hover,
+html.light-mode .el-select-dropdown__item.hover {
     background: rgba(124, 58, 237, 0.1) !important;
 }
 
-body.light-theme .el-select-dropdown__item.selected {
+html.light-mode .el-select-dropdown__item.selected {
     color: #7c3aed !important;
     font-weight: 600 !important;
 }
 
 /* EL-POPPER (All Popups/Dropdowns) */
-body.light-theme .el-popper {
+html.light-mode .el-popper {
     background: #ffffff !important;
     border: 1px solid rgba(0, 0, 0, 0.1) !important;
 }
 
-body.light-theme .el-popper__arrow::before {
+html.light-mode .el-popper__arrow::before {
     background: #ffffff !important;
     border-color: rgba(0, 0, 0, 0.1) !important;
 }
 
 /* GENERAL FORM INPUTS */
-body.light-theme input,
-body.light-theme textarea,
-body.light-theme select {
+html.light-mode input,
+html.light-mode textarea,
+html.light-mode select {
     background: rgba(255, 255, 255, 0.9) !important;
     color: #1f1f1f !important;
     border-color: rgba(0, 0, 0, 0.1) !important;
 }
 
-body.light-theme input::placeholder,
-body.light-theme textarea::placeholder {
+html.light-mode input::placeholder,
+html.light-mode textarea::placeholder {
     color: #8b8b8b !important;
 }
 
 /* EL-FORM LABELS */
-body.light-theme .el-form-item__label {
+html.light-mode .el-form-item__label {
     color: #1f1f1f !important;
 }
 
 /* EL-DIALOG (Modals) */
-body.light-theme .el-dialog {
+html.light-mode .el-dialog {
     background: rgba(255, 255, 255, 0.95) !important;
     backdrop-filter: blur(20px) !important;
 }
 
-body.light-theme .el-dialog__header {
+html.light-mode .el-dialog__header {
     border-bottom: 1px solid rgba(0, 0, 0, 0.1) !important;
 }
 
-body.light-theme .el-dialog__title {
+html.light-mode .el-dialog__title {
     color: #1f1f1f !important;
 }
 
-body.light-theme .el-dialog__body {
+html.light-mode .el-dialog__body {
     color: #1f1f1f !important;
 }
 
 /* EL-TABLE */
-body.light-theme .el-table {
+html.light-mode .el-table {
     background: transparent !important;
 }
 
-body.light-theme .el-table th,
-body.light-theme .el-table tr {
+html.light-mode .el-table th,
+html.light-mode .el-table tr {
     background: rgba(255, 255, 255, 0.7) !important;
     color: #1f1f1f !important;
 }
 
-body.light-theme .el-table--striped .el-table__body tr.el-table__row--striped td {
+html.light-mode .el-table--striped .el-table__body tr.el-table__row--striped td {
     background: rgba(255, 255, 255, 0.5) !important;
 }
 
-body.light-theme .el-table td,
-body.light-theme .el-table th {
+html.light-mode .el-table td,
+html.light-mode .el-table th {
     border-color: rgba(0, 0, 0, 0.05) !important;
 }
 
 /* EL-BUTTON */
-body.light-theme .el-button--default {
+html.light-mode .el-button--default {
     background: rgba(255, 255, 255, 0.8) !important;
     border-color: rgba(0, 0, 0, 0.1) !important;
     color: #1f1f1f !important;
 }
 
-body.light-theme .el-button--primary {
+html.light-mode .el-button--primary {
     background: linear-gradient(135deg, #7c3aed, #a855f7) !important;
     border: none !important;
     color: #ffffff !important;
 }
 
 /* TEXT COLORS */
-body.light-theme .text-neutral-900 {
+html.light-mode .text-neutral-900 {
     color: #1f1f1f !important;
 }
 
-body.light-theme .text-neutral-400 {
+html.light-mode .text-neutral-400 {
     color: #8b8b8b !important;
 }
 
@@ -408,31 +408,31 @@ body.light-theme .text-neutral-400 {
 
 /* GLOBAL INPUT FIX - FORCE LIGHT BACKGROUNDS */
 /* This ensures NO input is black in Light Mode */
-body.light-theme input:not([type="checkbox"]):not([type="radio"]),
-body.light-theme textarea,
-body.light-theme select,
-body.light-theme .el-input__wrapper,
-body.light-theme .el-textarea__inner,
-body.light-theme .el-select__wrapper,
-body.light-theme .el-select .select-trigger {
+html.light-mode input:not([type="checkbox"]):not([type="radio"]),
+html.light-mode textarea,
+html.light-mode select,
+html.light-mode .el-input__wrapper,
+html.light-mode .el-textarea__inner,
+html.light-mode .el-select__wrapper,
+html.light-mode .el-select .select-trigger {
     background-color: rgba(255, 255, 255, 0.9) !important;
     color: #1f1f1f !important;
     border-color: rgba(0, 0, 0, 0.1) !important;
 }
 
 /* Fix Focus State */
-body.light-theme .el-select .el-input__wrapper.is-focus,
-body.light-theme .el-input__wrapper.is-focus {
+html.light-mode .el-select .el-input__wrapper.is-focus,
+html.light-mode .el-input__wrapper.is-focus {
     box-shadow: 0 0 0 1px #7c3aed inset !important;
 }
 
 /* Fix Dropdown Text */
-body.light-theme .el-select-dropdown__item {
+html.light-mode .el-select-dropdown__item {
     color: #1f1f1f !important;
 }
 
 /* Fix Upload File Area - Target EL-UPLOAD directly since 'drag' prop is missing */
-body.light-theme .el-upload {
+html.light-mode .el-upload {
     background-color: rgba(255, 255, 255, 0.6) !important;
     border: 2px dashed #d8b4fe !important;
     width: 100% !important;
@@ -447,19 +447,19 @@ body.light-theme .el-upload {
     text-align: center !important;
 }
 
-body.light-theme .el-upload:hover {
+html.light-mode .el-upload:hover {
     background-color: rgba(243, 232, 255, 0.5) !important;
     border-color: #a855f7 !important;
     transform: translateY(-2px);
 }
 
-body.light-theme .el-upload .el-icon {
+html.light-mode .el-upload .el-icon {
     font-size: 48px !important;
     color: #a855f7 !important;
     margin-bottom: 10px !important;
 }
 
-body.light-theme .el-upload__text {
+html.light-mode .el-upload__text {
     color: #1f1f1f !important;
     font-size: 14px !important;
     width: 100% !important;
@@ -468,7 +468,7 @@ body.light-theme .el-upload__text {
 
 
 /* Target element by class inside el-upload */
-body.light-theme .el-upload .text-neutral-900 {
+html.light-mode .el-upload .text-neutral-900 {
     width: 100% !important;
     text-align: center !important;
     display: flex !important;
@@ -477,7 +477,7 @@ body.light-theme .el-upload .text-neutral-900 {
     justify-content: center !important;
 }
 
-body.light-theme .el-upload .text-neutral-400 {
+html.light-mode .el-upload .text-neutral-400 {
     text-align: center !important;
     margin-top: 5px !important;
     display: block !important;
@@ -485,14 +485,14 @@ body.light-theme .el-upload .text-neutral-400 {
 }
 
 
-body.light-theme .el-upload__text em {
+html.light-mode .el-upload__text em {
     color: #7c3aed !important;
     font-weight: 600 !important;
 }
 
 
 /* Fix Phone Input Container specifically */
-body.light-theme .vue-tel-input {
+html.light-mode .vue-tel-input {
     background-color: rgba(255, 255, 255, 0.9) !important;
     position: relative !important;
     z-index: 10 !important;

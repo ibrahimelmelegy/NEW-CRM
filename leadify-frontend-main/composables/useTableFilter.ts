@@ -1,3 +1,6 @@
+import { formatDate, getYear, formatSnakeCase } from "../utils/format";
+import { useApiFetch } from "@/composables/useApiFetch";
+
 export const globalFilterOptions = ref<Record<string, string | string[] | number[]>>({});
 
 export default async function useTableFilter(
@@ -62,7 +65,7 @@ export default async function useTableFilter(
 
   try {
     // Fetch data based on the query parameters
-    const { body, success, message } = await useApiFetch(`${position}${queryString}`);
+    const { body, status: success, message } = await useApiFetch(`${position}${queryString}`);
 
     // Update the URL to reflect the current query parameters
     router.replace({
@@ -78,7 +81,7 @@ export default async function useTableFilter(
       const formattedData = body?.docs?.map((data: any) => ({
         ...data,
         createdAt: formatDate(data.createdAt),
-        date:getYear(data?.createdAt),
+        date: getYear(data?.createdAt),
         updatedAt: formatDate(data.updatedAt),
         assign: data.users?.length ? data.users?.map((user: any) => user.name).join(", ") : "Unassigned",
         ...(data?.proposalDate && { proposalDate: formatDate(data?.proposalDate) }),
@@ -134,6 +137,14 @@ export default async function useTableFilter(
         projectClient: data?.client?.clientName || "-",
         description: data?.description || "-",
         relatedEntity: data?.relatedEntity?.name || "-",
+        poNumber: data?.poNumber || "-",
+        vendorName: data?.vendor?.name || "-",
+        projectName: data?.project?.name || "-",
+        vendorDetails: {
+          title: data.name,
+          text: data.commercialRegistration,
+          withImage: false
+        }
       }));
 
       // Extract pagination details if available

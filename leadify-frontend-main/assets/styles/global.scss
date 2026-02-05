@@ -16,3 +16,53 @@
 
 // 4. Fonts (CSS Import - Must come after Sass modules)
 @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@200;300;400;500;600;700;800&family=Tajawal:wght@200;300;400;500;700;800&display=swap');
+
+// 5. Global overrides for Vue Tel Input (Dark Mode Fix)
+.vue-tel-input {
+    background-color: rgba(30, 18, 48, 0.6) !important;
+    border: 1px solid rgba(168, 85, 247, 0.2) !important;
+    border-radius: 12px !important;
+
+    &:focus-within {
+        border-color: #a855f7 !important;
+        box-shadow: 0 0 15px rgba(168, 85, 247, 0.1) !important;
+    }
+
+    .vti__input {
+        background-color: transparent !important;
+        color: white !important;
+
+        &::placeholder {
+            color: rgba(255, 255, 255, 0.3) !important;
+        }
+    }
+
+    .vti__dropdown {
+        background-color: transparent !important;
+
+        &:hover {
+            background-color: rgba(168, 85, 247, 0.1) !important;
+        }
+
+        .vti__dropdown-list {
+            background-color: #1e1230 !important;
+            border: 1px solid rgba(168, 85, 247, 0.2) !important;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5) !important;
+            z-index: 99999 !important;
+
+            .vti__dropdown-item {
+                color: #e9d5ff !important;
+                padding: 10px;
+
+                &:hover,
+                &.highlighted {
+                    background-color: rgba(168, 85, 247, 0.2) !important;
+                }
+
+                strong {
+                    color: white !important;
+                }
+            }
+        }
+    }
+}

@@ -1,12 +1,133 @@
-<template lang="pug">
-el-form-item(:label="label" :error='errorMessage' class="!mb-6")
-        QuillEditor.w-full( v-model:content="inputValue" :name="name" :modules="uploadImagEditor()"  :placeholder='placeholder ? placeholder : "enter" + label' content-type="html"  toolbar="full" )
+<template>
+  <el-form-item :label="label" :error="errorMessage" class="!mb-6">
+    <div
+      class="editor-wrapper border rounded-md"
+      :class="{ 'is-error': errorMessage, 'is-disabled': disabled }"
+    >
+      <!-- Toolbar -->
+      <div v-if="editor && !disabled" class="toolbar p-2 border-b bg-gray-50 flex gap-2 flex-wrap">
+        <button
+          @click.prevent="editor.chain().focus().toggleBold().run()"
+          :class="{ 'is-active': editor.isActive('bold') }"
+          title="Bold"
+          type="button"
+        >
+          <i class="ri-bold"></i>
+        </button>
+        <button
+          @click.prevent="editor.chain().focus().toggleItalic().run()"
+          :class="{ 'is-active': editor.isActive('italic') }"
+          title="Italic"
+          type="button"
+        >
+          <i class="ri-italic"></i>
+        </button>
+        <button
+          @click.prevent="editor.chain().focus().toggleUnderline().run()"
+          :class="{ 'is-active': editor.isActive('underline') }"
+          title="Underline"
+          type="button"
+        >
+          <i class="ri-underline"></i>
+        </button>
+        <button
+          @click.prevent="editor.chain().focus().toggleStrike().run()"
+          :class="{ 'is-active': editor.isActive('strike') }"
+          title="Strikethrough"
+          type="button"
+        >
+          <i class="ri-strikethrough"></i>
+        </button>
+
+        <div class="w-px h-6 bg-gray-300 mx-1"></div>
+
+        <button
+          @click.prevent="editor.chain().focus().setTextAlign('left').run()"
+          :class="{ 'is-active': editor.isActive({ textAlign: 'left' }) }"
+          title="Align Left"
+          type="button"
+        >
+          <i class="ri-align-left"></i>
+        </button>
+        <button
+          @click.prevent="editor.chain().focus().setTextAlign('center').run()"
+          :class="{ 'is-active': editor.isActive({ textAlign: 'center' }) }"
+          title="Align Center"
+          type="button"
+        >
+          <i class="ri-align-center"></i>
+        </button>
+        <button
+          @click.prevent="editor.chain().focus().setTextAlign('right').run()"
+          :class="{ 'is-active': editor.isActive({ textAlign: 'right' }) }"
+          title="Align Right"
+          type="button"
+        >
+          <i class="ri-align-right"></i>
+        </button>
+
+        <div class="w-px h-6 bg-gray-300 mx-1"></div>
+
+        <button
+          @click.prevent="editor.chain().focus().toggleBulletList().run()"
+          :class="{ 'is-active': editor.isActive('bulletList') }"
+          title="Bullet List"
+          type="button"
+        >
+          <i class="ri-list-unordered"></i>
+        </button>
+        <button
+          @click.prevent="editor.chain().focus().toggleOrderedList().run()"
+          :class="{ 'is-active': editor.isActive('orderedList') }"
+          title="Ordered List"
+          type="button"
+        >
+          <i class="ri-list-ordered"></i>
+        </button>
+
+        <div class="w-px h-6 bg-gray-300 mx-1"></div>
+
+        <button
+          @click.prevent="triggerImageUpload"
+          title="Insert Image"
+          type="button"
+        >
+          <i class="ri-image-add-line"></i>
+        </button>
+        <input
+          ref="fileInput"
+          type="file"
+          accept="image/*"
+          class="hidden"
+          @change="handleImageUpload"
+        />
+        
+        <button
+          @click.prevent="setLink"
+          :class="{ 'is-active': editor.isActive('link') }"
+          title="Link"
+           type="button"
+        >
+          <i class="ri-link"></i>
+        </button>
+      </div>
+
+      <!-- Editor Content -->
+      <editor-content :editor="editor" class="editor-content p-4 min-h-[160px]" />
+    </div>
+  </el-form-item>
 </template>
 
 <script setup lang="ts">
 import { useField } from 'vee-validate';
-import ImageUploader from 'quill-image-uploader';
-const contentImagesUrls = ref([]);
+import { useEditor, EditorContent } from '@tiptap/vue-3';
+import StarterKit from '@tiptap/starter-kit';
+import { Image } from '@tiptap/extension-image';
+import { TextAlign } from '@tiptap/extension-text-align';
+import { Underline } from '@tiptap/extension-underline';
+import { Link } from '@tiptap/extension-link';
+import { Placeholder } from '@tiptap/extension-placeholder';
+
 const props = defineProps({
   type: {
     type: String,
@@ -26,7 +147,6 @@ const props = defineProps({
     default: '',
     required: false,
   },
-
   label: {
     type: String,
     required: true,
@@ -46,88 +166,178 @@ const props = defineProps({
     required: false,
   },
   model: {
-    type: String,
+    type: String, // Used for upload path
   },
 });
-function uploadImagEditor() {
-  return {
-    name: 'imageUploader',
-    module: ImageUploader,
-    options: {
-      upload: async (filename) => {
-        return new Promise(async (resolve, reject) => {
-          try {
-            const { success, data } = await uploadFile(props.model, filename);
-            contentImagesUrls.value.push(data);
-            resolve(useRuntimeConfig().public.BUCKET_URL + data);
-          } catch (error) {
-            reject('Upload failed');
-            console.error('Error:', error);
-          }
-        });
-      },
-    },
-  };
-}
 
 const {
   value: inputValue,
   errorMessage,
   handleBlur,
   handleChange,
-  meta,
 } = useField(props.name, undefined, {
   initialValue: props.value,
 });
 
+const fileInput = ref<HTMLInputElement | null>(null);
+
+const editor = useEditor({
+  content: props.value || '',
+  editable: !props.disabled,
+  extensions: [
+    StarterKit,
+    Image,
+    Underline,
+    TextAlign.configure({
+      types: ['heading', 'paragraph'],
+    }),
+    Link.configure({
+      openOnClick: false,
+    }),
+    Placeholder.configure({
+      placeholder: props.placeholder || `Enter ${props.label}`,
+    }),
+  ],
+  editorProps: {
+    attributes: {
+      class: 'prose prose-sm sm:prose lg:prose-lg xl:prose-2xl mx-auto focus:outline-none max-w-none',
+    },
+  },
+  onUpdate: ({ editor }) => {
+    const content = editor.getHTML();
+     // If content is just empty paragraph, treat as empty string
+    inputValue.value = content === '<p></p>' ? '' : content;
+  },
+  onBlur:({event}) => {
+       handleBlur(event)
+  }
+});
+
+// Watch for external value changes
 watch(
   () => props.value,
-  () => {
-    if (props.value) {
-      inputValue.value = props.value; // set value from parent
+  (newValue) => {
+    const isSame = editor.value?.getHTML() === newValue;
+    if (!isSame && editor.value) {
+      editor.value.commands.setContent(newValue || '', { emitUpdate: false });
     }
   }
 );
 
-watch(inputValue, () => {
-  {
-    if (inputValue.value === '<p><br></p>') {
-      inputValue.value = '';
-    }
+watch(
+  () => props.disabled,
+  (val) => {
+    editor.value?.setEditable(!val);
   }
-});
+);
+
+
+// Image Upload Logic
+const triggerImageUpload = () => {
+  fileInput.value?.click();
+};
+
+const handleImageUpload = async (event: Event) => {
+  const target = event.target as HTMLInputElement;
+  const file = target.files?.[0];
+  
+  if (file && props.model) {
+    try {
+      const filePath = await uploadFile({ file });
+      const url = useRuntimeConfig().public.BUCKET_URL + filePath;
+      
+      if (editor.value) {
+        editor.value.chain().focus().setImage({ src: url }).run();
+      }
+    } catch (error) {
+      console.error('Upload failed:', error);
+      // You might want to show a toast/notification here
+    }
+  } else if (file) {
+      // Fallback if no model prop is provided (e.g. createObjectURL)
+     const url = URL.createObjectURL(file)
+      if (editor.value) {
+        editor.value.chain().focus().setImage({ src: url }).run();
+      }
+  }
+  
+  // Reset input
+  target.value = '';
+};
+
+const setLink = () => {
+  const previousUrl = editor.value?.getAttributes('link').href;
+  const url = window.prompt('URL', previousUrl);
+
+  // cancelled
+  if (url === null) {
+    return;
+  }
+
+  // empty
+  if (url === '') {
+    editor.value?.chain().focus().extendMarkRange('link').unsetLink().run();
+    return;
+  }
+
+  // update
+  editor.value?.chain().focus().extendMarkRange('link').setLink({ href: url }).run();
+};
 </script>
 
-<style lang="scss">
-.ql-editor {
-  min-height: 160px;
-  //   border: 1px solid #d1d5db;
-  //   border-top: none;
-}
-.ql-container {
-  border-radius: 0 0 $raduis-base $raduis-base !important;
-}
-.ql-toolbar {
-  border-radius: $raduis-base $raduis-base 0 0 !important;
-  width: 100%;
-}
-
-.is-error {
-  .ql-container,
-  .ql-toolbar {
-    border-color: $error;
+<style lang="scss" scoped>
+.editor-wrapper {
+  background-color: white;
+  transition: border-color 0.2s;
+  
+  &.is-error {
+    border-color: var(--el-color-danger);
+  }
+  
+  &.is-disabled {
+    background-color: var(--el-disabled-bg-color);
+    cursor: not-allowed;
+    opacity: 0.7;
   }
 }
 
-.ql-active,
-.ql-selected {
-  background-color: $primary-light !important ;
-  color: $primary !important;
+.toolbar button {
+  padding: 4px;
+  border-radius: 4px;
+  color: #606266;
+  
+  &:hover {
+    background-color: #f2f3f5;
+    color: var(--el-color-primary);
+  }
+  
+  &.is-active {
+    background-color: #ecf5ff;
+    color: var(--el-color-primary);
+  }
 }
-.ql-fill {
-  fill: $primary !important;
-}
-.ql-stroke {
-  stroke: $primary !important;
+
+:deep(.ProseMirror) {
+  min-height: 160px;
+  outline: none;
+  
+  p.is-editor-empty:first-child::before {
+    color: #a8abb2;
+    content: attr(data-placeholder);
+    float: left;
+    height: 0;
+    pointer-events: none;
+  }
+  
+  img {
+      max-width: 100%;
+      height: auto;
+      border-radius: 4px;
+      margin: 10px 0;
+      
+      &.ProseMirror-selectednode {
+        outline: 2px solid var(--el-color-primary);
+      }
+  }
 }
 </style>

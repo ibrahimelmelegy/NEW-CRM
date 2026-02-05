@@ -1,40 +1,66 @@
 <template lang="pug">
-el-form.mb-24( autocomplete="off"   @submit.prevent='onSubmit'   ref="myForm" label-position="top"  :validationSchema="formSchema" :key="project" )
+el-form( autocomplete="off"   @submit.prevent='onSubmit'   ref="myForm" label-position="top"  :validationSchema="formSchema" :key="project" )
   slot
-  .glass-card.m-auto.p-10(class="w-[90%] ")
-    .grid.grid-cols-2.gap-3
-      InputText.mt-4(label="Project Name"  placeholder="Enter Project Name" name="name" :value="project?.name" )
-      InputText.mt-4(label=" Project Type" placeholder="Enter Project Type" name="type" :value="project?.type"  )
-      InputSelect.mt-4(label=" Category" name="category" :options="projectCategories" :value="project?.category" @change="checkIfEtimadProject" )
-      InputSelect.mt-4(label=" Client" name="client" :options="mappedClients" :value="mappedClients?.find((client: any) => client.value === project?.clientId)?.value" )
-      InputDate(label=" Start Date"  placeholder="Enter Start Date" :value="project?.startDate" name="startDate" )
-      InputDate(label="End Date"  placeholder="Enter End Date" :value="project?.endDate" name="endDate" )
-      InputText.mt-4(label=" Project Duration"  placeholder="Enter Project Duration" name="duration" :value="project?.duration" )
-      InputSelect.mt-4(label=" Assign User" isMultiple name="assignUser" :options="users" :value="users?.filter((user: any) => project?.assignedUsers?.map((user: any) => user.id)?.includes(user.value))?.map((user: any) => user.value)"  )
-    InputSelect.mt-4(label=" Status " name="status" :options="projectStatuses" :value="project?.status"  @change="checkIfCancelled" )
-    InputText.mt-4(label="Cancel Reason" type="textarea" v-if="isCancelled" placeholder="Enter Cancel Reason"  name="cancelReason" :value="project?.cancelledReason" )
-    InputText.mt-4(label="Project Description" type="textarea" placeholder="Enter Project Description"  name="description" :value="project?.description" )
-    //- .title.font-bold.text-xl.capitalize.my-8 Project Folders
-    //- OperationsProjectsFolders
+  .glass-card.m-auto.p-8(class="!w-full max-w-[1600px]")
+    .flex.items-center.gap-4.mb-8
+         Icon(name="ph:pencil-simple-slash-bold" class="text-purple-400 text-2xl")
+         .text-xl.font-bold.text-gradient Project Information
+
+    //- SECTION 1: Basic Classification
+    .bg-white_5.rounded-2xl.p-6.mb-6
+        .text-xs.uppercase.tracking-widest.text-muted.mb-4.font-bold Classification
+        .grid.grid-cols-1.md.grid-cols-3.gap-6
+             InputText(label="Project Name" placeholder="e.g. Riyadh Metro Expansion" name="name" :value="project?.name" class="premium-input")
+             InputSelect(label="Category" name="category" :options="projectCategories" :value="project?.category" @change="checkIfEtimadProject" class="premium-select")
+             InputText(label="Project Type" placeholder="e.g. Construction" name="type" :value="project?.type" class="premium-input")
+
+    //- SECTION 2: Client & Schedule
+    .bg-white_5.rounded-2xl.p-6.mb-6
+        .text-xs.uppercase.tracking-widest.text-muted.mb-4.font-bold Client & Schedule
+        .grid.grid-cols-1.md.grid-cols-3.gap-6
+             InputSelect(label="Client" name="client" :options="mappedClients" :value="mappedClients?.find((client: any) => client.value === project?.clientId)?.value" class="premium-select")
+             InputDate(label="Start Date" placeholder="Select Date" :value="project?.startDate" name="startDate" class="premium-datepicker")
+             InputDate(label="End Date" placeholder="Select Date" :value="project?.endDate" name="endDate" class="premium-datepicker")
+             
+             InputText(label="Duration" placeholder="Days" name="duration" :value="project?.duration" class="premium-input")
+             InputSelect(label="Assign Users" isMultiple name="assignUser" :options="users" :value="users?.filter((user: any) => project?.assignedUsers?.map((user: any) => user.id)?.includes(user.value))?.map((user: any) => user.value)" class="premium-select")
+             InputSelect(label="Status" name="status" :options="projectStatuses" :value="project?.status" @change="checkIfCancelled" class="premium-select")
+
+    //- SECTION 3: Additional Details
+    .bg-white_5.rounded-2xl.p-6.mb-6
+        .text-xs.uppercase.tracking-widest.text-muted.mb-4.font-bold Details
+        .grid.grid-cols-1.gap-6
+             InputText(label="Description" type="textarea" placeholder="Detailed project scope..." name="description" :value="project?.description" class="premium-input")
+             InputText(v-if="isCancelled" label="Cancellation Reason" type="textarea" placeholder="Why was this cancelled?" name="cancelReason" :value="project?.cancelledReason" class="premium-input")
+
+    //- SECTION 4: Etimad (Conditional)
     template(v-if="isEtimadProject")
-      .title.font-bold.text-xl.capitalize.my-8 Etimad Projects
-      .grid.grid-cols-2.gap-3
-        InputText.mt-4(label="Abbreviation"  placeholder="Enter Abbreviation" name="abbreviation" :value="project?.etimadProject?.abbreviation" )
-        InputText.mt-4(label="Organization Name"  placeholder="Enter Organization Name" name="organizationName" :value="project?.etimadProject?.organizationName" )
-        InputText.mt-4(label="RFP Name"  placeholder="Enter RFP Name" name="rfpName" :value="project?.etimadProject?.rfpName" )
-        InputSelect.mt-4(label=" Contract Type"  name="contractType" :options="contractTypes" :value="project?.etimadProject?.contractType" )
-        InputText.mt-4(label="Tender Price"  placeholder="Enter Tender Price" name="tenderPrice" :value="project?.etimadProject?.tenderPrice" )
-        InputText.mt-4(label="Business Line"  placeholder="Enter Business Line" name="businessLine" :value="project?.etimadProject?.businessLine" )
-        InputText.mt-4(label="Estimated Budget"  placeholder="Enter Estimated Budget" name="estimatedBudget" :value="project?.etimadProject?.estimatedBudget" )
-        InputText.mt-4(label="Company Margin"  placeholder="Enter Company Margin %" name="companyMargin" :value="project?.etimadProject?.companyMargin" )
-        InputDate.mt-4(label=" Submission Date"  placeholder="Enter Submission Date" disabledDate="past" :value="project?.etimadProject?.submissionDate" name="submissionDate" )
-        InputText.mt-4(label="Remaining Days" type="number" disabled name="remainingDays" :value="remainingDays" :key="remainingDays" )
-        InputSelect.mt-4(label=" Proposal Status" name="proposalStatus" :options="proposalStatuses" :value="project?.etimadProject?.proposalStatus" )
-        InputSelect.mt-4(label=" Application Status" name="applicationStatus" :options="applicationStatuses" :value="project?.etimadProject?.applicationStatus" )
-  .endBar
-      .flex.justify-between.w-full
-        el-button(   size='large' plain type="primary" class=" !rounded-2xl" @click="emit('cancel')") Cancel
-        el-button(   size='large' type="primary" native-type="submit" :loading="loading"  :disabled="loading" class=" !px-5 !rounded-2xl") Next
+      .bg-purple-900_10.rounded-2xl.p-6.mb-6.border.border-purple-500_20
+          .flex.items-center.gap-2.mb-4
+              Icon(name="simple-icons:govdotuk" class="text-purple-400")
+              .text-xs.uppercase.tracking-widest.text-purple-300.font-bold Etimad Details
+          
+          .grid.grid-cols-1.md.grid-cols-3.gap-6
+            InputText(label="Abbreviation" placeholder="Short Code" name="abbreviation" :value="project?.etimadProject?.abbreviation" class="premium-input")
+            InputText(label="Organization" placeholder="Org Name" name="organizationName" :value="project?.etimadProject?.organizationName" class="premium-input")
+            InputText(label="RFP Name" placeholder="RFP Official Title" name="rfpName" :value="project?.etimadProject?.rfpName" class="premium-input")
+            
+            InputSelect(label="Contract Type" name="contractType" :options="contractTypes" :value="project?.etimadProject?.contractType" class="premium-select")
+            InputText(label="Tender Price" placeholder="SAR" name="tenderPrice" :value="project?.etimadProject?.tenderPrice" class="premium-input")
+            InputText(label="Business Line" placeholder="Business Line" name="businessLine" :value="project?.etimadProject?.businessLine" class="premium-input")
+            
+            InputText(label="Est. Budget" placeholder="SAR" name="estimatedBudget" :value="project?.etimadProject?.estimatedBudget" class="premium-input")
+            InputText(label="Margin %" placeholder="%" name="companyMargin" :value="project?.etimadProject?.companyMargin" class="premium-input")
+            InputDate(label="Submission Date" placeholder="Date" disabledDate="past" :value="project?.etimadProject?.submissionDate" name="submissionDate" class="premium-datepicker")
+            
+            InputText(label="Remaining Days" type="number" disabled name="remainingDays" :value="remainingDays" :key="remainingDays" class="premium-input !opacity-70")
+            InputSelect(label="Proposal Status" name="proposalStatus" :options="proposalStatuses" :value="project?.etimadProject?.proposalStatus" class="premium-select")
+            InputSelect(label="App Status" name="applicationStatus" :options="applicationStatuses" :value="project?.etimadProject?.applicationStatus" class="premium-select")
+
+  .endBar.sticky.bottom-0.z-10.backdrop-blur-md.bg-opacity-80.p-6.border-t.border-white_10
+      .flex.justify-between.w-full.mx-auto(class="max-w-[1600px]")
+        el-button(size='large' plain class="premium-btn-outline px-8 !rounded-xl" @click="emit('cancel')") Cancel
+        el-button(size='large' type="primary" native-type="submit" :loading="loading" :disabled="loading" class="premium-btn px-8 !rounded-xl") Next: Vehicles
 </template>
 
 <script lang="ts" setup>
@@ -275,3 +301,31 @@ el-form.mb-24( autocomplete="off"   @submit.prevent='onSubmit'   ref="myForm" la
     }
   );
 </script>
+
+<style scoped lang="scss">
+.text-gradient {
+  background: var(--gradient-primary);
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+.bg-white_5 { background: rgba(255, 255, 255, 0.05); }
+.border-white_10 { border-color: rgba(255, 255, 255, 0.1); }
+.bg-purple-900_10 { background: rgba(88, 28, 135, 0.1); }
+.border-purple-500_20 { border-color: rgba(168, 85, 247, 0.2); }
+
+// Consistent input styling if not fully encapsulated in InputText
+.premium-input, .premium-select, .premium-datepicker {
+  :deep(input), :deep(.el-input__wrapper) {
+      background: rgba(255, 255, 255, 0.03) !important;
+      border: 1px solid rgba(255, 255, 255, 0.1) !important;
+      border-radius: 12px !important;
+      box-shadow: none !important;
+      color: white;
+      &.is-focus, &:focus {
+        border-color: var(--purple-500) !important;
+      }
+  }
+}
+</style>

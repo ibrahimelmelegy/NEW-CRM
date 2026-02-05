@@ -1,6 +1,5 @@
 import { defineStore } from 'pinia';
-// @ts-ignore
-import ImageUploader from 'quill-image-uploader';
+// ImageUploader import moved to action to prevent SSR crash
 import { ElNotification } from 'element-plus';
 
 export const useMain = defineStore('Main', {
@@ -71,9 +70,30 @@ export const useMain = defineStore('Main', {
 
     uploadImagEditor() {
       const runtimeConfig = useRuntimeConfig();
+      // Ensure we are on client-side
+      if (import.meta.server) return null;
+
+      // Dynamic import to prevent SSR crash
+      // We return the structure expected by Quill, but the module is loaded lazily or we assume it's available via plugin
+      // However, for this store, we can try to return the config object directly if the module is handled by the component.
+      // But based on usage, it seems this is passed to modules: { ... }
+
+      // FIX: Return a safe object that loads the module only when needed or just assume the component handles it.
+      // Better yet, let's just dynamic import it here if possible, but synchronous return is expected usually?
+      // If synchronous return is needed, we must use a client-only guard at the component level.
+      // But here, let's try to make the module import safe.
+
+      let ImageUploaderModule;
+      try {
+        ImageUploaderModule = require('quill-image-uploader');
+      } catch (e) {
+        console.warn("Quill Image Uploader not loaded");
+        return {};
+      }
+
       return {
         name: 'imageUploader',
-        module: ImageUploader,
+        module: ImageUploaderModule.default || ImageUploaderModule,
         options: {
           upload: async (file: File) => {
             return new Promise(async (resolve, reject) => {

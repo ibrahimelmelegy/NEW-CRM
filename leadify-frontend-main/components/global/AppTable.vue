@@ -18,7 +18,7 @@
             span.mr-2 Filters
             span.font-bold.rounded-full.w-6.h-6.bg-accent-purple.text-white.flex.items-center.justify-center(v-if="numberOfFilters") {{ numberOfFilters }}
     div(:class="{ 'mt-4': !withoutSearch || !withoutFilters }")
-        el-table(:data='finalData || []' stripe v-loading="isLoading || loading" ref="tableRef" style='width:100%' :row-style="{cursor:'pointer'}" @current-change="(val)=> $emit('handleRowClick' , val)"   @sort-change="handleSortChange" @filter-change="handleFilterChange"  :default-sort="sort" @selection-change="handleSelectionChange")
+        el-table(:data='finalData || []' v-loading="isLoading || loading" ref="tableRef" style='width:100%' :row-style="{cursor:'pointer'}" @current-change="(val)=> $emit('handleRowClick' , val)"   @sort-change="handleSortChange" @filter-change="handleFilterChange"  :default-sort="sort" @selection-change="handleSelectionChange")
             el-table-column(type="index", width="50" :index="calculateIndex")
             el-table-column( class-name="wrap-text" :min-width="column?.width" :show-overflow-tooltip="true"   v-for="column in columns"  :filtered-value="filters[column?.prop]"  :prop="column.prop" :label="column.label"  :column-key="column.prop" :sortable="column?.sortable ? 'custom' : undefined" )
                 template(#default="scope")
@@ -31,6 +31,14 @@
                              TableLabel(:valueObject = "scope.row" :value="scope.row[column?.prop]" :type="column?.type"  :filters="column?.filters" )
                         div( v-else-if="column?.component==='Label'" )
                              TableLabel(:value="scope.row[column?.prop]" :type="column?.type"  :filters="column?.filters" )
+                        div( v-else-if="column?.component==='Tags'" )
+                             .flex.flex-wrap.gap-1.items-center
+                                el-tag(v-for="(tag, i) in (scope.row[column?.prop] || []).slice(0, 2)" :key="i" size="small" effect="dark" round class="!border-purple-500/30 !text-white !bg-purple-500/20") {{ tag }}
+                                el-dropdown(v-if="(scope.row[column?.prop] || []).length > 2" trigger="click" size="small")
+                                    el-tag.cursor-pointer(size="small" effect="dark" round class="!border-purple-500/30 !text-white !bg-purple-500/20 hover:!bg-purple-500/40 transition-colors") +{{ (scope.row[column?.prop] || []).length - 2 }}
+                                    template(#dropdown)
+                                        el-dropdown-menu.glass-dropdown
+                                            el-dropdown-item(v-for="(tag, i) in (scope.row[column?.prop] || []).slice(2)" :key="i") {{ tag }}
 
             el-table-column(label="Action" min-width="150" fixed="right" v-if="!withoutAction")
               template(#default="scope")

@@ -2,7 +2,7 @@ import { user } from './useUser';
 
 // ✅ FIX: Proper TypeScript interface for API responses
 export interface ApiResponse<T = any> {
-  data: T | null;
+  body: T | null; // Changed data to body to match backend responseWrapper
   status: boolean;
   message: string;
   error?: any;
@@ -71,7 +71,7 @@ export const useApiFetch = async <T = any>(
     }
 
     return {
-      data: null,
+      body: null, // Changed from data to body
       status: false,
       message,
       error, // Returning the raw error object helps debugging
