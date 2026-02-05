@@ -95,7 +95,8 @@ export const getUserProfile = async (req: Request, res: Response, next: NextFunc
 
     // Fetch the user data
     const user = await User.findByPk(decoded.id, {
-      attributes: { exclude: ['password'] } // Exclude password for security
+      attributes: { exclude: ['password'] },
+      include: [{ model: require('../role/roleModel').default }] // Dynamically load Role to avoid circular deps
     });
 
     if (!user) {

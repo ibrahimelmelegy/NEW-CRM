@@ -59,7 +59,7 @@
   
   <script lang="ts" setup>
   import { ref } from 'vue';
-  import { getYear } from "~/composables/format";
+  import { getYear } from "#imports";
   
   const contentToPrint = ref(null);
   

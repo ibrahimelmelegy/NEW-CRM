@@ -12,10 +12,10 @@
         @click="openDialog()", 
         type="primary", 
         :icon="Plus", 
-        class="premium-btn !rounded-2xl px-8 glow-purple"
+        class="premium-btn !rounded-2xl px-8 glow-purple glass-button-press"
       ) {{ btnText }}
   
-  .glass-card.p-4(class="!rounded-3xl shadow-glow")
+  .glass-card.p-4.interactive(class="!rounded-3xl shadow-glow")
     AppTable(
       v-slot="{data}", 
       :columns="table.columns", 
@@ -93,6 +93,10 @@
       border-bottom: 1px solid rgba(168, 85, 247, 0.05) !important;
       padding: 16px 0;
     }
+
+    tr.el-table__row {
+      @include glass-table-row-hover;
+    }
   }
 }
 
@@ -111,6 +115,7 @@
     border-radius: 12px;
 }
 </style>
+
 
 <script setup lang="ts">
 import { Plus } from "@element-plus/icons-vue";

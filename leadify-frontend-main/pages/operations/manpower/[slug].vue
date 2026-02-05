@@ -235,7 +235,7 @@ el-tabs.demo-tabs(v-model="activeName", @tab-click="handleClick")
     }
   };
 
-  const manpower = await getManpower(route.params.slug);
+  const manpower = await getManpower(route.params.slug as string);
 </script>
 <style scoped lang="scss">
   .activity {

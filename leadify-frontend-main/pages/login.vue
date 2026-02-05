@@ -17,10 +17,10 @@
         </template>
         <div class="space-y-4">
           <h2 class="text-4xl lg:text-5xl font-bold leading-tight theme-text-primary">
-            Elevate Your <span class="text-transparent bg-clip-text bg-gradient-to-r from-[#7849ff] to-[#ff7b00]">Experience</span>
+            {{ $t('auth.elevateExperience') }} <span class="text-transparent bg-clip-text bg-gradient-to-r from-[#7849ff] to-[#ff7b00]">Experience</span>
           </h2>
           <p class="theme-text-secondary text-lg max-w-md leading-relaxed">
-            Harness the power of intelligence with our professional CRM solutions.
+            {{ $t('auth.harnessIntelligence') }}
           </p>
         </div>
         
@@ -28,11 +28,11 @@
         <div class="grid grid-cols-2 gap-4 w-full max-w-sm">
           <div class="flex items-center gap-3 p-4 rounded-2xl glass-effect hover:bg-white/10 transition-all duration-300">
             <div class="p-2 rounded-xl bg-[#7849ff]/20"><Icon name="ph:lightning-bold" class="text-[#7849ff] text-xl" /></div>
-            <span class="text-sm font-medium text-[var(--text-primary)] opacity-90">Fast Workflow</span>
+            <span class="text-sm font-medium text-[var(--text-primary)] opacity-90">{{ $t('auth.fastWorkflow') }}</span>
           </div>
           <div class="flex items-center gap-3 p-4 rounded-2xl glass-effect hover:bg-white/10 transition-all duration-300">
             <div class="p-2 rounded-xl bg-[#ff7b00]/20"><Icon name="ph:chart-line-up-bold" class="text-[#ff7b00] text-xl" /></div>
-            <span class="text-sm font-medium text-[var(--text-primary)] opacity-90">Smart Analytics</span>
+            <span class="text-sm font-medium text-[var(--text-primary)] opacity-90">{{ $t('auth.smartAnalytics') }}</span>
           </div>
         </div>
       </div>
@@ -45,8 +45,8 @@
           
           <div class="relative z-10">
             <div class="mb-10 text-center md:text-left">
-              <h1 class="text-3xl font-bold theme-text-primary mb-2 tracking-tight">Welcome Back</h1>
-              <p class="theme-text-muted text-sm">Enter your credentials to access your dashboard</p>
+              <h1 class="text-3xl font-bold theme-text-primary mb-2 tracking-tight">{{ $t('auth.welcomeBack') }}</h1>
+              <p class="theme-text-muted text-sm">{{ $t('auth.enterCredentials') }}</p>
             </div>
 
             <el-form 
@@ -64,7 +64,7 @@
                   <InputText 
                     placeholder="name@company.com" 
                     name="email" 
-                    label="Email Address"
+                    :label="$t('auth.email')"
                     class="modern-input"
                     aria-label="Email address"
                     aria-required="true"
@@ -74,14 +74,14 @@
                 <div class="form-group relative flex flex-col gap-2">
                   <div class="flex justify-between items-center px-1">
                     <nuxt-link to="/forget-password" class="text-xs text-[#7849ff] hover:text-[#906dff] transition-colors" aria-label="Forgot your password? Click here to reset">
-                      Forgot Password?
+                      {{ $t('auth.forgotPassword') }}
                     </nuxt-link>
                   </div>
                   <InputText 
                     placeholder="••••••••" 
                     name="password" 
                     type="password" 
-                    label="Password"
+                    :label="$t('auth.password')"
                     class="modern-input"
                     aria-label="Password"
                     aria-required="true"
@@ -90,7 +90,7 @@
               </div>
 
               <div class="flex items-center mt-6">
-                <el-checkbox label="Keep me logged in" class="custom-checkbox" aria-label="Keep me logged in checkbox" />
+                <el-checkbox :label="$t('auth.rememberMe')" class="custom-checkbox" aria-label="Keep me logged in checkbox" />
               </div>
 
               <el-form-item class="mt-8 mb-0">
@@ -102,7 +102,7 @@
                   aria-label="Sign in to your account"
                   :aria-busy="loading"
                 >
-                  Sign In
+                  {{ $t('auth.login') }}
                 </el-button>
               </el-form-item>
             </el-form>
@@ -110,7 +110,7 @@
         </div>
         
         <p class="text-center mt-8 theme-text-muted text-sm">
-          Don't have an account? <span class="theme-text-primary hover:text-[#7849ff] font-medium cursor-pointer transition-colors">Contact Administrator</span>
+          {{ $t('auth.noAccount') }} <span class="theme-text-primary hover:text-[#7849ff] font-medium cursor-pointer transition-colors">{{ $t('auth.contactAdmin') }}</span>
         </p>
       </div>
 
@@ -177,23 +177,16 @@
       
       // ✅ FIX: Using runtimeConfig instead of hardcoded URL
       // ✅ FIX: Using runtimeConfig for clean architecture
-      const config = useRuntimeConfig();
-      const response: any = await $fetch(`${config.public.API_BASE_URL}auth/login`, {
-        method: 'POST',
-        body: {
-          email: values.email,
-          password: values.password,
-        }
+      const response = await useApiFetch('auth/login', 'POST', {
+        email: values.email,
+        password: values.password,
       });
 
-      console.log("Login Response:", response);
+      console.log("Login Response (Normalized):", response);
 
-      // Robust Token Extraction
-      const token = response?.token || response?.data?.token || response?.accessToken;
-
-      if (token) {
+      if (response.success && response.body?.token) {
         const accessToken = useCookie("access_token");
-        accessToken.value = token;
+        accessToken.value = response.body.token;
         
         ElNotification({
           title: "Success",
@@ -204,7 +197,7 @@
         // Force redirect
         window.location.href = "/";
       } else {
-        throw new Error("Token not found in response");
+        throw new Error(response.message || "Token not found in response");
       }
 
     } catch (error: any) {

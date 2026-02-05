@@ -25,15 +25,17 @@ export interface Leads {
 }
 
 export interface Opportunities {
+  id?: number;
   name?: string;
   stage?: string;
   estimatedValue?: number;
   expectedCloseDate?: string;
   priority?: string;
   interestedIn?: string;
-  nextSteps?: string;
+  nextSteps?: string | string[];
   reasonOfLose?: string;
-  users?: number;
+  users?: number | any[];
+  leadId?: number;
   [key: string]: any;
 }
 
@@ -114,7 +116,7 @@ export const reasonOptions = [
  * @returns {Promise<Opportunities[]>} A promise that resolves to an array of Opportunities objects
  * @throws {Error} If the API call is unsuccessful, an error is thrown with a message
  */
-export async function getOpportunities(all?:false): Promise<UseOpportunitiesResult> {
+export async function getOpportunities(all?: false): Promise<UseOpportunitiesResult> {
   try {
     // Make the API call
     const { body, success, message } = all ? await useApiFetch('opportunity?limit=1000') : await useApiFetch('opportunity');
@@ -160,7 +162,7 @@ export async function getOpportunity(id: string | string[]): Promise<Opportuniti
   }
 }
 
-export async function getOpportunityActivity(id: string | string[]): Promise<Lead> {
+export async function getOpportunityActivity(id: string | string[]): Promise<any> {
   try {
     let { body: lead, success } = await useApiFetch(`activity/opportunity/${id}`);
     return lead;

@@ -23,6 +23,11 @@ jest.mock('../../src/notification/notificationService');
 jest.mock('../../src/activity-logs/activityService');
 jest.mock('../../src/opportunity/model/oppotyunity_UsersModel');
 jest.mock('../../src/utils/emailHelper');
+jest.mock('../../src/server', () => ({
+    io: {
+        emit: jest.fn()
+    }
+}));
 
 // Mock Transaction
 const mockTransaction = {
@@ -122,7 +127,7 @@ describe('OpportunityService', () => {
             // Act & Assert
             await expect(opportunityService.createOpportunity(input, mockAdminUser))
                 .rejects
-                .toThrow(new BaseError(ERRORS.CLIENT_ALREADY_FOUND)); // Note: Code throws CLIENT_ALREADY_FOUND when not found (based on source read) logic seems inverted in source or error naming is confusing, but testing strict source behavior.
+                .toThrow(new BaseError(ERRORS.CLIENT_NOT_FOUND));
 
             expect(mockTransaction.rollback).toHaveBeenCalled();
         });

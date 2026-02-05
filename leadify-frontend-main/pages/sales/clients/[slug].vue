@@ -166,16 +166,16 @@ el-tabs.demo-tabs(v-model="activeName", @tab-click="handleClick")
   };
 
   // Call API to Get the client
-  const client = await getClient(route.params.slug);
+  const client = await getClient(route.params.slug as string);
 
   const activity = ref();
-  const respons = await getClientActivity(route.params.slug + `?limit=10` + "&&page=1");
+  const respons = await getClientActivity((route.params.slug as string) + `?limit=10` + "&&page=1");
   activity.value = respons;
 
   const getActivityPage = async (page: number) => {
     try {
       loading.value = true;
-      const responsPage = await getClientActivity(route.params.slug + `?limit=10` + `&&page=${page}`);
+      const responsPage = await getClientActivity((route.params.slug as string) + `?limit=10` + `&&page=${page}`);
       activity.value = { docs: [...activity.value.docs, ...responsPage.docs], pagination: responsPage.pagination };
     } finally {
       loading.value = false;

@@ -7,6 +7,7 @@
         "edit": "تعديل",
         "add": "إضافة",
         "search": "بحث",
+        "searchAltK": "البحث (Alt+K)",
         "filter": "تصفية",
         "actions": "الإجراءات",
         "yes": "نعم",
@@ -23,7 +24,12 @@
         "success": "نجاح",
         "error": "خطأ",
         "warning": "تحذير",
-        "info": "معلومات"
+        "info": "معلومات",
+        "logout": "تسجيل الخروج",
+        "darkMode": "الوضع الليلي",
+        "lightMode": "الوضع النهاري",
+        "english": "الإنجليزية",
+        "arabic": "العربية"
     },
     "auth": {
         "login": "تسجيل الدخول",
@@ -43,7 +49,11 @@
         "sessionExpired": "انتهت صلاحية جلستك. الرجاء تسجيل الدخول مرة أخرى.",
         "unauthorized": "غير مصرح لك بالوصول إلى هذه الصفحة",
         "noAccount": "ليس لديك حساب؟",
-        "contactAdmin": "تواصل مع المسؤول"
+        "contactAdmin": "تواصل مع المسؤول",
+        "elevateExperience": "ارتقِ بتجربتك",
+        "harnessIntelligence": "استخدم قوة الذكاء مع حلول إدارة علاقات العملاء (CRM) المتطورة.",
+        "fastWorkflow": "سير عمل سريع",
+        "smartAnalytics": "تحليلات ذكية"
     },
     "validation": {
         "required": "حقل {field} مطلوب",
@@ -65,15 +75,41 @@
     },
     "navigation": {
         "dashboard": "لوحة التحكم",
+        "board": "اللوحة الرئيسية",
+        "sales": "المبيعات",
         "leads": "العملاء المحتملين",
         "opportunities": "الفرص",
+        "opportunity": "الفرص البيعية",
         "deals": "الصفقات",
         "proposals": "العروض",
         "clients": "العملاء",
+        "operations": "العمليات",
+        "projects": "المشاريع",
+        "dailyTasks": "المهام اليومية",
+        "vehicle": "المركبات",
+        "manpower": "القوى العاملة",
+        "additionalMaterials": "المواد الإضافية",
+        "services": "الخدمات",
+        "assets": "الأصول",
+        "procurement": "المشتريات",
+        "vendors": "الموردين",
+        "distributors": "الموزعين",
+        "localSuppliers": "الموردين المحليين",
+        "showRooms": "صالات العرض",
+        "purchaseOrders": "أوامر الشراء",
+        "rfq": "طلبات تسعير",
+        "statistics": "الإحصائيات",
         "staff": "الموظفين",
         "roles": "الأدوار",
+        "rolesAccess": "صلاحيات الأدوار",
+        "addNewRole": "إضافة دور جديد",
+        "staffManagement": "إدارة الموظفين",
+        "addNewStaff": "إضافة موظف جديد",
+        "qaCenter": "مركز تحكم الجودة",
+        "permissionsHub": "مركز الصلاحيات",
         "settings": "الإعدادات",
         "reports": "التقارير",
+        "report": "التقارير",
         "notifications": "الإشعارات"
     },
     "forms": {
@@ -81,5 +117,12 @@
         "fileTypes": "JPG, JPEG, PNG, PDF, DOCX, EXCEL, PPTX, TXT, CSV",
         "maxFileSize": "الحد الأقصى لحجم الملف: {size} ميجابايت",
         "optional": "اختياري"
+    },
+    "dashboard": {
+        "leadsSales": "العملاء والمبيعات",
+        "projectsOperations": "المشاريع والعمليات",
+        "financialBusinessMetrics": "المؤشرات المالية والأعمال",
+        "performanceHr": "الأداء والموارد البشرية",
+        "procurement": "المشتريات وسلاسل الإمداد"
     }
 }

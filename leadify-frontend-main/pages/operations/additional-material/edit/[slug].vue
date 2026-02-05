@@ -24,7 +24,7 @@
   const loading = ref(false);
   const categoryRef = ref();
   const categoryItemRef = ref();
-  const material = await getAdditionalMaterial(route.params.slug);
+  const material = await getAdditionalMaterial(route.params.slug as string);
 
   const finalValues = ref<AdditionalMaterial>({
     name: "",
@@ -46,7 +46,7 @@
       await categoryRef.value.onSubmit();
       await categoryItemRef.value.onSubmitCategoryItems();
       if (!finalValues.value?.name || !finalValues.value?.items || !finalValues.value?.items?.length) return;
-      await updateAdditionalMaterial({ ...finalValues.value, materialId: +route.params.slug });
+      await updateAdditionalMaterial({ ...finalValues.value, materialId: +(route.params.slug as string) });
       loading.value = false;
     } catch (error) {
       console.log("Error saving forms:", error);

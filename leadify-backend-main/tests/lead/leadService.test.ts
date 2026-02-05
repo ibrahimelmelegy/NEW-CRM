@@ -21,6 +21,11 @@ jest.mock('../../src/lead/model/lead_UsersModel');
 jest.mock('../../src/notification/notificationService');
 jest.mock('../../src/activity-logs/activityService');
 jest.mock('../../src/utils/emailHelper');
+jest.mock('../../src/server', () => ({
+    io: {
+        emit: jest.fn()
+    }
+}));
 
 // Mock Sequelize Transaction
 const mockTransaction = {
@@ -61,6 +66,13 @@ describe('LeadService', () => {
         $set: jest.fn(),
         set: jest.fn(),
         save: (jest.fn() as jest.Mock<any>).mockResolvedValue(true),
+        toJSON: jest.fn(() => ({
+            id: 'lead-123',
+            name: 'Test Lead',
+            email: 'lead@test.com',
+            phone: '+123456789',
+            status: 'NEW',
+        }))
     };
 
     beforeEach(() => {

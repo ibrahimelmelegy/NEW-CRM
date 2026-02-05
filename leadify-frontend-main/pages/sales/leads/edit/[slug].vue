@@ -20,8 +20,16 @@ LeadsForm( :loading="loading" @submit="submitForm" :data="lead")
   const route = useRoute();
   const loading = ref(false);
 
-  // Call API to Get the lead
-  const lead = await getLead(route.params.slug);
+  const lead = ref<any>(null);
+
+  onMounted(async () => {
+    loading.value = true;
+    const rawSlug = route.params.slug;
+    const slug = (Array.isArray(rawSlug) ? rawSlug[0] : (rawSlug || "")) as string;
+    const leadData = await getLead(slug);
+    lead.value = leadData;
+    loading.value = false;
+  });
 
   // Call API to update the lead
   async function submitForm(values: LeadValues) {

@@ -61,6 +61,7 @@ export interface Invoice {
   id: string; // Add unique ID
   invoiceNumber: string;
   amount: number | null;
+  invoiceDate: Date | null;
   dueDate: Date | null;
   collectedDate: Date | null;
   collected: Boolean | null;
@@ -84,10 +85,10 @@ interface UseDealResult {
  * @returns {Promise<UseDealResult>} A promise that resolves to an object containing the deals and pagination
  * @throws {Error} If the API call is unsuccessful, an error is thrown with a message
  */
-export async function getDeals(all?:false): Promise<UseDealResult> {
+export async function getDeals(all?: false): Promise<UseDealResult> {
   try {
     // Make the API call
-    const { body, success, message } =  all ? await useApiFetch('deal?limit=1000') : await useApiFetch('deal');
+    const { body, success, message } = all ? await useApiFetch('deal?limit=1000') : await useApiFetch('deal');
 
     if (success) {
       // Return the docs (c) from the response

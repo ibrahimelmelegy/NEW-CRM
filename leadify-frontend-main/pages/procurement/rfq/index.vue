@@ -56,8 +56,8 @@ const getStatusType = (status: string) => {
 
 onMounted(async () => {
     try {
-        const res = await useApiFetch("rfq"); // Fetch from the new endpoint
-        rfqs.value = res?.data?.docs || [];
+        const res: any = await useApiFetch("rfq"); // Fetch from the new endpoint
+        rfqs.value = res?.body?.docs || [];
     } catch (e) {
         console.error("Failed to fetch RFQs", e);
     }

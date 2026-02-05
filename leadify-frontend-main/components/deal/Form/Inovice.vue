@@ -42,7 +42,7 @@ el-form(
 <script lang="ts" setup>
   import { useForm } from "vee-validate";
   import * as yup from "yup";
-  import { defineExpose } from 'vue';
+
   import { Delete } from "@element-plus/icons-vue";
   import { id } from "yup-locales";
 

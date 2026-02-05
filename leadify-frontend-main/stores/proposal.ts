@@ -14,24 +14,24 @@ export const useProposalStore = defineStore('proposal', {
       assignUser: '',
       companyLogo: null,
       comments: '',
-      fileAttachments: [],
+      fileAttachments: [] as any[],
     },
     proposalContent: {
       title: '',
       subtitle: '',
       description: '',
-      financeTable: [],
+      financeTable: [] as any[],
     },
     grandTotal: 0,
     margin: 0,
     discount: 0,
-    customColumns: [],
+    customColumns: [] as any[],
     status: 'Draft',
   }),
 
   actions: {
     // Add logic to handle table updates, margin, and discount calculations
-    addFinanceItem(item) {
+    addFinanceItem(item: any) {
       this.proposalContent.financeTable.push(item);
       this.calculateGrandTotal();
     },
@@ -43,11 +43,11 @@ export const useProposalStore = defineStore('proposal', {
       // Apply VAT, Margin, and Discount
       this.grandTotalWithAdjustments();
     },
-    addMargin(marginPercentage) {
+    addMargin(marginPercentage: any) {
       this.margin = marginPercentage;
       this.grandTotalWithAdjustments();
     },
-    addDiscount(discountAmount) {
+    addDiscount(discountAmount: any) {
       this.discount = discountAmount;
       this.grandTotalWithAdjustments();
     },
@@ -61,11 +61,11 @@ export const useProposalStore = defineStore('proposal', {
       }
       this.grandTotal = total;
     },
-    setProposalInfo(data) {
+    setProposalInfo(data: any) {
       console.log('>>>>>>>>>>>>>> useProposalStoreInfo', data);
       this.proposalInfo = { ...this.proposalInfo, ...data };
     },
-    setProposalContent(data) {
+    setProposalContent(data: any) {
       this.proposalContent = { ...this.proposalContent, ...data };
     },
     finalizeProposal() {

@@ -166,14 +166,14 @@ el-tabs.demo-tabs(v-model="activeName", @tab-click="handleClick")
   const activity = ref();
 
   // Call API to Get the deal
-  const deal = await getDeal(route.params.slug);
-  const respons = await getActivity(route.params.slug + `?limit=10` + "&&page=1");
+  const deal = await getDeal(route.params.slug as string);
+  const respons = await getActivity((route.params.slug as string) + `?limit=10` + "&&page=1");
   activity.value = respons;
 
   const getActivityPage = async (page: number) => {
     try {
       loading.value = true;
-      const responsPage = await getActivity(route.params.slug + `?limit=10` + `&&page=${page}`);
+      const responsPage = await getActivity((route.params.slug as string) + `?limit=10` + `&&page=${page}`);
       activity.value = { docs: [...activity.value.docs, ...responsPage.docs], pagination: responsPage.pagination };
     } finally {
       loading.value = false;
@@ -351,7 +351,7 @@ el-tabs.demo-tabs(v-model="activeName", @tab-click="handleClick")
     data: [] as Client[],
   });
 
-  const response = await useTableFilter(`proposal?relatedEntityId=${route.params.slug}&page=1&limit=100`);
+  const response = await useTableFilter(`proposal?relatedEntityId=${route.params.slug as string}&page=1&limit=100`);
  table.data =response.formattedData?.map((el:any) => {return {...el,
   type :el.type == "Mixed"  ? 'Tech & Financial' : el.type}})
 </script>

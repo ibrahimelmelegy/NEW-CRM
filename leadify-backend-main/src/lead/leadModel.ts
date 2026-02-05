@@ -70,6 +70,10 @@ class Lead extends Model {
 
   @Column({ type: DataType.DATE, allowNull: true })
   lastContactDate?: Date;
+
+  @Default(0)
+  @Column({ type: DataType.INTEGER, allowNull: false })
+  public score!: number;
 }
 
 export default Lead;

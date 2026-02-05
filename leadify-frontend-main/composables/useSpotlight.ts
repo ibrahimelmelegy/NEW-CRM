@@ -132,7 +132,7 @@ export function useSpotlight() {
 
             // Get role info to check if admin
             const userResponse = await useApiFetch('auth/me');
-            const user = userResponse?.user;
+            const user = userResponse?.body;
 
             if (user?.roleId) {
                 const roleResponse = await useApiFetch(`role/${user.roleId}`);

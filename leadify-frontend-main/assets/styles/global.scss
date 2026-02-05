@@ -2,17 +2,18 @@
 // 🎨 GLOBAL STYLES - Main Entry Point
 // ============================================
 
-// 1. Core Theme Files (Must be @used first)
-@use '../scss/theme-variables.scss' as *;
-@use '../scss/theme-base.scss';
-@use '../scss/theme-components.scss';
-@use '../scss/theme-utilities.scss';
+// 1. Core Theme Files (Using @import for compatibility with prepended additionalData)
+@import '../scss/theme-variables.scss';
+@import './glass'; // 💎 Glassmorphism 2.0
+@import '../scss/theme-base.scss';
+@import '../scss/theme-components.scss';
+@import '../scss/theme-utilities.scss';
 
 // 2. Element Plus Component Overrides (Handled by theme-components.scss)
-// @use './element-plus' as *;
+// @import './element-plus';
 
 // 3. RTL Support
-@use './rtl.scss';
+@import './rtl.scss';
 
 // 4. Fonts (CSS Import - Must come after Sass modules)
 @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@200;300;400;500;600;700;800&family=Tajawal:wght@200;300;400;500;700;800&display=swap');

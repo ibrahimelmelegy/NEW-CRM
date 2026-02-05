@@ -104,7 +104,7 @@ function openNav() {
 }
 async function logout() {
   const response = await useApiFetch("auth/logout", "POST");
-  if (response?.message === "Logged out successfully") {
+  if (response?.success) {
     router.push("/login");
     const accessToken = useCookie("access_token");
     accessToken.value = "";
@@ -123,11 +123,11 @@ async function logout() {
 }
 
 const user = ref<any>({});
-const proposal = await getProposal(route.params.slug);
+const proposal = await getProposal(route.params.slug as string);
 
 if (!user.value?.id) {
   const response = await useApiFetch("auth/me");
-  user.value = response?.user;
+  user.value = response?.body;
 }
 
 const saveContent = async () => {

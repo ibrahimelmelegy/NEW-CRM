@@ -9,33 +9,7 @@ export function fromCamelCase(camelCaseStr: string) {
   const spacedStr = camelCaseStr.replace(/([A-Z])/g, " $1");
   return spacedStr.charAt(0).toUpperCase() + spacedStr.slice(1);
 }
-export function formatDate(timestamp: any) {
-  if (!timestamp) return "-";
-  const now = new Date();
-  const then = new Date(timestamp);
-  const diffInMs = now.getTime() - then.getTime();
 
-  const seconds = Math.floor(diffInMs / 1000);
-  const minutes = Math.floor(seconds / 60);
-  const hours = Math.floor(minutes / 60);
-  const days = Math.floor(hours / 24);
-  const months = Math.floor(days / 30); // Approximation for months
-  const years = Math.floor(days / 365); // Approximation for years
-
-  if (seconds < 60) {
-    return `${seconds}s`;
-  } else if (minutes < 60) {
-    return `${minutes} minute${minutes > 1 ? "s" : ""} ago`;
-  } else if (hours < 24) {
-    return `${hours} hour${hours > 1 ? "s" : ""} ago`;
-  } else if (days < 30) {
-    return `${days} day${days > 1 ? "s" : ""} ago`;
-  } else if (months < 12) {
-    return `${months} month${months > 1 ? "s" : ""} ago`;
-  } else {
-    return `${years} year${years > 1 ? "s" : ""} ago`;
-  }
-}
 
 export function formatIso(dateText: any) {
   const date = new Date(dateText);
@@ -208,15 +182,7 @@ export function normalizePhoneNumber(phone: string): string {
   if (!phone) return "";
   return phone.replace(/\s+/g, "").replace(/^\+/, "").replace(/^2/, ""); // Assuming removing country code prefix '2', modify if needed
 }
-export function getYear(dateInput: any) {
-  const date = new Date(dateInput); // Parse the input date string
 
-  const year = date.getFullYear(); // Extract year
-  const month = String(date.getMonth() + 1).padStart(2, "0"); // Extract month (0-based, so add 1) and pad with 0
-  const day = String(date.getDate()).padStart(2, "0"); // Extract day and pad with 0
-
-  return `${year}-${month}-${day}`; // Format as YYYY-MM-DD
-}
 
 export function capitalizeName(name: string) {
   if (!name) return "";
@@ -233,3 +199,22 @@ export function formatLargeNumber(num: number | string) {
   }
   return n.toString();
 }
+
+export const formatDate = (date: string | Date, format: string = "DD MMM YYYY") => {
+  if (!date) return "-";
+  return new Date(date).toLocaleDateString("en-US", { day: "2-digit", month: "short", year: "numeric" });
+};
+
+export function getYear(date: string | Date | null | undefined) {
+  if (!date) return "-";
+  try {
+    return new Date(date).getFullYear().toString();
+  } catch (e) {
+    return "-";
+  }
+}
+
+export const formatSnakeCase = (str: string) => {
+  if (!str) return "-";
+  return str.split("_").map((word) => word.charAt(0).toUpperCase() + word.slice(1)).join(" ");
+};

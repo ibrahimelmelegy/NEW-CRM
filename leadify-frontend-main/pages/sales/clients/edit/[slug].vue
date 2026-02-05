@@ -20,10 +20,10 @@ ClientForm( :loading="loading" @submit="submitForm" :data="client" editMode)
   const route = useRoute();
   const loading = ref(false);
 
-  const client = await getClient(route.params.slug);
+  const client = await getClient(route.params.slug as string);
   async function submitForm(values: FormattedValues) {
     loading.value = true;
-    await updateClient({ ...values, id: route.params.slug });
+    await updateClient({ ...values, id: route.params.slug as string });
     loading.value = false;
   }
 </script>

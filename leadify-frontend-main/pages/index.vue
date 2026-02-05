@@ -2,23 +2,23 @@
 .statistics
   el-tabs.w-full(v-model='selectedTab' @tab-change="tabChange")
 
-    el-tab-pane(label='Leads & Sales' name='leadsSales')
+    el-tab-pane(:label="$t('dashboard.leadsSales')" name='leadsSales')
       ClientOnly
         StatisticsLeadsSales(v-if="selectedTab === 'leadsSales'")
 
-    el-tab-pane(label='Projects & Operations' name='projectsOperations')
+    el-tab-pane(:label="$t('dashboard.projectsOperations')" name='projectsOperations')
       ClientOnly
         StatisticsProjectsOperations(v-if="selectedTab === 'projectsOperations'")
 
-    el-tab-pane(label='Financial & Business Metrics' name='financialBusinessMetrics')
+    el-tab-pane(:label="$t('dashboard.financialBusinessMetrics')" name='financialBusinessMetrics')
       ClientOnly
         StatisticsFinancialBusinessMetrics(v-if="selectedTab === 'financialBusinessMetrics'")
 
-    el-tab-pane(label='Performance & HR' name='performanceHr')
+    el-tab-pane(:label="$t('dashboard.performanceHr')" name='performanceHr')
       ClientOnly
         StatisticsPerformanceHr(v-if="selectedTab === 'performanceHr'")
 
-    el-tab-pane(label='Procurement & Supply Chain' name='procurement')
+    el-tab-pane(:label="$t('dashboard.procurement')" name='procurement')
       ClientOnly
         StatisticsProcurement(v-if="selectedTab === 'procurement'")
 </template>

@@ -236,7 +236,7 @@ async function submitRFQ() {
         const rfqRes = await useApiFetch("rfq", "POST", payload);
         console.log("RFQ Creation Response:", rfqRes);
 
-        if (rfqRes && rfqRes.status && rfqRes.body) {
+        if (rfqRes && rfqRes.success && rfqRes.body) {
              const rfqId = rfqRes.body.id;
              console.log("Sending to vendors:", form.vendorIds);
              
@@ -246,7 +246,7 @@ async function submitRFQ() {
              });
              console.log("Send to Vendors Response:", sendRes);
              
-             if (!sendRes || !sendRes.status) throw new Error(sendRes?.message || "Failed to send to vendors");
+             if (!sendRes || !sendRes.success) throw new Error(sendRes?.message || "Failed to send to vendors");
 
              ElNotification({ title: "Success", message: "RFQ Created and Sent to Vendors!", type: "success" });
              router.push("/procurement/rfq"); // Needs List page

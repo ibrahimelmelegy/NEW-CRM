@@ -166,7 +166,7 @@ el-tabs.demo-tabs(v-model="activeName", @tab-click="handleClick")
     }
   };
 
-  const vehicle = await getVehicle(route.params.slug);
+  const vehicle = await getVehicle(route.params.slug as string);
 </script>
 <style scoped lang="scss">
   .activity {

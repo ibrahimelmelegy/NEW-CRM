@@ -40,11 +40,11 @@ export const useAuthStore = defineStore("auth", {
 
         this.loadingChangePassword = false;
 
-        if (response.status && response.data?.token) {
-          this.setData(response.data.token);
+        if (response.success && response.body?.token) {
+          this.setData(response.body.token);
         }
 
-        if (response.status) {
+        if (response.success) {
           ElNotification({
             type: "success",
             title: "Success",
@@ -59,7 +59,7 @@ export const useAuthStore = defineStore("auth", {
         }
 
         return {
-          success: response.status || false,
+          success: response.success || false,
           message: response.message || "",
         };
       } catch (error: any) {

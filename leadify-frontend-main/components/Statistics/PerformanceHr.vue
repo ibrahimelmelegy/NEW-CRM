@@ -8,19 +8,19 @@
   .cards.grid.grid-cols-3.gap-6.mb-8
     StatisticsCard(
       name="Total Leads" 
-      :data="preformanceStats.firstCards[0].value" 
+      :data="preformanceStats?.firstCards?.[0]?.value || 0" 
       icon="ph:users-four-bold" 
       colorType="indigo"
     )
     StatisticsCard(
       name="Opp -> Deal Conv." 
-      :data="preformanceStats.firstCards[1].value" 
+      :data="preformanceStats?.firstCards?.[1]?.value || 0" 
       icon="ph:trend-up-bold" 
       colorType="cyan"
     )
     StatisticsCard(
       name="Total Deals" 
-      :data="preformanceStats.firstCards[2].value" 
+      :data="preformanceStats?.firstCards?.[2]?.value || 0" 
       icon="ph:medal-bold" 
       colorType="emerald"
     )

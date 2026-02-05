@@ -325,7 +325,7 @@ async function submit() {
     const method = props.vendor ? "PUT" : "POST";
     
     const res = await useApiFetch(url, method, form);
-    if (!res.status) throw new Error(res.message || "Failed to save");
+    if (!res.success) throw new Error(res.message || "Failed to save");
     
     // Check if created type matches the current filter context
     if (props.type && form.type && props.type !== form.type) {

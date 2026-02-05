@@ -99,22 +99,22 @@ function onFetchClient(id:string) {
   emit('fetchClient', id);
 }
 //  Get Users
-let users = await useApiFetch("users?limit=10000");
+const usersRes = await useApiFetch("users?limit=10000");
 // Map Users to Select Options
-users = users?.body?.docs?.map((e: any) => ({
+const users = usersRes?.body?.docs?.map((e: any) => ({
   label: e.name,
   value: e.id,
 }));
 
-//  Get Users
-let clients = await useApiFetch("client?limit=10000");
-// Map Users to Select Options
-clients = [
+//  Get Clients
+const clientsRes = await useApiFetch("client?limit=10000");
+// Map Clients to Select Options
+const clients = [
   { label: "New Client", value: 0 },
-  ...clients?.body?.docs?.map((e: any) => ({
+  ...(clientsRes?.body?.docs?.map((e: any) => ({
     label: e.clientName,
     value: e.id,
-  })),
+  })) || []),
 ];
 
 const onSubmit = handleSubmit((values: any, actions: any) => {

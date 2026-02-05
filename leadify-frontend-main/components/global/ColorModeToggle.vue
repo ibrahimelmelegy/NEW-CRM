@@ -4,7 +4,7 @@ const themeStore = useThemeStore();
 </script>
 
 <template>
-    <button class="mode-toggle" @click="themeStore.toggleTheme" :title="themeStore.isLight ? 'Dark Mode' : 'Light Mode'">
+    <button class="mode-toggle" @click="themeStore.toggleTheme" :title="themeStore.isLight ? $t('common.darkMode') : $t('common.lightMode')">
         <span class="icon">{{ themeStore.isLight ? '🌙' : '☀️' }}</span>
     </button>
 </template>

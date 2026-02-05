@@ -20,9 +20,14 @@ import {
 import { DealStageEnums } from '../deal/dealEnum';
 import Invoice from '../deal/model/invoiceMode';
 import { LeadStatusEnums } from '../lead/leadEnum';
+import cacheService from '../utils/cacheService';
 
 class InsightService {
   async getLeadsSalesInsights(user: User) {
+    const cacheKey = `leads_sales_insights_${user.id}`;
+    const cachedData = await cacheService.get(cacheKey);
+    if (cachedData) return cachedData;
+
     const startDate = startOfMonth(new Date());
     const endDate = endOfMonth(new Date());
 
@@ -123,14 +128,14 @@ class InsightService {
         attributes: [[Sequelize.fn('SUM', Sequelize.col('Deal.price')), 'totalRevenue']],
         include: query.userId
           ? [
-              {
-                model: User,
-                as: 'users',
-                attributes: [], // explicitly avoid selecting any user fields
-                through: { attributes: [] },
-                where: { id: query.userId }
-              }
-            ]
+            {
+              model: User,
+              as: 'users',
+              attributes: [], // explicitly avoid selecting any user fields
+              through: { attributes: [] },
+              where: { id: query.userId }
+            }
+          ]
           : [],
         raw: true, // ensures no model mapping and omits implicit primary key injection
         subQuery: false // prevents subquery generation which could pull in unwanted columns
@@ -182,7 +187,7 @@ class InsightService {
       };
     });
 
-    return {
+    const result = {
       leadCount,
       leadConversionRate,
       opportunityCount,
@@ -192,6 +197,9 @@ class InsightService {
       revenueFromDeals,
       salesPerformance
     };
+
+    await cacheService.set(cacheKey, result);
+    return result;
   }
 
   generateLast30Days = () => {
@@ -206,6 +214,10 @@ class InsightService {
   };
 
   async getProjectsOperationsInsights(user: User) {
+    const cacheKey = `projects_operations_insights_${user.id}`;
+    const cachedData = await cacheService.get(cacheKey);
+    if (cachedData) return cachedData;
+
     const query: any = {};
     if (!user.role.permissions.includes(ProjectsAndOperationsWidgetsPermissionsEnum.VIEW_GLOBAL_PROJECTS_OPERATIONS_WIDGETS)) query.userId = user.id;
 
@@ -275,22 +287,23 @@ class InsightService {
     // Calculate percentage of used assets
     const usedAssetPercentage = totalAssetCount > 0 ? Number(((assignedAssetCount / totalAssetCount) * 100).toFixed(2)) : 0;
 
-    // Project Profitability Analysis (KPI Box) → Project Profitability= (Total Revenue from  Projects −Total Project Expenses) / Total Revenue from Projects ×100
-
-    // Total Revenue from Projects = Total Material Margin Commissions + Project Margin
-
-    // Total Project Expenses = All project costs Manpower + Vehicles + Materials + Assets
-
-    return {
+    const result = {
       projectCount,
       projectsByStatus,
       usedManpowerPercentage,
       usedAssetPercentage,
       eitmadProjectsCount
     };
+
+    await cacheService.set(cacheKey, result);
+    return result;
   }
 
   async getFinancialAndBusinessMetricsInsights(user: User) {
+    const cacheKey = `financial_business_metrics_insights_${user.id}`;
+    const cachedData = await cacheService.get(cacheKey);
+    if (cachedData) return cachedData;
+
     const query: any = {};
     if (!user.role.permissions.includes(FinancialAndBusinessMetricsWidgetsPermissionsEnum.VIEW_GLOBAL_FINANCIAL_BUSINESS_METRICS_WIDGETS))
       query.userId = user.id;
@@ -303,14 +316,14 @@ class InsightService {
         attributes: [[Sequelize.fn('SUM', Sequelize.col('Deal.price')), 'totalRevenue']],
         include: query.userId
           ? [
-              {
-                model: User,
-                as: 'users',
-                attributes: [], // explicitly avoid selecting any user fields
-                through: { attributes: [] },
-                where: { id: query.userId }
-              }
-            ]
+            {
+              model: User,
+              as: 'users',
+              attributes: [], // explicitly avoid selecting any user fields
+              through: { attributes: [] },
+              where: { id: query.userId }
+            }
+          ]
           : [],
         raw: true, // ensures no model mapping and omits implicit primary key injection
         subQuery: false // prevents subquery generation which could pull in unwanted columns
@@ -329,14 +342,21 @@ class InsightService {
 
     const revenueFromDeals = Number((revenueFromDealsResult as unknown as { totalRevenue: string | null })?.totalRevenue || 0);
 
-    return {
+    const result = {
       revenueFromDeals,
       outstandingInvoicesCount,
       collectedPaymentsCount
     };
+
+    await cacheService.set(cacheKey, result);
+    return result;
   }
 
   async getPerformanceAndHRInsights(user: User) {
+    const cacheKey = `performance_hr_insights_${user.id}`;
+    const cachedData = await cacheService.get(cacheKey);
+    if (cachedData) return cachedData;
+
     const query: any = {};
     if (!user.role.permissions.includes(PerformanceAndHRWidgetsPermissionsEnum.VIEW_GLOBAL_PERFORMANCE_HR_WIDGETS)) query.userId = user.id;
 
@@ -397,11 +417,16 @@ class InsightService {
 
     const percentageOfOpportunitiesBecameDeals =
       opportunityCount > 0 ? Number(((convertedDealsFromOpportunityCount / opportunityCount) * 100).toFixed(2)) : 0;
-    return {
+
+    const result = {
       leadCount,
       percentageOfOpportunitiesBecameDeals,
       dealsCount
     };
+
+    await cacheService.set(cacheKey, result);
+    return result;
   }
 }
 export default new InsightService();
+

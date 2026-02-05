@@ -34,6 +34,8 @@ import dailyTaskRoutes from './dailyTask/dailyTaskRoutes';
 import vendorRoutes from './vendor/vendorRoutes';
 import procurementRoutes from './procurement/procurementRoutes';
 import rfqRoutes from './procurement/rfqRoutes';
+import aiRoutes from './ai/aiRoutes';
+import integrationRoutes from './integration/integrationRoutes';
 
 const fileUpload = require('express-fileupload');
 
@@ -94,6 +96,8 @@ app.use('/api/daily-task', dailyTaskRoutes);
 app.use('/api/vendor', vendorRoutes);
 app.use('/api/procurement', procurementRoutes);
 app.use('/api/rfq', rfqRoutes);
+app.use('/api/ai', aiRoutes);
+app.use('/api/integrations', integrationRoutes);
 
 // Authentication routes
 app.use('/api/auth', authRoutes); // Explicitly mount at /api/auth

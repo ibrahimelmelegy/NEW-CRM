@@ -10,19 +10,19 @@ export function copyText(slug: string) {
   });
 }
 
-export function checkRouteDispatch(to, from) {
+export function checkRouteDispatch(to: any, from: any) {
   const toRoue = to.fullPath.split("/");
   const fromRoute = from.fullPath.split("/");
 
   return toRoue[toRoue.length - 2] == fromRoute[fromRoute.length - 1];
 }
-export function checkSecParent(to, from) {
+export function checkSecParent(to: any, from: any) {
   const toRoue = to.fullPath.split("/");
   const fromRoute = from.fullPath.includes("?") ? from.fullPath.split("?")[0].split("/") : from.fullPath.split("/");
 
   return toRoue[2] == fromRoute[2];
 }
-export function checkparent(to, from) {
+export function checkparent(to: any, from: any) {
   const toRoue = to.fullPath.split("/");
   const fromRoute = from.fullPath.split("/");
 
@@ -44,13 +44,7 @@ export function isObjectValid(obj: any) {
   return true; // All properties are valid
 }
 
-export function formatSnakeCase(str: string) {
-  return str
-    ?.toLowerCase()
-    .split("_")
-    .map((word: string) => word.charAt(0).toUpperCase() + word.slice(1))
-    .join(" ");
-}
+
 
 export const filterLength = (obj: Record<string, any>): number => {
   if (!Object.entries(obj).length) return 0;

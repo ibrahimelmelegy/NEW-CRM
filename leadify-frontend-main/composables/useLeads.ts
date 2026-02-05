@@ -36,6 +36,28 @@ export interface Lead {
   [key: string]: any;
 }
 
+export interface Activity {
+  id: string;
+  status: string;
+  descripion: string;
+  createdAt: string;
+  user?: {
+    name: string;
+    profilePicture?: string;
+  };
+}
+
+export interface ActivityResponse {
+  docs: Activity[];
+  pagination: {
+    page: number | string;
+    totalPages: number | string;
+    totalItems: number;
+    limit: number;
+  };
+}
+
+
 export enum LeadSourceEnums {
   REFERRAL = 'REFERRAL',
   WEBSITE = 'WEBSITE',
@@ -85,9 +107,9 @@ export async function getLeads(): Promise<UseLeadsResult> {
         ...lead,
         createdAt: formatDate(lead.createdAt),
         // updatedAt: formatDate(lead.updatedAt),
-        leadDetails:{title :lead?.name ,text: lead?.companyName},
+        leadDetails: { title: lead?.name, text: lead?.companyName },
         updatedAt: '-',
-        assign: lead.users?.map((el:any)=> el.name).join(', ') ,
+        assign: lead.users?.map((el: any) => el.name).join(', '),
       }));
       const pagination = body?.pagination;
       return { leads, pagination };
@@ -124,14 +146,14 @@ export async function getLead(id: string | string[]): Promise<Lead> {
   }
 }
 
-export async function getActivity(id: string | string[]): Promise<Lead> {
+export async function getActivity(id: string | string[]): Promise<ActivityResponse> {
   try {
-    let { body: lead, success } = await useApiFetch(`activity/lead/${id}`);
-    return lead;
+    let { body: activities, success } = await useApiFetch(`activity/lead/${id}`);
+    return activities;
   } catch (error) {
-    console.error('Error fetching lead:', error instanceof Error ? error.message : error);
-    handleError('An error occurred while fetching lead. Please try again.');
-    return {} as Lead;
+    console.error('Error fetching activity:', error instanceof Error ? error.message : error);
+    handleError('An error occurred while fetching activity. Please try again.');
+    return { docs: [], pagination: { page: 1, totalPages: 1, totalItems: 0, limit: 10 } } as ActivityResponse;
   }
 }
 

@@ -160,7 +160,7 @@
       const responseCheckToken: any = await useApiFetch("auth/check-reset-token", "POST", {
         token: route.query.token,
       });
-      if (!responseCheckToken?.userId) {
+      if (!responseCheckToken?.body?.userId) {
         errMsg.value = responseCheckToken?.message || "Invalid or expired token";
         setTimeout(() => {
           if (errMsg.value) router.push("/login");
@@ -178,7 +178,7 @@
         token: route.query.token,
         newPassword: values.password,
       });
-      if (response?.message === "Password reset successfully") {
+      if (response.success) {
         router.push("/reset-complete");
         ElNotification({
           title: "Success",

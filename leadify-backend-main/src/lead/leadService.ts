@@ -3,7 +3,7 @@ import notificationService from '../notification/notificationService';
 import User from '../user/userModel';
 import BaseError from '../utils/error/base-http-exception';
 import { ERRORS } from '../utils/error/errors';
-import { LeadStatusEnums, SortByEnum, SortEnum } from './leadEnum';
+import { LeadStatusEnums, SortByEnum, SortEnum, LeadSourceEnums } from './leadEnum';
 import Lead from './leadModel';
 import { createActivityLog } from '../activity-logs/activityService';
 import xlsx from 'xlsx';
@@ -11,13 +11,18 @@ import { LeadPermissionsEnum } from '../role/roleEnum';
 import LeadUsers from './model/lead_UsersModel';
 import * as ExcelJS from 'exceljs';
 import { sendEmail } from '../utils/emailHelper';
+import { io } from '../server';
 
 class LeadService {
   async createLead(input: any, adminId: number, t?: Transaction): Promise<Lead> {
     const { users: inputUsers, ...leadData } = input;
 
     if (input.email) await this.errorIfLeadWithExistEmail(input.email);
+    if (input.email) await this.errorIfLeadWithExistEmail(input.email);
     if (input.phone) await this.errorIfLeadWithExistPhone(input.phone);
+
+    // 🧠 AI Scoring
+    leadData.score = this.calculateScore(leadData);
 
     let users = inputUsers;
     if (!users || !Array.isArray(users)) {
@@ -50,6 +55,7 @@ class LeadService {
       });
     }
 
+    io.emit('lead:created', lead); // Emit event after creation
     return lead;
   }
 
@@ -69,6 +75,12 @@ class LeadService {
 
     if (input.email) await this.errorIfLeadWithExistEmail(input.email, lead.id);
     if (input.phone) await this.errorIfLeadWithExistPhone(input.phone, lead.id);
+    if (input.phone) await this.errorIfLeadWithExistPhone(input.phone, lead.id);
+
+    // 🧠 Recalculate Score on Update
+    const updatedData = { ...lead.toJSON(), ...input };
+    input.score = this.calculateScore(updatedData);
+
     const users = input.users?.filter((item: number) => !lead.users?.map(e => e.id).includes(item));
 
     if (users?.length) {
@@ -80,7 +92,9 @@ class LeadService {
     lead.set(input);
     await createActivityLog('lead', 'update', lead.id, user.id, null, `New updates added suucesfully`);
     users?.length && (await notificationService.sendAssignLeadNotification({ userId: user.id, target: lead.id }));
-    return await lead.save();
+    const updatedLead = await lead.save();
+    io.emit('lead:updated', updatedLead); // Emit event after update
+    return updatedLead;
   }
 
   async leadOrError(filter: WhereOptions, joinedTables?: Includeable[]): Promise<Lead> {
@@ -256,6 +270,41 @@ class LeadService {
   private async isUserAssignedToLead(leadId: string, userId: number): Promise<boolean> {
     const assignment = await LeadUsers.findOne({ where: { leadId, userId } });
     return !!assignment; // Returns true if assigned, false otherwise
+  }
+
+  private calculateScore(lead: any): number {
+    let score = 0;
+
+    // 1. Core Contacts (60 points)
+    if (lead.email) score += 30;
+    if (lead.phone) score += 30;
+
+    // 2. Business Context (15 points)
+    if (lead.companyName) score += 15;
+
+    // 3. Source Quality (15 points)
+    if (lead.leadSource === LeadSourceEnums.SOCIAL_MEDIA || lead.leadSource === 'REFERRAL') {
+      score += 15;
+    } else if (lead.leadSource === LeadSourceEnums.WEBSITE) {
+      score += 10;
+    }
+
+    // 4. Interaction & Recency (10 points) - "Intelligent Intelligence"
+    if (lead.notes && lead.notes.length > 20) score += 5; // Points for detailed notes
+
+    // Points for status progression
+    if (lead.status !== LeadStatusEnums.NEW) score += 5;
+
+    // Recency bonus: if contacted in last 7 days
+    if (lead.lastContactDate) {
+      const sevenDaysAgo = new Date();
+      sevenDaysAgo.setDate(sevenDaysAgo.getDate() - 7);
+      if (new Date(lead.lastContactDate) > sevenDaysAgo) {
+        score += 5;
+      }
+    }
+
+    return Math.min(score, 100);
   }
 
   async sendLeadsExcelByEmail(query: any, user: User, email: string): Promise<void> {

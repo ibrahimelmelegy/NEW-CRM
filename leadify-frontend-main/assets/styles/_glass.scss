@@ -1,0 +1,115 @@
+// 🎨 Glassmorphism 2.0 Design System
+// This file defines the core variables for the "World-Class" transparent UI look.
+
+:root {
+    // Base Glass Variables (Intensified for Visibility)
+    --glass-bg-primary: rgba(30, 30, 45, 0.6); // Much darker/visible for dark mode
+    --glass-bg-hover: rgba(255, 255, 255, 0.1);
+    --glass-bg-active: rgba(255, 255, 255, 0.15);
+
+    --glass-border-color: rgba(255, 255, 255, 0.15); // Stronger border
+    --glass-border-hover: rgba(255, 255, 255, 0.3);
+
+    --glass-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.3); // Deeper shadow
+    --glass-blur: blur(30px); // Heavier blur
+
+    // Neon Accents (for depth)
+    --neon-purple: rgba(120, 73, 255, 0.8);
+    --neon-blue: rgba(59, 130, 246, 0.8);
+
+    // Light Mode Overrides
+    body.light-theme & {
+        --glass-bg-primary: rgba(255, 255, 255, 0.75); // Milky glass
+        --glass-bg-hover: rgba(255, 255, 255, 0.9);
+        --glass-border-color: rgba(255, 255, 255, 0.6);
+        --glass-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.15);
+    }
+}
+
+// 🛠️ Mixins for easy usage
+@mixin glass-card {
+    background: var(--glass-bg-primary);
+    backdrop-filter: var(--glass-blur);
+    -webkit-backdrop-filter: var(--glass-blur);
+    border: 1px solid var(--glass-border-color);
+    box-shadow: var(--glass-shadow);
+    border-radius: 20px;
+    transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
+
+    &.interactive:hover {
+        background: var(--glass-bg-hover);
+        border-color: var(--glass-border-hover);
+        transform: translateY(-4px);
+        box-shadow: 0 16px 40px 0 rgba(0, 0, 0, 0.4);
+    }
+}
+
+@mixin glass-input {
+    background: rgba(0, 0, 0, 0.2);
+    border: 1px solid var(--glass-border-color);
+    border-radius: 12px;
+    color: inherit;
+    backdrop-filter: blur(10px);
+    transition: all 0.2s ease;
+
+    &:focus {
+        background: rgba(0, 0, 0, 0.3);
+        border-color: var(--primary-color, #7849ff);
+        box-shadow: 0 0 0 4px rgba(120, 73, 255, 0.15);
+        outline: none;
+    }
+}
+
+// ⚡ Micro-Interactions (The "Wow" Factor)
+@mixin glass-button-press {
+    transition: transform 0.1s cubic-bezier(0.4, 0, 0.2, 1), box-shadow 0.2s ease;
+
+    &:active {
+        transform: scale(0.96) !important;
+    }
+
+    &:hover {
+        filter: brightness(1.1);
+    }
+}
+
+@mixin glass-table-row-hover {
+    transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+
+    &:hover {
+        background-color: var(--glass-bg-hover) !important;
+        transform: scale(1.002) translateX(4px);
+        box-shadow: -10px 0 20px rgba(0, 0, 0, 0.2);
+        z-index: 10;
+        position: relative;
+    }
+}
+
+@mixin glass-sidebar-bg {
+    background: linear-gradient(165deg,
+            rgba(45, 50, 70, 0.85) 0%,
+            rgba(20, 20, 30, 0.95) 100%) !important;
+
+    backdrop-filter: blur(25px) !important;
+    -webkit-backdrop-filter: blur(25px) !important;
+
+    border-right: 1px solid rgba(255, 255, 255, 0.08) !important;
+    box-shadow: 10px 0 30px rgba(0, 0, 0, 0.4);
+}
+
+// 📦 Utility Classes
+.glass-card {
+    @include glass-card;
+}
+
+.glass-input {
+    @include glass-input;
+}
+
+.glass-button-press {
+    @include glass-button-press;
+}
+
+.glass-row-hover {
+    @include glass-table-row-hover;
+}

@@ -19,22 +19,23 @@
               div(class="breadcrumb")
                 el-breadcrumb(:separator-icon="ArrowRight")      
                   el-breadcrumb-item(to="/") 
-                    span.breadcrumb-home(class="!text-[var(--text-primary)] opacity-80") Dashboard
+                    span.breadcrumb-home(class="!text-[var(--text-primary)] opacity-80") {{ $t('navigation.dashboard') }}
                   el-breadcrumb-item(v-for="(route, index) in breadcrumbRoutes",  :key="index", @click="getPath(route)" , class="cursor-pointer",  :class="{ 'last': index === breadcrumbRoutes.length - 1 }"  ) 
                     span.breadcrumb-text(class="!text-[var(--text-primary)]") {{ route }}
             .flex.gap-3.items-center
               .tools.flex.items-center(class="p-2 rounded-full gap-2.5" )
                 //- Circular Spotlight Button (⌘)
-                button.premium-nav-btn.spotlight-btn(@click="open" title="Search (Alt+K)")
+                button.premium-nav-btn.spotlight-btn(@click="open" :title="$t('common.searchAltK')")
                   Icon(name="ph:command-bold")
                 
                 ColorModeToggle
+                LanguageToggle
                 
                 //- Circular Notification Button
                 .notification.premium-nav-btn
                   NuxtLink.flex.items-center.justify-center.w-full.h-full(:to="`/notification`" )
                     Icon.text-xl(name="ph:bell-bold")
-                    div.notification-badge(v-if="response?.unreadNotificationsCount > 0")
+                    div.notification-badge(v-if="notificationResponse?.unreadNotificationsCount > 0")
                 
                 //- Profile Dropdown
                 el-dropdown(class="outline-0")
@@ -45,10 +46,11 @@
                     template(#dropdown='')
                       el-dropdown-menu
                           el-dropdown-item(@click="logout")
-                              p.text-xs logout
+                              p.text-xs {{ $t('common.logout') }}
           .mt-4
         .slot-content(class="!mt-24 animate-entrance" :class="{'!pl-[32px] !pr-[50px]' : !mobile, '!px-[20px] '  : mobile}")
             slot
+      AIChatbot
   </template>
 <script setup lang="ts">
 import { useWindowSize } from "@vueuse/core";
@@ -56,6 +58,7 @@ import { storeToRefs } from "pinia";
 import { useMain } from "~/stores/common";
 import { ArrowRight, Search, Plus } from "@element-plus/icons-vue";
 import { ElNotification } from "element-plus";
+import AIChatbot from "~/components/global/AIChatbot.vue";
 
 // Initialize Spotlight
 const { open } = useSpotlight();
@@ -63,13 +66,14 @@ const { open } = useSpotlight();
 const mainData = useMain();
 const { fullNav, mobile, hideNav } = storeToRefs(mainData);
 const { width, height } = useWindowSize();
+const { locale, t } = useI18n();
 const router = useRouter();
 const route = useRoute();
 const showNavbar = ref(false);
 const showDropdown = ref(false);
 const searchInput = ref("");
 
-const response = await useTableFilter("notification");
+const notificationResponse = await useTableFilter("notification");
 
 function toggleDropdown(val: boolean) {
   showDropdown.value = val;
@@ -109,19 +113,13 @@ function openNav() {
 }
 async function logout() {
   const response = await useApiFetch("auth/logout", "POST");
-  if (response?.message === "Logged out successfully") {
+  if (response?.success) {
     router.push("/login");
     const accessToken = useCookie("access_token");
     accessToken.value = "";
     ElNotification({
-      title: "Success",
-      type: "success",
-      message: response.message,
-    });
-  } else {
-    ElNotification({
-      title: "Error",
-      type: "error",
+      title: response.success ? t('common.success') : t('common.error'),
+      type: response.success ? "success" : "error",
       message: response.message,
     });
   }
@@ -136,8 +134,8 @@ watch(width, () => {
 const user = ref<any>({});
 
 if (!user.value?.id) {
-  const response = await useApiFetch("auth/me");
-  user.value = response?.user;
+  const meResponse = await useApiFetch("auth/me");
+  user.value = meResponse?.body;
 }
 
 const breadcrumbRoutes = computed(() => {
@@ -215,7 +213,13 @@ const getPath = (routeName: string) => {
   transition: all 0.2s ease-in;
   top: 0;
   left: 0;
-  // border-bottom: 1px solid $border;
+  
+  // 💎 Glassmorphism
+  background: var(--glass-bg-primary);
+  backdrop-filter: var(--glass-blur);
+  -webkit-backdrop-filter: var(--glass-blur);
+  border-bottom: 1px solid var(--glass-border-color);
+  box-shadow: var(--glass-shadow);
 }
 
 .top {

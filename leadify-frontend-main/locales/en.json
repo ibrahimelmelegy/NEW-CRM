@@ -7,6 +7,7 @@
         "edit": "Edit",
         "add": "Add",
         "search": "Search",
+        "searchAltK": "Search (Alt+K)",
         "filter": "Filter",
         "actions": "Actions",
         "yes": "Yes",
@@ -23,7 +24,12 @@
         "success": "Success",
         "error": "Error",
         "warning": "Warning",
-        "info": "Info"
+        "info": "Info",
+        "logout": "Logout",
+        "darkMode": "Dark Mode",
+        "lightMode": "Light Mode",
+        "english": "English",
+        "arabic": "Arabic"
     },
     "auth": {
         "login": "Sign In",
@@ -43,7 +49,11 @@
         "sessionExpired": "Your session has expired. Please login again.",
         "unauthorized": "You are not authorized to access this page",
         "noAccount": "Don't have an account?",
-        "contactAdmin": "Contact Administrator"
+        "contactAdmin": "Contact Administrator",
+        "elevateExperience": "Elevate Your Experience",
+        "harnessIntelligence": "Harness the power of intelligence with our professional CRM solutions.",
+        "fastWorkflow": "Fast Workflow",
+        "smartAnalytics": "Smart Analytics"
     },
     "validation": {
         "required": "{field} is required",
@@ -65,15 +75,41 @@
     },
     "navigation": {
         "dashboard": "Dashboard",
+        "board": "Board",
+        "sales": "Sales",
         "leads": "Leads",
         "opportunities": "Opportunities",
+        "opportunity": "Opportunity",
         "deals": "Deals",
         "proposals": "Proposals",
         "clients": "Clients",
+        "operations": "Operations",
+        "projects": "Projects",
+        "dailyTasks": "Daily Tasks",
+        "vehicle": "Vehicle",
+        "manpower": "Manpower",
+        "additionalMaterials": "Additional Materials",
+        "services": "Services",
+        "assets": "Assets",
+        "procurement": "Procurement",
+        "vendors": "Vendors",
+        "distributors": "Distributors",
+        "localSuppliers": "Local Suppliers",
+        "showRooms": "Show Rooms",
+        "purchaseOrders": "Purchase Orders",
+        "rfq": "Requests for Quotation",
+        "statistics": "Statistics",
         "staff": "Staff",
         "roles": "Roles",
+        "rolesAccess": "Roles Access",
+        "addNewRole": "Add New Role",
+        "staffManagement": "Staff Management",
+        "addNewStaff": "Add New Staff",
+        "qaCenter": "QA Command Center",
+        "permissionsHub": "Permissions Hub",
         "settings": "Settings",
         "reports": "Reports",
+        "report": "Report",
         "notifications": "Notifications"
     },
     "forms": {
@@ -81,5 +117,12 @@
         "fileTypes": "JPG, JPEG, PNG, PDF, DOCX, EXCEL, PPTX, TXT, CSV",
         "maxFileSize": "Maximum file size: {size}MB",
         "optional": "optional"
+    },
+    "dashboard": {
+        "leadsSales": "Leads & Sales",
+        "projectsOperations": "Projects & Operations",
+        "financialBusinessMetrics": "Financial & Business Metrics",
+        "performanceHr": "Performance & HR",
+        "procurement": "Procurement & Supply Chain"
     }
 }

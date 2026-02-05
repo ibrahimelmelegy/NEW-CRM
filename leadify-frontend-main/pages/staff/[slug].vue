@@ -54,6 +54,6 @@
   const route = useRoute();
   const { hasPermission } = await usePermissions();
   // Call API to Get the staff
-  const staff = await getStaff(route.params.slug);
+  const staff = await getStaff(route.params.slug as string);
 </script>
 <style scoped lang="scss"></style>

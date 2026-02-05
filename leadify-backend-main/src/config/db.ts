@@ -53,6 +53,7 @@ import RFQ from '../procurement/models/rfqModel';
 import RFQItem from '../procurement/models/rfqItemModel';
 import RFQVendor from '../procurement/models/rfqVendorModel';
 import RFQVendorItem from '../procurement/models/rfqVendorItemModel';
+import Integration from '../integration/integrationModel';
 
 dotenv.config();
 
@@ -127,7 +128,8 @@ const sequelize = new Sequelize({
     RFQ,
     RFQItem,
     RFQVendor,
-    RFQVendorItem
+    RFQVendorItem,
+    Integration
   ], // Path to your models
   logging: true // Disable logging (optional, based on your preference)
 });

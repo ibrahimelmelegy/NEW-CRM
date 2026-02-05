@@ -70,7 +70,7 @@
     data: [] as CategoryItem[],
   });
 
-  const material = await getAdditionalMaterial(route.params.slug);
+  const material = await getAdditionalMaterial(route.params.slug as string);
   table.data = material?.materialItem || [];
 </script>
 <style scoped lang="scss">

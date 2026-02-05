@@ -31,7 +31,8 @@ import VChart from "vue-echarts";
 const colorpieChart = ["#3498db", "#2ecc71", "#f39c12"];
 const colorbarChart = ["#3498db"];
 
-const dailyTaskStats = ref(await getDailyTaskStatistics());
+const dailyTaskStatsRes = await getDailyTaskStatistics();
+const dailyTaskStats = ref(dailyTaskStatsRes?.body || {});
 
 const cardData = ref([
   {

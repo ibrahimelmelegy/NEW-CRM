@@ -338,7 +338,7 @@ async function submit() {
     const res = await useApiFetch("procurement", "POST", payload);
     console.log("DEBUG: PO Creation Response:", res);
     
-    if (!res || !res.status) {
+    if (!res || !res.success) {
         throw new Error(res?.message || "Unknown error during creation");
     }
 

@@ -1,0 +1,146 @@
+[90m[[90mnuxt:tailwindcss[90m][39m [36mi[39m Using Tailwind CSS from ~/assets/css/tailwind.css
+
+[90m[[90mnuxt-i18n[90m][39m [43m[30m WARN [39m[49m In project layer ([36mE:/NEW-CRM/leadify-frontend-main/nuxt.config[39m) - [36mlangDir[39m is set to an absolute path ([36mE:\NEW-CRM\leadify-frontend-main\locales[39m) but should be set a path relative to [36msrcDir[39m ([36mE:/NEW-CRM/leadify-frontend-main[39m). Absolute paths will not work in production, see https://i18n.nuxtjs.org/docs/api/options#langdir for more details.
+
+[36mi[39m Nuxt Icon server bundle mode is set to [36mlocal[39m
+components/deal/Delivery.vue(176,27): error TS2345: Argument of type 'Date | null' is not assignable to parameter of type 'string | Date'.
+  Type 'null' is not assignable to type 'string | Date'.
+components/deal/Form/Delivery.vue(31,10): error TS2440: Import declaration conflicts with local declaration of 'defineExpose'.
+components/deal/Form/Inovice.vue(45,12): error TS2440: Import declaration conflicts with local declaration of 'defineExpose'.
+components/deal/Invoices.vue(184,22): error TS2345: Argument of type 'Date | null' is not assignable to parameter of type 'string | Date'.
+  Type 'null' is not assignable to type 'string | Date'.
+components/deal/Invoices.vue(185,28): error TS2345: Argument of type 'Date | null' is not assignable to parameter of type 'string | Date'.
+  Type 'null' is not assignable to type 'string | Date'.
+components/global/BaseImg.vue(48,46): error TS7006: Parameter 'url' implicitly has an 'any' type.
+components/global/UltimateEditor.vue(147,36): error TS2305: Module '"@tiptap/vue-3"' has no exported member 'BubbleMenu'.
+components/Input/List.vue(69,7): error TS2322: Type 'string' is not assignable to type 'never[]'.
+components/Input/List.vue(76,23): error TS2345: Argument of type 'string' is not assignable to parameter of type 'never'.
+components/Input/Select.vue(77,61): error TS2571: Object is of type 'unknown'.
+components/Input/UploadImageList.vue(106,11): error TS2339: Property 'success' does not exist on type 'unknown'.
+components/Input/UploadImageList.vue(106,20): error TS2339: Property 'data' does not exist on type 'unknown'.
+components/Input/UploadImageList.vue(106,66): error TS2554: Expected 1 arguments, but got 2.
+components/Input/UploadImageList.vue(115,62): error TS18046: 'format' is of type 'unknown'.
+components/Input/UploadImageList.vue(126,20): error TS2551: Property 'splice' does not exist on type 'string | never[]'. Did you mean 'slice'?
+  Property 'splice' does not exist on type 'string'.
+components/Input/UploadImageList.vue(126,52): error TS2345: Argument of type 'UploadFile' is not assignable to parameter of type 'never'.
+components/operations/daily-tasks/Form.vue(112,1): error TS2739: Type 'any[]' is missing the following properties from type 'ApiResponse<any>': body, success, message, code
+components/operations/daily-tasks/Statistics.vue(59,41): error TS2304: Cannot find name 'getBarChartWithLineData'.
+components/operations/daily-tasks/Statistics.vue(68,49): error TS2304: Cannot find name 'getCenterPieChartsData'.
+components/operations/material/Category.vue(15,10): error TS2440: Import declaration conflicts with local declaration of 'defineExpose'.
+components/operations/material/CategoryItem.vue(43,15): error TS2440: Import declaration conflicts with local declaration of 'defineExpose'.
+components/operations/material/Form/CategoryItem.vue(18,10): error TS2440: Import declaration conflicts with local declaration of 'defineExpose'.
+components/operations/Projects/Assets.vue(78,9): error TS18046: 'activeStep.value' is of type 'unknown'.
+components/operations/Projects/Form/Folder.vue(42,12): error TS2440: Import declaration conflicts with local declaration of 'defineExpose'.
+components/operations/Projects/Manpower.vue(74,5): error TS18046: 'activeStep.value' is of type 'unknown'.
+components/operations/Projects/Materials.vue(179,111): error TS2339: Property 'price' does not exist on type '{ id: string; name: string; }'.
+components/operations/Projects/Materials.vue(188,96): error TS2339: Property 'name' does not exist on type '{ id: number; additionalMaterialId?: number | undefined; unitPrice: number; quantity: number; description: string; serviceId?: string | undefined; service?: { price?: number | undefined; } | undefined; }'.
+components/operations/Projects/Materials.vue(197,101): error TS2339: Property 'type' does not exist on type '{ id: string; name: string; }'.
+components/operations/Projects/Materials.vue(224,32): error TS7015: Element implicitly has an 'any' type because index expression is not of type 'number'.
+components/operations/Projects/Materials.vue(227,32): error TS7015: Element implicitly has an 'any' type because index expression is not of type 'number'.
+components/operations/Projects/Modal/Material.vue(218,33): error TS2538: Type 'undefined' cannot be used as an index type.
+components/operations/Projects/Modal/Material.vue(227,42): error TS2538: Type 'undefined' cannot be used as an index type.
+components/operations/Projects/Show/Preview.vue(62,12): error TS2305: Module '"~/composables/format"' has no exported member 'getYear'.
+components/operations/Projects/Vehicles.vue(64,7): error TS18046: 'activeStep.value' is of type 'unknown'.
+components/procurement/VendorDialog.vue(328,14): error TS2339: Property 'status' does not exist on type 'ApiResponse<any>'.
+composables/charts.ts(266,19): error TS2339: Property 'status' does not exist on type 'ApiResponse<any>'.
+composables/charts.ts(298,19): error TS2339: Property 'status' does not exist on type 'ApiResponse<any>'.
+composables/charts.ts(337,19): error TS2339: Property 'status' does not exist on type 'ApiResponse<any>'.
+composables/charts.ts(358,19): error TS2339: Property 'status' does not exist on type 'ApiResponse<any>'.
+composables/queryParams.ts(19,5): error TS2322: Type 'string | LocationQueryValue[]' is not assignable to type 'string'.
+  Type 'LocationQueryValue[]' is not assignable to type 'string'.
+composables/queryParams.ts(26,50): error TS2345: Argument of type 'Object' is not assignable to parameter of type 'string'.
+composables/useSpotlight.ts(135,40): error TS2339: Property 'user' does not exist on type 'ApiResponse<any>'.
+composables/useUser.ts(5,26): error TS2339: Property 'user' does not exist on type 'ApiResponse<any>'.
+composables/useUser.ts(5,46): error TS2339: Property 'user' does not exist on type 'ApiResponse<any>'.
+cypress/e2e/exhaustive_procurement.cy.ts(21,69): error TS2532: Object is possibly 'undefined'.
+layouts/default-no-padding.vue(131,26): error TS2339: Property 'user' does not exist on type 'ApiResponse<any>'.
+layouts/full-width.vue(131,26): error TS2339: Property 'user' does not exist on type 'ApiResponse<any>'.
+layouts/full-width.vue(145,24): error TS2345: Argument of type 'string | undefined' is not assignable to parameter of type 'string'.
+  Type 'undefined' is not assignable to type 'string'.
+layouts/proposal.vue(126,36): error TS2345: Argument of type 'string | string[] | undefined' is not assignable to parameter of type 'string | string[]'.
+  Type 'undefined' is not assignable to type 'string | string[]'.
+layouts/proposal.vue(130,26): error TS2339: Property 'user' does not exist on type 'ApiResponse<any>'.
+pages/operations/additional-material/[slug].vue(73,48): error TS2345: Argument of type 'string | string[] | undefined' is not assignable to parameter of type 'string | string[]'.
+  Type 'undefined' is not assignable to type 'string | string[]'.
+pages/operations/additional-material/edit/[slug].vue(27,48): error TS2345: Argument of type 'string | string[] | undefined' is not assignable to parameter of type 'string | string[]'.
+  Type 'undefined' is not assignable to type 'string | string[]'.
+pages/operations/additional-material/edit/[slug].vue(49,75): error TS18048: 'route.params.slug' is possibly 'undefined'.
+pages/operations/assets/[slug].vue(154,32): error TS2345: Argument of type 'string | string[] | undefined' is not assignable to parameter of type 'string | string[]'.
+  Type 'undefined' is not assignable to type 'string | string[]'.
+pages/operations/assets/edit/[slug].vue(22,32): error TS2345: Argument of type 'string | string[] | undefined' is not assignable to parameter of type 'string | string[]'.
+  Type 'undefined' is not assignable to type 'string | string[]'.
+pages/operations/daily-task/[slug].vue(76,42): error TS2345: Argument of type 'string | string[] | undefined' is not assignable to parameter of type 'string | string[]'.
+  Type 'undefined' is not assignable to type 'string | string[]'.
+pages/operations/daily-task/edits/[slug].vue(18,42): error TS2345: Argument of type 'string | string[] | undefined' is not assignable to parameter of type 'string | string[]'.
+  Type 'undefined' is not assignable to type 'string | string[]'.
+pages/operations/daily-task/edits/[slug].vue(22,43): error TS2345: Argument of type 'string | string[] | undefined' is not assignable to parameter of type 'string'.
+  Type 'undefined' is not assignable to type 'string'.
+pages/operations/manpower/[slug].vue(238,38): error TS2345: Argument of type 'string | string[] | undefined' is not assignable to parameter of type 'string | string[]'.
+  Type 'undefined' is not assignable to type 'string | string[]'.
+pages/operations/manpower/edit/[slug].vue(22,38): error TS2345: Argument of type 'string | string[] | undefined' is not assignable to parameter of type 'string | string[]'.
+  Type 'undefined' is not assignable to type 'string | string[]'.
+pages/operations/projects/[slug].vue(353,32): error TS18048: 'route.params.slug' is possibly 'undefined'.
+pages/operations/projects/[slug].vue(414,34): error TS18048: 'route.params.slug' is possibly 'undefined'.
+pages/operations/projects/[slug].vue(743,34): error TS2339: Property 'find' does not exist on type '{ formattedData: any; pagination: any; status: string; unreadNotificationsCount: any; } | { formattedData: never[]; pagination: {}; status: string; unreadNotificationsCount?: undefined; } | { ...; }'.
+  Property 'find' does not exist on type '{ formattedData: any; pagination: any; status: string; unreadNotificationsCount: any; }'.
+pages/operations/projects/[slug].vue(892,27): error TS2339: Property 'find' does not exist on type '{ formattedData: any; pagination: any; status: string; unreadNotificationsCount: any; } | { formattedData: never[]; pagination: {}; status: string; unreadNotificationsCount?: undefined; } | { ...; }'.
+  Property 'find' does not exist on type '{ formattedData: any; pagination: any; status: string; unreadNotificationsCount: any; }'.
+pages/operations/projects/[slug].vue(901,56): error TS2339: Property 'find' does not exist on type '{ formattedData: any; pagination: any; status: string; unreadNotificationsCount: any; } | { formattedData: never[]; pagination: {}; status: string; unreadNotificationsCount?: undefined; } | { ...; }'.
+  Property 'find' does not exist on type '{ formattedData: any; pagination: any; status: string; unreadNotificationsCount: any; }'.
+pages/operations/projects/[slug].vue(902,61): error TS2339: Property 'find' does not exist on type '{ formattedData: any; pagination: any; status: string; unreadNotificationsCount: any; } | { formattedData: never[]; pagination: {}; status: string; unreadNotificationsCount?: undefined; } | { ...; }'.
+  Property 'find' does not exist on type '{ formattedData: any; pagination: any; status: string; unreadNotificationsCount: any; }'.
+pages/operations/projects/[slug].vue(988,35): error TS2339: Property 'filter' does not exist on type '{ formattedData: any; pagination: any; status: string; unreadNotificationsCount: any; } | { formattedData: never[]; pagination: {}; status: string; unreadNotificationsCount?: undefined; } | { ...; }'.
+  Property 'filter' does not exist on type '{ formattedData: any; pagination: any; status: string; unreadNotificationsCount: any; }'.
+pages/operations/services/[slug].vue(149,36): error TS2345: Argument of type 'string | string[] | undefined' is not assignable to parameter of type 'string | string[]'.
+  Type 'undefined' is not assignable to type 'string | string[]'.
+pages/operations/services/edit/[slug].vue(22,36): error TS2345: Argument of type 'string | string[] | undefined' is not assignable to parameter of type 'string | string[]'.
+  Type 'undefined' is not assignable to type 'string | string[]'.
+pages/operations/vehicle/[slug].vue(169,36): error TS2345: Argument of type 'string | string[] | undefined' is not assignable to parameter of type 'string | string[]'.
+  Type 'undefined' is not assignable to type 'string | string[]'.
+pages/operations/vehicle/edit/[slug].vue(22,36): error TS2345: Argument of type 'string | string[] | undefined' is not assignable to parameter of type 'string | string[]'.
+  Type 'undefined' is not assignable to type 'string | string[]'.
+pages/operations/vehicle/edit/[slug].vue(26,50): error TS18048: 'route.params.slug' is possibly 'undefined'.
+pages/procurement/purchase-orders/[id].vue(282,22): error TS2353: Object literal may only specify known properties, and 'title' does not exist in type 'VNode<RendererNode, RendererElement, { [key: string]: any; }>'.
+pages/procurement/purchase-orders/create.vue(341,22): error TS2339: Property 'status' does not exist on type 'ApiResponse<any>'.
+pages/procurement/rfq/create.vue(239,30): error TS2339: Property 'status' does not exist on type 'ApiResponse<any>'.
+pages/procurement/rfq/create.vue(249,39): error TS2339: Property 'status' does not exist on type 'ApiResponse<any>'.
+pages/procurement/rfq/index.vue(60,27): error TS2339: Property 'data' does not exist on type 'ApiResponse<any>'.
+pages/reports/index.vue(18,24): error TS2339: Property 'user' does not exist on type 'ApiResponse<any>'.
+pages/roles/index.vue(71,17): error TS2304: Cannot find name 'Role'.
+pages/sales/clients/[slug].vue(169,34): error TS2345: Argument of type 'string | string[] | undefined' is not assignable to parameter of type 'string | string[]'.
+  Type 'undefined' is not assignable to type 'string | string[]'.
+pages/sales/deals/[slug].vue(169,30): error TS2345: Argument of type 'string | string[] | undefined' is not assignable to parameter of type 'string | string[]'.
+  Type 'undefined' is not assignable to type 'string | string[]'.
+pages/sales/deals/[slug].vue(238,33): error TS2339: Property 'invoiceDate' does not exist on type 'Invoice'.
+pages/sales/deals/[slug].vue(239,24): error TS2345: Argument of type 'Date | null' is not assignable to parameter of type 'string | Date'.
+  Type 'null' is not assignable to type 'string | Date'.
+pages/sales/deals/[slug].vue(240,30): error TS2345: Argument of type 'Date | null' is not assignable to parameter of type 'string | Date'.
+  Type 'null' is not assignable to type 'string | Date'.
+pages/sales/deals/[slug].vue(265,86): error TS2345: Argument of type 'Date | null' is not assignable to parameter of type 'string | Date'.
+  Type 'null' is not assignable to type 'string | Date'.
+pages/sales/deals/edit/[slug].vue(35,30): error TS2345: Argument of type 'string | string[] | undefined' is not assignable to parameter of type 'string | string[]'.
+  Type 'undefined' is not assignable to type 'string | string[]'.
+pages/sales/opportunity/[slug].vue(205,44): error TS2345: Argument of type 'string | string[] | undefined' is not assignable to parameter of type 'string | string[]'.
+  Type 'undefined' is not assignable to type 'string | string[]'.
+pages/sales/opportunity/edit/[slug].vue(26,44): error TS2345: Argument of type 'string | string[] | undefined' is not assignable to parameter of type 'string | string[]'.
+  Type 'undefined' is not assignable to type 'string | string[]'.
+pages/sales/opportunity/edit/[slug].vue(31,49): error TS2345: Argument of type 'string | string[] | undefined' is not assignable to parameter of type 'string | string[]'.
+  Type 'undefined' is not assignable to type 'string | string[]'.
+pages/staff/[slug].vue(57,32): error TS2345: Argument of type 'string | string[] | undefined' is not assignable to parameter of type 'string | string[]'.
+  Type 'undefined' is not assignable to type 'string | string[]'.
+pages/staff/edit/[slug].vue(24,32): error TS2345: Argument of type 'string | string[] | undefined' is not assignable to parameter of type 'string | string[]'.
+  Type 'undefined' is not assignable to type 'string | string[]'.
+
+[41m[30m ERROR [39m[49m Process exited with non-zero status (2)
+
+    [90mat [39mG._waitForOutput ([36m/E:/NEW-CRM/leadify-frontend-main/node_modules/tinyexec/dist/main.js:574:92[39m)
+    [90mat [39mprocess.processTicksAndRejections ([36mnode:internal/process/task_queues:103:5[39m)
+    [90mat [39masync Object.run ([36m/E:/NEW-CRM/leadify-frontend-main/node_modules/@nuxt/cli/dist/typecheck-B-jIcMjP.mjs:66:3[39m)
+    [90mat [39masync runCommand ([36m/E:/NEW-CRM/leadify-frontend-main/node_modules/citty/dist/index.mjs:316:16[39m)
+    [90mat [39masync runCommand ([36m/E:/NEW-CRM/leadify-frontend-main/node_modules/citty/dist/index.mjs:307:11[39m)
+    [90mat [39masync runMain ([36m/E:/NEW-CRM/leadify-frontend-main/node_modules/citty/dist/index.mjs:445:7[39m) 
+
+
+
+[41m[30m ERROR [39m[49m Process exited with non-zero status (2)
+

@@ -1,6 +1,8 @@
 // ============================================
 // 🧩 THEME COMPONENTS - Element Plus Overrides
 // ============================================
+@use '../styles/glass' as *;
+
 
 // ========================================
 // 🎛️ ELEMENT PLUS CSS VARIABLES
@@ -150,6 +152,7 @@
     border-radius: var(--radius-md) !important;
     font-weight: 500 !important;
     transition: all var(--transition-fast) !important;
+    @include glass-button-press;
 
     &--default {
         background-color: var(--bg-input) !important;
@@ -236,8 +239,12 @@
         border-bottom: 1px solid var(--border-default) !important;
     }
 
-    .el-table__row:hover td {
-        background-color: var(--bg-hover) !important;
+    .el-table__row {
+        @include glass-table-row-hover;
+
+        td {
+            transition: background-color 0.2s ease;
+        }
     }
 }
 

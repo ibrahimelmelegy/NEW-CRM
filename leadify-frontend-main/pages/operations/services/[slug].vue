@@ -146,7 +146,7 @@ el-tabs.demo-tabs(v-model="activeName", @tab-click="handleClick")
     }
   };
 
-  const service = await getService(route.params.slug);
+  const service = await getService(route.params.slug as string);
 </script>
 <style scoped lang="scss">
   .activity {

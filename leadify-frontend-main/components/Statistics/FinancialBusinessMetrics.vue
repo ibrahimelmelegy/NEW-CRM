@@ -8,19 +8,19 @@
   .cards.grid.grid-cols-3.gap-6.mb-8
     StatisticsCard(
       name="Total Deals Revenue" 
-      :data="bussinesStats.firstCards[0].value" 
+      :data="bussinesStats?.firstCards?.[0]?.value || 0" 
       icon="ph:currency-circle-dollar-bold" 
       colorType="rose"
     )
     StatisticsCard(
       name="Outstanding Invoices" 
-      :data="bussinesStats.firstCards[1].value" 
+      :data="bussinesStats?.firstCards?.[1]?.value || 0" 
       icon="ph:receipt-bold" 
       colorType="amber"
     )
     StatisticsCard(
       name="Collected Payments" 
-      :data="bussinesStats.firstCards[2].value" 
+      :data="bussinesStats?.firstCards?.[2]?.value || 0" 
       icon="ph:check-circle-bold" 
       colorType="emerald"
     )

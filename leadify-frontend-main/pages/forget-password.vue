@@ -164,7 +164,7 @@ const onSubmit = handleSubmit(async (values: any) => {
       email: values.email,
     });
 
-    if (response?.message === 'Password reset link sent to your email.') {
+    if (response.success) {
       submittedEmail.value = values.email;
       isSubmitted.value = true;
       resetForm();

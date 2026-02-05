@@ -1,5 +1,5 @@
 <template lang="pug">
-.stats-card-container(:class="[`border-${colorType}`, 'group', 'animate-entrance']")
+.stats-card-container.glass-card.interactive(:class="[`border-${colorType}`, 'group', 'animate-entrance']")
   //- Aurora Background Effect
   .aurora-blur(:class="[`aurora-${colorType}`]")
   
@@ -33,23 +33,18 @@
 
 <style lang="scss" scoped>
 .stats-card-container {
-  background: var(--bg-card);
-  background-image: var(--gradient-glass);
-  border-radius: var(--radius-card);
   padding: 30px;
   position: relative;
   overflow: hidden;
-  transition: var(--transition-smooth);
-  backdrop-filter: blur(15px);
 
-  // Gradient border stroke (thin line around the card)
+  // Gradient border stroke
   &::before {
     content: '';
     position: absolute;
     inset: 0;
-    border-radius: var(--radius-card);
-    padding: 2px; // Border thickness
-    background: linear-gradient(135deg, #7C3AED, #EC4899, #F97316, #7C3AED); // Default aurora gradient
+    border-radius: inherit;
+    padding: 1.5px;
+    background: linear-gradient(135deg, rgba(255,255,255,0.2), rgba(255,255,255,0.05));
     -webkit-mask: 
       linear-gradient(#fff 0 0) content-box, 
       linear-gradient(#fff 0 0);
@@ -62,34 +57,15 @@
     transition: var(--transition-smooth);
   }
 
-  // Gradient border colors by type
-  &.border-purple::before { 
-    background: linear-gradient(135deg, #7C3AED, #EC4899, #F97316, #7C3AED); 
-  }
-  &.border-indigo::before { 
-    background: linear-gradient(135deg, #6366F1, #A855F7, #EC4899, #6366F1); 
-  }
-  &.border-cyan::before { 
-    background: linear-gradient(135deg, #06B6D4, #22D3EE, #06B6D4); 
-  }
-  &.border-rose::before { 
-    background: linear-gradient(135deg, #F43F5E, #F97316, #F43F5E); 
-  }
-  &.border-emerald::before { 
-    background: linear-gradient(135deg, #10B981, #34D399, #10B981); 
-  }
-  &.border-amber::before { 
-    background: linear-gradient(135deg, #F97316, #FBBF24, #F97316); 
-  }
+  // Gradient border colors by type on hover/active
+  &.border-purple:hover::before { background: linear-gradient(135deg, #7C3AED, #EC4899); }
+  &.border-indigo:hover::before { background: linear-gradient(135deg, #6366F1, #A855F7); }
+  &.border-cyan:hover::before   { background: linear-gradient(135deg, #06B6D4, #22D3EE); }
+  &.border-rose:hover::before   { background: linear-gradient(135deg, #F43F5E, #F97316); }
+  &.border-emerald:hover::before { background: linear-gradient(135deg, #10B981, #34D399); }
+  &.border-amber:hover::before  { background: linear-gradient(135deg, #F97316, #FBBF24); }
 
   &:hover {
-    transform: translateY(-8px);
-    box-shadow: var(--shadow-premium);
-    
-    &::before {
-      padding: 3px; // Thicker border on hover
-    }
-    
     .aurora-blur {
         opacity: 0.15;
         transform: scale(1.2) translateY(-20%);
@@ -117,24 +93,24 @@
   .icon-wrapper {
     width: 56px;
     height: 56px;
-    border-radius: 18px;
+    border-radius: 16px;
     display: flex;
     align-items: center;
     justify-content: center;
     transition: var(--transition-smooth);
     
     .group:hover & {
-      transform: rotate(-12deg) scale(1.15);
+      transform: rotate(-8deg) scale(1.1);
     }
   }
 
   .trend-indicator {
       font-size: 13px;
       font-weight: 700;
-      background: rgba(255,255,255,0.03);
+      background: rgba(255,255,255,0.05);
       padding: 4px 10px;
       border-radius: 20px;
-      border: 1px solid var(--border-glass);
+      border: 1px solid rgba(255,255,255,0.1);
   }
 
   .bg-gradient-purple { background: var(--gradient-purple); }

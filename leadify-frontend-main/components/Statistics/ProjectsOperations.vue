@@ -8,13 +8,13 @@
   .cards.grid.grid-cols-2.gap-6.mb-8
     StatisticsCard(
       name="Total Projects" 
-      :data="projectStats.firstCards[0].value" 
+      :data="projectStats?.firstCards?.[0]?.value || 0" 
       icon="ph:projector-screen-chart-bold" 
       colorType="indigo"
     )
     StatisticsCard(
       name="Eitmad Projects Overview" 
-      :data="projectStats.firstCards[1].value" 
+      :data="projectStats?.firstCards?.[1]?.value || 0" 
       icon="ph:certificate-bold" 
       colorType="cyan"
     )

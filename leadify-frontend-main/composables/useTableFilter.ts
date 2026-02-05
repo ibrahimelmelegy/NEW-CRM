@@ -1,4 +1,4 @@
-import { formatDate, getYear, formatSnakeCase } from "../utils/format";
+// Formatting utilities are now auto-imported from composables/format.ts
 import { useApiFetch } from "@/composables/useApiFetch";
 
 export const globalFilterOptions = ref<Record<string, string | string[] | number[]>>({});
@@ -65,7 +65,7 @@ export default async function useTableFilter(
 
   try {
     // Fetch data based on the query parameters
-    const { body, status: success, message } = await useApiFetch(`${position}${queryString}`);
+    const { body, success, message } = await useApiFetch(`${position}${queryString}`);
 
     // Update the URL to reflect the current query parameters
     router.replace({

@@ -73,7 +73,7 @@
     <script lang="ts" setup>
     const route = useRoute();
     
-    const dailyTask = await getDailyTask(route.params.slug);
+    const dailyTask = await getDailyTask(route.params.slug as string);
     </script>
     <style scoped lang="scss">
     .activity {

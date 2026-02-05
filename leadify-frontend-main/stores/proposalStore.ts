@@ -2,17 +2,17 @@ import { defineStore } from 'pinia';
 
 export const useProposalStoreee = defineStore('proposalll', {
   state: () => ({
-    proposalInfo: {},
-    proposalContent: [],
+    proposalInfo: {} as any,
+    proposalContent: [] as any[],
   }),
   actions: {
-    setProposalInfo(info) {
+    setProposalInfo(info: any) {
       console.log('>>>>>>>>>>>>>> useProposalStore', info);
       this.proposalInfo = info;
       console.log('>>>>>>>>>>>>>> useProposalStore', this.proposalInfo);
       navigateTo('/sales/proposals/proposal-content');
     },
-    addContent(content) {
+    addContent(content: any) {
       this.proposalContent.push(content);
     },
     resetProposal() {

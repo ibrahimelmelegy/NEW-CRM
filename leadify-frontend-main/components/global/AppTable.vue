@@ -4,7 +4,7 @@
       el-button(v-if="exportButton"  @click="()=> $emit('exportClick')" size='large'   class="premium-btn-secondary")
        Icon(  name="IconExport" size="20")
        p.mx-1 Export
-    .px-6.flex.items-center.flex-wrap.gap-2.mb-6.justify-start
+    .px-6.flex.items-center.flex-wrap.gap-2.mb-6.justify-start(v-if="!isLoading && !loading")
         .input.table-search(class="w-[250px]" v-if="!withoutSearch")
             el-input(size="large"
                 style="height:50px"
@@ -17,8 +17,10 @@
             Icon(  name="IconFilter" size="20")
             span.mr-2 Filters
             span.font-bold.rounded-full.w-6.h-6.bg-accent-purple.text-white.flex.items-center.justify-center(v-if="numberOfFilters") {{ numberOfFilters }}
+    
     div(:class="{ 'mt-4': !withoutSearch || !withoutFilters }")
-        el-table(:data='finalData || []' v-loading="isLoading || loading" ref="tableRef" style='width:100%' :row-style="{cursor:'pointer'}" @current-change="(val)=> $emit('handleRowClick' , val)"   @sort-change="handleSortChange" @filter-change="handleFilterChange"  :default-sort="sort" @selection-change="handleSelectionChange")
+        SkeletonTable(v-if="isLoading || loading")
+        el-table(v-else :data='finalData || []' ref="tableRef" style='width:100%' :row-style="{cursor:'pointer'}" @current-change="(val)=> $emit('handleRowClick' , val)"   @sort-change="handleSortChange" @filter-change="handleFilterChange"  :default-sort="sort" @selection-change="handleSelectionChange")
             el-table-column(type="index", width="50" :index="calculateIndex")
             el-table-column( class-name="wrap-text" :min-width="column?.width" :show-overflow-tooltip="true"   v-for="column in columns"  :filtered-value="filters[column?.prop]"  :prop="column.prop" :label="column.label"  :column-key="column.prop" :sortable="column?.sortable ? 'custom' : undefined" )
                 template(#default="scope")
@@ -251,4 +253,13 @@
       scrollbar-width: thin !important;
     }
   }
+@keyframes rowPulse {
+  0% { background: rgba(168, 85, 247, 0); }
+  50% { background: rgba(168, 85, 247, 0.1); }
+  100% { background: rgba(168, 85, 247, 0); }
+}
+
+.pulse-row {
+  animation: rowPulse 2s ease-out;
+}
 </style>

@@ -151,7 +151,7 @@ el-tabs.demo-tabs(v-model="activeName", @tab-click="handleClick")
     }
   };
 
-  const asset = await getAsset(route.params.slug);
+  const asset = await getAsset(route.params.slug as string);
 </script>
 <style scoped lang="scss">
   .activity {
