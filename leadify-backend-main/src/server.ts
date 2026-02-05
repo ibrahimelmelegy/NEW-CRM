@@ -18,6 +18,13 @@ sequelize
     // Start the Express server
     app.listen(PORT, () => {
       console.log(`Server is running on port ${PORT}`);
+      // Start Background Jobs
+      try {
+        const PaymentReminderScheduler = require('./cron/paymentReminders').default;
+        PaymentReminderScheduler.start();
+      } catch (e) {
+        console.error("Failed to start Cron Jobs", e);
+      }
     });
   })
   .catch((err: Error) => {

@@ -4,20 +4,24 @@ import { OpportunityActivity } from './model/opportunityActivities';
 import { LeadActivity } from './model/leadActivities';
 import { ClientActivity } from './model/clientActivities';
 import { ProjectActivity } from './model/projectActivities';
+import { VendorActivity } from './model/vendorActivities';
+import { PurchaseOrderActivity } from './model/purchaseOrderActivities';
 
-type ActivityModel = 'deal' | 'opportunity' | 'lead' | 'client' | 'project';
+type ActivityModel = 'deal' | 'opportunity' | 'lead' | 'client' | 'project' | 'vendor' | 'purchaseOrder';
 const actionModel: Record<ActivityModel, any> = {
   deal: DealActivity,
   opportunity: OpportunityActivity,
   lead: LeadActivity,
   client: ClientActivity,
-  project: ProjectActivity
+  project: ProjectActivity,
+  vendor: VendorActivity,
+  purchaseOrder: PurchaseOrderActivity
 };
 
 export async function createActivityLog(
   model: ActivityModel,
   actionType: ActivityActionType,
-  modelId: string,
+  modelId: string | number,
   userId: number,
   transation?: any,
   data?: any

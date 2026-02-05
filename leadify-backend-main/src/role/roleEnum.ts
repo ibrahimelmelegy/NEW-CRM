@@ -120,6 +120,23 @@ export enum PerformanceAndHRWidgetsPermissionsEnum {
   VIEW_GLOBAL_PERFORMANCE_HR_WIDGETS = 'VIEW_GLOBAL_PERFORMANCE_HR_WIDGETS'
 }
 
+export enum ProcurementPermissionsEnum {
+  VIEW_PROCUREMENT = 'VIEW_PROCUREMENT',
+  CREATE_PROCUREMENT = 'CREATE_PROCUREMENT',
+  EDIT_PROCUREMENT = 'EDIT_PROCUREMENT',
+  APPROVE_PROCUREMENT = 'APPROVE_PROCUREMENT',
+  REJECT_PROCUREMENT = 'REJECT_PROCUREMENT',
+  DELETE_PROCUREMENT = 'DELETE_PROCUREMENT',
+  ARCHIVE_PROCUREMENT = 'ARCHIVE_PROCUREMENT'
+}
+
+export enum VendorPermissionsEnum {
+  VIEW_VENDORS = 'VIEW_VENDORS',
+  CREATE_VENDORS = 'CREATE_VENDORS',
+  EDIT_VENDORS = 'EDIT_VENDORS',
+  DELETE_VENDORS = 'DELETE_VENDORS'
+}
+
 // Consolidating all permissions
 export const permissions = {
   leads: Object.keys(LeadPermissionsEnum),
@@ -140,7 +157,9 @@ export const permissions = {
   leadAndSalesWidgets: Object.keys(LeadAndSalesWidgetsPermissionsEnum),
   projectsAndOperationsWidgets: Object.keys(ProjectsAndOperationsWidgetsPermissionsEnum),
   financialAndBusinessMetricsWidgets: Object.keys(FinancialAndBusinessMetricsWidgetsPermissionsEnum),
-  performanceAndHRWidgets: Object.keys(PerformanceAndHRWidgetsPermissionsEnum)
+  performanceAndHRWidgets: Object.keys(PerformanceAndHRWidgetsPermissionsEnum),
+  procurement: Object.keys(ProcurementPermissionsEnum),
+  vendors: Object.keys(VendorPermissionsEnum)
 };
 
 // Function to get all permissions

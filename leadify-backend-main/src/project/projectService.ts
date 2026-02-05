@@ -477,6 +477,13 @@ class ProjectService {
     };
   }
 
+  public async getAllProjects(): Promise<Project[]> {
+    return await Project.findAll({
+      attributes: ['id', 'name'],
+      order: [['name', 'ASC']]
+    });
+  }
+
   public async getProjectById(projectId: string, user: User): Promise<any> {
     await this.validateProjectAccess(projectId, user);
     const project = await this.projectOrError({ id: projectId }, RelationArray);

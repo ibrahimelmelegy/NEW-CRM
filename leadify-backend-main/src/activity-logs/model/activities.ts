@@ -1,6 +1,6 @@
 import { AutoIncrement, BelongsTo, Column, DataType, ForeignKey, Model } from 'sequelize-typescript';
 import User from '../../user/userModel';
-export type ActivityActionType = 'create' | 'update' | 'assign' | 'export';
+export type ActivityActionType = 'create' | 'update' | 'assign' | 'export' | 'delete' | 'approve' | 'reject' | 'archive';
 
 export abstract class ActivityModelClass extends Model {
   @Column({

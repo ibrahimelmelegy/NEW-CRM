@@ -59,6 +59,15 @@ class ProjectController {
     }
   }
 
+  public async getAllProjects(req: AuthenticatedRequest, res: Response, next: NextFunction): Promise<void> {
+    try {
+      const projects = await projectService.getAllProjects();
+      wrapResult(res, projects);
+    } catch (error) {
+      next(error);
+    }
+  }
+
   public async getProjects(req: AuthenticatedRequest, res: Response, next: NextFunction): Promise<void> {
     try {
       const responseFromService = await projectService.getProjects(req.query, req.user as User);

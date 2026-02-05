@@ -152,6 +152,18 @@ class NotificationService {
       type: NotificationTypeEnums.CLIENT_ASSIGNED
     });
   }
+
+  // Generic Notification Creator for System Events
+  async createNotification(userId: number, title: string, body: string, metadata: any = {}): Promise<any> {
+    return await Notification.create({
+      userId,
+      title: title, // Make sure Model has title or use body
+      body_en: body,
+      body_ar: body,
+      type: 'SYSTEM_ALERT', // Need to make sure this fits enum or use generic
+      ...metadata
+    });
+  }
 }
 
 export default new NotificationService();

@@ -31,6 +31,9 @@ import roleRoutes from './role/roleRoutes';
 import settingRoutes from './setting/settingRoutes';
 import insightRoutes from './insights/insightRoutes';
 import dailyTaskRoutes from './dailyTask/dailyTaskRoutes';
+import vendorRoutes from './vendor/vendorRoutes';
+import procurementRoutes from './procurement/procurementRoutes';
+import rfqRoutes from './procurement/rfqRoutes';
 
 const fileUpload = require('express-fileupload');
 
@@ -82,6 +85,9 @@ app.use('/api/activity', ActivityRoutes);
 app.use('/api/users', userRoutes);
 app.use('/api/setting', settingRoutes);
 app.use('/api/daily-task', dailyTaskRoutes);
+app.use('/api/vendor', vendorRoutes);
+app.use('/api/procurement', procurementRoutes);
+app.use('/api/rfq', rfqRoutes);
 
 // Authentication routes
 app.use('/api', authRoutes); // Use /api for authentication-related routes

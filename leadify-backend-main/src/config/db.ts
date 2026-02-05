@@ -44,6 +44,15 @@ import ClientUsers from '../client/client_UsersModel';
 import UserProjects from '../project/models/projectUsersModel';
 import { Material } from '../material/material.model';
 import DailyTask from '../dailyTask/dailyTaskModel';
+import Vendor from '../vendor/vendorModel';
+import PurchaseOrder from '../procurement/models/purchaseOrderModel';
+import PurchaseOrderItem from '../procurement/models/purchaseOrderItemModel';
+import { VendorActivity } from '../activity-logs/model/vendorActivities';
+import { PurchaseOrderActivity } from '../activity-logs/model/purchaseOrderActivities';
+import RFQ from '../procurement/models/rfqModel';
+import RFQItem from '../procurement/models/rfqItemModel';
+import RFQVendor from '../procurement/models/rfqVendorModel';
+import RFQVendorItem from '../procurement/models/rfqVendorItemModel';
 
 dotenv.config();
 
@@ -109,7 +118,16 @@ const sequelize = new Sequelize({
     OpportunityUsers,
     ClientUsers,
     UserProjects,
-    DailyTask
+    DailyTask,
+    Vendor,
+    PurchaseOrder,
+    PurchaseOrderItem,
+    VendorActivity,
+    PurchaseOrderActivity,
+    RFQ,
+    RFQItem,
+    RFQVendor,
+    RFQVendorItem
   ], // Path to your models
   logging: true // Disable logging (optional, based on your preference)
 });

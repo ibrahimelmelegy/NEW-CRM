@@ -1,0 +1,29 @@
+import BaseError from '../utils/error/base-http-exception';
+import { ERRORS } from '../utils/error/errors';
+
+class OCRService {
+    /**
+     * Processes an image or PDF and extracts vendor name, items, and total amount.
+     * For now, this is a placeholder structure that can be integrated with 
+     * Google Vision API or AWS Textract.
+     */
+    async extractPOData(file: any): Promise<any> {
+        try {
+            // Placeholder: Logic to send file to OCR provider would go here
+            // For demonstration, we'll return a mock structure.
+
+            return {
+                vendorName: "Mock Vendor",
+                totalAmount: 1000.00,
+                items: [
+                    { description: "Item 1", quantity: 10, unitPrice: 50.00, tax: 15 },
+                    { description: "Item 2", quantity: 5, unitPrice: 100.00, tax: 15 }
+                ]
+            };
+        } catch (error) {
+            throw new BaseError(ERRORS.FILE_ERROR);
+        }
+    }
+}
+
+export default new OCRService();
