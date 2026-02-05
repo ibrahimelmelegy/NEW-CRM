@@ -55,6 +55,12 @@ app.use(express.json());
 
 app.use(cors());
 
+// DEBUG: Log all incoming requests
+app.use((req, res, next) => {
+  console.log(`[DEBUG] Incoming Request: ${req.method} ${req.url}`);
+  next();
+});
+
 // Middleware for uploading files
 app.use(fileUpload());
 
@@ -90,7 +96,7 @@ app.use('/api/procurement', procurementRoutes);
 app.use('/api/rfq', rfqRoutes);
 
 // Authentication routes
-app.use('/api', authRoutes); // Use /api for authentication-related routes
+app.use('/api/auth', authRoutes); // Explicitly mount at /api/auth
 
 // Serve static files from the 'public' directory
 app.use('/assets', express.static('public/uploads'));

@@ -35,7 +35,7 @@ const router = express.Router();
  *         description: Server error
  */
 // Authentication route for login
-router.post('/auth/login', loginUser);
+router.post('/login', loginUser);
 
 /**
  * @swagger
@@ -72,7 +72,7 @@ router.post('/auth/login', loginUser);
  *       500:
  *         description: Server error
  */
-router.get('/auth/me', getUserProfile);
+router.get('/me', getUserProfile);
 
 /**
  * @swagger
@@ -92,7 +92,7 @@ router.get('/auth/me', getUserProfile);
  *         description: Server error
  */
 // Logout route (authenticated users only)
-router.post('/auth/logout', authenticateUser, logoutUser);
+router.post('/logout', authenticateUser, logoutUser);
 
 /**
  * @swagger
@@ -120,7 +120,7 @@ router.post('/auth/logout', authenticateUser, logoutUser);
  *         description: Server error
  */
 // Forgot password route
-router.post('/auth/forgot-password', forgotPassword);
+router.post('/forgot-password', forgotPassword);
 
 /**
  * @swagger
@@ -151,7 +151,7 @@ router.post('/auth/forgot-password', forgotPassword);
  *         description: Server error
  */
 // Reset password route
-router.post('/auth/reset-password', resetPassword);
+router.post('/reset-password', resetPassword);
 
 /**
  * @swagger
@@ -177,6 +177,6 @@ router.post('/auth/reset-password', resetPassword);
  *         description: Invalid or expired token
  */
 // Route to verify the reset token (optional for frontend validation)
-router.post('/auth/check-reset-token', checkResetToken);
+router.post('/check-reset-token', checkResetToken);
 
 export default router;
