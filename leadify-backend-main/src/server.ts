@@ -2,6 +2,7 @@ import dotenv from 'dotenv';
 dotenv.config();
 import app from './app';
 import { sequelize } from './config/db';
+import { Sequelize } from 'sequelize-typescript';
 
 import http from 'http';
 import { Server } from 'socket.io';
@@ -16,6 +17,33 @@ export const io = new Server(server, {
   }
 });
 
+async function runTypoMigration(sequelize: Sequelize) {
+  const tables = [
+    'leadActivities',
+    'dealActivities',
+    'opportunityActivities',
+    'clientActivities',
+    'projectActivities',
+    'vendorActivities',
+    'purchaseOrderActivities'
+  ];
+
+  for (const table of tables) {
+    try {
+      const [results]: any = await sequelize.query(
+        `SELECT column_name FROM information_schema.columns WHERE table_name='${table}' AND column_name='descripion'`
+      );
+
+      if (results.length > 0) {
+        console.log(`[Migration] Renaming 'descripion' to 'description' in ${table}...`);
+        await sequelize.query(`ALTER TABLE "${table}" RENAME COLUMN "descripion" TO "description"`);
+      }
+    } catch (e) {
+      // Ignore errors if table doesn't exist yet
+    }
+  }
+}
+
 io.on('connection', (socket) => {
   console.log('[Socket] New Client Connected:', socket.id);
   socket.on('disconnect', () => {
@@ -28,6 +56,9 @@ sequelize
   .authenticate()
   .then(async () => {
     console.log('Database connection established successfully.');
+
+    // Automated migration for 'descripion' typo
+    await runTypoMigration(sequelize);
 
     // Synchronize all defined models to the database
     await sequelize.sync({ alter: true });
