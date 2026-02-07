@@ -1,16 +1,16 @@
 <template lang="pug">
 el-form.border-t.pt-4(  autocomplete="off"   @submit.prevent='onSubmit'   ref="myForm" label-position="top"  :validationSchema="formSchema" )
   .flex.align-center.gap-1
-    InputSelect( class="w-11/12	"  label=" Manpower Name" name="manpowerId" :options="manpowerOptions" :value=" isNew ? manpowerOptions[0]?.value  : data?.manpowerId" )
+    InputSelect( class="w-11/12	"  :label="$t('operations.projects.manpower.table.manpowerName')" name="manpowerId" :options="manpowerOptions" :value=" isNew ? manpowerOptions[0]?.value  : data?.manpowerId" )
     el-button.mt-7.flex-1(size='medium' :icon="Plus" native-type="button" @click="addNewManPower = true" class="!rounded-2xl !border-[#e9e8eb] !py-7 !px-4")
   .grid.grid-cols-2.gap-3.items-center
-    InputText(label="Estimate Work Day"  placeholder="Enter Estimate Work Day" name="estimatedWorkDays" :value="data?.estimatedWorkDays" )
-    InputSelect.mt-6(label=" Mission" isMultiple name="mission" :options="projectMissions" :value="data?.mission" )
-    InputText.mt-4(v-if="data?.id"   label="Actual Worked Days"  placeholder="Enter Actual Worked Days" name="actualWorkDays" :value="data?.actualWorkDays" )
-    el-checkbox(label="Other Costs ?" v-model="isOtherCost")
+    InputText(:label="$t('operations.projects.manpower.table.estimatedDays')"  :placeholder="$t('operations.projects.manpower.table.estimatedDays')" name="estimatedWorkDays" :value="data?.estimatedWorkDays" )
+    InputSelect.mt-6(:label="$t('operations.projects.manpower.table.mission')" isMultiple name="mission" :options="getProjectMissions()" :value="data?.mission" )
+    InputText.mt-4(v-if="data?.id"   :label="$t('operations.projects.manpower.table.actualDays')"  :placeholder="$t('operations.projects.manpower.table.actualDays')" name="actualWorkDays" :value="data?.actualWorkDays" )
+    el-checkbox(:label="$t('operations.projects.manpower.table.otherCosts') + '?'" v-model="isOtherCost")
   template(v-if="isOtherCost")
-    InputText.mt-4(label="Other Costs"  placeholder="Enter Other Costs SAR" name="otherCosts" :value="data?.otherCosts" )
-    InputText.mt-4(label="Other Cost Reason" type="textarea" placeholder="Enter Total Cost SAR" name="otherCostsReason" :value="data?.otherCostsReason" )
+    InputText.mt-4(:label="$t('operations.projects.manpower.table.otherCosts')"  :placeholder="$t('operations.projects.manpower.table.otherCosts')" name="otherCosts" :value="data?.otherCosts" )
+    InputText.mt-4(:label="$t('operations.projects.manpower.form.otherCostReason')" type="textarea" :placeholder="$t('operations.projects.manpower.form.otherCostReason')" name="otherCostsReason" :value="data?.otherCostsReason" )
   slot(name="modal-footer")
 </template>
 
@@ -19,6 +19,7 @@ el-form.border-t.pt-4(  autocomplete="off"   @submit.prevent='onSubmit'   ref="m
   import * as yup from "yup";
   import { Plus } from "@element-plus/icons-vue";
   import { ref } from 'vue';
+  const { t } = useI18n();
   const props = defineProps({
     loading: Boolean,
     isNew: Boolean,
@@ -52,15 +53,15 @@ el-form.border-t.pt-4(  autocomplete="off"   @submit.prevent='onSubmit'   ref="m
       .nullable()
       .test(
         "is-valid-number",
-        "Please enter a valid number.", // Custom error message
+        t("validation.invalidNumber"), // Custom error message
         (value: any) => {
           if (!value) return true; // Allow empty input
           return /^\d*\.?\d*$/.test(value); // Check if value is a valid integer or float
         }
       )
       .max(25)
-      .label("Actual Worked Days"),
-    mission: yup.array().of(yup.string()).required().min(1).label("Mission"),
+      .label(t("operations.projects.manpower.table.actualDays")),
+    mission: yup.array().of(yup.string()).required().min(1).label(t("operations.projects.manpower.table.mission")),
     // foodAllowanceCost: yup
     //   .string() // Use string to allow flexible input (empty, float, or integer)
     //   .required()
@@ -107,7 +108,7 @@ el-form.border-t.pt-4(  autocomplete="off"   @submit.prevent='onSubmit'   ref="m
     }),
     otherCostsReason: yup.string().when([], {
       is: () => isOtherCost.value,
-      then: () => yup.string().required().trim().min(2).max(100).label("Other Cost Reason"),
+      then: () => yup.string().required().trim().min(2).max(100).label(t("operations.projects.manpower.form.otherCostReason")),
       otherwise: () =>
         yup
           .string()

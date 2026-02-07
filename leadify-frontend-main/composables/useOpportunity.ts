@@ -59,11 +59,11 @@ export enum StageEnum {
 }
 
 export const stageOptions = [
-  { label: 'Discovery', value: StageEnum.Discovery },
-  { label: 'Proposal', value: StageEnum.Proposal },
-  { label: 'Negotiation', value: StageEnum.Negotiation },
-  { label: 'Lost', value: StageEnum.Lost },
-  { label: 'Won', value: StageEnum.Won },
+  { label: 'opportunities.stages.discovery', value: StageEnum.Discovery },
+  { label: 'opportunities.stages.proposal', value: StageEnum.Proposal },
+  { label: 'opportunities.stages.negotiation', value: StageEnum.Negotiation },
+  { label: 'opportunities.stages.lost', value: StageEnum.Lost },
+  { label: 'opportunities.stages.won', value: StageEnum.Won },
 ];
 
 export enum priorityEnum {
@@ -75,11 +75,11 @@ export enum priorityEnum {
 }
 
 export const priorityOptions = [
-  { label: 'Very Low', value: priorityEnum.VeryLow },
-  { label: 'Low', value: priorityEnum.Low },
-  { label: 'Medium', value: priorityEnum.Medium },
-  { label: 'High', value: priorityEnum.High },
-  { label: 'Very High', value: priorityEnum.VeryHigh },
+  { label: 'opportunities.priorities.veryLow', value: priorityEnum.VeryLow },
+  { label: 'opportunities.priorities.low', value: priorityEnum.Low },
+  { label: 'opportunities.priorities.medium', value: priorityEnum.Medium },
+  { label: 'opportunities.priorities.high', value: priorityEnum.High },
+  { label: 'opportunities.priorities.veryHigh', value: priorityEnum.VeryHigh },
 ];
 
 export enum stepsEnum {
@@ -91,11 +91,11 @@ export enum stepsEnum {
 }
 
 export const stepsOptions = [
-  { label: 'Schedule Meeting', value: stepsEnum.ScheduleMeeting },
-  { label: 'Send Proposal', value: stepsEnum.SendProposal },
-  { label: 'Follow-Up Call', value: stepsEnum.FollowUpCall },
-  { label: 'Negotiate Terms', value: stepsEnum.NegotiateTerms },
-  { label: 'Close the Deal', value: stepsEnum.CloseTheDeal },
+  { label: 'opportunities.steps.scheduleMeeting', value: stepsEnum.ScheduleMeeting },
+  { label: 'opportunities.steps.sendProposal', value: stepsEnum.SendProposal },
+  { label: 'opportunities.steps.followUpCall', value: stepsEnum.FollowUpCall },
+  { label: 'opportunities.steps.negotiateTerms', value: stepsEnum.NegotiateTerms },
+  { label: 'opportunities.steps.closeTheDeal', value: stepsEnum.CloseTheDeal },
 ];
 
 export enum reasonEnum {
@@ -106,10 +106,10 @@ export enum reasonEnum {
 }
 
 export const reasonOptions = [
-  { label: 'Not Interested', value: reasonEnum.NotInterested },
-  { label: 'No Budget', value: reasonEnum.NoBudget },
-  { label: 'Competitor Chosen', value: reasonEnum.CompetitorChosen },
-  { label: 'Other', value: reasonEnum.Other },
+  { label: 'opportunities.reasons.notInterested', value: reasonEnum.NotInterested },
+  { label: 'opportunities.reasons.noBudget', value: reasonEnum.NoBudget },
+  { label: 'opportunities.reasons.competitorChosen', value: reasonEnum.CompetitorChosen },
+  { label: 'opportunities.reasons.other', value: reasonEnum.Other },
 ];
 /**
  * Fetches a list of opportunties from the API

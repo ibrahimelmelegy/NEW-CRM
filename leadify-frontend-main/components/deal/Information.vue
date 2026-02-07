@@ -1,30 +1,31 @@
 <template lang="pug">
 el-form(  autocomplete="off"   @submit.prevent='onSubmit'   ref="myForm" label-position="top"  :validationSchema="formSchema" )
   .glass-card.m-auto.p-10(class="2xl:w-1/2 w-[90%] ")
-      el-switch.my-4(v-if="!editMode" v-model="switchType", size="large" inline-prompt, style="--el-switch-on-color: #7849FF; --el-switch-off-color: #918E98", active-text="Select Client", inactive-text="Select Lead")
+      el-switch.my-4(v-if="!editMode" v-model="switchType", size="large" inline-prompt, style="--el-switch-on-color: #7849FF; --el-switch-off-color: #918E98", :active-text="$t('deals.form.selectClient')", :inactive-text="$t('deals.form.selectLead')")
       .flex.justify-between.items-center.mb-6(v-if="switchType")
-        h3.text-xl.font-semibold Client Information
-        el-switch.ml-2(v-if="!editMode" v-model="switchValue", size="large" inline-prompt, style="--el-switch-on-color: #7849FF; --el-switch-off-color: #918E98", active-text="Existing Client", inactive-text="New Client")
+        h3.text-xl.font-semibold {{ $t('deals.form.clientInfo') }}
+        el-switch.ml-2(v-if="!editMode" v-model="switchValue", size="large" inline-prompt, style="--el-switch-on-color: #7849FF; --el-switch-off-color: #918E98", :active-text="$t('deals.form.existingClient')", :inactive-text="$t('deals.form.newClient')")
       .grid.grid-cols-2.gap-3(v-if="switchType" :key="selectedClient")
-        component(:is="isClients" label=" Client Name"  name="leadName" :options="mappedClients" :value="selectedClient?.clientName" @change="getSelectedClient" :disabled="editMode")
-        InputText(label="Company Name"  name="leadCompanyName" :value="selectedClient?.companyName" :disabled="editMode" is-form)
-        InputText(label="Email"  name="email" :value="selectedClient?.email" @value="val=> isEmail = !!val" :disabled="editMode" is-form)
-        InputPhone(label=" Phone Number"  name="phone" :value="selectedClient?.phoneNumber" @validphone="val=> validPhone = val" @value="val=> isPhone = !!val" mode="international" :disabled="editMode")
-      h3.text-xl.font-semibold.my-6 Deal Information
+        component(:is="isClients" :label="$t('deals.info.client')"  name="leadName" :options="mappedClients" :value="selectedClient?.clientName" @change="getSelectedClient" :disabled="editMode")
+        InputText(:label="$t('common.companyName')"  name="leadCompanyName" :value="selectedClient?.companyName" :disabled="editMode" is-form)
+        InputText(:label="$t('leads.info.email')"  name="email" :value="selectedClient?.email" @value="val=> isEmail = !!val" :disabled="editMode" is-form)
+        InputPhone(:label="$t('leads.info.phone')"  name="phone" :value="selectedClient?.phoneNumber" @validphone="val=> validPhone = val" @value="val=> isPhone = !!val" mode="international" :disabled="editMode")
+      h3.text-xl.font-semibold.my-6 {{ $t('deals.form.dealInfo') }}
       .grid.grid-cols-2.gap-3
-        InputSelect(v-if="!switchType" label=" Lead" name="leadId" :options="mappedLeads" :value="selectedLead?.id" :disabled="editMode")
-        InputText(label="Deal Name"  name="dealName" :value="deal?.name"  is-form)
-        InputText(label="Company Name"  name="companyName" :value="deal?.companyName" is-form)
-        InputText(label="Deal Price"  type="number" name="dealPrice" :value="deal?.price" is-form)
-        InputSelect(label=" Contract Type" name="contractType" :options="contractTypeOptions" :value="deal?.contractType" )
-        InputSelect(label=" Assign User" name="assignUser" isMultiple :options="users" :value="users?.filter((user: any) => deal?.users?.map((user: any) => user.id)?.includes(user.value))?.map((user: any) => user.value)"  )
-        InputDate(label="Signature Date" placeholder="Enter Signature Date" :value="deal?.signatureDate" name="signatureDate" )
-        InputSelect(:class="{'col-span-2': switchType}" label=" Deal Stage" name="dealStage" :options="dealStageOptions" :value="deal?.stage" @change="checkIfCancelled" )
-      InputText(type="textarea" placeholder="Cancellation Reason"  name="cancellationReason" :value="deal?.cancelledReason" v-if="isCancelled")
+        InputSelect(v-if="!switchType" :label="$t('deals.info.lead')" name="leadId" :options="mappedLeads" :value="selectedLead?.id" :disabled="editMode")
+        InputText(:label="$t('deals.info.dealName')"  name="dealName" :value="deal?.name"  is-form)
+        InputText(:label="$t('common.companyName')"  name="companyName" :value="deal?.companyName" is-form)
+        InputText(:label="$t('deals.info.price')"  type="number" name="dealPrice" :value="deal?.price" is-form)
+        InputSelect(:label="$t('deals.info.contractType')" name="contractType" :options="contractTypeOptions" :value="deal?.contractType" )
+        InputSelect(:label="$t('deals.table.assigned')" name="assignUser" isMultiple :options="users" :value="users?.filter((user: any) => deal?.users?.map((user: any) => user.id)?.includes(user.value))?.map((user: any) => user.value)"  )
+        InputDate(:label="$t('deals.info.signatureDate')" :placeholder="$t('deals.form.enterSignatureDate')" :value="deal?.signatureDate" name="signatureDate" )
+        InputSelect(:class="{'col-span-2': switchType}" :label="$t('deals.info.dealStage')" name="dealStage" :options="dealStageOptions" :value="deal?.stage" @change="checkIfCancelled" )
+      InputText(type="textarea" :placeholder="$t('deals.form.cancellationReason')"  name="cancellationReason" :value="deal?.cancelledReason" v-if="isCancelled")
 </template>
 
 <script lang="ts" setup>
   ;
+  import { useI18n } from "vue-i18n";
   import { useForm } from "vee-validate";
   import isEmailValidator from "validator/lib/isEmail";
   import * as yup from "yup";
@@ -36,6 +37,7 @@ el-form(  autocomplete="off"   @submit.prevent='onSubmit'   ref="myForm" label-p
   });
 
   //  refs and composables
+  const { t } = useI18n();
   const route = useRoute();
   const router = useRouter();
   const switchValue = ref(true);
@@ -52,16 +54,16 @@ el-form(  autocomplete="off"   @submit.prevent='onSubmit'   ref="myForm" label-p
   const formSchema = yup.object({
     leadName: yup.string().when([], {
       is: () => switchType.value,
-      then: () => yup.string().trim().required().min(2).max(100).label("Client Name"),
+      then: () => yup.string().trim().required().min(2).max(100).label(t('deals.info.client')),
 
-      otherwise: () => yup.string().nullable().trim().max(100).label("Client Name"),
+      otherwise: () => yup.string().nullable().trim().max(100).label(t('deals.info.client')),
     }),
-    leadCompanyName: yup.string().nullable().trim().max(100).label("Company Name"),
+    leadCompanyName: yup.string().nullable().trim().max(100).label(t('common.companyName')),
     leadId: yup.string().when([], {
       is: () => !switchType.value,
-      then: () => yup.string().required().label("Lead"),
+      then: () => yup.string().required().label(t('deals.info.lead')),
 
-      otherwise: () => yup.string().nullable().label("Lead"),
+      otherwise: () => yup.string().nullable().label(t('deals.info.lead')),
     }),
     email: yup.string().when([], {
       is: () => isPhone.value || !switchType.value,
@@ -76,19 +78,20 @@ el-form(  autocomplete="off"   @submit.prevent='onSubmit'   ref="myForm" label-p
             (message: any) => "Invalid email",
             (value: any) => !value || isEmailValidator(value)
           )
-          .label("Email"),
+
+          .label(t('leads.info.email')),
       otherwise: () =>
         yup
           .string()
           .email()
           .max(100)
-          .nullable("At least one of email or phone number is required")
+          .nullable(t('errors.emailOrPhoneRequired'))
           .test(
             "is-valid",
             (message: any) => "Invalid email",
             (value: any) => (value ? isEmailValidator(value) : new yup.ValidationError("Invalid value"))
           )
-          .label("Email"),
+          .label(t('leads.info.email')),
     }),
     phone: yup.number().when([], {
       is: () => isEmail.value || !switchType.value,
@@ -97,7 +100,7 @@ el-form(  autocomplete="off"   @submit.prevent='onSubmit'   ref="myForm" label-p
           .number()
           .nullable() // Allows the value to be null
           .transform((value: any, originalValue: any) => (originalValue === "" ? null : Number.isNaN(value) ? null : value))
-          .label("Phone Number")
+          .label(t('leads.info.phone'))
           .test("Phone number", "Invalid Phone", function (value: any) {
             if (value === null || value === undefined) {
               return true;
@@ -109,35 +112,35 @@ el-form(  autocomplete="off"   @submit.prevent='onSubmit'   ref="myForm" label-p
           .number()
           .transform((value: any) => (Number.isNaN(value) ? null : value))
           .nullable()
-          .required("At least one of email or phone number is required")
-          .label("Phone Number")
+          .required(t('errors.emailOrPhoneRequired'))
+          .label(t('leads.info.phone'))
           .test("Phone number", "invalid Phone", function (value: any) {
             return validPhone.value ? true : false;
           }),
     }),
-    dealName: yup.string().trim().required().min(2).max(100).label("Deal Name"),
-    companyName: yup.string().trim().required().min(2).max(100).label("Company Name"),
-    contractType: yup.string().trim().required().max(100).label("Contract Type"),
-    dealStage: yup.string().trim().required().max(100).label("Deal Stage"),
-    assignUser: yup.array().of(yup.number()).required().min(1).label("Assign User"),
+    dealName: yup.string().trim().required().min(2).max(100).label(t('deals.info.dealName')),
+    companyName: yup.string().trim().required().min(2).max(100).label(t('common.companyName')),
+    contractType: yup.string().trim().required().max(100).label(t('deals.info.contractType')),
+    dealStage: yup.string().trim().required().max(100).label(t('deals.info.dealStage')),
+    assignUser: yup.array().of(yup.number()).required().min(1).label(t('deals.table.assigned')),
     dealPrice: yup
       .number()
       .nullable() // Allows null values
       .transform((value: any, originalValue: any) => (String(originalValue).trim() === "" ? null : value))
-      .required("Deal Price is required")
+      .required(t('validation.required', {field: t('deals.info.price')}))
       .max(100000000000)
-      .label("Deal Price"),
+      .label(t('deals.info.price')),
     signatureDate: yup
       .mixed()
       .test("is-valid-date", "Signature Date must be a valid date", (value: any) => {
         // Check if the value is valid
         return value && !isNaN(new Date(value).getTime());
       })
-      .required("Signature Date is required")
-      .label("Signature Date"),
+      .required(t('validation.required', {field: t('deals.info.signatureDate')}))
+      .label(t('deals.info.signatureDate')),
     cancellationReason: yup.string().when([], {
       is: () => isCancelled.value,
-      then: () => yup.string().required().trim().min(2).max(250).label("Cancellation Reason"),
+      then: () => yup.string().required().trim().min(2).max(250).label(t('deals.form.cancellationReason')),
       otherwise: () =>
         yup
           .string()
@@ -150,7 +153,7 @@ el-form(  autocomplete="off"   @submit.prevent='onSubmit'   ref="myForm" label-p
           )
           .trim()
           .max(250)
-          .label("Cancellation Reason"),
+          .label(t('deals.form.cancellationReason')),
     }),
   });
 

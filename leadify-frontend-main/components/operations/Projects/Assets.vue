@@ -1,12 +1,12 @@
 <template lang="pug">
 el-form.mt-6.mb-24(  autocomplete="off"   @submit.prevent='onSubmit'   ref="myForm" label-position="top"  :validationSchema="formSchema" )
   .card.m-auto.glass-card.p-10.rounded-3xl(class="w-[90%] ")
-    .title.font-bold.text-xl.capitalize.mb-8 Assets Info
+    .title.font-bold.text-xl.capitalize.mb-8 {{ $t('operations.projects.assets.title') }}
     .flex.align-center.gap-1
-      InputSelect.flex-1(label=" Assets" isMultiple name="assetIds" :options="assetsOptions"  :value="filteredAssets.map((asset: any) => asset.value)" :key="filteredAssets  || assetsOptions" @change="toggleAssetSelection")
+      InputSelect.flex-1(:label="$t('operations.projects.assets.label')" isMultiple name="assetIds" :options="assetsOptions"  :value="filteredAssets.map((asset: any) => asset.value)" :key="filteredAssets  || assetsOptions" @change="toggleAssetSelection")
       el-button.mt-7(size='medium' :icon="Plus" native-type="button" @click="addAsset = true" class="!rounded-2xl !border-[#e9e8eb] !color-[#e9e8eb] !py-7 !px-4")
     .glass-card.rounded-3xl.mt-3.border
-      .title.font-bold.text-xl.capitalize.flex-1.p-10.pb-0 Perview
+      .title.font-bold.text-xl.capitalize.flex-1.p-10.pb-0 {{ $t('operations.projects.assets.preview') }}
       AppTable(v-slot="{data}" without-filters without-search without-pagination :columns="table.columns" :key="table.data" :data="table.data" class="!py-0")
         .flex.items-center.py-2(@click.stop)
           el-button(class="!rounded-2xl" type='danger' link @click="toggleAssetSelection(data.id)"): Icon(name="IconDelete" size="20")
@@ -15,10 +15,10 @@ el-form.mt-6.mb-24(  autocomplete="off"   @submit.prevent='onSubmit'   ref="myFo
       AppTable(without-filters without-search without-action without-pagination :columns="assetsTotal.columns" :data="assetsTotal.data" :key="assetsTotal.data" class="!py-0")
   .endBar
       .flex.justify-between.w-full
-        el-button(   size='large' plain type="primary" class=" !rounded-2xl" @click="emit('cancel')") Cancel
+        el-button(   size='large' plain type="primary" class=" !rounded-2xl" @click="emit('cancel')") {{ $t('common.cancel') }}
         .flex.items-center.gap-x-2
-          el-button(type="primary"  size='large' link :loading="loading"  :disabled="loading" class=" !px-5 !rounded-2xl" @click="activeStep--") Back
-          el-button(size='large' type="primary" native-type="submit" :loading="loading"  :disabled="loading" class=" !px-5 !rounded-2xl") {{ route.params.slug ? 'Update' : 'Next' }}
+          el-button(type="primary"  size='large' link :loading="loading"  :disabled="loading" class=" !px-5 !rounded-2xl" @click="activeStep--") {{ $t('common.back') }}
+          el-button(size='large' type="primary" native-type="submit" :loading="loading"  :disabled="loading" class=" !px-5 !rounded-2xl") {{ route.params.slug ? $t('common.update') : $t('common.next') }}
 OperationsProjectsModalAsset(v-model="addAsset"  @confirm="fetchAssets" :asset="asset")
 </template>
 
@@ -42,7 +42,7 @@ OperationsProjectsModalAsset(v-model="addAsset"  @confirm="fetchAssets" :asset="
       required: false,
     },
   });
-  const activeStep = defineModel();
+  const activeStep = defineModel<number>({ required: true });
   const addAsset = ref(false);
   const assetsOptions = ref<{ label: string; value: string }[]>([]);
   const filteredAssets = ref<{ label: string; value: string }[]>([]);
@@ -51,8 +51,9 @@ OperationsProjectsModalAsset(v-model="addAsset"  @confirm="fetchAssets" :asset="
   const assetsId = ref<string[]>([]);
   const emit = defineEmits(["submit", "cancel"]);
 
+  const { t } = useI18n();
   const formSchema = yup.object({
-    assetIds: yup.array().of(yup.string()).nullable().label("Assets"),
+    assetIds: yup.array().of(yup.string()).nullable().label(t("operations.projects.assets.label")),
   });
 
   const { handleSubmit } = useForm({
@@ -71,8 +72,8 @@ OperationsProjectsModalAsset(v-model="addAsset"  @confirm="fetchAssets" :asset="
         navigateTo("/operations/projects");
         ElNotification({
           type: "success",
-          title: "Success",
-          message: "Project updated successfully",
+          title: t("common.success"),
+          message: t("operations.projects.assets.notifications.updateSuccess"),
         });
       } else {
         activeStep.value++;
@@ -88,7 +89,7 @@ OperationsProjectsModalAsset(v-model="addAsset"  @confirm="fetchAssets" :asset="
     columns: [
       {
         prop: "name",
-        label: "Assets Name",
+        label: t("operations.projects.assets.table.name"),
         component: "Text",
         // sortable: true,
         type: "font-bold",
@@ -96,7 +97,7 @@ OperationsProjectsModalAsset(v-model="addAsset"  @confirm="fetchAssets" :asset="
       },
       {
         prop: "rentPrice",
-        label: "Rent Price",
+        label: t("operations.projects.assets.table.rentPrice"),
         component: "Text",
         // sortable: true,
         type: "font-bold",
@@ -104,7 +105,7 @@ OperationsProjectsModalAsset(v-model="addAsset"  @confirm="fetchAssets" :asset="
       },
       {
         prop: "buyPrice",
-        label: "Buy Price",
+        label: t("operations.projects.assets.table.buyPrice"),
         component: "Text",
         // sortable: true,
         type: "font-bold",
@@ -117,7 +118,7 @@ OperationsProjectsModalAsset(v-model="addAsset"  @confirm="fetchAssets" :asset="
     columns: [
       {
         prop: "totalRentPrice",
-        label: "Total Rent Price",
+        label: t("operations.projects.assets.totalTable.totalRent"),
         component: "Text",
         // sortable: true,
         type: "font-default",
@@ -125,7 +126,7 @@ OperationsProjectsModalAsset(v-model="addAsset"  @confirm="fetchAssets" :asset="
       },
       {
         prop: "totalBuyPrice",
-        label: "Total Buy Price",
+        label: t("operations.projects.assets.totalTable.totalBuy"),
         component: "Text",
         // sortable: true,
         type: "font-default",
@@ -133,7 +134,7 @@ OperationsProjectsModalAsset(v-model="addAsset"  @confirm="fetchAssets" :asset="
       },
       {
         prop: "totalAssetsCost",
-        label: "Total Assets Cost",
+        label: t("operations.projects.assets.totalTable.totalCost"),
         component: "Text",
         // sortable: true,
         type: "font-default",

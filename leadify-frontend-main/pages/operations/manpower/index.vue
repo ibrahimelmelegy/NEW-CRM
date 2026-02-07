@@ -2,10 +2,10 @@
 div
   //- Header
   .flex.items-center.justify-between.mb-8
-    .title.font-bold.text-2xl.mb-1.capitalize Manpower
+    .title.font-bold.text-2xl.mb-1.capitalize {{ $t('navigation.manpower') }}
     .flex.items-center.gap-x-3
       NuxtLink(to="/operations/manpower/add-manpower")
-        el-button(   size='large' :loading="loading" v-if="hasPermission('CREATE_MANPOWER')" native-type="submit" type="primary" :icon="Plus" class="w-full !my-4 !rounded-2xl")  New Manpower
+        el-button(   size='large' :loading="loading" v-if="hasPermission('CREATE_MANPOWER')" native-type="submit" type="primary" :icon="Plus" class="w-full !my-4 !rounded-2xl")  {{ $t('operations.manpower.new') }}
       //- el-dropdown(trigger="click")
       //-     span.el-dropdown-link
       //-         button.rounded-btn(class="!px-4"): Icon(  name="IconToggle" size="24")
@@ -24,7 +24,7 @@ div
       //-               NuxtLink.flex.items-center(:to="`/leads/1`")
       //-                 Icon.text-md.mr-2(size="20" name="IconArchived" )
       //-                 p.text-sm Archived
-  AppTable(v-slot="{data}"  :columns="table.columns" :filterOptions="filterOptions" position="manpower" :pageInfo="response.pagination" :data="table.data" :sortOptions="table.sort" @handleRowClick="handleRowClick" searchPlaceholder="manpower" )
+  AppTable(v-slot="{data}"  :columns="table.columns" :filterOptions="filterOptions" position="manpower" :pageInfo="response.pagination" :data="table.data" :sortOptions="table.sort" @handleRowClick="handleRowClick" :searchPlaceholder="$t('navigation.manpower')" )
     .flex.items-center.py-2(@click.stop)
         //- NuxtLink.toggle-icon(:to="`/leads/1`")
         //-     Icon.text-md(name="IconEye" )
@@ -38,16 +38,16 @@ div
                     el-dropdown-item
                       NuxtLink.flex.items-center(:to="`/operations/manpower/${data?.id}`")
                         Icon.text-md.mr-2(name="IconEye" )
-                        p.text-sm View
+                        p.text-sm {{ $t('common.view') }}
                     el-dropdown-item(v-if="hasPermission('EDIT_MANPOWER')")
                       NuxtLink.flex.items-center(:to="`/operations/manpower/edit/${data?.id}`")
                         Icon.text-md.mr-2(name="IconEdit" )
-                        p.text-sm Edit
+                        p.text-sm {{ $t('common.edit') }}
                     //- el-dropdown-item(@click="[deleteLeadPopup=true, userActionId = data?.id]" )
                     //-     .flex.items-center
                     //-       Icon.text-md.mr-2(name="IconDelete" )
                     //-       p.text-sm Delete
-  ActionModel(v-model="deleteLeadPopup" :loading="loadingAction" btn-text="Move to Archive" description-one="Are you sure you want to delete this Lead?" icon="/images/delete-image.png" description-two="It will be archived and can be restored later within 30 days." )
+  ActionModel(v-model="deleteLeadPopup" :loading="loadingAction" :btn-text="$t('common.moveToArchive')" :description-one="$t('common.archiveConfirmation')" icon="/images/delete-image.png" :description-two="$t('common.archiveDescription')" )
 </template>
 
 <script setup lang="ts">
@@ -61,7 +61,7 @@ div
     columns: [
       {
         prop: "name",
-        label: "Full Name",
+        label: useI18n().t('operations.manpower.table.fullName'),
         component: "Text",
         sortable: true,
         type: "font-bold",
@@ -69,7 +69,7 @@ div
       },
       {
         prop: "manpowerContacts",
-        label: "Contacts",
+        label: useI18n().t('operations.manpower.table.contacts'),
         component: "AvatarText",
         // sortable: true,
         type: "font-bold",
@@ -77,7 +77,7 @@ div
       },
       {
         prop: "role",
-        label: "Role",
+        label: useI18n().t('operations.manpower.table.role'),
         component: "Text",
         sortable: true,
         type: "font-default",
@@ -85,19 +85,19 @@ div
       },
       {
         prop: "availabilityStatus",
-        label: "Availability Status",
+        label: useI18n().t('operations.manpower.table.availability'),
         component: "Label",
         sortable: true,
         type: "outline",
         filters: [
-          { text: "Available", value: "AVAILABLE" },
-          { text: "Not Available", value: "NOT_AVAILABLE" },
+          { text: useI18n().t('operations.manpower.status.available'), value: "AVAILABLE" },
+          { text: useI18n().t('operations.manpower.status.notAvailable'), value: "NOT_AVAILABLE" },
         ],
         width: 200,
       },
       {
         prop: "salary",
-        label: "Salary",
+        label: useI18n().t('operations.manpower.table.salary'),
         component: "Text",
         sortable: true,
         type: "font-default",
@@ -138,7 +138,7 @@ div
       // },
       {
         prop: "totalCost",
-        label: "Total Cost",
+        label: useI18n().t('operations.manpower.table.totalCost'),
         component: "Text",
         sortable: true,
         type: "font-default",
@@ -146,11 +146,16 @@ div
       },
       {
         prop: "dailyCost",
-        label: "Daily Cost",
+        label: useI18n().t('operations.manpower.table.dailyCost'),
         component: "Text",
         sortable: true,
         type: "font-default",
         width: 150,
+      },
+      {
+        prop: "action",
+        label: useI18n().t('common.action'),
+        component: "Action",
       },
     ],
     data: [] as ManpowerValues[],
@@ -165,47 +170,47 @@ div
 
   const filterOptions = [
     {
-      title: "Availability Status",
+      title: useI18n().t('operations.manpower.filter.availability'),
       value: "availabilityStatus",
       options: [...manpowerAvailabilityStatus],
     },
     {
-      title: "Role",
+      title: useI18n().t('operations.manpower.filter.role'),
       value: "role",
       options: [...manpowerRoles],
     },
     {
-      title: "Salary",
+      title: useI18n().t('operations.manpower.filter.salary'),
       value: ["fromSalary", "toSalary"],
       type: "input",
     },
     {
-      title: "Variable Allowance",
+      title: useI18n().t('operations.manpower.filter.variableAllowance'),
       value: ["fromVariableAllowance", "toVariableAllowance"],
       type: "input",
     },
     {
-      title: "Transportation Allowance",
+      title: useI18n().t('operations.manpower.filter.transportationAllowance'),
       value: ["fromTransportationAllowance", "toTransportationAllowance"],
       type: "input",
     },
     {
-      title: "Iqama Cost",
+      title: useI18n().t('operations.manpower.filter.iqamaCost'),
       value: ["fromIqamaCost", "toIqamaCost"],
       type: "input",
     },
     {
-      title: "Total Cost",
+      title: useI18n().t('operations.manpower.filter.totalCost'),
       value: ["fromTotalCost", "toTotalCost"],
       type: "input",
     },
     {
-      title: "Daily Cost",
+      title: useI18n().t('operations.manpower.filter.dailyCost'),
       value: ["fromDailyCost", "toDailyCost"],
       type: "input",
     },
     {
-      title: "Creation Date",
+      title: useI18n().t('common.created'),
       value: ["fromDate", "toDate"],
       type: "date",
     },

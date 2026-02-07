@@ -2,10 +2,10 @@
 div
   //- Header
   .flex.items-center.justify-between.mb-8
-    .title.font-bold.text-2xl.mb-1.capitalize Services
+    .title.font-bold.text-2xl.mb-1.capitalize {{ $t('navigation.services') }}
     .flex.items-center.gap-x-3
       NuxtLink(to="/operations/services/add-service")
-        el-button(   size='large' :loading="loading" v-if="hasPermission('CREATE_SERVICES')" native-type="submit" type="primary" :icon="Plus" class="w-full !my-4 !rounded-2xl")  New Service
+        el-button(   size='large' :loading="loading" v-if="hasPermission('CREATE_SERVICES')" native-type="submit" type="primary" :icon="Plus" class="w-full !my-4 !rounded-2xl")  {{ $t('operations.services.new') }}
       //- el-dropdown(trigger="click")
       //-     span.el-dropdown-link
       //-         button.rounded-btn(class="!px-4"): Icon(  name="IconToggle" size="24")
@@ -24,7 +24,7 @@ div
       //-               NuxtLink.flex.items-center(:to="`/leads/1`")
       //-                 Icon.text-md.mr-2(size="20" name="IconArchived" )
       //-                 p.text-sm Archived
-  AppTable(v-slot="{data}" without-filters :columns="table.columns" position="service" :pageInfo="response.pagination" :data="table.data" :sortOptions="table.sort" @handleRowClick="handleRowClick" searchPlaceholder="service" )
+  AppTable(v-slot="{data}" without-filters :columns="table.columns" position="service" :pageInfo="response.pagination" :data="table.data" :sortOptions="table.sort" @handleRowClick="handleRowClick" :searchPlaceholder="$t('navigation.services')" )
     .flex.items-center.py-2(@click.stop)
         //- NuxtLink.toggle-icon(:to="`/leads/1`")
         //-     Icon.text-md(name="IconEye" )
@@ -38,16 +38,16 @@ div
                     el-dropdown-item
                       NuxtLink.flex.items-center(:to="`/operations/services/${data?.id}`")
                         Icon.text-md.mr-2(name="IconEye" )
-                        p.text-sm View
+                        p.text-sm {{ $t('common.view') }}
                     el-dropdown-item(v-if="hasPermission('EDIT_SERVICES')")
                       NuxtLink.flex.items-center(:to="`/operations/services/edit/${data?.id}`")
                         Icon.text-md.mr-2(name="IconEdit" )
-                        p.text-sm Edit
+                        p.text-sm {{ $t('common.edit') }}
                     //- el-dropdown-item(@click="[deleteLeadPopup=true, userActionId = data?.id]" )
                     //-     .flex.items-center
                     //-       Icon.text-md.mr-2(name="IconDelete" )
                     //-       p.text-sm Delete
-  ActionModel(v-model="deleteLeadPopup" :loading="loadingAction" btn-text="Move to Archive" description-one="Are you sure you want to delete this Lead?" icon="/images/delete-image.png" description-two="It will be archived and can be restored later within 30 days." )
+  ActionModel(v-model="deleteLeadPopup" :loading="loadingAction" :btn-text="$t('common.moveToArchive')" :description-one="$t('common.archiveConfirmation')" icon="/images/delete-image.png" :description-two="$t('common.archiveDescription')" )
 </template>
 
 <script setup lang="ts">
@@ -61,7 +61,7 @@ div
     columns: [
       {
         prop: "type",
-        label: "Service Type",
+        label: useI18n().t('operations.services.table.type'),
         component: "Text",
         // sortable: true,
         type: "font-default",
@@ -69,11 +69,16 @@ div
       },
       {
         prop: "price",
-        label: "Price",
+        label: useI18n().t('operations.services.table.price'),
         component: "Text",
         // sortable: true,
         type: "font-default",
         width: 150,
+      },
+      {
+        prop: "action",
+        label: useI18n().t('common.action'),
+        component: "Action",
       },
     ],
     data: [] as Service[],

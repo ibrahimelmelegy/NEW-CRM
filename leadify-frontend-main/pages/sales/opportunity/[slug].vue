@@ -1,6 +1,6 @@
 <template lang="pug">
 .flex.items-center.justify-between.mb-5.mt-5
-  .title.font-bold.text-2xl.mb-1.capitalize Opportunity Details
+  .title.font-bold.text-2xl.mb-1.capitalize {{ $t('opportunities.details') }}
   el-dropdown(trigger="click")
       span.el-dropdown-link
           button.rounded-btn(class="!px-4"): Icon(  name="IconToggle" size="24")
@@ -9,11 +9,11 @@
             el-dropdown-item( v-if="hasPermission('EDIT_OPPORTUNITIES')")
               NuxtLink.flex.items-center(:to="`/sales/opportunity/edit/${opportunity?.id}`")
                 Icon.text-md.mr-2(size="20" name="IconEdit" )
-                p.text-sm Edit
+                p.text-sm {{ $t('common.edit') }}
             el-dropdown-item
               NuxtLink.flex.items-center(:to="`/sales/deals/add-deal?opportunityId=${opportunity?.id}&leadId=${lead?.id}`")
                 Icon.text-md.mr-2(size="20" name="IconDeal" )
-                p.text-sm Convert to Deal
+                p.text-sm {{ $t('opportunities.convertDeal') }}
             //- el-dropdown-item
             //-   .flex.items-center
             //-     Icon.text-md.mr-2(size="20" name="IconRestore" )
@@ -35,7 +35,7 @@
             //-     Icon.text-md.mr-2(size="20" name="IconDelete" )
             //-     p.text-sm Delete
 el-tabs.demo-tabs(v-model="activeName", @tab-click="handleClick")
-  el-tab-pane(label="Summary", name="summary")
+  el-tab-pane(:label="$t('leads.summary')", name="summary")
     .flex.align-center.gap-6.mt-3(class="flex-col xl:flex-row")
       .flex-1.glass-card.p-10.rounded-3xl
         .flex.align-center.gap-3(class="flex-col md:flex-row")
@@ -44,83 +44,83 @@ el-tabs.demo-tabs(v-model="activeName", @tab-click="handleClick")
             h4.text-2xl.font-semibold.mb-2.text-neutral-900.flex.items-center.gap-x-3 {{opportunity?.name}}
             p.text-neutral-600 {{lead?.companyName}}
         .mt-8
-          p.text-neutral-900.font-semibold.mb-6.text-lg Information
+          p.text-neutral-900.font-semibold.mb-6.text-lg {{ $t('common.info') }}
           .grid.gap-4(class="md:grid-cols-2 grid-cols-1")
             NuxtLink.text-neutral-400(v-if="lead?.id" :to="`/sales/leads/${lead?.id}`")
               .font-medium.mb-2.flex.items-center
                 Icon(name="IconAssign" size="20" class="mr-2")
-                p Lead Name
+                p {{ $t('opportunities.info.leadName') }}
               p.mb-2.underline.text-primary-purple-500 {{lead?.name}}
             div(v-if="lead?.email")
               .text-neutral-400.font-medium.mb-2.flex.items-center
                 Icon(name="IconEmail" size="20" class="mr-2")
-                p Email
+                p {{ $t('leads.info.email') }}
               p.text-neutral-800.mb-2 {{lead?.email}}
             div(v-if="lead?.phone")
               .text-neutral-400.font-medium.mb-2.flex.items-center
                 Icon(name="IconPhone" size="20" class="mr-2")
-                p Phone Number
+                p {{ $t('leads.info.phone') }}
               p.text-neutral-800.mb-2 {{lead?.phone}}
             div(v-if="opportunity?.users?.length")
               .text-neutral-400.font-medium.mb-2.flex.items-center
                 Icon(name="IconAssign" size="20" class="mr-2")
-                p Assign
+                p {{ $t('opportunities.table.assigned') }}
               p.text-neutral-800.mb-2 {{opportunity?.users?.map((user) => user.name).join(', ')}}
             div(v-if="opportunity?.interestedIn")
               .text-neutral-400.font-medium.mb-2.flex.items-center
                 Icon(name="tabler:category-2" size="20" class="mr-2")
-                p Products/Services
+                p {{ $t('opportunities.info.products') }}
               p.text-neutral-800.mb-2 {{opportunity?.interestedIn}}
             div
               .text-neutral-400.font-medium.mb-2.flex.items-center
                 Icon(name="lucide-lab:dollar-sign-square" size="20" class="mr-2")
-                p Estimated Budget
+                p {{ $t('opportunities.info.budget') }}
               p.text-neutral-800.mb-2 $ {{opportunity?.estimatedValue}}
             div
               .text-neutral-400.font-medium.mb-2.flex.items-center
                 Icon(name="IconCalendar" size="20" class="mr-2")
-                p Expected Close Date
+                p {{ $t('opportunities.info.closeDate') }}
               p.text-neutral-800.mb-2 {{getYear(opportunity?.expectedCloseDate)}}
             div(v-if="opportunity?.priority")
               .text-neutral-400.font-medium.mb-2.flex.items-center
                 Icon(name="IconPriority" size="20" class="mr-2")
-                p Priority
+                p {{ $t('opportunities.info.priority') }}
               .items-center(:class="`inline-flex rounded-xl p-1 label-outline-${getStatusColor(formatSnakeCase(opportunity?.priority))}`")
                 div(class="h-1.5 w-1.5 rounded-full mr-1" :class="`bg-solid-${getStatusColor(formatSnakeCase(opportunity?.priority))}`")
                 span {{ formatSnakeCase(opportunity?.priority) }}
             div
               .text-neutral-400.font-medium.mb-2.flex.items-center.mb-3
                 Icon(name="lets-icons:status" size="20" class="mr-2")
-                p stage
+                p {{ $t('opportunities.info.stage') }}
               span.border.rounded-xl.px-2(:class="`label-outline-${getStatusColor(opportunity?.stage)}`") {{formatSnakeCase(opportunity?.stage)}}
             div
               .text-neutral-400.font-medium.mb-2.flex.items-center.mb-3
                 Icon(name="IconSteps" size="20" class="mr-2")
-                p Next Steps
+                p {{ $t('opportunities.info.nextSteps') }}
               span.text-neutral-800.mb-2.bg-neutral-100.rounded-xl.py-1.px-2.mr-2(v-for="nextStep in opportunity?.nextSteps") {{nextStep}}
             div
               .text-neutral-400.font-medium.mb-2.flex.items-center
                 Icon(name="IconCalendar" size="20" class="mr-2")
-                p Created
+                p {{ $t('opportunities.info.created') }}
               p.text-neutral-800.mb-2 {{formatDate(opportunity?.createdAt)}}
             div
               .text-neutral-400.font-medium.mb-2.flex.items-center
                 Icon(name="IconCalendar" size="20" class="mr-2")
-                p Last Updated
+                p {{ $t('opportunities.info.updated') }}
               p.text-neutral-800.mb-2 {{formatDate(opportunity?.updatedAt)}}
             div(v-if="opportunity?.stage  === 'LOST'")
               .text-neutral-400.font-medium.mb-2.flex.items-center
                 Icon(name="mage:message-information" size="20" class="mr-2")
-                p Reason for loss
+                p {{ $t('opportunities.info.reasonLoss') }}
               p.text-neutral-800.mb-2 {{opportunity?.reasonOfLose}}
       .flex-1.glass-card.p-10.rounded-3xl(v-if="opportunity?.notes")
         .flex.items-center.gap-2.mb-4
           .flex.items-center.justify-center.w-10.h-10.rounded-full.bg-secondary-turquoise-50: Icon.text-secondary-turquoise-700(name="IconNote" size="24")
-          h4.text-lg.font-semibold.text-neutral-900 Notes
+          h4.text-lg.font-semibold.text-neutral-900 {{ $t('leads.notes') }}
         p.text-neutral-800.leading-relaxed {{opportunity?.notes}}
-  el-tab-pane(label="Proposal" , name="proposal")
+  el-tab-pane(:label="$t('opportunities.proposal')" , name="proposal")
     .glass-card.rounded-3xl.mt-3.border.px-2
-     .title.font-bold.text-xl.capitalize.flex-1.mt-8 Proposal
+     .title.font-bold.text-xl.capitalize.flex-1.mt-8 {{ $t('opportunities.proposal') }}
        AppTable(
         without-filters,
         without-search,
@@ -130,24 +130,25 @@ el-tabs.demo-tabs(v-model="activeName", @tab-click="handleClick")
         :data="table?.data",
         class="!py-0"
       )
-  el-tab-pane(label="Activity log", name="activity")
+  el-tab-pane(:label="$t('leads.activity')", name="activity")
      .mt-6.activity
        .flex.items-start.gap-x-6.mb-7(v-for="item in activity?.docs" class="w-full lg:w-6/12")
          .flex.items-center.justify-center.w-12.h-12.rounded-full(class="!min-w-[48px] !min-h-[48px]" :class="handleTypeStyle(item.status)"): Icon(:name="handleIconName(item.status)" size="24")
          .mt-2
-             h4.text-neutral-800.font-semibold.text-sm.mb-1 {{  item?.status == 'assigned'? 'Assigned User' : item?.status == 'create' ?'Create New Opportunity'  :item?.status?.toString()?.toUpperCase() }}
+             h4.text-neutral-800.font-semibold.text-sm.mb-1 {{  item?.status == 'assigned'? $t('leads.info.assign') : item?.status == 'create' ? $t('opportunities.createTitle')  :item?.status?.toString()?.toUpperCase() }}
              p.text-neutral-500.text-xs.mb-4.font-medium {{ formatDate(item?.createdAt) }}
              .glass-card.p-5.rounded-3xl(class="w-[65vw]")
                p.text-neutral-700.text-xs {{ item?.descripion?.toString()?.toUpperCase() }}
                .flex.items-center.gap-3.gap-x-2.mt-4
                  Avatar(:src="item?.user?.profilePicture ?? '/images/avatar.png'" small)
                  p.text-neutral-800.text-xs.font-medium  {{ item?.user?.name }}
-     el-empty(v-if="activity?.docs?.length ==  0 || !activity?.docs " description="No activity recorded for this Opportunity." image="/images/empty.png")
+     el-empty(v-if="activity?.docs?.length ==  0 || !activity?.docs " :description="$t('common.noData')" image="/images/empty.png")
      .flex.justify-center.items-center.w-full
-      el-button( v-if="activity?.docs?.length >0" :loading = "loading" class="!rounded-2xl mb-2"  type= 'primary' size="large" :disabled="activity?.pagination?.totalPages == activity?.pagination?.page" @click="getActivityPage(Number(activity?.pagination?.page)+1)") View More
+      el-button( v-if="activity?.docs?.length >0" :loading = "loading" class="!rounded-2xl mb-2"  type= 'primary' size="large" :disabled="activity?.pagination?.totalPages == activity?.pagination?.page" @click="getActivityPage(Number(activity?.pagination?.page)+1)") {{ $t('common.view') }} More
 </template>
 <script lang="ts" setup>
   const { hasPermission } = await usePermissions();
+  const { t } = useI18n();
   const activeName = ref("summary");
   const route = useRoute();
 
@@ -222,7 +223,7 @@ el-tabs.demo-tabs(v-model="activeName", @tab-click="handleClick")
     columns: [
       {
         prop: "title",
-        label: "Proposal Title",
+        label: t('opportunities.table.proposalTitle'),
         component: "Text",
         sortable: true,
         type: "font-bold",
@@ -230,7 +231,7 @@ el-tabs.demo-tabs(v-model="activeName", @tab-click="handleClick")
       },
       {
         prop: "version",
-        label: "Version",
+        label: t('opportunities.table.version'),
         component: "Text",
         sortable: true,
         type: "font-default",
@@ -238,7 +239,7 @@ el-tabs.demo-tabs(v-model="activeName", @tab-click="handleClick")
       },
       {
         prop: "relatedEntity",
-        label: "Related to",
+        label: t('opportunities.table.relatedTo'),
         component: "Text",
         sortable: true,
         type: "font-default",
@@ -246,20 +247,20 @@ el-tabs.demo-tabs(v-model="activeName", @tab-click="handleClick")
       },
       {
         prop: "type",
-        label: "Type",
+        label: t('opportunities.table.type'),
         component: "Text",
         sortable: true,
         type: "font-default",
         filters: [
-          { text: "Financial", value: "FINANCIAL" },
-          { text: "Technical", value: "TECHNICAL" },
-          { text: 'Tech & Financial', value: "MIXED" },
+          { text: t('opportunities.proposalTypes.financial'), value: "FINANCIAL" },
+          { text: t('opportunities.proposalTypes.technical'), value: "TECHNICAL" },
+          { text: t('opportunities.proposalTypes.mixed'), value: "MIXED" },
         ],
         width: 150,
       },
       {
         prop: "proposalFor",
-        label: "Client Name",
+        label: t('opportunities.table.clientName'),
         component: "Text",
         sortable: true,
         type: "font-bold",
@@ -267,19 +268,19 @@ el-tabs.demo-tabs(v-model="activeName", @tab-click="handleClick")
       },
       {
         prop: "status",
-        label: "Status",
+        label: t('opportunities.table.status'),
         component: "Label",
         type: "outline",
         filters: [
-          { text: "Approved", value: "APPROVED" },
-          { text: "Waiting Approval", value: "WAITING_APPROVAL" },
-          { text: "Rejected", value: "REJECTED" },
+          { text: t('opportunities.proposalStatus.approved'), value: "APPROVED" },
+          { text: t('opportunities.proposalStatus.waiting'), value: "WAITING_APPROVAL" },
+          { text: t('opportunities.proposalStatus.rejected'), value: "REJECTED" },
         ],
         width: 150,
       },
       {
         prop: "reference",
-        label: "Reference",
+        label: t('opportunities.table.reference'),
         component: "Text",
         sortable: true,
         type: "font-bold",
@@ -287,14 +288,14 @@ el-tabs.demo-tabs(v-model="activeName", @tab-click="handleClick")
       },
       {
         prop: "assign",
-        label: "Assigned",
+        label: t('opportunities.table.assigned'),
         component: "Text",
         type: "font-default",
         width: 200,
       },
       {
         prop: "createdAt",
-        label: "Created",
+        label: t('opportunities.table.created'),
         component: "Text",
         sortable: true,
         type: "font-default",
@@ -307,7 +308,7 @@ el-tabs.demo-tabs(v-model="activeName", @tab-click="handleClick")
 
   const response = await useTableFilter(`proposal?relatedEntityId=${route.params.slug as string}&page=1&limit=100`);
   table.data =response.formattedData?.map((el:any) => {return {...el,
-  type :el.type == "Mixed"  ? 'Tech & Financial' : el.type}})
+  type :el.type == "Mixed"  ? t('opportunities.proposalTypes.mixed') : el.type}})
 </script>
 <style scoped lang="scss">
   .activity {

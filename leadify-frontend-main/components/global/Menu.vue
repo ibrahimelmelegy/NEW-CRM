@@ -32,22 +32,16 @@
             span.ml-2 {{ $t(navLink.name) }}
           
           div(v-for="(subLink, subIndex) in navLink.submenu" :key="subIndex")
-            //- Special Daily Task Logic
-            NuxtLink(:to="subLink.link" v-if="subLink.link == '/operations/daily-task' && user?.id == 1")
+            //- Special Daily Task Logic (Fixed: Removed hardcoded user guard)
+            NuxtLink(:to="subLink.link" v-if="!getDisabled(subLink.role)")
               el-menu-item(:index="subLink.link" @click="mobileNavigate(subLink.link)" :class="{'is-active': route?.fullPath?.includes(subLink.link)}")
                 Icon.mr-2.submenu-icon(size="18" :name="subLink.icon" v-if="subLink.icon")
                 span {{ $t(subLink.name) }}
             
-            //- Disabled Links Logic
-            el-menu-item(:index="`${index+1}-${subIndex+1}`" :class="{'disabled-link' : getDisabled(subLink.role)}" v-else-if="getDisabled(subLink.role) && subLink.link !== '/operations/daily-task'")
+            //- Disabled Links Logic (Visible but grayed out)
+            el-menu-item(:index="`${index+1}-${subIndex+1}`" :class="{'disabled-link' : true}" v-else)
               Icon.mr-2.submenu-icon(size="18" :name="subLink.icon" v-if="subLink.icon")
               span {{ $t(subLink.name) }}
-            
-            //- Normal Submenu Links
-            NuxtLink(:to="subLink.link" v-else-if="subLink.link !== '/operations/daily-task'")
-              el-menu-item(:index="subLink.link" @click="mobileNavigate(subLink.link)" :class="{'is-active': route?.fullPath?.includes(subLink.link)}")
-                Icon.mr-2.submenu-icon(size="18" :name="subLink.icon" v-if="subLink.icon")
-                span {{ $t(subLink.name) }}
 
         //- Single Level Items
         template(v-else)

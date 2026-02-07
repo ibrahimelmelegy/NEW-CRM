@@ -1,73 +1,73 @@
 <template lang="pug">
     .flex.items-center.justify-between.mb-5.mt-5
-      .title.font-bold.text-2xl.mb-1.capitalize Daily Task Details
+      .title.font-bold.text-2xl.mb-1.capitalize {{dailyTask?.name}}
     .flex.align-center.gap-6.mt-3(class="flex-col xl:flex-row")
             .flex-1.glass-card.p-10.rounded-3xl
               .grid.gap-4(class="md:grid-cols-2 lg:grid-cols-3  xl:grid-cols-4")
                 div
                   .text-neutral-400.font-medium.mb-2.flex.items-center
                     Icon(name="solar:hashtag-outline" size="20" class="mr-2")
-                    p name
+                    p {{ $t('operations.dailyTasks.details.name') }}
                   p.text-neutral-800.mb-2 {{dailyTask?.name}}
                 div
                   .text-neutral-400.font-medium.mb-2.flex.items-center
                     Icon(name="fluent:manufacturer-24-regular" size="20" class="mr-2")
-                    p client Name
+                    p {{ $t('operations.dailyTasks.details.clientName') }}
                   p.text-neutral-800.mb-2 {{dailyTask?.client?.clientName}}
                 div
                   .text-neutral-400.font-medium.mb-2.flex.items-center
                     Icon(name="fluent:manufacturer-24-regular" size="20" class="mr-2")
-                    p Sales Representative Name
+                    p {{ $t('operations.dailyTasks.details.salesRepName') }}
                   p.text-neutral-800.mb-2 {{dailyTask?.salesRepresentative?.name}}
                 div
                   .text-neutral-400.font-medium.mb-2.flex.items-center
                     Icon(name="fluent:manufacturer-24-regular" size="20" class="mr-2")
-                    p Assign To
+                    p {{ $t('operations.dailyTasks.details.assignedTo') }}
                   p.text-neutral-800.mb-2 {{dailyTask?.user?.name}}
                 div
                   .text-neutral-400.font-medium.mb-2.flex.items-center
                     Icon(name="solar:hashtag-outline" size="20" class="mr-2")
-                    p Cost
+                    p {{ $t('operations.dailyTasks.details.cost') }}
                   p.text-neutral-800.mb-2 {{dailyTask?.cost}}
                 div
                   .text-neutral-400.font-medium.mb-2.flex.items-center
                     Icon(name="solar:hashtag-outline" size="20" class="mr-2")
-                    p Total Paid
+                    p {{ $t('operations.dailyTasks.details.totalPaid') }}
                   p.text-neutral-800.mb-2 {{dailyTask?.totalPaid}}
                 div
                   .text-neutral-400.font-medium.mb-2.flex.items-center
                     Icon(name="solar:hashtag-outline" size="20" class="mr-2")
-                    p Down Payment
+                    p {{ $t('operations.dailyTasks.details.downPayment') }}
                   p.text-neutral-800.mb-2 {{dailyTask?.downPayment}}
                 div
                   .text-neutral-400.font-medium.mb-2.flex.items-center
                     Icon(name="solar:hashtag-outline" size="20" class="mr-2")
-                    p priority
+                    p {{ $t('operations.dailyTasks.details.priority') }}
                   p.text-neutral-800.mb-2 {{dailyTask?.priority}}
                 div
                   .text-neutral-400.font-medium.mb-2.flex.items-center
                     Icon(name="solar:hashtag-outline" size="20" class="mr-2")
-                    p Status
+                    p {{ $t('operations.dailyTasks.details.status') }}
                   p.text-neutral-800.mb-2 {{dailyTask?.status}}
                 div
                   .text-neutral-400.font-medium.mb-2.flex.items-center
                     Icon(name="solar:hashtag-outline" size="20" class="mr-2")
-                    p Date
+                    p {{ $t('operations.dailyTasks.details.date') }}
                   p.text-neutral-800.mb-2 {{getYear(dailyTask?.createdAt)}}
                 div
                   .text-neutral-400.font-medium.mb-2.flex.items-center
                     Icon(name="solar:hashtag-outline" size="20" class="mr-2")
-                    p Start Date
+                    p {{ $t('operations.dailyTasks.details.startDate') }}
                   p.text-neutral-800.mb-2 {{getYear(dailyTask?.startDate)}}
                 div
                   .text-neutral-400.font-medium.mb-2.flex.items-center
                     Icon(name="solar:hashtag-outline" size="20" class="mr-2")
-                    p End Date
+                    p {{ $t('operations.dailyTasks.details.endDate') }}
                   p.text-neutral-800.mb-2 {{getYear(dailyTask?.endDate)}}
             .flex-1.glass-card.p-10.rounded-3xl(v-if="dailyTask?.notes")
              .flex.items-center.gap-2.mb-4
                .flex.items-center.justify-center.w-10.h-10.rounded-full.bg-secondary-turquoise-50: Icon.text-secondary-turquoise-700(name="IconNote" size="24")
-             h4.text-lg.font-semibold.text-neutral-900 Notes
+             h4.text-lg.font-semibold.text-neutral-900 {{ $t('operations.dailyTasks.details.notes') }}
              p.text-neutral-800.leading-relaxed {{dailyTask?.notes}}
     </template>
     <script lang="ts" setup>

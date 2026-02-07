@@ -1,6 +1,6 @@
 <template lang="pug">
 el-form-item(:error='errorMessage' label-position="top" :label="label" :class="innerClass")
-  el-select(size="large" @remove-tag="removeTag" v-model="inputValue" filterable :reserve-keyword="false"  :multiple="isMultiple"  :disabled="disabled" :placeholder="placeholder ? placeholder :  'Choose ' + label ")
+  el-select(size="large" @remove-tag="removeTag" v-model="inputValue" filterable :reserve-keyword="false"  :multiple="isMultiple"  :disabled="disabled" :placeholder="placeholder ? placeholder :  $t('common.choose') + label ")
     div(
       v-infinite-scroll="load"
       infinite-scroll-immediate

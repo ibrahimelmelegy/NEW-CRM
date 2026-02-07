@@ -21,7 +21,7 @@
                   el-breadcrumb-item(to="/") 
                     span.breadcrumb-home(class="!text-[var(--text-primary)] opacity-80") {{ $t('navigation.dashboard') }}
                   el-breadcrumb-item(v-for="(route, index) in breadcrumbRoutes",  :key="index", @click="getPath(route)" , class="cursor-pointer",  :class="{ 'last': index === breadcrumbRoutes.length - 1 }"  ) 
-                    span.breadcrumb-text(class="!text-[var(--text-primary)]") {{ route }}
+                    span.breadcrumb-text(class="!text-[var(--text-primary)]") {{ route.label }}
             .flex.gap-3.items-center
               .tools.flex.items-center(class="p-2 rounded-full gap-2.5" )
                 //- Circular Spotlight Button (⌘)
@@ -154,17 +154,31 @@ const breadcrumbRoutes = computed(() => {
     }
   }
 
-  // Replace hyphens and underscores with spaces in each path segment
-  const formattedSegments = pathSegments.map((segment: any) =>
-    segment.replace(/[-_]/g, " ")
-  );
-  return formattedSegments;
+  // Create breadcrumb items with translation support
+  const breadcrumbs = pathSegments.map((segment: any) => {
+    // Convert kebab-case to camelCase for key matching (e.g. daily-tasks -> dailyTasks)
+    const camelSegment = segment.replace(/-([a-z])/g, (g: string) => g[1].toUpperCase());
+    
+    // Try navigation key first
+    const navKey = `navigation.${camelSegment}`;
+    
+    // Check if translation exists, otherwise fallback to Space Case
+    const label = t(navKey) !== navKey ? t(navKey) : segment.replace(/[-_]/g, " "); // fallback
+    
+    return {
+      path: segment,
+      label: label
+    };
+  });
+
+  return breadcrumbs;
 });
 
-const getPath = (routeName: string) => {
+const getPath = (routeSegment: any) => {
   const pathSegments = route.path.split("/").filter(Boolean);
   let pathGo = "";
-  const indexStop = pathSegments.findIndex((segment) => segment == routeName)
+  // Find index using the raw path segment
+  const indexStop = pathSegments.findIndex((segment) => segment == routeSegment.path)
   pathSegments.forEach((el , index) => {
     if (index <= indexStop  ) pathGo = pathGo + "/" + el;
   });

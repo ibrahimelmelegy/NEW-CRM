@@ -2,10 +2,10 @@
 div
   //- Header
   .flex.items-center.justify-between.mb-8
-    .title.font-bold.text-2xl.mb-1.capitalize Deals
+    .title.font-bold.text-2xl.mb-1.capitalize {{ $t('deals.title') }}
     .flex.items-center.gap-x-3
       NuxtLink(to="/sales/deals/add-deal")
-        el-button(   size='large' :loading="loading" v-if="hasPermission('CREATE_DEALS')" native-type="submit" type="primary" :icon="Plus" class="w-full !my-4 !rounded-2xl")  New Deal
+        el-button(   size='large' :loading="loading" v-if="hasPermission('CREATE_DEALS')" native-type="submit" type="primary" :icon="Plus" class="w-full !my-4 !rounded-2xl")  {{ $t('deals.newDeal') }}
       //- el-dropdown(trigger="click")
       //-     span.el-dropdown-link
       //-         button.rounded-btn(class="!px-4"): Icon(  name="IconToggle" size="24")
@@ -24,7 +24,7 @@ div
       //-               NuxtLink.flex.items-center(:to="`/deals/1`")
       //-                 Icon.text-md.mr-2(size="20" name="IconArchived" )
       //-                 p.text-sm Archived
-  AppTable(v-slot="{data}" :filterOptions="filterOptions" :columns="table.columns" position="deal" :pageInfo="response.pagination" :data="table.data" :sortOptions="table.sort" @handleRowClick="handleRowClick" searchPlaceholder="deals" )
+  AppTable(v-slot="{data}" :filterOptions="filterOptions" :columns="table.columns" position="deal" :pageInfo="response.pagination" :data="table.data" :sortOptions="table.sort" @handleRowClick="handleRowClick" :searchPlaceholder="$t('deals.title')" )
     .flex.items-center.py-2(@click.stop)
         //- NuxtLink.toggle-icon(:to="`/deals/1`")
         //-     Icon.text-md(name="IconEye" )
@@ -38,21 +38,23 @@ div
                     el-dropdown-item
                       NuxtLink.flex.items-center(:to="`/sales/deals/${data?.id}`")
                         Icon.text-md.mr-2(name="IconEye" )
-                        p.text-sm View
+                        p.text-sm {{ $t('common.view') }}
                     el-dropdown-item(v-if="hasPermission('EDIT_DEALS')")
                       NuxtLink.flex.items-center(:to="`/sales/deals/edit/${data?.id}`")
                         Icon.text-md.mr-2(name="IconEdit" )
-                        p.text-sm Edit
+                        p.text-sm {{ $t('common.edit') }}
                     //- el-dropdown-item(@click="[deleteLeadPopup=true, userActionId = data?.id]" )
                     //-     .flex.items-center
                     //-       Icon.text-md.mr-2(name="IconDelete" )
-                    //-       p.text-sm Delete
+                    //-       p.text-sm {{ $t('common.delete') }}
   ActionModel(v-model="deleteLeadPopup" :loading="loadingAction" btn-text="Move to Archive" description-one="Are you sure you want to delete this Deal?" icon="/images/delete-image.png" description-two="It will be archived and can be restored later within 30 days." )
 </template>
 
 <script setup lang="ts">
   const router = useRouter();
   const { hasPermission } = await usePermissions();
+  const { $i18n } = useNuxtApp();
+  const t = $i18n.t;
   import { Plus } from "@element-plus/icons-vue";
   const loadingAction = ref(false);
   const deleteLeadPopup = ref(false);
@@ -61,7 +63,7 @@ div
     columns: [
       {
         prop: "dealDetails",
-        label: "Deal Name",
+        label: t('deals.table.name'),
         component: "AvatarText",
         sortable: true,
         type: "font-bold",
@@ -69,7 +71,7 @@ div
       },
       {
         prop: "stage",
-        label: "Stage",
+        label: t('deals.table.stage'),
         component: "Label",
         sortable: true,
         type: "outline",
@@ -78,7 +80,7 @@ div
       },
       {
         prop: "price",
-        label: "Price",
+        label: t('deals.table.price'),
         component: "Text",
         sortable: true,
         type: "font-default",
@@ -86,7 +88,7 @@ div
       },
       {
         prop: "assign",
-        label: "Assigned",
+        label: t('deals.table.assigned'),
         component: "Text",
         // sortable: true,
         type: "font-default",
@@ -94,7 +96,7 @@ div
       },
       {
         prop: "contractType",
-        label: "Contract Type",
+        label: t('deals.table.contractType'),
         component: "Label",
         sortable: true,
         type: "solid",
@@ -102,7 +104,7 @@ div
       },
       {
         prop: "signatureDate",
-        label: "Signature Date",
+        label: t('deals.table.signatureDate'),
         component: "Text",
         sortable: true,
         type: "font-default",
@@ -128,31 +130,31 @@ div
     value: e.id,
   }));
 
-  const filterOptions = [
+  const filterOptions = computed(() => [
     {
-      title: "Deal Stage",
+      title: t('deals.table.stage'),
       value: "stage",
       options: [...dealStageOptions],
     },
     {
-      title: "Assigned user",
+      title: t('deals.table.assigned'),
       value: "userId",
       options: [...mappedUsers],
     },
     {
-      title: "Contract Type",
+      title: t('deals.table.contractType'),
       value: "contractType",
       options: [...contractTypeOptions],
     },
     {
-      title: "Expected Signature Date",
+      title: t('deals.info.signatureDate'),
       value: ["fromDate", "toDate"],
       type: "date",
     },
     {
-      title: "Deal Price",
+      title: t('deals.table.price'),
       value: ["fromPrice", "toPrice"],
       type: "input",
     },
-  ];
+  ]);
 </script>

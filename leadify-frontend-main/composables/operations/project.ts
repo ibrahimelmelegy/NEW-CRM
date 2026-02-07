@@ -25,10 +25,13 @@ enum projectCategory {
   Direct = 'Direct',
   Etimad = 'Etimad',
 }
-export const projectCategories = [
-  { label: 'Direct', value: projectCategory.Direct },
-  { label: 'Etimad', value: projectCategory.Etimad },
-];
+export const getProjectCategories = () => {
+  const { t } = useI18n();
+  return [
+    { label: t('operations.projects.category.direct'), value: projectCategory.Direct },
+    { label: t('operations.projects.category.etimad'), value: projectCategory.Etimad },
+  ];
+};
 
 enum projectStatus {
   active = 'ACTIVE',
@@ -36,45 +39,57 @@ enum projectStatus {
   onHold = 'ON_HOLD',
   completed = 'COMPLETE',
 }
-export const projectStatuses = [
-  { label: 'Active', value: projectStatus.active },
-  { label: 'Cancelled', value: projectStatus.cancelled },
-  { label: 'On Hold', value: projectStatus.onHold },
-  { label: 'Complete', value: projectStatus.completed },
-];
+export const getProjectStatuses = () => {
+  const { t } = useI18n();
+  return [
+    { label: t('operations.projects.status.active'), value: projectStatus.active },
+    { label: t('operations.projects.status.cancelled'), value: projectStatus.cancelled },
+    { label: t('operations.projects.status.onHold'), value: projectStatus.onHold },
+    { label: t('operations.projects.status.completed'), value: projectStatus.completed },
+  ];
+};
 
 enum contractType {
   purchased = 'PURCHASED',
   subContractor = 'SUBCONTRACTOR',
   invitation = 'INVITATION',
 }
-export const contractTypes = [
-  { label: 'Purchased', value: contractType.purchased },
-  { label: 'Sub Contractor', value: contractType.subContractor },
-  { label: 'Invitation', value: contractType.invitation },
-];
+export const getContractTypes = () => {
+  const { t } = useI18n();
+  return [
+    { label: t('operations.projects.contractType.purchased'), value: contractType.purchased },
+    { label: t('operations.projects.contractType.subContractor'), value: contractType.subContractor },
+    { label: t('operations.projects.contractType.invitation'), value: contractType.invitation },
+  ];
+};
 
 enum proposalStatus {
   underDeveloping = 'UNDER_DEVELOPING',
   finished = 'FINISHED',
   cancelled = 'CANCELLED',
 }
-export const proposalStatuses = [
-  { label: 'Under Developing', value: proposalStatus.underDeveloping },
-  { label: 'Finished', value: proposalStatus.finished },
-  { label: 'Cancelled', value: proposalStatus.cancelled },
-];
+export const getProposalStatuses = () => {
+  const { t } = useI18n();
+  return [
+    { label: t('operations.projects.proposalStatus.underDeveloping'), value: proposalStatus.underDeveloping },
+    { label: t('operations.projects.proposalStatus.finished'), value: proposalStatus.finished },
+    { label: t('operations.projects.proposalStatus.cancelled'), value: proposalStatus.cancelled },
+  ];
+};
 
 enum applicationStatus {
   underReview = 'UNDER_REVIEW',
   won = 'WON',
   lost = 'LOST',
 }
-export const applicationStatuses = [
-  { label: 'Under Review', value: applicationStatus.underReview },
-  { label: 'Won', value: applicationStatus.won },
-  { label: 'Lost', value: applicationStatus.lost },
-];
+export const getApplicationStatuses = () => {
+  const { t } = useI18n();
+  return [
+    { label: t('operations.projects.applicationStatus.underReview'), value: applicationStatus.underReview },
+    { label: t('operations.projects.applicationStatus.won'), value: applicationStatus.won },
+    { label: t('operations.projects.applicationStatus.lost'), value: applicationStatus.lost },
+  ];
+};
 
 export enum MissionEnum {
   Standard = 'Standard',
@@ -83,12 +98,15 @@ export enum MissionEnum {
   Engineer = 'Engineer',
 }
 
-export const projectMissions = [
-  { label: 'Standard', value: MissionEnum.Standard },
-  { label: 'Helper', value: MissionEnum.Helper },
-  { label: 'Site Engineer', value: MissionEnum.SiteEngineer },
-  { label: 'Engineer', value: MissionEnum.Engineer },
-];
+export const getProjectMissions = () => {
+  const { t } = useI18n();
+  return [
+    { label: t('operations.projects.missions.standard'), value: MissionEnum.Standard },
+    { label: t('operations.projects.missions.helper'), value: MissionEnum.Helper },
+    { label: t('operations.projects.missions.siteEngineer'), value: MissionEnum.SiteEngineer },
+    { label: t('operations.projects.missions.engineer'), value: MissionEnum.Engineer },
+  ];
+};
 
 interface BasicInfoValues {
   name?: string;

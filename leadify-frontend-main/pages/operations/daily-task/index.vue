@@ -1,21 +1,21 @@
 <template lang="pug">
   el-tabs.demo-tabs(v-model="activeName", @tab-click="handleClick")
-    el-tab-pane(label="Information Dashboard", name="info")
+    el-tab-pane(:label="$t('operations.dailyTasks.tabs.info')" name="info")
       OperationsDailyTasksStatistics
-    el-tab-pane(label="Active Projects", name="active")
+    el-tab-pane(:label="$t('operations.dailyTasks.tabs.active')" name="active")
       .glass-card.p-10.rounded-3xl.mt-3
         .flex.items-center.justify-between.m-5
-          .title.font-bold.text-2xl.mb-1.capitalize Active Projects
+          .title.font-bold.text-2xl.mb-1.capitalize {{ $t('operations.dailyTasks.tabs.active') }}
           .flex.items-center.gap-2
             el-button(type="primary" ,size='large' ,class="w-full !my-4 !rounded-2xl", @click="exportToPDF")
               .flex.items-center
                 Icon.mr-2(name="IconExport", size="20")
-                p.text-sm Export To PDF
+                p.text-sm {{ $t('operations.dailyTasks.buttons.exportPdf') }}
             NuxtLink(to="/operations/daily-task/add-task?status=Active")
               el-button(size='large' ,class="w-full !my-4 !rounded-2xl", plain, type="primary")
                 .flex.items-center
                   Icon.mr-2(name="IconAdd", size="20")
-                p.text-sm Add project
+                p.text-sm {{ $t('operations.dailyTasks.buttons.addProject') }}
         .flex.justify-center.items-center.h-64(v-if="loading")
           .animate-spin.rounded-full.h-12.w-12.border-4.border-primary-purple-400.border-t-transparent 
         AppTable(
@@ -46,20 +46,20 @@
                         Icon.text-md.mr-2(name="IconEdit" )
                         p.text-sm Edit
   
-    el-tab-pane(label="Completed Projects", name="completed")
+    el-tab-pane(:label="$t('operations.dailyTasks.tabs.completed')" name="completed")
       .glass-card.p-10.rounded-3xl.mt-3
         .flex.items-center.justify-between.m-5
-          .title.font-bold.text-2xl.mb-1.capitalize Completed Projects
+          .title.font-bold.text-2xl.mb-1.capitalize {{ $t('operations.dailyTasks.tabs.completed') }}
           .flex.items-center.gap-2
             el-button(type="primary", size='large' ,class="w-full !my-4 !rounded-2xl", @click="exportToPDF")
               .flex.items-center
                 Icon.mr-2(name="IconExport", size="20")
-                p.text-sm Export To PDF
+                p.text-sm {{ $t('operations.dailyTasks.buttons.exportPdf') }}
             NuxtLink(to="/operations/daily-task/add-task?status=Completed")
               el-button(size='large' ,class="w-full !my-4 !rounded-2xl", plain, type="primary")
                 .flex.items-center
                   Icon.mr-2(name="IconAdd", size="20")
-                  p.text-sm Add Project
+                  p.text-sm {{ $t('operations.dailyTasks.buttons.addProject') }}
         .flex.justify-center.items-center.h-64(v-if="loading")
           .animate-spin.rounded-full.h-12.w-12.border-4.border-primary-purple-400.border-t-transparent 
         AppTable(
@@ -89,20 +89,20 @@
                       NuxtLink.flex.items-center(:to="`/operations/daily-task/edits/${data?.id}`")
                         Icon.text-md.mr-2(name="IconEdit" )
                         p.text-sm Edit
-    el-tab-pane(label="Granted Projects", name="granted")
+    el-tab-pane(:label="$t('operations.dailyTasks.tabs.granted')" name="granted")
       .glass-card.p-10.rounded-3xl.mt-3
         .flex.items-center.justify-between.m-5
-          .title.font-bold.text-2xl.mb-1.capitalize Granted Projects
+          .title.font-bold.text-2xl.mb-1.capitalize {{ $t('operations.dailyTasks.tabs.granted') }}
           .flex.items-center.gap-2
             el-button(type="primary",size='large' ,class="w-full !my-4 !rounded-2xl", @click="exportToPDF")
               .flex.items-center
                 Icon.mr-2(name="IconExport", size="20")
-                p.text-sm Export To PDF
+                p.text-sm {{ $t('operations.dailyTasks.buttons.exportPdf') }}
             NuxtLink(to="/operations/daily-task/add-task?status=Granted")
               el-button(size='large' ,class="w-full !my-4 !rounded-2xl", plain, type="primary")
                .flex.items-center
                 Icon.mr-2(name="IconAdd", size="20")
-                p.text-sm Add Project
+                p.text-sm {{ $t('operations.dailyTasks.buttons.addProject') }}
         .flex.justify-center.items-center.h-64(v-if="loading")
           .animate-spin.rounded-full.h-12.w-12.border-4.border-primary-purple-400.border-t-transparent       
         AppTable(
@@ -136,6 +136,7 @@
 <script setup>
 import { ref, reactive } from 'vue';
 import { ElMessage } from "element-plus";
+import OperationsDailyTasksStatistics from '@/components/operations/daily-tasks/Statistics.vue';
 
 const activeName = ref("info");
 const loading = ref(false);
@@ -149,7 +150,7 @@ onMounted(async () => {
 const activeColumns = [
   {
     prop: "createdAt",
-    label: "Date",
+    label: useI18n().t('operations.dailyTasks.table.date'),
     component: "Text",
     sortable: true,
     width: 150,
@@ -158,7 +159,7 @@ const activeColumns = [
   },
   {
     prop: "clientName",
-    label: "Client",
+    label: useI18n().t('operations.dailyTasks.table.client'),
     component: "Text",
     sortable: true,
     width: 200,
@@ -167,7 +168,7 @@ const activeColumns = [
   },
   {
     prop: "name",
-    label: "Project Description",
+    label: useI18n().t('operations.dailyTasks.table.description'),
     component: "Text",
     width: 300,
     pdf: "Description",
@@ -175,7 +176,7 @@ const activeColumns = [
   },
   {
     prop: "salesRepresentativeName",
-    label: "Sales Representative",
+    label: useI18n().t('operations.dailyTasks.table.salesRep'),
     component: "Text",
     sortable: true,
     width: 200,
@@ -184,7 +185,7 @@ const activeColumns = [
   },
   {
     prop: "assignedToName",
-    label: "Assigned To",
+    label: useI18n().t('operations.dailyTasks.table.assignedTo'),
     component: "Text",
     sortable: true,
     width: 200,
@@ -193,7 +194,7 @@ const activeColumns = [
   },
   {
     prop: "priority",
-    label: "Priority",
+    label: useI18n().t('operations.dailyTasks.table.priority'),
     component: "Text",
     sortable: true,
     width: 200,
@@ -202,7 +203,7 @@ const activeColumns = [
   },
   {
     prop: "notes",
-    label: "Notes",
+    label: useI18n().t('operations.dailyTasks.table.notes'),
     component: "Text",
     sortable: true,
     width: 200,
@@ -211,12 +212,17 @@ const activeColumns = [
   },
   {
     prop: "status",
-    label: "Status",
+    label: useI18n().t('operations.dailyTasks.table.status'),
     component: "Label",
     sortable: true,
     width: 200,
     pdf: "Status",
     type: "outline",
+  },
+  {
+    prop: "action",
+    label: useI18n().t('common.action'),
+    component: "Action",
   },
 ];
 
@@ -224,7 +230,7 @@ const activeColumns = [
 const completedColumns = [
   {
     prop: "createdAt",
-    label: "Date",
+    label: useI18n().t('operations.dailyTasks.table.date'),
     component: "Text",
     sortable: true,
     width: 100,
@@ -233,7 +239,7 @@ const completedColumns = [
   },
   {
     prop: "clientName",
-    label: "Client Name",
+    label: useI18n().t('operations.dailyTasks.table.client'),
     component: "Text",
     sortable: true,
     width: 200,
@@ -242,7 +248,7 @@ const completedColumns = [
   },
   {
     prop: "name",
-    label: "Project Description",
+    label: useI18n().t('operations.dailyTasks.table.description'),
     component: "Text",
     width: 300,
     pdf: "Description",
@@ -250,7 +256,7 @@ const completedColumns = [
   },
   {
     prop: "salesRepresentativeName",
-    label: "Sales Representative",
+    label: useI18n().t('operations.dailyTasks.table.salesRep'),
     component: "Text",
     sortable: true,
     width: 200,
@@ -259,7 +265,7 @@ const completedColumns = [
   },
   {
     prop: "assignedToName",
-    label: "Assigned To",
+    label: useI18n().t('operations.dailyTasks.table.assignedTo'),
     component: "Text",
     sortable: true,
     width: 200,
@@ -268,7 +274,7 @@ const completedColumns = [
   },
    {
     prop: "notes",
-    label: "Notes",
+    label: useI18n().t('operations.dailyTasks.table.notes'),
     component: "Text",
     sortable: true,
     width: 200,
@@ -277,7 +283,7 @@ const completedColumns = [
   },
   {
     prop: "status",
-    label: "Status",
+    label: useI18n().t('operations.dailyTasks.table.status'),
     component: "Label",
     sortable: true,
     width: 200,
@@ -286,7 +292,7 @@ const completedColumns = [
   },
   {
     prop: "cost",
-    label: "Cost",
+    label: useI18n().t('operations.dailyTasks.table.cost'),
     component: "Text",
     sortable: true,
     width: 200,
@@ -295,7 +301,7 @@ const completedColumns = [
   },
   {
     prop: "totalPaid",
-    label: "Amount paid",
+    label: useI18n().t('operations.dailyTasks.table.amountPaid'),
     component: "Text",
     sortable: true,
     width: 200,
@@ -304,19 +310,24 @@ const completedColumns = [
   },
   {
     prop: "rest",
-    label: "Rest",
+    label: useI18n().t('operations.dailyTasks.table.rest'),
     component: "Text",
     sortable: true,
     width: 200,
     pdf: "Rest",
     type: "font-default",
   },
+  {
+    prop: "action",
+    label: useI18n().t('common.action'),
+    component: "Action",
+  },
 ];
 
 const grantedColumns = [
   {
     prop: "createdAt",
-    label: "Date",
+    label: useI18n().t('operations.dailyTasks.table.date'),
     component: "Text",
     sortable: true,
     width: 150,
@@ -325,7 +336,7 @@ const grantedColumns = [
   },
   {
     prop: "clientName",
-    label: "Client Name",
+    label: useI18n().t('operations.dailyTasks.table.client'),
     component: "Text",
     sortable: true,
     width: 200,
@@ -334,7 +345,7 @@ const grantedColumns = [
   },
   {
     prop: "name",
-    label: "Project Description",
+    label: useI18n().t('operations.dailyTasks.table.description'),
     component: "Text",
     width: 300,
     pdf: "Description",
@@ -342,7 +353,7 @@ const grantedColumns = [
   },
   {
     prop: "cost",
-    label: "Cost",
+    label: useI18n().t('operations.dailyTasks.table.cost'),
     component: "Text",
     sortable: true,
     width: 200,
@@ -351,7 +362,7 @@ const grantedColumns = [
   },
   {
     prop: "downPayment",
-    label: "Down Payment",
+    label: useI18n().t('operations.dailyTasks.table.downPayment'),
     component: "Text",
     sortable: true,
     width: 200,
@@ -369,7 +380,7 @@ const grantedColumns = [
   // },
   {
     prop: "salesRepresentativeName",
-    label: "Sales Representative",
+    label: useI18n().t('operations.dailyTasks.table.salesRep'),
     component: "Text",
     sortable: true,
     width: 200,
@@ -378,7 +389,7 @@ const grantedColumns = [
   },
   {
     prop: "assignedToName",
-    label: "Assigned To",
+    label: useI18n().t('operations.dailyTasks.table.assignedTo'),
     component: "Text",
     sortable: true,
     width: 200,
@@ -387,7 +398,7 @@ const grantedColumns = [
   },
   {
     prop: "notes",
-    label: "Notes",
+    label: useI18n().t('operations.dailyTasks.table.notes'),
     component: "Text",
     sortable: true,
     width: 200,
@@ -396,12 +407,17 @@ const grantedColumns = [
   },
   {
     prop: "status",
-    label: "Status",
+    label: useI18n().t('operations.dailyTasks.table.status'),
     component: "Label",
     sortable: true,
     width: 200,
     pdf: "Status",
     type: "outline",
+  },
+  {
+    prop: "action",
+    label: useI18n().t('common.action'),
+    component: "Action",
   },
 ];
 

@@ -2,10 +2,10 @@
 div
   //- Header
   .flex.items-center.justify-between.mb-8
-    .title.font-bold.text-2xl.mb-1.capitalize Vehicle
+    .title.font-bold.text-2xl.mb-1.capitalize {{ $t('navigation.vehicle') }}
     .flex.items-center.gap-x-3
       NuxtLink(to="/operations/vehicle/add-vehicle")
-        el-button(   size='large' :loading="loading" v-if="hasPermission('CREATE_VEHICLES')" native-type="submit" type="primary" :icon="Plus" class="w-full !my-4 !rounded-2xl")  New Vehicle
+        el-button(   size='large' :loading="loading" v-if="hasPermission('CREATE_VEHICLES')" native-type="submit" type="primary" :icon="Plus" class="w-full !my-4 !rounded-2xl")  {{ $t('operations.vehicles.new') }}
       //- el-dropdown(trigger="click")
       //-     span.el-dropdown-link
       //-         button.rounded-btn(class="!px-4"): Icon(  name="IconToggle" size="24")
@@ -24,7 +24,7 @@ div
       //-               NuxtLink.flex.items-center(:to="`/leads/1`")
       //-                 Icon.text-md.mr-2(size="20" name="IconArchived" )
       //-                 p.text-sm Archived
-  AppTable(v-slot="{data}" :columns="table.columns" :filterOptions="filterOptions" position="vehicle" :pageInfo="response.pagination" :data="table.data" :sortOptions="table.sort" @handleRowClick="handleRowClick" searchPlaceholder="vehicle" )
+  AppTable(v-slot="{data}" :columns="table.columns" :filterOptions="filterOptions" position="vehicle" :pageInfo="response.pagination" :data="table.data" :sortOptions="table.sort" @handleRowClick="handleRowClick" :searchPlaceholder="$t('navigation.vehicle')" )
     .flex.items-center.py-2(@click.stop)
         //- NuxtLink.toggle-icon(:to="`/leads/1`")
         //-     Icon.text-md(name="IconEye" )
@@ -38,16 +38,16 @@ div
                     el-dropdown-item
                       NuxtLink.flex.items-center(:to="`/operations/vehicle/${data?.id}`")
                         Icon.text-md.mr-2(name="IconEye" )
-                        p.text-sm View
+                        p.text-sm {{ $t('common.view') }}
                     el-dropdown-item(v-if="hasPermission('EDIT_VEHICLES')")
                       NuxtLink.flex.items-center(:to="`/operations/vehicle/edit/${data?.id}`")
                         Icon.text-md.mr-2(name="IconEdit" )
-                        p.text-sm Edit
+                        p.text-sm {{ $t('common.edit') }}
                     //- el-dropdown-item(@click="[deleteLeadPopup=true, userActionId = data?.id]" )
                     //-     .flex.items-center
                     //-       Icon.text-md.mr-2(name="IconDelete" )
                     //-       p.text-sm Delete
-  ActionModel(v-model="deleteLeadPopup" :loading="loadingAction" btn-text="Move to Archive" description-one="Are you sure you want to delete this Vehicle?" icon="/images/delete-image.png" description-two="It will be archived and can be restored later within 30 days." )
+  ActionModel(v-model="deleteLeadPopup" :loading="loadingAction" :btn-text="$t('common.moveToArchive')" :description-one="$t('common.archiveConfirmation')" icon="/images/delete-image.png" :description-two="$t('common.archiveDescription')" )
 </template>
 
 <script setup lang="ts">
@@ -61,7 +61,7 @@ div
     columns: [
       {
         prop: "plate",
-        label: "Plate",
+        label: useI18n().t('operations.vehicles.table.plate'),
         component: "Text",
         // sortable: true,
         type: "font-bold",
@@ -69,7 +69,7 @@ div
       },
       {
         prop: "manufacturer",
-        label: "Manufacturer",
+        label: useI18n().t('operations.vehicles.table.manufacturer'),
         component: "Text",
         // sortable: true,
         type: "font-bold",
@@ -77,7 +77,7 @@ div
       },
       {
         prop: "rentCost",
-        label: "Rent Cost",
+        label: useI18n().t('operations.vehicles.table.rentCost'),
         component: "Text",
         sortable: true,
         type: "font-default",
@@ -85,7 +85,7 @@ div
       },
       {
         prop: "gasCost",
-        label: "Gas Cost",
+        label: useI18n().t('operations.vehicles.table.gasCost'),
         component: "Text",
         sortable: true,
         type: "font-default",
@@ -93,7 +93,7 @@ div
       },
       {
         prop: "oilCost",
-        label: "Oil Cost",
+        label: useI18n().t('operations.vehicles.table.oilCost'),
         component: "Text",
         sortable: true,
         type: "font-default",
@@ -101,11 +101,16 @@ div
       },
       {
         prop: "regularMaintenanceCost",
-        label: "Regular Maintenance Cost",
+        label: useI18n().t('operations.vehicles.table.maintenanceCost'),
         component: "Text",
         // sortable: true,
         type: "font-default",
         width: 250,
+      },
+      {
+        prop: "action",
+        label: useI18n().t('common.action'),
+        component: "Action",
       },
     ],
     data: [] as Vehicle[],
@@ -120,27 +125,27 @@ div
 
   const filterOptions = [
     {
-      title: "Manufacturer",
+      title: useI18n().t('operations.vehicles.filter.manufacturer'),
       value: "manufacturer",
       options: [...manufacturers],
     },
     {
-      title: "Rent Cost",
+      title: useI18n().t('operations.vehicles.filter.rentCost'),
       value: ["fromRentCost", "toRentCost"],
       type: "input",
     },
     {
-      title: "Gas Cost",
+      title: useI18n().t('operations.vehicles.filter.gasCost'),
       value: ["fromGasCost", "toGasCost"],
       type: "input",
     },
     {
-      title: "Oil Cost",
+      title: useI18n().t('operations.vehicles.filter.oilCost'),
       value: ["fromOilCost", "toOilCost"],
       type: "input",
     },
     {
-      title: "Regular Maintenance Cost",
+      title: useI18n().t('operations.vehicles.filter.maintenanceCost'),
       value: ["fromRegularMaintenanceCost", "toRegularMaintenanceCost"],
       type: "input",
     },

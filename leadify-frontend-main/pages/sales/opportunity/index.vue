@@ -2,10 +2,10 @@
 div
   //- Header
   .flex.items-center.justify-between.mb-8
-    .title.font-bold.text-2xl.mb-1.capitalize Opportunity
+    .title.font-bold.text-2xl.mb-1.capitalize {{ $t('opportunities.title') }}
     .flex.items-center.gap-x-3
       NuxtLink(to="/sales/opportunity/add-opportunity")
-        el-button(size='large' :loading="loading" v-if="hasPermission('CREATE_OPPORTUNITIES')" native-type="submit" type="primary" :icon="Plus" class="w-full !my-4 !rounded-2xl") New Opportunity
+        el-button(size='large' :loading="loading" v-if="hasPermission('CREATE_OPPORTUNITIES')" native-type="submit" type="primary" :icon="Plus" class="w-full !my-4 !rounded-2xl") {{ $t('opportunities.newOpp') }}
       //- el-dropdown(trigger="click")
       //-     span.el-dropdown-link
       //-         button.rounded-btn(class="!px-4"): Icon(  name="IconToggle" size="24")
@@ -24,7 +24,7 @@ div
       //-               NuxtLink.flex.items-center(:to="`/opportunity/1`")
       //-                 Icon.text-md.mr-2(size="20" name="IconArchived" )
       //-                 p.text-sm Archived
-  AppTable(v-slot="{data}" v-if="!loadingAction" :filterOptions="filterOptions" :columns="table.columns" position="opportunity" :pageInfo="response.pagination" :data="table.data" :sortOptions="table.sort" @handleRowClick="handleRowClick" searchPlaceholder="opportunity" )
+  AppTable(v-slot="{data}" v-if="!loadingAction" :filterOptions="filterOptions" :columns="table.columns" position="opportunity" :pageInfo="response.pagination" :data="table.data" :sortOptions="table.sort" @handleRowClick="handleRowClick" :searchPlaceholder="$t('opportunities.title')" )
     .flex.items-center.py-2(@click.stop)
         //- NuxtLink.toggle-icon(:to="`/opportunities/1`")
         //-     Icon.text-md(name="IconEye" )
@@ -38,20 +38,20 @@ div
                     el-dropdown-item
                       NuxtLink.flex.items-center(:to="`/sales/opportunity/${data?.id}`")
                         Icon.text-md.mr-2(name="IconEye" )
-                        p.text-sm View
+                        p.text-sm {{ $t('common.view') }}
                     el-dropdown-item( v-if="hasPermission('EDIT_OPPORTUNITIES')")
                       NuxtLink.flex.items-center(:to="`/sales/opportunity/edit/${data?.id}`")
                         Icon.text-md.mr-2(name="IconEdit" )
-                        p.text-sm Edit
+                        p.text-sm {{ $t('common.edit') }}
                     //- el-dropdown-item(@click="[deleteLeadPopup=true, userActionId = data?.id]" )
                     //-     .flex.items-center
                     //-       Icon.text-md.mr-2(name="IconDelete" )
                     //-       p.text-sm Delete
-  ActionModel(v-model="deleteLeadPopup" :loading="loadingAction" btn-text="Move to Archive" description-one="Are you sure you want to delete this Opportunity?" icon="/images/delete-image.png" description-two="It will be archived and can be restored later within 30 days." )
-  ActionModel(v-model="wonPopup" :loading="loadingAction" btn-text="Save" description="Would you like to convert this opportunity into a Deal or a Project?" @confirm = " editPresent" )
+  ActionModel(v-model="deleteLeadPopup" :loading="loadingAction" :btn-text="$t('opportunities.archiveTitle')" :description-one="$t('opportunities.deleteDesc1')" icon="/images/delete-image.png" :description-two="$t('opportunities.deleteDesc2')" )
+  ActionModel(v-model="wonPopup" :loading="loadingAction" :btn-text="$t('common.save')" :description="$t('opportunities.wonDesc')" @confirm = " editPresent" )
    template(#input)
-    InputSelect(v-if="select?.status === 'WON' " label=" Present " @change ="setPresent" :options="opportunityPresent"  )
-    InputSelect( v-if="select?.status === 'LOST' " label=" Reason for lose" @change ="setReasons" :options="reasonOptions" )
+    InputSelect(v-if="select?.status === 'WON' " :label="$t('opportunities.present')" @change ="setPresent" :options="opportunityPresent"  )
+    InputSelect( v-if="select?.status === 'LOST' " :label="$t('opportunities.reasonLoss')" @change ="setReasons" :options="reasonOptions" )
 </template>
 
 <script setup lang="ts">
@@ -59,6 +59,9 @@ div
   import { Plus } from "@element-plus/icons-vue";
   import { stageOptions, priorityOptions } from '@/composables/useOpportunity';
   import useTableFilter from '@/composables/useTableFilter';
+
+  const { $i18n } = useNuxtApp();
+  const t = $i18n.t;
   const { hasPermission } = await usePermissions();
   const loadingAction = ref(false);
   const deleteLeadPopup = ref(false);
@@ -68,20 +71,21 @@ div
   const select = ref();
   const wonPopup = ref(false);
 
-  const opportunityPresent = [
+  // Using computed for reactivity if language changes
+  const opportunityPresent = computed(() => [
     {
-      label: "Convert to Deal",
+      label: t('opportunities.convertDeal'),
       value: "deal",
     },
     {
-      label: "Convert to Project",
+      label: t('opportunities.convertProject'),
       value: "project",
     },
     {
-      label: "Not Now",
+      label: t('common.cancel'),
       value: "now",
     },
-  ];
+  ]);
 
   async function setPresent(pre: any) {
     present.value = pre.value;
@@ -147,7 +151,7 @@ div
     columns: [
       {
         prop: "name",
-        label: "Opportunity Name",
+        label: t('opportunities.table.name'),
         component: "Text",
         sortable: true,
         type: "font-bold",
@@ -155,17 +159,17 @@ div
       },
       {
         prop: "stage",
-        label: "Stage",
+        label: t('opportunities.table.stage'),
         component: "Label",
         sortable: true,
         type: "select",
-        filters: stageOptions.map((stage) => ({ text: stage.label, value: stage.value, actions: submitForm })),
+        filters: stageOptions.map((stage) => ({ text: t(stage.label), value: stage.value, actions: submitForm })),
         width: 150,
       },
 
       {
         prop: "estimatedValue",
-        label: "Budget",
+        label: t('opportunities.table.budget'),
         component: "Text",
         sortable: true,
         type: "font-default",
@@ -173,7 +177,7 @@ div
       },
       {
         prop: "profit",
-        label: "Profit",
+        label: t('opportunities.table.profit'),
         component: "Text",
         // sortable: true,
         type: "font-default",
@@ -181,7 +185,7 @@ div
       },
       {
         prop: "expectedCloseDate",
-        label: "Close Date",
+        label: t('opportunities.table.closeDate'),
         component: "Text",
         sortable: true,
         type: "font-default",
@@ -189,23 +193,23 @@ div
       },
       {
         prop: "priority",
-        label: "Priority",
+        label: t('opportunities.table.priority'),
         component: "Label",
         sortable: true,
         type: "solid",
-        filters: priorityOptions.map((priority) => ({ text: priority.label, value: priority.value })),
+        filters: priorityOptions.map((priority) => ({ text: t(priority.label), value: priority.value })),
         width: 150,
       },
       {
         prop: "assign",
-        label: "Assigned",
+        label: t('opportunities.table.assigned'),
         component: "Text",
         type: "font-default",
         width: 200,
       },
       {
         prop: "createdAt",
-        label: "Created",
+        label: t('opportunities.table.created'),
         component: "Text",
         sortable: true,
         type: "font-default",
@@ -234,32 +238,32 @@ div
 
   const filterOptions = [
     {
-      title: "Opportunity Stage",
+      title: t('opportunities.filter.stage'),
       value: "stage",
-      options: [...stageOptions],
+      options: [...stageOptions.map(o => ({...o, label: t(o.label)}))],
     },
     {
-      title: "Assigned user",
+      title: t('opportunities.table.assigned'),
       value: "userId",
       options: [...mappedUsers],
     },
     {
-      title: "Priority",
+      title: t('opportunities.table.priority'),
       value: "priority",
-      options: [...priorityOptions],
+      options: [...priorityOptions.map(o => ({...o, label: t(o.label)}))],
     },
     {
-      title: "Expected Close Date",
+      title: t('opportunities.filter.closeDate'),
       value: ["fromExpectedCloseDate", "toExpectedCloseDate"],
       type: "date",
     },
     {
-      title: "Estimated Budget",
+      title: t('opportunities.filter.budget'),
       value: ["fromEstimatedValue", "toEstimatedValue"],
       type: "input",
     },
     {
-      title: "Profit",
+      title: t('opportunities.filter.profit'),
       value: ["fromProfit", "toProfit"],
       type: "input",
     },

@@ -261,6 +261,8 @@ export function getIncreaseLineChart(data: any, colorPalette: any) {
 export const statsLoading = ref(false);
 
 export async function getLeadsStatics() {
+  const { $i18n } = useNuxtApp();
+  const t = $i18n.t;
   statsLoading.value = true;
   try {
     const { body, success } = await useApiFetch("insights/leads-sales");
@@ -277,8 +279,14 @@ export async function getLeadsStatics() {
         { name: "Total Deals Closed", value: formatLargeNumber(body.dealsCount || 0) },
         { name: "Revenue Won", value: `SAR ${formatLargeNumber(body.revenueFromDeals || 0)}` },
       ],
-      opportunityStages: Object.entries(body.opportunityStages || {}).map(([name, value]) => ({ name: capitalizeName(name), value })),
-      dealsPipeline: Object.entries(body.dealsPipeline || {}).map(([name, value]) => ({ name: capitalizeName(name), value })),
+      opportunityStages: Object.entries(body.opportunityStages || {}).map(([name, value]) => ({
+        name: t(`crm.stages.${name.toLowerCase()}`) !== `crm.stages.${name.toLowerCase()}` ? t(`crm.stages.${name.toLowerCase()}`) : capitalizeName(name),
+        value
+      })),
+      dealsPipeline: Object.entries(body.dealsPipeline || {}).map(([name, value]) => ({
+        name: t(`crm.pipeline.${name.toLowerCase()}`) !== `crm.pipeline.${name.toLowerCase()}` ? t(`crm.pipeline.${name.toLowerCase()}`) : capitalizeName(name),
+        value
+      })),
       salesPerformance: (body.salesPerformance || []).map((i: any) => ({ name: i.date, value: i.revenue })),
     };
   } catch (error: any) {
@@ -293,6 +301,8 @@ function getDefaultLeadsStats() {
 }
 
 export async function getProjectOperationsStatics() {
+  const { $i18n } = useNuxtApp();
+  const t = $i18n.t;
   statsLoading.value = true;
   try {
     const { body, success } = await useApiFetch("insights/projects-operations");
@@ -305,20 +315,23 @@ export async function getProjectOperationsStatics() {
         { name: "Eitmad Projects Overview", value: formatLargeNumber(body.eitmadProjectsCount || 0) },
       ],
       pieChart_one: {
-        title: "Assets Percentage",
+        title: t("dashboard.widgets.assetsPercentage"),
         options: [
-          { name: "Used Assets %", value: body.usedAssetPercentage?.toFixed(2) },
-          { name: "Unused Assets %", value: (100 - body.usedAssetPercentage)?.toFixed(2) },
+          { name: t("dashboard.widgets.usedAssets"), value: body.usedAssetPercentage?.toFixed(2) },
+          { name: t("dashboard.widgets.unusedAssets"), value: (100 - body.usedAssetPercentage)?.toFixed(2) },
         ],
       },
       pieChart_two: {
-        title: "Manpower Percentage",
+        title: t("dashboard.widgets.manpowerPercentage"),
         options: [
-          { name: "Used Manpower %", value: body.usedManpowerPercentage?.toFixed(2) },
-          { name: "Unused Manpower %", value: (100 - body.usedManpowerPercentage)?.toFixed(2) },
+          { name: t("dashboard.widgets.usedManpower"), value: body.usedManpowerPercentage?.toFixed(2) },
+          { name: t("dashboard.widgets.unusedManpower"), value: (100 - body.usedManpowerPercentage)?.toFixed(2) },
         ],
       },
-      projectsByStatus: Object.entries(body.projectsByStatus || {}).map(([name, value]) => ({ name: formatSnakeCase(name), value })),
+      projectsByStatus: Object.entries(body.projectsByStatus || {}).map(([name, value]) => ({
+        name: t(`crm.projectStatus.${name.toLowerCase()}`) !== `crm.projectStatus.${name.toLowerCase()}` ? t(`crm.projectStatus.${name.toLowerCase()}`) : formatSnakeCase(name),
+        value
+      })),
     };
   } catch (error: any) {
     statsLoading.value = false;

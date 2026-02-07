@@ -1,7 +1,7 @@
 <template lang="pug">
 .lead-view(v-if="lead")
   .flex.items-center.justify-between.mb-5.mt-5
-    .title.font-bold.text-2xl.mb-1.capitalize Lead Details
+    .title.font-bold.text-2xl.mb-1.capitalize {{ $t('leads.details') }}
     el-dropdown(trigger="click")
       span.el-dropdown-link
         button.rounded-btn(class="!px-4"): Icon(name="IconToggle" size="24")
@@ -10,18 +10,18 @@
           el-dropdown-item(v-if="hasPermission('EDIT_LEADS')")
             NuxtLink.flex.items-center(:to="`/sales/leads/edit/${lead?.id}`")
               Icon.text-md.mr-2(size="20" name="IconEdit")
-              p.text-sm Edit
+              p.text-sm {{ $t('leads.edit') }}
           el-dropdown-item
             NuxtLink.flex.items-center(:to="`/sales/opportunity/add-opportunity?leadId=${lead?.id}`")
               Icon.text-md.mr-2(size="20" name="IconOpportunity")
-              p.text-sm Convert to Opportunity
+              p.text-sm {{ $t('leads.convertToOpp') }}
           el-dropdown-item
             NuxtLink.flex.items-center(:to="`/sales/deals/add-deal?leadId=${lead?.id}`")
               Icon.text-md.mr-2(size="20" name="IconDeal")
-              p.text-sm Convert to Deal
+              p.text-sm {{ $t('leads.convertToDeal') }}
 
   el-tabs.demo-tabs(v-model="activeName")
-    el-tab-pane(label="Summary" name="summary")
+    el-tab-pane(:label="$t('leads.summary')" name="summary")
       .flex.align-center.gap-6.mt-3(class="flex-col xl:flex-row")
         .flex-1.glass-card.p-10.rounded-3xl
           .flex.align-center.gap-3(class="flex-col md:flex-row")
@@ -31,74 +31,75 @@
             .flex.flex-col.items-center.justify-center.ml-auto
               el-progress(type="dashboard" :percentage="lead?.score || 0" :color="scoreColors" :width="80")
                 template(#default="{ percentage }")
-                  span.text-xs.font-medium.text-neutral-500 Score
+                  span.text-xs.font-medium.text-neutral-500 {{ $t('leads.info.score') }}
                   br
                   span.text-xl.font-bold {{ percentage }}
           .mt-8
-            p.text-neutral-900.font-semibold.mb-6.text-lg Information
+            p.text-neutral-900.font-semibold.mb-6.text-lg {{ $t('common.info') }}
             .grid.gap-4(class="md:grid-cols-2 grid-cols-1")
               div(v-if="lead?.email")
                 .text-neutral-400.font-medium.mb-2.flex.items-center
                   Icon(name="IconEmail" size="20" class="mr-2")
-                  p Email
+                  p {{ $t('leads.info.email') }}
                 p.text-neutral-800.mb-2 {{ lead?.email }}
                 el-button(type="primary" size="small" :loading="aiLoading" @click="generateAiEmail") 
                   Icon.mr-1(name="ph:magic-wand" size="16")
-                  | AI Compose
+                  | {{ $t('leads.aiCompose') }}
               div(v-if="lead?.phone")
                 .text-neutral-400.font-medium.mb-2.flex.items-center
                   Icon(name="IconPhone" size="20" class="mr-2")
-                  p Phone Number
+                  p {{ $t('leads.info.phone') }}
                 p.text-neutral-800.mb-2 {{ lead?.phone }}
               div(v-if="lead?.users?.length")
                 .text-neutral-400.font-medium.mb-2.flex.items-center
                   Icon(name="IconAssign" size="20" class="mr-2")
-                  p Assign
+                  p {{ $t('leads.info.assign') }}
                 p.text-neutral-800.mb-2 {{ lead?.users?.map((u: any) => u.name).join(', ') }}
               div
                 .text-neutral-400.font-medium.mb-2.flex.items-center
                   Icon(name="IconSource" size="20" class="mr-2")
-                  p Lead Source
+                  p {{ $t('leads.info.leadSource') }}
                 p.text-neutral-800.mb-2 {{ formatSnakeCase(lead?.leadSource) }}
               div(v-if="lead?.otherSource")
                 .text-neutral-400.font-medium.mb-2.flex.items-center
                   Icon(name="IconSource" size="20" class="mr-2")
-                  p Other Source
+                  p {{ $t('leads.info.otherSource') }}
                 p.text-neutral-800.mb-2 {{ lead?.otherSource }}
               div
                 .text-neutral-400.font-medium.mb-2.flex.items-center
                   Icon(name="IconCalendar" size="20" class="mr-2")
-                  p Created
+                  p {{ $t('leads.info.created') }}
                 p.text-neutral-800.mb-2 {{ formatDate(lead?.createdAt) }}
               div
                 .text-neutral-400.font-medium.mb-2.flex.items-center
                   Icon(name="IconCalendar" size="20" class="mr-2")
-                  p Last Contact
+                  p {{ $t('leads.info.lastContact') }}
                 p.text-neutral-800.mb-2 {{ formatDate(lead?.lastContactDate) }}
         .flex-1.glass-card.p-10.rounded-3xl(v-if="lead?.notes")
           .flex.items-center.gap-2.mb-4
             .flex.items-center.justify-center.w-10.h-10.rounded-full.bg-secondary-turquoise-50: Icon.text-secondary-turquoise-700(name="IconNote" size="24")
-            h4.text-lg.font-semibold.text-neutral-900 Notes
+            h4.text-lg.font-semibold.text-neutral-900 {{ $t('leads.notes') }}
             el-button.ml-auto(type="info" size="small" plain @click="showSummarizer = true")
               Icon.mr-1(name="ph:article-bold" size="16")
-              | AI Summarize
+              | {{ $t('leads.aiSummarize') }}
           p.text-neutral-800.leading-relaxed {{ lead?.notes }}
 
-    el-tab-pane(label="Activity log" name="activity")
+    el-tab-pane(:label="$t('leads.activity')" name="activity")
       .mt-6.activity
         .flex.items-start.gap-x-6.mb-7(v-for="item in activity?.docs" :key="item.id" class="w-full lg:w-6/12")
           .flex.items-center.justify-center.w-12.h-12.rounded-full(class="!min-w-[48px] !min-h-[48px]" :class="handleTypeStyle(item.status)"): Icon(:name="handleIconName(item.status)" size="24")
           .mt-2
-              h4.text-neutral-800.font-semibold.text-sm.mb-1 {{ item?.status === 'assigned' ? 'Assigned User' : item?.status === 'create' ? 'Create New Lead' : item?.status?.toString()?.toUpperCase() }}
+              //- Improved translation logic for activity types
+              h4.text-neutral-800.font-semibold.text-sm.mb-1 {{ item?.status === 'assigned' ? $t('leads.info.assign') : item?.status === 'create' ? $t('leads.createTitle') : item?.status?.toString()?.toUpperCase() }}
               p.text-neutral-500.text-xs.mb-4.font-medium {{ formatDate(item?.createdAt) }}
               .glass-card.p-5.rounded-3xl(class="w-[65vw]")
                 p.text-neutral-700.text-xs {{ item?.descripion?.toString()?.toUpperCase() }}
                 .flex.items-center.gap-3.mt-4
                   Avatar(:src="item?.user?.profilePicture ?? '/images/avatar.png'" small)
                   p.text-neutral-800.text-xs.font-medium {{ item?.user?.name }}
-      el-empty(v-if="!activity?.docs?.length" description="No activity recorded for this lead." image="/images/empty.png")
+      el-empty(v-if="!activity?.docs?.length" :description="$t('common.noData')" image="/images/empty.png")
       .flex.justify-center.items-center.w-full
-        el-button(v-if="activity?.docs?.length > 0" :loading="loading" class="!rounded-2xl mb-2" type='primary' size="large" :disabled="activity?.pagination?.totalPages == activity?.pagination?.page" @click="getActivityPage(Number(activity?.pagination?.page)+1)") View More
+        el-button(v-if="activity?.docs?.length > 0" :loading="loading" class="!rounded-2xl mb-2" type='primary' size="large" :disabled="activity?.pagination?.totalPages == activity?.pagination?.page" @click="getActivityPage(Number(activity?.pagination?.page)+1)") {{ $t('common.view') }} More
 
   AIEmailAssist(v-model="showAiDialog" :context="leadContext")
   AISummarizer(v-model="showSummarizer" :initialText="lead?.notes")

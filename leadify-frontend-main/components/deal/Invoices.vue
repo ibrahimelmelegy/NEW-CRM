@@ -2,7 +2,7 @@
 .glass-card.m-auto.p-10(class="2xl:w-1/2 w-[90%]")
   .flex.justify-between.items-center.mb-4
     span
-    el-button(size='medium' plain type="primary" :icon="Plus" native-type="button" @click="AddInvoice" class="!rounded-2xl !py-2.5 !px-4") Add Invoice
+    el-button(size='medium' plain type="primary" :icon="Plus" native-type="button" @click="AddInvoice" class="!rounded-2xl !py-2.5 !px-4") {{ $t('deals.form.addInvoice') }}
   DealFormInovice(
     v-for="(invoice, index) in invoices"
     :key="invoice.id"
@@ -19,6 +19,8 @@
 import { ref } from 'vue';
 import { v4 as uuidv4 } from 'uuid'; // To generate unique IDs
 import { ElMessage } from 'element-plus';
+import { useI18n } from 'vue-i18n';
+const { t } = useI18n();
 const emit = defineEmits(['onSubmit', 'isValid']);
 const route = useRoute();
 const props = defineProps({
@@ -48,7 +50,7 @@ if (props.invoices?.length) {
   invoices.value = props.invoices.map((invoice: any) => ({
     amount: invoice.amount || null,
     invoiceNumber: invoice.invoiceNumber || '',
-    dueDate: new Date(invoice.dueDate),
+    invoiceDate: new Date(invoice.invoiceDate),
     collectedDate: new Date(invoice.collectedDate),
     collected: invoice.collected ? true : false,
     id: invoice.id,
@@ -173,15 +175,15 @@ async function onSubmitInvoices() {
   // Only proceed if all forms are submitted successfully
   if (!isSubmitted) {
     emit('isValid', false);
-    console.log('Please fill in all the required in invoices fields.');
-    ElMessage.error('Please fill in all the required in invoices fields.');
+    console.log(t('deals.errors.fillInvoices'));
+    ElMessage.error(t('deals.errors.fillInvoices'));
     return;
   }
 
   // Prepare and log final data for API
   const cleanedInvoices = invoices.value.map(({ id, ...data }: Invoice) => ({
     ...data,
-    dueDate: getYear(data.dueDate),
+    invoiceDate: getYear(data.invoiceDate),
     collectedDate: getYear(data.collectedDate),
     amount: Number(data.amount),
   }));

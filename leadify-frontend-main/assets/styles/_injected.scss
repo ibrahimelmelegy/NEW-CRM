@@ -32,4 +32,4 @@ $height-input: 56px;
 $height-button: 44px;
 
 // 💎 Glass Styles (Mixins & Variables) - Using absolute path for global injection
-@import "@/assets/styles/glass";
+@forward "@/assets/styles/glass";

@@ -7,7 +7,7 @@ el-form(
 )
   .card.m-auto.bg-neutral-50.p-6.rounded-3xl.mb-4
     .flex.justify-between.items-center.mb-4
-      h3.text-xl.font-semibold.my-4 Delivery
+      h3.text-xl.font-semibold.my-4 {{ $t('deals.form.deliveryTitle') }}
       el-button(
         v-if="!editMode"
         size="medium"
@@ -19,8 +19,8 @@ el-form(
         @click="onDelete"
       )
     .grid.grid-cols-2.gap-3
-      InputText(label="Delivery Details" name="deliveryDetails" :value="delivery?.deliveryDetails")
-      InputDate(label="Delivery Date" placeholder="Enter Delivery Date" :value="delivery?.deliveryDate" name="deliveryDate")
+      InputText(:label="$t('deals.table.deliveryDetails')" name="deliveryDetails" :value="delivery?.deliveryDetails")
+      InputDate(:label="$t('deals.table.deliveryDate')" :placeholder="$t('deals.form.enterDeliveryDate')" :value="delivery?.deliveryDate" name="deliveryDate")
 
 
 </template>
@@ -29,7 +29,10 @@ el-form(
 import { useForm } from 'vee-validate';
 import * as yup from 'yup';
 
+import { useI18n } from "vue-i18n";
 import { Delete } from '@element-plus/icons-vue';
+
+const { t } = useI18n();
 
 // Props
 const props = defineProps({
@@ -42,8 +45,8 @@ const emit = defineEmits(['onSubmit', 'onDelete']);
 
 // Validation schema
 const formSchema = yup.object({
-  deliveryDetails: yup.string().trim().required().min(2).max(500).label('Delivery Details'),
-  deliveryDate: yup.date().required().label('Delivery Date'),
+  deliveryDetails: yup.string().trim().required().min(2).max(500).label(t('deals.table.deliveryDetails')),
+  deliveryDate: yup.date().required().label(t('deals.table.deliveryDate')),
 });
 
 // Form setup

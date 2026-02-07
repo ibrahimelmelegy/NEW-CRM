@@ -2,10 +2,10 @@
 div
   //- Header
   .flex.items-center.justify-between.mb-8
-    .title.font-bold.text-2xl.mb-1.capitalize Clients
+    .title.font-bold.text-2xl.mb-1.capitalize {{ $t('clients.title') }}
     .flex.items-center.gap-x-3
       NuxtLink(to="/sales/clients/add-client")
-        el-button(   size='large' :loading="loading" v-if="hasPermission('CREATE_CLIENTS')" native-type="submit" type="primary" :icon="Plus" class="w-full !my-4 !rounded-2xl")  New Client
+        el-button(   size='large' :loading="loading" v-if="hasPermission('CREATE_CLIENTS')" native-type="submit" type="primary" :icon="Plus" class="w-full !my-4 !rounded-2xl")  {{ $t('clients.newClient') }}
       //- el-dropdown(trigger="click")
       //-     span.el-dropdown-link
       //-         button.rounded-btn(class="!px-4"): Icon(  name="IconToggle" size="24")
@@ -38,11 +38,11 @@ div
                     el-dropdown-item
                       NuxtLink.flex.items-center(:to="`/sales/clients/${data?.id}`")
                         Icon.text-md.mr-2(name="IconEye" )
-                        p.text-sm View
+                        p.text-sm {{ $t('common.view') }}
                     el-dropdown-item(v-if="hasPermission('EDIT_CLIENTS')")
                       NuxtLink.flex.items-center(:to="`/sales/clients/edit/${data?.id}`")
                         Icon.text-md.mr-2(name="IconEdit" )
-                        p.text-sm Edit
+                        p.text-sm {{ $t('common.edit') }}
                     //- el-dropdown-item(@click="[deleteclientPopup=true, userActionId = data?.id]" )
                     //-     .flex.items-center
                     //-       Icon.text-md.mr-2(name="IconDelete" )
@@ -51,17 +51,19 @@ div
 </template>
 
 <script setup lang="ts">
+  import { useI18n } from 'vue-i18n';
   const router = useRouter();
   import { Plus } from "@element-plus/icons-vue";
   const { hasPermission } = await usePermissions();
   const loadingAction = ref(false);
   const deleteClientPopup = ref(false);
+  const { t } = useI18n();
 
   const table = reactive({
     columns: [
       {
         prop: "ClientDetails",
-        label: "Client Name",
+        label: t('clients.table.clientName'),
         component: "AvatarText",
         sortable: true,
         type: "font-bold",
@@ -69,7 +71,7 @@ div
       },
       {
         prop: "clientType",
-        label: "Type",
+        label: t('clients.table.type'),
         component: "Text",
         sortable: true,
         type: "font-bold",
@@ -77,7 +79,7 @@ div
       },
       {
         prop: "email",
-        label: "Email",
+        label: t('clients.table.email'),
         component: "Text",
         sortable: true,
         type: "font-default",
@@ -85,7 +87,7 @@ div
       },
       {
         prop: "phoneNumber",
-        label: "Phone",
+        label: t('clients.table.phone'),
         component: "Text",
         sortable: true,
         type: "font-default",
@@ -93,7 +95,7 @@ div
       },
       {
         prop: "clientStatus",
-        label: "Status",
+        label: t('clients.table.status'),
         component: "Label",
         sortable: true,
         type: "outline",
@@ -105,14 +107,14 @@ div
       },
       {
         prop: "assign",
-        label: "Assigned",
+        label: t('clients.table.assigned'),
         component: "Text",
         type: "font-default",
         width: 200,
       },
       {
         prop: "createdAt",
-        label: "Created",
+        label: t('clients.table.created'),
         component: "Text",
         sortable: true,
         type: "font-default",
@@ -147,17 +149,17 @@ div
 
   const filterOptions = [
     {
-      title: "Status",
+      title: t('clients.filter.status'),
       value: "status",
       options: [...clientStatuses],
     },
     {
-      title: "Type",
+      title: t('clients.filter.type'),
       value: "type",
       options: [...clientTypes],
     },
     {
-      title: "Assigned user",
+      title: t('clients.filter.assigned'),
       value: "userId",
       options: [...mappedUsers],
     },

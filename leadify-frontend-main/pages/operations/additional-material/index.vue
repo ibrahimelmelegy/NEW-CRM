@@ -1,14 +1,14 @@
 <template>
   <div class="flex items-center justify-between mb-8">
     <!-- Title -->
-    <div class="title font-bold text-2xl mb-1 capitalize">Additional Material</div>
+    <div class="title font-bold text-2xl mb-1 capitalize">{{ $t('operations.additionalMaterials.title') }}</div>
 
     <!-- Action Buttons -->
     <div class="flex items-center gap-x-3">
       <!-- New Material Button -->
       <nuxt-link v-if="hasPermission('CREATE_ADDITIONAL_MATERIAL')" to="/operations/additional-material/add-material">
         <el-button size="large" native-type="submit" type="primary" :icon="Plus" class="w-full !my-4 !rounded-2xl">
-          New Additional Material
+          {{ $t('operations.additionalMaterials.new') }}
         </el-button>
       </nuxt-link>
 
@@ -57,22 +57,22 @@
         <template #default="props">
           <div m="4">
             <el-table class="px-6" :data="props.row.materialItem">
-              <el-table-column label="Item" prop="name" />
-              <el-table-column label="Price" prop="price" />
+              <el-table-column :label="$t('operations.additionalMaterials.table.item')" prop="name" />
+              <el-table-column :label="$t('operations.additionalMaterials.table.price')" prop="price" />
             </el-table>
           </div>
         </template>
       </el-table-column>
 
       <!-- Category Column -->
-      <el-table-column label="Category" :min-width="600">
+      <el-table-column :label="$t('operations.additionalMaterials.table.category')" :min-width="600">
         <template #default="scope">
           <p class="mb-2 text-base font-semibold">{{ scope.row?.name }}</p>
         </template>
       </el-table-column>
 
       <!-- Action Column -->
-      <el-table-column label="Action" prop="action">
+      <el-table-column :label="$t('common.action')" prop="action">
         <template #default="scope">
           <div @click.stop>
             <el-dropdown class="outline-0" trigger="click">
@@ -86,13 +86,13 @@
                   <el-dropdown-item>
                     <nuxt-link class="flex items-center" :to="`/operations/additional-material/${scope.row?.id}`">
                       <icon class="text-md mr-2" name="IconEye"></icon>
-                      <p class="text-sm">View</p>
+                      <p class="text-sm">{{ $t('common.view') }}</p>
                     </nuxt-link>
                   </el-dropdown-item>
                   <el-dropdown-item v-if="hasPermission('EDIT_ADDITIONAL_MATERIAL')">
                     <nuxt-link class="flex items-center" :to="`/operations/additional-material/edit/${scope.row?.id}`">
                       <icon class="text-md mr-2" name="IconEdit"></icon>
-                      <p class="text-sm">Edit</p>
+                      <p class="text-sm">{{ $t('common.edit') }}</p>
                     </nuxt-link>
                   </el-dropdown-item>
                 </el-dropdown-menu>
@@ -106,11 +106,11 @@
     <!-- Pagination -->
     <div class="pagination mt-5 flex items-center flex-wrap gap-2 px-6 sm:justify-between justify-center">
       <div class="flex items-center gap-3">
-        <span class="text-sm text-neutral-400">Show</span>
+        <span class="text-sm text-neutral-400">{{ $t('common.showEntries') }}</span>
         <el-select v-model="limit" :placeholder="`${limit}`" style="width: 65px" @change="handleSizeChange">
           <el-option v-for="item in [10, 25, 50]" :key="item" :label="item" :value="item"></el-option>
         </el-select>
-        <span class="text-sm text-neutral-400">entries</span>
+        <span class="text-sm text-neutral-400">{{ $t('common.entries') }}</span>
       </div>
       <el-pagination
         background

@@ -2,22 +2,22 @@
 .leads-sales.chromatic-dashboard(v-if="!loading")
   .header.mb-8.flex.justify-between.items-center
     div
-        h2(class="text-2xl font-bold text-primary mb-2") Leads & Sales Overview
-        p.text-muted {{ isLocked ? 'Layout is locked. Unlock to drag.' : 'Drag and drop widgets to customize your view.' }}
+        h2(class="text-2xl font-bold text-primary mb-2") {{ $t('dashboard.leadsSales') }}
+        p.text-muted {{ isLocked ? $t('dashboard.layoutLocked') : $t('dashboard.dragDropHint') }}
     .flex.items-center.gap-4
         el-button(@click="showWidgetManager = true" size="small" type="primary" plain) 
             Icon(name="ph:layout-bold" size="18" class="mr-1")
-            | Manage Widgets
-        el-switch(v-model="isLocked" active-text="Lock Layout" inactive-text="Edit Mode" @change="saveLayout")
-        el-button(@click="resetLayout" size="small" type="danger" plain) Reset Default
+            | {{ $t('dashboard.manageWidgets') }}
+        el-switch(v-model="isLocked" :active-text="$t('dashboard.lockLayout')" :inactive-text="$t('dashboard.editMode')" @change="saveLayout")
+        el-button(@click="resetLayout" size="small" type="danger" plain) {{ $t('dashboard.resetDefault') }}
 
   //- Widget Manager Dialog
-  el-dialog(v-model="showWidgetManager" title="Manage Dashboard Widgets" width="400" class="glass-dialog")
+  el-dialog(v-model="showWidgetManager" :title="$t('dashboard.widgetsDialog')" width="400" class="glass-dialog")
     .grid.gap-4
         .flex.items-center.justify-between(v-for="w in widgets" :key="w.id")
             .flex.items-center.gap-2
                 Icon(:name="w.icon || 'ph:chart-bar-bold'" size="20" class="text-neutral-500")
-                span.text-sm {{ w.name }}
+                span.text-sm {{ $t(w.name) }}
             el-checkbox(v-model="w.visible" @change="saveLayout")
 
   draggable.grid.grid-cols-12.gap-6(
@@ -41,7 +41,7 @@
             //- 1. Metric Card Widget
             StatisticsCard.h-full(
                 v-if="element.type === 'metric'"
-                :name="element.name" 
+                :name="$t(element.name)" 
                 :data="getMetricValue(element.dataKey)" 
                 :icon="element.icon" 
                 :colorType="element.color"
@@ -52,7 +52,7 @@
                 template(#header)
                     .flex.items-center.gap-2
                         .w-2.h-6.rounded-full(:class="`bg-${element.accentColor}`")
-                        h3(class="text-lg font-semibold text-primary") {{ element.name }}
+                        h3(class="text-lg font-semibold text-primary") {{ $t(element.name) }}
                 
                 div(:class="element.heightClass")
                     v-chart.w-full.h-full(
@@ -76,6 +76,7 @@
   } from "@/composables/charts";
   import { useSocket } from "@/composables/useSocket";
 
+  const { t } = useI18n();
   const router = useRouter();
   const isLocked = ref(true); // Default to locked
   const showWidgetManager = ref(false);
@@ -96,7 +97,7 @@
         if (socket.value) {
           socket.value.on('lead:created', async () => {
             leadStats.value = await getLeadsStatics();
-            ElNotification.info('New lead created - Dashboard updated');
+            ElNotification.info(t('dashboard.newLead'));
           });
           socket.value.on('lead:updated', async () => {
             leadStats.value = await getLeadsStatics();
@@ -110,18 +111,18 @@
   // Professional Default Widget Config
   const defaultWidgets = [
     // Top Row: Core Metrics
-    { id: 'w1', type: 'metric', name: 'Total Leads Assigned', dataKey: 'leads', icon: 'ph:user-list-bold', color: 'indigo', span: 'col-span-12 md:col-span-3', visible: true },
-    { id: 'w3', type: 'metric', name: 'Total Opportunities', dataKey: 'opportunities', icon: 'ph:sparkle-bold', color: 'amber', span: 'col-span-12 md:col-span-3', visible: true },
-    { id: 'w5', type: 'metric', name: 'Total Deals Closed', dataKey: 'deals', icon: 'ph:handshake-bold', color: 'emerald', span: 'col-span-12 md:col-span-3', visible: true },
-    { id: 'w6', type: 'metric', name: 'Revenue Won', dataKey: 'revenue', icon: 'ph:coins-bold', color: 'rose', span: 'col-span-12 md:col-span-3', visible: true },
+    { id: 'w1', type: 'metric', name: 'dashboard.widgets.totalLeads', dataKey: 'leads', icon: 'ph:user-list-bold', color: 'indigo', span: 'col-span-12 md:col-span-3', visible: true },
+    { id: 'w3', type: 'metric', name: 'dashboard.widgets.totalOpportunities', dataKey: 'opportunities', icon: 'ph:sparkle-bold', color: 'amber', span: 'col-span-12 md:col-span-3', visible: true },
+    { id: 'w5', type: 'metric', name: 'dashboard.widgets.totalDeals', dataKey: 'deals', icon: 'ph:handshake-bold', color: 'emerald', span: 'col-span-12 md:col-span-3', visible: true },
+    { id: 'w6', type: 'metric', name: 'dashboard.widgets.revenue', dataKey: 'revenue', icon: 'ph:coins-bold', color: 'rose', span: 'col-span-12 md:col-span-3', visible: true },
     
     // Middle Row: Performance & Conversion
-    { id: 'w8', type: 'chart', chartType: 'line', name: 'Sales Performance Over Time', accentColor: 'accent-rose', heightClass: 'h-[400px]', span: 'col-span-12 md:col-span-8', visible: true },
-    { id: 'w2', type: 'chart', chartType: 'gauge', name: 'Lead Conversion Rate', accentColor: 'accent-cyan', heightClass: 'h-[400px]', span: 'col-span-12 md:col-span-4', visible: true },
+    { id: 'w8', type: 'chart', chartType: 'line', name: 'dashboard.widgets.salesPerformance', accentColor: 'accent-rose', heightClass: 'h-[400px]', span: 'col-span-12 md:col-span-8', visible: true },
+    { id: 'w2', type: 'chart', chartType: 'gauge', name: 'dashboard.widgets.leadConversion', accentColor: 'accent-cyan', heightClass: 'h-[400px]', span: 'col-span-12 md:col-span-4', visible: true },
     
     // Bottom Row: Pipeline Breakdown
-    { id: 'w4', type: 'chart', chartType: 'bar', name: 'Deals Pipeline Overview', accentColor: 'accent-indigo', heightClass: 'h-[400px]', span: 'col-span-12 md:col-span-7', visible: true },
-    { id: 'w7', type: 'chart', chartType: 'pie', name: 'Opportunities by Stage', accentColor: 'accent-cyan', heightClass: 'h-[400px]', span: 'col-span-12 md:col-span-5', visible: true },
+    { id: 'w4', type: 'chart', chartType: 'bar', name: 'dashboard.widgets.dealsPipeline', accentColor: 'accent-indigo', heightClass: 'h-[400px]', span: 'col-span-12 md:col-span-7', visible: true },
+    { id: 'w7', type: 'chart', chartType: 'pie', name: 'dashboard.widgets.opportunitiesStage', accentColor: 'accent-cyan', heightClass: 'h-[400px]', span: 'col-span-12 md:col-span-5', visible: true },
   ];
 
   const widgets = ref([...defaultWidgets]);
@@ -164,12 +165,12 @@
   };
 
   const saveLayout = () => {
-    localStorage.setItem('dashboard-layout-leads-v3', JSON.stringify(widgets.value));
-    ElNotification.success('Dashboard layout saved');
+    localStorage.setItem('dashboard-layout-leads-v4-i18n', JSON.stringify(widgets.value));
+    ElNotification.success(t('dashboard.layoutSaved'));
   };
 
   const loadLayout = () => {
-    const saved = localStorage.getItem('dashboard-layout-leads-v3');
+    const saved = localStorage.getItem('dashboard-layout-leads-v4-i18n');
     if (saved) {
         const parsed = JSON.parse(saved);
         // Merge saved layout with default widgets to ensure new widgets are added
@@ -188,11 +189,11 @@
     // Deep clone default widgets to avoid reference issues
     const freshWidgets = JSON.parse(JSON.stringify(defaultWidgets));
     widgets.value = freshWidgets;
-    localStorage.setItem('dashboard-layout-leads-v3', JSON.stringify(freshWidgets));
+    localStorage.setItem('dashboard-layout-leads-v4-i18n', JSON.stringify(freshWidgets));
     
     ElNotification.success({
-      title: 'Layout Reset',
-      message: 'Dashboard restoring to professional default...',
+      title: t('dashboard.layoutReset'),
+      message: t('dashboard.restoring'),
       duration: 2000
     });
 

@@ -3,19 +3,19 @@
     .flex.justify-end.mx-2
       el-button(v-if="exportButton"  @click="()=> $emit('exportClick')" size='large'   class="premium-btn-secondary")
        Icon(  name="IconExport" size="20")
-       p.mx-1 Export
+       p.mx-1 {{ $t('common.export') }}
     .px-6.flex.items-center.flex-wrap.gap-2.mb-6.justify-start(v-if="!isLoading && !loading")
         .input.table-search(class="w-[250px]" v-if="!withoutSearch")
             el-input(size="large"
                 style="height:50px"
                 v-model="search"
-                :placeholder="`search ${searchPlaceholder}`"
+                :placeholder="`${$t('common.search')} ${searchPlaceholder}`"
                 :prefix-icon="Search"
                 @input="searchTimeOut"
             )
         button.rounded-btn.flex.items-center(class="premium-btn-outline" v-if="!withoutFilters" @click="filterBar = true")
             Icon(  name="IconFilter" size="20")
-            span.mr-2 Filters
+            span.mr-2 {{ $t('common.filter') }}
             span.font-bold.rounded-full.w-6.h-6.bg-accent-purple.text-white.flex.items-center.justify-center(v-if="numberOfFilters") {{ numberOfFilters }}
     
     div(:class="{ 'mt-4': !withoutSearch || !withoutFilters }")
@@ -46,17 +46,17 @@
               template(#default="scope")
                   slot(:data="scope.row")
             template(#empty style="text-align: center; padding: 20px;")
-              el-empty(description="No matching records found" image="/images/empty.png")
+              el-empty(:description="$t('common.noData')" image="/images/empty.png")
         el-dialog(v-model='fileShow'   class=" !bg-transparent  !shadow-none xl:!w-1/3 lg:!w-1/3 sm:!w-[90%] !w-full " align-center='' )
                 LazyImg.m-auto(:src="srcOverlay" :key="srcOverlay" )
 
         .pagination.mt-5.flex.items-center.flex-wrap.gap-2.px-6(class=" sm:justify-between justify-center" v-if="!withoutPagination")
 
             .flex.items-center.gap-3
-              span.text-xs.font-bold.text-muted.uppercase.tracking-widest Show
+              span.text-xs.font-bold.text-muted.uppercase.tracking-widest {{ $t('common.showEntries') }}
               el-select(size="default"  v-model="limit" :placeholder="limit"  style="width: 75px" @change="handleSizeChange")
                 el-option( v-for="item in [10,25,50]" :key="item" :label="item" :value="item" )
-              span.text-xs.font-bold.text-muted.uppercase.tracking-widest entries
+              span.text-xs.font-bold.text-muted.uppercase.tracking-widest {{ $t('common.entries') }}
             el-pagination( background style="direction:ltr"  :pager-count="4"  :page-count="pagintaion?.totalPages" v-model:current-page='currentPage' :page-size='limit'  layout=' prev, pager, next' :total='pagintaion?.totalItems' )
     TableFilter(v-model="filterBar" v-if="!withoutFilters" :filterOptions="filterOptions" @filter="handleFilter" @reset="handleReset")
 </template>

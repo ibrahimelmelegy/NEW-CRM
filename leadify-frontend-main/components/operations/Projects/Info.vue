@@ -4,63 +4,63 @@ el-form( autocomplete="off"   @submit.prevent='onSubmit'   ref="myForm" label-po
   .glass-card.m-auto.p-8(class="!w-full max-w-[1600px]")
     .flex.items-center.gap-4.mb-8
          Icon(name="ph:pencil-simple-slash-bold" class="text-purple-400 text-2xl")
-         .text-xl.font-bold.text-gradient Project Information
+         .text-xl.font-bold.text-gradient {{ $t('operations.projects.form.projectInfo') }}
 
     //- SECTION 1: Basic Classification
     .bg-white_5.rounded-2xl.p-6.mb-6
-        .text-xs.uppercase.tracking-widest.text-muted.mb-4.font-bold Classification
+        .text-xs.uppercase.tracking-widest.text-muted.mb-4.font-bold {{ $t('operations.projects.form.classification') }}
         .grid.grid-cols-1.md.grid-cols-3.gap-6
-             InputText(label="Project Name" placeholder="e.g. Riyadh Metro Expansion" name="name" :value="project?.name" class="premium-input")
-             InputSelect(label="Category" name="category" :options="projectCategories" :value="project?.category" @change="checkIfEtimadProject" class="premium-select")
-             InputText(label="Project Type" placeholder="e.g. Construction" name="type" :value="project?.type" class="premium-input")
+             InputText(:label="$t('operations.projects.form.projectName')" :placeholder="$t('operations.projects.form.projectNamePlaceholder')" name="name" :value="project?.name" class="premium-input")
+             InputSelect(:label="$t('operations.projects.form.category')" name="category" :options="getProjectCategories()" :value="project?.category" @change="checkIfEtimadProject" class="premium-select")
+             InputText(:label="$t('operations.projects.form.projectType')" :placeholder="$t('operations.projects.form.projectTypePlaceholder')" name="type" :value="project?.type" class="premium-input")
 
     //- SECTION 2: Client & Schedule
     .bg-white_5.rounded-2xl.p-6.mb-6
-        .text-xs.uppercase.tracking-widest.text-muted.mb-4.font-bold Client & Schedule
+        .text-xs.uppercase.tracking-widest.text-muted.mb-4.font-bold {{ $t('operations.projects.form.clientSchedule') }}
         .grid.grid-cols-1.md.grid-cols-3.gap-6
-             InputSelect(label="Client" name="client" :options="mappedClients" :value="mappedClients?.find((client: any) => client.value === project?.clientId)?.value" class="premium-select")
-             InputDate(label="Start Date" placeholder="Select Date" :value="project?.startDate" name="startDate" class="premium-datepicker")
-             InputDate(label="End Date" placeholder="Select Date" :value="project?.endDate" name="endDate" class="premium-datepicker")
+             InputSelect(:label="$t('operations.projects.form.client')" name="client" :options="mappedClients" :value="mappedClients?.find((client: any) => client.value === project?.clientId)?.value" class="premium-select")
+             InputDate(:label="$t('operations.projects.form.startDate')" :placeholder="$t('operations.projects.form.selectDate')" :value="project?.startDate" name="startDate" class="premium-datepicker")
+             InputDate(:label="$t('operations.projects.form.endDate')" :placeholder="$t('operations.projects.form.selectDate')" :value="project?.endDate" name="endDate" class="premium-datepicker")
              
-             InputText(label="Duration" placeholder="Days" name="duration" :value="project?.duration" class="premium-input")
-             InputSelect(label="Assign Users" isMultiple name="assignUser" :options="users" :value="users?.filter((user: any) => project?.assignedUsers?.map((user: any) => user.id)?.includes(user.value))?.map((user: any) => user.value)" class="premium-select")
-             InputSelect(label="Status" name="status" :options="projectStatuses" :value="project?.status" @change="checkIfCancelled" class="premium-select")
+             InputText(:label="$t('operations.projects.form.duration')" :placeholder="$t('operations.projects.form.days')" name="duration" :value="project?.duration" class="premium-input")
+             InputSelect(:label="$t('operations.projects.form.assignUsers')" isMultiple name="assignUser" :options="users" :value="users?.filter((user: any) => project?.assignedUsers?.map((user: any) => user.id)?.includes(user.value))?.map((user: any) => user.value)" class="premium-select")
+             InputSelect(:label="$t('operations.projects.form.status')" name="status" :options="getProjectStatuses()" :value="project?.status" @change="checkIfCancelled" class="premium-select")
 
     //- SECTION 3: Additional Details
     .bg-white_5.rounded-2xl.p-6.mb-6
-        .text-xs.uppercase.tracking-widest.text-muted.mb-4.font-bold Details
+        .text-xs.uppercase.tracking-widest.text-muted.mb-4.font-bold {{ $t('operations.projects.form.details') }}
         .grid.grid-cols-1.gap-6
-             InputText(label="Description" type="textarea" placeholder="Detailed project scope..." name="description" :value="project?.description" class="premium-input")
-             InputText(v-if="isCancelled" label="Cancellation Reason" type="textarea" placeholder="Why was this cancelled?" name="cancelReason" :value="project?.cancelledReason" class="premium-input")
+             InputText(:label="$t('operations.projects.form.description')" type="textarea" :placeholder="$t('operations.projects.form.scopePlaceholder')" name="description" :value="project?.description" class="premium-input")
+             InputText(v-if="isCancelled" :label="$t('operations.projects.form.cancelReason')" type="textarea" :placeholder="$t('operations.projects.form.cancelPlaceholder')" name="cancelReason" :value="project?.cancelledReason" class="premium-input")
 
     //- SECTION 4: Etimad (Conditional)
     template(v-if="isEtimadProject")
       .bg-purple-900_10.rounded-2xl.p-6.mb-6.border.border-purple-500_20
           .flex.items-center.gap-2.mb-4
               Icon(name="simple-icons:govdotuk" class="text-purple-400")
-              .text-xs.uppercase.tracking-widest.text-purple-300.font-bold Etimad Details
+              .text-xs.uppercase.tracking-widest.text-purple-300.font-bold {{ $t('operations.projects.form.etimadDetails') }}
           
           .grid.grid-cols-1.md.grid-cols-3.gap-6
-            InputText(label="Abbreviation" placeholder="Short Code" name="abbreviation" :value="project?.etimadProject?.abbreviation" class="premium-input")
-            InputText(label="Organization" placeholder="Org Name" name="organizationName" :value="project?.etimadProject?.organizationName" class="premium-input")
-            InputText(label="RFP Name" placeholder="RFP Official Title" name="rfpName" :value="project?.etimadProject?.rfpName" class="premium-input")
+            InputText(:label="$t('operations.projects.form.abbreviation')" :placeholder="$t('operations.projects.form.shortCodePlaceholder')" name="abbreviation" :value="project?.etimadProject?.abbreviation" class="premium-input")
+            InputText(:label="$t('operations.projects.form.organization')" :placeholder="$t('operations.projects.form.orgNamePlaceholder')" name="organizationName" :value="project?.etimadProject?.organizationName" class="premium-input")
+            InputText(:label="$t('operations.projects.form.rfpName')" :placeholder="$t('operations.projects.form.rfpTitlePlaceholder')" name="rfpName" :value="project?.etimadProject?.rfpName" class="premium-input")
             
-            InputSelect(label="Contract Type" name="contractType" :options="contractTypes" :value="project?.etimadProject?.contractType" class="premium-select")
-            InputText(label="Tender Price" placeholder="SAR" name="tenderPrice" :value="project?.etimadProject?.tenderPrice" class="premium-input")
-            InputText(label="Business Line" placeholder="Business Line" name="businessLine" :value="project?.etimadProject?.businessLine" class="premium-input")
+            InputSelect(:label="$t('operations.projects.form.contractType')" name="contractType" :options="getContractTypes()" :value="project?.etimadProject?.contractType" class="premium-select")
+            InputText(:label="$t('operations.projects.form.tenderPrice')" placeholder="SAR" name="tenderPrice" :value="project?.etimadProject?.tenderPrice" class="premium-input")
+            InputText(:label="$t('operations.projects.form.businessLine')" :placeholder="$t('operations.projects.form.businessLine')" name="businessLine" :value="project?.etimadProject?.businessLine" class="premium-input")
             
-            InputText(label="Est. Budget" placeholder="SAR" name="estimatedBudget" :value="project?.etimadProject?.estimatedBudget" class="premium-input")
-            InputText(label="Margin %" placeholder="%" name="companyMargin" :value="project?.etimadProject?.companyMargin" class="premium-input")
-            InputDate(label="Submission Date" placeholder="Date" disabledDate="past" :value="project?.etimadProject?.submissionDate" name="submissionDate" class="premium-datepicker")
+            InputText(:label="$t('operations.projects.form.estBudget')" placeholder="SAR" name="estimatedBudget" :value="project?.etimadProject?.estimatedBudget" class="premium-input")
+            InputText(:label="$t('operations.projects.form.margin')" placeholder="%" name="companyMargin" :value="project?.etimadProject?.companyMargin" class="premium-input")
+            InputDate(:label="$t('operations.projects.form.submissionDate')" :placeholder="$t('operations.projects.form.selectDate')" disabledDate="past" :value="project?.etimadProject?.submissionDate" name="submissionDate" class="premium-datepicker")
             
-            InputText(label="Remaining Days" type="number" disabled name="remainingDays" :value="remainingDays" :key="remainingDays" class="premium-input !opacity-70")
-            InputSelect(label="Proposal Status" name="proposalStatus" :options="proposalStatuses" :value="project?.etimadProject?.proposalStatus" class="premium-select")
-            InputSelect(label="App Status" name="applicationStatus" :options="applicationStatuses" :value="project?.etimadProject?.applicationStatus" class="premium-select")
+            InputText(:label="$t('operations.projects.form.remainingDays')" type="number" disabled name="remainingDays" :value="remainingDays" :key="remainingDays" class="premium-input !opacity-70")
+            InputSelect(:label="$t('operations.projects.form.proposalStatus')" name="proposalStatus" :options="getProposalStatuses()" :value="project?.etimadProject?.proposalStatus" class="premium-select")
+            InputSelect(:label="$t('operations.projects.form.appStatus')" name="applicationStatus" :options="getApplicationStatuses()" :value="project?.etimadProject?.applicationStatus" class="premium-select")
 
   .endBar.sticky.bottom-0.z-10.backdrop-blur-md.bg-opacity-80.p-6.border-t.border-white_10
       .flex.justify-between.w-full.mx-auto(class="max-w-[1600px]")
-        el-button(size='large' plain class="premium-btn-outline px-8 !rounded-xl" @click="emit('cancel')") Cancel
-        el-button(size='large' type="primary" native-type="submit" :loading="loading" :disabled="loading" class="premium-btn px-8 !rounded-xl") Next: Vehicles
+        el-button(size='large' plain class="premium-btn-outline px-8 !rounded-xl" @click="emit('cancel')") {{ $t('common.cancel') }}
+        el-button(size='large' type="primary" native-type="submit" :loading="loading" :disabled="loading" class="premium-btn px-8 !rounded-xl") {{ $t('operations.projects.form.nextVehicles') }}
 </template>
 
 <script lang="ts" setup>
@@ -81,78 +81,79 @@ el-form( autocomplete="off"   @submit.prevent='onSubmit'   ref="myForm" label-po
   const emit = defineEmits(["submit", "cancel"]);
   const isCancelled = ref(false);
   const isEtimadProject = ref(false);
+  const { t } = useI18n();
   const formSchema = computed(() => {
     const baseSchema = {
-      name: yup.string().trim().required().min(2).max(100).label("Project Name"),
-      type: yup.string().trim().required().min(2).max(100).label("Project Type"),
-      category: yup.string().trim().required().min(2).max(100).label("Category"),
-      client: yup.string().nullable().trim().max(100).label("Client"),
+      name: yup.string().trim().required().min(2).max(100).label(t("operations.projects.form.projectName")),
+      type: yup.string().trim().required().min(2).max(100).label(t("operations.projects.form.projectType")),
+      category: yup.string().trim().required().min(2).max(100).label(t("operations.projects.form.category")),
+      client: yup.string().nullable().trim().max(100).label(t("operations.projects.form.client")),
       startDate: yup
         .date()
         .nullable()
         .notRequired()
-        .typeError("Start Date must be a valid date")
-        .label("Start Date"),
+        .typeError(t("validation.invalidDate"))
+        .label(t("operations.projects.form.startDate")),
 
       endDate: yup
         .date()
         .nullable()
         .notRequired()
-        .typeError("End Date must be a valid date")
-        .min(yup.ref('startDate'), "End Date must be after Start Date")
-        .label("End Date"),
+        .typeError(t("validation.invalidDate"))
+        .min(yup.ref('startDate'), t("validation.dateAfter"))
+        .label(t("operations.projects.form.endDate")),
       duration: yup
         .string()
         .required()
-        .test("is-valid-number", "Please enter a valid number.", (value: any) => {
+        .test("is-valid-number", t("validation.invalidNumber"), (value: any) => {
           return /^\d+$/.test(value || "");
         })
-        .label("Project Duration"),
-      assignUser: yup.array().of(yup.number()).required().min(1).label("Assign User"),
-      status: yup.string().trim().required().label("Status"),
-      description: yup.string().trim().required().min(1).max(500).label("Project Description"),
+        .label(t("operations.projects.form.duration")),
+      assignUser: yup.array().of(yup.mixed()).required().min(1).label(t("operations.projects.form.assignUsers")),
+      status: yup.string().trim().required().label(t("operations.projects.form.status")),
+      description: yup.string().trim().required().min(1).max(500).label(t("operations.projects.form.description")),
       cancelReason: yup.string().when([], {
         is: () => isCancelled.value,
-        then: () => yup.string().required().min(2).max(250).label("Cancellation Reason"),
+        then: () => yup.string().required().min(2).max(250).label(t("operations.projects.form.cancelReason")),
       }),
     };
 
     if (isEtimadProject.value) {
       return yup.object({
         ...baseSchema,
-        abbreviation: yup.string().trim().required().min(2).max(100).label("Abbreviation"),
-        organizationName: yup.string().trim().required().min(2).max(100).label("Organization Name"),
-        rfpName: yup.string().trim().required().min(2).max(100).label("RFP Name"),
-        contractType: yup.string().trim().required().min(2).max(100).label("Contract Type"),
+        abbreviation: yup.string().trim().required().min(2).max(100).label(t("operations.projects.form.abbreviation")),
+        organizationName: yup.string().trim().required().min(2).max(100).label(t("operations.projects.form.organization")),
+        rfpName: yup.string().trim().required().min(2).max(100).label(t("operations.projects.form.rfpName")),
+        contractType: yup.string().trim().required().min(2).max(100).label(t("operations.projects.form.contractType")),
         tenderPrice: yup
           .string()
           .nullable()
-          .test("is-valid-number", "Please enter a valid number.", (value: any) => /^\d*\.?\d*$/.test(value || ""))
-          .label("Tender Price"),
-        businessLine: yup.string().nullable().trim().max(100).label("Business Line"),
+          .test("is-valid-number", t("validation.invalidNumber"), (value: any) => /^\d*\.?\d*$/.test(value || ""))
+          .label(t("operations.projects.form.tenderPrice")),
+        businessLine: yup.string().nullable().trim().max(100).label(t("operations.projects.form.businessLine")),
         estimatedBudget: yup
           .string()
           .nullable()
-          .test("is-valid-number", "Please enter a valid number.", (value: any) => /^\d*\.?\d*$/.test(value || ""))
-          .label("Estimated Budget"),
+          .test("is-valid-number", t("validation.invalidNumber"), (value: any) => /^\d*\.?\d*$/.test(value || ""))
+          .label(t("operations.projects.form.estBudget")),
         companyMargin: yup
           .string()
           .nullable()
-          .test("is-valid-number", "Please enter a valid number.", (value: any) => /^\d*\.?\d*$/.test(value || ""))
-          .test("max-value", "Value must be less than or equal to 100.", (value: any) =>
+          .test("is-valid-number", t("validation.invalidNumber"), (value: any) => /^\d*\.?\d*$/.test(value || ""))
+          .test("max-value", t("validation.maxValue", { value: 100 }), (value: any) =>
             value ? parseFloat(value) <= 100 : true
           )
-          .label("Company Margin"),
+          .label(t("operations.projects.form.margin")),
         submissionDate: yup
           .mixed()
-          .test("is-valid-date", "Submission Date must be a valid date", (value: any) => {
+          .test("is-valid-date", t("validation.invalidDate"), (value: any) => {
             // Check if the value is valid
             return value && !isNaN(new Date(value).getTime());
           })
-          .required("Submission Date is required")
-          .label("Submission Date"),
-        proposalStatus: yup.string().trim().required().label("Proposal Status"),
-        applicationStatus: yup.string().trim().required().label("Application Status"),
+          .required(t("validation.required"))
+          .label(t("operations.projects.form.submissionDate")),
+        proposalStatus: yup.string().trim().required().label(t("operations.projects.form.proposalStatus")),
+        applicationStatus: yup.string().trim().required().label(t("operations.projects.form.appStatus")),
       });
     }
 

@@ -1,19 +1,19 @@
 <template lang="pug">
     OperationsDailyTasksForm( :loading="loading" @fetchClient = "fetchClient" @submit="submitForm")
       .flex.items-center.justify-between.mb-8
-        .title.font-bold.text-2xl.mb-1.capitalize Create {{route.query.status}} Project 
+        .title.font-bold.text-2xl.mb-1.capitalize {{ $t('operations.dailyTasks.form.createTitle', { status: route.query.status || '' }) }} 
         .flex.items-center.gap-x-2
-          el-button(   size='large' plain type="primary" class="w-full !rounded-2xl" @click="router.back()") Cancel
-          el-button(   size='large' type="primary" native-type="submit" :loading="loading"  :disabled="loading" class="w-full !px-5 !rounded-2xl") Save
-    ActionModel(v-model="openFormClient" , :loading="loadingClient",style="width:100wh",title="create Client" ,btn-text="save",@confirm="submitFormClient")
+          el-button(   size='large' plain type="primary" class="w-full !rounded-2xl" @click="router.back()") {{ $t('common.cancel') }}
+          el-button(   size='large' type="primary" native-type="submit" :loading="loading"  :disabled="loading" class="w-full !px-5 !rounded-2xl") {{ $t('common.save') }}
+    ActionModel(v-model="openFormClient" , :loading="loadingClient",style="width:100wh",:title="$t('operations.dailyTasks.form.createClient')" ,:btn-text="$t('common.save')",@confirm="submitFormClient")
      template(#input)
-      InputText.mt-3(label="Client Name" @change ="setClient" name="clientName" :value="data?.clientName" is-form)
+      InputText.mt-3(:label="$t('operations.dailyTasks.form.clientName')" @change ="setClient" name="clientName" :value="data?.clientName" is-form)
 
-      InputText.mt-3(label="Company Name" @change ="setCompany" name="companyName" :value="data?.companyName" is-form)
-      InputText.mt-3(label="Email"  name="email" @change ="setEmail" :value=" data?.email" @value="val=> isEmail = !!val" is-form)
-      p.mt-3 Phone Number
+      InputText.mt-3(:label="$t('operations.dailyTasks.form.companyName')" @change ="setCompany" name="companyName" :value="data?.companyName" is-form)
+      InputText.mt-3(:label="$t('operations.dailyTasks.form.email')"  name="email" @change ="setEmail" :value=" data?.email" @value="val=> isEmail = !!val" is-form)
+      p.mt-3 {{ $t('operations.dailyTasks.form.phone') }}
       InputPhone.mt-3(label=""  name="phone" @change ="setPhone" :value=" data?.phoneNumber" @value="val=> isPhone = !!val" @validphone="val=> validPhone = val" mode="international")
-      InputSelect.mt-3(label=" Client Type" name="clientType"  @change ="setType" :options="clientTypes" :value="data?.clientType")
+      InputSelect.mt-3(:label="$t('operations.dailyTasks.form.clientType')" name="clientType"  @change ="setType" :options="clientTypes" :value="data?.clientType")
       
     </template>
 

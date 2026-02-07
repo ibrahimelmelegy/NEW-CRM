@@ -3,8 +3,8 @@
     <!-- Header with controls -->
     <div class="header">
       <div class="header-left">
-        <h1 class="title">Proposals Management</h1>
-        <span class="badge">React v2</span>
+        <h1 class="title">{{ $t('proposals.management') }}</h1>
+        <span class="badge">{{ $t('proposals.reactVersion') }}</span>
       </div>
       <div class="header-right">
         <el-button @click="refreshFrame" type="primary" :icon="Refresh" circle />
@@ -22,7 +22,7 @@
       />
       <div v-if="loading" class="loading-overlay">
         <el-icon class="is-loading" :size="40"><Loading /></el-icon>
-        <p>Loading Proposal System...</p>
+        <p>{{ $t('proposals.loading') }}</p>
       </div>
     </div>
   </div>
@@ -31,6 +31,9 @@
 <script setup lang="ts">
 import { ref, onMounted, onUnmounted } from 'vue'
 import { Refresh, Loading } from '@element-plus/icons-vue'
+import { useI18n } from 'vue-i18n'
+
+const { t } = useI18n()
 
 definePageMeta({
   layout: 'full-width',

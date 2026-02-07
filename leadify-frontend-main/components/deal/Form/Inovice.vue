@@ -7,7 +7,7 @@ el-form(
 )
   .card.m-auto.bg-neutral-50.p-6.rounded-3xl.mb-4
     .flex.justify-between.items-center.mb-4
-      h3.text-xl.font-semibold.my-4 Invoice
+      h3.text-xl.font-semibold.my-4 {{ $t('deals.form.invoiceTitle') }}
       el-button(
         v-if="!editMode"
         size="medium"
@@ -19,21 +19,21 @@ el-form(
         @click="onDelete"
       )
     .grid.grid-cols-2.gap-3
-      InputText(label="Invoice Number" name="invoiceNumber" :value="invoice?.invoiceNumber")
-      InputText(label="Invoice Amount" type="number" name="amount" :value="invoice?.amount")
-      InputDate.mt-4(label="Invoice Due Date (Optional)" placeholder="Enter Invoice Due Date" :value="invoice?.invoiceDate" name="invoiceDate")
+      InputText(:label="$t('deals.table.invoiceNumber')" name="invoiceNumber" :value="invoice?.invoiceNumber")
+      InputText(:label="$t('deals.table.amount')" type="number" name="amount" :value="invoice?.amount")
+      InputDate.mt-4(:label="$t('deals.form.enterInvoiceDate')" :placeholder="$t('deals.form.enterInvoiceDate')" :value="invoice?.invoiceDate" name="invoiceDate")
       InputSelect.mt-4(
-        label="Invoice Collected (Optional)"
-        placeholder="Choose Invoice Collected"
+        :label="$t('deals.form.chooseCollected')"
+        :placeholder="$t('deals.form.chooseCollected')"
         name="collected"
-        :options="[{ label: 'Yes', value: true }, { label: 'No', value: false }]"
+        :options="[{ label: $t('common.yes'), value: true }, { label: $t('common.no'), value: false }]"
         :value="invoice?.collected"
         @change="handleCollectedChange"
       )
       InputDate(
-        label="Invoice Collected Date (Optional)"
+        :label="$t('deals.form.enterCollectedDate')"
         v-if="isCollected"
-        placeholder="Enter Invoice Collected Date"
+        :placeholder="$t('deals.form.enterCollectedDate')"
         :value="invoice?.collectedDate"
         name="collectedDate"
       )
@@ -44,7 +44,10 @@ el-form(
   import * as yup from "yup";
 
   import { Delete } from "@element-plus/icons-vue";
+  import { useI18n } from "vue-i18n";
   import { id } from "yup-locales";
+
+  const { t } = useI18n();
 
   // Props
   const props = defineProps({
@@ -57,15 +60,15 @@ el-form(
 
   // Validation schema
   const formSchema = yup.object({
-    invoiceNumber: yup.string().trim().required().min(2).max(50).label("Invoice Number"),
+    invoiceNumber: yup.string().trim().required().min(2).max(50).label(t('deals.table.invoiceNumber')),
     amount: yup
       .number()
       .required()
-      .label("Invoice Amount")
+      .label(t('deals.table.amount'))
       .transform((value: any, originalValue: any) => (String(originalValue).trim() === "" ? null : value)),
-    invoiceDate: yup.date().nullable().label("Invoice Due Date"),
-    collectedDate: yup.date().nullable().label("Invoice Collected Date"),
-    collected: yup.string().trim().nullable().label("Invoice Collected"),
+    invoiceDate: yup.date().nullable().label(t('deals.table.invoiceDate')),
+    collectedDate: yup.date().nullable().label(t('deals.table.collectedDate')),
+    collected: yup.string().trim().nullable().label(t('deals.table.collected')),
   });
 
   // Form setup

@@ -1,4 +1,42 @@
 {
+    "navigation": {
+        "board": "Dashboard",
+        "dashboard": "Dashboard",
+        "sales": "Sales",
+        "leads": "Leads",
+        "clients": "Clients",
+        "opportunity": "Opportunities",
+        "opportunities": "Opportunities",
+        "deals": "Deals",
+        "proposals": "Proposals",
+        "operations": "Operations",
+        "projects": "Projects",
+        "dailyTasks": "Daily Tasks",
+        "vehicle": "Vehicles",
+        "manpower": "Manpower",
+        "additionalMaterials": "Additional Materials",
+        "services": "Services",
+        "assets": "Assets",
+        "procurement": "Procurement",
+        "vendors": "Vendors",
+        "distributors": "Distributors",
+        "localSuppliers": "Local Suppliers",
+        "showRooms": "Showrooms",
+        "purchaseOrders": "Purchase Orders",
+        "rfq": "RFQ",
+        "statistics": "Statistics",
+        "report": "Reports",
+        "reports": "Reports",
+        "settings": "Settings",
+        "integrations": "Integrations",
+        "auditLogs": "Audit Logs",
+        "rolesAccess": "Roles & Access",
+        "addNewRole": "Add New Role",
+        "staffManagement": "Staff Management",
+        "addNewStaff": "Add New Staff",
+        "qaCenter": "QA Center",
+        "permissionsHub": "Permissions Hub"
+    },
     "common": {
         "loading": "Loading...",
         "save": "Save",
@@ -7,9 +45,11 @@
         "edit": "Edit",
         "add": "Add",
         "search": "Search",
-        "searchAltK": "Search (Alt+K)",
+        "searchAltK": "Search (⌘ + K)",
         "filter": "Filter",
         "actions": "Actions",
+        "action": "Action",
+        "update": "Update",
         "yes": "Yes",
         "no": "No",
         "confirm": "Confirm",
@@ -29,7 +69,28 @@
         "darkMode": "Dark Mode",
         "lightMode": "Light Mode",
         "english": "English",
-        "arabic": "Arabic"
+        "arabic": "Arabic",
+        "export": "Export",
+        "showEntries": "Show",
+        "entries": "entries",
+        "noData": "No matching records found",
+        "enter": "Enter ",
+        "optional": "optional",
+        "choose": "Choose ",
+        "dragAndDrop": "Drag and drop file here or",
+        "fileTypes": "JPG, JPEG, PNG, PDF, DOCX, EXCEL, PPTX, TXT, CSV",
+        "fileSizeLimit": "jpg/png files with a size less than {size}kb",
+        "acceptUpload": "Accept Upload {formats}",
+        "uploadMaxSize": "Upload Max Size {size} MB",
+        "fileSize": "File size must be less than 5MB",
+        "archive": "Archive",
+        "moveToArchive": "Move to Archive",
+        "archiveConfirmation": "Are you sure you want to archive this item?",
+        "archiveDescription": "It will be archived and can be restored later.",
+        "finish": "Finish",
+        "summary": "Summary",
+        "sar": "SAR",
+        "days": "Days"
     },
     "auth": {
         "login": "Sign In",
@@ -53,7 +114,15 @@
         "elevateExperience": "Elevate Your Experience",
         "harnessIntelligence": "Harness the power of intelligence with our professional CRM solutions.",
         "fastWorkflow": "Fast Workflow",
-        "smartAnalytics": "Smart Analytics"
+        "smartAnalytics": "Smart Analytics",
+        "experience": "Experience",
+        "resetTitle": "Reset Password",
+        "forgetTitle": "Forgot Password?",
+        "forgetSubtitle": "Enter your email address and we'll send you instructions to reset your password.",
+        "backToLogin": "Back to Login",
+        "sendResetLink": "Send Reset Link",
+        "newPassword": "New Password",
+        "resetSuccess": "Password changed successfully"
     },
     "validation": {
         "required": "{field} is required",
@@ -71,35 +140,43 @@
         "notFound": "The requested resource was not found.",
         "forbidden": "You don't have permission to perform this action.",
         "serverError": "Server error. Please try again later.",
-        "timeout": "Request timed out. Please try again."
+        "timeout": "Request timed out. Please try again.",
+        "invalidEmail": "Invalid email address",
+        "invalidPhone": "Invalid phone number",
+        "required": "This field is required",
+        "emailOrPhoneRequired": "At least one of email or phone number is required",
+        "minLength": "Must be at least {min} characters"
     },
-    "navigation": {
-        "dashboard": "Dashboard",
-        "board": "Board",
-        "sales": "Sales",
-        "leads": "Leads",
-        "opportunities": "Opportunities",
-        "opportunity": "Opportunity",
-        "deals": "Deals",
-        "proposals": "Proposals",
-        "clients": "Clients",
-        "operations": "Operations",
-        "projects": "Projects",
-        "dailyTasks": "Daily Tasks",
-        "vehicle": "Vehicle",
-        "manpower": "Manpower",
-        "additionalMaterials": "Additional Materials",
-        "services": "Services",
-        "assets": "Assets",
-        "procurement": "Procurement",
-        "vendors": "Vendors",
-        "distributors": "Distributors",
-        "localSuppliers": "Local Suppliers",
-        "showRooms": "Show Rooms",
-        "purchaseOrders": "Purchase Orders",
-        "rfq": "Requests for Quotation",
-        "statistics": "Statistics",
-        "staff": "Staff",
+    "crm": {
+        "projectStatus": {
+            "active": "Active",
+            "on_hold": "On Hold",
+            "delayed": "Delayed",
+            "cancelled": "Cancelled",
+            "completed": "Completed",
+            "complete": "Complete"
+        },
+        "stages": {
+            "new": "New",
+            "contacted": "Contacted",
+            "qualified": "Qualified",
+            "proposal": "Proposal",
+            "negotiation": "Negotiation",
+            "won": "Won",
+            "lost": "Lost",
+            "converted": "Converted"
+        },
+        "pipeline": {
+            "lead": "Lead",
+            "opportunity": "Opportunity",
+            "deal": "Deal",
+            "closed": "Closed",
+            "leads": "Leads",
+            "opportunities": "Opportunities",
+            "deals": "Deals"
+        }
+    },
+    "staff": {
         "roles": "Roles",
         "rolesAccess": "Roles Access",
         "addNewRole": "Add New Role",
@@ -107,10 +184,26 @@
         "addNewStaff": "Add New Staff",
         "qaCenter": "QA Command Center",
         "permissionsHub": "Permissions Hub",
+        "form": {
+            "fullName": "Full Name",
+            "email": "Email",
+            "phone": "Phone Number",
+            "role": "Role",
+            "selectRole": "Select Role",
+            "status": "Status",
+            "password": "Password",
+            "uploadImage": "Upload Image",
+            "optional": "(Optional)",
+            "imageHint": "JPG, JPEG, PNG, GIF (5 MB Maximum)"
+        }
+    },
+    "reports": {
         "settings": "Settings",
         "reports": "Reports",
         "report": "Report",
-        "notifications": "Notifications"
+        "notifications": "Notifications",
+        "integrations": "Integrations",
+        "auditLogs": "Audit Logs"
     },
     "forms": {
         "dragDrop": "Drag and drop file here or",
@@ -123,6 +216,828 @@
         "projectsOperations": "Projects & Operations",
         "financialBusinessMetrics": "Financial & Business Metrics",
         "performanceHr": "Performance & HR",
-        "procurement": "Procurement & Supply Chain"
+        "procurement": "Procurement & Supply Chain",
+        "projectsOverviewHint": "Monitor project lifecycles, asset utilization, and manpower efficiency.",
+        "financialHint": "Tracking revenue flow, outstanding invoices, and payment collections.",
+        "performanceHint": "Analyze team productivity, conversion efficiency, and success rates.",
+        "widgets": {
+            "totalLeads": "Total Leads Assigned",
+            "totalOpportunities": "Total Opportunities",
+            "totalDeals": "Total Deals Closed",
+            "revenue": "Revenue Won",
+            "salesPerformance": "Sales Performance Over Time",
+            "leadConversion": "Lead Conversion Rate",
+            "dealsPipeline": "Deals Pipeline Overview",
+            "opportunitiesStage": "Opportunities by Stage",
+            "totalProjects": "Total Projects",
+            "eitmadProjects": "Eitmad Projects Overview",
+            "projectsByStatus": "Projects by Status",
+            "assetsPercentage": "Assets Percentage",
+            "usedAssets": "Used Assets %",
+            "unusedAssets": "Unused Assets %",
+            "manpowerPercentage": "Manpower Percentage",
+            "usedManpower": "Used Manpower %",
+            "unusedManpower": "Unused Manpower %",
+            "totalDealsRevenue": "Total Deals Revenue",
+            "outstandingInvoices": "Outstanding Invoices",
+            "collectedPayments": "Collected Payments",
+            "oppDealConv": "Opp -> Deal Conv."
+        },
+        "layoutLocked": "Layout is locked. Unlock to drag.",
+        "dragDropHint": "Drag and drop widgets to customize your view.",
+        "manageWidgets": "Manage Widgets",
+        "lockLayout": "Lock Layout",
+        "editMode": "Edit Mode",
+        "resetDefault": "Reset Default",
+        "layoutSaved": "Dashboard layout saved",
+        "layoutReset": "Layout Reset",
+        "restoring": "Dashboard restoring to professional default...",
+        "newLead": "New lead created - Dashboard updated",
+        "widgetsDialog": "Manage Dashboard Widgets"
+    },
+    "deals": {
+        "title": "Deals",
+        "newDeal": "New Deal",
+        "details": "Deal Details",
+        "convertProject": "Convert to Project",
+        "createTitle": "Create Deal",
+        "info": {
+            "client": "Client",
+            "contractType": "Contract Type",
+            "price": "Price",
+            "signatureDate": "Signature Date",
+            "paymentCycle": "Payment Cycle",
+            "startDate": "Start Date",
+            "endDate": "End Date",
+            "side": "Side",
+            "status": "Status",
+            "dealName": "Deal Name",
+            "dealStage": "Deal Stage",
+            "desc": "Description",
+            "lead": "Lead",
+            "opp": "Opportunity"
+        },
+        "table": {
+            "name": "Deal Name",
+            "stage": "Stage",
+            "price": "Price",
+            "assigned": "Assigned",
+            "contractType": "Contract Type",
+            "signatureDate": "Signature Date",
+            "created": "Created",
+            "invoiceNumber": "Invoice #",
+            "amount": "Amount",
+            "invoiceDate": "Invoice Date",
+            "collected": "Collected",
+            "collectedDate": "Collected Date",
+            "deliveryDetails": "Delivery Details",
+            "deliveryDate": "Delivery Date"
+        },
+        "tabs": {
+            "summary": "Summary",
+            "deal": "Deal Information",
+            "invoices": "Invoices",
+            "deliveries": "Deliveries",
+            "proposal": "Proposal",
+            "activity": "Activity Log"
+        },
+        "form": {
+            "selectClient": "Select Client",
+            "selectLead": "Select Lead",
+            "existingClient": "Existing Client",
+            "newClient": "New Client",
+            "clientInfo": "Client Information",
+            "dealInfo": "Deal Information",
+            "addInvoice": "Add Invoice",
+            "addDelivery": "Add Delivery",
+            "invoiceTitle": "Invoice",
+            "deliveryTitle": "Delivery",
+            "enterSignatureDate": "Enter Signature Date",
+            "cancellationReason": "Cancellation Reason",
+            "enterInvoiceDate": "Enter Invoice Due Date",
+            "chooseCollected": "Choose Invoice Collected",
+            "enterCollectedDate": "Enter Invoice Collected Date",
+            "enterDeliveryDate": "Enter Delivery Date"
+        },
+        "errors": {
+            "fillInvoices": "Please fill in all the required invoice fields.",
+            "fillDeliveries": "Please fill in all the required delivery fields."
+        }
+    },
+    "leads": {
+        "title": "Leads",
+        "newLead": "New Lead",
+        "createTitle": "Create Lead",
+        "import": "Import",
+        "export": "Export",
+        "view": "View",
+        "edit": "Edit",
+        "editTitle": "Edit Lead",
+        "delete": "Delete",
+        "details": "Lead Details",
+        "summary": "Summary",
+        "activity": "Activity Log",
+        "notes": "Notes",
+        "aiCompose": "AI Compose",
+        "aiSummarize": "AI Summarize",
+        "convertToOpp": "Convert to Opportunity",
+        "convertToDeal": "Convert to Deal",
+        "table": {
+            "leadName": "Lead Name",
+            "phone": "Phone",
+            "email": "Email",
+            "status": "Status",
+            "source": "Source",
+            "lastContact": "Last Contact",
+            "assigned": "Assigned",
+            "created": "Created"
+        },
+        "info": {
+            "email": "Email",
+            "phone": "Phone Number",
+            "assign": "Assign",
+            "leadSource": "Lead Source",
+            "otherSource": "Other Source",
+            "created": "Created",
+            "lastContact": "Last Contact",
+            "score": "Score",
+            "confirmConversion": "Would you like to convert this lead into an Opportunity or a Deal?",
+            "present": "Present",
+            "importSuccess": "Leads successfully imported."
+        },
+        "errors": {
+            "invalidFile": "Please upload a valid Excel file (.xls or .xlsx)",
+            "importFailed": "Failed to import file"
+        }
+    },
+    "clients": {
+        "title": "Clients",
+        "newClient": "New Client",
+        "createTitle": "Create Client",
+        "editTitle": "Edit Client",
+        "details": "Client Details",
+        "import": "Import",
+        "export": "Export",
+        "archived": "Archived",
+        "table": {
+            "clientName": "Client Name",
+            "type": "Type",
+            "email": "Email",
+            "phone": "Phone",
+            "status": "Status",
+            "assigned": "Assigned",
+            "created": "Created"
+        },
+        "info": {
+            "information": "Information",
+            "clientType": "Client Type",
+            "industry": "Industry",
+            "address": "Address",
+            "files": "Documents",
+            "assign": "Assign",
+            "lastUpdated": "Last Updated",
+            "summary": "Summary",
+            "activityLog": "Activity Log"
+        },
+        "form": {
+            "existingLead": "Existing Lead",
+            "newClient": "New Client",
+            "leadName": "Lead Name",
+            "companyName": "Company Name",
+            "city": "City",
+            "street": "Street Address",
+            "state": "State",
+            "zipCode": "Zip Code",
+            "enterCity": "Enter City",
+            "enterStreet": "Enter Street Address",
+            "enterState": "Enter State",
+            "enterZip": "Enter Zip Code",
+            "uploadFile": "Upload File *",
+            "clientName": "Client Name",
+            "email": "Email",
+            "phone": "Phone Number",
+            "clientType": "Client Type",
+            "assignUser": "Assign User",
+            "clientStatus": "Client Status",
+            "industry": "Industry"
+        },
+        "filter": {
+            "status": "Status",
+            "type": "Type",
+            "assigned": "Assigned User"
+        }
+    },
+    "opportunities": {
+        "title": "Opportunities",
+        "newOpp": "New Opportunity",
+        "createTitle": "Create Opportunity",
+        "details": "Opportunity Details",
+        "convertDeal": "Convert to Deal",
+        "convertProject": "Convert to Project",
+        "proposal": "Proposal",
+        "table": {
+            "name": "Opportunity Name",
+            "stage": "Stage",
+            "budget": "Budget",
+            "profit": "Profit",
+            "closeDate": "Close Date",
+            "priority": "Priority",
+            "assigned": "Assigned",
+            "created": "Created",
+            "status": "Status",
+            "proposalTitle": "Proposal Title",
+            "version": "Version",
+            "relatedTo": "Related to",
+            "type": "Type",
+            "clientName": "Client Name",
+            "reference": "Reference"
+        },
+        "info": {
+            "leadName": "Lead Name",
+            "products": "Products/Services",
+            "budget": "Estimated Budget",
+            "closeDate": "Expected Close Date",
+            "priority": "Priority",
+            "stage": "Stage",
+            "nextSteps": "Next Steps",
+            "created": "Created",
+            "updated": "Last Updated",
+            "reasonLoss": "Reason for loss",
+            "archiveTitle": "Move to Archive",
+            "deleteDesc1": "Are you sure you want to delete this Opportunity?",
+            "deleteDesc2": "It will be archived and can be restored later within 30 days.",
+            "wonDesc": "Would you like to convert this opportunity into a Deal or a Project?",
+            "present": "Present"
+        },
+        "editTitle": "Edit Opportunity",
+        "proposalTypes": {
+            "financial": "Financial",
+            "technical": "Technical",
+            "mixed": "Tech & Financial"
+        },
+        "proposalStatus": {
+            "approved": "Approved",
+            "waiting": "Waiting Approval",
+            "rejected": "Rejected"
+        },
+        "stages": {
+            "discovery": "Discovery",
+            "proposal": "Proposal",
+            "negotiation": "Negotiation",
+            "lost": "Lost",
+            "won": "Won"
+        },
+        "priorities": {
+            "veryLow": "Very Low",
+            "low": "Low",
+            "medium": "Medium",
+            "high": "High",
+            "veryHigh": "Very High"
+        },
+        "reasons": {
+            "notInterested": "Not Interested",
+            "noBudget": "No Budget",
+            "competitorChosen": "Competitor Chosen",
+            "price": "Price",
+            "competitor": "Competitor",
+            "product": "Product",
+            "timing": "Timing",
+            "other": "Other"
+        },
+        "steps": {
+            "phoneCall": "Phone Call",
+            "meeting": "Meeting",
+            "email": "Email",
+            "demo": "Demo",
+            "proposal": "Proposal",
+            "followUp": "Follow Up",
+            "negotiation": "Negotiation",
+            "sendProposal": "Send Proposal",
+            "followUpCall": "Follow-Up Call",
+            "negotiateTerms": "Negotiate Terms",
+            "closeTheDeal": "Close the Deal",
+            "scheduleMeeting": "Schedule Meeting"
+        },
+        "filter": {
+            "stage": "Opportunity Stage",
+            "budget": "Estimated Budget",
+            "profit": "Profit",
+            "closeDate": "Expected Close Date"
+        },
+        "reports": {
+            "filter": {
+                "stage": "Opportunity Stage",
+                "assigned": "Assigned User",
+                "priority": "Assigned Priority",
+                "fromCloseDate": "From Expected Close Date",
+                "toCloseDate": "To Expected Close Date",
+                "enterDateRange": "Enter Date Range",
+                "showResult": "Show Filter Result",
+                "reset": "Reset Filter",
+                "selectStage": "Select Stage",
+                "selectUser": "Select User",
+                "selectPriority": "Select Priority"
+            },
+            "export": {
+                "btn": "Export",
+                "desc": "Please enter the email address where the Excel file will be received.",
+                "emailLabel": "Email",
+                "success": "Send file to email successfully"
+            }
+        }
+    },
+    "proposals": {
+        "title": "Proposals",
+        "management": "Proposals Management",
+        "details": "Proposal Details",
+        "loading": "Loading Proposal System...",
+        "loadingDetails": "Loading Proposal Details...",
+        "refresh": "Refresh",
+        "reactVersion": "React v2",
+        "react": "React"
+    },
+    "operations": {
+        "projects": {
+            "title": "Projects",
+            "newProject": "New Project",
+            "createTitle": "Create Project",
+            "editTitle": "Edit Project",
+            "steps": {
+                "info": "Project Info",
+                "vehicles": "Vehicles",
+                "manpower": "Manpower",
+                "materials": "Materials",
+                "assets": "Assets",
+                "preview": "Preview"
+            },
+            "modals": {
+                "confirmCreateTitle": "Are you sure you want to confirm Project Creation?",
+                "confirmCreateDesc": "Do you want to proceed without making any further changes?",
+                "cancelCreateTitle": "Are you sure you want to cancel Project Creation?",
+                "cancelCreateDesc": "Do you want to cancel the project creation?"
+            },
+            "form": {
+                "projectInfo": "Project Information",
+                "classification": "Classification",
+                "projectName": "Project Name",
+                "category": "Category",
+                "projectType": "Project Type",
+                "clientSchedule": "Client & Schedule",
+                "client": "Client",
+                "startDate": "Start Date",
+                "endDate": "End Date",
+                "duration": "Duration",
+                "assignUsers": "Assign Users",
+                "status": "Status",
+                "details": "Details",
+                "description": "Description",
+                "cancelReason": "Cancellation Reason",
+                "etimadDetails": "Etimad Details",
+                "abbreviation": "Abbreviation",
+                "organization": "Organization",
+                "rfpName": "RFP Name",
+                "contractType": "Contract Type",
+                "tenderPrice": "Tender Price",
+                "businessLine": "Business Line",
+                "estBudget": "Est. Budget",
+                "margin": "Margin %",
+                "submissionDate": "Submission Date",
+                "remainingDays": "Remaining Days",
+                "proposalStatus": "Proposal Status",
+                "appStatus": "App Status",
+                "nextVehicles": "Next: Vehicles",
+                "projectNamePlaceholder": "e.g. Riyadh Metro Expansion",
+                "projectTypePlaceholder": "e.g. Construction",
+                "selectDate": "Select Date",
+                "days": "Days",
+                "scopePlaceholder": "Detailed project scope...",
+                "cancelPlaceholder": "Why was this cancelled?",
+                "shortCodePlaceholder": "Short Code",
+                "orgNamePlaceholder": "Org Name",
+                "rfpTitlePlaceholder": "RFP Official Title"
+            },
+            "details": {
+                "title": "Project Details",
+                "edit": "Edit",
+                "createFolder": "Create Folder",
+                "projectFolders": "Project Folders",
+                "viewMore": "View More",
+                "noActivity": "No activity recorded for this project."
+            },
+            "tabs": {
+                "information": "Information",
+                "vehicles": "Vehicles",
+                "manpower": "Manpower",
+                "materials": "Materials",
+                "assets": "Assets",
+                "preview": "Preview",
+                "proposal": "Proposal",
+                "folders": "Folders",
+                "activity": "Activity Log"
+            },
+            "detailsSummary": {
+                "title": "Summary",
+                "subtotal": "Subtotal",
+                "vat": "VAT (15%)",
+                "discount": "Discount",
+                "margin": "Margin ({percentage}%)",
+                "totalCost": "Total Project Cost"
+            },
+            "activity": {
+                "assigned": "Assigned User",
+                "create": "Create New Project",
+                "update": "Update Project",
+                "restored": "Restored",
+                "delete": "Delete",
+                "archived": "Archived",
+                "import": "Import",
+                "export": "Export"
+            },
+            "proposalTable": {
+                "title": "Proposal Title",
+                "version": "Version",
+                "relatedTo": "Related to",
+                "type": "Type",
+                "client": "Client Name",
+                "status": "Status",
+                "reference": "Reference",
+                "assigned": "Assigned",
+                "created": "Created"
+            },
+            "vehicles": {
+                "title": "Vehicles Info",
+                "label": "Vehicles",
+                "table": {
+                    "plateNumber": "Plate Number",
+                    "manufacturer": "Manufacturer",
+                    "rentCost": "Rent Cost",
+                    "gasCost": "Gas Cost",
+                    "oilCost": "Oil Cost",
+                    "maintenanceCost": "Regular Maintenance Cost",
+                    "totalCost": "Total Cost"
+                }
+            },
+            "manpower": {
+                "title": "Manpower Info",
+                "accommodationCost": "Accommodation Cost",
+                "foodCost": "Food Cost Per Day",
+                "managementAddition": "Management Addition Percentage",
+                "placeholders": {
+                    "accommodation": "Enter Accommodation Cost SAR",
+                    "food": "Enter Food Cost Per Day SAR",
+                    "management": "Enter Management Addition Percentage %"
+                },
+                "preview": "Preview",
+                "table": {
+                    "manpowerName": "Manpower Name",
+                    "estimatedDays": "Estimated Work Days",
+                    "mission": "Mission",
+                    "durationCost": "Duration Cost",
+                    "foodAllowance": "Food Allowance Cost",
+                    "accommodationPerMan": "Accommodation Cost/Manpower",
+                    "carRentPerMan": "Car Rent/Manpower",
+                    "otherCosts": "Other Costs",
+                    "actualDays": "Actual Worked Days",
+                    "totalCost": "Total Cost"
+                },
+                "form": {
+                    "otherCostReason": "Other Cost Reason"
+                },
+                "previewTable": {
+                    "totalCarRent": "Total Car Rent",
+                    "totalCarRentDuration": "Total Car Rent/Duration",
+                    "resourceCount": "Resource Count"
+                },
+                "totalTable": {
+                    "manpowerTotal": "Manpower Table Total Cost",
+                    "managementAddition": "Management addition percentage",
+                    "finalTotal": "Final Manpower Table Total Cost"
+                },
+                "modals": {
+                    "deleteTitle": "Delete Project Manpower",
+                    "deleteConfirm": "Are you sure you want to delete this Project Manpower?"
+                }
+            },
+            "materials": {
+                "title": "Material Info",
+                "margin": "Material Margin",
+                "marginPlaceholder": "Enter Material Margin %",
+                "preview": "Preview",
+                "table": {
+                    "description": "Description",
+                    "quantity": "Quantity",
+                    "unitPrice": "Unit Price",
+                    "category": "Additional Material Category",
+                    "additionalCost": "Additional Material Cost",
+                    "marginCommission": "Margin Commission",
+                    "service": "Service",
+                    "servicePrice": "Service Price",
+                    "materialCost": "Material Cost",
+                    "totalMaterialCost": "Total Material Cost"
+                }
+            },
+            "assets": {
+                "title": "Assets Info",
+                "label": "Assets",
+                "preview": "Preview",
+                "table": {
+                    "name": "Assets Name",
+                    "rentPrice": "Rent Price",
+                    "buyPrice": "Buy Price"
+                },
+                "totalTable": {
+                    "totalRent": "Total Rent Price",
+                    "totalBuy": "Total Buy Price",
+                    "totalCost": "Total Assets Cost"
+                },
+                "notifications": {
+                    "updateSuccess": "Project updated successfully"
+                }
+            },
+            "preview": {
+                "finalCosts": "Final Costs Table",
+                "finalMaterialsCost": "Final Materials Table Cost",
+                "finalAssetsCost": "Final Assets Table Cost",
+                "haveDiscount": "Have Discount?",
+                "haveMargin": "Have Margin?",
+                "discountPlaceholder": "Enter Discount SAR",
+                "marginPlaceholder": "Enter Margin %",
+                "grandTotal": "GrandTotal",
+                "vat": "VAT (15%)",
+                "discount": "Discount",
+                "margin": "Margin",
+                "totalPrice": "Total Price"
+            },
+            "table": {
+                "projectName": "Project Name",
+                "clientName": "Client Name",
+                "category": "Category",
+                "type": "Type",
+                "status": "Status",
+                "startDate": "Start Date",
+                "endDate": "End Date",
+                "duration": "Duration",
+                "totalCost": "Total Cost",
+                "assigned": "Assigned"
+            },
+            "status": {
+                "active": "Active",
+                "cancelled": "Cancelled",
+                "onHold": "On Hold",
+                "completed": "Completed"
+            },
+            "category": {
+                "direct": "Direct",
+                "etimad": "Etimad"
+            },
+            "missions": {
+                "standard": "Standard",
+                "helper": "Helper",
+                "siteEngineer": "Site Engineer",
+                "engineer": "Engineer"
+            },
+            "contractType": {
+                "purchased": "Purchased",
+                "subContractor": "Sub Contractor",
+                "invitation": "Invitation"
+            },
+            "proposalStatus": {
+                "underDeveloping": "Under Developing",
+                "finished": "Finished",
+                "cancelled": "Cancelled"
+            },
+            "applicationStatus": {
+                "underReview": "Under Review",
+                "won": "Won",
+                "lost": "Lost"
+            },
+            "filter": {
+                "status": "Project Status",
+                "type": "Project Type",
+                "startDate": "Start Date",
+                "endDate": "End Date"
+            }
+        },
+        "vehicles": {
+            "title": "Vehicles",
+            "new": "New Vehicle",
+            "view": "Vehicle Details",
+            "edit": "Edit Vehicle",
+            "table": {
+                "plate": "Plate Number",
+                "manufacturer": "Manufacturer",
+                "rentCost": "Rent Cost",
+                "gasCost": "Gas Cost",
+                "oilCost": "Oil Cost",
+                "maintenanceCost": "Regular Maintenance Cost"
+            },
+            "filter": {
+                "manufacturer": "Manufacturer",
+                "rentCost": "Rent Cost",
+                "gasCost": "Gas Cost",
+                "oilCost": "Oil Cost",
+                "maintenanceCost": "Regular Maintenance Cost"
+            }
+        },
+        "manpower": {
+            "title": "Manpower",
+            "new": "New Manpower",
+            "view": "Manpower Details",
+            "edit": "Edit Manpower",
+            "table": {
+                "fullName": "Full Name",
+                "contacts": "Contacts",
+                "role": "Role",
+                "availability": "Availability Status",
+                "salary": "Salary",
+                "totalCost": "Total Cost",
+                "dailyCost": "Daily Cost"
+            },
+            "status": {
+                "available": "Available",
+                "notAvailable": "Not Available"
+            },
+            "filter": {
+                "availability": "Availability Status",
+                "role": "Role",
+                "salary": "Salary",
+                "variableAllowance": "Variable Allowance",
+                "transportationAllowance": "Transportation Allowance",
+                "iqamaCost": "Iqama Cost",
+                "totalCost": "Total Cost",
+                "dailyCost": "Daily Cost",
+                "creationDate": "Creation Date"
+            }
+        },
+        "assets": {
+            "title": "Assets",
+            "new": "New Asset",
+            "view": "Asset Details",
+            "edit": "Edit Asset",
+            "table": {
+                "name": "Asset Name",
+                "rentPrice": "Rent Price",
+                "buyPrice": "Buy Price"
+            },
+            "filter": {
+                "rentPrice": "Rent Price",
+                "buyPrice": "Buy Price"
+            }
+        },
+        "services": {
+            "title": "Services",
+            "new": "New Service",
+            "view": "Service Details",
+            "edit": "Edit Service",
+            "table": {
+                "type": "Service Type",
+                "price": "Price"
+            }
+        },
+        "additionalMaterials": {
+            "title": "Additional Materials",
+            "new": "New Additional Material",
+            "view": "Additional Material Details",
+            "edit": "Edit Additional Material",
+            "table": {
+                "category": "Category",
+                "item": "Item",
+                "price": "Price"
+            }
+        },
+        "dailyTasks": {
+            "title": "Daily Tasks",
+            "tabs": {
+                "info": "Information Dashboard",
+                "active": "Active Projects",
+                "completed": "Completed Projects",
+                "granted": "Granted Projects"
+            },
+            "buttons": {
+                "exportPdf": "Export To PDF",
+                "addProject": "Add Project",
+                "newTask": "Create Project",
+                "editTask": "Edit Daily Task"
+            },
+            "table": {
+                "date": "Date",
+                "client": "Client",
+                "description": "Project Description",
+                "salesRep": "Sales Representative",
+                "assignedTo": "Assigned To",
+                "priority": "Priority",
+                "notes": "Notes",
+                "status": "Status",
+                "cost": "Cost",
+                "amountPaid": "Amount Paid",
+                "rest": "Rest",
+                "downPayment": "Down Payment",
+                "startDate": "Start Date",
+                "endDate": "End Date"
+            },
+            "details": {
+                "name": "Name",
+                "clientName": "Client Name",
+                "salesRepName": "Sales Representative Name",
+                "assignedTo": "Assigned To",
+                "cost": "Cost",
+                "totalPaid": "Total Paid",
+                "downPayment": "Down Payment",
+                "priority": "Priority",
+                "status": "Status",
+                "date": "Date",
+                "startDate": "Start Date",
+                "endDate": "End Date",
+                "notes": "Notes"
+            },
+            "form": {
+                "name": "Name",
+                "enterName": "Enter Name",
+                "priority": "Priority",
+                "status": "Status",
+                "user": "User",
+                "client": "Client",
+                "salesRep": "Sales Representative",
+                "cost": "Cost",
+                "enterCost": "Enter Cost SAR",
+                "downPayment": "Down Payment",
+                "enterDownPayment": "Enter Down Payment",
+                "totalPaid": "Total Paid",
+                "enterTotalPaid": "Enter Total Paid",
+                "notes": "Notes"
+            }
+        },
+        "vehicle": {
+            "form": {
+                "name": "Vehicle Name",
+                "plateNumber": "Plate Number",
+                "type": "Type",
+                "status": "Status",
+                "enterName": "Enter Vehicle Name",
+                "enterPlate": "Enter Plate Number"
+            }
+        },
+        "service": {
+            "form": {
+                "name": "Service Name",
+                "description": "Description",
+                "cost": "Cost",
+                "enterName": "Enter Service Name",
+                "enterCost": "Enter Cost"
+            }
+        }
+    },
+    "notifications": {
+        "title": "Notifications",
+        "markAllRead": "Mark all as read",
+        "markingUnread": "Marking notification as unread",
+        "show": "Show",
+        "entries": "entries",
+        "noData": "No notifications yet."
+    },
+    "procurement": {
+        "createTitle": "Create Purchase Order",
+        "subtitle": "AI-Assisted Procurement Request",
+        "supplierTerms": "Supplier & Terms",
+        "vendorSelection": "Vendor Selection",
+        "projectAllocation": "Project Allocation",
+        "paymentTerms": "Payment Terms",
+        "expectedDelivery": "Expected Delivery",
+        "referenceNote": "Reference / Note",
+        "orderItems": "Order Items",
+        "addProduct": "Add Product",
+        "itemDetails": "Item Details",
+        "quantity": "Quantity",
+        "unitPrice": "Unit Price",
+        "tax": "Tax %",
+        "total": "Total",
+        "subtotal": "Subtotal",
+        "taxAmount": "Tax Amount",
+        "grandTotal": "Grand Total",
+        "cancel": "Cancel",
+        "issuePO": "Issue PO",
+        "aiAutoFill": "AI Auto-Fill",
+        "aiDesc": "Drag & drop a PDF invoice or quotation here. Leadify AI will extract line items, prices, and vendor details automatically.",
+        "dropFile": "Drop file or Browse",
+        "supported": "Supported: PDF, PNG, JPG",
+        "instantProcess": "Instant Process",
+        "purchaseOrders": {
+            "title": "Purchase Orders",
+            "create": "Create New",
+            "vendor": "Vendor",
+            "amount": "Amount",
+            "date": "Date",
+            "status": "Status"
+        }
+    },
+    "role": {
+        "form": {
+            "name": "Role Name",
+            "enterName": "Enter Role Name",
+            "description": "Description",
+            "enterDescription": "Enter Description",
+            "optional": "(Optional)",
+            "descriptionHint": "Notes must be at least 2 characters"
+        }
     }
 }

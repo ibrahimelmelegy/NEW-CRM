@@ -16,17 +16,18 @@ el-form-item(:label="label" :error="errorMessage" class="!mb-6 w-full")
     el-icon.el-icon--upload
       upload-filled
     div.text-neutral-900
-      | Drag and drop file here or
-      p.text-neutral-400.text-xs JPG, JPEG, PNG, PDF, DOCX,EXCEL, PPTX, TXT ,CSV
+      | {{ $t('common.dragAndDrop') }}
+      p.text-neutral-400.text-xs {{ $t('common.fileTypes') }}
     template(#tip)
-      div.el-upload__tip
-        | jpg/png files with a size less than 500kb
+      div.el-upload__tip(v-if="tipNote")
+        | {{ $t('common.fileSizeLimit', { size: sizeInMb * 1024 / 4 }) }}
 </template>
 
 <script lang="ts" setup>
 import { ElMessage } from "element-plus";
 import { useField } from "vee-validate";
 import type { UploadFile, UploadProps } from "element-plus";
+const { t } = useI18n();
 
 const props = defineProps({
   name: String,
@@ -127,15 +128,13 @@ const loading = ref(false);
 const beforeUpload: UploadProps["beforeUpload"] = (file: File) => {
   if (!props.formats.includes(file.type)) {
     ElMessage.error(
-      `Accept Upload ${props.formats
-        .map((format: any) => format.split("/").pop())
-        .join(", ")}`
+      t('common.acceptUpload', { formats: props.formats.map((format: any) => format.split("/").pop()).join(", ") })
     );
     return false;
   }
 
   if (file.size / 1024 / 1024 > props.sizeInMb) {
-    ElMessage.error(`uploadMaxSize ${props.sizeInMb} MB`);
+    ElMessage.error(t('common.uploadMaxSize', { size: props.sizeInMb }));
     return false;
   }
 

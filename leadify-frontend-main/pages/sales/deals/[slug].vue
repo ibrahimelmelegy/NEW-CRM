@@ -1,6 +1,6 @@
 <template lang="pug">
 .flex.items-center.justify-between.mb-5.mt-5
-  .title.font-bold.text-2xl.mb-1.capitalize Deal Details
+  .title.font-bold.text-2xl.mb-1.capitalize {{ $t('deals.details') }}
   el-dropdown(trigger="click")
       span.el-dropdown-link
           button.rounded-btn(class="!px-4"): Icon(  name="IconToggle" size="24")
@@ -9,25 +9,9 @@
             el-dropdown-item(v-if="hasPermission('EDIT_DEALS')")
               NuxtLink.flex.items-center(:to="`/sales/deals/edit/${deal?.id}`")
                 Icon.text-md.mr-2(size="20" name="IconEdit" )
-                p.text-sm Edit
-            //- el-dropdown-item
-            //-   .flex.items-center
-            //-     Icon.text-md.mr-2(size="20" name="IconRestore" )
-            //-     p.text-sm Convert to
-            //- el-dropdown-item
-            //-   .flex.items-center
-            //-     Icon.text-md.mr-2(size="20" name="IconDeal" )
-            //-     p.text-sm Deal
-            //- el-dropdown-item
-            //-   .flex.items-center
-            //-     Icon.text-md.mr-2(size="20" name="IconProject" )
-            //-     p.text-sm Project
-            //- el-dropdown-item
-            //-   .flex.items-center
-            //-     Icon.text-md.mr-2(size="20" name="IconDelete" )
-            //-     p.text-sm Delete
+                p.text-sm {{ $t('common.edit') }}
 el-tabs.demo-tabs(v-model="activeName", @tab-click="handleClick")
-  el-tab-pane(label="Summary", name="summary")
+  el-tab-pane(:label="$t('deals.tabs.summary')", name="summary")
     .flex-1.glass-card.p-10.rounded-3xl.mt-3
       .flex.align-center.gap-3(class="flex-col md:flex-row")
         //- Avatar(src="/images/avatar.png")
@@ -35,57 +19,57 @@ el-tabs.demo-tabs(v-model="activeName", @tab-click="handleClick")
           h4.text-2xl.font-semibold.mb-2.text-neutral-900.flex.items-center.gap-x-3 {{deal?.name}} #[span.border.rounded-xl.text-xs.px-2(:class="`label-outline-${getStatusColor(deal?.stage)}`") {{formatSnakeCase(deal?.stage)}}]
           p.text-neutral-600 {{deal?.companyName}}
       .mt-8
-        p.text-neutral-900.font-semibold.mb-6.text-lg Information
+        p.text-neutral-900.font-semibold.mb-6.text-lg {{ $t('common.info') }}
         .grid.gap-4(class="md:grid-cols-2 grid-cols-1")
           NuxtLink.text-neutral-400(:to="`/sales/leads/${lead?.id}`")
             .font-medium.mb-2.flex.items-center
               Icon(name="IconAssign" size="20" class="mr-2")
-              p Lead Name
+              p {{ $t('leads.table.leadName') }}
             p.mb-2.underline.text-primary-purple-500 {{lead?.name}}
           div(v-if="lead?.email")
             .text-neutral-400.font-medium.mb-2.flex.items-center
               Icon(name="IconEmail" size="20" class="mr-2")
-              p Email
+              p {{ $t('leads.info.email') }}
             p.text-neutral-800.mb-2 {{lead?.email}}
           div(v-if="lead?.phone")
             .text-neutral-400.font-medium.mb-2.flex.items-center
               Icon(name="IconPhone" size="20" class="mr-2")
-              p Phone Number
+              p {{ $t('leads.info.phone') }}
             p.text-neutral-800.mb-2 {{lead?.phone}}
           div(v-if="deal?.users?.length")
             .text-neutral-400.font-medium.mb-2.flex.items-center
               Icon(name="IconAssign" size="20" class="mr-2")
-              p Assign
+              p {{ $t('deals.table.assigned') }}
             p.text-neutral-800.mb-2 {{deal?.users?.map((user) => user.name).join(', ')}}
           div
             .text-neutral-400.font-medium.mb-2.flex.items-center
               Icon(name="f7:money-dollar-circle" size="20" class="mr-2")
-              p Price
+              p {{ $t('deals.table.price') }}
             p.text-neutral-800.mb-2 {{deal?.price}}
           div
             .text-neutral-400.font-medium.mb-2.flex.items-center
               Icon(name="tabler:category-2" size="20" class="mr-2")
-              p Contract Type
+              p {{ $t('deals.table.contractType') }}
             p.text-neutral-800.mb-2 {{deal?.contractType}}
           div(v-if="deal?.cancelledReason && deal?.stage === 'CANCELLED'")
             .text-neutral-400.font-medium.mb-2.flex.items-center
               Icon(name="material-symbols:cancel-outline-rounded" size="20" class="mr-2")
-              p Cancellation Reason
+              p {{ $t('opportunities.info.reasonLoss') }}
             p.text-neutral-800.mb-2 {{deal?.cancelledReason}}
           div
             .text-neutral-400.font-medium.mb-2.flex.items-center
               Icon(name="IconCalendar" size="20" class="mr-2")
-              p Signature Date
+              p {{ $t('deals.table.signatureDate') }}
             p.text-neutral-800.mb-2 {{getYear(deal?.signatureDate)}}
-  el-tab-pane(label="Invoices", name="invoices" v-if="deal?.invoice?.length")
+  el-tab-pane(:label="$t('deals.tabs.invoices')", name="invoices" v-if="deal?.invoice?.length")
     .glass-card.p-10.rounded-3xl.mt-3
       AppTable(without-filters without-search without-action without-pagination :columns="invoicesTable.columns" :data="invoicesTable.data" class="!py-0")
-  el-tab-pane(label="Deliveries", name="deliveries" v-if="deal?.deliveryDetails?.length")
+  el-tab-pane(:label="$t('deals.tabs.deliveries')", name="deliveries" v-if="deal?.deliveryDetails?.length")
     .glass-card.p-10.rounded-3xl.mt-3
       AppTable(without-filters without-search without-action without-pagination :columns="deliveriesTable.columns" :data="deliveriesTable.data" class="!py-0")
-  el-tab-pane(label="Proposal" , name="proposal")
+  el-tab-pane(:label="$t('deals.tabs.proposal')" , name="proposal")
     .glass-card.rounded-3xl.mt-3.border.px-2
-     .title.font-bold.text-xl.capitalize.flex-1.mt-8 Proposal
+     .title.font-bold.text-xl.capitalize.flex-1.mt-8 {{ $t('deals.tabs.proposal') }}
        AppTable(
         without-filters,
         without-search,
@@ -95,24 +79,26 @@ el-tabs.demo-tabs(v-model="activeName", @tab-click="handleClick")
         :data="table?.data",
         class="!py-0"
       )
-  el-tab-pane(label="Activity log", name="activity")
+  el-tab-pane(:label="$t('deals.tabs.activity')", name="activity")
      .mt-6.activity
        .flex.items-start.gap-x-6.mb-7(v-for="item in activity?.docs" class="w-full lg:w-6/12")
          .flex.items-center.justify-center.w-12.h-12.rounded-full(class="!min-w-[48px] !min-h-[48px]" :class="handleTypeStyle(item.status)"): Icon(:name="handleIconName(item.status)" size="24")
          .mt-2
-             h4.text-neutral-800.font-semibold.text-sm.mb-1 {{  item?.status == 'assigned'? 'Assigned User' : item?.status == 'create' ?'Create New Deal'  :item?.status?.toString()?.toUpperCase() }}
+             h4.text-neutral-800.font-semibold.text-sm.mb-1 {{  item?.status == 'assigned'? $t('leads.info.assign') : item?.status == 'create' ? $t('deals.newDeal')  :item?.status?.toString()?.toUpperCase() }}
              p.text-neutral-500.text-xs.mb-4.font-medium {{ formatDate(item?.createdAt) }}
              .glass-card.p-5.rounded-3xl(class="w-[65vw]")
                p.text-neutral-700.text-xs {{ item?.descripion?.toString()?.toUpperCase() }}
                .flex.items-center.gap-3.gap-x-2.mt-4
                  Avatar(:src="item?.user?.profilePicture ?? '/images/avatar.png'" small)
                  p.text-neutral-800.text-xs.font-medium  {{ item?.user?.name }}
-     el-empty(v-if="activity?.docs?.length ==  0 || !activity?.docs " description="No activity recorded for this deal." image="/images/empty.png")
+     el-empty(v-if="activity?.docs?.length ==  0 || !activity?.docs " :description="$t('common.noData')" image="/images/empty.png")
      .flex.justify-center.items-center.w-full
-      el-button( v-if="activity?.docs?.length >0" :loading = "loading" class="!rounded-2xl mb-2"  type= 'primary' size="large" :disabled="activity?.pagination?.totalPages == activity?.pagination?.page" @click="getActivityPage(Number(activity?.pagination?.page)+1)") View More
+      el-button( v-if="activity?.docs?.length >0" :loading = "loading" class="!rounded-2xl mb-2"  type= 'primary' size="large" :disabled="activity?.pagination?.totalPages == activity?.pagination?.page" @click="getActivityPage(Number(activity?.pagination?.page)+1)") {{ $t('common.view') }} More
 </template>
 <script lang="ts" setup>
   const { hasPermission } = await usePermissions();
+  const { $i18n } = useNuxtApp();
+  const t = $i18n.t;
   const activeName = ref("summary");
   const route = useRoute();
   const loading = ref(false);
@@ -188,21 +174,21 @@ el-tabs.demo-tabs(v-model="activeName", @tab-click="handleClick")
     columns: [
       {
         prop: "invoiceNumber",
-        label: "Invoice #",
+        label: t('deals.table.invoiceNumber'),
         component: "Text",
         // sortable: true,
         type: "font-default",
       },
       {
         prop: "amount",
-        label: "Amount",
+        label: t('deals.table.amount'),
         component: "Text",
         // sortable: true,
         type: "font-default",
       },
       {
         prop: "invoiceDate",
-        label: "Invoice Date",
+        label: t('deals.table.invoiceDate'),
         component: "Text",
         // sortable: true,
         type: "font-default",
@@ -216,14 +202,14 @@ el-tabs.demo-tabs(v-model="activeName", @tab-click="handleClick")
       // },
       {
         prop: "collected",
-        label: "Collected",
+        label: t('deals.table.collected'),
         component: "Text",
         // sortable: true,
         type: "font-default",
       },
       {
         prop: "collectedDate",
-        label: "Collected Date",
+        label: t('deals.table.collectedDate'),
         component: "Text",
         // sortable: true,
         type: "font-default",
@@ -238,7 +224,7 @@ el-tabs.demo-tabs(v-model="activeName", @tab-click="handleClick")
       invoiceDate: getYear(item.invoiceDate),
       dueDate: getYear(item.dueDate),
       collectedDate: getYear(item.collectedDate),
-      collected: item.collected ? "Yes" : "No",
+      collected: item.collected ? t('common.yes') : t('common.no'),
     })) || [];
 
   //  invoices table
@@ -246,14 +232,14 @@ el-tabs.demo-tabs(v-model="activeName", @tab-click="handleClick")
     columns: [
       {
         prop: "deliveryDetails",
-        label: "Delivery Details",
+        label: t('deals.table.deliveryDetails'),
         component: "Text",
         // sortable: true,
         type: "font-default",
       },
       {
         prop: "deliveryDate",
-        label: "Delivery Date",
+        label: t('deals.table.deliveryDate'),
         component: "Text",
         // sortable: true,
         type: "font-default",
@@ -268,7 +254,7 @@ el-tabs.demo-tabs(v-model="activeName", @tab-click="handleClick")
     columns: [
       {
         prop: "title",
-        label: "Proposal Title",
+        label: t('deals.tabs.proposal'),
         component: "Text",
         sortable: true,
         type: "font-bold",
@@ -333,14 +319,14 @@ el-tabs.demo-tabs(v-model="activeName", @tab-click="handleClick")
       },
       {
         prop: "assign",
-        label: "Assigned",
+        label: t('deals.table.assigned'),
         component: "Text",
         type: "font-default",
         width: 200,
       },
       {
         prop: "createdAt",
-        label: "Created",
+        label: t('deals.table.created'),
         component: "Text",
         sortable: true,
         type: "font-default",

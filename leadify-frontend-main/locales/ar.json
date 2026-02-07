@@ -1,4 +1,42 @@
 {
+    "navigation": {
+        "board": "لوحة القيادة",
+        "dashboard": "لوحة القيادة",
+        "sales": "المبيعات",
+        "leads": "العملاء المحتملين",
+        "clients": "العملاء",
+        "opportunity": "الفرص",
+        "opportunities": "الفرص",
+        "deals": "الصفقات",
+        "proposals": "العروض",
+        "operations": "العمليات",
+        "projects": "المشاريع",
+        "dailyTasks": "المهام اليومية",
+        "vehicle": "المركبات",
+        "manpower": "القوى العاملة",
+        "additionalMaterials": "المواد الإضافية",
+        "services": "الخدمات",
+        "assets": "الأصول",
+        "procurement": "المشتريات",
+        "vendors": "الموردين",
+        "distributors": "الموزعين",
+        "localSuppliers": "الموردين المحليين",
+        "showRooms": "صالات العرض",
+        "purchaseOrders": "أوامر الشراء",
+        "rfq": "طلب عروض الأسعار",
+        "statistics": "الإحصائيات",
+        "report": "التقارير",
+        "reports": "التقارير",
+        "settings": "الإعدادات",
+        "integrations": "الربط والتكامل",
+        "auditLogs": "سجلات التدقيق",
+        "rolesAccess": "صلاحيات الأدوار",
+        "addNewRole": "إضافة دور جديد",
+        "staffManagement": "إدارة الموظفين",
+        "addNewStaff": "إضافة موظف جديد",
+        "qaCenter": "مركز تحكم الجودة",
+        "permissionsHub": "مركز الصلاحيات"
+    },
     "common": {
         "loading": "جاري التحميل...",
         "save": "حفظ",
@@ -10,6 +48,8 @@
         "searchAltK": "البحث (Alt+K)",
         "filter": "تصفية",
         "actions": "الإجراءات",
+        "action": "الإجراء",
+        "update": "تحديث",
         "yes": "نعم",
         "no": "لا",
         "confirm": "تأكيد",
@@ -28,8 +68,29 @@
         "logout": "تسجيل الخروج",
         "darkMode": "الوضع الليلي",
         "lightMode": "الوضع النهاري",
-        "english": "الإنجليزية",
-        "arabic": "العربية"
+        "english": "English",
+        "arabic": "العربية",
+        "export": "تصدير",
+        "showEntries": "عرض",
+        "entries": "سجلات",
+        "noData": "لا توجد نتائج مطابقة",
+        "enter": "أدخل ",
+        "optional": "اختياري",
+        "choose": "اختر ",
+        "dragAndDrop": "قم بسحب وإفلات الملف هنا أو",
+        "fileTypes": "JPG, JPEG, PNG, PDF, DOCX, EXCEL, PPTX, TXT, CSV",
+        "fileSize": "يجب أن يكون حجم الملف أقل من 5 ميجابايت",
+        "archive": "أرشيف",
+        "moveToArchive": "نقل إلى الأرشيف",
+        "archiveConfirmation": "هل أنت متأكد أنك تريد أرشفة هذا العنصر؟",
+        "archiveDescription": "سيتم أرشفته ويمكن استعادته لاحقاً.",
+        "fileSizeLimit": "ملفات jpg/png بحجم أقل من {size} كيلوبايت",
+        "acceptUpload": "يقبل رفع {formats}",
+        "uploadMaxSize": "الحد الأقصى لحجم التحميل {size} ميجابايت",
+        "finish": "إنهاء",
+        "summary": "ملخص",
+        "sar": "ر.س",
+        "days": "أيام"
     },
     "auth": {
         "login": "تسجيل الدخول",
@@ -53,7 +114,15 @@
         "elevateExperience": "ارتقِ بتجربتك",
         "harnessIntelligence": "استخدم قوة الذكاء مع حلول إدارة علاقات العملاء (CRM) المتطورة.",
         "fastWorkflow": "سير عمل سريع",
-        "smartAnalytics": "تحليلات ذكية"
+        "smartAnalytics": "تحليلات ذكية",
+        "experience": "تجربة",
+        "resetTitle": "إعادة تعيين كلمة المرور",
+        "forgetTitle": "نسيت كلمة المرور؟",
+        "forgetSubtitle": "أدخل بريدك الإلكتروني وسنرسل لك تعليمات لإعادة تعيين كلمة المرور.",
+        "backToLogin": "العودة لتسجيل الدخول",
+        "sendResetLink": "إرسال رابط إعادة التعيين",
+        "newPassword": "كلمة المرور الجديدة",
+        "resetSuccess": "تم تغيير كلمة المرور بنجاح"
     },
     "validation": {
         "required": "حقل {field} مطلوب",
@@ -71,35 +140,49 @@
         "notFound": "المورد المطلوب غير موجود.",
         "forbidden": "ليس لديك صلاحية لتنفيذ هذا الإجراء.",
         "serverError": "خطأ في الخادم. الرجاء المحاولة لاحقاً.",
-        "timeout": "انتهت مهلة الطلب. الرجاء المحاولة مرة أخرى."
+        "timeout": "انتهت مهلة الطلب. الرجاء المحاولة مرة أخرى.",
+        "fillInvoices": "يرجى تعبئة جميع حقول الفاتورة المطلوبة.",
+        "fillDeliveries": "يرجى تعبئة جميع حقول التسليم المطلوبة.",
+        "invalidEmail": "البريد الإلكتروني غير صالح",
+        "invalidPhone": "رقم الهاتف غير صالح",
+        "required": "هذا الحقل مطلوب",
+        "emailOrPhoneRequired": "يجب إدخال البريد الإلكتروني أو رقم الهاتف",
+        "minLength": "يجب أن يكون على الأقل {min} حروف"
     },
-    "navigation": {
-        "dashboard": "لوحة التحكم",
-        "board": "اللوحة الرئيسية",
-        "sales": "المبيعات",
-        "leads": "العملاء المحتملين",
-        "opportunities": "الفرص",
-        "opportunity": "الفرص البيعية",
-        "deals": "الصفقات",
-        "proposals": "العروض",
-        "clients": "العملاء",
-        "operations": "العمليات",
-        "projects": "المشاريع",
-        "dailyTasks": "المهام اليومية",
-        "vehicle": "المركبات",
-        "manpower": "القوى العاملة",
-        "additionalMaterials": "المواد الإضافية",
-        "services": "الخدمات",
-        "assets": "الأصول",
-        "procurement": "المشتريات",
-        "vendors": "الموردين",
-        "distributors": "الموزعين",
-        "localSuppliers": "الموردين المحليين",
-        "showRooms": "صالات العرض",
-        "purchaseOrders": "أوامر الشراء",
-        "rfq": "طلبات تسعير",
-        "statistics": "الإحصائيات",
-        "staff": "الموظفين",
+    "crm": {
+        "projectStatus": {
+            "active": "نشط",
+            "on_hold": "قيد الانتظار",
+            "delayed": "متأخر",
+            "cancelled": "ملغي",
+            "completed": "مكتمل",
+            "complete": "مكتمل"
+        },
+        "stages": {
+            "new": "جديد",
+            "contacted": "تم الاتصال",
+            "qualified": "مؤهل",
+            "proposal": "عرض سعر",
+            "negotiation": "تفاوض",
+            "won": "ربح",
+            "lost": "خسارة",
+            "converted": "محول"
+        },
+        "pipeline": {
+            "lead": "عميل محتمل",
+            "opportunity": "فرصة",
+            "deal": "صفقة",
+            "closed": "مغلق",
+            "leads": "العملاء المحتملين",
+            "opportunities": "الفرص",
+            "deals": "الصفقات"
+        },
+        "dragDrop": "اسحب وأفلت الملف هنا أو",
+        "fileTypes": "JPG, JPEG, PNG, PDF, DOCX, EXCEL, PPTX, TXT, CSV",
+        "maxFileSize": "الحد الأقصى لحجم الملف: {size} ميجابايت",
+        "optional": "اختياري"
+    },
+    "staff": {
         "roles": "الأدوار",
         "rolesAccess": "صلاحيات الأدوار",
         "addNewRole": "إضافة دور جديد",
@@ -107,10 +190,798 @@
         "addNewStaff": "إضافة موظف جديد",
         "qaCenter": "مركز تحكم الجودة",
         "permissionsHub": "مركز الصلاحيات",
+        "form": {
+            "fullName": "الاسم الكامل",
+            "email": "البريد الإلكتروني",
+            "phone": "رقم الهاتف",
+            "role": "الدور",
+            "selectRole": "اختر الدور",
+            "status": "الحالة",
+            "password": "كلمة المرور",
+            "uploadImage": "تحميل صورة",
+            "optional": "(اختياري)",
+            "imageHint": "JPG, JPEG, PNG, GIF (الحد الأقصى 5 ميجابايت)"
+        }
+    },
+    "reports": {
         "settings": "الإعدادات",
         "reports": "التقارير",
         "report": "التقارير",
-        "notifications": "الإشعارات"
+        "notifications": "الإشعارات",
+        "integrations": "الربط والتكامل",
+        "auditLogs": "سجلات التدقيق"
+    },
+    "deals": {
+        "title": "الصفقات",
+        "newDeal": "إضافة صفقة",
+        "details": "تفاصيل الصفقة",
+        "convertProject": "تحويل إلى مشروع",
+        "createTitle": "إنشاء صفقة",
+        "info": {
+            "client": "العميل",
+            "contractType": "نوع العقد",
+            "price": "السعر",
+            "signatureDate": "تاريخ التوقيع",
+            "paymentCycle": "دورة الدفع",
+            "startDate": "تاريخ البدء",
+            "endDate": "تاريخ الانتهاء",
+            "side": "الجهة",
+            "status": "الحالة",
+            "dealName": "اسم الصفقة",
+            "dealStage": "مرحلة الصفقة",
+            "desc": "الوصف",
+            "lead": "العميل المحتمل",
+            "opp": "الفرصة"
+        },
+        "table": {
+            "name": "اسم الصفقة",
+            "stage": "المرحلة",
+            "price": "السعر",
+            "assigned": "المعين",
+            "contractType": "نوع العقد",
+            "signatureDate": "تاريخ التوقيع",
+            "created": "تاريخ الإنشاء",
+            "invoiceNumber": "رقم الفاتورة",
+            "amount": "المبلغ",
+            "invoiceDate": "تاريخ الفاتورة",
+            "collected": "مُحصلة",
+            "collectedDate": "تاريخ التحصيل",
+            "deliveryDetails": "تفاصيل التسليم",
+            "deliveryDate": "تاريخ التسليم"
+        },
+        "tabs": {
+            "summary": "ملخص",
+            "deal": "بيانات الصفقة",
+            "invoices": "الفواتير",
+            "deliveries": "التسليمات",
+            "proposal": "عرض السعر",
+            "activity": "سجل النشاط"
+        },
+        "form": {
+            "selectClient": "اختر العميل",
+            "selectLead": "اختر العميل المحتمل",
+            "existingClient": "عميل حالي",
+            "newClient": "عميل جديد",
+            "clientInfo": "معلومات العميل",
+            "dealInfo": "معلومات الصفقة",
+            "addInvoice": "إضافة فاتورة",
+            "addDelivery": "إضافة تسليم",
+            "invoiceTitle": "فاتورة",
+            "deliveryTitle": "تسليم",
+            "enterSignatureDate": "أدخل تاريخ التوقيع",
+            "cancellationReason": "سبب الإلغاء",
+            "enterInvoiceDate": "أدخل تاريخ استحقاق الفاتورة",
+            "chooseCollected": "اختر حالة التحصيل",
+            "enterCollectedDate": "أدخل تاريخ التحصيل",
+            "enterDeliveryDate": "أدخل تاريخ التسليم"
+        }
+    },
+    "dashboard": {
+        "leadsSales": "العملاء والمبيعات",
+        "projectsOperations": "المشاريع والعمليات",
+        "financialBusinessMetrics": "المؤشرات المالية والأعمال",
+        "performanceHr": "الأداء والموارد البشرية",
+        "procurement": "المشتريات وسلاسل الإمداد",
+        "projectsOverviewHint": "مراقبة دورة حياة المشاريع، استخدام الأصول، وكفاءة القوى العاملة.",
+        "financialHint": "تتبع تدفق الإيرادات، الفواتير المستحقة، وتحصيل المدفوعات.",
+        "performanceHint": "تحليل إنتاجية الفريق، كفاءة التحويل، ومعدلات النجاح.",
+        "widgets": {
+            "totalLeads": "إجمالي العملاء المعينين",
+            "totalOpportunities": "إجمالي الفرص",
+            "totalDeals": "إجمالي الصفقات المغلقة",
+            "revenue": "الإيرادات المحققة",
+            "salesPerformance": "أداء المبيعات بمرور الوقت",
+            "leadConversion": "معدل تحويل العملاء",
+            "dealsPipeline": "نظرة عامة على خط سير الصفقات",
+            "opportunitiesStage": "الفرص حسب المرحلة",
+            "totalProjects": "إجمالي المشاريع",
+            "eitmadProjects": "نظرة عامة على مشاريع اعتماد",
+            "projectsByStatus": "المشاريع حسب الحالة",
+            "assetsPercentage": "نسبة استخدام الأصول",
+            "usedAssets": "الأصول المستخدمة %",
+            "unusedAssets": "الأصول غير المستخدمة %",
+            "manpowerPercentage": "نسبة استخدام القوى العاملة",
+            "usedManpower": "القوى العاملة المستخدمة %",
+            "unusedManpower": "القوى العاملة غير المستخدمة %",
+            "totalDealsRevenue": "إجمالي إيرادات الصفقات",
+            "outstandingInvoices": "الفواتير المستحقة",
+            "collectedPayments": "المدفوعات المحصلة",
+            "oppDealConv": "معدل تحويل الفرص لصفقات"
+        },
+        "layoutLocked": "التخطيط مقفل. قم بإلغاء القفل للسحب.",
+        "dragDropHint": "اسحب وأفلت العناصر لتخصيص العرض.",
+        "manageWidgets": "إدارة العناصر",
+        "lockLayout": "قفل التخطيط",
+        "editMode": "وضع التعديل",
+        "resetDefault": "استعادة الافتراضي",
+        "layoutSaved": "تم حفظ التخطيط",
+        "layoutReset": "تمت استعادة التخطيط",
+        "restoring": "جاري استعادة التخطيط الافتراضي...",
+        "newLead": "تم إنشاء عميل جديد - تم تحديث اللوحة",
+        "widgetsDialog": "إدارة عناصر لوحة التحكم"
+    },
+    "clients": {
+        "title": "العملاء",
+        "newClient": "عميل جديد",
+        "createTitle": "إنشاء عميل",
+        "editTitle": "تعديل العميل",
+        "details": "تفاصيل العميل",
+        "import": "استيراد",
+        "export": "تصدير",
+        "archived": "الأرشيف",
+        "table": {
+            "clientName": "اسم العميل",
+            "type": "النوع",
+            "email": "البريد الإلكتروني",
+            "phone": "رقم الهاتف",
+            "status": "الحالة",
+            "assigned": "المعين",
+            "created": "تاريخ الإنشاء"
+        },
+        "info": {
+            "information": "معلومات",
+            "clientType": "نوع العميل",
+            "industry": "المجال",
+            "address": "العنوان",
+            "files": "المستندات",
+            "assign": "تعيين",
+            "lastUpdated": "آخر تحديث",
+            "summary": "ملخص",
+            "activityLog": "سجل النشاطات"
+        },
+        "form": {
+            "existingLead": "عميل محتمل حالي",
+            "newClient": "عميل جديد",
+            "leadName": "اسم العميل المحتمل",
+            "companyName": "اسم الشركة",
+            "city": "المدينة",
+            "street": "العنوان",
+            "state": "المنطقة/المحافظة",
+            "zipCode": "الرمز البريدي",
+            "enterCity": "أدخل المدينة",
+            "enterStreet": "أدخل العنوان",
+            "enterState": "أدخل المنطقة",
+            "enterZip": "أدخل الرمز البريدي",
+            "uploadFile": "تحميل ملف *",
+            "clientName": "اسم العميل",
+            "email": "البريد الإلكتروني",
+            "phone": "رقم الهاتف",
+            "clientType": "نوع العميل",
+            "assignUser": "تعيين مستخدم",
+            "clientStatus": "حالة العميل",
+            "industry": "المجال"
+        },
+        "filter": {
+            "status": "الحالة",
+            "type": "النوع",
+            "assigned": "المستخدم المعين"
+        }
+    },
+    "leads": {
+        "title": "العملاء المحتملين",
+        "newLead": "عميل جديد",
+        "createTitle": "إنشاء عميل محتمل",
+        "import": "استيراد",
+        "export": "تصدير",
+        "view": "عرض",
+        "edit": "تعديل",
+        "editTitle": "تعديل العميل المحتمل",
+        "delete": "حذف",
+        "details": "تفاصيل العميل",
+        "summary": "ملخص",
+        "activity": "سجل النشاطات",
+        "notes": "الملاحظات",
+        "aiCompose": "كتابة بالذكاء الاصطناعي",
+        "aiSummarize": "تلخيص بالذكاء الاصطناعي",
+        "convertToOpp": "تحويل إلى فرصة",
+        "convertToDeal": "تحويل إلى صفقة",
+        "table": {
+            "leadName": "اسم العميل",
+            "phone": "رقم الهاتف",
+            "email": "البريد الإلكتروني",
+            "status": "الحالة",
+            "source": "المصدر",
+            "lastContact": "آخر تواصل",
+            "assigned": "المعين",
+            "created": "تاريخ الإنشاء"
+        },
+        "info": {
+            "email": "البريد الإلكتروني",
+            "phone": "رقم الهاتف",
+            "assign": "المعين",
+            "leadSource": "المصدر",
+            "otherSource": "مصدر آخر",
+            "created": "تاريخ الإنشاء",
+            "lastContact": "آخر تواصل",
+            "score": "التقييم",
+            "confirmConversion": "هل تود تحويل هذا العميل المحتمل إلى فرصة أو صفقة؟",
+            "present": "الإجراء",
+            "importSuccess": "تم استيراد العملاء المحتملين بنجاح."
+        },
+        "errors": {
+            "invalidFile": "يرجى تحميل ملف Excel صالح (.xls أو .xlsx)",
+            "importFailed": "فشل استيراد الملف"
+        }
+    },
+    "opportunities": {
+        "title": "الفرص",
+        "newOpp": "فرصة جديدة",
+        "createTitle": "إنشاء فرصة",
+        "details": "تفاصيل الفرصة",
+        "convertDeal": "تحويل إلى صفقة",
+        "convertProject": "تحويل إلى مشروع",
+        "proposal": "عرض السعر",
+        "table": {
+            "name": "اسم الفرصة",
+            "stage": "المرحلة",
+            "budget": "الميزانية",
+            "profit": "الربح",
+            "closeDate": "تاريخ الإغلاق",
+            "priority": "الأولوية",
+            "assigned": "المعين",
+            "created": "تاريخ الإنشاء",
+            "status": "الحالة",
+            "proposalTitle": "عنوان العرض",
+            "version": "الإصدار",
+            "relatedTo": "مرتبط بـ",
+            "type": "النوع",
+            "clientName": "اسم العميل",
+            "reference": "المرجع"
+        },
+        "info": {
+            "leadName": "اسم العميل",
+            "products": "المنتجات/الخدمات",
+            "budget": "الميزانية المتوقعة",
+            "closeDate": "تاريخ الإغلاق المتوقع",
+            "priority": "الأولوية",
+            "stage": "المرحلة",
+            "nextSteps": "الخطوات التالية",
+            "created": "تاريخ الإنشاء",
+            "updated": "آخر تحديث",
+            "reasonLoss": "سبب الخسارة",
+            "archiveTitle": "نقل إلى الأرشيف",
+            "deleteDesc1": "هل أنت متأكد أنك تريد حذف هذه الفرصة؟",
+            "deleteDesc2": "سيتم أرشفتها ويمكن استعادتها لاحقًا خلال 30 يومًا.",
+            "wonDesc": "هل تود تحويل هذه الفرصة إلى صفقة أو مشروع؟",
+            "present": "الإجراء"
+        },
+        "editTitle": "تعديل الفرصة",
+        "proposalTypes": {
+            "financial": "مالي",
+            "technical": "فني",
+            "mixed": "فني ومالي"
+        },
+        "proposalStatus": {
+            "approved": "تمت الموافقة",
+            "waiting": "بانتظار الموافقة",
+            "rejected": "مرفوض"
+        },
+        "stages": {
+            "discovery": "اكتشاف",
+            "proposal": "عرض",
+            "negotiation": "مفاوضة",
+            "lost": "خسارة",
+            "won": "ربح"
+        },
+        "priorities": {
+            "veryLow": "منخفضة جداً",
+            "low": "منخفضة",
+            "medium": "متوسطة",
+            "high": "عالية",
+            "veryHigh": "عالية جداً"
+        },
+        "reasons": {
+            "notInterested": "غير مهتم",
+            "noBudget": "لا توجد ميزانية",
+            "competitorChosen": "تم اختيار منافس",
+            "price": "السعر",
+            "competitor": "المنافس",
+            "product": "المنتج",
+            "timing": "التوقيت",
+            "other": "أخرى"
+        },
+        "steps": {
+            "phoneCall": "مكالمة هاتفية",
+            "meeting": "اجتماع",
+            "email": "بريد إلكتروني",
+            "demo": "عينة",
+            "proposal": "عرض",
+            "followUp": "متابعة",
+            "sendProposal": "إرسال عرض",
+            "followUpCall": "مكالمة متابعة",
+            "negotiateTerms": "مفاوضة الشروط",
+            "closeTheDeal": "إغلاق الصفقة",
+            "scheduleMeeting": "جدولة اجتماع",
+            "negotiation": "مفاوضة"
+        },
+        "filter": {
+            "stage": "مرحلة الفرصة",
+            "budget": "الميزانية المتوقعة",
+            "profit": "الربح",
+            "closeDate": "تاريخ الإغلاق المتوقع"
+        },
+        "reports": {
+            "filter": {
+                "stage": "مرحلة الفرصة",
+                "assigned": "المستخدم المعين",
+                "priority": "الأولوية المعينة",
+                "fromCloseDate": "من تاريخ الإغلاق المتوقع",
+                "toCloseDate": "إلى تاريخ الإغلاق المتوقع",
+                "enterDateRange": "أدخل نطاق التاريخ",
+                "showResult": "عرض نتائج التصفية",
+                "reset": "إعادة تعيين التصفية",
+                "selectStage": "اختر المرحلة",
+                "selectUser": "اختر المستخدم",
+                "selectPriority": "اختر الأولوية"
+            },
+            "export": {
+                "btn": "تصدير",
+                "desc": "يرجى إدخال عنوان البريد الإلكتروني الذي سيتم استلام ملف Excel عليه.",
+                "emailLabel": "البريد الإلكتروني",
+                "success": "تم إرسال الملف إلى البريد الإلكتروني بنجاح"
+            }
+        }
+    },
+    "proposals": {
+        "title": "العروض",
+        "management": "إدارة العروض",
+        "details": "تفاصيل العرض",
+        "loading": "جاري تحميل نظام العروض...",
+        "loadingDetails": "جاري تحميل تفاصيل العرض...",
+        "refresh": "تحديث",
+        "reactVersion": "إصدار ريأكت v2",
+        "react": "ريأكت"
+    },
+    "operations": {
+        "projects": {
+            "title": "المشاريع",
+            "newProject": "مشروع جديد",
+            "createTitle": "إنشاء مشروع",
+            "editTitle": "تعديل مشروع",
+            "steps": {
+                "info": "معلومات المشروع",
+                "vehicles": "المركبات",
+                "manpower": "القوى العاملة",
+                "materials": "المواد",
+                "assets": "الأصول",
+                "preview": "معاينة"
+            },
+            "modals": {
+                "confirmCreateTitle": "هل أنت متأكد من تأكيد إنشاء المشروع؟",
+                "confirmCreateDesc": "هل تريد المتابعة دون إجراء أي تغييرات أخرى؟",
+                "cancelCreateTitle": "هل أنت متأكد من إلغاء إنشاء المشروع؟",
+                "cancelCreateDesc": "هل تريد إلغاء عملية إنشاء المشروع؟"
+            },
+            "form": {
+                "projectInfo": "معلومات المشروع",
+                "classification": "التصنيف",
+                "projectName": "اسم المشروع",
+                "category": "الفئة",
+                "projectType": "نوع المشروع",
+                "clientSchedule": "العميل والجدول الزمني",
+                "client": "العميل",
+                "startDate": "تاريخ البدء",
+                "endDate": "تاريخ الانتهاء",
+                "duration": "المدة",
+                "assignUsers": "تعيين المستخدمين",
+                "status": "الحالة",
+                "details": "التفاصيل",
+                "description": "الوصف",
+                "cancelReason": "سبب الإلغاء",
+                "etimadDetails": "تفاصيل اعتماد",
+                "abbreviation": "الاختصار",
+                "organization": "المنظمة",
+                "rfpName": "اسم طلب العروض",
+                "contractType": "نوع العقد",
+                "tenderPrice": "سعر العطاء",
+                "businessLine": "خط الأعمال",
+                "estBudget": "الميزانية التقديرية",
+                "margin": "الهامش %",
+                "submissionDate": "تاريخ التقديم",
+                "remainingDays": "الأيام المتبقية",
+                "proposalStatus": "حالة العرض",
+                "appStatus": "حالة التطبيق",
+                "nextVehicles": "التالي: المركبات",
+                "projectNamePlaceholder": "مثال: توسعة مترو الرياض",
+                "projectTypePlaceholder": "مثال: بناء",
+                "selectDate": "اختر التاريخ",
+                "days": "أيام",
+                "scopePlaceholder": "نطاق المشروع التفصيلي...",
+                "cancelPlaceholder": "لماذا تم إلغاء هذا؟",
+                "orgNamePlaceholder": "اسم المنظمة",
+                "rfpTitlePlaceholder": "العنوان الرسمي لطلب العروض",
+                "shortCodePlaceholder": "الكود المختصر"
+            },
+            "details": {
+                "title": "تفاصيل المشروع",
+                "edit": "تعديل",
+                "createFolder": "إنشاء مجلد",
+                "projectFolders": "مجلدات المشروع",
+                "viewMore": "عرض المزيد",
+                "noActivity": "لم يتم تسجيل أي نشاط لهذا المشروع."
+            },
+            "tabs": {
+                "information": "المعلومات",
+                "vehicles": "المركبات",
+                "manpower": "القوى العاملة",
+                "materials": "المواد",
+                "assets": "الأصول",
+                "preview": "معاينة",
+                "proposal": "العروض",
+                "folders": "المجلدات",
+                "activity": "سجل النشاط"
+            },
+            "detailsSummary": {
+                "title": "الملخص",
+                "subtotal": "المجموع الفرعي",
+                "vat": "ضريبة القيمة المضافة (15%)",
+                "discount": "الخصم",
+                "margin": "الهامش ({percentage}%)",
+                "totalCost": "إجمالي تكلفة المشروع"
+            },
+            "activity": {
+                "assigned": "مستخدم معين",
+                "create": "إنشاء مشروع جديد",
+                "update": "تحديث المشروع",
+                "restored": "مستعاد",
+                "delete": "حذف",
+                "archived": "مؤرشف",
+                "import": "استيراد",
+                "export": "تصدير"
+            },
+            "proposalTable": {
+                "title": "عنوان العرض",
+                "version": "الإصدار",
+                "relatedTo": "مرتبط بـ",
+                "type": "النوع",
+                "client": "اسم العميل",
+                "status": "الحالة",
+                "reference": "المرجع",
+                "assigned": "معين لـ",
+                "created": "تم الإنشاء"
+            },
+            "vehicles": {
+                "title": "معلومات المركبات",
+                "label": "المركبات",
+                "table": {
+                    "plateNumber": "رقم اللوحة",
+                    "manufacturer": "الشركة المصنعة",
+                    "rentCost": "تكلفة الإيجار",
+                    "gasCost": "تكلفة البنزين",
+                    "oilCost": "تكلفة الزيت",
+                    "maintenanceCost": "تكلفة الصيانة الدورية",
+                    "totalCost": "التكلفة الإجمالية"
+                }
+            },
+            "manpower": {
+                "title": "معلومات القوى العاملة",
+                "accommodationCost": "تكلفة الإقامة",
+                "foodCost": "تكلفة الطعام لليوم الواحد",
+                "managementAddition": "نسبة الإضافة الإدارية",
+                "placeholders": {
+                    "accommodation": "أدخل تكلفة الإقامة ر.س",
+                    "food": "أدخل تكلفة الطعام لليوم الواحد ر.س",
+                    "management": "أدخل نسبة الإضافة الإدارية %"
+                },
+                "preview": "معاينة",
+                "table": {
+                    "manpowerName": "اسم القوى العاملة",
+                    "estimatedDays": "أيام العمل المقدرة",
+                    "mission": "المهمة",
+                    "durationCost": "تكلفة المدة",
+                    "foodAllowance": "تكلفة بدل الطعام",
+                    "accommodationPerMan": "تكلفة الإقامة/القوى العاملة",
+                    "carRentPerMan": "إيجار السيارة/القوى العاملة",
+                    "otherCosts": "تكاليف أخرى",
+                    "actualDays": "أيام العمل الفعلية",
+                    "totalCost": "التكلفة الإجمالية"
+                },
+                "form": {
+                    "otherCostReason": "سبب التكلفة الأخرى"
+                },
+                "previewTable": {
+                    "totalCarRent": "إجمالي إيجار السيارات",
+                    "totalCarRentDuration": "إجمالي إيجار السيارات/المدة",
+                    "resourceCount": "عدد الموارد"
+                },
+                "totalTable": {
+                    "manpowerTotal": "إجمالي جدول القوى العاملة",
+                    "managementAddition": "نسبة الإضافة الإدارية",
+                    "finalTotal": "إجمالي جدول القوى العاملة النهائي"
+                },
+                "modals": {
+                    "deleteTitle": "حذف القوى العاملة للمشروع",
+                    "deleteConfirm": "هل أنت متأكد أنك تريد حذف هذه القوى العاملة للمشروع؟"
+                }
+            },
+            "materials": {
+                "title": "معلومات المواد",
+                "margin": "هامش المواد",
+                "marginPlaceholder": "أدخل هامش المواد %",
+                "preview": "معاينة",
+                "table": {
+                    "description": "الوصف",
+                    "quantity": "الكمية",
+                    "unitPrice": "سعر الوحدة",
+                    "category": "فئة المواد الإضافية",
+                    "additionalCost": "تكلفة المواد الإضافية",
+                    "marginCommission": "عمولة الهامش",
+                    "service": "الخدمة",
+                    "servicePrice": "سعر الخدمة",
+                    "materialCost": "تكلفة المواد",
+                    "totalMaterialCost": "التكلفة الإجمالية للمواد"
+                }
+            },
+            "assets": {
+                "title": "معلومات الأصول",
+                "label": "الأصول",
+                "preview": "معاينة",
+                "table": {
+                    "name": "اسم الأصول",
+                    "rentPrice": "سعر الإيجار",
+                    "buyPrice": "سعر الشراء"
+                },
+                "totalTable": {
+                    "totalRent": "إجمالي سعر الإيجار",
+                    "totalBuy": "إجمالي سعر الشراء",
+                    "totalCost": "إجمالي تكلفة الأصول"
+                },
+                "notifications": {
+                    "updateSuccess": "تم تحديث المشروع بنجاح"
+                }
+            },
+            "preview": {
+                "finalCosts": "جدول التكاليف النهائية",
+                "finalMaterialsCost": "إجمالي تكلفة جدول المواد",
+                "finalAssetsCost": "إجمالي تكلفة جدول الأصول",
+                "haveDiscount": "هل يوجد خصم؟",
+                "haveMargin": "هل يوجد هامش؟",
+                "discountPlaceholder": "أدخل الخصم ر.س",
+                "marginPlaceholder": "أدخل الهامش %",
+                "grandTotal": "المجموع الكلي",
+                "vat": "ضريبة القيمة المضافة (15%)",
+                "discount": "الخصم",
+                "margin": "الهامش",
+                "totalPrice": "السعر الإجمالي"
+            },
+            "table": {
+                "projectName": "اسم المشروع",
+                "clientName": "اسم العميل",
+                "category": "الفئة",
+                "type": "النوع",
+                "status": "الحالة",
+                "startDate": "تاريخ البدء",
+                "endDate": "تاريخ الانتهاء",
+                "duration": "المدة",
+                "totalCost": "التكلفة الإجمالية",
+                "assigned": "المعين"
+            },
+            "status": {
+                "active": "نشط",
+                "cancelled": "ملغى",
+                "onHold": "قيد الانتظار",
+                "completed": "مكتمل"
+            },
+            "category": {
+                "direct": "مباشر",
+                "etimad": "اعتماد"
+            },
+            "missions": {
+                "standard": "قياسي",
+                "helper": "مساعد",
+                "siteEngineer": "مهندس موقع",
+                "engineer": "مهندس"
+            },
+            "contractType": {
+                "purchased": "مشتراه",
+                "subContractor": "مقاول باطن",
+                "invitation": "دعوة"
+            },
+            "proposalStatus": {
+                "underDeveloping": "تحت التطوير",
+                "finished": "منتهي",
+                "cancelled": "ملغى"
+            },
+            "applicationStatus": {
+                "underReview": "تحت المراجعة",
+                "won": "فوز",
+                "lost": "خسارة"
+            },
+            "filter": {
+                "status": "حالة المشروع",
+                "type": "نوع المشروع",
+                "startDate": "تاريخ البدء",
+                "endDate": "تاريخ الانتهاء"
+            }
+        },
+        "vehicles": {
+            "title": "المركبات",
+            "new": "مركبة جديدة",
+            "view": "تفاصيل المركبة",
+            "edit": "تعديل المركبة",
+            "table": {
+                "plate": "رقم اللوحة",
+                "manufacturer": "الشركة المصنعة",
+                "rentCost": "تكلفة الإيجار",
+                "gasCost": "تكلفة البنزين",
+                "oilCost": "تكلفة الزيت",
+                "maintenanceCost": "تكلفة الصيانة الدورية"
+            },
+            "filter": {
+                "manufacturer": "الشركة المصنعة",
+                "rentCost": "تكلفة الإيجار",
+                "gasCost": "تكلفة البنزين",
+                "oilCost": "تكلفة الزيت",
+                "maintenanceCost": "تكلفة الصيانة الدورية"
+            }
+        },
+        "manpower": {
+            "title": "القوى العاملة",
+            "new": "قوى عاملة جديدة",
+            "view": "تفاصيل القوى العاملة",
+            "edit": "تعديل القوى العاملة",
+            "table": {
+                "fullName": "الاسم الكامل",
+                "contacts": "بيانات الاتصال",
+                "role": "الدور",
+                "availability": "حالة التوفر",
+                "salary": "الراتب",
+                "totalCost": "التكلفة الإجمالية",
+                "dailyCost": "التكلفة اليومية"
+            },
+            "status": {
+                "available": "متوفر",
+                "notAvailable": "غير متوفر"
+            },
+            "filter": {
+                "availability": "حالة التوفر",
+                "role": "الدور",
+                "salary": "الراتب",
+                "variableAllowance": "البدل المتغير",
+                "transportationAllowance": "بدل النقل",
+                "iqamaCost": "تكلفة الإقامة",
+                "totalCost": "التكلفة الإجمالية",
+                "dailyCost": "التكلفة اليومية",
+                "creationDate": "تاريخ الإنشاء"
+            }
+        },
+        "assets": {
+            "title": "الأصول",
+            "new": "أصل جديد",
+            "view": "تفاصيل الأصل",
+            "edit": "تعديل الأصل",
+            "table": {
+                "name": "اسم الأصل",
+                "rentPrice": "سعر الإيجار",
+                "buyPrice": "سعر الشراء"
+            },
+            "filter": {
+                "rentPrice": "سعر الإيجار",
+                "buyPrice": "سعر الشراء"
+            }
+        },
+        "services": {
+            "title": "الخدمات",
+            "new": "خدمة جديدة",
+            "view": "تفاصيل الخدمة",
+            "edit": "تعديل الخدمة",
+            "table": {
+                "type": "نوع الخدمة",
+                "price": "السعر"
+            }
+        },
+        "additionalMaterials": {
+            "title": "المواد الإضافية",
+            "new": "مادة إضافية جديدة",
+            "view": "تفاصيل المادة الإضافية",
+            "edit": "تعديل المادة الإضافية",
+            "table": {
+                "category": "الفئة",
+                "item": "المادة",
+                "price": "السعر"
+            }
+        },
+        "dailyTasks": {
+            "title": "المهام اليومية",
+            "tabs": {
+                "info": "لوحة المعلومات",
+                "active": "المشاريع النشطة",
+                "completed": "المشاريع المكتملة",
+                "granted": "المشاريع الممنوحة"
+            },
+            "buttons": {
+                "exportPdf": "تصدير إلى PDF",
+                "addProject": "إضافة مشروع",
+                "newTask": "إنشاء مشروع",
+                "editTask": "تعديل المهمة اليومية"
+            },
+            "table": {
+                "date": "التاريخ",
+                "client": "العميل",
+                "description": "وصف المشروع",
+                "salesRep": "مندوب المبيعات",
+                "assignedTo": "تم التعيين لـ",
+                "priority": "الأولوية",
+                "notes": "ملاحظات",
+                "status": "الحالة",
+                "cost": "التكلفة",
+                "amountPaid": "المبلغ المدفوع",
+                "rest": "الباقي",
+                "downPayment": "الدفعة المقدمة",
+                "startDate": "تاريخ البدء",
+                "endDate": "تاريخ الانتهاء"
+            },
+            "details": {
+                "name": "الاسم",
+                "clientName": "اسم العميل",
+                "salesRepName": "اسم مندوب المبيعات",
+                "assignedTo": "تم التعيين لـ",
+                "cost": "التكلفة",
+                "totalPaid": "إجمالي المدفوع",
+                "downPayment": "الدفعة المقدمة",
+                "priority": "الأولوية",
+                "status": "الحالة",
+                "date": "التاريخ",
+                "startDate": "تاريخ البدء",
+                "endDate": "تاريخ الانتهاء",
+                "notes": "ملاحظات"
+            },
+            "form": {
+                "name": "الاسم",
+                "enterName": "أدخل الاسم",
+                "priority": "الأولوية",
+                "status": "الحالة",
+                "user": "المستخدم",
+                "client": "العميل",
+                "salesRep": "مندوب المبيعات",
+                "cost": "التكلفة",
+                "enterCost": "أدخل التكلفة ر.س",
+                "downPayment": "الدفعة المقدمة",
+                "enterDownPayment": "أدخل الدفعة المقدمة",
+                "totalPaid": "إجمالي المدفوع",
+                "enterTotalPaid": "أدخل إجمالي المدفوع",
+                "notes": "ملاحظات"
+            }
+        },
+        "vehicle": {
+            "form": {
+                "name": "اسم المركبة",
+                "plateNumber": "رقم اللوحة",
+                "type": "النوع",
+                "status": "الحالة",
+                "enterName": "أدخل اسم المركبة",
+                "enterPlate": "أدخل رقم اللوحة"
+            }
+        },
+        "service": {
+            "form": {
+                "name": "اسم الخدمة",
+                "description": "الوصف",
+                "cost": "التكلفة",
+                "enterName": "أدخل اسم الخدمة",
+                "enterCost": "أدخل التكلفة"
+            }
+        }
     },
     "forms": {
         "dragDrop": "اسحب وأفلت الملف هنا أو",
@@ -118,11 +989,57 @@
         "maxFileSize": "الحد الأقصى لحجم الملف: {size} ميجابايت",
         "optional": "اختياري"
     },
-    "dashboard": {
-        "leadsSales": "العملاء والمبيعات",
-        "projectsOperations": "المشاريع والعمليات",
-        "financialBusinessMetrics": "المؤشرات المالية والأعمال",
-        "performanceHr": "الأداء والموارد البشرية",
-        "procurement": "المشتريات وسلاسل الإمداد"
+    "notifications": {
+        "title": "الإشعارات",
+        "markAllRead": "تحديد الكل كمقروء",
+        "markingUnread": "تحديد كغير مقروء",
+        "show": "عرض",
+        "entries": "سجلات",
+        "noData": "لا توجد إشعارات بعد"
+    },
+    "procurement": {
+        "createTitle": "إنشاء طلب شراء",
+        "subtitle": "طلب مشتريات مدعوم بالذكاء الاصطناعي",
+        "supplierTerms": "المورد والشروط",
+        "vendorSelection": "اختيار المورد",
+        "projectAllocation": "تخصيص المشروع",
+        "paymentTerms": "شروط الدفع",
+        "expectedDelivery": "التسليم المتوقع",
+        "referenceNote": "مرجع / ملاحظة",
+        "orderItems": "عناصر الطلب",
+        "addProduct": "إضافة منتج",
+        "itemDetails": "تفاصيل العنصر",
+        "quantity": "الكمية",
+        "unitPrice": "سعر الوحدة",
+        "tax": "الضريبة %",
+        "total": "المجموع",
+        "subtotal": "المجموع الفرعي",
+        "taxAmount": "قيمة الضريبة",
+        "grandTotal": "المجموع الكلي",
+        "cancel": "إلغاء",
+        "issuePO": "إصدار طلب الشراء",
+        "aiAutoFill": "تعبئة تلقائية بالذكاء الاصطناعي",
+        "aiDesc": "اسحب وأفلت فاتورة PDF أو عرض سعر هنا. سيقوم النظام باستخراج العناصر والأسعار وتفاصيل المورد تلقائياً.",
+        "dropFile": "افلت الملف أو تصفح",
+        "supported": "مدعوم: PDF, PNG, JPG",
+        "instantProcess": "معالجة فورية",
+        "purchaseOrders": {
+            "title": "أوامر الشراء",
+            "create": "إنشاء جديد",
+            "vendor": "المورد",
+            "amount": "المبلغ",
+            "date": "التاريخ",
+            "status": "الحالة"
+        }
+    },
+    "role": {
+        "form": {
+            "name": "اسم الدور",
+            "enterName": "أدخل اسم الدور",
+            "description": "الوصف",
+            "enterDescription": "أدخل الوصف",
+            "optional": "(اختياري)",
+            "descriptionHint": "يجب أن تكون الملاحظات حرفين على الأقل"
+        }
     }
 }

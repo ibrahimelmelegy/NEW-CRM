@@ -4,8 +4,8 @@
     .flex.items-center.gap-6
       el-button(@click="router.back()", circle, :icon="ArrowLeft", class="premium-btn-outline !w-12 !h-12 !text-lg")
       .header-content
-        .title.font-black.text-4xl.text-gradient Create Purchase Order
-        .subtitle.text-muted.text-base.mt-1 AI-Assisted Procurement Request
+        .title.font-black.text-4xl.text-gradient {{ $t('procurement.createTitle') }}
+        .subtitle.text-muted.text-base.mt-1 {{ $t('procurement.subtitle') }}
 
   .grid.grid-cols-12.gap-8
     //- Left Column: Main Form (8 cols)
@@ -18,13 +18,13 @@
         .flex.items-center.gap-4.mb-8
              .p-3.rounded-xl.bg-purple-500_10.border.border-purple-500_20
                 Icon(name="ph:identification-badge-bold" class="text-purple-400 text-2xl")
-             span.text-2xl.font-bold.text-white Supplier & Terms
+             span.text-2xl.font-bold.text-white {{ $t('procurement.supplierTerms') }}
         
         el-form(:model="form", label-position="top", ref="formRef")
           .grid.grid-cols-1.md.grid-cols-2.gap-8
             el-form-item(prop="vendorId", :rules="[{ required: true, message: 'Vendor is required' }]")
               template(#label)
-                span.text-xs.uppercase.font-bold.tracking-widest.text-muted Vendor Selection
+                span.text-xs.uppercase.font-bold.tracking-widest.text-muted {{ $t('procurement.vendorSelection') }}
               el-select(v-model="form.vendorId", placeholder="Search and select supplier...", class="w-full premium-select-large", filterable, remote)
                 el-option(v-for="v in vendors", :key="v.id", :label="v.name", :value="v.id")
                   .flex.items-center.justify-between.w-full
@@ -37,7 +37,7 @@
             
             el-form-item(prop="projectId")
               template(#label)
-                span.text-xs.uppercase.font-bold.tracking-widest.text-muted Project Allocation
+                span.text-xs.uppercase.font-bold.tracking-widest.text-muted {{ $t('procurement.projectAllocation') }}
               el-select(v-model="form.projectId", placeholder="Assign to project...", class="w-full premium-select-large", filterable, clearable)
                 el-option(v-for="p in projects", :key="p.id", :label="p.name", :value="p.id")
                   .flex.items-center.gap-3
@@ -45,7 +45,7 @@
                     span.font-medium {{ p.name }}
           
           .grid.grid-cols-1.md.grid-cols-3.gap-8.mt-6
-            el-form-item(label="Payment Terms", prop="paymentTerms")
+            el-form-item(:label="$t('procurement.paymentTerms')", prop="paymentTerms")
                el-select(v-model="form.paymentTerms", class="w-full premium-select", placeholder="Select terms")
                  template(#prefix) <Icon name="ph:credit-card" class="mr-2"/>
                  el-option(label="Immediate Payment" value="Immediate")
@@ -54,10 +54,10 @@
                  el-option(label="Net 60 Days" value="Net 60")
                  el-option(label="50/50 Split" value="50-50")
             
-            el-form-item(label="Expected Delivery", prop="dueDate")
+            el-form-item(:label="$t('procurement.expectedDelivery')", prop="dueDate")
                el-date-picker(v-model="form.dueDate", type="date", placeholder="Select date", class="!w-full premium-datepicker")
             
-            el-form-item(label="Reference / Note", prop="attachments")
+            el-form-item(:label="$t('procurement.referenceNote')", prop="attachments")
                el-input(v-model="form.attachments", placeholder="#REF-001", class="premium-input")
 
       //- SECTION 2: Items List
@@ -66,28 +66,28 @@
           .flex.items-center.gap-4
              .p-3.rounded-xl.bg-pink-500_10.border.border-pink-500_20
                 Icon(name="ph:shopping-cart-bold" class="text-pink-400 text-2xl")
-             span.text-2xl.font-bold.text-white Order Items
+             span.text-2xl.font-bold.text-white {{ $t('procurement.orderItems') }}
           
-          el-button(type="primary", :icon="Plus", @click="addItem", class="premium-btn-outline px-8 !h-12 !rounded-xl text-base") Add Product
+          el-button(type="primary", :icon="Plus", @click="addItem", class="premium-btn-outline px-8 !h-12 !rounded-xl text-base") {{ $t('procurement.addProduct') }}
         
         el-table(:data="form.items", style="width: 100%; height: auto !important;", class="premium-table mb-8 table-auto-height")
           el-table-column(label="#" width="50" align="center")
             template(#default="{$index}")
                 span.text-muted.font-mono {{ $index + 1 }}
-          el-table-column(label="Item Details" min-width="300")
+          el-table-column(:label="$t('procurement.itemDetails')" min-width="300")
             template(#default="{row}")
               el-input(v-model="row.description", placeholder="Item name, specs, or SKU...", class="premium-input-transparent font-medium")
-          el-table-column(label="Quantity" width="120")
+          el-table-column(:label="$t('procurement.quantity')" width="120")
             template(#default="{row}")
               el-input-number(v-model="row.quantity", :min="1", class="premium-number-input !w-full", :controls="false")
-          el-table-column(label="Unit Price" width="160")
+          el-table-column(:label="$t('procurement.unitPrice')" width="160")
             template(#default="{row}")
               el-input-number(v-model="row.unitPrice", :min="0", :precision="2", class="premium-number-input !w-full", :controls="false")
-                template(#prefix) <span class="text-xs text-muted mr-1">$</span>
-          el-table-column(label="Tax %" width="100")
+                template(#prefix) <span class="text-xs text-muted mr-1">{{ $t('common.sar') }}</span>
+          el-table-column(:label="$t('procurement.tax')" width="100")
             template(#default="{row}")
               el-input-number(v-model="row.tax", :min="0", :max="100", class="premium-number-input !w-full", :controls="false")
-          el-table-column(label="Total" width="150" align="right")
+          el-table-column(:label="$t('procurement.total')" width="150" align="right")
             template(#default="{row}")
               span.font-bold.text-lg.text-white {{ ((row.quantity * row.unitPrice) * (1 + row.tax / 100)).toFixed(2) }}
           el-table-column(width="60" align="center")
@@ -97,18 +97,18 @@
         //- Totals Section
         .flex.flex-col.items-end.gap-2.pt-8.border-t.border-white_10
             .flex.items-center.justify-between.w-full.max-w-xs.py-2
-                span.text-muted Subtotal
+                span.text-muted {{ $t('procurement.subtotal') }}
                 span.text-white {{ subTotal.toFixed(2) }}
             .flex.items-center.justify-between.w-full.max-w-xs.py-2
-                span.text-muted Tax Amount
+                span.text-muted {{ $t('procurement.taxAmount') }}
                 span.text-white {{ taxTotal.toFixed(2) }}
             
             .flex.items-center.justify-between.w-full.max-w-md.mt-4.p-4.rounded-2xl.bg-white_5.border.border-white_10
-                span.text-lg.font-bold.text-gradient Grand Total
+                span.text-lg.font-bold.text-gradient {{ $t('procurement.grandTotal') }}
                 span.text-4xl.font-black.text-white {{ grandTotal.toFixed(2) }}
             
             .flex.gap-4.mt-8
-                 el-button(size="large" class="premium-btn-ghost w-32 !h-14") Cancel
+                 el-button(size="large" class="premium-btn-ghost w-32 !h-14") {{ $t('procurement.cancel') }}
                  el-button(
                     type="primary", 
                     size="large", 
@@ -117,7 +117,7 @@
                     class="premium-btn !rounded-xl w-64 !h-14 text-lg shadow-lg shadow-purple-900/50"
                   ) 
                     Icon(name="ph:paper-plane-right-bold" class="mr-2")
-                    | Issue PO
+                    | {{ $t('procurement.issuePO') }}
 
     //- Right Column: AI & Summary (4 cols)
     .col-span-12.xl.col-span-4.space-y-8
@@ -128,20 +128,20 @@
           .flex.items-center.gap-3.mb-6
             .p-2.bg-orange-500_20.rounded-lg.text-orange-400
                 Icon(name="ph:sparkles-fill" class="text-xl animate-pulse")
-            span.text-lg.font-bold.text-white AI Auto-Fill
+            span.text-lg.font-bold.text-white {{ $t('procurement.aiAutoFill') }}
           
           p.text-sm.text-gray-300.mb-6.leading-relaxed 
-            | Drag & drop a PDF invoice or quotation here. Leadify AI will extract line items, prices, and vendor details automatically.
+            | {{ $t('procurement.aiDesc') }}
           
           .border-2.border-dashed.border-white_20.rounded-2xl.p-8.text-center.transition-all.hover_border-purple-400.hover_bg-white_5.cursor-pointer(@click="triggerUpload")
              Icon(name="ph:file-pdf-duotone" class="text-5xl text-white_40 mb-3 group-hover:text-purple-400 transition-colors")
-             .text-sm.font-bold.text-white Drop file or Browse
+             .text-sm.font-bold.text-white {{ $t('procurement.dropFile') }}
           
           .mt-6.flex.items-center.justify-between.text-xs.text-muted
-             span Supported: PDF, PNG, JPG
+             span {{ $t('procurement.supported') }}
              span.flex.items-center.gap-1 
                 Icon(name="ph:lightning-fill" class="text-yellow-400")
-                | Instant Process
+                | {{ $t('procurement.instantProcess') }}
 
 </template>
 

@@ -33,8 +33,8 @@
             <!-- State 1: Request Form -->
             <div v-if="!isSubmitted">
               <div class="mb-10">
-                <h1 class="text-3xl font-bold text-white mb-2">Reset Password</h1>
-                <p class="text-text-muted leading-relaxed">Enter the email associated with your account to receive a secure reset link.</p>
+                <h1 class="text-3xl font-bold text-white mb-2">{{ $t('auth.resetTitle') }}</h1>
+                <p class="text-text-muted leading-relaxed">{{ $t('auth.forgetSubtitle') }}</p>
               </div>
 
               <el-form 
@@ -48,7 +48,7 @@
                 <div class="space-y-6">
                   <div class="form-group flex flex-col gap-2">
                     <InputText 
-                      label="Email Address"
+                      :label="$t('auth.email')"
                       placeholder="name@company.com" 
                       name="email" 
                       class="modern-input"
@@ -64,7 +64,7 @@
                     type="primary" 
                     class="w-full !h-[56px] !rounded-2xl !bg-primary hover:!bg-primary-hover !border-none !text-lg !font-bold shadow-lg shadow-primary/20 transition-all"
                   >
-                    Send Link
+                    {{ $t('auth.sendResetLink') }}
                   </el-button>
                   
                   <el-button 
@@ -72,7 +72,7 @@
                     @click="router.push('/login')"
                     class="w-full !h-[56px] !rounded-2xl !bg-transparent hover:!bg-white/5 !border-white/10 !text-text-secondary hover:!text-white transition-all"
                   >
-                    Back to Login
+                    {{ $t('auth.backToLogin') }}
                   </el-button>
                 </div>
               </el-form>
@@ -96,7 +96,7 @@
                 @click="router.push('/login')"
                 class="w-full !h-[56px] !rounded-2xl !bg-primary hover:!bg-primary-hover !border-none !text-lg !font-bold shadow-lg shadow-primary/20 transition-all"
               >
-                Return to Login
+                {{ $t('auth.backToLogin') }}
               </el-button>
               
               <button 

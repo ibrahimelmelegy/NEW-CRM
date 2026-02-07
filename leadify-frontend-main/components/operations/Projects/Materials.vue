@@ -1,24 +1,24 @@
 <template lang="pug">
 el-form.mt-6.mb-24(  autocomplete="off"   @submit.prevent='onSubmit'   ref="myForm" label-position="top"  :validationSchema="formSchema" )
   .card.m-auto.glass-card.p-10.rounded-3xl(class="w-[90%] ")
-    InputText.mt-4(label="Material Margin" placeholder="Enter Material Margin %" name="materialMargin" :value="project?.materialMargin" @value="getMaterialMargin" )
+    InputText.mt-4(:label="$t('operations.projects.materials.margin')" :placeholder="$t('operations.projects.materials.marginPlaceholder')" name="materialMargin" :value="project?.materialMargin" @value="getMaterialMargin" )
     .glass-card.rounded-3xl.mt-3.border.mt-8
       .flex.justify-justify-between.items-center.p-10.pb-0
-        .title.font-bold.text-xl.capitalize.flex-1 Material Info
-        el-button(class="!rounded-2xl" type='primary' @click='addMaterial = true, material = {}, selectedAddMaterialItem = {}' :icon="Plus" size="large" :loading="loading") Add
+        .title.font-bold.text-xl.capitalize.flex-1 {{ $t('operations.projects.materials.title') }}
+        el-button(class="!rounded-2xl" type='primary' @click='addMaterial = true, material = {}, selectedAddMaterialItem = {}' :icon="Plus" size="large" :loading="loading") {{ $t('common.add') }}
       AppTable(v-slot="{data}" without-filters without-search without-pagination :columns="table.columns" :data="table.data" :key="table.data" class="!py-0")
         .flex.items-center.py-2(@click.stop)
           el-button(class="!rounded-2xl" type='danger' link @click="deleteMaterial(data.id)"): Icon(name="IconDelete" size="20")
           el-button(class="!rounded-2xl" type='primary' link @click="addMaterial = true, material = materials.find((material: Material) => material.id === data.id), selectedAddMaterialItem = { [data.additionalMaterialId]: addMaterialItems[data.additionalMaterialId] }"): Icon(name="IconEdit" size="20")
     .glass-card.rounded-3xl.mt-3.border.mt-8
-      .p-10.pb-0.title.font-bold.text-xl.capitalize.flex-1 preview
+      .p-10.pb-0.title.font-bold.text-xl.capitalize.flex-1 {{ $t('operations.projects.materials.preview') }}
       AppTable(without-filters without-search without-action without-pagination :columns="preview.columns" :data="preview.data" :key="preview.data" class="!py-0")
   .endBar
       .flex.justify-between.w-full
-        el-button(   size='large' plain type="primary" class=" !rounded-2xl" @click="emit('cancel')") Cancel
+        el-button(   size='large' plain type="primary" class=" !rounded-2xl" @click="emit('cancel')") {{ $t('common.cancel') }}
         .flex.items-center.gap-x-2
-          el-button( type="primary"  size='large' link :loading="loading"  :disabled="loading" class=" !px-5 !rounded-2xl" @click="activeStep--") Back
-          el-button(   size='large' type="primary" native-type="submit" :loading="loading"  :disabled="loading" class=" !px-5 !rounded-2xl") Next
+          el-button( type="primary"  size='large' link :loading="loading"  :disabled="loading" class=" !px-5 !rounded-2xl" @click="activeStep--") {{ $t('common.back') }}
+          el-button(   size='large' type="primary" native-type="submit" :loading="loading"  :disabled="loading" class=" !px-5 !rounded-2xl") {{ $t('common.next') }}
 OperationsProjectsModalMaterial(v-model="addMaterial" :data="material" :allAddMaterialItems="addMaterialItems" :selectedAddMaterialItem="selectedAddMaterialItem" v-if="addMaterial"  @confirm="getMaterial")
 </template>
 
@@ -37,7 +37,7 @@ OperationsProjectsModalMaterial(v-model="addMaterial" :data="material" :allAddMa
 
   const emit = defineEmits(["submit", "cancel"]);
 
-  const activeStep = defineModel<number>();
+  const activeStep = defineModel<number>({ required: true });
   const addMaterial = ref(false);
   const materials = ref<Material[]>([]);
   const material = ref<Material>();
@@ -48,8 +48,9 @@ OperationsProjectsModalMaterial(v-model="addMaterial" :data="material" :allAddMa
   const route = useRoute();
   const services = ref<Service[]>([]);
 
+  const { t } = useI18n();
   const formSchema = yup.object({
-    materialMargin: yup.string().trim().required().min(1).max(100).label("Material Margin"),
+    materialMargin: yup.string().trim().required().min(1).max(100).label(t("operations.projects.materials.margin")),
   });
 
   const { handleSubmit, values } = useForm({
@@ -58,36 +59,36 @@ OperationsProjectsModalMaterial(v-model="addMaterial" :data="material" :allAddMa
 
   const table = ref({
     columns: [
-      { prop: "description", label: "Description", component: "Text", type: "font-default", width: 400 },
-      { prop: "quantity", label: "Quantity", component: "Text", type: "font-default", width: 150 },
-      { prop: "unitPrice", label: "Unit Price", component: "Text", type: "font-default", width: 120 },
+      { prop: "description", label: t("operations.projects.materials.table.description"), component: "Text", type: "font-default", width: 400 },
+      { prop: "quantity", label: t("operations.projects.materials.table.quantity"), component: "Text", type: "font-default", width: 150 },
+      { prop: "unitPrice", label: t("operations.projects.materials.table.unitPrice"), component: "Text", type: "font-default", width: 120 },
       {
         prop: "additionalMaterial",
-        label: "Additional Material Category",
+        label: t("operations.projects.materials.table.category"),
         component: "Text",
         type: "font-default",
         width: 250,
       },
       {
         prop: "additionalMaterialCost",
-        label: "Additional Material Cost",
+        label: t("operations.projects.materials.table.additionalCost"),
         component: "Text",
         type: "font-default",
         width: 200,
       },
-      { prop: "marginCommission", label: "Margin Commission", component: "Text", type: "font-default", width: 180 },
-      { prop: "service", label: "Service", component: "Text", type: "font-default", width: 120 },
-      { prop: "servicePrice", label: "Service Price", component: "Text", type: "font-default", width: 120 },
+      { prop: "marginCommission", label: t("operations.projects.materials.table.marginCommission"), component: "Text", type: "font-default", width: 180 },
+      { prop: "service", label: t("operations.projects.materials.table.service"), component: "Text", type: "font-default", width: 120 },
+      { prop: "servicePrice", label: t("operations.projects.materials.table.servicePrice"), component: "Text", type: "font-default", width: 120 },
       {
         prop: "materialCost",
-        label: "Material Cost",
+        label: t("operations.projects.materials.table.materialCost"),
         component: "Text",
         type: "font-default",
         width: 200,
       },
       {
         prop: "totalMaterialCost",
-        label: "Total Material Cost",
+        label: t("operations.projects.materials.table.totalMaterialCost"),
         component: "Text",
         type: "font-default",
         width: 200,
@@ -99,7 +100,7 @@ OperationsProjectsModalMaterial(v-model="addMaterial" :data="material" :allAddMa
     columns: [
       {
         prop: "totalMaterialCost",
-        label: "Total Material Cost",
+        label: t("operations.projects.materials.table.totalMaterialCost"),
         component: "Text",
         type: "font-default",
         width: 200,

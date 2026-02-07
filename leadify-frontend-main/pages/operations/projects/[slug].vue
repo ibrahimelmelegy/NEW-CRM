@@ -1,6 +1,6 @@
 <template lang="pug">
 .flex.items-center.justify-between.mb-5.mt-5
-  .title.font-bold.text-2xl.mb-1.capitalize Project Details
+  .title.font-bold.text-2xl.mb-1.capitalize {{ $t('operations.projects.details.title') }}
   el-dropdown(trigger="click")
     span.el-dropdown-link
       button.rounded-btn(class="!px-4"): Icon(name="IconToggle", size="24")
@@ -11,11 +11,11 @@
             :to="`/operations/projects/edit/${project?.id}`"
           )
             Icon.text-md.mr-2(size="20", name="IconEdit")
-            p.text-sm Edit
+            p.text-sm {{ $t('operations.projects.details.edit') }}
         el-dropdown-item(@click="addShow = true")
           .flex.items-center
             Icon.text-md.mr-2(size="20", name="IconAdd")
-            p.text-sm Create Folder
+            p.text-sm {{ $t('operations.projects.details.createFolder') }}
         //- el-dropdown-item
         //-   .flex.items-center
         //-     Icon.text-md.mr-2(size="20" name="IconRestore" )
@@ -33,142 +33,142 @@
         //-     Icon.text-md.mr-2(size="20" name="IconDelete" )
         //-     p.text-sm Delete
 el-tabs.demo-tabs(v-model="activeName", @tab-click="handleClick")
-  el-tab-pane(label="Information", name="information")
+  el-tab-pane(:label="$t('operations.projects.tabs.information')", name="information")
     .flex-1.glass-card.p-10.rounded-3xl
       .grid.gap-4.grid-cols-1(class="md:grid-cols-2 lg:grid-cols-4")
         div
           .text-neutral-400.font-medium.mb-2.flex.items-center
             Icon.mr-2(name="tabler:category-2", size="20")
-            p Project Name
+            p {{ $t('operations.projects.form.projectName') }}
           p.text-neutral-800.mb-2 {{ project?.name }}
         div
           .text-neutral-400.font-medium.mb-2.flex.items-center
             Icon.mr-2(name="IconAssign", size="20")
-            p Client
+            p {{ $t('operations.projects.form.client') }}
           p.text-neutral-800.mb-2 {{ project?.client?.clientName }}
         div
           .text-neutral-400.font-medium.mb-2.flex.items-center
             Icon.mr-2(name="solar:hashtag-outline", size="20")
-            p Project Type
+            p {{ $t('operations.projects.form.projectType') }}
           p.text-neutral-800.mb-2 {{ formatSnakeCase(project?.type) }}
         div
           .text-neutral-400.font-medium.mb-2.flex.items-center
             Icon.mr-2(name="IconProjectStatus", size="20")
-            p Project Status
+            p {{ $t('operations.projects.form.status') }}
           span.border.rounded-xl.text-xs.px-2(
             :class="`label-outline-${getStatusColor(valueMap[project?.status])}`"
           ) {{ formatSnakeCase(project?.status) }}
         div
           .text-neutral-400.font-medium.mb-2.flex.items-center
             Icon.mr-2(name="IconCalendar", size="20")
-            p Start Date
+            p {{ $t('operations.projects.form.startDate') }}
           p.text-neutral-800.mb-2 {{ getYear(project?.startDate) }}
         div
           .text-neutral-400.font-medium.mb-2.flex.items-center
             Icon.mr-2(name="IconCalendar", size="20")
-            p End Date
+            p {{ $t('operations.projects.form.endDate') }}
           p.text-neutral-800.mb-2 {{ getYear(project?.endDate) }}
         div
           .text-neutral-400.font-medium.mb-2.flex.items-center
             Icon.mr-2(name="solar:hashtag-outline", size="20")
-            p Duration
+            p {{ $t('operations.projects.form.duration') }}
           p.text-neutral-800.mb-2 {{ project?.duration }}
         div
           .text-neutral-400.font-medium.mb-2.flex.items-center
             Icon.mr-2(name="IconAssign", size="20")
-            p Assign to
+            p {{ $t('operations.projects.form.assignUsers') }}
           p.text-neutral-800.mb-2 {{ project?.assignedUsers?.map((user: any) => user?.name).join(", ") }}
 
     .flex.align-center.gap-6.mt-3.flex-col(class="xl:flex-row")
       .flex-1.glass-card.p-10.rounded-3xl(v-if="project?.etimadProject")
-        h4.text-lg.font-semibold.text-neutral-900.mb-4 Etimad Project
+        h4.text-lg.font-semibold.text-neutral-900.mb-4 {{ $t('operations.projects.form.etimadDetails') }}
         .grid.gap-4.grid-cols-1(class="md:grid-cols-2 lg:grid-cols-4")
           div
             .text-neutral-400.font-medium.mb-2.flex.items-center
               Icon.mr-2(name="solar:hashtag-outline", size="20")
-              p Abbreviation
+              p {{ $t('operations.projects.form.abbreviation') }}
             p.text-neutral-800.mb-2 {{ project?.etimadProject?.abbreviation }}
           div
             .text-neutral-400.font-medium.mb-2.flex.items-center
               Icon.mr-2(name="solar:hashtag-outline", size="20")
-              p Organization Name
+              p {{ $t('operations.projects.form.organization') }}
             p.text-neutral-800.mb-2 {{ project?.etimadProject?.organizationName }}
           div
             .text-neutral-400.font-medium.mb-2.flex.items-center
               Icon.mr-2(name="solar:hashtag-outline", size="20")
-              p RFP Name
+              p {{ $t('operations.projects.form.rfpName') }}
             p.text-neutral-800.mb-2 {{ project?.etimadProject?.rfpName }}
           div
             .text-neutral-400.font-medium.mb-2.flex.items-center
               Icon.mr-2(name="solar:hashtag-outline", size="20")
-              p Contract Type
+              p {{ $t('operations.projects.form.contractType') }}
             p.text-neutral-800.mb-2 {{ project?.etimadProject?.contractType }}
           div
             .text-neutral-400.font-medium.mb-2.flex.items-center
               Icon.mr-2(name="solar:hashtag-outline", size="20")
-              p Tender Price
+              p {{ $t('operations.projects.form.tenderPrice') }}
             p.text-neutral-800.mb-2 {{ project?.etimadProject?.tenderPrice }}
           div
             .text-neutral-400.font-medium.mb-2.flex.items-center
               Icon.mr-2(name="solar:hashtag-outline", size="20")
-              p Business Line
+              p {{ $t('operations.projects.form.businessLine') }}
             p.text-neutral-800.mb-2 {{ project?.etimadProject?.businessLine }}
           div
             .text-neutral-400.font-medium.mb-2.flex.items-center
               Icon.mr-2(name="solar:hashtag-outline", size="20")
-              p Estimated Budget
+              p {{ $t('operations.projects.form.estBudget') }}
             p.text-neutral-800.mb-2 {{ project?.etimadProject?.estimatedBudget }}
           div
             .text-neutral-400.font-medium.mb-2.flex.items-center
               Icon.mr-2(name="solar:hashtag-outline", size="20")
-              p Company Margin
+              p {{ $t('operations.projects.form.margin') }}
             p.text-neutral-800.mb-2 {{ project?.etimadProject?.companyMargin }}
           div
             .text-neutral-400.font-medium.mb-2.flex.items-center
               Icon.mr-2(name="solar:hashtag-outline", size="20")
-              p remaining Days
+              p {{ $t('operations.projects.form.remainingDays') }}
             p.text-neutral-800.mb-2 {{ project?.etimadProject?.remainingDays }}
           div
             .text-neutral-400.font-medium.mb-2.flex.items-center
               Icon.mr-2(name="IconProjectStatus", size="20")
-              p Application Status
+              p {{ $t('operations.projects.form.appStatus') }}
             span.border.rounded-xl.text-xs.px-2(
               :class="`label-outline-${getStatusColor(project?.etimadProject?.applicationStatus)}`"
             ) {{ formatSnakeCase(project?.etimadProject?.applicationStatus) }}
           div
             .text-neutral-400.font-medium.mb-2.flex.items-center
               Icon.mr-2(name="IconProjectStatus", size="20")
-              p Proposal Status
+              p {{ $t('operations.projects.form.proposalStatus') }}
             span.border.rounded-xl.text-xs.px-2(
               :class="`label-outline-${getStatusColor(project?.etimadProject?.proposalStatus)}`"
             ) {{ formatSnakeCase(project?.etimadProject?.proposalStatus) }}
           div
             .text-neutral-400.font-medium.mb-2.flex.items-center
               Icon.mr-2(name="IconCalendar", size="20")
-              p Submission Date
+              p {{ $t('operations.projects.form.submissionDate') }}
             p.text-neutral-800.mb-2 {{ getYear(project?.etimadProject?.submissionDate) }}
     .flex.align-center.gap-6.mt-3.flex-col(class="xl:flex-row")
       .flex-1.glass-card.p-10.rounded-3xl(v-if="project?.description")
-        h4.text-lg.font-semibold.text-neutral-900.mb-4 Project Description
+        h4.text-lg.font-semibold.text-neutral-900.mb-4 {{ $t('operations.projects.form.description') }}
         p.text-neutral-800.leading-relaxed {{ project?.description }}
       .glass-card.p-10.rounded-3xl
-        p.text-lg.font-semibold.text-neutral-900.mb-3 Summary
+        p.text-lg.font-semibold.text-neutral-900.mb-3 {{ $t('operations.projects.detailsSummary.title') }}
         .flex.justify-between.items-center.gap-60.mb-4
-          p.text-base.text-neutral-400 Subtotal :
-          p.text-base.text-neutral-900 {{ project?.grandTotal || 0 }} SAR
+          p.text-base.text-neutral-400 {{ $t('operations.projects.detailsSummary.subtotal') }}:
+          p.text-base.text-neutral-900 {{ project?.grandTotal || 0 }} {{ $t('common.sar') }}
         .flex.justify-between.items-center.gap-60.mb-4
-          p.text-base.text-neutral-400 VAT (15%):
-          p.text-base.text-neutral-900 {{ project?.vat || 0 }} SAR
+          p.text-base.text-neutral-400 {{ $t('operations.projects.detailsSummary.vat') }}:
+          p.text-base.text-neutral-900 {{ project?.vat || 0 }} {{ $t('common.sar') }}
         .flex.justify-between.items-center.gap-12.mb-4
-          p.text-base.text-neutral-400 Discount :
-          p.text-base.text-neutral-900 {{ project.discount || 0 }} SAR
+          p.text-base.text-neutral-400 {{ $t('operations.projects.detailsSummary.discount') }}:
+          p.text-base.text-neutral-900 {{ project.discount || 0 }} {{ $t('common.sar') }}
         .flex.justify-between.items-center.gap-12.mb-4.border-b.pb-4
-          p.text-base.text-neutral-400 Margin ({{ project.marginPercentage || 0 }}%) :
-          p.text-base.text-neutral-900 {{ project?.marginAmount?.toFixed(2) }} SAR
+          p.text-base.text-neutral-400 {{ $t('operations.projects.detailsSummary.margin', { percentage: project.marginPercentage || 0 }) }}:
+          p.text-base.text-neutral-900 {{ project?.marginAmount?.toFixed(2) }} {{ $t('common.sar') }}
         .flex.justify-between.items-center.gap-60.mb-4
-          p.text-base.text-neutral-900 Total Project Cost :
-          p.text-base.text-neutral-900 {{ project?.totalCost || 0 }} SAR
-  el-tab-pane(label="Vehicles", name="vehicles")
+          p.text-base.text-neutral-900 {{ $t('operations.projects.detailsSummary.totalCost') }}:
+          p.text-base.text-neutral-900 {{ project?.totalCost || 0 }} {{ $t('common.sar') }}
+  el-tab-pane(:label="$t('operations.projects.tabs.vehicles')", name="vehicles")
     .glass-card.p-10.rounded-3xl.mt-3
       AppTable(
         without-filters,
@@ -179,7 +179,7 @@ el-tabs.demo-tabs(v-model="activeName", @tab-click="handleClick")
         :data="vehicles.data",
         class="!py-0"
       )
-  el-tab-pane(label="Manpower", name="project")
+  el-tab-pane(:label="$t('operations.projects.tabs.manpower')", name="project")
     .glass-card.p-10.rounded-3xl.mt-3
       AppTable(
         without-filters,
@@ -190,7 +190,7 @@ el-tabs.demo-tabs(v-model="activeName", @tab-click="handleClick")
         :data="manpowers.data",
         class="!py-0"
       )
-    .title.font-bold.text-xl.capitalize.flex-1.mt-8 Perview
+    .title.font-bold.text-xl.capitalize.flex-1.mt-8 {{ $t('operations.projects.tabs.preview') }}
     .glass-card.rounded-3xl.mt-3.border
       AppTable(
         without-filters,
@@ -211,7 +211,7 @@ el-tabs.demo-tabs(v-model="activeName", @tab-click="handleClick")
         :data="manPowertotal.data",
         class="!py-0"
       )
-  el-tab-pane(label="Materials", name="materials")
+  el-tab-pane(:label="$t('operations.projects.tabs.materials')", name="materials")
     .glass-card.p-10.rounded-3xl.mt-3
       AppTable(
         without-filters,
@@ -232,7 +232,7 @@ el-tabs.demo-tabs(v-model="activeName", @tab-click="handleClick")
         :data="materialsPreview.data",
         class="!py-0"
       )
-  el-tab-pane(label="Assets", name="assets")
+  el-tab-pane(:label="$t('operations.projects.tabs.assets')", name="assets")
     .glass-card.p-10.rounded-3xl.mt-3
       AppTable(
         without-filters,
@@ -253,14 +253,14 @@ el-tabs.demo-tabs(v-model="activeName", @tab-click="handleClick")
         :data="assetsTotal.data",
         class="!py-0"
       )
-  el-tab-pane(label="Preview", name="preview")
+  el-tab-pane(:label="$t('operations.projects.tabs.preview')", name="preview")
     OperationsProjectsShowPreview(
       :project="project",
       :manPowerPreview="finalCost"
     )
-  el-tab-pane(label="proposal", name="proposal")
+  el-tab-pane(:label="$t('operations.projects.tabs.proposal')", name="proposal")
     .glass-card.rounded-3xl.mt-3.border.px-2
-      .title.font-bold.text-xl.capitalize.flex-1.mt-8 proposal
+      .title.font-bold.text-xl.capitalize.flex-1.mt-8 {{ $t('operations.projects.tabs.proposal') }}
         AppTable(
           without-filters,
           without-search,
@@ -270,7 +270,7 @@ el-tabs.demo-tabs(v-model="activeName", @tab-click="handleClick")
           :data="table?.data",
           class="!py-0"
         )
-  el-tab-pane(label="Folders", name="folders")
+  el-tab-pane(:label="$t('operations.projects.tabs.folders')", name="folders")
     .relative
       el-skeleton(:loading="loading" animated)
         template(#template)
@@ -288,7 +288,7 @@ el-tabs.demo-tabs(v-model="activeName", @tab-click="handleClick")
             :project="project"
           )
 
-  el-tab-pane(label="Activity log", name="activity")
+  el-tab-pane(:label="$t('operations.projects.tabs.activity')", name="activity")
     .mt-6.activity
       .flex.items-start.gap-x-6.mb-7.w-full(
         v-for="item in activity?.docs",
@@ -302,7 +302,7 @@ el-tabs.demo-tabs(v-model="activeName", @tab-click="handleClick")
           size="24"
         )
         .mt-2
-          h4.text-neutral-800.font-semibold.text-sm.mb-1 {{ item?.status == "assigned" ? "Assigned User" : item?.status == "create" ? "Create New Project" : item?.status?.toString()?.toUpperCase() }}
+          h4.text-neutral-800.font-semibold.text-sm.mb-1 {{ item?.status == "assigned" ? $t('operations.projects.activity.assigned') : item?.status == "create" ? $t('operations.projects.activity.create') : item?.status?.toString()?.toUpperCase() }}
           p.text-neutral-500.text-xs.mb-4.font-medium {{ formatDate(item?.createdAt) }}
           .glass-card.p-5.rounded-3xl(class="w-[65vw]")
             p.text-neutral-700.text-xs {{ item?.descripion?.toString()?.toUpperCase() }}
@@ -314,7 +314,7 @@ el-tabs.demo-tabs(v-model="activeName", @tab-click="handleClick")
               p.text-neutral-800.text-xs.font-medium {{ item?.user?.name }}
     el-empty(
       v-if="activity?.docs?.length == 0 || !activity?.docs",
-      description="No activity recorded for this project.",
+      :description="$t('operations.projects.details.noActivity')",
       image="/images/empty.png"
     )
     .flex.justify-center.items-center.w-full
@@ -326,14 +326,14 @@ el-tabs.demo-tabs(v-model="activeName", @tab-click="handleClick")
         size="large",
         :disabled="activity?.pagination?.totalPages == activity?.pagination?.page",
         @click="getActivityPage(Number(activity?.pagination?.page) + 1)"
-      ) View More
+      ) {{ $t('operations.projects.details.viewMore') }}
 el-dialog(
   v-model="addShow",
   class="!shadow-none xl:!w-[50%] lg:!w-[70%] sm:!w-[90%] !w-full",
   align-center="",
   @close="handleDialogClose"
 )
-  .title.font-bold.text-xl.capitalize Project Folders
+  .title.font-bold.text-xl.capitalize {{ $t('operations.projects.details.projectFolders') }}
   OperationsProjectsFolders(
     @onSubmit="handleSubmit",
     @onCancel="handleCancel",
@@ -341,6 +341,7 @@ el-dialog(
   )
 </template>
 <script lang="ts" setup>
+  const { t } = useI18n();
   const activeName = ref("information");
   const route = useRoute();
   const loading = ref(false);
@@ -350,7 +351,7 @@ el-dialog(
     loading.value = true;
     addShow.value = false;
     // Refresh project data
-    project = await getProject(route.params.slug.toString());
+    project = await getProject(route.params.slug?.toString() || "");
     loading.value = false;
   };
 
@@ -411,7 +412,7 @@ el-dialog(
   const activity = ref();
 
   // mock data for integrate till api is ready
-  let project = await getProject(route.params.slug.toString());
+  let project = await getProject(route.params.slug?.toString() || "");
 
   const respons = await getProjectActivity(route.params.slug + `?limit=10` + "&&page=1");
   activity.value = respons;
@@ -437,269 +438,90 @@ el-dialog(
   };
 
   // vehicles table
-
   const vehicles = reactive({
     columns: [
-      {
-        prop: "plate",
-        label: "Plate Number",
-        component: "Text",
-        // sortable: true,
-        type: "font-bold",
-        width: 130,
-      },
-      {
-        prop: "manufacturer",
-        label: "Manufacturer",
-        component: "Text",
-        // sortable: true,
-        type: "font-bold",
-        width: 150,
-      },
-      {
-        prop: "rentCost",
-        label: "Rent Cost",
-        component: "Text",
-        // sortable: true,
-        type: "font-default",
-        width: 120,
-      },
-      {
-        prop: "gasCost",
-        label: "Gas Cost",
-        component: "Text",
-        // sortable: true,
-        type: "font-default",
-        width: 120,
-      },
-      {
-        prop: "oilCost",
-        label: "Oil Cost",
-        component: "Text",
-        // sortable: true,
-        type: "font-default",
-        width: 150,
-      },
-      {
-        prop: "regularMaintenanceCost",
-        label: "Regular Maintenance Cost",
-        component: "Text",
-        // sortable: true,
-        type: "font-default",
-        width: 250,
-      },
-      {
-        prop: "totalCost",
-        label: "Total Cost",
-        component: "Text",
-        // sortable: true,
-        type: "font-default",
-        width: 250,
-      },
+      { prop: "plate", label: t('operations.projects.vehicles.table.plateNumber'), component: "Text", type: "font-bold", width: 130 },
+      { prop: "manufacturer", label: t('operations.projects.vehicles.table.manufacturer'), component: "Text", type: "font-bold", width: 150 },
+      { prop: "rentCost", label: t('operations.projects.vehicles.table.rentCost'), component: "Text", type: "font-default", width: 120 },
+      { prop: "gasCost", label: t('operations.projects.vehicles.table.gasCost'), component: "Text", type: "font-default", width: 120 },
+      { prop: "oilCost", label: t('operations.projects.vehicles.table.oilCost'), component: "Text", type: "font-default", width: 150 },
+      { prop: "regularMaintenanceCost", label: t('operations.projects.vehicles.table.maintenanceCost'), component: "Text", type: "font-default", width: 250 },
+      { prop: "totalCost", label: t('operations.projects.vehicles.table.totalCost'), component: "Text", type: "font-default", width: 250 },
     ],
-    data: [] as Vehicle[],
+    data: [] as any[],
   });
 
   if (project?.vehicles?.length) {
-    vehicles.data =
-      project?.vehicles?.map((vehicle: Vehicle) => ({
-        ...vehicle,
-        totalCost:
-          Number(vehicle.rentCost || 0) +
-          Number(vehicle.gasCost || 0) +
-          Number(vehicle.oilCost || 0) +
-          Number(vehicle.regularMaintenanceCost || 0),
-      })) || [];
+    vehicles.data = project?.vehicles?.map((vehicle: any) => ({
+      ...vehicle,
+      totalCost: Number(vehicle.rentCost || 0) + Number(vehicle.gasCost || 0) + Number(vehicle.oilCost || 0) + Number(vehicle.regularMaintenanceCost || 0),
+    })) || [];
   }
 
-  //  manpower table
+  // manpower table
   const manpowers = ref({
     columns: [
-      {
-        prop: "name",
-        label: "Manpower Name",
-        component: "Text",
-        // sortable: true,
-        type: "font-bold",
-        width: 150,
-      },
-      {
-        prop: "estimatedWorkDays",
-        label: "Estimated Work Days ",
-        component: "Text",
-        // sortable: true,
-        type: "font-bold",
-        width: 180,
-      },
-      {
-        prop: "mission",
-        label: "Mission",
-        component: "Text",
-        // sortable: true,
-        type: "font-default",
-        width: 120,
-      },
-      {
-        prop: "durationCost",
-        label: "Duration Cost",
-        component: "Text",
-        // sortable: true,
-        type: "font-default",
-        width: 150,
-      },
-      {
-        prop: "foodAllowanceCost",
-        label: "Food Allowance Cost",
-        component: "Text",
-        // sortable: true,
-        type: "font-default",
-        width: 200,
-      },
-      {
-        prop: "accommodationCostPerManpower",
-        label: "Accommodation Cost/Manpower",
-        component: "Text",
-        // sortable: true,
-        type: "font-default",
-        width: 270,
-      },
-      {
-        prop: "carRentPerManpower",
-        label: "Car Rent/Manpower",
-        component: "Text",
-        // sortable: true,
-        type: "font-default",
-        width: 200,
-      },
-      {
-        prop: "otherCosts",
-        label: "Other Costs",
-        component: "Text",
-        // sortable: true,
-        type: "font-default",
-        width: 150,
-      },
-      {
-        prop: "totalCost",
-        label: "Total Cost",
-        component: "Text",
-        // sortable: true,
-        type: "font-default",
-        width: 150,
-      },
+      { prop: "name", label: t('operations.projects.manpower.table.manpowerName'), component: "Text", type: "font-bold", width: 150 },
+      { prop: "estimatedWorkDays", label: t('operations.projects.manpower.table.estimatedDays'), component: "Text", type: "font-bold", width: 180 },
+      { prop: "mission", label: t('operations.projects.manpower.table.mission'), component: "Text", type: "font-default", width: 120 },
+      { prop: "durationCost", label: t('operations.projects.manpower.table.durationCost'), component: "Text", type: "font-default", width: 150 },
+      { prop: "foodAllowanceCost", label: t('operations.projects.manpower.table.foodAllowance'), component: "Text", type: "font-default", width: 200 },
+      { prop: "accommodationCostPerManpower", label: t('operations.projects.manpower.table.accommodationPerMan'), component: "Text", type: "font-default", width: 270 },
+      { prop: "carRentPerManpower", label: t('operations.projects.manpower.table.carRentPerMan'), component: "Text", type: "font-default", width: 200 },
+      { prop: "otherCosts", label: t('operations.projects.manpower.table.otherCosts'), component: "Text", type: "font-default", width: 150 },
+      { prop: "totalCost", label: t('operations.projects.manpower.table.totalCost'), component: "Text", type: "font-default", width: 150 },
     ],
-    data: [] as ProjectManpower[],
+    data: [] as any[],
   });
+
   const manPowertotal = ref({
     columns: [
-      {
-        prop: "totalCost",
-        label: "Total Cost",
-        component: "Text",
-        // sortable: true,
-        type: "font-bold",
-        width: 130,
-      },
-      {
-        prop: "finalManpowerTableTotalCost",
-        label: "Final Manpower Table Total Cost",
-        component: "Text",
-        // sortable: true,
-        type: "font-bold",
-        width: 150,
-      },
+      { prop: "totalCost", label: t('operations.projects.manpower.totalTable.manpowerTotal'), component: "Text", type: "font-bold", width: 130 },
+      { prop: "finalManpowerTableTotalCost", label: t('operations.projects.manpower.totalTable.finalTotal'), component: "Text", type: "font-bold", width: 150 },
     ],
-    data: [] as any,
+    data: [] as any[],
   });
 
   const table = reactive({
     columns: [
-      {
-        prop: "title",
-        label: "Proposal Title",
-        component: "Text",
-        sortable: true,
-        type: "font-bold",
-        width: 200,
-      },
-      {
-        prop: "version",
-        label: "Version",
-        component: "Text",
-        sortable: true,
-        type: "font-default",
-        width: 150,
-      },
-      {
-        prop: "relatedEntity",
-        label: "Related to",
-        component: "Text",
-        sortable: true,
-        type: "font-default",
-        width: 150,
-      },
-      {
-        prop: "type",
-        label: "Type",
-        component: "Text",
-        sortable: true,
-        type: "font-default",
+      { prop: "title", label: t('operations.projects.proposalTable.title'), component: "Text", sortable: true, type: "font-bold", width: 200 },
+      { prop: "version", label: t('operations.projects.proposalTable.version'), component: "Text", sortable: true, type: "font-default", width: 150 },
+      { prop: "relatedEntity", label: t('operations.projects.proposalTable.relatedTo'), component: "Text", sortable: true, type: "font-default", width: 150 },
+      { 
+        prop: "type", 
+        label: t('operations.projects.proposalTable.type'), 
+        component: "Text", 
+        sortable: true, 
+        type: "font-default", 
         filters: [
           { text: "Financial", value: "FINANCIAL" },
           { text: "Technical", value: "TECHNICAL" },
           { text: "Tech & Financial", value: "MIXED" },
-        ],
-        width: 150,
+        ], 
+        width: 150 
       },
-      {
-        prop: "proposalFor",
-        label: "Client Name",
-        component: "Text",
-        sortable: true,
-        type: "font-bold",
-        width: 200,
-      },
-      {
-        prop: "status",
-        label: "Status",
-        component: "Label",
-        type: "outline",
+      { prop: "proposalFor", label: t('operations.projects.proposalTable.client'), component: "Text", sortable: true, type: "font-bold", width: 200 },
+      { 
+        prop: "status", 
+        label: t('operations.projects.proposalTable.status'), 
+        component: "Label", 
+        type: "outline", 
         filters: [
           { text: "Approved", value: "APPROVED" },
           { text: "Waiting Approval", value: "WAITING_APPROVAL" },
           { text: "Rejected", value: "REJECTED" },
-        ],
-        width: 150,
+        ], 
+        width: 150 
       },
-      {
-        prop: "reference",
-        label: "Reference",
-        component: "Text",
-        sortable: true,
-        type: "font-bold",
-        width: 200,
-      },
-      {
-        prop: "assign",
-        label: "Assigned",
-        component: "Text",
-        type: "font-default",
-        width: 200,
-      },
-      {
-        prop: "createdAt",
-        label: "Created",
-        component: "Text",
-        sortable: true,
-        type: "font-default",
-        width: 200,
-      },
-      // { prop: 'actions', label: 'Actions', sortable: false },
+      { prop: "reference", label: t('operations.projects.proposalTable.reference'), component: "Text", sortable: true, type: "font-bold", width: 200 },
+      { prop: "assign", label: t('operations.projects.proposalTable.assigned'), component: "Text", type: "font-default", width: 200 },
+      { prop: "createdAt", label: t('operations.projects.proposalTable.created'), component: "Text", sortable: true, type: "font-default", width: 200 },
     ],
-    data: [] as Client[],
+    data: [] as any[],
   });
 
-  const response = await useTableFilter(`proposal?relatedEntityId=${route.params.slug}&page=1&limit=100`);
+
+  const response: any = await useTableFilter(`proposal?relatedEntityId=${route.params.slug}&page=1&limit=100`);
  table.data =response.formattedData?.map((el:any) => {return {...el,
   type :el.type == "Mixed"  ? 'Tech & Financial' : el.type}})
 
@@ -733,7 +555,7 @@ el-dialog(
     data: [] as any,
   });
 
-  let manpowersResponse = await useTableFilter("manpower");
+  let manpowersResponse: any = await useTableFilter("manpower");
   manpowersResponse = manpowersResponse.formattedData;
 
   if (project?.projectManpowerResources?.length) {
@@ -759,106 +581,33 @@ el-dialog(
   }
 
   // materials table
-
   const materials = ref({
     columns: [
-      {
-        prop: "description",
-        label: "Description",
-        component: "Text",
-        type: "font-default",
-        width: 400,
-      },
-      {
-        prop: "quantity",
-        label: "Quantity",
-        component: "Text",
-        type: "font-default",
-        width: 150,
-      },
-      {
-        prop: "unitPrice",
-        label: "Unit Price",
-        component: "Text",
-        type: "font-default",
-        width: 120,
-      },
-      {
-        prop: "additionalMaterial",
-        label: "Additional Material Category",
-        component: "Text",
-        type: "font-default",
-        width: 250,
-      },
-      {
-        prop: "additionalMaterialCost",
-        label: "Additional Material Cost",
-        component: "Text",
-        type: "font-default",
-        width: 200,
-      },
-      {
-        prop: "marginCommission",
-        label: "Margin Commission",
-        component: "Text",
-        type: "font-default",
-        width: 180,
-      },
-      {
-        prop: "service",
-        label: "Service",
-        component: "Text",
-        type: "font-default",
-        width: 120,
-      },
-      {
-        prop: "servicePrice",
-        label: "Service Price",
-        component: "Text",
-        type: "font-default",
-        width: 120,
-      },
-      {
-        prop: "materialCost",
-        label: "Material Cost",
-        component: "Text",
-        type: "font-default",
-        width: 200,
-      },
-      {
-        prop: "totalMaterialCost",
-        label: "Total Material Cost",
-        component: "Text",
-        type: "font-default",
-        width: 200,
-      },
+      { prop: "description", label: t('operations.projects.materials.table.description'), component: "Text", type: "font-default", width: 400 },
+      { prop: "quantity", label: t('operations.projects.materials.table.quantity'), component: "Text", type: "font-default", width: 150 },
+      { prop: "unitPrice", label: t('operations.projects.materials.table.unitPrice'), component: "Text", type: "font-default", width: 120 },
+      { prop: "additionalMaterial", label: t('operations.projects.materials.table.category'), component: "Text", type: "font-default", width: 250 },
+      { prop: "additionalMaterialCost", label: t('operations.projects.materials.table.additionalCost'), component: "Text", type: "font-default", width: 200 },
+      { prop: "marginCommission", label: t('operations.projects.materials.table.marginCommission'), component: "Text", type: "font-default", width: 180 },
+      { prop: "service", label: t('operations.projects.materials.table.service'), component: "Text", type: "font-default", width: 120 },
+      { prop: "servicePrice", label: t('operations.projects.materials.table.servicePrice'), component: "Text", type: "font-default", width: 120 },
+      { prop: "materialCost", label: t('operations.projects.materials.table.materialCost'), component: "Text", type: "font-default", width: 200 },
+      { prop: "totalMaterialCost", label: t('operations.projects.materials.table.totalMaterialCost'), component: "Text", type: "font-default", width: 200 },
     ],
-    data: [] as any,
+    data: [] as any[],
   });
+
   const materialsPreview = ref({
     columns: [
-      {
-        prop: "totalMaterialCost",
-        label: "Total Material Cost",
-        component: "Text",
-        type: "font-default",
-        width: 200,
-      },
-      // {
-      //   prop: 'totalAdditionalMaterialCost',
-      //   label: 'Total Additional Material Cost',
-      //   component: 'Text',
-      //   type: 'font-default',
-      //   width: 300,
-      // },
+      { prop: "totalMaterialCost", label: t('operations.projects.materials.table.totalMaterialCost'), component: "Text", type: "font-default", width: 200 },
     ],
-    data: [] as any,
+    data: [] as any[],
   });
 
-  let serviceResponse = await useTableFilter("service");
+  let serviceResponse: any = await useTableFilter("service");
   serviceResponse = serviceResponse?.formattedData || [];
 
-  let addMaterials = await useTableFilter("additional-material");
+  let addMaterials: any = await useTableFilter("additional-material");
   addMaterials = addMaterials?.formattedData || [];
 
   function materialMappedData() {
@@ -919,67 +668,25 @@ el-dialog(
   }
 
   // Assets table
-
   const assets = reactive({
     columns: [
-      {
-        prop: "name",
-        label: "Assets Name",
-        component: "Text",
-        // sortable: true,
-        type: "font-bold",
-        width: 150,
-      },
-      {
-        prop: "rentPrice",
-        label: "Rent Price",
-        component: "Text",
-        // sortable: true,
-        type: "font-bold",
-        width: 150,
-      },
-      {
-        prop: "buyPrice",
-        label: "Buy Price",
-        component: "Text",
-        // sortable: true,
-        type: "font-bold",
-        width: 150,
-      },
+      { prop: "name", label: t('operations.projects.assets.table.name'), component: "Text", type: "font-bold", width: 150 },
+      { prop: "rentPrice", label: t('operations.projects.assets.table.rentPrice'), component: "Text", type: "font-bold", width: 150 },
+      { prop: "buyPrice", label: t('operations.projects.assets.table.buyPrice'), component: "Text", type: "font-bold", width: 150 },
     ],
-    data: [] as Asset[],
-  });
-  const assetsTotal = reactive({
-    columns: [
-      {
-        prop: "totalRentPrice",
-        label: "Total Rent Price",
-        component: "Text",
-        // sortable: true,
-        type: "font-default",
-        width: 150,
-      },
-      {
-        prop: "totalBuyPrice",
-        label: "Total Buy Price",
-        component: "Text",
-        // sortable: true,
-        type: "font-default",
-        width: 150,
-      },
-      {
-        prop: "totalAssetsCost",
-        label: "Total Assets Cost",
-        component: "Text",
-        // sortable: true,
-        type: "font-default",
-        width: 150,
-      },
-    ],
-    data: [] as any,
+    data: [] as any[],
   });
 
-  let assetsResponse = await useTableFilter("asset");
+  const assetsTotal = reactive({
+    columns: [
+      { prop: "totalRentPrice", label: t('operations.projects.assets.totalTable.totalRent'), component: "Text", type: "font-default", width: 150 },
+      { prop: "totalBuyPrice", label: t('operations.projects.assets.totalTable.totalBuy'), component: "Text", type: "font-default", width: 150 },
+      { prop: "totalAssetsCost", label: t('operations.projects.assets.totalTable.totalCost'), component: "Text", type: "font-default", width: 150 },
+    ],
+    data: [] as any[],
+  });
+
+  let assetsResponse: any = await useTableFilter("asset");
   assetsResponse = assetsResponse?.formattedData || [];
 
   if (project?.projectAssets?.length) {
@@ -1005,32 +712,11 @@ el-dialog(
 
   const finalCost = ref({
     columns: [
-      {
-        prop: "finalManpowerTableTotalCost",
-        label: "Manpower Table  Cost",
-        component: "Text",
-        // sortable: true,
-        type: "font-default",
-        width: 270,
-      },
-      {
-        prop: "finalMaterialsTableCost",
-        label: "Materials Table Cost ",
-        component: "Text",
-        // sortable: true,
-        type: "font-default",
-        width: 250,
-      },
-      {
-        prop: "finalAssetsTableCost",
-        label: "Assets Table Cost",
-        component: "Text",
-        // sortable: true,
-        type: "font-default",
-        width: 250,
-      },
+      { prop: "finalManpowerTableTotalCost", label: t('operations.projects.manpower.title'), component: "Text", type: "font-default", width: 270 },
+      { prop: "finalMaterialsTableCost", label: t('operations.projects.materials.title'), component: "Text", type: "font-default", width: 250 },
+      { prop: "finalAssetsTableCost", label: t('operations.projects.assets.title'), component: "Text", type: "font-default", width: 250 },
     ],
-    data: [] as any,
+    data: [] as any[],
   });
 
   finalCost.value.data = [

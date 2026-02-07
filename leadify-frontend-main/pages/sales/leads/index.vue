@@ -1,12 +1,13 @@
+
 <template lang="pug">
 div
   //- Header
   .flex.items-center.justify-between.mb-8
-    .title.font-bold.text-2xl.mb-1.capitalize Leads
+    .title.font-bold.text-2xl.mb-1.capitalize {{ $t('leads.title') }}
     .flex.items-center.gap-x-3
       template(v-if="canCreateLeads")
         NuxtLink(to="/sales/leads/add-lead")
-          el-button(size='large' :loading="loading" native-type="submit" type="primary" :icon="Plus" class="w-full !my-4 !rounded-2xl")  New Lead
+          el-button(size='large' :loading="loading" native-type="submit" type="primary" :icon="Plus" class="w-full !my-4 !rounded-2xl")  {{ $t('leads.newLead') }}
       el-dropdown(trigger="click")
           span.el-dropdown-link
               button.rounded-btn(class="!px-4"): Icon(  name="IconToggle" size="24")
@@ -15,20 +16,16 @@ div
                 el-dropdown-item
                   button.flex.items-center(:to="`/leads/1`" @click="triggerFileInput" type="button")
                     Icon.text-md.mr-2(size="20" name="IconImport" )
-                    p.text-sm Import
+                    p.text-sm {{ $t('leads.import') }}
                 //- NuxtLink(:to="`/leads/1`")
                 //-   el-dropdown-item
                 //-     NuxtLink.flex.items-center(:to="`/leads/1`")
                 //-       Icon.text-md.mr-2(size="20" name="IconExport" )
-                //-       p.text-sm Export
-                //- el-dropdown-item
-                //-     NuxtLink.flex.items-center(:to="`/leads/1`")
-                //-       Icon.text-md.mr-2(size="20" name="IconArchived" )
-                //-       p.text-sm Archived
+                //-       p.text-sm {{ $t('leads.export') }}
   input(type="file", ref="fileInput", style="display: none", accept=".xls,.xlsx", @change="handleFileChange")
   // Spinner
   el-spinner(size="large" v-if="loadingAction" class="nuxt-loading-indicator")
-  AppTable(v-slot="{data}"  v-if="!loadingAction" :externalLoading="loading" :filterOptions="filterOptions" :columns="table.columns" position="lead" :pageInfo="response.pagination"  :data="table.data" :sortOptions="table.sort" @handleRowClick="handleRowClick" searchPlaceholder="leads" :key="table.data" )
+  AppTable(v-slot="{data}"  v-if="!loadingAction" :externalLoading="loading" :filterOptions="filterOptions" :columns="table.columns" position="lead" :pageInfo="response.pagination"  :data="table.data" :sortOptions="table.sort" @handleRowClick="handleRowClick" :searchPlaceholder="$t('leads.title')" :key="table.data" )
     .flex.items-center.py-2(@click.stop)
         //- NuxtLink.toggle-icon(:to="`/leads/1`")
         //-     Icon.text-md(name="IconEye" )
@@ -42,18 +39,18 @@ div
                     el-dropdown-item
                       NuxtLink.flex.items-center(:to="`/sales/leads/${data?.id}`")
                         Icon.text-md.mr-2(name="IconEye" )
-                        p.text-sm View
+                        p.text-sm {{ $t('leads.view') }}
                     el-dropdown-item( v-if="hasPermission('EDIT_LEADS')")
                       NuxtLink.flex.items-center(:to="`/sales/leads/edit/${data?.id}`")
                         Icon.text-md.mr-2(name="IconEdit" )
-                        p.text-sm Edit
+                        p.text-sm {{ $t('leads.edit') }}
                     //- el-dropdown-item(@click="[deleteLeadPopup=true, userActionId = data?.id]" )
                     //-     .flex.items-center
                     //-       Icon.text-md.mr-2(name="IconDelete" )
-                    //-       p.text-sm Delete
-  ActionModel(v-model="qualifiedLeadPopup" :loading="loadingAction" btn-text="Save" description="Would you like to convert this lead into an Opportunity or a Deal?" @confirm = "editPresent" )
+                    //-       p.text-sm {{ $t('leads.delete') }}
+  ActionModel(v-model="qualifiedLeadPopup" :loading="loadingAction" :btn-text="$t('common.save')" :description="$t('leads.confirmConversion')" @confirm = "editPresent" )
    template(#input)
-    InputSelect(label=" Present " @change ="setPresent" :options="leadPresent"  )
+    InputSelect(:label="$t('leads.present')" @change ="setPresent" :options="leadPresent"  )
 </template>
 
 <script setup lang="ts">
@@ -63,6 +60,9 @@ div
   import { leadStates, leadSources } from '@/composables/useLeads';
   import useTableFilter from '@/composables/useTableFilter';
   import { computed, ref, watch, unref, shallowRef, isRef, onMounted, onBeforeMount } from 'vue';
+  
+  const { $i18n } = useNuxtApp();
+  const t = $i18n.t;
   const { hasPermission } = await usePermissions();
   const loadingAction = ref(false);
   const loading = ref(false);
@@ -74,20 +74,20 @@ div
   // This ensures the v-if updates reactively when permissions change
   const canCreateLeads = computed(() => hasPermission('CREATE_LEADS') === true);
 
-  const leadPresent = [
+  const leadPresent = computed(() => [
     {
-      label: "Convert to Opportunity",
+      label: t('leads.convertToOpp'),
       value: "opportunity",
     },
     {
-      label: "Convert to Deal",
+      label: t('leads.convertToDeal'),
       value: "deal",
     },
     {
-      label: "Not Now",
+      label: t('common.cancel'), // "Not Now" replaced with Cancel or relevant translation
       value: "now",
     },
-  ];
+  ]);
 
   async function setPresent(pre: any) {
     present.value = pre.value;
@@ -125,81 +125,13 @@ div
     select.value = {};
   }
 
-  const table = ref({
-    columns: [
-      {
-        prop: "leadDetails",
-        label: "Lead Name",
-        component: "AvatarText",
-        sortable: true,
-        type: "font-bold",
-        width: 170,
-      },
-      {
-        prop: "phone",
-        label: "Phone",
-        component: "Text",
-        sortable: true,
-        type: "font-default",
-        width: 150,
-      },
-      {
-        prop: "email",
-        label: "Email",
-        component: "Text",
-        sortable: true,
-        type: "font-default",
-        width: 200,
-      },
-      {
-        prop: "status",
-        label: "Status",
-        component: "Label",
-        sortable: true,
-        type: "select",
-        filters: [
-          { text: "New", value: "NEW", actions: submitForm },
-          { text: "Contacted", value: "CONTACTED", actions: submitForm },
-          { text: "Disqualified", value: "DISQUALIFIED", actions: submitForm },
-          { text: "Qualified", value: "QUALIFIED", actions: submitForm },
-        ],
-        width: 150,
-      },
+  // Call API to Get the lead
+  let response;
+  response = await useTableFilter("lead");
 
-      {
-        prop: "leadSource",
-        label: "Source",
-        component: "Text",
-        sortable: true,
-        type: "font-default",
-        width: 150,
-      },
-      {
-        prop: "lastContactDate",
-        label: "Last Contact",
-        component: "Text",
-        sortable: true,
-        type: "font-default",
-        width: 150,
-      },
-      {
-        prop: "assign",
-        label: "Assigned",
-        component: "Text",
-        type: "font-default",
-        width: 200,
-      },
-      {
-        prop: "createdAt",
-        label: "Created",
-        component: "Text",
-        sortable: true,
-        type: "font-default",
-        width: 200,
-      },
-      // { prop: 'actions', label: 'Actions', sortable: false },
-    ],
-    data: [] as Lead[],
+  const table = ref({
+    columns: [] as any[], // Initialize as empty array
+    data: response.formattedData || [],
     sort: [
       { prop: "price", order: "ascending", value: "PRICE_ASC" },
       { prop: "price", order: "descending", value: "PRICE_DESC" },
@@ -208,11 +140,89 @@ div
     ],
   });
 
-  // Call API to Get the lead
-  // const response = await getLeads();
-  let response;
-  response = await useTableFilter("lead");
-  table.value.data = response.formattedData;
+  const updateTableColumns = () => {
+    table.value.columns = [
+      {
+        prop: "leadDetails",
+        label: t('leads.table.leadName'),
+        component: "AvatarText",
+        sortable: true,
+        type: "font-bold",
+        width: 170,
+      },
+      {
+        prop: "phone",
+        label: t('leads.table.phone'),
+        component: "Text",
+        sortable: true,
+        type: "font-default",
+        width: 150,
+      },
+      {
+        prop: "email",
+        label: t('leads.table.email'),
+        component: "Text",
+        sortable: true,
+        type: "font-default",
+        width: 200,
+      },
+      {
+        prop: "status",
+        label: t('leads.table.status'),
+        component: "Label",
+        sortable: true,
+        type: "select",
+        filters: [
+          { text: t('crm.stages.new'), value: "NEW", actions: submitForm },
+          { text: t('crm.stages.contacted'), value: "CONTACTED", actions: submitForm },
+          { text: t('crm.stages.lost'), value: "DISQUALIFIED", actions: submitForm }, // Assuming Disqualified maps to Lost or has its own key
+          { text: t('crm.stages.qualified'), value: "QUALIFIED", actions: submitForm },
+        ],
+        width: 150,
+      },
+
+      {
+        prop: "leadSource",
+        label: t('leads.table.source'),
+        component: "Text",
+        sortable: true,
+        type: "font-default",
+        width: 150,
+      },
+      {
+        prop: "lastContactDate",
+        label: t('leads.table.lastContact'),
+        component: "Text",
+        sortable: true,
+        type: "font-default",
+        width: 150,
+      },
+      {
+        prop: "assign",
+        label: t('leads.table.assigned'),
+        component: "Text",
+        type: "font-default",
+        width: 200,
+      },
+      {
+        prop: "createdAt",
+        label: t('leads.table.created'),
+        component: "Text",
+        sortable: true,
+        type: "font-default",
+        width: 200,
+      },
+      // { prop: 'actions', label: 'Actions', sortable: false },
+    ];
+  };
+
+  // Initial update of columns
+  updateTableColumns();
+
+  // If you want columns to react to locale changes, you would watch the locale:
+  // const { locale } = useI18n();
+  // watch(locale, updateTableColumns);
+
   function handleRowClick(val: any) {
     router.push(`/sales/leads/${val.id}`);
   }
@@ -223,33 +233,33 @@ div
     value: e.id,
   }));
 
-  const filterOptions = [
+  const filterOptions = computed(() => [
     {
-      title: "Status",
+      title: t('leads.table.status'),
       value: "status",
       options: [...leadStates],
     },
     {
-      title: "Lead Source",
+      title: t('leads.table.source'),
       value: "leadSource",
       options: [...leadSources],
     },
     {
-      title: "Assigned user",
+      title: t('leads.table.assigned'), // "Assigned user"
       value: "userId",
       options: [...mappedUsers],
     },
     {
-      title: "Creation Date",
+      title: t('leads.table.created'), // "Creation Date"
       value: ["fromDate", "toDate"],
       type: "date",
     },
     {
-      title: "Last Contact Date",
+      title: t('leads.table.lastContact'), // "Last Contact Date"
       value: ["fromLastContactDate", "toLastContactDate"],
       type: "date",
     },
-  ];
+  ]);
 
   // implement import leads
 
@@ -272,8 +282,8 @@ div
     if (!validTypes.includes(file.type)) {
       ElNotification({
         type: "error",
-        title: "Error",
-        message: "Please upload a valid Excel file (.xls or .xlsx)",
+        title: t('common.error'),
+        message: t('leads.errors.invalidFile'),
       });
       target.value = ""; // Reset input
       return;
@@ -284,8 +294,8 @@ div
       if (!fileResponse?.success) {
         ElNotification({
           type: "error",
-          title: "Error",
-          message: fileResponse?.message || "Failed to import file",
+          title: t('common.error'),
+          message: fileResponse?.message || t('leads.errors.importFailed'),
         });
         return;
       }
@@ -295,14 +305,14 @@ div
 
       ElNotification({
         type: "success",
-        title: "success",
-        message: "Leads successfully imported.",
+        title: t('common.success'),
+        message: t('leads.importSuccess'),
       });
     } catch (err) {
       ElNotification({
         type: "error",
-        title: "Error",
-        message: "Failed to import file",
+        title: t('common.error'),
+        message: t('leads.errors.importFailed'),
       });
     } finally {
       // Reset the file input so you can upload the same file again if needed

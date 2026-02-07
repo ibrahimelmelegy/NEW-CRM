@@ -2,7 +2,7 @@
 .glass-card.m-auto.p-10(class="2xl:w-1/2 w-[90%]")
   .flex.justify-between.items-center.mb-4
     span
-    el-button(size='medium' plain type="primary" :icon="Plus" native-type="button" @click="AddDelivery" class="!rounded-2xl !py-2.5 !px-4") Add Delivery
+    el-button(size='medium' plain type="primary" :icon="Plus" native-type="button" @click="AddDelivery" class="!rounded-2xl !py-2.5 !px-4") {{ $t('deals.form.addDelivery') }}
   DealFormDelivery(
     v-for="(delivery, index) in deliveries"
     :key="delivery.id"
@@ -19,6 +19,8 @@
 import { ref } from 'vue';
 import { v4 as uuidv4 } from 'uuid'; // To generate unique IDs
 import { ElMessage } from 'element-plus';
+import { useI18n } from 'vue-i18n';
+const { t } = useI18n();
 const emit = defineEmits(['onSubmit', 'isValid']);
 const route = useRoute();
 const props = defineProps({
@@ -166,7 +168,7 @@ async function onSubmitDeliveries() {
   // Only proceed if all forms are submitted successfully
   if (!isSubmitted) {
     emit('isValid', false);
-    ElMessage.error('Please fill in all the required in delivery fields.');
+    ElMessage.error(t('deals.errors.fillDeliveries'));
     return;
   }
 

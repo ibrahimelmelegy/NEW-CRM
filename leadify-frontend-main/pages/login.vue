@@ -17,7 +17,7 @@
         </template>
         <div class="space-y-4">
           <h2 class="text-4xl lg:text-5xl font-bold leading-tight theme-text-primary">
-            {{ $t('auth.elevateExperience') }} <span class="text-transparent bg-clip-text bg-gradient-to-r from-[#7849ff] to-[#ff7b00]">Experience</span>
+            {{ $t('auth.elevateExperience') }} <span class="text-transparent bg-clip-text bg-gradient-to-r from-[#7849ff] to-[#ff7b00]">{{ $t('auth.experience') }}</span>
           </h2>
           <p class="theme-text-secondary text-lg max-w-md leading-relaxed">
             {{ $t('auth.harnessIntelligence') }}

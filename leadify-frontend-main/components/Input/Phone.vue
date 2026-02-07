@@ -1,6 +1,6 @@
 <template lang="pug">
 el-form-item(:label="label"  :error='errorMessage' class="!mb-6")
-  vue-tel-input.form-control.w-full( :disabled="disabled" v-model="phoneNumber"  :inputOptions="{type : 'tel', placeholder: placeholder ? placeholder : 'enter' + label}"  :dropdownOptions="{showSearchBox : true , showFlags:true , showDialCodeInSelection: true , showDialCodeInList: true }"   @validate="validatecode"   :validCharactersOnly="true"  placeholder="12 123 45 67"  mode="international"  @input="handleChange" @blur="handleBlur"  :class="{'is-invalid': errorMessage, valid: meta.valid , 'p-invali-input': errorMessage  }"  defaultCountry="EG")
+  vue-tel-input.form-control.w-full( :disabled="disabled" v-model="phoneNumber"  :inputOptions="{type : 'tel', placeholder: placeholder ? placeholder : $t('common.enter') + label}"  :dropdownOptions="{showSearchBox : true , showFlags:true , showDialCodeInSelection: true , showDialCodeInList: true }"   @validate="validatecode"   :validCharactersOnly="true"  placeholder="12 123 45 67"  mode="international"  @input="handleChange" @blur="handleBlur"  :class="{'is-invalid': errorMessage, valid: meta.valid , 'p-invali-input': errorMessage  }"  defaultCountry="EG")
 </template>
 
 <script setup lang="ts">

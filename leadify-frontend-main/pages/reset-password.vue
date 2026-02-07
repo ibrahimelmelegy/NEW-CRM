@@ -33,7 +33,7 @@
             <!-- State 1: New Password Form -->
             <div v-if="!errMsg">
               <div class="mb-10">
-                <h1 class="text-3xl font-bold text-white mb-2">New Password</h1>
+                <h1 class="text-3xl font-bold text-white mb-2">{{ $t('auth.newPassword') }}</h1>
                 <p class="text-text-muted leading-relaxed">Please set a strong password that you haven't used before.</p>
               </div>
 
@@ -48,7 +48,7 @@
                 <div class="space-y-6">
                   <div class="form-group flex flex-col gap-2">
                     <InputText 
-                      label="New Password"
+                      :label="$t('auth.newPassword')"
                       placeholder="••••••••••••" 
                       name="password" 
                       type="password"
@@ -57,7 +57,7 @@
                   </div>
                   <div class="form-group flex flex-col gap-2">
                     <InputText 
-                      label="Confirm Password"
+                      :label="$t('auth.confirmPassword')"
                       placeholder="••••••••••••" 
                       name="confirmPassword" 
                       type="password"
@@ -74,7 +74,7 @@
                     type="primary" 
                     class="w-full !h-[56px] !rounded-2xl !bg-primary hover:!bg-primary-hover !border-none !text-lg !font-bold shadow-lg shadow-primary/20 transition-all"
                   >
-                    Reset Password
+                    {{ $t('auth.resetTitle') }}
                   </el-button>
                 </div>
               </el-form>

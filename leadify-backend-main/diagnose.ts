@@ -1,8 +1,8 @@
 
 import redisClient from './src/config/redis';
-import { sequelize } from './src/config/database';
+import { sequelize } from './src/config/db';
 import Lead from './src/lead/leadModel';
-import Deal from './src/deal/dealModel';
+import Deal from './src/deal/model/dealModel';
 
 const diagnose = async () => {
     console.log('🔍 STARTING SYSTEM DIAGNOSIS...');

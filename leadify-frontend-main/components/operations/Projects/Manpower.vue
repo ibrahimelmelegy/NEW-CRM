@@ -2,30 +2,30 @@
 el-form.mt-6.mb-24(  autocomplete="off"   @submit.prevent='onSubmit'   ref="myForm" label-position="top"  :validationSchema="formSchema" )
   .card.m-auto.glass-card.p-10.rounded-3xl(class="w-[90%] ")
     .grid.grid-cols-2.gap-3
-      InputText.mt-4(label="Accommodation Cost"  placeholder="Enter Accommodation Cost SAR" name="accommodationCost" :value="project?.accommodationCost" )
-      InputText.mt-4(label="Food Cost Per Day"  placeholder="Enter Food Cost Per Day SAR" name="foodCost" :value="project?.foodCostPerDay" )
-    InputText.mt-4(label="Management Addition Percentage"  placeholder="Enter Management Addition Percentage %" name="managementAddition" :value="project?.managementAdditionPercentage" )
+      InputText.mt-4(:label="$t('operations.projects.manpower.accommodationCost')"  :placeholder="$t('operations.projects.manpower.placeholders.accommodation')" name="accommodationCost" :value="project?.accommodationCost" )
+      InputText.mt-4(:label="$t('operations.projects.manpower.foodCost')"  :placeholder="$t('operations.projects.manpower.placeholders.food')" name="foodCost" :value="project?.foodCostPerDay" )
+    InputText.mt-4(:label="$t('operations.projects.manpower.managementAddition')"  :placeholder="$t('operations.projects.manpower.placeholders.management')" name="managementAddition" :value="project?.managementAdditionPercentage" )
     .glass-card.rounded-3xl.mt-3.border.mt-8
       .flex.justify-justify-between.items-center.p-10.pb-0
-        .title.font-bold.text-xl.capitalize.flex-1 Manpower Info
-        el-button(class="!rounded-2xl" type='primary' @click='selectedManpower = {} ,addManpower = true' :icon="Plus" size="large" :loading="loading") Add
+        .title.font-bold.text-xl.capitalize.flex-1 {{ $t('operations.projects.manpower.title') }}
+        el-button(class="!rounded-2xl" type='primary' @click='selectedManpower = {} ,addManpower = true' :icon="Plus" size="large" :loading="loading") {{ $t('common.add') }}
       AppTable(v-slot="{data}" without-filters without-search without-pagination :columns="manpowers.columns" :data="manpowers.data" :key="manpowers.data || values.accommodationCost" class="!py-0")
         .flex.items-center.py-2(@click.stop)
           el-button(class="!rounded-2xl" type='danger' link @click="selectedManpower = data, isDelete = true"): Icon(name="IconDelete" size="20")
           el-button(class="!rounded-2xl" type='primary' link @click="editManpower(data.id)"): Icon(name="IconEdit" size="20")
-    .title.font-bold.text-xl.capitalize.flex-1.mt-8 Perview
+    .title.font-bold.text-xl.capitalize.flex-1.mt-8 {{ $t('operations.projects.manpower.preview') }}
     .glass-card.rounded-3xl.mt-3.border
       AppTable(without-filters without-search without-action without-pagination :columns="manPowerPreview.columns" :data="manPowerPreview.data" :key="manPowerPreview.data" class="!py-0")
     .glass-card.rounded-3xl.mt-3.border
       AppTable(without-filters without-search without-action without-pagination :columns="manPowertotal.columns" :data="manPowertotal.data" :key="manPowertotal.data" class="!py-0")
   .endBar
       .flex.justify-between.w-full
-        el-button(   size='large' plain type="primary" class=" !rounded-2xl" @click="emit('cancel')") Cancel
+        el-button(   size='large' plain type="primary" class=" !rounded-2xl" @click="emit('cancel')") {{ $t('common.cancel') }}
         .flex.items-center.gap-x-2
-          el-button(type="primary"  size='large' link :loading="loading"  :disabled="loading" class=" !px-5 !rounded-2xl" @click="activeStep--") Back
-          el-button(   size='large' type="primary" native-type="submit" :loading="loading"  :disabled="loading" class=" !px-5 !rounded-2xl") Next
+          el-button(type="primary"  size='large' link :loading="loading"  :disabled="loading" class=" !px-5 !rounded-2xl" @click="activeStep--") {{ $t('common.back') }}
+          el-button(   size='large' type="primary" native-type="submit" :loading="loading"  :disabled="loading" class=" !px-5 !rounded-2xl") {{ $t('common.next') }}
 OperationsProjectsModalManpower(v-model="addManpower" v-if="addManpower" :manpower="selectedManpower"  @confirm="fetchProjectsManpowers")
-ActionModel(v-model="isDelete" v-if="isDelete" :loading="loadingAction" @confirm="deleteManpower" btn-text="delete" title="Delete Project Manpower" description="Are you sure you want to delete this Project Manpower?" icon="/images/delete-image.png" )
+ActionModel(v-model="isDelete" v-if="isDelete" :loading="loadingAction" @confirm="deleteManpower" :btn-text="$t('common.delete')" :title="$t('operations.projects.manpower.modals.deleteTitle')" :description="$t('operations.projects.manpower.modals.deleteConfirm')" icon="/images/delete-image.png" )
 </template>
 
 <script lang="ts" setup>
@@ -46,16 +46,17 @@ const props = defineProps({
     required: false,
   },
 });
-const activeStep = defineModel();
+const activeStep = defineModel<number>({ required: true });
 const addManpower = ref(false);
 const selectedManpower = ref<ProjectManpower>({});
 const isDelete = ref(false);
 const emit = defineEmits(['submit', 'cancel']);
+const { t } = useI18n();
 const loadingAction = ref(false);
 const formSchema = yup.object({
-  accommodationCost: yup.string().trim().required().min(1).max(100).label('Accommodation Cost'),
-  foodCost: yup.string().trim().required().min(1).max(100).label('Food Cost Per Day'),
-  managementAddition: yup.string().trim().required().min(1).max(100).label('Management Addition'),
+  accommodationCost: yup.string().trim().required().min(1).max(100).label(t('operations.projects.manpower.accommodationCost')),
+  foodCost: yup.string().trim().required().min(1).max(100).label(t('operations.projects.manpower.foodCost')),
+  managementAddition: yup.string().trim().required().min(1).max(100).label(t('operations.projects.manpower.managementAddition')),
 });
 
 const { handleSubmit, values } = useForm({
@@ -83,7 +84,7 @@ const manpowers = ref({
   columns: [
     {
       prop: 'name',
-      label: 'Manpower Name',
+      label: t('operations.projects.manpower.table.manpowerName'),
       component: 'Text',
       // sortable: true,
       type: 'font-bold',
@@ -91,7 +92,7 @@ const manpowers = ref({
     },
     {
       prop: 'estimatedWorkDays',
-      label: 'Estimated Work Days ',
+      label: t('operations.projects.manpower.table.estimatedDays'),
       component: 'Text',
       // sortable: true,
       type: 'font-bold',
@@ -99,7 +100,7 @@ const manpowers = ref({
     },
     {
       prop: 'mission',
-      label: 'Mission',
+      label: t('operations.projects.manpower.table.mission'),
       component: 'Text',
       // sortable: true,
       type: 'font-default',
@@ -107,7 +108,7 @@ const manpowers = ref({
     },
     {
       prop: 'durationCost',
-      label: 'Duration Cost',
+      label: t('operations.projects.manpower.table.durationCost'),
       component: 'Text',
       // sortable: true,
       type: 'font-default',
@@ -115,7 +116,7 @@ const manpowers = ref({
     },
     {
       prop: 'foodAllowanceCost',
-      label: 'Food Allowance Cost',
+      label: t('operations.projects.manpower.table.foodAllowance'),
       component: 'Text',
       // sortable: true,
       type: 'font-default',
@@ -123,7 +124,7 @@ const manpowers = ref({
     },
     {
       prop: 'accommodationCostPerManpower',
-      label: 'Accommodation Cost/Manpower',
+      label: t('operations.projects.manpower.table.accommodationPerMan'),
       component: 'Text',
       // sortable: true,
       type: 'font-default',
@@ -131,7 +132,7 @@ const manpowers = ref({
     },
     {
       prop: 'carRentPerManpower',
-      label: 'Car Rent/Manpower',
+      label: t('operations.projects.manpower.table.carRentPerMan'),
       component: 'Text',
       // sortable: true,
       type: 'font-default',
@@ -139,7 +140,7 @@ const manpowers = ref({
     },
     {
       prop: 'otherCosts',
-      label: 'Other Costs',
+      label: t('operations.projects.manpower.table.otherCosts'),
       component: 'Text',
       // sortable: true,
       type: 'font-default',
@@ -147,7 +148,7 @@ const manpowers = ref({
     },
     {
       prop: 'totalCost',
-      label: 'Total Cost',
+      label: t('operations.projects.manpower.table.totalCost'),
       component: 'Text',
       // sortable: true,
       type: 'font-default',
@@ -160,7 +161,7 @@ const manPowerPreview = ref({
   columns: [
     {
       prop: 'totalCarRent',
-      label: 'Total Car Rent',
+      label: t('operations.projects.manpower.previewTable.totalCarRent'),
       component: 'Text',
       // sortable: true,
       type: 'font-bold',
@@ -168,7 +169,7 @@ const manPowerPreview = ref({
     },
     {
       prop: 'totalCarRentDuration',
-      label: 'Total Car Rent/Duration',
+      label: t('operations.projects.manpower.previewTable.totalCarRentDuration'),
       component: 'Text',
       // sortable: true,
       type: 'font-bold',
@@ -176,7 +177,7 @@ const manPowerPreview = ref({
     },
     {
       prop: 'resourceCount',
-      label: 'Resource Count',
+      label: t('operations.projects.manpower.previewTable.resourceCount'),
       component: 'Text',
       // sortable: true,
       type: 'font-default',
@@ -189,7 +190,7 @@ const manPowertotal = ref({
   columns: [
     {
       prop: 'totalCost',
-      label: 'Manpower Table Total Cost',
+      label: t('operations.projects.manpower.totalTable.manpowerTotal'),
       component: 'Text',
       // sortable: true,
       type: 'font-bold',
@@ -197,7 +198,7 @@ const manPowertotal = ref({
     },
     {
       prop: 'managementAdditionPercentage',
-      label: 'Management addition percentage',
+      label: t('operations.projects.manpower.totalTable.managementAddition'),
       component: 'Text',
       // sortable: true,
       type: 'font-bold',
@@ -205,7 +206,7 @@ const manPowertotal = ref({
     },
     {
       prop: 'finalManpowerTableTotalCost',
-      label: 'Final Manpower Table Total Cost',
+      label: t('operations.projects.manpower.totalTable.finalTotal'),
       component: 'Text',
       // sortable: true,
       type: 'font-bold',

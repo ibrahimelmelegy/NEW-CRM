@@ -1,6 +1,6 @@
 <template lang="pug">
 .flex.items-center.justify-between.mb-5.mt-5
-  .title.font-bold.text-2xl.mb-1.capitalize Vehicle Details
+  .title.font-bold.text-2xl.mb-1.capitalize {{ $t('operations.vehicles.view') }}
   el-dropdown(trigger="click")
       span.el-dropdown-link
           button.rounded-btn(class="!px-4"): Icon(  name="IconToggle" size="24")
@@ -9,7 +9,7 @@
             el-dropdown-item(v-if="hasPermission('EDIT_VEHICLES')")
               NuxtLink.flex.items-center(:to="`/operations/vehicle/edit/${vehicle?.id}`")
                 Icon.text-md.mr-2(size="20" name="IconEdit" )
-                p.text-sm Edit
+                p.text-sm {{ $t('common.edit') }}
             //- el-dropdown-item
             //-   .flex.items-center
             //-     Icon.text-md.mr-2(size="20" name="IconRestore" )
@@ -30,40 +30,40 @@
             //-   .flex.items-center
             //-     Icon.text-md.mr-2(size="20" name="IconDelete" )
             //-     p.text-sm Delete
-el-tabs.demo-tabs(v-model="activeName", @tab-click="handleClick")
-  el-tab-pane(label="Summary", name="summary")
+el-tabs.demo-tabs(v-model="activeName" @tab-click="handleClick")
+  el-tab-pane(:label="$t('operations.projects.tabs.summary')" name="summary")
     .flex.align-center.gap-6.mt-3(class="flex-col xl:flex-row")
         .flex-1.glass-card.p-10.rounded-3xl
           .grid.gap-4(class="md:grid-cols-2 lg:grid-cols-3  xl:grid-cols-4")
             div
               .text-neutral-400.font-medium.mb-2.flex.items-center
                 Icon(name="solar:hashtag-outline" size="20" class="mr-2")
-                p Plate
+                p {{ $t('operations.vehicles.table.plate') }}
               p.text-neutral-800.mb-2 {{vehicle?.plate}}
             div
               .text-neutral-400.font-medium.mb-2.flex.items-center
                 Icon(name="fluent:manufacturer-24-regular" size="20" class="mr-2")
-                p Manufacturer
+                p {{ $t('operations.vehicles.table.manufacturer') }}
               p.text-neutral-800.mb-2 {{vehicle?.manufacturer}}
             div
               .text-neutral-400.font-medium.mb-2.flex.items-center
                 Icon(name="solar:hashtag-outline" size="20" class="mr-2")
-                p Rent Cost
+                p {{ $t('operations.vehicles.table.rentCost') }}
               p.text-neutral-800.mb-2 {{vehicle?.rentCost}}
             div
               .text-neutral-400.font-medium.mb-2.flex.items-center
                 Icon(name="solar:hashtag-outline" size="20" class="mr-2")
-                p Gas Cost
+                p {{ $t('operations.vehicles.table.gasCost') }}
               p.text-neutral-800.mb-2 {{vehicle?.gasCost}}
             div
               .text-neutral-400.font-medium.mb-2.flex.items-center
                 Icon(name="solar:hashtag-outline" size="20" class="mr-2")
-                p Oil Cost
+                p {{ $t('operations.vehicles.table.oilCost') }}
               p.text-neutral-800.mb-2 {{vehicle?.oilCost}}
             div
               .text-neutral-400.font-medium.mb-2.flex.items-center
                 Icon(name="solar:hashtag-outline" size="20" class="mr-2")
-                p Regular Maintenance Cost
+                p {{ $t('operations.vehicles.table.maintenanceCost') }}
               p.text-neutral-800.mb-2 {{vehicle?.regularMaintenanceCost}}
 </template>
 <script lang="ts" setup>

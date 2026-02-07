@@ -2,10 +2,10 @@
 div
   //- Header
   .flex.items-center.justify-between.mb-8
-    .title.font-bold.text-2xl.mb-1.capitalize Assets
+    .title.font-bold.text-2xl.mb-1.capitalize {{ $t('navigation.assets') }}
     .flex.items-center.gap-x-3
       NuxtLink(to="/operations/assets/add-asset")
-        el-button(   size='large' :loading="loading" v-if="hasPermission('CREATE_ASSETS')" native-type="submit" type="primary" :icon="Plus" class="w-full !my-4 !rounded-2xl")  New Asset
+        el-button(   size='large' :loading="loading" v-if="hasPermission('CREATE_ASSETS')" native-type="submit" type="primary" :icon="Plus" class="w-full !my-4 !rounded-2xl")  {{ $t('operations.assets.new') }}
       //- el-dropdown(trigger="click")
       //-     span.el-dropdown-link
       //-         button.rounded-btn(class="!px-4"): Icon(  name="IconToggle" size="24")
@@ -24,7 +24,7 @@ div
       //-               NuxtLink.flex.items-center(:to="`/leads/1`")
       //-                 Icon.text-md.mr-2(size="20" name="IconArchived" )
       //-                 p.text-sm Archived
-  AppTable(v-slot="{data}" :filterOptions="filterOptions" :columns="table.columns" position="asset" :pageInfo="response.pagination" :data="table.data" :sortOptions="table.sort" @handleRowClick="handleRowClick" searchPlaceholder="asset" )
+  AppTable(v-slot="{data}" :filterOptions="filterOptions" :columns="table.columns" position="asset" :pageInfo="response.pagination" :data="table.data" :sortOptions="table.sort" @handleRowClick="handleRowClick" :searchPlaceholder="$t('navigation.assets')" )
     .flex.items-center.py-2(@click.stop)
         //- NuxtLink.toggle-icon(:to="`/leads/1`")
         //-     Icon.text-md(name="IconEye" )
@@ -38,16 +38,16 @@ div
                     el-dropdown-item
                       NuxtLink.flex.items-center(:to="`/operations/assets/${data?.id}`")
                         Icon.text-md.mr-2(name="IconEye" )
-                        p.text-sm View
+                        p.text-sm {{ $t('common.view') }}
                     el-dropdown-item(v-if="hasPermission('EDIT_ASSETS')")
                       NuxtLink.flex.items-center(:to="`/operations/assets/edit/${data?.id}`")
                         Icon.text-md.mr-2(name="IconEdit" )
-                        p.text-sm Edit
+                        p.text-sm {{ $t('common.edit') }}
                     //- el-dropdown-item(@click="[deleteLeadPopup=true, userActionId = data?.id]" )
                     //-     .flex.items-center
                     //-       Icon.text-md.mr-2(name="IconDelete" )
                     //-       p.text-sm Delete
-  ActionModel(v-model="deleteLeadPopup" :loading="loadingAction" btn-text="Move to Archive" description-one="Are you sure you want to delete this Lead?" icon="/images/delete-image.png" description-two="It will be archived and can be restored later within 30 days." )
+  ActionModel(v-model="deleteLeadPopup" :loading="loadingAction" :btn-text="$t('common.moveToArchive')" :description-one="$t('common.archiveConfirmation')" icon="/images/delete-image.png" :description-two="$t('common.archiveDescription')" )
 </template>
 
 <script setup lang="ts">
@@ -60,7 +60,7 @@ div
     columns: [
       {
         prop: "name",
-        label: "Assets Name",
+        label: useI18n().t('operations.assets.table.name'),
         component: "Text",
         sortable: true,
         type: "font-default",
@@ -68,7 +68,7 @@ div
       },
       {
         prop: "rentPrice",
-        label: "Rent Price",
+        label: useI18n().t('operations.assets.table.rentPrice'),
         component: "Text",
         sortable: true,
         type: "font-default",
@@ -76,11 +76,16 @@ div
       },
       {
         prop: "buyPrice",
-        label: "Buy Price",
+        label: useI18n().t('operations.assets.table.buyPrice'),
         component: "Text",
         sortable: true,
         type: "font-default",
         width: 150,
+      },
+      {
+        prop: "action",
+        label: useI18n().t('common.action'),
+        component: "Action",
       },
     ],
     data: [],
@@ -95,12 +100,12 @@ div
 
   const filterOptions = [
     {
-      title: "Rent Price",
+      title: useI18n().t('operations.assets.filter.rentPrice'),
       value: ["fromRentPrice", "toRentPrice"],
       type: "input",
     },
     {
-      title: "Buy Price",
+      title: useI18n().t('operations.assets.filter.buyPrice'),
       value: ["fromBuyPrice", "toBuyPrice"],
       type: "input",
     },

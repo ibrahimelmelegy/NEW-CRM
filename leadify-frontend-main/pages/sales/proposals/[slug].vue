@@ -4,12 +4,12 @@
     <div class="header">
       <div class="header-left">
         <el-button @click="goBack" type="default" :icon="ArrowLeft" circle />
-        <h1 class="title">Proposal Details</h1>
-        <span class="badge">React</span>
+        <h1 class="title">{{ $t('proposals.details') }}</h1>
+        <span class="badge">{{ $t('proposals.react') }}</span>
       </div>
       <div class="header-right">
         <el-button @click="refreshFrame" type="primary" :icon="Refresh">
-          Refresh
+          {{ $t('proposals.refresh') }}
         </el-button>
       </div>
     </div>
@@ -25,7 +25,7 @@
       />
       <div v-if="loading" class="loading-overlay">
         <el-icon class="is-loading" :size="40"><Loading /></el-icon>
-        <p>Loading Proposal Details...</p>
+        <p>{{ $t('proposals.loadingDetails') }}</p>
       </div>
     </div>
   </div>
@@ -34,6 +34,9 @@
 <script setup lang="ts">
 import { ref, onMounted, onUnmounted } from 'vue'
 import { ArrowLeft, Refresh, Loading } from '@element-plus/icons-vue'
+import { useI18n } from 'vue-i18n'
+
+const { t } = useI18n()
 
 definePageMeta({
   layout: 'default',

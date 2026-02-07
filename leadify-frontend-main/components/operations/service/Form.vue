@@ -3,15 +3,16 @@ el-form(  autocomplete="off"   @submit.prevent='onSubmit'   ref="myForm" label-p
   slot
   div(:class="{'2xl:w-1/2 w-[90%] p-10  card m-auto glass-card rounded-3xl': !isModal}")
     .grid.grid-cols-2.gap-3
-      InputText(label=" Service Type" name="type" placeholder="Enter Service Type" :value="data?.type" )
-      InputText(label="Service Price"  placeholder="Enter Service Price SAR" name="price" :value="data?.price" )
+      InputText(:label="$t('operations.service.form.name')" name="type" :placeholder="$t('operations.service.form.enterName')" :value="data?.type" )
+      InputText(:label="$t('operations.service.form.cost')"  :placeholder="$t('operations.service.form.enterCost')" name="price" :value="data?.price" )
   slot(name="modal-footer")
 </template>
 
 <script lang="ts" setup>
 import { useForm } from 'vee-validate';
 import * as yup from 'yup';
-;
+import { useI18n } from 'vue-i18n';
+const { t } = useI18n();
 const router = useRouter();
 const props = defineProps({
   loading: Boolean,
@@ -26,7 +27,7 @@ const props = defineProps({
 const emit = defineEmits(['submit']);
 
 const formSchema = yup.object({
-  type: yup.string().trim().required().min(2).max(100).label('Service Type'),
+  type: yup.string().trim().required().min(2).max(100).label(t('operations.service.form.name')),
   price: yup
     .string() // Use string to allow flexible input (empty, float, or integer)
     .required()
@@ -39,7 +40,7 @@ const formSchema = yup.object({
       }
     )
     .max(25)
-    .label('Service Price'),
+    .label(t('operations.service.form.cost')),
 });
 
 const { handleSubmit } = useForm({

@@ -62,7 +62,7 @@ export interface Invoice {
   invoiceNumber: string;
   amount: number | null;
   invoiceDate: Date | null;
-  dueDate: Date | null;
+  dueDate?: Date | null;
   collectedDate: Date | null;
   collected: Boolean | null;
 }

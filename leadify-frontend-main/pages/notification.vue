@@ -2,12 +2,12 @@
     div
      .flex.items-center.justify-center(style="flex-direction: column; ")
       .flex.items-center.justify-between.mb-8.gap-2(class="w-[75%]")
-        .title.font-bold.text-2xl.capitalize Notifications
-        .title.font-medium.text-lg.capitalize(v-if="unreadNotificationsCount == 0" style ="color : #6D42E8;cursor: pointer" ) Mark all as read
-        .title.font-medium.text-lg.capitalize( v-if = "unreadNotificationsCount > 0" style ="color : #ff0000;cursor: pointer" @click = "readNotifications") marking notification as unread {{unreadNotificationsCount}}
+        .title.font-bold.text-2xl.capitalize {{ $t('notifications.title') }}
+        .title.font-medium.text-lg.capitalize(v-if="unreadNotificationsCount == 0" style ="color : #6D42E8;cursor: pointer" ) {{ $t('notifications.markAllRead') }}
+        .title.font-medium.text-lg.capitalize( v-if = "unreadNotificationsCount > 0" style ="color : #ff0000;cursor: pointer" @click = "readNotifications") {{ $t('notifications.markingUnread') }} {{unreadNotificationsCount}}
       .notify.glass-card(class="h-[75vh] mb-2 p-[16px]")
        el-spinner(size="large" v-if="isLoading" class="nuxt-loading-indicator")
-       el-empty(v-if="finalData?.length ==  0 || !finalData " description="No notifications yet." image="/images/emptyNotify.png")
+       el-empty(v-if="finalData?.length ==  0 || !finalData " :description="$t('notifications.noData')" image="/images/emptyNotify.png")
        .item.flex.flex-wrap.gap-2.items-center.justify-center(v-else-if="finalData && finalData?.length > 0")
          .w-full.my-2.p-2(v-for="notify in finalData" :key="notify?.id" :class="`item-data_${notify?.read}`" @click="() => readNotification(notify)")
             .flex.justify-between.items-center
@@ -19,10 +19,10 @@
              div.rounded-full.bg-red-500.w-2.h-2(v-if="notify?.read == 'UN_READ'")
        .pagination.mt-auto.flex.items-center.flex-wrap.gap-2.px-6(class="sm:justify-between justify-center" v-if="!withoutPagination ")
          .flex.items-center.gap-3
-           span.text-sm.text-neutral-400 Show
+           span.text-sm.text-neutral-400 {{ $t('notifications.show') }}
              el-select(size="medium"  v-model="limit" :placeholder="limit"  style="width: 65px" @change="handleSizeChange")
                el-option( v-for="item in [10,25,50]" :key="item" :label="item" :value="item" )
-               span.text-sm.text-neutral-400 entries
+               span.text-sm.text-neutral-400 {{ $t('notifications.entries') }}
            el-pagination( background style="direction:ltr"  :pager-count="4"  :page-count="pagintaion?.totalPages" v-model:current-page='currentPage' :page-size='limit'  layout=' prev, pager, next' :total='pagintaion?.totalItems' )
 </template>
 <script setup lang="ts">

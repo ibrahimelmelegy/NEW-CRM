@@ -3,9 +3,9 @@ el-form(  autocomplete="off"   @submit.prevent='onSubmit'   ref="myForm" label-p
   slot
   div(:class="{'2xl:w-1/2 w-[90%]  card m-auto glass-card p-10 rounded-3xl': !isModal}")
     .grid.grid-cols-2.gap-3
-      InputText.mt-4(label="Plate"  placeholder="Enter Plate" name="plate" :value="data?.plate" )
+      InputText.mt-4(:label="$t('operations.vehicle.form.plateNumber')"  :placeholder="$t('operations.vehicle.form.enterPlate')" name="plate" :value="data?.plate" )
       InputSelect.mt-4(label=" Manufacturer" name="manufacturer" :options="manufacturers" :value="data?.manufacturer" )
-      InputText.mt-4(label="Rent Cost"  placeholder="Enter Rent Cost SAR" name="rentCost" :value="data?.rentCost" )
+      InputText.mt-4(:label="$t('operations.vehicle.form.name')"  :placeholder="$t('operations.vehicle.form.enterName')" name="rentCost" :value="data?.rentCost" )
       InputText.mt-4(label="Gas Cost"  placeholder="Enter Gas Cost SAR" name="gasCost" :value="data?.gasCost" )
       InputText.mt-4(label="Oil Cost"  placeholder="Enter Oil Cost SAR" name="oilCost" :value="data?.oilCost" )
       InputText.mt-4(label="Regular Maintenance Cost"  placeholder="Enter Regular Maintenance Cost SAR" name="regularMaintenanceCost" :value="data?.regularMaintenanceCost" )
@@ -15,7 +15,8 @@ el-form(  autocomplete="off"   @submit.prevent='onSubmit'   ref="myForm" label-p
 <script lang="ts" setup>
 import { useForm } from 'vee-validate';
 import * as yup from 'yup';
-;
+import { useI18n } from 'vue-i18n';
+const { t } = useI18n();
 const router = useRouter();
 const props = defineProps({
   loading: Boolean,
@@ -43,7 +44,7 @@ const formSchema = yup.object({
       }
     )
     .max(25)
-    .label('Rent Cost'),
+    .label(t('operations.vehicle.form.name')),
   gasCost: yup
     .string() // Use string to allow flexible input (empty, float, or integer)
     .required()
@@ -74,7 +75,7 @@ const formSchema = yup.object({
     .string() // Use string to allow flexible input (empty, float, or integer)
     .required()
     .max(20)
-    .label('Plate'),
+    .label(t('operations.vehicle.form.plateNumber')),
   regularMaintenanceCost: yup
     .string() // Use string to allow flexible input (empty, float, or integer)
     .required()

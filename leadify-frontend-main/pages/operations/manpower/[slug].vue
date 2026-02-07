@@ -1,6 +1,6 @@
 <template lang="pug">
 .flex.items-center.justify-between.mb-5.mt-5
-  .title.font-bold.text-2xl.mb-1.capitalize Manpower Details
+  .title.font-bold.text-2xl.mb-1.capitalize {{ $t('operations.manpower.view') }}
   el-dropdown(trigger="click")
       span.el-dropdown-link
           button.rounded-btn(class="!px-4"): Icon(  name="IconToggle" size="24")
@@ -9,7 +9,7 @@
             el-dropdown-item(v-if="hasPermission('EDIT_MANPOWER')")
               NuxtLink.flex.items-center(:to="`/operations/manpower/edit/${manpower?.id}`")
                 Icon.text-md.mr-2(size="20" name="IconEdit" )
-                p.text-sm Edit
+                p.text-sm {{ $t('common.edit') }}
             //- el-dropdown-item
             //-   .flex.items-center
             //-     Icon.text-md.mr-2(size="20" name="IconRestore" )
@@ -30,8 +30,8 @@
             //-   .flex.items-center
             //-     Icon.text-md.mr-2(size="20" name="IconDelete" )
             //-     p.text-sm Delete
-el-tabs.demo-tabs(v-model="activeName", @tab-click="handleClick")
-  el-tab-pane(label="Summary", name="summary")
+el-tabs.demo-tabs(v-model="activeName" @tab-click="handleClick")
+  el-tab-pane(:label="$t('operations.projects.tabs.summary')" name="summary")
     .flex.align-center.gap-6.mt-3(class="flex-col xl:flex-row")
       .flex-1.glass-card.p-10.rounded-3xl
         .flex.align-center.gap-3(class="flex-col md:flex-row")
@@ -40,87 +40,87 @@ el-tabs.demo-tabs(v-model="activeName", @tab-click="handleClick")
             h4.text-2xl.font-semibold.mb-2.text-neutral-900.flex.items-center.gap-x-3 {{manpower?.name}} #[span.border.rounded-xl.text-xs.px-2(:class="`label-outline-${getStatusColor(manpower?.availabilityStatus)}`")  {{formatSnakeCase(manpower?.availabilityStatus)}}]
             p.text-neutral-600 {{manpower?.role?.map((role: string) => formatSnakeCase(role))?.join(', ')}}
         .mt-8
-          p.text-neutral-900.font-semibold.mb-6.text-lg Information
+          p.text-neutral-900.font-semibold.mb-6.text-lg {{ $t('operations.projects.form.projectInfo') }}
           .grid.gap-4(class="md:grid-cols-2 grid-cols-1")
             div
               .text-neutral-400.font-medium.mb-2.flex.items-center
                 Icon(name="IconEmail" size="20" class="mr-2")
-                p Email
+                p {{ $t('common.email') }}
               p.text-neutral-800.mb-2 {{manpower?.email}}
             div
               .text-neutral-400.font-medium.mb-2.flex.items-center
                 Icon(name="IconPhone" size="20" class="mr-2")
-                p Phone Number
+                p {{ $t('common.phone') }}
               p.text-neutral-800.mb-2 {{manpower?.phone}}
             div
               .text-neutral-400.font-medium.mb-2.flex.items-center
                 Icon(name="material-symbols:event-available-outline" size="20" class="mr-2")
-                p Availability Status
+                p {{ $t('operations.manpower.table.availability') }}
               p.text-neutral-800.mb-2 {{formatSnakeCase(manpower?.availabilityStatus)}}
             div
               .text-neutral-400.font-medium.mb-2.flex.items-center
                 Icon(name="f7:money-dollar-circle" size="20" class="mr-2")
-                p Salary
+                p {{ $t('operations.manpower.table.salary') }}
               p.text-neutral-800.mb-2 {{manpower?.salary}}
             div
               .text-neutral-400.font-medium.mb-2.flex.items-center
                 Icon(name="solar:hashtag-outline" size="20" class="mr-2")
-                p V. Allowance
+                p {{ $t('operations.manpower.filter.variableAllowance') }}
               p.text-neutral-800.mb-2 {{manpower?.transportationAllowance}}
             div
               .text-neutral-400.font-medium.mb-2.flex.items-center
                 Icon(name="solar:hashtag-outline" size="20" class="mr-2")
-                p T. Allowance
+                p {{ $t('operations.manpower.filter.transportationAllowance') }}
               p.text-neutral-800.mb-2 {{manpower?.variableAllowance}}
             div
               .text-neutral-400.font-medium.mb-2.flex.items-center
                 Icon(name="solar:hashtag-outline" size="20" class="mr-2")
-                p Iqama Cost
+                p {{ $t('operations.manpower.filter.iqamaCost') }}
               p.text-neutral-800.mb-2 {{manpower?.iqamaCost}}
             div
               .text-neutral-400.font-medium.mb-2.flex.items-center
                 Icon(name="solar:hashtag-outline" size="20" class="mr-2")
-                p EOF
+                p {{ $t('common.eof') }}
               p.text-neutral-800.mb-2 {{manpower?.endOfServiceBenefit}}
             div
               .text-neutral-400.font-medium.mb-2.flex.items-center
                 Icon(name="solar:hashtag-outline" size="20" class="mr-2")
-                p Saudization
+                p {{ $t('common.saudization') }}
               p.text-neutral-800.mb-2 {{manpower?.saudization}}
             div
               .text-neutral-400.font-medium.mb-2.flex.items-center
                 Icon(name="IconFees" size="20" class="mr-2")
-                p Visa Fees
+                p {{ $t('common.visaFees') }}
               p.text-neutral-800.mb-2 {{manpower?.visaFees}}
             div
               .text-neutral-400.font-medium.mb-2.flex.items-center
                 Icon(name="fluent-emoji-high-contrast:ticket" size="20" class="mr-2")
-                p Incoming flight ticket
+                p {{ $t('common.incomingFlightTicket') }}
               p.text-neutral-800.mb-2 {{manpower?.incomingFlightTicket}}
             div
               .text-neutral-400.font-medium.mb-2.flex.items-center
                 Icon(name="solar:hashtag-outline" size="20" class="mr-2")
-                p Health insurance
+                p {{ $t('common.healthInsurance') }}
               p.text-neutral-800.mb-2 {{manpower?.healthInsurance}}
             div
               .text-neutral-400.font-medium.mb-2.flex.items-center
                 Icon(name="solar:hashtag-outline" size="20" class="mr-2")
-                p Org for Social Insurance
+                p {{ $t('common.socialInsurance') }}
               p.text-neutral-800.mb-2 {{manpower?.generalOrganizationForSocialInsurance}}
             div
               .text-neutral-400.font-medium.mb-2.flex.items-center
                 Icon(name="solar:hashtag-outline" size="20" class="mr-2")
-                p Total Cost
+                p {{ $t('operations.manpower.table.totalCost') }}
               p.text-neutral-800.mb-2 {{manpower?.totalCost}}
             div
               .text-neutral-400.font-medium.mb-2.flex.items-center
                 Icon(name="solar:hashtag-outline" size="20" class="mr-2")
-                p Daily Cost
+                p {{ $t('operations.manpower.table.dailyCost') }}
               p.text-neutral-800.mb-2 {{manpower?.dailyCost}}
       .flex-1.glass-card.p-10.rounded-3xl(v-if="manpower?.notes")
         .flex.items-center.gap-2.mb-4
           .flex.items-center.justify-center.w-10.h-10.rounded-full.bg-secondary-turquoise-50: Icon.text-secondary-turquoise-700(name="IconNote" size="24")
-          h4.text-lg.font-semibold.text-neutral-900 Notes
+          h4.text-lg.font-semibold.text-neutral-900 {{ $t('common.notes') }}
         p.text-neutral-800.leading-relaxed {{manpower?.notes}}
   //- el-tab-pane(label="Activity log", name="activity")
   //-   .mt-6.activity

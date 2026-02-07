@@ -2,8 +2,8 @@
 .p-6.animate-entrance
   .flex.items-center.justify-between.mb-10
     .header-content
-      .title.font-bold.text-3xl.mb-2.text-gradient Purchase Orders
-      .subtitle.text-muted.text-sm.tracking-wide Tracking and processing procurement requests
+      .title.font-bold.text-3xl.mb-2.text-gradient {{ $t('procurement.purchaseOrders.title') }}
+      .subtitle.text-muted.text-sm.tracking-wide {{ $t('procurement.subtitle') }}
       
     .flex.items-center.gap-x-4
       NuxtLink(to="/procurement/purchase-orders/create")
@@ -12,7 +12,7 @@
           type="primary", 
           :icon="Plus", 
           class="premium-btn !rounded-2xl px-8 glow-purple"
-        ) New Purchase Order
+        ) {{ $t('procurement.purchaseOrders.create') }}
   
   .glass-card.p-4(class="!rounded-3xl shadow-glow")
     el-tabs.mb-4(v-model="activeTab" @tab-change="handleTabChange" class="premium-tabs")
@@ -25,7 +25,7 @@
       position="procurement", 
       :pageInfo="response.pagination", 
       :data="table.data", 
-      searchPlaceholder="purchase orders",
+      :searchPlaceholder="$t('procurement.purchaseOrders.title')",
       @handleRowClick="handleRowClick",
       class="premium-table"
     )
@@ -115,17 +115,20 @@
 <script setup lang="ts">
 import { Plus } from "@element-plus/icons-vue";
 
+import { useI18n } from "vue-i18n";
+
 const { hasPermission } = await usePermissions();
-const response = await useTableFilter("procurement"); // We'll need to make sure the backend endpoint works for this
+const response = await useTableFilter("procurement"); 
+const { t } = useI18n();
 
 const table = reactive({
   columns: [
     { prop: "poNumber", label: "PO Number", component: "Text", sortable: true, type: "font-bold", width: 180 },
-    { prop: "vendor.name", label: "Vendor", component: "Text", sortable: false, type: "font-default", width: 200 },
+    { prop: "vendor.name", label: t('procurement.purchaseOrders.vendor'), component: "Text", sortable: false, type: "font-default", width: 200 },
     { prop: "project.name", label: "Project", component: "Text", sortable: false, type: "font-default", width: 200 },
-    { prop: "status", label: "Status", component: "Label", sortable: true, type: "outline", width: 140 }, // We can map colors here
-    { prop: "totalAmount", label: "Total Amount", component: "Text", sortable: true, type: "font-bold", width: 150 },
-    { prop: "createdAt", label: "Date", component: "Text", sortable: true, type: "font-default", width: 180 },
+    { prop: "status", label: t('procurement.purchaseOrders.status'), component: "Label", sortable: true, type: "outline", width: 140 }, 
+    { prop: "totalAmount", label: t('procurement.purchaseOrders.amount'), component: "Text", sortable: true, type: "font-bold", width: 150 },
+    { prop: "createdAt", label: t('procurement.purchaseOrders.date'), component: "Text", sortable: true, type: "font-default", width: 180 },
   ],
   data: response.formattedData,
 });

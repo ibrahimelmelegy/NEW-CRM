@@ -18,12 +18,15 @@
     :withoutFilters="true"
     :exportButton="true"
   )
-  ActionModel(v-model="exportPopup" :loading="loadingExport" btn-text="Export" description="Please enter the email address where the Excel file will be received." @confirm = "confirmClick" )
+  ActionModel(v-model="exportPopup" :loading="loadingExport" :btn-text="$t('opportunities.reports.export.btn')" :description="$t('opportunities.reports.export.desc')" @confirm = "confirmClick" )
    template(#input)
-    InputText(v-if="exportPopup" label="Email " @change ="setEmail" :value="email")
+    InputText(v-if="exportPopup" :label="$t('opportunities.reports.export.emailLabel')" @change ="setEmail" :value="email")
 </template>
 
 <script setup lang="ts">
+  import { useI18n } from 'vue-i18n';
+  import { stageOptions, priorityOptions } from '@/composables/useOpportunity';
+
   const props = defineProps({
     filters: {
       type: Object,
@@ -43,12 +46,13 @@
   const loadingExport = ref(false);
   const email = ref("");
 
+  const { t } = useI18n();
   const isLoading = ref(false);
   const table = reactive({
     columns: [
       {
         prop: "name",
-        label: "Opportunity Name",
+        label: t('opportunities.table.name'),
         component: "Text",
         sortable: true,
         type: "font-bold",
@@ -56,17 +60,17 @@
       },
       {
         prop: "stage",
-        label: "Stage",
+        label: t('opportunities.table.stage'),
         component: "Label",
         sortable: true,
         type: "outline",
-        filters: stageOptions.map((stage) => ({ text: stage.label, value: stage.value })),
+        filters: stageOptions.map((stage) => ({ text: t(stage.label), value: stage.value })),
         width: 150,
       },
 
       {
         prop: "estimatedValue",
-        label: "Budget",
+        label: t('opportunities.table.budget'),
         component: "Text",
         sortable: true,
         type: "font-default",
@@ -74,7 +78,7 @@
       },
       {
         prop: "expectedCloseDate",
-        label: "Close Date",
+        label: t('opportunities.table.closeDate'),
         component: "Text",
         sortable: true,
         type: "font-default",
@@ -82,23 +86,23 @@
       },
       {
         prop: "priority",
-        label: "Priority",
+        label: t('opportunities.table.priority'),
         component: "Label",
         sortable: true,
         type: "solid",
-        filters: priorityOptions.map((priority) => ({ text: priority.label, value: priority.value })),
+        filters: priorityOptions.map((priority) => ({ text: t(priority.label), value: priority.value })),
         width: 150,
       },
       {
         prop: "assign",
-        label: "Assigned",
+        label: t('opportunities.table.assigned'),
         component: "Text",
         type: "font-default",
         width: 200,
       },
       {
         prop: "createdAt",
-        label: "Created",
+        label: t('opportunities.table.created'),
         component: "Text",
         sortable: true,
         type: "font-default",
@@ -142,22 +146,22 @@
       if (res?.status == "200") {
         ElNotification({
           type: "success",
-          title: "Success",
-          message: "Send file to email successfully ",
+          title: t('common.success'),
+          message: t('opportunities.reports.export.success'),
         });
       } else {
         ElNotification({
           type: "error",
-          title: "Error",
-          message: "Unknown error",
+          title: t('common.error'),
+          message: t('errors.unknown'),
         });
       }
     } catch (error) {
       // Catch any unexpected errors and handle them
       ElNotification({
         type: "error",
-        title: "Error",
-        message: error instanceof Error ? error.message : "Unknown error",
+        title: t('common.error'),
+        message: error instanceof Error ? error.message : t('errors.unknown'),
       });
     } finally {
       email.value = "";

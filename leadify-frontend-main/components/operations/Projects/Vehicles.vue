@@ -1,9 +1,9 @@
 <template lang="pug">
 el-form.mt-6.mb-24(  autocomplete="off"   @submit.prevent='onSubmit'   ref="myForm" label-position="top"  :validationSchema="formSchema" )
   .card.m-auto.glass-card.p-10.rounded-3xl(class="w-[90%] ")
-    .title.font-bold.text-xl.capitalize.mb-8 Vehicles Info
+    .title.font-bold.text-xl.capitalize.mb-8 {{ $t('operations.projects.vehicles.title') }}
     .flex.align-center.gap-1
-      InputSelect.flex-1(label=" Vehicles" isMultiple name="vehicles" :options="vehiclesOptions"  :value="filteredVehicles.map((vehicle: any) => vehicle.value)" :key="filteredVehicles.length  || vehiclesOptions.length" @change="toggleVehicleSelection")
+      InputSelect.flex-1(:label="$t('operations.projects.vehicles.label')" isMultiple name="vehicles" :options="vehiclesOptions"  :value="filteredVehicles.map((vehicle: any) => vehicle.value)" :key="filteredVehicles.length  || vehiclesOptions.length" @change="toggleVehicleSelection")
       el-button.mt-7(size='medium' :icon="Plus" native-type="button" @click="vehicle = {}, addVehicle = true" class="!rounded-2xl !border-[#e9e8eb] !color-[#e9e8eb] !py-7 !px-4")
     .glass-card.rounded-3xl.mt-3.border
       AppTable(v-slot="{data}" without-filters without-search without-pagination :columns="table.columns" :data="table.data" :key="table.data" class="!py-0")
@@ -12,10 +12,10 @@ el-form.mt-6.mb-24(  autocomplete="off"   @submit.prevent='onSubmit'   ref="myFo
           el-button(class="!rounded-2xl" type='primary' link @click="selectVehicleForEdit(data.id)"): Icon(name="IconEdit" size="20")
   .endBar
       .flex.justify-between.w-full
-        el-button(   size='large' plain type="primary" class=" !rounded-2xl" @click="emit('cancel')") Cancel
+        el-button(   size='large' plain type="primary" class=" !rounded-2xl" @click="emit('cancel')") {{ $t('common.cancel') }}
         .flex.items-center.gap-x-2
-          el-button( type="primary"  size='large' link :loading="loading"  :disabled="loading" class=" !px-5 !rounded-2xl" @click="activeStep--") Back
-          el-button(   size='large' type="primary" native-type="submit" :loading="loading"  :disabled="loading" class=" !px-5 !rounded-2xl") Next
+          el-button( type="primary"  size='large' link :loading="loading"  :disabled="loading" class=" !px-5 !rounded-2xl" @click="activeStep--") {{ $t('common.back') }}
+          el-button(   size='large' type="primary" native-type="submit" :loading="loading"  :disabled="loading" class=" !px-5 !rounded-2xl") {{ $t('common.next') }}
 OperationsProjectsModalVehicle(v-model="addVehicle"  @confirm="fetchVehicles" :vehicle="vehicle")
 </template>
 
@@ -37,7 +37,7 @@ OperationsProjectsModalVehicle(v-model="addVehicle"  @confirm="fetchVehicles" :v
       required: false,
     },
   });
-  const activeStep = defineModel();
+  const activeStep = defineModel<number>({ required: true });
   const addVehicle = ref(false);
   const emit = defineEmits(["submit", "cancel"]);
   const vehiclesOptions = ref<{ label: string; value: string }[]>([]);
@@ -45,8 +45,9 @@ OperationsProjectsModalVehicle(v-model="addVehicle"  @confirm="fetchVehicles" :v
   const vehicles = ref<Vehicle[]>([]);
   const vehicle = ref<Vehicle>();
   const vehiclesId = ref<string[]>([]);
+  const { t } = useI18n();
   const formSchema = yup.object({
-    vehicles: yup.array().of(yup.string()).nullable().label("Vehicles"),
+    vehicles: yup.array().of(yup.string()).nullable().label(t("operations.projects.vehicles.label")),
   });
 
   const { handleSubmit } = useForm({
@@ -73,7 +74,7 @@ OperationsProjectsModalVehicle(v-model="addVehicle"  @confirm="fetchVehicles" :v
     columns: [
       {
         prop: "plate",
-        label: "Plate Number",
+        label: t("operations.projects.vehicles.table.plateNumber"),
         component: "Text",
         // sortable: true,
         type: "font-bold",
@@ -81,7 +82,7 @@ OperationsProjectsModalVehicle(v-model="addVehicle"  @confirm="fetchVehicles" :v
       },
       {
         prop: "manufacturer",
-        label: "Manufacturer",
+        label: t("operations.projects.vehicles.table.manufacturer"),
         component: "Text",
         // sortable: true,
         type: "font-bold",
@@ -89,7 +90,7 @@ OperationsProjectsModalVehicle(v-model="addVehicle"  @confirm="fetchVehicles" :v
       },
       {
         prop: "rentCost",
-        label: "Rent Cost",
+        label: t("operations.projects.vehicles.table.rentCost"),
         component: "Text",
         // sortable: true,
         type: "font-default",
@@ -97,7 +98,7 @@ OperationsProjectsModalVehicle(v-model="addVehicle"  @confirm="fetchVehicles" :v
       },
       {
         prop: "gasCost",
-        label: "Gas Cost",
+        label: t("operations.projects.vehicles.table.gasCost"),
         component: "Text",
         // sortable: true,
         type: "font-default",
@@ -105,7 +106,7 @@ OperationsProjectsModalVehicle(v-model="addVehicle"  @confirm="fetchVehicles" :v
       },
       {
         prop: "oilCost",
-        label: "Oil Cost",
+        label: t("operations.projects.vehicles.table.oilCost"),
         component: "Text",
         // sortable: true,
         type: "font-default",
@@ -113,7 +114,7 @@ OperationsProjectsModalVehicle(v-model="addVehicle"  @confirm="fetchVehicles" :v
       },
       {
         prop: "regularMaintenanceCost",
-        label: "Regular Maintenance Cost",
+        label: t("operations.projects.vehicles.table.maintenanceCost"),
         component: "Text",
         // sortable: true,
         type: "font-default",
@@ -121,7 +122,7 @@ OperationsProjectsModalVehicle(v-model="addVehicle"  @confirm="fetchVehicles" :v
       },
       {
         prop: "totalCost",
-        label: "Total Cost",
+        label: t("operations.projects.vehicles.table.totalCost"),
         component: "Text",
         // sortable: true,
         type: "font-default",

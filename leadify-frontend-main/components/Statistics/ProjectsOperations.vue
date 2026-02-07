@@ -1,19 +1,19 @@
 <template lang="pug">
 .projects-operations.chromatic-dashboard
   .header.mb-8
-    h2(class="text-2xl font-bold text-primary mb-2") Projects & Operations Overview
-    p.text-muted Monitor project lifecycles, asset utilization, and manpower efficiency.
+    h2(class="text-2xl font-bold text-primary mb-2") {{ $t('dashboard.projectsOperations') }}
+    p.text-muted {{ $t('dashboard.projectsOverviewHint') }}
 
   //- First Row: Essential Project Metrics
   .cards.grid.grid-cols-2.gap-6.mb-8
     StatisticsCard(
-      name="Total Projects" 
+      :name="$t('dashboard.widgets.totalProjects')" 
       :data="projectStats?.firstCards?.[0]?.value || 0" 
       icon="ph:projector-screen-chart-bold" 
       colorType="indigo"
     )
     StatisticsCard(
-      name="Eitmad Projects Overview" 
+      :name="$t('dashboard.widgets.eitmadProjects')" 
       :data="projectStats?.firstCards?.[1]?.value || 0" 
       icon="ph:certificate-bold" 
       colorType="cyan"
@@ -25,7 +25,7 @@
       template(#header)
         .flex.items-center.gap-2
           .w-2.h-6.bg-accent-indigo.rounded-full
-          h3(class="text-lg font-semibold text-primary") Projects by Status
+          h3(class="text-lg font-semibold text-primary") {{ $t('dashboard.widgets.projectsByStatus') }}
       
       div(class="h-[320px]")
         v-chart.bar-chart(:option="barChartOptions" autoresize)

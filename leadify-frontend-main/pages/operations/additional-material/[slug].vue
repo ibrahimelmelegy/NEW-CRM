@@ -1,6 +1,6 @@
 <template lang="pug">
 .flex.items-center.justify-between.mb-5.mt-5
-  .title.font-bold.text-2xl.mb-1.capitalize Material Details
+  .title.font-bold.text-2xl.mb-1.capitalize {{ $t('operations.additionalMaterials.view') }}
   el-dropdown(trigger="click")
       span.el-dropdown-link
           button.rounded-btn(class="!px-4"): Icon(  name="IconToggle" size="24")
@@ -9,7 +9,7 @@
             el-dropdown-item(v-if="hasPermission('EDIT_ADDITIONAL_MATERIAL')")
               NuxtLink.flex.items-center(:to="`/operations/additional-material/edit/${material?.id}`")
                 Icon.text-md.mr-2(size="20" name="IconEdit" )
-                p.text-sm Edit
+                p.text-sm {{ $t('common.edit') }}
             //- el-dropdown-item
             //-   .flex.items-center
             //-     Icon.text-md.mr-2(size="20" name="IconRestore" )
@@ -54,14 +54,14 @@
     columns: [
       {
         prop: "name",
-        label: "Item",
+        label: useI18n().t('operations.additionalMaterials.table.item'),
         component: "Text",
         // sortable: true,
         type: "font-default",
       },
       {
         prop: "price",
-        label: "Price",
+        label: useI18n().t('operations.additionalMaterials.table.price'),
         component: "Text",
         // sortable: true,
         type: "font-default",

@@ -1,19 +1,23 @@
-<template lang="pug">  
-el-form(@submit.prevent='onSubmit' )
- .grid.grid-cols-2.gap-3     
-   InputSelect(label="Opportunity Stage" name="stage"  placeholder="Select Stage" :options="stageOptions"  )
-   InputSelect(label="Assigned User" name="userId"  placeholder="Select User"  :options="mappedUsers" )
-   InputSelect(label="Assigned Priority" name="priority"  placeholder="Select Priority"  :options="priorityOptions" )
- .grid.grid-cols-2.gap-3
-   InputDate(label="From Expected Close Date" placeholder="Enter Date Range"  name="fromExpectedCloseDate")
-   InputDate(label="To Expected Close Date" placeholder="Enter Date Range"  name="toExpectedCloseDate")
- .flex.justify-end
-   el-button(  native-type="submit" size='large' type="primary"  class="!rounded-2xl" )  Show Filter Result 
-   el-button(  @click="ResetFilter" size='large'   class="!rounded-2xl text-col")  Reset Filter 
+<template lang="pug">
+el-form(@submit.prevent='onSubmit')
+  .grid.grid-cols-2.gap-3
+    InputSelect(:label="$t('opportunities.reports.filter.stage')" name="stage" :placeholder="$t('opportunities.reports.filter.selectStage')" :options="stageOptions.map(o => ({...o, label: $t(o.label)}))")
+    InputSelect(:label="$t('opportunities.reports.filter.assigned')" name="userId" :placeholder="$t('opportunities.reports.filter.selectUser')" :options="mappedUsers")
+    InputSelect(:label="$t('opportunities.reports.filter.priority')" name="priority" :placeholder="$t('opportunities.reports.filter.selectPriority')" :options="priorityOptions.map(o => ({...o, label: $t(o.label)}))")
+  .grid.grid-cols-2.gap-3
+    InputDate(:label="$t('opportunities.reports.filter.fromCloseDate')" :placeholder="$t('opportunities.reports.filter.enterDateRange')" name="fromExpectedCloseDate")
+    InputDate(:label="$t('opportunities.reports.filter.toCloseDate')" :placeholder="$t('opportunities.reports.filter.enterDateRange')" name="toExpectedCloseDate")
+  .flex.justify-end
+    el-button(native-type="submit" size='large' type="primary" class="!rounded-2xl") {{ $t('opportunities.reports.filter.showResult') }}
+    el-button(@click="ResetFilter" size='large' class="!rounded-2xl text-col") {{ $t('opportunities.reports.filter.reset') }}
 </template>
 
 <script setup lang="ts">
 import { useForm } from 'vee-validate';
+import { useI18n } from 'vue-i18n';
+import { stageOptions, priorityOptions } from '@/composables/useOpportunity';
+
+const { t } = useI18n();
 const { handleSubmit, errors, values,resetForm } = useForm();
 const emit = defineEmits(['showFilter']);
 

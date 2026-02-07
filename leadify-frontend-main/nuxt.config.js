@@ -44,7 +44,8 @@ export default defineNuxtConfig({
     css: {
       preprocessorOptions: {
         scss: {
-          additionalData: `@import "@/assets/styles/_injected.scss";`,
+          additionalData: `@use "@/assets/styles/_injected.scss" as *;`,
+          silenceDeprecations: ['legacy-js-api'],
         },
       },
     },
@@ -101,8 +102,9 @@ export default defineNuxtConfig({
     ],
     defaultLocale: 'en',
     lazy: true,
+    restructureDir: '.',
     // تحويل المسار النسبي إلى مسار مطلق متوافق مع نظام Windows
-    langDir: fileURLToPath(new URL('./locales', import.meta.url)),
+    langDir: 'locales',
     strategy: 'no_prefix',
     detectBrowserLanguage: {
       useCookie: true,

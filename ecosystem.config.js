@@ -1,8 +1,10 @@
+const path = require('path');
+
 module.exports = {
     apps: [
         {
             name: "CRM-Backend",
-            cwd: "./leadify-backend-main",
+            cwd: path.resolve(__dirname, "leadify-backend-main"),
             script: "npm.cmd",
             interpreter: "none",
             args: "run dev",
@@ -13,7 +15,7 @@ module.exports = {
         },
         {
             name: "CRM-Frontend",
-            cwd: "./leadify-frontend-main",
+            cwd: path.resolve(__dirname, "leadify-frontend-main"),
             script: "npm.cmd",
             interpreter: "none",
             args: "run dev",
@@ -26,7 +28,7 @@ module.exports = {
         },
         {
             name: "CRM-Proposal",
-            cwd: "./React proposal",
+            cwd: path.resolve(__dirname, "React proposal"),
             script: "npm.cmd",
             interpreter: "none",
             args: "run dev -- --host 0.0.0.0 --port 3001",
@@ -36,7 +38,7 @@ module.exports = {
         },
         {
             name: "CRM-Health-Dash",
-            cwd: "./leadify-frontend-main",
+            cwd: path.resolve(__dirname, "leadify-frontend-main"),
             script: "npm.cmd",
             interpreter: "none",
             args: "run health:ui",
