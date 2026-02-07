@@ -14,7 +14,7 @@ export abstract class ActivityModelClass extends Model {
     type: DataType.STRING,
     allowNull: false
   })
-  descripion!: string;
+  description!: string;
 
   @Column({
     type: DataType.STRING,

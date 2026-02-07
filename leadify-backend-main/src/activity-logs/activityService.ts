@@ -29,7 +29,7 @@ export async function createActivityLog(
   await actionModel[model].create(
     {
       userId,
-      descripion: `${data}`,
+      description: `${data}`,
       status: actionType,
       [model + 'Id']: modelId
     },
