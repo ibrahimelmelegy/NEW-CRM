@@ -90,7 +90,21 @@
         "finish": "إنهاء",
         "summary": "ملخص",
         "sar": "ر.س",
-        "days": "أيام"
+        "days": "أيام",
+        "today": "اليوم",
+        "yesterday": "أمس"
+    },
+    "activities": {
+        "types": {
+            "assigned": "تعيين مستخدم",
+            "update": "تحديث بيانات",
+            "restored": "استعادة",
+            "create": "إنشاء جديد",
+            "delete": "حذف",
+            "archived": "أرشفة",
+            "import": "استيراد",
+            "export": "تصدير"
+        }
     },
     "auth": {
         "login": "تسجيل الدخول",

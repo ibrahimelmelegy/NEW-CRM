@@ -130,21 +130,11 @@ el-tabs.demo-tabs(v-model="activeName", @tab-click="handleClick")
         :data="table?.data",
         class="!py-0"
       )
-  el-tab-pane(:label="$t('leads.activity')", name="activity")
-     .mt-6.activity
-       .flex.items-start.gap-x-6.mb-7(v-for="item in activity?.docs" class="w-full lg:w-6/12")
-         .flex.items-center.justify-center.w-12.h-12.rounded-full(class="!min-w-[48px] !min-h-[48px]" :class="handleTypeStyle(item.status)"): Icon(:name="handleIconName(item.status)" size="24")
-         .mt-2
-             h4.text-neutral-800.font-semibold.text-sm.mb-1 {{  item?.status == 'assigned'? $t('leads.info.assign') : item?.status == 'create' ? $t('opportunities.createTitle')  :item?.status?.toString()?.toUpperCase() }}
-             p.text-neutral-500.text-xs.mb-4.font-medium {{ formatDate(item?.createdAt) }}
-             .glass-card.p-5.rounded-3xl(class="w-[65vw]")
-               p.text-neutral-700.text-xs {{ item?.descripion?.toString()?.toUpperCase() }}
-               .flex.items-center.gap-3.gap-x-2.mt-4
-                 Avatar(:src="item?.user?.profilePicture ?? '/images/avatar.png'" small)
-                 p.text-neutral-800.text-xs.font-medium  {{ item?.user?.name }}
-     el-empty(v-if="activity?.docs?.length ==  0 || !activity?.docs " :description="$t('common.noData')" image="/images/empty.png")
-     .flex.justify-center.items-center.w-full
-      el-button( v-if="activity?.docs?.length >0" :loading = "loading" class="!rounded-2xl mb-2"  type= 'primary' size="large" :disabled="activity?.pagination?.totalPages == activity?.pagination?.page" @click="getActivityPage(Number(activity?.pagination?.page)+1)") {{ $t('common.view') }} More
+    el-tab-pane(:label="$t('leads.activity')", name="activity")
+      .mt-6
+        ActivityTimeline(:activities="activity?.docs")
+      .flex.justify-center.items-center.w-full
+        el-button( v-if="activity?.docs?.length >0" :loading = "loading" class="!rounded-2xl mb-2"  type= 'primary' size="large" :disabled="activity?.pagination?.totalPages == activity?.pagination?.page" @click="getActivityPage(Number(activity?.pagination?.page)+1)") {{ $t('common.view') }} More
 </template>
 <script lang="ts" setup>
   const { hasPermission } = await usePermissions();
@@ -154,58 +144,12 @@ el-tabs.demo-tabs(v-model="activeName", @tab-click="handleClick")
 
   const loading = ref(false);
 
-  const handleTypeStyle = (type: string) => {
-    switch (type) {
-      case "assigned":
-        return "bg-primary-purple-50 text-primary-purple-500";
-      case "update":
-        return "bg-secondary-turquoise-50 text-secondary-turquoise-700";
-      case "restored":
-        return "bg-semantic-warning-background text-semantic-warning-foreground";
-      case "create":
-        return "bg-primary-purple-50 text-primary-purple-500";
-      case "delete":
-        return "bg-semantic-error-background text-semantic-error-foreground";
-      case "archived":
-        return "bg-neutral-100 text-neutral-500";
-      case "import":
-        return "bg-secondary-blue-100 text-secondary-blue-600";
-      case "export":
-        return "bg-secondary-turquoise-100 text-secondary-turquoise-900";
-      default:
-        return "";
-    }
-  };
-
-  const handleIconName = (type: string) => {
-    switch (type) {
-      case "assigned":
-        return "IconAssign";
-      case "update":
-        return "IconEdit";
-      case "restored":
-        return "IconRestore";
-      case "create":
-        return "IconNewLead";
-      case "delete":
-        return "IconDelete";
-      case "archived":
-        return "IconArchived";
-      case "import":
-        return "IconImport";
-      case "export":
-        return "IconExport";
-      default:
-        return "";
-    }
-  };
-
   const activity = ref();
 
   // Call API to Get the opportunity
   const opportunity = await getOpportunity(route.params.slug as string);
-  const respons = await getOpportunityActivity((route.params.slug as string) + `?limit=10` + "&&page=1");
-  activity.value = respons;
+  const response = await getOpportunityActivity((route.params.slug as string) + `?limit=10` + "&&page=1");
+  activity.value = response;
 
   const getActivityPage = async (page: number) => {
     try {
@@ -306,25 +250,7 @@ el-tabs.demo-tabs(v-model="activeName", @tab-click="handleClick")
     data: [] as Client[],
   });
 
-  const response = await useTableFilter(`proposal?relatedEntityId=${route.params.slug as string}&page=1&limit=100`);
-  table.data =response.formattedData?.map((el:any) => {return {...el,
+  const proposalResponse = await useTableFilter(`proposal?relatedEntityId=${route.params.slug as string}&page=1&limit=100`);
+  table.data = proposalResponse.formattedData?.map((el:any) => {return {...el,
   type :el.type == "Mixed"  ? t('opportunities.proposalTypes.mixed') : el.type}})
 </script>
-<style scoped lang="scss">
-  .activity {
-    position: relative;
-    ::before {
-      content: "";
-      height: 100%;
-      width: 1px;
-      position: absolute;
-      left: 24px;
-      top: 2%;
-      border: 1px dashed #e7e6e9;
-      z-index: -1;
-    }
-    > div:last-of-type {
-      background: #f8f7fa !important;
-    }
-  }
-</style>

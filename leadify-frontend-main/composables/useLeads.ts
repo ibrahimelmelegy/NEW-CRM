@@ -39,7 +39,7 @@ export interface Lead {
 export interface Activity {
   id: string;
   status: string;
-  descripion: string;
+  description: string;
   createdAt: string;
   user?: {
     name: string;

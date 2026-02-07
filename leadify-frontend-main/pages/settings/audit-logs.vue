@@ -42,7 +42,7 @@ const columns = [
     { prop: 'user', label: 'Actor', width: 200, slot: 'user' },
     { prop: 'status', label: 'Action', width: 120, slot: 'status' },
     { prop: 'entityType', label: 'Module', width: 120 },
-    { prop: 'descripion', label: 'Description', minWidth: 250 }, // Note the typo 'descripion' matches backend
+    { prop: 'description', label: 'Description', minWidth: 250 },
 ];
 
 onMounted(async () => {
@@ -63,7 +63,7 @@ const fetchLogs = async () => {
 
 const filteredLogs = computed(() => {
     return logs.value.filter(log => {
-        const matchesSearch = log.descripion?.toLowerCase().includes(search.value.toLowerCase());
+        const matchesSearch = log.description?.toLowerCase().includes(search.value.toLowerCase());
         const matchesType = !filterType.value || log.status === filterType.value;
         return matchesSearch && matchesType;
     });

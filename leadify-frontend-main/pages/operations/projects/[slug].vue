@@ -305,7 +305,7 @@ el-tabs.demo-tabs(v-model="activeName", @tab-click="handleClick")
           h4.text-neutral-800.font-semibold.text-sm.mb-1 {{ item?.status == "assigned" ? $t('operations.projects.activity.assigned') : item?.status == "create" ? $t('operations.projects.activity.create') : item?.status?.toString()?.toUpperCase() }}
           p.text-neutral-500.text-xs.mb-4.font-medium {{ formatDate(item?.createdAt) }}
           .glass-card.p-5.rounded-3xl(class="w-[65vw]")
-            p.text-neutral-700.text-xs {{ item?.descripion?.toString()?.toUpperCase() }}
+            p.text-neutral-700.text-xs {{ item?.description?.toString()?.toUpperCase() }}
             .flex.items-center.gap-3.gap-x-2.mt-4
               Avatar(
                 :src="item?.user?.profilePicture ?? '/images/avatar.png'",

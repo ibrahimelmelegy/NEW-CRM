@@ -95,21 +95,11 @@ el-tabs.demo-tabs(v-model="activeName", @tab-click="handleClick")
         img(:src="`/images/files/${file?.split('.').pop()}.svg`" size="40")
         p(class="text-gray-800 font-medium") {{file}}
         Icon(name="solar:download-bold" class="text-neutral-500 ml-auto")
-  el-tab-pane(:label="$t('clients.info.activityLog')" name="activity")
-   .mt-6.activity
-     .flex.items-start.gap-x-6.mb-7(v-for="item in activity?.docs" class="w-full lg:w-6/12")
-       .flex.items-center.justify-center.w-12.h-12.rounded-full(class="!min-w-[48px] !min-h-[48px]" :class="handleTypeStyle(item.status)"): Icon(:name="handleIconName(item.status)" size="24")
-       .mt-2
-           h4.text-neutral-800.font-semibold.text-sm.mb-1 {{  item?.status == 'assigned'? 'Assigned User' : item?.status == 'create' ?'Create New Lead'  :item?.status?.toString()?.toUpperCase() }}
-           p.text-neutral-500.text-xs.mb-4.font-medium {{ formatDate(item?.createdAt) }}
-           .glass-card.p-5.rounded-3xl(class="w-[65vw]")
-             p.text-neutral-700.text-xs {{ item?.descripion?.toString()?.toUpperCase() }}
-             .flex.items-center.gap-3.gap-x-2.mt-4
-               Avatar(:src="item?.user?.profilePicture ?? '/images/avatar.png'" small)
-               p.text-neutral-800.text-xs.font-medium  {{ item?.user?.name }}
-   el-empty(v-if="activity?.docs?.length ==  0 || !activity?.docs " description="No activity recorded for this lead." image="/images/empty.png")
-   .flex.justify-center.items-center.w-full
-    el-button( v-if="activity?.docs?.length >0" :loading = "loading" class="!rounded-2xl mb-2"  type= 'primary' size="large" :disabled="activity?.pagination?.totalPages == activity?.pagination?.page" @click="getActivityPage(Number(activity?.pagination?.page)+1)") View More
+    el-tab-pane(:label="$t('clients.info.activityLog')" name="activity")
+      .mt-6
+        ActivityTimeline(:activities="activity?.docs")
+      .flex.justify-center.items-center.w-full
+        el-button( v-if="activity?.docs?.length >0" :loading = "loading" class="!rounded-2xl mb-2"  type= 'primary' size="large" :disabled="activity?.pagination?.totalPages == activity?.pagination?.page" @click="getActivityPage(Number(activity?.pagination?.page)+1)") {{ $t('common.view') }} More
 </template>
 <script lang="ts" setup>
   import { useI18n } from 'vue-i18n';
@@ -121,58 +111,13 @@ el-tabs.demo-tabs(v-model="activeName", @tab-click="handleClick")
 
   const loading = ref(false);
 
-  const handleTypeStyle = (type: string) => {
-    switch (type) {
-      case "assigned":
-        return "bg-primary-purple-50 text-primary-purple-500";
-      case "update":
-        return "bg-secondary-turquoise-50 text-secondary-turquoise-700";
-      case "restored":
-        return "bg-semantic-warning-background text-semantic-warning-foreground";
-      case "create":
-        return "bg-primary-purple-50 text-primary-purple-500";
-      case "delete":
-        return "bg-semantic-error-background text-semantic-error-foreground";
-      case "archived":
-        return "bg-neutral-100 text-neutral-500";
-      case "import":
-        return "bg-secondary-blue-100 text-secondary-blue-600";
-      case "export":
-        return "bg-secondary-turquoise-100 text-secondary-turquoise-900";
-      default:
-        return "";
-    }
-  };
-
-  const handleIconName = (type: string) => {
-    switch (type) {
-      case "assigned":
-        return "IconAssign";
-      case "update":
-        return "IconEdit";
-      case "restored":
-        return "IconRestore";
-      case "create":
-        return "IconNewLead";
-      case "delete":
-        return "IconDelete";
-      case "archived":
-        return "IconArchived";
-      case "import":
-        return "IconImport";
-      case "export":
-        return "IconExport";
-      default:
-        return "";
-    }
-  };
+  const activity = ref();
 
   // Call API to Get the client
   const client = await getClient(route.params.slug as string);
 
-  const activity = ref();
-  const respons = await getClientActivity((route.params.slug as string) + `?limit=10` + "&&page=1");
-  activity.value = respons;
+  const response = await getClientActivity((route.params.slug as string) + `?limit=10` + "&&page=1");
+  activity.value = response;
 
   const getActivityPage = async (page: number) => {
     try {
@@ -206,21 +151,3 @@ el-tabs.demo-tabs(v-model="activeName", @tab-click="handleClick")
       });
   }
 </script>
-<style scoped lang="scss">
-  .activity {
-    position: relative;
-    ::before {
-      content: "";
-      height: 100%;
-      width: 1px;
-      position: absolute;
-      left: 24px;
-      top: 2%;
-      border: 1px dashed #e7e6e9;
-      z-index: -1;
-    }
-    > div:last-of-type {
-      background: #f8f7fa !important;
-    }
-  }
-</style>
