@@ -10,44 +10,44 @@ const phoneNumber = ref();
 const props = defineProps({
   type: {
     type: String,
-    default: 'text',
+    default: 'text'
   },
   value: {
     type: String,
-    default: '',
+    default: ''
   },
   name: {
     type: String,
-    required: true,
+    required: true
   },
   label: {
     type: String,
-    required: true,
+    required: true
   },
   successMessage: {
     type: String,
-    default: '',
+    default: ''
   },
   placeholder: {
     type: String,
-    default: '',
+    default: ''
   },
   mask: {
     type: String,
-    default: '',
+    default: ''
   },
   labelStyle: {
     type: Object,
-    default: {},
+    default: {}
   },
   disabled: {
     type: Boolean,
-    default: false,
+    default: false
   },
   padding: {
     type: Number,
-    default: 0.5,
-  },
+    default: 0.5
+  }
 });
 const emit = defineEmits(['validphone', 'value']);
 const name = toRef(props, 'name');
@@ -64,16 +64,16 @@ function validatecode(event: any, submit: any) {
 }
 
 const tels = ref({
-  placeholder: 'phonePlaceholder',
+  placeholder: 'phonePlaceholder'
 });
 const {
   value: inputValue,
   errorMessage,
   handleBlur,
   handleChange,
-  meta,
+  meta
 } = useField(name, undefined, {
-  initialValue: props.value,
+  initialValue: props.value
 });
 watch(
   () => props.value,
@@ -106,15 +106,15 @@ watch(
   align-items: center !important;
   /* overflow: hidden !important;  <-- REMOVED THIS to allow dropdown to show */
   position: relative !important; /* Ensure dropdown positions correctly */
-  
+
   /* Default: Dark Mode */
   background-color: rgba(30, 18, 48, 0.6) !important;
   border: 1px solid rgba(168, 85, 247, 0.3) !important;
-  
+
   &:hover {
     border-color: #a855f7 !important;
   }
-  
+
   &:focus-within {
     border-color: #a855f7 !important;
     box-shadow: 0 0 0 2px rgba(168, 85, 247, 0.2) !important;
@@ -129,7 +129,7 @@ watch(
   color: #f8fafc !important;
   font-size: 14px !important;
   padding-left: 12px !important;
-  
+
   &::placeholder {
     color: #a78bfa !important;
     opacity: 0.7 !important;
@@ -142,7 +142,7 @@ watch(
   border-radius: 0 !important;
   padding: 0 12px !important;
   border-right: 1px solid rgba(168, 85, 247, 0.2) !important;
-  
+
   &:hover {
     background-color: rgba(168, 85, 247, 0.1) !important;
   }
@@ -163,12 +163,14 @@ watch(
   padding: 8px 12px !important;
   border-radius: 8px !important;
   color: #f3e8ff !important;
-  
-  &:hover, &.highlighted {
+
+  &:hover,
+  &.highlighted {
     background-color: rgba(168, 85, 247, 0.2) !important;
   }
-  
-  strong, span {
+
+  strong,
+  span {
     color: #f3e8ff !important;
   }
 }
@@ -190,11 +192,12 @@ html.light-mode .vue-tel-input,
 body.light-theme .vue-tel-input {
   background-color: rgba(255, 255, 255, 0.9) !important;
   border-color: rgba(0, 0, 0, 0.1) !important;
-  
-  &:hover, &:focus-within {
+
+  &:hover,
+  &:focus-within {
     border-color: #7c3aed !important;
   }
-  
+
   &:focus-within {
     box-shadow: 0 0 0 2px rgba(124, 58, 237, 0.15) !important;
   }
@@ -203,7 +206,7 @@ body.light-theme .vue-tel-input {
 html.light-mode .vti__input,
 body.light-theme .vti__input {
   color: #1f1f1f !important;
-  
+
   &::placeholder {
     color: #9e9e9e !important;
   }
@@ -212,7 +215,7 @@ body.light-theme .vti__input {
 html.light-mode .vti__dropdown,
 body.light-theme .vti__dropdown {
   border-right-color: rgba(0, 0, 0, 0.08) !important;
-  
+
   &:hover {
     background-color: rgba(0, 0, 0, 0.03) !important;
   }
@@ -228,12 +231,14 @@ body.light-theme .vti__dropdown-list {
 html.light-mode .vti__dropdown-item,
 body.light-theme .vti__dropdown-item {
   color: #1f1f1f !important;
-  
-  &:hover, &.highlighted {
+
+  &:hover,
+  &.highlighted {
     background-color: rgba(0, 0, 0, 0.05) !important;
   }
-  
-  strong, span {
+
+  strong,
+  span {
     color: #1f1f1f !important;
   }
 }

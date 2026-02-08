@@ -5,14 +5,14 @@ function handleError(message: string) {
   ElNotification({
     type: 'error',
     title: 'Error',
-    message,
+    message
   });
 }
 function handleSuccess(message: string, id?: string) {
   ElNotification({
     type: 'success',
     title: 'Success',
-    message,
+    message
   });
   if (id) {
     navigateTo(`/operations/projects/${id}`); // Navigate to the service details
@@ -23,13 +23,13 @@ function handleSuccess(message: string, id?: string) {
 
 enum projectCategory {
   Direct = 'Direct',
-  Etimad = 'Etimad',
+  Etimad = 'Etimad'
 }
 export const getProjectCategories = () => {
   const { t } = useI18n();
   return [
     { label: t('operations.projects.category.direct'), value: projectCategory.Direct },
-    { label: t('operations.projects.category.etimad'), value: projectCategory.Etimad },
+    { label: t('operations.projects.category.etimad'), value: projectCategory.Etimad }
   ];
 };
 
@@ -37,7 +37,7 @@ enum projectStatus {
   active = 'ACTIVE',
   cancelled = 'CANCELLED',
   onHold = 'ON_HOLD',
-  completed = 'COMPLETE',
+  completed = 'COMPLETE'
 }
 export const getProjectStatuses = () => {
   const { t } = useI18n();
@@ -45,49 +45,49 @@ export const getProjectStatuses = () => {
     { label: t('operations.projects.status.active'), value: projectStatus.active },
     { label: t('operations.projects.status.cancelled'), value: projectStatus.cancelled },
     { label: t('operations.projects.status.onHold'), value: projectStatus.onHold },
-    { label: t('operations.projects.status.completed'), value: projectStatus.completed },
+    { label: t('operations.projects.status.completed'), value: projectStatus.completed }
   ];
 };
 
 enum contractType {
   purchased = 'PURCHASED',
   subContractor = 'SUBCONTRACTOR',
-  invitation = 'INVITATION',
+  invitation = 'INVITATION'
 }
 export const getContractTypes = () => {
   const { t } = useI18n();
   return [
     { label: t('operations.projects.contractType.purchased'), value: contractType.purchased },
     { label: t('operations.projects.contractType.subContractor'), value: contractType.subContractor },
-    { label: t('operations.projects.contractType.invitation'), value: contractType.invitation },
+    { label: t('operations.projects.contractType.invitation'), value: contractType.invitation }
   ];
 };
 
 enum proposalStatus {
   underDeveloping = 'UNDER_DEVELOPING',
   finished = 'FINISHED',
-  cancelled = 'CANCELLED',
+  cancelled = 'CANCELLED'
 }
 export const getProposalStatuses = () => {
   const { t } = useI18n();
   return [
     { label: t('operations.projects.proposalStatus.underDeveloping'), value: proposalStatus.underDeveloping },
     { label: t('operations.projects.proposalStatus.finished'), value: proposalStatus.finished },
-    { label: t('operations.projects.proposalStatus.cancelled'), value: proposalStatus.cancelled },
+    { label: t('operations.projects.proposalStatus.cancelled'), value: proposalStatus.cancelled }
   ];
 };
 
 enum applicationStatus {
   underReview = 'UNDER_REVIEW',
   won = 'WON',
-  lost = 'LOST',
+  lost = 'LOST'
 }
 export const getApplicationStatuses = () => {
   const { t } = useI18n();
   return [
     { label: t('operations.projects.applicationStatus.underReview'), value: applicationStatus.underReview },
     { label: t('operations.projects.applicationStatus.won'), value: applicationStatus.won },
-    { label: t('operations.projects.applicationStatus.lost'), value: applicationStatus.lost },
+    { label: t('operations.projects.applicationStatus.lost'), value: applicationStatus.lost }
   ];
 };
 
@@ -95,7 +95,7 @@ export enum MissionEnum {
   Standard = 'Standard',
   Helper = 'Helper',
   SiteEngineer = 'SiteEngineer',
-  Engineer = 'Engineer',
+  Engineer = 'Engineer'
 }
 
 export const getProjectMissions = () => {
@@ -104,7 +104,7 @@ export const getProjectMissions = () => {
     { label: t('operations.projects.missions.standard'), value: MissionEnum.Standard },
     { label: t('operations.projects.missions.helper'), value: MissionEnum.Helper },
     { label: t('operations.projects.missions.siteEngineer'), value: MissionEnum.SiteEngineer },
-    { label: t('operations.projects.missions.engineer'), value: MissionEnum.Engineer },
+    { label: t('operations.projects.missions.engineer'), value: MissionEnum.Engineer }
   ];
 };
 
@@ -149,7 +149,7 @@ export interface ProjectManpower {
   [key: string]: any;
 }
 
-export interface CombinedProjectValues extends BasicInfoValues, EtimadProjectInfoValues { }
+export interface CombinedProjectValues extends BasicInfoValues, EtimadProjectInfoValues {}
 export interface ProjectInfo {
   projectId?: string;
   basicInfo: BasicInfoValues;
@@ -167,7 +167,7 @@ export async function getProjects(all?: false): Promise<CombinedProjectValues> {
       // Return the docs (c) from the response
       const projects = body?.docs?.map((project: any) => ({
         ...project,
-        createdAt: formatDate(project.createdAt),
+        createdAt: formatDate(project.createdAt)
       }));
       const pagination = body?.pagination;
       return { projects, pagination };
@@ -211,7 +211,7 @@ export const fetchExistingProject = async () => {
         description: opp.description,
         type: opp.type,
         status: 'ACTIVE',
-        category: 'Direct', // Default or map from opp
+        category: 'Direct' // Default or map from opp
       };
     }
   } else {
@@ -285,7 +285,7 @@ export async function getProject(id: string): Promise<CombinedProjectValues> {
 
 export async function getProjectActivity(id: string | string[]): Promise<Lead> {
   try {
-    let { body: lead, success } = await useApiFetch(`activity/project/${id}`);
+    const { body: lead, success } = await useApiFetch(`activity/project/${id}`);
     return lead;
   } catch (error) {
     console.error('Error fetching lead:', error instanceof Error ? error.message : error);
@@ -305,7 +305,7 @@ export async function createProject(values: ProjectInfo): Promise<void> {
     // Call API to create the project
     const response = await useApiFetch('project/create', 'POST', {
       ...values,
-      ...(projectId.value && { projectId: projectId.value }),
+      ...(projectId.value && { projectId: projectId.value })
     });
 
     // Handle the API response
@@ -326,7 +326,7 @@ export async function createProject(values: ProjectInfo): Promise<void> {
 export async function updateProject(values: any): Promise<void> {
   try {
     // Call API to create the project
-    console.log(values)
+    console.log(values);
     const response = await useApiFetch(`project/create`, 'POST', values);
 
     // Handle the API response
@@ -396,7 +396,7 @@ export async function createtAssociatedManPower(values: {
 
 export async function createtAssociatedMaterial(values: {
   materialMargin?: number;
-  additionalMaterialItems?: Object;
+  additionalMaterialItems?: object;
   materialsIds?: number[];
 }): Promise<void> {
   try {
@@ -481,7 +481,7 @@ export async function createProjectManPower(values: ProjectManpower): Promise<vo
     // Call API to create the project manpower
     const response = await useApiFetch('project-manpower', 'POST', {
       ...values,
-      ...(projectId.value && { projectId: projectId.value }),
+      ...(projectId.value && { projectId: projectId.value })
     });
 
     // Handle the API response
@@ -503,7 +503,7 @@ export async function updateProjectManPower(values: ProjectManpower, id: string)
     // Call API to update the project manpower
     const response = await useApiFetch(`project-manpower/${id}`, 'PUT', {
       ...values,
-      ...(projectId.value && { projectId: projectId.value }),
+      ...(projectId.value && { projectId: projectId.value })
     });
 
     // Handle the API response

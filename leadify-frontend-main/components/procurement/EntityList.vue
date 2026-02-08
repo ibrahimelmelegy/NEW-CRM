@@ -66,63 +66,12 @@
   )
 </template>
 
-<style scoped lang="scss">
-.text-gradient {
-  background: var(--gradient-primary);
-  -webkit-background-clip: text;
-  background-clip: text;
-  -webkit-text-fill-color: transparent;
-}
-
-.premium-table {
-  :deep(.el-table) {
-    background: transparent !important;
-    --el-table-bg-color: transparent;
-    --el-table-tr-bg-color: transparent;
-    
-    th.el-table__cell {
-      background: rgba(168, 85, 247, 0.05) !important;
-      color: var(--text-secondary);
-      font-weight: 700;
-      text-transform: uppercase;
-      font-size: 11px;
-      letter-spacing: 1px;
-    }
-    
-    td.el-table__cell {
-      border-bottom: 1px solid rgba(168, 85, 247, 0.05) !important;
-      padding: 16px 0;
-    }
-
-    tr.el-table__row {
-      @include glass-table-row-hover;
-    }
-  }
-}
-
-.hover-scale {
-    transition: transform 0.2s ease;
-    cursor: pointer;
-    &:hover {
-        transform: scale(1.2);
-    }
-}
-
-.glass-dropdown {
-    background: rgba(30, 18, 48, 0.9) !important;
-    backdrop-filter: blur(10px);
-    border: 1px solid rgba(168, 85, 247, 0.2);
-    border-radius: 12px;
-}
-</style>
-
-
 <script setup lang="ts">
-import { Plus } from "@element-plus/icons-vue";
-import { ElNotification } from "element-plus";
-import { usePermissions } from "@/composables/usePermissions"; 
-import useTableFilter from "@/composables/useTableFilter";
-import { useApiFetch } from "@/composables/useApiFetch";
+import { Plus } from '@element-plus/icons-vue';
+import { ElNotification } from 'element-plus';
+import { usePermissions } from '@/composables/usePermissions';
+import useTableFilter from '@/composables/useTableFilter';
+import { useApiFetch } from '@/composables/useApiFetch';
 
 const props = defineProps({
   title: { type: String, required: true },
@@ -142,27 +91,27 @@ const response = await useTableFilter(props.apiPosition, queryParams.value);
 
 const table = reactive({
   columns: [
-    { prop: "name", label: "Name", component: "Text", sortable: true, type: "font-bold", width: 180 },
-    { prop: "serviceType", label: "Service", component: "Badge", sortable: true, width: 120 },
-    { prop: "brands", label: "Brands", component: "Tags", sortable: false, width: 200 },
-    { prop: "firstName", label: "Contact", component: "Text", sortable: true, type: "font-default", width: 130 },
-    { prop: "phone", label: "Phone", component: "Text", sortable: true, type: "font-default", width: 130 },
-    { prop: "email", label: "Email", component: "Text", sortable: true, type: "font-default", width: 180 },
-    { prop: "taxId", label: "Tax ID", component: "Text", sortable: true, type: "font-default", width: 120 },
-    { prop: "createdAt", label: "Created", component: "Text", sortable: true, type: "font-default", width: 150 },
+    { prop: 'name', label: 'Name', component: 'Text', sortable: true, type: 'font-bold', width: 180 },
+    { prop: 'serviceType', label: 'Service', component: 'Badge', sortable: true, width: 120 },
+    { prop: 'brands', label: 'Brands', component: 'Tags', sortable: false, width: 200 },
+    { prop: 'firstName', label: 'Contact', component: 'Text', sortable: true, type: 'font-default', width: 130 },
+    { prop: 'phone', label: 'Phone', component: 'Text', sortable: true, type: 'font-default', width: 130 },
+    { prop: 'email', label: 'Email', component: 'Text', sortable: true, type: 'font-default', width: 180 },
+    { prop: 'taxId', label: 'Tax ID', component: 'Text', sortable: true, type: 'font-default', width: 120 },
+    { prop: 'createdAt', label: 'Created', component: 'Text', sortable: true, type: 'font-default', width: 150 }
   ],
-  data: response.formattedData,
+  data: response.formattedData
 });
 
 const dialog = reactive({
   visible: false,
-  data: null as any,
+  data: null as any
 });
 
 const deletePopup = reactive({
   visible: false,
   loading: false,
-  data: null as any,
+  data: null as any
 });
 
 function openDialog(data: any = null) {
@@ -187,11 +136,11 @@ function confirmDelete(data: any) {
 async function deleteEntity() {
   deletePopup.loading = true;
   try {
-    await useApiFetch(`${props.apiPosition}/${deletePopup.data.id}`, "DELETE");
-    ElNotification({ title: "Success", type: "success", message: `${props.entityLabel} deleted successfully` });
+    await useApiFetch(`${props.apiPosition}/${deletePopup.data.id}`, 'DELETE');
+    ElNotification({ title: 'Success', type: 'success', message: `${props.entityLabel} deleted successfully` });
     fetchData();
   } catch (error) {
-    ElNotification({ title: "Error", type: "error", message: `Failed to delete ${props.entityLabel.toLowerCase()}` });
+    ElNotification({ title: 'Error', type: 'error', message: `Failed to delete ${props.entityLabel.toLowerCase()}` });
   } finally {
     deletePopup.loading = false;
     deletePopup.visible = false;
@@ -199,7 +148,60 @@ async function deleteEntity() {
 }
 
 // Watch for prop changes to re-fetch if type changes (though pages will likely recreate component)
-watch(() => props.entityType, () => {
+watch(
+  () => props.entityType,
+  () => {
     fetchData();
-});
+  }
+);
 </script>
+
+<style scoped lang="scss">
+.text-gradient {
+  background: var(--gradient-primary);
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+.premium-table {
+  :deep(.el-table) {
+    background: transparent !important;
+    --el-table-bg-color: transparent;
+    --el-table-tr-bg-color: transparent;
+
+    th.el-table__cell {
+      background: rgba(168, 85, 247, 0.05) !important;
+      color: var(--text-secondary);
+      font-weight: 700;
+      text-transform: uppercase;
+      font-size: 11px;
+      letter-spacing: 1px;
+    }
+
+    td.el-table__cell {
+      border-bottom: 1px solid rgba(168, 85, 247, 0.05) !important;
+      padding: 16px 0;
+    }
+
+    tr.el-table__row {
+      @include glass-table-row-hover;
+    }
+  }
+}
+
+.hover-scale {
+  transition: transform 0.2s ease;
+  cursor: pointer;
+  &:hover {
+    transform: scale(1.2);
+  }
+}
+
+.glass-dropdown {
+  background: rgba(30, 18, 48, 0.9) !important;
+  backdrop-filter: blur(10px);
+  border: 1px solid rgba(168, 85, 247, 0.2);
+  border-radius: 12px;
+}
+</style>

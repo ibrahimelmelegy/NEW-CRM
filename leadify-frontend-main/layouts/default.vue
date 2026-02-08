@@ -53,12 +53,12 @@
       AIChatbot
   </template>
 <script setup lang="ts">
-import { useWindowSize } from "@vueuse/core";
-import { storeToRefs } from "pinia";
-import { useMain } from "~/stores/common";
-import { ArrowRight, Search, Plus } from "@element-plus/icons-vue";
-import { ElNotification } from "element-plus";
-import AIChatbot from "~/components/global/AIChatbot.vue";
+import { useWindowSize } from '@vueuse/core';
+import { storeToRefs } from 'pinia';
+import { ArrowRight, Search, Plus } from '@element-plus/icons-vue';
+import { ElNotification } from 'element-plus';
+import { useMain } from '~/stores/common';
+import AIChatbot from '~/components/global/AIChatbot.vue';
 
 // Initialize Spotlight
 const { open } = useSpotlight();
@@ -71,9 +71,9 @@ const router = useRouter();
 const route = useRoute();
 const showNavbar = ref(false);
 const showDropdown = ref(false);
-const searchInput = ref("");
+const searchInput = ref('');
 
-const notificationResponse = await useTableFilter("notification");
+const notificationResponse = await useTableFilter('notification');
 
 function toggleDropdown(val: boolean) {
   showDropdown.value = val;
@@ -87,16 +87,16 @@ const handleClickOutside = () => {
 };
 
 onMounted(() => {
-  window.addEventListener("scroll", handleScroll);
-  window.addEventListener("click", handleClickOutside);
+  window.addEventListener('scroll', handleScroll);
+  window.addEventListener('click', handleClickOutside);
 });
 
 onUnmounted(() => {
-  window.removeEventListener("scroll", handleScroll);
-  window.removeEventListener("click", handleClickOutside);
+  window.removeEventListener('scroll', handleScroll);
+  window.removeEventListener('click', handleClickOutside);
 });
 
-const mykey = ref("1");
+const mykey = ref('1');
 
 function checkwidth() {
   if (width.value < 990) {
@@ -112,15 +112,15 @@ function openNav() {
   }
 }
 async function logout() {
-  const response = await useApiFetch("auth/logout", "POST");
+  const response = await useApiFetch('auth/logout', 'POST');
   if (response?.success) {
-    router.push("/login");
-    const accessToken = useCookie("access_token");
-    accessToken.value = "";
+    router.push('/login');
+    const accessToken = useCookie('access_token');
+    accessToken.value = '';
     ElNotification({
       title: response.success ? t('common.success') : t('common.error'),
-      type: response.success ? "success" : "error",
-      message: response.message,
+      type: response.success ? 'success' : 'error',
+      message: response.message
     });
   }
 }
@@ -134,12 +134,12 @@ watch(width, () => {
 const user = ref<any>({});
 
 if (!user.value?.id) {
-  const meResponse = await useApiFetch("auth/me");
+  const meResponse = await useApiFetch('auth/me');
   user.value = meResponse?.body;
 }
 
 const breadcrumbRoutes = computed(() => {
-  const pathSegments = route.path.split("/").filter(Boolean);
+  const pathSegments = route.path.split('/').filter(Boolean);
 
   // Regular expression for a UUID-like ID format
   const uuidRegex = /^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$/;
@@ -158,16 +158,16 @@ const breadcrumbRoutes = computed(() => {
   const breadcrumbs = pathSegments.map((segment: any) => {
     // Convert kebab-case to camelCase for key matching (e.g. daily-tasks -> dailyTasks)
     const camelSegment = segment.replace(/-([a-z])/g, (g: string) => g[1].toUpperCase());
-    
+
     // Try navigation key first
     const navKey = `navigation.${camelSegment}`;
-    
+
     // Check if translation exists, otherwise fallback to Space Case
-    const label = t(navKey) !== navKey ? t(navKey) : segment.replace(/[-_]/g, " "); // fallback
-    
+    const label = t(navKey) !== navKey ? t(navKey) : segment.replace(/[-_]/g, ' '); // fallback
+
     return {
       path: segment,
-      label: label
+      label
     };
   });
 
@@ -175,14 +175,14 @@ const breadcrumbRoutes = computed(() => {
 });
 
 const getPath = (routeSegment: any) => {
-  const pathSegments = route.path.split("/").filter(Boolean);
-  let pathGo = "";
+  const pathSegments = route.path.split('/').filter(Boolean);
+  let pathGo = '';
   // Find index using the raw path segment
-  const indexStop = pathSegments.findIndex((segment) => segment == routeSegment.path)
-  pathSegments.forEach((el , index) => {
-    if (index <= indexStop  ) pathGo = pathGo + "/" + el;
+  const indexStop = pathSegments.findIndex(segment => segment == routeSegment.path);
+  pathSegments.forEach((el, index) => {
+    if (index <= indexStop) pathGo = pathGo + '/' + el;
   });
- if(pathGo !== "/sales" && pathGo !== "/operations") router.push(pathGo);
+  if (pathGo !== '/sales' && pathGo !== '/operations') router.push(pathGo);
 };
 </script>
 
@@ -268,7 +268,7 @@ const getPath = (routeSegment: any) => {
 }
 .background-overlay {
   &::before {
-    content: "";
+    content: '';
     background-color: rgba(0, 0, 0, 0.411);
     position: absolute;
     width: 100%;
@@ -277,7 +277,8 @@ const getPath = (routeSegment: any) => {
 }
 
 @keyframes auroraFloat {
-  0%, 100% {
+  0%,
+  100% {
     transform: translate(0, 0) scale(1);
     opacity: 0.12;
   }

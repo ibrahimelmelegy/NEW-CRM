@@ -57,11 +57,11 @@
 
 <script lang="ts" setup>
 import { ref, computed, onMounted } from 'vue';
-import { storeToRefs } from "pinia";
-import { useMain } from "~/stores/common";
-import { Setting } from "@element-plus/icons-vue";
-import { useApiFetch } from "~/composables/useApiFetch";
-import { useThemeStore } from "~/stores/theme";
+import { storeToRefs } from 'pinia';
+import { Setting } from '@element-plus/icons-vue';
+import { useMain } from '~/stores/common';
+import { useApiFetch } from '~/composables/useApiFetch';
+import { useThemeStore } from '~/stores/theme';
 
 const themeStore = useThemeStore();
 const mainStore = useMain();
@@ -71,18 +71,18 @@ const router = useRouter();
 const user = ref();
 
 const logoSrc = computed(() => {
-    return themeStore.isLight ? '/images/Logo.png' : '/images/lOGO-DARDK-MODE.png';
+  return themeStore.isLight ? '/images/Logo.png' : '/images/lOGO-DARDK-MODE.png';
 });
 
 // Using onMounted to fetch user data safely
 onMounted(async () => {
-    themeStore.initializeTheme();
-    try {
-        const response: any = await useApiFetch("auth/me");
-        user.value = response?.user;
-    } catch (e) {
-        console.error("Auth fetch failed", e);
-    }
+  themeStore.initializeTheme();
+  try {
+    const response: any = await useApiFetch('auth/me');
+    user.value = response?.user;
+  } catch (e) {
+    console.error('Auth fetch failed', e);
+  }
 });
 
 function mobileNavigate(link: string) {
@@ -91,76 +91,74 @@ function mobileNavigate(link: string) {
 
 function getDisabled(role: string) {
   if (permissions.value && Array.isArray(permissions.value) && permissions.value.length) {
-    if (!role) return false; 
+    if (!role) return false;
     return !(permissions.value as string[])?.includes(role);
   }
   return false;
 }
 
 const menu = [
-  { link: "/", name: "navigation.board", icon: "IconHome", submenu: false, isOpen: false },
+  { link: '/', name: 'navigation.board', icon: 'IconHome', submenu: false, isOpen: false },
   {
-    name: "navigation.sales",
-    icon: "IconSales",
+    name: 'navigation.sales',
+    icon: 'IconSales',
     isOpen: true,
     submenu: [
-      { link: "/sales/leads", name: "navigation.leads", icon: "ph:users-three" },
-      { link: "/sales/clients", name: "navigation.clients", icon: "ph:briefcase" },
-      { link: "/sales/opportunity", name: "navigation.opportunity", icon: "ph:lightbulb" },
-      { link: "/sales/deals", name: "navigation.deals", icon: "ph:handshake" },
-      { link: "/sales/proposals", name: "navigation.proposals", icon: "ph:file-text" },
-    ],
+      { link: '/sales/leads', name: 'navigation.leads', icon: 'ph:users-three' },
+      { link: '/sales/clients', name: 'navigation.clients', icon: 'ph:briefcase' },
+      { link: '/sales/opportunity', name: 'navigation.opportunity', icon: 'ph:lightbulb' },
+      { link: '/sales/deals', name: 'navigation.deals', icon: 'ph:handshake' },
+      { link: '/sales/proposals', name: 'navigation.proposals', icon: 'ph:file-text' }
+    ]
   },
   {
-    name: "navigation.operations",
-    icon: "IconOperations",
+    name: 'navigation.operations',
+    icon: 'IconOperations',
     isOpen: false,
     submenu: [
-      { link: "/operations/projects", name: "navigation.projects", icon: "ph:projector-screen-chart" },
-      { link: "/operations/daily-task", name: "navigation.dailyTasks", icon: "ph:check-square" },
-      { link: "/operations/vehicle", name: "navigation.vehicle", icon: "ph:car" },
-      { link: "/operations/manpower", name: "navigation.manpower", icon: "ph:users-four" },
-      { link: "/operations/additional-material", name: "navigation.additionalMaterials", icon: "ph:cube" },
-      { link: "/operations/services", name: "navigation.services", icon: "ph:wrench" },
-      { link: "/operations/assets", name: "navigation.assets", icon: "ph:bank" },
-    ],
+      { link: '/operations/projects', name: 'navigation.projects', icon: 'ph:projector-screen-chart' },
+      { link: '/operations/daily-task', name: 'navigation.dailyTasks', icon: 'ph:check-square' },
+      { link: '/operations/vehicle', name: 'navigation.vehicle', icon: 'ph:car' },
+      { link: '/operations/manpower', name: 'navigation.manpower', icon: 'ph:users-four' },
+      { link: '/operations/additional-material', name: 'navigation.additionalMaterials', icon: 'ph:cube' },
+      { link: '/operations/services', name: 'navigation.services', icon: 'ph:wrench' },
+      { link: '/operations/assets', name: 'navigation.assets', icon: 'ph:bank' }
+    ]
   },
   {
-    name: "navigation.procurement",
-    icon: "ph:shopping-bag",
+    name: 'navigation.procurement',
+    icon: 'ph:shopping-bag',
     isOpen: true,
     submenu: [
-      { link: "/procurement/vendors", name: "navigation.vendors", icon: "ph:storefront" },
-      { link: "/procurement/distributors", name: "navigation.distributors", icon: "ph:truck" },
-      { link: "/procurement/local-suppliers", name: "navigation.localSuppliers", icon: "ph:handshake" },
-      { link: "/procurement/showrooms", name: "navigation.showRooms", icon: "ph:buildings" },
-      { link: "/procurement/purchase-orders", name: "navigation.purchaseOrders", icon: "ph:shopping-cart" },
-      { link: "/procurement/rfq", name: "navigation.rfq", icon: "ph:files" },
-      { link: "/procurement/statistics", name: "navigation.statistics", icon: "ph:chart-bar" },
-    ],
+      { link: '/procurement/vendors', name: 'navigation.vendors', icon: 'ph:storefront' },
+      { link: '/procurement/distributors', name: 'navigation.distributors', icon: 'ph:truck' },
+      { link: '/procurement/local-suppliers', name: 'navigation.localSuppliers', icon: 'ph:handshake' },
+      { link: '/procurement/showrooms', name: 'navigation.showRooms', icon: 'ph:buildings' },
+      { link: '/procurement/purchase-orders', name: 'navigation.purchaseOrders', icon: 'ph:shopping-cart' },
+      { link: '/procurement/rfq', name: 'navigation.rfq', icon: 'ph:files' },
+      { link: '/procurement/statistics', name: 'navigation.statistics', icon: 'ph:chart-bar' }
+    ]
   },
-  { link: "/reports", name: "navigation.report", icon: "IconReport", submenu: false, isOpen: false },
+  { link: '/reports', name: 'navigation.report', icon: 'IconReport', submenu: false, isOpen: false },
   {
-    name: "navigation.settings",
-    icon: "ph:gear-bold",
+    name: 'navigation.settings',
+    icon: 'ph:gear-bold',
     isOpen: false,
-    role: "VIEW_SETTINGS", // Higher permission
+    role: 'VIEW_SETTINGS', // Higher permission
     submenu: [
-      { link: "/settings/integrations", name: "navigation.integrations", icon: "ph:plugs-connected-bold" },
-      { link: "/settings/audit-logs", name: "navigation.auditLogs", icon: "ph:fingerprint-bold" },
-      { link: "/roles", name: "navigation.rolesAccess", icon: "ph:shield-check-bold" },
-      { link: "/roles/add-role", name: "navigation.addNewRole", icon: "ph:plus-circle-bold" },
-      { link: "/staff", name: "navigation.staffManagement", icon: "ph:users-bold" },
-      { link: "/staff/add-staff", name: "navigation.addNewStaff", icon: "ph:user-plus-bold" },
-      { link: "/admin/tests", name: "navigation.qaCenter", icon: "ph:test-tube-bold" },
-      { link: "/test", name: "navigation.permissionsHub", icon: "ph:key-bold" },
-    ],
-  },
+      { link: '/settings/integrations', name: 'navigation.integrations', icon: 'ph:plugs-connected-bold' },
+      { link: '/settings/audit-logs', name: 'navigation.auditLogs', icon: 'ph:fingerprint-bold' },
+      { link: '/roles', name: 'navigation.rolesAccess', icon: 'ph:shield-check-bold' },
+      { link: '/roles/add-role', name: 'navigation.addNewRole', icon: 'ph:plus-circle-bold' },
+      { link: '/staff', name: 'navigation.staffManagement', icon: 'ph:users-bold' },
+      { link: '/staff/add-staff', name: 'navigation.addNewStaff', icon: 'ph:user-plus-bold' },
+      { link: '/admin/tests', name: 'navigation.qaCenter', icon: 'ph:test-tube-bold' },
+      { link: '/test', name: 'navigation.permissionsHub', icon: 'ph:key-bold' }
+    ]
+  }
 ];
 
-const defaultOpenMenus = menu
-  .map((item, index) => (item.isOpen ? `${index + 1}` : null))
-  .filter(Boolean) as string[];
+const defaultOpenMenus = menu.map((item, index) => (item.isOpen ? `${index + 1}` : null)).filter(Boolean) as string[];
 
 function openNav() {
   fullNav.value = !fullNav.value;
@@ -171,9 +169,10 @@ function openNav() {
 <style lang="scss" scoped>
 .sidebar-glass {
   @include glass-sidebar-bg;
-  transition: width 0.3s ease-in-out, background 0.3s ease;
+  transition:
+    width 0.3s ease-in-out,
+    background 0.3s ease;
 }
-
 
 .submenu-icon {
   color: var(--accent-color, #7849ff);

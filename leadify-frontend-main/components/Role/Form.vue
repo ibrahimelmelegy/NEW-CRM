@@ -7,39 +7,39 @@ el-form(  autocomplete="off"   @submit.prevent='onSubmit'   ref="myForm" label-p
 </template>
 
 <script lang="ts" setup>
-  import { useForm } from "vee-validate";
-  import * as yup from "yup";
-  import { useI18n } from "vue-i18n";
-  const { t } = useI18n();
-  const router = useRouter();
-  const props = defineProps({
-    loading: Boolean,
-    label: String,
-    data: {
-      type: Object,
-      required: false,
-    },
-  });
+import { useForm } from 'vee-validate';
+import * as yup from 'yup';
+import { useI18n } from 'vue-i18n';
+const { t } = useI18n();
+const router = useRouter();
+const props = defineProps({
+  loading: Boolean,
+  label: String,
+  data: {
+    type: Object,
+    required: false
+  }
+});
 
-  const emit = defineEmits(["submit"]);
+const emit = defineEmits(['submit']);
 
-  const formSchema = yup.object({
-    name: yup.string().trim().required().min(2).max(100).label(t('role.form.name')),
-    description: yup
-      .string()
-      .trim()
-      .nullable()
-      .test("min-length-if-entered", t('role.form.descriptionHint'), (value: any) => !value || value.length >= 2)
-      .trim()
-      .max(2000)
-      .label(t('role.form.description')),
-  });
+const formSchema = yup.object({
+  name: yup.string().trim().required().min(2).max(100).label(t('role.form.name')),
+  description: yup
+    .string()
+    .trim()
+    .nullable()
+    .test('min-length-if-entered', t('role.form.descriptionHint'), (value: any) => !value || value.length >= 2)
+    .trim()
+    .max(2000)
+    .label(t('role.form.description'))
+});
 
-  const { handleSubmit } = useForm({
-    validationSchema: formSchema,
-  });
+const { handleSubmit } = useForm({
+  validationSchema: formSchema
+});
 
-  const onSubmit = handleSubmit((values: any, actions: any) => {
-    emit("submit", values);
-  });
+const onSubmit = handleSubmit((values: any, actions: any) => {
+  emit('submit', values);
+});
 </script>

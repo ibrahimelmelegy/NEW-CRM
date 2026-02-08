@@ -24,8 +24,8 @@ const props = defineProps({
   isModal: Boolean,
   data: {
     type: Object,
-    required: false,
-  },
+    required: false
+  }
 });
 
 const emit = defineEmits(['submit']);
@@ -88,11 +88,11 @@ const formSchema = yup.object({
       }
     )
     .max(25)
-    .label('Regular Maintenance Cost'),
+    .label('Regular Maintenance Cost')
 });
 
 const { handleSubmit } = useForm({
-  validationSchema: formSchema,
+  validationSchema: formSchema
 });
 
 const onSubmit = handleSubmit((values: any, actions: any) => {

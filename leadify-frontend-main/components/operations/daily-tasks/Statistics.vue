@@ -26,10 +26,10 @@
     </template>
 
 <script lang="ts" setup>
-import VChart from "vue-echarts";
+import VChart from 'vue-echarts';
 
-const colorpieChart = ["#3498db", "#2ecc71", "#f39c12"];
-const colorbarChart = ["#3498db"];
+const colorpieChart = ['#3498db', '#2ecc71', '#f39c12'];
+const colorbarChart = ['#3498db'];
 
 const dailyTaskStats = ref({});
 
@@ -40,44 +40,31 @@ onMounted(async () => {
 
 const cardData = ref([
   {
-    name: "Active Projects",
+    name: 'Active Projects',
     value: dailyTaskStats.value?.activeTasks,
-    icon: { name: "fluent:task-list-ltr-24-filled", color: "#3498db" },
+    icon: { name: 'fluent:task-list-ltr-24-filled', color: '#3498db' }
   },
   {
-    name: "Completed Projects",
+    name: 'Completed Projects',
     value: dailyTaskStats.value?.completedTasks,
-    icon: { name: "ic:round-task-alt", color: "#2ecc71" },
+    icon: { name: 'ic:round-task-alt', color: '#2ecc71' }
   },
   {
-    name: "Granted Projects",
+    name: 'Granted Projects',
     value: dailyTaskStats.value?.grantedTasks,
-    icon: { name: "material-symbols:award-star", color: "#f39c12" },
+    icon: { name: 'material-symbols:award-star', color: '#f39c12' }
   },
   {
-    name: "Total Revenue Projects",
+    name: 'Total Revenue Projects',
     value: dailyTaskStats.value?.totalRevenue,
-    icon: { name: "ic:sharp-monetization-on", color: "#27ae60" },
-  },
+    icon: { name: 'ic:sharp-monetization-on', color: '#27ae60' }
+  }
 ]);
 
-const barChartSalesPerformanceOptions = getBarChartWithLineData(
-  dailyTaskStats.value?.salesPerformance,["Tasks count","Total paid"],
-  colorbarChart
-);
-const barChartMonthlyRevenueOptions = getBarChartData(
-  dailyTaskStats.value?.monthlyRevenue,
-  colorbarChart
-);
-console.log(barChartSalesPerformanceOptions)
-const pieChartTaskDistributionByClientOptions = getCenterPieChartsData(
-  dailyTaskStats.value?.taskDistributionByClient,
-  colorpieChart,
-  ""
-);
+const barChartSalesPerformanceOptions = getBarChartWithLineData(dailyTaskStats.value?.salesPerformance, ['Tasks count', 'Total paid'], colorbarChart);
+const barChartMonthlyRevenueOptions = getBarChartData(dailyTaskStats.value?.monthlyRevenue, colorbarChart);
+console.log(barChartSalesPerformanceOptions);
+const pieChartTaskDistributionByClientOptions = getCenterPieChartsData(dailyTaskStats.value?.taskDistributionByClient, colorpieChart, '');
 
-const pieChartTaskStatusPercentageOptions = getPieChartsData(
-  dailyTaskStats.value?.taskStatusPercentage,
-  colorpieChart
-);
+const pieChartTaskStatusPercentageOptions = getPieChartsData(dailyTaskStats.value?.taskStatusPercentage, colorpieChart);
 </script>

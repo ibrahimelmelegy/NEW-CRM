@@ -28,7 +28,6 @@ el-form(  autocomplete="off"   @submit.prevent='onSubmit'   ref="myForm" label-p
 import { useForm } from 'vee-validate';
 import * as yup from 'yup';
 import isEmailValidator from 'validator/lib/isEmail';
-;
 const router = useRouter();
 const props = defineProps({
   loading: Boolean,
@@ -36,8 +35,8 @@ const props = defineProps({
   isModal: Boolean,
   data: {
     type: Object,
-    required: false,
-  },
+    required: false
+  }
 });
 
 const emit = defineEmits(['submit']);
@@ -73,7 +72,7 @@ const formSchema = yup.object({
           (message: any) => 'Invalid email',
           (value: any) => (value ? isEmailValidator(value) : new yup.ValidationError('Invalid value'))
         )
-        .label('Email'),
+        .label('Email')
   }),
   phone: yup.number().when([], {
     is: () => isEmail.value,
@@ -87,7 +86,7 @@ const formSchema = yup.object({
           if (value === null || value === undefined) {
             return true;
           }
-          return validPhone.value ? true : false;
+          return !!validPhone.value;
         }),
     otherwise: () =>
       yup
@@ -97,8 +96,8 @@ const formSchema = yup.object({
         .required('At least one of email or phone number is required')
         .label('Phone Number')
         .test('Phone number', 'invalid Phone', function (value: any) {
-          return validPhone.value ? true : false;
-        }),
+          return !!validPhone.value;
+        })
   }),
   role: yup.array().of(yup.string()).required().min(1).label('Role'),
   availabilityStatus: yup.string().trim().required().min(2).max(100).label('Availability Status'),
@@ -232,11 +231,11 @@ const formSchema = yup.object({
     )
     .max(25)
     .label('General Organization for Social Insurance'),
-  notes: yup.string().nullable().trim().max(2000).label('Additional Notes'),
+  notes: yup.string().nullable().trim().max(2000).label('Additional Notes')
 });
 
 const { handleSubmit } = useForm({
-  validationSchema: formSchema,
+  validationSchema: formSchema
 });
 
 const onSubmit = handleSubmit((values: any, actions: any) => {

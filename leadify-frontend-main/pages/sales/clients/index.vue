@@ -51,117 +51,117 @@ div
 </template>
 
 <script setup lang="ts">
-  import { useI18n } from 'vue-i18n';
-  const router = useRouter();
-  import { Plus } from "@element-plus/icons-vue";
-  const { hasPermission } = await usePermissions();
-  const loadingAction = ref(false);
-  const deleteClientPopup = ref(false);
-  const { t } = useI18n();
+import { useI18n } from 'vue-i18n';
+import { Plus } from '@element-plus/icons-vue';
+const router = useRouter();
+const { hasPermission } = await usePermissions();
+const loadingAction = ref(false);
+const deleteClientPopup = ref(false);
+const { t } = useI18n();
 
-  const table = reactive({
-    columns: [
-      {
-        prop: "ClientDetails",
-        label: t('clients.table.clientName'),
-        component: "AvatarText",
-        sortable: true,
-        type: "font-bold",
-        width: 170,
-      },
-      {
-        prop: "clientType",
-        label: t('clients.table.type'),
-        component: "Text",
-        sortable: true,
-        type: "font-bold",
-        width: 150,
-      },
-      {
-        prop: "email",
-        label: t('clients.table.email'),
-        component: "Text",
-        sortable: true,
-        type: "font-default",
-        width: 200,
-      },
-      {
-        prop: "phoneNumber",
-        label: t('clients.table.phone'),
-        component: "Text",
-        sortable: true,
-        type: "font-default",
-        width: 200,
-      },
-      {
-        prop: "clientStatus",
-        label: t('clients.table.status'),
-        component: "Label",
-        sortable: true,
-        type: "outline",
-        filters: [
-          { text: "Active", value: "ACTIVE" },
-          { text: "Inactive", value: "INACTIVE" },
-        ],
-        width: 150,
-      },
-      {
-        prop: "assign",
-        label: t('clients.table.assigned'),
-        component: "Text",
-        type: "font-default",
-        width: 200,
-      },
-      {
-        prop: "createdAt",
-        label: t('clients.table.created'),
-        component: "Text",
-        sortable: true,
-        type: "font-default",
-        width: 200,
-      },
-      // { prop: 'actions', label: 'Actions', sortable: false },
-    ],
-    data: [] as Client[],
-    sort: [
-      { prop: "price", order: "ascending", value: "PRICE_ASC" },
-      { prop: "price", order: "descending", value: "PRICE_DESC" },
-      { prop: "identity", order: "ascending", value: "IDENTITY_ASC" },
-      { prop: "identity", order: "descending", value: "IDENTITY_DESC" },
-    ],
-  });
+const table = reactive({
+  columns: [
+    {
+      prop: 'ClientDetails',
+      label: t('clients.table.clientName'),
+      component: 'AvatarText',
+      sortable: true,
+      type: 'font-bold',
+      width: 170
+    },
+    {
+      prop: 'clientType',
+      label: t('clients.table.type'),
+      component: 'Text',
+      sortable: true,
+      type: 'font-bold',
+      width: 150
+    },
+    {
+      prop: 'email',
+      label: t('clients.table.email'),
+      component: 'Text',
+      sortable: true,
+      type: 'font-default',
+      width: 200
+    },
+    {
+      prop: 'phoneNumber',
+      label: t('clients.table.phone'),
+      component: 'Text',
+      sortable: true,
+      type: 'font-default',
+      width: 200
+    },
+    {
+      prop: 'clientStatus',
+      label: t('clients.table.status'),
+      component: 'Label',
+      sortable: true,
+      type: 'outline',
+      filters: [
+        { text: 'Active', value: 'ACTIVE' },
+        { text: 'Inactive', value: 'INACTIVE' }
+      ],
+      width: 150
+    },
+    {
+      prop: 'assign',
+      label: t('clients.table.assigned'),
+      component: 'Text',
+      type: 'font-default',
+      width: 200
+    },
+    {
+      prop: 'createdAt',
+      label: t('clients.table.created'),
+      component: 'Text',
+      sortable: true,
+      type: 'font-default',
+      width: 200
+    }
+    // { prop: 'actions', label: 'Actions', sortable: false },
+  ],
+  data: [] as Client[],
+  sort: [
+    { prop: 'price', order: 'ascending', value: 'PRICE_ASC' },
+    { prop: 'price', order: 'descending', value: 'PRICE_DESC' },
+    { prop: 'identity', order: 'ascending', value: 'IDENTITY_ASC' },
+    { prop: 'identity', order: 'descending', value: 'IDENTITY_DESC' }
+  ]
+});
 
-  // Call API to Get the client
-  // const response = await getClients();
+// Call API to Get the client
+// const response = await getClients();
 
-  const response = await useTableFilter("client");
-  table.data = response.formattedData;
+const response = await useTableFilter('client');
+table.data = response.formattedData;
 
-  function handleRowClick(val: any) {
-    router.push(`/sales/clients/${val.id}`);
+function handleRowClick(val: any) {
+  router.push(`/sales/clients/${val.id}`);
+}
+
+const users = await useApiFetch('users');
+const mappedUsers = users?.body?.docs?.map((e: any) => ({
+  label: e.name,
+  value: e.id
+}));
+
+const filterOptions = [
+  {
+    title: t('clients.filter.status'),
+    value: 'status',
+    options: [...clientStatuses]
+  },
+  {
+    title: t('clients.filter.type'),
+    value: 'type',
+    options: [...clientTypes]
+  },
+  {
+    title: t('clients.filter.assigned'),
+    value: 'userId',
+    options: [...mappedUsers]
   }
-
-  let users = await useApiFetch("users");
-  const mappedUsers = users?.body?.docs?.map((e: any) => ({
-    label: e.name,
-    value: e.id,
-  }));
-
-  const filterOptions = [
-    {
-      title: t('clients.filter.status'),
-      value: "status",
-      options: [...clientStatuses],
-    },
-    {
-      title: t('clients.filter.type'),
-      value: "type",
-      options: [...clientTypes],
-    },
-    {
-      title: t('clients.filter.assigned'),
-      value: "userId",
-      options: [...mappedUsers],
-    },
-  ];
+];
 </script>

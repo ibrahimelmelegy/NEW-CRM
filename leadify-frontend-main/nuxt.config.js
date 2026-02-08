@@ -1,28 +1,31 @@
+import { fileURLToPath } from 'node:url'; // استيراد لضمان دقة المسارات
 import { defineNuxtConfig } from 'nuxt/config';
 import { visualizer } from 'rollup-plugin-visualizer';
-import { fileURLToPath } from 'node:url'; // استيراد لضمان دقة المسارات
 
 export default defineNuxtConfig({
   app: {
     head: {
       title: 'Leadify CRM - Enterprise Customer Relationship Management',
       htmlAttrs: {
-        lang: 'en',
+        lang: 'en'
       },
       link: [
         { rel: 'icon', href: '/images/logo-shape.png' },
         { rel: 'dns-prefetch', href: 'https://fonts.googleapis.com' },
         { rel: 'preconnect', href: 'https://fonts.googleapis.com', crossorigin: '' },
         { rel: 'preconnect', href: 'https://fonts.gstatic.com', crossorigin: '' },
-        { rel: 'stylesheet', href: 'https://fonts.googleapis.com/icon?family=Material+Icons' },
+        { rel: 'stylesheet', href: 'https://fonts.googleapis.com/icon?family=Material+Icons' }
       ],
       meta: [
         { 'http-equiv': 'x-ua-compatible', content: 'IE=edge' },
         { name: 'viewport', content: 'width=device-width, initial-scale=1.0' },
-        { name: 'description', content: 'Leadify CRM - Professional enterprise customer relationship management solution for sales, leads, and opportunity tracking.' },
-        { name: 'theme-color', content: '#7849ff' },
-      ],
-    },
+        {
+          name: 'description',
+          content: 'Leadify CRM - Professional enterprise customer relationship management solution for sales, leads, and opportunity tracking.'
+        },
+        { name: 'theme-color', content: '#7849ff' }
+      ]
+    }
   },
 
   css: ['@/assets/styles/global.scss', '@/assets/css/microsoft-light.css'],
@@ -38,16 +41,16 @@ export default defineNuxtConfig({
         filename: './stats.html',
         open: false,
         gzipSize: true,
-        brotliSize: true,
-      }),
+        brotliSize: true
+      })
     ],
     css: {
       preprocessorOptions: {
         scss: {
           additionalData: `@use "@/assets/styles/_injected.scss" as *;`,
-          silenceDeprecations: ['legacy-js-api'],
-        },
-      },
+          silenceDeprecations: ['legacy-js-api']
+        }
+      }
     },
     optimizeDeps: {
       include: [
@@ -80,25 +83,17 @@ export default defineNuxtConfig({
         '@vue/devtools-core',
         '@vue/devtools-kit'
       ]
-    },
+    }
   },
 
-  modules: [
-    '@element-plus/nuxt',
-    '@nuxt/icon',
-    '@nuxtjs/tailwindcss',
-    '@pinia/nuxt',
-    '@nuxt/image',
-    '@vueuse/nuxt',
-    '@nuxtjs/i18n',
-  ],
+  modules: ['@element-plus/nuxt', '@nuxt/icon', '@nuxtjs/tailwindcss', '@pinia/nuxt', '@nuxt/image', '@vueuse/nuxt', '@nuxtjs/i18n'],
 
   // ✅ الحل النهائي لمشكلة ENOENT في Nuxt 4
   i18n: {
     vueI18n: './i18n.config.ts',
     locales: [
       { code: 'en', name: 'English', file: 'en.json', dir: 'ltr' },
-      { code: 'ar', name: 'العربية', file: 'ar.json', dir: 'rtl' },
+      { code: 'ar', name: 'العربية', file: 'ar.json', dir: 'rtl' }
     ],
     defaultLocale: 'en',
     lazy: true,
@@ -109,8 +104,8 @@ export default defineNuxtConfig({
     detectBrowserLanguage: {
       useCookie: true,
       cookieKey: 'i18n_redirected',
-      fallbackLocale: 'en',
-    },
+      fallbackLocale: 'en'
+    }
   },
 
   icon: {
@@ -120,24 +115,24 @@ export default defineNuxtConfig({
 
   image: {
     format: ['webp'],
-    quality: 80,
+    quality: 80
   },
 
   runtimeConfig: {
     public: {
       API_BASE_URL: process.env.API_BASE_URL || 'http://localhost:5000/api/',
       BASE_URL: process.env.BASE_URL || 'http://localhost:3060/',
-      BUCKET_URL: process.env.BUCKET_URL || 'http://localhost:3000/',
-    },
+      BUCKET_URL: process.env.BUCKET_URL || 'http://localhost:3000/'
+    }
   },
 
   tailwindcss: {
     configPath: 'tailwind.config.js',
-    cssPath: '~/assets/css/tailwind.css',
+    cssPath: '~/assets/css/tailwind.css'
   },
 
   imports: {
-    dirs: ['composables/**'],
+    dirs: ['composables/**']
   },
 
   ssr: false,
@@ -151,10 +146,10 @@ export default defineNuxtConfig({
 
   nitro: {
     devProxy: {
-      "/api": {
-        target: "http://localhost:5000",
+      '/api': {
+        target: 'http://localhost:5000',
         changeOrigin: true,
-        prependPath: true,
+        prependPath: true
       }
     }
   }

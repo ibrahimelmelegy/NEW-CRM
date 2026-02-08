@@ -1,4 +1,4 @@
-import { graphic } from "echarts";
+import { graphic } from 'echarts';
 
 const THEME = {
   purple: '#7849FF',
@@ -18,27 +18,27 @@ const THEME = {
   }
 };
 
-export function getPieChartsData(data: any, colorpallete: any, position = "0%", left = "center") {
+export function getPieChartsData(data: any, colorpallete: any, position = '0%', left = 'center') {
   return {
     tooltip: {
-      trigger: "item",
-      formatter: "{b} : {c} ({d}%)",
+      trigger: 'item',
+      formatter: '{b} : {c} ({d}%)',
       ...THEME.glassTooltip
     },
     legend: {
-      orient: left === "center" ? "horizontal" : "vertical",
+      orient: left === 'center' ? 'horizontal' : 'vertical',
       top: position,
-      left: left,
+      left,
       textStyle: { color: '#94A3B8' },
       itemWidth: 14,
       itemHeight: 14,
-      icon: "circle"
+      icon: 'circle'
     },
     color: colorpallete,
     series: [
       {
-        type: "pie",
-        radius: ["55%", "75%"],
+        type: 'pie',
+        radius: ['55%', '75%'],
         avoidLabelOverlap: true,
         itemStyle: {
           borderRadius: 8,
@@ -61,41 +61,41 @@ export function getPieChartsData(data: any, colorpallete: any, position = "0%", 
           scaleSize: 10,
           itemStyle: {
             shadowBlur: 30,
-            shadowColor: "rgba(0,0,0,0.6)",
-          },
+            shadowColor: 'rgba(0,0,0,0.6)'
+          }
         },
-        data: data,
-      },
-    ],
+        data
+      }
+    ]
   };
 }
 
 export function getBarChartData(data: any, colorpallete: any) {
   return {
-    tooltip: { trigger: "axis", axisPointer: { type: 'shadow' }, ...THEME.glassTooltip },
+    tooltip: { trigger: 'axis', axisPointer: { type: 'shadow' }, ...THEME.glassTooltip },
     grid: { top: 20, right: 20, bottom: 20, left: 20, containLabel: true },
     xAxis: {
-      type: "category",
+      type: 'category',
       data: data.map((val: any) => val.name),
-      axisLabel: { color: "#94A3B8", fontWeight: 500 },
+      axisLabel: { color: '#94A3B8', fontWeight: 500 },
       axisLine: { show: false },
       axisTick: { show: false }
     },
     yAxis: {
-      type: "value",
+      type: 'value',
       splitLine: THEME.axisLine,
-      axisLabel: { color: "#64748B" }
+      axisLabel: { color: '#64748B' }
     },
     series: [
       {
-        type: "bar",
-        barWidth: "30%",
+        type: 'bar',
+        barWidth: '30%',
         data: data.map((val: any) => Number(val.value)),
         itemStyle: {
           borderRadius: [6, 6, 6, 6], // Fully rounded
           color: new graphic.LinearGradient(0, 0, 0, 1, [
             { offset: 0, color: THEME.purple },
-            { offset: 1, color: hexToRgba(THEME.purple, 0.3) },
+            { offset: 1, color: hexToRgba(THEME.purple, 0.3) }
           ]),
           shadowBlur: 15,
           shadowColor: hexToRgba(THEME.purple, 0.4),
@@ -106,8 +106,8 @@ export function getBarChartData(data: any, colorpallete: any) {
             color: THEME.purple
           }
         }
-      },
-    ],
+      }
+    ]
   };
 }
 
@@ -121,19 +121,19 @@ function hexToRgba(hex: string, alpha: number) {
 
 export function getBarHorizontalChartData(data: any, colorpallete: any) {
   return {
-    tooltip: { trigger: "item", ...THEME.glassTooltip },
+    tooltip: { trigger: 'item', ...THEME.glassTooltip },
     grid: { containLabel: true, bottom: 10, top: 10, right: 30 },
     xAxis: {
-      type: "value",
+      type: 'value',
       axisLabel: { show: false },
       splitLine: { show: false }
     },
     yAxis: {
-      type: "category",
+      type: 'category',
       data: data.map((val: any) => val.name),
       inverse: true,
       axisLabel: {
-        color: "#94A3B8",
+        color: '#94A3B8',
         fontSize: 12,
         fontWeight: 500,
         margin: 15
@@ -143,7 +143,7 @@ export function getBarHorizontalChartData(data: any, colorpallete: any) {
     },
     series: [
       {
-        type: "bar",
+        type: 'bar',
         data: data.map((val: any) => val.value),
         barWidth: 16,
         showBackground: true,
@@ -155,76 +155,78 @@ export function getBarHorizontalChartData(data: any, colorpallete: any) {
           borderRadius: [0, 8, 8, 0],
           color: new graphic.LinearGradient(1, 0, 0, 0, [
             { offset: 0, color: '#A855F7' },
-            { offset: 1, color: '#7849FF' },
+            { offset: 1, color: '#7849FF' }
           ]),
           shadowBlur: 10,
           shadowColor: 'rgba(120, 73, 255, 0.3)'
-        },
-      },
-    ],
+        }
+      }
+    ]
   };
 }
 
 export function getConversionGauge(value: number) {
   const numValue = parseFloat(value.toString()) || 0;
   return {
-    series: [{
-      type: 'gauge',
-      startAngle: 180,
-      endAngle: 0,
-      min: 0,
-      max: 100,
-      splitNumber: 5,
-      radius: '90%',
-      center: ['50%', '70%'],
-      progress: {
-        show: true,
-        width: 12,
-        itemStyle: {
-          color: new graphic.LinearGradient(0, 0, 1, 0, [
-            { offset: 0, color: '#3B82F6' },
-            { offset: 1, color: '#10B981' }
-          ])
-        }
-      },
-      pointer: { show: false },
-      axisLine: { lineStyle: { width: 12, color: [[1, 'rgba(255,255,255,0.05)']] } },
-      axisTick: { show: false },
-      splitLine: { show: false },
-      axisLabel: { show: false },
-      detail: {
-        valueAnimation: true,
-        offsetCenter: [0, -10],
-        fontSize: 32,
-        fontWeight: 'bold',
-        color: '#fff',
-        formatter: '{value}%'
-      },
-      data: [{ value: numValue }]
-    }]
+    series: [
+      {
+        type: 'gauge',
+        startAngle: 180,
+        endAngle: 0,
+        min: 0,
+        max: 100,
+        splitNumber: 5,
+        radius: '90%',
+        center: ['50%', '70%'],
+        progress: {
+          show: true,
+          width: 12,
+          itemStyle: {
+            color: new graphic.LinearGradient(0, 0, 1, 0, [
+              { offset: 0, color: '#3B82F6' },
+              { offset: 1, color: '#10B981' }
+            ])
+          }
+        },
+        pointer: { show: false },
+        axisLine: { lineStyle: { width: 12, color: [[1, 'rgba(255,255,255,0.05)']] } },
+        axisTick: { show: false },
+        splitLine: { show: false },
+        axisLabel: { show: false },
+        detail: {
+          valueAnimation: true,
+          offsetCenter: [0, -10],
+          fontSize: 32,
+          fontWeight: 'bold',
+          color: '#fff',
+          formatter: '{value}%'
+        },
+        data: [{ value: numValue }]
+      }
+    ]
   };
 }
 
 export function getIncreaseLineChart(data: any, colorPalette: any) {
   return {
-    tooltip: { trigger: "axis", ...THEME.glassTooltip },
+    tooltip: { trigger: 'axis', ...THEME.glassTooltip },
     grid: { top: 30, right: 30, bottom: 20, left: 20, containLabel: true },
     xAxis: {
-      type: "category",
+      type: 'category',
       boundaryGap: false,
       data: data.map((val: any) => val.name),
-      axisLabel: { color: "#94A3B8" },
+      axisLabel: { color: '#94A3B8' },
       axisLine: { show: false },
       axisTick: { show: false }
     },
     yAxis: {
-      type: "value",
+      type: 'value',
       splitLine: THEME.axisLine,
-      axisLabel: { color: "#64748B" }
+      axisLabel: { color: '#64748B' }
     },
     series: [
       {
-        type: "line",
+        type: 'line',
         data: data.map((val: any) => val.value),
         smooth: true, // Smooth curves for organic feel
         showSymbol: false,
@@ -239,8 +241,8 @@ export function getIncreaseLineChart(data: any, colorPalette: any) {
         areaStyle: {
           color: new graphic.LinearGradient(0, 0, 0, 1, [
             { offset: 0, color: hexToRgba(THEME.green, 0.4) },
-            { offset: 1, color: 'rgba(0,0,0,0)' },
-          ]),
+            { offset: 1, color: 'rgba(0,0,0,0)' }
+          ])
         },
         emphasis: {
           showSymbol: true,
@@ -250,8 +252,8 @@ export function getIncreaseLineChart(data: any, colorPalette: any) {
             borderWidth: 3
           }
         }
-      },
-    ],
+      }
+    ]
   };
 }
 
@@ -265,33 +267,37 @@ export async function getLeadsStatics() {
   const t = $i18n.t;
   statsLoading.value = true;
   try {
-    const { body, success } = await useApiFetch("insights/leads-sales");
+    const { body, success } = await useApiFetch('insights/leads-sales');
     statsLoading.value = false;
     if (!success) return getDefaultLeadsStats();
 
     return {
       firstCards: [
-        { name: "Total Leads Assigned", value: Number(body.leadCount) || 0 },
-        { name: "Lead Conversion Rate", value: `${(body.leadConversionRate || 0).toFixed(2)}%` },
-        { name: "Total Opportunities", value: Number(body.opportunityCount) || 0 },
+        { name: 'Total Leads Assigned', value: Number(body.leadCount) || 0 },
+        { name: 'Lead Conversion Rate', value: `${(body.leadConversionRate || 0).toFixed(2)}%` },
+        { name: 'Total Opportunities', value: Number(body.opportunityCount) || 0 }
       ],
       secondCards: [
-        { name: "Total Deals Closed", value: formatLargeNumber(body.dealsCount || 0) },
-        { name: "Revenue Won", value: `SAR ${formatLargeNumber(body.revenueFromDeals || 0)}` },
+        { name: 'Total Deals Closed', value: formatLargeNumber(body.dealsCount || 0) },
+        { name: 'Revenue Won', value: `SAR ${formatLargeNumber(body.revenueFromDeals || 0)}` }
       ],
       opportunityStages: Object.entries(body.opportunityStages || {}).map(([name, value]) => ({
-        name: t(`crm.stages.${name.toLowerCase()}`) !== `crm.stages.${name.toLowerCase()}` ? t(`crm.stages.${name.toLowerCase()}`) : capitalizeName(name),
+        name:
+          t(`crm.stages.${name.toLowerCase()}`) !== `crm.stages.${name.toLowerCase()}` ? t(`crm.stages.${name.toLowerCase()}`) : capitalizeName(name),
         value
       })),
       dealsPipeline: Object.entries(body.dealsPipeline || {}).map(([name, value]) => ({
-        name: t(`crm.pipeline.${name.toLowerCase()}`) !== `crm.pipeline.${name.toLowerCase()}` ? t(`crm.pipeline.${name.toLowerCase()}`) : capitalizeName(name),
+        name:
+          t(`crm.pipeline.${name.toLowerCase()}`) !== `crm.pipeline.${name.toLowerCase()}`
+            ? t(`crm.pipeline.${name.toLowerCase()}`)
+            : capitalizeName(name),
         value
       })),
-      salesPerformance: (body.salesPerformance || []).map((i: any) => ({ name: i.date, value: i.revenue })),
+      salesPerformance: (body.salesPerformance || []).map((i: any) => ({ name: i.date, value: i.revenue }))
     };
   } catch (error: any) {
     statsLoading.value = false;
-    ElNotification.error({ title: "Dashboard Error", message: error?.message || "Failed to load Leads stats" });
+    ElNotification.error({ title: 'Dashboard Error', message: error?.message || 'Failed to load Leads stats' });
     return getDefaultLeadsStats();
   }
 }
@@ -305,37 +311,40 @@ export async function getProjectOperationsStatics() {
   const t = $i18n.t;
   statsLoading.value = true;
   try {
-    const { body, success } = await useApiFetch("insights/projects-operations");
+    const { body, success } = await useApiFetch('insights/projects-operations');
     statsLoading.value = false;
     if (!success) return getDefaultProjectStats();
 
     return {
       firstCards: [
-        { name: "Total Projects", value: formatLargeNumber(body.projectCount || 0) },
-        { name: "Eitmad Projects Overview", value: formatLargeNumber(body.eitmadProjectsCount || 0) },
+        { name: 'Total Projects', value: formatLargeNumber(body.projectCount || 0) },
+        { name: 'Eitmad Projects Overview', value: formatLargeNumber(body.eitmadProjectsCount || 0) }
       ],
       pieChart_one: {
-        title: t("dashboard.widgets.assetsPercentage"),
+        title: t('dashboard.widgets.assetsPercentage'),
         options: [
-          { name: t("dashboard.widgets.usedAssets"), value: body.usedAssetPercentage?.toFixed(2) },
-          { name: t("dashboard.widgets.unusedAssets"), value: (100 - body.usedAssetPercentage)?.toFixed(2) },
-        ],
+          { name: t('dashboard.widgets.usedAssets'), value: body.usedAssetPercentage?.toFixed(2) },
+          { name: t('dashboard.widgets.unusedAssets'), value: (100 - body.usedAssetPercentage)?.toFixed(2) }
+        ]
       },
       pieChart_two: {
-        title: t("dashboard.widgets.manpowerPercentage"),
+        title: t('dashboard.widgets.manpowerPercentage'),
         options: [
-          { name: t("dashboard.widgets.usedManpower"), value: body.usedManpowerPercentage?.toFixed(2) },
-          { name: t("dashboard.widgets.unusedManpower"), value: (100 - body.usedManpowerPercentage)?.toFixed(2) },
-        ],
+          { name: t('dashboard.widgets.usedManpower'), value: body.usedManpowerPercentage?.toFixed(2) },
+          { name: t('dashboard.widgets.unusedManpower'), value: (100 - body.usedManpowerPercentage)?.toFixed(2) }
+        ]
       },
       projectsByStatus: Object.entries(body.projectsByStatus || {}).map(([name, value]) => ({
-        name: t(`crm.projectStatus.${name.toLowerCase()}`) !== `crm.projectStatus.${name.toLowerCase()}` ? t(`crm.projectStatus.${name.toLowerCase()}`) : formatSnakeCase(name),
+        name:
+          t(`crm.projectStatus.${name.toLowerCase()}`) !== `crm.projectStatus.${name.toLowerCase()}`
+            ? t(`crm.projectStatus.${name.toLowerCase()}`)
+            : formatSnakeCase(name),
         value
-      })),
+      }))
     };
   } catch (error: any) {
     statsLoading.value = false;
-    ElNotification.error({ title: "Dashboard Error", message: error?.message || "Failed to load Project stats" });
+    ElNotification.error({ title: 'Dashboard Error', message: error?.message || 'Failed to load Project stats' });
     return getDefaultProjectStats();
   }
 }
@@ -347,20 +356,20 @@ function getDefaultProjectStats() {
 export async function getBussinesStatics() {
   statsLoading.value = true;
   try {
-    const { body, success } = await useApiFetch("insights/financial-business-metrics");
+    const { body, success } = await useApiFetch('insights/financial-business-metrics');
     statsLoading.value = false;
     if (!success) return { firstCards: [] };
 
     return {
       firstCards: [
-        { name: "Total Deals Revenue", value: formatLargeNumber(body.revenueFromDeals || 0) },
-        { name: "Outstanding Invoices", value: formatLargeNumber(body.outstandingInvoicesCount || 0) },
-        { name: "Collected Payments", value: formatLargeNumber(body.collectedPaymentsCount || 0) },
-      ],
+        { name: 'Total Deals Revenue', value: formatLargeNumber(body.revenueFromDeals || 0) },
+        { name: 'Outstanding Invoices', value: formatLargeNumber(body.outstandingInvoicesCount || 0) },
+        { name: 'Collected Payments', value: formatLargeNumber(body.collectedPaymentsCount || 0) }
+      ]
     };
   } catch (error: any) {
     statsLoading.value = false;
-    ElNotification.error({ title: "Dashboard Error", message: error?.message || "Failed to load Business stats" });
+    ElNotification.error({ title: 'Dashboard Error', message: error?.message || 'Failed to load Business stats' });
     return { firstCards: [] };
   }
 }
@@ -368,20 +377,20 @@ export async function getBussinesStatics() {
 export async function getPerformanceStatics() {
   statsLoading.value = true;
   try {
-    const { body, success } = await useApiFetch("insights/performance-hr");
+    const { body, success } = await useApiFetch('insights/performance-hr');
     statsLoading.value = false;
     if (!success) return { firstCards: [] };
 
     return {
       firstCards: [
-        { name: "Total Leads", value: formatLargeNumber(body.leadCount || 0) },
-        { name: "Conv. Rate (Opp -> Deal)", value: `${body.percentageOfOpportunitiesBecameDeals?.toFixed(2)}%` },
-        { name: "Total Deals Closed", value: formatLargeNumber(body.dealsCount || 0) },
-      ],
+        { name: 'Total Leads', value: formatLargeNumber(body.leadCount || 0) },
+        { name: 'Conv. Rate (Opp -> Deal)', value: `${body.percentageOfOpportunitiesBecameDeals?.toFixed(2)}%` },
+        { name: 'Total Deals Closed', value: formatLargeNumber(body.dealsCount || 0) }
+      ]
     };
   } catch (error: any) {
     statsLoading.value = false;
-    ElNotification.error({ title: "Dashboard Error", message: error?.message || "Failed to load Performance stats" });
+    ElNotification.error({ title: 'Dashboard Error', message: error?.message || 'Failed to load Performance stats' });
     return { firstCards: [] };
   }
 }
@@ -389,24 +398,24 @@ export async function getPerformanceStatics() {
 export function getBarChartWithLineData(data: any, legend: string[], colorpallete: any) {
   if (!data) return {};
   return {
-    tooltip: { trigger: "axis", axisPointer: { type: 'cross' }, ...THEME.glassTooltip },
+    tooltip: { trigger: 'axis', axisPointer: { type: 'cross' }, ...THEME.glassTooltip },
     legend: { data: legend, textStyle: { color: '#94A3B8' }, bottom: 0 },
     grid: { top: 40, right: 40, bottom: 40, left: 40, containLabel: true },
     xAxis: {
-      type: "category",
+      type: 'category',
       data: data.map((val: any) => val.name),
-      axisLabel: { color: "#94A3B8" },
+      axisLabel: { color: '#94A3B8' },
       axisLine: { show: false }
     },
     yAxis: [
-      { type: 'value', splitLine: THEME.axisLine, axisLabel: { color: "#64748B" } },
-      { type: 'value', splitLine: { show: false }, axisLabel: { color: "#64748B" } }
+      { type: 'value', splitLine: THEME.axisLine, axisLabel: { color: '#64748B' } },
+      { type: 'value', splitLine: { show: false }, axisLabel: { color: '#64748B' } }
     ],
     series: [
       {
         name: legend[0],
-        type: "bar",
-        barWidth: "20%",
+        type: 'bar',
+        barWidth: '20%',
         data: data.map((val: any) => val.value),
         itemStyle: {
           borderRadius: [4, 4, 0, 0],
@@ -415,7 +424,7 @@ export function getBarChartWithLineData(data: any, legend: string[], colorpallet
       },
       {
         name: legend[1],
-        type: "line",
+        type: 'line',
         yAxisIndex: 1,
         smooth: true,
         data: data.map((val: any) => val.totalPaid || 0),
@@ -426,16 +435,16 @@ export function getBarChartWithLineData(data: any, legend: string[], colorpallet
   };
 }
 
-export function getCenterPieChartsData(data: any, colorpallete: any, title = "") {
+export function getCenterPieChartsData(data: any, colorpallete: any, title = '') {
   return {
     tooltip: {
-      trigger: "item",
+      trigger: 'item',
       ...THEME.glassTooltip
     },
     legend: {
-      orient: "vertical",
-      left: "left",
-      top: "center",
+      orient: 'vertical',
+      left: 'left',
+      top: 'center',
       textStyle: { color: '#94A3B8' }
     },
     title: {
@@ -447,8 +456,8 @@ export function getCenterPieChartsData(data: any, colorpallete: any, title = "")
     color: colorpallete,
     series: [
       {
-        type: "pie",
-        radius: ["40%", "70%"],
+        type: 'pie',
+        radius: ['40%', '70%'],
         center: ['60%', '50%'],
         avoidLabelOverlap: false,
         itemStyle: {
@@ -464,8 +473,8 @@ export function getCenterPieChartsData(data: any, colorpallete: any, title = "")
             fontWeight: 'bold'
           }
         },
-        data: data,
-      },
-    ],
+        data
+      }
+    ]
   };
 }

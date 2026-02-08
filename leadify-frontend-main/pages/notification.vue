@@ -32,74 +32,70 @@ const currentPage = ref<number>(1);
 const pagintaion = ref<any>({});
 const filters = ref<any>({});
 const finalData = ref<any>([]);
-const unreadNotificationsCount = ref(0)
+const unreadNotificationsCount = ref(0);
 
-const response = await useTableFilter("notification");
+const response = await useTableFilter('notification');
 
 pagintaion.value = response?.pagination;
 finalData.value = response?.formattedData || [];
-unreadNotificationsCount.value = response?.unreadNotificationsCount
+unreadNotificationsCount.value = response?.unreadNotificationsCount;
 
 async function getData() {
-    isLoading.value = true;
-    const data = await useTableFilter("notification", filters.value);
-    finalData.value = data.formattedData;
-    pagintaion.value = data.pagination;
-    isLoading.value = false;
-    unreadNotificationsCount.value = data?.unreadNotificationsCount
-
+  isLoading.value = true;
+  const data = await useTableFilter('notification', filters.value);
+  finalData.value = data.formattedData;
+  pagintaion.value = data.pagination;
+  isLoading.value = false;
+  unreadNotificationsCount.value = data?.unreadNotificationsCount;
 }
-
 
 let intervalId: any;
 
 const startPolling = () => {
-    if (intervalId) return;
-    intervalId = setInterval(() => {
-        if (document.visibilityState === 'visible') {
-            getData();
-        }
-    }, 15000);
+  if (intervalId) return;
+  intervalId = setInterval(() => {
+    if (document.visibilityState === 'visible') {
+      getData();
+    }
+  }, 15000);
 };
 
 const stopPolling = () => {
-    if (intervalId) {
-        clearInterval(intervalId);
-        intervalId = null;
-    }
+  if (intervalId) {
+    clearInterval(intervalId);
+    intervalId = null;
+  }
 };
 
 onMounted(() => {
-    startPolling();
-    document.addEventListener('visibilitychange', () => {
-        if (document.visibilityState === 'visible') {
-            getData();
-            startPolling();
-        } else {
-            stopPolling();
-        }
-    });
+  startPolling();
+  document.addEventListener('visibilitychange', () => {
+    if (document.visibilityState === 'visible') {
+      getData();
+      startPolling();
+    } else {
+      stopPolling();
+    }
+  });
 });
 
 onBeforeUnmount(() => {
-    stopPolling();
+  stopPolling();
 });
 
 const readNotifications = async () => {
-    try {
-        await readAll();
-    } finally {
-        getData();
-    }
+  try {
+    await readAll();
+  } finally {
+    getData();
+  }
 };
 
 const readNotification = async (data: any) => {
-   try {
-    let typeAssign = data.type.split("_")[0]?.split(" ")?.[0].toLowerCase();
-    typeAssign !== "opportunity" ? (typeAssign = `${typeAssign}s`) : typeAssign;
-    const path = `${
-      typeAssign !== "projects" ? "sales" : "operations"
-    }/${typeAssign}/${data.target}`;
+  try {
+    let typeAssign = data.type.split('_')[0]?.split(' ')?.[0].toLowerCase();
+    typeAssign !== 'opportunity' ? (typeAssign = `${typeAssign}s`) : typeAssign;
+    const path = `${typeAssign !== 'projects' ? 'sales' : 'operations'}/${typeAssign}/${data.target}`;
 
     await read(data.id, path);
   } finally {
@@ -107,61 +103,61 @@ const readNotification = async (data: any) => {
 };
 
 const handleSizeChange = (val: any) => {
-    filters.value["limit"] = val;
-    getData();
+  filters.value.limit = val;
+  getData();
 };
 
 watch(
-    () => currentPage.value,
-    () => {
-        filters.value["page"] = currentPage.value;
-        getData();
-    }
+  () => currentPage.value,
+  () => {
+    filters.value.page = currentPage.value;
+    getData();
+  }
 );
 </script>
 
 <style lang="scss" scoped>
 .notify {
-    border-bottom: 1px solid var(--border-default);
-    border-radius: 24px;
-    width: 70%;
-    display: flex;
-    flex-direction: column;
-    padding: 10px;
+  border-bottom: 1px solid var(--border-default);
+  border-radius: 24px;
+  width: 70%;
+  display: flex;
+  flex-direction: column;
+  padding: 10px;
 
-    @media screen and (max-width: 768px) {
-        width: 100%;
-    }
+  @media screen and (max-width: 768px) {
+    width: 100%;
+  }
 }
 
 .item {
-    flex-direction: row;
-    height: 60vh;
-    width: 100%;
-    overflow-y: auto;
-    overflow-x: hidden;
-    cursor: pointer;
+  flex-direction: row;
+  height: 60vh;
+  width: 100%;
+  overflow-y: auto;
+  overflow-x: hidden;
+  cursor: pointer;
 }
 
 .item-data_UN_READ {
-    background-color: var(--bg-hover);
-    border-radius: 20px;
+  background-color: var(--bg-hover);
+  border-radius: 20px;
 }
 
 .item-data_READ {
-    background-color: var(--bg-card);
-    border-radius: 20px;
+  background-color: var(--bg-card);
+  border-radius: 20px;
 }
 
 .icon_READ {
-    background-color: rgba(120, 73, 255, 0.1);
-    border-radius: 50%;
-    color: var(--accent-color);
+  background-color: rgba(120, 73, 255, 0.1);
+  border-radius: 50%;
+  color: var(--accent-color);
 }
 
 .icon_UN_READ {
-    background-color: rgba(255, 183, 45, 0.1);
-    border-radius: 50%;
-    color: #ffb72d;
+  background-color: rgba(255, 183, 45, 0.1);
+  border-radius: 50%;
+  color: #ffb72d;
 }
 </style>

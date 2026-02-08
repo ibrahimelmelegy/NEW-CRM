@@ -16,42 +16,41 @@
 <script setup lang="ts">
 import { useForm } from 'vee-validate';
 const { t } = useI18n();
-const { handleSubmit, errors, values ,resetForm } = useForm();
+const { handleSubmit, errors, values, resetForm } = useForm();
 const emit = defineEmits(['showFilter']);
 
-const onSubmit = handleSubmit(async (values:any) => {
+const onSubmit = handleSubmit(async (values: any) => {
   const formatYear = (val: any) => {
     if (!val) return null;
     const date = new Date(val);
     return !isNaN(date.getTime()) ? date.getFullYear().toString() : null;
   };
 
-  if( values["fromStartDate"]) {
-    values["fromStartDate"] = [formatYear(values["fromStartDate"])];
+  if (values.fromStartDate) {
+    values.fromStartDate = [formatYear(values.fromStartDate)];
   }
-  if( values["toStartDate"]) {
-    values["toStartDate"] = [formatYear(values["toStartDate"])];
+  if (values.toStartDate) {
+    values.toStartDate = [formatYear(values.toStartDate)];
   }
-  if( values["fromEndDate"]) {
-    values["fromEndDate"] = [formatYear(values["fromEndDate"])];
+  if (values.fromEndDate) {
+    values.fromEndDate = [formatYear(values.fromEndDate)];
   }
-  if( values["toEndDate"]) {
-    values["toEndDate"] = [formatYear(values["toEndDate"])];
+  if (values.toEndDate) {
+    values.toEndDate = [formatYear(values.toEndDate)];
   }
   emit('showFilter', values);
-})
+});
 
 const ResetFilter = async () => {
-  //await resetForm()
+  // await resetForm()
   emit('showFilter', {
-    type: "",
-    status: "",
-    fromStartDate: "",
-    toStartDate: "",
-    fromEndDate: "",
-    toEndDate: "",
+    type: '',
+    status: '',
+    fromStartDate: '',
+    toStartDate: '',
+    fromEndDate: '',
+    toEndDate: ''
   });
-  resetForm()
-}
-
+  resetForm();
+};
 </script>

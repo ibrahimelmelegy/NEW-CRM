@@ -51,103 +51,103 @@ div
 </template>
 
 <script setup lang="ts">
-  const router = useRouter();
-  import { Plus } from "@element-plus/icons-vue";
-  const { hasPermission } = await usePermissions();
-  const loadingAction = ref(false);
-  const deleteLeadPopup = ref(false);
+import { Plus } from '@element-plus/icons-vue';
+const router = useRouter();
+const { hasPermission } = await usePermissions();
+const loadingAction = ref(false);
+const deleteLeadPopup = ref(false);
 
-  const table = reactive({
-    columns: [
-      {
-        prop: "plate",
-        label: useI18n().t('operations.vehicles.table.plate'),
-        component: "Text",
-        // sortable: true,
-        type: "font-bold",
-        width: 150,
-      },
-      {
-        prop: "manufacturer",
-        label: useI18n().t('operations.vehicles.table.manufacturer'),
-        component: "Text",
-        // sortable: true,
-        type: "font-bold",
-        width: 200,
-      },
-      {
-        prop: "rentCost",
-        label: useI18n().t('operations.vehicles.table.rentCost'),
-        component: "Text",
-        sortable: true,
-        type: "font-default",
-        width: 150,
-      },
-      {
-        prop: "gasCost",
-        label: useI18n().t('operations.vehicles.table.gasCost'),
-        component: "Text",
-        sortable: true,
-        type: "font-default",
-        width: 150,
-      },
-      {
-        prop: "oilCost",
-        label: useI18n().t('operations.vehicles.table.oilCost'),
-        component: "Text",
-        sortable: true,
-        type: "font-default",
-        width: 150,
-      },
-      {
-        prop: "regularMaintenanceCost",
-        label: useI18n().t('operations.vehicles.table.maintenanceCost'),
-        component: "Text",
-        // sortable: true,
-        type: "font-default",
-        width: 250,
-      },
-      {
-        prop: "action",
-        label: useI18n().t('common.action'),
-        component: "Action",
-      },
-    ],
-    data: [] as Vehicle[],
-  });
+const table = reactive({
+  columns: [
+    {
+      prop: 'plate',
+      label: useI18n().t('operations.vehicles.table.plate'),
+      component: 'Text',
+      // sortable: true,
+      type: 'font-bold',
+      width: 150
+    },
+    {
+      prop: 'manufacturer',
+      label: useI18n().t('operations.vehicles.table.manufacturer'),
+      component: 'Text',
+      // sortable: true,
+      type: 'font-bold',
+      width: 200
+    },
+    {
+      prop: 'rentCost',
+      label: useI18n().t('operations.vehicles.table.rentCost'),
+      component: 'Text',
+      sortable: true,
+      type: 'font-default',
+      width: 150
+    },
+    {
+      prop: 'gasCost',
+      label: useI18n().t('operations.vehicles.table.gasCost'),
+      component: 'Text',
+      sortable: true,
+      type: 'font-default',
+      width: 150
+    },
+    {
+      prop: 'oilCost',
+      label: useI18n().t('operations.vehicles.table.oilCost'),
+      component: 'Text',
+      sortable: true,
+      type: 'font-default',
+      width: 150
+    },
+    {
+      prop: 'regularMaintenanceCost',
+      label: useI18n().t('operations.vehicles.table.maintenanceCost'),
+      component: 'Text',
+      // sortable: true,
+      type: 'font-default',
+      width: 250
+    },
+    {
+      prop: 'action',
+      label: useI18n().t('common.action'),
+      component: 'Action'
+    }
+  ],
+  data: [] as Vehicle[]
+});
 
-  const response = await useTableFilter("vehicle");
-  table.data = response.formattedData;
+const response = await useTableFilter('vehicle');
+table.data = response.formattedData;
 
-  function handleRowClick(val: any) {
-    router.push(`/operations/vehicle/${val.id}`);
+function handleRowClick(val: any) {
+  router.push(`/operations/vehicle/${val.id}`);
+}
+
+const filterOptions = [
+  {
+    title: useI18n().t('operations.vehicles.filter.manufacturer'),
+    value: 'manufacturer',
+    options: [...manufacturers]
+  },
+  {
+    title: useI18n().t('operations.vehicles.filter.rentCost'),
+    value: ['fromRentCost', 'toRentCost'],
+    type: 'input'
+  },
+  {
+    title: useI18n().t('operations.vehicles.filter.gasCost'),
+    value: ['fromGasCost', 'toGasCost'],
+    type: 'input'
+  },
+  {
+    title: useI18n().t('operations.vehicles.filter.oilCost'),
+    value: ['fromOilCost', 'toOilCost'],
+    type: 'input'
+  },
+  {
+    title: useI18n().t('operations.vehicles.filter.maintenanceCost'),
+    value: ['fromRegularMaintenanceCost', 'toRegularMaintenanceCost'],
+    type: 'input'
   }
-
-  const filterOptions = [
-    {
-      title: useI18n().t('operations.vehicles.filter.manufacturer'),
-      value: "manufacturer",
-      options: [...manufacturers],
-    },
-    {
-      title: useI18n().t('operations.vehicles.filter.rentCost'),
-      value: ["fromRentCost", "toRentCost"],
-      type: "input",
-    },
-    {
-      title: useI18n().t('operations.vehicles.filter.gasCost'),
-      value: ["fromGasCost", "toGasCost"],
-      type: "input",
-    },
-    {
-      title: useI18n().t('operations.vehicles.filter.oilCost'),
-      value: ["fromOilCost", "toOilCost"],
-      type: "input",
-    },
-    {
-      title: useI18n().t('operations.vehicles.filter.maintenanceCost'),
-      value: ["fromRegularMaintenanceCost", "toRegularMaintenanceCost"],
-      type: "input",
-    },
-  ];
+];
 </script>

@@ -3,12 +3,12 @@ export default function useQuery(currentPage: Ref<number>, sort: Ref<string>, fi
     currentPage: currentPageRef,
     sort: sortRef,
     filters: filtersRef,
-    search: searchRef,
+    search: searchRef
   } = toRefs({
     currentPage,
     sort,
     filters,
-    search,
+    search
   });
 
   const router = useRouter();
@@ -21,7 +21,7 @@ export default function useQuery(currentPage: Ref<number>, sort: Ref<string>, fi
     filtersRef.value = route.query?.filterOptions ? decode(route.query?.filterOptions || {}) : filtersRef.value;
   });
 
-  function decode(value: Object) {
+  function decode(value: object) {
     try {
       const data = JSON.parse(decodeURIComponent(value));
       return data;
@@ -30,34 +30,34 @@ export default function useQuery(currentPage: Ref<number>, sort: Ref<string>, fi
     }
   }
 
-  watch(currentPageRef, (curr) => {
+  watch(currentPageRef, curr => {
     router.push({
       path: route.fullPath,
-      query: { ...route.query, pageNumber: curr },
+      query: { ...route.query, pageNumber: curr }
     });
   });
 
   let timer: any;
-  watch(searchRef, (curr) => {
+  watch(searchRef, curr => {
     clearTimeout(timer);
     timer = setTimeout(async () => {
       router.push({
         path: route.fullPath,
-        query: { ...route.query, find: curr },
+        query: { ...route.query, find: curr }
       });
     }, 500);
   });
-  watch(sortRef, (curr) => {
+  watch(sortRef, curr => {
     router.push({
       path: route.fullPath,
-      query: { ...route.query, sortOption: encodeURIComponent(JSON.stringify(curr || '')) },
+      query: { ...route.query, sortOption: encodeURIComponent(JSON.stringify(curr || '')) }
     });
   });
 
-  watch(filtersRef, (curr) => {
+  watch(filtersRef, curr => {
     router.push({
       path: route.fullPath,
-      query: { ...route.query, filterOptions: encodeURIComponent(JSON.stringify(curr || '')) },
+      query: { ...route.query, filterOptions: encodeURIComponent(JSON.stringify(curr || '')) }
     });
   });
 
@@ -65,6 +65,6 @@ export default function useQuery(currentPage: Ref<number>, sort: Ref<string>, fi
     currentPage: currentPageRef,
     sort: sortRef,
     filters: filtersRef,
-    search: searchRef,
+    search: searchRef
   };
 }

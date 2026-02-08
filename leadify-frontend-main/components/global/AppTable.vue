@@ -62,201 +62,203 @@
 </template>
 
 <script setup lang="ts">
-  import { Calendar, Search } from "@element-plus/icons-vue";
-  import type { ElTable } from 'element-plus';
-  const filterBar = ref(false);
-  const route = useRoute();
-  const router = useRouter();
-  const isLoading = ref(false);
+import { Calendar, Search } from '@element-plus/icons-vue';
+import type { ElTable } from 'element-plus';
+const filterBar = ref(false);
+const route = useRoute();
+const router = useRouter();
+const isLoading = ref(false);
 
-  const tableRef = ref<InstanceType<typeof ElTable> | null>(null);
-  const props = defineProps({
-    columns: {
-      type: Array,
-      required: true,
-    },
-    filterOptions: {
-      type: Array,
-      required: true,
-    },
-    withoutFilters: {
-      type: Boolean,
-      required: false,
-      default: false,
-    },
-    exportButton: {
-      type: Boolean,
-      required: false,
-      default: false,
-    },
-    withoutPagination: {
-      type: Boolean,
-      required: false,
-      default: false,
-    },
-    withoutSearch: {
-      type: Boolean,
-      required: false,
-      default: false,
-    },
-    withoutAction: {
-      type: Boolean,
-      required: false,
-      default: false,
-    },
-    data: {
-      type: Array,
-      required: true,
-    },
-    searchPlaceholder: {
-      type: String,
-      default: "",
-    },
-    position: {
-      type: String,
-      default: "",
-    },
-    pageInfo: {
-      type: Object,
-      required: false,
-      default: { totalCount: 20, totalPages: 2 },
-    },
-    sortOptions: {
-      type: Object,
-      required: false,
-    },
-    externalLoading: {
-      type: Boolean,
-      required: false,
-      default: false,
-    },
-  });
-
-  watch(
-    () => props.externalLoading,
-    () => {
-      isLoading.value = props.externalLoading;
-    }
-  );
-
-  const fileShow = ref(false);
-  const srcOverlay = ref("");
-
-  const limit = ref(10);
-  const currentPage = ref<number>(1);
-  const sort = ref<any>({});
-  const filters = ref<any>({});
-  const search = ref<string | any>("");
-  search.value = route.query.searchKey || "";
-  const pagintaion = ref<any>({});
-  pagintaion.value = props.pageInfo;
-  sort.value = {
-    prop: route.query.sortBy || "",
-    order: route.query.sort === "ASC" ? "ascending" : "descending",
-  };
-  function showfile(value: any) {
-    fileShow.value = true;
-    srcOverlay.value = value;
+const tableRef = ref<InstanceType<typeof ElTable> | null>(null);
+const props = defineProps({
+  columns: {
+    type: Array,
+    required: true
+  },
+  filterOptions: {
+    type: Array,
+    required: true
+  },
+  withoutFilters: {
+    type: Boolean,
+    required: false,
+    default: false
+  },
+  exportButton: {
+    type: Boolean,
+    required: false,
+    default: false
+  },
+  withoutPagination: {
+    type: Boolean,
+    required: false,
+    default: false
+  },
+  withoutSearch: {
+    type: Boolean,
+    required: false,
+    default: false
+  },
+  withoutAction: {
+    type: Boolean,
+    required: false,
+    default: false
+  },
+  data: {
+    type: Array,
+    required: true
+  },
+  searchPlaceholder: {
+    type: String,
+    default: ''
+  },
+  position: {
+    type: String,
+    default: ''
+  },
+  pageInfo: {
+    type: Object,
+    required: false,
+    default: { totalCount: 20, totalPages: 2 }
+  },
+  sortOptions: {
+    type: Object,
+    required: false
+  },
+  externalLoading: {
+    type: Boolean,
+    required: false,
+    default: false
   }
+});
 
-  // sort
-
-  function handleSortChange({ prop, order }: { prop: string; order: string }) {
-    const formatProp =
-      prop === "leadDetails" || prop === "dealDetails" || prop === "staffDetails"
-        ? "name"
-        : prop === "ClientDetails"
-        ? "clientName"
-        : prop;
-    const formatSort = order === "ascending" ? "ASC" : "DESC";
-    filters.value["sortBy"] = formatProp;
-    filters.value["sort"] = formatSort;
-    getData();
+watch(
+  () => props.externalLoading,
+  () => {
+    isLoading.value = props.externalLoading;
   }
+);
 
-  // search
-  let timer: any;
-  function searchTimeOut() {
-    clearTimeout(timer);
-    timer = setTimeout(async () => {
-      filters.value["searchKey"] = search.value;
-      await getData();
-    }, 500);
-  }
+const fileShow = ref(false);
+const srcOverlay = ref('');
 
-  const finalData = ref<any>([]);
-  finalData.value = props.data || [];
-  async function getData() {
-    isLoading.value = true;
-    const data = await useTableFilter(props.position, filters.value);
-    finalData.value = data.formattedData;
-    pagintaion.value = data.pagination;
-    isLoading.value = false;
-  }
-  function handleFilterChange(value: any) {
-    // filters.value = value;
-  }
+const limit = ref(10);
+const currentPage = ref<number>(1);
+const sort = ref<any>({});
+const filters = ref<any>({});
+const search = ref<string | any>('');
+search.value = route.query.searchKey || '';
+const pagintaion = ref<any>({});
+pagintaion.value = props.pageInfo;
+sort.value = {
+  prop: route.query.sortBy || '',
+  order: route.query.sort === 'ASC' ? 'ascending' : 'descending'
+};
+function showfile(value: any) {
+  fileShow.value = true;
+  srcOverlay.value = value;
+}
 
-  const handleSizeChange = (val: any) => {
-    filters.value["limit"] = val;
-    getData();
-  };
+// sort
 
-  watch(
-    () => currentPage.value,
-    () => {
-      filters.value["page"] = currentPage.value;
-      getData();
-    }
-  );
+function handleSortChange({ prop, order }: { prop: string; order: string }) {
+  const formatProp =
+    prop === 'leadDetails' || prop === 'dealDetails' || prop === 'staffDetails' ? 'name' : prop === 'ClientDetails' ? 'clientName' : prop;
+  const formatSort = order === 'ascending' ? 'ASC' : 'DESC';
+  filters.value.sortBy = formatProp;
+  filters.value.sort = formatSort;
+  getData();
+}
 
-  const handleFilter = async (filteration: any) => {
-    if (isObjectValid(filteration)) {
-      filters.value = { ...filters.value, ...filteration };
-    } else {
-      filters.value = {};
-      tableRef.value?.clearSort();
-    }
+// search
+let timer: any;
+function searchTimeOut() {
+  clearTimeout(timer);
+  timer = setTimeout(async () => {
+    filters.value.searchKey = search.value;
     await getData();
-    filterBar.value = false;
-    numberOfFilters.value = filterLength(filteration);
-  };
+  }, 500);
+}
 
-  const handleReset = async () => {
+const finalData = ref<any>([]);
+finalData.value = props.data || [];
+async function getData() {
+  isLoading.value = true;
+  const data = await useTableFilter(props.position, filters.value);
+  finalData.value = data.formattedData;
+  pagintaion.value = data.pagination;
+  isLoading.value = false;
+}
+function handleFilterChange(value: any) {
+  // filters.value = value;
+}
+
+const handleSizeChange = (val: any) => {
+  filters.value.limit = val;
+  getData();
+};
+
+watch(
+  () => currentPage.value,
+  () => {
+    filters.value.page = currentPage.value;
+    getData();
+  }
+);
+
+const handleFilter = async (filteration: any) => {
+  if (isObjectValid(filteration)) {
+    filters.value = { ...filters.value, ...filteration };
+  } else {
     filters.value = {};
-    await router.push({ path: route.path, query: {} });
-    await getData();
-    filterBar.value = false;
-    numberOfFilters.value = 0;
     tableRef.value?.clearSort();
-  };
-
-  function calculateIndex(index: number) {
-    const page: number = Number(route.query.page) || 1;
-    const limit: number = Number(route.query.limit) || 10;
-    return (page - 1) * limit + index + 1;
   }
+  await getData();
+  filterBar.value = false;
+  numberOfFilters.value = filterLength(filteration);
+};
+
+const handleReset = async () => {
+  filters.value = {};
+  await router.push({ path: route.path, query: {} });
+  await getData();
+  filterBar.value = false;
+  numberOfFilters.value = 0;
+  tableRef.value?.clearSort();
+};
+
+function calculateIndex(index: number) {
+  const page: number = Number(route.query.page) || 1;
+  const limit: number = Number(route.query.limit) || 10;
+  return (page - 1) * limit + index + 1;
+}
 </script>
 
 <style lang="scss">
-  .el-table {
-    .blocked-row {
-      background-color: rgba(247, 96, 129, 0.154);
-      opacity: 60%;
-    }
-
-    .deleted-row {
-      opacity: 40%;
-    }
-
-    .el-scrollbar__wrap.el-scrollbar__wrap--hidden-default {
-      scrollbar-width: thin !important;
-    }
+.el-table {
+  .blocked-row {
+    background-color: rgba(247, 96, 129, 0.154);
+    opacity: 60%;
   }
+
+  .deleted-row {
+    opacity: 40%;
+  }
+
+  .el-scrollbar__wrap.el-scrollbar__wrap--hidden-default {
+    scrollbar-width: thin !important;
+  }
+}
 @keyframes rowPulse {
-  0% { background: rgba(168, 85, 247, 0); }
-  50% { background: rgba(168, 85, 247, 0.1); }
-  100% { background: rgba(168, 85, 247, 0); }
+  0% {
+    background: rgba(168, 85, 247, 0);
+  }
+  50% {
+    background: rgba(168, 85, 247, 0.1);
+  }
+  100% {
+    background: rgba(168, 85, 247, 0);
+  }
 }
 
 .pulse-row {

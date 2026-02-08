@@ -56,30 +56,26 @@
           p.text-base.text-neutral-900 Total Price :
           p.text-base.text-neutral-900 {{ formatNumber((Number(project?.totalCost) || 0)?.toFixed(2)) }} SAR
   </template>
-  
-  <script lang="ts" setup>
-  import { ref } from 'vue';
-  import { getYear } from "#imports";
-  
-  const contentToPrint = ref(null);
-  
-  const props = defineProps({
-    project: {
-      type: Object,
-      required: false,
-    },
-    manPowerPreview: {
-      type: Object,
-      required: false,
-    },
-  });
-  
-  
-  async function exportToPDF() {
-  const [{ default: jsPDF }, { default: autoTable }] = await Promise.all([
-    import("jspdf"),
-    import("jspdf-autotable")
-  ]);
+
+<script lang="ts" setup>
+import { ref } from 'vue';
+import { getYear } from '#imports';
+
+const contentToPrint = ref(null);
+
+const props = defineProps({
+  project: {
+    type: Object,
+    required: false
+  },
+  manPowerPreview: {
+    type: Object,
+    required: false
+  }
+});
+
+async function exportToPDF() {
+  const [{ default: jsPDF }, { default: autoTable }] = await Promise.all([import('jspdf'), import('jspdf-autotable')]);
   try {
     // Helper function to check if we need a new page
     const checkNewPage = (doc: any, y: number, minSpace: number = 40) => {
@@ -93,160 +89,151 @@
 
     // Title (centered)
     doc.setFontSize(20);
-    doc.setFont("", "bold");
-    doc.text("Final Costs Project", 105, 20, { align: "center" });
+    doc.setFont('', 'bold');
+    doc.text('Final Costs Project', 105, 20, { align: 'center' });
 
     // Subtitle
     doc.setFontSize(12);
-    doc.setFont("", "normal");
-    doc.text(`Client: ${props.project?.client?.clientName || "-"}`, 105, 30, {
-      align: "center",
+    doc.setFont('', 'normal');
+    doc.text(`Client: ${props.project?.client?.clientName || '-'}`, 105, 30, {
+      align: 'center'
     });
 
     // Project Info Section
     doc.setFontSize(22);
-    doc.setFont("helvetica", "bold");
+    doc.setFont('helvetica', 'bold');
     doc.setTextColor(50, 31, 107);
-    doc.text("Project Information", 12, 45);
+    doc.text('Project Information', 12, 45);
 
     // Draw Table with Header Borders
     autoTable(doc, {
       startY: 50,
       body: [
-        ["Project Name", props.project?.name || "-"],
-        ["Project Start Date", getYear(props.project?.startDate)],
-        ["Project End Date", getYear(props.project?.endDate)],
+        ['Project Name', props.project?.name || '-'],
+        ['Project Start Date', getYear(props.project?.startDate)],
+        ['Project End Date', getYear(props.project?.endDate)]
       ],
       columnStyles: {
         0: { cellWidth: 50, fillColor: [248, 247, 250] }, // Description Column Width
-        1: { cellWidth: 130, fillColor: [255, 255, 255] },
+        1: { cellWidth: 130, fillColor: [255, 255, 255] }
       },
       styles: {
         lineWidth: 0.4, // Border thickness
-        lineColor: [231, 230, 233], // Black border for header and columns
-      },
+        lineColor: [231, 230, 233] // Black border for header and columns
+      }
     });
 
     // Table 1: Material Costs
     doc.setFontSize(20);
-    doc.setFont("helvetica", "bold"); // Gilroy is not a default font in jsPDF
+    doc.setFont('helvetica', 'bold'); // Gilroy is not a default font in jsPDF
     doc.setTextColor(50, 31, 107);
-    doc.text("Total Material Cost", 12, (doc as any).lastAutoTable.finalY + 20);
+    doc.text('Total Material Cost', 12, (doc as any).lastAutoTable.finalY + 20);
 
     autoTable(doc, {
       startY: (doc as any).lastAutoTable.finalY + 25, // Position under title
-      head: [["Description", "Quantity", "Unit Price (SAR)", "Total Cost"]],
-      body: props.project?.materials.map((item: any) => [
-        item?.description,
-        item?.quantity,
-        item?.unitPrice,
-        item?.totalMaterialCost,
-      ]),
+      head: [['Description', 'Quantity', 'Unit Price (SAR)', 'Total Cost']],
+      body: props.project?.materials.map((item: any) => [item?.description, item?.quantity, item?.unitPrice, item?.totalMaterialCost]),
       headStyles: {
         fillColor: [248, 247, 250], // Background color as rgba(231, 230, 233, 1)
         textColor: [101, 101, 101], // Ensuring text is visible
-        fontStyle: "normal",
+        fontStyle: 'normal',
         fontSize: 12,
-        font: "Gilroy", // Custom font (ensure it's registered in jsPDF)
+        font: 'Gilroy' // Custom font (ensure it's registered in jsPDF)
       },
       bodyStyles: {
         fillColor: [255, 255, 255],
-        textColor: [0, 0, 0],
+        textColor: [0, 0, 0]
       },
       alternateRowStyles: { fillColor: [255, 255, 255] },
       styles: {
         lineWidth: 0.4, // Border width set to 1px
-        lineColor: [231, 230, 233], // Black border
-      },
+        lineColor: [231, 230, 233] // Black border
+      }
     });
 
     doc.setFontSize(20);
-    doc.setFont("helvetica", "bold"); // Gilroy is not a default font in jsPDF
+    doc.setFont('helvetica', 'bold'); // Gilroy is not a default font in jsPDF
     doc.setTextColor(50, 31, 107);
-    doc.text("Total Manpower Cost", 12, (doc as any).lastAutoTable.finalY + 20);
+    doc.text('Total Manpower Cost', 12, (doc as any).lastAutoTable.finalY + 20);
 
     // Table 2: Manpower Costs
     autoTable(doc, {
       startY: (doc as any).lastAutoTable.finalY + 25, // Ensure it follows the previous table
-      head: [["Name", "Estimated Work Days", "Duration Cost", "Total Cost"]],
+      head: [['Name', 'Estimated Work Days', 'Duration Cost', 'Total Cost']],
       body: props.project?.projectManpowerResources.map((worker: any) => [
         worker?.manpower?.name,
         worker?.estimatedWorkDays,
         worker?.durationCost,
-        worker?.totalCost,
+        worker?.totalCost
       ]),
       headStyles: {
         fillColor: [248, 247, 250], // Background color as rgba(231, 230, 233, 1)
         textColor: [101, 101, 101], // Ensuring text is visible
-        fontStyle: "normal",
+        fontStyle: 'normal',
         fontSize: 12,
-        font: "Gilroy", // Custom font (ensure it's registered in jsPDF)
+        font: 'Gilroy' // Custom font (ensure it's registered in jsPDF)
       },
       bodyStyles: {
         fillColor: [255, 255, 255],
-        textColor: [0, 0, 0],
+        textColor: [0, 0, 0]
       },
       alternateRowStyles: { fillColor: [255, 255, 255] },
       styles: {
         lineWidth: 0.4, // Border width set to 1px
-        lineColor: [231, 230, 233], // Black border
-      },
+        lineColor: [231, 230, 233] // Black border
+      }
     });
 
     doc.setFontSize(20);
-    doc.setFont("helvetica", "bold"); // Gilroy is not a default font in jsPDF
+    doc.setFont('helvetica', 'bold'); // Gilroy is not a default font in jsPDF
     doc.setTextColor(50, 31, 107);
-    doc.text("Total Assets Cost", 12, (doc as any).lastAutoTable.finalY + 20);
+    doc.text('Total Assets Cost', 12, (doc as any).lastAutoTable.finalY + 20);
     // Table 3: Assets Costs
     autoTable(doc, {
       startY: (doc as any).lastAutoTable.finalY + 25, // Ensures spacing between tables
-      head: [["Name", "Buy Price (SAR)", "Rent Price (SAR)"]],
-      body: props.project?.projectAssets.map((asset: any) => [
-        asset?.asset?.name,
-        asset?.buyPrice,
-        asset?.rentPrice,
-      ]),
+      head: [['Name', 'Buy Price (SAR)', 'Rent Price (SAR)']],
+      body: props.project?.projectAssets.map((asset: any) => [asset?.asset?.name, asset?.buyPrice, asset?.rentPrice]),
       headStyles: {
         fillColor: [248, 247, 250], // Background color as rgba(231, 230, 233, 1)
         textColor: [101, 101, 101], // Ensuring text is visible
-        fontStyle: "normal",
+        fontStyle: 'normal',
         fontSize: 12,
-        font: "Gilroy", // Custom font (ensure it's registered in jsPDF)
+        font: 'Gilroy' // Custom font (ensure it's registered in jsPDF)
       },
       bodyStyles: {
         fillColor: [255, 255, 255],
-        textColor: [0, 0, 0],
+        textColor: [0, 0, 0]
       },
       alternateRowStyles: { fillColor: [255, 255, 255] },
       styles: {
         lineWidth: 0.4, // Border width set to 1px
-        lineColor: [231, 230, 233], // Black border
-      },
+        lineColor: [231, 230, 233] // Black border
+      }
     });
-    //sumary card
+    // sumary card
     doc.setFontSize(20);
-    doc.setFont("helvetica", "bold"); // Gilroy is not a default font in jsPDF
+    doc.setFont('helvetica', 'bold'); // Gilroy is not a default font in jsPDF
     doc.setTextColor(50, 31, 107);
-    doc.text("Total Costs", 12, (doc as any).lastAutoTable.finalY + 20);
+    doc.text('Total Costs', 12, (doc as any).lastAutoTable.finalY + 20);
     const summaryCards = [
       {
-        label: "Total Materials Cost",
-        value: props.project?.totalMaterialCost || 0,
+        label: 'Total Materials Cost',
+        value: props.project?.totalMaterialCost || 0
       },
       {
-        label: "Total Manpower Cost",
-        value: props.project?.manpowerTotalCost || 0,
+        label: 'Total Manpower Cost',
+        value: props.project?.manpowerTotalCost || 0
       },
       {
-        label: "Total Assets Cost",
-        value: props.project?.totalAssetsCost || 0,
+        label: 'Total Assets Cost',
+        value: props.project?.totalAssetsCost || 0
       },
-      { label: "Total Car Rent", value: props.project?.totalCarRent || 0 },
+      { label: 'Total Car Rent', value: props.project?.totalCarRent || 0 },
       {
-        label: "Total Car Rent Per Duration",
-        value: props.project?.totalCarRentPerDuration || 0,
+        label: 'Total Car Rent Per Duration',
+        value: props.project?.totalCarRentPerDuration || 0
       },
-      { label: "Total Costs", value: props.project?.grandTotal || 0 },
+      { label: 'Total Costs', value: props.project?.grandTotal || 0 }
     ];
 
     // // Card layout settings
@@ -258,33 +245,33 @@
     const startX = 12;
     let x = startX;
     let yCards = (doc as any).lastAutoTable.finalY + 25;
-    let cardsPerRow = 2;
+    const cardsPerRow = 2;
 
     summaryCards.forEach((card, idx) => {
       // Draw card border
-       yCards = checkNewPage(doc, yCards);
+      yCards = checkNewPage(doc, yCards);
       doc.setFillColor(248, 247, 250); // Set background color to rgba(248, 247, 250, 1)
-      doc.rect(x, yCards, cardW, cardH, "F"); // Draw filled rectangle for background
+      doc.rect(x, yCards, cardW, cardH, 'F'); // Draw filled rectangle for background
       doc.setDrawColor(231, 230, 233);
       doc.setLineWidth(0.4);
 
       // Label (top, centered)
       doc.setTextColor(95, 90, 106);
       doc.setFontSize(14);
-      doc.setFont("", "normal");
-      doc.text(card.label, x + cardW / 2, yCards + 10, { align: "center" });
+      doc.setFont('', 'normal');
+      doc.text(card.label, x + cardW / 2, yCards + 10, { align: 'center' });
       doc.setFontSize(24);
       doc.setTextColor(63, 58, 77);
-      doc.setFont("", "bold");
+      doc.setFont('', 'bold');
       doc.text(Number(card.value).toFixed(2), x + cardW / 2, yCards + 20, {
-        align: "center",
+        align: 'center'
       });
 
       // Currency (bottom, centered, gray)
       doc.setFontSize(14);
-      doc.setFont("", "normal");
+      doc.setFont('', 'normal');
       doc.setTextColor(95, 90, 106);
-      doc.text("SAR", x + cardW / 2, yCards + 30, { align: "center" });
+      doc.text('SAR', x + cardW / 2, yCards + 30, { align: 'center' });
 
       // Next card position
       if ((idx + 1) % cardsPerRow === 0) {
@@ -300,42 +287,35 @@
     let summaryY = yCards + 10;
     summaryY = checkNewPage(doc, summaryY);
     doc.setFontSize(22);
-    doc.setFont("helvetica", "bold");
+    doc.setFont('helvetica', 'bold');
     doc.setTextColor(50, 31, 107);
-    doc.text("Summary", 12, summaryY);
+    doc.text('Summary', 12, summaryY);
 
     // Draw Table with Header Borders
     autoTable(doc, {
       startY: summaryY + 5,
       body: [
-        ["Project Name", props.project?.name || "-"],
-        ["Report Date", `Report Date: ${getYear(new Date())}`],
-        ["Grand Total", `${(props.project?.grandTotal || 0)?.toFixed(2)} SAR`],
-        ["VAT (15%)", `${(props.project?.vat || 0)?.toFixed(2)} SAR`],
-        ["Discount", `${props.project?.discount || 0} SAR`],
-        [
-          `Profit Margin (${props.project?.marginPercentage || 0}%)`,
-          `${(props.project?.marginAmount || 0)?.toFixed(2)} SAR`,
-        ],
-        ["Final Price", `${(props.project?.totalCost || 0)?.toFixed(2)} SAR`],
+        ['Project Name', props.project?.name || '-'],
+        ['Report Date', `Report Date: ${getYear(new Date())}`],
+        ['Grand Total', `${(props.project?.grandTotal || 0)?.toFixed(2)} SAR`],
+        ['VAT (15%)', `${(props.project?.vat || 0)?.toFixed(2)} SAR`],
+        ['Discount', `${props.project?.discount || 0} SAR`],
+        [`Profit Margin (${props.project?.marginPercentage || 0}%)`, `${(props.project?.marginAmount || 0)?.toFixed(2)} SAR`],
+        ['Final Price', `${(props.project?.totalCost || 0)?.toFixed(2)} SAR`]
       ],
       columnStyles: {
         0: { cellWidth: 50, fillColor: [248, 247, 250] }, // Description Column Width
-        1: { cellWidth: 130, fillColor: [255, 255, 255] },
+        1: { cellWidth: 130, fillColor: [255, 255, 255] }
       },
       styles: {
         lineWidth: 0.4, // Border thickness
-        lineColor: [231, 230, 233], // Black border for header and columns
-      },
+        lineColor: [231, 230, 233] // Black border for header and columns
+      }
     });
     // Save the PDF
-    doc.save(
-      `${
-        props.project?.name || "Project"
-      } Project Report ${new Date().toLocaleDateString()}.pdf`
-    );
+    doc.save(`${props.project?.name || 'Project'} Project Report ${new Date().toLocaleDateString()}.pdf`);
   } catch (error) {
-    console.error("Error exporting PDF:", error);
+    console.error('Error exporting PDF:', error);
   }
 }
 </script>

@@ -62,11 +62,11 @@ section
     .slot-content(:class="{ '!pr-[20px]': mobile }")
       slot
 </template>
-    <script setup lang="ts">
-import { storeToRefs } from "pinia";
-import { useMain } from "~/stores/common";
-import { ElNotification } from "element-plus";
-import { Plus } from "@element-plus/icons-vue";
+<script setup lang="ts">
+import { storeToRefs } from 'pinia';
+import { ElNotification } from 'element-plus';
+import { Plus } from '@element-plus/icons-vue';
+import { useMain } from '~/stores/common';
 const mainData = useMain();
 const { fullNav, mobile, hideNav } = storeToRefs(mainData);
 const router = useRouter();
@@ -78,11 +78,11 @@ function toggleDropdown(val: boolean) {
   showDropdown.value = val;
 }
 onMounted(() => {
-  window.addEventListener("scroll", handleScroll);
+  window.addEventListener('scroll', handleScroll);
 });
 
 onUnmounted(() => {
-  window.removeEventListener("scroll", handleScroll);
+  window.removeEventListener('scroll', handleScroll);
 });
 
 const handleScroll = () => {
@@ -90,7 +90,7 @@ const handleScroll = () => {
 };
 
 if (process.client) {
-  window.addEventListener("click", () => {
+  window.addEventListener('click', () => {
     showDropdown.value = false;
   });
 }
@@ -103,21 +103,21 @@ function openNav() {
   hideNav.value = !hideNav.value;
 }
 async function logout() {
-  const response = await useApiFetch("auth/logout", "POST");
+  const response = await useApiFetch('auth/logout', 'POST');
   if (response?.success) {
-    router.push("/login");
-    const accessToken = useCookie("access_token");
-    accessToken.value = "";
+    router.push('/login');
+    const accessToken = useCookie('access_token');
+    accessToken.value = '';
     ElNotification({
-      title: "Success",
-      type: "success",
-      message: response.message,
+      title: 'Success',
+      type: 'success',
+      message: response.message
     });
   } else {
     ElNotification({
-      title: "Error",
-      type: "error",
-      message: response.message,
+      title: 'Error',
+      type: 'error',
+      message: response.message
     });
   }
 }
@@ -126,26 +126,26 @@ const user = ref<any>({});
 const proposal = await getProposal(route.params.slug as string);
 
 if (!user.value?.id) {
-  const response = await useApiFetch("auth/me");
+  const response = await useApiFetch('auth/me');
   user.value = response?.body;
 }
 
 const saveContent = async () => {
   await updateProposal({
     id: route.params.slug,
-    content: window.document.getElementsByClassName("editor")[0]?.innerHTML,
+    content: window.document.getElementsByClassName('editor')[0]?.innerHTML
   });
 };
 
 const handlePrint = async () => {
   try {
-    if (proposal?.status !== "APPROVED") await saveContent();
+    if (proposal?.status !== 'APPROVED') await saveContent();
   } finally {
     window.print();
   }
 };
 </script>
-    
+
 <style lang="scss" scoped>
 .website-body {
   .slot-content {
@@ -241,4 +241,3 @@ const handlePrint = async () => {
   }
 }
 </style>
-    

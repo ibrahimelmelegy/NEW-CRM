@@ -8,14 +8,14 @@ function handleError(message: string) {
   ElNotification({
     type: 'error',
     title: 'Error',
-    message,
+    message
   });
 }
 function handleSuccess(message: string) {
   ElNotification({
     type: 'success',
     title: 'Success',
-    message,
+    message
   });
   navigateTo('/sales/leads'); // Navigate to the leads list
 }
@@ -57,20 +57,19 @@ export interface ActivityResponse {
   };
 }
 
-
 export enum LeadSourceEnums {
   REFERRAL = 'REFERRAL',
   WEBSITE = 'WEBSITE',
   EVENT = 'EVENT',
   EMAIL = 'EMAIL',
-  OTHER = 'OTHER',
+  OTHER = 'OTHER'
 }
 
 export enum LeadStatusEnums {
   NEW = 'NEW',
   CONTACTED = 'CONTACTED',
   QUALIFIED = 'QUALIFIED',
-  DISQUALIFIED = 'DISQUALIFIED',
+  DISQUALIFIED = 'DISQUALIFIED'
 }
 
 export const leadSources = [
@@ -78,14 +77,14 @@ export const leadSources = [
   { label: 'Website', value: LeadSourceEnums.WEBSITE },
   { label: 'Event', value: LeadSourceEnums.EVENT },
   { label: 'Email', value: LeadSourceEnums.EMAIL },
-  { label: 'Other', value: LeadSourceEnums.OTHER },
+  { label: 'Other', value: LeadSourceEnums.OTHER }
 ];
 
 export const leadStates = [
   { label: 'New', value: LeadStatusEnums.NEW },
   { label: 'Contacted', value: LeadStatusEnums.CONTACTED },
   { label: 'Qualified', value: LeadStatusEnums.QUALIFIED },
-  { label: 'Disqualified', value: LeadStatusEnums.DISQUALIFIED },
+  { label: 'Disqualified', value: LeadStatusEnums.DISQUALIFIED }
 ];
 interface UseLeadsResult {
   leads: Lead[];
@@ -109,7 +108,7 @@ export async function getLeads(): Promise<UseLeadsResult> {
         // updatedAt: formatDate(lead.updatedAt),
         leadDetails: { title: lead?.name, text: lead?.companyName },
         updatedAt: '-',
-        assign: lead.users?.map((el: any) => el.name).join(', '),
+        assign: lead.users?.map((el: any) => el.name).join(', ')
       }));
       const pagination = body?.pagination;
       return { leads, pagination };
@@ -137,7 +136,7 @@ export async function getLeads(): Promise<UseLeadsResult> {
  */
 export async function getLead(id: string | string[]): Promise<Lead> {
   try {
-    let { body: lead, success } = await useApiFetch(`lead/${id}`);
+    const { body: lead, success } = await useApiFetch(`lead/${id}`);
     return lead;
   } catch (error) {
     console.error('Error fetching lead:', error instanceof Error ? error.message : error);
@@ -148,7 +147,7 @@ export async function getLead(id: string | string[]): Promise<Lead> {
 
 export async function getActivity(id: string | string[]): Promise<ActivityResponse> {
   try {
-    let { body: activities, success } = await useApiFetch(`activity/lead/${id}`);
+    const { body: activities, success } = await useApiFetch(`activity/lead/${id}`);
     return activities;
   } catch (error) {
     console.error('Error fetching activity:', error instanceof Error ? error.message : error);
@@ -192,7 +191,7 @@ export async function createLead(values: LeadValues) {
       users: values.assignUser,
       notes: values.notes,
       status: values.leadState,
-      otherSource: values.otherSource,
+      otherSource: values.otherSource
     };
 
     // Call API to create the lead
@@ -230,7 +229,7 @@ export async function updateLead(values: LeadValues) {
       users: values.assignUser,
       notes: values.notes,
       status: values.leadState,
-      otherSource: values.otherSource,
+      otherSource: values.otherSource
     };
 
     // Call API to create the lead

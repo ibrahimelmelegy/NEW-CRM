@@ -48,23 +48,24 @@ export const useApiFetch = async <T = any>(
     headers: {
       ...(!isFd && { 'Content-Type': 'application/json' }),
       ...(!isFd && { Accept: 'application/json' }),
-      ...(accessToken.value && !url.includes('reset-password') && {
-        Authorization: `Bearer ${accessToken.value}`,
-      }),
+      ...(accessToken.value &&
+        !url.includes('reset-password') && {
+          Authorization: `Bearer ${accessToken.value}`
+        }),
       // Multi-tenant header
-      ...(user.value?.tenantId && { 'X-Tenant-ID': user.value.tenantId }),
-    },
+      ...(user.value?.tenantId && { 'X-Tenant-ID': user.value.tenantId })
+    }
   };
 
   try {
     const rawResponse: any = await $fetch(config.public.API_BASE_URL + url, defaultOptions);
 
     // ✅ ROBUST NORMALIZATION: Handle both standardized and legacy responses
-    let normalizedResponse: ApiResponse<T> = {
+    const normalizedResponse: ApiResponse<T> = {
       body: null,
       success: true,
       message: rawResponse?.message || 'Success',
-      code: 200,
+      code: 200
     };
 
     if (rawResponse && typeof rawResponse === 'object') {
@@ -106,7 +107,7 @@ export const useApiFetch = async <T = any>(
       success: false,
       message,
       error, // Returning the raw error object helps debugging
-      code,  // Now this will correctly be 422, 403, 500 etc.
+      code // Now this will correctly be 422, 403, 500 etc.
     };
   }
 };

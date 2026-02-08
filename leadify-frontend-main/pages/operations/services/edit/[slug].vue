@@ -9,23 +9,23 @@ OperationsServiceForm( :loading="loading" @submit="submitForm" :data="service")
 </template>
 
 <script lang="ts" setup>
-  useHead({
-    title: "App HP Tech | Edit Service",
-  });
-  definePageMeta({
-    middleware: "permissions",
-    permission: "EDIT_SERVICES",
-  });
-  const router = useRouter();
-  const route = useRoute();
-  const loading = ref(false);
-  const service = await getService(route.params.slug);
+useHead({
+  title: 'App HP Tech | Edit Service'
+});
+definePageMeta({
+  middleware: 'permissions',
+  permission: 'EDIT_SERVICES'
+});
+const router = useRouter();
+const route = useRoute();
+const loading = ref(false);
+const service = await getService(route.params.slug);
 
-  async function submitForm(values: Service) {
-    loading.value = true;
-    await updateService({ ...values, id: route.params.slug });
-    loading.value = false;
-  }
+async function submitForm(values: Service) {
+  loading.value = true;
+  await updateService({ ...values, id: route.params.slug });
+  loading.value = false;
+}
 </script>
 
 <style lang="scss"></style>

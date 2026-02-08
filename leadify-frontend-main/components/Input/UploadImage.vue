@@ -42,213 +42,213 @@ el-form-item( :label="label" :error='errorMessage' class="!mb-0")
 </template>
 
 <script lang="ts" setup>
-  import { computed, ref, watch } from 'vue';
-  import { Delete, Download, Plus, ZoomIn, Crop } from "@element-plus/icons-vue";
-  import type { UploadProps, UploadFile } from "element-plus";
-  import { ElMessage } from "element-plus";
-  import { useField } from "vee-validate";
+import { computed, ref, watch } from 'vue';
+import { Delete, Download, Plus, ZoomIn, Crop } from '@element-plus/icons-vue';
+import type { UploadProps, UploadFile } from 'element-plus';
+import { ElMessage } from 'element-plus';
+import { useField } from 'vee-validate';
 
-  const props = defineProps({
-    name: {
-      type: String,
-      default: "",
-      required: false,
-    },
-    value: {
-      type: String,
-      default: "",
-      required: false,
-    },
-    label: {
-      type: String,
-      required: true,
-    },
-    placeholder: {
-      type: String,
-      default: "",
-    },
-    disabled: {
-      type: Boolean,
-      default: false,
-      required: false,
-    },
-    sizeInMb: {
-      type: Number,
-      default: 2, //2mb
-    },
-    formats: {
-      type: Array,
-      default: [
-        "image/jpg",
-        "image/jpeg",
-        "image/png",
-        "image/webp",
-        // "image/svg+xml",
-      ],
-      required: false,
-    },
-    type: {
-      type: String,
-    },
-    note: {
-      type: String,
-    },
-    sizeLook: {
-      type: String,
-    },
-    model: {
-      type: String,
-      default: "PROJECT",
-    },
-  });
+const props = defineProps({
+  name: {
+    type: String,
+    default: '',
+    required: false
+  },
+  value: {
+    type: String,
+    default: '',
+    required: false
+  },
+  label: {
+    type: String,
+    required: true
+  },
+  placeholder: {
+    type: String,
+    default: ''
+  },
+  disabled: {
+    type: Boolean,
+    default: false,
+    required: false
+  },
+  sizeInMb: {
+    type: Number,
+    default: 2 // 2mb
+  },
+  formats: {
+    type: Array,
+    default: [
+      'image/jpg',
+      'image/jpeg',
+      'image/png',
+      'image/webp'
+      // "image/svg+xml",
+    ],
+    required: false
+  },
+  type: {
+    type: String
+  },
+  note: {
+    type: String
+  },
+  sizeLook: {
+    type: String
+  },
+  model: {
+    type: String,
+    default: 'PROJECT'
+  }
+});
 
-  const runtimeConfig = useRuntimeConfig();
-  const srcValue = ref();
+const runtimeConfig = useRuntimeConfig();
+const srcValue = ref();
 
-  const loading = ref(false);
+const loading = ref(false);
 
-  const icon = computed(() => {
-    switch (props.type) {
-      case "pdf":
-        return "Download";
-      case "image":
-        return "IconImage";
-      case "video":
-        return "IconVideo";
-      default:
-        return "IconPlus";
-    }
-  });
+const icon = computed(() => {
+  switch (props.type) {
+    case 'pdf':
+      return 'Download';
+    case 'image':
+      return 'IconImage';
+    case 'video':
+      return 'IconVideo';
+    default:
+      return 'IconPlus';
+  }
+});
 
-  const handleUploadSuccess: UploadProps["onSuccess"] = (response: any, uploadFile: any) => {
-    if (!response) return;
-    inputValue.value = response;
-    srcValue.value = inputValue.value;
-  };
+const handleUploadSuccess: UploadProps['onSuccess'] = (response: any, uploadFile: any) => {
+  if (!response) return;
+  inputValue.value = response;
+  srcValue.value = inputValue.value;
+};
 
-  const handleRemove = () => {
-    inputValue.value = "";
-  };
+const handleRemove = () => {
+  inputValue.value = '';
+};
 
-  const handleUploadRequest = async (params: any) => {
-    loading.value = true;
-    const { result, errorData } = await handleUploadRequestApi(params, "file", props.model);
-    loading.value = false;
+const handleUploadRequest = async (params: any) => {
+  loading.value = true;
+  const { result, errorData } = await handleUploadRequestApi(params, 'file', props.model);
+  loading.value = false;
 
-    if (errorData.value) {
-      ElMessage.error(errorData.value || "Something went wrong");
-      return;
-    }
-
-    inputValue.value = result.value;
-  };
-
-  const dialogImageUrl = ref("");
-  const dialogView = ref(false);
-  const handlePictureCardPreview = () => {
-    dialogView.value = true;
-  };
-
-  const beforeAvatarUpload: UploadProps["beforeUpload"] = (rawFile: any) => {
-    if (!props.formats.includes(rawFile.type)) {
-      ElMessage.error({
-        message: `acceptUpload ${props.formats.map((format: any) => format.split("/").pop()).join(" , ")}`,
-      });
-      return false;
-    } else if (rawFile.size / 1024 / 1024 > props.sizeInMb) {
-      ElMessage.error("uploadMaxSize" + props.sizeInMb + "MB");
-      return false;
-    }
-    return true;
-  };
-
-  const cropper = ref();
-  const dialogCrop = ref(false);
-  function handlePictureCardCrop() {
-    !srcValue.value && (srcValue.value = inputValue.value);
-    dialogCrop.value = true;
+  if (errorData.value) {
+    ElMessage.error(errorData.value || 'Something went wrong');
+    return;
   }
 
-  const cropImage = async () => {
-    const { canvas } = cropper.value.getResult();
-    if (canvas) {
-      canvas.toBlob((blob: Blob) => {
-        const file = new File([blob], "image.jpg", { type: "image/jpeg" });
+  inputValue.value = result.value;
+};
 
-        // Handle the file upload request with the appropriate data
-        handleUploadRequest({ file, data: { model: props.model } })
-          .then(() => {
-            ElMessage.success("Image cropped and uploaded successfully!");
-            dialogCrop.value = false;
-          })
-          .catch((err) => {
-            ElMessage.error("Failed to upload cropped image");
-            console.error(err);
-          });
-      }, "image/jpeg");
-    } else {
-      ElMessage.error("Failed to crop image. Please try again.");
+const dialogImageUrl = ref('');
+const dialogView = ref(false);
+const handlePictureCardPreview = () => {
+  dialogView.value = true;
+};
+
+const beforeAvatarUpload: UploadProps['beforeUpload'] = (rawFile: any) => {
+  if (!props.formats.includes(rawFile.type)) {
+    ElMessage.error({
+      message: `acceptUpload ${props.formats.map((format: any) => format.split('/').pop()).join(' , ')}`
+    });
+    return false;
+  } else if (rawFile.size / 1024 / 1024 > props.sizeInMb) {
+    ElMessage.error('uploadMaxSize' + props.sizeInMb + 'MB');
+    return false;
+  }
+  return true;
+};
+
+const cropper = ref();
+const dialogCrop = ref(false);
+function handlePictureCardCrop() {
+  !srcValue.value && (srcValue.value = inputValue.value);
+  dialogCrop.value = true;
+}
+
+const cropImage = async () => {
+  const { canvas } = cropper.value.getResult();
+  if (canvas) {
+    canvas.toBlob((blob: Blob) => {
+      const file = new File([blob], 'image.jpg', { type: 'image/jpeg' });
+
+      // Handle the file upload request with the appropriate data
+      handleUploadRequest({ file, data: { model: props.model } })
+        .then(() => {
+          ElMessage.success('Image cropped and uploaded successfully!');
+          dialogCrop.value = false;
+        })
+        .catch(err => {
+          ElMessage.error('Failed to upload cropped image');
+          console.error(err);
+        });
+    }, 'image/jpeg');
+  } else {
+    ElMessage.error('Failed to crop image. Please try again.');
+  }
+};
+
+const {
+  value: inputValue,
+  errorMessage,
+  handleBlur,
+  handleChange,
+  meta
+} = useField(props.name, undefined, {
+  initialValue: props.value
+});
+
+watch(
+  () => props.value,
+  () => {
+    if (props.value) {
+      inputValue.value = props.value;
     }
-  };
+  }
+);
 
-  const {
-    value: inputValue,
-    errorMessage,
-    handleBlur,
-    handleChange,
-    meta,
-  } = useField(props.name, undefined, {
-    initialValue: props.value,
-  });
-
-  watch(
-    () => props.value,
-    () => {
-      if (props.value) {
-        inputValue.value = props.value;
-      }
-    }
-  );
-
-  watch(inputValue, () => {
-    // if (!srcValue.value) {
-    srcValue.value = inputValue.value;
-    // }
-  });
+watch(inputValue, () => {
+  // if (!srcValue.value) {
+  srcValue.value = inputValue.value;
+  // }
+});
 </script>
 
 <style lang="scss">
-  .avatar-uploader .el-upload {
-    border: 1px dashed #d5c7ff;
-    border-radius: $radius-base;
-    cursor: pointer;
-    position: relative;
-    overflow: hidden;
-    transition: var(--el-transition-duration-fast);
-  }
+.avatar-uploader .el-upload {
+  border: 1px dashed #d5c7ff;
+  border-radius: $radius-base;
+  cursor: pointer;
+  position: relative;
+  overflow: hidden;
+  transition: var(--el-transition-duration-fast);
+}
 
-  .avatar-uploader.small-size {
-    .el-upload {
-      width: 90px !important;
-      height: 90px !important;
-      .el-upload-dragger {
-        width: 100% !important;
-        height: 100% !important;
-        background-color: #f2edff;
-      }
+.avatar-uploader.small-size {
+  .el-upload {
+    width: 90px !important;
+    height: 90px !important;
+    .el-upload-dragger {
+      width: 100% !important;
+      height: 100% !important;
+      background-color: #f2edff;
     }
   }
+}
 
-  .avatar-uploader .el-upload:hover {
-    border-color: var(--el-color-primary);
-  }
+.avatar-uploader .el-upload:hover {
+  border-color: var(--el-color-primary);
+}
 
-  .el-icon.avatar-uploader-icon {
-    font-size: 28px;
-    color: #8c939d;
-    text-align: center;
-  }
-  .el-upload-list__item-thumbnail {
-    border-radius: $radius-base;
-  }
+.el-icon.avatar-uploader-icon {
+  font-size: 28px;
+  color: #8c939d;
+  text-align: center;
+}
+.el-upload-list__item-thumbnail {
+  border-radius: $radius-base;
+}
 </style>

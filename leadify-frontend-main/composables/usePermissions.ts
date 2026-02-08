@@ -1,4 +1,4 @@
-import { user, useUser } from "@/composables/useUser";
+import { user, useUser } from '@/composables/useUser';
 
 const permissions = ref<string[]>([]);
 const isLoaded = ref(false);
@@ -23,11 +23,11 @@ export async function usePermissions(isUpdated = false) {
   };
 
   const hasAnyPermission = (perms: string[]): boolean => {
-    return perms.some((perm) => hasPermission(perm));
+    return perms.some(perm => hasPermission(perm));
   };
 
   return {
     hasPermission,
-    hasAnyPermission,
+    hasAnyPermission
   };
 }

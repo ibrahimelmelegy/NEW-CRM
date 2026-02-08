@@ -6,36 +6,36 @@ el-form-item(:label="label" :error='errorMessage' class="!mb-6")
 </template>
 
 <script setup lang="ts">
-import { useField } from "vee-validate";
+import { useField } from 'vee-validate';
 const props = defineProps({
   name: {
     type: String,
-    default: "",
-    required: false,
+    default: '',
+    required: false
   },
 
   value: {
     type: String,
-    default: "",
-    required: false,
+    default: '',
+    required: false
   },
   options: {
     type: Array,
-    default: [],
+    default: []
   },
   label: {
     type: String,
-    required: true,
+    required: true
   },
   placeholder: {
     type: String,
-    default: "",
+    default: ''
   },
   disabled: {
     type: Boolean,
     default: false,
-    required: false,
-  },
+    required: false
+  }
 });
 
 const {
@@ -43,9 +43,9 @@ const {
   errorMessage,
   handleBlur,
   handleChange,
-  meta,
+  meta
 } = useField(props.name, undefined, {
-  initialValue: props.value,
+  initialValue: props.value
 });
 if (props.value) {
   inputValue.value = props.value;

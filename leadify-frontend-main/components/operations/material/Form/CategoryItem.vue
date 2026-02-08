@@ -19,7 +19,7 @@ import { defineExpose } from 'vue';
 
 // Props
 const props = defineProps({
-  categoryItem: { type: Object, required: true },
+  categoryItem: { type: Object, required: true }
 });
 
 // Emit events
@@ -32,7 +32,7 @@ const formSchema = yup.object({
     .number()
     .required()
     .label('Price')
-    .transform((value: any, originalValue: any) => (String(originalValue).trim() === '' ? null : value)),
+    .transform((value: any, originalValue: any) => (String(originalValue).trim() === '' ? null : value))
 });
 
 // Form setup

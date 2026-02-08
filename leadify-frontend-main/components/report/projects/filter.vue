@@ -33,36 +33,36 @@
   </template>
 
 <script lang="ts" setup>
-  const { hasPermission } = await usePermissions();
-  import { ref } from 'vue';
-  const props = defineProps({
-    user: {
-      type: Object,
-      required: true,
-    },
-  });
+import { ref } from 'vue';
+const { hasPermission } = await usePermissions();
+const props = defineProps({
+  user: {
+    type: Object,
+    required: true
+  }
+});
 
-  const route = useRoute();
-  const router = useRouter();
-  const tabs = ref(["Projects", "Manpower", "Vehicle", "Service", "Asset"]);
-  const activeTab = ref(tabs.value[0]);
+const route = useRoute();
+const router = useRouter();
+const tabs = ref(['Projects', 'Manpower', 'Vehicle', 'Service', 'Asset']);
+const activeTab = ref(tabs.value[0]);
 
-  const filter = ref();
+const filter = ref();
 
-  const showFilter = (val: any) => {
-    filter.value = val;
-  };
+const showFilter = (val: any) => {
+  filter.value = val;
+};
 
-  const handleReset = async () => {
-    filter.value = {};
-    await router.push({ path: route.path, query: {} });
-    numberOfFilters.value = 0;
-  };
+const handleReset = async () => {
+  filter.value = {};
+  await router.push({ path: route.path, query: {} });
+  numberOfFilters.value = 0;
+};
 
-  watch(
-    () => activeTab.value,
-    () => {
-      handleReset();
-    }
-  );
+watch(
+  () => activeTab.value,
+  () => {
+    handleReset();
+  }
+);
 </script>

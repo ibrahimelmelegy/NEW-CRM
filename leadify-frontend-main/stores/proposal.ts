@@ -14,19 +14,19 @@ export const useProposalStore = defineStore('proposal', {
       assignUser: '',
       companyLogo: null,
       comments: '',
-      fileAttachments: [] as any[],
+      fileAttachments: [] as any[]
     },
     proposalContent: {
       title: '',
       subtitle: '',
       description: '',
-      financeTable: [] as any[],
+      financeTable: [] as any[]
     },
     grandTotal: 0,
     margin: 0,
     discount: 0,
     customColumns: [] as any[],
-    status: 'Draft',
+    status: 'Draft'
   }),
 
   actions: {
@@ -70,6 +70,6 @@ export const useProposalStore = defineStore('proposal', {
     },
     finalizeProposal() {
       this.status = 'Waiting Approval';
-    },
-  },
+    }
+  }
 });

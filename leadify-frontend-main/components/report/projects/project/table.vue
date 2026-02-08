@@ -24,171 +24,171 @@
 </template>
 
 <script setup lang="ts">
-  const props = defineProps({
-    filters: {
-      type: Object,
-      required: false,
+const props = defineProps({
+  filters: {
+    type: Object,
+    required: false
+  },
+  user: {
+    type: Object,
+    required: true
+  },
+  hasExport: {
+    type: Boolean,
+    required: false
+  }
+});
+
+const exportPopup = ref(false);
+const loadingExport = ref(false);
+const email = ref('');
+
+const isLoading = ref(false);
+const table = reactive({
+  columns: [
+    {
+      prop: 'name',
+      label: 'Project Name',
+      component: 'Text',
+      sortable: true,
+      type: 'font-bold',
+      width: 150
     },
-    user: {
-      type: Object,
-      required: true,
+    {
+      prop: 'projectClient',
+      label: 'Client Name',
+      component: 'Text',
+      type: 'font-bold',
+      width: 150
     },
-    hasExport: {
-      type: Boolean,
-      required: false,
+    {
+      prop: 'category',
+      label: 'Category',
+      component: 'Text',
+      type: 'font-default',
+      width: 150
     },
-  });
-
-  const exportPopup = ref(false);
-  const loadingExport = ref(false);
-  const email = ref("");
-
-  const isLoading = ref(false);
-  const table = reactive({
-    columns: [
-      {
-        prop: "name",
-        label: "Project Name",
-        component: "Text",
-        sortable: true,
-        type: "font-bold",
-        width: 150,
-      },
-      {
-        prop: "projectClient",
-        label: "Client Name",
-        component: "Text",
-        type: "font-bold",
-        width: 150,
-      },
-      {
-        prop: "category",
-        label: "Category",
-        component: "Text",
-        type: "font-default",
-        width: 150,
-      },
-      {
-        prop: "type",
-        label: "Type",
-        component: "Text",
-        sortable: true,
-        type: "font-default",
-        width: 150,
-      },
-      {
-        prop: "status",
-        label: "Status",
-        component: "Label",
-        sortable: true,
-        type: "outline",
-        filters: [
-          { text: "Active", value: "PROJECT_ACTIVE" },
-          { text: "Cancelled", value: "PROJECT_CANCELLED" },
-          { text: "On Hold", value: "PROJECT_ON_HOLD" },
-          { text: "Completed", value: "PROJECT_COMPLETE" },
-        ],
-        width: 150,
-      },
-      {
-        prop: "startDate",
-        label: "Start Date",
-        component: "Text",
-        sortable: true,
-        type: "font-default",
-        width: 150,
-      },
-      {
-        prop: "endDate",
-        label: "End Date",
-        component: "Text",
-        sortable: true,
-        type: "font-default",
-        width: 150,
-      },
-      {
-        prop: "duration",
-        label: "Duration",
-        component: "Text",
-        sortable: true,
-        type: "font-default",
-        width: 150,
-      },
-      {
-        prop: "totalCost",
-        label: "Total Cost",
-        component: "Text",
-        sortable: true,
-        type: "font-default",
-        width: 150,
-      },
-      {
-        prop: "projectAssignedUsers",
-        label: "assigned",
-        component: "Text",
-        // sortable: true,
-        type: "font-default",
-        width: 150,
-      },
-    ],
-    data: [] as CombinedProjectValues[],
-  });
-
-  const response = await getProjects();
-  table.data = response.projects;
-
-  const getData = async () => {
-    isLoading.value = true;
-    const response = await useTableFilter("project", props?.filters);
-    table.data = response.formattedData;
-    isLoading.value = false;
-  };
-
-  watch(
-    () => props?.filters,
-    () => {
-      getData();
+    {
+      prop: 'type',
+      label: 'Type',
+      component: 'Text',
+      sortable: true,
+      type: 'font-default',
+      width: 150
+    },
+    {
+      prop: 'status',
+      label: 'Status',
+      component: 'Label',
+      sortable: true,
+      type: 'outline',
+      filters: [
+        { text: 'Active', value: 'PROJECT_ACTIVE' },
+        { text: 'Cancelled', value: 'PROJECT_CANCELLED' },
+        { text: 'On Hold', value: 'PROJECT_ON_HOLD' },
+        { text: 'Completed', value: 'PROJECT_COMPLETE' }
+      ],
+      width: 150
+    },
+    {
+      prop: 'startDate',
+      label: 'Start Date',
+      component: 'Text',
+      sortable: true,
+      type: 'font-default',
+      width: 150
+    },
+    {
+      prop: 'endDate',
+      label: 'End Date',
+      component: 'Text',
+      sortable: true,
+      type: 'font-default',
+      width: 150
+    },
+    {
+      prop: 'duration',
+      label: 'Duration',
+      component: 'Text',
+      sortable: true,
+      type: 'font-default',
+      width: 150
+    },
+    {
+      prop: 'totalCost',
+      label: 'Total Cost',
+      component: 'Text',
+      sortable: true,
+      type: 'font-default',
+      width: 150
+    },
+    {
+      prop: 'projectAssignedUsers',
+      label: 'assigned',
+      component: 'Text',
+      // sortable: true,
+      type: 'font-default',
+      width: 150
     }
-  );
+  ],
+  data: [] as CombinedProjectValues[]
+});
 
-  async function setEmail(pre: any) {
-    email.value = pre.target.value;
+const response = await getProjects();
+table.data = response.projects;
+
+const getData = async () => {
+  isLoading.value = true;
+  const response = await useTableFilter('project', props?.filters);
+  table.data = response.formattedData;
+  isLoading.value = false;
+};
+
+watch(
+  () => props?.filters,
+  () => {
+    getData();
   }
+);
 
-  async function exportClick() {
-    email.value = await props?.user?.email;
-    exportPopup.value = await true;
-  }
+async function setEmail(pre: any) {
+  email.value = pre.target.value;
+}
 
-  async function confirmClick() {
-    loadingExport.value = true;
-    try {
-      const res = await useTableFilter(`project/excel/${email.value}`, props?.filters);
-      if (res?.status == "200") {
-        ElNotification({
-          type: "success",
-          title: "Success",
-          message: "Send file to email successfully ",
-        });
-      } else {
-        ElNotification({
-          type: "error",
-          title: "Error",
-          message: "Unknown error",
-        });
-      }
-    } catch (error) {
-      // Catch any unexpected errors and handle them
+async function exportClick() {
+  email.value = await props?.user?.email;
+  exportPopup.value = await true;
+}
+
+async function confirmClick() {
+  loadingExport.value = true;
+  try {
+    const res = await useTableFilter(`project/excel/${email.value}`, props?.filters);
+    if (res?.status == '200') {
       ElNotification({
-        type: "error",
-        title: "Error",
-        message: error instanceof Error ? error.message : "Unknown error",
+        type: 'success',
+        title: 'Success',
+        message: 'Send file to email successfully '
       });
-    } finally {
-      email.value = "";
-      loadingExport.value = false;
-      exportPopup.value = false;
-      getData();
+    } else {
+      ElNotification({
+        type: 'error',
+        title: 'Error',
+        message: 'Unknown error'
+      });
     }
+  } catch (error) {
+    // Catch any unexpected errors and handle them
+    ElNotification({
+      type: 'error',
+      title: 'Error',
+      message: error instanceof Error ? error.message : 'Unknown error'
+    });
+  } finally {
+    email.value = '';
+    loadingExport.value = false;
+    exportPopup.value = false;
+    getData();
   }
+}
 </script>

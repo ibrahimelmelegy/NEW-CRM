@@ -29,7 +29,7 @@ el-form(
 import { useForm } from 'vee-validate';
 import * as yup from 'yup';
 
-import { useI18n } from "vue-i18n";
+import { useI18n } from 'vue-i18n';
 import { Delete } from '@element-plus/icons-vue';
 
 const { t } = useI18n();
@@ -37,7 +37,7 @@ const { t } = useI18n();
 // Props
 const props = defineProps({
   delivery: { type: Object, required: true },
-  editMode: { type: Boolean, required: false },
+  editMode: { type: Boolean, required: false }
 });
 
 // Emit events
@@ -46,7 +46,7 @@ const emit = defineEmits(['onSubmit', 'onDelete']);
 // Validation schema
 const formSchema = yup.object({
   deliveryDetails: yup.string().trim().required().min(2).max(500).label(t('deals.table.deliveryDetails')),
-  deliveryDate: yup.date().required().label(t('deals.table.deliveryDate')),
+  deliveryDate: yup.date().required().label(t('deals.table.deliveryDate'))
 });
 
 // Form setup

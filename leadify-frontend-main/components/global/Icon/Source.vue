@@ -14,21 +14,9 @@
       stroke-linecap="round"
       stroke-linejoin="round"
     />
-    <path
-      d="M6.75 12.2754V15.5004"
-      stroke="currentColor"
-      stroke-width="1.5"
-      stroke-linecap="round"
-      stroke-linejoin="round"
-    />
+    <path d="M6.75 12.2754V15.5004" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" />
     <path d="M1.5 9.4248H9" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" />
-    <path
-      d="M4.46289 15.5H9.00038"
-      stroke="currentColor"
-      stroke-width="1.5"
-      stroke-linecap="round"
-      stroke-linejoin="round"
-    />
+    <path d="M4.46289 15.5H9.00038" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" />
     <path
       d="M12.7576 10.0473C13.2008 10.0473 13.5601 9.68805 13.5601 9.24484C13.5601 8.80163 13.2008 8.44238 12.7576 8.44238C12.3144 8.44238 11.9551 8.80163 11.9551 9.24484C11.9551 9.68805 12.3144 10.0473 12.7576 10.0473Z"
       stroke="currentColor"

@@ -16,19 +16,19 @@
 </template>
 
 <script lang="ts" setup>
-  const props = defineProps({
-    name: String,
-    data: [Number, String],
-    rate: Number,
-    icon: {
-      type: String,
-      default: 'ph:chart-line-up-bold'
-    },
-    colorType: {
-      type: String,
-      default: 'purple' 
-    }
-  });
+const props = defineProps({
+  name: String,
+  data: [Number, String],
+  rate: Number,
+  icon: {
+    type: String,
+    default: 'ph:chart-line-up-bold'
+  },
+  colorType: {
+    type: String,
+    default: 'purple'
+  }
+});
 </script>
 
 <style lang="scss" scoped>
@@ -44,13 +44,13 @@
     inset: 0;
     border-radius: inherit;
     padding: 1.5px;
-    background: linear-gradient(135deg, rgba(255,255,255,0.2), rgba(255,255,255,0.05));
-    -webkit-mask: 
-      linear-gradient(#fff 0 0) content-box, 
+    background: linear-gradient(135deg, rgba(255, 255, 255, 0.2), rgba(255, 255, 255, 0.05));
+    -webkit-mask:
+      linear-gradient(#fff 0 0) content-box,
       linear-gradient(#fff 0 0);
     -webkit-mask-composite: xor;
-    mask: 
-      linear-gradient(#fff 0 0) content-box, 
+    mask:
+      linear-gradient(#fff 0 0) content-box,
       linear-gradient(#fff 0 0);
     mask-composite: exclude;
     pointer-events: none;
@@ -58,17 +58,29 @@
   }
 
   // Gradient border colors by type on hover/active
-  &.border-purple:hover::before { background: linear-gradient(135deg, #7C3AED, #EC4899); }
-  &.border-indigo:hover::before { background: linear-gradient(135deg, #6366F1, #A855F7); }
-  &.border-cyan:hover::before   { background: linear-gradient(135deg, #06B6D4, #22D3EE); }
-  &.border-rose:hover::before   { background: linear-gradient(135deg, #F43F5E, #F97316); }
-  &.border-emerald:hover::before { background: linear-gradient(135deg, #10B981, #34D399); }
-  &.border-amber:hover::before  { background: linear-gradient(135deg, #F97316, #FBBF24); }
+  &.border-purple:hover::before {
+    background: linear-gradient(135deg, #7c3aed, #ec4899);
+  }
+  &.border-indigo:hover::before {
+    background: linear-gradient(135deg, #6366f1, #a855f7);
+  }
+  &.border-cyan:hover::before {
+    background: linear-gradient(135deg, #06b6d4, #22d3ee);
+  }
+  &.border-rose:hover::before {
+    background: linear-gradient(135deg, #f43f5e, #f97316);
+  }
+  &.border-emerald:hover::before {
+    background: linear-gradient(135deg, #10b981, #34d399);
+  }
+  &.border-amber:hover::before {
+    background: linear-gradient(135deg, #f97316, #fbbf24);
+  }
 
   &:hover {
     .aurora-blur {
-        opacity: 0.15;
-        transform: scale(1.2) translateY(-20%);
+      opacity: 0.15;
+      transform: scale(1.2) translateY(-20%);
     }
   }
 
@@ -82,12 +94,24 @@
     opacity: 0;
     transition: all 0.8s ease;
     pointer-events: none;
-    &.aurora-purple { background: var(--accent-purple); }
-    &.aurora-indigo { background: var(--accent-indigo); }
-    &.aurora-cyan { background: var(--accent-cyan); }
-    &.aurora-rose { background: var(--accent-rose); }
-    &.aurora-emerald { background: var(--accent-emerald); }
-    &.aurora-amber { background: var(--accent-amber); }
+    &.aurora-purple {
+      background: var(--accent-purple);
+    }
+    &.aurora-indigo {
+      background: var(--accent-indigo);
+    }
+    &.aurora-cyan {
+      background: var(--accent-cyan);
+    }
+    &.aurora-rose {
+      background: var(--accent-rose);
+    }
+    &.aurora-emerald {
+      background: var(--accent-emerald);
+    }
+    &.aurora-amber {
+      background: var(--accent-amber);
+    }
   }
 
   .icon-wrapper {
@@ -98,32 +122,54 @@
     align-items: center;
     justify-content: center;
     transition: var(--transition-smooth);
-    
+
     .group:hover & {
       transform: rotate(-8deg) scale(1.1);
     }
   }
 
   .trend-indicator {
-      font-size: 13px;
-      font-weight: 700;
-      background: rgba(255,255,255,0.05);
-      padding: 4px 10px;
-      border-radius: 20px;
-      border: 1px solid rgba(255,255,255,0.1);
+    font-size: 13px;
+    font-weight: 700;
+    background: rgba(255, 255, 255, 0.05);
+    padding: 4px 10px;
+    border-radius: 20px;
+    border: 1px solid rgba(255, 255, 255, 0.1);
   }
 
-  .bg-gradient-purple { background: var(--gradient-purple); }
-  .bg-gradient-indigo { background: var(--gradient-indigo); }
-  .bg-gradient-cyan   { background: var(--gradient-ocean); }
-  .bg-gradient-rose   { background: var(--gradient-sunset); }
-  .bg-gradient-emerald { background: var(--gradient-mint); }
-  .bg-gradient-amber { background: linear-gradient(135deg, #F59E0B 0%, #D97706 100%); }
+  .bg-gradient-purple {
+    background: var(--gradient-purple);
+  }
+  .bg-gradient-indigo {
+    background: var(--gradient-indigo);
+  }
+  .bg-gradient-cyan {
+    background: var(--gradient-ocean);
+  }
+  .bg-gradient-rose {
+    background: var(--gradient-sunset);
+  }
+  .bg-gradient-emerald {
+    background: var(--gradient-mint);
+  }
+  .bg-gradient-amber {
+    background: linear-gradient(135deg, #f59e0b 0%, #d97706 100%);
+  }
 
-  .shadow-glow-purple { box-shadow: var(--glow-purple); }
-  .shadow-glow-indigo { box-shadow: 0 0 25px rgba(99, 102, 241, 0.3); }
-  .shadow-glow-cyan   { box-shadow: 0 0 25px rgba(6, 182, 212, 0.3); }
-  .shadow-glow-rose   { box-shadow: 0 0 25px rgba(244, 63, 94, 0.3); }
-  .shadow-glow-amber  { box-shadow: 0 0 25px rgba(245, 158, 11, 0.3); }
+  .shadow-glow-purple {
+    box-shadow: var(--glow-purple);
+  }
+  .shadow-glow-indigo {
+    box-shadow: 0 0 25px rgba(99, 102, 241, 0.3);
+  }
+  .shadow-glow-cyan {
+    box-shadow: 0 0 25px rgba(6, 182, 212, 0.3);
+  }
+  .shadow-glow-rose {
+    box-shadow: 0 0 25px rgba(244, 63, 94, 0.3);
+  }
+  .shadow-glow-amber {
+    box-shadow: 0 0 25px rgba(245, 158, 11, 0.3);
+  }
 }
 </style>

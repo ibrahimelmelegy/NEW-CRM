@@ -5,14 +5,14 @@ function handleError(message: string) {
   ElNotification({
     type: 'error',
     title: 'Error',
-    message,
+    message
   });
 }
 function handleSuccess(message: string, id?: string, redirect: boolean = true) {
   ElNotification({
     type: 'success',
     title: 'Success',
-    message,
+    message
   });
   if (!redirect) {
     return;
@@ -52,7 +52,7 @@ export async function getServices(): Promise<UseServicesResult> {
         createdAt: formatDate(service.createdAt),
         // updatedAt: formatDate(service.updatedAt),
         updatedAt: '-',
-        assign: service.user?.name,
+        assign: service.user?.name
       }));
       const pagination = body?.pagination;
       return { services, pagination };
@@ -80,7 +80,7 @@ export async function getServices(): Promise<UseServicesResult> {
  */
 export async function getService(id: string | string[]): Promise<Service> {
   try {
-    let { body: service, success } = await useApiFetch(`service/${id}`);
+    const { body: service, success } = await useApiFetch(`service/${id}`);
     return service;
   } catch (error) {
     console.error('Error fetching service:', error instanceof Error ? error.message : error);
@@ -124,7 +124,7 @@ export async function createService(values: Service, redirect: boolean = true): 
 export async function updateService(values: Service, redirect: boolean = true): Promise<void> {
   console.log('values', values);
   try {
-    let mappedService = mapToNumbers(values);
+    const mappedService = mapToNumbers(values);
     delete mappedService.id;
     // Call API to create the service
     const response = await useApiFetch(`service/${values.id}`, 'PUT', mappedService);
@@ -153,7 +153,7 @@ function mapToNumbers(data: Service): Service {
 
   // Convert specified fields to numbers if they are strings
   const mappedData = { ...data };
-  numericFields.forEach((field) => {
+  numericFields.forEach(field => {
     if (typeof mappedData[field as keyof Service] === 'string') {
       const numericValue = parseFloat(mappedData[field as keyof Service] as unknown as string);
       mappedData[field as keyof Service] = isNaN(numericValue)

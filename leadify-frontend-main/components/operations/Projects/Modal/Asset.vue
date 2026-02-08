@@ -16,7 +16,7 @@ const props = defineProps({
   descriptionTwo: String,
   icon: String,
   btnText: String,
-  asset: Object as () => Asset,
+  asset: Object as () => Asset
 });
 const emit = defineEmits(['confirm', 'submit']);
 const dialog = defineModel();

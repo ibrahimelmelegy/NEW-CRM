@@ -24,17 +24,17 @@
 </template>
 
 <script setup lang="ts">
-  const route = useRoute();
-  const router = useRouter();
-  const selectedTab = ref("leadsSales");
+const route = useRoute();
+const router = useRouter();
+const selectedTab = ref('leadsSales');
 
-  function tabChange(tab: string) {
-    selectedTab.value = tab;
-    router.push({
-      path: "",
-      query: { tab: selectedTab.value },
-    });
-  }
+function tabChange(tab: string) {
+  selectedTab.value = tab;
+  router.push({
+    path: '',
+    query: { tab: selectedTab.value }
+  });
+}
 
-  selectedTab.value = (route.query?.tab as string) || "leadsSales";
+selectedTab.value = (route.query?.tab as string) || 'leadsSales';
 </script>

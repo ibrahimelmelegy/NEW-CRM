@@ -5,14 +5,14 @@ function handleError(message: string) {
   ElNotification({
     type: 'error',
     title: 'Error',
-    message,
+    message
   });
 }
 function handleSuccess(message: string, id?: string, redirect: boolean = true) {
   ElNotification({
     type: 'success',
     title: 'Success',
-    message,
+    message
   });
   if (!redirect) {
     return;
@@ -50,12 +50,12 @@ export enum ManpowerRoleEnums {
   SITE_ENGINEER = 'SITE_ENGINEER',
   PROJECT_MANAGER = 'PROJECT_MANAGER',
   TECHNICIAN = 'TECHNICIAN',
-  HELPER = 'HELPER',
+  HELPER = 'HELPER'
 }
 
 export enum ManpowerAvailabilityStatusEnums {
   AVAILABLE = 'AVAILABLE',
-  NOT_AVAILABLE = 'NOT_AVAILABLE',
+  NOT_AVAILABLE = 'NOT_AVAILABLE'
 }
 
 export const manpowerRoles = [
@@ -64,12 +64,12 @@ export const manpowerRoles = [
   { label: 'Site Engineer', value: ManpowerRoleEnums.SITE_ENGINEER },
   { label: 'Project Manager', value: ManpowerRoleEnums.PROJECT_MANAGER },
   { label: 'Technician', value: ManpowerRoleEnums.TECHNICIAN },
-  { label: 'Helper', value: ManpowerRoleEnums.HELPER },
+  { label: 'Helper', value: ManpowerRoleEnums.HELPER }
 ];
 
 export const manpowerAvailabilityStatus = [
   { label: 'Available', value: ManpowerAvailabilityStatusEnums.AVAILABLE },
-  { label: 'Not Available', value: ManpowerAvailabilityStatusEnums.NOT_AVAILABLE },
+  { label: 'Not Available', value: ManpowerAvailabilityStatusEnums.NOT_AVAILABLE }
 ];
 
 export enum ManpowerNationalityEnums {
@@ -253,12 +253,12 @@ export enum ManpowerNationalityEnums {
   WELSH = 'WELSH',
   YEMENI = 'YEMENI',
   ZAMBIAN = 'ZAMBIAN',
-  ZIMBABWEAN = 'ZIMBABWEAN',
+  ZIMBABWEAN = 'ZIMBABWEAN'
 }
 
-export const ManpowerNationalityOptions = Object.keys(ManpowerNationalityEnums).map((key) => ({
+export const ManpowerNationalityOptions = Object.keys(ManpowerNationalityEnums).map(key => ({
   label: key.charAt(0) + key.slice(1).toLowerCase().replace(/_/g, ' '), // Converts key to a human-readable label
-  value: ManpowerNationalityEnums[key as keyof typeof ManpowerNationalityEnums], // Keeps enum value
+  value: ManpowerNationalityEnums[key as keyof typeof ManpowerNationalityEnums] // Keeps enum value
 }));
 
 interface UseManpowersResult {
@@ -280,12 +280,12 @@ export async function getManpowers(): Promise<UseManpowersResult> {
       // Return the docs (manpowers) from the response
       const manpowers = body?.docs?.map((manpower: any) => ({
         ...manpower,
-        manpowerContacts:{title : manpower?.email, text:manpower?.phone},
+        manpowerContacts: { title: manpower?.email, text: manpower?.phone },
         role: manpower?.role?.join(', '),
         createdAt: formatDate(manpower.createdAt),
         // updatedAt: formatDate(manpower.updatedAt),
         updatedAt: '-',
-        assign: manpower.user?.name,
+        assign: manpower.user?.name
       }));
       const pagination = body?.pagination;
       return { manpowers, pagination };
@@ -313,7 +313,7 @@ export async function getManpowers(): Promise<UseManpowersResult> {
  */
 export async function getManpower(id: string | string[]): Promise<ManpowerValues> {
   try {
-    let { body: manpower, success } = await useApiFetch(`manpower/${id}`);
+    const { body: manpower, success } = await useApiFetch(`manpower/${id}`);
     return manpower;
   } catch (error) {
     console.error('Error fetching manpower:', error instanceof Error ? error.message : error);
@@ -328,7 +328,7 @@ export async function getManpower(id: string | string[]): Promise<ManpowerValues
  * @returns {Promise<Boolean>} A promise that resolves when the manpower is created
  * @throws {Error} If the API call is unsuccessful, an error is thrown with a message
  */
-export async function createManpower(values: ManpowerValues, redirect: boolean = true): Promise<Boolean> {
+export async function createManpower(values: ManpowerValues, redirect: boolean = true): Promise<boolean> {
   // Normalize the phone number before sending
   try {
     const normalizedPhone = normalizePhoneNumber(values.phone);
@@ -358,10 +358,10 @@ export async function createManpower(values: ManpowerValues, redirect: boolean =
  * @returns {Promise<Boolean>} A promise that resolves when the manpower is updated
  * @throws {Error} If the API call is unsuccessful, an error is thrown with a message
  */
-export async function updateManpower(values: ManpowerValues, redirect: boolean = true): Promise<Boolean> {
+export async function updateManpower(values: ManpowerValues, redirect: boolean = true): Promise<boolean> {
   try {
     const normalizedPhone = normalizePhoneNumber(values.phone);
-    let mappedManpower = mapToNumbers(values);
+    const mappedManpower = mapToNumbers(values);
     delete mappedManpower.id;
     const manpowerData = { ...mappedManpower, phone: normalizedPhone };
     // Call API to create the manpower
@@ -399,12 +399,12 @@ function mapToNumbers(data: ManpowerValues): ManpowerValues {
     'saudization',
     'transportationAllowance',
     'variableAllowance',
-    'visaFees',
+    'visaFees'
   ];
 
   // Convert specified fields to numbers if they are strings
   const mappedData = { ...data };
-  numericFields.forEach((field) => {
+  numericFields.forEach(field => {
     if (typeof mappedData[field as keyof ManpowerValues] === 'string') {
       const numericValue = parseFloat(mappedData[field as keyof ManpowerValues] as unknown as string);
       mappedData[field as keyof ManpowerValues] = isNaN(numericValue)

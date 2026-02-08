@@ -9,37 +9,37 @@ LeadsForm( :loading="loading" @submit="submitForm" :data="lead")
 </template>
 
 <script lang="ts" setup>
-  import { useI18n } from 'vue-i18n';
-  const { t } = useI18n();
-  
-  useHead({
-    title: t('leads.editTitle'),
-  });
-  definePageMeta({
-    middleware: "permissions",
-    permission: "EDIT_LEADS",
-  });
-  const router = useRouter();
-  const route = useRoute();
-  const loading = ref(false);
+import { useI18n } from 'vue-i18n';
+const { t } = useI18n();
 
-  const lead = ref<any>(null);
+useHead({
+  title: t('leads.editTitle')
+});
+definePageMeta({
+  middleware: 'permissions',
+  permission: 'EDIT_LEADS'
+});
+const router = useRouter();
+const route = useRoute();
+const loading = ref(false);
 
-  onMounted(async () => {
-    loading.value = true;
-    const rawSlug = route.params.slug;
-    const slug = (Array.isArray(rawSlug) ? rawSlug[0] : (rawSlug || "")) as string;
-    const leadData = await getLead(slug);
-    lead.value = leadData;
-    loading.value = false;
-  });
+const lead = ref<any>(null);
 
-  // Call API to update the lead
-  async function submitForm(values: LeadValues) {
-    loading.value = true;
-    await updateLead({ ...values, id: route.params.slug });
-    loading.value = false;
-  }
+onMounted(async () => {
+  loading.value = true;
+  const rawSlug = route.params.slug;
+  const slug = (Array.isArray(rawSlug) ? rawSlug[0] : rawSlug || '') as string;
+  const leadData = await getLead(slug);
+  lead.value = leadData;
+  loading.value = false;
+});
+
+// Call API to update the lead
+async function submitForm(values: LeadValues) {
+  loading.value = true;
+  await updateLead({ ...values, id: route.params.slug });
+  loading.value = false;
+}
 </script>
 
 <style lang="scss"></style>

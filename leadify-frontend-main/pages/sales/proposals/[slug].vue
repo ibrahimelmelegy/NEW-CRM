@@ -3,12 +3,12 @@
     <!-- Header with navigation -->
     <div class="header">
       <div class="header-left">
-        <el-button @click="goBack" type="default" :icon="ArrowLeft" circle />
+        <el-button type="default" :icon="ArrowLeft" circle @click="goBack" />
         <h1 class="title">{{ $t('proposals.details') }}</h1>
         <span class="badge">{{ $t('proposals.react') }}</span>
       </div>
       <div class="header-right">
-        <el-button @click="refreshFrame" type="primary" :icon="Refresh">
+        <el-button type="primary" :icon="Refresh" @click="refreshFrame">
           {{ $t('proposals.refresh') }}
         </el-button>
       </div>
@@ -16,13 +16,7 @@
 
     <!-- React App iframe -->
     <div class="iframe-wrapper">
-      <iframe
-        ref="reactFrame"
-        :src="reactAppUrl"
-        class="react-iframe"
-        @load="onFrameLoad"
-        allow="clipboard-write; downloads"
-      />
+      <iframe ref="reactFrame" :src="reactAppUrl" class="react-iframe" allow="clipboard-write; downloads" @load="onFrameLoad" />
       <div v-if="loading" class="loading-overlay">
         <el-icon class="is-loading" :size="40"><Loading /></el-icon>
         <p>{{ $t('proposals.loadingDetails') }}</p>
@@ -32,55 +26,55 @@
 </template>
 
 <script setup lang="ts">
-import { ref, onMounted, onUnmounted } from 'vue'
-import { ArrowLeft, Refresh, Loading } from '@element-plus/icons-vue'
-import { useI18n } from 'vue-i18n'
+import { ref, onMounted, onUnmounted } from 'vue';
+import { ArrowLeft, Refresh, Loading } from '@element-plus/icons-vue';
+import { useI18n } from 'vue-i18n';
 
-const { t } = useI18n()
+const { t } = useI18n();
 
 definePageMeta({
   layout: 'default',
   middleware: ['permissions'],
   permission: 'VIEW_OWN_PROPOSALS'
-})
+});
 
-const router = useRouter()
-const route = useRoute()
+const router = useRouter();
+const route = useRoute();
 
 // React app URL - view mode
-const reactAppUrl = ref('http://localhost:3001/')
-const loading = ref(true)
-const reactFrame = ref<HTMLIFrameElement | null>(null)
+const reactAppUrl = ref('http://localhost:3001/');
+const loading = ref(true);
+const reactFrame = ref<HTMLIFrameElement | null>(null);
 
 // Handle proposal ID from slug
 onMounted(() => {
-  const proposalId = route.params.slug as string
+  const proposalId = route.params.slug as string;
   if (proposalId) {
-    reactAppUrl.value = `http://localhost:3001/view/${proposalId}`
+    reactAppUrl.value = `http://localhost:3001/view/${proposalId}`;
   }
-  
+
   // Pass auth token
-  const token = useCookie('access_token')
+  const token = useCookie('access_token');
   if (token.value) {
-    const separator = reactAppUrl.value.includes('?') ? '&' : '?'
-    reactAppUrl.value += `${separator}token=${token.value}`
+    const separator = reactAppUrl.value.includes('?') ? '&' : '?';
+    reactAppUrl.value += `${separator}token=${token.value}`;
   }
-})
+});
 
 const onFrameLoad = () => {
-  loading.value = false
-}
+  loading.value = false;
+};
 
 const refreshFrame = () => {
-  loading.value = true
+  loading.value = true;
   if (reactFrame.value) {
-    reactFrame.value.src = reactFrame.value.src
+    reactFrame.value.src = reactFrame.value.src;
   }
-}
+};
 
 const goBack = () => {
-  router.push('/sales/proposals')
-}
+  router.push('/sales/proposals');
+};
 </script>
 
 <style scoped>

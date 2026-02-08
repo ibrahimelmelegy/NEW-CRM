@@ -9,20 +9,20 @@ OperationsManPowerForm( :loading="loading" @submit="submitForm")
 </template>
 
 <script lang="ts" setup>
-  useHead({
-    title: "App HP Tech | Add Manpower",
-  });
-  definePageMeta({
-    middleware: "permissions",
-    permission: "CREATE_MANPOWER",
-  });
-  const router = useRouter();
-  const loading = ref(false);
-  async function submitForm(values: ManpowerValues) {
-    loading.value = true;
-    await createManpower(values);
-    loading.value = false;
-  }
+useHead({
+  title: 'App HP Tech | Add Manpower'
+});
+definePageMeta({
+  middleware: 'permissions',
+  permission: 'CREATE_MANPOWER'
+});
+const router = useRouter();
+const loading = ref(false);
+async function submitForm(values: ManpowerValues) {
+  loading.value = true;
+  await createManpower(values);
+  loading.value = false;
+}
 </script>
 
 <style lang="scss"></style>

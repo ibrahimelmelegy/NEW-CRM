@@ -55,217 +55,215 @@ div
 </template>
 
 <script setup lang="ts">
-  const router = useRouter();
-  import { Plus } from "@element-plus/icons-vue";
-  import { stageOptions, priorityOptions } from '@/composables/useOpportunity';
-  import useTableFilter from '@/composables/useTableFilter';
+import { Plus } from '@element-plus/icons-vue';
+import { stageOptions, priorityOptions } from '@/composables/useOpportunity';
+import useTableFilter from '@/composables/useTableFilter';
+const router = useRouter();
 
-  const { $i18n } = useNuxtApp();
-  const t = $i18n.t;
-  const { hasPermission } = await usePermissions();
-  const loadingAction = ref(false);
-  const deleteLeadPopup = ref(false);
+const { $i18n } = useNuxtApp();
+const t = $i18n.t;
+const { hasPermission } = await usePermissions();
+const loadingAction = ref(false);
+const deleteLeadPopup = ref(false);
 
-  const present = ref("");
-  const reasons = ref("");
-  const select = ref();
-  const wonPopup = ref(false);
+const present = ref('');
+const reasons = ref('');
+const select = ref();
+const wonPopup = ref(false);
 
-  // Using computed for reactivity if language changes
-  const opportunityPresent = computed(() => [
-    {
-      label: t('opportunities.convertDeal'),
-      value: "deal",
-    },
-    {
-      label: t('opportunities.convertProject'),
-      value: "project",
-    },
-    {
-      label: t('common.cancel'),
-      value: "now",
-    },
-  ]);
-
-  async function setPresent(pre: any) {
-    present.value = pre.value;
+// Using computed for reactivity if language changes
+const opportunityPresent = computed(() => [
+  {
+    label: t('opportunities.convertDeal'),
+    value: 'deal'
+  },
+  {
+    label: t('opportunities.convertProject'),
+    value: 'project'
+  },
+  {
+    label: t('common.cancel'),
+    value: 'now'
   }
-  async function setReasons(pre: any) {
-    reasons.value = pre.value;
-    console.log(pre.value);
-  }
+]);
 
-  async function changeStage(id: any, newStage: any) {
-    const opportunity: any = await getOpportunity(id);
-    loadingAction.value = true;
-    try {
-      await updateOpportunity({ stage: newStage }, id);
-    } catch {
-    } finally {
-      const response = await useTableFilter("opportunity");
-      table.data = response.formattedData;
-      loadingAction.value = false;
+async function setPresent(pre: any) {
+  present.value = pre.value;
+}
+async function setReasons(pre: any) {
+  reasons.value = pre.value;
+  console.log(pre.value);
+}
+
+async function changeStage(id: any, newStage: any) {
+  const opportunity: any = await getOpportunity(id);
+  loadingAction.value = true;
+  try {
+    await updateOpportunity({ stage: newStage }, id);
+  } catch {
+  } finally {
+    const response = await useTableFilter('opportunity');
+    table.data = response.formattedData;
+    loadingAction.value = false;
+  }
+}
+
+async function editWithResone() {
+  const opportunity: any = await getOpportunity(select.value?.id);
+  loadingAction.value = true;
+  try {
+    await updateOpportunity({ stage: select.value?.status, reasonOfLose: reasons.value }, select.value?.id);
+  } catch {
+  } finally {
+    const response = await useTableFilter('opportunity');
+    table.data = response.formattedData;
+    loadingAction.value = false;
+  }
+}
+
+async function submitForm(values: any) {
+  try {
+    if (values?.status === 'WON' || values?.status === 'LOST') {
+      wonPopup.value = true;
+      select.value = values;
     }
-  }
+    if (values?.status !== 'WON' && values?.status !== 'LOST') changeStage(values?.id, values?.status);
+  } catch {}
+}
 
-  async function editWithResone() {
-    const opportunity: any = await getOpportunity(select.value?.id);
-    loadingAction.value = true;
-    try {
-      await updateOpportunity({ stage: select.value?.status, reasonOfLose: reasons.value }, select.value?.id);
-    } catch {
-    } finally {
-      const response = await useTableFilter("opportunity");
-      table.data = response.formattedData;
-      loadingAction.value = false;
+async function editPresent() {
+  if (select?.value?.status === 'LOST') {
+    await editWithResone();
+  } else {
+    await changeStage(select.value?.id, select.value?.status);
+    if (present.value === 'project') router.push(`/operations/projects/add-project?opportunityId=${select.value?.id}&leadId=${select.value?.leadId}`);
+    if (present.value === 'deal') router.push(`/sales/deals/add-deal?opportunityId=${select.value?.id}&leadId=${select.value?.leadId}`);
+  }
+  wonPopup.value = false;
+  present.value = '';
+  reasons.value = '';
+  select.value = {};
+}
+
+const table = reactive({
+  columns: [
+    {
+      prop: 'name',
+      label: t('opportunities.table.name'),
+      component: 'Text',
+      sortable: true,
+      type: 'font-bold',
+      width: 200
+    },
+    {
+      prop: 'stage',
+      label: t('opportunities.table.stage'),
+      component: 'Label',
+      sortable: true,
+      type: 'select',
+      filters: stageOptions.map(stage => ({ text: t(stage.label), value: stage.value, actions: submitForm })),
+      width: 150
+    },
+
+    {
+      prop: 'estimatedValue',
+      label: t('opportunities.table.budget'),
+      component: 'Text',
+      sortable: true,
+      type: 'font-default',
+      width: 150
+    },
+    {
+      prop: 'profit',
+      label: t('opportunities.table.profit'),
+      component: 'Text',
+      // sortable: true,
+      type: 'font-default',
+      width: 150
+    },
+    {
+      prop: 'expectedCloseDate',
+      label: t('opportunities.table.closeDate'),
+      component: 'Text',
+      sortable: true,
+      type: 'font-default',
+      width: 200
+    },
+    {
+      prop: 'priority',
+      label: t('opportunities.table.priority'),
+      component: 'Label',
+      sortable: true,
+      type: 'solid',
+      filters: priorityOptions.map(priority => ({ text: t(priority.label), value: priority.value })),
+      width: 150
+    },
+    {
+      prop: 'assign',
+      label: t('opportunities.table.assigned'),
+      component: 'Text',
+      type: 'font-default',
+      width: 200
+    },
+    {
+      prop: 'createdAt',
+      label: t('opportunities.table.created'),
+      component: 'Text',
+      sortable: true,
+      type: 'font-default',
+      width: 150
     }
+    // { prop: 'actions', label: 'Actions', sortable: false },
+  ],
+  data: [] as Opportunities[]
+});
+
+// Call API to Get the lead
+// const response = await getopportunity();
+
+const response = await useTableFilter('opportunity');
+table.data = response.formattedData;
+
+function handleRowClick(val: any) {
+  router.push(`/sales/opportunity/${val.id}`);
+}
+
+const users = await useApiFetch('users');
+const mappedUsers = users?.body?.docs?.map((e: any) => ({
+  label: e.name,
+  value: e.id
+}));
+
+const filterOptions = [
+  {
+    title: t('opportunities.filter.stage'),
+    value: 'stage',
+    options: [...stageOptions.map(o => ({ ...o, label: t(o.label) }))]
+  },
+  {
+    title: t('opportunities.table.assigned'),
+    value: 'userId',
+    options: [...mappedUsers]
+  },
+  {
+    title: t('opportunities.table.priority'),
+    value: 'priority',
+    options: [...priorityOptions.map(o => ({ ...o, label: t(o.label) }))]
+  },
+  {
+    title: t('opportunities.filter.closeDate'),
+    value: ['fromExpectedCloseDate', 'toExpectedCloseDate'],
+    type: 'date'
+  },
+  {
+    title: t('opportunities.filter.budget'),
+    value: ['fromEstimatedValue', 'toEstimatedValue'],
+    type: 'input'
+  },
+  {
+    title: t('opportunities.filter.profit'),
+    value: ['fromProfit', 'toProfit'],
+    type: 'input'
   }
-
-  async function submitForm(values: any) {
-    try {
-      if (values?.status === "WON" || values?.status === "LOST") {
-        wonPopup.value = true;
-        select.value = values;
-      }
-      if (values?.status !== "WON" && values?.status !== "LOST") changeStage(values?.id, values?.status);
-    } catch {}
-  }
-
-  async function editPresent() {
-    if (select?.value?.status === "LOST") {
-      await editWithResone();
-    } else {
-      await changeStage(select.value?.id, select.value?.status);
-      if (present.value === "project")
-        router.push(`/operations/projects/add-project?opportunityId=${select.value?.id}&leadId=${select.value?.leadId}`);
-      if (present.value === "deal")
-        router.push(`/sales/deals/add-deal?opportunityId=${select.value?.id}&leadId=${select.value?.leadId}`);
-    }
-    wonPopup.value = false;
-    present.value = "";
-    reasons.value = "";
-    select.value = {};
-  }
-
-  const table = reactive({
-    columns: [
-      {
-        prop: "name",
-        label: t('opportunities.table.name'),
-        component: "Text",
-        sortable: true,
-        type: "font-bold",
-        width: 200,
-      },
-      {
-        prop: "stage",
-        label: t('opportunities.table.stage'),
-        component: "Label",
-        sortable: true,
-        type: "select",
-        filters: stageOptions.map((stage) => ({ text: t(stage.label), value: stage.value, actions: submitForm })),
-        width: 150,
-      },
-
-      {
-        prop: "estimatedValue",
-        label: t('opportunities.table.budget'),
-        component: "Text",
-        sortable: true,
-        type: "font-default",
-        width: 150,
-      },
-      {
-        prop: "profit",
-        label: t('opportunities.table.profit'),
-        component: "Text",
-        // sortable: true,
-        type: "font-default",
-        width: 150,
-      },
-      {
-        prop: "expectedCloseDate",
-        label: t('opportunities.table.closeDate'),
-        component: "Text",
-        sortable: true,
-        type: "font-default",
-        width: 200,
-      },
-      {
-        prop: "priority",
-        label: t('opportunities.table.priority'),
-        component: "Label",
-        sortable: true,
-        type: "solid",
-        filters: priorityOptions.map((priority) => ({ text: t(priority.label), value: priority.value })),
-        width: 150,
-      },
-      {
-        prop: "assign",
-        label: t('opportunities.table.assigned'),
-        component: "Text",
-        type: "font-default",
-        width: 200,
-      },
-      {
-        prop: "createdAt",
-        label: t('opportunities.table.created'),
-        component: "Text",
-        sortable: true,
-        type: "font-default",
-        width: 150,
-      },
-      // { prop: 'actions', label: 'Actions', sortable: false },
-    ],
-    data: [] as Opportunities[],
-  });
-
-  // Call API to Get the lead
-  // const response = await getopportunity();
-
-  const response = await useTableFilter("opportunity");
-  table.data = response.formattedData;
-
-  function handleRowClick(val: any) {
-    router.push(`/sales/opportunity/${val.id}`);
-  }
-
-  let users = await useApiFetch("users");
-  const mappedUsers = users?.body?.docs?.map((e: any) => ({
-    label: e.name,
-    value: e.id,
-  }));
-
-  const filterOptions = [
-    {
-      title: t('opportunities.filter.stage'),
-      value: "stage",
-      options: [...stageOptions.map(o => ({...o, label: t(o.label)}))],
-    },
-    {
-      title: t('opportunities.table.assigned'),
-      value: "userId",
-      options: [...mappedUsers],
-    },
-    {
-      title: t('opportunities.table.priority'),
-      value: "priority",
-      options: [...priorityOptions.map(o => ({...o, label: t(o.label)}))],
-    },
-    {
-      title: t('opportunities.filter.closeDate'),
-      value: ["fromExpectedCloseDate", "toExpectedCloseDate"],
-      type: "date",
-    },
-    {
-      title: t('opportunities.filter.budget'),
-      value: ["fromEstimatedValue", "toEstimatedValue"],
-      type: "input",
-    },
-    {
-      title: t('opportunities.filter.profit'),
-      value: ["fromProfit", "toProfit"],
-      type: "input",
-    },
-  ];
+];
 </script>

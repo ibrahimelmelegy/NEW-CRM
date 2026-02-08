@@ -9,20 +9,20 @@ OperationsAssetForm( :loading="loading" @submit="submitForm")
 </template>
 
 <script lang="ts" setup>
-  useHead({
-    title: "App HP Tech | Add Asset",
-  });
-  definePageMeta({
-    middleware: "permissions",
-    permission: "CREATE_ASSETS",
-  });
-  const router = useRouter();
-  const loading = ref(false);
-  async function submitForm(values: Asset) {
-    loading.value = true;
-    await createAsset(values);
-    loading.value = false;
-  }
+useHead({
+  title: 'App HP Tech | Add Asset'
+});
+definePageMeta({
+  middleware: 'permissions',
+  permission: 'CREATE_ASSETS'
+});
+const router = useRouter();
+const loading = ref(false);
+async function submitForm(values: Asset) {
+  loading.value = true;
+  await createAsset(values);
+  loading.value = false;
+}
 </script>
 
 <style lang="scss"></style>

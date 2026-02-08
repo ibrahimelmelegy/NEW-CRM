@@ -5,12 +5,10 @@
 </template>
 
 <script lang="ts" setup>
-;
-
 const props = defineProps({
   title: String,
   position: String,
-  value: Object,
+  value: Object
 });
 
 const emit = defineEmits(['value']);

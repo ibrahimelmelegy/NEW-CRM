@@ -1,5 +1,4 @@
-export const defaultDataProposal: string =
-      `<div class="pageData" contenteditable="true"></div>
+export const defaultDataProposal: string = `<div class="pageData" contenteditable="true"></div>
         <!-- first page -->
       <div class="pageData" contenteditable="true" >
         <div id="titleEdit" style=" font-weight: 600;
@@ -227,4 +226,4 @@ including delivery and services. </p>
       </div>
       </div>
       <br>
-      `
+      `;

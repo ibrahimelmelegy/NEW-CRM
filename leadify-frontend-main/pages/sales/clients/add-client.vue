@@ -9,23 +9,23 @@ ClientForm( :loading="loading" @submit="submitForm")
 </template>
 
 <script lang="ts" setup>
-  import { useI18n } from 'vue-i18n';
-  const { t } = useI18n();
-  useHead({
-    title: t('clients.createTitle'),
-  });
-  definePageMeta({
-    middleware: "permissions",
-    permission: "CREATE_CLIENTS",
-  });
-  const router = useRouter();
-  const route = useRoute();
-  const loading = ref(false);
-  async function submitForm(values: FormattedValues) {
-    loading.value = true;
-    await createClient(values);
-    loading.value = false;
-  }
+import { useI18n } from 'vue-i18n';
+const { t } = useI18n();
+useHead({
+  title: t('clients.createTitle')
+});
+definePageMeta({
+  middleware: 'permissions',
+  permission: 'CREATE_CLIENTS'
+});
+const router = useRouter();
+const route = useRoute();
+const loading = ref(false);
+async function submitForm(values: FormattedValues) {
+  loading.value = true;
+  await createClient(values);
+  loading.value = false;
+}
 </script>
 
 <style lang="scss"></style>

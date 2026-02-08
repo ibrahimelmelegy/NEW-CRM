@@ -2,14 +2,17 @@
   <div class="professional-background absolute inset-0 z-0 overflow-hidden isolate" :class="themeStore.isLight ? 'bg-[#f8f7fa]' : 'bg-[#0b0a12]'">
     <!-- Mesh Gradient Layer -->
     <div class="mesh-gradient absolute inset-0 opacity-80"></div>
-    
+
     <!-- SVG Noise Texture -->
     <div class="noise-overlay absolute inset-0 opacity-[0.03] pointer-events-none"></div>
-    
+
     <!-- Dynamic Ambient Glows -->
     <div class="ambient-glows absolute inset-0">
       <div class="glow glow-1 absolute top-[-10%] left-[-5%] w-[50%] h-[50%] bg-[#7849ff]/30 rounded-full blur-[120px] animate-pulse-slow"></div>
-      <div class="glow glow-2 absolute bottom-[-10%] right-[-5%] w-[50%] h-[50%] bg-[#ff7b00]/20 rounded-full blur-[150px] animate-pulse-slow" style="animation-delay: 3s;"></div>
+      <div
+        class="glow glow-2 absolute bottom-[-10%] right-[-5%] w-[50%] h-[50%] bg-[#ff7b00]/20 rounded-full blur-[150px] animate-pulse-slow"
+        style="animation-delay: 3s"
+      ></div>
     </div>
   </div>
 </template>
@@ -20,7 +23,7 @@ const themeStore = useThemeStore();
 
 <style lang="scss" scoped>
 .professional-background {
-  position: fixed; 
+  position: fixed;
   z-index: -1; // Ensure it stays behind everything
   top: 0;
   left: 0;
@@ -32,23 +35,22 @@ const themeStore = useThemeStore();
   :global(body.light-theme) & {
     background-color: #f8f7fa;
   }
-  
+
   .mesh-gradient {
-    background: 
-      radial-gradient(at 0% 0%, hsla(253,16%,7%,1) 0, transparent 50%), 
-      radial-gradient(at 50% 0%, hsla(255,100%,64%,0.15) 0, transparent 50%), 
-      radial-gradient(at 100% 0%, hsla(29,100%,50%,0.1) 0, transparent 50%),
-      radial-gradient(at 0% 100%, hsla(255,100%,64%,0.1) 0, transparent 50%),
-      radial-gradient(at 50% 100%, hsla(253,16%,7%,1) 0, transparent 50%),
-      radial-gradient(at 100% 100%, hsla(29,100%,50%,0.15) 0, transparent 50%);
+    background:
+      radial-gradient(at 0% 0%, hsla(253, 16%, 7%, 1) 0, transparent 50%), radial-gradient(at 50% 0%, hsla(255, 100%, 64%, 0.15) 0, transparent 50%),
+      radial-gradient(at 100% 0%, hsla(29, 100%, 50%, 0.1) 0, transparent 50%),
+      radial-gradient(at 0% 100%, hsla(255, 100%, 64%, 0.1) 0, transparent 50%),
+      radial-gradient(at 50% 100%, hsla(253, 16%, 7%, 1) 0, transparent 50%),
+      radial-gradient(at 100% 100%, hsla(29, 100%, 50%, 0.15) 0, transparent 50%);
     filter: blur(40px);
     transition: all 0.5s ease;
 
     :global(body.light-theme) & {
       opacity: 0.15;
-      background: 
-        radial-gradient(at 0% 0%, hsla(255,100%,64%,0.3) 0, transparent 50%), 
-        radial-gradient(at 100% 100%, hsla(29,100%,50%,0.2) 0, transparent 50%);
+      background:
+        radial-gradient(at 0% 0%, hsla(255, 100%, 64%, 0.3) 0, transparent 50%),
+        radial-gradient(at 100% 100%, hsla(29, 100%, 50%, 0.2) 0, transparent 50%);
     }
   }
 
@@ -61,8 +63,15 @@ const themeStore = useThemeStore();
   }
 
   @keyframes pulse {
-    0%, 100% { opacity: 0.5; transform: scale(1); }
-    50% { opacity: 0.8; transform: scale(1.1); }
+    0%,
+    100% {
+      opacity: 0.5;
+      transform: scale(1);
+    }
+    50% {
+      opacity: 0.8;
+      transform: scale(1.1);
+    }
   }
 }
 </style>

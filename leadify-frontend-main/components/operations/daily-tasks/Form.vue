@@ -23,9 +23,9 @@
     </template>
 
 <script lang="ts" setup>
-import { useForm } from "vee-validate";
-import * as yup from "yup";
-import { useI18n } from "vue-i18n";
+import { useForm } from 'vee-validate';
+import * as yup from 'yup';
+import { useI18n } from 'vue-i18n';
 const { t } = useI18n();
 const router = useRouter();
 const route = useRoute();
@@ -35,12 +35,11 @@ const props = defineProps({
   isModal: Boolean,
   data: {
     type: Object,
-    required: false,
-  },
+    required: false
+  }
 });
 
-const emit = defineEmits(["submit" ,"fetchClient"]);
-
+const emit = defineEmits(['submit', 'fetchClient']);
 
 const formSchema = yup.object({
   name: yup.string().trim().required().min(2).max(100).label(t('operations.dailyTasks.form.name')),
@@ -48,8 +47,8 @@ const formSchema = yup.object({
     .string() // Use string to allow flexible input (empty, float, or integer)
     .required()
     .test(
-      "is-valid-number",
-      "Please enter a valid number.", // Custom error message
+      'is-valid-number',
+      'Please enter a valid number.', // Custom error message
       (value: any) => {
         if (!value) return true; // Allow empty input
         return /^\d*\.?\d*$/.test(value); // Check if value is a valid integer or float
@@ -61,8 +60,8 @@ const formSchema = yup.object({
     .string() // Use string to allow flexible input (empty, float, or integer)
     .required()
     .test(
-      "is-valid-number",
-      "Please enter a valid number.", // Custom error message
+      'is-valid-number',
+      'Please enter a valid number.', // Custom error message
       (value: any) => {
         if (!value) return true; // Allow empty input
         return /^\d*\.?\d*$/.test(value); // Check if value is a valid integer or float
@@ -74,8 +73,8 @@ const formSchema = yup.object({
     .string() // Use string to allow flexible input (empty, float, or integer)
     .required()
     .test(
-      "is-valid-number",
-      "Please enter a valid number.", // Custom error message
+      'is-valid-number',
+      'Please enter a valid number.', // Custom error message
       (value: any) => {
         if (!value) return true; // Allow empty input
         return /^\d*\.?\d*$/.test(value); // Check if value is a valid integer or float
@@ -87,43 +86,43 @@ const formSchema = yup.object({
   priority: yup.string().trim().nullable().max(100).label(t('operations.dailyTasks.form.priority')),
   clientId: yup.string().trim().nullable().label(t('operations.dailyTasks.form.client')),
   userId: yup.string().required().label(t('operations.dailyTasks.form.user')),
-  salesRepresentativeId: yup.string().required().label(t('operations.dailyTasks.form.salesRep')),
+  salesRepresentativeId: yup.string().required().label(t('operations.dailyTasks.form.salesRep'))
 });
 
 const { handleSubmit } = useForm({
-  validationSchema: formSchema,
+  validationSchema: formSchema
 });
 
 // Emit delete
-function onFetchClient(id:string) {
-  console.log(id)
+function onFetchClient(id: string) {
+  console.log(id);
   emit('fetchClient', id);
 }
 //  Get Users
-const usersRes = await useApiFetch("users?limit=10000");
+const usersRes = await useApiFetch('users?limit=10000');
 // Map Users to Select Options
 const users = usersRes?.body?.docs?.map((e: any) => ({
   label: e.name,
-  value: e.id,
+  value: e.id
 }));
 
 //  Get Clients
-const clientsRes = await useApiFetch("client?limit=10000");
+const clientsRes = await useApiFetch('client?limit=10000');
 // Map Clients to Select Options
 const clients = computed(() => [
   { label: t('common.add') + ' ' + t('operations.dailyTasks.form.client'), value: 0 },
   ...(clientsRes?.body?.docs?.map((e: any) => ({
     label: e.clientName,
-    value: e.id,
-  })) || []),
+    value: e.id
+  })) || [])
 ]);
 
 const onSubmit = handleSubmit((values: any, actions: any) => {
-  emit("submit", {
+  emit('submit', {
     ...values,
     cost: Number(values.cost),
     downPayment: Number(values.downPayment),
-    totalPaid: Number(values.totalPaid),
+    totalPaid: Number(values.totalPaid)
   });
 });
 </script>

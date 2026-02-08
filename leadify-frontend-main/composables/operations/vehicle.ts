@@ -5,14 +5,14 @@ function handleError(message: string) {
   ElNotification({
     type: 'error',
     title: 'Error',
-    message,
+    message
   });
 }
 function handleSuccess(message: string, id?: string, redirect: boolean = true) {
   ElNotification({
     type: 'success',
     title: 'Success',
-    message,
+    message
   });
   if (!redirect) {
     return;
@@ -37,13 +37,13 @@ export interface Vehicle {
 enum Manufacturer {
   sedan = 'Sedan',
   changanHunter = 'Changan Hunter',
-  other = 'Other',
+  other = 'Other'
 }
 
 export const manufacturers = [
   { label: 'Sedan', value: Manufacturer.sedan },
   { label: 'Changan Hunter', value: Manufacturer.changanHunter },
-  { label: 'Other', value: Manufacturer.other },
+  { label: 'Other', value: Manufacturer.other }
 ];
 
 interface UseVehicleResult {
@@ -68,7 +68,7 @@ export async function getVehicles(): Promise<UseVehicleResult> {
         createdAt: formatDate(vehicle.createdAt),
         // updatedAt: formatDate(vehicle.updatedAt),
         updatedAt: '-',
-        assign: vehicle?.user?.name,
+        assign: vehicle?.user?.name
       }));
       const pagination = body?.pagination;
       return { vehicles, pagination };
@@ -96,7 +96,7 @@ export async function getVehicles(): Promise<UseVehicleResult> {
  */
 export async function getVehicle(id: string | string[]): Promise<Vehicle> {
   try {
-    let { body: vehicle, success } = await useApiFetch(`vehicle/${id}`);
+    const { body: vehicle, success } = await useApiFetch(`vehicle/${id}`);
     return vehicle;
   } catch (error) {
     console.error('Error fetching vehicle:', error instanceof Error ? error.message : error);
@@ -141,7 +141,7 @@ export async function createVehicle(values: Vehicle, redirect: boolean = true) {
  */
 export async function updateVehicle(values: Vehicle, redirect: boolean = true) {
   try {
-    let mappedVehicle = mapToNumbers(values);
+    const mappedVehicle = mapToNumbers(values);
     // Call API to create the Vehicle
     const response = await useApiFetch(`vehicle/update`, 'POST', mappedVehicle);
 
@@ -173,7 +173,7 @@ function mapToNumbers(data: Vehicle): Vehicle {
 
   // Convert specified fields to numbers if they are strings
   const mappedData = { ...data };
-  numericFields.forEach((field) => {
+  numericFields.forEach(field => {
     if (typeof mappedData[field as keyof Vehicle] === 'string') {
       const numericValue = parseFloat(mappedData[field as keyof Vehicle] as unknown as string);
       mappedData[field as keyof Vehicle] = isNaN(numericValue)

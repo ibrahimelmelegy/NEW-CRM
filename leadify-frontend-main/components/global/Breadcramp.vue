@@ -16,8 +16,8 @@ ol(vocab='http://schema.org/' typeof='BreadcrumbList' class="breadcrumb" )
 defineProps({
   title: {
     type: String,
-    default: null,
-  },
+    default: null
+  }
 });
 
 const route = useRoute();
@@ -34,7 +34,7 @@ const crumbs = computed(() => {
     if (match.name !== null) {
       crumbs.push({
         title: param.replace(/-/g, ' ').split('?')[0],
-        ...match,
+        ...match
       });
     }
   });

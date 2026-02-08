@@ -40,72 +40,72 @@ el-form(
 </template>
 
 <script lang="ts" setup>
-  import { useForm } from "vee-validate";
-  import * as yup from "yup";
+import { useForm } from 'vee-validate';
+import * as yup from 'yup';
 
-  import { Delete } from "@element-plus/icons-vue";
-  import { useI18n } from "vue-i18n";
-  import { id } from "yup-locales";
+import { Delete } from '@element-plus/icons-vue';
+import { useI18n } from 'vue-i18n';
+import { id } from 'yup-locales';
 
-  const { t } = useI18n();
+const { t } = useI18n();
 
-  // Props
-  const props = defineProps({
-    invoice: { type: Object, required: true },
-    editMode: { type: Boolean, required: false },
-  });
+// Props
+const props = defineProps({
+  invoice: { type: Object, required: true },
+  editMode: { type: Boolean, required: false }
+});
 
-  // Emit events
-  const emit = defineEmits(["onSubmit", "onDelete"]);
+// Emit events
+const emit = defineEmits(['onSubmit', 'onDelete']);
 
-  // Validation schema
-  const formSchema = yup.object({
-    invoiceNumber: yup.string().trim().required().min(2).max(50).label(t('deals.table.invoiceNumber')),
-    amount: yup
-      .number()
-      .required()
-      .label(t('deals.table.amount'))
-      .transform((value: any, originalValue: any) => (String(originalValue).trim() === "" ? null : value)),
-    invoiceDate: yup.date().nullable().label(t('deals.table.invoiceDate')),
-    collectedDate: yup.date().nullable().label(t('deals.table.collectedDate')),
-    collected: yup.string().trim().nullable().label(t('deals.table.collected')),
-  });
+// Validation schema
+const formSchema = yup.object({
+  invoiceNumber: yup.string().trim().required().min(2).max(50).label(t('deals.table.invoiceNumber')),
+  amount: yup
+    .number()
+    .required()
+    .label(t('deals.table.amount'))
+    .transform((value: any, originalValue: any) => (String(originalValue).trim() === '' ? null : value)),
+  invoiceDate: yup.date().nullable().label(t('deals.table.invoiceDate')),
+  collectedDate: yup.date().nullable().label(t('deals.table.collectedDate')),
+  collected: yup.string().trim().nullable().label(t('deals.table.collected'))
+});
 
-  // Form setup
-  const { handleSubmit, errors, validate, values } = useForm({ validationSchema: formSchema });
+// Form setup
+const { handleSubmit, errors, validate, values } = useForm({ validationSchema: formSchema });
 
-  const formRef = ref();
+const formRef = ref();
 
-  //  Emit submittion values
-  const onSubmit = handleSubmit((values: any) => {
-    const formattedValues = {
-      ...values,
-      id: props.invoice.id,
-      collectedDate: isCollected.value ? values.collectedDate : null,
-    };
-    emit("onSubmit", formattedValues);
-  });
+//  Emit submittion values
+const onSubmit = handleSubmit((values: any) => {
+  const formattedValues = {
+    ...values,
+    id: props.invoice.id,
+    collectedDate: isCollected.value ? values.collectedDate : null
+  };
+  emit('onSubmit', formattedValues);
+});
 
-  // Emit delete
-  function onDelete() {
-    emit("onDelete", props.invoice.id);
-  }
+// Emit delete
+function onDelete() {
+  emit('onDelete', props.invoice.id);
+}
 
-  /**
-   * Handles the change event for the "collected" field.
-   */
-  const isCollected = ref(false);
-  function handleCollectedChange(value: any) {
-    if (value.label === "Yes") {
-      isCollected.value = true;
-    } else {
-      isCollected.value = false;
-    }
-  }
-  if (props.invoice?.collected) {
+/**
+ * Handles the change event for the "collected" field.
+ */
+const isCollected = ref(false);
+function handleCollectedChange(value: any) {
+  if (value.label === 'Yes') {
     isCollected.value = true;
+  } else {
+    isCollected.value = false;
   }
+}
+if (props.invoice?.collected) {
+  isCollected.value = true;
+}
 
-  // Expose methods to the parent component
-  defineExpose({ onSubmit, validate, errors, values });
+// Expose methods to the parent component
+defineExpose({ onSubmit, validate, errors, values });
 </script>

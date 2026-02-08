@@ -1,5 +1,5 @@
-import AnimatedCounter from "vue-animated-counter";
+import AnimatedCounter from 'vue-animated-counter';
 
-export default defineNuxtPlugin((nuxtApp) => {
-  nuxtApp.vueApp.component("AnimatedCounter", AnimatedCounter);
+export default defineNuxtPlugin(nuxtApp => {
+  nuxtApp.vueApp.component('AnimatedCounter', AnimatedCounter);
 });

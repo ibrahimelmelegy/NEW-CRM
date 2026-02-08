@@ -38,156 +38,156 @@
 </template>
 
 <script setup lang="ts">
-  import { useForm } from "vee-validate";
-  const { hasPermission } = await usePermissions();
-  const props = defineProps({
-    user: {
-      type: Object,
-      required: true,
+import { useForm } from 'vee-validate';
+const { hasPermission } = await usePermissions();
+const props = defineProps({
+  user: {
+    type: Object,
+    required: true
+  }
+});
+
+const { handleSubmit, errors, values, resetForm } = useForm();
+const filter = ref();
+
+const mappedRoles = ref<{ label: string; value: any }[]>();
+//  Get roles
+const repsonse = await useApiFetch('role');
+// Map clients to Select Options
+mappedRoles.value = repsonse.body?.docs?.map((e: any) => ({
+  label: e.name,
+  value: e.id
+}));
+
+const exportPopup = ref(false);
+const loadingExport = ref(false);
+const email = ref('');
+
+const isLoading = ref(false);
+
+const table = reactive({
+  columns: [
+    {
+      prop: 'staffDetails',
+      label: 'Staff Name',
+      component: 'AvatarText',
+      sortable: true,
+      type: 'font-bold',
+      width: 170
     },
-  });
-
-  const { handleSubmit, errors, values, resetForm } = useForm();
-  const filter = ref();
-
-  const mappedRoles = ref<{ label: string; value: any }[]>();
-  //  Get roles
-  let repsonse = await useApiFetch("role");
-  // Map clients to Select Options
-  mappedRoles.value = repsonse.body?.docs?.map((e: any) => ({
-    label: e.name,
-    value: e.id,
-  }));
-
-  const exportPopup = ref(false);
-  const loadingExport = ref(false);
-  const email = ref("");
-
-  const isLoading = ref(false);
-
-  const table = reactive({
-    columns: [
-      {
-        prop: "staffDetails",
-        label: "Staff Name",
-        component: "AvatarText",
-        sortable: true,
-        type: "font-bold",
-        width: 170,
-      },
-      {
-        prop: "email",
-        label: "Email",
-        component: "Text",
-        sortable: true,
-        type: "font-default",
-        width: 220,
-      },
-      {
-        prop: "phone",
-        label: "Phone",
-        component: "Text",
-        sortable: false,
-        type: "font-default",
-        width: 150,
-      },
-      {
-        prop: "roleDetails",
-        label: "Role",
-        component: "Text",
-        sortable: false,
-        type: "font-default",
-        width: 200,
-      },
-      {
-        prop: "status",
-        label: "Status",
-        component: "Label",
-        sortable: true,
-        type: "outline",
-        filters: [
-          { text: "Active", value: "ACTIVE" },
-          { text: "Inactive", value: "INACTIVE" },
-        ],
-        width: 150,
-      },
-      {
-        prop: "updatedAt",
-        label: "Last Activity",
-        component: "Text",
-        sortable: false,
-        type: "font-default",
-        width: 200,
-      },
-    ],
-    data: [] as Staff[],
-    // sort: [
-    //   { prop: 'price', order: 'ascending', value: 'PRICE_ASC' },
-    //   { prop: 'price', order: 'descending', value: 'PRICE_DESC' },
-    //   { prop: 'identity', order: 'ascending', value: 'IDENTITY_ASC' },
-    //   { prop: 'identity', order: 'descending', value: 'IDENTITY_DESC' },
-    // ],
-  });
-
-  const response = await getStaffs();
-  table.data = response.staffs;
-
-  const getData = async () => {
-    isLoading.value = true;
-    const response = await useTableFilter("users", filter.value);
-    table.data = response.formattedData;
-    isLoading.value = false;
-  };
-
-  const onSubmit = handleSubmit(async (values: any) => {
-    filter.value = values;
-    getData();
-  });
-
-  const ResetFilter = async () => {
-    //await resetForm()
-    filter.value = await { status: "", roleId: "" };
-    await getData();
-    resetForm();
-  };
-  async function setEmail(pre: any) {
-    email.value = pre.target.value;
-  }
-
-  async function exportClick() {
-    email.value = await props?.user?.email;
-    exportPopup.value = await true;
-  }
-
-  async function confirmClick() {
-    loadingExport.value = true;
-    try {
-      const res = await useTableFilter(`users/excel/${email.value}`, filter.value);
-      if (res?.status == "200") {
-        ElNotification({
-          type: "success",
-          title: "Success",
-          message: "Send file to email successfully ",
-        });
-      } else {
-        ElNotification({
-          type: "error",
-          title: "Error",
-          message: "Unknown error",
-        });
-      }
-    } catch (error) {
-      // Catch any unexpected errors and handle them
-      ElNotification({
-        type: "error",
-        title: "Error",
-        message: error instanceof Error ? error.message : "Unknown error",
-      });
-    } finally {
-      email.value = "";
-      loadingExport.value = false;
-      exportPopup.value = false;
-      getData();
+    {
+      prop: 'email',
+      label: 'Email',
+      component: 'Text',
+      sortable: true,
+      type: 'font-default',
+      width: 220
+    },
+    {
+      prop: 'phone',
+      label: 'Phone',
+      component: 'Text',
+      sortable: false,
+      type: 'font-default',
+      width: 150
+    },
+    {
+      prop: 'roleDetails',
+      label: 'Role',
+      component: 'Text',
+      sortable: false,
+      type: 'font-default',
+      width: 200
+    },
+    {
+      prop: 'status',
+      label: 'Status',
+      component: 'Label',
+      sortable: true,
+      type: 'outline',
+      filters: [
+        { text: 'Active', value: 'ACTIVE' },
+        { text: 'Inactive', value: 'INACTIVE' }
+      ],
+      width: 150
+    },
+    {
+      prop: 'updatedAt',
+      label: 'Last Activity',
+      component: 'Text',
+      sortable: false,
+      type: 'font-default',
+      width: 200
     }
+  ],
+  data: [] as Staff[]
+  // sort: [
+  //   { prop: 'price', order: 'ascending', value: 'PRICE_ASC' },
+  //   { prop: 'price', order: 'descending', value: 'PRICE_DESC' },
+  //   { prop: 'identity', order: 'ascending', value: 'IDENTITY_ASC' },
+  //   { prop: 'identity', order: 'descending', value: 'IDENTITY_DESC' },
+  // ],
+});
+
+const response = await getStaffs();
+table.data = response.staffs;
+
+const getData = async () => {
+  isLoading.value = true;
+  const response = await useTableFilter('users', filter.value);
+  table.data = response.formattedData;
+  isLoading.value = false;
+};
+
+const onSubmit = handleSubmit(async (values: any) => {
+  filter.value = values;
+  getData();
+});
+
+const ResetFilter = async () => {
+  // await resetForm()
+  filter.value = await { status: '', roleId: '' };
+  await getData();
+  resetForm();
+};
+async function setEmail(pre: any) {
+  email.value = pre.target.value;
+}
+
+async function exportClick() {
+  email.value = await props?.user?.email;
+  exportPopup.value = await true;
+}
+
+async function confirmClick() {
+  loadingExport.value = true;
+  try {
+    const res = await useTableFilter(`users/excel/${email.value}`, filter.value);
+    if (res?.status == '200') {
+      ElNotification({
+        type: 'success',
+        title: 'Success',
+        message: 'Send file to email successfully '
+      });
+    } else {
+      ElNotification({
+        type: 'error',
+        title: 'Error',
+        message: 'Unknown error'
+      });
+    }
+  } catch (error) {
+    // Catch any unexpected errors and handle them
+    ElNotification({
+      type: 'error',
+      title: 'Error',
+      message: error instanceof Error ? error.message : 'Unknown error'
+    });
+  } finally {
+    email.value = '';
+    loadingExport.value = false;
+    exportPopup.value = false;
+    getData();
   }
+}
 </script>

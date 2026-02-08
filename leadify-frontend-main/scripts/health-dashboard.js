@@ -9,108 +9,108 @@ const PROJECT_ROOT = path.resolve(__dirname, '..');
 
 // Arabic Error Mapping Strategy
 const ERROR_STRATEGIES = [
-    { keywords: ['401', 'Unauthorized', 'token'], msg: 'مشكلة في المصادقة: تحقق من التوكن وصلاحيات الرول' },
-    { keywords: ['500', 'Internal Server Error'], msg: 'خطأ في السيرفر: تحقق من الـ API Logs واتصال قاعدة البيانات' },
-    { keywords: ['404', 'Not Found'], msg: 'المسار غير موجود: تأكد من الرابط (API Endpoint) أو الملف' },
-    { keywords: ['Network', 'fetch', 'ECONNREFUSED'], msg: 'خطأ في الشبكة: تأكد أن السيرفر (Backend) يعمل على المنفذ الصحيح' },
-    { keywords: ['Element not found', 'Cannot find element', 'null'], msg: 'خطأ واجهة: العنصر غير موجود، تحقق من الـ v-if والـ CSS classes' },
-    { keywords: ['undefined', 'reading', 'property'], msg: 'خطأ برمجي: تحاول قراءة خاصية من متغير غير معرف (undefined)' },
-    { keywords: ['timeout', 'timed out'], msg: 'انتهت المهلة: العملية استغرقت وقتاً طويلاً جداً' }
+  { keywords: ['401', 'Unauthorized', 'token'], msg: 'مشكلة في المصادقة: تحقق من التوكن وصلاحيات الرول' },
+  { keywords: ['500', 'Internal Server Error'], msg: 'خطأ في السيرفر: تحقق من الـ API Logs واتصال قاعدة البيانات' },
+  { keywords: ['404', 'Not Found'], msg: 'المسار غير موجود: تأكد من الرابط (API Endpoint) أو الملف' },
+  { keywords: ['Network', 'fetch', 'ECONNREFUSED'], msg: 'خطأ في الشبكة: تأكد أن السيرفر (Backend) يعمل على المنفذ الصحيح' },
+  { keywords: ['Element not found', 'Cannot find element', 'null'], msg: 'خطأ واجهة: العنصر غير موجود، تحقق من الـ v-if والـ CSS classes' },
+  { keywords: ['undefined', 'reading', 'property'], msg: 'خطأ برمجي: تحاول قراءة خاصية من متغير غير معرف (undefined)' },
+  { keywords: ['timeout', 'timed out'], msg: 'انتهت المهلة: العملية استغرقت وقتاً طويلاً جداً' }
 ];
 
 function getArabicStrategy(errorMsg) {
-    if (!errorMsg) return 'خطأ غير معروف';
-    for (const strategy of ERROR_STRATEGIES) {
-        if (strategy.keywords.some(k => errorMsg.includes(k))) {
-            return strategy.msg;
-        }
+  if (!errorMsg) return 'خطأ غير معروف';
+  for (const strategy of ERROR_STRATEGIES) {
+    if (strategy.keywords.some(k => errorMsg.includes(k))) {
+      return strategy.msg;
     }
-    return 'خطأ تقني: راجع الرسالة الأصلية للمزيد من التفاصيل';
+  }
+  return 'خطأ تقني: راجع الرسالة الأصلية للمزيد من التفاصيل';
 }
 
 let latestTestData = null;
 
 function updateTestData() {
-    const resultsPath = path.join(PROJECT_ROOT, TEST_RESULTS_FILE);
-    try {
-        if (fs.existsSync(resultsPath)) {
-            // Read file synchronously to avoid rendering half-written files
-            // In a real app we might want debouncing or file locking check
-            const content = fs.readFileSync(resultsPath, 'utf8');
-            if (content.trim()) {
-                latestTestData = JSON.parse(content);
-                // console.log('Updated test data from file');
-            }
-        }
-    } catch (e) {
-        // console.error("Waiting for test results...", e.message);
+  const resultsPath = path.join(PROJECT_ROOT, TEST_RESULTS_FILE);
+  try {
+    if (fs.existsSync(resultsPath)) {
+      // Read file synchronously to avoid rendering half-written files
+      // In a real app we might want debouncing or file locking check
+      const content = fs.readFileSync(resultsPath, 'utf8');
+      if (content.trim()) {
+        latestTestData = JSON.parse(content);
+        // console.log('Updated test data from file');
+      }
     }
+  } catch (e) {
+    // console.error("Waiting for test results...", e.message);
+  }
 }
 
 function runTests() {
-    console.log('Starting Vitest in WATCH mode... (UI will be at http://localhost:51204)');
-    console.log('Creating Arabic Dashboard at http://localhost:8888');
+  console.log('Starting Vitest in WATCH mode... (UI will be at http://localhost:51204)');
+  console.log('Creating Arabic Dashboard at http://localhost:8888');
 
-    // Use spawn to keep the process alive
-    // npx vitest --reporter=json --outputFile=test-results.json
-    // Note: By default 'vitest' is in watch mode.
-    // We add --ui to explicitly ensure the UI starts too.
-    const vitest = spawn('npx', ['vitest', '--ui', '--reporter=json', '--outputFile=' + TEST_RESULTS_FILE], {
-        cwd: PROJECT_ROOT,
-        shell: true,
-        stdio: 'inherit'
-    });
+  // Use spawn to keep the process alive
+  // npx vitest --reporter=json --outputFile=test-results.json
+  // Note: By default 'vitest' is in watch mode.
+  // We add --ui to explicitly ensure the UI starts too.
+  const vitest = spawn('npx', ['vitest', '--ui', '--reporter=json', '--outputFile=' + TEST_RESULTS_FILE], {
+    cwd: PROJECT_ROOT,
+    shell: true,
+    stdio: 'inherit'
+  });
 
-    vitest.on('error', (err) => {
-        console.error('Failed to start vitest subprocess:', err);
-    });
+  vitest.on('error', err => {
+    console.error('Failed to start vitest subprocess:', err);
+  });
 
-    // Watch for file changes to clean/update dashboard
-    const resultsPath = path.join(PROJECT_ROOT, TEST_RESULTS_FILE);
+  // Watch for file changes to clean/update dashboard
+  const resultsPath = path.join(PROJECT_ROOT, TEST_RESULTS_FILE);
 
-    // Initial check
-    updateTestData();
+  // Initial check
+  updateTestData();
 
-    // Poll for changes (fs.watch can be flaky on some systems/editors)
-    setInterval(updateTestData, 2000);
+  // Poll for changes (fs.watch can be flaky on some systems/editors)
+  setInterval(updateTestData, 2000);
 
-    generateAndServeDashboard();
+  generateAndServeDashboard();
 }
 
 function generateAndServeDashboard() {
-    const server = http.createServer((req, res) => {
-        // Re-process data on every request to ensure freshness
-        const failedTests = [];
-        let passedCount = 0;
-        let failedCount = 0;
-        let isRunning = latestTestData === null;
+  const server = http.createServer((req, res) => {
+    // Re-process data on every request to ensure freshness
+    const failedTests = [];
+    let passedCount = 0;
+    let failedCount = 0;
+    let isRunning = latestTestData === null;
 
-        if (latestTestData && latestTestData.testResults) {
-            latestTestData.testResults.forEach(suite => {
-                suite.assertionResults.forEach(result => {
-                    if (result.status === 'failed') {
-                        failedCount++;
-                        const formattedError = result.failureMessages.join('\n');
-                        failedTests.push({
-                            file: suite.name,
-                            name: result.title,
-                            error: formattedError,
-                            arabicFix: getArabicStrategy(formattedError)
-                        });
-                    } else {
-                        passedCount++;
-                    }
-                });
+    if (latestTestData && latestTestData.testResults) {
+      latestTestData.testResults.forEach(suite => {
+        suite.assertionResults.forEach(result => {
+          if (result.status === 'failed') {
+            failedCount++;
+            const formattedError = result.failureMessages.join('\n');
+            failedTests.push({
+              file: suite.name,
+              name: result.title,
+              error: formattedError,
+              arabicFix: getArabicStrategy(formattedError)
             });
-            isRunning = false;
-        }
+          } else {
+            passedCount++;
+          }
+        });
+      });
+      isRunning = false;
+    }
 
-        const isHealthy = failedCount === 0 && (passedCount + failedCount > 0);
-        const statusText = isRunning ? 'Running Tests... ⏳' : (isHealthy ? 'Healthy ✅' : 'Critical ❌');
-        const statusColor = isRunning ? '#3b82f6' : (isHealthy ? '#10b981' : '#ef4444');
+    const isHealthy = failedCount === 0 && passedCount + failedCount > 0;
+    const statusText = isRunning ? 'Running Tests... ⏳' : isHealthy ? 'Healthy ✅' : 'Critical ❌';
+    const statusColor = isRunning ? '#3b82f6' : isHealthy ? '#10b981' : '#ef4444';
 
-        // HTML Template
-        const html = `
+    // HTML Template
+    const html = `
 <!DOCTYPE html>
 <html lang="ar" dir="rtl">
 <head>
@@ -163,9 +163,12 @@ function generateAndServeDashboard() {
 
         <h2>Failed Components / الأخطاء المكتشفة</h2>
         
-        ${failedTests.length === 0 ?
-                '<div class="empty-state"><h3>🎉 النظام يعمل بكفاءة! لا توجد أخطاء.</h3></div>' :
-                failedTests.map(f => `
+        ${
+          failedTests.length === 0
+            ? '<div class="empty-state"><h3>🎉 النظام يعمل بكفاءة! لا توجد أخطاء.</h3></div>'
+            : failedTests
+                .map(
+                  f => `
                 <div class="error-card">
                     <div class="error-header">
                         <span>📄 ${f.file}</span>
@@ -177,8 +180,10 @@ function generateAndServeDashboard() {
                         <span>استراتيجية الحل: ${f.arabicFix}</span>
                     </div>
                 </div>
-            `).join('')
-            }
+            `
+                )
+                .join('')
+        }
 
         <div class="vitest-link">
              👉 <a href="http://localhost:51204/__vitest__/" target="_blank">افتح Vitest UI التفصيلي (Live Console)</a>
@@ -192,18 +197,18 @@ function generateAndServeDashboard() {
 </html>
         `;
 
-        res.writeHead(200, { 'Content-Type': 'text/html; charset=utf-8' });
-        res.end(html);
-    });
+    res.writeHead(200, { 'Content-Type': 'text/html; charset=utf-8' });
+    res.end(html);
+  });
 
-    server.listen(PORT, () => {
-        console.log(`\n✅ Arabic Health Dashboard is live at: http://localhost:${PORT}`);
-        // Attempt to open browser
-        const start = (process.platform == 'darwin' ? 'open' : process.platform == 'win32' ? 'start' : 'xdg-open');
-        try {
-            require('child_process').exec(start + ' http://localhost:' + PORT);
-        } catch (e) { }
-    });
+  server.listen(PORT, () => {
+    console.log(`\n✅ Arabic Health Dashboard is live at: http://localhost:${PORT}`);
+    // Attempt to open browser
+    const start = process.platform == 'darwin' ? 'open' : process.platform == 'win32' ? 'start' : 'xdg-open';
+    try {
+      require('child_process').exec(start + ' http://localhost:' + PORT);
+    } catch (e) {}
+  });
 }
 
 // Start

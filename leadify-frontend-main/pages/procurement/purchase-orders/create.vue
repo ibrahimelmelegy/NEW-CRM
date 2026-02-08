@@ -145,6 +145,105 @@
 
 </template>
 
+<script setup lang="ts">
+import { ArrowLeft, Plus, Delete, MagicStick } from '@element-plus/icons-vue';
+import { ElNotification } from 'element-plus';
+import { useApiFetch } from '@/composables/useApiFetch';
+
+const router = useRouter();
+const formRef = ref();
+const loading = ref(false);
+
+const form = reactive({
+  vendorId: null,
+  projectId: null,
+  paymentMethod: 'Cash',
+  paymentTerms: 'Net 30',
+  dueDate: null,
+  attachments: '',
+  items: [{ description: '', quantity: 1, unitPrice: 0, tax: 15 }]
+});
+
+const vendors = ref<any[]>([]);
+const projects = ref<any[]>([]);
+
+// Fetch initial data
+onMounted(async () => {
+  const vRes = await useApiFetch('vendor/all');
+  vendors.value = vRes?.body || [];
+
+  const pRes = await useApiFetch('project/all'); // Assuming this endpoint exists
+  projects.value = pRes?.body || [];
+});
+
+function addItem() {
+  form.items.push({ description: '', quantity: 1, unitPrice: 0, tax: 15 });
+}
+
+const subTotal = computed(() => {
+  return form.items.reduce((acc, item) => acc + item.quantity * item.unitPrice, 0);
+});
+
+const taxTotal = computed(() => {
+  return form.items.reduce((acc, item) => acc + item.quantity * item.unitPrice * (item.tax / 100), 0);
+});
+
+const grandTotal = computed(() => {
+  return subTotal.value + taxTotal.value;
+});
+
+function triggerUpload() {
+  // Trigger hidden file input logic
+  console.log('Trigger upload');
+}
+
+async function handleOCR(file: any) {
+  ElNotification({ title: 'AI OCR', message: 'Processing file...', type: 'info' });
+  try {
+    // In a real app, we would send this to the OCR endpoint
+    // await useApiFetch("ocr/extract", "POST", { file });
+
+    // Simulating OCR result
+    setTimeout(() => {
+      form.items = [
+        { description: 'Material X', quantity: 50, unitPrice: 120, tax: 15 },
+        { description: 'Service Y', quantity: 1, unitPrice: 500, tax: 15 }
+      ];
+      ElNotification({ title: 'OCR Success', message: 'Data extracted successfully', type: 'success' });
+    }, 1500);
+  } catch (error) {
+    ElNotification({ title: 'OCR Error', message: 'Failed to extract data', type: 'error' });
+  }
+}
+
+async function submit() {
+  await formRef.value.validate();
+  if (form.items.length === 0) {
+    return ElNotification({ title: 'Error', message: 'Add at least one item', type: 'warning' });
+  }
+
+  loading.value = true;
+  try {
+    const payload = { ...form, totalAmount: grandTotal.value };
+    console.log('DEBUG: Sending PO Payload:', JSON.parse(JSON.stringify(payload)));
+    const res = await useApiFetch('procurement', 'POST', payload);
+    console.log('DEBUG: PO Creation Response:', res);
+
+    if (!res || !res.success) {
+      throw new Error(res?.message || 'Unknown error during creation');
+    }
+
+    ElNotification({ title: 'Success', type: 'success', message: 'Purchase Order created successfully' });
+    router.push('/procurement/purchase-orders');
+  } catch (error) {
+    console.error('DEBUG: Frontend PO Submit Error:', error);
+    ElNotification({ title: 'Error', type: 'error', message: 'Failed to create PO' });
+  } finally {
+    loading.value = false;
+  }
+}
+</script>
+
 <style scoped lang="scss">
 .text-gradient {
   background: var(--gradient-primary);
@@ -153,16 +252,34 @@
   -webkit-text-fill-color: transparent;
 }
 
-.bg-white_5 { background: rgba(255, 255, 255, 0.05); }
-.bg-white_10 { background: rgba(255, 255, 255, 0.1); }
-.bg-purple-500_10 { background: rgba(168, 85, 247, 0.1); }
-.bg-purple-500_20 { background: rgba(168, 85, 247, 0.2); }
-.bg-pink-500_10 { background: rgba(236, 72, 153, 0.1); }
-.border-purple-500_20 { border-color: rgba(168, 85, 247, 0.2); }
-.border-pink-500_20 { border-color: rgba(236, 72, 153, 0.2); }
-.text-white_40 { color: rgba(255, 255, 255, 0.4); }
+.bg-white_5 {
+  background: rgba(255, 255, 255, 0.05);
+}
+.bg-white_10 {
+  background: rgba(255, 255, 255, 0.1);
+}
+.bg-purple-500_10 {
+  background: rgba(168, 85, 247, 0.1);
+}
+.bg-purple-500_20 {
+  background: rgba(168, 85, 247, 0.2);
+}
+.bg-pink-500_10 {
+  background: rgba(236, 72, 153, 0.1);
+}
+.border-purple-500_20 {
+  border-color: rgba(168, 85, 247, 0.2);
+}
+.border-pink-500_20 {
+  border-color: rgba(236, 72, 153, 0.2);
+}
+.text-white_40 {
+  color: rgba(255, 255, 255, 0.4);
+}
 
-.premium-input, .premium-select, .premium-datepicker {
+.premium-input,
+.premium-select,
+.premium-datepicker {
   :deep(.el-input__wrapper) {
     background: rgba(255, 255, 255, 0.03) !important;
     border: 1px solid rgba(255, 255, 255, 0.1) !important;
@@ -172,183 +289,82 @@
     color: white;
     font-size: 15px;
     transition: all 0.3s ease;
-    &.is-focus, &:hover {
-        border-color: var(--purple-500) !important;
-        background: rgba(168, 85, 247, 0.05) !important;
-        transform: translateY(-1px);
+    &.is-focus,
+    &:hover {
+      border-color: var(--purple-500) !important;
+      background: rgba(168, 85, 247, 0.05) !important;
+      transform: translateY(-1px);
     }
   }
 }
 
 .premium-select-large {
-    @extend .premium-input;
-    :deep(.el-input__wrapper) {
-        height: 60px; /* Even taller for main selects */
-        font-size: 16px;
-        font-weight: 600;
-    }
+  @extend .premium-input;
+  :deep(.el-input__wrapper) {
+    height: 60px; /* Even taller for main selects */
+    font-size: 16px;
+    font-weight: 600;
+  }
 }
 
 .premium-input-transparent {
-    :deep(.el-input__wrapper) {
-        background: transparent !important;
-        border: none !important;
-        box-shadow: none !important;
-        padding-left: 0;
-        font-size: 15px;
-    }
+  :deep(.el-input__wrapper) {
+    background: transparent !important;
+    border: none !important;
+    box-shadow: none !important;
+    padding-left: 0;
+    font-size: 15px;
+  }
 }
 
 .premium-number-input {
-    :deep(.el-input__wrapper) {
-        background: rgba(255, 255, 255, 0.03) !important;
-        border: 1px solid rgba(255, 255, 255, 0.1) !important;
-        border-radius: 12px !important;
-        box-shadow: none !important;
-        height: 42px;
-    }
+  :deep(.el-input__wrapper) {
+    background: rgba(255, 255, 255, 0.03) !important;
+    border: 1px solid rgba(255, 255, 255, 0.1) !important;
+    border-radius: 12px !important;
+    box-shadow: none !important;
+    height: 42px;
+  }
 }
 
 .premium-table {
-    background: transparent !important;
-    --el-table-bg-color: transparent;
-    --el-table-tr-bg-color: transparent;
-    --el-table-header-bg-color: rgba(255, 255, 255, 0.02);
-    --el-table-border-color: rgba(255, 255, 255, 0.05);
-    
-    :deep(th.el-table__cell) {
-        text-transform: uppercase;
-        font-size: 11px;
-        letter-spacing: 1px;
-        color: var(--text-secondary);
-        padding: 16px 0;
-        border-bottom: 1px solid rgba(255, 255, 255, 0.05) !important;
-    }
-    :deep(td.el-table__cell) {
-        border-bottom: 1px solid rgba(255, 255, 255, 0.05) !important;
-        padding: 16px 0;
-    }
+  background: transparent !important;
+  --el-table-bg-color: transparent;
+  --el-table-tr-bg-color: transparent;
+  --el-table-header-bg-color: rgba(255, 255, 255, 0.02);
+  --el-table-border-color: rgba(255, 255, 255, 0.05);
+
+  :deep(th.el-table__cell) {
+    text-transform: uppercase;
+    font-size: 11px;
+    letter-spacing: 1px;
+    color: var(--text-secondary);
+    padding: 16px 0;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.05) !important;
+  }
+  :deep(td.el-table__cell) {
+    border-bottom: 1px solid rgba(255, 255, 255, 0.05) !important;
+    padding: 16px 0;
+  }
 }
 
 .table-auto-height {
-    :deep(.el-table__inner-wrapper) {
-        height: auto !important;
-    }
-    :deep(.el-table__body-wrapper) {
-        height: auto !important;
-        overflow-y: hidden !important; /* Disable scroll */
-    }
+  :deep(.el-table__inner-wrapper) {
+    height: auto !important;
+  }
+  :deep(.el-table__body-wrapper) {
+    height: auto !important;
+    overflow-y: hidden !important; /* Disable scroll */
+  }
 }
 
 .premium-btn-ghost {
-    background: rgba(255, 255, 255, 0.05);
-    border: none;
-    color: var(--text-secondary);
-    &:hover {
-        background: rgba(255, 255, 255, 0.1);
-        color: white;
-    }
+  background: rgba(255, 255, 255, 0.05);
+  border: none;
+  color: var(--text-secondary);
+  &:hover {
+    background: rgba(255, 255, 255, 0.1);
+    color: white;
+  }
 }
-
 </style>
-
-<script setup lang="ts">
-import { ArrowLeft, Plus, Delete, MagicStick } from "@element-plus/icons-vue";
-import { ElNotification } from "element-plus";
-import { useApiFetch } from "@/composables/useApiFetch";
-
-const router = useRouter();
-const formRef = ref();
-const loading = ref(false);
-
-const form = reactive({
-  vendorId: null,
-  projectId: null,
-  paymentMethod: "Cash",
-  paymentTerms: "Net 30",
-  dueDate: null,
-  attachments: "",
-  items: [
-    { description: "", quantity: 1, unitPrice: 0, tax: 15 }
-  ]
-});
-
-const vendors = ref<any[]>([]);
-const projects = ref<any[]>([]);
-
-// Fetch initial data
-onMounted(async () => {
-  const vRes = await useApiFetch("vendor/all");
-  vendors.value = vRes?.body || [];
-  
-  const pRes = await useApiFetch("project/all"); // Assuming this endpoint exists
-  projects.value = pRes?.body || [];
-});
-
-function addItem() {
-  form.items.push({ description: "", quantity: 1, unitPrice: 0, tax: 15 });
-}
-
-const subTotal = computed(() => {
-  return form.items.reduce((acc, item) => acc + (item.quantity * item.unitPrice), 0);
-});
-
-const taxTotal = computed(() => {
-  return form.items.reduce((acc, item) => acc + (item.quantity * item.unitPrice * (item.tax / 100)), 0);
-});
-
-const grandTotal = computed(() => {
-  return subTotal.value + taxTotal.value;
-});
-
-function triggerUpload() {
-    // Trigger hidden file input logic
-    console.log("Trigger upload");
-}
-
-async function handleOCR(file: any) {
-  ElNotification({ title: "AI OCR", message: "Processing file...", type: "info" });
-  try {
-    // In a real app, we would send this to the OCR endpoint
-    // await useApiFetch("ocr/extract", "POST", { file });
-    
-    // Simulating OCR result
-    setTimeout(() => {
-       form.items = [
-         { description: "Material X", quantity: 50, unitPrice: 120, tax: 15 },
-         { description: "Service Y", quantity: 1, unitPrice: 500, tax: 15 }
-       ];
-       ElNotification({ title: "OCR Success", message: "Data extracted successfully", type: "success" });
-    }, 1500);
-  } catch (error) {
-    ElNotification({ title: "OCR Error", message: "Failed to extract data", type: "error" });
-  }
-}
-
-async function submit() {
-  await formRef.value.validate();
-  if (form.items.length === 0) {
-     return ElNotification({ title: "Error", message: "Add at least one item", type: "warning" });
-  }
-  
-  loading.value = true;
-  try {
-    const payload = { ...form, totalAmount: grandTotal.value };
-    console.log("DEBUG: Sending PO Payload:", JSON.parse(JSON.stringify(payload)));
-    const res = await useApiFetch("procurement", "POST", payload);
-    console.log("DEBUG: PO Creation Response:", res);
-    
-    if (!res || !res.success) {
-        throw new Error(res?.message || "Unknown error during creation");
-    }
-
-    ElNotification({ title: "Success", type: "success", message: "Purchase Order created successfully" });
-    router.push("/procurement/purchase-orders");
-  } catch (error) {
-    console.error("DEBUG: Frontend PO Submit Error:", error);
-    ElNotification({ title: "Error", type: "error", message: "Failed to create PO" });
-  } finally {
-    loading.value = false;
-  }
-}
-</script>

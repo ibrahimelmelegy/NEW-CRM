@@ -7,11 +7,11 @@ div(:class="type") {{ value }}
 const props = defineProps({
   value: {
     type: String,
-    required: true,
+    required: true
   },
   type: {
     type: String,
-    required: false,
-  },
+    required: false
+  }
 });
 </script>

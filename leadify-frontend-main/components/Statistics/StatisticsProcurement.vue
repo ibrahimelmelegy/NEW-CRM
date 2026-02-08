@@ -78,137 +78,93 @@
 
 </template>
 
-<style scoped lang="scss">
-.text-gradient {
-  background: var(--gradient-primary);
-  -webkit-background-clip: text;
-  background-clip: text;
-  -webkit-text-fill-color: transparent;
-}
-
-.bg-purple-500_20 { background: rgba(168, 85, 247, 0.15); }
-.bg-orange-500_20 { background: rgba(249, 115, 22, 0.15); }
-.bg-pink-500_20 { background: rgba(236, 72, 153, 0.15); }
-
-.hover-translate-y {
-    transition: transform 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-    &:hover {
-        transform: translateY(-10px);
-        box-shadow: 0 20px 40px rgba(0,0,0,0.3);
-    }
-}
-
-.premium-table {
-  :deep(.el-table) {
-    background: transparent !important;
-    --el-table-bg-color: transparent;
-    --el-table-tr-bg-color: transparent;
-    --el-table-header-bg-color: rgba(255, 255, 255, 0.02);
-    --el-table-row-hover-bg-color: rgba(255, 255, 255, 0.05);
-    
-    th.el-table__cell {
-      background: rgba(168, 85, 247, 0.05) !important;
-      color: var(--text-secondary);
-      font-weight: 700;
-      text-transform: uppercase;
-      font-size: 11px;
-      letter-spacing: 1px;
-      border-bottom: 1px solid rgba(255, 255, 255, 0.05);
-    }
-    
-    td.el-table__cell {
-      border-bottom: 1px solid rgba(255, 255, 255, 0.05) !important;
-      padding: 16px 0;
-      color: white;
-    }
-    
-    .cell { padding: 0 16px; }
-  }
-}
-</style>
-
 <script setup lang="ts">
-import { use } from "echarts/core";
-import { CanvasRenderer } from "echarts/renderers";
-import { PieChart, BarChart } from "echarts/charts";
-import { TitleComponent, TooltipComponent, LegendComponent, GridComponent } from "echarts/components";
-import VChart from "vue-echarts";
+import { use } from 'echarts/core';
+import { CanvasRenderer } from 'echarts/renderers';
+import { PieChart, BarChart } from 'echarts/charts';
+import { TitleComponent, TooltipComponent, LegendComponent, GridComponent } from 'echarts/components';
+import VChart from 'vue-echarts';
 
 use([CanvasRenderer, PieChart, BarChart, TitleComponent, TooltipComponent, LegendComponent, GridComponent]);
 
 // State
 const stats = ref({
-    kpi: { totalPos: 0, totalSpend: 0, pendingCount: 0 },
-    charts: { topVendors: [], monthlyTrend: [] },
-    recentTransactions: []
+  kpi: { totalPos: 0, totalSpend: 0, pendingCount: 0 },
+  charts: { topVendors: [], monthlyTrend: [] },
+  recentTransactions: []
 });
 
 const loading = ref(true);
 
 // Fetch Data
 onMounted(async () => {
-    loading.value = true;
-    try {
-        const response = await useApiFetch("procurement/stats");
-        if (response) {
-            stats.value = response as any;
-        }
-    } catch (e) {
-        console.error("Failed to fetch statistics", e);
-    } finally {
-        loading.value = false;
+  loading.value = true;
+  try {
+    const response = await useApiFetch('procurement/stats');
+    if (response) {
+      stats.value = response as any;
     }
+  } catch (e) {
+    console.error('Failed to fetch statistics', e);
+  } finally {
+    loading.value = false;
+  }
 });
 
 // Helpers
 const formatCurrency = (value: number) => {
-    return new Intl.NumberFormat('en-SA', { style: 'currency', currency: 'SAR', maximumFractionDigits: 0 }).format(value);
+  return new Intl.NumberFormat('en-SA', { style: 'currency', currency: 'SAR', maximumFractionDigits: 0 }).format(value);
 };
 
 const getStatusClass = (status: string) => {
-    const map: any = {
-        'Pending': 'bg-yellow-500/20 text-yellow-500',
-        'Approved': 'bg-green-500/20 text-green-500',
-        'Rejected': 'bg-red-500/20 text-red-500',
-        'Draft': 'bg-gray-500/20 text-gray-500'
-    };
-    return map[status] || 'bg-gray-500/20 text-gray-500';
+  const map: any = {
+    Pending: 'bg-yellow-500/20 text-yellow-500',
+    Approved: 'bg-green-500/20 text-green-500',
+    Rejected: 'bg-red-500/20 text-red-500',
+    Draft: 'bg-gray-500/20 text-gray-500'
+  };
+  return map[status] || 'bg-gray-500/20 text-gray-500';
 };
 
 // Chart Options (Computed to react to data changes)
 const vendorChartOption = computed(() => ({
   backgroundColor: 'transparent',
-  tooltip: { 
+  tooltip: {
     trigger: 'item',
     backgroundColor: 'rgba(30, 18, 48, 0.9)',
     borderWidth: 0,
     textStyle: { color: '#fff' }
   },
-  legend: { 
-    bottom: '0', 
+  legend: {
+    bottom: '0',
     left: 'center',
     textStyle: { color: 'rgba(255,255,255,0.6)', fontSize: 10 }
   },
-  series: [{
-    name: 'Spending',
-    type: 'pie',
-    radius: ['50%', '80%'],
-    avoidLabelOverlap: false,
-    itemStyle: { 
-        borderRadius: 15, 
-        borderColor: 'rgba(255,255,255,0.05)', 
-        borderWidth: 2 
-    },
-    label: { show: false },
-    emphasis: { 
+  series: [
+    {
+      name: 'Spending',
+      type: 'pie',
+      radius: ['50%', '80%'],
+      avoidLabelOverlap: false,
+      itemStyle: {
+        borderRadius: 15,
+        borderColor: 'rgba(255,255,255,0.05)',
+        borderWidth: 2
+      },
+      label: { show: false },
+      emphasis: {
         label: { show: true, fontSize: '18', fontWeight: 'bold', color: '#fff' },
         itemStyle: { shadowBlur: 20, shadowColor: 'rgba(168, 85, 247, 0.5)' }
-    },
-    data: stats.value.charts.topVendors.map((v: any) => ({ 
-        value: v.value, 
-        name: v.name 
-    })).length > 0 ? stats.value.charts.topVendors.map((v: any) => ({ value: v.value, name: v.name })) : [{value: 0, name: 'No Data'}]
-  }]
+      },
+      data:
+        stats.value.charts.topVendors.map((v: any) => ({
+          value: v.value,
+          name: v.name
+        })).length > 0
+          ? stats.value.charts.topVendors.map((v: any) => ({ value: v.value, name: v.name }))
+          : [{ value: 0, name: 'No Data' }]
+    }
+  ]
 }));
 
 const monthlyChartOption = computed(() => ({
@@ -220,29 +176,91 @@ const monthlyChartOption = computed(() => ({
     axisLine: { lineStyle: { color: 'rgba(255,255,255,0.1)' } },
     axisLabel: { color: 'rgba(255,255,255,0.4)', fontSize: 10 }
   },
-  yAxis: { 
+  yAxis: {
     type: 'value',
     splitLine: { lineStyle: { color: 'rgba(255,255,255,0.05)', type: 'dashed' } },
     axisLabel: { color: 'rgba(255,255,255,0.4)', fontSize: 10 }
   },
-  series: [{
-    data: stats.value.charts.monthlyTrend.map((d: any) => d.value),
-    type: 'bar',
-    barWidth: '40%',
-    itemStyle: {
-      borderRadius: [8, 8, 0, 0],
-      color: {
-        type: 'linear',
-        x: 0, y: 0, x2: 0, y2: 1,
-        colorStops: [
-            { offset: 0, color: '#f97316' }, 
+  series: [
+    {
+      data: stats.value.charts.monthlyTrend.map((d: any) => d.value),
+      type: 'bar',
+      barWidth: '40%',
+      itemStyle: {
+        borderRadius: [8, 8, 0, 0],
+        color: {
+          type: 'linear',
+          x: 0,
+          y: 0,
+          x2: 0,
+          y2: 1,
+          colorStops: [
+            { offset: 0, color: '#f97316' },
             { offset: 1, color: '#a855f7' }
-        ]
-      }
-    },
-    emphasis: {
+          ]
+        }
+      },
+      emphasis: {
         itemStyle: { shadowBlur: 15, shadowColor: 'rgba(249, 115, 22, 0.4)' }
+      }
     }
-  }]
+  ]
 }));
 </script>
+
+<style scoped lang="scss">
+.text-gradient {
+  background: var(--gradient-primary);
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+.bg-purple-500_20 {
+  background: rgba(168, 85, 247, 0.15);
+}
+.bg-orange-500_20 {
+  background: rgba(249, 115, 22, 0.15);
+}
+.bg-pink-500_20 {
+  background: rgba(236, 72, 153, 0.15);
+}
+
+.hover-translate-y {
+  transition: transform 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+  &:hover {
+    transform: translateY(-10px);
+    box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3);
+  }
+}
+
+.premium-table {
+  :deep(.el-table) {
+    background: transparent !important;
+    --el-table-bg-color: transparent;
+    --el-table-tr-bg-color: transparent;
+    --el-table-header-bg-color: rgba(255, 255, 255, 0.02);
+    --el-table-row-hover-bg-color: rgba(255, 255, 255, 0.05);
+
+    th.el-table__cell {
+      background: rgba(168, 85, 247, 0.05) !important;
+      color: var(--text-secondary);
+      font-weight: 700;
+      text-transform: uppercase;
+      font-size: 11px;
+      letter-spacing: 1px;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+    }
+
+    td.el-table__cell {
+      border-bottom: 1px solid rgba(255, 255, 255, 0.05) !important;
+      padding: 16px 0;
+      color: white;
+    }
+
+    .cell {
+      padding: 0 16px;
+    }
+  }
+}
+</style>

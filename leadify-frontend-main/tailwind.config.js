@@ -1,12 +1,12 @@
 /** @type {import('tailwindcss').Config} */
 module.exports = {
   content: [
-    "./components/**/*.{js,vue,ts}",
-    "./layouts/**/*.vue",
-    "./pages/**/*.vue",
-    "./plugins/**/*.{js,ts}",
-    "./nuxt.config.{js,ts}",
-    "./app.vue",
+    './components/**/*.{js,vue,ts}',
+    './layouts/**/*.vue',
+    './pages/**/*.vue',
+    './plugins/**/*.{js,ts}',
+    './nuxt.config.{js,ts}',
+    './app.vue'
   ],
   theme: {
     extend: {
@@ -15,7 +15,7 @@ module.exports = {
         primary: {
           DEFAULT: 'var(--accent-purple)',
           hover: '#9360FF',
-          light: 'var(--bg-card)',
+          light: 'var(--bg-card)'
         },
 
         // System Layout System
@@ -36,23 +36,23 @@ module.exports = {
         'accent-cyan': 'var(--accent-cyan)',
         'accent-rose': 'var(--accent-rose)',
         'accent-amber': 'var(--accent-amber)',
-        'accent-emerald': 'var(--accent-emerald)',
+        'accent-emerald': 'var(--accent-emerald)'
       },
       spacing: {
-        main: '24px',
+        main: '24px'
       },
       borderRadius: {
-        '2xl': 'var(--radius-card)', // Synced with Premium Radius
+        '2xl': 'var(--radius-card)' // Synced with Premium Radius
       },
       boxShadow: {
-        'premium': 'var(--shadow-premium)',
-        'active-glow': 'var(--shadow-active)',
+        premium: 'var(--shadow-premium)',
+        'active-glow': 'var(--shadow-active)'
       },
       backgroundImage: {
         'gradient-glass': 'var(--gradient-glass)',
-        'gradient-premium': 'var(--gradient-primary)',
+        'gradient-premium': 'var(--gradient-primary)'
       }
-    },
+    }
   },
-  plugins: [],
-}
+  plugins: []
+};

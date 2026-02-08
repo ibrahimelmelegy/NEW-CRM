@@ -3,7 +3,7 @@ import { defineStore } from 'pinia';
 export const useProposalStoreee = defineStore('proposalll', {
   state: () => ({
     proposalInfo: {} as any,
-    proposalContent: [] as any[],
+    proposalContent: [] as any[]
   }),
   actions: {
     setProposalInfo(info: any) {
@@ -18,6 +18,6 @@ export const useProposalStoreee = defineStore('proposalll', {
     resetProposal() {
       this.proposalInfo = {};
       this.proposalContent = [];
-    },
-  },
+    }
+  }
 });

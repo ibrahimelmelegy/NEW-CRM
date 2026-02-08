@@ -1,4 +1,3 @@
-
 <template lang="pug">
 div
   //- Header
@@ -54,270 +53,270 @@ div
 </template>
 
 <script setup lang="ts">
-  const router = useRouter();
-  import { ElNotification } from "element-plus";
-  import { Plus } from "@element-plus/icons-vue";
-  import { leadStates, leadSources } from '@/composables/useLeads';
-  import useTableFilter from '@/composables/useTableFilter';
-  import { computed, ref, watch, unref, shallowRef, isRef, onMounted, onBeforeMount } from 'vue';
-  
-  const { $i18n } = useNuxtApp();
-  const t = $i18n.t;
-  const { hasPermission } = await usePermissions();
-  const loadingAction = ref(false);
-  const loading = ref(false);
-  const present = ref("");
-  const select = ref();
-  const qualifiedLeadPopup = ref(false);
-  
-  // Create computed property for CREATE_LEADS permission
-  // This ensures the v-if updates reactively when permissions change
-  const canCreateLeads = computed(() => hasPermission('CREATE_LEADS') === true);
+import { ElNotification } from 'element-plus';
+import { Plus } from '@element-plus/icons-vue';
+import { computed, ref, watch, unref, shallowRef, isRef, onMounted, onBeforeMount } from 'vue';
+import { leadStates, leadSources } from '@/composables/useLeads';
+import useTableFilter from '@/composables/useTableFilter';
+const router = useRouter();
 
-  const leadPresent = computed(() => [
-    {
-      label: t('leads.convertToOpp'),
-      value: "opportunity",
-    },
-    {
-      label: t('leads.convertToDeal'),
-      value: "deal",
-    },
-    {
-      label: t('common.cancel'), // "Not Now" replaced with Cancel or relevant translation
-      value: "now",
-    },
-  ]);
+const { $i18n } = useNuxtApp();
+const t = $i18n.t;
+const { hasPermission } = await usePermissions();
+const loadingAction = ref(false);
+const loading = ref(false);
+const present = ref('');
+const select = ref();
+const qualifiedLeadPopup = ref(false);
 
-  async function setPresent(pre: any) {
-    present.value = pre.value;
+// Create computed property for CREATE_LEADS permission
+// This ensures the v-if updates reactively when permissions change
+const canCreateLeads = computed(() => hasPermission('CREATE_LEADS') === true);
+
+const leadPresent = computed(() => [
+  {
+    label: t('leads.convertToOpp'),
+    value: 'opportunity'
+  },
+  {
+    label: t('leads.convertToDeal'),
+    value: 'deal'
+  },
+  {
+    label: t('common.cancel'), // "Not Now" replaced with Cancel or relevant translation
+    value: 'now'
   }
+]);
 
-  async function changeStatus(id: any, newStatus: any) {
-    const lead: any = await getLead(id);
-    loadingAction.value = true;
-    try {
-      await updateLead({ ...lead, leadState: newStatus, id: id });
-    } catch {
-    } finally {
-      const response = await useTableFilter("lead");
-      table.value.data = response.formattedData;
-      loadingAction.value = false;
+async function setPresent(pre: any) {
+  present.value = pre.value;
+}
+
+async function changeStatus(id: any, newStatus: any) {
+  const lead: any = await getLead(id);
+  loadingAction.value = true;
+  try {
+    await updateLead({ ...lead, leadState: newStatus, id });
+  } catch {
+  } finally {
+    const response = await useTableFilter('lead');
+    table.value.data = response.formattedData;
+    loadingAction.value = false;
+  }
+}
+
+async function submitForm(values: any) {
+  try {
+    if (values?.status === 'QUALIFIED') {
+      qualifiedLeadPopup.value = true;
+      select.value = values;
     }
+    if (values?.status !== 'QUALIFIED') changeStatus(values?.id, values?.status);
+  } catch {}
+}
+
+async function editPresent() {
+  await changeStatus(select.value?.id, select.value?.status);
+  if (present.value === 'opportunity') router.push(`/sales/opportunity/add-opportunity?leadId=${select.value?.id}`);
+  if (present.value === 'deal') router.push(`/sales/deals/add-deal?leadId=${select.value?.id}`);
+  qualifiedLeadPopup.value = false;
+  present.value = '';
+  select.value = {};
+}
+
+// Call API to Get the lead
+let response;
+response = await useTableFilter('lead');
+
+const table = ref({
+  columns: [] as any[], // Initialize as empty array
+  data: response.formattedData || [],
+  sort: [
+    { prop: 'price', order: 'ascending', value: 'PRICE_ASC' },
+    { prop: 'price', order: 'descending', value: 'PRICE_DESC' },
+    { prop: 'identity', order: 'ascending', value: 'IDENTITY_ASC' },
+    { prop: 'identity', order: 'descending', value: 'IDENTITY_DESC' }
+  ]
+});
+
+const updateTableColumns = () => {
+  table.value.columns = [
+    {
+      prop: 'leadDetails',
+      label: t('leads.table.leadName'),
+      component: 'AvatarText',
+      sortable: true,
+      type: 'font-bold',
+      width: 170
+    },
+    {
+      prop: 'phone',
+      label: t('leads.table.phone'),
+      component: 'Text',
+      sortable: true,
+      type: 'font-default',
+      width: 150
+    },
+    {
+      prop: 'email',
+      label: t('leads.table.email'),
+      component: 'Text',
+      sortable: true,
+      type: 'font-default',
+      width: 200
+    },
+    {
+      prop: 'status',
+      label: t('leads.table.status'),
+      component: 'Label',
+      sortable: true,
+      type: 'select',
+      filters: [
+        { text: t('crm.stages.new'), value: 'NEW', actions: submitForm },
+        { text: t('crm.stages.contacted'), value: 'CONTACTED', actions: submitForm },
+        { text: t('crm.stages.lost'), value: 'DISQUALIFIED', actions: submitForm }, // Assuming Disqualified maps to Lost or has its own key
+        { text: t('crm.stages.qualified'), value: 'QUALIFIED', actions: submitForm }
+      ],
+      width: 150
+    },
+
+    {
+      prop: 'leadSource',
+      label: t('leads.table.source'),
+      component: 'Text',
+      sortable: true,
+      type: 'font-default',
+      width: 150
+    },
+    {
+      prop: 'lastContactDate',
+      label: t('leads.table.lastContact'),
+      component: 'Text',
+      sortable: true,
+      type: 'font-default',
+      width: 150
+    },
+    {
+      prop: 'assign',
+      label: t('leads.table.assigned'),
+      component: 'Text',
+      type: 'font-default',
+      width: 200
+    },
+    {
+      prop: 'createdAt',
+      label: t('leads.table.created'),
+      component: 'Text',
+      sortable: true,
+      type: 'font-default',
+      width: 200
+    }
+    // { prop: 'actions', label: 'Actions', sortable: false },
+  ];
+};
+
+// Initial update of columns
+updateTableColumns();
+
+// If you want columns to react to locale changes, you would watch the locale:
+// const { locale } = useI18n();
+// watch(locale, updateTableColumns);
+
+function handleRowClick(val: any) {
+  router.push(`/sales/leads/${val.id}`);
+}
+
+const users = await useApiFetch('users');
+const mappedUsers = users?.body?.docs?.map((e: any) => ({
+  label: e.name,
+  value: e.id
+}));
+
+const filterOptions = computed(() => [
+  {
+    title: t('leads.table.status'),
+    value: 'status',
+    options: [...leadStates]
+  },
+  {
+    title: t('leads.table.source'),
+    value: 'leadSource',
+    options: [...leadSources]
+  },
+  {
+    title: t('leads.table.assigned'), // "Assigned user"
+    value: 'userId',
+    options: [...mappedUsers]
+  },
+  {
+    title: t('leads.table.created'), // "Creation Date"
+    value: ['fromDate', 'toDate'],
+    type: 'date'
+  },
+  {
+    title: t('leads.table.lastContact'), // "Last Contact Date"
+    value: ['fromLastContactDate', 'toLastContactDate'],
+    type: 'date'
   }
+]);
 
-  async function submitForm(values: any) {
-    try {
-      if (values?.status === "QUALIFIED") {
-        qualifiedLeadPopup.value = true;
-        select.value = values;
-      }
-      if (values?.status !== "QUALIFIED") changeStatus(values?.id, values?.status);
-    } catch {}
+// implement import leads
+
+const fileInput = ref<HTMLInputElement | null>(null);
+
+const triggerFileInput = () => {
+  fileInput.value?.click();
+};
+
+const handleFileChange = async (event: Event) => {
+  const target = event.target as HTMLInputElement;
+  const file = target.files?.[0];
+  if (!file) return;
+
+  const formData = new FormData();
+  formData.append('file', file);
+
+  // Validate file type
+  const validTypes = ['application/vnd.ms-excel', 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'];
+  if (!validTypes.includes(file.type)) {
+    ElNotification({
+      type: 'error',
+      title: t('common.error'),
+      message: t('leads.errors.invalidFile')
+    });
+    target.value = ''; // Reset input
+    return;
   }
-
-  async function editPresent() {
-    await changeStatus(select.value?.id, select.value?.status);
-    if (present.value === "opportunity") router.push(`/sales/opportunity/add-opportunity?leadId=${select.value?.id}`);
-    if (present.value === "deal") router.push(`/sales/deals/add-deal?leadId=${select.value?.id}`);
-    qualifiedLeadPopup.value = false;
-    present.value = "";
-    select.value = {};
-  }
-
-  // Call API to Get the lead
-  let response;
-  response = await useTableFilter("lead");
-
-  const table = ref({
-    columns: [] as any[], // Initialize as empty array
-    data: response.formattedData || [],
-    sort: [
-      { prop: "price", order: "ascending", value: "PRICE_ASC" },
-      { prop: "price", order: "descending", value: "PRICE_DESC" },
-      { prop: "identity", order: "ascending", value: "IDENTITY_ASC" },
-      { prop: "identity", order: "descending", value: "IDENTITY_DESC" },
-    ],
-  });
-
-  const updateTableColumns = () => {
-    table.value.columns = [
-      {
-        prop: "leadDetails",
-        label: t('leads.table.leadName'),
-        component: "AvatarText",
-        sortable: true,
-        type: "font-bold",
-        width: 170,
-      },
-      {
-        prop: "phone",
-        label: t('leads.table.phone'),
-        component: "Text",
-        sortable: true,
-        type: "font-default",
-        width: 150,
-      },
-      {
-        prop: "email",
-        label: t('leads.table.email'),
-        component: "Text",
-        sortable: true,
-        type: "font-default",
-        width: 200,
-      },
-      {
-        prop: "status",
-        label: t('leads.table.status'),
-        component: "Label",
-        sortable: true,
-        type: "select",
-        filters: [
-          { text: t('crm.stages.new'), value: "NEW", actions: submitForm },
-          { text: t('crm.stages.contacted'), value: "CONTACTED", actions: submitForm },
-          { text: t('crm.stages.lost'), value: "DISQUALIFIED", actions: submitForm }, // Assuming Disqualified maps to Lost or has its own key
-          { text: t('crm.stages.qualified'), value: "QUALIFIED", actions: submitForm },
-        ],
-        width: 150,
-      },
-
-      {
-        prop: "leadSource",
-        label: t('leads.table.source'),
-        component: "Text",
-        sortable: true,
-        type: "font-default",
-        width: 150,
-      },
-      {
-        prop: "lastContactDate",
-        label: t('leads.table.lastContact'),
-        component: "Text",
-        sortable: true,
-        type: "font-default",
-        width: 150,
-      },
-      {
-        prop: "assign",
-        label: t('leads.table.assigned'),
-        component: "Text",
-        type: "font-default",
-        width: 200,
-      },
-      {
-        prop: "createdAt",
-        label: t('leads.table.created'),
-        component: "Text",
-        sortable: true,
-        type: "font-default",
-        width: 200,
-      },
-      // { prop: 'actions', label: 'Actions', sortable: false },
-    ];
-  };
-
-  // Initial update of columns
-  updateTableColumns();
-
-  // If you want columns to react to locale changes, you would watch the locale:
-  // const { locale } = useI18n();
-  // watch(locale, updateTableColumns);
-
-  function handleRowClick(val: any) {
-    router.push(`/sales/leads/${val.id}`);
-  }
-
-  let users = await useApiFetch("users");
-  const mappedUsers = users?.body?.docs?.map((e: any) => ({
-    label: e.name,
-    value: e.id,
-  }));
-
-  const filterOptions = computed(() => [
-    {
-      title: t('leads.table.status'),
-      value: "status",
-      options: [...leadStates],
-    },
-    {
-      title: t('leads.table.source'),
-      value: "leadSource",
-      options: [...leadSources],
-    },
-    {
-      title: t('leads.table.assigned'), // "Assigned user"
-      value: "userId",
-      options: [...mappedUsers],
-    },
-    {
-      title: t('leads.table.created'), // "Creation Date"
-      value: ["fromDate", "toDate"],
-      type: "date",
-    },
-    {
-      title: t('leads.table.lastContact'), // "Last Contact Date"
-      value: ["fromLastContactDate", "toLastContactDate"],
-      type: "date",
-    },
-  ]);
-
-  // implement import leads
-
-  const fileInput = ref<HTMLInputElement | null>(null);
-
-  const triggerFileInput = () => {
-    fileInput.value?.click();
-  };
-
-  const handleFileChange = async (event: Event) => {
-    const target = event.target as HTMLInputElement;
-    const file = target.files?.[0];
-    if (!file) return;
-
-    const formData = new FormData();
-    formData.append("file", file);
-
-    // Validate file type
-    const validTypes = ["application/vnd.ms-excel", "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"];
-    if (!validTypes.includes(file.type)) {
+  loading.value = true;
+  try {
+    const fileResponse = await useApiFetch('lead/import', 'POST', formData, false, true);
+    if (!fileResponse?.success) {
       ElNotification({
-        type: "error",
+        type: 'error',
         title: t('common.error'),
-        message: t('leads.errors.invalidFile'),
+        message: fileResponse?.message || t('leads.errors.importFailed')
       });
-      target.value = ""; // Reset input
       return;
     }
-    loading.value = true;
-    try {
-      const fileResponse = await useApiFetch("lead/import", "POST", formData, false, true);
-      if (!fileResponse?.success) {
-        ElNotification({
-          type: "error",
-          title: t('common.error'),
-          message: fileResponse?.message || t('leads.errors.importFailed'),
-        });
-        return;
-      }
-      // Refresh leads after import
-      response = await useTableFilter("lead");
-      table.value.data = response.formattedData;
+    // Refresh leads after import
+    response = await useTableFilter('lead');
+    table.value.data = response.formattedData;
 
-      ElNotification({
-        type: "success",
-        title: t('common.success'),
-        message: t('leads.importSuccess'),
-      });
-    } catch (err) {
-      ElNotification({
-        type: "error",
-        title: t('common.error'),
-        message: t('leads.errors.importFailed'),
-      });
-    } finally {
-      // Reset the file input so you can upload the same file again if needed
-      target.value = "";
-      loading.value = false;
-    }
-  };
+    ElNotification({
+      type: 'success',
+      title: t('common.success'),
+      message: t('leads.importSuccess')
+    });
+  } catch (err) {
+    ElNotification({
+      type: 'error',
+      title: t('common.error'),
+      message: t('leads.errors.importFailed')
+    });
+  } finally {
+    // Reset the file input so you can upload the same file again if needed
+    target.value = '';
+    loading.value = false;
+  }
+};
 </script>

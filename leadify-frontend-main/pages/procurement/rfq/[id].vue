@@ -62,8 +62,8 @@
 </template>
 
 <script setup lang="ts">
-import { ArrowLeft } from "@element-plus/icons-vue";
-import { ElNotification } from "element-plus";
+import { ArrowLeft } from '@element-plus/icons-vue';
+import { ElNotification } from 'element-plus';
 
 const route = useRoute();
 const router = useRouter();
@@ -73,77 +73,76 @@ const selectedVendor = ref(null);
 const offerAmount = ref(0);
 
 onMounted(async () => {
-    try {
-        const res = await useApiFetch(`rfq/${route.params.id}`);
-        if(res) {
-            rfq.value = res;
-        }
-    } catch (e) {
-        ElNotification({title: 'Error', message: 'Failed to load RFQ', type: 'error'});
+  try {
+    const res = await useApiFetch(`rfq/${route.params.id}`);
+    if (res) {
+      rfq.value = res;
     }
+  } catch (e) {
+    ElNotification({ title: 'Error', message: 'Failed to load RFQ', type: 'error' });
+  }
 });
 
 const getStatusType = (status: string) => {
-    return status === 'Completed' ? 'success' : 'warning';
+  return status === 'Completed' ? 'success' : 'warning';
 };
 
 const getVendorStatus = (status: string) => {
-    if(status === 'Won') return 'success';
-    if(status === 'Lost') return 'danger';
-    return 'info';
+  if (status === 'Won') return 'success';
+  if (status === 'Lost') return 'danger';
+  return 'info';
 };
 
 const getItemPrice = (vendor: any, itemId: string) => {
-    // Navigate through RFQVendorItems to find price
-    const item = vendor.items?.find((i: any) => i.rfqItemId === itemId);
-    return item ? item.price : null;
+  // Navigate through RFQVendorItems to find price
+  const item = vendor.items?.find((i: any) => i.rfqItemId === itemId);
+  return item ? item.price : null;
 };
 
 const formatCurrency = (val: number) => {
-    return new Intl.NumberFormat('en-SAR', { style: 'currency', currency: 'SAR' }).format(val);
+  return new Intl.NumberFormat('en-SAR', { style: 'currency', currency: 'SAR' }).format(val);
 };
 
 // Logic to highlight lowest price
 const isLowestPrice = (vendor: any) => {
-    if (!rfq.value?.vendors) return false;
-    const respondedVendors = rfq.value.vendors.filter((v: any) => v.totalOfferAmount > 0);
-    if(respondedVendors.length === 0) return false;
-    const min = Math.min(...respondedVendors.map((v: any) => parseFloat(v.totalOfferAmount)));
-    return parseFloat(vendor.totalOfferAmount) === min;
+  if (!rfq.value?.vendors) return false;
+  const respondedVendors = rfq.value.vendors.filter((v: any) => v.totalOfferAmount > 0);
+  if (respondedVendors.length === 0) return false;
+  const min = Math.min(...respondedVendors.map((v: any) => parseFloat(v.totalOfferAmount)));
+  return parseFloat(vendor.totalOfferAmount) === min;
 };
 
 const isWinner = (vendor: any) => vendor.status === 'Won';
 
 function openAddOffer() {
-    offerDialogVisible.value = true;
+  offerDialogVisible.value = true;
 }
 
 async function submitOffer() {
-    try {
-        // Quick mock integration
-        await useApiFetch(`rfq/${route.params.id}/vendors/${selectedVendor.value}/response`, "POST", {
-            items: [], // Simplification: just updating total for demo
-            notes: "Manual Entry"
-        });
-        ElNotification({title: 'Success', message: 'Offer Recorded', type: 'success'});
-        offerDialogVisible.value = false;
-        // Reload
-        const res = await useApiFetch(`rfq/${route.params.id}`);
-        rfq.value = res;
-    } catch(e) {
-        console.error(e);
-    }
+  try {
+    // Quick mock integration
+    await useApiFetch(`rfq/${route.params.id}/vendors/${selectedVendor.value}/response`, 'POST', {
+      items: [], // Simplification: just updating total for demo
+      notes: 'Manual Entry'
+    });
+    ElNotification({ title: 'Success', message: 'Offer Recorded', type: 'success' });
+    offerDialogVisible.value = false;
+    // Reload
+    const res = await useApiFetch(`rfq/${route.params.id}`);
+    rfq.value = res;
+  } catch (e) {
+    console.error(e);
+  }
 }
 
 async function awardVendor(vendor: any) {
-    ElNotification({title: 'Processing', message: 'Converting to PO...', type: 'info'});
-    // Future: Call API to convert
-    setTimeout(() => {
-        router.push('/procurement/purchase-orders');
-        ElNotification({title: 'Success', message: `PO Created for ${vendor.vendor.name}`, type: 'success'});
-    }, 1000);
+  ElNotification({ title: 'Processing', message: 'Converting to PO...', type: 'info' });
+  // Future: Call API to convert
+  setTimeout(() => {
+    router.push('/procurement/purchase-orders');
+    ElNotification({ title: 'Success', message: `PO Created for ${vendor.vendor.name}`, type: 'success' });
+  }, 1000);
 }
-
 </script>
 
 <style scoped lang="scss">
@@ -153,8 +152,16 @@ async function awardVendor(vendor: any) {
   background-clip: text;
   -webkit-text-fill-color: transparent;
 }
-.bg-white_5 { background: rgba(255, 255, 255, 0.05); }
-.border-white_10 { border-color: rgba(255, 255, 255, 0.1); }
-.bg-purple-500_20 { background: rgba(168, 85, 247, 0.2); }
-.bg-purple-500_10 { background: rgba(168, 85, 247, 0.1); }
+.bg-white_5 {
+  background: rgba(255, 255, 255, 0.05);
+}
+.border-white_10 {
+  border-color: rgba(255, 255, 255, 0.1);
+}
+.bg-purple-500_20 {
+  background: rgba(168, 85, 247, 0.2);
+}
+.bg-purple-500_10 {
+  background: rgba(168, 85, 247, 0.1);
+}
 </style>

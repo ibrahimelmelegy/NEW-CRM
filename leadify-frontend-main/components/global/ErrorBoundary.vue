@@ -5,32 +5,26 @@
       <div class="error-icon mb-6">
         <Icon name="ph:warning-circle-bold" class="text-6xl text-red-400" />
       </div>
-      
+
       <!-- Error Title -->
       <h2 class="text-2xl font-bold text-[var(--text-primary)] mb-3">
         {{ $t('errors.generic') }}
       </h2>
-      
+
       <!-- Error Message -->
       <p class="text-[var(--text-muted)] mb-6">
         {{ errorMessage }}
       </p>
-      
+
       <!-- Error Details (Dev Mode Only) -->
       <details v-if="isDev && errorDetails" class="text-left mb-6 text-sm">
-        <summary class="cursor-pointer text-[var(--text-muted)] hover:text-[var(--text-primary)]">
-          Technical Details
-        </summary>
+        <summary class="cursor-pointer text-[var(--text-muted)] hover:text-[var(--text-primary)]">Technical Details</summary>
         <pre class="mt-2 p-3 bg-black/20 rounded-lg overflow-auto text-red-300 text-xs">{{ errorDetails }}</pre>
       </details>
-      
+
       <!-- Actions -->
       <div class="flex gap-4 justify-center">
-        <el-button 
-          type="primary" 
-          @click="retry"
-          class="!bg-[#7849ff] !border-none"
-        >
+        <el-button type="primary" class="!bg-[#7849ff] !border-none" @click="retry">
           {{ $t('common.reset') }}
         </el-button>
         <el-button @click="goHome">
@@ -39,7 +33,7 @@
       </div>
     </div>
   </div>
-  
+
   <!-- Normal Content -->
   <slot v-else />
 </template>
@@ -50,7 +44,7 @@ interface Props {
 }
 
 const props = withDefaults(defineProps<Props>(), {
-  fallback: 'Something went wrong',
+  fallback: 'Something went wrong'
 });
 
 const error = ref<Error | null>(null);
@@ -63,9 +57,9 @@ onErrorCaptured((err: Error, instance, info) => {
   error.value = err;
   errorMessage.value = err.message || props.fallback;
   errorDetails.value = `${err.stack}\n\nComponent: ${instance?.$options?.name || 'Unknown'}\nInfo: ${info}`;
-  
+
   console.error('[ErrorBoundary] Caught error:', err);
-  
+
   // Return false to prevent the error from propagating further
   return false;
 });

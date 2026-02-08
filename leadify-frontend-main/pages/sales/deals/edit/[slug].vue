@@ -13,72 +13,72 @@ el-tabs.demo-tabs(v-model="activeName", :lazy="false" @tab-click="handleClick")
     DealDelivery( :loading="loading" ref="deliveryRef" @onSubmit="getDeliveries" :deliveries="deal.deliveryDetails" editMode @isValid="(value)=>isDeliveries = value")
 </template>
 <script lang="ts" setup>
-  const activeName = ref("deal");
-  const informationRef = ref();
-  const invoicesRef = ref();
-  const deliveryRef = ref();
-  useHead({
-    title: "App HP Tech | Edit Deal",
-  });
-  definePageMeta({
-    middleware: "permissions",
-    permission: "EDIT_DEALS",
-  });
-  const router = useRouter();
-  const route = useRoute();
-  const loading = ref(false);
-  const isInvoices = ref(false);
-  const isDeliveries = ref(false);
+const activeName = ref('deal');
+const informationRef = ref();
+const invoicesRef = ref();
+const deliveryRef = ref();
+useHead({
+  title: 'App HP Tech | Edit Deal'
+});
+definePageMeta({
+  middleware: 'permissions',
+  permission: 'EDIT_DEALS'
+});
+const router = useRouter();
+const route = useRoute();
+const loading = ref(false);
+const isInvoices = ref(false);
+const isDeliveries = ref(false);
 
-  let combinedValues = ref<DealValues>({});
+const combinedValues = ref<DealValues>({});
 
-  const deal = await getDeal(route.params.slug);
+const deal = await getDeal(route.params.slug);
 
-  function getDealInformation(values: any) {
-    combinedValues.value = { ...combinedValues.value, ...values };
-  }
+function getDealInformation(values: any) {
+  combinedValues.value = { ...combinedValues.value, ...values };
+}
 
-  function getInvoices(values: any) {
-    combinedValues.value.invoiceDetails = [...values];
-  }
+function getInvoices(values: any) {
+  combinedValues.value.invoiceDetails = [...values];
+}
 
-  function getDeliveries(values: any) {
-    combinedValues.value.deliveryDetails = [...values];
-  }
+function getDeliveries(values: any) {
+  combinedValues.value.deliveryDetails = [...values];
+}
 
-  async function saveAllForms() {
-    // reset the values
-    combinedValues.value = {};
-    try {
-      loading.value = true;
-      // FIXME : Work arround to wait for the ref to initialize
-      if (activeName.value === "deal") {
-        activeName.value = "invoices";
-        await nextTick();
-        activeName.value = "deal";
-        await nextTick();
-      }
-      await informationRef.value.onSubmitInformation();
-      await invoicesRef.value.onSubmitInvoices();
-      await deliveryRef.value.onSubmitDeliveries();
-      if ((combinedValues.value?.deal?.name || combinedValues.value?.name) && isInvoices.value && isDeliveries.value) {
-        if (combinedValues.value?.clientId) {
-          await updateDeal({
-            ...combinedValues.value.deal,
-            clientId: combinedValues.value.clientId,
-            dealId: route.params.slug,
-          });
-        } else {
-          await updateDeal({ ...combinedValues.value, dealId: route.params.slug });
-        }
-        // console.log("combinedValues.value", combinedValues.value);
-      }
-      loading.value = false;
-    } catch (error) {
-      console.error("Error saving forms:", error);
-      loading.value = false;
-    } finally {
-      loading.value = false;
+async function saveAllForms() {
+  // reset the values
+  combinedValues.value = {};
+  try {
+    loading.value = true;
+    // FIXME : Work arround to wait for the ref to initialize
+    if (activeName.value === 'deal') {
+      activeName.value = 'invoices';
+      await nextTick();
+      activeName.value = 'deal';
+      await nextTick();
     }
+    await informationRef.value.onSubmitInformation();
+    await invoicesRef.value.onSubmitInvoices();
+    await deliveryRef.value.onSubmitDeliveries();
+    if ((combinedValues.value?.deal?.name || combinedValues.value?.name) && isInvoices.value && isDeliveries.value) {
+      if (combinedValues.value?.clientId) {
+        await updateDeal({
+          ...combinedValues.value.deal,
+          clientId: combinedValues.value.clientId,
+          dealId: route.params.slug
+        });
+      } else {
+        await updateDeal({ ...combinedValues.value, dealId: route.params.slug });
+      }
+      // console.log("combinedValues.value", combinedValues.value);
+    }
+    loading.value = false;
+  } catch (error) {
+    console.error('Error saving forms:', error);
+    loading.value = false;
+  } finally {
+    loading.value = false;
   }
+}
 </script>

@@ -14,34 +14,34 @@ el-form(@submit.prevent='onSubmit' )
 
 <script setup lang="ts">
 import { useForm } from 'vee-validate';
-const { handleSubmit, errors, values ,resetForm} = useForm();
+const { handleSubmit, errors, values, resetForm } = useForm();
 const emit = defineEmits(['showFilter']);
 
-let users = await useApiFetch('users');
+const users = await useApiFetch('users');
 const mappedUsers = users?.body?.docs?.map((e: any) => ({
   label: e.name,
-  value: e.id,
+  value: e.id
 }));
-console.log(values)
+console.log(values);
 
-const onSubmit = handleSubmit(async (values:any) => {
-  if( values["fromLastContactDate"]) {
-    values["fromLastContactDate"] = [getYear(values["fromLastContactDate"].toISOString())];
+const onSubmit = handleSubmit(async (values: any) => {
+  if (values.fromLastContactDate) {
+    values.fromLastContactDate = [getYear(values.fromLastContactDate.toISOString())];
   }
-  if( values["toLastContactDate"]) {
-    values["toLastContactDate"] = [getYear(values["toLastContactDate"].toISOString())];
+  if (values.toLastContactDate) {
+    values.toLastContactDate = [getYear(values.toLastContactDate.toISOString())];
   }
   emit('showFilter', values);
-})
+});
 
 const ResetFilter = async () => {
   emit('showFilter', {
-    leadSource: "",
-    userId: "",
-    status: "",
-    fromLastContactDate: "",
-    toLastContactDate: ""
+    leadSource: '',
+    userId: '',
+    status: '',
+    fromLastContactDate: '',
+    toLastContactDate: ''
   });
-  resetForm()
-}
+  resetForm();
+};
 </script>

@@ -52,16 +52,18 @@
 </template>
 
 <script lang="ts" setup>
-  import VChart from "vue-echarts";
+import VChart from 'vue-echarts';
 
-  const vibrantPalette = ["#F59E0B", "#10B981", "#F97316", "#0EA5E9", "#6366F1", "#F43F5E"];
-  
-  const projectStats = ref(await getProjectOperationsStatics());
-  const barChartOptions = getBarHorizontalChartData(projectStats.value?.projectsByStatus, vibrantPalette);
+const vibrantPalette = ['#F59E0B', '#10B981', '#F97316', '#0EA5E9', '#6366F1', '#F43F5E'];
+
+const projectStats = ref(await getProjectOperationsStatics());
+const barChartOptions = getBarHorizontalChartData(projectStats.value?.projectsByStatus, vibrantPalette);
 </script>
 
 <style lang="scss" scoped>
-.chromatic-dashboard { padding: 10px; }
+.chromatic-dashboard {
+  padding: 10px;
+}
 .glass-container {
   background: var(--bg-card) !important;
   background-image: var(--gradient-glass) !important;

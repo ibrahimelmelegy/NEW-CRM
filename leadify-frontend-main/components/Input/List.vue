@@ -17,38 +17,38 @@ const props = defineProps({
   type: {
     type: String,
     default: 'text',
-    required: false,
+    required: false
   },
   name: {
     type: String,
     default: '',
-    required: false,
+    required: false
   },
 
   value: {
     type: String,
     default: '',
-    required: false,
+    required: false
   },
 
   label: {
     type: String,
-    required: true,
+    required: true
   },
   placeholder: {
     type: String,
-    default: '',
+    default: ''
   },
   disabled: {
     type: Boolean,
     default: false,
-    required: false,
+    required: false
   },
   optional: {
     type: Boolean,
     default: false,
-    required: false,
-  },
+    required: false
+  }
 });
 const emits = defineEmits(['getData']);
 const listData = ref([]);
@@ -57,9 +57,9 @@ const {
   errorMessage,
   handleBlur,
   handleChange,
-  meta,
+  meta
 } = useField(props.name, undefined, {
-  initialValue: '',
+  initialValue: ''
 });
 
 watch(

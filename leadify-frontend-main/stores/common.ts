@@ -26,14 +26,14 @@ export const useMain = defineStore('Main', {
       { label: 'September', value: 9 },
       { label: 'October', value: 10 },
       { label: 'November', value: 11 },
-      { label: 'December', value: 12 },
-    ],
+      { label: 'December', value: 12 }
+    ]
   }),
 
   actions: {
     async uploadFile(model: string, file: File) {
       const extension = file.name.slice(file.name.lastIndexOf('.'));
-      let fileName = `HPT-${new Date().getTime()}${extension}`;
+      const fileName = `HPT-${new Date().getTime()}${extension}`;
       const runtimeConfig = useRuntimeConfig();
 
       const myRenamedFile = new File([file], fileName, { type: file.type });
@@ -44,16 +44,16 @@ export const useMain = defineStore('Main', {
         // @ts-ignore
         const { data } = await useAsyncGql('generateUploadLink', {
           model: model.toUpperCase(),
-          fileName: fileName,
+          fileName,
           contentType: file.type,
-          sizeInBytes: file.size,
+          sizeInBytes: file.size
         });
 
         const link = data.value?.generateUploadLink.data;
 
         await $fetch(link, {
           method: 'PUT',
-          body: myRenamedFile,
+          body: myRenamedFile
         });
 
         const filereturned = link?.split('?')[0].split(runtimeConfig.public.BUCKET_URL)[1];
@@ -62,7 +62,7 @@ export const useMain = defineStore('Main', {
         ElNotification({
           title: 'Error',
           type: 'error',
-          message: error?.message || 'Upload failed',
+          message: error?.message || 'Upload failed'
         });
         throw error;
       }
@@ -87,7 +87,7 @@ export const useMain = defineStore('Main', {
       try {
         ImageUploaderModule = require('quill-image-uploader');
       } catch (e) {
-        console.warn("Quill Image Uploader not loaded");
+        console.warn('Quill Image Uploader not loaded');
         return {};
       }
 
@@ -108,11 +108,11 @@ export const useMain = defineStore('Main', {
                 console.error('Error:', error);
               }
             });
-          },
-        },
+          }
+        }
       };
-    },
-  },
+    }
+  }
 });
 
 // تحويل الدالة لـ Typed Function

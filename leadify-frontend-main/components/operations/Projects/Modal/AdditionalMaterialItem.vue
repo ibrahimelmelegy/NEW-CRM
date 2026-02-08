@@ -33,7 +33,7 @@ const props = defineProps({
   isNew: Boolean,
   loading: Boolean,
   icon: String,
-  btnText: String,
+  btnText: String
 });
 
 const emit = defineEmits(['confirm', 'submit']);
@@ -49,11 +49,9 @@ const selectedItems = ref<any[]>([]);
 // - Otherwise, fallback to addMaterial.materialItem.
 if (props.addMaterial?.id && props.allAddMaterialItems && props.allAddMaterialItems[props.addMaterial.id]) {
   if (!props.isNew) {
-    let filterAddMaterial = props.addMaterial.materialItem;
+    const filterAddMaterial = props.addMaterial.materialItem;
     filterAddMaterial.forEach((item: any) => {
-      const matchedItem = props.allAddMaterialItems?.[props.addMaterial?.id]?.find(
-        (material: any) => material.id === item.id
-      );
+      const matchedItem = props.allAddMaterialItems?.[props.addMaterial?.id]?.find((material: any) => material.id === item.id);
       if (matchedItem) {
         item.quantity = matchedItem.quantity; // Update the quantity in materialItem
       }
@@ -78,11 +76,11 @@ const onSubmit = () => {
     name: item.name,
     id: item.id,
     quantity: +item.quantity || 1,
-    price: +item.price,
+    price: +item.price
   }));
   emit('confirm', {
     // Using addMaterial id as key and mapping to the selected data
-    [`${props.addMaterial?.id}`]: [...selectedData],
+    [`${props.addMaterial?.id}`]: [...selectedData]
   });
   dialog.value = false; // Close the dialog
 };

@@ -97,7 +97,6 @@
   el-spinner(size="large")
 </template>
 
-
 <script lang="ts" setup>
 import { ElNotification } from 'element-plus';
 
@@ -114,13 +113,13 @@ interface ActivityResponse {
 }
 
 const { hasPermission } = await usePermissions();
-const activeName = ref("summary");
+const activeName = ref('summary');
 const route = useRoute();
 const loading = ref(false);
 
 // Sanitizing slug
 const rawSlug = route.params.slug;
-const slug = (Array.isArray(rawSlug) ? rawSlug[0] : (rawSlug || "")) as string;
+const slug = (Array.isArray(rawSlug) ? rawSlug[0] : rawSlug || '') as string;
 
 // Standard Nuxt 3 Data Fetching for SSR/Hydration
 const { data: lead } = await useAsyncData(`lead-${slug}`, () => getLead(slug));
@@ -131,9 +130,9 @@ const getActivityPage = async (page: number) => {
     loading.value = true;
     const res = await getActivity(slug + `?limit=10&page=${page}`);
     if (activity.value && res) {
-      activity.value = { 
-        docs: [...activity.value.docs, ...res.docs], 
-        pagination: res.pagination 
+      activity.value = {
+        docs: [...activity.value.docs, ...res.docs],
+        pagination: res.pagination
       };
     }
   } finally {
@@ -156,14 +155,17 @@ const leadContext = computed(() => ({
 }));
 </script>
 
-
 <style scoped lang="scss">
 .loading-state {
   animation: fadeIn 0.3s ease-out;
 }
 
 @keyframes fadeIn {
-  from { opacity: 0; }
-  to { opacity: 1; }
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
 }
 </style>

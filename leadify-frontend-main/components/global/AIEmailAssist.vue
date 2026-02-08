@@ -55,7 +55,7 @@ const emit = defineEmits(['update:modelValue']);
 
 const visible = computed({
   get: () => props.modelValue,
-  set: (val) => emit('update:modelValue', val)
+  set: val => emit('update:modelValue', val)
 });
 
 const prompt = ref('');
@@ -64,14 +64,14 @@ const generatedEmail = ref('');
 
 async function generateEmail() {
   if (!prompt.value) return;
-  
+
   loading.value = true;
   try {
     const response: any = await useApiFetch('ai/generate-email', 'POST', {
       prompt: prompt.value,
       context: props.context
     });
-    
+
     if (response.success) {
       generatedEmail.value = response.data;
     } else {
@@ -112,13 +112,13 @@ async function copyToClipboard() {
   backdrop-filter: blur(20px);
   border: 1px solid rgba(255, 255, 255, 0.1);
   border-radius: 24px !important;
-  
+
   .el-dialog__header {
     border-bottom: 1px solid rgba(255, 255, 255, 0.05);
     margin-right: 0;
     padding-bottom: 20px;
   }
-  
+
   .el-dialog__title {
     color: var(--primary-color);
     font-weight: 800;
@@ -129,12 +129,12 @@ async function copyToClipboard() {
   min-height: 200px;
   background: rgba(0, 0, 0, 0.2) !important;
   border: 1px solid rgba(120, 73, 255, 0.2) !important;
-  
+
   pre {
     color: rgba(255, 255, 255, 0.9);
     font-family: inherit;
   }
-  
+
   .copy-btn {
     position: absolute;
     top: 10px;
@@ -142,17 +142,19 @@ async function copyToClipboard() {
     background: rgba(120, 73, 255, 0.1);
     border: 1px solid rgba(120, 73, 255, 0.3);
     color: white;
-    
+
     &:hover {
       background: rgba(120, 73, 255, 0.2);
     }
   }
 }
 
-.fade-enter-active, .fade-leave-active {
+.fade-enter-active,
+.fade-leave-active {
   transition: opacity 0.5s ease;
 }
-.fade-enter-from, .fade-leave-to {
+.fade-enter-from,
+.fade-leave-to {
   opacity: 0;
 }
 </style>

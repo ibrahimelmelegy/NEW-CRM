@@ -2,62 +2,76 @@
 
 نظام إدارة علاقات العملاء (CRM) متكامل لشركة HP Tech.
 
-## 📋 المتطلبات
+A comprehensive Customer Relationship Management (CRM) system for HP Tech with support for leads, clients, opportunities, deals, projects, and proposals.
 
-- **Node.js** v18+
-- **Docker Desktop** (للـ Database)
-- **npm** أو **yarn**
+## 📋 Prerequisites / المتطلبات
 
-## 🚀 التشغيل السريع
+- **Node.js** v18.0.0 or higher
+- **Docker Desktop** (for PostgreSQL & Redis)
+- **npm** v8.0.0 or higher
 
-### الطريقة الأولى: سكريبت التشغيل التلقائي
+## 🚀 Quick Start / التشغيل السريع
+
+### Automated Setup (Recommended)
+
+**Windows:**
 
 ```bash
-# من المجلد الرئيسي
-.\start-all.bat
+# From root directory
+scripts\setup.bat
 ```
 
-هذا السكريبت سيقوم تلقائياً بـ:
-1. التحقق من Docker
-2. تشغيل قاعدة البيانات
-3. تشغيل Backend على Port 5000
-4. تشغيل Frontend على Port 3060
+**Linux/Mac:**
 
-### الطريقة الثانية: التشغيل اليدوي
-
-#### 1. تشغيل قاعدة البيانات (Docker)
 ```bash
-cd leadify-backend-main
-docker-compose up -d
+chmod +x scripts/setup.sh
+./scripts/setup.sh
 ```
 
-#### 2. تشغيل Backend
+This will automatically:
+
+1. ✅ Check prerequisites
+2. ✅ Install all dependencies
+3. ✅ Validate environment variables
+4. ✅ Guide you through next steps
+
+### Manual Setup
+
+**For detailed setup instructions, see [SETUP.md](SETUP.md)**
+
+Quick manual start:
+
 ```bash
-cd leadify-backend-main
-npm install  # أول مرة فقط
-npm run dev
+# 1. Install all dependencies
+npm run install:all
+
+# 2. Start Docker containers (PostgreSQL + Redis)
+npm run docker:up
+
+# 3. Seed database with initial data
+npm run seed
+
+# 4. Start development servers
+npm run dev:all
 ```
 
-#### 3. تشغيل Frontend
-```bash
-cd leadify-frontend-main
-npm install  # أول مرة فقط
-npm run dev
+## 🔐 Default Login Credentials / بيانات الدخول
+
+After running `npm run seed`, use these credentials:
+
+```
+Email: admin@hptech.com
+Password: Heroo@1502
 ```
 
-## 🔐 بيانات الدخول (Super Admin)
-
-Default admin credentials are configured via environment variables during the `npm run seed` process.
-Set `ADMIN_EMAIL` and `ADMIN_PASSWORD` in your `.env` file before running seed.
-
-> **WARNING**: Change the default admin password immediately after first login in production.
+> **⚠️ SECURITY WARNING**: Change the default admin password immediately after first login, especially in production environments!
 
 ## 🌐 الروابط
 
-| Service | URL |
-|---------|-----|
-| **Frontend** | http://localhost:3060 |
-| **Backend API** | http://localhost:5000 |
+| Service               | URL                            |
+| --------------------- | ------------------------------ |
+| **Frontend**          | http://localhost:3060          |
+| **Backend API**       | http://localhost:5000          |
 | **API Documentation** | http://localhost:5000/api-docs |
 
 ## 📁 هيكل المشروع
@@ -85,57 +99,161 @@ HP-Tech-CRM/
 └── diagnose.bat              # سكريبت تشخيص المشاكل
 ```
 
-## 🛠️ الأوامر المتاحة
+## 🛠️ Available Commands / الأوامر المتاحة
 
-### Backend
-```bash
-npm run dev      # تشغيل بوضع التطوير
-npm run build    # بناء للإنتاج
-npm run seed     # إنشاء البيانات الأساسية
-```
-
-### Frontend
-```bash
-npm run dev      # تشغيل بوضع التطوير
-npm run build    # بناء للإنتاج
-npm run generate # إنشاء Static Site
-```
-
-## 🔧 استكشاف الأخطاء
-
-### إذا واجهت مشاكل في التشغيل:
+**From root directory:**
 
 ```bash
-.\diagnose.bat
+# Development
+npm run dev:all           # Start both backend and frontend
+npm run dev:backend       # Start backend only
+npm run dev:frontend      # Start frontend only
+
+# Building
+npm run build:all         # Build both projects
+npm run build:backend     # Build backend
+npm run build:frontend    # Build frontend
+
+# Testing
+npm run test:all          # Run all tests
+npm run test:backend      # Backend tests (97.38% coverage)
+npm run test:frontend     # Frontend tests
+
+# Linting
+npm run lint:all          # Lint all code
+npm run lint:backend      # Lint backend
+npm run lint:frontend     # Lint frontend
+
+# Database
+npm run seed              # Seed database with initial data
+
+# Docker
+npm run docker:up         # Start PostgreSQL & Redis
+npm run docker:down       # Stop containers
+npm run docker:logs       # View container logs
+
+# Utilities
+npm run validate:env      # Validate environment variables
+npm run install:all       # Install all dependencies
 ```
 
-### مشاكل شائعة:
+## 🔧 Troubleshooting / استكشاف الأخطاء
 
-1. **"User not found" عند تسجيل الدخول:**
+### Common Issues:
+
+1. **"Cannot find module 'xxx'"**
+
    ```bash
-   cd leadify-backend-main
+   # Reinstall all dependencies
+   npm run install:all
+   ```
+
+2. **"Port already in use"**
+
+   ```bash
+   # Kill processes on ports
+   npx kill-port 3000 3060 5000 5433 6379
+   ```
+
+3. **"Database connection failed"**
+
+   ```bash
+   # Restart Docker containers
+   npm run docker:down
+   npm run docker:up
+   ```
+
+4. **"User not found" at login**
+
+   ```bash
+   # Re-seed the database
    npm run seed
    ```
 
-2. **"Port already in use":**
-   - أوقف أي تطبيقات تستخدم Port 5000 أو 3060
+5. **"Environment validation failed"**
+   ```bash
+   # Check what's missing
+   npm run validate:env
+   ```
 
-3. **"Database connection failed":**
-   - تأكد من تشغيل Docker Desktop
-   - شغل: `docker-compose up -d`
+**For more solutions, see [SETUP.md](SETUP.md#troubleshooting)**
 
-## 📱 الميزات الرئيسية
+## 📱 Key Features / الميزات الرئيسية
 
-- ✅ إدارة العملاء المحتملين (Leads)
-- ✅ إدارة العملاء (Clients)
-- ✅ إدارة الفرص (Opportunities)
-- ✅ إدارة الصفقات (Deals)
-- ✅ إدارة المشاريع (Projects)
-- ✅ إدارة العروض (Proposals)
-- ✅ إدارة الموظفين والصلاحيات
-- ✅ لوحة تحكم إحصائية (Dashboard)
-- ✅ تقارير وتصدير البيانات
+- ✅ Lead Management / إدارة العملاء المحتملين
+- ✅ Client Management / إدارة العملاء
+- ✅ Opportunity Tracking / إدارة الفرص
+- ✅ Deal Management / إدارة الصفقات
+- ✅ Project Management / إدارة المشاريع
+- ✅ Proposal System / إدارة العروض
+- ✅ User & Role Management / إدارة الموظفين والصلاحيات
+- ✅ Statistical Dashboard / لوحة تحكم إحصائية
+- ✅ Reports & Data Export / تقارير وتصدير البيانات
+- ✅ Real-time Notifications / إشعارات فورية
+- ✅ Multi-language Support (Arabic/English) / دعم اللغتين
+- ✅ Advanced Permissions System / نظام صلاحيات متقدم
+- ✅ Activity Logging / تسجيل الأنشطة
+
+## 📚 Documentation
+
+- **[SETUP.md](SETUP.md)** - Complete setup guide with troubleshooting
+- **[SECURITY.md](SECURITY.md)** - Security information and known vulnerabilities
+- **[CONTRIBUTING.md](CONTRIBUTING.md)** - Development guidelines _(coming soon)_
+- **API Docs** - http://localhost:5000/api-docs (when running)
+
+## 🧪 Testing
+
+- **Backend Coverage**: 97.38% ✅ (Excellent)
+- **Frontend Coverage**: In progress 🚧
+- **E2E Tests**: Playwright
+
+```bash
+# Run all tests
+npm run test:all
+
+# Run backend tests with coverage
+cd leadify-backend-main && npm test
+
+# Run E2E tests
+npx playwright test
+```
+
+## 🏗️ Tech Stack
+
+**Backend:**
+
+- Node.js + Express + TypeScript
+- PostgreSQL 15 + Sequelize ORM
+- Redis for caching
+- Socket.io for real-time features
+- JWT authentication + 2FA support
+- Jest for testing (97.38% coverage)
+
+**Frontend:**
+
+- Nuxt 4 + Vue 3 + TypeScript
+- Element Plus UI library
+- Pinia for state management
+- TipTap rich text editor
+- i18n for localization
+- Vitest for testing
+
+## 🤝 Contributing
+
+Development follows a systematic approach with quality gates:
+
+1. All changes require tests
+2. Linting must pass
+3. No hardcoded strings (use i18n)
+4. Environment variables must be documented
+5. PR review required
+
+See the comprehensive development plan in `.claude/plans/compiled-conjuring-fern.md`
 
 ## 📄 License
 
-© 2024 HP Tech. All rights reserved.
+© 2024-2026 HP Tech. All rights reserved.
+
+---
+
+**Last Updated:** 2026-02-08 | **Version:** 1.0.0

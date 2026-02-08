@@ -14,52 +14,52 @@ const props = defineProps({
   type: {
     type: String,
     default: 'text',
-    required: false,
+    required: false
   },
   name: {
     type: String,
     default: '',
-    required: false,
+    required: false
   },
   append: {
-    type: Boolean,
+    type: Boolean
   },
   value: {
     type: String,
     default: '',
-    required: false,
+    required: false
   },
   label: {
     type: String,
-    required: true,
+    required: true
   },
   placeholder: {
     type: String,
-    default: '',
+    default: ''
   },
   disabled: {
     type: Boolean,
     default: false,
-    required: false,
+    required: false
   },
   isForm: {
     type: Boolean,
     default: false,
-    required: false,
+    required: false
   },
   optional: {
     type: Boolean,
     default: false,
-    required: false,
+    required: false
   },
   step: {
     type: String,
-    default: '',
+    default: ''
   },
   min: {
     type: String,
-    default: '',
-  },
+    default: ''
+  }
 });
 const emit = defineEmits(['value']);
 const {
@@ -67,9 +67,9 @@ const {
   errorMessage,
   handleBlur,
   handleChange,
-  meta,
+  meta
 } = useField(props.name, undefined, {
-  initialValue: props.value,
+  initialValue: props.value
 });
 
 watchEffect(() => {

@@ -24,78 +24,78 @@ el-form-item(:label="label" :error="errorMessage" class="!mb-6 w-full")
 </template>
 
 <script lang="ts" setup>
-import { ElMessage } from "element-plus";
-import { useField } from "vee-validate";
-import type { UploadFile, UploadProps } from "element-plus";
+import { ElMessage } from 'element-plus';
+import { useField } from 'vee-validate';
+import type { UploadFile, UploadProps } from 'element-plus';
 const { t } = useI18n();
 
 const props = defineProps({
   name: String,
   value: {
     type: Array,
-    default: [],
+    default: []
   },
   label: String,
   sizeInMb: {
     type: Number,
-    default: 2, // Max file size in MB
+    default: 2 // Max file size in MB
   },
   formats: {
     type: Array,
     default: () => [
-      "image/jpg",
-      "image/jpeg",
-      "image/png",
-      "application/pdf",
-      "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
-      "application/vnd.ms-excel",
-      "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
-      "text/csv",
-      "application/csv",
-      "application/x-csv",
-    ],
+      'image/jpg',
+      'image/jpeg',
+      'image/png',
+      'application/pdf',
+      'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
+      'application/vnd.ms-excel',
+      'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
+      'text/csv',
+      'application/csv',
+      'application/x-csv'
+    ]
   },
   formatsError: {
-    type: String,
+    type: String
   },
   tipNote: {
     type: Boolean,
-    default: true,
+    default: true
   },
   limit: {
     type: Number,
-    default: null,
+    default: null
   },
   multiple: {
     type: Boolean,
-    default: false,
+    default: false
   },
   innerClass: {
     type: String,
-    default: "!mb-6",
+    default: '!mb-6'
   },
   type: {
     type: String,
-    default: "",
-  },
+    default: ''
+  }
 });
 
 const icon = computed(() => {
   switch (props.type) {
-    case "file":
-      return "IconAdd";
-    case "image":
-      return "IconImage";
-    case "video":
-      return "IconVideo";
+    case 'file':
+      return 'IconAdd';
+    case 'image':
+      return 'IconImage';
+    case 'video':
+      return 'IconVideo';
     default:
-      return "IconImageList";
+      return 'IconImageList';
   }
 });
 
 const runtimeConfig = useRuntimeConfig();
 
-const dialogImageUrl = ref("");
+const dialogImageUrl = ref('');
 const dialogVisible = ref(false);
 const disabled = ref(false);
 
@@ -104,12 +104,9 @@ const handlePictureCardPreview = (file: UploadFile) => {
   dialogVisible.value = true;
 };
 
-const handleUploadSuccess: UploadProps["onSuccess"] = (response, uploadFile) => {};
+const handleUploadSuccess: UploadProps['onSuccess'] = (response, uploadFile) => {};
 
-const { value: inputValue, errorMessage, handleBlur, handleChange, meta } = useField(
-  props.name || "",
-  undefined
-);
+const { value: inputValue, errorMessage, handleBlur, handleChange, meta } = useField(props.name || '', undefined);
 
 watch(
   () => props.value,
@@ -125,11 +122,9 @@ if (props.value.length) {
 
 const loading = ref(false);
 
-const beforeUpload: UploadProps["beforeUpload"] = (file: File) => {
+const beforeUpload: UploadProps['beforeUpload'] = (file: File) => {
   if (!props.formats.includes(file.type)) {
-    ElMessage.error(
-      t('common.acceptUpload', { formats: props.formats.map((format: any) => format.split("/").pop()).join(", ") })
-    );
+    ElMessage.error(t('common.acceptUpload', { formats: props.formats.map((format: any) => format.split('/').pop()).join(', ') }));
     return false;
   }
 
@@ -145,7 +140,7 @@ const handleUploadRequest = async (params: any) => {
   const { file, filename, data } = params;
   try {
     loading.value = true;
-    data.model = "PROJECT";
+    data.model = 'PROJECT';
 
     const formData = new FormData();
     const fileToUpload = new File([file], file.name);
@@ -156,12 +151,12 @@ const handleUploadRequest = async (params: any) => {
       formData.append(key, value);
     });
 
-    const response = await useApiFetch("upload", "POST", formData, false, true);
+    const response = await useApiFetch('upload', 'POST', formData, false, true);
     if (response?.success) {
       return response.body;
     }
   } catch (error) {
-    console.error("Upload failed:", error);
+    console.error('Upload failed:', error);
   } finally {
     loading.value = false;
   }
@@ -176,7 +171,7 @@ const handleRemove = (file: UploadFile) => {
 /* ============================================
    UPLOAD FILES - UNIFIED DARK/LIGHT STYLING
    ============================================ */
-   
+
 /* Hide upload button when limit reached */
 .upload-disabled-none {
   .el-upload.el-upload--text {
@@ -198,11 +193,11 @@ const handleRemove = (file: UploadFile) => {
   text-align: center !important;
   box-sizing: border-box !important;
   cursor: pointer !important;
-  
+
   /* Default: Dark Mode */
   background-color: rgba(30, 18, 48, 0.4) !important;
   border: 2px dashed rgba(168, 85, 247, 0.3) !important;
-  
+
   &:hover {
     background-color: rgba(30, 18, 48, 0.6) !important;
     border-color: #a855f7 !important;
@@ -263,7 +258,7 @@ html.light-mode .el-upload,
 body.light-theme .el-upload {
   background-color: rgba(255, 255, 255, 0.6) !important;
   border-color: #d8b4fe !important;
-  
+
   &:hover {
     background-color: rgba(243, 232, 255, 0.7) !important;
     border-color: #a855f7 !important;

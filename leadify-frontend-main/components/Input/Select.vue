@@ -22,59 +22,59 @@ const props = defineProps({
   type: {
     type: String,
     default: 'text',
-    required: false,
+    required: false
   },
   name: {
     type: String,
     default: '',
-    required: false,
+    required: false
   },
   value: {
     type: String,
     default: '',
-    required: false,
+    required: false
   },
 
   options: {
     type: Array,
     default: [],
-    required: true,
+    required: true
   },
   label: {
     type: String,
-    required: true,
+    required: true
   },
   placeholder: {
     type: String,
-    default: '',
+    default: ''
   },
   disabled: {
     type: Boolean,
     default: false,
-    required: false,
+    required: false
   },
   isMultiple: {
     type: Boolean,
     default: false,
-    required: false,
+    required: false
   },
   firstOption: {
     type: Boolean,
-    default: false,
+    default: false
   },
   innerClass: {
     type: String,
-    default: 'mb-6',
-  },
+    default: 'mb-6'
+  }
 });
 const {
   value: inputValue,
   errorMessage,
   handleBlur,
   handleChange,
-  meta,
+  meta
 } = useField(props.name, undefined, {
-  initialValue: props.isMultiple ? [] : props.firstOption ? props.options[0].value : props.value,
+  initialValue: props.isMultiple ? [] : props.firstOption ? props.options[0].value : props.value
 });
 
 watchEffect(() => {

@@ -23,101 +23,93 @@ el-drawer(v-model="drawer", direction="rtl", :show-close="true" destroy-on-close
 </template>
 
 <script lang="ts" setup>
-  import { ref, computed } from 'vue';
-  const route = useRoute();
-  const query = { ...route.query };
-  const router = useRouter();
-  const props = defineProps({
-    filterOptions: {
-      type: Array as PropType<FilterCategory[]>,
-      default: [],
-      required: true,
+import { ref, computed } from 'vue';
+const route = useRoute();
+const query = { ...route.query };
+const router = useRouter();
+const props = defineProps({
+  filterOptions: {
+    type: Array as PropType<FilterCategory[]>,
+    default: [],
+    required: true
+  }
+});
+const emit = defineEmits(['filter', 'reset']);
+// Drawer state
+const drawer = defineModel();
+
+// Collapse open state
+const activeNames = ref<string[]>([]);
+
+// CheckList: Store selected options for each filter category
+const checkList = ref<Record<string, string | string[] | number[]>>({});
+
+if (globalFilterOptions.value) {
+  const processedFilterOptions = Object.entries(globalFilterOptions.value).reduce(
+    (acc, [key, value]) => {
+      if (key === 'userId') {
+        acc[key] = Array.isArray(value) ? value.map((e: any) => Number(e)) : typeof value === 'string' ? [Number(value)] : [];
+      } else {
+        acc[key] = Array.isArray(value) ? value : typeof value === 'string' ? [value] : value;
+      }
+      return acc;
     },
-  });
-  const emit = defineEmits(["filter", "reset"]);
-  // Drawer state
-  const drawer = defineModel();
+    {} as Record<string, any>
+  );
 
-  // Collapse open state
-  const activeNames = ref<string[]>([]);
+  checkList.value = processedFilterOptions;
+} else {
+  checkList.value = {};
+}
 
-  // CheckList: Store selected options for each filter category
-  const checkList = ref<Record<string, string | string[] | number[]>>({});
+interface FilterOption {
+  label: string;
+  value: string;
+}
 
-  if (globalFilterOptions.value) {
-    const processedFilterOptions = Object.entries(globalFilterOptions.value).reduce(
-      (acc, [key, value]) => {
-        if (key === "userId") {
-          acc[key] = Array.isArray(value)
-            ? value.map((e: any) => Number(e))
-            : typeof value === "string"
-            ? [Number(value)]
-            : [];
-        } else {
-          acc[key] = Array.isArray(value)
-            ? value
-            : typeof value === "string"
-            ? [value]
-            : value;
-        }
-        return acc;
-      },
-      {} as Record<string, any>
-    );
+interface FilterCategory {
+  title: string;
+  options?: FilterOption[];
+  type?: string;
+  value?: string;
+}
 
-    checkList.value = processedFilterOptions;
-  } else {
-    checkList.value = {};
-  }
+const data = ref<FilterCategory[]>([]);
+data.value = props.filterOptions.length ? props.filterOptions : [];
+activeNames.value = data.value.map((_: any, index: number) => (index + 1).toString());
 
-  interface FilterOption {
-    label: string;
-    value: string;
-  }
+const selectedFiltersCount = computed(() => {
+  return Object.values(checkList.value).reduce((acc: number, val: any) => {
+    return acc + (Array.isArray(val) ? val.length : val ? 1 : 0);
+  }, 0);
+});
 
-  interface FilterCategory {
-    title: string;
-    options?: FilterOption[];
-    type?: string;
-    value?: string;
-  }
+const handleInputChange = (value: any, type: string) => {
+  checkList.value[type] = value ? [Number(value)] : [];
+};
 
-  const data = ref<FilterCategory[]>([]);
-  data.value = props.filterOptions.length ? props.filterOptions : [];
-  activeNames.value = data.value.map((_: any, index: number) => (index + 1).toString());
+const handleSelectChange = (selectedValues: string[], categoryTitle: string) => {
+  checkList.value[categoryTitle] = [...selectedValues];
+};
 
-  const selectedFiltersCount = computed(() => {
-    return Object.values(checkList.value).reduce((acc: number, val: any) => {
-      return acc + (Array.isArray(val) ? val.length : (val ? 1 : 0));
-    }, 0);
-  });
+const resetFilters = () => {
+  checkList.value = {};
+  emit('reset', checkList.value);
+};
 
-  const handleInputChange = (value: any, type: string) => {
-    checkList.value[type] = value ? [Number(value)] : [];
-  };
+const handleDateChange = (date: any, type: string) => {
+  // Date range or single date logic
+};
 
-  const handleSelectChange = (selectedValues: string[], categoryTitle: string) => {
-    checkList.value[categoryTitle] = [...selectedValues];
-  };
+const applyFilters = () => {
+  emit('filter', checkList.value);
+};
 
-  const resetFilters = () => {
-    checkList.value = {};
-    emit("reset", checkList.value);
-  };
+onMounted(() => {
+  // numberOfFilters.value = filterLength(checkList.value);
+});
 
-  const handleDateChange = (date: any, type: string) => {
-     // Date range or single date logic
-  };
-
-  const applyFilters = () => {
-    emit("filter", checkList.value);
-  };
-
-  onMounted(() => {
-    // numberOfFilters.value = filterLength(checkList.value);
-  });
-
-  const handleCollapseChange = (val: any) => {
-    activeNames.value = val;
-  };
+const handleCollapseChange = (val: any) => {
+  activeNames.value = val;
+};
 </script>

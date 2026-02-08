@@ -41,14 +41,14 @@
             slot
   </template>
 <script setup lang="ts">
-import { useWindowSize } from "@vueuse/core";
-import { storeToRefs } from "pinia";
-import { useMain } from "~/stores/common";
-import { ArrowRight, Search, Plus } from "@element-plus/icons-vue";
-import { ElNotification } from "element-plus";
+import { useWindowSize } from '@vueuse/core';
+import { storeToRefs } from 'pinia';
+import { ArrowRight, Search, Plus } from '@element-plus/icons-vue';
+import { ElNotification } from 'element-plus';
+import { useMain } from '~/stores/common';
 
 // Initialize Spotlight (keyboard listener)
-import { useSpotlight } from "~/composables/useSpotlight";
+import { useSpotlight } from '~/composables/useSpotlight';
 useSpotlight();
 
 const mainData = useMain();
@@ -58,19 +58,19 @@ const router = useRouter();
 const route = useRoute();
 const showNavbar = ref(false);
 const showDropdown = ref(false);
-const searchInput = ref("");
+const searchInput = ref('');
 
-const response = await useTableFilter("notification");
+const response = await useTableFilter('notification');
 
 function toggleDropdown(val: boolean) {
   showDropdown.value = val;
 }
 onMounted(() => {
-  window.addEventListener("scroll", handleScroll);
+  window.addEventListener('scroll', handleScroll);
 });
 
 onUnmounted(() => {
-  window.removeEventListener("scroll", handleScroll);
+  window.removeEventListener('scroll', handleScroll);
 });
 
 const handleScroll = () => {
@@ -78,12 +78,12 @@ const handleScroll = () => {
 };
 
 if (process.client) {
-  window.addEventListener("click", () => {
+  window.addEventListener('click', () => {
     showDropdown.value = false;
   });
 }
 
-const mykey = ref("1");
+const mykey = ref('1');
 
 function checkwidth() {
   if (width.value < 990) {
@@ -99,21 +99,21 @@ function openNav() {
   }
 }
 async function logout() {
-  const response = await useApiFetch("auth/logout", "POST");
-  if (response?.message === "Logged out successfully") {
-    router.push("/login");
-    const accessToken = useCookie("access_token");
-    accessToken.value = "";
+  const response = await useApiFetch('auth/logout', 'POST');
+  if (response?.message === 'Logged out successfully') {
+    router.push('/login');
+    const accessToken = useCookie('access_token');
+    accessToken.value = '';
     ElNotification({
-      title: "Success",
-      type: "success",
-      message: response.message,
+      title: 'Success',
+      type: 'success',
+      message: response.message
     });
   } else {
     ElNotification({
-      title: "Error",
-      type: "error",
-      message: response.message,
+      title: 'Error',
+      type: 'error',
+      message: response.message
     });
   }
 }
@@ -127,12 +127,12 @@ watch(width, () => {
 const user = ref<any>({});
 
 if (!user.value?.id) {
-  const response = await useApiFetch("auth/me");
+  const response = await useApiFetch('auth/me');
   user.value = response?.user;
 }
 
 const breadcrumbRoutes = computed(() => {
-  const pathSegments = route.path.split("/").filter(Boolean);
+  const pathSegments = route.path.split('/').filter(Boolean);
 
   // Regular expression for a UUID-like ID format
   const uuidRegex = /^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$/;
@@ -148,20 +148,18 @@ const breadcrumbRoutes = computed(() => {
   }
 
   // Replace hyphens and underscores with spaces in each path segment
-  const formattedSegments = pathSegments.map((segment: any) =>
-    segment.replace(/[-_]/g, " ")
-  );
+  const formattedSegments = pathSegments.map((segment: any) => segment.replace(/[-_]/g, ' '));
   return formattedSegments;
 });
 
 const getPath = (routeName: string) => {
-  const pathSegments = route.path.split("/").filter(Boolean);
-  let pathGo = "";
-  const indexStop = pathSegments.findIndex((route) => route ==routeName )
-  pathSegments.forEach((el , indes) => {
-    if (indes <= indexStop  ) pathGo = pathGo + "/" + el;
+  const pathSegments = route.path.split('/').filter(Boolean);
+  let pathGo = '';
+  const indexStop = pathSegments.findIndex(route => route == routeName);
+  pathSegments.forEach((el, indes) => {
+    if (indes <= indexStop) pathGo = pathGo + '/' + el;
   });
- if(pathGo !== "/sales" && pathGo !== "/operations") router.push(pathGo);
+  if (pathGo !== '/sales' && pathGo !== '/operations') router.push(pathGo);
 };
 </script>
 
@@ -243,7 +241,7 @@ const getPath = (routeName: string) => {
 }
 .background-overlay {
   &::before {
-    content: "";
+    content: '';
     background-color: rgba(0, 0, 0, 0.411);
     position: absolute;
     width: 100%;

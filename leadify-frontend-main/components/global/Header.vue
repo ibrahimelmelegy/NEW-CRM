@@ -12,8 +12,8 @@ const route = useRoute();
 const props = defineProps({
   disableRoot: {
     type: Boolean,
-    default: false,
-  },
+    default: false
+  }
 });
 
 watch(

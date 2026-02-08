@@ -35,24 +35,22 @@
 const isOpen = ref(false);
 const input = ref('');
 const loading = ref(false);
-const messages = ref([
-  { role: 'assistant', content: 'Hello! I am your CRM assistant. How can I help you today?' }
-]);
+const messages = ref([{ role: 'assistant', content: 'Hello! I am your CRM assistant. How can I help you today?' }]);
 
 const sendMessage = async () => {
   if (!input.value || loading.value) return;
-  
+
   const userMsg = input.value;
   messages.value.push({ role: 'user', content: userMsg });
   input.value = '';
   loading.value = true;
-  
+
   try {
     const response: any = await useApiFetch('ai/generate-email', 'POST', {
       prompt: `Act as a CRM Assistant. Answer based on CRM context. Question: ${userMsg}`,
       context: { source: 'chatbot' }
     });
-    
+
     if (response.success) {
       messages.value.push({ role: 'assistant', content: response.data });
     }
@@ -97,21 +95,38 @@ const sendMessage = async () => {
 .chat-messages {
   flex: 1;
   overflow-y: auto;
-  
+
   .message {
     max-width: 85%;
-    &.user { 
-      align-self: flex-end; 
-      .msg-bubble { background: var(--primary-color); color: white; border-bottom-right-radius: 4px; }
+    &.user {
+      align-self: flex-end;
+      .msg-bubble {
+        background: var(--primary-color);
+        color: white;
+        border-bottom-right-radius: 4px;
+      }
     }
-    &.assistant { 
-      align-self: flex-start; 
-      .msg-bubble { background: rgba(255,255,255,0.05); color: rgba(255,255,255,0.9); border-bottom-left-radius: 4px; }
+    &.assistant {
+      align-self: flex-start;
+      .msg-bubble {
+        background: rgba(255, 255, 255, 0.05);
+        color: rgba(255, 255, 255, 0.9);
+        border-bottom-left-radius: 4px;
+      }
     }
   }
 }
 
-.slide-up-enter-active, .slide-up-leave-active { transition: all 0.3s ease; }
-.slide-up-enter-from { opacity: 0; transform: translateY(20px); }
-.slide-up-leave-to { opacity: 0; transform: translateY(20px); }
+.slide-up-enter-active,
+.slide-up-leave-active {
+  transition: all 0.3s ease;
+}
+.slide-up-enter-from {
+  opacity: 0;
+  transform: translateY(20px);
+}
+.slide-up-leave-to {
+  opacity: 0;
+  transform: translateY(20px);
+}
 </style>

@@ -9,25 +9,25 @@
 </template>
 
 <script lang="ts" setup>
-  useHead({
-    title: "App HP Tech | Edit Staff",
-  });
-  definePageMeta({
-    middleware: "permissions",
-    permission: "EDIT_STAFF",
-  });
-  const router = useRouter();
-  const route = useRoute();
-  const loading = ref(false);
+useHead({
+  title: 'App HP Tech | Edit Staff'
+});
+definePageMeta({
+  middleware: 'permissions',
+  permission: 'EDIT_STAFF'
+});
+const router = useRouter();
+const route = useRoute();
+const loading = ref(false);
 
-  // Call API to Get the Staff
-  const staff = await getStaff(route.params.slug);
+// Call API to Get the Staff
+const staff = await getStaff(route.params.slug);
 
-  async function submitForm(values: Staff) {
-    loading.value = true;
-    await updateStaff({ ...values, id: route.params.slug as string });
-    loading.value = false;
-  }
+async function submitForm(values: Staff) {
+  loading.value = true;
+  await updateStaff({ ...values, id: route.params.slug as string });
+  loading.value = false;
+}
 </script>
 
 <style lang="scss"></style>

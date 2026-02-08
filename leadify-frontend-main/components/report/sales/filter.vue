@@ -30,37 +30,37 @@ div(class="pt-4")
 </template>
 
 <script lang="ts" setup>
-  import { ref } from 'vue';
-  const { hasPermission } = await usePermissions();
-  const props = defineProps({
-    user: {
-      type: Object,
-      required: true,
-    },
-  });
+import { ref } from 'vue';
+const { hasPermission } = await usePermissions();
+const props = defineProps({
+  user: {
+    type: Object,
+    required: true
+  }
+});
 
-  const route = useRoute();
-  const router = useRouter();
-  const tabs = ref(["Lead", "Opportunity", "Deal", "Client"]);
-  const activeTab = ref(tabs.value[0]);
-  const filter = ref();
+const route = useRoute();
+const router = useRouter();
+const tabs = ref(['Lead', 'Opportunity', 'Deal', 'Client']);
+const activeTab = ref(tabs.value[0]);
+const filter = ref();
 
-  const showFilter = (val: any) => {
-    filter.value = val;
-  };
+const showFilter = (val: any) => {
+  filter.value = val;
+};
 
-  const handleReset = async () => {
-    filter.value = {};
-    await router.push({ path: route.path, query: {} });
-    numberOfFilters.value = 0;
-    console.log(route.fullPath, filter.value);
-  };
+const handleReset = async () => {
+  filter.value = {};
+  await router.push({ path: route.path, query: {} });
+  numberOfFilters.value = 0;
+  console.log(route.fullPath, filter.value);
+};
 
-  watch(
-    () => activeTab.value,
-    () => {
-      console.log();
-      handleReset();
-    }
-  );
+watch(
+  () => activeTab.value,
+  () => {
+    console.log();
+    handleReset();
+  }
+);
 </script>

@@ -109,7 +109,7 @@ el-dialog(
         p.text-gray-800.font-medium {{ file }}
         Icon.text-neutral-500.ml-auto(name="solar:download-bold")
 </template>
-  
+
 <script lang="ts" setup>
 import { ref, onMounted, watch } from 'vue';
 interface Project {
@@ -118,7 +118,7 @@ interface Project {
   etimadProject?: any;
 }
 const props = defineProps<{ project?: Project }>();
-const emit = defineEmits(["onSubmit", "onCancel"]);
+const emit = defineEmits(['onSubmit', 'onCancel']);
 
 const fileShow = ref(false);
 const fileFolder = ref();
@@ -163,19 +163,13 @@ function formattedBasicInfo(values: any) {
     type: values?.type,
     category: values?.category,
     clientId: values?.clientId,
-    startDate:
-      typeof values?.startDate === "string"
-        ? values?.startDate
-        : values?.startDate?.toISOString(),
-    endDate:
-      typeof values?.endDate === "string"
-        ? values?.endDate
-        : values?.endDate?.toISOString(),
+    startDate: typeof values?.startDate === 'string' ? values?.startDate : values?.startDate?.toISOString(),
+    endDate: typeof values?.endDate === 'string' ? values?.endDate : values?.endDate?.toISOString(),
     duration: Number(values?.duration),
     assignedUsersIds: values?.assignedUsers?.map((el: any) => el?.id),
     status: values?.status,
     description: values?.description,
-    cancelledReason: values?.cancelReason,
+    cancelledReason: values?.cancelReason
   });
 }
 
@@ -190,12 +184,9 @@ function formattedEtimadProjectInfo(values: any) {
     businessLine: values?.businessLine,
     estimatedBudget: Number(values?.estimatedBudget),
     companyMargin: Number(values?.companyMargin),
-    submissionDate:
-      typeof values?.submissionDate === "string"
-        ? values?.submissionDate
-        : values?.submissionDate?.toISOString(),
+    submissionDate: typeof values?.submissionDate === 'string' ? values?.submissionDate : values?.submissionDate?.toISOString(),
     proposalStatus: values?.proposalStatus,
-    applicationStatus: values?.applicationStatus,
+    applicationStatus: values?.applicationStatus
   });
 }
 
@@ -209,32 +200,31 @@ async function deleteFolder(index: number) {
     basicInfo: {
       ...basicInfo,
       ...(props?.project?.etimadProject && { etimadInfo }),
-      files: data,
-    },
+      files: data
+    }
   };
   await updateProject({
     basicInfo: projectInfo?.basicInfo,
-    projectId: props?.project?.id,
+    projectId: props?.project?.id
   });
-  emit("onSubmit");
+  emit('onSubmit');
 }
 
 const handleSubmit = () => {
   fileEdit.value = false;
   folderDetails.value = null;
-  emit("onSubmit");
+  emit('onSubmit');
 };
 
 const handleCancel = () => {
   fileEdit.value = false;
   folderDetails.value = null;
-  emit("onSubmit");
+  emit('onSubmit');
 };
 </script>
-  
+
 <style>
 .el-dropdown__popper {
   margin-top: -40px !important;
 }
 </style>
-  

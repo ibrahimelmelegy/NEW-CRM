@@ -81,21 +81,12 @@ Teleport(to="body")
 <script setup lang="ts">
 import { useSpotlight } from '~/composables/useSpotlight';
 
-const {
-  isOpen,
-  searchQuery,
-  selectedIndex,
-  groupedItems,
-  flatItems,
-  open,
-  close,
-  selectItem,
-} = useSpotlight();
+const { isOpen, searchQuery, selectedIndex, groupedItems, flatItems, open, close, selectItem } = useSpotlight();
 
 const inputRef = ref<HTMLInputElement | null>(null);
 
 // Focus input when modal opens
-watch(isOpen, (value) => {
+watch(isOpen, value => {
   if (value) {
     nextTick(() => {
       inputRef.value?.focus();
@@ -121,12 +112,12 @@ watch(isOpen, (value) => {
   box-shadow: 0 8px 24px rgba(124, 58, 237, 0.4);
   z-index: 9990;
   transition: all 0.2s ease;
-  
+
   &:hover {
     transform: translateY(-2px);
     box-shadow: var(--shadow-active);
   }
-  
+
   &:active {
     transform: translateY(0);
   }
@@ -134,7 +125,7 @@ watch(isOpen, (value) => {
 
 .spotlight-fab-icon {
   font-size: 24px;
-  color: #FFFFFF !important;
+  color: #ffffff !important;
   font-weight: 300;
 }
 
@@ -191,7 +182,7 @@ watch(isOpen, (value) => {
   font-size: 16px;
   color: var(--text-primary);
   background: transparent;
-  
+
   &::placeholder {
     color: var(--text-muted);
   }
@@ -243,11 +234,11 @@ watch(isOpen, (value) => {
   cursor: pointer;
   transition: all 0.15s ease;
   gap: 12px;
-  
+
   &:hover,
   &.active {
     background: var(--gradient-primary);
-    
+
     .spotlight-item-icon,
     .spotlight-item-title,
     .spotlight-item-arrow {
@@ -280,7 +271,7 @@ watch(isOpen, (value) => {
   color: var(--text-muted);
   opacity: 0;
   transition: opacity 0.15s ease;
-  
+
   .spotlight-item:hover &,
   .spotlight-item.active & {
     opacity: 1;
@@ -330,7 +321,7 @@ watch(isOpen, (value) => {
   gap: 6px;
   font-size: 12px;
   color: var(--text-secondary);
-  
+
   .key {
     min-width: 20px;
     height: 20px;

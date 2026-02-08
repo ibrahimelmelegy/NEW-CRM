@@ -17,33 +17,32 @@ import { useForm } from 'vee-validate';
 const { handleSubmit, errors, values, resetForm } = useForm();
 const emit = defineEmits(['showFilter']);
 
-const data = ref("")
-let users = await useApiFetch('users');
+const data = ref('');
+const users = await useApiFetch('users');
 const mappedUsers = users?.body?.docs?.map((e: any) => ({
   label: e.name,
-  value: e.id,
+  value: e.id
 }));
 
 const onSubmit = handleSubmit(async (values: any) => {
-  if (values["fromLastContactDate"]) {
-    values["fromLastContactDate"] = [getYear(values["fromLastContactDate"].toISOString())];
+  if (values.fromLastContactDate) {
+    values.fromLastContactDate = [getYear(values.fromLastContactDate.toISOString())];
   }
-  if (values["toLastContactDate"]) {
-    values["toLastContactDate"] = [getYear(values["toLastContactDate"].toISOString())];
+  if (values.toLastContactDate) {
+    values.toLastContactDate = [getYear(values.toLastContactDate.toISOString())];
   }
   emit('showFilter', values);
-})
+});
 
 const ResetFilter = async () => {
-  //await resetForm()
+  // await resetForm()
   emit('showFilter', {
-    type: "",
-    status: "",
-    userId: "",
-    fromLastContactDate: "",
-    toLastContactDate: ""
+    type: '',
+    status: '',
+    userId: '',
+    fromLastContactDate: '',
+    toLastContactDate: ''
   });
-  resetForm()
-}
-
+  resetForm();
+};
 </script>

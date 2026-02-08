@@ -9,25 +9,25 @@ ClientForm( :loading="loading" @submit="submitForm" :data="client" editMode)
 </template>
 
 <script lang="ts" setup>
-  import { useI18n } from 'vue-i18n';
-  const { t } = useI18n();
-  useHead({
-    title: t('clients.editTitle'),
-  });
-  definePageMeta({
-    middleware: "permissions",
-    permission: "EDIT_CLIENTS",
-  });
-  const router = useRouter();
-  const route = useRoute();
-  const loading = ref(false);
+import { useI18n } from 'vue-i18n';
+const { t } = useI18n();
+useHead({
+  title: t('clients.editTitle')
+});
+definePageMeta({
+  middleware: 'permissions',
+  permission: 'EDIT_CLIENTS'
+});
+const router = useRouter();
+const route = useRoute();
+const loading = ref(false);
 
-  const client = await getClient(route.params.slug as string);
-  async function submitForm(values: FormattedValues) {
-    loading.value = true;
-    await updateClient({ ...values, id: route.params.slug as string });
-    loading.value = false;
-  }
+const client = await getClient(route.params.slug as string);
+async function submitForm(values: FormattedValues) {
+  loading.value = true;
+  await updateClient({ ...values, id: route.params.slug as string });
+  loading.value = false;
+}
 </script>
 
 <style lang="scss"></style>

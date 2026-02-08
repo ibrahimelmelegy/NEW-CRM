@@ -9,22 +9,22 @@ LeadsForm( :loading="loading" @submit="submitForm")
 </template>
 
 <script lang="ts" setup>
-  import { useI18n } from 'vue-i18n';
-  const { t } = useI18n();
-  useHead({
-    title: t('leads.createTitle'),
-  });
-  definePageMeta({
-    middleware: "permissions",
-    permission: "CREATE_LEADS",
-  });
-  const router = useRouter();
-  const loading = ref(false);
-  async function submitForm(values: LeadValues) {
-    loading.value = true;
-    await createLead(values);
-    loading.value = false;
-  }
+import { useI18n } from 'vue-i18n';
+const { t } = useI18n();
+useHead({
+  title: t('leads.createTitle')
+});
+definePageMeta({
+  middleware: 'permissions',
+  permission: 'CREATE_LEADS'
+});
+const router = useRouter();
+const loading = ref(false);
+async function submitForm(values: LeadValues) {
+  loading.value = true;
+  await createLead(values);
+  loading.value = false;
+}
 </script>
 
 <style lang="scss"></style>
