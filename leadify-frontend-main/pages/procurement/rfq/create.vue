@@ -122,8 +122,8 @@
 </template>
 
 <script setup lang="ts">
-import { ArrowLeft, Edit, List, UserFilled, Plus, Delete, Search } from "@element-plus/icons-vue"; // Added Search
-import { ElNotification } from "element-plus";
+import { ArrowLeft, Edit, List, UserFilled, Plus, Delete, Search } from '@element-plus/icons-vue'; // Added Search
+import { ElNotification } from 'element-plus';
 
 const router = useRouter();
 const step1Ref = ref();
@@ -132,127 +132,124 @@ const loading = ref(false);
 
 const vendors = ref<any[]>([]);
 const projects = ref<any[]>([]);
-const searchQuery = ref("");
+const searchQuery = ref('');
 const currentPage = ref(1);
 const pageSize = ref(10);
 const vendorTableRef = ref(); // Ref for table to handle selection
 
 const form = reactive({
-    title: "",
-    projectId: null,
-    deadLine: null,
-    items: [
-        { name: "", description: "", quantity: 1, uom: "PCS" }
-    ],
-    vendorIds: [] as number[]
+  title: '',
+  projectId: null,
+  deadLine: null,
+  items: [{ name: '', description: '', quantity: 1, uom: 'PCS' }],
+  vendorIds: [] as number[]
 });
 
 // Computed for Search + Pagination
 const filteredVendors = computed(() => {
-    if (!searchQuery.value) return vendors.value;
-    const q = searchQuery.value.toLowerCase();
-    return vendors.value.filter(v => 
-        v.name?.toLowerCase().includes(q) || 
-        v.email?.toLowerCase().includes(q) || 
-        v.type?.toLowerCase().includes(q) ||
-        v.serviceType?.toLowerCase().includes(q)
-    );
+  if (!searchQuery.value) return vendors.value;
+  const q = searchQuery.value.toLowerCase();
+  return vendors.value.filter(
+    v =>
+      v.name?.toLowerCase().includes(q) ||
+      v.email?.toLowerCase().includes(q) ||
+      v.type?.toLowerCase().includes(q) ||
+      v.serviceType?.toLowerCase().includes(q)
+  );
 });
 
 const paginatedVendors = computed(() => {
-    const start = (currentPage.value - 1) * pageSize.value;
-    const end = start + pageSize.value;
-    return filteredVendors.value.slice(start, end);
+  const start = (currentPage.value - 1) * pageSize.value;
+  const end = start + pageSize.value;
+  return filteredVendors.value.slice(start, end);
 });
 
 function handleSelectionChange(selection: any[]) {
-    form.vendorIds = selection.map(v => v.id);
+  form.vendorIds = selection.map(v => v.id);
 }
 
 onMounted(async () => {
-    try {
-        const [vRes, pRes] = await Promise.all([
-            // Fetch ALL vendors with limit=1000 to get full details for client-side search
-            // Fetch ALL vendors with limit=1000 to get full details for client-side search
-            useApiFetch("vendor?limit=1000"), 
-            useApiFetch("project/all")
-        ]);
-        // Handle paginated response structure { docs: [], pagination: {} }
-        const vendorData = (vRes as any).body || (vRes as any).data || vRes;
-        if (vendorData && vendorData.docs) {
-             vendors.value = vendorData.docs;
-        } else if (Array.isArray(vendorData)) {
-             vendors.value = vendorData;
-        } else {
-             vendors.value = [];
-        }
-
-        if (pRes) projects.value = (pRes as any).body || (pRes as any).data || pRes || [];
-    } catch (e) {
-        console.error("Failed to fetch initial data", e);
+  try {
+    const [vRes, pRes] = await Promise.all([
+      // Fetch ALL vendors with limit=1000 to get full details for client-side search
+      useApiFetch("vendor?limit=1000"), 
+      useApiFetch("project/all")
+    ]);
+    // Handle paginated response structure { docs: [], pagination: {} }
+    const vendorData = (vRes as any).body || (vRes as any).data || vRes;
+    if (vendorData && vendorData.docs) {
+      vendors.value = vendorData.docs;
+    } else if (Array.isArray(vendorData)) {
+      vendors.value = vendorData;
+    } else {
+      vendors.value = [];
     }
+
+    if (pRes) projects.value = (pRes as any).body || (pRes as any).data || pRes || [];
+  } catch (e) {
+    console.error('Failed to fetch initial data', e);
+  }
 });
 
 function addItem() {
-    form.items.push({ name: "", description: "", quantity: 1, uom: "PCS" });
+  form.items.push({ name: '', description: '', quantity: 1, uom: 'PCS' });
 }
 // Removed toggleVendor as table handles it via selection-change
 
 async function nextStep() {
-    if (activeStep.value === 0) {
-        const valid = await step1Ref.value?.validate().catch(() => false);
-        if (!valid) return;
+  if (activeStep.value === 0) {
+    const valid = await step1Ref.value?.validate().catch(() => false);
+    if (!valid) return;
+  }
+  if (activeStep.value === 1) {
+    if (form.items.length === 0) {
+      return ElNotification({ title: 'Validation', message: 'Please add at least one item', type: 'warning' });
     }
-    if (activeStep.value === 1) {
-        if (form.items.length === 0) {
-            return ElNotification({ title: "Validation", message: "Please add at least one item", type: "warning" });
-        }
-        const invalidItem = form.items.find(i => !i.name || !i.quantity);
-        if (invalidItem) {
-            return ElNotification({ title: "Validation", message: "All items must have a name and quantity", type: "warning" });
-        }
+    const invalidItem = form.items.find(i => !i.name || !i.quantity);
+    if (invalidItem) {
+      return ElNotification({ title: 'Validation', message: 'All items must have a name and quantity', type: 'warning' });
     }
-    activeStep.value++;
+  }
+  activeStep.value++;
 }
 
 async function submitRFQ() {
-    if (form.vendorIds.length === 0) {
-        return ElNotification({ title: "Validation", message: "Please select at least one vendor", type: "warning" });
+  if (form.vendorIds.length === 0) {
+    return ElNotification({ title: "Validation", message: "Please select at least one vendor", type: "warning" });
+  }
+
+  loading.value = true;
+  try {
+    const payload = {
+      title: form.title,
+      projectId: form.projectId,
+      deadLine: form.deadLine,
+      items: form.items
+    };
+
+    // 1. Create RFQ
+    const rfqRes = await useApiFetch("rfq", "POST", payload);
+
+    if (rfqRes && rfqRes.success && rfqRes.body) {
+      const rfqId = rfqRes.body.id;
+      // 2. Send to Vendors
+      const sendRes = await useApiFetch(`rfq/${rfqId}/send`, "POST", {
+        vendorIds: form.vendorIds
+      });
+      if (!sendRes || !sendRes.success) throw new Error(sendRes?.message || "Failed to send to vendors");
+
+      ElNotification({ title: "Success", message: "RFQ Created and Sent to Vendors!", type: "success" });
+      router.push("/procurement/rfq"); // Needs List page
+    } else {
+      throw new Error(rfqRes?.message || "Failed to create RFQ");
     }
-
-    loading.value = true;
-    try {
-        const payload = {
-            title: form.title,
-            projectId: form.projectId,
-            deadLine: form.deadLine,
-            items: form.items
-        };
-
-        // 1. Create RFQ
-        const rfqRes = await useApiFetch("rfq", "POST", payload);
-
-        if (rfqRes && rfqRes.success && rfqRes.body) {
-             const rfqId = rfqRes.body.id;
-             // 2. Send to Vendors
-             const sendRes = await useApiFetch(`rfq/${rfqId}/send`, "POST", {
-                 vendorIds: form.vendorIds
-             });
-             if (!sendRes || !sendRes.success) throw new Error(sendRes?.message || "Failed to send to vendors");
-
-             ElNotification({ title: "Success", message: "RFQ Created and Sent to Vendors!", type: "success" });
-             router.push("/procurement/rfq"); // Needs List page
-        } else {
-             throw new Error(rfqRes?.message || "Failed to create RFQ");
-        }
-    } catch (error) {
-        ElNotification({ title: "Error", message: "Failed to create RFQ", type: "error" });
-        console.error("Submit RFQ Error:", error);
-    } finally {
-        loading.value = false;
-    }
+  } catch (error) {
+    ElNotification({ title: "Error", message: "Failed to create RFQ", type: "error" });
+    console.error("Submit RFQ Error:", error);
+  } finally {
+    loading.value = false;
+  }
 }
-
 </script>
 
 <style scoped lang="scss">
@@ -263,13 +260,25 @@ async function submitRFQ() {
   -webkit-text-fill-color: transparent;
 }
 
-.bg-white_5 { background: rgba(255, 255, 255, 0.05); }
-.bg-white_10 { background: rgba(255, 255, 255, 0.1); }
-.border-white_10 { border-color: rgba(255, 255, 255, 0.1); }
-.bg-purple-500_20 { background: rgba(168, 85, 247, 0.2); }
-.bg-purple-500_10 { background: rgba(168, 85, 247, 0.1); }
+.bg-white_5 {
+  background: rgba(255, 255, 255, 0.05);
+}
+.bg-white_10 {
+  background: rgba(255, 255, 255, 0.1);
+}
+.border-white_10 {
+  border-color: rgba(255, 255, 255, 0.1);
+}
+.bg-purple-500_20 {
+  background: rgba(168, 85, 247, 0.2);
+}
+.bg-purple-500_10 {
+  background: rgba(168, 85, 247, 0.1);
+}
 
-.premium-input, .premium-select, .premium-datepicker {
+.premium-input,
+.premium-select,
+.premium-datepicker {
   :deep(.el-input__wrapper) {
     background: rgba(255, 255, 255, 0.03) !important;
     border: 1px solid rgba(255, 255, 255, 0.1) !important;
@@ -278,38 +287,39 @@ async function submitRFQ() {
     height: 48px;
     color: white;
     &.is-focus {
-        border-color: var(--purple-500) !important;
-        background: rgba(168, 85, 247, 0.05) !important;
+      border-color: var(--purple-500) !important;
+      background: rgba(168, 85, 247, 0.05) !important;
     }
   }
 }
 
 .premium-table {
+  background: transparent !important;
+  :deep(.el-table) {
     background: transparent !important;
-    :deep(.el-table) {
-        background: transparent !important;
-        --el-table-bg-color: transparent;
-        --el-table-header-bg-color: rgba(255, 255, 255, 0.03);
-    }
-    :deep(th.el-table__cell) {
-        color: var(--text-secondary);
-        background: rgba(255, 255, 255, 0.03) !important;
-    }
+    --el-table-bg-color: transparent;
+    --el-table-header-bg-color: rgba(255, 255, 255, 0.03);
+  }
+  :deep(th.el-table__cell) {
+    color: var(--text-secondary);
+    background: rgba(255, 255, 255, 0.03) !important;
+  }
 }
 .premium-pagination {
-    :deep(.el-pagination.is-background .el-pager li:not(.is-disabled).is-active) {
-        background-color: var(--purple-500) !important;
-        color: white;
-    }
-    :deep(.el-pagination.is-background .el-pager li) {
-        background-color: rgba(255, 255, 255, 0.05);
-        color: var(--text-secondary);
-        border: 1px solid rgba(255, 255, 255, 0.1);
-    }
-    :deep(.el-pagination.is-background .btn-prev), :deep(.el-pagination.is-background .btn-next) {
-        background-color: rgba(255, 255, 255, 0.05);
-        color: var(--text-secondary);
-        border: 1px solid rgba(255, 255, 255, 0.1);
-    }
+  :deep(.el-pagination.is-background .el-pager li:not(.is-disabled).is-active) {
+    background-color: var(--purple-500) !important;
+    color: white;
+  }
+  :deep(.el-pagination.is-background .el-pager li) {
+    background-color: rgba(255, 255, 255, 0.05);
+    color: var(--text-secondary);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+  }
+  :deep(.el-pagination.is-background .btn-prev),
+  :deep(.el-pagination.is-background .btn-next) {
+    background-color: rgba(255, 255, 255, 0.05);
+    color: var(--text-secondary);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+  }
 }
 </style>

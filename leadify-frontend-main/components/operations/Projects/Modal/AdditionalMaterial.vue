@@ -16,14 +16,14 @@ const categoryItemRef = ref();
 
 const finalValues = ref<AdditionalMaterial>({
   name: '',
-  items: [],
+  items: []
 });
 
 const props = defineProps({
   material: {
     type: Object,
-    default: () => ({}),
-  },
+    default: () => ({})
+  }
 });
 const emit = defineEmits(['confirm']);
 const dialog = defineModel();
@@ -32,7 +32,7 @@ async function submitCategoryForm(values: any) {
 }
 
 async function submitCategoryItemForm(values: any) {
-  finalValues.value['items'] = [...values];
+  finalValues.value.items = [...values];
 }
 async function onSubmitMaterials() {
   //  reset values

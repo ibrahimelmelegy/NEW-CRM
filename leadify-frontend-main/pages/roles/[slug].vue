@@ -45,77 +45,79 @@
 </template>
 
 <script lang="ts" setup>
-  const route = useRoute();
-  const { hasPermission } = await usePermissions();
+const route = useRoute();
+const { hasPermission } = await usePermissions();
 
-  // Call API to Get the role
-  const slug = (Array.isArray(route.params.slug) ? route.params.slug[0] : route.params.slug) as string;
-  const role = await getRole(slug);
+// Call API to Get the role
+const slug = (Array.isArray(route.params.slug) ? route.params.slug[0] : route.params.slug) as string;
+const role = await getRole(slug);
 
-  interface PermissionsData {
-    [key: string]: string[];
-  }
+interface PermissionsData {
+  [key: string]: string[];
+}
 
-  const permissionsData = ref<PermissionsData>({
-    leads: ["VIEW_OWN_LEADS", "VIEW_GLOBAL_LEADS", "CREATE_LEADS", "EDIT_LEADS"],
-    opportunities: ["VIEW_OWN_OPPORTUNITIES", "VIEW_GLOBAL_OPPORTUNITIES", "CREATE_OPPORTUNITIES", "EDIT_OPPORTUNITIES"],
-    deals: ["VIEW_OWN_DEALS", "VIEW_GLOBAL_DEALS", "CREATE_DEALS", "EDIT_DEALS"],
-    proposals: ["VIEW_OWN_PROPOSALS", "VIEW_GLOBAL_PROPOSALS", "CREATE_PROPOSALS", "EDIT_PROPOSALS", "APPROVE_PROPOSALS", "REJECT_PROPOSALS", "WAITING_APPROVAL_PROPOSALS"],
-    projects: ["VIEW_OWN_PROJECTS", "VIEW_GLOBAL_PROJECTS", "CREATE_PROJECTS", "EDIT_PROJECTS"],
-    vehicles: ["VIEW_VEHICLES", "CREATE_VEHICLES", "EDIT_VEHICLES"],
-    manpower: ["VIEW_MANPOWER", "CREATE_MANPOWER", "EDIT_MANPOWER"],
-    additionalMaterial: ["VIEW_ADDITIONAL_MATERIAL", "CREATE_ADDITIONAL_MATERIAL", "EDIT_ADDITIONAL_MATERIAL"],
-    services: ["VIEW_SERVICES", "CREATE_SERVICES", "EDIT_SERVICES"],
-    assets: ["VIEW_ASSETS", "CREATE_ASSETS", "EDIT_ASSETS"],
-    clients: ["VIEW_OWN_CLIENTS", "VIEW_GLOBAL_CLIENTS", "CREATE_CLIENTS", "EDIT_CLIENTS"],
-    staff: ["VIEW_OWN_STAFF", "VIEW_GLOBAL_STAFF", "CREATE_STAFF", "EDIT_STAFF"],
-    roles: ["VIEW_ROLES", "CREATE_ROLES", "EDIT_ROLES"],
-    reports: [
-      "EXPORT_OWN_REPORTS",
-      "EXPORT_GLOBAL_REPORTS",
-      "EXPORT_SALES_REPORTS",
-      "EXPORT_PROJECT_REPORTS",
-      "EXPORT_PERFORMANCE_REPORTS",
-    ],
-    salesWidgets: ["VIEW_OWN_LEAD_SALES_WIDGETS", "VIEW_GLOBAL_LEAD_SALES_WIDGETS"],
-    projectWidgets: ["VIEW_OWN_PROJECTS_OPERATIONS_WIDGETS", "VIEW_GLOBAL_PROJECTS_OPERATIONS_WIDGETS"],
-    financialWidgets: ["VIEW_OWN_FINANCIAL_BUSINESS_METRICS_WIDGETS", "VIEW_GLOBAL_FINANCIAL_BUSINESS_METRICS_WIDGETS"],
-    performanceWidgets: ["VIEW_OWN_PERFORMANCE_HR_WIDGETS", "VIEW_GLOBAL_PERFORMANCE_HR_WIDGETS"],
-  });
+const permissionsData = ref<PermissionsData>({
+  leads: ['VIEW_OWN_LEADS', 'VIEW_GLOBAL_LEADS', 'CREATE_LEADS', 'EDIT_LEADS'],
+  opportunities: ['VIEW_OWN_OPPORTUNITIES', 'VIEW_GLOBAL_OPPORTUNITIES', 'CREATE_OPPORTUNITIES', 'EDIT_OPPORTUNITIES'],
+  deals: ['VIEW_OWN_DEALS', 'VIEW_GLOBAL_DEALS', 'CREATE_DEALS', 'EDIT_DEALS'],
+  proposals: [
+    'VIEW_OWN_PROPOSALS',
+    'VIEW_GLOBAL_PROPOSALS',
+    'CREATE_PROPOSALS',
+    'EDIT_PROPOSALS',
+    'APPROVE_PROPOSALS',
+    'REJECT_PROPOSALS',
+    'WAITING_APPROVAL_PROPOSALS'
+  ],
+  projects: ['VIEW_OWN_PROJECTS', 'VIEW_GLOBAL_PROJECTS', 'CREATE_PROJECTS', 'EDIT_PROJECTS'],
+  vehicles: ['VIEW_VEHICLES', 'CREATE_VEHICLES', 'EDIT_VEHICLES'],
+  manpower: ['VIEW_MANPOWER', 'CREATE_MANPOWER', 'EDIT_MANPOWER'],
+  additionalMaterial: ['VIEW_ADDITIONAL_MATERIAL', 'CREATE_ADDITIONAL_MATERIAL', 'EDIT_ADDITIONAL_MATERIAL'],
+  services: ['VIEW_SERVICES', 'CREATE_SERVICES', 'EDIT_SERVICES'],
+  assets: ['VIEW_ASSETS', 'CREATE_ASSETS', 'EDIT_ASSETS'],
+  clients: ['VIEW_OWN_CLIENTS', 'VIEW_GLOBAL_CLIENTS', 'CREATE_CLIENTS', 'EDIT_CLIENTS'],
+  staff: ['VIEW_OWN_STAFF', 'VIEW_GLOBAL_STAFF', 'CREATE_STAFF', 'EDIT_STAFF'],
+  roles: ['VIEW_ROLES', 'CREATE_ROLES', 'EDIT_ROLES'],
+  reports: ['EXPORT_OWN_REPORTS', 'EXPORT_GLOBAL_REPORTS', 'EXPORT_SALES_REPORTS', 'EXPORT_PROJECT_REPORTS', 'EXPORT_PERFORMANCE_REPORTS'],
+  salesWidgets: ['VIEW_OWN_LEAD_SALES_WIDGETS', 'VIEW_GLOBAL_LEAD_SALES_WIDGETS'],
+  projectWidgets: ['VIEW_OWN_PROJECTS_OPERATIONS_WIDGETS', 'VIEW_GLOBAL_PROJECTS_OPERATIONS_WIDGETS'],
+  financialWidgets: ['VIEW_OWN_FINANCIAL_BUSINESS_METRICS_WIDGETS', 'VIEW_GLOBAL_FINANCIAL_BUSINESS_METRICS_WIDGETS'],
+  performanceWidgets: ['VIEW_OWN_PERFORMANCE_HR_WIDGETS', 'VIEW_GLOBAL_PERFORMANCE_HR_WIDGETS']
+});
 
-  // Format section header
-  function formatKeyLabel(key: string) {
-    return key.replace(/([A-Z])/g, " $1").replace(/^./, (str) => str.toUpperCase());
-  }
+// Format section header
+function formatKeyLabel(key: string) {
+  return key.replace(/([A-Z])/g, ' $1').replace(/^./, str => str.toUpperCase());
+}
 
-  // Format permission label
-  function formatPermissionLabel(permission: string) {
-    if (permission.includes("VIEW_OWN")) return "View (Own)";
-    if (permission.includes("VIEW_GLOBAL")) return "View (Global)";
-    if (permission.includes("CREATE")) return "Create";
-    if (permission.includes("EDIT")) return "Edit";
-    if (permission.includes("EXPORT_OWN")) return "Export (Own)";
-    if (permission.includes("EXPORT_GLOBAL")) return "Export (Global)";
-    if (permission.includes("EXPORT_SALES")) return "Export Sales Reports";
-    if (permission.includes("EXPORT_PROJECT")) return "Export Project Reports";
-    if (permission.includes("EXPORT_PERFORMANCE")) return "Export Performance Reports";
-    if (permission.includes("APPROVE")) return "Approve";
-    if (permission.includes("REJECT")) return "Reject";
-    if (permission.includes("WAITING_APPROVAL")) return "Waiting Approval";
-    return permission.replace(/_/g, " ").toLowerCase();
-  }
+// Format permission label
+function formatPermissionLabel(permission: string) {
+  if (permission.includes('VIEW_OWN')) return 'View (Own)';
+  if (permission.includes('VIEW_GLOBAL')) return 'View (Global)';
+  if (permission.includes('CREATE')) return 'Create';
+  if (permission.includes('EDIT')) return 'Edit';
+  if (permission.includes('EXPORT_OWN')) return 'Export (Own)';
+  if (permission.includes('EXPORT_GLOBAL')) return 'Export (Global)';
+  if (permission.includes('EXPORT_SALES')) return 'Export Sales Reports';
+  if (permission.includes('EXPORT_PROJECT')) return 'Export Project Reports';
+  if (permission.includes('EXPORT_PERFORMANCE')) return 'Export Performance Reports';
+  if (permission.includes('APPROVE')) return 'Approve';
+  if (permission.includes('REJECT')) return 'Reject';
+  if (permission.includes('WAITING_APPROVAL')) return 'Waiting Approval';
+  return permission.replace(/_/g, ' ').toLowerCase();
+}
 
-  // Get displayed permissions
-  function getEffectivePermissions(section: string): string[] {
-    const available = permissionsData.value[section];
-    if (!available) return [];
-    const assigned = role?.permissions?.filter((p: string) => available.includes(p)) || [];
+// Get displayed permissions
+function getEffectivePermissions(section: string): string[] {
+  const available = permissionsData.value[section];
+  if (!available) return [];
+  const assigned = role?.permissions?.filter((p: string) => available.includes(p)) || [];
 
-    if (assigned.length > 0) return assigned;
+  if (assigned.length > 0) return assigned;
 
-    // fallback to first VIEW_OWN_* if available
-    const fallback = available.find((p: string) => p.includes("VIEW_OWN"));
-    return fallback ? [fallback] : [];
-  }
+  // fallback to first VIEW_OWN_* if available
+  const fallback = available.find((p: string) => p.includes('VIEW_OWN'));
+  return fallback ? [fallback] : [];
+}
 </script>
 <style scoped lang="scss"></style>

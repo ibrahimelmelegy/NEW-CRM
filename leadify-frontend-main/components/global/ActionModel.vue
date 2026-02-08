@@ -21,8 +21,8 @@ const props = defineProps({
   icon: String,
   btnText: {
     type: String,
-    default: 'Confirm',
-  },
+    default: 'Confirm'
+  }
 });
 const emit = defineEmits(['confirm']);
 const confirm = () => {

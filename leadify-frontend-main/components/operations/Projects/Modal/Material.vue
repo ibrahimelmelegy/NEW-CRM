@@ -53,7 +53,7 @@ const props = defineProps({
   btnText: String,
   data: Object,
   selectedAddMaterialItem: Object,
-  allAddMaterialItems: Array,
+  allAddMaterialItems: Array
 });
 const emit = defineEmits(['confirm', 'submit']);
 const dialog = defineModel();
@@ -82,11 +82,11 @@ const formSchema = yup.object({
     .string()
     .required()
     .test('is-valid-number', 'Please enter a valid number.', (value: any) => /^\d*\.?\d*$/.test(value || ''))
-    .label('material Unit Price'),
+    .label('material Unit Price')
 });
 
 const { handleSubmit, values } = useForm({
-  validationSchema: formSchema,
+  validationSchema: formSchema
 });
 
 const onSubmit = handleSubmit(async (values: any, actions: any) => {
@@ -96,11 +96,11 @@ const onSubmit = handleSubmit(async (values: any, actions: any) => {
     unitPrice: Number(values.unitPrice),
     quantity: Number(values.quantity),
     description: values.description,
-    materialCategoryId: values.materialCategoryId,
+    materialCategoryId: values.materialCategoryId
   });
   try {
     // Attempt to create the project
-    let material = await createtMaterial(formattedValues);
+    const material = await createtMaterial(formattedValues);
     emit('confirm', material, finalAddMaterialsItems.value);
     dialog.value = false;
   } catch (error) {
@@ -117,7 +117,7 @@ const items = ref({
       component: 'Text',
       // sortable: true,
       type: 'font-bold',
-      width: 130,
+      width: 130
     },
     {
       prop: 'price',
@@ -125,7 +125,7 @@ const items = ref({
       component: 'Text',
       // sortable: true,
       type: 'font-bold',
-      width: 150,
+      width: 150
     },
     {
       prop: 'quantity',
@@ -133,7 +133,7 @@ const items = ref({
       component: 'Text',
       // sortable: true,
       type: 'font-default',
-      width: 120,
+      width: 120
     },
     {
       prop: 'additionalMaterialPrice',
@@ -141,10 +141,10 @@ const items = ref({
       component: 'Text',
       // sortable: true,
       type: 'font-default',
-      width: 200,
-    },
+      width: 200
+    }
   ],
-  data: [] as AdditionalMaterial[],
+  data: [] as AdditionalMaterial[]
 });
 
 isAdditionalMaterial.value = !!props.data?.additionalMaterialId;
@@ -155,7 +155,7 @@ let services = await useTableFilter('service');
 services = services.formattedData.map((item: any) => ({
   label: item.type,
   value: item.id,
-  price: item.price,
+  price: item.price
 }));
 /**
  * Maps an array of addMaterials into a format suitable for a select input.
@@ -176,7 +176,7 @@ function updateTableData() {
         ?.find((material: any) => Object.keys(finalAddMaterialsItems.value).includes(material.id?.toString()))
         ?.materialItem.find((materialI: any) => materialI.id === item?.id)?.name,
     quantity: item?.quantity || 1,
-    additionalMaterialPrice: item?.price * (item?.quantity || 1),
+    additionalMaterialPrice: item?.price * (item?.quantity || 1)
   }));
 }
 
@@ -225,7 +225,7 @@ function updateMaterialQuantities(selectedItems: any, additionalMaterial: any) {
     materialItem: additionalMaterial.materialItem?.map((item: any) => {
       const selectedItem = selectedItems[Object.keys(selectedItems)[0]]?.find((s: any) => s.id === item.id);
       return selectedItem ? { ...item, quantity: selectedItem.quantity } : item;
-    }),
+    })
   };
 }
 
@@ -241,7 +241,7 @@ async function updateService(val?: any) {
   services = services.formattedData.map((item: any) => ({
     label: item.type,
     value: item.id,
-    price: item.price,
+    price: item.price
   }));
 
   if (val) {

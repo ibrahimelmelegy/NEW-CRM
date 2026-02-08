@@ -10,16 +10,14 @@ el-dialog(v-model='dialog' width='750' title="Add New Service Module" append-to-
 
 <script setup lang="ts">
 const loading = ref(false);
-;
-
 const props = defineProps({
-  service: Object as () => Service,
+  service: Object as () => Service
 });
 
 const modifiedService = ref<Service>({
   type: props.service?.label || '',
   price: props.service?.price || 0,
-  id: props.service?.value || 0,
+  id: props.service?.value || 0
 });
 
 const dialog = defineModel();

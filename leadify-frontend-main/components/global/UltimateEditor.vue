@@ -1,15 +1,14 @@
 <template>
-  <div class="ultimate-editor-container" v-if="editor">
+  <div v-if="editor" class="ultimate-editor-container">
     <!-- STICKY PROFESSIONAL TOOLBAR -->
     <div class="toolbar-wrapper sticky-top">
       <div class="toolbar">
-        
         <!-- Group: History -->
         <div class="toolbar-group">
-          <button @click="editor.chain().focus().undo().run()" :disabled="!editor.can().chain().focus().undo().run()" title="Undo">
+          <button :disabled="!editor.can().chain().focus().undo().run()" title="Undo" @click="editor.chain().focus().undo().run()">
             <i class="ri-arrow-go-back-line"></i>
           </button>
-          <button @click="editor.chain().focus().redo().run()" :disabled="!editor.can().chain().focus().redo().run()" title="Redo">
+          <button :disabled="!editor.can().chain().focus().redo().run()" title="Redo" @click="editor.chain().focus().redo().run()">
             <i class="ri-arrow-go-forward-line"></i>
           </button>
         </div>
@@ -18,19 +17,19 @@
 
         <!-- Group: Text Formatting -->
         <div class="toolbar-group">
-          <button @click="editor.chain().focus().toggleBold().run()" :class="{ 'is-active': editor.isActive('bold') }" title="Bold">
+          <button :class="{ 'is-active': editor.isActive('bold') }" title="Bold" @click="editor.chain().focus().toggleBold().run()">
             <i class="ri-bold"></i>
           </button>
-          <button @click="editor.chain().focus().toggleItalic().run()" :class="{ 'is-active': editor.isActive('italic') }" title="Italic">
+          <button :class="{ 'is-active': editor.isActive('italic') }" title="Italic" @click="editor.chain().focus().toggleItalic().run()">
             <i class="ri-italic"></i>
           </button>
-          <button @click="editor.chain().focus().toggleUnderline().run()" :class="{ 'is-active': editor.isActive('underline') }" title="Underline">
+          <button :class="{ 'is-active': editor.isActive('underline') }" title="Underline" @click="editor.chain().focus().toggleUnderline().run()">
             <i class="ri-underline"></i>
           </button>
-          <button @click="editor.chain().focus().toggleStrike().run()" :class="{ 'is-active': editor.isActive('strike') }" title="Strikethrough">
+          <button :class="{ 'is-active': editor.isActive('strike') }" title="Strikethrough" @click="editor.chain().focus().toggleStrike().run()">
             <i class="ri-strikethrough"></i>
           </button>
-          <button @click="editor.chain().focus().toggleHighlight().run()" :class="{ 'is-active': editor.isActive('highlight') }" title="Highlight">
+          <button :class="{ 'is-active': editor.isActive('highlight') }" title="Highlight" @click="editor.chain().focus().toggleHighlight().run()">
             <i class="ri-mark-pen-line"></i>
           </button>
         </div>
@@ -39,19 +38,25 @@
 
         <!-- Group: Colors & Headings -->
         <div class="toolbar-group">
-          <input 
-            type="color" 
-            @input="editor.chain().focus().setColor(($event.target as HTMLInputElement).value).run()"
+          <input
+            type="color"
             :value="editor.getAttributes('textStyle').color || '#000000'"
             title="Text Color"
             class="color-picker"
-          >
-          
+            @input="
+              editor
+                .chain()
+                .focus()
+                .setColor(($event.target as HTMLInputElement).value)
+                .run()
+            "
+          />
+
           <select class="heading-select" @change="setHeading($event)">
-             <option value="p" :selected="editor.isActive('paragraph')">Normal</option>
-             <option value="1" :selected="editor.isActive('heading', { level: 1 })">Heading 1</option>
-             <option value="2" :selected="editor.isActive('heading', { level: 2 })">Heading 2</option>
-             <option value="3" :selected="editor.isActive('heading', { level: 3 })">Heading 3</option>
+            <option value="p" :selected="editor.isActive('paragraph')">Normal</option>
+            <option value="1" :selected="editor.isActive('heading', { level: 1 })">Heading 1</option>
+            <option value="2" :selected="editor.isActive('heading', { level: 2 })">Heading 2</option>
+            <option value="3" :selected="editor.isActive('heading', { level: 3 })">Heading 3</option>
           </select>
         </div>
 
@@ -59,16 +64,32 @@
 
         <!-- Group: Alignment -->
         <div class="toolbar-group">
-          <button @click="editor.chain().focus().setTextAlign('left').run()" :class="{ 'is-active': editor.isActive({ textAlign: 'left' }) }" title="Align Left">
+          <button
+            :class="{ 'is-active': editor.isActive({ textAlign: 'left' }) }"
+            title="Align Left"
+            @click="editor.chain().focus().setTextAlign('left').run()"
+          >
             <i class="ri-align-left"></i>
           </button>
-          <button @click="editor.chain().focus().setTextAlign('center').run()" :class="{ 'is-active': editor.isActive({ textAlign: 'center' }) }" title="Align Center">
+          <button
+            :class="{ 'is-active': editor.isActive({ textAlign: 'center' }) }"
+            title="Align Center"
+            @click="editor.chain().focus().setTextAlign('center').run()"
+          >
             <i class="ri-align-center"></i>
           </button>
-          <button @click="editor.chain().focus().setTextAlign('right').run()" :class="{ 'is-active': editor.isActive({ textAlign: 'right' }) }" title="Align Right">
+          <button
+            :class="{ 'is-active': editor.isActive({ textAlign: 'right' }) }"
+            title="Align Right"
+            @click="editor.chain().focus().setTextAlign('right').run()"
+          >
             <i class="ri-align-right"></i>
           </button>
-          <button @click="editor.chain().focus().setTextAlign('justify').run()" :class="{ 'is-active': editor.isActive({ textAlign: 'justify' }) }" title="Justify">
+          <button
+            :class="{ 'is-active': editor.isActive({ textAlign: 'justify' }) }"
+            title="Justify"
+            @click="editor.chain().focus().setTextAlign('justify').run()"
+          >
             <i class="ri-align-justify"></i>
           </button>
         </div>
@@ -77,14 +98,22 @@
 
         <!-- Group: Lists -->
         <div class="toolbar-group">
-          <button @click="editor.chain().focus().toggleBulletList().run()" :class="{ 'is-active': editor.isActive('bulletList') }" title="Bullet List">
+          <button
+            :class="{ 'is-active': editor.isActive('bulletList') }"
+            title="Bullet List"
+            @click="editor.chain().focus().toggleBulletList().run()"
+          >
             <i class="ri-list-unordered"></i>
           </button>
-          <button @click="editor.chain().focus().toggleOrderedList().run()" :class="{ 'is-active': editor.isActive('orderedList') }" title="Ordered List">
+          <button
+            :class="{ 'is-active': editor.isActive('orderedList') }"
+            title="Ordered List"
+            @click="editor.chain().focus().toggleOrderedList().run()"
+          >
             <i class="ri-list-ordered"></i>
           </button>
-          <button @click="editor.chain().focus().toggleTaskList().run()" :class="{ 'is-active': editor.isActive('taskList') }" title="Task List">
-             <i class="ri-checkbox-line"></i>
+          <button :class="{ 'is-active': editor.isActive('taskList') }" title="Task List" @click="editor.chain().focus().toggleTaskList().run()">
+            <i class="ri-checkbox-line"></i>
           </button>
         </div>
 
@@ -92,45 +121,45 @@
 
         <!-- Group: Insert -->
         <div class="toolbar-group">
-          <button @click="addImage" title="Insert Image">
+          <button title="Insert Image" @click="addImage">
             <i class="ri-image-add-line"></i>
           </button>
-           <button @click="setLink" :class="{ 'is-active': editor.isActive('link') }" title="Link">
+          <button :class="{ 'is-active': editor.isActive('link') }" title="Link" @click="setLink">
             <i class="ri-link"></i>
           </button>
-          <button @click="editor.chain().focus().insertTable({ rows: 3, cols: 3, withHeaderRow: true }).run()" title="Insert Table">
+          <button title="Insert Table" @click="editor.chain().focus().insertTable({ rows: 3, cols: 3, withHeaderRow: true }).run()">
             <i class="ri-table-2"></i>
           </button>
         </div>
       </div>
-      
+
       <!-- SUB-TOOLBAR: TABLE CONTROLS (Conditional) -->
-      <div class="sub-toolbar" v-if="editor.isActive('table')">
-         <span class="label">Table Controls:</span>
-         <button @click="editor.chain().focus().addColumnBefore().run()">Add Col Before</button>
-         <button @click="editor.chain().focus().addColumnAfter().run()">Add Col After</button>
-         <button @click="editor.chain().focus().deleteColumn().run()">Del Col</button>
-         <div class="divider small"></div>
-         <button @click="editor.chain().focus().addRowBefore().run()">Add Row Before</button>
-         <button @click="editor.chain().focus().addRowAfter().run()">Add Row After</button>
-         <button @click="editor.chain().focus().deleteRow().run()">Del Row</button>
-         <div class="divider small"></div>
-         <button @click="editor.chain().focus().mergeCells().run()">Merge</button>
-         <button @click="editor.chain().focus().splitCell().run()">Split</button>
-         <button @click="editor.chain().focus().deleteTable().run()" class="danger">Delete Table</button>
+      <div v-if="editor.isActive('table')" class="sub-toolbar">
+        <span class="label">Table Controls:</span>
+        <button @click="editor.chain().focus().addColumnBefore().run()">Add Col Before</button>
+        <button @click="editor.chain().focus().addColumnAfter().run()">Add Col After</button>
+        <button @click="editor.chain().focus().deleteColumn().run()">Del Col</button>
+        <div class="divider small"></div>
+        <button @click="editor.chain().focus().addRowBefore().run()">Add Row Before</button>
+        <button @click="editor.chain().focus().addRowAfter().run()">Add Row After</button>
+        <button @click="editor.chain().focus().deleteRow().run()">Del Row</button>
+        <div class="divider small"></div>
+        <button @click="editor.chain().focus().mergeCells().run()">Merge</button>
+        <button @click="editor.chain().focus().splitCell().run()">Split</button>
+        <button class="danger" @click="editor.chain().focus().deleteTable().run()">Delete Table</button>
       </div>
     </div>
 
     <!-- BUBBLE MENU -->
-    <bubble-menu :editor="editor" :tippy-options="{ duration: 100 }" v-if="editor">
+    <bubble-menu v-if="editor" :editor="editor" :tippy-options="{ duration: 100 }">
       <div class="bubble-menu-content">
-        <button @click="editor.chain().focus().toggleBold().run()" :class="{ 'is-active': editor.isActive('bold') }">
+        <button :class="{ 'is-active': editor.isActive('bold') }" @click="editor.chain().focus().toggleBold().run()">
           <i class="ri-bold"></i>
         </button>
-        <button @click="editor.chain().focus().toggleItalic().run()" :class="{ 'is-active': editor.isActive('italic') }">
-         <i class="ri-italic"></i>
+        <button :class="{ 'is-active': editor.isActive('italic') }" @click="editor.chain().focus().toggleItalic().run()">
+          <i class="ri-italic"></i>
         </button>
-        <button @click="editor.chain().focus().toggleHighlight().run()" :class="{ 'is-active': editor.isActive('highlight') }">
+        <button :class="{ 'is-active': editor.isActive('highlight') }" @click="editor.chain().focus().toggleHighlight().run()">
           <i class="ri-mark-pen-line"></i>
         </button>
       </div>
@@ -138,38 +167,38 @@
 
     <!-- EDITOR AREA (A4 PAPER LOOK) -->
     <div class="editor-viewport">
-       <editor-content :editor="editor" class="ultimum-paper" />
+      <editor-content :editor="editor" class="ultimum-paper" />
     </div>
   </div>
 </template>
 
 <script setup lang="ts">
-import { useEditor, EditorContent, BubbleMenu } from '@tiptap/vue-3'
-import StarterKit from '@tiptap/starter-kit'
-import { Image } from '@tiptap/extension-image'
-import { Table } from '@tiptap/extension-table'
-import { TableRow } from '@tiptap/extension-table-row'
-import { TableCell } from '@tiptap/extension-table-cell'
-import { TableHeader } from '@tiptap/extension-table-header'
-import { TextAlign } from '@tiptap/extension-text-align'
-import { TextStyle } from '@tiptap/extension-text-style'
-import { Color } from '@tiptap/extension-color'
-import { Highlight } from '@tiptap/extension-highlight'
-import { TaskList } from '@tiptap/extension-task-list'
-import { TaskItem } from '@tiptap/extension-task-item'
-import { Link } from '@tiptap/extension-link'
-import { Underline } from '@tiptap/extension-underline'
-import { Subscript } from '@tiptap/extension-subscript'
-import { Superscript } from '@tiptap/extension-superscript'
-import { Placeholder } from '@tiptap/extension-placeholder'
+import { useEditor, EditorContent, BubbleMenu } from '@tiptap/vue-3';
+import StarterKit from '@tiptap/starter-kit';
+import { Image } from '@tiptap/extension-image';
+import { Table } from '@tiptap/extension-table';
+import { TableRow } from '@tiptap/extension-table-row';
+import { TableCell } from '@tiptap/extension-table-cell';
+import { TableHeader } from '@tiptap/extension-table-header';
+import { TextAlign } from '@tiptap/extension-text-align';
+import { TextStyle } from '@tiptap/extension-text-style';
+import { Color } from '@tiptap/extension-color';
+import { Highlight } from '@tiptap/extension-highlight';
+import { TaskList } from '@tiptap/extension-task-list';
+import { TaskItem } from '@tiptap/extension-task-item';
+import { Link } from '@tiptap/extension-link';
+import { Underline } from '@tiptap/extension-underline';
+import { Subscript } from '@tiptap/extension-subscript';
+import { Superscript } from '@tiptap/extension-superscript';
+import { Placeholder } from '@tiptap/extension-placeholder';
 
 // Props & Emits
 const props = defineProps<{
-  modelValue?: string
-  placeholder?: string
-}>()
+  modelValue?: string;
+  placeholder?: string;
+}>();
 
-const emit = defineEmits(['update:modelValue'])
+const emit = defineEmits(['update:modelValue']);
 
 const editor = useEditor({
   content: props.modelValue || '',
@@ -177,83 +206,89 @@ const editor = useEditor({
     StarterKit,
     Image,
     Table.configure({
-      resizable: true,
+      resizable: true
     }),
     TableRow,
     TableHeader,
     TableCell,
     TextAlign.configure({
-      types: ['heading', 'paragraph'],
+      types: ['heading', 'paragraph']
     }),
     TextStyle,
     Color,
     Highlight.configure({ multicolor: true }),
     TaskList,
     TaskItem.configure({
-      nested: true,
+      nested: true
     }),
     Link.configure({
-       openOnClick: false,
+      openOnClick: false
     }),
     Underline,
     Subscript,
     Superscript,
     Placeholder.configure({
-       placeholder: props.placeholder || 'Start typing your proposal here...',
-    }),
+      placeholder: props.placeholder || 'Start typing your proposal here...'
+    })
   ],
   onUpdate: ({ editor }) => {
-    emit('update:modelValue', editor.getHTML())
-  },
-})
+    emit('update:modelValue', editor.getHTML());
+  }
+});
 
 // Watch model value for external changes
-watch(() => props.modelValue, (newValue) => {
-  const isSame = editor.value?.getHTML() === newValue
-  if (!isSame && editor.value) {
-    editor.value.commands.setContent(newValue || '', { emitUpdate: false })
+watch(
+  () => props.modelValue,
+  newValue => {
+    const isSame = editor.value?.getHTML() === newValue;
+    if (!isSame && editor.value) {
+      editor.value.commands.setContent(newValue || '', { emitUpdate: false });
+    }
   }
-})
+);
 
 // Toolbar Functions
 const addImage = () => {
-   const url = window.prompt('URL')
-   if (url && editor.value) {
-     editor.value.chain().focus().setImage({ src: url }).run()
-   }
-}
+  const url = window.prompt('URL');
+  if (url && editor.value) {
+    editor.value.chain().focus().setImage({ src: url }).run();
+  }
+};
 
 const setLink = () => {
-  const previousUrl = editor.value?.getAttributes('link').href
-  const url = window.prompt('URL', previousUrl)
+  const previousUrl = editor.value?.getAttributes('link').href;
+  const url = window.prompt('URL', previousUrl);
 
   // cancelled
   if (url === null) {
-    return
+    return;
   }
 
   // empty
   if (url === '') {
-    editor.value?.chain().focus().extendMarkRange('link').unsetLink().run()
-    return
+    editor.value?.chain().focus().extendMarkRange('link').unsetLink().run();
+    return;
   }
 
   // update
-  editor.value?.chain().focus().extendMarkRange('link').setLink({ href: url }).run()
-}
+  editor.value?.chain().focus().extendMarkRange('link').setLink({ href: url }).run();
+};
 
 const setHeading = (event: Event) => {
-   const target = event.target as HTMLSelectElement
-   const value = target.value
-   if(!editor.value) return;
+  const target = event.target as HTMLSelectElement;
+  const value = target.value;
+  if (!editor.value) return;
 
-   if(value === 'p') {
-      editor.value.chain().focus().setParagraph().run()
-   } else {
-      editor.value.chain().focus().toggleHeading({ level: parseInt(value) as any }).run()
-   }
-}
-
+  if (value === 'p') {
+    editor.value.chain().focus().setParagraph().run();
+  } else {
+    editor.value
+      .chain()
+      .focus()
+      .toggleHeading({ level: parseInt(value) as any })
+      .run();
+  }
+};
 </script>
 
 <style lang="scss">
@@ -305,9 +340,9 @@ const setHeading = (event: Event) => {
   height: 24px;
   background-color: var(--border-stroke);
   margin: 0 4px;
-  
+
   &.small {
-     height: 16px;
+    height: 16px;
   }
 }
 
@@ -329,8 +364,8 @@ button {
   }
 
   &.is-active {
-    background-color: rgba(124, 58, 237, 0.15); 
-    color: var(--accent-purple); 
+    background-color: rgba(124, 58, 237, 0.15);
+    color: var(--accent-purple);
     border-color: rgba(124, 58, 237, 0.3);
   }
 
@@ -340,7 +375,7 @@ button {
   }
 
   i {
-     font-size: 20px;
+    font-size: 20px;
   }
 }
 
@@ -365,48 +400,50 @@ button {
   color: var(--text-primary);
   outline: none;
   cursor: pointer;
-  
+
   &:focus {
-     border-color: var(--accent-purple);
+    border-color: var(--accent-purple);
   }
 }
 
 /* Sub Toolbar */
 .sub-toolbar {
-   display: flex;
-   align-items: center;
-   gap: 8px;
-   background: rgba(0, 0, 0, 0.2);
-   padding: 8px 16px;
-   border-radius: 8px;
-   font-size: 13px;
-   flex-wrap: wrap;
-   margin-top: 4px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  background: rgba(0, 0, 0, 0.2);
+  padding: 8px 16px;
+  border-radius: 8px;
+  font-size: 13px;
+  flex-wrap: wrap;
+  margin-top: 4px;
 
-   .label {
-      font-weight: 600;
-      color: var(--text-muted);
-      margin-right: 4px;
-   }
+  .label {
+    font-weight: 600;
+    color: var(--text-muted);
+    margin-right: 4px;
+  }
 
-   button {
-      padding: 4px 10px;
-      font-size: 12px;
-      border: 1px solid var(--border-stroke);
-      background: var(--bg-card);
-      color: var(--text-secondary);
-      
-      &.danger {
-         color: #ef4444;
-         border-color: rgba(239, 68, 68, 0.2);
-         &:hover { background: rgba(239, 68, 68, 0.1); }
-      }
-      
+  button {
+    padding: 4px 10px;
+    font-size: 12px;
+    border: 1px solid var(--border-stroke);
+    background: var(--bg-card);
+    color: var(--text-secondary);
+
+    &.danger {
+      color: #ef4444;
+      border-color: rgba(239, 68, 68, 0.2);
       &:hover {
-          background: rgba(255,255,255,0.05);
-          color: var(--text-primary);
+        background: rgba(239, 68, 68, 0.1);
       }
-   }
+    }
+
+    &:hover {
+      background: rgba(255, 255, 255, 0.05);
+      color: var(--text-primary);
+    }
+  }
 }
 
 /* --- EDITOR AREA (THE PAPER) --- */
@@ -421,25 +458,25 @@ button {
 
 .ultimum-paper {
   outline: none;
-  
+
   /* A4 Dimensions (approx) */
-  width: 210mm; 
+  width: 210mm;
   min-height: 297mm;
-  
-  background: #FFFFFF;
+
+  background: #ffffff;
   border-radius: 4px;
   box-shadow: var(--shadow-premium);
   padding: 25mm; /* Standard margins */
   margin-bottom: 40px;
-  
+
   /* Typography basics */
   font-family: 'Poppins', sans-serif;
   color: #1a1a1a;
   line-height: 1.7;
   font-size: 11pt;
 
-  direction: ltr; 
-  
+  direction: ltr;
+
   /* Placeholder Logic */
   .ProseMirror p.is-editor-empty:first-child::before {
     color: #adb5bd;
@@ -458,12 +495,18 @@ button {
     margin-top: 1em;
   }
 
-  ul, ol {
+  ul,
+  ol {
     padding: 0 1rem;
     padding-inline-start: 1.5rem;
   }
 
-  h1, h2, h3, h4, h5, h6 {
+  h1,
+  h2,
+  h3,
+  h4,
+  h5,
+  h6 {
     line-height: 1.2;
     font-weight: 700;
     color: #111111;
@@ -500,7 +543,7 @@ button {
     border-radius: 8px;
     display: block;
     margin: 2rem auto;
-    box-shadow: 0 10px 20px rgba(0,0,0,0.1);
+    box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
 
     &.ProseMirror-selectednode {
       outline: 3px solid var(--accent-purple);
@@ -522,7 +565,7 @@ button {
     border-top: 2px solid #eeeeee;
     margin: 3rem 0;
   }
-  
+
   /* --- TABLES --- */
   table {
     border-collapse: collapse;
@@ -532,7 +575,8 @@ button {
     overflow: hidden;
     border: 1px solid #dddddd;
 
-    td, th {
+    td,
+    th {
       min-width: 1em;
       border: 1px solid #cccccc;
       padding: 12px 15px;
@@ -554,8 +598,11 @@ button {
     .selectedCell:after {
       z-index: 2;
       position: absolute;
-      content: "";
-      left: 0; right: 0; top: 0; bottom: 0;
+      content: '';
+      left: 0;
+      right: 0;
+      top: 0;
+      bottom: 0;
       background: rgba(124, 58, 237, 0.1);
       pointer-events: none;
     }
@@ -572,7 +619,7 @@ button {
   }
 
   /* --- TASK LISTS --- */
-  ul[data-type="taskList"] {
+  ul[data-type='taskList'] {
     list-style: none;
     padding: 0;
 
@@ -592,12 +639,12 @@ button {
         flex: 1 1 auto;
       }
     }
-    
-    input[type="checkbox"] {
-        cursor: pointer;
-        width: 1.2em;
-        height: 1.2em;
-        accent-color: var(--accent-purple);
+
+    input[type='checkbox'] {
+      cursor: pointer;
+      width: 1.2em;
+      height: 1.2em;
+      accent-color: var(--accent-purple);
     }
   }
 }

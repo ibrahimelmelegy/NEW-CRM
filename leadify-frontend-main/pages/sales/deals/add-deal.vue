@@ -13,69 +13,69 @@ el-tabs.demo-tabs(v-model="activeName", :lazy="false" @tab-click="handleClick")
     DealDelivery( :loading="loading" ref="deliveryRef" @onSubmit="getDeliveries" @isValid="(value)=>isDeliveries = value")
 </template>
 <script lang="ts" setup>
-  const activeName = ref("deal");
-  const informationRef = ref();
-  const invoicesRef = ref();
-  const deliveryRef = ref();
-  useHead({
-    title: "App HP Tech | Add Deal",
-  });
-  definePageMeta({
-    middleware: "permissions",
-    permission: "CREATE_DEALS",
-  });
-  const router = useRouter();
-  const route = useRoute();
-  const loading = ref(false);
+const activeName = ref('deal');
+const informationRef = ref();
+const invoicesRef = ref();
+const deliveryRef = ref();
+useHead({
+  title: 'App HP Tech | Add Deal'
+});
+definePageMeta({
+  middleware: 'permissions',
+  permission: 'CREATE_DEALS'
+});
+const router = useRouter();
+const route = useRoute();
+const loading = ref(false);
 
-  const isInvoices = ref(false);
-  const isDeliveries = ref(false);
+const isInvoices = ref(false);
+const isDeliveries = ref(false);
 
-  let combinedValues = ref<DealValues>({});
+const combinedValues = ref<DealValues>({});
 
-  function getDealInformation(values: any) {
-    combinedValues.value = { ...combinedValues.value, ...values };
-  }
+function getDealInformation(values: any) {
+  combinedValues.value = { ...combinedValues.value, ...values };
+}
 
-  function getInvoices(values: any) {
-    combinedValues.value.invoiceDetails = [...values];
-  }
+function getInvoices(values: any) {
+  combinedValues.value.invoiceDetails = [...values];
+}
 
-  function getDeliveries(values: any) {
-    combinedValues.value.deliveryDetails = [...values];
-  }
+function getDeliveries(values: any) {
+  combinedValues.value.deliveryDetails = [...values];
+}
 
-  async function saveAllForms() {
-    // reset the values
-    combinedValues.value = {};
-    try {
-      loading.value = true;
-      // FIXME : Work arround to wait for the ref to initialize
-      if (activeName.value === "deal") {
-        activeName.value = "invoices";
-        await nextTick();
-        activeName.value = "deal";
-        await nextTick();
-      }
-      await informationRef.value.onSubmitInformation();
-      await invoicesRef.value.onSubmitInvoices();
-      await deliveryRef.value.onSubmitDeliveries();
-      if ((combinedValues.value?.deal?.name || combinedValues.value?.name) && isInvoices.value && isDeliveries.value) {
-        if (combinedValues.value?.leadId || combinedValues.value?.opportunityId) {
-          await convertToDeal(combinedValues.value);
-          // return;
-        } else {
-          await createDeal(combinedValues.value);
-        }
-      }
-      loading.value = false;
-      isDeliveries.value = false;
-      isInvoices.value = false;
-    } catch (error) {
-      console.error("Error saving forms:", error);
-      loading.value = false;
-    } finally {
-      loading.value = false;
+async function saveAllForms() {
+  // reset the values
+  combinedValues.value = {};
+  try {
+    loading.value = true;
+    // FIXME : Work arround to wait for the ref to initialize
+    if (activeName.value === 'deal') {
+      activeName.value = 'invoices';
+      await nextTick();
+      activeName.value = 'deal';
+      await nextTick();
     }
+    await informationRef.value.onSubmitInformation();
+    await invoicesRef.value.onSubmitInvoices();
+    await deliveryRef.value.onSubmitDeliveries();
+    if ((combinedValues.value?.deal?.name || combinedValues.value?.name) && isInvoices.value && isDeliveries.value) {
+      if (combinedValues.value?.leadId || combinedValues.value?.opportunityId) {
+        await convertToDeal(combinedValues.value);
+        // return;
+      } else {
+        await createDeal(combinedValues.value);
+      }
+    }
+    loading.value = false;
+    isDeliveries.value = false;
+    isInvoices.value = false;
+  } catch (error) {
+    console.error('Error saving forms:', error);
+    loading.value = false;
+  } finally {
+    loading.value = false;
   }
+}
 </script>

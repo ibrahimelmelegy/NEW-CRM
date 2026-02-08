@@ -17,7 +17,7 @@ const props = defineProps({
   descriptionTwo: String,
   icon: String,
   btnText: String,
-  vehicle: Object as () => Vehicle,
+  vehicle: Object as () => Vehicle
 });
 const emit = defineEmits(['confirm', 'submit']);
 

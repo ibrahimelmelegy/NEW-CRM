@@ -49,12 +49,12 @@ const props = defineProps({
   items: {
     type: Array,
     required: true,
-    default: [],
+    default: []
   },
   editMode: {
     type: Boolean,
-    required: false,
-  },
+    required: false
+  }
 });
 const route = useRoute();
 const emit = defineEmits(['onSubmit']);
@@ -63,8 +63,8 @@ const categoryItems = ref<CategoryItem[]>([
   {
     id: uuidv4(),
     name: '',
-    price: null,
-  },
+    price: null
+  }
 ]);
 
 if (props.items?.length) {
@@ -80,7 +80,7 @@ async function AddCategoryItem() {
   categoryItems.value.push({
     id: uuidv4(),
     name: '',
-    price: null,
+    price: null
   });
 }
 
@@ -182,7 +182,7 @@ async function onSubmitCategoryItems(): Promise<void> {
   if (route.path.includes('edit')) {
     const cleanedCategories = categoryItems.value.map(({ id, ...data }: CategoryItem) => ({
       ...data,
-      ...(props.items?.find((item: any) => item.id === id) ? { id } : {}),
+      ...(props.items?.find((item: any) => item.id === id) ? { id } : {})
     }));
     emit('onSubmit', cleanedCategories);
   } else {

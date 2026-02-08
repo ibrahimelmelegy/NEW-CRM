@@ -57,7 +57,6 @@ el-form.mt-6(  autocomplete="off"   @submit.prevent='onSubmit'   ref="myForm" la
 <script lang="ts" setup>
 import { useForm } from 'vee-validate';
 import * as yup from 'yup';
-;
 import { Plus } from '@element-plus/icons-vue';
 const route = useRoute();
 const props = defineProps({
@@ -65,12 +64,12 @@ const props = defineProps({
   label: String,
   data: {
     type: Object,
-    required: false,
+    required: false
   },
   editMode: {
     type: Boolean,
-    required: false,
-  },
+    required: false
+  }
 });
 const activeStep = defineModel<number>({ required: true });
 const addManpower = ref(false);
@@ -94,7 +93,7 @@ const formSchema = computed(() => {
             return value <= (project.value?.grandTotal || 0);
           })
           .max(999999999.99)
-          .label(t('operations.projects.preview.discount')),
+          .label(t('operations.projects.preview.discount'))
     }),
     margin: yup.string().when([], {
       is: () => haveMargin.value,
@@ -106,20 +105,20 @@ const formSchema = computed(() => {
             return /^\d+$/.test(value || '');
           })
           .max(9999)
-          .label(t('operations.projects.preview.margin')),
-    }),
+          .label(t('operations.projects.preview.margin'))
+    })
   };
   return yup.object(schema);
 });
 
 const { handleSubmit, errors, values } = useForm({
-  validationSchema: formSchema,
+  validationSchema: formSchema
 });
 
 const onSubmit = handleSubmit((values: any, actions: any) => {
   const formatedValues = cleanObject({
     discount: Number(values.discount),
-    marginPercentage: Number(values.margin),
+    marginPercentage: Number(values.margin)
   });
   emit('onFinish', formatedValues);
   // emit('submit', values);
@@ -133,7 +132,7 @@ const finalCost = ref({
       component: 'Text',
       // sortable: true,
       type: 'font-default',
-      width: 270,
+      width: 270
     },
     {
       prop: 'finalMaterialsTableCost',
@@ -141,7 +140,7 @@ const finalCost = ref({
       component: 'Text',
       // sortable: true,
       type: 'font-default',
-      width: 250,
+      width: 250
     },
     {
       prop: 'finalAssetsTableCost',
@@ -149,8 +148,8 @@ const finalCost = ref({
       component: 'Text',
       // sortable: true,
       type: 'font-default',
-      width: 250,
-    },
+      width: 250
+    }
     // {
     //   prop: 'grandTotal',
     //   label: 'Grand Total',
@@ -168,7 +167,7 @@ const finalCost = ref({
     //   width: 150,
     // },
   ],
-  data: [] as any,
+  data: [] as any
 });
 
 if (projectId.value) {
@@ -178,8 +177,8 @@ if (projectId.value) {
       finalMaterialsTableCost: project.value?.totalMaterialCost?.toFixed(2),
       finalAssetsTableCost: project.value?.totalAssetsCost?.toFixed(2),
       grandTotal: project.value?.grandTotal?.toFixed(2),
-      vat: project.value?.vat?.toFixed(2),
-    },
+      vat: project.value?.vat?.toFixed(2)
+    }
   ];
 }
 

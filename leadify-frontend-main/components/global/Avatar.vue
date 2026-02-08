@@ -10,50 +10,50 @@
 </template>
 
 <script setup>
-  const props = defineProps({
-    src: String,
-    small: Boolean,
-    text: String,
-    big: Boolean,
-    bigger: Boolean,
-    table: Boolean,
-  });
+const props = defineProps({
+  src: String,
+  small: Boolean,
+  text: String,
+  big: Boolean,
+  bigger: Boolean,
+  table: Boolean
+});
 
-  const fileShow = ref(false);
-  function showfile(file) {
-    if (!props.table) {
-      fileShow.value = true;
-    }
+const fileShow = ref(false);
+function showfile(file) {
+  if (!props.table) {
+    fileShow.value = true;
   }
-  const runtimeConfig = useRuntimeConfig();
+}
+const runtimeConfig = useRuntimeConfig();
 </script>
 
 <style lang="scss" scoped>
-  .big {
-    width: 132px;
-    height: 132px;
+.big {
+  width: 132px;
+  height: 132px;
+}
+.big-text {
+  font-size: 5em !important;
+}
+.bigger {
+  width: 80px !important;
+  height: 80px !important;
+}
+.avatar {
+  transition: var(--transition-smooth);
+  border: 1px solid var(--border-glass) !important;
+  background: var(--bg-surface-elevated) !important;
+  overflow: hidden;
+
+  &:hover {
+    border-color: var(--accent-purple) !important;
+    transform: scale(1.05);
+    box-shadow: var(--shadow-active);
   }
-  .big-text {
-    font-size: 5em !important;
-  }
-  .bigger {
-    width: 80px !important;
-    height: 80px !important;
-  }
-  .avatar {
-    transition: var(--transition-smooth);
-    border: 1px solid var(--border-glass) !important;
-    background: var(--bg-surface-elevated) !important;
-    overflow: hidden;
-    
-    &:hover {
-      border-color: var(--accent-purple) !important;
-      transform: scale(1.05);
-      box-shadow: var(--shadow-active);
-    }
-  }
-  
-  .text p {
-    color: var(--text-primary);
-  }
+}
+
+.text p {
+  color: var(--text-primary);
+}
 </style>

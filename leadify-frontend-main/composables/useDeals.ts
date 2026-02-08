@@ -4,14 +4,14 @@ function handleError(message: string) {
   ElNotification({
     type: 'error',
     title: 'Error',
-    message,
+    message
   });
 }
 function handleSuccess(message: string) {
   ElNotification({
     type: 'success',
     title: 'Success',
-    message,
+    message
   });
   navigateTo('/sales/deals'); // Navigate to the deals list
 }
@@ -19,23 +19,23 @@ function handleSuccess(message: string) {
 export enum DealStageEnums {
   PROGRESS = 'PROGRESS',
   CLOSED = 'CLOSED',
-  CANCELLED = 'CANCELLED',
+  CANCELLED = 'CANCELLED'
 }
 
 export const dealStageOptions = [
   { label: 'In Progress', value: DealStageEnums.PROGRESS },
   { label: 'Closed', value: DealStageEnums.CLOSED },
-  { label: 'Cancelled', value: DealStageEnums.CANCELLED },
+  { label: 'Cancelled', value: DealStageEnums.CANCELLED }
 ];
 
 export enum ContractTypeEnums {
   Contract = 'Contract',
-  PurchaseOrder = 'PurchaseOrder',
+  PurchaseOrder = 'PurchaseOrder'
 }
 
 export const contractTypeOptions = [
   { label: 'Contract', value: ContractTypeEnums.Contract },
-  { label: 'Purchase Order', value: ContractTypeEnums.PurchaseOrder },
+  { label: 'Purchase Order', value: ContractTypeEnums.PurchaseOrder }
 ];
 
 export interface Deal {
@@ -64,7 +64,7 @@ export interface Invoice {
   invoiceDate: Date | null;
   dueDate?: Date | null;
   collectedDate: Date | null;
-  collected: Boolean | null;
+  collected: boolean | null;
 }
 
 export interface DealValues {
@@ -97,7 +97,7 @@ export async function getDeals(all?: false): Promise<UseDealResult> {
         createdAt: formatDate(deal.createdAt),
         // updatedAt: formatDate(deal.updatedAt),
         updatedAt: '-',
-        assign: deal.user?.name,
+        assign: deal.user?.name
       }));
       const pagination = body?.pagination;
       return { deals, pagination };
@@ -125,7 +125,7 @@ export async function getDeals(all?: false): Promise<UseDealResult> {
  */
 export async function getDeal(id: string | string[]): Promise<Deal> {
   try {
-    let { body: deal, success } = await useApiFetch(`deal/${id}`);
+    const { body: deal, success } = await useApiFetch(`deal/${id}`);
     return deal;
   } catch (error) {
     console.error('Error fetching deal:', error instanceof Error ? error.message : error);
@@ -136,7 +136,7 @@ export async function getDeal(id: string | string[]): Promise<Deal> {
 
 export async function getDealActivity(id: string | string[]): Promise<Lead> {
   try {
-    let { body: lead, success } = await useApiFetch(`activity/deal/${id}`);
+    const { body: lead, success } = await useApiFetch(`activity/deal/${id}`);
     return lead;
   } catch (error) {
     console.error('Error fetching lead:', error instanceof Error ? error.message : error);

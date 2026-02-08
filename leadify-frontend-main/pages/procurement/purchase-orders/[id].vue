@@ -144,82 +144,10 @@
 
 </template>
 
-<style scoped lang="scss">
-.text-gradient {
-  background: var(--gradient-primary);
-  -webkit-background-clip: text;
-  background-clip: text;
-  -webkit-text-fill-color: transparent;
-}
-
-.bg-red-900_20 { background: rgba(127, 29, 29, 0.2); }
-.border-red-900_30 { border: 1px solid rgba(127, 29, 29, 0.3); }
-
-.premium-table {
-    background: transparent !important;
-    :deep(.el-table) {
-        background: transparent !important;
-        --el-table-bg-color: transparent;
-        --el-table-border-color: rgba(255, 255, 255, 0.05);
-        --el-table-header-bg-color: rgba(255, 255, 255, 0.03);
-    }
-    :deep(th.el-table__cell) {
-        text-transform: uppercase;
-        font-size: 10px;
-        letter-spacing: 1px;
-        color: var(--text-secondary);
-        padding: 12px 0;
-    }
-    :deep(td.el-table__cell) {
-        padding: 20px 0;
-        border-bottom: 1px solid rgba(255, 255, 255, 0.03) !important;
-    }
-}
-
-.premium-btn-outline {
-    background: rgba(255, 255, 255, 0.05) !important;
-    border: 1px solid rgba(255, 255, 255, 0.1) !important;
-    color: white !important;
-    &:hover {
-        background: rgba(255, 255, 255, 0.1) !important;
-        border-color: rgba(255, 255, 255, 0.2) !important;
-    }
-}
-
-.premium-input-textarea {
-    :deep(.el-textarea__inner) {
-        background: rgba(255, 255, 255, 0.03) !important;
-        border: 1px solid rgba(255, 255, 255, 0.1) !important;
-        border-radius: 16px !important;
-        color: white;
-        padding: 15px;
-        &:focus {
-            border-color: var(--purple-500) !important;
-            box-shadow: 0 0 15px rgba(168, 85, 247, 0.1);
-        }
-    }
-}
-
-.glass-dialog {
-  :deep(.el-dialog) {
-    background: rgba(30, 18, 48, 0.8) !important;
-    backdrop-filter: blur(25px);
-    border: 1px solid rgba(168, 85, 247, 0.2);
-  }
-}
-
-.bg-white_03 { background: rgba(255, 255, 255, 0.03); }
-.border-white_05 { border-color: rgba(255, 255, 255, 0.05); }
-.border-white_10 { border-color: rgba(255, 255, 255, 0.1); }
-
-.glow-green { box-shadow: 0 0 20px rgba(16, 185, 129, 0.4); }
-.glow-red { box-shadow: 0 0 20px rgba(239, 68, 68, 0.4); }
-</style>
-
 <script setup lang="ts">
-import { ArrowLeft, Download } from "@element-plus/icons-vue";
-import { ElNotification } from "element-plus";
-import { useApiFetch } from "~/composables/useApiFetch";
+import { ArrowLeft, Download } from '@element-plus/icons-vue';
+import { ElNotification } from 'element-plus';
+import { useApiFetch } from '~/composables/useApiFetch';
 
 const route = useRoute();
 const router = useRouter();
@@ -234,14 +162,18 @@ function formatDate(date: any) {
 const po = ref<any>(null);
 const loadingAction = ref(false);
 const rejectDialogVisible = ref(false);
-const rejectionReason = ref("");
+const rejectionReason = ref('');
 
 const statusRibbonClass = computed(() => {
   switch (po.value?.status) {
-    case 'Approved': return 'bg-green-600 text-white shadow-green-900/40';
-    case 'Rejected': return 'bg-red-600 text-white shadow-red-900/40';
-    case 'Pending': return 'bg-orange-500 text-white shadow-orange-900/40';
-    default: return 'bg-gray-600 text-white';
+    case 'Approved':
+      return 'bg-green-600 text-white shadow-green-900/40';
+    case 'Rejected':
+      return 'bg-red-600 text-white shadow-red-900/40';
+    case 'Pending':
+      return 'bg-orange-500 text-white shadow-orange-900/40';
+    default:
+      return 'bg-gray-600 text-white';
   }
 });
 
@@ -249,7 +181,7 @@ async function fetchPO() {
   try {
     po.value = await useApiFetch(`procurement/${route.params.id}`);
   } catch (error) {
-    ElNotification({ title: "Error", message: "Failed to load PO details", type: "error" });
+    ElNotification({ title: 'Error', message: 'Failed to load PO details', type: 'error' });
   }
 }
 
@@ -257,87 +189,173 @@ onMounted(fetchPO);
 
 const subtotal = computed(() => {
   if (!po.value?.items) return 0;
-  return po.value.items.reduce((acc: number, item: any) => acc + (item.quantity * item.unitPrice), 0);
+  return po.value.items.reduce((acc: number, item: any) => acc + item.quantity * item.unitPrice, 0);
 });
 
 async function handleApprove() {
   loadingAction.value = true;
   try {
-    await useApiFetch(`procurement/${po.value.id}/approve`, "PATCH");
-    ElNotification({ title: "Approved", type: "success", message: "Purchase Order has been approved" });
+    await useApiFetch(`procurement/${po.value.id}/approve`, 'PATCH');
+    ElNotification({ title: 'Approved', type: 'success', message: 'Purchase Order has been approved' });
     fetchPO();
   } catch (error) {
-    ElNotification({ title: "Error", type: "error", message: "Failed to approve PO" });
+    ElNotification({ title: 'Error', type: 'error', message: 'Failed to approve PO' });
   } finally {
     loadingAction.value = false;
   }
 }
 
 async function handleReject() {
-  if (!rejectionReason.value) return (ElNotification as any)({ title: "Required", message: "Please provide a rejection reason", type: "warning" });
-  
+  if (!rejectionReason.value) return (ElNotification as any)({ title: 'Required', message: 'Please provide a rejection reason', type: 'warning' });
+
   loadingAction.value = true;
   try {
-    await useApiFetch(`procurement/${po.value.id}/reject`, "PATCH", { rejectionReason: rejectionReason.value });
-    ElNotification({ title: "Rejected", type: "danger", message: "Purchase Order has been rejected" });
+    await useApiFetch(`procurement/${po.value.id}/reject`, 'PATCH', { rejectionReason: rejectionReason.value });
+    ElNotification({ title: 'Rejected', type: 'danger', message: 'Purchase Order has been rejected' });
     rejectDialogVisible.value = false;
     fetchPO();
   } catch (error) {
-    ElNotification({ title: "Error", type: "error", message: "Failed to reject PO" });
+    ElNotification({ title: 'Error', type: 'error', message: 'Failed to reject PO' });
   } finally {
     loadingAction.value = false;
   }
 }
 
 async function downloadPDF() {
-  const { jsPDF } = await import("jspdf");
-  const { default: autoTable } = await import("jspdf-autotable");
+  const { jsPDF } = await import('jspdf');
+  const { default: autoTable } = await import('jspdf-autotable');
 
   const doc = new jsPDF();
 
   // Header
   doc.setFontSize(20);
-  doc.text("PURCHASE ORDER", 105, 20, { align: "center" });
-  
+  doc.text('PURCHASE ORDER', 105, 20, { align: 'center' });
+
   doc.setFontSize(10);
   doc.text(`PO Number: ${po.value.poNumber}`, 14, 40);
   doc.text(`Date: ${formatDate(po.value.createdAt)}`, 14, 45);
   doc.text(`Status: ${po.value.status}`, 14, 50);
 
   // Vendor & Project
-  doc.text("Vendor:", 14, 60);
+  doc.text('Vendor:', 14, 60);
   // @ts-ignore
-  doc.setFont("helvetica", "bold");
-  doc.text(po.value.vendor?.name || "N/A", 40, 60);
-  
+  doc.setFont('helvetica', 'bold');
+  doc.text(po.value.vendor?.name || 'N/A', 40, 60);
+
   // @ts-ignore
-  doc.setFont("helvetica", "normal");
-  doc.text("Project:", 14, 65);
-  doc.text(po.value.project?.name || "N/A", 40, 65);
+  doc.setFont('helvetica', 'normal');
+  doc.text('Project:', 14, 65);
+  doc.text(po.value.project?.name || 'N/A', 40, 65);
 
   // Items Table
   const tableData = po.value.items.map((item: any) => [
     item.description,
     item.quantity,
     item.unitPrice,
-    item.tax + "%",
-    ((item.quantity * item.unitPrice) * (1 + item.tax / 100)).toFixed(2)
+    item.tax + '%',
+    (item.quantity * item.unitPrice * (1 + item.tax / 100)).toFixed(2)
   ]);
 
   autoTable(doc, {
     startY: 75,
-    head: [["Description", "Qty", "Unit Price", "Tax", "Total"]],
+    head: [['Description', 'Qty', 'Unit Price', 'Tax', 'Total']],
     body: tableData,
-    theme: "striped",
+    theme: 'striped',
     headStyles: { fillColor: [120, 73, 255] }
   });
 
   // Footer / Total
   const finalY = (doc as any).lastAutoTable.finalY + 10;
   doc.setFontSize(14);
-  doc.text(`Grand Total: SR ${po.value.totalAmount}`, 196, finalY, { align: "right" });
+  doc.text(`Grand Total: SR ${po.value.totalAmount}`, 196, finalY, { align: 'right' });
 
   doc.save(`${po.value.poNumber}.pdf`);
-  ElNotification({ title: "Success", message: "PDF downloaded successfully", type: "success" });
+  ElNotification({ title: 'Success', message: 'PDF downloaded successfully', type: 'success' });
 }
 </script>
+
+<style scoped lang="scss">
+.text-gradient {
+  background: var(--gradient-primary);
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+.bg-red-900_20 {
+  background: rgba(127, 29, 29, 0.2);
+}
+.border-red-900_30 {
+  border: 1px solid rgba(127, 29, 29, 0.3);
+}
+
+.premium-table {
+  background: transparent !important;
+  :deep(.el-table) {
+    background: transparent !important;
+    --el-table-bg-color: transparent;
+    --el-table-border-color: rgba(255, 255, 255, 0.05);
+    --el-table-header-bg-color: rgba(255, 255, 255, 0.03);
+  }
+  :deep(th.el-table__cell) {
+    text-transform: uppercase;
+    font-size: 10px;
+    letter-spacing: 1px;
+    color: var(--text-secondary);
+    padding: 12px 0;
+  }
+  :deep(td.el-table__cell) {
+    padding: 20px 0;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.03) !important;
+  }
+}
+
+.premium-btn-outline {
+  background: rgba(255, 255, 255, 0.05) !important;
+  border: 1px solid rgba(255, 255, 255, 0.1) !important;
+  color: white !important;
+  &:hover {
+    background: rgba(255, 255, 255, 0.1) !important;
+    border-color: rgba(255, 255, 255, 0.2) !important;
+  }
+}
+
+.premium-input-textarea {
+  :deep(.el-textarea__inner) {
+    background: rgba(255, 255, 255, 0.03) !important;
+    border: 1px solid rgba(255, 255, 255, 0.1) !important;
+    border-radius: 16px !important;
+    color: white;
+    padding: 15px;
+    &:focus {
+      border-color: var(--purple-500) !important;
+      box-shadow: 0 0 15px rgba(168, 85, 247, 0.1);
+    }
+  }
+}
+
+.glass-dialog {
+  :deep(.el-dialog) {
+    background: rgba(30, 18, 48, 0.8) !important;
+    backdrop-filter: blur(25px);
+    border: 1px solid rgba(168, 85, 247, 0.2);
+  }
+}
+
+.bg-white_03 {
+  background: rgba(255, 255, 255, 0.03);
+}
+.border-white_05 {
+  border-color: rgba(255, 255, 255, 0.05);
+}
+.border-white_10 {
+  border-color: rgba(255, 255, 255, 0.1);
+}
+
+.glow-green {
+  box-shadow: 0 0 20px rgba(16, 185, 129, 0.4);
+}
+.glow-red {
+  box-shadow: 0 0 20px rgba(239, 68, 68, 0.4);
+}
+</style>

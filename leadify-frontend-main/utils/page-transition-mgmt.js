@@ -51,7 +51,12 @@ function move_children_forward_recursively(child, child_sibling, stop_condition,
     // - a header title (e.g. <h1>)
     // - a table row (e.g. <tr>)
     // - any element on whose user-custom `do_not_break` function returns true
-    else if (!sub_child.childNodes.length || sub_child.tagName.match(/h\d/i) || sub_child.tagName.match(/tr/i) || (typeof do_not_break === 'function' && do_not_break(sub_child))) {
+    else if (
+      !sub_child.childNodes.length ||
+      sub_child.tagName.match(/h\d/i) ||
+      sub_child.tagName.match(/tr/i) ||
+      (typeof do_not_break === 'function' && do_not_break(sub_child))
+    ) {
       // just prevent moving the last child of the page
       if (!not_first_child) {
         console.log('Move-forward: first child reached with no stop condition. Aborting');
@@ -87,7 +92,11 @@ function move_children_forward_recursively(child, child_sibling, stop_condition,
       else if (!stop_condition()) {
         // the only case when it can be non empty should be when stop_condition is now true
         console.log('sub_child:', sub_child, 'that is in child:', child);
-        throw Error('Document editor is trying to remove a non-empty sub-child. This ' + 'is a bug and should not happen. Please report a repeatable set of actions that ' + 'leaded to this error to https://github.com/motla/vue-document-editor/issues/new');
+        throw new Error(
+          'Document editor is trying to remove a non-empty sub-child. This ' +
+            'is a bug and should not happen. Please report a repeatable set of actions that ' +
+            'leaded to this error to https://github.com/motla/vue-document-editor/issues/new'
+        );
       }
     }
   }

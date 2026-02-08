@@ -16,20 +16,20 @@
 const props = defineProps({
   valueObject: {
     type: Object,
-    required: false,
+    required: false
   },
   value: {
     type: String,
-    required: true,
+    required: true
   },
   type: {
     type: String,
-    required: true,
+    required: true
   },
   filters: {
     type: Array,
-    default: [],
-  },
+    default: []
+  }
 });
 const route = useRoute();
 
@@ -37,7 +37,7 @@ const valueMap = {
   ACTIVE: 'PROJECT_ACTIVE',
   CANCELLED: 'PROJECT_CANCELLED',
   COMPLETED: 'PROJECT_COMPLETED',
-  ON_HOLD: 'PROJECT_ON_HOLD',
+  ON_HOLD: 'PROJECT_ON_HOLD'
 };
 const labelType = computed(() => {
   // Check if the route includes "projects"
@@ -51,7 +51,7 @@ const labelBg = computed(() => {
 function getTextFromValue(value) {
   const mappedValue = route.path.includes('projects') ? valueMap[value] || value : value;
 
-  const matchedFilter = props.filters?.find((filter) => filter.value === mappedValue);
+  const matchedFilter = props.filters?.find(filter => filter.value === mappedValue);
 
   return matchedFilter ? matchedFilter.text : mappedValue;
 }
@@ -103,7 +103,6 @@ function getTextFromValue(value) {
   }
 
   &-solid {
-
     // &-primary {
     //   border: 1px solid $primary;
     //   color: $primary;

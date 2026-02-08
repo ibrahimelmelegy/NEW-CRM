@@ -64,242 +64,234 @@ el-form( autocomplete="off"   @submit.prevent='onSubmit'   ref="myForm" label-po
 </template>
 
 <script lang="ts" setup>
-  import { useForm } from "vee-validate";
-  import * as yup from "yup";
-  const route = useRoute();
-  const router = useRouter();
-  const props = defineProps({
-    loading: Boolean,
-    label: String,
-    data: {
-      type: Object,
-      required: false,
-    },
-  });
+import { useForm } from 'vee-validate';
+import * as yup from 'yup';
+const route = useRoute();
+const router = useRouter();
+const props = defineProps({
+  loading: Boolean,
+  label: String,
+  data: {
+    type: Object,
+    required: false
+  }
+});
 
-  const activeStep = defineModel<number>({ required: true });
-  const emit = defineEmits(["submit", "cancel"]);
-  const isCancelled = ref(false);
-  const isEtimadProject = ref(false);
-  const { t } = useI18n();
-  const formSchema = computed(() => {
-    const baseSchema = {
-      name: yup.string().trim().required().min(2).max(100).label(t("operations.projects.form.projectName")),
-      type: yup.string().trim().required().min(2).max(100).label(t("operations.projects.form.projectType")),
-      category: yup.string().trim().required().min(2).max(100).label(t("operations.projects.form.category")),
-      client: yup.string().nullable().trim().max(100).label(t("operations.projects.form.client")),
-      startDate: yup
-        .date()
-        .nullable()
-        .notRequired()
-        .typeError(t("validation.invalidDate"))
-        .label(t("operations.projects.form.startDate")),
+const activeStep = defineModel<number>({ required: true });
+const emit = defineEmits(['submit', 'cancel']);
+const isCancelled = ref(false);
+const isEtimadProject = ref(false);
+const { t } = useI18n();
+const formSchema = computed(() => {
+  const baseSchema = {
+    name: yup.string().trim().required().min(2).max(100).label(t('operations.projects.form.projectName')),
+    type: yup.string().trim().required().min(2).max(100).label(t('operations.projects.form.projectType')),
+    category: yup.string().trim().required().min(2).max(100).label(t('operations.projects.form.category')),
+    client: yup.string().nullable().trim().max(100).label(t('operations.projects.form.client')),
+    startDate: yup.date().nullable().notRequired().typeError(t('validation.invalidDate')).label(t('operations.projects.form.startDate')),
 
-      endDate: yup
-        .date()
-        .nullable()
-        .notRequired()
-        .typeError(t("validation.invalidDate"))
-        .min(yup.ref('startDate'), t("validation.dateAfter"))
-        .label(t("operations.projects.form.endDate")),
-      duration: yup
+    endDate: yup
+      .date()
+      .nullable()
+      .notRequired()
+      .typeError(t('validation.invalidDate'))
+      .min(yup.ref('startDate'), t('validation.dateAfter'))
+      .label(t('operations.projects.form.endDate')),
+    duration: yup
+      .string()
+      .required()
+      .test('is-valid-number', t('validation.invalidNumber'), (value: any) => {
+        return /^\d+$/.test(value || '');
+      })
+      .label(t('operations.projects.form.duration')),
+    assignUser: yup.array().of(yup.mixed()).required().min(1).label(t('operations.projects.form.assignUsers')),
+    status: yup.string().trim().required().label(t('operations.projects.form.status')),
+    description: yup.string().trim().required().min(1).max(500).label(t('operations.projects.form.description')),
+    cancelReason: yup.string().when([], {
+      is: () => isCancelled.value,
+      then: () => yup.string().required().min(2).max(250).label(t('operations.projects.form.cancelReason'))
+    })
+  };
+
+  if (isEtimadProject.value) {
+    return yup.object({
+      ...baseSchema,
+      abbreviation: yup.string().trim().required().min(2).max(100).label(t('operations.projects.form.abbreviation')),
+      organizationName: yup.string().trim().required().min(2).max(100).label(t('operations.projects.form.organization')),
+      rfpName: yup.string().trim().required().min(2).max(100).label(t('operations.projects.form.rfpName')),
+      contractType: yup.string().trim().required().min(2).max(100).label(t('operations.projects.form.contractType')),
+      tenderPrice: yup
         .string()
-        .required()
-        .test("is-valid-number", t("validation.invalidNumber"), (value: any) => {
-          return /^\d+$/.test(value || "");
+        .nullable()
+        .test('is-valid-number', t('validation.invalidNumber'), (value: any) => /^\d*\.?\d*$/.test(value || ''))
+        .label(t('operations.projects.form.tenderPrice')),
+      businessLine: yup.string().nullable().trim().max(100).label(t('operations.projects.form.businessLine')),
+      estimatedBudget: yup
+        .string()
+        .nullable()
+        .test('is-valid-number', t('validation.invalidNumber'), (value: any) => /^\d*\.?\d*$/.test(value || ''))
+        .label(t('operations.projects.form.estBudget')),
+      companyMargin: yup
+        .string()
+        .nullable()
+        .test('is-valid-number', t('validation.invalidNumber'), (value: any) => /^\d*\.?\d*$/.test(value || ''))
+        .test('max-value', t('validation.maxValue', { value: 100 }), (value: any) => (value ? parseFloat(value) <= 100 : true))
+        .label(t('operations.projects.form.margin')),
+      submissionDate: yup
+        .mixed()
+        .test('is-valid-date', t('validation.invalidDate'), (value: any) => {
+          // Check if the value is valid
+          return value && !isNaN(new Date(value).getTime());
         })
-        .label(t("operations.projects.form.duration")),
-      assignUser: yup.array().of(yup.mixed()).required().min(1).label(t("operations.projects.form.assignUsers")),
-      status: yup.string().trim().required().label(t("operations.projects.form.status")),
-      description: yup.string().trim().required().min(1).max(500).label(t("operations.projects.form.description")),
-      cancelReason: yup.string().when([], {
-        is: () => isCancelled.value,
-        then: () => yup.string().required().min(2).max(250).label(t("operations.projects.form.cancelReason")),
-      }),
-    };
-
-    if (isEtimadProject.value) {
-      return yup.object({
-        ...baseSchema,
-        abbreviation: yup.string().trim().required().min(2).max(100).label(t("operations.projects.form.abbreviation")),
-        organizationName: yup.string().trim().required().min(2).max(100).label(t("operations.projects.form.organization")),
-        rfpName: yup.string().trim().required().min(2).max(100).label(t("operations.projects.form.rfpName")),
-        contractType: yup.string().trim().required().min(2).max(100).label(t("operations.projects.form.contractType")),
-        tenderPrice: yup
-          .string()
-          .nullable()
-          .test("is-valid-number", t("validation.invalidNumber"), (value: any) => /^\d*\.?\d*$/.test(value || ""))
-          .label(t("operations.projects.form.tenderPrice")),
-        businessLine: yup.string().nullable().trim().max(100).label(t("operations.projects.form.businessLine")),
-        estimatedBudget: yup
-          .string()
-          .nullable()
-          .test("is-valid-number", t("validation.invalidNumber"), (value: any) => /^\d*\.?\d*$/.test(value || ""))
-          .label(t("operations.projects.form.estBudget")),
-        companyMargin: yup
-          .string()
-          .nullable()
-          .test("is-valid-number", t("validation.invalidNumber"), (value: any) => /^\d*\.?\d*$/.test(value || ""))
-          .test("max-value", t("validation.maxValue", { value: 100 }), (value: any) =>
-            value ? parseFloat(value) <= 100 : true
-          )
-          .label(t("operations.projects.form.margin")),
-        submissionDate: yup
-          .mixed()
-          .test("is-valid-date", t("validation.invalidDate"), (value: any) => {
-            // Check if the value is valid
-            return value && !isNaN(new Date(value).getTime());
-          })
-          .required(t("validation.required"))
-          .label(t("operations.projects.form.submissionDate")),
-        proposalStatus: yup.string().trim().required().label(t("operations.projects.form.proposalStatus")),
-        applicationStatus: yup.string().trim().required().label(t("operations.projects.form.appStatus")),
-      });
-    }
-
-    return yup.object(baseSchema);
-  });
-
-  //  Get Users
-  let users = await useApiFetch("users");
-  // Map Users to Select Options
-  users = users?.body?.docs?.map((e: any) => ({
-    label: e.name,
-    value: e.id,
-  }));
-
-  const mappedClients = ref<{ label: string; value: any }[]>();
-  //  Get clients
-  let { clients } = await getClients();
-  // Map clients to Select Options
-  mappedClients.value = clients?.map((e: any) => ({
-    label: e.clientName,
-    value: e.id,
-  }));
-
-  /**
-   * Checks if the deal stage has been set to 'Cancelled'.
-   */
-  function checkIfCancelled(value: any) {
-    if (value.value === "CANCELLED") {
-      isCancelled.value = true;
-    } else {
-      isCancelled.value = false;
-    }
+        .required(t('validation.required'))
+        .label(t('operations.projects.form.submissionDate')),
+      proposalStatus: yup.string().trim().required().label(t('operations.projects.form.proposalStatus')),
+      applicationStatus: yup.string().trim().required().label(t('operations.projects.form.appStatus'))
+    });
   }
 
-  if (project.value?.cancelledReason) {
+  return yup.object(baseSchema);
+});
+
+//  Get Users
+let users = await useApiFetch('users');
+// Map Users to Select Options
+users = users?.body?.docs?.map((e: any) => ({
+  label: e.name,
+  value: e.id
+}));
+
+const mappedClients = ref<{ label: string; value: any }[]>();
+//  Get clients
+const { clients } = await getClients();
+// Map clients to Select Options
+mappedClients.value = clients?.map((e: any) => ({
+  label: e.clientName,
+  value: e.id
+}));
+
+/**
+ * Checks if the deal stage has been set to 'Cancelled'.
+ */
+function checkIfCancelled(value: any) {
+  if (value.value === 'CANCELLED') {
     isCancelled.value = true;
+  } else {
+    isCancelled.value = false;
   }
+}
 
-  /**
-   * Checks if the project category has been set to 'ETIMAD Project'.
-   */
-  function checkIfEtimadProject(value: any) {
-    if (value.label === "Etimad") {
-      isEtimadProject.value = true;
-    } else {
-      isEtimadProject.value = false;
-    }
-  }
+if (project.value?.cancelledReason) {
+  isCancelled.value = true;
+}
 
-  if (project.value?.category === "Etimad") {
+/**
+ * Checks if the project category has been set to 'ETIMAD Project'.
+ */
+function checkIfEtimadProject(value: any) {
+  if (value.label === 'Etimad') {
     isEtimadProject.value = true;
+  } else {
+    isEtimadProject.value = false;
   }
+}
 
-  const { handleSubmit, errors, values } = useForm({
-    validationSchema: formSchema,
-  });
+if (project.value?.category === 'Etimad') {
+  isEtimadProject.value = true;
+}
 
-  const onSubmit = handleSubmit(async (values: CombinedProjectValues) => {
-    // Prepare the project info
-    const basicInfo = formattedBasicInfo(values);
-    const etimadInfo = formattedEtimadProjectInfo(values);
-    const projectInfo = {
-      basicInfo: {
-        ...basicInfo,
-        ...(isEtimadProject.value && { etimadInfo }),
-      },
-    };
+const { handleSubmit, errors, values } = useForm({
+  validationSchema: formSchema
+});
 
-    try {
-      // Attempt to create the project
-      await createProject(projectInfo);
-      activeStep.value++;
-    } catch (error) {
-      // Handle the error and prevent the step from being incremented
-      console.error("Project creation failed", error);
+const onSubmit = handleSubmit(async (values: CombinedProjectValues) => {
+  // Prepare the project info
+  const basicInfo = formattedBasicInfo(values);
+  const etimadInfo = formattedEtimadProjectInfo(values);
+  const projectInfo = {
+    basicInfo: {
+      ...basicInfo,
+      ...(isEtimadProject.value && { etimadInfo })
     }
-    // emit('submit')
+  };
+
+  try {
+    // Attempt to create the project
+    await createProject(projectInfo);
+    activeStep.value++;
+  } catch (error) {
+    // Handle the error and prevent the step from being incremented
+    console.error('Project creation failed', error);
+  }
+  // emit('submit')
+});
+
+function formattedBasicInfo(values: any) {
+  if (!values) return {};
+  return cleanObject({
+    name: values?.name,
+    type: values?.type,
+    category: values?.category,
+    clientId: values?.client,
+    startDate: typeof values?.startDate === 'string' ? values?.startDate : values?.startDate?.toISOString(),
+    endDate: typeof values?.endDate === 'string' ? values?.endDate : values?.endDate?.toISOString(),
+    duration: Number(values?.duration),
+    assignedUsersIds: values?.assignUser,
+    status: values?.status,
+    description: values?.description,
+    cancelledReason: values?.cancelReason
   });
+}
 
-  function formattedBasicInfo(values: any) {
-    if (!values) return {};
-    return cleanObject({
-      name: values?.name,
-      type: values?.type,
-      category: values?.category,
-      clientId: values?.client,
-      startDate: typeof values?.startDate === "string" ? values?.startDate : values?.startDate?.toISOString(),
-      endDate: typeof values?.endDate === "string" ? values?.endDate : values?.endDate?.toISOString(),
-      duration: Number(values?.duration),
-      assignedUsersIds: values?.assignUser,
-      status: values?.status,
-      description: values?.description,
-      cancelledReason: values?.cancelReason,
-    });
+function formattedEtimadProjectInfo(values: any) {
+  if (!values) return {};
+  return cleanObject({
+    abbreviation: values?.abbreviation,
+    organizationName: values?.organizationName,
+    rfpName: values?.rfpName,
+    contractType: values?.contractType,
+    tenderPrice: Number(values?.tenderPrice),
+    businessLine: values?.businessLine,
+    estimatedBudget: Number(values?.estimatedBudget),
+    companyMargin: Number(values?.companyMargin),
+    submissionDate: typeof values?.submissionDate === 'string' ? values?.submissionDate : values?.submissionDate?.toISOString(),
+    proposalStatus: values?.proposalStatus,
+    applicationStatus: values?.applicationStatus
+  });
+}
+function calculateRemainingDays(): number | null {
+  const submissionDate = values?.submissionDate; // Example: "2025-02-13"
+  const currentDate = new Date().toISOString().split('T')[0];
+  if (!submissionDate || !currentDate) return null;
+
+  // Convert input strings to Date objects
+  const submission = new Date(submissionDate);
+  const current = new Date(currentDate);
+
+  // Validate date conversion
+  if (isNaN(submission.getTime()) || isNaN(current.getTime())) return null;
+
+  // Calculate difference in time (milliseconds)
+  const diffTime = submission.getTime() - current.getTime();
+
+  // Convert milliseconds to days
+  const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+
+  // Ensure remaining days are not negative
+  return diffDays >= 0 ? diffDays : 0;
+}
+
+const remainingDays = ref(calculateRemainingDays());
+remainingDays.value = project.value?.etimadProject?.remainingDays || calculateRemainingDays();
+watch(
+  () => [values.submissionDate],
+  () => {
+    remainingDays.value = calculateRemainingDays();
+  },
+  {
+    deep: true
   }
-
-  function formattedEtimadProjectInfo(values: any) {
-    if (!values) return {};
-    return cleanObject({
-      abbreviation: values?.abbreviation,
-      organizationName: values?.organizationName,
-      rfpName: values?.rfpName,
-      contractType: values?.contractType,
-      tenderPrice: Number(values?.tenderPrice),
-      businessLine: values?.businessLine,
-      estimatedBudget: Number(values?.estimatedBudget),
-      companyMargin: Number(values?.companyMargin),
-      submissionDate:
-        typeof values?.submissionDate === "string" ? values?.submissionDate : values?.submissionDate?.toISOString(),
-      proposalStatus: values?.proposalStatus,
-      applicationStatus: values?.applicationStatus,
-    });
-  }
-  function calculateRemainingDays(): number | null {
-    const submissionDate = values?.submissionDate; // Example: "2025-02-13"
-    const currentDate = new Date().toISOString().split("T")[0];
-    if (!submissionDate || !currentDate) return null;
-
-    // Convert input strings to Date objects
-    const submission = new Date(submissionDate);
-    const current = new Date(currentDate);
-
-    // Validate date conversion
-    if (isNaN(submission.getTime()) || isNaN(current.getTime())) return null;
-
-    // Calculate difference in time (milliseconds)
-    const diffTime = submission.getTime() - current.getTime();
-
-    // Convert milliseconds to days
-    const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
-
-    // Ensure remaining days are not negative
-    return diffDays >= 0 ? diffDays : 0;
-  }
-
-  const remainingDays = ref(calculateRemainingDays());
-  remainingDays.value = project.value?.etimadProject?.remainingDays || calculateRemainingDays();
-  watch(
-    () => [values.submissionDate],
-    () => {
-      remainingDays.value = calculateRemainingDays();
-    },
-    {
-      deep: true,
-    }
-  );
+);
 </script>
 
 <style scoped lang="scss">
@@ -310,22 +302,34 @@ el-form( autocomplete="off"   @submit.prevent='onSubmit'   ref="myForm" label-po
   -webkit-text-fill-color: transparent;
 }
 
-.bg-white_5 { background: rgba(255, 255, 255, 0.05); }
-.border-white_10 { border-color: rgba(255, 255, 255, 0.1); }
-.bg-purple-900_10 { background: rgba(88, 28, 135, 0.1); }
-.border-purple-500_20 { border-color: rgba(168, 85, 247, 0.2); }
+.bg-white_5 {
+  background: rgba(255, 255, 255, 0.05);
+}
+.border-white_10 {
+  border-color: rgba(255, 255, 255, 0.1);
+}
+.bg-purple-900_10 {
+  background: rgba(88, 28, 135, 0.1);
+}
+.border-purple-500_20 {
+  border-color: rgba(168, 85, 247, 0.2);
+}
 
 // Consistent input styling if not fully encapsulated in InputText
-.premium-input, .premium-select, .premium-datepicker {
-  :deep(input), :deep(.el-input__wrapper) {
-      background: rgba(255, 255, 255, 0.03) !important;
-      border: 1px solid rgba(255, 255, 255, 0.1) !important;
-      border-radius: 12px !important;
-      box-shadow: none !important;
-      color: white;
-      &.is-focus, &:focus {
-        border-color: var(--purple-500) !important;
-      }
+.premium-input,
+.premium-select,
+.premium-datepicker {
+  :deep(input),
+  :deep(.el-input__wrapper) {
+    background: rgba(255, 255, 255, 0.03) !important;
+    border: 1px solid rgba(255, 255, 255, 0.1) !important;
+    border-radius: 12px !important;
+    box-shadow: none !important;
+    color: white;
+    &.is-focus,
+    &:focus {
+      border-color: var(--purple-500) !important;
+    }
   }
 }
 </style>

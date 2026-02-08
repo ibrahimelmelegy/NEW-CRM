@@ -26,12 +26,12 @@ const route = useRoute();
 const props = defineProps({
   invoices: {
     type: Array,
-    required: true,
+    required: true
   },
   editMode: {
     type: Boolean,
-    required: false,
-  },
+    required: false
+  }
 });
 
 // Reactive invoice array
@@ -42,8 +42,8 @@ const invoices = ref<Invoice[]>([
     amount: null,
     dueDate: null,
     collectedDate: null,
-    collected: null,
-  },
+    collected: null
+  }
 ]);
 
 if (props.invoices?.length) {
@@ -52,8 +52,8 @@ if (props.invoices?.length) {
     invoiceNumber: invoice.invoiceNumber || '',
     invoiceDate: new Date(invoice.invoiceDate),
     collectedDate: new Date(invoice.collectedDate),
-    collected: invoice.collected ? true : false,
-    id: invoice.id,
+    collected: !!invoice.collected,
+    id: invoice.id
   }));
 }
 
@@ -69,7 +69,7 @@ async function AddInvoice() {
     amount: null,
     dueDate: null,
     collectedDate: null,
-    collected: null,
+    collected: null
   });
 }
 
@@ -184,7 +184,7 @@ async function onSubmitInvoices() {
     ...data,
     invoiceDate: getYear(data.invoiceDate),
     collectedDate: getYear(data.collectedDate),
-    amount: Number(data.amount),
+    amount: Number(data.amount)
   }));
   emit('isValid', true);
   if (route.path.includes('edit')) {

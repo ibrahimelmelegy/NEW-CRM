@@ -13,29 +13,28 @@
 
 <script setup lang="ts">
 import { useForm } from 'vee-validate';
-const { handleSubmit, errors, values ,resetForm } = useForm();
+const { handleSubmit, errors, values, resetForm } = useForm();
 const emit = defineEmits(['showFilter']);
 
-const onSubmit = handleSubmit(async (values:any) => {
-  if( values["fromDate"]) {
-    values["fromDate"] = [getYear(values["fromDate"].toISOString())];
+const onSubmit = handleSubmit(async (values: any) => {
+  if (values.fromDate) {
+    values.fromDate = [getYear(values.fromDate.toISOString())];
   }
-  if( values["toDate"]) {
-    values["toDate"] = [getYear(values["toDate"].toISOString())];
+  if (values.toDate) {
+    values.toDate = [getYear(values.toDate.toISOString())];
   }
 
   emit('showFilter', values);
-})
+});
 
 const ResetFilter = async () => {
-  //await resetForm()
+  // await resetForm()
   emit('showFilter', {
-    role: "",
-    availabilityStatus: "",
-    fromDate: "",
-    toDate: "",
+    role: '',
+    availabilityStatus: '',
+    fromDate: '',
+    toDate: ''
   });
-  resetForm()
-}
-
+  resetForm();
+};
 </script>

@@ -102,52 +102,52 @@ el-tabs.demo-tabs(v-model="activeName", @tab-click="handleClick")
         el-button( v-if="activity?.docs?.length >0" :loading = "loading" class="!rounded-2xl mb-2"  type= 'primary' size="large" :disabled="activity?.pagination?.totalPages == activity?.pagination?.page" @click="getActivityPage(Number(activity?.pagination?.page)+1)") {{ $t('common.view') }} More
 </template>
 <script lang="ts" setup>
-  import { useI18n } from 'vue-i18n';
-  const { hasPermission } = await usePermissions();
-  const { t } = useI18n();
-  const activeName = ref("summary");
-  const route = useRoute();
-  import { ElMessage } from "element-plus";
+import { useI18n } from 'vue-i18n';
+import { ElMessage } from 'element-plus';
+const { hasPermission } = await usePermissions();
+const { t } = useI18n();
+const activeName = ref('summary');
+const route = useRoute();
 
-  const loading = ref(false);
+const loading = ref(false);
 
-  const activity = ref();
+const activity = ref();
 
-  // Call API to Get the client
-  const client = await getClient(route.params.slug as string);
+// Call API to Get the client
+const client = await getClient(route.params.slug as string);
 
-  const response = await getClientActivity((route.params.slug as string) + `?limit=10` + "&&page=1");
-  activity.value = response;
+const response = await getClientActivity((route.params.slug as string) + `?limit=10` + '&&page=1');
+activity.value = response;
 
-  const getActivityPage = async (page: number) => {
-    try {
-      loading.value = true;
-      const responsPage = await getClientActivity((route.params.slug as string) + `?limit=10` + `&&page=${page}`);
-      activity.value = { docs: [...activity.value.docs, ...responsPage.docs], pagination: responsPage.pagination };
-    } finally {
-      loading.value = false;
-    }
-  };
-
-  async function downloadFile(pdfUrl: string, filename: string) {
-    fetch(pdfUrl)
-      // check to make sure you didn't have an unexpected failure (may need to check other things here depending on use case / backend)
-      .then((resp) => (resp.status === 200 ? resp.blob() : Promise.reject("something went wrong")))
-      .then((blob) => {
-        const url = window.URL.createObjectURL(blob);
-        const a = document.createElement("a");
-        a.style.display = "none";
-        a.href = url;
-        // the filename you want
-        a.download = filename;
-        document.body.appendChild(a);
-        a.click();
-        window.URL.revokeObjectURL(url);
-        // or you know, something with better UX...
-        ElMessage.success(`Downloaded ${filename}`);
-      })
-      .catch(() => {
-        ElMessage.error("Download failed");
-      });
+const getActivityPage = async (page: number) => {
+  try {
+    loading.value = true;
+    const responsPage = await getClientActivity((route.params.slug as string) + `?limit=10` + `&&page=${page}`);
+    activity.value = { docs: [...activity.value.docs, ...responsPage.docs], pagination: responsPage.pagination };
+  } finally {
+    loading.value = false;
   }
+};
+
+async function downloadFile(pdfUrl: string, filename: string) {
+  fetch(pdfUrl)
+    // check to make sure you didn't have an unexpected failure (may need to check other things here depending on use case / backend)
+    .then(resp => (resp.status === 200 ? resp.blob() : Promise.reject('something went wrong')))
+    .then(blob => {
+      const url = window.URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.style.display = 'none';
+      a.href = url;
+      // the filename you want
+      a.download = filename;
+      document.body.appendChild(a);
+      a.click();
+      window.URL.revokeObjectURL(url);
+      // or you know, something with better UX...
+      ElMessage.success(`Downloaded ${filename}`);
+    })
+    .catch(() => {
+      ElMessage.error('Download failed');
+    });
+}
 </script>

@@ -26,12 +26,12 @@ const route = useRoute();
 const props = defineProps({
   deliveries: {
     type: Array,
-    required: true,
+    required: true
   },
   editMode: {
     type: Boolean,
-    required: false,
-  },
+    required: false
+  }
 });
 
 // Reactive delivery array
@@ -39,15 +39,15 @@ const deliveries = ref<Delivery[]>([
   {
     id: uuidv4(),
     deliveryDetails: '',
-    deliveryDate: null,
-  },
+    deliveryDate: null
+  }
 ]);
 
 if (props.deliveries?.length) {
   deliveries.value = props.deliveries.map((delivery: any) => ({
     deliveryDetails: delivery.deliveryDetails,
     deliveryDate: delivery.deliveryDate,
-    id: delivery.id,
+    id: delivery.id
   }));
 }
 
@@ -60,7 +60,7 @@ async function AddDelivery() {
   deliveries.value.push({
     id: uuidv4(),
     deliveryDetails: '',
-    deliveryDate: null,
+    deliveryDate: null
   });
 }
 
@@ -175,7 +175,7 @@ async function onSubmitDeliveries() {
   // Prepare and log final data for API
   const cleanedDeliveries = deliveries.value.map(({ id, ...data }: Delivery) => ({
     ...data,
-    deliveryDate: getYear(data.deliveryDate),
+    deliveryDate: getYear(data.deliveryDate)
   }));
   emit('isValid', true);
   if (route.path.includes('edit')) {

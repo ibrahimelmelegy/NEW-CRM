@@ -9,32 +9,32 @@ LeadsForm( :loading="loading" @submit="submitForm")
 </template>
 
 <script lang="ts" setup>
-  import { useI18n } from 'vue-i18n';
-  import { ElNotification } from 'element-plus';
-  const { t } = useI18n();
-  useHead({
-    title: t('leads.createTitle'),
-  });
-  definePageMeta({
-    middleware: "permissions",
-    permission: "CREATE_LEADS",
-  });
-  const router = useRouter();
-  const loading = ref(false);
-  async function submitForm(values: LeadValues) {
-    loading.value = true;
-    try {
-      const response = await createLead(values);
-      if (response) {
-        ElNotification.success(t('leads.createSuccess'));
-        await router.push('/sales/leads');
-      }
-    } catch (error: any) {
-      ElNotification.error(error?.message || t('errors.generic'));
-    } finally {
-      loading.value = false;
+import { useI18n } from 'vue-i18n';
+import { ElNotification } from 'element-plus';
+const { t } = useI18n();
+useHead({
+  title: t('leads.createTitle'),
+});
+definePageMeta({
+  middleware: "permissions",
+  permission: "CREATE_LEADS",
+});
+const router = useRouter();
+const loading = ref(false);
+async function submitForm(values: LeadValues) {
+  loading.value = true;
+  try {
+    const response = await createLead(values);
+    if (response) {
+      ElNotification.success(t('leads.createSuccess'));
+      await router.push('/sales/leads');
     }
+  } catch (error: any) {
+    ElNotification.error(error?.message || t('errors.generic'));
+  } finally {
+    loading.value = false;
   }
+}
 </script>
 
 <style lang="scss"></style>

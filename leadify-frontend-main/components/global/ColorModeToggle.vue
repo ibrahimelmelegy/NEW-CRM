@@ -4,30 +4,30 @@ const themeStore = useThemeStore();
 </script>
 
 <template>
-    <button class="mode-toggle" @click="themeStore.toggleTheme" :title="themeStore.isLight ? $t('common.darkMode') : $t('common.lightMode')">
-        <span class="icon">{{ themeStore.isLight ? '🌙' : '☀️' }}</span>
-    </button>
+  <button class="mode-toggle" :title="themeStore.isLight ? $t('common.darkMode') : $t('common.lightMode')" @click="themeStore.toggleTheme">
+    <span class="icon">{{ themeStore.isLight ? '🌙' : '☀️' }}</span>
+  </button>
 </template>
 
 <style scoped lang="scss">
 .mode-toggle {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    width: 40px;
-    height: 40px;
-    border: none;
-    border-radius: 50%;
-    background: var(--bg-card);
-    cursor: pointer;
-    transition: all 0.3s ease;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 40px;
+  height: 40px;
+  border: none;
+  border-radius: 50%;
+  background: var(--bg-card);
+  cursor: pointer;
+  transition: all 0.3s ease;
 
-    .icon {
-        font-size: 20px;
-    }
+  .icon {
+    font-size: 20px;
+  }
 
-    &:hover {
-        transform: scale(1.1);
-    }
+  &:hover {
+    transform: scale(1.1);
+  }
 }
 </style>

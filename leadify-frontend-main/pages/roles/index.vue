@@ -27,57 +27,57 @@ div
 </template>
 
 <script setup lang="ts">
-  const router = useRouter();
-  const { hasPermission } = await usePermissions();
-  import { Plus } from "@element-plus/icons-vue";
-  const loadingAction = ref(false);
-  const deleteRolePopup = ref(false);
+import { Plus } from '@element-plus/icons-vue';
+const router = useRouter();
+const { hasPermission } = await usePermissions();
+const loadingAction = ref(false);
+const deleteRolePopup = ref(false);
 
-  const table = reactive({
-    columns: [
-      {
-        prop: "name",
-        label: "Role Name",
-        component: "Text",
-        sortable: true,
-        type: "font-bold",
-        width: 170,
-      },
-      {
-        prop: "description",
-        label: "Description",
-        component: "Text",
-        sortable: true,
-        type: "font-default",
-        width: 150,
-      },
-      {
-        prop: "totalAssignedUsers",
-        label: "Total Staff",
-        component: "Text",
-        sortable: true,
-        type: "font-default",
-        width: 150,
-      },
-      {
-        prop: "updatedAt",
-        label: "Last Modified",
-        component: "Text",
-        sortable: true,
-        type: "font-default",
-        width: 150,
-      },
-    ],
-    data: [] as Role[],
-  });
+const table = reactive({
+  columns: [
+    {
+      prop: 'name',
+      label: 'Role Name',
+      component: 'Text',
+      sortable: true,
+      type: 'font-bold',
+      width: 170
+    },
+    {
+      prop: 'description',
+      label: 'Description',
+      component: 'Text',
+      sortable: true,
+      type: 'font-default',
+      width: 150
+    },
+    {
+      prop: 'totalAssignedUsers',
+      label: 'Total Staff',
+      component: 'Text',
+      sortable: true,
+      type: 'font-default',
+      width: 150
+    },
+    {
+      prop: 'updatedAt',
+      label: 'Last Modified',
+      component: 'Text',
+      sortable: true,
+      type: 'font-default',
+      width: 150
+    }
+  ],
+  data: [] as Role[]
+});
 
-  // Call API to Get the role
-  // const response = await getRoles();
+// Call API to Get the role
+// const response = await getRoles();
 
-  const response = await useTableFilter("role");
-  table.data = response.formattedData;
+const response = await useTableFilter('role');
+table.data = response.formattedData;
 
-  function handleRowClick(val: any) {
-    router.push(`/roles/${val.id}`);
-  }
+function handleRowClick(val: any) {
+  router.push(`/roles/${val.id}`);
+}
 </script>

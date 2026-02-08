@@ -19,7 +19,7 @@ const props = defineProps({
   icon: String,
   btnText: String,
   label: String,
-  manpower: Object as () => ManpowerValues,
+  manpower: Object as () => ManpowerValues
 });
 const emit = defineEmits(['confirm', 'submit']);
 const dialog = defineModel();

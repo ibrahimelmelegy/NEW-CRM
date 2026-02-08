@@ -47,47 +47,47 @@
       //-     p.text-neutral-800.mb-2 {{material?.price}}
 </template>
 <script lang="ts" setup>
-  const activeName = ref("summary");
-  const route = useRoute();
-  const { hasPermission } = await usePermissions();
-  const table = reactive({
-    columns: [
-      {
-        prop: "name",
-        label: useI18n().t('operations.additionalMaterials.table.item'),
-        component: "Text",
-        // sortable: true,
-        type: "font-default",
-      },
-      {
-        prop: "price",
-        label: useI18n().t('operations.additionalMaterials.table.price'),
-        component: "Text",
-        // sortable: true,
-        type: "font-default",
-      },
-    ],
-    data: [] as CategoryItem[],
-  });
+const activeName = ref('summary');
+const route = useRoute();
+const { hasPermission } = await usePermissions();
+const table = reactive({
+  columns: [
+    {
+      prop: 'name',
+      label: useI18n().t('operations.additionalMaterials.table.item'),
+      component: 'Text',
+      // sortable: true,
+      type: 'font-default'
+    },
+    {
+      prop: 'price',
+      label: useI18n().t('operations.additionalMaterials.table.price'),
+      component: 'Text',
+      // sortable: true,
+      type: 'font-default'
+    }
+  ],
+  data: [] as CategoryItem[]
+});
 
-  const material = await getAdditionalMaterial(route.params.slug as string);
-  table.data = material?.materialItem || [];
+const material = await getAdditionalMaterial(route.params.slug as string);
+table.data = material?.materialItem || [];
 </script>
 <style scoped lang="scss">
-  .activity {
-    position: relative;
-    ::before {
-      content: "";
-      height: 100%;
-      width: 1px;
-      position: absolute;
-      left: 24px;
-      top: 2%;
-      border: 1px dashed #e7e6e9;
-      z-index: -1;
-    }
-    > div:last-of-type {
-      background: #f8f7fa !important;
-    }
+.activity {
+  position: relative;
+  ::before {
+    content: '';
+    height: 100%;
+    width: 1px;
+    position: absolute;
+    left: 24px;
+    top: 2%;
+    border: 1px dashed #e7e6e9;
+    z-index: -1;
   }
+  > div:last-of-type {
+    background: #f8f7fa !important;
+  }
+}
 </style>

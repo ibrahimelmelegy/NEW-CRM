@@ -37,36 +37,36 @@
 </template>
 
 <script setup lang="ts">
-import { Plus, View } from "@element-plus/icons-vue";
+import { Plus, View } from '@element-plus/icons-vue';
 
 const router = useRouter();
 const rfqs = ref([]);
 
 const getStatusType = (status: string) => {
-    const map: any = {
-        'Draft': 'info',
-        'Sent': 'warning',
-        'Partially Received': 'primary',
-        'Completed': 'success',
-        'Converted to PO': 'success',
-        'Archived': 'info'
-    };
-    return map[status] || 'info';
+  const map: any = {
+    Draft: 'info',
+    Sent: 'warning',
+    'Partially Received': 'primary',
+    Completed: 'success',
+    'Converted to PO': 'success',
+    Archived: 'info'
+  };
+  return map[status] || 'info';
 };
 
 onMounted(async () => {
-    try {
-        const res: any = await useApiFetch("rfq"); // Fetch from the new endpoint
-        rfqs.value = res?.body?.docs || [];
-    } catch (e) {
-        console.error("Failed to fetch RFQs", e);
-    }
+  try {
+    const res: any = await useApiFetch('rfq'); // Fetch from the new endpoint
+    rfqs.value = res?.body?.docs || [];
+  } catch (e) {
+    console.error('Failed to fetch RFQs', e);
+  }
 });
 
 function openRFQ(id: string) {
-    // Navigate to details/comparison page (to be built)
-    // router.push(`/procurement/rfq/${id}`);
-    ElNotification({ title: "Coming Soon", message: "Comparison page is next!", type: "info" });
+  // Navigate to details/comparison page (to be built)
+  // router.push(`/procurement/rfq/${id}`);
+  ElNotification({ title: 'Coming Soon', message: 'Comparison page is next!', type: 'info' });
 }
 </script>
 
@@ -84,8 +84,8 @@ function openRFQ(id: string) {
     --el-table-bg-color: transparent;
     --el-table-header-bg-color: rgba(255, 255, 255, 0.03);
     th.el-table__cell {
-       color: var(--text-secondary);
-       background: rgba(255, 255, 255, 0.03) !important;
+      color: var(--text-secondary);
+      background: rgba(255, 255, 255, 0.03) !important;
     }
   }
 }

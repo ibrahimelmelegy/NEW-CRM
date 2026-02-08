@@ -7,24 +7,14 @@
         <span class="badge">React</span>
       </div>
       <div class="header-right">
-        <el-button @click="goBack" type="default" :icon="ArrowLeft">
-          Back to Proposals
-        </el-button>
-        <el-button @click="refreshFrame" type="primary" :icon="Refresh">
-          Refresh
-        </el-button>
+        <el-button type="default" :icon="ArrowLeft" @click="goBack">Back to Proposals</el-button>
+        <el-button type="primary" :icon="Refresh" @click="refreshFrame">Refresh</el-button>
       </div>
     </div>
 
     <!-- React App iframe -->
     <div class="iframe-wrapper">
-      <iframe
-        ref="reactFrame"
-        :src="reactAppUrl"
-        class="react-iframe"
-        @load="onFrameLoad"
-        allow="clipboard-write; downloads"
-      />
+      <iframe ref="reactFrame" :src="reactAppUrl" class="react-iframe" allow="clipboard-write; downloads" @load="onFrameLoad" />
       <div v-if="loading" class="loading-overlay">
         <el-icon class="is-loading" :size="40"><Loading /></el-icon>
         <p>Loading Proposal Editor...</p>
@@ -34,81 +24,81 @@
 </template>
 
 <script setup lang="ts">
-import { ref, onMounted, onUnmounted } from 'vue'
-import { ArrowLeft, Refresh, Loading } from '@element-plus/icons-vue'
+import { ref, onMounted, onUnmounted } from 'vue';
+import { ArrowLeft, Refresh, Loading } from '@element-plus/icons-vue';
 
 definePageMeta({
   layout: 'default',
   middleware: ['permissions'],
   permission: 'VIEW_OWN_PROPOSALS'
-})
+});
 
-const router = useRouter()
-const route = useRoute()
+const router = useRouter();
+const route = useRoute();
 
 // React app URL - use the same port as React dev server
-const reactAppUrl = ref('http://localhost:3001/create')
-const loading = ref(true)
-const reactFrame = ref<HTMLIFrameElement | null>(null)
+const reactAppUrl = ref('http://localhost:3001/create');
+const loading = ref(true);
+const reactFrame = ref<HTMLIFrameElement | null>(null);
 
 // Handle messages from React iframe
 const handleMessage = (event: MessageEvent) => {
   // Validate origin in production
-  if (event.origin !== 'http://localhost:3001') return
-  
-  const { action, id, mode } = event.data || {}
-  
+  if (event.origin !== 'http://localhost:3001') return;
+
+  const { action, id, mode } = event.data || {};
+
   if (action === 'PROPOSAL_SAVED') {
     // Navigate to the saved proposal or proposals list
     if (id) {
-      router.push(`/sales/proposals/${id}`)
+      router.push(`/sales/proposals/${id}`);
     } else {
-      router.push('/sales/proposals')
+      router.push('/sales/proposals');
     }
   } else if (action === 'PROPOSAL_CANCELLED') {
     // Go back to proposals list
-    router.push('/sales/proposals')
+    router.push('/sales/proposals');
   }
-}
+};
 
 // Handle proposal ID if editing
 onMounted(() => {
-  const proposalId = route.query.id as string
+  const proposalId = route.query.id as string;
   if (proposalId) {
-    reactAppUrl.value = `http://localhost:3001/edit/${proposalId}`
+    reactAppUrl.value = `http://localhost:3001/edit/${proposalId}`;
   }
-  
+
   // Pass auth token to React app via URL or postMessage
-  const token = useCookie('access_token')
+  const token = useCookie('access_token');
   if (token.value) {
     // Append token as query param (React will pick it up)
-    const separator = reactAppUrl.value.includes('?') ? '&' : '?'
-    reactAppUrl.value += `${separator}token=${token.value}`
+    const separator = reactAppUrl.value.includes('?') ? '&' : '?';
+    reactAppUrl.value += `${separator}token=${token.value}`;
   }
-  
+
   // Listen for messages from React iframe
-  window.addEventListener('message', handleMessage)
-})
+  window.addEventListener('message', handleMessage);
+});
 
 onUnmounted(() => {
   // Cleanup message listener
-  window.removeEventListener('message', handleMessage)
-})
+  window.removeEventListener('message', handleMessage);
+});
 
 const onFrameLoad = () => {
-  loading.value = false
-}
+  loading.value = false;
+};
 
 const refreshFrame = () => {
-  loading.value = true
+  loading.value = true;
   if (reactFrame.value) {
-    reactFrame.value.src = reactFrame.value.src
+    reactFrame.value.src = reactFrame.value.src;
   }
-}
+};
 
 const goBack = () => {
-  router.push('/sales/proposals')
-}
+  router.push('/sales/proposals');
+};
 </script>
 
 <style scoped>
@@ -191,8 +181,9 @@ const goBack = () => {
     flex-direction: column;
     gap: 12px;
   }
-  
-  .header-left, .header-right {
+
+  .header-left,
+  .header-right {
     width: 100%;
     justify-content: center;
   }

@@ -31,7 +31,6 @@ ActionModel(v-model="isDelete" v-if="isDelete" :loading="loadingAction" @confirm
 <script lang="ts" setup>
 import { useForm } from 'vee-validate';
 import * as yup from 'yup';
-;
 import { Plus } from '@element-plus/icons-vue';
 const route = useRoute();
 const props = defineProps({
@@ -39,12 +38,12 @@ const props = defineProps({
   label: String,
   data: {
     type: Object,
-    required: false,
+    required: false
   },
   editMode: {
     type: Boolean,
-    required: false,
-  },
+    required: false
+  }
 });
 const activeStep = defineModel<number>({ required: true });
 const addManpower = ref(false);
@@ -56,18 +55,18 @@ const loadingAction = ref(false);
 const formSchema = yup.object({
   accommodationCost: yup.string().trim().required().min(1).max(100).label(t('operations.projects.manpower.accommodationCost')),
   foodCost: yup.string().trim().required().min(1).max(100).label(t('operations.projects.manpower.foodCost')),
-  managementAddition: yup.string().trim().required().min(1).max(100).label(t('operations.projects.manpower.managementAddition')),
+  managementAddition: yup.string().trim().required().min(1).max(100).label(t('operations.projects.manpower.managementAddition'))
 });
 
 const { handleSubmit, values } = useForm({
-  validationSchema: formSchema,
+  validationSchema: formSchema
 });
 
 const onSubmit = handleSubmit(async (values: any, actions: any) => {
   const formattedValues = cleanObject({
     accommodationCost: Number(values.accommodationCost),
     foodCostPerDay: Number(values.foodCost),
-    managementAdditionPercentage: Number(values.managementAddition),
+    managementAdditionPercentage: Number(values.managementAddition)
   });
   try {
     // Attempt to create the project
@@ -88,7 +87,7 @@ const manpowers = ref({
       component: 'Text',
       // sortable: true,
       type: 'font-bold',
-      width: 150,
+      width: 150
     },
     {
       prop: 'estimatedWorkDays',
@@ -96,7 +95,7 @@ const manpowers = ref({
       component: 'Text',
       // sortable: true,
       type: 'font-bold',
-      width: 180,
+      width: 180
     },
     {
       prop: 'mission',
@@ -104,7 +103,7 @@ const manpowers = ref({
       component: 'Text',
       // sortable: true,
       type: 'font-default',
-      width: 120,
+      width: 120
     },
     {
       prop: 'durationCost',
@@ -112,7 +111,7 @@ const manpowers = ref({
       component: 'Text',
       // sortable: true,
       type: 'font-default',
-      width: 150,
+      width: 150
     },
     {
       prop: 'foodAllowanceCost',
@@ -120,7 +119,7 @@ const manpowers = ref({
       component: 'Text',
       // sortable: true,
       type: 'font-default',
-      width: 200,
+      width: 200
     },
     {
       prop: 'accommodationCostPerManpower',
@@ -128,7 +127,7 @@ const manpowers = ref({
       component: 'Text',
       // sortable: true,
       type: 'font-default',
-      width: 270,
+      width: 270
     },
     {
       prop: 'carRentPerManpower',
@@ -136,7 +135,7 @@ const manpowers = ref({
       component: 'Text',
       // sortable: true,
       type: 'font-default',
-      width: 200,
+      width: 200
     },
     {
       prop: 'otherCosts',
@@ -144,7 +143,7 @@ const manpowers = ref({
       component: 'Text',
       // sortable: true,
       type: 'font-default',
-      width: 150,
+      width: 150
     },
     {
       prop: 'totalCost',
@@ -152,10 +151,10 @@ const manpowers = ref({
       component: 'Text',
       // sortable: true,
       type: 'font-default',
-      width: 150,
-    },
+      width: 150
+    }
   ],
-  data: [] as ProjectManpower[],
+  data: [] as ProjectManpower[]
 });
 const manPowerPreview = ref({
   columns: [
@@ -165,7 +164,7 @@ const manPowerPreview = ref({
       component: 'Text',
       // sortable: true,
       type: 'font-bold',
-      width: 130,
+      width: 130
     },
     {
       prop: 'totalCarRentDuration',
@@ -173,7 +172,7 @@ const manPowerPreview = ref({
       component: 'Text',
       // sortable: true,
       type: 'font-bold',
-      width: 150,
+      width: 150
     },
     {
       prop: 'resourceCount',
@@ -181,10 +180,10 @@ const manPowerPreview = ref({
       component: 'Text',
       // sortable: true,
       type: 'font-default',
-      width: 120,
-    },
+      width: 120
+    }
   ],
-  data: [] as any,
+  data: [] as any
 });
 const manPowertotal = ref({
   columns: [
@@ -194,7 +193,7 @@ const manPowertotal = ref({
       component: 'Text',
       // sortable: true,
       type: 'font-bold',
-      width: 130,
+      width: 130
     },
     {
       prop: 'managementAdditionPercentage',
@@ -202,7 +201,7 @@ const manPowertotal = ref({
       component: 'Text',
       // sortable: true,
       type: 'font-bold',
-      width: 130,
+      width: 130
     },
     {
       prop: 'finalManpowerTableTotalCost',
@@ -210,10 +209,10 @@ const manPowertotal = ref({
       component: 'Text',
       // sortable: true,
       type: 'font-bold',
-      width: 150,
-    },
+      width: 150
+    }
   ],
-  data: [] as any,
+  data: [] as any
 });
 
 const totalManpowerCost = (data: any) => {
@@ -243,11 +242,8 @@ const fetchProjectsManpowers = async () => {
   filteredData = response.filter((item: any) => item?.projectId === projectId.value);
   if (response) {
     const accommodationCost =
-      typeof Number(values.accommodationCost) === 'number' && !isNaN(Number(values.accommodationCost))
-        ? Number(values.accommodationCost)
-        : 0;
-    const foodCost =
-      typeof Number(values.foodCost) === 'number' && !isNaN(Number(values.foodCost)) ? Number(values.foodCost) : 0;
+      typeof Number(values.accommodationCost) === 'number' && !isNaN(Number(values.accommodationCost)) ? Number(values.accommodationCost) : 0;
+    const foodCost = typeof Number(values.foodCost) === 'number' && !isNaN(Number(values.foodCost)) ? Number(values.foodCost) : 0;
 
     // Ensure data is an array and get its length
     const numManpowers = Array.isArray(filteredData) ? filteredData.length : 0;
@@ -271,24 +267,22 @@ const fetchProjectsManpowers = async () => {
         name: manpower?.manpower?.name || '-',
         mission: manpower?.mission?.join(', '),
         accommodationCostPerManpower: values.accommodationCost ? Number(values.accommodationCost) / filteredData?.length : 0,
-        foodAllowanceCost: values.foodCost ? Number(values.foodCost) * Number(manpower?.estimatedWorkDays || 0) : 0,
+        foodAllowanceCost: values.foodCost ? Number(values.foodCost) * Number(manpower?.estimatedWorkDays || 0) : 0
       };
     });
     manPowertotal.value.data = [
       {
         totalCost: formatNumber(totalManpowerCost(manpowers.value.data)?.toFixed(2)),
-        managementAdditionPercentage: formatNumber(
-          (totalManpowerCost(manpowers.value.data) * Number(values.managementAddition)) / 100 || 0
-        ),
-        finalManpowerTableTotalCost: formatNumber(finalManpowerTotalCost(manpowers.value.data)),
-      },
+        managementAdditionPercentage: formatNumber((totalManpowerCost(manpowers.value.data) * Number(values.managementAddition)) / 100 || 0),
+        finalManpowerTableTotalCost: formatNumber(finalManpowerTotalCost(manpowers.value.data))
+      }
     ];
     manPowerPreview.value.data = [
       {
         totalCarRent: formatNumber(totalCarRent(filteredData)),
         totalCarRentDuration: formatNumber(totalCarRentDuration(filteredData)),
-        resourceCount: filteredData?.length || 0,
-      },
+        resourceCount: filteredData?.length || 0
+      }
     ];
   }
 };
@@ -313,11 +307,8 @@ watch(
   () => {
     // Validate accommodationCost and foodCost
     const accommodationCost =
-      typeof Number(values.accommodationCost) === 'number' && !isNaN(Number(values.accommodationCost))
-        ? Number(values.accommodationCost)
-        : 0;
-    const foodCost =
-      typeof Number(values.foodCost) === 'number' && !isNaN(Number(values.foodCost)) ? Number(values.foodCost) : 0;
+      typeof Number(values.accommodationCost) === 'number' && !isNaN(Number(values.accommodationCost)) ? Number(values.accommodationCost) : 0;
+    const foodCost = typeof Number(values.foodCost) === 'number' && !isNaN(Number(values.foodCost)) ? Number(values.foodCost) : 0;
 
     // Ensure data is an array and get its length
     const numManpowers = Array.isArray(filteredData) ? filteredData.length : 0;
@@ -328,9 +319,7 @@ watch(
           ? Number(manpower.estimatedWorkDays)
           : 0;
       const manpowerTotalCost =
-        typeof Number(manpower?.totalCost) === 'number' && !isNaN(Number(manpower?.totalCost))
-          ? Number(manpower.totalCost)
-          : 0;
+        typeof Number(manpower?.totalCost) === 'number' && !isNaN(Number(manpower?.totalCost)) ? Number(manpower.totalCost) : 0;
 
       const accommodationCostPerManpower = numManpowers ? accommodationCost / numManpowers : 0;
       const foodAllowanceCost = foodCost * estimatedWorkDays;
@@ -347,14 +336,12 @@ watch(
         foodAllowanceCost: foodAllowanceCost?.toFixed(2),
         totalCost: totalCost?.toFixed(2),
         name: manpower?.manpower?.name || '-',
-        mission: manpower?.mission?.join(', '),
+        mission: manpower?.mission?.join(', ')
       };
     });
     // Validate managementAddition
     const managementAddition =
-      typeof Number(values.managementAddition) === 'number' && !isNaN(Number(values.managementAddition))
-        ? Number(values.managementAddition)
-        : 0;
+      typeof Number(values.managementAddition) === 'number' && !isNaN(Number(values.managementAddition)) ? Number(values.managementAddition) : 0;
     const totalManpower = totalManpowerCost(manpowers.value.data);
     const finalManpowerTableTotalCost = (
       (Number(totalManpower) || 0) +
@@ -367,8 +354,8 @@ watch(
         managementAdditionPercentage: formatNumber(
           ((totalManpowerCost(manpowers.value.data) * Number(values.managementAddition)) / 100)?.toFixed(2) || 0
         ),
-        finalManpowerTableTotalCost: formatNumber(finalManpowerTableTotalCost),
-      },
+        finalManpowerTableTotalCost: formatNumber(finalManpowerTableTotalCost)
+      }
     ];
   }
 );

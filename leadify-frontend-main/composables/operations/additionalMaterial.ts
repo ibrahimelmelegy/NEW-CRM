@@ -5,14 +5,14 @@ function handleError(message: string) {
   ElNotification({
     type: 'error',
     title: 'Error',
-    message,
+    message
   });
 }
 function handleSuccess(message: string, id?: string, redirect: boolean = true) {
   ElNotification({
     type: 'success',
     title: 'Success',
-    message,
+    message
   });
   if (!redirect) {
     return;
@@ -39,8 +39,8 @@ export interface AdditionalMaterial {
 
 export interface Material {
   description: string;
-  quantity:number;
-  unitPrice:number
+  quantity: number;
+  unitPrice: number;
 }
 
 interface UseAdditionalMaterialsResult {
@@ -48,10 +48,12 @@ interface UseAdditionalMaterialsResult {
   pagination: Pagination;
 }
 
-export async function getMaterials(project?:number): Promise<UseAdditionalMaterialsResult> {
+export async function getMaterials(project?: number): Promise<UseAdditionalMaterialsResult> {
   try {
     // Make the API call
-    const { body, success, message } = project ? await useApiFetch(`material?limit=1000&project=${project}`) :await useApiFetch('material?limit=1000')  ;
+    const { body, success, message } = project
+      ? await useApiFetch(`material?limit=1000&project=${project}`)
+      : await useApiFetch('material?limit=1000');
 
     if (success) {
       // Return the docs (additional Material) from the response
@@ -60,7 +62,7 @@ export async function getMaterials(project?:number): Promise<UseAdditionalMateri
         createdAt: formatDate(material.createdAt),
         // updatedAt: formatDate(material.updatedAt),
         updatedAt: '-',
-        assign: material.user?.name,
+        assign: material.user?.name
       }));
       const pagination = body?.pagination;
       return { materials, pagination };
@@ -117,7 +119,7 @@ export async function getAdditionalMaterials(): Promise<UseAdditionalMaterialsRe
         createdAt: formatDate(material.createdAt),
         // updatedAt: formatDate(material.updatedAt),
         updatedAt: '-',
-        assign: material.user?.name,
+        assign: material.user?.name
       }));
       const pagination = body?.pagination;
       return { materials, pagination };
@@ -145,7 +147,7 @@ export async function getAdditionalMaterials(): Promise<UseAdditionalMaterialsRe
  */
 export async function getAdditionalMaterial(id: string | string[]): Promise<AdditionalMaterial> {
   try {
-    let { body: material, success } = await useApiFetch(`additional-material/${id}`);
+    const { body: material, success } = await useApiFetch(`additional-material/${id}`);
     return material;
   } catch (error) {
     console.error('Error fetching material:', error instanceof Error ? error.message : error);

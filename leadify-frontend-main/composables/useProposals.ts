@@ -1,19 +1,19 @@
-import type { RelatedTypesValues, RelatedTypeOptions, RelatedToOptions, ProposalTypeOptions, ProposalInfoPayload } from '~/types/Proposal';
 import { getOpportunities } from './useOpportunity';
+import type { RelatedTypesValues, RelatedTypeOptions, RelatedToOptions, ProposalTypeOptions, ProposalInfoPayload } from '~/types/Proposal';
 
 // Handle error during lead creation
 function handleError(message: string) {
   ElNotification({
     type: 'error',
     title: 'Error',
-    message,
+    message
   });
 }
 function handleSuccess(message: string, proposalId?: string) {
   ElNotification({
     type: 'success',
     title: 'Success',
-    message,
+    message
   });
   if (proposalId) {
     navigateTo(`/sales/proposals/editor/content/${proposalId}`); // Navigate to the leads list
@@ -23,19 +23,19 @@ function handleSuccess(message: string, proposalId?: string) {
 export const proposalRelatedTypes: RelatedTypeOptions[] = [
   { label: 'Opportunity', value: 'Opportunity' },
   { label: 'Deal', value: 'Deal' },
-  { label: 'Project', value: 'Project' },
+  { label: 'Project', value: 'Project' }
 ];
 export const proposalStatus = [
   { label: 'Approved', value: 'APPROVED' },
   { label: 'Waiting Approval', value: 'WAITING_APPROVAL' },
   { label: 'Rejected', value: 'REJECTED' },
-  { label: 'Archived', value: 'ARCHIVED' },
+  { label: 'Archived', value: 'ARCHIVED' }
 ];
 
 export const ProposalType: ProposalTypeOptions[] = [
   { label: 'Financial', value: 'FINANCIAL' },
   { label: 'Technical', value: 'TECHNICAL' },
-  { label: 'Tech & Financial', value: 'MIXED' },
+  { label: 'Tech & Financial', value: 'MIXED' }
 ];
 
 export const fileAttachmentsFormats = [
@@ -57,7 +57,7 @@ export async function fetchRelatedToOptions(type: RelatedTypesValues) {
   const functionMap: { [key in RelatedTypesValues]: Function } = {
     Opportunity: getOpportunities,
     Deal: getDeals,
-    Project: getProjects,
+    Project: getProjects
   };
 
   const existingType = type === 'Project' ? 'projects' : type === 'Deal' ? 'deals' : 'opportunties';
@@ -67,7 +67,7 @@ export async function fetchRelatedToOptions(type: RelatedTypesValues) {
   const response = await fetchFunction();
   proposalRelatedToOptions.value = response[existingType]?.map((item: any) => ({
     label: item?.name,
-    value: item?.id,
+    value: item?.id
   }));
 
   return proposalRelatedToOptions.value;
@@ -81,7 +81,7 @@ export async function fetchRelatedToOptions(type: RelatedTypesValues) {
  */
 export async function getProposal(id: string | string[]): Promise<Deal> {
   try {
-    let { body: deal, success } = await useApiFetch(`proposal/${id}`);
+    const { body: deal, success } = await useApiFetch(`proposal/${id}`);
     return deal;
   } catch (error) {
     console.error('Error fetching proposal:', error instanceof Error ? error.message : error);
@@ -92,7 +92,7 @@ export async function getProposal(id: string | string[]): Promise<Deal> {
 
 export async function getProposalFinanceTableByPropsalId(proposalId: string | string[]): Promise<Deal> {
   try {
-    let { body: table, success } = await useApiFetch(`proposal-finance-table/?page=1&limit=10&proposalId=${proposalId}`);
+    const { body: table, success } = await useApiFetch(`proposal-finance-table/?page=1&limit=10&proposalId=${proposalId}`);
     return table;
   } catch (error) {
     console.error('Error fetching proposal:', error instanceof Error ? error.message : error);
@@ -103,7 +103,7 @@ export async function getProposalFinanceTableByPropsalId(proposalId: string | st
 
 export async function getProposalFinanceTableItemByTablelId(TablelId: string | string[]): Promise<Deal> {
   try {
-    let { body: tableItem, success } = await useApiFetch(`proposal-finance-table-item/?page=1&limit=1000&financeTableId=${TablelId}`);
+    const { body: tableItem, success } = await useApiFetch(`proposal-finance-table-item/?page=1&limit=1000&financeTableId=${TablelId}`);
     return tableItem;
   } catch (error) {
     console.error('Error fetching tableItem:', error instanceof Error ? error.message : error);
@@ -116,7 +116,7 @@ export async function createProposalFinanceTable(values: any): Promise<void> {
   try {
     // Prepare the client data
     const ProposalFinanceTableData = {
-      ...values,
+      ...values
     };
     // Call API to create the client
     const response = await useApiFetch(`proposal-finance-table`, 'POST', ProposalFinanceTableData);
@@ -137,7 +137,7 @@ export async function updateProposalFinanceTable(values: any, id: number, propos
   try {
     // Prepare the client data
     const ProposalFinanceTableData = {
-      ...values,
+      ...values
     };
     // Call API to create the client
     const response = await useApiFetch(`proposal-finance-table/${id}`, 'PUT', ProposalFinanceTableData);
@@ -159,7 +159,7 @@ export async function updateProposalFinanceTableitem(values: any, id: number, ty
     // Prepare the client data
     const ProposalFinanceTableData = {
       customColumns: values?.customColumns,
-      qty: values?.qty,
+      qty: values?.qty
     };
     // Call API to create the client
     const response = await useApiFetch(`proposal-finance-table-item/${id}`, 'PUT', ProposalFinanceTableData);
@@ -171,7 +171,6 @@ export async function updateProposalFinanceTableitem(values: any, id: number, ty
       } else {
         handleSuccess('proposal finance table item update successfully', values?.proposalId);
       }
-
     } else {
       handleError(response?.message || 'Something went wrong');
     }
@@ -185,7 +184,7 @@ export async function createProposalFinanceTableitem(values: any, type: string =
   try {
     // Prepare the client data
     const ProposalFinanceTableData = {
-      ...values,
+      ...values
     };
     // Call API to create the client
     const response = await useApiFetch(`proposal-finance-table-item`, 'POST', ProposalFinanceTableData);
@@ -216,9 +215,8 @@ export async function deleteProposalFinanceTableItem(id: number): Promise<void> 
       ElNotification({
         type: 'success',
         title: 'Success',
-        message: 'proposal finance table DELETE successfully',
+        message: 'proposal finance table DELETE successfully'
       });
-
     } else {
       handleError(response?.message || 'Something went wrong');
     }
@@ -227,7 +225,6 @@ export async function deleteProposalFinanceTableItem(id: number): Promise<void> 
     handleError(error instanceof Error ? error.message : 'Unknown error');
   }
 }
-
 
 export async function deleteCustomColumn(idFinanceTable: number, columnKey: string): Promise<void> {
   try {
@@ -254,11 +251,11 @@ export async function deleteCustomColumn(idFinanceTable: number, columnKey: stri
 export async function createProposal(values: ProposalInfoPayload): Promise<void> {
   try {
     const valuesAny = values as any;
-    let formattedValues: any = {
+    const formattedValues: any = {
       ...values,
       fileAttachments: valuesAny?.file?.map((el: any) => el?.response),
-      relatedEntityId: values?.relatedEntityId == "" ? undefined : values?.relatedEntityId,
-      relatedEntityType: values?.relatedEntityType == "" ? undefined : values?.relatedEntityType
+      relatedEntityId: values?.relatedEntityId == '' ? undefined : values?.relatedEntityId,
+      relatedEntityType: values?.relatedEntityType == '' ? undefined : values?.relatedEntityType
     };
     delete formattedValues.file;
     // Call API to create the proposal
@@ -269,7 +266,7 @@ export async function createProposal(values: ProposalInfoPayload): Promise<void>
       ElNotification({
         type: 'success',
         title: 'Success',
-        message: 'proposal  create successfully',
+        message: 'proposal  create successfully'
       });
       navigateTo(`/sales/proposals/add-table/${response.body?.id}`);
     } else {
@@ -277,7 +274,7 @@ export async function createProposal(values: ProposalInfoPayload): Promise<void>
       ElNotification({
         type: 'error',
         title: 'Error',
-        message: errorMessage,
+        message: errorMessage
       });
       throw new Error(errorMessage); // Throw an error to be caught in the calling function
     }
@@ -288,19 +285,18 @@ export async function createProposal(values: ProposalInfoPayload): Promise<void>
     ElNotification({
       type: 'error',
       title: 'Error',
-      message: errorMessage,
+      message: errorMessage
     });
     throw new Error(errorMessage); // Re-throw the error to propagate it to the calling function
   }
 }
 
-
 export async function updateProposal(values: any): Promise<void> {
   try {
     // Call API to create the proposal
     const proposalData = {
-      relatedEntityId: values?.relatedEntityId == "" ? undefined : values?.relatedEntityId,
-      relatedEntityType: values?.relatedEntityType == "" ? undefined : values?.relatedEntityType,
+      relatedEntityId: values?.relatedEntityId == '' ? undefined : values?.relatedEntityId,
+      relatedEntityType: values?.relatedEntityType == '' ? undefined : values?.relatedEntityType,
       title: values?.title ?? undefined,
       version: values?.version ?? undefined,
       content: values?.content ?? undefined,
@@ -310,53 +306,52 @@ export async function updateProposal(values: any): Promise<void> {
       companyLogo: values?.companyLogo ?? undefined,
       proposalFor: values?.proposalFor ?? undefined,
       reference: values?.reference ?? undefined,
-      fileAttachments: values?.file?.map((el: any) => el?.response) ?? undefined,
+      fileAttachments: values?.file?.map((el: any) => el?.response) ?? undefined
     };
     if (values.status) {
-      const responseChange = values.status == "reject" ? await useApiFetch(`proposal/reject/${values.id}`, 'PUT', {
-        rejectionReason: values.reason,
-      }) : values.status == "waiting-approval" ? await useApiFetch(`proposal/waiting-approval/${values.id}`, 'PUT') :
-        await useApiFetch(`proposal/approve/${values.id}`, 'PUT');
+      const responseChange =
+        values.status == 'reject'
+          ? await useApiFetch(`proposal/reject/${values.id}`, 'PUT', {
+            rejectionReason: values.reason
+          })
+          : values.status == 'waiting-approval'
+            ? await useApiFetch(`proposal/waiting-approval/${values.id}`, 'PUT')
+            : await useApiFetch(`proposal/approve/${values.id}`, 'PUT');
       // Handle the API response
       if (responseChange?.success) {
         ElNotification({
           type: 'success',
           title: 'Success',
-          message: `proposal update status (${values.status}) successfully`,
-        })
+          message: `proposal update status (${values.status}) successfully`
+        });
         navigateTo(`/sales/proposals`);
-
-      }
-      else {
+      } else {
         const errorMessage = responseChange?.message || 'Something went wrong';
         ElNotification({
           type: 'error',
           title: 'Error',
-          message: errorMessage,
+          message: errorMessage
         });
         throw new Error(errorMessage); // Throw an error to be caught in the calling function
       }
-    }
-    else {
+    } else {
       const response = await useApiFetch(`proposal/${values.id}`, 'PUT', {
-        ...proposalData,
+        ...proposalData
       });
       // Handle the API response
       if (response?.success) {
         ElNotification({
           type: 'success',
           title: 'Success',
-          message: 'proposal update successfully',
-        })
+          message: 'proposal update successfully'
+        });
         navigateTo(`/sales/proposals`);
-
-      }
-      else {
+      } else {
         const errorMessage = response?.message || 'Something went wrong';
         ElNotification({
           type: 'error',
           title: 'Error',
-          message: errorMessage,
+          message: errorMessage
         });
         throw new Error(errorMessage); // Throw an error to be caught in the calling function
       }
@@ -369,7 +364,7 @@ export async function updateProposal(values: any): Promise<void> {
     ElNotification({
       type: 'error',
       title: 'Error',
-      message: errorMessage,
+      message: errorMessage
     });
     throw new Error(errorMessage); // Re-throw the error to propagate it to the calling function
   }
@@ -386,7 +381,7 @@ export async function submitForApproval(id: string | number): Promise<boolean> {
       ElNotification({
         type: 'success',
         title: 'Success',
-        message: 'Proposal submitted for approval',
+        message: 'Proposal submitted for approval'
       });
       return true;
     }
@@ -409,7 +404,7 @@ export async function approveProposal(id: string | number): Promise<boolean> {
       ElNotification({
         type: 'success',
         title: 'Success',
-        message: 'Proposal approved successfully',
+        message: 'Proposal approved successfully'
       });
       return true;
     }
@@ -434,13 +429,13 @@ export async function approveProposal(id: string | number): Promise<boolean> {
 export async function rejectProposal(id: string | number, reason: string): Promise<boolean> {
   try {
     const response = await useApiFetch(`proposal/reject/${id}`, 'PUT', {
-      rejectionReason: reason,
+      rejectionReason: reason
     });
     if (response?.success) {
       ElNotification({
         type: 'success',
         title: 'Success',
-        message: 'Proposal rejected',
+        message: 'Proposal rejected'
       });
       return true;
     }
@@ -463,7 +458,7 @@ export async function archiveProposal(id: string | number): Promise<boolean> {
       ElNotification({
         type: 'success',
         title: 'Success',
-        message: 'Proposal archived successfully',
+        message: 'Proposal archived successfully'
       });
       return true;
     }
@@ -486,7 +481,7 @@ export async function deleteProposal(id: string | number): Promise<boolean> {
       ElNotification({
         type: 'success',
         title: 'Success',
-        message: 'Proposal deleted successfully',
+        message: 'Proposal deleted successfully'
       });
       return true;
     }
@@ -515,7 +510,7 @@ export async function getProposalFinanceTable(proposalId: string | number): Prom
           ...table,
           items: items?.items || [],
           subtotal: items?.items?.reduce((sum: number, item: any) => sum + (item.totalPrice || 0), 0) || 0,
-          total: table.totalPrice || items?.items?.reduce((sum: number, item: any) => sum + (item.totalPrice || 0), 0) || 0,
+          total: table.totalPrice || items?.items?.reduce((sum: number, item: any) => sum + (item.totalPrice || 0), 0) || 0
         };
       })
     );

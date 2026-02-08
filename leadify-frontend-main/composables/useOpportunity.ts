@@ -4,14 +4,14 @@ function handleError(message: string) {
   ElNotification({
     type: 'error',
     title: 'Error',
-    message,
+    message
   });
 }
 function handleSuccess(message: string) {
   ElNotification({
     type: 'success',
     title: 'Success',
-    message,
+    message
   });
   navigateTo('/sales/opportunity'); // Navigate to the opportunties list
 }
@@ -55,7 +55,7 @@ export enum StageEnum {
   Proposal = 'PROPOSAL',
   Negotiation = 'NEGOTIATION',
   Lost = 'LOST',
-  Won = 'WON',
+  Won = 'WON'
 }
 
 export const stageOptions = [
@@ -63,7 +63,7 @@ export const stageOptions = [
   { label: 'opportunities.stages.proposal', value: StageEnum.Proposal },
   { label: 'opportunities.stages.negotiation', value: StageEnum.Negotiation },
   { label: 'opportunities.stages.lost', value: StageEnum.Lost },
-  { label: 'opportunities.stages.won', value: StageEnum.Won },
+  { label: 'opportunities.stages.won', value: StageEnum.Won }
 ];
 
 export enum priorityEnum {
@@ -71,7 +71,7 @@ export enum priorityEnum {
   Low = 'LOW',
   Medium = 'MEDIUM',
   High = 'HIGH',
-  VeryHigh = 'VERY_HIGH',
+  VeryHigh = 'VERY_HIGH'
 }
 
 export const priorityOptions = [
@@ -79,7 +79,7 @@ export const priorityOptions = [
   { label: 'opportunities.priorities.low', value: priorityEnum.Low },
   { label: 'opportunities.priorities.medium', value: priorityEnum.Medium },
   { label: 'opportunities.priorities.high', value: priorityEnum.High },
-  { label: 'opportunities.priorities.veryHigh', value: priorityEnum.VeryHigh },
+  { label: 'opportunities.priorities.veryHigh', value: priorityEnum.VeryHigh }
 ];
 
 export enum stepsEnum {
@@ -87,7 +87,7 @@ export enum stepsEnum {
   SendProposal = 'Send Proposal',
   FollowUpCall = 'Follow-Up Call',
   NegotiateTerms = 'Negotiate Terms',
-  CloseTheDeal = 'Close the Deal',
+  CloseTheDeal = 'Close the Deal'
 }
 
 export const stepsOptions = [
@@ -95,21 +95,21 @@ export const stepsOptions = [
   { label: 'opportunities.steps.sendProposal', value: stepsEnum.SendProposal },
   { label: 'opportunities.steps.followUpCall', value: stepsEnum.FollowUpCall },
   { label: 'opportunities.steps.negotiateTerms', value: stepsEnum.NegotiateTerms },
-  { label: 'opportunities.steps.closeTheDeal', value: stepsEnum.CloseTheDeal },
+  { label: 'opportunities.steps.closeTheDeal', value: stepsEnum.CloseTheDeal }
 ];
 
 export enum reasonEnum {
   NotInterested = 'Not Interested',
   NoBudget = 'No Budget',
   CompetitorChosen = 'Competitor Chosen',
-  Other = 'Other',
+  Other = 'Other'
 }
 
 export const reasonOptions = [
   { label: 'opportunities.reasons.notInterested', value: reasonEnum.NotInterested },
   { label: 'opportunities.reasons.noBudget', value: reasonEnum.NoBudget },
   { label: 'opportunities.reasons.competitorChosen', value: reasonEnum.CompetitorChosen },
-  { label: 'opportunities.reasons.other', value: reasonEnum.Other },
+  { label: 'opportunities.reasons.other', value: reasonEnum.Other }
 ];
 /**
  * Fetches a list of opportunties from the API
@@ -128,7 +128,7 @@ export async function getOpportunities(all?: false): Promise<UseOpportunitiesRes
         createdAt: formatDate(opportunity.createdAt),
         // updatedAt: formatDate(opportunity.updatedAt),
         updatedAt: '-',
-        assign: opportunity.user?.name,
+        assign: opportunity.user?.name
       }));
       const pagination = body?.pagination;
       return { opportunties, pagination };
@@ -153,7 +153,7 @@ export async function getOpportunities(all?: false): Promise<UseOpportunitiesRes
  */
 export async function getOpportunity(id: string | string[]): Promise<Opportunities> {
   try {
-    let { body: opportunity, success } = await useApiFetch(`opportunity/${id}`);
+    const { body: opportunity, success } = await useApiFetch(`opportunity/${id}`);
     return opportunity;
   } catch (error) {
     console.error('Error fetching opportunity:', error instanceof Error ? error.message : error);
@@ -164,7 +164,7 @@ export async function getOpportunity(id: string | string[]): Promise<Opportuniti
 
 export async function getOpportunityActivity(id: string | string[]): Promise<any> {
   try {
-    let { body: lead, success } = await useApiFetch(`activity/opportunity/${id}`);
+    const { body: lead, success } = await useApiFetch(`activity/opportunity/${id}`);
     return lead;
   } catch (error) {
     console.error('Error fetching lead:', error instanceof Error ? error.message : error);

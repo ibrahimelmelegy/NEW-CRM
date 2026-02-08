@@ -70,27 +70,26 @@
              h4.text-lg.font-semibold.text-neutral-900 {{ $t('operations.dailyTasks.details.notes') }}
              p.text-neutral-800.leading-relaxed {{dailyTask?.notes}}
     </template>
-    <script lang="ts" setup>
-    const route = useRoute();
-    
-    const dailyTask = await getDailyTask(route.params.slug as string);
-    </script>
-    <style scoped lang="scss">
-    .activity {
-      position: relative;
-      ::before {
-        content: "";
-        height: 100%;
-        width: 1px;
-        position: absolute;
-        left: 24px;
-        top: 2%;
-        border: 1px dashed #e7e6e9;
-        z-index: -1;
-      }
-      > div:last-of-type {
-        background: #f8f7fa !important;
-      }
-    }
-    </style>
-    
+<script lang="ts" setup>
+const route = useRoute();
+
+const dailyTask = await getDailyTask(route.params.slug as string);
+</script>
+<style scoped lang="scss">
+.activity {
+  position: relative;
+  ::before {
+    content: '';
+    height: 100%;
+    width: 1px;
+    position: absolute;
+    left: 24px;
+    top: 2%;
+    border: 1px dashed #e7e6e9;
+    z-index: -1;
+  }
+  > div:last-of-type {
+    background: #f8f7fa !important;
+  }
+}
+</style>

@@ -1,6 +1,6 @@
 import { PDFDocument } from 'pdf-lib';
 
-export const generatePdf = async (proposalData) => {
+export const generatePdf = async proposalData => {
   const pdfDoc = await PDFDocument.create();
   const page = pdfDoc.addPage([600, 800]);
   const { width, height } = page.getSize();

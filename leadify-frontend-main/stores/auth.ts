@@ -1,18 +1,18 @@
-import { defineStore, skipHydrate } from "pinia";
-import { useLocalStorage } from "@vueuse/core";
-import { ElNotification } from "element-plus";
+import { defineStore, skipHydrate } from 'pinia';
+import { useLocalStorage } from '@vueuse/core';
+import { ElNotification } from 'element-plus';
 
-export const useAuthStore = defineStore("auth", {
+export const useAuthStore = defineStore('auth', {
   state: () => ({
-    token: useLocalStorage("access_token", ""),
+    token: useLocalStorage('access_token', ''),
     loadingChangePassword: false, // ✅ FIX: Fixed typo
     permissions: [] as string[],
-    lang: "en"
+    lang: 'en'
   }),
 
   hydrate(state) {
     // Re-initialize localStorage refs on client hydration
-    state.token = useLocalStorage("access_token", "").value;
+    state.token = useLocalStorage('access_token', '').value;
   },
 
   actions: {
@@ -23,7 +23,7 @@ export const useAuthStore = defineStore("auth", {
     },
 
     setData(token: string) {
-      useLocalStorage("access_token", token);
+      useLocalStorage('access_token', token);
       this.token = token;
     },
 
@@ -35,7 +35,7 @@ export const useAuthStore = defineStore("auth", {
         const response = await useApiFetch('auth/change-password', 'POST', {
           oldPassword: input.oldPassword,
           newPassword: input.password,
-          confirmPassword: input.confirmPassword,
+          confirmPassword: input.confirmPassword
         });
 
         this.loadingChangePassword = false;
@@ -46,37 +46,37 @@ export const useAuthStore = defineStore("auth", {
 
         if (response.success) {
           ElNotification({
-            type: "success",
-            title: "Success",
-            message: "Password has been changed successfully",
+            type: 'success',
+            title: 'Success',
+            message: 'Password has been changed successfully'
           });
         } else {
           ElNotification({
-            title: "Error",
-            type: "error",
-            message: response.message || "Failed to change password",
+            title: 'Error',
+            type: 'error',
+            message: response.message || 'Failed to change password'
           });
         }
 
         return {
           success: response.success || false,
-          message: response.message || "",
+          message: response.message || ''
         };
       } catch (error: any) {
         this.loadingChangePassword = false;
         ElNotification({
-          title: "Error",
-          type: "error",
-          message: error.message || "An error occurred",
+          title: 'Error',
+          type: 'error',
+          message: error.message || 'An error occurred'
         });
         return { success: false, message: error.message };
       }
     },
 
     async logout() {
-      this.token = "";
-      useLocalStorage("access_token", "");
-      navigateTo("/login");
+      this.token = '';
+      useLocalStorage('access_token', '');
+      navigateTo('/login');
     }
-  },
+  }
 });

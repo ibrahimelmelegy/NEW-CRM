@@ -3,7 +3,7 @@
     <div v-if="groupedActivities.length > 0" class="timeline-container">
       <div v-for="group in groupedActivities" :key="group.date" class="timeline-group">
         <div class="date-header">{{ group.dateLabel }}</div>
-        
+
         <div v-for="item in group.items" :key="item.id" class="timeline-item">
           <!-- Icon & Line -->
           <div class="timeline-visual">
@@ -19,10 +19,10 @@
               <span class="activity-type">{{ formatStatus(item.status) }}</span>
               <span class="activity-time">{{ formatTime(item.createdAt) }}</span>
             </div>
-            
+
             <div class="glass-card activity-card">
               <p class="description">{{ item.description }}</p>
-              
+
               <div v-if="item.user" class="user-info">
                 <Avatar :src="item.user.profilePicture || '/images/avatar.png'" small />
                 <span class="user-name">{{ item.user.name }}</span>
@@ -32,7 +32,7 @@
         </div>
       </div>
     </div>
-    
+
     <div v-else class="empty-state">
       <el-empty :description="$t('common.noData')" image="/images/empty.png" />
     </div>
@@ -55,7 +55,7 @@ const groupedActivities = computed(() => {
   if (!props.activities || props.activities.length === 0) return [];
 
   const groups: Record<string, any[]> = {};
-  
+
   props.activities.forEach(item => {
     const date = new Date(item.createdAt).toDateString();
     if (!groups[date]) groups[date] = [];
@@ -66,14 +66,14 @@ const groupedActivities = computed(() => {
     const dObj = new Date(date);
     const today = new Date().toDateString();
     const yesterday = new Date(Date.now() - 86400000).toDateString();
-    
+
     let label = date;
     if (date === today) label = t('common.today');
     else if (date === yesterday) label = t('common.yesterday');
     else label = dObj.toLocaleDateString(locale.value === 'ar' ? 'ar-EG' : 'en-US', { day: 'numeric', month: 'long' });
 
     return {
-      date: date,
+      date,
       dateLabel: label,
       items: groups[date]
     };
@@ -82,30 +82,30 @@ const groupedActivities = computed(() => {
 
 const getTypeStyle = (type: string): string => {
   const styles: Record<string, string> = {
-    assigned: "assigned-style",
-    update: "update-style",
-    restored: "restore-style",
-    create: "create-style",
-    delete: "delete-style",
-    archived: "archive-style",
-    import: "import-style",
-    export: "export-style",
+    assigned: 'assigned-style',
+    update: 'update-style',
+    restored: 'restore-style',
+    create: 'create-style',
+    delete: 'delete-style',
+    archived: 'archive-style',
+    import: 'import-style',
+    export: 'export-style'
   };
-  return styles[type] || "default-style";
+  return styles[type] || 'default-style';
 };
 
 const getIconName = (type: string): string => {
   const icons: Record<string, string> = {
-    assigned: "ph:user-plus-bold",
-    update: "ph:pencil-line-bold",
-    restored: "ph:arrow-counter-clockwise-bold",
-    create: "ph:star-bold",
-    delete: "ph:trash-bold",
-    archived: "ph:archive-bold",
-    import: "ph:upload-simple-bold",
-    export: "ph:download-simple-bold",
+    assigned: 'ph:user-plus-bold',
+    update: 'ph:pencil-line-bold',
+    restored: 'ph:arrow-counter-clockwise-bold',
+    create: 'ph:star-bold',
+    delete: 'ph:trash-bold',
+    archived: 'ph:archive-bold',
+    import: 'ph:upload-simple-bold',
+    export: 'ph:download-simple-bold'
   };
-  return icons[type] || "ph:activity-bold";
+  return icons[type] || 'ph:activity-bold';
 };
 
 const formatStatus = (status: string) => {
@@ -117,10 +117,10 @@ const formatStatus = (status: string) => {
 
 const formatTime = (dateStr: string) => {
   const date = new Date(dateStr);
-  return date.toLocaleTimeString(locale.value === 'ar' ? 'ar-EG' : 'en-US', { 
-    hour: '2-digit', 
+  return date.toLocaleTimeString(locale.value === 'ar' ? 'ar-EG' : 'en-US', {
+    hour: '2-digit',
     minute: '2-digit',
-    hour12: true 
+    hour12: true
   });
 };
 </script>
@@ -132,7 +132,7 @@ const formatTime = (dateStr: string) => {
 
   .timeline-group {
     margin-bottom: 2rem;
-    
+
     .date-header {
       font-size: 0.875rem;
       font-weight: 600;
@@ -180,14 +180,38 @@ const formatTime = (dateStr: string) => {
         transform: scale(1.1);
       }
 
-      &.assigned-style { color: #a855f7; background: rgba(168, 85, 247, 0.1); }
-      &.update-style { color: #14b8a6; background: rgba(20, 184, 166, 0.1); }
-      &.restore-style { color: #f59e0b; background: rgba(245, 158, 11, 0.1); }
-      &.create-style { color: #8b5cf6; background: rgba(139, 92, 246, 0.1); }
-      &.delete-style { color: #ef4444; background: rgba(239, 68, 68, 0.1); }
-      &.archive-style { color: #64748b; background: rgba(100, 116, 139, 0.1); }
-      &.import-style { color: #3b82f6; background: rgba(59, 130, 246, 0.1); }
-      &.export-style { color: #06b6d4; background: rgba(6, 182, 212, 0.1); }
+      &.assigned-style {
+        color: #a855f7;
+        background: rgba(168, 85, 247, 0.1);
+      }
+      &.update-style {
+        color: #14b8a6;
+        background: rgba(20, 184, 166, 0.1);
+      }
+      &.restore-style {
+        color: #f59e0b;
+        background: rgba(245, 158, 11, 0.1);
+      }
+      &.create-style {
+        color: #8b5cf6;
+        background: rgba(139, 92, 246, 0.1);
+      }
+      &.delete-style {
+        color: #ef4444;
+        background: rgba(239, 68, 68, 0.1);
+      }
+      &.archive-style {
+        color: #64748b;
+        background: rgba(100, 116, 139, 0.1);
+      }
+      &.import-style {
+        color: #3b82f6;
+        background: rgba(59, 130, 246, 0.1);
+      }
+      &.export-style {
+        color: #06b6d4;
+        background: rgba(6, 182, 212, 0.1);
+      }
     }
 
     .timeline-connector {
@@ -200,13 +224,13 @@ const formatTime = (dateStr: string) => {
 
   .timeline-content {
     flex: 1;
-    
+
     .content-header {
       display: flex;
       justify-content: space-between;
       align-items: center;
       margin-bottom: 0.5rem;
-      
+
       .activity-type {
         font-weight: 700;
         font-size: 0.813rem;
@@ -214,7 +238,7 @@ const formatTime = (dateStr: string) => {
         text-transform: uppercase;
         letter-spacing: 0.05em;
       }
-      
+
       .activity-time {
         font-size: 0.75rem;
         color: var(--text-muted);
@@ -224,19 +248,19 @@ const formatTime = (dateStr: string) => {
     .activity-card {
       padding: 1.25rem;
       border-radius: 1.5rem;
-      
+
       .description {
         font-size: 0.875rem;
         color: var(--text-secondary);
         line-height: 1.5;
         margin-bottom: 0.75rem;
       }
-      
+
       .user-info {
         display: flex;
         align-items: center;
         gap: 0.75rem;
-        
+
         .user-name {
           font-size: 0.813rem;
           font-weight: 500;
@@ -248,7 +272,7 @@ const formatTime = (dateStr: string) => {
 }
 
 // RTL Support
-[dir="rtl"] {
+[dir='rtl'] {
   .activity-timeline {
     .timeline-group .date-header {
       padding-left: 0;
@@ -256,7 +280,7 @@ const formatTime = (dateStr: string) => {
       border-left: 0;
       border-right: 3px solid var(--primary);
     }
-    
+
     .timeline-visual .timeline-icon {
       /* Ensure icons don't flip unless they are directional */
     }

@@ -12,7 +12,7 @@ el-tabs.demo-tabs(v-model="activeName")
 
 <script setup lang="ts">
 const activeName = ref('sales');
-const user = ref()
+const user = ref();
 
 const response = await useApiFetch('auth/me');
 user.value = response?.body;

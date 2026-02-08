@@ -30,141 +30,141 @@ ActionModel(
 </template>
 
 <script setup lang="ts">
-  const props = defineProps({
-    filters: {
-      type: Object,
-      required: false,
+const props = defineProps({
+  filters: {
+    type: Object,
+    required: false
+  },
+  user: {
+    type: Object,
+    required: true
+  },
+  hasExport: {
+    type: Boolean,
+    required: false
+  }
+});
+
+const exportPopup = ref(false);
+const loadingExport = ref(false);
+const email = ref('');
+
+const isLoading = ref(false);
+
+const table = reactive({
+  columns: [
+    {
+      prop: 'name',
+      label: 'Full Name',
+      component: 'Text',
+      type: 'font-bold',
+      width: 150
     },
-    user: {
-      type: Object,
-      required: true,
+    {
+      prop: 'manpowerContacts',
+      label: 'Contacts',
+      component: 'AvatarText',
+      type: 'font-bold',
+      width: 200
     },
-    hasExport: {
-      type: Boolean,
-      required: false,
+    {
+      prop: 'role',
+      label: 'Role',
+      component: 'Text',
+      type: 'font-default',
+      width: 150
     },
-  });
-
-  const exportPopup = ref(false);
-  const loadingExport = ref(false);
-  const email = ref("");
-
-  const isLoading = ref(false);
-
-  const table = reactive({
-    columns: [
-      {
-        prop: "name",
-        label: "Full Name",
-        component: "Text",
-        type: "font-bold",
-        width: 150,
-      },
-      {
-        prop: "manpowerContacts",
-        label: "Contacts",
-        component: "AvatarText",
-        type: "font-bold",
-        width: 200,
-      },
-      {
-        prop: "role",
-        label: "Role",
-        component: "Text",
-        type: "font-default",
-        width: 150,
-      },
-      {
-        prop: "availabilityStatus",
-        label: "Availability Status",
-        component: "Label",
-        type: "outline",
-        filters: [
-          { text: "Available", value: "AVAILABLE" },
-          { text: "Not Available", value: "NOT_AVAILABLE" },
-        ],
-        width: 200,
-      },
-      {
-        prop: "salary",
-        label: "Salary",
-        component: "Text",
-        type: "font-default",
-        width: 150,
-      },
-      {
-        prop: "totalCost",
-        label: "Total Cost",
-        component: "Text",
-        type: "font-default",
-        width: 150,
-      },
-      {
-        prop: "dailyCost",
-        label: "Daily Cost",
-        component: "Text",
-        type: "font-default",
-        width: 150,
-      },
-    ],
-    data: [] as ManpowerValues[],
-  });
-
-  const response = await getManpowers();
-  table.data = response.manpowers;
-
-  const getData = async () => {
-    isLoading.value = true;
-    const response = await useTableFilter("manpower", props?.filters);
-    table.data = response.formattedData;
-    isLoading.value = false;
-  };
-
-  watch(
-    () => props?.filters,
-    () => {
-      getData();
+    {
+      prop: 'availabilityStatus',
+      label: 'Availability Status',
+      component: 'Label',
+      type: 'outline',
+      filters: [
+        { text: 'Available', value: 'AVAILABLE' },
+        { text: 'Not Available', value: 'NOT_AVAILABLE' }
+      ],
+      width: 200
+    },
+    {
+      prop: 'salary',
+      label: 'Salary',
+      component: 'Text',
+      type: 'font-default',
+      width: 150
+    },
+    {
+      prop: 'totalCost',
+      label: 'Total Cost',
+      component: 'Text',
+      type: 'font-default',
+      width: 150
+    },
+    {
+      prop: 'dailyCost',
+      label: 'Daily Cost',
+      component: 'Text',
+      type: 'font-default',
+      width: 150
     }
-  );
+  ],
+  data: [] as ManpowerValues[]
+});
 
-  async function setEmail(pre: any) {
-    email.value = pre.target.value;
+const response = await getManpowers();
+table.data = response.manpowers;
+
+const getData = async () => {
+  isLoading.value = true;
+  const response = await useTableFilter('manpower', props?.filters);
+  table.data = response.formattedData;
+  isLoading.value = false;
+};
+
+watch(
+  () => props?.filters,
+  () => {
+    getData();
   }
+);
 
-  async function exportClick() {
-    email.value = await props?.user?.email;
-    exportPopup.value = await true;
-  }
+async function setEmail(pre: any) {
+  email.value = pre.target.value;
+}
 
-  async function confirmClick() {
-    loadingExport.value = true;
-    try {
-      const res = await useTableFilter(`manpower/excel/${email.value}`, props?.filters);
-      if (res?.status == "200") {
-        ElNotification({
-          type: "success",
-          title: "Success",
-          message: "Send file to email successfully ",
-        });
-      } else {
-        ElNotification({
-          type: "error",
-          title: "Error",
-          message: "Unknown error",
-        });
-      }
-    } catch (error) {
-      // Catch any unexpected errors and handle them
+async function exportClick() {
+  email.value = await props?.user?.email;
+  exportPopup.value = await true;
+}
+
+async function confirmClick() {
+  loadingExport.value = true;
+  try {
+    const res = await useTableFilter(`manpower/excel/${email.value}`, props?.filters);
+    if (res?.status == '200') {
       ElNotification({
-        type: "error",
-        title: "Error",
-        message: error instanceof Error ? error.message : "Unknown error",
+        type: 'success',
+        title: 'Success',
+        message: 'Send file to email successfully '
       });
-    } finally {
-      email.value = "";
-      loadingExport.value = false;
-      exportPopup.value = false;
-      getData();
+    } else {
+      ElNotification({
+        type: 'error',
+        title: 'Error',
+        message: 'Unknown error'
+      });
     }
+  } catch (error) {
+    // Catch any unexpected errors and handle them
+    ElNotification({
+      type: 'error',
+      title: 'Error',
+      message: error instanceof Error ? error.message : 'Unknown error'
+    });
+  } finally {
+    email.value = '';
+    loadingExport.value = false;
+    exportPopup.value = false;
+    getData();
   }
+}
 </script>

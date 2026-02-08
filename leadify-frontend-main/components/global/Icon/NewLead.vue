@@ -37,13 +37,6 @@
       stroke-linecap="round"
       stroke-linejoin="round"
     />
-    <path
-      d="M19 3.51953V6.50952"
-      stroke="currentColor"
-      stroke-width="1.5"
-      stroke-miterlimit="10"
-      stroke-linecap="round"
-      stroke-linejoin="round"
-    />
+    <path d="M19 3.51953V6.50952" stroke="currentColor" stroke-width="1.5" stroke-miterlimit="10" stroke-linecap="round" stroke-linejoin="round" />
   </svg>
 </template>

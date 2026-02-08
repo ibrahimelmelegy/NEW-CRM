@@ -9,11 +9,11 @@
 </template>
 
 <script setup>
-  defineProps(["error", "statusCode"]);
+defineProps(['error', 'statusCode']);
 
-  const handleerror = () => {
-    clearError({ redirect: "/" });
-  };
+const handleerror = () => {
+  clearError({ redirect: '/' });
+};
 </script>
 
 <style scoped></style>

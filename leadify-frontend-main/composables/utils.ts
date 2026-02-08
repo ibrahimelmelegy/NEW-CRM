@@ -1,36 +1,36 @@
-import { ElNotification } from "element-plus";
+import { ElNotification } from 'element-plus';
 
 export const numberOfFilters = ref();
 
 export function copyText(slug: string) {
   navigator.clipboard.writeText(slug);
   ElNotification({
-    type: "success",
-    message: h("h1", { style: "color:#1BC5C3" }, "Code copied Successfully"),
+    type: 'success',
+    message: h('h1', { style: 'color:#1BC5C3' }, 'Code copied Successfully')
   });
 }
 
 export function checkRouteDispatch(to: any, from: any) {
-  const toRoue = to.fullPath.split("/");
-  const fromRoute = from.fullPath.split("/");
+  const toRoue = to.fullPath.split('/');
+  const fromRoute = from.fullPath.split('/');
 
   return toRoue[toRoue.length - 2] == fromRoute[fromRoute.length - 1];
 }
 export function checkSecParent(to: any, from: any) {
-  const toRoue = to.fullPath.split("/");
-  const fromRoute = from.fullPath.includes("?") ? from.fullPath.split("?")[0].split("/") : from.fullPath.split("/");
+  const toRoue = to.fullPath.split('/');
+  const fromRoute = from.fullPath.includes('?') ? from.fullPath.split('?')[0].split('/') : from.fullPath.split('/');
 
   return toRoue[2] == fromRoute[2];
 }
 export function checkparent(to: any, from: any) {
-  const toRoue = to.fullPath.split("/");
-  const fromRoute = from.fullPath.split("/");
+  const toRoue = to.fullPath.split('/');
+  const fromRoute = from.fullPath.split('/');
 
   return toRoue[1] == fromRoute[1];
 }
 export function isObjectValid(obj: any) {
   // Check if the input is an object and not null
-  if (typeof obj !== "object" || obj === null) {
+  if (typeof obj !== 'object' || obj === null) {
     return false;
   }
 
@@ -44,12 +44,10 @@ export function isObjectValid(obj: any) {
   return true; // All properties are valid
 }
 
-
-
 export const filterLength = (obj: Record<string, any>): number => {
   if (!Object.entries(obj).length) return 0;
   return Object.entries(obj)?.reduce((total, [key, value]) => {
-    if (Array.isArray(value) || typeof value === "string") {
+    if (Array.isArray(value) || typeof value === 'string') {
       // Add the length of arrays or strings
       return total + value.length;
     }
@@ -61,9 +59,9 @@ export const cleanObject = (obj: any) => {
   return Object.fromEntries(
     Object.entries(obj).filter(([_, value]) => {
       // Remove falsy values, empty arrays, and empty objects
-      if (value === null || value === undefined || value === "" || Number.isNaN(value)) return false; // Falsy values
+      if (value === null || value === undefined || value === '' || Number.isNaN(value)) return false; // Falsy values
       if (Array.isArray(value) && value.length === 0) return false; // Empty array
-      if (typeof value === "object" && !Array.isArray(value) && Object.keys(value).length === 0) return false; // Empty object
+      if (typeof value === 'object' && !Array.isArray(value) && Object.keys(value).length === 0) return false; // Empty object
       return true; // Keep other values
     })
   );
@@ -73,9 +71,9 @@ export function isNullish(value: any) {
   return (
     value === null ||
     value === undefined ||
-    (typeof value === "string" && value.trim() === "") || // Empty string
+    (typeof value === 'string' && value.trim() === '') || // Empty string
     (Array.isArray(value) && value.length === 0) || // Empty array
-    (typeof value === "object" && value !== null && Object.keys(value).length === 0) // Empty object
+    (typeof value === 'object' && value !== null && Object.keys(value).length === 0) // Empty object
   );
 }
 
@@ -97,13 +95,13 @@ export const handleUploadRequestApi = async (params: any, payloadName?: string, 
       formData.append(key, value);
     });
 
-    const response = await useApiFetch("upload", "POST", formData, false, true);
+    const response = await useApiFetch('upload', 'POST', formData, false, true);
     if (response?.success) {
       result.value = response.body;
     }
   } catch (error) {
     errorData.value = error;
-    console.error("Upload failed:", error);
+    console.error('Upload failed:', error);
   }
   return { result, errorData };
 };

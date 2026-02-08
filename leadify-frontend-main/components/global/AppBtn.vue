@@ -9,35 +9,35 @@ el-button(:type="type" :size="size" :link="link" :native-type="nativeType" :plai
 const props = defineProps({
   text: {
     type: String,
-    required: true,
+    required: true
   },
   type: {
-    type: String,
+    type: String
   },
   size: {
     type: String,
-    default: 'large',
+    default: 'large'
   },
   nativeType: {
-    type: String,
+    type: String
   },
   plain: {
     type: Boolean,
-    default: false,
+    default: false
   },
   link: {
     type: Boolean,
-    default: false,
+    default: false
   },
   loading: {
     type: Boolean,
-    default: false,
+    default: false
   },
   icon: {
-    type: String,
+    type: String
   },
   iconSize: {
-    type: String,
-  },
+    type: String
+  }
 });
 </script>

@@ -12,7 +12,6 @@ el-form(  autocomplete="off"   @submit.prevent='onSubmit'   ref="myForm" label-p
 <script lang="ts" setup>
 import { useForm } from 'vee-validate';
 import * as yup from 'yup';
-;
 const router = useRouter();
 const props = defineProps({
   loading: Boolean,
@@ -20,8 +19,8 @@ const props = defineProps({
   label: String,
   data: {
     type: Object,
-    required: false,
-  },
+    required: false
+  }
 });
 
 const emit = defineEmits(['submit']);
@@ -53,11 +52,11 @@ const formSchema = yup.object({
       }
     )
     .max(25)
-    .label('Buy Price'),
+    .label('Buy Price')
 });
 
 const { handleSubmit } = useForm({
-  validationSchema: formSchema,
+  validationSchema: formSchema
 });
 
 const onSubmit = handleSubmit((values: any, actions: any) => {

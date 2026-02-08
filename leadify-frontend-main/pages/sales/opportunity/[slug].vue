@@ -137,120 +137,121 @@ el-tabs.demo-tabs(v-model="activeName", @tab-click="handleClick")
         el-button( v-if="activity?.docs?.length >0" :loading = "loading" class="!rounded-2xl mb-2"  type= 'primary' size="large" :disabled="activity?.pagination?.totalPages == activity?.pagination?.page" @click="getActivityPage(Number(activity?.pagination?.page)+1)") {{ $t('common.view') }} More
 </template>
 <script lang="ts" setup>
-  const { hasPermission } = await usePermissions();
-  const { t } = useI18n();
-  const activeName = ref("summary");
-  const route = useRoute();
+const { hasPermission } = await usePermissions();
+const { t } = useI18n();
+const activeName = ref('summary');
+const route = useRoute();
 
-  const loading = ref(false);
+const loading = ref(false);
 
-  const activity = ref();
+const activity = ref();
 
-  // Call API to Get the opportunity
-  const opportunity = await getOpportunity(route.params.slug as string);
-  const response = await getOpportunityActivity((route.params.slug as string) + `?limit=10` + "&&page=1");
-  activity.value = response;
+// Call API to Get the opportunity
+const opportunity = await getOpportunity(route.params.slug as string);
+const response = await getOpportunityActivity((route.params.slug as string) + `?limit=10` + '&&page=1');
+activity.value = response;
 
-  const getActivityPage = async (page: number) => {
-    try {
-      loading.value = true;
-      const responsPage = await getOpportunityActivity((route.params.slug as string) + `?limit=10` + `&&page=${page}`);
-      activity.value = { docs: [...activity.value.docs, ...responsPage.docs], pagination: responsPage.pagination };
-    } finally {
-      loading.value = false;
+const getActivityPage = async (page: number) => {
+  try {
+    loading.value = true;
+    const responsPage = await getOpportunityActivity((route.params.slug as string) + `?limit=10` + `&&page=${page}`);
+    activity.value = { docs: [...activity.value.docs, ...responsPage.docs], pagination: responsPage.pagination };
+  } finally {
+    loading.value = false;
+  }
+};
+
+// Call API to Get the lead
+const lead = await getLead(opportunity.leadId as any);
+const table = reactive({
+  columns: [
+    {
+      prop: 'title',
+      label: t('opportunities.table.proposalTitle'),
+      component: 'Text',
+      sortable: true,
+      type: 'font-bold',
+      width: 200
+    },
+    {
+      prop: 'version',
+      label: t('opportunities.table.version'),
+      component: 'Text',
+      sortable: true,
+      type: 'font-default',
+      width: 150
+    },
+    {
+      prop: 'relatedEntity',
+      label: t('opportunities.table.relatedTo'),
+      component: 'Text',
+      sortable: true,
+      type: 'font-default',
+      width: 150
+    },
+    {
+      prop: 'type',
+      label: t('opportunities.table.type'),
+      component: 'Text',
+      sortable: true,
+      type: 'font-default',
+      filters: [
+        { text: t('opportunities.proposalTypes.financial'), value: 'FINANCIAL' },
+        { text: t('opportunities.proposalTypes.technical'), value: 'TECHNICAL' },
+        { text: t('opportunities.proposalTypes.mixed'), value: 'MIXED' }
+      ],
+      width: 150
+    },
+    {
+      prop: 'proposalFor',
+      label: t('opportunities.table.clientName'),
+      component: 'Text',
+      sortable: true,
+      type: 'font-bold',
+      width: 200
+    },
+    {
+      prop: 'status',
+      label: t('opportunities.table.status'),
+      component: 'Label',
+      type: 'outline',
+      filters: [
+        { text: t('opportunities.proposalStatus.approved'), value: 'APPROVED' },
+        { text: t('opportunities.proposalStatus.waiting'), value: 'WAITING_APPROVAL' },
+        { text: t('opportunities.proposalStatus.rejected'), value: 'REJECTED' }
+      ],
+      width: 150
+    },
+    {
+      prop: 'reference',
+      label: t('opportunities.table.reference'),
+      component: 'Text',
+      sortable: true,
+      type: 'font-bold',
+      width: 200
+    },
+    {
+      prop: 'assign',
+      label: t('opportunities.table.assigned'),
+      component: 'Text',
+      type: 'font-default',
+      width: 200
+    },
+    {
+      prop: 'createdAt',
+      label: t('opportunities.table.created'),
+      component: 'Text',
+      sortable: true,
+      type: 'font-default',
+      width: 200
     }
-  };
+    // { prop: 'actions', label: 'Actions', sortable: false },
+  ],
+  data: [] as Client[]
+});
 
-  // Call API to Get the lead
-  const lead = await getLead(opportunity.leadId as any);
-  const table = reactive({
-    columns: [
-      {
-        prop: "title",
-        label: t('opportunities.table.proposalTitle'),
-        component: "Text",
-        sortable: true,
-        type: "font-bold",
-        width: 200,
-      },
-      {
-        prop: "version",
-        label: t('opportunities.table.version'),
-        component: "Text",
-        sortable: true,
-        type: "font-default",
-        width: 150,
-      },
-      {
-        prop: "relatedEntity",
-        label: t('opportunities.table.relatedTo'),
-        component: "Text",
-        sortable: true,
-        type: "font-default",
-        width: 150,
-      },
-      {
-        prop: "type",
-        label: t('opportunities.table.type'),
-        component: "Text",
-        sortable: true,
-        type: "font-default",
-        filters: [
-          { text: t('opportunities.proposalTypes.financial'), value: "FINANCIAL" },
-          { text: t('opportunities.proposalTypes.technical'), value: "TECHNICAL" },
-          { text: t('opportunities.proposalTypes.mixed'), value: "MIXED" },
-        ],
-        width: 150,
-      },
-      {
-        prop: "proposalFor",
-        label: t('opportunities.table.clientName'),
-        component: "Text",
-        sortable: true,
-        type: "font-bold",
-        width: 200,
-      },
-      {
-        prop: "status",
-        label: t('opportunities.table.status'),
-        component: "Label",
-        type: "outline",
-        filters: [
-          { text: t('opportunities.proposalStatus.approved'), value: "APPROVED" },
-          { text: t('opportunities.proposalStatus.waiting'), value: "WAITING_APPROVAL" },
-          { text: t('opportunities.proposalStatus.rejected'), value: "REJECTED" },
-        ],
-        width: 150,
-      },
-      {
-        prop: "reference",
-        label: t('opportunities.table.reference'),
-        component: "Text",
-        sortable: true,
-        type: "font-bold",
-        width: 200,
-      },
-      {
-        prop: "assign",
-        label: t('opportunities.table.assigned'),
-        component: "Text",
-        type: "font-default",
-        width: 200,
-      },
-      {
-        prop: "createdAt",
-        label: t('opportunities.table.created'),
-        component: "Text",
-        sortable: true,
-        type: "font-default",
-        width: 200,
-      },
-      // { prop: 'actions', label: 'Actions', sortable: false },
-    ],
-    data: [] as Client[],
-  });
-
-  const proposalResponse = await useTableFilter(`proposal?relatedEntityId=${route.params.slug as string}&page=1&limit=100`);
-  table.data = proposalResponse.formattedData?.map((el:any) => {return {...el,
-  type :el.type == "Mixed"  ? t('opportunities.proposalTypes.mixed') : el.type}})
+const proposalResponse = await useTableFilter(`proposal?relatedEntityId=${route.params.slug as string}&page=1&limit=100`);
+table.data = proposalResponse.formattedData?.map((el: any) => {
+  return { ...el, type: el.type == 'Mixed' ? t('opportunities.proposalTypes.mixed') : el.type };
+});
 </script>

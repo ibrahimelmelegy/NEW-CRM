@@ -51,43 +51,43 @@ div
 </template>
 
 <script setup lang="ts">
-  const router = useRouter();
-  const { hasPermission } = await usePermissions();
-  import { Plus } from "@element-plus/icons-vue";
-  const loadingAction = ref(false);
-  const deleteLeadPopup = ref(false);
+import { Plus } from '@element-plus/icons-vue';
+const router = useRouter();
+const { hasPermission } = await usePermissions();
+const loadingAction = ref(false);
+const deleteLeadPopup = ref(false);
 
-  const table = reactive({
-    columns: [
-      {
-        prop: "type",
-        label: useI18n().t('operations.services.table.type'),
-        component: "Text",
-        // sortable: true,
-        type: "font-default",
-        width: 500,
-      },
-      {
-        prop: "price",
-        label: useI18n().t('operations.services.table.price'),
-        component: "Text",
-        // sortable: true,
-        type: "font-default",
-        width: 150,
-      },
-      {
-        prop: "action",
-        label: useI18n().t('common.action'),
-        component: "Action",
-      },
-    ],
-    data: [] as Service[],
-  });
+const table = reactive({
+  columns: [
+    {
+      prop: 'type',
+      label: useI18n().t('operations.services.table.type'),
+      component: 'Text',
+      // sortable: true,
+      type: 'font-default',
+      width: 500
+    },
+    {
+      prop: 'price',
+      label: useI18n().t('operations.services.table.price'),
+      component: 'Text',
+      // sortable: true,
+      type: 'font-default',
+      width: 150
+    },
+    {
+      prop: 'action',
+      label: useI18n().t('common.action'),
+      component: 'Action'
+    }
+  ],
+  data: [] as Service[]
+});
 
-  const response = await useTableFilter("service");
-  table.data = response.formattedData;
+const response = await useTableFilter('service');
+table.data = response.formattedData;
 
-  function handleRowClick(val: any) {
-    router.push(`/operations/services/${val.id}`);
-  }
+function handleRowClick(val: any) {
+  router.push(`/operations/services/${val.id}`);
+}
 </script>

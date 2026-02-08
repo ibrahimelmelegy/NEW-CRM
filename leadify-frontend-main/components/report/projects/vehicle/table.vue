@@ -24,132 +24,132 @@
 </template>
 
 <script setup lang="ts">
-  const props = defineProps({
-    filters: {
-      type: Object,
-      required: false,
+const props = defineProps({
+  filters: {
+    type: Object,
+    required: false
+  },
+  user: {
+    type: Object,
+    required: true
+  },
+  hasExport: {
+    type: Boolean,
+    required: false
+  }
+});
+
+const exportPopup = ref(false);
+const loadingExport = ref(false);
+const email = ref('');
+
+const isLoading = ref(false);
+const table = reactive({
+  columns: [
+    {
+      prop: 'plate',
+      label: 'Plate',
+      component: 'Text',
+      // sortable: true,
+      type: 'font-bold',
+      width: 150
     },
-    user: {
-      type: Object,
-      required: true,
+    {
+      prop: 'manufacturer',
+      label: 'Manufacturer',
+      component: 'Text',
+      // sortable: true,
+      type: 'font-bold',
+      width: 200
     },
-    hasExport: {
-      type: Boolean,
-      required: false,
+    {
+      prop: 'rentCost',
+      label: 'Rent Cost',
+      component: 'Text',
+      // sortable: true,
+      type: 'font-default',
+      width: 150
     },
-  });
-
-  const exportPopup = ref(false);
-  const loadingExport = ref(false);
-  const email = ref("");
-
-  const isLoading = ref(false);
-  const table = reactive({
-    columns: [
-      {
-        prop: "plate",
-        label: "Plate",
-        component: "Text",
-        // sortable: true,
-        type: "font-bold",
-        width: 150,
-      },
-      {
-        prop: "manufacturer",
-        label: "Manufacturer",
-        component: "Text",
-        // sortable: true,
-        type: "font-bold",
-        width: 200,
-      },
-      {
-        prop: "rentCost",
-        label: "Rent Cost",
-        component: "Text",
-        // sortable: true,
-        type: "font-default",
-        width: 150,
-      },
-      {
-        prop: "gasCost",
-        label: "Gas Cost",
-        component: "Text",
-        type: "font-default",
-        width: 150,
-      },
-      {
-        prop: "oilCost",
-        label: "Oil Cost",
-        component: "Text",
-        type: "font-default",
-        width: 150,
-      },
-      {
-        prop: "regularMaintenanceCost",
-        label: "Regular Maintenance Cost",
-        component: "Text",
-        type: "font-default",
-        width: 250,
-      },
-    ],
-    data: [] as Vehicle[],
-  });
-
-  const response = await getVehicles();
-  table.data = response.vehicles;
-
-  const getData = async () => {
-    isLoading.value = true;
-    const response = await useTableFilter("vehicle", props?.filters);
-    table.data = response.formattedData;
-    isLoading.value = false;
-  };
-
-  watch(
-    () => props?.filters,
-    () => {
-      getData();
+    {
+      prop: 'gasCost',
+      label: 'Gas Cost',
+      component: 'Text',
+      type: 'font-default',
+      width: 150
+    },
+    {
+      prop: 'oilCost',
+      label: 'Oil Cost',
+      component: 'Text',
+      type: 'font-default',
+      width: 150
+    },
+    {
+      prop: 'regularMaintenanceCost',
+      label: 'Regular Maintenance Cost',
+      component: 'Text',
+      type: 'font-default',
+      width: 250
     }
-  );
+  ],
+  data: [] as Vehicle[]
+});
 
-  async function setEmail(pre: any) {
-    email.value = pre.target.value;
+const response = await getVehicles();
+table.data = response.vehicles;
+
+const getData = async () => {
+  isLoading.value = true;
+  const response = await useTableFilter('vehicle', props?.filters);
+  table.data = response.formattedData;
+  isLoading.value = false;
+};
+
+watch(
+  () => props?.filters,
+  () => {
+    getData();
   }
+);
 
-  async function exportClick() {
-    email.value = await props?.user?.email;
-    exportPopup.value = await true;
-  }
+async function setEmail(pre: any) {
+  email.value = pre.target.value;
+}
 
-  async function confirmClick() {
-    loadingExport.value = true;
-    try {
-      const res = await useTableFilter(`vehicle/excel/${email.value}`, props?.filters);
-      if (res?.status == "200") {
-        ElNotification({
-          type: "success",
-          title: "Success",
-          message: "Send file to email successfully ",
-        });
-      } else {
-        ElNotification({
-          type: "error",
-          title: "Error",
-          message: "Unknown error",
-        });
-      }
-    } catch (error) {
-      // Catch any unexpected errors and handle them
+async function exportClick() {
+  email.value = await props?.user?.email;
+  exportPopup.value = await true;
+}
+
+async function confirmClick() {
+  loadingExport.value = true;
+  try {
+    const res = await useTableFilter(`vehicle/excel/${email.value}`, props?.filters);
+    if (res?.status == '200') {
       ElNotification({
-        type: "error",
-        title: "Error",
-        message: error instanceof Error ? error.message : "Unknown error",
+        type: 'success',
+        title: 'Success',
+        message: 'Send file to email successfully '
       });
-    } finally {
-      email.value = "";
-      loadingExport.value = false;
-      exportPopup.value = false;
-      getData();
+    } else {
+      ElNotification({
+        type: 'error',
+        title: 'Error',
+        message: 'Unknown error'
+      });
     }
+  } catch (error) {
+    // Catch any unexpected errors and handle them
+    ElNotification({
+      type: 'error',
+      title: 'Error',
+      message: error instanceof Error ? error.message : 'Unknown error'
+    });
+  } finally {
+    email.value = '';
+    loadingExport.value = false;
+    exportPopup.value = false;
+    getData();
   }
+}
 </script>

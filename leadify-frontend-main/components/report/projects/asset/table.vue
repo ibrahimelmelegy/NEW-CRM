@@ -30,112 +30,112 @@
   </template>
 
 <script setup lang="ts">
-  const props = defineProps({
-    filters: {
-      type: Object,
-      required: false,
+const props = defineProps({
+  filters: {
+    type: Object,
+    required: false
+  },
+  user: {
+    type: Object,
+    required: true
+  },
+  hasExport: {
+    type: Boolean,
+    required: false
+  }
+});
+
+const exportPopup = ref(false);
+const loadingExport = ref(false);
+const email = ref('');
+
+const isLoading = ref(false);
+
+const table = reactive({
+  columns: [
+    {
+      prop: 'name',
+      label: 'Assets Name',
+      component: 'Text',
+      // sortable: true,
+      type: 'font-default',
+      width: 500
     },
-    user: {
-      type: Object,
-      required: true,
+    {
+      prop: 'rentPrice',
+      label: 'Rent Price',
+      component: 'Text',
+      // sortable: true,
+      type: 'font-default',
+      width: 150
     },
-    hasExport: {
-      type: Boolean,
-      required: false,
-    },
-  });
-
-  const exportPopup = ref(false);
-  const loadingExport = ref(false);
-  const email = ref("");
-
-  const isLoading = ref(false);
-
-  const table = reactive({
-    columns: [
-      {
-        prop: "name",
-        label: "Assets Name",
-        component: "Text",
-        // sortable: true,
-        type: "font-default",
-        width: 500,
-      },
-      {
-        prop: "rentPrice",
-        label: "Rent Price",
-        component: "Text",
-        // sortable: true,
-        type: "font-default",
-        width: 150,
-      },
-      {
-        prop: "buyPrice",
-        label: "Buy Price",
-        component: "Text",
-        // sortable: true,
-        type: "font-default",
-        width: 150,
-      },
-    ],
-    data: [] as Asset[],
-  });
-
-  const response = await getAssets();
-  table.data = response.assets;
-
-  const getData = async () => {
-    isLoading.value = true;
-    const response = await useTableFilter("asset", props?.filters);
-    table.data = response.formattedData;
-    isLoading.value = false;
-  };
-
-  watch(
-    () => props?.filters,
-    () => {
-      getData();
+    {
+      prop: 'buyPrice',
+      label: 'Buy Price',
+      component: 'Text',
+      // sortable: true,
+      type: 'font-default',
+      width: 150
     }
-  );
+  ],
+  data: [] as Asset[]
+});
 
-  async function setEmail(pre: any) {
-    email.value = pre.target.value;
+const response = await getAssets();
+table.data = response.assets;
+
+const getData = async () => {
+  isLoading.value = true;
+  const response = await useTableFilter('asset', props?.filters);
+  table.data = response.formattedData;
+  isLoading.value = false;
+};
+
+watch(
+  () => props?.filters,
+  () => {
+    getData();
   }
+);
 
-  async function exportClick() {
-    email.value = await props?.user?.email;
-    exportPopup.value = await true;
-  }
+async function setEmail(pre: any) {
+  email.value = pre.target.value;
+}
 
-  async function confirmClick() {
-    loadingExport.value = true;
-    try {
-      const res = await useTableFilter(`asset/excel/${email.value}`, props?.filters);
-      if (res?.status == "200") {
-        ElNotification({
-          type: "success",
-          title: "Success",
-          message: "Send file to email successfully ",
-        });
-      } else {
-        ElNotification({
-          type: "error",
-          title: "Error",
-          message: "Unknown error",
-        });
-      }
-    } catch (error) {
-      // Catch any unexpected errors and handle them
+async function exportClick() {
+  email.value = await props?.user?.email;
+  exportPopup.value = await true;
+}
+
+async function confirmClick() {
+  loadingExport.value = true;
+  try {
+    const res = await useTableFilter(`asset/excel/${email.value}`, props?.filters);
+    if (res?.status == '200') {
       ElNotification({
-        type: "error",
-        title: "Error",
-        message: error instanceof Error ? error.message : "Unknown error",
+        type: 'success',
+        title: 'Success',
+        message: 'Send file to email successfully '
       });
-    } finally {
-      email.value = "";
-      loadingExport.value = false;
-      exportPopup.value = false;
-      getData();
+    } else {
+      ElNotification({
+        type: 'error',
+        title: 'Error',
+        message: 'Unknown error'
+      });
     }
+  } catch (error) {
+    // Catch any unexpected errors and handle them
+    ElNotification({
+      type: 'error',
+      title: 'Error',
+      message: error instanceof Error ? error.message : 'Unknown error'
+    });
+  } finally {
+    email.value = '';
+    loadingExport.value = false;
+    exportPopup.value = false;
+    getData();
   }
+}
 </script>

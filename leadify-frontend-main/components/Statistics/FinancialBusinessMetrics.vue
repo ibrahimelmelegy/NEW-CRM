@@ -27,9 +27,11 @@
 </template>
 
 <script lang="ts" setup>
-  const bussinesStats = ref(await getBussinesStatics());
+const bussinesStats = ref(await getBussinesStatics());
 </script>
 
 <style lang="scss" scoped>
-.chromatic-dashboard { padding: 10px; }
+.chromatic-dashboard {
+  padding: 10px;
+}
 </style>

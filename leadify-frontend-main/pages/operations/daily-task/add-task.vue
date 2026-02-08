@@ -19,7 +19,7 @@
 
 <script lang="ts" setup>
 useHead({
-  title: "App HP Tech | Add Daily Task",
+  title: 'App HP Tech | Add Daily Task'
 });
 const route = useRoute();
 const router = useRouter();
@@ -29,17 +29,17 @@ const isEmail = ref(false);
 const isPhone = ref(false);
 const openFormClient = ref(false);
 const ClientNew = ref({
-  name: "",
-  phone: "",
-  email: "",
-  companyName: "",
-  clientType: "",
+  name: '',
+  phone: '',
+  email: '',
+  companyName: '',
+  clientType: ''
 });
 
-let users = await useApiFetch("users");
+let users = await useApiFetch('users');
 users = users?.body?.docs?.map((e: any) => ({
   label: e.name,
-  value: e.id,
+  value: e.id
 }));
 
 const selectedLead = ref<any>([]);
@@ -51,20 +51,20 @@ async function setClient(pre: any) {
 }
 
 async function setEmail(pre: any) {
-  ClientNew.value.email =pre.target?.value
+  ClientNew.value.email = pre.target?.value;
 }
 async function setPhone(pre: any) {
-  ClientNew.value.phone =pre.target?.value
+  ClientNew.value.phone = pre.target?.value;
 }
 async function setCompany(pre: any) {
-  ClientNew.value.companyName = pre.target?.value
+  ClientNew.value.companyName = pre.target?.value;
 }
 async function setType(pre: any) {
-  ClientNew.value.clientType =pre.target?.value
+  ClientNew.value.clientType = pre.target?.value;
 }
 
 const fetchClient = (clientId: string) => {
-  if (clientId == "0") openFormClient.value = true;
+  if (clientId == '0') openFormClient.value = true;
 };
 
 const loading = ref(false);
@@ -78,12 +78,12 @@ const loadingClient = ref(false);
 async function submitFormClient() {
   loadingClient.value = true;
   try {
-    let formattedValues = cleanObject({
+    const formattedValues = cleanObject({
       clientName: ClientNew.value?.name,
       phone: ClientNew.value?.phone,
       email: ClientNew.value?.email,
       companyName: ClientNew.value?.companyName,
-      clientType: ClientNew.value?.clientType,
+      clientType: ClientNew.value?.clientType
     });
     await createClient(formattedValues, true);
   } catch (err) {

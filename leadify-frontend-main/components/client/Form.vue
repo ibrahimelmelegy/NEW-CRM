@@ -23,162 +23,159 @@ el-form.mb-24(  autocomplete="off"   @submit.prevent='onSubmit'   ref="myForm" l
 </template>
 
 <script lang="ts" setup>
-  import { useForm } from "vee-validate";
-  import * as yup from "yup";
-  import isEmailValidator from "validator/lib/isEmail";
-  import { useI18n } from 'vue-i18n';
-  const { t } = useI18n();
-  ;
-  import { v4 as uuidv4 } from "uuid"; // To generate unique IDs
-  const route = useRoute();
-  const props = defineProps({
-    loading: Boolean,
-    withoutPading:Boolean,
-    label: String,
-    data: {
-      type: Object,
-      required: false,
-    },
-    editMode: {
-      type: Boolean,
-      required: false,
-    },
+import { useForm } from 'vee-validate';
+import * as yup from 'yup';
+import isEmailValidator from 'validator/lib/isEmail';
+import { useI18n } from 'vue-i18n';
+import { v4 as uuidv4 } from 'uuid';
+const { t } = useI18n(); // To generate unique IDs
+const route = useRoute();
+const props = defineProps({
+  loading: Boolean,
+  withoutPading: Boolean,
+  label: String,
+  data: {
+    type: Object,
+    required: false
+  },
+  editMode: {
+    type: Boolean,
+    required: false
+  }
+});
+
+const switchValue = ref(true);
+const emit = defineEmits(['submit', 'leadId']);
+const validPhone = ref(true);
+const isEmail = ref(false);
+const isPhone = ref(false);
+const formSchema = yup.object({
+  clientName: yup.string().trim().required().min(2).max(100).label(t('clients.form.clientName')),
+  companyName: yup.string().nullable().trim().max(100).label(t('clients.form.companyName')),
+  email: yup.string().when([], {
+    is: () => isPhone.value,
+    then: () =>
+      yup
+        .string()
+        .email()
+        .max(100)
+        .nullable()
+        .test(
+          'is-valid',
+          (message: any) => t('errors.invalidEmail'),
+          (value: any) => !value || isEmailValidator(value)
+        )
+        .label(t('clients.form.email')),
+    otherwise: () =>
+      yup
+        .string()
+        .email()
+        .max(100)
+        .required(t('errors.required'))
+        .test(
+          'is-valid',
+          (message: any) => t('errors.invalidEmail'),
+          (value: any) => (value ? isEmailValidator(value) : new yup.ValidationError('Invalid value'))
+        )
+        .label(t('clients.form.email'))
+  }),
+  phone: yup.number().when([], {
+    is: () => isEmail.value,
+    then: () =>
+      yup
+        .number()
+        .nullable() // Allows the value to be null
+        .transform((value: any, originalValue: any) => (originalValue === '' ? null : Number.isNaN(value) ? null : value))
+        .label(t('clients.form.phone'))
+        .test('Phone number', t('errors.invalidPhone'), function (value: any) {
+          if (value === null || value === undefined) {
+            return true;
+          }
+          return !!validPhone.value;
+        }),
+    otherwise: () =>
+      yup
+        .number()
+        .transform((value: any) => (Number.isNaN(value) ? null : value))
+        .nullable()
+        .required(t('errors.required'))
+        .label(t('clients.form.phone'))
+        .test('Phone number', t('errors.invalidPhone'), function (value: any) {
+          return !!validPhone.value;
+        })
+  }),
+  clientType: yup.string().trim().nullable().max(100).label(t('clients.form.clientType')),
+  users: yup.array().of(yup.number()).nullable().label(t('clients.form.assignUser')),
+  city: yup.string().nullable().trim().max(50).label(t('clients.form.city')),
+  streetAddress: yup.string().nullable().trim().max(100).label(t('clients.form.street')),
+  state: yup.string().nullable().trim().max(50).label(t('clients.form.state')),
+  zipCode: yup.string().nullable().trim().max(10).label(t('clients.form.zipCode')),
+  industry: yup.string().trim().nullable().max(100).label(t('clients.form.industry')),
+  clientStatus: yup.string().trim().nullable().max(100).label(t('clients.form.clientStatus')),
+  file: yup.array().nullable().label(t('clients.form.uploadFile'))
+});
+
+const { handleSubmit } = useForm({
+  validationSchema: formSchema
+});
+
+const onSubmit = handleSubmit((values: any, actions: any) => {
+  const formattedValues = cleanObject({
+    ...values,
+    ...(values.file?.length && { fileUpload: values.file?.map((file: any) => file.response) }),
+    ...(selectedLead.value && switchValue.value && !props.editMode && { leadId: selectedLead.value?.id })
   });
+  delete formattedValues.file;
 
-  const switchValue = ref(true);
-  const emit = defineEmits(["submit", "leadId"]);
-  const validPhone = ref(true);
-  const isEmail = ref(false);
-  const isPhone = ref(false);
-  const formSchema = yup.object({
-    clientName: yup.string().trim().required().min(2).max(100).label(t("clients.form.clientName")),
-    companyName: yup.string().nullable().trim().max(100).label(t("clients.form.companyName")),
-    email: yup.string().when([], {
-      is: () => isPhone.value,
-      then: () =>
-        yup
-          .string()
-          .email()
-          .max(100)
-          .nullable()
-          .test(
-            "is-valid",
-            (message: any) => t("errors.invalidEmail"),
-            (value: any) => !value || isEmailValidator(value)
-          )
-          .label(t("clients.form.email")),
-      otherwise: () =>
-        yup
-          .string()
-          .email()
-          .max(100)
-          .required(t("errors.required"))
-          .test(
-            "is-valid",
-            (message: any) => t("errors.invalidEmail"),
-            (value: any) => (value ? isEmailValidator(value) : new yup.ValidationError("Invalid value"))
-          )
-          .label(t("clients.form.email")),
-    }),
-    phone: yup.number().when([], {
-      is: () => isEmail.value,
-      then: () =>
-        yup
-          .number()
-          .nullable() // Allows the value to be null
-          .transform((value: any, originalValue: any) => (originalValue === "" ? null : Number.isNaN(value) ? null : value))
-          .label(t("clients.form.phone"))
-          .test("Phone number", t("errors.invalidPhone"), function (value: any) {
-            if (value === null || value === undefined) {
-              return true;
-            }
-            return validPhone.value ? true : false;
-          }),
-      otherwise: () =>
-        yup
-          .number()
-          .transform((value: any) => (Number.isNaN(value) ? null : value))
-          .nullable()
-          .required(t("errors.required"))
-          .label(t("clients.form.phone"))
-          .test("Phone number", t("errors.invalidPhone"), function (value: any) {
-            return validPhone.value ? true : false;
-          }),
-    }),
-    clientType: yup.string().trim().nullable().max(100).label(t("clients.form.clientType")),
-    users: yup.array().of(yup.number()).nullable().label(t("clients.form.assignUser")),
-    city: yup.string().nullable().trim().max(50).label(t("clients.form.city")),
-    streetAddress: yup.string().nullable().trim().max(100).label(t("clients.form.street")),
-    state: yup.string().nullable().trim().max(50).label(t("clients.form.state")),
-    zipCode: yup.string().nullable().trim().max(10).label(t("clients.form.zipCode")),
-    industry: yup.string().trim().nullable().max(100).label(t("clients.form.industry")),
-    clientStatus: yup.string().trim().nullable().max(100).label(t("clients.form.clientStatus")),
-    file: yup.array().nullable().label(t("clients.form.uploadFile")),
-  });
+  emit('submit', formattedValues);
+});
 
-  const { handleSubmit } = useForm({
-    validationSchema: formSchema,
-  });
+let users = await useApiFetch('users');
+users = users?.body?.docs?.map((e: any) => ({
+  label: e.name,
+  value: e.id
+}));
 
-  const onSubmit = handleSubmit((values: any, actions: any) => {
-    let formattedValues = cleanObject({
-      ...values,
-      ...(values.file?.length && { fileUpload: values.file?.map((file: any) => file.response) }),
-      ...(selectedLead.value && switchValue.value && !props.editMode && { leadId: selectedLead.value?.id }),
-    });
-    delete formattedValues.file;
+const selectedLead = ref<any>([]);
+const response = await getLeads();
+const leads = response.leads;
 
-    emit("submit", formattedValues);
-  });
+const mappedLeads = leads?.map((e: any) => ({
+  label: e.name,
+  value: e.name,
+  id: e.id
+}));
 
-  let users = await useApiFetch("users");
-  users = users?.body?.docs?.map((e: any) => ({
-    label: e.name,
-    value: e.id,
-  }));
+const leadId = props.data?.leadId || route.query?.leadId;
 
-  const selectedLead = ref<any>([]);
-  const response = await getLeads();
-  const leads = response.leads;
+if (leadId) {
+  let lead = selectedLead.value;
 
-  const mappedLeads = leads?.map((e: any) => ({
-    label: e.name,
-    value: e.name,
-    id: e.id,
-  }));
-
-  const leadId = props.data?.leadId || route.query?.leadId;
-
-  if (leadId) {
-    let lead = selectedLead.value;
-
-    if (props.data?.leadId) {
-      lead = await getLead(leadId);
-      if (lead) {
-        selectedLead.value = lead;
-      }
-    } else {
-      selectedLead.value = leads?.find((lead: any) => lead.id === leadId);
+  if (props.data?.leadId) {
+    lead = await getLead(leadId);
+    if (lead) {
+      selectedLead.value = lead;
     }
-
-    if (selectedLead.value) {
-      isEmail.value = Boolean(selectedLead.value.email);
-      isPhone.value = !isEmail.value && Boolean(selectedLead.value.phone);
-    }
+  } else {
+    selectedLead.value = leads?.find((lead: any) => lead.id === leadId);
   }
 
-  function getSelectedLead(e: any) {
-    selectedLead.value = leads?.find((lead: any) => lead.id === e.id);
-    if (selectedLead.value?.email) {
-      isEmail.value = true;
-    } else if (selectedLead.value?.phone) {
-      isPhone.value = true;
-    }
+  if (selectedLead.value) {
+    isEmail.value = Boolean(selectedLead.value.email);
+    isPhone.value = !isEmail.value && Boolean(selectedLead.value.phone);
   }
+}
 
-  const isLeads = computed(() => {
-    return mappedLeads?.length && switchValue.value && !props.editMode
-      ? resolveComponent("InputSelect")
-      : resolveComponent("InputText");
-  });
+function getSelectedLead(e: any) {
+  selectedLead.value = leads?.find((lead: any) => lead.id === e.id);
+  if (selectedLead.value?.email) {
+    isEmail.value = true;
+  } else if (selectedLead.value?.phone) {
+    isPhone.value = true;
+  }
+}
+
+const isLeads = computed(() => {
+  return mappedLeads?.length && switchValue.value && !props.editMode ? resolveComponent('InputSelect') : resolveComponent('InputText');
+});
 </script>

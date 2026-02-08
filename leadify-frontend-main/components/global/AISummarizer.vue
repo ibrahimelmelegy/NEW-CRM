@@ -50,7 +50,7 @@ const emit = defineEmits(['update:modelValue']);
 
 const visible = computed({
   get: () => props.modelValue,
-  set: (val) => emit('update:modelValue', val)
+  set: val => emit('update:modelValue', val)
 });
 
 const rawText = ref(props.initialText || '');
@@ -59,13 +59,13 @@ const summaryData = ref<any>(null);
 
 const generateSummary = async () => {
   if (!rawText.value) return ElNotification.warning('Please enter some text');
-  
+
   loading.value = true;
   try {
     const response: any = await useApiFetch('ai/summarize-meeting', 'POST', {
       text: rawText.value
     });
-    
+
     if (response.success) {
       summaryData.value = response.data;
       ElNotification.success('Summary generated successfully');

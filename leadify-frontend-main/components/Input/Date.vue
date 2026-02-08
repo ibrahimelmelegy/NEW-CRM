@@ -10,41 +10,41 @@ const props = defineProps({
   type: {
     type: String,
     default: 'text',
-    required: false,
+    required: false
   },
   name: {
     type: String,
     default: '',
-    required: false,
+    required: false
   },
   value: {
     type: String,
     default: '',
-    required: false,
+    required: false
   },
 
   label: {
     type: String,
-    required: true,
+    required: true
   },
   placeholder: {
     type: String,
-    default: '',
+    default: ''
   },
   disabled: {
     type: Boolean,
     default: false,
-    required: false,
+    required: false
   },
   disabledDate: {
     type: String,
     default: false,
-    required: false,
+    required: false
   },
   innerClass: {
     type: String,
-    default: '!mb-6',
-  },
+    default: '!mb-6'
+  }
 });
 // use `toRef` to create reactive references to `name` prop which is passed to `useField`
 // this is important because vee-validte needs to know if the field name changes
@@ -58,9 +58,9 @@ const {
   errorMessage,
   handleBlur,
   handleChange,
-  meta,
+  meta
 } = useField(props.name, undefined, {
-  initialValue: props.value,
+  initialValue: props.value
 });
 
 if (props.value) {

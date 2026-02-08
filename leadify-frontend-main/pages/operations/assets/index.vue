@@ -51,63 +51,63 @@ div
 </template>
 
 <script setup lang="ts">
-  const router = useRouter();
-  const { hasPermission } = await usePermissions();
-  import { Plus } from "@element-plus/icons-vue";
-  const loadingAction = ref(false);
-  const deleteLeadPopup = ref(false);
-  const table = reactive({
-    columns: [
-      {
-        prop: "name",
-        label: useI18n().t('operations.assets.table.name'),
-        component: "Text",
-        sortable: true,
-        type: "font-default",
-        width: 500,
-      },
-      {
-        prop: "rentPrice",
-        label: useI18n().t('operations.assets.table.rentPrice'),
-        component: "Text",
-        sortable: true,
-        type: "font-default",
-        width: 150,
-      },
-      {
-        prop: "buyPrice",
-        label: useI18n().t('operations.assets.table.buyPrice'),
-        component: "Text",
-        sortable: true,
-        type: "font-default",
-        width: 150,
-      },
-      {
-        prop: "action",
-        label: useI18n().t('common.action'),
-        component: "Action",
-      },
-    ],
-    data: [],
-  });
+import { Plus } from '@element-plus/icons-vue';
+const router = useRouter();
+const { hasPermission } = await usePermissions();
+const loadingAction = ref(false);
+const deleteLeadPopup = ref(false);
+const table = reactive({
+  columns: [
+    {
+      prop: 'name',
+      label: useI18n().t('operations.assets.table.name'),
+      component: 'Text',
+      sortable: true,
+      type: 'font-default',
+      width: 500
+    },
+    {
+      prop: 'rentPrice',
+      label: useI18n().t('operations.assets.table.rentPrice'),
+      component: 'Text',
+      sortable: true,
+      type: 'font-default',
+      width: 150
+    },
+    {
+      prop: 'buyPrice',
+      label: useI18n().t('operations.assets.table.buyPrice'),
+      component: 'Text',
+      sortable: true,
+      type: 'font-default',
+      width: 150
+    },
+    {
+      prop: 'action',
+      label: useI18n().t('common.action'),
+      component: 'Action'
+    }
+  ],
+  data: []
+});
 
-  const response = await useTableFilter("asset");
-  table.data = response.formattedData;
+const response = await useTableFilter('asset');
+table.data = response.formattedData;
 
-  function handleRowClick(val: any) {
-    router.push(`/operations/assets/${val.id}`);
+function handleRowClick(val: any) {
+  router.push(`/operations/assets/${val.id}`);
+}
+
+const filterOptions = [
+  {
+    title: useI18n().t('operations.assets.filter.rentPrice'),
+    value: ['fromRentPrice', 'toRentPrice'],
+    type: 'input'
+  },
+  {
+    title: useI18n().t('operations.assets.filter.buyPrice'),
+    value: ['fromBuyPrice', 'toBuyPrice'],
+    type: 'input'
   }
-
-  const filterOptions = [
-    {
-      title: useI18n().t('operations.assets.filter.rentPrice'),
-      value: ["fromRentPrice", "toRentPrice"],
-      type: "input",
-    },
-    {
-      title: useI18n().t('operations.assets.filter.buyPrice'),
-      value: ["fromBuyPrice", "toBuyPrice"],
-      type: "input",
-    },
-  ];
+];
 </script>

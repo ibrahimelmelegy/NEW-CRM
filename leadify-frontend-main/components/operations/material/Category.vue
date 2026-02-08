@@ -16,7 +16,7 @@ import { defineExpose } from 'vue';
 
 // Props
 const props = defineProps({
-  name: { type: String, required: true },
+  name: { type: String, required: true }
 });
 
 // Emit events
@@ -24,7 +24,7 @@ const emit = defineEmits(['onSubmit', 'onDelete']);
 
 // Validation schema
 const formSchema = yup.object({
-  name: yup.string().trim().required().min(2).max(100).label('Category Name'),
+  name: yup.string().trim().required().min(2).max(100).label('Category Name')
 });
 
 // Form setup

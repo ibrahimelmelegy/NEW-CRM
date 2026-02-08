@@ -4,13 +4,9 @@
     <div class="skeleton-header flex gap-4 p-4 border-b border-white/10">
       <Skeleton v-for="i in columns" :key="`header-${i}`" variant="text" :width="getColumnWidth(i)" />
     </div>
-    
+
     <!-- Body Rows -->
-    <div 
-      v-for="row in rows" 
-      :key="`row-${row}`" 
-      class="skeleton-row flex gap-4 p-4 border-b border-white/5"
-    >
+    <div v-for="row in rows" :key="`row-${row}`" class="skeleton-row flex gap-4 p-4 border-b border-white/5">
       <Skeleton v-for="col in columns" :key="`cell-${row}-${col}`" variant="text" :width="getColumnWidth(col)" />
     </div>
   </div>
@@ -24,7 +20,7 @@ interface Props {
 
 const props = withDefaults(defineProps<Props>(), {
   rows: 5,
-  columns: 4,
+  columns: 4
 });
 
 const getColumnWidth = (index: number): string => {
@@ -47,11 +43,11 @@ const getColumnWidth = (index: number): string => {
 html.light-mode .table-skeleton,
 body.light-theme .table-skeleton {
   background: rgba(255, 255, 255, 0.5);
-  
+
   .skeleton-header {
     border-bottom-color: rgba(0, 0, 0, 0.08);
   }
-  
+
   .skeleton-row {
     border-bottom-color: rgba(0, 0, 0, 0.04);
   }

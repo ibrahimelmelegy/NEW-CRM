@@ -341,408 +341,453 @@ el-dialog(
   )
 </template>
 <script lang="ts" setup>
-  const { t } = useI18n();
-  const activeName = ref("information");
-  const route = useRoute();
-  const loading = ref(false);
-  const addShow = ref(false);
-  const { hasPermission } = await usePermissions();
-  const handleSubmit = async () => {
+const { t } = useI18n();
+const activeName = ref('information');
+const route = useRoute();
+const loading = ref(false);
+const addShow = ref(false);
+const { hasPermission } = await usePermissions();
+const handleSubmit = async () => {
+  loading.value = true;
+  addShow.value = false;
+  // Refresh project data
+  project = await getProject(route.params.slug?.toString() || '');
+  loading.value = false;
+};
+
+const handleCancel = () => {
+  addShow.value = false;
+};
+
+const handleDialogClose = () => {
+  addShow.value = false;
+};
+
+const handleTypeStyle = (type: string) => {
+  switch (type) {
+    case 'assigned':
+      return 'bg-primary-purple-50 text-primary-purple-500';
+    case 'update':
+      return 'bg-secondary-turquoise-50 text-secondary-turquoise-700';
+    case 'restored':
+      return 'bg-semantic-warning-background text-semantic-warning-foreground';
+    case 'create':
+      return 'bg-primary-purple-50 text-primary-purple-500';
+    case 'delete':
+      return 'bg-semantic-error-background text-semantic-error-foreground';
+    case 'archived':
+      return 'bg-neutral-100 text-neutral-500';
+    case 'import':
+      return 'bg-secondary-blue-100 text-secondary-blue-600';
+    case 'export':
+      return 'bg-secondary-turquoise-100 text-secondary-turquoise-900';
+    default:
+      return '';
+  }
+};
+
+const handleIconName = (type: string) => {
+  switch (type) {
+    case 'assigned':
+      return 'IconAssign';
+    case 'update':
+      return 'IconEdit';
+    case 'restored':
+      return 'IconRestore';
+    case 'create':
+      return 'IconNewLead';
+    case 'delete':
+      return 'IconDelete';
+    case 'archived':
+      return 'IconArchived';
+    case 'import':
+      return 'IconImport';
+    case 'export':
+      return 'IconExport';
+    default:
+      return '';
+  }
+};
+
+const activity = ref();
+
+// mock data for integrate till api is ready
+let project = await getProject(route.params.slug?.toString() || '');
+
+const respons = await getProjectActivity(route.params.slug + `?limit=10` + '&&page=1');
+activity.value = respons;
+
+const getActivityPage = async (page: number) => {
+  try {
     loading.value = true;
-    addShow.value = false;
-    // Refresh project data
-    project = await getProject(route.params.slug?.toString() || "");
+    const responsPage = await getProjectActivity(route.params.slug + `?limit=10` + `&&page=${page}`);
+    activity.value = {
+      docs: [...activity.value.docs, ...responsPage.docs],
+      pagination: responsPage.pagination
+    };
+  } finally {
     loading.value = false;
-  };
-
-  const handleCancel = () => {
-    addShow.value = false;
-  };
-
-  const handleDialogClose = () => {
-    addShow.value = false;
-  };
-
-  const handleTypeStyle = (type: string) => {
-    switch (type) {
-      case "assigned":
-        return "bg-primary-purple-50 text-primary-purple-500";
-      case "update":
-        return "bg-secondary-turquoise-50 text-secondary-turquoise-700";
-      case "restored":
-        return "bg-semantic-warning-background text-semantic-warning-foreground";
-      case "create":
-        return "bg-primary-purple-50 text-primary-purple-500";
-      case "delete":
-        return "bg-semantic-error-background text-semantic-error-foreground";
-      case "archived":
-        return "bg-neutral-100 text-neutral-500";
-      case "import":
-        return "bg-secondary-blue-100 text-secondary-blue-600";
-      case "export":
-        return "bg-secondary-turquoise-100 text-secondary-turquoise-900";
-      default:
-        return "";
-    }
-  };
-
-  const handleIconName = (type: string) => {
-    switch (type) {
-      case "assigned":
-        return "IconAssign";
-      case "update":
-        return "IconEdit";
-      case "restored":
-        return "IconRestore";
-      case "create":
-        return "IconNewLead";
-      case "delete":
-        return "IconDelete";
-      case "archived":
-        return "IconArchived";
-      case "import":
-        return "IconImport";
-      case "export":
-        return "IconExport";
-      default:
-        return "";
-    }
-  };
-
-  const activity = ref();
-
-  // mock data for integrate till api is ready
-  let project = await getProject(route.params.slug?.toString() || "");
-
-  const respons = await getProjectActivity(route.params.slug + `?limit=10` + "&&page=1");
-  activity.value = respons;
-
-  const getActivityPage = async (page: number) => {
-    try {
-      loading.value = true;
-      const responsPage = await getProjectActivity(route.params.slug + `?limit=10` + `&&page=${page}`);
-      activity.value = {
-        docs: [...activity.value.docs, ...responsPage.docs],
-        pagination: responsPage.pagination,
-      };
-    } finally {
-      loading.value = false;
-    }
-  };
-
-  const valueMap = {
-    ACTIVE: "PROJECT_ACTIVE",
-    CANCELLED: "PROJECT_CANCELLED",
-    COMPLETED: "PROJECT_COMPLETED",
-    ON_HOLD: "PROJECT_ON_HOLD",
-  };
-
-  // vehicles table
-  const vehicles = reactive({
-    columns: [
-      { prop: "plate", label: t('operations.projects.vehicles.table.plateNumber'), component: "Text", type: "font-bold", width: 130 },
-      { prop: "manufacturer", label: t('operations.projects.vehicles.table.manufacturer'), component: "Text", type: "font-bold", width: 150 },
-      { prop: "rentCost", label: t('operations.projects.vehicles.table.rentCost'), component: "Text", type: "font-default", width: 120 },
-      { prop: "gasCost", label: t('operations.projects.vehicles.table.gasCost'), component: "Text", type: "font-default", width: 120 },
-      { prop: "oilCost", label: t('operations.projects.vehicles.table.oilCost'), component: "Text", type: "font-default", width: 150 },
-      { prop: "regularMaintenanceCost", label: t('operations.projects.vehicles.table.maintenanceCost'), component: "Text", type: "font-default", width: 250 },
-      { prop: "totalCost", label: t('operations.projects.vehicles.table.totalCost'), component: "Text", type: "font-default", width: 250 },
-    ],
-    data: [] as any[],
-  });
-
-  if (project?.vehicles?.length) {
-    vehicles.data = project?.vehicles?.map((vehicle: any) => ({
-      ...vehicle,
-      totalCost: Number(vehicle.rentCost || 0) + Number(vehicle.gasCost || 0) + Number(vehicle.oilCost || 0) + Number(vehicle.regularMaintenanceCost || 0),
-    })) || [];
   }
+};
 
-  // manpower table
-  const manpowers = ref({
-    columns: [
-      { prop: "name", label: t('operations.projects.manpower.table.manpowerName'), component: "Text", type: "font-bold", width: 150 },
-      { prop: "estimatedWorkDays", label: t('operations.projects.manpower.table.estimatedDays'), component: "Text", type: "font-bold", width: 180 },
-      { prop: "mission", label: t('operations.projects.manpower.table.mission'), component: "Text", type: "font-default", width: 120 },
-      { prop: "durationCost", label: t('operations.projects.manpower.table.durationCost'), component: "Text", type: "font-default", width: 150 },
-      { prop: "foodAllowanceCost", label: t('operations.projects.manpower.table.foodAllowance'), component: "Text", type: "font-default", width: 200 },
-      { prop: "accommodationCostPerManpower", label: t('operations.projects.manpower.table.accommodationPerMan'), component: "Text", type: "font-default", width: 270 },
-      { prop: "carRentPerManpower", label: t('operations.projects.manpower.table.carRentPerMan'), component: "Text", type: "font-default", width: 200 },
-      { prop: "otherCosts", label: t('operations.projects.manpower.table.otherCosts'), component: "Text", type: "font-default", width: 150 },
-      { prop: "totalCost", label: t('operations.projects.manpower.table.totalCost'), component: "Text", type: "font-default", width: 150 },
-    ],
-    data: [] as any[],
-  });
+const valueMap = {
+  ACTIVE: 'PROJECT_ACTIVE',
+  CANCELLED: 'PROJECT_CANCELLED',
+  COMPLETED: 'PROJECT_COMPLETED',
+  ON_HOLD: 'PROJECT_ON_HOLD'
+};
 
-  const manPowertotal = ref({
-    columns: [
-      { prop: "totalCost", label: t('operations.projects.manpower.totalTable.manpowerTotal'), component: "Text", type: "font-bold", width: 130 },
-      { prop: "finalManpowerTableTotalCost", label: t('operations.projects.manpower.totalTable.finalTotal'), component: "Text", type: "font-bold", width: 150 },
-    ],
-    data: [] as any[],
-  });
-
-  const table = reactive({
-    columns: [
-      { prop: "title", label: t('operations.projects.proposalTable.title'), component: "Text", sortable: true, type: "font-bold", width: 200 },
-      { prop: "version", label: t('operations.projects.proposalTable.version'), component: "Text", sortable: true, type: "font-default", width: 150 },
-      { prop: "relatedEntity", label: t('operations.projects.proposalTable.relatedTo'), component: "Text", sortable: true, type: "font-default", width: 150 },
-      { 
-        prop: "type", 
-        label: t('operations.projects.proposalTable.type'), 
-        component: "Text", 
-        sortable: true, 
-        type: "font-default", 
-        filters: [
-          { text: "Financial", value: "FINANCIAL" },
-          { text: "Technical", value: "TECHNICAL" },
-          { text: "Tech & Financial", value: "MIXED" },
-        ], 
-        width: 150 
-      },
-      { prop: "proposalFor", label: t('operations.projects.proposalTable.client'), component: "Text", sortable: true, type: "font-bold", width: 200 },
-      { 
-        prop: "status", 
-        label: t('operations.projects.proposalTable.status'), 
-        component: "Label", 
-        type: "outline", 
-        filters: [
-          { text: "Approved", value: "APPROVED" },
-          { text: "Waiting Approval", value: "WAITING_APPROVAL" },
-          { text: "Rejected", value: "REJECTED" },
-        ], 
-        width: 150 
-      },
-      { prop: "reference", label: t('operations.projects.proposalTable.reference'), component: "Text", sortable: true, type: "font-bold", width: 200 },
-      { prop: "assign", label: t('operations.projects.proposalTable.assigned'), component: "Text", type: "font-default", width: 200 },
-      { prop: "createdAt", label: t('operations.projects.proposalTable.created'), component: "Text", sortable: true, type: "font-default", width: 200 },
-    ],
-    data: [] as any[],
-  });
-
-
-  const response: any = await useTableFilter(`proposal?relatedEntityId=${route.params.slug}&page=1&limit=100`);
- table.data =response.formattedData?.map((el:any) => {return {...el,
-  type :el.type == "Mixed"  ? 'Tech & Financial' : el.type}})
-
-  const manPowerPreview = ref({
-    columns: [
-      {
-        prop: "totalCarRent",
-        label: "Total Car Rent",
-        component: "Text",
-        // sortable: true,
-        type: "font-bold",
-        width: 130,
-      },
-      {
-        prop: "totalCarRentDuration",
-        label: "Total Car Rent/Duration",
-        component: "Text",
-        // sortable: true,
-        type: "font-bold",
-        width: 150,
-      },
-      {
-        prop: "resourceCount",
-        label: "Resource Count",
-        component: "Text",
-        // sortable: true,
-        type: "font-default",
-        width: 120,
-      },
-    ],
-    data: [] as any,
-  });
-
-  let manpowersResponse: any = await useTableFilter("manpower");
-  manpowersResponse = manpowersResponse.formattedData;
-
-  if (project?.projectManpowerResources?.length) {
-    manpowers.value.data =
-      project?.projectManpowerResources?.map((manpower: any) => ({
-        ...manpower,
-        name: manpowersResponse?.find((item: any) => item.id === manpower?.manpowerId)?.name || "-",
-        mission: manpower?.mission?.join(", "),
-      })) || [];
-    manPowertotal.value.data = [
-      {
-        totalCost: project?.manpowerTotalCost,
-        finalManpowerTableTotalCost: project?.finalManpowerTotalCost,
-      },
-    ];
-    manPowerPreview.value.data = [
-      {
-        totalCarRent: project?.totalCarRent,
-        totalCarRentDuration: project?.totalCarRentPerDuration,
-        resourceCount: manpowers.value.data?.length || 0,
-      },
-    ];
-  }
-
-  // materials table
-  const materials = ref({
-    columns: [
-      { prop: "description", label: t('operations.projects.materials.table.description'), component: "Text", type: "font-default", width: 400 },
-      { prop: "quantity", label: t('operations.projects.materials.table.quantity'), component: "Text", type: "font-default", width: 150 },
-      { prop: "unitPrice", label: t('operations.projects.materials.table.unitPrice'), component: "Text", type: "font-default", width: 120 },
-      { prop: "additionalMaterial", label: t('operations.projects.materials.table.category'), component: "Text", type: "font-default", width: 250 },
-      { prop: "additionalMaterialCost", label: t('operations.projects.materials.table.additionalCost'), component: "Text", type: "font-default", width: 200 },
-      { prop: "marginCommission", label: t('operations.projects.materials.table.marginCommission'), component: "Text", type: "font-default", width: 180 },
-      { prop: "service", label: t('operations.projects.materials.table.service'), component: "Text", type: "font-default", width: 120 },
-      { prop: "servicePrice", label: t('operations.projects.materials.table.servicePrice'), component: "Text", type: "font-default", width: 120 },
-      { prop: "materialCost", label: t('operations.projects.materials.table.materialCost'), component: "Text", type: "font-default", width: 200 },
-      { prop: "totalMaterialCost", label: t('operations.projects.materials.table.totalMaterialCost'), component: "Text", type: "font-default", width: 200 },
-    ],
-    data: [] as any[],
-  });
-
-  const materialsPreview = ref({
-    columns: [
-      { prop: "totalMaterialCost", label: t('operations.projects.materials.table.totalMaterialCost'), component: "Text", type: "font-default", width: 200 },
-    ],
-    data: [] as any[],
-  });
-
-  let serviceResponse: any = await useTableFilter("service");
-  serviceResponse = serviceResponse?.formattedData || [];
-
-  let addMaterials: any = await useTableFilter("additional-material");
-  addMaterials = addMaterials?.formattedData || [];
-
-  function materialMappedData() {
-    if (!project?.materials?.length) return [];
-    return project?.materials.map((material: any) => {
-      // const additionalMaterials = project?.additionalMaterialItem[material.additionalMaterialId || 0] || [];
-      const additionalMaterials =
-        project?.additionalMaterialItem?.filter(
-          (item: any) => item.AdditionalMaterialItem.additionalMateria === material.additionalMaterialId
-        ) || [];
-
-      const totalAdditionalMaterialCost = additionalMaterials.reduce((sum: number, item: any) => {
-        return sum + item.quantity * Number(item.AdditionalMaterialItem?.price || 0);
-      }, 0);
-
-      const totalRelatedQuantity = project?.materials
-        .filter((m: any) => m.additionalMaterialId === material.additionalMaterialId)
-        .reduce((sum: number, item: any) => sum + item.quantity, 0);
-
-      const additionalMaterialCost = totalRelatedQuantity > 0 ? totalAdditionalMaterialCost / totalRelatedQuantity : 0;
-      const marginCommission = (material.unitPrice + additionalMaterialCost) * (project?.materialMargin.value || 1);
-      const materialCost = material.unitPrice + additionalMaterialCost + marginCommission + (material.service?.price || 0);
-      const totalMaterialCost = materialCost * material.quantity;
-
-      return {
-        projectId: project.id,
-        materialId: material.id,
-        additionalMaterialId: material.additionalMaterialId,
-        additionalMaterial: material.additionalMaterialId
-          ? addMaterials?.find((item: any) => item.id === material.additionalMaterialId)?.name
-          : "-",
-        description: material.description,
-        quantity: material.quantity,
-        unitPrice: material.unitPrice,
-        additionalMaterialCost: +additionalMaterialCost.toFixed(2),
-        marginCommission: +marginCommission.toFixed(2),
-        materialCost: +materialCost.toFixed(2),
-        totalMaterialCost: +totalMaterialCost.toFixed(2),
-        service: material.serviceId ? serviceResponse?.find((s: any) => s.id === material.serviceId)?.type : "-",
-        servicePrice: material.serviceId ? serviceResponse?.find((s: any) => s.id === material.serviceId)?.price : 0,
-        id: material.id,
-      };
-    });
-  }
-
-  if (project?.materials?.length) {
-    materials.value.data = materialMappedData();
-    materialsPreview.value.data = [
-      {
-        totalMaterialCost: materialMappedData()?.reduce((sum: number, item: any) => sum + item.totalMaterialCost, 0),
-        totalAdditionalMaterialCost: materialMappedData()?.reduce(
-          (sum: number, item: any) => (sum += item.additionalMaterialCost),
-          0
-        ),
-      },
-    ];
-  }
-
-  // Assets table
-  const assets = reactive({
-    columns: [
-      { prop: "name", label: t('operations.projects.assets.table.name'), component: "Text", type: "font-bold", width: 150 },
-      { prop: "rentPrice", label: t('operations.projects.assets.table.rentPrice'), component: "Text", type: "font-bold", width: 150 },
-      { prop: "buyPrice", label: t('operations.projects.assets.table.buyPrice'), component: "Text", type: "font-bold", width: 150 },
-    ],
-    data: [] as any[],
-  });
-
-  const assetsTotal = reactive({
-    columns: [
-      { prop: "totalRentPrice", label: t('operations.projects.assets.totalTable.totalRent'), component: "Text", type: "font-default", width: 150 },
-      { prop: "totalBuyPrice", label: t('operations.projects.assets.totalTable.totalBuy'), component: "Text", type: "font-default", width: 150 },
-      { prop: "totalAssetsCost", label: t('operations.projects.assets.totalTable.totalCost'), component: "Text", type: "font-default", width: 150 },
-    ],
-    data: [] as any[],
-  });
-
-  let assetsResponse: any = await useTableFilter("asset");
-  assetsResponse = assetsResponse?.formattedData || [];
-
-  if (project?.projectAssets?.length) {
-    let assetsId = project?.projectAssets?.map((projectAsset: any) => projectAsset.assetId);
-
-    assets.data = assetsResponse?.filter(({ id }: Asset) => assetsId?.includes(id)) || [];
-    // Calculate the total rent price by summing the rentPrice of each asset, ensuring the value is a number
-    const totalRentPrice = assets.data?.reduce((acc: number, { rentPrice }: Asset) => acc + (Number(rentPrice) || 0), 0);
-
-    // Calculate the total buy price by summing the buyPrice of each asset, ensuring the value is a number
-    const totalBuyPrice = assets.data?.reduce((acc: number, { buyPrice }: Asset) => acc + (Number(buyPrice) || 0), 0);
-
-    // Calculate the total assets cost by adding total rent price and buy price, ensuring the values are numbers
-    const totalAssetsCost = (totalRentPrice || 0) + (totalBuyPrice || 0);
-    assetsTotal.data = [
-      {
-        totalRentPrice,
-        totalBuyPrice,
-        totalAssetsCost,
-      },
-    ];
-  }
-
-  const finalCost = ref({
-    columns: [
-      { prop: "finalManpowerTableTotalCost", label: t('operations.projects.manpower.title'), component: "Text", type: "font-default", width: 270 },
-      { prop: "finalMaterialsTableCost", label: t('operations.projects.materials.title'), component: "Text", type: "font-default", width: 250 },
-      { prop: "finalAssetsTableCost", label: t('operations.projects.assets.title'), component: "Text", type: "font-default", width: 250 },
-    ],
-    data: [] as any[],
-  });
-
-  finalCost.value.data = [
+// vehicles table
+const vehicles = reactive({
+  columns: [
+    { prop: 'plate', label: t('operations.projects.vehicles.table.plateNumber'), component: 'Text', type: 'font-bold', width: 130 },
+    { prop: 'manufacturer', label: t('operations.projects.vehicles.table.manufacturer'), component: 'Text', type: 'font-bold', width: 150 },
+    { prop: 'rentCost', label: t('operations.projects.vehicles.table.rentCost'), component: 'Text', type: 'font-default', width: 120 },
+    { prop: 'gasCost', label: t('operations.projects.vehicles.table.gasCost'), component: 'Text', type: 'font-default', width: 120 },
+    { prop: 'oilCost', label: t('operations.projects.vehicles.table.oilCost'), component: 'Text', type: 'font-default', width: 150 },
     {
-      finalManpowerTableTotalCost: project?.finalManpowerTotalCost?.toFixed(2),
-      finalMaterialsTableCost: project?.totalMaterialCost?.toFixed(2),
-      finalAssetsTableCost: project?.totalAssetsCost?.toFixed(2),
-      grandTotal: project?.grandTotal?.toFixed(2),
-      vat: project?.vat?.toFixed(2),
+      prop: 'regularMaintenanceCost',
+      label: t('operations.projects.vehicles.table.maintenanceCost'),
+      component: 'Text',
+      type: 'font-default',
+      width: 250
     },
+    { prop: 'totalCost', label: t('operations.projects.vehicles.table.totalCost'), component: 'Text', type: 'font-default', width: 250 }
+  ],
+  data: [] as any[]
+});
+
+if (project?.vehicles?.length) {
+  vehicles.data =
+    project?.vehicles?.map((vehicle: any) => ({
+      ...vehicle,
+      totalCost:
+        Number(vehicle.rentCost || 0) + Number(vehicle.gasCost || 0) + Number(vehicle.oilCost || 0) + Number(vehicle.regularMaintenanceCost || 0)
+    })) || [];
+}
+
+// manpower table
+const manpowers = ref({
+  columns: [
+    { prop: 'name', label: t('operations.projects.manpower.table.manpowerName'), component: 'Text', type: 'font-bold', width: 150 },
+    { prop: 'estimatedWorkDays', label: t('operations.projects.manpower.table.estimatedDays'), component: 'Text', type: 'font-bold', width: 180 },
+    { prop: 'mission', label: t('operations.projects.manpower.table.mission'), component: 'Text', type: 'font-default', width: 120 },
+    { prop: 'durationCost', label: t('operations.projects.manpower.table.durationCost'), component: 'Text', type: 'font-default', width: 150 },
+    { prop: 'foodAllowanceCost', label: t('operations.projects.manpower.table.foodAllowance'), component: 'Text', type: 'font-default', width: 200 },
+    {
+      prop: 'accommodationCostPerManpower',
+      label: t('operations.projects.manpower.table.accommodationPerMan'),
+      component: 'Text',
+      type: 'font-default',
+      width: 270
+    },
+    { prop: 'carRentPerManpower', label: t('operations.projects.manpower.table.carRentPerMan'), component: 'Text', type: 'font-default', width: 200 },
+    { prop: 'otherCosts', label: t('operations.projects.manpower.table.otherCosts'), component: 'Text', type: 'font-default', width: 150 },
+    { prop: 'totalCost', label: t('operations.projects.manpower.table.totalCost'), component: 'Text', type: 'font-default', width: 150 }
+  ],
+  data: [] as any[]
+});
+
+const manPowertotal = ref({
+  columns: [
+    { prop: 'totalCost', label: t('operations.projects.manpower.totalTable.manpowerTotal'), component: 'Text', type: 'font-bold', width: 130 },
+    {
+      prop: 'finalManpowerTableTotalCost',
+      label: t('operations.projects.manpower.totalTable.finalTotal'),
+      component: 'Text',
+      type: 'font-bold',
+      width: 150
+    }
+  ],
+  data: [] as any[]
+});
+
+const table = reactive({
+  columns: [
+    { prop: 'title', label: t('operations.projects.proposalTable.title'), component: 'Text', sortable: true, type: 'font-bold', width: 200 },
+    { prop: 'version', label: t('operations.projects.proposalTable.version'), component: 'Text', sortable: true, type: 'font-default', width: 150 },
+    {
+      prop: 'relatedEntity',
+      label: t('operations.projects.proposalTable.relatedTo'),
+      component: 'Text',
+      sortable: true,
+      type: 'font-default',
+      width: 150
+    },
+    {
+      prop: 'type',
+      label: t('operations.projects.proposalTable.type'),
+      component: 'Text',
+      sortable: true,
+      type: 'font-default',
+      filters: [
+        { text: 'Financial', value: 'FINANCIAL' },
+        { text: 'Technical', value: 'TECHNICAL' },
+        { text: 'Tech & Financial', value: 'MIXED' }
+      ],
+      width: 150
+    },
+    { prop: 'proposalFor', label: t('operations.projects.proposalTable.client'), component: 'Text', sortable: true, type: 'font-bold', width: 200 },
+    {
+      prop: 'status',
+      label: t('operations.projects.proposalTable.status'),
+      component: 'Label',
+      type: 'outline',
+      filters: [
+        { text: 'Approved', value: 'APPROVED' },
+        { text: 'Waiting Approval', value: 'WAITING_APPROVAL' },
+        { text: 'Rejected', value: 'REJECTED' }
+      ],
+      width: 150
+    },
+    { prop: 'reference', label: t('operations.projects.proposalTable.reference'), component: 'Text', sortable: true, type: 'font-bold', width: 200 },
+    { prop: 'assign', label: t('operations.projects.proposalTable.assigned'), component: 'Text', type: 'font-default', width: 200 },
+    { prop: 'createdAt', label: t('operations.projects.proposalTable.created'), component: 'Text', sortable: true, type: 'font-default', width: 200 }
+  ],
+  data: [] as any[]
+});
+
+const response: any = await useTableFilter(`proposal?relatedEntityId=${route.params.slug}&page=1&limit=100`);
+table.data = response.formattedData?.map((el: any) => {
+  return { ...el, type: el.type == 'Mixed' ? 'Tech & Financial' : el.type };
+});
+
+const manPowerPreview = ref({
+  columns: [
+    {
+      prop: 'totalCarRent',
+      label: 'Total Car Rent',
+      component: 'Text',
+      // sortable: true,
+      type: 'font-bold',
+      width: 130
+    },
+    {
+      prop: 'totalCarRentDuration',
+      label: 'Total Car Rent/Duration',
+      component: 'Text',
+      // sortable: true,
+      type: 'font-bold',
+      width: 150
+    },
+    {
+      prop: 'resourceCount',
+      label: 'Resource Count',
+      component: 'Text',
+      // sortable: true,
+      type: 'font-default',
+      width: 120
+    }
+  ],
+  data: [] as any
+});
+
+let manpowersResponse: any = await useTableFilter('manpower');
+manpowersResponse = manpowersResponse.formattedData;
+
+if (project?.projectManpowerResources?.length) {
+  manpowers.value.data =
+    project?.projectManpowerResources?.map((manpower: any) => ({
+      ...manpower,
+      name: manpowersResponse?.find((item: any) => item.id === manpower?.manpowerId)?.name || '-',
+      mission: manpower?.mission?.join(', ')
+    })) || [];
+  manPowertotal.value.data = [
+    {
+      totalCost: project?.manpowerTotalCost,
+      finalManpowerTableTotalCost: project?.finalManpowerTotalCost
+    }
   ];
+  manPowerPreview.value.data = [
+    {
+      totalCarRent: project?.totalCarRent,
+      totalCarRentDuration: project?.totalCarRentPerDuration,
+      resourceCount: manpowers.value.data?.length || 0
+    }
+  ];
+}
+
+// materials table
+const materials = ref({
+  columns: [
+    { prop: 'description', label: t('operations.projects.materials.table.description'), component: 'Text', type: 'font-default', width: 400 },
+    { prop: 'quantity', label: t('operations.projects.materials.table.quantity'), component: 'Text', type: 'font-default', width: 150 },
+    { prop: 'unitPrice', label: t('operations.projects.materials.table.unitPrice'), component: 'Text', type: 'font-default', width: 120 },
+    { prop: 'additionalMaterial', label: t('operations.projects.materials.table.category'), component: 'Text', type: 'font-default', width: 250 },
+    {
+      prop: 'additionalMaterialCost',
+      label: t('operations.projects.materials.table.additionalCost'),
+      component: 'Text',
+      type: 'font-default',
+      width: 200
+    },
+    {
+      prop: 'marginCommission',
+      label: t('operations.projects.materials.table.marginCommission'),
+      component: 'Text',
+      type: 'font-default',
+      width: 180
+    },
+    { prop: 'service', label: t('operations.projects.materials.table.service'), component: 'Text', type: 'font-default', width: 120 },
+    { prop: 'servicePrice', label: t('operations.projects.materials.table.servicePrice'), component: 'Text', type: 'font-default', width: 120 },
+    { prop: 'materialCost', label: t('operations.projects.materials.table.materialCost'), component: 'Text', type: 'font-default', width: 200 },
+    {
+      prop: 'totalMaterialCost',
+      label: t('operations.projects.materials.table.totalMaterialCost'),
+      component: 'Text',
+      type: 'font-default',
+      width: 200
+    }
+  ],
+  data: [] as any[]
+});
+
+const materialsPreview = ref({
+  columns: [
+    {
+      prop: 'totalMaterialCost',
+      label: t('operations.projects.materials.table.totalMaterialCost'),
+      component: 'Text',
+      type: 'font-default',
+      width: 200
+    }
+  ],
+  data: [] as any[]
+});
+
+let serviceResponse: any = await useTableFilter('service');
+serviceResponse = serviceResponse?.formattedData || [];
+
+let addMaterials: any = await useTableFilter('additional-material');
+addMaterials = addMaterials?.formattedData || [];
+
+function materialMappedData() {
+  if (!project?.materials?.length) return [];
+  return project?.materials.map((material: any) => {
+    // const additionalMaterials = project?.additionalMaterialItem[material.additionalMaterialId || 0] || [];
+    const additionalMaterials =
+      project?.additionalMaterialItem?.filter((item: any) => item.AdditionalMaterialItem.additionalMateria === material.additionalMaterialId) || [];
+
+    console.log('material', material);
+    const totalAdditionalMaterialCost = additionalMaterials.reduce((sum: number, item: any) => {
+      return sum + item.quantity * Number(item.AdditionalMaterialItem?.price || 0);
+    }, 0);
+
+    const totalRelatedQuantity = project?.materials
+      .filter((m: any) => m.additionalMaterialId === material.additionalMaterialId)
+      .reduce((sum: number, item: any) => sum + item.quantity, 0);
+
+    const additionalMaterialCost = totalRelatedQuantity > 0 ? totalAdditionalMaterialCost / totalRelatedQuantity : 0;
+    const marginCommission = (material.unitPrice + additionalMaterialCost) * (project?.materialMargin.value || 1);
+    const materialCost = material.unitPrice + additionalMaterialCost + marginCommission + (material.service?.price || 0);
+    const totalMaterialCost = materialCost * material.quantity;
+
+    return {
+      projectId: project.id,
+      materialId: material.id,
+      additionalMaterialId: material.additionalMaterialId,
+      additionalMaterial: material.additionalMaterialId ? addMaterials?.find((item: any) => item.id === material.additionalMaterialId)?.name : '-',
+      description: material.description,
+      quantity: material.quantity,
+      unitPrice: material.unitPrice,
+      additionalMaterialCost: +additionalMaterialCost.toFixed(2),
+      marginCommission: +marginCommission.toFixed(2),
+      materialCost: +materialCost.toFixed(2),
+      totalMaterialCost: +totalMaterialCost.toFixed(2),
+      service: material.serviceId ? serviceResponse?.find((s: any) => s.id === material.serviceId)?.type : '-',
+      servicePrice: material.serviceId ? serviceResponse?.find((s: any) => s.id === material.serviceId)?.price : 0,
+      id: material.id
+    };
+  });
+}
+
+if (project?.materials?.length) {
+  materials.value.data = materialMappedData();
+  materialsPreview.value.data = [
+    {
+      totalMaterialCost: materialMappedData()?.reduce((sum: number, item: any) => sum + item.totalMaterialCost, 0),
+      totalAdditionalMaterialCost: materialMappedData()?.reduce((sum: number, item: any) => (sum += item.additionalMaterialCost), 0)
+    }
+  ];
+}
+
+// Assets table
+const assets = reactive({
+  columns: [
+    { prop: 'name', label: t('operations.projects.assets.table.name'), component: 'Text', type: 'font-bold', width: 150 },
+    { prop: 'rentPrice', label: t('operations.projects.assets.table.rentPrice'), component: 'Text', type: 'font-bold', width: 150 },
+    { prop: 'buyPrice', label: t('operations.projects.assets.table.buyPrice'), component: 'Text', type: 'font-bold', width: 150 }
+  ],
+  data: [] as any[]
+});
+
+const assetsTotal = reactive({
+  columns: [
+    { prop: 'totalRentPrice', label: t('operations.projects.assets.totalTable.totalRent'), component: 'Text', type: 'font-default', width: 150 },
+    { prop: 'totalBuyPrice', label: t('operations.projects.assets.totalTable.totalBuy'), component: 'Text', type: 'font-default', width: 150 },
+    { prop: 'totalAssetsCost', label: t('operations.projects.assets.totalTable.totalCost'), component: 'Text', type: 'font-default', width: 150 }
+  ],
+  data: [] as any[]
+});
+
+let assetsResponse: any = await useTableFilter('asset');
+assetsResponse = assetsResponse?.formattedData || [];
+
+if (project?.projectAssets?.length) {
+  const assetsId = project?.projectAssets?.map((projectAsset: any) => projectAsset.assetId);
+
+  assets.data = assetsResponse?.filter(({ id }: Asset) => assetsId?.includes(id)) || [];
+  // Calculate the total rent price by summing the rentPrice of each asset, ensuring the value is a number
+  const totalRentPrice = assets.data?.reduce((acc: number, { rentPrice }: Asset) => acc + (Number(rentPrice) || 0), 0);
+
+  // Calculate the total buy price by summing the buyPrice of each asset, ensuring the value is a number
+  const totalBuyPrice = assets.data?.reduce((acc: number, { buyPrice }: Asset) => acc + (Number(buyPrice) || 0), 0);
+
+  // Calculate the total assets cost by adding total rent price and buy price, ensuring the values are numbers
+  const totalAssetsCost = (totalRentPrice || 0) + (totalBuyPrice || 0);
+  assetsTotal.data = [
+    {
+      totalRentPrice,
+      totalBuyPrice,
+      totalAssetsCost
+    }
+  ];
+}
+
+const finalCost = ref({
+  columns: [
+    { prop: 'finalManpowerTableTotalCost', label: t('operations.projects.manpower.title'), component: 'Text', type: 'font-default', width: 270 },
+    { prop: 'finalMaterialsTableCost', label: t('operations.projects.materials.title'), component: 'Text', type: 'font-default', width: 250 },
+    { prop: 'finalAssetsTableCost', label: t('operations.projects.assets.title'), component: 'Text', type: 'font-default', width: 250 }
+  ],
+  data: [] as any[]
+});
+
+finalCost.value.data = [
+  {
+    finalManpowerTableTotalCost: project?.finalManpowerTotalCost?.toFixed(2),
+    finalMaterialsTableCost: project?.totalMaterialCost?.toFixed(2),
+    finalAssetsTableCost: project?.totalAssetsCost?.toFixed(2),
+    grandTotal: project?.grandTotal?.toFixed(2),
+    vat: project?.vat?.toFixed(2)
+  }
+];
 </script>
 <style scoped lang="scss">
-  .activity {
-    position: relative;
-    ::before {
-      content: "";
-      height: 100%;
-      width: 1px;
-      position: absolute;
-      left: 24px;
-      top: 2%;
-      border: 1px dashed #e7e6e9;
-      z-index: -1;
-    }
-    > div:last-of-type {
-      background: #f8f7fa !important;
-    }
+.activity {
+  position: relative;
+  ::before {
+    content: '';
+    height: 100%;
+    width: 1px;
+    position: absolute;
+    left: 24px;
+    top: 2%;
+    border: 1px dashed #e7e6e9;
+    z-index: -1;
   }
+  > div:last-of-type {
+    background: #f8f7fa !important;
+  }
+}
 </style>

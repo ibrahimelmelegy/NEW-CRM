@@ -46,12 +46,7 @@
     --></div>
   </div>
   <div class="glass-card rounded-3xl py-6">
-    <el-table
-      :data="finalData || []"
-      style="width: 100%"
-      :row-style="{ cursor: 'pointer' }"
-      @current-change="handleRowClick"
-    >
+    <el-table :data="finalData || []" style="width: 100%" :row-style="{ cursor: 'pointer' }" @current-change="handleRowClick">
       <!-- Expand Column -->
       <el-table-column type="expand">
         <template #default="props">
@@ -113,11 +108,11 @@
         <span class="text-sm text-neutral-400">{{ $t('common.entries') }}</span>
       </div>
       <el-pagination
+        v-model:current-page="currentPage"
         background
         style="direction: ltr"
         :pager-count="4"
         :page-count="pagintaion?.totalPages"
-        v-model:current-page="currentPage"
         :page-size="limit"
         layout="prev, pager, next"
         :total="pagintaion?.totalItems"
@@ -127,39 +122,39 @@
 </template>
 
 <script setup lang="ts">
-  const { hasPermission } = await usePermissions();
-  const limit = ref(10);
-  const isLoading = ref(false);
-  const currentPage = ref<number>(1);
-  const sort = ref<any>({});
-  const pagintaion = ref<any>({});
-  const finalData = ref<any>([]);
-  const router = useRouter();
-  import { Plus } from "@element-plus/icons-vue";
-  const handleSizeChange = (val: any) => {
+import { Plus } from '@element-plus/icons-vue';
+const { hasPermission } = await usePermissions();
+const limit = ref(10);
+const isLoading = ref(false);
+const currentPage = ref<number>(1);
+const sort = ref<any>({});
+const pagintaion = ref<any>({});
+const finalData = ref<any>([]);
+const router = useRouter();
+const handleSizeChange = (val: any) => {
+  getData();
+};
+
+function handleRowClick(val: any) {
+  router.push(`/operations/additional-material/${val.id}`);
+}
+
+watch(
+  () => currentPage.value,
+  () => {
     getData();
-  };
-
-  function handleRowClick(val: any) {
-    router.push(`/operations/additional-material/${val.id}`);
   }
+);
 
-  watch(
-    () => currentPage.value,
-    () => {
-      getData();
-    }
-  );
+async function getData() {
+  isLoading.value = true;
+  const data = await useTableFilter('additional-material', { limit: [limit.value], page: [currentPage.value] });
+  finalData.value = data.formattedData;
+  pagintaion.value = data.pagination;
+  isLoading.value = false;
+}
 
-  async function getData() {
-    isLoading.value = true;
-    const data = await useTableFilter("additional-material", { limit: [limit.value], page: [currentPage.value] });
-    finalData.value = data.formattedData;
-    pagintaion.value = data.pagination;
-    isLoading.value = false;
-  }
-
-  const response = await useTableFilter("additional-material");
-  finalData.value = response.formattedData;
-  pagintaion.value = response.pagination;
+const response = await useTableFilter('additional-material');
+finalData.value = response.formattedData;
+pagintaion.value = response.pagination;
 </script>

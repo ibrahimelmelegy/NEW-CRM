@@ -50,10 +50,10 @@
 </template>
 
 <script lang="ts" setup>
-  const activeName = ref("summary");
-  const route = useRoute();
-  const { hasPermission } = await usePermissions();
-  // Call API to Get the staff
-  const staff = await getStaff(route.params.slug as string);
+const activeName = ref('summary');
+const route = useRoute();
+const { hasPermission } = await usePermissions();
+// Call API to Get the staff
+const staff = await getStaff(route.params.slug as string);
 </script>
 <style scoped lang="scss"></style>

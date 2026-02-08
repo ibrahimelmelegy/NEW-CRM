@@ -135,10 +135,10 @@
 
 <script setup>
 import { ref, reactive } from 'vue';
-import { ElMessage } from "element-plus";
+import { ElMessage } from 'element-plus';
 import OperationsDailyTasksStatistics from '@/components/operations/daily-tasks/Statistics.vue';
 
-const activeName = ref("info");
+const activeName = ref('info');
 const loading = ref(false);
 const router = useRouter();
 
@@ -149,225 +149,225 @@ onMounted(async () => {
 // Table columns configuration
 const activeColumns = [
   {
-    prop: "createdAt",
+    prop: 'createdAt',
     label: useI18n().t('operations.dailyTasks.table.date'),
-    component: "Text",
+    component: 'Text',
     sortable: true,
     width: 150,
-    pdf: "Date",
-    type: "font-default",
+    pdf: 'Date',
+    type: 'font-default'
   },
   {
-    prop: "clientName",
+    prop: 'clientName',
     label: useI18n().t('operations.dailyTasks.table.client'),
-    component: "Text",
+    component: 'Text',
     sortable: true,
     width: 200,
-    pdf: "Client Name",
-    type: "font-default",
+    pdf: 'Client Name',
+    type: 'font-default'
   },
   {
-    prop: "name",
+    prop: 'name',
     label: useI18n().t('operations.dailyTasks.table.description'),
-    component: "Text",
+    component: 'Text',
     width: 300,
-    pdf: "Description",
-    type: "font-default",
+    pdf: 'Description',
+    type: 'font-default'
   },
   {
-    prop: "salesRepresentativeName",
+    prop: 'salesRepresentativeName',
     label: useI18n().t('operations.dailyTasks.table.salesRep'),
-    component: "Text",
+    component: 'Text',
     sortable: true,
     width: 200,
-    pdf: "Sales",
-    type: "font-default",
+    pdf: 'Sales',
+    type: 'font-default'
   },
   {
-    prop: "assignedToName",
+    prop: 'assignedToName',
     label: useI18n().t('operations.dailyTasks.table.assignedTo'),
-    component: "Text",
+    component: 'Text',
     sortable: true,
     width: 200,
-    pdf: "Assigned",
-    type: "font-default",
+    pdf: 'Assigned',
+    type: 'font-default'
   },
   {
-    prop: "priority",
+    prop: 'priority',
     label: useI18n().t('operations.dailyTasks.table.priority'),
-    component: "Text",
+    component: 'Text',
     sortable: true,
     width: 200,
-    pdf: "Priority",
-    type: "font-default",
+    pdf: 'Priority',
+    type: 'font-default'
   },
   {
-    prop: "notes",
+    prop: 'notes',
     label: useI18n().t('operations.dailyTasks.table.notes'),
-    component: "Text",
+    component: 'Text',
     sortable: true,
     width: 200,
-    pdf: "Notes",
-    type: "font-default",
+    pdf: 'Notes',
+    type: 'font-default'
   },
   {
-    prop: "status",
+    prop: 'status',
     label: useI18n().t('operations.dailyTasks.table.status'),
-    component: "Label",
+    component: 'Label',
     sortable: true,
     width: 200,
-    pdf: "Status",
-    type: "outline",
+    pdf: 'Status',
+    type: 'outline'
   },
   {
-    prop: "action",
+    prop: 'action',
     label: useI18n().t('common.action'),
-    component: "Action",
-  },
+    component: 'Action'
+  }
 ];
 
 // Reuse the same columns structure for other tabs
 const completedColumns = [
   {
-    prop: "createdAt",
+    prop: 'createdAt',
     label: useI18n().t('operations.dailyTasks.table.date'),
-    component: "Text",
+    component: 'Text',
     sortable: true,
     width: 100,
-    pdf: "Date",
-    type: "font-default",
+    pdf: 'Date',
+    type: 'font-default'
   },
   {
-    prop: "clientName",
+    prop: 'clientName',
     label: useI18n().t('operations.dailyTasks.table.client'),
-    component: "Text",
+    component: 'Text',
     sortable: true,
     width: 200,
-    pdf: "Client",
-    type: "font-default",
+    pdf: 'Client',
+    type: 'font-default'
   },
   {
-    prop: "name",
+    prop: 'name',
     label: useI18n().t('operations.dailyTasks.table.description'),
-    component: "Text",
+    component: 'Text',
     width: 300,
-    pdf: "Description",
-    type: "font-default",
+    pdf: 'Description',
+    type: 'font-default'
   },
   {
-    prop: "salesRepresentativeName",
+    prop: 'salesRepresentativeName',
     label: useI18n().t('operations.dailyTasks.table.salesRep'),
-    component: "Text",
+    component: 'Text',
     sortable: true,
     width: 200,
-    pdf: "Sales",
-    type: "font-default",
+    pdf: 'Sales',
+    type: 'font-default'
   },
   {
-    prop: "assignedToName",
+    prop: 'assignedToName',
     label: useI18n().t('operations.dailyTasks.table.assignedTo'),
-    component: "Text",
+    component: 'Text',
     sortable: true,
     width: 200,
-    pdf: "Assigned",
-    type: "font-default",
+    pdf: 'Assigned',
+    type: 'font-default'
   },
-   {
-    prop: "notes",
+  {
+    prop: 'notes',
     label: useI18n().t('operations.dailyTasks.table.notes'),
-    component: "Text",
+    component: 'Text',
     sortable: true,
     width: 200,
-    pdf: "Notes",
-    type: "font-default",
+    pdf: 'Notes',
+    type: 'font-default'
   },
   {
-    prop: "status",
+    prop: 'status',
     label: useI18n().t('operations.dailyTasks.table.status'),
-    component: "Label",
+    component: 'Label',
     sortable: true,
     width: 200,
-    pdf: "Status",
-    type: "outline",
+    pdf: 'Status',
+    type: 'outline'
   },
   {
-    prop: "cost",
+    prop: 'cost',
     label: useI18n().t('operations.dailyTasks.table.cost'),
-    component: "Text",
+    component: 'Text',
     sortable: true,
     width: 200,
-    pdf: "Cost",
-    type: "font-default",
+    pdf: 'Cost',
+    type: 'font-default'
   },
   {
-    prop: "totalPaid",
+    prop: 'totalPaid',
     label: useI18n().t('operations.dailyTasks.table.amountPaid'),
-    component: "Text",
+    component: 'Text',
     sortable: true,
     width: 200,
-    pdf: "Amount paid",
-    type: "font-default",
+    pdf: 'Amount paid',
+    type: 'font-default'
   },
   {
-    prop: "rest",
+    prop: 'rest',
     label: useI18n().t('operations.dailyTasks.table.rest'),
-    component: "Text",
+    component: 'Text',
     sortable: true,
     width: 200,
-    pdf: "Rest",
-    type: "font-default",
+    pdf: 'Rest',
+    type: 'font-default'
   },
   {
-    prop: "action",
+    prop: 'action',
     label: useI18n().t('common.action'),
-    component: "Action",
-  },
+    component: 'Action'
+  }
 ];
 
 const grantedColumns = [
   {
-    prop: "createdAt",
+    prop: 'createdAt',
     label: useI18n().t('operations.dailyTasks.table.date'),
-    component: "Text",
+    component: 'Text',
     sortable: true,
     width: 150,
-    pdf: "Date",
-    type: "font-default",
+    pdf: 'Date',
+    type: 'font-default'
   },
   {
-    prop: "clientName",
+    prop: 'clientName',
     label: useI18n().t('operations.dailyTasks.table.client'),
-    component: "Text",
+    component: 'Text',
     sortable: true,
     width: 200,
-    pdf: "Client",
-    type: "font-default",
+    pdf: 'Client',
+    type: 'font-default'
   },
   {
-    prop: "name",
+    prop: 'name',
     label: useI18n().t('operations.dailyTasks.table.description'),
-    component: "Text",
+    component: 'Text',
     width: 300,
-    pdf: "Description",
-    type: "font-default",
+    pdf: 'Description',
+    type: 'font-default'
   },
   {
-    prop: "cost",
+    prop: 'cost',
     label: useI18n().t('operations.dailyTasks.table.cost'),
-    component: "Text",
+    component: 'Text',
     sortable: true,
     width: 200,
-    pdf: "Cost",
-    type: "font-default",
+    pdf: 'Cost',
+    type: 'font-default'
   },
   {
-    prop: "downPayment",
+    prop: 'downPayment',
     label: useI18n().t('operations.dailyTasks.table.downPayment'),
-    component: "Text",
+    component: 'Text',
     sortable: true,
     width: 200,
-    pdf: "Down Payment",
-    type: "font-default",
+    pdf: 'Down Payment',
+    type: 'font-default'
   },
   // {
   //   prop: "startDate",
@@ -379,46 +379,46 @@ const grantedColumns = [
   //   type: "font-default",
   // },
   {
-    prop: "salesRepresentativeName",
+    prop: 'salesRepresentativeName',
     label: useI18n().t('operations.dailyTasks.table.salesRep'),
-    component: "Text",
+    component: 'Text',
     sortable: true,
     width: 200,
-    pdf: "Sales",
-    type: "font-default",
+    pdf: 'Sales',
+    type: 'font-default'
   },
   {
-    prop: "assignedToName",
+    prop: 'assignedToName',
     label: useI18n().t('operations.dailyTasks.table.assignedTo'),
-    component: "Text",
+    component: 'Text',
     sortable: true,
     width: 200,
-    pdf: "Assigned",
-    type: "font-default",
+    pdf: 'Assigned',
+    type: 'font-default'
   },
   {
-    prop: "notes",
+    prop: 'notes',
     label: useI18n().t('operations.dailyTasks.table.notes'),
-    component: "Text",
+    component: 'Text',
     sortable: true,
     width: 200,
-    pdf: "Notes",
-    type: "font-default",
+    pdf: 'Notes',
+    type: 'font-default'
   },
   {
-    prop: "status",
+    prop: 'status',
     label: useI18n().t('operations.dailyTasks.table.status'),
-    component: "Label",
+    component: 'Label',
     sortable: true,
     width: 200,
-    pdf: "Status",
-    type: "outline",
+    pdf: 'Status',
+    type: 'outline'
   },
   {
-    prop: "action",
+    prop: 'action',
     label: useI18n().t('common.action'),
-    component: "Action",
-  },
+    component: 'Action'
+  }
 ];
 
 // Mock data - Replace with actual API calls
@@ -432,57 +432,57 @@ const completedProjectsPagination = ref([]);
 const grantedProjectsPagination = ref([]);
 
 // Handle tab click
-const handleClick = async (tab) => {
+const handleClick = async tab => {
   try {
     // Fetch data based on selected tab
     loading.value = true;
     switch (tab.props.name) {
-      case "active":
-        const response = await useTableFilter("daily-task", { status: "ACTIVE,ON_HOLD" });
-        activeProjects.value = await response.formattedData?.map((task) => ({
+      case 'active':
+        const response = await useTableFilter('daily-task', { status: 'ACTIVE,ON_HOLD' });
+        activeProjects.value = await response.formattedData?.map(task => ({
           ...task,
           createdAt: task.date,
-          updatedAt: "-",
+          updatedAt: '-',
           clientName: task.client?.clientName,
           salesRepresentativeName: task.salesRepresentative?.name,
-          assignedToName: task.user?.name,
+          assignedToName: task.user?.name
         }));
         activeProjectsPagination.value = await response.pagination;
 
         break;
-      case "completed":
-        const responseCompleted = await useTableFilter("daily-task", {
-          status: "COMPLETED",
+      case 'completed':
+        const responseCompleted = await useTableFilter('daily-task', {
+          status: 'COMPLETED'
         });
-        completedProjects.value = responseCompleted.formattedData?.map((task) => ({
+        completedProjects.value = responseCompleted.formattedData?.map(task => ({
           ...task,
           createdAt: task?.date,
-          updatedAt: "-",
+          updatedAt: '-',
           clientName: task.client?.clientName,
           salesRepresentativeName: task.salesRepresentative?.name,
-          assignedToName: task.user?.name,
+          assignedToName: task.user?.name
         }));
         completedProjectsPagination.value = responseCompleted.pagination;
         break;
-      case "granted":
-        const responseGranted = await useTableFilter("daily-task", {
-          status: "WAITING_FOR_CONTRACT,CONTRACT_SIGNED",
+      case 'granted':
+        const responseGranted = await useTableFilter('daily-task', {
+          status: 'WAITING_FOR_CONTRACT,CONTRACT_SIGNED'
         });
-        grantedProjects.value = responseGranted.formattedData?.map((task) => ({
+        grantedProjects.value = responseGranted.formattedData?.map(task => ({
           ...task,
           createdAt: task?.date,
-          updatedAt: "-",
+          updatedAt: '-',
           clientName: task.client?.clientName,
           salesRepresentativeName: task.salesRepresentative?.name,
-          assignedToName: task.user?.name,
+          assignedToName: task.user?.name
         }));
 
         grantedProjectsPagination.value = responseGranted.pagination;
         break;
     }
   } catch (error) {
-    console.error("Error fetching data:", error);
-    ElMessage.error("Failed to fetch data. Please try again later.");
+    console.error('Error fetching data:', error);
+    ElMessage.error('Failed to fetch data. Please try again later.');
   } finally {
     loading.value = false;
   }
@@ -490,36 +490,19 @@ const handleClick = async (tab) => {
 
 // Export to PDF
 const exportToPDF = async () => {
-  const [{ default: jsPDF }, { default: autoTable }] = await Promise.all([
-    import("jspdf"),
-    import("jspdf-autotable")
-  ]);
-  const CairoFont = (await import("../assets/fonts/Cairo-SemiBold.ttf")).default;
+  const [{ default: jsPDF }, { default: autoTable }] = await Promise.all([import('jspdf'), import('jspdf-autotable')]);
+  const CairoFont = (await import('../assets/fonts/Cairo-SemiBold.ttf')).default;
 
   const data =
-    activeName.value === "active"
-      ? activeProjects.value
-      : activeName.value === "completed"
-      ? completedProjects.value
-      : grantedProjects.value;
-  const name =
-    activeName.value === "active"
-      ? "Active Projects"
-      : activeName.value === "completed"
-      ? "Completed Projects"
-      : "Granted Projects";
-  const columns =
-    activeName.value === "active"
-      ? activeColumns
-      : activeName.value === "completed"
-      ? completedColumns
-      : grantedColumns;
+    activeName.value === 'active' ? activeProjects.value : activeName.value === 'completed' ? completedProjects.value : grantedProjects.value;
+  const name = activeName.value === 'active' ? 'Active Projects' : activeName.value === 'completed' ? 'Completed Projects' : 'Granted Projects';
+  const columns = activeName.value === 'active' ? activeColumns : activeName.value === 'completed' ? completedColumns : grantedColumns;
 
   // Initialize jsPDF
   const doc = new jsPDF({
-    orientation: "l", // Portrait mode
-    unit: "mm",
-    format: [500, 210], // Wider page (500mm width, 210mm height)
+    orientation: 'l', // Portrait mode
+    unit: 'mm',
+    format: [500, 210] // Wider page (500mm width, 210mm height)
   });
   // Center title (h2 format)
 
@@ -529,41 +512,41 @@ const exportToPDF = async () => {
 
   // Use the imported `autoTable` function
   autoTable(doc, {
-    head: [columns.map((column) => column.pdf)],
-    body: data.map((item) => columns.map((column) => item[column.prop] ?? "N/A")),
+    head: [columns.map(column => column.pdf)],
+    body: data.map(item => columns.map(column => item[column.prop] ?? 'N/A')),
     headStyles: {
       fillColor: [248, 247, 250], // Background color as rgba(231, 230, 233, 1)
       textColor: [101, 101, 101], // Ensuring text is visible
-      fontStyle: "normal",
+      fontStyle: 'normal',
       fontSize: 12,
-      font:"Cairo"
+      font: 'Cairo'
     },
     bodyStyles: {
       fillColor: [255, 255, 255],
       textColor: [0, 0, 0],
-      font:"Cairo"
+      font: 'Cairo'
     },
     alternateRowStyles: { fillColor: [255, 255, 255] },
     styles: {
       lineWidth: 0.4, // Border width set to 1px
-      lineColor: [231, 230, 233], // Black border
-    },
+      lineColor: [231, 230, 233] // Black border
+    }
   });
   // Save the PDF
   doc.save(`${name}${new Date().toLocaleDateString()}.pdf`);
 };
 const addTask = () => {
   // Implement add task logic
-  ElMessage.success("Adding task...");
+  ElMessage.success('Adding task...');
 };
 // Format date
-const formatDate = (date) => {
-  if (!date) return "";
+const formatDate = date => {
+  if (!date) return '';
   return new Date(date).toLocaleDateString();
 };
 
 // Handle view action
-const handleView = (row) => {
+const handleView = row => {
   router.push(`/operations/daily-task/${row?.id}`);
 };
 </script>

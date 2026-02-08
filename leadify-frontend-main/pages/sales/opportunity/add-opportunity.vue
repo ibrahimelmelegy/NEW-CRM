@@ -9,36 +9,36 @@ OpportunityForm( :loading="loading" @submit="submitForm" @leadId="(value)=>  lea
 </template>
 
 <script lang="ts" setup>
-  import { useI18n } from 'vue-i18n';
-  const { t } = useI18n();
-  useHead({
-    title: t('opportunities.createTitle'),
-  });
+import { useI18n } from 'vue-i18n';
+const { t } = useI18n();
+useHead({
+  title: t('opportunities.createTitle')
+});
 
-  definePageMeta({
-    middleware: "permissions",
-    permission: "CREATE_OPPORTUNITIES",
-  });
+definePageMeta({
+  middleware: 'permissions',
+  permission: 'CREATE_OPPORTUNITIES'
+});
 
-  const router = useRouter();
-  const route = useRoute();
-  const loading = ref(false);
-  const leadId = ref("");
-  async function submitForm(values: FormattedValues) {
-    loading.value = true;
-    if (values?.clientId) {
-      await createOpportunity(values);
-    } else if (route.query.leadId || leadId.value) {
-      await convertLeadToOpportunity({
-        ...values.opportunity,
-        ...((route.query.leadId || leadId.value) && { leadId: route.query.leadId || leadId.value }),
-        ...(values.clientId && { clientId: values.clientId }),
-      });
-    } else {
-      await createOpportunity(values);
-    }
-    loading.value = false;
+const router = useRouter();
+const route = useRoute();
+const loading = ref(false);
+const leadId = ref('');
+async function submitForm(values: FormattedValues) {
+  loading.value = true;
+  if (values?.clientId) {
+    await createOpportunity(values);
+  } else if (route.query.leadId || leadId.value) {
+    await convertLeadToOpportunity({
+      ...values.opportunity,
+      ...((route.query.leadId || leadId.value) && { leadId: route.query.leadId || leadId.value }),
+      ...(values.clientId && { clientId: values.clientId })
+    });
+  } else {
+    await createOpportunity(values);
   }
+  loading.value = false;
+}
 </script>
 
 <style lang="scss"></style>

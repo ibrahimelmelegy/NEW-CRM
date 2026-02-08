@@ -5,14 +5,14 @@ function handleError(message: string) {
   ElNotification({
     type: 'error',
     title: 'Error',
-    message,
+    message
   });
 }
 function handleSuccess(message: string, id?: string, redirect: boolean = true) {
   ElNotification({
     type: 'success',
     title: 'Success',
-    message,
+    message
   });
   if (!redirect) {
     return;
@@ -53,7 +53,7 @@ export async function getAssets(): Promise<UseAssetsResult> {
         createdAt: formatDate(asset.createdAt),
         // updatedAt: formatDate(asset.updatedAt),
         updatedAt: '-',
-        assign: asset.user?.name,
+        assign: asset.user?.name
       }));
       const pagination = body?.pagination;
       return { assets, pagination };
@@ -81,7 +81,7 @@ export async function getAssets(): Promise<UseAssetsResult> {
  */
 export async function getAsset(id: string | string[]): Promise<Asset> {
   try {
-    let { body: asset, success } = await useApiFetch(`asset/${id}`);
+    const { body: asset, success } = await useApiFetch(`asset/${id}`);
     return asset;
   } catch (error) {
     console.error('Error fetching asset:', error instanceof Error ? error.message : error);
@@ -125,7 +125,7 @@ export async function createAsset(values: Asset, redirect: boolean = true) {
  */
 export async function updateAsset(values: Asset, redirect: boolean = true) {
   try {
-    let mappedAsset = mapToNumbers(values);
+    const mappedAsset = mapToNumbers(values);
     delete mappedAsset.id;
     // Call API to create the asset
     const response = await useApiFetch(`asset/${values.id}`, 'PUT', cleanObject(mappedAsset));
@@ -157,7 +157,7 @@ function mapToNumbers(data: Asset): Asset {
 
   // Convert specified fields to numbers if they are strings
   const mappedData = { ...data };
-  numericFields.forEach((field) => {
+  numericFields.forEach(field => {
     if (typeof mappedData[field as keyof Asset] === 'string') {
       const numericValue = parseFloat(mappedData[field as keyof Asset] as unknown as string);
       mappedData[field as keyof Asset] = isNaN(numericValue)

@@ -27,9 +27,11 @@
 </template>
 
 <script lang="ts" setup>
-  const preformanceStats = ref(await getPerformanceStatics());
+const preformanceStats = ref(await getPerformanceStatics());
 </script>
 
 <style lang="scss" scoped>
-.chromatic-dashboard { padding: 10px; }
+.chromatic-dashboard {
+  padding: 10px;
+}
 </style>

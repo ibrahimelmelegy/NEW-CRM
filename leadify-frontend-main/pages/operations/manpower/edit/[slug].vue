@@ -9,23 +9,23 @@ OperationsManPowerForm( :loading="loading" @submit="submitForm" :data="manpower"
 </template>
 
 <script lang="ts" setup>
-  useHead({
-    title: "App HP Tech | Edit Manpower",
-  });
-  definePageMeta({
-    middleware: "permissions",
-    permission: "EDIT_MANPOWER",
-  });
-  const router = useRouter();
-  const route = useRoute();
-  const loading = ref(false);
-  const manpower = await getManpower(route.params.slug);
+useHead({
+  title: 'App HP Tech | Edit Manpower'
+});
+definePageMeta({
+  middleware: 'permissions',
+  permission: 'EDIT_MANPOWER'
+});
+const router = useRouter();
+const route = useRoute();
+const loading = ref(false);
+const manpower = await getManpower(route.params.slug);
 
-  async function submitForm(values: ManpowerValues) {
-    loading.value = true;
-    await updateManpower({ ...values, id: route.params.slug });
-    loading.value = false;
-  }
+async function submitForm(values: ManpowerValues) {
+  loading.value = true;
+  await updateManpower({ ...values, id: route.params.slug });
+  loading.value = false;
+}
 </script>
 
 <style lang="scss"></style>

@@ -12,49 +12,49 @@
 </template>
 
 <script lang="ts" setup>
-  useHead({
-    title: "App HP Tech | Edit Material",
-  });
-  definePageMeta({
-    middleware: "permissions",
-    permission: "EDIT_ADDITIONAL_MATERIAL",
-  });
-  const router = useRouter();
-  const route = useRoute();
-  const loading = ref(false);
-  const categoryRef = ref();
-  const categoryItemRef = ref();
-  const material = await getAdditionalMaterial(route.params.slug as string);
+useHead({
+  title: 'App HP Tech | Edit Material'
+});
+definePageMeta({
+  middleware: 'permissions',
+  permission: 'EDIT_ADDITIONAL_MATERIAL'
+});
+const router = useRouter();
+const route = useRoute();
+const loading = ref(false);
+const categoryRef = ref();
+const categoryItemRef = ref();
+const material = await getAdditionalMaterial(route.params.slug as string);
 
-  const finalValues = ref<AdditionalMaterial>({
-    name: "",
-    items: [],
-  });
+const finalValues = ref<AdditionalMaterial>({
+  name: '',
+  items: []
+});
 
-  async function submitCategoryForm(values: any) {
-    finalValues.value = { ...finalValues.value, ...values };
-  }
+async function submitCategoryForm(values: any) {
+  finalValues.value = { ...finalValues.value, ...values };
+}
 
-  async function submitCategoryItemForm(values: any) {
-    finalValues.value["items"] = [...values];
+async function submitCategoryItemForm(values: any) {
+  finalValues.value.items = [...values];
+}
+async function onSubmitMaterials() {
+  //  reset values
+  finalValues.value = {} as AdditionalMaterial;
+  try {
+    loading.value = true;
+    await categoryRef.value.onSubmit();
+    await categoryItemRef.value.onSubmitCategoryItems();
+    if (!finalValues.value?.name || !finalValues.value?.items || !finalValues.value?.items?.length) return;
+    await updateAdditionalMaterial({ ...finalValues.value, materialId: +(route.params.slug as string) });
+    loading.value = false;
+  } catch (error) {
+    console.error("Error saving forms:", error);
+    loading.value = false;
+  } finally {
+    loading.value = false;
   }
-  async function onSubmitMaterials() {
-    //  reset values
-    finalValues.value = {} as AdditionalMaterial;
-    try {
-      loading.value = true;
-      await categoryRef.value.onSubmit();
-      await categoryItemRef.value.onSubmitCategoryItems();
-      if (!finalValues.value?.name || !finalValues.value?.items || !finalValues.value?.items?.length) return;
-      await updateAdditionalMaterial({ ...finalValues.value, materialId: +(route.params.slug as string) });
-      loading.value = false;
-    } catch (error) {
-      console.error("Error saving forms:", error);
-      loading.value = false;
-    } finally {
-      loading.value = false;
-    }
-  }
+}
 </script>
 
 <style lang="scss"></style>

@@ -7,19 +7,13 @@
         <span class="badge">{{ $t('proposals.reactVersion') }}</span>
       </div>
       <div class="header-right">
-        <el-button @click="refreshFrame" type="primary" :icon="Refresh" circle />
+        <el-button type="primary" :icon="Refresh" circle @click="refreshFrame" />
       </div>
     </div>
 
     <!-- React App iframe -->
     <div class="iframe-wrapper">
-      <iframe
-        ref="reactFrame"
-        :src="reactAppUrl"
-        class="react-iframe"
-        @load="onFrameLoad"
-        allow="clipboard-write; downloads"
-      />
+      <iframe ref="reactFrame" :src="reactAppUrl" class="react-iframe" allow="clipboard-write; downloads" @load="onFrameLoad" />
       <div v-if="loading" class="loading-overlay">
         <el-icon class="is-loading" :size="40"><Loading /></el-icon>
         <p>{{ $t('proposals.loading') }}</p>
@@ -29,66 +23,66 @@
 </template>
 
 <script setup lang="ts">
-import { ref, onMounted, onUnmounted } from 'vue'
-import { Refresh, Loading } from '@element-plus/icons-vue'
-import { useI18n } from 'vue-i18n'
+import { ref, onMounted, onUnmounted } from 'vue';
+import { Refresh, Loading } from '@element-plus/icons-vue';
+import { useI18n } from 'vue-i18n';
 
-const { t } = useI18n()
+const { t } = useI18n();
 
 definePageMeta({
   layout: 'full-width',
   // You might want to adjust permissions based on your needs
   middleware: ['permissions'],
-  permission: 'VIEW_OWN_PROPOSALS' 
-})
+  permission: 'VIEW_OWN_PROPOSALS'
+});
 
-const route = useRoute()
-const router = useRouter()
+const route = useRoute();
+const router = useRouter();
 
 // Point to the root of the React app
-const reactAppUrl = ref('http://localhost:3001/')
-const loading = ref(true)
-const reactFrame = ref<HTMLIFrameElement | null>(null)
+const reactAppUrl = ref('http://localhost:3001/');
+const loading = ref(true);
+const reactFrame = ref<HTMLIFrameElement | null>(null);
 
 // Handle messages from React iframe (if needed for value-add integrations)
 const handleMessage = (event: MessageEvent) => {
   // Validate origin in production used commonly
-  if (event.origin !== 'http://localhost:3001') return
-  
-  const { action, id } = event.data || {}
-  
+  if (event.origin !== 'http://localhost:3001') return;
+
+  const { action, id } = event.data || {};
+
   // Example: If the React app sends a message to navigate or notify
   if (action === 'NAVIGATE_EXTERNAL') {
     // Handle external navigation if needed
   }
-}
+};
 
 onMounted(() => {
   // Pass auth token to React app via URL query param so it can authenticate immediately
-  const token = useCookie('access_token')
+  const token = useCookie('access_token');
   if (token.value) {
-    const separator = reactAppUrl.value.includes('?') ? '&' : '?'
-    reactAppUrl.value += `${separator}token=${token.value}`
+    const separator = reactAppUrl.value.includes('?') ? '&' : '?';
+    reactAppUrl.value += `${separator}token=${token.value}`;
   }
-  
-  window.addEventListener('message', handleMessage)
-})
+
+  window.addEventListener('message', handleMessage);
+});
 
 onUnmounted(() => {
-  window.removeEventListener('message', handleMessage)
-})
+  window.removeEventListener('message', handleMessage);
+});
 
 const onFrameLoad = () => {
-  loading.value = false
-}
+  loading.value = false;
+};
 
 const refreshFrame = () => {
-  loading.value = true
+  loading.value = true;
   if (reactFrame.value) {
     // Force reload the iframe
-    reactFrame.value.src = reactFrame.value.src
+    reactFrame.value.src = reactFrame.value.src;
   }
-}
+};
 </script>
 
 <style scoped>
@@ -96,10 +90,10 @@ const refreshFrame = () => {
   display: flex;
   flex-direction: column;
   /* Top spacing is 80px defined in layout */
-  height: calc(100vh - 80px); 
+  height: calc(100vh - 80px);
   background: white;
   width: 100%;
-  overflow: hidden; 
+  overflow: hidden;
 }
 
 .header {

@@ -20,7 +20,6 @@ el-form(  autocomplete="off"   @submit.prevent='onSubmit'   ref="myForm" label-p
 import { useForm } from 'vee-validate';
 import * as yup from 'yup';
 import isEmailValidator from 'validator/lib/isEmail';
-;
 const router = useRouter();
 const route = useRoute();
 const activeStep = defineModel();
@@ -32,8 +31,8 @@ const props = defineProps({
   label: String,
   data: {
     type: Object,
-    required: false,
-  },
+    required: false
+  }
 });
 
 const emit = defineEmits(['submit']);
@@ -42,90 +41,92 @@ const isEmail = ref(false);
 const isPhone = ref(false);
 const isOtherSource = ref(false);
 
-const formSchema = computed(() => yup.object({
-  leadName: yup.string().trim().required().min(2).max(100).label(t('leads.table.leadName')),
-  companyName: yup.string().nullable().trim().max(100).label(t('common.companyName')),
-  email: yup.string().when([], {
-    is: () => isPhone.value,
-    then: () =>
-      yup
-        .string()
-        .email()
-        .max(100)
-        .nullable()
-        .test(
-          'is-valid',
-          (message: any) => t('errors.invalidEmail'),
-          (value: any) => !value || isEmailValidator(value)
-        )
-        .label(t('leads.info.email')),
-    otherwise: () =>
-      yup
-        .string()
-        .email()
-        .max(100)
-        .required(t('errors.emailOrPhoneRequired'))
-        .test(
-          'is-valid',
-          (message: any) => t('errors.invalidEmail'),
-          (value: any) => (value ? isEmailValidator(value) : new yup.ValidationError('Invalid value'))
-        )
-        .label(t('leads.info.email')),
-  }),
-  phone: yup.number().when([], {
-    is: () => isEmail.value,
-    then: () =>
-      yup
-        .number()
-        .nullable() // Allows the value to be null
-        .transform((value: any, originalValue: any) => (originalValue === '' ? null : Number.isNaN(value) ? null : value))
-        .label(t('leads.info.phone'))
-        .test('Phone number', t('errors.invalidPhone'), function (value: any) {
-          if (value === null || value === undefined) {
-            return true;
-          }
-          return validPhone.value ? true : false;
-        }),
-    otherwise: () =>
-      yup
-        .number()
-        .transform((value: any) => (Number.isNaN(value) ? null : value))
-        .nullable()
-        .required(t('errors.emailOrPhoneRequired'))
-        .label(t('leads.info.phone'))
-        .test('Phone number', t('errors.invalidPhone'), function (value: any) {
-          return validPhone.value ? true : false;
-        }),
-  }),
-  leadState: yup.string().trim().required().min(2).max(100).label(t('leads.table.status')),
-  leadSource: yup.string().nullable().trim().max(100).label(t('leads.info.leadSource')),
-  otherSource: yup.string().when([], {
-    is: () => isOtherSource.value,
-    then: () => yup.string().required().trim().min(2).max(100).label(t('leads.info.otherSource')),
-    otherwise: () =>
-      yup
-        .string()
-        .trim()
-        .nullable()
-        .test('min-length-if-entered', t('errors.minLength', { min: 2 }), (value: any) => !value || value.length >= 2)
-        .trim()
-        .max(250)
-        .label(t('leads.info.otherSource')),
-  }),
-  assignUser: yup.array().of(yup.number()).required().min(1).label(t('leads.info.assign')),
-  lastContactDate: yup.date().nullable().label(t('leads.info.lastContact')),
-  notes: yup
-    .string()
-    .trim()
-    .nullable()
-    .test('min-length-if-entered', t('errors.minLength', { min: 2 }), (value: any) => !value || value.length >= 2)
-    .trim()
-    .max(2000)
-    .label(t('leads.notes')),
-}));
+const formSchema = computed(() =>
+  yup.object({
+    leadName: yup.string().trim().required().min(2).max(100).label(t('leads.table.leadName')),
+    companyName: yup.string().nullable().trim().max(100).label(t('common.companyName')),
+    email: yup.string().when([], {
+      is: () => isPhone.value,
+      then: () =>
+        yup
+          .string()
+          .email()
+          .max(100)
+          .nullable()
+          .test(
+            'is-valid',
+            (message: any) => t('errors.invalidEmail'),
+            (value: any) => !value || isEmailValidator(value)
+          )
+          .label(t('leads.info.email')),
+      otherwise: () =>
+        yup
+          .string()
+          .email()
+          .max(100)
+          .required(t('errors.emailOrPhoneRequired'))
+          .test(
+            'is-valid',
+            (message: any) => t('errors.invalidEmail'),
+            (value: any) => (value ? isEmailValidator(value) : new yup.ValidationError('Invalid value'))
+          )
+          .label(t('leads.info.email'))
+    }),
+    phone: yup.number().when([], {
+      is: () => isEmail.value,
+      then: () =>
+        yup
+          .number()
+          .nullable() // Allows the value to be null
+          .transform((value: any, originalValue: any) => (originalValue === '' ? null : Number.isNaN(value) ? null : value))
+          .label(t('leads.info.phone'))
+          .test('Phone number', t('errors.invalidPhone'), function (value: any) {
+            if (value === null || value === undefined) {
+              return true;
+            }
+            return !!validPhone.value;
+          }),
+      otherwise: () =>
+        yup
+          .number()
+          .transform((value: any) => (Number.isNaN(value) ? null : value))
+          .nullable()
+          .required(t('errors.emailOrPhoneRequired'))
+          .label(t('leads.info.phone'))
+          .test('Phone number', t('errors.invalidPhone'), function (value: any) {
+            return !!validPhone.value;
+          })
+    }),
+    leadState: yup.string().trim().required().min(2).max(100).label(t('leads.table.status')),
+    leadSource: yup.string().nullable().trim().max(100).label(t('leads.info.leadSource')),
+    otherSource: yup.string().when([], {
+      is: () => isOtherSource.value,
+      then: () => yup.string().required().trim().min(2).max(100).label(t('leads.info.otherSource')),
+      otherwise: () =>
+        yup
+          .string()
+          .trim()
+          .nullable()
+          .test('min-length-if-entered', t('errors.minLength', { min: 2 }), (value: any) => !value || value.length >= 2)
+          .trim()
+          .max(250)
+          .label(t('leads.info.otherSource'))
+    }),
+    assignUser: yup.array().of(yup.number()).required().min(1).label(t('leads.info.assign')),
+    lastContactDate: yup.date().nullable().label(t('leads.info.lastContact')),
+    notes: yup
+      .string()
+      .trim()
+      .nullable()
+      .test('min-length-if-entered', t('errors.minLength', { min: 2 }), (value: any) => !value || value.length >= 2)
+      .trim()
+      .max(2000)
+      .label(t('leads.notes'))
+  })
+);
 
 const { handleSubmit } = useForm({
-  validationSchema: formSchema,
+  validationSchema: formSchema
 });
 
 const onSubmit = handleSubmit((values: any, actions: any) => {
@@ -135,7 +136,7 @@ const onSubmit = handleSubmit((values: any, actions: any) => {
 let users = await useApiFetch('users');
 users = users?.body?.docs?.map((e: any) => ({
   label: e.name,
-  value: e.id,
+  value: e.id
 }));
 
 function checkIfOtherSource(value: any) {

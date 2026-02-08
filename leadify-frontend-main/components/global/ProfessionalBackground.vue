@@ -9,7 +9,10 @@
     <!-- Dynamic Ambient Glows -->
     <div class="ambient-glows absolute inset-0">
       <div class="glow glow-1 absolute top-[-10%] left-[-5%] w-[50%] h-[50%] bg-[#7849ff]/30 rounded-full blur-[120px] animate-pulse-slow"></div>
-      <div class="glow glow-2 absolute bottom-[-10%] right-[-5%] w-[50%] h-[50%] bg-[#ff7b00]/20 rounded-full blur-[150px] animate-pulse-slow" style="animation-delay: 3s;"></div>
+      <div
+        class="glow glow-2 absolute bottom-[-10%] right-[-5%] w-[50%] h-[50%] bg-[#ff7b00]/20 rounded-full blur-[150px] animate-pulse-slow"
+        style="animation-delay: 3s"
+      ></div>
     </div>
   </div>
 </template>
@@ -59,8 +62,15 @@ const themeStore = useThemeStore();
   }
 
   @keyframes pulse {
-    0%, 100% { opacity: 0.5; transform: scale(1); }
-    50% { opacity: 0.8; transform: scale(1.1); }
+    0%,
+    100% {
+      opacity: 0.5;
+      transform: scale(1);
+    }
+    50% {
+      opacity: 0.8;
+      transform: scale(1.1);
+    }
   }
 }
 </style>

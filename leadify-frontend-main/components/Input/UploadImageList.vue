@@ -27,53 +27,53 @@ el-form-item(:label="label" :error='errorMessage' class="!mb-6")
 
 <script lang="ts" setup>
 import { Delete, Download, Plus, ZoomIn } from '@element-plus/icons-vue';
-import type { UploadProps, UploadUserFile } from 'element-plus';
-import type { UploadFile } from 'element-plus';
+import type { UploadProps, UploadUserFile, UploadFile } from 'element-plus';
+
 import { useField } from 'vee-validate';
 
 const props = defineProps({
   name: {
     type: String,
     default: '',
-    required: false,
+    required: false
   },
   value: {
     type: String,
     default: '',
-    required: false,
+    required: false
   },
 
   label: {
     type: String,
-    required: true,
+    required: true
   },
   placeholder: {
     type: String,
-    default: '',
+    default: ''
   },
   disabled: {
     type: Boolean,
     default: false,
-    required: false,
+    required: false
   },
   sizeInMb: {
     type: Number,
-    default: 2, //2mb
+    default: 2 // 2mb
   },
   formats: {
     type: Array,
     default: [
       'image/jpg',
       'image/jpeg',
-      'image/png',
+      'image/png'
       // "image/webp",
       // "image/svg+xml",
     ],
-    required: false,
+    required: false
   },
   type: {
-    type: String,
-  },
+    type: String
+  }
 });
 
 const icon = computed(() => {
@@ -109,10 +109,10 @@ const handleUploadRequest = async (params: any) => {
   return data;
 };
 
-const beforeUpload: UploadProps['beforeUpload'] = (rawFile) => {
+const beforeUpload: UploadProps['beforeUpload'] = rawFile => {
   if (!props.formats.includes(rawFile.type)) {
     ElMessage.error({
-      message: `acceptUpload ${props.formats.map((format) => format.split('/').pop()).join(' , ')}`,
+      message: `acceptUpload ${props.formats.map(format => format.split('/').pop()).join(' , ')}`
     });
     return false;
   } else if (rawFile.size / 1024 / 1024 > props.sizeInMb) {
@@ -133,9 +133,9 @@ const {
   errorMessage,
   handleBlur,
   handleChange,
-  meta,
+  meta
 } = useField(props.name, undefined, {
-  initialValue: props.value ? props.value : [],
+  initialValue: props.value ? props.value : []
 });
 watchEffect(() => {
   if (props.value) {

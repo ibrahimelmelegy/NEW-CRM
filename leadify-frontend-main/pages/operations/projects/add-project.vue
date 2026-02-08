@@ -23,40 +23,40 @@ ActionModel(v-model="isCanceling" v-if="isCanceling" @confirm="submitCancel" :lo
 </template>
 
 <script lang="ts" setup>
-  const { t } = useI18n();
-  useHead({
-    title: `App HP Tech | ${t('operations.projects.createTitle')}`,
-  });
-  definePageMeta({
-    middleware: "permissions",
-    permission: "CREATE_PROJECTS",
-  });
-  const router = useRouter();
-  const activeStep = ref<number>(0);
-  const loading = ref(false);
-  const isFinished = ref(false);
-  const isCanceling = ref(false);
-  const values = ref<any>({});
-  const finalvalues = ref<any>({});
+const { t } = useI18n();
+useHead({
+  title: `App HP Tech | ${t('operations.projects.createTitle')}`
+});
+definePageMeta({
+  middleware: 'permissions',
+  permission: 'CREATE_PROJECTS'
+});
+const router = useRouter();
+const activeStep = ref<number>(0);
+const loading = ref(false);
+const isFinished = ref(false);
+const isCanceling = ref(false);
+const values = ref<any>({});
+const finalvalues = ref<any>({});
 
-  await fetchExistingProject();
-  activeStep.value = project.value?.step ? project.value.step - 1 : 0;
-  async function submitForm() {
-    loading.value = true;
-    await completeProject(values.value);
-    loading.value = false;
-  }
+await fetchExistingProject();
+activeStep.value = project.value?.step ? project.value.step - 1 : 0;
+async function submitForm() {
+  loading.value = true;
+  await completeProject(values.value);
+  loading.value = false;
+}
 
-  async function submitCancel() {
-    loading.value = true;
-    await deleteProject();
-    loading.value = false;
-  }
+async function submitCancel() {
+  loading.value = true;
+  await deleteProject();
+  loading.value = false;
+}
 
-  function confirmCompeleteForm(val: any) {
-    isFinished.value = true;
-    values.value = val;
-  }
+function confirmCompeleteForm(val: any) {
+  isFinished.value = true;
+  values.value = val;
+}
 </script>
 
 <style lang="scss"></style>

@@ -24,8 +24,8 @@ div.proposal
 <script>
 export default {
   props: {
-    modelValue: Object,
-  },
+    modelValue: Object
+  }
 };
 </script>
 
@@ -90,10 +90,10 @@ export default {
           object-fit: cover;
         }
       }
-       &-shape3 {
+      &-shape3 {
         position: absolute;
         top: 25px;
-        left:25px;
+        left: 25px;
         width: 100%;
         max-width: 650px;
         z-index: 1;

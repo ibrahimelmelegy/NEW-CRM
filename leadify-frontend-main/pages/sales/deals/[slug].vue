@@ -86,202 +86,202 @@ el-tabs.demo-tabs(v-model="activeName", @tab-click="handleClick")
         el-button( v-if="activity?.docs?.length >0" :loading = "loading" class="!rounded-2xl mb-2"  type= 'primary' size="large" :disabled="activity?.pagination?.totalPages == activity?.pagination?.page" @click="getActivityPage(Number(activity?.pagination?.page)+1)") {{ $t('common.view') }} More
 </template>
 <script lang="ts" setup>
-  const { hasPermission } = await usePermissions();
-  const { $i18n } = useNuxtApp();
-  const t = $i18n.t;
-  const activeName = ref("summary");
-  const route = useRoute();
-  const loading = ref(false);
+const { hasPermission } = await usePermissions();
+const { $i18n } = useNuxtApp();
+const t = $i18n.t;
+const activeName = ref('summary');
+const route = useRoute();
+const loading = ref(false);
 
-  const activity = ref();
+const activity = ref();
 
-  // Call API to Get the deal
-  const deal = await getDeal(route.params.slug as string);
-  const activityResponse = await getOpportunityActivity((route.params.slug as string) + `?limit=10` + "&&page=1");
-  activity.value = activityResponse;
+// Call API to Get the deal
+const deal = await getDeal(route.params.slug as string);
+const activityResponse = await getOpportunityActivity((route.params.slug as string) + `?limit=10` + '&&page=1');
+activity.value = activityResponse;
 
-  const getActivityPage = async (page: number) => {
-    try {
-      loading.value = true;
-      const responsPage = await getActivity((route.params.slug as string) + `?limit=10` + `&&page=${page}`);
-      activity.value = { docs: [...activity.value.docs, ...responsPage.docs], pagination: responsPage.pagination };
-    } finally {
-      loading.value = false;
+const getActivityPage = async (page: number) => {
+  try {
+    loading.value = true;
+    const responsPage = await getActivity((route.params.slug as string) + `?limit=10` + `&&page=${page}`);
+    activity.value = { docs: [...activity.value.docs, ...responsPage.docs], pagination: responsPage.pagination };
+  } finally {
+    loading.value = false;
+  }
+};
+
+// Call API to Get the lead
+const lead = await getLead(deal.leadId);
+
+//  invoices table
+const invoicesTable = reactive({
+  columns: [
+    {
+      prop: 'invoiceNumber',
+      label: t('deals.table.invoiceNumber'),
+      component: 'Text',
+      // sortable: true,
+      type: 'font-default'
+    },
+    {
+      prop: 'amount',
+      label: t('deals.table.amount'),
+      component: 'Text',
+      // sortable: true,
+      type: 'font-default'
+    },
+    {
+      prop: 'invoiceDate',
+      label: t('deals.table.invoiceDate'),
+      component: 'Text',
+      // sortable: true,
+      type: 'font-default'
+    },
+    // {
+    //   prop: "dueDate",
+    //   label: "Due Date",
+    //   component: "Text",
+    //   // sortable: true,
+    //   type: "font-default",
+    // },
+    {
+      prop: 'collected',
+      label: t('deals.table.collected'),
+      component: 'Text',
+      // sortable: true,
+      type: 'font-default'
+    },
+    {
+      prop: 'collectedDate',
+      label: t('deals.table.collectedDate'),
+      component: 'Text',
+      // sortable: true,
+      type: 'font-default'
     }
-  };
+  ],
+  data: [] as Invoice[]
+});
 
-  // Call API to Get the lead
-  const lead = await getLead(deal.leadId);
+invoicesTable.data =
+  deal?.invoice?.map((item: Invoice) => ({
+    ...item,
+    invoiceDate: getYear(item.invoiceDate),
+    dueDate: getYear(item.dueDate),
+    collectedDate: getYear(item.collectedDate),
+    collected: item.collected ? t('common.yes') : t('common.no')
+  })) || [];
 
-  //  invoices table
-  const invoicesTable = reactive({
-    columns: [
-      {
-        prop: "invoiceNumber",
-        label: t('deals.table.invoiceNumber'),
-        component: "Text",
-        // sortable: true,
-        type: "font-default",
-      },
-      {
-        prop: "amount",
-        label: t('deals.table.amount'),
-        component: "Text",
-        // sortable: true,
-        type: "font-default",
-      },
-      {
-        prop: "invoiceDate",
-        label: t('deals.table.invoiceDate'),
-        component: "Text",
-        // sortable: true,
-        type: "font-default",
-      },
-      // {
-      //   prop: "dueDate",
-      //   label: "Due Date",
-      //   component: "Text",
-      //   // sortable: true,
-      //   type: "font-default",
-      // },
-      {
-        prop: "collected",
-        label: t('deals.table.collected'),
-        component: "Text",
-        // sortable: true,
-        type: "font-default",
-      },
-      {
-        prop: "collectedDate",
-        label: t('deals.table.collectedDate'),
-        component: "Text",
-        // sortable: true,
-        type: "font-default",
-      },
-    ],
-    data: [] as Invoice[],
-  });
+//  invoices table
+const deliveriesTable = reactive({
+  columns: [
+    {
+      prop: 'deliveryDetails',
+      label: t('deals.table.deliveryDetails'),
+      component: 'Text',
+      // sortable: true,
+      type: 'font-default'
+    },
+    {
+      prop: 'deliveryDate',
+      label: t('deals.table.deliveryDate'),
+      component: 'Text',
+      // sortable: true,
+      type: 'font-default'
+    }
+  ],
+  data: [] as Delivery[]
+});
+deliveriesTable.data = deal?.deliveryDetails?.map((item: Delivery) => ({ ...item, deliveryDate: getYear(item.deliveryDate) })) || [];
 
-  invoicesTable.data =
-    deal?.invoice?.map((item: Invoice) => ({
-      ...item,
-      invoiceDate: getYear(item.invoiceDate),
-      dueDate: getYear(item.dueDate),
-      collectedDate: getYear(item.collectedDate),
-      collected: item.collected ? t('common.yes') : t('common.no'),
-    })) || [];
+const table = reactive({
+  columns: [
+    {
+      prop: 'title',
+      label: t('deals.tabs.proposal'),
+      component: 'Text',
+      sortable: true,
+      type: 'font-bold',
+      width: 200
+    },
+    {
+      prop: 'version',
+      label: 'Version',
+      component: 'Text',
+      sortable: true,
+      type: 'font-default',
+      width: 150
+    },
+    {
+      prop: 'relatedEntity',
+      label: 'Related to',
+      component: 'Text',
+      sortable: true,
+      type: 'font-default',
+      width: 150
+    },
+    {
+      prop: 'type',
+      label: 'Type',
+      component: 'Text',
+      sortable: true,
+      type: 'font-default',
+      filters: [
+        { text: 'Financial', value: 'FINANCIAL' },
+        { text: 'Technical', value: 'TECHNICAL' },
+        { text: 'Tech & Financial', value: 'MIXED' }
+      ],
+      width: 150
+    },
+    {
+      prop: 'proposalFor',
+      label: 'Client Name',
+      component: 'Text',
+      sortable: true,
+      type: 'font-bold',
+      width: 200
+    },
+    {
+      prop: 'status',
+      label: 'Status',
+      component: 'Label',
+      type: 'outline',
+      filters: [
+        { text: 'Approved', value: 'APPROVED' },
+        { text: 'Waiting Approval', value: 'WAITING_APPROVAL' },
+        { text: 'Rejected', value: 'REJECTED' }
+      ],
+      width: 150
+    },
+    {
+      prop: 'reference',
+      label: 'Reference',
+      component: 'Text',
+      sortable: true,
+      type: 'font-bold',
+      width: 200
+    },
+    {
+      prop: 'assign',
+      label: t('deals.table.assigned'),
+      component: 'Text',
+      type: 'font-default',
+      width: 200
+    },
+    {
+      prop: 'createdAt',
+      label: t('deals.table.created'),
+      component: 'Text',
+      sortable: true,
+      type: 'font-default',
+      width: 200
+    }
+    // { prop: 'actions', label: 'Actions', sortable: false },
+  ],
+  data: [] as Client[]
+});
 
-  //  invoices table
-  const deliveriesTable = reactive({
-    columns: [
-      {
-        prop: "deliveryDetails",
-        label: t('deals.table.deliveryDetails'),
-        component: "Text",
-        // sortable: true,
-        type: "font-default",
-      },
-      {
-        prop: "deliveryDate",
-        label: t('deals.table.deliveryDate'),
-        component: "Text",
-        // sortable: true,
-        type: "font-default",
-      },
-    ],
-    data: [] as Delivery[],
-  });
-  deliveriesTable.data =
-    deal?.deliveryDetails?.map((item: Delivery) => ({ ...item, deliveryDate: getYear(item.deliveryDate) })) || [];
-
-  const table = reactive({
-    columns: [
-      {
-        prop: "title",
-        label: t('deals.tabs.proposal'),
-        component: "Text",
-        sortable: true,
-        type: "font-bold",
-        width: 200,
-      },
-      {
-        prop: "version",
-        label: "Version",
-        component: "Text",
-        sortable: true,
-        type: "font-default",
-        width: 150,
-      },
-      {
-        prop: "relatedEntity",
-        label: "Related to",
-        component: "Text",
-        sortable: true,
-        type: "font-default",
-        width: 150,
-      },
-      {
-        prop: "type",
-        label: "Type",
-        component: "Text",
-        sortable: true,
-        type: "font-default",
-        filters: [
-          { text: "Financial", value: "FINANCIAL" },
-          { text: "Technical", value: "TECHNICAL" },
-          { text: 'Tech & Financial', value: "MIXED" },
-        ],
-        width: 150,
-      },
-      {
-        prop: "proposalFor",
-        label: "Client Name",
-        component: "Text",
-        sortable: true,
-        type: "font-bold",
-        width: 200,
-      },
-      {
-        prop: "status",
-        label: "Status",
-        component: "Label",
-        type: "outline",
-        filters: [
-          { text: "Approved", value: "APPROVED" },
-          { text: "Waiting Approval", value: "WAITING_APPROVAL" },
-          { text: "Rejected", value: "REJECTED" },
-        ],
-        width: 150,
-      },
-      {
-        prop: "reference",
-        label: "Reference",
-        component: "Text",
-        sortable: true,
-        type: "font-bold",
-        width: 200,
-      },
-      {
-        prop: "assign",
-        label: t('deals.table.assigned'),
-        component: "Text",
-        type: "font-default",
-        width: 200,
-      },
-      {
-        prop: "createdAt",
-        label: t('deals.table.created'),
-        component: "Text",
-        sortable: true,
-        type: "font-default",
-        width: 200,
-      },
-      // { prop: 'actions', label: 'Actions', sortable: false },
-    ],
-    data: [] as Client[],
-  });
-
-  const checkProposalResponse = await useTableFilter(`proposal?relatedEntityId=${route.params.slug as string}&page=1&limit=100`);
- table.data =checkProposalResponse.formattedData?.map((el:any) => {return {...el,
-  type :el.type == "Mixed"  ? 'Tech & Financial' : el.type}})
+const checkProposalResponse = await useTableFilter(`proposal?relatedEntityId=${route.params.slug as string}&page=1&limit=100`);
+table.data = checkProposalResponse.formattedData?.map((el: any) => {
+  return { ...el, type: el.type == 'Mixed' ? 'Tech & Financial' : el.type };
+});
 </script>

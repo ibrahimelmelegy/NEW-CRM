@@ -9,23 +9,23 @@ OperationsAssetForm( :loading="loading" @submit="submitForm" :data="asset")
 </template>
 
 <script lang="ts" setup>
-  useHead({
-    title: "App HP Tech | Edit Asset",
-  });
-  definePageMeta({
-    middleware: "permissions",
-    permission: "EDIT_ASSETS",
-  });
-  const router = useRouter();
-  const route = useRoute();
-  const loading = ref(false);
-  const asset = await getAsset(route.params.slug);
+useHead({
+  title: 'App HP Tech | Edit Asset'
+});
+definePageMeta({
+  middleware: 'permissions',
+  permission: 'EDIT_ASSETS'
+});
+const router = useRouter();
+const route = useRoute();
+const loading = ref(false);
+const asset = await getAsset(route.params.slug);
 
-  async function submitForm(values: Asset) {
-    loading.value = true;
-    await updateAsset({ ...values, id: route.params.slug });
-    loading.value = false;
-  }
+async function submitForm(values: Asset) {
+  loading.value = true;
+  await updateAsset({ ...values, id: route.params.slug });
+  loading.value = false;
+}
 </script>
 
 <style lang="scss"></style>

@@ -1,40 +1,37 @@
 <template>
   <el-form-item :label="label" :error="errorMessage" class="!mb-6">
-    <div
-      class="editor-wrapper border rounded-md"
-      :class="{ 'is-error': errorMessage, 'is-disabled': disabled }"
-    >
+    <div class="editor-wrapper border rounded-md" :class="{ 'is-error': errorMessage, 'is-disabled': disabled }">
       <!-- Toolbar -->
       <div v-if="editor && !disabled" class="toolbar p-2 border-b bg-gray-50 flex gap-2 flex-wrap">
         <button
-          @click.prevent="editor.chain().focus().toggleBold().run()"
           :class="{ 'is-active': editor.isActive('bold') }"
           title="Bold"
           type="button"
+          @click.prevent="editor.chain().focus().toggleBold().run()"
         >
           <i class="ri-bold"></i>
         </button>
         <button
-          @click.prevent="editor.chain().focus().toggleItalic().run()"
           :class="{ 'is-active': editor.isActive('italic') }"
           title="Italic"
           type="button"
+          @click.prevent="editor.chain().focus().toggleItalic().run()"
         >
           <i class="ri-italic"></i>
         </button>
         <button
-          @click.prevent="editor.chain().focus().toggleUnderline().run()"
           :class="{ 'is-active': editor.isActive('underline') }"
           title="Underline"
           type="button"
+          @click.prevent="editor.chain().focus().toggleUnderline().run()"
         >
           <i class="ri-underline"></i>
         </button>
         <button
-          @click.prevent="editor.chain().focus().toggleStrike().run()"
           :class="{ 'is-active': editor.isActive('strike') }"
           title="Strikethrough"
           type="button"
+          @click.prevent="editor.chain().focus().toggleStrike().run()"
         >
           <i class="ri-strikethrough"></i>
         </button>
@@ -42,26 +39,26 @@
         <div class="w-px h-6 bg-gray-300 mx-1"></div>
 
         <button
-          @click.prevent="editor.chain().focus().setTextAlign('left').run()"
           :class="{ 'is-active': editor.isActive({ textAlign: 'left' }) }"
           title="Align Left"
           type="button"
+          @click.prevent="editor.chain().focus().setTextAlign('left').run()"
         >
           <i class="ri-align-left"></i>
         </button>
         <button
-          @click.prevent="editor.chain().focus().setTextAlign('center').run()"
           :class="{ 'is-active': editor.isActive({ textAlign: 'center' }) }"
           title="Align Center"
           type="button"
+          @click.prevent="editor.chain().focus().setTextAlign('center').run()"
         >
           <i class="ri-align-center"></i>
         </button>
         <button
-          @click.prevent="editor.chain().focus().setTextAlign('right').run()"
           :class="{ 'is-active': editor.isActive({ textAlign: 'right' }) }"
           title="Align Right"
           type="button"
+          @click.prevent="editor.chain().focus().setTextAlign('right').run()"
         >
           <i class="ri-align-right"></i>
         </button>
@@ -69,45 +66,30 @@
         <div class="w-px h-6 bg-gray-300 mx-1"></div>
 
         <button
-          @click.prevent="editor.chain().focus().toggleBulletList().run()"
           :class="{ 'is-active': editor.isActive('bulletList') }"
           title="Bullet List"
           type="button"
+          @click.prevent="editor.chain().focus().toggleBulletList().run()"
         >
           <i class="ri-list-unordered"></i>
         </button>
         <button
-          @click.prevent="editor.chain().focus().toggleOrderedList().run()"
           :class="{ 'is-active': editor.isActive('orderedList') }"
           title="Ordered List"
           type="button"
+          @click.prevent="editor.chain().focus().toggleOrderedList().run()"
         >
           <i class="ri-list-ordered"></i>
         </button>
 
         <div class="w-px h-6 bg-gray-300 mx-1"></div>
 
-        <button
-          @click.prevent="triggerImageUpload"
-          title="Insert Image"
-          type="button"
-        >
+        <button title="Insert Image" type="button" @click.prevent="triggerImageUpload">
           <i class="ri-image-add-line"></i>
         </button>
-        <input
-          ref="fileInput"
-          type="file"
-          accept="image/*"
-          class="hidden"
-          @change="handleImageUpload"
-        />
-        
-        <button
-          @click.prevent="setLink"
-          :class="{ 'is-active': editor.isActive('link') }"
-          title="Link"
-           type="button"
-        >
+        <input ref="fileInput" type="file" accept="image/*" class="hidden" @change="handleImageUpload" />
+
+        <button :class="{ 'is-active': editor.isActive('link') }" title="Link" type="button" @click.prevent="setLink">
           <i class="ri-link"></i>
         </button>
       </div>
@@ -132,51 +114,51 @@ const props = defineProps({
   type: {
     type: String,
     default: 'text',
-    required: false,
+    required: false
   },
   name: {
     type: String,
     default: '',
-    required: false,
+    required: false
   },
   append: {
-    type: Boolean,
+    type: Boolean
   },
   value: {
     type: String,
     default: '',
-    required: false,
+    required: false
   },
   label: {
     type: String,
-    required: true,
+    required: true
   },
   placeholder: {
     type: String,
-    default: '',
+    default: ''
   },
   disabled: {
     type: Boolean,
     default: false,
-    required: false,
+    required: false
   },
   optional: {
     type: Boolean,
     default: false,
-    required: false,
+    required: false
   },
   model: {
-    type: String, // Used for upload path
-  },
+    type: String // Used for upload path
+  }
 });
 
 const {
   value: inputValue,
   errorMessage,
   handleBlur,
-  handleChange,
+  handleChange
 } = useField(props.name, undefined, {
-  initialValue: props.value,
+  initialValue: props.value
 });
 
 const fileInput = ref<HTMLInputElement | null>(null);
@@ -189,34 +171,34 @@ const editor = useEditor({
     Image,
     Underline,
     TextAlign.configure({
-      types: ['heading', 'paragraph'],
+      types: ['heading', 'paragraph']
     }),
     Link.configure({
-      openOnClick: false,
+      openOnClick: false
     }),
     Placeholder.configure({
-      placeholder: props.placeholder || `Enter ${props.label}`,
-    }),
+      placeholder: props.placeholder || `Enter ${props.label}`
+    })
   ],
   editorProps: {
     attributes: {
-      class: 'prose prose-sm sm:prose lg:prose-lg xl:prose-2xl mx-auto focus:outline-none max-w-none',
-    },
+      class: 'prose prose-sm sm:prose lg:prose-lg xl:prose-2xl mx-auto focus:outline-none max-w-none'
+    }
   },
   onUpdate: ({ editor }) => {
     const content = editor.getHTML();
-     // If content is just empty paragraph, treat as empty string
+    // If content is just empty paragraph, treat as empty string
     inputValue.value = content === '<p></p>' ? '' : content;
   },
-  onBlur:({event}) => {
-       handleBlur(event)
+  onBlur: ({ event }) => {
+    handleBlur(event);
   }
 });
 
 // Watch for external value changes
 watch(
   () => props.value,
-  (newValue) => {
+  newValue => {
     const isSame = editor.value?.getHTML() === newValue;
     if (!isSame && editor.value) {
       editor.value.commands.setContent(newValue || '', { emitUpdate: false });
@@ -226,11 +208,10 @@ watch(
 
 watch(
   () => props.disabled,
-  (val) => {
+  val => {
     editor.value?.setEditable(!val);
   }
 );
-
 
 // Image Upload Logic
 const triggerImageUpload = () => {
@@ -240,12 +221,12 @@ const triggerImageUpload = () => {
 const handleImageUpload = async (event: Event) => {
   const target = event.target as HTMLInputElement;
   const file = target.files?.[0];
-  
+
   if (file && props.model) {
     try {
       const filePath = await uploadFile({ file });
       const url = useRuntimeConfig().public.BUCKET_URL + filePath;
-      
+
       if (editor.value) {
         editor.value.chain().focus().setImage({ src: url }).run();
       }
@@ -254,13 +235,13 @@ const handleImageUpload = async (event: Event) => {
       // You might want to show a toast/notification here
     }
   } else if (file) {
-      // Fallback if no model prop is provided (e.g. createObjectURL)
-     const url = URL.createObjectURL(file)
-      if (editor.value) {
-        editor.value.chain().focus().setImage({ src: url }).run();
-      }
+    // Fallback if no model prop is provided (e.g. createObjectURL)
+    const url = URL.createObjectURL(file);
+    if (editor.value) {
+      editor.value.chain().focus().setImage({ src: url }).run();
+    }
   }
-  
+
   // Reset input
   target.value = '';
 };
@@ -289,11 +270,11 @@ const setLink = () => {
 .editor-wrapper {
   background-color: white;
   transition: border-color 0.2s;
-  
+
   &.is-error {
     border-color: var(--el-color-danger);
   }
-  
+
   &.is-disabled {
     background-color: var(--el-disabled-bg-color);
     cursor: not-allowed;
@@ -305,12 +286,12 @@ const setLink = () => {
   padding: 4px;
   border-radius: 4px;
   color: #606266;
-  
+
   &:hover {
     background-color: #f2f3f5;
     color: var(--el-color-primary);
   }
-  
+
   &.is-active {
     background-color: #ecf5ff;
     color: var(--el-color-primary);
@@ -320,7 +301,7 @@ const setLink = () => {
 :deep(.ProseMirror) {
   min-height: 160px;
   outline: none;
-  
+
   p.is-editor-empty:first-child::before {
     color: #a8abb2;
     content: attr(data-placeholder);
@@ -328,16 +309,16 @@ const setLink = () => {
     height: 0;
     pointer-events: none;
   }
-  
+
   img {
-      max-width: 100%;
-      height: auto;
-      border-radius: 4px;
-      margin: 10px 0;
-      
-      &.ProseMirror-selectednode {
-        outline: 2px solid var(--el-color-primary);
-      }
+    max-width: 100%;
+    height: auto;
+    border-radius: 4px;
+    margin: 10px 0;
+
+    &.ProseMirror-selectednode {
+      outline: 2px solid var(--el-color-primary);
+    }
   }
 }
 </style>

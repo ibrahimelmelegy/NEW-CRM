@@ -150,26 +150,150 @@ el-dialog(
 
 </template>
 
+<script setup lang="ts">
+import { ElNotification } from 'element-plus';
+
+const props = defineProps({
+  modelValue: Boolean,
+  vendor: Object,
+  type: String,
+  title: String
+});
+
+const emit = defineEmits(['update:modelValue', 'success']);
+
+const visible = computed({
+  get: () => props.modelValue,
+  set: val => emit('update:modelValue', val)
+});
+
+const formRef = ref();
+const loading = ref(false);
+
+const entityTypes = [
+  { label: 'Vendor', value: 'Vendor' },
+  { label: 'Distributor', value: 'Distributor' },
+  { label: 'Local Supplier', value: 'LocalSupplier' },
+  { label: 'Showroom', value: 'Showroom' }
+];
+
+const dialogTitle = computed(() => {
+  if (props.vendor) return 'Edit Entity Details';
+  return 'Create New Entity';
+});
+
+const form = reactive({
+  name: '',
+  type: 'Vendor',
+  firstName: '',
+  lastName: '',
+  phone: '',
+  email: '',
+  taxId: '',
+  commercialRegistration: '',
+  serviceType: '',
+  brands: [] as string[],
+  address: {
+    street: '',
+    street2: '',
+    city: '',
+    state: '',
+    zip: ''
+  },
+  defaultPaymentMethod: 'Cash'
+});
+
+watch(
+  () => props.vendor,
+  val => {
+    if (val) {
+      Object.assign(form, val);
+      if (!form.address) {
+        form.address = { street: '', street2: '', city: '', state: '', zip: '' };
+      }
+      // Handle specific fields if they come differently from backend
+      if (!form.brands) form.brands = [];
+    } else {
+      // Reset
+      form.name = '';
+      form.firstName = '';
+      form.lastName = '';
+      form.phone = '';
+      form.email = '';
+      form.taxId = '';
+      form.commercialRegistration = '';
+      form.serviceType = '';
+      form.brands = [];
+      form.address = { street: '', street2: '', city: '', state: '', zip: '' };
+      form.defaultPaymentMethod = 'Cash';
+
+      if (props.type) form.type = props.type;
+    }
+  },
+  { immediate: true }
+);
+
+watch(
+  () => props.type,
+  newType => {
+    if (!props.vendor && newType) {
+      form.type = newType;
+    }
+  }
+);
+
+async function submit() {
+  await formRef.value.validate();
+  loading.value = true;
+  try {
+    const url = props.vendor ? `vendor/${props.vendor.id}` : 'vendor';
+    const method = props.vendor ? 'PUT' : 'POST';
+
+    const res = await useApiFetch(url, method, form);
+    if (!res.success) throw new Error(res.message || 'Failed to save');
+
+    // Check if created type matches the current filter context
+    if (props.type && form.type && props.type !== form.type) {
+      ElNotification({
+        title: 'Saved',
+        type: 'warning',
+        message: `Entity saved as ${form.type}. Switch tab to view it.`,
+        duration: 5000
+      });
+    } else {
+      ElNotification({ title: 'Success', type: 'success', message: 'Saved successfully' });
+    }
+
+    emit('success');
+    visible.value = false;
+  } catch (error) {
+    ElNotification({ title: 'Error', type: 'error', message: 'Failed to save' });
+  } finally {
+    loading.value = false;
+  }
+}
+</script>
+
 <style scoped lang="scss">
 .glass-dialog {
   :deep(.el-dialog) {
-    background: rgba(30, 18, 48, 0.95) !important; 
+    background: rgba(30, 18, 48, 0.95) !important;
     backdrop-filter: blur(25px) !important;
     border: 1px solid rgba(168, 85, 247, 0.2) !important;
     box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5) !important;
   }
-  
+
   :deep(.el-dialog__header) {
     border-bottom: 1px solid rgba(168, 85, 247, 0.1);
     margin-right: 0;
     padding: 20px 25px;
     .el-dialog__title {
-        font-family: 'Space Grotesk', sans-serif;
-        font-weight: 700;
-        background: var(--gradient-primary);
-        -webkit-background-clip: text;
-        background-clip: text;
-        -webkit-text-fill-color: transparent;
+      font-family: 'Space Grotesk', sans-serif;
+      font-weight: 700;
+      background: var(--gradient-primary);
+      -webkit-background-clip: text;
+      background-clip: text;
+      -webkit-text-fill-color: transparent;
     }
   }
 }
@@ -198,153 +322,36 @@ el-dialog(
     box-shadow: none !important;
     height: 44px;
     transition: all 0.3s ease;
-    
+
     &.is-focus {
       border-color: var(--purple-500) !important;
       background: rgba(168, 85, 247, 0.05) !important;
       box-shadow: 0 0 15px rgba(168, 85, 247, 0.1) !important;
     }
   }
-  
+
   :deep(input) {
-     color: white;
-     &::placeholder {
-        color: rgba(255, 255, 255, 0.3);
-     }
+    color: white;
+    &::placeholder {
+      color: rgba(255, 255, 255, 0.3);
+    }
   }
 }
 
 .premium-select {
-    :deep(.el-input__wrapper) {
-        background: rgba(255, 255, 255, 0.03) !important;
-        border: 1px solid rgba(168, 85, 247, 0.1) !important;
-        border-radius: 12px !important;
-        height: 44px;
-        box-shadow: none !important;
-    }
-    :deep(.el-select__tags) {
-       max-width: 100% !important;
-    }
+  :deep(.el-input__wrapper) {
+    background: rgba(255, 255, 255, 0.03) !important;
+    border: 1px solid rgba(168, 85, 247, 0.1) !important;
+    border-radius: 12px !important;
+    height: 44px;
+    box-shadow: none !important;
+  }
+  :deep(.el-select__tags) {
+    max-width: 100% !important;
+  }
 }
 
 .shadow-glow {
-    box-shadow: 0 0 15px rgba(168, 85, 247, 0.3);
+  box-shadow: 0 0 15px rgba(168, 85, 247, 0.3);
 }
 </style>
-
-<script setup lang="ts">
-import { ElNotification } from "element-plus";
-
-const props = defineProps({
-  modelValue: Boolean,
-  vendor: Object,
-  type: String, 
-  title: String,
-});
-
-const emit = defineEmits(["update:modelValue", "success"]);
-
-const visible = computed({
-  get: () => props.modelValue,
-  set: (val) => emit("update:modelValue", val),
-});
-
-const formRef = ref();
-const loading = ref(false);
-
-const entityTypes = [
-  { label: 'Vendor', value: 'Vendor' },
-  { label: 'Distributor', value: 'Distributor' },
-  { label: 'Local Supplier', value: 'LocalSupplier' },
-  { label: 'Showroom', value: 'Showroom' },
-];
-
-const dialogTitle = computed(() => {
-    if (props.vendor) return "Edit Entity Details";
-    return "Create New Entity";
-});
-
-const form = reactive({
-  name: "",
-  type: "Vendor",
-  firstName: "",
-  lastName: "",
-  phone: "",
-  email: "",
-  taxId: "",
-  commercialRegistration: "",
-  serviceType: "",
-  brands: [] as string[],
-  address: {
-    street: "",
-    street2: "",
-    city: "",
-    state: "",
-    zip: ""
-  },
-  defaultPaymentMethod: "Cash",
-});
-
-watch(() => props.vendor, (val) => {
-  if (val) {
-    Object.assign(form, val);
-    if (!form.address) {
-        form.address = { street: "", street2: "", city: "", state: "", zip: "" };
-    }
-    // Handle specific fields if they come differently from backend
-    if (!form.brands) form.brands = [];
-  } else {
-    // Reset
-    form.name = "";
-    form.firstName = "";
-    form.lastName = "";
-    form.phone = "";
-    form.email = "";
-    form.taxId = "";
-    form.commercialRegistration = "";
-    form.serviceType = "";
-    form.brands = [];
-    form.address = { street: "", street2: "", city: "", state: "", zip: "" };
-    form.defaultPaymentMethod = "Cash";
-    
-    if (props.type) form.type = props.type;
-  }
-}, { immediate: true });
-
-watch(() => props.type, (newType) => {
-    if (!props.vendor && newType) {
-        form.type = newType;
-    }
-});
-
-async function submit() {
-  await formRef.value.validate();
-  loading.value = true;
-  try {
-    const url = props.vendor ? `vendor/${props.vendor.id}` : "vendor";
-    const method = props.vendor ? "PUT" : "POST";
-    
-    const res = await useApiFetch(url, method, form);
-    if (!res.success) throw new Error(res.message || "Failed to save");
-    
-    // Check if created type matches the current filter context
-    if (props.type && form.type && props.type !== form.type) {
-         ElNotification({ 
-             title: "Saved", 
-             type: "warning", 
-             message: `Entity saved as ${form.type}. Switch tab to view it.`,
-             duration: 5000
-         });
-    } else {
-         ElNotification({ title: "Success", type: "success", message: "Saved successfully" });
-    }
-    
-    emit("success");
-    visible.value = false;
-  } catch (error) {
-    ElNotification({ title: "Error", type: "error", message: "Failed to save" });
-  } finally {
-    loading.value = false;
-  }
-}
-</script>

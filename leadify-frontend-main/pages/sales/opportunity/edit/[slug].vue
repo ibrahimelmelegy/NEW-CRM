@@ -9,31 +9,31 @@ OpportunityForm( :loading="loading" @submit="submitForm" :data="opportunity" edi
 </template>
 
 <script lang="ts" setup>
-  import { useI18n } from 'vue-i18n';
-  const { t } = useI18n();
+import { useI18n } from 'vue-i18n';
+const { t } = useI18n();
 
-  useHead({
-    title: t('opportunities.editTitle'),
-  });
+useHead({
+  title: t('opportunities.editTitle')
+});
 
-  definePageMeta({
-    middleware: "permissions",
-    permission: "EDIT_OPPORTUNITIES",
-  });
+definePageMeta({
+  middleware: 'permissions',
+  permission: 'EDIT_OPPORTUNITIES'
+});
 
-  const router = useRouter();
-  const route = useRoute();
-  const loading = ref(false);
+const router = useRouter();
+const route = useRoute();
+const loading = ref(false);
 
-  // Call API to Get the opportunity
-  const opportunity = await getOpportunity(route.params.slug);
+// Call API to Get the opportunity
+const opportunity = await getOpportunity(route.params.slug);
 
-  // Call API to update the opportunity
-  async function submitForm(values: FormattedValues) {
-    loading.value = true;
-    await updateOpportunity(values.opportunity, route.params.slug);
-    loading.value = false;
-  }
+// Call API to update the opportunity
+async function submitForm(values: FormattedValues) {
+  loading.value = true;
+  await updateOpportunity(values.opportunity, route.params.slug);
+  loading.value = false;
+}
 </script>
 
 <style lang="scss"></style>

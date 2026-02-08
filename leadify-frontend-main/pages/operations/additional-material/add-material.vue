@@ -11,45 +11,45 @@
 </template>
 
 <script lang="ts" setup>
-  import { ref } from 'vue';
-  const loading = ref(false);
-  const categoryRef = ref();
-  const categoryItemRef = ref();
-  useHead({
-    title: "App HP Tech | Add Material",
-  });
-  definePageMeta({
-    middleware: "permissions",
-    permission: "CREATE_ADDITIONAL_MATERIAL",
-  });
+import { ref } from 'vue';
+const loading = ref(false);
+const categoryRef = ref();
+const categoryItemRef = ref();
+useHead({
+  title: 'App HP Tech | Add Material'
+});
+definePageMeta({
+  middleware: 'permissions',
+  permission: 'CREATE_ADDITIONAL_MATERIAL'
+});
 
-  const finalValues = ref<AdditionalMaterial>({
-    name: "",
-    items: [],
-  });
+const finalValues = ref<AdditionalMaterial>({
+  name: '',
+  items: []
+});
 
-  async function submitCategoryForm(values: any) {
-    finalValues.value = { ...finalValues.value, ...values };
-  }
+async function submitCategoryForm(values: any) {
+  finalValues.value = { ...finalValues.value, ...values };
+}
 
-  async function submitCategoryItemForm(values: any) {
-    finalValues.value["items"] = [...values];
+async function submitCategoryItemForm(values: any) {
+  finalValues.value.items = [...values];
+}
+async function onSubmitMaterials() {
+  //  reset values
+  finalValues.value = {} as AdditionalMaterial;
+  try {
+    loading.value = true;
+    await categoryRef.value.onSubmit();
+    await categoryItemRef.value.onSubmitCategoryItems();
+    if (!finalValues.value?.name || !finalValues.value?.items || !finalValues.value?.items?.length) return;
+    await createAdditionalMaterial(finalValues.value);
+    loading.value = false;
+  } catch (error) {
+    console.error("Error saving forms:", error);
+    loading.value = false;
+  } finally {
+    loading.value = false;
   }
-  async function onSubmitMaterials() {
-    //  reset values
-    finalValues.value = {} as AdditionalMaterial;
-    try {
-      loading.value = true;
-      await categoryRef.value.onSubmit();
-      await categoryItemRef.value.onSubmitCategoryItems();
-      if (!finalValues.value?.name || !finalValues.value?.items || !finalValues.value?.items?.length) return;
-      await createAdditionalMaterial(finalValues.value);
-      loading.value = false;
-    } catch (error) {
-      console.error("Error saving forms:", error);
-      loading.value = false;
-    } finally {
-      loading.value = false;
-    }
-  }
+}
 </script>

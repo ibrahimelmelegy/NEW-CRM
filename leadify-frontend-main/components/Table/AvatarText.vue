@@ -11,26 +11,26 @@ div.flex.items-center.gap-3(@click.stop)
 </template>
 
 <script setup>
-  const props = defineProps({
-    image: {
-      type: String,
-      required: true,
-    },
-    title: {
-      type: String,
-      required: true,
-    },
-    withImage: {
-      type: Boolean,
-    },
-    text: {
-      type: String,
-      required: false,
-    },
-  });
+const props = defineProps({
+  image: {
+    type: String,
+    required: true
+  },
+  title: {
+    type: String,
+    required: true
+  },
+  withImage: {
+    type: Boolean
+  },
+  text: {
+    type: String,
+    required: false
+  }
+});
 </script>
 <style lang="postcss">
-  .text {
-    @apply border border-neutral-100 p-2 flex items-center justify-center text-white rounded-full w-[3rem] h-[3rem] min-w-[3rem] min-h-[3rem];
-  }
+.text {
+  @apply border border-neutral-100 p-2 flex items-center justify-center text-white rounded-full w-[3rem] h-[3rem] min-w-[3rem] min-h-[3rem];
+}
 </style>

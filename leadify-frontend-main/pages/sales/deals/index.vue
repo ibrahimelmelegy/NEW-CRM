@@ -51,110 +51,110 @@ div
 </template>
 
 <script setup lang="ts">
-  const router = useRouter();
-  const { hasPermission } = await usePermissions();
-  const { $i18n } = useNuxtApp();
-  const t = $i18n.t;
-  import { Plus } from "@element-plus/icons-vue";
-  const loadingAction = ref(false);
-  const deleteLeadPopup = ref(false);
+import { Plus } from '@element-plus/icons-vue';
+const router = useRouter();
+const { hasPermission } = await usePermissions();
+const { $i18n } = useNuxtApp();
+const t = $i18n.t;
+const loadingAction = ref(false);
+const deleteLeadPopup = ref(false);
 
-  const table = reactive({
-    columns: [
-      {
-        prop: "dealDetails",
-        label: t('deals.table.name'),
-        component: "AvatarText",
-        sortable: true,
-        type: "font-bold",
-        width: 170,
-      },
-      {
-        prop: "stage",
-        label: t('deals.table.stage'),
-        component: "Label",
-        sortable: true,
-        type: "outline",
-        filters: dealStageOptions.map((stage) => ({ text: stage.label, value: stage.value })),
-        width: 150,
-      },
-      {
-        prop: "price",
-        label: t('deals.table.price'),
-        component: "Text",
-        sortable: true,
-        type: "font-default",
-        width: 150,
-      },
-      {
-        prop: "assign",
-        label: t('deals.table.assigned'),
-        component: "Text",
-        // sortable: true,
-        type: "font-default",
-        width: 200,
-      },
-      {
-        prop: "contractType",
-        label: t('deals.table.contractType'),
-        component: "Label",
-        sortable: true,
-        type: "solid",
-        width: 150,
-      },
-      {
-        prop: "signatureDate",
-        label: t('deals.table.signatureDate'),
-        component: "Text",
-        sortable: true,
-        type: "font-default",
-        width: 150,
-      },
-    ],
-    data: [] as Deal[],
-  });
+const table = reactive({
+  columns: [
+    {
+      prop: 'dealDetails',
+      label: t('deals.table.name'),
+      component: 'AvatarText',
+      sortable: true,
+      type: 'font-bold',
+      width: 170
+    },
+    {
+      prop: 'stage',
+      label: t('deals.table.stage'),
+      component: 'Label',
+      sortable: true,
+      type: 'outline',
+      filters: dealStageOptions.map(stage => ({ text: stage.label, value: stage.value })),
+      width: 150
+    },
+    {
+      prop: 'price',
+      label: t('deals.table.price'),
+      component: 'Text',
+      sortable: true,
+      type: 'font-default',
+      width: 150
+    },
+    {
+      prop: 'assign',
+      label: t('deals.table.assigned'),
+      component: 'Text',
+      // sortable: true,
+      type: 'font-default',
+      width: 200
+    },
+    {
+      prop: 'contractType',
+      label: t('deals.table.contractType'),
+      component: 'Label',
+      sortable: true,
+      type: 'solid',
+      width: 150
+    },
+    {
+      prop: 'signatureDate',
+      label: t('deals.table.signatureDate'),
+      component: 'Text',
+      sortable: true,
+      type: 'font-default',
+      width: 150
+    }
+  ],
+  data: [] as Deal[]
+});
 
-  // Call API to Get the deal
-  // const response = await getLeads();
+// Call API to Get the deal
+// const response = await getLeads();
 
-  const response = await useTableFilter("deal");
-  table.data = response.formattedData;
+const response = await useTableFilter('deal');
+table.data = response.formattedData;
 
-  function handleRowClick(val: any) {
-    router.push(`/sales/deals/${val.id}`);
+function handleRowClick(val: any) {
+  router.push(`/sales/deals/${val.id}`);
+}
+
+const users = await useApiFetch('users');
+const mappedUsers = users?.body?.docs?.map((e: any) => ({
+  label: e.name,
+  value: e.id
+}));
+
+const filterOptions = computed(() => [
+  {
+    title: t('deals.table.stage'),
+    value: 'stage',
+    options: [...dealStageOptions]
+  },
+  {
+    title: t('deals.table.assigned'),
+    value: 'userId',
+    options: [...mappedUsers]
+  },
+  {
+    title: t('deals.table.contractType'),
+    value: 'contractType',
+    options: [...contractTypeOptions]
+  },
+  {
+    title: t('deals.info.signatureDate'),
+    value: ['fromDate', 'toDate'],
+    type: 'date'
+  },
+  {
+    title: t('deals.table.price'),
+    value: ['fromPrice', 'toPrice'],
+    type: 'input'
   }
-
-  let users = await useApiFetch("users");
-  const mappedUsers = users?.body?.docs?.map((e: any) => ({
-    label: e.name,
-    value: e.id,
-  }));
-
-  const filterOptions = computed(() => [
-    {
-      title: t('deals.table.stage'),
-      value: "stage",
-      options: [...dealStageOptions],
-    },
-    {
-      title: t('deals.table.assigned'),
-      value: "userId",
-      options: [...mappedUsers],
-    },
-    {
-      title: t('deals.table.contractType'),
-      value: "contractType",
-      options: [...contractTypeOptions],
-    },
-    {
-      title: t('deals.info.signatureDate'),
-      value: ["fromDate", "toDate"],
-      type: "date",
-    },
-    {
-      title: t('deals.table.price'),
-      value: ["fromPrice", "toPrice"],
-      type: "input",
-    },
-  ]);
+]);
 </script>

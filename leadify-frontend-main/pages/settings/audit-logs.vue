@@ -38,46 +38,49 @@ const search = ref('');
 const filterType = ref('');
 
 const columns = [
-    { prop: 'createdAt', label: 'Timestamp', width: 180 },
-    { prop: 'user', label: 'Actor', width: 200, slot: 'user' },
-    { prop: 'status', label: 'Action', width: 120, slot: 'status' },
-    { prop: 'entityType', label: 'Module', width: 120 },
-    { prop: 'description', label: 'Description', minWidth: 250 },
+  { prop: 'createdAt', label: 'Timestamp', width: 180 },
+  { prop: 'user', label: 'Actor', width: 200, slot: 'user' },
+  { prop: 'status', label: 'Action', width: 120, slot: 'status' },
+  { prop: 'entityType', label: 'Module', width: 120 },
+  { prop: 'description', label: 'Description', minWidth: 250 }
 ];
 
 onMounted(async () => {
-    await fetchLogs();
+  await fetchLogs();
 });
 
 const fetchLogs = async () => {
-    loading.value = true;
-    try {
-        const response: any = await useApiFetch('activity?limit=100');
-        if (response.success && response.docs) {
-            logs.value = response.docs;
-        }
-    } finally {
-        loading.value = false;
+  loading.value = true;
+  try {
+    const response: any = await useApiFetch('activity?limit=100');
+    if (response.success && response.docs) {
+      logs.value = response.docs;
     }
+  } finally {
+    loading.value = false;
+  }
 };
 
 const filteredLogs = computed(() => {
-    return logs.value.filter(log => {
-        const matchesSearch = log.description?.toLowerCase().includes(search.value.toLowerCase());
-        const matchesType = !filterType.value || log.status === filterType.value;
-        return matchesSearch && matchesType;
-    });
+  return logs.value.filter(log => {
+    const matchesSearch = log.description?.toLowerCase().includes(search.value.toLowerCase());
+    const matchesType = !filterType.value || log.status === filterType.value;
+    return matchesSearch && matchesType;
+  });
 });
 
 const getTypeColor = (status: string) => {
-    switch(status) {
-        case 'create': return 'success';
-        case 'update': return 'warning';
-        case 'delete': return 'danger';
-        default: return 'info';
-    }
-}
+  switch (status) {
+    case 'create':
+      return 'success';
+    case 'update':
+      return 'warning';
+    case 'delete':
+      return 'danger';
+    default:
+      return 'info';
+  }
+};
 </script>
 
-<style lang="scss" scoped>
-</style>
+<style lang="scss" scoped></style>

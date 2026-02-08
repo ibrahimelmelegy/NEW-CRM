@@ -24,331 +24,322 @@ el-form(  autocomplete="off"   @submit.prevent='onSubmit'   ref="myForm" label-p
 </template>
 
 <script lang="ts" setup>
-  ;
-  import { useI18n } from "vue-i18n";
-  import { useForm } from "vee-validate";
-  import isEmailValidator from "validator/lib/isEmail";
-  import * as yup from "yup";
-  import { Plus } from "@element-plus/icons-vue";
+import { useI18n } from 'vue-i18n';
+import { useForm } from 'vee-validate';
+import isEmailValidator from 'validator/lib/isEmail';
+import * as yup from 'yup';
+import { Plus } from '@element-plus/icons-vue';
+const props = defineProps({
+  editMode: Boolean,
+  deal: Object
+});
 
-  const props = defineProps({
-    editMode: Boolean,
-    deal: Object,
-  });
+//  refs and composables
+const { t } = useI18n();
+const route = useRoute();
+const router = useRouter();
+const switchValue = ref(true);
+const switchType = ref(false);
+const isCancelled = ref(false);
+const validPhone = ref(true);
+const loading = ref(false);
+const emit = defineEmits(['onSubmit']);
+const myForm = ref();
+const isEmail = ref(false);
+const isPhone = ref(false);
 
-  //  refs and composables
-  const { t } = useI18n();
-  const route = useRoute();
-  const router = useRouter();
-  const switchValue = ref(true);
-  const switchType = ref(false);
-  const isCancelled = ref(false);
-  const validPhone = ref(true);
-  const loading = ref(false);
-  const emit = defineEmits(["onSubmit"]);
-  const myForm = ref();
-  const isEmail = ref(false);
-  const isPhone = ref(false);
+// form schema for validation
+const formSchema = yup.object({
+  leadName: yup.string().when([], {
+    is: () => switchType.value,
+    then: () => yup.string().trim().required().min(2).max(100).label(t('deals.info.client')),
 
-  // form schema for validation
-  const formSchema = yup.object({
-    leadName: yup.string().when([], {
-      is: () => switchType.value,
-      then: () => yup.string().trim().required().min(2).max(100).label(t('deals.info.client')),
+    otherwise: () => yup.string().nullable().trim().max(100).label(t('deals.info.client'))
+  }),
+  leadCompanyName: yup.string().nullable().trim().max(100).label(t('common.companyName')),
+  leadId: yup.string().when([], {
+    is: () => !switchType.value,
+    then: () => yup.string().required().label(t('deals.info.lead')),
 
-      otherwise: () => yup.string().nullable().trim().max(100).label(t('deals.info.client')),
-    }),
-    leadCompanyName: yup.string().nullable().trim().max(100).label(t('common.companyName')),
-    leadId: yup.string().when([], {
-      is: () => !switchType.value,
-      then: () => yup.string().required().label(t('deals.info.lead')),
+    otherwise: () => yup.string().nullable().label(t('deals.info.lead'))
+  }),
+  email: yup.string().when([], {
+    is: () => isPhone.value || !switchType.value,
+    then: () =>
+      yup
+        .string()
+        .email()
+        .max(100)
+        .nullable()
+        .test(
+          'is-valid',
+          (message: any) => 'Invalid email',
+          (value: any) => !value || isEmailValidator(value)
+        )
 
-      otherwise: () => yup.string().nullable().label(t('deals.info.lead')),
-    }),
-    email: yup.string().when([], {
-      is: () => isPhone.value || !switchType.value,
-      then: () =>
-        yup
-          .string()
-          .email()
-          .max(100)
-          .nullable()
-          .test(
-            "is-valid",
-            (message: any) => "Invalid email",
-            (value: any) => !value || isEmailValidator(value)
-          )
+        .label(t('leads.info.email')),
+    otherwise: () =>
+      yup
+        .string()
+        .email()
+        .max(100)
+        .nullable(t('errors.emailOrPhoneRequired'))
+        .test(
+          'is-valid',
+          (message: any) => 'Invalid email',
+          (value: any) => (value ? isEmailValidator(value) : new yup.ValidationError('Invalid value'))
+        )
+        .label(t('leads.info.email'))
+  }),
+  phone: yup.number().when([], {
+    is: () => isEmail.value || !switchType.value,
+    then: () =>
+      yup
+        .number()
+        .nullable() // Allows the value to be null
+        .transform((value: any, originalValue: any) => (originalValue === '' ? null : Number.isNaN(value) ? null : value))
+        .label(t('leads.info.phone'))
+        .test('Phone number', 'Invalid Phone', function (value: any) {
+          if (value === null || value === undefined) {
+            return true;
+          }
+          return !!validPhone.value;
+        }),
+    otherwise: () =>
+      yup
+        .number()
+        .transform((value: any) => (Number.isNaN(value) ? null : value))
+        .nullable()
+        .required(t('errors.emailOrPhoneRequired'))
+        .label(t('leads.info.phone'))
+        .test('Phone number', 'invalid Phone', function (value: any) {
+          return !!validPhone.value;
+        })
+  }),
+  dealName: yup.string().trim().required().min(2).max(100).label(t('deals.info.dealName')),
+  companyName: yup.string().trim().required().min(2).max(100).label(t('common.companyName')),
+  contractType: yup.string().trim().required().max(100).label(t('deals.info.contractType')),
+  dealStage: yup.string().trim().required().max(100).label(t('deals.info.dealStage')),
+  assignUser: yup.array().of(yup.number()).required().min(1).label(t('deals.table.assigned')),
+  dealPrice: yup
+    .number()
+    .nullable() // Allows null values
+    .transform((value: any, originalValue: any) => (String(originalValue).trim() === '' ? null : value))
+    .required(t('validation.required', { field: t('deals.info.price') }))
+    .max(100000000000)
+    .label(t('deals.info.price')),
+  signatureDate: yup
+    .mixed()
+    .test('is-valid-date', 'Signature Date must be a valid date', (value: any) => {
+      // Check if the value is valid
+      return value && !isNaN(new Date(value).getTime());
+    })
+    .required(t('validation.required', { field: t('deals.info.signatureDate') }))
+    .label(t('deals.info.signatureDate')),
+  cancellationReason: yup.string().when([], {
+    is: () => isCancelled.value,
+    then: () => yup.string().required().trim().min(2).max(250).label(t('deals.form.cancellationReason')),
+    otherwise: () =>
+      yup
+        .string()
+        .trim()
+        .nullable()
+        .test('min-length-if-entered', 'Cancellation Reason must be at least 2 characters', (value: any) => !value || value.length >= 2)
+        .trim()
+        .max(250)
+        .label(t('deals.form.cancellationReason'))
+  })
+});
 
-          .label(t('leads.info.email')),
-      otherwise: () =>
-        yup
-          .string()
-          .email()
-          .max(100)
-          .nullable(t('errors.emailOrPhoneRequired'))
-          .test(
-            "is-valid",
-            (message: any) => "Invalid email",
-            (value: any) => (value ? isEmailValidator(value) : new yup.ValidationError("Invalid value"))
-          )
-          .label(t('leads.info.email')),
-    }),
-    phone: yup.number().when([], {
-      is: () => isEmail.value || !switchType.value,
-      then: () =>
-        yup
-          .number()
-          .nullable() // Allows the value to be null
-          .transform((value: any, originalValue: any) => (originalValue === "" ? null : Number.isNaN(value) ? null : value))
-          .label(t('leads.info.phone'))
-          .test("Phone number", "Invalid Phone", function (value: any) {
-            if (value === null || value === undefined) {
-              return true;
-            }
-            return validPhone.value ? true : false;
-          }),
-      otherwise: () =>
-        yup
-          .number()
-          .transform((value: any) => (Number.isNaN(value) ? null : value))
-          .nullable()
-          .required(t('errors.emailOrPhoneRequired'))
-          .label(t('leads.info.phone'))
-          .test("Phone number", "invalid Phone", function (value: any) {
-            return validPhone.value ? true : false;
-          }),
-    }),
-    dealName: yup.string().trim().required().min(2).max(100).label(t('deals.info.dealName')),
-    companyName: yup.string().trim().required().min(2).max(100).label(t('common.companyName')),
-    contractType: yup.string().trim().required().max(100).label(t('deals.info.contractType')),
-    dealStage: yup.string().trim().required().max(100).label(t('deals.info.dealStage')),
-    assignUser: yup.array().of(yup.number()).required().min(1).label(t('deals.table.assigned')),
-    dealPrice: yup
-      .number()
-      .nullable() // Allows null values
-      .transform((value: any, originalValue: any) => (String(originalValue).trim() === "" ? null : value))
-      .required(t('validation.required', {field: t('deals.info.price')}))
-      .max(100000000000)
-      .label(t('deals.info.price')),
-    signatureDate: yup
-      .mixed()
-      .test("is-valid-date", "Signature Date must be a valid date", (value: any) => {
-        // Check if the value is valid
-        return value && !isNaN(new Date(value).getTime());
-      })
-      .required(t('validation.required', {field: t('deals.info.signatureDate')}))
-      .label(t('deals.info.signatureDate')),
-    cancellationReason: yup.string().when([], {
-      is: () => isCancelled.value,
-      then: () => yup.string().required().trim().min(2).max(250).label(t('deals.form.cancellationReason')),
-      otherwise: () =>
-        yup
-          .string()
-          .trim()
-          .nullable()
-          .test(
-            "min-length-if-entered",
-            "Cancellation Reason must be at least 2 characters",
-            (value: any) => !value || value.length >= 2
-          )
-          .trim()
-          .max(250)
-          .label(t('deals.form.cancellationReason')),
-    }),
-  });
-
-  /**
-   * Checks if the deal stage has been set to 'Cancelled'.
-   */
-  function checkIfCancelled(value: any) {
-    if (value.label === "Cancelled") {
-      isCancelled.value = true;
-    } else {
-      isCancelled.value = false;
-    }
-  }
-
-  if (props.deal?.cancelledReason) {
+/**
+ * Checks if the deal stage has been set to 'Cancelled'.
+ */
+function checkIfCancelled(value: any) {
+  if (value.label === 'Cancelled') {
     isCancelled.value = true;
+  } else {
+    isCancelled.value = false;
+  }
+}
+
+if (props.deal?.cancelledReason) {
+  isCancelled.value = true;
+}
+
+//  Get Users
+let users = await useApiFetch('users');
+// Map Users to Select Options
+users = users?.body?.docs?.map((e: any) => ({
+  label: e.name,
+  value: e.id
+}));
+
+//  Get leads
+const response = await getLeads();
+const leads = response.leads;
+//  Map leads to Select Options
+let mappedLeads = leads?.map((e: any) => ({
+  label: e.name,
+  value: e.id
+}));
+
+const selectedClient = ref<any>([]);
+const mappedClients = ref<{ label: string; value: any }[]>();
+//  Get clients
+const { clients } = await getClients();
+// Map clients to Select Options
+mappedClients.value = clients?.map((e: any) => ({
+  label: e.clientName,
+  value: e.clientName,
+  id: e.id
+}));
+
+if (props.deal?.clientId) {
+  selectedClient.value = clients?.find((client: any) => client.id === props.deal?.clientId);
+  switchType.value = true;
+}
+const selectedLead = ref<string | null>();
+const leadId = route.query?.leadId || props?.deal?.leadId;
+const opportunityId = route.query?.opportunityId;
+
+if (leadId) {
+  let lead: any = leads?.find((l: any) => l.id === leadId);
+
+  if (!lead || opportunityId) {
+    // Always fetch from API if opportunityId exists or local lead was not found
+    lead = await getLead(leadId as string);
   }
 
-  //  Get Users
-  let users = await useApiFetch("users");
-  // Map Users to Select Options
-  users = users?.body?.docs?.map((e: any) => ({
-    label: e.name,
-    value: e.id,
-  }));
-
-  //  Get leads
-  const response = await getLeads();
-  const leads = response.leads;
-  //  Map leads to Select Options
-  let mappedLeads = leads?.map((e: any) => ({
-    label: e.name,
-    value: e.id,
-  }));
-
-  const selectedClient = ref<any>([]);
-  const mappedClients = ref<{ label: string; value: any }[]>();
-  //  Get clients
-  let { clients } = await getClients();
-  // Map clients to Select Options
-  mappedClients.value = clients?.map((e: any) => ({
-    label: e.clientName,
-    value: e.clientName,
-    id: e.id,
-  }));
-
-  if (props.deal?.clientId) {
-    selectedClient.value = clients?.find((client: any) => client.id === props.deal?.clientId);
-    switchType.value = true;
+  if (lead) {
+    mappedLeads = [...mappedLeads, { label: lead.name, value: lead.id }];
+    selectedLead.value = lead;
   }
-  const selectedLead = ref<string | null>();
-  const leadId = route.query?.leadId || props?.deal?.leadId;
-  const opportunityId = route.query?.opportunityId;
+}
 
-  if (leadId) {
-    let lead: any = leads?.find((l: any) => l.id === leadId);
-
-    if (!lead || opportunityId) {
-      // Always fetch from API if opportunityId exists or local lead was not found
-      lead = await getLead(leadId as string);
-    }
-
-    if (lead) {
-      mappedLeads = [...mappedLeads, { label: lead.name, value: lead.id }];
-      selectedLead.value = lead;
-    }
-  }
-
-  /**
-   * Updates the selectedClient variable when a new lead is selected.
-   * @param {Object} e - The selected lead object
-   */
-  function getSelectedClient(e: any) {
-    // Find the selected lead in the clients array and update the selectedClient variable
-    selectedClient.value = clients?.find((lead: any) => lead.id === e.id);
-
-    if (selectedClient.value?.email) {
-      isEmail.value = true;
-    } else if (selectedClient.value?.phone) {
-      isPhone.value = true;
-    }
-  }
-  // computed property to determine which component to render
-  const isClients = computed(() => {
-    return mappedClients.value?.length && switchValue.value
-      ? resolveComponent("InputSelect")
-      : resolveComponent("InputText");
-  });
+/**
+ * Updates the selectedClient variable when a new lead is selected.
+ * @param {Object} e - The selected lead object
+ */
+function getSelectedClient(e: any) {
+  // Find the selected lead in the clients array and update the selectedClient variable
+  selectedClient.value = clients?.find((lead: any) => lead.id === e.id);
 
   if (selectedClient.value?.email) {
     isEmail.value = true;
   } else if (selectedClient.value?.phone) {
     isPhone.value = true;
   }
+}
+// computed property to determine which component to render
+const isClients = computed(() => {
+  return mappedClients.value?.length && switchValue.value ? resolveComponent('InputSelect') : resolveComponent('InputText');
+});
 
-  // Form Validation
-  const { handleSubmit, errors, validate, resetForm, values } = useForm({
-    validationSchema: formSchema,
+if (selectedClient.value?.email) {
+  isEmail.value = true;
+} else if (selectedClient.value?.phone) {
+  isPhone.value = true;
+}
+
+// Form Validation
+const { handleSubmit, errors, validate, resetForm, values } = useForm({
+  validationSchema: formSchema
+});
+
+watch(
+  () => switchValue.value,
+  () => {
+    // if (!switchValue.value) {
+    selectedClient.value = null;
+    // }
+  }
+);
+
+// submit deal form
+const onSubmit = handleSubmit((values: any) => {
+  try {
+    // Prepare formatted values
+    const formattedValues = {
+      lead: formatLeadData(values),
+      deal: formatDealData(values)
+    };
+
+    // Set loading state to true
+    loading.value = true;
+
+    // Prepare submission payload
+    const leadId = route.query?.leadId;
+    const opportunityId = route.query?.opportunityId;
+    const shouldSubmitWithLead = leadId || (mappedLeads?.length && !switchType.value && values.leadId);
+
+    const payload =
+      shouldSubmitWithLead || selectedClient.value
+        ? {
+            ...(switchType.value ? { deal: formattedValues.deal } : formattedValues.deal),
+            ...(!route.path.includes('edit') && !switchType.value && { leadId: leadId || values.leadId }),
+            ...(switchType.value && { clientId: selectedClient.value?.id }),
+            ...(opportunityId && { opportunityId })
+          }
+        : formattedValues;
+
+    // Emit the submission event
+    emit('onSubmit', payload);
+  } catch (error) {
+    console.error('Error while submitting the form:', error);
+  } finally {
+    // Reset loading state
+    loading.value = false;
+  }
+});
+
+// Utility functions for formatting data
+function formatLeadData(values: any) {
+  return cleanObject({
+    name: values.leadName,
+    companyName: values.leadCompanyName,
+    email: values.email,
+    phone: normalizePhoneNumber(values.phone),
+    users: values.assignUser
   });
+}
 
-  watch(
-    () => switchValue.value,
-    () => {
-      // if (!switchValue.value) {
-      selectedClient.value = null;
-      // }
-    }
-  );
-
-  // submit deal form
-  const onSubmit = handleSubmit((values: any) => {
-    try {
-      // Prepare formatted values
-      const formattedValues = {
-        lead: formatLeadData(values),
-        deal: formatDealData(values),
-      };
-
-      // Set loading state to true
-      loading.value = true;
-
-      // Prepare submission payload
-      const leadId = route.query?.leadId;
-      const opportunityId = route.query?.opportunityId;
-      const shouldSubmitWithLead = leadId || (mappedLeads?.length && !switchType.value && values.leadId);
-
-      const payload =
-        shouldSubmitWithLead || selectedClient.value
-          ? {
-              ...(switchType.value ? { deal: formattedValues.deal } : formattedValues.deal),
-              ...(!route.path.includes("edit") && !switchType.value && { leadId: leadId || values.leadId }),
-              ...(switchType.value && { clientId: selectedClient.value?.id }),
-              ...(opportunityId && { opportunityId }),
-            }
-          : formattedValues;
-
-      // Emit the submission event
-      emit("onSubmit", payload);
-    } catch (error) {
-      console.error("Error while submitting the form:", error);
-    } finally {
-      // Reset loading state
-      loading.value = false;
-    }
+function formatDealData(values: any) {
+  return cleanObject({
+    name: values.dealName,
+    price: Number(values.dealPrice),
+    contractType: values.contractType,
+    stage: values.dealStage,
+    signatureDate: getYear(values.signatureDate),
+    cancelledReason: values.cancellationReason,
+    companyName: values.companyName,
+    users: values.assignUser
   });
+}
 
-  // Utility functions for formatting data
-  function formatLeadData(values: any) {
-    return cleanObject({
-      name: values.leadName,
-      companyName: values.leadCompanyName,
-      email: values.email,
-      phone: normalizePhoneNumber(values.phone),
-      users: values.assignUser,
-    });
+async function onSubmitForm(): Promise<boolean> {
+  // Validate the form, and exit early if validation fails
+  await validate();
+  if (Object.keys(errors.value).length) return false;
+  try {
+    await onSubmit();
+    return true; // form submitted successfully
+  } catch (error) {
+    ElMessage.error('Submission failed');
+    return false; // Submission failed
   }
+}
 
-  function formatDealData(values: any) {
-    return cleanObject({
-      name: values.dealName,
-      price: Number(values.dealPrice),
-      contractType: values.contractType,
-      stage: values.dealStage,
-      signatureDate: getYear(values.signatureDate),
-      cancelledReason: values.cancellationReason,
-      companyName: values.companyName,
-      users: values.assignUser,
-    });
+async function onSubmitInformation() {
+  const isSubmitted = await onSubmitForm();
+
+  // Only proceed if all forms are submitted successfully
+  if (!isSubmitted) {
+    ElMessage.error('Please fill in all the required in Deal information fields.');
   }
+}
 
-  async function onSubmitForm(): Promise<boolean> {
-    // Validate the form, and exit early if validation fails
-    await validate();
-    if (Object.keys(errors.value).length) return false;
-    try {
-      await onSubmit();
-      return true; // form submitted successfully
-    } catch (error) {
-      ElMessage.error("Submission failed");
-      return false; // Submission failed
-    }
-  }
-
-  async function onSubmitInformation() {
-    const isSubmitted = await onSubmitForm();
-
-    // Only proceed if all forms are submitted successfully
-    if (!isSubmitted) {
-      ElMessage.error("Please fill in all the required in Deal information fields.");
-      return;
-    }
-  }
-
-  // Expose methods to the parent component
-  defineExpose({
-    onSubmitInformation,
-  });
+// Expose methods to the parent component
+defineExpose({
+  onSubmitInformation
+});
 </script>

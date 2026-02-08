@@ -20,184 +20,180 @@ OperationsProjectsModalVehicle(v-model="addVehicle"  @confirm="fetchVehicles" :v
 </template>
 
 <script lang="ts" setup>
-  import { useForm } from "vee-validate";
-  import * as yup from "yup";
-  ;
-  import { Plus } from "@element-plus/icons-vue";
-  const route = useRoute();
-  const props = defineProps({
-    loading: Boolean,
-    label: String,
-    data: {
-      type: Object,
-      required: false,
+import { useForm } from 'vee-validate';
+import * as yup from 'yup';
+import { Plus } from '@element-plus/icons-vue';
+const route = useRoute();
+const props = defineProps({
+  loading: Boolean,
+  label: String,
+  data: {
+    type: Object,
+    required: false
+  },
+  editMode: {
+    type: Boolean,
+    required: false
+  }
+});
+const activeStep = defineModel<number>({ required: true });
+const addVehicle = ref(false);
+const emit = defineEmits(['submit', 'cancel']);
+const vehiclesOptions = ref<{ label: string; value: string }[]>([]);
+const filteredVehicles = ref<{ label: string; value: string }[]>([]);
+const vehicles = ref<Vehicle[]>([]);
+const vehicle = ref<Vehicle>();
+const vehiclesId = ref<string[]>([]);
+const { t } = useI18n();
+const formSchema = yup.object({
+  vehicles: yup.array().of(yup.string()).nullable().label(t('operations.projects.vehicles.label'))
+});
+
+const { handleSubmit } = useForm({
+  validationSchema: formSchema
+});
+
+const onSubmit = handleSubmit(async (values: any) => {
+  try {
+    // Attempt to create the project
+    if (values.vehicles.length) {
+      await createtAssociatedVehicles({
+        vehiclesIds: values.vehicles
+      });
+    }
+    activeStep.value++;
+  } catch (error) {
+    // Handle the error and prevent the step from being incremented
+    console.error('Project creation failed', error);
+  }
+  // emit('submit')
+});
+
+const table = reactive({
+  columns: [
+    {
+      prop: 'plate',
+      label: t('operations.projects.vehicles.table.plateNumber'),
+      component: 'Text',
+      // sortable: true,
+      type: 'font-bold',
+      width: 130
     },
-    editMode: {
-      type: Boolean,
-      required: false,
+    {
+      prop: 'manufacturer',
+      label: t('operations.projects.vehicles.table.manufacturer'),
+      component: 'Text',
+      // sortable: true,
+      type: 'font-bold',
+      width: 150
     },
-  });
-  const activeStep = defineModel<number>({ required: true });
-  const addVehicle = ref(false);
-  const emit = defineEmits(["submit", "cancel"]);
-  const vehiclesOptions = ref<{ label: string; value: string }[]>([]);
-  const filteredVehicles = ref<{ label: string; value: string }[]>([]);
-  const vehicles = ref<Vehicle[]>([]);
-  const vehicle = ref<Vehicle>();
-  const vehiclesId = ref<string[]>([]);
-  const { t } = useI18n();
-  const formSchema = yup.object({
-    vehicles: yup.array().of(yup.string()).nullable().label(t("operations.projects.vehicles.label")),
-  });
-
-  const { handleSubmit } = useForm({
-    validationSchema: formSchema,
-  });
-
-  const onSubmit = handleSubmit(async (values: any) => {
-    try {
-      // Attempt to create the project
-      if (values.vehicles.length) {
-        await createtAssociatedVehicles({
-          vehiclesIds: values.vehicles,
-        });
-      }
-      activeStep.value++;
-    } catch (error) {
-      // Handle the error and prevent the step from being incremented
-      console.error("Project creation failed", error);
+    {
+      prop: 'rentCost',
+      label: t('operations.projects.vehicles.table.rentCost'),
+      component: 'Text',
+      // sortable: true,
+      type: 'font-default',
+      width: 120
+    },
+    {
+      prop: 'gasCost',
+      label: t('operations.projects.vehicles.table.gasCost'),
+      component: 'Text',
+      // sortable: true,
+      type: 'font-default',
+      width: 120
+    },
+    {
+      prop: 'oilCost',
+      label: t('operations.projects.vehicles.table.oilCost'),
+      component: 'Text',
+      // sortable: true,
+      type: 'font-default',
+      width: 150
+    },
+    {
+      prop: 'regularMaintenanceCost',
+      label: t('operations.projects.vehicles.table.maintenanceCost'),
+      component: 'Text',
+      // sortable: true,
+      type: 'font-default',
+      width: 250
+    },
+    {
+      prop: 'totalCost',
+      label: t('operations.projects.vehicles.table.totalCost'),
+      component: 'Text',
+      // sortable: true,
+      type: 'font-default',
+      width: 250
     }
-    // emit('submit')
-  });
+  ],
+  data: [] as Vehicle[]
+});
 
-  const table = reactive({
-    columns: [
-      {
-        prop: "plate",
-        label: t("operations.projects.vehicles.table.plateNumber"),
-        component: "Text",
-        // sortable: true,
-        type: "font-bold",
-        width: 130,
-      },
-      {
-        prop: "manufacturer",
-        label: t("operations.projects.vehicles.table.manufacturer"),
-        component: "Text",
-        // sortable: true,
-        type: "font-bold",
-        width: 150,
-      },
-      {
-        prop: "rentCost",
-        label: t("operations.projects.vehicles.table.rentCost"),
-        component: "Text",
-        // sortable: true,
-        type: "font-default",
-        width: 120,
-      },
-      {
-        prop: "gasCost",
-        label: t("operations.projects.vehicles.table.gasCost"),
-        component: "Text",
-        // sortable: true,
-        type: "font-default",
-        width: 120,
-      },
-      {
-        prop: "oilCost",
-        label: t("operations.projects.vehicles.table.oilCost"),
-        component: "Text",
-        // sortable: true,
-        type: "font-default",
-        width: 150,
-      },
-      {
-        prop: "regularMaintenanceCost",
-        label: t("operations.projects.vehicles.table.maintenanceCost"),
-        component: "Text",
-        // sortable: true,
-        type: "font-default",
-        width: 250,
-      },
-      {
-        prop: "totalCost",
-        label: t("operations.projects.vehicles.table.totalCost"),
-        component: "Text",
-        // sortable: true,
-        type: "font-default",
-        width: 250,
-      },
-    ],
-    data: [] as Vehicle[],
-  });
+if (project.value?.vehicles?.length) {
+  vehiclesId.value = project.value?.vehicles.map(({ id }: Vehicle) => id);
+  updateTableData();
+}
 
-  if (project.value?.vehicles?.length) {
-    vehiclesId.value = project.value?.vehicles.map(({ id }: Vehicle) => id);
+/**
+ * Maps an array of vehicles into a format suitable for a select input.
+ */
+function mapVehicles(data: Vehicle[] = []): { label: string; value: string }[] {
+  return data.map(({ plate, id }) => ({ label: plate, value: id }));
+}
+
+/**
+ * Fetches the list of vehicles from the API and updates the select input with the results.
+ */
+async function fetchVehicles(id: string = '', isUpdate?: boolean) {
+  const response = await useTableFilter('vehicle');
+  vehicles.value = response?.formattedData || [];
+  vehiclesOptions.value = mapVehicles(vehicles.value);
+  if (isUpdate) {
     updateTableData();
+    return;
   }
+  toggleVehicleSelection(id);
+}
 
-  /**
-   * Maps an array of vehicles into a format suitable for a select input.
-   */
-  function mapVehicles(data: Vehicle[] = []): { label: string; value: string }[] {
-    return data.map(({ plate, id }) => ({ label: plate, value: id }));
+/**
+ * Updates the table data and filtered vehicles list based on the selected vehicle IDs.
+ */
+function updateTableData() {
+  table.data =
+    vehicles.value
+      ?.filter(({ id }: Vehicle) => vehiclesId.value?.includes(id))
+      ?.map((vehicle: Vehicle) => ({
+        ...vehicle,
+        totalCost:
+          Number(vehicle.rentCost || 0) + Number(vehicle.gasCost || 0) + Number(vehicle.oilCost || 0) + Number(vehicle.regularMaintenanceCost || 0)
+      })) || [];
+  filteredVehicles.value = mapVehicles([...table.data]);
+}
+
+/**
+ * Toggles the selection of a vehicle by its ID.
+ */
+function toggleVehicleSelection(val: any) {
+  const vehicleId = val.value || val;
+  const index = vehiclesId.value?.indexOf(vehicleId);
+
+  if (index !== -1) {
+    vehiclesId.value.splice(index, 1);
+  } else {
+    vehiclesId.value.push(vehicleId);
   }
+  updateTableData();
+}
 
-  /**
-   * Fetches the list of vehicles from the API and updates the select input with the results.
-   */
-  async function fetchVehicles(id: string = "", isUpdate?: boolean) {
-    const response = await useTableFilter("vehicle");
-    vehicles.value = response?.formattedData || [];
-    vehiclesOptions.value = mapVehicles(vehicles.value);
-    if (isUpdate) {
-      updateTableData();
-      return;
-    }
-    toggleVehicleSelection(id);
-  }
+/**
+ * Selects a vehicle for editing based on its ID and opens the vehicle form.
+ */
+function selectVehicleForEdit(id: string) {
+  vehicle.value = vehicles.value?.find(({ id: vehicleId }: Vehicle) => vehicleId === id);
+  addVehicle.value = !!vehicle.value?.id;
+}
 
-  /**
-   * Updates the table data and filtered vehicles list based on the selected vehicle IDs.
-   */
-  function updateTableData() {
-    table.data =
-      vehicles.value
-        ?.filter(({ id }: Vehicle) => vehiclesId.value?.includes(id))
-        ?.map((vehicle: Vehicle) => ({
-          ...vehicle,
-          totalCost:
-            Number(vehicle.rentCost || 0) +
-            Number(vehicle.gasCost || 0) +
-            Number(vehicle.oilCost || 0) +
-            Number(vehicle.regularMaintenanceCost || 0),
-        })) || [];
-    filteredVehicles.value = mapVehicles([...table.data]);
-  }
-
-  /**
-   * Toggles the selection of a vehicle by its ID.
-   */
-  function toggleVehicleSelection(val: any) {
-    const vehicleId = val.value || val;
-    const index = vehiclesId.value?.indexOf(vehicleId);
-
-    if (index !== -1) {
-      vehiclesId.value.splice(index, 1);
-    } else {
-      vehiclesId.value.push(vehicleId);
-    }
-    updateTableData();
-  }
-
-  /**
-   * Selects a vehicle for editing based on its ID and opens the vehicle form.
-   */
-  function selectVehicleForEdit(id: string) {
-    vehicle.value = vehicles.value?.find(({ id: vehicleId }: Vehicle) => vehicleId === id);
-    addVehicle.value = !!vehicle.value?.id;
-  }
-
-  await fetchVehicles();
+await fetchVehicles();
 </script>

@@ -8,7 +8,7 @@ button.AppButton(    type="button" @click.stop="copyText(title)" :class="{'text-
 const props = defineProps({
   title: String,
   background: Boolean,
-  small: Boolean,
+  small: Boolean
 });
 </script>
 

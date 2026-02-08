@@ -51,168 +51,168 @@ div
 </template>
 
 <script setup lang="ts">
-  const router = useRouter();
-  const { hasPermission } = await usePermissions();
-  import { Plus } from "@element-plus/icons-vue";
-  const loadingAction = ref(false);
-  const deleteLeadPopup = ref(false);
+import { Plus } from '@element-plus/icons-vue';
+const router = useRouter();
+const { hasPermission } = await usePermissions();
+const loadingAction = ref(false);
+const deleteLeadPopup = ref(false);
 
-  const table = reactive({
-    columns: [
-      {
-        prop: "name",
-        label: useI18n().t('operations.manpower.table.fullName'),
-        component: "Text",
-        sortable: true,
-        type: "font-bold",
-        width: 150,
-      },
-      {
-        prop: "manpowerContacts",
-        label: useI18n().t('operations.manpower.table.contacts'),
-        component: "AvatarText",
-        // sortable: true,
-        type: "font-bold",
-        width: 200,
-      },
-      {
-        prop: "role",
-        label: useI18n().t('operations.manpower.table.role'),
-        component: "Text",
-        sortable: true,
-        type: "font-default",
-        width: 150,
-      },
-      {
-        prop: "availabilityStatus",
-        label: useI18n().t('operations.manpower.table.availability'),
-        component: "Label",
-        sortable: true,
-        type: "outline",
-        filters: [
-          { text: useI18n().t('operations.manpower.status.available'), value: "AVAILABLE" },
-          { text: useI18n().t('operations.manpower.status.notAvailable'), value: "NOT_AVAILABLE" },
-        ],
-        width: 200,
-      },
-      {
-        prop: "salary",
-        label: useI18n().t('operations.manpower.table.salary'),
-        component: "Text",
-        sortable: true,
-        type: "font-default",
-        width: 150,
-      },
+const table = reactive({
+  columns: [
+    {
+      prop: 'name',
+      label: useI18n().t('operations.manpower.table.fullName'),
+      component: 'Text',
+      sortable: true,
+      type: 'font-bold',
+      width: 150
+    },
+    {
+      prop: 'manpowerContacts',
+      label: useI18n().t('operations.manpower.table.contacts'),
+      component: 'AvatarText',
+      // sortable: true,
+      type: 'font-bold',
+      width: 200
+    },
+    {
+      prop: 'role',
+      label: useI18n().t('operations.manpower.table.role'),
+      component: 'Text',
+      sortable: true,
+      type: 'font-default',
+      width: 150
+    },
+    {
+      prop: 'availabilityStatus',
+      label: useI18n().t('operations.manpower.table.availability'),
+      component: 'Label',
+      sortable: true,
+      type: 'outline',
+      filters: [
+        { text: useI18n().t('operations.manpower.status.available'), value: 'AVAILABLE' },
+        { text: useI18n().t('operations.manpower.status.notAvailable'), value: 'NOT_AVAILABLE' }
+      ],
+      width: 200
+    },
+    {
+      prop: 'salary',
+      label: useI18n().t('operations.manpower.table.salary'),
+      component: 'Text',
+      sortable: true,
+      type: 'font-default',
+      width: 150
+    },
 
-      // {
-      //   prop: 'variableAllowance',
-      //   label: 'V. Allowance',
-      //   component: 'Text',
-      //   // sortable: true,
-      //   type: 'font-default',
-      //   width: 150,
-      // },
-      // {
-      //   prop: 'transportationAllowance',
-      //   label: 'T. Allowance',
-      //   component: 'Text',
-      //   // sortable: true,
-      //   type: 'font-default',
-      //   width: 150,
-      // },
-      // {
-      //   prop: 'iqamaCost',
-      //   label: 'Iqama Cost',
-      //   component: 'Text',
-      //   // sortable: true,
-      //   type: 'font-default',
-      //   width: 150,
-      // },
-      // {
-      //   prop: 'endOfServiceBenefit',
-      //   label: 'EOF',
-      //   component: 'Text',
-      //   // sortable: true,
-      //   type: 'font-default',
-      //   width: 150,
-      // },
-      {
-        prop: "totalCost",
-        label: useI18n().t('operations.manpower.table.totalCost'),
-        component: "Text",
-        sortable: true,
-        type: "font-default",
-        width: 150,
-      },
-      {
-        prop: "dailyCost",
-        label: useI18n().t('operations.manpower.table.dailyCost'),
-        component: "Text",
-        sortable: true,
-        type: "font-default",
-        width: 150,
-      },
-      {
-        prop: "action",
-        label: useI18n().t('common.action'),
-        component: "Action",
-      },
-    ],
-    data: [] as ManpowerValues[],
-  });
+    // {
+    //   prop: 'variableAllowance',
+    //   label: 'V. Allowance',
+    //   component: 'Text',
+    //   // sortable: true,
+    //   type: 'font-default',
+    //   width: 150,
+    // },
+    // {
+    //   prop: 'transportationAllowance',
+    //   label: 'T. Allowance',
+    //   component: 'Text',
+    //   // sortable: true,
+    //   type: 'font-default',
+    //   width: 150,
+    // },
+    // {
+    //   prop: 'iqamaCost',
+    //   label: 'Iqama Cost',
+    //   component: 'Text',
+    //   // sortable: true,
+    //   type: 'font-default',
+    //   width: 150,
+    // },
+    // {
+    //   prop: 'endOfServiceBenefit',
+    //   label: 'EOF',
+    //   component: 'Text',
+    //   // sortable: true,
+    //   type: 'font-default',
+    //   width: 150,
+    // },
+    {
+      prop: 'totalCost',
+      label: useI18n().t('operations.manpower.table.totalCost'),
+      component: 'Text',
+      sortable: true,
+      type: 'font-default',
+      width: 150
+    },
+    {
+      prop: 'dailyCost',
+      label: useI18n().t('operations.manpower.table.dailyCost'),
+      component: 'Text',
+      sortable: true,
+      type: 'font-default',
+      width: 150
+    },
+    {
+      prop: 'action',
+      label: useI18n().t('common.action'),
+      component: 'Action'
+    }
+  ],
+  data: [] as ManpowerValues[]
+});
 
-  const response = await useTableFilter("manpower");
-  table.data = response.formattedData;
+const response = await useTableFilter('manpower');
+table.data = response.formattedData;
 
-  function handleRowClick(val: any) {
-    router.push(`/operations/manpower/${val?.id}`);
+function handleRowClick(val: any) {
+  router.push(`/operations/manpower/${val?.id}`);
+}
+
+const filterOptions = [
+  {
+    title: useI18n().t('operations.manpower.filter.availability'),
+    value: 'availabilityStatus',
+    options: [...manpowerAvailabilityStatus]
+  },
+  {
+    title: useI18n().t('operations.manpower.filter.role'),
+    value: 'role',
+    options: [...manpowerRoles]
+  },
+  {
+    title: useI18n().t('operations.manpower.filter.salary'),
+    value: ['fromSalary', 'toSalary'],
+    type: 'input'
+  },
+  {
+    title: useI18n().t('operations.manpower.filter.variableAllowance'),
+    value: ['fromVariableAllowance', 'toVariableAllowance'],
+    type: 'input'
+  },
+  {
+    title: useI18n().t('operations.manpower.filter.transportationAllowance'),
+    value: ['fromTransportationAllowance', 'toTransportationAllowance'],
+    type: 'input'
+  },
+  {
+    title: useI18n().t('operations.manpower.filter.iqamaCost'),
+    value: ['fromIqamaCost', 'toIqamaCost'],
+    type: 'input'
+  },
+  {
+    title: useI18n().t('operations.manpower.filter.totalCost'),
+    value: ['fromTotalCost', 'toTotalCost'],
+    type: 'input'
+  },
+  {
+    title: useI18n().t('operations.manpower.filter.dailyCost'),
+    value: ['fromDailyCost', 'toDailyCost'],
+    type: 'input'
+  },
+  {
+    title: useI18n().t('common.created'),
+    value: ['fromDate', 'toDate'],
+    type: 'date'
   }
-
-  const filterOptions = [
-    {
-      title: useI18n().t('operations.manpower.filter.availability'),
-      value: "availabilityStatus",
-      options: [...manpowerAvailabilityStatus],
-    },
-    {
-      title: useI18n().t('operations.manpower.filter.role'),
-      value: "role",
-      options: [...manpowerRoles],
-    },
-    {
-      title: useI18n().t('operations.manpower.filter.salary'),
-      value: ["fromSalary", "toSalary"],
-      type: "input",
-    },
-    {
-      title: useI18n().t('operations.manpower.filter.variableAllowance'),
-      value: ["fromVariableAllowance", "toVariableAllowance"],
-      type: "input",
-    },
-    {
-      title: useI18n().t('operations.manpower.filter.transportationAllowance'),
-      value: ["fromTransportationAllowance", "toTransportationAllowance"],
-      type: "input",
-    },
-    {
-      title: useI18n().t('operations.manpower.filter.iqamaCost'),
-      value: ["fromIqamaCost", "toIqamaCost"],
-      type: "input",
-    },
-    {
-      title: useI18n().t('operations.manpower.filter.totalCost'),
-      value: ["fromTotalCost", "toTotalCost"],
-      type: "input",
-    },
-    {
-      title: useI18n().t('operations.manpower.filter.dailyCost'),
-      value: ["fromDailyCost", "toDailyCost"],
-      type: "input",
-    },
-    {
-      title: useI18n().t('common.created'),
-      value: ["fromDate", "toDate"],
-      type: "date",
-    },
-  ];
+];
 </script>

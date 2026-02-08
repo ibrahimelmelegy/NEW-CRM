@@ -7,7 +7,7 @@ NuxtIcon(v-else :name="name" :size="size" v-bind="$attrs")
 </template>
 
 <script setup>
-import { computed } from 'vue'
+import { computed } from 'vue';
 
 const props = defineProps({
   name: {
@@ -18,30 +18,27 @@ const props = defineProps({
     type: [String, Number],
     default: '1em'
   }
-})
+});
 
 // Custom components are auto-imported by Nuxt from components/global/Icon/ as IconHome, IconSales, etc.
 const isCustom = computed(() => {
-  return typeof props.name === 'string' && props.name.startsWith('Icon') && !props.name.includes(':')
-})
+  return typeof props.name === 'string' && props.name.startsWith('Icon') && !props.name.includes(':');
+});
 
 const iconClasses = computed(() => {
-  return [
-    'custom-icon-wrapper',
-    isCustom.value ? 'is-custom' : ''
-  ]
-})
+  return ['custom-icon-wrapper', isCustom.value ? 'is-custom' : ''];
+});
 
 const iconStyles = computed(() => {
-  const s = typeof props.size === 'number' ? `${props.size}px` : props.size
+  const s = typeof props.size === 'number' ? `${props.size}px` : props.size;
   return {
     fontSize: s,
     width: s,
     height: s,
     display: 'inline-block',
     verticalAlign: 'middle'
-  }
-})
+  };
+});
 </script>
 
 <style scoped>

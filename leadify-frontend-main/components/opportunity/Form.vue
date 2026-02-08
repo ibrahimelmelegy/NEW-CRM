@@ -30,10 +30,10 @@ el-form(  autocomplete="off"   @submit.prevent='onSubmit'   ref="myForm" label-p
 </template>
 
 <script lang="ts" setup>
-import { useForm } from "vee-validate";
+import { useForm } from 'vee-validate';
+import * as yup from 'yup';
+import isEmailValidator from 'validator/lib/isEmail';
 import { stageOptions, priorityOptions } from '@/composables/useOpportunity';
-import * as yup from "yup";
-import isEmailValidator from "validator/lib/isEmail";
 
 const { $i18n } = useNuxtApp();
 const t = $i18n.t;
@@ -47,133 +47,131 @@ const props = defineProps({
   editMode: {
     type: Boolean || String || Number,
     required: false,
-    default: false,
+    default: false
   },
   data: {
     type: Object,
-    required: false,
-  },
+    required: false
+  }
 });
 
 const switchValue = ref(true);
 const switchType = ref(true);
-const emit = defineEmits(["submit", "leadId"]);
+const emit = defineEmits(['submit', 'leadId']);
 const validPhone = ref(true);
 const isEmail = ref(false);
 const isPhone = ref(false);
 
-const formSchema = computed(() => yup.object({
-  leadName: yup.string().when([], {
-    is: () => switchType.value,
-    then: () => yup.string().trim().required(t('errors.required')).min(2).max(100).label(t('leads.table.leadName')),
-    otherwise: () => yup.string().nullable().trim().max(100).label(t('leads.table.leadName')),
-  }),
-  leadCompanyName: yup.string().nullable().trim().max(100).label(t('common.companyName')),
-  clientId: yup.string().when([], {
-    is: () => !switchType.value,
-    then: () => yup.string().required(t('errors.required')).label(t('deals.info.client')),
-    otherwise: () => yup.string().nullable().label(t('deals.info.client')),
-  }),
-  email: yup.string().when([], {
-    is: () => isPhone.value || !switchType.value,
-    then: () =>
-      yup
-        .string()
-        .email()
-        .max(100)
-        .nullable()
-        .test(
-          "is-valid",
-          (message: any) => t('errors.invalidEmail'),
-          (value: any) => !value || isEmailValidator(value)
-        )
-        .label(t('leads.info.email')),
-    otherwise: () =>
-      yup
-        .string()
-        .email()
-        .max(100)
-        .nullable(t('errors.emailOrPhoneRequired'))
-        .test(
-          "is-valid",
-          (message: any) => t('errors.invalidEmail'),
-          (value: any) => (value ? isEmailValidator(value) : new yup.ValidationError(t('errors.invalidEmail')))
-        )
-        .label(t('leads.info.email')),
-  }),
-  phone: yup.number().when([], {
-    is: () => isEmail.value || !switchType.value,
-    then: () =>
-      yup
-        .number()
-        .nullable()
-        .transform((value: any, originalValue: any) => (originalValue === "" ? null : Number.isNaN(value) ? null : value))
-        .label(t('leads.info.phone'))
-        .test("Phone number", t('errors.invalidPhone'), function (value: any) {
-          if (value === null || value === undefined) {
-            return true;
-          }
-          return validPhone.value ? true : false;
-        }),
-    otherwise: () =>
-      yup
-        .number()
-        .transform((value: any) => (Number.isNaN(value) ? null : value))
-        .nullable()
-        .required(t('errors.emailOrPhoneRequired'))
-        .label(t('leads.info.phone'))
-        .test("Phone number", t('errors.invalidPhone'), function (value: any) {
-          return validPhone.value ? true : false;
-        }),
-  }),
-  opportunityName: yup.string().trim().required(t('errors.required')).min(2).max(100).label(t('opportunities.table.name')),
-  opportunityStage: yup.string().trim().required(t('errors.required')).min(2).max(100).label(t('opportunities.table.stage')),
-  assignUser: yup.array().of(yup.number()).required(t('errors.required')).min(1).label(t('opportunities.table.assigned')),
-  estimatedValue: yup
-    .number()
-    .nullable()
-    .max(10000000)
-    .label(t('opportunities.info.budget'))
-    .transform((value: any, originalValue: any) => (String(originalValue).trim() === "" ? null : value)),
-  profit: yup
-    .number()
-    .nullable()
-    .max(10000000)
-    .label(t('opportunities.table.profit'))
-    .transform((value: any, originalValue: any) => (String(originalValue).trim() === "" ? null : value)),
-  expectedCloseDate: yup.date().nullable().label(t('opportunities.info.closeDate')),
-  priority: yup.string().nullable().trim().max(100).label(t('opportunities.info.priority')),
-  interestedIn: yup.string().nullable().trim().max(200).label(t('opportunities.info.products')),
-  nextSteps: yup.array().of(yup.string()).required(t('errors.required')).min(1).label(t('opportunities.info.nextSteps')),
-  reasons: yup.string().when([], {
-    is: () => isLose.value,
-    then: () => yup.string().required(t('errors.required')).trim().min(2).max(250).label(t('opportunities.info.reasonLoss')),
-    otherwise: () =>
-      yup
-        .string()
-        .trim()
-        .nullable()
-        .test(
-          "min-length-if-entered",
-           t('errors.minLength', {min: 2}),
-          (value: any) => !value || value.length >= 2
-        )
-        .trim()
-        .max(250)
-        .label(t('opportunities.info.reasonLoss')),
-  }),
-  notes: yup
-    .string()
-    .trim()
-    .nullable()
-    .test("min-length-if-entered",  t('errors.minLength', {min: 2}), (value: any) => !value || value.length >= 2)
-    .trim()
-    .max(2000)
-    .label(t('leads.notes')),
-}));
+const formSchema = computed(() =>
+  yup.object({
+    leadName: yup.string().when([], {
+      is: () => switchType.value,
+      then: () => yup.string().trim().required(t('errors.required')).min(2).max(100).label(t('leads.table.leadName')),
+      otherwise: () => yup.string().nullable().trim().max(100).label(t('leads.table.leadName'))
+    }),
+    leadCompanyName: yup.string().nullable().trim().max(100).label(t('common.companyName')),
+    clientId: yup.string().when([], {
+      is: () => !switchType.value,
+      then: () => yup.string().required(t('errors.required')).label(t('deals.info.client')),
+      otherwise: () => yup.string().nullable().label(t('deals.info.client'))
+    }),
+    email: yup.string().when([], {
+      is: () => isPhone.value || !switchType.value,
+      then: () =>
+        yup
+          .string()
+          .email()
+          .max(100)
+          .nullable()
+          .test(
+            'is-valid',
+            (message: any) => t('errors.invalidEmail'),
+            (value: any) => !value || isEmailValidator(value)
+          )
+          .label(t('leads.info.email')),
+      otherwise: () =>
+        yup
+          .string()
+          .email()
+          .max(100)
+          .nullable(t('errors.emailOrPhoneRequired'))
+          .test(
+            'is-valid',
+            (message: any) => t('errors.invalidEmail'),
+            (value: any) => (value ? isEmailValidator(value) : new yup.ValidationError(t('errors.invalidEmail')))
+          )
+          .label(t('leads.info.email'))
+    }),
+    phone: yup.number().when([], {
+      is: () => isEmail.value || !switchType.value,
+      then: () =>
+        yup
+          .number()
+          .nullable()
+          .transform((value: any, originalValue: any) => (originalValue === '' ? null : Number.isNaN(value) ? null : value))
+          .label(t('leads.info.phone'))
+          .test('Phone number', t('errors.invalidPhone'), function (value: any) {
+            if (value === null || value === undefined) {
+              return true;
+            }
+            return !!validPhone.value;
+          }),
+      otherwise: () =>
+        yup
+          .number()
+          .transform((value: any) => (Number.isNaN(value) ? null : value))
+          .nullable()
+          .required(t('errors.emailOrPhoneRequired'))
+          .label(t('leads.info.phone'))
+          .test('Phone number', t('errors.invalidPhone'), function (value: any) {
+            return !!validPhone.value;
+          })
+    }),
+    opportunityName: yup.string().trim().required(t('errors.required')).min(2).max(100).label(t('opportunities.table.name')),
+    opportunityStage: yup.string().trim().required(t('errors.required')).min(2).max(100).label(t('opportunities.table.stage')),
+    assignUser: yup.array().of(yup.number()).required(t('errors.required')).min(1).label(t('opportunities.table.assigned')),
+    estimatedValue: yup
+      .number()
+      .nullable()
+      .max(10000000)
+      .label(t('opportunities.info.budget'))
+      .transform((value: any, originalValue: any) => (String(originalValue).trim() === '' ? null : value)),
+    profit: yup
+      .number()
+      .nullable()
+      .max(10000000)
+      .label(t('opportunities.table.profit'))
+      .transform((value: any, originalValue: any) => (String(originalValue).trim() === '' ? null : value)),
+    expectedCloseDate: yup.date().nullable().label(t('opportunities.info.closeDate')),
+    priority: yup.string().nullable().trim().max(100).label(t('opportunities.info.priority')),
+    interestedIn: yup.string().nullable().trim().max(200).label(t('opportunities.info.products')),
+    nextSteps: yup.array().of(yup.string()).required(t('errors.required')).min(1).label(t('opportunities.info.nextSteps')),
+    reasons: yup.string().when([], {
+      is: () => isLose.value,
+      then: () => yup.string().required(t('errors.required')).trim().min(2).max(250).label(t('opportunities.info.reasonLoss')),
+      otherwise: () =>
+        yup
+          .string()
+          .trim()
+          .nullable()
+          .test('min-length-if-entered', t('errors.minLength', { min: 2 }), (value: any) => !value || value.length >= 2)
+          .trim()
+          .max(250)
+          .label(t('opportunities.info.reasonLoss'))
+    }),
+    notes: yup
+      .string()
+      .trim()
+      .nullable()
+      .test('min-length-if-entered', t('errors.minLength', { min: 2 }), (value: any) => !value || value.length >= 2)
+      .trim()
+      .max(2000)
+      .label(t('leads.notes'))
+  })
+);
 
 const { handleSubmit } = useForm({
-  validationSchema: formSchema,
+  validationSchema: formSchema
 });
 
 const onSubmit = handleSubmit((values: any, actions: any) => {
@@ -184,8 +182,8 @@ const onSubmit = handleSubmit((values: any, actions: any) => {
         companyName: values.companyName,
         email: values.email,
         phone: normalizePhoneNumber(values.phone),
-        users: values.assignUser,
-      },
+        users: values.assignUser
+      }
     }),
     opportunity: {
       name: values.opportunityName,
@@ -199,18 +197,18 @@ const onSubmit = handleSubmit((values: any, actions: any) => {
       reasonOfLose: values.reasons,
       users: values.assignUser,
       notes: values.notes,
-      ...(route.path.includes("edit") && values.clientId && !switchType.value && { clientId: values.clientId }),
+      ...(route.path.includes('edit') && values.clientId && !switchType.value && { clientId: values.clientId })
     },
-    ...(!route.path.includes("edit") && values.clientId && { clientId: values.clientId }),
+    ...(!route.path.includes('edit') && values.clientId && { clientId: values.clientId })
   };
-  if (mappedLeads?.length && switchValue.value && switchType.value) emit("leadId", selectedLead.value?.id);
-  emit("submit", formatedValues);
+  if (mappedLeads?.length && switchValue.value && switchType.value) emit('leadId', selectedLead.value?.id);
+  emit('submit', formatedValues);
 });
 
-let users = await useApiFetch("users");
+let users = await useApiFetch('users');
 users = users?.body?.docs?.map((e: any) => ({
   label: e.name,
-  value: e.id,
+  value: e.id
 }));
 
 const selectedLead = ref<any>([]);
@@ -220,7 +218,7 @@ const leads = response.leads;
 const mappedLeads = leads?.map((e: any) => ({
   label: e.name,
   value: e.name,
-  id: e.id,
+  id: e.id
 }));
 
 const leadId = props.data?.leadId || route.query?.leadId;
@@ -249,11 +247,11 @@ if (leadId) {
 
 const mappedClients = ref<{ label: string; value: any }[]>();
 //  Get clients
-let { clients } = await getClients();
+const { clients } = await getClients();
 // Map clients to Select Options
 mappedClients.value = clients?.map((e: any) => ({
   label: e.clientName,
-  value: e.id,
+  value: e.id
 }));
 
 function getSelectedLead(e: any) {
@@ -266,12 +264,12 @@ function getSelectedLead(e: any) {
 }
 
 const isLeads = computed(() => {
-  return mappedLeads?.length && switchValue.value ? resolveComponent("InputSelect") : resolveComponent("InputText");
+  return mappedLeads?.length && switchValue.value ? resolveComponent('InputSelect') : resolveComponent('InputText');
 });
 
 const isLose = ref(false);
 function checkIfCancelled(value: any) {
-  if (value.label === "Lost") {
+  if (value.label === 'Lost') {
     isLose.value = true;
   } else {
     isLose.value = false;
@@ -283,20 +281,20 @@ if (props.data?.reasonOfLose) {
 }
 
 const stepsOptions = [
-    { label: "opportunities.steps.phoneCall", value: "phone_call" },
-    { label: "opportunities.steps.meeting", value: "meeting" },
-    { label: "opportunities.steps.email", value: "email" },
-    { label: "opportunities.steps.demo", value: "Demo" },
-    { label: "opportunities.steps.proposal", value: "proposal" },
-    { label: "opportunities.steps.followUp", value: "follow_up" },
-    { label: "opportunities.steps.negotiation", value: "negotiation" },
+  { label: 'opportunities.steps.phoneCall', value: 'phone_call' },
+  { label: 'opportunities.steps.meeting', value: 'meeting' },
+  { label: 'opportunities.steps.email', value: 'email' },
+  { label: 'opportunities.steps.demo', value: 'Demo' },
+  { label: 'opportunities.steps.proposal', value: 'proposal' },
+  { label: 'opportunities.steps.followUp', value: 'follow_up' },
+  { label: 'opportunities.steps.negotiation', value: 'negotiation' }
 ];
 
 const reasonOptions = [
-    { label: "opportunities.reasons.price", value: "Price" },
-    { label: "opportunities.reasons.competitor", value: "Competitor" },
-    { label: "opportunities.reasons.product", value: "Product" },
-    { label: "opportunities.reasons.timing", value: "Timing" },
-    { label: "opportunities.reasons.other", value: "Other" },
+  { label: 'opportunities.reasons.price', value: 'Price' },
+  { label: 'opportunities.reasons.competitor', value: 'Competitor' },
+  { label: 'opportunities.reasons.product', value: 'Product' },
+  { label: 'opportunities.reasons.timing', value: 'Timing' },
+  { label: 'opportunities.reasons.other', value: 'Other' }
 ];
 </script>

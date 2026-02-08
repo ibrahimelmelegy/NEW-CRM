@@ -17,115 +17,115 @@ RoleForm( :loading="loading" @submit="submitForm" :data="role")
 </template>
 
 <script lang="ts" setup>
-  const loading = ref(false);
-  const route = useRoute();
-  useHead({
-    title: "App HP Tech | Edit Role",
-  });
-  definePageMeta({
-    middleware: "permissions",
-    permission: "EDIT_ROLES",
-  });
+const loading = ref(false);
+const route = useRoute();
+useHead({
+  title: 'App HP Tech | Edit Role'
+});
+definePageMeta({
+  middleware: 'permissions',
+  permission: 'EDIT_ROLES'
+});
 
-  const slug = (Array.isArray(route.params.slug) ? route.params.slug[0] : route.params.slug) as string;
-  const role = await getRole(slug);
+const slug = (Array.isArray(route.params.slug) ? route.params.slug[0] : route.params.slug) as string;
+const role = await getRole(slug);
 
-  async function submitForm(values: any) {
-    loading.value = true;
-    await updateRole({ ...values, id: slug, permissions: Object.values(checkList.value).flat() });
-    loading.value = false;
+async function submitForm(values: any) {
+  loading.value = true;
+  await updateRole({ ...values, id: slug, permissions: Object.values(checkList.value).flat() });
+  loading.value = false;
+}
+
+interface PermissionsData {
+  [key: string]: string[];
+}
+
+const permissionsData: PermissionsData = {
+  leads: ['VIEW_OWN_LEADS', 'VIEW_GLOBAL_LEADS', 'CREATE_LEADS', 'EDIT_LEADS'],
+  opportunities: ['VIEW_OWN_OPPORTUNITIES', 'VIEW_GLOBAL_OPPORTUNITIES', 'CREATE_OPPORTUNITIES', 'EDIT_OPPORTUNITIES'],
+  deals: ['VIEW_OWN_DEALS', 'VIEW_GLOBAL_DEALS', 'CREATE_DEALS', 'EDIT_DEALS'],
+  proposals: [
+    'VIEW_OWN_PROPOSALS',
+    'VIEW_GLOBAL_PROPOSALS',
+    'CREATE_PROPOSALS',
+    'EDIT_PROPOSALS',
+    'APPROVE_PROPOSALS',
+    'REJECT_PROPOSALS',
+    'WAITING_APPROVAL_PROPOSALS'
+  ],
+  projects: ['VIEW_OWN_PROJECTS', 'VIEW_GLOBAL_PROJECTS', 'CREATE_PROJECTS', 'EDIT_PROJECTS'],
+  vehicles: ['VIEW_VEHICLES', 'CREATE_VEHICLES', 'EDIT_VEHICLES'],
+  manpower: ['VIEW_MANPOWER', 'CREATE_MANPOWER', 'EDIT_MANPOWER'],
+  additionalMaterial: ['VIEW_ADDITIONAL_MATERIAL', 'CREATE_ADDITIONAL_MATERIAL', 'EDIT_ADDITIONAL_MATERIAL'],
+  services: ['VIEW_SERVICES', 'CREATE_SERVICES', 'EDIT_SERVICES'],
+  assets: ['VIEW_ASSETS', 'CREATE_ASSETS', 'EDIT_ASSETS'],
+  clients: ['VIEW_OWN_CLIENTS', 'VIEW_GLOBAL_CLIENTS', 'CREATE_CLIENTS', 'EDIT_CLIENTS'],
+  staff: ['VIEW_OWN_STAFF', 'VIEW_GLOBAL_STAFF', 'CREATE_STAFF', 'EDIT_STAFF'],
+  roles: ['VIEW_ROLES', 'CREATE_ROLES', 'EDIT_ROLES'],
+  reports: ['EXPORT_OWN_REPORTS', 'EXPORT_GLOBAL_REPORTS', 'EXPORT_SALES_REPORTS', 'EXPORT_PROJECT_REPORTS', 'EXPORT_PERFORMANCE_REPORTS'],
+  salesWidgets: ['VIEW_OWN_LEAD_SALES_WIDGETS', 'VIEW_GLOBAL_LEAD_SALES_WIDGETS'],
+  projectWidgets: ['VIEW_OWN_PROJECTS_OPERATIONS_WIDGETS', 'VIEW_GLOBAL_PROJECTS_OPERATIONS_WIDGETS'],
+  financialWidgets: ['VIEW_OWN_FINANCIAL_BUSINESS_METRICS_WIDGETS', 'VIEW_GLOBAL_FINANCIAL_BUSINESS_METRICS_WIDGETS'],
+  performanceWidgets: ['VIEW_OWN_PERFORMANCE_HR_WIDGETS', 'VIEW_GLOBAL_PERFORMANCE_HR_WIDGETS']
+};
+
+const checkList = ref<Record<string, string[]>>(Object.fromEntries(Object.keys(permissionsData).map(key => [key, []])));
+
+function formatKeyLabel(key: string) {
+  return key.replace(/([A-Z])/g, ' $1').replace(/^./, str => str.toUpperCase());
+}
+
+function formatPermissionLabel(permission: string) {
+  if (permission.includes('VIEW_OWN')) return 'View (Own)';
+  if (permission.includes('VIEW_GLOBAL')) return 'View (Global)';
+  if (permission.includes('VIEW')) return 'View';
+  if (permission.includes('CREATE')) return 'Create';
+  if (permission.includes('EDIT')) return 'Edit';
+  if (permission.includes('EXPORT_OWN')) return 'Export (Own)';
+  if (permission.includes('EXPORT_GLOBAL')) return 'Export (Global)';
+  if (permission.includes('EXPORT_SALES')) return 'Export Sales Reports';
+  if (permission.includes('EXPORT_PROJECT')) return 'Export Project Reports';
+  if (permission.includes('EXPORT_PERFORMANCE')) return 'Export Performance Reports';
+  if (permission.includes('APPROVE')) return 'Approve';
+  if (permission.includes('REJECT')) return 'Reject';
+  if (permission.includes('WAITING_APPROVAL')) return 'Waiting Approval';
+  return permission.replace(/_/g, ' ').toLowerCase();
+}
+
+function handleMutuallyExclusive(permission: string, key: string) {
+  const list = checkList.value[key];
+  if (!list) return;
+
+  const isOwn = permission.includes('OWN');
+  const isGlobal = permission.includes('GLOBAL');
+
+  if (!isOwn && !isGlobal) return; // skip non-exclusive types
+
+  const prefix = permission.startsWith('VIEW_') ? 'VIEW' : permission.startsWith('EXPORT_') ? 'EXPORT' : null;
+
+  if (!prefix) return;
+
+  const base = permission.replace(`${prefix}_OWN_`, '').replace(`${prefix}_GLOBAL_`, '');
+
+  const ownPermission = `${prefix}_OWN_${base}`;
+  const globalPermission = `${prefix}_GLOBAL_${base}`;
+
+  if (permission === ownPermission && list.includes(globalPermission)) {
+    checkList.value[key] = list.filter((p: string) => p !== globalPermission);
+  } else if (permission === globalPermission && list.includes(ownPermission)) {
+    checkList.value[key] = list.filter((p: string) => p !== ownPermission);
   }
+}
 
-  interface PermissionsData {
-    [key: string]: string[];
+const applySelectedPermissions = (selected: string[]) => {
+  for (const [key, permissions] of Object.entries(permissionsData)) {
+    checkList.value[key] = permissions?.filter(p => selected.includes(p));
   }
+};
 
-  const permissionsData: PermissionsData = {
-    leads: ["VIEW_OWN_LEADS", "VIEW_GLOBAL_LEADS", "CREATE_LEADS", "EDIT_LEADS"],
-    opportunities: ["VIEW_OWN_OPPORTUNITIES", "VIEW_GLOBAL_OPPORTUNITIES", "CREATE_OPPORTUNITIES", "EDIT_OPPORTUNITIES"],
-    deals: ["VIEW_OWN_DEALS", "VIEW_GLOBAL_DEALS", "CREATE_DEALS", "EDIT_DEALS"],
-    proposals: ["VIEW_OWN_PROPOSALS", "VIEW_GLOBAL_PROPOSALS", "CREATE_PROPOSALS", "EDIT_PROPOSALS", "APPROVE_PROPOSALS", "REJECT_PROPOSALS", "WAITING_APPROVAL_PROPOSALS"],
-    projects: ["VIEW_OWN_PROJECTS", "VIEW_GLOBAL_PROJECTS", "CREATE_PROJECTS", "EDIT_PROJECTS"],
-    vehicles: ["VIEW_VEHICLES", "CREATE_VEHICLES", "EDIT_VEHICLES"],
-    manpower: ["VIEW_MANPOWER", "CREATE_MANPOWER", "EDIT_MANPOWER"],
-    additionalMaterial: ["VIEW_ADDITIONAL_MATERIAL", "CREATE_ADDITIONAL_MATERIAL", "EDIT_ADDITIONAL_MATERIAL"],
-    services: ["VIEW_SERVICES", "CREATE_SERVICES", "EDIT_SERVICES"],
-    assets: ["VIEW_ASSETS", "CREATE_ASSETS", "EDIT_ASSETS"],
-    clients: ["VIEW_OWN_CLIENTS", "VIEW_GLOBAL_CLIENTS", "CREATE_CLIENTS", "EDIT_CLIENTS"],
-    staff: ["VIEW_OWN_STAFF", "VIEW_GLOBAL_STAFF", "CREATE_STAFF", "EDIT_STAFF"],
-    roles: ["VIEW_ROLES", "CREATE_ROLES", "EDIT_ROLES"],
-    reports: [
-      "EXPORT_OWN_REPORTS",
-      "EXPORT_GLOBAL_REPORTS",
-      "EXPORT_SALES_REPORTS",
-      "EXPORT_PROJECT_REPORTS",
-      "EXPORT_PERFORMANCE_REPORTS",
-    ],
-    salesWidgets: ["VIEW_OWN_LEAD_SALES_WIDGETS", "VIEW_GLOBAL_LEAD_SALES_WIDGETS"],
-    projectWidgets: ["VIEW_OWN_PROJECTS_OPERATIONS_WIDGETS", "VIEW_GLOBAL_PROJECTS_OPERATIONS_WIDGETS"],
-    financialWidgets: ["VIEW_OWN_FINANCIAL_BUSINESS_METRICS_WIDGETS", "VIEW_GLOBAL_FINANCIAL_BUSINESS_METRICS_WIDGETS"],
-    performanceWidgets: ["VIEW_OWN_PERFORMANCE_HR_WIDGETS", "VIEW_GLOBAL_PERFORMANCE_HR_WIDGETS"],
-  };
-
-  const checkList = ref<Record<string, string[]>>(
-    Object.fromEntries(Object.keys(permissionsData).map((key) => [key, []]))
-  );
-
-  function formatKeyLabel(key: string) {
-    return key.replace(/([A-Z])/g, " $1").replace(/^./, (str) => str.toUpperCase());
+onMounted(() => {
+  if (role?.permissions) {
+    applySelectedPermissions(role.permissions);
   }
-
-  function formatPermissionLabel(permission: string) {
-    if (permission.includes("VIEW_OWN")) return "View (Own)";
-    if (permission.includes("VIEW_GLOBAL")) return "View (Global)";
-    if (permission.includes("VIEW")) return "View";
-    if (permission.includes("CREATE")) return "Create";
-    if (permission.includes("EDIT")) return "Edit";
-    if (permission.includes("EXPORT_OWN")) return "Export (Own)";
-    if (permission.includes("EXPORT_GLOBAL")) return "Export (Global)";
-    if (permission.includes("EXPORT_SALES")) return "Export Sales Reports";
-    if (permission.includes("EXPORT_PROJECT")) return "Export Project Reports";
-    if (permission.includes("EXPORT_PERFORMANCE")) return "Export Performance Reports";
-    if (permission.includes("APPROVE")) return "Approve";
-    if (permission.includes("REJECT")) return "Reject";
-    if (permission.includes("WAITING_APPROVAL")) return "Waiting Approval";
-    return permission.replace(/_/g, " ").toLowerCase();
-  }
-
-  function handleMutuallyExclusive(permission: string, key: string) {
-    const list = checkList.value[key];
-    if (!list) return;
-
-    const isOwn = permission.includes("OWN");
-    const isGlobal = permission.includes("GLOBAL");
-
-    if (!isOwn && !isGlobal) return; // skip non-exclusive types
-
-    const prefix = permission.startsWith("VIEW_") ? "VIEW" : permission.startsWith("EXPORT_") ? "EXPORT" : null;
-
-    if (!prefix) return;
-
-    const base = permission.replace(`${prefix}_OWN_`, "").replace(`${prefix}_GLOBAL_`, "");
-
-    const ownPermission = `${prefix}_OWN_${base}`;
-    const globalPermission = `${prefix}_GLOBAL_${base}`;
-
-    if (permission === ownPermission && list.includes(globalPermission)) {
-      checkList.value[key] = list.filter((p: string) => p !== globalPermission);
-    } else if (permission === globalPermission && list.includes(ownPermission)) {
-      checkList.value[key] = list.filter((p: string) => p !== ownPermission);
-    }
-  }
-
-  const applySelectedPermissions = (selected: string[]) => {
-    for (const [key, permissions] of Object.entries(permissionsData)) {
-      checkList.value[key] = permissions?.filter((p) => selected.includes(p));
-    }
-  };
-
-  onMounted(() => {
-    if (role?.permissions) {
-      applySelectedPermissions(role.permissions);
-    }
-  });
+});
 </script>

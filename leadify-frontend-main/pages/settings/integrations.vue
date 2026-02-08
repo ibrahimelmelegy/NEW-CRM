@@ -123,19 +123,19 @@ onMounted(async () => {
 });
 
 const fetchIntegrations = async () => {
-    try {
-        const response: any = await useApiFetch('integrations');
-        if (response.success && response.body) {
-            response.body.forEach((item: any) => {
-                if (config.value[item.provider]) {
-                    config.value[item.provider] = { ...config.value[item.provider], ...item.config };
-                    status.value[item.provider] = item.isActive;
-                }
-            });
+  try {
+    const response: any = await useApiFetch('integrations');
+    if (response.success && response.body) {
+      response.body.forEach((item: any) => {
+        if (config.value[item.provider]) {
+          config.value[item.provider] = { ...config.value[item.provider], ...item.config };
+          status.value[item.provider] = item.isActive;
         }
-    } catch (e) {
-        console.error("Fetch integrations failed", e);
+      });
     }
+  } catch (e) {
+    console.error('Fetch integrations failed', e);
+  }
 };
 
 const saveIntegration = async (provider: Provider) => {
@@ -161,13 +161,14 @@ const saveIntegration = async (provider: Provider) => {
 </script>
 
 <style lang="scss" scoped>
-
 .integrations-page {
   animation: fadeIn 0.5s ease-out;
 }
 
 .integration-card {
-  transition: transform 0.3s ease, box-shadow 0.3s ease;
+  transition:
+    transform 0.3s ease,
+    box-shadow 0.3s ease;
   &:hover {
     transform: translateY(-5px);
     box-shadow: 0 20px 40px rgba(0, 0, 0, 0.2);
@@ -184,7 +185,13 @@ const saveIntegration = async (provider: Provider) => {
 }
 
 @keyframes fadeIn {
-  from { opacity: 0; transform: translateY(10px); }
-  to { opacity: 1; transform: translateY(0); }
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
 }
 </style>

@@ -5,7 +5,7 @@
 
 <script setup lang="ts">
 const props = defineProps({
-  src: String,
+  src: String
 });
 </script>
 

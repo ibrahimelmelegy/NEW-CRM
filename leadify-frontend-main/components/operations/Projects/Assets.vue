@@ -23,210 +23,208 @@ OperationsProjectsModalAsset(v-model="addAsset"  @confirm="fetchAssets" :asset="
 </template>
 
 <script lang="ts" setup>
-  import { useForm } from "vee-validate";
-  import * as yup from "yup";
-  ;
-  import { Plus } from "@element-plus/icons-vue";
-  import { ElNotification } from "element-plus";
+import { useForm } from 'vee-validate';
+import * as yup from 'yup';
+import { Plus } from '@element-plus/icons-vue';
+import { ElNotification } from 'element-plus';
+const route = useRoute();
+const props = defineProps({
+  loading: Boolean,
+  label: String,
+  data: {
+    type: Object,
+    required: false
+  },
+  editMode: {
+    type: Boolean,
+    required: false
+  }
+});
+const activeStep = defineModel<number>({ required: true });
+const addAsset = ref(false);
+const assetsOptions = ref<{ label: string; value: string }[]>([]);
+const filteredAssets = ref<{ label: string; value: string }[]>([]);
+const assets = ref<Asset[]>([]);
+const asset = ref<Asset>();
+const assetsId = ref<string[]>([]);
+const emit = defineEmits(['submit', 'cancel']);
 
-  const route = useRoute();
-  const props = defineProps({
-    loading: Boolean,
-    label: String,
-    data: {
-      type: Object,
-      required: false,
-    },
-    editMode: {
-      type: Boolean,
-      required: false,
-    },
-  });
-  const activeStep = defineModel<number>({ required: true });
-  const addAsset = ref(false);
-  const assetsOptions = ref<{ label: string; value: string }[]>([]);
-  const filteredAssets = ref<{ label: string; value: string }[]>([]);
-  const assets = ref<Asset[]>([]);
-  const asset = ref<Asset>();
-  const assetsId = ref<string[]>([]);
-  const emit = defineEmits(["submit", "cancel"]);
+const { t } = useI18n();
+const formSchema = yup.object({
+  assetIds: yup.array().of(yup.string()).nullable().label(t('operations.projects.assets.label'))
+});
 
-  const { t } = useI18n();
-  const formSchema = yup.object({
-    assetIds: yup.array().of(yup.string()).nullable().label(t("operations.projects.assets.label")),
-  });
+const { handleSubmit } = useForm({
+  validationSchema: formSchema
+});
 
-  const { handleSubmit } = useForm({
-    validationSchema: formSchema,
-  });
-
-  const onSubmit = handleSubmit(async (values: any, actions: any) => {
-    try {
-      // Attempt to create the project
-      if (values.assetIds.length) {
-        await createtAssociatedAssets({
-          assetIds: values.assetIds,
-        });
-      }
-      if (route.params.slug) {
-        navigateTo("/operations/projects");
-        ElNotification({
-          type: "success",
-          title: t("common.success"),
-          message: t("operations.projects.assets.notifications.updateSuccess"),
-        });
-      } else {
-        activeStep.value++;
-      }
-    } catch (error) {
-      // Handle the error and prevent the step from being incremented
-      console.error("Project creation failed", error);
+const onSubmit = handleSubmit(async (values: any, actions: any) => {
+  try {
+    // Attempt to create the project
+    if (values.assetIds.length) {
+      await createtAssociatedAssets({
+        assetIds: values.assetIds
+      });
     }
-    // emit('submit')
-  });
-
-  const table = reactive({
-    columns: [
-      {
-        prop: "name",
-        label: t("operations.projects.assets.table.name"),
-        component: "Text",
-        // sortable: true,
-        type: "font-bold",
-        width: 150,
-      },
-      {
-        prop: "rentPrice",
-        label: t("operations.projects.assets.table.rentPrice"),
-        component: "Text",
-        // sortable: true,
-        type: "font-bold",
-        width: 150,
-      },
-      {
-        prop: "buyPrice",
-        label: t("operations.projects.assets.table.buyPrice"),
-        component: "Text",
-        // sortable: true,
-        type: "font-bold",
-        width: 150,
-      },
-    ],
-    data: [] as Asset[],
-  });
-  const assetsTotal = reactive({
-    columns: [
-      {
-        prop: "totalRentPrice",
-        label: t("operations.projects.assets.totalTable.totalRent"),
-        component: "Text",
-        // sortable: true,
-        type: "font-default",
-        width: 150,
-      },
-      {
-        prop: "totalBuyPrice",
-        label: t("operations.projects.assets.totalTable.totalBuy"),
-        component: "Text",
-        // sortable: true,
-        type: "font-default",
-        width: 150,
-      },
-      {
-        prop: "totalAssetsCost",
-        label: t("operations.projects.assets.totalTable.totalCost"),
-        component: "Text",
-        // sortable: true,
-        type: "font-default",
-        width: 150,
-      },
-    ],
-    data: [] as any,
-  });
-  if (project.value?.projectAssets?.length) {
-    assetsId.value = project.value?.projectAssets?.map((projectAsset: any) => projectAsset.assetId);
-    updateTableData();
-  }
-
-  /**
-   * Maps an array of assets into a format suitable for a select input.
-   */
-  function mapAssets(data: Asset[] = []): { label: string; value: string }[] {
-    return data.map(({ name, id }) => ({ label: name, value: id }));
-  }
-
-  /**
-   * Fetches the list of assets from the API and updates the select input with the results.
-   */
-  async function fetchAssets(id: string = "", isUpdate?: boolean) {
-    const response = await useTableFilter("asset");
-    assets.value = response?.formattedData || [];
-    assetsTotal.data = [
-      {
-        totalRentPrice: project.value?.totalAssetRentPrice,
-        totalBuyPrice: project.value?.totalAssetBuyPrice,
-        totalAssetsCost: project.value?.totalAssetsCost,
-      },
-    ];
-    assetsOptions.value = mapAssets(assets.value);
-    if (isUpdate) {
-      updateTableData();
-      return;
-    }
-    toggleAssetSelection(id);
-  }
-
-  /**
-   * Updates the table data and filtered assets list based on the selected asset IDs.
-   */
-  function updateTableData() {
-    // Filter the assets based on the selected asset IDs
-    table.data = assets.value?.filter(({ id }: Asset) => assetsId.value?.includes(id)) || [];
-
-    // Calculate the total rent price by summing the rentPrice of each asset, ensuring the value is a number
-    const totalRentPrice = table.data?.reduce((acc: number, { rentPrice }: Asset) => acc + (Number(rentPrice) || 0), 0);
-
-    // Calculate the total buy price by summing the buyPrice of each asset, ensuring the value is a number
-    const totalBuyPrice = table.data?.reduce((acc: number, { buyPrice }: Asset) => acc + (Number(buyPrice) || 0), 0);
-
-    // Calculate the total assets cost by adding total rent price and buy price, ensuring the values are numbers
-    const totalAssetsCost = (totalRentPrice || 0) + (totalBuyPrice || 0);
-
-    // Update the assets total data
-    assetsTotal.data = [
-      {
-        totalRentPrice,
-        totalBuyPrice,
-        totalAssetsCost,
-      },
-    ];
-
-    // Map through the filtered assets (if necessary)
-    filteredAssets.value = mapAssets([...table.data]);
-  }
-
-  /**
-   * Toggles the selection of a asset by its ID.
-   */
-  function toggleAssetSelection(val: any) {
-    const assetId = val.value || val;
-    const index = assetsId.value?.indexOf(assetId);
-
-    if (index !== -1) {
-      assetsId.value.splice(index, 1);
+    if (route.params.slug) {
+      navigateTo('/operations/projects');
+      ElNotification({
+        type: 'success',
+        title: t('common.success'),
+        message: t('operations.projects.assets.notifications.updateSuccess')
+      });
     } else {
-      assetsId.value.push(assetId);
+      activeStep.value++;
     }
+  } catch (error) {
+    // Handle the error and prevent the step from being incremented
+    console.error('Project creation failed', error);
+  }
+  // emit('submit')
+});
+
+const table = reactive({
+  columns: [
+    {
+      prop: 'name',
+      label: t('operations.projects.assets.table.name'),
+      component: 'Text',
+      // sortable: true,
+      type: 'font-bold',
+      width: 150
+    },
+    {
+      prop: 'rentPrice',
+      label: t('operations.projects.assets.table.rentPrice'),
+      component: 'Text',
+      // sortable: true,
+      type: 'font-bold',
+      width: 150
+    },
+    {
+      prop: 'buyPrice',
+      label: t('operations.projects.assets.table.buyPrice'),
+      component: 'Text',
+      // sortable: true,
+      type: 'font-bold',
+      width: 150
+    }
+  ],
+  data: [] as Asset[]
+});
+const assetsTotal = reactive({
+  columns: [
+    {
+      prop: 'totalRentPrice',
+      label: t('operations.projects.assets.totalTable.totalRent'),
+      component: 'Text',
+      // sortable: true,
+      type: 'font-default',
+      width: 150
+    },
+    {
+      prop: 'totalBuyPrice',
+      label: t('operations.projects.assets.totalTable.totalBuy'),
+      component: 'Text',
+      // sortable: true,
+      type: 'font-default',
+      width: 150
+    },
+    {
+      prop: 'totalAssetsCost',
+      label: t('operations.projects.assets.totalTable.totalCost'),
+      component: 'Text',
+      // sortable: true,
+      type: 'font-default',
+      width: 150
+    }
+  ],
+  data: [] as any
+});
+if (project.value?.projectAssets?.length) {
+  assetsId.value = project.value?.projectAssets?.map((projectAsset: any) => projectAsset.assetId);
+  updateTableData();
+}
+
+/**
+ * Maps an array of assets into a format suitable for a select input.
+ */
+function mapAssets(data: Asset[] = []): { label: string; value: string }[] {
+  return data.map(({ name, id }) => ({ label: name, value: id }));
+}
+
+/**
+ * Fetches the list of assets from the API and updates the select input with the results.
+ */
+async function fetchAssets(id: string = '', isUpdate?: boolean) {
+  const response = await useTableFilter('asset');
+  assets.value = response?.formattedData || [];
+  assetsTotal.data = [
+    {
+      totalRentPrice: project.value?.totalAssetRentPrice,
+      totalBuyPrice: project.value?.totalAssetBuyPrice,
+      totalAssetsCost: project.value?.totalAssetsCost
+    }
+  ];
+  assetsOptions.value = mapAssets(assets.value);
+  if (isUpdate) {
     updateTableData();
+    return;
   }
+  toggleAssetSelection(id);
+}
 
-  /**
-   * Selects a asset for editing based on its ID and opens the asset form.
-   */
-  function selectAssetForEdit(id: string) {
-    asset.value = assets.value?.find(({ id: assetId }: Asset) => assetId === id);
-    addAsset.value = !!asset.value?.id;
+/**
+ * Updates the table data and filtered assets list based on the selected asset IDs.
+ */
+function updateTableData() {
+  // Filter the assets based on the selected asset IDs
+  table.data = assets.value?.filter(({ id }: Asset) => assetsId.value?.includes(id)) || [];
+
+  // Calculate the total rent price by summing the rentPrice of each asset, ensuring the value is a number
+  const totalRentPrice = table.data?.reduce((acc: number, { rentPrice }: Asset) => acc + (Number(rentPrice) || 0), 0);
+
+  // Calculate the total buy price by summing the buyPrice of each asset, ensuring the value is a number
+  const totalBuyPrice = table.data?.reduce((acc: number, { buyPrice }: Asset) => acc + (Number(buyPrice) || 0), 0);
+
+  // Calculate the total assets cost by adding total rent price and buy price, ensuring the values are numbers
+  const totalAssetsCost = (totalRentPrice || 0) + (totalBuyPrice || 0);
+
+  // Update the assets total data
+  assetsTotal.data = [
+    {
+      totalRentPrice,
+      totalBuyPrice,
+      totalAssetsCost
+    }
+  ];
+
+  // Map through the filtered assets (if necessary)
+  filteredAssets.value = mapAssets([...table.data]);
+}
+
+/**
+ * Toggles the selection of a asset by its ID.
+ */
+function toggleAssetSelection(val: any) {
+  const assetId = val.value || val;
+  const index = assetsId.value?.indexOf(assetId);
+
+  if (index !== -1) {
+    assetsId.value.splice(index, 1);
+  } else {
+    assetsId.value.push(assetId);
   }
+  updateTableData();
+}
 
-  await fetchAssets();
+/**
+ * Selects a asset for editing based on its ID and opens the asset form.
+ */
+function selectAssetForEdit(id: string) {
+  asset.value = assets.value?.find(({ id: assetId }: Asset) => assetId === id);
+  addAsset.value = !!asset.value?.id;
+}
+
+await fetchAssets();
 </script>

@@ -10,9 +10,9 @@ export default defineNuxtRouteMiddleware(async (to, from) => {
 
   // Routes that require specific permissions (Synced with Backend roleEnum.ts)
   const protectedRoutes: Record<string, string[]> = {
-    '/roles': ['VIEW_ROLES'],           // Was 'manage_roles'
-    '/staff': ['VIEW_GLOBAL_STAFF'],    // Was 'manage_staff' 
-    '/reports': ['EXPORT_SALES_REPORTS'], // Was 'view_reports' (using basic one)
+    '/roles': ['VIEW_ROLES'], // Was 'manage_roles'
+    '/staff': ['VIEW_GLOBAL_STAFF'], // Was 'manage_staff'
+    '/reports': ['EXPORT_SALES_REPORTS'] // Was 'view_reports' (using basic one)
   };
 
   try {
@@ -57,8 +57,7 @@ export default defineNuxtRouteMiddleware(async (to, from) => {
     }
 
     // CASE 3: Permission-based route protection
-    const requiredPermissions = Object.entries(protectedRoutes)
-      .find(([route]) => to.path.startsWith(route))?.[1];
+    const requiredPermissions = Object.entries(protectedRoutes).find(([route]) => to.path.startsWith(route))?.[1];
 
     if (requiredPermissions && requiredPermissions.length > 0) {
       // SUPER_ADMIN bypass uses role name, never hardcoded email

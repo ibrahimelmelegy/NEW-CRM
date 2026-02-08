@@ -8,14 +8,14 @@
         <Skeleton variant="text" width="40%" />
       </div>
     </div>
-    
+
     <!-- Content -->
     <div class="space-y-3 mb-6">
       <Skeleton variant="text" width="100%" />
       <Skeleton variant="text" width="90%" />
       <Skeleton variant="text" width="75%" />
     </div>
-    
+
     <!-- Footer / Actions -->
     <div class="flex gap-3">
       <Skeleton variant="button" width="100px" />

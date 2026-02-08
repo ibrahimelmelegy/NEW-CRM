@@ -19,21 +19,21 @@ OperationsProjectsAssets.mt-6(v-model="activeStep" :loading="loading" @submit="s
 </template>
 
 <script lang="ts" setup>
-  const { t } = useI18n();
-  useHead({
-    title: `${t('common.info')} | ${t('operations.projects.editTitle')}`,
-  });
-  definePageMeta({
-    middleware: "permissions",
-    permission: "EDIT_PROJECTS",
-  });
-  const activeStep = ref<number>(0);
-  const loading = ref(false);
-  const isFinished = ref(false);
+const { t } = useI18n();
+useHead({
+  title: `${t('common.info')} | ${t('operations.projects.editTitle')}`
+});
+definePageMeta({
+  middleware: 'permissions',
+  permission: 'EDIT_PROJECTS'
+});
+const activeStep = ref<number>(0);
+const loading = ref(false);
+const isFinished = ref(false);
 
-  // Assuming fetchExistingProject is auto-imported or managed by global project store
-  // if not, I might need to implement it or use getProject
-  // For now I'll just localize the UI
+// Assuming fetchExistingProject is auto-imported or managed by global project store
+// if not, I might need to implement it or use getProject
+// For now I'll just localize the UI
 </script>
 
 <style lang="scss"></style>

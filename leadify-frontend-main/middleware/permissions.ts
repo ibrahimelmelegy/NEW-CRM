@@ -1,6 +1,6 @@
 import { user } from '~/composables/useUser';
 
-export default defineNuxtRouteMiddleware(async (to) => {
+export default defineNuxtRouteMiddleware(async to => {
   const { hasPermission } = await usePermissions();
 
   const requiredPermission = to.meta?.permission as string | undefined;
@@ -11,7 +11,7 @@ export default defineNuxtRouteMiddleware(async (to) => {
 
     throw createError({
       statusCode: 403,
-      message: "You don't have permission to access this page",
+      message: "You don't have permission to access this page"
     });
   }
 });

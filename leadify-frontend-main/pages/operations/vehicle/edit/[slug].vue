@@ -9,23 +9,23 @@ OperationsVehicleForm( :loading="loading" @submit="submitForm" :data="vehicle")
 </template>
 
 <script lang="ts" setup>
-  useHead({
-    title: "App HP Tech | Edit Vehicle",
-  });
-  definePageMeta({
-    middleware: "permissions",
-    permission: "EDIT_VEHICLES",
-  });
-  const router = useRouter();
-  const route = useRoute();
-  const loading = ref(false);
-  const vehicle = await getVehicle(route.params.slug);
+useHead({
+  title: 'App HP Tech | Edit Vehicle'
+});
+definePageMeta({
+  middleware: 'permissions',
+  permission: 'EDIT_VEHICLES'
+});
+const router = useRouter();
+const route = useRoute();
+const loading = ref(false);
+const vehicle = await getVehicle(route.params.slug);
 
-  async function submitForm(values: Vehicle) {
-    loading.value = true;
-    await updateVehicle({ ...values, vehicleId: +route.params.slug });
-    loading.value = false;
-  }
+async function submitForm(values: Vehicle) {
+  loading.value = true;
+  await updateVehicle({ ...values, vehicleId: +route.params.slug });
+  loading.value = false;
+}
 </script>
 
 <style lang="scss"></style>
