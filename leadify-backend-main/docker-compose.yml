@@ -5,9 +5,9 @@ services:
     env_file:
       - .env # Use the same .env file for both services
     environment:
-      POSTGRES_USER: leadify
-      POSTGRES_PASSWORD: x8tjNImGW7A4Dr
-      POSTGRES_DB: leadify
+      POSTGRES_USER: ${POSTGRES_USER:-leadify}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:?POSTGRES_PASSWORD is required}
+      POSTGRES_DB: ${POSTGRES_DB:-leadify}
     ports:
       - "5433:5432"
     volumes:

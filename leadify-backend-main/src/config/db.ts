@@ -131,7 +131,7 @@ const sequelize = new Sequelize({
     RFQVendorItem,
     Integration
   ], // Path to your models
-  logging: true // Disable logging (optional, based on your preference)
+  logging: process.env.NODE_ENV !== 'production' ? console.log : false
 });
 
 export { sequelize };

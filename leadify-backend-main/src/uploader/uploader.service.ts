@@ -7,14 +7,42 @@ import { FileModel } from './uploader.enum';
 import { Uploader } from './uploader.model';
 
 class UploaderService {
+  // Allowed MIME types
+  private static readonly ALLOWED_MIME_TYPES = [
+    'image/jpeg', 'image/png', 'image/gif', 'image/webp', 'image/svg+xml',
+    'application/pdf',
+    'application/msword',
+    'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
+    'application/vnd.ms-excel',
+    'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
+    'text/csv'
+  ];
+
+  private static readonly MAX_FILE_SIZE = 10 * 1024 * 1024; // 10 MB
+
   public async createFile(input: any, model: FileModel): Promise<string> {
-    // Validate file input (size and type, if necessary)
+    // Validate file exists
     if (!input || !input.name) {
       throw new BaseError(ERRORS.FILE_ERROR);
     }
 
-    // Generate file path
-    const filePath = new Date().getTime().toString() + '-' + input.name;
+    // Validate file size
+    if (input.size && input.size > UploaderService.MAX_FILE_SIZE) {
+      throw new BaseError(ERRORS.FILE_ERROR);
+    }
+
+    // Validate MIME type
+    if (input.mimetype && !UploaderService.ALLOWED_MIME_TYPES.includes(input.mimetype)) {
+      throw new BaseError(ERRORS.FILE_ERROR);
+    }
+
+    // Sanitize filename: remove path traversal characters
+    const sanitizedName = input.name
+      .replace(/\.\./g, '')
+      .replace(/[^a-zA-Z0-9._-]/g, '_');
+
+    // Generate safe file path
+    const filePath = new Date().getTime().toString() + '-' + sanitizedName;
     const uploadPath = join(process.cwd(), 'public', 'uploads');
     try {
       // Ensure the upload directory exists

@@ -10,10 +10,15 @@ import { Server } from 'socket.io';
 const PORT = process.env.PORT ? parseInt(process.env.PORT, 10) : 5000;
 const server = http.createServer(app);
 
+const CORS_ORIGINS = process.env.CORS_ORIGINS
+  ? process.env.CORS_ORIGINS.split(',').map(o => o.trim())
+  : ['http://localhost:3060'];
+
 export const io = new Server(server, {
   cors: {
-    origin: '*', // Adjust for production
-    methods: ['GET', 'POST']
+    origin: CORS_ORIGINS,
+    methods: ['GET', 'POST'],
+    credentials: true
   }
 });
 

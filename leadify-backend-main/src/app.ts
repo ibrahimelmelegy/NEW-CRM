@@ -1,8 +1,11 @@
 import cors from 'cors';
 import express, { Application, NextFunction, Request, Response } from 'express';
+import helmet from 'helmet';
 import i18next from 'i18next';
 import Backend from 'i18next-fs-backend';
 import middleware from 'i18next-http-middleware';
+import { generalLimiter, authLimiter, uploadLimiter } from './middleware/rateLimiter';
+import { sanitizeInput } from './middleware/sanitize';
 import assetRoutes from './asset/assetRoutes';
 import clientRoutes from './client/clientRoutes';
 import { swaggerDocs, swaggerUi } from './config/swagger';
@@ -40,6 +43,40 @@ import integrationRoutes from './integration/integrationRoutes';
 const fileUpload = require('express-fileupload');
 
 const app: Application = express();
+
+// 1. Trust proxy (for reverse proxy / load balancer setups)
+app.set('trust proxy', 1);
+
+// 2. Security headers (helmet)
+app.use(helmet({
+  contentSecurityPolicy: {
+    directives: {
+      defaultSrc: ["'self'"],
+      scriptSrc: ["'self'"],
+      styleSrc: ["'self'", "'unsafe-inline'", "https://fonts.googleapis.com"],
+      imgSrc: ["'self'", "data:", "blob:"],
+      fontSrc: ["'self'", "https://fonts.gstatic.com"],
+      connectSrc: ["'self'"],
+    }
+  },
+  crossOriginEmbedderPolicy: false,
+  hsts: {
+    maxAge: 31536000,
+    includeSubDomains: true
+  }
+}));
+
+// 3. HTTPS enforcement (production only)
+if (process.env.NODE_ENV === 'production') {
+  app.use((req: Request, res: Response, next: NextFunction) => {
+    if (req.headers['x-forwarded-proto'] !== 'https') {
+      return res.redirect(301, `https://${req.headers.host}${req.url}`);
+    }
+    next();
+  });
+}
+
+// 4. i18next middleware
 i18next
   .use(Backend)
   .use(middleware.LanguageDetector)
@@ -49,25 +86,48 @@ i18next
     },
     fallbackLng: 'en-US'
   });
-// Attach i18next middleware
 app.use(middleware.handle(i18next));
 
-// Middleware to parse incoming JSON requests
-app.use(express.json());
+// 5. JSON body parser
+app.use(express.json({ limit: '1mb' }));
 
-app.use(cors());
+// 6. Input sanitization (XSS protection)
+app.use(sanitizeInput);
 
-// DEBUG: Log all incoming requests
-app.use((req, res, next) => {
-  console.log(`[DEBUG] Incoming Request: ${req.method} ${req.url}`);
-  next();
-});
+// 7. CORS (single configured call)
+const CORS_ORIGINS = process.env.CORS_ORIGINS
+  ? process.env.CORS_ORIGINS.split(',').map(o => o.trim())
+  : ['http://localhost:3060'];
 
-// Middleware for uploading files
-app.use(fileUpload());
+app.use(cors({
+  origin: CORS_ORIGINS,
+  credentials: true,
+  methods: ['GET', 'POST', 'PUT', 'PATCH', 'DELETE', 'OPTIONS'],
+  allowedHeaders: ['Content-Type', 'Authorization', 'X-Tenant-ID', 'Accept-Language'],
+  maxAge: 86400
+}));
 
-app.use(cors());
+// 8. General rate limiting
+app.use(generalLimiter);
 
+// 9. Request logging (development only, no query strings)
+if (process.env.NODE_ENV !== 'production') {
+  app.use((req: Request, _res: Response, next: NextFunction) => {
+    console.log(`[DEV] ${req.method} ${req.path}`);
+    next();
+  });
+}
+
+// 10. File upload with limits
+app.use(fileUpload({
+  limits: { fileSize: 10 * 1024 * 1024 }, // 10 MB max
+  abortOnLimit: true,
+  responseOnLimit: 'File size exceeds the 10MB limit.',
+  safeFileNames: true,
+  preserveExtension: true
+}));
+
+// --- API Routes ---
 app.use('/api/insights', insightRoutes);
 app.use('/api/role', roleRoutes);
 app.use('/api/proposal-log', proposalLogRoutes);
@@ -79,7 +139,7 @@ app.use('/api/project-manpower', projectManpowerRoutes);
 app.use('/api/project', projectRoutes);
 app.use('/api/asset', assetRoutes);
 app.use('/api/service', serviceRoutes);
-app.use('/api/upload', UploaderRoutes);
+app.use('/api/upload', uploadLimiter, UploaderRoutes);
 app.use('/api/additional-material', AdditionalMaterialRoutes);
 app.use('/api/material', materialRoutes);
 app.use('/api/vehicle', vehicleRoutes);
@@ -99,8 +159,8 @@ app.use('/api/rfq', rfqRoutes);
 app.use('/api/ai', aiRoutes);
 app.use('/api/integrations', integrationRoutes);
 
-// Authentication routes
-app.use('/api/auth', authRoutes); // Explicitly mount at /api/auth
+// Authentication routes (with stricter rate limiting)
+app.use('/api/auth', authLimiter, authRoutes);
 
 // Serve static files from the 'public' directory
 app.use('/assets', express.static('public/uploads'));

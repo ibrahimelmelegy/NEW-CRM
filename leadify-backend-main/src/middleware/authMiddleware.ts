@@ -21,7 +21,11 @@ export const authenticateUser = async (req: AuthenticatedRequest, res: Response,
   }
 
   try {
-    const SECRET_KEY = process.env.SECRET_KEY || 'your_secret_key';
+    const SECRET_KEY = process.env.SECRET_KEY;
+    if (!SECRET_KEY) {
+      res.status(500).json({ message: 'Server configuration error' });
+      return;
+    }
     // Decode the token to get the user ID
     const decoded = jwt.verify(token, SECRET_KEY) as JwtPayload;
     const userId = decoded.id;

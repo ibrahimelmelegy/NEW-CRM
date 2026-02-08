@@ -46,11 +46,10 @@ export const useApiFetch = async <T = any>(
     method,
     body: method === 'GET' ? null : data,
     headers: {
-      'Access-Control-Allow-Origin': '*',
       ...(!isFd && { 'Content-Type': 'application/json' }),
       ...(!isFd && { Accept: 'application/json' }),
-      ...(accessToken.value && {
-        Authorization: `${url.includes('reset-password') ? '' : 'Bearer'} ${accessToken.value}`,
+      ...(accessToken.value && !url.includes('reset-password') && {
+        Authorization: `Bearer ${accessToken.value}`,
       }),
       // Multi-tenant header
       ...(user.value?.tenantId && { 'X-Tenant-ID': user.value.tenantId }),

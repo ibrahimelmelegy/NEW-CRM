@@ -61,17 +61,15 @@ export default defineNuxtRouteMiddleware(async (to, from) => {
       .find(([route]) => to.path.startsWith(route))?.[1];
 
     if (requiredPermissions && requiredPermissions.length > 0) {
-      // ✅ RADICAL FIX: Always allow 'admin@hp-tech.com' to pass
-      if (authResponse.body.email === 'admin@hp-tech.com') return;
+      // SUPER_ADMIN bypass uses role name, never hardcoded email
+      const userRole: string = authResponse.body.role?.name || '';
+      if (userRole === 'SUPER_ADMIN') return;
 
-      const userPermissions: string[] = authResponse.body.permissions || [];
+      const userPermissions: string[] = authResponse.body.role?.permissions || authResponse.body.permissions || [];
       const hasPermission = requiredPermissions.some(perm => userPermissions.includes(perm));
 
       if (!hasPermission) {
-        // ⚠️ WARNING ONLY - Do not block navigation (Let Backend handle 403s)
-        console.warn(`[Auth Bypass] User missing permission for ${to.path}. Required: ${requiredPermissions.join(', ')}`);
-
-        // return navigateTo('/'); // DISABLED FOR RADICAL FIX
+        return navigateTo('/');
       }
     }
 

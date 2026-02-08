@@ -23,13 +23,19 @@ class UserService {
     }
 
     let superAdmin = await User.findOne({ where: { roleId: role.id } });
-    if (!superAdmin)
+    if (!superAdmin) {
+      const seedEmail = process.env.ADMIN_EMAIL || 'admin@leadify.com';
+      const seedPassword = process.env.ADMIN_PASSWORD || 'Leadify@Admin2026!';
+      if (seedPassword.length < 8) {
+        throw new Error('ADMIN_PASSWORD must be at least 8 characters for super admin creation.');
+      }
       superAdmin = await User.create({
         name: 'Super Admin',
-        email: 'admin@lead.com',
-        password: await bcrypt.hash('123456', 10),
+        email: seedEmail,
+        password: await bcrypt.hash(seedPassword, 12),
         roleId: role.id
       });
+    }
     return superAdmin;
   }
 

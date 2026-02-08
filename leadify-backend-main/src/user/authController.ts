@@ -12,9 +12,12 @@ import PasswordResetLog from './models/passwordResetLogModel';
 
 dotenv.config();
 
-const LOCK_TIME = 60 * 1000; // Lock time: 1 minute in milliseconds
-const MAX_ATTEMPTS = 5; // Max failed attempts before lockout
-const SECRET_KEY = process.env.SECRET_KEY || 'your_secret_key';
+const LOCK_TIME = parseInt(process.env.LOGIN_LOCK_TIME_MS || '900000', 10); // Default: 15 minutes
+const MAX_ATTEMPTS = parseInt(process.env.LOGIN_MAX_ATTEMPTS || '5', 10);
+const SECRET_KEY = process.env.SECRET_KEY;
+if (!SECRET_KEY) {
+  throw new Error('FATAL: SECRET_KEY environment variable is not set. Server cannot start without it.');
+}
 
 // Email configuration (using nodemailer)
 const transporter = nodemailer.createTransport({
@@ -32,7 +35,7 @@ const transporter = nodemailer.createTransport({
 
 export const loginUser = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
   const { email, password } = req.body;
-  console.log('Login attempt:', { email, passwordReceived: !!password, emailType: typeof email, emailLen: email?.length });
+  // Login attempt - sensitive data not logged
 
   try {
     // Check recent login failures
@@ -44,14 +47,15 @@ export const loginUser = async (req: Request, res: Response, next: NextFunction)
     });
 
     if (recentFailures >= MAX_ATTEMPTS) {
-      res.status(429).json({ message: 'Too many failed attempts. Please try again in 1 minute.' });
+      res.status(429).json({ message: 'Too many failed attempts. Please try again later.' });
       return;
     }
 
     const user = await User.findOne({ where: { email } });
     if (!user) {
-      await LoginFailure.create({ email, reason: 'User not found' });
-      res.status(404).json({ message: 'User not found' });
+      await LoginFailure.create({ email, reason: 'Invalid credentials' });
+      // Same response as invalid password to prevent user enumeration
+      res.status(401).json({ message: 'Invalid credentials' });
       return;
     }
 

@@ -50,11 +50,16 @@ async function seed() {
         const userModel = User as any;
 
 
-        // 3. Create Fresh Super Admin
-        const adminEmail = 'admin@hp-tech.com';
-        const adminPassword = 'Heroo@1502';
+        // 3. Create Fresh Super Admin (credentials from environment variables)
+        const adminEmail = process.env.ADMIN_EMAIL || 'admin@leadify.com';
+        const adminPassword = process.env.ADMIN_PASSWORD || 'Leadify@Admin2026!';
 
-        const hashedPassword = await bcrypt.hash(adminPassword, 10);
+        if (adminPassword.length < 8) {
+            console.error('ADMIN_PASSWORD must be at least 8 characters.');
+            process.exit(1);
+        }
+
+        const hashedPassword = await bcrypt.hash(adminPassword, 12);
         const newAdmin = await userModel.create({
             name: 'System Admin',
             email: adminEmail,
@@ -63,10 +68,9 @@ async function seed() {
             status: 'ACTIVE'
         });
 
-        console.log('🚀 Super Admin created successfully!');
+        console.log('Super Admin created successfully!');
         console.log(`   ID: ${newAdmin.id}`);
         console.log(`   Email: ${adminEmail}`);
-        console.log(`   Password: ${adminPassword}`);
         console.log(`   Role ID: ${newAdmin.roleId}`);
         console.log(`   Status: ${newAdmin.status}`);
 

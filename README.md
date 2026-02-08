@@ -47,10 +47,10 @@ npm run dev
 
 ## 🔐 بيانات الدخول (Super Admin)
 
-| Field | Value |
-|-------|-------|
-| **Email** | `admin@hp-tech.com` |
-| **Password** | `Heroo@1502` |
+Default admin credentials are configured via environment variables during the `npm run seed` process.
+Set `ADMIN_EMAIL` and `ADMIN_PASSWORD` in your `.env` file before running seed.
+
+> **WARNING**: Change the default admin password immediately after first login in production.
 
 ## 🌐 الروابط
 

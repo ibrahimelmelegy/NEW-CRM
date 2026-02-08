@@ -11,7 +11,17 @@ class AIService {
     private async getClient() {
         if (!this.openai) {
             const integration = await Integration.findOne({ where: { provider: 'openai', isActive: true } });
-            const apiKey = integration?.config?.apiKey || process.env.OPENAI_API_KEY;
+            let apiKey = process.env.OPENAI_API_KEY;
+
+            if (integration?.config?.apiKey) {
+                try {
+                    const { decrypt } = require('../utils/encryption');
+                    apiKey = decrypt(integration.config.apiKey);
+                } catch {
+                    // Fallback: key may be unencrypted legacy data
+                    apiKey = integration.config.apiKey;
+                }
+            }
 
             if (apiKey) {
                 this.openai = new OpenAI({ apiKey });
