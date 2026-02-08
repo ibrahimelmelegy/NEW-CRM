@@ -278,28 +278,37 @@ const onSubmit = handleSubmit(async (values: any) => {
     }
 
     .glass-card-premium {
-      background: rgba(255, 255, 255, 0.7) !important;
-      border-color: rgba(120, 73, 255, 0.3) !important;
-      box-shadow: 0 10px 40px -10px rgba(120, 73, 255, 0.2) !important;
+      background: #ffffff !important;
+      border: 2px solid rgba(120, 73, 255, 0.2) !important;
+      box-shadow: 0 10px 40px -10px rgba(120, 73, 255, 0.15) !important;
+      backdrop-filter: none !important;
     }
 
     .modern-input .el-input__wrapper {
-      background-color: rgba(255, 255, 255, 0.95) !important;
-      border-color: rgba(120, 73, 255, 0.4) !important;
+      background-color: #ffffff !important;
+      border: 2px solid #e0e0e8 !important;
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04) !important;
 
       &.is-focus,
       &:hover {
         background-color: #ffffff !important;
-        box-shadow: 0 4px 15px rgba(120, 73, 255, 0.2) !important;
+        border-color: #7849ff !important;
+        box-shadow: 0 4px 15px rgba(120, 73, 255, 0.15) !important;
       }
 
       .el-input__inner {
         color: #1a1a2e !important;
         &::placeholder {
-          color: #8a8aa8 !important;
-          opacity: 0.7 !important;
+          color: #9090a8 !important;
+          opacity: 1 !important;
         }
       }
+    }
+    
+    // Glass effect cards in light mode
+    .glass-effect {
+      background: rgba(255, 255, 255, 0.8) !important;
+      border: 1px solid rgba(0, 0, 0, 0.06) !important;
     }
   }
 

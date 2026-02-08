@@ -1,91 +1,121 @@
 /* -------------------------------------------------------------------------- */
-/* App Colors (Dark Theme Optimized)                                          */
+/* 🎨 Element Plus Theme Override - Synced with Design Tokens                 */
 /* -------------------------------------------------------------------------- */
-$primary: #7849ff; // البنفسجي الأساسي (ممتاز)
-$primary-hover: #9360ff;
 
-// ⚠️ تعديل هام جداً: تحويل اللون "الفاتح" إلى شفاف
-// القديم كان (#f8f7fa) وده كان بيعمل خلفية بيضاء، دلوقتي بقى شفاف بنفسجي
-$primary-light: rgba(120, 73, 255, 0.1);
-$primary-light-hover: rgba(120, 73, 255, 0.2);
-$primary-light-active: rgba(120, 73, 255, 0.3);
+// Brand Colors (synced with theme-variables.scss)
+$brand-primary: #7c3aed;
+$brand-primary-hover: #6d28d9;
+$brand-accent: #f97316;
 
-// الألوان الوظيفية (تعديلات للتباين على الخلفية السوداء)
-$brown: #a19b8d;
-$brown-light: #686252;
-$success: #2fb350;
-$danger: #ef4444; // أحمر ساطع قليلاً
-$gray: #9ca3af; // رمادي فاتح للنصوص
-$info: #1f1f2e; // ⚠️ هام: تحويل خلفيات الـ Info لغامق بدلاً من الرمادي الفاتح
-$error: #ff6868;
-$yellow: #eab308;
+// Semantic Colors
+$success: #10b981;
+$danger: #ef4444;
+$warning: #f59e0b;
+$info: #3b82f6;
+$error: #ef4444;
 
-/* -------------------------------------------------------------------------- */
-/* Layout & Dimensions                                                        */
-/* -------------------------------------------------------------------------- */
-// استخدام ألوان داكنة للحدود والخلفيات الاحتياطية
-$border: #2e2e3a;
-$background-light: #16151f; // ⚠️ الخلفية الاحتياطية بقت غامقة
-$padding-primary: 40px;
+// Layout Colors (Dark theme defaults)
+$border: rgba(255, 255, 255, 0.08);
+$background-dark: #16161d;
+$background-body: #0a0a0f;
+$text-primary: #ffffff;
+$text-secondary: #a1a1aa;
+$text-muted: #71717a;
 
-$radius-base: 2rem;
-$radius-md: 0.5rem;
-$radius-lg: 1rem;
+// Dimensions
+$radius-sm: 6px;
+$radius-md: 10px;
+$radius-lg: 14px;
+$radius-xl: 18px;
 
-$height-input: 56px;
-$height-button: 44px;
+$height-input: 44px;
+$height-button: 40px;
+$padding-primary: 24px;
 
 /* -------------------------------------------------------------------------- */
 /* Element Plus Theme Override                                                */
 /* -------------------------------------------------------------------------- */
-/* This overrides the default Element Plus variables without generating CSS */
-@forward 'element-plus/theme-chalk/src/common/var.scss' with ($colors: ('primary': ('base': $primary,
-    ),
-    'success': ('base': $success,
-    ),
-    'warning': ('base': $yellow,
-    ),
-    'danger': ('base': $danger,
-    ),
-    'error': ('base': $error,
-    ),
-    'info': ('base': $info,
-    ),
+@forward 'element-plus/theme-chalk/src/common/var.scss' with ( // Color palette
+  $colors: ('primary': ('base': $brand-primary),
+    'success': ('base': $success),
+    'warning': ('base': $warning),
+    'danger': ('base': $danger),
+    'error': ('base': $error),
+    'info': ('base': $info),
   ),
-  // تعيين ألوان التعبئة لتكون شفافة أو داكنة
-  $fill-color: ('dark': $primary,
-    'light': $primary-light, // سيستخدم اللون الشفاف الجديد
-    'blank': transparent, // ⚠️ هام: إزالة الخلفية البيضاء الافتراضية
+
+  // Fill colors - transparent for glass effect
+  $fill-color: ('dark': $brand-primary,
+    'light': rgba(124, 58, 237, 0.1),
+    'lighter': rgba(124, 58, 237, 0.05),
+    'blank': transparent,
   ),
-  $bg-color: ('page': #09090b, // أسود
-    'overlay': #16151f,
+
+  // Background colors
+  $bg-color: ('page': $background-body,
+    'overlay': $background-dark,
+    '': $background-dark,
   ),
-  $text-color: ('primary': #ffffff,
-    'regular': #a1a1aa,
-    'secondary': #71717a,
+
+  // Text colors
+  $text-color: ('primary': $text-primary,
+    'regular': $text-secondary,
+    'secondary': $text-muted,
+    'placeholder': #52525b,
+    'disabled': #3f3f46,
   ),
+
+  // Border colors
   $border-color: ('base': $border,
-    'light': $border,
-    'lighter': $border,
+    'light': rgba(255, 255, 255, 0.05),
+    'lighter': rgba(255, 255, 255, 0.03),
+    'extra-light': rgba(255, 255, 255, 0.02),
+    'dark': rgba(255, 255, 255, 0.12),
+    'darker': rgba(255, 255, 255, 0.16),
   ),
-  $border-radius: ('base': $radius-base,
-    'small': 2px,
+
+  // Border radius
+  $border-radius: ('base': $radius-md,
+    'small': $radius-sm,
+    'large': $radius-lg,
     'round': 20px,
     'circle': 100%,
   ),
-  $select-dropdown: ('padding': 1rem,
+
+  // Component sizing
+  $common-component-size: ('large': 48px,
+    'default': 40px,
+    'small': 32px,
   ),
-  $border-color-hover: $primary-hover,
-  $pagination: ('item-gap': 20px,
+
+  // Other overrides
+  $border-color-hover: $brand-primary-hover,
+
+  $select-dropdown: ('padding': 8px,
   ),
-  $dropdown: ('padding': 1rem,
+
+  $dropdown: ('padding': 8px,
   ),
-  $common-component-size: ('large': $height-input,
-  ),
-  $popper: ('border-radius': $radius-base,
-    'padding': 1rem,
+
+  $popper: ('border-radius': $radius-md,
+    'padding': 12px,
     'border': 1px solid $border,
   ),
-  $dialog: ('title-font-size': 24px,
-    'border-radius': $radius-base,
-  ));
+
+  $dialog: ('title-font-size': 20px,
+    'border-radius': $radius-lg,
+    'padding-primary': $padding-primary,
+  ),
+
+  $pagination: ('item-gap': 8px,
+  ),
+
+  $card: ('border-radius': $radius-lg,
+    'padding': $padding-primary,
+  ),
+
+  $table: ('border-color': $border,
+    'header-bg-color': rgba(30, 30, 38, 0.5),
+    'row-hover-bg-color': rgba(124, 58, 237, 0.05),
+  ),
+);
