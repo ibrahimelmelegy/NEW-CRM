@@ -176,12 +176,8 @@ function openNav() {
 
 
 .submenu-icon {
-  color: #7849ff;
+  color: var(--accent-color, #7849ff);
   transition: all 0.3s ease;
-  
-  :global(body.light-theme) & {
-    color: #6a3ae0;
-  }
 }
 
 .el-menu-vertical-demo:not(.el-menu--collapse) {

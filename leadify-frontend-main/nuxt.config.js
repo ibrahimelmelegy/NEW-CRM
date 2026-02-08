@@ -5,7 +5,7 @@ import { fileURLToPath } from 'node:url'; // استيراد لضمان دقة ا
 export default defineNuxtConfig({
   app: {
     head: {
-      title: 'High Point CRM - Enterprise Customer Relationship Management',
+      title: 'Leadify CRM - Enterprise Customer Relationship Management',
       htmlAttrs: {
         lang: 'en',
       },
@@ -19,7 +19,7 @@ export default defineNuxtConfig({
       meta: [
         { 'http-equiv': 'x-ua-compatible', content: 'IE=edge' },
         { name: 'viewport', content: 'width=device-width, initial-scale=1.0' },
-        { name: 'description', content: 'High Point CRM - Professional enterprise customer relationship management solution for sales, leads, and opportunity tracking.' },
+        { name: 'description', content: 'Leadify CRM - Professional enterprise customer relationship management solution for sales, leads, and opportunity tracking.' },
         { name: 'theme-color', content: '#7849ff' },
       ],
     },

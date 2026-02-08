@@ -17,13 +17,16 @@
     --neon-purple: rgba(120, 73, 255, 0.8);
     --neon-blue: rgba(59, 130, 246, 0.8);
 
-    // Light Mode Overrides
-    body.light-theme & {
-        --glass-bg-primary: rgba(255, 255, 255, 0.75); // Milky glass
-        --glass-bg-hover: rgba(255, 255, 255, 0.9);
-        --glass-border-color: rgba(255, 255, 255, 0.6);
-        --glass-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.15);
-    }
+}
+
+// Light Mode Overrides for Glass
+html.light-mode {
+    --glass-bg-primary: rgba(255, 255, 255, 0.75);
+    --glass-bg-hover: rgba(255, 255, 255, 0.9);
+    --glass-bg-active: rgba(255, 255, 255, 0.95);
+    --glass-border-color: rgba(0, 0, 0, 0.08);
+    --glass-border-hover: rgba(0, 0, 0, 0.15);
+    --glass-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.1);
 }
 
 // 🛠️ Mixins for easy usage

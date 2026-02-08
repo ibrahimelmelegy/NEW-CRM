@@ -161,7 +161,11 @@
         "invalidPhone": "رقم الهاتف غير صالح",
         "required": "هذا الحقل مطلوب",
         "emailOrPhoneRequired": "يجب إدخال البريد الإلكتروني أو رقم الهاتف",
-        "minLength": "يجب أن يكون على الأقل {min} حروف"
+        "minLength": "يجب أن يكون على الأقل {min} حروف",
+        "pageNotFound": "الصفحة غير موجودة",
+        "pageNotFoundDesc": "الصفحة التي تبحث عنها غير موجودة أو تم نقلها.",
+        "goHome": "الذهاب إلى لوحة القيادة",
+        "goBack": "رجوع"
     },
     "crm": {
         "projectStatus": {
@@ -197,13 +201,31 @@
         "optional": "اختياري"
     },
     "staff": {
+        "title": "الموظفين",
         "roles": "الأدوار",
         "rolesAccess": "صلاحيات الأدوار",
         "addNewRole": "إضافة دور جديد",
         "staffManagement": "إدارة الموظفين",
         "addNewStaff": "إضافة موظف جديد",
+        "newStaff": "موظف جديد",
         "qaCenter": "مركز تحكم الجودة",
         "permissionsHub": "مركز الصلاحيات",
+        "table": {
+            "staffName": "اسم الموظف",
+            "email": "البريد الإلكتروني",
+            "phone": "الهاتف",
+            "role": "الدور",
+            "status": "الحالة",
+            "lastActivity": "آخر نشاط"
+        },
+        "actions": {
+            "view": "عرض",
+            "edit": "تعديل",
+            "delete": "حذف",
+            "moveToArchive": "نقل إلى الأرشيف",
+            "deleteConfirm": "هل أنت متأكد أنك تريد حذف هذا الموظف؟",
+            "deleteDescription": "سيتم أرشفته ويمكن استعادته لاحقاً خلال 30 يومًا."
+        },
         "form": {
             "fullName": "الاسم الكامل",
             "email": "البريد الإلكتروني",
@@ -218,12 +240,57 @@
         }
     },
     "reports": {
+        "title": "التقارير",
         "settings": "الإعدادات",
         "reports": "التقارير",
         "report": "التقارير",
         "notifications": "الإشعارات",
         "integrations": "الربط والتكامل",
-        "auditLogs": "سجلات التدقيق"
+        "auditLogs": "سجلات التدقيق",
+        "tabs": {
+            "sales": "المبيعات",
+            "projects": "المشاريع",
+            "performance": "الأداء"
+        }
+    },
+    "integrations": {
+        "title": "الربط والتكامل",
+        "subtitle": "إدارة مفاتيح API على مستوى النظام واتصالات الخدمات.",
+        "google": {
+            "title": "تقويم جوجل",
+            "subtitle": "مزامنة ثنائية الاتجاه",
+            "clientId": "معرف العميل",
+            "clientIdPlaceholder": "أدخل معرف عميل جوجل",
+            "clientSecret": "سر العميل",
+            "clientSecretPlaceholder": "أدخل سر عميل جوجل"
+        },
+        "outlook": {
+            "title": "تقويم أوتلوك",
+            "subtitle": "مزامنة Microsoft Graph API",
+            "appId": "معرف التطبيق",
+            "appIdPlaceholder": "أدخل معرف تطبيق Azure",
+            "tenantId": "معرف الدليل (المستأجر)",
+            "tenantIdPlaceholder": "أدخل معرف المستأجر"
+        },
+        "whatsapp": {
+            "title": "واتساب للأعمال",
+            "subtitle": "رسائل وإشعارات تلقائية",
+            "phoneId": "معرف رقم الهاتف",
+            "phoneIdPlaceholder": "أدخل معرف الهاتف",
+            "accessToken": "رمز الوصول",
+            "accessTokenPlaceholder": "أدخل رمز الوصول الدائم"
+        },
+        "openai": {
+            "title": "ذكاء OpenAI",
+            "subtitle": "يدعم تقييم العملاء والتلخيص",
+            "apiKey": "مفتاح API",
+            "apiKeyPlaceholder": "sk-..."
+        },
+        "status": {
+            "connected": "متصل",
+            "disconnected": "غير متصل"
+        },
+        "saveAndTest": "حفظ واختبار"
     },
     "deals": {
         "title": "الصفقات",

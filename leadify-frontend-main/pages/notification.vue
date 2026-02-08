@@ -15,14 +15,14 @@
                 Icon.p-2(name="IconRestore" class="text-[35px]" :class="`icon_${notify?.read}`"  )
                 div
                  span {{notify?.body_ar}}
-                 p.text-neutral-500.text-xs.mb-4.font-medium {{ notify?.createdAt }}
+                 p.text-xs.mb-4.font-medium(style="color: var(--text-muted)") {{ notify?.createdAt }}
              div.rounded-full.bg-red-500.w-2.h-2(v-if="notify?.read == 'UN_READ'")
        .pagination.mt-auto.flex.items-center.flex-wrap.gap-2.px-6(class="sm:justify-between justify-center" v-if="!withoutPagination ")
          .flex.items-center.gap-3
-           span.text-sm.text-neutral-400 {{ $t('notifications.show') }}
+           span.text-sm(style="color: var(--text-muted)") {{ $t('notifications.show') }}
              el-select(size="medium"  v-model="limit" :placeholder="limit"  style="width: 65px" @change="handleSizeChange")
                el-option( v-for="item in [10,25,50]" :key="item" :label="item" :value="item" )
-               span.text-sm.text-neutral-400 {{ $t('notifications.entries') }}
+               span.text-sm(style="color: var(--text-muted)") {{ $t('notifications.entries') }}
            el-pagination( background style="direction:ltr"  :pager-count="4"  :page-count="pagintaion?.totalPages" v-model:current-page='currentPage' :page-size='limit'  layout=' prev, pager, next' :total='pagintaion?.totalItems' )
 </template>
 <script setup lang="ts">
@@ -53,18 +53,36 @@ async function getData() {
 
 let intervalId: any;
 
-onMounted(() => {
-    // Start the interval when the component is mounted
+const startPolling = () => {
+    if (intervalId) return;
     intervalId = setInterval(() => {
-        getData(); // Your function to fetch notifications
-    }, 15000); // 15 seconds in milliseconds
+        if (document.visibilityState === 'visible') {
+            getData();
+        }
+    }, 15000);
+};
+
+const stopPolling = () => {
+    if (intervalId) {
+        clearInterval(intervalId);
+        intervalId = null;
+    }
+};
+
+onMounted(() => {
+    startPolling();
+    document.addEventListener('visibilitychange', () => {
+        if (document.visibilityState === 'visible') {
+            getData();
+            startPolling();
+        } else {
+            stopPolling();
+        }
+    });
 });
 
 onBeforeUnmount(() => {
-    // Clear the interval when the component is unmounted to prevent memory leaks
-    if (intervalId) {
-        clearInterval(intervalId);
-    }
+    stopPolling();
 });
 
 const readNotifications = async () => {
@@ -104,12 +122,16 @@ watch(
 
 <style lang="scss" scoped>
 .notify {
-    border-bottom: 1px solid white;
+    border-bottom: 1px solid var(--border-default);
     border-radius: 24px;
     width: 70%;
     display: flex;
     flex-direction: column;
     padding: 10px;
+
+    @media screen and (max-width: 768px) {
+        width: 100%;
+    }
 }
 
 .item {
@@ -118,30 +140,27 @@ watch(
     width: 100%;
     overflow-y: auto;
     overflow-x: hidden;
-}
-
-.item:hover {
     cursor: pointer;
 }
 
 .item-data_UN_READ {
-    background-color: #f8f7fa;
+    background-color: var(--bg-hover);
     border-radius: 20px;
 }
 
 .item-data_READ {
-    background-color: #ffffff;
+    background-color: var(--bg-card);
     border-radius: 20px;
 }
 
 .icon_READ {
-    background-color: #f2edff;
+    background-color: rgba(120, 73, 255, 0.1);
     border-radius: 50%;
-    color: #6d42e8;
+    color: var(--accent-color);
 }
 
 .icon_UN_READ {
-    background-color: #fff8e7;
+    background-color: rgba(255, 183, 45, 0.1);
     border-radius: 50%;
     color: #ffb72d;
 }

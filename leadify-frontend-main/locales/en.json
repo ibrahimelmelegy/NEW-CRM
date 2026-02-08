@@ -145,7 +145,11 @@
         "invalidPhone": "Invalid phone number",
         "required": "This field is required",
         "emailOrPhoneRequired": "At least one of email or phone number is required",
-        "minLength": "Must be at least {min} characters"
+        "minLength": "Must be at least {min} characters",
+        "pageNotFound": "Page Not Found",
+        "pageNotFoundDesc": "The page you're looking for doesn't exist or has been moved.",
+        "goHome": "Go to Dashboard",
+        "goBack": "Go Back"
     },
     "crm": {
         "projectStatus": {
@@ -177,13 +181,31 @@
         }
     },
     "staff": {
+        "title": "Staff",
         "roles": "Roles",
         "rolesAccess": "Roles Access",
         "addNewRole": "Add New Role",
         "staffManagement": "Staff Management",
         "addNewStaff": "Add New Staff",
+        "newStaff": "New Staff",
         "qaCenter": "QA Command Center",
         "permissionsHub": "Permissions Hub",
+        "table": {
+            "staffName": "Staff Name",
+            "email": "Email",
+            "phone": "Phone",
+            "role": "Role",
+            "status": "Status",
+            "lastActivity": "Last Activity"
+        },
+        "actions": {
+            "view": "View",
+            "edit": "Edit",
+            "delete": "Delete",
+            "moveToArchive": "Move to Archive",
+            "deleteConfirm": "Are you sure you want to delete this staff?",
+            "deleteDescription": "It will be archived and can be restored later within 30 days."
+        },
         "form": {
             "fullName": "Full Name",
             "email": "Email",
@@ -198,12 +220,57 @@
         }
     },
     "reports": {
+        "title": "Reports",
         "settings": "Settings",
         "reports": "Reports",
         "report": "Report",
         "notifications": "Notifications",
         "integrations": "Integrations",
-        "auditLogs": "Audit Logs"
+        "auditLogs": "Audit Logs",
+        "tabs": {
+            "sales": "Sales",
+            "projects": "Projects",
+            "performance": "Performance"
+        }
+    },
+    "integrations": {
+        "title": "System Integrations",
+        "subtitle": "Manage system-wide API keys and real-time service connections.",
+        "google": {
+            "title": "Google Calendar",
+            "subtitle": "Direct bi-directional sync",
+            "clientId": "Client ID",
+            "clientIdPlaceholder": "Enter Google Client ID",
+            "clientSecret": "Client Secret",
+            "clientSecretPlaceholder": "Enter Google Client Secret"
+        },
+        "outlook": {
+            "title": "Outlook Calendar",
+            "subtitle": "Microsoft Graph API Sync",
+            "appId": "Application ID",
+            "appIdPlaceholder": "Enter Azure App ID",
+            "tenantId": "Directory (Tenant) ID",
+            "tenantIdPlaceholder": "Enter Tenant ID"
+        },
+        "whatsapp": {
+            "title": "WhatsApp Business",
+            "subtitle": "Automated messaging & notifications",
+            "phoneId": "Phone Number ID",
+            "phoneIdPlaceholder": "Enter Phone ID",
+            "accessToken": "Access Token",
+            "accessTokenPlaceholder": "Enter Permanent Access Token"
+        },
+        "openai": {
+            "title": "OpenAI Intelligence",
+            "subtitle": "Powers Lead Scoring & Summarizers",
+            "apiKey": "API Key",
+            "apiKeyPlaceholder": "sk-..."
+        },
+        "status": {
+            "connected": "Connected",
+            "disconnected": "Disconnected"
+        },
+        "saveAndTest": "Save & Test"
     },
     "forms": {
         "dragDrop": "Drag and drop file here or",

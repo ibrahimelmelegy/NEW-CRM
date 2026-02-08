@@ -10,10 +10,10 @@
       <div class="hidden md:flex flex-1 flex-col items-start space-y-8 animate-fade-in-left">
         <!-- ✅ FIX: Reliable theme-based logo switch -->
         <template v-if="themeStore.isLight">
-            <NuxtImg src="/images/Logo.png" alt="High Point CRM" format="webp" quality="80" class="h-16 w-auto drop-shadow-[0_0_15px_rgba(0,0,0,0.1)] transition-all duration-500" />
+            <NuxtImg src="/images/Logo.png" alt="Leadify CRM" format="webp" quality="80" class="h-16 w-auto drop-shadow-[0_0_15px_rgba(0,0,0,0.1)] transition-all duration-500" />
         </template>
         <template v-else>
-            <NuxtImg src="/images/light-logo.png" alt="High Point CRM" format="webp" quality="80" class="h-16 w-auto drop-shadow-[0_0_15px_rgba(255,255,255,0.3)] transition-all duration-500 light-logo-shadow" />
+            <NuxtImg src="/images/light-logo.png" alt="Leadify CRM" format="webp" quality="80" class="h-16 w-auto drop-shadow-[0_0_15px_rgba(255,255,255,0.3)] transition-all duration-500 light-logo-shadow" />
         </template>
         <div class="space-y-4">
           <h2 class="text-4xl lg:text-5xl font-bold leading-tight theme-text-primary">
@@ -173,16 +173,10 @@
   const onSubmit = handleSubmit(async (values: any) => {
     loading.value = true;
     try {
-      console.log("Attempting login...");
-      
-      // ✅ FIX: Using runtimeConfig instead of hardcoded URL
-      // ✅ FIX: Using runtimeConfig for clean architecture
       const response = await useApiFetch('auth/login', 'POST', {
         email: values.email,
         password: values.password,
       });
-
-      console.log("Login Response (Normalized):", response);
 
       if (response.success && response.body?.token) {
         const accessToken = useCookie("access_token");
@@ -194,14 +188,12 @@
           message: "Login Successful",
         });
         
-        // Force redirect
-        window.location.href = "/";
+        await router.push("/");
       } else {
         throw new Error(response.message || "Token not found in response");
       }
 
     } catch (error: any) {
-      console.error("Login Error:", error);
       ElNotification({
         title: "Error",
         type: "error",
@@ -250,7 +242,7 @@
   }
 
   // ✅ GLOBAL LIGHT THEME OVERRIDES (High specificity)
-  :global(body.light-theme) & {
+  :global(html.light-mode) & {
     .theme-text-primary, h1, h2, h3, .text-\[var\(--text-primary\)\] { color: #1a1a2e !important; }
     .theme-text-secondary, p, .text-\[var\(--text-secondary\)\] { color: #4a4a6a !important; }
     .theme-text-muted, label, span, .text-\[var\(--text-muted\)\], .text-white\/40, .text-white\/60 { color: #6a6a8a !important; opacity: 1 !important; }
@@ -280,21 +272,9 @@
     }
   }
 
-  .theme-text-primary { color: #FFFFFF !important; }
-  .theme-text-secondary { color: #F3E8FF !important; }
-  .theme-text-muted { color: #D8B4FE !important; }
-
-  :global(body.light-theme) & {
-    .theme-text-primary { color: #1a1a2e !important; }
-    .theme-text-secondary { color: #4a4a6a !important; }
-    .theme-text-muted { color: #6a6a8a !important; }
-
-    .glass-card-premium {
-      background: rgba(255, 255, 255, 0.7);
-      border-color: rgba(120, 73, 255, 0.2);
-      box-shadow: 0 10px 40px -10px rgba(120, 73, 255, 0.15);
-    }
-  }
+  .theme-text-primary { color: var(--text-primary) !important; }
+  .theme-text-secondary { color: var(--text-secondary) !important; }
+  .theme-text-muted { color: var(--text-muted) !important; }
 
   .glass-card-premium {
     backdrop-filter: blur(15px);
@@ -322,7 +302,7 @@
         box-shadow: 0 0 0 4px rgba(120, 73, 255, 0.1) !important;
       }
 
-      :global(body.light-theme) & {
+      :global(html.light-mode) & {
         background-color: rgba(255, 255, 255, 0.95) !important;
         border-color: rgba(120, 73, 255, 0.4) !important;
         
@@ -367,7 +347,7 @@
       border-color: rgba(255, 255, 255, 0.1) !important;
       border-radius: 6px;
 
-      :global(body.light-mode) & {
+      :global(html.light-mode) & {
         background-color: rgba(0, 0, 0, 0.05) !important;
         border-color: rgba(0, 0, 0, 0.1) !important;
       }

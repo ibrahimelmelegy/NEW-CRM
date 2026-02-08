@@ -2,10 +2,10 @@
   div
     //- Header
     .flex.items-center.justify-between.mb-8
-      .title.font-bold.text-2xl.mb-1.capitalize Staff
+      .title.font-bold.text-2xl.mb-1.capitalize {{ $t('staff.title') }}
       .flex.items-center.gap-x-3
         NuxtLink(to="/staff/add-staff")
-          el-button(size='large' :loading="loading" v-if="hasPermission('CREATE_STAFF')" native-type="submit" type="primary" :icon="Plus" class="w-full !my-4 !rounded-2xl")  New Staff
+          el-button(size='large' :loading="loading" v-if="hasPermission('CREATE_STAFF')" native-type="submit" type="primary" :icon="Plus" class="w-full !my-4 !rounded-2xl") {{ $t('staff.newStaff') }}
 
     AppTable(v-slot="{data}" :filterOptions="filterOptions" :columns="table.columns" position="users" :pageInfo="response.pagination" :data="table.data" :sortOptions="table.sort" @handleRowClick="handleRowClick" searchPlaceholder="staff" :loading="loadingAction" )
       .flex.items-center.py-2(@click.stop)
@@ -18,22 +18,19 @@
                       el-dropdown-item
                         NuxtLink.flex.items-center(:to="`/staff/${data?.id}`")
                           Icon.text-md.mr-2(name="IconEye" )
-                          p.text-sm View
+                          p.text-sm {{ $t('common.view') }}
                       el-dropdown-item(v-if="hasPermission('EDIT_STAFF') && data?.id !== 1" )
                         NuxtLink.flex.items-center(:to="`/staff/edit/${data?.id}`")
                           Icon.text-md.mr-2(name="IconEdit" )
-                          p.text-sm Edit
-                      //- el-dropdown-item(@click="[deleteStaffPopup=true, staffActionId = data?.id]" )
-                      //-     .flex.items-center
-                      //-       Icon.text-md.mr-2(name="IconDelete" )
-                      //-       p.text-sm Delete
+                          p.text-sm {{ $t('common.edit') }}
 
-    ActionModel(v-model="deleteStaffPopup" :loading="loadingAction" @confirm="deleteStaffAction()" btn-text="Move to Archive" description-one="Are you sure you want to delete this staff?" icon="/images/delete-image.png" description-two="It will be archived and can be restored later within 30 days." )
+    ActionModel(v-model="deleteStaffPopup" :loading="loadingAction" @confirm="deleteStaffAction()" :btn-text="$t('staff.actions.moveToArchive')" :description-one="$t('staff.actions.deleteConfirm')" icon="/images/delete-image.png" :description-two="$t('staff.actions.deleteDescription')" )
 </template>
 
 <script setup lang="ts">
   import { Plus } from "@element-plus/icons-vue";
   const { hasPermission } = await usePermissions();
+  const { t } = useI18n();
   const router = useRouter();
   const loadingAction = ref(false);
   const deleteStaffPopup = ref(false);
@@ -43,7 +40,7 @@
     columns: [
       {
         prop: "staffDetails",
-        label: "Staff Name",
+        label: t('staff.table.staffName'),
         component: "AvatarText",
         sortable: true,
         type: "font-bold",
@@ -51,7 +48,7 @@
       },
       {
         prop: "email",
-        label: "Email",
+        label: t('staff.table.email'),
         component: "Text",
         sortable: true,
         type: "font-default",
@@ -59,7 +56,7 @@
       },
       {
         prop: "phone",
-        label: "Phone",
+        label: t('staff.table.phone'),
         component: "Text",
         sortable: false,
         type: "font-default",
@@ -67,7 +64,7 @@
       },
       {
         prop: "roleDetails",
-        label: "Role",
+        label: t('staff.table.role'),
         component: "Text",
         sortable: false,
         type: "font-default",
@@ -75,7 +72,7 @@
       },
       {
         prop: "status",
-        label: "Status",
+        label: t('staff.table.status'),
         component: "Label",
         sortable: true,
         type: "outline",
@@ -87,7 +84,7 @@
       },
       {
         prop: "updatedAt",
-        label: "Last Activity",
+        label: t('staff.table.lastActivity'),
         component: "Text",
         sortable: false,
         type: "font-default",
@@ -95,12 +92,6 @@
       },
     ],
     data: [] as Staff[],
-    // sort: [
-    //   { prop: 'price', order: 'ascending', value: 'PRICE_ASC' },
-    //   { prop: 'price', order: 'descending', value: 'PRICE_DESC' },
-    //   { prop: 'identity', order: 'ascending', value: 'IDENTITY_ASC' },
-    //   { prop: 'identity', order: 'descending', value: 'IDENTITY_DESC' },
-    // ],
   });
 
   // Call API to Get the staff
@@ -136,12 +127,12 @@
 
   const filterOptions = [
     {
-      title: "Status",
+      title: t('staff.table.status'),
       value: "status",
       options: [...staffStatuses],
     },
     {
-      title: "Role",
+      title: t('staff.table.role'),
       value: "roleId",
       options: mappedRoles.value,
     },

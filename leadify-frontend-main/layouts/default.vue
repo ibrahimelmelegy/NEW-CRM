@@ -78,23 +78,23 @@ const notificationResponse = await useTableFilter("notification");
 function toggleDropdown(val: boolean) {
   showDropdown.value = val;
 }
-onMounted(() => {
-  window.addEventListener("scroll", handleScroll);
-});
-
-onUnmounted(() => {
-  window.removeEventListener("scroll", handleScroll);
-});
-
 const handleScroll = () => {
   showNavbar.value = window.scrollY > 10;
 };
 
-if (process.client) {
-  window.addEventListener("click", () => {
-    showDropdown.value = false;
-  });
-}
+const handleClickOutside = () => {
+  showDropdown.value = false;
+};
+
+onMounted(() => {
+  window.addEventListener("scroll", handleScroll);
+  window.addEventListener("click", handleClickOutside);
+});
+
+onUnmounted(() => {
+  window.removeEventListener("scroll", handleScroll);
+  window.removeEventListener("click", handleClickOutside);
+});
 
 const mykey = ref("1");
 
@@ -204,19 +204,19 @@ const getPath = (routeSegment: any) => {
   z-index: 3;
 
   bottom: 38px;
-  left: 260px;
+  inset-inline-start: 260px;
   transition: all 0.2s ease-in;
   &.margined {
-    left: 0px;
+    inset-inline-start: 0px;
   }
 }
 #allTheNav {
   position: relative;
-  left: 0;
+  inset-inline-start: 0;
   .nav {
     top: 0;
     z-index: 100;
-    left: 0;
+    inset-inline-start: 0;
     position: fixed;
     padding-bottom: 3rem;
   }
@@ -226,9 +226,9 @@ const getPath = (routeSegment: any) => {
   width: 100%;
   transition: all 0.2s ease-in;
   top: 0;
-  left: 0;
-  
-  // 💎 Glassmorphism
+  inset-inline-start: 0;
+
+  // Glassmorphism
   background: var(--glass-bg-primary);
   backdrop-filter: var(--glass-blur);
   -webkit-backdrop-filter: var(--glass-blur);
@@ -243,8 +243,7 @@ const getPath = (routeSegment: any) => {
     padding: 2rem;
     z-index: 1000;
     border-radius: 0px 0 50px 0px;
-    left: 0;
-    // width: calc(100% + 5px);
+    inset-inline-start: 0;
     top: 0;
     width: 100%;
   }
@@ -256,15 +255,15 @@ const getPath = (routeSegment: any) => {
   border-radius: 50%;
 }
 .marginedStart {
-  margin-left: 260px;
+  margin-inline-start: 260px;
   width: calc(100% - 260px);
 }
 .collapseMargin {
-  margin-left: 105px;
+  margin-inline-start: 105px;
   width: calc(100% - 105px) !important;
 }
 .notMargined {
-  margin-left: 0px;
+  margin-inline-start: 0px;
   width: 100% !important;
 }
 .background-overlay {

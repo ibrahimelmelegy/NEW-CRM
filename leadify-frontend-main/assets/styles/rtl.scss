@@ -1,43 +1,34 @@
 /* -------------------------------------------------------------------------- */
-/* RTL Support (Right to Left) for Arabic                                     */
+/* RTL Support (Right to Left) for Arabic                                     */
 /* -------------------------------------------------------------------------- */
 [dir='rtl'] {
 
   /* --- 1. Layout & Sidebar --- */
-  #allTheNav {
-    .nav {
-      left: auto !important;
-      right: 0;
-    }
-  }
+  /* Note: .marginedStart, .collapseMargin, #allTheNav .nav now use
+     logical properties (margin-inline-start, inset-inline-start) in
+     default.vue, so they auto-adapt to RTL without overrides. */
 
   .ql-editor {
     text-align: right !important;
   }
 
   .marginedStart {
-    margin-left: 0 !important;
-    margin-right: 260px !important;
-
     .endBar {
-      padding-right: calc(260px + 2rem) !important;
-      padding-left: 2rem !important;
+      padding-inline-start: calc(260px + 2rem) !important;
+      padding-inline-end: 2rem !important;
     }
   }
 
   .collapseMargin {
-    margin-left: 0 !important;
-    margin-right: 80px !important;
-
     .endBar {
-      padding-right: calc(80px + 2rem) !important;
-      padding-left: 2rem !important;
+      padding-inline-start: calc(80px + 2rem) !important;
+      padding-inline-end: 2rem !important;
     }
   }
 
   /* --- 2. Custom Components --- */
   .vue-tel-input {
-    direction: ltr !important; // الأرقام دائماً LTR
+    direction: ltr !important;
 
     .vti__input {
       padding-right: 24px;
@@ -52,10 +43,9 @@
 
   /* --- 3. Element Plus Overrides --- */
 
-  // القوائم الجانبية
   .el-menu.el-menu-vertical-demo {
-    // ✅ تحديث: استخدام لون الحدود الخاص بالثيم
     border-left: solid 1px var(--border-stroke);
+    border-right: none;
     padding-left: 0 !important;
     padding-right: 7px;
 
@@ -63,7 +53,7 @@
       left: var(--el-menu-base-level-padding);
       right: auto !important;
       margin-left: 0 !important;
-      transform: rotate(90deg); // تدوير السهم ليناسب الاتجاه
+      transform: rotate(90deg);
     }
 
     .el-sub-menu__title {
@@ -72,19 +62,16 @@
     }
   }
 
-  // الأسهم في القوائم المنسدلة (Collapse)
   .el-collapse-item__arrow {
     margin: 0 auto 0 8px !important;
-    transform: rotate(90deg); // تعديل الزاوية
+    transform: rotate(90deg);
   }
 
-  // المسافات بين الأزرار
   .el-button+.el-button {
     margin-left: 0 !important;
     margin-right: 12px !important;
   }
 
-  // التبويبات (Tabs)
   .el-tabs__item {
     &.is-top:nth-child(2) {
       padding-right: 0px !important;
@@ -94,7 +81,6 @@
     padding: 0 20px !important;
   }
 
-  // زر إغلاق النوافذ المنبثقة (Dialog Close X)
   .el-dialog__headerbtn {
     right: auto !important;
     left: 20px !important;
@@ -102,31 +88,29 @@
 
   /* --- 4. Forms & Inputs --- */
 
-  // مجموعات الإدخال (Append/Prepend) - عكس الكورنرز
   .el-input-group__append {
-    border-top-left-radius: var(--el-input-border-radius) !important;
-    border-bottom-left-radius: var(--el-input-border-radius) !important;
-    border-top-right-radius: 0;
-    border-bottom-right-radius: 0;
-    border-left: none; // إزالة الحدود المتداخلة
+    border-start-start-radius: var(--el-input-border-radius) !important;
+    border-end-start-radius: var(--el-input-border-radius) !important;
+    border-start-end-radius: 0;
+    border-end-end-radius: 0;
+    border-inline-start: none;
   }
 
   .el-input-group--append>.el-input__wrapper {
-    border-top-right-radius: var(--el-input-border-radius) !important;
-    border-bottom-right-radius: var(--el-input-border-radius) !important;
-    border-top-left-radius: 0 !important;
-    border-bottom-left-radius: 0 !important;
+    border-start-end-radius: var(--el-input-border-radius) !important;
+    border-end-end-radius: var(--el-input-border-radius) !important;
+    border-start-start-radius: 0 !important;
+    border-end-start-radius: 0 !important;
   }
 
-  // القوائم (Checkbox / Radio)
   .el-checkbox__label {
-    padding-right: 8px !important;
-    padding-left: 0 !important;
+    padding-inline-start: 8px !important;
+    padding-inline-end: 0 !important;
   }
 
   .el-input__prefix-inner> :last-child {
-    margin-left: 8px !important;
-    margin-right: 0 !important;
+    margin-inline-end: 8px !important;
+    margin-inline-start: 0 !important;
   }
 
   .el-radio {
@@ -135,8 +119,8 @@
   }
 
   .el-radio__label {
-    padding-right: 8px !important;
-    padding-left: 0 !important;
+    padding-inline-start: 8px !important;
+    padding-inline-end: 0 !important;
   }
 
   .el-form-item__error {
@@ -149,7 +133,6 @@
     text-align: right;
   }
 
-  // التاجز (Tags) - عكس مكان زر الإغلاق
   .el-tag {
     padding-left: 5px !important;
     padding-right: 9px !important;
@@ -160,7 +143,6 @@
     }
   }
 
-  // قوائم الرفع (Upload List)
   .el-upload-list__item-status-label,
   .el-upload-list__item .el-icon--close {
     right: auto !important;
@@ -172,7 +154,6 @@
     margin-left: 6px !important;
   }
 
-  // رفع الصور (Picture Card)
   .list-upload {
     .el-upload-list--picture-card .el-upload-list__item {
       margin-left: 8px !important;

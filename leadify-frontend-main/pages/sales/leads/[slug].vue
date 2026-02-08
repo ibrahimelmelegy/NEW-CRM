@@ -26,63 +26,63 @@
         .flex-1.glass-card.p-10.rounded-3xl
           .flex.align-center.gap-3(class="flex-col md:flex-row")
             div
-              h4.text-2xl.font-semibold.mb-2.text-neutral-900.flex.items-center.gap-x-3 {{ lead?.name }} #[span.border.rounded-xl.text-xs.px-2(:class="`label-outline-${getStatusColor(lead?.status)}`") {{ formatSnakeCase(lead?.status) }}]
-              p.text-neutral-600 {{ lead?.companyName }}
+              h4.text-2xl.font-semibold.mb-2.flex.items-center.gap-x-3(style="color: var(--text-primary)") {{ lead?.name }} #[span.border.rounded-xl.text-xs.px-2(:class="`label-outline-${getStatusColor(lead?.status)}`") {{ formatSnakeCase(lead?.status) }}]
+              p(style="color: var(--text-secondary)") {{ lead?.companyName }}
             .flex.flex-col.items-center.justify-center.ml-auto
               el-progress(type="dashboard" :percentage="lead?.score || 0" :color="scoreColors" :width="80")
                 template(#default="{ percentage }")
-                  span.text-xs.font-medium.text-neutral-500 {{ $t('leads.info.score') }}
+                  span.text-xs.font-medium(style="color: var(--text-muted)") {{ $t('leads.info.score') }}
                   br
-                  span.text-xl.font-bold {{ percentage }}
+                  span.text-xl.font-bold(style="color: var(--text-primary)") {{ percentage }}
           .mt-8
-            p.text-neutral-900.font-semibold.mb-6.text-lg {{ $t('common.info') }}
+            p.font-semibold.mb-6.text-lg(style="color: var(--text-primary)") {{ $t('common.info') }}
             .grid.gap-4(class="md:grid-cols-2 grid-cols-1")
               div(v-if="lead?.email")
-                .text-neutral-400.font-medium.mb-2.flex.items-center
+                .font-medium.mb-2.flex.items-center(style="color: var(--text-muted)")
                   Icon(name="IconEmail" size="20" class="mr-2")
                   p {{ $t('leads.info.email') }}
-                p.text-neutral-800.mb-2 {{ lead?.email }}
-                el-button(type="primary" size="small" :loading="aiLoading" @click="generateAiEmail") 
+                p.mb-2(style="color: var(--text-primary)") {{ lead?.email }}
+                el-button(type="primary" size="small" :loading="aiLoading" @click="generateAiEmail")
                   Icon.mr-1(name="ph:magic-wand" size="16")
                   | {{ $t('leads.aiCompose') }}
               div(v-if="lead?.phone")
-                .text-neutral-400.font-medium.mb-2.flex.items-center
+                .font-medium.mb-2.flex.items-center(style="color: var(--text-muted)")
                   Icon(name="IconPhone" size="20" class="mr-2")
                   p {{ $t('leads.info.phone') }}
-                p.text-neutral-800.mb-2 {{ lead?.phone }}
+                p.mb-2(style="color: var(--text-primary)") {{ lead?.phone }}
               div(v-if="lead?.users?.length")
-                .text-neutral-400.font-medium.mb-2.flex.items-center
+                .font-medium.mb-2.flex.items-center(style="color: var(--text-muted)")
                   Icon(name="IconAssign" size="20" class="mr-2")
                   p {{ $t('leads.info.assign') }}
-                p.text-neutral-800.mb-2 {{ lead?.users?.map((u: any) => u.name).join(', ') }}
+                p.mb-2(style="color: var(--text-primary)") {{ lead?.users?.map((u: any) => u.name).join(', ') }}
               div
-                .text-neutral-400.font-medium.mb-2.flex.items-center
+                .font-medium.mb-2.flex.items-center(style="color: var(--text-muted)")
                   Icon(name="IconSource" size="20" class="mr-2")
                   p {{ $t('leads.info.leadSource') }}
-                p.text-neutral-800.mb-2 {{ formatSnakeCase(lead?.leadSource) }}
+                p.mb-2(style="color: var(--text-primary)") {{ formatSnakeCase(lead?.leadSource) }}
               div(v-if="lead?.otherSource")
-                .text-neutral-400.font-medium.mb-2.flex.items-center
+                .font-medium.mb-2.flex.items-center(style="color: var(--text-muted)")
                   Icon(name="IconSource" size="20" class="mr-2")
                   p {{ $t('leads.info.otherSource') }}
-                p.text-neutral-800.mb-2 {{ lead?.otherSource }}
+                p.mb-2(style="color: var(--text-primary)") {{ lead?.otherSource }}
               div
-                .text-neutral-400.font-medium.mb-2.flex.items-center
+                .font-medium.mb-2.flex.items-center(style="color: var(--text-muted)")
                   Icon(name="IconCalendar" size="20" class="mr-2")
                   p {{ $t('leads.info.created') }}
-                p.text-neutral-800.mb-2 {{ formatDate(lead?.createdAt) }}
+                p.mb-2(style="color: var(--text-primary)") {{ formatDate(lead?.createdAt) }}
               div
-                .text-neutral-400.font-medium.mb-2.flex.items-center
+                .font-medium.mb-2.flex.items-center(style="color: var(--text-muted)")
                   Icon(name="IconCalendar" size="20" class="mr-2")
                   p {{ $t('leads.info.lastContact') }}
-                p.text-neutral-800.mb-2 {{ formatDate(lead?.lastContactDate) }}
+                p.mb-2(style="color: var(--text-primary)") {{ formatDate(lead?.lastContactDate) }}
         .flex-1.glass-card.p-10.rounded-3xl(v-if="lead?.notes")
           .flex.items-center.gap-2.mb-4
-            .flex.items-center.justify-center.w-10.h-10.rounded-full.bg-secondary-turquoise-50: Icon.text-secondary-turquoise-700(name="IconNote" size="24")
-            h4.text-lg.font-semibold.text-neutral-900 {{ $t('leads.notes') }}
+            .flex.items-center.justify-center.w-10.h-10.rounded-full(style="background-color: rgba(120, 73, 255, 0.1)"): Icon(name="IconNote" size="24" style="color: var(--accent-color)")
+            h4.text-lg.font-semibold(style="color: var(--text-primary)") {{ $t('leads.notes') }}
             el-button.ml-auto(type="info" size="small" plain @click="showSummarizer = true")
               Icon.mr-1(name="ph:article-bold" size="16")
               | {{ $t('leads.aiSummarize') }}
-          p.text-neutral-800.leading-relaxed {{ lead?.notes }}
+          p.leading-relaxed(style="color: var(--text-primary)") {{ lead?.notes }}
 
     el-tab-pane(:label="$t('leads.activity')" name="activity")
       .mt-6
