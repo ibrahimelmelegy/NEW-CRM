@@ -1,5 +1,7 @@
 import dotenv from 'dotenv';
 dotenv.config();
+import { validateEnvironment } from './config/validateEnv';
+validateEnvironment();
 import app from './app';
 import { sequelize } from './config/db';
 import { Sequelize } from 'sequelize-typescript';

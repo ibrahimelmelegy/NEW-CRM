@@ -1,5 +1,6 @@
 import jwt from 'jsonwebtoken';
 import bcrypt from 'bcryptjs';
+import { verifySync } from 'otplib';
 import { Request, Response, NextFunction } from 'express';
 import { Op } from 'sequelize';
 import nodemailer from 'nodemailer';
@@ -64,6 +65,30 @@ export const loginUser = async (req: Request, res: Response, next: NextFunction)
       await LoginFailure.create({ email, reason: 'Invalid credentials' });
       res.status(401).json({ message: 'Invalid credentials' });
       return;
+    }
+
+    // Check if 2FA is enabled for this user
+    if (user.twoFactorEnabled && user.twoFactorSecret) {
+      const { twoFactorCode } = req.body;
+
+      if (!twoFactorCode) {
+        // Password correct but 2FA required - don't issue token yet
+        res.status(206).json({
+          message: '2FA verification required',
+          requires2FA: true,
+          email: user.email
+        });
+        return;
+      }
+
+      // Verify the 2FA code
+      const result2FA = verifySync({ token: twoFactorCode, secret: user.twoFactorSecret });
+      const is2FAValid = result2FA.valid;
+      if (!is2FAValid) {
+        await LoginFailure.create({ email, reason: 'Invalid 2FA code' });
+        res.status(401).json({ message: 'Invalid 2FA code' });
+        return;
+      }
     }
 
     const token = jwt.sign({ id: user.id }, SECRET_KEY, { expiresIn: process.env.JWT_EXPIRATION_TIME || ('7d' as any) });

@@ -48,6 +48,13 @@ class User extends Model {
   @Column({ type: DataType.TEXT, allowNull: true })
   profilePicture?: string;
 
+  @Default(false)
+  @Column({ type: DataType.BOOLEAN, allowNull: false, defaultValue: false })
+  public twoFactorEnabled!: boolean;
+
+  @Column({ type: DataType.STRING, allowNull: true })
+  public twoFactorSecret?: string;
+
   @ForeignKey(() => Role)
   @Column({ type: DataType.UUID, allowNull: false })
   public roleId!: string;
@@ -66,7 +73,8 @@ class User extends Model {
   // Override toJSON to exclude the password field
   public toJSON(): Record<string, unknown> {
     const userInstance = { ...this.get() };
-    delete userInstance.password; // Remove password before returning JSON
+    delete userInstance.password;
+    delete userInstance.twoFactorSecret;
     return userInstance;
   }
 }

@@ -1,6 +1,7 @@
 import express, { Request, Response, NextFunction } from 'express';
 import { loginUser, logoutUser, forgotPassword, resetPassword, checkResetToken, getUserProfile } from './authController';
 import { authenticateUser } from '../middleware/authMiddleware';
+import { setup2FA, verify2FA, disable2FA, validateLoginCode } from './twoFactorController';
 
 const router = express.Router();
 
@@ -178,5 +179,104 @@ router.post('/reset-password', resetPassword);
  */
 // Route to verify the reset token (optional for frontend validation)
 router.post('/check-reset-token', checkResetToken);
+
+/**
+ * @swagger
+ * /api/auth/2fa/setup:
+ *   post:
+ *     summary: Setup 2FA
+ *     description: Generates a TOTP secret and QR code for the authenticated user.
+ *     tags: [Two-Factor Authentication]
+ *     security:
+ *       - bearerAuth: []
+ *     responses:
+ *       200:
+ *         description: 2FA setup initiated, returns QR code and secret
+ *       400:
+ *         description: 2FA already enabled
+ *       401:
+ *         description: Unauthorized
+ */
+router.post('/2fa/setup', authenticateUser, setup2FA);
+
+/**
+ * @swagger
+ * /api/auth/2fa/verify:
+ *   post:
+ *     summary: Verify and enable 2FA
+ *     description: Verifies a TOTP code and enables 2FA for the authenticated user.
+ *     tags: [Two-Factor Authentication]
+ *     security:
+ *       - bearerAuth: []
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             properties:
+ *               code:
+ *                 type: string
+ *                 description: The 6-digit TOTP code from the authenticator app
+ *     responses:
+ *       200:
+ *         description: 2FA enabled successfully
+ *       400:
+ *         description: Invalid code or 2FA not set up
+ */
+router.post('/2fa/verify', authenticateUser, verify2FA);
+
+/**
+ * @swagger
+ * /api/auth/2fa/disable:
+ *   post:
+ *     summary: Disable 2FA
+ *     description: Disables 2FA for the authenticated user after verifying a current TOTP code.
+ *     tags: [Two-Factor Authentication]
+ *     security:
+ *       - bearerAuth: []
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             properties:
+ *               code:
+ *                 type: string
+ *                 description: Current 6-digit TOTP code to confirm disable
+ *     responses:
+ *       200:
+ *         description: 2FA disabled successfully
+ *       400:
+ *         description: Invalid code or 2FA not enabled
+ */
+router.post('/2fa/disable', authenticateUser, disable2FA);
+
+/**
+ * @swagger
+ * /api/auth/2fa/validate:
+ *   post:
+ *     summary: Validate 2FA code during login
+ *     description: Validates a TOTP code during the login process (when 2FA is enabled).
+ *     tags: [Two-Factor Authentication]
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             properties:
+ *               email:
+ *                 type: string
+ *               code:
+ *                 type: string
+ *     responses:
+ *       200:
+ *         description: 2FA code is valid
+ *       400:
+ *         description: Invalid code
+ */
+router.post('/2fa/validate', validateLoginCode);
 
 export default router;
