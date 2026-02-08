@@ -138,6 +138,23 @@
         "newPassword": "كلمة المرور الجديدة",
         "resetSuccess": "تم تغيير كلمة المرور بنجاح"
     },
+    "ai": {
+        "assistant": "المساعد الذكي",
+        "onlineReady": "متصل وجاهز",
+        "askPlaceholder": "اسألني أي شيء...",
+        "welcomeMessage": "مرحباً! أنا مساعد CRM الخاص بك. كيف يمكنني مساعدتك اليوم؟",
+        "connectionError": "عذراً، أواجه مشكلة في الاتصال. يرجى المحاولة مرة أخرى."
+    },
+    "spotlight": {
+        "searchPlaceholder": "ابحث عن صفحات أو إجراءات أو اكتب أمر...",
+        "pages": "الصفحات",
+        "quickActions": "إجراءات سريعة",
+        "noResults": "لا توجد نتائج لـ",
+        "trySearching": "حاول البحث عن صفحات أو إجراءات",
+        "toNavigate": "للتنقل",
+        "toSelect": "للاختيار",
+        "toOpen": "لفتح"
+    },
     "validation": {
         "required": "حقل {field} مطلوب",
         "email": "الرجاء إدخال بريد إلكتروني صالح",
@@ -462,6 +479,7 @@
         "title": "العملاء المحتملين",
         "newLead": "عميل جديد",
         "createTitle": "إنشاء عميل محتمل",
+        "createSuccess": "تم إنشاء العميل المحتمل بنجاح",
         "import": "استيراد",
         "export": "تصدير",
         "view": "عرض",

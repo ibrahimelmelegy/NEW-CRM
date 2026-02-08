@@ -42,7 +42,7 @@
                                         el-dropdown-menu.glass-dropdown
                                             el-dropdown-item(v-for="(tag, i) in (scope.row[column?.prop] || []).slice(2)" :key="i") {{ tag }}
 
-            el-table-column(label="Action" min-width="150" fixed="right" v-if="!withoutAction")
+            el-table-column(:label="$t('common.action')" min-width="150" fixed="right" v-if="!withoutAction")
               template(#default="scope")
                   slot(:data="scope.row")
             template(#empty style="text-align: center; padding: 20px;")

@@ -3,26 +3,26 @@
   //- Floating Button
   button.floating-chat-btn(@click="isOpen = !isOpen" class="premium-btn glow-purple")
     Icon(:name="isOpen ? 'ph:x-bold' : 'ph:sparkle-bold'" size="28")
-  
+
   //- Chat Window
   transition(name="slide-up")
     .chat-window.glass-card(v-show="isOpen")
       .chat-header.p-4.flex.items-center.gap-3
         .assistant-avatar.bg-indigo-500: Icon(name="ph:robot-bold" size="24" class="text-white")
         div
-          h4.font-bold AI Assistant
+          h4.font-bold {{ $t('ai.assistant') }}
           p(class="text-[10px] text-emerald-500 flex items-center")
             span.w-1.h-1.bg-emerald-500.rounded-full.mr-1
-            | Online & Ready
-            
+            | {{ $t('ai.onlineReady') }}
+
       .chat-messages.p-4.flex.flex-col.gap-3(ref="msgContainer")
         .message(v-for="(msg, i) in messages" :key="i" :class="msg.role")
           .msg-bubble.p-3.rounded-2xl.text-sm {{ msg.content }}
-          
-      .chat-input.p-4.border-t.border-white.border-opacity-10
+
+      .chat-input.p-4(style="border-top: 1px solid var(--border-default)")
         el-input(
-          v-model="input" 
-          placeholder="Ask me anything..." 
+          v-model="input"
+          :placeholder="$t('ai.askPlaceholder')"
           @keyup.enter="sendMessage"
           :disabled="loading"
           class="glass-input"
@@ -32,32 +32,33 @@
 </template>
 
 <script setup lang="ts">
+const { t } = useI18n();
 const isOpen = ref(false);
 const input = ref('');
 const loading = ref(false);
 const messages = ref([
-  { role: 'assistant', content: 'Hello! I am your CRM assistant. How can I help you today?' }
+  { role: 'assistant', content: t('ai.welcomeMessage') }
 ]);
 
 const sendMessage = async () => {
   if (!input.value || loading.value) return;
-  
+
   const userMsg = input.value;
   messages.value.push({ role: 'user', content: userMsg });
   input.value = '';
   loading.value = true;
-  
+
   try {
     const response: any = await useApiFetch('ai/generate-email', 'POST', {
       prompt: `Act as a CRM Assistant. Answer based on CRM context. Question: ${userMsg}`,
       context: { source: 'chatbot' }
     });
-    
+
     if (response.success) {
       messages.value.push({ role: 'assistant', content: response.data });
     }
   } catch (e) {
-    messages.value.push({ role: 'assistant', content: 'Sorry, I am having trouble connecting to my brain.' });
+    messages.value.push({ role: 'assistant', content: t('ai.connectionError') });
   } finally {
     loading.value = false;
   }
@@ -68,7 +69,7 @@ const sendMessage = async () => {
 .ai-chatbot-container {
   position: fixed;
   bottom: 30px;
-  right: 30px;
+  inset-inline-end: 30px;
   z-index: 9999;
 }
 
@@ -85,7 +86,7 @@ const sendMessage = async () => {
 .chat-window {
   position: absolute;
   bottom: 80px;
-  right: 0;
+  inset-inline-end: 0;
   width: 350px;
   height: 500px;
   display: flex;
@@ -97,16 +98,16 @@ const sendMessage = async () => {
 .chat-messages {
   flex: 1;
   overflow-y: auto;
-  
+
   .message {
     max-width: 85%;
-    &.user { 
-      align-self: flex-end; 
-      .msg-bubble { background: var(--primary-color); color: white; border-bottom-right-radius: 4px; }
+    &.user {
+      align-self: flex-end;
+      .msg-bubble { background: var(--accent-color); color: white; border-bottom-right-radius: 4px; }
     }
-    &.assistant { 
-      align-self: flex-start; 
-      .msg-bubble { background: rgba(255,255,255,0.05); color: rgba(255,255,255,0.9); border-bottom-left-radius: 4px; }
+    &.assistant {
+      align-self: flex-start;
+      .msg-bubble { background: var(--bg-card-hover); color: var(--text-primary); border-bottom-left-radius: 4px; }
     }
   }
 }

@@ -41,83 +41,83 @@ el-tabs.demo-tabs(v-model="activeName", @tab-click="handleClick")
         .flex.align-center.gap-3(class="flex-col md:flex-row")
           //- Avatar(src="/images/avatar.png")
           div
-            h4.text-2xl.font-semibold.mb-2.text-neutral-900.flex.items-center.gap-x-3 {{opportunity?.name}}
-            p.text-neutral-600 {{lead?.companyName}}
+            h4.text-2xl.font-semibold.mb-2.flex.items-center.gap-x-3(style="color: var(--text-primary)") {{opportunity?.name}}
+            p(style="color: var(--text-secondary)") {{lead?.companyName}}
         .mt-8
-          p.text-neutral-900.font-semibold.mb-6.text-lg {{ $t('common.info') }}
+          p.font-semibold.mb-6.text-lg(style="color: var(--text-primary)") {{ $t('common.info') }}
           .grid.gap-4(class="md:grid-cols-2 grid-cols-1")
-            NuxtLink.text-neutral-400(v-if="lead?.id" :to="`/sales/leads/${lead?.id}`")
+            NuxtLink(v-if="lead?.id" style="color: var(--text-muted)" :to="`/sales/leads/${lead?.id}`")
               .font-medium.mb-2.flex.items-center
                 Icon(name="IconAssign" size="20" class="mr-2")
                 p {{ $t('opportunities.info.leadName') }}
               p.mb-2.underline.text-primary-purple-500 {{lead?.name}}
             div(v-if="lead?.email")
-              .text-neutral-400.font-medium.mb-2.flex.items-center
+              .font-medium.mb-2.flex.items-center(style="color: var(--text-muted)")
                 Icon(name="IconEmail" size="20" class="mr-2")
                 p {{ $t('leads.info.email') }}
-              p.text-neutral-800.mb-2 {{lead?.email}}
+              p.mb-2(style="color: var(--text-primary)") {{lead?.email}}
             div(v-if="lead?.phone")
-              .text-neutral-400.font-medium.mb-2.flex.items-center
+              .font-medium.mb-2.flex.items-center(style="color: var(--text-muted)")
                 Icon(name="IconPhone" size="20" class="mr-2")
                 p {{ $t('leads.info.phone') }}
-              p.text-neutral-800.mb-2 {{lead?.phone}}
+              p.mb-2(style="color: var(--text-primary)") {{lead?.phone}}
             div(v-if="opportunity?.users?.length")
-              .text-neutral-400.font-medium.mb-2.flex.items-center
+              .font-medium.mb-2.flex.items-center(style="color: var(--text-muted)")
                 Icon(name="IconAssign" size="20" class="mr-2")
                 p {{ $t('opportunities.table.assigned') }}
-              p.text-neutral-800.mb-2 {{opportunity?.users?.map((user) => user.name).join(', ')}}
+              p.mb-2(style="color: var(--text-primary)") {{opportunity?.users?.map((user) => user.name).join(', ')}}
             div(v-if="opportunity?.interestedIn")
-              .text-neutral-400.font-medium.mb-2.flex.items-center
+              .font-medium.mb-2.flex.items-center(style="color: var(--text-muted)")
                 Icon(name="tabler:category-2" size="20" class="mr-2")
                 p {{ $t('opportunities.info.products') }}
-              p.text-neutral-800.mb-2 {{opportunity?.interestedIn}}
+              p.mb-2(style="color: var(--text-primary)") {{opportunity?.interestedIn}}
             div
-              .text-neutral-400.font-medium.mb-2.flex.items-center
+              .font-medium.mb-2.flex.items-center(style="color: var(--text-muted)")
                 Icon(name="lucide-lab:dollar-sign-square" size="20" class="mr-2")
                 p {{ $t('opportunities.info.budget') }}
-              p.text-neutral-800.mb-2 $ {{opportunity?.estimatedValue}}
+              p.mb-2(style="color: var(--text-primary)") $ {{opportunity?.estimatedValue}}
             div
-              .text-neutral-400.font-medium.mb-2.flex.items-center
+              .font-medium.mb-2.flex.items-center(style="color: var(--text-muted)")
                 Icon(name="IconCalendar" size="20" class="mr-2")
                 p {{ $t('opportunities.info.closeDate') }}
-              p.text-neutral-800.mb-2 {{getYear(opportunity?.expectedCloseDate)}}
+              p.mb-2(style="color: var(--text-primary)") {{getYear(opportunity?.expectedCloseDate)}}
             div(v-if="opportunity?.priority")
-              .text-neutral-400.font-medium.mb-2.flex.items-center
+              .font-medium.mb-2.flex.items-center(style="color: var(--text-muted)")
                 Icon(name="IconPriority" size="20" class="mr-2")
                 p {{ $t('opportunities.info.priority') }}
               .items-center(:class="`inline-flex rounded-xl p-1 label-outline-${getStatusColor(formatSnakeCase(opportunity?.priority))}`")
                 div(class="h-1.5 w-1.5 rounded-full mr-1" :class="`bg-solid-${getStatusColor(formatSnakeCase(opportunity?.priority))}`")
                 span {{ formatSnakeCase(opportunity?.priority) }}
             div
-              .text-neutral-400.font-medium.mb-2.flex.items-center.mb-3
+              .font-medium.mb-2.flex.items-center(style="color: var(--text-muted)").mb-3
                 Icon(name="lets-icons:status" size="20" class="mr-2")
                 p {{ $t('opportunities.info.stage') }}
               span.border.rounded-xl.px-2(:class="`label-outline-${getStatusColor(opportunity?.stage)}`") {{formatSnakeCase(opportunity?.stage)}}
             div
-              .text-neutral-400.font-medium.mb-2.flex.items-center.mb-3
+              .font-medium.mb-2.flex.items-center(style="color: var(--text-muted)").mb-3
                 Icon(name="IconSteps" size="20" class="mr-2")
                 p {{ $t('opportunities.info.nextSteps') }}
-              span.text-neutral-800.mb-2.bg-neutral-100.rounded-xl.py-1.px-2.mr-2(v-for="nextStep in opportunity?.nextSteps") {{nextStep}}
+              span.mb-2.rounded-xl.py-1.px-2.mr-2(v-for="nextStep in opportunity?.nextSteps" style="color: var(--text-primary); background-color: var(--bg-card-hover)") {{nextStep}}
             div
-              .text-neutral-400.font-medium.mb-2.flex.items-center
+              .font-medium.mb-2.flex.items-center(style="color: var(--text-muted)")
                 Icon(name="IconCalendar" size="20" class="mr-2")
                 p {{ $t('opportunities.info.created') }}
-              p.text-neutral-800.mb-2 {{formatDate(opportunity?.createdAt)}}
+              p.mb-2(style="color: var(--text-primary)") {{formatDate(opportunity?.createdAt)}}
             div
-              .text-neutral-400.font-medium.mb-2.flex.items-center
+              .font-medium.mb-2.flex.items-center(style="color: var(--text-muted)")
                 Icon(name="IconCalendar" size="20" class="mr-2")
                 p {{ $t('opportunities.info.updated') }}
-              p.text-neutral-800.mb-2 {{formatDate(opportunity?.updatedAt)}}
+              p.mb-2(style="color: var(--text-primary)") {{formatDate(opportunity?.updatedAt)}}
             div(v-if="opportunity?.stage  === 'LOST'")
-              .text-neutral-400.font-medium.mb-2.flex.items-center
+              .font-medium.mb-2.flex.items-center(style="color: var(--text-muted)")
                 Icon(name="mage:message-information" size="20" class="mr-2")
                 p {{ $t('opportunities.info.reasonLoss') }}
-              p.text-neutral-800.mb-2 {{opportunity?.reasonOfLose}}
+              p.mb-2(style="color: var(--text-primary)") {{opportunity?.reasonOfLose}}
       .flex-1.glass-card.p-10.rounded-3xl(v-if="opportunity?.notes")
         .flex.items-center.gap-2.mb-4
-          .flex.items-center.justify-center.w-10.h-10.rounded-full.bg-secondary-turquoise-50: Icon.text-secondary-turquoise-700(name="IconNote" size="24")
-          h4.text-lg.font-semibold.text-neutral-900 {{ $t('leads.notes') }}
-        p.text-neutral-800.leading-relaxed {{opportunity?.notes}}
+          .flex.items-center.justify-center.w-10.h-10.rounded-full(style="background-color: rgba(120, 73, 255, 0.1)"): Icon(name="IconNote" size="24" style="color: var(--accent-color)")
+          h4.text-lg.font-semibold(style="color: var(--text-primary)") {{ $t('leads.notes') }}
+        p.leading-relaxed(style="color: var(--text-primary)") {{opportunity?.notes}}
   el-tab-pane(:label="$t('opportunities.proposal')" , name="proposal")
     .glass-card.rounded-3xl.mt-3.border.px-2
      .title.font-bold.text-xl.capitalize.flex-1.mt-8 {{ $t('opportunities.proposal') }}

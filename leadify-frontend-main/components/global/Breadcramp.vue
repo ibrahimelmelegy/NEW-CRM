@@ -52,7 +52,7 @@ ol {
     &:after {
       content: ' » ';
       display: inline;
-      color: #aaa;
+      color: var(--text-muted);
       padding: 0 0.0725em 0 0.15em;
     }
 

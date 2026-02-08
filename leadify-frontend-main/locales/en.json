@@ -124,6 +124,23 @@
         "newPassword": "New Password",
         "resetSuccess": "Password changed successfully"
     },
+    "ai": {
+        "assistant": "AI Assistant",
+        "onlineReady": "Online & Ready",
+        "askPlaceholder": "Ask me anything...",
+        "welcomeMessage": "Hello! I am your CRM assistant. How can I help you today?",
+        "connectionError": "Sorry, I am having trouble connecting. Please try again."
+    },
+    "spotlight": {
+        "searchPlaceholder": "Search pages, actions, or type a command...",
+        "pages": "Pages",
+        "quickActions": "Quick Actions",
+        "noResults": "No results found for",
+        "trySearching": "Try searching for pages or actions",
+        "toNavigate": "to navigate",
+        "toSelect": "to select",
+        "toOpen": "to open"
+    },
     "validation": {
         "required": "{field} is required",
         "email": "Please enter a valid email address",
@@ -395,6 +412,7 @@
         "title": "Leads",
         "newLead": "New Lead",
         "createTitle": "Create Lead",
+        "createSuccess": "Lead created successfully",
         "import": "Import",
         "export": "Export",
         "view": "View",

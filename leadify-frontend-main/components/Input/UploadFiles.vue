@@ -259,34 +259,29 @@ const handleRemove = (file: UploadFile) => {
 /* ============================================
    LIGHT MODE OVERRIDES
    ============================================ */
-html.light-mode .el-upload,
-body.light-theme .el-upload {
+html.light-mode .el-upload {
   background-color: rgba(255, 255, 255, 0.6) !important;
   border-color: #d8b4fe !important;
-  
+
   &:hover {
     background-color: rgba(243, 232, 255, 0.7) !important;
     border-color: #a855f7 !important;
   }
 }
 
-html.light-mode .el-icon--upload,
-body.light-theme .el-icon--upload {
+html.light-mode .el-icon--upload {
   color: #7c3aed !important;
 }
 
-html.light-mode .el-upload .text-neutral-900,
-body.light-theme .el-upload .text-neutral-900 {
+html.light-mode .el-upload .text-neutral-900 {
   color: #1f1f1f !important;
 }
 
-html.light-mode .el-upload .text-neutral-400,
-body.light-theme .el-upload .text-neutral-400 {
+html.light-mode .el-upload .text-neutral-400 {
   color: #6b7280 !important;
 }
 
-html.light-mode .el-upload__tip,
-body.light-theme .el-upload__tip {
+html.light-mode .el-upload__tip {
   color: #6b7280 !important;
 }
 </style>

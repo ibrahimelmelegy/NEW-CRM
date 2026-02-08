@@ -1,11 +1,11 @@
 <template>
-  <div class="professional-background absolute inset-0 z-0 overflow-hidden isolate" :class="themeStore.isLight ? 'bg-[#f8f7fa]' : 'bg-[#0b0a12]'">
+  <div class="professional-background absolute inset-0 z-0 overflow-hidden isolate" :style="{ backgroundColor: themeStore.isLight ? '#f8f7fa' : '#0b0a12' }">
     <!-- Mesh Gradient Layer -->
     <div class="mesh-gradient absolute inset-0 opacity-80"></div>
-    
+
     <!-- SVG Noise Texture -->
     <div class="noise-overlay absolute inset-0 opacity-[0.03] pointer-events-none"></div>
-    
+
     <!-- Dynamic Ambient Glows -->
     <div class="ambient-glows absolute inset-0">
       <div class="glow glow-1 absolute top-[-10%] left-[-5%] w-[50%] h-[50%] bg-[#7849ff]/30 rounded-full blur-[120px] animate-pulse-slow"></div>
@@ -20,34 +20,32 @@ const themeStore = useThemeStore();
 
 <style lang="scss" scoped>
 .professional-background {
-  position: fixed; 
-  z-index: -1; // Ensure it stays behind everything
+  position: fixed;
+  z-index: -1;
   top: 0;
   left: 0;
   width: 100vw;
   height: 100vh;
-  background-color: #0b0a12;
+  background-color: var(--bg-primary, #0b0a12);
   transition: background-color 0.5s ease;
 
-  :global(body.light-theme) & {
-    background-color: #f8f7fa;
-  }
-  
   .mesh-gradient {
-    background: 
-      radial-gradient(at 0% 0%, hsla(253,16%,7%,1) 0, transparent 50%), 
-      radial-gradient(at 50% 0%, hsla(255,100%,64%,0.15) 0, transparent 50%), 
+    background:
+      radial-gradient(at 0% 0%, hsla(253,16%,7%,1) 0, transparent 50%),
+      radial-gradient(at 50% 0%, hsla(255,100%,64%,0.15) 0, transparent 50%),
       radial-gradient(at 100% 0%, hsla(29,100%,50%,0.1) 0, transparent 50%),
       radial-gradient(at 0% 100%, hsla(255,100%,64%,0.1) 0, transparent 50%),
       radial-gradient(at 50% 100%, hsla(253,16%,7%,1) 0, transparent 50%),
       radial-gradient(at 100% 100%, hsla(29,100%,50%,0.15) 0, transparent 50%);
     filter: blur(40px);
     transition: all 0.5s ease;
+  }
 
-    :global(body.light-theme) & {
+  :global(html.light-mode) & {
+    .mesh-gradient {
       opacity: 0.15;
-      background: 
-        radial-gradient(at 0% 0%, hsla(255,100%,64%,0.3) 0, transparent 50%), 
+      background:
+        radial-gradient(at 0% 0%, hsla(255,100%,64%,0.3) 0, transparent 50%),
         radial-gradient(at 100% 100%, hsla(29,100%,50%,0.2) 0, transparent 50%);
     }
   }

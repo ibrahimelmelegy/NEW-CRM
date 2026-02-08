@@ -16,7 +16,7 @@ Teleport(to="body")
           input.spotlight-input(
             ref="inputRef"
             v-model="searchQuery"
-            placeholder="Search pages, actions, or type a command..."
+            :placeholder="$t('spotlight.searchPlaceholder')"
             @keydown.stop
           )
           .spotlight-shortcut
@@ -28,7 +28,7 @@ Teleport(to="body")
           template(v-if="groupedItems.pages.length > 0")
             .spotlight-section-title
               Icon(name="ph:browsers-bold")
-              span Pages
+              span {{ $t('spotlight.pages') }}
             .spotlight-item(
               v-for="(item, index) in groupedItems.pages"
               :key="item.id"
@@ -45,7 +45,7 @@ Teleport(to="body")
           template(v-if="groupedItems.actions.length > 0")
             .spotlight-section-title
               Icon(name="ph:lightning-bold")
-              span Quick Actions
+              span {{ $t('spotlight.quickActions') }}
             .spotlight-item(
               v-for="(item, index) in groupedItems.actions"
               :key="item.id"
@@ -61,21 +61,21 @@ Teleport(to="body")
         //- Empty State
         .spotlight-empty(v-else)
           Icon.spotlight-empty-icon(name="ph:magnifying-glass-bold")
-          p No results found for "{{ searchQuery }}"
-          span Try searching for pages or actions
+          p {{ $t('spotlight.noResults') }} "{{ searchQuery }}"
+          span {{ $t('spotlight.trySearching') }}
         
         //- Footer
         .spotlight-footer
           .spotlight-footer-item
             span.key ↑
             span.key ↓
-            span to navigate
+            span {{ $t('spotlight.toNavigate') }}
           .spotlight-footer-item
             span.key Enter
-            span to select
+            span {{ $t('spotlight.toSelect') }}
           .spotlight-footer-item
             span.key /
-            span to open
+            span {{ $t('spotlight.toOpen') }}
 </template>
 
 <script setup lang="ts">
@@ -134,7 +134,7 @@ watch(isOpen, (value) => {
 
 .spotlight-fab-icon {
   font-size: 24px;
-  color: #FFFFFF !important;
+  color: white !important;
   font-weight: 300;
 }
 

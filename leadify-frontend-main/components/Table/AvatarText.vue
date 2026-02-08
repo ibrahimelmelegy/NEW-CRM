@@ -6,7 +6,7 @@ div.flex.items-center.gap-3(@click.stop)
             p.text-sm.font-semibold.whitespace-nowrap {{ getWordInitials(title) }}
 
         div
-            h3.text-sm.font-medium.text-black {{ title }}
+            h3.text-sm.font-medium(style="color: var(--text-primary)") {{ title }}
             p.text-xs {{ text }}
 </template>
 

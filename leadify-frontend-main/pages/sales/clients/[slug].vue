@@ -41,60 +41,60 @@ el-tabs.demo-tabs(v-model="activeName", @tab-click="handleClick")
         .flex.align-center.gap-3(class="flex-col md:flex-row")
           //- Avatar(src="/images/avatar.png")
           div
-            h4.text-2xl.font-semibold.mb-2.text-neutral-900.flex.items-center.gap-x-3 {{client?.clientName}} #[span.border.rounded-xl.text-xs.px-2(:class="`label-outline-${getStatusColor(client?.clientStatus)}`") {{formatSnakeCase(client?.clientStatus)}}]
-            p.text-neutral-600 {{client?.companyName}}
+            h4.text-2xl.font-semibold.mb-2.flex.items-center.gap-x-3(style="color: var(--text-primary)") {{client?.clientName}} #[span.border.rounded-xl.text-xs.px-2(:class="`label-outline-${getStatusColor(client?.clientStatus)}`") {{formatSnakeCase(client?.clientStatus)}}]
+            p(style="color: var(--text-secondary)") {{client?.companyName}}
         .mt-8
-          p.text-neutral-900.font-semibold.mb-6.text-lg {{ $t('clients.info.information') }}
+          p.font-semibold.mb-6.text-lg(style="color: var(--text-primary)") {{ $t('clients.info.information') }}
           .grid.gap-4(class="md:grid-cols-2 lg:grid-cols-3  xl:grid-cols-4")
             div(v-if="client?.email")
-              .text-neutral-400.font-medium.mb-2.flex.items-center
+              .font-medium.mb-2.flex.items-center(style="color: var(--text-muted)")
                 Icon(name="IconEmail" size="20" class="mr-2")
                 p {{ $t('clients.table.email') }}
-              p.text-neutral-800.mb-2 {{client?.email}}
+              p.mb-2(style="color: var(--text-primary)") {{client?.email}}
             div(v-if="client?.phone")
-              .text-neutral-400.font-medium.mb-2.flex.items-center
+              .font-medium.mb-2.flex.items-center(style="color: var(--text-muted)")
                 Icon(name="IconPhone" size="20" class="mr-2")
                 p {{ $t('clients.table.phone') }}
-              p.text-neutral-800.mb-2 {{client?.phone}}
+              p.mb-2(style="color: var(--text-primary)") {{client?.phone}}
             div(v-if="client?.clientType")
-              .text-neutral-400.font-medium.mb-2.flex.items-center
+              .font-medium.mb-2.flex.items-center(style="color: var(--text-muted)")
                 Icon(name="tabler:category-2" size="20" class="mr-2")
                 p {{ $t('clients.info.clientType') }}
-              p.text-neutral-800.mb-2 {{formatSnakeCase(client?.clientType)}}
+              p.mb-2(style="color: var(--text-primary)") {{formatSnakeCase(client?.clientType)}}
             div(v-if="client?.city || client?.state || client?.streetAddress || client?.zipCode")
-              .text-neutral-400.font-medium.mb-2.flex.items-center
+              .font-medium.mb-2.flex.items-center(style="color: var(--text-muted)")
                 Icon(name="material-symbols:location-on" size="20" class="mr-2")
                 p {{ $t('clients.info.address') }}
-              p.text-neutral-800.mb-2 {{ [ client?.city, client?.state, client?.streetAddress, client?.zipCode ].filter(Boolean).join(' - ') }}
+              p.mb-2(style="color: var(--text-primary)") {{ [ client?.city, client?.state, client?.streetAddress, client?.zipCode ].filter(Boolean).join(' - ') }}
             div(v-if="client?.industry")
-              .text-neutral-400.font-medium.mb-2.flex.items-center
+              .font-medium.mb-2.flex.items-center(style="color: var(--text-muted)")
                 Icon(name="tabler:category-2" size="20" class="mr-2")
                 p {{ $t('clients.info.industry') }}
-              p.text-neutral-800.mb-2 {{client?.industry}}
+              p.mb-2(style="color: var(--text-primary)") {{client?.industry}}
             div(v-if="client?.users?.length")
-              .text-neutral-400.font-medium.mb-2.flex.items-center
+              .font-medium.mb-2.flex.items-center(style="color: var(--text-muted)")
                 Icon(name="IconAssign" size="20" class="mr-2")
                 p {{ $t('clients.info.assign') }}
-              p.text-neutral-800.mb-2 {{client?.users?.map((user) => user.name).join(', ')}}
+              p.mb-2(style="color: var(--text-primary)") {{client?.users?.map((user) => user.name).join(', ')}}
             div
-              .text-neutral-400.font-medium.mb-2.flex.items-center
+              .font-medium.mb-2.flex.items-center(style="color: var(--text-muted)")
                 Icon(name="IconCalendar" size="20" class="mr-2")
                 p {{ $t('clients.table.created') }}
-              p.text-neutral-800.mb-2 {{formatDate(client?.createdAt)}}
+              p.mb-2(style="color: var(--text-primary)") {{formatDate(client?.createdAt)}}
             div
-              .text-neutral-400.font-medium.mb-2.flex.items-center
+              .font-medium.mb-2.flex.items-center(style="color: var(--text-muted)")
                 Icon(name="IconCalendar" size="20" class="mr-2")
                 p {{ $t('clients.info.lastUpdated') }}
-              p.text-neutral-800.mb-2 {{formatDate(client?.updatedAt)}}
+              p.mb-2(style="color: var(--text-primary)") {{formatDate(client?.updatedAt)}}
     .flex-1.glass-card.p-10.rounded-3xl.mt-6(v-if="client?.fileUpload?.length")
      .flex.items-center.gap-3.mb-6
-      .flex.items-center.justify-center.w-12.h-12.rounded-full(class="!min-w-[48px] !min-h-[48px]" class="bg-secondary-turquoise-50 text-secondary-turquoise-700"): Icon(name="mdi:file-outline" size="24")
-      h4.text-lg.font-semibold.text-neutral-900 {{ $t('clients.info.files') }}
+      .flex.items-center.justify-center.w-12.h-12.rounded-full(class="!min-w-[48px] !min-h-[48px]" style="background-color: rgba(120, 73, 255, 0.1)"): Icon(name="mdi:file-outline" size="24")
+      h4.text-lg.font-semibold(style="color: var(--text-primary)") {{ $t('clients.info.files') }}
      div( class="flex gap-4 flex-wrap items-center")
       button(@click="downloadFile(`https://staging-api.hp-tech.com/assets/${file}`, file)" class="bg-white border rounded-lg p-4 flex items-center space-x-4" v-for="file in client?.fileUpload" :key="file")
         img(:src="`/images/files/${file?.split('.').pop()}.svg`" size="40")
-        p(class="text-gray-800 font-medium") {{file}}
-        Icon(name="solar:download-bold" class="text-neutral-500 ml-auto")
+        p(style="color: var(--text-primary)" class="font-medium") {{file}}
+        Icon(name="solar:download-bold" style="color: var(--text-muted)" class="ml-auto")
     el-tab-pane(:label="$t('clients.info.activityLog')" name="activity")
       .mt-6
         ActivityTimeline(:activities="activity?.docs")

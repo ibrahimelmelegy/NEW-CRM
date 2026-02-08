@@ -55,7 +55,7 @@ onMounted(() => {
     }
 }
 
-:global(body.light-theme) .lang-toggle {
+:global(html.light-mode) .lang-toggle {
     background: rgba(0, 0, 0, 0.03);
     border-color: rgba(0, 0, 0, 0.08);
     

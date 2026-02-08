@@ -16,51 +16,51 @@ el-tabs.demo-tabs(v-model="activeName", @tab-click="handleClick")
       .flex.align-center.gap-3(class="flex-col md:flex-row")
         //- Avatar(src="/images/avatar.png")
         div
-          h4.text-2xl.font-semibold.mb-2.text-neutral-900.flex.items-center.gap-x-3 {{deal?.name}} #[span.border.rounded-xl.text-xs.px-2(:class="`label-outline-${getStatusColor(deal?.stage)}`") {{formatSnakeCase(deal?.stage)}}]
-          p.text-neutral-600 {{deal?.companyName}}
+          h4.text-2xl.font-semibold.mb-2.flex.items-center.gap-x-3(style="color: var(--text-primary)") {{deal?.name}} #[span.border.rounded-xl.text-xs.px-2(:class="`label-outline-${getStatusColor(deal?.stage)}`") {{formatSnakeCase(deal?.stage)}}]
+          p(style="color: var(--text-secondary)") {{deal?.companyName}}
       .mt-8
-        p.text-neutral-900.font-semibold.mb-6.text-lg {{ $t('common.info') }}
+        p.font-semibold.mb-6.text-lg(style="color: var(--text-primary)") {{ $t('common.info') }}
         .grid.gap-4(class="md:grid-cols-2 grid-cols-1")
-          NuxtLink.text-neutral-400(:to="`/sales/leads/${lead?.id}`")
+          NuxtLink(style="color: var(--text-muted)" :to="`/sales/leads/${lead?.id}`")
             .font-medium.mb-2.flex.items-center
               Icon(name="IconAssign" size="20" class="mr-2")
               p {{ $t('leads.table.leadName') }}
             p.mb-2.underline.text-primary-purple-500 {{lead?.name}}
           div(v-if="lead?.email")
-            .text-neutral-400.font-medium.mb-2.flex.items-center
+            .font-medium.mb-2.flex.items-center(style="color: var(--text-muted)")
               Icon(name="IconEmail" size="20" class="mr-2")
               p {{ $t('leads.info.email') }}
-            p.text-neutral-800.mb-2 {{lead?.email}}
+            p.mb-2(style="color: var(--text-primary)") {{lead?.email}}
           div(v-if="lead?.phone")
-            .text-neutral-400.font-medium.mb-2.flex.items-center
+            .font-medium.mb-2.flex.items-center(style="color: var(--text-muted)")
               Icon(name="IconPhone" size="20" class="mr-2")
               p {{ $t('leads.info.phone') }}
-            p.text-neutral-800.mb-2 {{lead?.phone}}
+            p.mb-2(style="color: var(--text-primary)") {{lead?.phone}}
           div(v-if="deal?.users?.length")
-            .text-neutral-400.font-medium.mb-2.flex.items-center
+            .font-medium.mb-2.flex.items-center(style="color: var(--text-muted)")
               Icon(name="IconAssign" size="20" class="mr-2")
               p {{ $t('deals.table.assigned') }}
-            p.text-neutral-800.mb-2 {{deal?.users?.map((user) => user.name).join(', ')}}
+            p.mb-2(style="color: var(--text-primary)") {{deal?.users?.map((user) => user.name).join(', ')}}
           div
-            .text-neutral-400.font-medium.mb-2.flex.items-center
+            .font-medium.mb-2.flex.items-center(style="color: var(--text-muted)")
               Icon(name="f7:money-dollar-circle" size="20" class="mr-2")
               p {{ $t('deals.table.price') }}
-            p.text-neutral-800.mb-2 {{deal?.price}}
+            p.mb-2(style="color: var(--text-primary)") {{deal?.price}}
           div
-            .text-neutral-400.font-medium.mb-2.flex.items-center
+            .font-medium.mb-2.flex.items-center(style="color: var(--text-muted)")
               Icon(name="tabler:category-2" size="20" class="mr-2")
               p {{ $t('deals.table.contractType') }}
-            p.text-neutral-800.mb-2 {{deal?.contractType}}
+            p.mb-2(style="color: var(--text-primary)") {{deal?.contractType}}
           div(v-if="deal?.cancelledReason && deal?.stage === 'CANCELLED'")
-            .text-neutral-400.font-medium.mb-2.flex.items-center
+            .font-medium.mb-2.flex.items-center(style="color: var(--text-muted)")
               Icon(name="material-symbols:cancel-outline-rounded" size="20" class="mr-2")
               p {{ $t('opportunities.info.reasonLoss') }}
-            p.text-neutral-800.mb-2 {{deal?.cancelledReason}}
+            p.mb-2(style="color: var(--text-primary)") {{deal?.cancelledReason}}
           div
-            .text-neutral-400.font-medium.mb-2.flex.items-center
+            .font-medium.mb-2.flex.items-center(style="color: var(--text-muted)")
               Icon(name="IconCalendar" size="20" class="mr-2")
               p {{ $t('deals.table.signatureDate') }}
-            p.text-neutral-800.mb-2 {{getYear(deal?.signatureDate)}}
+            p.mb-2(style="color: var(--text-primary)") {{getYear(deal?.signatureDate)}}
   el-tab-pane(:label="$t('deals.tabs.invoices')", name="invoices" v-if="deal?.invoice?.length")
     .glass-card.p-10.rounded-3xl.mt-3
       AppTable(without-filters without-search without-action without-pagination :columns="invoicesTable.columns" :data="invoicesTable.data" class="!py-0")
