@@ -463,7 +463,6 @@ const handleClick = async (tab) => {
           assignedToName: task.user?.name,
         }));
         completedProjectsPagination.value = responseCompleted.pagination;
-        console.log(completedProjectsPagination.value);
         break;
       case "granted":
         const responseGranted = await useTableFilter("daily-task", {
@@ -479,7 +478,6 @@ const handleClick = async (tab) => {
         }));
 
         grantedProjectsPagination.value = responseGranted.pagination;
-        console.log(grantedProjectsPagination.value, responseGranted.formattedData);
         break;
     }
   } catch (error) {
@@ -527,7 +525,6 @@ const exportToPDF = async () => {
 
   doc.addFont(CairoFont, "Cairo", "normal");
   doc.setFont("Cairo");
-  console.log(doc.getFont());
   doc.text(`${name}`, 250, 10);
 
   // Use the imported `autoTable` function

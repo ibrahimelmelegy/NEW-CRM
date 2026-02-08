@@ -326,7 +326,6 @@ export async function createProject(values: ProjectInfo): Promise<void> {
 export async function updateProject(values: any): Promise<void> {
   try {
     // Call API to create the project
-    console.log(values)
     const response = await useApiFetch(`project/create`, 'POST', values);
 
     // Handle the API response

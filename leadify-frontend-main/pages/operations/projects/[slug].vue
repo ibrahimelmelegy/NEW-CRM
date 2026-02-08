@@ -619,7 +619,6 @@ el-dialog(
           (item: any) => item.AdditionalMaterialItem.additionalMateria === material.additionalMaterialId
         ) || [];
 
-      console.log("material", material);
       const totalAdditionalMaterialCost = additionalMaterials.reduce((sum: number, item: any) => {
         return sum + item.quantity * Number(item.AdditionalMaterialItem?.price || 0);
       }, 0);

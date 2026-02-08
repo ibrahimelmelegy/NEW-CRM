@@ -175,7 +175,6 @@ async function onSubmitInvoices() {
   // Only proceed if all forms are submitted successfully
   if (!isSubmitted) {
     emit('isValid', false);
-    console.log(t('deals.errors.fillInvoices'));
     ElMessage.error(t('deals.errors.fillInvoices'));
     return;
   }

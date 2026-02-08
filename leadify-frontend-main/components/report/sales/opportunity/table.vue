@@ -114,7 +114,6 @@
 
   const response = await getOpportunities();
   table.data = response.opportunties;
-  console.log(response.opportunties);
 
   const getData = async () => {
     isLoading.value = true;

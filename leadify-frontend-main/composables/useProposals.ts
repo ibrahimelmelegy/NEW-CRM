@@ -166,9 +166,7 @@ export async function updateProposalFinanceTableitem(values: any, id: number, ty
 
     // Handle the API response
     if (response?.success) {
-      console.log(type);
       if (type === 'one') {
-        console.log(type);
         handleSuccess('proposal finance table item update successfully');
       } else {
         handleSuccess('proposal finance table item update successfully', values?.proposalId);
@@ -299,7 +297,6 @@ export async function createProposal(values: ProposalInfoPayload): Promise<void>
 
 export async function updateProposal(values: any): Promise<void> {
   try {
-    console.log(values)
     // Call API to create the proposal
     const proposalData = {
       relatedEntityId: values?.relatedEntityId == "" ? undefined : values?.relatedEntityId,

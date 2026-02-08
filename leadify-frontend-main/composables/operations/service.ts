@@ -122,7 +122,6 @@ export async function createService(values: Service, redirect: boolean = true): 
  * @throws {Error} If the API call is unsuccessful, an error is thrown with a message
  */
 export async function updateService(values: Service, redirect: boolean = true): Promise<void> {
-  console.log('values', values);
   try {
     let mappedService = mapToNumbers(values);
     delete mappedService.id;

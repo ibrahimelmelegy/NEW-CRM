@@ -46,7 +46,7 @@
       await createAdditionalMaterial(finalValues.value);
       loading.value = false;
     } catch (error) {
-      console.log("Error saving forms:", error);
+      console.error("Error saving forms:", error);
       loading.value = false;
     } finally {
       loading.value = false;

@@ -85,10 +85,9 @@ async function submitFormClient() {
       companyName: ClientNew.value?.companyName,
       clientType: ClientNew.value?.clientType,
     });
-    console.log(ClientNew.value)
     await createClient(formattedValues, true);
   } catch (err) {
-    console.log("Error saving forms:", err);
+    console.error("Error saving forms:", err);
     loadingClient.value = false;
   } finally {
     openFormClient.value = false;

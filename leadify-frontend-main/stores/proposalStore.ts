@@ -7,9 +7,7 @@ export const useProposalStoreee = defineStore('proposalll', {
   }),
   actions: {
     setProposalInfo(info: any) {
-      console.log('>>>>>>>>>>>>>> useProposalStore', info);
       this.proposalInfo = info;
-      console.log('>>>>>>>>>>>>>> useProposalStore', this.proposalInfo);
       navigateTo('/sales/proposals/proposal-content');
     },
     addContent(content: any) {

@@ -22,7 +22,6 @@ const mappedUsers = users?.body?.docs?.map((e: any) => ({
   label: e.name,
   value: e.id,
 }));
-console.log(values)
 
 const onSubmit = handleSubmit(async (values:any) => {
   if( values["fromLastContactDate"]) {

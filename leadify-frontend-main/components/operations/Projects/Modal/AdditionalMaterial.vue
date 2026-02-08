@@ -52,7 +52,7 @@ async function onSubmitMaterials() {
     if (Object.keys(response).length) dialog.value = false;
     loading.value = false;
   } catch (error) {
-    console.log('Error saving forms:', error);
+    console.error('Error saving forms:', error);
     loading.value = false;
   } finally {
     loading.value = false;

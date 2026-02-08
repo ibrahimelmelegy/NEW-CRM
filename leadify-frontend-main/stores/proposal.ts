@@ -62,7 +62,6 @@ export const useProposalStore = defineStore('proposal', {
       this.grandTotal = total;
     },
     setProposalInfo(data: any) {
-      console.log('>>>>>>>>>>>>>> useProposalStoreInfo', data);
       this.proposalInfo = { ...this.proposalInfo, ...data };
     },
     setProposalContent(data: any) {

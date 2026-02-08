@@ -303,7 +303,6 @@ const grandTotal = computed(() => {
 
 function triggerUpload() {
     // Trigger hidden file input logic
-    console.log("Trigger upload");
 }
 
 async function handleOCR(file: any) {
@@ -334,9 +333,7 @@ async function submit() {
   loading.value = true;
   try {
     const payload = { ...form, totalAmount: grandTotal.value };
-    console.log("DEBUG: Sending PO Payload:", JSON.parse(JSON.stringify(payload)));
     const res = await useApiFetch("procurement", "POST", payload);
-    console.log("DEBUG: PO Creation Response:", res);
     
     if (!res || !res.success) {
         throw new Error(res?.message || "Unknown error during creation");

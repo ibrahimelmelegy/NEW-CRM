@@ -69,7 +69,6 @@ const barChartMonthlyRevenueOptions = getBarChartData(
   dailyTaskStats.value?.monthlyRevenue,
   colorbarChart
 );
-console.log(barChartSalesPerformanceOptions)
 const pieChartTaskDistributionByClientOptions = getCenterPieChartsData(
   dailyTaskStats.value?.taskDistributionByClient,
   colorpieChart,

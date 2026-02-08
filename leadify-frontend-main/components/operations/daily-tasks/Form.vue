@@ -96,7 +96,6 @@ const { handleSubmit } = useForm({
 
 // Emit delete
 function onFetchClient(id:string) {
-  console.log(id)
   emit('fetchClient', id);
 }
 //  Get Users

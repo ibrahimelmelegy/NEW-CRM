@@ -53,13 +53,11 @@ div(class="pt-4")
     filter.value = {};
     await router.push({ path: route.path, query: {} });
     numberOfFilters.value = 0;
-    console.log(route.fullPath, filter.value);
   };
 
   watch(
     () => activeTab.value,
     () => {
-      console.log();
       handleReset();
     }
   );

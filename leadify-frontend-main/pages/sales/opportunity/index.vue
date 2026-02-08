@@ -92,7 +92,6 @@ div
   }
   async function setReasons(pre: any) {
     reasons.value = pre.value;
-    console.log(pre.value);
   }
 
   async function changeStage(id: any, newStage: any) {

@@ -575,7 +575,6 @@ export default {
       }
     },
     undo() {
-      console.log("undo");
       document.execCommand("undo");
     },
     execCommand: (command, value = null) => {
@@ -2056,7 +2055,6 @@ involved.  </div>
       // restore pages and overlays
 
       for (const [page_idx, page] of this.pages.entries()) {
-        console.log(page);
         page.elt.style = this.css_to_string(
           this.page_style(page_idx, page.template ? false : true)
         );

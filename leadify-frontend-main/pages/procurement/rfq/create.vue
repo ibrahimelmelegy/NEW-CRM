@@ -177,8 +177,6 @@ onMounted(async () => {
             useApiFetch("vendor?limit=1000"), 
             useApiFetch("project/all")
         ]);
-        console.log("RFQ Initial Data Fetch:", { vendors: vRes, projects: pRes });
-        
         // Handle paginated response structure { docs: [], pagination: {} }
         const vendorData = (vRes as any).body || (vRes as any).data || vRes;
         if (vendorData && vendorData.docs) {
@@ -230,22 +228,16 @@ async function submitRFQ() {
             deadLine: form.deadLine,
             items: form.items
         };
-        console.log("Submitting RFQ Payload:", JSON.parse(JSON.stringify(payload)));
 
         // 1. Create RFQ
         const rfqRes = await useApiFetch("rfq", "POST", payload);
-        console.log("RFQ Creation Response:", rfqRes);
 
         if (rfqRes && rfqRes.success && rfqRes.body) {
              const rfqId = rfqRes.body.id;
-             console.log("Sending to vendors:", form.vendorIds);
-             
              // 2. Send to Vendors
              const sendRes = await useApiFetch(`rfq/${rfqId}/send`, "POST", {
                  vendorIds: form.vendorIds
              });
-             console.log("Send to Vendors Response:", sendRes);
-             
              if (!sendRes || !sendRes.success) throw new Error(sendRes?.message || "Failed to send to vendors");
 
              ElNotification({ title: "Success", message: "RFQ Created and Sent to Vendors!", type: "success" });

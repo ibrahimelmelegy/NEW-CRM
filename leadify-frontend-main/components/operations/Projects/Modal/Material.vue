@@ -213,7 +213,6 @@ if (props.data) {
 }
 
 function getAddMaterialsItem(val: any) {
-  console.log('val', val);
   finalAddMaterialsItems.value = val;
   addMaterialsItems.value = val[Object.keys(val)[0]];
   updateTableData();

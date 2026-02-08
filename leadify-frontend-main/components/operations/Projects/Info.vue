@@ -295,7 +295,6 @@ el-form( autocomplete="off"   @submit.prevent='onSubmit'   ref="myForm" label-po
     () => [values.submissionDate],
     () => {
       remainingDays.value = calculateRemainingDays();
-      console.log("remainingDays.value", remainingDays.value);
     },
     {
       deep: true,

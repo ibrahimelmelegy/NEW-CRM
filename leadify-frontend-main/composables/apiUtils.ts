@@ -48,8 +48,6 @@ export async function downloadFile(file: string) {
 }
 
 export function uploadFile(params: any) {
-  console.log("params", params);
-
   return new Promise((resolve, reject) => {
     const file = params.file as File;
 
