@@ -1,5 +1,5 @@
 import { test, expect } from '@playwright/test';
-import { performLogin } from '../auth.spec';
+import { performLogin } from '../helpers';
 
 /**
  * ============================================

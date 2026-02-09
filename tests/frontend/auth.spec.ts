@@ -229,21 +229,3 @@ test.describe('Authentication Flow', () => {
     });
 });
 
-/**
- * Helper function to perform login
- */
-export async function performLogin(page: Page, email?: string, password?: string): Promise<void> {
-    await page.goto('/login');
-    await waitForPageLoad(page);
-
-    await page.locator('input[type="email"], input[type="text"]').first().fill(email || process.env.TEST_USER_EMAIL || 'admin@example.com');
-    await page.locator('input[type="password"]').first().fill(password || process.env.TEST_USER_PASSWORD || 'password');
-    await page.locator('button[type="submit"], button:has-text("Sign"), button:has-text("Login")').first().click();
-
-    await page.waitForTimeout(5000);
-}
-
-/**
- * Exported helper to wait for page load
- */
-export { waitForPageLoad };
