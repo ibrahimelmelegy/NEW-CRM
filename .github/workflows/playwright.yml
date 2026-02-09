@@ -1,27 +1,63 @@
 name: Playwright Tests
 on:
   push:
-    branches: [ main, master ]
+    branches: [main, master]
   pull_request:
-    branches: [ main, master ]
+    branches: [main, master]
+
 jobs:
   test:
     timeout-minutes: 60
     runs-on: ubuntu-latest
+
     steps:
-    - uses: actions/checkout@v4
-    - uses: actions/setup-node@v4
-      with:
-        node-version: lts/*
-    - name: Install dependencies
-      run: npm ci
-    - name: Install Playwright Browsers
-      run: npx playwright install --with-deps
-    - name: Run Playwright tests
-      run: npx playwright test
-    - uses: actions/upload-artifact@v4
-      if: ${{ !cancelled() }}
-      with:
-        name: playwright-report
-        path: playwright-report/
-        retention-days: 30
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: lts/*
+
+      # Install root dependencies
+      - name: Install root dependencies
+        run: npm ci --legacy-peer-deps
+
+      # Install frontend dependencies
+      - name: Install frontend dependencies
+        working-directory: leadify-frontend-main
+        run: npm ci --legacy-peer-deps
+
+      # Prepare Nuxt
+      - name: Prepare Nuxt
+        working-directory: leadify-frontend-main
+        run: npx nuxt prepare
+
+      # Install Playwright Browsers
+      - name: Install Playwright Browsers
+        run: npx playwright install --with-deps chromium
+
+      # Start dev server in background
+      - name: Start frontend dev server
+        working-directory: leadify-frontend-main
+        run: |
+          npm run dev > /dev/null 2>&1 &
+          echo $! > .dev-server.pid
+          sleep 30
+        env:
+          NUXT_PUBLIC_API_BASE_URL: http://localhost:3001/api/v1/
+
+      # Wait for server to be ready
+      - name: Health check - wait for server
+        run: |
+          timeout 60 bash -c 'until curl -f http://localhost:3000 > /dev/null 2>&1; do sleep 2; done' || exit 1
+
+      # Run Playwright tests
+      - name: Run Playwright tests
+        run: npx playwright test --project=chromium
+
+      # Upload test results
+      - uses: actions/upload-artifact@v4
+        if: ${{ !cancelled() }}
+        with:
+          name: playwright-report
+          path: playwright-report/
+          retention-days: 30
