@@ -23,30 +23,30 @@
         <div class='clearfix'>
             
             <div class='fl pad1y space-right2'>
-                <span class="strong">0% </span>
+                <span class="strong">20% </span>
                 <span class="quiet">Statements</span>
-                <span class='fraction'>0/55</span>
+                <span class='fraction'>11/55</span>
             </div>
         
             
             <div class='fl pad1y space-right2'>
-                <span class="strong">0% </span>
+                <span class="strong">11.76% </span>
                 <span class="quiet">Branches</span>
-                <span class='fraction'>0/34</span>
+                <span class='fraction'>4/34</span>
             </div>
         
             
             <div class='fl pad1y space-right2'>
-                <span class="strong">0% </span>
+                <span class="strong">18.18% </span>
                 <span class="quiet">Functions</span>
-                <span class='fraction'>0/11</span>
+                <span class='fraction'>2/11</span>
             </div>
         
             
             <div class='fl pad1y space-right2'>
-                <span class="strong">0% </span>
+                <span class="strong">17.3% </span>
                 <span class="quiet">Lines</span>
-                <span class='fraction'>0/52</span>
+                <span class='fraction'>9/52</span>
             </div>
         
             
@@ -293,24 +293,24 @@
 <span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-yes">1x</span>
+<span class="cline-any cline-yes">1x</span>
+<span class="cline-any cline-yes">1x</span>
+<span class="cline-any cline-yes">1x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-yes">1x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-yes">1x</span>
+<span class="cline-any cline-yes">1x</span>
+<span class="cline-any cline-yes">1x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-yes">1x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
@@ -505,24 +505,24 @@ function <span class="fstat-no" title="function not covered" >handleSuccess(m</s
 <span class="cstat-no" title="statement not covered" >  navigateTo('/sales/deals'); // Navigate to the deals list</span>
 }
 &nbsp;
-export <span class="cstat-no" title="statement not covered" ><span class="fstat-no" title="function not covered" >enum <span class="cstat-no" title="statement not covered" >D</span>ealStageEnums {</span></span>
-<span class="cstat-no" title="statement not covered" >  PROGRESS = 'PROGRESS',</span>
-<span class="cstat-no" title="statement not covered" >  CLOSED = 'CLOSED',</span>
-<span class="cstat-no" title="statement not covered" >  CANCELLED = 'CANCELLED'</span>
+export enum DealStageEnums {
+  PROGRESS = 'PROGRESS',
+  CLOSED = 'CLOSED',
+  CANCELLED = 'CANCELLED'
 }
 &nbsp;
-export const dealStageOptions = <span class="cstat-no" title="statement not covered" >[</span>
+export const dealStageOptions = [
   { label: 'In Progress', value: DealStageEnums.PROGRESS },
   { label: 'Closed', value: DealStageEnums.CLOSED },
   { label: 'Cancelled', value: DealStageEnums.CANCELLED }
 ];
 &nbsp;
-export <span class="cstat-no" title="statement not covered" ><span class="fstat-no" title="function not covered" >enum <span class="cstat-no" title="statement not covered" >C</span>ontractTypeEnums {</span></span>
-<span class="cstat-no" title="statement not covered" >  Contract = 'Contract',</span>
-<span class="cstat-no" title="statement not covered" >  PurchaseOrder = 'PurchaseOrder'</span>
+export enum ContractTypeEnums {
+  Contract = 'Contract',
+  PurchaseOrder = 'PurchaseOrder'
 }
 &nbsp;
-export const contractTypeOptions = <span class="cstat-no" title="statement not covered" >[</span>
+export const contractTypeOptions = [
   { label: 'Contract', value: ContractTypeEnums.Contract },
   { label: 'Purchase Order', value: ContractTypeEnums.PurchaseOrder }
 ];
@@ -706,7 +706,7 @@ export async function <span class="fstat-no" title="function not covered" >conve
             <div class='footer quiet pad2 space-top1 center small'>
                 Code coverage generated by
                 <a href="https://istanbul.js.org/" target="_blank" rel="noopener noreferrer">istanbul</a>
-                at 2026-02-09T06:38:11.697Z
+                at 2026-02-09T07:55:20.682Z
             </div>
         <script src="../prettify.js"></script>
         <script>

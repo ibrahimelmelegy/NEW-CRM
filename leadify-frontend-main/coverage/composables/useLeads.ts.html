@@ -23,30 +23,30 @@
         <div class='clearfix'>
             
             <div class='fl pad1y space-right2'>
-                <span class="strong">0% </span>
+                <span class="strong">25.42% </span>
                 <span class="quiet">Statements</span>
-                <span class='fraction'>0/59</span>
+                <span class='fraction'>15/59</span>
             </div>
         
             
             <div class='fl pad1y space-right2'>
-                <span class="strong">0% </span>
+                <span class="strong">15.38% </span>
                 <span class="quiet">Branches</span>
-                <span class='fraction'>0/26</span>
+                <span class='fraction'>4/26</span>
             </div>
         
             
             <div class='fl pad1y space-right2'>
-                <span class="strong">0% </span>
+                <span class="strong">16.66% </span>
                 <span class="quiet">Functions</span>
-                <span class='fraction'>0/12</span>
+                <span class='fraction'>2/12</span>
             </div>
         
             
             <div class='fl pad1y space-right2'>
-                <span class="strong">0% </span>
+                <span class="strong">23.21% </span>
                 <span class="quiet">Lines</span>
-                <span class='fraction'>0/56</span>
+                <span class='fraction'>13/56</span>
             </div>
         
             
@@ -370,30 +370,30 @@
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-yes">1x</span>
+<span class="cline-any cline-yes">1x</span>
+<span class="cline-any cline-yes">1x</span>
+<span class="cline-any cline-yes">1x</span>
+<span class="cline-any cline-yes">1x</span>
+<span class="cline-any cline-yes">1x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-yes">1x</span>
+<span class="cline-any cline-yes">1x</span>
+<span class="cline-any cline-yes">1x</span>
+<span class="cline-any cline-yes">1x</span>
+<span class="cline-any cline-yes">1x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">1x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">1x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
@@ -618,22 +618,22 @@ export interface ActivityResponse {
   };
 }
 &nbsp;
-export <span class="cstat-no" title="statement not covered" ><span class="fstat-no" title="function not covered" >enum <span class="cstat-no" title="statement not covered" >L</span>eadSourceEnums {</span></span>
-<span class="cstat-no" title="statement not covered" >  REFERRAL = 'REFERRAL',</span>
-<span class="cstat-no" title="statement not covered" >  WEBSITE = 'WEBSITE',</span>
-<span class="cstat-no" title="statement not covered" >  EVENT = 'EVENT',</span>
-<span class="cstat-no" title="statement not covered" >  EMAIL = 'EMAIL',</span>
-<span class="cstat-no" title="statement not covered" >  OTHER = 'OTHER'</span>
+export enum LeadSourceEnums {
+  REFERRAL = 'REFERRAL',
+  WEBSITE = 'WEBSITE',
+  EVENT = 'EVENT',
+  EMAIL = 'EMAIL',
+  OTHER = 'OTHER'
 }
 &nbsp;
-export <span class="cstat-no" title="statement not covered" ><span class="fstat-no" title="function not covered" >enum <span class="cstat-no" title="statement not covered" >L</span>eadStatusEnums {</span></span>
-<span class="cstat-no" title="statement not covered" >  NEW = 'NEW',</span>
-<span class="cstat-no" title="statement not covered" >  CONTACTED = 'CONTACTED',</span>
-<span class="cstat-no" title="statement not covered" >  QUALIFIED = 'QUALIFIED',</span>
-<span class="cstat-no" title="statement not covered" >  DISQUALIFIED = 'DISQUALIFIED'</span>
+export enum LeadStatusEnums {
+  NEW = 'NEW',
+  CONTACTED = 'CONTACTED',
+  QUALIFIED = 'QUALIFIED',
+  DISQUALIFIED = 'DISQUALIFIED'
 }
 &nbsp;
-export const leadSources = <span class="cstat-no" title="statement not covered" >[</span>
+export const leadSources = [
   { label: 'Referral', value: LeadSourceEnums.REFERRAL },
   { label: 'Website', value: LeadSourceEnums.WEBSITE },
   { label: 'Event', value: LeadSourceEnums.EVENT },
@@ -641,7 +641,7 @@ export const leadSources = <span class="cstat-no" title="statement not covered" 
   { label: 'Other', value: LeadSourceEnums.OTHER }
 ];
 &nbsp;
-export const leadStates = <span class="cstat-no" title="statement not covered" >[</span>
+export const leadStates = [
   { label: 'New', value: LeadStatusEnums.NEW },
   { label: 'Contacted', value: LeadStatusEnums.CONTACTED },
   { label: 'Qualified', value: LeadStatusEnums.QUALIFIED },
@@ -814,7 +814,7 @@ export async function <span class="fstat-no" title="function not covered" >updat
             <div class='footer quiet pad2 space-top1 center small'>
                 Code coverage generated by
                 <a href="https://istanbul.js.org/" target="_blank" rel="noopener noreferrer">istanbul</a>
-                at 2026-02-09T06:38:11.697Z
+                at 2026-02-09T07:55:20.682Z
             </div>
         <script src="../prettify.js"></script>
         <script>

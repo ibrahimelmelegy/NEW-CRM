@@ -86,15 +86,6 @@
                 </div>
 
                 <div class="form-group relative flex flex-col gap-2">
-                  <div class="flex justify-between items-center px-1">
-                    <nuxt-link
-                      to="/forget-password"
-                      class="text-xs text-[#7849ff] hover:text-[#906dff] transition-colors"
-                      aria-label="Forgot your password? Click here to reset"
-                    >
-                      {{ $t('auth.forgotPassword') }}
-                    </nuxt-link>
-                  </div>
                   <InputText
                     placeholder="••••••••"
                     name="password"
@@ -104,10 +95,19 @@
                     aria-label="Password"
                     aria-required="true"
                   />
+                  <div class="flex justify-end px-1 mt-1">
+                    <nuxt-link
+                      to="/forget-password"
+                      class="text-xs text-[var(--brand-primary)] hover:text-[var(--brand-primary-hover)] transition-colors"
+                      aria-label="Forgot your password? Click here to reset"
+                    >
+                      {{ $t('auth.forgotPassword') }}
+                    </nuxt-link>
+                  </div>
                 </div>
               </div>
 
-              <div class="flex items-center mt-6">
+              <div class="flex items-center mt-4">
                 <el-checkbox :label="$t('auth.rememberMe')" class="custom-checkbox" aria-label="Keep me logged in checkbox" />
               </div>
 
@@ -253,132 +253,54 @@ const onSubmit = handleSubmit(async (values: any) => {
     }
   }
 
-  // ✅ GLOBAL LIGHT THEME OVERRIDES (High specificity)
-  :global(html.light-mode) & {
-    .theme-text-primary,
-    h1,
-    h2,
-    h3,
-    .text-\[var\(--text-primary\)\] {
-      color: #1a1a2e !important;
-    }
-    .theme-text-secondary,
-    p,
-    .text-\[var\(--text-secondary\)\] {
-      color: #4a4a6a !important;
-    }
-    .theme-text-muted,
-    label,
-    span,
-    .text-\[var\(--text-muted\)\],
-    .text-white\/40,
-    .text-white\/60 {
-      color: #6a6a8a !important;
-      opacity: 1 !important;
-    }
-
-    .glass-card-premium {
-      background: #ffffff !important;
-      border: 2px solid rgba(120, 73, 255, 0.2) !important;
-      box-shadow: 0 10px 40px -10px rgba(120, 73, 255, 0.15) !important;
-      backdrop-filter: none !important;
-    }
-
-    .modern-input .el-input__wrapper {
-      background-color: #ffffff !important;
-      border: 2px solid #e0e0e8 !important;
-      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04) !important;
-
-      &.is-focus,
-      &:hover {
-        background-color: #ffffff !important;
-        border-color: #7849ff !important;
-        box-shadow: 0 4px 15px rgba(120, 73, 255, 0.15) !important;
-      }
-
-      .el-input__inner {
-        color: #1a1a2e !important;
-        &::placeholder {
-          color: #9090a8 !important;
-          opacity: 1 !important;
-        }
-      }
-    }
-    
-    // Glass effect cards in light mode
-    .glass-effect {
-      background: rgba(255, 255, 255, 0.8) !important;
-      border: 1px solid rgba(0, 0, 0, 0.06) !important;
-    }
-  }
+  // ✅ REFACTORED: Using CSS variables instead of hardcoded colors
+  // Light mode is now handled by theme-variables.scss
 
   .theme-text-primary {
-    color: var(--text-primary) !important;
+    color: var(--text-primary);
   }
   .theme-text-secondary {
-    color: var(--text-secondary) !important;
+    color: var(--text-secondary);
   }
   .theme-text-muted {
-    color: var(--text-muted) !important;
+    color: var(--text-muted);
   }
 
   .glass-card-premium {
     backdrop-filter: blur(15px);
-    border: 1px solid rgba(255, 255, 255, 0.12);
-    background: rgba(255, 255, 255, 0.03);
-    box-shadow:
-      0 8px 32px 0 rgba(0, 0, 0, 0.2),
-      inset 0 0 0 1px rgba(255, 255, 255, 0.05);
+    border: 1px solid var(--border-glass);
+    background: var(--glass-bg);
+    box-shadow: var(--shadow-lg);
     border-radius: 24px;
     transition: all 0.5s ease;
   }
 
   .modern-input {
     .el-input__wrapper {
-      background-color: rgba(255, 255, 255, 0.05) !important;
-      border: 1px solid rgba(255, 255, 255, 0.1) !important;
-      box-shadow: none !important;
-      border-radius: 16px !important;
-      padding: 6px 16px !important;
-      transition: all 0.3s ease !important;
+      background-color: var(--bg-input);
+      border: 1px solid var(--border-default);
+      box-shadow: none;
+      border-radius: 16px;
+      padding: 6px 16px;
+      transition: all 0.3s ease;
 
       &.is-focus,
       &:hover {
-        border-color: #7849ff !important;
-        background-color: rgba(120, 73, 255, 0.08) !important;
-        box-shadow: 0 0 0 4px rgba(120, 73, 255, 0.1) !important;
-      }
-
-      :global(html.light-mode) & {
-        background-color: rgba(255, 255, 255, 0.95) !important;
-        border-color: rgba(120, 73, 255, 0.4) !important;
-
-        &.is-focus,
-        &:hover {
-          background-color: #ffffff !important;
-          border-color: #7849ff !important;
-          box-shadow: 0 4px 15px rgba(120, 73, 255, 0.2) !important;
-        }
-
-        .el-input__inner {
-          color: #1a1a2e !important;
-          &::placeholder {
-            color: #8a8aa8 !important;
-            opacity: 0.7;
-          }
-        }
+        border-color: var(--brand-primary);
+        background-color: rgba(124, 58, 237, 0.08);
+        box-shadow: var(--shadow-active);
       }
     }
 
     .el-input__inner {
-      color: var(--text-primary) !important;
-      font-size: 15px !important;
-      height: 48px !important;
-      background: transparent !important; // ✅ FIX: Ensure transparent background
-      box-shadow: none !important;
-      border: none !important;
+      color: var(--text-primary);
+      font-size: 15px;
+      height: 48px;
+      background: transparent;
+      box-shadow: none;
+      border: none;
       &::placeholder {
-        color: var(--text-muted) !important;
+        color: var(--text-muted);
         opacity: 0.5;
       }
     }

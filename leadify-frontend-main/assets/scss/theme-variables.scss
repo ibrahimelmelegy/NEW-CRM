@@ -194,6 +194,19 @@ html.light-mode {
     // Body background
     background-color: var(--bg-body);
     color: var(--text-primary);
+
+    // Glass components in light mode
+    .glass-card-premium {
+        background: rgba(255, 255, 255, 0.95);
+        backdrop-filter: blur(10px);
+        border: 1px solid rgba(0, 0, 0, 0.08);
+        box-shadow: 0 10px 40px -10px rgba(124, 58, 237, 0.1);
+    }
+
+    .glass-effect {
+        background: rgba(255, 255, 255, 0.8);
+        border: 1px solid rgba(0, 0, 0, 0.06);
+    }
 }
 
 // ========================================
