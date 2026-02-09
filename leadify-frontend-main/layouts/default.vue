@@ -219,6 +219,13 @@ const getPath = (routeSegment: any) => {
     inset-inline-start: 0;
     position: fixed;
     padding-bottom: 3rem;
+
+    // 🎨 Glass Sidebar
+    @include mica-material;
+    backdrop-filter: blur(40px) saturate(180%);
+    -webkit-backdrop-filter: blur(40px) saturate(180%);
+    border-right: 1px solid var(--color-border-default);
+    box-shadow: var(--elevation-shadow-8);
   }
 }
 .navbar {
@@ -227,13 +234,42 @@ const getPath = (routeSegment: any) => {
   transition: all 0.2s ease-in;
   top: 0;
   inset-inline-start: 0;
+  z-index: 999;
 
-  // Glassmorphism
-  background: var(--glass-bg-primary);
-  backdrop-filter: var(--glass-blur);
-  -webkit-backdrop-filter: var(--glass-blur);
-  border-bottom: 1px solid var(--glass-border-color);
-  box-shadow: var(--glass-shadow);
+  // 🎨 Premium Glassmorphism Effect
+  @include mica-material;
+  backdrop-filter: blur(40px) saturate(180%);
+  -webkit-backdrop-filter: blur(40px) saturate(180%);
+  border: 1px solid var(--color-border-default);
+  border-radius: var(--radius-large);
+  box-shadow: var(--elevation-shadow-8);
+  margin: var(--spacing-md);
+  width: calc(100% - var(--spacing-xl));
+
+  // Shine effect
+  position: relative;
+  overflow: hidden;
+
+  &::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 2px;
+    background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.3), transparent);
+    animation: shine 3s infinite;
+  }
+
+  &:hover {
+    box-shadow: var(--elevation-shadow-16);
+    transform: translateY(-2px);
+  }
+}
+
+@keyframes shine {
+  0% { left: -100%; }
+  50%, 100% { left: 100%; }
 }
 
 .top {
@@ -281,6 +317,121 @@ const getPath = (routeSegment: any) => {
   100% {
     transform: translate(0, 0) scale(1);
     opacity: 0.12;
+  }
+}
+
+// 🎨 Premium Navbar Buttons
+.tools {
+  background: var(--color-neutral-background-2);
+  border: 1px solid var(--color-border-subtle);
+  box-shadow: var(--elevation-shadow-2);
+  transition: all var(--duration-fast) var(--curve-standard);
+
+  &:hover {
+    background: var(--color-neutral-background-3);
+    box-shadow: var(--elevation-shadow-4);
+  }
+}
+
+.premium-nav-btn {
+  width: 42px;
+  height: 42px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: var(--radius-medium);
+  background: transparent;
+  border: 1px solid transparent;
+  color: var(--color-text-primary);
+  cursor: pointer;
+  transition: all var(--duration-fast) var(--curve-standard);
+  position: relative;
+
+  &:hover {
+    background: var(--color-surface-hover);
+    border-color: var(--color-border-subtle);
+    transform: translateY(-1px);
+    box-shadow: var(--elevation-shadow-2);
+  }
+
+  &:active {
+    transform: translateY(0);
+  }
+
+  &.spotlight-btn {
+    &:hover {
+      color: var(--color-primary);
+    }
+  }
+}
+
+.notification {
+  position: relative;
+
+  &-badge {
+    position: absolute;
+    top: 8px;
+    right: 8px;
+    width: 8px;
+    height: 8px;
+    background: var(--color-danger);
+    border-radius: 50%;
+    border: 2px solid var(--color-neutral-background-1);
+    animation: pulse 2s infinite;
+  }
+}
+
+@keyframes pulse {
+  0%, 100% {
+    opacity: 1;
+    transform: scale(1);
+  }
+  50% {
+    opacity: 0.7;
+    transform: scale(1.1);
+  }
+}
+
+.profile-trigger {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-sm);
+  padding: var(--spacing-xs) var(--spacing-md);
+  border-radius: var(--radius-medium);
+  cursor: pointer;
+  transition: all var(--duration-fast) var(--curve-standard);
+
+  &:hover {
+    background: var(--color-surface-hover);
+  }
+
+  p {
+    font-size: var(--font-size-sm);
+    font-weight: var(--font-weight-medium);
+  }
+}
+
+// Breadcrumb Improvements
+.breadcrumb {
+  .el-breadcrumb {
+    :deep(.el-breadcrumb__item) {
+      .el-breadcrumb__inner {
+        font-weight: var(--font-weight-medium);
+        transition: all var(--duration-fast);
+
+        &:hover {
+          color: var(--color-primary);
+        }
+      }
+
+      &.is-link {
+        .el-breadcrumb__inner {
+          &:hover {
+            color: var(--color-primary);
+          }
+        }
+      }
+    }
   }
 }
 </style>
