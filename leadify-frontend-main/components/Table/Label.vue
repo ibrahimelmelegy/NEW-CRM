@@ -104,8 +104,8 @@ function getTextFromValue(value) {
 
   &-solid {
     // &-primary {
-    //   border: 1px solid $primary;
-    //   color: $primary;
+    //   border: 1px solid var(--color-primary);
+    //   color: var(--color-primary);
     // }
     // &-red {
     //   border: 1px solid $danger;
@@ -138,9 +138,9 @@ function getTextFromValue(value) {
     }
 
     &-brown {
-      border: 1px solid $brown;
-      color: $brown;
-      background-color: $brown-light;
+      border: 1px solid var(--color-brown);
+      color: var(--color-brown);
+      background-color: var(--color-brown-light);
     }
   }
 }
@@ -168,9 +168,9 @@ function getTextFromValue(value) {
     }
 
     &-brown {
-      border: 1px solid $brown;
-      color: $brown;
-      background-color: $brown-light;
+      border: 1px solid var(--color-brown);
+      color: var(--color-brown);
+      background-color: var(--color-brown-light);
     }
   }
 }

@@ -185,7 +185,16 @@ watch(
     }
 
     tr.el-table__row {
-      @include glass-table-row-hover;
+      transition: all var(--duration-fast) var(--curve-standard);
+      cursor: pointer;
+
+      &:hover {
+        background-color: var(--color-surface-hover) !important;
+        transform: translateX(2px);
+        box-shadow: -4px 0 8px rgba(0, 0, 0, 0.1);
+        position: relative;
+        z-index: 1;
+      }
     }
   }
 }

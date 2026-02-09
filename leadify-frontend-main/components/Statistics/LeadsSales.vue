@@ -276,7 +276,8 @@ const resetLayout = () => {
 }
 
 .glass-container {
-  @include glass-card;
+  @include mica-material;
+  border-radius: var(--radius-card);
   overflow: hidden;
 
   // Hover effect for drag handle visibility

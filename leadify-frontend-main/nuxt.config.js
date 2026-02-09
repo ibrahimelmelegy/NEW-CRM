@@ -48,7 +48,17 @@ export default defineNuxtConfig({
     css: {
       preprocessorOptions: {
         scss: {
-          // No additional data needed - everything in main.scss
+          // Inject design tokens and mixins into all components
+          additionalData: `
+            @import "@/assets/styles/tokens/_colors.scss";
+            @import "@/assets/styles/tokens/_typography.scss";
+            @import "@/assets/styles/tokens/_spacing.scss";
+            @import "@/assets/styles/tokens/_borders.scss";
+            @import "@/assets/styles/tokens/_elevation.scss";
+            @import "@/assets/styles/tokens/_motion.scss";
+            @import "@/assets/styles/tokens/_materials.scss";
+            @import "@/assets/styles/tokens/_rtl.scss";
+          `,
           silenceDeprecations: ['legacy-js-api']
         }
       }

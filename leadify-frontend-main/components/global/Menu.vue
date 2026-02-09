@@ -168,30 +168,36 @@ function openNav() {
 
 <style lang="scss" scoped>
 .sidebar-glass {
-  @include glass-sidebar-bg;
-  transition:
-    width 0.3s ease-in-out,
-    background 0.3s ease;
+  @include acrylic-material;
+  border-radius: var(--radius-large);
+  transition: width var(--duration-normal) var(--curve-standard);
 
   // Ensure text and icons are visible in both modes
   :deep(.el-menu-item),
   :deep(.el-sub-menu__title) {
-    color: var(--text-primary) !important;
+    color: var(--color-text-primary) !important;
+    border-radius: var(--radius-small);
+    margin: 0 var(--spacing-sm) var(--spacing-xs) var(--spacing-sm);
+    transition: all var(--duration-fast) var(--curve-standard);
 
     &:hover {
-      background-color: rgba(120, 73, 255, 0.15) !important;
+      background-color: rgba(0, 120, 212, 0.1) !important; // Microsoft Blue tint
     }
 
     &.is-active {
-      background-color: rgba(120, 73, 255, 0.2) !important;
-      color: var(--accent-color, #7849ff) !important;
+      background-color: var(--color-primary) !important; // #0078D4 Microsoft Blue
+      color: #FFFFFF !important;
     }
   }
 
   // Icon colors
   :deep(.el-icon),
   :deep(svg) {
-    color: var(--text-primary) !important;
+    color: var(--color-text-primary) !important;
+
+    .is-active & {
+      color: #FFFFFF !important;
+    }
   }
 }
 

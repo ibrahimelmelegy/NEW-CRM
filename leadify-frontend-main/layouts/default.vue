@@ -250,7 +250,7 @@ const getPath = (routeSegment: any) => {
 }
 .myicon {
   color: white;
-  background-color: $primary;
+  background-color: var(--color-primary);
   padding: 0.3rem;
   border-radius: 50%;
 }

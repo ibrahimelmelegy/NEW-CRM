@@ -209,7 +209,7 @@ const handlePrint = async () => {
 }
 .myicon {
   color: white;
-  background-color: $primary;
+  background-color: var(--color-primary);
   padding: 0.5rem;
   border-radius: 50%;
 }
