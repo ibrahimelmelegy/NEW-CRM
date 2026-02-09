@@ -1,0 +1,325 @@
+// ============================================
+// ⚡ MICROSOFT FLUENT DESIGN - MOTION SYSTEM
+// ============================================
+// Animation durations and easing curves matching Windows 11
+
+:root {
+  // ==========================================
+  // DURATION - Animation timing
+  // ==========================================
+  --duration-instant: 0ms;
+  --duration-faster: 100ms;
+  --duration-fast: 150ms;
+  --duration-normal: 250ms;
+  --duration-slow: 300ms;
+  --duration-slower: 500ms;
+  --duration-slowest: 700ms;
+
+  // ==========================================
+  // EASING CURVES - Microsoft Fluent curves
+  // ==========================================
+  --curve-accelerate: cubic-bezier(0.9, 0.1, 1, 0.2);
+  --curve-decelerate: cubic-bezier(0.1, 0.9, 0.2, 1);
+  --curve-standard: cubic-bezier(0.8, 0, 0.2, 1);
+  --curve-emphasized: cubic-bezier(0.4, 0, 0.6, 1);
+  --curve-smooth: cubic-bezier(0.4, 0, 0.2, 1);
+  --curve-linear: linear;
+
+  // ==========================================
+  // COMPONENT-SPECIFIC TRANSITIONS
+  // ==========================================
+  --transition-button: all var(--duration-fast) var(--curve-standard);
+  --transition-card: all var(--duration-normal) var(--curve-smooth);
+  --transition-dialog: opacity var(--duration-normal) var(--curve-emphasized), transform var(--duration-normal) var(--curve-emphasized);
+  --transition-dropdown: all var(--duration-fast) var(--curve-decelerate);
+  --transition-tooltip: opacity var(--duration-faster) var(--curve-standard);
+  --transition-color: color var(--duration-fast) var(--curve-standard), background-color var(--duration-fast) var(--curve-standard);
+}
+
+// ============================================
+// 🎬 ANIMATION KEYFRAMES
+// ============================================
+
+// Fade animations
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes fadeOut {
+  from {
+    opacity: 1;
+  }
+  to {
+    opacity: 0;
+  }
+}
+
+// Slide animations
+@keyframes slideInUp {
+  from {
+    transform: translateY(20px);
+    opacity: 0;
+  }
+  to {
+    transform: translateY(0);
+    opacity: 1;
+  }
+}
+
+@keyframes slideInDown {
+  from {
+    transform: translateY(-20px);
+    opacity: 0;
+  }
+  to {
+    transform: translateY(0);
+    opacity: 1;
+  }
+}
+
+@keyframes slideInStart {
+  from {
+    transform: translateX(-20px);
+    opacity: 0;
+  }
+  to {
+    transform: translateX(0);
+    opacity: 1;
+  }
+}
+
+@keyframes slideInEnd {
+  from {
+    transform: translateX(20px);
+    opacity: 0;
+  }
+  to {
+    transform: translateX(0);
+    opacity: 1;
+  }
+}
+
+// Scale animations
+@keyframes scaleIn {
+  from {
+    transform: scale(0.95);
+    opacity: 0;
+  }
+  to {
+    transform: scale(1);
+    opacity: 1;
+  }
+}
+
+@keyframes scaleOut {
+  from {
+    transform: scale(1);
+    opacity: 1;
+  }
+  to {
+    transform: scale(0.95);
+    opacity: 0;
+  }
+}
+
+// Spin animation
+@keyframes spin {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+// Pulse animation
+@keyframes pulse {
+  0%, 100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.5;
+  }
+}
+
+// Bounce animation
+@keyframes bounce {
+  0%, 100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-10px);
+  }
+}
+
+// Shake animation
+@keyframes shake {
+  0%, 100% {
+    transform: translateX(0);
+  }
+  25% {
+    transform: translateX(-8px);
+  }
+  75% {
+    transform: translateX(8px);
+  }
+}
+
+// Shimmer animation (for loading states)
+@keyframes shimmer {
+  0% {
+    background-position: -1000px 0;
+  }
+  100% {
+    background-position: 1000px 0;
+  }
+}
+
+// Focus ring animation
+@keyframes focusRing {
+  from {
+    box-shadow: 0 0 0 0 rgba(0, 120, 212, 0.4);
+  }
+  to {
+    box-shadow: var(--shadow-focus);
+  }
+}
+
+// ============================================
+// 📦 ANIMATION UTILITY CLASSES
+// ============================================
+
+// Fade
+.animate-fade-in {
+  animation: fadeIn var(--duration-normal) var(--curve-standard);
+}
+
+.animate-fade-out {
+  animation: fadeOut var(--duration-normal) var(--curve-standard);
+}
+
+// Slide
+.animate-slide-in-up {
+  animation: slideInUp var(--duration-normal) var(--curve-decelerate);
+}
+
+.animate-slide-in-down {
+  animation: slideInDown var(--duration-normal) var(--curve-decelerate);
+}
+
+.animate-slide-in-start {
+  animation: slideInStart var(--duration-normal) var(--curve-decelerate);
+}
+
+.animate-slide-in-end {
+  animation: slideInEnd var(--duration-normal) var(--curve-decelerate);
+}
+
+// Scale
+.animate-scale-in {
+  animation: scaleIn var(--duration-fast) var(--curve-emphasized);
+}
+
+.animate-scale-out {
+  animation: scaleOut var(--duration-fast) var(--curve-emphasized);
+}
+
+// Spin
+.animate-spin {
+  animation: spin 1s var(--curve-linear) infinite;
+}
+
+// Pulse
+.animate-pulse {
+  animation: pulse 2s var(--curve-smooth) infinite;
+}
+
+// Bounce
+.animate-bounce {
+  animation: bounce 1s var(--curve-smooth) infinite;
+}
+
+// Shake
+.animate-shake {
+  animation: shake 0.5s var(--curve-standard);
+}
+
+// Shimmer
+.animate-shimmer {
+  background: linear-gradient(
+    90deg,
+    var(--color-neutral-background-2) 0%,
+    var(--color-neutral-background-3) 50%,
+    var(--color-neutral-background-2) 100%
+  );
+  background-size: 1000px 100%;
+  animation: shimmer 2s var(--curve-linear) infinite;
+}
+
+// ============================================
+// 🎯 TRANSITION UTILITIES
+// ============================================
+
+.transition-none { transition: none !important; }
+.transition-all { transition: all var(--duration-normal) var(--curve-standard) !important; }
+.transition-colors { transition: var(--transition-color) !important; }
+.transition-fast { transition-duration: var(--duration-fast) !important; }
+.transition-normal { transition-duration: var(--duration-normal) !important; }
+.transition-slow { transition-duration: var(--duration-slow) !important; }
+
+// ============================================
+// 🌊 HOVER & INTERACTION EFFECTS
+// ============================================
+
+// Lift on hover
+.hover-lift {
+  transition: transform var(--duration-fast) var(--curve-standard), box-shadow var(--duration-fast) var(--curve-standard);
+
+  &:hover {
+    transform: translateY(-2px);
+    box-shadow: var(--elevation-shadow-8);
+  }
+
+  &:active {
+    transform: translateY(0);
+    box-shadow: var(--elevation-shadow-4);
+  }
+}
+
+// Scale on hover
+.hover-scale {
+  transition: transform var(--duration-fast) var(--curve-standard);
+
+  &:hover {
+    transform: scale(1.05);
+  }
+
+  &:active {
+    transform: scale(0.98);
+  }
+}
+
+// Glow on hover
+.hover-glow {
+  transition: box-shadow var(--duration-normal) var(--curve-standard);
+
+  &:hover {
+    box-shadow: var(--shadow-glow);
+  }
+}
+
+// Reduce motion for users who prefer it
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}

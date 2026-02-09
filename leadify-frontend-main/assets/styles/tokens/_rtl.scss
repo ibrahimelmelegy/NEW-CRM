@@ -1,0 +1,441 @@
+// ============================================
+// 🌍 MICROSOFT FLUENT DESIGN - RTL/LTR SYSTEM
+// ============================================
+// Complete bilingual support for Arabic (RTL) and English (LTR)
+// Auto-mirroring for all UI elements
+
+:root {
+  // ==========================================
+  // DIRECTION VARIABLES
+  // ==========================================
+  --direction: ltr;
+  --start: left;
+  --end: right;
+  --start-position: 0;
+  --end-position: 100%;
+}
+
+// ============================================
+// 🌙 RTL MODE (Arabic)
+// ============================================
+html[dir="rtl"] {
+  --direction: rtl;
+  --start: right;
+  --end: left;
+  --start-position: 100%;
+  --end-position: 0;
+  direction: rtl;
+
+  // Arabic-specific typography adjustments
+  --font-size-base: 15px; // Slightly larger for Arabic readability
+  --line-height-base: 1.7; // Taller for Arabic vertical space
+  letter-spacing: 0; // No letter spacing for Arabic
+
+  // Font family override for Arabic
+  font-family: var(--font-family-arabic);
+}
+
+// ============================================
+// 🌤️ LTR MODE (English) - Default
+// ============================================
+html[dir="ltr"] {
+  --direction: ltr;
+  --start: left;
+  --end: right;
+  --start-position: 0;
+  --end-position: 100%;
+  direction: ltr;
+}
+
+// ============================================
+// 🔄 AUTO-MIRRORING UTILITIES
+// ============================================
+
+// Logical Properties (RTL-aware)
+.margin-start {
+  margin-inline-start: var(--spacing-md);
+}
+
+.margin-end {
+  margin-inline-end: var(--spacing-md);
+}
+
+.padding-start {
+  padding-inline-start: var(--spacing-md);
+}
+
+.padding-end {
+  padding-inline-end: var(--spacing-md);
+}
+
+.border-start {
+  border-inline-start: 1px solid var(--color-border-default);
+}
+
+.border-end {
+  border-inline-end: 1px solid var(--color-border-default);
+}
+
+// Text alignment (RTL-aware)
+.text-start {
+  text-align: start;
+}
+
+.text-end {
+  text-align: end;
+}
+
+// Float (RTL-aware)
+.float-start {
+  float: inline-start;
+}
+
+.float-end {
+  float: inline-end;
+}
+
+// ============================================
+// 🔃 ICON FLIPPING FOR RTL
+// ============================================
+
+// Icons that should flip in RTL
+html[dir="rtl"] {
+  // Arrows and directional icons
+  .icon-flip,
+  .el-icon-arrow-right,
+  .el-icon-arrow-left,
+  .el-icon-back,
+  .el-icon-right,
+  .el-icon-d-arrow-right,
+  .el-icon-d-arrow-left {
+    transform: scaleX(-1);
+  }
+
+  // Chevrons
+  [class*="chevron"],
+  [class*="caret"] {
+    transform: scaleX(-1);
+  }
+
+  // Custom Fluent icons that need flipping
+  .fluent-icon-flip {
+    transform: scaleX(-1);
+  }
+}
+
+// Icons that should NOT flip in RTL
+.icon-no-flip,
+.icon-rtl-preserve {
+  html[dir="rtl"] & {
+    transform: none !important;
+  }
+}
+
+// ============================================
+// 🎯 COMPONENT RTL ADJUSTMENTS
+// ============================================
+
+// Sidebar position
+.sidebar {
+  html[dir="rtl"] & {
+    border-left: 1px solid var(--color-border-default);
+    border-right: none;
+  }
+}
+
+// Dropdown menu alignment
+.dropdown-menu {
+  html[dir="rtl"] & {
+    left: auto;
+    right: 0;
+  }
+}
+
+// Tooltip arrow
+.tooltip {
+  html[dir="rtl"] & {
+    &[data-placement^="left"] {
+      &::before {
+        left: auto;
+        right: -6px;
+        transform: scaleX(-1);
+      }
+    }
+
+    &[data-placement^="right"] {
+      &::before {
+        right: auto;
+        left: -6px;
+        transform: scaleX(-1);
+      }
+    }
+  }
+}
+
+// Button groups
+.el-button-group {
+  html[dir="rtl"] & {
+    .el-button:first-child {
+      border-radius: 0 var(--radius-button) var(--radius-button) 0;
+    }
+
+    .el-button:last-child {
+      border-radius: var(--radius-button) 0 0 var(--radius-button);
+    }
+  }
+}
+
+// Pagination
+.el-pagination {
+  html[dir="rtl"] & {
+    .el-icon-arrow-left {
+      transform: rotate(180deg);
+    }
+
+    .el-icon-arrow-right {
+      transform: rotate(180deg);
+    }
+  }
+}
+
+// Breadcrumbs
+.el-breadcrumb {
+  html[dir="rtl"] & {
+    .el-breadcrumb__separator {
+      transform: scaleX(-1);
+    }
+  }
+}
+
+// Tables
+.el-table {
+  html[dir="rtl"] & {
+    text-align: right;
+
+    th, td {
+      text-align: right;
+    }
+
+    // Table actions column
+    .el-table__column--selection {
+      .el-checkbox {
+        margin-left: 10px;
+        margin-right: 0;
+      }
+    }
+  }
+}
+
+// Forms
+.el-form {
+  html[dir="rtl"] & {
+    // Form item label
+    .el-form-item__label {
+      text-align: right;
+      padding-left: 12px;
+      padding-right: 0;
+    }
+
+    // Form icons
+    .el-input__prefix {
+      right: 5px;
+      left: auto;
+    }
+
+    .el-input__suffix {
+      left: 5px;
+      right: auto;
+    }
+
+    // Radio/Checkbox labels
+    .el-radio__label,
+    .el-checkbox__label {
+      padding-left: 0;
+      padding-right: 10px;
+    }
+  }
+}
+
+// Dialogs
+.el-dialog {
+  html[dir="rtl"] & {
+    // Dialog close button
+    .el-dialog__headerbtn {
+      left: 20px;
+      right: auto;
+    }
+  }
+}
+
+// Menu/Navigation
+.el-menu {
+  html[dir="rtl"] & {
+    text-align: right;
+
+    .el-submenu__icon-arrow {
+      left: 20px;
+      right: auto;
+      transform: scaleX(-1);
+    }
+
+    .el-menu-item,
+    .el-submenu__title {
+      text-align: right;
+      padding-right: 20px;
+      padding-left: 0;
+    }
+  }
+}
+
+// Drawer
+.el-drawer {
+  html[dir="rtl"] & {
+    &.rtl {
+      left: 0;
+      right: auto;
+    }
+
+    &.ltr {
+      right: 0;
+      left: auto;
+    }
+  }
+}
+
+// ============================================
+// 🎨 GRADIENT DIRECTION RTL
+// ============================================
+html[dir="rtl"] {
+  // Reverse gradient directions
+  .gradient-to-r {
+    background: linear-gradient(to left, var(--gradient-start), var(--gradient-end));
+  }
+
+  .gradient-to-l {
+    background: linear-gradient(to right, var(--gradient-start), var(--gradient-end));
+  }
+}
+
+// ============================================
+// 📊 CHART & DATA VISUALIZATION RTL
+// ============================================
+html[dir="rtl"] {
+  // Chart labels and legends
+  .chart-legend {
+    text-align: right;
+
+    .legend-item {
+      flex-direction: row-reverse;
+    }
+  }
+
+  // Data tables with numeric data
+  .data-table {
+    .numeric-column {
+      text-align: left; // Keep numbers LTR even in RTL
+      direction: ltr;
+    }
+  }
+}
+
+// ============================================
+// 🔢 NUMBER & DATE FORMATTING
+// ============================================
+html[lang="ar"] {
+  // Keep numbers in LTR format
+  .number,
+  .price,
+  .currency,
+  .phone,
+  .email,
+  .url {
+    direction: ltr;
+    display: inline-block;
+  }
+
+  // Date formatting
+  .date-display {
+    direction: ltr;
+    display: inline-block;
+  }
+}
+
+// ============================================
+// 🎯 TRANSITION DIRECTIONS RTL
+// ============================================
+html[dir="rtl"] {
+  // Slide animations should reverse
+  .slide-enter-from {
+    transform: translateX(-100%);
+  }
+
+  .slide-leave-to {
+    transform: translateX(100%);
+  }
+
+  // Drawer animations
+  .drawer-enter-from {
+    transform: translateX(-100%);
+  }
+
+  .drawer-leave-to {
+    transform: translateX(-100%);
+  }
+}
+
+// ============================================
+// 🌐 BIDIRECTIONAL TEXT (BIDI)
+// ============================================
+
+// Mixed content (Arabic + English)
+.bidi-text {
+  unicode-bidi: embed;
+}
+
+// Force LTR for specific content
+.force-ltr {
+  direction: ltr !important;
+  text-align: left !important;
+  unicode-bidi: bidi-override;
+}
+
+// Force RTL for specific content
+.force-rtl {
+  direction: rtl !important;
+  text-align: right !important;
+  unicode-bidi: bidi-override;
+}
+
+// ============================================
+// ✨ RTL UTILITY CLASSES
+// ============================================
+
+// Show/hide based on direction
+.rtl-only {
+  display: none;
+  html[dir="rtl"] & {
+    display: block;
+  }
+}
+
+.ltr-only {
+  display: none;
+  html[dir="ltr"] & {
+    display: block;
+  }
+}
+
+// Inline variants
+.rtl-inline {
+  display: none;
+  html[dir="rtl"] & {
+    display: inline;
+  }
+}
+
+.ltr-inline {
+  display: none;
+  html[dir="ltr"] & {
+    display: inline;
+  }
+}

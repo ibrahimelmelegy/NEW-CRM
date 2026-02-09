@@ -1,0 +1,63 @@
+// ============================================
+// 🌑 MICROSOFT FLUENT DESIGN - ELEVATION SYSTEM
+// ============================================
+// Shadow system matching Windows 11 depth levels
+
+:root {
+  // ==========================================
+  // SHADOW LEVELS - Dark Mode
+  // ==========================================
+  --elevation-shadow-2: 0 1px 3px rgba(0, 0, 0, 0.12), 0 1px 2px rgba(0, 0, 0, 0.24);
+  --elevation-shadow-4: 0 2px 4px rgba(0, 0, 0, 0.14), 0 3px 4px rgba(0, 0, 0, 0.26);
+  --elevation-shadow-8: 0 4px 8px rgba(0, 0, 0, 0.14), 0 6px 10px rgba(0, 0, 0, 0.28);
+  --elevation-shadow-16: 0 8px 16px rgba(0, 0, 0, 0.14), 0 12px 20px rgba(0, 0, 0, 0.30);
+  --elevation-shadow-24: 0 12px 24px rgba(0, 0, 0, 0.16), 0 16px 28px rgba(0, 0, 0, 0.32);
+  --elevation-shadow-32: 0 16px 32px rgba(0, 0, 0, 0.18), 0 20px 36px rgba(0, 0, 0, 0.34);
+  --elevation-shadow-64: 0 32px 64px rgba(0, 0, 0, 0.24), 0 36px 72px rgba(0, 0, 0, 0.38);
+
+  // ==========================================
+  // SPECIAL SHADOWS
+  // ==========================================
+  --shadow-focus: 0 0 0 3px rgba(0, 120, 212, 0.3);
+  --shadow-focus-danger: 0 0 0 3px rgba(209, 52, 56, 0.3);
+  --shadow-premium: 0 4px 20px rgba(124, 58, 237, 0.15);
+  --shadow-glow: 0 0 20px rgba(0, 120, 212, 0.2);
+}
+
+// ============================================
+// 🌤️ LIGHT MODE OVERRIDES
+// ============================================
+html.light-mode {
+  --elevation-shadow-2: 0 1px 3px rgba(0, 0, 0, 0.08), 0 1px 2px rgba(0, 0, 0, 0.12);
+  --elevation-shadow-4: 0 2px 4px rgba(0, 0, 0, 0.08), 0 3px 4px rgba(0, 0, 0, 0.10);
+  --elevation-shadow-8: 0 4px 8px rgba(0, 0, 0, 0.10), 0 6px 10px rgba(0, 0, 0, 0.12);
+  --elevation-shadow-16: 0 8px 16px rgba(0, 0, 0, 0.12), 0 12px 20px rgba(0, 0, 0, 0.14);
+  --elevation-shadow-24: 0 12px 24px rgba(0, 0, 0, 0.14), 0 16px 28px rgba(0, 0, 0, 0.16);
+  --elevation-shadow-32: 0 16px 32px rgba(0, 0, 0, 0.16), 0 20px 36px rgba(0, 0, 0, 0.18);
+  --elevation-shadow-64: 0 32px 64px rgba(0, 0, 0, 0.18), 0 36px 72px rgba(0, 0, 0, 0.20);
+
+  --shadow-glow: 0 0 20px rgba(0, 120, 212, 0.15);
+}
+
+// ============================================
+// 📦 ELEVATION UTILITY CLASSES
+// ============================================
+.shadow-none { box-shadow: none !important; }
+.shadow-2 { box-shadow: var(--elevation-shadow-2) !important; }
+.shadow-4 { box-shadow: var(--elevation-shadow-4) !important; }
+.shadow-8 { box-shadow: var(--elevation-shadow-8) !important; }
+.shadow-16 { box-shadow: var(--elevation-shadow-16) !important; }
+.shadow-24 { box-shadow: var(--elevation-shadow-24) !important; }
+.shadow-32 { box-shadow: var(--elevation-shadow-32) !important; }
+.shadow-64 { box-shadow: var(--elevation-shadow-64) !important; }
+.shadow-focus { box-shadow: var(--shadow-focus) !important; }
+.shadow-glow { box-shadow: var(--shadow-glow) !important; }
+
+// ============================================
+// 🎯 COMPONENT ELEVATION PRESETS
+// ============================================
+.elevation-card { box-shadow: var(--elevation-shadow-4); }
+.elevation-button { box-shadow: var(--elevation-shadow-2); }
+.elevation-dialog { box-shadow: var(--elevation-shadow-64); }
+.elevation-dropdown { box-shadow: var(--elevation-shadow-16); }
+.elevation-tooltip { box-shadow: var(--elevation-shadow-8); }

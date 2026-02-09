@@ -1,0 +1,52 @@
+// ============================================
+// 🌑 DARK MODE THEME
+// ============================================
+// Default theme matching Windows 11 Dark Mode
+
+:root {
+  // Theme identifier
+  --theme-mode: dark;
+
+  // Already defined in _colors.scss, but ensuring consistency
+  color-scheme: dark;
+}
+
+// Dark mode is the default, so main colors are already defined in _colors.scss
+// This file is for any dark-mode-specific overrides or adjustments
+
+// Body styling for dark mode
+body {
+  background-color: var(--color-neutral-background-1);
+  color: var(--color-text-primary);
+}
+
+// Scrollbar styling for dark mode
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: var(--color-neutral-background-1);
+}
+
+::-webkit-scrollbar-thumb {
+  background: var(--color-neutral-background-4);
+  border-radius: 4px;
+
+  &:hover {
+    background: var(--color-neutral-background-5);
+  }
+}
+
+// Selection color
+::selection {
+  background: var(--color-surface-selected);
+  color: var(--color-text-primary);
+}
+
+// Focus visible outline
+:focus-visible {
+  outline: 2px solid var(--color-primary);
+  outline-offset: 2px;
+}

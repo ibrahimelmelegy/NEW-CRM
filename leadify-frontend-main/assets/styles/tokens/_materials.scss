@@ -1,0 +1,275 @@
+// ============================================
+// 🪟 MICROSOFT FLUENT DESIGN - MATERIALS SYSTEM
+// ============================================
+// All 4 Fluent Materials: Acrylic, Mica, Mica Alt, Smoke
+// These create the signature Windows 11 glass/blur effects
+
+:root {
+  // ==========================================
+  // 1. ACRYLIC MATERIAL
+  // ==========================================
+  // Heavy blur - Used for Sidebar, Navbar, Dialogs
+  // Most prominent glass effect
+
+  --material-acrylic-bg-dark: rgba(32, 32, 32, 0.7);
+  --material-acrylic-bg-light: rgba(252, 252, 252, 0.85);
+  --material-acrylic-blur: blur(30px) saturate(150%);
+  --material-acrylic-border-dark: rgba(255, 255, 255, 0.08);
+  --material-acrylic-border-light: rgba(0, 0, 0, 0.06);
+  --material-acrylic-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+
+  // ==========================================
+  // 2. MICA MATERIAL
+  // ==========================================
+  // Subtle blur - Used for Cards, Content areas
+  // Lighter than Acrylic, more content-focused
+
+  --material-mica-bg-dark: rgba(32, 32, 32, 0.5);
+  --material-mica-bg-light: rgba(243, 243, 243, 0.7);
+  --material-mica-blur: blur(15px) saturate(110%);
+  --material-mica-tint-dark: rgba(255, 255, 255, 0.03);
+  --material-mica-tint-light: rgba(0, 0, 0, 0.02);
+  --material-mica-border-dark: rgba(255, 255, 255, 0.06);
+  --material-mica-border-light: rgba(0, 0, 0, 0.04);
+
+  // ==========================================
+  // 3. MICA ALT MATERIAL
+  // ==========================================
+  // Alternative Mica - Used for Tabs, Headers
+  // Slightly different tone from regular Mica
+
+  --material-mica-alt-bg-dark: rgba(26, 26, 26, 0.6);
+  --material-mica-alt-bg-light: rgba(234, 234, 234, 0.8);
+  --material-mica-alt-blur: blur(12px);
+  --material-mica-alt-border-dark: rgba(255, 255, 255, 0.08);
+  --material-mica-alt-border-light: rgba(0, 0, 0, 0.05);
+
+  // ==========================================
+  // 4. SMOKE MATERIAL
+  // ==========================================
+  // Modal backdrops/overlays
+  // Creates the dimmed background effect
+
+  --material-smoke-bg-dark: rgba(0, 0, 0, 0.5);
+  --material-smoke-bg-light: rgba(0, 0, 0, 0.3);
+  --material-smoke-blur: blur(8px);
+}
+
+// ============================================
+// 🎨 MATERIAL MIXINS
+// ============================================
+
+// 1. Acrylic Material Mixin
+@mixin acrylic-material {
+  background: var(--material-acrylic-bg-dark);
+  backdrop-filter: var(--material-acrylic-blur);
+  -webkit-backdrop-filter: var(--material-acrylic-blur);
+  border: 1px solid var(--material-acrylic-border-dark);
+  box-shadow: var(--material-acrylic-shadow);
+
+  html.light-mode & {
+    background: var(--material-acrylic-bg-light);
+    border-color: var(--material-acrylic-border-light);
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.08);
+  }
+}
+
+// 2. Mica Material Mixin
+@mixin mica-material {
+  background: var(--material-mica-bg-dark);
+  backdrop-filter: var(--material-mica-blur);
+  -webkit-backdrop-filter: var(--material-mica-blur);
+  border: 1px solid var(--material-mica-border-dark);
+  position: relative;
+
+  // Subtle tint overlay
+  &::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: var(--material-mica-tint-dark);
+    pointer-events: none;
+    border-radius: inherit;
+  }
+
+  html.light-mode & {
+    background: var(--material-mica-bg-light);
+    border-color: var(--material-mica-border-light);
+
+    &::before {
+      background: var(--material-mica-tint-light);
+    }
+  }
+}
+
+// 3. Mica Alt Material Mixin
+@mixin mica-alt-material {
+  background: var(--material-mica-alt-bg-dark);
+  backdrop-filter: var(--material-mica-alt-blur);
+  -webkit-backdrop-filter: var(--material-mica-alt-blur);
+  border: 1px solid var(--material-mica-alt-border-dark);
+
+  html.light-mode & {
+    background: var(--material-mica-alt-bg-light);
+    border-color: var(--material-mica-alt-border-light);
+  }
+}
+
+// 4. Smoke Material Mixin
+@mixin smoke-material {
+  background: var(--material-smoke-bg-dark);
+  backdrop-filter: var(--material-smoke-blur);
+  -webkit-backdrop-filter: var(--material-smoke-blur);
+
+  html.light-mode & {
+    background: var(--material-smoke-bg-light);
+  }
+}
+
+// ============================================
+// 📦 MATERIAL UTILITY CLASSES
+// ============================================
+
+// Acrylic Material Class
+.material-acrylic {
+  @include acrylic-material;
+}
+
+// Mica Material Class
+.material-mica {
+  @include mica-material;
+}
+
+// Mica Alt Material Class
+.material-mica-alt {
+  @include mica-alt-material;
+}
+
+// Smoke Material Class
+.material-smoke {
+  @include smoke-material;
+}
+
+// ============================================
+// 🎯 USAGE GUIDE (Comments for developers)
+// ============================================
+
+/*
+MATERIAL USAGE RECOMMENDATIONS:
+
+1. ACRYLIC - Strongest blur
+   ✅ Use for: Sidebar navigation, Top navbar, Dialog/modals
+   ❌ Avoid: Large content areas (too much blur affects readability)
+   Example: @include acrylic-material;
+
+2. MICA - Subtle blur
+   ✅ Use for: Cards, Content panels, Form containers
+   ❌ Avoid: Overlapping multiple layers (can get too blurry)
+   Example: @include mica-material;
+
+3. MICA ALT - Alternative for tabs
+   ✅ Use for: Tab headers, Section headers, Toolbars
+   ❌ Avoid: Main navigation (use Acrylic instead)
+   Example: @include mica-alt-material;
+
+4. SMOKE - Backdrop overlay
+   ✅ Use for: Modal backdrops, Dropdown overlays, Loading screens
+   ❌ Avoid: Static UI elements
+   Example: @include smoke-material;
+
+LAYERING ORDER (z-index):
+- Smoke backdrop: 1000
+- Dialogs/Modals: 1100
+- Acrylic sidebar/navbar: 100
+- Mica cards: 1
+- Content: auto
+*/
+
+// ============================================
+// 🌟 ENHANCED GLASS EFFECTS
+// ============================================
+
+// Elevated glass effect (with shadow)
+@mixin glass-elevated {
+  @include acrylic-material;
+  box-shadow: var(--elevation-shadow-16);
+}
+
+// Glass with hover effect
+@mixin glass-interactive {
+  @include mica-material;
+  transition: all var(--duration-fast) var(--curve-standard);
+
+  &:hover {
+    transform: translateY(-2px);
+    box-shadow: var(--elevation-shadow-8);
+    background: rgba(255, 255, 255, 0.08);
+
+    html.light-mode & {
+      background: rgba(255, 255, 255, 0.95);
+    }
+  }
+
+  &:active {
+    transform: translateY(0);
+    box-shadow: var(--elevation-shadow-4);
+  }
+}
+
+// Glass card with border glow
+@mixin glass-glow {
+  @include mica-material;
+
+  &:hover {
+    border-color: var(--color-primary);
+    box-shadow: 0 0 20px rgba(0, 120, 212, 0.15);
+  }
+}
+
+// Frosted glass (extra strong blur)
+@mixin glass-frosted {
+  background: rgba(255, 255, 255, 0.1);
+  backdrop-filter: blur(40px) saturate(180%);
+  -webkit-backdrop-filter: blur(40px) saturate(180%);
+  border: 1px solid rgba(255, 255, 255, 0.12);
+
+  html.light-mode & {
+    background: rgba(255, 255, 255, 0.6);
+    border-color: rgba(0, 0, 0, 0.08);
+  }
+}
+
+// Glass utility classes
+.glass-elevated {
+  @include glass-elevated;
+}
+
+.glass-interactive {
+  @include glass-interactive;
+}
+
+.glass-glow {
+  @include glass-glow;
+}
+
+.glass-frosted {
+  @include glass-frosted;
+}
+
+// ============================================
+// 🔧 BROWSER SUPPORT FALLBACKS
+// ============================================
+
+// Fallback for browsers that don't support backdrop-filter
+@supports not (backdrop-filter: blur(1px)) {
+  .material-acrylic,
+  .material-mica,
+  .material-mica-alt {
+    background: var(--color-neutral-background-2) !important;
+    border: 1px solid var(--color-border-default) !important;
+  }
+
+  .material-smoke {
+    background: rgba(0, 0, 0, 0.7) !important;
+  }
+}

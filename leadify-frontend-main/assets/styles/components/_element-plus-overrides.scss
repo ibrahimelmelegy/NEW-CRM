@@ -1,0 +1,606 @@
+// ============================================
+// 🎨 ELEMENT PLUS - FLUENT DESIGN OVERRIDES
+// ============================================
+// Complete Element Plus theming for Microsoft Fluent Design
+// Replaces all glassmorphism with Fluent Materials
+
+// ==========================================
+// GLOBAL ELEMENT PLUS VARIABLES
+// ==========================================
+:root {
+  // Primary color
+  --el-color-primary: var(--color-primary);
+  --el-color-primary-light-3: #4C9FE5;
+  --el-color-primary-light-5: #6BB3EA;
+  --el-color-primary-light-7: #8AC7EF;
+  --el-color-primary-light-9: #D4EBFA;
+  --el-color-primary-dark-2: #005A9E;
+
+  // Success
+  --el-color-success: var(--color-success);
+  --el-color-success-light-3: #3D9D3D;
+  --el-color-success-light-5: #52B152;
+  --el-color-success-light-7: #6EC56E;
+  --el-color-success-light-9: #D4F0D4;
+
+  // Warning
+  --el-color-warning: var(--color-warning);
+  --el-color-warning-light-3: #F87A30;
+  --el-color-warning-light-5: #F98E4B;
+  --el-color-warning-light-7: #FAA266;
+  --el-color-warning-light-9: #FED9C2;
+
+  // Danger
+  --el-color-danger: var(--color-danger);
+  --el-color-danger-light-3: #D74E51;
+  --el-color-danger-light-5: #DD686B;
+  --el-color-danger-light-7: #E38285;
+  --el-color-danger-light-9: #F7D4D5;
+
+  // Info
+  --el-color-info: var(--color-info);
+
+  // Background colors
+  --el-bg-color: var(--color-neutral-background-2);
+  --el-bg-color-page: var(--color-neutral-background-1);
+  --el-bg-color-overlay: var(--color-neutral-background-2);
+
+  // Text colors
+  --el-text-color-primary: var(--color-text-primary);
+  --el-text-color-regular: var(--color-text-secondary);
+  --el-text-color-secondary: var(--color-text-tertiary);
+  --el-text-color-placeholder: var(--color-text-disabled);
+  --el-text-color-disabled: var(--color-text-disabled);
+
+  // Border colors
+  --el-border-color: var(--color-border-default);
+  --el-border-color-light: var(--color-border-subtle);
+  --el-border-color-lighter: var(--color-border-subtle);
+  --el-border-color-extra-light: var(--color-border-subtle);
+  --el-border-color-dark: var(--color-border-strong);
+  --el-border-color-darker: var(--color-border-strong);
+
+  // Fill colors
+  --el-fill-color-blank: var(--color-neutral-background-1);
+  --el-fill-color: var(--color-neutral-background-2);
+  --el-fill-color-light: var(--color-neutral-background-3);
+  --el-fill-color-lighter: var(--color-neutral-background-2);
+  --el-fill-color-extra-light: var(--color-neutral-background-1);
+  --el-fill-color-dark: var(--color-neutral-background-4);
+  --el-fill-color-darker: var(--color-neutral-background-5);
+
+  // Border radius
+  --el-border-radius-base: var(--radius-small);
+  --el-border-radius-small: var(--radius-small);
+  --el-border-radius-round: var(--radius-circular);
+  --el-border-radius-circle: var(--radius-circular);
+
+  // Shadows
+  --el-box-shadow: var(--elevation-shadow-2);
+  --el-box-shadow-light: var(--elevation-shadow-4);
+  --el-box-shadow-lighter: var(--elevation-shadow-2);
+  --el-box-shadow-dark: var(--elevation-shadow-8);
+}
+
+// ==========================================
+// BUTTONS
+// ==========================================
+.el-button {
+  border-radius: var(--radius-button);
+  font-weight: var(--font-weight-medium);
+  transition: var(--transition-button);
+
+  &:hover {
+    transform: translateY(-1px);
+  }
+
+  &:active {
+    transform: translateY(0);
+  }
+
+  // Primary button
+  &--primary {
+    background: var(--color-primary) !important;
+    border: none !important;
+    color: #FFFFFF !important;
+
+    &:hover {
+      background: var(--color-primary-hover) !important;
+    }
+
+    &:active {
+      background: var(--color-primary-pressed) !important;
+    }
+  }
+
+  // Success button
+  &--success {
+    background: var(--color-success) !important;
+    border: none !important;
+
+    &:hover {
+      background: var(--color-success-hover) !important;
+    }
+  }
+
+  // Warning button
+  &--warning {
+    background: var(--color-warning) !important;
+    border: none !important;
+
+    &:hover {
+      background: var(--color-warning-hover) !important;
+    }
+  }
+
+  // Danger button
+  &--danger {
+    background: var(--color-danger) !important;
+    border: none !important;
+
+    &:hover {
+      background: var(--color-danger-hover) !important;
+    }
+  }
+
+  // Default button
+  &--default {
+    background: var(--color-neutral-background-3) !important;
+    border: 1px solid var(--color-border-default) !important;
+    color: var(--color-text-primary) !important;
+
+    &:hover {
+      background: var(--color-neutral-background-4) !important;
+    }
+  }
+}
+
+// ==========================================
+// INPUTS
+// ==========================================
+.el-input,
+.el-textarea {
+  &__wrapper {
+    background: var(--color-neutral-background-1) !important;
+    border: 1px solid var(--color-border-default) !important;
+    border-radius: var(--radius-input) !important;
+    box-shadow: none !important;
+    backdrop-filter: none !important;
+    transition: var(--transition-button);
+
+    &:hover {
+      border-color: var(--color-border-strong) !important;
+    }
+
+    &.is-focus {
+      border-color: var(--color-primary) !important;
+      box-shadow: var(--shadow-focus) !important;
+    }
+  }
+
+  &__inner {
+    color: var(--color-text-primary);
+
+    &::placeholder {
+      color: var(--color-text-disabled);
+    }
+  }
+}
+
+// ==========================================
+// CARDS
+// ==========================================
+.el-card {
+  @include mica-material;
+  border-radius: var(--radius-card) !important;
+  box-shadow: var(--elevation-shadow-4) !important;
+  color: var(--color-text-primary) !important;
+
+  &__header {
+    background: var(--color-neutral-background-3);
+    border-bottom: 1px solid var(--color-border-default);
+    color: var(--color-text-primary);
+    font-weight: var(--font-weight-semibold);
+  }
+
+  &__body {
+    color: var(--color-text-primary);
+  }
+}
+
+// ==========================================
+// TABLES
+// ==========================================
+.el-table {
+  @include mica-material;
+  --el-table-bg-color: transparent;
+  --el-table-tr-bg-color: transparent;
+  --el-table-header-bg-color: var(--color-neutral-background-3);
+  --el-table-row-hover-bg-color: var(--color-surface-hover);
+  --el-table-border-color: var(--color-border-default);
+  --el-table-text-color: var(--color-text-primary);
+  --el-table-header-text-color: var(--color-text-primary);
+
+  border-radius: var(--radius-medium);
+
+  // Table header
+  thead {
+    th {
+      background: var(--color-neutral-background-3);
+      color: var(--color-text-primary);
+      font-weight: var(--font-weight-semibold);
+    }
+  }
+
+  // Table rows
+  tbody {
+    tr {
+      transition: all var(--duration-fast) var(--curve-standard);
+
+      &:hover {
+        background-color: var(--color-surface-hover) !important;
+        transform: translateX(2px);
+        box-shadow: -4px 0 8px rgba(0, 0, 0, 0.1);
+        position: relative;
+        z-index: 1;
+      }
+    }
+
+    td {
+      color: var(--color-text-primary);
+    }
+  }
+}
+
+// ==========================================
+// DIALOGS / MODALS
+// ==========================================
+.el-dialog {
+  @include acrylic-material;
+  border-radius: var(--radius-dialog) !important;
+  box-shadow: var(--elevation-shadow-64) !important;
+
+  &__header {
+    padding: var(--spacing-lg) var(--spacing-xl);
+    border-bottom: 1px solid var(--color-border-default);
+    background: transparent;
+
+    .el-dialog__title {
+      color: var(--color-text-primary);
+      font-weight: var(--font-weight-semibold);
+      font-size: var(--font-size-500);
+    }
+  }
+
+  &__body {
+    padding: var(--spacing-xl);
+    color: var(--color-text-primary);
+  }
+
+  &__footer {
+    padding: var(--spacing-lg) var(--spacing-xl);
+    border-top: 1px solid var(--color-border-default);
+  }
+
+  &__headerbtn {
+    top: var(--spacing-lg);
+    right: var(--spacing-lg);
+  }
+}
+
+// Modal overlay (Smoke material)
+.el-overlay {
+  @include smoke-material;
+}
+
+// ==========================================
+// DROPDOWNS / SELECTS / POPOVERS
+// ==========================================
+.el-dropdown-menu,
+.el-select-dropdown,
+.el-popper,
+.el-picker-panel {
+  @include mica-material;
+  border-radius: var(--radius-medium) !important;
+  box-shadow: var(--elevation-shadow-16) !important;
+
+  .el-dropdown-menu__item,
+  .el-select-dropdown__item {
+    color: var(--color-text-primary);
+
+    &:hover {
+      background: var(--color-surface-hover) !important;
+      color: var(--color-primary) !important;
+    }
+
+    &.is-selected {
+      background: var(--color-surface-selected) !important;
+      color: var(--color-primary) !important;
+    }
+  }
+}
+
+// ==========================================
+// MENUS / NAVIGATION
+// ==========================================
+.el-menu {
+  background: transparent !important;
+  border: none !important;
+
+  &-item,
+  &-sub-menu__title {
+    color: var(--color-text-secondary) !important;
+    border-radius: var(--radius-small);
+    margin: 0 var(--spacing-sm) var(--spacing-xs) var(--spacing-sm);
+    transition: all var(--duration-fast) var(--curve-standard);
+
+    &:hover {
+      background: var(--color-surface-hover) !important;
+      color: var(--color-text-primary) !important;
+    }
+
+    &.is-active {
+      background: var(--color-primary) !important;
+      color: #FFFFFF !important;
+    }
+  }
+}
+
+// Sidebar menu
+.el-menu-vertical-demo {
+  @include acrylic-material;
+  border-radius: var(--radius-large);
+  border: none !important;
+  min-height: 100vh;
+}
+
+// ==========================================
+// BREADCRUMB
+// ==========================================
+.el-breadcrumb {
+  &__item {
+    .el-breadcrumb__inner {
+      color: var(--color-text-secondary);
+      transition: var(--transition-color);
+
+      &:hover {
+        color: var(--color-primary);
+      }
+
+      &.is-link:hover {
+        color: var(--color-primary);
+      }
+    }
+  }
+
+  &__separator {
+    color: var(--color-text-disabled);
+  }
+}
+
+// ==========================================
+// PAGINATION
+// ==========================================
+.el-pagination {
+  .el-pager li {
+    background: var(--color-neutral-background-2);
+    color: var(--color-text-primary);
+    border: 1px solid var(--color-border-default);
+    border-radius: var(--radius-small);
+
+    &:hover {
+      color: var(--color-primary);
+    }
+
+    &.is-active {
+      background: var(--color-primary) !important;
+      color: #FFFFFF !important;
+    }
+  }
+
+  button {
+    background: var(--color-neutral-background-2);
+    color: var(--color-text-primary);
+    border: 1px solid var(--color-border-default);
+    border-radius: var(--radius-small);
+
+    &:hover {
+      color: var(--color-primary);
+    }
+  }
+}
+
+// ==========================================
+// TABS
+// ==========================================
+.el-tabs {
+  &__header {
+    @include mica-alt-material;
+    border-radius: var(--radius-medium);
+    padding: var(--spacing-sm);
+  }
+
+  &__item {
+    color: var(--color-text-secondary);
+    border-radius: var(--radius-small);
+    transition: var(--transition-button);
+
+    &:hover {
+      color: var(--color-primary);
+    }
+
+    &.is-active {
+      background: var(--color-primary);
+      color: #FFFFFF !important;
+    }
+  }
+
+  &__content {
+    color: var(--color-text-primary);
+  }
+}
+
+// ==========================================
+// NOTIFICATIONS / MESSAGES / ALERTS
+// ==========================================
+.el-message,
+.el-notification,
+.el-message-box {
+  @include mica-material;
+  border-radius: var(--radius-large);
+  box-shadow: var(--elevation-shadow-16);
+
+  &__title {
+    color: var(--color-text-primary);
+  }
+
+  &__content {
+    color: var(--color-text-secondary);
+  }
+}
+
+.el-alert {
+  @include mica-material;
+  border-radius: var(--radius-medium);
+  border: 1px solid var(--color-border-default);
+
+  &__title {
+    color: var(--color-text-primary);
+  }
+
+  &__description {
+    color: var(--color-text-secondary);
+  }
+}
+
+// ==========================================
+// FORMS
+// ==========================================
+.el-form {
+  &-item__label {
+    color: var(--color-text-primary);
+    font-weight: var(--font-weight-medium);
+  }
+
+  &-item__error {
+    color: var(--color-danger);
+  }
+}
+
+// ==========================================
+// TOOLTIPS
+// ==========================================
+.el-tooltip__popper {
+  @include mica-material;
+  border-radius: var(--radius-small);
+  box-shadow: var(--elevation-shadow-8);
+  color: var(--color-text-primary);
+}
+
+// ==========================================
+// LOADING
+// ==========================================
+.el-loading-mask {
+  @include smoke-material;
+}
+
+.el-loading-spinner {
+  .path {
+    stroke: var(--color-primary);
+  }
+
+  .el-loading-text {
+    color: var(--color-text-primary);
+  }
+}
+
+// ==========================================
+// DRAWER
+// ==========================================
+.el-drawer {
+  @include acrylic-material;
+
+  &__header {
+    border-bottom: 1px solid var(--color-border-default);
+    color: var(--color-text-primary);
+  }
+
+  &__body {
+    color: var(--color-text-primary);
+  }
+}
+
+// ==========================================
+// CHECKBOX & RADIO
+// ==========================================
+.el-checkbox,
+.el-radio {
+  &__label {
+    color: var(--color-text-primary);
+  }
+
+  &__input.is-checked + .el-checkbox__label,
+  &__input.is-checked + .el-radio__label {
+    color: var(--color-primary);
+  }
+}
+
+// ==========================================
+// SWITCH
+// ==========================================
+.el-switch {
+  &.is-checked .el-switch__core {
+    background-color: var(--color-primary) !important;
+    border-color: var(--color-primary) !important;
+  }
+}
+
+// ==========================================
+// SLIDER
+// ==========================================
+.el-slider {
+  &__runway {
+    background: var(--color-neutral-background-4);
+  }
+
+  &__bar {
+    background: var(--color-primary);
+  }
+
+  &__button {
+    border-color: var(--color-primary);
+  }
+}
+
+// ==========================================
+// PROGRESS
+// ==========================================
+.el-progress {
+  &__text {
+    color: var(--color-text-primary);
+  }
+
+  &-bar__inner {
+    background-color: var(--color-primary);
+  }
+}
+
+// ==========================================
+// TAG
+// ==========================================
+.el-tag {
+  border-radius: var(--radius-small);
+  border: 1px solid var(--color-border-default);
+  background: var(--color-neutral-background-3);
+  color: var(--color-text-primary);
+}
+
+// ==========================================
+// BADGE
+// ==========================================
+.el-badge {
+  &__content {
+    background-color: var(--color-danger);
+    border-radius: var(--radius-circular);
+  }
+}

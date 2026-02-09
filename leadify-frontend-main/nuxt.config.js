@@ -23,12 +23,13 @@ export default defineNuxtConfig({
           name: 'description',
           content: 'Leadify CRM - Professional enterprise customer relationship management solution for sales, leads, and opportunity tracking.'
         },
-        { name: 'theme-color', content: '#7849ff' }
+        { name: 'theme-color', content: '#0078D4' } // Microsoft Blue
       ]
     }
   },
 
-  css: ['@/assets/styles/global.scss', '@/assets/css/microsoft-light.css'],
+  // ✨ NEW: Microsoft Fluent Design System
+  css: ['@/assets/styles/main.scss'],
 
   sourcemap: {
     server: process.env.NODE_ENV !== 'production',
@@ -47,7 +48,7 @@ export default defineNuxtConfig({
     css: {
       preprocessorOptions: {
         scss: {
-          additionalData: `@use "@/assets/styles/_injected.scss" as *;`,
+          // No additional data needed - everything in main.scss
           silenceDeprecations: ['legacy-js-api']
         }
       }

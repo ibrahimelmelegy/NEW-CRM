@@ -1,0 +1,70 @@
+// ============================================
+// 🔲 MICROSOFT FLUENT DESIGN - BORDERS SYSTEM
+// ============================================
+// Border radius and border styles matching Windows 11
+
+:root {
+  // ==========================================
+  // BORDER RADIUS
+  // ==========================================
+  --radius-none: 0;
+  --radius-small: 4px;
+  --radius-medium: 8px;
+  --radius-large: 12px;
+  --radius-xl: 16px;
+  --radius-2xl: 20px;
+  --radius-circular: 9999px;
+  --radius-pill: 100px;
+
+  // Component-specific radius
+  --radius-button: var(--radius-small);
+  --radius-input: var(--radius-small);
+  --radius-card: var(--radius-large);
+  --radius-dialog: var(--radius-xl);
+
+  // ==========================================
+  // BORDER WIDTH
+  // ==========================================
+  --border-width-none: 0;
+  --border-width-thin: 1px;
+  --border-width-medium: 2px;
+  --border-width-thick: 4px;
+
+  // ==========================================
+  // BORDER STYLES
+  // ==========================================
+  --border-style-solid: solid;
+  --border-style-dashed: dashed;
+  --border-style-dotted: dotted;
+}
+
+// ============================================
+// 📦 BORDER UTILITY CLASSES
+// ============================================
+
+// Border Radius
+.rounded-none { border-radius: var(--radius-none) !important; }
+.rounded-sm { border-radius: var(--radius-small) !important; }
+.rounded { border-radius: var(--radius-medium) !important; }
+.rounded-md { border-radius: var(--radius-medium) !important; }
+.rounded-lg { border-radius: var(--radius-large) !important; }
+.rounded-xl { border-radius: var(--radius-xl) !important; }
+.rounded-2xl { border-radius: var(--radius-2xl) !important; }
+.rounded-full { border-radius: var(--radius-circular) !important; }
+.rounded-pill { border-radius: var(--radius-pill) !important; }
+
+// Border Width
+.border-0 { border-width: var(--border-width-none) !important; }
+.border { border-width: var(--border-width-thin) !important; }
+.border-2 { border-width: var(--border-width-medium) !important; }
+.border-4 { border-width: var(--border-width-thick) !important; }
+
+.border-t { border-top-width: var(--border-width-thin) !important; }
+.border-b { border-bottom-width: var(--border-width-thin) !important; }
+.border-s { border-inline-start-width: var(--border-width-thin) !important; }
+.border-e { border-inline-end-width: var(--border-width-thin) !important; }
+
+// Border Style
+.border-solid { border-style: var(--border-style-solid) !important; }
+.border-dashed { border-style: var(--border-style-dashed) !important; }
+.border-dotted { border-style: var(--border-style-dotted) !important; }

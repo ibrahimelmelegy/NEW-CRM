@@ -1,0 +1,59 @@
+// ============================================
+// 🌤️ LIGHT MODE THEME
+// ============================================
+// Clean theme matching Microsoft 365 and Windows 11 Light Mode
+
+html.light-mode {
+  // Theme identifier
+  --theme-mode: light;
+  color-scheme: light;
+
+  // Background and text colors are already overridden in _colors.scss
+  // This file is for any light-mode-specific adjustments
+
+  // Body styling for light mode
+  body {
+    background-color: var(--color-neutral-background-1);
+    color: var(--color-text-primary);
+  }
+
+  // Scrollbar styling for light mode
+  ::-webkit-scrollbar {
+    width: 8px;
+    height: 8px;
+  }
+
+  ::-webkit-scrollbar-track {
+    background: var(--color-neutral-background-2);
+  }
+
+  ::-webkit-scrollbar-thumb {
+    background: var(--color-neutral-background-4);
+    border-radius: 4px;
+
+    &:hover {
+      background: var(--color-neutral-background-5);
+    }
+  }
+
+  // Selection color
+  ::selection {
+    background: var(--color-surface-selected);
+    color: var(--color-text-primary);
+  }
+
+  // Focus visible outline
+  :focus-visible {
+    outline: 2px solid var(--color-primary);
+    outline-offset: 2px;
+  }
+
+  // Improved contrast for light mode
+  .text-secondary {
+    color: var(--color-text-secondary);
+  }
+
+  .text-tertiary {
+    color: var(--color-text-tertiary);
+  }
+}

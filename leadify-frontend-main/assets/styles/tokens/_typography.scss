@@ -1,0 +1,297 @@
+// ============================================
+// 🔤 MICROSOFT FLUENT DESIGN - TYPOGRAPHY SYSTEM
+// ============================================
+// Segoe UI Variable font system matching Windows 11
+// Includes Type Ramp and bilingual support (Arabic/English)
+
+:root {
+  // ==========================================
+  // FONT FAMILIES
+  // ==========================================
+  --font-family-primary: 'Segoe UI Variable', 'Segoe UI', system-ui, -apple-system, BlinkMacSystemFont, sans-serif;
+  --font-family-monospace: 'Cascadia Code', 'Cascadia Mono', 'Consolas', 'Courier New', monospace;
+  --font-family-arabic: 'Segoe UI Variable', 'Segoe UI', 'Cairo', 'Tajawal', sans-serif;
+
+  // ==========================================
+  // FONT SIZES - Microsoft Type Ramp
+  // ==========================================
+  --font-size-100: 12px;  // Caption
+  --font-size-200: 14px;  // Body
+  --font-size-300: 16px;  // Body Large
+  --font-size-400: 18px;  // Subtitle
+  --font-size-500: 20px;  // Title
+  --font-size-600: 24px;  // Title Large
+  --font-size-700: 28px;  // Display
+  --font-size-800: 32px;  // Display Large
+  --font-size-900: 40px;  // Hero
+  --font-size-1000: 48px; // Hero Large
+
+  // ==========================================
+  // LINE HEIGHTS
+  // ==========================================
+  --line-height-100: 16px;  // 1.33
+  --line-height-200: 20px;  // 1.43
+  --line-height-300: 22px;  // 1.38
+  --line-height-400: 24px;  // 1.33
+  --line-height-500: 28px;  // 1.4
+  --line-height-600: 32px;  // 1.33
+  --line-height-700: 36px;  // 1.29
+  --line-height-800: 40px;  // 1.25
+  --line-height-900: 52px;  // 1.3
+  --line-height-1000: 60px; // 1.25
+
+  // ==========================================
+  // FONT WEIGHTS - Segoe UI Variable Weights
+  // ==========================================
+  --font-weight-light: 300;
+  --font-weight-regular: 400;
+  --font-weight-medium: 500;
+  --font-weight-semibold: 600;
+  --font-weight-bold: 700;
+
+  // ==========================================
+  // LETTER SPACING
+  // ==========================================
+  --letter-spacing-normal: 0;
+  --letter-spacing-tight: -0.02em;
+  --letter-spacing-wide: 0.02em;
+
+  // ==========================================
+  // DEFAULT SETTINGS (English/LTR)
+  // ==========================================
+  --font-size-base: 14px;
+  --line-height-base: 1.5;
+  --letter-spacing-base: var(--letter-spacing-normal);
+}
+
+// ============================================
+// 🌍 LANGUAGE-SPECIFIC OVERRIDES
+// ============================================
+
+// Arabic Language - Optimized for better readability
+html[lang="ar"],
+html[dir="rtl"] {
+  --font-family-primary: var(--font-family-arabic);
+  --font-size-base: 15px; // Slightly larger for Arabic
+  --line-height-base: 1.7; // Taller for Arabic vertical space
+  --letter-spacing-base: 0; // No letter spacing for Arabic
+}
+
+// English Language
+html[lang="en"],
+html[dir="ltr"] {
+  --font-family-primary: var(--font-family-primary);
+  --font-size-base: 14px;
+  --line-height-base: 1.5;
+  --letter-spacing-base: var(--letter-spacing-normal);
+}
+
+// ============================================
+// 📝 TYPOGRAPHY UTILITY CLASSES
+// ============================================
+
+// Caption - Small supporting text
+.text-caption {
+  font-size: var(--font-size-100);
+  line-height: var(--line-height-100);
+  font-weight: var(--font-weight-regular);
+  letter-spacing: var(--letter-spacing-base);
+}
+
+// Body - Default body text
+.text-body {
+  font-size: var(--font-size-200);
+  line-height: var(--line-height-200);
+  font-weight: var(--font-weight-regular);
+  letter-spacing: var(--letter-spacing-base);
+}
+
+// Body Large - Emphasized body text
+.text-body-large {
+  font-size: var(--font-size-300);
+  line-height: var(--line-height-300);
+  font-weight: var(--font-weight-regular);
+  letter-spacing: var(--letter-spacing-base);
+}
+
+// Subtitle - Section subtitles
+.text-subtitle {
+  font-size: var(--font-size-400);
+  line-height: var(--line-height-400);
+  font-weight: var(--font-weight-semibold);
+  letter-spacing: var(--letter-spacing-base);
+}
+
+// Title - Page/section titles
+.text-title {
+  font-size: var(--font-size-500);
+  line-height: var(--line-height-500);
+  font-weight: var(--font-weight-semibold);
+  letter-spacing: var(--letter-spacing-tight);
+}
+
+// Title Large - Major section titles
+.text-title-large {
+  font-size: var(--font-size-600);
+  line-height: var(--line-height-600);
+  font-weight: var(--font-weight-semibold);
+  letter-spacing: var(--letter-spacing-tight);
+}
+
+// Display - Hero titles
+.text-display {
+  font-size: var(--font-size-700);
+  line-height: var(--line-height-700);
+  font-weight: var(--font-weight-bold);
+  letter-spacing: var(--letter-spacing-tight);
+}
+
+// Display Large - Large hero titles
+.text-display-large {
+  font-size: var(--font-size-800);
+  line-height: var(--line-height-800);
+  font-weight: var(--font-weight-bold);
+  letter-spacing: var(--letter-spacing-tight);
+}
+
+// Hero - Extra large titles
+.text-hero {
+  font-size: var(--font-size-900);
+  line-height: var(--line-height-900);
+  font-weight: var(--font-weight-bold);
+  letter-spacing: var(--letter-spacing-tight);
+}
+
+// Hero Large - Massive titles
+.text-hero-large {
+  font-size: var(--font-size-1000);
+  line-height: var(--line-height-1000);
+  font-weight: var(--font-weight-bold);
+  letter-spacing: var(--letter-spacing-tight);
+}
+
+// ==========================================
+// FONT WEIGHT UTILITIES
+// ==========================================
+.font-light { font-weight: var(--font-weight-light) !important; }
+.font-regular { font-weight: var(--font-weight-regular) !important; }
+.font-medium { font-weight: var(--font-weight-medium) !important; }
+.font-semibold { font-weight: var(--font-weight-semibold) !important; }
+.font-bold { font-weight: var(--font-weight-bold) !important; }
+
+// ==========================================
+// TEXT STYLE UTILITIES
+// ==========================================
+.text-mono { font-family: var(--font-family-monospace) !important; }
+.text-uppercase { text-transform: uppercase !important; }
+.text-lowercase { text-transform: lowercase !important; }
+.text-capitalize { text-transform: capitalize !important; }
+.text-truncate {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+// ==========================================
+// TEXT ALIGNMENT (RTL/LTR AWARE)
+// ==========================================
+.text-start { text-align: start !important; } // Auto RTL/LTR
+.text-end { text-align: end !important; }     // Auto RTL/LTR
+.text-center { text-align: center !important; }
+.text-justify { text-align: justify !important; }
+
+// ==========================================
+// BASE TYPOGRAPHY STYLES
+// ==========================================
+body {
+  font-family: var(--font-family-primary);
+  font-size: var(--font-size-base);
+  line-height: var(--line-height-base);
+  letter-spacing: var(--letter-spacing-base);
+  color: var(--color-text-primary);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  text-rendering: optimizeLegibility;
+}
+
+// Headings
+h1, h2, h3, h4, h5, h6 {
+  margin: 0;
+  font-weight: var(--font-weight-semibold);
+  color: var(--color-text-primary);
+}
+
+h1 { @extend .text-display-large; }
+h2 { @extend .text-display; }
+h3 { @extend .text-title-large; }
+h4 { @extend .text-title; }
+h5 { @extend .text-subtitle; }
+h6 { @extend .text-body-large; }
+
+// Paragraphs
+p {
+  margin: 0 0 var(--spacing-md) 0;
+  @extend .text-body;
+}
+
+// Links
+a {
+  color: var(--color-primary);
+  text-decoration: none;
+  transition: color var(--duration-fast) var(--curve-standard);
+
+  &:hover {
+    color: var(--color-primary-hover);
+    text-decoration: underline;
+  }
+
+  &:active {
+    color: var(--color-primary-pressed);
+  }
+}
+
+// Strong and emphasis
+strong, b {
+  font-weight: var(--font-weight-semibold);
+}
+
+em, i {
+  font-style: italic;
+}
+
+// Code
+code, kbd, samp {
+  font-family: var(--font-family-monospace);
+  font-size: 0.875em;
+  padding: 2px 6px;
+  background-color: var(--color-neutral-background-3);
+  border-radius: 4px;
+}
+
+pre {
+  font-family: var(--font-family-monospace);
+  padding: var(--spacing-md);
+  background-color: var(--color-neutral-background-2);
+  border-radius: var(--radius-medium);
+  overflow-x: auto;
+
+  code {
+    padding: 0;
+    background: none;
+  }
+}
+
+// Small text
+small {
+  font-size: var(--font-size-100);
+}
+
+// Lists
+ul, ol {
+  margin: 0 0 var(--spacing-md) 0;
+  padding-inline-start: var(--spacing-xl);
+}
+
+li {
+  margin-bottom: var(--spacing-xs);
+}
