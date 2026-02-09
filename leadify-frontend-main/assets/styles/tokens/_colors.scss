@@ -76,6 +76,29 @@
   --color-status-busy: #EF4444;
   --color-status-away: #F59E0B;
   --color-status-offline: #6B7280;
+
+  // ==========================================
+  // 🔄 LEGACY VARIABLES MAPPING (Backward Compatibility)
+  // ==========================================
+  // These map old variable names to new Fluent Design variables
+  // Ensures existing components continue to work without changes
+
+  --accent-purple: var(--color-primary);
+  --bg-obsidian: var(--color-neutral-background-1);
+  --bg-card: var(--color-neutral-background-2);
+  --bg-surface-elevated: var(--color-neutral-background-3);
+  --text-primary: var(--color-text-primary);
+  --text-secondary: var(--color-text-secondary);
+  --text-tertiary: var(--color-text-tertiary);
+  --border-stroke: var(--color-border-default);
+  --border-glass: var(--color-border-strong);
+  --shadow-premium: var(--elevation-shadow-8);
+  --radius-btn: var(--radius-button);
+  --transition-smooth: var(--transition-card);
+
+  // Additional legacy mappings
+  --primary-purple-50: #EDE9FE;
+  --primary-purple-500: var(--color-primary);
 }
 
 // ============================================

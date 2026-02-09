@@ -1,0 +1,357 @@
+// ============================================
+// 🎨 NAVBAR - FLUENT DESIGN COMPONENTS
+// ============================================
+// Professional navbar styling for Microsoft Fluent Design
+
+// ==========================================
+// NAVBAR CONTAINER
+// ==========================================
+.navbar {
+  height: 70px !important;
+  min-height: 70px !important;
+  padding-top: var(--spacing-md) !important;
+  padding-bottom: var(--spacing-md) !important;
+
+  // Prevent overlap with content
+  &+.slot-content {
+    margin-top: 90px !important; // Increased from 4rem
+    padding-top: var(--spacing-lg);
+  }
+}
+
+// ==========================================
+// NAVBAR TOOLS CONTAINER
+// ==========================================
+.tools {
+  background: var(--color-neutral-background-2);
+  border: 1px solid var(--color-border-default);
+  border-radius: var(--radius-circular);
+  padding: var(--spacing-xs);
+  gap: var(--spacing-xs);
+  box-shadow: var(--elevation-shadow-2);
+  transition: all var(--duration-fast) var(--curve-standard);
+
+  &:hover {
+    box-shadow: var(--elevation-shadow-4);
+  }
+}
+
+// ==========================================
+// PREMIUM NAV BUTTONS (Icons)
+// ==========================================
+.premium-nav-btn {
+  width: 40px;
+  height: 40px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: var(--radius-circular);
+  background: transparent;
+  border: 1px solid transparent;
+  color: var(--color-text-primary);
+  cursor: pointer;
+  transition: all var(--duration-fast) var(--curve-standard);
+  position: relative;
+
+  // Icon styling
+  i,
+  svg {
+    font-size: 18px;
+    color: var(--color-text-primary);
+    transition: color var(--duration-fast) var(--curve-standard);
+  }
+
+  // Hover state
+  &:hover {
+    background: rgba(255, 255, 255, 0.1);
+    border-color: rgba(255, 255, 255, 0.2);
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+
+    // Blue Glow
+    &::after {
+      content: '';
+      position: absolute;
+      inset: 0;
+      border-radius: inherit;
+      box-shadow: 0 0 15px rgba(59, 130, 246, 0.3); // Blue glow
+      pointer-events: none;
+    }
+
+    i,
+    svg {
+      color: #3B82F6; // Microsoft Blue Bright
+    }
+  }
+
+  // Active/Pressed state
+  &:active {
+    transform: translateY(0);
+    box-shadow: var(--elevation-shadow-2);
+  }
+
+  // Focus state (accessibility)
+  &:focus-visible {
+    outline: 2px solid var(--color-primary);
+    outline-offset: 2px;
+  }
+}
+
+// Spotlight button (⌘ command)
+.spotlight-btn {
+
+  // Add a subtle pulse animation on hover
+  &:hover::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    border-radius: var(--radius-circular);
+    background: var(--color-primary);
+    opacity: 0.1;
+    animation: pulse 1.5s ease-in-out infinite;
+  }
+}
+
+@keyframes pulse {
+
+  0%,
+  100% {
+    transform: scale(1);
+    opacity: 0.1;
+  }
+
+  50% {
+    transform: scale(1.1);
+    opacity: 0;
+  }
+}
+
+// ==========================================
+// NOTIFICATION BADGE
+// ==========================================
+.notification {
+  position: relative;
+
+  .notification-badge {
+    position: absolute;
+    top: 4px;
+    right: 4px;
+    width: 8px;
+    height: 8px;
+    background: var(--color-danger);
+    border-radius: var(--radius-circular);
+    border: 2px solid var(--color-neutral-background-2);
+    animation: notificationPulse 2s ease-in-out infinite;
+  }
+}
+
+@keyframes notificationPulse {
+
+  0%,
+  100% {
+    transform: scale(1);
+    opacity: 1;
+  }
+
+  50% {
+    transform: scale(1.2);
+    opacity: 0.8;
+  }
+}
+
+// ==========================================
+// PROFILE DROPDOWN TRIGGER
+// ==========================================
+.profile-trigger {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-sm);
+  padding: var(--spacing-xs) var(--spacing-md);
+  border-radius: var(--radius-large);
+  background: var(--color-neutral-background-2);
+  border: 1px solid var(--color-border-default);
+  cursor: pointer;
+  transition: all var(--duration-fast) var(--curve-standard);
+  min-height: 48px;
+
+  // Text styling
+  p {
+    font-size: var(--font-size-200);
+    font-weight: var(--font-weight-medium);
+    color: var(--color-text-primary);
+    margin: 0;
+    white-space: nowrap;
+  }
+
+  // Icon
+  i,
+  svg {
+    color: var(--color-text-secondary);
+    font-size: 16px;
+    transition: all var(--duration-fast) var(--curve-standard);
+  }
+
+  // Hover state
+  &:hover {
+    background: var(--color-surface-hover);
+    border-color: var(--color-border-strong);
+    box-shadow: var(--elevation-shadow-4);
+    transform: translateY(-1px);
+
+    i,
+    svg {
+      color: var(--color-primary);
+      transform: rotate(180deg);
+    }
+  }
+
+  // Active state
+  &:active {
+    transform: translateY(0);
+  }
+
+  // System Admin Badge (Golden Premium)
+  .admin-badge {
+    background: linear-gradient(135deg, #F59E0B 0%, #D97706 100%); // Amber/Gold Gradient
+    color: #FFFFFF;
+    padding: 3px 10px;
+    border-radius: 20px;
+    font-size: 10px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.8px;
+    box-shadow: 0 2px 4px rgba(245, 158, 11, 0.3);
+  }
+}
+
+// ==========================================
+// BREADCRUMB STYLING
+// ==========================================
+.breadcrumb {
+
+  .breadcrumb-home,
+  .breadcrumb-text {
+    font-size: var(--font-size-200);
+    font-weight: var(--font-weight-medium);
+    transition: color var(--duration-fast) var(--curve-standard);
+
+    &:hover {
+      color: var(--color-primary) !important;
+    }
+  }
+
+  // Last breadcrumb (current page)
+  .last .breadcrumb-text {
+    color: var(--color-primary) !important;
+    font-weight: var(--font-weight-semibold);
+  }
+}
+
+// ==========================================
+// SIDEBAR TOGGLE BUTTON (Collapsed State)
+// ==========================================
+.toggle-indicator {
+  background: var(--color-neutral-background-2);
+  border: 1px solid var(--color-border-default);
+  box-shadow: var(--elevation-shadow-4);
+  transition: all var(--duration-fast) var(--curve-standard);
+
+  &:hover {
+    background: var(--color-surface-hover);
+    border-color: var(--color-primary);
+    box-shadow: var(--elevation-shadow-8);
+    transform: scale(1.1);
+
+    i,
+    svg {
+      color: var(--color-primary);
+    }
+  }
+
+  &:active {
+    transform: scale(1);
+  }
+}
+
+// ==========================================
+// MOBILE TOGGLE BUTTON
+// ==========================================
+.toggle-icon {
+  width: 40px;
+  height: 40px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: var(--radius-medium);
+  background: var(--color-neutral-background-2);
+  border: 1px solid var(--color-border-default);
+  cursor: pointer;
+  transition: all var(--duration-fast) var(--curve-standard);
+
+  &:hover {
+    background: var(--color-surface-hover);
+    border-color: var(--color-primary);
+    transform: translateX(2px);
+
+    i,
+    svg {
+      color: var(--color-primary);
+    }
+  }
+
+  &:active {
+    transform: translateX(0);
+  }
+
+  // RTL support
+  html[dir="rtl"] & {
+    &:hover {
+      transform: translateX(-2px);
+    }
+  }
+}
+
+// ==========================================
+// NAVBAR SCROLL STATE
+// ==========================================
+.navbar-scroll {
+  box-shadow: var(--elevation-shadow-8) !important;
+
+  .tools {
+    box-shadow: var(--elevation-shadow-4);
+  }
+}
+
+// ==========================================
+// FIX SIDEBAR GAP WHEN COLLAPSED
+// ==========================================
+.collapseMargin {
+  margin-inline-start: 80px !important; // Reduced from 105px
+  width: calc(100% - 80px) !important;
+}
+
+.sidebar-glass {
+  &.el-menu--collapse {
+    width: 80px !important; // Match the collapsed margin
+  }
+}
+
+// ==========================================
+// RTL SUPPORT
+// ==========================================
+html[dir="rtl"] {
+
+  .premium-nav-btn,
+  .profile-trigger {
+    direction: ltr; // Keep icons left-to-right
+
+    p {
+      direction: rtl; // But text right-to-left
+    }
+  }
+
+  .notification-badge {
+    right: auto;
+    left: 4px;
+  }
+}
