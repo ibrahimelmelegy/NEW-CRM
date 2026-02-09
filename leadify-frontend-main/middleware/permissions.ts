@@ -5,10 +5,10 @@ export default defineNuxtRouteMiddleware(async to => {
 
   const requiredPermission = to.meta?.permission as string | undefined;
 
-  if (requiredPermission && !hasPermission(requiredPermission)) {
-    // SUPER_ADMIN bypass uses role name, never hardcoded email
-    if (user.value?.role?.name === 'SUPER_ADMIN') return;
+  // SUPER_ADMIN bypass - check FIRST before permission validation
+  if (user.value?.role?.name === 'SUPER_ADMIN') return;
 
+  if (requiredPermission && !hasPermission(requiredPermission)) {
     throw createError({
       statusCode: 403,
       message: "You don't have permission to access this page"

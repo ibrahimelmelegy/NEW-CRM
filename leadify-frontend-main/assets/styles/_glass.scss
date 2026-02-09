@@ -89,6 +89,7 @@ html.light-mode {
 }
 
 @mixin glass-sidebar-bg {
+    // Dark Mode Sidebar (Default)
     background: linear-gradient(165deg,
             rgba(45, 50, 70, 0.85) 0%,
             rgba(20, 20, 30, 0.95) 100%) !important;
@@ -98,6 +99,16 @@ html.light-mode {
 
     border-right: 1px solid rgba(255, 255, 255, 0.08) !important;
     box-shadow: 10px 0 30px rgba(0, 0, 0, 0.4);
+
+    // Light Mode Sidebar Override
+    html.light-mode & {
+        background: linear-gradient(165deg,
+            rgba(255, 255, 255, 0.95) 0%,
+            rgba(248, 250, 252, 0.98) 100%) !important;
+
+        border-right: 1px solid rgba(0, 0, 0, 0.08) !important;
+        box-shadow: 10px 0 30px rgba(0, 0, 0, 0.08);
+    }
 }
 
 // 📦 Utility Classes

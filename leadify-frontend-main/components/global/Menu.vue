@@ -172,6 +172,27 @@ function openNav() {
   transition:
     width 0.3s ease-in-out,
     background 0.3s ease;
+
+  // Ensure text and icons are visible in both modes
+  :deep(.el-menu-item),
+  :deep(.el-sub-menu__title) {
+    color: var(--text-primary) !important;
+
+    &:hover {
+      background-color: rgba(120, 73, 255, 0.15) !important;
+    }
+
+    &.is-active {
+      background-color: rgba(120, 73, 255, 0.2) !important;
+      color: var(--accent-color, #7849ff) !important;
+    }
+  }
+
+  // Icon colors
+  :deep(.el-icon),
+  :deep(svg) {
+    color: var(--text-primary) !important;
+  }
 }
 
 .submenu-icon {
@@ -196,6 +217,7 @@ function openNav() {
   margin-left: -5px !important;
   display: inline-block;
   vertical-align: middle;
+  color: var(--text-primary) !important;
 }
 
 [dir='rtl'] .myicon {

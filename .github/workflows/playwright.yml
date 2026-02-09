@@ -10,6 +10,30 @@ jobs:
     timeout-minutes: 60
     runs-on: ubuntu-latest
 
+    services:
+      postgres:
+        image: postgres:15
+        env:
+          POSTGRES_USER: test_user
+          POSTGRES_PASSWORD: test_password
+          POSTGRES_DB: test_db
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd pg_isready
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+      redis:
+        image: redis:7
+        ports:
+          - 6379:6379
+        options: >-
+          --health-cmd "redis-cli ping"
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+
     steps:
       - uses: actions/checkout@v4
 
@@ -31,6 +55,34 @@ jobs:
         working-directory: leadify-frontend-main
         run: npx nuxt prepare
 
+      # Install Backend Dependencies
+      - name: Install backend dependencies
+        working-directory: leadify-backend-main
+        run: npm ci
+
+      # Start Backend
+      - name: Start backend server
+        working-directory: leadify-backend-main
+        run: |
+          npm ci
+          npm run build
+          npm run seed
+          npm run start > /dev/null 2>&1 &
+          echo $! > .backend-server.pid
+        env:
+          PORT: 3001
+          DB_HOST: localhost
+          DB_PORT: 5432
+          DB_USERNAME: test_user
+          DB_PASSWORD: test_password
+          DB_NAME: test_db
+          REDIS_HOST: localhost
+          REDIS_PORT: 6379
+          JWT_SECRET: test_secret
+          NODE_ENV: test
+          ADMIN_EMAIL: test@example.com
+          ADMIN_PASSWORD: Test@123456
+
       # Install Playwright Browsers
       - name: Install Playwright Browsers
         run: npx playwright install --with-deps chromium
@@ -45,14 +97,19 @@ jobs:
         env:
           NUXT_PUBLIC_API_BASE_URL: http://localhost:3001/api/v1/
 
-      # Wait for server to be ready
-      - name: Health check - wait for server
+      # Wait for servers to be ready
+      - name: Health check - wait for servers
         run: |
           timeout 60 bash -c 'until curl -f http://localhost:3000 > /dev/null 2>&1; do sleep 2; done' || exit 1
+          timeout 60 bash -c 'until curl -f http://localhost:3001/api/health > /dev/null 2>&1; do sleep 2; done' || (cat leadify-backend-main/test_output.txt && exit 1)
 
       # Run Playwright tests
       - name: Run Playwright tests
         run: npx playwright test --project=chromium
+        env:
+          TEST_USER_EMAIL: test@example.com
+          TEST_USER_PASSWORD: Test@123456
+          CI: true
 
       # Upload test results
       - uses: actions/upload-artifact@v4
