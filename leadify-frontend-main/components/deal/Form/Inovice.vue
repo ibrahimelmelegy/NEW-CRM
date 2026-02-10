@@ -5,7 +5,7 @@ el-form(
   ref="formRef"
   label-position="top"
 )
-  .card.m-auto.bg-neutral-50.p-6.rounded-3xl.mb-4
+  .card.m-auto.bg-[var(--color-neutral-background-2)].p-6.rounded-3xl.mb-4
     .flex.justify-between.items-center.mb-4
       h3.text-xl.font-semibold.my-4 {{ $t('deals.form.invoiceTitle') }}
       el-button(

@@ -173,7 +173,7 @@ const getPath = (routeName: string) => {
 }
 #main {
   min-height: 100vh;
-  background-color: white;
+  background-color: var(--color-neutral-background-1);
   transition: all 0.2s ease-in;
 }
 .toggleMenu {
@@ -205,7 +205,7 @@ const getPath = (routeName: string) => {
   transition: all 0.2s ease-in;
   top: 0;
   left: 0;
-  border-bottom: 1px solid #e7e6e9 !important;
+  border-bottom: 1px solid var(--color-border-default) !important;
 }
 
 .top {
@@ -242,7 +242,7 @@ const getPath = (routeName: string) => {
 .background-overlay {
   &::before {
     content: '';
-    background-color: rgba(0, 0, 0, 0.411);
+    background-color: var(--color-neutral-background-5);
     position: absolute;
     width: 100%;
     height: 100%;

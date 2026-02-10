@@ -109,7 +109,7 @@ watch(isOpen, value => {
   align-items: center;
   justify-content: center;
   cursor: pointer;
-  box-shadow: 0 8px 24px rgba(124, 58, 237, 0.4);
+  box-shadow: 0 8px 24px rgba(0, 120, 212, 0.4);
   z-index: 9990;
   transition: all 0.2s ease;
 
@@ -133,7 +133,7 @@ watch(isOpen, value => {
 .spotlight-overlay {
   position: fixed;
   inset: 0;
-  background: rgba(0, 0, 0, 0.7); // Darker overlay
+  background: var(--color-surface-scrim);
   backdrop-filter: blur(4px);
   z-index: 9998;
 }

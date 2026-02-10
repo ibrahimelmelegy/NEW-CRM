@@ -1,19 +1,46 @@
 <template lang="pug">
-el-form(  autocomplete="off"   @submit.prevent='onSubmit'   ref="myForm" label-position="top"  :validationSchema="formSchema" )
+el-form(autocomplete="off" @submit.prevent='onSubmit' ref="myForm" label-position="top" :validationSchema="formSchema")
   slot
-  .glass-card.m-auto.p-10(class="2xl:w-1/2 w-[90%] ")
-      .grid.grid-cols-2.gap-3
-        InputText(:label="$t('leads.table.leadName')"  name="leadName" :value="data?.name" )
-        InputText(:label="$t('common.companyName')"  name="companyName" :value="data?.companyName" )
-        InputText.mt-4(:label="$t('leads.info.email')"  name="email" :value="data?.email" @value="val=> isEmail = !!val" )
-        InputPhone.mt-4(:label="$t('leads.info.phone')"  name="phone" @value="val=> isPhone = !!val" :value="data?.phone" @validphone="val=> validPhone = val" mode="international" )
-        InputSelect(:label="$t('leads.table.status')" name="leadState" :options="leadStates" :value="data?.status" )
-        InputSelect(:label="$t('leads.info.leadSource')" name="leadSource" :options="leadSources" :value="data?.leadSource" @change="checkIfOtherSource" )
-      InputText(:label="$t('leads.info.otherSource')"  name="otherSource" v-if="isOtherSource" :value="data?.otherSource" )
-      InputDate.mt-4(:label="$t('leads.info.lastContact')" v-if="route.path.includes('edit')" :placeholder="$t('leads.info.lastContact')" disabledDate="future" :value="data?.lastContactDate || new Date()" name="lastContactDate" )
-      InputSelect.mt-4(:label="$t('leads.info.assign')" name="assignUser" isMultiple :options="users" :value="users?.filter((user: any) => data?.users?.map((user: any) => user.id)?.includes(user.value))?.map((user: any) => user.value)"  )
-      InputText(type="textarea" :placeholder="$t('leads.notes')"  name="notes" :value="data?.notes" )
+  .glass-card.m-auto.p-10(class="2xl:w-1/2 w-[90%]")
+    //- Contact Information
+    .form-section
+      .form-section-header
+        .section-icon: Icon(name="ph:user-bold" size="20")
+        div
+          .section-title {{ $t('leads.table.leadName') }}
+      .grid.grid-cols-2.gap-4
+        InputText(:label="$t('leads.table.leadName')" name="leadName" :value="data?.name")
+        InputText(:label="$t('common.companyName')" name="companyName" :value="data?.companyName")
+        InputText(:label="$t('leads.info.email')" name="email" :value="data?.email" @value="val=> isEmail = !!val")
+        InputPhone(:label="$t('leads.info.phone')" name="phone" @value="val=> isPhone = !!val" :value="data?.phone" @validphone="val=> validPhone = val" mode="international")
 
+    //- Source & Status
+    .form-section
+      .form-section-header
+        .section-icon: Icon(name="ph:funnel-bold" size="20")
+        div
+          .section-title Source & Status
+      .grid.grid-cols-2.gap-4
+        InputSelect(:label="$t('leads.table.status')" name="leadState" :options="leadStates" :value="data?.status")
+        InputSelect(:label="$t('leads.info.leadSource')" name="leadSource" :options="leadSources" :value="data?.leadSource" @change="checkIfOtherSource")
+      InputText.mt-4(:label="$t('leads.info.otherSource')" name="otherSource" v-if="isOtherSource" :value="data?.otherSource")
+      InputDate.mt-4(:label="$t('leads.info.lastContact')" v-if="route.path.includes('edit')" :placeholder="$t('leads.info.lastContact')" disabledDate="future" :value="data?.lastContactDate || new Date()" name="lastContactDate")
+
+    //- Assignment
+    .form-section
+      .form-section-header
+        .section-icon: Icon(name="ph:users-bold" size="20")
+        div
+          .section-title Assignment
+      InputSelect(:label="$t('leads.info.assign')" name="assignUser" isMultiple :options="users" :value="users?.filter((user: any) => data?.users?.map((user: any) => user.id)?.includes(user.value))?.map((user: any) => user.value)")
+
+    //- Notes
+    .form-section
+      .form-section-header
+        .section-icon: Icon(name="ph:note-pencil-bold" size="20")
+        div
+          .section-title Notes
+      InputText(type="textarea" :placeholder="$t('leads.notes')" name="notes" :value="data?.notes")
 </template>
 
 <script lang="ts" setup>

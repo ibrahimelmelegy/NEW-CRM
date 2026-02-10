@@ -5,7 +5,7 @@
     el-button(size='large' plain type="primary" class="w-full !rounded-2xl" @click="router.back()") Cancel
     el-button(size='large' type="primary" native-type="submit" :loading="loading" :disabled="loading" class="w-full !px-5 !rounded-2xl" @click="onSubmitMaterials") Save
 
-.card.m-auto.bg-white.p-10.rounded-3xl(class="2xl:w-1/2 w-[90%]")
+.card.m-auto.p-10.rounded-3xl(class="2xl:w-1/2 w-[90%]" :style="{ backgroundColor: 'var(--color-neutral-background-2)', border: '1px solid var(--color-border-default)' }")
   OperationsMaterialCategory(ref="categoryRef" @onSubmit="submitCategoryForm")
   OperationsMaterialCategoryItem(ref="categoryItemRef" @onSubmit="submitCategoryItemForm")
 </template>

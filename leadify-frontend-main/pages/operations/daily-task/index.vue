@@ -5,7 +5,7 @@
     el-tab-pane(:label="$t('operations.dailyTasks.tabs.active')" name="active")
       .glass-card.p-10.rounded-3xl.mt-3
         .flex.items-center.justify-between.m-5
-          .title.font-bold.text-2xl.mb-1.capitalize {{ $t('operations.dailyTasks.tabs.active') }}
+          .title.font-bold.text-3xl.mb-2.text-gradient {{ $t('operations.dailyTasks.tabs.active') }}
           .flex.items-center.gap-2
             el-button(type="primary" ,size='large' ,class="w-full !my-4 !rounded-2xl", @click="exportToPDF")
               .flex.items-center
@@ -21,6 +21,7 @@
         AppTable(
           v-else
           v-slot="{ data }",
+          class="premium-table",
           :columns="activeColumns",
           :data="activeProjects",
           :loading="loading",
@@ -33,10 +34,10 @@
          .flex.items-center.py-2(@click.stop)
            el-dropdown(class="outline-0" trigger="click")
             span(class="el-dropdown-link")
-              .toggle-icon.text-md
-                  Icon(name="IconToggle"  size="22")
+              .toggle-icon.text-md.hover-scale
+                  Icon(name="ph:dots-three-outline-vertical-fill" size="20" class="text-purple-400")
             template(#dropdown='')
-                el-dropdown-menu
+                el-dropdown-menu(class="glass-dropdown")
                     el-dropdown-item
                       NuxtLink.flex.items-center(:to="`/operations/daily-task/${data?.id}`")
                         Icon.text-md.mr-2(name="IconEye" )
@@ -49,7 +50,7 @@
     el-tab-pane(:label="$t('operations.dailyTasks.tabs.completed')" name="completed")
       .glass-card.p-10.rounded-3xl.mt-3
         .flex.items-center.justify-between.m-5
-          .title.font-bold.text-2xl.mb-1.capitalize {{ $t('operations.dailyTasks.tabs.completed') }}
+          .title.font-bold.text-3xl.mb-2.text-gradient {{ $t('operations.dailyTasks.tabs.completed') }}
           .flex.items-center.gap-2
             el-button(type="primary", size='large' ,class="w-full !my-4 !rounded-2xl", @click="exportToPDF")
               .flex.items-center
@@ -65,6 +66,7 @@
         AppTable(
           v-else
           v-slot="{ data }",
+          class="premium-table",
           :columns="completedColumns",
           :data="completedProjects",
           :loading="loading",
@@ -77,10 +79,10 @@
          .flex.items-center.py-2(@click.stop)
           el-dropdown(class="outline-0" trigger="click")
             span(class="el-dropdown-link")
-              .toggle-icon.text-md
-                  Icon(name="IconToggle"  size="22")
+              .toggle-icon.text-md.hover-scale
+                  Icon(name="ph:dots-three-outline-vertical-fill" size="20" class="text-purple-400")
             template(#dropdown='')
-                el-dropdown-menu
+                el-dropdown-menu(class="glass-dropdown")
                     el-dropdown-item
                       NuxtLink.flex.items-center(:to="`/operations/daily-task/${data?.id}`")
                         Icon.text-md.mr-2(name="IconEye" )
@@ -92,7 +94,7 @@
     el-tab-pane(:label="$t('operations.dailyTasks.tabs.granted')" name="granted")
       .glass-card.p-10.rounded-3xl.mt-3
         .flex.items-center.justify-between.m-5
-          .title.font-bold.text-2xl.mb-1.capitalize {{ $t('operations.dailyTasks.tabs.granted') }}
+          .title.font-bold.text-3xl.mb-2.text-gradient {{ $t('operations.dailyTasks.tabs.granted') }}
           .flex.items-center.gap-2
             el-button(type="primary",size='large' ,class="w-full !my-4 !rounded-2xl", @click="exportToPDF")
               .flex.items-center
@@ -108,6 +110,7 @@
         AppTable(
           v-else
           v-slot="{ data }",
+          class="premium-table",
           :columns="grantedColumns",
           :loading="loading",
           :pageInfo="grantedProjectsPagination",
@@ -119,10 +122,10 @@
          .flex.items-center.py-2(@click.stop)
            el-dropdown(class="outline-0" trigger="click")
             span(class="el-dropdown-link")
-              .toggle-icon.text-md
-                  Icon(name="IconToggle"  size="22")
+              .toggle-icon.text-md.hover-scale
+                  Icon(name="ph:dots-three-outline-vertical-fill" size="20" class="text-purple-400")
             template(#dropdown='')
-                el-dropdown-menu
+                el-dropdown-menu(class="glass-dropdown")
                     el-dropdown-item
                       NuxtLink.flex.items-center(:to="`/operations/daily-task/${data?.id}`")
                         Icon.text-md.mr-2(name="IconEye" )
@@ -491,7 +494,7 @@ const handleClick = async tab => {
 // Export to PDF
 const exportToPDF = async () => {
   const [{ default: jsPDF }, { default: autoTable }] = await Promise.all([import('jspdf'), import('jspdf-autotable')]);
-  const CairoFont = (await import('../assets/fonts/Cairo-SemiBold.ttf')).default;
+  // Cairo font removed - using default jsPDF fonts
 
   const data =
     activeName.value === 'active' ? activeProjects.value : activeName.value === 'completed' ? completedProjects.value : grantedProjects.value;
@@ -500,15 +503,15 @@ const exportToPDF = async () => {
 
   // Initialize jsPDF
   const doc = new jsPDF({
-    orientation: 'l', // Portrait mode
+    orientation: 'l', // Landscape mode
     unit: 'mm',
     format: [500, 210] // Wider page (500mm width, 210mm height)
   });
   // Center title (h2 format)
 
-  doc.addFont(CairoFont, "Cairo", "normal");
-  doc.setFont("Cairo");
-  doc.text(`${name}`, 250, 10);
+  // Using default Helvetica font
+  doc.setFontSize(16);
+  doc.text(`${name}`, 250, 10, { align: 'center' });
 
   // Use the imported `autoTable` function
   autoTable(doc, {

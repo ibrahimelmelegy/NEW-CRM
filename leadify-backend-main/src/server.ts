@@ -90,3 +90,4 @@ sequelize
   .catch((err: Error) => {
     console.error('Unable to connect to the database:', err);
   });
+

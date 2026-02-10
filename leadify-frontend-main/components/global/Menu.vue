@@ -1,15 +1,15 @@
 <template lang="pug">
-.relative.inline-block
+.relative.block
   //- Toggle Button for Desktop
   .toggle-indicator.cursor-pointer.flex.items-center.justify-center.absolute.rounded-full.w-9.h-9.glass-card(@click="openNav" v-if="!mobile" :class="{ 'left-full -translate-x-1/2' : true }" class="top-[50px] z-20")
-    Icon(:name="fullNav ? 'ph:caret-left-bold' : 'ph:caret-right-bold'" size="18" class="text-[var(--text-primary)]")
+    Icon(:name="fullNav ? 'ph:caret-left-bold' : 'ph:caret-right-bold'" size="18" class="text-[var(--color-text-primary)]")
 
   //- Mobile Overlay
   div.background-overlay.fixed.top-0.left-0.w-screen.h-full(class='z-[-1]' v-if="mobile && !hideNav" @click="hideNav = true")
   
   transition(:name='mobile ? "side" : "none"')
     el-menu.el-menu-vertical-demo.relative.sidebar-glass(
-      class='!pl-[5px] h-[100vh] card-auto' 
+      class='!pl-[5px] h-full min-h-screen'
       :class="{'overflow-x-hidden' : !fullNav }" 
       v-if="mobile ? !hideNav : true" 
       :collapse='mobile ? false : !fullNav' 
@@ -168,8 +168,10 @@ function openNav() {
 
 <style lang="scss" scoped>
 .sidebar-glass {
-  @include acrylic-material;
-  border-radius: var(--radius-large);
+  // @include acrylic-material;
+  background: var(--color-neutral-background-3) !important;
+  border-right: 1px solid var(--color-border-subtle);
+  border-radius: 0;
   transition: width var(--duration-normal) var(--curve-standard);
 
   // Ensure text and icons are visible in both modes
@@ -181,7 +183,7 @@ function openNav() {
     transition: all var(--duration-fast) var(--curve-standard);
 
     &:hover {
-      background-color: rgba(0, 120, 212, 0.1) !important; // Microsoft Blue tint
+      background-color: var(--color-surface-hover) !important;
     }
 
     &.is-active {
@@ -202,8 +204,8 @@ function openNav() {
 }
 
 .submenu-icon {
-  color: var(--accent-color, #7849ff);
-  transition: all 0.3s ease;
+  color: var(--color-primary);
+  transition: all var(--duration-fast) var(--curve-standard);
 }
 
 .el-menu-vertical-demo:not(.el-menu--collapse) {
@@ -223,7 +225,7 @@ function openNav() {
   margin-left: -5px !important;
   display: inline-block;
   vertical-align: middle;
-  color: var(--text-primary) !important;
+  color: var(--color-text-primary) !important;
 }
 
 [dir='rtl'] .myicon {

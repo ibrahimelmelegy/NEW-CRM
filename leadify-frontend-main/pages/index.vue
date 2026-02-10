@@ -1,6 +1,6 @@
 <template lang="pug">
-.statistics
-  el-tabs.w-full(v-model='selectedTab' @tab-change="tabChange")
+.statistics.p-3.md_p-4.lg_p-5
+  el-tabs.w-full(v-model='selectedTab' @tab-change="tabChange" class="dashboard-tabs")
 
     el-tab-pane(:label="$t('dashboard.leadsSales')" name='leadsSales')
       ClientOnly
@@ -38,3 +38,10 @@ function tabChange(tab: string) {
 
 selectedTab.value = (route.query?.tab as string) || 'leadsSales';
 </script>
+
+<style lang="scss" scoped>
+.statistics {
+  min-height: 100vh;
+  background: transparent;
+}
+</style>

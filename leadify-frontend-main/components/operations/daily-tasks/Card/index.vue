@@ -25,22 +25,29 @@ const props = defineProps({
 .stat-card {
   flex: 1;
   min-width: 200px;
-  background-color: white;
-  border-radius: 8px;
-  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+  background-color: var(--color-neutral-background-2);
+  border: 1px solid var(--color-border-default);
+  border-radius: var(--radius-large);
+  box-shadow: var(--elevation-shadow-4);
   padding: 20px;
   text-align: center;
+  transition: all var(--duration-fast) var(--curve-standard);
+
+  &:hover {
+    box-shadow: var(--elevation-shadow-8);
+    transform: translateY(-2px);
+  }
 }
 
 .stat-value {
-  font-size: 24px;
-  font-weight: bold;
-  color: #3498db;
+  font-size: var(--font-size-600);
+  font-weight: var(--font-weight-bold);
+  color: var(--color-primary);
   margin: 10px 0;
 }
 
 .stat-label {
-  color: #7f8c8d;
-  font-size: 14px;
+  color: var(--color-text-secondary);
+  font-size: var(--font-size-200);
 }
 </style>

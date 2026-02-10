@@ -1,10 +1,16 @@
 <template lang="pug">
-el-form(  autocomplete="off"   @submit.prevent='onSubmit'   ref="myForm" label-position="top"  :validationSchema="formSchema" )
+el-form(autocomplete="off" @submit.prevent='onSubmit' ref="myForm" label-position="top" :validationSchema="formSchema")
   slot
-  div(:class="{'2xl:w-1/2 w-[90%] p-10  card m-auto glass-card rounded-3xl': !isModal}")
-    .grid.grid-cols-2.gap-3
-      InputText(:label="$t('operations.service.form.name')" name="type" :placeholder="$t('operations.service.form.enterName')" :value="data?.type" )
-      InputText(:label="$t('operations.service.form.cost')"  :placeholder="$t('operations.service.form.enterCost')" name="price" :value="data?.price" )
+  div(:class="{'2xl:w-1/2 w-[90%] p-10 card m-auto glass-card rounded-3xl': !isModal}")
+    //- Service Details
+    .form-section
+      .form-section-header
+        .section-icon: Icon(name="ph:wrench-bold" size="20")
+        div
+          .section-title Service Details
+      .grid.grid-cols-2.gap-4
+        InputText(:label="$t('operations.service.form.name')" name="type" :placeholder="$t('operations.service.form.enterName')" :value="data?.type")
+        InputText(:label="$t('operations.service.form.cost')" :placeholder="$t('operations.service.form.enterCost')" name="price" :value="data?.price")
   slot(name="modal-footer")
 </template>
 

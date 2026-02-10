@@ -85,7 +85,7 @@
                 el-table-column(type="selection" width="55" reserve-selection)
                 el-table-column(label="Vendor Name" min-width="200" prop="name")
                     template(#default="{row}")
-                        .font-bold.text-white {{ row.name }}
+                        .font-bold.text-[var(--color-text-primary)] {{ row.name }}
                         .text-xs.text-muted {{ row.email }}
                 el-table-column(label="Type" width="150" prop="type")
                     template(#default="{row}")
@@ -260,66 +260,27 @@ async function submitRFQ() {
   -webkit-text-fill-color: transparent;
 }
 
-.bg-white_5 {
-  background: rgba(255, 255, 255, 0.05);
-}
-.bg-white_10 {
-  background: rgba(255, 255, 255, 0.1);
-}
-.border-white_10 {
-  border-color: rgba(255, 255, 255, 0.1);
-}
-.bg-purple-500_20 {
-  background: rgba(168, 85, 247, 0.2);
-}
-.bg-purple-500_10 {
-  background: rgba(168, 85, 247, 0.1);
-}
+// Accent tint utilities (scoped duplicates for Pug class references)
+.bg-purple-500_20 { background: rgba(0, 120, 212, 0.2); }
+.bg-purple-500_10 { background: rgba(0, 120, 212, 0.1); }
 
-.premium-input,
-.premium-select,
-.premium-datepicker {
-  :deep(.el-input__wrapper) {
-    background: rgba(255, 255, 255, 0.03) !important;
-    border: 1px solid rgba(255, 255, 255, 0.1) !important;
-    border-radius: 14px !important;
-    box-shadow: none !important;
-    height: 48px;
-    color: white;
-    &.is-focus {
-      border-color: var(--purple-500) !important;
-      background: rgba(168, 85, 247, 0.05) !important;
-    }
-  }
-}
+// All premium-input/select/table classes are now global in _utilities.scss
 
-.premium-table {
-  background: transparent !important;
-  :deep(.el-table) {
-    background: transparent !important;
-    --el-table-bg-color: transparent;
-    --el-table-header-bg-color: rgba(255, 255, 255, 0.03);
-  }
-  :deep(th.el-table__cell) {
-    color: var(--text-secondary);
-    background: rgba(255, 255, 255, 0.03) !important;
-  }
-}
 .premium-pagination {
   :deep(.el-pagination.is-background .el-pager li:not(.is-disabled).is-active) {
-    background-color: var(--purple-500) !important;
-    color: white;
+    background-color: var(--color-primary) !important;
+    color: #FFFFFF;
   }
   :deep(.el-pagination.is-background .el-pager li) {
-    background-color: rgba(255, 255, 255, 0.05);
-    color: var(--text-secondary);
-    border: 1px solid rgba(255, 255, 255, 0.1);
+    background-color: var(--color-surface-hover);
+    color: var(--color-text-secondary);
+    border: 1px solid var(--color-border-default);
   }
   :deep(.el-pagination.is-background .btn-prev),
   :deep(.el-pagination.is-background .btn-next) {
-    background-color: rgba(255, 255, 255, 0.05);
-    color: var(--text-secondary);
-    border: 1px solid rgba(255, 255, 255, 0.1);
+    background-color: var(--color-surface-hover);
+    color: var(--color-text-secondary);
+    border: 1px solid var(--color-border-default);
   }
 }
 </style>

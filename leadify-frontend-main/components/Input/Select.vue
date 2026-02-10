@@ -105,6 +105,6 @@ function removeTag(tag: any) {
 </script>
 <style lang="scss">
 .el-select--large .el-select__wrapper {
-  border-radius: 1rem !important;
+  border-radius: var(--radius-input, 12px) !important;
 }
 </style>

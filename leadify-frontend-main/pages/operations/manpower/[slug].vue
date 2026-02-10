@@ -225,7 +225,7 @@ const handleTypeStyle = (type: string) => {
     case 'DELETED':
       return 'bg-semantic-error-background text-semantic-error-foreground';
     case 'ARCHIVED':
-      return 'bg-neutral-100 text-neutral-500';
+      return 'bg-[var(--color-neutral-background-3)] text-neutral-500';
     case 'IMPORTED':
       return 'bg-secondary-blue-100 text-secondary-blue-600';
     case 'EXPORTED':
@@ -247,11 +247,11 @@ const manpower = await getManpower(route.params.slug as string);
     position: absolute;
     left: 24px;
     top: 2%;
-    border: 1px dashed #e7e6e9;
+    border: 1px dashed var(--color-border-subtle);
     z-index: -1;
   }
   > div:last-of-type {
-    background: #f8f7fa !important;
+    background: var(--color-neutral-background-3) !important;
   }
 }
 </style>

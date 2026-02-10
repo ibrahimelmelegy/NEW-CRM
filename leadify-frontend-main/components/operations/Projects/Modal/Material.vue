@@ -5,7 +5,7 @@ el-dialog(v-model='dialog' width='800' align-center='' :class="{ 'material': isA
     .grid.grid-cols-2.gap-3
       InputText.mt-4(label="Material Quantity" type="number"  placeholder="Enter Material Quantity" name="quantity" :value="data?.quantity" )
       InputText.mt-4(label="Material Unit Price"  placeholder="Enter Material Unit Price" name="unitPrice" :value="data?.unitPrice" )
-    .bg-neutral-50.p-4.rounded-3xl.flex.items-center.justify-between.mb-6.mt-9
+    .bg-[var(--color-neutral-background-2)].p-4.rounded-3xl.flex.items-center.justify-between.mb-6.mt-9
       p.text-base.text-neutral-500.font-semibold Additional Material
       <el-switch v-model="isAdditionalMaterial" class="ml-2"  style="--el-switch-on-color: #13ce66;"/>
     template(v-if="isAdditionalMaterial")
@@ -19,7 +19,7 @@ el-dialog(v-model='dialog' width='800' align-center='' :class="{ 'material': isA
         .flex.justify-justify-between.items-center
           .title.font-bold.text-base.capitalize.flex-1 Items
         AppTable(without-filters without-search without-action without-pagination :columns="items.columns" :data="items.data" class="!py-0" :key="items.data")
-    .bg-neutral-50.p-4.rounded-3xl.flex.items-center.justify-between.mb-6
+    .bg-[var(--color-neutral-background-2)].p-4.rounded-3xl.flex.items-center.justify-between.mb-6
       p.text-base.text-neutral-500.font-semibold Additional Service
       <el-switch v-model="isAdditionalService" class="ml-2"  style="--el-switch-on-color: #13ce66;"/>
     template(v-if="isAdditionalService")

@@ -85,11 +85,11 @@ const dailyTask = await getDailyTask(route.params.slug as string);
     position: absolute;
     left: 24px;
     top: 2%;
-    border: 1px dashed #e7e6e9;
+    border: 1px dashed var(--color-border-subtle);
     z-index: -1;
   }
   > div:last-of-type {
-    background: #f8f7fa !important;
+    background: var(--color-neutral-background-3) !important;
   }
 }
 </style>

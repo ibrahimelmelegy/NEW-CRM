@@ -161,12 +161,13 @@
 .el-input,
 .el-textarea {
   &__wrapper {
-    background: var(--color-neutral-background-1) !important;
+    background: var(--color-neutral-background-3) !important;
     border: 1px solid var(--color-border-default) !important;
     border-radius: var(--radius-input) !important;
     box-shadow: none !important;
     backdrop-filter: none !important;
-    transition: var(--transition-button);
+    transition: all var(--duration-normal) var(--curve-standard);
+    min-height: 44px;
 
     &:hover {
       border-color: var(--color-border-strong) !important;
@@ -174,7 +175,8 @@
 
     &.is-focus {
       border-color: var(--color-primary) !important;
-      box-shadow: var(--shadow-focus) !important;
+      background: rgba(0, 120, 212, 0.05) !important;
+      box-shadow: 0 0 0 2px rgba(0, 120, 212, 0.2) !important;
     }
   }
 
@@ -184,6 +186,56 @@
     &::placeholder {
       color: var(--color-text-disabled);
     }
+  }
+}
+
+// Textarea inner override
+.el-textarea {
+  .el-textarea__inner {
+    background: var(--color-neutral-background-3) !important;
+    border: 1px solid var(--color-border-default) !important;
+    border-radius: var(--radius-input) !important;
+    color: var(--color-text-primary);
+    transition: all var(--duration-normal) var(--curve-standard);
+
+    &:hover {
+      border-color: var(--color-border-strong) !important;
+    }
+
+    &:focus {
+      border-color: var(--color-primary) !important;
+      background: rgba(0, 120, 212, 0.05) !important;
+      box-shadow: 0 0 0 2px rgba(0, 120, 212, 0.2) !important;
+    }
+  }
+}
+
+// Select input wrappers
+.el-select {
+  .el-select__wrapper {
+    background: var(--color-neutral-background-3) !important;
+    border: 1px solid var(--color-border-default) !important;
+    border-radius: var(--radius-input) !important;
+    box-shadow: none !important;
+    min-height: 44px;
+    transition: all var(--duration-normal) var(--curve-standard);
+
+    &:hover {
+      border-color: var(--color-border-strong) !important;
+    }
+
+    &.is-focused {
+      border-color: var(--color-primary) !important;
+      background: rgba(0, 120, 212, 0.05) !important;
+      box-shadow: 0 0 0 2px rgba(0, 120, 212, 0.2) !important;
+    }
+  }
+}
+
+// Date picker input
+.el-date-editor {
+  .el-input__wrapper {
+    background: var(--color-neutral-background-3) !important;
   }
 }
 
@@ -349,7 +401,7 @@
 // Sidebar menu
 .el-menu-vertical-demo {
   @include acrylic-material;
-  border-radius: var(--radius-large);
+  border-radius: 0;
   border: none !important;
   min-height: 100vh;
 }
@@ -478,8 +530,11 @@
 // ==========================================
 .el-form {
   &-item__label {
-    color: var(--color-text-primary);
-    font-weight: var(--font-weight-medium);
+    color: var(--color-text-tertiary);
+    font-weight: 600;
+    font-size: 11px;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
   }
 
   &-item__error {

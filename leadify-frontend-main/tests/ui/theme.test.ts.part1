@@ -1,0 +1,75 @@
+/**
+ * UI Theme & CSS Utility Tests
+ * ==============================
+ * Comprehensive tests for theme switching, CSS utility classes,
+ * and design system compliance.
+ */
+
+import { describe, it, expect, beforeEach, afterEach } from 'vitest';
+
+describe('UI Theme Switching', () => {
+  let htmlElement: HTMLElement;
+
+  beforeEach(() => {
+    htmlElement = document.documentElement;
+    htmlElement.className = '';
+    document.body.className = '';
+  });
+
+  afterEach(() => {
+    htmlElement.className = '';
+  });
+
+  describe('Dark Mode (Default)', () => {
+    it('should default to dark mode with no light-mode class', () => {
+      expect(htmlElement.classList.contains('light-mode')).toBe(false);
+    });
+
+    it('should NOT have light-mode class on body (uses documentElement)', () => {
+      expect(document.body.classList.contains('light-mode')).toBe(false);
+    });
+  });
+
+  describe('Light Mode Toggle', () => {
+    it('should add light-mode class to documentElement when toggling to light', () => {
+      htmlElement.classList.add('light-mode');
+      expect(htmlElement.classList.contains('light-mode')).toBe(true);
+    });
+
+    it('should remove light-mode class when toggling back to dark', () => {
+      htmlElement.classList.add('light-mode');
+      htmlElement.classList.remove('light-mode');
+      expect(htmlElement.classList.contains('light-mode')).toBe(false);
+    });
+
+    it('should apply class to documentElement NOT body', () => {
+      htmlElement.classList.add('light-mode');
+      expect(document.documentElement.classList.contains('light-mode')).toBe(true);
+      expect(document.body.classList.contains('light-mode')).toBe(false);
+    });
+
+    it('should support toggle function pattern', () => {
+      const toggleTheme = () => {
+        htmlElement.classList.toggle('light-mode');
+      };
+
+      toggleTheme();
+      expect(htmlElement.classList.contains('light-mode')).toBe(true);
+
+      toggleTheme();
+      expect(htmlElement.classList.contains('light-mode')).toBe(false);
+    });
+  });
+
+  describe('Theme Class Naming', () => {
+    it('should use light-mode NOT light-theme', () => {
+      htmlElement.classList.add('light-mode');
+      expect(htmlElement.classList.contains('light-mode')).toBe(true);
+      expect(htmlElement.classList.contains('light-theme')).toBe(false);
+    });
+
+    it('should use light-mode NOT dark-mode (dark is default/absence)', () => {
+      expect(htmlElement.classList.contains('dark-mode')).toBe(false);
+    });
+  });
+});

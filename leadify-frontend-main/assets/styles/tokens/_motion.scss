@@ -261,6 +261,11 @@
   animation: shimmer 2s var(--curve-linear) infinite;
 }
 
+// Entrance animation (for cards appearing on page load)
+.animate-entrance {
+  animation: slideInUp var(--duration-normal) var(--curve-decelerate);
+}
+
 // ============================================
 // 🎯 TRANSITION UTILITIES
 // ============================================

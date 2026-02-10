@@ -5,7 +5,7 @@
     p.text-muted {{ $t('dashboard.financialHint') }}
 
   //- Core Financial Row
-  .cards.grid.grid-cols-3.gap-6.mb-8
+  .cards.grid.grid-cols-1.md_grid-cols-2.lg_grid-cols-3.gap-6.mb-8
     StatisticsCard(
       :name="$t('dashboard.widgets.totalDealsRevenue')" 
       :data="bussinesStats?.firstCards?.[0]?.value || 0" 

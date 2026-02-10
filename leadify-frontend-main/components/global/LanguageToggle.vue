@@ -39,15 +39,15 @@ onMounted(() => {
   transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
 
   // Match Obsidian Glass theme
-  background: rgba(255, 255, 255, 0.05);
-  border: 1px solid rgba(255, 255, 255, 0.1);
+  background: var(--color-surface-hover);
+  border: 1px solid var(--color-border-default);
   color: var(--text-primary);
 
   &:hover {
-    background: rgba(120, 73, 255, 0.1);
-    border-color: rgba(120, 73, 255, 0.3);
+    background: rgba(0, 120, 212, 0.1);
+    border-color: rgba(0, 120, 212, 0.3);
     transform: translateY(-2px);
-    box-shadow: 0 4px 12px rgba(120, 73, 255, 0.2);
+    box-shadow: 0 4px 12px rgba(0, 120, 212, 0.2);
   }
 
   span {
@@ -60,8 +60,8 @@ onMounted(() => {
     border-color: rgba(0, 0, 0, 0.08);
     
     &:hover {
-        background: rgba(120, 73, 255, 0.05);
-        border-color: rgba(120, 73, 255, 0.2);
+        background: rgba(0, 120, 212, 0.05);
+        border-color: rgba(0, 120, 212, 0.2);
     }
 }
 </style>

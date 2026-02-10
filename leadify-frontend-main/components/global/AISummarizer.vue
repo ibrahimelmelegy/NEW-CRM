@@ -79,12 +79,13 @@ const generateSummary = async () => {
 </script>
 
 <style lang="scss" scoped>
+@import "@/assets/styles/tokens/_materials.scss";
+
 .glass-dialog {
   :deep(.el-dialog) {
-    background: rgba(255, 255, 255, 0.7);
-    backdrop-filter: blur(20px);
-    border: 1px solid rgba(255, 255, 255, 0.3);
-    border-radius: 24px;
+    @include acrylic-material;
+    border-radius: var(--radius-large);
+    box-shadow: var(--elevation-shadow-64);
   }
 }
 </style>

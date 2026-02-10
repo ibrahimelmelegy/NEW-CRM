@@ -59,27 +59,29 @@
 // 🎨 MATERIAL MIXINS
 // ============================================
 
-// 1. Acrylic Material Mixin
+// 1. Acrylic Material Mixin (Strong Glass)
 @mixin acrylic-material {
-  background: var(--material-acrylic-bg-dark);
-  backdrop-filter: var(--material-acrylic-blur);
-  -webkit-backdrop-filter: var(--material-acrylic-blur);
-  border: 1px solid var(--material-acrylic-border-dark);
-  box-shadow: var(--material-acrylic-shadow);
+  background: rgba(11, 14, 20, 0.75) !important; // Dark transparent
+  backdrop-filter: blur(25px) saturate(180%);
+  -webkit-backdrop-filter: blur(25px) saturate(180%);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.4);
 
   html.light-mode & {
-    background: var(--material-acrylic-bg-light);
-    border-color: var(--material-acrylic-border-light);
-    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.08);
+    background: #F5F5F5 !important; // Match --color-neutral-background-3
+    backdrop-filter: none;
+    -webkit-backdrop-filter: none;
+    border-right: 1px solid var(--color-border-default);
+    box-shadow: none;
   }
 }
 
-// 2. Mica Material Mixin
+// 2. Mica Material Mixin (Subtle Glass)
 @mixin mica-material {
-  background: var(--material-mica-bg-dark);
-  backdrop-filter: var(--material-mica-blur);
-  -webkit-backdrop-filter: var(--material-mica-blur);
-  border: 1px solid var(--material-mica-border-dark);
+  background: rgba(45, 52, 70, 0.85) !important; // Lighter semi-transparent Card
+  backdrop-filter: blur(12px) saturate(120%);
+  -webkit-backdrop-filter: blur(12px) saturate(120%);
+  border: 1px solid rgba(255, 255, 255, 0.1);
   position: relative;
 
   // Subtle tint overlay
@@ -87,42 +89,46 @@
     content: '';
     position: absolute;
     inset: 0;
-    background: var(--material-mica-tint-dark);
+    background: linear-gradient(180deg, rgba(255, 255, 255, 0.05) 0%, transparent 100%);
     pointer-events: none;
     border-radius: inherit;
   }
 
   html.light-mode & {
-    background: var(--material-mica-bg-light);
-    border-color: var(--material-mica-border-light);
+    background: #FFFFFF !important;
+    border-color: rgba(0, 0, 0, 0.08);
+    backdrop-filter: none;
+    -webkit-backdrop-filter: none;
 
     &::before {
-      background: var(--material-mica-tint-light);
+      display: none;
     }
   }
 }
 
 // 3. Mica Alt Material Mixin
 @mixin mica-alt-material {
-  background: var(--material-mica-alt-bg-dark);
-  backdrop-filter: var(--material-mica-alt-blur);
-  -webkit-backdrop-filter: var(--material-mica-alt-blur);
-  border: 1px solid var(--material-mica-alt-border-dark);
+  background: rgba(30, 35, 48, 0.5) !important;
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  border: 1px solid rgba(255, 255, 255, 0.05);
 
   html.light-mode & {
-    background: var(--material-mica-alt-bg-light);
-    border-color: var(--material-mica-alt-border-light);
+    background: #F5F5F5 !important;
+    backdrop-filter: none;
+    -webkit-backdrop-filter: none;
+    border-color: rgba(0, 0, 0, 0.06);
   }
 }
 
 // 4. Smoke Material Mixin
 @mixin smoke-material {
-  background: var(--material-smoke-bg-dark);
-  backdrop-filter: var(--material-smoke-blur);
-  -webkit-backdrop-filter: var(--material-smoke-blur);
+  background: rgba(0, 0, 0, 0.6) !important;
+  backdrop-filter: blur(5px);
+  -webkit-backdrop-filter: blur(5px);
 
   html.light-mode & {
-    background: var(--material-smoke-bg-light);
+    background: rgba(0, 0, 0, 0.2);
   }
 }
 
@@ -262,6 +268,7 @@ LAYERING ORDER (z-index):
 
 // Fallback for browsers that don't support backdrop-filter
 @supports not (backdrop-filter: blur(1px)) {
+
   .material-acrylic,
   .material-mica,
   .material-mica-alt {

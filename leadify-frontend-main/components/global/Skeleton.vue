@@ -57,7 +57,7 @@ const customStyle = computed(() => {
 
 <style scoped lang="scss">
 .skeleton-loader {
-  background: linear-gradient(90deg, rgba(168, 85, 247, 0.1) 25%, rgba(168, 85, 247, 0.2) 50%, rgba(168, 85, 247, 0.1) 75%);
+  background: linear-gradient(90deg, rgba(0, 120, 212, 0.1) 25%, rgba(0, 120, 212, 0.2) 50%, rgba(0, 120, 212, 0.1) 75%);
   background-size: 200% 100%;
 
   &.animate-pulse {

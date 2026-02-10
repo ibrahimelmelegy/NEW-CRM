@@ -13,10 +13,10 @@ export default defineNuxtPlugin(nuxtApp => {
   if (process.client) {
     const applyTheme = () => {
       const savedTheme = localStorage.getItem('theme');
-      if (savedTheme === 'light') {
-        document.body.classList.add('light-theme');
+      if (savedTheme === 'light' || savedTheme === 'true') {
+        document.documentElement.classList.add('light-mode');
       } else {
-        document.body.classList.remove('light-theme');
+        document.documentElement.classList.remove('light-mode');
       }
     };
 
@@ -28,12 +28,12 @@ export default defineNuxtPlugin(nuxtApp => {
 
     // Provide toggle functions globally
     nuxtApp.provide('enableLightMode', () => {
-      document.body.classList.add('light-theme');
+      document.documentElement.classList.add('light-mode');
       localStorage.setItem('theme', 'light');
     });
 
     nuxtApp.provide('disableLightMode', () => {
-      document.body.classList.remove('light-theme');
+      document.documentElement.classList.remove('light-mode');
       localStorage.setItem('theme', 'dark');
     });
   }

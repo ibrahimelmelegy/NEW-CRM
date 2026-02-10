@@ -33,7 +33,7 @@
         el-dropdown(class="outline-0", trigger="click")
           span(class="el-dropdown-link")
             .toggle-icon.text-md.hover-scale
-              Icon(name="ph:dots-three-outline-vertical-fill", size="20", class="text-purple-400")
+              Icon(name="ph:dots-three-outline-vertical-fill", size="20", class="text-[var(--color-primary)]")
           template(#dropdown='')
             el-dropdown-menu(class="glass-dropdown")
               el-dropdown-item
@@ -84,7 +84,7 @@ function handleRowClick(val: any) {
     --el-table-tr-bg-color: transparent;
 
     th.el-table__cell {
-      background: rgba(168, 85, 247, 0.05) !important;
+      background: rgba(0, 120, 212, 0.05) !important;
       color: var(--text-secondary);
       font-weight: 700;
       text-transform: uppercase;
@@ -93,7 +93,7 @@ function handleRowClick(val: any) {
     }
 
     td.el-table__cell {
-      border-bottom: 1px solid rgba(168, 85, 247, 0.05) !important;
+      border-bottom: 1px solid rgba(0, 120, 212, 0.05) !important;
       padding: 16px 0;
     }
 
@@ -110,9 +110,9 @@ function handleRowClick(val: any) {
         box-shadow: 0 0 10px rgba(16, 185, 129, 0.2);
       }
       &.el-tag--warning {
-        background: rgba(245, 158, 11, 0.2);
-        color: #f59e0b;
-        box-shadow: 0 0 10px rgba(245, 158, 11, 0.2);
+        background: rgba(246, 99, 12, 0.2);
+        color: #F7630C;
+        box-shadow: 0 0 10px rgba(246, 99, 12, 0.2);
       }
       &.el-tag--danger {
         background: rgba(239, 68, 68, 0.2);
@@ -134,7 +134,7 @@ function handleRowClick(val: any) {
 .glass-dropdown {
   background: rgba(30, 18, 48, 0.9) !important;
   backdrop-filter: blur(10px);
-  border: 1px solid rgba(168, 85, 247, 0.2);
+  border: 1px solid rgba(0, 120, 212, 0.2);
   border-radius: 12px;
 }
 </style>

@@ -171,8 +171,8 @@ watch(
     --el-table-tr-bg-color: transparent;
 
     th.el-table__cell {
-      background: rgba(168, 85, 247, 0.05) !important;
-      color: var(--text-secondary);
+      background: var(--color-neutral-background-3) !important;
+      color: var(--color-text-secondary);
       font-weight: 700;
       text-transform: uppercase;
       font-size: 11px;
@@ -180,7 +180,7 @@ watch(
     }
 
     td.el-table__cell {
-      border-bottom: 1px solid rgba(168, 85, 247, 0.05) !important;
+      border-bottom: 1px solid var(--color-border-subtle) !important;
       padding: 16px 0;
     }
 
@@ -208,9 +208,10 @@ watch(
 }
 
 .glass-dropdown {
-  background: rgba(30, 18, 48, 0.9) !important;
+  background: var(--color-neutral-background-1) !important;
   backdrop-filter: blur(10px);
-  border: 1px solid rgba(168, 85, 247, 0.2);
+  border: 1px solid var(--color-border-default);
   border-radius: 12px;
+  box-shadow: var(--elevation-shadow-16);
 }
 </style>

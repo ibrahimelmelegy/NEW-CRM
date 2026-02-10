@@ -24,7 +24,7 @@
 
       <!-- Actions -->
       <div class="flex gap-4 justify-center">
-        <el-button type="primary" class="!bg-[#7849ff] !border-none" @click="retry">
+        <el-button type="primary" class="!bg-[var(--color-primary)] !border-none" @click="retry">
           {{ $t('common.reset') }}
         </el-button>
         <el-button @click="goHome">

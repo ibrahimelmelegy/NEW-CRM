@@ -1,14 +1,28 @@
 <template lang="pug">
-el-form(  autocomplete="off"   @submit.prevent='onSubmit'   ref="myForm" label-position="top"  :validationSchema="formSchema" )
+el-form(autocomplete="off" @submit.prevent='onSubmit' ref="myForm" label-position="top" :validationSchema="formSchema")
   slot
-  div(:class="{'2xl:w-1/2 w-[90%]  card m-auto glass-card p-10 rounded-3xl': !isModal}")
-    .grid.grid-cols-2.gap-3
-      InputText.mt-4(:label="$t('operations.vehicle.form.plateNumber')"  :placeholder="$t('operations.vehicle.form.enterPlate')" name="plate" :value="data?.plate" )
-      InputSelect.mt-4(label=" Manufacturer" name="manufacturer" :options="manufacturers" :value="data?.manufacturer" )
-      InputText.mt-4(:label="$t('operations.vehicle.form.name')"  :placeholder="$t('operations.vehicle.form.enterName')" name="rentCost" :value="data?.rentCost" )
-      InputText.mt-4(label="Gas Cost"  placeholder="Enter Gas Cost SAR" name="gasCost" :value="data?.gasCost" )
-      InputText.mt-4(label="Oil Cost"  placeholder="Enter Oil Cost SAR" name="oilCost" :value="data?.oilCost" )
-      InputText.mt-4(label="Regular Maintenance Cost"  placeholder="Enter Regular Maintenance Cost SAR" name="regularMaintenanceCost" :value="data?.regularMaintenanceCost" )
+  div(:class="{'2xl:w-1/2 w-[90%] card m-auto glass-card p-10 rounded-3xl': !isModal}")
+    //- Vehicle Information
+    .form-section
+      .form-section-header
+        .section-icon: Icon(name="ph:car-bold" size="20")
+        div
+          .section-title Vehicle Information
+      .grid.grid-cols-2.gap-4
+        InputText(:label="$t('operations.vehicle.form.plateNumber')" :placeholder="$t('operations.vehicle.form.enterPlate')" name="plate" :value="data?.plate")
+        InputSelect(label="Manufacturer" name="manufacturer" :options="manufacturers" :value="data?.manufacturer")
+
+    //- Cost Details
+    .form-section
+      .form-section-header
+        .section-icon: Icon(name="ph:money-bold" size="20")
+        div
+          .section-title Cost Details
+      .grid.grid-cols-2.gap-4
+        InputText(:label="$t('operations.vehicle.form.name')" :placeholder="$t('operations.vehicle.form.enterName')" name="rentCost" :value="data?.rentCost")
+        InputText(label="Gas Cost" placeholder="Enter Gas Cost SAR" name="gasCost" :value="data?.gasCost")
+        InputText(label="Oil Cost" placeholder="Enter Oil Cost SAR" name="oilCost" :value="data?.oilCost")
+        InputText(label="Regular Maintenance Cost" placeholder="Enter Regular Maintenance Cost SAR" name="regularMaintenanceCost" :value="data?.regularMaintenanceCost")
   slot(name="modal-footer")
 </template>
 

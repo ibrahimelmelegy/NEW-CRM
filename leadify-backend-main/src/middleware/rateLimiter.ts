@@ -10,9 +10,10 @@ export const generalLimiter = rateLimit({
 });
 
 // Strict rate limit for auth routes: 10 requests per 15 minutes per IP
+// For development: increased to 100 requests to prevent blocking during testing
 export const authLimiter = rateLimit({
   windowMs: 15 * 60 * 1000,
-  max: 10,
+  max: process.env.NODE_ENV === 'production' ? 10 : 100, // 100 for dev, 10 for prod
   standardHeaders: true,
   legacyHeaders: false,
   message: { message: 'Too many authentication attempts, please try again later.' }

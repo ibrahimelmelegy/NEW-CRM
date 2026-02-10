@@ -15,7 +15,22 @@ export const summarizeMeeting = async (req: Request, res: Response) => {
     }
 };
 
+import { lockManager } from './lockManager';
+
 export const generateEmail = async (req: Request, res: Response) => {
+    // 1. BMS Check: Is AI Service Locked?
+    if (lockManager.isLocked()) {
+        const remainingMs = lockManager.getRemainingTimeMs();
+        const hours = Math.ceil(remainingMs / (1000 * 60 * 60));
+        return res.status(429).json({
+            success: false,
+            message: `AI Service is temporarily locked due to high traffic.`,
+            locked: true,
+            remainingHours: hours,
+            remainingMs: remainingMs
+        });
+    }
+
     try {
         const { prompt, context } = req.body;
 

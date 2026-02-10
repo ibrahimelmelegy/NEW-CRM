@@ -3,8 +3,8 @@
      .flex.items-center.justify-center(style="flex-direction: column; ")
       .flex.items-center.justify-between.mb-8.gap-2(class="w-[75%]")
         .title.font-bold.text-2xl.capitalize {{ $t('notifications.title') }}
-        .title.font-medium.text-lg.capitalize(v-if="unreadNotificationsCount == 0" style ="color : #6D42E8;cursor: pointer" ) {{ $t('notifications.markAllRead') }}
-        .title.font-medium.text-lg.capitalize( v-if = "unreadNotificationsCount > 0" style ="color : #ff0000;cursor: pointer" @click = "readNotifications") {{ $t('notifications.markingUnread') }} {{unreadNotificationsCount}}
+        .title.font-medium.text-lg.capitalize(v-if="unreadNotificationsCount == 0" style="color: var(--color-primary); cursor: pointer") {{ $t('notifications.markAllRead') }}
+        .title.font-medium.text-lg.capitalize(v-if="unreadNotificationsCount > 0" style="color: var(--color-status-error, #ef4444); cursor: pointer" @click="readNotifications") {{ $t('notifications.markingUnread') }} {{unreadNotificationsCount}}
       .notify.glass-card(class="h-[75vh] mb-2 p-[16px]")
        el-spinner(size="large" v-if="isLoading" class="nuxt-loading-indicator")
        el-empty(v-if="finalData?.length ==  0 || !finalData " :description="$t('notifications.noData')" image="/images/emptyNotify.png")
@@ -150,14 +150,14 @@ watch(
 }
 
 .icon_READ {
-  background-color: rgba(120, 73, 255, 0.1);
+  background-color: rgba(0, 120, 212, 0.1);
   border-radius: 50%;
-  color: var(--accent-color);
+  color: var(--color-primary);
 }
 
 .icon_UN_READ {
   background-color: rgba(255, 183, 45, 0.1);
   border-radius: 50%;
-  color: #ffb72d;
+  color: var(--color-status-warning, #ffb72d);
 }
 </style>

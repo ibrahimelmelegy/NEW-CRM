@@ -22,10 +22,10 @@ el-form.mt-6(  autocomplete="off"   @submit.prevent='onSubmit'   ref="myForm" la
     .rounded-3xl.mt-3.border.mt-8
       AppTable(without-filters without-search without-action without-pagination :columns="finalCost.columns" :data="finalCost.data" class="!py-0")
     .flex.items-center.gap-3(class="md:flex-row flex-col")
-      .flex-1.bg-neutral-50.p-4.rounded-3xl.mt-4
+      .flex-1.bg-[var(--color-neutral-background-2)].p-4.rounded-3xl.mt-4
         el-checkbox(:label="$t('operations.projects.preview.haveDiscount')" v-model="haveDiscount")
         InputText(:placeholder="$t('operations.projects.preview.discountPlaceholder')" name="discount" :value="data?.discount" v-if="haveDiscount")
-      .flex-1.bg-neutral-50.p-4.rounded-3xl.mt-4
+      .flex-1.bg-[var(--color-neutral-background-2)].p-4.rounded-3xl.mt-4
         el-checkbox(:label="$t('operations.projects.preview.haveMargin')" v-model="haveMargin")
         InputText(:placeholder="$t('operations.projects.preview.marginPlaceholder')" name="margin" :value="data?.margin" v-if="haveMargin")
     .flex.justify-end.mt-12

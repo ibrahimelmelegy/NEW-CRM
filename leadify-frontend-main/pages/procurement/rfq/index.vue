@@ -82,10 +82,10 @@ function openRFQ(id: string) {
   :deep(.el-table) {
     background: transparent !important;
     --el-table-bg-color: transparent;
-    --el-table-header-bg-color: rgba(255, 255, 255, 0.03);
+    --el-table-header-bg-color: var(--color-neutral-background-3);
     th.el-table__cell {
       color: var(--text-secondary);
-      background: rgba(255, 255, 255, 0.03) !important;
+      background: var(--color-neutral-background-3) !important;
     }
   }
 }

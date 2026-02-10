@@ -364,9 +364,9 @@ button {
   }
 
   &.is-active {
-    background-color: rgba(124, 58, 237, 0.15);
+    background-color: rgba(0, 120, 212, 0.15);
     color: var(--accent-purple);
-    border-color: rgba(124, 58, 237, 0.3);
+    border-color: rgba(0, 120, 212, 0.3);
   }
 
   &:disabled {
@@ -603,7 +603,7 @@ button {
       right: 0;
       top: 0;
       bottom: 0;
-      background: rgba(124, 58, 237, 0.1);
+      background: rgba(0, 120, 212, 0.1);
       pointer-events: none;
     }
 

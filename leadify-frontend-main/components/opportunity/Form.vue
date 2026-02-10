@@ -1,32 +1,57 @@
 <template lang="pug">
-el-form(  autocomplete="off"   @submit.prevent='onSubmit'   ref="myForm" label-position="top"  :validationSchema="formSchema" )
+el-form(autocomplete="off" @submit.prevent='onSubmit' ref="myForm" label-position="top" :validationSchema="formSchema")
   slot
-  .glass-card.m-auto.p-10(class="2xl:w-1/2 w-[90%] ")
-        el-switch.my-4(v-if="!editMode" v-model="switchType", size="large" inline-prompt, style="--el-switch-on-color: #7849FF; --el-switch-off-color: #918E98", active-text="Select Lead", inactive-text="Select Client")
-        .flex.justify-between.items-center.mb-6(v-if="switchType")
-          h3.text-xl.font-semibold {{ $t('leads.details') }}
-          el-switch.ml-2(v-if="!editMode" v-model="switchValue", size="large" inline-prompt, style="--el-switch-on-color: #7849FF; --el-switch-off-color: #918E98", :active-text="$t('leads.newLead')", :inactive-text="$t('leads.title')")
-        .grid.grid-cols-2.gap-3(v-if="switchType")
-          component(:is="isLeads" :label="$t('leads.table.leadName')"  name="leadName" :options="mappedLeads" :value="selectedLead?.name" @change="getSelectedLead" :disabled="editMode" )
-          InputText(:label="$t('common.companyName')"  name="companyName" :value="selectedLead?.companyName" :disabled="editMode" is-form)
-          InputText(:label="$t('leads.info.email')"  name="email" :value="selectedLead?.email" @value="val=> isEmail = !!val" :disabled="editMode" is-form)
-          InputPhone(:label="$t('leads.info.phone')"  name="phone" :value="selectedLead?.phone" @value="val=> isPhone = !!val" @validphone="val=> validPhone = val" mode="international" :disabled="editMode")
-        h3.text-xl.font-semibold.my-6 {{ $t('opportunities.details') }}
-        .grid.grid-cols-2.gap-3
-          InputSelect(v-if="!switchType" :label="$t('deals.info.client')" name="clientId" :options="mappedClients" :value="data?.clientId" )
-          InputText(:label="$t('opportunities.table.name')"  name="opportunityName" :value="data?.name" )
-          InputSelect(:label="$t('opportunities.table.stage')" name="opportunityStage" :options="stageOptions.map(o => ({...o, label: $t(o.label)}))" :value="data?.stage" @change="checkIfCancelled" )
-          InputText(:label="$t('opportunities.table.profit') + ' (Optional)'" type="number" :placeholder="$t('opportunities.table.profit')" name="profit" :value="data?.profit" )
-          InputSelect(:class="{'col-span-2': !switchType}" :label="$t('opportunities.table.assigned')" name="assignUser" isMultiple :options="users" :value="users?.filter((user: any) => data?.users?.map((user: any) => user.id)?.includes(user.value))?.map((user: any) => user.value)" )
-        .grid.grid-cols-2.gap-3
-          InputText.mt-4(:label="$t('opportunities.info.budget') + ' (Optional)'" type="number" :placeholder="$t('opportunities.info.budget')" name="estimatedValue" :value="data?.estimatedValue" )
-          InputDate.mt-4(:label="$t('opportunities.info.closeDate') + ' (Optional)'" disabledDate="past" :placeholder="$t('opportunities.info.closeDate')" :value="data?.expectedCloseDate || new Date()" name="expectedCloseDate" )
-          InputSelect(:label="$t('opportunities.info.priority') + ' (Optional)'" name="priority"  :placeholder="$t('opportunities.info.priority')" :options="priorityOptions.map(o => ({...o, label: $t(o.label)}))" :value="data?.priority" )
-          InputText(:label="$t('opportunities.info.products') + ' (Optional)'" name="interestedIn"  :placeholder="$t('opportunities.info.products')"  :value="data?.interestedIn" )
-        InputSelect(:label="$t('opportunities.info.nextSteps')" isMultiple name="nextSteps" :options="stepsOptions.map(o => ({...o, label: $t(o.label)}))" :value="data?.nextSteps" )
-        InputSelect(:label="$t('opportunities.info.reasonLoss')" name="reasons" :options="reasonOptions.map(o => ({...o, label: $t(o.label)}))" :value="data?.reasonOfLose" v-if="isLose" )
-        InputText(type="textarea" :placeholder="$t('leads.notes')"  name="notes" :value="data?.notes" )
+  .glass-card.m-auto.p-10(class="2xl:w-1/2 w-[90%]")
+    el-switch.my-4(v-if="!editMode" v-model="switchType" size="large" inline-prompt style="--el-switch-on-color: var(--color-primary); --el-switch-off-color: var(--color-text-disabled)" active-text="Select Lead" inactive-text="Select Client")
 
+    //- Lead Details
+    .form-section(v-if="switchType")
+      .form-section-header
+        .section-icon: Icon(name="ph:user-circle-bold" size="20")
+        div
+          .section-title {{ $t('leads.details') }}
+      .flex.justify-end.mb-4
+        el-switch(v-if="!editMode" v-model="switchValue" size="large" inline-prompt style="--el-switch-on-color: var(--color-primary); --el-switch-off-color: var(--color-text-disabled)" :active-text="$t('leads.newLead')" :inactive-text="$t('leads.title')")
+      .grid.grid-cols-2.gap-4
+        component(:is="isLeads" :label="$t('leads.table.leadName')" name="leadName" :options="mappedLeads" :value="selectedLead?.name" @change="getSelectedLead" :disabled="editMode")
+        InputText(:label="$t('common.companyName')" name="companyName" :value="selectedLead?.companyName" :disabled="editMode" is-form)
+        InputText(:label="$t('leads.info.email')" name="email" :value="selectedLead?.email" @value="val=> isEmail = !!val" :disabled="editMode" is-form)
+        InputPhone(:label="$t('leads.info.phone')" name="phone" :value="selectedLead?.phone" @value="val=> isPhone = !!val" @validphone="val=> validPhone = val" mode="international" :disabled="editMode")
+
+    //- Opportunity Details
+    .form-section
+      .form-section-header
+        .section-icon: Icon(name="ph:lightbulb-bold" size="20")
+        div
+          .section-title {{ $t('opportunities.details') }}
+      .grid.grid-cols-2.gap-4
+        InputSelect(v-if="!switchType" :label="$t('deals.info.client')" name="clientId" :options="mappedClients" :value="data?.clientId")
+        InputText(:label="$t('opportunities.table.name')" name="opportunityName" :value="data?.name")
+        InputSelect(:label="$t('opportunities.table.stage')" name="opportunityStage" :options="stageOptions.map(o => ({...o, label: $t(o.label)}))" :value="data?.stage" @change="checkIfCancelled")
+        InputText(:label="$t('opportunities.table.profit') + ' (Optional)'" type="number" :placeholder="$t('opportunities.table.profit')" name="profit" :value="data?.profit")
+        InputSelect(:class="{'col-span-2': !switchType}" :label="$t('opportunities.table.assigned')" name="assignUser" isMultiple :options="users" :value="users?.filter((user: any) => data?.users?.map((user: any) => user.id)?.includes(user.value))?.map((user: any) => user.value)")
+
+    //- Budget & Timeline
+    .form-section
+      .form-section-header
+        .section-icon: Icon(name="ph:calendar-bold" size="20")
+        div
+          .section-title Budget & Timeline
+      .grid.grid-cols-2.gap-4
+        InputText(:label="$t('opportunities.info.budget') + ' (Optional)'" type="number" :placeholder="$t('opportunities.info.budget')" name="estimatedValue" :value="data?.estimatedValue")
+        InputDate(:label="$t('opportunities.info.closeDate') + ' (Optional)'" disabledDate="past" :placeholder="$t('opportunities.info.closeDate')" :value="data?.expectedCloseDate || new Date()" name="expectedCloseDate")
+        InputSelect(:label="$t('opportunities.info.priority') + ' (Optional)'" name="priority" :placeholder="$t('opportunities.info.priority')" :options="priorityOptions.map(o => ({...o, label: $t(o.label)}))" :value="data?.priority")
+        InputText(:label="$t('opportunities.info.products') + ' (Optional)'" name="interestedIn" :placeholder="$t('opportunities.info.products')" :value="data?.interestedIn")
+
+    //- Next Steps & Notes
+    .form-section
+      .form-section-header
+        .section-icon: Icon(name="ph:list-checks-bold" size="20")
+        div
+          .section-title Next Steps
+      InputSelect(:label="$t('opportunities.info.nextSteps')" isMultiple name="nextSteps" :options="stepsOptions.map(o => ({...o, label: $t(o.label)}))" :value="data?.nextSteps")
+      InputSelect.mt-4(:label="$t('opportunities.info.reasonLoss')" name="reasons" :options="reasonOptions.map(o => ({...o, label: $t(o.label)}))" :value="data?.reasonOfLose" v-if="isLose")
+      InputText.mt-4(type="textarea" :placeholder="$t('leads.notes')" name="notes" :value="data?.notes")
 </template>
 
 <script lang="ts" setup>

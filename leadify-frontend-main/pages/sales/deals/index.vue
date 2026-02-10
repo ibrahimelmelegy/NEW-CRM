@@ -1,11 +1,13 @@
 <template lang="pug">
-div
+.p-6.animate-entrance
   //- Header
-  .flex.items-center.justify-between.mb-8
-    .title.font-bold.text-2xl.mb-1.capitalize {{ $t('deals.title') }}
+  .flex.items-center.justify-between.mb-10
+    .header-content
+      .title.font-bold.text-3xl.mb-2.text-gradient {{ $t('deals.title') }}
+      .subtitle.text-muted.text-sm.tracking-wide Track and manage your deals pipeline
     .flex.items-center.gap-x-3
       NuxtLink(to="/sales/deals/add-deal")
-        el-button(   size='large' :loading="loading" v-if="hasPermission('CREATE_DEALS')" native-type="submit" type="primary" :icon="Plus" class="w-full !my-4 !rounded-2xl")  {{ $t('deals.newDeal') }}
+        el-button(   size='large' :loading="loading" v-if="hasPermission('CREATE_DEALS')" native-type="submit" type="primary" :icon="Plus" class="premium-btn !rounded-2xl px-8 glow-purple glass-button-press")  {{ $t('deals.newDeal') }}
       //- el-dropdown(trigger="click")
       //-     span.el-dropdown-link
       //-         button.rounded-btn(class="!px-4"): Icon(  name="IconToggle" size="24")
@@ -24,17 +26,15 @@ div
       //-               NuxtLink.flex.items-center(:to="`/deals/1`")
       //-                 Icon.text-md.mr-2(size="20" name="IconArchived" )
       //-                 p.text-sm Archived
-  AppTable(v-slot="{data}" :filterOptions="filterOptions" :columns="table.columns" position="deal" :pageInfo="response.pagination" :data="table.data" :sortOptions="table.sort" @handleRowClick="handleRowClick" :searchPlaceholder="$t('deals.title')" )
-    .flex.items-center.py-2(@click.stop)
-        //- NuxtLink.toggle-icon(:to="`/deals/1`")
-        //-     Icon.text-md(name="IconEye" )
-
-        el-dropdown(class="outline-0" trigger="click")
-            span(class="el-dropdown-link")
-              .toggle-icon.text-md
-                  Icon(name="IconToggle"  size="22")
-            template(#dropdown='')
-                el-dropdown-menu
+  .glass-card.p-4(class="!rounded-3xl")
+    AppTable(v-slot="{data}" :filterOptions="filterOptions" :columns="table.columns" position="deal" :pageInfo="response.pagination" :data="table.data" :sortOptions="table.sort" @handleRowClick="handleRowClick" :searchPlaceholder="$t('deals.title')" class="premium-table")
+      .flex.items-center.py-2(@click.stop)
+          el-dropdown(class="outline-0" trigger="click")
+              span(class="el-dropdown-link")
+                .toggle-icon.text-md.hover-scale
+                    Icon(name="ph:dots-three-outline-vertical-fill" size="20" class="text-purple-400")
+              template(#dropdown='')
+                  el-dropdown-menu(class="glass-dropdown")
                     el-dropdown-item
                       NuxtLink.flex.items-center(:to="`/sales/deals/${data?.id}`")
                         Icon.text-md.mr-2(name="IconEye" )

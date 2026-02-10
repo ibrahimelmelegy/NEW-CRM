@@ -1,26 +1,62 @@
 <template lang="pug">
-el-form(  autocomplete="off"   @submit.prevent='onSubmit'   ref="myForm" label-position="top"  :validationSchema="formSchema" )
+el-form(autocomplete="off" @submit.prevent='onSubmit' ref="myForm" label-position="top" :validationSchema="formSchema")
   slot
-  div(:class="{'2xl:w-1/2 w-[90%]  card m-auto glass-card p-10 rounded-3xl': !isModal}")
-      .grid.grid-cols-2.gap-3
-        InputText(label="Full Name"  name="name" :value="data?.name" )
-        InputSelect(label=" Nationality" name="nationality" :options="ManpowerNationalityOptions" :value="data?.nationality" )
-        InputText(label="Email"  name="email" :value="data?.email" @value="val=> isEmail = !!val" )
-        InputPhone(label=" Phone Number"  name="phone" :value="data?.phone" @validphone="val=> validPhone = val" mode="international" @value="val=> isPhone = !!val" )
-        InputSelect(label=" Role" name="role" isMultiple :options="manpowerRoles" :value="data?.role" )
-        InputSelect(label=" Availability Status" name="availabilityStatus" :options="manpowerAvailabilityStatus" :value="data?.availabilityStatus" )
-      InputText(label="Salary" placeholder="Enter Salary SAR" name="salary" :value="data?.salary" )
-      .grid.grid-cols-2.gap-3
-        InputText.mt-4(label="V. Allowance"  placeholder="Enter V. Allowance SAR" name="variableAllowance" :value="data?.variableAllowance" )
-        InputText.mt-4(label="T. Allowance"  placeholder="Enter T. Allowance SAR" name="transportationAllowance" :value="data?.transportationAllowance" )
-        InputText.mt-4(label="Iqama Cost"  placeholder="Enter Iqama Cost SAR" name="iqamaCost" :value="data?.iqamaCost" )
-        InputText.mt-4(label="EOF"  placeholder="Enter EOF SAR" name="endOfServiceBenefit" :value="data?.endOfServiceBenefit" )
-        InputText.mt-4(label="Saudization (optional)"  placeholder="Enter Saudization SAR" name="saudization" :value="data?.saudization" )
-        InputText.mt-4(label="Visa Fees (optional)"  placeholder="Enter Visa Fees SAR" name="visaFees" :value="data?.visaFees" )
-        InputText.mt-4(label="Incoming flight ticket (optional)"  placeholder="Enter Incoming flight ticket SAR" name="incomingFlightTicket" :value="data?.incomingFlightTicket" )
-        InputText.mt-4(label="Health insurance (optional)"  placeholder="Enter Health insurance SAR" name="healthInsurance" :value="data?.healthInsurance" )
-      InputText.mt-4(label="General Organization for Social Insurance (optional)"  placeholder="Enter General Organization for Social Insurance SAR" name="generalOrganizationForSocialInsurance" :value="data?.generalOrganizationForSocialInsurance" )
-      InputText.mt-4(type="textarea" placeholder="Enter Notes"  label="Additional Notes (optional)"  name="notes" :value="data?.notes" )
+  div(:class="{'2xl:w-1/2 w-[90%] card m-auto glass-card p-10 rounded-3xl': !isModal}")
+    //- Personal Information
+    .form-section
+      .form-section-header
+        .section-icon: Icon(name="ph:user-bold" size="20")
+        div
+          .section-title Personal Information
+      .grid.grid-cols-2.gap-4
+        InputText(label="Full Name" name="name" :value="data?.name")
+        InputSelect(label="Nationality" name="nationality" :options="ManpowerNationalityOptions" :value="data?.nationality")
+        InputText(label="Email" name="email" :value="data?.email" @value="val=> isEmail = !!val")
+        InputPhone(label="Phone Number" name="phone" :value="data?.phone" @validphone="val=> validPhone = val" mode="international" @value="val=> isPhone = !!val")
+
+    //- Role & Status
+    .form-section
+      .form-section-header
+        .section-icon: Icon(name="ph:briefcase-bold" size="20")
+        div
+          .section-title Role & Status
+      .grid.grid-cols-2.gap-4
+        InputSelect(label="Role" name="role" isMultiple :options="manpowerRoles" :value="data?.role")
+        InputSelect(label="Availability Status" name="availabilityStatus" :options="manpowerAvailabilityStatus" :value="data?.availabilityStatus")
+
+    //- Salary & Compensation
+    .form-section
+      .form-section-header
+        .section-icon: Icon(name="ph:money-bold" size="20")
+        div
+          .section-title Salary & Compensation
+      InputText(label="Salary" placeholder="Enter Salary SAR" name="salary" :value="data?.salary")
+      .grid.grid-cols-2.gap-4.mt-4
+        InputText(label="V. Allowance" placeholder="Enter V. Allowance SAR" name="variableAllowance" :value="data?.variableAllowance")
+        InputText(label="T. Allowance" placeholder="Enter T. Allowance SAR" name="transportationAllowance" :value="data?.transportationAllowance")
+        InputText(label="Iqama Cost" placeholder="Enter Iqama Cost SAR" name="iqamaCost" :value="data?.iqamaCost")
+        InputText(label="EOF" placeholder="Enter EOF SAR" name="endOfServiceBenefit" :value="data?.endOfServiceBenefit")
+
+    //- Additional Benefits
+    .form-section
+      .form-section-header
+        .section-icon: Icon(name="ph:heart-bold" size="20")
+        div
+          .section-title Additional Benefits
+      .grid.grid-cols-2.gap-4
+        InputText(label="Saudization (optional)" placeholder="Enter Saudization SAR" name="saudization" :value="data?.saudization")
+        InputText(label="Visa Fees (optional)" placeholder="Enter Visa Fees SAR" name="visaFees" :value="data?.visaFees")
+        InputText(label="Incoming flight ticket (optional)" placeholder="Enter Incoming flight ticket SAR" name="incomingFlightTicket" :value="data?.incomingFlightTicket")
+        InputText(label="Health insurance (optional)" placeholder="Enter Health insurance SAR" name="healthInsurance" :value="data?.healthInsurance")
+      InputText.mt-4(label="General Organization for Social Insurance (optional)" placeholder="Enter General Organization for Social Insurance SAR" name="generalOrganizationForSocialInsurance" :value="data?.generalOrganizationForSocialInsurance")
+
+    //- Notes
+    .form-section
+      .form-section-header
+        .section-icon: Icon(name="ph:note-pencil-bold" size="20")
+        div
+          .section-title Notes
+      InputText(type="textarea" placeholder="Enter Notes" label="Additional Notes (optional)" name="notes" :value="data?.notes")
   slot(name="modal-footer")
 </template>
 

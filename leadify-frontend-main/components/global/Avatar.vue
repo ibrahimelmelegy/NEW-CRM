@@ -1,5 +1,5 @@
 <template lang="pug">
-.img.avatar.cursor-pointer(:style="small && ' width:32px  ; height:32px  ;'  , (!big && !small) && 'width:50px  ; height:50px' " style="border-radius: 50%;overflow: hidden; display : flex ; justifyContent: center ; alignItems: center ; background:#e1e1e1 " :class="{'big' : big , 'bigger' : bigger}")
+.img.avatar.cursor-pointer(:style="small && ' width:32px  ; height:32px  ;'  , (!big && !small) && 'width:50px  ; height:50px' " style="border-radius: 50%;overflow: hidden; display : flex ; justifyContent: center ; alignItems: center ; background: var(--color-neutral-background-4, #e1e1e1) " :class="{'big' : big , 'bigger' : bigger}")
         LazyImg(:src="src"  v-if="!text" :small="true" @click="showfile()"  )
 
         .text(v-else)

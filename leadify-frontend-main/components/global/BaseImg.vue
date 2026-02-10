@@ -70,7 +70,7 @@ async function getRedirectedUrlWithHeaders(url) {
 
 <style scoped>
 .lazyImage {
-  background: linear-gradient(90deg, #dbdbdb, #dfdfdf, #ebebeb, #dddddd);
+  background: linear-gradient(90deg, var(--color-neutral-background-3), var(--color-neutral-background-4), var(--color-neutral-background-3), var(--color-neutral-background-4));
   background-size: 400% 400%;
   animation: gradientBG 3s ease infinite reverse;
   overflow: hidden;

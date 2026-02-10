@@ -99,6 +99,50 @@
   // Additional legacy mappings
   --primary-purple-50: #EDE9FE;
   --primary-purple-500: var(--color-primary);
+
+  // Missing aliases referenced by various components
+  --text-muted: var(--color-text-tertiary);
+  --glass-bg: rgba(45, 52, 70, 0.85);
+  --bg-input: var(--color-neutral-background-1);
+  --border-default: var(--color-border-default);
+  --brand-primary: var(--color-primary);
+  --brand-primary-hover: var(--color-primary-hover);
+  --shadow-lg: var(--elevation-shadow-16);
+  --shadow-focus: 0 0 0 3px rgba(0, 120, 212, 0.3);
+  --shadow-active: 0 0 0 3px rgba(0, 120, 212, 0.3);
+  --bg-sidebar: var(--color-neutral-background-2);
+  --primary-color: var(--color-primary);
+  --accent-color: var(--color-primary);
+
+  // ==========================================
+  // GRADIENT COLORS (For Dashboard Cards)
+  // ==========================================
+  --gradient-primary: linear-gradient(135deg, #0078D4 0%, #4CA6E8 100%);
+  --gradient-purple: linear-gradient(135deg, #7849FF 0%, #A855F7 100%);
+  --gradient-indigo: linear-gradient(135deg, #6366F1 0%, #818CF8 100%);
+  --gradient-ocean: linear-gradient(135deg, #06B6D4 0%, #22D3EE 100%);
+  --gradient-sunset: linear-gradient(135deg, #F43F5E 0%, #FB7185 100%);
+  --gradient-mint: linear-gradient(135deg, #10B981 0%, #34D399 100%);
+  --gradient-amber: linear-gradient(135deg, #F7630C 0%, #FBBF24 100%);
+
+  // ==========================================
+  // ACCENT COLOR VARIABLES (For Dashboard)
+  // ==========================================
+  --accent-indigo: #6366F1;
+  --accent-cyan: #06B6D4;
+  --accent-rose: #F43F5E;
+  --accent-emerald: #10B981;
+  --accent-amber: #F7630C;
+
+  // ==========================================
+  // GLOW EFFECTS (For Cards)
+  // ==========================================
+  --glow-purple: 0 0 25px rgba(120, 73, 255, 0.3);
+  --glow-indigo: 0 0 25px rgba(99, 102, 241, 0.3);
+  --glow-cyan: 0 0 25px rgba(6, 182, 212, 0.3);
+  --glow-rose: 0 0 25px rgba(244, 63, 94, 0.3);
+  --glow-emerald: 0 0 25px rgba(16, 185, 129, 0.3);
+  --glow-amber: 0 0 25px rgba(247, 99, 12, 0.3);
 }
 
 // ============================================
@@ -106,14 +150,14 @@
 // ============================================
 html.light-mode {
   // ==========================================
-  // NEUTRAL PALETTE - Light Mode
+  // NEUTRAL PALETTE - Light Mode (Whiter)
   // ==========================================
   --color-neutral-background-1: #FFFFFF;
-  --color-neutral-background-2: #F5F5F5;
-  --color-neutral-background-3: #EBEBEB;
-  --color-neutral-background-4: #E0E0E0;
-  --color-neutral-background-5: #D6D6D6;
-  --color-neutral-background-6: #CCCCCC;
+  --color-neutral-background-2: #FAFAFA;
+  --color-neutral-background-3: #F5F5F5;
+  --color-neutral-background-4: #EBEBEB;
+  --color-neutral-background-5: #E0E0E0;
+  --color-neutral-background-6: #D6D6D6;
 
   // ==========================================
   // TEXT COLORS - Light Mode
@@ -140,6 +184,10 @@ html.light-mode {
   --color-surface-selected: rgba(0, 120, 212, 0.1);
   --color-surface-hover: rgba(0, 0, 0, 0.04);
   --color-surface-pressed: rgba(0, 0, 0, 0.08);
+
+  // Light mode legacy alias overrides
+  --glass-bg: rgba(255, 255, 255, 0.9);
+  --bg-input: #FFFFFF;
 }
 
 // ============================================

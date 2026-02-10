@@ -21,14 +21,46 @@ export default defineNuxtRouteMiddleware(async (to, from) => {
 
     // Fetch user if token exists
     if (accessToken.value) {
+      console.log('[Auth Middleware] Fetching user with token:', accessToken.value?.substring(0, 20) + '...');
       authResponse = await useApiFetch('auth/me', 'GET', {}, true);
+      console.log('[Auth Middleware] Response:', {
+        success: authResponse?.success,
+        code: authResponse?.code,
+        hasUserId: !!authResponse?.body?.id,
+        message: authResponse?.message
+      });
 
-      // Invalid token - clear it immediately
-      if (!authResponse?.success || !authResponse.body?.id) {
+      // Only clear token if it's genuinely invalid (401 Unauthorized)
+      // Don't clear on network errors, server errors, or transient failures
+      if (!authResponse?.success) {
+        // Check if it's an authentication error (401) or invalid token
+        if (authResponse?.code === 401 || authResponse?.message?.toLowerCase().includes('unauthorized') || authResponse?.message?.toLowerCase().includes('invalid token')) {
+          console.warn('[Auth Middleware] Invalid token (401), clearing and redirecting to login');
+          accessToken.value = null;
+          authResponse = { body: null };
+        } else {
+          // Network/server error - keep the token and use cached user if available
+          console.warn('[Auth Middleware] API error (keeping token):', authResponse?.code, authResponse?.message);
+
+          // If we have a cached user, use it
+          if (user.value?.id) {
+            console.log('[Auth Middleware] Using cached user:', user.value.email);
+            authResponse = { body: user.value, success: true };
+          } else {
+            // No cached user and API failed - this is a real problem
+            console.error('[Auth Middleware] No cached user and API failed - clearing token');
+            accessToken.value = null;
+            authResponse = { body: null };
+          }
+        }
+      } else if (!authResponse.body?.id) {
+        // Response successful but no user ID - invalid token
+        console.warn('[Auth Middleware] No user ID in response, clearing token');
         accessToken.value = null;
         authResponse = { body: null };
       } else {
         // ✅ Store user data globally for other composables
+        console.log('[Auth Middleware] User authenticated:', authResponse.body.email);
         user.value = authResponse.body;
       }
     }

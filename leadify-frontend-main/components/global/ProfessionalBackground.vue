@@ -1,12 +1,12 @@
 <template>
-  <div class="professional-background" :class="{ 'light-theme': themeStore.isLight }">
+  <div class="professional-background" :class="{ 'light-mode': themeStore.isLight }">
     <!-- Dark Mode: Mesh Gradient + Glows -->
     <template v-if="!themeStore.isLight">
       <div class="mesh-gradient"></div>
-      <div class="ambient-glows">
+      <!-- <div class="ambient-glows">
         <div class="glow glow-1"></div>
         <div class="glow glow-2"></div>
-      </div>
+      </div> -->
     </template>
     
     <!-- Light Mode: Clean solid background -->
@@ -32,20 +32,20 @@ const themeStore = useThemeStore();
   left: 0;
   width: 100vw;
   height: 100vh;
-  background-color: #0a0a0f;
+  background-color: var(--color-neutral-background-1);
   transition: background-color 0.3s ease;
-  
+
   // ========== DARK MODE (Default) ==========
   .mesh-gradient {
     position: absolute;
     inset: 0;
-    opacity: 0.8;
+    opacity: 0.6;
     background:
-      radial-gradient(at 0% 0%, hsla(253,16%,7%,1) 0, transparent 50%),
-      radial-gradient(at 50% 0%, hsla(255,100%,64%,0.15) 0, transparent 50%),
-      radial-gradient(at 100% 0%, hsla(29,100%,50%,0.1) 0, transparent 50%),
-      radial-gradient(at 0% 100%, hsla(255,100%,64%,0.1) 0, transparent 50%),
-      radial-gradient(at 100% 100%, hsla(29,100%,50%,0.15) 0, transparent 50%);
+      radial-gradient(at 0% 0%, hsla(253,16%,12%,1) 0, transparent 50%),
+      radial-gradient(at 50% 0%, hsla(255,100%,64%,0.2) 0, transparent 50%),
+      radial-gradient(at 100% 0%, hsla(29,100%,50%,0.15) 0, transparent 50%),
+      radial-gradient(at 0% 100%, hsla(255,100%,64%,0.15) 0, transparent 50%),
+      radial-gradient(at 100% 100%, hsla(29,100%,50%,0.2) 0, transparent 50%);
     filter: blur(40px);
   }
 
@@ -64,7 +64,7 @@ const themeStore = useThemeStore();
       left: -5%;
       width: 50%;
       height: 50%;
-      background: rgba(120, 73, 255, 0.25);
+      background: rgba(0, 120, 212, 0.25);
       filter: blur(100px);
     }
     
@@ -80,16 +80,16 @@ const themeStore = useThemeStore();
   }
   
   // ========== LIGHT MODE ==========
-  &.light-theme {
-    background-color: #f8f9fa;
+  &.light-mode {
+    background-color: var(--color-neutral-background-1);
     
     .light-pattern {
       position: absolute;
       inset: 0;
       // Subtle gradient - NO BLUR
-      background: 
-        linear-gradient(135deg, rgba(124, 58, 237, 0.03) 0%, transparent 50%),
-        linear-gradient(225deg, rgba(249, 115, 22, 0.02) 0%, transparent 50%);
+      background:
+        linear-gradient(135deg, rgba(0, 120, 212, 0.03) 0%, transparent 50%),
+        linear-gradient(225deg, rgba(246, 99, 12, 0.02) 0%, transparent 50%);
     }
   }
 

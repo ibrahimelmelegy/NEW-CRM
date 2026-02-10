@@ -8,8 +8,12 @@ html.light-mode {
   --theme-mode: light;
   color-scheme: light;
 
-  // Background and text colors are already overridden in _colors.scss
-  // This file is for any light-mode-specific adjustments
+  // Element Plus overrides for light mode
+  --el-bg-color: var(--color-neutral-background-1);
+  --el-bg-color-overlay: var(--color-neutral-background-1);
+  --el-fill-color-blank: #FFFFFF;
+  --el-text-color-primary: var(--color-text-primary);
+  --el-text-color-regular: var(--color-text-secondary);
 
   // Body styling for light mode
   body {

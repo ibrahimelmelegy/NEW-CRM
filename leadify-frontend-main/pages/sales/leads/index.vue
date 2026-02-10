@@ -1,12 +1,14 @@
 <template lang="pug">
-div
+.p-6.animate-entrance
   //- Header
-  .flex.items-center.justify-between.mb-8
-    .title.font-bold.text-2xl.mb-1.capitalize {{ $t('leads.title') }}
+  .flex.items-center.justify-between.mb-10
+    .header-content
+      .title.font-bold.text-3xl.mb-2.text-gradient {{ $t('leads.title') }}
+      .subtitle.text-muted.text-sm.tracking-wide Manage and track your sales leads
     .flex.items-center.gap-x-3
       template(v-if="canCreateLeads")
         NuxtLink(to="/sales/leads/add-lead")
-          el-button(size='large' :loading="loading" native-type="submit" type="primary" :icon="Plus" class="w-full !my-4 !rounded-2xl")  {{ $t('leads.newLead') }}
+          el-button(size='large' :loading="loading" native-type="submit" type="primary" :icon="Plus" class="premium-btn !rounded-2xl px-8 glow-purple glass-button-press")  {{ $t('leads.newLead') }}
       el-dropdown(trigger="click")
           span.el-dropdown-link
               button.rounded-btn(class="!px-4"): Icon(  name="IconToggle" size="24")
@@ -24,17 +26,15 @@ div
   input(type="file", ref="fileInput", style="display: none", accept=".xls,.xlsx", @change="handleFileChange")
   // Spinner
   el-spinner(size="large" v-if="loadingAction" class="nuxt-loading-indicator")
-  AppTable(v-slot="{data}"  v-if="!loadingAction" :externalLoading="loading" :filterOptions="filterOptions" :columns="table.columns" position="lead" :pageInfo="response.pagination"  :data="table.data" :sortOptions="table.sort" @handleRowClick="handleRowClick" :searchPlaceholder="$t('leads.title')" :key="table.data" )
-    .flex.items-center.py-2(@click.stop)
-        //- NuxtLink.toggle-icon(:to="`/leads/1`")
-        //-     Icon.text-md(name="IconEye" )
-
-        el-dropdown(class="outline-0" trigger="click")
-            span(class="el-dropdown-link")
-              .toggle-icon.text-md
-                  Icon(name="IconToggle"  size="22")
-            template(#dropdown='')
-                el-dropdown-menu
+  .glass-card.p-4(class="!rounded-3xl")
+    AppTable(v-slot="{data}"  v-if="!loadingAction" :externalLoading="loading" :filterOptions="filterOptions" :columns="table.columns" position="lead" :pageInfo="response.pagination"  :data="table.data" :sortOptions="table.sort" @handleRowClick="handleRowClick" :searchPlaceholder="$t('leads.title')" :key="table.data" class="premium-table")
+      .flex.items-center.py-2(@click.stop)
+          el-dropdown(class="outline-0" trigger="click")
+              span(class="el-dropdown-link")
+                .toggle-icon.text-md.hover-scale
+                    Icon(name="ph:dots-three-outline-vertical-fill" size="20" class="text-purple-400")
+              template(#dropdown='')
+                  el-dropdown-menu(class="glass-dropdown")
                     el-dropdown-item
                       NuxtLink.flex.items-center(:to="`/sales/leads/${data?.id}`")
                         Icon.text-md.mr-2(name="IconEye" )

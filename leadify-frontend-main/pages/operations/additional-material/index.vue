@@ -1,13 +1,17 @@
 <template>
-  <div class="flex items-center justify-between mb-8">
+  <div class="p-6 animate-entrance">
+  <div class="flex items-center justify-between mb-10">
     <!-- Title -->
-    <div class="title font-bold text-2xl mb-1 capitalize">{{ $t('operations.additionalMaterials.title') }}</div>
+    <div class="header-content">
+      <div class="title font-bold text-3xl mb-2 text-gradient">{{ $t('operations.additionalMaterials.title') }}</div>
+      <div class="subtitle text-muted text-sm tracking-wide">Track additional materials and inventory</div>
+    </div>
 
     <!-- Action Buttons -->
     <div class="flex items-center gap-x-3">
       <!-- New Material Button -->
       <nuxt-link v-if="hasPermission('CREATE_ADDITIONAL_MATERIAL')" to="/operations/additional-material/add-material">
-        <el-button size="large" native-type="submit" type="primary" :icon="Plus" class="w-full !my-4 !rounded-2xl">
+        <el-button size="large" native-type="submit" type="primary" :icon="Plus" class="premium-btn !rounded-2xl px-8 glow-purple glass-button-press">
           {{ $t('operations.additionalMaterials.new') }}
         </el-button>
       </nuxt-link>
@@ -45,7 +49,7 @@
     </el-dropdown>
     --></div>
   </div>
-  <div class="glass-card rounded-3xl py-6">
+  <div class="glass-card p-4 !rounded-3xl">
     <el-table :data="finalData || []" style="width: 100%" :row-style="{ cursor: 'pointer' }" @current-change="handleRowClick">
       <!-- Expand Column -->
       <el-table-column type="expand">
@@ -72,12 +76,12 @@
           <div @click.stop>
             <el-dropdown class="outline-0" trigger="click">
               <span class="el-dropdown-link">
-                <div class="toggle-icon text-md">
-                  <icon name="IconToggle" size="22"></icon>
+                <div class="toggle-icon text-md hover-scale">
+                  <Icon name="ph:dots-three-outline-vertical-fill" size="20" class="text-purple-400" />
                 </div>
               </span>
               <template #dropdown>
-                <el-dropdown-menu>
+                <el-dropdown-menu class="glass-dropdown">
                   <el-dropdown-item>
                     <nuxt-link class="flex items-center" :to="`/operations/additional-material/${scope.row?.id}`">
                       <icon class="text-md mr-2" name="IconEye"></icon>
@@ -101,11 +105,11 @@
     <!-- Pagination -->
     <div class="pagination mt-5 flex items-center flex-wrap gap-2 px-6 sm:justify-between justify-center">
       <div class="flex items-center gap-3">
-        <span class="text-sm text-neutral-400">{{ $t('common.showEntries') }}</span>
+        <span class="text-xs font-bold text-muted uppercase tracking-widest">{{ $t('common.showEntries') }}</span>
         <el-select v-model="limit" :placeholder="`${limit}`" style="width: 65px" @change="handleSizeChange">
           <el-option v-for="item in [10, 25, 50]" :key="item" :label="item" :value="item"></el-option>
         </el-select>
-        <span class="text-sm text-neutral-400">{{ $t('common.entries') }}</span>
+        <span class="text-xs font-bold text-muted uppercase tracking-widest">{{ $t('common.entries') }}</span>
       </div>
       <el-pagination
         v-model:current-page="currentPage"
@@ -118,6 +122,7 @@
         :total="pagintaion?.totalItems"
       ></el-pagination>
     </div>
+  </div>
   </div>
 </template>
 

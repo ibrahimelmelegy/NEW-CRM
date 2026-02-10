@@ -37,8 +37,8 @@ const props = defineProps({
   position: relative;
   overflow: hidden;
 
-  // Gradient border stroke
-  &::before {
+  // Gradient border stroke (use ::after to avoid mica-material ::before conflict)
+  &::after {
     content: '';
     position: absolute;
     inset: 0;
@@ -55,26 +55,30 @@ const props = defineProps({
     mask-composite: exclude;
     pointer-events: none;
     transition: var(--transition-smooth);
+
+    html.light-mode & {
+      background: linear-gradient(135deg, rgba(0, 0, 0, 0.06), rgba(0, 0, 0, 0.02));
+    }
   }
 
   // Gradient border colors by type on hover/active
-  &.border-purple:hover::before {
-    background: linear-gradient(135deg, #7c3aed, #ec4899);
+  &.border-purple:hover::after {
+    background: linear-gradient(135deg, #0078D4, #ec4899);
   }
-  &.border-indigo:hover::before {
-    background: linear-gradient(135deg, #6366f1, #a855f7);
+  &.border-indigo:hover::after {
+    background: linear-gradient(135deg, #6366f1, #0078D4);
   }
-  &.border-cyan:hover::before {
+  &.border-cyan:hover::after {
     background: linear-gradient(135deg, #06b6d4, #22d3ee);
   }
-  &.border-rose:hover::before {
-    background: linear-gradient(135deg, #f43f5e, #f97316);
+  &.border-rose:hover::after {
+    background: linear-gradient(135deg, #f43f5e, #F7630C);
   }
-  &.border-emerald:hover::before {
+  &.border-emerald:hover::after {
     background: linear-gradient(135deg, #10b981, #34d399);
   }
-  &.border-amber:hover::before {
-    background: linear-gradient(135deg, #f97316, #fbbf24);
+  &.border-amber:hover::after {
+    background: linear-gradient(135deg, #F7630C, #fbbf24);
   }
 
   &:hover {
@@ -131,10 +135,10 @@ const props = defineProps({
   .trend-indicator {
     font-size: 13px;
     font-weight: 700;
-    background: rgba(255, 255, 255, 0.05);
+    background: var(--color-surface-hover);
     padding: 4px 10px;
     border-radius: 20px;
-    border: 1px solid rgba(255, 255, 255, 0.1);
+    border: 1px solid var(--color-border-default);
   }
 
   .bg-gradient-purple {
@@ -153,7 +157,7 @@ const props = defineProps({
     background: var(--gradient-mint);
   }
   .bg-gradient-amber {
-    background: linear-gradient(135deg, #f59e0b 0%, #d97706 100%);
+    background: linear-gradient(135deg, #F7630C 0%, #d97706 100%);
   }
 
   .shadow-glow-purple {
@@ -169,7 +173,7 @@ const props = defineProps({
     box-shadow: 0 0 25px rgba(244, 63, 94, 0.3);
   }
   .shadow-glow-amber {
-    box-shadow: 0 0 25px rgba(245, 158, 11, 0.3);
+    box-shadow: 0 0 25px rgba(246, 99, 12, 0.3);
   }
 }
 </style>

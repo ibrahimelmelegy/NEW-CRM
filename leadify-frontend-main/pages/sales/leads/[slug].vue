@@ -77,7 +77,7 @@
                 p.mb-2(style="color: var(--text-primary)") {{ formatDate(lead?.lastContactDate) }}
         .flex-1.glass-card.p-10.rounded-3xl(v-if="lead?.notes")
           .flex.items-center.gap-2.mb-4
-            .flex.items-center.justify-center.w-10.h-10.rounded-full(style="background-color: rgba(120, 73, 255, 0.1)"): Icon(name="IconNote" size="24" style="color: var(--accent-color)")
+            .flex.items-center.justify-center.w-10.h-10.rounded-full(style="background-color: var(--color-primary-alpha-10, rgba(0, 120, 212, 0.1))"): Icon(name="IconNote" size="24" style="color: var(--color-primary)")
             h4.text-lg.font-semibold(style="color: var(--text-primary)") {{ $t('leads.notes') }}
             el-button.ml-auto(type="info" size="small" plain @click="showSummarizer = true")
               Icon.mr-1(name="ph:article-bold" size="16")

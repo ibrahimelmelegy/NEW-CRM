@@ -82,7 +82,7 @@ const goBack = () => {
   display: flex;
   flex-direction: column;
   height: calc(100vh - 60px);
-  background: white;
+  background: var(--color-neutral-background-1);
 }
 
 .header {
@@ -90,8 +90,8 @@ const goBack = () => {
   justify-content: space-between;
   align-items: center;
   padding: 12px 24px;
-  background: white;
-  border-bottom: 1px solid #e4e7ed;
+  background: var(--color-neutral-background-1);
+  border-bottom: 1px solid var(--color-border-default);
 }
 
 .header-left {
@@ -103,7 +103,7 @@ const goBack = () => {
 .title {
   font-size: 18px;
   font-weight: 600;
-  color: #303133;
+  color: var(--color-text-primary);
   margin: 0;
 }
 
@@ -138,12 +138,12 @@ const goBack = () => {
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  background: rgba(255, 255, 255, 0.9);
+  background: var(--color-surface-overlay);
   gap: 16px;
 }
 
 .loading-overlay p {
-  color: #606266;
+  color: var(--color-text-secondary);
   font-size: 14px;
 }
 </style>

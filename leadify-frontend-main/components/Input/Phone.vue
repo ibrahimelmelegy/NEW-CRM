@@ -107,17 +107,17 @@ watch(
   /* overflow: hidden !important;  <-- REMOVED THIS to allow dropdown to show */
   position: relative !important; /* Ensure dropdown positions correctly */
 
-  /* Default: Dark Mode */
-  background-color: rgba(30, 18, 48, 0.6) !important;
-  border: 1px solid rgba(168, 85, 247, 0.3) !important;
+  /* Default: Uses CSS Variables */
+  background-color: var(--color-neutral-background-1) !important;
+  border: 1px solid var(--color-border-default) !important;
 
   &:hover {
-    border-color: #a855f7 !important;
+    border-color: var(--color-primary) !important;
   }
 
   &:focus-within {
-    border-color: #a855f7 !important;
-    box-shadow: 0 0 0 2px rgba(168, 85, 247, 0.2) !important;
+    border-color: var(--color-primary) !important;
+    box-shadow: 0 0 0 2px rgba(0, 120, 212, 0.2) !important;
   }
 }
 
@@ -126,12 +126,12 @@ watch(
   background: transparent !important;
   border: none !important;
   box-shadow: none !important;
-  color: #f8fafc !important;
+  color: var(--color-text-primary) !important;
   font-size: 14px !important;
   padding-left: 12px !important;
 
   &::placeholder {
-    color: #a78bfa !important;
+    color: var(--color-text-disabled) !important;
     opacity: 0.7 !important;
   }
 }
@@ -141,10 +141,10 @@ watch(
   background: transparent !important;
   border-radius: 0 !important;
   padding: 0 12px !important;
-  border-right: 1px solid rgba(168, 85, 247, 0.2) !important;
+  border-right: 1px solid var(--color-border-subtle) !important;
 
   &:hover {
-    background-color: rgba(168, 85, 247, 0.1) !important;
+    background-color: var(--color-surface-hover) !important;
   }
 }
 
@@ -154,106 +154,35 @@ watch(
   position: absolute !important;
   border-radius: 1rem !important;
   padding: 12px !important;
-  background-color: #1e1230 !important;
-  border: 1px solid rgba(168, 85, 247, 0.3) !important;
-  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.4) !important;
+  background-color: var(--color-neutral-background-2) !important;
+  border: 1px solid var(--color-border-default) !important;
+  box-shadow: var(--elevation-shadow-16) !important;
 }
 
 .vti__dropdown-item {
   padding: 8px 12px !important;
   border-radius: 8px !important;
-  color: #f3e8ff !important;
+  color: var(--color-text-primary) !important;
 
   &:hover,
   &.highlighted {
-    background-color: rgba(168, 85, 247, 0.2) !important;
+    background-color: var(--color-surface-hover) !important;
   }
 
   strong,
   span {
-    color: #f3e8ff !important;
+    color: var(--color-text-primary) !important;
   }
 }
 
 .vti__search_box {
   width: 100% !important;
   border-radius: 8px !important;
-  background-color: rgba(30, 18, 48, 0.8) !important;
-  border: 1px solid rgba(168, 85, 247, 0.2) !important;
-  color: #f8fafc !important;
+  background-color: var(--color-neutral-background-1) !important;
+  border: 1px solid var(--color-border-subtle) !important;
+  color: var(--color-text-primary) !important;
   margin-bottom: 8px !important;
   padding: 8px 12px !important;
-}
-
-/* ============================================
-   LIGHT MODE OVERRIDES
-   ============================================ */
-html.light-mode .vue-tel-input,
-
-
-  background-color: rgba(255, 255, 255, 0.9) !important;
-  border-color: rgba(0, 0, 0, 0.1) !important;
-
-  &:hover,
-  &:focus-within {
-    border-color: #7c3aed !important;
-  }
-
-  &:focus-within {
-    box-shadow: 0 0 0 2px rgba(124, 58, 237, 0.15) !important;
-  }
-}
-
-html.light-mode .vti__input,
-
-
-  color: #1f1f1f !important;
-
-  &::placeholder {
-    color: #9e9e9e !important;
-  }
-}
-
-html.light-mode .vti__dropdown,
-
-
-  border-right-color: rgba(0, 0, 0, 0.08) !important;
-
-  &:hover {
-    background-color: rgba(0, 0, 0, 0.03) !important;
-  }
-}
-
-html.light-mode .vti__dropdown-list,
-
-
-  background-color: #ffffff !important;
-  border-color: rgba(0, 0, 0, 0.1) !important;
-  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1) !important;
-}
-
-html.light-mode .vti__dropdown-item,
-
-
-  color: #1f1f1f !important;
-
-  &:hover,
-  &.highlighted {
-    background-color: rgba(0, 0, 0, 0.05) !important;
-  }
-
-  strong,
-  span {
-    color: #1f1f1f !important;
-  }
-}
-
-html.light-mode .vti__search_box,
-
-
-  background-color: #f5f5f5 !important;
-  border-color: rgba(0, 0, 0, 0.1) !important;
-  color: #1f1f1f !important;
 }
 
 /* Error State */

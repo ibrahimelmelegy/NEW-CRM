@@ -11,11 +11,12 @@ el-dialog(
   .p-6.overflow-y-auto.custom-scrollbar(class="h-[75vh]")
     //- Entity Type Tabs (Unified Selector)
     .flex.justify-center.mb-8
-      .p-1.bg-white.bg-opacity-5.rounded-2xl.flex.gap-1.border.border-purple-500.border-opacity-20
+      .p-1.bg-white.bg-opacity-5.rounded-2xl.flex.gap-1.border(style="border-color: var(--color-primary); border-opacity: 0.2")
         .cursor-pointer.px-6.py-2.rounded-xl.transition-all.duration-300.text-sm.font-medium(
           v-for="type in entityTypes"
           :key="type.value"
-          :class="[form.type === type.value ? 'bg-purple-500 text-white shadow-glow' : 'text-gray-400 hover:text-white hover:bg-white hover:bg-opacity-5']"
+          :class="[form.type === type.value ? 'text-white shadow-glow' : 'text-gray-400 hover:text-white hover:bg-white hover:bg-opacity-5']"
+          :style="form.type === type.value ? 'background-color: var(--color-primary)' : ''"
           @click="form.type = type.value"
         ) {{ type.label }}
 
@@ -36,7 +37,7 @@ el-dialog(
             class="premium-input"
           )
             template(#prefix)
-                Icon(name="ph:buildings-bold" class="text-purple-400")
+                Icon(name="ph:buildings-bold" style="color: var(--color-primary)")
       
       .grid.grid-cols-2.gap-4.mb-6
         el-form-item(label="Service Type")
@@ -66,7 +67,7 @@ el-dialog(
             span.text-xs.uppercase.tracking-wider.font-semibold.text-muted Tax ID Number
           el-input(v-model="form.taxId", placeholder="e.g. 123-456-789", class="premium-input")
             template(#prefix)
-               Icon(name="ph:hash-bold" class="text-purple-400")
+               Icon(name="ph:hash-bold" style="color: var(--color-primary)")
         
         el-form-item(label="C.R. Number", prop="commercialRegistration")
           template(#label)
@@ -145,7 +146,7 @@ el-dialog(
         type="primary", 
         :loading="loading", 
         @click="submit", 
-        class="premium-btn !rounded-xl px-12 glow-purple"
+        class="premium-btn !rounded-xl px-12"
       ) {{ vendor ? 'Save Changes' : 'Create Entity' }}
 
 </template>
@@ -275,25 +276,22 @@ async function submit() {
 </script>
 
 <style scoped lang="scss">
+@import "@/assets/styles/tokens/_materials.scss";
+
 .glass-dialog {
   :deep(.el-dialog) {
-    background: rgba(30, 18, 48, 0.95) !important;
-    backdrop-filter: blur(25px) !important;
-    border: 1px solid rgba(168, 85, 247, 0.2) !important;
-    box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5) !important;
+    @include acrylic-material;
+    border-radius: var(--radius-large);
+    box-shadow: var(--elevation-shadow-64);
   }
 
   :deep(.el-dialog__header) {
-    border-bottom: 1px solid rgba(168, 85, 247, 0.1);
+    border-bottom: 1px solid var(--color-border-default);
     margin-right: 0;
     padding: 20px 25px;
     .el-dialog__title {
-      font-family: 'Space Grotesk', sans-serif;
-      font-weight: 700;
-      background: var(--gradient-primary);
-      -webkit-background-clip: text;
-      background-clip: text;
-      -webkit-text-fill-color: transparent;
+      font-weight: var(--font-weight-semibold);
+      color: var(--color-text-primary);
     }
   }
 }
@@ -303,46 +301,46 @@ async function submit() {
     width: 6px;
   }
   &::-webkit-scrollbar-track {
-    background: rgba(255, 255, 255, 0.02);
+    background: transparent;
   }
   &::-webkit-scrollbar-thumb {
-    background: rgba(168, 85, 247, 0.2);
+    background: rgba(0, 120, 212, 0.2);
     border-radius: 10px;
     &:hover {
-      background: rgba(168, 85, 247, 0.4);
+      background: rgba(0, 120, 212, 0.4);
     }
   }
 }
 
 .premium-input {
   :deep(.el-input__wrapper) {
-    background: rgba(255, 255, 255, 0.03) !important;
-    border: 1px solid rgba(168, 85, 247, 0.1) !important;
-    border-radius: 12px !important;
+    background: var(--color-neutral-background-3) !important;
+    border: 1px solid var(--color-border-default) !important;
+    border-radius: var(--radius-medium) !important;
     box-shadow: none !important;
     height: 44px;
-    transition: all 0.3s ease;
+    transition: all var(--duration-normal) var(--curve-standard);
 
     &.is-focus {
-      border-color: var(--purple-500) !important;
-      background: rgba(168, 85, 247, 0.05) !important;
-      box-shadow: 0 0 15px rgba(168, 85, 247, 0.1) !important;
+      border-color: var(--color-primary) !important;
+      background: rgba(0, 120, 212, 0.05) !important;
+      box-shadow: 0 0 0 2px rgba(0, 120, 212, 0.2) !important;
     }
   }
 
   :deep(input) {
-    color: white;
+    color: var(--color-text-primary);
     &::placeholder {
-      color: rgba(255, 255, 255, 0.3);
+      color: var(--color-text-disabled);
     }
   }
 }
 
 .premium-select {
   :deep(.el-input__wrapper) {
-    background: rgba(255, 255, 255, 0.03) !important;
-    border: 1px solid rgba(168, 85, 247, 0.1) !important;
-    border-radius: 12px !important;
+    background: var(--color-neutral-background-3) !important;
+    border: 1px solid var(--color-border-default) !important;
+    border-radius: var(--radius-medium) !important;
     height: 44px;
     box-shadow: none !important;
   }
@@ -352,6 +350,6 @@ async function submit() {
 }
 
 .shadow-glow {
-  box-shadow: 0 0 15px rgba(168, 85, 247, 0.3);
+  box-shadow: 0 0 15px rgba(0, 120, 212, 0.3);
 }
 </style>

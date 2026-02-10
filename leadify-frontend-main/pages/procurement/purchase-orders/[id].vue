@@ -53,12 +53,12 @@
         .grid.grid-cols-2.gap-12.mb-16
             .vendor-box.p-6.rounded-2xl.bg-white_03.border.border-white_05
                 .text-xs.uppercase.font-black.text-purple-400.tracking-widest.mb-4 Supplier
-                .text-2xl.font-bold.text-white {{ po?.vendor?.name }}
+                .text-2xl.font-bold(class="text-[var(--color-text-primary)]") {{ po?.vendor?.name }}
                 .text-sm.text-muted.mt-2 C.R: {{ po?.vendor?.commercialRegistration || 'N/A' }}
-            
+
             .project-box.p-6.rounded-2xl.bg-white_03.border.border-white_05
                 .text-xs.uppercase.font-black.text-orange-400.tracking-widest.mb-4 Assigned Project
-                .text-2xl.font-bold.text-white {{ po?.project?.name }}
+                .text-2xl.font-bold(class="text-[var(--color-text-primary)]") {{ po?.project?.name }}
                 .text-sm.text-muted.mt-2 Manager: {{ po?.project?.manager || 'TBD' }}
 
         .document-items
@@ -83,10 +83,10 @@
               .w-64.space-y-4
                 .flex.justify-between.text-sm
                     span.text-muted Subtotal
-                    span.text-white {{ subtotal.toFixed(2) }}
+                    span(class="text-[var(--color-text-primary)]") {{ subtotal.toFixed(2) }}
                 .flex.justify-between.text-sm
                     span.text-muted Estimated Tax
-                    span.text-white {{ (po?.totalAmount - subtotal).toFixed(2) }}
+                    span(class="text-[var(--color-text-primary)]") {{ (po?.totalAmount - subtotal).toFixed(2) }}
                 .pt-4.border-t.border-white_10.flex.justify-between.items-end
                     span.text-xs.font-black.uppercase.tracking-tighter Total Amount
                     span.text-3xl.font-black.text-gradient {{ po?.totalAmount }}
@@ -289,68 +289,35 @@ async function downloadPDF() {
   border: 1px solid rgba(127, 29, 29, 0.3);
 }
 
-.premium-table {
-  background: transparent !important;
-  :deep(.el-table) {
-    background: transparent !important;
-    --el-table-bg-color: transparent;
-    --el-table-border-color: rgba(255, 255, 255, 0.05);
-    --el-table-header-bg-color: rgba(255, 255, 255, 0.03);
-  }
-  :deep(th.el-table__cell) {
-    text-transform: uppercase;
-    font-size: 10px;
-    letter-spacing: 1px;
-    color: var(--text-secondary);
-    padding: 12px 0;
-  }
-  :deep(td.el-table__cell) {
-    padding: 20px 0;
-    border-bottom: 1px solid rgba(255, 255, 255, 0.03) !important;
-  }
-}
-
-.premium-btn-outline {
-  background: rgba(255, 255, 255, 0.05) !important;
-  border: 1px solid rgba(255, 255, 255, 0.1) !important;
-  color: white !important;
-  &:hover {
-    background: rgba(255, 255, 255, 0.1) !important;
-    border-color: rgba(255, 255, 255, 0.2) !important;
-  }
-}
+// All premium-table/btn-outline classes are now global in _utilities.scss
 
 .premium-input-textarea {
   :deep(.el-textarea__inner) {
-    background: rgba(255, 255, 255, 0.03) !important;
-    border: 1px solid rgba(255, 255, 255, 0.1) !important;
-    border-radius: 16px !important;
-    color: white;
-    padding: 15px;
+    background: var(--color-neutral-background-1) !important;
+    border: 1px solid var(--color-border-default) !important;
+    border-radius: 14px !important;
+    box-shadow: none !important;
+    padding: 14px 16px;
+    color: var(--color-text-primary) !important;
+    font-size: 14px;
+    line-height: 1.6;
+    transition: all 0.3s ease;
     &:focus {
-      border-color: var(--purple-500) !important;
-      box-shadow: 0 0 15px rgba(168, 85, 247, 0.1);
+      border-color: var(--color-primary) !important;
+      background: var(--color-surface-selected) !important;
     }
   }
 }
 
 .glass-dialog {
   :deep(.el-dialog) {
-    background: rgba(30, 18, 48, 0.8) !important;
+    background: var(--color-neutral-background-1) !important;
     backdrop-filter: blur(25px);
-    border: 1px solid rgba(168, 85, 247, 0.2);
+    border: 1px solid var(--color-border-default);
   }
 }
 
-.bg-white_03 {
-  background: rgba(255, 255, 255, 0.03);
-}
-.border-white_05 {
-  border-color: rgba(255, 255, 255, 0.05);
-}
-.border-white_10 {
-  border-color: rgba(255, 255, 255, 0.1);
-}
+// Theme-aware utilities now in global _utilities.scss
 
 .glow-green {
   box-shadow: 0 0 20px rgba(16, 185, 129, 0.4);

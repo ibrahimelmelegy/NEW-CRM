@@ -20,7 +20,7 @@ section
           )
           .header
             h4 Prosacco Group
-            .flex.gap-1.items-center(class="text-[#918E98]")
+            .flex.gap-1.items-center(class="text-[var(--color-text-tertiary)]")
               span updated about 1 hour ago
         .flex.gap-3.items-center
           #proposal-actions.pr-3
@@ -149,7 +149,7 @@ const handlePrint = async () => {
 <style lang="scss" scoped>
 .website-body {
   .slot-content {
-    background: #f8f7fa !important;
+    background: var(--color-neutral-background-1) !important;
     padding: 0 !important;
     margin-top: 4rem !important;
   }
@@ -175,7 +175,7 @@ const handlePrint = async () => {
   left: 0;
   .nav {
     top: 0;
-    background: #ffffff;
+    background: var(--color-neutral-background-1);
     z-index: 100;
     left: 0;
     position: fixed;
@@ -188,10 +188,10 @@ const handlePrint = async () => {
   height: 80px;
   align-content: center;
   transition: all 0.2s ease-in;
-  background: #ffffff;
+  background: var(--color-neutral-background-1);
   top: 0;
   left: 0;
-  border-bottom: 1px solid #e7e6e9 !important;
+  border-bottom: 1px solid var(--color-border-default) !important;
 }
 
 .top {

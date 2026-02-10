@@ -1,9 +1,15 @@
 <template lang="pug">
-el-form(  autocomplete="off"   @submit.prevent='onSubmit'   ref="myForm" label-position="top"  :validationSchema="formSchema" )
+el-form(autocomplete="off" @submit.prevent='onSubmit' ref="myForm" label-position="top" :validationSchema="formSchema")
   slot
-  div(class="p-10  card m-auto glass-card rounded-3xl")
-    InputText(:label="$t('role.form.name')" name="name" :placeholder="$t('role.form.enterName')" :value="data?.name" )
-    InputText.mt-6(type="textarea" :label="$t('role.form.description') + ' ' + $t('role.form.optional')" :placeholder="$t('role.form.enterDescription')"  name="description" :value="data?.description" )
+  div(class="p-10 card m-auto glass-card rounded-3xl")
+    //- Role Details
+    .form-section
+      .form-section-header
+        .section-icon: Icon(name="ph:shield-check-bold" size="20")
+        div
+          .section-title Role Details
+      InputText(:label="$t('role.form.name')" name="name" :placeholder="$t('role.form.enterName')" :value="data?.name")
+      InputText.mt-4(type="textarea" :label="$t('role.form.description') + ' ' + $t('role.form.optional')" :placeholder="$t('role.form.enterDescription')" name="description" :value="data?.description")
 </template>
 
 <script lang="ts" setup>

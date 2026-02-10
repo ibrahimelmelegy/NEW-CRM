@@ -29,7 +29,7 @@
         <div class="space-y-4">
           <h2 class="text-4xl lg:text-5xl font-bold leading-tight theme-text-primary">
             {{ $t('auth.elevateExperience') }}
-            <span class="text-transparent bg-clip-text bg-gradient-to-r from-[#7849ff] to-[#ff7b00]">{{ $t('auth.experience') }}</span>
+            <span class="text-transparent bg-clip-text bg-gradient-to-r from-[#0078D4] to-[#ff7b00]">{{ $t('auth.experience') }}</span>
           </h2>
           <p class="theme-text-secondary text-lg max-w-md leading-relaxed">
             {{ $t('auth.harnessIntelligence') }}
@@ -38,12 +38,12 @@
 
         <!-- Feature Highlights -->
         <div class="grid grid-cols-2 gap-4 w-full max-w-sm">
-          <div class="flex items-center gap-3 p-4 rounded-2xl glass-effect hover:bg-white/10 transition-all duration-300">
-            <div class="p-2 rounded-xl bg-[#7849ff]/20"><Icon name="ph:lightning-bold" class="text-[#7849ff] text-xl" /></div>
+          <div class="flex items-center gap-3 p-4 rounded-2xl glass-effect hover:bg-[var(--color-surface-hover)] transition-all duration-300">
+            <div class="p-2 rounded-xl" style="background: rgba(0, 120, 212, 0.2)"><Icon name="ph:lightning-bold" class="text-xl" style="color: var(--color-primary)" /></div>
             <span class="text-sm font-medium text-[var(--text-primary)] opacity-90">{{ $t('auth.fastWorkflow') }}</span>
           </div>
-          <div class="flex items-center gap-3 p-4 rounded-2xl glass-effect hover:bg-white/10 transition-all duration-300">
-            <div class="p-2 rounded-xl bg-[#ff7b00]/20"><Icon name="ph:chart-line-up-bold" class="text-[#ff7b00] text-xl" /></div>
+          <div class="flex items-center gap-3 p-4 rounded-2xl glass-effect hover:bg-[var(--color-surface-hover)] transition-all duration-300">
+            <div class="p-2 rounded-xl" style="background: rgba(255, 123, 0, 0.2)"><Icon name="ph:chart-line-up-bold" class="text-xl" style="color: #ff7b00" /></div>
             <span class="text-sm font-medium text-[var(--text-primary)] opacity-90">{{ $t('auth.smartAnalytics') }}</span>
           </div>
         </div>
@@ -54,7 +54,7 @@
         <div class="glass-card-premium p-8 md:p-12 relative overflow-hidden group">
           <!-- Subtle hover interaction glow -->
           <div
-            class="absolute -top-24 -right-24 w-64 h-64 bg-[#7849ff]/10 rounded-full blur-[80px] group-hover:bg-[#7849ff]/20 transition-all duration-1000"
+            class="absolute -top-24 -right-24 w-64 h-64 bg-[#0078D4]/10 rounded-full blur-[80px] group-hover:bg-[#0078D4]/20 transition-all duration-1000"
           ></div>
 
           <div class="relative z-10">
@@ -116,7 +116,8 @@
                   size="large"
                   :loading="loading"
                   native-type="submit"
-                  class="login-btn w-full !h-[58px] !rounded-2xl !bg-[#7849ff] hover:!bg-[#6a3ae0] !border-none !text-lg !font-bold !text-white shadow-[0_10px_20px_-5px_rgba(120,73,255,0.5)] active:scale-[0.98] transition-all"
+                  class="login-btn w-full !h-[58px] !rounded-2xl !border-none !text-lg !font-bold !text-white active:scale-[0.98] transition-all"
+                  style="background-color: var(--color-primary); box-shadow: 0 10px 20px -5px rgba(0, 120, 212, 0.5)"
                   aria-label="Sign in to your account"
                   :aria-busy="loading"
                 >
@@ -129,7 +130,7 @@
 
         <p class="text-center mt-8 theme-text-muted text-sm">
           {{ $t('auth.noAccount') }}
-          <span class="theme-text-primary hover:text-[#7849ff] font-medium cursor-pointer transition-colors">{{ $t('auth.contactAdmin') }}</span>
+          <span class="theme-text-primary font-medium cursor-pointer transition-colors" style="--hover-color: var(--color-primary)">{{ $t('auth.contactAdmin') }}</span>
         </p>
       </div>
     </div>
@@ -237,19 +238,15 @@ const onSubmit = handleSubmit(async (values: any) => {
   }
 
   .glass-card {
-    border: 1px solid rgba(255, 255, 255, 0.15);
-    background: rgba(255, 255, 255, 0.03);
-    box-shadow:
-      0 4px 24px -1px rgba(0, 0, 0, 0.2),
-      inset 0 0 12px rgba(255, 255, 255, 0.02);
+    border: 1px solid var(--color-border-default);
+    background: var(--glass-bg);
+    box-shadow: var(--elevation-shadow-4);
     transition: all 0.5s cubic-bezier(0.165, 0.84, 0.44, 1);
 
     &:hover {
-      background: rgba(255, 255, 255, 0.05);
-      border-color: rgba(255, 255, 255, 0.25);
-      box-shadow:
-        0 40px 80px -10px rgba(0, 0, 0, 0.5),
-        inset 0 0 20px rgba(255, 255, 255, 0.05);
+      background: var(--color-surface-hover);
+      border-color: var(--color-border-strong);
+      box-shadow: var(--elevation-shadow-16);
     }
   }
 
@@ -287,7 +284,7 @@ const onSubmit = handleSubmit(async (values: any) => {
       &.is-focus,
       &:hover {
         border-color: var(--brand-primary);
-        background-color: rgba(124, 58, 237, 0.08);
+        background-color: rgba(0, 120, 212, 0.06);
         box-shadow: var(--shadow-active);
       }
     }
@@ -325,8 +322,8 @@ const onSubmit = handleSubmit(async (values: any) => {
 
     &.is-checked {
       .el-checkbox__inner {
-        background-color: #7849ff !important;
-        border-color: #7849ff !important;
+        background-color: var(--color-primary) !important;
+        border-color: var(--color-primary) !important;
       }
     }
   }

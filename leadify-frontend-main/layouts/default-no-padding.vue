@@ -241,7 +241,7 @@ const getPath = (routeName: string) => {
 .background-overlay {
   &::before {
     content: '';
-    background-color: rgba(0, 0, 0, 0.411);
+    background-color: var(--color-neutral-background-5);
     position: absolute;
     width: 100%;
     height: 100%;

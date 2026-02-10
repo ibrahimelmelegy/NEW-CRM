@@ -60,8 +60,8 @@ export function getPieChartsData(data: any, colorpallete: any, position = '0%', 
           scale: true,
           scaleSize: 10,
           itemStyle: {
-            shadowBlur: 30,
-            shadowColor: 'rgba(0,0,0,0.6)'
+            shadowBlur: 0, // Sharp edges
+            shadowColor: 'rgba(0,0,0,0.5)'
           }
         },
         data
@@ -97,9 +97,9 @@ export function getBarChartData(data: any, colorpallete: any) {
             { offset: 0, color: THEME.purple },
             { offset: 1, color: hexToRgba(THEME.purple, 0.3) }
           ]),
-          shadowBlur: 15,
-          shadowColor: hexToRgba(THEME.purple, 0.4),
-          shadowOffsetY: 4
+          shadowBlur: 0, // No blur
+          shadowColor: 'transparent',
+          shadowOffsetY: 0
         },
         emphasis: {
           itemStyle: {
@@ -232,11 +232,11 @@ export function getIncreaseLineChart(data: any, colorPalette: any) {
         showSymbol: false,
         symbolSize: 10,
         lineStyle: {
-          width: 5,
+          width: 4, // Sharp line
           color: THEME.green,
-          shadowBlur: 20,
-          shadowColor: hexToRgba(THEME.green, 0.4),
-          shadowOffsetY: 10
+          shadowBlur: 0, // No blur
+          shadowColor: 'transparent',
+          shadowOffsetY: 0
         },
         areaStyle: {
           color: new graphic.LinearGradient(0, 0, 0, 1, [

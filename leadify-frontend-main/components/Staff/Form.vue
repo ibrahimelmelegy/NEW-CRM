@@ -1,24 +1,43 @@
 <template lang="pug">
-    el-form(autocomplete="off" @submit.prevent='onSubmit' ref="myForm" label-position="top" :validationSchema="formSchema")
-      slot
-  
-      .glass-card.m-auto.p-10(class="2xl:w-1/2 w-[90%]")
-          .upload-img-staff.flex.items-center.gap-3.mb-6
-            InputUploadImage(name="profilePicture" type="image" sizeLook="small" :value="data?.profilePicture" :isEdit="route.path.includes('edit')" model="USER")
-            .label
-              .flex.items-center.gap-2.font-medium.mb-1
-                p(class="text-neutral-800") {{ $t('staff.form.uploadImage') }}
-                span(class="text-neutral-500 text-xs") {{ $t('staff.form.optional') }}
-              span(class="text-neutral-400 text-xs") {{ $t('staff.form.imageHint') }}
-  
-          .grid.grid-cols-2.gap-3
-            InputText(:label="$t('staff.form.fullName')" name="name" :value="data?.name" )
-            InputText(:label="$t('staff.form.email')"  name="email" :value="data?.email" @value="val=> isEmail = !!val" )
-            InputPhone.mt-6(:label="$t('staff.form.phone')"  name="phone" @value="val=> isPhone = !!val" :value="data?.phone" @validphone="val=> validPhone = val" mode="international" )
-            InputSelect.mt-6(:label="$t('staff.form.role')" :placeholder="$t('staff.form.selectRole')" name="roleId" :options="mappedRoles" :value="data?.roleId" )
-            InputSelect(:label="$t('staff.form.status')" name="status" :options="staffStatuses" :value="data?.status" v-if="editMode")
-            InputText(:class="{'col-span-2': !editMode}" :label="$t('staff.form.password')" name="password" type="password" :value="data?.password" )
-    </template>
+el-form(autocomplete="off" @submit.prevent='onSubmit' ref="myForm" label-position="top" :validationSchema="formSchema")
+  slot
+  .glass-card.m-auto.p-10(class="2xl:w-1/2 w-[90%]")
+    //- Profile Picture
+    .form-section
+      .form-section-header
+        .section-icon: Icon(name="ph:camera-bold" size="20")
+        div
+          .section-title Profile Picture
+      .upload-img-staff.flex.items-center.gap-3
+        InputUploadImage(name="profilePicture" type="image" sizeLook="small" :value="data?.profilePicture" :isEdit="route.path.includes('edit')" model="USER")
+        .label
+          .flex.items-center.gap-2.font-medium.mb-1
+            p(style="color: var(--color-text-primary)") {{ $t('staff.form.uploadImage') }}
+            span.text-xs(style="color: var(--color-text-tertiary)") {{ $t('staff.form.optional') }}
+          span.text-xs(style="color: var(--color-text-disabled)") {{ $t('staff.form.imageHint') }}
+
+    //- Personal Information
+    .form-section
+      .form-section-header
+        .section-icon: Icon(name="ph:user-bold" size="20")
+        div
+          .section-title Personal Information
+      .grid.grid-cols-2.gap-4
+        InputText(:label="$t('staff.form.fullName')" name="name" :value="data?.name")
+        InputText(:label="$t('staff.form.email')" name="email" :value="data?.email" @value="val=> isEmail = !!val")
+        InputPhone(:label="$t('staff.form.phone')" name="phone" @value="val=> isPhone = !!val" :value="data?.phone" @validphone="val=> validPhone = val" mode="international")
+        InputSelect(:label="$t('staff.form.role')" :placeholder="$t('staff.form.selectRole')" name="roleId" :options="mappedRoles" :value="data?.roleId")
+
+    //- Account Settings
+    .form-section
+      .form-section-header
+        .section-icon: Icon(name="ph:shield-check-bold" size="20")
+        div
+          .section-title Account Settings
+      .grid.grid-cols-2.gap-4
+        InputSelect(:label="$t('staff.form.status')" name="status" :options="staffStatuses" :value="data?.status" v-if="editMode")
+        InputText(:class="{'col-span-2': !editMode}" :label="$t('staff.form.password')" name="password" type="password" :value="data?.password")
+</template>
 
 <script lang="ts" setup>
 import { useForm } from 'vee-validate';

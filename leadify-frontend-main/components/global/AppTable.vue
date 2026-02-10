@@ -35,9 +35,9 @@
                              TableLabel(:value="scope.row[column?.prop]" :type="column?.type"  :filters="column?.filters" )
                         div( v-else-if="column?.component==='Tags'" )
                              .flex.flex-wrap.gap-1.items-center
-                                el-tag(v-for="(tag, i) in (scope.row[column?.prop] || []).slice(0, 2)" :key="i" size="small" effect="dark" round class="!border-purple-500/30 !text-white !bg-purple-500/20") {{ tag }}
+                                el-tag(v-for="(tag, i) in (scope.row[column?.prop] || []).slice(0, 2)" :key="i" size="small" effect="dark" round class="!border-[var(--color-border-default)] !text-[var(--color-text-primary)] !bg-[var(--color-neutral-background-3)]") {{ tag }}
                                 el-dropdown(v-if="(scope.row[column?.prop] || []).length > 2" trigger="click" size="small")
-                                    el-tag.cursor-pointer(size="small" effect="dark" round class="!border-purple-500/30 !text-white !bg-purple-500/20 hover:!bg-purple-500/40 transition-colors") +{{ (scope.row[column?.prop] || []).length - 2 }}
+                                    el-tag.cursor-pointer(size="small" effect="dark" round class="!border-[var(--color-border-default)] !text-[var(--color-text-primary)] !bg-[var(--color-neutral-background-3)] hover:!bg-[var(--color-surface-hover)] transition-colors") +{{ (scope.row[column?.prop] || []).length - 2 }}
                                     template(#dropdown)
                                         el-dropdown-menu.glass-dropdown
                                             el-dropdown-item(v-for="(tag, i) in (scope.row[column?.prop] || []).slice(2)" :key="i") {{ tag }}
@@ -237,7 +237,7 @@ function calculateIndex(index: number) {
 <style lang="scss">
 .el-table {
   .blocked-row {
-    background-color: rgba(247, 96, 129, 0.154);
+    background-color: var(--color-danger-bg, rgba(247, 96, 129, 0.154));
     opacity: 60%;
   }
 
@@ -251,13 +251,13 @@ function calculateIndex(index: number) {
 }
 @keyframes rowPulse {
   0% {
-    background: rgba(168, 85, 247, 0);
+    background: rgba(0, 120, 212, 0);
   }
   50% {
-    background: rgba(168, 85, 247, 0.1);
+    background: rgba(0, 120, 212, 0.1);
   }
   100% {
-    background: rgba(168, 85, 247, 0);
+    background: rgba(0, 120, 212, 0);
   }
 }
 

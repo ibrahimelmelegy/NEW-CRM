@@ -10,13 +10,13 @@
   @include mica-material;
   border-radius: var(--radius-large);
   border: 1px solid var(--color-border-default);
-  box-shadow: 0 4px 24px rgba(0, 0, 0, 0.2); // Deeper shadow
+  box-shadow: var(--elevation-shadow-4);
   padding: var(--spacing-lg);
   transition: all var(--duration-fast) var(--curve-standard);
 
   &:hover {
-    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
-    border-color: rgba(255, 255, 255, 0.1); // Light border on hover
+    box-shadow: var(--elevation-shadow-8);
+    border-color: var(--color-border-strong);
     transform: translateY(-2px);
   }
 }
@@ -32,6 +32,33 @@
   @extend .glass-card;
   padding: var(--spacing-xl);
   border-radius: var(--radius-large);
+}
+
+// Glass container (alias for glass-card, used in dashboard)
+.glass-container {
+  @include mica-material;
+  border-radius: var(--radius-large);
+  border: 1px solid var(--color-border-default);
+  box-shadow: var(--elevation-shadow-4);
+  transition: all var(--duration-fast) var(--curve-standard);
+  overflow: hidden;
+
+  &:hover {
+    box-shadow: var(--elevation-shadow-8);
+    border-color: var(--color-border-strong);
+  }
+
+  // For element-plus card integration
+  :deep(.el-card__header) {
+    background: transparent;
+    border-bottom: 1px solid var(--color-border-default);
+    padding: 20px 24px;
+  }
+
+  :deep(.el-card__body) {
+    background: transparent;
+    padding: 20px 24px;
+  }
 }
 
 // ==========================================
@@ -190,6 +217,10 @@
   color: var(--color-text-primary) !important;
 }
 
+.text-primary {
+  color: var(--color-text-primary) !important;
+}
+
 .text-muted {
   color: var(--color-text-secondary) !important;
 }
@@ -203,6 +234,50 @@
 // ==========================================
 .bg-accent-purple {
   background: var(--color-primary) !important;
+}
+
+.bg-accent-indigo {
+  background: #6366F1 !important;
+}
+
+.bg-accent-cyan {
+  background: #06B6D4 !important;
+}
+
+.bg-accent-rose {
+  background: #F43F5E !important;
+}
+
+.bg-accent-emerald {
+  background: #10B981 !important;
+}
+
+.bg-accent-amber {
+  background: #F7630C !important;
+}
+
+.accent-purple {
+  background: var(--color-primary) !important;
+}
+
+.accent-indigo {
+  background: #6366F1 !important;
+}
+
+.accent-cyan {
+  background: #06B6D4 !important;
+}
+
+.accent-rose {
+  background: #F43F5E !important;
+}
+
+.accent-emerald {
+  background: #10B981 !important;
+}
+
+.accent-amber {
+  background: #F7630C !important;
 }
 
 .text-accent {
@@ -297,7 +372,7 @@
   @include mica-material;
   border-radius: var(--radius-large);
   border: 1px solid var(--color-border-default);
-  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+  box-shadow: var(--elevation-shadow-4);
   padding: var(--spacing-xl);
   transition: all var(--duration-normal) var(--curve-standard);
   position: relative;
@@ -311,15 +386,15 @@
     left: 0;
     right: 0;
     height: 1px;
-    background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+    background: linear-gradient(90deg, transparent, var(--color-surface-pressed), transparent);
     opacity: 0;
     transition: opacity 0.3s ease;
   }
 
   &:hover {
-    box-shadow: 0 12px 40px rgba(0, 0, 0, 0.3);
+    box-shadow: var(--elevation-shadow-16);
     transform: translateY(-4px);
-    border-color: rgba(255, 255, 255, 0.15);
+    border-color: var(--color-border-strong);
 
     &::after {
       opacity: 1;
@@ -499,13 +574,13 @@
     --el-table-border-color: var(--color-border-default);
 
     th.el-table__cell {
-      background: rgba(255, 255, 255, 0.03) !important; // Subtle transparent header
+      background: var(--color-neutral-background-3) !important;
       color: var(--color-text-secondary);
       font-weight: 600;
       text-transform: uppercase;
       font-size: 11px;
       letter-spacing: 1px;
-      border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+      border-bottom: 1px solid var(--color-border-subtle);
     }
 
     td.el-table__cell {
@@ -573,4 +648,418 @@
 
 .hover_border-purple-400:hover {
   border-color: var(--color-primary) !important;
+}
+
+// ==========================================
+// INTERACTIVE UTILITY
+// ==========================================
+.interactive {
+  transition: all var(--duration-fast) var(--curve-standard);
+  cursor: pointer;
+
+  &:hover {
+    transform: translateY(-2px);
+    box-shadow: var(--elevation-shadow-8);
+  }
+
+  &:active {
+    transform: translateY(0);
+    box-shadow: var(--elevation-shadow-4);
+  }
+}
+
+// ==========================================
+// RESPONSIVE GRID UTILITIES (Pug-compatible with underscore syntax)
+// ==========================================
+// These classes use underscore instead of colon for Pug compatibility
+.md_grid-cols-2 {
+  @media (min-width: 768px) {
+    grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+  }
+}
+
+.md_grid-cols-3 {
+  @media (min-width: 768px) {
+    grid-template-columns: repeat(3, minmax(0, 1fr)) !important;
+  }
+}
+
+.lg_grid-cols-2 {
+  @media (min-width: 1024px) {
+    grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+  }
+}
+
+.lg_grid-cols-3 {
+  @media (min-width: 1024px) {
+    grid-template-columns: repeat(3, minmax(0, 1fr)) !important;
+  }
+}
+
+// Responsive padding utilities
+.md_p-6 {
+  @media (min-width: 768px) {
+    padding: var(--spacing-xl) !important;
+  }
+}
+
+.lg_p-8 {
+  @media (min-width: 1024px) {
+    padding: var(--spacing-2xl) !important;
+  }
+}
+
+// ==========================================
+// DASHBOARD TABS
+// ==========================================
+.dashboard-tabs {
+  :deep(.el-tabs__header) {
+    background: transparent;
+    border-bottom: 2px solid var(--color-border-default);
+    margin-bottom: var(--spacing-lg);
+  }
+
+  :deep(.el-tabs__nav-wrap) {
+    &::after {
+      display: none;
+    }
+  }
+
+  :deep(.el-tabs__item) {
+    color: var(--color-text-secondary);
+    font-weight: var(--font-weight-semibold);
+    font-size: var(--font-size-200);
+    padding: var(--spacing-md) var(--spacing-lg);
+    transition: all var(--duration-fast) var(--curve-standard);
+    border-radius: var(--radius-medium) var(--radius-medium) 0 0;
+
+    &:hover {
+      color: var(--color-text-primary);
+      background: var(--color-surface-hover);
+    }
+
+    &.is-active {
+      color: var(--color-primary);
+      font-weight: var(--font-weight-bold);
+    }
+  }
+
+  :deep(.el-tabs__active-bar) {
+    background-color: var(--color-primary);
+    height: 3px;
+    border-radius: var(--radius-small);
+  }
+}
+
+// ==========================================
+// PREMIUM FORM INPUTS (Global)
+// ==========================================
+// Unified glass-style form inputs used across all forms.
+// Replaces hardcoded rgba values from purchase-orders/create.vue
+
+.premium-input,
+.premium-select,
+.premium-datepicker {
+  :deep(.el-input__wrapper),
+  :deep(.el-select__wrapper) {
+    background: var(--color-neutral-background-3) !important;
+    border: 1px solid var(--color-border-default) !important;
+    border-radius: 14px !important;
+    box-shadow: none !important;
+    height: 44px;
+    padding: 0 16px;
+    color: var(--color-text-primary);
+    transition: all var(--duration-normal) var(--curve-standard);
+
+    &.is-focus {
+      border-color: var(--color-primary) !important;
+      background: rgba(0, 120, 212, 0.05) !important;
+      box-shadow: 0 0 0 2px rgba(0, 120, 212, 0.2) !important;
+    }
+
+    &:hover {
+      border-color: var(--color-border-strong) !important;
+    }
+
+    .el-input__inner,
+    .el-select__input {
+      color: var(--color-text-primary) !important;
+      font-size: 15px;
+
+      &::placeholder {
+        color: var(--color-text-disabled) !important;
+      }
+    }
+  }
+
+  // Select dropdown trigger
+  :deep(.el-select__suffix),
+  :deep(.el-input__suffix) {
+    color: var(--color-text-disabled);
+  }
+}
+
+// Larger select variant (60px height)
+.premium-select-large {
+  @extend .premium-select;
+
+  :deep(.el-select__wrapper),
+  :deep(.el-input__wrapper) {
+    height: 60px !important;
+  }
+}
+
+// Transparent variant (no bg, no border - for inline editing)
+.premium-input-transparent {
+  :deep(.el-input__wrapper) {
+    background: transparent !important;
+    border: none !important;
+    box-shadow: none !important;
+    color: var(--color-text-primary);
+
+    .el-input__inner {
+      color: var(--color-text-primary) !important;
+      font-size: 15px;
+
+      &::placeholder {
+        color: var(--color-text-disabled) !important;
+      }
+    }
+  }
+}
+
+// Smaller number input (42px height)
+.premium-number-input {
+  :deep(.el-input__wrapper) {
+    background: var(--color-neutral-background-3) !important;
+    border: 1px solid var(--color-border-default) !important;
+    border-radius: 10px !important;
+    box-shadow: none !important;
+    height: 42px;
+    color: var(--color-text-primary);
+    transition: all 0.3s ease;
+
+    &.is-focus,
+    &:hover {
+      border-color: var(--color-primary) !important;
+      background: var(--color-surface-selected) !important;
+    }
+
+    .el-input__inner {
+      color: var(--color-text-primary) !important;
+      text-align: center;
+    }
+  }
+}
+
+// Premium textarea
+.premium-textarea {
+  :deep(.el-textarea__inner) {
+    background: var(--color-neutral-background-3) !important;
+    border: 1px solid var(--color-border-default) !important;
+    border-radius: 14px !important;
+    box-shadow: none !important;
+    color: var(--color-text-primary) !important;
+    padding: 16px;
+    font-size: 15px;
+    transition: all var(--duration-normal) var(--curve-standard);
+
+    &:focus {
+      border-color: var(--color-primary) !important;
+      background: rgba(0, 120, 212, 0.05) !important;
+      box-shadow: 0 0 0 2px rgba(0, 120, 212, 0.2) !important;
+    }
+
+    &::placeholder {
+      color: var(--color-text-disabled) !important;
+    }
+  }
+}
+
+// ==========================================
+// PREMIUM FORM TABLE (for line-item tables)
+// ==========================================
+.premium-form-table {
+  background: transparent !important;
+  --el-table-bg-color: transparent;
+  --el-table-tr-bg-color: transparent;
+  --el-table-header-bg-color: var(--color-neutral-background-3);
+  --el-table-row-hover-bg-color: var(--color-surface-hover);
+  --el-table-border-color: var(--color-border-subtle);
+
+  :deep(th.el-table__cell) {
+    background: var(--color-neutral-background-3) !important;
+    color: var(--color-text-secondary) !important;
+    font-weight: 600;
+    text-transform: uppercase;
+    font-size: 11px;
+    letter-spacing: 1px;
+    border-bottom: 1px solid var(--color-border-subtle) !important;
+  }
+
+  :deep(td.el-table__cell) {
+    border-bottom: 1px solid var(--color-border-subtle) !important;
+    color: var(--color-text-primary);
+  }
+
+  :deep(.el-table__row) {
+    transition: all 0.2s ease;
+  }
+}
+
+// ==========================================
+// PREMIUM GHOST BUTTON
+// ==========================================
+.premium-btn-ghost {
+  background: var(--color-surface-hover) !important;
+  color: var(--color-text-secondary) !important;
+  border: 1px solid var(--color-border-default) !important;
+  border-radius: 12px !important;
+  transition: all 0.3s ease;
+
+  &:hover {
+    background: var(--color-surface-pressed) !important;
+    color: var(--color-text-primary) !important;
+    border-color: var(--color-border-strong) !important;
+  }
+}
+
+// ==========================================
+// ACCENT TINT UTILITIES (Theme-aware)
+// ==========================================
+.bg-primary_10 {
+  background: rgba(0, 120, 212, 0.1);
+}
+
+.bg-primary_15 {
+  background: rgba(0, 120, 212, 0.15);
+}
+
+.bg-primary_20 {
+  background: rgba(0, 120, 212, 0.2);
+}
+
+.bg-pink_10 {
+  background: rgba(236, 72, 153, 0.1);
+}
+
+.border-primary_20 {
+  border-color: rgba(0, 120, 212, 0.2);
+}
+
+.border-pink_20 {
+  border-color: rgba(236, 72, 153, 0.2);
+}
+
+// ==========================================
+// TEXT GRADIENT (Page titles)
+// ==========================================
+.text-gradient {
+  background: var(--gradient-primary);
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+// ==========================================
+// HOVER SCALE (Action icons)
+// ==========================================
+.hover-scale {
+  transition: transform 0.2s ease;
+  cursor: pointer;
+
+  &:hover {
+    transform: scale(1.2);
+  }
+}
+
+// ==========================================
+// GLOW EFFECTS (Premium buttons)
+// ==========================================
+.glow-purple {
+  box-shadow: 0 0 20px rgba(0, 120, 212, 0.3);
+}
+
+.glow-green {
+  box-shadow: 0 0 20px rgba(16, 185, 129, 0.4);
+}
+
+.glow-red {
+  box-shadow: 0 0 20px rgba(239, 68, 68, 0.4);
+}
+
+// ==========================================
+// SHADOW GLOW (Card containers)
+// ==========================================
+.shadow-glow {
+  box-shadow: var(--elevation-shadow-8);
+}
+
+// ==========================================
+// GLASS BUTTON PRESS
+// ==========================================
+.glass-button-press {
+  &:active {
+    transform: scale(0.97);
+  }
+}
+
+// ==========================================
+// FORM SECTION WRAPPER
+// ==========================================
+// Wraps form sections with subtle background
+.form-section {
+  background: var(--color-surface-hover);
+  border-radius: 16px;
+  padding: 24px;
+  margin-bottom: 24px;
+  border: 1px solid var(--color-border-subtle);
+}
+
+// Section header with icon
+.form-section-header {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 20px;
+  padding-bottom: 16px;
+  border-bottom: 1px solid var(--color-border-subtle);
+
+  .section-icon {
+    width: 40px;
+    height: 40px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 12px;
+    background: rgba(0, 120, 212, 0.1);
+    color: var(--color-primary);
+    font-size: 20px;
+  }
+
+  .section-title {
+    font-size: 16px;
+    font-weight: 600;
+    color: var(--color-text-primary);
+  }
+
+  .section-subtitle {
+    font-size: 13px;
+    color: var(--color-text-tertiary);
+  }
+}
+
+// Theme-aware Tailwind neutral text overrides
+// These Tailwind classes use fixed colors that are invisible on dark backgrounds
+.text-neutral-900, .text-neutral-800 {
+  color: var(--color-text-primary) !important;
+}
+.text-neutral-700, .text-neutral-600 {
+  color: var(--color-text-secondary) !important;
+}
+.text-neutral-500 {
+  color: var(--color-text-tertiary) !important;
+}
+.text-neutral-400 {
+  color: var(--color-text-disabled) !important;
 }

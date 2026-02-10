@@ -268,42 +268,59 @@ const setLink = () => {
 
 <style lang="scss" scoped>
 .editor-wrapper {
-  background-color: white;
-  transition: border-color 0.2s;
+  background-color: var(--color-neutral-background-1);
+  border: 1px solid var(--color-border-default);
+  border-radius: var(--radius-medium);
+  transition: all var(--duration-fast) var(--curve-standard);
 
   &.is-error {
-    border-color: var(--el-color-danger);
+    border-color: var(--color-danger);
   }
 
   &.is-disabled {
-    background-color: var(--el-disabled-bg-color);
+    background-color: var(--color-neutral-background-3);
     cursor: not-allowed;
     opacity: 0.7;
   }
+
+  &:hover {
+    border-color: var(--color-border-strong);
+  }
+}
+
+.toolbar {
+  background-color: var(--color-neutral-background-2) !important;
+  border-bottom: 1px solid var(--color-border-default) !important;
 }
 
 .toolbar button {
   padding: 4px;
-  border-radius: 4px;
-  color: #606266;
+  border-radius: var(--radius-small);
+  color: var(--color-text-secondary);
+  border: none;
+  background: transparent;
+  cursor: pointer;
+  transition: all var(--duration-faster) var(--curve-standard);
 
   &:hover {
-    background-color: #f2f3f5;
-    color: var(--el-color-primary);
+    background-color: var(--color-neutral-background-3);
+    color: var(--color-primary);
   }
 
   &.is-active {
-    background-color: #ecf5ff;
-    color: var(--el-color-primary);
+    background-color: var(--color-primary);
+    color: #FFFFFF;
   }
 }
 
 :deep(.ProseMirror) {
   min-height: 160px;
   outline: none;
+  padding: var(--spacing-md);
+  color: var(--color-text-primary);
 
   p.is-editor-empty:first-child::before {
-    color: #a8abb2;
+    color: var(--color-text-disabled);
     content: attr(data-placeholder);
     float: left;
     height: 0;

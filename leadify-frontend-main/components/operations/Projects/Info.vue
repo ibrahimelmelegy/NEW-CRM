@@ -303,33 +303,21 @@ watch(
 }
 
 .bg-white_5 {
-  background: rgba(255, 255, 255, 0.05);
-}
-.border-white_10 {
-  border-color: rgba(255, 255, 255, 0.1);
-}
-.bg-purple-900_10 {
-  background: rgba(88, 28, 135, 0.1);
-}
-.border-purple-500_20 {
-  border-color: rgba(168, 85, 247, 0.2);
-}
+  background: var(--color-neutral-background-2);
+  border: 1px solid var(--color-border-default);
+  box-shadow: var(--elevation-shadow-4);
+  transition: all var(--duration-fast) var(--curve-standard);
 
-// Consistent input styling if not fully encapsulated in InputText
-.premium-input,
-.premium-select,
-.premium-datepicker {
-  :deep(input),
-  :deep(.el-input__wrapper) {
-    background: rgba(255, 255, 255, 0.03) !important;
-    border: 1px solid rgba(255, 255, 255, 0.1) !important;
-    border-radius: 12px !important;
-    box-shadow: none !important;
-    color: white;
-    &.is-focus,
-    &:focus {
-      border-color: var(--purple-500) !important;
-    }
+  &:hover {
+    box-shadow: var(--elevation-shadow-8);
   }
 }
+.bg-purple-900_10 {
+  background: rgba(0, 120, 212, 0.1);
+}
+.border-purple-500_20 {
+  border-color: rgba(0, 120, 212, 0.2);
+}
+
+// All premium-input/select/datepicker classes are now global in _utilities.scss
 </style>

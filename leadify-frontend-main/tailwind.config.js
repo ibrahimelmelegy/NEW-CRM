@@ -14,7 +14,7 @@ module.exports = {
         // 🔮 Synced with premium-theme.scss variables
         primary: {
           DEFAULT: 'var(--accent-purple)',
-          hover: '#9360FF',
+          hover: 'var(--color-primary-hover)',
           light: 'var(--bg-card)'
         },
 

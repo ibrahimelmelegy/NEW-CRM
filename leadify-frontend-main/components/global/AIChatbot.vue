@@ -11,8 +11,8 @@
         .assistant-avatar.bg-indigo-500: Icon(name="ph:robot-bold" size="24" class="text-white")
         div
           h4.font-bold {{ $t('ai.assistant') }}
-          p(class="text-[10px] text-emerald-500 flex items-center")
-            span.w-1.h-1.bg-emerald-500.rounded-full.mr-1
+          p(class="text-[10px] flex items-center" style="color: var(--color-status-online)")
+            span.w-1.h-1.rounded-full.mr-1(style="background: var(--color-status-online)")
             | {{ $t('ai.onlineReady') }}
 
       .chat-messages.p-4.flex.flex-col.gap-3(ref="msgContainer")
@@ -57,8 +57,18 @@ const sendMessage = async () => {
     if (response.success) {
       messages.value.push({ role: 'assistant', content: response.data });
     }
-  } catch (e) {
-    messages.value.push({ role: 'assistant', content: t('ai.connectionError') });
+  } catch (e: any) {
+    // Handle Lockout (429)
+    if (e.response && e.response.status === 429) {
+       const data = await e.response._data;
+       const hours = data.remainingHours || 10;
+       messages.value.push({ 
+         role: 'assistant', 
+         content: `🔒 ${t('ai.lockedMessage', { hours })}` 
+       });
+    } else {
+       messages.value.push({ role: 'assistant', content: t('ai.connectionError') });
+    }
   } finally {
     loading.value = false;
   }
@@ -74,25 +84,40 @@ const sendMessage = async () => {
 }
 
 .floating-chat-btn {
-  width: 65px;
-  height: 65px;
-  border-radius: 20px;
+  width: 56px;
+  height: 56px;
+  border-radius: 18px;
   display: flex;
   align-items: center;
   justify-content: center;
-  box-shadow: 0 10px 30px rgba(120, 73, 255, 0.4);
+  box-shadow: var(--elevation-shadow-16);
+  transition: all 0.2s ease;
+
+  &:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 30px rgba(0, 120, 212, 0.4);
+  }
 }
 
 .chat-window {
   position: absolute;
-  bottom: 80px;
+  bottom: 70px;
   inset-inline-end: 0;
-  width: 350px;
-  height: 500px;
+  width: 380px;
+  height: 520px;
   display: flex;
   flex-direction: column;
   overflow: hidden;
   box-shadow: 0 20px 50px rgba(0, 0, 0, 0.3);
+  border-radius: 20px !important;
+
+  @media (max-width: 640px) {
+    position: fixed;
+    inset: 12px;
+    width: auto;
+    height: auto;
+    bottom: 80px;
+  }
 }
 
 .chat-messages {

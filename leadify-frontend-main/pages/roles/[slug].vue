@@ -16,31 +16,31 @@
               //-     p.text-sm Delete
 
   .flex-1.glass-card.p-10.rounded-3xl
-      p.text-neutral-900.font-semibold.mb-6.text-lg Information
+      p.font-semibold.mb-6.text-lg(class="text-[var(--color-text-primary)]") Information
       .grid.gap-4(class="lg:grid-cols-4 grid-cols-1")
         div(v-if="role?.name")
-          .text-neutral-400.font-medium.mb-2.flex.items-center
+          .font-medium.mb-2.flex.items-center(class="text-[var(--color-text-tertiary)]")
             Icon(name="tabler:category-2" size="20" class="mr-2")
             p Role
-          p.text-neutral-800.mb-2 {{role?.name}}
+          p.mb-2(class="text-[var(--color-text-primary)]") {{role?.name}}
         div
-          .text-neutral-400.font-medium.mb-2.flex.items-center
+          .font-medium.mb-2.flex.items-center(class="text-[var(--color-text-tertiary)]")
             Icon(name="solar:hashtag-outline" size="20" class="mr-2")
             p Total Staff
-          p.text-neutral-800.mb-2 {{role.totalAssignedUsers}}
+          p.mb-2(class="text-[var(--color-text-primary)]") {{role.totalAssignedUsers}}
         div(v-if="role.description")
-          .text-neutral-400.font-medium.mb-2.flex.items-center
+          .font-medium.mb-2.flex.items-center(class="text-[var(--color-text-tertiary)]")
             Icon(name="solar:hashtag-outline" size="20" class="mr-2")
             p Description
-          p.text-neutral-800.mb-2 {{role.description}}
+          p.mb-2(class="text-[var(--color-text-primary)]") {{role.description}}
   .card.m-auto.glass-card.rounded-3xl.p-10
     h3.text-2xl.font-bold.mb-5 Permissions
 
     .flex.flex-col.gap-y-6
       template(v-for="(permissions, key) in permissionsData" :key="key")
-        div.flex.gap-x-4.rounded-2xl.items-center.border.border-neutral-100.divide-x.mb-4.bg-neutral-100(v-if="getEffectivePermissions(key)?.length")
-          p.ps-4.h-full.text-sm.text-neutral-600.font-medium.py-3(class="w-[190px] min-w-[190px]") {{ formatKeyLabel(key) }}
-          .grid.gap-4.w-full.text-sm.text-neutral-500.font-medium.glass-card.py-3.rounded-r-2xl.divide-x(class="grid-cols-2 xl:grid-cols-4")
+        div.flex.gap-x-4.rounded-2xl.items-center.border.divide-x.mb-4(v-if="getEffectivePermissions(key)?.length" class="border-[var(--color-border-default)] bg-[var(--color-neutral-background-2)]")
+          p.ps-4.h-full.text-sm.font-medium.py-3(class="w-[190px] min-w-[190px] text-[var(--color-text-secondary)]") {{ formatKeyLabel(key) }}
+          .grid.gap-4.w-full.text-sm.font-medium.glass-card.py-3.rounded-r-2xl.divide-x(class="grid-cols-2 xl:grid-cols-4 text-[var(--color-text-tertiary)]")
             .px-4.w-full(v-for="permission in getEffectivePermissions(key)" :key="permission") {{ formatPermissionLabel(permission) }}
 </template>
 

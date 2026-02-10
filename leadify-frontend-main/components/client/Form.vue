@@ -1,25 +1,47 @@
 <template lang="pug">
-el-form.mb-24(  autocomplete="off"   @submit.prevent='onSubmit'   ref="myForm" label-position="top"  :validationSchema="formSchema" )
+el-form.mb-24(autocomplete="off" @submit.prevent='onSubmit' ref="myForm" label-position="top" :validationSchema="formSchema")
   slot
-  .glass-card.m-auto(class="2xl:w-1/2 w-[90%] " :class="!withoutPading ? 'p-10' : 'p-[0px]'")
+  .glass-card.m-auto(class="2xl:w-1/2 w-[90%]" :class="!withoutPading ? 'p-10' : 'p-[0px]'")
     .flex.align-center.justify-between
       span
-      el-switch.my-4(v-if="!editMode && mappedLeads?.length" v-model="switchValue", size="large" inline-prompt, style="--el-switch-on-color: #7849FF; --el-switch-off-color: #918E98", :active-text="$t('clients.form.existingLead')", :inactive-text="$t('clients.form.newClient')")
-    .grid.grid-cols-2.gap-3
-      component.mt-3(:is="isLeads" :label="switchValue && !editMode && mappedLeads?.length ? $t('clients.form.leadName') : $t('clients.form.clientName')"  name="clientName" :options="mappedLeads" is-form :value="selectedLead?.name || data?.clientName" @change="getSelectedLead" )
-      InputText.mt-3(:label="$t('clients.form.companyName')"  name="companyName" :value="selectedLead?.companyName  || data?.companyName" is-form)
-      InputText.mt-3(:label="$t('clients.form.email')"  name="email" :value="selectedLead?.email || data?.email" @value="val=> isEmail = !!val" is-form)
-      InputPhone.mt-3(:label="$t('clients.form.phone')"  name="phone" :value="selectedLead?.phone || data?.phoneNumber" @value="val=> isPhone = !!val" @validphone="val=> validPhone = val" mode="international")
-      InputSelect.mt-3(:label="$t('clients.form.clientType')" name="clientType" :options="clientTypes" :value="data?.clientType")
-      InputSelect.mt-3(:label="$t('clients.form.assignUser')" name="users" isMultiple :options="users" :value="users?.filter((user: any) => data?.users?.map((user: any) => user.id)?.includes(user.value))?.map((user: any) => user.value)" )
-    .grid.grid-cols-2.gap-3
-      InputText(:label="$t('clients.form.city')" name="city"  :placeholder="$t('clients.form.enterCity')"  :value="data?.city" )
-      InputText(:label="$t('clients.form.street')" name="streetAddress"  :placeholder="$t('clients.form.enterStreet')"  :value="data?.streetAddress" )
-      InputText.mt-3(:label="$t('clients.form.state')" name="state"  :placeholder="$t('clients.form.enterState')"  :value="data?.state" )
-      InputText.mt-3(:label="$t('clients.form.zipCode')" name="zipCode"  :placeholder="$t('clients.form.enterZip')"  :value="data?.zipCode" )
-      InputSelect.mt-3(:label="$t('clients.form.industry')" name="industry" :options="clientIndustries" :value="data?.industry" )
-      InputSelect.mt-3(:label="$t('clients.form.clientStatus')" name="clientStatus" :options="clientStatuses" :value="data?.clientStatus" )
-    InputUploadFiles.mt-3(:label="$t('clients.form.uploadFile')" name="file" :value="data?.fileUpload?.map((file: any) => ({name: file, response: file, uid: uuidv4() }))" multiple)
+      el-switch.my-4(v-if="!editMode && mappedLeads?.length" v-model="switchValue" size="large" inline-prompt style="--el-switch-on-color: var(--color-primary); --el-switch-off-color: var(--color-text-disabled)" :active-text="$t('clients.form.existingLead')" :inactive-text="$t('clients.form.newClient')")
+
+    //- Basic Information
+    .form-section
+      .form-section-header
+        .section-icon: Icon(name="ph:user-bold" size="20")
+        div
+          .section-title Basic Information
+      .grid.grid-cols-2.gap-4
+        component(:is="isLeads" :label="switchValue && !editMode && mappedLeads?.length ? $t('clients.form.leadName') : $t('clients.form.clientName')" name="clientName" :options="mappedLeads" is-form :value="selectedLead?.name || data?.clientName" @change="getSelectedLead")
+        InputText(:label="$t('clients.form.companyName')" name="companyName" :value="selectedLead?.companyName || data?.companyName" is-form)
+        InputText(:label="$t('clients.form.email')" name="email" :value="selectedLead?.email || data?.email" @value="val=> isEmail = !!val" is-form)
+        InputPhone(:label="$t('clients.form.phone')" name="phone" :value="selectedLead?.phone || data?.phoneNumber" @value="val=> isPhone = !!val" @validphone="val=> validPhone = val" mode="international")
+        InputSelect(:label="$t('clients.form.clientType')" name="clientType" :options="clientTypes" :value="data?.clientType")
+        InputSelect(:label="$t('clients.form.assignUser')" name="users" isMultiple :options="users" :value="users?.filter((user: any) => data?.users?.map((user: any) => user.id)?.includes(user.value))?.map((user: any) => user.value)")
+
+    //- Address
+    .form-section
+      .form-section-header
+        .section-icon: Icon(name="ph:map-pin-bold" size="20")
+        div
+          .section-title Address
+      .grid.grid-cols-2.gap-4
+        InputText(:label="$t('clients.form.city')" name="city" :placeholder="$t('clients.form.enterCity')" :value="data?.city")
+        InputText(:label="$t('clients.form.street')" name="streetAddress" :placeholder="$t('clients.form.enterStreet')" :value="data?.streetAddress")
+        InputText(:label="$t('clients.form.state')" name="state" :placeholder="$t('clients.form.enterState')" :value="data?.state")
+        InputText(:label="$t('clients.form.zipCode')" name="zipCode" :placeholder="$t('clients.form.enterZip')" :value="data?.zipCode")
+
+    //- Additional Details
+    .form-section
+      .form-section-header
+        .section-icon: Icon(name="ph:info-bold" size="20")
+        div
+          .section-title Additional Details
+      .grid.grid-cols-2.gap-4
+        InputSelect(:label="$t('clients.form.industry')" name="industry" :options="clientIndustries" :value="data?.industry")
+        InputSelect(:label="$t('clients.form.clientStatus')" name="clientStatus" :options="clientStatuses" :value="data?.clientStatus")
+      InputUploadFiles.mt-4(:label="$t('clients.form.uploadFile')" name="file" :value="data?.fileUpload?.map((file: any) => ({name: file, response: file, uid: uuidv4() }))" multiple)
 </template>
 
 <script lang="ts" setup>

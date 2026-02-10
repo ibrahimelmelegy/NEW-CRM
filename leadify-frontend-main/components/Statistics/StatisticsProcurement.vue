@@ -2,79 +2,79 @@
 .p-6.animate-entrance
   .flex.items-center.justify-between.mb-10
     .header-content
-      .title.font-bold.text-3xl.mb-2.text-gradient Procurement Analytics
-      .subtitle.text-muted.text-sm.tracking-wide Real-time insights into your supply chain
-  
+      .page-title.mb-2 Procurement Analytics
+      .subtitle.text-muted Real-time insights into your supply chain
+
   //- KPI Cards
-  .grid.grid-cols-1.md.grid-cols-3.gap-8.mb-10
-    .glass-card.p-8.relative.overflow-hidden.hover-translate-y
+  .grid.grid-cols-1.md_grid-cols-2.lg_grid-cols-3.gap-8.mb-10
+    .stat-card-primary
       .flex.items-center.justify-between
         div
-          .text-muted.text-xs.uppercase.font-black.tracking-widest.mb-2 Total POs
-          .text-4xl.font-black.text-white {{ stats.kpi.totalPos }}
-          .text-xs.text-purple-400.mt-2 Lifetime volume
-        .icon-box.bg-purple-500_20.p-4.rounded-2xl
-          Icon(name="ph:shopping-cart-bold" class="text-3xl text-purple-400")
-    
-    .glass-card.p-8.relative.overflow-hidden.hover-translate-y
+          .stat-label Total POs
+          .stat-value {{ stats.kpi.totalPos }}
+          .stat-sublabel Lifetime volume
+        .icon-box
+          Icon(name="ph:shopping-cart-bold")
+
+    .stat-card-warning
       .flex.items-center.justify-between
         div
-          .text-muted.text-xs.uppercase.font-black.tracking-widest.mb-2 Total Expenditure
-          .text-4xl.font-black.text-gradient {{ formatCurrency(stats.kpi.totalSpend) }}
-          .text-xs.text-orange-400.mt-2 Total committed spend
-        .icon-box.bg-orange-500_20.p-4.rounded-2xl
-          Icon(name="ph:currency-circle-dollar-bold" class="text-3xl text-orange-400")
-    
-    .glass-card.p-8.relative.overflow-hidden.hover-translate-y
+          .stat-label Total Expenditure
+          .stat-value {{ formatCurrency(stats.kpi.totalSpend) }}
+          .stat-sublabel Total committed spend
+        .icon-box
+          Icon(name="ph:currency-circle-dollar-bold")
+
+    .stat-card-danger
       .flex.items-center.justify-between
         div
-          .text-muted.text-xs.uppercase.font-black.tracking-widest.mb-2 Pending Queue
-          .text-4xl.font-black.text-white {{ stats.kpi.pendingCount }}
-          .text-xs.text-pink-400.mt-2 Needs attention
-        .icon-box.bg-pink-500_20.p-4.rounded-2xl
-          Icon(name="ph:clock-countdown-bold" class="text-3xl text-pink-400")
+          .stat-label Pending Queue
+          .stat-value {{ stats.kpi.pendingCount }}
+          .stat-sublabel Needs attention
+        .icon-box
+          Icon(name="ph:clock-countdown-bold")
 
   //- Charts
-  .grid.grid-cols-1.lg.grid-cols-2.gap-10.mb-10
-    .glass-card.p-8
-      .flex.items-center.gap-4.mb-8
-        Icon(name="ph:chart-pie-slice-bold" class="text-purple-400 text-xl")
-        span.font-bold.text-muted.uppercase.tracking-widest.text-xs Top Suppliers by Volume
+  .grid.grid-cols-1.lg_grid-cols-2.gap-10.mb-10
+    .chart-card
+      .chart-header
+        Icon(name="ph:chart-pie-slice-bold")
+        .chart-title Top Suppliers by Volume
       client-only
         v-chart(:option="vendorChartOption", style="height: 350px", autoresize)
-    
-    .glass-card.p-8
-      .flex.items-center.gap-4.mb-8
-        Icon(name="ph:chart-line-up-bold" class="text-orange-400 text-xl")
-        span.font-bold.text-muted.uppercase.tracking-widest.text-xs Procurement Trend (6 Months)
+
+    .chart-card
+      .chart-header
+        Icon(name="ph:chart-line-up-bold")
+        .chart-title Procurement Trend (6 Months)
       client-only
         v-chart(:option="monthlyChartOption", style="height: 350px", autoresize)
 
   //- Recent Transactions Table
-  .glass-card.p-8
-      .flex.items-center.gap-4.mb-6
-        Icon(name="ph:list-dashes-bold" class="text-blue-400 text-xl")
-        span.font-bold.text-muted.uppercase.tracking-widest.text-xs Recent Transactions
+  .premium-table.p-8
+      .chart-header
+        Icon(name="ph:list-dashes-bold")
+        .chart-title Recent Transactions
 
-      el-table(:data="stats.recentTransactions" style="width: 100%" class="premium-table")
+      el-table(:data="stats.recentTransactions" style="width: 100%")
         el-table-column(prop="poNumber" label="PO Number" width="180")
           template(#default="{row}")
-             span.font-bold.text-white {{ row.poNumber }}
+             span.font-bold {{ row.poNumber }}
         el-table-column(label="Vendor" width="250")
           template(#default="{row}")
              .flex.items-center.gap-3
-               .w-8.h-8.rounded-full.bg-purple-500_20.flex.items-center.justify-center.text-purple-400.font-bold.text-xs
+               .vendor-avatar
                   | {{ row.Vendor?.name?.charAt(0) || '?' }}
-               span.text-gray-300 {{ row.Vendor?.name || 'Unknown' }}
+               span {{ row.Vendor?.name || 'Unknown' }}
         el-table-column(prop="totalAmount" label="Amount")
            template(#default="{row}")
               span.font-mono {{ formatCurrency(row.totalAmount) }}
         el-table-column(prop="status" label="Status")
            template(#default="{row}")
-              span.px-3.py-1.rounded-full.text-xs.font-bold(:class="getStatusClass(row.status)") {{ row.status }}
+              el-tag(:type="getStatusType(row.status)" size="small") {{ row.status }}
         el-table-column(prop="createdAt" label="Date")
            template(#default="{row}")
-              span.text-xs.text-muted {{ new Date(row.createdAt).toLocaleDateString() }}
+              span.text-muted {{ new Date(row.createdAt).toLocaleDateString() }}
 
 </template>
 
@@ -116,29 +116,43 @@ const formatCurrency = (value: number) => {
   return new Intl.NumberFormat('en-SA', { style: 'currency', currency: 'SAR', maximumFractionDigits: 0 }).format(value);
 };
 
-const getStatusClass = (status: string) => {
+const getStatusType = (status: string) => {
   const map: any = {
-    Pending: 'bg-yellow-500/20 text-yellow-500',
-    Approved: 'bg-green-500/20 text-green-500',
-    Rejected: 'bg-red-500/20 text-red-500',
-    Draft: 'bg-gray-500/20 text-gray-500'
+    Pending: 'warning',
+    Approved: 'success',
+    Rejected: 'danger',
+    Draft: 'info'
   };
-  return map[status] || 'bg-gray-500/20 text-gray-500';
+  return map[status] || 'info';
 };
+
+// Get current theme colors
+const isDark = ref(true);
+if (process.client) {
+  isDark.value = document.documentElement.classList.contains('dark-mode');
+}
 
 // Chart Options (Computed to react to data changes)
 const vendorChartOption = computed(() => ({
   backgroundColor: 'transparent',
   tooltip: {
     trigger: 'item',
-    backgroundColor: 'rgba(30, 18, 48, 0.9)',
-    borderWidth: 0,
-    textStyle: { color: '#fff' }
+    backgroundColor: isDark.value ? 'rgba(45, 45, 45, 0.95)' : 'rgba(255, 255, 255, 0.95)',
+    borderWidth: 1,
+    borderColor: isDark.value ? 'rgba(255, 255, 255, 0.12)' : 'rgba(0, 0, 0, 0.12)',
+    textStyle: {
+      color: isDark.value ? '#FFFFFF' : '#242424',
+      fontSize: 14,
+      fontWeight: 500
+    }
   },
   legend: {
     bottom: '0',
     left: 'center',
-    textStyle: { color: 'rgba(255,255,255,0.6)', fontSize: 10 }
+    textStyle: {
+      color: isDark.value ? 'rgba(255, 255, 255, 0.7)' : 'rgba(0, 0, 0, 0.7)',
+      fontSize: 12
+    }
   },
   series: [
     {
@@ -148,13 +162,21 @@ const vendorChartOption = computed(() => ({
       avoidLabelOverlap: false,
       itemStyle: {
         borderRadius: 15,
-        borderColor: 'rgba(255,255,255,0.05)',
+        borderColor: isDark.value ? 'rgba(255, 255, 255, 0.05)' : 'rgba(0, 0, 0, 0.05)',
         borderWidth: 2
       },
       label: { show: false },
       emphasis: {
-        label: { show: true, fontSize: '18', fontWeight: 'bold', color: '#fff' },
-        itemStyle: { shadowBlur: 20, shadowColor: 'rgba(168, 85, 247, 0.5)' }
+        label: {
+          show: true,
+          fontSize: 18,
+          fontWeight: 'bold',
+          color: isDark.value ? '#FFFFFF' : '#242424'
+        },
+        itemStyle: {
+          shadowBlur: 20,
+          shadowColor: 'rgba(0, 120, 212, 0.4)'
+        }
       },
       data:
         stats.value.charts.topVendors.map((v: any) => ({
@@ -170,22 +192,50 @@ const vendorChartOption = computed(() => ({
 const monthlyChartOption = computed(() => ({
   backgroundColor: 'transparent',
   grid: { top: '10%', left: '3%', right: '4%', bottom: '15%', containLabel: true },
+  tooltip: {
+    trigger: 'axis',
+    backgroundColor: isDark.value ? 'rgba(45, 45, 45, 0.95)' : 'rgba(255, 255, 255, 0.95)',
+    borderWidth: 1,
+    borderColor: isDark.value ? 'rgba(255, 255, 255, 0.12)' : 'rgba(0, 0, 0, 0.12)',
+    textStyle: {
+      color: isDark.value ? '#FFFFFF' : '#242424',
+      fontSize: 14,
+      fontWeight: 500
+    }
+  },
   xAxis: {
     type: 'category',
     data: stats.value.charts.monthlyTrend.map((d: any) => d.month),
-    axisLine: { lineStyle: { color: 'rgba(255,255,255,0.1)' } },
-    axisLabel: { color: 'rgba(255,255,255,0.4)', fontSize: 10 }
+    axisLine: {
+      lineStyle: {
+        color: isDark.value ? 'rgba(255, 255, 255, 0.12)' : 'rgba(0, 0, 0, 0.12)'
+      }
+    },
+    axisLabel: {
+      color: isDark.value ? 'rgba(255, 255, 255, 0.6)' : 'rgba(0, 0, 0, 0.6)',
+      fontSize: 12,
+      fontWeight: 500
+    }
   },
   yAxis: {
     type: 'value',
-    splitLine: { lineStyle: { color: 'rgba(255,255,255,0.05)', type: 'dashed' } },
-    axisLabel: { color: 'rgba(255,255,255,0.4)', fontSize: 10 }
+    splitLine: {
+      lineStyle: {
+        color: isDark.value ? 'rgba(255, 255, 255, 0.08)' : 'rgba(0, 0, 0, 0.08)',
+        type: 'dashed'
+      }
+    },
+    axisLabel: {
+      color: isDark.value ? 'rgba(255, 255, 255, 0.6)' : 'rgba(0, 0, 0, 0.6)',
+      fontSize: 12,
+      fontWeight: 500
+    }
   },
   series: [
     {
       data: stats.value.charts.monthlyTrend.map((d: any) => d.value),
       type: 'bar',
-      barWidth: '40%',
+      barWidth: '50%',
       itemStyle: {
         borderRadius: [8, 8, 0, 0],
         color: {
@@ -195,13 +245,16 @@ const monthlyChartOption = computed(() => ({
           x2: 0,
           y2: 1,
           colorStops: [
-            { offset: 0, color: '#f97316' },
-            { offset: 1, color: '#a855f7' }
+            { offset: 0, color: '#0078D4' },
+            { offset: 1, color: '#106EBE' }
           ]
         }
       },
       emphasis: {
-        itemStyle: { shadowBlur: 15, shadowColor: 'rgba(249, 115, 22, 0.4)' }
+        itemStyle: {
+          shadowBlur: 15,
+          shadowColor: 'rgba(0, 120, 212, 0.5)'
+        }
       }
     }
   ]
@@ -209,58 +262,32 @@ const monthlyChartOption = computed(() => ({
 </script>
 
 <style scoped lang="scss">
-.text-gradient {
-  background: var(--gradient-primary);
+.page-title {
+  font-size: var(--font-size-700);
+  font-weight: var(--font-weight-bold);
+  color: var(--color-text-primary);
+  background: linear-gradient(135deg, var(--color-primary), var(--color-primary-hover));
   -webkit-background-clip: text;
   background-clip: text;
   -webkit-text-fill-color: transparent;
 }
 
-.bg-purple-500_20 {
-  background: rgba(168, 85, 247, 0.15);
-}
-.bg-orange-500_20 {
-  background: rgba(249, 115, 22, 0.15);
-}
-.bg-pink-500_20 {
-  background: rgba(236, 72, 153, 0.15);
+.subtitle {
+  font-size: var(--font-size-200);
+  color: var(--color-text-secondary);
 }
 
-.hover-translate-y {
-  transition: transform 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-  &:hover {
-    transform: translateY(-10px);
-    box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3);
-  }
-}
-
-.premium-table {
-  :deep(.el-table) {
-    background: transparent !important;
-    --el-table-bg-color: transparent;
-    --el-table-tr-bg-color: transparent;
-    --el-table-header-bg-color: rgba(255, 255, 255, 0.02);
-    --el-table-row-hover-bg-color: rgba(255, 255, 255, 0.05);
-
-    th.el-table__cell {
-      background: rgba(168, 85, 247, 0.05) !important;
-      color: var(--text-secondary);
-      font-weight: 700;
-      text-transform: uppercase;
-      font-size: 11px;
-      letter-spacing: 1px;
-      border-bottom: 1px solid rgba(255, 255, 255, 0.05);
-    }
-
-    td.el-table__cell {
-      border-bottom: 1px solid rgba(255, 255, 255, 0.05) !important;
-      padding: 16px 0;
-      color: white;
-    }
-
-    .cell {
-      padding: 0 16px;
-    }
-  }
+.vendor-avatar {
+  width: 32px;
+  height: 32px;
+  border-radius: var(--radius-circular);
+  background: var(--color-primary);
+  opacity: 0.15;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--color-primary);
+  font-weight: var(--font-weight-bold);
+  font-size: var(--font-size-100);
 }
 </style>

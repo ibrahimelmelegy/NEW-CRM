@@ -152,16 +152,14 @@ async function awardVendor(vendor: any) {
   background-clip: text;
   -webkit-text-fill-color: transparent;
 }
-.bg-white_5 {
-  background: rgba(255, 255, 255, 0.05);
-}
+// Theme-aware utilities now in global _utilities.scss
 .border-white_10 {
-  border-color: rgba(255, 255, 255, 0.1);
+  border-color: var(--color-border-default);
 }
 .bg-purple-500_20 {
-  background: rgba(168, 85, 247, 0.2);
+  background: rgba(0, 120, 212, 0.2);
 }
 .bg-purple-500_10 {
-  background: rgba(168, 85, 247, 0.1);
+  background: rgba(0, 120, 212, 0.1);
 }
 </style>

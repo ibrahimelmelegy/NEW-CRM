@@ -1,26 +1,41 @@
 <template lang="pug">
-    el-form(  autocomplete="off"   @submit.prevent='onSubmit'   ref="myForm" label-position="top"  :validationSchema="formSchema" )
-      slot
-      div(:class="{'2xl:w-1/2 w-[90%]  card m-auto glass-card p-10 rounded-3xl': !isModal}")
-        .grid.grid-cols-2.gap-3
-          InputText.mt-4(:label="$t('operations.dailyTasks.form.name')"  :placeholder="$t('operations.dailyTasks.form.enterName')" name="name" :value="data?.name" )
-          InputSelect.mt-4(:label="$t('operations.dailyTasks.form.priority')" name="priority" :options="taskPriorityOptions" :value="data?.priority" )
-          InputSelect.mt-4(:label="$t('operations.dailyTasks.form.status')" name="status" :options="taskStatusOptions" :value="data?.status ?? (route.query.status ? route.query.status.toString().toUpperCase() : '')" )
-          InputSelect.mt-4(:label="$t('operations.dailyTasks.form.user')" name="userId" :options="users" :value="data?.userId" )
-          InputSelect.mt-4(:label="$t('operations.dailyTasks.form.client')" name="clientId" :options="clients"  @change="[onFetchClient($event?.value)]" :value="data?.clientId" )
-          InputSelect.mt-4(:label="$t('operations.dailyTasks.form.salesRep')" name="salesRepresentativeId" :options="users" :value="data?.salesRepresentativeId" )
-          InputText.mt-4(:label="$t('operations.dailyTasks.form.cost')"  :placeholder="$t('operations.dailyTasks.form.enterCost')" name="cost" :value="data?.cost" )
-          InputText.mt-4(:label="$t('operations.dailyTasks.form.downPayment')"  :placeholder="$t('operations.dailyTasks.form.enterDownPayment')" name="downPayment" :value="data?.downPayment" )
-          InputText.mt-4(:label="$t('operations.dailyTasks.form.totalPaid')"  :placeholder="$t('operations.dailyTasks.form.enterTotalPaid')" name="totalPaid" :value="data?.totalPaid" )
-          //- InputDate.mt-4(label="Start Date"  placeholder="Enter Start  Date"  :value="data?.startDate || new Date()" name="startDate" )
-          //- InputDate.mt-4(label="End Date"  placeholder="Enter End  Date"  :value="data?.endDate || new Date()" name="endDate" )
-        .grid.grid-cols-1.gap-3
-          InputText(type="textarea" :placeholder="$t('operations.dailyTasks.form.notes')"  name="notes" :value="data?.notes" )
-      slot(name="modal-footer")
-  
-   
-  
-    </template>
+el-form(autocomplete="off" @submit.prevent='onSubmit' ref="myForm" label-position="top" :validationSchema="formSchema")
+  slot
+  div(:class="{'2xl:w-1/2 w-[90%] card m-auto glass-card p-10 rounded-3xl': !isModal}")
+    //- Task Details
+    .form-section
+      .form-section-header
+        .section-icon: Icon(name="ph:check-square-bold" size="20")
+        div
+          .section-title Task Details
+      .grid.grid-cols-2.gap-4
+        InputText(:label="$t('operations.dailyTasks.form.name')" :placeholder="$t('operations.dailyTasks.form.enterName')" name="name" :value="data?.name")
+        InputSelect(:label="$t('operations.dailyTasks.form.priority')" name="priority" :options="taskPriorityOptions" :value="data?.priority")
+        InputSelect(:label="$t('operations.dailyTasks.form.status')" name="status" :options="taskStatusOptions" :value="data?.status ?? (route.query.status ? route.query.status.toString().toUpperCase() : '')")
+        InputSelect(:label="$t('operations.dailyTasks.form.user')" name="userId" :options="users" :value="data?.userId")
+        InputSelect(:label="$t('operations.dailyTasks.form.client')" name="clientId" :options="clients" @change="[onFetchClient($event?.value)]" :value="data?.clientId")
+        InputSelect(:label="$t('operations.dailyTasks.form.salesRep')" name="salesRepresentativeId" :options="users" :value="data?.salesRepresentativeId")
+
+    //- Financial Details
+    .form-section
+      .form-section-header
+        .section-icon: Icon(name="ph:money-bold" size="20")
+        div
+          .section-title Financial Details
+      .grid.grid-cols-2.gap-4
+        InputText(:label="$t('operations.dailyTasks.form.cost')" :placeholder="$t('operations.dailyTasks.form.enterCost')" name="cost" :value="data?.cost")
+        InputText(:label="$t('operations.dailyTasks.form.downPayment')" :placeholder="$t('operations.dailyTasks.form.enterDownPayment')" name="downPayment" :value="data?.downPayment")
+      InputText.mt-4(:label="$t('operations.dailyTasks.form.totalPaid')" :placeholder="$t('operations.dailyTasks.form.enterTotalPaid')" name="totalPaid" :value="data?.totalPaid")
+
+    //- Notes
+    .form-section
+      .form-section-header
+        .section-icon: Icon(name="ph:note-pencil-bold" size="20")
+        div
+          .section-title Notes
+      InputText(type="textarea" :placeholder="$t('operations.dailyTasks.form.notes')" name="notes" :value="data?.notes")
+  slot(name="modal-footer")
+</template>
 
 <script lang="ts" setup>
 import { useForm } from 'vee-validate';

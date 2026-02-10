@@ -1,26 +1,55 @@
 // ============================================
-// 🌑 DARK MODE THEME
+// 🌑 DARK MODE THEME - ENHANCED FLUENT
 // ============================================
-// Default theme matching Windows 11 Dark Mode
+// True Dark Mode with Deep Blue/Slate tints
+// Eliminates "Grey Washout" for a premium feel
 
-:root {
-  // Theme identifier
+html:not(.light-mode) {
   --theme-mode: dark;
-
-  // Already defined in _colors.scss, but ensuring consistency
   color-scheme: dark;
+
+  // --------------------------------------------
+  // 1. GLOBAL BACKGROUND OVERRIDES
+  // --------------------------------------------
+  // Main Background (Deep Slate/Blue)
+  --color-neutral-background-1: #0B0E14;
+
+  // Card/Surface Background (Slightly Lighter)
+  --color-neutral-background-2: #151922;
+
+  // Input/Secondary Background
+  --color-neutral-background-3: #1E2330;
+
+  // Hover State
+  --color-neutral-background-4: #2A3040;
+
+  // Active/Pressed State
+  --color-neutral-background-5: #353C50;
+
+  // --------------------------------------------
+  // 2. TEXT & BORDER CONTRAST
+  // --------------------------------------------
+  --color-text-primary: #FFFFFF;
+  --color-text-secondary: #94A3B8; // Slate 400
+  --color-border-default: rgba(255, 255, 255, 0.08);
+  --color-border-subtle: rgba(255, 255, 255, 0.04);
+
+  // --------------------------------------------
+  // 3. ELEMENT PLUS SPECIFIC FIXES
+  // --------------------------------------------
+  // Fix Element Plus white backgrounds
+  --el-bg-color: var(--color-neutral-background-2);
+  --el-bg-color-overlay: var(--color-neutral-background-2);
+  --el-fill-color-blank: var(--color-neutral-background-1);
+  --el-text-color-primary: var(--color-text-primary);
 }
 
-// Dark mode is the default, so main colors are already defined in _colors.scss
-// This file is for any dark-mode-specific overrides or adjustments
-
-// Body styling for dark mode
 body {
   background-color: var(--color-neutral-background-1);
   color: var(--color-text-primary);
 }
 
-// Scrollbar styling for dark mode
+// Custom Scrollbar
 ::-webkit-scrollbar {
   width: 8px;
   height: 8px;
@@ -39,13 +68,11 @@ body {
   }
 }
 
-// Selection color
 ::selection {
-  background: var(--color-surface-selected);
-  color: var(--color-text-primary);
+  background: rgba(0, 120, 212, 0.3); // Microsoft Blue
+  color: #FFF;
 }
 
-// Focus visible outline
 :focus-visible {
   outline: 2px solid var(--color-primary);
   outline-offset: 2px;

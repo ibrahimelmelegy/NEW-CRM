@@ -18,7 +18,7 @@
         .flex.items-center.gap-4.mb-8
              .p-3.rounded-xl.bg-purple-500_10.border.border-purple-500_20
                 Icon(name="ph:identification-badge-bold" class="text-purple-400 text-2xl")
-             span.text-2xl.font-bold.text-white {{ $t('procurement.supplierTerms') }}
+             span.text-2xl.font-bold.text-[var(--color-text-primary)] {{ $t('procurement.supplierTerms') }}
         
         el-form(:model="form", label-position="top", ref="formRef")
           .grid.grid-cols-1.md.grid-cols-2.gap-8
@@ -31,7 +31,7 @@
                     .flex.items-center.gap-3
                         el-avatar(:size="24" :src="v.logo" shape="circle" class="bg-white_10") {{ v.name?.charAt(0) }}
                         .flex.flex-col
-                            span.font-bold.text-white {{ v.name }}
+                            span.font-bold.text-[var(--color-text-primary)] {{ v.name }}
                             span.text-xs.text-muted {{ v.email }}
                     el-tag(size="small" type="info" class="!bg-white_5 !border-none") {{ v.type }}
             
@@ -66,7 +66,7 @@
           .flex.items-center.gap-4
              .p-3.rounded-xl.bg-pink-500_10.border.border-pink-500_20
                 Icon(name="ph:shopping-cart-bold" class="text-pink-400 text-2xl")
-             span.text-2xl.font-bold.text-white {{ $t('procurement.orderItems') }}
+             span.text-2xl.font-bold.text-[var(--color-text-primary)] {{ $t('procurement.orderItems') }}
           
           el-button(type="primary", :icon="Plus", @click="addItem", class="premium-btn-outline px-8 !h-12 !rounded-xl text-base") {{ $t('procurement.addProduct') }}
         
@@ -89,7 +89,7 @@
               el-input-number(v-model="row.tax", :min="0", :max="100", class="premium-number-input !w-full", :controls="false")
           el-table-column(:label="$t('procurement.total')" width="150" align="right")
             template(#default="{row}")
-              span.font-bold.text-lg.text-white {{ ((row.quantity * row.unitPrice) * (1 + row.tax / 100)).toFixed(2) }}
+              span.font-bold.text-lg.text-[var(--color-text-primary)] {{ ((row.quantity * row.unitPrice) * (1 + row.tax / 100)).toFixed(2) }}
           el-table-column(width="60" align="center")
             template(#default="{$index}")
               el-button(type="danger", :icon="Delete", circle, plain, class="!border-none !bg-transparent hover:!bg-red-500_20 text-red-400", @click="form.items.splice($index, 1)")
@@ -98,14 +98,14 @@
         .flex.flex-col.items-end.gap-2.pt-8.border-t.border-white_10
             .flex.items-center.justify-between.w-full.max-w-xs.py-2
                 span.text-muted {{ $t('procurement.subtotal') }}
-                span.text-white {{ subTotal.toFixed(2) }}
+                span.text-[var(--color-text-primary)] {{ subTotal.toFixed(2) }}
             .flex.items-center.justify-between.w-full.max-w-xs.py-2
                 span.text-muted {{ $t('procurement.taxAmount') }}
-                span.text-white {{ taxTotal.toFixed(2) }}
+                span.text-[var(--color-text-primary)] {{ taxTotal.toFixed(2) }}
             
             .flex.items-center.justify-between.w-full.max-w-md.mt-4.p-4.rounded-2xl.bg-white_5.border.border-white_10
                 span.text-lg.font-bold.text-gradient {{ $t('procurement.grandTotal') }}
-                span.text-4xl.font-black.text-white {{ grandTotal.toFixed(2) }}
+                span.text-4xl.font-black.text-[var(--color-text-primary)] {{ grandTotal.toFixed(2) }}
             
             .flex.gap-4.mt-8
                  el-button(size="large" class="premium-btn-ghost w-32 !h-14") {{ $t('procurement.cancel') }}
@@ -128,14 +128,14 @@
           .flex.items-center.gap-3.mb-6
             .p-2.bg-orange-500_20.rounded-lg.text-orange-400
                 Icon(name="ph:sparkles-fill" class="text-xl animate-pulse")
-            span.text-lg.font-bold.text-white {{ $t('procurement.aiAutoFill') }}
+            span.text-lg.font-bold.text-[var(--color-text-primary)] {{ $t('procurement.aiAutoFill') }}
           
-          p.text-sm.text-gray-300.mb-6.leading-relaxed 
+          p.text-sm.text-muted.mb-6.leading-relaxed
             | {{ $t('procurement.aiDesc') }}
           
           .border-2.border-dashed.border-white_20.rounded-2xl.p-8.text-center.transition-all.hover_border-purple-400.hover_bg-white_5.cursor-pointer(@click="triggerUpload")
              Icon(name="ph:file-pdf-duotone" class="text-5xl text-white_40 mb-3 group-hover:text-purple-400 transition-colors")
-             .text-sm.font-bold.text-white {{ $t('procurement.dropFile') }}
+             .text-sm.font-bold.text-[var(--color-text-primary)] {{ $t('procurement.dropFile') }}
           
           .mt-6.flex.items-center.justify-between.text-xs.text-muted
              span {{ $t('procurement.supported') }}
@@ -252,101 +252,15 @@ async function submit() {
   -webkit-text-fill-color: transparent;
 }
 
-.bg-white_5 {
-  background: rgba(255, 255, 255, 0.05);
-}
-.bg-white_10 {
-  background: rgba(255, 255, 255, 0.1);
-}
-.bg-purple-500_10 {
-  background: rgba(168, 85, 247, 0.1);
-}
-.bg-purple-500_20 {
-  background: rgba(168, 85, 247, 0.2);
-}
-.bg-pink-500_10 {
-  background: rgba(236, 72, 153, 0.1);
-}
-.border-purple-500_20 {
-  border-color: rgba(168, 85, 247, 0.2);
-}
-.border-pink-500_20 {
-  border-color: rgba(236, 72, 153, 0.2);
-}
-.text-white_40 {
-  color: rgba(255, 255, 255, 0.4);
-}
+// Accent tint utilities (scoped duplicates for Pug class references)
+.bg-purple-500_10 { background: rgba(0, 120, 212, 0.1); }
+.bg-purple-500_20 { background: rgba(0, 120, 212, 0.2); }
+.bg-pink-500_10 { background: rgba(236, 72, 153, 0.1); }
+.border-purple-500_20 { border-color: rgba(0, 120, 212, 0.2); }
+.border-pink-500_20 { border-color: rgba(236, 72, 153, 0.2); }
+.text-white_40 { color: var(--color-text-disabled); }
 
-.premium-input,
-.premium-select,
-.premium-datepicker {
-  :deep(.el-input__wrapper) {
-    background: rgba(255, 255, 255, 0.03) !important;
-    border: 1px solid rgba(255, 255, 255, 0.1) !important;
-    border-radius: 14px !important;
-    box-shadow: none !important;
-    height: 52px; /* Taller inputs */
-    color: white;
-    font-size: 15px;
-    transition: all 0.3s ease;
-    &.is-focus,
-    &:hover {
-      border-color: var(--purple-500) !important;
-      background: rgba(168, 85, 247, 0.05) !important;
-      transform: translateY(-1px);
-    }
-  }
-}
-
-.premium-select-large {
-  @extend .premium-input;
-  :deep(.el-input__wrapper) {
-    height: 60px; /* Even taller for main selects */
-    font-size: 16px;
-    font-weight: 600;
-  }
-}
-
-.premium-input-transparent {
-  :deep(.el-input__wrapper) {
-    background: transparent !important;
-    border: none !important;
-    box-shadow: none !important;
-    padding-left: 0;
-    font-size: 15px;
-  }
-}
-
-.premium-number-input {
-  :deep(.el-input__wrapper) {
-    background: rgba(255, 255, 255, 0.03) !important;
-    border: 1px solid rgba(255, 255, 255, 0.1) !important;
-    border-radius: 12px !important;
-    box-shadow: none !important;
-    height: 42px;
-  }
-}
-
-.premium-table {
-  background: transparent !important;
-  --el-table-bg-color: transparent;
-  --el-table-tr-bg-color: transparent;
-  --el-table-header-bg-color: rgba(255, 255, 255, 0.02);
-  --el-table-border-color: rgba(255, 255, 255, 0.05);
-
-  :deep(th.el-table__cell) {
-    text-transform: uppercase;
-    font-size: 11px;
-    letter-spacing: 1px;
-    color: var(--text-secondary);
-    padding: 16px 0;
-    border-bottom: 1px solid rgba(255, 255, 255, 0.05) !important;
-  }
-  :deep(td.el-table__cell) {
-    border-bottom: 1px solid rgba(255, 255, 255, 0.05) !important;
-    padding: 16px 0;
-  }
-}
+// All premium-input/select/table/btn classes are now global in _utilities.scss
 
 .table-auto-height {
   :deep(.el-table__inner-wrapper) {
@@ -354,17 +268,7 @@ async function submit() {
   }
   :deep(.el-table__body-wrapper) {
     height: auto !important;
-    overflow-y: hidden !important; /* Disable scroll */
-  }
-}
-
-.premium-btn-ghost {
-  background: rgba(255, 255, 255, 0.05);
-  border: none;
-  color: var(--text-secondary);
-  &:hover {
-    background: rgba(255, 255, 255, 0.1);
-    color: white;
+    overflow-y: hidden !important;
   }
 }
 </style>

@@ -71,7 +71,7 @@
     //- OpenAI API
     .glass-card.p-6.integration-card
       .flex.items-center.gap-4.mb-6
-        .icon-box(style="background-color: rgba(120, 73, 255, 0.1)")
+        .icon-box(style="background-color: var(--color-primary-alpha-10, rgba(0, 120, 212, 0.1))")
           Icon(name="logos:openai-icon" size="32")
         div
           h3.text-xl.font-bold {{ $t('integrations.openai.title') }}

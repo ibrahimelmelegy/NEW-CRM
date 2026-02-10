@@ -170,27 +170,27 @@ const formatTime = (dateStr: string) => {
       display: flex;
       align-items: center;
       justify-content: center;
-      background: var(--glass-bg-secondary);
-      border: 1px solid var(--glass-border-color);
-      box-shadow: var(--glass-shadow);
+      background: var(--color-neutral-background-2);
+      border: 1px solid var(--color-border-default);
+      box-shadow: var(--elevation-shadow-4);
       z-index: 2;
-      transition: all 0.3s ease;
+      transition: all var(--duration-normal) var(--curve-standard);
 
       &:hover {
         transform: scale(1.1);
       }
 
       &.assigned-style {
-        color: #a855f7;
-        background: rgba(168, 85, 247, 0.1);
+        color: var(--color-primary);
+        background: rgba(0, 120, 212, 0.1);
       }
       &.update-style {
         color: #14b8a6;
         background: rgba(20, 184, 166, 0.1);
       }
       &.restore-style {
-        color: #f59e0b;
-        background: rgba(245, 158, 11, 0.1);
+        color: var(--color-warning);
+        background: rgba(246, 99, 12, 0.1);
       }
       &.create-style {
         color: #8b5cf6;
@@ -217,7 +217,7 @@ const formatTime = (dateStr: string) => {
     .timeline-connector {
       flex: 1;
       width: 2px;
-      background: linear-gradient(to bottom, var(--glass-border-color) 0%, transparent 100%);
+      background: linear-gradient(to bottom, var(--color-border-default) 0%, transparent 100%);
       margin-top: 4px;
     }
   }

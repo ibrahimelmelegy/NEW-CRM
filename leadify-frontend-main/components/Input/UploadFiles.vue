@@ -194,13 +194,13 @@ const handleRemove = (file: UploadFile) => {
   box-sizing: border-box !important;
   cursor: pointer !important;
 
-  /* Default: Dark Mode */
-  background-color: rgba(30, 18, 48, 0.4) !important;
-  border: 2px dashed rgba(168, 85, 247, 0.3) !important;
+  /* Default: Uses CSS Variables */
+  background-color: var(--color-neutral-background-1) !important;
+  border: 2px dashed var(--color-border-default) !important;
 
   &:hover {
-    background-color: rgba(30, 18, 48, 0.6) !important;
-    border-color: #a855f7 !important;
+    background-color: var(--color-neutral-background-2) !important;
+    border-color: var(--color-primary) !important;
     transform: translateY(-2px);
   }
 }
@@ -208,7 +208,7 @@ const handleRemove = (file: UploadFile) => {
 /* Upload Icon */
 .el-icon--upload {
   font-size: 48px !important;
-  color: #a855f7 !important;
+  color: var(--color-primary) !important;
   margin-bottom: 12px !important;
 }
 
@@ -220,7 +220,7 @@ const handleRemove = (file: UploadFile) => {
   flex-direction: column !important;
   align-items: center !important;
   justify-content: center !important;
-  color: #f3e8ff !important;
+  color: var(--color-text-primary) !important;
   font-size: 15px !important;
 }
 
@@ -228,7 +228,7 @@ const handleRemove = (file: UploadFile) => {
   width: 100% !important;
   text-align: center !important;
   display: block !important;
-  color: #c4b5fd !important;
+  color: var(--color-text-secondary) !important;
   margin-top: 6px !important;
   font-size: 12px !important;
 }
@@ -237,7 +237,7 @@ const handleRemove = (file: UploadFile) => {
 .el-upload__tip {
   margin: 8px 0 0 0 !important;
   opacity: 0.6;
-  color: #c4b5fd !important;
+  color: var(--color-text-secondary) !important;
   text-align: center !important;
   width: 100% !important;
 }
@@ -251,32 +251,5 @@ const handleRemove = (file: UploadFile) => {
   }
 }
 
-/* ============================================
-   LIGHT MODE OVERRIDES
-   ============================================ */
-html.light-mode .el-upload {
-  background-color: rgba(255, 255, 255, 0.6) !important;
-  border-color: #d8b4fe !important;
-
-  &:hover {
-    background-color: rgba(243, 232, 255, 0.7) !important;
-    border-color: #a855f7 !important;
-  }
-}
-
-html.light-mode .el-icon--upload {
-  color: #7c3aed !important;
-}
-
-html.light-mode .el-upload .text-neutral-900 {
-  color: #1f1f1f !important;
-}
-
-html.light-mode .el-upload .text-neutral-400 {
-  color: #6b7280 !important;
-}
-
-html.light-mode .el-upload__tip {
-  color: #6b7280 !important;
-}
+/* Light mode overrides removed - base styles now use CSS variables */
 </style>

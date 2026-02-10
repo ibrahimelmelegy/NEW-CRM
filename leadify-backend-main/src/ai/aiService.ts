@@ -3,10 +3,11 @@ import OpenAI from 'openai';
 import dotenv from 'dotenv';
 dotenv.config();
 
-import Integration from '../integration/integrationModel';
+import { lockManager } from './lockManager';
 
 class AIService {
     private openai: OpenAI | null = null;
+    // ... getClient method remains same ...
 
     private async getClient() {
         if (!this.openai) {
@@ -15,7 +16,8 @@ class AIService {
 
             if (integration?.config?.apiKey) {
                 try {
-                    const { decrypt } = require('../utils/encryption');
+                    // Use dynamic import instead of require to fix TS error
+                    const { decrypt } = await import('../utils/encryption');
                     apiKey = decrypt(integration.config.apiKey);
                 } catch {
                     // Fallback: key may be unencrypted legacy data
@@ -46,8 +48,16 @@ class AIService {
             });
 
             return completion.choices[0].message.content || 'No content generated';
-        } catch (error) {
+        } catch (error: any) {
             console.error('OpenAI Error:', error);
+
+            // AUTO-LOCK on 429 (Rate Limit)
+            if (error?.status === 429 || error?.code === 'insufficient_quota') {
+                console.warn('⚠️ OpenAI Rate Limit Hit! Locking AI Service for 10 Hours.');
+                lockManager.lock(10 * 60 * 60 * 1000); // 10 Hours
+                throw new Error('AI Service Rate Limit Exceeded. System Locked for 10 Hours.');
+            }
+
             throw new Error('Failed to generate email');
         }
     }

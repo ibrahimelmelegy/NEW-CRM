@@ -219,8 +219,8 @@ watch(inputValue, () => {
 
 <style lang="scss">
 .avatar-uploader .el-upload {
-  border: 1px dashed #d5c7ff;
-  border-radius: $radius-base;
+  border: 1px dashed var(--color-border-default);
+  border-radius: var(--radius-medium);
   cursor: pointer;
   position: relative;
   overflow: hidden;
@@ -234,7 +234,7 @@ watch(inputValue, () => {
     .el-upload-dragger {
       width: 100% !important;
       height: 100% !important;
-      background-color: #f2edff;
+      background-color: var(--color-neutral-background-2);
     }
   }
 }
@@ -245,10 +245,10 @@ watch(inputValue, () => {
 
 .el-icon.avatar-uploader-icon {
   font-size: 28px;
-  color: #8c939d;
+  color: var(--color-text-disabled);
   text-align: center;
 }
 .el-upload-list__item-thumbnail {
-  border-radius: $radius-base;
+  border-radius: var(--radius-medium);
 }
 </style>

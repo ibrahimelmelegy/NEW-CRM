@@ -5,7 +5,7 @@
     p.text-muted {{ $t('dashboard.projectsOverviewHint') }}
 
   //- First Row: Essential Project Metrics
-  .cards.grid.grid-cols-2.gap-6.mb-8
+  .cards.grid.grid-cols-1.md_grid-cols-2.gap-6.mb-8
     StatisticsCard(
       :name="$t('dashboard.widgets.totalProjects')" 
       :data="projectStats?.firstCards?.[0]?.value || 0" 
@@ -31,7 +31,7 @@
         v-chart.bar-chart(:option="barChartOptions" autoresize)
 
   //- Third Row: Resource Allocations (Pie Charts)
-  .pie-chart.grid.grid-cols-2.gap-6
+  .pie-chart.grid.grid-cols-1.lg_grid-cols-2.gap-6
     el-card.glass-container(v-loading="statsLoading" class="h-[550px]")
       template(#header)
         .flex.items-center.gap-2
@@ -53,6 +53,7 @@
 
 <script lang="ts" setup>
 import VChart from 'vue-echarts';
+import { getProjectOperationsStatics, getBarHorizontalChartData, getPieChartsData, statsLoading } from '@/composables/charts';
 
 const vibrantPalette = ['#F59E0B', '#10B981', '#F97316', '#0EA5E9', '#6366F1', '#F43F5E'];
 
