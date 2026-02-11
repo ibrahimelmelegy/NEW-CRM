@@ -191,7 +191,7 @@ watch(
       &:hover {
         background-color: var(--color-surface-hover) !important;
         transform: translateX(2px);
-        box-shadow: -4px 0 8px rgba(0, 0, 0, 0.1);
+        box-shadow: -4px 0 8px var(--color-surface-hover);
         position: relative;
         z-index: 1;
       }

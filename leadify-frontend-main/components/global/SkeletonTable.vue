@@ -15,7 +15,7 @@ const cellWidths = ['40px', '180px', '120px', '200px', '130px', '180px'];
 
 <style lang="scss" scoped>
 .skeleton-shimmer {
-  background: linear-gradient(90deg, rgba(0, 120, 212, 0.05) 25%, rgba(0, 120, 212, 0.1) 50%, rgba(0, 120, 212, 0.05) 75%);
+  background: linear-gradient(90deg, var(--color-skeleton-base) 25%, var(--color-skeleton-shine) 50%, var(--color-skeleton-base) 75%);
   background-size: 200% 100%;
   animation: shimmer 1.5s infinite linear;
 }

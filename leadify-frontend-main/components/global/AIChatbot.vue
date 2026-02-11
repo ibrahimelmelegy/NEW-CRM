@@ -95,7 +95,7 @@ const sendMessage = async () => {
 
   &:hover {
     transform: translateY(-2px);
-    box-shadow: 0 8px 30px rgba(0, 120, 212, 0.4);
+    box-shadow: 0 8px 30px var(--color-primary-alpha-40);
   }
 }
 
@@ -108,7 +108,7 @@ const sendMessage = async () => {
   display: flex;
   flex-direction: column;
   overflow: hidden;
-  box-shadow: 0 20px 50px rgba(0, 0, 0, 0.3);
+  box-shadow: 0 20px 50px var(--color-surface-overlay);
   border-radius: 20px !important;
 
   @media (max-width: 640px) {

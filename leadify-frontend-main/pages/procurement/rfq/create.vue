@@ -261,15 +261,15 @@ async function submitRFQ() {
 }
 
 // Accent tint utilities (scoped duplicates for Pug class references)
-.bg-purple-500_20 { background: rgba(0, 120, 212, 0.2); }
-.bg-purple-500_10 { background: rgba(0, 120, 212, 0.1); }
+.bg-purple-500_20 { background: var(--color-primary-alpha-20); }
+.bg-purple-500_10 { background: var(--color-primary-alpha-10); }
 
 // All premium-input/select/table classes are now global in _utilities.scss
 
 .premium-pagination {
   :deep(.el-pagination.is-background .el-pager li:not(.is-disabled).is-active) {
     background-color: var(--color-primary) !important;
-    color: #FFFFFF;
+    color: white;
   }
   :deep(.el-pagination.is-background .el-pager li) {
     background-color: var(--color-surface-hover);

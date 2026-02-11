@@ -88,7 +88,7 @@ el-tabs.demo-tabs(v-model="activeName", @tab-click="handleClick")
               p.mb-2(style="color: var(--text-primary)") {{formatDate(client?.updatedAt)}}
     .flex-1.glass-card.p-10.rounded-3xl.mt-6(v-if="client?.fileUpload?.length")
      .flex.items-center.gap-3.mb-6
-      .flex.items-center.justify-center.w-12.h-12.rounded-full(class="!min-w-[48px] !min-h-[48px]" style="background-color: var(--color-primary-alpha-10, rgba(0, 120, 212, 0.1))"): Icon(name="mdi:file-outline" size="24" style="color: var(--color-primary)")
+      .flex.items-center.justify-center.w-12.h-12.rounded-full(class="!min-w-[48px] !min-h-[48px]" style="background-color: var(--color-primary-alpha-10)"): Icon(name="mdi:file-outline" size="24" style="color: var(--color-primary)")
       h4.text-lg.font-semibold(style="color: var(--text-primary)") {{ $t('clients.info.files') }}
      div( class="flex gap-4 flex-wrap items-center")
       button.glass-card.transition-all.duration-200(@click="downloadFile(`https://staging-api.hp-tech.com/assets/${file}`, file)" class="rounded-xl p-4 flex items-center space-x-4 hover:scale-[1.02]" style="border: 1px solid var(--color-border-default)" v-for="file in client?.fileUpload" :key="file")

@@ -773,8 +773,8 @@
 
     &.is-focus {
       border-color: var(--color-primary) !important;
-      background: rgba(0, 120, 212, 0.05) !important;
-      box-shadow: 0 0 0 2px rgba(0, 120, 212, 0.2) !important;
+      background: var(--color-primary-alpha-05) !important;
+      box-shadow: 0 0 0 2px var(--color-primary-alpha-20) !important;
     }
 
     &:hover {
@@ -866,8 +866,8 @@
 
     &:focus {
       border-color: var(--color-primary) !important;
-      background: rgba(0, 120, 212, 0.05) !important;
-      box-shadow: 0 0 0 2px rgba(0, 120, 212, 0.2) !important;
+      background: var(--color-primary-alpha-05) !important;
+      box-shadow: 0 0 0 2px var(--color-primary-alpha-20) !important;
     }
 
     &::placeholder {
@@ -928,15 +928,15 @@
 // ACCENT TINT UTILITIES (Theme-aware)
 // ==========================================
 .bg-primary_10 {
-  background: rgba(0, 120, 212, 0.1);
+  background: var(--color-primary-alpha-10);
 }
 
 .bg-primary_15 {
-  background: rgba(0, 120, 212, 0.15);
+  background: var(--color-primary-alpha-15);
 }
 
 .bg-primary_20 {
-  background: rgba(0, 120, 212, 0.2);
+  background: var(--color-primary-alpha-20);
 }
 
 .bg-pink_10 {
@@ -944,7 +944,7 @@
 }
 
 .border-primary_20 {
-  border-color: rgba(0, 120, 212, 0.2);
+  border-color: var(--color-primary-alpha-20);
 }
 
 .border-pink_20 {
@@ -977,7 +977,7 @@
 // GLOW EFFECTS (Premium buttons)
 // ==========================================
 .glow-purple {
-  box-shadow: 0 0 20px rgba(0, 120, 212, 0.3);
+  box-shadow: 0 0 20px var(--color-primary-alpha-30);
 }
 
 .glow-green {
@@ -1032,7 +1032,7 @@
     align-items: center;
     justify-content: center;
     border-radius: 12px;
-    background: rgba(0, 120, 212, 0.1);
+    background: var(--color-primary-alpha-10);
     color: var(--color-primary);
     font-size: 20px;
   }

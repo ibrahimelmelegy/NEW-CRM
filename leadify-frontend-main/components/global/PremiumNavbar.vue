@@ -336,7 +336,7 @@ onMounted(() => {
       left: -100%;
       width: 100%;
       height: 2px;
-      background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.3), transparent);
+      background: linear-gradient(90deg, transparent, var(--color-border-strong), transparent);
       animation: shine 3s infinite;
     }
   }
@@ -423,7 +423,7 @@ onMounted(() => {
         &:focus {
           outline: none;
           border-color: var(--color-primary);
-          box-shadow: 0 0 0 3px rgba(0, 120, 212, 0.1);
+          box-shadow: 0 0 0 3px var(--color-primary-alpha-10);
           background: var(--color-neutral-background-1);
         }
 
@@ -676,7 +676,7 @@ onMounted(() => {
   bottom: 0;
   left: 0;
   z-index: 2000;
-  background: rgba(0, 0, 0, 0.5);
+  background: var(--color-surface-overlay);
   backdrop-filter: blur(4px);
 
   .drawer-glass-panel {

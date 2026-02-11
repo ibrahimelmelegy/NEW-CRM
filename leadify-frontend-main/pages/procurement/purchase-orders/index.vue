@@ -84,7 +84,7 @@ function handleRowClick(val: any) {
     --el-table-tr-bg-color: transparent;
 
     th.el-table__cell {
-      background: rgba(0, 120, 212, 0.05) !important;
+      background: var(--color-primary-alpha-05) !important;
       color: var(--text-secondary);
       font-weight: 700;
       text-transform: uppercase;
@@ -93,7 +93,7 @@ function handleRowClick(val: any) {
     }
 
     td.el-table__cell {
-      border-bottom: 1px solid rgba(0, 120, 212, 0.05) !important;
+      border-bottom: 1px solid var(--color-border-subtle) !important;
       padding: 16px 0;
     }
 
@@ -105,19 +105,19 @@ function handleRowClick(val: any) {
       padding: 4px 10px;
       border: none;
       &.el-tag--success {
-        background: rgba(16, 185, 129, 0.2);
-        color: #10b981;
-        box-shadow: 0 0 10px rgba(16, 185, 129, 0.2);
+        background: var(--color-success-alpha-10);
+        color: var(--color-success);
+        box-shadow: 0 0 10px var(--color-success-alpha-10);
       }
       &.el-tag--warning {
-        background: rgba(246, 99, 12, 0.2);
-        color: #F7630C;
-        box-shadow: 0 0 10px rgba(246, 99, 12, 0.2);
+        background: var(--color-warning-alpha-10);
+        color: var(--color-warning);
+        box-shadow: 0 0 10px var(--color-warning-alpha-10);
       }
       &.el-tag--danger {
-        background: rgba(239, 68, 68, 0.2);
-        color: #ef4444;
-        box-shadow: 0 0 10px rgba(239, 68, 68, 0.2);
+        background: var(--color-danger-alpha-10);
+        color: var(--color-danger);
+        box-shadow: 0 0 10px var(--color-danger-alpha-10);
       }
     }
   }
@@ -132,9 +132,9 @@ function handleRowClick(val: any) {
 }
 
 .glass-dropdown {
-  background: rgba(30, 18, 48, 0.9) !important;
+  background: var(--glass-bg) !important;
   backdrop-filter: blur(10px);
-  border: 1px solid rgba(0, 120, 212, 0.2);
+  border: 1px solid var(--color-primary-alpha-20);
   border-radius: 12px;
 }
 </style>

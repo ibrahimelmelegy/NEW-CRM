@@ -4,6 +4,7 @@ import dotenv from 'dotenv';
 dotenv.config();
 
 import { lockManager } from './lockManager';
+import Integration from '../integration/integrationModel';
 
 class AIService {
     private openai: OpenAI | null = null;
@@ -16,8 +17,7 @@ class AIService {
 
             if (integration?.config?.apiKey) {
                 try {
-                    // Use dynamic import instead of require to fix TS error
-                    const { decrypt } = await import('../utils/encryption');
+                    const { decrypt } = require('../utils/encryption');
                     apiKey = decrypt(integration.config.apiKey);
                 } catch {
                     // Fallback: key may be unencrypted legacy data

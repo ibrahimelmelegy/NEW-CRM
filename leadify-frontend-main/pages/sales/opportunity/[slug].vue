@@ -115,7 +115,7 @@ el-tabs.demo-tabs(v-model="activeName", @tab-click="handleClick")
               p.mb-2(style="color: var(--text-primary)") {{opportunity?.reasonOfLose}}
       .flex-1.glass-card.p-10.rounded-3xl(v-if="opportunity?.notes")
         .flex.items-center.gap-2.mb-4
-          .flex.items-center.justify-center.w-10.h-10.rounded-full(style="background-color: var(--color-primary-alpha-10, rgba(0, 120, 212, 0.1))"): Icon(name="IconNote" size="24" style="color: var(--color-primary)")
+          .flex.items-center.justify-center.w-10.h-10.rounded-full(style="background-color: var(--color-primary-alpha-10)"): Icon(name="IconNote" size="24" style="color: var(--color-primary)")
           h4.text-lg.font-semibold(style="color: var(--text-primary)") {{ $t('leads.notes') }}
         p.leading-relaxed(style="color: var(--text-primary)") {{opportunity?.notes}}
   el-tab-pane(:label="$t('opportunities.proposal')" , name="proposal")

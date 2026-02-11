@@ -150,14 +150,14 @@ watch(
 }
 
 .icon_READ {
-  background-color: rgba(0, 120, 212, 0.1);
+  background-color: var(--color-primary-alpha-10);
   border-radius: 50%;
   color: var(--color-primary);
 }
 
 .icon_UN_READ {
-  background-color: rgba(255, 183, 45, 0.1);
+  background-color: var(--color-warning-alpha-10);
   border-radius: 50%;
-  color: var(--color-status-warning, #ffb72d);
+  color: var(--color-warning);
 }
 </style>

@@ -1,10 +1,10 @@
 <template lang="pug">
 el-form(  autocomplete="off"   @submit.prevent='onSubmit'   ref="myForm" label-position="top"  :validationSchema="formSchema" )
   .glass-card.m-auto.p-10(class="2xl:w-1/2 w-[90%] ")
-      el-switch.my-4(v-if="!editMode" v-model="switchType", size="large" inline-prompt, style="--el-switch-on-color: #7849FF; --el-switch-off-color: #918E98", :active-text="$t('deals.form.selectClient')", :inactive-text="$t('deals.form.selectLead')")
+      el-switch.my-4(v-if="!editMode" v-model="switchType", size="large" inline-prompt, style="--el-switch-on-color: var(--color-primary); --el-switch-off-color: var(--color-text-disabled)", :active-text="$t('deals.form.selectClient')", :inactive-text="$t('deals.form.selectLead')")
       .flex.justify-between.items-center.mb-6(v-if="switchType")
         h3.text-xl.font-semibold {{ $t('deals.form.clientInfo') }}
-        el-switch.ml-2(v-if="!editMode" v-model="switchValue", size="large" inline-prompt, style="--el-switch-on-color: #7849FF; --el-switch-off-color: #918E98", :active-text="$t('deals.form.existingClient')", :inactive-text="$t('deals.form.newClient')")
+        el-switch.ml-2(v-if="!editMode" v-model="switchValue", size="large" inline-prompt, style="--el-switch-on-color: var(--color-primary); --el-switch-off-color: var(--color-text-disabled)", :active-text="$t('deals.form.existingClient')", :inactive-text="$t('deals.form.newClient')")
       .grid.grid-cols-2.gap-3(v-if="switchType" :key="selectedClient")
         component(:is="isClients" :label="$t('deals.info.client')"  name="leadName" :options="mappedClients" :value="selectedClient?.clientName" @change="getSelectedClient" :disabled="editMode")
         InputText(:label="$t('common.companyName')"  name="leadCompanyName" :value="selectedClient?.companyName" :disabled="editMode" is-form)

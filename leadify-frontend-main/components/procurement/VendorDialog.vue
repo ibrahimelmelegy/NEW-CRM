@@ -304,10 +304,10 @@ async function submit() {
     background: transparent;
   }
   &::-webkit-scrollbar-thumb {
-    background: rgba(0, 120, 212, 0.2);
+    background: var(--color-primary-alpha-20);
     border-radius: 10px;
     &:hover {
-      background: rgba(0, 120, 212, 0.4);
+      background: var(--color-primary-alpha-40);
     }
   }
 }
@@ -323,8 +323,8 @@ async function submit() {
 
     &.is-focus {
       border-color: var(--color-primary) !important;
-      background: rgba(0, 120, 212, 0.05) !important;
-      box-shadow: 0 0 0 2px rgba(0, 120, 212, 0.2) !important;
+      background: var(--color-primary-alpha-05) !important;
+      box-shadow: 0 0 0 2px var(--color-primary-alpha-20) !important;
     }
   }
 
@@ -350,6 +350,6 @@ async function submit() {
 }
 
 .shadow-glow {
-  box-shadow: 0 0 15px rgba(0, 120, 212, 0.3);
+  box-shadow: 0 0 15px var(--color-primary-alpha-30);
 }
 </style>

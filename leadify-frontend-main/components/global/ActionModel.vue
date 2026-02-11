@@ -1,7 +1,7 @@
 <template lang="pug">
 el-dialog(v-model='dialog' width='480' align-center='' class="glass-dialog !rounded-3xl" destroy-on-close)
     .text-center.py-4.px-2
-      .mx-auto.mb-4.w-16.h-16.rounded-2xl.flex.items-center.justify-center(v-if="icon" style="background: rgba(0, 120, 212, 0.1)")
+      .mx-auto.mb-4.w-16.h-16.rounded-2xl.flex.items-center.justify-center(v-if="icon" style="background: var(--color-primary-alpha-10)")
         img.h-10.w-10.object-contain(:src="icon" alt="icon")
       p.text-xl.font-bold.mb-2(style="color: var(--color-text-primary)") {{title}}
       p.text-sm(style="color: var(--color-text-secondary)") {{descriptionOne}}

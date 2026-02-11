@@ -44,10 +44,10 @@ onMounted(() => {
   color: var(--text-primary);
 
   &:hover {
-    background: rgba(0, 120, 212, 0.1);
-    border-color: rgba(0, 120, 212, 0.3);
+    background: var(--color-primary-alpha-10);
+    border-color: var(--color-primary-alpha-30);
     transform: translateY(-2px);
-    box-shadow: 0 4px 12px rgba(0, 120, 212, 0.2);
+    box-shadow: 0 4px 12px var(--color-primary-alpha-20);
   }
 
   span {
@@ -56,12 +56,12 @@ onMounted(() => {
 }
 
 :global(html.light-mode) .lang-toggle {
-    background: rgba(0, 0, 0, 0.03);
-    border-color: rgba(0, 0, 0, 0.08);
-    
+    background: var(--color-surface-hover);
+    border-color: var(--color-border-subtle);
+
     &:hover {
-        background: rgba(0, 120, 212, 0.05);
-        border-color: rgba(0, 120, 212, 0.2);
+        background: var(--color-primary-alpha-05);
+        border-color: var(--color-primary-alpha-20);
     }
 }
 </style>

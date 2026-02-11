@@ -253,10 +253,10 @@ async function submit() {
 }
 
 // Accent tint utilities (scoped duplicates for Pug class references)
-.bg-purple-500_10 { background: rgba(0, 120, 212, 0.1); }
-.bg-purple-500_20 { background: rgba(0, 120, 212, 0.2); }
+.bg-purple-500_10 { background: var(--color-primary-alpha-10); }
+.bg-purple-500_20 { background: var(--color-primary-alpha-20); }
 .bg-pink-500_10 { background: rgba(236, 72, 153, 0.1); }
-.border-purple-500_20 { border-color: rgba(0, 120, 212, 0.2); }
+.border-purple-500_20 { border-color: var(--color-primary-alpha-20); }
 .border-pink-500_20 { border-color: rgba(236, 72, 153, 0.2); }
 .text-white_40 { color: var(--color-text-disabled); }
 

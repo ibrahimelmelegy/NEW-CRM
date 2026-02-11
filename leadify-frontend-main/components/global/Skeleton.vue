@@ -57,19 +57,12 @@ const customStyle = computed(() => {
 
 <style scoped lang="scss">
 .skeleton-loader {
-  background: linear-gradient(90deg, rgba(0, 120, 212, 0.1) 25%, rgba(0, 120, 212, 0.2) 50%, rgba(0, 120, 212, 0.1) 75%);
+  background: linear-gradient(90deg, var(--color-skeleton-base) 25%, var(--color-skeleton-shine) 50%, var(--color-skeleton-base) 75%);
   background-size: 200% 100%;
 
   &.animate-pulse {
     animation: shimmer 1.5s ease-in-out infinite;
   }
-}
-
-// Light mode overrides
-html.light-mode .skeleton-loader,
-body.light-theme .skeleton-loader {
-  background: linear-gradient(90deg, rgba(0, 0, 0, 0.06) 25%, rgba(0, 0, 0, 0.1) 50%, rgba(0, 0, 0, 0.06) 75%);
-  background-size: 200% 100%;
 }
 
 // Variant styles

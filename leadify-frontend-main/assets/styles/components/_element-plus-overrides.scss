@@ -175,8 +175,8 @@
 
     &.is-focus {
       border-color: var(--color-primary) !important;
-      background: rgba(0, 120, 212, 0.05) !important;
-      box-shadow: 0 0 0 2px rgba(0, 120, 212, 0.2) !important;
+      background: var(--color-primary-alpha-05) !important;
+      box-shadow: 0 0 0 2px var(--color-primary-alpha-20) !important;
     }
   }
 
@@ -204,8 +204,8 @@
 
     &:focus {
       border-color: var(--color-primary) !important;
-      background: rgba(0, 120, 212, 0.05) !important;
-      box-shadow: 0 0 0 2px rgba(0, 120, 212, 0.2) !important;
+      background: var(--color-primary-alpha-05) !important;
+      box-shadow: 0 0 0 2px var(--color-primary-alpha-20) !important;
     }
   }
 }
@@ -226,8 +226,8 @@
 
     &.is-focused {
       border-color: var(--color-primary) !important;
-      background: rgba(0, 120, 212, 0.05) !important;
-      box-shadow: 0 0 0 2px rgba(0, 120, 212, 0.2) !important;
+      background: var(--color-primary-alpha-05) !important;
+      box-shadow: 0 0 0 2px var(--color-primary-alpha-20) !important;
     }
   }
 }
@@ -292,7 +292,7 @@
       &:hover {
         background-color: var(--color-surface-hover) !important;
         transform: translateX(2px);
-        box-shadow: -4px 0 8px rgba(0, 0, 0, 0.1);
+        box-shadow: -4px 0 8px var(--color-surface-hover);
         position: relative;
         z-index: 1;
       }

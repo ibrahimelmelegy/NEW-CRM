@@ -108,11 +108,34 @@
   --brand-primary: var(--color-primary);
   --brand-primary-hover: var(--color-primary-hover);
   --shadow-lg: var(--elevation-shadow-16);
-  --shadow-focus: 0 0 0 3px rgba(0, 120, 212, 0.3);
-  --shadow-active: 0 0 0 3px rgba(0, 120, 212, 0.3);
+  --shadow-focus: 0 0 0 3px var(--color-primary-alpha-30);
+  --shadow-active: 0 0 0 3px var(--color-primary-alpha-30);
   --bg-sidebar: var(--color-neutral-background-2);
   --primary-color: var(--color-primary);
   --accent-color: var(--color-primary);
+
+  // ==========================================
+  // PRIMARY ALPHA VARIANTS (For backgrounds, borders, shadows)
+  // ==========================================
+  --color-primary-alpha-05: rgba(0, 120, 212, 0.05);
+  --color-primary-alpha-10: rgba(0, 120, 212, 0.1);
+  --color-primary-alpha-15: rgba(0, 120, 212, 0.15);
+  --color-primary-alpha-20: rgba(0, 120, 212, 0.2);
+  --color-primary-alpha-30: rgba(0, 120, 212, 0.3);
+  --color-primary-alpha-40: rgba(0, 120, 212, 0.4);
+  --color-primary-alpha-50: rgba(0, 120, 212, 0.5);
+
+  --color-accent: #FF7B00;
+  --color-accent-alpha-20: rgba(255, 123, 0, 0.2);
+
+  --color-danger-alpha-10: rgba(209, 52, 56, 0.1);
+  --color-danger-alpha-20: rgba(209, 52, 56, 0.2);
+  --color-success-alpha-10: rgba(16, 124, 16, 0.1);
+  --color-warning-alpha-10: rgba(247, 99, 12, 0.1);
+
+  // Skeleton / loading state colors
+  --color-skeleton-base: rgba(0, 120, 212, 0.1);
+  --color-skeleton-shine: rgba(0, 120, 212, 0.2);
 
   // ==========================================
   // GRADIENT COLORS (For Dashboard Cards)
@@ -184,6 +207,10 @@ html.light-mode {
   --color-surface-selected: rgba(0, 120, 212, 0.1);
   --color-surface-hover: rgba(0, 0, 0, 0.04);
   --color-surface-pressed: rgba(0, 0, 0, 0.08);
+
+  // Skeleton / loading state colors - Light Mode
+  --color-skeleton-base: rgba(0, 0, 0, 0.06);
+  --color-skeleton-shine: rgba(0, 0, 0, 0.1);
 
   // Light mode legacy alias overrides
   --glass-bg: rgba(255, 255, 255, 0.9);

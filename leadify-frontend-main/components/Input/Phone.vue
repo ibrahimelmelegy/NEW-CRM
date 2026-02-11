@@ -117,7 +117,7 @@ watch(
 
   &:focus-within {
     border-color: var(--color-primary) !important;
-    box-shadow: 0 0 0 2px rgba(0, 120, 212, 0.2) !important;
+    box-shadow: 0 0 0 2px var(--color-primary-alpha-20) !important;
   }
 }
 

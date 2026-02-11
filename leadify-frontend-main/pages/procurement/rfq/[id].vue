@@ -157,9 +157,9 @@ async function awardVendor(vendor: any) {
   border-color: var(--color-border-default);
 }
 .bg-purple-500_20 {
-  background: rgba(0, 120, 212, 0.2);
+  background: var(--color-primary-alpha-20);
 }
 .bg-purple-500_10 {
-  background: rgba(0, 120, 212, 0.1);
+  background: var(--color-primary-alpha-10);
 }
 </style>

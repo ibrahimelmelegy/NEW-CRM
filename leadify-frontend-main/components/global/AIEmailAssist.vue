@@ -108,7 +108,7 @@ async function copyToClipboard() {
 
 <style lang="scss">
 .glass-dialog {
-  background: rgba(20, 20, 30, 0.9) !important;
+  background: var(--glass-bg) !important;
   backdrop-filter: blur(20px);
   border: 1px solid var(--color-border-default);
   border-radius: 24px !important;
@@ -127,8 +127,8 @@ async function copyToClipboard() {
 
 .generated-box {
   min-height: 200px;
-  background: rgba(0, 0, 0, 0.2) !important;
-  border: 1px solid rgba(0, 120, 212, 0.2) !important;
+  background: var(--color-surface-hover) !important;
+  border: 1px solid var(--color-primary-alpha-20) !important;
 
   pre {
     color: var(--color-text-primary);
@@ -139,12 +139,12 @@ async function copyToClipboard() {
     position: absolute;
     top: 10px;
     right: 10px;
-    background: rgba(0, 120, 212, 0.1);
-    border: 1px solid rgba(0, 120, 212, 0.3);
-    color: white;
+    background: var(--color-primary-alpha-10);
+    border: 1px solid var(--color-primary-alpha-30);
+    color: var(--color-text-primary);
 
     &:hover {
-      background: rgba(0, 120, 212, 0.2);
+      background: var(--color-primary-alpha-20);
     }
   }
 }

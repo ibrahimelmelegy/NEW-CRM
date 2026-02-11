@@ -283,10 +283,10 @@ async function downloadPDF() {
 }
 
 .bg-red-900_20 {
-  background: rgba(127, 29, 29, 0.2);
+  background: var(--color-danger-alpha-20);
 }
 .border-red-900_30 {
-  border: 1px solid rgba(127, 29, 29, 0.3);
+  border: 1px solid var(--color-danger-alpha-20);
 }
 
 // All premium-table/btn-outline classes are now global in _utilities.scss
@@ -320,9 +320,9 @@ async function downloadPDF() {
 // Theme-aware utilities now in global _utilities.scss
 
 .glow-green {
-  box-shadow: 0 0 20px rgba(16, 185, 129, 0.4);
+  box-shadow: var(--glow-emerald);
 }
 .glow-red {
-  box-shadow: 0 0 20px rgba(239, 68, 68, 0.4);
+  box-shadow: var(--glow-rose);
 }
 </style>

@@ -35,21 +35,18 @@ const getColumnWidth = (index: number): string => {
 
 <style scoped lang="scss">
 .table-skeleton {
-  background: rgba(30, 18, 48, 0.3);
+  background: var(--color-neutral-background-2);
   border-radius: 16px;
   overflow: hidden;
 }
 
-html.light-mode .table-skeleton,
-body.light-theme .table-skeleton {
-  background: rgba(255, 255, 255, 0.5);
-
+html.light-mode .table-skeleton {
   .skeleton-header {
-    border-bottom-color: rgba(0, 0, 0, 0.08);
+    border-bottom-color: var(--color-border-default);
   }
 
   .skeleton-row {
-    border-bottom-color: rgba(0, 0, 0, 0.04);
+    border-bottom-color: var(--color-border-subtle);
   }
 }
 </style>

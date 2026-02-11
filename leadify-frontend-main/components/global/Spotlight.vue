@@ -109,7 +109,7 @@ watch(isOpen, value => {
   align-items: center;
   justify-content: center;
   cursor: pointer;
-  box-shadow: 0 8px 24px rgba(0, 120, 212, 0.4);
+  box-shadow: 0 8px 24px var(--color-primary-alpha-40);
   z-index: 9990;
   transition: all 0.2s ease;
 
@@ -155,7 +155,7 @@ watch(isOpen, value => {
   background: var(--bg-card);
   border: 1px solid var(--border-glass);
   border-radius: 16px;
-  box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
+  box-shadow: 0 25px 50px -12px var(--color-surface-overlay);
   overflow: hidden;
   pointer-events: auto;
   margin: 0 16px;

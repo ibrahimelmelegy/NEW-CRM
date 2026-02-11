@@ -251,13 +251,13 @@ function calculateIndex(index: number) {
 }
 @keyframes rowPulse {
   0% {
-    background: rgba(0, 120, 212, 0);
+    background: transparent;
   }
   50% {
-    background: rgba(0, 120, 212, 0.1);
+    background: var(--color-primary-alpha-10);
   }
   100% {
-    background: rgba(0, 120, 212, 0);
+    background: transparent;
   }
 }
 

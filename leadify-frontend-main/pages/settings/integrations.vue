@@ -71,7 +71,7 @@
     //- OpenAI API
     .glass-card.p-6.integration-card
       .flex.items-center.gap-4.mb-6
-        .icon-box(style="background-color: var(--color-primary-alpha-10, rgba(0, 120, 212, 0.1))")
+        .icon-box(style="background-color: var(--color-primary-alpha-10)")
           Icon(name="logos:openai-icon" size="32")
         div
           h3.text-xl.font-bold {{ $t('integrations.openai.title') }}
@@ -171,7 +171,7 @@ const saveIntegration = async (provider: Provider) => {
     box-shadow 0.3s ease;
   &:hover {
     transform: translateY(-5px);
-    box-shadow: 0 20px 40px rgba(0, 0, 0, 0.2);
+    box-shadow: 0 20px 40px var(--color-surface-overlay);
   }
 }
 

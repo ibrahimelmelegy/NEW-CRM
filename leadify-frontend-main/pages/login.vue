@@ -29,7 +29,7 @@
         <div class="space-y-4">
           <h2 class="text-4xl lg:text-5xl font-bold leading-tight theme-text-primary">
             {{ $t('auth.elevateExperience') }}
-            <span class="text-transparent bg-clip-text bg-gradient-to-r from-[#0078D4] to-[#ff7b00]">{{ $t('auth.experience') }}</span>
+            <span class="text-transparent bg-clip-text bg-gradient-to-r from-[var(--color-primary)] to-[var(--color-accent)]">{{ $t('auth.experience') }}</span>
           </h2>
           <p class="theme-text-secondary text-lg max-w-md leading-relaxed">
             {{ $t('auth.harnessIntelligence') }}
@@ -39,11 +39,11 @@
         <!-- Feature Highlights -->
         <div class="grid grid-cols-2 gap-4 w-full max-w-sm">
           <div class="flex items-center gap-3 p-4 rounded-2xl glass-effect hover:bg-[var(--color-surface-hover)] transition-all duration-300">
-            <div class="p-2 rounded-xl" style="background: rgba(0, 120, 212, 0.2)"><Icon name="ph:lightning-bold" class="text-xl" style="color: var(--color-primary)" /></div>
+            <div class="p-2 rounded-xl" style="background: var(--color-primary-alpha-20)"><Icon name="ph:lightning-bold" class="text-xl" style="color: var(--color-primary)" /></div>
             <span class="text-sm font-medium text-[var(--text-primary)] opacity-90">{{ $t('auth.fastWorkflow') }}</span>
           </div>
           <div class="flex items-center gap-3 p-4 rounded-2xl glass-effect hover:bg-[var(--color-surface-hover)] transition-all duration-300">
-            <div class="p-2 rounded-xl" style="background: rgba(255, 123, 0, 0.2)"><Icon name="ph:chart-line-up-bold" class="text-xl" style="color: #ff7b00" /></div>
+            <div class="p-2 rounded-xl" style="background: var(--color-accent-alpha-20)"><Icon name="ph:chart-line-up-bold" class="text-xl" style="color: var(--color-accent)" /></div>
             <span class="text-sm font-medium text-[var(--text-primary)] opacity-90">{{ $t('auth.smartAnalytics') }}</span>
           </div>
         </div>
@@ -54,7 +54,8 @@
         <div class="glass-card-premium p-8 md:p-12 relative overflow-hidden group">
           <!-- Subtle hover interaction glow -->
           <div
-            class="absolute -top-24 -right-24 w-64 h-64 bg-[#0078D4]/10 rounded-full blur-[80px] group-hover:bg-[#0078D4]/20 transition-all duration-1000"
+            class="absolute -top-24 -right-24 w-64 h-64 rounded-full blur-[80px] transition-all duration-1000"
+            style="background: var(--color-primary-alpha-10)"
           ></div>
 
           <div class="relative z-10">
@@ -117,7 +118,7 @@
                   :loading="loading"
                   native-type="submit"
                   class="login-btn w-full !h-[58px] !rounded-2xl !border-none !text-lg !font-bold !text-white active:scale-[0.98] transition-all"
-                  style="background-color: var(--color-primary); box-shadow: 0 10px 20px -5px rgba(0, 120, 212, 0.5)"
+                  style="background-color: var(--color-primary); box-shadow: 0 10px 20px -5px var(--color-primary-alpha-50)"
                   aria-label="Sign in to your account"
                   :aria-busy="loading"
                 >
@@ -284,7 +285,7 @@ const onSubmit = handleSubmit(async (values: any) => {
       &.is-focus,
       &:hover {
         border-color: var(--brand-primary);
-        background-color: rgba(0, 120, 212, 0.06);
+        background-color: var(--color-primary-alpha-05);
         box-shadow: var(--shadow-active);
       }
     }
@@ -310,14 +311,9 @@ const onSubmit = handleSubmit(async (values: any) => {
     }
 
     .el-checkbox__inner {
-      background-color: rgba(255, 255, 255, 0.05) !important;
-      border-color: rgba(255, 255, 255, 0.1) !important;
+      background-color: var(--color-surface-hover) !important;
+      border-color: var(--color-border-subtle) !important;
       border-radius: 6px;
-
-      :global(html.light-mode) & {
-        background-color: rgba(0, 0, 0, 0.05) !important;
-        border-color: rgba(0, 0, 0, 0.1) !important;
-      }
     }
 
     &.is-checked {
