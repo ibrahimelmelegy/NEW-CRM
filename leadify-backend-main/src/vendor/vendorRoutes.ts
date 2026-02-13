@@ -7,8 +7,7 @@ const router = Router();
 
 // Define routes
 router.post('/', authenticateUser, HasPermission([VendorPermissionsEnum.CREATE_VENDORS]), VendorController.createVendor);
-// router.get('/all', authenticateUser, HasPermission([VendorPermissionsEnum.VIEW_VENDORS]), VendorController.getAllVendors);
-router.get('/all', VendorController.getAllVendors);
+router.get('/all', authenticateUser, HasPermission([VendorPermissionsEnum.VIEW_VENDORS]), VendorController.getAllVendors);
 router.get('/', authenticateUser, HasPermission([VendorPermissionsEnum.VIEW_VENDORS]), VendorController.getVendors);
 router.get('/:id', authenticateUser, HasPermission([VendorPermissionsEnum.VIEW_VENDORS]), VendorController.getVendorById);
 router.put('/:id', authenticateUser, HasPermission([VendorPermissionsEnum.EDIT_VENDORS]), VendorController.updateVendor);

@@ -71,7 +71,7 @@
     "@tiptap/vue-3": "^3.18.0",
     "@vueup/vue-quill": "^1.2.0",
     "axios": "^1.13.4",
-    "echarts": "^6.0.0",
+    "echarts": "^5.5.1",
     "echarts-wordcloud": "^2.1.0",
     "element-plus": "^2.13.2",
     "html2pdf.js": "^0.14.0",

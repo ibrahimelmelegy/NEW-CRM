@@ -42,7 +42,7 @@ OperationsMaterialFormCategoryItem(
 <script lang="ts" setup>
 import { ref, defineExpose } from 'vue';
 import { v4 as uuidv4 } from 'uuid'; // To generate unique IDs
-import { ElMessage } from 'element-plus';
+import { ElMessage, ElMessageBox } from 'element-plus';
 import { Delete, Plus } from '@element-plus/icons-vue';
 
 const props = defineProps({
@@ -89,9 +89,17 @@ async function AddCategoryItem() {
  * @param {string} id - The ID of the category item to delete.
  * @returns {void}
  */
-function onDelete(id: string): void {
-  // Filter out the category item to be deleted from the list of category items
-  categoryItems.value = categoryItems.value.filter((Item: CategoryItem) => Item.id !== id);
+async function onDelete(id: string): Promise<void> {
+  try {
+    await ElMessageBox.confirm('Are you sure you want to remove this item?', 'Warning', {
+      confirmButtonText: 'Confirm',
+      cancelButtonText: 'Cancel',
+      type: 'warning'
+    });
+    categoryItems.value = categoryItems.value.filter((Item: CategoryItem) => Item.id !== id);
+  } catch {
+    // User cancelled
+  }
 }
 
 /**

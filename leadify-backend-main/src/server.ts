@@ -42,7 +42,6 @@ async function runTypoMigration(sequelize: Sequelize) {
       );
 
       if (results.length > 0) {
-        console.log(`[Migration] Renaming 'descripion' to 'description' in ${table}...`);
         await sequelize.query(`ALTER TABLE "${table}" RENAME COLUMN "descripion" TO "description"`);
       }
     } catch (e) {
@@ -52,9 +51,8 @@ async function runTypoMigration(sequelize: Sequelize) {
 }
 
 io.on('connection', (socket) => {
-  console.log('[Socket] New Client Connected:', socket.id);
   socket.on('disconnect', () => {
-    console.log('[Socket] Client Disconnected:', socket.id);
+    // Client disconnected
   });
 });
 
@@ -69,7 +67,6 @@ sequelize
 
     // Synchronize all defined models to the database
     await sequelize.sync({ alter: true });
-    console.log('Database tables created/updated successfully.');
 
     // Start the Server
     server.listen(PORT, () => {
@@ -83,7 +80,7 @@ sequelize
         const ChurnPredictionScheduler = require('./cron/churnPrediction').default;
         ChurnPredictionScheduler.start();
       } catch (e) {
-        console.error("Failed to start Cron Jobs", e);
+        // Cron job initialization failed - silently handled
       }
     });
   })

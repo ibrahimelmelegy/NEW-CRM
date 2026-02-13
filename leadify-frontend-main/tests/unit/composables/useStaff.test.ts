@@ -6,7 +6,7 @@
 
 import { describe, it, expect, vi } from 'vitest';
 import {
-    Staff,
+    type Staff,
     StaffStatusEnums,
     staffStatuses
 } from '@/composables/useStaff';

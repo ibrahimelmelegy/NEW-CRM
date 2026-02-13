@@ -2,10 +2,10 @@
 el-form(  autocomplete="off"   @submit.prevent='onSubmit'   ref="myForm" label-position="top"  :validationSchema="formSchema" )
   slot
   div(:class="{'2xl:w-1/2 w-[90%]  card m-auto glass-card p-10 rounded-3xl': !isModal}")
-    InputText(label="Asset Name" name="name" placeholder="Enter Assets Name" :value="data?.name" )
+    InputText(:label="$t('operations.assets.form.name')" name="name" :placeholder="$t('operations.assets.form.namePlaceholder')" :value="data?.name" )
     .grid.grid-cols-2.gap-3
-      InputText.mt-4(label="Rent Price"  placeholder="Enter Rent Price SAR" name="rentPrice" :value="data?.rentPrice" )
-      InputText.mt-4(label="Buy Price"  placeholder="Enter Buy Price SAR" name="buyPrice" :value="data?.buyPrice" )
+      InputText.mt-4(:label="$t('operations.assets.form.rentPrice')"  :placeholder="$t('operations.assets.form.rentPricePlaceholder')" name="rentPrice" :value="data?.rentPrice" )
+      InputText.mt-4(:label="$t('operations.assets.form.buyPrice')"  :placeholder="$t('operations.assets.form.buyPricePlaceholder')" name="buyPrice" :value="data?.buyPrice" )
   slot(name="modal-footer")
 </template>
 

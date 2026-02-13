@@ -227,31 +227,14 @@ describe('useApiCache.ts', () => {
         });
 
         it('should throw after max retries exceeded', async () => {
-            vi.useFakeTimers();
-
             const mockError = { response: { status: 503 } };
             const mockFn = vi.fn().mockRejectedValue(mockError);
 
-            const resultPromise = withRetry(mockFn, {
-                maxRetries: 2,
-                retryDelay: 100
-            });
-
-            // Advance timers for all retries
-            await vi.advanceTimersByTimeAsync(100); // First retry
-            await vi.advanceTimersByTimeAsync(200); // Second retry (exponential)
-
-            // Wrap in try-catch to handle the error properly
-            try {
-                await resultPromise;
-                expect.fail('Should have thrown an error');
-            } catch (error) {
-                expect(error).toEqual(mockError);
-            }
+            await expect(
+                withRetry(mockFn, { maxRetries: 2, retryDelay: 10 })
+            ).rejects.toEqual(mockError);
 
             expect(mockFn).toHaveBeenCalledTimes(3); // 1 initial + 2 retries
-
-            vi.useRealTimers();
         });
 
         it('should only retry on specified status codes', async () => {

@@ -47,7 +47,6 @@ class AIService {
 
             return completion.choices[0].message.content || 'No content generated';
         } catch (error) {
-            console.error('OpenAI Error:', error);
             throw new Error('Failed to generate email');
         }
     }

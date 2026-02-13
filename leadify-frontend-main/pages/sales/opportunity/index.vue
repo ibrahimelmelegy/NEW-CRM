@@ -4,6 +4,13 @@ div
   .flex.items-center.justify-between.mb-8
     .title.font-bold.text-2xl.mb-1.capitalize {{ $t('opportunities.title') }}
     .flex.items-center.gap-x-3
+      el-button-group
+        el-button(type="primary" size="large" class="!rounded-l-2xl")
+          Icon(name="ph:list-bold" size="18")
+          span.ml-1 {{ $t('kanban.tableView') }}
+        el-button(:type="'default'" size="large" @click="navigateTo('/sales/opportunity/kanban')" class="!rounded-r-2xl")
+          Icon(name="ph:columns-bold" size="18")
+          span.ml-1 {{ $t('kanban.kanbanView') }}
       NuxtLink(to="/sales/opportunity/add-opportunity")
         el-button(size='large' :loading="loading" v-if="hasPermission('CREATE_OPPORTUNITIES')" native-type="submit" type="primary" :icon="Plus" class="w-full !my-4 !rounded-2xl") {{ $t('opportunities.newOpp') }}
       //- el-dropdown(trigger="click")

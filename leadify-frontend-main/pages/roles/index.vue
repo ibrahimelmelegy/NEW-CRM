@@ -2,10 +2,10 @@
 div
   //- Header
   .flex.items-center.justify-between.mb-8
-    .title.font-bold.text-2xl.mb-1.capitalize Role
+    .title.font-bold.text-2xl.mb-1.capitalize {{ $t('roles.title') }}
     .flex.items-center.gap-x-3
       NuxtLink(to="/roles/add-role")
-        el-button(   size='large' :loading="loading" v-if="hasPermission('CREATE_ROLES')" native-type="submit" type="primary" :icon="Plus" class="w-full !my-4 !rounded-2xl")  New Role
+        el-button(   size='large' :loading="loading" v-if="hasPermission('CREATE_ROLES')" native-type="submit" type="primary" :icon="Plus" class="w-full !my-4 !rounded-2xl")  {{ $t('roles.newRole') }}
   AppTable(v-slot="{data}" without-filters without-search :filterOptions="filterOptions" :columns="table.columns" position="role" :pageInfo="response.pagination" :data="table.data" :sortOptions="table.sort" @handleRowClick="handleRowClick" searchPlaceholder="roles" )
     .flex.items-center.py-2(@click.stop)
 
@@ -18,16 +18,17 @@ div
                     el-dropdown-item
                       NuxtLink.flex.items-center(:to="`/roles/${data?.id}`")
                         Icon.text-md.mr-2(name="IconEye" )
-                        p.text-sm View
+                        p.text-sm {{ $t('common.view') }}
                     el-dropdown-item(v-if="hasPermission('EDIT_ROLES')")
                       NuxtLink.flex.items-center(:to="`/roles/edit/${data?.id}`")
                         Icon.text-md.mr-2(name="IconEdit" )
-                        p.text-sm Edit
-  ActionModel(v-model="deleteRolePopup" :loading="loadingAction" btn-text="Move to Archive" description-one="Are you sure you want to delete this Role?" icon="/images/delete-image.png" description-two="It will be archived and can be restored later within 30 days." )
+                        p.text-sm {{ $t('common.edit') }}
+  ActionModel(v-model="deleteRolePopup" :loading="loadingAction" :btn-text="$t('roles.moveToArchive')" :description="$t('roles.deleteConfirm')" icon="/images/delete-image.png" )
 </template>
 
 <script setup lang="ts">
 import { Plus } from '@element-plus/icons-vue';
+const { t } = useI18n();
 const router = useRouter();
 const { hasPermission } = await usePermissions();
 const loadingAction = ref(false);
@@ -37,7 +38,7 @@ const table = reactive({
   columns: [
     {
       prop: 'name',
-      label: 'Role Name',
+      label: t('roles.columns.name'),
       component: 'Text',
       sortable: true,
       type: 'font-bold',
@@ -45,7 +46,7 @@ const table = reactive({
     },
     {
       prop: 'description',
-      label: 'Description',
+      label: t('roles.columns.description'),
       component: 'Text',
       sortable: true,
       type: 'font-default',
@@ -53,7 +54,7 @@ const table = reactive({
     },
     {
       prop: 'totalAssignedUsers',
-      label: 'Total Staff',
+      label: t('roles.columns.totalStaff'),
       component: 'Text',
       sortable: true,
       type: 'font-default',
@@ -61,7 +62,7 @@ const table = reactive({
     },
     {
       prop: 'updatedAt',
-      label: 'Last Modified',
+      label: t('roles.columns.lastModified'),
       component: 'Text',
       sortable: true,
       type: 'font-default',

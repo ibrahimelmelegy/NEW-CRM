@@ -3,11 +3,13 @@ import { wrapResult } from '../utils/response/responseWrapper';
 import leadService from './leadService';
 import { AuthenticatedRequest } from '../types';
 import User from '../user/userModel';
+import { io } from '../server';
 
 class LeadController {
   public async createLead(req: AuthenticatedRequest, res: Response, next: NextFunction): Promise<void> {
     try {
       const responseFromService = await leadService.createLead(req.body, req.user!.id);
+      io.emit('lead:created', { id: responseFromService?.id });
       wrapResult(res, responseFromService, 201);
     } catch (error) {
       next(error);
@@ -17,6 +19,7 @@ class LeadController {
   public async updateLead(req: AuthenticatedRequest, res: Response, next: NextFunction): Promise<void> {
     try {
       const responseFromService = await leadService.updateLead(req.params.id as string, req.body, req.user as User);
+      io.emit('lead:updated', { id: req.params.id });
       wrapResult(res, responseFromService);
     } catch (error) {
       next(error);

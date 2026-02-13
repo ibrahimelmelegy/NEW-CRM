@@ -390,7 +390,21 @@ router.put(
   opportunityController.updateOpportunity
 );
 
+router.patch(
+  '/:id/stage',
+  authenticateUser,
+  HasPermission([OpportunityPermissionsEnum.EDIT_OPPORTUNITIES]),
+  opportunityController.updateOpportunityStage
+);
+
 //** --------------------- GET --------------------- */
+
+router.get(
+  '/kanban',
+  authenticateUser,
+  HasPermission([OpportunityPermissionsEnum.VIEW_GLOBAL_OPPORTUNITIES, OpportunityPermissionsEnum.VIEW_OWN_OPPORTUNITIES]),
+  opportunityController.getKanbanOpportunities
+);
 
 /**
  * @swagger

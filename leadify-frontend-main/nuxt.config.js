@@ -11,6 +11,8 @@ export default defineNuxtConfig({
       },
       link: [
         { rel: 'icon', href: '/images/logo-shape.png' },
+        { rel: 'manifest', href: '/manifest.json' },
+        { rel: 'apple-touch-icon', href: '/images/logo-shape.png' },
         { rel: 'dns-prefetch', href: 'https://fonts.googleapis.com' },
         { rel: 'preconnect', href: 'https://fonts.googleapis.com', crossorigin: '' },
         { rel: 'preconnect', href: 'https://fonts.gstatic.com', crossorigin: '' },

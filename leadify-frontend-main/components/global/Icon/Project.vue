@@ -1,5 +1,5 @@
 <template>
-  <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 20 20" fill="none">
+  <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 20 20" fill="none" aria-label="Project" role="img">
     <path
       d="M10.8416 2.43359L15.7583 4.61693C17.1749 5.24193 17.1749 6.27526 15.7583 6.90026L10.8416 9.08359C10.2833 9.33359 9.3666 9.33359 8.80827 9.08359L3.8916 6.90026C2.47493 6.27526 2.47493 5.24193 3.8916 4.61693L8.80827 2.43359C9.3666 2.18359 10.2833 2.18359 10.8416 2.43359Z"
       stroke="currentColor"

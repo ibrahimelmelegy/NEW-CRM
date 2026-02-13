@@ -10,6 +10,7 @@ import LoginFailure from './models/loginFailureModel';
 import Session from './models/sessionModel';
 import ResetToken from './models/resetTokenModel';
 import PasswordResetLog from './models/passwordResetLogModel';
+import { wrapResult } from '../utils/response/responseWrapper';
 
 dotenv.config();
 
@@ -98,7 +99,7 @@ export const loginUser = async (req: Request, res: Response, next: NextFunction)
       expiresAt: new Date(Date.now() + (Number(process.env.SESSION_EXPIRATION_TIME) || 7) * 24 * 60 * 60 * 1000)
     });
 
-    res.status(200).json({ message: 'Login successful', token });
+    wrapResult(res, { token });
   } catch (error) {
     res.status(500).json({ error: error instanceof Error ? error.message : 'Server error' });
   }
@@ -133,9 +134,8 @@ export const getUserProfile = async (req: Request, res: Response, next: NextFunc
       return;
     }
 
-    res.status(200).json({ user });
+    wrapResult(res, user);
   } catch (error) {
-    console.error('Profile fetch error:', error);
     res.status(500).json({ message: 'Failed to retrieve user data', error: error instanceof Error ? error.message : 'Server error' });
   }
 };
@@ -151,7 +151,7 @@ export const logoutUser = async (req: Request, res: Response, next: NextFunction
     const decoded = jwt.verify(token, SECRET_KEY) as { id: string };
     await Session.destroy({ where: { userId: decoded.id, token } });
 
-    res.status(200).json({ message: 'Logged out successfully' });
+    wrapResult(res, { message: 'Logged out successfully' });
   } catch (error) {
     res.status(500).json({ message: 'Logout failed', error: error instanceof Error ? error.message : 'Server error' });
   }
@@ -194,7 +194,7 @@ export const forgotPassword = async (req: Request, res: Response, next: NextFunc
 
     // await transporter.sendMail(mailOptions);
 
-    res.status(200).json({ message: 'Password reset link sent to your email.', resetLink: resetLink });
+    wrapResult(res, { message: 'Password reset link sent to your email.', resetLink });
   } catch (error) {
     res.status(500).json({ message: 'Something went wrong', error: error instanceof Error ? error.message : 'Server error' });
   }
@@ -243,7 +243,7 @@ export const resetPassword = async (req: Request, res: Response, next: NextFunct
 
     // await transporter.sendMail(mailOptions);
 
-    res.status(200).json({ message: 'Password reset successfully' });
+    wrapResult(res, { message: 'Password reset successfully' });
   } catch (error) {
     res.status(500).json({ message: 'Something went wrong', error: error instanceof Error ? error.message : 'Server error' });
   }
@@ -266,7 +266,7 @@ export const checkResetToken = async (req: Request, res: Response, next: NextFun
       return;
     }
 
-    res.status(200).json({ message: 'Token is valid', userId: decoded.id });
+    wrapResult(res, { message: 'Token is valid', userId: decoded.id });
   } catch (error) {
     res.status(400).json({ message: 'Invalid or expired token', error: error instanceof Error ? error.message : 'Server error' });
   }

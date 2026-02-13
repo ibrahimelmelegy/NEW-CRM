@@ -127,7 +127,7 @@ class RoleService {
     return role;
   }
 
-  public async getPremissions(): Promise<any> {
+  public async getPermissions(): Promise<any> {
     return getPermissionsGroupedByName();
   }
 }

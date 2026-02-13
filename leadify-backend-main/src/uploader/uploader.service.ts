@@ -51,9 +51,6 @@ class UploaderService {
       // Move file to destination using a promise wrapper for async/await
       await this.moveFile(input, join(uploadPath, filePath));
 
-      // Log successful file upload
-      console.log(`File uploaded successfully: ${filePath}`);
-
       // Save the file details to the database
       await Uploader.create({
         name: input.name,
@@ -63,7 +60,6 @@ class UploaderService {
 
       return filePath;
     } catch (error) {
-      console.error(`Error uploading file: ${(<any>error).message}`);
       throw new BaseError(ERRORS.FILE_ERROR); // Handle specific file upload errors
     }
   }
@@ -86,9 +82,7 @@ class UploaderService {
         name: { [Op.in]: paths }
       }
     });
-    //disable it for testing
-    //TODO : enable on production
-    //if (files.length !== paths.length) throw new BaseError(ERRORS.FILE_ERROR);
+    if (files.length !== paths.length) throw new BaseError(ERRORS.FILE_ERROR);
 
     await Uploader.update(
       { hasReference: true },

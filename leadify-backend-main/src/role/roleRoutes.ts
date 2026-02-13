@@ -120,21 +120,21 @@ router.put('/:id', authenticateUser, HasPermission([RolePermissionsEnum.EDIT_ROL
 
 /**
  * @swagger
- * /api/role/premissions:
+ * /api/role/permissions:
  *   get:
- *     summary: Get all premissions
+ *     summary: Get all permissions
  *     tags: [Role]
  *     security:
  *       - bearerAuth: []
  *     responses:
  *       200:
- *         description: List of premissions
+ *         description: List of permissions
  *       400:
  *         description: Bad Request
  *       500:
  *         description: Internal Server Error
  */
-router.get('/premissions', authenticateUser, HasPermission([RolePermissionsEnum.VIEW_ROLES]), roleController.getPremissions);
+router.get('/permissions', authenticateUser, HasPermission([RolePermissionsEnum.VIEW_ROLES]), roleController.getPermissions);
 
 /**
  * @swagger

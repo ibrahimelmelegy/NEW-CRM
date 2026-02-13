@@ -45,6 +45,10 @@ const crumbs = computed(() => {
 <style lang="scss">
 ol {
   list-style: none;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  max-width: 100%;
 
   li {
     display: inline;
@@ -62,6 +66,15 @@ ol {
 
     a {
       color: var(--text-primary);
+    }
+
+    span {
+      max-width: 150px;
+      display: inline-block;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+      vertical-align: bottom;
     }
   }
 }

@@ -391,7 +391,21 @@ router.post('/update', authenticateUser, HasPermission([DealPermissionsEnum.EDIT
 
 //** --------------------- PUT --------------------- */
 
+router.patch(
+  '/stage',
+  authenticateUser,
+  HasPermission([DealPermissionsEnum.EDIT_DEALS]),
+  dealController.updateDealStage
+);
+
 //** --------------------- GET --------------------- */
+
+router.get(
+  '/kanban',
+  authenticateUser,
+  HasPermission([DealPermissionsEnum.VIEW_GLOBAL_DEALS, DealPermissionsEnum.VIEW_OWN_DEALS]),
+  dealController.getKanbanDeals
+);
 
 /**
  * @swagger

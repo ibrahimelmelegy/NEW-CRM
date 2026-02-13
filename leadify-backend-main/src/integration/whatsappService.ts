@@ -1,4 +1,3 @@
-import axios from 'axios';
 import Integration from '../integration/integrationModel';
 
 class WhatsAppService {
@@ -9,23 +8,25 @@ class WhatsAppService {
         const { phoneNumberId, accessToken } = integration.config;
         const url = `https://graph.facebook.com/v17.0/${phoneNumberId}/messages`;
 
-        const response = await axios.post(
-            url,
-            {
+        const response = await fetch(url, {
+            method: 'POST',
+            headers: {
+                Authorization: `Bearer ${accessToken}`,
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
                 messaging_product: 'whatsapp',
                 to,
                 type: 'text',
                 text: { body: message }
-            },
-            {
-                headers: {
-                    Authorization: `Bearer ${accessToken}`,
-                    'Content-Type': 'application/json'
-                }
-            }
-        );
+            })
+        });
 
-        return response.data;
+        if (!response.ok) {
+            throw new Error(`WhatsApp API error: ${response.status}`);
+        }
+
+        return response.json();
     }
 }
 

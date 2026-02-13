@@ -24,134 +24,136 @@ el-dialog(
       //- Business Details
       .section-header.flex.items-center.gap-2.mb-4
         Icon(name="ph:briefcase-bold" class="text-blue-400 text-xl")
-        span.font-bold.text-lg.text-white Business Details
+        span.font-bold.text-lg.text-white {{ $t('vendors.dialog.businessDetails') }}
 
       .grid.grid-cols-2.gap-4.mb-4
-        el-form-item(prop="name", :rules="[{ required: true, message: 'Name is required' }]", class="col-span-2")
+        el-form-item(prop="name", :rules="[{ required: true, message: $t('vendors.dialog.nameRequired') }]", class="col-span-2")
           template(#label)
-            span.text-xs.uppercase.tracking-wider.font-semibold.text-muted Company Name
+            span.text-xs.uppercase.tracking-wider.font-semibold.text-muted {{ $t('vendors.dialog.companyName') }}
           el-input(
-            v-model="form.name", 
-            placeholder="Official Company Name",
+            v-model="form.name",
+            :placeholder="$t('vendors.dialog.companyNamePlaceholder')",
             class="premium-input"
           )
             template(#prefix)
                 Icon(name="ph:buildings-bold" class="text-purple-400")
-      
-      .grid.grid-cols-2.gap-4.mb-6
-        el-form-item(label="Service Type")
-           template(#label)
-             span.text-xs.uppercase.tracking-wider.font-semibold.text-muted Service Type
-           el-select(v-model="form.serviceType" placeholder="Select Type" class="premium-select w-full")
-             el-option(label="Hardware" value="Hardware")
-             el-option(label="Software" value="Software")
-             el-option(label="Both (Hardware & Software)" value="Both")
 
-        el-form-item(label="Brands")
+      .grid.grid-cols-2.gap-4.mb-6
+        el-form-item(:label="$t('vendors.dialog.serviceType')")
            template(#label)
-             span.text-xs.uppercase.tracking-wider.font-semibold.text-muted Brands
+             span.text-xs.uppercase.tracking-wider.font-semibold.text-muted {{ $t('vendors.dialog.serviceType') }}
+           el-select(v-model="form.serviceType" :placeholder="$t('vendors.dialog.selectType')" class="premium-select w-full")
+             el-option(:label="$t('vendors.dialog.hardware')" value="Hardware")
+             el-option(:label="$t('vendors.dialog.software')" value="Software")
+             el-option(:label="$t('vendors.dialog.both')" value="Both")
+
+        el-form-item(:label="$t('vendors.dialog.brands')")
+           template(#label)
+             span.text-xs.uppercase.tracking-wider.font-semibold.text-muted {{ $t('vendors.dialog.brands') }}
            el-select(
-             v-model="form.brands" 
-             multiple 
-             filterable 
-             allow-create 
+             v-model="form.brands"
+             multiple
+             filterable
+             allow-create
              default-first-option
-             placeholder="Add Brands..." 
+             :placeholder="$t('vendors.dialog.addBrands')"
              class="premium-select w-full"
            )
 
       .grid.grid-cols-2.gap-4.mb-6
-        el-form-item(label="Tax ID Number", prop="taxId")
+        el-form-item(:label="$t('vendors.dialog.taxId')", prop="taxId")
           template(#label)
-            span.text-xs.uppercase.tracking-wider.font-semibold.text-muted Tax ID Number
-          el-input(v-model="form.taxId", placeholder="e.g. 123-456-789", class="premium-input")
+            span.text-xs.uppercase.tracking-wider.font-semibold.text-muted {{ $t('vendors.dialog.taxId') }}
+          el-input(v-model="form.taxId", :placeholder="$t('vendors.dialog.taxIdPlaceholder')", class="premium-input")
             template(#prefix)
                Icon(name="ph:hash-bold" class="text-purple-400")
-        
-        el-form-item(label="C.R. Number", prop="commercialRegistration")
+
+        el-form-item(:label="$t('vendors.dialog.crNumber')", prop="commercialRegistration")
           template(#label)
-            span.text-xs.uppercase.tracking-wider.font-semibold.text-muted C.R. Number
-          el-input(v-model="form.commercialRegistration", placeholder="Registration #", class="premium-input")
+            span.text-xs.uppercase.tracking-wider.font-semibold.text-muted {{ $t('vendors.dialog.crNumber') }}
+          el-input(v-model="form.commercialRegistration", :placeholder="$t('vendors.dialog.crPlaceholder')", class="premium-input")
 
       //- Contact Details
       .section-header.flex.items-center.gap-2.mb-4.mt-8
         Icon(name="ph:phone-bold" class="text-green-400 text-xl")
-        span.font-bold.text-lg.text-white Contact Information
+        span.font-bold.text-lg.text-white {{ $t('vendors.dialog.contactInfo') }}
 
       .grid.grid-cols-2.gap-4.mb-4
-        el-form-item(label="Phone Number", prop="phone")
+        el-form-item(:label="$t('vendors.dialog.phone')", prop="phone")
           template(#label)
-            span.text-xs.uppercase.tracking-wider.font-semibold.text-muted Phone Number
-          el-input(v-model="form.phone", placeholder="+966 50 000 0000", class="premium-input")
+            span.text-xs.uppercase.tracking-wider.font-semibold.text-muted {{ $t('vendors.dialog.phone') }}
+          el-input(v-model="form.phone", :placeholder="$t('vendors.dialog.phonePlaceholder')", class="premium-input")
             template(#prefix)
                 Icon(name="ph:phone" class="text-green-400")
 
-        el-form-item(label="Email", prop="email")
+        el-form-item(:label="$t('vendors.dialog.email')", prop="email")
           template(#label)
-            span.text-xs.uppercase.tracking-wider.font-semibold.text-muted Email
-          el-input(v-model="form.email", placeholder="example@domain.com", class="premium-input")
+            span.text-xs.uppercase.tracking-wider.font-semibold.text-muted {{ $t('vendors.dialog.email') }}
+          el-input(v-model="form.email", :placeholder="$t('vendors.dialog.emailPlaceholder')", class="premium-input")
              template(#prefix)
                 Icon(name="ph:envelope-simple" class="text-blue-400")
 
       //- Principal Contact
       .grid.grid-cols-2.gap-4.mb-4
-         el-form-item(label="Contact First Name")
+         el-form-item(:label="$t('vendors.dialog.contactFirstName')")
            template(#label)
-              span.text-xs.uppercase.tracking-wider.font-semibold.text-muted Contact First Name
-           el-input(v-model="form.firstName", placeholder="First Name", class="premium-input")
+              span.text-xs.uppercase.tracking-wider.font-semibold.text-muted {{ $t('vendors.dialog.contactFirstName') }}
+           el-input(v-model="form.firstName", :placeholder="$t('vendors.dialog.firstNamePlaceholder')", class="premium-input")
 
-         el-form-item(label="Contact Last Name")
+         el-form-item(:label="$t('vendors.dialog.contactLastName')")
            template(#label)
-              span.text-xs.uppercase.tracking-wider.font-semibold.text-muted Contact Last Name
-           el-input(v-model="form.lastName", placeholder="Last Name", class="premium-input")
+              span.text-xs.uppercase.tracking-wider.font-semibold.text-muted {{ $t('vendors.dialog.contactLastName') }}
+           el-input(v-model="form.lastName", :placeholder="$t('vendors.dialog.lastNamePlaceholder')", class="premium-input")
 
 
       //- Address Section
       .section-header.flex.items-center.gap-2.mb-4.mt-8
         Icon(name="ph:map-pin-bold" class="text-red-400 text-xl")
-        span.font-bold.text-lg.text-white Address
+        span.font-bold.text-lg.text-white {{ $t('vendors.dialog.address') }}
 
       .grid.grid-cols-1.gap-4.mb-4
-        el-form-item(label="Street Address")
+        el-form-item(:label="$t('vendors.dialog.street')")
           template(#label)
-             span.text-xs.uppercase.tracking-wider.font-semibold.text-muted Street Address
-          el-input(v-model="form.address.street", placeholder="Street name", class="premium-input")
+             span.text-xs.uppercase.tracking-wider.font-semibold.text-muted {{ $t('vendors.dialog.street') }}
+          el-input(v-model="form.address.street", :placeholder="$t('vendors.dialog.streetPlaceholder')", class="premium-input")
 
-        el-form-item(label="Street Address Line 2")
+        el-form-item(:label="$t('vendors.dialog.street2')")
           template(#label)
-             span.text-xs.uppercase.tracking-wider.font-semibold.text-muted Street Address Line 2
-          el-input(v-model="form.address.street2", placeholder="Appt, Suite, etc.", class="premium-input")
+             span.text-xs.uppercase.tracking-wider.font-semibold.text-muted {{ $t('vendors.dialog.street2') }}
+          el-input(v-model="form.address.street2", :placeholder="$t('vendors.dialog.street2Placeholder')", class="premium-input")
 
       .grid.grid-cols-3.gap-4.mb-4
-         el-form-item(label="City")
+         el-form-item(:label="$t('vendors.dialog.city')")
            template(#label)
-              span.text-xs.uppercase.tracking-wider.font-semibold.text-muted City
-           el-input(v-model="form.address.city", placeholder="City", class="premium-input")
-         
-         el-form-item(label="State / Province")
-           template(#label)
-              span.text-xs.uppercase.tracking-wider.font-semibold.text-muted State / Province
-           el-input(v-model="form.address.state", placeholder="State", class="premium-input")
+              span.text-xs.uppercase.tracking-wider.font-semibold.text-muted {{ $t('vendors.dialog.city') }}
+           el-input(v-model="form.address.city", :placeholder="$t('vendors.dialog.cityPlaceholder')", class="premium-input")
 
-         el-form-item(label="Postal / Zip Code")
+         el-form-item(:label="$t('vendors.dialog.state')")
            template(#label)
-              span.text-xs.uppercase.tracking-wider.font-semibold.text-muted Postal / Zip Code
-           el-input(v-model="form.address.zip", placeholder="Zip Code", class="premium-input")
+              span.text-xs.uppercase.tracking-wider.font-semibold.text-muted {{ $t('vendors.dialog.state') }}
+           el-input(v-model="form.address.state", :placeholder="$t('vendors.dialog.statePlaceholder')", class="premium-input")
+
+         el-form-item(:label="$t('vendors.dialog.zip')")
+           template(#label)
+              span.text-xs.uppercase.tracking-wider.font-semibold.text-muted {{ $t('vendors.dialog.zip') }}
+           el-input(v-model="form.address.zip", :placeholder="$t('vendors.dialog.zipPlaceholder')", class="premium-input")
 
   template(#footer)
     .flex.justify-end.gap-4.pb-4.px-4.border-t.border-white.border-opacity-10.pt-4
-      el-button(@click="visible = false", class="premium-btn-outline !rounded-xl px-8") Cancel
+      el-button(@click="visible = false", class="premium-btn-outline !rounded-xl px-8") {{ $t('vendors.dialog.cancel') }}
       el-button(
-        type="primary", 
-        :loading="loading", 
-        @click="submit", 
+        type="primary",
+        :loading="loading",
+        @click="submit",
         class="premium-btn !rounded-xl px-12 glow-purple"
-      ) {{ vendor ? 'Save Changes' : 'Create Entity' }}
+      ) {{ vendor ? $t('vendors.dialog.saveChanges') : $t('vendors.dialog.createEntity') }}
 
 </template>
 
 <script setup lang="ts">
 import { ElNotification } from 'element-plus';
+import { useI18n } from 'vue-i18n';
+const { t } = useI18n();
 
 const props = defineProps({
   modelValue: Boolean,
@@ -170,16 +172,16 @@ const visible = computed({
 const formRef = ref();
 const loading = ref(false);
 
-const entityTypes = [
-  { label: 'Vendor', value: 'Vendor' },
-  { label: 'Distributor', value: 'Distributor' },
-  { label: 'Local Supplier', value: 'LocalSupplier' },
-  { label: 'Showroom', value: 'Showroom' }
-];
+const entityTypes = computed(() => [
+  { label: t('vendors.dialog.entityTypes.vendor'), value: 'Vendor' },
+  { label: t('vendors.dialog.entityTypes.distributor'), value: 'Distributor' },
+  { label: t('vendors.dialog.entityTypes.localSupplier'), value: 'LocalSupplier' },
+  { label: t('vendors.dialog.entityTypes.showroom'), value: 'Showroom' }
+]);
 
 const dialogTitle = computed(() => {
-  if (props.vendor) return 'Edit Entity Details';
-  return 'Create New Entity';
+  if (props.vendor) return t('vendors.dialog.editTitle');
+  return t('vendors.dialog.createTitle');
 });
 
 const form = reactive({
@@ -250,24 +252,24 @@ async function submit() {
     const method = props.vendor ? 'PUT' : 'POST';
 
     const res = await useApiFetch(url, method, form);
-    if (!res.success) throw new Error(res.message || 'Failed to save');
+    if (!res.success) throw new Error(res.message || t('vendors.dialog.saveFailed'));
 
     // Check if created type matches the current filter context
     if (props.type && form.type && props.type !== form.type) {
       ElNotification({
-        title: 'Saved',
+        title: t('common.success'),
         type: 'warning',
-        message: `Entity saved as ${form.type}. Switch tab to view it.`,
+        message: t('vendors.dialog.savedAs', { type: form.type }),
         duration: 5000
       });
     } else {
-      ElNotification({ title: 'Success', type: 'success', message: 'Saved successfully' });
+      ElNotification({ title: t('common.success'), type: 'success', message: t('vendors.dialog.savedSuccess') });
     }
 
     emit('success');
     visible.value = false;
   } catch (error) {
-    ElNotification({ title: 'Error', type: 'error', message: 'Failed to save' });
+    ElNotification({ title: t('common.error'), type: 'error', message: t('vendors.dialog.saveFailed') });
   } finally {
     loading.value = false;
   }

@@ -4,11 +4,11 @@ el-form(  autocomplete="off"   @submit.prevent='onSubmit'   ref="myForm" label-p
   div(:class="{'2xl:w-1/2 w-[90%]  card m-auto glass-card p-10 rounded-3xl': !isModal}")
     .grid.grid-cols-2.gap-3
       InputText.mt-4(:label="$t('operations.vehicle.form.plateNumber')"  :placeholder="$t('operations.vehicle.form.enterPlate')" name="plate" :value="data?.plate" )
-      InputSelect.mt-4(label=" Manufacturer" name="manufacturer" :options="manufacturers" :value="data?.manufacturer" )
+      InputSelect.mt-4(:label="$t('operations.vehicle.form.manufacturer')" name="manufacturer" :options="manufacturers" :value="data?.manufacturer" )
       InputText.mt-4(:label="$t('operations.vehicle.form.name')"  :placeholder="$t('operations.vehicle.form.enterName')" name="rentCost" :value="data?.rentCost" )
-      InputText.mt-4(label="Gas Cost"  placeholder="Enter Gas Cost SAR" name="gasCost" :value="data?.gasCost" )
-      InputText.mt-4(label="Oil Cost"  placeholder="Enter Oil Cost SAR" name="oilCost" :value="data?.oilCost" )
-      InputText.mt-4(label="Regular Maintenance Cost"  placeholder="Enter Regular Maintenance Cost SAR" name="regularMaintenanceCost" :value="data?.regularMaintenanceCost" )
+      InputText.mt-4(:label="$t('operations.vehicle.form.gasCost')"  :placeholder="$t('operations.vehicle.form.gasCostPlaceholder')" name="gasCost" :value="data?.gasCost" )
+      InputText.mt-4(:label="$t('operations.vehicle.form.oilCost')"  :placeholder="$t('operations.vehicle.form.oilCostPlaceholder')" name="oilCost" :value="data?.oilCost" )
+      InputText.mt-4(:label="$t('operations.vehicle.form.regularMaintenanceCost')"  :placeholder="$t('operations.vehicle.form.regularMaintenanceCostPlaceholder')" name="regularMaintenanceCost" :value="data?.regularMaintenanceCost" )
   slot(name="modal-footer")
 </template>
 

@@ -35,7 +35,6 @@ class VendorService {
     }
 
     async getVendors(query: any): Promise<any> {
-        console.log('DEBUG: getVendors query:', query);
         const { page = 1, limit = 10, searchKey } = query;
         const offset = (Number(page) - 1) * Number(limit);
 

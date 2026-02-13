@@ -50,6 +50,24 @@ class OpportunityController {
     }
   }
 
+  public async getKanbanOpportunities(req: AuthenticatedRequest, res: Response, next: NextFunction): Promise<void> {
+    try {
+      const responseFromService = await opportunityService.getKanbanOpportunities(req.user as User);
+      wrapResult(res, responseFromService);
+    } catch (error) {
+      next(error);
+    }
+  }
+
+  public async updateOpportunityStage(req: AuthenticatedRequest, res: Response, next: NextFunction): Promise<void> {
+    try {
+      const responseFromService = await opportunityService.updateOpportunityStage(req.params.id as string, req.body.stage, req.user as User);
+      wrapResult(res, responseFromService);
+    } catch (error) {
+      next(error);
+    }
+  }
+
   public async sendOpportunitiesExcelByEmail(req: AuthenticatedRequest, res: Response, next: NextFunction): Promise<void> {
     try {
       await opportunityService.sendOpportunitiesExcelByEmail(req.query, req.user as User, req.params.email as string);

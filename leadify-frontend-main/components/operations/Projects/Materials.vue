@@ -27,6 +27,7 @@ import { useForm } from 'vee-validate';
 import * as yup from 'yup';
 import { ref, computed, onMounted } from 'vue';
 import { Plus } from '@element-plus/icons-vue';
+import { ElMessageBox } from 'element-plus';
 
 const props = defineProps({
   loading: Boolean,
@@ -330,8 +331,17 @@ function getMaterialMargin(val: any) {
 
 getMaterial();
 
-function deleteMaterial(id: number) {
-  materials.value = materials.value.filter((material: Material) => material.id !== id);
-  getMaterial();
+async function deleteMaterial(id: number) {
+  try {
+    await ElMessageBox.confirm(t('common.deleteConfirm'), t('common.warning'), {
+      confirmButtonText: t('common.confirm'),
+      cancelButtonText: t('common.cancel'),
+      type: 'warning'
+    });
+    materials.value = materials.value.filter((material: Material) => material.id !== id);
+    getMaterial();
+  } catch {
+    // User cancelled
+  }
 }
 </script>

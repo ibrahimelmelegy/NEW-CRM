@@ -2,35 +2,35 @@
 .p-6.animate-entrance
   .flex.items-center.justify-between.mb-10
     .header-content
-      .title.font-bold.text-3xl.mb-2.text-gradient Procurement Analytics
-      .subtitle.text-muted.text-sm.tracking-wide Real-time insights into your supply chain
-  
+      .title.font-bold.text-3xl.mb-2.text-gradient {{ $t('procurement.statistics.title') }}
+      .subtitle.text-muted.text-sm.tracking-wide {{ $t('procurement.statistics.subtitle') }}
+
   //- KPI Cards
   .grid.grid-cols-1.md.grid-cols-3.gap-8.mb-10
     .glass-card.p-8.relative.overflow-hidden.hover-translate-y
       .flex.items-center.justify-between
         div
-          .text-muted.text-xs.uppercase.font-black.tracking-widest.mb-2 Total POs
+          .text-muted.text-xs.uppercase.font-black.tracking-widest.mb-2 {{ $t('procurement.statistics.totalPOs') }}
           .text-4xl.font-black.text-white {{ stats.kpi.totalPos }}
-          .text-xs.text-purple-400.mt-2 Lifetime volume
+          .text-xs.text-purple-400.mt-2 {{ $t('procurement.statistics.lifetimeVolume') }}
         .icon-box.bg-purple-500_20.p-4.rounded-2xl
           Icon(name="ph:shopping-cart-bold" class="text-3xl text-purple-400")
-    
+
     .glass-card.p-8.relative.overflow-hidden.hover-translate-y
       .flex.items-center.justify-between
         div
-          .text-muted.text-xs.uppercase.font-black.tracking-widest.mb-2 Total Expenditure
+          .text-muted.text-xs.uppercase.font-black.tracking-widest.mb-2 {{ $t('procurement.statistics.totalExpenditure') }}
           .text-4xl.font-black.text-gradient {{ formatCurrency(stats.kpi.totalSpend) }}
-          .text-xs.text-orange-400.mt-2 Total committed spend
+          .text-xs.text-orange-400.mt-2 {{ $t('procurement.statistics.totalCommittedSpend') }}
         .icon-box.bg-orange-500_20.p-4.rounded-2xl
           Icon(name="ph:currency-circle-dollar-bold" class="text-3xl text-orange-400")
-    
+
     .glass-card.p-8.relative.overflow-hidden.hover-translate-y
       .flex.items-center.justify-between
         div
-          .text-muted.text-xs.uppercase.font-black.tracking-widest.mb-2 Pending Queue
+          .text-muted.text-xs.uppercase.font-black.tracking-widest.mb-2 {{ $t('procurement.statistics.pendingQueue') }}
           .text-4xl.font-black.text-white {{ stats.kpi.pendingCount }}
-          .text-xs.text-pink-400.mt-2 Needs attention
+          .text-xs.text-pink-400.mt-2 {{ $t('procurement.statistics.needsAttention') }}
         .icon-box.bg-pink-500_20.p-4.rounded-2xl
           Icon(name="ph:clock-countdown-bold" class="text-3xl text-pink-400")
 
@@ -39,14 +39,14 @@
     .glass-card.p-8
       .flex.items-center.gap-4.mb-8
         Icon(name="ph:chart-pie-slice-bold" class="text-purple-400 text-xl")
-        span.font-bold.text-muted.uppercase.tracking-widest.text-xs Top Suppliers by Volume
+        span.font-bold.text-muted.uppercase.tracking-widest.text-xs {{ $t('procurement.statistics.topSuppliers') }}
       client-only
         v-chart(:option="vendorChartOption", style="height: 350px", autoresize)
     
     .glass-card.p-8
       .flex.items-center.gap-4.mb-8
         Icon(name="ph:chart-line-up-bold" class="text-orange-400 text-xl")
-        span.font-bold.text-muted.uppercase.tracking-widest.text-xs Procurement Trend (6 Months)
+        span.font-bold.text-muted.uppercase.tracking-widest.text-xs {{ $t('procurement.statistics.procurementTrend') }}
       client-only
         v-chart(:option="monthlyChartOption", style="height: 350px", autoresize)
 
@@ -54,25 +54,25 @@
   .glass-card.p-8
       .flex.items-center.gap-4.mb-6
         Icon(name="ph:list-dashes-bold" class="text-blue-400 text-xl")
-        span.font-bold.text-muted.uppercase.tracking-widest.text-xs Recent Transactions
+        span.font-bold.text-muted.uppercase.tracking-widest.text-xs {{ $t('procurement.statistics.recentTransactions') }}
 
       el-table(:data="stats.recentTransactions" style="width: 100%" class="premium-table")
-        el-table-column(prop="poNumber" label="PO Number" width="180")
+        el-table-column(prop="poNumber" :label="$t('procurement.statistics.poNumber')" width="180")
           template(#default="{row}")
              span.font-bold.text-white {{ row.poNumber }}
-        el-table-column(label="Vendor" width="250")
+        el-table-column(:label="$t('procurement.statistics.vendor')" width="250")
           template(#default="{row}")
              .flex.items-center.gap-3
                .w-8.h-8.rounded-full.bg-purple-500_20.flex.items-center.justify-center.text-purple-400.font-bold.text-xs
                   | {{ row.Vendor?.name?.charAt(0) || '?' }}
                span.text-gray-300 {{ row.Vendor?.name || 'Unknown' }}
-        el-table-column(prop="totalAmount" label="Amount")
+        el-table-column(prop="totalAmount" :label="$t('procurement.statistics.amount')")
            template(#default="{row}")
               span.font-mono {{ formatCurrency(row.totalAmount) }}
-        el-table-column(prop="status" label="Status")
+        el-table-column(prop="status" :label="$t('procurement.statistics.status')")
            template(#default="{row}")
               span.px-3.py-1.rounded-full.text-xs.font-bold(:class="getStatusClass(row.status)") {{ row.status }}
-        el-table-column(prop="createdAt" label="Date")
+        el-table-column(prop="createdAt" :label="$t('procurement.statistics.date')")
            template(#default="{row}")
               span.text-xs.text-muted {{ new Date(row.createdAt).toLocaleDateString() }}
 
@@ -105,7 +105,7 @@ onMounted(async () => {
       stats.value = response as any;
     }
   } catch (e) {
-    console.error('Failed to fetch statistics', e);
+    // Failed to fetch statistics - silently handle
   } finally {
     loading.value = false;
   }

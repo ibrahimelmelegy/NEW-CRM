@@ -225,9 +225,7 @@ async function submit() {
   loading.value = true;
   try {
     const payload = { ...form, totalAmount: grandTotal.value };
-    console.log('DEBUG: Sending PO Payload:', JSON.parse(JSON.stringify(payload)));
     const res = await useApiFetch('procurement', 'POST', payload);
-    console.log('DEBUG: PO Creation Response:', res);
 
     if (!res || !res.success) {
       throw new Error(res?.message || 'Unknown error during creation');
@@ -236,7 +234,6 @@ async function submit() {
     ElNotification({ title: 'Success', type: 'success', message: 'Purchase Order created successfully' });
     router.push('/procurement/purchase-orders');
   } catch (error) {
-    console.error('DEBUG: Frontend PO Submit Error:', error);
     ElNotification({ title: 'Error', type: 'error', message: 'Failed to create PO' });
   } finally {
     loading.value = false;

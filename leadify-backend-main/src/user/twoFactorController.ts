@@ -37,7 +37,6 @@ export const setup2FA = async (req: AuthenticatedRequest, res: Response): Promis
       qrCode: qrCodeDataUrl
     });
   } catch (error) {
-    console.error('2FA setup error:', error);
     res.status(500).json({ message: 'Failed to set up 2FA' });
   }
 };
@@ -73,7 +72,6 @@ export const verify2FA = async (req: AuthenticatedRequest, res: Response): Promi
 
     res.status(200).json({ message: '2FA has been enabled successfully.' });
   } catch (error) {
-    console.error('2FA verify error:', error);
     res.status(500).json({ message: 'Failed to verify 2FA' });
   }
 };
@@ -108,7 +106,6 @@ export const disable2FA = async (req: AuthenticatedRequest, res: Response): Prom
 
     res.status(200).json({ message: '2FA has been disabled successfully.' });
   } catch (error) {
-    console.error('2FA disable error:', error);
     res.status(500).json({ message: 'Failed to disable 2FA' });
   }
 };
@@ -137,7 +134,6 @@ export const validateLoginCode = async (req: Request, res: Response): Promise<vo
 
     res.status(200).json({ message: '2FA code verified', valid: true });
   } catch (error) {
-    console.error('2FA login validation error:', error);
     res.status(500).json({ message: 'Failed to validate 2FA code' });
   }
 };

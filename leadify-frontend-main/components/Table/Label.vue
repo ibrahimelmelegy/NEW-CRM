@@ -57,83 +57,96 @@ function getTextFromValue(value) {
 }
 </script>
 <style lang="scss">
+// Status color variables (dark mode safe via CSS custom properties)
+:root {
+  --status-cyan-bg: #e6f9fb;
+  --status-cyan-text: #00adc3;
+  --status-purple-bg: #e9e6f3;
+  --status-purple-text: #270089;
+  --status-red-bg: #ffebeb;
+  --status-red-text: #ee2424;
+  --status-yellow-bg: #fff8e7;
+  --status-yellow-text: #ffb72d;
+  --status-orange-text: #ee7c24;
+  --status-green-bg: #d1ffe5;
+  --status-green-text: #0db355;
+  --status-gray-text: #b5b3ba;
+}
+
+html.dark-mode {
+  --status-cyan-bg: rgba(0, 173, 195, 0.15);
+  --status-purple-bg: rgba(39, 0, 137, 0.15);
+  --status-red-bg: rgba(238, 36, 36, 0.15);
+  --status-yellow-bg: rgba(255, 183, 45, 0.15);
+  --status-green-bg: rgba(13, 179, 85, 0.15);
+}
+
 .label {
   &-outline {
     &-one {
-      background-color: #e6f9fb;
-      color: #00adc3;
+      background-color: var(--status-cyan-bg);
+      color: var(--status-cyan-text);
       border-color: transparent;
     }
 
     &-two {
-      background-color: #e9e6f3;
-      color: #270089;
+      background-color: var(--status-purple-bg);
+      color: var(--status-purple-text);
       border-color: transparent;
     }
 
     &-three {
-      background-color: #ffebeb;
-      color: #ee2424;
+      background-color: var(--status-red-bg);
+      color: var(--status-red-text);
       border-color: transparent;
     }
 
     &-four {
-      background-color: #fff8e7;
-      color: #ffb72d;
+      background-color: var(--status-yellow-bg);
+      color: var(--status-yellow-text);
       border-color: transparent;
     }
 
     &-five {
-      // background-color: #fff8e7;
-      color: #ee7c24;
+      color: var(--status-orange-text);
       border-color: transparent;
     }
 
     &-primary {
-      background-color: #d1ffe5;
-      color: #0db355;
+      background-color: var(--status-green-bg);
+      color: var(--status-green-text);
       border-color: transparent;
     }
 
     &-six {
-      // background-color: #fff8e7;
-      color: #b5b3ba;
+      color: var(--status-gray-text);
       border-color: transparent;
     }
   }
 
   &-solid {
-    // &-primary {
-    //   border: 1px solid $primary;
-    //   color: $primary;
-    // }
-    // &-red {
-    //   border: 1px solid $danger;
-    //   color: $danger;
-    // }
     &-three {
-      color: #ee2424;
+      color: var(--status-red-text);
       border-color: transparent;
     }
 
     &-five {
-      color: #ee7c24;
+      color: var(--status-orange-text);
       border-color: transparent;
     }
 
     &-four {
-      color: #ffb72d;
+      color: var(--status-yellow-text);
       border-color: transparent;
     }
 
     &-primary {
-      color: #0db355;
+      color: var(--status-green-text);
       border-color: transparent;
     }
 
     &-six {
-      // background-color: #fff8e7;
-      color: #b5b3ba;
+      color: var(--status-gray-text);
       border-color: transparent;
     }
 
@@ -148,23 +161,23 @@ function getTextFromValue(value) {
 .bg {
   &-solid {
     &-three {
-      background-color: #ee2424 !important;
+      background-color: var(--status-red-text) !important;
     }
 
     &-five {
-      background-color: #ee7c24 !important;
+      background-color: var(--status-orange-text) !important;
     }
 
     &-four {
-      background-color: #ffb72d !important;
+      background-color: var(--status-yellow-text) !important;
     }
 
     &-primary {
-      background-color: #0db355 !important;
+      background-color: var(--status-green-text) !important;
     }
 
     &-six {
-      background-color: #b5b3ba !important;
+      background-color: var(--status-gray-text) !important;
     }
 
     &-brown {

@@ -108,6 +108,8 @@ const menu = [
       { link: '/sales/clients', name: 'navigation.clients', icon: 'ph:briefcase' },
       { link: '/sales/opportunity', name: 'navigation.opportunity', icon: 'ph:lightbulb' },
       { link: '/sales/deals', name: 'navigation.deals', icon: 'ph:handshake' },
+      { link: '/sales/invoices', name: 'navigation.invoices', icon: 'ph:receipt-bold' },
+      { link: '/sales/contracts', name: 'navigation.contracts', icon: 'ph:file-doc-bold' },
       { link: '/sales/proposals', name: 'navigation.proposals', icon: 'ph:file-text' }
     ]
   },
@@ -122,7 +124,8 @@ const menu = [
       { link: '/operations/manpower', name: 'navigation.manpower', icon: 'ph:users-four' },
       { link: '/operations/additional-material', name: 'navigation.additionalMaterials', icon: 'ph:cube' },
       { link: '/operations/services', name: 'navigation.services', icon: 'ph:wrench' },
-      { link: '/operations/assets', name: 'navigation.assets', icon: 'ph:bank' }
+      { link: '/operations/assets', name: 'navigation.assets', icon: 'ph:bank' },
+      { link: '/operations/time-tracking', name: 'navigation.timeTracking', icon: 'ph:timer-bold' }
     ]
   },
   {
@@ -139,7 +142,24 @@ const menu = [
       { link: '/procurement/statistics', name: 'navigation.statistics', icon: 'ph:chart-bar' }
     ]
   },
-  { link: '/reports', name: 'navigation.report', icon: 'IconReport', submenu: false, isOpen: false },
+  { link: '/messaging', name: 'navigation.messaging', icon: 'ph:chat-circle-dots-bold', submenu: false, isOpen: false },
+  {
+    name: 'navigation.marketing',
+    icon: 'ph:megaphone-bold',
+    isOpen: false,
+    submenu: [
+      { link: '/marketing/campaigns', name: 'navigation.campaigns', icon: 'ph:envelope-simple-bold' }
+    ]
+  },
+  {
+    name: 'navigation.reports',
+    icon: 'IconReport',
+    isOpen: false,
+    submenu: [
+      { link: '/reports', name: 'navigation.report', icon: 'ph:chart-pie' },
+      { link: '/reports/builder', name: 'navigation.reportBuilder', icon: 'ph:faders-horizontal-bold' }
+    ]
+  },
   {
     name: 'navigation.settings',
     icon: 'ph:gear-bold',
@@ -147,6 +167,11 @@ const menu = [
     role: 'VIEW_SETTINGS', // Higher permission
     submenu: [
       { link: '/settings/integrations', name: 'navigation.integrations', icon: 'ph:plugs-connected-bold' },
+      { link: '/settings/security', name: 'navigation.security', icon: 'ph:lock-bold' },
+      { link: '/settings/custom-fields', name: 'navigation.customFields', icon: 'ph:sliders-horizontal-bold' },
+      { link: '/settings/webhooks', name: 'navigation.webhooks', icon: 'ph:webhooks-logo-bold' },
+      { link: '/settings/workflows', name: 'navigation.workflows', icon: 'ph:lightning-bold' },
+      { link: '/settings/portal-users', name: 'navigation.portalUsers', icon: 'ph:users-three-bold' },
       { link: '/settings/audit-logs', name: 'navigation.auditLogs', icon: 'ph:fingerprint-bold' },
       { link: '/roles', name: 'navigation.rolesAccess', icon: 'ph:shield-check-bold' },
       { link: '/roles/add-role', name: 'navigation.addNewRole', icon: 'ph:plus-circle-bold' },

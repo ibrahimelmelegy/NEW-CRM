@@ -1,9 +1,11 @@
 import cors from 'cors';
+import cookieParser from 'cookie-parser';
 import express, { Application, NextFunction, Request, Response } from 'express';
 import helmet from 'helmet';
 import i18next from 'i18next';
 import Backend from 'i18next-fs-backend';
 import middleware from 'i18next-http-middleware';
+import { doubleCsrf } from 'csrf-csrf';
 import { generalLimiter, authLimiter, uploadLimiter } from './middleware/rateLimiter';
 import { sanitizeInput } from './middleware/sanitize';
 import assetRoutes from './asset/assetRoutes';
@@ -39,6 +41,16 @@ import procurementRoutes from './procurement/procurementRoutes';
 import rfqRoutes from './procurement/rfqRoutes';
 import aiRoutes from './ai/aiRoutes';
 import integrationRoutes from './integration/integrationRoutes';
+import messagingRoutes from './messaging/messagingRoutes';
+import customFieldRoutes from './customField/customFieldRoutes';
+import webhookRoutes from './webhook/webhookRoutes';
+import timeTrackingRoutes from './timeTracking/timeTrackingRoutes';
+import reportBuilderRoutes from './reports/reportRoutes';
+import invoiceRoutes from './invoice/invoiceRoutes';
+import workflowRoutes from './workflow/workflowRoutes';
+import campaignRoutes from './campaign/campaignRoutes';
+import contractRoutes from './contract/contractRoutes';
+import portalRoutes from './portal/portalRoutes';
 
 const fileUpload = require('express-fileupload');
 
@@ -91,6 +103,9 @@ app.use(middleware.handle(i18next));
 // 5. JSON body parser
 app.use(express.json({ limit: '1mb' }));
 
+// 5.5. Cookie parser (required for CSRF)
+app.use(cookieParser(process.env.SECRET_KEY || 'csrf-secret'));
+
 // 6. Input sanitization (XSS protection)
 app.use(sanitizeInput);
 
@@ -103,11 +118,35 @@ app.use(cors({
   origin: CORS_ORIGINS,
   credentials: true,
   methods: ['GET', 'POST', 'PUT', 'PATCH', 'DELETE', 'OPTIONS'],
-  allowedHeaders: ['Content-Type', 'Authorization', 'X-Tenant-ID', 'Accept-Language'],
+  allowedHeaders: ['Content-Type', 'Authorization', 'X-Tenant-ID', 'Accept-Language', 'X-CSRF-Token'],
   maxAge: 86400
 }));
 
-// 8. General rate limiting
+// 8. CSRF protection setup
+const { doubleCsrfProtection, generateCsrfToken } = doubleCsrf({
+  getSecret: () => process.env.SECRET_KEY || 'csrf-secret',
+  getSessionIdentifier: (req: Request) => req.headers.authorization || '',
+  cookieName: '__csrf',
+  cookieOptions: {
+    httpOnly: true,
+    sameSite: 'strict' as const,
+    secure: process.env.NODE_ENV === 'production',
+    path: '/',
+  },
+  getCsrfTokenFromRequest: (req: Request) => req.headers['x-csrf-token'] as string,
+});
+
+// Expose CSRF token endpoint for frontend
+app.get('/api/csrf-token', (req: Request, res: Response) => {
+  const token = generateCsrfToken(req, res);
+  res.json({ csrfToken: token });
+});
+
+// API routes use Bearer token auth (JWT + session), so CSRF middleware
+// is available but not globally applied. Apply per-route if needed
+// for cookie-based auth flows via: app.use('/path', doubleCsrfProtection, handler)
+
+// 9. General rate limiting
 app.use(generalLimiter);
 
 // 9. Request logging (development only, no query strings)
@@ -158,6 +197,16 @@ app.use('/api/procurement', procurementRoutes);
 app.use('/api/rfq', rfqRoutes);
 app.use('/api/ai', aiRoutes);
 app.use('/api/integrations', integrationRoutes);
+app.use('/api/messaging', messagingRoutes);
+app.use('/api/custom-fields', customFieldRoutes);
+app.use('/api/webhooks', webhookRoutes);
+app.use('/api/time-tracking', timeTrackingRoutes);
+app.use('/api/report-builder', reportBuilderRoutes);
+app.use('/api/invoices', invoiceRoutes);
+app.use('/api/workflows', workflowRoutes);
+app.use('/api/campaigns', campaignRoutes);
+app.use('/api/contracts', contractRoutes);
+app.use('/api/portal', portalRoutes);
 
 // Authentication routes (with stricter rate limiting)
 app.use('/api/auth', authLimiter, authRoutes);

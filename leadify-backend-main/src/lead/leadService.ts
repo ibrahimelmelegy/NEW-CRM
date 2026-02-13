@@ -230,8 +230,6 @@ class LeadService {
         },
         attributes: ['id', 'email']
       });
-      console.log(existingUsers);
-
       leadArray.push({
         name: name,
         companyName: companyName,

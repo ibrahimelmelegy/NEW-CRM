@@ -8,12 +8,14 @@ el-dialog(v-model='dialog' width='500' align-center='')
     template(#footer='')
         .dialog-footer
             .w-full.flex.mt-4
-                el-button(  class="w-1/2 !rounded-2xl" @click='dialog = false' size="large"   ) Cancel
-                el-button(class="w-1/2 !rounded-2xl !text-white" type='primary' @click='confirm' size="large" :loading="loading" :disabled="loading") {{btnText}}
+                el-button(  class="w-1/2 !rounded-2xl" @click='dialog = false' size="large"   ) {{ $t('common.cancel') }}
+                el-button(class="w-1/2 !rounded-2xl !text-white" type='primary' @click='confirm' size="large" :loading="loading" :disabled="loading") {{computedBtnText}}
 
 </template>
 
 <script setup>
+import { useI18n } from 'vue-i18n';
+const { t } = useI18n();
 const props = defineProps({
   title: String,
   description: String,
@@ -21,9 +23,10 @@ const props = defineProps({
   icon: String,
   btnText: {
     type: String,
-    default: 'Confirm'
+    default: ''
   }
 });
+const computedBtnText = computed(() => props.btnText || t('common.confirm'));
 const emit = defineEmits(['confirm']);
 const confirm = () => {
   emit('confirm');

@@ -133,7 +133,6 @@ class ProjectService {
         include: RelationArray
       });
     } catch (error) {
-      console.log(error);
       await transaction?.rollback();
       throw new BaseError((ERRORS[(<any>error).message] as any) || ERRORS.SOMETHING_WENT_WRONG);
     }
@@ -304,8 +303,6 @@ class ProjectService {
 
       return this.recalculateProject(project);
     } catch (error) {
-      console.log(error);
-
       transaction.rollback();
       throw new BaseError(ERRORS.SOMETHING_WENT_WRONG);
     }

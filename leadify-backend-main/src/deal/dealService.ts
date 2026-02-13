@@ -111,7 +111,6 @@ class DealService {
 
       return deal;
     } catch (error) {
-      console.log(error);
       transaction.rollback();
       throw new BaseError(ERRORS[(error as any)?.message as keyof typeof ERRORS] || ERRORS.SOMETHING_WENT_WRONG);
     }
@@ -202,7 +201,6 @@ class DealService {
       await createActivityLog('deal', 'create', deal.id, admin.id, t, 'Deal created succesfully');
       return deal;
     } catch (error: Error | unknown) {
-      console.log(error);
       await t.rollback();
       throw new BaseError(ERRORS[(error as any)?.message as keyof typeof ERRORS] || ERRORS.SOMETHING_WENT_WRONG);
     }
@@ -415,6 +413,59 @@ class DealService {
         transaction: TX
       }
     );
+  }
+
+  public async getKanbanDeals(user: User): Promise<Record<string, Deal[]>> {
+    const where: any = {
+      stage: { [Op.ne]: DealStageEnums.CONVERTED }
+    };
+
+    const include: Includeable[] = [{
+      model: User,
+      as: 'users',
+      attributes: ['id', 'name', 'email'],
+      through: { attributes: [] },
+      ...(!user.role.permissions.includes(DealPermissionsEnum.VIEW_GLOBAL_DEALS) && {
+        required: true,
+        where: { id: user.id }
+      })
+    }];
+
+    const deals = await Deal.findAll({
+      where,
+      include,
+      attributes: ['id', 'name', 'companyName', 'price', 'stage', 'contractType', 'createdAt'],
+      order: [['createdAt', 'DESC']],
+      limit: 500
+    });
+
+    const grouped: Record<string, Deal[]> = {
+      [DealStageEnums.PROGRESS]: [],
+      [DealStageEnums.CLOSED]: [],
+      [DealStageEnums.CANCELLED]: []
+    };
+
+    deals.forEach(deal => {
+      if (grouped[deal.stage]) {
+        grouped[deal.stage].push(deal);
+      }
+    });
+
+    return grouped;
+  }
+
+  public async updateDealStage(dealId: string, stage: DealStageEnums, user: User): Promise<Deal> {
+    await this.validateDealAccess(dealId, user);
+    const deal = await this.dealOrError({ id: dealId });
+
+    if (!Object.values(DealStageEnums).includes(stage) || stage === DealStageEnums.CONVERTED) {
+      throw new BaseError(ERRORS.SOMETHING_WENT_WRONG);
+    }
+
+    deal.set({ stage });
+    await deal.save();
+    await createActivityLog('deal', 'update', deal.id, user.id, null, `Deal stage changed to ${stage}`);
+    return deal;
   }
 
   async dealOrError(filter: WhereOptions, joinedTables?: Includeable[]): Promise<Deal> {

@@ -6,14 +6,11 @@ class ChurnPredictionScheduler {
         // Run every day at midnight
         cron.schedule('0 0 * * *', async () => {
             try {
-                console.log('[Cron] Running Daily Churn Prediction...');
                 await churnService.predictChurn();
             } catch (error) {
-                console.error('[Cron] Churn Prediction Error:', error);
+                // Churn prediction error - silently handled
             }
         });
-
-        console.log('[Cron] Churn Prediction Scheduler Started');
     }
 }
 

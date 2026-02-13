@@ -6,13 +6,13 @@
 
 import { describe, it, expect, vi } from 'vitest';
 import {
-    Deal,
+    type Deal,
     DealStageEnums,
     ContractTypeEnums,
     dealStageOptions,
     contractTypeOptions,
-    Delivery,
-    Invoice
+    type Delivery,
+    type Invoice
 } from '@/composables/useDeals';
 
 // Mock the API fetch

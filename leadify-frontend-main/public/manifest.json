@@ -1,0 +1,25 @@
+{
+  "name": "Leadify CRM",
+  "short_name": "Leadify",
+  "description": "Enterprise Customer Relationship Management",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#0a0a1a",
+  "theme_color": "#7849ff",
+  "orientation": "any",
+  "icons": [
+    {
+      "src": "/images/logo-shape.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "/images/logo-shape.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any maskable"
+    }
+  ],
+  "categories": ["business", "productivity"]
+}

@@ -6,7 +6,7 @@
 
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 import {
-    Lead,
+    type Lead,
     LeadSourceEnums,
     LeadStatusEnums,
     leadSources,

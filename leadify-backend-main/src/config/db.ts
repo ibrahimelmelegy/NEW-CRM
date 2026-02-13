@@ -54,6 +54,20 @@ import RFQItem from '../procurement/models/rfqItemModel';
 import RFQVendor from '../procurement/models/rfqVendorModel';
 import RFQVendorItem from '../procurement/models/rfqVendorItemModel';
 import Integration from '../integration/integrationModel';
+import Message from '../messaging/messagingModel';
+import CustomField from '../customField/customFieldModel';
+import CustomFieldValue from '../customField/customFieldValueModel';
+import Webhook from '../webhook/webhookModel';
+import TimeEntry from '../timeTracking/timeEntryModel';
+import SavedReport from '../reports/reportModel';
+import Workflow from '../workflow/workflowModel';
+import WorkflowLog from '../workflow/workflowLogModel';
+import Campaign from '../campaign/campaignModel';
+import CampaignRecipient from '../campaign/campaignRecipientModel';
+import EmailTemplate from '../campaign/emailTemplateModel';
+import Contract from '../contract/contractModel';
+import PortalUser from '../portal/portalUserModel';
+import SupportTicket from '../portal/supportTicketModel';
 
 dotenv.config();
 
@@ -129,7 +143,21 @@ const sequelize = new Sequelize({
     RFQItem,
     RFQVendor,
     RFQVendorItem,
-    Integration
+    Integration,
+    Message,
+    CustomField,
+    CustomFieldValue,
+    Webhook,
+    TimeEntry,
+    SavedReport,
+    Workflow,
+    WorkflowLog,
+    Campaign,
+    CampaignRecipient,
+    EmailTemplate,
+    Contract,
+    PortalUser,
+    SupportTicket
   ], // Path to your models
   logging: process.env.NODE_ENV !== 'production' ? console.log : false
 });

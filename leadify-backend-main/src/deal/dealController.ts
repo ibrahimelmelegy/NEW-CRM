@@ -3,10 +3,13 @@ import { AuthenticatedRequest } from '../types';
 import { wrapResult } from '../utils/response/responseWrapper';
 import dealService from './dealService';
 import User from '../user/userModel';
+import { io } from '../server';
+
 class DealController {
   public async convertLead(req: AuthenticatedRequest, res: Response, next: NextFunction): Promise<void> {
     try {
       const responseFromService = await dealService.convertLeadTODeal(req.body, req.user as User);
+      io.emit('deal:created', { id: responseFromService?.id });
       wrapResult(res, responseFromService, 201);
     } catch (error) {
       next(error);
@@ -16,6 +19,7 @@ class DealController {
   public async createDeal(req: AuthenticatedRequest, res: Response, next: NextFunction): Promise<void> {
     try {
       const responseFromService = await dealService.createDeal(req.body, req.user as User);
+      io.emit('deal:created', { id: responseFromService?.id });
       wrapResult(res, responseFromService, 201);
     } catch (error) {
       next(error);
@@ -60,6 +64,26 @@ class DealController {
   public async updateDeal(req: AuthenticatedRequest, res: Response, next: NextFunction): Promise<void> {
     try {
       const responseFromService = await dealService.updateDeal(req.body, req.user as User);
+      io.emit('deal:updated', { id: req.body?.dealId });
+      wrapResult(res, responseFromService);
+    } catch (error) {
+      next(error);
+    }
+  }
+
+  public async getKanbanDeals(req: AuthenticatedRequest, res: Response, next: NextFunction): Promise<void> {
+    try {
+      const responseFromService = await dealService.getKanbanDeals(req.user as User);
+      wrapResult(res, responseFromService);
+    } catch (error) {
+      next(error);
+    }
+  }
+
+  public async updateDealStage(req: AuthenticatedRequest, res: Response, next: NextFunction): Promise<void> {
+    try {
+      const responseFromService = await dealService.updateDealStage(req.body.dealId, req.body.stage, req.user as User);
+      io.emit('deal:stageChanged', { id: responseFromService.id, stage: responseFromService.stage });
       wrapResult(res, responseFromService);
     } catch (error) {
       next(error);

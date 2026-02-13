@@ -2,7 +2,7 @@
 .flex.items-center.justify-between.mb-8
   .title.font-bold.text-2xl.mb-1.capitalize.mb-5.mt-5 Edit Deal
   .flex.items-center.gap-x-2
-    el-button(size='large' plain type="primary" class="w-full !rounded-2xl" @click="router.back()") Cancel
+    el-button(size='large' plain type="primary" class="w-full !rounded-2xl" @click="router.back()") {{ $t('common.cancel') }}
     el-button(size='large' type="primary" native-type="submit" :loading="loading" :disabled="loading" class="w-full !px-5 !rounded-2xl" @click="saveAllForms") Save
 el-tabs.demo-tabs(v-model="activeName", :lazy="false" @tab-click="handleClick")
   el-tab-pane(label="Deal Information", name="deal")
@@ -46,21 +46,25 @@ function getDeliveries(values: any) {
   combinedValues.value.deliveryDetails = [...values];
 }
 
+async function ensureTabRefs() {
+  const originalTab = activeName.value;
+  for (const tab of ['deal', 'invoices', 'delivery']) {
+    activeName.value = tab;
+    await nextTick();
+  }
+  activeName.value = originalTab;
+  await nextTick();
+}
+
 async function saveAllForms() {
   // reset the values
   combinedValues.value = {};
   try {
     loading.value = true;
-    // FIXME : Work arround to wait for the ref to initialize
-    if (activeName.value === 'deal') {
-      activeName.value = 'invoices';
-      await nextTick();
-      activeName.value = 'deal';
-      await nextTick();
-    }
-    await informationRef.value.onSubmitInformation();
-    await invoicesRef.value.onSubmitInvoices();
-    await deliveryRef.value.onSubmitDeliveries();
+    await ensureTabRefs();
+    await informationRef.value?.onSubmitInformation();
+    await invoicesRef.value?.onSubmitInvoices();
+    await deliveryRef.value?.onSubmitDeliveries();
     if ((combinedValues.value?.deal?.name || combinedValues.value?.name) && isInvoices.value && isDeliveries.value) {
       if (combinedValues.value?.clientId) {
         await updateDeal({

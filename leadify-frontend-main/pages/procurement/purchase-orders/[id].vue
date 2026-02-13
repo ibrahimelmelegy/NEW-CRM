@@ -139,7 +139,7 @@
       )
     template(#footer)
       .flex.justify-end.gap-4.pb-4.px-4
-        el-button(@click="rejectDialogVisible = false", class="premium-btn-outline !rounded-xl px-8") Cancel
+        el-button(@click="rejectDialogVisible = false", class="premium-btn-outline !rounded-xl px-8") {{ $t('common.cancel') }}
         el-button(type="danger", @click="handleReject", :loading="loadingAction", class="premium-btn !rounded-xl px-12 glow-red") Confirm Rejection
 
 </template>

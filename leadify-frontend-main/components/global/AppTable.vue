@@ -5,18 +5,20 @@
        Icon(  name="IconExport" size="20")
        p.mx-1 {{ $t('common.export') }}
     .px-6.flex.items-center.flex-wrap.gap-2.mb-6.justify-start(v-if="!isLoading && !loading")
-        .input.table-search(class="w-[250px]" v-if="!withoutSearch")
+        .input.table-search(class="w-full md:w-[250px]" v-if="!withoutSearch")
             el-input(size="large"
                 style="height:50px"
                 v-model="search"
                 :placeholder="`${$t('common.search')} ${searchPlaceholder}`"
                 :prefix-icon="Search"
+                clearable
                 @input="searchTimeOut"
+                @clear="searchTimeOut"
             )
         button.rounded-btn.flex.items-center(class="premium-btn-outline" v-if="!withoutFilters" @click="filterBar = true")
             Icon(  name="IconFilter" size="20")
             span.mr-2 {{ $t('common.filter') }}
-            span.font-bold.rounded-full.w-6.h-6.bg-accent-purple.text-white.flex.items-center.justify-center(v-if="numberOfFilters") {{ numberOfFilters }}
+            span.font-bold.rounded-full.w-6.h-6.bg-accent-purple.text-white.flex.items-center.justify-center(v-if="numberOfFilters" :aria-label="`${numberOfFilters} active filters`") {{ numberOfFilters }}
     
     div(:class="{ 'mt-4': !withoutSearch || !withoutFilters }")
         SkeletonTable(v-if="isLoading || loading")
@@ -57,7 +59,7 @@
               el-select(size="default"  v-model="limit" :placeholder="limit"  style="width: 75px" @change="handleSizeChange")
                 el-option( v-for="item in [10,25,50]" :key="item" :label="item" :value="item" )
               span.text-xs.font-bold.text-muted.uppercase.tracking-widest {{ $t('common.entries') }}
-            el-pagination( background style="direction:ltr"  :pager-count="4"  :page-count="pagintaion?.totalPages" v-model:current-page='currentPage' :page-size='limit'  layout=' prev, pager, next' :total='pagintaion?.totalItems' )
+            el-pagination( background style="direction:ltr"  :pager-count="4"  :page-count="pagintaion?.totalPages" v-model:current-page='currentPage' :page-size='limit'  layout=' prev, pager, next' :total='pagintaion?.totalItems' aria-label="Table pagination" )
     TableFilter(v-model="filterBar" v-if="!withoutFilters" :filterOptions="filterOptions" @filter="handleFilter" @reset="handleReset")
 </template>
 

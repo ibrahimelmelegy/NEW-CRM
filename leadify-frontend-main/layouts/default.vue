@@ -51,6 +51,8 @@
         .slot-content(class="!mt-24 animate-entrance" :class="{'!pl-[32px] !pr-[50px]' : !mobile, '!px-[20px] '  : mobile}")
             slot
       AIChatbot
+      MobileBottomNav
+      PWAInstallPrompt
   </template>
 <script setup lang="ts">
 import { useWindowSize } from '@vueuse/core';
@@ -89,6 +91,10 @@ const handleClickOutside = () => {
 onMounted(() => {
   window.addEventListener('scroll', handleScroll);
   window.addEventListener('click', handleClickOutside);
+  // Register service worker for PWA
+  if ('serviceWorker' in navigator) {
+    navigator.serviceWorker.register('/sw.js').catch(() => {});
+  }
 });
 
 onUnmounted(() => {

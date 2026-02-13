@@ -6,7 +6,7 @@
 
 import { describe, it, expect, vi } from 'vitest';
 import {
-    Opportunities,
+    type Opportunities,
     StageEnum,
     priorityEnum,
     stepsEnum,
