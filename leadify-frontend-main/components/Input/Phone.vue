@@ -188,9 +188,7 @@ watch(
 /* ============================================
    LIGHT MODE OVERRIDES
    ============================================ */
-html.light-mode .vue-tel-input,
-
-
+html.light-mode .vue-tel-input {
   background-color: rgba(255, 255, 255, 0.9) !important;
   border-color: rgba(0, 0, 0, 0.1) !important;
 
@@ -204,9 +202,7 @@ html.light-mode .vue-tel-input,
   }
 }
 
-html.light-mode .vti__input,
-
-
+html.light-mode .vti__input {
   color: #1f1f1f !important;
 
   &::placeholder {
@@ -214,9 +210,7 @@ html.light-mode .vti__input,
   }
 }
 
-html.light-mode .vti__dropdown,
-
-
+html.light-mode .vti__dropdown {
   border-right-color: rgba(0, 0, 0, 0.08) !important;
 
   &:hover {
@@ -224,17 +218,13 @@ html.light-mode .vti__dropdown,
   }
 }
 
-html.light-mode .vti__dropdown-list,
-
-
+html.light-mode .vti__dropdown-list {
   background-color: #ffffff !important;
   border-color: rgba(0, 0, 0, 0.1) !important;
   box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1) !important;
 }
 
-html.light-mode .vti__dropdown-item,
-
-
+html.light-mode .vti__dropdown-item {
   color: #1f1f1f !important;
 
   &:hover,
@@ -248,9 +238,7 @@ html.light-mode .vti__dropdown-item,
   }
 }
 
-html.light-mode .vti__search_box,
-
-
+html.light-mode .vti__search_box {
   background-color: #f5f5f5 !important;
   border-color: rgba(0, 0, 0, 0.1) !important;
   color: #1f1f1f !important;

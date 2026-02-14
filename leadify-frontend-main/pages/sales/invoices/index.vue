@@ -35,7 +35,7 @@
       el-table-column(:label="$t('invoices.invoiceNo')" prop="invoiceNumber" width="160")
       el-table-column(:label="$t('invoices.deal')" min-width="200")
         template(#default="{ row }")
-          NuxtLink.text-purple-500.hover\\:underline(:to="`/sales/deals/show/${row.dealId}`") {{ row.deal?.name || row.dealId }}
+          NuxtLink.text-purple-500(:to="`/sales/deals/show/${row.dealId}`" style="text-decoration: none") {{ row.deal?.name || row.dealId }}
       el-table-column(:label="$t('invoices.amount')" width="140" align="right")
         template(#default="{ row }")
           span.font-bold {{ formatCurrency(row.amount) }}
@@ -83,7 +83,7 @@ import { ElNotification } from 'element-plus';
 import type { InvoiceItem, InvoiceSummary } from '~/composables/useInvoices';
 import { fetchInvoices, fetchInvoiceSummary, markCollected, markUncollected } from '~/composables/useInvoices';
 
-definePageMeta({ title: 'Invoices', middleware: 'auth' });
+definePageMeta({ title: 'Invoices' });
 
 const invoices = ref<InvoiceItem[]>([]);
 const summary = ref<InvoiceSummary>({ totalInvoices: 0, totalAmount: 0, collectedAmount: 0, pendingAmount: 0, collectedCount: 0, pendingCount: 0 });

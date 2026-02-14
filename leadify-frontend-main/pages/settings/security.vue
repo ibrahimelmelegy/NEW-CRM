@@ -48,8 +48,7 @@
 import { user as currentUser } from '~/composables/useUser';
 
 definePageMeta({
-  title: 'Security Settings',
-  middleware: 'auth'
+  title: 'Security Settings'
 });
 
 const showDisable = ref(false);

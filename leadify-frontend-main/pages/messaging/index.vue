@@ -1,5 +1,5 @@
 <template lang="pug">
-.messaging-page.flex.h-[calc(100vh-80px)]
+.messaging-page.flex(style="height: calc(100vh - 80px)")
   //- Conversation List Sidebar
   .conversation-sidebar.flex.flex-col(class="w-[360px] min-w-[300px]")
     .sidebar-header.p-4
@@ -134,8 +134,7 @@ import {
 } from '~/composables/useMessaging';
 
 definePageMeta({
-  title: 'Messaging',
-  middleware: 'auth'
+  title: 'Messaging'
 });
 
 const conversations = ref<Conversation[]>([]);

@@ -6,7 +6,7 @@ import i18next from 'i18next';
 import Backend from 'i18next-fs-backend';
 import middleware from 'i18next-http-middleware';
 import { doubleCsrf } from 'csrf-csrf';
-import { generalLimiter, authLimiter, uploadLimiter } from './middleware/rateLimiter';
+import { generalLimiter, uploadLimiter } from './middleware/rateLimiter';
 import { sanitizeInput } from './middleware/sanitize';
 import assetRoutes from './asset/assetRoutes';
 import clientRoutes from './client/clientRoutes';
@@ -208,8 +208,9 @@ app.use('/api/campaigns', campaignRoutes);
 app.use('/api/contracts', contractRoutes);
 app.use('/api/portal', portalRoutes);
 
-// Authentication routes (with stricter rate limiting)
-app.use('/api/auth', authLimiter, authRoutes);
+// Authentication routes
+// Apply strict rate limiting only to login/password-reset endpoints (not /me which is called on every page)
+app.use('/api/auth', authRoutes);
 
 // Serve static files from the 'public' directory
 app.use('/assets', express.static('public/uploads'));

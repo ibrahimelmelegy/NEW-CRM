@@ -122,7 +122,7 @@ import {
 
 use([CanvasRenderer, BarChart, PieChart, LineChart, TitleComponent, TooltipComponent, LegendComponent, GridComponent]);
 
-definePageMeta({ title: 'Report Builder', middleware: 'auth' });
+definePageMeta({ title: 'Report Builder' });
 
 const config = ref<ReportConfig>({
   entityType: 'LEAD',

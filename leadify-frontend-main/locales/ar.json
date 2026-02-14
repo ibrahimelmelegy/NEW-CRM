@@ -1419,7 +1419,7 @@
             "phone": "رقم الهاتف",
             "phonePlaceholder": "+966 50 000 0000",
             "email": "البريد الإلكتروني",
-            "emailPlaceholder": "example@domain.com",
+            "emailPlaceholder": "example{'@'}domain.com",
             "contactFirstName": "الاسم الأول للمسؤول",
             "firstNamePlaceholder": "الاسم الأول",
             "contactLastName": "اسم العائلة للمسؤول",

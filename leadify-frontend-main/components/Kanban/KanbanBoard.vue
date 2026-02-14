@@ -1,5 +1,5 @@
 <template lang="pug">
-.kanban-board.flex.gap-5.overflow-x-auto.pb-4.min-h-[70vh]
+.kanban-board.flex.gap-5.overflow-x-auto.pb-4(style="min-height: 70vh")
   .kanban-column.flex-shrink-0(
     v-for="col in columns"
     :key="col.key"
@@ -18,7 +18,8 @@
         | {{ $t('kanban.totalValue') }}: {{ formatLargeNumber(col.totalValue) }}
 
     //- Draggable Cards
-    draggable.kanban-drop-zone.min-h-[200px].rounded-2xl.p-2.space-y-3(
+    draggable.kanban-drop-zone.rounded-2xl.p-2.space-y-3(
+      style="min-height: 200px"
       :list="getColumnCards(col.key)"
       group="kanban"
       item-key="id"
@@ -28,7 +29,7 @@
       @end="onDragEnd($event, col.key)"
     )
       template(#item="{ element }")
-        .kanban-card.glass-card.rounded-xl.p-4.cursor-grab.active_cursor-grabbing.transition-all.hover_translate-y-[-2px](@click="$emit('cardClick', element)")
+        .kanban-card.glass-card.rounded-xl.p-4.cursor-grab.transition-all(@click="$emit('cardClick', element)" style="cursor: grab")
           .flex.items-center.justify-between.mb-2
             span.font-semibold.text-sm.text-white.truncate {{ element.name }}
             .w-2.h-2.rounded-full(:style="{ background: col.color }")
@@ -44,7 +45,8 @@
               span.text-xs.text-gray-400 {{ element.priority }}
           //- User avatars
           .flex.items-center.mt-3.-space-x-2(v-if="element.users?.length")
-            .w-6.h-6.rounded-full.bg-purple-500_20.flex.items-center.justify-center.text-purple-400.text-xs.font-bold.border.border-purple-500_30(
+            .w-6.h-6.rounded-full.flex.items-center.justify-center.text-purple-400.text-xs.font-bold.border(
+              style="background: rgba(168, 85, 247, 0.2); border-color: rgba(168, 85, 247, 0.3)"
               v-for="u in element.users.slice(0, 3)"
               :key="u.id"
               :title="u.name"
@@ -147,6 +149,4 @@ const onDragEnd = (evt: any, toStage: string) => {
   box-shadow: 0 15px 40px rgba(0, 0, 0, 0.5);
 }
 
-.bg-purple-500_20 { background: rgba(168, 85, 247, 0.2); }
-.border-purple-500_30 { border-color: rgba(168, 85, 247, 0.3); }
 </style>

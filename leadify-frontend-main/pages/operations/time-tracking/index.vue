@@ -106,7 +106,7 @@ import {
   createManualEntry, deleteTimeEntry, getWeeklySummary, formatDuration
 } from '~/composables/useTimeTracking';
 
-definePageMeta({ title: 'Time Tracking', middleware: 'auth' });
+definePageMeta({ title: 'Time Tracking' });
 
 const entries = ref<TimeEntry[]>([]);
 const runningTimer = ref<TimeEntry | null>(null);
@@ -148,8 +148,12 @@ async function loadEntries() {
 }
 
 async function loadRunning() {
-  runningTimer.value = await getRunningTimer();
-  if (runningTimer.value) startElapsedTimer();
+  const timer = await getRunningTimer();
+  // Only set if it has a valid startTime
+  if (timer?.startTime) {
+    runningTimer.value = timer;
+    startElapsedTimer();
+  }
 }
 
 async function loadWeekly() {
