@@ -265,8 +265,8 @@ const getPath = (routeSegment: any) => {
   width: calc(100% - 260px);
 }
 .collapseMargin {
-  margin-inline-start: 105px;
-  width: calc(100% - 105px) !important;
+  margin-inline-start: 80px;
+  width: calc(100% - 80px) !important;
 }
 .notMargined {
   margin-inline-start: 0px;

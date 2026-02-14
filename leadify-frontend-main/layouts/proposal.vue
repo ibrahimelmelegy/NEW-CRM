@@ -218,8 +218,8 @@ const handlePrint = async () => {
   width: calc(100% - 260px);
 }
 .collapseMargin {
-  margin-left: 105px;
-  width: calc(100% - 105px) !important;
+  margin-left: 80px;
+  width: calc(100% - 80px) !important;
 }
 .notMargined {
   margin-left: 0px;
