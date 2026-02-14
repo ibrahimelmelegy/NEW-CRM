@@ -9,8 +9,8 @@
   
   transition(:name='mobile ? "side" : "none"')
     el-menu.el-menu-vertical-demo.relative.sidebar-glass(
-      class='!pl-[5px] h-[100vh] card-auto' 
-      :class="{'overflow-x-hidden' : !fullNav }" 
+      class='!pl-[5px] card-auto'
+      style="height: 100vh; overflow-y: auto; overflow-x: hidden"
       v-if="mobile ? !hideNav : true" 
       :collapse='mobile ? false : !fullNav' 
       :default-openeds="defaultOpenMenus"
@@ -197,6 +197,19 @@ function openNav() {
   transition:
     width 0.3s ease-in-out,
     background 0.3s ease;
+  scrollbar-width: thin;
+  scrollbar-color: rgba(120, 73, 255, 0.3) transparent;
+
+  &::-webkit-scrollbar {
+    width: 4px;
+  }
+  &::-webkit-scrollbar-track {
+    background: transparent;
+  }
+  &::-webkit-scrollbar-thumb {
+    background: rgba(120, 73, 255, 0.3);
+    border-radius: 2px;
+  }
 }
 
 .submenu-icon {
