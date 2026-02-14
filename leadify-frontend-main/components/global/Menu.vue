@@ -230,15 +230,28 @@ function openNav() {
 
 .myicon {
   width: 24px !important;
+  min-width: 24px !important;
   height: 24px !important;
   margin-left: -5px !important;
-  display: inline-block;
+  display: inline-flex !important;
+  align-items: center;
+  justify-content: center;
   vertical-align: middle;
+  color: var(--text-primary, #e4e4e7) !important;
 }
 
 [dir='rtl'] .myicon {
   margin-left: 5px !important;
   margin-right: -5px !important;
+}
+
+// Ensure nuxt-icon SPANs and SVGs inside .myicon fill the container
+.myicon :deep(.iconify),
+.myicon :deep(.nuxt-icon),
+.myicon :deep(svg) {
+  width: 24px !important;
+  height: 24px !important;
+  font-size: 24px !important;
 }
 
 .el-menu--collapse {
