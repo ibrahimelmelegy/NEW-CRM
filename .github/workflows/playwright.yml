@@ -1,63 +1,125 @@
-name: Playwright Tests
+name: E2E Tests
+
+# E2E tests require full infrastructure (backend + frontend + database)
+# Run manually or on release branches only
 on:
-  push:
-    branches: [main, master]
-  pull_request:
-    branches: [main, master]
+  workflow_dispatch:
+    inputs:
+      browser:
+        description: "Browser to test"
+        required: false
+        default: "chromium"
+        type: choice
+        options:
+          - chromium
+          - firefox
+          - webkit
 
 jobs:
-  test:
-    timeout-minutes: 60
+  e2e:
+    name: Playwright E2E
     runs-on: ubuntu-latest
+    timeout-minutes: 45
+
+    services:
+      postgres:
+        image: postgres:16
+        env:
+          POSTGRES_USER: postgres
+          POSTGRES_PASSWORD: postgres
+          POSTGRES_DB: leadify_test
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd pg_isready
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
 
     steps:
-      - uses: actions/checkout@v4
+      - name: Checkout code
+        uses: actions/checkout@v4
 
-      - uses: actions/setup-node@v4
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
         with:
-          node-version: lts/*
+          node-version: 20.x
 
-      # Install root dependencies
-      - name: Install root dependencies
+      - name: Install Playwright browsers
+        run: npx playwright install --with-deps ${{ inputs.browser || 'chromium' }}
+
+      - name: Install backend dependencies
+        working-directory: leadify-backend-main
         run: npm ci --legacy-peer-deps
 
-      # Install frontend dependencies
       - name: Install frontend dependencies
         working-directory: leadify-frontend-main
         run: npm ci --legacy-peer-deps
 
-      # Prepare Nuxt
       - name: Prepare Nuxt
         working-directory: leadify-frontend-main
         run: npx nuxt prepare
 
-      # Install Playwright Browsers
-      - name: Install Playwright Browsers
-        run: npx playwright install --with-deps chromium
+      - name: Start backend server
+        working-directory: leadify-backend-main
+        run: |
+          npm run build
+          node dist/server.js &
+          sleep 10
+        env:
+          DB_NAME: leadify_test
+          DB_USER: postgres
+          DB_PASSWORD: postgres
+          DB_HOST: localhost
+          DB_PORT: 5432
+          JWT_SECRET: e2e-test-jwt-secret
+          NODE_ENV: test
+          PORT: 3001
 
-      # Start dev server in background
-      - name: Start frontend dev server
+      - name: Seed database
+        working-directory: leadify-backend-main
+        run: node dist/seed.js || true
+        env:
+          DB_NAME: leadify_test
+          DB_USER: postgres
+          DB_PASSWORD: postgres
+          DB_HOST: localhost
+          DB_PORT: 5432
+          JWT_SECRET: e2e-test-jwt-secret
+          NODE_ENV: test
+
+      - name: Start frontend server
         working-directory: leadify-frontend-main
         run: |
-          npm run dev > /dev/null 2>&1 &
-          echo $! > .dev-server.pid
+          npm run dev &
           sleep 30
         env:
           NUXT_PUBLIC_API_BASE_URL: http://localhost:3001/api/v1/
 
-      # Wait for server to be ready
-      - name: Health check - wait for server
+      - name: Wait for servers
         run: |
-          timeout 60 bash -c 'until curl -f http://localhost:3000 > /dev/null 2>&1; do sleep 2; done' || exit 1
+          timeout 60 bash -c 'until curl -sf http://localhost:3000 > /dev/null 2>&1; do sleep 2; done'
+          echo "Frontend ready"
+          timeout 30 bash -c 'until curl -sf http://localhost:3001/api/v1/ > /dev/null 2>&1; do sleep 2; done' || true
+          echo "Backend ready"
 
-      # Run Playwright tests
-      - name: Run Playwright tests
-        run: npx playwright test --project=chromium
+      - name: Run E2E tests
+        run: npx playwright test --project=${{ inputs.browser || 'chromium' }}
+        env:
+          CI: true
 
-      # Upload test results
-      - uses: actions/upload-artifact@v4
+      - name: Upload test report
+        uses: actions/upload-artifact@v4
         if: ${{ !cancelled() }}
         with:
           name: playwright-report
           path: playwright-report/
-          retention-days: 30
+          retention-days: 14
+
+      - name: Upload test results
+        uses: actions/upload-artifact@v4
+        if: failure()
+        with:
+          name: test-results
+          path: test-results/
+          retention-days: 7
