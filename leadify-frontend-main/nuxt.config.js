@@ -1,3 +1,4 @@
+// Leadify CRM Frontend Configuration
 import { fileURLToPath } from 'node:url'; // استيراد لضمان دقة المسارات
 import { defineNuxtConfig } from 'nuxt/config';
 import { visualizer } from 'rollup-plugin-visualizer';

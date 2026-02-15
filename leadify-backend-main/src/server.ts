@@ -1,3 +1,4 @@
+// Leadify CRM Backend Server
 import dotenv from 'dotenv';
 dotenv.config();
 import { validateEnvironment } from './config/validateEnv';
