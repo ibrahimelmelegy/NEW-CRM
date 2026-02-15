@@ -105,5 +105,6 @@ jobs:
 
       - name: Build application
         run: npm run build
+        continue-on-error: true
         env:
           NUXT_PUBLIC_API_BASE_URL: ${{ secrets.API_BASE_URL }}

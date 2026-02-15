@@ -35,7 +35,7 @@ jobs:
         run: npm ci --legacy-peer-deps
 
       - name: Run tests
-        run: npm test
+        run: npx jest --runInBand --forceExit
         env:
           NODE_OPTIONS: "--max-old-space-size=4096"
 
