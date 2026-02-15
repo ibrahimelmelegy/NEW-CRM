@@ -45,4 +45,3 @@ out/
 .svelte-kit/
 coverage/
 .pnpm-store/
-package-lock.json
