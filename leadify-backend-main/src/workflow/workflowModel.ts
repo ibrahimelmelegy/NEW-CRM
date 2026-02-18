@@ -146,6 +146,10 @@ class WorkflowRule extends Model {
   @BelongsTo(() => User, { as: 'creator' })
   public creator?: User;
 
+  @AllowNull(true)
+  @Column({ type: DataType.JSONB })
+  public graphData?: Record<string, any>;
+
   // Virtual association – defined in execution model
   public executions?: any[];
 }

@@ -79,6 +79,9 @@ import Budget from '../finance/budgetModel';
 import FieldCheckIn from '../fieldOps/checkInModel';
 import Achievement from '../gamification/achievementModel';
 import UserPoints from '../gamification/userPointsModel';
+import UserStreak from '../gamification/streakModel';
+import Challenge from '../gamification/challengeModel';
+import UserChallenge from '../gamification/userChallengeModel';
 import Currency from '../currency/currencyModel';
 import TaxRule from '../currency/taxRuleModel';
 import Product from '../inventory/productModel';
@@ -216,6 +219,9 @@ const sequelize = new Sequelize({
     FieldCheckIn,
     Achievement,
     UserPoints,
+    UserStreak,
+    Challenge,
+    UserChallenge,
     Currency,
     TaxRule,
     Product,

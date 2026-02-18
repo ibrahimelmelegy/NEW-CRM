@@ -1,5 +1,6 @@
 import express from 'express';
 import { generateEmail, summarizeMeeting, getChurnDashboard } from './aiController';
+import salesCoachController from './salesCoachController';
 import { authenticateUser, HasPermission } from '../middleware/authMiddleware';
 import { LeadAndSalesWidgetsPermissionsEnum } from '../role/roleEnum';
 
@@ -17,5 +18,10 @@ router.get(
     ]),
     getChurnDashboard
 );
+
+// Sales Coach routes
+router.get('/sales-coach/deal/:id', authenticateUser, salesCoachController.analyzeDeal);
+router.get('/sales-coach/pipeline', authenticateUser, salesCoachController.getPipelineHealth);
+router.get('/sales-coach/weekly-summary', authenticateUser, salesCoachController.getWeeklySummary);
 
 export default router;

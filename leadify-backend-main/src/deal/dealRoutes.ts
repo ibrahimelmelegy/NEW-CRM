@@ -2,6 +2,7 @@ import express from 'express';
 import { authenticateUser, HasPermission } from '../middleware/authMiddleware';
 import { validateBody, validateQuery } from '../middleware/validation';
 import dealController from './dealController';
+import dealRoomController from './dealRoomController';
 import { ConvertLeadToDealInput, CreateLeadAndDealInput } from './inputs/convert-lead-to-deal.input';
 import { GetPaginatedDealsInput } from './inputs/paginated-deals.input';
 import { UpdateDealInput } from './inputs/update-deal.input';
@@ -670,6 +671,14 @@ router.get(
  *       500:
  *         description: Internal Server Error
  */
+// Deal Room - must be before /:id
+router.get(
+  '/:id/room',
+  authenticateUser,
+  HasPermission([DealPermissionsEnum.VIEW_GLOBAL_DEALS, DealPermissionsEnum.VIEW_OWN_DEALS]),
+  dealRoomController.getDealRoom
+);
+
 router.get(
   '/:id',
   authenticateUser,

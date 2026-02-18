@@ -80,7 +80,38 @@
         "forecasting": "التنبؤات",
         "emailAccounts": "حسابات البريد",
         "sequences": "التسلسلات",
-        "products": "المنتجات"
+        "products": "المنتجات",
+        "warRoom": "غرفة العمليات",
+        "themeStudio": "استوديو المظهر",
+        "activityHeatmap": "خريطة النشاط",
+        "relationshipGraph": "شبكة العلاقات",
+        "achievements": "الإنجازات",
+        "analytics": "التحليلات",
+        "workflowBuilder": "منشئ سلاسل العمل"
+    },
+    "themeStudio": {
+        "title": "استوديو المظهر",
+        "subtitle": "خصص مظهر نظام إدارة العلاقات",
+        "presets": "أنماط الألوان",
+        "customize": "ضبط دقيق",
+        "accentColor": "اللون الأساسي",
+        "glassBlur": "ضبابية الزجاج",
+        "glassOpacity": "شفافية الزجاج",
+        "fontSize": "حجم الخط",
+        "reset": "إعادة الافتراضي",
+        "preview": "معاينة مباشرة"
+    },
+    "heatmap": {
+        "title": "خريطة النشاط",
+        "subtitle": "تصور نشاط فريقك بمرور الوقت",
+        "activityMap": "خريطة النشاط"
+    },
+    "relationshipGraph": {
+        "title": "شبكة العلاقات",
+        "subtitle": "استكشف الروابط بين العملاء والصفقات والفريق"
+    },
+    "achievements": {
+        "title": "الإنجازات"
     },
     "auditLogs": {
         "subtitle": "شفافية كاملة في أنشطة النظام وإجراءات المستخدمين",

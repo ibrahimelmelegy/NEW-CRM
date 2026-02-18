@@ -10,5 +10,7 @@ router.post('/award', authenticateUser, gamificationController.awardPoints);
 router.get('/achievements', authenticateUser, gamificationController.getAchievements);
 router.post('/achievements', authenticateUser, gamificationController.createAchievement);
 router.delete('/achievements/:id', authenticateUser, gamificationController.deleteAchievement);
+router.get('/achievements/me', authenticateUser, gamificationController.getMyAchievements);
+router.get('/challenges', authenticateUser, gamificationController.getChallenges);
 
 export default router;

@@ -2,6 +2,7 @@ import { Response, NextFunction } from 'express';
 import { wrapResult } from '../utils/response/responseWrapper';
 import { AuthenticatedRequest } from '../types';
 import gamificationService from './gamificationService';
+import achievementEngine from './achievementEngine';
 
 class GamificationController {
   public async getLeaderboard(req: AuthenticatedRequest, res: Response, next: NextFunction): Promise<void> {
@@ -55,6 +56,26 @@ class GamificationController {
     try {
       await gamificationService.deleteAchievement(Number(req.params.id));
       wrapResult(res);
+    } catch (error) {
+      next(error);
+    }
+  }
+
+  public async getMyAchievements(req: AuthenticatedRequest, res: Response, next: NextFunction): Promise<void> {
+    try {
+      const userId = req.user!.id;
+      const result = await achievementEngine.getUserAchievements(userId);
+      wrapResult(res, result);
+    } catch (error) {
+      next(error);
+    }
+  }
+
+  public async getChallenges(req: AuthenticatedRequest, res: Response, next: NextFunction): Promise<void> {
+    try {
+      const userId = req.user!.id;
+      const result = await achievementEngine.getChallenges(userId);
+      wrapResult(res, result);
     } catch (error) {
       next(error);
     }

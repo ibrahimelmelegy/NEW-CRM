@@ -99,6 +99,7 @@ function getDisabled(role: string) {
 
 const menu = [
   { link: '/', name: 'navigation.board', icon: 'IconHome', submenu: false, isOpen: false },
+  { link: '/dashboard/war-room', name: 'navigation.warRoom', icon: 'ph:crosshair-bold', submenu: false, isOpen: false },
   {
     name: 'navigation.sales',
     icon: 'IconSales',
@@ -203,11 +204,21 @@ const menu = [
     ]
   },
   {
+    name: 'navigation.analytics',
+    icon: 'ph:chart-line-bold',
+    isOpen: false,
+    submenu: [
+      { link: '/analytics/heatmap', name: 'navigation.activityHeatmap', icon: 'ph:squares-four-bold' },
+      { link: '/analytics/relationship-graph', name: 'navigation.relationshipGraph', icon: 'ph:graph-bold' }
+    ]
+  },
+  {
     name: 'navigation.gamification',
     icon: 'ph:trophy-bold',
     isOpen: false,
     submenu: [
-      { link: '/gamification/leaderboard', name: 'navigation.leaderboard', icon: 'ph:ranking-bold' }
+      { link: '/gamification/leaderboard', name: 'navigation.leaderboard', icon: 'ph:ranking-bold' },
+      { link: '/gamification/achievements', name: 'navigation.achievements', icon: 'ph:medal-bold' }
     ]
   },
   {
@@ -233,6 +244,7 @@ const menu = [
     isOpen: false,
     role: 'VIEW_SETTINGS', // Higher permission
     submenu: [
+      { link: '/settings/theme-studio', name: 'navigation.themeStudio', icon: 'ph:palette-bold' },
       { link: '/settings/integrations', name: 'navigation.integrations', icon: 'ph:plugs-connected-bold' },
       { link: '/settings/security', name: 'navigation.security', icon: 'ph:lock-bold' },
       { link: '/settings/custom-fields', name: 'navigation.customFields', icon: 'ph:sliders-horizontal-bold' },

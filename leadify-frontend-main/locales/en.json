@@ -80,7 +80,38 @@
         "forecasting": "Forecasting",
         "emailAccounts": "Email Accounts",
         "sequences": "Sequences",
-        "products": "Products"
+        "products": "Products",
+        "warRoom": "War Room",
+        "themeStudio": "Theme Studio",
+        "activityHeatmap": "Activity Heatmap",
+        "relationshipGraph": "Relationship Graph",
+        "achievements": "Achievements",
+        "analytics": "Analytics",
+        "workflowBuilder": "Workflow Builder"
+    },
+    "themeStudio": {
+        "title": "Theme Studio",
+        "subtitle": "Customize your CRM appearance",
+        "presets": "Color Presets",
+        "customize": "Fine Tune",
+        "accentColor": "Accent Color",
+        "glassBlur": "Glass Blur",
+        "glassOpacity": "Glass Opacity",
+        "fontSize": "Font Size",
+        "reset": "Reset to Default",
+        "preview": "Live Preview"
+    },
+    "heatmap": {
+        "title": "Activity Heatmap",
+        "subtitle": "Visualize your team activity over time",
+        "activityMap": "Activity Map"
+    },
+    "relationshipGraph": {
+        "title": "Relationship Graph",
+        "subtitle": "Explore connections between leads, deals, clients and team"
+    },
+    "achievements": {
+        "title": "Achievements"
     },
     "auditLogs": {
         "subtitle": "Full transparency into system activities and user actions",
