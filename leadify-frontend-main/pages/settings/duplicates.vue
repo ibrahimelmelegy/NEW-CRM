@@ -57,7 +57,7 @@
               :key="idx"
               style="background: var(--card-bg, rgba(255,255,255,0.03)); border: 1px solid var(--border-glass, rgba(255,255,255,0.08))"
             )
-              p.text-xs.font-semibold.uppercase.mb-2(style="color: var(--text-muted)") {{ $t('duplicates.records') }} #{{ idx + 1 }} (ID: {{ record.entityId }})
+              p.text-xs.font-semibold.uppercase.mb-2(style="color: var(--text-muted)") {{ $t('duplicates.records') }} {{ '#' + (idx + 1) }} (ID: {{ record.entityId }})
               .space-y-1
                 .flex.items-center.gap-2(v-for="(value, key) in record.data" :key="key")
                   span.text-xs.font-semibold(style="color: var(--text-muted); min-width: 80px") {{ key }}:
