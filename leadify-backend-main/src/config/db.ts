@@ -104,6 +104,17 @@ import CustomReport from '../reports/customReportModel';
 import TwoFactorAuth from '../security/twoFactorModel';
 import FieldPermission from '../security/fieldPermissionModel';
 import { DataSharingRule, RecordShare } from '../security/dataShareModel';
+import PipelineStage from '../pipelineConfig/pipelineConfigModel';
+import Territory from '../territory/territoryModel';
+import ForecastPeriod from '../forecasting/forecastModel';
+import EmailAccount from '../emailIntegration/emailAccountModel';
+import EmailMessage from '../emailIntegration/emailMessageModel';
+import EmailTracking from '../emailIntegration/emailTrackingModel';
+import Sequence from '../sequences/sequenceModel';
+import { SequenceEnrollment } from '../sequences/sequenceModel';
+import CatalogProduct from '../productCatalog/productModel';
+import PriceRule from '../productCatalog/priceRuleModel';
+import QuoteLine from '../productCatalog/quoteLineModel';
 
 dotenv.config();
 
@@ -232,7 +243,18 @@ const sequelize = new Sequelize({
     TwoFactorAuth,
     FieldPermission,
     DataSharingRule,
-    RecordShare
+    RecordShare,
+    PipelineStage,
+    Territory,
+    ForecastPeriod,
+    EmailAccount,
+    EmailMessage,
+    EmailTracking,
+    Sequence,
+    SequenceEnrollment,
+    CatalogProduct,
+    PriceRule,
+    QuoteLine
   ], // Path to your models
   logging: process.env.NODE_ENV !== 'production' ? console.log : false
 });

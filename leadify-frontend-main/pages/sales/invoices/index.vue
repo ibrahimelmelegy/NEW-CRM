@@ -9,6 +9,9 @@ div
 
   StatCards(:stats="summaryStats")
 
+  SavedViews(:entityType="'invoice'" :currentFilters="{}" @apply-view="handleApplyView")
+  AdvancedSearch(:entityType="'invoice'" :fields="advancedSearchFields" @apply="handleAdvancedFilter" @clear="handleClearAdvancedFilter")
+
   AppTable(
     v-slot="{data}"
     :externalLoading="loading"
@@ -239,5 +242,40 @@ async function downloadInvoiceWithTemplate(template: any) {
 
 function formatCurrency(amount: number): string {
   return new Intl.NumberFormat('en-US', { style: 'currency', currency: 'SAR', minimumFractionDigits: 0 }).format(amount || 0);
+}
+
+// SavedViews & AdvancedSearch
+const advancedSearchFields = [
+  { key: 'invoiceNumber', label: t('invoices.table.invoiceNumber'), type: 'string' },
+  { key: 'amount', label: t('invoices.table.amount'), type: 'number' },
+  { key: 'status', label: t('invoices.table.status'), type: 'select', options: [{ value: 'collected', label: 'Collected' }, { value: 'pending', label: 'Pending' }] },
+  { key: 'invoiceDate', label: t('invoices.table.date'), type: 'date' }
+];
+
+async function handleApplyView(view: any) {
+  if (view?.filters) {
+    try {
+      const qs = '?' + new URLSearchParams(view.filters).toString();
+      const res = await useApiFetch(`invoice${qs}`);
+      if (res?.success && res?.body) {
+        const data = res.body as any;
+        table.data = data.docs || [];
+      }
+    } catch {}
+  }
+}
+
+async function handleAdvancedFilter(filterPayload: any) {
+  try {
+    const res = await useApiFetch('search/advanced/invoice', 'POST', filterPayload);
+    if (res?.success && res?.body) {
+      const data = res.body as any;
+      table.data = data.docs || data || [];
+    }
+  } catch {}
+}
+
+async function handleClearAdvancedFilter() {
+  await loadData();
 }
 </script>

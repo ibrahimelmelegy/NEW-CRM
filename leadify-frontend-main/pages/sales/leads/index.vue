@@ -26,6 +26,8 @@ div
   // Spinner
   el-spinner(size="large" v-if="loadingAction" class="nuxt-loading-indicator")
   BulkActions(:count="selectedRows.length" :actions="['delete', 'export']" @bulk-delete="handleBulkDelete" @bulk-export="handleBulkExport" @clear-selection="selectedRows = []")
+  SavedViews(:entityType="'lead'" :currentFilters="currentFilters" @apply-view="handleApplyView")
+  AdvancedSearch(:entityType="'lead'" :fields="advancedSearchFields" @apply="handleAdvancedFilter" @clear="handleClearAdvancedFilter")
   AppTable(v-slot="{data}"  v-if="!loadingAction" :externalLoading="loading" :filterOptions="filterOptions" :columns="table.columns" position="lead" :pageInfo="response.pagination"  :data="table.data" :sortOptions="table.sort" @handleRowClick="handleRowClick" :searchPlaceholder="$t('leads.title')" :key="table.data" )
     .flex.items-center.py-2(@click.stop)
         //- NuxtLink.toggle-icon(:to="`/leads/1`")
@@ -262,6 +264,41 @@ const filterOptions = computed(() => [
     type: 'date'
   }
 ]);
+
+// SavedViews & AdvancedSearch
+const currentFilters = ref<Record<string, any>>({});
+
+const advancedSearchFields = [
+  { key: 'name', label: t('leads.table.leadName'), type: 'string' },
+  { key: 'email', label: t('leads.table.email'), type: 'string' },
+  { key: 'phone', label: t('leads.table.phone'), type: 'string' },
+  { key: 'status', label: t('leads.table.status'), type: 'select', options: leadStates.map((s: any) => ({ value: s.value, label: s.label })) },
+  { key: 'leadSource', label: t('leads.table.source'), type: 'select', options: leadSources.map((s: any) => ({ value: s.value, label: s.label })) },
+  { key: 'createdAt', label: t('leads.table.created'), type: 'date' }
+];
+
+async function handleApplyView(view: any) {
+  if (view?.filters) {
+    currentFilters.value = view.filters;
+    const response = await useTableFilter('lead', view.filters);
+    table.value.data = response.formattedData;
+  }
+}
+
+async function handleAdvancedFilter(filterPayload: any) {
+  try {
+    const response = await useApiFetch('search/advanced/lead', 'POST', filterPayload);
+    if (response?.success && response?.body) {
+      const data = response.body as any;
+      table.value.data = data.docs || data || [];
+    }
+  } catch {}
+}
+
+async function handleClearAdvancedFilter() {
+  const response = await useTableFilter('lead');
+  table.value.data = response.formattedData;
+}
 
 // Export columns & data
 const exportColumns = [

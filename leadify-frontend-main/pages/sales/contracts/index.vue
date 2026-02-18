@@ -12,6 +12,9 @@ div
 
   StatCards(:stats="summaryStats")
 
+  SavedViews(:entityType="'contract'" :currentFilters="{}" @apply-view="handleApplyView")
+  AdvancedSearch(:entityType="'contract'" :fields="advancedSearchFields" @apply="handleAdvancedFilter" @clear="handleClearAdvancedFilter")
+
   .glass-card.py-8.animate-entrance
     .px-6.mb-6
       el-input(size="large" style="height:50px; max-width: 250px" v-model="searchText" :placeholder="$t('common.search') + ' ' + $t('contracts.title')" clearable @input="debounceSearch")
@@ -229,5 +232,33 @@ async function handleSend(id: string) {
   await sendForSignature(id);
   contracts.value = await fetchContracts();
   ElNotification({ type: 'success', title: t('common.success'), message: t('contracts.sent') || 'Sent for signature' });
+}
+
+// SavedViews & AdvancedSearch
+const advancedSearchFields = [
+  { key: 'title', label: t('contracts.table.title'), type: 'string' },
+  { key: 'signerName', label: t('contracts.table.signer'), type: 'string' },
+  { key: 'signerEmail', label: t('contracts.table.email'), type: 'string' },
+  { key: 'status', label: t('contracts.table.status'), type: 'select', options: [{ value: 'DRAFT', label: 'Draft' }, { value: 'SENT', label: 'Sent' }, { value: 'SIGNED', label: 'Signed' }] },
+  { key: 'createdAt', label: t('common.created') || 'Created', type: 'date' }
+];
+
+async function handleApplyView(view: any) {
+  // Contracts use client-side data, so filter from loaded list
+  contracts.value = await fetchContracts();
+}
+
+async function handleAdvancedFilter(filterPayload: any) {
+  try {
+    const res = await useApiFetch('search/advanced/contract', 'POST', filterPayload);
+    if (res?.success && res?.body) {
+      const data = res.body as any;
+      contracts.value = data.docs || data || [];
+    }
+  } catch {}
+}
+
+async function handleClearAdvancedFilter() {
+  contracts.value = await fetchContracts();
 }
 </script>

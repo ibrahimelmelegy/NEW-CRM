@@ -26,6 +26,8 @@ div
       //-                 Icon.text-md.mr-2(size="20" name="IconArchived" )
       //-                 p.text-sm Archived
   BulkActions(:count="selectedRows.length" :actions="['delete', 'export']" @bulk-delete="handleBulkDelete" @bulk-export="handleBulkExport" @clear-selection="selectedRows = []")
+  SavedViews(:entityType="'client'" :currentFilters="{}" @apply-view="handleApplyView")
+  AdvancedSearch(:entityType="'client'" :fields="advancedSearchFields" @apply="handleAdvancedFilter" @clear="handleClearAdvancedFilter")
   AppTable(v-slot="{data}" :filterOptions="filterOptions" :columns="table.columns" position="client" :pageInfo="response.pagination" :data="table.data" :sortOptions="table.sort" @handleRowClick="handleRowClick" searchPlaceholder="clients" )
     .flex.items-center.py-2(@click.stop)
         //- NuxtLink.toggle-icon(:to="`/clients/1`")
@@ -183,4 +185,36 @@ const filterOptions = [
     options: [...mappedUsers]
   }
 ];
+
+// SavedViews & AdvancedSearch
+const advancedSearchFields = [
+  { key: 'name', label: t('clients.table.clientName'), type: 'string' },
+  { key: 'email', label: t('clients.table.email'), type: 'string' },
+  { key: 'phoneNumber', label: t('clients.table.phone'), type: 'string' },
+  { key: 'clientType', label: t('clients.table.type'), type: 'select', options: clientTypes.map((s: any) => ({ value: s.value, label: s.label })) },
+  { key: 'status', label: t('clients.table.status'), type: 'select', options: clientStatuses.map((s: any) => ({ value: s.value, label: s.label })) },
+  { key: 'createdAt', label: t('clients.table.created'), type: 'date' }
+];
+
+async function handleApplyView(view: any) {
+  if (view?.filters) {
+    const res = await useTableFilter('client', view.filters);
+    table.data = res.formattedData;
+  }
+}
+
+async function handleAdvancedFilter(filterPayload: any) {
+  try {
+    const res = await useApiFetch('search/advanced/client', 'POST', filterPayload);
+    if (res?.success && res?.body) {
+      const data = res.body as any;
+      table.data = data.docs || data || [];
+    }
+  } catch {}
+}
+
+async function handleClearAdvancedFilter() {
+  const res = await useTableFilter('client');
+  table.data = res.formattedData;
+}
 </script>

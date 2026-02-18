@@ -57,6 +57,32 @@ Teleport(to="body")
               .spotlight-item-content
                 span.spotlight-item-title {{ item.title }}
               Icon.spotlight-item-arrow(name="ph:arrow-right-bold")
+
+          //- Search Results Section
+          template(v-if="searchLoading")
+            .spotlight-section-title
+              Icon(name="ph:magnifying-glass-bold")
+              span {{ $t('spotlight.searchResults') || 'Search Results' }}
+            .spotlight-item
+              .spotlight-item-content
+                span.spotlight-item-title(style="color: var(--text-muted)") {{ $t('common.loading') }}
+
+          template(v-else-if="groupedItems.searches.length > 0")
+            .spotlight-section-title
+              Icon(name="ph:magnifying-glass-bold")
+              span {{ $t('spotlight.searchResults') || 'Search Results' }}
+            .spotlight-item(
+              v-for="(item, index) in groupedItems.searches"
+              :key="item.id"
+              :class="{ active: flatItems.indexOf(item) === selectedIndex }"
+              @click="selectItem(item)"
+              @mouseenter="selectedIndex = flatItems.indexOf(item)"
+            )
+              Icon.spotlight-item-icon(:name="item.icon")
+              .spotlight-item-content
+                span.spotlight-item-title {{ item.title }}
+                span.spotlight-item-subtitle(v-if="item.subtitle") {{ item.subtitle }}
+              Icon.spotlight-item-arrow(name="ph:arrow-right-bold")
         
         //- Empty State
         .spotlight-empty(v-else)
@@ -81,7 +107,7 @@ Teleport(to="body")
 <script setup lang="ts">
 import { useSpotlight } from '~/composables/useSpotlight';
 
-const { isOpen, searchQuery, selectedIndex, groupedItems, flatItems, open, close, selectItem } = useSpotlight();
+const { isOpen, searchQuery, selectedIndex, groupedItems, flatItems, searchLoading, open, close, selectItem } = useSpotlight();
 
 const inputRef = ref<HTMLInputElement | null>(null);
 
@@ -264,6 +290,11 @@ watch(isOpen, value => {
   font-size: 14px;
   font-weight: 500;
   color: var(--text-primary);
+}
+
+.spotlight-item-subtitle {
+  font-size: 12px;
+  color: var(--text-muted);
 }
 
 .spotlight-item-arrow {

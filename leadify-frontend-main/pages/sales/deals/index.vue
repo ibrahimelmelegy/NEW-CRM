@@ -33,6 +33,8 @@ div
       //-                 Icon.text-md.mr-2(size="20" name="IconArchived" )
       //-                 p.text-sm Archived
   BulkActions(:count="selectedRows.length" :actions="['delete', 'export']" @bulk-delete="handleBulkDelete" @bulk-export="handleBulkExport" @clear-selection="selectedRows = []")
+  SavedViews(:entityType="'deal'" :currentFilters="{}" @apply-view="handleApplyView")
+  AdvancedSearch(:entityType="'deal'" :fields="advancedSearchFields" @apply="handleAdvancedFilter" @clear="handleClearAdvancedFilter")
   AppTable(v-slot="{data}" :filterOptions="filterOptions" :columns="table.columns" position="deal" :pageInfo="response.pagination" :data="table.data" :sortOptions="table.sort" @handleRowClick="handleRowClick" :searchPlaceholder="$t('deals.title')" )
     .flex.items-center.py-2(@click.stop)
         //- NuxtLink.toggle-icon(:to="`/deals/1`")
@@ -182,4 +184,36 @@ const filterOptions = computed(() => [
     type: 'input'
   }
 ]);
+
+// SavedViews & AdvancedSearch
+const advancedSearchFields = [
+  { key: 'name', label: t('deals.table.dealName'), type: 'string' },
+  { key: 'stage', label: t('deals.table.stage'), type: 'select', options: dealStageOptions.map((o: any) => ({ value: o.value, label: o.label })) },
+  { key: 'price', label: t('deals.table.price'), type: 'number' },
+  { key: 'contractType', label: t('deals.table.contractType'), type: 'select', options: contractTypeOptions.map((o: any) => ({ value: o.value, label: o.label })) },
+  { key: 'signatureDate', label: t('deals.table.signatureDate'), type: 'date' },
+  { key: 'createdAt', label: t('deals.table.created'), type: 'date' }
+];
+
+async function handleApplyView(view: any) {
+  if (view?.filters) {
+    const res = await useTableFilter('deal', view.filters);
+    table.data = res.formattedData;
+  }
+}
+
+async function handleAdvancedFilter(filterPayload: any) {
+  try {
+    const res = await useApiFetch('search/advanced/deal', 'POST', filterPayload);
+    if (res?.success && res?.body) {
+      const data = res.body as any;
+      table.data = data.docs || data || [];
+    }
+  } catch {}
+}
+
+async function handleClearAdvancedFilter() {
+  const res = await useTableFilter('deal');
+  table.data = res.formattedData;
+}
 </script>

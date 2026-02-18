@@ -77,6 +77,12 @@ import slaRoutes from './sla/slaRoutes';
 import dashboardRoutes from './dashboard/dashboardRoutes';
 import customReportRoutes from './reports/customReportRoutes';
 import securityRoutes from './security/securityRoutes';
+import pipelineConfigRoutes from './pipelineConfig/pipelineConfigRoutes';
+import territoryRoutes from './territory/territoryRoutes';
+import forecastRoutes from './forecasting/forecastRoutes';
+import emailRoutes from './emailIntegration/emailRoutes';
+import sequenceRoutes from './sequences/sequenceRoutes';
+import productCatalogRoutes from './productCatalog/productRoutes';
 
 const fileUpload = require('express-fileupload');
 
@@ -259,6 +265,12 @@ app.use('/api/sla', slaRoutes);
 app.use('/api/dashboards', dashboardRoutes);
 app.use('/api/reports', customReportRoutes);
 app.use('/api/security', securityRoutes);
+app.use('/api/pipeline-config', pipelineConfigRoutes);
+app.use('/api/territories', territoryRoutes);
+app.use('/api/forecasting', forecastRoutes);
+app.use('/api/email', emailRoutes);
+app.use('/api/sequences', sequenceRoutes);
+app.use('/api/catalog', productCatalogRoutes);
 
 // Authentication routes
 // Apply strict rate limiting only to login/password-reset endpoints (not /me which is called on every page)

@@ -19,6 +19,9 @@ const searchQuery = ref('');
 const selectedIndex = ref(0);
 const userPermissions = ref<string[]>([]);
 const isAdmin = ref(false);
+const searchResults = ref<SpotlightItem[]>([]);
+const searchLoading = ref(false);
+let searchDebounceTimer: ReturnType<typeof setTimeout>;
 
 // All available items with permissions
 const spotlightItems: SpotlightItem[] = [
@@ -344,7 +347,7 @@ const filteredItems = computed(() => {
 const groupedItems = computed(() => {
   const pages = filteredItems.value.filter(i => i.category === 'page');
   const actions = filteredItems.value.filter(i => i.category === 'action');
-  const searches = filteredItems.value.filter(i => i.category === 'search');
+  const searches = searchResults.value;
 
   return { pages, actions, searches };
 });
@@ -469,9 +472,71 @@ export function useSpotlight() {
     }
   }
 
-  // Watch for search query changes to reset selection
-  watch(searchQuery, () => {
+  // Entity type icon mapping for search results
+  const entityIconMap: Record<string, string> = {
+    lead: 'ph:users-bold',
+    client: 'ph:user-circle-bold',
+    deal: 'ph:handshake-bold',
+    opportunity: 'ph:target-bold',
+    project: 'ph:folder-bold',
+    contact: 'ph:address-book-bold',
+    invoice: 'ph:receipt-bold',
+    proposal: 'ph:file-text-bold',
+    task: 'ph:list-checks-bold',
+    staff: 'ph:identification-badge-bold'
+  };
+
+  const entityPathMap: Record<string, string> = {
+    lead: '/sales/leads/',
+    client: '/sales/clients/',
+    deal: '/sales/deals/',
+    opportunity: '/sales/opportunity/',
+    project: '/operations/projects/',
+    invoice: '/sales/invoices/',
+    proposal: '/sales/proposals/',
+    task: '/tasks/',
+    staff: '/staff/'
+  };
+
+  // API search function
+  async function performApiSearch(query: string) {
+    if (query.length < 3) {
+      searchResults.value = [];
+      return;
+    }
+    searchLoading.value = true;
+    try {
+      const response = await useApiFetch(`search?q=${encodeURIComponent(query)}&limit=5`);
+      if (response?.success && response?.body) {
+        const results = (response.body as any).docs || response.body || [];
+        searchResults.value = (Array.isArray(results) ? results : []).slice(0, 5).map((item: any, idx: number) => ({
+          id: `search-${idx}`,
+          title: item.name || item.title || item.email || `${item.entityType} #${item.id}`,
+          subtitle: item.entityType ? item.entityType.charAt(0).toUpperCase() + item.entityType.slice(1) : '',
+          icon: entityIconMap[item.entityType?.toLowerCase()] || 'ph:magnifying-glass-bold',
+          category: 'search' as const,
+          path: item.entityType && item.id ? (entityPathMap[item.entityType.toLowerCase()] || '/') + item.id : undefined,
+          keywords: []
+        }));
+      } else {
+        searchResults.value = [];
+      }
+    } catch {
+      searchResults.value = [];
+    } finally {
+      searchLoading.value = false;
+    }
+  }
+
+  // Watch for search query changes to reset selection and debounce API search
+  watch(searchQuery, (query) => {
     selectedIndex.value = 0;
+    clearTimeout(searchDebounceTimer);
+    if (query.trim().length >= 3) {
+      searchDebounceTimer = setTimeout(() => performApiSearch(query.trim()), 300);
+    } else {
+      searchResults.value = [];
+    }
   });
 
   // Setup keyboard listeners
@@ -492,6 +557,7 @@ export function useSpotlight() {
     groupedItems,
     flatItems,
     isAdmin,
+    searchLoading,
     open,
     close,
     toggle,

@@ -26,6 +26,8 @@ div
       //-                 Icon.text-md.mr-2(size="20" name="IconArchived" )
       //-                 p.text-sm Archived
   BulkActions(:count="selectedRows.length" :actions="['delete', 'export']" @bulk-delete="handleBulkDelete" @bulk-export="handleBulkExport" @clear-selection="selectedRows = []")
+  SavedViews(:entityType="'project'" :currentFilters="{}" @apply-view="handleApplyView")
+  AdvancedSearch(:entityType="'project'" :fields="advancedSearchFields" @apply="handleAdvancedFilter" @clear="handleClearAdvancedFilter")
   AppTable(v-slot="{data}"  :filterOptions="filterOptions" :columns="table.columns" position="project" :pageInfo="response.pagination" :data="table.data" :sortOptions="table.sort" @handleRowClick="handleRowClick" :searchPlaceholder="$t('operations.projects.title')" )
     .flex.items-center.py-2(@click.stop)
         //- NuxtLink.toggle-icon(:to="`/leads/1`")
@@ -209,4 +211,36 @@ const filterOptions = [
     type: 'date'
   }
 ];
+
+// SavedViews & AdvancedSearch
+const advancedSearchFields = [
+  { key: 'name', label: t('operations.projects.table.projectName'), type: 'string' },
+  { key: 'status', label: t('operations.projects.table.status'), type: 'select', options: getProjectStatuses() },
+  { key: 'category', label: t('operations.projects.table.category'), type: 'select', options: getProjectCategories() },
+  { key: 'startDate', label: t('operations.projects.filter.startDate'), type: 'date' },
+  { key: 'endDate', label: t('operations.projects.filter.endDate'), type: 'date' },
+  { key: 'totalCost', label: t('operations.projects.table.totalCost'), type: 'number' }
+];
+
+async function handleApplyView(view: any) {
+  if (view?.filters) {
+    const res = await useTableFilter('project', view.filters);
+    table.data = res.formattedData;
+  }
+}
+
+async function handleAdvancedFilter(filterPayload: any) {
+  try {
+    const res = await useApiFetch('search/advanced/project', 'POST', filterPayload);
+    if (res?.success && res?.body) {
+      const data = res.body as any;
+      table.data = data.docs || data || [];
+    }
+  } catch {}
+}
+
+async function handleClearAdvancedFilter() {
+  const res = await useTableFilter('project');
+  table.data = res.formattedData;
+}
 </script>

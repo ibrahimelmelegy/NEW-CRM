@@ -33,6 +33,8 @@ div
       //-                 Icon.text-md.mr-2(size="20" name="IconArchived" )
       //-                 p.text-sm Archived
   BulkActions(:count="selectedRows.length" :actions="['delete', 'export']" @bulk-delete="handleBulkDelete" @bulk-export="handleBulkExport" @clear-selection="selectedRows = []")
+  SavedViews(:entityType="'opportunity'" :currentFilters="{}" @apply-view="handleApplyView")
+  AdvancedSearch(:entityType="'opportunity'" :fields="advancedSearchFields" @apply="handleAdvancedFilter" @clear="handleClearAdvancedFilter")
   AppTable(v-slot="{data}" v-if="!loadingAction" :filterOptions="filterOptions" :columns="table.columns" position="opportunity" :pageInfo="response.pagination" :data="table.data" :sortOptions="table.sort" @handleRowClick="handleRowClick" :searchPlaceholder="$t('opportunities.title')" )
     .flex.items-center.py-2(@click.stop)
         //- NuxtLink.toggle-icon(:to="`/opportunities/1`")
@@ -292,4 +294,36 @@ const filterOptions = [
     type: 'input'
   }
 ];
+
+// SavedViews & AdvancedSearch
+const advancedSearchFields = [
+  { key: 'name', label: t('opportunities.table.oppName'), type: 'string' },
+  { key: 'stage', label: t('opportunities.table.stage'), type: 'select', options: stageOptions.map(o => ({ value: o.value, label: t(o.label) })) },
+  { key: 'estimatedValue', label: t('opportunities.table.budget'), type: 'number' },
+  { key: 'priority', label: t('opportunities.table.priority'), type: 'select', options: priorityOptions.map(o => ({ value: o.value, label: t(o.label) })) },
+  { key: 'expectedCloseDate', label: t('opportunities.table.closeDate'), type: 'date' },
+  { key: 'createdAt', label: t('opportunities.table.created'), type: 'date' }
+];
+
+async function handleApplyView(view: any) {
+  if (view?.filters) {
+    const res = await useTableFilter('opportunity', view.filters);
+    table.data = res.formattedData;
+  }
+}
+
+async function handleAdvancedFilter(filterPayload: any) {
+  try {
+    const res = await useApiFetch('search/advanced/opportunity', 'POST', filterPayload);
+    if (res?.success && res?.body) {
+      const data = res.body as any;
+      table.data = data.docs || data || [];
+    }
+  } catch {}
+}
+
+async function handleClearAdvancedFilter() {
+  const res = await useTableFilter('opportunity');
+  table.data = res.formattedData;
+}
 </script>

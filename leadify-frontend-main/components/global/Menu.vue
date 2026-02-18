@@ -149,13 +149,15 @@ const menu = [
     isOpen: false,
     link: '/inventory'
   },
+  { link: '/tasks', name: 'navigation.tasks', icon: 'ph:list-checks-bold', submenu: false, isOpen: false },
   { link: '/messaging', name: 'navigation.messaging', icon: 'ph:chat-circle-dots-bold', submenu: false, isOpen: false },
   {
     name: 'navigation.marketing',
     icon: 'ph:megaphone-bold',
     isOpen: false,
     submenu: [
-      { link: '/marketing/campaigns', name: 'navigation.campaigns', icon: 'ph:envelope-simple-bold' }
+      { link: '/marketing/campaigns', name: 'navigation.campaigns', icon: 'ph:envelope-simple-bold' },
+      { link: '/marketing/sequences', name: 'navigation.sequences', icon: 'ph:flow-arrow-bold' }
     ]
   },
   {
@@ -176,7 +178,8 @@ const menu = [
     isOpen: false,
     submenu: [
       { link: '/reports', name: 'navigation.report', icon: 'ph:chart-pie' },
-      { link: '/reports/builder', name: 'navigation.reportBuilder', icon: 'ph:faders-horizontal-bold' }
+      { link: '/reports/builder', name: 'navigation.reportBuilder', icon: 'ph:faders-horizontal-bold' },
+      { link: '/reports/forecasting', name: 'navigation.forecasting', icon: 'ph:trend-up-bold' }
     ]
   },
   {
@@ -244,6 +247,14 @@ const menu = [
       { link: '/roles/add-role', name: 'navigation.addNewRole', icon: 'ph:plus-circle-bold' },
       { link: '/staff', name: 'navigation.staffManagement', icon: 'ph:users-bold' },
       { link: '/staff/add-staff', name: 'navigation.addNewStaff', icon: 'ph:user-plus-bold' },
+      { link: '/settings/notifications', name: 'navigation.notificationPrefs', icon: 'ph:bell-ringing-bold' },
+      { link: '/settings/lead-scoring', name: 'navigation.leadScoring', icon: 'ph:chart-line-up-bold' },
+      { link: '/settings/duplicates', name: 'navigation.duplicateDetection', icon: 'ph:copy-bold' },
+      { link: '/settings/sla', name: 'navigation.slaManagement', icon: 'ph:clock-countdown-bold' },
+      { link: '/settings/pipeline', name: 'navigation.pipeline', icon: 'ph:funnel-bold' },
+      { link: '/settings/territories', name: 'navigation.territories', icon: 'ph:map-trifold-bold' },
+      { link: '/settings/email-accounts', name: 'navigation.emailAccounts', icon: 'ph:envelope-bold' },
+      { link: '/settings/products', name: 'navigation.products', icon: 'ph:package-bold' },
       { link: '/admin/tests', name: 'navigation.qaCenter', icon: 'ph:test-tube-bold' },
       { link: '/test', name: 'navigation.permissionsHub', icon: 'ph:key-bold' }
     ]

@@ -8,6 +8,9 @@
         NuxtLink(to="/staff/add-staff")
           el-button(size='large' :loading="loading" v-if="hasPermission('CREATE_STAFF')" native-type="submit" type="primary" :icon="Plus" class="w-full !my-4 !rounded-2xl") {{ $t('staff.newStaff') }}
 
+    SavedViews(:entityType="'staff'" :currentFilters="{}" @apply-view="handleApplyView")
+    AdvancedSearch(:entityType="'staff'" :fields="advancedSearchFields" @apply="handleAdvancedFilter" @clear="handleClearAdvancedFilter")
+
     AppTable(v-slot="{data}" :filterOptions="filterOptions" :columns="table.columns" position="users" :pageInfo="response.pagination" :data="table.data" :sortOptions="table.sort" @handleRowClick="handleRowClick" searchPlaceholder="staff" :loading="loadingAction" )
       .flex.items-center.py-2(@click.stop)
           el-dropdown(class="outline-0" trigger="click")
@@ -149,4 +152,36 @@ const filterOptions = [
     options: mappedRoles.value
   }
 ];
+
+// SavedViews & AdvancedSearch
+const advancedSearchFields = [
+  { key: 'name', label: t('staff.table.name'), type: 'string' },
+  { key: 'email', label: t('staff.table.email'), type: 'string' },
+  { key: 'phone', label: t('staff.table.phone'), type: 'string' },
+  { key: 'status', label: t('staff.table.status'), type: 'select', options: staffStatuses.map((s: any) => ({ value: s.value, label: s.label })) },
+  { key: 'roleId', label: t('staff.table.role'), type: 'select', options: mappedRoles.value || [] },
+  { key: 'createdAt', label: t('common.created') || 'Created', type: 'date' }
+];
+
+async function handleApplyView(view: any) {
+  if (view?.filters) {
+    const res = await useTableFilter('users', view.filters);
+    table.data = res.formattedData;
+  }
+}
+
+async function handleAdvancedFilter(filterPayload: any) {
+  try {
+    const res = await useApiFetch('search/advanced/staff', 'POST', filterPayload);
+    if (res?.success && res?.body) {
+      const data = res.body as any;
+      table.data = data.docs || data || [];
+    }
+  } catch {}
+}
+
+async function handleClearAdvancedFilter() {
+  const res = await useTableFilter('users');
+  table.data = res.formattedData;
+}
 </script>
