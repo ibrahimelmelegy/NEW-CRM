@@ -116,8 +116,8 @@ async function exportExcel(headers: string[], rows: string[][], baseName: string
 
 async function exportPDF(headers: string[], rows: string[][], baseName: string) {
   try {
-    const jsPDF = (await import('jspdf')).default;
-    await import('jspdf-autotable');
+    const { default: jsPDF } = await import('jspdf');
+    const autoTable = (await import('jspdf-autotable')).default;
 
     const doc = new jsPDF({
       orientation: rows[0] && rows[0].length > 5 ? 'landscape' : 'portrait',
@@ -156,7 +156,7 @@ async function exportPDF(headers: string[], rows: string[][], baseName: string) 
     doc.setTextColor(0, 0, 0);
 
     // Table
-    (doc as any).autoTable({
+    autoTable(doc, {
       startY,
       head: [headers],
       body: rows,
@@ -166,7 +166,7 @@ async function exportPDF(headers: string[], rows: string[][], baseName: string) 
         textColor: [255, 255, 255],
         fontSize: 9,
         fontStyle: 'bold',
-        halign: 'left'
+        halign: 'left' as const
       },
       bodyStyles: {
         fontSize: 8,
@@ -178,7 +178,7 @@ async function exportPDF(headers: string[], rows: string[][], baseName: string) 
       styles: {
         lineColor: [220, 220, 230],
         lineWidth: 0.2,
-        overflow: 'linebreak'
+        overflow: 'linebreak' as const
       },
       margin: { left: 10, right: 10 },
       didDrawPage: (data: any) => {

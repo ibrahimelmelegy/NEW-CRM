@@ -6,6 +6,14 @@ import { SettingsPermissionsEnum } from '../role/roleEnum';
 const router = express.Router();
 
 // ── Rules CRUD ──
+// Support both /api/workflows and /api/workflows/rules
+router.get(
+  '/',
+  authenticateUser,
+  HasPermission([SettingsPermissionsEnum.VIEW_SETTINGS]),
+  workflowController.getRules
+);
+
 router.get(
   '/rules',
   authenticateUser,

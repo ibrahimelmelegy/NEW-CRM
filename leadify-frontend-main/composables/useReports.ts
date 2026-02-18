@@ -52,7 +52,7 @@ export async function deleteReport(id: number) {
   return useApiFetch(`reports/${id}`, 'DELETE');
 }
 
-export async function executeReport(
+export async function executeSavedReport(
   id: number,
   filters?: Record<string, any>
 ): Promise<any> {

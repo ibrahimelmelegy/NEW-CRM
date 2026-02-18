@@ -30,13 +30,18 @@ export function useRelationshipGraph() {
 
   async function fetchGraph() {
     loading.value = true;
-    const typesParam = filters.value.join(',');
-    const res = await useApiFetch(`insights/relationship-graph?types=${typesParam}`);
-    if (res.success && res.body) {
-      nodes.value = res.body.nodes;
-      edges.value = res.body.edges;
+    try {
+      const typesParam = filters.value.join(',');
+      const res = await useApiFetch(`insights/relationship-graph?types=${typesParam}`, 'GET', {}, true);
+      if (res.success && res.body) {
+        nodes.value = res.body.nodes || [];
+        edges.value = res.body.edges || [];
+      }
+    } catch (e) {
+      console.warn('[RelationshipGraph] Failed to fetch graph data:', e);
+    } finally {
+      loading.value = false;
     }
-    loading.value = false;
   }
 
   function toCytoscapeElements() {

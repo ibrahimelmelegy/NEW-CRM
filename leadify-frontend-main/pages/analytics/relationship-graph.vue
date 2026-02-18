@@ -9,9 +9,15 @@
           p.text-secondary.text-sm {{ $t('relationshipGraph.subtitle') }}
       GraphFilters(v-model="filters" :counts="nodeCounts" @update:modelValue="onFilterChange")
 
-  .glass-card.p-4.relative(v-loading="loading")
-    GraphCanvas(:elements="cytoscapeElements" @nodeClick="onNodeClick")
-    NodeDetailPanel(:node="selectedNode" @close="selectedNode = null")
+  ClientOnly
+    .glass-card.p-4.relative
+      .flex.items-center.justify-center(v-if="loading" style="height: 600px")
+        el-icon.is-loading(size="32" style="color: var(--accent-color, #7849ff)")
+          i.el-icon-loading
+        span.ml-3.text-sm(style="color: var(--text-secondary)") Loading graph...
+      template(v-else)
+        GraphCanvas(:elements="cytoscapeElements" @nodeClick="onNodeClick")
+      NodeDetailPanel(:node="selectedNode" @close="selectedNode = null")
 </template>
 
 <script setup lang="ts">

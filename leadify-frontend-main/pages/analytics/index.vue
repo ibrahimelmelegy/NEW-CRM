@@ -88,7 +88,7 @@ div
   //- Team Performance Table
   .glass-card.p-6.mt-6.animate-entrance(style="animation-delay: 0.3s")
     h3.text-lg.font-bold.mb-4(style="color: var(--text-primary)") {{ $t('analyticsPage.teamPerformance') }}
-    el-table(:data="teamData" v-loading="loadingTeam" style="width: 100%")
+    el-table(:data="Array.isArray(teamData) ? teamData : []" v-loading="loadingTeam" style="width: 100%")
       el-table-column(:label="$t('analyticsPage.member')" min-width="200")
         template(#default="{ row }")
           .flex.items-center.gap-3
@@ -124,6 +124,7 @@ import {
 import {
   fetchPipelineData, fetchRevenueChart, fetchTeamPerformance
 } from '~/composables/useDashboard';
+import { formatLargeNumber } from '~/composables/format';
 
 use([CanvasRenderer, BarChart, LineChart, PieChart, FunnelChart, TitleComponent, TooltipComponent, LegendComponent, GridComponent]);
 
@@ -217,6 +218,8 @@ async function loadPipeline() {
     } else {
       pipelineOption.value = null;
     }
+  } catch {
+    pipelineOption.value = null;
   } finally {
     loadingPipeline.value = false;
   }
@@ -232,6 +235,8 @@ async function loadRevenue() {
     } else {
       revenueOption.value = null;
     }
+  } catch {
+    revenueOption.value = null;
   } finally {
     loadingRevenue.value = false;
   }
@@ -248,6 +253,8 @@ async function loadLeadSources() {
     } else {
       leadSourcesOption.value = null;
     }
+  } catch {
+    leadSourcesOption.value = null;
   } finally {
     loadingLeadSources.value = false;
   }
@@ -283,6 +290,8 @@ async function loadFunnel() {
     } else {
       funnelOption.value = null;
     }
+  } catch {
+    funnelOption.value = null;
   } finally {
     loadingFunnel.value = false;
   }
@@ -302,6 +311,8 @@ async function loadWinLoss() {
     } else {
       winLossOption.value = null;
     }
+  } catch {
+    winLossOption.value = null;
   } finally {
     loadingWinLoss.value = false;
   }
@@ -318,6 +329,8 @@ async function loadDealSize() {
     } else {
       dealSizeOption.value = null;
     }
+  } catch {
+    dealSizeOption.value = null;
   } finally {
     loadingDealSize.value = false;
   }
@@ -328,6 +341,8 @@ async function loadTeamPerformance() {
   try {
     const data = await fetchTeamPerformance(getDateRangeParams());
     teamData.value = data?.members || data || [];
+  } catch {
+    teamData.value = [];
   } finally {
     loadingTeam.value = false;
   }

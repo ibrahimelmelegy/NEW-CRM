@@ -58,6 +58,7 @@
 import draggable from 'vuedraggable';
 import { getPriorityColor } from '@/composables/useKanban';
 import type { KanbanCard } from '@/composables/useKanban';
+import { formatLargeNumber } from '@/composables/format';
 
 interface KanbanColumn {
   key: string;

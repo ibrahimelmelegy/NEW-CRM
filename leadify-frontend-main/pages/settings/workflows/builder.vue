@@ -36,14 +36,15 @@
 
     //- Canvas
     .canvas-area
-      WorkflowCanvas(
-        :nodes="nodes"
-        :edges="edges"
-        @update:nodes="nodes = $event"
-        @update:edges="edges = $event"
-        @connect="addEdge"
-        @nodeClick="onNodeClick"
-      )
+      ClientOnly
+        WorkflowCanvas(
+          :nodes="nodes"
+          :edges="edges"
+          @update:nodes="nodes = $event"
+          @update:edges="edges = $event"
+          @connect="addEdge"
+          @nodeClick="onNodeClick"
+        )
 
   //- Config Panel
   NodeConfigPanel(
