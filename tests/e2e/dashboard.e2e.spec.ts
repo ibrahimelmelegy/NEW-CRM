@@ -30,8 +30,9 @@ test.describe('Dashboard & Analytics E2E', () => {
 
             if (page.url().includes('/login')) { expect(true).toBe(true); return; }
 
-            // Look for tab elements
+            // Wait for at least one tab to render (Nuxt hydration)
             const tabs = page.locator('[role="tab"], .el-tabs__item, [class*="tab"]');
+            await tabs.first().waitFor({ state: 'visible', timeout: 15000 });
             const tabCount = await tabs.count();
 
             // Dashboard should have multiple tabs

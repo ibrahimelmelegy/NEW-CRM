@@ -422,8 +422,9 @@ test.describe('Operations Module E2E', () => {
             if (page.url().includes('/login')) { expect(true).toBe(true); return; }
 
             const addBtn = page.locator('a[href*="add-service"]').first();
+            await addBtn.waitFor({ state: 'visible', timeout: 15000 });
             await addBtn.click();
-            await waitForPageLoad(page, 2000);
+            await page.waitForURL(/add-service|create/, { timeout: 15000 });
             await expect(page).toHaveURL(/add-service|create/);
         });
 

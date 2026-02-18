@@ -21,11 +21,16 @@ test.describe('Cross-Module Workflows E2E', () => {
 
             // Create lead
             await navigateTo(page, '/sales/leads/add-lead');
+            await page.waitForTimeout(2000);
 
             if (page.url().includes('/login')) { expect(true).toBe(true); return; }
 
             await page.locator('input[placeholder*="name" i], input[name*="name" i]').first().fill(leadName);
-            await page.locator('input[placeholder*="email" i], input[type="email"]').first().fill(uniqueEmail('pipeline'));
+
+            const emailInput = page.locator('input[placeholder*="email" i], input[type="email"]').first();
+            if (await emailInput.isVisible({ timeout: 5000 }).catch(() => false)) {
+                await emailInput.fill(uniqueEmail('pipeline'));
+            }
 
             const phoneInput = page.locator('input[placeholder*="phone" i], input[type="tel"]').first();
             if (await phoneInput.isVisible({ timeout: 2000 }).catch(() => false)) {

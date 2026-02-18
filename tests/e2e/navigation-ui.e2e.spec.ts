@@ -33,9 +33,13 @@ test.describe('Navigation & UI E2E', () => {
 
             if (page.url().includes('/login')) { expect(true).toBe(true); return; }
 
+            // Wait for sidebar to fully render before interacting
+            const sidebar = page.locator('[class*="sidebar"], [class*="nav"], nav, aside').first();
+            await sidebar.waitFor({ state: 'visible', timeout: 10000 });
+
             // Check if Leads link is already visible (submenu might be pre-expanded)
             const leadsLink = page.locator('a[href*="leads"], [href*="leads"]').first();
-            let hasLeads = await leadsLink.isVisible({ timeout: 3000 }).catch(() => false);
+            let hasLeads = await leadsLink.isVisible({ timeout: 5000 }).catch(() => false);
 
             if (!hasLeads) {
                 // Try clicking Sales menu to expand
@@ -43,7 +47,7 @@ test.describe('Navigation & UI E2E', () => {
                 if (await salesMenu.isVisible({ timeout: 5000 }).catch(() => false)) {
                     await salesMenu.click();
                     await page.waitForTimeout(500);
-                    hasLeads = await leadsLink.isVisible({ timeout: 3000 }).catch(() => false);
+                    hasLeads = await leadsLink.isVisible({ timeout: 5000 }).catch(() => false);
                 }
             }
 

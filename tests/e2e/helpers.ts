@@ -75,20 +75,22 @@ export async function ensureLoggedIn(page: Page): Promise<void> {
  * If unexpectedly redirected to login (not intentional), attempts re-auth.
  */
 export async function navigateTo(page: Page, path: string): Promise<void> {
-    await page.goto(path);
-    await waitForPageLoad(page);
+    await page.goto(path, { waitUntil: 'domcontentloaded', timeout: 15000 });
+    // Short wait to allow client-side redirects (auth middleware)
+    await page.waitForTimeout(1500);
 
     // Only re-auth if we didn't intend to go to a login/auth page
     const isAuthPage = path.includes('login') || path.includes('forget-password');
     if (page.url().includes('/login') && !isAuthPage) {
         try {
             await login(page);
-            await page.goto(path);
-            await waitForPageLoad(page);
+            await page.goto(path, { waitUntil: 'domcontentloaded', timeout: 15000 });
+            await page.waitForTimeout(1500);
         } catch {
             // Re-auth failed - continue with current state, test assertion will handle
         }
     }
+    await dismissViteOverlay(page);
 }
 
 /**
