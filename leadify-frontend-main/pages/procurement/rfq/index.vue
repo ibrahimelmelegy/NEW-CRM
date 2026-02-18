@@ -6,13 +6,15 @@
       .title.font-bold.text-3xl.mb-2.text-gradient Request for Quotations
       .subtitle.text-muted.text-sm.tracking-wide Manage your sourcing requests
       
-    el-button(
-      size='large', 
-      @click="router.push('/procurement/rfq/create')", 
-      type="primary", 
-      :icon="Plus", 
-      class="premium-btn !rounded-2xl px-8 glow-purple"
-    ) New RFQ
+    .flex.items-center.gap-x-4
+      ExportButton(:data="rfqs" :columns="exportColumns" :filename="'rfq-export'" title="Request for Quotations")
+      el-button(
+        size='large',
+        @click="router.push('/procurement/rfq/create')",
+        type="primary",
+        :icon="Plus",
+        class="premium-btn !rounded-2xl px-8 glow-purple"
+      ) New RFQ
 
   //- List
   .glass-card.p-4(class="!rounded-3xl shadow-glow")
@@ -41,6 +43,14 @@ import { Plus, View } from '@element-plus/icons-vue';
 
 const router = useRouter();
 const rfqs = ref([]);
+
+// Export columns
+const exportColumns = [
+  { prop: 'rfqNumber', label: 'RFQ #' },
+  { prop: 'title', label: 'Title' },
+  { prop: 'status', label: 'Status' },
+  { prop: 'deadLine', label: 'Deadline' }
+];
 
 const getStatusType = (status: string) => {
   const map: any = {

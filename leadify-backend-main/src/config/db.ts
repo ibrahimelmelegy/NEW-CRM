@@ -60,14 +60,50 @@ import CustomFieldValue from '../customField/customFieldValueModel';
 import Webhook from '../webhook/webhookModel';
 import TimeEntry from '../timeTracking/timeEntryModel';
 import SavedReport from '../reports/reportModel';
-import Workflow from '../workflow/workflowModel';
-import WorkflowLog from '../workflow/workflowLogModel';
+import WorkflowRule from '../workflow/workflowModel';
+import WorkflowExecution from '../workflow/workflowExecutionModel';
 import Campaign from '../campaign/campaignModel';
 import CampaignRecipient from '../campaign/campaignRecipientModel';
 import EmailTemplate from '../campaign/emailTemplateModel';
 import Contract from '../contract/contractModel';
 import PortalUser from '../portal/portalUserModel';
 import SupportTicket from '../portal/supportTicketModel';
+import DocumentTemplate from '../documentTemplate/documentTemplateModel';
+import KBArticle from '../knowledgeBase/kbArticleModel';
+import Attendance from '../hr/attendanceModel';
+import LeaveRequest from '../hr/leaveRequestModel';
+import ExpenseCategory from '../finance/expenseCategoryModel';
+import CalendarEvent from '../calendar/calendarEventModel';
+import Expense from '../finance/expenseModel';
+import Budget from '../finance/budgetModel';
+import FieldCheckIn from '../fieldOps/checkInModel';
+import Achievement from '../gamification/achievementModel';
+import UserPoints from '../gamification/userPointsModel';
+import Currency from '../currency/currencyModel';
+import TaxRule from '../currency/taxRuleModel';
+import Product from '../inventory/productModel';
+import StockMovement from '../inventory/stockMovementModel';
+import DocumentFolder from '../documents/documentFolderModel';
+import DocumentFile from '../documents/documentFileModel';
+import ApprovalWorkflow from '../approval/approvalWorkflowModel';
+import ApprovalRequest from '../approval/approvalRequestModel';
+import Comment from '../comments/commentModel';
+import Attachment from '../attachments/attachmentModel';
+import AuditTrail from '../audit/auditModel';
+import Task from '../tasks/taskModel';
+import ZatcaInvoice from '../zatca/zatcaModel';
+import ZakaatAssessment from '../zakaat/zakaatModel';
+import SavedView from '../savedViews/savedViewModel';
+import SyncLog from '../integrations/erpnext/syncLogModel';
+import { LeadScoringRule, EntityScore } from '../leadScoring/leadScoringModel';
+import DuplicateSet from '../duplicateDetection/duplicateModel';
+import NotificationPreference from '../notification/notificationPreferenceModel';
+import { SLAPolicy, SLAInstance } from '../sla/slaModel';
+import Dashboard from '../dashboard/dashboardModel';
+import CustomReport from '../reports/customReportModel';
+import TwoFactorAuth from '../security/twoFactorModel';
+import FieldPermission from '../security/fieldPermissionModel';
+import { DataSharingRule, RecordShare } from '../security/dataShareModel';
 
 dotenv.config();
 
@@ -150,14 +186,53 @@ const sequelize = new Sequelize({
     Webhook,
     TimeEntry,
     SavedReport,
-    Workflow,
-    WorkflowLog,
+    WorkflowRule,
+    WorkflowExecution,
     Campaign,
     CampaignRecipient,
     EmailTemplate,
     Contract,
     PortalUser,
-    SupportTicket
+    SupportTicket,
+    DocumentTemplate,
+    KBArticle,
+    Attendance,
+    LeaveRequest,
+    ExpenseCategory,
+    Expense,
+    Budget,
+    CalendarEvent,
+    FieldCheckIn,
+    Achievement,
+    UserPoints,
+    Currency,
+    TaxRule,
+    Product,
+    StockMovement,
+    DocumentFolder,
+    DocumentFile,
+    ApprovalWorkflow,
+    ApprovalRequest,
+    Comment,
+    Attachment,
+    AuditTrail,
+    Task,
+    ZatcaInvoice,
+    ZakaatAssessment,
+    SavedView,
+    SyncLog,
+    LeadScoringRule,
+    EntityScore,
+    DuplicateSet,
+    NotificationPreference,
+    SLAPolicy,
+    SLAInstance,
+    Dashboard,
+    CustomReport,
+    TwoFactorAuth,
+    FieldPermission,
+    DataSharingRule,
+    RecordShare
   ], // Path to your models
   logging: process.env.NODE_ENV !== 'production' ? console.log : false
 });

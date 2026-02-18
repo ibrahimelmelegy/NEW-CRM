@@ -154,21 +154,22 @@ const formSchema = computed(() => {
 });
 
 //  Get Users
-let users = await useApiFetch('users');
-// Map Users to Select Options
-users = users?.body?.docs?.map((e: any) => ({
-  label: e.name,
-  value: e.id
-}));
-
+const users = ref<any[]>([]);
 const mappedClients = ref<{ label: string; value: any }[]>();
-//  Get clients
-const { clients } = await getClients();
-// Map clients to Select Options
-mappedClients.value = clients?.map((e: any) => ({
-  label: e.clientName,
-  value: e.id
-}));
+
+onMounted(async () => {
+  const usersRes = await useApiFetch('users');
+  users.value = usersRes?.body?.docs?.map((e: any) => ({
+    label: e.name,
+    value: e.id
+  })) || [];
+
+  const { clients } = await getClients();
+  mappedClients.value = clients?.map((e: any) => ({
+    label: e.clientName,
+    value: e.id
+  }));
+});
 
 /**
  * Checks if the deal stage has been set to 'Cancelled'.

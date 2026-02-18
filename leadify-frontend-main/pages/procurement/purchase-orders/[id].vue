@@ -126,6 +126,15 @@
                     .font-bold {{ po?.creator?.name }}
                     .text-xs.text-muted Staff Member
 
+  //- Record Tabs
+  el-tabs.mt-6(v-model="activeRecordTab")
+    el-tab-pane(:label="$t('common.timeline')" name="timeline")
+      RecordTimeline(:entityType="'purchaseOrder'" :entityId="route.params.id as string")
+    el-tab-pane(:label="$t('common.comments')" name="comments")
+      RecordComments(:entityType="'purchaseOrder'" :entityId="route.params.id as string")
+    el-tab-pane(:label="$t('common.attachments')" name="attachments")
+      RecordAttachments(:entityType="'purchaseOrder'" :entityId="route.params.id as string")
+
   //- Rejection Dialog
   el-dialog(v-model="rejectDialogVisible", title="Review Rejection", width="450px", class="glass-dialog !rounded-3xl", append-to-body)
     .p-2
@@ -141,6 +150,25 @@
       .flex.justify-end.gap-4.pb-4.px-4
         el-button(@click="rejectDialogVisible = false", class="premium-btn-outline !rounded-xl px-8") {{ $t('common.cancel') }}
         el-button(type="danger", @click="handleReject", :loading="loadingAction", class="premium-btn !rounded-xl px-12 glow-red") Confirm Rejection
+
+  //- Template Selector Dialog
+  el-dialog(v-model="showTemplateSelector" title="Select PDF Template" width="500px")
+    .space-y-3
+      .template-item.p-3.rounded-xl.cursor-pointer.flex.items-center.justify-between(
+        v-for="tpl in poTemplates"
+        :key="tpl.id"
+        style="background: var(--bg-input); border: 1px solid var(--border-default)"
+        @click="downloadPDFWithTemplate(tpl)"
+      )
+        .flex.items-center.gap-3
+          Icon(name="ph:file-pdf-bold" size="24" class="text-purple-400")
+          div
+            .font-bold(style="color: var(--text-primary)") {{ tpl.name }}
+            .text-xs(style="color: var(--text-muted)") {{ tpl.layout?.elements?.length || 0 }} elements
+        Icon(name="ph:arrow-right" size="18" style="color: var(--text-muted)")
+    template(#footer)
+      el-button(@click="showTemplateSelector = false") {{ $t('common.cancel') }}
+      el-button(@click="downloadPDFClassic(); showTemplateSelector = false" type="primary" class="!bg-[#7849ff] hover:!bg-[#6a3ae0] !border-none") Use Classic Export
 
 </template>
 
@@ -163,6 +191,7 @@ const po = ref<any>(null);
 const loadingAction = ref(false);
 const rejectDialogVisible = ref(false);
 const rejectionReason = ref('');
+const activeRecordTab = ref('timeline');
 
 const statusRibbonClass = computed(() => {
   switch (po.value?.status) {
@@ -221,13 +250,66 @@ async function handleReject() {
   }
 }
 
+const showTemplateSelector = ref(false);
+const poTemplates = ref<any[]>([]);
+
 async function downloadPDF() {
+  // Try to load templates for purchase orders
+  const { fetchDocumentTemplates } = await import('~/composables/useDocumentTemplates');
+  const result = await fetchDocumentTemplates({ type: 'PURCHASE_ORDER', limit: '50' });
+  if (result.docs.length > 0) {
+    poTemplates.value = result.docs;
+    showTemplateSelector.value = true;
+  } else {
+    downloadPDFClassic();
+  }
+}
+
+async function downloadPDFWithTemplate(template: any) {
+  showTemplateSelector.value = false;
+  const { generatePDF } = await import('~/utils/pdfExporter');
+
+  const taxTotal = po.value.items?.reduce((acc: number, item: any) =>
+    acc + (item.quantity * item.unitPrice * item.tax / 100), 0) || 0;
+
+  const data = {
+    companyName: 'LEADIFY ERP',
+    companyAddress: '',
+    companyPhone: '',
+    companyEmail: '',
+    poNumber: po.value.poNumber,
+    date: formatDate(po.value.createdAt),
+    deliveryDate: formatDate(po.value.dueDate),
+    vendorName: po.value.vendor?.name || 'N/A',
+    vendorAddress: po.value.vendor?.address || '',
+    vendorPhone: po.value.vendor?.phone || '',
+    vendorEmail: po.value.vendor?.email || '',
+    projectName: po.value.project?.name || 'N/A',
+    subtotal: `SR ${subtotal.value.toFixed(2)}`,
+    tax: `SR ${taxTotal.toFixed(2)}`,
+    total: `SR ${po.value.totalAmount}`,
+    notes: '',
+    items: po.value.items?.map((item: any) => ({
+      item: item.description,
+      qty: item.quantity,
+      unit: item.unit || 'pcs',
+      rate: item.unitPrice,
+      unitprice: item.unitPrice,
+      amount: (item.quantity * item.unitPrice * (1 + item.tax / 100)).toFixed(2),
+      total: (item.quantity * item.unitPrice * (1 + item.tax / 100)).toFixed(2)
+    })) || []
+  };
+
+  generatePDF(template.layout, data, `${po.value.poNumber}.pdf`);
+  ElNotification({ title: 'Success', message: 'PDF downloaded successfully', type: 'success' });
+}
+
+async function downloadPDFClassic() {
   const { jsPDF } = await import('jspdf');
   const { default: autoTable } = await import('jspdf-autotable');
 
   const doc = new jsPDF();
 
-  // Header
   doc.setFontSize(20);
   doc.text('PURCHASE ORDER', 105, 20, { align: 'center' });
 
@@ -236,7 +318,6 @@ async function downloadPDF() {
   doc.text(`Date: ${formatDate(po.value.createdAt)}`, 14, 45);
   doc.text(`Status: ${po.value.status}`, 14, 50);
 
-  // Vendor & Project
   doc.text('Vendor:', 14, 60);
   // @ts-ignore
   doc.setFont('helvetica', 'bold');
@@ -247,7 +328,6 @@ async function downloadPDF() {
   doc.text('Project:', 14, 65);
   doc.text(po.value.project?.name || 'N/A', 40, 65);
 
-  // Items Table
   const tableData = po.value.items.map((item: any) => [
     item.description,
     item.quantity,
@@ -264,7 +344,6 @@ async function downloadPDF() {
     headStyles: { fillColor: [120, 73, 255] }
   });
 
-  // Footer / Total
   const finalY = (doc as any).lastAutoTable.finalY + 10;
   doc.setFontSize(14);
   doc.text(`Grand Total: SR ${po.value.totalAmount}`, 196, finalY, { align: 'right' });

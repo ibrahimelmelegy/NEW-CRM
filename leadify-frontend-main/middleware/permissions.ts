@@ -9,9 +9,6 @@ export default defineNuxtRouteMiddleware(async to => {
     // SUPER_ADMIN bypass uses role name, never hardcoded email
     if (user.value?.role?.name === 'SUPER_ADMIN') return;
 
-    throw createError({
-      statusCode: 403,
-      message: "You don't have permission to access this page"
-    });
+    return navigateTo('/');
   }
 });

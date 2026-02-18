@@ -47,6 +47,15 @@
                         div(:class="{'text-green-400': isLowestPrice(vendor)}") {{ formatCurrency(vendor.totalOfferAmount) }}
                         el-button(v-if="vendor.status === 'Responded'" size="small" type="success" class="mt-2" @click="awardVendor(vendor)") Award PO
 
+  //- Record Tabs
+  el-tabs.mt-6(v-model="activeRecordTab")
+    el-tab-pane(:label="$t('common.timeline')" name="timeline")
+      RecordTimeline(:entityType="'rfq'" :entityId="route.params.id as string")
+    el-tab-pane(:label="$t('common.comments')" name="comments")
+      RecordComments(:entityType="'rfq'" :entityId="route.params.id as string")
+    el-tab-pane(:label="$t('common.attachments')" name="attachments")
+      RecordAttachments(:entityType="'rfq'" :entityId="route.params.id as string")
+
   //- Add Offer Dialog (Mocked for now)
   el-dialog(v-model="offerDialogVisible" title="Record Vendor Response" width="600px" class="glass-dialog")
      .p-4
@@ -71,6 +80,7 @@ const rfq = ref<any>(null);
 const offerDialogVisible = ref(false);
 const selectedVendor = ref(null);
 const offerAmount = ref(0);
+const activeRecordTab = ref('timeline');
 
 onMounted(async () => {
   try {

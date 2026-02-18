@@ -50,6 +50,12 @@ el-tabs.demo-tabs(v-model="activeName" @tab-click="handleClick")
                 Icon(name="solar:hashtag-outline" size="20" class="mr-2")
                 p {{ $t('operations.assets.table.buyPrice') }}
               p.text-neutral-800.mb-2 {{asset?.buyPrice}}
+  el-tab-pane(:label="$t('common.timeline')" name="timeline")
+    RecordTimeline(:entityType="'asset'" :entityId="route.params.slug as string")
+  el-tab-pane(:label="$t('common.comments')" name="comments")
+    RecordComments(:entityType="'asset'" :entityId="route.params.slug as string")
+  el-tab-pane(:label="$t('common.attachments')" name="record-attachments")
+    RecordAttachments(:entityType="'asset'" :entityId="route.params.slug as string")
 </template>
 <script lang="ts" setup>
 const activeName = ref('summary');

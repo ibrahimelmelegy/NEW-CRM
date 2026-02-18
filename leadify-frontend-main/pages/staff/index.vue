@@ -4,6 +4,7 @@
     .flex.items-center.justify-between.mb-8
       .title.font-bold.text-2xl.mb-1.capitalize {{ $t('staff.title') }}
       .flex.items-center.gap-x-3
+        ExportButton(:data="exportData" :columns="exportColumns" :filename="'staff-export'" :title="$t('staff.title')")
         NuxtLink(to="/staff/add-staff")
           el-button(size='large' :loading="loading" v-if="hasPermission('CREATE_STAFF')" native-type="submit" type="primary" :icon="Plus" class="w-full !my-4 !rounded-2xl") {{ $t('staff.newStaff') }}
 
@@ -35,6 +36,17 @@ const router = useRouter();
 const loadingAction = ref(false);
 const deleteStaffPopup = ref(false);
 const staffActionId = ref();
+
+// Export columns & data
+const exportColumns = [
+  { prop: 'staffDetails', label: t('staff.table.staffName') },
+  { prop: 'email', label: t('staff.table.email') },
+  { prop: 'phone', label: t('staff.table.phone') },
+  { prop: 'roleDetails', label: t('staff.table.role') },
+  { prop: 'status', label: t('staff.table.status') },
+  { prop: 'updatedAt', label: t('staff.table.lastActivity') }
+];
+const exportData = computed(() => table.data);
 
 const table = reactive({
   columns: [

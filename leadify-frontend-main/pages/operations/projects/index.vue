@@ -4,6 +4,7 @@ div
   .flex.items-center.justify-between.mb-8
     .title.font-bold.text-2xl.mb-1.capitalize {{ $t('operations.projects.title') }}
     .flex.items-center.gap-x-3
+      ExportButton(:data="exportData" :columns="exportColumns" :filename="'projects-export'" :title="$t('operations.projects.title')")
       NuxtLink(to="/operations/projects/add-project")
         el-button(   size='large' :loading="loading" v-if="hasPermission('CREATE_PROJECTS')" native-type="submit" type="primary" :icon="Plus" class="w-full !my-4 !rounded-2xl")  {{ $t('operations.projects.newProject') }}
       //- el-dropdown(trigger="click")
@@ -24,6 +25,7 @@ div
       //-               NuxtLink.flex.items-center(:to="`/leads/1`")
       //-                 Icon.text-md.mr-2(size="20" name="IconArchived" )
       //-                 p.text-sm Archived
+  BulkActions(:count="selectedRows.length" :actions="['delete', 'export']" @bulk-delete="handleBulkDelete" @bulk-export="handleBulkExport" @clear-selection="selectedRows = []")
   AppTable(v-slot="{data}"  :filterOptions="filterOptions" :columns="table.columns" position="project" :pageInfo="response.pagination" :data="table.data" :sortOptions="table.sort" @handleRowClick="handleRowClick" :searchPlaceholder="$t('operations.projects.title')" )
     .flex.items-center.py-2(@click.stop)
         //- NuxtLink.toggle-icon(:to="`/leads/1`")
@@ -56,6 +58,26 @@ const router = useRouter();
 const { hasPermission } = await usePermissions();
 const loadingAction = ref(false);
 const deleteLeadPopup = ref(false);
+
+// Export columns & data
+const exportColumns = [
+  { prop: 'name', label: useI18n().t('operations.projects.table.projectName') },
+  { prop: 'projectClient', label: useI18n().t('operations.projects.table.clientName') },
+  { prop: 'category', label: useI18n().t('operations.projects.table.category') },
+  { prop: 'type', label: useI18n().t('operations.projects.table.type') },
+  { prop: 'status', label: useI18n().t('operations.projects.table.status') },
+  { prop: 'startDate', label: useI18n().t('operations.projects.table.startDate') },
+  { prop: 'endDate', label: useI18n().t('operations.projects.table.endDate') },
+  { prop: 'duration', label: useI18n().t('operations.projects.table.duration') },
+  { prop: 'totalCost', label: useI18n().t('operations.projects.table.totalCost') },
+  { prop: 'projectAssignedUsers', label: useI18n().t('operations.projects.table.assigned') }
+];
+const exportData = computed(() => table.data);
+
+// Bulk actions
+const selectedRows = ref<any[]>([]);
+function handleBulkDelete() { selectedRows.value = []; }
+function handleBulkExport() { selectedRows.value = []; }
 
 const table = reactive({
   columns: [

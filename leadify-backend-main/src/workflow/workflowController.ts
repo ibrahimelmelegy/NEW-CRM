@@ -4,49 +4,100 @@ import workflowService from './workflowService';
 import { AuthenticatedRequest } from '../types';
 
 class WorkflowController {
-  async getAll(_req: AuthenticatedRequest, res: Response, next: NextFunction) {
+  // ── Rule CRUD ──
+
+  async getRules(req: AuthenticatedRequest, res: Response, next: NextFunction) {
     try {
-      const workflows = await workflowService.getAll();
-      wrapResult(res, workflows);
-    } catch (error) { next(error); }
+      const result = await workflowService.getRules(req.query as any);
+      wrapResult(res, result);
+    } catch (error) {
+      next(error);
+    }
   }
 
-  async getById(req: AuthenticatedRequest, res: Response, next: NextFunction) {
+  async getRuleById(req: AuthenticatedRequest, res: Response, next: NextFunction) {
     try {
-      const workflow = await workflowService.getById(req.params.id as string);
-      wrapResult(res, workflow);
-    } catch (error) { next(error); }
+      const id = parseInt(req.params.id as string, 10);
+      const result = await workflowService.getRuleById(id);
+      wrapResult(res, result);
+    } catch (error) {
+      next(error);
+    }
   }
 
-  async create(req: AuthenticatedRequest, res: Response, next: NextFunction) {
+  async createRule(req: AuthenticatedRequest, res: Response, next: NextFunction) {
     try {
-      const workflow = await workflowService.create(req.body);
-      wrapResult(res, workflow, 201);
-    } catch (error) { next(error); }
+      const userId = req.user?.id;
+      const rule = await workflowService.createRule(req.body, userId!);
+      wrapResult(res, rule, 201);
+    } catch (error) {
+      next(error);
+    }
   }
 
-  async update(req: AuthenticatedRequest, res: Response, next: NextFunction) {
+  async updateRule(req: AuthenticatedRequest, res: Response, next: NextFunction) {
     try {
-      const workflow = await workflowService.update(req.params.id as string, req.body);
-      wrapResult(res, workflow);
-    } catch (error) { next(error); }
+      const id = parseInt(req.params.id as string, 10);
+      const rule = await workflowService.updateRule(id, req.body);
+      wrapResult(res, rule);
+    } catch (error) {
+      next(error);
+    }
   }
 
-  async delete(req: AuthenticatedRequest, res: Response, next: NextFunction) {
+  async deleteRule(req: AuthenticatedRequest, res: Response, next: NextFunction) {
     try {
-      await workflowService.delete(req.params.id as string);
+      const id = parseInt(req.params.id as string, 10);
+      await workflowService.deleteRule(id);
       wrapResult(res, { deleted: true });
-    } catch (error) { next(error); }
+    } catch (error) {
+      next(error);
+    }
   }
 
-  async getLogs(req: AuthenticatedRequest, res: Response, next: NextFunction) {
+  async toggleRule(req: AuthenticatedRequest, res: Response, next: NextFunction) {
     try {
-      const logs = await workflowService.getLogs(
-        req.query.workflowId as string,
-        Number(req.query.limit) || 50
-      );
-      wrapResult(res, logs);
-    } catch (error) { next(error); }
+      const id = parseInt(req.params.id as string, 10);
+      const { isActive } = req.body;
+      const rule = await workflowService.toggleRule(id, isActive);
+      wrapResult(res, rule);
+    } catch (error) {
+      next(error);
+    }
+  }
+
+  // ── Test rule with sample data ──
+
+  async testRule(req: AuthenticatedRequest, res: Response, next: NextFunction) {
+    try {
+      const id = parseInt(req.params.id as string, 10);
+      const sampleData = req.body;
+      const result = await workflowService.testRule(id, sampleData);
+      wrapResult(res, result);
+    } catch (error) {
+      next(error);
+    }
+  }
+
+  // ── Execution logs ──
+
+  async getExecutions(req: AuthenticatedRequest, res: Response, next: NextFunction) {
+    try {
+      const result = await workflowService.getExecutions(req.query as any);
+      wrapResult(res, result);
+    } catch (error) {
+      next(error);
+    }
+  }
+
+  async getExecutionsForRule(req: AuthenticatedRequest, res: Response, next: NextFunction) {
+    try {
+      const ruleId = parseInt(req.params.id as string, 10);
+      const result = await workflowService.getExecutionsForRule(ruleId, req.query as any);
+      wrapResult(res, result);
+    } catch (error) {
+      next(error);
+    }
   }
 }
 

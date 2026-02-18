@@ -85,6 +85,50 @@
         el-tag(:type="status.openai ? 'success' : 'info'" effect="dark") {{ status.openai ? $t('integrations.status.connected') : $t('integrations.status.disconnected') }}
         el-button(type="primary" :loading="loading.openai" @click="saveIntegration('openai')" class="premium-btn") {{ $t('integrations.saveAndTest') }}
 
+    //- ERPNext Integration
+    .glass-card.p-6.integration-card
+      .flex.items-center.gap-4.mb-6
+        .icon-box(style="background-color: rgba(0, 140, 255, 0.1)")
+          Icon(name="ph:database-bold" size="32" style="color: #008cff")
+        div
+          h3.text-xl.font-bold {{ $t('integrations.erpnext.title') }}
+          p.text-xs(style="color: var(--text-muted)") {{ $t('integrations.erpnext.subtitle') }}
+
+      .form-group.mb-4
+        label.block.text-sm.font-medium.mb-2 {{ $t('integrations.erpnext.baseUrl') }}
+        el-input(v-model="config.erpnext.baseUrl" :placeholder="$t('integrations.erpnext.baseUrlPlaceholder')" class="glass-input")
+
+      .form-group.mb-4
+        label.block.text-sm.font-medium.mb-2 {{ $t('integrations.erpnext.apiKey') }}
+        el-input(v-model="config.erpnext.apiKey" type="password" show-password :placeholder="$t('integrations.erpnext.apiKeyPlaceholder')" class="glass-input")
+
+      .form-group.mb-6
+        label.block.text-sm.font-medium.mb-2 {{ $t('integrations.erpnext.apiSecret') }}
+        el-input(v-model="config.erpnext.apiSecret" type="password" show-password :placeholder="$t('integrations.erpnext.apiSecretPlaceholder')" class="glass-input")
+
+      .flex.justify-between.items-center
+        el-tag(:type="status.erpnext ? 'success' : 'info'" effect="dark") {{ status.erpnext ? $t('integrations.status.connected') : $t('integrations.status.disconnected') }}
+        .flex.gap-2
+          el-button(:loading="loading.erpnext" @click="testConnection('erpnext')" class="premium-btn-secondary") {{ $t('integrations.testConnection') }}
+          el-button(type="primary" :loading="loading.erpnext" @click="saveIntegration('erpnext')" class="premium-btn") {{ $t('integrations.saveAndTest') }}
+
+    //- Brevo (Email) Integration
+    .glass-card.p-6.integration-card
+      .flex.items-center.gap-4.mb-6
+        .icon-box(style="background-color: rgba(0, 150, 100, 0.1)")
+          Icon(name="ph:envelope-simple-bold" size="32" style="color: #009664")
+        div
+          h3.text-xl.font-bold {{ $t('integrations.brevo.title') }}
+          p.text-xs(style="color: var(--text-muted)") {{ $t('integrations.brevo.subtitle') }}
+
+      .form-group.mb-6
+        label.block.text-sm.font-medium.mb-2 {{ $t('integrations.brevo.apiKey') }}
+        el-input(v-model="config.brevo.apiKey" type="password" show-password :placeholder="$t('integrations.brevo.apiKeyPlaceholder')" class="glass-input")
+
+      .flex.justify-between.items-center
+        el-tag(:type="status.brevo ? 'success' : 'info'" effect="dark") {{ status.brevo ? $t('integrations.status.connected') : $t('integrations.status.disconnected') }}
+        el-button(type="primary" :loading="loading.brevo" @click="saveIntegration('brevo')" class="premium-btn") {{ $t('integrations.saveAndTest') }}
+
 </template>
 
 <script setup lang="ts">
@@ -95,27 +139,33 @@ definePageMeta({
   permission: 'VIEW_SETTINGS'
 });
 
-type Provider = 'google' | 'outlook' | 'whatsapp' | 'openai';
+type Provider = 'google' | 'outlook' | 'whatsapp' | 'openai' | 'erpnext' | 'brevo';
 
 const config = ref<Record<string, any>>({
   google: { clientId: '', clientSecret: '' },
   outlook: { clientId: '', tenantId: '', clientSecret: '' },
   whatsapp: { phoneNumberId: '', accessToken: '' },
-  openai: { apiKey: '' }
+  openai: { apiKey: '' },
+  erpnext: { baseUrl: '', apiKey: '', apiSecret: '' },
+  brevo: { apiKey: '' }
 });
 
 const status = ref<Record<string, boolean>>({
   google: false,
   outlook: false,
   whatsapp: false,
-  openai: false
+  openai: false,
+  erpnext: false,
+  brevo: false
 });
 
 const loading = ref<Record<string, boolean>>({
   google: false,
   outlook: false,
   whatsapp: false,
-  openai: false
+  openai: false,
+  erpnext: false,
+  brevo: false
 });
 
 onMounted(async () => {
@@ -154,6 +204,23 @@ const saveIntegration = async (provider: Provider) => {
     }
   } catch (err) {
     ElNotification.error(`Failed to save ${provider} integration`);
+  } finally {
+    loading.value[provider] = false;
+  }
+};
+
+const testConnection = async (provider: Provider) => {
+  loading.value[provider] = true;
+  try {
+    const response: any = await useApiFetch(`integrations/${provider}/test`, 'POST', config.value[provider]);
+    if (response.success) {
+      ElNotification.success(`${provider} connection successful`);
+      status.value[provider] = true;
+    } else {
+      ElNotification.warning(response.message || `${provider} connection failed`);
+    }
+  } catch (err) {
+    ElNotification.error(`${provider} connection test failed`);
   } finally {
     loading.value[provider] = false;
   }

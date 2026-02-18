@@ -4,6 +4,7 @@ div
   .flex.items-center.justify-between.mb-8
     .title.font-bold.text-2xl.mb-1.capitalize {{ $t('navigation.services') }}
     .flex.items-center.gap-x-3
+      ExportButton(:data="table.data" :columns="exportColumns" :filename="'services-export'" :title="$t('navigation.services')")
       NuxtLink(to="/operations/services/add-service")
         el-button(   size='large' :loading="loading" v-if="hasPermission('CREATE_SERVICES')" native-type="submit" type="primary" :icon="Plus" class="w-full !my-4 !rounded-2xl")  {{ $t('operations.services.new') }}
       //- el-dropdown(trigger="click")
@@ -56,6 +57,12 @@ const router = useRouter();
 const { hasPermission } = await usePermissions();
 const loadingAction = ref(false);
 const deleteLeadPopup = ref(false);
+
+// Export columns
+const exportColumns = [
+  { prop: 'type', label: useI18n().t('operations.services.table.type') },
+  { prop: 'price', label: useI18n().t('operations.services.table.price') }
+];
 
 const table = reactive({
   columns: [

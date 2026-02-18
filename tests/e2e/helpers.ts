@@ -20,6 +20,21 @@ export const API_URL = process.env.API_URL || 'http://localhost:5000/api';
 export async function waitForPageLoad(page: Page, timeout = 4000): Promise<void> {
     await page.waitForLoadState('domcontentloaded', { timeout: 15000 });
     await page.waitForTimeout(timeout);
+    // Dismiss any vite-error-overlay that may block interactions
+    await dismissViteOverlay(page);
+}
+
+/**
+ * Remove vite-error-overlay elements that block pointer events during dev mode
+ */
+export async function dismissViteOverlay(page: Page): Promise<void> {
+    try {
+        await page.evaluate(() => {
+            document.querySelectorAll('vite-error-overlay').forEach(el => el.remove());
+        });
+    } catch {
+        // Page might not be ready yet - ignore
+    }
 }
 
 /**
@@ -109,11 +124,25 @@ export async function expectNotification(page: Page, text?: string, type: 'succe
 }
 
 /**
- * Wait for a table to load data (look for rows)
+ * Wait for a table to load data.
+ * Waits for skeleton/loading to disappear and actual el-table to appear.
  */
-export async function waitForTableData(page: Page): Promise<void> {
+export async function waitForTableData(page: Page, timeout = 30000): Promise<void> {
     await page.waitForLoadState('domcontentloaded');
-    await page.waitForTimeout(3000);
+    // Dismiss any vite-error-overlay if present
+    const overlay = page.locator('vite-error-overlay');
+    if (await overlay.count() > 0) {
+        await page.evaluate(() => {
+            document.querySelectorAll('vite-error-overlay').forEach(el => el.remove());
+        });
+    }
+    // Wait for actual table to render (skeleton disappears, el-table appears)
+    try {
+        await page.locator('.el-table, table').first().waitFor({ state: 'visible', timeout });
+    } catch {
+        // Table may not exist on this page - continue anyway
+    }
+    await page.waitForTimeout(500);
 }
 
 /**

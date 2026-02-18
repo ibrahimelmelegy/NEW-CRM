@@ -40,7 +40,7 @@
           h3.text-lg.font-bold(style="color: var(--text-primary)") {{ $t('security.passwordSettings') }}
           p.text-xs(style="color: var(--text-muted)") {{ $t('security.passwordSubtitle') }}
 
-      NuxtLink(to="/change-password")
+      NuxtLink(to="/forget-password")
         el-button(type="primary" plain class="!rounded-xl") {{ $t('security.changePassword') }}
 </template>
 

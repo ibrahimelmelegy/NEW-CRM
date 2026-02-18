@@ -4,6 +4,7 @@ div
   .flex.items-center.justify-between.mb-8
     .title.font-bold.text-2xl.mb-1.capitalize {{ $t('navigation.vehicle') }}
     .flex.items-center.gap-x-3
+      ExportButton(:data="table.data" :columns="exportColumns" :filename="'vehicles-export'" :title="$t('navigation.vehicle')")
       NuxtLink(to="/operations/vehicle/add-vehicle")
         el-button(   size='large' :loading="loading" v-if="hasPermission('CREATE_VEHICLES')" native-type="submit" type="primary" :icon="Plus" class="w-full !my-4 !rounded-2xl")  {{ $t('operations.vehicles.new') }}
       //- el-dropdown(trigger="click")
@@ -56,6 +57,16 @@ const router = useRouter();
 const { hasPermission } = await usePermissions();
 const loadingAction = ref(false);
 const deleteLeadPopup = ref(false);
+
+// Export columns
+const exportColumns = [
+  { prop: 'plate', label: useI18n().t('operations.vehicles.table.plate') },
+  { prop: 'manufacturer', label: useI18n().t('operations.vehicles.table.manufacturer') },
+  { prop: 'rentCost', label: useI18n().t('operations.vehicles.table.rentCost') },
+  { prop: 'gasCost', label: useI18n().t('operations.vehicles.table.gasCost') },
+  { prop: 'oilCost', label: useI18n().t('operations.vehicles.table.oilCost') },
+  { prop: 'regularMaintenanceCost', label: useI18n().t('operations.vehicles.table.maintenanceCost') }
+];
 
 const table = reactive({
   columns: [

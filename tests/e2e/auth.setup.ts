@@ -30,6 +30,15 @@ setup('authenticate', async ({ page }) => {
     // Verify we're logged in
     expect(page.url()).not.toContain('/login');
 
+    // Verify auth cookie is present before saving state
+    const cookies = await page.context().cookies();
+    const hasAuthCookie = cookies.some(c => c.name === 'access_token' && c.value);
+    expect(hasAuthCookie).toBeTruthy();
+
+    // Navigate to a protected page to ensure full auth state is established
+    await page.goto('/');
+    await page.waitForURL(url => !url.toString().includes('/login'), { timeout: 15000 });
+
     // Save storage state (cookies + localStorage)
     await page.context().storageState({ path: authFile });
 });

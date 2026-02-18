@@ -4,6 +4,7 @@ div
   .flex.items-center.justify-between.mb-8
     .title.font-bold.text-2xl.mb-1.capitalize {{ $t('roles.title') }}
     .flex.items-center.gap-x-3
+      ExportButton(:data="table.data" :columns="exportColumns" :filename="'roles-export'" :title="$t('roles.title')")
       NuxtLink(to="/roles/add-role")
         el-button(   size='large' :loading="loading" v-if="hasPermission('CREATE_ROLES')" native-type="submit" type="primary" :icon="Plus" class="w-full !my-4 !rounded-2xl")  {{ $t('roles.newRole') }}
   AppTable(v-slot="{data}" without-filters without-search :filterOptions="filterOptions" :columns="table.columns" position="role" :pageInfo="response.pagination" :data="table.data" :sortOptions="table.sort" @handleRowClick="handleRowClick" searchPlaceholder="roles" )
@@ -33,6 +34,14 @@ const router = useRouter();
 const { hasPermission } = await usePermissions();
 const loadingAction = ref(false);
 const deleteRolePopup = ref(false);
+
+// Export columns
+const exportColumns = [
+  { prop: 'name', label: t('roles.columns.name') },
+  { prop: 'description', label: t('roles.columns.description') },
+  { prop: 'totalAssignedUsers', label: t('roles.columns.totalStaff') },
+  { prop: 'updatedAt', label: t('roles.columns.lastModified') }
+];
 
 const table = reactive({
   columns: [

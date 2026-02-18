@@ -83,6 +83,7 @@ export default defineNuxtConfig({
         'validator/lib/isEmail',
         'jspdf',
         'jspdf-autotable',
+        'xlsx',
         '@vue/devtools-core',
         '@vue/devtools-kit'
       ]

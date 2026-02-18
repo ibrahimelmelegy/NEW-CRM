@@ -67,7 +67,32 @@ sequelize
     await runTypoMigration(sequelize);
 
     // Synchronize all defined models to the database
-    await sequelize.sync({ alter: true });
+    try {
+      await sequelize.sync({ alter: true });
+    } catch (syncErr) {
+      console.warn('sync({ alter: true }) failed, attempting basic sync:', (syncErr as Error).message);
+      try {
+        await sequelize.sync();
+      } catch (basicErr) {
+        console.warn('sync() also failed (tables likely already exist):', (basicErr as Error).message);
+      }
+    }
+
+    // Add performance indexes (non-blocking - failures are logged and skipped)
+    try {
+      const { addPerformanceIndexes } = require('./infrastructure/dbIndexes');
+      await addPerformanceIndexes(sequelize);
+    } catch (e) {
+      console.warn('[Startup] Index setup:', (e as Error).message);
+    }
+
+    // Initialize job queue for background processing
+    try {
+      const jobQueue = require('./infrastructure/jobQueue').default;
+      jobQueue.processJobs();
+    } catch (e) {
+      console.warn('[Startup] Job queue:', (e as Error).message);
+    }
 
     // Start the Server
     server.listen(PORT, () => {

@@ -4,6 +4,7 @@ div
   .flex.items-center.justify-between.mb-8
     .title.font-bold.text-2xl.mb-1.capitalize {{ $t('clients.title') }}
     .flex.items-center.gap-x-3
+      ExportButton(:data="exportData" :columns="exportColumns" :filename="'clients-export'" :title="$t('clients.title')")
       NuxtLink(to="/sales/clients/add-client")
         el-button(   size='large' :loading="loading" v-if="hasPermission('CREATE_CLIENTS')" native-type="submit" type="primary" :icon="Plus" class="w-full !my-4 !rounded-2xl")  {{ $t('clients.newClient') }}
       //- el-dropdown(trigger="click")
@@ -24,6 +25,7 @@ div
       //-               NuxtLink.flex.items-center(:to="`/clients/1`")
       //-                 Icon.text-md.mr-2(size="20" name="IconArchived" )
       //-                 p.text-sm Archived
+  BulkActions(:count="selectedRows.length" :actions="['delete', 'export']" @bulk-delete="handleBulkDelete" @bulk-export="handleBulkExport" @clear-selection="selectedRows = []")
   AppTable(v-slot="{data}" :filterOptions="filterOptions" :columns="table.columns" position="client" :pageInfo="response.pagination" :data="table.data" :sortOptions="table.sort" @handleRowClick="handleRowClick" searchPlaceholder="clients" )
     .flex.items-center.py-2(@click.stop)
         //- NuxtLink.toggle-icon(:to="`/clients/1`")
@@ -58,6 +60,23 @@ const { hasPermission } = await usePermissions();
 const loadingAction = ref(false);
 const deleteClientPopup = ref(false);
 const { t } = useI18n();
+
+// Export columns & data
+const exportColumns = [
+  { prop: 'ClientDetails', label: t('clients.table.clientName') },
+  { prop: 'clientType', label: t('clients.table.type') },
+  { prop: 'email', label: t('clients.table.email') },
+  { prop: 'phoneNumber', label: t('clients.table.phone') },
+  { prop: 'clientStatus', label: t('clients.table.status') },
+  { prop: 'assign', label: t('clients.table.assigned') },
+  { prop: 'createdAt', label: t('clients.table.created') }
+];
+const exportData = computed(() => table.data);
+
+// Bulk actions
+const selectedRows = ref<any[]>([]);
+function handleBulkDelete() { selectedRows.value = []; }
+function handleBulkExport() { selectedRows.value = []; }
 
 const table = reactive({
   columns: [
@@ -131,18 +150,18 @@ const table = reactive({
   ]
 });
 
-// Call API to Get the client
-// const response = await getClients();
-
-const response = await useTableFilter('client');
+// Call API to Get the client and users in parallel
+const [response, usersResponse] = await Promise.all([
+  useTableFilter('client'),
+  useApiFetch('users')
+]);
 table.data = response.formattedData;
 
 function handleRowClick(val: any) {
   router.push(`/sales/clients/${val.id}`);
 }
 
-const users = await useApiFetch('users');
-const mappedUsers = users?.body?.docs?.map((e: any) => ({
+const mappedUsers = usersResponse?.body?.docs?.map((e: any) => ({
   label: e.name,
   value: e.id
 }));

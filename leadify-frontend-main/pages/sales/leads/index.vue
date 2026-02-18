@@ -4,6 +4,7 @@ div
   .flex.items-center.justify-between.mb-8
     .title.font-bold.text-2xl.mb-1.capitalize {{ $t('leads.title') }}
     .flex.items-center.gap-x-3
+      ExportButton(:data="exportData" :columns="exportColumns" :filename="'leads-export'" :title="$t('leads.title')")
       template(v-if="canCreateLeads")
         NuxtLink(to="/sales/leads/add-lead")
           el-button(size='large' :loading="loading" native-type="submit" type="primary" :icon="Plus" class="w-full !my-4 !rounded-2xl")  {{ $t('leads.newLead') }}
@@ -24,6 +25,7 @@ div
   input(type="file", ref="fileInput", style="display: none", accept=".xls,.xlsx", @change="handleFileChange")
   // Spinner
   el-spinner(size="large" v-if="loadingAction" class="nuxt-loading-indicator")
+  BulkActions(:count="selectedRows.length" :actions="['delete', 'export']" @bulk-delete="handleBulkDelete" @bulk-export="handleBulkExport" @clear-selection="selectedRows = []")
   AppTable(v-slot="{data}"  v-if="!loadingAction" :externalLoading="loading" :filterOptions="filterOptions" :columns="table.columns" position="lead" :pageInfo="response.pagination"  :data="table.data" :sortOptions="table.sort" @handleRowClick="handleRowClick" :searchPlaceholder="$t('leads.title')" :key="table.data" )
     .flex.items-center.py-2(@click.stop)
         //- NuxtLink.toggle-icon(:to="`/leads/1`")
@@ -124,9 +126,11 @@ async function editPresent() {
   select.value = {};
 }
 
-// Call API to Get the lead
-let response;
-response = await useTableFilter('lead');
+// Call API to Get the lead and users in parallel
+const [response, usersResponse] = await Promise.all([
+  useTableFilter('lead'),
+  useApiFetch('users')
+]);
 
 const table = ref({
   columns: [] as any[], // Initialize as empty array
@@ -226,8 +230,7 @@ function handleRowClick(val: any) {
   router.push(`/sales/leads/${val.id}`);
 }
 
-const users = await useApiFetch('users');
-const mappedUsers = users?.body?.docs?.map((e: any) => ({
+const mappedUsers = usersResponse?.body?.docs?.map((e: any) => ({
   label: e.name,
   value: e.id
 }));
@@ -259,6 +262,32 @@ const filterOptions = computed(() => [
     type: 'date'
   }
 ]);
+
+// Export columns & data
+const exportColumns = [
+  { prop: 'leadDetails', label: t('leads.table.leadName') },
+  { prop: 'phone', label: t('leads.table.phone') },
+  { prop: 'email', label: t('leads.table.email') },
+  { prop: 'status', label: t('leads.table.status') },
+  { prop: 'leadSource', label: t('leads.table.source') },
+  { prop: 'lastContactDate', label: t('leads.table.lastContact') },
+  { prop: 'assign', label: t('leads.table.assigned') },
+  { prop: 'createdAt', label: t('leads.table.created') }
+];
+const exportData = computed(() => table.value.data);
+
+// Bulk actions
+const selectedRows = ref<any[]>([]);
+
+async function handleBulkDelete() {
+  // Placeholder for bulk delete - depends on API
+  selectedRows.value = [];
+}
+
+function handleBulkExport() {
+  // Triggers the ExportButton behavior via the selected rows
+  selectedRows.value = [];
+}
 
 // implement import leads
 

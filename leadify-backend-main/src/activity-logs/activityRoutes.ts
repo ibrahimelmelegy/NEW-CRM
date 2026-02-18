@@ -32,6 +32,18 @@ const router = express.Router();
  *       500:
  *         description: Internal Server Error
  */
+// Get all recent activities across all models
+router.get('/', authenticateUser, async (req: AuthenticatedRequest, res: Response, next: NextFunction) => {
+  try {
+    const limit = Number(req.query.limit) || 100;
+    const { getAllActivityLogs } = require('./activityService');
+    const logs = await getAllActivityLogs(limit);
+    wrapResult(res, logs);
+  } catch (error) {
+    next(error);
+  }
+});
+
 router.get('/:model/:id', authenticateUser, async (req: AuthenticatedRequest, res: Response, next: NextFunction) => {
   try {
     const responseFromService = await getActivityLogs(req.params?.model as any, req.params?.id as string, req.query?.page as any, req.query?.limit as any);

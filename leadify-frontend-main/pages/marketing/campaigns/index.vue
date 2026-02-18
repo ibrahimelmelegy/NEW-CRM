@@ -1,51 +1,100 @@
 <template lang="pug">
-.campaigns-page.p-8
-  .header.mb-8
-    h2.text-3xl.font-bold.mb-2(style="color: var(--text-primary)") {{ $t('campaigns.title') }}
-    p(style="color: var(--text-muted)") {{ $t('campaigns.subtitle') }}
+div
+  ModuleHeader(
+    :title="$t('campaigns.title')"
+    :subtitle="$t('campaigns.subtitle')"
+  )
+    template(#actions)
+      ExportButton(:data="filteredCampaigns" :columns="exportColumns" :filename="'campaigns-export'" :title="$t('campaigns.title')")
+      el-button(size="large" @click="showTemplates = true" class="!rounded-2xl")
+        Icon(name="ph:file-text" size="16")
+        span.ml-1 {{ $t('campaigns.templates') }}
+      el-button(size="large" type="primary" @click="openForm()" class="!rounded-2xl")
+        Icon(name="ph:plus-bold" size="16")
+        span.ml-1 {{ $t('campaigns.create') }}
 
-  //- Stats
-  .grid.grid-cols-4.gap-4.mb-6(v-if="!loading")
-    .glass-card.p-4.text-center(v-for="stat in stats" :key="stat.label")
-      p.text-2xl.font-bold(style="color: var(--text-primary)") {{ stat.value }}
-      p.text-sm(style="color: var(--text-muted)") {{ stat.label }}
+  StatCards(:stats="summaryStats")
 
-  .glass-card.p-6
-    .flex.justify-between.items-center.mb-6
-      h3.text-lg.font-bold(style="color: var(--text-primary)") {{ $t('campaigns.allCampaigns') }}
-      .flex.gap-2
-        el-button(@click="showTemplates = true" class="!rounded-xl")
-          Icon(name="ph:file-text" size="16" aria-hidden="true")
-          span.ml-2 {{ $t('campaigns.templates') }}
-        el-button(type="primary" @click="openForm()" class="!rounded-xl !bg-[#7849ff] hover:!bg-[#6a3ae0] !border-none")
-          Icon(name="ph:plus-bold" size="16" aria-hidden="true")
-          span.ml-2 {{ $t('campaigns.create') }}
+  .glass-card.py-8.animate-entrance
+    .px-6.mb-6.flex.items-center.gap-4
+      el-input(
+        size="large"
+        style="height: 50px; max-width: 250px"
+        v-model="searchText"
+        :placeholder="$t('common.search') + ' ' + $t('campaigns.title')"
+        clearable
+      )
+        template(#prefix)
+          Icon(name="ph:magnifying-glass" size="16")
+      el-select(
+        v-model="filterStatus"
+        :placeholder="$t('campaigns.status') || 'Status'"
+        clearable
+        size="large"
+        style="max-width: 180px"
+      )
+        el-option(:label="$t('campaigns.allCampaigns')" value="")
+        el-option(label="Draft" value="DRAFT")
+        el-option(label="Scheduled" value="SCHEDULED")
+        el-option(label="Sending" value="SENDING")
+        el-option(label="Sent" value="SENT")
+        el-option(label="Cancelled" value="CANCELLED")
 
-    el-skeleton(:rows="3" animated v-if="loading")
-
-    el-table(:data="campaigns" v-else style="width: 100%")
-      el-table-column(:label="$t('campaigns.name')" prop="name" min-width="180")
-      el-table-column(:label="$t('campaigns.subject')" prop="subject" min-width="200")
-      el-table-column(:label="$t('campaigns.status')" width="120")
+    el-table(:data="paginatedCampaigns" v-loading="loading" style="width: 100%")
+      el-table-column(type="index" width="50")
+      el-table-column(:label="$t('campaigns.name')" min-width="180")
         template(#default="{ row }")
-          el-tag(:type="getStatusType(row.status)" size="small" effect="dark") {{ row.status }}
+          .font-bold(style="color: var(--text-primary)") {{ row.name }}
+      el-table-column(:label="$t('campaigns.subject')" min-width="200")
+        template(#default="{ row }")
+          span(style="color: var(--text-primary)") {{ row.subject }}
+      el-table-column(:label="$t('campaigns.status')" width="130")
+        template(#default="{ row }")
+          span.border.rounded-xl.text-xs.px-2(:class="`label-outline-${getCampaignStatusColor(row.status)}`") {{ row.status }}
       el-table-column(:label="$t('campaigns.recipients')" width="110" align="center")
         template(#default="{ row }")
-          span {{ row.recipients?.length || 0 }}
+          span(style="color: var(--text-primary)") {{ row.recipients?.length || 0 }}
       el-table-column(:label="$t('campaigns.sentAt')" width="160")
         template(#default="{ row }")
-          span {{ row.sentAt ? formatDate(row.sentAt) : '-' }}
-      el-table-column(:label="$t('common.actions')" width="200" align="center")
+          span(style="color: var(--text-muted)") {{ row.sentAt ? formatDate(row.sentAt) : '—' }}
+      el-table-column(:label="$t('common.action')" width="120" fixed="right")
         template(#default="{ row }")
-          .flex.gap-1.justify-center
-            el-button(link @click="viewAnalytics(row.id)" size="small" v-if="row.status === 'SENT'")
-              Icon(name="ph:chart-bar" size="16" aria-label="Analytics")
-            el-button(link @click="openForm(row)" size="small" v-if="row.status === 'DRAFT'")
-              Icon(name="ph:pencil" size="16" aria-label="Edit")
-            el-button(link @click="handleSend(row.id)" size="small" v-if="row.status === 'DRAFT'")
-              Icon(name="ph:paper-plane-tilt" size="16" aria-label="Send")
-            el-button(link @click="removeCampaign(row.id)" size="small")
-              Icon(name="ph:trash" size="16" class="text-red-400" aria-label="Delete")
+          .flex.items-center(@click.stop)
+            el-dropdown(trigger="click")
+              span.el-dropdown-link
+                .toggle-icon.text-md
+                  Icon(name="IconToggle" size="22")
+              template(#dropdown)
+                el-dropdown-menu
+                  el-dropdown-item(v-if="row.status === 'SENT'" @click="viewAnalytics(row.id)")
+                    .flex.items-center
+                      Icon.text-md.mr-2(name="ph:chart-bar-bold")
+                      p.text-sm {{ $t('campaigns.analytics') }}
+                  el-dropdown-item(v-if="row.status === 'DRAFT'" @click="openForm(row)")
+                    .flex.items-center
+                      Icon.text-md.mr-2(name="IconEdit")
+                      p.text-sm {{ $t('common.edit') }}
+                  el-dropdown-item(v-if="row.status === 'DRAFT'" @click="handleSend(row.id)")
+                    .flex.items-center
+                      Icon.text-md.mr-2(name="ph:paper-plane-tilt-bold")
+                      p.text-sm {{ $t('campaigns.sent') || 'Send' }}
+                  el-dropdown-item(@click="[deleteId = row.id, deletePopup = true]")
+                    .flex.items-center
+                      Icon.text-md.mr-2(name="IconDelete")
+                      p.text-sm {{ $t('common.delete') }}
+      template(#empty)
+        el-empty(:description="$t('common.noData') || 'No campaigns found'" image="/images/empty.png")
+
+    //- Pagination
+    .px-6.pt-6.flex.items-center.justify-between(v-if="filteredCampaigns.length > 0")
+      span.text-sm(style="color: var(--text-muted)") {{ $t('common.showing') || 'Showing' }} {{ paginationStart }}-{{ paginationEnd }} {{ $t('common.of') || 'of' }} {{ filteredCampaigns.length }} {{ $t('common.entries') || 'entries' }}
+      el-pagination(
+        v-model:current-page="currentPage"
+        :page-size="pageSize"
+        :total="filteredCampaigns.length"
+        layout="prev, pager, next"
+        background
+      )
 
   //- Create/Edit Dialog
   el-dialog(v-model="showForm" :title="editingId ? $t('campaigns.edit') : $t('campaigns.create')" width="700px" :close-on-click-modal="false")
@@ -65,7 +114,7 @@
 
     template(#footer)
       el-button(@click="showForm = false") {{ $t('common.cancel') }}
-      el-button(type="primary" :loading="saving" @click="saveCampaign" class="!bg-[#7849ff] hover:!bg-[#6a3ae0] !border-none") {{ $t('common.save') }}
+      el-button(type="primary" :loading="saving" @click="saveCampaign" class="!rounded-2xl") {{ $t('common.save') }}
 
   //- Analytics Dialog
   el-dialog(v-model="showAnalytics" :title="$t('campaigns.analytics')" width="500px")
@@ -102,47 +151,110 @@
             Icon(name="ph:trash" size="16" class="text-red-400" aria-label="Delete")
     .text-center.py-4(v-else)
       p.text-sm(style="color: var(--text-muted)") {{ $t('campaigns.noTemplates') }}
+
+  //- Delete Confirmation
+  ActionModel(v-model="deletePopup" :loading="deleting" :description="$t('common.confirmDelete')" @confirm="confirmDelete")
 </template>
 
 <script setup lang="ts">
-import { ref, computed, onMounted } from 'vue';
 import {
   fetchCampaigns, createCampaign, updateCampaign, deleteCampaign, sendCampaign,
   fetchCampaignAnalytics, addRecipients, fetchTemplates, deleteTemplate,
   type Campaign, type EmailTemplate
 } from '~/composables/useCampaigns';
 
+definePageMeta({ middleware: 'permissions' });
+const { $i18n } = useNuxtApp();
+const t = $i18n.t;
+
+// Export columns
+const exportColumns = [
+  { prop: 'name', label: t('campaigns.name') },
+  { prop: 'subject', label: t('campaigns.subject') },
+  { prop: 'status', label: t('campaigns.status') },
+  { prop: 'sentAt', label: t('campaigns.sentAt') }
+];
+
 const loading = ref(true);
 const saving = ref(false);
+const deleting = ref(false);
 const campaigns = ref<Campaign[]>([]);
 const templates = ref<EmailTemplate[]>([]);
 const showForm = ref(false);
 const showAnalytics = ref(false);
 const showTemplates = ref(false);
+const deletePopup = ref(false);
+const deleteId = ref<string | null>(null);
 const editingId = ref<string | null>(null);
 const analytics = ref<any>(null);
 const recipientInput = ref('');
 const form = ref({ name: '', subject: '', htmlContent: '' });
+const searchText = ref('');
+const filterStatus = ref('');
+const currentPage = ref(1);
+const pageSize = 10;
 
-const stats = computed(() => [
-  { label: 'Total', value: campaigns.value.length },
-  { label: 'Draft', value: campaigns.value.filter(c => c.status === 'DRAFT').length },
-  { label: 'Sent', value: campaigns.value.filter(c => c.status === 'SENT').length },
-  { label: 'Sending', value: campaigns.value.filter(c => c.status === 'SENDING').length }
+const summaryStats = computed(() => [
+  { label: t('campaigns.allCampaigns') || 'Total', value: campaigns.value.length, icon: 'ph:envelope-bold', color: '#7849ff' },
+  { label: t('campaigns.status') + ': Draft', value: campaigns.value.filter(c => c.status === 'DRAFT').length, icon: 'ph:pencil-bold', color: '#64748b' },
+  { label: t('campaigns.sent') || 'Sent', value: campaigns.value.filter(c => c.status === 'SENT').length, icon: 'ph:check-circle-bold', color: '#22c55e' },
+  { label: t('campaigns.status') + ': Sending', value: campaigns.value.filter(c => c.status === 'SENDING').length, icon: 'ph:paper-plane-tilt-bold', color: '#3b82f6' }
 ]);
 
+const filteredCampaigns = computed(() => {
+  let result = campaigns.value;
+  if (searchText.value) {
+    const s = searchText.value.toLowerCase();
+    result = result.filter(c =>
+      c.name?.toLowerCase().includes(s) || c.subject?.toLowerCase().includes(s)
+    );
+  }
+  if (filterStatus.value) {
+    result = result.filter(c => c.status === filterStatus.value);
+  }
+  return result;
+});
+
+const paginatedCampaigns = computed(() => {
+  const start = (currentPage.value - 1) * pageSize;
+  return filteredCampaigns.value.slice(start, start + pageSize);
+});
+
+const paginationStart = computed(() => {
+  if (filteredCampaigns.value.length === 0) return 0;
+  return (currentPage.value - 1) * pageSize + 1;
+});
+
+const paginationEnd = computed(() => {
+  return Math.min(currentPage.value * pageSize, filteredCampaigns.value.length);
+});
+
+// Reset to page 1 when filters change
+watch([searchText, filterStatus], () => {
+  currentPage.value = 1;
+});
+
 onMounted(async () => {
-  campaigns.value = await fetchCampaigns();
-  templates.value = await fetchTemplates();
+  const [campaignsData, templatesData] = await Promise.all([fetchCampaigns(), fetchTemplates()]);
+  campaigns.value = campaignsData;
+  templates.value = templatesData;
   loading.value = false;
 });
 
-function getStatusType(status: string) {
-  const map: Record<string, string> = { DRAFT: 'info', SCHEDULED: 'warning', SENDING: '', SENT: 'success', CANCELLED: 'danger' };
-  return map[status] || 'info';
+function getCampaignStatusColor(status: string): string {
+  const map: Record<string, string> = {
+    DRAFT: 'gray',
+    SCHEDULED: 'orange',
+    SENDING: 'blue',
+    SENT: 'green',
+    CANCELLED: 'red'
+  };
+  return map[status] || 'gray';
 }
 
-function formatDate(d: string) { return new Date(d).toLocaleDateString(); }
+function formatDate(d: string) {
+  return new Date(d).toLocaleDateString();
+}
 
 function openForm(campaign?: Campaign) {
   if (campaign) {
@@ -170,7 +282,7 @@ async function saveCampaign() {
     const campaignId = editingId.value || response.body?.id;
     if (campaignId) {
       const emails = recipientInput.value.split(/[\n,]+/).map(e => e.trim()).filter(Boolean);
-      const recipients = emails.map(email => ({ email, name: email.split('@')[0] }));
+      const recipients = emails.map(email => ({ email, name: email.split('@')[0] || email }));
       await addRecipients(campaignId, recipients);
     }
   }
@@ -179,9 +291,16 @@ async function saveCampaign() {
   saving.value = false;
 }
 
-async function removeCampaign(id: string) {
-  await deleteCampaign(id);
-  campaigns.value = campaigns.value.filter(c => c.id !== id);
+async function confirmDelete() {
+  if (!deleteId.value) return;
+  deleting.value = true;
+  try {
+    await deleteCampaign(deleteId.value);
+    campaigns.value = campaigns.value.filter(c => c.id !== deleteId.value);
+  } finally {
+    deleting.value = false;
+    deletePopup.value = false;
+  }
 }
 
 async function handleSend(id: string) {

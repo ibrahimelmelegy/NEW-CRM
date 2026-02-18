@@ -1,81 +1,62 @@
 <template lang="pug">
-.invoices-page.p-8
-  .flex.justify-between.items-start.mb-8
-    div
-      h2.text-3xl.font-bold.mb-2(style="color: var(--text-primary)") {{ $t('invoices.title') }}
-      p(style="color: var(--text-muted)") {{ $t('invoices.subtitle') }}
+div
+  ModuleHeader(
+    :title="$t('invoices.title')"
+    :subtitle="$t('invoices.subtitle')"
+  )
+    template(#actions)
+      ExportButton(:data="exportData" :columns="exportColumns" :filename="'invoices-export'" :title="$t('invoices.title')")
 
-  //- Summary Cards
-  .grid.grid-cols-1.gap-4.mb-8(class="md:grid-cols-4")
-    .glass-card.p-5
-      p.text-xs.font-medium.mb-1(style="color: var(--text-muted)") {{ $t('invoices.totalInvoices') }}
-      p.text-2xl.font-bold(style="color: var(--text-primary)") {{ summary.totalInvoices }}
-    .glass-card.p-5
-      p.text-xs.font-medium.mb-1(style="color: var(--text-muted)") {{ $t('invoices.totalAmount') }}
-      p.text-2xl.font-bold(style="color: #7849ff") {{ formatCurrency(summary.totalAmount) }}
-    .glass-card.p-5
-      p.text-xs.font-medium.mb-1(style="color: var(--text-muted)") {{ $t('invoices.collected') }}
-      p.text-2xl.font-bold.text-green-500 {{ formatCurrency(summary.collectedAmount) }}
-    .glass-card.p-5
-      p.text-xs.font-medium.mb-1(style="color: var(--text-muted)") {{ $t('invoices.pending') }}
-      p.text-2xl.font-bold.text-orange-500 {{ formatCurrency(summary.pendingAmount) }}
+  StatCards(:stats="summaryStats")
 
-  //- Filters
-  .flex.gap-4.mb-6
-    el-input(v-model="search" :placeholder="$t('invoices.searchInvoice')" clearable class="w-64" @input="debounceLoad")
-      template(#prefix)
-        Icon(name="ph:magnifying-glass" size="16" aria-hidden="true")
-    el-select(v-model="statusFilter" clearable :placeholder="$t('invoices.allStatuses')" @change="loadInvoices" class="w-44")
-      el-option(value="collected" :label="$t('invoices.collected')")
-      el-option(value="pending" :label="$t('invoices.pending')")
+  AppTable(
+    v-slot="{data}"
+    :externalLoading="loading"
+    :filterOptions="filterOptions"
+    :columns="table.columns"
+    position="invoices"
+    :pageInfo="pagination"
+    :data="table.data"
+    @handleRowClick="handleRowClick"
+    :searchPlaceholder="$t('invoices.title')"
+    :key="table.data"
+  )
+    .flex.items-center.py-2(@click.stop)
+      el-dropdown(class="outline-0" trigger="click")
+        span(class="el-dropdown-link")
+          .toggle-icon.text-md
+            Icon(name="IconToggle" size="22")
+        template(#dropdown)
+          el-dropdown-menu
+            el-dropdown-item(v-if="!data?.collected" @click="handleCollect(data?.id)")
+              .flex.items-center
+                Icon.text-md.mr-2(name="ph:check-circle-bold")
+                p.text-sm {{ $t('invoices.markCollected') }}
+            el-dropdown-item(v-else @click="handleUncollect(data?.id)")
+              .flex.items-center
+                Icon.text-md.mr-2(name="ph:arrow-counter-clockwise-bold")
+                p.text-sm {{ $t('invoices.undo') }}
+            el-dropdown-item(@click="exportInvoicePDF(data)")
+              .flex.items-center
+                Icon.text-md.mr-2(name="ph:file-pdf-bold")
+                p.text-sm PDF
 
-  //- Table
-  .glass-card.p-6
-    el-table(:data="invoices" style="width: 100%" v-loading="loading")
-      el-table-column(:label="$t('invoices.invoiceNo')" prop="invoiceNumber" width="160")
-      el-table-column(:label="$t('invoices.deal')" min-width="200")
-        template(#default="{ row }")
-          NuxtLink.text-purple-500(:to="`/sales/deals/show/${row.dealId}`" style="text-decoration: none") {{ row.deal?.name || row.dealId }}
-      el-table-column(:label="$t('invoices.amount')" width="140" align="right")
-        template(#default="{ row }")
-          span.font-bold {{ formatCurrency(row.amount) }}
-      el-table-column(:label="$t('invoices.date')" width="130")
-        template(#default="{ row }")
-          span {{ row.invoiceDate ? new Date(row.invoiceDate).toLocaleDateString() : '—' }}
-      el-table-column(:label="$t('invoices.status')" width="130" align="center")
-        template(#default="{ row }")
-          el-tag(:type="row.collected ? 'success' : 'warning'" effect="dark" size="small") {{ row.collected ? $t('invoices.collected') : $t('invoices.pending') }}
-      el-table-column(:label="$t('invoices.collectedDate')" width="140")
-        template(#default="{ row }")
-          span {{ row.collectedDate ? new Date(row.collectedDate).toLocaleDateString() : '—' }}
-      el-table-column(:label="$t('common.actions')" width="120" align="center")
-        template(#default="{ row }")
-          el-button(
-            v-if="!row.collected"
-            type="success"
-            size="small"
-            @click="handleCollect(row.id)"
-            :loading="collecting === row.id"
-            class="!rounded-lg"
-          ) {{ $t('invoices.markCollected') }}
-          el-button(
-            v-else
-            type="warning"
-            size="small"
-            plain
-            @click="handleUncollect(row.id)"
-            :loading="collecting === row.id"
-            class="!rounded-lg"
-          ) {{ $t('invoices.undo') }}
-
-    .flex.justify-center.mt-4(v-if="pagination.totalPages > 1")
-      el-pagination(
-        v-model:current-page="currentPage"
-        :page-size="pagination.limit"
-        :total="pagination.totalItems"
-        layout="prev, pager, next"
-        @current-change="loadInvoices"
+  //- Template Selector
+  el-dialog(v-model="showTemplateSelector" :title="$t('invoices.selectTemplate') || 'Select Invoice Template'" width="500px")
+    .space-y-3
+      .glass-card.p-3.rounded-xl.cursor-pointer.flex.items-center.justify-between(
+        v-for="tpl in invoiceTemplates"
+        :key="tpl.id"
+        @click="downloadInvoiceWithTemplate(tpl)"
       )
+        .flex.items-center.gap-3
+          Icon(name="ph:file-pdf-bold" size="24" class="text-purple-400")
+          div
+            .font-bold(style="color: var(--text-primary)") {{ tpl.name }}
+            .text-xs(style="color: var(--text-muted)") {{ tpl.layout?.elements?.length || 0 }} elements
+        Icon(name="ph:arrow-right" size="18" style="color: var(--text-muted)")
+    template(#footer)
+      el-button(@click="showTemplateSelector = false") {{ $t('common.cancel') }}
 </template>
 
 <script setup lang="ts">
@@ -83,18 +64,75 @@ import { ElNotification } from 'element-plus';
 import type { InvoiceItem, InvoiceSummary } from '~/composables/useInvoices';
 import { fetchInvoices, fetchInvoiceSummary, markCollected, markUncollected } from '~/composables/useInvoices';
 
-definePageMeta({ title: 'Invoices' });
+definePageMeta({ middleware: 'permissions' });
+const { $i18n } = useNuxtApp();
+const t = $i18n.t;
+const router = useRouter();
 
-const invoices = ref<InvoiceItem[]>([]);
-const summary = ref<InvoiceSummary>({ totalInvoices: 0, totalAmount: 0, collectedAmount: 0, pendingAmount: 0, collectedCount: 0, pendingCount: 0 });
+// Export columns & data
+const exportColumns = [
+  { prop: 'invoiceNumber', label: t('invoices.invoiceNo') },
+  { prop: 'dealDetails', label: t('invoices.deal') },
+  { prop: 'formattedAmount', label: t('invoices.amount') },
+  { prop: 'formattedDate', label: t('invoices.date') },
+  { prop: 'statusLabel', label: t('invoices.status') },
+  { prop: 'formattedCollectedDate', label: t('invoices.collectedDate') }
+];
+const exportData = computed(() => table.value.data);
+
 const loading = ref(true);
 const collecting = ref<number | null>(null);
-const search = ref('');
-const statusFilter = ref('');
-const currentPage = ref(1);
+
+// Data
+const invoices = ref<InvoiceItem[]>([]);
+const summary = ref<InvoiceSummary>({ totalInvoices: 0, totalAmount: 0, collectedAmount: 0, pendingAmount: 0, collectedCount: 0, pendingCount: 0 });
 const pagination = ref({ page: 1, limit: 20, totalItems: 0, totalPages: 0 });
 
-let debounceTimer: ReturnType<typeof setTimeout>;
+const summaryStats = computed(() => [
+  { label: t('invoices.totalInvoices'), value: summary.value.totalInvoices, icon: 'ph:file-text-bold', color: '#7849ff' },
+  { label: t('invoices.totalAmount'), value: formatCurrency(summary.value.totalAmount), icon: 'ph:money-bold', color: '#3b82f6' },
+  { label: t('invoices.collected'), value: formatCurrency(summary.value.collectedAmount), icon: 'ph:check-circle-bold', color: '#22c55e' },
+  { label: t('invoices.pending'), value: formatCurrency(summary.value.pendingAmount), icon: 'ph:clock-bold', color: '#f59e0b' }
+]);
+
+const table = ref({
+  columns: [] as any[],
+  data: [] as any[],
+  sort: []
+});
+
+const updateColumns = () => {
+  table.value.columns = [
+    { prop: 'invoiceNumber', label: t('invoices.invoiceNo'), component: 'Text', sortable: true, type: 'font-bold', width: 150 },
+    { prop: 'dealDetails', label: t('invoices.deal'), component: 'AvatarText', type: 'font-bold', width: 200 },
+    { prop: 'formattedAmount', label: t('invoices.amount'), component: 'Text', sortable: true, type: 'font-bold', width: 140 },
+    { prop: 'formattedDate', label: t('invoices.date'), component: 'Text', sortable: true, type: 'font-default', width: 130 },
+    {
+      prop: 'statusLabel',
+      label: t('invoices.status') || t('finance.expenses.status'),
+      component: 'Label',
+      type: 'outline',
+      filters: [
+        { text: t('invoices.collected'), value: 'COLLECTED' },
+        { text: t('invoices.pending'), value: 'PENDING' }
+      ],
+      width: 140
+    },
+    { prop: 'formattedCollectedDate', label: t('invoices.collectedDate'), component: 'Text', type: 'font-default', width: 140 }
+  ];
+};
+updateColumns();
+
+const filterOptions = computed(() => [
+  {
+    title: t('invoices.status') || 'Status',
+    value: 'status',
+    options: [
+      { label: t('invoices.collected'), value: 'collected' },
+      { label: t('invoices.pending'), value: 'pending' }
+    ]
+  }
+]);
 
 onMounted(async () => {
   await Promise.all([loadInvoices(), loadSummary()]);
@@ -103,14 +141,10 @@ onMounted(async () => {
 async function loadInvoices() {
   loading.value = true;
   try {
-    const result = await fetchInvoices({
-      page: currentPage.value,
-      limit: 20,
-      status: statusFilter.value || undefined,
-      search: search.value || undefined
-    });
+    const result = await fetchInvoices({ page: 1, limit: 20 });
     invoices.value = result.docs;
     pagination.value = result.pagination;
+    table.value.data = result.docs.map(formatRow);
   } finally {
     loading.value = false;
   }
@@ -120,12 +154,20 @@ async function loadSummary() {
   summary.value = await fetchInvoiceSummary();
 }
 
-function debounceLoad() {
-  clearTimeout(debounceTimer);
-  debounceTimer = setTimeout(() => {
-    currentPage.value = 1;
-    loadInvoices();
-  }, 400);
+function formatRow(inv: InvoiceItem) {
+  return {
+    ...inv,
+    dealDetails: { title: inv.deal?.name || `Deal #${inv.dealId}`, text: '' },
+    formattedAmount: formatCurrency(inv.amount),
+    formattedDate: inv.invoiceDate ? new Date(inv.invoiceDate).toLocaleDateString() : '—',
+    statusLabel: inv.collected ? 'COLLECTED' : 'PENDING',
+    formattedCollectedDate: inv.collectedDate ? new Date(inv.collectedDate).toLocaleDateString() : '—'
+  };
+}
+
+function handleRowClick(row: any) {
+  // Navigate to deal detail for now
+  if (row.dealId) router.push(`/sales/deals/${row.dealId}`);
 }
 
 async function handleCollect(id: number) {
@@ -133,10 +175,8 @@ async function handleCollect(id: number) {
   try {
     await markCollected(id);
     await Promise.all([loadInvoices(), loadSummary()]);
-    ElNotification({ type: 'success', title: 'Collected', message: 'Invoice marked as collected' });
-  } finally {
-    collecting.value = null;
-  }
+    ElNotification({ type: 'success', title: t('common.success'), message: t('invoices.markCollected') });
+  } finally { collecting.value = null; }
 }
 
 async function handleUncollect(id: number) {
@@ -144,23 +184,60 @@ async function handleUncollect(id: number) {
   try {
     await markUncollected(id);
     await Promise.all([loadInvoices(), loadSummary()]);
-    ElNotification({ type: 'info', title: 'Updated', message: 'Invoice marked as pending' });
-  } finally {
-    collecting.value = null;
+    ElNotification({ type: 'info', title: t('common.success'), message: t('invoices.pending') });
+  } finally { collecting.value = null; }
+}
+
+function handleExport() {
+  const csvHeaders = ['Invoice #', 'Deal', 'Amount', 'Date', 'Status', 'Collected Date'];
+  const rows = (table.value.data || []).map((r: any) => [
+    r.invoiceNumber, r.dealDetails?.title, r.formattedAmount, r.formattedDate, r.statusLabel, r.formattedCollectedDate
+  ]);
+  const csv = [csvHeaders, ...rows].map(r => r.map((v: any) => `"${String(v || '').replace(/"/g, '""')}"`).join(',')).join('\n');
+  const blob = new Blob(['\ufeff' + csv], { type: 'text/csv;charset=utf-8;' });
+  const url = URL.createObjectURL(blob);
+  const link = document.createElement('a');
+  link.href = url;
+  link.download = 'invoices.csv';
+  link.click();
+  URL.revokeObjectURL(url);
+}
+
+// Template-based PDF export
+const showTemplateSelector = ref(false);
+const invoiceTemplates = ref<any[]>([]);
+const selectedInvoice = ref<any>(null);
+
+async function exportInvoicePDF(row: any) {
+  const { fetchDocumentTemplates } = await import('~/composables/useDocumentTemplates');
+  const result = await fetchDocumentTemplates({ type: 'INVOICE', limit: '50' });
+  if (result.docs.length > 0) {
+    invoiceTemplates.value = result.docs;
+    selectedInvoice.value = row;
+    showTemplateSelector.value = true;
+  } else {
+    ElNotification({ type: 'info', title: 'No Templates', message: 'Create invoice templates in Settings > Document Templates' });
   }
 }
 
+async function downloadInvoiceWithTemplate(template: any) {
+  showTemplateSelector.value = false;
+  const { generatePDF } = await import('~/utils/pdfExporter');
+  const inv = selectedInvoice.value;
+  const data = {
+    companyName: 'LEADIFY ERP', companyAddress: '', companyPhone: '', companyEmail: '',
+    invoiceNumber: inv.invoiceNumber,
+    date: inv.invoiceDate ? new Date(inv.invoiceDate).toLocaleDateString() : '',
+    dueDate: '', clientName: inv.deal?.name || '', clientAddress: '',
+    subtotal: formatCurrency(inv.amount), tax: formatCurrency(0), total: formatCurrency(inv.amount),
+    notes: '',
+    items: [{ description: inv.deal?.name || 'Invoice', qty: 1, rate: inv.amount, unitprice: inv.amount, amount: inv.amount, total: inv.amount }]
+  };
+  generatePDF(template.layout, data, `Invoice-${inv.invoiceNumber}.pdf`);
+  ElNotification({ type: 'success', title: t('common.success'), message: 'PDF downloaded' });
+}
+
 function formatCurrency(amount: number): string {
-  return new Intl.NumberFormat('en-US', { style: 'currency', currency: 'SAR', minimumFractionDigits: 0 }).format(amount);
+  return new Intl.NumberFormat('en-US', { style: 'currency', currency: 'SAR', minimumFractionDigits: 0 }).format(amount || 0);
 }
 </script>
-
-<style lang="scss" scoped>
-.invoices-page {
-  animation: fadeIn 0.4s ease-out;
-}
-@keyframes fadeIn {
-  from { opacity: 0; transform: translateY(10px); }
-  to { opacity: 1; transform: translateY(0); }
-}
-</style>

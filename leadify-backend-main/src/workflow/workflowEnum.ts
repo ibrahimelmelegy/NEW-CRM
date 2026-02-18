@@ -1,28 +1,9 @@
-export enum WorkflowTrigger {
-  LEAD_CREATED = 'LEAD_CREATED',
-  LEAD_UPDATED = 'LEAD_UPDATED',
-  LEAD_STATUS_CHANGED = 'LEAD_STATUS_CHANGED',
-  DEAL_CREATED = 'DEAL_CREATED',
-  DEAL_UPDATED = 'DEAL_UPDATED',
-  DEAL_STAGE_CHANGED = 'DEAL_STAGE_CHANGED',
-  OPPORTUNITY_CREATED = 'OPPORTUNITY_CREATED',
-  OPPORTUNITY_UPDATED = 'OPPORTUNITY_UPDATED',
-  OPPORTUNITY_STAGE_CHANGED = 'OPPORTUNITY_STAGE_CHANGED',
-  CLIENT_CREATED = 'CLIENT_CREATED'
-}
+// ── Re-exported from workflowModel.ts for backward compatibility ──
+// The canonical type definitions now live in workflowModel.ts and
+// workflowExecutionModel.ts. This file re-exports them so that any
+// existing imports from workflowEnum still resolve correctly.
 
-export enum WorkflowActionType {
-  SEND_EMAIL = 'SEND_EMAIL',
-  CREATE_NOTIFICATION = 'CREATE_NOTIFICATION',
-  UPDATE_FIELD = 'UPDATE_FIELD',
-  ASSIGN_USER = 'ASSIGN_USER'
-}
-
-export enum ConditionOperator {
-  EQUALS = 'EQUALS',
-  NOT_EQUALS = 'NOT_EQUALS',
-  CONTAINS = 'CONTAINS',
-  GREATER_THAN = 'GREATER_THAN',
-  LESS_THAN = 'LESS_THAN',
-  IN = 'IN'
-}
+export { TriggerType, ConditionLogic, ENTITY_TYPES } from './workflowModel';
+export type { EntityType, WorkflowCondition, WorkflowAction } from './workflowModel';
+export { ExecutionStatus } from './workflowExecutionModel';
+export type { ActionExecutionResult } from './workflowExecutionModel';

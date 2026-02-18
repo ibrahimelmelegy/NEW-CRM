@@ -11,6 +11,7 @@ div
         el-button(:type="'default'" size="large" @click="navigateTo('/sales/deals/kanban')" class="!rounded-r-2xl")
           Icon(name="ph:columns-bold" size="18")
           span.ml-1 {{ $t('kanban.kanbanView') }}
+      ExportButton(:data="exportData" :columns="exportColumns" :filename="'deals-export'" :title="$t('deals.title')")
       NuxtLink(to="/sales/deals/add-deal")
         el-button(   size='large' :loading="loading" v-if="hasPermission('CREATE_DEALS')" native-type="submit" type="primary" :icon="Plus" class="w-full !my-4 !rounded-2xl")  {{ $t('deals.newDeal') }}
       //- el-dropdown(trigger="click")
@@ -31,6 +32,7 @@ div
       //-               NuxtLink.flex.items-center(:to="`/deals/1`")
       //-                 Icon.text-md.mr-2(size="20" name="IconArchived" )
       //-                 p.text-sm Archived
+  BulkActions(:count="selectedRows.length" :actions="['delete', 'export']" @bulk-delete="handleBulkDelete" @bulk-export="handleBulkExport" @clear-selection="selectedRows = []")
   AppTable(v-slot="{data}" :filterOptions="filterOptions" :columns="table.columns" position="deal" :pageInfo="response.pagination" :data="table.data" :sortOptions="table.sort" @handleRowClick="handleRowClick" :searchPlaceholder="$t('deals.title')" )
     .flex.items-center.py-2(@click.stop)
         //- NuxtLink.toggle-icon(:to="`/deals/1`")
@@ -65,6 +67,22 @@ const { $i18n } = useNuxtApp();
 const t = $i18n.t;
 const loadingAction = ref(false);
 const deleteLeadPopup = ref(false);
+
+// Export columns & data
+const exportColumns = [
+  { prop: 'dealDetails', label: t('deals.table.name') },
+  { prop: 'stage', label: t('deals.table.stage') },
+  { prop: 'price', label: t('deals.table.price') },
+  { prop: 'assign', label: t('deals.table.assigned') },
+  { prop: 'contractType', label: t('deals.table.contractType') },
+  { prop: 'signatureDate', label: t('deals.table.signatureDate') }
+];
+const exportData = computed(() => table.data);
+
+// Bulk actions
+const selectedRows = ref<any[]>([]);
+function handleBulkDelete() { selectedRows.value = []; }
+function handleBulkExport() { selectedRows.value = []; }
 
 const table = reactive({
   columns: [
@@ -121,18 +139,18 @@ const table = reactive({
   data: [] as Deal[]
 });
 
-// Call API to Get the deal
-// const response = await getLeads();
-
-const response = await useTableFilter('deal');
+// Call API to Get the deal and users in parallel
+const [response, usersResponse] = await Promise.all([
+  useTableFilter('deal'),
+  useApiFetch('users')
+]);
 table.data = response.formattedData;
 
 function handleRowClick(val: any) {
   router.push(`/sales/deals/${val.id}`);
 }
 
-const users = await useApiFetch('users');
-const mappedUsers = users?.body?.docs?.map((e: any) => ({
+const mappedUsers = usersResponse?.body?.docs?.map((e: any) => ({
   label: e.name,
   value: e.id
 }));

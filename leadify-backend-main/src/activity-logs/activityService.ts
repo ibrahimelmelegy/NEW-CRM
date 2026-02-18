@@ -37,6 +37,27 @@ export async function createActivityLog(
   );
   return true;
 }
+export async function getAllActivityLogs(limit: number = 100) {
+  const allLogs: any[] = [];
+  for (const [modelName, Model] of Object.entries(actionModel)) {
+    try {
+      const logs = await Model.findAll({
+        limit: Math.ceil(limit / Object.keys(actionModel).length),
+        order: [['createdAt', 'DESC']],
+        include: { all: true }
+      });
+      allLogs.push(...logs.map((log: any) => ({
+        ...log.toJSON(),
+        entityType: modelName
+      })));
+    } catch {
+      // Skip models that may not have tables yet
+    }
+  }
+  allLogs.sort((a: any, b: any) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime());
+  return allLogs.slice(0, limit);
+}
+
 export async function getActivityLogs(model: ActivityModel, modelId: string, page: number = 1, limit: number = 10) {
   const offset = (page - 1) * limit;
   const { rows: docs, count: totalItems } = await actionModel[model].findAndCountAll({

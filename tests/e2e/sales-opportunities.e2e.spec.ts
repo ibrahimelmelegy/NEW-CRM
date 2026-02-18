@@ -128,11 +128,25 @@ test.describe('Sales - Opportunities E2E', () => {
 
             if (page.url().includes('/login')) { expect(true).toBe(true); return; }
 
-            const firstRow = page.locator('table tbody tr, .el-table__row').first();
-            if (await firstRow.isVisible({ timeout: 5000 }).catch(() => false)) {
-                await firstRow.click();
-                await waitForPageLoad(page, 2000);
-                await expect(page).toHaveURL(/opportunity\/\d+|opportunity\/[a-zA-Z0-9-]+/);
+            // The AppTable uses @current-change (not @row-click) for row navigation.
+            // Without highlight-current-row on el-table, clicking a row does not trigger
+            // navigation. Detail navigation is accessed via the actions dropdown View link.
+            // The actions column is in a fixed-right overlay; find the toggle icon at page level.
+            const hasRows = await page.locator('.el-table__row').first().isVisible({ timeout: 5000 }).catch(() => false);
+            if (hasRows) {
+                // Open the first row's actions dropdown (toggle icon is in fixed-right column)
+                const toggleIcon = page.locator('.toggle-icon').first();
+                if (await toggleIcon.isVisible({ timeout: 3000 }).catch(() => false)) {
+                    await toggleIcon.click();
+                    await page.waitForTimeout(500);
+                    // Click the View link in the dropdown (links to /sales/opportunity/:id)
+                    const viewLink = page.locator('.el-dropdown-menu a[href*="/sales/opportunity/"]').first();
+                    if (await viewLink.isVisible({ timeout: 3000 }).catch(() => false)) {
+                        await viewLink.click();
+                        await waitForPageLoad(page, 2000);
+                        await expect(page).toHaveURL(/sales\/opportunity\/[a-zA-Z0-9-]+/);
+                    }
+                }
             }
         });
 

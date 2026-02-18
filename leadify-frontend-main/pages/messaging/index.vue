@@ -265,7 +265,7 @@ function getAvatarColor(name: string): string {
   const colors = ['#7849ff', '#ff7b00', '#22c55e', '#3b82f6', '#ef4444', '#8b5cf6', '#f59e0b'];
   let hash = 0;
   for (let i = 0; i < name.length; i++) hash = name.charCodeAt(i) + ((hash << 5) - hash);
-  return colors[Math.abs(hash) % colors.length];
+  return colors[Math.abs(hash) % colors.length] || '#7849ff';
 }
 
 function formatTime(dateStr: string): string {

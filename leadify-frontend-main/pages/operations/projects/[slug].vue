@@ -327,6 +327,12 @@ el-tabs.demo-tabs(v-model="activeName", @tab-click="handleClick")
         :disabled="activity?.pagination?.totalPages == activity?.pagination?.page",
         @click="getActivityPage(Number(activity?.pagination?.page) + 1)"
       ) {{ $t('operations.projects.details.viewMore') }}
+  el-tab-pane(:label="$t('common.timeline')" name="timeline")
+    RecordTimeline(:entityType="'project'" :entityId="route.params.slug as string")
+  el-tab-pane(:label="$t('common.comments')" name="comments")
+    RecordComments(:entityType="'project'" :entityId="route.params.slug as string")
+  el-tab-pane(:label="$t('common.attachments')" name="record-attachments")
+    RecordAttachments(:entityType="'project'" :entityId="route.params.slug as string")
 el-dialog(
   v-model="addShow",
   class="!shadow-none xl:!w-[50%] lg:!w-[70%] sm:!w-[90%] !w-full",
@@ -547,7 +553,14 @@ const table = reactive({
   data: [] as any[]
 });
 
-const response: any = await useTableFilter(`proposal?relatedEntityId=${route.params.slug}&page=1&limit=100`);
+// Fetch all lookup data in parallel for faster page load
+const [response, _manpowersRes, _serviceRes, _addMaterialsRes, _assetsRes]: any[] = await Promise.all([
+  useTableFilter(`proposal?relatedEntityId=${route.params.slug}&page=1&limit=100`),
+  useTableFilter('manpower'),
+  useTableFilter('service'),
+  useTableFilter('additional-material'),
+  useTableFilter('asset')
+]);
 table.data = response.formattedData?.map((el: any) => {
   return { ...el, type: el.type == 'Mixed' ? 'Tech & Financial' : el.type };
 });
@@ -582,8 +595,7 @@ const manPowerPreview = ref({
   data: [] as any
 });
 
-let manpowersResponse: any = await useTableFilter('manpower');
-manpowersResponse = manpowersResponse.formattedData;
+let manpowersResponse: any = _manpowersRes.formattedData;
 
 if (project?.projectManpowerResources?.length) {
   manpowers.value.data =
@@ -655,11 +667,9 @@ const materialsPreview = ref({
   data: [] as any[]
 });
 
-let serviceResponse: any = await useTableFilter('service');
-serviceResponse = serviceResponse?.formattedData || [];
+let serviceResponse: any = _serviceRes?.formattedData || [];
 
-let addMaterials: any = await useTableFilter('additional-material');
-addMaterials = addMaterials?.formattedData || [];
+let addMaterials: any = _addMaterialsRes?.formattedData || [];
 
 function materialMappedData() {
   if (!project?.materials?.length) return [];
@@ -730,8 +740,7 @@ const assetsTotal = reactive({
   data: [] as any[]
 });
 
-let assetsResponse: any = await useTableFilter('asset');
-assetsResponse = assetsResponse?.formattedData || [];
+let assetsResponse: any = _assetsRes?.formattedData || [];
 
 if (project?.projectAssets?.length) {
   const assetsId = project?.projectAssets?.map((projectAsset: any) => projectAsset.assetId);

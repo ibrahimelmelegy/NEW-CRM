@@ -137,6 +137,13 @@ export enum VendorPermissionsEnum {
   DELETE_VENDORS = 'DELETE_VENDORS'
 }
 
+export enum DocumentTemplatePermissionsEnum {
+  VIEW_DOCUMENT_TEMPLATES = 'VIEW_DOCUMENT_TEMPLATES',
+  CREATE_DOCUMENT_TEMPLATES = 'CREATE_DOCUMENT_TEMPLATES',
+  EDIT_DOCUMENT_TEMPLATES = 'EDIT_DOCUMENT_TEMPLATES',
+  DELETE_DOCUMENT_TEMPLATES = 'DELETE_DOCUMENT_TEMPLATES'
+}
+
 // Consolidating all permissions
 export const permissions = {
   leads: Object.keys(LeadPermissionsEnum),
@@ -159,7 +166,8 @@ export const permissions = {
   financialAndBusinessMetricsWidgets: Object.keys(FinancialAndBusinessMetricsWidgetsPermissionsEnum),
   performanceAndHRWidgets: Object.keys(PerformanceAndHRWidgetsPermissionsEnum),
   procurement: Object.keys(ProcurementPermissionsEnum),
-  vendors: Object.keys(VendorPermissionsEnum)
+  vendors: Object.keys(VendorPermissionsEnum),
+  documentTemplates: Object.keys(DocumentTemplatePermissionsEnum)
 };
 
 // Function to get all permissions

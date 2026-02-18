@@ -69,9 +69,17 @@
                .flex.items-center.justify-center.w-10.h-10.rounded-full.bg-secondary-turquoise-50: Icon.text-secondary-turquoise-700(name="IconNote" size="24")
              h4.text-lg.font-semibold.text-neutral-900 {{ $t('operations.dailyTasks.details.notes') }}
              p.text-neutral-800.leading-relaxed {{dailyTask?.notes}}
+    el-tabs.mt-6(v-model="activeTab")
+      el-tab-pane(:label="$t('common.timeline')" name="timeline")
+        RecordTimeline(:entityType="'dailyTask'" :entityId="route.params.slug as string")
+      el-tab-pane(:label="$t('common.comments')" name="comments")
+        RecordComments(:entityType="'dailyTask'" :entityId="route.params.slug as string")
+      el-tab-pane(:label="$t('common.attachments')" name="attachments")
+        RecordAttachments(:entityType="'dailyTask'" :entityId="route.params.slug as string")
     </template>
 <script lang="ts" setup>
 const route = useRoute();
+const activeTab = ref('timeline');
 
 const dailyTask = await getDailyTask(route.params.slug as string);
 </script>

@@ -106,7 +106,7 @@ const newOption = ref('');
 const formData = ref({
   fieldLabel: '',
   fieldName: '',
-  fieldType: 'TEXT' as string,
+  fieldType: 'TEXT' as 'TEXT' | 'NUMBER' | 'DATE' | 'SELECT' | 'CHECKBOX' | 'TEXTAREA',
   options: [] as string[],
   required: false
 });

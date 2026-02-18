@@ -125,7 +125,8 @@ const menu = [
       { link: '/operations/additional-material', name: 'navigation.additionalMaterials', icon: 'ph:cube' },
       { link: '/operations/services', name: 'navigation.services', icon: 'ph:wrench' },
       { link: '/operations/assets', name: 'navigation.assets', icon: 'ph:bank' },
-      { link: '/operations/time-tracking', name: 'navigation.timeTracking', icon: 'ph:timer-bold' }
+      { link: '/operations/time-tracking', name: 'navigation.timeTracking', icon: 'ph:timer-bold' },
+      { link: '/operations/field-tracking', name: 'navigation.fieldTracking', icon: 'ph:map-pin-bold' }
     ]
   },
   {
@@ -142,6 +143,12 @@ const menu = [
       { link: '/procurement/statistics', name: 'navigation.statistics', icon: 'ph:chart-bar' }
     ]
   },
+  {
+    name: 'navigation.inventory',
+    icon: 'ph:package-bold',
+    isOpen: false,
+    link: '/inventory'
+  },
   { link: '/messaging', name: 'navigation.messaging', icon: 'ph:chat-circle-dots-bold', submenu: false, isOpen: false },
   {
     name: 'navigation.marketing',
@@ -152,12 +159,69 @@ const menu = [
     ]
   },
   {
+    name: 'navigation.calendar',
+    icon: 'ph:calendar-bold',
+    isOpen: false,
+    link: '/calendar'
+  },
+  {
+    name: 'navigation.documents',
+    icon: 'ph:folder-open-bold',
+    isOpen: false,
+    link: '/documents'
+  },
+  {
     name: 'navigation.reports',
     icon: 'IconReport',
     isOpen: false,
     submenu: [
       { link: '/reports', name: 'navigation.report', icon: 'ph:chart-pie' },
       { link: '/reports/builder', name: 'navigation.reportBuilder', icon: 'ph:faders-horizontal-bold' }
+    ]
+  },
+  {
+    name: 'navigation.finance',
+    icon: 'ph:currency-circle-dollar-bold',
+    isOpen: false,
+    submenu: [
+      { link: '/finance/expenses', name: 'navigation.expenses', icon: 'ph:receipt-bold' },
+      { link: '/finance/budgets', name: 'navigation.budgets', icon: 'ph:wallet-bold' },
+      { link: '/finance/zatca', name: 'navigation.zatca', icon: 'ph:stamp-bold' },
+      { link: '/finance/zakaat', name: 'navigation.zakaat', icon: 'ph:hand-coins-bold' }
+    ]
+  },
+  {
+    name: 'navigation.hr',
+    icon: 'ph:identification-badge-bold',
+    isOpen: false,
+    submenu: [
+      { link: '/hr/attendance', name: 'navigation.attendance', icon: 'ph:clock-bold' },
+      { link: '/hr/leave-requests', name: 'navigation.leaveRequests', icon: 'ph:calendar-x-bold' }
+    ]
+  },
+  {
+    name: 'navigation.gamification',
+    icon: 'ph:trophy-bold',
+    isOpen: false,
+    submenu: [
+      { link: '/gamification/leaderboard', name: 'navigation.leaderboard', icon: 'ph:ranking-bold' }
+    ]
+  },
+  {
+    name: 'navigation.support',
+    icon: 'ph:lifebuoy-bold',
+    isOpen: false,
+    submenu: [
+      { link: '/support/knowledge-base', name: 'navigation.knowledgeBase', icon: 'ph:book-open-bold' }
+    ]
+  },
+  {
+    name: 'navigation.approvals',
+    icon: 'ph:stamp-bold',
+    isOpen: false,
+    submenu: [
+      { link: '/approvals', name: 'navigation.approvalCenter', icon: 'ph:check-circle-bold' },
+      { link: '/approvals/workflows', name: 'navigation.approvalWorkflows', icon: 'ph:flow-arrow-bold' }
     ]
   },
   {
@@ -170,8 +234,11 @@ const menu = [
       { link: '/settings/security', name: 'navigation.security', icon: 'ph:lock-bold' },
       { link: '/settings/custom-fields', name: 'navigation.customFields', icon: 'ph:sliders-horizontal-bold' },
       { link: '/settings/webhooks', name: 'navigation.webhooks', icon: 'ph:webhooks-logo-bold' },
+      { link: '/settings/document-templates', name: 'navigation.documentTemplates', icon: 'ph:file-pdf-bold' },
       { link: '/settings/workflows', name: 'navigation.workflows', icon: 'ph:lightning-bold' },
       { link: '/settings/portal-users', name: 'navigation.portalUsers', icon: 'ph:users-three-bold' },
+      { link: '/settings/currencies', name: 'navigation.currencies', icon: 'ph:coins-bold' },
+      { link: '/settings/tax-rules', name: 'navigation.taxRules', icon: 'ph:percent-bold' },
       { link: '/settings/audit-logs', name: 'navigation.auditLogs', icon: 'ph:fingerprint-bold' },
       { link: '/roles', name: 'navigation.rolesAccess', icon: 'ph:shield-check-bold' },
       { link: '/roles/add-role', name: 'navigation.addNewRole', icon: 'ph:plus-circle-bold' },

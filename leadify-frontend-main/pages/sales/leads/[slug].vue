@@ -90,6 +90,13 @@
       .flex.justify-center.items-center.w-full
         el-button(v-if="activity?.docs?.length > 0" :loading="loading" class="!rounded-2xl mb-2" type='primary' size="large" :disabled="activity?.pagination?.totalPages == activity?.pagination?.page" @click="getActivityPage(Number(activity?.pagination?.page)+1)") {{ $t('common.view') }} More
 
+    el-tab-pane(:label="$t('common.timeline')" name="timeline")
+      RecordTimeline(:entityType="'lead'" :entityId="slug")
+    el-tab-pane(:label="$t('common.comments')" name="comments")
+      RecordComments(:entityType="'lead'" :entityId="slug")
+    el-tab-pane(:label="$t('common.attachments')" name="attachments")
+      RecordAttachments(:entityType="'lead'" :entityId="slug")
+
   AIEmailAssist(v-model="showAiDialog" :context="leadContext")
   AISummarizer(v-model="showSummarizer" :initialText="lead?.notes")
 

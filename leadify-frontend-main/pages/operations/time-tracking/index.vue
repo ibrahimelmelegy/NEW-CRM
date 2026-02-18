@@ -1,135 +1,148 @@
 <template lang="pug">
-.time-tracking-page.p-8
-  .flex.justify-between.items-start.mb-8
+div
+  ModuleHeader(
+    :title="$t('timeTracking.title')"
+    :subtitle="$t('timeTracking.subtitle')"
+  )
+    template(#actions)
+      ExportButton(:data="entries" :columns="exportColumns" :filename="'time-tracking-export'" :title="$t('timeTracking.title')")
+      el-button(v-if="!activeTimer" type="success" size="large" :loading="starting" @click="startTimer" class="!rounded-2xl")
+        Icon(name="ph:play-bold" size="16" class="mr-1")
+        span {{ $t('timeTracking.start') || 'Start Timer' }}
+      el-button(v-else type="danger" size="large" :loading="stopping" @click="stopTimer" class="!rounded-2xl")
+        Icon(name="ph:stop-bold" size="16" class="mr-1")
+        span {{ $t('timeTracking.stop') || 'Stop Timer' }}
+      el-button(size="large" @click="showManualEntry = true" class="!rounded-2xl")
+        Icon(name="ph:plus-bold" size="16" class="mr-1")
+        span {{ $t('timeTracking.manual') || 'Manual Entry' }}
+
+  //- Active Timer Card
+  .glass-card.p-6.mb-6.flex.items-center.gap-4.animate-entrance(v-if="activeTimer")
+    .w-16.h-16.rounded-2xl.flex.items-center.justify-center(style="background: rgba(239, 68, 68, 0.1)")
+      Icon(name="ph:timer-bold" size="32" style="color: #ef4444")
     div
-      h2.text-3xl.font-bold.mb-2(style="color: var(--text-primary)") {{ $t('timeTracking.title') }}
-      p(style="color: var(--text-muted)") {{ $t('timeTracking.subtitle') }}
-    .flex.gap-3
-      //- Active Timer
-      .glass-card.px-4.py-3.flex.items-center.gap-3(v-if="runningTimer")
-        .w-3.h-3.rounded-full.bg-green-500.animate-pulse
-        span.font-mono.text-lg.font-bold(style="color: var(--text-primary)") {{ elapsedTime }}
-        span.text-sm(style="color: var(--text-muted)") {{ runningTimer.entityName || runningTimer.description || $t('timeTracking.noDescription') }}
-        el-button(type="danger" size="small" @click="handleStop" :loading="stopping" class="!rounded-lg")
-          Icon(name="ph:stop-bold" size="16" aria-label="Stop timer")
+      .text-3xl.font-bold.font-mono(style="color: var(--text-primary)") {{ elapsedDisplay }}
+      p.text-sm(style="color: var(--text-muted)") {{ activeTimer?.description || $t('timeTracking.currentSession') || 'Current session' }}
+    .ml-auto
+      el-button(type="danger" size="large" :loading="stopping" @click="stopTimer" class="!rounded-2xl")
+        Icon(name="ph:stop-bold" size="16" class="mr-1")
+        span {{ $t('timeTracking.stop') || 'Stop' }}
 
-      el-button(v-else type="primary" @click="showStartDialog = true" class="!rounded-xl !bg-[#7849ff] hover:!bg-[#6a3ae0] !border-none")
-        Icon(name="ph:play-bold" size="16" aria-hidden="true")
-        span.ml-2 {{ $t('timeTracking.startTimer') }}
+  StatCards(:stats="summaryStats")
 
-      el-button(@click="showManualDialog = true" class="!rounded-xl")
-        Icon(name="ph:plus-bold" size="16" aria-hidden="true")
-        span.ml-2 {{ $t('timeTracking.addManual') }}
+  .glass-card.py-8.animate-entrance
+    .px-6.mb-4
+      .text-lg.font-bold(style="color: var(--text-primary)") {{ $t('timeTracking.entries') || 'Time Entries' }}
 
-  //- Weekly Summary
-  .grid.grid-cols-1.gap-6.mb-8(class="md:grid-cols-7")
-    .glass-card.p-4.text-center(v-for="(seconds, day) in weeklyData.dailyTotals" :key="day")
-      p.text-xs.font-medium.mb-1(style="color: var(--text-muted)") {{ formatDay(day) }}
-      p.text-lg.font-bold(style="color: var(--text-primary)") {{ formatDuration(seconds) }}
-
-  //- Total
-  .glass-card.p-4.mb-8.flex.items-center.justify-between
-    span.font-medium(style="color: var(--text-primary)") {{ $t('timeTracking.weekTotal') }}
-    span.text-2xl.font-bold(style="color: #7849ff") {{ formatDuration(weeklyData.totalSeconds) }}
-
-  //- Entries Table
-  .glass-card.p-6
-    h3.text-lg.font-bold.mb-4(style="color: var(--text-primary)") {{ $t('timeTracking.recentEntries') }}
-
-    el-table(:data="entries" style="width: 100%" v-loading="loading")
-      el-table-column(:label="$t('timeTracking.date')" width="120")
+    el-table(:data="entries" v-loading="loading" style="width: 100%")
+      el-table-column(type="index" width="50")
+      el-table-column(:label="$t('timeTracking.description') || 'Description'" min-width="200")
         template(#default="{ row }")
-          span {{ new Date(row.startTime).toLocaleDateString() }}
-      el-table-column(:label="$t('timeTracking.description')" prop="description" min-width="200")
-      el-table-column(:label="$t('timeTracking.entity')" width="150")
+          .font-bold(style="color: var(--text-primary)") {{ row.description || '—' }}
+          .text-xs(style="color: var(--text-muted)") {{ row.entityType ? `${row.entityType}: ${row.entityName || ''}` : '' }}
+      el-table-column(:label="$t('timeTracking.date') || 'Date'" width="120")
         template(#default="{ row }")
-          el-tag(v-if="row.entityType" size="small" effect="plain") {{ row.entityType }}
-          span.ml-2.text-sm {{ row.entityName || '' }}
-      el-table-column(:label="$t('timeTracking.start')" width="100")
+          span {{ row.date || formatDate(row.startTime) }}
+      el-table-column(:label="$t('timeTracking.startTime') || 'Start'" width="100")
         template(#default="{ row }")
-          span {{ new Date(row.startTime).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }) }}
-      el-table-column(:label="$t('timeTracking.end')" width="100")
+          span {{ formatTime(row.startTime) }}
+      el-table-column(:label="$t('timeTracking.endTime') || 'End'" width="100")
         template(#default="{ row }")
-          span(v-if="row.endTime") {{ new Date(row.endTime).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }) }}
-          el-tag(v-else type="success" size="small") {{ $t('timeTracking.running') }}
-      el-table-column(:label="$t('timeTracking.duration')" width="120")
+          span {{ row.endTime ? formatTime(row.endTime) : '—' }}
+      el-table-column(:label="$t('timeTracking.duration') || 'Duration'" width="120")
         template(#default="{ row }")
-          span.font-mono {{ row.duration ? formatDuration(row.duration) : '—' }}
-      el-table-column(:label="$t('common.actions')" width="80" align="center")
+          span.font-bold(style="color: #7849ff") {{ row.duration || calculateDuration(row.startTime, row.endTime) }}
+      el-table-column(:label="$t('common.action')" width="80" fixed="right")
         template(#default="{ row }")
-          el-button(v-if="row.endTime" link @click="removeEntry(row.id)")
-            Icon(name="ph:trash" size="16" class="text-red-400" aria-label="Delete")
+          el-popconfirm(:title="$t('common.confirmDelete')" @confirm="removeEntry(row.id)")
+            template(#reference)
+              el-button(text circle size="small")
+                Icon(name="ph:trash-bold" size="16" style="color: var(--text-muted)")
+      template(#empty)
+        el-empty(:description="$t('common.noData')" image="/images/empty.png")
 
-    .flex.justify-center.mt-4(v-if="total > limit")
-      el-pagination(
-        v-model:current-page="page"
-        :page-size="limit"
-        :total="total"
-        layout="prev, pager, next"
-        @current-change="loadEntries"
-      )
-
-  //- Start Timer Dialog
-  el-dialog(v-model="showStartDialog" :title="$t('timeTracking.startTimer')" width="420px")
-    .space-y-4
-      el-input(v-model="timerDesc" :placeholder="$t('timeTracking.whatWorking')")
-      el-select(v-model="timerEntityType" :placeholder="$t('timeTracking.entityType')" clearable class="w-full")
-        el-option(value="LEAD" :label="$t('navigation.leads')")
-        el-option(value="DEAL" :label="$t('navigation.deals')")
-        el-option(value="PROJECT" :label="$t('navigation.projects')")
-      el-input(v-if="timerEntityType" v-model="timerEntityName" :placeholder="$t('timeTracking.entityName')")
-    template(#footer)
-      el-button(@click="showStartDialog = false") {{ $t('common.cancel') }}
-      el-button(type="primary" :loading="starting" @click="handleStart" class="!bg-[#7849ff] hover:!bg-[#6a3ae0] !border-none") {{ $t('timeTracking.start') }}
+    .pagination.mt-5.flex.justify-center.px-6(v-if="pagination.totalPages > 1")
+      el-pagination(background style="direction:ltr" :pager-count="4" v-model:current-page="currentPage" :page-size="20" layout="prev, pager, next" :total="pagination.totalItems" @current-change="loadEntries")
 
   //- Manual Entry Dialog
-  el-dialog(v-model="showManualDialog" :title="$t('timeTracking.addManual')" width="480px")
-    .space-y-4
-      el-input(v-model="manualData.description" :placeholder="$t('timeTracking.description')")
+  el-dialog(v-model="showManualEntry" :title="$t('timeTracking.manual') || 'Manual Time Entry'" width="600px")
+    el-form(label-position="top" size="large")
+      el-form-item(:label="$t('timeTracking.description') || 'Description'")
+        el-input(v-model="manualForm.description")
       .grid.grid-cols-2.gap-4
-        .form-group
-          label.block.text-sm.font-medium.mb-2 {{ $t('timeTracking.start') }}
-          el-date-picker(v-model="manualData.startTime" type="datetime" class="w-full")
-        .form-group
-          label.block.text-sm.font-medium.mb-2 {{ $t('timeTracking.end') }}
-          el-date-picker(v-model="manualData.endTime" type="datetime" class="w-full")
+        el-form-item(:label="$t('timeTracking.date') || 'Date'")
+          el-date-picker(v-model="manualForm.date" type="date" class="w-full" value-format="YYYY-MM-DD")
+        el-form-item(:label="$t('timeTracking.duration') || 'Duration (hours)'")
+          el-input-number(v-model="manualForm.hours" :min="0.25" :step="0.25" :precision="2" class="w-full")
+      .grid.grid-cols-2.gap-4
+        el-form-item(:label="$t('timeTracking.entityType') || 'Type'")
+          el-select(v-model="manualForm.entityType" clearable class="w-full")
+            el-option(value="LEAD" label="Lead")
+            el-option(value="DEAL" label="Deal")
+            el-option(value="PROJECT" label="Project")
+        el-form-item(:label="$t('timeTracking.entityName') || 'Entity Name'")
+          el-input(v-model="manualForm.entityName")
     template(#footer)
-      el-button(@click="showManualDialog = false") {{ $t('common.cancel') }}
-      el-button(type="primary" :loading="savingManual" @click="handleManualSave" class="!bg-[#7849ff] hover:!bg-[#6a3ae0] !border-none") {{ $t('common.save') }}
+      el-button(@click="showManualEntry = false") {{ $t('common.cancel') }}
+      el-button(type="primary" :loading="savingManual" @click="submitManual" class="!rounded-2xl") {{ $t('common.save') }}
 </template>
 
 <script setup lang="ts">
 import { ElNotification } from 'element-plus';
-import type { TimeEntry } from '~/composables/useTimeTracking';
-import {
-  startTimer, stopTimer, getRunningTimer, fetchTimeEntries,
-  createManualEntry, deleteTimeEntry, getWeeklySummary, formatDuration
-} from '~/composables/useTimeTracking';
 
-definePageMeta({ title: 'Time Tracking' });
+definePageMeta({ middleware: 'permissions' });
+const { $i18n } = useNuxtApp();
+const t = $i18n.t;
 
-const entries = ref<TimeEntry[]>([]);
-const runningTimer = ref<TimeEntry | null>(null);
-const weeklyData = ref<{ dailyTotals: Record<string, number>; totalSeconds: number }>({ dailyTotals: {}, totalSeconds: 0 });
+// Export columns
+const exportColumns = [
+  { prop: 'description', label: t('timeTracking.description') || 'Description' },
+  { prop: 'date', label: t('timeTracking.date') || 'Date' },
+  { prop: 'startTime', label: t('timeTracking.startTime') || 'Start' },
+  { prop: 'endTime', label: t('timeTracking.endTime') || 'End' },
+  { prop: 'duration', label: t('timeTracking.duration') || 'Duration' },
+  { prop: 'entityType', label: t('timeTracking.entityType') || 'Type' }
+];
+
 const loading = ref(true);
 const starting = ref(false);
 const stopping = ref(false);
 const savingManual = ref(false);
-const showStartDialog = ref(false);
-const showManualDialog = ref(false);
-const page = ref(1);
-const limit = 20;
-const total = ref(0);
-const elapsedTime = ref('0:00:00');
+const entries = ref<any[]>([]);
+const activeTimer = ref<any>(null);
+const currentPage = ref(1);
+const pagination = ref({ page: 1, limit: 20, totalItems: 0, totalPages: 0 });
+const showManualEntry = ref(false);
+const elapsedSeconds = ref(0);
 let timerInterval: ReturnType<typeof setInterval> | null = null;
 
-const timerDesc = ref('');
-const timerEntityType = ref('');
-const timerEntityName = ref('');
-const manualData = ref({ description: '', startTime: null as any, endTime: null as any });
+const manualForm = reactive({ description: '', date: '', hours: 1, entityType: '', entityName: '' });
+
+const elapsedDisplay = computed(() => {
+  const h = Math.floor(elapsedSeconds.value / 3600);
+  const m = Math.floor((elapsedSeconds.value % 3600) / 60);
+  const s = elapsedSeconds.value % 60;
+  return `${String(h).padStart(2, '0')}:${String(m).padStart(2, '0')}:${String(s).padStart(2, '0')}`;
+});
+
+const summaryStats = computed(() => {
+  const totalHours = entries.value.reduce((sum, e) => {
+    if (e.duration) {
+      const parts = e.duration.split(':');
+      return sum + (Number(parts[0]) || 0) + (Number(parts[1]) || 0) / 60;
+    }
+    return sum;
+  }, 0);
+  return [
+    { label: t('timeTracking.totalEntries') || 'Total Entries', value: entries.value.length, icon: 'ph:clock-bold', color: '#7849ff' },
+    { label: t('timeTracking.totalHours') || 'Total Hours', value: totalHours.toFixed(1) + 'h', icon: 'ph:timer-bold', color: '#22c55e' },
+    { label: t('timeTracking.activeTimer') || 'Active Timer', value: activeTimer.value ? 'Running' : 'Stopped', icon: 'ph:play-circle-bold', color: activeTimer.value ? '#ef4444' : '#64748b' }
+  ];
+});
 
 onMounted(async () => {
-  await Promise.all([loadEntries(), loadRunning(), loadWeekly()]);
+  await loadEntries();
+  checkActiveTimer();
 });
 
 onUnmounted(() => {
@@ -139,112 +152,81 @@ onUnmounted(() => {
 async function loadEntries() {
   loading.value = true;
   try {
-    const result = await fetchTimeEntries({ page: page.value, limit });
-    entries.value = result.entries;
-    total.value = result.total;
-  } finally {
-    loading.value = false;
-  }
+    const { body, success } = await useApiFetch(`time-tracking?page=${currentPage.value}&limit=20`);
+    if (success && body) {
+      entries.value = body.docs || [];
+      pagination.value = body.pagination || pagination.value;
+    }
+  } finally { loading.value = false; }
 }
 
-async function loadRunning() {
-  const timer = await getRunningTimer();
-  // Only set if it has a valid startTime
-  if (timer?.startTime) {
-    runningTimer.value = timer;
-    startElapsedTimer();
-  }
+async function checkActiveTimer() {
+  try {
+    const { body, success } = await useApiFetch('time-tracking/active');
+    if (success && body && body.id) {
+      activeTimer.value = body;
+      startElapsedCounter(body.startTime);
+    }
+  } catch {}
 }
 
-async function loadWeekly() {
-  const now = new Date();
-  const monday = new Date(now);
-  monday.setDate(now.getDate() - now.getDay() + 1);
-  weeklyData.value = await getWeeklySummary(monday.toISOString().split('T')[0]);
+function startElapsedCounter(startTime: string) {
+  const start = new Date(startTime).getTime();
+  elapsedSeconds.value = Math.floor((Date.now() - start) / 1000);
+  timerInterval = setInterval(() => { elapsedSeconds.value++; }, 1000);
 }
 
-function startElapsedTimer() {
-  if (timerInterval) clearInterval(timerInterval);
-  timerInterval = setInterval(() => {
-    if (!runningTimer.value) return;
-    const diff = Math.floor((Date.now() - new Date(runningTimer.value.startTime).getTime()) / 1000);
-    const h = Math.floor(diff / 3600);
-    const m = Math.floor((diff % 3600) / 60);
-    const s = diff % 60;
-    elapsedTime.value = `${h}:${String(m).padStart(2, '0')}:${String(s).padStart(2, '0')}`;
-  }, 1000);
-}
-
-async function handleStart() {
+async function startTimer() {
   starting.value = true;
   try {
-    await startTimer({
-      description: timerDesc.value,
-      entityType: timerEntityType.value || undefined,
-      entityName: timerEntityName.value || undefined
-    });
-    showStartDialog.value = false;
-    timerDesc.value = '';
-    timerEntityType.value = '';
-    timerEntityName.value = '';
-    await loadRunning();
-    ElNotification({ type: 'success', title: 'Started', message: 'Timer started' });
-  } finally {
-    starting.value = false;
-  }
+    const { body, success } = await useApiFetch('time-tracking/start', 'POST');
+    if (success && body) {
+      activeTimer.value = body;
+      startElapsedCounter(body.startTime);
+      ElNotification({ type: 'success', title: t('common.success'), message: t('timeTracking.started') || 'Timer started' });
+    }
+  } finally { starting.value = false; }
 }
 
-async function handleStop() {
+async function stopTimer() {
   stopping.value = true;
   try {
-    await stopTimer();
-    if (timerInterval) clearInterval(timerInterval);
-    runningTimer.value = null;
-    elapsedTime.value = '0:00:00';
-    await Promise.all([loadEntries(), loadWeekly()]);
-    ElNotification({ type: 'success', title: 'Stopped', message: 'Timer stopped' });
-  } finally {
-    stopping.value = false;
-  }
+    const { success } = await useApiFetch('time-tracking/stop', 'POST');
+    if (success) {
+      activeTimer.value = null;
+      if (timerInterval) { clearInterval(timerInterval); timerInterval = null; }
+      elapsedSeconds.value = 0;
+      await loadEntries();
+      ElNotification({ type: 'success', title: t('common.success'), message: t('timeTracking.stopped') || 'Timer stopped' });
+    }
+  } finally { stopping.value = false; }
 }
 
-async function handleManualSave() {
-  if (!manualData.value.startTime || !manualData.value.endTime) {
-    ElNotification({ type: 'warning', title: 'Warning', message: 'Start and end time are required' });
-    return;
-  }
+async function submitManual() {
   savingManual.value = true;
   try {
-    await createManualEntry({
-      description: manualData.value.description,
-      startTime: new Date(manualData.value.startTime).toISOString(),
-      endTime: new Date(manualData.value.endTime).toISOString()
-    });
-    showManualDialog.value = false;
-    manualData.value = { description: '', startTime: null, endTime: null };
-    await Promise.all([loadEntries(), loadWeekly()]);
-    ElNotification({ type: 'success', title: 'Added', message: 'Time entry added' });
-  } finally {
-    savingManual.value = false;
-  }
+    const { success } = await useApiFetch('time-tracking', 'POST', manualForm);
+    if (success) {
+      showManualEntry.value = false;
+      Object.assign(manualForm, { description: '', date: '', hours: 1, entityType: '', entityName: '' });
+      await loadEntries();
+      ElNotification({ type: 'success', title: t('common.success'), message: t('common.saved') || 'Saved' });
+    }
+  } finally { savingManual.value = false; }
 }
 
-async function removeEntry(id: string) {
-  await deleteTimeEntry(id);
-  await Promise.all([loadEntries(), loadWeekly()]);
+async function removeEntry(id: number) {
+  const { success } = await useApiFetch(`time-tracking/${id}`, 'DELETE');
+  if (success) await loadEntries();
 }
 
-function formatDay(dateStr: string): string {
-  return new Date(dateStr).toLocaleDateString([], { weekday: 'short' });
+function formatDate(d: string) { return d ? new Date(d).toLocaleDateString() : '—'; }
+function formatTime(d: string) { return d ? new Date(d).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }) : '—'; }
+function calculateDuration(start: string, end: string) {
+  if (!start || !end) return '—';
+  const diff = new Date(end).getTime() - new Date(start).getTime();
+  const h = Math.floor(diff / 3600000);
+  const m = Math.floor((diff % 3600000) / 60000);
+  return `${h}h ${m}m`;
 }
 </script>
-
-<style lang="scss" scoped>
-.time-tracking-page {
-  animation: fadeIn 0.4s ease-out;
-}
-@keyframes fadeIn {
-  from { opacity: 0; transform: translateY(10px); }
-  to { opacity: 1; transform: translateY(0); }
-}
-</style>
