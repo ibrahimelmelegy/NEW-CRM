@@ -8,13 +8,11 @@ import { TEST_EMAIL, TEST_PASSWORD } from './helpers';
 const authFile = 'tests/e2e/.auth/user.json';
 
 setup('authenticate', async ({ page }) => {
-    await page.goto('/login');
-    await page.waitForLoadState('domcontentloaded', { timeout: 15000 });
-    await page.waitForTimeout(2000);
+    await page.goto('/login', { waitUntil: 'networkidle', timeout: 30000 });
 
-    // Fill login form
+    // Fill login form - allow extra time on cold start for Nuxt hydration
     const emailInput = page.locator('input[type="email"], input[type="text"]').first();
-    await emailInput.waitFor({ state: 'visible', timeout: 10000 });
+    await emailInput.waitFor({ state: 'visible', timeout: 30000 });
     await emailInput.fill(TEST_EMAIL);
 
     const passwordInput = page.locator('input[type="password"]').first();
