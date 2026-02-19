@@ -9,6 +9,11 @@ router.get('/executive-summary', authenticateUser, dashboardController.getExecut
 router.get('/pipeline', authenticateUser, dashboardController.getPipeline);
 router.get('/revenue', authenticateUser, dashboardController.getRevenue);
 router.get('/team-performance', authenticateUser, dashboardController.getTeamPerformance);
+router.get('/analytics-summary', authenticateUser, dashboardController.getAnalyticsSummary);
+router.get('/lead-sources', authenticateUser, dashboardController.getLeadSources);
+router.get('/win-loss', authenticateUser, dashboardController.getWinLoss);
+router.get('/avg-deal-size', authenticateUser, dashboardController.getAvgDealSize);
+router.get('/conversion-funnel', authenticateUser, dashboardController.getConversionFunnel);
 
 // Widget data
 router.post('/widget-data', authenticateUser, dashboardController.getWidgetData);

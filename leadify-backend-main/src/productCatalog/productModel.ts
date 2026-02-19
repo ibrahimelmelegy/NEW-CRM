@@ -1,7 +1,8 @@
-import { Column, DataType, Default, Model, Table } from 'sequelize-typescript';
+import { Column, DataType, Default, HasMany, Model, Table } from 'sequelize-typescript';
+import PriceRule from './priceRuleModel';
 
 @Table({
-  tableName: 'products',
+  tableName: 'catalog_products',
   modelName: 'CatalogProduct',
   timestamps: true
 })
@@ -35,6 +36,9 @@ class CatalogProduct extends Model {
 
   @Column({ type: DataType.JSONB, allowNull: true })
   public metadata?: object;
+
+  @HasMany(() => PriceRule)
+  public priceRules?: PriceRule[];
 }
 
 export default CatalogProduct;

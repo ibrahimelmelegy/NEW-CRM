@@ -652,6 +652,124 @@ class DashboardService {
 
     return { team: performance };
   }
+
+  // ─── ANALYTICS PAGE ENDPOINTS ──────────────────────────
+
+  async getAnalyticsSummary(startDate?: string, endDate?: string) {
+    const dateWhere: any = {};
+    if (startDate && endDate) {
+      dateWhere.createdAt = { [Op.between]: [new Date(startDate), new Date(endDate)] };
+    }
+
+    const [totalLeads, totalDeals, revenueResult, wonDeals, lostDeals, avgCycleResult] = await Promise.all([
+      Lead.count({ where: dateWhere }),
+      Deal.count({ where: dateWhere }),
+      Deal.findOne({
+        where: { ...dateWhere, stage: DealStageEnums.CLOSED },
+        attributes: [[fn('SUM', col('price')), 'totalRevenue']],
+        raw: true
+      }),
+      Deal.count({ where: { ...dateWhere, stage: DealStageEnums.CLOSED } }),
+      Deal.count({ where: { ...dateWhere, stage: DealStageEnums.CANCELLED } }),
+      Deal.findOne({
+        where: { ...dateWhere, stage: DealStageEnums.CLOSED },
+        attributes: [[fn('AVG', literal(`EXTRACT(EPOCH FROM ("updatedAt" - "createdAt")) / 86400`)), 'avgCycle']],
+        raw: true
+      })
+    ]);
+
+    const totalClosedCancelled = wonDeals + lostDeals;
+    const winRate = totalClosedCancelled > 0 ? (wonDeals / totalClosedCancelled) * 100 : 0;
+    const totalRevenue = Number((revenueResult as any)?.totalRevenue || 0);
+    const avgDealCycle = Math.round(Number((avgCycleResult as any)?.avgCycle || 0));
+
+    return { totalLeads, totalDeals, totalRevenue, winRate, avgDealCycle };
+  }
+
+  async getLeadSources(startDate?: string, endDate?: string) {
+    const dateWhere: any = {};
+    if (startDate && endDate) {
+      dateWhere.createdAt = { [Op.between]: [new Date(startDate), new Date(endDate)] };
+    }
+
+    const results = await Lead.findAll({
+      where: dateWhere,
+      attributes: [
+        'leadSource',
+        [fn('COUNT', col('id')), 'count']
+      ],
+      group: ['leadSource'],
+      raw: true
+    });
+
+    return results.map((r: any) => ({
+      source: r.leadSource,
+      count: Number(r.count)
+    }));
+  }
+
+  async getWinLoss(startDate?: string, endDate?: string) {
+    const dateWhere: any = {};
+    if (startDate && endDate) {
+      dateWhere.createdAt = { [Op.between]: [new Date(startDate), new Date(endDate)] };
+    }
+
+    const [won, lost] = await Promise.all([
+      Deal.count({ where: { ...dateWhere, stage: DealStageEnums.CLOSED } }),
+      Deal.count({ where: { ...dateWhere, stage: DealStageEnums.CANCELLED } })
+    ]);
+
+    return { won, lost };
+  }
+
+  async getAvgDealSize(startDate?: string, endDate?: string) {
+    const dateWhere: any = {};
+    if (startDate && endDate) {
+      dateWhere.createdAt = { [Op.between]: [new Date(startDate), new Date(endDate)] };
+    }
+
+    const results = await Deal.findAll({
+      where: { ...dateWhere, stage: DealStageEnums.CLOSED },
+      attributes: [
+        [literal(`TO_CHAR("createdAt", 'YYYY-MM')`), 'month'],
+        [fn('AVG', col('price')), 'avgValue'],
+        [fn('COUNT', col('id')), 'dealCount']
+      ],
+      group: [literal(`TO_CHAR("createdAt", 'YYYY-MM')`) as any],
+      order: [[literal(`TO_CHAR("createdAt", 'YYYY-MM')`), 'ASC']],
+      raw: true
+    });
+
+    return results.map((r: any) => ({
+      month: r.month,
+      avgValue: Math.round(Number(r.avgValue || 0)),
+      dealCount: Number(r.dealCount)
+    }));
+  }
+
+  async getConversionFunnel(startDate?: string, endDate?: string) {
+    const dateWhere: any = {};
+    if (startDate && endDate) {
+      dateWhere.createdAt = { [Op.between]: [new Date(startDate), new Date(endDate)] };
+    }
+
+    const funnelStages = [
+      { name: 'New Leads', model: Lead, where: dateWhere },
+      { name: 'Contacted', model: Lead, where: { ...dateWhere, status: LeadStatusEnums.CONTACTED } },
+      { name: 'Qualified', model: Lead, where: { ...dateWhere, status: LeadStatusEnums.QUALIFIED } },
+      { name: 'Converted', model: Lead, where: { ...dateWhere, status: LeadStatusEnums.CONVERTED } },
+      { name: 'Deals Won', model: Deal, where: { ...dateWhere, stage: DealStageEnums.CLOSED } }
+    ];
+
+    const results = await Promise.all(
+      funnelStages.map(async (stage) => ({
+        name: stage.name,
+        value: await (stage.model as any).count({ where: stage.where })
+      }))
+    );
+
+    return results;
+  }
 }
 
 export default new DashboardService();

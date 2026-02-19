@@ -40,8 +40,8 @@ class Territory extends Model {
   public children?: Territory[];
 
   @ForeignKey(() => User)
-  @Column({ type: DataType.UUID, allowNull: true })
-  public assignedUserId?: string;
+  @Column({ type: DataType.INTEGER, allowNull: true })
+  public assignedUserId?: number;
 
   @BelongsTo(() => User, { foreignKey: 'assignedUserId', as: 'assignedUser' })
   public assignedUser?: User;

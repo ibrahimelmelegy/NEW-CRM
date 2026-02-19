@@ -15,7 +15,7 @@
 
       .timeline-content.glass-card.p-3
         .flex.items-start.gap-2
-          img.w-6.h-6.rounded-full.object-cover.mt-0.5(
+          img.w-6.h-6.rounded-full.object-cover(class="mt-0.5"
             :src="entry.user?.profilePicture || '/images/avatar.png'"
             :alt="entry.user?.name || 'User'"
           )

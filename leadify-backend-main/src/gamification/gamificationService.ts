@@ -19,8 +19,8 @@ class GamificationService {
           attributes: ['id', 'name', 'email', 'profilePicture']
         }
       ],
-      group: ['userId', 'user.id', 'user.name', 'user.email', 'user.profilePicture'],
-      order: [[literal('totalPoints'), 'DESC']],
+      group: ['UserPoints.userId', 'user.id'],
+      order: [[literal('"totalPoints"'), 'DESC']],
       raw: false
     });
 

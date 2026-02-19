@@ -114,6 +114,56 @@ class DashboardController {
       next(error);
     }
   }
+
+  async getAnalyticsSummary(req: AuthenticatedRequest, res: Response, next: NextFunction) {
+    try {
+      const { startDate, endDate } = req.query as { startDate?: string; endDate?: string };
+      const data = await dashboardService.getAnalyticsSummary(startDate, endDate);
+      wrapResult(res, data);
+    } catch (error) {
+      next(error);
+    }
+  }
+
+  async getLeadSources(req: AuthenticatedRequest, res: Response, next: NextFunction) {
+    try {
+      const { startDate, endDate } = req.query as { startDate?: string; endDate?: string };
+      const data = await dashboardService.getLeadSources(startDate, endDate);
+      wrapResult(res, data);
+    } catch (error) {
+      next(error);
+    }
+  }
+
+  async getWinLoss(req: AuthenticatedRequest, res: Response, next: NextFunction) {
+    try {
+      const { startDate, endDate } = req.query as { startDate?: string; endDate?: string };
+      const data = await dashboardService.getWinLoss(startDate, endDate);
+      wrapResult(res, data);
+    } catch (error) {
+      next(error);
+    }
+  }
+
+  async getAvgDealSize(req: AuthenticatedRequest, res: Response, next: NextFunction) {
+    try {
+      const { startDate, endDate } = req.query as { startDate?: string; endDate?: string };
+      const data = await dashboardService.getAvgDealSize(startDate, endDate);
+      wrapResult(res, data);
+    } catch (error) {
+      next(error);
+    }
+  }
+
+  async getConversionFunnel(req: AuthenticatedRequest, res: Response, next: NextFunction) {
+    try {
+      const { startDate, endDate } = req.query as { startDate?: string; endDate?: string };
+      const data = await dashboardService.getConversionFunnel(startDate, endDate);
+      wrapResult(res, data);
+    } catch (error) {
+      next(error);
+    }
+  }
 }
 
 export default new DashboardController();

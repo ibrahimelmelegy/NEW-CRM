@@ -16,8 +16,8 @@ class ForecastPeriod extends Model {
   public id!: string;
 
   @ForeignKey(() => User)
-  @Column({ type: DataType.UUID, allowNull: false })
-  public userId!: string;
+  @Column({ type: DataType.INTEGER, allowNull: false })
+  public userId!: number;
 
   @Column({ type: DataType.STRING, allowNull: false })
   public period!: 'monthly' | 'quarterly' | 'yearly';
