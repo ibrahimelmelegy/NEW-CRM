@@ -113,11 +113,13 @@ import ForecastPeriod from '../forecasting/forecastModel';
 import EmailAccount from '../emailIntegration/emailAccountModel';
 import EmailMessage from '../emailIntegration/emailMessageModel';
 import EmailTracking from '../emailIntegration/emailTrackingModel';
+import ComposerTemplate from '../emailIntegration/emailTemplateModel';
 import Sequence from '../sequences/sequenceModel';
 import { SequenceEnrollment } from '../sequences/sequenceModel';
 import CatalogProduct from '../productCatalog/productModel';
 import PriceRule from '../productCatalog/priceRuleModel';
 import QuoteLine from '../productCatalog/quoteLineModel';
+import Playbook from '../playbook/playbookModel';
 
 dotenv.config();
 
@@ -260,7 +262,9 @@ const sequelize = new Sequelize({
     SequenceEnrollment,
     CatalogProduct,
     PriceRule,
-    QuoteLine
+    QuoteLine,
+    ComposerTemplate,
+    Playbook
   ], // Path to your models
   logging: process.env.NODE_ENV !== 'production' ? console.log : false
 });

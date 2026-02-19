@@ -19,6 +19,10 @@
             NuxtLink.flex.items-center(:to="`/sales/deals/add-deal?leadId=${lead?.id}`")
               Icon.text-md.mr-2(size="20" name="IconDeal")
               p.text-sm {{ $t('leads.convertToDeal') }}
+          el-dropdown-item
+            NuxtLink.flex.items-center(:to="`/sales/leads/${lead?.id}/journey`")
+              Icon.text-md.mr-2(size="20" name="ph:path-bold")
+              p.text-sm {{ $t('journey.title') }}
 
   el-tabs.demo-tabs(v-model="activeName")
     el-tab-pane(:label="$t('leads.summary')" name="summary")

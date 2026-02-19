@@ -83,6 +83,7 @@ import forecastRoutes from './forecasting/forecastRoutes';
 import emailRoutes from './emailIntegration/emailRoutes';
 import sequenceRoutes from './sequences/sequenceRoutes';
 import productCatalogRoutes from './productCatalog/productRoutes';
+import playbookRoutes from './playbook/playbookRoutes';
 
 const fileUpload = require('express-fileupload');
 
@@ -271,6 +272,7 @@ app.use('/api/forecasting', forecastRoutes);
 app.use('/api/email', emailRoutes);
 app.use('/api/sequences', sequenceRoutes);
 app.use('/api/catalog', productCatalogRoutes);
+app.use('/api/playbook', playbookRoutes);
 
 // Authentication routes
 // Apply strict rate limiting only to login/password-reset endpoints (not /me which is called on every page)

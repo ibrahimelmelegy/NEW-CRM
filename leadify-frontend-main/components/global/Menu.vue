@@ -100,6 +100,7 @@ function getDisabled(role: string) {
 const menu = [
   { link: '/', name: 'navigation.board', icon: 'IconHome', submenu: false, isOpen: false },
   { link: '/dashboard/war-room', name: 'navigation.warRoom', icon: 'ph:crosshair-bold', submenu: false, isOpen: false },
+  { link: '/dashboard/briefing', name: 'navigation.dailyBriefing', icon: 'ph:sun-horizon-bold', submenu: false, isOpen: false },
   { link: '/dashboard/builder', name: 'navigation.dashboardBuilder', icon: 'ph:squares-four-bold', submenu: false, isOpen: false },
   {
     name: 'navigation.sales',
@@ -112,7 +113,8 @@ const menu = [
       { link: '/sales/deals', name: 'navigation.deals', icon: 'ph:handshake' },
       { link: '/sales/invoices', name: 'navigation.invoices', icon: 'ph:receipt-bold' },
       { link: '/sales/contracts', name: 'navigation.contracts', icon: 'ph:file-doc-bold' },
-      { link: '/sales/proposals', name: 'navigation.proposals', icon: 'ph:file-text' }
+      { link: '/sales/proposals', name: 'navigation.proposals', icon: 'ph:file-text' },
+      { link: '/sales/playbook', name: 'navigation.salesPlaybook', icon: 'ph:book-open-bold' }
     ]
   },
   {
@@ -210,7 +212,8 @@ const menu = [
     isOpen: false,
     submenu: [
       { link: '/analytics/heatmap', name: 'navigation.activityHeatmap', icon: 'ph:squares-four-bold' },
-      { link: '/analytics/relationship-graph', name: 'navigation.relationshipGraph', icon: 'ph:graph-bold' }
+      { link: '/analytics/relationship-graph', name: 'navigation.relationshipGraph', icon: 'ph:graph-bold' },
+      { link: '/analytics/simulator', name: 'navigation.revenueSimulator', icon: 'ph:chart-line-up-bold' }
     ]
   },
   {

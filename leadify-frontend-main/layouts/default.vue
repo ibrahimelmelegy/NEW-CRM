@@ -6,6 +6,9 @@
       //- Spotlight Search Component
       Spotlight
 
+      //- Command Terminal
+      CommandTerminal
+
       //- Keyboard Shortcuts Cheat Sheet
       KeyboardShortcutsOverlay(
         :visible="cheatSheetVisible"
@@ -78,8 +81,19 @@ import AIChatbot from '~/components/global/AIChatbot.vue';
 // Initialize Spotlight
 const { open } = useSpotlight();
 
+// Initialize Command Terminal
+const { isOpen: terminalOpen, toggle: toggleTerminal } = useCommandTerminal();
+
 // Initialize Keyboard Shortcuts
-const { cheatSheetVisible, categories: shortcutCategories } = useKeyboardShortcuts();
+const { cheatSheetVisible, categories: shortcutCategories, register } = useKeyboardShortcuts();
+
+// Register terminal shortcut
+register({
+  keys: 'Ctrl+`',
+  label: 'Command Terminal',
+  category: 'General',
+  action: toggleTerminal,
+});
 
 const mainData = useMain();
 const { fullNav, mobile, hideNav } = storeToRefs(mainData);

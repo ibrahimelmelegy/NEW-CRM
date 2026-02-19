@@ -1,5 +1,6 @@
 import express from 'express';
 import leadController from './leadController';
+import leadJourneyController from './leadJourneyController';
 import { authenticateUser, HasPermission } from '../middleware/authMiddleware';
 import { validateBody, validateQuery } from '../middleware/validation';
 import { CreateLeadInput } from './inputs/createLeadInput'; // DTO for body validation
@@ -493,6 +494,38 @@ router.get(
   HasPermission([LeadPermissionsEnum.VIEW_GLOBAL_LEADS, LeadPermissionsEnum.VIEW_OWN_LEADS]),
   validateQuery(GetLeadsInput),
   leadController.sendLeadsExcelByEmail
+);
+
+/**
+ * @swagger
+ * /api/lead/{id}/journey:
+ *   get:
+ *     summary: Get customer journey map for a lead
+ *     description: Returns a timeline of all touchpoints and interactions for a specific lead
+ *     tags: [Lead]
+ *     security:
+ *       - bearerAuth: []
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         schema:
+ *           type: string
+ *           format: uuid
+ *         description: The ID of the lead
+ *     responses:
+ *       200:
+ *         description: Journey data retrieved successfully
+ *       603:
+ *         description: Lead not found
+ *       500:
+ *         description: Internal server error
+ */
+router.get(
+  '/:id/journey',
+  authenticateUser,
+  HasPermission([LeadPermissionsEnum.VIEW_GLOBAL_LEADS, LeadPermissionsEnum.VIEW_OWN_LEADS]),
+  leadJourneyController.getJourney
 );
 
 /**

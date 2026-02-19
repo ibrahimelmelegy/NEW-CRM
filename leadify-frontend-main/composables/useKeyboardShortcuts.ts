@@ -83,10 +83,21 @@ export function useKeyboardShortcuts() {
     if (e.defaultPrevented) return;
 
     const target = e.target as HTMLElement;
+    const isInInput = ['INPUT', 'TEXTAREA', 'SELECT'].includes(target.tagName) || target.isContentEditable;
 
-    // Don't trigger when typing in inputs/textareas/selects
-    if (['INPUT', 'TEXTAREA', 'SELECT'].includes(target.tagName)) return;
-    if (target.isContentEditable) return;
+    // Allow Ctrl+` even from inputs (for terminal toggle)
+    if (isInInput && e.ctrlKey && e.key === '`') {
+      const backtickMatch = shortcuts.value.find(s => s.keys === 'Ctrl+`');
+      if (backtickMatch) {
+        e.preventDefault();
+        clearChord();
+        backtickMatch.action();
+        return;
+      }
+    }
+
+    // Don't trigger other shortcuts when typing in inputs/textareas/selects
+    if (isInInput) return;
 
     // Handle Escape - close cheat sheet if open
     if (e.key === 'Escape') {
@@ -111,8 +122,19 @@ export function useKeyboardShortcuts() {
     // Don't process shortcuts when cheat sheet is open (except Escape and ? handled above)
     if (cheatSheetVisible.value) return;
 
-    // Handle Ctrl/Cmd combos (e.g. Ctrl+K)
+    // Handle Ctrl/Cmd combos (e.g. Ctrl+K, Ctrl+`)
     if (e.ctrlKey || e.metaKey) {
+      // Special handling for backtick key (Ctrl+`)
+      if (e.key === '`') {
+        const backtickMatch = shortcuts.value.find(s => s.keys === 'Ctrl+`');
+        if (backtickMatch) {
+          e.preventDefault();
+          clearChord();
+          backtickMatch.action();
+          return;
+        }
+      }
+
       const comboKey = `Ctrl+${e.key.toUpperCase()}`;
       const match = shortcuts.value.find(s => s.keys === comboKey);
       if (match) {

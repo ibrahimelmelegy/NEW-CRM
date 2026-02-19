@@ -59,6 +59,23 @@ export function setupPresenceHandlers(io: Server) {
       activeUsers.delete(socket.id);
       broadcastPresence(io);
     });
+
+    // Cursor collaboration events
+    socket.on('cursor:move', (data: { userId: number; name: string; page: string; x: number; y: number; color: string }) => {
+      // Broadcast to all other users on the same page
+      socket.broadcast.emit('cursor:move', {
+        socketId: socket.id,
+        ...data,
+        timestamp: Date.now()
+      });
+    });
+
+    socket.on('cursor:leave', (data: { page: string }) => {
+      socket.broadcast.emit('cursor:leave', {
+        socketId: socket.id,
+        page: data.page
+      });
+    });
   });
 
   // Clean up stale connections every 60 seconds
