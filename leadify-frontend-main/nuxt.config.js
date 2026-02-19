@@ -5,6 +5,8 @@ import { visualizer } from 'rollup-plugin-visualizer';
 
 export default defineNuxtConfig({
   app: {
+    pageTransition: { name: 'page', mode: 'out-in' },
+    layoutTransition: { name: 'fade', mode: 'out-in' },
     head: {
       title: 'Leadify CRM - Enterprise Customer Relationship Management',
       htmlAttrs: {
@@ -31,7 +33,7 @@ export default defineNuxtConfig({
     }
   },
 
-  css: ['@/assets/styles/global.scss', '@/assets/css/microsoft-light.css'],
+  css: ['@/assets/styles/global.scss', '@/assets/scss/transitions.scss', '@/assets/css/microsoft-light.css'],
 
   sourcemap: {
     server: process.env.NODE_ENV !== 'production',

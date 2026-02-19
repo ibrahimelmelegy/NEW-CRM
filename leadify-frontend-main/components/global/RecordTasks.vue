@@ -19,7 +19,7 @@
     )
       .flex.items-start.gap-3
         //- Complete checkbox
-        .pt-0.5
+        div(class="pt-0.5")
           el-checkbox(
             :model-value="task.status === 'DONE'"
             @change="(val: boolean) => toggleComplete(task, val)"
@@ -37,7 +37,7 @@
               round
               effect="plain"
             ) {{ task.priority }}
-          .flex.items-center.gap-3.mt-1.5
+          .flex.items-center.gap-3(class="mt-1.5")
             //- Assignee
             .flex.items-center.gap-1(v-if="task.assignee")
               img.w-4.h-4.rounded-full.object-cover(:src="task.assignee.profilePicture || '/images/avatar.png'" :alt="task.assignee.name")
@@ -48,7 +48,7 @@
               span.text-xs(:style="{ color: isOverdue(task) ? '#ef4444' : 'var(--text-muted)', fontWeight: isOverdue(task) ? '600' : '400' }") {{ formatDate(task.dueDate) }}
             //- Status
             .flex.items-center.gap-1
-              .w-1.5.h-1.5.rounded-full(:style="{ background: statusColor(task.status) }")
+              div(class="w-1.5 h-1.5 rounded-full" :style="{ background: statusColor(task.status) }")
               span.text-xs(style="color: var(--text-muted)") {{ formatStatus(task.status) }}
 
         //- Actions

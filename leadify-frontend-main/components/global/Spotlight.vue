@@ -1,11 +1,11 @@
 <template lang="pug">
 Teleport(to="body")
   //- FAB removed - using navbar button only
-  
+
   //- Overlay
   Transition(name="spotlight-overlay")
     .spotlight-overlay(v-if="isOpen" @click="close")
-  
+
   //- Modal
   Transition(name="spotlight-modal")
     .spotlight-container(v-if="isOpen")
@@ -20,43 +20,91 @@ Teleport(to="body")
             @keydown.stop
           )
           .spotlight-shortcut
-            span.key Alt+K
-        
+            span.key {{ isMac ? '\u2318' : 'Ctrl' }}+K
+
         //- Results
-        .spotlight-results(v-if="flatItems.length > 0")
+        .spotlight-results(ref="resultsRef" v-if="flatItems.length > 0")
+          //- Recent Section (only when search is empty)
+          template(v-if="groupedItems.recent.length > 0")
+            .spotlight-section-title
+              Icon(name="ph:clock-counter-clockwise-bold")
+              span {{ $t('spotlight.recent') }}
+            TransitionGroup(name="spotlight-stagger" tag="div")
+              .spotlight-item(
+                v-for="(item, index) in groupedItems.recent"
+                :key="'recent-' + item.path"
+                :class="{ active: flatItems.indexOf(item) === selectedIndex }"
+                :ref="el => setItemRef(el, flatItems.indexOf(item))"
+                @click="selectItem(item)"
+                @mouseenter="selectedIndex = flatItems.indexOf(item)"
+              )
+                Icon.spotlight-item-icon(:name="item.icon")
+                .spotlight-item-content
+                  span.spotlight-item-title {{ item.title }}
+                .spotlight-item-hint(v-if="item.shortcutHint")
+                  span.key-hint(v-for="part in parseShortcutHint(item.shortcutHint)" :key="part") {{ part }}
+                Icon.spotlight-item-arrow(name="ph:arrow-right-bold")
+
           //- Pages Section
           template(v-if="groupedItems.pages.length > 0")
             .spotlight-section-title
               Icon(name="ph:browsers-bold")
               span {{ $t('spotlight.pages') }}
-            .spotlight-item(
-              v-for="(item, index) in groupedItems.pages"
-              :key="item.id"
-              :class="{ active: flatItems.indexOf(item) === selectedIndex }"
-              @click="selectItem(item)"
-              @mouseenter="selectedIndex = flatItems.indexOf(item)"
-            )
-              Icon.spotlight-item-icon(:name="item.icon")
-              .spotlight-item-content
-                span.spotlight-item-title {{ item.title }}
-              Icon.spotlight-item-arrow(name="ph:arrow-right-bold")
-          
+            TransitionGroup(name="spotlight-stagger" tag="div")
+              .spotlight-item(
+                v-for="(item, index) in groupedItems.pages"
+                :key="item.id"
+                :class="{ active: flatItems.indexOf(item) === selectedIndex }"
+                :ref="el => setItemRef(el, flatItems.indexOf(item))"
+                @click="selectItem(item)"
+                @mouseenter="selectedIndex = flatItems.indexOf(item)"
+              )
+                Icon.spotlight-item-icon(:name="item.icon")
+                .spotlight-item-content
+                  span.spotlight-item-title {{ item.title }}
+                .spotlight-item-hint(v-if="item.shortcutHint")
+                  span.key-hint(v-for="part in parseShortcutHint(item.shortcutHint)" :key="part") {{ part }}
+                Icon.spotlight-item-arrow(name="ph:arrow-right-bold")
+
           //- Actions Section
           template(v-if="groupedItems.actions.length > 0")
             .spotlight-section-title
               Icon(name="ph:lightning-bold")
               span {{ $t('spotlight.quickActions') }}
-            .spotlight-item(
-              v-for="(item, index) in groupedItems.actions"
-              :key="item.id"
-              :class="{ active: flatItems.indexOf(item) === selectedIndex }"
-              @click="selectItem(item)"
-              @mouseenter="selectedIndex = flatItems.indexOf(item)"
-            )
-              Icon.spotlight-item-icon(:name="item.icon")
-              .spotlight-item-content
-                span.spotlight-item-title {{ item.title }}
-              Icon.spotlight-item-arrow(name="ph:arrow-right-bold")
+            TransitionGroup(name="spotlight-stagger" tag="div")
+              .spotlight-item(
+                v-for="(item, index) in groupedItems.actions"
+                :key="item.id"
+                :class="{ active: flatItems.indexOf(item) === selectedIndex }"
+                :ref="el => setItemRef(el, flatItems.indexOf(item))"
+                @click="selectItem(item)"
+                @mouseenter="selectedIndex = flatItems.indexOf(item)"
+              )
+                Icon.spotlight-item-icon(:name="item.icon")
+                .spotlight-item-content
+                  span.spotlight-item-title {{ item.title }}
+                Icon.spotlight-item-arrow(name="ph:arrow-right-bold")
+
+          //- Commands Section
+          template(v-if="groupedItems.commands.length > 0")
+            .spotlight-section-title
+              Icon(name="ph:terminal-bold")
+              span {{ $t('spotlight.commands') }}
+            TransitionGroup(name="spotlight-stagger" tag="div")
+              .spotlight-item(
+                v-for="(item, index) in groupedItems.commands"
+                :key="item.id"
+                :class="{ active: flatItems.indexOf(item) === selectedIndex }"
+                :ref="el => setItemRef(el, flatItems.indexOf(item))"
+                @click="selectItem(item)"
+                @mouseenter="selectedIndex = flatItems.indexOf(item)"
+              )
+                Icon.spotlight-item-icon(:name="item.icon")
+                .spotlight-item-content
+                  span.spotlight-item-title {{ item.title }}
+                .spotlight-item-hint(v-if="item.shortcutHint")
+                  span.key-hint(v-for="part in parseShortcutHint(item.shortcutHint)" :key="part") {{ part }}
+                Icon.spotlight-item-arrow(name="ph:caret-right-bold")
 
           //- Search Results Section
           template(v-if="searchLoading")
@@ -71,25 +119,27 @@ Teleport(to="body")
             .spotlight-section-title
               Icon(name="ph:magnifying-glass-bold")
               span {{ $t('spotlight.searchResults') || 'Search Results' }}
-            .spotlight-item(
-              v-for="(item, index) in groupedItems.searches"
-              :key="item.id"
-              :class="{ active: flatItems.indexOf(item) === selectedIndex }"
-              @click="selectItem(item)"
-              @mouseenter="selectedIndex = flatItems.indexOf(item)"
-            )
-              Icon.spotlight-item-icon(:name="item.icon")
-              .spotlight-item-content
-                span.spotlight-item-title {{ item.title }}
-                span.spotlight-item-subtitle(v-if="item.subtitle") {{ item.subtitle }}
-              Icon.spotlight-item-arrow(name="ph:arrow-right-bold")
-        
+            TransitionGroup(name="spotlight-stagger" tag="div")
+              .spotlight-item(
+                v-for="(item, index) in groupedItems.searches"
+                :key="item.id"
+                :class="{ active: flatItems.indexOf(item) === selectedIndex }"
+                :ref="el => setItemRef(el, flatItems.indexOf(item))"
+                @click="selectItem(item)"
+                @mouseenter="selectedIndex = flatItems.indexOf(item)"
+              )
+                Icon.spotlight-item-icon(:name="item.icon")
+                .spotlight-item-content
+                  span.spotlight-item-title {{ item.title }}
+                  span.spotlight-item-subtitle(v-if="item.subtitle") {{ item.subtitle }}
+                Icon.spotlight-item-arrow(name="ph:arrow-right-bold")
+
         //- Empty State
         .spotlight-empty(v-else)
           Icon.spotlight-empty-icon(name="ph:magnifying-glass-bold")
           p {{ $t('spotlight.noResults') }} "{{ searchQuery }}"
           span {{ $t('spotlight.trySearching') }}
-        
+
         //- Footer
         .spotlight-footer
           .spotlight-footer-item
@@ -97,11 +147,11 @@ Teleport(to="body")
             span.key ↓
             span {{ $t('spotlight.toNavigate') }}
           .spotlight-footer-item
-            span.key Enter
+            span.key ↵
             span {{ $t('spotlight.toSelect') }}
           .spotlight-footer-item
-            span.key /
-            span {{ $t('spotlight.toOpen') }}
+            span.key esc
+            span {{ $t('spotlight.toClose') }}
 </template>
 
 <script setup lang="ts">
@@ -110,6 +160,38 @@ import { useSpotlight } from '~/composables/useSpotlight';
 const { isOpen, searchQuery, selectedIndex, groupedItems, flatItems, searchLoading, open, close, selectItem } = useSpotlight();
 
 const inputRef = ref<HTMLInputElement | null>(null);
+const resultsRef = ref<HTMLElement | null>(null);
+
+// Detect Mac for shortcut display
+const isMac = ref(false);
+onMounted(() => {
+  isMac.value = typeof navigator !== 'undefined' && /Mac|iPod|iPhone|iPad/.test(navigator.userAgent);
+});
+
+// Track item refs for scroll-into-view
+const itemRefs = ref<Record<number, HTMLElement | null>>({});
+
+function setItemRef(el: any, index: number) {
+  if (el?.$el) {
+    itemRefs.value[index] = el.$el;
+  } else {
+    itemRefs.value[index] = el;
+  }
+}
+
+// Parse shortcut hint into parts (e.g. "G then D" => ["G", "then", "D"])
+function parseShortcutHint(hint: string): string[] {
+  if (hint.includes(' then ')) {
+    const parts = hint.split(' then ');
+    const result: string[] = [];
+    parts.forEach((p, i) => {
+      result.push(p.trim());
+      if (i < parts.length - 1) result.push('then');
+    });
+    return result;
+  }
+  return [hint];
+}
 
 // Focus input when modal opens
 watch(isOpen, value => {
@@ -117,7 +199,19 @@ watch(isOpen, value => {
     nextTick(() => {
       inputRef.value?.focus();
     });
+    // Reset item refs
+    itemRefs.value = {};
   }
+});
+
+// Scroll selected item into view
+watch(selectedIndex, (idx) => {
+  nextTick(() => {
+    const el = itemRefs.value[idx];
+    if (el && resultsRef.value) {
+      el.scrollIntoView({ block: 'nearest', behavior: 'smooth' });
+    }
+  });
 });
 </script>
 
@@ -177,14 +271,42 @@ watch(isOpen, value => {
 
 .spotlight-modal {
   width: 100%;
-  max-width: 600px;
+  max-width: 640px;
   background: var(--bg-card);
-  border: 1px solid var(--border-glass);
+  border: 1px solid transparent;
   border-radius: 16px;
-  box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
+  box-shadow:
+    0 25px 50px -12px rgba(0, 0, 0, 0.5),
+    0 0 0 1px rgba(255, 255, 255, 0.06);
   overflow: hidden;
   pointer-events: auto;
   margin: 0 16px;
+  // Gradient border effect
+  background-clip: padding-box;
+  position: relative;
+
+  &::before {
+    content: '';
+    position: absolute;
+    inset: -1px;
+    border-radius: 17px;
+    padding: 1px;
+    background: linear-gradient(
+      135deg,
+      rgba(120, 73, 255, 0.4),
+      rgba(168, 85, 247, 0.15),
+      rgba(255, 255, 255, 0.05),
+      rgba(168, 85, 247, 0.15),
+      rgba(120, 73, 255, 0.4)
+    );
+    -webkit-mask:
+      linear-gradient(#fff 0 0) content-box,
+      linear-gradient(#fff 0 0);
+    -webkit-mask-composite: xor;
+    mask-composite: exclude;
+    pointer-events: none;
+    z-index: 1;
+  }
 }
 
 .spotlight-header {
@@ -235,9 +357,22 @@ watch(isOpen, value => {
 }
 
 .spotlight-results {
-  max-height: 400px;
+  max-height: 420px;
   overflow-y: auto;
   padding: 8px;
+  scroll-behavior: smooth;
+
+  // Custom scrollbar
+  &::-webkit-scrollbar {
+    width: 4px;
+  }
+  &::-webkit-scrollbar-track {
+    background: transparent;
+  }
+  &::-webkit-scrollbar-thumb {
+    background: rgba(255, 255, 255, 0.1);
+    border-radius: 4px;
+  }
 }
 
 .spotlight-section-title {
@@ -255,7 +390,7 @@ watch(isOpen, value => {
 .spotlight-item {
   display: flex;
   align-items: center;
-  padding: 12px 16px;
+  padding: 10px 16px;
   border-radius: 10px;
   cursor: pointer;
   transition: all 0.15s ease;
@@ -269,6 +404,16 @@ watch(isOpen, value => {
     .spotlight-item-title,
     .spotlight-item-arrow {
       color: white !important;
+    }
+
+    .spotlight-item-subtitle {
+      color: rgba(255, 255, 255, 0.7) !important;
+    }
+
+    .key-hint {
+      background: rgba(255, 255, 255, 0.2);
+      border-color: rgba(255, 255, 255, 0.3);
+      color: rgba(255, 255, 255, 0.9);
     }
   }
 }
@@ -284,6 +429,7 @@ watch(isOpen, value => {
   display: flex;
   flex-direction: column;
   gap: 2px;
+  min-width: 0;
 }
 
 .spotlight-item-title {
@@ -297,11 +443,48 @@ watch(isOpen, value => {
   color: var(--text-muted);
 }
 
+// Shortcut hint badges next to items
+.spotlight-item-hint {
+  display: flex;
+  align-items: center;
+  gap: 3px;
+  flex-shrink: 0;
+}
+
+.key-hint {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 20px;
+  height: 20px;
+  padding: 0 5px;
+  background: rgba(255, 255, 255, 0.06);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 4px;
+  font-family: 'SF Mono', 'Fira Code', 'Cascadia Code', monospace;
+  font-size: 10px;
+  font-weight: 500;
+  color: var(--text-muted);
+  transition: all 0.15s ease;
+
+  // "then" text between chord keys
+  &:nth-child(even) {
+    background: transparent;
+    border: none;
+    padding: 0 1px;
+    min-width: auto;
+    font-family: inherit;
+    font-size: 9px;
+    opacity: 0.6;
+  }
+}
+
 .spotlight-item-arrow {
   font-size: 16px;
   color: var(--text-muted);
   opacity: 0;
   transition: opacity 0.15s ease;
+  flex-shrink: 0;
 
   .spotlight-item:hover &,
   .spotlight-item.active & {
@@ -373,12 +556,56 @@ watch(isOpen, value => {
 
 .spotlight-modal-enter-active,
 .spotlight-modal-leave-active {
-  transition: all 0.2s ease;
+  transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
 .spotlight-modal-enter-from,
 .spotlight-modal-leave-to {
   opacity: 0;
-  transform: scale(0.95);
+  transform: scale(0.95) translateY(-8px);
+}
+
+// Stagger animation for items
+.spotlight-stagger-enter-active {
+  transition: all 0.2s ease;
+}
+
+.spotlight-stagger-enter-from {
+  opacity: 0;
+  transform: translateY(4px);
+}
+
+.spotlight-stagger-leave-active {
+  transition: all 0.15s ease;
+}
+
+.spotlight-stagger-leave-to {
+  opacity: 0;
+}
+
+// Light mode adjustments
+:global(html.light-mode) {
+  .spotlight-modal::before {
+    background: linear-gradient(
+      135deg,
+      rgba(120, 73, 255, 0.3),
+      rgba(168, 85, 247, 0.1),
+      rgba(0, 0, 0, 0.03),
+      rgba(168, 85, 247, 0.1),
+      rgba(120, 73, 255, 0.3)
+    );
+  }
+
+  .key-hint {
+    background: rgba(0, 0, 0, 0.04);
+    border-color: rgba(0, 0, 0, 0.08);
+    color: var(--text-secondary);
+  }
+
+  .spotlight-results {
+    &::-webkit-scrollbar-thumb {
+      background: rgba(0, 0, 0, 0.1);
+    }
+  }
 }
 </style>

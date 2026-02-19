@@ -5,12 +5,14 @@ export interface SpotlightItem {
   title: string;
   subtitle?: string;
   icon: string;
-  category: 'page' | 'action' | 'search';
+  category: 'page' | 'action' | 'search' | 'command' | 'recent';
   path?: string;
   action?: () => void;
   keywords?: string[];
   // Permissions required to see this item (any of these permissions allows access)
   permissions?: string[];
+  // Optional shortcut hint displayed alongside the item (e.g. "G then D")
+  shortcutHint?: string;
 }
 
 // State
@@ -21,14 +23,40 @@ const userPermissions = ref<string[]>([]);
 const isAdmin = ref(false);
 const searchResults = ref<SpotlightItem[]>([]);
 const searchLoading = ref(false);
+const recentItems = ref<SpotlightItem[]>([]);
 let searchDebounceTimer: ReturnType<typeof setTimeout>;
+
+// Load recent items from localStorage on init (client-side only)
+if (typeof window !== 'undefined') {
+  try {
+    const savedRecent = localStorage.getItem('crm_spotlight_recent');
+    if (savedRecent) recentItems.value = JSON.parse(savedRecent);
+  } catch { /* ignore parse errors */ }
+}
+
+function trackRecent(item: SpotlightItem) {
+  // Only track items with a path (navigable items)
+  if (!item.path) return;
+  // Remove if already in recent
+  recentItems.value = recentItems.value.filter(r => r.path !== item.path);
+  // Create a copy with 'recent' category for display purposes
+  const recentCopy: SpotlightItem = { ...item, category: 'recent' };
+  // Add to front
+  recentItems.value.unshift(recentCopy);
+  // Keep only 5
+  recentItems.value = recentItems.value.slice(0, 5);
+  // Persist
+  try {
+    localStorage.setItem('crm_spotlight_recent', JSON.stringify(recentItems.value));
+  } catch { /* ignore storage errors */ }
+}
 
 // All available items with permissions
 const spotlightItems: SpotlightItem[] = [
   // ========== PAGES ==========
 
   // Dashboard - everyone can see
-  { id: 'dashboard', title: 'Dashboard', icon: 'ph:house-bold', category: 'page', path: '/', keywords: ['home', 'main'] },
+  { id: 'dashboard', title: 'Dashboard', icon: 'ph:house-bold', category: 'page', path: '/', keywords: ['home', 'main'], shortcutHint: 'G then D' },
 
   // Sales Pages
   {
@@ -38,7 +66,8 @@ const spotlightItems: SpotlightItem[] = [
     category: 'page',
     path: '/sales/leads',
     keywords: ['sales', 'prospects'],
-    permissions: ['VIEW_OWN_LEADS', 'VIEW_GLOBAL_LEADS']
+    permissions: ['VIEW_OWN_LEADS', 'VIEW_GLOBAL_LEADS'],
+    shortcutHint: 'G then L'
   },
   {
     id: 'clients',
@@ -65,7 +94,8 @@ const spotlightItems: SpotlightItem[] = [
     category: 'page',
     path: '/sales/deals',
     keywords: ['contracts'],
-    permissions: ['VIEW_OWN_DEALS', 'VIEW_GLOBAL_DEALS']
+    permissions: ['VIEW_OWN_DEALS', 'VIEW_GLOBAL_DEALS'],
+    shortcutHint: 'G then E'
   },
   {
     id: 'proposals',
@@ -85,7 +115,8 @@ const spotlightItems: SpotlightItem[] = [
     category: 'page',
     path: '/operations/projects',
     keywords: ['project'],
-    permissions: ['VIEW_OWN_PROJECTS', 'VIEW_GLOBAL_PROJECTS']
+    permissions: ['VIEW_OWN_PROJECTS', 'VIEW_GLOBAL_PROJECTS'],
+    shortcutHint: 'G then P'
   },
   {
     id: 'daily-tasks',
@@ -94,7 +125,8 @@ const spotlightItems: SpotlightItem[] = [
     category: 'page',
     path: '/operations/daily-task',
     keywords: ['tasks', 'todo'],
-    permissions: ['VIEW_OWN_PROJECTS', 'VIEW_GLOBAL_PROJECTS']
+    permissions: ['VIEW_OWN_PROJECTS', 'VIEW_GLOBAL_PROJECTS'],
+    shortcutHint: 'G then T'
   },
   {
     id: 'manpower',
@@ -311,6 +343,16 @@ const spotlightItems: SpotlightItem[] = [
   }
 ];
 
+// Command items - inline actions that don't navigate
+// The actual actions are injected inside useSpotlight() where stores are available
+const commandItems = ref<SpotlightItem[]>([
+  { id: 'cmd-dark-mode', title: 'Toggle Dark Mode', icon: 'ph:moon-bold', category: 'command', keywords: ['theme', 'light', 'dark', 'mode'], shortcutHint: 'Ctrl+Shift+D' },
+  { id: 'cmd-language', title: 'Switch Language', icon: 'ph:translate-bold', category: 'command', keywords: ['locale', 'arabic', 'english', 'lang', 'rtl'] },
+  { id: 'cmd-sidebar', title: 'Toggle Sidebar', icon: 'ph:sidebar-bold', category: 'command', keywords: ['menu', 'nav', 'collapse', 'expand'] },
+  { id: 'cmd-fullscreen', title: 'Fullscreen', icon: 'ph:arrows-out-bold', category: 'command', keywords: ['fullscreen', 'maximize', 'screen'] },
+  { id: 'cmd-shortcuts', title: 'Keyboard Shortcuts', icon: 'ph:keyboard-bold', category: 'command', keywords: ['keys', 'hotkeys', 'help'], shortcutHint: '?' },
+]);
+
 // Check if user has permission for an item
 function hasPermissionForItem(item: SpotlightItem): boolean {
   // Admins can see everything
@@ -328,14 +370,19 @@ const permittedItems = computed(() => {
   return spotlightItems.filter(item => hasPermissionForItem(item));
 });
 
+// All searchable items (pages + actions + commands)
+const allSearchableItems = computed(() => {
+  return [...permittedItems.value, ...commandItems.value];
+});
+
 // Filtered items based on search
 const filteredItems = computed(() => {
   if (!searchQuery.value.trim()) {
-    return permittedItems.value;
+    return allSearchableItems.value;
   }
 
   const query = searchQuery.value.toLowerCase();
-  return permittedItems.value.filter(item => {
+  return allSearchableItems.value.filter(item => {
     const matchTitle = item.title.toLowerCase().includes(query);
     const matchKeywords = item.keywords?.some(k => k.toLowerCase().includes(query));
     const matchSubtitle = item.subtitle?.toLowerCase().includes(query);
@@ -345,20 +392,65 @@ const filteredItems = computed(() => {
 
 // Grouped items by category
 const groupedItems = computed(() => {
+  const hasQuery = searchQuery.value.trim().length > 0;
+  const recent = hasQuery ? [] : recentItems.value;
   const pages = filteredItems.value.filter(i => i.category === 'page');
   const actions = filteredItems.value.filter(i => i.category === 'action');
+  const commands = filteredItems.value.filter(i => i.category === 'command');
   const searches = searchResults.value;
 
-  return { pages, actions, searches };
+  return { recent, pages, actions, commands, searches };
 });
 
 // Flat list for navigation
 const flatItems = computed(() => {
-  return [...groupedItems.value.pages, ...groupedItems.value.actions, ...groupedItems.value.searches];
+  return [
+    ...groupedItems.value.recent,
+    ...groupedItems.value.pages,
+    ...groupedItems.value.actions,
+    ...groupedItems.value.commands,
+    ...groupedItems.value.searches,
+  ];
 });
 
 export function useSpotlight() {
   const router = useRouter();
+
+  // Inject actual actions into command items (requires access to stores/composables)
+  function initCommandActions() {
+    const themeStore = useThemeStore();
+    const mainStore = useMain();
+    const { cheatSheetVisible } = useKeyboardShortcuts();
+
+    const actionMap: Record<string, () => void> = {
+      'cmd-dark-mode': () => { themeStore.toggleTheme(); },
+      'cmd-language': () => {
+        const { locale, setLocale } = useI18n();
+        const nextLocale = locale.value === 'en' ? 'ar' : 'en';
+        setLocale(nextLocale);
+        if (typeof document !== 'undefined') {
+          document.documentElement.dir = nextLocale === 'ar' ? 'rtl' : 'ltr';
+          document.documentElement.lang = nextLocale;
+        }
+      },
+      'cmd-sidebar': () => { mainStore.fullNav = !mainStore.fullNav; },
+      'cmd-fullscreen': () => {
+        if (typeof document !== 'undefined') {
+          if (document.fullscreenElement) {
+            document.exitFullscreen();
+          } else {
+            document.documentElement.requestFullscreen();
+          }
+        }
+      },
+      'cmd-shortcuts': () => { cheatSheetVisible.value = true; },
+    };
+
+    commandItems.value = commandItems.value.map(item => ({
+      ...item,
+      action: actionMap[item.id] || item.action,
+    }));
+  }
 
   // Load user permissions on init
   async function loadPermissions() {
@@ -403,6 +495,8 @@ export function useSpotlight() {
   }
 
   function selectItem(item: SpotlightItem) {
+    // Track recent items before navigating
+    trackRecent(item);
     if (item.path) {
       router.push(item.path);
     }
@@ -436,9 +530,10 @@ export function useSpotlight() {
   }
 
   function handleKeydown(event: KeyboardEvent) {
-    // Open with Alt+K or / key (when not in input)
+    // Open with Alt+K, Ctrl+K (Cmd+K on Mac), or / key (when not in input)
     if (
       (event.altKey && event.key.toLowerCase() === 'k') ||
+      ((event.ctrlKey || event.metaKey) && event.key.toLowerCase() === 'k') ||
       (event.key === '/' && !isOpen.value && document.activeElement?.tagName !== 'INPUT' && document.activeElement?.tagName !== 'TEXTAREA')
     ) {
       event.preventDefault();
@@ -543,6 +638,7 @@ export function useSpotlight() {
   onMounted(() => {
     window.addEventListener('keydown', handleKeydown, true); // Use capture phase
     loadPermissions();
+    initCommandActions();
   });
 
   onUnmounted(() => {
@@ -556,6 +652,7 @@ export function useSpotlight() {
     filteredItems,
     groupedItems,
     flatItems,
+    recentItems,
     isAdmin,
     searchLoading,
     open,

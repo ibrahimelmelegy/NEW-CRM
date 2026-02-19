@@ -1,8 +1,7 @@
-<template>
-  <div id="global-background"></div>
-  <NuxtLayout>
-    <NuxtPage />
-  </NuxtLayout>
+<template lang="pug">
+  div#global-background
+  NuxtLayout
+    NuxtPage
 </template>
 
 <script setup lang="ts">

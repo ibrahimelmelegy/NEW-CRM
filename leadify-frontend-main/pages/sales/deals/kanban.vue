@@ -13,10 +13,22 @@ div
       NuxtLink(to="/sales/deals/add-deal" v-if="hasPermission('CREATE_DEALS')")
         el-button(size='large' type="primary" :icon="Plus" class="!rounded-2xl") {{ $t('deals.newDeal') }}
 
+  //- Kanban Toolbar
+  KanbanToolbar(
+    :swimlane-mode="swimlaneMode"
+    :total-cards="totalCards"
+    :active-filter="activeFilter"
+    @update:swimlane-mode="swimlaneMode = $event"
+    @filter="onFilter"
+    @toggle-all="onToggleAll"
+  )
+
   div(v-loading="loading")
-    KanbanBoard(
+    KanbanBoardAdvanced(
+      ref="kanbanBoardRef"
       :columns="columns"
-      :cards="kanbanCards"
+      :cards="filteredCards"
+      :swimlane-mode="swimlaneMode"
       @stageChange="onStageChange"
       @cardClick="onCardClick"
     )
@@ -35,6 +47,9 @@ const t = $i18n.t;
 
 const loading = ref(true);
 const kanbanCards = ref<Record<string, KanbanCard[]>>({});
+const swimlaneMode = ref<'none' | 'assignee' | 'priority' | 'value'>('none');
+const activeFilter = ref('all');
+const kanbanBoardRef = ref<{ toggleAllLanes: () => void } | null>(null);
 
 const columns = computed(() => [
   { key: 'PROGRESS', label: t('kanban.stages.progress'), color: getStageColor('PROGRESS'), totalValue: sumValue('PROGRESS') },
@@ -44,6 +59,50 @@ const columns = computed(() => [
 
 function sumValue(stage: string): number {
   return (kanbanCards.value[stage] || []).reduce((sum, card) => sum + (card.price || 0), 0);
+}
+
+// Total card count across all stages
+const totalCards = computed(() => {
+  return Object.values(kanbanCards.value).reduce((sum, cards) => sum + cards.length, 0);
+});
+
+// Filtered cards based on active quick filter
+const filteredCards = computed<Record<string, KanbanCard[]>>(() => {
+  if (activeFilter.value === 'all') return kanbanCards.value;
+
+  const result: Record<string, KanbanCard[]> = {};
+  const now = new Date();
+
+  for (const [stage, cards] of Object.entries(kanbanCards.value)) {
+    result[stage] = cards.filter(card => {
+      if (activeFilter.value === 'high-value') {
+        const val = card.price ?? card.estimatedValue ?? 0;
+        return val > 10000;
+      }
+      if (activeFilter.value === 'stale') {
+        const dateStr = card.updatedAt || card.createdAt;
+        if (!dateStr) return false;
+        const diffDays = (now.getTime() - new Date(dateStr).getTime()) / (1000 * 60 * 60 * 24);
+        return diffDays > 7;
+      }
+      if (activeFilter.value === 'closing-soon') {
+        if (!card.expectedCloseDate) return false;
+        const closeDate = new Date(card.expectedCloseDate);
+        const diffDays = (closeDate.getTime() - now.getTime()) / (1000 * 60 * 60 * 24);
+        return diffDays >= 0 && diffDays <= 14;
+      }
+      return true;
+    });
+  }
+  return result;
+});
+
+function onFilter(key: string) {
+  activeFilter.value = activeFilter.value === key ? 'all' : key;
+}
+
+function onToggleAll() {
+  kanbanBoardRef.value?.toggleAllLanes();
 }
 
 async function loadKanban() {

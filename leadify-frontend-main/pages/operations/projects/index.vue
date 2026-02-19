@@ -57,6 +57,7 @@ div
 <script setup lang="ts">
 import { Plus } from '@element-plus/icons-vue';
 const router = useRouter();
+const { t } = useI18n();
 const { hasPermission } = await usePermissions();
 const loadingAction = ref(false);
 const deleteLeadPopup = ref(false);

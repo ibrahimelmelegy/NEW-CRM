@@ -6,6 +6,13 @@
       //- Spotlight Search Component
       Spotlight
 
+      //- Keyboard Shortcuts Cheat Sheet
+      KeyboardShortcutsShortcutsOverlay(
+        :visible="cheatSheetVisible"
+        :categories="shortcutCategories"
+        @close="cheatSheetVisible = false"
+      )
+
       
       #allTheNav
         .nav
@@ -32,10 +39,10 @@
                 LanguageToggle
                 
                 //- Circular Notification Button
-                .notification.premium-nav-btn
-                  NuxtLink.flex.items-center.justify-center.w-full.h-full(:to="`/notification`" )
+                .notification.premium-nav-btn(@click.stop="notificationCenter.toggle()")
+                  .flex.items-center.justify-center.w-full.h-full
                     Icon.text-xl(name="ph:bell-bold")
-                    div.notification-badge(v-if="notificationResponse?.unreadNotificationsCount > 0")
+                    div.notification-badge(v-if="notificationCenter.unreadCount.value > 0")
                 
                 //- Profile Dropdown
                 el-dropdown(class="outline-0")
@@ -50,6 +57,12 @@
           .mt-4
         .slot-content(class="!mt-24 animate-entrance" :class="{'!pl-[32px] !pr-[50px]' : !mobile, '!px-[20px] '  : mobile}")
             slot
+      //- Notification Center Flyout
+      NotificationsNotificationCenter(:visible="notificationCenter.visible.value" @close="notificationCenter.close()")
+      //- Onboarding Tour Overlay
+      OnboardingTourOverlay
+      //- Speed Dial (contextual quick actions)
+      SpeedDial
       AIChatbot
       MobileBottomNav
       PWAInstallPrompt
@@ -65,6 +78,9 @@ import AIChatbot from '~/components/global/AIChatbot.vue';
 // Initialize Spotlight
 const { open } = useSpotlight();
 
+// Initialize Keyboard Shortcuts
+const { cheatSheetVisible, categories: shortcutCategories } = useKeyboardShortcuts();
+
 const mainData = useMain();
 const { fullNav, mobile, hideNav } = storeToRefs(mainData);
 const { width, height } = useWindowSize();
@@ -75,7 +91,10 @@ const showNavbar = ref(false);
 const showDropdown = ref(false);
 const searchInput = ref('');
 
-const notificationResponse = await useTableFilter('notification');
+// Notification Center
+const notificationCenter = useNotificationCenter();
+// Initial unread count fetch
+notificationCenter.fetchUnreadCount();
 
 function toggleDropdown(val: boolean) {
   showDropdown.value = val;
@@ -88,6 +107,9 @@ const handleClickOutside = () => {
   showDropdown.value = false;
 };
 
+// Poll unread notification count every 30s
+let notificationPollId: ReturnType<typeof setInterval> | null = null;
+
 onMounted(() => {
   window.addEventListener('scroll', handleScroll);
   window.addEventListener('click', handleClickOutside);
@@ -95,11 +117,21 @@ onMounted(() => {
   if ('serviceWorker' in navigator) {
     navigator.serviceWorker.register('/sw.js').catch(() => {});
   }
+  // Start polling for unread notifications
+  notificationPollId = setInterval(() => {
+    if (document.visibilityState === 'visible') {
+      notificationCenter.fetchUnreadCount();
+    }
+  }, 30000);
 });
 
 onUnmounted(() => {
   window.removeEventListener('scroll', handleScroll);
   window.removeEventListener('click', handleClickOutside);
+  if (notificationPollId) {
+    clearInterval(notificationPollId);
+    notificationPollId = null;
+  }
 });
 
 const mykey = ref('1');

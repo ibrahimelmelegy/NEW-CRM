@@ -100,6 +100,7 @@ function getDisabled(role: string) {
 const menu = [
   { link: '/', name: 'navigation.board', icon: 'IconHome', submenu: false, isOpen: false },
   { link: '/dashboard/war-room', name: 'navigation.warRoom', icon: 'ph:crosshair-bold', submenu: false, isOpen: false },
+  { link: '/dashboard/builder', name: 'navigation.dashboardBuilder', icon: 'ph:squares-four-bold', submenu: false, isOpen: false },
   {
     name: 'navigation.sales',
     icon: 'IconSales',
