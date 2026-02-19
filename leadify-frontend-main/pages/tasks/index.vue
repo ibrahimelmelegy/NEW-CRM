@@ -16,7 +16,7 @@ div
     el-tab-pane(:label="$t('tasks.myTasks')" name="my")
 
   //- Table
-  el-spinner(size="large" v-if="loadingAction" class="nuxt-loading-indicator")
+  el-icon.is-loading(:size="32" v-if="loadingAction" style="color: var(--accent-color, #7849ff)")
   AppTable(
     v-slot="{ data }"
     v-if="!loadingAction"

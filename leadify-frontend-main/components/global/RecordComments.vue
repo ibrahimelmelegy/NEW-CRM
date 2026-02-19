@@ -46,7 +46,7 @@
 
   //- Loading
   .flex.justify-center.py-4(v-if="loading")
-    el-spinner(size="default")
+    el-icon.is-loading(:size="24" style="color: var(--accent-color, #7849ff)")
 </template>
 
 <script setup lang="ts">

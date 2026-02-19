@@ -24,7 +24,7 @@
 
     //- Loading
     .flex.items-center.justify-center.py-20(v-if="loading")
-      el-spinner(size="large")
+      el-icon.is-loading(:size="32" style="color: var(--accent-color, #7849ff)")
 
     //- Duplicate Sets List
     template(v-else)

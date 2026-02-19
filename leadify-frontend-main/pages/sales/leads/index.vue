@@ -24,7 +24,7 @@ div
                 //-       p.text-sm {{ $t('leads.export') }}
   input(type="file", ref="fileInput", style="display: none", accept=".xls,.xlsx", @change="handleFileChange")
   // Spinner
-  el-spinner(size="large" v-if="loadingAction" class="nuxt-loading-indicator")
+  el-icon.is-loading(:size="32" v-if="loadingAction" style="color: var(--accent-color, #7849ff)")
   BulkActions(:count="selectedRows.length" :actions="['delete', 'export']" @bulk-delete="handleBulkDelete" @bulk-export="handleBulkExport" @clear-selection="selectedRows = []")
   SavedViews(:entityType="'lead'" :currentFilters="currentFilters" @apply-view="handleApplyView")
   AdvancedSearch(:entityType="'lead'" :fields="advancedSearchFields" @apply="handleAdvancedFilter" @clear="handleClearAdvancedFilter")

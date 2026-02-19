@@ -101,7 +101,7 @@
   AISummarizer(v-model="showSummarizer" :initialText="lead?.notes")
 
 .loading-state.flex.items-center.justify-center.h-64(v-else)
-  el-spinner(size="large")
+  el-icon.is-loading(:size="32" style="color: var(--accent-color, #7849ff)")
 </template>
 
 <script lang="ts" setup>
