@@ -59,7 +59,7 @@ div
               Icon(:name="getActivityIcon(activity.status)" size="14" :style="{ color: getActivityColor(activity.status) }")
             div
               p.text-sm.font-medium(style="color: var(--text-primary)") {{ activity.description || activity.entityType }}
-              .flex.items-center.gap-2(class="mt-0.5")
+              div(class="flex items-center gap-2 mt-0.5")
                 span.text-xs(style="color: var(--text-muted)") {{ activity.user?.name || 'System' }}
                 span.text-xs(style="color: var(--text-muted)") {{ formatTimeAgo(activity.createdAt) }}
           .text-center.py-4(v-if="!activities.length && !loadingActivities")

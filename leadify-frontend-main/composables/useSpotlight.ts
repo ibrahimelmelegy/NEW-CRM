@@ -413,6 +413,13 @@ const flatItems = computed(() => {
   ];
 });
 
+// Direct open function for use outside component context (e.g. plugins)
+export function openSpotlightDirect() {
+  isOpen.value = true;
+  searchQuery.value = '';
+  selectedIndex.value = 0;
+}
+
 export function useSpotlight() {
   const router = useRouter();
 
@@ -534,7 +541,7 @@ export function useSpotlight() {
     if (
       (event.altKey && event.key.toLowerCase() === 'k') ||
       ((event.ctrlKey || event.metaKey) && event.key.toLowerCase() === 'k') ||
-      (event.key === '/' && !isOpen.value && document.activeElement?.tagName !== 'INPUT' && document.activeElement?.tagName !== 'TEXTAREA')
+      (event.key === '/' && !event.shiftKey && !isOpen.value && document.activeElement?.tagName !== 'INPUT' && document.activeElement?.tagName !== 'TEXTAREA')
     ) {
       event.preventDefault();
       toggle();

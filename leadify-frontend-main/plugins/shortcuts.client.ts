@@ -1,9 +1,8 @@
 import { useKeyboardShortcuts } from '~/composables/useKeyboardShortcuts';
-import { useSpotlight } from '~/composables/useSpotlight';
+import { openSpotlightDirect } from '~/composables/useSpotlight';
 
 export default defineNuxtPlugin(() => {
   const router = useRouter();
-  const { open: openSpotlight } = useSpotlight();
   const { register, handleKeyDown } = useKeyboardShortcuts();
 
   // ── Navigation (chord: G then ...) ──
@@ -105,7 +104,7 @@ export default defineNuxtPlugin(() => {
     keys: 'Ctrl+K',
     label: 'Open Spotlight Search',
     category: 'Actions',
-    action: () => openSpotlight(),
+    action: () => openSpotlightDirect(),
   });
 
   // ── General (display-only shortcuts) ──
@@ -125,7 +124,7 @@ export default defineNuxtPlugin(() => {
     keys: 'Alt+K',
     label: 'Open Spotlight Search',
     category: 'Actions',
-    action: () => openSpotlight(),
+    action: () => openSpotlightDirect(),
   });
 
   // Attach global keyboard listener

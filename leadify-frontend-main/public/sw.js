@@ -1,4 +1,4 @@
-const CACHE_NAME = 'leadify-v1';
+const CACHE_NAME = 'leadify-v2';
 const PRECACHE_URLS = ['/', '/images/logo-shape.png', '/images/Logo.png'];
 
 self.addEventListener('install', (event) => {

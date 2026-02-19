@@ -7,7 +7,7 @@
       Spotlight
 
       //- Keyboard Shortcuts Cheat Sheet
-      KeyboardShortcutsShortcutsOverlay(
+      KeyboardShortcutsOverlay(
         :visible="cheatSheetVisible"
         :categories="shortcutCategories"
         @close="cheatSheetVisible = false"
