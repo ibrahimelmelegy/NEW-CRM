@@ -2,7 +2,7 @@ import Department from './models/departmentModel';
 import Employee from './models/employeeModel';
 import BaseError from '../utils/error/base-http-exception';
 import { ERRORS } from '../utils/error/errors';
-import { fn, col } from 'sequelize';
+import { fn, col, Op } from 'sequelize';
 
 class DepartmentService {
   async createDepartment(data: any) {
@@ -22,7 +22,7 @@ class DepartmentService {
     // Count employees per department
     const employeeCounts = await Employee.findAll({
       attributes: ['departmentId', [fn('COUNT', col('id')), 'employeeCount']],
-      where: { departmentId: { $ne: null } as any },
+      where: { departmentId: { [Op.ne]: null } },
       group: ['departmentId'],
       raw: true
     }) as any[];
@@ -91,7 +91,7 @@ class DepartmentService {
     // Count employees per department
     const employeeCounts = await Employee.findAll({
       attributes: ['departmentId', [fn('COUNT', col('id')), 'employeeCount']],
-      where: { departmentId: { $ne: null } as any },
+      where: { departmentId: { [Op.ne]: null } },
       group: ['departmentId'],
       raw: true
     }) as any[];

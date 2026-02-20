@@ -74,8 +74,8 @@ export const HasPermission = (requiredPermissions: string[]) => {
     try {
       if (!req.user || !req.user.role) throw new BaseError(ERRORS.ACCESS_DENIED);
 
-      // Bypass check if user is SUPER_ADMIN
-      if (req.user.role.name === 'SUPER_ADMIN') {
+      // Bypass check if user is SUPER_ADMIN (handles both naming conventions)
+      if (req.user.role.name === 'SUPER_ADMIN' || req.user.role.name === 'Super Admin') {
         return next();
       }
 

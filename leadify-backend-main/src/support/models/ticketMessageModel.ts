@@ -31,7 +31,7 @@ class TicketMessage extends Model {
   public senderId!: string;
 
   @Default(SenderType.AGENT)
-  @Column({ type: DataType.ENUM(...Object.values(SenderType)), allowNull: false })
+  @Column({ type: DataType.STRING, allowNull: false })
   public senderType!: string;
 
   @Column({ type: DataType.TEXT, allowNull: false })

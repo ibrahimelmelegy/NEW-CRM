@@ -54,11 +54,11 @@ class Ticket extends Model {
   public description?: string;
 
   @Default(TicketStatus.OPEN)
-  @Column({ type: DataType.ENUM(...Object.values(TicketStatus)), allowNull: false })
+  @Column({ type: DataType.STRING, allowNull: false })
   public status!: string;
 
   @Default(TicketPriority.MEDIUM)
-  @Column({ type: DataType.ENUM(...Object.values(TicketPriority)), allowNull: false })
+  @Column({ type: DataType.STRING, allowNull: false })
   public priority!: string;
 
   @ForeignKey(() => TicketCategory)
@@ -66,8 +66,8 @@ class Ticket extends Model {
   public categoryId?: string;
 
   @ForeignKey(() => User)
-  @Column({ type: DataType.UUID, allowNull: true })
-  public assignedTo?: string;
+  @Column({ type: DataType.INTEGER, allowNull: true })
+  public assignedTo?: number;
 
   @ForeignKey(() => Client)
   @Column({ type: DataType.UUID, allowNull: true })
@@ -92,7 +92,7 @@ class Ticket extends Model {
   public tags?: string[];
 
   @Default(TicketSource.PORTAL)
-  @Column({ type: DataType.ENUM(...Object.values(TicketSource)), allowNull: false })
+  @Column({ type: DataType.STRING, allowNull: false })
   public source!: string;
 
   @Column({ type: DataType.STRING, allowNull: true })
