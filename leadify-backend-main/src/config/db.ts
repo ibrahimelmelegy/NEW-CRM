@@ -120,6 +120,32 @@ import CatalogProduct from '../productCatalog/productModel';
 import PriceRule from '../productCatalog/priceRuleModel';
 import QuoteLine from '../productCatalog/quoteLineModel';
 import Playbook from '../playbook/playbookModel';
+// ERP Module Models
+import InvoiceLineItem from '../invoice/models/invoiceLineItemModel';
+import CreditNote from '../invoice/models/creditNoteModel';
+import Payment from '../payment/models/paymentModel';
+import PaymentReminder from '../payment/models/paymentReminderModel';
+import Employee from '../hr/models/employeeModel';
+import Department from '../hr/models/departmentModel';
+import EmployeeDocument from '../hr/models/employeeDocumentModel';
+import SalaryStructure from '../payroll/models/salaryStructureModel';
+import PayrollRun from '../payroll/models/payrollRunModel';
+import Payslip from '../payroll/models/payslipModel';
+import EndOfService from '../payroll/models/endOfServiceModel';
+import ChartOfAccounts from '../accounting/models/chartOfAccountsModel';
+import JournalEntry from '../accounting/models/journalEntryModel';
+import JournalEntryLine from '../accounting/models/journalEntryLineModel';
+import FiscalYear from '../accounting/models/fiscalYearModel';
+import SalesOrder from '../salesOrder/models/salesOrderModel';
+import SalesOrderItem from '../salesOrder/models/salesOrderItemModel';
+import Fulfillment from '../salesOrder/models/fulfillmentModel';
+import Ticket from '../support/models/ticketModel';
+import TicketMessage from '../support/models/ticketMessageModel';
+import TicketCategory from '../support/models/ticketCategoryModel';
+import CannedResponse from '../support/models/cannedResponseModel';
+import SubscriptionPlan from '../subscription/models/subscriptionPlanModel';
+import CustomerSubscription from '../subscription/models/customerSubscriptionModel';
+import SubscriptionEvent from '../subscription/models/subscriptionEventModel';
 
 dotenv.config();
 
@@ -264,7 +290,32 @@ const sequelize = new Sequelize({
     PriceRule,
     QuoteLine,
     ComposerTemplate,
-    Playbook
+    Playbook,
+    SalesOrder,
+    SalesOrderItem,
+    Fulfillment,
+    Ticket,
+    TicketMessage,
+    TicketCategory,
+    CannedResponse,
+    SubscriptionPlan,
+    CustomerSubscription,
+    SubscriptionEvent,
+    InvoiceLineItem,
+    CreditNote,
+    Payment,
+    PaymentReminder,
+    Employee,
+    Department,
+    EmployeeDocument,
+    SalaryStructure,
+    PayrollRun,
+    Payslip,
+    EndOfService,
+    ChartOfAccounts,
+    JournalEntry,
+    JournalEntryLine,
+    FiscalYear
   ], // Path to your models
   logging: process.env.NODE_ENV !== 'production' ? console.log : false
 });

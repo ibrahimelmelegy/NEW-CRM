@@ -47,6 +47,7 @@ import webhookRoutes from './webhook/webhookRoutes';
 import timeTrackingRoutes from './timeTracking/timeTrackingRoutes';
 import reportBuilderRoutes from './reports/reportRoutes';
 import invoiceRoutes from './invoice/invoiceRoutes';
+import invoiceBillingRoutes from './invoice/invoiceBillingRoutes';
 import workflowRoutes from './workflow/workflowRoutes';
 import campaignRoutes from './campaign/campaignRoutes';
 import contractRoutes from './contract/contractRoutes';
@@ -54,6 +55,7 @@ import portalRoutes from './portal/portalRoutes';
 import documentTemplateRoutes from './documentTemplate/documentTemplateRoutes';
 import kbRoutes from './knowledgeBase/kbRoutes';
 import hrRoutes from './hr/hrRoutes';
+import employeeRoutes from './hr/employeeRoutes';
 import financeRoutes from './finance/financeRoutes';
 import calendarRoutes from './calendar/calendarRoutes';
 import fieldOpsRoutes from './fieldOps/fieldOpsRoutes';
@@ -84,6 +86,12 @@ import emailRoutes from './emailIntegration/emailRoutes';
 import sequenceRoutes from './sequences/sequenceRoutes';
 import productCatalogRoutes from './productCatalog/productRoutes';
 import playbookRoutes from './playbook/playbookRoutes';
+import salesOrderRoutes from './salesOrder/salesOrderRoutes';
+import paymentRoutes from './payment/paymentRoutes';
+import supportRoutes from './support/supportRoutes';
+import subscriptionRoutes from './subscription/subscriptionRoutes';
+import payrollRoutes from './payroll/payrollRoutes';
+import accountingRoutes from './accounting/accountingRoutes';
 
 const fileUpload = require('express-fileupload');
 
@@ -237,6 +245,7 @@ app.use('/api/webhooks', webhookRoutes);
 app.use('/api/time-tracking', timeTrackingRoutes);
 app.use('/api/report-builder', reportBuilderRoutes);
 app.use('/api/invoices', invoiceRoutes);
+app.use('/api/invoices/billing', invoiceBillingRoutes);
 app.use('/api/workflows', workflowRoutes);
 app.use('/api/campaigns', campaignRoutes);
 app.use('/api/contracts', contractRoutes);
@@ -244,6 +253,7 @@ app.use('/api/portal', portalRoutes);
 app.use('/api/document-templates', documentTemplateRoutes);
 app.use('/api/knowledge-base', kbRoutes);
 app.use('/api/hr', hrRoutes);
+app.use('/api/hr', employeeRoutes);
 app.use('/api/finance', financeRoutes);
 app.use('/api/calendar', calendarRoutes);
 app.use('/api/field-ops', fieldOpsRoutes);
@@ -273,6 +283,12 @@ app.use('/api/email', emailRoutes);
 app.use('/api/sequences', sequenceRoutes);
 app.use('/api/catalog', productCatalogRoutes);
 app.use('/api/playbook', playbookRoutes);
+app.use('/api/sales-orders', salesOrderRoutes);
+app.use('/api/subscriptions', subscriptionRoutes);
+app.use('/api/payments', paymentRoutes);
+app.use('/api/support', supportRoutes);
+app.use('/api/payroll', payrollRoutes);
+app.use('/api/accounting', accountingRoutes);
 
 // Authentication routes
 // Apply strict rate limiting only to login/password-reset endpoints (not /me which is called on every page)

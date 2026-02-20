@@ -111,7 +111,9 @@ const menu = [
       { link: '/sales/clients', name: 'navigation.clients', icon: 'ph:briefcase' },
       { link: '/sales/opportunity', name: 'navigation.opportunity', icon: 'ph:lightbulb' },
       { link: '/sales/deals', name: 'navigation.deals', icon: 'ph:handshake' },
+      { link: '/sales/sales-orders', name: 'navigation.salesOrders', icon: 'ph:clipboard-text-bold' },
       { link: '/sales/invoices', name: 'navigation.invoices', icon: 'ph:receipt-bold' },
+      { link: '/sales/subscriptions', name: 'navigation.subscriptions', icon: 'ph:arrows-clockwise-bold' },
       { link: '/sales/contracts', name: 'navigation.contracts', icon: 'ph:file-doc-bold' },
       { link: '/sales/proposals', name: 'navigation.proposals', icon: 'ph:file-text' },
       { link: '/sales/playbook', name: 'navigation.salesPlaybook', icon: 'ph:book-open-bold' }
@@ -193,6 +195,12 @@ const menu = [
     submenu: [
       { link: '/finance/expenses', name: 'navigation.expenses', icon: 'ph:receipt-bold' },
       { link: '/finance/budgets', name: 'navigation.budgets', icon: 'ph:wallet-bold' },
+      { link: '/finance/payments', name: 'navigation.payments', icon: 'ph:money-bold' },
+      { link: '/finance/accounting/chart-of-accounts', name: 'navigation.chartOfAccounts', icon: 'ph:tree-structure-bold' },
+      { link: '/finance/accounting/journal-entries', name: 'navigation.journalEntries', icon: 'ph:notebook-bold' },
+      { link: '/finance/accounting/reports/trial-balance', name: 'navigation.trialBalance', icon: 'ph:scales-bold' },
+      { link: '/finance/accounting/reports/profit-loss', name: 'navigation.profitLoss', icon: 'ph:chart-line-up-bold' },
+      { link: '/finance/accounting/reports/balance-sheet', name: 'navigation.balanceSheet', icon: 'ph:chart-bar-bold' },
       { link: '/finance/zatca', name: 'navigation.zatca', icon: 'ph:stamp-bold' },
       { link: '/finance/zakaat', name: 'navigation.zakaat', icon: 'ph:hand-coins-bold' }
     ]
@@ -202,8 +210,14 @@ const menu = [
     icon: 'ph:identification-badge-bold',
     isOpen: false,
     submenu: [
+      { link: '/hr/employees', name: 'navigation.employees', icon: 'ph:users-bold' },
+      { link: '/hr/org-chart', name: 'navigation.orgChart', icon: 'ph:tree-structure-bold' },
+      { link: '/hr/departments', name: 'navigation.departments', icon: 'ph:buildings-bold' },
       { link: '/hr/attendance', name: 'navigation.attendance', icon: 'ph:clock-bold' },
-      { link: '/hr/leave-requests', name: 'navigation.leaveRequests', icon: 'ph:calendar-x-bold' }
+      { link: '/hr/leave-requests', name: 'navigation.leaveRequests', icon: 'ph:calendar-x-bold' },
+      { link: '/hr/payroll', name: 'navigation.payroll', icon: 'ph:money-bold' },
+      { link: '/hr/payroll/salary-structures', name: 'navigation.salaryStructures', icon: 'ph:stack-bold' },
+      { link: '/hr/payroll/end-of-service', name: 'navigation.endOfService', icon: 'ph:hand-coins-bold' }
     ]
   },
   {
@@ -230,6 +244,9 @@ const menu = [
     icon: 'ph:lifebuoy-bold',
     isOpen: false,
     submenu: [
+      { link: '/support/tickets', name: 'navigation.tickets', icon: 'ph:ticket-bold' },
+      { link: '/support/dashboard', name: 'navigation.supportDashboard', icon: 'ph:chart-pie-bold' },
+      { link: '/support/canned-responses', name: 'navigation.cannedResponses', icon: 'ph:chat-text-bold' },
       { link: '/support/knowledge-base', name: 'navigation.knowledgeBase', icon: 'ph:book-open-bold' }
     ]
   },
