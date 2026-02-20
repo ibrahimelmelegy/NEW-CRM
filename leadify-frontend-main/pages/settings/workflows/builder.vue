@@ -14,25 +14,49 @@
   .builder-layout.mt-4
     //- Node Palette Sidebar
     .node-palette.glass-card.p-4
-      h3.text-sm.font-bold.text-primary.mb-3 Node Types
+      h3.text-sm.font-bold.text-primary.mb-3 {{ $t('workflows.nodeTypes') }}
       .palette-item(@click="addNode('trigger')")
         .palette-icon.trigger
           Icon(name="ph:play-circle-bold" size="18")
         div
-          .palette-name Trigger
-          .palette-desc Start event
-      .palette-item(@click="addNode('condition')")
+          .palette-name {{ $t('workflows.triggerNode') }}
+          .palette-desc {{ $t('workflows.triggerDesc') }}
+      .palette-item(@click="addNode('wfCondition')")
         .palette-icon.condition
           Icon(name="ph:git-branch-bold" size="18")
         div
-          .palette-name Condition
-          .palette-desc If/else branch
+          .palette-name {{ $t('workflows.conditionNode') }}
+          .palette-desc {{ $t('workflows.conditionDesc') }}
       .palette-item(@click="addNode('action')")
         .palette-icon.action
           Icon(name="ph:lightning-bold" size="18")
         div
-          .palette-name Action
-          .palette-desc Execute step
+          .palette-name {{ $t('workflows.actionNode') }}
+          .palette-desc {{ $t('workflows.actionDesc') }}
+      .palette-item(@click="addNode('delay')")
+        .palette-icon.delay
+          Icon(name="ph:clock-bold" size="18")
+        div
+          .palette-name {{ $t('workflows.delayNode') }}
+          .palette-desc {{ $t('workflows.delayDesc') }}
+      .palette-item(@click="addNode('http')")
+        .palette-icon.http
+          Icon(name="ph:globe-bold" size="18")
+        div
+          .palette-name {{ $t('workflows.httpNode') }}
+          .palette-desc {{ $t('workflows.httpDesc') }}
+      .palette-item(@click="addNode('template')")
+        .palette-icon.template-icon
+          Icon(name="ph:file-text-bold" size="18")
+        div
+          .palette-name {{ $t('workflows.templateNode') }}
+          .palette-desc {{ $t('workflows.templateDesc') }}
+      .palette-item(@click="addNode('approval')")
+        .palette-icon.approval
+          Icon(name="ph:shield-check-bold" size="18")
+        div
+          .palette-name {{ $t('workflows.approvalNode') }}
+          .palette-desc {{ $t('workflows.approvalDesc') }}
 
     //- Canvas
     .canvas-area
@@ -161,6 +185,10 @@ onMounted(() => {
   &.trigger { background: linear-gradient(135deg, #16a34a, #22c55e); }
   &.action { background: linear-gradient(135deg, #7849ff, #a855f7); }
   &.condition { background: linear-gradient(135deg, #ea580c, #f59e0b); }
+  &.delay { background: linear-gradient(135deg, #ca8a04, #eab308); }
+  &.http { background: linear-gradient(135deg, #2563eb, #3b82f6); }
+  &.template-icon { background: linear-gradient(135deg, #16a34a, #4ade80); }
+  &.approval { background: linear-gradient(135deg, #ea580c, #f97316); }
 }
 
 .palette-name {

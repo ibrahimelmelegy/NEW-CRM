@@ -215,6 +215,35 @@ export enum SupportPermissionsEnum {
   MANAGE_CANNED_RESPONSES = 'MANAGE_CANNED_RESPONSES'
 }
 
+export enum SecurityPermissionsEnum {
+  VIEW_SESSIONS = 'VIEW_SESSIONS',
+  MANAGE_SESSIONS = 'MANAGE_SESSIONS',
+  VIEW_LOGIN_HISTORY = 'VIEW_LOGIN_HISTORY',
+  MANAGE_IP_WHITELIST = 'MANAGE_IP_WHITELIST',
+  EXPORT_DATA = 'EXPORT_DATA'
+}
+
+export enum CommunicationPermissionsEnum {
+  VIEW_ACTIVITIES = 'VIEW_ACTIVITIES',
+  LOG_ACTIVITIES = 'LOG_ACTIVITIES',
+  LOG_CALLS = 'LOG_CALLS',
+  VIEW_STATS = 'VIEW_STATS'
+}
+
+export enum ReportBuilderPermissionsEnum {
+  BUILD_REPORTS = 'BUILD_REPORTS',
+  SAVE_REPORTS = 'SAVE_REPORTS',
+  SCHEDULE_REPORTS = 'SCHEDULE_REPORTS',
+  EXPORT_REPORTS = 'EXPORT_REPORTS'
+}
+
+export enum IntegrationPermissionsEnum {
+  VIEW_INTEGRATIONS = 'VIEW_INTEGRATIONS',
+  CONFIGURE_INTEGRATIONS = 'CONFIGURE_INTEGRATIONS',
+  TEST_INTEGRATIONS = 'TEST_INTEGRATIONS',
+  MANAGE_WEBHOOKS = 'MANAGE_WEBHOOKS'
+}
+
 // Consolidating all permissions
 export const permissions = {
   leads: Object.keys(LeadPermissionsEnum),
@@ -246,7 +275,11 @@ export const permissions = {
   payments: Object.keys(PaymentPermissionsEnum),
   support: Object.keys(SupportPermissionsEnum),
   employees: Object.keys(EmployeePermissionsEnum),
-  payroll: Object.keys(PayrollPermissionsEnum)
+  payroll: Object.keys(PayrollPermissionsEnum),
+  security: Object.keys(SecurityPermissionsEnum),
+  communications: Object.keys(CommunicationPermissionsEnum),
+  reportBuilder: Object.keys(ReportBuilderPermissionsEnum),
+  integrations: Object.keys(IntegrationPermissionsEnum)
 };
 
 // Function to get all permissions

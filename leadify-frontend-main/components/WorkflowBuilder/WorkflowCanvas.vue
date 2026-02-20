@@ -18,6 +18,16 @@
       ActionNode(:data="props.data")
     template(#node-conditionNode="props")
       ConditionNode(:data="props.data")
+    template(#node-delayNode="props")
+      DelayNode(:data="props.data")
+    template(#node-httpNode="props")
+      HttpNode(:data="props.data")
+    template(#node-wfConditionNode="props")
+      WfConditionNode(:data="props.data")
+    template(#node-templateNode="props")
+      TemplateNode(:data="props.data")
+    template(#node-approvalNode="props")
+      ApprovalNode(:data="props.data")
     Background(:gap="20" pattern-color="rgba(255,255,255,0.03)")
     Controls
 </template>
@@ -30,6 +40,11 @@ import { Controls } from '@vue-flow/controls';
 import TriggerNode from './TriggerNode.vue';
 import ActionNode from './ActionNode.vue';
 import ConditionNode from './ConditionNode.vue';
+import DelayNode from '~/components/Workflow/nodes/DelayNode.vue';
+import HttpNode from '~/components/Workflow/nodes/HttpNode.vue';
+import WfConditionNode from '~/components/Workflow/nodes/ConditionNode.vue';
+import TemplateNode from '~/components/Workflow/nodes/TemplateNode.vue';
+import ApprovalNode from '~/components/Workflow/nodes/ApprovalNode.vue';
 
 const props = defineProps<{
   nodes: any[];
@@ -51,7 +66,12 @@ const localEdges = computed({
 const nodeTypes = {
   triggerNode: TriggerNode,
   actionNode: ActionNode,
-  conditionNode: ConditionNode
+  conditionNode: ConditionNode,
+  delayNode: DelayNode,
+  httpNode: HttpNode,
+  wfConditionNode: WfConditionNode,
+  templateNode: TemplateNode,
+  approvalNode: ApprovalNode
 };
 
 function onConnect(params: any) {

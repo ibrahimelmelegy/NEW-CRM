@@ -79,6 +79,19 @@ class WorkflowController {
     }
   }
 
+  // ── Manual execution ──
+
+  async manualExecute(req: AuthenticatedRequest, res: Response, next: NextFunction) {
+    try {
+      const id = parseInt(req.params.id as string, 10);
+      const userId = req.user?.id;
+      const execution = await workflowService.manualExecute(id, userId!);
+      wrapResult(res, execution, 201);
+    } catch (error) {
+      next(error);
+    }
+  }
+
   // ── Execution logs ──
 
   async getExecutions(req: AuthenticatedRequest, res: Response, next: NextFunction) {
@@ -95,6 +108,27 @@ class WorkflowController {
       const ruleId = parseInt(req.params.id as string, 10);
       const result = await workflowService.getExecutionsForRule(ruleId, req.query as any);
       wrapResult(res, result);
+    } catch (error) {
+      next(error);
+    }
+  }
+
+  async getExecutionDetail(req: AuthenticatedRequest, res: Response, next: NextFunction) {
+    try {
+      const runId = parseInt(req.params.runId as string, 10);
+      const result = await workflowService.getExecutionDetail(runId);
+      wrapResult(res, result);
+    } catch (error) {
+      next(error);
+    }
+  }
+
+  // ── Templates ──
+
+  async getTemplates(_req: AuthenticatedRequest, res: Response, next: NextFunction) {
+    try {
+      const templates = workflowService.getTemplates();
+      wrapResult(res, templates);
     } catch (error) {
       next(error);
     }

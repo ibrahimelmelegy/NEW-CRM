@@ -65,5 +65,7 @@
   "TWO_FACTOR_INVALID_CODE": "رمز التحقق غير صالح",
   "FIELD_PERMISSION_NOT_FOUND": "صلاحية الحقل غير موجودة",
   "SHARE_NOT_FOUND": "سجل المشاركة غير موجود",
-  "SHARE_INVALID_TARGET": "يجب تحديد مستخدم أو دور للمشاركة معه"
+  "SHARE_INVALID_TARGET": "يجب تحديد مستخدم أو دور للمشاركة معه",
+  "WORKFLOW_EXECUTION_NOT_FOUND": "تنفيذ سير العمل غير موجود",
+  "WORKFLOW_APPROVAL_NOT_FOUND": "موافقة سير العمل غير موجودة"
 }

@@ -1,5 +1,6 @@
 import express from 'express';
 import portalController from './portalController';
+import portalEnhancedController from './portalEnhancedController';
 import { authenticatePortalUser } from './portalMiddleware';
 import { authenticateUser } from '../middleware/authMiddleware';
 
@@ -18,6 +19,14 @@ router.get('/contracts', authenticatePortalUser, portalController.getContracts);
 router.get('/tickets', authenticatePortalUser, portalController.getTickets);
 router.post('/tickets', authenticatePortalUser, portalController.createTicket);
 router.get('/tickets/:id', authenticatePortalUser, portalController.getTicketById);
+
+// Enhanced portal routes: e-signatures, payments, projects, documents
+router.post('/documents/:id/sign', authenticatePortalUser, portalEnhancedController.signDocument);
+router.get('/enhanced/dashboard', authenticatePortalUser, portalEnhancedController.getDashboard);
+router.get('/enhanced/invoices', authenticatePortalUser, portalEnhancedController.getInvoices);
+router.get('/enhanced/projects', authenticatePortalUser, portalEnhancedController.getProjects);
+router.get('/documents/shared', authenticatePortalUser, portalEnhancedController.getSharedDocuments);
+router.get('/signatures/:documentId', authenticatePortalUser, portalEnhancedController.getSignatures);
 
 // Admin routes (CRM user auth)
 router.get('/admin/users', authenticateUser, portalController.adminGetPortalUsers);

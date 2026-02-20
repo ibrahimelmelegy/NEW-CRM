@@ -65,12 +65,35 @@ router.post(
   workflowController.testRule
 );
 
+// ── Manual trigger ──
+router.post(
+  '/rules/:id/execute',
+  authenticateUser,
+  HasPermission([SettingsPermissionsEnum.EDIT_SETTINGS]),
+  workflowController.manualExecute
+);
+
+// ── Workflow templates ──
+router.get(
+  '/templates',
+  authenticateUser,
+  workflowController.getTemplates
+);
+
 // ── Execution logs ──
 router.get(
   '/executions',
   authenticateUser,
   HasPermission([SettingsPermissionsEnum.VIEW_SETTINGS]),
   workflowController.getExecutions
+);
+
+// ── Execution detail (single run) ──
+router.get(
+  '/executions/:runId',
+  authenticateUser,
+  HasPermission([SettingsPermissionsEnum.VIEW_SETTINGS]),
+  workflowController.getExecutionDetail
 );
 
 router.get(

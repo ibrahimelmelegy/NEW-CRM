@@ -33,7 +33,7 @@ export default defineNuxtConfig({
     }
   },
 
-  css: ['@/assets/styles/global.scss', '@/assets/scss/transitions.scss', '@/assets/css/microsoft-light.css'],
+  css: ['@/assets/styles/global.scss', '@/assets/scss/transitions.scss', '@/assets/css/microsoft-light.css', '@/assets/css/mobile.scss'],
 
   sourcemap: {
     server: process.env.NODE_ENV !== 'production',

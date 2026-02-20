@@ -19,14 +19,21 @@ export function useWorkflowBuilder() {
 
   let nodeIdCounter = 0;
 
-  function addNode(type: 'trigger' | 'action' | 'condition', position?: { x: number; y: number }) {
+  type NodeType = 'trigger' | 'action' | 'condition' | 'delay' | 'http' | 'wfCondition' | 'template' | 'approval';
+
+  function addNode(type: NodeType, position?: { x: number; y: number }) {
     const id = `node-${++nodeIdCounter}`;
     const pos = position || { x: 250, y: 50 + nodes.value.length * 120 };
 
     const labels: Record<string, string> = {
       trigger: 'New Trigger',
       action: 'New Action',
-      condition: 'New Condition'
+      condition: 'New Condition',
+      delay: 'Delay',
+      http: 'HTTP Request',
+      wfCondition: 'Condition',
+      template: 'Send Template',
+      approval: 'Approval'
     };
 
     nodes.value.push({
@@ -34,12 +41,21 @@ export function useWorkflowBuilder() {
       type: `${type}Node`,
       position: pos,
       data: {
-        label: labels[type],
+        label: labels[type] || 'New Node',
         nodeType: type,
         config: {}
       }
     });
     return id;
+  }
+
+  function loadFromTemplate(templateData: { nodes: any[]; edges: any[] }) {
+    nodes.value = templateData.nodes.map(n => ({ ...n, position: { ...n.position } }));
+    edges.value = templateData.edges.map(e => ({
+      ...e,
+      style: e.style || { stroke: 'var(--accent-color, #7849ff)', strokeDasharray: '5 5' }
+    }));
+    nodeIdCounter = nodes.value.length + 1;
   }
 
   function removeNode(nodeId: string) {
@@ -139,6 +155,7 @@ export function useWorkflowBuilder() {
     addEdge,
     updateNodeConfig,
     saveWorkflow,
-    loadWorkflow
+    loadWorkflow,
+    loadFromTemplate
   };
 }

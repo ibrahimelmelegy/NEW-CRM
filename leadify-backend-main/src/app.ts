@@ -92,6 +92,7 @@ import supportRoutes from './support/supportRoutes';
 import subscriptionRoutes from './subscription/subscriptionRoutes';
 import payrollRoutes from './payroll/payrollRoutes';
 import accountingRoutes from './accounting/accountingRoutes';
+import communicationRoutes from './communication/communicationRoutes';
 
 const fileUpload = require('express-fileupload');
 
@@ -289,6 +290,7 @@ app.use('/api/payments', paymentRoutes);
 app.use('/api/support', supportRoutes);
 app.use('/api/payroll', payrollRoutes);
 app.use('/api/accounting', accountingRoutes);
+app.use('/api/communications', communicationRoutes);
 
 // Authentication routes
 // Apply strict rate limiting only to login/password-reset endpoints (not /me which is called on every page)

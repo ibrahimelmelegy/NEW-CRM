@@ -146,6 +146,16 @@ import CannedResponse from '../support/models/cannedResponseModel';
 import SubscriptionPlan from '../subscription/models/subscriptionPlanModel';
 import CustomerSubscription from '../subscription/models/customerSubscriptionModel';
 import SubscriptionEvent from '../subscription/models/subscriptionEventModel';
+// Security Models
+import LoginHistory from '../security/models/loginHistoryModel';
+import IPWhitelist from '../security/models/ipWhitelistModel';
+// Communication Models
+import CommActivity from '../communication/models/activityModel';
+import CommCallLog from '../communication/models/callLogModel';
+import DocumentSignature from '../portal/models/signatureModel';
+// Integration Hub Models
+import IntegrationConfig from '../integration/models/integrationConfigModel';
+import OutgoingWebhook from '../integration/models/outgoingWebhookModel';
 
 dotenv.config();
 
@@ -315,7 +325,14 @@ const sequelize = new Sequelize({
     ChartOfAccounts,
     JournalEntry,
     JournalEntryLine,
-    FiscalYear
+    FiscalYear,
+    LoginHistory,
+    IPWhitelist,
+    CommActivity,
+    CommCallLog,
+    DocumentSignature,
+    IntegrationConfig,
+    OutgoingWebhook
   ], // Path to your models
   logging: process.env.NODE_ENV !== 'production' ? console.log : false
 });

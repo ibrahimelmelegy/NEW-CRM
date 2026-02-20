@@ -8,6 +8,10 @@ div
       el-button(size="large" @click="handleSeedDefaults" :loading="seeding" class="!rounded-2xl")
         Icon(name="ph:database-bold" size="16" class="mr-1")
         span {{ $t('documentTemplates.seedDefaults') }}
+      NuxtLink(to="/settings/document-templates/pro-builder")
+        el-button(size="large" class="!rounded-2xl")
+          Icon(name="ph:pen-nib-bold" size="16" class="mr-1")
+          span {{ $t('documentTemplates.proBuilder.title') || 'Pro Builder' }}
       NuxtLink(to="/settings/document-templates/builder")
         el-button(size="large" type="primary" class="!rounded-2xl")
           Icon(name="ph:plus-bold" size="16" class="mr-1")

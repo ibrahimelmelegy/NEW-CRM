@@ -797,6 +797,148 @@ async function testRule(
   return { conditionsMatch, resolvedActions };
 }
 
+// ─────────────────────────────────────────────────────────
+// Manual execution
+// ─────────────────────────────────────────────────────────
+
+async function manualExecute(ruleId: number, userId: number): Promise<WorkflowExecution> {
+  const rule = await WorkflowRule.findByPk(ruleId);
+  if (!rule) throw new BaseError(ERRORS.WORKFLOW_RULE_NOT_FOUND);
+
+  // For manual triggers, we build a minimal entity context from the rule's entityType
+  const entity: Record<string, any> = {
+    id: 'manual-trigger',
+    _manualExecution: true,
+    _triggeredBy: userId,
+    _triggeredAt: new Date().toISOString()
+  };
+
+  const execution = await executeWorkflow(rule, entity, {
+    type: TriggerType.MANUAL,
+    entityType: rule.entityType,
+    entityId: 'manual-trigger'
+  }, userId);
+
+  return execution;
+}
+
+// ─────────────────────────────────────────────────────────
+// Execution detail (single run)
+// ─────────────────────────────────────────────────────────
+
+async function getExecutionDetail(runId: number) {
+  const execution = await WorkflowExecution.findByPk(runId, {
+    include: [{ model: WorkflowRule, as: 'workflowRule', attributes: ['id', 'name', 'entityType', 'triggerType', 'actions'] }]
+  });
+  if (!execution) throw new BaseError(ERRORS.WORKFLOW_EXECUTION_NOT_FOUND);
+  return execution;
+}
+
+// ─────────────────────────────────────────────────────────
+// Workflow templates
+// ─────────────────────────────────────────────────────────
+
+function getTemplates() {
+  return [
+    {
+      id: 'lead-nurture',
+      name: 'Lead Nurture',
+      description: 'Automatically assign new leads, send a welcome email, wait 3 days, then create a follow-up task.',
+      entityType: 'lead',
+      triggerType: TriggerType.ON_CREATE,
+      nodes: [
+        { id: 'tpl-1', type: 'triggerNode', position: { x: 300, y: 30 }, data: { label: 'New Lead Created', nodeType: 'trigger', config: { entityType: 'lead', triggerType: 'ON_CREATE' } } },
+        { id: 'tpl-2', type: 'actionNode', position: { x: 300, y: 150 }, data: { label: 'Auto-Assign', nodeType: 'action', config: { type: 'ASSIGN_TO', method: 'round_robin' } } },
+        { id: 'tpl-3', type: 'actionNode', position: { x: 300, y: 270 }, data: { label: 'Welcome Email', nodeType: 'action', config: { type: 'SEND_EMAIL', to: '{{email}}', subject: 'Welcome!', body: 'Thank you for your interest, {{name}}.' } } },
+        { id: 'tpl-4', type: 'delayNode', position: { x: 300, y: 390 }, data: { label: 'Wait 3 Days', nodeType: 'delay', config: { delay: 3, unit: 'days' } } },
+        { id: 'tpl-5', type: 'actionNode', position: { x: 300, y: 510 }, data: { label: 'Follow-up Task', nodeType: 'action', config: { type: 'CREATE_TASK', title: 'Follow up with {{name}}', dueInDays: 1 } } }
+      ],
+      edges: [
+        { id: 'tpl-e1', source: 'tpl-1', target: 'tpl-2', animated: true },
+        { id: 'tpl-e2', source: 'tpl-2', target: 'tpl-3', animated: true },
+        { id: 'tpl-e3', source: 'tpl-3', target: 'tpl-4', animated: true },
+        { id: 'tpl-e4', source: 'tpl-4', target: 'tpl-5', animated: true }
+      ]
+    },
+    {
+      id: 'deal-won',
+      name: 'Deal Won Pipeline',
+      description: 'When a deal is won, create a sales order, generate an invoice, and notify the team.',
+      entityType: 'deal',
+      triggerType: TriggerType.ON_FIELD_CHANGE,
+      nodes: [
+        { id: 'tpl-1', type: 'triggerNode', position: { x: 300, y: 30 }, data: { label: 'Deal Won', nodeType: 'trigger', config: { entityType: 'deal', triggerType: 'ON_FIELD_CHANGE', triggerField: 'stage', triggerValue: 'WON' } } },
+        { id: 'tpl-2', type: 'actionNode', position: { x: 300, y: 150 }, data: { label: 'Create Sales Order', nodeType: 'action', config: { type: 'CREATE_RECORD', entityType: 'invoice', data: { dealId: '{{id}}', amount: '{{amount}}' } } } },
+        { id: 'tpl-3', type: 'actionNode', position: { x: 300, y: 270 }, data: { label: 'Generate Invoice', nodeType: 'action', config: { type: 'SEND_EMAIL', to: '{{client.email}}', subject: 'Invoice for {{name}}', body: 'Please find your invoice attached.' } } },
+        { id: 'tpl-4', type: 'actionNode', position: { x: 300, y: 390 }, data: { label: 'Notify Team', nodeType: 'action', config: { type: 'SEND_NOTIFICATION', role: 'Sales Manager', title: 'Deal Won!', message: '{{name}} has been won for {{amount}}.' } } }
+      ],
+      edges: [
+        { id: 'tpl-e1', source: 'tpl-1', target: 'tpl-2', animated: true },
+        { id: 'tpl-e2', source: 'tpl-2', target: 'tpl-3', animated: true },
+        { id: 'tpl-e3', source: 'tpl-3', target: 'tpl-4', animated: true }
+      ]
+    },
+    {
+      id: 'support-escalation',
+      name: 'Support Escalation',
+      description: 'Auto-assign new tickets, check SLA, and escalate overdue tickets with a condition check.',
+      entityType: 'ticket',
+      triggerType: TriggerType.ON_CREATE,
+      nodes: [
+        { id: 'tpl-1', type: 'triggerNode', position: { x: 300, y: 30 }, data: { label: 'Ticket Created', nodeType: 'trigger', config: { entityType: 'ticket', triggerType: 'ON_CREATE' } } },
+        { id: 'tpl-2', type: 'actionNode', position: { x: 300, y: 150 }, data: { label: 'Auto-Assign', nodeType: 'action', config: { type: 'ASSIGN_TO', method: 'least_loaded' } } },
+        { id: 'tpl-3', type: 'conditionNode', position: { x: 300, y: 270 }, data: { label: 'SLA Check', nodeType: 'condition', config: { field: 'priority', operator: 'equals', value: 'HIGH' } } },
+        { id: 'tpl-4', type: 'actionNode', position: { x: 150, y: 410 }, data: { label: 'Escalate to Manager', nodeType: 'action', config: { type: 'SEND_NOTIFICATION', role: 'Support Manager', title: 'Urgent Ticket', message: 'Ticket #{{id}} requires escalation: {{subject}}' } } },
+        { id: 'tpl-5', type: 'actionNode', position: { x: 450, y: 410 }, data: { label: 'Standard Process', nodeType: 'action', config: { type: 'SEND_NOTIFICATION', title: 'New Ticket', message: 'Ticket #{{id}} assigned to you.' } } }
+      ],
+      edges: [
+        { id: 'tpl-e1', source: 'tpl-1', target: 'tpl-2', animated: true },
+        { id: 'tpl-e2', source: 'tpl-2', target: 'tpl-3', animated: true },
+        { id: 'tpl-e3', source: 'tpl-3', sourceHandle: 'yes', target: 'tpl-4', animated: true },
+        { id: 'tpl-e4', source: 'tpl-3', sourceHandle: 'no', target: 'tpl-5', animated: true }
+      ]
+    },
+    {
+      id: 'employee-onboarding',
+      name: 'Employee Onboarding',
+      description: 'New employee triggers account creation, mentor assignment, and orientation scheduling.',
+      entityType: 'task',
+      triggerType: TriggerType.ON_CREATE,
+      nodes: [
+        { id: 'tpl-1', type: 'triggerNode', position: { x: 300, y: 30 }, data: { label: 'New Employee', nodeType: 'trigger', config: { entityType: 'task', triggerType: 'ON_CREATE' } } },
+        { id: 'tpl-2', type: 'actionNode', position: { x: 300, y: 150 }, data: { label: 'Create Accounts', nodeType: 'action', config: { type: 'CREATE_TASK', title: 'Create accounts for {{name}}', dueInDays: 1 } } },
+        { id: 'tpl-3', type: 'actionNode', position: { x: 300, y: 270 }, data: { label: 'Assign Mentor', nodeType: 'action', config: { type: 'ASSIGN_TO', method: 'least_loaded' } } },
+        { id: 'tpl-4', type: 'actionNode', position: { x: 300, y: 390 }, data: { label: 'Schedule Orientation', nodeType: 'action', config: { type: 'SEND_EMAIL', to: '{{email}}', subject: 'Welcome Orientation', body: 'Welcome aboard, {{name}}! Your orientation is scheduled.' } } }
+      ],
+      edges: [
+        { id: 'tpl-e1', source: 'tpl-1', target: 'tpl-2', animated: true },
+        { id: 'tpl-e2', source: 'tpl-2', target: 'tpl-3', animated: true },
+        { id: 'tpl-e3', source: 'tpl-3', target: 'tpl-4', animated: true }
+      ]
+    },
+    {
+      id: 'invoice-reminder',
+      name: 'Invoice Reminder',
+      description: 'When an invoice is overdue, send a reminder, wait 7 days, send final notice, and create a follow-up task.',
+      entityType: 'invoice',
+      triggerType: TriggerType.ON_FIELD_CHANGE,
+      nodes: [
+        { id: 'tpl-1', type: 'triggerNode', position: { x: 300, y: 30 }, data: { label: 'Invoice Overdue', nodeType: 'trigger', config: { entityType: 'invoice', triggerType: 'ON_FIELD_CHANGE', triggerField: 'status', triggerValue: 'OVERDUE' } } },
+        { id: 'tpl-2', type: 'actionNode', position: { x: 300, y: 150 }, data: { label: 'Send Reminder', nodeType: 'action', config: { type: 'SEND_EMAIL', to: '{{client.email}}', subject: 'Invoice Reminder - {{invoiceNumber}}', body: 'This is a friendly reminder that invoice {{invoiceNumber}} is overdue.' } } },
+        { id: 'tpl-3', type: 'delayNode', position: { x: 300, y: 270 }, data: { label: 'Wait 7 Days', nodeType: 'delay', config: { delay: 7, unit: 'days' } } },
+        { id: 'tpl-4', type: 'actionNode', position: { x: 300, y: 390 }, data: { label: 'Final Notice', nodeType: 'action', config: { type: 'SEND_EMAIL', to: '{{client.email}}', subject: 'Final Notice - {{invoiceNumber}}', body: 'URGENT: Invoice {{invoiceNumber}} is still unpaid. Please settle immediately.' } } },
+        { id: 'tpl-5', type: 'actionNode', position: { x: 300, y: 510 }, data: { label: 'Create Follow-up Task', nodeType: 'action', config: { type: 'CREATE_TASK', title: 'Follow up on overdue invoice {{invoiceNumber}}', dueInDays: 1 } } }
+      ],
+      edges: [
+        { id: 'tpl-e1', source: 'tpl-1', target: 'tpl-2', animated: true },
+        { id: 'tpl-e2', source: 'tpl-2', target: 'tpl-3', animated: true },
+        { id: 'tpl-e3', source: 'tpl-3', target: 'tpl-4', animated: true },
+        { id: 'tpl-e4', source: 'tpl-4', target: 'tpl-5', animated: true }
+      ]
+    }
+  ];
+}
+
 export default {
   // CRUD
   createRule,
@@ -809,6 +951,7 @@ export default {
   // Execution queries
   getExecutions,
   getExecutionsForRule,
+  getExecutionDetail,
 
   // Engine core
   evaluateConditions,
@@ -816,6 +959,12 @@ export default {
   processEntityEvent,
   executeAction,
   resolveTemplate,
+
+  // Manual execution
+  manualExecute,
+
+  // Templates
+  getTemplates,
 
   // Testing
   testRule

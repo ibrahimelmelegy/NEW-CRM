@@ -65,5 +65,7 @@
   "TWO_FACTOR_INVALID_CODE": "Invalid verification code",
   "FIELD_PERMISSION_NOT_FOUND": "Field permission not found",
   "SHARE_NOT_FOUND": "Share record not found",
-  "SHARE_INVALID_TARGET": "Must specify either a user or role to share with"
+  "SHARE_INVALID_TARGET": "Must specify either a user or role to share with",
+  "WORKFLOW_EXECUTION_NOT_FOUND": "Workflow execution not found",
+  "WORKFLOW_APPROVAL_NOT_FOUND": "Workflow approval not found"
 }
