@@ -34,7 +34,7 @@ div
       el-table-column(:label="$t('contracts.signerEmail')" prop="signerEmail" min-width="180")
       el-table-column(:label="$t('contracts.status')" width="130")
         template(#default="{ row }")
-          span.border.rounded-xl.text-xs.px-2(:class="`label-outline-${getStatusColor(row.status)}`") {{ row.status }}
+          el-tag(:type="getContractStatusType(row.status)" size="small" round) {{ row.status }}
       el-table-column(:label="$t('contracts.signedAt')" width="140")
         template(#default="{ row }")
           span {{ row.signedAt ? formatDate(row.signedAt) : '—' }}
@@ -91,7 +91,7 @@ div
       .grid.grid-cols-2.gap-4
         div
           .text-sm.font-medium(style="color: var(--text-muted)") {{ $t('contracts.status') }}
-          .mt-1: span.border.rounded-xl.text-xs.px-2(:class="`label-outline-${getStatusColor(viewItem.status)}`") {{ viewItem.status }}
+          .mt-1: el-tag(:type="getContractStatusType(viewItem.status)" size="small" round) {{ viewItem.status }}
         div
           .text-sm.font-medium(style="color: var(--text-muted)") {{ $t('contracts.deal') }}
           p(style="color: var(--text-primary)") {{ viewItem.deal?.name || '—' }}

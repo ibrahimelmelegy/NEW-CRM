@@ -109,40 +109,24 @@ interface SalesOrderListResult {
  * Fetch paginated list of sales orders
  */
 export async function getSalesOrders(query?: string): Promise<SalesOrderListResult> {
-    try {
-        const endpoint = query ? `sales-orders?${query}` : 'sales-orders';
-        const { body, success, message } = await useApiFetch(endpoint);
-
-        if (success && body) {
-            return {
-                orders: body.docs || [],
-                pagination: body.pagination || { totalItems: 0, page: 1, limit: 10, totalPages: 1 }
-            };
-        } else {
-            throw new Error(message || 'Failed to fetch sales orders');
-        }
-    } catch (error) {
-        console.error('Error fetching sales orders:', error instanceof Error ? error.message : error);
-        handleError('An error occurred while fetching sales orders.');
-        return { orders: [], pagination: { totalItems: 0, page: 1, limit: 10, totalPages: 1 } };
+    const endpoint = query ? `sales-orders?${query}` : 'sales-orders';
+    const { body, success } = await useApiFetch(endpoint);
+    if (success && body) {
+        return {
+            orders: body.docs || [],
+            pagination: body.pagination || { totalItems: 0, page: 1, limit: 10, totalPages: 1 }
+        };
     }
+    return { orders: [], pagination: { totalItems: 0, page: 1, limit: 10, totalPages: 1 } };
 }
 
 /**
  * Fetch a single sales order by ID
  */
 export async function getSalesOrderById(id: string): Promise<SalesOrder> {
-    try {
-        const { body, success } = await useApiFetch(`sales-orders/${id}`);
-        if (success && body) {
-            return body;
-        }
-        throw new Error('Failed to fetch sales order');
-    } catch (error) {
-        console.error('Error fetching sales order:', error instanceof Error ? error.message : error);
-        handleError('An error occurred while fetching sales order.');
-        return {} as SalesOrder;
-    }
+    const { body, success } = await useApiFetch(`sales-orders/${id}`);
+    if (success && body) return body;
+    return {} as SalesOrder;
 }
 
 /**

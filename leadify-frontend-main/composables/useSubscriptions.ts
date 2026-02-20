@@ -166,14 +166,9 @@ export function formatSubscriptionCurrency(amount: number, currency: string = 'S
 // =====================
 
 export async function fetchPlans(includeInactive: boolean = false): Promise<SubscriptionPlan[]> {
-    try {
-        const query = includeInactive ? '?includeInactive=true' : '';
-        const { body, success } = await useApiFetch(`subscriptions/plans${query}`);
-        return success && body ? body : [];
-    } catch (error) {
-        handleError('Failed to fetch plans');
-        return [];
-    }
+    const query = includeInactive ? '?includeInactive=true' : '';
+    const { body, success } = await useApiFetch(`subscriptions/plans${query}`);
+    return success && body ? body : [];
 }
 
 export async function createPlan(data: Partial<SubscriptionPlan>): Promise<SubscriptionPlan | null> {
@@ -229,37 +224,21 @@ export async function deletePlan(id: string): Promise<boolean> {
 // =====================
 
 export async function fetchSubscriptions(query?: string): Promise<SubscriptionListResult> {
-    try {
-        const endpoint = query ? `subscriptions?${query}` : 'subscriptions';
-        const { body, success, message } = await useApiFetch(endpoint);
-
-        if (success && body) {
-            return {
-                subscriptions: body.docs || [],
-                pagination: body.pagination || { totalItems: 0, page: 1, limit: 10, totalPages: 1 }
-            };
-        } else {
-            throw new Error(message || 'Failed to fetch subscriptions');
-        }
-    } catch (error) {
-        console.error('Error fetching subscriptions:', error instanceof Error ? error.message : error);
-        handleError('An error occurred while fetching subscriptions.');
-        return { subscriptions: [], pagination: { totalItems: 0, page: 1, limit: 10, totalPages: 1 } };
+    const endpoint = query ? `subscriptions?${query}` : 'subscriptions';
+    const { body, success } = await useApiFetch(endpoint);
+    if (success && body) {
+        return {
+            subscriptions: body.docs || [],
+            pagination: body.pagination || { totalItems: 0, page: 1, limit: 10, totalPages: 1 }
+        };
     }
+    return { subscriptions: [], pagination: { totalItems: 0, page: 1, limit: 10, totalPages: 1 } };
 }
 
 export async function fetchSubscriptionById(id: string): Promise<CustomerSubscription | null> {
-    try {
-        const { body, success } = await useApiFetch(`subscriptions/${id}`);
-        if (success && body) {
-            return body;
-        }
-        throw new Error('Failed to fetch subscription');
-    } catch (error) {
-        console.error('Error fetching subscription:', error instanceof Error ? error.message : error);
-        handleError('An error occurred while fetching subscription.');
-        return null;
-    }
+    const { body, success } = await useApiFetch(`subscriptions/${id}`);
+    if (success && body) return body;
+    return null;
 }
 
 export async function createSubscription(data: any): Promise<CustomerSubscription | null> {
