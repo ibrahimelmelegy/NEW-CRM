@@ -26,6 +26,17 @@
       </div>
     </div>
 
+    <div v-else-if="fetchError" class="glass-panel p-12 rounded-2xl flex flex-col items-center justify-center text-center">
+      <div class="w-20 h-20 bg-red-900/30 rounded-full flex items-center justify-center mb-4">
+        <Icon name="ph:warning-bold" class="w-10 h-10 text-red-400" />
+      </div>
+      <h3 class="text-xl font-medium text-slate-200 mb-2">Failed to Load Automations</h3>
+      <p class="text-slate-400 max-w-sm mb-4">{{ fetchError }}</p>
+      <el-button type="primary" class="!rounded-xl" @click="fetchWorkflows">
+        Retry
+      </el-button>
+    </div>
+
     <div v-else-if="workflows.length === 0" class="glass-panel p-12 rounded-2xl flex flex-col items-center justify-center text-center">
       <div class="w-20 h-20 bg-slate-800/50 rounded-full flex items-center justify-center mb-4">
         <Icon name="ph:git-merge-bold" class="w-10 h-10 text-slate-400" />
@@ -122,16 +133,25 @@ const router = useRouter();
 
 const workflows = ref<any[]>([]);
 const loading = ref(true);
+const fetchError = ref('');
 
 const fetchWorkflows = async () => {
   loading.value = true;
-  const res: any = await useApiFetch('workflows');
-  if (res?.success) {
-    workflows.value = res.body?.docs || [];
-  } else {
-    ElMessage.error(res?.message || 'Failed to fetch automations');
+  fetchError.value = '';
+  try {
+    const res: any = await useApiFetch('workflows');
+    if (res?.success) {
+      workflows.value = res.body?.docs || res.body || [];
+    } else {
+      fetchError.value = res?.message || `API error (code ${res?.code || 'unknown'})`;
+      console.error('[Automations] fetch failed:', res);
+    }
+  } catch (err: any) {
+    fetchError.value = err?.message || 'Network error';
+    console.error('[Automations] unexpected error:', err);
+  } finally {
+    loading.value = false;
   }
-  loading.value = false;
 };
 
 const createNewJourney = async () => {
