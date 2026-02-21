@@ -57,21 +57,31 @@ function getTimeOfDay(): 'morning' | 'afternoon' | 'evening' | 'night' {
 
 function getGreetingIcon(timeOfDay: string): string {
   switch (timeOfDay) {
-    case 'morning': return 'ph:sun-horizon-bold';
-    case 'afternoon': return 'ph:sun-bold';
-    case 'evening': return 'ph:cloud-sun-bold';
-    case 'night': return 'ph:moon-stars-bold';
-    default: return 'ph:sun-bold';
+    case 'morning':
+      return 'ph:sun-horizon-bold';
+    case 'afternoon':
+      return 'ph:sun-bold';
+    case 'evening':
+      return 'ph:cloud-sun-bold';
+    case 'night':
+      return 'ph:moon-stars-bold';
+    default:
+      return 'ph:sun-bold';
   }
 }
 
 function getGreetingKey(timeOfDay: string): string {
   switch (timeOfDay) {
-    case 'morning': return 'briefing.goodMorning';
-    case 'afternoon': return 'briefing.goodAfternoon';
-    case 'evening': return 'briefing.goodEvening';
-    case 'night': return 'briefing.goodNight';
-    default: return 'briefing.goodMorning';
+    case 'morning':
+      return 'briefing.goodMorning';
+    case 'afternoon':
+      return 'briefing.goodAfternoon';
+    case 'evening':
+      return 'briefing.goodEvening';
+    case 'night':
+      return 'briefing.goodNight';
+    default:
+      return 'briefing.goodMorning';
   }
 }
 
@@ -98,11 +108,7 @@ function isToday(dateStr: string): boolean {
   if (!dateStr) return false;
   const today = new Date();
   const date = new Date(dateStr);
-  return (
-    date.getFullYear() === today.getFullYear() &&
-    date.getMonth() === today.getMonth() &&
-    date.getDate() === today.getDate()
-  );
+  return date.getFullYear() === today.getFullYear() && date.getMonth() === today.getMonth() && date.getDate() === today.getDate();
 }
 
 function daysSinceUpdate(dateStr: string): number {
@@ -198,7 +204,7 @@ export function useDailyBriefing() {
             id: 'deals-at-risk',
             type: 'deal',
             title: 'briefing.dealsAtRisk',
-            description: `${atRiskDeals.length} deal${atRiskDeals.length > 1 ? 's' : ''} — ${('briefing.noActivity')}`,
+            description: `${atRiskDeals.length} deal${atRiskDeals.length > 1 ? 's' : ''} — ${'briefing.noActivity'}`,
             urgency: 'high',
             link: '/sales/deals'
           });
@@ -246,9 +252,7 @@ export function useDailyBriefing() {
         // Build today's schedule
         todaySchedule.value = todayEvents.map((e: any) => {
           const startTime = e.startDate || e.start || e.date;
-          const formatted = startTime
-            ? new Date(startTime).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
-            : 'All day';
+          const formatted = startTime ? new Date(startTime).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }) : 'All day';
           return {
             icon: e.type === 'call' ? 'ph:phone-bold' : 'ph:calendar-bold',
             title: e.title || e.name || 'Event',
@@ -318,22 +322,24 @@ export function useDailyBriefing() {
       kpis.value = [
         {
           label: 'briefing.revenue',
-          value: revenue >= 1000000
-            ? `$${(revenue / 1000000).toFixed(1)}M`
-            : revenue >= 1000
-              ? `$${(revenue / 1000).toFixed(1)}K`
-              : `$${revenue.toLocaleString()}`,
+          value:
+            revenue >= 1000000
+              ? `$${(revenue / 1000000).toFixed(1)}M`
+              : revenue >= 1000
+                ? `$${(revenue / 1000).toFixed(1)}K`
+                : `$${revenue.toLocaleString()}`,
           change: calcChange(revenueSparkline),
           sparkline: revenueSparkline,
           color: '#22c55e'
         },
         {
           label: 'briefing.pipelineValue',
-          value: pipelineValue >= 1000000
-            ? `$${(pipelineValue / 1000000).toFixed(1)}M`
-            : pipelineValue >= 1000
-              ? `$${(pipelineValue / 1000).toFixed(1)}K`
-              : `$${pipelineValue.toLocaleString()}`,
+          value:
+            pipelineValue >= 1000000
+              ? `$${(pipelineValue / 1000000).toFixed(1)}M`
+              : pipelineValue >= 1000
+                ? `$${(pipelineValue / 1000).toFixed(1)}K`
+                : `$${pipelineValue.toLocaleString()}`,
           change: calcChange(pipelineSparkline),
           sparkline: pipelineSparkline,
           color: '#8b5cf6'

@@ -4,9 +4,7 @@
     <div class="glass-panel p-6 rounded-2xl">
       <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
         <div>
-          <h1 class="text-2xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-blue-400 to-cyan-400">
-            Kanban Board
-          </h1>
+          <h1 class="text-2xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-blue-400 to-cyan-400">Kanban Board</h1>
           <p class="text-slate-400 text-sm mt-1">Universal drag-and-drop board view for any entity.</p>
         </div>
         <div class="flex gap-2">
@@ -96,26 +94,33 @@
               </div>
               <div class="flex items-center gap-2 text-xs text-slate-600">
                 <span v-if="card.dueDate" class="flex items-center gap-1" :class="isOverdue(card.dueDate) ? 'text-red-400' : ''">
-                  <Icon name="ph:calendar" class="w-3 h-3" /> {{ formatShortDate(card.dueDate) }}
+                  <Icon name="ph:calendar" class="w-3 h-3" />
+                  {{ formatShortDate(card.dueDate) }}
                 </span>
                 <span v-if="card.comments" class="flex items-center gap-1">
-                  <Icon name="ph:chat-circle" class="w-3 h-3" /> {{ card.comments }}
+                  <Icon name="ph:chat-circle" class="w-3 h-3" />
+                  {{ card.comments }}
                 </span>
                 <span v-if="card.attachments" class="flex items-center gap-1">
-                  <Icon name="ph:paperclip" class="w-3 h-3" /> {{ card.attachments }}
+                  <Icon name="ph:paperclip" class="w-3 h-3" />
+                  {{ card.attachments }}
                 </span>
               </div>
             </div>
 
             <!-- Progress Bar -->
-            <el-progress v-if="card.progress !== undefined" :percentage="card.progress" :stroke-width="3" :show-text="false"
-              :color="card.progress === 100 ? '#10B981' : '#6366F1'" class="mt-2" />
+            <el-progress
+              v-if="card.progress !== undefined"
+              :percentage="card.progress"
+              :stroke-width="3"
+              :show-text="false"
+              :color="card.progress === 100 ? '#10B981' : '#6366F1'"
+              class="mt-2"
+            />
           </div>
 
           <!-- Empty State -->
-          <div v-if="getColumnCards(col.key).length === 0" class="text-center py-8 text-slate-600 text-xs">
-            Drop items here
-          </div>
+          <div v-if="getColumnCards(col.key).length === 0" class="text-center py-8 text-slate-600 text-xs">Drop items here</div>
         </div>
       </div>
     </div>
@@ -224,14 +229,102 @@ const entityColumns: Record<string, { key: string; label: string; color: string 
 const columns = computed(() => entityColumns[selectedEntity.value] || entityColumns.deals);
 
 const cards = ref<BoardCard[]>([
-  { id: 1, title: 'Enterprise CRM License - TechCorp', code: 'DEAL-001', status: 'DISCOVERY', priority: 'HIGH', assignee: 'Ahmed F.', dueDate: '2026-03-15', labels: ['Enterprise', 'Q1'], comments: 5, attachments: 2, value: 150000 },
-  { id: 2, title: 'Cloud Migration - StartupX', code: 'DEAL-002', status: 'PROPOSAL', priority: 'CRITICAL', assignee: 'Sara M.', dueDate: '2026-02-28', labels: ['Cloud'], comments: 12, progress: 65, value: 85000 },
-  { id: 3, title: 'API Integration Package', code: 'DEAL-003', status: 'NEGOTIATION', priority: 'MEDIUM', assignee: 'Omar H.', dueDate: '2026-03-10', labels: ['Integration'], comments: 3, value: 45000 },
-  { id: 4, title: 'Data Analytics Suite', code: 'DEAL-004', status: 'DISCOVERY', priority: 'LOW', assignee: 'Fatima A.', labels: ['Analytics'], comments: 1, value: 32000 },
-  { id: 5, title: 'Security Audit Package', code: 'DEAL-005', status: 'WON', priority: 'HIGH', assignee: 'Khalid I.', dueDate: '2026-02-20', labels: ['Security'], progress: 100, value: 72000 },
-  { id: 6, title: 'Custom Dashboard Development', code: 'DEAL-006', status: 'PROPOSAL', priority: 'MEDIUM', assignee: 'Ahmed F.', dueDate: '2026-03-20', labels: ['Custom'], comments: 8, attachments: 4, value: 55000 },
-  { id: 7, title: 'Mobile App Revamp', code: 'DEAL-007', status: 'NEGOTIATION', priority: 'HIGH', assignee: 'Sara M.', dueDate: '2026-03-05', labels: ['Mobile'], progress: 40, value: 120000 },
-  { id: 8, title: 'Training & Onboarding', code: 'DEAL-008', status: 'DISCOVERY', priority: 'LOW', assignee: 'Omar H.', labels: ['Training'], value: 18000 }
+  {
+    id: 1,
+    title: 'Enterprise CRM License - TechCorp',
+    code: 'DEAL-001',
+    status: 'DISCOVERY',
+    priority: 'HIGH',
+    assignee: 'Ahmed F.',
+    dueDate: '2026-03-15',
+    labels: ['Enterprise', 'Q1'],
+    comments: 5,
+    attachments: 2,
+    value: 150000
+  },
+  {
+    id: 2,
+    title: 'Cloud Migration - StartupX',
+    code: 'DEAL-002',
+    status: 'PROPOSAL',
+    priority: 'CRITICAL',
+    assignee: 'Sara M.',
+    dueDate: '2026-02-28',
+    labels: ['Cloud'],
+    comments: 12,
+    progress: 65,
+    value: 85000
+  },
+  {
+    id: 3,
+    title: 'API Integration Package',
+    code: 'DEAL-003',
+    status: 'NEGOTIATION',
+    priority: 'MEDIUM',
+    assignee: 'Omar H.',
+    dueDate: '2026-03-10',
+    labels: ['Integration'],
+    comments: 3,
+    value: 45000
+  },
+  {
+    id: 4,
+    title: 'Data Analytics Suite',
+    code: 'DEAL-004',
+    status: 'DISCOVERY',
+    priority: 'LOW',
+    assignee: 'Fatima A.',
+    labels: ['Analytics'],
+    comments: 1,
+    value: 32000
+  },
+  {
+    id: 5,
+    title: 'Security Audit Package',
+    code: 'DEAL-005',
+    status: 'WON',
+    priority: 'HIGH',
+    assignee: 'Khalid I.',
+    dueDate: '2026-02-20',
+    labels: ['Security'],
+    progress: 100,
+    value: 72000
+  },
+  {
+    id: 6,
+    title: 'Custom Dashboard Development',
+    code: 'DEAL-006',
+    status: 'PROPOSAL',
+    priority: 'MEDIUM',
+    assignee: 'Ahmed F.',
+    dueDate: '2026-03-20',
+    labels: ['Custom'],
+    comments: 8,
+    attachments: 4,
+    value: 55000
+  },
+  {
+    id: 7,
+    title: 'Mobile App Revamp',
+    code: 'DEAL-007',
+    status: 'NEGOTIATION',
+    priority: 'HIGH',
+    assignee: 'Sara M.',
+    dueDate: '2026-03-05',
+    labels: ['Mobile'],
+    progress: 40,
+    value: 120000
+  },
+  {
+    id: 8,
+    title: 'Training & Onboarding',
+    code: 'DEAL-008',
+    status: 'DISCOVERY',
+    priority: 'LOW',
+    assignee: 'Omar H.',
+    labels: ['Training'],
+    value: 18000
+  }
 ]);
 
 const getColumnCards = (status: string) => cards.value.filter(c => c.status === status);
@@ -251,13 +344,22 @@ const isOverdue = (d: string) => d && new Date(d) < new Date();
 
 const getPriorityType = (p: string): 'success' | 'warning' | 'info' | 'danger' | undefined => {
   const map: Record<string, 'success' | 'warning' | 'info' | 'danger' | undefined> = {
-    CRITICAL: 'danger', HIGH: 'warning', MEDIUM: undefined, LOW: 'info'
+    CRITICAL: 'danger',
+    HIGH: 'warning',
+    MEDIUM: undefined,
+    LOW: 'info'
   };
   return map[p];
 };
 
 const getLabelClass = (label: string) => {
-  const colors = ['bg-blue-500/20 text-blue-400', 'bg-purple-500/20 text-purple-400', 'bg-amber-500/20 text-amber-400', 'bg-emerald-500/20 text-emerald-400', 'bg-rose-500/20 text-rose-400'];
+  const colors = [
+    'bg-blue-500/20 text-blue-400',
+    'bg-purple-500/20 text-purple-400',
+    'bg-amber-500/20 text-amber-400',
+    'bg-emerald-500/20 text-emerald-400',
+    'bg-rose-500/20 text-rose-400'
+  ];
   return colors[label.length % colors.length];
 };
 

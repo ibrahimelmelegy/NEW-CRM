@@ -87,7 +87,7 @@ async function submitFormClient() {
     });
     await createClient(formattedValues, true);
   } catch (err) {
-    console.error("Error saving forms:", err);
+    console.error('Error saving forms:', err);
     loadingClient.value = false;
   } finally {
     openFormClient.value = false;

@@ -304,7 +304,7 @@ const canManageAchievements = computed(() => true);
 
 const topThree = computed(() => leaderboard.value.slice(0, 3));
 
-const topScorer = computed(() => leaderboard.value.length > 0 ? leaderboard.value[0]!.user.name : '—');
+const topScorer = computed(() => (leaderboard.value.length > 0 ? leaderboard.value[0]!.user.name : '—'));
 
 const totalPoints = computed(() => leaderboard.value.reduce((sum, e) => sum + e.totalPoints, 0));
 

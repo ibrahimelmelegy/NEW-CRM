@@ -116,9 +116,13 @@
 <script setup lang="ts">
 import { ref, onMounted } from 'vue';
 import {
-  fetchPortalUsers, createPortalUser, togglePortalUser,
-  fetchAllTickets, respondToTicket,
-  type PortalUser, type SupportTicket
+  fetchPortalUsers,
+  createPortalUser,
+  togglePortalUser,
+  fetchAllTickets,
+  respondToTicket,
+  type PortalUser,
+  type SupportTicket
 } from '~/composables/usePortal';
 
 const loading = ref(true);
@@ -137,11 +141,7 @@ const responseStatus = ref('RESOLVED');
 const userForm = ref({ name: '', email: '', password: '', clientId: '' });
 
 onMounted(async () => {
-  const [users, ticketData, clientData] = await Promise.all([
-    fetchPortalUsers(),
-    fetchAllTickets(),
-    useApiFetch('client?limit=1000')
-  ]);
+  const [users, ticketData, clientData] = await Promise.all([fetchPortalUsers(), fetchAllTickets(), useApiFetch('client?limit=1000')]);
   portalUsers.value = users;
   tickets.value = ticketData;
   clients.value = clientData.body?.docs || [];
@@ -149,7 +149,9 @@ onMounted(async () => {
   ticketsLoading.value = false;
 });
 
-function formatDate(d: string) { return new Date(d).toLocaleDateString(); }
+function formatDate(d: string) {
+  return new Date(d).toLocaleDateString();
+}
 
 function getTicketStatusType(status: string) {
   const map: Record<string, string> = { OPEN: 'danger', IN_PROGRESS: 'warning', RESOLVED: 'success', CLOSED: 'info' };

@@ -113,8 +113,13 @@ div
 <script setup lang="ts">
 import { ElNotification } from 'element-plus';
 import {
-  fetchContracts, createContract, updateContract, deleteContract, sendForSignature,
-  getContractStatusType, type Contract
+  fetchContracts,
+  createContract,
+  updateContract,
+  deleteContract,
+  sendForSignature,
+  getContractStatusType,
+  type Contract
 } from '~/composables/useContracts';
 import { getDeals } from '~/composables/useDeals';
 
@@ -161,8 +166,8 @@ const summaryStats = computed(() => {
 const filteredContracts = computed(() => {
   if (!searchText.value) return contracts.value;
   const s = searchText.value.toLowerCase();
-  return contracts.value.filter(c =>
-    c.title?.toLowerCase().includes(s) || c.signerName?.toLowerCase().includes(s) || c.signerEmail?.toLowerCase().includes(s)
+  return contracts.value.filter(
+    c => c.title?.toLowerCase().includes(s) || c.signerName?.toLowerCase().includes(s) || c.signerEmail?.toLowerCase().includes(s)
   );
 });
 
@@ -179,7 +184,9 @@ onMounted(async () => {
   loading.value = false;
 });
 
-function formatDate(d: string) { return new Date(d).toLocaleDateString(); }
+function formatDate(d: string) {
+  return new Date(d).toLocaleDateString();
+}
 
 function handleRowClick(row: Contract) {
   viewContract(row);
@@ -188,7 +195,13 @@ function handleRowClick(row: Contract) {
 function openForm(contract?: Contract) {
   if (contract) {
     editingId.value = contract.id;
-    form.value = { title: contract.title, content: contract.content || '', signerName: contract.signerName || '', signerEmail: contract.signerEmail || '', dealId: contract.dealId || null };
+    form.value = {
+      title: contract.title,
+      content: contract.content || '',
+      signerName: contract.signerName || '',
+      signerEmail: contract.signerEmail || '',
+      dealId: contract.dealId || null
+    };
   } else {
     editingId.value = null;
     form.value = { title: '', content: '', signerName: '', signerEmail: '', dealId: null };
@@ -212,7 +225,9 @@ async function saveContract() {
     contracts.value = await fetchContracts();
     showForm.value = false;
     ElNotification({ type: 'success', title: t('common.success'), message: t('common.saved') || 'Saved' });
-  } finally { saving.value = false; }
+  } finally {
+    saving.value = false;
+  }
 }
 
 async function confirmDelete() {
@@ -239,7 +254,16 @@ const advancedSearchFields = [
   { key: 'title', label: t('contracts.table.title'), type: 'string' },
   { key: 'signerName', label: t('contracts.table.signer'), type: 'string' },
   { key: 'signerEmail', label: t('contracts.table.email'), type: 'string' },
-  { key: 'status', label: t('contracts.table.status'), type: 'select', options: [{ value: 'DRAFT', label: 'Draft' }, { value: 'SENT', label: 'Sent' }, { value: 'SIGNED', label: 'Signed' }] },
+  {
+    key: 'status',
+    label: t('contracts.table.status'),
+    type: 'select',
+    options: [
+      { value: 'DRAFT', label: 'Draft' },
+      { value: 'SENT', label: 'Sent' },
+      { value: 'SIGNED', label: 'Signed' }
+    ]
+  },
   { key: 'createdAt', label: t('common.created') || 'Created', type: 'date' }
 ];
 

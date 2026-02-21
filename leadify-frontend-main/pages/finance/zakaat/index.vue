@@ -89,9 +89,7 @@ const summaryStats = computed(() => [
   { label: t('zakaat.stats.currentYearStatus'), value: summary.value.currentYearStatus, icon: 'ph:calendar-check-bold', color: '#e6a23c' }
 ]);
 
-const headerActions = computed(() => [
-  { label: t('zakaat.newAssessment'), to: '/finance/zakaat/create', type: 'primary', icon: Plus }
-]);
+const headerActions = computed(() => [{ label: t('zakaat.newAssessment'), to: '/finance/zakaat/create', type: 'primary', icon: Plus }]);
 
 function getStatusType(status: ZakaatStatus): string {
   const map: Record<string, string> = {

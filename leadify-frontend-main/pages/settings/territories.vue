@@ -94,10 +94,7 @@ const flatTerritories = computed(() => {
 
 // Load data
 try {
-  const [treeData, usersRes] = await Promise.all([
-    fetchTerritoryTree(),
-    useApiFetch('users')
-  ]);
+  const [treeData, usersRes] = await Promise.all([fetchTerritoryTree(), useApiFetch('users')]);
   territories.value = treeData;
   if (usersRes?.body?.docs) {
     users.value = usersRes.body.docs.map((u: any) => ({ label: u.name, value: u.id }));
@@ -171,46 +168,68 @@ const TerritoryNode: ReturnType<typeof defineComponent> = defineComponent({
   setup(props, { emit }) {
     const expanded = ref(true);
 
-    return () => h('div', { style: { paddingLeft: props.depth * 24 + 'px' } }, [
-      h('div', {
-        class: 'glass-card p-4 mb-2 flex items-center justify-between',
-        style: { borderLeft: '3px solid ' + (props.territory.isActive ? '#7849ff' : '#a1a1aa') }
-      }, [
-        h('div', { class: 'flex items-center gap-3 flex-1' }, [
-          props.territory.children?.length
-            ? h('div', {
-                class: 'cursor-pointer',
-                onClick: () => { expanded.value = !expanded.value; }
-              }, [h(resolveComponent('Icon'), { name: expanded.value ? 'ph:caret-down-bold' : 'ph:caret-right-bold', size: '16', style: 'color: var(--text-muted)' })])
-            : h('div', { style: 'width: 16px' }),
-          h('div', [
-            h('p', { class: 'text-sm font-semibold', style: 'color: var(--text-primary)' }, props.territory.name),
-            h('div', { class: 'flex items-center gap-2 mt-1' }, [
-              h(resolveComponent('el-tag'), { size: 'small', type: 'info' }, () => props.territory.type),
-              props.territory.assignedUser
-                ? h('span', { class: 'text-xs', style: 'color: var(--text-muted)' }, props.territory.assignedUser.name)
-                : null,
-              !props.territory.isActive
-                ? h(resolveComponent('el-tag'), { size: 'small', type: 'danger' }, () => 'Inactive')
-                : null
+    return () =>
+      h('div', { style: { paddingLeft: props.depth * 24 + 'px' } }, [
+        h(
+          'div',
+          {
+            class: 'glass-card p-4 mb-2 flex items-center justify-between',
+            style: { borderLeft: '3px solid ' + (props.territory.isActive ? '#7849ff' : '#a1a1aa') }
+          },
+          [
+            h('div', { class: 'flex items-center gap-3 flex-1' }, [
+              props.territory.children?.length
+                ? h(
+                    'div',
+                    {
+                      class: 'cursor-pointer',
+                      onClick: () => {
+                        expanded.value = !expanded.value;
+                      }
+                    },
+                    [
+                      h(resolveComponent('Icon'), {
+                        name: expanded.value ? 'ph:caret-down-bold' : 'ph:caret-right-bold',
+                        size: '16',
+                        style: 'color: var(--text-muted)'
+                      })
+                    ]
+                  )
+                : h('div', { style: 'width: 16px' }),
+              h('div', [
+                h('p', { class: 'text-sm font-semibold', style: 'color: var(--text-primary)' }, props.territory.name),
+                h('div', { class: 'flex items-center gap-2 mt-1' }, [
+                  h(resolveComponent('el-tag'), { size: 'small', type: 'info' }, () => props.territory.type),
+                  props.territory.assignedUser
+                    ? h('span', { class: 'text-xs', style: 'color: var(--text-muted)' }, props.territory.assignedUser.name)
+                    : null,
+                  !props.territory.isActive ? h(resolveComponent('el-tag'), { size: 'small', type: 'danger' }, () => 'Inactive') : null
+                ])
+              ])
+            ]),
+            h('div', { class: 'flex items-center gap-2' }, [
+              h(resolveComponent('el-button'), { size: 'small', class: '!rounded-lg', onClick: () => emit('edit', props.territory) }, () =>
+                h(resolveComponent('Icon'), { name: 'ph:pencil-bold', size: '14' })
+              ),
+              h(
+                resolveComponent('el-button'),
+                { size: 'small', type: 'danger', plain: true, class: '!rounded-lg', onClick: () => emit('delete', props.territory) },
+                () => h(resolveComponent('Icon'), { name: 'ph:trash-bold', size: '14' })
+              )
             ])
-          ])
-        ]),
-        h('div', { class: 'flex items-center gap-2' }, [
-          h(resolveComponent('el-button'), { size: 'small', class: '!rounded-lg', onClick: () => emit('edit', props.territory) }, () =>
-            h(resolveComponent('Icon'), { name: 'ph:pencil-bold', size: '14' })
-          ),
-          h(resolveComponent('el-button'), { size: 'small', type: 'danger', plain: true, class: '!rounded-lg', onClick: () => emit('delete', props.territory) }, () =>
-            h(resolveComponent('Icon'), { name: 'ph:trash-bold', size: '14' })
-          )
-        ])
-      ]),
-      expanded.value && props.territory.children?.length
-        ? props.territory.children.map(child =>
-            h(TerritoryNode, { territory: child, depth: props.depth + 1, onEdit: (t: Territory) => emit('edit', t), onDelete: (t: Territory) => emit('delete', t) })
-          )
-        : null
-    ]);
+          ]
+        ),
+        expanded.value && props.territory.children?.length
+          ? props.territory.children.map(child =>
+              h(TerritoryNode, {
+                territory: child,
+                depth: props.depth + 1,
+                onEdit: (t: Territory) => emit('edit', t),
+                onDelete: (t: Territory) => emit('delete', t)
+              })
+            )
+          : null
+      ]);
   }
 });
 </script>
@@ -221,7 +240,13 @@ const TerritoryNode: ReturnType<typeof defineComponent> = defineComponent({
 }
 
 @keyframes fadeIn {
-  from { opacity: 0; transform: translateY(10px); }
-  to { opacity: 1; transform: translateY(0); }
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
 }
 </style>

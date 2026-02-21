@@ -68,11 +68,7 @@ const activeTab = ref('all');
 const tableKey = ref(0);
 
 // Fetch initial data
-const [tasksResponse, statsResponse, usersResponse] = await Promise.all([
-  fetchTasks(),
-  fetchTaskStats(),
-  useApiFetch('users')
-]);
+const [tasksResponse, statsResponse, usersResponse] = await Promise.all([fetchTasks(), fetchTaskStats(), useApiFetch('users')]);
 
 const tasks = ref<Task[]>(tasksResponse.docs || []);
 const pagination = ref(tasksResponse.pagination);
@@ -161,10 +157,11 @@ const updateTableColumns = () => {
 
 updateTableColumns();
 
-const mappedUsers = usersResponse?.body?.docs?.map((e: any) => ({
-  label: e.name,
-  value: e.id
-})) || [];
+const mappedUsers =
+  usersResponse?.body?.docs?.map((e: any) => ({
+    label: e.name,
+    value: e.id
+  })) || [];
 
 const filterOptions = computed(() => [
   {

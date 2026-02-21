@@ -136,7 +136,12 @@ const summaryStats = computed(() => {
   return [
     { label: t('timeTracking.totalEntries') || 'Total Entries', value: entries.value.length, icon: 'ph:clock-bold', color: '#7849ff' },
     { label: t('timeTracking.totalHours') || 'Total Hours', value: totalHours.toFixed(1) + 'h', icon: 'ph:timer-bold', color: '#22c55e' },
-    { label: t('timeTracking.activeTimer') || 'Active Timer', value: activeTimer.value ? 'Running' : 'Stopped', icon: 'ph:play-circle-bold', color: activeTimer.value ? '#ef4444' : '#64748b' }
+    {
+      label: t('timeTracking.activeTimer') || 'Active Timer',
+      value: activeTimer.value ? 'Running' : 'Stopped',
+      icon: 'ph:play-circle-bold',
+      color: activeTimer.value ? '#ef4444' : '#64748b'
+    }
   ];
 });
 
@@ -157,7 +162,9 @@ async function loadEntries() {
       entries.value = body.docs || [];
       pagination.value = body.pagination || pagination.value;
     }
-  } finally { loading.value = false; }
+  } finally {
+    loading.value = false;
+  }
 }
 
 async function checkActiveTimer() {
@@ -173,7 +180,9 @@ async function checkActiveTimer() {
 function startElapsedCounter(startTime: string) {
   const start = new Date(startTime).getTime();
   elapsedSeconds.value = Math.floor((Date.now() - start) / 1000);
-  timerInterval = setInterval(() => { elapsedSeconds.value++; }, 1000);
+  timerInterval = setInterval(() => {
+    elapsedSeconds.value++;
+  }, 1000);
 }
 
 async function startTimer() {
@@ -185,7 +194,9 @@ async function startTimer() {
       startElapsedCounter(body.startTime);
       ElNotification({ type: 'success', title: t('common.success'), message: t('timeTracking.started') || 'Timer started' });
     }
-  } finally { starting.value = false; }
+  } finally {
+    starting.value = false;
+  }
 }
 
 async function stopTimer() {
@@ -194,12 +205,17 @@ async function stopTimer() {
     const { success } = await useApiFetch('time-tracking/stop', 'POST');
     if (success) {
       activeTimer.value = null;
-      if (timerInterval) { clearInterval(timerInterval); timerInterval = null; }
+      if (timerInterval) {
+        clearInterval(timerInterval);
+        timerInterval = null;
+      }
       elapsedSeconds.value = 0;
       await loadEntries();
       ElNotification({ type: 'success', title: t('common.success'), message: t('timeTracking.stopped') || 'Timer stopped' });
     }
-  } finally { stopping.value = false; }
+  } finally {
+    stopping.value = false;
+  }
 }
 
 async function submitManual() {
@@ -212,7 +228,9 @@ async function submitManual() {
       await loadEntries();
       ElNotification({ type: 'success', title: t('common.success'), message: t('common.saved') || 'Saved' });
     }
-  } finally { savingManual.value = false; }
+  } finally {
+    savingManual.value = false;
+  }
 }
 
 async function removeEntry(id: number) {
@@ -220,8 +238,12 @@ async function removeEntry(id: number) {
   if (success) await loadEntries();
 }
 
-function formatDate(d: string) { return d ? new Date(d).toLocaleDateString() : '—'; }
-function formatTime(d: string) { return d ? new Date(d).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }) : '—'; }
+function formatDate(d: string) {
+  return d ? new Date(d).toLocaleDateString() : '—';
+}
+function formatTime(d: string) {
+  return d ? new Date(d).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }) : '—';
+}
 function calculateDuration(start: string, end: string) {
   if (!start || !end) return '—';
   const diff = new Date(end).getTime() - new Date(start).getTime();

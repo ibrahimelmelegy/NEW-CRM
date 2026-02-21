@@ -94,12 +94,7 @@ div
 
 <script setup lang="ts">
 import { ElNotification } from 'element-plus';
-import {
-  fetchSalaryStructures,
-  createSalaryStructure,
-  updateSalaryStructure,
-  type SalaryStructureItem
-} from '~/composables/usePayroll';
+import { fetchSalaryStructures, createSalaryStructure, updateSalaryStructure, type SalaryStructureItem } from '~/composables/usePayroll';
 
 definePageMeta({ middleware: 'permissions' });
 
@@ -122,7 +117,9 @@ const form = ref({
 });
 
 const totalMonthlySalary = computed(() => {
-  return (form.value.basicSalary || 0) + (form.value.housingAllowance || 0) + (form.value.transportAllowance || 0) + (form.value.otherAllowances || 0);
+  return (
+    (form.value.basicSalary || 0) + (form.value.housingAllowance || 0) + (form.value.transportAllowance || 0) + (form.value.otherAllowances || 0)
+  );
 });
 
 const result = ref(await fetchSalaryStructures());
@@ -141,7 +138,9 @@ async function searchEmployees(query: string) {
       const data = body as any;
       employeeOptions.value = data.docs || data || [];
     }
-  } finally { searchingEmployees.value = false; }
+  } finally {
+    searchingEmployees.value = false;
+  }
 }
 
 function resetForm() {
@@ -202,6 +201,8 @@ async function handleSave() {
     } else {
       ElNotification({ type: 'error', title: 'Error', message: res.message });
     }
-  } finally { saving.value = false; }
+  } finally {
+    saving.value = false;
+  }
 }
 </script>

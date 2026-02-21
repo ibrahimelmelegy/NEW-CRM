@@ -126,7 +126,12 @@ const summaryStats = computed(() => {
 
   return [
     { label: t('currency.currencies.totalCurrencies') || 'Total Currencies', value: total, icon: 'ph:coins-bold', color: '#7849ff' },
-    { label: t('currency.currencies.defaultCurrency') || 'Default Currency', value: defaultCurrency?.code || '—', icon: 'ph:star-bold', color: '#22c55e' },
+    {
+      label: t('currency.currencies.defaultCurrency') || 'Default Currency',
+      value: defaultCurrency?.code || '—',
+      icon: 'ph:star-bold',
+      color: '#22c55e'
+    },
     { label: t('currency.currencies.exchangeRateRange') || 'Exchange Rate Range', value: rateRange, icon: 'ph:chart-line-up-bold', color: '#f59e0b' }
   ];
 });

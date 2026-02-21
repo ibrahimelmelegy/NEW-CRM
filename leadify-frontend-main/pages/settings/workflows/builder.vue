@@ -91,10 +91,8 @@ import NodeConfigPanel from '~/components/WorkflowBuilder/NodeConfigPanel.vue';
 const router = useRouter();
 const route = useRoute();
 
-const {
-  workflowName, isActive, nodes, edges, selectedNode, saving,
-  addNode, removeNode, addEdge, updateNodeConfig, saveWorkflow, loadWorkflow
-} = useWorkflowBuilder();
+const { workflowName, isActive, nodes, edges, selectedNode, saving, addNode, removeNode, addEdge, updateNodeConfig, saveWorkflow, loadWorkflow } =
+  useWorkflowBuilder();
 
 const configPanelOpen = ref(false);
 
@@ -140,7 +138,9 @@ onMounted(() => {
   margin: 0 auto;
 }
 
-.text-primary { color: var(--text-primary); }
+.text-primary {
+  color: var(--text-primary);
+}
 
 .builder-layout {
   display: flex;
@@ -182,13 +182,27 @@ onMounted(() => {
   color: white;
   flex-shrink: 0;
 
-  &.trigger { background: linear-gradient(135deg, #16a34a, #22c55e); }
-  &.action { background: linear-gradient(135deg, #7849ff, #a855f7); }
-  &.condition { background: linear-gradient(135deg, #ea580c, #f59e0b); }
-  &.delay { background: linear-gradient(135deg, #ca8a04, #eab308); }
-  &.http { background: linear-gradient(135deg, #2563eb, #3b82f6); }
-  &.template-icon { background: linear-gradient(135deg, #16a34a, #4ade80); }
-  &.approval { background: linear-gradient(135deg, #ea580c, #f97316); }
+  &.trigger {
+    background: linear-gradient(135deg, #16a34a, #22c55e);
+  }
+  &.action {
+    background: linear-gradient(135deg, #7849ff, #a855f7);
+  }
+  &.condition {
+    background: linear-gradient(135deg, #ea580c, #f59e0b);
+  }
+  &.delay {
+    background: linear-gradient(135deg, #ca8a04, #eab308);
+  }
+  &.http {
+    background: linear-gradient(135deg, #2563eb, #3b82f6);
+  }
+  &.template-icon {
+    background: linear-gradient(135deg, #16a34a, #4ade80);
+  }
+  &.approval {
+    background: linear-gradient(135deg, #ea580c, #f97316);
+  }
 }
 
 .palette-name {

@@ -92,8 +92,12 @@ const exportData = computed(() => table.data);
 
 // Bulk actions
 const selectedRows = ref<any[]>([]);
-function handleBulkDelete() { selectedRows.value = []; }
-function handleBulkExport() { selectedRows.value = []; }
+function handleBulkDelete() {
+  selectedRows.value = [];
+}
+function handleBulkExport() {
+  selectedRows.value = [];
+}
 
 const present = ref('');
 const reasons = ref('');
@@ -104,15 +108,15 @@ const wonPopup = ref(false);
 const opportunityPresent = computed(() => [
   {
     label: t('opportunities.convertDeal'),
-    value: "deal",
+    value: 'deal'
   },
   {
     label: t('opportunities.convertProject'),
-    value: "project",
+    value: 'project'
   },
   {
     label: t('common.cancel'),
-    value: "now",
+    value: 'now'
   }
 ]);
 
@@ -247,10 +251,7 @@ const table = reactive({
 });
 
 // Call API to Get the opportunity and users in parallel
-const [response, usersResponse] = await Promise.all([
-  useTableFilter('opportunity'),
-  useApiFetch('users')
-]);
+const [response, usersResponse] = await Promise.all([useTableFilter('opportunity'), useApiFetch('users')]);
 table.data = response.formattedData;
 
 function handleRowClick(val: any) {
@@ -300,7 +301,12 @@ const advancedSearchFields = [
   { key: 'name', label: t('opportunities.table.oppName'), type: 'string' },
   { key: 'stage', label: t('opportunities.table.stage'), type: 'select', options: stageOptions.map(o => ({ value: o.value, label: t(o.label) })) },
   { key: 'estimatedValue', label: t('opportunities.table.budget'), type: 'number' },
-  { key: 'priority', label: t('opportunities.table.priority'), type: 'select', options: priorityOptions.map(o => ({ value: o.value, label: t(o.label) })) },
+  {
+    key: 'priority',
+    label: t('opportunities.table.priority'),
+    type: 'select',
+    options: priorityOptions.map(o => ({ value: o.value, label: t(o.label) }))
+  },
   { key: 'expectedCloseDate', label: t('opportunities.table.closeDate'), type: 'date' },
   { key: 'createdAt', label: t('opportunities.table.created'), type: 'date' }
 ];

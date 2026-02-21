@@ -138,14 +138,7 @@
 <script setup lang="ts">
 import { ref, reactive } from 'vue';
 import { ElNotification, ElMessageBox } from 'element-plus';
-import {
-  fetchSLAPolicies,
-  createSLAPolicy,
-  updateSLAPolicy,
-  deleteSLAPolicy,
-  getSLAMetrics,
-  checkBreaches
-} from '~/composables/useSLA';
+import { fetchSLAPolicies, createSLAPolicy, updateSLAPolicy, deleteSLAPolicy, getSLAMetrics, checkBreaches } from '~/composables/useSLA';
 import type { SLAPolicy, SLAMetrics, EscalationRule } from '~/composables/useSLA';
 
 definePageMeta({ title: 'SLA Management' });
@@ -301,7 +294,13 @@ async function loadMetrics() {
 }
 
 @keyframes fadeIn {
-  from { opacity: 0; transform: translateY(10px); }
-  to { opacity: 1; transform: translateY(0); }
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
 }
 </style>

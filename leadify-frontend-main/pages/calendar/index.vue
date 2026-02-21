@@ -115,8 +115,14 @@ const formRef = ref();
 const weekDays = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
 
 const form = reactive({
-  title: '', description: '', startDate: '' as any, endDate: '' as any,
-  allDay: false, color: '', eventType: 'OTHER', location: ''
+  title: '',
+  description: '',
+  startDate: '' as any,
+  endDate: '' as any,
+  allDay: false,
+  color: '',
+  eventType: 'OTHER',
+  location: ''
 });
 
 const rules = {
@@ -205,10 +211,22 @@ async function loadEvents() {
   events.value = await fetchCalendarEvents({ start, end });
 }
 
-function prevMonth() { currentDate.value = new Date(currentDate.value.getFullYear(), currentDate.value.getMonth() - 1, 1); loadEvents(); }
-function nextMonth() { currentDate.value = new Date(currentDate.value.getFullYear(), currentDate.value.getMonth() + 1, 1); loadEvents(); }
-function goToToday() { currentDate.value = new Date(); selectedDate.value = new Date().toISOString().split('T')[0]!; loadEvents(); }
-function selectDate(date: string) { selectedDate.value = date; }
+function prevMonth() {
+  currentDate.value = new Date(currentDate.value.getFullYear(), currentDate.value.getMonth() - 1, 1);
+  loadEvents();
+}
+function nextMonth() {
+  currentDate.value = new Date(currentDate.value.getFullYear(), currentDate.value.getMonth() + 1, 1);
+  loadEvents();
+}
+function goToToday() {
+  currentDate.value = new Date();
+  selectedDate.value = new Date().toISOString().split('T')[0]!;
+  loadEvents();
+}
+function selectDate(date: string) {
+  selectedDate.value = date;
+}
 
 function openCreate() {
   resetForm();
@@ -221,17 +239,27 @@ function openCreate() {
 
 function editEvent(evt: CalendarEvent) {
   editingId.value = evt.id;
-  form.title = evt.title; form.description = evt.description || '';
-  form.startDate = new Date(evt.startDate); form.endDate = new Date(evt.endDate);
-  form.allDay = evt.allDay; form.color = evt.color || '';
-  form.eventType = evt.eventType; form.location = evt.location || '';
+  form.title = evt.title;
+  form.description = evt.description || '';
+  form.startDate = new Date(evt.startDate);
+  form.endDate = new Date(evt.endDate);
+  form.allDay = evt.allDay;
+  form.color = evt.color || '';
+  form.eventType = evt.eventType;
+  form.location = evt.location || '';
   showEditor.value = true;
 }
 
 function resetForm() {
   editingId.value = null;
-  form.title = ''; form.description = ''; form.startDate = ''; form.endDate = '';
-  form.allDay = false; form.color = ''; form.eventType = 'OTHER'; form.location = '';
+  form.title = '';
+  form.description = '';
+  form.startDate = '';
+  form.endDate = '';
+  form.allDay = false;
+  form.color = '';
+  form.eventType = 'OTHER';
+  form.location = '';
 }
 
 async function saveEvent() {
@@ -240,9 +268,7 @@ async function saveEvent() {
   saving.value = true;
   try {
     const payload = { ...form };
-    const res = editingId.value
-      ? await updateCalendarEvent(editingId.value, payload)
-      : await createCalendarEvent(payload);
+    const res = editingId.value ? await updateCalendarEvent(editingId.value, payload) : await createCalendarEvent(payload);
     if (res.success) {
       ElNotification({ type: 'success', title: t('common.success'), message: t('common.saved') });
       showEditor.value = false;
@@ -250,12 +276,16 @@ async function saveEvent() {
     } else {
       ElNotification({ type: 'error', title: t('common.error'), message: res.message });
     }
-  } finally { saving.value = false; }
+  } finally {
+    saving.value = false;
+  }
 }
 
 async function handleDelete(id: number) {
   const res = await deleteCalendarEvent(id);
-  if (res.success) { await loadEvents(); }
+  if (res.success) {
+    await loadEvents();
+  }
 }
 
 function formatTime(dateStr: string): string {
@@ -271,9 +301,15 @@ function formatTime(dateStr: string): string {
   cursor: pointer;
   transition: background 0.2s;
 }
-.calendar-cell:hover { background: var(--bg-input); }
-.calendar-cell.today { background: rgba(120, 73, 255, 0.06); }
-.calendar-cell.other-month { opacity: 0.4; }
+.calendar-cell:hover {
+  background: var(--bg-input);
+}
+.calendar-cell.today {
+  background: rgba(120, 73, 255, 0.06);
+}
+.calendar-cell.other-month {
+  opacity: 0.4;
+}
 .event-dot {
   font-size: 10px;
   padding: 1px 4px;

@@ -108,9 +108,7 @@ div
 <script setup lang="ts">
 import { ElNotification } from 'element-plus';
 import type { DocumentTemplate } from '~/composables/useDocumentTemplates';
-import {
-  fetchDocumentTemplates, deleteDocumentTemplate, cloneDocumentTemplate, seedDefaultTemplates
-} from '~/composables/useDocumentTemplates';
+import { fetchDocumentTemplates, deleteDocumentTemplate, cloneDocumentTemplate, seedDefaultTemplates } from '~/composables/useDocumentTemplates';
 
 definePageMeta({
   middleware: 'permissions',
@@ -136,7 +134,12 @@ const summaryStats = computed(() => {
   const invoices = all.filter(t => t.type === 'INVOICE').length;
   const pos = all.filter(t => t.type === 'PURCHASE_ORDER').length;
   return [
-    { label: t('documentTemplates.allTemplates') || 'All Templates', value: pagination.value.totalItems || all.length, icon: 'ph:file-doc-bold', color: '#7849ff' },
+    {
+      label: t('documentTemplates.allTemplates') || 'All Templates',
+      value: pagination.value.totalItems || all.length,
+      icon: 'ph:file-doc-bold',
+      color: '#7849ff'
+    },
     { label: t('documentTemplates.invoice'), value: invoices, icon: 'ph:receipt-bold', color: '#3b82f6' },
     { label: t('documentTemplates.purchaseOrder'), value: pos, icon: 'ph:shopping-cart-bold', color: '#f59e0b' }
   ];
@@ -157,7 +160,9 @@ async function loadTemplates() {
     const result = await fetchDocumentTemplates(query);
     templates.value = result.docs;
     pagination.value = { ...pagination.value, ...result.pagination };
-  } finally { loading.value = false; }
+  } finally {
+    loading.value = false;
+  }
 }
 
 function debouncedSearch() {
@@ -208,7 +213,9 @@ async function handleSeedDefaults() {
       ElNotification({ type: 'success', title: t('common.success'), message: t('documentTemplates.seeded') || 'Default templates seeded' });
       await loadTemplates();
     }
-  } finally { seeding.value = false; }
+  } finally {
+    seeding.value = false;
+  }
 }
 
 function miniElementStyle(el: any, layout: any) {

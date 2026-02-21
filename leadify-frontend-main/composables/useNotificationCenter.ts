@@ -25,15 +25,7 @@ interface NotificationGroup {
 }
 
 // Important notification types that warrant the "important" tab
-const IMPORTANT_TYPES = [
-  'DEAL_WON',
-  'SLA_BREACH',
-  'SLA_WARNING',
-  'INVOICE_OVERDUE',
-  'CONTRACT_EXPIRING',
-  'SYSTEM_ALERT',
-  'APPROVAL_REQUESTED'
-];
+const IMPORTANT_TYPES = ['DEAL_WON', 'SLA_BREACH', 'SLA_WARNING', 'INVOICE_OVERDUE', 'CONTRACT_EXPIRING', 'SYSTEM_ALERT', 'APPROVAL_REQUESTED'];
 
 // Shared state across all component instances
 const visible = ref(false);
@@ -93,9 +85,9 @@ export function useNotificationCenter() {
     const items = notifications.value;
     switch (activeTab.value) {
       case 'unread':
-        return items.filter((n) => n.read === 'UN_READ');
+        return items.filter(n => n.read === 'UN_READ');
       case 'important':
-        return items.filter((n) => IMPORTANT_TYPES.includes(n.type));
+        return items.filter(n => IMPORTANT_TYPES.includes(n.type));
       default:
         return items;
     }
@@ -157,7 +149,7 @@ export function useNotificationCenter() {
     try {
       const res = await useApiFetch('notification/', 'PUT');
       if (res?.success) {
-        notifications.value = notifications.value.map((n) => ({
+        notifications.value = notifications.value.map(n => ({
           ...n,
           read: 'READ' as const
         }));
@@ -173,7 +165,7 @@ export function useNotificationCenter() {
     try {
       const res = await useApiFetch(`notification/read/${id}` as any, 'PUT');
       if (res?.success) {
-        const idx = notifications.value.findIndex((n) => n.id === id);
+        const idx = notifications.value.findIndex(n => n.id === id);
         if (idx !== -1) {
           notifications.value[idx] = { ...notifications.value[idx], read: 'READ' };
           // Trigger reactivity
@@ -191,7 +183,7 @@ export function useNotificationCenter() {
     try {
       await useApiFetch(`notification/click/${notif.id}` as any, 'PUT', {}, true);
       // Update local state
-      const idx = notifications.value.findIndex((n) => n.id === notif.id);
+      const idx = notifications.value.findIndex(n => n.id === notif.id);
       if (idx !== -1 && notifications.value[idx].read === 'UN_READ') {
         notifications.value[idx] = { ...notifications.value[idx], read: 'CLICKED' };
         notifications.value = [...notifications.value];

@@ -4,9 +4,7 @@
     <div class="glass-panel p-6 rounded-2xl">
       <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
         <div>
-          <h1 class="text-2xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-emerald-400 to-green-400">
-            Sales Commissions
-          </h1>
+          <h1 class="text-2xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-emerald-400 to-green-400">Sales Commissions</h1>
           <p class="text-slate-400 text-sm mt-1">Track commission plans, calculate payouts, and monitor sales incentives.</p>
         </div>
         <div class="flex gap-2">
@@ -119,8 +117,16 @@
             <div class="space-y-2 my-3">
               <div v-for="(tier, idx) in plan.tiers" :key="idx" class="flex items-center justify-between p-2 rounded-lg bg-slate-800/30">
                 <div class="flex items-center gap-2">
-                  <div class="w-6 h-6 rounded-full flex items-center justify-center text-[10px] font-bold"
-                    :class="idx === 0 ? 'bg-blue-500/20 text-blue-400' : idx === 1 ? 'bg-purple-500/20 text-purple-400' : 'bg-emerald-500/20 text-emerald-400'">
+                  <div
+                    class="w-6 h-6 rounded-full flex items-center justify-center text-[10px] font-bold"
+                    :class="
+                      idx === 0
+                        ? 'bg-blue-500/20 text-blue-400'
+                        : idx === 1
+                          ? 'bg-purple-500/20 text-purple-400'
+                          : 'bg-emerald-500/20 text-emerald-400'
+                    "
+                  >
                     T{{ idx + 1 }}
                   </div>
                   <span class="text-xs text-slate-300">{{ tier.label }}</span>
@@ -136,10 +142,12 @@
 
             <div class="flex gap-2 mt-3">
               <el-button size="small" text type="primary" @click="editPlan(plan)">
-                <Icon name="ph:pencil-simple" class="w-4 h-4 mr-1" /> Edit
+                <Icon name="ph:pencil-simple" class="w-4 h-4 mr-1" />
+                Edit
               </el-button>
               <el-button size="small" text @click="duplicatePlan(plan)">
-                <Icon name="ph:copy" class="w-4 h-4 mr-1" /> Clone
+                <Icon name="ph:copy" class="w-4 h-4 mr-1" />
+                Clone
               </el-button>
             </div>
           </div>
@@ -149,12 +157,24 @@
       <!-- Leaderboard -->
       <el-tab-pane label="Leaderboard" name="leaderboard">
         <div class="space-y-3">
-          <div v-for="(rep, idx) in leaderboard" :key="rep.name"
+          <div
+            v-for="(rep, idx) in leaderboard"
+            :key="rep.name"
             class="glass-panel p-4 rounded-xl flex items-center gap-4"
             :class="idx < 3 ? 'border border-amber-500/20' : ''"
           >
-            <div class="w-10 h-10 rounded-full flex items-center justify-center font-bold text-lg"
-              :class="idx === 0 ? 'bg-amber-500/20 text-amber-400' : idx === 1 ? 'bg-slate-400/20 text-slate-300' : idx === 2 ? 'bg-amber-700/20 text-amber-600' : 'bg-slate-800/40 text-slate-500'">
+            <div
+              class="w-10 h-10 rounded-full flex items-center justify-center font-bold text-lg"
+              :class="
+                idx === 0
+                  ? 'bg-amber-500/20 text-amber-400'
+                  : idx === 1
+                    ? 'bg-slate-400/20 text-slate-300'
+                    : idx === 2
+                      ? 'bg-amber-700/20 text-amber-600'
+                      : 'bg-slate-800/40 text-slate-500'
+              "
+            >
               {{ idx + 1 }}
             </div>
             <el-avatar :size="40" class="bg-slate-700">{{ rep.name.charAt(0) }}</el-avatar>
@@ -167,8 +187,11 @@
               <div class="text-[10px] text-slate-500">Total Earnings</div>
             </div>
             <div class="w-32">
-              <el-progress :percentage="Math.round(rep.quotaAttainment)" :stroke-width="6"
-                :color="rep.quotaAttainment >= 100 ? '#10B981' : rep.quotaAttainment >= 75 ? '#F59E0B' : '#EF4444'" />
+              <el-progress
+                :percentage="Math.round(rep.quotaAttainment)"
+                :stroke-width="6"
+                :color="rep.quotaAttainment >= 100 ? '#10B981' : rep.quotaAttainment >= 75 ? '#F59E0B' : '#EF4444'"
+              />
               <div class="text-[10px] text-slate-500 text-center mt-0.5">{{ rep.quotaAttainment }}% quota</div>
             </div>
           </div>
@@ -251,7 +274,8 @@
               </el-button>
             </div>
             <el-button text type="primary" @click="newPlan.tiers.push({ label: '', minValue: 0, rate: 0 })">
-              <Icon name="ph:plus-bold" class="w-4 h-4 mr-1" /> Add Tier
+              <Icon name="ph:plus-bold" class="w-4 h-4 mr-1" />
+              Add Tier
             </el-button>
           </div>
         </el-form-item>
@@ -285,19 +309,60 @@ const commissionEntries = ref([
 ]);
 
 const commissionPlans = ref([
-  { id: 1, name: 'Enterprise Sales Plan', description: 'For enterprise account executives closing deals > 100K SAR', isActive: true, type: 'Tiered', assignedReps: 3,
-    tiers: [{ label: 'Base (0-200K)', rate: 5 }, { label: 'Mid (200K-500K)', rate: 7 }, { label: 'Accelerator (500K+)', rate: 10 }] },
-  { id: 2, name: 'Standard Sales Plan', description: 'Standard commission for mid-market sales reps', isActive: true, type: 'Revenue %', assignedReps: 4,
-    tiers: [{ label: 'All Revenue', rate: 5 }] },
-  { id: 3, name: 'SMB Plan', description: 'High volume SMB sales with lower rate', isActive: true, type: 'Revenue %', assignedReps: 3,
-    tiers: [{ label: 'Base', rate: 3 }, { label: 'Bonus (>20 deals)', rate: 4 }] },
-  { id: 4, name: 'Partner Referral Plan', description: 'Commission for partner-sourced deals', isActive: false, type: 'Fixed per Deal', assignedReps: 0,
-    tiers: [{ label: 'Per Referral', rate: 2 }] }
+  {
+    id: 1,
+    name: 'Enterprise Sales Plan',
+    description: 'For enterprise account executives closing deals > 100K SAR',
+    isActive: true,
+    type: 'Tiered',
+    assignedReps: 3,
+    tiers: [
+      { label: 'Base (0-200K)', rate: 5 },
+      { label: 'Mid (200K-500K)', rate: 7 },
+      { label: 'Accelerator (500K+)', rate: 10 }
+    ]
+  },
+  {
+    id: 2,
+    name: 'Standard Sales Plan',
+    description: 'Standard commission for mid-market sales reps',
+    isActive: true,
+    type: 'Revenue %',
+    assignedReps: 4,
+    tiers: [{ label: 'All Revenue', rate: 5 }]
+  },
+  {
+    id: 3,
+    name: 'SMB Plan',
+    description: 'High volume SMB sales with lower rate',
+    isActive: true,
+    type: 'Revenue %',
+    assignedReps: 3,
+    tiers: [
+      { label: 'Base', rate: 3 },
+      { label: 'Bonus (>20 deals)', rate: 4 }
+    ]
+  },
+  {
+    id: 4,
+    name: 'Partner Referral Plan',
+    description: 'Commission for partner-sourced deals',
+    isActive: false,
+    type: 'Fixed per Deal',
+    assignedReps: 0,
+    tiers: [{ label: 'Per Referral', rate: 2 }]
+  }
 ]);
 
 const leaderboard = computed(() =>
   [...commissionEntries.value]
-    .map(e => ({ name: e.rep, deals: e.dealsClosed, revenue: e.revenue, totalEarnings: e.commission + (e.bonus || 0), quotaAttainment: Math.round(e.revenue / 300000 * 100) }))
+    .map(e => ({
+      name: e.rep,
+      deals: e.dealsClosed,
+      revenue: e.revenue,
+      totalEarnings: e.commission + (e.bonus || 0),
+      quotaAttainment: Math.round((e.revenue / 300000) * 100)
+    }))
     .sort((a, b) => b.totalEarnings - a.totalEarnings)
 );
 
@@ -325,11 +390,26 @@ const formatCurrency = (val: number) => {
 const getSummary = ({ columns, data }: any) => {
   const sums: string[] = [];
   columns.forEach((_: any, idx: number) => {
-    if (idx === 0) { sums[idx] = 'Total'; return; }
-    if (idx === 2) { sums[idx] = String(data.reduce((s: number, r: any) => s + r.dealsClosed, 0)); return; }
-    if (idx === 3) { sums[idx] = formatCurrency(data.reduce((s: number, r: any) => s + r.revenue, 0)); return; }
-    if (idx === 5) { sums[idx] = formatCurrency(data.reduce((s: number, r: any) => s + r.commission, 0)); return; }
-    if (idx === 7) { sums[idx] = formatCurrency(data.reduce((s: number, r: any) => s + r.commission + (r.bonus || 0), 0)); return; }
+    if (idx === 0) {
+      sums[idx] = 'Total';
+      return;
+    }
+    if (idx === 2) {
+      sums[idx] = String(data.reduce((s: number, r: any) => s + r.dealsClosed, 0));
+      return;
+    }
+    if (idx === 3) {
+      sums[idx] = formatCurrency(data.reduce((s: number, r: any) => s + r.revenue, 0));
+      return;
+    }
+    if (idx === 5) {
+      sums[idx] = formatCurrency(data.reduce((s: number, r: any) => s + r.commission, 0));
+      return;
+    }
+    if (idx === 7) {
+      sums[idx] = formatCurrency(data.reduce((s: number, r: any) => s + r.commission + (r.bonus || 0), 0));
+      return;
+    }
     sums[idx] = '';
   });
   return sums;
@@ -339,7 +419,10 @@ const editPlan = (p: any) => ElMessage.info(`Editing: ${p.name}`);
 const duplicatePlan = (p: any) => ElMessage.info(`Cloning: ${p.name}`);
 const viewPayout = (p: any) => ElMessage.info(`Viewing: ${p.payoutId}`);
 const savePlan = () => {
-  if (!newPlan.value.name) { ElMessage.warning('Plan name required'); return; }
+  if (!newPlan.value.name) {
+    ElMessage.warning('Plan name required');
+    return;
+  }
   ElMessage.success('Commission plan created');
   showPlanDialog.value = false;
 };

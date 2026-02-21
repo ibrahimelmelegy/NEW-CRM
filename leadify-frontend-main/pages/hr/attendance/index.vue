@@ -118,7 +118,9 @@ async function handleCheckIn() {
     } else {
       ElNotification({ type: 'error', title: t('common.error'), message: res.message });
     }
-  } finally { checkingIn.value = false; }
+  } finally {
+    checkingIn.value = false;
+  }
 }
 
 async function handleCheckOut() {
@@ -131,7 +133,9 @@ async function handleCheckOut() {
     } else {
       ElNotification({ type: 'error', title: t('common.error'), message: res.message });
     }
-  } finally { checkingOut.value = false; }
+  } finally {
+    checkingOut.value = false;
+  }
 }
 
 async function refreshData() {

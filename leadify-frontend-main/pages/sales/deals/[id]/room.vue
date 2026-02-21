@@ -89,8 +89,12 @@ onMounted(() => {
   margin: 0 auto;
 }
 
-.text-primary { color: var(--text-primary); }
-.text-secondary { color: var(--text-secondary); }
+.text-primary {
+  color: var(--text-primary);
+}
+.text-secondary {
+  color: var(--text-secondary);
+}
 
 .stat-value {
   font-size: 24px;

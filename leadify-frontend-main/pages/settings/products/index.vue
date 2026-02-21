@@ -150,15 +150,13 @@ const filteredProducts = computed(() => {
   let result = products.value;
   if (searchQuery.value.trim()) {
     const q = searchQuery.value.toLowerCase();
-    result = result.filter(p =>
-      p.name?.toLowerCase().includes(q) || p.sku?.toLowerCase().includes(q) || p.description?.toLowerCase().includes(q)
-    );
+    result = result.filter(p => p.name?.toLowerCase().includes(q) || p.sku?.toLowerCase().includes(q) || p.description?.toLowerCase().includes(q));
   }
   if (categoryFilter.value) {
     result = result.filter(p => p.category === categoryFilter.value);
   }
   if (statusFilter.value) {
-    result = result.filter(p => statusFilter.value === 'active' ? p.isActive : !p.isActive);
+    result = result.filter(p => (statusFilter.value === 'active' ? p.isActive : !p.isActive));
   }
   return result;
 });
@@ -175,7 +173,9 @@ async function loadData() {
   }
 }
 
-await loadData().catch(() => { loading.value = false; });
+await loadData().catch(() => {
+  loading.value = false;
+});
 
 function formatCurrency(amount: number): string {
   return new Intl.NumberFormat('en-US', { style: 'currency', currency: 'SAR', minimumFractionDigits: 0 }).format(amount || 0);
@@ -259,7 +259,13 @@ async function handleDelete(product: CatalogProduct) {
 }
 
 @keyframes fadeIn {
-  from { opacity: 0; transform: translateY(10px); }
-  to { opacity: 1; transform: translateY(0); }
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
 }
 </style>

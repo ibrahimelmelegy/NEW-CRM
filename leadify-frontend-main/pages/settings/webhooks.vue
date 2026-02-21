@@ -63,9 +63,7 @@
 <script setup lang="ts">
 import { ElNotification, ElMessageBox } from 'element-plus';
 import type { WebhookConfig } from '~/composables/useWebhooks';
-import {
-  fetchWebhooks, createWebhook, updateWebhook, deleteWebhook, testWebhook, WEBHOOK_EVENTS
-} from '~/composables/useWebhooks';
+import { fetchWebhooks, createWebhook, updateWebhook, deleteWebhook, testWebhook, WEBHOOK_EVENTS } from '~/composables/useWebhooks';
 
 definePageMeta({
   middleware: 'permissions',
@@ -161,7 +159,13 @@ async function testWebhookHandler(id: string) {
   animation: fadeIn 0.4s ease-out;
 }
 @keyframes fadeIn {
-  from { opacity: 0; transform: translateY(10px); }
-  to { opacity: 1; transform: translateY(0); }
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
 }
 </style>

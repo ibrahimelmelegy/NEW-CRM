@@ -118,7 +118,7 @@ const {
   saveDashboard,
   loadDashboard,
   toggleEditMode,
-  getWidgetStyle,
+  getWidgetStyle
 } = useDashboardBuilder();
 
 const searchQuery = ref('');

@@ -4,9 +4,7 @@
     <div class="glass-panel p-6 rounded-2xl">
       <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
         <div>
-          <h1 class="text-2xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-indigo-400 to-blue-400">
-            Gantt Timeline
-          </h1>
+          <h1 class="text-2xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-indigo-400 to-blue-400">Gantt Timeline</h1>
           <p class="text-slate-400 text-sm mt-1">Visualize project schedules, dependencies, and milestones.</p>
         </div>
         <div class="flex gap-2">
@@ -55,7 +53,9 @@
           <span class="text-sm font-medium text-slate-300">Task Name</span>
         </div>
         <div class="flex-1 flex overflow-x-auto">
-          <div v-for="(date, idx) in timelineDates" :key="idx"
+          <div
+            v-for="(date, idx) in timelineDates"
+            :key="idx"
             class="flex-shrink-0 text-center p-2 border-r border-slate-800/30"
             :style="{ width: cellWidth + 'px' }"
             :class="isToday(date) ? 'bg-primary-500/10' : ''"
@@ -86,7 +86,9 @@
         <!-- Gantt Bar Area -->
         <div class="flex-1 relative overflow-x-auto" style="min-height: 48px">
           <div class="flex h-full">
-            <div v-for="(date, idx) in timelineDates" :key="idx"
+            <div
+              v-for="(date, idx) in timelineDates"
+              :key="idx"
               class="flex-shrink-0 border-r border-slate-800/20 h-full"
               :style="{ width: cellWidth + 'px' }"
               :class="isToday(date) ? 'bg-primary-500/5' : ''"
@@ -103,15 +105,26 @@
             </template>
             <template v-else>
               <!-- Progress Fill -->
-              <div class="absolute left-0 top-0 h-full rounded-md opacity-40" :style="{ width: task.progress + '%', backgroundColor: task.color }"></div>
+              <div
+                class="absolute left-0 top-0 h-full rounded-md opacity-40"
+                :style="{ width: task.progress + '%', backgroundColor: task.color }"
+              ></div>
               <span class="text-[10px] text-white font-medium relative z-10">{{ task.progress }}%</span>
             </template>
           </div>
 
           <!-- Dependency Arrow -->
           <svg v-if="task.dependency" class="absolute top-0 left-0 w-full h-full pointer-events-none" style="overflow: visible">
-            <line :x1="getDependencyLine(task).x1" y1="24" :x2="getDependencyLine(task).x2" y2="24"
-              stroke="#6366F1" stroke-width="1.5" stroke-dasharray="4 2" marker-end="url(#arrowhead)" />
+            <line
+              :x1="getDependencyLine(task).x1"
+              y1="24"
+              :x2="getDependencyLine(task).x2"
+              y2="24"
+              stroke="#6366F1"
+              stroke-width="1.5"
+              stroke-dasharray="4 2"
+              marker-end="url(#arrowhead)"
+            />
           </svg>
         </div>
       </div>
@@ -125,11 +138,26 @@
 
     <!-- Today Indicator Legend -->
     <div class="flex items-center gap-4 text-xs text-slate-500">
-      <div class="flex items-center gap-1"><div class="w-3 h-1 bg-primary-500 rounded"></div> Today</div>
-      <div class="flex items-center gap-1"><div class="w-3 h-3 rounded-sm bg-blue-500/40"></div> In Progress</div>
-      <div class="flex items-center gap-1"><div class="w-3 h-3 rounded-sm bg-emerald-500/40"></div> Completed</div>
-      <div class="flex items-center gap-1"><Icon name="ph:diamond-fill" class="w-3 h-3 text-amber-400" /> Milestone</div>
-      <div class="flex items-center gap-1"><div class="w-4 border-t border-dashed border-indigo-400"></div> Dependency</div>
+      <div class="flex items-center gap-1">
+        <div class="w-3 h-1 bg-primary-500 rounded"></div>
+        Today
+      </div>
+      <div class="flex items-center gap-1">
+        <div class="w-3 h-3 rounded-sm bg-blue-500/40"></div>
+        In Progress
+      </div>
+      <div class="flex items-center gap-1">
+        <div class="w-3 h-3 rounded-sm bg-emerald-500/40"></div>
+        Completed
+      </div>
+      <div class="flex items-center gap-1">
+        <Icon name="ph:diamond-fill" class="w-3 h-3 text-amber-400" />
+        Milestone
+      </div>
+      <div class="flex items-center gap-1">
+        <div class="w-4 border-t border-dashed border-indigo-400"></div>
+        Dependency
+      </div>
     </div>
 
     <!-- Add Task Dialog -->
@@ -165,7 +193,7 @@
     </el-dialog>
 
     <!-- SVG Defs for Arrowhead -->
-    <svg style="position: absolute; width: 0; height: 0;">
+    <svg style="position: absolute; width: 0; height: 0">
       <defs>
         <marker id="arrowhead" markerWidth="10" markerHeight="7" refX="10" refY="3.5" orient="auto">
           <polygon points="0 0, 10 3.5, 0 7" fill="#6366F1" />
@@ -198,19 +226,65 @@ interface GanttTask {
 
 const viewMode = ref('month');
 const showTaskDialog = ref(false);
-const cellWidth = computed(() => viewMode.value === 'week' ? 80 : viewMode.value === 'month' ? 40 : 20);
+const cellWidth = computed(() => (viewMode.value === 'week' ? 80 : viewMode.value === 'month' ? 40 : 20));
 
 const newTask = ref({ name: '', start: '', end: '', assignee: '', progress: 0, isMilestone: false });
 
 const tasks = ref<GanttTask[]>([
   { id: 1, name: 'Project Planning & Requirements', start: '2026-02-01', end: '2026-02-14', progress: 100, assignee: 'Ahmed F.', color: '#10B981' },
   { id: 2, name: 'UI/UX Design Phase', start: '2026-02-10', end: '2026-02-28', progress: 85, assignee: 'Sara M.', color: '#8B5CF6', dependency: 1 },
-  { id: 3, name: 'Backend API Development', start: '2026-02-15', end: '2026-03-15', progress: 60, assignee: 'Omar H.', color: '#3B82F6', dependency: 1 },
-  { id: 4, name: 'Frontend Implementation', start: '2026-02-20', end: '2026-03-20', progress: 40, assignee: 'Fatima A.', color: '#6366F1', dependency: 2 },
-  { id: 5, name: 'Design Review Milestone', start: '2026-02-28', end: '2026-02-28', progress: 0, assignee: 'Khalid I.', color: '#F59E0B', isMilestone: true },
+  {
+    id: 3,
+    name: 'Backend API Development',
+    start: '2026-02-15',
+    end: '2026-03-15',
+    progress: 60,
+    assignee: 'Omar H.',
+    color: '#3B82F6',
+    dependency: 1
+  },
+  {
+    id: 4,
+    name: 'Frontend Implementation',
+    start: '2026-02-20',
+    end: '2026-03-20',
+    progress: 40,
+    assignee: 'Fatima A.',
+    color: '#6366F1',
+    dependency: 2
+  },
+  {
+    id: 5,
+    name: 'Design Review Milestone',
+    start: '2026-02-28',
+    end: '2026-02-28',
+    progress: 0,
+    assignee: 'Khalid I.',
+    color: '#F59E0B',
+    isMilestone: true
+  },
   { id: 6, name: 'Integration Testing', start: '2026-03-10', end: '2026-03-25', progress: 15, assignee: 'Ahmed F.', color: '#EC4899', dependency: 3 },
-  { id: 7, name: 'User Acceptance Testing', start: '2026-03-20', end: '2026-04-01', progress: 0, assignee: 'Sara M.', color: '#14B8A6', dependency: 6 },
-  { id: 8, name: 'Production Deployment', start: '2026-04-01', end: '2026-04-01', progress: 0, assignee: 'Omar H.', color: '#F59E0B', isMilestone: true, dependency: 7 }
+  {
+    id: 7,
+    name: 'User Acceptance Testing',
+    start: '2026-03-20',
+    end: '2026-04-01',
+    progress: 0,
+    assignee: 'Sara M.',
+    color: '#14B8A6',
+    dependency: 6
+  },
+  {
+    id: 8,
+    name: 'Production Deployment',
+    start: '2026-04-01',
+    end: '2026-04-01',
+    progress: 0,
+    assignee: 'Omar H.',
+    color: '#F59E0B',
+    isMilestone: true,
+    dependency: 7
+  }
 ]);
 
 const overdueTasks = computed(() => tasks.value.filter(t => new Date(t.end) < new Date() && t.progress < 100).length);
@@ -255,13 +329,16 @@ const getDependencyLine = (task: GanttTask) => {
   const dep = tasks.value.find(t => t.id === task.dependency);
   if (!dep) return { x1: 0, x2: 0 };
   const timelineStart = new Date(timelineDates.value[0]);
-  const depEnd = (new Date(dep.end).getTime() - timelineStart.getTime()) / 86400000 * cellWidth.value;
-  const taskStart = (new Date(task.start).getTime() - timelineStart.getTime()) / 86400000 * cellWidth.value;
+  const depEnd = ((new Date(dep.end).getTime() - timelineStart.getTime()) / 86400000) * cellWidth.value;
+  const taskStart = ((new Date(task.start).getTime() - timelineStart.getTime()) / 86400000) * cellWidth.value;
   return { x1: depEnd, x2: taskStart };
 };
 
 const addTask = () => {
-  if (!newTask.value.name) { ElMessage.warning('Task name required'); return; }
+  if (!newTask.value.name) {
+    ElMessage.warning('Task name required');
+    return;
+  }
   const colors = ['#3B82F6', '#8B5CF6', '#10B981', '#EC4899', '#6366F1', '#14B8A6'];
   tasks.value.push({
     id: Date.now(),

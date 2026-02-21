@@ -83,10 +83,7 @@ import { CanvasRenderer } from 'echarts/renderers';
 import { BarChart, PieChart, LineChart } from 'echarts/charts';
 import { TitleComponent, TooltipComponent, LegendComponent, GridComponent } from 'echarts/components';
 import VChart from 'vue-echarts';
-import {
-  fetchSavedReports, executeReport, exportReportCSV,
-  type SavedReport, type ReportConfig
-} from '~/composables/useReportBuilder';
+import { fetchSavedReports, executeReport, exportReportCSV, type SavedReport, type ReportConfig } from '~/composables/useReportBuilder';
 
 use([CanvasRenderer, BarChart, PieChart, LineChart, TitleComponent, TooltipComponent, LegendComponent, GridComponent]);
 
@@ -139,14 +136,16 @@ const chartOption = computed(() => {
     return {
       tooltip: { trigger: 'item' },
       color: ['#7849FF', '#3B82F6', '#10B981', '#F97316', '#EF4444', '#A855F7', '#06B6D4'],
-      series: [{
-        type: 'pie',
-        radius: ['45%', '70%'],
-        itemStyle: { borderRadius: 8, borderColor: 'transparent', borderWidth: 2 },
-        label: { show: false },
-        emphasis: { label: { show: true, fontSize: 16, fontWeight: 'bold' } },
-        data: labels.map((l: string, i: number) => ({ name: l, value: values[i] }))
-      }]
+      series: [
+        {
+          type: 'pie',
+          radius: ['45%', '70%'],
+          itemStyle: { borderRadius: 8, borderColor: 'transparent', borderWidth: 2 },
+          label: { show: false },
+          emphasis: { label: { show: true, fontSize: 16, fontWeight: 'bold' } },
+          data: labels.map((l: string, i: number) => ({ name: l, value: values[i] }))
+        }
+      ]
     };
   }
 
@@ -155,11 +154,13 @@ const chartOption = computed(() => {
     grid: { top: 20, right: 20, bottom: 30, left: 40, containLabel: true },
     xAxis: { type: 'category', data: labels, axisLabel: { color: '#94A3B8' } },
     yAxis: { type: 'value', axisLabel: { color: '#64748B' }, splitLine: { lineStyle: { type: 'dashed', color: 'rgba(255,255,255,0.05)' } } },
-    series: [{
-      type: config.chartType || 'bar',
-      data: values,
-      itemStyle: { color: '#7849ff', borderRadius: [4, 4, 0, 0] }
-    }]
+    series: [
+      {
+        type: config.chartType || 'bar',
+        data: values,
+        itemStyle: { color: '#7849ff', borderRadius: [4, 4, 0, 0] }
+      }
+    ]
   };
 });
 

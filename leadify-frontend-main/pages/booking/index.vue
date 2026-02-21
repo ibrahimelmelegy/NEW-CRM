@@ -4,9 +4,7 @@
     <div class="glass-panel p-6 rounded-2xl">
       <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
         <div>
-          <h1 class="text-2xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-teal-400 to-cyan-400">
-            Booking & Scheduling
-          </h1>
+          <h1 class="text-2xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-teal-400 to-cyan-400">Booking & Scheduling</h1>
           <p class="text-slate-400 text-sm mt-1">Manage appointments, meetings, and resource bookings with calendar sync.</p>
         </div>
         <div class="flex gap-2">
@@ -157,11 +155,16 @@
       <div class="flex justify-between items-center mb-4">
         <h3 class="text-sm font-medium text-slate-300">Booking Pages</h3>
         <el-button type="primary" size="small" @click="showBookingTypeDialog = true">
-          <Icon name="ph:plus-bold" class="w-4 h-4 mr-2" /> New Page
+          <Icon name="ph:plus-bold" class="w-4 h-4 mr-2" />
+          New Page
         </el-button>
       </div>
       <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
-        <div v-for="page in bookingPages" :key="page.id" class="p-4 rounded-xl border border-slate-700/50 bg-slate-800/20 hover:border-primary-500/30 transition">
+        <div
+          v-for="page in bookingPages"
+          :key="page.id"
+          class="p-4 rounded-xl border border-slate-700/50 bg-slate-800/20 hover:border-primary-500/30 transition"
+        >
           <div class="flex items-center gap-3 mb-3">
             <div class="w-10 h-10 rounded-lg flex items-center justify-center" :style="{ backgroundColor: page.color + '20' }">
               <Icon :name="page.icon" class="w-5 h-5" :style="{ color: page.color }" />
@@ -174,7 +177,8 @@
           <div class="flex items-center justify-between text-xs text-slate-500">
             <span>{{ page.bookings }} bookings</span>
             <el-button text type="primary" size="small" @click="copyBookingLink(page)">
-              <Icon name="ph:link" class="w-3 h-3 mr-1" /> Copy Link
+              <Icon name="ph:link" class="w-3 h-3 mr-1" />
+              Copy Link
             </el-button>
           </div>
         </div>
@@ -280,13 +284,97 @@ const newPage = ref({ name: '', duration: 30, type: 'ONE_ON_ONE', buffer: 10 });
 const timeSlots = Array.from({ length: 12 }, (_, i) => i + 8); // 8 AM to 7 PM
 
 const bookings = ref([
-  { id: 1, title: 'Product Demo - TechCorp', clientName: 'Ahmed Al-Farsi', date: '2026-02-20', time: '09:00', duration: 60, type: 'DEMO', host: 'Sara M.', status: 'CONFIRMED', color: '#6366F1', hour: 9 },
-  { id: 2, title: 'Q1 Strategy Meeting', clientName: 'Internal', date: '2026-02-20', time: '10:30', duration: 90, type: 'MEETING', host: 'Ahmed F.', status: 'CONFIRMED', color: '#10B981', hour: 10 },
-  { id: 3, title: 'Consultation - StartupX', clientName: 'Omar Hassan', date: '2026-02-20', time: '13:00', duration: 45, type: 'CONSULTATION', host: 'Fatima A.', status: 'PENDING', color: '#F59E0B', hour: 13 },
-  { id: 4, title: 'Follow-up - Deal #234', clientName: 'Khalid Ibrahim', date: '2026-02-20', time: '14:00', duration: 30, type: 'FOLLOWUP', host: 'Sara M.', status: 'CONFIRMED', color: '#8B5CF6', hour: 14 },
-  { id: 5, title: 'Demo - Enterprise Plan', clientName: 'Noura Salem', date: '2026-02-20', time: '16:00', duration: 60, type: 'DEMO', host: 'Omar H.', status: 'PENDING', color: '#EC4899', hour: 16 },
-  { id: 6, title: 'Partnership Review', clientName: 'Yusuf Ahmed', date: '2026-02-21', time: '11:00', duration: 45, type: 'MEETING', host: 'Ahmed F.', status: 'CONFIRMED', color: '#14B8A6', hour: 11 },
-  { id: 7, title: 'Technical Onboarding', clientName: 'Layla M.', date: '2026-02-21', time: '09:00', duration: 120, type: 'CONSULTATION', host: 'Omar H.', status: 'CONFIRMED', color: '#3B82F6', hour: 9 }
+  {
+    id: 1,
+    title: 'Product Demo - TechCorp',
+    clientName: 'Ahmed Al-Farsi',
+    date: '2026-02-20',
+    time: '09:00',
+    duration: 60,
+    type: 'DEMO',
+    host: 'Sara M.',
+    status: 'CONFIRMED',
+    color: '#6366F1',
+    hour: 9
+  },
+  {
+    id: 2,
+    title: 'Q1 Strategy Meeting',
+    clientName: 'Internal',
+    date: '2026-02-20',
+    time: '10:30',
+    duration: 90,
+    type: 'MEETING',
+    host: 'Ahmed F.',
+    status: 'CONFIRMED',
+    color: '#10B981',
+    hour: 10
+  },
+  {
+    id: 3,
+    title: 'Consultation - StartupX',
+    clientName: 'Omar Hassan',
+    date: '2026-02-20',
+    time: '13:00',
+    duration: 45,
+    type: 'CONSULTATION',
+    host: 'Fatima A.',
+    status: 'PENDING',
+    color: '#F59E0B',
+    hour: 13
+  },
+  {
+    id: 4,
+    title: 'Follow-up - Deal #234',
+    clientName: 'Khalid Ibrahim',
+    date: '2026-02-20',
+    time: '14:00',
+    duration: 30,
+    type: 'FOLLOWUP',
+    host: 'Sara M.',
+    status: 'CONFIRMED',
+    color: '#8B5CF6',
+    hour: 14
+  },
+  {
+    id: 5,
+    title: 'Demo - Enterprise Plan',
+    clientName: 'Noura Salem',
+    date: '2026-02-20',
+    time: '16:00',
+    duration: 60,
+    type: 'DEMO',
+    host: 'Omar H.',
+    status: 'PENDING',
+    color: '#EC4899',
+    hour: 16
+  },
+  {
+    id: 6,
+    title: 'Partnership Review',
+    clientName: 'Yusuf Ahmed',
+    date: '2026-02-21',
+    time: '11:00',
+    duration: 45,
+    type: 'MEETING',
+    host: 'Ahmed F.',
+    status: 'CONFIRMED',
+    color: '#14B8A6',
+    hour: 11
+  },
+  {
+    id: 7,
+    title: 'Technical Onboarding',
+    clientName: 'Layla M.',
+    date: '2026-02-21',
+    time: '09:00',
+    duration: 120,
+    type: 'CONSULTATION',
+    host: 'Omar H.',
+    status: 'CONFIRMED',
+    color: '#3B82F6',
+    hour: 9
+  }
 ]);
 
 const bookingPages = ref([
@@ -304,12 +392,18 @@ const currentDateLabel = computed(() => {
 });
 
 const formatHour = (h: number) => `${h > 12 ? h - 12 : h}:00 ${h >= 12 ? 'PM' : 'AM'}`;
-const formatDate = (d: string) => d ? new Date(d).toLocaleDateString('en', { weekday: 'short', month: 'short', day: 'numeric' }) : '-';
+const formatDate = (d: string) => (d ? new Date(d).toLocaleDateString('en', { weekday: 'short', month: 'short', day: 'numeric' }) : '-');
 
 const getBookingsForHour = (hour: number) => bookings.value.filter(b => b.hour === hour && b.date === '2026-02-20');
 
 const getBookingStatusType = (s: string): 'success' | 'warning' | 'info' | 'danger' | undefined => {
-  const m: Record<string, 'success' | 'warning' | 'info' | 'danger' | undefined> = { CONFIRMED: 'success', PENDING: 'warning', CANCELLED: 'danger', NO_SHOW: 'danger', COMPLETED: 'info' };
+  const m: Record<string, 'success' | 'warning' | 'info' | 'danger' | undefined> = {
+    CONFIRMED: 'success',
+    PENDING: 'warning',
+    CANCELLED: 'danger',
+    NO_SHOW: 'danger',
+    COMPLETED: 'info'
+  };
   return m[s] || 'info';
 };
 
@@ -318,22 +412,42 @@ const navigateDay = (offset: number) => {
   d.setDate(d.getDate() + offset);
   currentDate.value = d;
 };
-const goToToday = () => { currentDate.value = new Date(); };
+const goToToday = () => {
+  currentDate.value = new Date();
+};
 
 const openBooking = (b: any) => ElMessage.info(`Opening: ${b.title}`);
-const confirmBooking = (b: any) => { b.status = 'CONFIRMED'; ElMessage.success('Booking confirmed'); };
-const cancelBooking = (b: any) => { b.status = 'CANCELLED'; ElMessage.success('Booking cancelled'); };
-const quickBook = (hour: number) => { newBooking.value.time = `${hour}:00`; showBookingDialog.value = true; };
-const copyBookingLink = (page: any) => { navigator.clipboard?.writeText(`https://book.example.com/${page.id}`); ElMessage.success('Link copied!'); };
+const confirmBooking = (b: any) => {
+  b.status = 'CONFIRMED';
+  ElMessage.success('Booking confirmed');
+};
+const cancelBooking = (b: any) => {
+  b.status = 'CANCELLED';
+  ElMessage.success('Booking cancelled');
+};
+const quickBook = (hour: number) => {
+  newBooking.value.time = `${hour}:00`;
+  showBookingDialog.value = true;
+};
+const copyBookingLink = (page: any) => {
+  navigator.clipboard?.writeText(`https://book.example.com/${page.id}`);
+  ElMessage.success('Link copied!');
+};
 
 const createBooking = () => {
-  if (!newBooking.value.title) { ElMessage.warning('Title required'); return; }
+  if (!newBooking.value.title) {
+    ElMessage.warning('Title required');
+    return;
+  }
   ElMessage.success('Booking scheduled');
   showBookingDialog.value = false;
 };
 
 const createBookingPage = () => {
-  if (!newPage.value.name) { ElMessage.warning('Page name required'); return; }
+  if (!newPage.value.name) {
+    ElMessage.warning('Page name required');
+    return;
+  }
   ElMessage.success('Booking page created');
   showBookingTypeDialog.value = false;
 };

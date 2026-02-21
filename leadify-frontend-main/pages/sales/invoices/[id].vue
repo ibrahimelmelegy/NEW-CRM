@@ -155,13 +155,7 @@ div
 <script setup lang="ts">
 import { ElMessageBox, ElNotification } from 'element-plus';
 import type { InvoiceDetail } from '~/composables/useInvoiceBilling';
-import {
-  getInvoiceDetail,
-  markInvoiceSent,
-  voidInvoice,
-  createCreditNote,
-  formatCurrency
-} from '~/composables/useInvoiceBilling';
+import { getInvoiceDetail, markInvoiceSent, voidInvoice, createCreditNote, formatCurrency } from '~/composables/useInvoiceBilling';
 
 definePageMeta({ middleware: 'permissions' });
 
@@ -195,7 +189,9 @@ function goBack() {
 function formatDate(date?: string): string {
   if (!date) return '--';
   return new Date(date).toLocaleDateString('en-US', {
-    year: 'numeric', month: 'short', day: 'numeric'
+    year: 'numeric',
+    month: 'short',
+    day: 'numeric'
   });
 }
 
@@ -227,22 +223,28 @@ async function handleSend() {
     sending.value = true;
     const success = await markInvoiceSent(Number(route.params.id));
     if (success) await loadInvoice();
-  } catch { /* cancelled */ }
-  finally { sending.value = false; }
+  } catch {
+    /* cancelled */
+  } finally {
+    sending.value = false;
+  }
 }
 
 async function handleVoid() {
   try {
-    await ElMessageBox.confirm(
-      'Voiding this invoice is irreversible. Continue?',
-      'Void Invoice',
-      { confirmButtonText: 'Void', cancelButtonText: 'Cancel', type: 'warning' }
-    );
+    await ElMessageBox.confirm('Voiding this invoice is irreversible. Continue?', 'Void Invoice', {
+      confirmButtonText: 'Void',
+      cancelButtonText: 'Cancel',
+      type: 'warning'
+    });
     voiding.value = true;
     const success = await voidInvoice(Number(route.params.id));
     if (success) await loadInvoice();
-  } catch { /* cancelled */ }
-  finally { voiding.value = false; }
+  } catch {
+    /* cancelled */
+  } finally {
+    voiding.value = false;
+  }
 }
 
 async function handleCreateCreditNote() {
@@ -274,8 +276,8 @@ onMounted(() => {
 
 <style scoped>
 .glass-card {
-  background: var(--glass-bg, rgba(255,255,255,0.06));
+  background: var(--glass-bg, rgba(255, 255, 255, 0.06));
   backdrop-filter: blur(var(--glass-blur, 12px));
-  border: 1px solid var(--glass-border, rgba(255,255,255,0.08));
+  border: 1px solid var(--glass-border, rgba(255, 255, 255, 0.08));
 }
 </style>

@@ -66,16 +66,7 @@ import { usePlaybook } from '~/composables/usePlaybook';
 
 definePageMeta({ layout: 'default' });
 
-const {
-  playbooks,
-  selectedPlaybook,
-  loading,
-  fetchPlaybooks,
-  getProgress,
-  toggleStep,
-  getOverallCompletion,
-  resetProgress
-} = usePlaybook();
+const { playbooks, selectedPlaybook, loading, fetchPlaybooks, getProgress, toggleStep, getOverallCompletion, resetProgress } = usePlaybook();
 
 const selectedId = ref('');
 // Reactive trigger to force re-computation when steps are toggled
@@ -103,9 +94,7 @@ const completedStepsCount = computed(() => {
   const _v = progressVersion.value;
   if (!selectedPlaybook.value) return 0;
   const progress = getProgress(selectedPlaybook.value.id);
-  return selectedPlaybook.value.stages.reduce(
-    (sum, s) => sum + s.steps.filter(step => progress[step.id]).length, 0
-  );
+  return selectedPlaybook.value.stages.reduce((sum, s) => sum + s.steps.filter(step => progress[step.id]).length, 0);
 });
 
 function handleToggleStep(stepId: string) {

@@ -33,7 +33,7 @@ const ROUTE_MAP: Record<string, string> = {
   reports: '/reports',
   notifications: '/notification',
   settings: '/settings',
-  analytics: '/analytics',
+  analytics: '/analytics'
 };
 
 // Create route map
@@ -51,7 +51,7 @@ const CREATE_ROUTE_MAP: Record<string, string> = {
   service: '/operations/services/add-service',
   material: '/operations/additional-material/add-additional-material',
   staff: '/staff/add-staff',
-  role: '/roles/add-role',
+  role: '/roles/add-role'
 };
 
 // API endpoint map for list commands
@@ -70,13 +70,11 @@ const LIST_ENDPOINT_MAP: Record<string, string> = {
   project: 'project',
   tasks: 'daily-task',
   task: 'daily-task',
-  staff: 'staff',
+  staff: 'staff'
 };
 
 // All available commands for autocomplete
-const ALL_COMMANDS = [
-  'goto', 'list', 'search', 'find', 'create', 'help', 'clear', 'history', 'theme',
-];
+const ALL_COMMANDS = ['goto', 'list', 'search', 'find', 'create', 'help', 'clear', 'history', 'theme'];
 
 const GOTO_TARGETS = Object.keys(ROUTE_MAP);
 const CREATE_TARGETS = Object.keys(CREATE_ROUTE_MAP);
@@ -96,13 +94,17 @@ if (typeof window !== 'undefined') {
   try {
     const saved = localStorage.getItem(HISTORY_KEY);
     if (saved) history.value = JSON.parse(saved);
-  } catch { /* ignore */ }
+  } catch {
+    /* ignore */
+  }
 }
 
 function saveHistory() {
   try {
     localStorage.setItem(HISTORY_KEY, JSON.stringify(history.value.slice(0, MAX_HISTORY)));
-  } catch { /* ignore */ }
+  } catch {
+    /* ignore */
+  }
 }
 
 function addLine(type: TerminalLine['type'], content: string, data?: any[]) {
@@ -134,7 +136,7 @@ export function useCommandTerminal() {
   function toggle() {
     isOpen.value = !isOpen.value;
     if (isOpen.value && output.value.length === 0) {
-      addLine('info', 'Welcome to CRM Terminal. Type \'help\' for available commands.');
+      addLine('info', "Welcome to CRM Terminal. Type 'help' for available commands.");
     }
   }
 
@@ -221,7 +223,9 @@ export function useCommandTerminal() {
       addLine('result', `Navigating to ${target}...`);
       router.push(route);
       // Close terminal after navigation
-      setTimeout(() => { isOpen.value = false; }, 300);
+      setTimeout(() => {
+        isOpen.value = false;
+      }, 300);
     } else {
       addLine('error', `Unknown page: '${target}'`);
       addLine('info', `Available pages: ${GOTO_TARGETS.join(', ')}`);
@@ -256,9 +260,7 @@ export function useCommandTerminal() {
     try {
       const response = await useApiFetch(`${endpoint}${queryParams}` as any);
       if (response?.success && response?.body) {
-        const items = Array.isArray(response.body)
-          ? response.body
-          : (response.body as any)?.docs || (response.body as any)?.rows || [];
+        const items = Array.isArray(response.body) ? response.body : (response.body as any)?.docs || (response.body as any)?.rows || [];
 
         if (items.length === 0) {
           addLine('result', 'No results found.');
@@ -270,7 +272,7 @@ export function useCommandTerminal() {
           ID: item.id || '-',
           Name: item.name || item.title || item.companyName || '-',
           Status: item.status || item.stage || '-',
-          Created: item.createdAt ? new Date(item.createdAt).toLocaleDateString() : '-',
+          Created: item.createdAt ? new Date(item.createdAt).toLocaleDateString() : '-'
         }));
 
         addLine('table', `Found ${items.length} ${entity}:`, displayItems);
@@ -311,7 +313,7 @@ export function useCommandTerminal() {
         const displayItems = items.slice(0, 10).map((item: any) => ({
           Type: item.entityType || '-',
           Name: item.name || item.title || item.email || '-',
-          ID: item.id || '-',
+          ID: item.id || '-'
         }));
 
         addLine('table', `Found ${items.length} result(s):`, displayItems);
@@ -336,7 +338,9 @@ export function useCommandTerminal() {
     if (route) {
       addLine('result', `Opening create ${entity} form...`);
       router.push(route);
-      setTimeout(() => { isOpen.value = false; }, 300);
+      setTimeout(() => {
+        isOpen.value = false;
+      }, 300);
     } else {
       addLine('error', `Cannot create '${entity}'.`);
       addLine('info', `Available entities: ${CREATE_TARGETS.join(', ')}`);
@@ -409,14 +413,12 @@ export function useCommandTerminal() {
         historyIndex.value++;
         input.value = history.value[historyIndex.value];
       }
-    } else {
-      if (historyIndex.value > 0) {
-        historyIndex.value--;
-        input.value = history.value[historyIndex.value];
-      } else if (historyIndex.value === 0) {
-        historyIndex.value = -1;
-        input.value = '';
-      }
+    } else if (historyIndex.value > 0) {
+      historyIndex.value--;
+      input.value = history.value[historyIndex.value];
+    } else if (historyIndex.value === 0) {
+      historyIndex.value = -1;
+      input.value = '';
     }
   }
 
@@ -488,6 +490,6 @@ export function useCommandTerminal() {
     execute,
     navigateHistory,
     autocomplete,
-    clear,
+    clear
   };
 }

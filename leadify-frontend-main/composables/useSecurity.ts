@@ -104,7 +104,7 @@ export function useSecurity() {
     try {
       const response = await useApiFetch(`security/session/sessions/${sessionId}`, 'DELETE');
       if (response.success) {
-        sessions.value = sessions.value.filter((s) => s.id !== sessionId);
+        sessions.value = sessions.value.filter(s => s.id !== sessionId);
         return true;
       }
       error.value = response.message;
@@ -124,7 +124,7 @@ export function useSecurity() {
       const response = await useApiFetch('security/session/sessions', 'DELETE');
       if (response.success) {
         // Only keep the current session
-        sessions.value = sessions.value.filter((s) => s.isCurrent);
+        sessions.value = sessions.value.filter(s => s.isCurrent);
         return true;
       }
       error.value = response.message;
@@ -150,9 +150,7 @@ export function useSecurity() {
         }
       });
       const qs = params.toString();
-      const response = await useApiFetch<PaginatedLoginHistory>(
-        `security/session/login-history${qs ? `?${qs}` : ''}`
-      );
+      const response = await useApiFetch<PaginatedLoginHistory>(`security/session/login-history${qs ? `?${qs}` : ''}`);
       if (response.success && response.body) {
         loginHistory.value = response.body;
       } else {
@@ -188,11 +186,7 @@ export function useSecurity() {
     loading.value = true;
     error.value = null;
     try {
-      const response = await useApiFetch<IPWhitelistEntry>(
-        'security/session/ip-whitelist',
-        'POST',
-        { ip, label }
-      );
+      const response = await useApiFetch<IPWhitelistEntry>('security/session/ip-whitelist', 'POST', { ip, label });
       if (response.success && response.body) {
         ipWhitelist.value.unshift(response.body);
         return true;
@@ -213,7 +207,7 @@ export function useSecurity() {
     try {
       const response = await useApiFetch(`security/session/ip-whitelist/${id}`, 'DELETE');
       if (response.success) {
-        ipWhitelist.value = ipWhitelist.value.filter((entry) => entry.id !== id);
+        ipWhitelist.value = ipWhitelist.value.filter(entry => entry.id !== id);
         return true;
       }
       error.value = response.message;
@@ -251,10 +245,7 @@ export function useSecurity() {
     loading.value = true;
     error.value = null;
     try {
-      const response = await useApiFetch<Record<string, any>>(
-        'security/session/export-data',
-        'POST'
-      );
+      const response = await useApiFetch<Record<string, any>>('security/session/export-data', 'POST');
       if (response.success && response.body) {
         return response.body;
       }

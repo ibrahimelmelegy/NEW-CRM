@@ -47,10 +47,10 @@ div(class="animate-fade-in")
 <script setup lang="ts">
 import { useI18n } from 'vue-i18n';
 import { Plus } from '@element-plus/icons-vue';
+import { computed, reactive, ref } from 'vue';
 import PremiumPageHeader from '~/components/UI/PremiumPageHeader.vue';
 import PremiumKPICards from '~/components/UI/PremiumKPICards.vue';
 import type { KPIMetric } from '~/components/UI/PremiumKPICards.vue';
-import { computed, reactive, ref } from 'vue';
 
 const router = useRouter();
 const { hasPermission } = await usePermissions();
@@ -72,8 +72,12 @@ const exportData = computed(() => table.data);
 
 // Bulk actions
 const selectedRows = ref<any[]>([]);
-function handleBulkDelete() { selectedRows.value = []; }
-function handleBulkExport() { selectedRows.value = []; }
+function handleBulkDelete() {
+  selectedRows.value = [];
+}
+function handleBulkExport() {
+  selectedRows.value = [];
+}
 
 const table = reactive({
   columns: [
@@ -148,18 +152,15 @@ const table = reactive({
 });
 
 // Call API to Get the client and users in parallel
-let [response, usersResponse] = await Promise.all([
-  useTableFilter('client'),
-  useApiFetch('users')
-]);
+const [response, usersResponse] = await Promise.all([useTableFilter('client'), useApiFetch('users')]);
 table.data = response.formattedData;
 
 const kpiMetrics = computed<KPIMetric[]>(() => {
   const data = table.data || [];
   const total = data.length;
   const active = data.filter((c: any) => c.clientStatus === 'ACTIVE' || c.status === 'ACTIVE').length;
-  const churnRisk = data.length > 5 ? 1 : 0; 
-  
+  const churnRisk = data.length > 5 ? 1 : 0;
+
   return [
     { label: 'Total Clients', value: total, icon: 'ph:buildings-bold', color: '#3b82f6', trend: '+4%', trendType: 'up' },
     { label: 'Active Clients', value: active, icon: 'ph:check-circle-bold', color: '#10b981' },

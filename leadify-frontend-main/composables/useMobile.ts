@@ -88,7 +88,7 @@ export function useMobile() {
       isSwiping,
       onTouchStart,
       onTouchMove,
-      onTouchEnd,
+      onTouchEnd
     };
   }
 
@@ -137,6 +137,6 @@ export function useMobile() {
     hasTouch,
     orientation,
     useSwipe,
-    vibrate,
+    vibrate
   };
 }

@@ -229,15 +229,13 @@ const formRef = ref();
 const submitting = ref(false);
 
 const form = reactive({
-    clientId: null as string | null,
-    dealId: null as string | null,
-    paymentTerms: 'Net 30',
-    currency: 'SAR',
-    shippingAddress: '',
-    notes: '',
-    items: [
-        { description: '', quantity: 1, unitPrice: 0, taxRate: 15, discountRate: 0 }
-    ] as any[]
+  clientId: null as string | null,
+  dealId: null as string | null,
+  paymentTerms: 'Net 30',
+  currency: 'SAR',
+  shippingAddress: '',
+  notes: '',
+  items: [{ description: '', quantity: 1, unitPrice: 0, taxRate: 15, discountRate: 0 }] as any[]
 });
 
 const clients = ref<any[]>([]);
@@ -245,237 +243,261 @@ const deals = ref<any[]>([]);
 
 // Fetch clients and deals on mount
 onMounted(async () => {
-    const clientRes = await useApiFetch('client?limit=500');
-    clients.value = clientRes?.body?.docs || [];
+  const clientRes = await useApiFetch('client?limit=500');
+  clients.value = clientRes?.body?.docs || [];
 
-    const dealRes = await useApiFetch('deal?limit=500');
-    deals.value = dealRes?.body?.docs || [];
+  const dealRes = await useApiFetch('deal?limit=500');
+  deals.value = dealRes?.body?.docs || [];
 });
 
 const selectedClientName = computed(() => {
-    if (!form.clientId) return '';
-    const client = clients.value.find((c: any) => c.id === form.clientId);
-    return client?.clientName || '';
+  if (!form.clientId) return '';
+  const client = clients.value.find((c: any) => c.id === form.clientId);
+  return client?.clientName || '';
 });
 
 function addItem() {
-    form.items.push({ description: '', quantity: 1, unitPrice: 0, taxRate: 15, discountRate: 0 });
+  form.items.push({ description: '', quantity: 1, unitPrice: 0, taxRate: 15, discountRate: 0 });
 }
 
 function calcLineTotal(row: any): number {
-    const qty = Number(row.quantity) || 0;
-    const price = Number(row.unitPrice) || 0;
-    const taxRate = Number(row.taxRate) || 0;
-    const discountRate = Number(row.discountRate) || 0;
+  const qty = Number(row.quantity) || 0;
+  const price = Number(row.unitPrice) || 0;
+  const taxRate = Number(row.taxRate) || 0;
+  const discountRate = Number(row.discountRate) || 0;
 
-    const lineBase = qty * price;
-    const lineDiscount = lineBase * (discountRate / 100);
-    const lineAfterDiscount = lineBase - lineDiscount;
-    const lineTax = lineAfterDiscount * (taxRate / 100);
-    return lineAfterDiscount + lineTax;
+  const lineBase = qty * price;
+  const lineDiscount = lineBase * (discountRate / 100);
+  const lineAfterDiscount = lineBase - lineDiscount;
+  const lineTax = lineAfterDiscount * (taxRate / 100);
+  return lineAfterDiscount + lineTax;
 }
 
 const subtotal = computed(() => {
-    return form.items.reduce((acc, item) => acc + (Number(item.quantity) || 0) * (Number(item.unitPrice) || 0), 0);
+  return form.items.reduce((acc, item) => acc + (Number(item.quantity) || 0) * (Number(item.unitPrice) || 0), 0);
 });
 
 const taxTotal = computed(() => {
-    return form.items.reduce((acc, item) => {
-        const lineBase = (Number(item.quantity) || 0) * (Number(item.unitPrice) || 0);
-        const lineDiscount = lineBase * ((Number(item.discountRate) || 0) / 100);
-        const lineAfterDiscount = lineBase - lineDiscount;
-        return acc + lineAfterDiscount * ((Number(item.taxRate) || 0) / 100);
-    }, 0);
+  return form.items.reduce((acc, item) => {
+    const lineBase = (Number(item.quantity) || 0) * (Number(item.unitPrice) || 0);
+    const lineDiscount = lineBase * ((Number(item.discountRate) || 0) / 100);
+    const lineAfterDiscount = lineBase - lineDiscount;
+    return acc + lineAfterDiscount * ((Number(item.taxRate) || 0) / 100);
+  }, 0);
 });
 
 const discountTotal = computed(() => {
-    return form.items.reduce((acc, item) => {
-        const lineBase = (Number(item.quantity) || 0) * (Number(item.unitPrice) || 0);
-        return acc + lineBase * ((Number(item.discountRate) || 0) / 100);
-    }, 0);
+  return form.items.reduce((acc, item) => {
+    const lineBase = (Number(item.quantity) || 0) * (Number(item.unitPrice) || 0);
+    return acc + lineBase * ((Number(item.discountRate) || 0) / 100);
+  }, 0);
 });
 
 const grandTotal = computed(() => {
-    return subtotal.value - discountTotal.value + taxTotal.value;
+  return subtotal.value - discountTotal.value + taxTotal.value;
 });
 
 async function handleSubmit() {
-    try {
-        await formRef.value.validate();
-    } catch {
-        return;
-    }
+  try {
+    await formRef.value.validate();
+  } catch {
+    return;
+  }
 
-    if (form.items.length === 0) {
-        return ElNotification({ title: 'Error', message: 'Add at least one item', type: 'warning' });
-    }
+  if (form.items.length === 0) {
+    return ElNotification({ title: 'Error', message: 'Add at least one item', type: 'warning' });
+  }
 
-    // Validate items
-    for (const item of form.items) {
-        if (!item.description?.trim()) {
-            return ElNotification({ title: 'Error', message: 'All items must have a description', type: 'warning' });
-        }
+  // Validate items
+  for (const item of form.items) {
+    if (!item.description?.trim()) {
+      return ElNotification({ title: 'Error', message: 'All items must have a description', type: 'warning' });
     }
+  }
 
-    submitting.value = true;
-    try {
-        const payload = {
-            clientId: form.clientId,
-            dealId: form.dealId || undefined,
-            paymentTerms: form.paymentTerms,
-            currency: form.currency,
-            shippingAddress: form.shippingAddress || undefined,
-            notes: form.notes || undefined,
-            items: form.items.map(item => ({
-                description: item.description,
-                quantity: item.quantity,
-                unitPrice: item.unitPrice,
-                taxRate: item.taxRate,
-                discountRate: item.discountRate
-            }))
-        };
+  submitting.value = true;
+  try {
+    const payload = {
+      clientId: form.clientId,
+      dealId: form.dealId || undefined,
+      paymentTerms: form.paymentTerms,
+      currency: form.currency,
+      shippingAddress: form.shippingAddress || undefined,
+      notes: form.notes || undefined,
+      items: form.items.map(item => ({
+        description: item.description,
+        quantity: item.quantity,
+        unitPrice: item.unitPrice,
+        taxRate: item.taxRate,
+        discountRate: item.discountRate
+      }))
+    };
 
-        const result = await createSalesOrder(payload);
-        if (result) {
-            navigateTo('/sales/sales-orders');
-        }
-    } finally {
-        submitting.value = false;
+    const result = await createSalesOrder(payload);
+    if (result) {
+      navigateTo('/sales/sales-orders');
     }
+  } finally {
+    submitting.value = false;
+  }
 }
 </script>
 
 <style scoped lang="scss">
 .text-gradient {
-    background: var(--gradient-primary);
-    -webkit-background-clip: text;
-    background-clip: text;
-    -webkit-text-fill-color: transparent;
+  background: var(--gradient-primary);
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
 }
 
-.bg-white_5 { background: rgba(255, 255, 255, 0.05); }
-.bg-white_10 { background: rgba(255, 255, 255, 0.1); }
-.border-white_10 { border-color: rgba(255, 255, 255, 0.1); }
-.bg-purple-500_10 { background: rgba(168, 85, 247, 0.1); }
-.border-purple-500_20 { border-color: rgba(168, 85, 247, 0.2); }
-.bg-pink-500_10 { background: rgba(236, 72, 153, 0.1); }
-.border-pink-500_20 { border-color: rgba(236, 72, 153, 0.2); }
-.bg-yellow-500_10 { background: rgba(234, 179, 8, 0.1); }
-.border-yellow-500_20 { border-color: rgba(234, 179, 8, 0.2); }
-.bg-blue-500_20 { background: rgba(59, 130, 246, 0.2); }
-.from-purple-600_20 { --tw-gradient-from: rgba(147, 51, 234, 0.2); }
-.to-blue-500_20 { --tw-gradient-to: rgba(59, 130, 246, 0.2); }
+.bg-white_5 {
+  background: rgba(255, 255, 255, 0.05);
+}
+.bg-white_10 {
+  background: rgba(255, 255, 255, 0.1);
+}
+.border-white_10 {
+  border-color: rgba(255, 255, 255, 0.1);
+}
+.bg-purple-500_10 {
+  background: rgba(168, 85, 247, 0.1);
+}
+.border-purple-500_20 {
+  border-color: rgba(168, 85, 247, 0.2);
+}
+.bg-pink-500_10 {
+  background: rgba(236, 72, 153, 0.1);
+}
+.border-pink-500_20 {
+  border-color: rgba(236, 72, 153, 0.2);
+}
+.bg-yellow-500_10 {
+  background: rgba(234, 179, 8, 0.1);
+}
+.border-yellow-500_20 {
+  border-color: rgba(234, 179, 8, 0.2);
+}
+.bg-blue-500_20 {
+  background: rgba(59, 130, 246, 0.2);
+}
+.from-purple-600_20 {
+  --tw-gradient-from: rgba(147, 51, 234, 0.2);
+}
+.to-blue-500_20 {
+  --tw-gradient-to: rgba(59, 130, 246, 0.2);
+}
 
 .premium-input,
 .premium-select {
-    :deep(.el-input__wrapper) {
-        background: rgba(255, 255, 255, 0.03) !important;
-        border: 1px solid rgba(255, 255, 255, 0.1) !important;
-        border-radius: 14px !important;
-        box-shadow: none !important;
-        height: 52px;
-        color: white;
-        font-size: 15px;
-        transition: all 0.3s ease;
-        &.is-focus,
-        &:hover {
-            border-color: var(--purple-500) !important;
-            background: rgba(168, 85, 247, 0.05) !important;
-        }
+  :deep(.el-input__wrapper) {
+    background: rgba(255, 255, 255, 0.03) !important;
+    border: 1px solid rgba(255, 255, 255, 0.1) !important;
+    border-radius: 14px !important;
+    box-shadow: none !important;
+    height: 52px;
+    color: white;
+    font-size: 15px;
+    transition: all 0.3s ease;
+    &.is-focus,
+    &:hover {
+      border-color: var(--purple-500) !important;
+      background: rgba(168, 85, 247, 0.05) !important;
     }
+  }
 }
 
 .premium-select-large {
-    @extend .premium-input;
-    :deep(.el-input__wrapper) {
-        height: 60px;
-        font-size: 16px;
-        font-weight: 600;
-    }
+  @extend .premium-input;
+  :deep(.el-input__wrapper) {
+    height: 60px;
+    font-size: 16px;
+    font-weight: 600;
+  }
 }
 
 .premium-input-transparent {
-    :deep(.el-input__wrapper) {
-        background: transparent !important;
-        border: none !important;
-        box-shadow: none !important;
-        padding-left: 0;
-        font-size: 15px;
-    }
+  :deep(.el-input__wrapper) {
+    background: transparent !important;
+    border: none !important;
+    box-shadow: none !important;
+    padding-left: 0;
+    font-size: 15px;
+  }
 }
 
 .premium-number-input {
-    :deep(.el-input__wrapper) {
-        background: rgba(255, 255, 255, 0.03) !important;
-        border: 1px solid rgba(255, 255, 255, 0.1) !important;
-        border-radius: 12px !important;
-        box-shadow: none !important;
-        height: 42px;
-    }
+  :deep(.el-input__wrapper) {
+    background: rgba(255, 255, 255, 0.03) !important;
+    border: 1px solid rgba(255, 255, 255, 0.1) !important;
+    border-radius: 12px !important;
+    box-shadow: none !important;
+    height: 42px;
+  }
 }
 
 .premium-input-textarea {
-    :deep(.el-textarea__inner) {
-        background: rgba(255, 255, 255, 0.03) !important;
-        border: 1px solid rgba(255, 255, 255, 0.1) !important;
-        border-radius: 16px !important;
-        color: white;
-        padding: 15px;
-        &:focus {
-            border-color: var(--purple-500) !important;
-            box-shadow: 0 0 15px rgba(168, 85, 247, 0.1);
-        }
+  :deep(.el-textarea__inner) {
+    background: rgba(255, 255, 255, 0.03) !important;
+    border: 1px solid rgba(255, 255, 255, 0.1) !important;
+    border-radius: 16px !important;
+    color: white;
+    padding: 15px;
+    &:focus {
+      border-color: var(--purple-500) !important;
+      box-shadow: 0 0 15px rgba(168, 85, 247, 0.1);
     }
+  }
 }
 
 .premium-table {
-    background: transparent !important;
-    --el-table-bg-color: transparent;
-    --el-table-tr-bg-color: transparent;
-    --el-table-header-bg-color: rgba(255, 255, 255, 0.02);
-    --el-table-border-color: rgba(255, 255, 255, 0.05);
+  background: transparent !important;
+  --el-table-bg-color: transparent;
+  --el-table-tr-bg-color: transparent;
+  --el-table-header-bg-color: rgba(255, 255, 255, 0.02);
+  --el-table-border-color: rgba(255, 255, 255, 0.05);
 
-    :deep(th.el-table__cell) {
-        text-transform: uppercase;
-        font-size: 11px;
-        letter-spacing: 1px;
-        color: var(--text-secondary);
-        padding: 16px 0;
-        border-bottom: 1px solid rgba(255, 255, 255, 0.05) !important;
-    }
-    :deep(td.el-table__cell) {
-        border-bottom: 1px solid rgba(255, 255, 255, 0.05) !important;
-        padding: 16px 0;
-    }
+  :deep(th.el-table__cell) {
+    text-transform: uppercase;
+    font-size: 11px;
+    letter-spacing: 1px;
+    color: var(--text-secondary);
+    padding: 16px 0;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.05) !important;
+  }
+  :deep(td.el-table__cell) {
+    border-bottom: 1px solid rgba(255, 255, 255, 0.05) !important;
+    padding: 16px 0;
+  }
 }
 
 .table-auto-height {
-    :deep(.el-table__inner-wrapper) {
-        height: auto !important;
-    }
-    :deep(.el-table__body-wrapper) {
-        height: auto !important;
-        overflow-y: hidden !important;
-    }
+  :deep(.el-table__inner-wrapper) {
+    height: auto !important;
+  }
+  :deep(.el-table__body-wrapper) {
+    height: auto !important;
+    overflow-y: hidden !important;
+  }
 }
 
 .premium-btn-ghost {
-    background: rgba(255, 255, 255, 0.05);
-    border: none;
-    color: var(--text-secondary);
-    &:hover {
-        background: rgba(255, 255, 255, 0.1);
-        color: white;
-    }
+  background: rgba(255, 255, 255, 0.05);
+  border: none;
+  color: var(--text-secondary);
+  &:hover {
+    background: rgba(255, 255, 255, 0.1);
+    color: white;
+  }
 }
 
 .premium-btn-outline {
-    background: rgba(255, 255, 255, 0.05) !important;
-    border: 1px solid rgba(255, 255, 255, 0.1) !important;
-    color: white !important;
-    &:hover {
-        background: rgba(255, 255, 255, 0.1) !important;
-        border-color: rgba(255, 255, 255, 0.2) !important;
-    }
+  background: rgba(255, 255, 255, 0.05) !important;
+  border: 1px solid rgba(255, 255, 255, 0.1) !important;
+  color: white !important;
+  &:hover {
+    background: rgba(255, 255, 255, 0.1) !important;
+    border-color: rgba(255, 255, 255, 0.2) !important;
+  }
 }
 </style>

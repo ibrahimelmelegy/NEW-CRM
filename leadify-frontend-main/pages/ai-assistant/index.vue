@@ -15,7 +15,8 @@
         </div>
         <div class="flex gap-2">
           <el-button size="small" text @click="clearChat">
-            <Icon name="ph:trash-bold" class="w-4 h-4 mr-1" /> Clear
+            <Icon name="ph:trash-bold" class="w-4 h-4 mr-1" />
+            Clear
           </el-button>
         </div>
       </div>
@@ -28,7 +29,9 @@
             <Icon name="ph:sparkle-bold" class="w-10 h-10 text-indigo-400" />
           </div>
           <h3 class="text-xl font-semibold text-slate-200 mb-2">How can I help you today?</h3>
-          <p class="text-slate-500 max-w-md mb-8">Ask me about your leads, deals, clients, analytics, or let me help you write emails and analyze performance.</p>
+          <p class="text-slate-500 max-w-md mb-8">
+            Ask me about your leads, deals, clients, analytics, or let me help you write emails and analyze performance.
+          </p>
 
           <!-- Quick Actions -->
           <div class="grid grid-cols-2 gap-3 max-w-lg w-full">
@@ -90,10 +93,17 @@
             placeholder="Ask about your CRM data, generate emails, analyze deals..."
             class="flex-1"
             size="large"
-            @keyup.enter="sendMessage()"
             :disabled="isTyping"
+            @keyup.enter="sendMessage()"
           />
-          <el-button type="primary" size="large" class="!rounded-xl !px-6" @click="sendMessage()" :loading="isTyping" :disabled="!inputMessage.trim()">
+          <el-button
+            type="primary"
+            size="large"
+            class="!rounded-xl !px-6"
+            :loading="isTyping"
+            :disabled="!inputMessage.trim()"
+            @click="sendMessage()"
+          >
             <Icon name="ph:paper-plane-tilt-bold" class="w-5 h-5" />
           </el-button>
         </div>
@@ -116,9 +126,7 @@
           <div v-for="(insight, idx) in dailyInsights" :key="idx" class="p-3 rounded-lg bg-slate-800/50 border border-slate-700/50">
             <p class="text-sm text-slate-300">{{ insight.text || insight }}</p>
           </div>
-          <div v-if="dailyInsights.length === 0" class="text-sm text-slate-500 text-center py-4">
-            No insights available yet
-          </div>
+          <div v-if="dailyInsights.length === 0" class="text-sm text-slate-500 text-center py-4">No insights available yet</div>
         </div>
       </div>
 
@@ -129,23 +137,31 @@
           AI Tools
         </h3>
         <div class="space-y-2">
-          <button class="w-full p-3 rounded-lg bg-slate-800/50 hover:bg-slate-700/50 transition text-left flex items-center gap-3"
-            @click="sendMessage('Generate a follow-up email for my latest deals')">
+          <button
+            class="w-full p-3 rounded-lg bg-slate-800/50 hover:bg-slate-700/50 transition text-left flex items-center gap-3"
+            @click="sendMessage('Generate a follow-up email for my latest deals')"
+          >
             <Icon name="ph:envelope-simple-bold" class="w-4 h-4 text-blue-400" />
             <span class="text-sm text-slate-400">Email Generator</span>
           </button>
-          <button class="w-full p-3 rounded-lg bg-slate-800/50 hover:bg-slate-700/50 transition text-left flex items-center gap-3"
-            @click="sendMessage('Analyze my sales pipeline health')">
+          <button
+            class="w-full p-3 rounded-lg bg-slate-800/50 hover:bg-slate-700/50 transition text-left flex items-center gap-3"
+            @click="sendMessage('Analyze my sales pipeline health')"
+          >
             <Icon name="ph:chart-line-bold" class="w-4 h-4 text-emerald-400" />
             <span class="text-sm text-slate-400">Pipeline Analysis</span>
           </button>
-          <button class="w-full p-3 rounded-lg bg-slate-800/50 hover:bg-slate-700/50 transition text-left flex items-center gap-3"
-            @click="sendMessage('Show me leads at risk of churning')">
+          <button
+            class="w-full p-3 rounded-lg bg-slate-800/50 hover:bg-slate-700/50 transition text-left flex items-center gap-3"
+            @click="sendMessage('Show me leads at risk of churning')"
+          >
             <Icon name="ph:warning-bold" class="w-4 h-4 text-amber-400" />
             <span class="text-sm text-slate-400">Churn Prediction</span>
           </button>
-          <button class="w-full p-3 rounded-lg bg-slate-800/50 hover:bg-slate-700/50 transition text-left flex items-center gap-3"
-            @click="sendMessage('Give me coaching tips for my current deals')">
+          <button
+            class="w-full p-3 rounded-lg bg-slate-800/50 hover:bg-slate-700/50 transition text-left flex items-center gap-3"
+            @click="sendMessage('Give me coaching tips for my current deals')"
+          >
             <Icon name="ph:graduation-cap-bold" class="w-4 h-4 text-purple-400" />
             <span class="text-sm text-slate-400">Sales Coach</span>
           </button>
@@ -157,8 +173,8 @@
 
 <script setup lang="ts">
 import { ref, onMounted, nextTick } from 'vue';
-import { useApiFetch } from '~/composables/useApiFetch';
 import { ElMessage } from 'element-plus';
+import { useApiFetch } from '~/composables/useApiFetch';
 
 definePageMeta({
   layout: 'default',
@@ -176,7 +192,7 @@ const quickSuggestions = [
   { text: 'Summarize my sales pipeline status', icon: 'ph:funnel-bold' },
   { text: 'Which deals need attention this week?', icon: 'ph:warning-circle-bold' },
   { text: 'Write a follow-up email for a prospect', icon: 'ph:envelope-simple-bold' },
-  { text: 'Show me this month\'s key metrics', icon: 'ph:chart-bar-bold' }
+  { text: "Show me this month's key metrics", icon: 'ph:chart-bar-bold' }
 ];
 
 const sendMessage = async (text?: string) => {
@@ -198,7 +214,7 @@ const sendMessage = async (text?: string) => {
   } else {
     messages.value.push({
       role: 'assistant',
-      content: res?.message || 'Sorry, I couldn\'t process that request. Please try again.'
+      content: res?.message || "Sorry, I couldn't process that request. Please try again."
     });
   }
   await scrollToBottom();

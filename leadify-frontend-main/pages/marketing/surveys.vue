@@ -4,9 +4,7 @@
     <div class="glass-panel p-6 rounded-2xl">
       <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
         <div>
-          <h1 class="text-2xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-purple-400 to-violet-400">
-            Surveys & NPS
-          </h1>
+          <h1 class="text-2xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-purple-400 to-violet-400">Surveys & NPS</h1>
           <p class="text-slate-400 text-sm mt-1">Create customer surveys, measure Net Promoter Score, and gather feedback.</p>
         </div>
         <el-button type="primary" class="!rounded-xl" @click="showCreateDialog = true">
@@ -24,15 +22,25 @@
         <div class="relative inline-block">
           <svg width="160" height="100" viewBox="0 0 160 100">
             <path d="M 20 90 A 60 60 0 0 1 140 90" fill="none" stroke="#1e293b" stroke-width="12" stroke-linecap="round" />
-            <path d="M 20 90 A 60 60 0 0 1 140 90" fill="none" :stroke="npsColor" stroke-width="12" stroke-linecap="round"
-              :stroke-dasharray="`${npsScore * 1.88} 188`" />
+            <path
+              d="M 20 90 A 60 60 0 0 1 140 90"
+              fill="none"
+              :stroke="npsColor"
+              stroke-width="12"
+              stroke-linecap="round"
+              :stroke-dasharray="`${npsScore * 1.88} 188`"
+            />
           </svg>
           <div class="absolute inset-0 flex items-end justify-center pb-2">
-            <span class="text-3xl font-bold" :class="npsScore >= 50 ? 'text-emerald-400' : npsScore >= 0 ? 'text-amber-400' : 'text-red-400'">{{ npsScore }}</span>
+            <span class="text-3xl font-bold" :class="npsScore >= 50 ? 'text-emerald-400' : npsScore >= 0 ? 'text-amber-400' : 'text-red-400'">
+              {{ npsScore }}
+            </span>
           </div>
         </div>
         <div class="flex justify-between text-[10px] text-slate-500 mt-2 px-4">
-          <span>-100</span><span>0</span><span>100</span>
+          <span>-100</span>
+          <span>0</span>
+          <span>100</span>
         </div>
       </div>
 
@@ -121,7 +129,10 @@
             <div class="text-[10px] text-slate-500">Response Rate</div>
           </div>
           <div>
-            <div class="text-sm font-bold" :class="survey.avgScore >= 4 ? 'text-emerald-400' : survey.avgScore >= 3 ? 'text-amber-400' : 'text-red-400'">
+            <div
+              class="text-sm font-bold"
+              :class="survey.avgScore >= 4 ? 'text-emerald-400' : survey.avgScore >= 3 ? 'text-amber-400' : 'text-red-400'"
+            >
               {{ survey.avgScore }}/5
             </div>
             <div class="text-[10px] text-slate-500">Avg Score</div>
@@ -131,16 +142,20 @@
         <!-- Actions -->
         <div class="flex gap-2">
           <el-button size="small" text type="primary" @click="viewResults(survey)">
-            <Icon name="ph:chart-bar" class="w-4 h-4 mr-1" /> Results
+            <Icon name="ph:chart-bar" class="w-4 h-4 mr-1" />
+            Results
           </el-button>
           <el-button size="small" text @click="editSurvey(survey)">
-            <Icon name="ph:pencil-simple" class="w-4 h-4 mr-1" /> Edit
+            <Icon name="ph:pencil-simple" class="w-4 h-4 mr-1" />
+            Edit
           </el-button>
           <el-button size="small" text @click="shareSurvey(survey)">
-            <Icon name="ph:share-network" class="w-4 h-4 mr-1" /> Share
+            <Icon name="ph:share-network" class="w-4 h-4 mr-1" />
+            Share
           </el-button>
           <el-button v-if="survey.status === 'ACTIVE'" size="small" text type="danger" @click="closeSurvey(survey)">
-            <Icon name="ph:stop-circle" class="w-4 h-4 mr-1" /> Close
+            <Icon name="ph:stop-circle" class="w-4 h-4 mr-1" />
+            Close
           </el-button>
         </div>
       </div>
@@ -160,7 +175,12 @@
             </div>
             <p class="text-sm text-slate-400">{{ fb.comment }}</p>
             <div class="flex items-center gap-2 mt-1">
-              <el-tag :type="fb.sentiment === 'positive' ? 'success' : fb.sentiment === 'negative' ? 'danger' : 'warning'" effect="dark" size="small" class="!text-[10px]">
+              <el-tag
+                :type="fb.sentiment === 'positive' ? 'success' : fb.sentiment === 'negative' ? 'danger' : 'warning'"
+                effect="dark"
+                size="small"
+                class="!text-[10px]"
+              >
                 {{ fb.sentiment }}
               </el-tag>
               <span class="text-[10px] text-slate-500">via {{ fb.source }}</span>
@@ -227,23 +247,105 @@ const showCreateDialog = ref(false);
 const newSurvey = ref({ name: '', type: 'NPS', audience: 'ALL_CLIENTS', channels: ['EMAIL'], startDate: '' });
 
 const npsScore = ref(42);
-const npsColor = computed(() => npsScore.value >= 50 ? '#10B981' : npsScore.value >= 0 ? '#F59E0B' : '#EF4444');
+const npsColor = computed(() => (npsScore.value >= 50 ? '#10B981' : npsScore.value >= 0 ? '#F59E0B' : '#EF4444'));
 const npsData = ref({ promoters: 58, passives: 26, detractors: 16, totalResponses: 847 });
 
 const surveys = ref([
-  { id: 1, name: 'Customer Satisfaction Q1 2026', type: 'CSAT', status: 'ACTIVE', questionCount: 8, sent: 500, responses: 312, responseRate: 62.4, avgScore: 4.2 },
-  { id: 2, name: 'Product NPS - February', type: 'NPS', status: 'ACTIVE', questionCount: 3, sent: 1200, responses: 535, responseRate: 44.6, avgScore: 4.0 },
-  { id: 3, name: 'Onboarding Experience', type: 'CSAT', status: 'COMPLETED', questionCount: 12, sent: 200, responses: 156, responseRate: 78.0, avgScore: 4.5 },
-  { id: 4, name: 'Feature Request Priority', type: 'PRODUCT', status: 'ACTIVE', questionCount: 6, sent: 350, responses: 189, responseRate: 54.0, avgScore: 3.8 },
-  { id: 5, name: 'Annual NPS 2025', type: 'NPS', status: 'COMPLETED', questionCount: 5, sent: 2000, responses: 847, responseRate: 42.4, avgScore: 3.9 },
+  {
+    id: 1,
+    name: 'Customer Satisfaction Q1 2026',
+    type: 'CSAT',
+    status: 'ACTIVE',
+    questionCount: 8,
+    sent: 500,
+    responses: 312,
+    responseRate: 62.4,
+    avgScore: 4.2
+  },
+  {
+    id: 2,
+    name: 'Product NPS - February',
+    type: 'NPS',
+    status: 'ACTIVE',
+    questionCount: 3,
+    sent: 1200,
+    responses: 535,
+    responseRate: 44.6,
+    avgScore: 4.0
+  },
+  {
+    id: 3,
+    name: 'Onboarding Experience',
+    type: 'CSAT',
+    status: 'COMPLETED',
+    questionCount: 12,
+    sent: 200,
+    responses: 156,
+    responseRate: 78.0,
+    avgScore: 4.5
+  },
+  {
+    id: 4,
+    name: 'Feature Request Priority',
+    type: 'PRODUCT',
+    status: 'ACTIVE',
+    questionCount: 6,
+    sent: 350,
+    responses: 189,
+    responseRate: 54.0,
+    avgScore: 3.8
+  },
+  {
+    id: 5,
+    name: 'Annual NPS 2025',
+    type: 'NPS',
+    status: 'COMPLETED',
+    questionCount: 5,
+    sent: 2000,
+    responses: 847,
+    responseRate: 42.4,
+    avgScore: 3.9
+  },
   { id: 6, name: 'Support Quality Survey', type: 'CSAT', status: 'DRAFT', questionCount: 10, sent: 0, responses: 0, responseRate: 0, avgScore: 0 }
 ]);
 
 const recentFeedback = ref([
-  { id: 1, name: 'Ahmed Al-Farsi', rating: 5, comment: 'Excellent product! The CRM features have streamlined our sales process significantly.', sentiment: 'positive', source: 'NPS Survey', date: 'Feb 19' },
-  { id: 2, name: 'Sara Mohammed', rating: 4, comment: 'Good overall experience. Would love to see more customization options for dashboards.', sentiment: 'positive', source: 'CSAT Survey', date: 'Feb 18' },
-  { id: 3, name: 'Omar Hassan', rating: 2, comment: 'The reporting module is slow and often times out with large datasets.', sentiment: 'negative', source: 'Product Feedback', date: 'Feb 18' },
-  { id: 4, name: 'Fatima Ali', rating: 3, comment: 'Decent product but onboarding could be smoother. Took our team 3 weeks to get comfortable.', sentiment: 'neutral', source: 'Onboarding Survey', date: 'Feb 17' }
+  {
+    id: 1,
+    name: 'Ahmed Al-Farsi',
+    rating: 5,
+    comment: 'Excellent product! The CRM features have streamlined our sales process significantly.',
+    sentiment: 'positive',
+    source: 'NPS Survey',
+    date: 'Feb 19'
+  },
+  {
+    id: 2,
+    name: 'Sara Mohammed',
+    rating: 4,
+    comment: 'Good overall experience. Would love to see more customization options for dashboards.',
+    sentiment: 'positive',
+    source: 'CSAT Survey',
+    date: 'Feb 18'
+  },
+  {
+    id: 3,
+    name: 'Omar Hassan',
+    rating: 2,
+    comment: 'The reporting module is slow and often times out with large datasets.',
+    sentiment: 'negative',
+    source: 'Product Feedback',
+    date: 'Feb 18'
+  },
+  {
+    id: 4,
+    name: 'Fatima Ali',
+    rating: 3,
+    comment: 'Decent product but onboarding could be smoother. Took our team 3 weeks to get comfortable.',
+    sentiment: 'neutral',
+    source: 'Onboarding Survey',
+    date: 'Feb 17'
+  }
 ]);
 
 const totalResponses = computed(() => surveys.value.reduce((s, sv) => s + sv.responses, 0));
@@ -258,7 +360,12 @@ const getSurveyTypeBg = (t: string) => {
   return m[t] || 'bg-slate-500/10';
 };
 const getSurveyTypeIcon = (t: string) => {
-  const m: Record<string, string> = { NPS: 'ph:chart-line-up-bold', CSAT: 'ph:smiley-bold', PRODUCT: 'ph:package-bold', CUSTOM: 'ph:clipboard-text-bold' };
+  const m: Record<string, string> = {
+    NPS: 'ph:chart-line-up-bold',
+    CSAT: 'ph:smiley-bold',
+    PRODUCT: 'ph:package-bold',
+    CUSTOM: 'ph:clipboard-text-bold'
+  };
   return m[t] || 'ph:question-bold';
 };
 const getSurveyTypeColor = (t: string) => {
@@ -268,11 +375,20 @@ const getSurveyTypeColor = (t: string) => {
 
 const viewResults = (s: any) => ElMessage.info(`Viewing results: ${s.name}`);
 const editSurvey = (s: any) => ElMessage.info(`Editing: ${s.name}`);
-const shareSurvey = (s: any) => { navigator.clipboard?.writeText(`https://survey.example.com/${s.id}`); ElMessage.success('Survey link copied!'); };
-const closeSurvey = (s: any) => { s.status = 'COMPLETED'; ElMessage.success('Survey closed'); };
+const shareSurvey = (s: any) => {
+  navigator.clipboard?.writeText(`https://survey.example.com/${s.id}`);
+  ElMessage.success('Survey link copied!');
+};
+const closeSurvey = (s: any) => {
+  s.status = 'COMPLETED';
+  ElMessage.success('Survey closed');
+};
 
 const createSurvey = () => {
-  if (!newSurvey.value.name) { ElMessage.warning('Survey name required'); return; }
+  if (!newSurvey.value.name) {
+    ElMessage.warning('Survey name required');
+    return;
+  }
   ElMessage.success('Survey created');
   showCreateDialog.value = false;
 };

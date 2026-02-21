@@ -182,7 +182,12 @@ async function removeField(id: string) {
 
 function getFieldTypeTag(type: string) {
   const map: Record<string, string> = {
-    TEXT: '', NUMBER: 'success', DATE: 'warning', SELECT: 'primary', CHECKBOX: 'info', TEXTAREA: ''
+    TEXT: '',
+    NUMBER: 'success',
+    DATE: 'warning',
+    SELECT: 'primary',
+    CHECKBOX: 'info',
+    TEXTAREA: ''
   };
   return map[type] || '';
 }
@@ -193,7 +198,13 @@ function getFieldTypeTag(type: string) {
   animation: fadeIn 0.4s ease-out;
 }
 @keyframes fadeIn {
-  from { opacity: 0; transform: translateY(10px); }
-  to { opacity: 1; transform: translateY(0); }
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
 }
 </style>

@@ -46,10 +46,10 @@ div(class="animate-fade-in")
 
 <script setup lang="ts">
 import { Plus } from '@element-plus/icons-vue';
+import { computed, reactive, ref } from 'vue';
 import PremiumPageHeader from '~/components/UI/PremiumPageHeader.vue';
 import PremiumKPICards from '~/components/UI/PremiumKPICards.vue';
 import type { KPIMetric } from '~/components/UI/PremiumKPICards.vue';
-import { computed, reactive, ref } from 'vue';
 
 const router = useRouter();
 const { t } = useI18n();
@@ -74,8 +74,12 @@ const exportData = computed(() => table.data);
 
 // Bulk actions
 const selectedRows = ref<any[]>([]);
-function handleBulkDelete() { selectedRows.value = []; }
-function handleBulkExport() { selectedRows.value = []; }
+function handleBulkDelete() {
+  selectedRows.value = [];
+}
+function handleBulkExport() {
+  selectedRows.value = [];
+}
 
 const table = reactive({
   columns: [
@@ -168,7 +172,7 @@ const table = reactive({
   data: [] as CombinedProjectValues[]
 });
 
-let response = await useTableFilter('project');
+const response = await useTableFilter('project');
 table.data = response.formattedData;
 
 const kpiMetrics = computed<KPIMetric[]>(() => {
@@ -176,7 +180,7 @@ const kpiMetrics = computed<KPIMetric[]>(() => {
   const total = data.length;
   const active = data.filter((p: any) => p.status === 'PROJECT_ACTIVE').length;
   const completed = data.filter((p: any) => p.status === 'PROJECT_COMPLETE').length;
-  
+
   return [
     { label: 'Total Projects', value: total, icon: 'ph:kanban-bold', color: '#8b5cf6', trend: '+2%', trendType: 'up' },
     { label: 'Active Projects', value: active, icon: 'ph:spinner-gap-bold', color: '#10b981' },

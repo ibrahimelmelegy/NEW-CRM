@@ -149,7 +149,7 @@ export interface ProjectManpower {
   [key: string]: any;
 }
 
-export interface CombinedProjectValues extends BasicInfoValues, EtimadProjectInfoValues { }
+export interface CombinedProjectValues extends BasicInfoValues, EtimadProjectInfoValues {}
 export interface ProjectInfo {
   projectId?: string;
   basicInfo: BasicInfoValues;

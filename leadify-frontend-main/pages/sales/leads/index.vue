@@ -136,10 +136,7 @@ async function editPresent() {
 }
 
 // Call API to Get the lead and users in parallel
-let [response, usersResponse] = await Promise.all([
-  useTableFilter('lead'),
-  useApiFetch('users')
-]);
+let [response, usersResponse] = await Promise.all([useTableFilter('lead'), useApiFetch('users')]);
 
 const table = ref({
   columns: [] as any[], // Initialize as empty array
@@ -160,7 +157,7 @@ const kpiMetrics = computed<KPIMetric[]>(() => {
   const qualified = data.filter((l: any) => l.status === 'QUALIFIED').length;
   const contacted = data.filter((l: any) => l.status === 'CONTACTED').length;
   const rate = total > 0 ? Math.round((qualified / total) * 100) : 0;
-  
+
   return [
     { label: 'Total Leads', value: total, icon: 'ph:users-three-bold', color: '#7849ff', trend: '+12%', trendType: 'up' },
     { label: 'New Pipeline', value: newLeads, icon: 'ph:sparkle-bold', color: '#10b981', trend: 'Trending', trendType: 'up' },

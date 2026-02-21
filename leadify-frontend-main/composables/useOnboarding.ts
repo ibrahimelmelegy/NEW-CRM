@@ -30,38 +30,34 @@ const tours: Tour[] = [
       {
         target: '.nav',
         title: 'Navigation',
-        description:
-          'Use the sidebar to navigate between modules. You can collapse it for more space.',
-        position: 'right',
+        description: 'Use the sidebar to navigate between modules. You can collapse it for more space.',
+        position: 'right'
       },
       {
         target: '.spotlight-btn',
         title: 'Spotlight Search',
-        description:
-          'Press Alt+K or click here to quickly find anything — leads, deals, pages, or actions.',
-        position: 'bottom',
+        description: 'Press Alt+K or click here to quickly find anything — leads, deals, pages, or actions.',
+        position: 'bottom'
       },
       {
         target: '.notification',
         title: 'Notifications',
-        description:
-          'Stay updated with real-time alerts for deal changes, task assignments, and more.',
-        position: 'bottom',
+        description: 'Stay updated with real-time alerts for deal changes, task assignments, and more.',
+        position: 'bottom'
       },
       {
         target: '.profile-trigger',
         title: 'Your Profile',
         description: 'Access your profile settings and logout from here.',
-        position: 'bottom',
+        position: 'bottom'
       },
       {
         target: '.slot-content',
         title: "You're All Set!",
-        description:
-          'Explore the CRM and discover powerful tools for managing your sales pipeline. Press ? anytime to see keyboard shortcuts.',
-        position: 'top',
-      },
-    ],
+        description: 'Explore the CRM and discover powerful tools for managing your sales pipeline. Press ? anytime to see keyboard shortcuts.',
+        position: 'top'
+      }
+    ]
   },
   {
     id: 'sales-pipeline',
@@ -70,28 +66,25 @@ const tours: Tour[] = [
       {
         target: '.slot-content',
         title: 'Sales Pipeline',
-        description:
-          'Track your deals from first contact to close. Each stage represents a milestone in your sales process.',
+        description: 'Track your deals from first contact to close. Each stage represents a milestone in your sales process.',
         position: 'top',
-        route: '/sales/deals',
+        route: '/sales/deals'
       },
       {
         target: '.slot-content',
         title: 'Kanban View',
-        description:
-          'Drag and drop deals between stages. See your entire pipeline at a glance.',
+        description: 'Drag and drop deals between stages. See your entire pipeline at a glance.',
         position: 'top',
-        route: '/sales/deals/kanban',
+        route: '/sales/deals/kanban'
       },
       {
         target: '.slot-content',
         title: 'Analytics',
-        description:
-          'Monitor win rates, conversion funnels, and team performance.',
+        description: 'Monitor win rates, conversion funnels, and team performance.',
         position: 'top',
-        route: '/analytics',
-      },
-    ],
+        route: '/analytics'
+      }
+    ]
   },
   {
     id: 'productivity',
@@ -100,29 +93,26 @@ const tours: Tour[] = [
       {
         target: '.slot-content',
         title: 'War Room',
-        description:
-          'Your mission control center with real-time KPIs, live deal alerts, and team pulse.',
+        description: 'Your mission control center with real-time KPIs, live deal alerts, and team pulse.',
         position: 'top',
-        route: '/dashboard/war-room',
+        route: '/dashboard/war-room'
       },
       {
         target: '.slot-content',
         title: 'Theme Studio',
-        description:
-          'Customize the CRM appearance with 10 color presets and fine-tune glass effects.',
+        description: 'Customize the CRM appearance with 10 color presets and fine-tune glass effects.',
         position: 'top',
-        route: '/settings/theme-studio',
+        route: '/settings/theme-studio'
       },
       {
         target: '.slot-content',
         title: 'Gamification',
-        description:
-          'Earn points, unlock achievements, and compete on the leaderboard!',
+        description: 'Earn points, unlock achievements, and compete on the leaderboard!',
         position: 'top',
-        route: '/gamification/leaderboard',
-      },
-    ],
-  },
+        route: '/gamification/leaderboard'
+      }
+    ]
+  }
 ];
 
 export function useOnboarding() {
@@ -182,12 +172,12 @@ export function useOnboarding() {
     if (route.path !== step.route) {
       await router.push(step.route);
       // Allow time for the page to render after navigation
-      await new Promise((resolve) => setTimeout(resolve, 600));
+      await new Promise(resolve => setTimeout(resolve, 600));
     }
   }
 
   async function startTour(tourId: string) {
-    const tour = tours.find((t) => t.id === tourId);
+    const tour = tours.find(t => t.id === tourId);
     if (!tour) return;
 
     currentTour.value = tour;
@@ -264,6 +254,6 @@ export function useOnboarding() {
     skipTour,
     completeTour,
     resetTours,
-    isTourCompleted,
+    isTourCompleted
   };
 }

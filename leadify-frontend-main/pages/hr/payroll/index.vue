@@ -85,13 +85,7 @@ div
 
 <script setup lang="ts">
 import { ElNotification } from 'element-plus';
-import {
-  fetchPayrollRuns,
-  createPayrollRun,
-  PAYROLL_RUN_STATUSES,
-  PayrollRunStatusEnum,
-  type PayrollRun
-} from '~/composables/usePayroll';
+import { fetchPayrollRuns, createPayrollRun, PAYROLL_RUN_STATUSES, PayrollRunStatusEnum, type PayrollRun } from '~/composables/usePayroll';
 
 definePageMeta({ middleware: 'permissions' });
 const router = useRouter();
@@ -156,7 +150,9 @@ async function applyFilters() {
     if (filterYear.value) params.year = String(filterYear.value);
     if (filterStatus.value) params.status = filterStatus.value;
     result.value = await fetchPayrollRuns(params);
-  } finally { loading.value = false; }
+  } finally {
+    loading.value = false;
+  }
 }
 
 async function handleCreateRun() {
@@ -170,6 +166,8 @@ async function handleCreateRun() {
     } else {
       ElNotification({ type: 'error', title: 'Error', message: res.message });
     }
-  } finally { creating.value = false; }
+  } finally {
+    creating.value = false;
+  }
 }
 </script>

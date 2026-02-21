@@ -73,13 +73,16 @@
             </div>
             <div class="flex gap-2 mt-4 pt-3 border-t border-slate-800/60">
               <el-button size="small" text type="primary" @click="editQuote(quote)">
-                <Icon name="ph:pencil-simple" class="w-4 h-4 mr-1" /> Edit
+                <Icon name="ph:pencil-simple" class="w-4 h-4 mr-1" />
+                Edit
               </el-button>
               <el-button size="small" text @click="duplicateQuote(quote)">
-                <Icon name="ph:copy" class="w-4 h-4 mr-1" /> Clone
+                <Icon name="ph:copy" class="w-4 h-4 mr-1" />
+                Clone
               </el-button>
               <el-button size="small" text @click="exportQuote(quote)">
-                <Icon name="ph:file-pdf" class="w-4 h-4 mr-1" /> PDF
+                <Icon name="ph:file-pdf" class="w-4 h-4 mr-1" />
+                PDF
               </el-button>
             </div>
           </div>
@@ -92,7 +95,8 @@
           <div class="flex justify-between items-center mb-4">
             <h3 class="text-lg font-medium text-slate-200">Products & Services</h3>
             <el-button type="primary" size="small" @click="showProductDialog = true">
-              <Icon name="ph:plus-bold" class="w-4 h-4 mr-2" /> Add Product
+              <Icon name="ph:plus-bold" class="w-4 h-4 mr-2" />
+              Add Product
             </el-button>
           </div>
           <el-table :data="products" class="glass-table" stripe>
@@ -133,7 +137,8 @@
           <div class="flex justify-between items-center mb-4">
             <h3 class="text-lg font-medium text-slate-200">Discount & Pricing Rules</h3>
             <el-button type="primary" size="small" @click="showPricingDialog = true">
-              <Icon name="ph:plus-bold" class="w-4 h-4 mr-2" /> Add Rule
+              <Icon name="ph:plus-bold" class="w-4 h-4 mr-2" />
+              Add Rule
             </el-button>
           </div>
           <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -152,9 +157,7 @@
                 <span>Min Qty: {{ rule.minQuantity }}</span>
               </div>
             </div>
-            <div v-if="pricingRules.length === 0" class="col-span-2 text-center py-8 text-slate-500">
-              No pricing rules configured yet
-            </div>
+            <div v-if="pricingRules.length === 0" class="col-span-2 text-center py-8 text-slate-500">No pricing rules configured yet</div>
           </div>
         </div>
       </el-tab-pane>
@@ -281,7 +284,11 @@ const formatCurrency = (val: number) => {
 
 const getStatusType = (status: string): 'success' | 'warning' | 'info' | 'danger' | undefined => {
   const map: Record<string, 'success' | 'warning' | 'info' | 'danger' | undefined> = {
-    APPROVED: 'success', PENDING: 'warning', DRAFT: 'info', REJECTED: 'danger', EXPIRED: 'danger'
+    APPROVED: 'success',
+    PENDING: 'warning',
+    DRAFT: 'info',
+    REJECTED: 'danger',
+    EXPIRED: 'danger'
   };
   return map[status] || 'info';
 };

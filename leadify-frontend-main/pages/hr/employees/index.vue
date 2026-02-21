@@ -162,13 +162,7 @@ div
 </template>
 
 <script setup lang="ts">
-import {
-  fetchEmployees,
-  fetchDepartments,
-  EMPLOYEE_STATUSES,
-  getEmployeeStatusType,
-  getEmployeeStatusLabel
-} from '~/composables/useEmployees';
+import { fetchEmployees, fetchDepartments, EMPLOYEE_STATUSES, getEmployeeStatusType, getEmployeeStatusLabel } from '~/composables/useEmployees';
 import type { Employee, DepartmentItem } from '~/composables/useEmployees';
 
 definePageMeta({ middleware: 'permissions' });

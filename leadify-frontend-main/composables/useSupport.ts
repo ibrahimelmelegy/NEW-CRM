@@ -134,11 +134,11 @@ export const ticketSourceOptions = [
 // ─── Helper functions ─────────────────────────────────────────────────────────
 
 export function getStatusOption(status: string) {
-  return ticketStatusOptions.find((s) => s.value === status) || ticketStatusOptions[0];
+  return ticketStatusOptions.find(s => s.value === status) || ticketStatusOptions[0];
 }
 
 export function getPriorityOption(priority: string) {
-  return ticketPriorityOptions.find((p) => p.value === priority) || ticketPriorityOptions[1];
+  return ticketPriorityOptions.find(p => p.value === priority) || ticketPriorityOptions[1];
 }
 
 // ─── API Functions ────────────────────────────────────────────────────────────

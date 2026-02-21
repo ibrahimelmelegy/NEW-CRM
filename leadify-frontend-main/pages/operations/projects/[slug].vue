@@ -595,7 +595,7 @@ const manPowerPreview = ref({
   data: [] as any
 });
 
-let manpowersResponse: any = _manpowersRes.formattedData;
+const manpowersResponse: any = _manpowersRes.formattedData;
 
 if (project?.projectManpowerResources?.length) {
   manpowers.value.data =
@@ -667,9 +667,9 @@ const materialsPreview = ref({
   data: [] as any[]
 });
 
-let serviceResponse: any = _serviceRes?.formattedData || [];
+const serviceResponse: any = _serviceRes?.formattedData || [];
 
-let addMaterials: any = _addMaterialsRes?.formattedData || [];
+const addMaterials: any = _addMaterialsRes?.formattedData || [];
 
 function materialMappedData() {
   if (!project?.materials?.length) return [];
@@ -740,7 +740,7 @@ const assetsTotal = reactive({
   data: [] as any[]
 });
 
-let assetsResponse: any = _assetsRes?.formattedData || [];
+const assetsResponse: any = _assetsRes?.formattedData || [];
 
 if (project?.projectAssets?.length) {
   const assetsId = project?.projectAssets?.map((projectAsset: any) => projectAsset.assetId);

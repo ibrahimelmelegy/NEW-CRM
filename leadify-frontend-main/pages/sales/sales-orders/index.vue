@@ -150,144 +150,162 @@ const orders = ref<any[]>([]);
 const pagination = ref({ totalItems: 0, page: 1, limit: 10, totalPages: 1 });
 
 const kpi = reactive({
-    total: 0,
-    processing: 0,
-    shipped: 0,
-    delivered: 0
+  total: 0,
+  processing: 0,
+  shipped: 0,
+  delivered: 0
 });
 
 // Debounce search
 let searchTimeout: ReturnType<typeof setTimeout>;
 function debouncedSearch() {
-    clearTimeout(searchTimeout);
-    searchTimeout = setTimeout(() => {
-        currentPage.value = 1;
-        fetchOrders();
-    }, 400);
+  clearTimeout(searchTimeout);
+  searchTimeout = setTimeout(() => {
+    currentPage.value = 1;
+    fetchOrders();
+  }, 400);
 }
 
 async function fetchOrders() {
-    const params = new URLSearchParams();
-    params.append('page', String(currentPage.value));
-    params.append('limit', '10');
+  const params = new URLSearchParams();
+  params.append('page', String(currentPage.value));
+  params.append('limit', '10');
 
-    if (activeTab.value !== 'ALL') {
-        params.append('status', activeTab.value);
-    }
-    if (searchKey.value) {
-        params.append('searchKey', searchKey.value);
-    }
+  if (activeTab.value !== 'ALL') {
+    params.append('status', activeTab.value);
+  }
+  if (searchKey.value) {
+    params.append('searchKey', searchKey.value);
+  }
 
-    const result = await getSalesOrders(params.toString());
-    orders.value = result.orders;
-    pagination.value = result.pagination;
+  const result = await getSalesOrders(params.toString());
+  orders.value = result.orders;
+  pagination.value = result.pagination;
 }
 
 async function fetchKPIs() {
-    // Fetch counts for KPI cards by querying different statuses
-    const [allRes, processingRes, shippedRes, deliveredRes] = await Promise.all([
-        getSalesOrders('limit=1'),
-        getSalesOrders('status=PROCESSING&limit=1'),
-        getSalesOrders('status=SHIPPED&limit=1'),
-        getSalesOrders('status=DELIVERED&limit=1')
-    ]);
+  // Fetch counts for KPI cards by querying different statuses
+  const [allRes, processingRes, shippedRes, deliveredRes] = await Promise.all([
+    getSalesOrders('limit=1'),
+    getSalesOrders('status=PROCESSING&limit=1'),
+    getSalesOrders('status=SHIPPED&limit=1'),
+    getSalesOrders('status=DELIVERED&limit=1')
+  ]);
 
-    kpi.total = allRes.pagination.totalItems;
-    kpi.processing = processingRes.pagination.totalItems;
-    kpi.shipped = shippedRes.pagination.totalItems;
-    kpi.delivered = deliveredRes.pagination.totalItems;
+  kpi.total = allRes.pagination.totalItems;
+  kpi.processing = processingRes.pagination.totalItems;
+  kpi.shipped = shippedRes.pagination.totalItems;
+  kpi.delivered = deliveredRes.pagination.totalItems;
 }
 
 function handleTabChange(tab: string) {
-    currentPage.value = 1;
-    fetchOrders();
+  currentPage.value = 1;
+  fetchOrders();
 }
 
 function handlePageChange(page: number) {
-    currentPage.value = page;
-    fetchOrders();
+  currentPage.value = page;
+  fetchOrders();
 }
 
 function handleRowClick(row: any) {
-    router.push(`/sales/sales-orders/${row.id}`);
+  router.push(`/sales/sales-orders/${row.id}`);
 }
 
 function formatDate(date: any) {
-    if (!date) return '-';
-    const d = new Date(date);
-    return d.toLocaleDateString('en-GB', { day: '2-digit', month: 'short', year: 'numeric' });
+  if (!date) return '-';
+  const d = new Date(date);
+  return d.toLocaleDateString('en-GB', { day: '2-digit', month: 'short', year: 'numeric' });
 }
 
 // Initial fetch
 onMounted(async () => {
-    await Promise.all([fetchOrders(), fetchKPIs()]);
+  await Promise.all([fetchOrders(), fetchKPIs()]);
 });
 </script>
 
 <style scoped lang="scss">
 .text-gradient {
-    background: var(--gradient-primary);
-    -webkit-background-clip: text;
-    background-clip: text;
-    -webkit-text-fill-color: transparent;
+  background: var(--gradient-primary);
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
 }
 
-.bg-purple-500_10 { background: rgba(168, 85, 247, 0.1); }
-.bg-purple-500_20 { background: rgba(168, 85, 247, 0.2); }
-.border-purple-500_20 { border-color: rgba(168, 85, 247, 0.2); }
-.bg-yellow-500_10 { background: rgba(234, 179, 8, 0.1); }
-.border-yellow-500_20 { border-color: rgba(234, 179, 8, 0.2); }
-.bg-blue-500_10 { background: rgba(59, 130, 246, 0.1); }
-.border-blue-500_20 { border-color: rgba(59, 130, 246, 0.2); }
-.bg-green-500_10 { background: rgba(34, 197, 94, 0.1); }
-.border-green-500_20 { border-color: rgba(34, 197, 94, 0.2); }
+.bg-purple-500_10 {
+  background: rgba(168, 85, 247, 0.1);
+}
+.bg-purple-500_20 {
+  background: rgba(168, 85, 247, 0.2);
+}
+.border-purple-500_20 {
+  border-color: rgba(168, 85, 247, 0.2);
+}
+.bg-yellow-500_10 {
+  background: rgba(234, 179, 8, 0.1);
+}
+.border-yellow-500_20 {
+  border-color: rgba(234, 179, 8, 0.2);
+}
+.bg-blue-500_10 {
+  background: rgba(59, 130, 246, 0.1);
+}
+.border-blue-500_20 {
+  border-color: rgba(59, 130, 246, 0.2);
+}
+.bg-green-500_10 {
+  background: rgba(34, 197, 94, 0.1);
+}
+.border-green-500_20 {
+  border-color: rgba(34, 197, 94, 0.2);
+}
 
 .premium-table {
-    :deep(.el-table) {
-        background: transparent !important;
-        --el-table-bg-color: transparent;
-        --el-table-tr-bg-color: transparent;
+  :deep(.el-table) {
+    background: transparent !important;
+    --el-table-bg-color: transparent;
+    --el-table-tr-bg-color: transparent;
 
-        th.el-table__cell {
-            background: rgba(168, 85, 247, 0.05) !important;
-            color: var(--text-secondary);
-            font-weight: 700;
-            text-transform: uppercase;
-            font-size: 11px;
-            letter-spacing: 1px;
-        }
-
-        td.el-table__cell {
-            border-bottom: 1px solid rgba(168, 85, 247, 0.05) !important;
-            padding: 16px 0;
-        }
+    th.el-table__cell {
+      background: rgba(168, 85, 247, 0.05) !important;
+      color: var(--text-secondary);
+      font-weight: 700;
+      text-transform: uppercase;
+      font-size: 11px;
+      letter-spacing: 1px;
     }
+
+    td.el-table__cell {
+      border-bottom: 1px solid rgba(168, 85, 247, 0.05) !important;
+      padding: 16px 0;
+    }
+  }
 }
 
 .premium-input {
-    :deep(.el-input__wrapper) {
-        background: rgba(255, 255, 255, 0.03) !important;
-        border: 1px solid rgba(255, 255, 255, 0.1) !important;
-        border-radius: 14px !important;
-        box-shadow: none !important;
-        height: 44px;
-        &.is-focus,
-        &:hover {
-            border-color: var(--purple-500) !important;
-            background: rgba(168, 85, 247, 0.05) !important;
-        }
+  :deep(.el-input__wrapper) {
+    background: rgba(255, 255, 255, 0.03) !important;
+    border: 1px solid rgba(255, 255, 255, 0.1) !important;
+    border-radius: 14px !important;
+    box-shadow: none !important;
+    height: 44px;
+    &.is-focus,
+    &:hover {
+      border-color: var(--purple-500) !important;
+      background: rgba(168, 85, 247, 0.05) !important;
     }
+  }
 }
 
 .hover-scale {
-    transition: transform 0.2s ease;
-    cursor: pointer;
-    &:hover {
-        transform: scale(1.2);
-    }
+  transition: transform 0.2s ease;
+  cursor: pointer;
+  &:hover {
+    transform: scale(1.2);
+  }
 }
 
 .cursor-pointer {
-    cursor: pointer;
+  cursor: pointer;
 }
 </style>

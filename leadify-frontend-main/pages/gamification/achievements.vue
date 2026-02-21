@@ -82,8 +82,12 @@ onMounted(async () => {
   margin: 0 auto;
 }
 
-.text-primary { color: var(--text-primary); }
-.text-secondary { color: var(--text-secondary); }
+.text-primary {
+  color: var(--text-primary);
+}
+.text-secondary {
+  color: var(--text-secondary);
+}
 
 .achievement-grid {
   display: grid;
@@ -103,10 +107,13 @@ onMounted(async () => {
   transition: transform 0.6s;
   transform-style: preserve-3d;
 
-  &:hover { transform: rotateY(180deg); }
+  &:hover {
+    transform: rotateY(180deg);
+  }
 }
 
-.flip-front, .flip-back {
+.flip-front,
+.flip-back {
   position: absolute;
   inset: 0;
   backface-visibility: hidden;
@@ -118,7 +125,7 @@ onMounted(async () => {
   padding: 16px;
   text-align: center;
   background: var(--glass-bg-primary);
-  border: 1px solid var(--glass-border-color, rgba(255,255,255,0.08));
+  border: 1px solid var(--glass-border-color, rgba(255, 255, 255, 0.08));
 }
 
 .flip-back {

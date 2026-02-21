@@ -4,9 +4,7 @@
     <div class="glass-panel p-6 rounded-2xl">
       <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
         <div>
-          <h1 class="text-2xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-pink-400 to-rose-400">
-            E-Signatures
-          </h1>
+          <h1 class="text-2xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-pink-400 to-rose-400">E-Signatures</h1>
           <p class="text-slate-400 text-sm mt-1">Send, track, and manage electronic signatures for contracts and documents.</p>
         </div>
         <el-button type="primary" class="!rounded-xl" @click="showSendDialog = true">
@@ -89,7 +87,13 @@
         <el-table-column label="Progress" width="150">
           <template #default="{ row }">
             <div class="flex items-center gap-2">
-              <el-progress :percentage="row.signedCount / row.totalSigners * 100" :stroke-width="4" :show-text="false" :color="getSignStatusColor(row.status)" class="flex-1" />
+              <el-progress
+                :percentage="(row.signedCount / row.totalSigners) * 100"
+                :stroke-width="4"
+                :show-text="false"
+                :color="getSignStatusColor(row.status)"
+                class="flex-1"
+              />
               <span class="text-xs text-slate-500">{{ row.signedCount }}/{{ row.totalSigners }}</span>
             </div>
           </template>
@@ -142,7 +146,8 @@
               </el-button>
             </div>
             <el-button text type="primary" @click="newSignRequest.recipients.push({ name: '', email: '' })">
-              <Icon name="ph:plus-bold" class="w-4 h-4 mr-1" /> Add Recipient
+              <Icon name="ph:plus-bold" class="w-4 h-4 mr-1" />
+              Add Recipient
             </el-button>
           </div>
         </el-form-item>
@@ -178,17 +183,92 @@ const searchQuery = ref('');
 const showSendDialog = ref(false);
 
 const newSignRequest = ref({
-  name: '', message: '', expiryDate: null,
+  name: '',
+  message: '',
+  expiryDate: null,
   recipients: [{ name: '', email: '' }]
 });
 
 const documents = ref([
-  { id: 1, name: 'Service Agreement - Acme Corp', type: 'CONTRACT', pages: 12, status: 'SIGNED', signedCount: 2, totalSigners: 2, sentDate: '2026-02-15', recipients: [{ name: 'John Smith', email: 'john@acme.com' }, { name: 'Sara Ahmed', email: 'sara@company.com' }] },
-  { id: 2, name: 'NDA - TechStart Inc', type: 'NDA', pages: 4, status: 'PENDING', signedCount: 1, totalSigners: 2, sentDate: '2026-02-18', recipients: [{ name: 'Mike Johnson', email: 'mike@techstart.com' }, { name: 'Ali Hassan', email: 'ali@company.com' }] },
-  { id: 3, name: 'SOW - Project Alpha', type: 'SOW', pages: 8, status: 'PENDING', signedCount: 0, totalSigners: 3, sentDate: '2026-02-19', recipients: [{ name: 'Lisa Park', email: 'lisa@client.com' }, { name: 'David Kim', email: 'david@client.com' }, { name: 'Omar Farooq', email: 'omar@company.com' }] },
-  { id: 4, name: 'Employment Contract - New Hire', type: 'CONTRACT', pages: 6, status: 'SIGNED', signedCount: 2, totalSigners: 2, sentDate: '2026-02-10', recipients: [{ name: 'Khalid Ibrahim', email: 'khalid@hire.com' }, { name: 'HR Dept', email: 'hr@company.com' }] },
-  { id: 5, name: 'Lease Agreement - Office B', type: 'LEASE', pages: 15, status: 'EXPIRED', signedCount: 0, totalSigners: 2, sentDate: '2026-01-15', recipients: [{ name: 'Property Manager', email: 'pm@building.com' }] },
-  { id: 6, name: 'Vendor Agreement - Supplier X', type: 'CONTRACT', pages: 10, status: 'DECLINED', signedCount: 0, totalSigners: 1, sentDate: '2026-02-01', recipients: [{ name: 'Vendor Rep', email: 'rep@vendor.com' }] }
+  {
+    id: 1,
+    name: 'Service Agreement - Acme Corp',
+    type: 'CONTRACT',
+    pages: 12,
+    status: 'SIGNED',
+    signedCount: 2,
+    totalSigners: 2,
+    sentDate: '2026-02-15',
+    recipients: [
+      { name: 'John Smith', email: 'john@acme.com' },
+      { name: 'Sara Ahmed', email: 'sara@company.com' }
+    ]
+  },
+  {
+    id: 2,
+    name: 'NDA - TechStart Inc',
+    type: 'NDA',
+    pages: 4,
+    status: 'PENDING',
+    signedCount: 1,
+    totalSigners: 2,
+    sentDate: '2026-02-18',
+    recipients: [
+      { name: 'Mike Johnson', email: 'mike@techstart.com' },
+      { name: 'Ali Hassan', email: 'ali@company.com' }
+    ]
+  },
+  {
+    id: 3,
+    name: 'SOW - Project Alpha',
+    type: 'SOW',
+    pages: 8,
+    status: 'PENDING',
+    signedCount: 0,
+    totalSigners: 3,
+    sentDate: '2026-02-19',
+    recipients: [
+      { name: 'Lisa Park', email: 'lisa@client.com' },
+      { name: 'David Kim', email: 'david@client.com' },
+      { name: 'Omar Farooq', email: 'omar@company.com' }
+    ]
+  },
+  {
+    id: 4,
+    name: 'Employment Contract - New Hire',
+    type: 'CONTRACT',
+    pages: 6,
+    status: 'SIGNED',
+    signedCount: 2,
+    totalSigners: 2,
+    sentDate: '2026-02-10',
+    recipients: [
+      { name: 'Khalid Ibrahim', email: 'khalid@hire.com' },
+      { name: 'HR Dept', email: 'hr@company.com' }
+    ]
+  },
+  {
+    id: 5,
+    name: 'Lease Agreement - Office B',
+    type: 'LEASE',
+    pages: 15,
+    status: 'EXPIRED',
+    signedCount: 0,
+    totalSigners: 2,
+    sentDate: '2026-01-15',
+    recipients: [{ name: 'Property Manager', email: 'pm@building.com' }]
+  },
+  {
+    id: 6,
+    name: 'Vendor Agreement - Supplier X',
+    type: 'CONTRACT',
+    pages: 10,
+    status: 'DECLINED',
+    signedCount: 0,
+    totalSigners: 1,
+    sentDate: '2026-02-01',
+    recipients: [{ name: 'Vendor Rep', email: 'rep@vendor.com' }]
+  }
 ]);
 
 const avgSignTime = computed(() => '1.3 days');
@@ -206,7 +286,12 @@ const getDocBg = (type: string) => {
 };
 
 const getDocIcon = (type: string) => {
-  const map: Record<string, string> = { CONTRACT: 'ph:file-doc-bold', NDA: 'ph:shield-check-bold', SOW: 'ph:clipboard-text-bold', LEASE: 'ph:house-bold' };
+  const map: Record<string, string> = {
+    CONTRACT: 'ph:file-doc-bold',
+    NDA: 'ph:shield-check-bold',
+    SOW: 'ph:clipboard-text-bold',
+    LEASE: 'ph:house-bold'
+  };
   return map[type] || 'ph:file-bold';
 };
 
@@ -216,7 +301,12 @@ const getDocIconColor = (type: string) => {
 };
 
 const getSignStatusType = (s: string): 'success' | 'warning' | 'info' | 'danger' | undefined => {
-  const m: Record<string, 'success' | 'warning' | 'info' | 'danger' | undefined> = { SIGNED: 'success', PENDING: 'warning', EXPIRED: 'danger', DECLINED: 'danger' };
+  const m: Record<string, 'success' | 'warning' | 'info' | 'danger' | undefined> = {
+    SIGNED: 'success',
+    PENDING: 'warning',
+    EXPIRED: 'danger',
+    DECLINED: 'danger'
+  };
   return m[s] || 'info';
 };
 
@@ -225,7 +315,7 @@ const getSignStatusColor = (s: string) => {
   return m[s] || '#94A3B8';
 };
 
-const formatDate = (d: string) => d ? new Date(d).toLocaleDateString('en', { month: 'short', day: 'numeric' }) : '-';
+const formatDate = (d: string) => (d ? new Date(d).toLocaleDateString('en', { month: 'short', day: 'numeric' }) : '-');
 
 const viewDocument = (doc: any) => ElMessage.info(`Viewing: ${doc.name}`);
 const sendReminder = (doc: any) => ElMessage.success(`Reminder sent for: ${doc.name}`);

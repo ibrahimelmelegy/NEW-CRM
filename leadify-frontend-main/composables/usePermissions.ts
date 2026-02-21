@@ -43,6 +43,6 @@ export function usePermissionsSync() {
   }
   return {
     hasPermission: (permission: string): boolean => permissions.value.includes(permission),
-    hasAnyPermission: (perms: string[]): boolean => perms.some(p => permissions.value.includes(p)),
+    hasAnyPermission: (perms: string[]): boolean => perms.some(p => permissions.value.includes(p))
   };
 }

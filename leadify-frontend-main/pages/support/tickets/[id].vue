@@ -196,7 +196,7 @@ async function loadAgents() {
 
 function handleCannedInsert(crId: string) {
   if (!crId) return;
-  const cr = cannedResponses.value.find((c) => c.id === crId);
+  const cr = cannedResponses.value.find(c => c.id === crId);
   if (cr) {
     newMessage.value = cr.body;
     selectedCannedResponse.value = '';

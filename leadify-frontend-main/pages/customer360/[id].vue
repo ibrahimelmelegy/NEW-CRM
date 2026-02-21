@@ -429,7 +429,12 @@ async function refreshAll() {
 // Helpers
 function getInitials(name: string): string {
   if (!name) return '?';
-  return name.split(' ').map(w => w[0]).join('').substring(0, 2).toUpperCase();
+  return name
+    .split(' ')
+    .map(w => w[0])
+    .join('')
+    .substring(0, 2)
+    .toUpperCase();
 }
 
 function getStatusType(status: string): string {

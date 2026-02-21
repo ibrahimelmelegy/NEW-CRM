@@ -98,16 +98,11 @@ async function loadReport() {
 
 function exportCSV() {
   const headers = ['Account Code', 'Account Name', 'Debit', 'Credit'];
-  const rows = trialBalance.value.accounts.map(a => [
-    a.code,
-    a.name,
-    a.debit > 0 ? a.debit.toFixed(2) : '',
-    a.credit > 0 ? a.credit.toFixed(2) : ''
-  ]);
+  const rows = trialBalance.value.accounts.map(a => [a.code, a.name, a.debit > 0 ? a.debit.toFixed(2) : '', a.credit > 0 ? a.credit.toFixed(2) : '']);
   rows.push(['', 'TOTALS', trialBalance.value.totalDebits.toFixed(2), trialBalance.value.totalCredits.toFixed(2)]);
 
   const csv = [headers, ...rows].map(r => r.map(v => `"${String(v).replace(/"/g, '""')}"`).join(',')).join('\n');
-  const blob = new Blob(['\ufeff' + csv], { type: 'text/csv;charset=utf-8;' });
+  const blob = new Blob(['\uFEFF' + csv], { type: 'text/csv;charset=utf-8;' });
   const url = URL.createObjectURL(blob);
   const link = document.createElement('a');
   link.href = url;

@@ -33,7 +33,10 @@ const loading = ref(true);
 
 onMounted(async () => {
   init();
-  if (!isAuthenticated()) { navigateTo('/portal/login'); return; }
+  if (!isAuthenticated()) {
+    navigateTo('/portal/login');
+    return;
+  }
   const res = await portalFetch('deals');
   if (res.success && res.body) {
     deals.value = res.body as any[];

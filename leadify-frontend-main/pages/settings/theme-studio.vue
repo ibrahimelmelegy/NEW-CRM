@@ -117,10 +117,7 @@ const localBlur = ref(themeStore.glassBlur);
 const localOpacity = ref(themeStore.glassOpacity);
 const localFontSize = ref(themeStore.fontSize);
 
-const predefineColors = [
-  '#7849ff', '#2563eb', '#ea580c', '#16a34a', '#e11d48',
-  '#06b6d4', '#d97706', '#6366f1', '#dc2626', '#8b5cf6'
-];
+const predefineColors = ['#7849ff', '#2563eb', '#ea580c', '#16a34a', '#e11d48', '#06b6d4', '#d97706', '#6366f1', '#dc2626', '#8b5cf6'];
 
 function onAccentChange(color: string | null) {
   if (color) themeStore.setAccentColor(color);
@@ -137,9 +134,12 @@ function resetToDefault() {
   localFontSize.value = 14;
 }
 
-watch(() => themeStore.accentColor, (val) => {
-  customAccent.value = val;
-});
+watch(
+  () => themeStore.accentColor,
+  val => {
+    customAccent.value = val;
+  }
+);
 </script>
 
 <style lang="scss" scoped>

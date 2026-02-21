@@ -4,9 +4,7 @@
     <div class="glass-panel p-6 rounded-2xl">
       <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
         <div>
-          <h1 class="text-2xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-teal-400 to-cyan-400">
-            Goals & OKRs
-          </h1>
+          <h1 class="text-2xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-teal-400 to-cyan-400">Goals & OKRs</h1>
           <p class="text-slate-400 text-sm mt-1">Set objectives, track key results, and align team goals across the organization.</p>
         </div>
         <el-button type="primary" class="!rounded-xl" @click="showGoalDialog = true">
@@ -89,7 +87,11 @@
               <span class="text-xs text-slate-600">({{ inProgressGoals.length }})</span>
             </div>
             <div class="space-y-3">
-              <div v-for="goal in inProgressGoals" :key="goal.id" class="glass-panel p-4 rounded-xl border-l-2 border-blue-500 hover:border-blue-400 transition">
+              <div
+                v-for="goal in inProgressGoals"
+                :key="goal.id"
+                class="glass-panel p-4 rounded-xl border-l-2 border-blue-500 hover:border-blue-400 transition"
+              >
                 <div class="flex items-start justify-between">
                   <h4 class="text-sm font-medium text-slate-200">{{ goal.title }}</h4>
                   <el-tag :type="getLevelType(goal.level)" effect="dark" size="small">{{ goal.level }}</el-tag>
@@ -196,7 +198,8 @@
               </el-button>
             </div>
             <el-button text type="primary" @click="newGoal.keyResults.push({ id: Date.now(), title: '', completed: false })">
-              <Icon name="ph:plus-bold" class="w-4 h-4 mr-1" /> Add Key Result
+              <Icon name="ph:plus-bold" class="w-4 h-4 mr-1" />
+              Add Key Result
             </el-button>
           </div>
         </el-form-item>
@@ -220,15 +223,95 @@ definePageMeta({
 
 const viewMode = ref('board');
 const showGoalDialog = ref(false);
-const newGoal = ref({ title: '', description: '', level: 'PERSONAL', dueDate: new Date().toISOString().slice(0, 10), keyResults: [{ id: Date.now(), title: '', completed: false }] });
+const newGoal = ref({
+  title: '',
+  description: '',
+  level: 'PERSONAL',
+  dueDate: new Date().toISOString().slice(0, 10),
+  keyResults: [{ id: Date.now(), title: '', completed: false }]
+});
 
 const allGoals = ref([
-  { id: 1, title: 'Increase Q1 Revenue by 25%', description: 'Drive revenue growth through new client acquisition and upselling', level: 'COMPANY', status: 'IN_PROGRESS', progress: 62, owner: 'Leadership', dueDate: '2026-03-31', keyResults: [{ id: 1, title: 'Close 15 new enterprise deals', completed: false }, { id: 2, title: 'Upsell 20% of existing clients', completed: true }, { id: 3, title: 'Reduce churn to under 5%', completed: false }] },
-  { id: 2, title: 'Launch Marketing Automation', description: 'Implement full marketing automation pipeline', level: 'TEAM', status: 'IN_PROGRESS', progress: 45, owner: 'Marketing', dueDate: '2026-02-28', keyResults: [{ id: 4, title: 'Set up email sequences', completed: true }, { id: 5, title: 'Configure lead scoring', completed: false }] },
-  { id: 3, title: 'Achieve 95% Customer Satisfaction', description: 'Improve customer support response times and quality', level: 'COMPANY', status: 'IN_PROGRESS', progress: 78, owner: 'Support', dueDate: '2026-03-31', keyResults: [{ id: 6, title: 'Response time under 2 hours', completed: true }, { id: 7, title: 'CSAT score above 4.5', completed: true }, { id: 8, title: 'Zero critical tickets unresolved over 48h', completed: false }] },
-  { id: 4, title: 'Complete Sales Training Program', description: 'Train all sales reps on new CRM features', level: 'PERSONAL', status: 'COMPLETED', progress: 100, owner: 'Ahmed Al-Farsi', dueDate: '2026-01-31', keyResults: [] },
-  { id: 5, title: 'Hire 5 New Engineers', description: 'Expand engineering team for product development', level: 'TEAM', status: 'NOT_STARTED', progress: 0, owner: 'HR', dueDate: '2026-04-30', keyResults: [{ id: 9, title: 'Post job listings', completed: false }, { id: 10, title: 'Screen 50 candidates', completed: false }] },
-  { id: 6, title: 'Reduce Operational Costs by 10%', description: 'Optimize processes and reduce overhead', level: 'COMPANY', status: 'NOT_STARTED', progress: 0, owner: 'Operations', dueDate: '2026-06-30', keyResults: [] }
+  {
+    id: 1,
+    title: 'Increase Q1 Revenue by 25%',
+    description: 'Drive revenue growth through new client acquisition and upselling',
+    level: 'COMPANY',
+    status: 'IN_PROGRESS',
+    progress: 62,
+    owner: 'Leadership',
+    dueDate: '2026-03-31',
+    keyResults: [
+      { id: 1, title: 'Close 15 new enterprise deals', completed: false },
+      { id: 2, title: 'Upsell 20% of existing clients', completed: true },
+      { id: 3, title: 'Reduce churn to under 5%', completed: false }
+    ]
+  },
+  {
+    id: 2,
+    title: 'Launch Marketing Automation',
+    description: 'Implement full marketing automation pipeline',
+    level: 'TEAM',
+    status: 'IN_PROGRESS',
+    progress: 45,
+    owner: 'Marketing',
+    dueDate: '2026-02-28',
+    keyResults: [
+      { id: 4, title: 'Set up email sequences', completed: true },
+      { id: 5, title: 'Configure lead scoring', completed: false }
+    ]
+  },
+  {
+    id: 3,
+    title: 'Achieve 95% Customer Satisfaction',
+    description: 'Improve customer support response times and quality',
+    level: 'COMPANY',
+    status: 'IN_PROGRESS',
+    progress: 78,
+    owner: 'Support',
+    dueDate: '2026-03-31',
+    keyResults: [
+      { id: 6, title: 'Response time under 2 hours', completed: true },
+      { id: 7, title: 'CSAT score above 4.5', completed: true },
+      { id: 8, title: 'Zero critical tickets unresolved over 48h', completed: false }
+    ]
+  },
+  {
+    id: 4,
+    title: 'Complete Sales Training Program',
+    description: 'Train all sales reps on new CRM features',
+    level: 'PERSONAL',
+    status: 'COMPLETED',
+    progress: 100,
+    owner: 'Ahmed Al-Farsi',
+    dueDate: '2026-01-31',
+    keyResults: []
+  },
+  {
+    id: 5,
+    title: 'Hire 5 New Engineers',
+    description: 'Expand engineering team for product development',
+    level: 'TEAM',
+    status: 'NOT_STARTED',
+    progress: 0,
+    owner: 'HR',
+    dueDate: '2026-04-30',
+    keyResults: [
+      { id: 9, title: 'Post job listings', completed: false },
+      { id: 10, title: 'Screen 50 candidates', completed: false }
+    ]
+  },
+  {
+    id: 6,
+    title: 'Reduce Operational Costs by 10%',
+    description: 'Optimize processes and reduce overhead',
+    level: 'COMPANY',
+    status: 'NOT_STARTED',
+    progress: 0,
+    owner: 'Operations',
+    dueDate: '2026-06-30',
+    keyResults: []
+  }
 ]);
 
 const companyGoals = computed(() => allGoals.value.filter(g => g.level === 'COMPANY'));
@@ -256,11 +339,15 @@ const getLevelType = (level: string): 'success' | 'warning' | 'info' | 'danger' 
 };
 
 const getStatusType = (status: string): 'success' | 'warning' | 'info' | 'danger' | undefined => {
-  const map: Record<string, 'success' | 'warning' | 'info' | 'danger' | undefined> = { COMPLETED: 'success', IN_PROGRESS: 'warning', NOT_STARTED: 'info' };
+  const map: Record<string, 'success' | 'warning' | 'info' | 'danger' | undefined> = {
+    COMPLETED: 'success',
+    IN_PROGRESS: 'warning',
+    NOT_STARTED: 'info'
+  };
   return map[status] || 'info';
 };
 
-const formatDate = (d: string) => d ? new Date(d).toLocaleDateString('en', { month: 'short', day: 'numeric' }) : '-';
+const formatDate = (d: string) => (d ? new Date(d).toLocaleDateString('en', { month: 'short', day: 'numeric' }) : '-');
 
 const createGoal = () => {
   if (!newGoal.value.title) {
@@ -275,7 +362,13 @@ const createGoal = () => {
     owner: 'Me'
   });
   showGoalDialog.value = false;
-  newGoal.value = { title: '', description: '', level: 'PERSONAL', dueDate: new Date().toISOString().slice(0, 10), keyResults: [{ id: Date.now(), title: '', completed: false }] };
+  newGoal.value = {
+    title: '',
+    description: '',
+    level: 'PERSONAL',
+    dueDate: new Date().toISOString().slice(0, 10),
+    keyResults: [{ id: Date.now(), title: '', completed: false }]
+  };
   ElMessage.success('Goal created successfully');
 };
 </script>

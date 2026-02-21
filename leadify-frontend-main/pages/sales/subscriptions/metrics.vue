@@ -125,12 +125,7 @@ div
 </template>
 
 <script setup lang="ts">
-import {
-  fetchSubscriptionMetrics,
-  processAutoRenewals,
-  formatSubscriptionCurrency,
-  type SubscriptionMetrics
-} from '~/composables/useSubscriptions';
+import { fetchSubscriptionMetrics, processAutoRenewals, formatSubscriptionCurrency, type SubscriptionMetrics } from '~/composables/useSubscriptions';
 
 const loading = ref(false);
 const processingRenewals = ref(false);

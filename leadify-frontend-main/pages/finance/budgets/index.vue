@@ -71,9 +71,7 @@ const deleting = ref(false);
 const deletePopup = ref(false);
 const deleteId = ref<number | null>(null);
 
-const headerActions = computed(() => [
-  { label: t('finance.budgets.addBudget'), to: '/finance/budgets/create', type: 'primary', icon: Plus }
-]);
+const headerActions = computed(() => [{ label: t('finance.budgets.addBudget'), to: '/finance/budgets/create', type: 'primary', icon: Plus }]);
 
 // Fetch
 const result = await fetchBudgets();
@@ -122,9 +120,7 @@ const updateColumns = () => {
 };
 updateColumns();
 
-const filterOptions = computed(() => [
-  { title: t('finance.budgets.startDate'), value: ['startDate', 'endDate'], type: 'date' }
-]);
+const filterOptions = computed(() => [{ title: t('finance.budgets.startDate'), value: ['startDate', 'endDate'], type: 'date' }]);
 
 function handleRowClick(row: any) {
   router.push(`/finance/budgets/${row.id}`);

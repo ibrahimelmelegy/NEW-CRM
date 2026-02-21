@@ -4,9 +4,7 @@
     <div class="glass-panel p-6 rounded-2xl">
       <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
         <div>
-          <h1 class="text-2xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-blue-400 to-cyan-400">
-            Live Chat
-          </h1>
+          <h1 class="text-2xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-blue-400 to-cyan-400">Live Chat</h1>
           <p class="text-slate-400 text-sm mt-1">Manage real-time customer conversations, assign agents, and resolve queries.</p>
         </div>
         <div class="flex gap-2">
@@ -17,7 +15,11 @@
             <el-option label="Resolved" value="resolved" />
           </el-select>
           <el-button type="primary" class="!rounded-xl" @click="toggleAvailability">
-            <Icon :name="isAvailable ? 'ph:circle-fill' : 'ph:circle'" class="w-4 h-4 mr-2" :class="isAvailable ? 'text-emerald-300' : 'text-red-300'" />
+            <Icon
+              :name="isAvailable ? 'ph:circle-fill' : 'ph:circle'"
+              class="w-4 h-4 mr-2"
+              :class="isAvailable ? 'text-emerald-300' : 'text-red-300'"
+            />
             {{ isAvailable ? 'Online' : 'Offline' }}
           </el-button>
         </div>
@@ -45,7 +47,7 @@
     </div>
 
     <!-- Chat Interface -->
-    <div class="grid grid-cols-12 gap-4" style="height: calc(100vh - 380px); min-height: 500px;">
+    <div class="grid grid-cols-12 gap-4" style="height: calc(100vh - 380px); min-height: 500px">
       <!-- Left Panel: Chat List -->
       <div class="col-span-3 glass-panel rounded-xl flex flex-col overflow-hidden">
         <div class="p-3 border-b border-slate-800/60">
@@ -56,15 +58,19 @@
           </el-input>
         </div>
         <div class="flex-1 overflow-y-auto">
-          <div v-for="chat in filteredChats" :key="chat.id"
+          <div
+            v-for="chat in filteredChats"
+            :key="chat.id"
             class="flex items-start gap-3 p-3 cursor-pointer hover:bg-slate-800/30 transition border-b border-slate-800/30"
             :class="selectedChatId === chat.id ? 'bg-slate-800/50 border-l-2 border-l-blue-400' : ''"
             @click="selectChat(chat.id)"
           >
             <div class="relative flex-shrink-0">
               <el-avatar :size="36" class="bg-slate-700">{{ chat.visitorName.charAt(0) }}</el-avatar>
-              <div class="absolute -bottom-0.5 -right-0.5 w-3 h-3 rounded-full border-2 border-slate-900"
-                :class="chat.status === 'active' ? 'bg-emerald-400' : chat.status === 'waiting' ? 'bg-amber-400' : 'bg-slate-500'"></div>
+              <div
+                class="absolute -bottom-0.5 -right-0.5 w-3 h-3 rounded-full border-2 border-slate-900"
+                :class="chat.status === 'active' ? 'bg-emerald-400' : chat.status === 'waiting' ? 'bg-amber-400' : 'bg-slate-500'"
+              ></div>
             </div>
             <div class="flex-1 min-w-0">
               <div class="flex justify-between items-center">
@@ -76,7 +82,10 @@
                 <el-tag :type="getChatStatusType(chat.status)" effect="dark" size="small" class="!text-[10px] !px-1.5 !py-0">
                   {{ chat.status }}
                 </el-tag>
-                <span v-if="chat.unreadCount > 0" class="ml-auto w-5 h-5 rounded-full bg-blue-500 text-white text-[10px] flex items-center justify-center font-bold">
+                <span
+                  v-if="chat.unreadCount > 0"
+                  class="ml-auto w-5 h-5 rounded-full bg-blue-500 text-white text-[10px] flex items-center justify-center font-bold"
+                >
                   {{ chat.unreadCount }}
                 </span>
               </div>
@@ -117,20 +126,16 @@
           </div>
 
           <!-- Messages -->
-          <div class="flex-1 overflow-y-auto p-4 space-y-4" ref="messagesContainer">
-            <div v-for="msg in activeChat.messages" :key="msg.id"
-              class="flex" :class="msg.sender === 'agent' ? 'justify-end' : 'justify-start'"
-            >
-              <div class="max-w-[75%] rounded-2xl px-4 py-2.5"
-                :class="msg.sender === 'agent'
-                  ? 'bg-blue-500/20 text-slate-200 rounded-br-sm'
-                  : 'bg-slate-800/60 text-slate-300 rounded-bl-sm'"
+          <div ref="messagesContainer" class="flex-1 overflow-y-auto p-4 space-y-4">
+            <div v-for="msg in activeChat.messages" :key="msg.id" class="flex" :class="msg.sender === 'agent' ? 'justify-end' : 'justify-start'">
+              <div
+                class="max-w-[75%] rounded-2xl px-4 py-2.5"
+                :class="msg.sender === 'agent' ? 'bg-blue-500/20 text-slate-200 rounded-br-sm' : 'bg-slate-800/60 text-slate-300 rounded-bl-sm'"
               >
                 <p class="text-sm">{{ msg.text }}</p>
                 <div class="flex items-center justify-end gap-1 mt-1">
                   <span class="text-[10px] text-slate-500">{{ msg.time }}</span>
-                  <Icon v-if="msg.sender === 'agent'" name="ph:checks-bold" class="w-3 h-3"
-                    :class="msg.read ? 'text-blue-400' : 'text-slate-600'" />
+                  <Icon v-if="msg.sender === 'agent'" name="ph:checks-bold" class="w-3 h-3" :class="msg.read ? 'text-blue-400' : 'text-slate-600'" />
                 </div>
               </div>
             </div>
@@ -150,14 +155,14 @@
           <!-- Message Input -->
           <div class="p-4 border-t border-slate-800/60">
             <div class="flex gap-2">
-              <el-input v-model="messageText" placeholder="Type a message..." @keyup.enter="sendMessage" class="flex-1">
+              <el-input v-model="messageText" placeholder="Type a message..." class="flex-1" @keyup.enter="sendMessage">
                 <template #prefix>
                   <el-tooltip content="Attach file">
                     <Icon name="ph:paperclip-bold" class="w-4 h-4 cursor-pointer text-slate-400 hover:text-slate-200" />
                   </el-tooltip>
                 </template>
               </el-input>
-              <el-button type="primary" @click="sendMessage" :disabled="!messageText.trim()">
+              <el-button type="primary" :disabled="!messageText.trim()" @click="sendMessage">
                 <Icon name="ph:paper-plane-tilt-bold" class="w-4 h-4" />
               </el-button>
             </div>
@@ -207,7 +212,9 @@
             <div class="pt-4 border-t border-slate-800/60">
               <h5 class="text-xs font-medium text-slate-400 mb-2">Quick Replies</h5>
               <div class="space-y-1.5">
-                <div v-for="reply in quickReplies" :key="reply.id"
+                <div
+                  v-for="reply in quickReplies"
+                  :key="reply.id"
                   class="text-xs text-slate-300 p-2 rounded-lg bg-slate-800/30 cursor-pointer hover:bg-slate-800/60 transition"
                   @click="useQuickReply(reply.text)"
                 >
@@ -221,7 +228,8 @@
               <h5 class="text-xs font-medium text-slate-400 mb-2">Notes</h5>
               <el-input v-model="chatNotes" type="textarea" :rows="3" placeholder="Add notes about this visitor..." size="small" />
               <el-button size="small" type="primary" class="mt-2 w-full" @click="saveNotes">
-                <Icon name="ph:floppy-disk-bold" class="w-3 h-3 mr-1" /> Save Notes
+                <Icon name="ph:floppy-disk-bold" class="w-3 h-3 mr-1" />
+                Save Notes
               </el-button>
             </div>
 
@@ -308,7 +316,7 @@ const agents = ref([
   { id: 1, name: 'Ahmed Al-Farsi', activeChats: 3 },
   { id: 2, name: 'Sara Mohammed', activeChats: 2 },
   { id: 3, name: 'Omar Hassan', activeChats: 1 },
-  { id: 4, name: 'Fatima Ali', activeChats: 4 },
+  { id: 4, name: 'Fatima Ali', activeChats: 4 }
 ]);
 
 const quickReplies = ref([
@@ -316,63 +324,116 @@ const quickReplies = ref([
   { id: 2, label: 'Please wait', text: 'Please hold on while I look into this for you.' },
   { id: 3, label: 'Transfer notice', text: 'I will transfer you to a specialist who can better assist you.' },
   { id: 4, label: 'Follow-up email', text: 'I will send you a follow-up email with the details we discussed.' },
-  { id: 5, label: 'Closing', text: 'Is there anything else I can help you with?' },
+  { id: 5, label: 'Closing', text: 'Is there anything else I can help you with?' }
 ]);
 
 const chats = ref<Chat[]>([
   {
-    id: 1, visitorName: 'Khalid Ibrahim', visitorEmail: 'khalid@techcorp.sa', status: 'active',
-    lastMessage: 'Can you help me with the pricing page?', lastMessageTime: '2m ago', unreadCount: 2, isTyping: true, assignedAgent: 1,
+    id: 1,
+    visitorName: 'Khalid Ibrahim',
+    visitorEmail: 'khalid@techcorp.sa',
+    status: 'active',
+    lastMessage: 'Can you help me with the pricing page?',
+    lastMessageTime: '2m ago',
+    unreadCount: 2,
+    isTyping: true,
+    assignedAgent: 1,
     visitorInfo: { browser: 'Chrome 121 / Windows', location: 'Riyadh, SA', currentPage: '/pricing' },
     messages: [
       { id: 1, sender: 'visitor', text: 'Hi, I have a question about your enterprise plan.', time: '10:32 AM', read: true },
-      { id: 2, sender: 'agent', text: 'Hello Khalid! Welcome. I would be happy to help you with the enterprise plan details.', time: '10:33 AM', read: true },
+      {
+        id: 2,
+        sender: 'agent',
+        text: 'Hello Khalid! Welcome. I would be happy to help you with the enterprise plan details.',
+        time: '10:33 AM',
+        read: true
+      },
       { id: 3, sender: 'visitor', text: 'What is included in the enterprise tier? We have 200+ users.', time: '10:34 AM', read: true },
-      { id: 4, sender: 'agent', text: 'Our enterprise plan includes unlimited users, priority support, custom integrations, and dedicated account management. For 200+ users, we can offer volume pricing.', time: '10:35 AM', read: true },
-      { id: 5, sender: 'visitor', text: 'Can you help me with the pricing page?', time: '10:38 AM', read: false },
-    ],
+      {
+        id: 4,
+        sender: 'agent',
+        text: 'Our enterprise plan includes unlimited users, priority support, custom integrations, and dedicated account management. For 200+ users, we can offer volume pricing.',
+        time: '10:35 AM',
+        read: true
+      },
+      { id: 5, sender: 'visitor', text: 'Can you help me with the pricing page?', time: '10:38 AM', read: false }
+    ]
   },
   {
-    id: 2, visitorName: 'Noura Salem', visitorEmail: 'noura@gulfbiz.com', status: 'active',
-    lastMessage: 'The dashboard is loading slowly for me', lastMessageTime: '5m ago', unreadCount: 1, isTyping: false, assignedAgent: 2,
+    id: 2,
+    visitorName: 'Noura Salem',
+    visitorEmail: 'noura@gulfbiz.com',
+    status: 'active',
+    lastMessage: 'The dashboard is loading slowly for me',
+    lastMessageTime: '5m ago',
+    unreadCount: 1,
+    isTyping: false,
+    assignedAgent: 2,
     visitorInfo: { browser: 'Safari 17 / macOS', location: 'Jeddah, SA', currentPage: '/dashboard' },
     messages: [
       { id: 1, sender: 'visitor', text: 'Hello, I am experiencing slow load times on the dashboard.', time: '10:25 AM', read: true },
       { id: 2, sender: 'agent', text: 'Hi Noura, sorry about that. Let me check on this right away.', time: '10:26 AM', read: true },
-      { id: 3, sender: 'visitor', text: 'The dashboard is loading slowly for me', time: '10:35 AM', read: false },
-    ],
+      { id: 3, sender: 'visitor', text: 'The dashboard is loading slowly for me', time: '10:35 AM', read: false }
+    ]
   },
   {
-    id: 3, visitorName: 'Hassan Al-Qahtani', visitorEmail: 'hassan@startup.sa', status: 'waiting',
-    lastMessage: 'Is anyone available to help?', lastMessageTime: '8m ago', unreadCount: 3, isTyping: false, assignedAgent: null,
+    id: 3,
+    visitorName: 'Hassan Al-Qahtani',
+    visitorEmail: 'hassan@startup.sa',
+    status: 'waiting',
+    lastMessage: 'Is anyone available to help?',
+    lastMessageTime: '8m ago',
+    unreadCount: 3,
+    isTyping: false,
+    assignedAgent: null,
     visitorInfo: { browser: 'Firefox 122 / Linux', location: 'Dammam, SA', currentPage: '/support' },
     messages: [
       { id: 1, sender: 'visitor', text: 'Hi, I need help setting up the API integration.', time: '10:20 AM', read: false },
       { id: 2, sender: 'visitor', text: 'We are trying to connect our ERP system.', time: '10:22 AM', read: false },
-      { id: 3, sender: 'visitor', text: 'Is anyone available to help?', time: '10:30 AM', read: false },
-    ],
+      { id: 3, sender: 'visitor', text: 'Is anyone available to help?', time: '10:30 AM', read: false }
+    ]
   },
   {
-    id: 4, visitorName: 'Amal Rashid', visitorEmail: 'amal@retailco.sa', status: 'resolved',
-    lastMessage: 'Thank you for your help!', lastMessageTime: '25m ago', unreadCount: 0, isTyping: false, assignedAgent: 1,
+    id: 4,
+    visitorName: 'Amal Rashid',
+    visitorEmail: 'amal@retailco.sa',
+    status: 'resolved',
+    lastMessage: 'Thank you for your help!',
+    lastMessageTime: '25m ago',
+    unreadCount: 0,
+    isTyping: false,
+    assignedAgent: 1,
     visitorInfo: { browser: 'Chrome 121 / Android', location: 'Riyadh, SA', currentPage: '/settings' },
     messages: [
       { id: 1, sender: 'visitor', text: 'How do I change my account settings?', time: '09:50 AM', read: true },
       { id: 2, sender: 'agent', text: 'Go to Settings > Account and you will find all the options there.', time: '09:51 AM', read: true },
-      { id: 3, sender: 'visitor', text: 'Thank you for your help!', time: '09:55 AM', read: true },
-    ],
+      { id: 3, sender: 'visitor', text: 'Thank you for your help!', time: '09:55 AM', read: true }
+    ]
   },
   {
-    id: 5, visitorName: 'Youssef Mansour', visitorEmail: 'youssef@finserv.sa', status: 'active',
-    lastMessage: 'Can I export my reports to Excel?', lastMessageTime: '12m ago', unreadCount: 0, isTyping: false, assignedAgent: 3,
+    id: 5,
+    visitorName: 'Youssef Mansour',
+    visitorEmail: 'youssef@finserv.sa',
+    status: 'active',
+    lastMessage: 'Can I export my reports to Excel?',
+    lastMessageTime: '12m ago',
+    unreadCount: 0,
+    isTyping: false,
+    assignedAgent: 3,
     visitorInfo: { browser: 'Edge 121 / Windows', location: 'Khobar, SA', currentPage: '/reports' },
     messages: [
       { id: 1, sender: 'visitor', text: 'Hi, quick question about report exports.', time: '10:15 AM', read: true },
       { id: 2, sender: 'agent', text: 'Sure! What do you need help with?', time: '10:16 AM', read: true },
       { id: 3, sender: 'visitor', text: 'Can I export my reports to Excel?', time: '10:18 AM', read: true },
-      { id: 4, sender: 'agent', text: 'Absolutely. On any report page, click the Export button in the top-right corner and select XLSX format.', time: '10:19 AM', read: true },
-    ],
-  },
+      {
+        id: 4,
+        sender: 'agent',
+        text: 'Absolutely. On any report page, click the Export button in the top-right corner and select XLSX format.',
+        time: '10:19 AM',
+        read: true
+      }
+    ]
+  }
 ]);
 
 const filteredChats = computed(() => {
@@ -382,9 +443,7 @@ const filteredChats = computed(() => {
   }
   if (chatSearch.value) {
     const s = chatSearch.value.toLowerCase();
-    result = result.filter(c =>
-      c.visitorName.toLowerCase().includes(s) || c.visitorEmail.toLowerCase().includes(s)
-    );
+    result = result.filter(c => c.visitorName.toLowerCase().includes(s) || c.visitorEmail.toLowerCase().includes(s));
   }
   return result;
 });
@@ -401,7 +460,7 @@ const getChatStatusType = (status: string): 'success' | 'warning' | 'info' | und
   const map: Record<string, 'success' | 'warning' | 'info' | undefined> = {
     active: 'success',
     waiting: 'warning',
-    resolved: 'info',
+    resolved: 'info'
   };
   return map[status];
 };
@@ -411,7 +470,9 @@ const selectChat = (id: number) => {
   const chat = chats.value.find(c => c.id === id);
   if (chat) {
     chat.unreadCount = 0;
-    chat.messages.forEach(m => { m.read = true; });
+    chat.messages.forEach(m => {
+      m.read = true;
+    });
   }
 };
 
@@ -423,7 +484,7 @@ const sendMessage = () => {
     sender: 'agent',
     text: messageText.value.trim(),
     time: new Date().toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit' }),
-    read: false,
+    read: false
   };
   chat.messages.push(newMsg);
   chat.lastMessage = newMsg.text;

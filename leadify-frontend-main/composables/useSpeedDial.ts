@@ -27,7 +27,7 @@ export function useSpeedDial() {
         { icon: 'ph:plus-bold', label: 'New Lead', color: '#3B82F6', action: () => router.push('/sales/leads/create') },
         { icon: 'ph:handshake-bold', label: 'New Deal', color: '#8B5CF6', action: () => router.push('/sales/deals/add-deal') },
         { icon: 'ph:chart-line-up-bold', label: 'Analytics', color: '#10B981', action: () => router.push('/analytics') },
-        { icon: 'ph:target-bold', label: 'War Room', color: '#F59E0B', action: () => router.push('/dashboard/war-room') },
+        { icon: 'ph:target-bold', label: 'War Room', color: '#F59E0B', action: () => router.push('/dashboard/war-room') }
       ];
     }
 
@@ -36,7 +36,7 @@ export function useSpeedDial() {
       return [
         { icon: 'ph:user-plus-bold', label: 'New Lead', color: '#3B82F6', action: () => router.push('/sales/leads/create') },
         { icon: 'ph:upload-bold', label: 'Import', color: '#10B981', action: () => router.push('/sales/leads/import') },
-        { icon: 'ph:funnel-bold', label: 'Lead Scoring', color: '#F59E0B', action: () => router.push('/settings/lead-scoring') },
+        { icon: 'ph:funnel-bold', label: 'Lead Scoring', color: '#F59E0B', action: () => router.push('/settings/lead-scoring') }
       ];
     }
 
@@ -45,7 +45,7 @@ export function useSpeedDial() {
       return [
         { icon: 'ph:handshake-bold', label: 'New Deal', color: '#8B5CF6', action: () => router.push('/sales/deals/add-deal') },
         { icon: 'ph:columns-bold', label: 'Kanban View', color: '#3B82F6', action: () => router.push('/sales/deals/kanban') },
-        { icon: 'ph:chart-pie-bold', label: 'Pipeline', color: '#10B981', action: () => router.push('/settings/pipeline') },
+        { icon: 'ph:chart-pie-bold', label: 'Pipeline', color: '#10B981', action: () => router.push('/settings/pipeline') }
       ];
     }
 
@@ -53,7 +53,7 @@ export function useSpeedDial() {
     if (path.startsWith('/sales/clients')) {
       return [
         { icon: 'ph:buildings-bold', label: 'New Client', color: '#3B82F6', action: () => router.push('/sales/clients/create') },
-        { icon: 'ph:export-bold', label: 'Export', color: '#10B981', action: () => {} },
+        { icon: 'ph:export-bold', label: 'Export', color: '#10B981', action: () => {} }
       ];
     }
 
@@ -61,7 +61,7 @@ export function useSpeedDial() {
     if (path.startsWith('/tasks')) {
       return [
         { icon: 'ph:check-circle-bold', label: 'New Task', color: '#3B82F6', action: () => router.push('/tasks/create') },
-        { icon: 'ph:calendar-bold', label: 'Calendar', color: '#8B5CF6', action: () => router.push('/calendar') },
+        { icon: 'ph:calendar-bold', label: 'Calendar', color: '#8B5CF6', action: () => router.push('/calendar') }
       ];
     }
 
@@ -70,7 +70,7 @@ export function useSpeedDial() {
       return [
         { icon: 'ph:fire-bold', label: 'Heatmap', color: '#EF4444', action: () => router.push('/analytics/heatmap') },
         { icon: 'ph:graph-bold', label: 'Relationships', color: '#8B5CF6', action: () => router.push('/analytics/relationship-graph') },
-        { icon: 'ph:chart-bar-bold', label: 'Reports', color: '#3B82F6', action: () => router.push('/reports') },
+        { icon: 'ph:chart-bar-bold', label: 'Reports', color: '#3B82F6', action: () => router.push('/reports') }
       ];
     }
 
@@ -79,7 +79,7 @@ export function useSpeedDial() {
       return [
         { icon: 'ph:palette-bold', label: 'Theme Studio', color: '#8B5CF6', action: () => router.push('/settings/theme-studio') },
         { icon: 'ph:gear-bold', label: 'Workflows', color: '#3B82F6', action: () => router.push('/settings/workflows') },
-        { icon: 'ph:shield-check-bold', label: 'Security', color: '#10B981', action: () => router.push('/settings/security') },
+        { icon: 'ph:shield-check-bold', label: 'Security', color: '#10B981', action: () => router.push('/settings/security') }
       ];
     }
 
@@ -87,7 +87,7 @@ export function useSpeedDial() {
     return [
       { icon: 'ph:user-plus-bold', label: 'New Lead', color: '#3B82F6', action: () => router.push('/sales/leads/create') },
       { icon: 'ph:handshake-bold', label: 'New Deal', color: '#8B5CF6', action: () => router.push('/sales/deals/add-deal') },
-      { icon: 'ph:magnifying-glass-bold', label: 'Search', color: '#F59E0B', action: () => {} },
+      { icon: 'ph:magnifying-glass-bold', label: 'Search', color: '#F59E0B', action: () => {} }
     ];
   });
 

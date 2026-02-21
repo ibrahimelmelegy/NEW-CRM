@@ -63,12 +63,7 @@ import { ref, computed, reactive, onMounted } from 'vue';
 import { Plus, Search } from '@element-plus/icons-vue';
 import { ElNotification } from 'element-plus';
 import type { FormInstance } from 'element-plus';
-import {
-  fetchCannedResponses,
-  createCannedResponse,
-  updateCannedResponse,
-  deleteCannedResponse
-} from '@/composables/useSupport';
+import { fetchCannedResponses, createCannedResponse, updateCannedResponse, deleteCannedResponse } from '@/composables/useSupport';
 import type { CannedResponse } from '@/composables/useSupport';
 
 const loading = ref(false);
@@ -96,7 +91,7 @@ function debounceLoad() {
 
 const uniqueCategories = computed(() => {
   const cats = new Set<string>();
-  responses.value.forEach((r) => {
+  responses.value.forEach(r => {
     if (r.category) cats.add(r.category);
   });
   return Array.from(cats).sort();
@@ -105,15 +100,11 @@ const uniqueCategories = computed(() => {
 const filteredResponses = computed(() => {
   let result = responses.value;
   if (categoryFilter.value) {
-    result = result.filter((r) => r.category === categoryFilter.value);
+    result = result.filter(r => r.category === categoryFilter.value);
   }
   if (search.value) {
     const q = search.value.toLowerCase();
-    result = result.filter(
-      (r) =>
-        r.title.toLowerCase().includes(q) ||
-        r.body.toLowerCase().includes(q)
-    );
+    result = result.filter(r => r.title.toLowerCase().includes(q) || r.body.toLowerCase().includes(q));
   }
   return result;
 });

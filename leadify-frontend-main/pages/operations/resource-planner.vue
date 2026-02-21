@@ -4,9 +4,7 @@
     <div class="glass-panel p-6 rounded-2xl">
       <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
         <div>
-          <h1 class="text-2xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-cyan-400 to-blue-400">
-            Resource Planner
-          </h1>
+          <h1 class="text-2xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-cyan-400 to-blue-400">Resource Planner</h1>
           <p class="text-slate-400 text-sm mt-1">Manage team workload, capacity, and resource allocation across projects.</p>
         </div>
         <div class="flex gap-2">
@@ -81,7 +79,7 @@
               </td>
               <td class="text-center p-2">
                 <el-progress
-                  :percentage="Math.round(res.weeklyHours.reduce((a: number, b: number) => a + b, 0) / (res.maxHoursPerDay * 5) * 100)"
+                  :percentage="Math.round((res.weeklyHours.reduce((a: number, b: number) => a + b, 0) / (res.maxHoursPerDay * 5)) * 100)"
                   :stroke-width="6"
                   :color="getUtilColor(res)"
                   :show-text="true"
@@ -107,8 +105,7 @@
                 <span class="text-sm text-slate-200">{{ proj.name }}</span>
                 <span class="text-xs text-slate-500">{{ proj.hours }}h / {{ proj.budget }}h</span>
               </div>
-              <el-progress :percentage="Math.round(proj.hours / proj.budget * 100)" :stroke-width="4"
-                :color="proj.color" :show-text="false" />
+              <el-progress :percentage="Math.round((proj.hours / proj.budget) * 100)" :stroke-width="4" :color="proj.color" :show-text="false" />
             </div>
           </div>
         </div>
@@ -209,7 +206,7 @@ const skills = ref([
 
 const availableCapacity = computed(() => resources.value.length * 40);
 const allocatedHours = computed(() => resources.value.reduce((s, r) => s + r.weeklyHours.reduce((a: number, b: number) => a + b, 0), 0));
-const utilizationRate = computed(() => Math.round(allocatedHours.value / availableCapacity.value * 100));
+const utilizationRate = computed(() => Math.round((allocatedHours.value / availableCapacity.value) * 100));
 const overallocated = computed(() => resources.value.filter(r => r.weeklyHours.some((h: number) => h > r.maxHoursPerDay)).length);
 
 const getHeatmapClass = (hours: number, max: number) => {
@@ -230,7 +227,7 @@ const getTotalClass = (res: any) => {
 };
 
 const getUtilColor = (res: any) => {
-  const pct = res.weeklyHours.reduce((a: number, b: number) => a + b, 0) / (res.maxHoursPerDay * 5) * 100;
+  const pct = (res.weeklyHours.reduce((a: number, b: number) => a + b, 0) / (res.maxHoursPerDay * 5)) * 100;
   if (pct > 100) return '#EF4444';
   if (pct >= 80) return '#F59E0B';
   return '#10B981';

@@ -34,7 +34,10 @@ const { projects, loading, fetchProjects } = useEnhancedPortal();
 
 onMounted(async () => {
   init();
-  if (!isAuthenticated()) { navigateTo('/portal/login'); return; }
+  if (!isAuthenticated()) {
+    navigateTo('/portal/login');
+    return;
+  }
   await fetchProjects();
 });
 </script>

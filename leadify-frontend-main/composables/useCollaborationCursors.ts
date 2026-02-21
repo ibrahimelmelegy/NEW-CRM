@@ -27,10 +27,7 @@ export function useCollaborationCursors() {
 
   // Generate consistent color from userId
   function userColor(userId: number): string {
-    const colors = [
-      '#8B5CF6', '#3B82F6', '#10B981', '#F59E0B',
-      '#EF4444', '#EC4899', '#06B6D4', '#F97316'
-    ];
+    const colors = ['#8B5CF6', '#3B82F6', '#10B981', '#F59E0B', '#EF4444', '#EC4899', '#06B6D4', '#F97316'];
     return colors[userId % colors.length];
   }
 
@@ -38,7 +35,7 @@ export function useCollaborationCursors() {
   const visibleCursors = computed(() => {
     const now = Date.now();
     return Array.from(remoteCursors.value.values())
-      .filter(c => c.page === currentPage.value && (now - c.lastSeen) < HIDE_AFTER_MS)
+      .filter(c => c.page === currentPage.value && now - c.lastSeen < HIDE_AFTER_MS)
       .slice(0, MAX_CURSORS);
   });
 

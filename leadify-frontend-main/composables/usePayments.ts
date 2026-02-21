@@ -113,16 +113,18 @@ export async function recordPayment(data: {
   return res;
 }
 
-export async function getPayments(query: {
-  page?: number;
-  limit?: number;
-  clientId?: string;
-  method?: string;
-  status?: string;
-  startDate?: string;
-  endDate?: string;
-  searchKey?: string;
-} = {}) {
+export async function getPayments(
+  query: {
+    page?: number;
+    limit?: number;
+    clientId?: string;
+    method?: string;
+    status?: string;
+    startDate?: string;
+    endDate?: string;
+    searchKey?: string;
+  } = {}
+) {
   const params = new URLSearchParams();
   if (query.page) params.set('page', String(query.page));
   if (query.limit) params.set('limit', String(query.limit));

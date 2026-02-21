@@ -118,11 +118,11 @@ export const contactTypeOptions = [
 // ─── Helper Functions ─────────────────────────────────────────────────────────
 
 export function getActivityTypeOption(type: string) {
-  return activityTypeOptions.find((o) => o.value === type) || activityTypeOptions[0];
+  return activityTypeOptions.find(o => o.value === type) || activityTypeOptions[0];
 }
 
 export function getCallOutcomeOption(outcome: string) {
-  return callOutcomeOptions.find((o) => o.value === outcome) || callOutcomeOptions[0];
+  return callOutcomeOptions.find(o => o.value === outcome) || callOutcomeOptions[0];
 }
 
 export function formatCallDuration(seconds: number): string {
@@ -157,9 +157,7 @@ export function useCommunication(contactId?: string, contactType?: string) {
     if (!contactId || !contactType) return;
     loading.value = true;
     try {
-      const res = await useApiFetch(
-        `communications/timeline/${contactType}/${contactId}?page=${page}&limit=${pagination.value.limit}`
-      );
+      const res = await useApiFetch(`communications/timeline/${contactType}/${contactId}?page=${page}&limit=${pagination.value.limit}`);
       if (res.success && res.body) {
         const data = res.body as any;
         if (append) {
@@ -240,16 +238,13 @@ export function useCommunication(contactId?: string, contactType?: string) {
   }
 
   // ─── Update Activity ────────────────────────────────────────────────────
-  async function updateActivity(
-    id: number,
-    data: { subject?: string; body?: string; direction?: string; duration?: number }
-  ) {
+  async function updateActivity(id: number, data: { subject?: string; body?: string; direction?: string; duration?: number }) {
     loading.value = true;
     try {
       const res = await useApiFetch(`communications/activities/${id}`, 'PUT', data);
       if (res.success && res.body) {
         const updated = res.body as CommunicationActivity;
-        const idx = activities.value.findIndex((a) => a.id === id);
+        const idx = activities.value.findIndex(a => a.id === id);
         if (idx !== -1) {
           activities.value[idx] = updated;
         }
@@ -266,7 +261,7 @@ export function useCommunication(contactId?: string, contactType?: string) {
     try {
       const res = await useApiFetch(`communications/activities/${id}`, 'DELETE');
       if (res.success) {
-        activities.value = activities.value.filter((a) => a.id !== id);
+        activities.value = activities.value.filter(a => a.id !== id);
         pagination.value.totalItems -= 1;
       }
       return res;

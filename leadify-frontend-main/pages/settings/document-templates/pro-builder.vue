@@ -74,7 +74,7 @@ import type { ProTemplateDefinition } from '~/composables/useDocumentBuilder';
 
 definePageMeta({
   middleware: 'permissions',
-  permission: 'VIEW_DOCUMENT_TEMPLATES',
+  permission: 'VIEW_DOCUMENT_TEMPLATES'
 });
 
 const route = useRoute();
@@ -127,12 +127,7 @@ async function handleSave() {
   const content = docBuilderRef.value?.getContent();
   if (!content) return;
 
-  const result = await builder.save(
-    templateId.value,
-    templateName.value,
-    templateType.value,
-    content,
-  );
+  const result = await builder.save(templateId.value, templateName.value, templateType.value, content);
 
   if (result.success) {
     ElNotification({ type: 'success', title: 'Success', message: 'Template saved successfully.' });
@@ -158,7 +153,7 @@ function handleTemplateSelect(tpl: ProTemplateDefinition) {
 function handleStartBlank() {
   const blankContent: JSONContent = {
     type: 'doc',
-    content: [{ type: 'paragraph' }],
+    content: [{ type: 'paragraph' }]
   };
   initialContent.value = blankContent;
   docBuilderRef.value?.setContent(blankContent);
@@ -184,8 +179,12 @@ function formatTimeSince(date: Date | null): string {
 }
 
 @keyframes fadeIn {
-  from { opacity: 0; }
-  to { opacity: 1; }
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
 }
 
 .header-bar {

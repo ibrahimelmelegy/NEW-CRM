@@ -107,7 +107,12 @@ const form = reactive({
   description: '',
   entityType: 'GENERAL',
   isActive: true,
-  steps: [{ order: 0, approverUserId: 1, approverName: '', required: true }] as Array<{ order: number; approverUserId: number; approverName: string; required: boolean }>
+  steps: [{ order: 0, approverUserId: 1, approverName: '', required: true }] as Array<{
+    order: number;
+    approverUserId: number;
+    approverName: string;
+    required: boolean;
+  }>
 });
 
 const formRules = {
@@ -171,7 +176,9 @@ function moveStep(idx: number, direction: number) {
 }
 
 function reindexSteps() {
-  form.steps.forEach((s, i) => { s.order = i; });
+  form.steps.forEach((s, i) => {
+    s.order = i;
+  });
 }
 
 async function handleSave() {
@@ -195,7 +202,9 @@ async function handleSave() {
     } else {
       ElNotification({ type: 'error', title: t('common.error'), message: res.message });
     }
-  } finally { saving.value = false; }
+  } finally {
+    saving.value = false;
+  }
 }
 
 async function handleDelete(id: number) {
@@ -206,7 +215,9 @@ async function handleDelete(id: number) {
       ElNotification({ type: 'success', title: t('common.success'), message: t('common.deleted') });
       await loadWorkflows();
     }
-  } catch (e) { /* cancelled */ }
+  } catch (e) {
+    /* cancelled */
+  }
 }
 
 function entityTypeKey(type: string): string {
@@ -223,9 +234,17 @@ function entityTypeKey(type: string): string {
 </script>
 
 <style scoped>
-.workflows-page { animation: fadeIn 0.4s ease-out; }
+.workflows-page {
+  animation: fadeIn 0.4s ease-out;
+}
 @keyframes fadeIn {
-  from { opacity: 0; transform: translateY(10px); }
-  to { opacity: 1; transform: translateY(0); }
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
 }
 </style>

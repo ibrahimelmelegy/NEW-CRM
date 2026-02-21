@@ -15,12 +15,15 @@ export function usePresence() {
   const route = useRoute();
 
   // Watch for page changes and emit to server
-  watch(() => route.path, (newPath) => {
-    socket.value?.emit('presence:page', { page: newPath });
-  });
+  watch(
+    () => route.path,
+    newPath => {
+      socket.value?.emit('presence:page', { page: newPath });
+    }
+  );
 
   // Listen for presence events once socket is available
-  watch(socket, (s) => {
+  watch(socket, s => {
     if (!s) return;
 
     s.on('presence:update', (users: UserPresence[]) => {
@@ -36,9 +39,7 @@ export function usePresence() {
     s.emit('presence:join', {
       page: route.path,
       userId: currentUser?.id,
-      name: currentUser?.firstName
-        ? `${currentUser.firstName} ${currentUser.lastName || ''}`.trim()
-        : currentUser?.email || 'Anonymous',
+      name: currentUser?.firstName ? `${currentUser.firstName} ${currentUser.lastName || ''}`.trim() : currentUser?.email || 'Anonymous',
       profilePicture: currentUser?.profilePicture || undefined
     });
   });

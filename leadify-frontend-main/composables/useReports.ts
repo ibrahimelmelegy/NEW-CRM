@@ -52,10 +52,7 @@ export async function deleteReport(id: number) {
   return useApiFetch(`reports/${id}`, 'DELETE');
 }
 
-export async function executeSavedReport(
-  id: number,
-  filters?: Record<string, any>
-): Promise<any> {
+export async function executeSavedReport(id: number, filters?: Record<string, any>): Promise<any> {
   const payload = filters ? { filters } : {};
   const { body, success } = await useApiFetch(`reports/${id}/execute`, 'POST', payload);
   return success && body ? body : null;

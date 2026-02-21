@@ -120,14 +120,7 @@ div
 </template>
 
 <script setup lang="ts">
-import {
-  fetchPlans,
-  createPlan,
-  updatePlan,
-  deletePlan,
-  billingCycleOptions,
-  type SubscriptionPlan
-} from '~/composables/useSubscriptions';
+import { fetchPlans, createPlan, updatePlan, deletePlan, billingCycleOptions, type SubscriptionPlan } from '~/composables/useSubscriptions';
 
 const loading = ref(false);
 const saving = ref(false);

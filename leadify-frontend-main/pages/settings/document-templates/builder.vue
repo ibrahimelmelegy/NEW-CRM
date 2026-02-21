@@ -67,8 +67,11 @@
 import { ElNotification } from 'element-plus';
 import type { DocumentTemplate, TemplateElement } from '~/composables/useDocumentTemplates';
 import {
-  fetchDocumentTemplate, createDocumentTemplate, updateDocumentTemplate,
-  fetchDefaultConfigs, BUILTIN_TEMPLATES
+  fetchDocumentTemplate,
+  createDocumentTemplate,
+  updateDocumentTemplate,
+  fetchDefaultConfigs,
+  BUILTIN_TEMPLATES
 } from '~/composables/useDocumentTemplates';
 import BuilderToolbar from '~/components/DocumentBuilder/BuilderToolbar.vue';
 import BuilderSidebar from '~/components/DocumentBuilder/BuilderSidebar.vue';
@@ -104,26 +107,49 @@ const history = ref<string[]>([]);
 const historyIndex = ref(-1);
 
 const INVOICE_VARIABLES = [
-  'companyName', 'companyAddress', 'companyPhone', 'companyEmail', 'companyLogo',
-  'invoiceNumber', 'date', 'dueDate',
-  'clientName', 'clientAddress', 'clientPhone', 'clientEmail',
-  'items', 'subtotal', 'tax', 'total', 'notes'
+  'companyName',
+  'companyAddress',
+  'companyPhone',
+  'companyEmail',
+  'companyLogo',
+  'invoiceNumber',
+  'date',
+  'dueDate',
+  'clientName',
+  'clientAddress',
+  'clientPhone',
+  'clientEmail',
+  'items',
+  'subtotal',
+  'tax',
+  'total',
+  'notes'
 ];
 
 const PO_VARIABLES = [
-  'companyName', 'companyAddress', 'companyPhone', 'companyEmail', 'companyLogo',
-  'poNumber', 'date', 'deliveryDate',
-  'vendorName', 'vendorAddress', 'vendorPhone', 'vendorEmail',
-  'projectName', 'items', 'subtotal', 'tax', 'total', 'notes'
+  'companyName',
+  'companyAddress',
+  'companyPhone',
+  'companyEmail',
+  'companyLogo',
+  'poNumber',
+  'date',
+  'deliveryDate',
+  'vendorName',
+  'vendorAddress',
+  'vendorPhone',
+  'vendorEmail',
+  'projectName',
+  'items',
+  'subtotal',
+  'tax',
+  'total',
+  'notes'
 ];
 
-const currentVariables = computed(() =>
-  templateType.value === 'INVOICE' ? INVOICE_VARIABLES : PO_VARIABLES
-);
+const currentVariables = computed(() => (templateType.value === 'INVOICE' ? INVOICE_VARIABLES : PO_VARIABLES));
 
-const selectedElement = computed(() =>
-  selectedId.value ? elements.value.find(e => e.id === selectedId.value) || null : null
-);
+const selectedElement = computed(() => (selectedId.value ? elements.value.find(e => e.id === selectedId.value) || null : null));
 
 onMounted(async () => {
   // Load default templates for picker (fall back to built-in definitions)
@@ -152,9 +178,25 @@ function generateId(): string {
 
 function addElement(type: string) {
   const defaults: Record<string, Partial<TemplateElement>> = {
-    text: { width: 80, height: 10, props: { content: 'New Text', fontSize: 12, fontWeight: 'normal', fontFamily: 'Helvetica', color: '#333333', align: 'left' } },
+    text: {
+      width: 80,
+      height: 10,
+      props: { content: 'New Text', fontSize: 12, fontWeight: 'normal', fontFamily: 'Helvetica', color: '#333333', align: 'left' }
+    },
     image: { width: 40, height: 30, props: { content: '{{companyLogo}}', objectFit: 'contain' } },
-    table: { width: 180, height: 60, props: { columns: ['Item', 'Qty', 'Price', 'Total'], columnWidths: [80, 30, 35, 35], headerBg: '#f0f0f0', headerColor: '#000000', borderColor: '#cccccc', fontSize: 9, fontFamily: 'Helvetica' } },
+    table: {
+      width: 180,
+      height: 60,
+      props: {
+        columns: ['Item', 'Qty', 'Price', 'Total'],
+        columnWidths: [80, 30, 35, 35],
+        headerBg: '#f0f0f0',
+        headerColor: '#000000',
+        borderColor: '#cccccc',
+        fontSize: 9,
+        fontFamily: 'Helvetica'
+      }
+    },
     line: { width: 180, height: 1, props: { color: '#000000', thickness: 1 } },
     shape: { width: 60, height: 30, props: { shape: 'rectangle', fill: '#e0e0e0', borderRadius: 0 } }
   };
@@ -352,7 +394,11 @@ async function saveTemplate() {
   animation: fadeIn 0.3s ease-out;
 }
 @keyframes fadeIn {
-  from { opacity: 0; }
-  to { opacity: 1; }
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
 }
 </style>

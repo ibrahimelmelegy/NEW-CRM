@@ -20,36 +20,36 @@ globalThis.h = h;
 
 // Mock Nuxt composables
 globalThis.useRuntimeConfig = () => ({
-    public: {
-        API_BASE_URL: 'http://localhost:3001/api/v1/'
-    }
+  public: {
+    API_BASE_URL: 'http://localhost:3001/api/v1/'
+  }
 });
 
 globalThis.useCookie = (name: string) => ({
-    value: name === 'access_token' ? 'mock-token' : null
+  value: name === 'access_token' ? 'mock-token' : null
 });
 
 globalThis.useRoute = () => ({
-    fullPath: '/test',
-    path: '/test',
-    params: {},
-    query: {}
+  fullPath: '/test',
+  path: '/test',
+  params: {},
+  query: {}
 });
 
 globalThis.useRouter = () => ({
-    push: vi.fn(),
-    replace: vi.fn(),
-    go: vi.fn(),
-    back: vi.fn()
+  push: vi.fn(),
+  replace: vi.fn(),
+  go: vi.fn(),
+  back: vi.fn()
 });
 
 globalThis.navigateTo = vi.fn();
 
 // Mock $fetch
 globalThis.$fetch = vi.fn().mockResolvedValue({
-    success: true,
-    body: {},
-    message: 'Success'
+  success: true,
+  body: {},
+  message: 'Success'
 });
 
 // Mock ElNotification

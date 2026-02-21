@@ -111,18 +111,8 @@ import ImpactCards from '~/components/Simulator/ImpactCards.vue';
 
 definePageMeta({ layout: 'default' });
 
-const {
-  loading,
-  baseline,
-  sliders,
-  currentProjection,
-  simulatedProjection,
-  monthLabels,
-  impact,
-  applyPreset,
-  reset,
-  fetchBaseline
-} = useRevenueSimulator();
+const { loading, baseline, sliders, currentProjection, simulatedProjection, monthLabels, impact, applyPreset, reset, fetchBaseline } =
+  useRevenueSimulator();
 
 onMounted(async () => {
   await fetchBaseline();

@@ -172,8 +172,8 @@ onMounted(async () => {
   try {
     const [vRes, pRes] = await Promise.all([
       // Fetch ALL vendors with limit=1000 to get full details for client-side search
-      useApiFetch("vendor?limit=1000"), 
-      useApiFetch("project/all")
+      useApiFetch('vendor?limit=1000'),
+      useApiFetch('project/all')
     ]);
     // Handle paginated response structure { docs: [], pagination: {} }
     const vendorData = (vRes as any).body || (vRes as any).data || vRes;
@@ -215,7 +215,7 @@ async function nextStep() {
 
 async function submitRFQ() {
   if (form.vendorIds.length === 0) {
-    return ElNotification({ title: "Validation", message: "Please select at least one vendor", type: "warning" });
+    return ElNotification({ title: 'Validation', message: 'Please select at least one vendor', type: 'warning' });
   }
 
   loading.value = true;
@@ -228,24 +228,24 @@ async function submitRFQ() {
     };
 
     // 1. Create RFQ
-    const rfqRes = await useApiFetch("rfq", "POST", payload);
+    const rfqRes = await useApiFetch('rfq', 'POST', payload);
 
     if (rfqRes && rfqRes.success && rfqRes.body) {
       const rfqId = rfqRes.body.id;
       // 2. Send to Vendors
-      const sendRes = await useApiFetch(`rfq/${rfqId}/send`, "POST", {
+      const sendRes = await useApiFetch(`rfq/${rfqId}/send`, 'POST', {
         vendorIds: form.vendorIds
       });
-      if (!sendRes || !sendRes.success) throw new Error(sendRes?.message || "Failed to send to vendors");
+      if (!sendRes || !sendRes.success) throw new Error(sendRes?.message || 'Failed to send to vendors');
 
-      ElNotification({ title: "Success", message: "RFQ Created and Sent to Vendors!", type: "success" });
-      router.push("/procurement/rfq"); // Needs List page
+      ElNotification({ title: 'Success', message: 'RFQ Created and Sent to Vendors!', type: 'success' });
+      router.push('/procurement/rfq'); // Needs List page
     } else {
-      throw new Error(rfqRes?.message || "Failed to create RFQ");
+      throw new Error(rfqRes?.message || 'Failed to create RFQ');
     }
   } catch (error) {
-    ElNotification({ title: "Error", message: "Failed to create RFQ", type: "error" });
-    console.error("Submit RFQ Error:", error);
+    ElNotification({ title: 'Error', message: 'Failed to create RFQ', type: 'error' });
+    console.error('Submit RFQ Error:', error);
   } finally {
     loading.value = false;
   }

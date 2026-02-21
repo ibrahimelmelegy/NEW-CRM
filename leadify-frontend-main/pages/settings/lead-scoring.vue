@@ -105,13 +105,7 @@
 <script setup lang="ts">
 import { ref, reactive } from 'vue';
 import { ElNotification, ElMessageBox } from 'element-plus';
-import {
-  fetchScoringRules,
-  createScoringRule,
-  updateScoringRule,
-  deleteScoringRule,
-  getGradeThresholds
-} from '~/composables/useLeadScoring';
+import { fetchScoringRules, createScoringRule, updateScoringRule, deleteScoringRule, getGradeThresholds } from '~/composables/useLeadScoring';
 import type { ScoringRule, ScoringCriteria, GradeThreshold } from '~/composables/useLeadScoring';
 
 definePageMeta({ title: 'Lead Scoring' });
@@ -135,10 +129,7 @@ const ruleForm = reactive({
 
 // Load data
 try {
-  const [rulesData, gradesData] = await Promise.all([
-    fetchScoringRules(),
-    getGradeThresholds()
-  ]);
+  const [rulesData, gradesData] = await Promise.all([fetchScoringRules(), getGradeThresholds()]);
   rules.value = rulesData;
   grades.value = gradesData;
 } catch (e) {
@@ -234,7 +225,13 @@ async function handleDeleteRule(rule: ScoringRule) {
 }
 
 @keyframes fadeIn {
-  from { opacity: 0; transform: translateY(10px); }
-  to { opacity: 1; transform: translateY(0); }
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
 }
 </style>

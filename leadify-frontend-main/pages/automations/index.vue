@@ -32,9 +32,7 @@
       </div>
       <h3 class="text-xl font-medium text-slate-200 mb-2">Failed to Load Automations</h3>
       <p class="text-slate-400 max-w-sm mb-4">{{ fetchError }}</p>
-      <el-button type="primary" class="!rounded-xl" @click="fetchWorkflows">
-        Retry
-      </el-button>
+      <el-button type="primary" class="!rounded-xl" @click="fetchWorkflows">Retry</el-button>
     </div>
 
     <div v-else-if="workflows.length === 0" class="glass-panel p-12 rounded-2xl flex flex-col items-center justify-center text-center">
@@ -43,15 +41,13 @@
       </div>
       <h3 class="text-xl font-medium text-slate-200 mb-2">No Automations Yet</h3>
       <p class="text-slate-400 max-w-sm mb-6">Build your first visual journey to automate repetitive tasks and scale your processes.</p>
-      <el-button type="primary" class="!rounded-xl" @click="createNewJourney">
-        Create First Journey
-      </el-button>
+      <el-button type="primary" class="!rounded-xl" @click="createNewJourney">Create First Journey</el-button>
     </div>
 
     <div v-else class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
       <!-- Journey Card -->
-      <div 
-        v-for="workflow in workflows" 
+      <div
+        v-for="workflow in workflows"
         :key="workflow.id"
         class="glass-panel p-6 rounded-2xl group hover:border-primary-500/30 transition-all duration-300 relative overflow-hidden"
       >
@@ -70,7 +66,7 @@
               </el-tag>
             </div>
           </div>
-          
+
           <el-dropdown trigger="click" @command="(cmd: string) => handleCommand(cmd, workflow)">
             <el-button link class="!text-slate-400 hover:!text-white">
               <Icon name="ph:dots-three-vertical-bold" class="w-5 h-5" />
@@ -78,17 +74,20 @@
             <template #dropdown>
               <el-dropdown-menu class="!bg-slate-900 !border-slate-800">
                 <el-dropdown-item command="edit">
-                  <Icon name="ph:pencil-simple" class="w-4 h-4 mr-2" /> Edit Canvas
+                  <Icon name="ph:pencil-simple" class="w-4 h-4 mr-2" />
+                  Edit Canvas
                 </el-dropdown-item>
                 <el-dropdown-item command="toggle">
-                  <Icon :name="workflow.isActive ? 'ph:pause' : 'ph:play'" class="w-4 h-4 mr-2" /> 
+                  <Icon :name="workflow.isActive ? 'ph:pause' : 'ph:play'" class="w-4 h-4 mr-2" />
                   {{ workflow.isActive ? 'Pause' : 'Activate' }}
                 </el-dropdown-item>
                 <el-dropdown-item command="logs">
-                  <Icon name="ph:list-dashes" class="w-4 h-4 mr-2" /> View Execution Logs
+                  <Icon name="ph:list-dashes" class="w-4 h-4 mr-2" />
+                  View Execution Logs
                 </el-dropdown-item>
                 <el-dropdown-item divided command="delete" class="!text-red-400">
-                  <Icon name="ph:trash" class="w-4 h-4 mr-2" /> Delete
+                  <Icon name="ph:trash" class="w-4 h-4 mr-2" />
+                  Delete
                 </el-dropdown-item>
               </el-dropdown-menu>
             </template>
@@ -163,7 +162,7 @@ const createNewJourney = async () => {
       inputErrorMessage: 'Name cannot be empty',
       customClass: 'dark-message-box'
     });
-    
+
     if (response && (response as any).value) {
       const res: any = await useApiFetch('workflows/rules', 'POST', {
         name: (response as any).value,
@@ -174,7 +173,7 @@ const createNewJourney = async () => {
         actions: [],
         isActive: false
       });
-      
+
       if (res?.success) {
         ElMessage.success('Journey created');
         router.push(`/automations/${res.body?.id}`);

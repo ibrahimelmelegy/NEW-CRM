@@ -189,11 +189,11 @@
 <script setup lang="ts">
 import { ArrowLeft } from '@element-plus/icons-vue';
 import {
-    getSalesOrderById,
-    updateSalesOrderStatus,
-    addFulfillment,
-    salesOrderStatusOptions,
-    fulfillmentStatusOptions
+  getSalesOrderById,
+  updateSalesOrderStatus,
+  addFulfillment,
+  salesOrderStatusOptions,
+  fulfillmentStatusOptions
 } from '~/composables/useSalesOrders';
 
 const route = useRoute();
@@ -206,72 +206,79 @@ const showFulfillmentDialog = ref(false);
 const fulfillmentLoading = ref(false);
 
 const fulfillmentForm = reactive({
-    status: 'PENDING',
-    trackingNumber: '',
-    carrier: '',
-    notes: ''
+  status: 'PENDING',
+  trackingNumber: '',
+  carrier: '',
+  notes: ''
 });
 
 const statusRibbonClass = computed(() => {
-    switch (order.value?.status) {
-        case 'DRAFT': return 'bg-gray-600 text-white';
-        case 'CONFIRMED': return 'bg-blue-600 text-white shadow-blue-900/40';
-        case 'PROCESSING': return 'bg-orange-500 text-white shadow-orange-900/40';
-        case 'SHIPPED': return 'bg-purple-600 text-white shadow-purple-900/40';
-        case 'DELIVERED': return 'bg-green-600 text-white shadow-green-900/40';
-        case 'CANCELLED': return 'bg-red-600 text-white shadow-red-900/40';
-        default: return 'bg-gray-600 text-white';
-    }
+  switch (order.value?.status) {
+    case 'DRAFT':
+      return 'bg-gray-600 text-white';
+    case 'CONFIRMED':
+      return 'bg-blue-600 text-white shadow-blue-900/40';
+    case 'PROCESSING':
+      return 'bg-orange-500 text-white shadow-orange-900/40';
+    case 'SHIPPED':
+      return 'bg-purple-600 text-white shadow-purple-900/40';
+    case 'DELIVERED':
+      return 'bg-green-600 text-white shadow-green-900/40';
+    case 'CANCELLED':
+      return 'bg-red-600 text-white shadow-red-900/40';
+    default:
+      return 'bg-gray-600 text-white';
+  }
 });
 
 const availableStatuses = computed(() => {
-    const current = order.value?.status;
-    // Only show statuses that make sense as a progression
-    return salesOrderStatusOptions.filter(opt => opt.value !== current);
+  const current = order.value?.status;
+  // Only show statuses that make sense as a progression
+  return salesOrderStatusOptions.filter(opt => opt.value !== current);
 });
 
 function formatDate(date: any) {
-    if (!date) return 'N/A';
-    const d = new Date(date);
-    return d.toLocaleDateString('en-GB', { day: '2-digit', month: 'short', year: 'numeric' });
+  if (!date) return 'N/A';
+  const d = new Date(date);
+  return d.toLocaleDateString('en-GB', { day: '2-digit', month: 'short', year: 'numeric' });
 }
 
 async function fetchOrder() {
-    loading.value = true;
-    try {
-        const id = route.params.id as string;
-        order.value = await getSalesOrderById(id);
-    } finally {
-        loading.value = false;
-    }
+  loading.value = true;
+  try {
+    const id = route.params.id as string;
+    order.value = await getSalesOrderById(id);
+  } finally {
+    loading.value = false;
+  }
 }
 
 async function handleStatusUpdate(status: string) {
-    const id = route.params.id as string;
-    const result = await updateSalesOrderStatus(id, status);
-    if (result) {
-        order.value = result;
-    }
+  const id = route.params.id as string;
+  const result = await updateSalesOrderStatus(id, status);
+  if (result) {
+    order.value = result;
+  }
 }
 
 async function handleAddFulfillment() {
-    fulfillmentLoading.value = true;
-    try {
-        const id = route.params.id as string;
-        const result = await addFulfillment(id, { ...fulfillmentForm });
-        if (result) {
-            showFulfillmentDialog.value = false;
-            // Reset form
-            fulfillmentForm.status = 'PENDING';
-            fulfillmentForm.trackingNumber = '';
-            fulfillmentForm.carrier = '';
-            fulfillmentForm.notes = '';
-            // Refresh order data
-            await fetchOrder();
-        }
-    } finally {
-        fulfillmentLoading.value = false;
+  fulfillmentLoading.value = true;
+  try {
+    const id = route.params.id as string;
+    const result = await addFulfillment(id, { ...fulfillmentForm });
+    if (result) {
+      showFulfillmentDialog.value = false;
+      // Reset form
+      fulfillmentForm.status = 'PENDING';
+      fulfillmentForm.trackingNumber = '';
+      fulfillmentForm.carrier = '';
+      fulfillmentForm.notes = '';
+      // Refresh order data
+      await fetchOrder();
     }
+  } finally {
+    fulfillmentLoading.value = false;
+  }
 }
 
 onMounted(fetchOrder);
@@ -279,34 +286,44 @@ onMounted(fetchOrder);
 
 <style scoped lang="scss">
 .text-gradient {
-    background: var(--gradient-primary);
-    -webkit-background-clip: text;
-    background-clip: text;
-    -webkit-text-fill-color: transparent;
+  background: var(--gradient-primary);
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
 }
 
-.bg-pink-500_10 { background: rgba(236, 72, 153, 0.1); }
-.border-pink-500_20 { border-color: rgba(236, 72, 153, 0.2); }
-.bg-green-500_10 { background: rgba(34, 197, 94, 0.1); }
-.border-green-500_20 { border-color: rgba(34, 197, 94, 0.2); }
-.border-white_10 { border-color: rgba(255, 255, 255, 0.1); }
+.bg-pink-500_10 {
+  background: rgba(236, 72, 153, 0.1);
+}
+.border-pink-500_20 {
+  border-color: rgba(236, 72, 153, 0.2);
+}
+.bg-green-500_10 {
+  background: rgba(34, 197, 94, 0.1);
+}
+.border-green-500_20 {
+  border-color: rgba(34, 197, 94, 0.2);
+}
+.border-white_10 {
+  border-color: rgba(255, 255, 255, 0.1);
+}
 
 .premium-btn-outline {
-    background: rgba(255, 255, 255, 0.05) !important;
-    border: 1px solid rgba(255, 255, 255, 0.1) !important;
-    color: white !important;
-    &:hover {
-        background: rgba(255, 255, 255, 0.1) !important;
-        border-color: rgba(255, 255, 255, 0.2) !important;
-    }
+  background: rgba(255, 255, 255, 0.05) !important;
+  border: 1px solid rgba(255, 255, 255, 0.1) !important;
+  color: white !important;
+  &:hover {
+    background: rgba(255, 255, 255, 0.1) !important;
+    border-color: rgba(255, 255, 255, 0.2) !important;
+  }
 }
 
 .glass-dialog {
-    :deep(.el-dialog) {
-        background: rgba(30, 18, 48, 0.9) !important;
-        backdrop-filter: blur(25px);
-        border: 1px solid rgba(168, 85, 247, 0.2);
-        border-radius: 24px;
-    }
+  :deep(.el-dialog) {
+    background: rgba(30, 18, 48, 0.9) !important;
+    backdrop-filter: blur(25px);
+    border: 1px solid rgba(168, 85, 247, 0.2);
+    border-radius: 24px;
+  }
 }
 </style>

@@ -11,7 +11,7 @@
             {{ $t('customerSuccess.subtitle', 'Monitor client health, predict churn, and drive retention.') }}
           </p>
         </div>
-        <el-button type="primary" class="!rounded-xl" @click="refreshData" :loading="loading">
+        <el-button type="primary" class="!rounded-xl" :loading="loading" @click="refreshData">
           <Icon name="ph:arrows-clockwise-bold" class="w-4 h-4 mr-2" />
           {{ $t('common.refresh', 'Refresh') }}
         </el-button>
@@ -101,9 +101,7 @@
                 :show-text="false"
                 class="flex-1"
               />
-              <span class="text-sm font-medium" :style="{ color: getScoreColor(row.overallScore) }">
-                {{ row.overallScore }}%
-              </span>
+              <span class="text-sm font-medium" :style="{ color: getScoreColor(row.overallScore) }">{{ row.overallScore }}%</span>
             </div>
           </template>
         </el-table-column>
@@ -171,9 +169,7 @@
                 :show-text="false"
                 class="flex-1"
               />
-              <span class="text-sm font-medium" :style="{ color: getScoreColor(row.overallScore) }">
-                {{ row.overallScore }}%
-              </span>
+              <span class="text-sm font-medium" :style="{ color: getScoreColor(row.overallScore) }">{{ row.overallScore }}%</span>
             </div>
           </template>
         </el-table-column>
@@ -204,8 +200,8 @@
 
 <script setup lang="ts">
 import { ref, onMounted, nextTick } from 'vue';
-import { useApiFetch } from '~/composables/useApiFetch';
 import * as echarts from 'echarts';
+import { useApiFetch } from '~/composables/useApiFetch';
 
 definePageMeta({
   layout: 'default',
@@ -257,18 +253,20 @@ const renderCharts = () => {
     const chart = echarts.init(healthChartRef.value);
     chart.setOption({
       tooltip: { trigger: 'item', backgroundColor: '#1e293b', borderColor: '#334155', textStyle: { color: '#e2e8f0' } },
-      series: [{
-        type: 'pie',
-        radius: ['45%', '70%'],
-        center: ['50%', '50%'],
-        avoidLabelOverlap: false,
-        label: { show: true, position: 'outside', color: '#94a3b8', fontSize: 12 },
-        data: dashboard.value.healthDistribution.map((d: any) => ({
-          name: d.name,
-          value: d.value,
-          itemStyle: { color: d.color }
-        }))
-      }]
+      series: [
+        {
+          type: 'pie',
+          radius: ['45%', '70%'],
+          center: ['50%', '50%'],
+          avoidLabelOverlap: false,
+          label: { show: true, position: 'outside', color: '#94a3b8', fontSize: 12 },
+          data: dashboard.value.healthDistribution.map((d: any) => ({
+            name: d.name,
+            value: d.value,
+            itemStyle: { color: d.color }
+          }))
+        }
+      ]
     });
   }
 
@@ -278,14 +276,31 @@ const renderCharts = () => {
     chart.setOption({
       tooltip: { trigger: 'axis', backgroundColor: '#1e293b', borderColor: '#334155', textStyle: { color: '#e2e8f0' } },
       grid: { left: '3%', right: '4%', bottom: '3%', top: '8%', containLabel: true },
-      xAxis: { type: 'category', data: dashboard.value.revenueByMonth.map((d: any) => d.month), axisLabel: { color: '#64748b' }, axisLine: { lineStyle: { color: '#334155' } } },
-      yAxis: { type: 'value', axisLabel: { color: '#64748b', formatter: (v: number) => v >= 1000 ? `${v / 1000}K` : v }, splitLine: { lineStyle: { color: '#1e293b' } } },
-      series: [{
-        type: 'bar',
-        data: dashboard.value.revenueByMonth.map((d: any) => d.revenue),
-        itemStyle: { color: new echarts.graphic.LinearGradient(0, 0, 0, 1, [{ offset: 0, color: '#10B981' }, { offset: 1, color: '#065F46' }]), borderRadius: [4, 4, 0, 0] },
-        barWidth: '60%'
-      }]
+      xAxis: {
+        type: 'category',
+        data: dashboard.value.revenueByMonth.map((d: any) => d.month),
+        axisLabel: { color: '#64748b' },
+        axisLine: { lineStyle: { color: '#334155' } }
+      },
+      yAxis: {
+        type: 'value',
+        axisLabel: { color: '#64748b', formatter: (v: number) => (v >= 1000 ? `${v / 1000}K` : v) },
+        splitLine: { lineStyle: { color: '#1e293b' } }
+      },
+      series: [
+        {
+          type: 'bar',
+          data: dashboard.value.revenueByMonth.map((d: any) => d.revenue),
+          itemStyle: {
+            color: new echarts.graphic.LinearGradient(0, 0, 0, 1, [
+              { offset: 0, color: '#10B981' },
+              { offset: 1, color: '#065F46' }
+            ]),
+            borderRadius: [4, 4, 0, 0]
+          },
+          barWidth: '60%'
+        }
+      ]
     });
   }
 
@@ -295,16 +310,28 @@ const renderCharts = () => {
     chart.setOption({
       tooltip: { trigger: 'axis', backgroundColor: '#1e293b', borderColor: '#334155', textStyle: { color: '#e2e8f0' } },
       grid: { left: '3%', right: '4%', bottom: '3%', top: '8%', containLabel: true },
-      xAxis: { type: 'category', data: dashboard.value.engagementTrend.map((d: any) => d.month), axisLabel: { color: '#64748b' }, axisLine: { lineStyle: { color: '#334155' } } },
+      xAxis: {
+        type: 'category',
+        data: dashboard.value.engagementTrend.map((d: any) => d.month),
+        axisLabel: { color: '#64748b' },
+        axisLine: { lineStyle: { color: '#334155' } }
+      },
       yAxis: { type: 'value', axisLabel: { color: '#64748b' }, splitLine: { lineStyle: { color: '#1e293b' } } },
-      series: [{
-        type: 'line',
-        data: dashboard.value.engagementTrend.map((d: any) => d.activities),
-        smooth: true,
-        lineStyle: { color: '#6366F1', width: 3 },
-        areaStyle: { color: new echarts.graphic.LinearGradient(0, 0, 0, 1, [{ offset: 0, color: 'rgba(99,102,241,0.3)' }, { offset: 1, color: 'rgba(99,102,241,0.02)' }]) },
-        itemStyle: { color: '#6366F1' }
-      }]
+      series: [
+        {
+          type: 'line',
+          data: dashboard.value.engagementTrend.map((d: any) => d.activities),
+          smooth: true,
+          lineStyle: { color: '#6366F1', width: 3 },
+          areaStyle: {
+            color: new echarts.graphic.LinearGradient(0, 0, 0, 1, [
+              { offset: 0, color: 'rgba(99,102,241,0.3)' },
+              { offset: 1, color: 'rgba(99,102,241,0.02)' }
+            ])
+          },
+          itemStyle: { color: '#6366F1' }
+        }
+      ]
     });
   }
 };

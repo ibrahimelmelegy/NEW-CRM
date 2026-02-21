@@ -151,9 +151,13 @@ import { BarChart, PieChart, LineChart } from 'echarts/charts';
 import { TitleComponent, TooltipComponent, LegendComponent, GridComponent } from 'echarts/components';
 import VChart from 'vue-echarts';
 import {
-  fetchDashboards, createDashboard, updateDashboard, deleteDashboard,
+  fetchDashboards,
+  createDashboard,
+  updateDashboard,
+  deleteDashboard,
   fetchWidgetData,
-  type Dashboard, type DashboardWidget
+  type Dashboard,
+  type DashboardWidget
 } from '~/composables/useDashboard';
 
 use([CanvasRenderer, BarChart, PieChart, LineChart, TitleComponent, TooltipComponent, LegendComponent, GridComponent]);

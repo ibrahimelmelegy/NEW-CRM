@@ -21,7 +21,11 @@ export function usePortalAuth() {
       const savedUser = localStorage.getItem(PORTAL_USER_KEY);
       if (saved) portalToken.value = saved;
       if (savedUser) {
-        try { portalUser.value = JSON.parse(savedUser); } catch { /* ignore */ }
+        try {
+          portalUser.value = JSON.parse(savedUser);
+        } catch {
+          /* ignore */
+        }
       }
     }
   }

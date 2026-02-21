@@ -31,7 +31,9 @@ if (typeof window !== 'undefined') {
   try {
     const savedRecent = localStorage.getItem('crm_spotlight_recent');
     if (savedRecent) recentItems.value = JSON.parse(savedRecent);
-  } catch { /* ignore parse errors */ }
+  } catch {
+    /* ignore parse errors */
+  }
 }
 
 function trackRecent(item: SpotlightItem) {
@@ -48,7 +50,9 @@ function trackRecent(item: SpotlightItem) {
   // Persist
   try {
     localStorage.setItem('crm_spotlight_recent', JSON.stringify(recentItems.value));
-  } catch { /* ignore storage errors */ }
+  } catch {
+    /* ignore storage errors */
+  }
 }
 
 // All available items with permissions
@@ -346,11 +350,31 @@ const spotlightItems: SpotlightItem[] = [
 // Command items - inline actions that don't navigate
 // The actual actions are injected inside useSpotlight() where stores are available
 const commandItems = ref<SpotlightItem[]>([
-  { id: 'cmd-dark-mode', title: 'Toggle Dark Mode', icon: 'ph:moon-bold', category: 'command', keywords: ['theme', 'light', 'dark', 'mode'], shortcutHint: 'Ctrl+Shift+D' },
-  { id: 'cmd-language', title: 'Switch Language', icon: 'ph:translate-bold', category: 'command', keywords: ['locale', 'arabic', 'english', 'lang', 'rtl'] },
+  {
+    id: 'cmd-dark-mode',
+    title: 'Toggle Dark Mode',
+    icon: 'ph:moon-bold',
+    category: 'command',
+    keywords: ['theme', 'light', 'dark', 'mode'],
+    shortcutHint: 'Ctrl+Shift+D'
+  },
+  {
+    id: 'cmd-language',
+    title: 'Switch Language',
+    icon: 'ph:translate-bold',
+    category: 'command',
+    keywords: ['locale', 'arabic', 'english', 'lang', 'rtl']
+  },
   { id: 'cmd-sidebar', title: 'Toggle Sidebar', icon: 'ph:sidebar-bold', category: 'command', keywords: ['menu', 'nav', 'collapse', 'expand'] },
   { id: 'cmd-fullscreen', title: 'Fullscreen', icon: 'ph:arrows-out-bold', category: 'command', keywords: ['fullscreen', 'maximize', 'screen'] },
-  { id: 'cmd-shortcuts', title: 'Keyboard Shortcuts', icon: 'ph:keyboard-bold', category: 'command', keywords: ['keys', 'hotkeys', 'help'], shortcutHint: '?' },
+  {
+    id: 'cmd-shortcuts',
+    title: 'Keyboard Shortcuts',
+    icon: 'ph:keyboard-bold',
+    category: 'command',
+    keywords: ['keys', 'hotkeys', 'help'],
+    shortcutHint: '?'
+  }
 ]);
 
 // Check if user has permission for an item
@@ -409,7 +433,7 @@ const flatItems = computed(() => {
     ...groupedItems.value.pages,
     ...groupedItems.value.actions,
     ...groupedItems.value.commands,
-    ...groupedItems.value.searches,
+    ...groupedItems.value.searches
   ];
 });
 
@@ -430,7 +454,9 @@ export function useSpotlight() {
     const { cheatSheetVisible } = useKeyboardShortcuts();
 
     const actionMap: Record<string, () => void> = {
-      'cmd-dark-mode': () => { themeStore.toggleTheme(); },
+      'cmd-dark-mode': () => {
+        themeStore.toggleTheme();
+      },
       'cmd-language': () => {
         const { locale, setLocale } = useI18n();
         const nextLocale = locale.value === 'en' ? 'ar' : 'en';
@@ -440,7 +466,9 @@ export function useSpotlight() {
           document.documentElement.lang = nextLocale;
         }
       },
-      'cmd-sidebar': () => { mainStore.fullNav = !mainStore.fullNav; },
+      'cmd-sidebar': () => {
+        mainStore.fullNav = !mainStore.fullNav;
+      },
       'cmd-fullscreen': () => {
         if (typeof document !== 'undefined') {
           if (document.fullscreenElement) {
@@ -450,12 +478,14 @@ export function useSpotlight() {
           }
         }
       },
-      'cmd-shortcuts': () => { cheatSheetVisible.value = true; },
+      'cmd-shortcuts': () => {
+        cheatSheetVisible.value = true;
+      }
     };
 
     commandItems.value = commandItems.value.map(item => ({
       ...item,
-      action: actionMap[item.id] || item.action,
+      action: actionMap[item.id] || item.action
     }));
   }
 
@@ -541,7 +571,11 @@ export function useSpotlight() {
     if (
       (event.altKey && event.key.toLowerCase() === 'k') ||
       ((event.ctrlKey || event.metaKey) && event.key.toLowerCase() === 'k') ||
-      (event.key === '/' && !event.shiftKey && !isOpen.value && document.activeElement?.tagName !== 'INPUT' && document.activeElement?.tagName !== 'TEXTAREA')
+      (event.key === '/' &&
+        !event.shiftKey &&
+        !isOpen.value &&
+        document.activeElement?.tagName !== 'INPUT' &&
+        document.activeElement?.tagName !== 'TEXTAREA')
     ) {
       event.preventDefault();
       toggle();
@@ -631,7 +665,7 @@ export function useSpotlight() {
   }
 
   // Watch for search query changes to reset selection and debounce API search
-  watch(searchQuery, (query) => {
+  watch(searchQuery, query => {
     selectedIndex.value = 0;
     clearTimeout(searchDebounceTimer);
     if (query.trim().length >= 3) {

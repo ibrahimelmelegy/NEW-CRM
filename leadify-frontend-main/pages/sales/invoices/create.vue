@@ -120,12 +120,7 @@ div
 
 <script setup lang="ts">
 import { ElNotification } from 'element-plus';
-import {
-  createInvoice,
-  createFromOrder,
-  PAYMENT_TERMS_OPTIONS,
-  formatCurrency
-} from '~/composables/useInvoiceBilling';
+import { createInvoice, createFromOrder, PAYMENT_TERMS_OPTIONS, formatCurrency } from '~/composables/useInvoiceBilling';
 
 definePageMeta({ middleware: 'permissions' });
 
@@ -154,9 +149,7 @@ const form = ref({
   paymentTerms: 'NET_30',
   dueDate: null as Date | null,
   notes: '',
-  lineItems: [
-    { description: '', quantity: 1, unitPrice: 0, taxRate: 0, discountRate: 0, lineTotal: 0 }
-  ] as LineItem[]
+  lineItems: [{ description: '', quantity: 1, unitPrice: 0, taxRate: 0, discountRate: 0, lineTotal: 0 }] as LineItem[]
 });
 
 const computedTotals = computed(() => {
@@ -239,7 +232,9 @@ async function loadDeals() {
       const data = body as any;
       deals.value = (data.docs || data || []).map((d: any) => ({ id: d.id, name: d.name }));
     }
-  } catch { /* silent */ }
+  } catch {
+    /* silent */
+  }
 }
 
 async function loadSalesOrders() {
@@ -253,7 +248,9 @@ async function loadSalesOrders() {
         orderNumber: o.orderNumber
       }));
     }
-  } catch { /* silent */ }
+  } catch {
+    /* silent */
+  }
 }
 
 function validate(): boolean {
@@ -279,9 +276,7 @@ async function saveDraft() {
       notes: form.value.notes || undefined,
       paymentTerms: form.value.paymentTerms,
       dueDate: form.value.dueDate ? new Date(form.value.dueDate).toISOString() : undefined,
-      lineItems: form.value.lineItems
-        .filter(item => item.description.trim())
-        .map(({ lineTotal, id, ...item }) => item)
+      lineItems: form.value.lineItems.filter(item => item.description.trim()).map(({ lineTotal, id, ...item }) => item)
     });
     if (result) {
       router.push(`/sales/invoices/${result.id}`);
@@ -301,9 +296,7 @@ async function saveAndSend() {
       notes: form.value.notes || undefined,
       paymentTerms: form.value.paymentTerms,
       dueDate: form.value.dueDate ? new Date(form.value.dueDate).toISOString() : undefined,
-      lineItems: form.value.lineItems
-        .filter(item => item.description.trim())
-        .map(({ lineTotal, id, ...item }) => item)
+      lineItems: form.value.lineItems.filter(item => item.description.trim()).map(({ lineTotal, id, ...item }) => item)
     });
     if (result) {
       // After creating, mark as sent
@@ -324,8 +317,8 @@ onMounted(async () => {
 
 <style scoped>
 .glass-card {
-  background: var(--glass-bg, rgba(255,255,255,0.06));
+  background: var(--glass-bg, rgba(255, 255, 255, 0.06));
   backdrop-filter: blur(var(--glass-blur, 12px));
-  border: 1px solid var(--glass-border, rgba(255,255,255,0.08));
+  border: 1px solid var(--glass-border, rgba(255, 255, 255, 0.08));
 }
 </style>

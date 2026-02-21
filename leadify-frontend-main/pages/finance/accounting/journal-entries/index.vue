@@ -87,12 +87,7 @@ div
 </template>
 
 <script setup lang="ts">
-import {
-  fetchJournalEntries,
-  journalStatusOptions,
-  sourceTypeOptions,
-  JournalEntryStatus
-} from '~/composables/useAccounting';
+import { fetchJournalEntries, journalStatusOptions, sourceTypeOptions, JournalEntryStatus } from '~/composables/useAccounting';
 import type { JournalEntryItem } from '~/composables/useAccounting';
 
 definePageMeta({ middleware: 'permissions' });
@@ -111,10 +106,14 @@ const filters = ref({
 
 function statusTagType(status: string): string {
   switch (status) {
-    case JournalEntryStatus.DRAFT: return 'warning';
-    case JournalEntryStatus.POSTED: return 'success';
-    case JournalEntryStatus.VOIDED: return 'danger';
-    default: return 'info';
+    case JournalEntryStatus.DRAFT:
+      return 'warning';
+    case JournalEntryStatus.POSTED:
+      return 'success';
+    case JournalEntryStatus.VOIDED:
+      return 'danger';
+    default:
+      return 'info';
   }
 }
 

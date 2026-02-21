@@ -216,9 +216,9 @@ const initials = computed(() => {
   return `${employee.value.firstName?.charAt(0) || ''}${employee.value.lastName?.charAt(0) || ''}`.toUpperCase();
 });
 
-const statusType = computed(() => employee.value ? getEmployeeStatusType(employee.value.status) : '');
-const statusLabel = computed(() => employee.value ? getEmployeeStatusLabel(employee.value.status) : '');
-const employmentTypeLabel = computed(() => employee.value ? getEmploymentTypeLabel(employee.value.employmentType) : '');
+const statusType = computed(() => (employee.value ? getEmployeeStatusType(employee.value.status) : ''));
+const statusLabel = computed(() => (employee.value ? getEmployeeStatusLabel(employee.value.status) : ''));
+const employmentTypeLabel = computed(() => (employee.value ? getEmploymentTypeLabel(employee.value.employmentType) : ''));
 
 function formatDate(dateStr?: string): string {
   if (!dateStr) return '---';

@@ -57,15 +57,7 @@ import { user } from '~/composables/useUser';
 
 definePageMeta({ layout: 'default' });
 
-const {
-  greeting,
-  priorities,
-  yesterdayHighlights,
-  todaySchedule,
-  kpis,
-  loading,
-  fetchBriefing
-} = useDailyBriefing();
+const { greeting, priorities, yesterdayHighlights, todaySchedule, kpis, loading, fetchBriefing } = useDailyBriefing();
 
 const userName = computed(() => {
   return user.value?.name || user.value?.firstName || 'there';

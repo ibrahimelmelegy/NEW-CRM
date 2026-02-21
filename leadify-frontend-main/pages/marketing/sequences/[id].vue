@@ -157,9 +157,14 @@
 import { ref, reactive } from 'vue';
 import { ElNotification } from 'element-plus';
 import {
-  fetchSequences, updateSequence,
-  fetchEnrollments, fetchSequenceStats,
-  enrollEntity, advanceStep, pauseEnrollment, resumeEnrollment
+  fetchSequences,
+  updateSequence,
+  fetchEnrollments,
+  fetchSequenceStats,
+  enrollEntity,
+  advanceStep,
+  pauseEnrollment,
+  resumeEnrollment
 } from '~/composables/useSequences';
 import type { Sequence, SequenceEnrollment, SequenceStats, SequenceStep } from '~/composables/useSequences';
 import { useSafeBack } from '~/composables/useSafeBack';
@@ -190,11 +195,7 @@ async function loadData() {
   loading.value = true;
   try {
     const id = route.params.id as string;
-    const [seqRes, enrollRes, statsRes] = await Promise.all([
-      fetchSequences({ id }),
-      fetchEnrollments(id),
-      fetchSequenceStats(id)
-    ]);
+    const [seqRes, enrollRes, statsRes] = await Promise.all([fetchSequences({ id }), fetchEnrollments(id), fetchSequenceStats(id)]);
     sequence.value = seqRes.docs[0] || null;
     enrollments.value = enrollRes;
     stats.value = statsRes;
@@ -210,7 +211,9 @@ async function loadData() {
   }
 }
 
-await loadData().catch(() => { loading.value = false; });
+await loadData().catch(() => {
+  loading.value = false;
+});
 
 function stepTypeTag(type: string) {
   const map: Record<string, string> = { email: 'primary', wait: 'warning', task: 'success' };
@@ -263,14 +266,21 @@ function removeStep(idx: number) {
   if (!sequence.value) return;
   const steps = [...sequence.value.steps];
   steps.splice(idx, 1);
-  steps.forEach((s, i) => { s.order = i; });
+  steps.forEach((s, i) => {
+    s.order = i;
+  });
   saving.value = true;
-  updateSequence(sequence.value.id, { steps }).then(() => {
-    sequence.value!.steps = steps;
-    ElNotification({ type: 'success', title: t('common.success'), message: t('common.deletedSuccessfully') });
-  }).catch(() => {
-    ElNotification({ type: 'error', title: t('common.error'), message: t('common.error') });
-  }).finally(() => { saving.value = false; });
+  updateSequence(sequence.value.id, { steps })
+    .then(() => {
+      sequence.value!.steps = steps;
+      ElNotification({ type: 'success', title: t('common.success'), message: t('common.deletedSuccessfully') });
+    })
+    .catch(() => {
+      ElNotification({ type: 'error', title: t('common.error'), message: t('common.error') });
+    })
+    .finally(() => {
+      saving.value = false;
+    });
 }
 
 async function handleSaveStep() {
@@ -346,7 +356,13 @@ async function handleAdvance(enrollment: SequenceEnrollment) {
 }
 
 @keyframes fadeIn {
-  from { opacity: 0; transform: translateY(10px); }
-  to { opacity: 1; transform: translateY(0); }
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
 }
 </style>

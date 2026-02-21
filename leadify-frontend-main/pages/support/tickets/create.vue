@@ -65,14 +65,7 @@ import { ref, reactive, onMounted } from 'vue';
 import { ArrowLeft } from '@element-plus/icons-vue';
 import { ElNotification } from 'element-plus';
 import type { FormInstance } from 'element-plus';
-import {
-  createTicket,
-  fetchCategories,
-  ticketPriorityOptions,
-  ticketSourceOptions,
-  TicketPriority,
-  TicketSource
-} from '@/composables/useSupport';
+import { createTicket, fetchCategories, ticketPriorityOptions, ticketSourceOptions, TicketPriority, TicketSource } from '@/composables/useSupport';
 import { useApiFetch } from '@/composables/useApiFetch';
 
 const router = useRouter();

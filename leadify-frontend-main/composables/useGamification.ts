@@ -51,13 +51,7 @@ export async function fetchMyPoints(): Promise<UserPointsResponse | null> {
   return success && body ? (body as UserPointsResponse) : null;
 }
 
-export async function awardPoints(data: {
-  userId: number;
-  points: number;
-  reason: string;
-  entityType?: string;
-  entityId?: string;
-}) {
+export async function awardPoints(data: { userId: number; points: number; reason: string; entityType?: string; entityId?: string }) {
   return useApiFetch('gamification/award', 'POST', data);
 }
 

@@ -90,9 +90,7 @@ const deleteId = ref<number | null>(null);
 const rejectId = ref<number | null>(null);
 const rejectReason = ref('');
 
-const headerActions = computed(() => [
-  { label: t('hr.leave.requestLeave'), to: '/hr/leave-requests/create', type: 'primary', icon: Plus }
-]);
+const headerActions = computed(() => [{ label: t('hr.leave.requestLeave'), to: '/hr/leave-requests/create', type: 'primary', icon: Plus }]);
 
 const result = ref(await fetchLeaveRequests());
 const pagination = ref(result.value.pagination);
@@ -171,7 +169,9 @@ async function confirmReject() {
       rejectReason.value = '';
       await refreshData();
     }
-  } finally { rejecting.value = false; }
+  } finally {
+    rejecting.value = false;
+  }
 }
 
 async function handleCancel(id: number) {

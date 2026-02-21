@@ -66,7 +66,10 @@ const currentPage = ref(1);
 
 onMounted(async () => {
   init();
-  if (!isAuthenticated()) { navigateTo('/portal/login'); return; }
+  if (!isAuthenticated()) {
+    navigateTo('/portal/login');
+    return;
+  }
   await fetchInvoices(1);
 });
 

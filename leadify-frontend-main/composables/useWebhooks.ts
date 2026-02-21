@@ -10,10 +10,17 @@ export interface WebhookConfig {
 }
 
 export const WEBHOOK_EVENTS = [
-  'lead:created', 'lead:updated', 'lead:deleted',
-  'deal:created', 'deal:updated', 'deal:stageChanged',
-  'opportunity:created', 'opportunity:updated', 'opportunity:stageChanged',
-  'client:created', 'client:updated'
+  'lead:created',
+  'lead:updated',
+  'lead:deleted',
+  'deal:created',
+  'deal:updated',
+  'deal:stageChanged',
+  'opportunity:created',
+  'opportunity:updated',
+  'opportunity:stageChanged',
+  'client:created',
+  'client:updated'
 ];
 
 export async function fetchWebhooks(): Promise<WebhookConfig[]> {

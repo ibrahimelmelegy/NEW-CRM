@@ -37,10 +37,7 @@ export async function createSavedView(data: {
   return success && body ? (body as SavedView) : null;
 }
 
-export async function updateSavedView(
-  id: number,
-  data: Partial<SavedView>
-): Promise<SavedView | null> {
+export async function updateSavedView(id: number, data: Partial<SavedView>): Promise<SavedView | null> {
   const { body, success } = await useApiFetch(`saved-views/${id}`, 'PUT', data as Record<string, any>);
   return success && body ? (body as SavedView) : null;
 }

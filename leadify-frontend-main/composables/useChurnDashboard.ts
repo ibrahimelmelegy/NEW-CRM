@@ -42,9 +42,13 @@ export async function getChurnDashboardData(): Promise<ChurnDashboardData | null
 
 export function getRiskTagType(level: string): string {
   switch (level) {
-    case 'HIGH': return 'danger';
-    case 'MEDIUM': return 'warning';
-    case 'LOW': return 'info';
-    default: return 'info';
+    case 'HIGH':
+      return 'danger';
+    case 'MEDIUM':
+      return 'warning';
+    case 'LOW':
+      return 'info';
+    default:
+      return 'info';
   }
 }

@@ -9,7 +9,7 @@ import { defineComponent, h } from 'vue';
 const VariableNodeView = defineComponent({
   name: 'VariableNodeView',
   props: {
-    node: { type: Object, required: true },
+    node: { type: Object, required: true }
   },
   setup(props) {
     const variableName = computed(() => props.node.attrs.variableName || 'variable');
@@ -36,12 +36,12 @@ const VariableNodeView = defineComponent({
             lineHeight: '1.6',
             userSelect: 'none',
             cursor: 'default',
-            whiteSpace: 'nowrap',
-          },
+            whiteSpace: 'nowrap'
+          }
         },
-        `{{${variableName.value}}}`,
+        `{{${variableName.value}}}`
       );
-  },
+  }
 });
 
 export interface VariableNodeOptions {
@@ -70,7 +70,7 @@ export const VariableNode = Node.create<VariableNodeOptions>({
 
   addOptions() {
     return {
-      HTMLAttributes: {},
+      HTMLAttributes: {}
     };
   },
 
@@ -78,19 +78,19 @@ export const VariableNode = Node.create<VariableNodeOptions>({
     return {
       variableName: {
         default: 'variable',
-        parseHTML: (element) => element.getAttribute('data-variable') || 'variable',
-        renderHTML: (attributes) => ({
-          'data-variable': attributes.variableName,
-        }),
-      },
+        parseHTML: element => element.getAttribute('data-variable') || 'variable',
+        renderHTML: attributes => ({
+          'data-variable': attributes.variableName
+        })
+      }
     };
   },
 
   parseHTML() {
     return [
       {
-        tag: 'span[data-type="variable"]',
-      },
+        tag: 'span[data-type="variable"]'
+      }
     ];
   },
 
@@ -99,9 +99,9 @@ export const VariableNode = Node.create<VariableNodeOptions>({
       'span',
       mergeAttributes(this.options.HTMLAttributes, HTMLAttributes, {
         'data-type': 'variable',
-        class: 'variable-node',
+        class: 'variable-node'
       }),
-      `{{${HTMLAttributes['data-variable'] || 'variable'}}}`,
+      `{{${HTMLAttributes['data-variable'] || 'variable'}}}`
     ];
   },
 
@@ -116,9 +116,9 @@ export const VariableNode = Node.create<VariableNodeOptions>({
         ({ commands }) => {
           return commands.insertContent({
             type: this.name,
-            attrs: { variableName },
+            attrs: { variableName }
           });
-        },
+        }
     };
   },
 
@@ -136,15 +136,11 @@ export const VariableNode = Node.create<VariableNodeOptions>({
           if (!variableName) return;
 
           const { tr } = state;
-          tr.replaceWith(
-            range.from,
-            range.to,
-            this.type.create({ variableName }),
-          );
-        },
-      },
+          tr.replaceWith(range.from, range.to, this.type.create({ variableName }));
+        }
+      }
     ];
-  },
+  }
 });
 
 export default VariableNode;

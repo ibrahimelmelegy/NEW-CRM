@@ -119,18 +119,13 @@ const composeForm = reactive({
 const filteredMessages = computed(() => {
   if (!searchQuery.value.trim()) return messages.value;
   const q = searchQuery.value.toLowerCase();
-  return messages.value.filter(m =>
-    m.subject?.toLowerCase().includes(q) || m.from?.toLowerCase().includes(q)
-  );
+  return messages.value.filter(m => m.subject?.toLowerCase().includes(q) || m.from?.toLowerCase().includes(q));
 });
 
 async function loadMessages() {
   loading.value = true;
   try {
-    const [msgRes, accRes] = await Promise.all([
-      fetchEmailMessages({ folder: activeFolder.value }),
-      fetchEmailAccounts()
-    ]);
+    const [msgRes, accRes] = await Promise.all([fetchEmailMessages({ folder: activeFolder.value }), fetchEmailAccounts()]);
     messages.value = msgRes.docs;
     accounts.value = accRes;
   } catch (e) {
@@ -140,7 +135,9 @@ async function loadMessages() {
   }
 }
 
-await loadMessages().catch(() => { loading.value = false; });
+await loadMessages().catch(() => {
+  loading.value = false;
+});
 
 function setFolder(folder: string) {
   activeFolder.value = folder;
@@ -193,7 +190,13 @@ async function handleSend() {
 }
 
 @keyframes fadeIn {
-  from { opacity: 0; transform: translateY(10px); }
-  to { opacity: 1; transform: translateY(0); }
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
 }
 </style>

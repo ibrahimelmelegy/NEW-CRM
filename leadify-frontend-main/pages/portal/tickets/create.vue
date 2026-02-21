@@ -61,7 +61,9 @@ const rules = {
 
 onMounted(() => {
   init();
-  if (!isAuthenticated()) { navigateTo('/portal/login'); return; }
+  if (!isAuthenticated()) {
+    navigateTo('/portal/login');
+  }
 });
 
 async function submitTicket() {

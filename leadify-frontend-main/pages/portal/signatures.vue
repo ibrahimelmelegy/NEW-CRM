@@ -69,8 +69,8 @@
 </template>
 
 <script setup lang="ts">
-import { useEnhancedPortal, type PortalSignatureDoc } from '~/composables/usePortal';
 import { ElNotification } from 'element-plus';
+import { useEnhancedPortal, type PortalSignatureDoc } from '~/composables/usePortal';
 
 definePageMeta({ layout: 'portal' });
 
@@ -81,17 +81,16 @@ const showSignDialog = ref(false);
 const selectedDocument = ref<PortalSignatureDoc | null>(null);
 const allContracts = ref<any[]>([]);
 
-const pendingContracts = computed(() =>
-  allContracts.value.filter(c => c.status === 'SENT' || c.status === 'VIEWED')
-);
+const pendingContracts = computed(() => allContracts.value.filter(c => c.status === 'SENT' || c.status === 'VIEWED'));
 
-const signedContracts = computed(() =>
-  allContracts.value.filter(c => c.status === 'SIGNED')
-);
+const signedContracts = computed(() => allContracts.value.filter(c => c.status === 'SIGNED'));
 
 onMounted(async () => {
   init();
-  if (!isAuthenticated()) { navigateTo('/portal/login'); return; }
+  if (!isAuthenticated()) {
+    navigateTo('/portal/login');
+    return;
+  }
   await loadContracts();
 });
 
@@ -112,12 +111,7 @@ function openSignDialog(contract: any) {
 async function handleSigned(data: { signatureData: string; signatureType: 'DRAWN' | 'TYPED'; typedName?: string }) {
   if (!selectedDocument.value) return;
 
-  const result = await signDocument(
-    selectedDocument.value.id,
-    data.signatureData,
-    data.signatureType,
-    data.typedName
-  );
+  const result = await signDocument(selectedDocument.value.id, data.signatureData, data.signatureType, data.typedName);
 
   if (result.success) {
     showSignDialog.value = false;

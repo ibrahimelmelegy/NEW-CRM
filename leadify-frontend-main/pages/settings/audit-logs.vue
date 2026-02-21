@@ -90,10 +90,11 @@ const availableModules = computed(() => {
 
 const filteredLogs = computed(() => {
   return logs.value.filter((log: any) => {
-    const matchesSearch = !search.value
-      || log.description?.toLowerCase().includes(search.value.toLowerCase())
-      || log.user?.name?.toLowerCase().includes(search.value.toLowerCase())
-      || log.entityType?.toLowerCase().includes(search.value.toLowerCase());
+    const matchesSearch =
+      !search.value ||
+      log.description?.toLowerCase().includes(search.value.toLowerCase()) ||
+      log.user?.name?.toLowerCase().includes(search.value.toLowerCase()) ||
+      log.entityType?.toLowerCase().includes(search.value.toLowerCase());
     const matchesAction = !filterAction.value || log.status === filterAction.value;
     const matchesModule = !filterModule.value || log.entityType === filterModule.value;
     return matchesSearch && matchesAction && matchesModule;
@@ -109,8 +110,18 @@ const paginatedLogs = computed(() => {
 
 const summaryStats = computed(() => [
   { label: t('auditLogs.totalLogs'), value: logs.value.length, icon: 'ph:list-bullets-bold', color: '#7849ff' },
-  { label: t('auditLogs.creates'), value: logs.value.filter((l: any) => l.status === 'create').length, icon: 'ph:plus-circle-bold', color: '#22c55e' },
-  { label: t('auditLogs.updates'), value: logs.value.filter((l: any) => l.status === 'update').length, icon: 'ph:pencil-simple-bold', color: '#f59e0b' },
+  {
+    label: t('auditLogs.creates'),
+    value: logs.value.filter((l: any) => l.status === 'create').length,
+    icon: 'ph:plus-circle-bold',
+    color: '#22c55e'
+  },
+  {
+    label: t('auditLogs.updates'),
+    value: logs.value.filter((l: any) => l.status === 'update').length,
+    icon: 'ph:pencil-simple-bold',
+    color: '#f59e0b'
+  },
   { label: t('auditLogs.deletes'), value: logs.value.filter((l: any) => l.status === 'delete').length, icon: 'ph:trash-bold', color: '#ef4444' }
 ]);
 
@@ -125,21 +136,33 @@ function onPageChange(page: number) {
 function formatDate(dateStr: string): string {
   if (!dateStr) return '—';
   const d = new Date(dateStr);
-  return d.toLocaleDateString(undefined, { year: 'numeric', month: 'short', day: 'numeric' })
-    + ' ' + d.toLocaleTimeString(undefined, { hour: '2-digit', minute: '2-digit' });
+  return (
+    d.toLocaleDateString(undefined, { year: 'numeric', month: 'short', day: 'numeric' }) +
+    ' ' +
+    d.toLocaleTimeString(undefined, { hour: '2-digit', minute: '2-digit' })
+  );
 }
 
 function getInitials(name?: string): string {
   if (!name) return 'S';
-  return name.split(' ').map(n => n[0]).join('').toUpperCase().slice(0, 2);
+  return name
+    .split(' ')
+    .map(n => n[0])
+    .join('')
+    .toUpperCase()
+    .slice(0, 2);
 }
 
 function getActionClass(status: string): string {
   switch (status) {
-    case 'create': return 'label-outline-green';
-    case 'update': return 'label-outline-orange';
-    case 'delete': return 'label-outline-red';
-    default: return 'label-outline-green';
+    case 'create':
+      return 'label-outline-green';
+    case 'update':
+      return 'label-outline-orange';
+    case 'delete':
+      return 'label-outline-red';
+    default:
+      return 'label-outline-green';
   }
 }
 

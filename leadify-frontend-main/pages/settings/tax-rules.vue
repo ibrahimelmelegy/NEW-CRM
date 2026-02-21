@@ -139,7 +139,16 @@ async function loadData() {
 function openDialog(item?: TaxRuleItem) {
   editingItem.value = item || null;
   form.value = item
-    ? { name: item.name, type: (item as any).type || 'VAT', rate: item.rate, region: item.region, description: item.description, isActive: item.isActive, isInclusive: (item as any).isInclusive || false, isCompound: (item as any).isCompound || false }
+    ? {
+        name: item.name,
+        type: (item as any).type || 'VAT',
+        rate: item.rate,
+        region: item.region,
+        description: item.description,
+        isActive: item.isActive,
+        isInclusive: (item as any).isInclusive || false,
+        isCompound: (item as any).isCompound || false
+      }
     : { name: '', type: 'VAT', rate: 15, region: '', description: '', isActive: true, isInclusive: false, isCompound: false };
   dialogVisible.value = true;
 }

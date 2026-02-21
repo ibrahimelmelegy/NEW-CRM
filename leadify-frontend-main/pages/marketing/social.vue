@@ -4,13 +4,11 @@
     <div class="glass-panel p-6 rounded-2xl">
       <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
         <div>
-          <h1 class="text-2xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-pink-400 to-rose-400">
-            Social CRM
-          </h1>
+          <h1 class="text-2xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-pink-400 to-rose-400">Social CRM</h1>
           <p class="text-slate-400 text-sm mt-1">Monitor social media, track brand mentions, and engage with your audience.</p>
         </div>
         <div class="flex gap-2">
-          <el-button @click="showComposeDialog = true" class="!rounded-xl">
+          <el-button class="!rounded-xl" @click="showComposeDialog = true">
             <Icon name="ph:pencil-line-bold" class="w-4 h-4 mr-2" />
             Compose
           </el-button>
@@ -24,7 +22,9 @@
 
     <!-- Social Accounts -->
     <div class="grid grid-cols-2 md:grid-cols-5 gap-4">
-      <div v-for="account in socialAccounts" :key="account.platform"
+      <div
+        v-for="account in socialAccounts"
+        :key="account.platform"
         class="glass-panel p-4 rounded-xl text-center cursor-pointer hover:border-primary-500/30 transition"
         :class="selectedPlatform === account.platform ? 'border border-primary-500/50' : ''"
         @click="selectedPlatform = account.platform"
@@ -58,9 +58,18 @@
                 </div>
                 <p class="text-sm text-slate-300 mb-2">{{ mention.content }}</p>
                 <div class="flex items-center gap-4 text-xs text-slate-500">
-                  <span class="flex items-center gap-1"><Icon name="ph:heart" class="w-3 h-3" /> {{ mention.likes }}</span>
-                  <span class="flex items-center gap-1"><Icon name="ph:chat-circle" class="w-3 h-3" /> {{ mention.comments }}</span>
-                  <span class="flex items-center gap-1"><Icon name="ph:share" class="w-3 h-3" /> {{ mention.shares }}</span>
+                  <span class="flex items-center gap-1">
+                    <Icon name="ph:heart" class="w-3 h-3" />
+                    {{ mention.likes }}
+                  </span>
+                  <span class="flex items-center gap-1">
+                    <Icon name="ph:chat-circle" class="w-3 h-3" />
+                    {{ mention.comments }}
+                  </span>
+                  <span class="flex items-center gap-1">
+                    <Icon name="ph:share" class="w-3 h-3" />
+                    {{ mention.shares }}
+                  </span>
                 </div>
                 <!-- Sentiment & Actions -->
                 <div class="flex items-center justify-between mt-3 pt-2 border-t border-slate-800/60">
@@ -72,13 +81,16 @@
                   </div>
                   <div class="flex gap-1">
                     <el-button text size="small" type="primary" @click="replyToMention(mention)">
-                      <Icon name="ph:arrow-bend-up-left" class="w-3 h-3 mr-1" /> Reply
+                      <Icon name="ph:arrow-bend-up-left" class="w-3 h-3 mr-1" />
+                      Reply
                     </el-button>
                     <el-button text size="small" @click="convertToLead(mention)">
-                      <Icon name="ph:user-plus" class="w-3 h-3 mr-1" /> Convert
+                      <Icon name="ph:user-plus" class="w-3 h-3 mr-1" />
+                      Convert
                     </el-button>
                     <el-button text size="small" @click="assignMention(mention)">
-                      <Icon name="ph:user-switch" class="w-3 h-3 mr-1" /> Assign
+                      <Icon name="ph:user-switch" class="w-3 h-3 mr-1" />
+                      Assign
                     </el-button>
                   </div>
                 </div>
@@ -106,9 +118,18 @@
               </div>
             </div>
             <div class="flex gap-4 mt-3 text-[10px] text-slate-500">
-              <span class="flex items-center gap-1"><div class="w-2 h-2 bg-blue-500/40 rounded"></div> Likes</span>
-              <span class="flex items-center gap-1"><div class="w-2 h-2 bg-purple-500/40 rounded"></div> Comments</span>
-              <span class="flex items-center gap-1"><div class="w-2 h-2 bg-emerald-500/40 rounded"></div> Shares</span>
+              <span class="flex items-center gap-1">
+                <div class="w-2 h-2 bg-blue-500/40 rounded"></div>
+                Likes
+              </span>
+              <span class="flex items-center gap-1">
+                <div class="w-2 h-2 bg-purple-500/40 rounded"></div>
+                Comments
+              </span>
+              <span class="flex items-center gap-1">
+                <div class="w-2 h-2 bg-emerald-500/40 rounded"></div>
+                Shares
+              </span>
             </div>
           </div>
 
@@ -129,15 +150,26 @@
                 <div class="text-xs text-slate-500 mt-1">Negative</div>
               </div>
             </div>
-            <el-progress :percentage="100" :stroke-width="16" :show-text="false" class="!rounded-full overflow-hidden"
-              :color="[{ color: '#10B981', percentage: sentimentData.positive }, { color: '#F59E0B', percentage: sentimentData.positive + sentimentData.neutral }, { color: '#EF4444', percentage: 100 }]" />
+            <el-progress
+              :percentage="100"
+              :stroke-width="16"
+              :show-text="false"
+              class="!rounded-full overflow-hidden"
+              :color="[
+                { color: '#10B981', percentage: sentimentData.positive },
+                { color: '#F59E0B', percentage: sentimentData.positive + sentimentData.neutral },
+                { color: '#EF4444', percentage: 100 }
+              ]"
+            />
           </div>
 
           <!-- Top Hashtags -->
           <div class="glass-panel p-6 rounded-xl">
             <h3 class="text-sm font-medium text-slate-300 mb-4">Trending Hashtags</h3>
             <div class="flex flex-wrap gap-2">
-              <div v-for="tag in trendingHashtags" :key="tag.name"
+              <div
+                v-for="tag in trendingHashtags"
+                :key="tag.name"
                 class="px-3 py-1.5 rounded-full border border-slate-700/50 bg-slate-800/30 text-sm cursor-pointer hover:border-primary-500/30 transition"
               >
                 <span class="text-slate-300">#{{ tag.name }}</span>
@@ -177,9 +209,17 @@
               <div class="flex-1">
                 <p class="text-sm text-slate-300 mb-2">{{ post.content }}</p>
                 <div class="flex items-center gap-3 text-xs text-slate-500">
-                  <span class="flex items-center gap-1"><Icon name="ph:calendar" class="w-3 h-3" /> {{ post.scheduledDate }}</span>
-                  <span class="flex items-center gap-1"><Icon name="ph:clock" class="w-3 h-3" /> {{ post.scheduledTime }}</span>
-                  <el-tag :type="post.status === 'SCHEDULED' ? 'info' : 'success'" effect="dark" size="small" class="!text-[10px]">{{ post.status }}</el-tag>
+                  <span class="flex items-center gap-1">
+                    <Icon name="ph:calendar" class="w-3 h-3" />
+                    {{ post.scheduledDate }}
+                  </span>
+                  <span class="flex items-center gap-1">
+                    <Icon name="ph:clock" class="w-3 h-3" />
+                    {{ post.scheduledTime }}
+                  </span>
+                  <el-tag :type="post.status === 'SCHEDULED' ? 'info' : 'success'" effect="dark" size="small" class="!text-[10px]">
+                    {{ post.status }}
+                  </el-tag>
                 </div>
               </div>
               <div class="flex gap-1">
@@ -228,7 +268,9 @@
     <!-- Connect Account Dialog -->
     <el-dialog v-model="showConnectDialog" title="Connect Social Account" width="480px">
       <div class="space-y-3">
-        <div v-for="platform in availablePlatforms" :key="platform.name"
+        <div
+          v-for="platform in availablePlatforms"
+          :key="platform.name"
           class="flex items-center justify-between p-4 rounded-xl border border-slate-700/50 bg-slate-800/20 hover:border-primary-500/30 transition cursor-pointer"
           @click="connectPlatform(platform.name)"
         >
@@ -271,17 +313,98 @@ const socialAccounts = ref([
 ]);
 
 const mentions = ref([
-  { id: 1, author: 'Tech Arabia', handle: 'techarabia', platform: 'Twitter', content: 'Just switched to @leadify CRM and the automation features are incredible! Saved us 10 hours/week already. #CRM #SaaS', likes: 45, comments: 12, shares: 8, sentiment: 'positive', isLead: false, timeAgo: '2h ago' },
-  { id: 2, author: 'Sarah Tech', handle: 'sarahtech_sa', platform: 'LinkedIn', content: 'Looking for a CRM solution with strong Arabic language support. Anyone tried Leadify? Need recommendations for a 50-person sales team.', likes: 23, comments: 18, shares: 5, sentiment: 'neutral', isLead: true, timeAgo: '4h ago' },
-  { id: 3, author: 'Digital Saudi', handle: 'digitalsaudi', platform: 'Twitter', content: 'The reporting in @leadify needs work. Dashboard loading times are too slow for enterprise-level data volumes. Hope they fix this soon.', likes: 15, comments: 7, shares: 2, sentiment: 'negative', isLead: false, timeAgo: '6h ago' },
-  { id: 4, author: 'Gulf Business Hub', handle: 'gulfbizhub', platform: 'Facebook', content: 'Great webinar by the Leadify team on CRM best practices for SMBs in the MENA region! Excellent insights on lead scoring.', likes: 89, comments: 24, shares: 31, sentiment: 'positive', isLead: false, timeAgo: '1d ago' },
-  { id: 5, author: 'Startup Riyadh', handle: 'startupriyadh', platform: 'Twitter', content: 'Can @leadify integrate with our existing ERP system? Looking for seamless data flow between sales and operations.', likes: 8, comments: 3, shares: 1, sentiment: 'neutral', isLead: true, timeAgo: '1d ago' }
+  {
+    id: 1,
+    author: 'Tech Arabia',
+    handle: 'techarabia',
+    platform: 'Twitter',
+    content: 'Just switched to @leadify CRM and the automation features are incredible! Saved us 10 hours/week already. #CRM #SaaS',
+    likes: 45,
+    comments: 12,
+    shares: 8,
+    sentiment: 'positive',
+    isLead: false,
+    timeAgo: '2h ago'
+  },
+  {
+    id: 2,
+    author: 'Sarah Tech',
+    handle: 'sarahtech_sa',
+    platform: 'LinkedIn',
+    content: 'Looking for a CRM solution with strong Arabic language support. Anyone tried Leadify? Need recommendations for a 50-person sales team.',
+    likes: 23,
+    comments: 18,
+    shares: 5,
+    sentiment: 'neutral',
+    isLead: true,
+    timeAgo: '4h ago'
+  },
+  {
+    id: 3,
+    author: 'Digital Saudi',
+    handle: 'digitalsaudi',
+    platform: 'Twitter',
+    content: 'The reporting in @leadify needs work. Dashboard loading times are too slow for enterprise-level data volumes. Hope they fix this soon.',
+    likes: 15,
+    comments: 7,
+    shares: 2,
+    sentiment: 'negative',
+    isLead: false,
+    timeAgo: '6h ago'
+  },
+  {
+    id: 4,
+    author: 'Gulf Business Hub',
+    handle: 'gulfbizhub',
+    platform: 'Facebook',
+    content: 'Great webinar by the Leadify team on CRM best practices for SMBs in the MENA region! Excellent insights on lead scoring.',
+    likes: 89,
+    comments: 24,
+    shares: 31,
+    sentiment: 'positive',
+    isLead: false,
+    timeAgo: '1d ago'
+  },
+  {
+    id: 5,
+    author: 'Startup Riyadh',
+    handle: 'startupriyadh',
+    platform: 'Twitter',
+    content: 'Can @leadify integrate with our existing ERP system? Looking for seamless data flow between sales and operations.',
+    likes: 8,
+    comments: 3,
+    shares: 1,
+    sentiment: 'neutral',
+    isLead: true,
+    timeAgo: '1d ago'
+  }
 ]);
 
 const scheduledPosts = ref([
-  { id: 1, content: 'Excited to announce our new AI-powered lead scoring feature! Predict conversion probability with 94% accuracy. #AI #CRM #SalesTech', platforms: ['Twitter', 'LinkedIn'], scheduledDate: 'Feb 22', scheduledTime: '10:00 AM', status: 'SCHEDULED' },
-  { id: 2, content: 'Join our upcoming webinar: "CRM Best Practices for Growing Businesses" - Register now! Link in bio.', platforms: ['LinkedIn', 'Facebook'], scheduledDate: 'Feb 24', scheduledTime: '2:00 PM', status: 'SCHEDULED' },
-  { id: 3, content: 'Customer success story: How TechCorp increased their sales pipeline by 300% using Leadify CRM. Full case study coming soon!', platforms: ['Twitter', 'LinkedIn', 'Facebook'], scheduledDate: 'Feb 26', scheduledTime: '9:00 AM', status: 'SCHEDULED' }
+  {
+    id: 1,
+    content: 'Excited to announce our new AI-powered lead scoring feature! Predict conversion probability with 94% accuracy. #AI #CRM #SalesTech',
+    platforms: ['Twitter', 'LinkedIn'],
+    scheduledDate: 'Feb 22',
+    scheduledTime: '10:00 AM',
+    status: 'SCHEDULED'
+  },
+  {
+    id: 2,
+    content: 'Join our upcoming webinar: "CRM Best Practices for Growing Businesses" - Register now! Link in bio.',
+    platforms: ['LinkedIn', 'Facebook'],
+    scheduledDate: 'Feb 24',
+    scheduledTime: '2:00 PM',
+    status: 'SCHEDULED'
+  },
+  {
+    id: 3,
+    content: 'Customer success story: How TechCorp increased their sales pipeline by 300% using Leadify CRM. Full case study coming soon!',
+    platforms: ['Twitter', 'LinkedIn', 'Facebook'],
+    scheduledDate: 'Feb 26',
+    scheduledTime: '9:00 AM',
+    status: 'SCHEDULED'
+  }
 ]);
 
 const engagementData = ref([
@@ -297,9 +420,14 @@ const engagementData = ref([
 const sentimentData = ref({ positive: 62, neutral: 25, negative: 13 });
 
 const trendingHashtags = ref([
-  { name: 'CRM', count: 234 }, { name: 'SaaS', count: 189 }, { name: 'SalesTech', count: 156 },
-  { name: 'Leadify', count: 145 }, { name: 'AI', count: 123 }, { name: 'MENA', count: 98 },
-  { name: 'DigitalTransformation', count: 87 }, { name: 'B2B', count: 76 }
+  { name: 'CRM', count: 234 },
+  { name: 'SaaS', count: 189 },
+  { name: 'SalesTech', count: 156 },
+  { name: 'Leadify', count: 145 },
+  { name: 'AI', count: 123 },
+  { name: 'MENA', count: 98 },
+  { name: 'DigitalTransformation', count: 87 },
+  { name: 'B2B', count: 76 }
 ]);
 
 const influencers = ref([
@@ -317,7 +445,12 @@ const availablePlatforms = ref([
 ]);
 
 const getPlatformIcon = (p: string) => {
-  const m: Record<string, string> = { Twitter: 'ph:twitter-logo-bold', LinkedIn: 'ph:linkedin-logo-bold', Facebook: 'ph:facebook-logo-bold', Instagram: 'ph:instagram-logo-bold' };
+  const m: Record<string, string> = {
+    Twitter: 'ph:twitter-logo-bold',
+    LinkedIn: 'ph:linkedin-logo-bold',
+    Facebook: 'ph:facebook-logo-bold',
+    Instagram: 'ph:instagram-logo-bold'
+  };
   return m[p] || 'ph:globe-bold';
 };
 const getPlatformColor = (p: string) => {
@@ -334,17 +467,29 @@ const replyToMention = (m: any) => ElMessage.info(`Replying to @${m.handle}`);
 const convertToLead = (m: any) => ElMessage.success(`Converting @${m.handle} to lead`);
 const assignMention = (m: any) => ElMessage.info(`Assigning mention from @${m.handle}`);
 const editPost = (p: any) => ElMessage.info('Editing post');
-const deletePost = (p: any) => { scheduledPosts.value = scheduledPosts.value.filter(sp => sp.id !== p.id); ElMessage.success('Post deleted'); };
-const connectPlatform = (name: string) => { ElMessage.info(`Connecting ${name}...`); showConnectDialog.value = false; };
+const deletePost = (p: any) => {
+  scheduledPosts.value = scheduledPosts.value.filter(sp => sp.id !== p.id);
+  ElMessage.success('Post deleted');
+};
+const connectPlatform = (name: string) => {
+  ElMessage.info(`Connecting ${name}...`);
+  showConnectDialog.value = false;
+};
 
 const publishNow = () => {
-  if (!newPost.value.content) { ElMessage.warning('Content required'); return; }
+  if (!newPost.value.content) {
+    ElMessage.warning('Content required');
+    return;
+  }
   ElMessage.success('Post published!');
   showComposeDialog.value = false;
 };
 
 const schedulePost = () => {
-  if (!newPost.value.content) { ElMessage.warning('Content required'); return; }
+  if (!newPost.value.content) {
+    ElMessage.warning('Content required');
+    return;
+  }
   ElMessage.success('Post scheduled!');
   showComposeDialog.value = false;
 };

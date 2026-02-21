@@ -77,47 +77,25 @@ const notificationGroups = [
     key: 'sales',
     icon: 'ph:chart-line-up-bold',
     color: '#7849ff',
-    types: [
-      { key: 'lead_assigned' },
-      { key: 'lead_converted' },
-      { key: 'deal_stage_changed' },
-      { key: 'deal_won' },
-      { key: 'deal_lost' }
-    ]
+    types: [{ key: 'lead_assigned' }, { key: 'lead_converted' }, { key: 'deal_stage_changed' }, { key: 'deal_won' }, { key: 'deal_lost' }]
   },
   {
     key: 'operations',
     icon: 'ph:gear-six-bold',
     color: '#3b82f6',
-    types: [
-      { key: 'task_assigned' },
-      { key: 'task_due_soon' },
-      { key: 'task_overdue' },
-      { key: 'project_updated' },
-      { key: 'daily_task_reminder' }
-    ]
+    types: [{ key: 'task_assigned' }, { key: 'task_due_soon' }, { key: 'task_overdue' }, { key: 'project_updated' }, { key: 'daily_task_reminder' }]
   },
   {
     key: 'approvals',
     icon: 'ph:stamp-bold',
     color: '#f59e0b',
-    types: [
-      { key: 'approval_requested' },
-      { key: 'approval_approved' },
-      { key: 'approval_rejected' },
-      { key: 'invoice_created' }
-    ]
+    types: [{ key: 'approval_requested' }, { key: 'approval_approved' }, { key: 'approval_rejected' }, { key: 'invoice_created' }]
   },
   {
     key: 'system',
     icon: 'ph:bell-bold',
     color: '#22c55e',
-    types: [
-      { key: 'mention' },
-      { key: 'comment_added' },
-      { key: 'sla_breach' },
-      { key: 'system_announcement' }
-    ]
+    types: [{ key: 'mention' }, { key: 'comment_added' }, { key: 'sla_breach' }, { key: 'system_announcement' }]
   }
 ];
 
@@ -180,7 +158,9 @@ async function savePreferences() {
     saveStatus.value = 'error';
   }
   clearTimeout(statusTimeout);
-  statusTimeout = setTimeout(() => { saveStatus.value = ''; }, 3000);
+  statusTimeout = setTimeout(() => {
+    saveStatus.value = '';
+  }, 3000);
 }
 
 function debouncedSave() {

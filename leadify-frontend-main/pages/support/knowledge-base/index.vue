@@ -202,7 +202,10 @@ async function loadCategories() {
 
 function debounceLoad() {
   clearTimeout(debounceTimer);
-  debounceTimer = setTimeout(() => { currentPage.value = 1; loadArticles(); }, 400);
+  debounceTimer = setTimeout(() => {
+    currentPage.value = 1;
+    loadArticles();
+  }, 400);
 }
 
 function viewArticle(article: KBArticle) {
@@ -238,9 +241,7 @@ async function saveArticle() {
   saving.value = true;
   try {
     const payload = { ...form };
-    const result = editingId.value
-      ? await updateKBArticle(editingId.value, payload)
-      : await createKBArticle(payload);
+    const result = editingId.value ? await updateKBArticle(editingId.value, payload) : await createKBArticle(payload);
 
     if (result.success) {
       ElNotification({ type: 'success', title: t('common.success'), message: t('common.saved') });

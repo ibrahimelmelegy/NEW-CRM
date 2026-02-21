@@ -54,12 +54,7 @@ div
 
 <script setup lang="ts">
 import { ref, onMounted, nextTick } from 'vue';
-import {
-  fetchSupportDashboard,
-  fetchTickets,
-  getStatusOption,
-  getPriorityOption
-} from '@/composables/useSupport';
+import { fetchSupportDashboard, fetchTickets, getStatusOption, getPriorityOption } from '@/composables/useSupport';
 import type { TicketMetrics } from '@/composables/useSupport';
 
 const router = useRouter();
@@ -122,11 +117,7 @@ function renderCharts() {
   }
 }
 
-function drawDonutChart(
-  canvas: HTMLCanvasElement,
-  data: Record<string, number>,
-  colorMap: Record<string, string>
-) {
+function drawDonutChart(canvas: HTMLCanvasElement, data: Record<string, number>, colorMap: Record<string, string>) {
   const ctx = canvas.getContext('2d');
   if (!ctx) return;
 

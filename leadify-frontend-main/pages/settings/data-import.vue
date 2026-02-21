@@ -4,9 +4,7 @@
     <div class="glass-panel p-6 rounded-2xl">
       <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
         <div>
-          <h1 class="text-2xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-teal-400 to-emerald-400">
-            Data Import Center
-          </h1>
+          <h1 class="text-2xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-teal-400 to-emerald-400">Data Import Center</h1>
           <p class="text-slate-400 text-sm mt-1">Import data from CSV and Excel files into your CRM entities.</p>
         </div>
       </div>
@@ -39,13 +37,21 @@
         <div class="glass-panel p-6 rounded-xl mb-6">
           <h3 class="text-sm font-medium text-slate-200 mb-4">1. Select Entity Type</h3>
           <div class="flex gap-3 mb-6">
-            <div v-for="entity in entityTypes" :key="entity.value"
+            <div
+              v-for="entity in entityTypes"
+              :key="entity.value"
               class="glass-panel p-4 rounded-xl cursor-pointer flex-1 text-center transition-all"
               :class="selectedEntity === entity.value ? 'border-2 !border-indigo-500/60' : 'hover:border-primary-500/30'"
               @click="selectedEntity = entity.value"
             >
-              <Icon :name="entity.icon" class="w-8 h-8 mx-auto mb-2" :class="selectedEntity === entity.value ? 'text-indigo-400' : 'text-slate-500'" />
-              <div class="text-xs font-medium" :class="selectedEntity === entity.value ? 'text-indigo-400' : 'text-slate-400'">{{ entity.label }}</div>
+              <Icon
+                :name="entity.icon"
+                class="w-8 h-8 mx-auto mb-2"
+                :class="selectedEntity === entity.value ? 'text-indigo-400' : 'text-slate-500'"
+              />
+              <div class="text-xs font-medium" :class="selectedEntity === entity.value ? 'text-indigo-400' : 'text-slate-400'">
+                {{ entity.label }}
+              </div>
             </div>
           </div>
 
@@ -105,7 +111,7 @@
             </el-table>
 
             <div class="flex justify-end mt-4">
-              <el-button type="primary" class="!rounded-xl" @click="startImport" :loading="importing">
+              <el-button type="primary" class="!rounded-xl" :loading="importing" @click="startImport">
                 <Icon name="ph:upload-bold" class="w-4 h-4 mr-2" />
                 Start Import ({{ previewData.length }}+ records)
               </el-button>
@@ -179,7 +185,12 @@
           </div>
 
           <div class="space-y-3">
-            <div v-for="mapping in fieldMappings" :key="mapping.source" class="flex items-center gap-4 p-3 rounded-lg" style="background: rgba(255,255,255,0.02)">
+            <div
+              v-for="mapping in fieldMappings"
+              :key="mapping.source"
+              class="flex items-center gap-4 p-3 rounded-lg"
+              style="background: rgba(255, 255, 255, 0.02)"
+            >
               <div class="flex-1">
                 <div class="flex items-center gap-2">
                   <Icon name="ph:file-text-bold" class="w-4 h-4 text-slate-500" />
@@ -251,13 +262,83 @@ const previewData = ref<Record<string, string>[]>([
 ]);
 
 const importHistory = ref([
-  { id: 1, date: 'Feb 18, 2026 14:23', entity: 'Leads', fileName: 'leads_q1_2026.csv', totalRecords: 350, successCount: 342, failedCount: 8, status: 'Completed', user: 'Ahmed F.' },
-  { id: 2, date: 'Feb 15, 2026 09:10', entity: 'Contacts', fileName: 'contacts_export.xlsx', totalRecords: 1200, successCount: 1185, failedCount: 15, status: 'Completed', user: 'Sara M.' },
-  { id: 3, date: 'Feb 12, 2026 16:45', entity: 'Products', fileName: 'products_catalog.csv', totalRecords: 89, successCount: 89, failedCount: 0, status: 'Completed', user: 'Ahmed F.' },
-  { id: 4, date: 'Feb 10, 2026 11:30', entity: 'Deals', fileName: 'deals_migration.xlsx', totalRecords: 200, successCount: 178, failedCount: 22, status: 'Completed', user: 'Omar H.' },
-  { id: 5, date: 'Feb 08, 2026 08:00', entity: 'Leads', fileName: 'tradeshow_leads.csv', totalRecords: 500, successCount: 498, failedCount: 2, status: 'Completed', user: 'Nada S.' },
-  { id: 6, date: 'Feb 05, 2026 13:15', entity: 'Contacts', fileName: 'old_crm_contacts.csv', totalRecords: 3200, successCount: 0, failedCount: 3200, status: 'Failed', user: 'Sara M.' },
-  { id: 7, date: 'Feb 03, 2026 10:00', entity: 'Leads', fileName: 'webinar_attendees.xlsx', totalRecords: 150, successCount: 150, failedCount: 0, status: 'Completed', user: 'Tariq N.' }
+  {
+    id: 1,
+    date: 'Feb 18, 2026 14:23',
+    entity: 'Leads',
+    fileName: 'leads_q1_2026.csv',
+    totalRecords: 350,
+    successCount: 342,
+    failedCount: 8,
+    status: 'Completed',
+    user: 'Ahmed F.'
+  },
+  {
+    id: 2,
+    date: 'Feb 15, 2026 09:10',
+    entity: 'Contacts',
+    fileName: 'contacts_export.xlsx',
+    totalRecords: 1200,
+    successCount: 1185,
+    failedCount: 15,
+    status: 'Completed',
+    user: 'Sara M.'
+  },
+  {
+    id: 3,
+    date: 'Feb 12, 2026 16:45',
+    entity: 'Products',
+    fileName: 'products_catalog.csv',
+    totalRecords: 89,
+    successCount: 89,
+    failedCount: 0,
+    status: 'Completed',
+    user: 'Ahmed F.'
+  },
+  {
+    id: 4,
+    date: 'Feb 10, 2026 11:30',
+    entity: 'Deals',
+    fileName: 'deals_migration.xlsx',
+    totalRecords: 200,
+    successCount: 178,
+    failedCount: 22,
+    status: 'Completed',
+    user: 'Omar H.'
+  },
+  {
+    id: 5,
+    date: 'Feb 08, 2026 08:00',
+    entity: 'Leads',
+    fileName: 'tradeshow_leads.csv',
+    totalRecords: 500,
+    successCount: 498,
+    failedCount: 2,
+    status: 'Completed',
+    user: 'Nada S.'
+  },
+  {
+    id: 6,
+    date: 'Feb 05, 2026 13:15',
+    entity: 'Contacts',
+    fileName: 'old_crm_contacts.csv',
+    totalRecords: 3200,
+    successCount: 0,
+    failedCount: 3200,
+    status: 'Failed',
+    user: 'Sara M.'
+  },
+  {
+    id: 7,
+    date: 'Feb 03, 2026 10:00',
+    entity: 'Leads',
+    fileName: 'webinar_attendees.xlsx',
+    totalRecords: 150,
+    successCount: 150,
+    failedCount: 0,
+    status: 'Completed',
+    user: 'Tariq N.'
+  }
 ]);
 
 const fieldMappings = ref([
@@ -360,7 +441,9 @@ function startImport() {
 }
 
 function resetMapping() {
-  fieldMappings.value.forEach(m => { m.target = ''; });
+  fieldMappings.value.forEach(m => {
+    m.target = '';
+  });
   ElMessage.info('Mapping reset');
 }
 

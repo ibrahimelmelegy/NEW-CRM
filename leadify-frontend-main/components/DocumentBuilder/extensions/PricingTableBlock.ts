@@ -9,7 +9,7 @@ export interface PricingTableOptions {
 declare module '@tiptap/core' {
   interface Commands<ReturnType> {
     pricingTable: {
-      insertPricingTable: (options?: { items?: any[], taxRate?: number }) => ReturnType;
+      insertPricingTable: (options?: { items?: any[]; taxRate?: number }) => ReturnType;
     };
   }
 }
@@ -22,8 +22,8 @@ export const PricingTableBlock = Node.create<PricingTableOptions>({
   addOptions() {
     return {
       HTMLAttributes: {
-        class: 'pricing-table-block',
-      },
+        class: 'pricing-table-block'
+      }
     };
   },
 
@@ -32,18 +32,18 @@ export const PricingTableBlock = Node.create<PricingTableOptions>({
       items: {
         default: [
           { description: 'Consulting Services', qty: 1, price: 1500 },
-          { description: 'Software License', qty: 12, price: 50 },
-        ],
+          { description: 'Software License', qty: 12, price: 50 }
+        ]
       },
-      taxRate: { default: 15 },
+      taxRate: { default: 15 }
     };
   },
 
   parseHTML() {
     return [
       {
-        tag: 'div[data-type="pricing-table"]',
-      },
+        tag: 'div[data-type="pricing-table"]'
+      }
     ];
   },
 
@@ -58,13 +58,13 @@ export const PricingTableBlock = Node.create<PricingTableOptions>({
   addCommands() {
     return {
       insertPricingTable:
-        (options) =>
+        options =>
         ({ commands }) => {
           return commands.insertContent({
             type: this.name,
-            attrs: options,
+            attrs: options
           });
-        },
+        }
     };
-  },
+  }
 });

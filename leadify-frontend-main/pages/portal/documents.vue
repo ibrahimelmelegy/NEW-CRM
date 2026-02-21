@@ -18,7 +18,10 @@ const { documents, loading, fetchDocuments } = useEnhancedPortal();
 
 onMounted(async () => {
   init();
-  if (!isAuthenticated()) { navigateTo('/portal/login'); return; }
+  if (!isAuthenticated()) {
+    navigateTo('/portal/login');
+    return;
+  }
   await fetchDocuments();
 });
 </script>

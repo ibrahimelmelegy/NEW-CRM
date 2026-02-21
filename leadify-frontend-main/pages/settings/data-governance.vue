@@ -4,12 +4,10 @@
     <div class="glass-panel p-6 rounded-2xl">
       <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
         <div>
-          <h1 class="text-2xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-cyan-400 to-blue-400">
-            Data Governance
-          </h1>
+          <h1 class="text-2xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-cyan-400 to-blue-400">Data Governance</h1>
           <p class="text-slate-400 text-sm mt-1">Manage data quality, compliance, retention policies, and GDPR/privacy controls.</p>
         </div>
-        <el-button type="primary" class="!rounded-xl" @click="runAudit" :loading="auditing">
+        <el-button type="primary" class="!rounded-xl" :loading="auditing" @click="runAudit">
           <Icon name="ph:magnifying-glass-bold" class="w-4 h-4 mr-2" />
           Run Data Audit
         </el-button>
@@ -22,8 +20,16 @@
         <div class="w-16 h-16 mx-auto mb-2 relative">
           <svg class="w-16 h-16 transform -rotate-90" viewBox="0 0 64 64">
             <circle cx="32" cy="32" r="28" fill="none" stroke="#1e293b" stroke-width="4" />
-            <circle cx="32" cy="32" r="28" fill="none" :stroke="qualityScoreColor" stroke-width="4"
-              :stroke-dasharray="`${qualityScore * 1.76} 176`" stroke-linecap="round" />
+            <circle
+              cx="32"
+              cy="32"
+              r="28"
+              fill="none"
+              :stroke="qualityScoreColor"
+              stroke-width="4"
+              :stroke-dasharray="`${qualityScore * 1.76} 176`"
+              stroke-linecap="round"
+            />
           </svg>
           <span class="absolute inset-0 flex items-center justify-center text-lg font-bold text-slate-200">{{ qualityScore }}%</span>
         </div>
@@ -91,7 +97,8 @@
           <div class="flex justify-between items-center mb-4">
             <h3 class="text-lg font-medium text-slate-200">Data Retention Policies</h3>
             <el-button type="primary" size="small" @click="showPolicyDialog = true">
-              <Icon name="ph:plus-bold" class="w-4 h-4 mr-2" /> Add Policy
+              <Icon name="ph:plus-bold" class="w-4 h-4 mr-2" />
+              Add Policy
             </el-button>
           </div>
           <el-table :data="retentionPolicies" class="glass-table" stripe>
@@ -169,9 +176,7 @@
                   <el-tag v-else :type="req.status === 'COMPLETED' ? 'success' : 'info'" effect="dark" size="small">{{ req.status }}</el-tag>
                 </div>
               </div>
-              <div v-if="erasureRequests.length === 0" class="text-center py-4 text-slate-500 text-sm">
-                No erasure requests pending
-              </div>
+              <div v-if="erasureRequests.length === 0" class="text-center py-4 text-slate-500 text-sm">No erasure requests pending</div>
             </div>
           </div>
         </div>
@@ -258,7 +263,7 @@ const showPolicyDialog = ref(false);
 const newPolicy = ref({ entity: '', retentionPeriod: '1 year', action: 'ARCHIVE' });
 
 const qualityScore = ref(78);
-const qualityScoreColor = computed(() => qualityScore.value >= 80 ? '#10B981' : qualityScore.value >= 60 ? '#F59E0B' : '#EF4444');
+const qualityScoreColor = computed(() => (qualityScore.value >= 80 ? '#10B981' : qualityScore.value >= 60 ? '#F59E0B' : '#EF4444'));
 
 const dataMetrics = ref({ completeRecords: 85, duplicates: 47, validEmails: 92, staleRecords: 128 });
 
@@ -277,7 +282,10 @@ const retentionPolicies = ref([
 ]);
 
 const privacySettings = ref({
-  marketingConsent: true, dataProcessing: true, cookieConsent: true, rightToBeForgotten: true
+  marketingConsent: true,
+  dataProcessing: true,
+  cookieConsent: true,
+  rightToBeForgotten: true
 });
 
 const erasureRequests = ref([

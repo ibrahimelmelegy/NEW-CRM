@@ -53,10 +53,10 @@ div(class="animate-fade-in")
 
 <script setup lang="ts">
 import { Plus } from '@element-plus/icons-vue';
+import { computed, reactive, ref } from 'vue';
 import PremiumPageHeader from '~/components/UI/PremiumPageHeader.vue';
 import PremiumKPICards from '~/components/UI/PremiumKPICards.vue';
 import type { KPIMetric } from '~/components/UI/PremiumKPICards.vue';
-import { computed, reactive, ref } from 'vue';
 
 const router = useRouter();
 const { hasPermission } = await usePermissions();
@@ -78,8 +78,12 @@ const exportData = computed(() => table.data);
 
 // Bulk actions
 const selectedRows = ref<any[]>([]);
-function handleBulkDelete() { selectedRows.value = []; }
-function handleBulkExport() { selectedRows.value = []; }
+function handleBulkDelete() {
+  selectedRows.value = [];
+}
+function handleBulkExport() {
+  selectedRows.value = [];
+}
 
 const table = reactive({
   columns: [
@@ -137,10 +141,7 @@ const table = reactive({
 });
 
 // Call API to Get the deal and users in parallel
-let [response, usersResponse] = await Promise.all([
-  useTableFilter('deal'),
-  useApiFetch('users')
-]);
+const [response, usersResponse] = await Promise.all([useTableFilter('deal'), useApiFetch('users')]);
 table.data = response.formattedData;
 
 const kpiMetrics = computed<KPIMetric[]>(() => {
@@ -148,9 +149,10 @@ const kpiMetrics = computed<KPIMetric[]>(() => {
   const total = data.length;
   const wonDeals = data.filter((d: any) => d.stage === 'WON').length;
   // Calculate total revenue from won deals
-  const totalRevenue = data.filter((d: any) => d.stage === 'WON')
-                           .reduce((sum: number, d: any) => sum + (Number(d.price) || 0), 0)
-                           .toLocaleString('en-US', { style: 'currency', currency: 'SAR', maximumFractionDigits: 0 });
+  const totalRevenue = data
+    .filter((d: any) => d.stage === 'WON')
+    .reduce((sum: number, d: any) => sum + (Number(d.price) || 0), 0)
+    .toLocaleString('en-US', { style: 'currency', currency: 'SAR', maximumFractionDigits: 0 });
   const pending = data.filter((d: any) => d.stage !== 'WON' && d.stage !== 'LOST').length;
 
   return [
@@ -203,7 +205,12 @@ const advancedSearchFields = [
   { key: 'name', label: t('deals.table.dealName'), type: 'string' },
   { key: 'stage', label: t('deals.table.stage'), type: 'select', options: dealStageOptions.map((o: any) => ({ value: o.value, label: o.label })) },
   { key: 'price', label: t('deals.table.price'), type: 'number' },
-  { key: 'contractType', label: t('deals.table.contractType'), type: 'select', options: contractTypeOptions.map((o: any) => ({ value: o.value, label: o.label })) },
+  {
+    key: 'contractType',
+    label: t('deals.table.contractType'),
+    type: 'select',
+    options: contractTypeOptions.map((o: any) => ({ value: o.value, label: o.label }))
+  },
   { key: 'signatureDate', label: t('deals.table.signatureDate'), type: 'date' },
   { key: 'createdAt', label: t('deals.table.created'), type: 'date' }
 ];

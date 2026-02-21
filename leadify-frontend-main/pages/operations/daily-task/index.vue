@@ -506,8 +506,8 @@ const exportToPDF = async () => {
   });
   // Center title (h2 format)
 
-  doc.addFont(CairoFont, "Cairo", "normal");
-  doc.setFont("Cairo");
+  doc.addFont(CairoFont, 'Cairo', 'normal');
+  doc.setFont('Cairo');
   doc.text(`${name}`, 250, 10);
 
   // Use the imported `autoTable` function

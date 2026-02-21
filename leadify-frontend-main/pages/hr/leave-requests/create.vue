@@ -73,6 +73,8 @@ async function handleSubmit() {
     } else {
       ElNotification({ type: 'error', title: t('common.error'), message: res.message });
     }
-  } finally { saving.value = false; }
+  } finally {
+    saving.value = false;
+  }
 }
 </script>

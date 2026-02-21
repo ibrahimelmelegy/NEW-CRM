@@ -133,7 +133,9 @@ async function confirmReject() {
       rejectPopup.value = false;
       leaveRequest.value = await fetchLeaveRequestById(route.params.id as string);
     }
-  } finally { rejecting.value = false; }
+  } finally {
+    rejecting.value = false;
+  }
 }
 
 async function confirmDelete() {

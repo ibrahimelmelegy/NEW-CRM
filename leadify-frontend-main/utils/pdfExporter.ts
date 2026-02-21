@@ -149,7 +149,12 @@ function renderTable(doc: jsPDF, el: TemplateElement, data: PDFData) {
       lineColor: [borderColor.r, borderColor.g, borderColor.b],
       lineWidth: 0.2
     },
-    ...(columnWidths && { columnStyles: columnWidths.reduce((acc: any, w: number, i: number) => { acc[i] = { cellWidth: w }; return acc; }, {}) }),
+    ...(columnWidths && {
+      columnStyles: columnWidths.reduce((acc: any, w: number, i: number) => {
+        acc[i] = { cellWidth: w };
+        return acc;
+      }, {})
+    }),
     alternateRowStyles: el.props?.stripedBg ? { fillColor: hexToRgbArray(el.props.stripedBg) } : undefined
   });
 }

@@ -15,5 +15,16 @@ export function useApprovals() {
   const rejectRequest = (id: number, comment: string) => useApiFetch(`approvals/requests/${id}/reject`, 'POST', { comment });
   const cancelRequest = (id: number) => useApiFetch(`approvals/requests/${id}/cancel`, 'POST');
 
-  return { fetchWorkflows, createWorkflow, updateWorkflow, deleteWorkflow, fetchRequests, fetchPendingApprovals, createRequest, approveRequest, rejectRequest, cancelRequest };
+  return {
+    fetchWorkflows,
+    createWorkflow,
+    updateWorkflow,
+    deleteWorkflow,
+    fetchRequests,
+    fetchPendingApprovals,
+    createRequest,
+    approveRequest,
+    rejectRequest,
+    cancelRequest
+  };
 }

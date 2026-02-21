@@ -49,7 +49,7 @@ async function onSubmitMaterials() {
     await updateAdditionalMaterial({ ...finalValues.value, materialId: +(route.params.slug as string) });
     loading.value = false;
   } catch (error) {
-    console.error("Error saving forms:", error);
+    console.error('Error saving forms:', error);
     loading.value = false;
   } finally {
     loading.value = false;

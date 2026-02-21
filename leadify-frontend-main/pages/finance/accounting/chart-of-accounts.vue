@@ -65,14 +65,7 @@ div
 <script setup lang="ts">
 import { ElNotification, ElMessageBox } from 'element-plus';
 import type { FormInstance, FormRules } from 'element-plus';
-import {
-  fetchChartOfAccounts,
-  createAccount,
-  updateAccount,
-  deleteAccount,
-  seedDefaultAccounts,
-  AccountType
-} from '~/composables/useAccounting';
+import { fetchChartOfAccounts, createAccount, updateAccount, deleteAccount, seedDefaultAccounts, AccountType } from '~/composables/useAccounting';
 import type { ChartOfAccountsItem } from '~/composables/useAccounting';
 
 definePageMeta({ middleware: 'permissions' });
@@ -203,11 +196,7 @@ async function handleDelete() {
 
 async function handleSeedDefaults() {
   try {
-    await ElMessageBox.confirm(
-      'This will create a default chart of accounts. Continue?',
-      'Seed Default Accounts',
-      { type: 'info' }
-    );
+    await ElMessageBox.confirm('This will create a default chart of accounts. Continue?', 'Seed Default Accounts', { type: 'info' });
   } catch {
     return;
   }

@@ -118,12 +118,8 @@ import { BarChart, LineChart, PieChart, FunnelChart } from 'echarts/charts';
 import { TitleComponent, TooltipComponent, LegendComponent, GridComponent } from 'echarts/components';
 import VChart from 'vue-echarts';
 import { graphic } from 'echarts';
-import {
-  getBarChartData, getPieChartsData, getIncreaseLineChart
-} from '~/composables/charts';
-import {
-  fetchPipelineData, fetchRevenueChart, fetchTeamPerformance
-} from '~/composables/useDashboard';
+import { getBarChartData, getPieChartsData, getIncreaseLineChart } from '~/composables/charts';
+import { fetchPipelineData, fetchRevenueChart, fetchTeamPerformance } from '~/composables/useDashboard';
 import { formatLargeNumber } from '~/composables/format';
 
 use([CanvasRenderer, BarChart, LineChart, PieChart, FunnelChart, TitleComponent, TooltipComponent, LegendComponent, GridComponent]);
@@ -197,7 +193,12 @@ function getDateRangeParams() {
 
 function getInitials(name: string): string {
   if (!name) return '?';
-  return name.split(' ').map(w => w[0]).join('').substring(0, 2).toUpperCase();
+  return name
+    .split(' ')
+    .map(w => w[0])
+    .join('')
+    .substring(0, 2)
+    .toUpperCase();
 }
 
 async function loadSummary() {
@@ -269,23 +270,25 @@ async function loadFunnel() {
       funnelOption.value = {
         tooltip: { trigger: 'item', formatter: '{b}: {c}' },
         color: COLORS,
-        series: [{
-          type: 'funnel',
-          left: '10%',
-          top: 20,
-          bottom: 20,
-          width: '80%',
-          min: 0,
-          max: Math.max(...body.map((b: any) => b.value || 0)) || 100,
-          minSize: '10%',
-          maxSize: '100%',
-          sort: 'descending',
-          gap: 4,
-          label: { show: true, position: 'inside', formatter: '{b}\n{c}', color: '#fff', fontSize: 12 },
-          itemStyle: { borderColor: 'transparent', borderWidth: 1, borderRadius: 4 },
-          emphasis: { label: { fontSize: 16, fontWeight: 'bold' } },
-          data: body.map((b: any) => ({ name: b.name || b.stage, value: b.value || b.count || 0 }))
-        }]
+        series: [
+          {
+            type: 'funnel',
+            left: '10%',
+            top: 20,
+            bottom: 20,
+            width: '80%',
+            min: 0,
+            max: Math.max(...body.map((b: any) => b.value || 0)) || 100,
+            minSize: '10%',
+            maxSize: '100%',
+            sort: 'descending',
+            gap: 4,
+            label: { show: true, position: 'inside', formatter: '{b}\n{c}', color: '#fff', fontSize: 12 },
+            itemStyle: { borderColor: 'transparent', borderWidth: 1, borderRadius: 4 },
+            emphasis: { label: { fontSize: 16, fontWeight: 'bold' } },
+            data: body.map((b: any) => ({ name: b.name || b.stage, value: b.value || b.count || 0 }))
+          }
+        ]
       };
     } else {
       funnelOption.value = null;
@@ -303,10 +306,12 @@ async function loadWinLoss() {
     const qs = dateRange.value ? `?startDate=${dateRange.value[0]}&endDate=${dateRange.value[1]}` : '';
     const { body, success } = await useApiFetch(`dashboards/win-loss${qs}`);
     if (success && body) {
-      const data = Array.isArray(body) ? body : [
-        { name: t('analyticsPage.won'), value: body.won || 0 },
-        { name: t('analyticsPage.lost'), value: body.lost || 0 }
-      ];
+      const data = Array.isArray(body)
+        ? body
+        : [
+            { name: t('analyticsPage.won'), value: body.won || 0 },
+            { name: t('analyticsPage.lost'), value: body.lost || 0 }
+          ];
       winLossOption.value = getPieChartsData(data, ['#10B981', '#EF4444'], '5%');
     } else {
       winLossOption.value = null;

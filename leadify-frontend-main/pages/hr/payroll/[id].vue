@@ -103,7 +103,9 @@ async function refreshData() {
   loading.value = true;
   try {
     payrollRun.value = await fetchPayrollRunById(route.params.id as string);
-  } finally { loading.value = false; }
+  } finally {
+    loading.value = false;
+  }
 }
 
 async function handleCalculate() {
@@ -116,7 +118,9 @@ async function handleCalculate() {
     } else {
       ElNotification({ type: 'error', title: 'Error', message: res.message });
     }
-  } finally { calculating.value = false; }
+  } finally {
+    calculating.value = false;
+  }
 }
 
 async function handleApprove() {
@@ -129,7 +133,9 @@ async function handleApprove() {
     } else {
       ElNotification({ type: 'error', title: 'Error', message: res.message });
     }
-  } finally { approving.value = false; }
+  } finally {
+    approving.value = false;
+  }
 }
 
 async function handleProcess() {
@@ -142,6 +148,8 @@ async function handleProcess() {
     } else {
       ElNotification({ type: 'error', title: 'Error', message: res.message });
     }
-  } finally { processing.value = false; }
+  } finally {
+    processing.value = false;
+  }
 }
 </script>

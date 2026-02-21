@@ -269,8 +269,7 @@ async function downloadPDFWithTemplate(template: any) {
   showTemplateSelector.value = false;
   const { generatePDF } = await import('~/utils/pdfExporter');
 
-  const taxTotal = po.value.items?.reduce((acc: number, item: any) =>
-    acc + (item.quantity * item.unitPrice * item.tax / 100), 0) || 0;
+  const taxTotal = po.value.items?.reduce((acc: number, item: any) => acc + (item.quantity * item.unitPrice * item.tax) / 100, 0) || 0;
 
   const data = {
     companyName: 'LEADIFY ERP',
@@ -289,15 +288,16 @@ async function downloadPDFWithTemplate(template: any) {
     tax: `SR ${taxTotal.toFixed(2)}`,
     total: `SR ${po.value.totalAmount}`,
     notes: '',
-    items: po.value.items?.map((item: any) => ({
-      item: item.description,
-      qty: item.quantity,
-      unit: item.unit || 'pcs',
-      rate: item.unitPrice,
-      unitprice: item.unitPrice,
-      amount: (item.quantity * item.unitPrice * (1 + item.tax / 100)).toFixed(2),
-      total: (item.quantity * item.unitPrice * (1 + item.tax / 100)).toFixed(2)
-    })) || []
+    items:
+      po.value.items?.map((item: any) => ({
+        item: item.description,
+        qty: item.quantity,
+        unit: item.unit || 'pcs',
+        rate: item.unitPrice,
+        unitprice: item.unitPrice,
+        amount: (item.quantity * item.unitPrice * (1 + item.tax / 100)).toFixed(2),
+        total: (item.quantity * item.unitPrice * (1 + item.tax / 100)).toFixed(2)
+      })) || []
   };
 
   generatePDF(template.layout, data, `${po.value.poNumber}.pdf`);

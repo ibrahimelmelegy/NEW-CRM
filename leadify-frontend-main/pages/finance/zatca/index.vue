@@ -160,9 +160,7 @@ const summaryStats = computed(() => [
   { label: t('zatca.stats.rejected'), value: summary.value.rejected, icon: 'ph:x-circle-bold', color: '#f56c6c' }
 ]);
 
-const headerActions = computed(() => [
-  { label: t('zatca.createInvoice'), to: '/finance/zatca/create', type: 'primary', icon: Plus }
-]);
+const headerActions = computed(() => [{ label: t('zatca.createInvoice'), to: '/finance/zatca/create', type: 'primary', icon: Plus }]);
 
 // Debounced search
 let searchTimeout: ReturnType<typeof setTimeout>;
@@ -209,11 +207,11 @@ function getStatusType(status: ZatcaInvoiceStatus): string {
 
 async function handleSubmit(invoice: ZatcaInvoice) {
   try {
-    await ElMessageBox.confirm(
-      t('zatca.submitConfirm'),
-      t('zatca.submitToZatca'),
-      { confirmButtonText: t('common.submit'), cancelButtonText: t('common.cancel'), type: 'warning' }
-    );
+    await ElMessageBox.confirm(t('zatca.submitConfirm'), t('zatca.submitToZatca'), {
+      confirmButtonText: t('common.submit'),
+      cancelButtonText: t('common.cancel'),
+      type: 'warning'
+    });
     submittingId.value = invoice.id;
     const res = await submitToZatca(invoice.id);
     if (res.success) {

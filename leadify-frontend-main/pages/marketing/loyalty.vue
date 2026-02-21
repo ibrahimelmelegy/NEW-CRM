@@ -4,13 +4,11 @@
     <div class="glass-panel p-6 rounded-2xl">
       <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
         <div>
-          <h1 class="text-2xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-amber-400 to-yellow-400">
-            Loyalty &amp; Rewards
-          </h1>
+          <h1 class="text-2xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-amber-400 to-yellow-400">Loyalty &amp; Rewards</h1>
           <p class="text-slate-400 text-sm mt-1">Manage loyalty programs, track member points, and configure reward tiers.</p>
         </div>
         <div class="flex gap-2">
-          <el-button @click="showAddRewardDialog = true" class="!rounded-xl">
+          <el-button class="!rounded-xl" @click="showAddRewardDialog = true">
             <Icon name="ph:gift-bold" class="w-4 h-4 mr-2" />
             Add Reward
           </el-button>
@@ -137,10 +135,12 @@
             </div>
             <div class="flex gap-2 mt-3">
               <el-button size="small" text type="primary" @click="editReward(reward)">
-                <Icon name="ph:pencil-simple" class="w-4 h-4 mr-1" /> Edit
+                <Icon name="ph:pencil-simple" class="w-4 h-4 mr-1" />
+                Edit
               </el-button>
               <el-button size="small" text type="danger" @click="removeReward(reward)">
-                <Icon name="ph:trash" class="w-4 h-4 mr-1" /> Remove
+                <Icon name="ph:trash" class="w-4 h-4 mr-1" />
+                Remove
               </el-button>
             </div>
           </div>
@@ -176,14 +176,20 @@
       <el-tab-pane label="Activity" name="activity">
         <div class="glass-panel p-6 rounded-xl">
           <div class="space-y-4">
-            <div v-for="activity in recentActivity" :key="activity.id"
+            <div
+              v-for="activity in recentActivity"
+              :key="activity.id"
               class="flex items-start gap-4 p-3 rounded-xl bg-slate-800/20 hover:bg-slate-800/40 transition"
             >
-              <div class="w-10 h-10 rounded-full flex items-center justify-center flex-shrink-0"
-                :class="activity.type === 'earn' ? 'bg-emerald-500/10' : 'bg-amber-500/10'">
-                <Icon :name="activity.type === 'earn' ? 'ph:arrow-up-bold' : 'ph:gift-bold'"
+              <div
+                class="w-10 h-10 rounded-full flex items-center justify-center flex-shrink-0"
+                :class="activity.type === 'earn' ? 'bg-emerald-500/10' : 'bg-amber-500/10'"
+              >
+                <Icon
+                  :name="activity.type === 'earn' ? 'ph:arrow-up-bold' : 'ph:gift-bold'"
                   class="w-5 h-5"
-                  :class="activity.type === 'earn' ? 'text-emerald-400' : 'text-amber-400'" />
+                  :class="activity.type === 'earn' ? 'text-emerald-400' : 'text-amber-400'"
+                />
               </div>
               <div class="flex-1">
                 <div class="flex justify-between items-start">
@@ -197,7 +203,13 @@
                 </div>
                 <div class="flex items-center gap-2 mt-1">
                   <span class="text-xs text-slate-500">{{ activity.date }}</span>
-                  <el-tag :type="getTierType(activity.tier)" effect="dark" size="small" class="!text-[10px] !px-1.5 !py-0" :class="getTierClass(activity.tier)">
+                  <el-tag
+                    :type="getTierType(activity.tier)"
+                    effect="dark"
+                    size="small"
+                    class="!text-[10px] !px-1.5 !py-0"
+                    :class="getTierClass(activity.tier)"
+                  >
                     {{ activity.tier }}
                   </el-tag>
                 </div>
@@ -287,61 +299,204 @@ const members = ref([
   { id: 7, name: 'Hassan Al-Qahtani', email: 'hassan@logistics.sa', tier: 'Bronze', pointsBalance: 1800, lifetimePoints: 5200, joinDate: 'May 2024' },
   { id: 8, name: 'Amal Rashid', email: 'amal@design.sa', tier: 'Platinum', pointsBalance: 52300, lifetimePoints: 145000, joinDate: 'Dec 2022' },
   { id: 9, name: 'Youssef Mansour', email: 'youssef@pharma.sa', tier: 'Gold', pointsBalance: 16200, lifetimePoints: 48700, joinDate: 'Apr 2023' },
-  { id: 10, name: 'Layla Bashar', email: 'layla@education.sa', tier: 'Bronze', pointsBalance: 2400, lifetimePoints: 6100, joinDate: 'Sep 2024' },
+  { id: 10, name: 'Layla Bashar', email: 'layla@education.sa', tier: 'Bronze', pointsBalance: 2400, lifetimePoints: 6100, joinDate: 'Sep 2024' }
 ]);
 
 const rewards = ref([
-  { id: 1, name: 'Free Month Subscription', description: 'Get one month of premium access for free', pointsCost: 5000, stock: 50, category: 'Service', icon: 'ph:calendar-star-bold' },
-  { id: 2, name: '20% Discount Coupon', description: 'Apply 20% discount on next purchase', pointsCost: 2000, stock: 100, category: 'Discount', icon: 'ph:percent-bold' },
-  { id: 3, name: 'Premium Support Upgrade', description: '3 months of dedicated priority support', pointsCost: 8000, stock: 20, category: 'Service', icon: 'ph:headset-bold' },
-  { id: 4, name: 'Branded Merchandise Pack', description: 'Exclusive company merchandise bundle', pointsCost: 3500, stock: 30, category: 'Product', icon: 'ph:t-shirt-bold' },
-  { id: 5, name: 'Conference VIP Pass', description: 'VIP access to annual industry conference', pointsCost: 15000, stock: 10, category: 'Experience', icon: 'ph:ticket-bold' },
-  { id: 6, name: 'Gift Card 500 SAR', description: 'Digital gift card worth 500 SAR', pointsCost: 10000, stock: 0, category: 'Gift Card', icon: 'ph:credit-card-bold' },
+  {
+    id: 1,
+    name: 'Free Month Subscription',
+    description: 'Get one month of premium access for free',
+    pointsCost: 5000,
+    stock: 50,
+    category: 'Service',
+    icon: 'ph:calendar-star-bold'
+  },
+  {
+    id: 2,
+    name: '20% Discount Coupon',
+    description: 'Apply 20% discount on next purchase',
+    pointsCost: 2000,
+    stock: 100,
+    category: 'Discount',
+    icon: 'ph:percent-bold'
+  },
+  {
+    id: 3,
+    name: 'Premium Support Upgrade',
+    description: '3 months of dedicated priority support',
+    pointsCost: 8000,
+    stock: 20,
+    category: 'Service',
+    icon: 'ph:headset-bold'
+  },
+  {
+    id: 4,
+    name: 'Branded Merchandise Pack',
+    description: 'Exclusive company merchandise bundle',
+    pointsCost: 3500,
+    stock: 30,
+    category: 'Product',
+    icon: 'ph:t-shirt-bold'
+  },
+  {
+    id: 5,
+    name: 'Conference VIP Pass',
+    description: 'VIP access to annual industry conference',
+    pointsCost: 15000,
+    stock: 10,
+    category: 'Experience',
+    icon: 'ph:ticket-bold'
+  },
+  {
+    id: 6,
+    name: 'Gift Card 500 SAR',
+    description: 'Digital gift card worth 500 SAR',
+    pointsCost: 10000,
+    stock: 0,
+    category: 'Gift Card',
+    icon: 'ph:credit-card-bold'
+  }
 ]);
 
 const tiers = ref([
   {
-    name: 'Bronze', minPoints: 0, memberCount: 3,
+    name: 'Bronze',
+    minPoints: 0,
+    memberCount: 3,
     benefits: ['Basic rewards access', 'Monthly newsletter', 'Birthday bonus (100 pts)', 'Standard support'],
-    borderClass: 'border-amber-700/30', bgClass: 'bg-amber-700/20', iconColor: 'text-amber-700', textColor: 'text-amber-600',
+    borderClass: 'border-amber-700/30',
+    bgClass: 'bg-amber-700/20',
+    iconColor: 'text-amber-700',
+    textColor: 'text-amber-600'
   },
   {
-    name: 'Silver', minPoints: 5000, memberCount: 2,
+    name: 'Silver',
+    minPoints: 5000,
+    memberCount: 2,
     benefits: ['All Bronze benefits', '10% bonus on earned points', 'Quarterly bonus (500 pts)', 'Priority support', 'Early access to new rewards'],
-    borderClass: 'border-slate-400/30', bgClass: 'bg-slate-400/20', iconColor: 'text-slate-300', textColor: 'text-slate-300',
+    borderClass: 'border-slate-400/30',
+    bgClass: 'bg-slate-400/20',
+    iconColor: 'text-slate-300',
+    textColor: 'text-slate-300'
   },
   {
-    name: 'Gold', minPoints: 15000, memberCount: 3,
-    benefits: ['All Silver benefits', '25% bonus on earned points', 'Free shipping on merchandise', 'Exclusive events access', 'Dedicated account manager'],
-    borderClass: 'border-amber-400/30', bgClass: 'bg-amber-400/20', iconColor: 'text-amber-400', textColor: 'text-amber-400',
+    name: 'Gold',
+    minPoints: 15000,
+    memberCount: 3,
+    benefits: [
+      'All Silver benefits',
+      '25% bonus on earned points',
+      'Free shipping on merchandise',
+      'Exclusive events access',
+      'Dedicated account manager'
+    ],
+    borderClass: 'border-amber-400/30',
+    bgClass: 'bg-amber-400/20',
+    iconColor: 'text-amber-400',
+    textColor: 'text-amber-400'
   },
   {
-    name: 'Platinum', minPoints: 40000, memberCount: 2,
-    benefits: ['All Gold benefits', '50% bonus on earned points', 'Annual VIP experience', 'Custom rewards requests', 'Executive support line', 'Referral double points'],
-    borderClass: 'border-indigo-400/30', bgClass: 'bg-indigo-400/20', iconColor: 'text-indigo-400', textColor: 'text-indigo-400',
-  },
+    name: 'Platinum',
+    minPoints: 40000,
+    memberCount: 2,
+    benefits: [
+      'All Gold benefits',
+      '50% bonus on earned points',
+      'Annual VIP experience',
+      'Custom rewards requests',
+      'Executive support line',
+      'Referral double points'
+    ],
+    borderClass: 'border-indigo-400/30',
+    bgClass: 'bg-indigo-400/20',
+    iconColor: 'text-indigo-400',
+    textColor: 'text-indigo-400'
+  }
 ]);
 
 const recentActivity = ref([
-  { id: 1, memberName: 'Ahmed Al-Farsi', description: 'earned points from deal closure', type: 'earn', points: 2500, date: 'Feb 20, 2026', tier: 'Platinum' },
-  { id: 2, memberName: 'Sara Mohammed', description: 'redeemed 20% Discount Coupon', type: 'redeem', points: 2000, date: 'Feb 20, 2026', tier: 'Gold' },
-  { id: 3, memberName: 'Amal Rashid', description: 'earned points from referral', type: 'earn', points: 5000, date: 'Feb 19, 2026', tier: 'Platinum' },
-  { id: 4, memberName: 'Omar Hassan', description: 'redeemed Premium Support Upgrade', type: 'redeem', points: 8000, date: 'Feb 19, 2026', tier: 'Gold' },
-  { id: 5, memberName: 'Fatima Ali', description: 'earned points from subscription renewal', type: 'earn', points: 1200, date: 'Feb 18, 2026', tier: 'Silver' },
+  {
+    id: 1,
+    memberName: 'Ahmed Al-Farsi',
+    description: 'earned points from deal closure',
+    type: 'earn',
+    points: 2500,
+    date: 'Feb 20, 2026',
+    tier: 'Platinum'
+  },
+  {
+    id: 2,
+    memberName: 'Sara Mohammed',
+    description: 'redeemed 20% Discount Coupon',
+    type: 'redeem',
+    points: 2000,
+    date: 'Feb 20, 2026',
+    tier: 'Gold'
+  },
+  {
+    id: 3,
+    memberName: 'Amal Rashid',
+    description: 'earned points from referral',
+    type: 'earn',
+    points: 5000,
+    date: 'Feb 19, 2026',
+    tier: 'Platinum'
+  },
+  {
+    id: 4,
+    memberName: 'Omar Hassan',
+    description: 'redeemed Premium Support Upgrade',
+    type: 'redeem',
+    points: 8000,
+    date: 'Feb 19, 2026',
+    tier: 'Gold'
+  },
+  {
+    id: 5,
+    memberName: 'Fatima Ali',
+    description: 'earned points from subscription renewal',
+    type: 'earn',
+    points: 1200,
+    date: 'Feb 18, 2026',
+    tier: 'Silver'
+  },
   { id: 6, memberName: 'Noura Salem', description: 'earned birthday bonus', type: 'earn', points: 100, date: 'Feb 18, 2026', tier: 'Bronze' },
-  { id: 7, memberName: 'Khalid Ibrahim', description: 'redeemed Branded Merchandise Pack', type: 'redeem', points: 3500, date: 'Feb 17, 2026', tier: 'Silver' },
-  { id: 8, memberName: 'Youssef Mansour', description: 'earned points from training completion', type: 'earn', points: 800, date: 'Feb 17, 2026', tier: 'Gold' },
-  { id: 9, memberName: 'Hassan Al-Qahtani', description: 'earned points from survey completion', type: 'earn', points: 200, date: 'Feb 16, 2026', tier: 'Bronze' },
-  { id: 10, memberName: 'Layla Bashar', description: 'earned sign-up bonus', type: 'earn', points: 500, date: 'Feb 16, 2026', tier: 'Bronze' },
+  {
+    id: 7,
+    memberName: 'Khalid Ibrahim',
+    description: 'redeemed Branded Merchandise Pack',
+    type: 'redeem',
+    points: 3500,
+    date: 'Feb 17, 2026',
+    tier: 'Silver'
+  },
+  {
+    id: 8,
+    memberName: 'Youssef Mansour',
+    description: 'earned points from training completion',
+    type: 'earn',
+    points: 800,
+    date: 'Feb 17, 2026',
+    tier: 'Gold'
+  },
+  {
+    id: 9,
+    memberName: 'Hassan Al-Qahtani',
+    description: 'earned points from survey completion',
+    type: 'earn',
+    points: 200,
+    date: 'Feb 16, 2026',
+    tier: 'Bronze'
+  },
+  { id: 10, memberName: 'Layla Bashar', description: 'earned sign-up bonus', type: 'earn', points: 500, date: 'Feb 16, 2026', tier: 'Bronze' }
 ]);
 
 const filteredMembers = computed(() => {
   let result = members.value;
   if (memberSearch.value) {
     const s = memberSearch.value.toLowerCase();
-    result = result.filter(m =>
-      m.name.toLowerCase().includes(s) || m.email.toLowerCase().includes(s)
-    );
+    result = result.filter(m => m.name.toLowerCase().includes(s) || m.email.toLowerCase().includes(s));
   }
   if (filterTier.value) {
     result = result.filter(m => m.tier === filterTier.value);
@@ -349,21 +504,15 @@ const filteredMembers = computed(() => {
   return result;
 });
 
-const totalActivePoints = computed(() =>
-  members.value.reduce((s, m) => s + m.pointsBalance, 0)
-);
+const totalActivePoints = computed(() => members.value.reduce((s, m) => s + m.pointsBalance, 0));
 
-const redeemedThisMonth = computed(() =>
-  recentActivity.value
-    .filter(a => a.type === 'redeem')
-    .reduce((s, a) => s + a.points, 0)
-);
+const redeemedThisMonth = computed(() => recentActivity.value.filter(a => a.type === 'redeem').reduce((s, a) => s + a.points, 0));
 
 const tierDistribution = computed(() => [
   { name: 'Platinum', count: members.value.filter(m => m.tier === 'Platinum').length, color: 'text-indigo-400' },
   { name: 'Gold', count: members.value.filter(m => m.tier === 'Gold').length, color: 'text-amber-400' },
   { name: 'Silver', count: members.value.filter(m => m.tier === 'Silver').length, color: 'text-slate-300' },
-  { name: 'Bronze', count: members.value.filter(m => m.tier === 'Bronze').length, color: 'text-amber-600' },
+  { name: 'Bronze', count: members.value.filter(m => m.tier === 'Bronze').length, color: 'text-amber-600' }
 ]);
 
 const getTierType = (tier: string): 'warning' | 'info' | 'success' | 'danger' | undefined => {
@@ -371,7 +520,7 @@ const getTierType = (tier: string): 'warning' | 'info' | 'success' | 'danger' | 
     Platinum: 'info',
     Gold: 'warning',
     Silver: undefined,
-    Bronze: 'danger',
+    Bronze: 'danger'
   };
   return map[tier];
 };
@@ -381,7 +530,7 @@ const getTierClass = (tier: string): string => {
     Platinum: '!bg-indigo-500/20 !border-indigo-500/40 !text-indigo-300',
     Gold: '!bg-amber-500/20 !border-amber-500/40 !text-amber-300',
     Silver: '!bg-slate-400/20 !border-slate-400/40 !text-slate-300',
-    Bronze: '!bg-amber-700/20 !border-amber-700/40 !text-amber-600',
+    Bronze: '!bg-amber-700/20 !border-amber-700/40 !text-amber-600'
   };
   return map[tier] || '';
 };
@@ -422,7 +571,7 @@ const addMember = () => {
     tier: 'Bronze',
     pointsBalance: newMember.value.points,
     lifetimePoints: newMember.value.points,
-    joinDate: new Date().toLocaleDateString('en-US', { month: 'short', year: 'numeric' }),
+    joinDate: new Date().toLocaleDateString('en-US', { month: 'short', year: 'numeric' })
   });
   ElMessage.success(`${newMember.value.name} added to loyalty program`);
   showAddMemberDialog.value = false;
@@ -441,7 +590,7 @@ const addReward = () => {
     pointsCost: newReward.value.pointsCost,
     stock: newReward.value.stock,
     category: newReward.value.category,
-    icon: 'ph:gift-bold',
+    icon: 'ph:gift-bold'
   });
   ElMessage.success(`Reward "${newReward.value.name}" added to catalog`);
   showAddRewardDialog.value = false;

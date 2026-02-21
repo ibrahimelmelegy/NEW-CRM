@@ -158,12 +158,7 @@ FormPage(
 
 <script setup lang="ts">
 import { ElMessage } from 'element-plus';
-import {
-  createAssessment,
-  updateAssessment,
-  fetchAssessment,
-  type ZakaatAssessment
-} from '~/composables/useZakaat';
+import { createAssessment, updateAssessment, fetchAssessment, type ZakaatAssessment } from '~/composables/useZakaat';
 
 definePageMeta({ middleware: 'permissions' });
 
@@ -205,10 +200,7 @@ const calculated = computed(() => {
     (form.value.prepaidExpenses || 0) +
     (form.value.otherCurrentAssets || 0);
 
-  const exemptAssets =
-    (form.value.fixedAssets || 0) +
-    (form.value.longTermLiabilities || 0) +
-    (form.value.otherDeductions || 0);
+  const exemptAssets = (form.value.fixedAssets || 0) + (form.value.longTermLiabilities || 0) + (form.value.otherDeductions || 0);
 
   const zakaatableBase = Math.max(0, totalAssets - exemptAssets);
   const zakaatDue = zakaatableBase * 0.025;

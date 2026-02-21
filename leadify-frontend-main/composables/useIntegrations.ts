@@ -1,6 +1,6 @@
 import { ref, computed } from 'vue';
-import { useApiFetch } from './useApiFetch';
 import { ElNotification } from 'element-plus';
+import { useApiFetch } from './useApiFetch';
 
 // ─── Types ───────────────────────────────────────────────────────────────────
 
@@ -101,9 +101,7 @@ const LEGACY_INTEGRATIONS: CatalogEntry[] = [
     description: 'Powers lead scoring and AI summarizers',
     icon: 'logos:openai-icon',
     category: 'Developer',
-    configFields: [
-      { key: 'apiKey', label: 'API Key', type: 'password', placeholder: 'sk-...', required: true }
-    ]
+    configFields: [{ key: 'apiKey', label: 'API Key', type: 'password', placeholder: 'sk-...', required: true }]
   },
   {
     type: 'ERPNEXT',
@@ -123,9 +121,7 @@ const LEGACY_INTEGRATIONS: CatalogEntry[] = [
     description: 'Transactional email and campaigns',
     icon: 'ph:envelope-simple-bold',
     category: 'Marketing',
-    configFields: [
-      { key: 'apiKey', label: 'API Key', type: 'password', placeholder: 'xkeysib-...', required: true }
-    ]
+    configFields: [{ key: 'apiKey', label: 'API Key', type: 'password', placeholder: 'xkeysib-...', required: true }]
   }
 ];
 
@@ -164,18 +160,16 @@ export function useIntegrations() {
 
     // Add legacy integrations that are not already in hub catalog
     const hubTypes = new Set(catalog.value.map(c => c.type));
-    const legacyEntries: MergedIntegration[] = LEGACY_INTEGRATIONS
-      .filter(l => !hubTypes.has(l.type))
-      .map(entry => ({
-        type: entry.type,
-        name: entry.name,
-        description: entry.description,
-        icon: entry.icon,
-        category: entry.category,
-        configFields: entry.configFields,
-        status: 'disconnected' as const,
-        isConfigured: false
-      }));
+    const legacyEntries: MergedIntegration[] = LEGACY_INTEGRATIONS.filter(l => !hubTypes.has(l.type)).map(entry => ({
+      type: entry.type,
+      name: entry.name,
+      description: entry.description,
+      icon: entry.icon,
+      category: entry.category,
+      configFields: entry.configFields,
+      status: 'disconnected' as const,
+      isConfigured: false
+    }));
 
     return [...hubEntries, ...legacyEntries];
   });

@@ -116,11 +116,7 @@ import { BarChart, LineChart } from 'echarts/charts';
 import { TitleComponent, TooltipComponent, LegendComponent, GridComponent } from 'echarts/components';
 import VChart from 'vue-echarts';
 import { getIncreaseLineChart, getBarChartData } from '~/composables/charts';
-import {
-  fetchExecutiveSummary,
-  fetchPipelineData,
-  fetchRevenueChart
-} from '~/composables/useDashboard';
+import { fetchExecutiveSummary, fetchPipelineData, fetchRevenueChart } from '~/composables/useDashboard';
 
 use([CanvasRenderer, BarChart, LineChart, TitleComponent, TooltipComponent, LegendComponent, GridComponent]);
 
@@ -265,13 +261,7 @@ async function loadPendingTasks() {
 async function refresh() {
   refreshing.value = true;
   try {
-    await Promise.all([
-      loadExecutiveSummary(),
-      loadRevenueChart(),
-      loadPipeline(),
-      loadActivities(),
-      loadPendingTasks()
-    ]);
+    await Promise.all([loadExecutiveSummary(), loadRevenueChart(), loadPipeline(), loadActivities(), loadPendingTasks()]);
     ElNotification({ type: 'success', title: t('executiveDashboard.refreshed'), message: '' });
   } finally {
     refreshing.value = false;

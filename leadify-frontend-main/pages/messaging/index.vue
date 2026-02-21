@@ -126,12 +126,7 @@
 <script setup lang="ts">
 import { ElNotification } from 'element-plus';
 import type { Conversation, ChatMessage } from '~/composables/useMessaging';
-import {
-  fetchConversations,
-  fetchMessages,
-  sendMessage,
-  markConversationRead
-} from '~/composables/useMessaging';
+import { fetchConversations, fetchMessages, sendMessage, markConversationRead } from '~/composables/useMessaging';
 
 definePageMeta({
   title: 'Messaging'
@@ -150,16 +145,12 @@ const newChatPhone = ref('');
 const newChatName = ref('');
 const messagesContainer = ref<HTMLElement>();
 
-const activeConversation = computed(() =>
-  conversations.value.find(c => c.contactPhone === activePhone.value)
-);
+const activeConversation = computed(() => conversations.value.find(c => c.contactPhone === activePhone.value));
 
 const filteredConversations = computed(() => {
   if (!searchQuery.value) return conversations.value;
   const q = searchQuery.value.toLowerCase();
-  return conversations.value.filter(c =>
-    c.contactName.toLowerCase().includes(q) || c.contactPhone.includes(q)
-  );
+  return conversations.value.filter(c => c.contactName.toLowerCase().includes(q) || c.contactPhone.includes(q));
 });
 
 onMounted(async () => {
@@ -197,11 +188,7 @@ async function handleSend() {
 
   sending.value = true;
   try {
-    const { success, body } = await sendMessage(
-      activePhone.value,
-      content,
-      activeConversation.value?.contactName
-    );
+    const { success, body } = await sendMessage(activePhone.value, content, activeConversation.value?.contactName);
 
     if (success && body) {
       messages.value.push(body as unknown as ChatMessage);
@@ -287,11 +274,16 @@ function formatTime(dateStr: string): string {
 
 function getStatusIcon(status: string): string {
   switch (status) {
-    case 'SENT': return 'ph:check';
-    case 'DELIVERED': return 'ph:checks';
-    case 'READ': return 'ph:checks';
-    case 'FAILED': return 'ph:warning';
-    default: return 'ph:clock';
+    case 'SENT':
+      return 'ph:check';
+    case 'DELIVERED':
+      return 'ph:checks';
+    case 'READ':
+      return 'ph:checks';
+    case 'FAILED':
+      return 'ph:warning';
+    default:
+      return 'ph:clock';
   }
 }
 </script>
@@ -395,7 +387,11 @@ function getStatusIcon(status: string): string {
 }
 
 @keyframes fadeIn {
-  from { opacity: 0; }
-  to { opacity: 1; }
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
 }
 </style>

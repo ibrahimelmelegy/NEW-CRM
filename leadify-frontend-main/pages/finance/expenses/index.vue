@@ -98,9 +98,7 @@ const summaryStats = computed(() => [
 ]);
 
 // Header actions
-const headerActions = computed(() => [
-  { label: t('finance.expenses.addExpense'), to: '/finance/expenses/create', type: 'primary', icon: Plus }
-]);
+const headerActions = computed(() => [{ label: t('finance.expenses.addExpense'), to: '/finance/expenses/create', type: 'primary', icon: Plus }]);
 
 // Fetch data
 let response = await useTableFilter('finance/expenses');
@@ -249,7 +247,7 @@ function handleExport() {
     r.status || ''
   ]);
   const csv = [csvHeaders, ...rows].map(r => r.map((v: any) => `"${String(v).replace(/"/g, '""')}"`).join(',')).join('\n');
-  const blob = new Blob(['\ufeff' + csv], { type: 'text/csv;charset=utf-8;' });
+  const blob = new Blob(['\uFEFF' + csv], { type: 'text/csv;charset=utf-8;' });
   const url = URL.createObjectURL(blob);
   const link = document.createElement('a');
   link.href = url;

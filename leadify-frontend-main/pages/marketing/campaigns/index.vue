@@ -158,9 +158,17 @@ div
 
 <script setup lang="ts">
 import {
-  fetchCampaigns, createCampaign, updateCampaign, deleteCampaign, sendCampaign,
-  fetchCampaignAnalytics, addRecipients, fetchTemplates, deleteTemplate,
-  type Campaign, type EmailTemplate
+  fetchCampaigns,
+  createCampaign,
+  updateCampaign,
+  deleteCampaign,
+  sendCampaign,
+  fetchCampaignAnalytics,
+  addRecipients,
+  fetchTemplates,
+  deleteTemplate,
+  type Campaign,
+  type EmailTemplate
 } from '~/composables/useCampaigns';
 
 definePageMeta({ middleware: 'permissions' });
@@ -196,18 +204,31 @@ const pageSize = 10;
 
 const summaryStats = computed(() => [
   { label: t('campaigns.allCampaigns') || 'Total', value: campaigns.value.length, icon: 'ph:envelope-bold', color: '#7849ff' },
-  { label: t('campaigns.status') + ': Draft', value: campaigns.value.filter(c => c.status === 'DRAFT').length, icon: 'ph:pencil-bold', color: '#64748b' },
-  { label: t('campaigns.sent') || 'Sent', value: campaigns.value.filter(c => c.status === 'SENT').length, icon: 'ph:check-circle-bold', color: '#22c55e' },
-  { label: t('campaigns.status') + ': Sending', value: campaigns.value.filter(c => c.status === 'SENDING').length, icon: 'ph:paper-plane-tilt-bold', color: '#3b82f6' }
+  {
+    label: t('campaigns.status') + ': Draft',
+    value: campaigns.value.filter(c => c.status === 'DRAFT').length,
+    icon: 'ph:pencil-bold',
+    color: '#64748b'
+  },
+  {
+    label: t('campaigns.sent') || 'Sent',
+    value: campaigns.value.filter(c => c.status === 'SENT').length,
+    icon: 'ph:check-circle-bold',
+    color: '#22c55e'
+  },
+  {
+    label: t('campaigns.status') + ': Sending',
+    value: campaigns.value.filter(c => c.status === 'SENDING').length,
+    icon: 'ph:paper-plane-tilt-bold',
+    color: '#3b82f6'
+  }
 ]);
 
 const filteredCampaigns = computed(() => {
   let result = campaigns.value;
   if (searchText.value) {
     const s = searchText.value.toLowerCase();
-    result = result.filter(c =>
-      c.name?.toLowerCase().includes(s) || c.subject?.toLowerCase().includes(s)
-    );
+    result = result.filter(c => c.name?.toLowerCase().includes(s) || c.subject?.toLowerCase().includes(s));
   }
   if (filterStatus.value) {
     result = result.filter(c => c.status === filterStatus.value);
@@ -281,7 +302,10 @@ async function saveCampaign() {
   if (response.success && recipientInput.value.trim()) {
     const campaignId = editingId.value || response.body?.id;
     if (campaignId) {
-      const emails = recipientInput.value.split(/[\n,]+/).map(e => e.trim()).filter(Boolean);
+      const emails = recipientInput.value
+        .split(/[\n,]+/)
+        .map(e => e.trim())
+        .filter(Boolean);
       const recipients = emails.map(email => ({ email, name: email.split('@')[0] || email }));
       await addRecipients(campaignId, recipients);
     }

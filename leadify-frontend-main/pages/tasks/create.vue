@@ -79,9 +79,7 @@ const priorityOptions = [
 
 // Fetch users
 const usersResponse = await useApiFetch('users');
-const users = ref(
-  usersResponse?.body?.docs?.map((u: any) => ({ label: u.name, value: u.id })) || []
-);
+const users = ref(usersResponse?.body?.docs?.map((u: any) => ({ label: u.name, value: u.id })) || []);
 
 function goBack() {
   router.back();
@@ -126,7 +124,13 @@ async function handleSubmit() {
 }
 
 @keyframes fadeIn {
-  from { opacity: 0; transform: translateY(10px); }
-  to { opacity: 1; transform: translateY(0); }
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
 }
 </style>

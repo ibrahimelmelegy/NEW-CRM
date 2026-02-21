@@ -196,9 +196,7 @@ export async function voidJournalEntry(id: string) {
 export async function fetchTrialBalance(date?: string): Promise<TrialBalanceResult> {
   const query = date ? `?date=${date}` : '';
   const { body, success } = await useApiFetch(`accounting/reports/trial-balance${query}`);
-  return success && body
-    ? (body as TrialBalanceResult)
-    : { accounts: [], totalDebits: 0, totalCredits: 0, isBalanced: true };
+  return success && body ? (body as TrialBalanceResult) : { accounts: [], totalDebits: 0, totalCredits: 0, isBalanced: true };
 }
 
 export async function fetchProfitAndLoss(from: string, to: string): Promise<ProfitLossResult> {
@@ -232,7 +230,5 @@ export async function fetchGeneralLedger(accountId: string, from?: string, to?: 
   if (to) params.set('to', to);
   const query = params.toString() ? `?${params.toString()}` : '';
   const { body, success } = await useApiFetch(`accounting/general-ledger/${accountId}${query}`);
-  return success && body
-    ? (body as GeneralLedgerResult)
-    : { account: { id: '', code: '', name: '', type: '' }, entries: [], closingBalance: 0 };
+  return success && body ? (body as GeneralLedgerResult) : { account: { id: '', code: '', name: '', type: '' }, entries: [], closingBalance: 0 };
 }

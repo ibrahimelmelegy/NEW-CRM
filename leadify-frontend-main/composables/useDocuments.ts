@@ -36,14 +36,12 @@ export function useDocuments() {
 
   const fetchFolderTree = () => useApiFetch('documents/folders/tree');
 
-  const createFolder = (data: { name: string; parentId?: number; color?: string }) =>
-    useApiFetch('documents/folders', 'POST', data);
+  const createFolder = (data: { name: string; parentId?: number; color?: string }) => useApiFetch('documents/folders', 'POST', data);
 
   const updateFolder = (id: number, data: { name?: string; parentId?: number; color?: string }) =>
     useApiFetch(`documents/folders/${id}`, 'PUT', data);
 
-  const deleteFolder = (id: number) =>
-    useApiFetch(`documents/folders/${id}`, 'DELETE');
+  const deleteFolder = (id: number) => useApiFetch(`documents/folders/${id}`, 'DELETE');
 
   const fetchFiles = (params?: Record<string, any>) => {
     const query = params ? '?' + new URLSearchParams(params as any).toString() : '';
@@ -55,8 +53,7 @@ export function useDocuments() {
     return useApiFetch(`documents/files/recent${query}`);
   };
 
-  const fetchFile = (id: number) =>
-    useApiFetch(`documents/files/${id}`);
+  const fetchFile = (id: number) => useApiFetch(`documents/files/${id}`);
 
   const createFile = (data: {
     name: string;
@@ -68,11 +65,9 @@ export function useDocuments() {
     tags?: string[];
   }) => useApiFetch('documents/files', 'POST', data);
 
-  const updateFile = (id: number, data: { name?: string; tags?: string[]; folderId?: number }) =>
-    useApiFetch(`documents/files/${id}`, 'PUT', data);
+  const updateFile = (id: number, data: { name?: string; tags?: string[]; folderId?: number }) => useApiFetch(`documents/files/${id}`, 'PUT', data);
 
-  const deleteFile = (id: number) =>
-    useApiFetch(`documents/files/${id}`, 'DELETE');
+  const deleteFile = (id: number) => useApiFetch(`documents/files/${id}`, 'DELETE');
 
   return {
     fetchFolders,

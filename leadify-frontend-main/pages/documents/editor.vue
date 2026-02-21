@@ -400,12 +400,60 @@ interface DocTypeConfig {
 
 // --- Document Types ---
 const documentTypes: DocTypeConfig[] = [
-  { type: 'INVOICE', label: 'documentEditor.types.invoice', description: 'documentEditor.types.invoiceDesc', icon: 'ph:file-text-bold', color: '#7849ff', prefix: 'INV-', tagType: '' },
-  { type: 'PURCHASE_ORDER', label: 'documentEditor.types.purchaseOrder', description: 'documentEditor.types.purchaseOrderDesc', icon: 'ph:shopping-cart-bold', color: '#f97316', prefix: 'PO-', tagType: 'warning' },
-  { type: 'SALES_ORDER', label: 'documentEditor.types.salesOrder', description: 'documentEditor.types.salesOrderDesc', icon: 'ph:clipboard-text-bold', color: '#22c55e', prefix: 'SO-', tagType: 'success' },
-  { type: 'CREDIT_NOTE', label: 'documentEditor.types.creditNote', description: 'documentEditor.types.creditNoteDesc', icon: 'ph:arrow-u-down-left-bold', color: '#ef4444', prefix: 'CN-', tagType: 'danger' },
-  { type: 'DELIVERY_NOTE', label: 'documentEditor.types.deliveryNote', description: 'documentEditor.types.deliveryNoteDesc', icon: 'ph:truck-bold', color: '#3b82f6', prefix: 'DN-', tagType: 'info' },
-  { type: 'PROFORMA_INVOICE', label: 'documentEditor.types.proformaInvoice', description: 'documentEditor.types.proformaInvoiceDesc', icon: 'ph:file-dashed-bold', color: '#8b5cf6', prefix: 'PI-', tagType: 'info' }
+  {
+    type: 'INVOICE',
+    label: 'documentEditor.types.invoice',
+    description: 'documentEditor.types.invoiceDesc',
+    icon: 'ph:file-text-bold',
+    color: '#7849ff',
+    prefix: 'INV-',
+    tagType: ''
+  },
+  {
+    type: 'PURCHASE_ORDER',
+    label: 'documentEditor.types.purchaseOrder',
+    description: 'documentEditor.types.purchaseOrderDesc',
+    icon: 'ph:shopping-cart-bold',
+    color: '#f97316',
+    prefix: 'PO-',
+    tagType: 'warning'
+  },
+  {
+    type: 'SALES_ORDER',
+    label: 'documentEditor.types.salesOrder',
+    description: 'documentEditor.types.salesOrderDesc',
+    icon: 'ph:clipboard-text-bold',
+    color: '#22c55e',
+    prefix: 'SO-',
+    tagType: 'success'
+  },
+  {
+    type: 'CREDIT_NOTE',
+    label: 'documentEditor.types.creditNote',
+    description: 'documentEditor.types.creditNoteDesc',
+    icon: 'ph:arrow-u-down-left-bold',
+    color: '#ef4444',
+    prefix: 'CN-',
+    tagType: 'danger'
+  },
+  {
+    type: 'DELIVERY_NOTE',
+    label: 'documentEditor.types.deliveryNote',
+    description: 'documentEditor.types.deliveryNoteDesc',
+    icon: 'ph:truck-bold',
+    color: '#3b82f6',
+    prefix: 'DN-',
+    tagType: 'info'
+  },
+  {
+    type: 'PROFORMA_INVOICE',
+    label: 'documentEditor.types.proformaInvoice',
+    description: 'documentEditor.types.proformaInvoiceDesc',
+    icon: 'ph:file-dashed-bold',
+    color: '#8b5cf6',
+    prefix: 'PI-',
+    tagType: 'info'
+  }
 ];
 
 // --- State ---
@@ -429,9 +477,7 @@ const form = ref({
   currency: 'SAR',
   notes: '',
   terms: '',
-  lineItems: [
-    { description: '', quantity: 1, unitPrice: 0, taxRate: 0, discountRate: 0, lineTotal: 0 }
-  ] as InvoiceLineItem[],
+  lineItems: [{ description: '', quantity: 1, unitPrice: 0, taxRate: 0, discountRate: 0, lineTotal: 0 }] as InvoiceLineItem[],
   // Invoice / Proforma
   dealId: '',
   salesOrderId: '',
@@ -613,7 +659,9 @@ async function onDealChange() {
         const data = body as any;
         salesOrders.value = (data.docs || data || []).map((o: any) => ({ id: o.id, orderNumber: o.orderNumber }));
       }
-    } catch { /* silent */ }
+    } catch {
+      /* silent */
+    }
   }
 }
 
@@ -663,9 +711,7 @@ function validate(): boolean {
 }
 
 function sanitizeLineItems() {
-  return form.value.lineItems
-    .filter(item => item.description.trim())
-    .map(({ lineTotal, id, ...item }) => item);
+  return form.value.lineItems.filter(item => item.description.trim()).map(({ lineTotal, id, ...item }) => item);
 }
 
 async function handleSaveDraft() {
@@ -694,12 +740,14 @@ async function handleSaveDraft() {
           paymentTerms: form.value.paymentTerms,
           paymentMethod: form.value.paymentMethod,
           dueDate: form.value.deliveryDate ? new Date(form.value.deliveryDate).toISOString() : undefined,
-          items: form.value.lineItems.filter(li => li.description.trim()).map(li => ({
-            description: li.description,
-            quantity: li.quantity,
-            unitPrice: li.unitPrice,
-            tax: li.taxRate
-          })),
+          items: form.value.lineItems
+            .filter(li => li.description.trim())
+            .map(li => ({
+              description: li.description,
+              quantity: li.quantity,
+              unitPrice: li.unitPrice,
+              tax: li.taxRate
+            })),
           totalAmount: computedTotals.value.total
         };
         const poRes = await useApiFetch('procurement', 'POST', poPayload as any);
@@ -808,7 +856,7 @@ async function loadInitialData() {
     clients.value = (data.docs || data || []).map((c: any) => ({ id: c.id, name: c.name, companyName: c.companyName }));
   }
   if (vendorRes.success && vendorRes.body) {
-    vendors.value = (vendorRes.body as any[] || []).map((v: any) => ({ id: v.id, name: v.name, companyName: v.companyName }));
+    vendors.value = ((vendorRes.body as any[]) || []).map((v: any) => ({ id: v.id, name: v.name, companyName: v.companyName }));
   }
   if (projectRes.success && projectRes.body) {
     const data = projectRes.body as any;
@@ -827,7 +875,9 @@ async function loadInvoices() {
         amount: inv.amount || 0
       }));
     }
-  } catch { /* silent */ }
+  } catch {
+    /* silent */
+  }
 }
 
 async function loadRecentDocs() {
@@ -874,7 +924,9 @@ async function loadRecentDocs() {
         recentDocs.value = (data.docs || data || []).slice(0, 5).map(mapFn);
       }
     }
-  } catch { /* silent */ }
+  } catch {
+    /* silent */
+  }
 }
 
 onMounted(async () => {
@@ -892,9 +944,9 @@ onMounted(async () => {
 
 <style scoped>
 .glass-card {
-  background: var(--glass-bg, rgba(255,255,255,0.06));
+  background: var(--glass-bg, rgba(255, 255, 255, 0.06));
   backdrop-filter: blur(var(--glass-blur, 12px));
-  border: 1px solid var(--glass-border, rgba(255,255,255,0.08));
+  border: 1px solid var(--glass-border, rgba(255, 255, 255, 0.08));
 }
 .text-gradient {
   background: linear-gradient(135deg, #7849ff 0%, #a855f7 100%);
@@ -906,15 +958,24 @@ onMounted(async () => {
   animation: entrance 0.4s ease-out;
 }
 @keyframes entrance {
-  from { opacity: 0; transform: translateY(12px); }
-  to { opacity: 1; transform: translateY(0); }
+  from {
+    opacity: 0;
+    transform: translateY(12px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
 }
 .preview-container {
   max-height: 70vh;
   overflow-y: auto;
 }
 @media print {
-  .glass-card, .el-button, .el-dialog__header, .el-dialog__footer {
+  .glass-card,
+  .el-button,
+  .el-dialog__header,
+  .el-dialog__footer {
     display: none !important;
   }
   .preview-container {

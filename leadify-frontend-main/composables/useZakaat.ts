@@ -60,9 +60,7 @@ export const zakaatStatusOptions = [
   { label: 'Paid', value: 'PAID' }
 ];
 
-export async function fetchAssessments(
-  query?: Record<string, string>
-): Promise<{ docs: ZakaatAssessment[]; pagination: ZakaatPagination }> {
+export async function fetchAssessments(query?: Record<string, string>): Promise<{ docs: ZakaatAssessment[]; pagination: ZakaatPagination }> {
   const qs = query ? '?' + new URLSearchParams(query).toString() : '';
   const { body, success } = await useApiFetch(`finance/zakaat${qs}`);
   if (success && body) return body as { docs: ZakaatAssessment[]; pagination: ZakaatPagination };

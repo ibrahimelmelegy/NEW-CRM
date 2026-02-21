@@ -152,10 +152,7 @@ async function refreshDashboard() {
   loading.value = true;
   loadingRecent.value = true;
   try {
-    const [dashboard, recent] = await Promise.all([
-      getCollectionDashboard(),
-      getPayments({ limit: 5, status: 'COMPLETED' })
-    ]);
+    const [dashboard, recent] = await Promise.all([getCollectionDashboard(), getPayments({ limit: 5, status: 'COMPLETED' })]);
     dashboardData.value = dashboard;
     recentPayments.value = recent.docs;
   } finally {

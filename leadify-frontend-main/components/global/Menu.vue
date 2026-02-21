@@ -102,7 +102,18 @@ const menu = [
   { link: '/dashboard/war-room', name: 'navigation.warRoom', icon: 'ph:crosshair-bold', submenu: false, isOpen: false },
   { link: '/dashboard/briefing', name: 'navigation.dailyBriefing', icon: 'ph:sun-horizon-bold', submenu: false, isOpen: false },
   { link: '/dashboard/builder', name: 'navigation.dashboardBuilder', icon: 'ph:squares-four-bold', submenu: false, isOpen: false },
+  { link: '/dashboards/executive', name: 'navigation.executiveDashboard', icon: 'ph:presentation-chart-bold', submenu: false, isOpen: false },
   { link: '/views/kanban', name: 'navigation.kanbanBoard', icon: 'ph:kanban-bold', submenu: false, isOpen: false },
+  {
+    name: 'navigation.crm',
+    icon: 'ph:address-book-bold',
+    isOpen: false,
+    submenu: [
+      { link: '/crm/customer-360', name: 'navigation.customer360', icon: 'ph:user-circle-bold' },
+      { link: '/crm/activities', name: 'navigation.activityTimeline', icon: 'ph:clock-counter-clockwise-bold' },
+      { link: '/notifications', name: 'navigation.notifications', icon: 'ph:bell-bold' }
+    ]
+  },
   {
     name: 'navigation.sales',
     icon: 'IconSales',
@@ -120,7 +131,8 @@ const menu = [
       { link: '/sales/playbook', name: 'navigation.salesPlaybook', icon: 'ph:book-open-bold' },
       { link: '/sales/cpq', name: 'navigation.cpq', icon: 'ph:calculator-bold' },
       { link: '/sales/commissions', name: 'navigation.commissions', icon: 'ph:currency-dollar-bold' },
-      { link: '/sales/competitors', name: 'navigation.competitors', icon: 'ph:binoculars-bold' }
+      { link: '/sales/competitors', name: 'navigation.competitors', icon: 'ph:binoculars-bold' },
+      { link: '/sales/goals', name: 'navigation.goalsQuotas', icon: 'ph:target-bold' }
     ]
   },
   {
@@ -180,7 +192,15 @@ const menu = [
     isOpen: false,
     link: '/shipping'
   },
-  { link: '/tasks', name: 'navigation.tasks', icon: 'ph:list-checks-bold', submenu: false, isOpen: false },
+  {
+    name: 'navigation.tasks',
+    icon: 'ph:list-checks-bold',
+    isOpen: false,
+    submenu: [
+      { link: '/tasks', name: 'navigation.taskList', icon: 'ph:list-bold' },
+      { link: '/tasks/kanban', name: 'navigation.tasksBoard', icon: 'ph:kanban-bold' }
+    ]
+  },
   { link: '/messaging', name: 'navigation.messaging', icon: 'ph:chat-circle-dots-bold', submenu: false, isOpen: false },
   { link: '/communications', name: 'navigation.communicationHub', icon: 'ph:phone-list-bold', submenu: false, isOpen: false },
   { link: '/ai-assistant', name: 'navigation.aiAssistant', icon: 'ph:brain-bold', submenu: false, isOpen: false },
@@ -298,6 +318,7 @@ const menu = [
     isOpen: false,
     submenu: [
       { link: '/support/tickets', name: 'navigation.tickets', icon: 'ph:ticket-bold' },
+      { link: '/support/tickets/kanban', name: 'navigation.ticketsBoard', icon: 'ph:kanban-bold' },
       { link: '/support/dashboard', name: 'navigation.supportDashboard', icon: 'ph:chart-pie-bold' },
       { link: '/support/canned-responses', name: 'navigation.cannedResponses', icon: 'ph:chat-text-bold' },
       { link: '/support/knowledge-base', name: 'navigation.knowledgeBase', icon: 'ph:book-open-bold' },

@@ -126,7 +126,9 @@ function draw(e: MouseEvent) {
   hasSignature.value = true;
 }
 
-function endDraw() { isDrawing = false; }
+function endDraw() {
+  isDrawing = false;
+}
 
 function startDrawTouch(e: TouchEvent) {
   const touch = e.touches[0];

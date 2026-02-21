@@ -165,8 +165,18 @@ const createForm = reactive({
 const summaryStats = computed(() => [
   { label: t('approvals.pendingApproval') || 'Pending', value: pendingApprovals.value.length, icon: 'ph:clock-bold', color: '#f59e0b' },
   { label: t('approvals.myRequests') || 'My Requests', value: allRequests.value.length, icon: 'ph:file-text-bold', color: '#7849ff' },
-  { label: t('hr.leave.approved') || 'Approved', value: allRequests.value.filter((r: any) => r.status === 'APPROVED').length, icon: 'ph:check-circle-bold', color: '#22c55e' },
-  { label: t('hr.leave.rejected') || 'Rejected', value: allRequests.value.filter((r: any) => r.status === 'REJECTED').length, icon: 'ph:x-circle-bold', color: '#ef4444' }
+  {
+    label: t('hr.leave.approved') || 'Approved',
+    value: allRequests.value.filter((r: any) => r.status === 'APPROVED').length,
+    icon: 'ph:check-circle-bold',
+    color: '#22c55e'
+  },
+  {
+    label: t('hr.leave.rejected') || 'Rejected',
+    value: allRequests.value.filter((r: any) => r.status === 'REJECTED').length,
+    icon: 'ph:x-circle-bold',
+    color: '#ef4444'
+  }
 ]);
 
 onMounted(async () => {
@@ -178,7 +188,9 @@ async function loadPending() {
   try {
     const { body, success } = await fetchPendingApprovals();
     if (success && body) pendingApprovals.value = Array.isArray(body) ? body : [];
-  } finally { loadingPending.value = false; }
+  } finally {
+    loadingPending.value = false;
+  }
 }
 
 async function loadRequests() {
@@ -186,7 +198,9 @@ async function loadRequests() {
   try {
     const { body, success } = await fetchRequests();
     if (success && body) allRequests.value = Array.isArray(body) ? body : [];
-  } finally { loadingRequests.value = false; }
+  } finally {
+    loadingRequests.value = false;
+  }
 }
 
 function viewRequest(row: any) {
@@ -213,7 +227,9 @@ async function confirmReject() {
       rejectComment.value = '';
       await Promise.all([loadPending(), loadRequests()]);
     }
-  } finally { rejecting.value = false; }
+  } finally {
+    rejecting.value = false;
+  }
 }
 
 async function handleCancel(id: number) {
@@ -236,6 +252,8 @@ async function submitRequest() {
       createForm.notes = '';
       await loadRequests();
     }
-  } finally { creating.value = false; }
+  } finally {
+    creating.value = false;
+  }
 }
 </script>

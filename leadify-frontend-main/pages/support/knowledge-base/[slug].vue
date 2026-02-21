@@ -73,10 +73,19 @@ async function handleHelpful() {
 </script>
 
 <style scoped>
-.kb-article-page { animation: fadeIn 0.3s ease-out; }
-@keyframes fadeIn {
-  from { opacity: 0; }
-  to { opacity: 1; }
+.kb-article-page {
+  animation: fadeIn 0.3s ease-out;
 }
-.article-content :deep(p) { margin-bottom: 1em; line-height: 1.7; }
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+.article-content :deep(p) {
+  margin-bottom: 1em;
+  line-height: 1.7;
+}
 </style>

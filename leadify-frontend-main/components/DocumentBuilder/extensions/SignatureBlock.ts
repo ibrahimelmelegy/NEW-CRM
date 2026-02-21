@@ -8,7 +8,7 @@ import { defineComponent, h } from 'vue';
 const SignatureBlockView = defineComponent({
   name: 'SignatureBlockView',
   props: {
-    node: { type: Object, required: true },
+    node: { type: Object, required: true }
   },
   setup(props) {
     const label = computed(() => props.node.attrs.label || 'Signature');
@@ -24,8 +24,8 @@ const SignatureBlockView = defineComponent({
             padding: '24px 0',
             margin: '16px 0',
             borderTop: '1px dashed rgba(120, 73, 255, 0.3)',
-            userSelect: 'none',
-          },
+            userSelect: 'none'
+          }
         },
         [
           h(
@@ -35,8 +35,8 @@ const SignatureBlockView = defineComponent({
                 display: 'flex',
                 justifyContent: 'space-between',
                 alignItems: 'flex-end',
-                gap: '40px',
-              },
+                gap: '40px'
+              }
             },
             [
               // Signature area
@@ -46,8 +46,8 @@ const SignatureBlockView = defineComponent({
                     borderBottom: '2px solid var(--text-primary, #333)',
                     minWidth: '200px',
                     height: '40px',
-                    marginBottom: '6px',
-                  },
+                    marginBottom: '6px'
+                  }
                 }),
                 h(
                   'div',
@@ -55,11 +55,11 @@ const SignatureBlockView = defineComponent({
                     style: {
                       fontSize: '12px',
                       color: 'var(--text-muted, #888)',
-                      fontWeight: '600',
-                    },
+                      fontWeight: '600'
+                    }
                   },
-                  label.value,
-                ),
+                  label.value
+                )
               ]),
               // Date area
               ...(showDate.value
@@ -69,8 +69,8 @@ const SignatureBlockView = defineComponent({
                         style: {
                           borderBottom: '2px solid var(--text-primary, #333)',
                           height: '40px',
-                          marginBottom: '6px',
-                        },
+                          marginBottom: '6px'
+                        }
                       }),
                       h(
                         'div',
@@ -78,19 +78,19 @@ const SignatureBlockView = defineComponent({
                           style: {
                             fontSize: '12px',
                             color: 'var(--text-muted, #888)',
-                            fontWeight: '600',
-                          },
+                            fontWeight: '600'
+                          }
                         },
-                        'Date',
-                      ),
-                    ]),
+                        'Date'
+                      )
+                    ])
                   ]
-                : []),
-            ],
-          ),
-        ],
+                : [])
+            ]
+          )
+        ]
       );
-  },
+  }
 });
 
 export interface SignatureBlockOptions {
@@ -119,7 +119,7 @@ export const SignatureBlock = Node.create<SignatureBlockOptions>({
 
   addOptions() {
     return {
-      HTMLAttributes: {},
+      HTMLAttributes: {}
     };
   },
 
@@ -127,26 +127,26 @@ export const SignatureBlock = Node.create<SignatureBlockOptions>({
     return {
       label: {
         default: 'Signature',
-        parseHTML: (element) => element.getAttribute('data-label') || 'Signature',
-        renderHTML: (attributes) => ({
-          'data-label': attributes.label,
-        }),
+        parseHTML: element => element.getAttribute('data-label') || 'Signature',
+        renderHTML: attributes => ({
+          'data-label': attributes.label
+        })
       },
       showDate: {
         default: true,
-        parseHTML: (element) => element.getAttribute('data-show-date') !== 'false',
-        renderHTML: (attributes) => ({
-          'data-show-date': String(attributes.showDate),
-        }),
-      },
+        parseHTML: element => element.getAttribute('data-show-date') !== 'false',
+        renderHTML: attributes => ({
+          'data-show-date': String(attributes.showDate)
+        })
+      }
     };
   },
 
   parseHTML() {
     return [
       {
-        tag: 'div[data-type="signature-block"]',
-      },
+        tag: 'div[data-type="signature-block"]'
+      }
     ];
   },
 
@@ -159,7 +159,7 @@ export const SignatureBlock = Node.create<SignatureBlockOptions>({
       mergeAttributes(this.options.HTMLAttributes, HTMLAttributes, {
         'data-type': 'signature-block',
         class: 'signature-block',
-        style: 'padding: 24px 0; margin: 16px 0; border-top: 1px dashed #ccc; page-break-inside: avoid;',
+        style: 'padding: 24px 0; margin: 16px 0; border-top: 1px dashed #ccc; page-break-inside: avoid;'
       }),
       [
         'div',
@@ -167,26 +167,20 @@ export const SignatureBlock = Node.create<SignatureBlockOptions>({
         [
           'div',
           { style: 'flex: 1;' },
-          [
-            'div',
-            { style: 'border-bottom: 2px solid #333; min-width: 200px; height: 40px; margin-bottom: 6px;' },
-          ],
-          ['div', { style: 'font-size: 12px; color: #888; font-weight: 600;' }, label],
+          ['div', { style: 'border-bottom: 2px solid #333; min-width: 200px; height: 40px; margin-bottom: 6px;' }],
+          ['div', { style: 'font-size: 12px; color: #888; font-weight: 600;' }, label]
         ],
         ...(showDate
           ? [
               [
                 'div',
                 { style: 'min-width: 160px;' },
-                [
-                  'div',
-                  { style: 'border-bottom: 2px solid #333; height: 40px; margin-bottom: 6px;' },
-                ],
-                ['div', { style: 'font-size: 12px; color: #888; font-weight: 600;' }, 'Date'],
-              ],
+                ['div', { style: 'border-bottom: 2px solid #333; height: 40px; margin-bottom: 6px;' }],
+                ['div', { style: 'font-size: 12px; color: #888; font-weight: 600;' }, 'Date']
+              ]
             ]
-          : []),
-      ],
+          : [])
+      ]
     ];
   },
 
@@ -197,18 +191,18 @@ export const SignatureBlock = Node.create<SignatureBlockOptions>({
   addCommands() {
     return {
       insertSignatureBlock:
-        (attrs) =>
+        attrs =>
         ({ commands }) => {
           return commands.insertContent({
             type: this.name,
             attrs: {
               label: attrs?.label || 'Signature',
-              showDate: attrs?.showDate !== false,
-            },
+              showDate: attrs?.showDate !== false
+            }
           });
-        },
+        }
     };
-  },
+  }
 });
 
 export default SignatureBlock;

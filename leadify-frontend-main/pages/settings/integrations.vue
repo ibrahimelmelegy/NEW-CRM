@@ -203,23 +203,26 @@ const config = ref<Record<string, any>>({
 });
 
 const legacyStatus = ref<Record<string, boolean>>({
-  google: false, outlook: false, whatsapp: false,
-  openai: false, erpnext: false, brevo: false
+  google: false,
+  outlook: false,
+  whatsapp: false,
+  openai: false,
+  erpnext: false,
+  brevo: false
 });
 
 const legacyLoading = ref<Record<string, boolean>>({
-  google: false, outlook: false, whatsapp: false,
-  openai: false, erpnext: false, brevo: false
+  google: false,
+  outlook: false,
+  whatsapp: false,
+  openai: false,
+  erpnext: false,
+  brevo: false
 });
 
 // ─── Lifecycle ───────────────────────────────────────────────────────────────
 onMounted(async () => {
-  await Promise.all([
-    fetchLegacyIntegrations(),
-    hub.fetchCatalog(),
-    hub.fetchConfigured(),
-    hub.fetchWebhooks()
-  ]);
+  await Promise.all([fetchLegacyIntegrations(), hub.fetchCatalog(), hub.fetchConfigured(), hub.fetchWebhooks()]);
 });
 
 // ─── Legacy integration methods ──────────────────────────────────────────────
@@ -367,7 +370,9 @@ async function handleToggleWebhook(data: { id: string; status: string }) {
 }
 
 .integration-card {
-  transition: transform 0.3s ease, box-shadow 0.3s ease;
+  transition:
+    transform 0.3s ease,
+    box-shadow 0.3s ease;
   &:hover {
     transform: translateY(-5px);
     box-shadow: 0 20px 40px rgba(0, 0, 0, 0.2);

@@ -60,7 +60,10 @@ const selectedTicket = ref<any>(null);
 
 onMounted(async () => {
   init();
-  if (!isAuthenticated()) { navigateTo('/portal/login'); return; }
+  if (!isAuthenticated()) {
+    navigateTo('/portal/login');
+    return;
+  }
   await loadTickets();
 });
 

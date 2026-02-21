@@ -31,9 +31,7 @@ export const useThemeStore = defineStore('theme', () => {
   const glassOpacity = ref(0.08);
   const fontSize = ref(14);
 
-  const activePreset = computed(() =>
-    THEME_PRESETS.find(p => p.id === activePresetId.value) || THEME_PRESETS[0]
-  );
+  const activePreset = computed(() => THEME_PRESETS.find(p => p.id === activePresetId.value) || THEME_PRESETS[0]);
 
   const initializeTheme = () => {
     const saved = localStorage.getItem('theme');
@@ -96,9 +94,7 @@ export const useThemeStore = defineStore('theme', () => {
     root.style.setProperty('--base-font-size', `${fontSize.value}px`);
 
     // Glass background with dynamic opacity
-    const glassBg = isLight.value
-      ? `rgba(255, 255, 255, ${glassOpacity.value})`
-      : `rgba(255, 255, 255, ${glassOpacity.value})`;
+    const glassBg = isLight.value ? `rgba(255, 255, 255, ${glassOpacity.value})` : `rgba(255, 255, 255, ${glassOpacity.value})`;
     root.style.setProperty('--glass-bg-primary', glassBg);
   };
 

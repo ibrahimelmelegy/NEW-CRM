@@ -132,8 +132,15 @@
 <script setup lang="ts">
 import { ref, onMounted } from 'vue';
 import {
-  fetchWorkflows, createWorkflow, updateWorkflow, deleteWorkflow, toggleWorkflow,
-  fetchWorkflowLogs, WORKFLOW_TRIGGERS, CONDITION_OPERATORS, ACTION_TYPES,
+  fetchWorkflows,
+  createWorkflow,
+  updateWorkflow,
+  deleteWorkflow,
+  toggleWorkflow,
+  fetchWorkflowLogs,
+  WORKFLOW_TRIGGERS,
+  CONDITION_OPERATORS,
+  ACTION_TYPES,
   type Workflow
 } from '~/composables/useWorkflows';
 

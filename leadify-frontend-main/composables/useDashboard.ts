@@ -58,17 +58,12 @@ export async function fetchExecutiveSummary(): Promise<any> {
 }
 
 export async function fetchPipelineData(dateRange?: { start: string; end: string }): Promise<any> {
-  const qs = dateRange
-    ? `?startDate=${dateRange.start}&endDate=${dateRange.end}`
-    : '';
+  const qs = dateRange ? `?startDate=${dateRange.start}&endDate=${dateRange.end}` : '';
   const { body, success } = await useApiFetch(`dashboards/pipeline${qs}`);
   return success && body ? body : null;
 }
 
-export async function fetchRevenueChart(
-  period: string = 'monthly',
-  dateRange?: { start: string; end: string }
-): Promise<any> {
+export async function fetchRevenueChart(period: string = 'monthly', dateRange?: { start: string; end: string }): Promise<any> {
   const params = new URLSearchParams({ period });
   if (dateRange) {
     params.set('startDate', dateRange.start);
@@ -78,12 +73,8 @@ export async function fetchRevenueChart(
   return success && body ? body : null;
 }
 
-export async function fetchTeamPerformance(
-  dateRange?: { start: string; end: string }
-): Promise<any> {
-  const qs = dateRange
-    ? `?startDate=${dateRange.start}&endDate=${dateRange.end}`
-    : '';
+export async function fetchTeamPerformance(dateRange?: { start: string; end: string }): Promise<any> {
+  const qs = dateRange ? `?startDate=${dateRange.start}&endDate=${dateRange.end}` : '';
   const { body, success } = await useApiFetch(`dashboards/team-performance${qs}`);
   return success && body ? body : null;
 }

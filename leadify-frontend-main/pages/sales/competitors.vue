@@ -4,13 +4,11 @@
     <div class="glass-panel p-6 rounded-2xl">
       <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
         <div>
-          <h1 class="text-2xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-red-400 to-rose-400">
-            Competitor Intelligence
-          </h1>
+          <h1 class="text-2xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-red-400 to-rose-400">Competitor Intelligence</h1>
           <p class="text-slate-400 text-sm mt-1">Track competitors, analyze win/loss patterns, and benchmark your strengths.</p>
         </div>
         <div class="flex gap-2">
-          <el-button @click="showComparisonMatrix = !showComparisonMatrix" class="!rounded-xl">
+          <el-button class="!rounded-xl" @click="showComparisonMatrix = !showComparisonMatrix">
             <Icon name="ph:table-bold" class="w-4 h-4 mr-2" />
             Comparison Matrix
           </el-button>
@@ -44,7 +42,9 @@
 
     <!-- Competitor Cards -->
     <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-      <div v-for="comp in competitors" :key="comp.id"
+      <div
+        v-for="comp in competitors"
+        :key="comp.id"
         class="glass-panel p-5 rounded-xl hover:border-primary-500/30 transition-all cursor-pointer"
         :class="selectedCompetitorId === comp.id ? 'border border-red-500/30' : ''"
         @click="selectCompetitor(comp.id)"
@@ -83,7 +83,11 @@
         <div class="mb-2">
           <span class="text-[10px] font-medium text-emerald-400">STRENGTHS</span>
           <div class="flex flex-wrap gap-1 mt-1">
-            <span v-for="s in comp.strengths" :key="s" class="text-[10px] px-1.5 py-0.5 rounded-full bg-emerald-500/10 text-emerald-400 border border-emerald-500/20">
+            <span
+              v-for="s in comp.strengths"
+              :key="s"
+              class="text-[10px] px-1.5 py-0.5 rounded-full bg-emerald-500/10 text-emerald-400 border border-emerald-500/20"
+            >
               {{ s }}
             </span>
           </div>
@@ -93,7 +97,11 @@
         <div>
           <span class="text-[10px] font-medium text-red-400">WEAKNESSES</span>
           <div class="flex flex-wrap gap-1 mt-1">
-            <span v-for="w in comp.weaknesses" :key="w" class="text-[10px] px-1.5 py-0.5 rounded-full bg-red-500/10 text-red-400 border border-red-500/20">
+            <span
+              v-for="w in comp.weaknesses"
+              :key="w"
+              class="text-[10px] px-1.5 py-0.5 rounded-full bg-red-500/10 text-red-400 border border-red-500/20"
+            >
               {{ w }}
             </span>
           </div>
@@ -276,8 +284,12 @@ const showComparisonMatrix = ref(false);
 const showAddCompetitorDialog = ref(false);
 
 const newCompetitor = ref({
-  name: '', industry: '', threatLevel: 'MEDIUM', marketShare: 0,
-  strengthsInput: '', weaknessesInput: '',
+  name: '',
+  industry: '',
+  threatLevel: 'MEDIUM',
+  marketShare: 0,
+  strengthsInput: '',
+  weaknessesInput: ''
 });
 
 interface Competitor {
@@ -300,60 +312,203 @@ interface Competitor {
 
 const competitors = ref<Competitor[]>([
   {
-    id: 1, name: 'CloudCRM Pro', industry: 'CRM Software', threatLevel: 'HIGH', marketShare: 28, dealsWon: 12, dealsLost: 8,
+    id: 1,
+    name: 'CloudCRM Pro',
+    industry: 'CRM Software',
+    threatLevel: 'HIGH',
+    marketShare: 28,
+    dealsWon: 12,
+    dealsLost: 8,
     strengths: ['Brand Recognition', 'AI Features', 'Integrations'],
     weaknesses: ['High Pricing', 'Complex Setup'],
     swot: {
-      strengths: ['Strong brand awareness in MENA region', 'Advanced AI-powered lead scoring', 'Extensive third-party integrations marketplace', 'Large sales team with enterprise experience'],
-      weaknesses: ['Premium pricing deters SMBs', 'Complex onboarding process takes 3-6 months', 'Limited Arabic language support', 'No local data residency options'],
-      opportunities: ['They may struggle with Saudi data sovereignty requirements', 'Their pricing creates openings in the SMB segment', 'Their complex setup drives customers to simpler alternatives'],
-      threats: ['Aggressive marketing budget ($50M+)', 'Acquiring smaller competitors for features', 'Expanding MENA presence with local hires'],
-    },
+      strengths: [
+        'Strong brand awareness in MENA region',
+        'Advanced AI-powered lead scoring',
+        'Extensive third-party integrations marketplace',
+        'Large sales team with enterprise experience'
+      ],
+      weaknesses: [
+        'Premium pricing deters SMBs',
+        'Complex onboarding process takes 3-6 months',
+        'Limited Arabic language support',
+        'No local data residency options'
+      ],
+      opportunities: [
+        'They may struggle with Saudi data sovereignty requirements',
+        'Their pricing creates openings in the SMB segment',
+        'Their complex setup drives customers to simpler alternatives'
+      ],
+      threats: ['Aggressive marketing budget ($50M+)', 'Acquiring smaller competitors for features', 'Expanding MENA presence with local hires']
+    }
   },
   {
-    id: 2, name: 'SalesHub MENA', industry: 'Sales Automation', threatLevel: 'MEDIUM', marketShare: 15, dealsWon: 18, dealsLost: 5,
+    id: 2,
+    name: 'SalesHub MENA',
+    industry: 'Sales Automation',
+    threatLevel: 'MEDIUM',
+    marketShare: 15,
+    dealsWon: 18,
+    dealsLost: 5,
     strengths: ['Local Support', 'Arabic UI', 'Affordable'],
     weaknesses: ['Limited Features', 'Small Team'],
     swot: {
-      strengths: ['Fully bilingual Arabic/English interface', 'Local customer support team in Riyadh', 'Competitive pricing for the region', 'ZATCA compliance built-in'],
-      weaknesses: ['Limited reporting and analytics capabilities', 'Small development team slows feature releases', 'No mobile app available', 'Basic automation compared to market leaders'],
-      opportunities: ['Their slow development cycle means we can outpace on features', 'No enterprise-grade features to compete at scale', 'Customer complaints about reliability'],
-      threats: ['Strong relationships with local government entities', 'Backed by a regional investment fund', 'Understands local market better than international competitors'],
-    },
+      strengths: [
+        'Fully bilingual Arabic/English interface',
+        'Local customer support team in Riyadh',
+        'Competitive pricing for the region',
+        'ZATCA compliance built-in'
+      ],
+      weaknesses: [
+        'Limited reporting and analytics capabilities',
+        'Small development team slows feature releases',
+        'No mobile app available',
+        'Basic automation compared to market leaders'
+      ],
+      opportunities: [
+        'Their slow development cycle means we can outpace on features',
+        'No enterprise-grade features to compete at scale',
+        'Customer complaints about reliability'
+      ],
+      threats: [
+        'Strong relationships with local government entities',
+        'Backed by a regional investment fund',
+        'Understands local market better than international competitors'
+      ]
+    }
   },
   {
-    id: 3, name: 'PipelineForce', industry: 'CRM Software', threatLevel: 'HIGH', marketShare: 22, dealsWon: 9, dealsLost: 14,
+    id: 3,
+    name: 'PipelineForce',
+    industry: 'CRM Software',
+    threatLevel: 'HIGH',
+    marketShare: 22,
+    dealsWon: 9,
+    dealsLost: 14,
     strengths: ['Market Leader', 'Enterprise Ready', 'Global Presence'],
     weaknesses: ['No Arabic', 'Poor Local Support', 'Expensive'],
     swot: {
-      strengths: ['Global market leader with proven enterprise track record', 'Comprehensive feature set covering all CRM needs', 'Extensive partner and consultant ecosystem', 'Strong security certifications and compliance'],
-      weaknesses: ['No Arabic language interface or RTL support', 'Support response times slow for MENA region', 'Pricing significantly above regional competitors', 'Forced data storage outside MENA'],
-      opportunities: ['Their lack of Arabic support is a major gap we can exploit', 'Enterprise customers frustrated with high costs', 'No ZATCA or Saudi-specific compliance features'],
-      threats: ['Massive R&D investment ($2B+ annually)', 'May acquire a local CRM to enter the market', 'Strong incumbent position at multinational companies'],
-    },
+      strengths: [
+        'Global market leader with proven enterprise track record',
+        'Comprehensive feature set covering all CRM needs',
+        'Extensive partner and consultant ecosystem',
+        'Strong security certifications and compliance'
+      ],
+      weaknesses: [
+        'No Arabic language interface or RTL support',
+        'Support response times slow for MENA region',
+        'Pricing significantly above regional competitors',
+        'Forced data storage outside MENA'
+      ],
+      opportunities: [
+        'Their lack of Arabic support is a major gap we can exploit',
+        'Enterprise customers frustrated with high costs',
+        'No ZATCA or Saudi-specific compliance features'
+      ],
+      threats: [
+        'Massive R&D investment ($2B+ annually)',
+        'May acquire a local CRM to enter the market',
+        'Strong incumbent position at multinational companies'
+      ]
+    }
   },
   {
-    id: 4, name: 'QuickSales', industry: 'Sales Tools', threatLevel: 'LOW', marketShare: 8, dealsWon: 22, dealsLost: 3,
+    id: 4,
+    name: 'QuickSales',
+    industry: 'Sales Tools',
+    threatLevel: 'LOW',
+    marketShare: 8,
+    dealsWon: 22,
+    dealsLost: 3,
     strengths: ['Easy to Use', 'Free Tier'],
     weaknesses: ['Basic CRM', 'No Customization', 'Startup'],
     swot: {
       strengths: ['Very intuitive user interface with minimal learning curve', 'Generous free tier attracts startups', 'Fast onboarding under 1 day'],
-      weaknesses: ['Very basic CRM functionality', 'No enterprise features or customization', 'Startup with uncertain funding runway', 'No API or integration capabilities'],
-      opportunities: ['Customers outgrow their platform and need to migrate', 'No enterprise credibility limits their upmarket movement', 'Limited funding may lead to shutdown or acquisition'],
-      threats: ['Disrupting at the entry level of the market', 'Growing user base creates network effects', 'Could be acquired by a larger competitor'],
-    },
-  },
+      weaknesses: [
+        'Very basic CRM functionality',
+        'No enterprise features or customization',
+        'Startup with uncertain funding runway',
+        'No API or integration capabilities'
+      ],
+      opportunities: [
+        'Customers outgrow their platform and need to migrate',
+        'No enterprise credibility limits their upmarket movement',
+        'Limited funding may lead to shutdown or acquisition'
+      ],
+      threats: [
+        'Disrupting at the entry level of the market',
+        'Growing user base creates network effects',
+        'Could be acquired by a larger competitor'
+      ]
+    }
+  }
 ]);
 
 const winLossRecords = ref([
-  { dealName: 'TechCorp ERP Integration', dealValue: 450000, competitor: 'CloudCRM Pro', outcome: 'WON', reason: 'Better Arabic support and local data residency', date: 'Feb 15, 2026' },
-  { dealName: 'Gulf Retail CRM Migration', dealValue: 320000, competitor: 'PipelineForce', outcome: 'LOST', reason: 'Competitor had existing enterprise relationship', date: 'Feb 10, 2026' },
-  { dealName: 'StartupHub Sales Platform', dealValue: 85000, competitor: 'QuickSales', outcome: 'WON', reason: 'Superior automation and reporting features', date: 'Feb 8, 2026' },
-  { dealName: 'National Bank CRM', dealValue: 1200000, competitor: 'PipelineForce', outcome: 'LOST', reason: 'Compliance certifications required SOC2 Type II', date: 'Jan 28, 2026' },
-  { dealName: 'Petromin Sales Automation', dealValue: 680000, competitor: 'CloudCRM Pro', outcome: 'WON', reason: 'ZATCA compliance and competitive pricing', date: 'Jan 22, 2026' },
-  { dealName: 'Al-Marai Distribution CRM', dealValue: 520000, competitor: 'SalesHub MENA', outcome: 'WON', reason: 'Superior reporting and mobile capabilities', date: 'Jan 15, 2026' },
-  { dealName: 'Jarir Bookstore POS + CRM', dealValue: 390000, competitor: 'CloudCRM Pro', outcome: 'LOST', reason: 'Competitor offered bundled POS integration', date: 'Jan 10, 2026' },
-  { dealName: 'STC Telecom Sales Tools', dealValue: 950000, competitor: 'PipelineForce', outcome: 'LOST', reason: 'Global contract with competitor already in place', date: 'Jan 5, 2026' },
+  {
+    dealName: 'TechCorp ERP Integration',
+    dealValue: 450000,
+    competitor: 'CloudCRM Pro',
+    outcome: 'WON',
+    reason: 'Better Arabic support and local data residency',
+    date: 'Feb 15, 2026'
+  },
+  {
+    dealName: 'Gulf Retail CRM Migration',
+    dealValue: 320000,
+    competitor: 'PipelineForce',
+    outcome: 'LOST',
+    reason: 'Competitor had existing enterprise relationship',
+    date: 'Feb 10, 2026'
+  },
+  {
+    dealName: 'StartupHub Sales Platform',
+    dealValue: 85000,
+    competitor: 'QuickSales',
+    outcome: 'WON',
+    reason: 'Superior automation and reporting features',
+    date: 'Feb 8, 2026'
+  },
+  {
+    dealName: 'National Bank CRM',
+    dealValue: 1200000,
+    competitor: 'PipelineForce',
+    outcome: 'LOST',
+    reason: 'Compliance certifications required SOC2 Type II',
+    date: 'Jan 28, 2026'
+  },
+  {
+    dealName: 'Petromin Sales Automation',
+    dealValue: 680000,
+    competitor: 'CloudCRM Pro',
+    outcome: 'WON',
+    reason: 'ZATCA compliance and competitive pricing',
+    date: 'Jan 22, 2026'
+  },
+  {
+    dealName: 'Al-Marai Distribution CRM',
+    dealValue: 520000,
+    competitor: 'SalesHub MENA',
+    outcome: 'WON',
+    reason: 'Superior reporting and mobile capabilities',
+    date: 'Jan 15, 2026'
+  },
+  {
+    dealName: 'Jarir Bookstore POS + CRM',
+    dealValue: 390000,
+    competitor: 'CloudCRM Pro',
+    outcome: 'LOST',
+    reason: 'Competitor offered bundled POS integration',
+    date: 'Jan 10, 2026'
+  },
+  {
+    dealName: 'STC Telecom Sales Tools',
+    dealValue: 950000,
+    competitor: 'PipelineForce',
+    outcome: 'LOST',
+    reason: 'Global contract with competitor already in place',
+    date: 'Jan 5, 2026'
+  }
 ]);
 
 const comparisonFeatures = ref([
@@ -368,7 +523,7 @@ const comparisonFeatures = ref([
   { feature: 'Local Data Residency', leadify: true, competitors: { 1: false, 2: true, 3: false, 4: false } },
   { feature: 'Social CRM', leadify: true, competitors: { 1: true, 2: false, 3: true, 4: false } },
   { feature: 'Workflow Automation', leadify: true, competitors: { 1: true, 2: false, 3: true, 4: false } },
-  { feature: 'Free Tier', leadify: false, competitors: { 1: false, 2: false, 3: false, 4: true } },
+  { feature: 'Free Tier', leadify: false, competitors: { 1: false, 2: false, 3: false, 4: true } }
 ]);
 
 const selectedCompetitor = computed(() => {
@@ -385,11 +540,7 @@ const winRate = computed(() => {
 
 const lossCount = computed(() => winLossRecords.value.filter(r => r.outcome === 'LOST').length);
 
-const lostRevenue = computed(() =>
-  winLossRecords.value
-    .filter(r => r.outcome === 'LOST')
-    .reduce((s, r) => s + r.dealValue, 0)
-);
+const lostRevenue = computed(() => winLossRecords.value.filter(r => r.outcome === 'LOST').reduce((s, r) => s + r.dealValue, 0));
 
 const formatCurrency = (val: number) => {
   if (!val) return '0 SAR';
@@ -402,7 +553,7 @@ const getThreatType = (level: string): 'danger' | 'warning' | 'success' | undefi
   const map: Record<string, 'danger' | 'warning' | 'success' | undefined> = {
     HIGH: 'danger',
     MEDIUM: 'warning',
-    LOW: 'success',
+    LOW: 'success'
   };
   return map[level];
 };
@@ -416,8 +567,14 @@ const addCompetitor = () => {
     ElMessage.warning('Competitor name is required');
     return;
   }
-  const strengths = newCompetitor.value.strengthsInput.split(',').map(s => s.trim()).filter(Boolean);
-  const weaknesses = newCompetitor.value.weaknessesInput.split(',').map(s => s.trim()).filter(Boolean);
+  const strengths = newCompetitor.value.strengthsInput
+    .split(',')
+    .map(s => s.trim())
+    .filter(Boolean);
+  const weaknesses = newCompetitor.value.weaknessesInput
+    .split(',')
+    .map(s => s.trim())
+    .filter(Boolean);
   competitors.value.push({
     id: Date.now(),
     name: newCompetitor.value.name,
@@ -432,8 +589,8 @@ const addCompetitor = () => {
       strengths: strengths.map(s => `Competitor has strength in ${s}`),
       weaknesses: weaknesses.map(w => `Competitor weakness: ${w}`),
       opportunities: ['Newly tracked - analysis pending'],
-      threats: ['Newly tracked - analysis pending'],
-    },
+      threats: ['Newly tracked - analysis pending']
+    }
   });
   ElMessage.success(`Now tracking ${newCompetitor.value.name}`);
   showAddCompetitorDialog.value = false;

@@ -174,7 +174,6 @@ export function useKeyboardShortcuts() {
       chordTimeout = setTimeout(() => {
         pendingChord.value = null;
       }, CHORD_TIMEOUT_MS);
-      return;
     }
 
     // Handle single key shortcuts (non-modifier, non-chord)
@@ -190,6 +189,6 @@ export function useKeyboardShortcuts() {
     register,
     unregister,
     handleKeyDown,
-    toggleCheatSheet,
+    toggleCheatSheet
   };
 }

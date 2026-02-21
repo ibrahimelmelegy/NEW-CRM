@@ -58,11 +58,7 @@ export function useRevenueSimulator() {
    * Adds a 2% monthly compound growth trend.
    */
   function calculateProjection(params: SimulatorSliders | SimulatorBaseline): number[] {
-    const monthlyRevenue =
-      params.newLeadsPerMonth *
-      (params.conversionRate / 100) *
-      (params.winRate / 100) *
-      params.avgDealSize;
+    const monthlyRevenue = params.newLeadsPerMonth * (params.conversionRate / 100) * (params.winRate / 100) * params.avgDealSize;
 
     // Shorter sales cycle means deals close faster, generating more revenue per period
     const defaultCycle = 45;
@@ -100,17 +96,10 @@ export function useRevenueSimulator() {
     const currentEnd = currentProjection.value[11] || 0;
     const simulatedEnd = simulatedProjection.value[11] || 0;
     const revenueChange = simulatedEnd - currentEnd;
-    const revenueChangePercent = currentEnd > 0
-      ? ((simulatedEnd - currentEnd) / currentEnd) * 100
-      : 0;
+    const revenueChangePercent = currentEnd > 0 ? ((simulatedEnd - currentEnd) / currentEnd) * 100 : 0;
 
     // Projected deals closed per month on simulated settings
-    const projectedDeals = Math.round(
-      sliders.newLeadsPerMonth *
-      (sliders.conversionRate / 100) *
-      (sliders.winRate / 100) *
-      12
-    );
+    const projectedDeals = Math.round(sliders.newLeadsPerMonth * (sliders.conversionRate / 100) * (sliders.winRate / 100) * 12);
 
     return {
       revenueChange,
@@ -177,9 +166,7 @@ export function useRevenueSimulator() {
 
         // Derive win rate from deals and opportunities
         const oppCount = Number(body.opportunityCount) || 1;
-        const derivedWinRate = oppCount > 0
-          ? Math.min(Math.round((dealCount / oppCount) * 100), 100)
-          : 30;
+        const derivedWinRate = oppCount > 0 ? Math.min(Math.round((dealCount / oppCount) * 100), 100) : 30;
 
         // Estimate monthly leads (assume data spans roughly recent months)
         const estimatedMonthlyLeads = Math.max(Math.round(leadCount / 3), 10);

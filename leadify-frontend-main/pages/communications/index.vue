@@ -120,8 +120,14 @@
                 <p v-if="activity.body" class="text-sm text-slate-400 mt-2 line-clamp-2">{{ activity.body }}</p>
                 <!-- Call Details -->
                 <div v-if="activity.callLog" class="flex items-center gap-3 mt-2 text-xs text-slate-500">
-                  <span><Icon name="ph:phone" class="w-3 h-3 inline mr-1" />{{ activity.callLog.phoneNumber }}</span>
-                  <span><Icon name="ph:timer" class="w-3 h-3 inline mr-1" />{{ formatDuration(activity.callLog.duration) }}</span>
+                  <span>
+                    <Icon name="ph:phone" class="w-3 h-3 inline mr-1" />
+                    {{ activity.callLog.phoneNumber }}
+                  </span>
+                  <span>
+                    <Icon name="ph:timer" class="w-3 h-3 inline mr-1" />
+                    {{ formatDuration(activity.callLog.duration) }}
+                  </span>
                   <el-tag size="small" :type="activity.callLog.outcome === 'CONNECTED' ? 'success' : 'info'" effect="plain">
                     {{ activity.callLog.outcome }}
                   </el-tag>
@@ -191,7 +197,7 @@
         <el-form-item label="Subject">
           <el-input v-model="newActivity.subject" placeholder="Activity subject" />
         </el-form-item>
-        <el-form-item label="Direction" v-if="['EMAIL', 'CALL'].includes(newActivity.type)">
+        <el-form-item v-if="['EMAIL', 'CALL'].includes(newActivity.type)" label="Direction">
           <el-radio-group v-model="newActivity.direction">
             <el-radio value="INBOUND">Inbound</el-radio>
             <el-radio value="OUTBOUND">Outbound</el-radio>
@@ -243,9 +249,15 @@ const showLogDialog = ref(false);
 const saving = ref(false);
 
 const stats = ref<any>({
-  totalActivities: 0, callsToday: 0, emailsThisWeek: 0,
-  meetingsScheduled: 0, notesCreated: 0, tasksThisWeek: 0,
-  avgCallDuration: 0, trend: 0, byType: {}
+  totalActivities: 0,
+  callsToday: 0,
+  emailsThisWeek: 0,
+  meetingsScheduled: 0,
+  notesCreated: 0,
+  tasksThisWeek: 0,
+  avgCallDuration: 0,
+  trend: 0,
+  byType: {}
 });
 
 const newActivity = ref({
@@ -304,7 +316,16 @@ const logActivity = async () => {
   if (res?.success) {
     ElMessage.success('Activity logged successfully');
     showLogDialog.value = false;
-    newActivity.value = { type: 'NOTE', subject: '', body: '', direction: 'OUTBOUND', contactId: '', contactType: 'LEAD', phoneNumber: '', outcome: 'CONNECTED' };
+    newActivity.value = {
+      type: 'NOTE',
+      subject: '',
+      body: '',
+      direction: 'OUTBOUND',
+      contactId: '',
+      contactType: 'LEAD',
+      phoneNumber: '',
+      outcome: 'CONNECTED'
+    };
     fetchActivities();
     fetchStats();
   } else {
@@ -315,8 +336,10 @@ const logActivity = async () => {
 
 const getActivityIcon = (type: string) => {
   const icons: Record<string, string> = {
-    EMAIL: 'ph:envelope-simple-bold', CALL: 'ph:phone-bold',
-    MEETING: 'ph:video-camera-bold', NOTE: 'ph:note-pencil-bold',
+    EMAIL: 'ph:envelope-simple-bold',
+    CALL: 'ph:phone-bold',
+    MEETING: 'ph:video-camera-bold',
+    NOTE: 'ph:note-pencil-bold',
     TASK: 'ph:check-square-bold'
   };
   return icons[type] || 'ph:circle-bold';
@@ -324,8 +347,10 @@ const getActivityIcon = (type: string) => {
 
 const getActivityIconBg = (type: string) => {
   const bgs: Record<string, string> = {
-    EMAIL: 'bg-blue-500/10', CALL: 'bg-emerald-500/10',
-    MEETING: 'bg-purple-500/10', NOTE: 'bg-amber-500/10',
+    EMAIL: 'bg-blue-500/10',
+    CALL: 'bg-emerald-500/10',
+    MEETING: 'bg-purple-500/10',
+    NOTE: 'bg-amber-500/10',
     TASK: 'bg-teal-500/10'
   };
   return bgs[type] || 'bg-slate-500/10';
@@ -333,8 +358,10 @@ const getActivityIconBg = (type: string) => {
 
 const getActivityIconColor = (type: string) => {
   const colors: Record<string, string> = {
-    EMAIL: 'text-blue-400', CALL: 'text-emerald-400',
-    MEETING: 'text-purple-400', NOTE: 'text-amber-400',
+    EMAIL: 'text-blue-400',
+    CALL: 'text-emerald-400',
+    MEETING: 'text-purple-400',
+    NOTE: 'text-amber-400',
     TASK: 'text-teal-400'
   };
   return colors[type] || 'text-slate-400';
@@ -342,7 +369,11 @@ const getActivityIconColor = (type: string) => {
 
 const getActivityTagType = (type: string): 'success' | 'warning' | 'info' | 'danger' | undefined => {
   const types: Record<string, 'success' | 'warning' | 'info' | 'danger' | undefined> = {
-    EMAIL: undefined, CALL: 'success', MEETING: 'warning', NOTE: 'info', TASK: 'danger'
+    EMAIL: undefined,
+    CALL: 'success',
+    MEETING: 'warning',
+    NOTE: 'info',
+    TASK: 'danger'
   };
   return types[type] || 'info';
 };

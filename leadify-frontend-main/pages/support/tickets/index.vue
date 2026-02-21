@@ -77,13 +77,7 @@ div
 <script setup lang="ts">
 import { ref, onMounted } from 'vue';
 import { Plus, Search } from '@element-plus/icons-vue';
-import {
-  fetchTickets,
-  ticketStatusOptions,
-  ticketPriorityOptions,
-  getStatusOption,
-  getPriorityOption
-} from '@/composables/useSupport';
+import { fetchTickets, ticketStatusOptions, ticketPriorityOptions, getStatusOption, getPriorityOption } from '@/composables/useSupport';
 
 const router = useRouter();
 

@@ -163,9 +163,7 @@ const selectedProduct = ref<any>(null);
 const form = reactive({ name: '', sku: '', quantity: 0, price: 0, category: '', warehouse: '', reorderPoint: 5, description: '' });
 const movementForm = reactive({ productId: null as number | null, type: 'IN', quantity: 1, notes: '' });
 
-const headerActions = computed(() => [
-  { label: t('inventory.addProduct') || 'Add Product', onClick: () => openForm(), type: 'primary' }
-]);
+const headerActions = computed(() => [{ label: t('inventory.addProduct') || 'Add Product', onClick: () => openForm(), type: 'primary' }]);
 
 const summaryStats = computed(() => {
   const totalValue = products.value.reduce((sum, p) => sum + (p.quantity || 0) * (p.price || 0), 0);
@@ -180,7 +178,10 @@ const summaryStats = computed(() => {
 let debounceTimer: ReturnType<typeof setTimeout>;
 function debounceLoad() {
   clearTimeout(debounceTimer);
-  debounceTimer = setTimeout(() => { currentPage.value = 1; loadProducts(); }, 400);
+  debounceTimer = setTimeout(() => {
+    currentPage.value = 1;
+    loadProducts();
+  }, 400);
 }
 
 onMounted(async () => {
@@ -198,7 +199,9 @@ async function loadProducts() {
       products.value = (body as any).docs || [];
       pagination.value = (body as any).pagination || pagination.value;
     }
-  } finally { loading.value = false; }
+  } finally {
+    loading.value = false;
+  }
 }
 
 async function loadCategories() {
@@ -218,7 +221,16 @@ function openForm() {
 
 function editProduct(row: any) {
   editingId.value = row.id;
-  Object.assign(form, { name: row.name, sku: row.sku || '', quantity: row.quantity, price: row.price || 0, category: row.category || '', warehouse: row.warehouse || '', reorderPoint: row.reorderPoint || 5, description: row.description || '' });
+  Object.assign(form, {
+    name: row.name,
+    sku: row.sku || '',
+    quantity: row.quantity,
+    price: row.price || 0,
+    category: row.category || '',
+    warehouse: row.warehouse || '',
+    reorderPoint: row.reorderPoint || 5,
+    description: row.description || ''
+  });
   showForm.value = true;
 }
 
@@ -231,7 +243,9 @@ async function saveProduct() {
       showForm.value = false;
       await loadProducts();
     }
-  } finally { saving.value = false; }
+  } finally {
+    saving.value = false;
+  }
 }
 
 async function confirmDelete() {
@@ -243,7 +257,10 @@ async function confirmDelete() {
       ElNotification({ type: 'success', title: t('common.success'), message: t('common.deleted') });
       await loadProducts();
     }
-  } finally { deleting.value = false; deletePopup.value = false; }
+  } finally {
+    deleting.value = false;
+    deletePopup.value = false;
+  }
 }
 
 async function submitMovement() {
@@ -260,17 +277,21 @@ async function submitMovement() {
       movementForm.notes = '';
       await loadProducts();
     }
-  } finally { movementSaving.value = false; }
+  } finally {
+    movementSaving.value = false;
+  }
 }
 
 function handleExport() {
   const csvHeaders = ['Name', 'SKU', 'Category', 'Quantity', 'Price', 'Warehouse'];
   const rows = products.value.map(p => [p.name, p.sku || '', p.category || '', p.quantity, p.price || 0, p.warehouse || '']);
   const csv = [csvHeaders, ...rows].map(r => r.map(v => `"${String(v).replace(/"/g, '""')}"`).join(',')).join('\n');
-  const blob = new Blob(['\ufeff' + csv], { type: 'text/csv;charset=utf-8;' });
+  const blob = new Blob(['\uFEFF' + csv], { type: 'text/csv;charset=utf-8;' });
   const url = URL.createObjectURL(blob);
   const link = document.createElement('a');
-  link.href = url; link.download = 'inventory.csv'; link.click();
+  link.href = url;
+  link.download = 'inventory.csv';
+  link.click();
   URL.revokeObjectURL(url);
 }
 

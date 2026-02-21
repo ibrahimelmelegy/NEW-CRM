@@ -120,12 +120,7 @@ div
 
 <script setup lang="ts">
 import { ElNotification } from 'element-plus';
-import {
-  calculateEndOfService,
-  approveEndOfService,
-  payEndOfService,
-  type EOSResult
-} from '~/composables/usePayroll';
+import { calculateEndOfService, approveEndOfService, payEndOfService, type EOSResult } from '~/composables/usePayroll';
 
 definePageMeta({ middleware: 'permissions' });
 
@@ -148,7 +143,9 @@ async function searchEmployees(query: string) {
       const data = body as any;
       employeeOptions.value = data.docs || data || [];
     }
-  } finally { searchingEmployees.value = false; }
+  } finally {
+    searchingEmployees.value = false;
+  }
 }
 
 function onEmployeeChange(empId: string) {
@@ -167,7 +164,9 @@ async function handleCalculate() {
     } else {
       ElNotification({ type: 'error', title: 'Error', message: res.message });
     }
-  } finally { calculating.value = false; }
+  } finally {
+    calculating.value = false;
+  }
 }
 
 async function handleApproveEos() {
@@ -181,7 +180,9 @@ async function handleApproveEos() {
     } else {
       ElNotification({ type: 'error', title: 'Error', message: res.message });
     }
-  } finally { approvingEos.value = false; }
+  } finally {
+    approvingEos.value = false;
+  }
 }
 
 async function handlePayEos() {
@@ -195,6 +196,8 @@ async function handlePayEos() {
     } else {
       ElNotification({ type: 'error', title: 'Error', message: res.message });
     }
-  } finally { payingEos.value = false; }
+  } finally {
+    payingEos.value = false;
+  }
 }
 </script>

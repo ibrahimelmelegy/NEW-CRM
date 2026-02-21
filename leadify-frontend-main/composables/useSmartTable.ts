@@ -46,7 +46,7 @@ export function useSmartTable(entityType: string, initialColumns: SmartTableColu
     initialColumns.map((col, i) => ({
       ...col,
       visible: col.visible !== false,
-      order: col.order ?? i,
+      order: col.order ?? i
     }))
   );
   const filters = ref<SmartTableFilter[]>([]);
@@ -72,11 +72,7 @@ export function useSmartTable(entityType: string, initialColumns: SmartTableColu
   loadSavedViews();
 
   // Computed: visible columns in order
-  const visibleColumns = computed(() =>
-    [...columns.value]
-      .filter((c) => c.visible)
-      .sort((a, b) => (a.order ?? 0) - (b.order ?? 0))
-  );
+  const visibleColumns = computed(() => [...columns.value].filter(c => c.visible).sort((a, b) => (a.order ?? 0) - (b.order ?? 0)));
 
   // Computed: filtered data helper
   const applyFiltersToData = (data: any[]) => {
@@ -85,8 +81,8 @@ export function useSmartTable(entityType: string, initialColumns: SmartTableColu
     // Apply search
     if (searchQuery.value.trim()) {
       const q = searchQuery.value.toLowerCase().trim();
-      result = result.filter((row) =>
-        columns.value.some((col) => {
+      result = result.filter(row =>
+        columns.value.some(col => {
           const val = row[col.prop];
           if (val == null) return false;
           return String(val).toLowerCase().includes(q);
@@ -96,7 +92,7 @@ export function useSmartTable(entityType: string, initialColumns: SmartTableColu
 
     // Apply filters
     if (filters.value.length > 0) {
-      result = result.filter((row) => {
+      result = result.filter(row => {
         return filters.value.every((filter, index) => {
           const val = row[filter.field];
           const useOr = filter.logic === 'OR' && index > 0;
@@ -106,7 +102,9 @@ export function useSmartTable(entityType: string, initialColumns: SmartTableColu
               case 'equals':
                 return String(val) === String(filter.value);
               case 'contains':
-                return String(val ?? '').toLowerCase().includes(String(filter.value).toLowerCase());
+                return String(val ?? '')
+                  .toLowerCase()
+                  .includes(String(filter.value).toLowerCase());
               case 'gt':
                 return Number(val) > Number(filter.value);
               case 'lt':
@@ -170,7 +168,7 @@ export function useSmartTable(entityType: string, initialColumns: SmartTableColu
   };
 
   const toggleColumn = (prop: string) => {
-    const col = columns.value.find((c) => c.prop === prop);
+    const col = columns.value.find(c => c.prop === prop);
     if (col) {
       col.visible = !col.visible;
     }
@@ -201,7 +199,7 @@ export function useSmartTable(entityType: string, initialColumns: SmartTableColu
       filters: JSON.parse(JSON.stringify(filters.value)),
       sort: sort.value ? JSON.parse(JSON.stringify(sort.value)) : null,
       groupByField: groupByField.value,
-      createdAt: new Date().toISOString(),
+      createdAt: new Date().toISOString()
     };
     savedViews.value.push(view);
     persistSavedViews();
@@ -209,7 +207,7 @@ export function useSmartTable(entityType: string, initialColumns: SmartTableColu
   };
 
   const loadView = (viewId: string) => {
-    const view = savedViews.value.find((v) => v.id === viewId);
+    const view = savedViews.value.find(v => v.id === viewId);
     if (!view) return;
 
     currentView.value = view.viewType as ViewType;
@@ -222,7 +220,7 @@ export function useSmartTable(entityType: string, initialColumns: SmartTableColu
   };
 
   const deleteView = (viewId: string) => {
-    savedViews.value = savedViews.value.filter((v) => v.id !== viewId);
+    savedViews.value = savedViews.value.filter(v => v.id !== viewId);
     persistSavedViews();
   };
 
@@ -238,15 +236,15 @@ export function useSmartTable(entityType: string, initialColumns: SmartTableColu
     columns.value = initialColumns.map((col, i) => ({
       ...col,
       visible: col.visible !== false,
-      order: col.order ?? i,
+      order: col.order ?? i
     }));
   };
 
   const exportData = (data: any[], format: 'xlsx' | 'csv' = 'xlsx') => {
     const exportColumns = visibleColumns.value;
-    const headers = exportColumns.map((c) => c.label);
-    const rows = data.map((row) =>
-      exportColumns.map((col) => {
+    const headers = exportColumns.map(c => c.label);
+    const rows = data.map(row =>
+      exportColumns.map(col => {
         const val = row[col.prop];
         if (val == null) return '';
         if (typeof val === 'object' && val.title) return val.title;
@@ -260,8 +258,8 @@ export function useSmartTable(entityType: string, initialColumns: SmartTableColu
       XLSX.utils.book_append_sheet(wb, ws, entityType);
 
       // Column widths
-      ws['!cols'] = exportColumns.map((col) => ({
-        wch: Math.max(String(col.label).length + 2, 15),
+      ws['!cols'] = exportColumns.map(col => ({
+        wch: Math.max(String(col.label).length + 2, 15)
       }));
 
       XLSX.writeFile(wb, `${entityType}-export-${Date.now()}.xlsx`);
@@ -274,10 +272,7 @@ export function useSmartTable(entityType: string, initialColumns: SmartTableColu
         }
         return str;
       };
-      const csvContent = [
-        headers.map(escapeCsv).join(','),
-        ...rows.map((row) => row.map(escapeCsv).join(',')),
-      ].join('\n');
+      const csvContent = [headers.map(escapeCsv).join(','), ...rows.map(row => row.map(escapeCsv).join(','))].join('\n');
 
       const blob = new Blob(['\uFEFF' + csvContent], { type: 'text/csv;charset=utf-8;' });
       const url = URL.createObjectURL(blob);
@@ -315,6 +310,6 @@ export function useSmartTable(entityType: string, initialColumns: SmartTableColu
     deleteView,
     resetColumns,
     exportData,
-    applyFiltersToData,
+    applyFiltersToData
   };
 }

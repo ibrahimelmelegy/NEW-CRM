@@ -90,7 +90,7 @@ register({
   keys: 'Ctrl+`',
   label: 'Command Terminal',
   category: 'General',
-  action: toggleTerminal,
+  action: toggleTerminal
 });
 
 const mainData = useMain();
@@ -175,8 +175,6 @@ async function logout() {
   }
 }
 
-
-
 checkwidth();
 
 watch(width, () => {
@@ -215,7 +213,7 @@ const breadcrumbRoutes = computed(() => {
     const navKey = `navigation.${camelSegment}`;
 
     // Check if translation exists, otherwise fallback to Space Case
-    const label = t(navKey) !== navKey ? t(navKey) : (segment ? segment.replace(/[-_]/g, ' ') : ''); // fallback
+    const label = t(navKey) !== navKey ? t(navKey) : segment ? segment.replace(/[-_]/g, ' ') : ''; // fallback
 
     return {
       path: segment,

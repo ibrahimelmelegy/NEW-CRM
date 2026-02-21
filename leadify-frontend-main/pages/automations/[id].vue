@@ -1,6 +1,5 @@
 <template>
   <div class="h-[calc(100vh-80px)] w-full flex flex-col bg-slate-950 overflow-hidden relative">
-    
     <!-- Header Controls -->
     <div class="h-16 border-b border-slate-800/60 bg-slate-900/50 backdrop-blur-md flex items-center justify-between px-6 z-10">
       <div class="flex items-center gap-4">
@@ -15,36 +14,39 @@
           </el-tag>
         </div>
       </div>
-      
-      <div class="flex items-center gap-3" v-if="!loading">
+
+      <div v-if="!loading" class="flex items-center gap-3">
         <div class="text-sm text-slate-400 mr-2">
-          Trigger: <span class="capitalize text-slate-200 font-medium">{{ (entityType || '').replace('_', ' ') }} ({{ triggerType }})</span>
+          Trigger:
+          <span class="capitalize text-slate-200 font-medium">{{ (entityType || '').replace('_', ' ') }} ({{ triggerType }})</span>
         </div>
-        <el-button @click="openSettingsDialog" class="!bg-slate-800 !border-slate-700 !text-white hover:!bg-slate-700">
-          <Icon name="ph:gear-bold" class="w-4 h-4 mr-2" /> Settings
+        <el-button class="!bg-slate-800 !border-slate-700 !text-white hover:!bg-slate-700" @click="openSettingsDialog">
+          <Icon name="ph:gear-bold" class="w-4 h-4 mr-2" />
+          Settings
         </el-button>
-        <el-button type="primary" class="!rounded-lg shadow-lg shadow-primary-500/20" @click="saveJourney" :loading="saving">
-          <Icon name="ph:floppy-disk-bold" class="w-4 h-4 mr-2" /> Save Journey
+        <el-button type="primary" class="!rounded-lg shadow-lg shadow-primary-500/20" :loading="saving" @click="saveJourney">
+          <Icon name="ph:floppy-disk-bold" class="w-4 h-4 mr-2" />
+          Save Journey
         </el-button>
       </div>
     </div>
 
     <!-- Canvas Area -->
     <div class="flex-1 flex w-full relative h-[calc(100vh-144px)]">
-      
       <!-- Toolbox Sidebar -->
       <div class="w-64 border-r border-slate-800/60 bg-slate-900/30 flex flex-col h-full z-10 shadow-xl">
         <div class="p-4 border-b border-slate-800/60 font-medium text-slate-200 flex items-center gap-2">
-          <Icon name="ph:toolbox-bold" class="w-5 h-5 text-indigo-400" /> Elements
+          <Icon name="ph:toolbox-bold" class="w-5 h-5 text-indigo-400" />
+          Elements
         </div>
-        
+
         <div class="p-4 space-y-4 overflow-y-auto">
           <!-- Triggers Section -->
           <div>
             <div class="text-xs font-bold text-slate-500 uppercase tracking-wider mb-2">Triggers</div>
-            <div 
+            <div
               class="drag-node border border-emerald-500/30 bg-emerald-900/20 hover:bg-emerald-900/40 text-emerald-300 p-3 rounded-xl cursor-grab flex items-center gap-3 transition-colors text-sm font-medium"
-              draggable="true" 
+              draggable="true"
               @dragstart="onDragStart($event, 'trigger-node')"
             >
               <div class="w-8 h-8 rounded-lg bg-emerald-500/20 flex items-center justify-center">
@@ -53,13 +55,13 @@
               Record Created
             </div>
           </div>
-          
+
           <!-- Actions Section -->
           <div>
             <div class="text-xs font-bold text-slate-500 uppercase tracking-wider mb-2 mt-4">Actions</div>
-            <div 
+            <div
               class="drag-node border border-blue-500/30 bg-blue-900/20 hover:bg-blue-900/40 text-blue-300 p-3 rounded-xl cursor-grab flex items-center gap-3 transition-colors text-sm font-medium mb-2"
-              draggable="true" 
+              draggable="true"
               @dragstart="onDragStart($event, 'action-node', { subType: 'SEND_EMAIL' })"
             >
               <div class="w-8 h-8 rounded-lg bg-blue-500/20 flex items-center justify-center">
@@ -68,9 +70,9 @@
               Send Email
             </div>
 
-            <div 
+            <div
               class="drag-node border border-orange-500/30 bg-orange-900/20 hover:bg-orange-900/40 text-orange-300 p-3 rounded-xl cursor-grab flex items-center gap-3 transition-colors text-sm font-medium mb-2"
-              draggable="true" 
+              draggable="true"
               @dragstart="onDragStart($event, 'action-node', { subType: 'CREATE_TASK' })"
             >
               <div class="w-8 h-8 rounded-lg bg-orange-500/20 flex items-center justify-center">
@@ -78,10 +80,10 @@
               </div>
               Create Task
             </div>
-            
-            <div 
+
+            <div
               class="drag-node border border-purple-500/30 bg-purple-900/20 hover:bg-purple-900/40 text-purple-300 p-3 rounded-xl cursor-grab flex items-center gap-3 transition-colors text-sm font-medium"
-              draggable="true" 
+              draggable="true"
               @dragstart="onDragStart($event, 'action-node', { subType: 'WEBHOOK' })"
             >
               <div class="w-8 h-8 rounded-lg bg-purple-500/20 flex items-center justify-center">
@@ -90,13 +92,13 @@
               Send Webhook
             </div>
           </div>
-          
+
           <!-- Flow Control Section -->
           <div>
             <div class="text-xs font-bold text-slate-500 uppercase tracking-wider mb-2 mt-4">Flow Control</div>
-            <div 
+            <div
               class="drag-node border border-slate-600/50 bg-slate-800/50 hover:bg-slate-700/50 text-slate-300 p-3 rounded-xl cursor-grab flex items-center gap-3 transition-colors text-sm font-medium"
-              draggable="true" 
+              draggable="true"
               @dragstart="onDragStart($event, 'delay-node')"
             >
               <div class="w-8 h-8 rounded-lg bg-slate-700 flex items-center justify-center">
@@ -105,30 +107,16 @@
               Time Delay
             </div>
           </div>
-
         </div>
       </div>
 
       <!-- Flow Canvas -->
-      <div 
-        class="flex-1 h-full relative" 
-        @drop="onDrop" 
-        @dragover.prevent 
-        @dragenter.prevent="dragOver = true" 
-        @dragleave.prevent="dragOver = false"
-      >
+      <div class="flex-1 h-full relative" @drop="onDrop" @dragover.prevent @dragenter.prevent="dragOver = true" @dragleave.prevent="dragOver = false">
         <ClientOnly>
-          <VueFlow 
-            v-model="elements" 
-            :default-zoom="1" 
-            :min-zoom="0.2" 
-            :max-zoom="4"
-            class="vue-flow-theme-dark"
-            @nodeClick="onNodeClick"
-          >
+          <VueFlow v-model="elements" :default-zoom="1" :min-zoom="0.2" :max-zoom="4" class="vue-flow-theme-dark" @node-click="onNodeClick">
             <Background pattern-color="#334155" :gap="32" />
             <Controls />
-            
+
             <!-- Custom Node Template Fallbacks (Will build actual components later) -->
             <template #node-trigger-node="{ data }">
               <div class="p-4 rounded-xl border-2 border-emerald-500 bg-slate-900 shadow-xl shadow-emerald-900/20 min-w-[200px]">
@@ -164,18 +152,20 @@
                 </div>
               </div>
             </template>
-
           </VueFlow>
         </ClientOnly>
 
         <!-- Drag Over Overlay -->
-        <div v-show="dragOver" class="absolute inset-0 z-50 bg-primary-500/10 border-2 border-dashed border-primary-500 pointer-events-none rounded-lg flex items-center justify-center backdrop-blur-sm">
+        <div
+          v-show="dragOver"
+          class="absolute inset-0 z-50 bg-primary-500/10 border-2 border-dashed border-primary-500 pointer-events-none rounded-lg flex items-center justify-center backdrop-blur-sm"
+        >
           <div class="bg-slate-900 p-4 rounded-xl border border-primary-500/30 text-primary-400 font-bold flex items-center gap-3 shadow-2xl">
-            <Icon name="ph:download-simple-bold" class="w-6 h-6" /> Drop Here to Add Step
+            <Icon name="ph:download-simple-bold" class="w-6 h-6" />
+            Drop Here to Add Step
           </div>
         </div>
       </div>
-
     </div>
   </div>
 </template>
@@ -226,14 +216,14 @@ const onDrop = (event: DragEvent) => {
   try {
     const data = JSON.parse(dataString);
     const position = project({ x: event.clientX - 256, y: event.clientY - 64 }); // rough offset for sidebar + header
-    
+
     const newNode = {
       id: `node_${Date.now()}`,
       type: data.type,
       position,
-      data: { ...data, label: `${data.subType || data.type} Node` },
+      data: { ...data, label: `${data.subType || data.type} Node` }
     };
-    
+
     elements.value.push(newNode);
 
     // Auto connect to the previous node if there's only a single path (simple logic for now)
@@ -248,7 +238,6 @@ const onDrop = (event: DragEvent) => {
         style: { stroke: '#6366f1', strokeWidth: 2 }
       });
     }
-
   } catch (err) {
     console.error('Failed parsing dragged element', err);
   }

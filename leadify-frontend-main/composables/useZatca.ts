@@ -106,9 +106,7 @@ export const zatcaStatusOptions = [
   { label: 'Rejected', value: 'REJECTED' }
 ];
 
-export async function fetchZatcaInvoices(
-  query?: Record<string, string>
-): Promise<{ docs: ZatcaInvoice[]; pagination: ZatcaPagination }> {
+export async function fetchZatcaInvoices(query?: Record<string, string>): Promise<{ docs: ZatcaInvoice[]; pagination: ZatcaPagination }> {
   const qs = query ? '?' + new URLSearchParams(query).toString() : '';
   const { body, success } = await useApiFetch(`finance/zatca${qs}`);
   if (success && body) return body as { docs: ZatcaInvoice[]; pagination: ZatcaPagination };

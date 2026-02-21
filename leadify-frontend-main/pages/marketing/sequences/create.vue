@@ -89,7 +89,9 @@ function addStep() {
 
 function removeStep(idx: number) {
   form.steps.splice(idx, 1);
-  form.steps.forEach((s, i) => { s.order = i; });
+  form.steps.forEach((s, i) => {
+    s.order = i;
+  });
 }
 
 function stepTypeTag(type: string) {
@@ -130,7 +132,13 @@ async function handleCreate() {
 }
 
 @keyframes fadeIn {
-  from { opacity: 0; transform: translateY(10px); }
-  to { opacity: 1; transform: translateY(0); }
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
 }
 </style>

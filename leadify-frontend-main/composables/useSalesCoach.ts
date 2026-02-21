@@ -52,8 +52,12 @@ export function useSalesCoach() {
     }
   }
 
-  function openCoach() { isOpen.value = true; }
-  function closeCoach() { isOpen.value = false; }
+  function openCoach() {
+    isOpen.value = true;
+  }
+  function closeCoach() {
+    isOpen.value = false;
+  }
 
   return {
     dealAnalysis,

@@ -98,13 +98,7 @@
 <script setup lang="ts">
 import { ref, reactive, computed } from 'vue';
 import { ElNotification, ElMessageBox } from 'element-plus';
-import {
-  fetchDuplicateSets,
-  confirmDuplicate,
-  dismissDuplicate,
-  mergeDuplicates,
-  scanForDuplicates
-} from '~/composables/useDuplicateDetection';
+import { fetchDuplicateSets, confirmDuplicate, dismissDuplicate, mergeDuplicates, scanForDuplicates } from '~/composables/useDuplicateDetection';
 import type { DuplicateSet } from '~/composables/useDuplicateDetection';
 
 definePageMeta({ title: 'Duplicate Detection' });
@@ -227,7 +221,8 @@ async function handleMerge() {
     mergeDialogVisible.value = false;
     await handleStatusChange(activeStatus.value);
     ElNotification({ type: 'success', title: t('common.success'), message: t('common.saved') });
-  } catch {} finally {
+  } catch {
+  } finally {
     merging.value = false;
   }
 }
@@ -239,7 +234,13 @@ async function handleMerge() {
 }
 
 @keyframes fadeIn {
-  from { opacity: 0; transform: translateY(10px); }
-  to { opacity: 1; transform: translateY(0); }
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
 }
 </style>

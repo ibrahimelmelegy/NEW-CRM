@@ -159,10 +159,7 @@ const editForm = reactive({
 
 // Load task and users
 try {
-  const [taskRes, usersRes] = await Promise.all([
-    useApiFetch(`tasks/${id}`),
-    useApiFetch('users')
-  ]);
+  const [taskRes, usersRes] = await Promise.all([useApiFetch(`tasks/${id}`), useApiFetch('users')]);
   if (taskRes?.success && taskRes?.body) {
     task.value = taskRes.body as Task;
     editForm.title = task.value.title;
@@ -282,7 +279,13 @@ async function handleSaveEdit() {
 }
 
 @keyframes fadeIn {
-  from { opacity: 0; transform: translateY(10px); }
-  to { opacity: 1; transform: translateY(0); }
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
 }
 </style>

@@ -17,16 +17,7 @@ export function useEmailComposer() {
   const context = ref<Record<string, string>>({});
 
   // Available variables for template placeholders
-  const availableVariables = [
-    'firstName',
-    'lastName',
-    'companyName',
-    'dealName',
-    'proposalLink',
-    'senderName',
-    'email',
-    'phone'
-  ];
+  const availableVariables = ['firstName', 'lastName', 'companyName', 'dealName', 'proposalLink', 'senderName', 'email', 'phone'];
 
   async function fetchTemplates() {
     loading.value = true;
@@ -82,31 +73,11 @@ export function useEmailComposer() {
 
   function getSuggestedSubjects(category: string): string[] {
     const suggestions: Record<string, string[]> = {
-      'follow-up': [
-        'Following up on our conversation',
-        'Quick follow-up regarding {{dealName}}',
-        'Checking in - {{companyName}}'
-      ],
-      introduction: [
-        'Introduction - {{companyName}}',
-        'Nice to connect, {{firstName}}',
-        'Reaching out from our team'
-      ],
-      proposal: [
-        'Proposal for {{dealName}}',
-        'Your customized proposal - {{companyName}}',
-        'Partnership proposal'
-      ],
-      'thank-you': [
-        'Thank you, {{firstName}}!',
-        'Grateful for the partnership',
-        'Thanks for choosing us'
-      ],
-      'win-back': [
-        'We miss you, {{firstName}}!',
-        'Let us reconnect - {{companyName}}',
-        'Exciting updates to share'
-      ]
+      'follow-up': ['Following up on our conversation', 'Quick follow-up regarding {{dealName}}', 'Checking in - {{companyName}}'],
+      introduction: ['Introduction - {{companyName}}', 'Nice to connect, {{firstName}}', 'Reaching out from our team'],
+      proposal: ['Proposal for {{dealName}}', 'Your customized proposal - {{companyName}}', 'Partnership proposal'],
+      'thank-you': ['Thank you, {{firstName}}!', 'Grateful for the partnership', 'Thanks for choosing us'],
+      'win-back': ['We miss you, {{firstName}}!', 'Let us reconnect - {{companyName}}', 'Exciting updates to share']
     };
     return suggestions[category] || [];
   }

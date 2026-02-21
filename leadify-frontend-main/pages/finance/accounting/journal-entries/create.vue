@@ -99,10 +99,7 @@ div
 
 <script setup lang="ts">
 import { ElNotification } from 'element-plus';
-import {
-  fetchChartOfAccounts,
-  createJournalEntry
-} from '~/composables/useAccounting';
+import { fetchChartOfAccounts, createJournalEntry } from '~/composables/useAccounting';
 import type { ChartOfAccountsItem } from '~/composables/useAccounting';
 
 definePageMeta({ middleware: 'permissions' });

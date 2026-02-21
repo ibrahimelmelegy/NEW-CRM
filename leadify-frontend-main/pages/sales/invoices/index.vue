@@ -179,7 +179,9 @@ async function handleCollect(id: number) {
     await markCollected(id);
     await Promise.all([loadInvoices(), loadSummary()]);
     ElNotification({ type: 'success', title: t('common.success'), message: t('invoices.markCollected') });
-  } finally { collecting.value = null; }
+  } finally {
+    collecting.value = null;
+  }
 }
 
 async function handleUncollect(id: number) {
@@ -188,16 +190,23 @@ async function handleUncollect(id: number) {
     await markUncollected(id);
     await Promise.all([loadInvoices(), loadSummary()]);
     ElNotification({ type: 'info', title: t('common.success'), message: t('invoices.pending') });
-  } finally { collecting.value = null; }
+  } finally {
+    collecting.value = null;
+  }
 }
 
 function handleExport() {
   const csvHeaders = ['Invoice #', 'Deal', 'Amount', 'Date', 'Status', 'Collected Date'];
   const rows = (table.value.data || []).map((r: any) => [
-    r.invoiceNumber, r.dealDetails?.title, r.formattedAmount, r.formattedDate, r.statusLabel, r.formattedCollectedDate
+    r.invoiceNumber,
+    r.dealDetails?.title,
+    r.formattedAmount,
+    r.formattedDate,
+    r.statusLabel,
+    r.formattedCollectedDate
   ]);
   const csv = [csvHeaders, ...rows].map(r => r.map((v: any) => `"${String(v || '').replace(/"/g, '""')}"`).join(',')).join('\n');
-  const blob = new Blob(['\ufeff' + csv], { type: 'text/csv;charset=utf-8;' });
+  const blob = new Blob(['\uFEFF' + csv], { type: 'text/csv;charset=utf-8;' });
   const url = URL.createObjectURL(blob);
   const link = document.createElement('a');
   link.href = url;
@@ -228,11 +237,18 @@ async function downloadInvoiceWithTemplate(template: any) {
   const { generatePDF } = await import('~/utils/pdfExporter');
   const inv = selectedInvoice.value;
   const data = {
-    companyName: 'LEADIFY ERP', companyAddress: '', companyPhone: '', companyEmail: '',
+    companyName: 'LEADIFY ERP',
+    companyAddress: '',
+    companyPhone: '',
+    companyEmail: '',
     invoiceNumber: inv.invoiceNumber,
     date: inv.invoiceDate ? new Date(inv.invoiceDate).toLocaleDateString() : '',
-    dueDate: '', clientName: inv.deal?.name || '', clientAddress: '',
-    subtotal: formatCurrency(inv.amount), tax: formatCurrency(0), total: formatCurrency(inv.amount),
+    dueDate: '',
+    clientName: inv.deal?.name || '',
+    clientAddress: '',
+    subtotal: formatCurrency(inv.amount),
+    tax: formatCurrency(0),
+    total: formatCurrency(inv.amount),
     notes: '',
     items: [{ description: inv.deal?.name || 'Invoice', qty: 1, rate: inv.amount, unitprice: inv.amount, amount: inv.amount, total: inv.amount }]
   };
@@ -248,7 +264,15 @@ function formatCurrency(amount: number): string {
 const advancedSearchFields = [
   { key: 'invoiceNumber', label: t('invoices.table.invoiceNumber'), type: 'string' },
   { key: 'amount', label: t('invoices.table.amount'), type: 'number' },
-  { key: 'status', label: t('invoices.table.status'), type: 'select', options: [{ value: 'collected', label: 'Collected' }, { value: 'pending', label: 'Pending' }] },
+  {
+    key: 'status',
+    label: t('invoices.table.status'),
+    type: 'select',
+    options: [
+      { value: 'collected', label: 'Collected' },
+      { value: 'pending', label: 'Pending' }
+    ]
+  },
   { key: 'invoiceDate', label: t('invoices.table.date'), type: 'date' }
 ];
 

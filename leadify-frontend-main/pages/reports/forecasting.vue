@@ -139,11 +139,7 @@ async function loadData() {
   try {
     if (dateRange.value) {
       const [start, end] = dateRange.value;
-      forecasts.value = await fetchForecastByPeriod(
-        selectedPeriod.value,
-        start.toISOString().split('T')[0],
-        end.toISOString().split('T')[0]
-      );
+      forecasts.value = await fetchForecastByPeriod(selectedPeriod.value, start.toISOString().split('T')[0], end.toISOString().split('T')[0]);
     } else {
       const response = await fetchForecasts({ period: selectedPeriod.value });
       forecasts.value = response.docs;
@@ -155,7 +151,9 @@ async function loadData() {
   }
 }
 
-await loadData().catch(() => { loading.value = false; });
+await loadData().catch(() => {
+  loading.value = false;
+});
 
 function formatCurrency(amount: number): string {
   return new Intl.NumberFormat('en-US', { style: 'currency', currency: 'SAR', minimumFractionDigits: 0 }).format(amount || 0);
@@ -179,7 +177,13 @@ function formatPeriodLabel(forecast: ForecastPeriod): string {
 }
 
 @keyframes fadeIn {
-  from { opacity: 0; transform: translateY(10px); }
-  to { opacity: 1; transform: translateY(0); }
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
 }
 </style>

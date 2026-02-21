@@ -181,13 +181,7 @@ div(v-loading="loading")
 
 <script setup lang="ts">
 import { ElMessage, ElMessageBox } from 'element-plus';
-import {
-  fetchZatcaInvoice,
-  submitToZatca,
-  downloadZatcaXml,
-  type ZatcaInvoice,
-  type ZatcaInvoiceStatus
-} from '~/composables/useZatca';
+import { fetchZatcaInvoice, submitToZatca, downloadZatcaXml, type ZatcaInvoice, type ZatcaInvoiceStatus } from '~/composables/useZatca';
 
 definePageMeta({ middleware: 'permissions' });
 
@@ -232,11 +226,11 @@ async function loadInvoice() {
 async function handleSubmit() {
   if (!invoice.value) return;
   try {
-    await ElMessageBox.confirm(
-      t('zatca.submitConfirm'),
-      t('zatca.submitToZatca'),
-      { confirmButtonText: t('common.submit'), cancelButtonText: t('common.cancel'), type: 'warning' }
-    );
+    await ElMessageBox.confirm(t('zatca.submitConfirm'), t('zatca.submitToZatca'), {
+      confirmButtonText: t('common.submit'),
+      cancelButtonText: t('common.cancel'),
+      type: 'warning'
+    });
     submitting.value = true;
     const res = await submitToZatca(invoice.value.id);
     if (res.success) {

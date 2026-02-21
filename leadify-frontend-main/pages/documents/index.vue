@@ -315,10 +315,7 @@ const deletePopup = ref(false);
 const deleteTargetId = ref<number | null>(null);
 const deleting = ref(false);
 
-const presetColors = [
-  '#7849ff', '#3b82f6', '#10b981', '#f59e0b', '#ef4444',
-  '#8b5cf6', '#ec4899', '#06b6d4', '#84cc16', '#f97316'
-];
+const presetColors = ['#7849ff', '#3b82f6', '#10b981', '#f59e0b', '#ef4444', '#8b5cf6', '#ec4899', '#06b6d4', '#84cc16', '#f97316'];
 
 let debounceTimer: ReturnType<typeof setTimeout>;
 
@@ -474,9 +471,7 @@ async function saveFolder() {
       color: folderForm.color
     };
 
-    const result = editingFolderId.value
-      ? await updateFolder(editingFolderId.value, payload)
-      : await createFolder(payload);
+    const result = editingFolderId.value ? await updateFolder(editingFolderId.value, payload) : await createFolder(payload);
 
     if (result.success) {
       ElNotification({ type: 'success', title: t('common.success'), message: t('common.created') });

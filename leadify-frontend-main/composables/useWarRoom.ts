@@ -31,10 +31,7 @@ export function useWarRoom() {
   async function fetchMetrics() {
     loading.value = true;
     try {
-      const [insightsRes, leadsRes] = await Promise.all([
-        useApiFetch('insights/leads-sales'),
-        useApiFetch('lead?page=1&limit=1')
-      ]);
+      const [insightsRes, leadsRes] = await Promise.all([useApiFetch('insights/leads-sales'), useApiFetch('lead?page=1&limit=1')]);
 
       if (insightsRes.success && insightsRes.body) {
         const data = insightsRes.body;

@@ -281,12 +281,7 @@
 <script setup lang="ts">
 import { ElNotification } from 'element-plus';
 import draggable from 'vuedraggable';
-import {
-  useReportBuilderPro,
-  MODULE_DEFINITIONS,
-  type FieldDefinition,
-  type ChartConfig
-} from '~/composables/useReportBuilderPro';
+import { useReportBuilderPro, MODULE_DEFINITIONS, type FieldDefinition, type ChartConfig } from '~/composables/useReportBuilderPro';
 
 definePageMeta({ title: 'Report Builder' });
 
@@ -315,9 +310,7 @@ const numericFields = computed(() => {
 const displayColumns = computed(() => {
   if (pro.config.value.groupBy) {
     const groupField = activeFields.value.find(f => f.name === pro.config.value.groupBy);
-    const cols = [
-      { name: pro.config.value.groupBy, label: groupField?.label || pro.config.value.groupBy, type: groupField?.type || 'text' }
-    ];
+    const cols = [{ name: pro.config.value.groupBy, label: groupField?.label || pro.config.value.groupBy, type: groupField?.type || 'text' }];
     // Add aggregation columns
     if (pro.config.value.aggregations.length) {
       for (const agg of pro.config.value.aggregations) {
@@ -348,11 +341,7 @@ const chartOption = computed(() => {
   if (!pro.config.value.chartType || pro.config.value.chartType === 'table') return {};
   if (!pro.results.value.length) return {};
 
-  return pro.getChartOption(
-    pro.results.value,
-    pro.config.value.chartType,
-    pro.config.value.chartConfig
-  );
+  return pro.getChartOption(pro.results.value, pro.config.value.chartType, pro.config.value.chartConfig);
 });
 
 // ─── Methods ──────────────────────────────────────────────
@@ -532,7 +521,13 @@ function formatDate(dateStr: string): string {
 }
 
 @keyframes fadeIn {
-  from { opacity: 0; transform: translateY(10px); }
-  to { opacity: 1; transform: translateY(0); }
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
 }
 </style>

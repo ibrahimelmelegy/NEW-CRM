@@ -4,9 +4,7 @@
     <div class="glass-panel p-6 rounded-2xl">
       <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
         <div>
-          <h1 class="text-2xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-violet-400 to-purple-400">
-            Performance Reviews
-          </h1>
+          <h1 class="text-2xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-violet-400 to-purple-400">Performance Reviews</h1>
           <p class="text-slate-400 text-sm mt-1">Track employee performance, set goals, and manage review cycles.</p>
         </div>
         <div class="flex gap-2">
@@ -145,8 +143,8 @@
 <script setup lang="ts">
 import { ref, computed, onMounted, nextTick } from 'vue';
 import { ElMessage } from 'element-plus';
-import { useApiFetch } from '~/composables/useApiFetch';
 import * as echarts from 'echarts';
+import { useApiFetch } from '~/composables/useApiFetch';
 
 definePageMeta({
   layout: 'default',
@@ -160,11 +158,56 @@ const deptChartRef = ref<HTMLElement>();
 
 // Sample data structure - will connect to real API
 const reviews = ref<any[]>([
-  { id: 1, employeeName: 'Ahmed Al-Farsi', department: 'Sales', reviewType: 'QUARTERLY', overallRating: 4.2, goalsCompleted: 85, status: 'COMPLETED', reviewDate: '2026-01-15' },
-  { id: 2, employeeName: 'Sara Mohammed', department: 'Marketing', reviewType: 'QUARTERLY', overallRating: 4.8, goalsCompleted: 95, status: 'COMPLETED', reviewDate: '2026-01-18' },
-  { id: 3, employeeName: 'Omar Hassan', department: 'Engineering', reviewType: 'QUARTERLY', overallRating: 3.5, goalsCompleted: 70, status: 'IN_PROGRESS', reviewDate: '2026-02-01' },
-  { id: 4, employeeName: 'Fatima Ali', department: 'HR', reviewType: 'ANNUAL', overallRating: 4.0, goalsCompleted: 80, status: 'COMPLETED', reviewDate: '2026-01-20' },
-  { id: 5, employeeName: 'Khalid Ibrahim', department: 'Sales', reviewType: 'QUARTERLY', overallRating: 3.8, goalsCompleted: 75, status: 'PENDING', reviewDate: '2026-02-10' }
+  {
+    id: 1,
+    employeeName: 'Ahmed Al-Farsi',
+    department: 'Sales',
+    reviewType: 'QUARTERLY',
+    overallRating: 4.2,
+    goalsCompleted: 85,
+    status: 'COMPLETED',
+    reviewDate: '2026-01-15'
+  },
+  {
+    id: 2,
+    employeeName: 'Sara Mohammed',
+    department: 'Marketing',
+    reviewType: 'QUARTERLY',
+    overallRating: 4.8,
+    goalsCompleted: 95,
+    status: 'COMPLETED',
+    reviewDate: '2026-01-18'
+  },
+  {
+    id: 3,
+    employeeName: 'Omar Hassan',
+    department: 'Engineering',
+    reviewType: 'QUARTERLY',
+    overallRating: 3.5,
+    goalsCompleted: 70,
+    status: 'IN_PROGRESS',
+    reviewDate: '2026-02-01'
+  },
+  {
+    id: 4,
+    employeeName: 'Fatima Ali',
+    department: 'HR',
+    reviewType: 'ANNUAL',
+    overallRating: 4.0,
+    goalsCompleted: 80,
+    status: 'COMPLETED',
+    reviewDate: '2026-01-20'
+  },
+  {
+    id: 5,
+    employeeName: 'Khalid Ibrahim',
+    department: 'Sales',
+    reviewType: 'QUARTERLY',
+    overallRating: 3.8,
+    goalsCompleted: 75,
+    status: 'PENDING',
+    reviewDate: '2026-02-10'
+  }
 ]);
 
 const employees = ref<any[]>([]);
@@ -188,12 +231,15 @@ const getProgressColor = (pct: number) => {
 
 const getReviewStatusType = (status: string): 'success' | 'warning' | 'info' | 'danger' | undefined => {
   const map: Record<string, 'success' | 'warning' | 'info' | 'danger' | undefined> = {
-    COMPLETED: 'success', IN_PROGRESS: 'warning', PENDING: 'info', CANCELLED: 'danger'
+    COMPLETED: 'success',
+    IN_PROGRESS: 'warning',
+    PENDING: 'info',
+    CANCELLED: 'danger'
   };
   return map[status] || 'info';
 };
 
-const formatDate = (d: string) => d ? new Date(d).toLocaleDateString('en', { month: 'short', day: 'numeric', year: 'numeric' }) : '-';
+const formatDate = (d: string) => (d ? new Date(d).toLocaleDateString('en', { month: 'short', day: 'numeric', year: 'numeric' }) : '-');
 
 const viewReview = (review: any) => ElMessage.info(`Viewing review for ${review.employeeName}`);
 const createReview = () => {
@@ -214,14 +260,27 @@ const renderCharts = () => {
     chart.setOption({
       tooltip: { trigger: 'axis', backgroundColor: '#1e293b', borderColor: '#334155', textStyle: { color: '#e2e8f0' } },
       grid: { left: '3%', right: '4%', bottom: '3%', top: '8%', containLabel: true },
-      xAxis: { type: 'category', data: ['1 Star', '2 Stars', '3 Stars', '4 Stars', '5 Stars'], axisLabel: { color: '#64748b' }, axisLine: { lineStyle: { color: '#334155' } } },
+      xAxis: {
+        type: 'category',
+        data: ['1 Star', '2 Stars', '3 Stars', '4 Stars', '5 Stars'],
+        axisLabel: { color: '#64748b' },
+        axisLine: { lineStyle: { color: '#334155' } }
+      },
       yAxis: { type: 'value', axisLabel: { color: '#64748b' }, splitLine: { lineStyle: { color: '#1e293b' } } },
-      series: [{
-        type: 'bar',
-        data: [0, 0, 1, 3, 1],
-        itemStyle: { color: new echarts.graphic.LinearGradient(0, 0, 0, 1, [{ offset: 0, color: '#8B5CF6' }, { offset: 1, color: '#6D28D9' }]), borderRadius: [4, 4, 0, 0] },
-        barWidth: '50%'
-      }]
+      series: [
+        {
+          type: 'bar',
+          data: [0, 0, 1, 3, 1],
+          itemStyle: {
+            color: new echarts.graphic.LinearGradient(0, 0, 0, 1, [
+              { offset: 0, color: '#8B5CF6' },
+              { offset: 1, color: '#6D28D9' }
+            ]),
+            borderRadius: [4, 4, 0, 0]
+          },
+          barWidth: '50%'
+        }
+      ]
     });
   }
 
@@ -231,8 +290,10 @@ const renderCharts = () => {
       tooltip: { trigger: 'axis', backgroundColor: '#1e293b', borderColor: '#334155', textStyle: { color: '#e2e8f0' } },
       radar: {
         indicator: [
-          { name: 'Sales', max: 5 }, { name: 'Marketing', max: 5 },
-          { name: 'Engineering', max: 5 }, { name: 'HR', max: 5 },
+          { name: 'Sales', max: 5 },
+          { name: 'Marketing', max: 5 },
+          { name: 'Engineering', max: 5 },
+          { name: 'HR', max: 5 },
           { name: 'Operations', max: 5 }
         ],
         axisName: { color: '#94a3b8' },
@@ -240,16 +301,20 @@ const renderCharts = () => {
         splitLine: { lineStyle: { color: '#334155' } },
         axisLine: { lineStyle: { color: '#334155' } }
       },
-      series: [{
-        type: 'radar',
-        data: [{
-          value: [4.0, 4.8, 3.5, 4.0, 3.7],
-          name: 'Avg Rating',
-          areaStyle: { color: 'rgba(99,102,241,0.2)' },
-          lineStyle: { color: '#6366F1', width: 2 },
-          itemStyle: { color: '#6366F1' }
-        }]
-      }]
+      series: [
+        {
+          type: 'radar',
+          data: [
+            {
+              value: [4.0, 4.8, 3.5, 4.0, 3.7],
+              name: 'Avg Rating',
+              areaStyle: { color: 'rgba(99,102,241,0.2)' },
+              lineStyle: { color: '#6366F1', width: 2 },
+              itemStyle: { color: '#6366F1' }
+            }
+          ]
+        }
+      ]
     });
   }
 };

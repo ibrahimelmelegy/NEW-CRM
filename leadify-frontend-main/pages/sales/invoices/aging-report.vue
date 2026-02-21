@@ -118,8 +118,8 @@ onMounted(() => {
 
 <style scoped>
 .glass-card {
-  background: var(--glass-bg, rgba(255,255,255,0.06));
+  background: var(--glass-bg, rgba(255, 255, 255, 0.06));
   backdrop-filter: blur(var(--glass-blur, 12px));
-  border: 1px solid var(--glass-border, rgba(255,255,255,0.08));
+  border: 1px solid var(--glass-border, rgba(255, 255, 255, 0.08));
 }
 </style>

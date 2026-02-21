@@ -4,9 +4,7 @@
     <div class="glass-panel p-6 rounded-2xl">
       <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
         <div>
-          <h1 class="text-2xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-indigo-400 to-purple-400">
-            Shipping & Logistics
-          </h1>
+          <h1 class="text-2xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-indigo-400 to-purple-400">Shipping & Logistics</h1>
           <p class="text-slate-400 text-sm mt-1">Manage shipments, carriers, and track deliveries in real time.</p>
         </div>
         <el-button type="primary" class="!rounded-xl" @click="showShipmentDialog = true">
@@ -149,7 +147,8 @@
             <div class="flex items-center justify-between mt-3 text-xs text-slate-500">
               <span>{{ carrier.totalShipments }} total shipments</span>
               <el-button text type="primary" size="small" @click="editCarrier(carrier)">
-                <Icon name="ph:pencil-simple-bold" class="w-3 h-3 mr-1" /> Edit
+                <Icon name="ph:pencil-simple-bold" class="w-3 h-3 mr-1" />
+                Edit
               </el-button>
             </div>
           </div>
@@ -185,7 +184,8 @@
             <div class="relative pl-8">
               <div class="absolute left-3 top-0 bottom-0 w-0.5 bg-slate-800"></div>
               <div v-for="(step, index) in trackingResult.timeline" :key="index" class="relative mb-6 last:mb-0">
-                <div class="absolute -left-5 w-6 h-6 rounded-full flex items-center justify-center"
+                <div
+                  class="absolute -left-5 w-6 h-6 rounded-full flex items-center justify-center"
                   :class="step.completed ? 'bg-indigo-500' : 'bg-slate-700'"
                 >
                   <Icon :name="step.icon" class="w-3 h-3" :class="step.completed ? 'text-white' : 'text-slate-500'" />
@@ -289,23 +289,171 @@ const estimatedCost = computed(() => {
 });
 
 const shipments = ref([
-  { id: 1, shipmentId: 'SHP-2026-0042', orderRef: 'ORD-2026-0091', origin: 'Riyadh', destination: 'Jeddah', carrier: 'SMSA Express', status: 'IN_TRANSIT', trackingNumber: 'TRK9847562310', eta: 'Feb 22', cost: 145 },
-  { id: 2, shipmentId: 'SHP-2026-0041', orderRef: 'ORD-2026-0090', origin: 'Riyadh', destination: 'Dammam', carrier: 'Aramex', status: 'DELIVERED', trackingNumber: 'TRK9847562309', eta: 'Feb 19', cost: 98 },
-  { id: 3, shipmentId: 'SHP-2026-0040', orderRef: 'ORD-2026-0089', origin: 'Jeddah', destination: 'Riyadh', carrier: 'DHL', status: 'PICKED_UP', trackingNumber: 'TRK9847562308', eta: 'Feb 23', cost: 210 },
-  { id: 4, shipmentId: 'SHP-2026-0039', orderRef: 'ORD-2026-0088', origin: 'Riyadh', destination: 'Abha', carrier: 'SMSA Express', status: 'PENDING', trackingNumber: 'TRK9847562307', eta: 'Feb 25', cost: 175 },
-  { id: 5, shipmentId: 'SHP-2026-0038', orderRef: 'ORD-2026-0087', origin: 'Dammam', destination: 'Riyadh', carrier: 'Naqel', status: 'DELIVERED', trackingNumber: 'TRK9847562306', eta: 'Feb 17', cost: 89 },
-  { id: 6, shipmentId: 'SHP-2026-0037', orderRef: 'ORD-2026-0086', origin: 'Riyadh', destination: 'Madinah', carrier: 'Aramex', status: 'IN_TRANSIT', trackingNumber: 'TRK9847562305', eta: 'Feb 21', cost: 132 },
-  { id: 7, shipmentId: 'SHP-2026-0036', orderRef: 'ORD-2026-0085', origin: 'Jeddah', destination: 'Tabuk', carrier: 'DHL', status: 'DELIVERED', trackingNumber: 'TRK9847562304', eta: 'Feb 16', cost: 265 },
-  { id: 8, shipmentId: 'SHP-2026-0035', orderRef: 'ORD-2026-0084', origin: 'Riyadh', destination: 'Khobar', carrier: 'FedEx', status: 'PENDING', trackingNumber: 'TRK9847562303', eta: 'Feb 26', cost: 195 }
+  {
+    id: 1,
+    shipmentId: 'SHP-2026-0042',
+    orderRef: 'ORD-2026-0091',
+    origin: 'Riyadh',
+    destination: 'Jeddah',
+    carrier: 'SMSA Express',
+    status: 'IN_TRANSIT',
+    trackingNumber: 'TRK9847562310',
+    eta: 'Feb 22',
+    cost: 145
+  },
+  {
+    id: 2,
+    shipmentId: 'SHP-2026-0041',
+    orderRef: 'ORD-2026-0090',
+    origin: 'Riyadh',
+    destination: 'Dammam',
+    carrier: 'Aramex',
+    status: 'DELIVERED',
+    trackingNumber: 'TRK9847562309',
+    eta: 'Feb 19',
+    cost: 98
+  },
+  {
+    id: 3,
+    shipmentId: 'SHP-2026-0040',
+    orderRef: 'ORD-2026-0089',
+    origin: 'Jeddah',
+    destination: 'Riyadh',
+    carrier: 'DHL',
+    status: 'PICKED_UP',
+    trackingNumber: 'TRK9847562308',
+    eta: 'Feb 23',
+    cost: 210
+  },
+  {
+    id: 4,
+    shipmentId: 'SHP-2026-0039',
+    orderRef: 'ORD-2026-0088',
+    origin: 'Riyadh',
+    destination: 'Abha',
+    carrier: 'SMSA Express',
+    status: 'PENDING',
+    trackingNumber: 'TRK9847562307',
+    eta: 'Feb 25',
+    cost: 175
+  },
+  {
+    id: 5,
+    shipmentId: 'SHP-2026-0038',
+    orderRef: 'ORD-2026-0087',
+    origin: 'Dammam',
+    destination: 'Riyadh',
+    carrier: 'Naqel',
+    status: 'DELIVERED',
+    trackingNumber: 'TRK9847562306',
+    eta: 'Feb 17',
+    cost: 89
+  },
+  {
+    id: 6,
+    shipmentId: 'SHP-2026-0037',
+    orderRef: 'ORD-2026-0086',
+    origin: 'Riyadh',
+    destination: 'Madinah',
+    carrier: 'Aramex',
+    status: 'IN_TRANSIT',
+    trackingNumber: 'TRK9847562305',
+    eta: 'Feb 21',
+    cost: 132
+  },
+  {
+    id: 7,
+    shipmentId: 'SHP-2026-0036',
+    orderRef: 'ORD-2026-0085',
+    origin: 'Jeddah',
+    destination: 'Tabuk',
+    carrier: 'DHL',
+    status: 'DELIVERED',
+    trackingNumber: 'TRK9847562304',
+    eta: 'Feb 16',
+    cost: 265
+  },
+  {
+    id: 8,
+    shipmentId: 'SHP-2026-0035',
+    orderRef: 'ORD-2026-0084',
+    origin: 'Riyadh',
+    destination: 'Khobar',
+    carrier: 'FedEx',
+    status: 'PENDING',
+    trackingNumber: 'TRK9847562303',
+    eta: 'Feb 26',
+    cost: 195
+  }
 ]);
 
 const carriers = ref([
-  { id: 1, name: 'SMSA Express', rating: 4.5, avgDeliveryTime: 2, costPerKg: 18.5, activeShipments: 8, totalShipments: 342, isActive: true, brandColor: '#E11D48' },
-  { id: 2, name: 'Aramex', rating: 4.2, avgDeliveryTime: 3, costPerKg: 15.0, activeShipments: 5, totalShipments: 278, isActive: true, brandColor: '#F97316' },
-  { id: 3, name: 'DHL', rating: 4.7, avgDeliveryTime: 2, costPerKg: 25.0, activeShipments: 4, totalShipments: 195, isActive: true, brandColor: '#EAB308' },
-  { id: 4, name: 'FedEx', rating: 4.4, avgDeliveryTime: 3, costPerKg: 22.0, activeShipments: 3, totalShipments: 156, isActive: true, brandColor: '#7C3AED' },
-  { id: 5, name: 'Naqel', rating: 4.0, avgDeliveryTime: 4, costPerKg: 12.0, activeShipments: 3, totalShipments: 120, isActive: true, brandColor: '#059669' },
-  { id: 6, name: 'Zajel', rating: 3.6, avgDeliveryTime: 5, costPerKg: 10.0, activeShipments: 0, totalShipments: 45, isActive: false, brandColor: '#6B7280' }
+  {
+    id: 1,
+    name: 'SMSA Express',
+    rating: 4.5,
+    avgDeliveryTime: 2,
+    costPerKg: 18.5,
+    activeShipments: 8,
+    totalShipments: 342,
+    isActive: true,
+    brandColor: '#E11D48'
+  },
+  {
+    id: 2,
+    name: 'Aramex',
+    rating: 4.2,
+    avgDeliveryTime: 3,
+    costPerKg: 15.0,
+    activeShipments: 5,
+    totalShipments: 278,
+    isActive: true,
+    brandColor: '#F97316'
+  },
+  {
+    id: 3,
+    name: 'DHL',
+    rating: 4.7,
+    avgDeliveryTime: 2,
+    costPerKg: 25.0,
+    activeShipments: 4,
+    totalShipments: 195,
+    isActive: true,
+    brandColor: '#EAB308'
+  },
+  {
+    id: 4,
+    name: 'FedEx',
+    rating: 4.4,
+    avgDeliveryTime: 3,
+    costPerKg: 22.0,
+    activeShipments: 3,
+    totalShipments: 156,
+    isActive: true,
+    brandColor: '#7C3AED'
+  },
+  {
+    id: 5,
+    name: 'Naqel',
+    rating: 4.0,
+    avgDeliveryTime: 4,
+    costPerKg: 12.0,
+    activeShipments: 3,
+    totalShipments: 120,
+    isActive: true,
+    brandColor: '#059669'
+  },
+  {
+    id: 6,
+    name: 'Zajel',
+    rating: 3.6,
+    avgDeliveryTime: 5,
+    costPerKg: 10.0,
+    activeShipments: 0,
+    totalShipments: 45,
+    isActive: false,
+    brandColor: '#6B7280'
+  }
 ]);
 
 const trackingResult = ref<{
@@ -318,7 +466,8 @@ const trackingResult = ref<{
 
 const filteredShipments = computed(() => {
   return shipments.value.filter(s => {
-    const matchesSearch = !shipmentSearch.value ||
+    const matchesSearch =
+      !shipmentSearch.value ||
       s.shipmentId.toLowerCase().includes(shipmentSearch.value.toLowerCase()) ||
       s.orderRef.toLowerCase().includes(shipmentSearch.value.toLowerCase()) ||
       s.trackingNumber.toLowerCase().includes(shipmentSearch.value.toLowerCase());
@@ -359,7 +508,14 @@ function lookupTracking() {
       timeline: [
         { label: 'Order Placed', timestamp: 'Feb 18, 2026 09:00 AM', location: 'Riyadh', icon: 'ph:shopping-cart-bold', completed: true },
         { label: 'Picked Up', timestamp: 'Feb 19, 2026 11:30 AM', location: 'Riyadh Warehouse', icon: 'ph:package-bold', completed: true },
-        { label: 'In Transit', timestamp: 'Feb 19, 2026 03:45 PM', location: 'Riyadh Distribution Center', icon: 'ph:truck-bold', completed: true, current: true },
+        {
+          label: 'In Transit',
+          timestamp: 'Feb 19, 2026 03:45 PM',
+          location: 'Riyadh Distribution Center',
+          icon: 'ph:truck-bold',
+          completed: true,
+          current: true
+        },
         { label: 'Out for Delivery', timestamp: 'Estimated Feb 22', icon: 'ph:map-pin-bold', completed: false },
         { label: 'Delivered', timestamp: 'Estimated Feb 22', icon: 'ph:check-circle-bold', completed: false }
       ]

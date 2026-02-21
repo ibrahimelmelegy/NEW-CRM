@@ -21,8 +21,8 @@ const PageBreakView = defineComponent({
             alignItems: 'center',
             justifyContent: 'center',
             userSelect: 'none',
-            cursor: 'default',
-          },
+            cursor: 'default'
+          }
         },
         [
           // Left dashed line
@@ -30,8 +30,8 @@ const PageBreakView = defineComponent({
             style: {
               flex: '1',
               height: '0',
-              borderTop: '2px dashed rgba(120, 73, 255, 0.3)',
-            },
+              borderTop: '2px dashed rgba(120, 73, 255, 0.3)'
+            }
           }),
           // Label
           h(
@@ -47,22 +47,22 @@ const PageBreakView = defineComponent({
                 border: '1px solid rgba(120, 73, 255, 0.2)',
                 whiteSpace: 'nowrap',
                 textTransform: 'uppercase',
-                letterSpacing: '0.5px',
-              },
+                letterSpacing: '0.5px'
+              }
             },
-            'Page Break',
+            'Page Break'
           ),
           // Right dashed line
           h('div', {
             style: {
               flex: '1',
               height: '0',
-              borderTop: '2px dashed rgba(120, 73, 255, 0.3)',
-            },
-          }),
-        ],
+              borderTop: '2px dashed rgba(120, 73, 255, 0.3)'
+            }
+          })
+        ]
       );
-  },
+  }
 });
 
 export interface PageBreakOptions {
@@ -91,15 +91,15 @@ export const PageBreak = Node.create<PageBreakOptions>({
 
   addOptions() {
     return {
-      HTMLAttributes: {},
+      HTMLAttributes: {}
     };
   },
 
   parseHTML() {
     return [
       {
-        tag: 'div[data-type="page-break"]',
-      },
+        tag: 'div[data-type="page-break"]'
+      }
     ];
   },
 
@@ -109,16 +109,16 @@ export const PageBreak = Node.create<PageBreakOptions>({
       mergeAttributes(this.options.HTMLAttributes, HTMLAttributes, {
         'data-type': 'page-break',
         class: 'page-break-node',
-        style: 'page-break-before: always; margin: 20px 0; border-top: 2px dashed #ccc; text-align: center; position: relative; padding: 8px 0;',
+        style: 'page-break-before: always; margin: 20px 0; border-top: 2px dashed #ccc; text-align: center; position: relative; padding: 8px 0;'
       }),
       [
         'span',
         {
           style:
-            'background: #f5f5f5; padding: 2px 12px; font-size: 11px; color: #999; border-radius: 10px; text-transform: uppercase; letter-spacing: 0.5px;',
+            'background: #f5f5f5; padding: 2px 12px; font-size: 11px; color: #999; border-radius: 10px; text-transform: uppercase; letter-spacing: 0.5px;'
         },
-        'Page Break',
-      ],
+        'Page Break'
+      ]
     ];
   },
 
@@ -132,18 +132,18 @@ export const PageBreak = Node.create<PageBreakOptions>({
         () =>
         ({ commands }) => {
           return commands.insertContent({
-            type: this.name,
+            type: this.name
           });
-        },
+        }
     };
   },
 
   // Keyboard shortcut: Ctrl+Enter for page break
   addKeyboardShortcuts() {
     return {
-      'Mod-Enter': () => this.editor.commands.insertPageBreak(),
+      'Mod-Enter': () => this.editor.commands.insertPageBreak()
     };
-  },
+  }
 });
 
 export default PageBreak;

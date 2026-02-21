@@ -13,11 +13,11 @@ import { useI18n } from 'vue-i18n';
 import { ElNotification } from 'element-plus';
 const { t } = useI18n();
 useHead({
-  title: t('leads.createTitle'),
+  title: t('leads.createTitle')
 });
 definePageMeta({
-  middleware: "permissions",
-  permission: "CREATE_LEADS",
+  middleware: 'permissions',
+  permission: 'CREATE_LEADS'
 });
 const router = useRouter();
 const { goBack } = useSafeBack('/sales/leads');

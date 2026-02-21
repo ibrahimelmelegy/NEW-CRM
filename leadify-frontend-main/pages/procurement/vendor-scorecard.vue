@@ -4,9 +4,7 @@
     <div class="glass-panel p-6 rounded-2xl">
       <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
         <div>
-          <h1 class="text-2xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-orange-400 to-amber-400">
-            Vendor Scorecard
-          </h1>
+          <h1 class="text-2xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-orange-400 to-amber-400">Vendor Scorecard</h1>
           <p class="text-slate-400 text-sm mt-1">Evaluate vendor performance, compare suppliers, and identify at-risk partners.</p>
         </div>
         <div class="flex gap-2">
@@ -55,12 +53,11 @@
             </template>
           </el-input>
         </div>
-        <el-table :data="filteredVendors" class="glass-table" stripe @row-click="selectVendor" row-class-name="cursor-pointer">
+        <el-table :data="filteredVendors" class="glass-table" stripe row-class-name="cursor-pointer" @row-click="selectVendor">
           <el-table-column label="Vendor" min-width="180">
             <template #default="{ row }">
               <div class="flex items-center gap-3">
-                <div class="w-8 h-8 rounded-lg flex items-center justify-center text-sm font-bold"
-                  :class="getVendorAvatarClass(row.overallScore)">
+                <div class="w-8 h-8 rounded-lg flex items-center justify-center text-sm font-bold" :class="getVendorAvatarClass(row.overallScore)">
                   {{ row.name.charAt(0) }}
                 </div>
                 <div>
@@ -89,9 +86,11 @@
             <template #default="{ row }">
               <div class="flex items-center justify-center gap-1">
                 <span class="text-sm font-bold" :class="getScoreColor(row.overallScore)">{{ row.overallScore.toFixed(1) }}</span>
-                <Icon :name="row.trend === 'up' ? 'ph:arrow-up-bold' : row.trend === 'down' ? 'ph:arrow-down-bold' : 'ph:minus-bold'"
+                <Icon
+                  :name="row.trend === 'up' ? 'ph:arrow-up-bold' : row.trend === 'down' ? 'ph:arrow-down-bold' : 'ph:minus-bold'"
                   class="w-3 h-3"
-                  :class="row.trend === 'up' ? 'text-emerald-400' : row.trend === 'down' ? 'text-red-400' : 'text-slate-500'" />
+                  :class="row.trend === 'up' ? 'text-emerald-400' : row.trend === 'down' ? 'text-red-400' : 'text-slate-500'"
+                />
               </div>
             </template>
           </el-table-column>
@@ -110,8 +109,10 @@
         <h3 class="text-lg font-medium text-slate-200 mb-4">Vendor Comparison</h3>
         <div v-if="selectedVendor">
           <div class="text-center mb-4">
-            <div class="w-16 h-16 rounded-2xl mx-auto flex items-center justify-center text-2xl font-bold mb-2"
-              :class="getVendorAvatarClass(selectedVendor.overallScore)">
+            <div
+              class="w-16 h-16 rounded-2xl mx-auto flex items-center justify-center text-2xl font-bold mb-2"
+              :class="getVendorAvatarClass(selectedVendor.overallScore)"
+            >
               {{ selectedVendor.name.charAt(0) }}
             </div>
             <h4 class="text-sm font-bold text-slate-200">{{ selectedVendor.name }}</h4>
@@ -125,8 +126,12 @@
                 <span class="text-xs text-slate-400">{{ metric.label }}</span>
                 <span class="text-xs font-bold" :class="getScoreColor(metric.score)">{{ metric.score.toFixed(1) }}/5.0</span>
               </div>
-              <el-progress :percentage="metric.score / 5 * 100" :stroke-width="8" :show-text="false"
-                :color="metric.score >= 4 ? '#10B981' : metric.score >= 3 ? '#F59E0B' : '#EF4444'" />
+              <el-progress
+                :percentage="(metric.score / 5) * 100"
+                :stroke-width="8"
+                :show-text="false"
+                :color="metric.score >= 4 ? '#10B981' : metric.score >= 3 ? '#F59E0B' : '#EF4444'"
+              />
             </div>
           </div>
 
@@ -154,10 +159,12 @@
 
           <div class="mt-4 flex gap-2">
             <el-button size="small" type="primary" class="flex-1" @click="evaluateVendor(selectedVendor)">
-              <Icon name="ph:clipboard-text-bold" class="w-4 h-4 mr-1" /> Evaluate
+              <Icon name="ph:clipboard-text-bold" class="w-4 h-4 mr-1" />
+              Evaluate
             </el-button>
             <el-button size="small" class="flex-1" @click="viewHistory(selectedVendor)">
-              <Icon name="ph:clock-counter-clockwise-bold" class="w-4 h-4 mr-1" /> History
+              <Icon name="ph:clock-counter-clockwise-bold" class="w-4 h-4 mr-1" />
+              History
             </el-button>
           </div>
         </div>
@@ -218,14 +225,118 @@ const showEvaluationDialog = ref(false);
 const selectedVendorId = ref<number | null>(null);
 
 const vendors = ref([
-  { id: 1, name: 'Al-Rajhi Materials', category: 'Raw Materials', qualityScore: 4.5, deliveryScore: 4.2, pricingScore: 3.8, overallScore: 4.2, trend: 'up' as const, contractValue: 1250000, activeSince: 'Jan 2023', ordersYTD: 48, onTimePercent: 94 },
-  { id: 2, name: 'Gulf Tech Supplies', category: 'IT Equipment', qualityScore: 4.0, deliveryScore: 3.5, pricingScore: 4.2, overallScore: 3.9, trend: 'stable' as const, contractValue: 870000, activeSince: 'Mar 2022', ordersYTD: 32, onTimePercent: 88 },
-  { id: 3, name: 'Saudi Steel Corp', category: 'Construction', qualityScore: 4.8, deliveryScore: 4.6, pricingScore: 3.5, overallScore: 4.3, trend: 'up' as const, contractValue: 2100000, activeSince: 'Jun 2021', ordersYTD: 56, onTimePercent: 96 },
-  { id: 4, name: 'Riyadh Logistics', category: 'Logistics', qualityScore: 3.2, deliveryScore: 2.8, pricingScore: 4.0, overallScore: 3.3, trend: 'down' as const, contractValue: 450000, activeSince: 'Sep 2024', ordersYTD: 18, onTimePercent: 72 },
-  { id: 5, name: 'Desert Packaging', category: 'Packaging', qualityScore: 2.0, deliveryScore: 2.2, pricingScore: 3.5, overallScore: 2.4, trend: 'down' as const, contractValue: 180000, activeSince: 'Nov 2024', ordersYTD: 12, onTimePercent: 65 },
-  { id: 6, name: 'MENA Office Solutions', category: 'Office Supplies', qualityScore: 3.8, deliveryScore: 4.0, pricingScore: 4.5, overallScore: 4.1, trend: 'up' as const, contractValue: 320000, activeSince: 'Feb 2023', ordersYTD: 24, onTimePercent: 91 },
-  { id: 7, name: 'Jeddah Chemicals', category: 'Chemicals', qualityScore: 4.2, deliveryScore: 3.9, pricingScore: 3.6, overallScore: 3.9, trend: 'stable' as const, contractValue: 560000, activeSince: 'Aug 2022', ordersYTD: 38, onTimePercent: 87 },
-  { id: 8, name: 'Eastern Textiles', category: 'Textiles', qualityScore: 1.8, deliveryScore: 2.0, pricingScore: 4.2, overallScore: 2.3, trend: 'down' as const, contractValue: 95000, activeSince: 'Apr 2025', ordersYTD: 6, onTimePercent: 58 },
+  {
+    id: 1,
+    name: 'Al-Rajhi Materials',
+    category: 'Raw Materials',
+    qualityScore: 4.5,
+    deliveryScore: 4.2,
+    pricingScore: 3.8,
+    overallScore: 4.2,
+    trend: 'up' as const,
+    contractValue: 1250000,
+    activeSince: 'Jan 2023',
+    ordersYTD: 48,
+    onTimePercent: 94
+  },
+  {
+    id: 2,
+    name: 'Gulf Tech Supplies',
+    category: 'IT Equipment',
+    qualityScore: 4.0,
+    deliveryScore: 3.5,
+    pricingScore: 4.2,
+    overallScore: 3.9,
+    trend: 'stable' as const,
+    contractValue: 870000,
+    activeSince: 'Mar 2022',
+    ordersYTD: 32,
+    onTimePercent: 88
+  },
+  {
+    id: 3,
+    name: 'Saudi Steel Corp',
+    category: 'Construction',
+    qualityScore: 4.8,
+    deliveryScore: 4.6,
+    pricingScore: 3.5,
+    overallScore: 4.3,
+    trend: 'up' as const,
+    contractValue: 2100000,
+    activeSince: 'Jun 2021',
+    ordersYTD: 56,
+    onTimePercent: 96
+  },
+  {
+    id: 4,
+    name: 'Riyadh Logistics',
+    category: 'Logistics',
+    qualityScore: 3.2,
+    deliveryScore: 2.8,
+    pricingScore: 4.0,
+    overallScore: 3.3,
+    trend: 'down' as const,
+    contractValue: 450000,
+    activeSince: 'Sep 2024',
+    ordersYTD: 18,
+    onTimePercent: 72
+  },
+  {
+    id: 5,
+    name: 'Desert Packaging',
+    category: 'Packaging',
+    qualityScore: 2.0,
+    deliveryScore: 2.2,
+    pricingScore: 3.5,
+    overallScore: 2.4,
+    trend: 'down' as const,
+    contractValue: 180000,
+    activeSince: 'Nov 2024',
+    ordersYTD: 12,
+    onTimePercent: 65
+  },
+  {
+    id: 6,
+    name: 'MENA Office Solutions',
+    category: 'Office Supplies',
+    qualityScore: 3.8,
+    deliveryScore: 4.0,
+    pricingScore: 4.5,
+    overallScore: 4.1,
+    trend: 'up' as const,
+    contractValue: 320000,
+    activeSince: 'Feb 2023',
+    ordersYTD: 24,
+    onTimePercent: 91
+  },
+  {
+    id: 7,
+    name: 'Jeddah Chemicals',
+    category: 'Chemicals',
+    qualityScore: 4.2,
+    deliveryScore: 3.9,
+    pricingScore: 3.6,
+    overallScore: 3.9,
+    trend: 'stable' as const,
+    contractValue: 560000,
+    activeSince: 'Aug 2022',
+    ordersYTD: 38,
+    onTimePercent: 87
+  },
+  {
+    id: 8,
+    name: 'Eastern Textiles',
+    category: 'Textiles',
+    qualityScore: 1.8,
+    deliveryScore: 2.0,
+    pricingScore: 4.2,
+    overallScore: 2.3,
+    trend: 'down' as const,
+    contractValue: 95000,
+    activeSince: 'Apr 2025',
+    ordersYTD: 6,
+    onTimePercent: 58
+  }
 ]);
 
 const evaluationCriteria = ref([
@@ -233,7 +344,7 @@ const evaluationCriteria = ref([
   { key: 'delivery', label: 'Delivery', description: 'On-time delivery and logistics reliability' },
   { key: 'pricing', label: 'Pricing', description: 'Competitiveness and value for money' },
   { key: 'communication', label: 'Communication', description: 'Responsiveness and clarity of communication' },
-  { key: 'compliance', label: 'Compliance', description: 'Regulatory and contractual compliance' },
+  { key: 'compliance', label: 'Compliance', description: 'Regulatory and contractual compliance' }
 ]);
 
 const evaluationForm = ref<{
@@ -245,15 +356,13 @@ const evaluationForm = ref<{
   vendorId: null,
   period: '',
   scores: { quality: 0, delivery: 0, pricing: 0, communication: 0, compliance: 0 },
-  notes: '',
+  notes: ''
 });
 
 const filteredVendors = computed(() => {
   if (!searchText.value) return vendors.value;
   const s = searchText.value.toLowerCase();
-  return vendors.value.filter(v =>
-    v.name.toLowerCase().includes(s) || v.category.toLowerCase().includes(s)
-  );
+  return vendors.value.filter(v => v.name.toLowerCase().includes(s) || v.category.toLowerCase().includes(s));
 });
 
 const avgScore = computed(() => {
@@ -277,7 +386,7 @@ const vendorMetrics = computed(() => {
     { label: 'Delivery', score: v.deliveryScore },
     { label: 'Pricing', score: v.pricingScore },
     { label: 'Communication', score: (v.qualityScore + v.deliveryScore) / 2 },
-    { label: 'Compliance', score: (v.overallScore + v.deliveryScore) / 2 },
+    { label: 'Compliance', score: (v.overallScore + v.deliveryScore) / 2 }
   ];
 });
 
@@ -332,7 +441,7 @@ const submitEvaluation = () => {
     return;
   }
   const scores = Object.values(evaluationForm.value.scores);
-  if (scores.some(s => s === 0)) {
+  if (scores.includes(0)) {
     ElMessage.warning('Please rate all criteria');
     return;
   }
@@ -342,7 +451,7 @@ const submitEvaluation = () => {
     vendorId: null,
     period: '',
     scores: { quality: 0, delivery: 0, pricing: 0, communication: 0, compliance: 0 },
-    notes: '',
+    notes: ''
   };
 };
 </script>

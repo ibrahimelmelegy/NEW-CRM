@@ -159,13 +159,7 @@ div(v-loading="loading")
 
 <script setup lang="ts">
 import { ElMessage } from 'element-plus';
-import {
-  fetchAssessment,
-  calculateZakaat,
-  updateAssessment,
-  type ZakaatAssessment,
-  type ZakaatStatus
-} from '~/composables/useZakaat';
+import { fetchAssessment, calculateZakaat, updateAssessment, type ZakaatAssessment, type ZakaatStatus } from '~/composables/useZakaat';
 
 definePageMeta({ middleware: 'permissions' });
 
@@ -188,12 +182,47 @@ const assetCards = computed(() => {
   const a = assessment.value;
   return [
     { key: 'cash', label: t('zakaat.assets.cashAndBank'), value: a.cashAndBank, icon: 'ph:bank-bold', color: '#7849ff', isDeduction: false },
-    { key: 'receivable', label: t('zakaat.assets.accountsReceivable'), value: a.accountsReceivable, icon: 'ph:invoice-bold', color: '#409eff', isDeduction: false },
-    { key: 'inventory', label: t('zakaat.assets.inventoryValue'), value: a.inventoryValue, icon: 'ph:package-bold', color: '#67c23a', isDeduction: false },
-    { key: 'investments', label: t('zakaat.assets.shortTermInvestments'), value: a.shortTermInvestments, icon: 'ph:chart-line-up-bold', color: '#e6a23c', isDeduction: false },
-    { key: 'prepaid', label: t('zakaat.assets.prepaidExpenses'), value: a.prepaidExpenses, icon: 'ph:receipt-bold', color: '#909399', isDeduction: false },
+    {
+      key: 'receivable',
+      label: t('zakaat.assets.accountsReceivable'),
+      value: a.accountsReceivable,
+      icon: 'ph:invoice-bold',
+      color: '#409eff',
+      isDeduction: false
+    },
+    {
+      key: 'inventory',
+      label: t('zakaat.assets.inventoryValue'),
+      value: a.inventoryValue,
+      icon: 'ph:package-bold',
+      color: '#67c23a',
+      isDeduction: false
+    },
+    {
+      key: 'investments',
+      label: t('zakaat.assets.shortTermInvestments'),
+      value: a.shortTermInvestments,
+      icon: 'ph:chart-line-up-bold',
+      color: '#e6a23c',
+      isDeduction: false
+    },
+    {
+      key: 'prepaid',
+      label: t('zakaat.assets.prepaidExpenses'),
+      value: a.prepaidExpenses,
+      icon: 'ph:receipt-bold',
+      color: '#909399',
+      isDeduction: false
+    },
     { key: 'fixed', label: t('zakaat.deductions.fixedAssets'), value: a.fixedAssets, icon: 'ph:buildings-bold', color: '#ef4444', isDeduction: true },
-    { key: 'liabilities', label: t('zakaat.deductions.longTermLiabilities'), value: a.longTermLiabilities, icon: 'ph:scales-bold', color: '#f56c6c', isDeduction: true }
+    {
+      key: 'liabilities',
+      label: t('zakaat.deductions.longTermLiabilities'),
+      value: a.longTermLiabilities,
+      icon: 'ph:scales-bold',
+      color: '#f56c6c',
+      isDeduction: true
+    }
   ];
 });
 

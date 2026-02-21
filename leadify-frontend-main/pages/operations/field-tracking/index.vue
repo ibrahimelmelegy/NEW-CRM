@@ -186,7 +186,10 @@ const summaryStats = computed(() => {
 let debounceTimer: ReturnType<typeof setTimeout>;
 function debounceLoad() {
   clearTimeout(debounceTimer);
-  debounceTimer = setTimeout(() => { currentPage.value = 1; loadCheckIns(); }, 400);
+  debounceTimer = setTimeout(() => {
+    currentPage.value = 1;
+    loadCheckIns();
+  }, 400);
 }
 
 onMounted(async () => {
@@ -204,7 +207,9 @@ async function loadCheckIns() {
     const result = await fetchCheckIns(params);
     checkIns.value = result.docs;
     pagination.value = result.pagination;
-  } finally { loading.value = false; }
+  } finally {
+    loading.value = false;
+  }
 }
 
 function handleDateChange(dates: [string, string] | null) {
@@ -250,7 +255,9 @@ async function handleCheckIn() {
   } catch (error: any) {
     const msg = error.code === 1 ? t('fieldOps.locationDenied') || 'Location access denied' : t('fieldOps.locationError') || 'Failed to get location';
     ElNotification({ type: 'error', title: t('common.error'), message: msg });
-  } finally { checkingIn.value = false; }
+  } finally {
+    checkingIn.value = false;
+  }
 }
 
 async function handleCheckOut() {
@@ -263,7 +270,9 @@ async function handleCheckOut() {
   } catch (error: any) {
     const msg = error.code === 1 ? t('fieldOps.locationDenied') || 'Location access denied' : t('fieldOps.locationError') || 'Failed to get location';
     ElNotification({ type: 'error', title: t('common.error'), message: msg });
-  } finally { checkingOut.value = false; }
+  } finally {
+    checkingOut.value = false;
+  }
 }
 
 async function handleSaveCheckIn() {
@@ -281,7 +290,9 @@ async function handleSaveCheckIn() {
       showCheckInDialog.value = false;
       await loadCheckIns();
     }
-  } finally { saving.value = false; }
+  } finally {
+    saving.value = false;
+  }
 }
 
 function handleRowClick(row: FieldCheckIn) {
@@ -289,6 +300,10 @@ function handleRowClick(row: FieldCheckIn) {
   showDetailDialog.value = true;
 }
 
-function formatDate(d: string) { return d ? new Date(d).toLocaleDateString() : '—'; }
-function formatTime(d: string) { return d ? new Date(d).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }) : '—'; }
+function formatDate(d: string) {
+  return d ? new Date(d).toLocaleDateString() : '—';
+}
+function formatTime(d: string) {
+  return d ? new Date(d).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }) : '—';
+}
 </script>

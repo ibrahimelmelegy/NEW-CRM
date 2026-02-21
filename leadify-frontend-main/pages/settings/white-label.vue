@@ -4,9 +4,7 @@
     <div class="glass-panel p-6 rounded-2xl">
       <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
         <div>
-          <h1 class="text-2xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-purple-400 to-pink-400">
-            White-Label Settings
-          </h1>
+          <h1 class="text-2xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-purple-400 to-pink-400">White-Label Settings</h1>
           <p class="text-slate-400 text-sm mt-1">Customize branding, domain, emails, and portal appearance for your organization.</p>
         </div>
       </div>
@@ -24,7 +22,7 @@
             <p class="text-xs text-slate-500">Company identity and visual assets</p>
           </div>
         </div>
-        <el-button type="primary" class="!rounded-xl" @click="saveBranding" :loading="savingBranding">
+        <el-button type="primary" class="!rounded-xl" :loading="savingBranding" @click="saveBranding">
           <Icon name="ph:floppy-disk-bold" class="w-4 h-4 mr-2" />
           Save
         </el-button>
@@ -45,7 +43,10 @@
         <!-- Logo Upload -->
         <div>
           <label class="block text-xs text-slate-500 mb-2">Logo</label>
-          <div class="border-2 border-dashed border-slate-700 rounded-xl p-6 text-center hover:border-slate-600 transition-all cursor-pointer" @click="triggerLogoUpload">
+          <div
+            class="border-2 border-dashed border-slate-700 rounded-xl p-6 text-center hover:border-slate-600 transition-all cursor-pointer"
+            @click="triggerLogoUpload"
+          >
             <div v-if="branding.logoPreview" class="mb-2">
               <img :src="branding.logoPreview" alt="Logo preview" class="h-12 mx-auto object-contain" />
             </div>
@@ -60,7 +61,10 @@
         <!-- Favicon Upload -->
         <div>
           <label class="block text-xs text-slate-500 mb-2">Favicon</label>
-          <div class="border-2 border-dashed border-slate-700 rounded-xl p-6 text-center hover:border-slate-600 transition-all cursor-pointer" @click="triggerFaviconUpload">
+          <div
+            class="border-2 border-dashed border-slate-700 rounded-xl p-6 text-center hover:border-slate-600 transition-all cursor-pointer"
+            @click="triggerFaviconUpload"
+          >
             <div v-if="branding.faviconPreview" class="mb-2">
               <img :src="branding.faviconPreview" alt="Favicon preview" class="h-8 mx-auto object-contain" />
             </div>
@@ -104,7 +108,7 @@
             <p class="text-xs text-slate-500">Use your own domain for the CRM</p>
           </div>
         </div>
-        <el-button type="primary" class="!rounded-xl" @click="saveDomain" :loading="savingDomain">
+        <el-button type="primary" class="!rounded-xl" :loading="savingDomain" @click="saveDomain">
           <Icon name="ph:floppy-disk-bold" class="w-4 h-4 mr-2" />
           Save
         </el-button>
@@ -131,17 +135,20 @@
       </div>
 
       <!-- DNS Instructions -->
-      <div class="mt-4 p-4 rounded-xl" style="background: rgba(255,255,255,0.02); border: 1px solid rgba(255,255,255,0.05)">
+      <div class="mt-4 p-4 rounded-xl" style="background: rgba(255, 255, 255, 0.02); border: 1px solid rgba(255, 255, 255, 0.05)">
         <h4 class="text-xs font-medium text-slate-400 mb-3 flex items-center gap-2">
           <Icon name="ph:info-bold" class="w-4 h-4" />
           DNS Configuration Instructions
         </h4>
         <div class="space-y-2 text-xs text-slate-500">
-          <p>1. Add a CNAME record pointing your domain to <span class="font-mono text-slate-400">app.leadify.cloud</span></p>
+          <p>
+            1. Add a CNAME record pointing your domain to
+            <span class="font-mono text-slate-400">app.leadify.cloud</span>
+          </p>
           <p>2. Wait for DNS propagation (up to 48 hours)</p>
           <p>3. SSL certificate will be automatically provisioned once DNS is verified</p>
         </div>
-        <div class="mt-3 p-3 rounded-lg font-mono text-xs text-slate-400" style="background: rgba(0,0,0,0.2)">
+        <div class="mt-3 p-3 rounded-lg font-mono text-xs text-slate-400" style="background: rgba(0, 0, 0, 0.2)">
           Type: CNAME | Host: crm | Value: app.leadify.cloud | TTL: 3600
         </div>
       </div>
@@ -159,7 +166,7 @@
             <p class="text-xs text-slate-500">Customize outgoing email appearance</p>
           </div>
         </div>
-        <el-button type="primary" class="!rounded-xl" @click="saveEmail" :loading="savingEmail">
+        <el-button type="primary" class="!rounded-xl" :loading="savingEmail" @click="saveEmail">
           <Icon name="ph:floppy-disk-bold" class="w-4 h-4 mr-2" />
           Save
         </el-button>
@@ -201,7 +208,7 @@
             <p class="text-xs text-slate-500">Customize the login page appearance</p>
           </div>
         </div>
-        <el-button type="primary" class="!rounded-xl" @click="saveLoginPage" :loading="savingLoginPage">
+        <el-button type="primary" class="!rounded-xl" :loading="savingLoginPage" @click="saveLoginPage">
           <Icon name="ph:floppy-disk-bold" class="w-4 h-4 mr-2" />
           Save
         </el-button>
@@ -224,7 +231,10 @@
 
       <div class="mt-6">
         <label class="block text-xs text-slate-500 mb-2">Custom Background</label>
-        <div class="border-2 border-dashed border-slate-700 rounded-xl p-6 text-center hover:border-slate-600 transition-all cursor-pointer" @click="triggerBgUpload">
+        <div
+          class="border-2 border-dashed border-slate-700 rounded-xl p-6 text-center hover:border-slate-600 transition-all cursor-pointer"
+          @click="triggerBgUpload"
+        >
           <div v-if="loginPage.bgPreview" class="mb-2">
             <img :src="loginPage.bgPreview" alt="Background preview" class="h-20 mx-auto object-cover rounded-lg" />
           </div>
@@ -249,7 +259,7 @@
             <p class="text-xs text-slate-500">Customize the client-facing portal</p>
           </div>
         </div>
-        <el-button type="primary" class="!rounded-xl" @click="savePortal" :loading="savingPortal">
+        <el-button type="primary" class="!rounded-xl" :loading="savingPortal" @click="savePortal">
           <Icon name="ph:floppy-disk-bold" class="w-4 h-4 mr-2" />
           Save
         </el-button>
@@ -262,7 +272,10 @@
         </div>
         <div>
           <label class="block text-xs text-slate-500 mb-2">Portal Logo</label>
-          <div class="border-2 border-dashed border-slate-700 rounded-xl p-4 text-center hover:border-slate-600 transition-all cursor-pointer" @click="triggerPortalLogoUpload">
+          <div
+            class="border-2 border-dashed border-slate-700 rounded-xl p-4 text-center hover:border-slate-600 transition-all cursor-pointer"
+            @click="triggerPortalLogoUpload"
+          >
             <div v-if="portal.logoPreview" class="flex items-center justify-center gap-2">
               <img :src="portal.logoPreview" alt="Portal logo" class="h-8 object-contain" />
               <el-button text type="danger" size="small" @click.stop="portal.logoPreview = ''">
@@ -297,14 +310,18 @@
 
       <div class="mt-6">
         <label class="block text-xs text-slate-500 mb-2">Custom CSS</label>
-        <el-input v-model="portal.customCss" type="textarea" :rows="6"
+        <el-input
+          v-model="portal.customCss"
+          type="textarea"
+          :rows="6"
           placeholder="/* Custom CSS overrides */
 .portal-header {
   background: #1a1a2e;
 }
 .portal-sidebar {
   border-right: 1px solid rgba(255,255,255,0.05);
-}" />
+}"
+        />
       </div>
     </div>
   </div>
@@ -368,10 +385,18 @@ const portal = ref({
 });
 
 // File upload handlers
-function triggerLogoUpload() { logoInputRef.value?.click(); }
-function triggerFaviconUpload() { faviconInputRef.value?.click(); }
-function triggerBgUpload() { bgInputRef.value?.click(); }
-function triggerPortalLogoUpload() { portalLogoInputRef.value?.click(); }
+function triggerLogoUpload() {
+  logoInputRef.value?.click();
+}
+function triggerFaviconUpload() {
+  faviconInputRef.value?.click();
+}
+function triggerBgUpload() {
+  bgInputRef.value?.click();
+}
+function triggerPortalLogoUpload() {
+  portalLogoInputRef.value?.click();
+}
 
 function handleLogoUpload(event: Event) {
   const file = (event.target as HTMLInputElement).files?.[0];

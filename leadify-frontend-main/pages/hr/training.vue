@@ -4,9 +4,7 @@
     <div class="glass-panel p-6 rounded-2xl">
       <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
         <div>
-          <h1 class="text-2xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-blue-400 to-indigo-400">
-            Training & LMS
-          </h1>
+          <h1 class="text-2xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-blue-400 to-indigo-400">Training & LMS</h1>
           <p class="text-slate-400 text-sm mt-1">Manage courses, track learner progress, and issue certifications.</p>
         </div>
         <el-button type="primary" class="!rounded-xl" @click="showCourseDialog = true">
@@ -59,7 +57,11 @@
         </div>
 
         <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-          <div v-for="course in filteredCourses" :key="course.id" class="glass-panel rounded-xl overflow-hidden hover:border-primary-500/30 transition-all">
+          <div
+            v-for="course in filteredCourses"
+            :key="course.id"
+            class="glass-panel rounded-xl overflow-hidden hover:border-primary-500/30 transition-all"
+          >
             <!-- Thumbnail Placeholder -->
             <div class="h-36 flex items-center justify-center" :style="{ background: course.thumbnailBg }">
               <Icon :name="course.icon" class="w-12 h-12 text-white/80" />
@@ -78,13 +80,17 @@
               <p class="text-xs text-slate-500 mb-3">{{ course.instructor }}</p>
 
               <!-- Progress -->
-              <div class="mb-3" v-if="course.progress !== undefined">
+              <div v-if="course.progress !== undefined" class="mb-3">
                 <div class="flex justify-between text-xs text-slate-500 mb-1">
                   <span>Progress</span>
                   <span>{{ course.progress }}%</span>
                 </div>
-                <el-progress :percentage="course.progress" :stroke-width="4" :show-text="false"
-                  :color="course.progress === 100 ? '#10B981' : '#6366F1'" />
+                <el-progress
+                  :percentage="course.progress"
+                  :stroke-width="4"
+                  :show-text="false"
+                  :color="course.progress === 100 ? '#10B981' : '#6366F1'"
+                />
               </div>
 
               <div class="flex items-center justify-between text-xs text-slate-500">
@@ -124,8 +130,12 @@
                     <span class="text-slate-500">{{ enrollment.completedModules }}/{{ enrollment.totalModules }} modules</span>
                     <span class="text-indigo-400 font-medium">{{ enrollment.progress }}%</span>
                   </div>
-                  <el-progress :percentage="enrollment.progress" :stroke-width="6" :show-text="false"
-                    :color="enrollment.progress === 100 ? '#10B981' : '#6366F1'" />
+                  <el-progress
+                    :percentage="enrollment.progress"
+                    :stroke-width="6"
+                    :show-text="false"
+                    :color="enrollment.progress === 100 ? '#10B981' : '#6366F1'"
+                  />
                 </div>
 
                 <div class="flex items-center justify-between">
@@ -263,33 +273,208 @@ const certificationsIssued = ref(156);
 const categories = ['Sales', 'Marketing', 'Technical', 'Leadership', 'Compliance', 'Onboarding'];
 
 const courses = ref([
-  { id: 1, title: 'CRM Fundamentals', instructor: 'Ahmed Al-Rashid', duration: '3h 20m', difficulty: 'Beginner', category: 'Sales', enrolled: 45, progress: 100, icon: 'ph:book-open-bold', thumbnailBg: 'linear-gradient(135deg, #3B82F6, #6366F1)' },
-  { id: 2, title: 'Advanced Sales Pipeline', instructor: 'Sara Mansour', duration: '5h 10m', difficulty: 'Advanced', category: 'Sales', enrolled: 32, progress: 65, icon: 'ph:chart-line-up-bold', thumbnailBg: 'linear-gradient(135deg, #8B5CF6, #A855F7)' },
-  { id: 3, title: 'Email Marketing Mastery', instructor: 'Tariq Nasser', duration: '4h 00m', difficulty: 'Intermediate', category: 'Marketing', enrolled: 28, progress: undefined, icon: 'ph:envelope-bold', thumbnailBg: 'linear-gradient(135deg, #EC4899, #F43F5E)' },
-  { id: 4, title: 'Leadership Communication', instructor: 'Lina Khalid', duration: '2h 45m', difficulty: 'Intermediate', category: 'Leadership', enrolled: 19, progress: 30, icon: 'ph:megaphone-bold', thumbnailBg: 'linear-gradient(135deg, #F59E0B, #EF4444)' },
-  { id: 5, title: 'Data Privacy & Compliance', instructor: 'Youssef Ali', duration: '1h 30m', difficulty: 'Beginner', category: 'Compliance', enrolled: 64, progress: undefined, icon: 'ph:shield-check-bold', thumbnailBg: 'linear-gradient(135deg, #10B981, #059669)' },
-  { id: 6, title: 'API Integration Workshop', instructor: 'Omar Hassan', duration: '6h 00m', difficulty: 'Advanced', category: 'Technical', enrolled: 15, progress: undefined, icon: 'ph:code-bold', thumbnailBg: 'linear-gradient(135deg, #06B6D4, #3B82F6)' },
-  { id: 7, title: 'New Employee Onboarding', instructor: 'Maha Ibrahim', duration: '2h 00m', difficulty: 'Beginner', category: 'Onboarding', enrolled: 52, progress: 80, icon: 'ph:user-plus-bold', thumbnailBg: 'linear-gradient(135deg, #14B8A6, #10B981)' },
-  { id: 8, title: 'Customer Success Strategies', instructor: 'Nada Salem', duration: '3h 45m', difficulty: 'Intermediate', category: 'Sales', enrolled: 23, progress: undefined, icon: 'ph:handshake-bold', thumbnailBg: 'linear-gradient(135deg, #7C3AED, #4F46E5)' },
-  { id: 9, title: 'Social Media for B2B', instructor: 'Faisal Mohammed', duration: '4h 15m', difficulty: 'Intermediate', category: 'Marketing', enrolled: 38, progress: undefined, icon: 'ph:share-network-bold', thumbnailBg: 'linear-gradient(135deg, #F472B6, #A855F7)' }
+  {
+    id: 1,
+    title: 'CRM Fundamentals',
+    instructor: 'Ahmed Al-Rashid',
+    duration: '3h 20m',
+    difficulty: 'Beginner',
+    category: 'Sales',
+    enrolled: 45,
+    progress: 100,
+    icon: 'ph:book-open-bold',
+    thumbnailBg: 'linear-gradient(135deg, #3B82F6, #6366F1)'
+  },
+  {
+    id: 2,
+    title: 'Advanced Sales Pipeline',
+    instructor: 'Sara Mansour',
+    duration: '5h 10m',
+    difficulty: 'Advanced',
+    category: 'Sales',
+    enrolled: 32,
+    progress: 65,
+    icon: 'ph:chart-line-up-bold',
+    thumbnailBg: 'linear-gradient(135deg, #8B5CF6, #A855F7)'
+  },
+  {
+    id: 3,
+    title: 'Email Marketing Mastery',
+    instructor: 'Tariq Nasser',
+    duration: '4h 00m',
+    difficulty: 'Intermediate',
+    category: 'Marketing',
+    enrolled: 28,
+    progress: undefined,
+    icon: 'ph:envelope-bold',
+    thumbnailBg: 'linear-gradient(135deg, #EC4899, #F43F5E)'
+  },
+  {
+    id: 4,
+    title: 'Leadership Communication',
+    instructor: 'Lina Khalid',
+    duration: '2h 45m',
+    difficulty: 'Intermediate',
+    category: 'Leadership',
+    enrolled: 19,
+    progress: 30,
+    icon: 'ph:megaphone-bold',
+    thumbnailBg: 'linear-gradient(135deg, #F59E0B, #EF4444)'
+  },
+  {
+    id: 5,
+    title: 'Data Privacy & Compliance',
+    instructor: 'Youssef Ali',
+    duration: '1h 30m',
+    difficulty: 'Beginner',
+    category: 'Compliance',
+    enrolled: 64,
+    progress: undefined,
+    icon: 'ph:shield-check-bold',
+    thumbnailBg: 'linear-gradient(135deg, #10B981, #059669)'
+  },
+  {
+    id: 6,
+    title: 'API Integration Workshop',
+    instructor: 'Omar Hassan',
+    duration: '6h 00m',
+    difficulty: 'Advanced',
+    category: 'Technical',
+    enrolled: 15,
+    progress: undefined,
+    icon: 'ph:code-bold',
+    thumbnailBg: 'linear-gradient(135deg, #06B6D4, #3B82F6)'
+  },
+  {
+    id: 7,
+    title: 'New Employee Onboarding',
+    instructor: 'Maha Ibrahim',
+    duration: '2h 00m',
+    difficulty: 'Beginner',
+    category: 'Onboarding',
+    enrolled: 52,
+    progress: 80,
+    icon: 'ph:user-plus-bold',
+    thumbnailBg: 'linear-gradient(135deg, #14B8A6, #10B981)'
+  },
+  {
+    id: 8,
+    title: 'Customer Success Strategies',
+    instructor: 'Nada Salem',
+    duration: '3h 45m',
+    difficulty: 'Intermediate',
+    category: 'Sales',
+    enrolled: 23,
+    progress: undefined,
+    icon: 'ph:handshake-bold',
+    thumbnailBg: 'linear-gradient(135deg, #7C3AED, #4F46E5)'
+  },
+  {
+    id: 9,
+    title: 'Social Media for B2B',
+    instructor: 'Faisal Mohammed',
+    duration: '4h 15m',
+    difficulty: 'Intermediate',
+    category: 'Marketing',
+    enrolled: 38,
+    progress: undefined,
+    icon: 'ph:share-network-bold',
+    thumbnailBg: 'linear-gradient(135deg, #F472B6, #A855F7)'
+  }
 ]);
 
 const myEnrollments = ref([
-  { id: 1, title: 'CRM Fundamentals', instructor: 'Ahmed Al-Rashid', duration: '3h 20m', difficulty: 'Beginner', progress: 100, completedModules: 8, totalModules: 8, dueDate: 'Feb 10, 2026', isOverdue: false, icon: 'ph:book-open-bold', thumbnailBg: 'linear-gradient(135deg, #3B82F6, #6366F1)' },
-  { id: 2, title: 'Advanced Sales Pipeline', instructor: 'Sara Mansour', duration: '5h 10m', difficulty: 'Advanced', progress: 65, completedModules: 7, totalModules: 11, dueDate: 'Mar 15, 2026', isOverdue: false, icon: 'ph:chart-line-up-bold', thumbnailBg: 'linear-gradient(135deg, #8B5CF6, #A855F7)' },
-  { id: 4, title: 'Leadership Communication', instructor: 'Lina Khalid', duration: '2h 45m', difficulty: 'Intermediate', progress: 30, completedModules: 2, totalModules: 6, dueDate: 'Feb 18, 2026', isOverdue: true, icon: 'ph:megaphone-bold', thumbnailBg: 'linear-gradient(135deg, #F59E0B, #EF4444)' },
-  { id: 7, title: 'New Employee Onboarding', instructor: 'Maha Ibrahim', duration: '2h 00m', difficulty: 'Beginner', progress: 80, completedModules: 4, totalModules: 5, dueDate: 'Feb 28, 2026', isOverdue: false, icon: 'ph:user-plus-bold', thumbnailBg: 'linear-gradient(135deg, #14B8A6, #10B981)' }
+  {
+    id: 1,
+    title: 'CRM Fundamentals',
+    instructor: 'Ahmed Al-Rashid',
+    duration: '3h 20m',
+    difficulty: 'Beginner',
+    progress: 100,
+    completedModules: 8,
+    totalModules: 8,
+    dueDate: 'Feb 10, 2026',
+    isOverdue: false,
+    icon: 'ph:book-open-bold',
+    thumbnailBg: 'linear-gradient(135deg, #3B82F6, #6366F1)'
+  },
+  {
+    id: 2,
+    title: 'Advanced Sales Pipeline',
+    instructor: 'Sara Mansour',
+    duration: '5h 10m',
+    difficulty: 'Advanced',
+    progress: 65,
+    completedModules: 7,
+    totalModules: 11,
+    dueDate: 'Mar 15, 2026',
+    isOverdue: false,
+    icon: 'ph:chart-line-up-bold',
+    thumbnailBg: 'linear-gradient(135deg, #8B5CF6, #A855F7)'
+  },
+  {
+    id: 4,
+    title: 'Leadership Communication',
+    instructor: 'Lina Khalid',
+    duration: '2h 45m',
+    difficulty: 'Intermediate',
+    progress: 30,
+    completedModules: 2,
+    totalModules: 6,
+    dueDate: 'Feb 18, 2026',
+    isOverdue: true,
+    icon: 'ph:megaphone-bold',
+    thumbnailBg: 'linear-gradient(135deg, #F59E0B, #EF4444)'
+  },
+  {
+    id: 7,
+    title: 'New Employee Onboarding',
+    instructor: 'Maha Ibrahim',
+    duration: '2h 00m',
+    difficulty: 'Beginner',
+    progress: 80,
+    completedModules: 4,
+    totalModules: 5,
+    dueDate: 'Feb 28, 2026',
+    isOverdue: false,
+    icon: 'ph:user-plus-bold',
+    thumbnailBg: 'linear-gradient(135deg, #14B8A6, #10B981)'
+  }
 ]);
 
 const certifications = ref([
-  { id: 1, name: 'CRM Fundamentals Certificate', courseName: 'CRM Fundamentals', issueDate: 'Feb 10, 2026', expiryDate: 'Feb 10, 2028', isExpired: false },
-  { id: 2, name: 'Data Privacy Compliance', courseName: 'Data Privacy & Compliance', issueDate: 'Jan 22, 2026', expiryDate: 'Jan 22, 2027', isExpired: false },
-  { id: 3, name: 'Sales Pipeline Expert', courseName: 'Advanced Sales Pipeline', issueDate: 'Nov 15, 2024', expiryDate: 'Nov 15, 2025', isExpired: true }
+  {
+    id: 1,
+    name: 'CRM Fundamentals Certificate',
+    courseName: 'CRM Fundamentals',
+    issueDate: 'Feb 10, 2026',
+    expiryDate: 'Feb 10, 2028',
+    isExpired: false
+  },
+  {
+    id: 2,
+    name: 'Data Privacy Compliance',
+    courseName: 'Data Privacy & Compliance',
+    issueDate: 'Jan 22, 2026',
+    expiryDate: 'Jan 22, 2027',
+    isExpired: false
+  },
+  {
+    id: 3,
+    name: 'Sales Pipeline Expert',
+    courseName: 'Advanced Sales Pipeline',
+    issueDate: 'Nov 15, 2024',
+    expiryDate: 'Nov 15, 2025',
+    isExpired: true
+  }
 ]);
 
 const filteredCourses = computed(() => {
   return courses.value.filter(c => {
-    const matchesSearch = !courseSearch.value || c.title.toLowerCase().includes(courseSearch.value.toLowerCase()) || c.instructor.toLowerCase().includes(courseSearch.value.toLowerCase());
+    const matchesSearch =
+      !courseSearch.value ||
+      c.title.toLowerCase().includes(courseSearch.value.toLowerCase()) ||
+      c.instructor.toLowerCase().includes(courseSearch.value.toLowerCase());
     const matchesCategory = !categoryFilter.value || c.category === categoryFilter.value;
     const matchesDifficulty = !difficultyFilter.value || c.difficulty === difficultyFilter.value;
     return matchesSearch && matchesCategory && matchesDifficulty;

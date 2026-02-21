@@ -4,9 +4,7 @@
     <div class="glass-panel p-6 rounded-2xl">
       <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
         <div>
-          <h1 class="text-2xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-green-400 to-emerald-400">
-            A/B Testing
-          </h1>
+          <h1 class="text-2xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-green-400 to-emerald-400">A/B Testing</h1>
           <p class="text-slate-400 text-sm mt-1">Create experiments, test variations, and optimize your campaigns with data-driven decisions.</p>
         </div>
         <el-button type="primary" class="!rounded-xl" @click="showCreateDialog = true">
@@ -55,7 +53,9 @@
 
         <!-- Variants Comparison -->
         <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mt-4">
-          <div v-for="variant in exp.variants" :key="variant.id"
+          <div
+            v-for="variant in exp.variants"
+            :key="variant.id"
             class="p-4 rounded-xl border transition"
             :class="variant.isWinner ? 'border-emerald-500/50 bg-emerald-500/5' : 'border-slate-700/50 bg-slate-800/30'"
           >
@@ -82,20 +82,25 @@
               </div>
             </div>
             <div class="mt-3">
-              <el-progress :percentage="variant.conversionRate * 5" :stroke-width="4"
-                :color="variant.isWinner ? '#10B981' : '#6366F1'" :show-text="false" />
+              <el-progress
+                :percentage="variant.conversionRate * 5"
+                :stroke-width="4"
+                :color="variant.isWinner ? '#10B981' : '#6366F1'"
+                :show-text="false"
+              />
             </div>
           </div>
         </div>
 
         <!-- Statistical Confidence -->
-        <div v-if="exp.status === 'COMPLETED' || exp.status === 'RUNNING'" class="mt-4 p-3 rounded-lg bg-slate-800/40 flex items-center justify-between">
+        <div
+          v-if="exp.status === 'COMPLETED' || exp.status === 'RUNNING'"
+          class="mt-4 p-3 rounded-lg bg-slate-800/40 flex items-center justify-between"
+        >
           <div class="flex items-center gap-2">
             <Icon name="ph:chart-bar-bold" class="w-4 h-4 text-indigo-400" />
             <span class="text-sm text-slate-400">Statistical Confidence:</span>
-            <span class="text-sm font-medium" :class="exp.confidence >= 95 ? 'text-emerald-400' : 'text-amber-400'">
-              {{ exp.confidence }}%
-            </span>
+            <span class="text-sm font-medium" :class="exp.confidence >= 95 ? 'text-emerald-400' : 'text-amber-400'">{{ exp.confidence }}%</span>
           </div>
           <div class="flex items-center gap-2">
             <span class="text-sm text-slate-400">Lift:</span>
@@ -175,24 +180,39 @@ const newExperiment = ref({ name: '', description: '', testType: 'SUBJECT', traf
 
 const experiments = ref([
   {
-    id: 1, name: 'Subject Line Test - March Newsletter', description: 'Testing casual vs professional subject lines for monthly newsletter',
-    status: 'COMPLETED', duration: '7 days', confidence: 97, lift: 12.5,
+    id: 1,
+    name: 'Subject Line Test - March Newsletter',
+    description: 'Testing casual vs professional subject lines for monthly newsletter',
+    status: 'COMPLETED',
+    duration: '7 days',
+    confidence: 97,
+    lift: 12.5,
     variants: [
       { id: 'a', name: 'Variant A', isControl: true, isWinner: false, trafficShare: 50, sent: 5000, openRate: 22.4, conversionRate: 3.2 },
       { id: 'b', name: 'Variant B', isControl: false, isWinner: true, trafficShare: 50, sent: 5000, openRate: 28.1, conversionRate: 4.8 }
     ]
   },
   {
-    id: 2, name: 'CTA Button Color Test', description: 'Testing green vs blue CTA buttons for conversion rate',
-    status: 'RUNNING', duration: '14 days', confidence: 82, lift: 8.3,
+    id: 2,
+    name: 'CTA Button Color Test',
+    description: 'Testing green vs blue CTA buttons for conversion rate',
+    status: 'RUNNING',
+    duration: '14 days',
+    confidence: 82,
+    lift: 8.3,
     variants: [
       { id: 'a', name: 'Green CTA', isControl: true, isWinner: false, trafficShare: 50, sent: 3200, openRate: 25.6, conversionRate: 4.1 },
       { id: 'b', name: 'Blue CTA', isControl: false, isWinner: false, trafficShare: 50, sent: 3200, openRate: 25.8, conversionRate: 4.5 }
     ]
   },
   {
-    id: 3, name: 'Send Time Optimization', description: 'Testing morning vs afternoon send times',
-    status: 'DRAFT', duration: '7 days', confidence: 0, lift: 0,
+    id: 3,
+    name: 'Send Time Optimization',
+    description: 'Testing morning vs afternoon send times',
+    status: 'DRAFT',
+    duration: '7 days',
+    confidence: 0,
+    lift: 0,
     variants: [
       { id: 'a', name: 'Morning (9 AM)', isControl: true, isWinner: false, trafficShare: 50, sent: 0, openRate: 0, conversionRate: 0 },
       { id: 'b', name: 'Afternoon (2 PM)', isControl: false, isWinner: false, trafficShare: 50, sent: 0, openRate: 0, conversionRate: 0 }
@@ -207,7 +227,12 @@ const avgLift = computed(() => {
 });
 
 const getExpStatusType = (s: string): 'success' | 'warning' | 'info' | 'danger' | undefined => {
-  const m: Record<string, 'success' | 'warning' | 'info' | 'danger' | undefined> = { COMPLETED: 'success', RUNNING: undefined, DRAFT: 'info', PAUSED: 'warning' };
+  const m: Record<string, 'success' | 'warning' | 'info' | 'danger' | undefined> = {
+    COMPLETED: 'success',
+    RUNNING: undefined,
+    DRAFT: 'info',
+    PAUSED: 'warning'
+  };
   return m[s] || 'info';
 };
 

@@ -78,8 +78,20 @@ export const MODULE_DEFINITIONS: Record<string, ModuleDefinition> = {
       { name: 'name', label: 'Name', type: 'text', icon: 'ph:user' },
       { name: 'email', label: 'Email', type: 'text', icon: 'ph:envelope' },
       { name: 'phone', label: 'Phone', type: 'text', icon: 'ph:phone' },
-      { name: 'status', label: 'Status', type: 'select', icon: 'ph:flag', options: ['NEW', 'CONTACTED', 'QUALIFIED', 'PROPOSAL', 'NEGOTIATION', 'WON', 'LOST'] },
-      { name: 'leadSource', label: 'Source', type: 'select', icon: 'ph:globe', options: ['EMAIL', 'WEBSITE', 'REFERRAL', 'SOCIAL_MEDIA', 'COLD_CALL', 'EVENT', 'OTHER'] },
+      {
+        name: 'status',
+        label: 'Status',
+        type: 'select',
+        icon: 'ph:flag',
+        options: ['NEW', 'CONTACTED', 'QUALIFIED', 'PROPOSAL', 'NEGOTIATION', 'WON', 'LOST']
+      },
+      {
+        name: 'leadSource',
+        label: 'Source',
+        type: 'select',
+        icon: 'ph:globe',
+        options: ['EMAIL', 'WEBSITE', 'REFERRAL', 'SOCIAL_MEDIA', 'COLD_CALL', 'EVENT', 'OTHER']
+      },
       { name: 'companyName', label: 'Company', type: 'text', icon: 'ph:buildings' },
       { name: 'score', label: 'Score', type: 'number', icon: 'ph:star' },
       { name: 'createdAt', label: 'Created At', type: 'date', icon: 'ph:calendar' }
@@ -92,8 +104,20 @@ export const MODULE_DEFINITIONS: Record<string, ModuleDefinition> = {
     fields: [
       { name: 'name', label: 'Name', type: 'text', icon: 'ph:tag' },
       { name: 'price', label: 'Price', type: 'number', icon: 'ph:currency-dollar' },
-      { name: 'stage', label: 'Stage', type: 'select', icon: 'ph:funnel', options: ['QUALIFYING', 'MEETING', 'PROPOSAL', 'NEGOTIATION', 'CLOSED_WON', 'CLOSED_LOST'] },
-      { name: 'contractType', label: 'Contract Type', type: 'select', icon: 'ph:file-text', options: ['SERVICE', 'PRODUCT', 'SUBSCRIPTION', 'MAINTENANCE'] },
+      {
+        name: 'stage',
+        label: 'Stage',
+        type: 'select',
+        icon: 'ph:funnel',
+        options: ['QUALIFYING', 'MEETING', 'PROPOSAL', 'NEGOTIATION', 'CLOSED_WON', 'CLOSED_LOST']
+      },
+      {
+        name: 'contractType',
+        label: 'Contract Type',
+        type: 'select',
+        icon: 'ph:file-text',
+        options: ['SERVICE', 'PRODUCT', 'SUBSCRIPTION', 'MAINTENANCE']
+      },
       { name: 'signatureDate', label: 'Signature Date', type: 'date', icon: 'ph:pen' },
       { name: 'createdAt', label: 'Created At', type: 'date', icon: 'ph:calendar' }
     ]
@@ -107,7 +131,13 @@ export const MODULE_DEFINITIONS: Record<string, ModuleDefinition> = {
       { name: 'email', label: 'Email', type: 'text', icon: 'ph:envelope' },
       { name: 'phoneNumber', label: 'Phone', type: 'text', icon: 'ph:phone' },
       { name: 'companyName', label: 'Company', type: 'text', icon: 'ph:buildings' },
-      { name: 'industry', label: 'Industry', type: 'select', icon: 'ph:factory', options: ['TECHNOLOGY', 'HEALTHCARE', 'FINANCE', 'RETAIL', 'MANUFACTURING', 'EDUCATION', 'OTHER'] },
+      {
+        name: 'industry',
+        label: 'Industry',
+        type: 'select',
+        icon: 'ph:factory',
+        options: ['TECHNOLOGY', 'HEALTHCARE', 'FINANCE', 'RETAIL', 'MANUFACTURING', 'EDUCATION', 'OTHER']
+      },
       { name: 'clientStatus', label: 'Status', type: 'select', icon: 'ph:flag', options: ['ACTIVE', 'INACTIVE', 'PROSPECT'] },
       { name: 'createdAt', label: 'Created At', type: 'date', icon: 'ph:calendar' }
     ]
@@ -118,7 +148,13 @@ export const MODULE_DEFINITIONS: Record<string, ModuleDefinition> = {
     icon: 'ph:shopping-cart',
     fields: [
       { name: 'orderNumber', label: 'Order Number', type: 'text', icon: 'ph:hash' },
-      { name: 'status', label: 'Status', type: 'select', icon: 'ph:flag', options: ['DRAFT', 'CONFIRMED', 'PROCESSING', 'SHIPPED', 'DELIVERED', 'CANCELLED'] },
+      {
+        name: 'status',
+        label: 'Status',
+        type: 'select',
+        icon: 'ph:flag',
+        options: ['DRAFT', 'CONFIRMED', 'PROCESSING', 'SHIPPED', 'DELIVERED', 'CANCELLED']
+      },
       { name: 'total', label: 'Total Amount', type: 'number', icon: 'ph:currency-dollar' },
       { name: 'subtotal', label: 'Subtotal', type: 'number', icon: 'ph:currency-dollar' },
       { name: 'taxAmount', label: 'Tax Amount', type: 'number', icon: 'ph:receipt' },
@@ -161,7 +197,13 @@ export const MODULE_DEFINITIONS: Record<string, ModuleDefinition> = {
       { name: 'ticketNumber', label: 'Ticket Number', type: 'text', icon: 'ph:hash' },
       { name: 'subject', label: 'Subject', type: 'text', icon: 'ph:text-aa' },
       { name: 'priority', label: 'Priority', type: 'select', icon: 'ph:warning', options: ['LOW', 'MEDIUM', 'HIGH', 'URGENT'] },
-      { name: 'status', label: 'Status', type: 'select', icon: 'ph:flag', options: ['OPEN', 'IN_PROGRESS', 'WAITING_CUSTOMER', 'RESOLVED', 'CLOSED'] },
+      {
+        name: 'status',
+        label: 'Status',
+        type: 'select',
+        icon: 'ph:flag',
+        options: ['OPEN', 'IN_PROGRESS', 'WAITING_CUSTOMER', 'RESOLVED', 'CLOSED']
+      },
       { name: 'source', label: 'Source', type: 'select', icon: 'ph:globe', options: ['EMAIL', 'PORTAL', 'PHONE', 'CHAT'] },
       { name: 'createdAt', label: 'Created At', type: 'date', icon: 'ph:calendar' }
     ]
@@ -176,7 +218,13 @@ export const MODULE_DEFINITIONS: Record<string, ModuleDefinition> = {
       { name: 'lastName', label: 'Last Name', type: 'text', icon: 'ph:user' },
       { name: 'email', label: 'Email', type: 'text', icon: 'ph:envelope' },
       { name: 'jobTitle', label: 'Position', type: 'text', icon: 'ph:briefcase' },
-      { name: 'employmentType', label: 'Employment Type', type: 'select', icon: 'ph:clock', options: ['FULL_TIME', 'PART_TIME', 'CONTRACT', 'INTERN'] },
+      {
+        name: 'employmentType',
+        label: 'Employment Type',
+        type: 'select',
+        icon: 'ph:clock',
+        options: ['FULL_TIME', 'PART_TIME', 'CONTRACT', 'INTERN']
+      },
       { name: 'status', label: 'Status', type: 'select', icon: 'ph:flag', options: ['ACTIVE', 'ON_LEAVE', 'TERMINATED', 'PROBATION'] },
       { name: 'salary', label: 'Salary', type: 'number', icon: 'ph:currency-dollar' },
       { name: 'hireDate', label: 'Hire Date', type: 'date', icon: 'ph:calendar' },
@@ -315,15 +363,17 @@ export function useReportBuilderPro() {
 
     const headers = columns.length ? columns : Object.keys(data[0]);
     const rows = data.map(row =>
-      headers.map(h => {
-        const val = row[h];
-        if (val === null || val === undefined) return '';
-        const str = String(val);
-        if (str.includes(',') || str.includes('"') || str.includes('\n')) {
-          return `"${str.replace(/"/g, '""')}"`;
-        }
-        return str;
-      }).join(',')
+      headers
+        .map(h => {
+          const val = row[h];
+          if (val === null || val === undefined) return '';
+          const str = String(val);
+          if (str.includes(',') || str.includes('"') || str.includes('\n')) {
+            return `"${str.replace(/"/g, '""')}"`;
+          }
+          return str;
+        })
+        .join(',')
     );
 
     const csvContent = [headers.join(','), ...rows].join('\n');
@@ -334,10 +384,7 @@ export function useReportBuilderPro() {
     if (!data.length) return;
 
     const headers = columns.length ? columns : Object.keys(data[0]);
-    const worksheetData = [
-      headers,
-      ...data.map(row => headers.map(h => row[h] ?? ''))
-    ];
+    const worksheetData = [headers, ...data.map(row => headers.map(h => row[h] ?? ''))];
 
     const wb = XLSX.utils.book_new();
     const ws = XLSX.utils.aoa_to_sheet(worksheetData);
@@ -360,11 +407,13 @@ export function useReportBuilderPro() {
     const doc = new jsPDF({ orientation: columns.length > 5 ? 'landscape' : 'portrait' });
 
     const headers = columns.length ? columns : Object.keys(data[0]);
-    const tableData = data.map(row => headers.map(h => {
-      const val = row[h];
-      if (val === null || val === undefined) return '';
-      return String(val);
-    }));
+    const tableData = data.map(row =>
+      headers.map(h => {
+        const val = row[h];
+        if (val === null || val === undefined) return '';
+        return String(val);
+      })
+    );
 
     // Title
     doc.setFontSize(16);
@@ -512,9 +561,7 @@ export function useReportBuilderPro() {
     const labels = data.map((r: any) => r[xField] || 'N/A');
     const values = data.map((r: any) => Number(r[yField]) || 0);
 
-    const baseLegend = chartConfig.showLegend !== false
-      ? { show: true, bottom: 0, textStyle: { color: 'var(--text-muted)' } }
-      : { show: false };
+    const baseLegend = chartConfig.showLegend !== false ? { show: true, bottom: 0, textStyle: { color: 'var(--text-muted)' } } : { show: false };
 
     const baseTooltip = { trigger: chartType === 'pie' || chartType === 'donut' ? 'item' : 'axis' };
 
@@ -523,24 +570,26 @@ export function useReportBuilderPro() {
         tooltip: baseTooltip,
         legend: baseLegend,
         color: colors,
-        series: [{
-          type: 'pie',
-          radius: chartType === 'donut' ? ['40%', '65%'] : '60%',
-          center: ['50%', '45%'],
-          data: labels.map((l: string, i: number) => ({ name: l, value: values[i] })),
-          emphasis: { itemStyle: { shadowBlur: 10, shadowColor: 'rgba(0, 0, 0, 0.3)' } },
-          label: {
-            show: chartConfig.showValues !== false,
-            formatter: '{b}: {c} ({d}%)',
-            color: 'var(--text-secondary)'
-          },
-          itemStyle: { borderRadius: 6, borderColor: 'rgba(0,0,0,0.1)', borderWidth: 1 }
-        }]
+        series: [
+          {
+            type: 'pie',
+            radius: chartType === 'donut' ? ['40%', '65%'] : '60%',
+            center: ['50%', '45%'],
+            data: labels.map((l: string, i: number) => ({ name: l, value: values[i] })),
+            emphasis: { itemStyle: { shadowBlur: 10, shadowColor: 'rgba(0, 0, 0, 0.3)' } },
+            label: {
+              show: chartConfig.showValues !== false,
+              formatter: '{b}: {c} ({d}%)',
+              color: 'var(--text-secondary)'
+            },
+            itemStyle: { borderRadius: 6, borderColor: 'rgba(0,0,0,0.1)', borderWidth: 1 }
+          }
+        ]
       };
     }
 
     // Bar, Line, Area, Stacked
-    const seriesType = chartType === 'area' ? 'line' : (chartType === 'stacked' ? 'bar' : chartType);
+    const seriesType = chartType === 'area' ? 'line' : chartType === 'stacked' ? 'bar' : chartType;
     const series: any = {
       type: seriesType,
       data: values,

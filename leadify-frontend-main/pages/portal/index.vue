@@ -67,13 +67,13 @@ const pageLoading = ref(true);
 
 onMounted(async () => {
   init();
-  if (!isAuthenticated()) { navigateTo('/portal/login'); return; }
+  if (!isAuthenticated()) {
+    navigateTo('/portal/login');
+    return;
+  }
 
   // Load both dashboards in parallel
-  const [basicRes] = await Promise.all([
-    portalFetch('dashboard'),
-    fetchDashboard()
-  ]);
+  const [basicRes] = await Promise.all([portalFetch('dashboard'), fetchDashboard()]);
 
   if (basicRes.success && basicRes.body) {
     dashboard.value = basicRes.body as any;

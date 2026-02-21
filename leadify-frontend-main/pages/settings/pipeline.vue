@@ -122,7 +122,9 @@ async function loadStages() {
   }
 }
 
-await loadStages().catch(() => { loading.value = false; });
+await loadStages().catch(() => {
+  loading.value = false;
+});
 
 function openDialog(stage?: PipelineStage) {
   if (stage) {
@@ -205,7 +207,13 @@ async function drop(index: number) {
 }
 
 @keyframes fadeIn {
-  from { opacity: 0; transform: translateY(10px); }
-  to { opacity: 1; transform: translateY(0); }
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
 }
 </style>
