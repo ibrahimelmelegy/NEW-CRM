@@ -9,9 +9,14 @@ import jwt from 'jsonwebtoken';
 import { Response } from 'express';
 
 // Mocks
+jest.mock('../../src/config/db', () => ({
+    sequelize: { transaction: jest.fn() }
+}));
 jest.mock('../../src/user/userModel');
 jest.mock('../../src/user/models/loginFailureModel');
 jest.mock('../../src/user/models/sessionModel');
+jest.mock('../../src/tenant/tenantModel', () => ({}));
+jest.mock('../../src/role/roleModel', () => ({}));
 jest.mock('bcryptjs');
 jest.mock('jsonwebtoken');
 jest.mock('nodemailer'); // Prevent email side effects
