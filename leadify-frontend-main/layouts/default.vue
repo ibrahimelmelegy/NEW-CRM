@@ -66,7 +66,7 @@
       OnboardingTourOverlay
       //- Speed Dial (contextual quick actions)
       SpeedDial
-      AIChatbot
+      AICopilot
       MobileBottomNav
       PWAInstallPrompt
   </template>
@@ -74,9 +74,7 @@
 import { useWindowSize } from '@vueuse/core';
 import { storeToRefs } from 'pinia';
 import { ArrowRight, Search, Plus } from '@element-plus/icons-vue';
-import { ElNotification } from 'element-plus';
 import { useMain } from '~/stores/common';
-import AIChatbot from '~/components/global/AIChatbot.vue';
 
 // Initialize Spotlight
 const { open } = useSpotlight();
@@ -177,6 +175,8 @@ async function logout() {
   }
 }
 
+
+
 checkwidth();
 
 watch(width, () => {
@@ -209,13 +209,13 @@ const breadcrumbRoutes = computed(() => {
   // Create breadcrumb items with translation support
   const breadcrumbs = pathSegments.map((segment: any) => {
     // Convert kebab-case to camelCase for key matching (e.g. daily-tasks -> dailyTasks)
-    const camelSegment = segment.replace(/-([a-z])/g, (g: string) => g[1].toUpperCase());
+    const camelSegment = segment ? String(segment).replace(/-([a-z])/g, (match: string, p1: string) => (p1 ? p1.toUpperCase() : '')) : '';
 
     // Try navigation key first
     const navKey = `navigation.${camelSegment}`;
 
     // Check if translation exists, otherwise fallback to Space Case
-    const label = t(navKey) !== navKey ? t(navKey) : segment.replace(/[-_]/g, ' '); // fallback
+    const label = t(navKey) !== navKey ? t(navKey) : (segment ? segment.replace(/[-_]/g, ' ') : ''); // fallback
 
     return {
       path: segment,
