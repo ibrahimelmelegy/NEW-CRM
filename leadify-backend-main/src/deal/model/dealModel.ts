@@ -2,8 +2,9 @@ import { BelongsTo, BelongsToMany, Column, DataType, ForeignKey, HasMany, Model,
 import Lead from '../../lead/leadModel';
 import Opportunity from '../../opportunity/opportunityModel';
 import User from '../../user/userModel';
+import Tenant from '../../tenant/tenantModel';
 import { ContractTypeEnums, DealStageEnums } from '../dealEnum';
-import DealDelivery from './dealDeliveryMode copy';
+import DealDelivery from './dealDeliveryModel';
 import Invoice from './invoiceMode';
 import Client from '../../client/clientModel';
 import DealUsers from './deal_UsersModel';
@@ -82,6 +83,13 @@ class Deal extends Model {
   public invoice?: Invoice[];
   @HasMany(() => DealDelivery, { as: 'deliveryDetails', onDelete: 'CASCADE' })
   public deliveryDetails?: DealDelivery[];
+
+  @ForeignKey(() => Tenant)
+  @Column({ type: DataType.UUID, allowNull: true })
+  public tenantId?: string;
+
+  @BelongsTo(() => Tenant)
+  public tenant!: Tenant;
 }
 
 export default Deal;

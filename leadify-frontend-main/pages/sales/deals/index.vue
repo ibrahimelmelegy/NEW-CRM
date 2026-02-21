@@ -1,37 +1,27 @@
 <template lang="pug">
-div
-  //- Header
-  .flex.items-center.justify-between.mb-8
-    .title.font-bold.text-2xl.mb-1.capitalize {{ $t('deals.title') }}
-    .flex.items-center.gap-x-3
+div(class="animate-fade-in")
+  //- Premium Header
+  PremiumPageHeader(
+    :title="$t('deals.title')"
+    description="Track your entire sales pipeline and convert opportunities into revenue."
+    icon="ph:handshake-duotone"
+    primaryColor="#10b981"
+  )
+    template(#actions)
       el-button-group
-        el-button(type="primary" size="large" class="!rounded-l-2xl")
+        el-button(type="primary" size="large" class="!rounded-l-xl shadow-lg shadow-primary/30")
           Icon(name="ph:list-bold" size="18")
           span.ml-1 {{ $t('kanban.tableView') }}
-        el-button(:type="'default'" size="large" @click="navigateTo('/sales/deals/kanban')" class="!rounded-r-2xl")
+        el-button(:type="'default'" size="large" @click="navigateTo('/sales/deals/kanban')" class="!rounded-r-xl")
           Icon(name="ph:columns-bold" size="18")
           span.ml-1 {{ $t('kanban.kanbanView') }}
       ExportButton(:data="exportData" :columns="exportColumns" :filename="'deals-export'" :title="$t('deals.title')")
       NuxtLink(to="/sales/deals/add-deal")
-        el-button(   size='large' :loading="loading" v-if="hasPermission('CREATE_DEALS')" native-type="submit" type="primary" :icon="Plus" class="w-full !my-4 !rounded-2xl")  {{ $t('deals.newDeal') }}
-      //- el-dropdown(trigger="click")
-      //-     span.el-dropdown-link
-      //-         button.rounded-btn(class="!px-4"): Icon(  name="IconToggle" size="24")
-      //-     template(#dropdown)
-      //-         el-dropdown-menu
-      //-           el-dropdown-item
-      //-             NuxtLink.flex.items-center(:to="`/deals/1`")
-      //-               Icon.text-md.mr-2(size="20" name="IconImport" )
-      //-               p.text-sm Import
-      //-           NuxtLink(:to="`/deals/1`")
-      //-             el-dropdown-item
-      //-               NuxtLink.flex.items-center(:to="`/deals/1`")
-      //-                 Icon.text-md.mr-2(size="20" name="IconExport" )
-      //-                 p.text-sm Export
-      //-           el-dropdown-item
-      //-               NuxtLink.flex.items-center(:to="`/deals/1`")
-      //-                 Icon.text-md.mr-2(size="20" name="IconArchived" )
-      //-                 p.text-sm Archived
+        el-button(size='large' :loading="loading" v-if="hasPermission('CREATE_DEALS')" native-type="submit" type="primary" :icon="Plus" class="!rounded-xl shadow-lg shadow-primary/30 active:scale-95 transition-transform") {{ $t('deals.newDeal') }}
+
+  //- KPI Metrics
+  PremiumKPICards(:metrics="kpiMetrics" v-if="!loadingAction")
+  
   BulkActions(:count="selectedRows.length" :actions="['delete', 'export']" @bulk-delete="handleBulkDelete" @bulk-export="handleBulkExport" @clear-selection="selectedRows = []")
   SavedViews(:entityType="'deal'" :currentFilters="{}" @apply-view="handleApplyView")
   AdvancedSearch(:entityType="'deal'" :fields="advancedSearchFields" @apply="handleAdvancedFilter" @clear="handleClearAdvancedFilter")
@@ -63,6 +53,11 @@ div
 
 <script setup lang="ts">
 import { Plus } from '@element-plus/icons-vue';
+import PremiumPageHeader from '~/components/UI/PremiumPageHeader.vue';
+import PremiumKPICards from '~/components/UI/PremiumKPICards.vue';
+import type { KPIMetric } from '~/components/UI/PremiumKPICards.vue';
+import { computed, reactive, ref } from 'vue';
+
 const router = useRouter();
 const { hasPermission } = await usePermissions();
 const { $i18n } = useNuxtApp();
@@ -142,11 +137,29 @@ const table = reactive({
 });
 
 // Call API to Get the deal and users in parallel
-const [response, usersResponse] = await Promise.all([
+let [response, usersResponse] = await Promise.all([
   useTableFilter('deal'),
   useApiFetch('users')
 ]);
 table.data = response.formattedData;
+
+const kpiMetrics = computed<KPIMetric[]>(() => {
+  const data = table.data || [];
+  const total = data.length;
+  const wonDeals = data.filter((d: any) => d.stage === 'WON').length;
+  // Calculate total revenue from won deals
+  const totalRevenue = data.filter((d: any) => d.stage === 'WON')
+                           .reduce((sum: number, d: any) => sum + (Number(d.price) || 0), 0)
+                           .toLocaleString('en-US', { style: 'currency', currency: 'SAR', maximumFractionDigits: 0 });
+  const pending = data.filter((d: any) => d.stage !== 'WON' && d.stage !== 'LOST').length;
+
+  return [
+    { label: 'Total Deals', value: total, icon: 'ph:handshake-bold', color: '#10b981', trend: '+8%', trendType: 'up' },
+    { label: 'Deals Won', value: wonDeals, icon: 'ph:trophy-bold', color: '#f59e0b', trend: 'Trending', trendType: 'up' },
+    { label: 'Total Revenue', value: totalRevenue, icon: 'ph:money-bold', color: '#3b82f6', trend: '+15%', trendType: 'up' },
+    { label: 'Pending Deals', value: pending, icon: 'ph:hourglass-bold', color: '#8b5cf6' }
+  ];
+});
 
 function handleRowClick(val: any) {
   router.push(`/sales/deals/${val.id}`);

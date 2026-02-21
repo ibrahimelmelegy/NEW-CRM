@@ -108,7 +108,47 @@
         "endOfService": "End of Service",
         "tickets": "Tickets",
         "supportDashboard": "Support Dashboard",
-        "cannedResponses": "Canned Responses"
+        "cannedResponses": "Canned Responses",
+        "automations": "Automations",
+        "communicationHub": "Communication Hub",
+        "aiAssistant": "AI Assistant",
+        "customerSuccess": "Customer Success",
+        "cpq": "CPQ",
+        "performanceReviews": "Performance Reviews",
+        "goalsOkrs": "Goals & OKRs",
+        "allDocuments": "All Documents",
+        "eSignatures": "E-Signatures",
+        "abTesting": "A/B Testing",
+        "dataGovernance": "Data Governance",
+        "kanbanBoard": "Kanban Board",
+        "ganttTimeline": "Gantt Timeline",
+        "resourcePlanner": "Resource Planner",
+        "warehouse": "Warehouse",
+        "manufacturing": "Manufacturing",
+        "formBuilder": "Form Builder",
+        "surveys": "Surveys & NPS",
+        "socialCrm": "Social CRM",
+        "booking": "Booking",
+        "assignmentRules": "Assignment Rules",
+        "commissions": "Commissions",
+        "competitors": "Competitors",
+        "vendorScorecard": "Vendor Scorecard",
+        "shipping": "Shipping",
+        "loyalty": "Loyalty & Rewards",
+        "recruitment": "Recruitment",
+        "training": "Training & LMS",
+        "liveChat": "Live Chat",
+        "dataImport": "Data Import",
+        "whiteLabel": "White Label",
+        "documentEditor": "Document Editor"
+    },
+    "automations": {
+        "title": "Visual Journey Builder",
+        "subtitle": "Design and automate your sales and operational workflows with ease.",
+        "createNew": "Create Journey",
+        "noAutomations": "No Automations Yet",
+        "noAutomationsDesc": "Build your first visual journey to automate repetitive tasks and scale your processes.",
+        "createFirst": "Create First Journey"
     },
     "themeStudio": {
         "title": "Theme Studio",
@@ -3832,5 +3872,295 @@
         "donutChart": "Donut Chart",
         "areaChart": "Area Chart",
         "stackedBar": "Stacked Bar"
+    },
+    "customerSuccess": {
+        "title": "Customer Success",
+        "subtitle": "Monitor client health, predict churn, and drive retention.",
+        "healthScore": "Health Score",
+        "atRisk": "At Risk",
+        "critical": "Critical",
+        "healthy": "Healthy",
+        "engagement": "Engagement",
+        "nps": "NPS Score",
+        "totalRevenue": "Total Revenue",
+        "avgHealth": "Avg Health"
+    },
+    "communications": {
+        "title": "Communication Hub",
+        "subtitle": "Unified inbox for all emails, calls, meetings, and notes across your CRM.",
+        "logActivity": "Log Activity",
+        "allTypes": "All Types",
+        "search": "Search activities..."
+    },
+    "aiAssistant": {
+        "title": "AI Assistant",
+        "subtitle": "Ask anything about your CRM data",
+        "placeholder": "Ask about your CRM data, generate emails, analyze deals...",
+        "clearChat": "Clear Chat",
+        "dailyInsights": "Daily Insights",
+        "aiTools": "AI Tools"
+    },
+    "cpq": {
+        "title": "Configure, Price, Quote",
+        "subtitle": "Build professional quotes with product configuration and dynamic pricing.",
+        "newQuote": "New Quote",
+        "productCatalog": "Product Catalog",
+        "pricingRules": "Pricing Rules"
+    },
+    "performanceReviews": {
+        "title": "Performance Reviews",
+        "subtitle": "Track employee performance, set goals, and manage review cycles.",
+        "newReview": "New Review",
+        "avgRating": "Avg Rating",
+        "goalCompletion": "Goal Completion"
+    },
+    "goals": {
+        "title": "Goals & OKRs",
+        "subtitle": "Set objectives, track key results, and align team goals.",
+        "createGoal": "Create Goal",
+        "company": "Company",
+        "team": "Team",
+        "personal": "Personal"
+    },
+    "eSignatures": {
+        "title": "E-Signatures",
+        "subtitle": "Send, track, and manage electronic signatures for contracts and documents.",
+        "sendForSignature": "Send for Signature",
+        "signed": "Signed",
+        "pending": "Pending",
+        "expired": "Expired"
+    },
+    "kanbanBoard": {
+        "title": "Kanban Board",
+        "subtitle": "Universal drag-and-drop board view for any entity.",
+        "addItem": "Add Item",
+        "dropHere": "Drop items here"
+    },
+    "ganttTimeline": {
+        "title": "Gantt Timeline",
+        "subtitle": "Visualize project schedules, dependencies, and milestones.",
+        "addTask": "Add Task",
+        "milestone": "Milestone",
+        "dependency": "Dependency"
+    },
+    "formBuilder": {
+        "title": "Form Builder",
+        "subtitle": "Create public lead capture forms, surveys, and registration pages.",
+        "newForm": "New Form",
+        "templates": "Templates",
+        "submissions": "Submissions",
+        "conversion": "Conversion"
+    },
+    "assignmentRules": {
+        "title": "Assignment & Escalation Rules",
+        "subtitle": "Auto-assign leads, deals, and tickets based on criteria.",
+        "newRule": "New Rule",
+        "roundRobin": "Round Robin",
+        "escalation": "Escalation"
+    },
+    "resourcePlanner": {
+        "title": "Resource Planner",
+        "subtitle": "Manage team workload, capacity, and resource allocation.",
+        "allocate": "Allocate",
+        "utilization": "Utilization",
+        "capacity": "Capacity"
+    },
+    "warehouseMgmt": {
+        "title": "Warehouse Management",
+        "subtitle": "Manage warehouse locations, bin storage, stock transfers, and receiving.",
+        "transferStock": "Transfer Stock",
+        "receiveStock": "Receive Stock",
+        "bins": "Bin Locations"
+    },
+    "manufacturingBom": {
+        "title": "Manufacturing & BOM",
+        "subtitle": "Bill of Materials, work orders, production planning, and quality control.",
+        "newBom": "New BOM",
+        "workOrder": "Work Order",
+        "qualityControl": "Quality Control"
+    },
+    "surveysNps": {
+        "title": "Surveys & NPS",
+        "subtitle": "Create customer surveys, measure Net Promoter Score, and gather feedback.",
+        "newSurvey": "New Survey",
+        "npsScore": "NPS Score",
+        "responses": "Responses"
+    },
+    "bookingScheduling": {
+        "title": "Booking & Scheduling",
+        "subtitle": "Manage appointments, meetings, and resource bookings.",
+        "newBooking": "New Booking",
+        "confirmed": "Confirmed",
+        "bookingPages": "Booking Pages"
+    },
+    "socialCrm": {
+        "title": "Social CRM",
+        "subtitle": "Monitor social media, track brand mentions, and engage with your audience.",
+        "compose": "Compose",
+        "mentions": "Mentions",
+        "sentiment": "Sentiment"
+    },
+    "salesCommissions": {
+        "title": "Sales Commissions",
+        "subtitle": "Track commissions, manage plans, and process payouts for your sales team.",
+        "overview": "Overview",
+        "plans": "Plans",
+        "leaderboard": "Leaderboard",
+        "payouts": "Payouts"
+    },
+    "recruitment": {
+        "title": "Recruitment & ATS",
+        "subtitle": "Manage job postings, track applicants, schedule interviews, and build your talent pipeline.",
+        "pipeline": "Pipeline",
+        "jobPostings": "Job Postings",
+        "interviews": "Interviews",
+        "talentPool": "Talent Pool"
+    },
+    "vendorScorecard": {
+        "title": "Vendor Scorecard",
+        "subtitle": "Rate and evaluate vendor performance across quality, delivery, and pricing.",
+        "performance": "Performance",
+        "evaluations": "Evaluations",
+        "comparison": "Comparison"
+    },
+    "liveChat": {
+        "title": "Live Chat",
+        "subtitle": "Real-time customer support with chat routing, canned replies, and visitor tracking.",
+        "activeChats": "Active Chats",
+        "visitors": "Visitors",
+        "quickReplies": "Quick Replies"
+    },
+    "competitors": {
+        "title": "Competitor Intelligence",
+        "subtitle": "Track competitors, analyze win/loss patterns, and compare feature sets.",
+        "overview": "Overview",
+        "swotAnalysis": "SWOT Analysis",
+        "winLoss": "Win/Loss Analysis",
+        "featureMatrix": "Feature Matrix"
+    },
+    "loyaltyRewards": {
+        "title": "Loyalty & Rewards",
+        "subtitle": "Build customer loyalty with points, tiers, and rewards programs.",
+        "tiers": "Tiers",
+        "rewards": "Rewards Catalog",
+        "members": "Members",
+        "activity": "Activity"
+    },
+    "trainingLms": {
+        "title": "Training & LMS",
+        "subtitle": "Manage courses, track learning progress, and issue certifications.",
+        "catalog": "Course Catalog",
+        "myLearning": "My Learning",
+        "certifications": "Certifications"
+    },
+    "dataImport": {
+        "title": "Data Import Center",
+        "subtitle": "Import data from CSV and Excel files with field mapping and duplicate handling.",
+        "upload": "Upload",
+        "mapping": "Field Mapping",
+        "history": "Import History"
+    },
+    "shippingLogistics": {
+        "title": "Shipping & Logistics",
+        "subtitle": "Manage shipments, track deliveries, and configure carrier integrations.",
+        "shipments": "Shipments",
+        "carriers": "Carriers",
+        "tracking": "Tracking"
+    },
+    "whiteLabel": {
+        "title": "White Label Settings",
+        "subtitle": "Customize branding, logos, colors, and domain settings for your CRM instance.",
+        "branding": "Branding",
+        "domain": "Custom Domain",
+        "emailBranding": "Email Branding",
+        "loginPage": "Login Page"
+    },
+    "documentEditor": {
+        "title": "Document Editor",
+        "subtitle": "Create invoices, purchase orders, sales orders, and more from one place",
+        "selectType": "Choose Document Type",
+        "selectTypeDesc": "Select the type of business document you want to create",
+        "changeType": "Change Type",
+        "types": {
+            "invoice": "Invoice",
+            "invoiceDesc": "Bill clients for goods or services",
+            "purchaseOrder": "Purchase Order",
+            "purchaseOrderDesc": "Request goods from vendors",
+            "salesOrder": "Sales Order",
+            "salesOrderDesc": "Confirm client purchase commitments",
+            "creditNote": "Credit Note",
+            "creditNoteDesc": "Issue credits against invoices",
+            "deliveryNote": "Delivery Note",
+            "deliveryNoteDesc": "Accompany shipped goods",
+            "proformaInvoice": "Proforma Invoice",
+            "proformaInvoiceDesc": "Preliminary invoice before delivery"
+        },
+        "headerFields": {
+            "details": "Document Details",
+            "deal": "Deal",
+            "selectDeal": "Select a deal",
+            "salesOrder": "Sales Order (Optional)",
+            "importFromOrder": "Import from sales order",
+            "invoiceDate": "Invoice Date",
+            "paymentTerms": "Payment Terms",
+            "dueDate": "Due Date",
+            "vendor": "Vendor",
+            "selectVendor": "Select a vendor",
+            "project": "Project",
+            "selectProject": "Select a project",
+            "paymentMethod": "Payment Method",
+            "deliveryDate": "Expected Delivery",
+            "client": "Client",
+            "selectClient": "Select a client",
+            "currency": "Currency",
+            "shippingAddress": "Shipping Address",
+            "shippingPlaceholder": "Enter shipping address...",
+            "invoice": "Invoice",
+            "selectInvoice": "Select an invoice",
+            "creditDate": "Credit Date",
+            "creditAmount": "Credit Amount",
+            "reason": "Reason",
+            "reasonPlaceholder": "Reason for credit note...",
+            "selectSalesOrder": "Select a sales order",
+            "trackingNumber": "Tracking Number",
+            "trackingPlaceholder": "Enter tracking number...",
+            "carrier": "Carrier",
+            "carrierPlaceholder": "Enter carrier name...",
+            "shippedDate": "Shipped Date"
+        },
+        "lineItems": "Line Items",
+        "summary": "Summary",
+        "subtotal": "Subtotal",
+        "tax": "Tax",
+        "discount": "Discount",
+        "total": "Total",
+        "notes": "Notes",
+        "terms": "Terms & Conditions",
+        "notesPlaceholder": "Additional notes for this document...",
+        "termsPlaceholder": "Terms and conditions...",
+        "saveDraft": "Save as Draft",
+        "saveAndSend": "Save & Send",
+        "preview": "Preview",
+        "print": "Print",
+        "cancel": "Cancel",
+        "close": "Close",
+        "docSummary": "Document Summary",
+        "docType": "Type",
+        "docNumber": "Number",
+        "itemCount": "Items",
+        "totalAmount": "Total",
+        "status": "Status",
+        "quickTips": "Quick Tips",
+        "recentDocuments": "Recent Documents",
+        "noRecentDocs": "No recent documents",
+        "validation": {
+            "selectDeal": "Please select a deal",
+            "selectVendor": "Please select a vendor",
+            "selectClient": "Please select a client",
+            "selectInvoice": "Please select an invoice to credit",
+            "selectSalesOrder": "Please select a sales order",
+            "enterAmount": "Please enter a credit amount",
+            "addLineItem": "Please add at least one line item with a description"
+        }
     }
 }

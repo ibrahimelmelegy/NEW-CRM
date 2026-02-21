@@ -108,7 +108,47 @@
         "endOfService": "نهاية الخدمة",
         "tickets": "التذاكر",
         "supportDashboard": "لوحة الدعم",
-        "cannedResponses": "الردود الجاهزة"
+        "cannedResponses": "الردود الجاهزة",
+        "automations": "الأتمتة",
+        "communicationHub": "مركز الاتصالات",
+        "aiAssistant": "المساعد الذكي",
+        "customerSuccess": "نجاح العملاء",
+        "cpq": "تكوين وتسعير",
+        "performanceReviews": "تقييم الأداء",
+        "goalsOkrs": "الأهداف والنتائج",
+        "allDocuments": "جميع المستندات",
+        "eSignatures": "التوقيعات الإلكترونية",
+        "abTesting": "اختبار A/B",
+        "dataGovernance": "حوكمة البيانات",
+        "kanbanBoard": "لوحة كانبان",
+        "ganttTimeline": "مخطط جانت",
+        "resourcePlanner": "مخطط الموارد",
+        "warehouse": "المستودعات",
+        "manufacturing": "التصنيع",
+        "formBuilder": "منشئ النماذج",
+        "surveys": "الاستطلاعات والـ NPS",
+        "socialCrm": "إدارة العلاقات الاجتماعية",
+        "booking": "الحجوزات",
+        "assignmentRules": "قواعد التعيين",
+        "commissions": "العمولات",
+        "competitors": "المنافسين",
+        "vendorScorecard": "تقييم الموردين",
+        "shipping": "الشحن والخدمات اللوجستية",
+        "loyalty": "الولاء والمكافآت",
+        "recruitment": "التوظيف",
+        "training": "التدريب والتعلم",
+        "liveChat": "الدردشة المباشرة",
+        "dataImport": "استيراد البيانات",
+        "whiteLabel": "العلامة البيضاء",
+        "documentEditor": "محرر المستندات"
+    },
+    "automations": {
+        "title": "منشئ الرحلات المرئي",
+        "subtitle": "صمم وأتمت سير العمل التجاري والعمليات بسهولة.",
+        "createNew": "إنشاء رحلة",
+        "noAutomations": "لا توجد أتمتة بعد",
+        "noAutomationsDesc": "أنشئ أول رحلة مرئية لأتمتة المهام المتكررة وتوسيع عملياتك.",
+        "createFirst": "إنشاء أول رحلة"
     },
     "themeStudio": {
         "title": "استوديو المظهر",
@@ -3848,5 +3888,295 @@
         "donutChart": "رسم بياني حلقي",
         "areaChart": "رسم بياني مساحي",
         "stackedBar": "رسم بياني شريطي مكدس"
+    },
+    "customerSuccess": {
+        "title": "نجاح العملاء",
+        "subtitle": "مراقبة صحة العملاء والتنبؤ بالمخاطر وتعزيز الاحتفاظ.",
+        "healthScore": "مؤشر الصحة",
+        "atRisk": "معرض للخطر",
+        "critical": "حرج",
+        "healthy": "سليم",
+        "engagement": "التفاعل",
+        "nps": "مؤشر رضا العملاء",
+        "totalRevenue": "إجمالي الإيرادات",
+        "avgHealth": "متوسط الصحة"
+    },
+    "communications": {
+        "title": "مركز الاتصالات",
+        "subtitle": "صندوق بريد موحد لجميع الرسائل والمكالمات والاجتماعات والملاحظات.",
+        "logActivity": "تسجيل نشاط",
+        "allTypes": "جميع الأنواع",
+        "search": "البحث في الأنشطة..."
+    },
+    "aiAssistant": {
+        "title": "المساعد الذكي",
+        "subtitle": "اسأل أي شيء عن بيانات CRM الخاصة بك",
+        "placeholder": "اسأل عن بيانات CRM، أنشئ رسائل بريد إلكتروني، حلل الصفقات...",
+        "clearChat": "مسح المحادثة",
+        "dailyInsights": "رؤى يومية",
+        "aiTools": "أدوات الذكاء الاصطناعي"
+    },
+    "cpq": {
+        "title": "تكوين وتسعير وعرض أسعار",
+        "subtitle": "بناء عروض أسعار احترافية مع تكوين المنتجات والتسعير الديناميكي.",
+        "newQuote": "عرض سعر جديد",
+        "productCatalog": "كتالوج المنتجات",
+        "pricingRules": "قواعد التسعير"
+    },
+    "performanceReviews": {
+        "title": "تقييم الأداء",
+        "subtitle": "تتبع أداء الموظفين وتحديد الأهداف وإدارة دورات التقييم.",
+        "newReview": "تقييم جديد",
+        "avgRating": "متوسط التقييم",
+        "goalCompletion": "إنجاز الأهداف"
+    },
+    "goals": {
+        "title": "الأهداف والنتائج الرئيسية",
+        "subtitle": "تحديد الأهداف وتتبع النتائج الرئيسية ومواءمة أهداف الفريق.",
+        "createGoal": "إنشاء هدف",
+        "company": "الشركة",
+        "team": "الفريق",
+        "personal": "شخصي"
+    },
+    "eSignatures": {
+        "title": "التوقيعات الإلكترونية",
+        "subtitle": "إرسال وتتبع وإدارة التوقيعات الإلكترونية للعقود والمستندات.",
+        "sendForSignature": "إرسال للتوقيع",
+        "signed": "موقع",
+        "pending": "قيد الانتظار",
+        "expired": "منتهي الصلاحية"
+    },
+    "kanbanBoard": {
+        "title": "لوحة كانبان",
+        "subtitle": "عرض لوحة السحب والإفلات الشامل لأي كيان.",
+        "addItem": "إضافة عنصر",
+        "dropHere": "أسقط العناصر هنا"
+    },
+    "ganttTimeline": {
+        "title": "مخطط جانت",
+        "subtitle": "تصور جداول المشاريع والتبعيات والمعالم.",
+        "addTask": "إضافة مهمة",
+        "milestone": "معلم",
+        "dependency": "تبعية"
+    },
+    "formBuilder": {
+        "title": "منشئ النماذج",
+        "subtitle": "إنشاء نماذج التقاط العملاء المحتملين والاستطلاعات وصفحات التسجيل.",
+        "newForm": "نموذج جديد",
+        "templates": "القوالب",
+        "submissions": "التقديمات",
+        "conversion": "التحويل"
+    },
+    "assignmentRules": {
+        "title": "قواعد التعيين والتصعيد",
+        "subtitle": "تعيين تلقائي للعملاء المحتملين والصفقات والتذاكر بناءً على المعايير.",
+        "newRule": "قاعدة جديدة",
+        "roundRobin": "توزيع دوري",
+        "escalation": "تصعيد"
+    },
+    "resourcePlanner": {
+        "title": "مخطط الموارد",
+        "subtitle": "إدارة عبء العمل والقدرة وتخصيص الموارد.",
+        "allocate": "تخصيص",
+        "utilization": "الاستخدام",
+        "capacity": "القدرة"
+    },
+    "warehouseMgmt": {
+        "title": "إدارة المستودعات",
+        "subtitle": "إدارة مواقع المستودعات وصناديق التخزين ونقل المخزون والاستلام.",
+        "transferStock": "نقل مخزون",
+        "receiveStock": "استلام مخزون",
+        "bins": "مواقع الصناديق"
+    },
+    "manufacturingBom": {
+        "title": "التصنيع وقائمة المواد",
+        "subtitle": "قائمة المواد وأوامر العمل وتخطيط الإنتاج ومراقبة الجودة.",
+        "newBom": "قائمة مواد جديدة",
+        "workOrder": "أمر عمل",
+        "qualityControl": "مراقبة الجودة"
+    },
+    "surveysNps": {
+        "title": "الاستطلاعات والـ NPS",
+        "subtitle": "إنشاء استطلاعات العملاء وقياس صافي نقاط الترويج وجمع الملاحظات.",
+        "newSurvey": "استطلاع جديد",
+        "npsScore": "نقاط NPS",
+        "responses": "الردود"
+    },
+    "bookingScheduling": {
+        "title": "الحجز والجدولة",
+        "subtitle": "إدارة المواعيد والاجتماعات وحجوزات الموارد.",
+        "newBooking": "حجز جديد",
+        "confirmed": "مؤكد",
+        "bookingPages": "صفحات الحجز"
+    },
+    "socialCrm": {
+        "title": "إدارة العلاقات الاجتماعية",
+        "subtitle": "مراقبة وسائل التواصل الاجتماعي وتتبع إشارات العلامة التجارية والتفاعل مع الجمهور.",
+        "compose": "إنشاء منشور",
+        "mentions": "الإشارات",
+        "sentiment": "المشاعر"
+    },
+    "salesCommissions": {
+        "title": "عمولات المبيعات",
+        "subtitle": "تتبع العمولات وإدارة الخطط ومعالجة المدفوعات لفريق المبيعات.",
+        "overview": "نظرة عامة",
+        "plans": "الخطط",
+        "leaderboard": "المتصدرين",
+        "payouts": "المدفوعات"
+    },
+    "recruitment": {
+        "title": "التوظيف ونظام تتبع المتقدمين",
+        "subtitle": "إدارة الوظائف الشاغرة وتتبع المتقدمين وجدولة المقابلات وبناء خط المواهب.",
+        "pipeline": "مسار التوظيف",
+        "jobPostings": "الوظائف الشاغرة",
+        "interviews": "المقابلات",
+        "talentPool": "مجموعة المواهب"
+    },
+    "vendorScorecard": {
+        "title": "تقييم الموردين",
+        "subtitle": "تقييم أداء الموردين عبر الجودة والتسليم والتسعير.",
+        "performance": "الأداء",
+        "evaluations": "التقييمات",
+        "comparison": "المقارنة"
+    },
+    "liveChat": {
+        "title": "الدردشة المباشرة",
+        "subtitle": "دعم العملاء في الوقت الفعلي مع توجيه المحادثات والردود الجاهزة وتتبع الزوار.",
+        "activeChats": "المحادثات النشطة",
+        "visitors": "الزوار",
+        "quickReplies": "الردود السريعة"
+    },
+    "competitors": {
+        "title": "استخبارات المنافسين",
+        "subtitle": "تتبع المنافسين وتحليل أنماط الفوز والخسارة ومقارنة الميزات.",
+        "overview": "نظرة عامة",
+        "swotAnalysis": "تحليل SWOT",
+        "winLoss": "تحليل الفوز/الخسارة",
+        "featureMatrix": "مصفوفة الميزات"
+    },
+    "loyaltyRewards": {
+        "title": "الولاء والمكافآت",
+        "subtitle": "بناء ولاء العملاء من خلال النقاط والمستويات وبرامج المكافآت.",
+        "tiers": "المستويات",
+        "rewards": "كتالوج المكافآت",
+        "members": "الأعضاء",
+        "activity": "النشاط"
+    },
+    "trainingLms": {
+        "title": "التدريب ونظام إدارة التعلم",
+        "subtitle": "إدارة الدورات وتتبع تقدم التعلم وإصدار الشهادات.",
+        "catalog": "كتالوج الدورات",
+        "myLearning": "تعلمي",
+        "certifications": "الشهادات"
+    },
+    "dataImport": {
+        "title": "مركز استيراد البيانات",
+        "subtitle": "استيراد البيانات من ملفات CSV وExcel مع تعيين الحقول ومعالجة التكرارات.",
+        "upload": "رفع",
+        "mapping": "تعيين الحقول",
+        "history": "سجل الاستيراد"
+    },
+    "shippingLogistics": {
+        "title": "الشحن والخدمات اللوجستية",
+        "subtitle": "إدارة الشحنات وتتبع التسليم وإعداد شركات الشحن.",
+        "shipments": "الشحنات",
+        "carriers": "شركات الشحن",
+        "tracking": "التتبع"
+    },
+    "whiteLabel": {
+        "title": "إعدادات العلامة البيضاء",
+        "subtitle": "تخصيص العلامة التجارية والشعارات والألوان وإعدادات النطاق لنظام CRM.",
+        "branding": "العلامة التجارية",
+        "domain": "النطاق المخصص",
+        "emailBranding": "بريد العلامة التجارية",
+        "loginPage": "صفحة تسجيل الدخول"
+    },
+    "documentEditor": {
+        "title": "محرر المستندات",
+        "subtitle": "إنشاء الفواتير وأوامر الشراء وأوامر البيع والمزيد من مكان واحد",
+        "selectType": "اختر نوع المستند",
+        "selectTypeDesc": "حدد نوع المستند التجاري الذي تريد إنشاءه",
+        "changeType": "تغيير النوع",
+        "types": {
+            "invoice": "فاتورة",
+            "invoiceDesc": "فوترة العملاء مقابل السلع أو الخدمات",
+            "purchaseOrder": "أمر شراء",
+            "purchaseOrderDesc": "طلب بضائع من الموردين",
+            "salesOrder": "أمر بيع",
+            "salesOrderDesc": "تأكيد التزامات شراء العملاء",
+            "creditNote": "إشعار دائن",
+            "creditNoteDesc": "إصدار ائتمانات مقابل الفواتير",
+            "deliveryNote": "إذن تسليم",
+            "deliveryNoteDesc": "مرافقة البضائع المشحونة",
+            "proformaInvoice": "فاتورة مبدئية",
+            "proformaInvoiceDesc": "فاتورة أولية قبل التسليم"
+        },
+        "headerFields": {
+            "details": "تفاصيل المستند",
+            "deal": "الصفقة",
+            "selectDeal": "اختر صفقة",
+            "salesOrder": "أمر البيع (اختياري)",
+            "importFromOrder": "استيراد من أمر بيع",
+            "invoiceDate": "تاريخ الفاتورة",
+            "paymentTerms": "شروط الدفع",
+            "dueDate": "تاريخ الاستحقاق",
+            "vendor": "المورد",
+            "selectVendor": "اختر مورد",
+            "project": "المشروع",
+            "selectProject": "اختر مشروع",
+            "paymentMethod": "طريقة الدفع",
+            "deliveryDate": "تاريخ التسليم المتوقع",
+            "client": "العميل",
+            "selectClient": "اختر عميل",
+            "currency": "العملة",
+            "shippingAddress": "عنوان الشحن",
+            "shippingPlaceholder": "أدخل عنوان الشحن...",
+            "invoice": "الفاتورة",
+            "selectInvoice": "اختر فاتورة",
+            "creditDate": "تاريخ الائتمان",
+            "creditAmount": "مبلغ الائتمان",
+            "reason": "السبب",
+            "reasonPlaceholder": "سبب إشعار الدائن...",
+            "selectSalesOrder": "اختر أمر بيع",
+            "trackingNumber": "رقم التتبع",
+            "trackingPlaceholder": "أدخل رقم التتبع...",
+            "carrier": "شركة الشحن",
+            "carrierPlaceholder": "أدخل اسم شركة الشحن...",
+            "shippedDate": "تاريخ الشحن"
+        },
+        "lineItems": "بنود الأصناف",
+        "summary": "الملخص",
+        "subtotal": "المجموع الفرعي",
+        "tax": "الضريبة",
+        "discount": "الخصم",
+        "total": "الإجمالي",
+        "notes": "ملاحظات",
+        "terms": "الشروط والأحكام",
+        "notesPlaceholder": "ملاحظات إضافية لهذا المستند...",
+        "termsPlaceholder": "الشروط والأحكام...",
+        "saveDraft": "حفظ كمسودة",
+        "saveAndSend": "حفظ وإرسال",
+        "preview": "معاينة",
+        "print": "طباعة",
+        "cancel": "إلغاء",
+        "close": "إغلاق",
+        "docSummary": "ملخص المستند",
+        "docType": "النوع",
+        "docNumber": "الرقم",
+        "itemCount": "الأصناف",
+        "totalAmount": "الإجمالي",
+        "status": "الحالة",
+        "quickTips": "نصائح سريعة",
+        "recentDocuments": "المستندات الأخيرة",
+        "noRecentDocs": "لا توجد مستندات حديثة",
+        "validation": {
+            "selectDeal": "الرجاء اختيار صفقة",
+            "selectVendor": "الرجاء اختيار مورد",
+            "selectClient": "الرجاء اختيار عميل",
+            "selectInvoice": "الرجاء اختيار فاتورة للائتمان",
+            "selectSalesOrder": "الرجاء اختيار أمر بيع",
+            "enterAmount": "الرجاء إدخال مبلغ الائتمان",
+            "addLineItem": "الرجاء إضافة بند واحد على الأقل مع وصف"
+        }
     }
 }

@@ -1,10 +1,10 @@
 <template lang="pug">
 div
-  .flex.items-center.justify-between.mb-6
-    div
-      h1.text-2xl.font-bold(style="color: var(--text-primary)") Payroll
-      p.text-sm.mt-1(style="color: var(--text-muted)") Manage payroll runs, calculate salaries, and process payments
-    .flex.items-center.gap-3
+  ModuleHeader(
+    title="Payroll"
+    subtitle="Manage payroll runs, calculate salaries, and process payments"
+  )
+    template(#actions)
       NuxtLink(to="/hr/payroll/salary-structures")
         el-button(size="large" class="!rounded-2xl")
           Icon(name="ph:money-bold" size="16" class="mr-1")

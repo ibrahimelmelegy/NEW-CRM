@@ -4,7 +4,7 @@ import User from '../user/userModel';
 import Task from '../tasks/taskModel';
 import Comment from '../comments/commentModel';
 import Attachment from '../attachments/attachmentModel';
-import DealDelivery from './model/dealDeliveryMode copy';
+import DealDelivery from './model/dealDeliveryModel';
 import Invoice from './model/invoiceMode';
 import { Op } from 'sequelize';
 

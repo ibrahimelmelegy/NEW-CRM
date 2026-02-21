@@ -1,18 +1,17 @@
 <template lang="pug">
-.p-6.animate-entrance
-  .flex.items-center.justify-between.mb-10
-    .header-content
-      .title.font-bold.text-3xl.mb-2.text-gradient {{ $t('procurement.purchaseOrders.title') }}
-      .subtitle.text-muted.text-sm.tracking-wide {{ $t('procurement.subtitle') }}
-      
-    .flex.items-center.gap-x-4
+div
+  ModuleHeader(
+    :title="$t('procurement.purchaseOrders.title')"
+    :subtitle="$t('procurement.subtitle')"
+  )
+    template(#actions)
       ExportButton(:data="table.data" :columns="exportColumns" :filename="'purchase-orders-export'" :title="$t('procurement.purchaseOrders.title')")
       NuxtLink(to="/procurement/purchase-orders/create")
         el-button(
           size='large',
           type="primary",
           :icon="Plus",
-          class="premium-btn !rounded-2xl px-8 glow-purple"
+          class="!rounded-2xl"
         ) {{ $t('procurement.purchaseOrders.create') }}
   
   .glass-card.p-4(class="!rounded-3xl shadow-glow")

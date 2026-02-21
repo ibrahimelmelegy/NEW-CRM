@@ -3,7 +3,7 @@ import Asset from './assetModel';
 import { UpdateAssetInput } from './inputs/updateAssetInput';
 import BaseError from '../utils/error/base-http-exception';
 import { ERRORS } from '../utils/error/errors';
-import { AssetSortByEnum } from './assets,enum';
+import { AssetSortByEnum } from './assets.enum';
 import { SortEnum } from '../lead/leadEnum';
 import * as ExcelJS from 'exceljs';
 import { sendEmail } from '../utils/emailHelper';

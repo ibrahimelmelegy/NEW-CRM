@@ -601,7 +601,26 @@ async function executeWorkflow(
   const actionResults: ActionExecutionResult[] = [];
   let overallStatus: ExecutionStatus = ExecutionStatus.SUCCESS;
 
-  for (const action of rule.actions) {
+  let hasDelayedActions = false;
+  let actionsToQueue: any[] = [];
+
+  for (let i = 0; i < rule.actions.length; i++) {
+    const action = rule.actions[i];
+
+    // DELAY Node Support (Time Wait)
+    if (action.type === 'DELAY') {
+      hasDelayedActions = true;
+      // Capture the rest of the actions to be executed after the delay
+      actionsToQueue = rule.actions.slice(i + 1);
+
+      actionResults.push({
+        actionType: 'DELAY',
+        status: 'SUCCESS',
+        result: { message: `Workflow paused for ${action.days || 0} days, ${action.hours || 0} hours.` }
+      });
+      break; // Stop synchronous execution here
+    }
+
     try {
       const result = await executeAction(action, entity, {
         entityType: trigger.entityType,
@@ -642,6 +661,26 @@ async function executeWorkflow(
     executionTimeMs,
     userId: userId || null
   });
+
+  // If we hit a delay node, dispatch the rest of the actions to BullMQ
+  if (hasDelayedActions && actionsToQueue.length > 0) {
+    const delayAction = rule.actions.find(a => a.type === 'DELAY');
+    const delayMs = ((delayAction?.days || 0) * 86400000) + ((delayAction?.hours || 0) * 3600000);
+
+    const { workflowQueue } = require('./workflowQueue');
+    await workflowQueue.add('delayed-workflow', {
+      executionId: execution.id,
+      ruleId: rule.id,
+      entityType: trigger.entityType,
+      entityId: trigger.entityId,
+      actions: actionsToQueue,
+      entityData: entity,
+      triggerUserId: userId
+    }, { delay: delayMs });
+
+    // Mark as Partial since it's queued
+    await execution.update({ status: ExecutionStatus.PARTIAL });
+  }
 
   // Update rule statistics
   await rule.update({
@@ -795,6 +834,61 @@ async function testRule(
   });
 
   return { conditionsMatch, resolvedActions };
+}
+
+// ─────────────────────────────────────────────────────────
+// Execute Delayed Actions (Called by BullMQ Worker)
+// ─────────────────────────────────────────────────────────
+
+async function executeDelayedActions(
+  executionId: number,
+  ruleId: number,
+  entity: Record<string, any>,
+  actions: any[],
+  userId?: number
+): Promise<void> {
+  const execution = await WorkflowExecution.findByPk(executionId);
+  if (!execution) return;
+
+  const actionResults: ActionExecutionResult[] = execution.actionsExecuted || [];
+  let overallStatus: ExecutionStatus = ExecutionStatus.SUCCESS;
+
+  for (const action of actions) {
+    try {
+      const result = await executeAction(action, entity, {
+        entityType: execution.entityType,
+        entityId: execution.entityId,
+        userId
+      });
+
+      actionResults.push({
+        actionType: action.type,
+        status: 'SUCCESS',
+        result
+      });
+    } catch (error: any) {
+      actionResults.push({
+        actionType: action.type,
+        status: 'FAILED',
+        error: error.message || 'Unknown error'
+      });
+      overallStatus = ExecutionStatus.PARTIAL;
+    }
+  }
+
+  if (actionResults.every((r) => r.status === 'FAILED')) {
+    overallStatus = ExecutionStatus.FAILED;
+  }
+
+  await execution.update({
+    status: overallStatus,
+    actionsExecuted: actionResults
+  });
+
+  io.emit('workflow:delayed_executed', {
+    executionId,
+    status: overallStatus
+  });
 }
 
 // ─────────────────────────────────────────────────────────

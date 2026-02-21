@@ -1,7 +1,7 @@
 import { Expose, Transform } from 'class-transformer';
 import { IsOptional, IsInt, Min, IsIn } from 'class-validator';
 import { SortEnum } from '../../lead/leadEnum';
-import { AssetSortByEnum } from '../assets,enum';
+import { AssetSortByEnum } from '../assets.enum';
 
 export class GetAssetsInput {
   @Expose()

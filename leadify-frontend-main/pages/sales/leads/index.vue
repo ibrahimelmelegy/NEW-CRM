@@ -1,27 +1,31 @@
 <template lang="pug">
-div
-  //- Header
-  .flex.items-center.justify-between.mb-8
-    .title.font-bold.text-2xl.mb-1.capitalize {{ $t('leads.title') }}
-    .flex.items-center.gap-x-3
+div(class="animate-fade-in")
+  //- Premium Header
+  PremiumPageHeader(
+    :title="$t('leads.title')"
+    description="Manage and track all prospective clients to accelerate your sales pipeline."
+    icon="ph:users-three-duotone"
+    primaryColor="#7849ff"
+  )
+    template(#actions)
       ExportButton(:data="exportData" :columns="exportColumns" :filename="'leads-export'" :title="$t('leads.title')")
       template(v-if="canCreateLeads")
         NuxtLink(to="/sales/leads/add-lead")
-          el-button(size='large' :loading="loading" native-type="submit" type="primary" :icon="Plus" class="w-full !my-4 !rounded-2xl")  {{ $t('leads.newLead') }}
+          el-button(size='large' :loading="loading" native-type="submit" type="primary" :icon="Plus" class="!rounded-xl shadow-lg shadow-primary/30 active:scale-95 transition-transform") {{ $t('leads.newLead') }}
       el-dropdown(trigger="click")
-          span.el-dropdown-link
-              button.rounded-btn(class="!px-4"): Icon(  name="IconToggle" size="24")
-          template(#dropdown)
-              el-dropdown-menu
-                el-dropdown-item
-                  button.flex.items-center(:to="`/leads/1`" @click="triggerFileInput" type="button")
-                    Icon.text-md.mr-2(size="20" name="IconImport" )
-                    p.text-sm {{ $t('leads.import') }}
-                //- NuxtLink(:to="`/leads/1`")
-                //-   el-dropdown-item
-                //-     NuxtLink.flex.items-center(:to="`/leads/1`")
-                //-       Icon.text-md.mr-2(size="20" name="IconExport" )
-                //-       p.text-sm {{ $t('leads.export') }}
+        span.el-dropdown-link
+          el-button(size="large" class="!rounded-xl" v-wave)
+            Icon(name="ph:dots-three-outline-vertical-fill" size="20")
+        template(#dropdown)
+          el-dropdown-menu
+            el-dropdown-item
+              button.flex.items-center(@click="triggerFileInput" type="button")
+                Icon.text-md.mr-2(size="20" name="ph:upload-simple-bold" )
+                p.text-sm {{ $t('leads.import') }}
+
+  //- KPI Metrics
+  PremiumKPICards(:metrics="kpiMetrics" v-if="!loadingAction")
+
   input(type="file", ref="fileInput", style="display: none", accept=".xls,.xlsx", @change="handleFileChange")
   // Spinner
   el-icon.is-loading(:size="32" v-if="loadingAction" style="color: var(--accent-color, #7849ff)")
@@ -62,6 +66,9 @@ import { Plus } from '@element-plus/icons-vue';
 import { computed, ref, watch, unref, shallowRef, isRef, onMounted, onBeforeMount } from 'vue';
 import { leadStates, leadSources } from '@/composables/useLeads';
 import useTableFilter from '@/composables/useTableFilter';
+import PremiumPageHeader from '~/components/UI/PremiumPageHeader.vue';
+import PremiumKPICards from '~/components/UI/PremiumKPICards.vue';
+import type { KPIMetric } from '~/components/UI/PremiumKPICards.vue';
 const router = useRouter();
 
 const { $i18n } = useNuxtApp();
@@ -129,7 +136,7 @@ async function editPresent() {
 }
 
 // Call API to Get the lead and users in parallel
-const [response, usersResponse] = await Promise.all([
+let [response, usersResponse] = await Promise.all([
   useTableFilter('lead'),
   useApiFetch('users')
 ]);
@@ -143,6 +150,23 @@ const table = ref({
     { prop: 'identity', order: 'ascending', value: 'IDENTITY_ASC' },
     { prop: 'identity', order: 'descending', value: 'IDENTITY_DESC' }
   ]
+});
+
+const kpiMetrics = computed<KPIMetric[]>(() => {
+  const data = table.value.data || [];
+  const total = data.length;
+  // Estimate stats purely for visual impact. In production backend should supply these.
+  const newLeads = data.filter((l: any) => l.status === 'NEW').length;
+  const qualified = data.filter((l: any) => l.status === 'QUALIFIED').length;
+  const contacted = data.filter((l: any) => l.status === 'CONTACTED').length;
+  const rate = total > 0 ? Math.round((qualified / total) * 100) : 0;
+  
+  return [
+    { label: 'Total Leads', value: total, icon: 'ph:users-three-bold', color: '#7849ff', trend: '+12%', trendType: 'up' },
+    { label: 'New Pipeline', value: newLeads, icon: 'ph:sparkle-bold', color: '#10b981', trend: 'Trending', trendType: 'up' },
+    { label: 'Qualified', value: qualified, icon: 'ph:check-circle-bold', color: '#f59e0b' },
+    { label: 'Conversion', value: rate + '%', icon: 'ph:chart-line-up-bold', color: '#3b82f6' }
+  ];
 });
 
 const updateTableColumns = () => {

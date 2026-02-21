@@ -9,10 +9,6 @@ div
         Icon(name="ph:database-bold" size="16" class="mr-1")
         span {{ $t('documentTemplates.seedDefaults') }}
       NuxtLink(to="/settings/document-templates/pro-builder")
-        el-button(size="large" class="!rounded-2xl")
-          Icon(name="ph:pen-nib-bold" size="16" class="mr-1")
-          span {{ $t('documentTemplates.proBuilder.title') || 'Pro Builder' }}
-      NuxtLink(to="/settings/document-templates/builder")
         el-button(size="large" type="primary" class="!rounded-2xl")
           Icon(name="ph:plus-bold" size="16" class="mr-1")
           span {{ $t('documentTemplates.createTemplate') }}
@@ -98,7 +94,7 @@ div
         p.mt-1.text-sm(style="color: var(--text-muted)") {{ $t('documentTemplates.noTemplatesHint') }}
         .flex.justify-center.gap-3.mt-6
           el-button(@click="handleSeedDefaults" :loading="seeding" class="!rounded-2xl") {{ $t('documentTemplates.seedDefaults') }}
-          NuxtLink(to="/settings/document-templates/builder")
+          NuxtLink(to="/settings/document-templates/pro-builder")
             el-button(type="primary" class="!rounded-2xl") {{ $t('documentTemplates.createTemplate') }}
 
     //- Pagination
@@ -178,7 +174,7 @@ function handlePageChange(page: number) {
 }
 
 function editTemplate(id: string) {
-  router.push(`/settings/document-templates/builder?id=${id}`);
+  router.push(`/settings/document-templates/pro-builder?id=${id}`);
 }
 
 async function handleClone(id: string) {

@@ -61,7 +61,7 @@ class ProjectController {
 
   public async getAllProjects(req: AuthenticatedRequest, res: Response, next: NextFunction): Promise<void> {
     try {
-      const projects = await projectService.getAllProjects();
+      const projects = await projectService.getAllProjects(req.user as User);
       wrapResult(res, projects);
     } catch (error) {
       next(error);
@@ -86,7 +86,7 @@ class ProjectController {
   }
   public async getDraftProject(req: AuthenticatedRequest, res: Response, next: NextFunction): Promise<void> {
     try {
-      const project = await projectService.getDraftProject();
+      const project = await projectService.getDraftProject(req.user as User);
       wrapResult(res, project, 200);
     } catch (error) {
       next(error);

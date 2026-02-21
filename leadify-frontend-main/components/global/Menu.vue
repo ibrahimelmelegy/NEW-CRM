@@ -102,6 +102,7 @@ const menu = [
   { link: '/dashboard/war-room', name: 'navigation.warRoom', icon: 'ph:crosshair-bold', submenu: false, isOpen: false },
   { link: '/dashboard/briefing', name: 'navigation.dailyBriefing', icon: 'ph:sun-horizon-bold', submenu: false, isOpen: false },
   { link: '/dashboard/builder', name: 'navigation.dashboardBuilder', icon: 'ph:squares-four-bold', submenu: false, isOpen: false },
+  { link: '/views/kanban', name: 'navigation.kanbanBoard', icon: 'ph:kanban-bold', submenu: false, isOpen: false },
   {
     name: 'navigation.sales',
     icon: 'IconSales',
@@ -116,7 +117,10 @@ const menu = [
       { link: '/sales/subscriptions', name: 'navigation.subscriptions', icon: 'ph:arrows-clockwise-bold' },
       { link: '/sales/contracts', name: 'navigation.contracts', icon: 'ph:file-doc-bold' },
       { link: '/sales/proposals', name: 'navigation.proposals', icon: 'ph:file-text' },
-      { link: '/sales/playbook', name: 'navigation.salesPlaybook', icon: 'ph:book-open-bold' }
+      { link: '/sales/playbook', name: 'navigation.salesPlaybook', icon: 'ph:book-open-bold' },
+      { link: '/sales/cpq', name: 'navigation.cpq', icon: 'ph:calculator-bold' },
+      { link: '/sales/commissions', name: 'navigation.commissions', icon: 'ph:currency-dollar-bold' },
+      { link: '/sales/competitors', name: 'navigation.competitors', icon: 'ph:binoculars-bold' }
     ]
   },
   {
@@ -132,7 +136,9 @@ const menu = [
       { link: '/operations/services', name: 'navigation.services', icon: 'ph:wrench' },
       { link: '/operations/assets', name: 'navigation.assets', icon: 'ph:bank' },
       { link: '/operations/time-tracking', name: 'navigation.timeTracking', icon: 'ph:timer-bold' },
-      { link: '/operations/field-tracking', name: 'navigation.fieldTracking', icon: 'ph:map-pin-bold' }
+      { link: '/operations/field-tracking', name: 'navigation.fieldTracking', icon: 'ph:map-pin-bold' },
+      { link: '/operations/gantt', name: 'navigation.ganttTimeline', icon: 'ph:chart-bar-horizontal-bold' },
+      { link: '/operations/resource-planner', name: 'navigation.resourcePlanner', icon: 'ph:users-four-bold' }
     ]
   },
   {
@@ -146,7 +152,8 @@ const menu = [
       { link: '/procurement/showrooms', name: 'navigation.showRooms', icon: 'ph:buildings' },
       { link: '/procurement/purchase-orders', name: 'navigation.purchaseOrders', icon: 'ph:shopping-cart' },
       { link: '/procurement/rfq', name: 'navigation.rfq', icon: 'ph:files' },
-      { link: '/procurement/statistics', name: 'navigation.statistics', icon: 'ph:chart-bar' }
+      { link: '/procurement/statistics', name: 'navigation.statistics', icon: 'ph:chart-bar' },
+      { link: '/procurement/vendor-scorecard', name: 'navigation.vendorScorecard', icon: 'ph:star-half-bold' }
     ]
   },
   {
@@ -155,15 +162,41 @@ const menu = [
     isOpen: false,
     link: '/inventory'
   },
+  {
+    name: 'navigation.warehouse',
+    icon: 'ph:warehouse-bold',
+    isOpen: false,
+    link: '/warehouse'
+  },
+  {
+    name: 'navigation.manufacturing',
+    icon: 'ph:factory-bold',
+    isOpen: false,
+    link: '/manufacturing'
+  },
+  {
+    name: 'navigation.shipping',
+    icon: 'ph:truck-bold',
+    isOpen: false,
+    link: '/shipping'
+  },
   { link: '/tasks', name: 'navigation.tasks', icon: 'ph:list-checks-bold', submenu: false, isOpen: false },
   { link: '/messaging', name: 'navigation.messaging', icon: 'ph:chat-circle-dots-bold', submenu: false, isOpen: false },
+  { link: '/communications', name: 'navigation.communicationHub', icon: 'ph:phone-list-bold', submenu: false, isOpen: false },
+  { link: '/ai-assistant', name: 'navigation.aiAssistant', icon: 'ph:brain-bold', submenu: false, isOpen: false },
+  { link: '/customer-success', name: 'navigation.customerSuccess', icon: 'ph:heart-half-bold', submenu: false, isOpen: false },
   {
     name: 'navigation.marketing',
     icon: 'ph:megaphone-bold',
     isOpen: false,
     submenu: [
       { link: '/marketing/campaigns', name: 'navigation.campaigns', icon: 'ph:envelope-simple-bold' },
-      { link: '/marketing/sequences', name: 'navigation.sequences', icon: 'ph:flow-arrow-bold' }
+      { link: '/marketing/sequences', name: 'navigation.sequences', icon: 'ph:flow-arrow-bold' },
+      { link: '/marketing/ab-testing', name: 'navigation.abTesting', icon: 'ph:flask-bold' },
+      { link: '/marketing/form-builder', name: 'navigation.formBuilder', icon: 'ph:textbox-bold' },
+      { link: '/marketing/surveys', name: 'navigation.surveys', icon: 'ph:chart-bar-bold' },
+      { link: '/marketing/social', name: 'navigation.socialCrm', icon: 'ph:share-network-bold' },
+      { link: '/marketing/loyalty', name: 'navigation.loyalty', icon: 'ph:gift-bold' }
     ]
   },
   {
@@ -173,10 +206,26 @@ const menu = [
     link: '/calendar'
   },
   {
+    name: 'navigation.booking',
+    icon: 'ph:calendar-check-bold',
+    isOpen: false,
+    link: '/booking'
+  },
+  {
     name: 'navigation.documents',
     icon: 'ph:folder-open-bold',
     isOpen: false,
-    link: '/documents'
+    submenu: [
+      { link: '/documents', name: 'navigation.allDocuments', icon: 'ph:folder-bold' },
+      { link: '/documents/e-signatures', name: 'navigation.eSignatures', icon: 'ph:signature-bold' },
+      { link: '/documents/editor', name: 'navigation.documentEditor', icon: 'ph:file-plus-bold' }
+    ]
+  },
+  {
+    name: 'navigation.automations',
+    icon: 'ph:git-merge-bold',
+    isOpen: false,
+    link: '/automations'
   },
   {
     name: 'navigation.reports',
@@ -217,7 +266,11 @@ const menu = [
       { link: '/hr/leave-requests', name: 'navigation.leaveRequests', icon: 'ph:calendar-x-bold' },
       { link: '/hr/payroll', name: 'navigation.payroll', icon: 'ph:money-bold' },
       { link: '/hr/payroll/salary-structures', name: 'navigation.salaryStructures', icon: 'ph:stack-bold' },
-      { link: '/hr/payroll/end-of-service', name: 'navigation.endOfService', icon: 'ph:hand-coins-bold' }
+      { link: '/hr/payroll/end-of-service', name: 'navigation.endOfService', icon: 'ph:hand-coins-bold' },
+      { link: '/hr/performance-reviews', name: 'navigation.performanceReviews', icon: 'ph:star-bold' },
+      { link: '/hr/goals', name: 'navigation.goalsOkrs', icon: 'ph:target-bold' },
+      { link: '/hr/recruitment', name: 'navigation.recruitment', icon: 'ph:user-circle-plus-bold' },
+      { link: '/hr/training', name: 'navigation.training', icon: 'ph:graduation-cap-bold' }
     ]
   },
   {
@@ -247,7 +300,8 @@ const menu = [
       { link: '/support/tickets', name: 'navigation.tickets', icon: 'ph:ticket-bold' },
       { link: '/support/dashboard', name: 'navigation.supportDashboard', icon: 'ph:chart-pie-bold' },
       { link: '/support/canned-responses', name: 'navigation.cannedResponses', icon: 'ph:chat-text-bold' },
-      { link: '/support/knowledge-base', name: 'navigation.knowledgeBase', icon: 'ph:book-open-bold' }
+      { link: '/support/knowledge-base', name: 'navigation.knowledgeBase', icon: 'ph:book-open-bold' },
+      { link: '/support/live-chat', name: 'navigation.liveChat', icon: 'ph:chats-bold' }
     ]
   },
   {
@@ -288,6 +342,10 @@ const menu = [
       { link: '/settings/territories', name: 'navigation.territories', icon: 'ph:map-trifold-bold' },
       { link: '/settings/email-accounts', name: 'navigation.emailAccounts', icon: 'ph:envelope-bold' },
       { link: '/settings/products', name: 'navigation.products', icon: 'ph:package-bold' },
+      { link: '/settings/assignment-rules', name: 'navigation.assignmentRules', icon: 'ph:user-switch-bold' },
+      { link: '/settings/data-governance', name: 'navigation.dataGovernance', icon: 'ph:database-bold' },
+      { link: '/settings/data-import', name: 'navigation.dataImport', icon: 'ph:upload-bold' },
+      { link: '/settings/white-label', name: 'navigation.whiteLabel', icon: 'ph:paint-brush-bold' },
       { link: '/admin/tests', name: 'navigation.qaCenter', icon: 'ph:test-tube-bold' },
       { link: '/test', name: 'navigation.permissionsHub', icon: 'ph:key-bold' }
     ]

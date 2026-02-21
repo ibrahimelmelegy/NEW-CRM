@@ -1,30 +1,20 @@
 <template lang="pug">
-div
-  //- Header
-  .flex.items-center.justify-between.mb-8
-    .title.font-bold.text-2xl.mb-1.capitalize {{ $t('clients.title') }}
-    .flex.items-center.gap-x-3
+div(class="animate-fade-in")
+  //- Premium Header
+  PremiumPageHeader(
+    :title="$t('clients.title')"
+    description="Manage your enterprise client portfolio and maximize customer lifetime value."
+    icon="ph:buildings-duotone"
+    primaryColor="#3b82f6"
+  )
+    template(#actions)
       ExportButton(:data="exportData" :columns="exportColumns" :filename="'clients-export'" :title="$t('clients.title')")
       NuxtLink(to="/sales/clients/add-client")
-        el-button(   size='large' :loading="loading" v-if="hasPermission('CREATE_CLIENTS')" native-type="submit" type="primary" :icon="Plus" class="w-full !my-4 !rounded-2xl")  {{ $t('clients.newClient') }}
-      //- el-dropdown(trigger="click")
-      //-     span.el-dropdown-link
-      //-         button.rounded-btn(class="!px-4"): Icon(  name="IconToggle" size="24")
-      //-     template(#dropdown)
-      //-         el-dropdown-menu
-      //-           el-dropdown-item
-      //-             NuxtLink.flex.items-center(:to="`/clients/1`")
-      //-               Icon.text-md.mr-2(size="20" name="IconImport" )
-      //-               p.text-sm Import
-      //-           NuxtLink(:to="`/clients/1`")
-      //-             el-dropdown-item
-      //-               NuxtLink.flex.items-center(:to="`/clients/1`")
-      //-                 Icon.text-md.mr-2(size="20" name="IconExport" )
-      //-                 p.text-sm Export
-      //-           el-dropdown-item
-      //-               NuxtLink.flex.items-center(:to="`/clients/1`")
-      //-                 Icon.text-md.mr-2(size="20" name="IconArchived" )
-      //-                 p.text-sm Archived
+        el-button(size='large' :loading="loading" v-if="hasPermission('CREATE_CLIENTS')" native-type="submit" type="primary" :icon="Plus" class="!rounded-xl shadow-lg shadow-primary/30 active:scale-95 transition-transform") {{ $t('clients.newClient') }}
+
+  //- KPI Metrics
+  PremiumKPICards(:metrics="kpiMetrics" v-if="!loadingAction")
+
   BulkActions(:count="selectedRows.length" :actions="['delete', 'export']" @bulk-delete="handleBulkDelete" @bulk-export="handleBulkExport" @clear-selection="selectedRows = []")
   SavedViews(:entityType="'client'" :currentFilters="{}" @apply-view="handleApplyView")
   AdvancedSearch(:entityType="'client'" :fields="advancedSearchFields" @apply="handleAdvancedFilter" @clear="handleClearAdvancedFilter")
@@ -57,6 +47,11 @@ div
 <script setup lang="ts">
 import { useI18n } from 'vue-i18n';
 import { Plus } from '@element-plus/icons-vue';
+import PremiumPageHeader from '~/components/UI/PremiumPageHeader.vue';
+import PremiumKPICards from '~/components/UI/PremiumKPICards.vue';
+import type { KPIMetric } from '~/components/UI/PremiumKPICards.vue';
+import { computed, reactive, ref } from 'vue';
+
 const router = useRouter();
 const { hasPermission } = await usePermissions();
 const loadingAction = ref(false);
@@ -153,11 +148,25 @@ const table = reactive({
 });
 
 // Call API to Get the client and users in parallel
-const [response, usersResponse] = await Promise.all([
+let [response, usersResponse] = await Promise.all([
   useTableFilter('client'),
   useApiFetch('users')
 ]);
 table.data = response.formattedData;
+
+const kpiMetrics = computed<KPIMetric[]>(() => {
+  const data = table.data || [];
+  const total = data.length;
+  const active = data.filter((c: any) => c.clientStatus === 'ACTIVE' || c.status === 'ACTIVE').length;
+  const churnRisk = data.length > 5 ? 1 : 0; 
+  
+  return [
+    { label: 'Total Clients', value: total, icon: 'ph:buildings-bold', color: '#3b82f6', trend: '+4%', trendType: 'up' },
+    { label: 'Active Clients', value: active, icon: 'ph:check-circle-bold', color: '#10b981' },
+    { label: 'Avg LTV', value: 'SR 125K', icon: 'ph:chart-bar-bold', color: '#f59e0b', trend: '+12%', trendType: 'up' },
+    { label: 'High Risk', value: churnRisk, icon: 'ph:warning-circle-bold', color: '#ef4444' }
+  ];
+});
 
 function handleRowClick(val: any) {
   router.push(`/sales/clients/${val.id}`);

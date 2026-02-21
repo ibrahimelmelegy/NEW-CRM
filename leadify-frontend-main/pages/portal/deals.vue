@@ -1,9 +1,9 @@
 <template lang="pug">
 .portal-deals
-  .flex.items-center.justify-between.mb-6
-    div
-      h2.text-2xl.font-bold.mb-1(style="color: var(--text-primary)") {{ $t('portal.deals.title') }}
-      p.text-sm(style="color: var(--text-muted)") {{ $t('portal.deals.subtitle') }}
+  ModuleHeader(
+    :title="$t('portal.deals.title')"
+    :subtitle="$t('portal.deals.subtitle')"
+  )
 
   .glass-card.p-6
     el-table(:data="deals" v-loading="loading" style="width: 100%")

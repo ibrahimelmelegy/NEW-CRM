@@ -1,13 +1,14 @@
 <template lang="pug">
 .portal-tickets
-  .flex.items-center.justify-between.mb-6
-    div
-      h2.text-2xl.font-bold.mb-1(style="color: var(--text-primary)") {{ $t('portal.tickets.title') }}
-      p.text-sm(style="color: var(--text-muted)") {{ $t('portal.tickets.subtitle') }}
-    NuxtLink(to="/portal/tickets/create")
-      el-button(type="primary" class="!bg-[#7849ff] hover:!bg-[#6a3ae0] !border-none !rounded-xl")
-        Icon(name="ph:plus-bold" size="14" aria-label="Create")
-        span.ml-1 {{ $t('portal.tickets.create') }}
+  ModuleHeader(
+    :title="$t('portal.tickets.title')"
+    :subtitle="$t('portal.tickets.subtitle')"
+  )
+    template(#actions)
+      NuxtLink(to="/portal/tickets/create")
+        el-button(type="primary" class="!bg-[#7849ff] hover:!bg-[#6a3ae0] !border-none !rounded-xl")
+          Icon(name="ph:plus-bold" size="14" aria-label="Create")
+          span.ml-1 {{ $t('portal.tickets.create') }}
 
   .glass-card.p-6
     el-table(:data="tickets" v-loading="loading" style="width: 100%")

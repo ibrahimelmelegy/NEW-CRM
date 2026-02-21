@@ -102,9 +102,11 @@ class ProjectService {
         if (input.basicInfo.opportunityId) await this.convertOpportunityToProject(input.basicInfo.opportunityId);
       }
 
-      // Create the project
-      let project = !existingProject ? await Project.create({ ...input.basicInfo }, { transaction }) : existingProject.set({ ...input.basicInfo });
-      existingProject && (await project.save());
+      // Create the project, ensuring it's bound to the user's tenant
+      let project = !existingProject
+        ? await Project.create({ ...input.basicInfo, tenantId: admin.tenantId }, { transaction })
+        : existingProject.set({ ...input.basicInfo });
+      existingProject && (await project.save({ transaction }));
 
       if (input.basicInfo.files?.length) {
         await uploaderService.setFileReferences(input.basicInfo.files.map(file => file.refs).flat(1));
@@ -298,12 +300,12 @@ class ProjectService {
         { transaction }
       );
 
-      transaction.commit();
+      await transaction.commit();
       project.isCompleted && (await createActivityLog('project', 'update', project.id, user.id, null, 'Prject materials got updated Successfully'));
 
       return this.recalculateProject(project);
     } catch (error) {
-      transaction.rollback();
+      await transaction.rollback();
       throw new BaseError(ERRORS.SOMETHING_WENT_WRONG);
     }
   }
@@ -434,7 +436,8 @@ class ProjectService {
           category: {
             [Op.in]: query.category
           }
-        })
+        }),
+        tenantId: user.tenantId // <-- CORE SAAS SECURITY: Isolate by Workspace
       },
       limit,
       offset,
@@ -474,8 +477,11 @@ class ProjectService {
     };
   }
 
-  public async getAllProjects(): Promise<Project[]> {
+  public async getAllProjects(user: User): Promise<Project[]> {
     return await Project.findAll({
+      where: {
+        tenantId: user.tenantId // Isolate by Workspace
+      },
       attributes: ['id', 'name'],
       order: [['name', 'ASC']]
     });
@@ -488,10 +494,11 @@ class ProjectService {
     return project;
   }
 
-  public async getDraftProject(): Promise<any> {
+  public async getDraftProject(user: User): Promise<any> {
     const project = await this.projectOrError(
       {
-        isCompleted: false
+        isCompleted: false,
+        tenantId: user.tenantId
       },
       RelationArray
     );

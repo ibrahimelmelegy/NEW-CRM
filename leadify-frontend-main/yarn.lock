@@ -2231,6 +2231,22 @@
     d3-selection "^3.0.0"
     d3-zoom "^3.0.0"
 
+"@vue-flow/minimap@^1.5.4":
+  version "1.5.4"
+  resolved "https://registry.npmjs.org/@vue-flow/minimap/-/minimap-1.5.4.tgz"
+  integrity sha512-l4C+XTAXnRxsRpUdN7cAVFBennC1sVRzq4bDSpVK+ag7tdMczAnhFYGgbLkUw3v3sY6gokyWwMl8CDonp8eB2g==
+  dependencies:
+    d3-selection "^3.0.0"
+    d3-zoom "^3.0.0"
+
+"@vue-flow/node-resizer@^1.5.1":
+  version "1.5.1"
+  resolved "https://registry.npmjs.org/@vue-flow/node-resizer/-/node-resizer-1.5.1.tgz"
+  integrity sha512-DNYgXTF39GXPAygVMFmgn5azgFztaWfqbWvv8D/X0HGgeunRrexJ0W94DyXH1rnndGyYAJ0KexEjyelsb+Nlbg==
+  dependencies:
+    d3-drag "^3.0.0"
+    d3-selection "^3.0.0"
+
 "@vue-macros/common@^3.1.1":
   version "3.1.2"
   resolved "https://registry.npmjs.org/@vue-macros/common/-/common-3.1.2.tgz"
@@ -2486,7 +2502,16 @@
     "@vueuse/shared" "10.11.1"
     vue-demi ">=0.14.8"
 
-"@vueuse/core@^14.2.0", "@vueuse/core@14.2.0":
+"@vueuse/core@^14.2.1":
+  version "14.2.1"
+  resolved "https://registry.npmjs.org/@vueuse/core/-/core-14.2.1.tgz"
+  integrity sha512-3vwDzV+GDUNpdegRY6kzpLm4Igptq+GA0QkJ3W61Iv27YWwW/ufSlOfgQIpN6FZRMG0mkaz4gglJRtq5SeJyIQ==
+  dependencies:
+    "@types/web-bluetooth" "^0.0.21"
+    "@vueuse/metadata" "14.2.1"
+    "@vueuse/shared" "14.2.1"
+
+"@vueuse/core@14.2.0":
   version "14.2.0"
   resolved "https://registry.npmjs.org/@vueuse/core/-/core-14.2.0.tgz"
   integrity sha512-tpjzVl7KCQNVd/qcaCE9XbejL38V6KJAEq/tVXj7mDPtl6JtzmUdnXelSS+ULRkkrDgzYVK7EerQJvd2jR794Q==
@@ -2504,6 +2529,11 @@
   version "14.2.0"
   resolved "https://registry.npmjs.org/@vueuse/metadata/-/metadata-14.2.0.tgz"
   integrity sha512-i3axTGjU8b13FtyR4Keeama+43iD+BwX9C2TmzBVKqjSHArF03hjkp2SBZ1m72Jk2UtrX0aYCugBq2R1fhkuAQ==
+
+"@vueuse/metadata@14.2.1":
+  version "14.2.1"
+  resolved "https://registry.npmjs.org/@vueuse/metadata/-/metadata-14.2.1.tgz"
+  integrity sha512-1ButlVtj5Sb/HDtIy1HFr1VqCP4G6Ypqt5MAo0lCgjokrk2mvQKsK2uuy0vqu/Ks+sHfuHo0B9Y9jn9xKdjZsw==
 
 "@vueuse/nuxt@^14.2.0":
   version "14.2.0"
@@ -2526,6 +2556,11 @@
   version "14.2.0"
   resolved "https://registry.npmjs.org/@vueuse/shared/-/shared-14.2.0.tgz"
   integrity sha512-Z0bmluZTlAXgUcJ4uAFaML16JcD8V0QG00Db3quR642I99JXIDRa2MI2LGxiLVhcBjVnL1jOzIvT5TT2lqJlkA==
+
+"@vueuse/shared@14.2.1":
+  version "14.2.1"
+  resolved "https://registry.npmjs.org/@vueuse/shared/-/shared-14.2.1.tgz"
+  integrity sha512-shTJncjV9JTI4oVNyF1FQonetYAiTBd+Qj7cY89SWbXSkx7gyhrgtEdF2ZAVWS1S3SHlaROO6F2IesJxQEkZBw==
 
 abbrev@^2.0.0:
   version "2.0.0"

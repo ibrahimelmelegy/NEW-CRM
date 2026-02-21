@@ -1,6 +1,7 @@
 import cors from 'cors';
 import cookieParser from 'cookie-parser';
 import express, { Application, NextFunction, Request, Response } from 'express';
+import { serverAdapter } from './workflow/workflowQueue';
 import helmet from 'helmet';
 import i18next from 'i18next';
 import Backend from 'i18next-fs-backend';
@@ -93,6 +94,7 @@ import subscriptionRoutes from './subscription/subscriptionRoutes';
 import payrollRoutes from './payroll/payrollRoutes';
 import accountingRoutes from './accounting/accountingRoutes';
 import communicationRoutes from './communication/communicationRoutes';
+import customerSuccessRoutes from './customerSuccess/customerSuccessRoutes';
 
 const fileUpload = require('express-fileupload');
 
@@ -291,10 +293,14 @@ app.use('/api/support', supportRoutes);
 app.use('/api/payroll', payrollRoutes);
 app.use('/api/accounting', accountingRoutes);
 app.use('/api/communications', communicationRoutes);
+app.use('/api/customer-success', customerSuccessRoutes);
 
 // Authentication routes
 // Apply strict rate limiting only to login/password-reset endpoints (not /me which is called on every page)
 app.use('/api/auth', authRoutes);
+
+// BullMQ Queue Dashboard (Optional: Secure this middleware in production)
+app.use('/api/admin/queues', serverAdapter.getRouter());
 
 // Serve static files from the 'public' directory
 app.use('/assets', express.static('public/uploads'));

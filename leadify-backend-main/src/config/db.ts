@@ -2,7 +2,7 @@ import dotenv from 'dotenv';
 import { Sequelize } from 'sequelize-typescript';
 import Asset from '../asset/assetModel';
 import Client from '../client/clientModel';
-import DealDelivery from '../deal/model/dealDeliveryMode copy';
+import DealDelivery from '../deal/model/dealDeliveryModel';
 import Deal from '../deal/model/dealModel';
 import Invoice from '../deal/model/invoiceMode';
 import Lead from '../lead/leadModel';
@@ -156,6 +156,8 @@ import DocumentSignature from '../portal/models/signatureModel';
 // Integration Hub Models
 import IntegrationConfig from '../integration/models/integrationConfigModel';
 import OutgoingWebhook from '../integration/models/outgoingWebhookModel';
+// SaaS Models
+import Tenant from '../tenant/tenantModel';
 
 dotenv.config();
 
@@ -208,7 +210,6 @@ const sequelize = new Sequelize({
     MaterialsAdditionalMaterialItem,
     ProjectMaterial,
     Role,
-    MaterialsAdditionalMaterialItem,
     ProjectAdditionalMaterialItem,
     DealActivity,
     OpportunityActivity,
@@ -332,7 +333,8 @@ const sequelize = new Sequelize({
     CommCallLog,
     DocumentSignature,
     IntegrationConfig,
-    OutgoingWebhook
+    OutgoingWebhook,
+    Tenant
   ], // Path to your models
   logging: process.env.NODE_ENV !== 'production' ? console.log : false
 });

@@ -1,30 +1,20 @@
 <template lang="pug">
-div
-  //- Header
-  .flex.items-center.justify-between.mb-8
-    .title.font-bold.text-2xl.mb-1.capitalize {{ $t('operations.projects.title') }}
-    .flex.items-center.gap-x-3
+div(class="animate-fade-in")
+  //- Premium Header
+  PremiumPageHeader(
+    :title="$t('operations.projects.title')"
+    description="Oversee active projects, manage delivery timelines, and ensure client success."
+    icon="ph:kanban-duotone"
+    primaryColor="#8b5cf6"
+  )
+    template(#actions)
       ExportButton(:data="exportData" :columns="exportColumns" :filename="'projects-export'" :title="$t('operations.projects.title')")
       NuxtLink(to="/operations/projects/add-project")
-        el-button(   size='large' :loading="loading" v-if="hasPermission('CREATE_PROJECTS')" native-type="submit" type="primary" :icon="Plus" class="w-full !my-4 !rounded-2xl")  {{ $t('operations.projects.newProject') }}
-      //- el-dropdown(trigger="click")
-      //-     span.el-dropdown-link
-      //-         button.rounded-btn(class="!px-4"): Icon(  name="IconToggle" size="24")
-      //-     template(#dropdown)
-      //-         el-dropdown-menu
-      //-           el-dropdown-item
-      //-             NuxtLink.flex.items-center(:to="`/leads/1`")
-      //-               Icon.text-md.mr-2(size="20" name="IconImport" )
-      //-               p.text-sm Import
-      //-           NuxtLink(:to="`/leads/1`")
-      //-             el-dropdown-item
-      //-               NuxtLink.flex.items-center(:to="`/leads/1`")
-      //-                 Icon.text-md.mr-2(size="20" name="IconExport" )
-      //-                 p.text-sm Export
-      //-           el-dropdown-item
-      //-               NuxtLink.flex.items-center(:to="`/leads/1`")
-      //-                 Icon.text-md.mr-2(size="20" name="IconArchived" )
-      //-                 p.text-sm Archived
+        el-button(size='large' :loading="loading" v-if="hasPermission('CREATE_PROJECTS')" native-type="submit" type="primary" :icon="Plus" class="!rounded-xl shadow-lg shadow-primary/30 active:scale-95 transition-transform") {{ $t('operations.projects.newProject') }}
+
+  //- KPI Metrics
+  PremiumKPICards(:metrics="kpiMetrics" v-if="!loadingAction")
+
   BulkActions(:count="selectedRows.length" :actions="['delete', 'export']" @bulk-delete="handleBulkDelete" @bulk-export="handleBulkExport" @clear-selection="selectedRows = []")
   SavedViews(:entityType="'project'" :currentFilters="{}" @apply-view="handleApplyView")
   AdvancedSearch(:entityType="'project'" :fields="advancedSearchFields" @apply="handleAdvancedFilter" @clear="handleClearAdvancedFilter")
@@ -56,6 +46,11 @@ div
 
 <script setup lang="ts">
 import { Plus } from '@element-plus/icons-vue';
+import PremiumPageHeader from '~/components/UI/PremiumPageHeader.vue';
+import PremiumKPICards from '~/components/UI/PremiumKPICards.vue';
+import type { KPIMetric } from '~/components/UI/PremiumKPICards.vue';
+import { computed, reactive, ref } from 'vue';
+
 const router = useRouter();
 const { t } = useI18n();
 const { hasPermission } = await usePermissions();
@@ -173,8 +168,22 @@ const table = reactive({
   data: [] as CombinedProjectValues[]
 });
 
-const response = await useTableFilter('project');
+let response = await useTableFilter('project');
 table.data = response.formattedData;
+
+const kpiMetrics = computed<KPIMetric[]>(() => {
+  const data = table.data || [];
+  const total = data.length;
+  const active = data.filter((p: any) => p.status === 'PROJECT_ACTIVE').length;
+  const completed = data.filter((p: any) => p.status === 'PROJECT_COMPLETE').length;
+  
+  return [
+    { label: 'Total Projects', value: total, icon: 'ph:kanban-bold', color: '#8b5cf6', trend: '+2%', trendType: 'up' },
+    { label: 'Active Projects', value: active, icon: 'ph:spinner-gap-bold', color: '#10b981' },
+    { label: 'Completed', value: completed, icon: 'ph:check-square-offset-bold', color: '#3b82f6' },
+    { label: 'Avg Duration', value: '45 Days', icon: 'ph:clock-bold', color: '#f59e0b' }
+  ];
+});
 
 // mock data for integrate till api is ready
 // const project = await getProjectDraft();

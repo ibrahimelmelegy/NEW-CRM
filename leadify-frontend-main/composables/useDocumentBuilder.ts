@@ -232,7 +232,8 @@ function buildSalesProposal(): ProTemplateDefinition {
     content: {
       type: 'doc',
       content: [
-        heading(1, 'Sales Proposal'),
+        coverPage('Sales Proposal', 'Strategic partnership & customized solutions', 'https://images.unsplash.com/photo-1557683316-973673baf926?q=80&w=2000&auto=format&fit=crop'),
+        heading(1, 'Executive Summary'),
         paragraph([
           text('Prepared for: '),
           variable('client.name'),
@@ -301,6 +302,7 @@ function buildContractAgreement(): ProTemplateDefinition {
     content: {
       type: 'doc',
       content: [
+        coverPage('Service Agreement', 'Legally binding contract and terms', 'https://images.unsplash.com/photo-1589829085413-56de8ae18c73?q=80&w=2000&auto=format&fit=crop'),
         heading(1, 'Service Agreement'),
         paragraph([
           text('This Service Agreement ("Agreement") is entered into as of '),
@@ -447,6 +449,7 @@ function buildMeetingNotes(): ProTemplateDefinition {
     content: {
       type: 'doc',
       content: [
+        coverPage('Meeting Minutes', 'Strategic alignment & action items', 'https://images.unsplash.com/photo-1600880292203-757bb62b4baf?q=80&w=2000&auto=format&fit=crop'),
         heading(1, 'Meeting Notes'),
         paragraph([
           boldText('Date: '),
@@ -805,11 +808,24 @@ function table(headers: string[], rows: string[][]): JSONContent {
           content: [
             {
               type: 'paragraph',
-              content: cell ? [{ type: 'text', text: cell }] : [],
+              content: [{ type: 'text', text: cell }],
             },
           ],
         })),
       })),
     ],
+  };
+}
+
+function coverPage(title: string, subtitle: string, coverImage: string): JSONContent {
+  return {
+    type: 'coverPage',
+    attrs: {
+      title,
+      subtitle,
+      coverImage,
+      date: '{{invoice.date}}',
+      preparedBy: '{{company.name}}'
+    },
   };
 }

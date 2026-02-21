@@ -17,7 +17,7 @@ import { ConvertLeadToDealInput, CreateLeadAndDealInput } from './inputs/convert
 import { CreateDealInvoiceInput, CreateDeliveryDetailsInput } from './inputs/creteDealInput';
 import { GetPaginatedDealsInput } from './inputs/paginated-deals.input';
 import { UpdateDealInput } from './inputs/update-deal.input';
-import DealDelivery from './model/dealDeliveryMode copy';
+import DealDelivery from './model/dealDeliveryModel';
 import Deal from './model/dealModel';
 import Invoice from './model/invoiceMode';
 import { createActivityLog } from '../activity-logs/activityService';
@@ -28,6 +28,8 @@ import userService from '../user/userService';
 import * as ExcelJS from 'exceljs';
 import { sendEmail } from '../utils/emailHelper';
 import clientService from '../client/clientService';
+import projectService from '../project/projectService';
+import { ProjectCategoryEnum, ProjectStatusEnum } from '../project/projectEnum';
 
 class DealService {
   public async convertLeadTODeal(input: ConvertLeadToDealInput & { userId: string }, admin: User): Promise<Deal> {
@@ -85,10 +87,10 @@ class DealService {
       );
 
       if (input.deliveryDetails?.length) {
-        await this.createDealDeliveryDetails(deal.id, input.deliveryDetails);
+        await this.createDealDeliveryDetails(deal.id, input.deliveryDetails, transaction);
       }
       if (input.invoiceDetails?.length) {
-        await this.createDealInvoice(deal.id, input.invoiceDetails);
+        await this.createDealInvoice(deal.id, input.invoiceDetails, transaction);
       }
 
       if (opportunity) {
@@ -101,17 +103,19 @@ class DealService {
         await deal.$set('users', input.users, {
           transaction
         });
+      await transaction.commit();
       if (input.users) {
-        input.users.forEach(async (item: number) => {
-          await notificationService.sendAssignDealNotification({ userId: item, target: deal.id }, deal, admin);
-        });
+        await Promise.all(
+          input.users.map((item: number) =>
+            notificationService.sendAssignDealNotification({ userId: item, target: deal.id }, deal, admin)
+          )
+        );
       }
-      transaction.commit();
-      await createActivityLog('deal', 'create', deal.id, admin.id, transaction, 'Deal created succesfully from lead conversion');
+      await createActivityLog('deal', 'create', deal.id, admin.id, null, 'Deal created succesfully from lead conversion');
 
       return deal;
     } catch (error) {
-      transaction.rollback();
+      await transaction.rollback();
       throw new BaseError(ERRORS[(error as any)?.message as keyof typeof ERRORS] || ERRORS.SOMETHING_WENT_WRONG);
     }
   }
@@ -187,9 +191,11 @@ class DealService {
           transaction: t
         });
       if (input.deal.users) {
-        input.deal.users.forEach(async (item: number) => {
-          await notificationService.sendAssignDealNotification({ userId: item, target: deal.id }, deal, admin);
-        });
+        await Promise.all(
+          input.deal.users.map((item: number) =>
+            notificationService.sendAssignDealNotification({ userId: item, target: deal.id }, deal, admin)
+          )
+        );
       }
       if (input.deliveryDetails?.length) {
         await this.createDealDeliveryDetails(deal.id, input.deliveryDetails, t);
@@ -223,17 +229,17 @@ class DealService {
         ...(query?.stage &&
           isArray(query.stage) &&
           query.stage.length && {
-            stage: {
-              [Op.in]: query.stage
-            }
-          }),
+          stage: {
+            [Op.in]: query.stage
+          }
+        }),
         ...(query?.contractType &&
           isArray(query.contractType) &&
           query.contractType.length && {
-            contractType: {
-              [Op.in]: query.contractType
-            }
-          }),
+          contractType: {
+            [Op.in]: query.contractType
+          }
+        }),
         ...((query.fromDate || query.toDate) && {
           createdAt: {
             ...(query.fromDate && { [Op.gte]: new Date(query.fromDate) }),
@@ -351,9 +357,11 @@ class DealService {
       ...input
     });
     if (users?.length) {
-      users.forEach(async (item: number) => {
-        await notificationService.sendAssignDealNotification({ userId: item, target: deal.id }, deal, user);
-      });
+      await Promise.all(
+        users.map((item: number) =>
+          notificationService.sendAssignDealNotification({ userId: item, target: deal.id }, deal, user)
+        )
+      );
     }
     await createActivityLog('deal', 'update', deal.id, user.id, null, `New updates added suucesfully`);
     await deal.save();
@@ -464,6 +472,30 @@ class DealService {
 
     deal.set({ stage });
     await deal.save();
+
+    // --> ORCHESTRATION: Auto-create Project on Deal Won (CLOSED)
+    if (stage === DealStageEnums.CLOSED) {
+      try {
+        await projectService.createProject({
+          basicInfo: {
+            name: `${deal.name} - Auto Project`,
+            type: 'Development', // default
+            category: ProjectCategoryEnum.Direct,
+            clientId: deal.clientId,
+            dealId: deal.id,
+            duration: 30, // Default duration
+            status: ProjectStatusEnum.ACTIVE,
+            assignedUsersIds: [user.id],
+            etimadInfo: {} as any // Bypass strict TS check for non-Etimad projects
+          }
+        }, user);
+        await createActivityLog('deal', 'update', deal.id, user.id, null, `Auto-generated Project for Winning Deal`);
+      } catch (err: any) {
+        // Log but don't fail the deal update if project creation fails (graceful degradation)
+        console.error('Failed to auto-create project from deal:', err.message);
+      }
+    }
+
     await createActivityLog('deal', 'update', deal.id, user.id, null, `Deal stage changed to ${stage}`);
     return deal;
   }
@@ -496,30 +528,30 @@ class DealService {
       }),
       ...(query.stage?.length &&
         isArray(query.stage) && {
-          stage: { [Op.in]: query.stage }
-        }),
+        stage: { [Op.in]: query.stage }
+      }),
       ...(query?.contractType &&
         isArray(query.contractType) &&
         query.contractType.length && {
-          contractType: {
-            [Op.in]: query.contractType
-          }
-        }),
+        contractType: {
+          [Op.in]: query.contractType
+        }
+      }),
       ...(query.fromDate || query.toDate
         ? {
-            createdAt: {
-              ...(query.fromDate && { [Op.gte]: new Date(query.fromDate) }),
-              ...(query.toDate && { [Op.lte]: new Date(query.toDate) })
-            }
+          createdAt: {
+            ...(query.fromDate && { [Op.gte]: new Date(query.fromDate) }),
+            ...(query.toDate && { [Op.lte]: new Date(query.toDate) })
           }
+        }
         : {}),
       ...(query.fromPrice || query.toPrice
         ? {
-            price: {
-              ...(query.fromPrice && { [Op.gte]: query.fromPrice }),
-              ...(query.toPrice && { [Op.lte]: query.toPrice })
-            }
+          price: {
+            ...(query.fromPrice && { [Op.gte]: query.fromPrice }),
+            ...(query.toPrice && { [Op.lte]: query.toPrice })
           }
+        }
         : {})
     };
 

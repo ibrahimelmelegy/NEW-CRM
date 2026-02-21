@@ -1,5 +1,5 @@
 import express, { Request, Response, NextFunction } from 'express';
-import { loginUser, logoutUser, forgotPassword, resetPassword, checkResetToken, getUserProfile } from './authController';
+import { loginUser, logoutUser, forgotPassword, resetPassword, checkResetToken, getUserProfile, registerWorkspace } from './authController';
 import { authenticateUser } from '../middleware/authMiddleware';
 import { setup2FA, verify2FA, disable2FA, validateLoginCode } from './twoFactorController';
 import { authLimiter } from '../middleware/rateLimiter';
@@ -38,6 +38,16 @@ const router = express.Router();
  */
 // Authentication route for login (rate-limited to prevent brute force)
 router.post('/login', authLimiter, loginUser);
+
+/**
+ * @swagger
+ * /api/auth/register:
+ *   post:
+ *     summary: Register a new Workspace
+ *     description: Creates a new Workspace (Tenant), an Admin Role, and the founding User. returns a token.
+ *     tags: [Authentication]
+ */
+router.post('/register', authLimiter, registerWorkspace);
 
 /**
  * @swagger

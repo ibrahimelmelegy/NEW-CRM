@@ -1,6 +1,7 @@
 import { BelongsTo, BelongsToMany, Column, DataType, ForeignKey, Model, Table } from 'sequelize-typescript';
 import Lead from '../lead/leadModel';
 import User from '../user/userModel';
+import Tenant from '../tenant/tenantModel';
 import { ClientIndustryEnums, ClientStatusEnums } from './clientEnum';
 import ClientUsers from './client_UsersModel';
 
@@ -106,6 +107,13 @@ class Client extends Model {
     as: 'users' // Alias for association
   })
   public users!: User[];
+
+  @ForeignKey(() => Tenant)
+  @Column({ type: DataType.UUID, allowNull: true })
+  public tenantId?: string;
+
+  @BelongsTo(() => Tenant)
+  public tenant!: Tenant;
 }
 
 export default Client;

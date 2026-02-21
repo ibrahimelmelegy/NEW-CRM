@@ -14,6 +14,7 @@ export interface TemplateLayout {
   margins: { top: number; right: number; bottom: number; left: number };
   elements: TemplateElement[];
   variables: string[];
+  proContent?: any;
 }
 
 export interface DocumentTemplate {

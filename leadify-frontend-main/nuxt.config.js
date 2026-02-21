@@ -87,7 +87,8 @@ export default defineNuxtConfig({
         'jspdf-autotable',
         'xlsx',
         '@vue/devtools-core',
-        '@vue/devtools-kit'
+        '@vue/devtools-kit',
+        'errx'
       ]
     }
   },

@@ -10,6 +10,7 @@ import { ERRORS } from '../utils/error/errors';
 
 interface JwtPayload {
   id: string;
+  tenantId?: string;
 }
 
 export const authenticateUser = async (req: AuthenticatedRequest, res: Response, next: NextFunction): Promise<void> => {
@@ -26,9 +27,10 @@ export const authenticateUser = async (req: AuthenticatedRequest, res: Response,
       res.status(500).json({ message: 'Server configuration error' });
       return;
     }
-    // Decode the token to get the user ID
+    // Decode the token to get the user ID and tenant context
     const decoded = jwt.verify(token, SECRET_KEY) as JwtPayload;
     const userId = decoded.id;
+    const tenantId = decoded.tenantId;
 
     // Delete expired sessions for the user
     await Session.destroy({
@@ -53,13 +55,18 @@ export const authenticateUser = async (req: AuthenticatedRequest, res: Response,
       return;
     }
 
-    // Attach the user to the request object for future use
+    // Attach the user to the request object for future use, and ensure tenantId is present
     const user = await User.findByPk(userId, {
       include: [{ model: Role, as: 'role' }]
     });
     if (!user) {
       res.status(404).json({ message: 'User not found' });
       return;
+    }
+
+    // Attach tenantId to the user object (if not populated from DB but present in token fallback)
+    if (tenantId && !user.tenantId) {
+      user.tenantId = tenantId;
     }
 
     req.user = user;
@@ -72,7 +79,7 @@ export const authenticateUser = async (req: AuthenticatedRequest, res: Response,
 export const HasPermission = (requiredPermissions: string[]) => {
   return (req: AuthenticatedRequest, res: Response, next: NextFunction): void => {
     try {
-      if (!req.user || !req.user.role) throw new BaseError(ERRORS.ACCESS_DENIED);
+      if (!req.user?.role) throw new BaseError(ERRORS.ACCESS_DENIED);
 
       // Bypass check if user is SUPER_ADMIN (handles both naming conventions)
       if (req.user.role.name === 'SUPER_ADMIN' || req.user.role.name === 'Super Admin') {

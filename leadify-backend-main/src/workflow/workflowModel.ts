@@ -14,15 +14,15 @@ import User from '../user/userModel';
 export interface WorkflowCondition {
   field: string;
   operator:
-    | 'equals'
-    | 'not_equals'
-    | 'contains'
-    | 'greater_than'
-    | 'less_than'
-    | 'is_empty'
-    | 'is_not_empty'
-    | 'in'
-    | 'not_in';
+  | 'equals'
+  | 'not_equals'
+  | 'contains'
+  | 'greater_than'
+  | 'less_than'
+  | 'is_empty'
+  | 'is_not_empty'
+  | 'in'
+  | 'not_in';
   value: any;
 }
 
@@ -34,7 +34,8 @@ export type WorkflowAction =
   | { type: 'SEND_NOTIFICATION'; userId?: string; role?: string; title: string; message: string }
   | { type: 'CREATE_TASK'; title: string; assignedTo: string; dueInDays: number }
   | { type: 'WEBHOOK'; url: string; method: string; headers: Record<string, string>; body: Record<string, any> }
-  | { type: 'ASSIGN_TO'; userId?: string; method?: 'round_robin' | 'least_loaded' };
+  | { type: 'ASSIGN_TO'; userId?: string; method?: 'round_robin' | 'least_loaded' }
+  | { type: 'DELAY'; days?: number; hours?: number };
 
 // ── Enums ──
 export enum TriggerType {
