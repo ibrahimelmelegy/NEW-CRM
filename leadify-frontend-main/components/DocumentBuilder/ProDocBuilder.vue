@@ -15,7 +15,7 @@
 
     //- Editor pane
     .editor-pane.flex-1.mx-3.glass-card.rounded-xl.overflow-hidden(
-      style="border: 1px solid var(--glass-border-color)"
+      style="border: 1px solid var(--glass-border-color); background: #f3f4f6"
     )
       //- Slash command menu
       .slash-menu.glass-card.rounded-xl.shadow-lg(
@@ -39,8 +39,8 @@
               .text-xs.font-semibold(style="color: var(--text-primary)") {{ item.label }}
               .text-xs(style="color: var(--text-muted)") {{ item.description }}
 
-      //- TipTap Editor
-      .editor-content.overflow-y-auto(style="height: 100%")
+      //- TipTap Editor Workspace (A4 Background)
+      .editor-workspace.overflow-y-auto(style="height: 100%; display: flex; justify-content: center; padding: 2rem 0;")
         editor-content.tiptap-editor(:editor="editor")
 
     //- Preview pane
@@ -55,6 +55,7 @@
 </template>
 
 <script setup lang="ts">
+import { ref, computed, nextTick, onMounted, watch } from 'vue';
 import { useEditor, EditorContent } from '@tiptap/vue-3';
 import StarterKit from '@tiptap/starter-kit';
 import Underline from '@tiptap/extension-underline';
@@ -72,6 +73,8 @@ import type { JSONContent } from '@tiptap/vue-3';
 import { VariableNode } from './extensions/VariableNode';
 import { SignatureBlock } from './extensions/SignatureBlock';
 import { PageBreak } from './extensions/PageBreak';
+import { PricingTableBlock } from './extensions/PricingTableBlock';
+import { CoverPage } from './extensions/CoverPage';
 import ProToolbar from './ProToolbar.vue';
 import VariablePicker from './VariablePicker.vue';
 import PDFPreview from './PDFPreview.vue';
@@ -177,6 +180,18 @@ const slashItems: SlashMenuItem[] = [
     command: (editor) => editor.chain().focus().toggleBlockquote().run(),
   },
   {
+    label: 'Pricing Table',
+    description: 'Dynamic calculated pricing table',
+    icon: 'ph:receipt-bold',
+    command: (editor) => editor.chain().focus().insertPricingTable().run(),
+  },
+  {
+    label: 'Cover Page',
+    description: 'A4 Professional Cover Page',
+    icon: 'ph:book-bold',
+    command: (editor) => editor.chain().focus().insertCoverPage().run(),
+  },
+  {
     label: 'Code Block',
     description: 'Code snippet block',
     icon: 'ph:code-bold',
@@ -242,6 +257,8 @@ const editor = useEditor({
     VariableNode,
     SignatureBlock,
     PageBreak,
+    PricingTableBlock,
+    CoverPage,
   ],
   onUpdate: ({ editor: ed }) => {
     editorHtml.value = ed.getHTML();
@@ -331,7 +348,7 @@ function openSlashMenu() {
   const { view } = editor.value;
   const { from } = view.state.selection;
   const coords = view.coordsAtPos(from);
-  const editorRect = view.dom.closest('.editor-content')?.getBoundingClientRect();
+  const editorRect = view.dom.closest('.tiptap-editor')?.getBoundingClientRect();
 
   if (editorRect) {
     slashMenuPosition.value = {
@@ -441,16 +458,30 @@ defineExpose({
   overflow: hidden;
 }
 
-/* TipTap editor styles */
-.editor-pane :deep(.tiptap-editor) {
-  padding: 40px 48px;
-  min-height: 100%;
-  outline: none;
+.editor-workspace {
+  background-color: #f1f3f5; /* Light gray workspace */
+  background-image: linear-gradient(rgba(0,0,0,0.03) 1px, transparent 1px),
+  linear-gradient(90deg, rgba(0,0,0,0.03) 1px, transparent 1px);
+  background-size: 20px 20px;
 }
 
+/* TipTap editor styles (The A4 Paper) */
+.editor-pane :deep(.tiptap-editor) {
+  width: 210mm;
+  min-height: 297mm; /* Ensure it stays A4 size at minimum */
+  padding: 40px 60px; /* Internal A4 Margins */
+  background: #ffffff;
+  box-shadow: 0 10px 40px -10px rgba(0,0,0,0.15); /* Premium drop shadow */
+  border-radius: 4px; /* Slight rounding for digital feel */
+  box-sizing: border-box;
+  outline: none;
+  margin-bottom: 40px; /* Space after page */
+}
+
+/* Maintain internal min-height for typing area */
 .editor-pane :deep(.tiptap) {
   outline: none;
-  min-height: 100%;
+  min-height: calc(297mm - 80px); /* 80px is top+bottom padding */
 }
 
 .editor-pane :deep(.tiptap > *:first-child) {
