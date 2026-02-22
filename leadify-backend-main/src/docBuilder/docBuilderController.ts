@@ -26,7 +26,7 @@ class DocBuilderController {
 
   public async getDocumentById(req: AuthenticatedRequest, res: Response, next: NextFunction): Promise<void> {
     try {
-      const result = await docBuilderService.getDocumentById(req.params.id, req.user as User);
+      const result = await docBuilderService.getDocumentById(req.params.id as string, req.user as User);
       wrapResult(res, result);
     } catch (error) {
       next(error);
@@ -35,7 +35,7 @@ class DocBuilderController {
 
   public async updateDocument(req: AuthenticatedRequest, res: Response, next: NextFunction): Promise<void> {
     try {
-      const result = await docBuilderService.updateDocument(req.params.id, req.body, req.user as User);
+      const result = await docBuilderService.updateDocument(req.params.id as string, req.body, req.user as User);
       wrapResult(res, result);
     } catch (error) {
       next(error);
@@ -44,7 +44,7 @@ class DocBuilderController {
 
   public async deleteDocument(req: AuthenticatedRequest, res: Response, next: NextFunction): Promise<void> {
     try {
-      await docBuilderService.deleteDocument(req.params.id, req.user as User);
+      await docBuilderService.deleteDocument(req.params.id as string, req.user as User);
       wrapResult(res);
     } catch (error) {
       next(error);
@@ -53,7 +53,7 @@ class DocBuilderController {
 
   public async changeStatus(req: AuthenticatedRequest, res: Response, next: NextFunction): Promise<void> {
     try {
-      const result = await docBuilderService.changeStatus(req.params.id, req.body.status, req.body.reason, req.user as User);
+      const result = await docBuilderService.changeStatus(req.params.id as string, req.body.status, req.body.reason, req.user as User);
       wrapResult(res, result);
     } catch (error) {
       next(error);
@@ -62,7 +62,7 @@ class DocBuilderController {
 
   public async convertDocument(req: AuthenticatedRequest, res: Response, next: NextFunction): Promise<void> {
     try {
-      const result = await docBuilderService.convertDocument(req.params.id, req.body.targetType, req.user as User);
+      const result = await docBuilderService.convertDocument(req.params.id as string, req.body.targetType, req.user as User);
       wrapResult(res, result, 201);
     } catch (error) {
       next(error);
@@ -71,7 +71,7 @@ class DocBuilderController {
 
   public async getVersions(req: AuthenticatedRequest, res: Response, next: NextFunction): Promise<void> {
     try {
-      const result = await docBuilderService.getVersions(req.params.id, req.user as User);
+      const result = await docBuilderService.getVersions(req.params.id as string, req.user as User);
       wrapResult(res, result);
     } catch (error) {
       next(error);
@@ -80,7 +80,7 @@ class DocBuilderController {
 
   public async getVersionById(req: AuthenticatedRequest, res: Response, next: NextFunction): Promise<void> {
     try {
-      const result = await docBuilderService.getVersionById(req.params.id, req.params.versionId, req.user as User);
+      const result = await docBuilderService.getVersionById(req.params.id as string, req.params.versionId as string, req.user as User);
       wrapResult(res, result);
     } catch (error) {
       next(error);
@@ -89,7 +89,7 @@ class DocBuilderController {
 
   public async restoreVersion(req: AuthenticatedRequest, res: Response, next: NextFunction): Promise<void> {
     try {
-      const result = await docBuilderService.restoreVersion(req.params.id, req.params.versionId, req.user as User);
+      const result = await docBuilderService.restoreVersion(req.params.id as string, req.params.versionId as string, req.user as User);
       wrapResult(res, result);
     } catch (error) {
       next(error);
@@ -98,7 +98,7 @@ class DocBuilderController {
 
   public async generatePdf(req: AuthenticatedRequest, res: Response, next: NextFunction): Promise<void> {
     try {
-      const result = await pdfService.generatePdf(req.params.id);
+      const result = await pdfService.generatePdf(req.params.id as string);
       wrapResult(res, { pdfUrl: result });
     } catch (error) {
       next(error);
@@ -107,7 +107,7 @@ class DocBuilderController {
 
   public async sendDocument(req: AuthenticatedRequest, res: Response, next: NextFunction): Promise<void> {
     try {
-      const result = await docBuilderService.sendDocument(req.params.id, req.body, req.user as User);
+      const result = await docBuilderService.sendDocument(req.params.id as string, req.body, req.user as User);
       wrapResult(res, result);
     } catch (error) {
       next(error);
