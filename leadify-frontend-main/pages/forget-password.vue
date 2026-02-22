@@ -20,7 +20,7 @@
     <div class="relative z-10 w-full max-w-[1200px] px-4 flex flex-col md:flex-row items-center justify-between gap-12 lg:gap-20">
       <!-- Brand & Visual Section -->
       <div class="hidden md:flex flex-1 flex-col items-start space-y-8 animate-fade-in-left">
-        <img :src="themeStore.isLight ? '/images/dark-logo.png' : '/images/light-logo.png'" alt="High Point Technology CRM" class="h-16 w-auto drop-shadow-2xl" />
+        <img :src="themeStore.isLight ? '/images/Logo.png' : '/images/light-logo.png'" alt="High Point Technology CRM" class="h-16 w-auto drop-shadow-2xl" />
         <div class="space-y-4">
           <h2 class="text-4xl lg:text-5xl font-bold leading-tight line-clamp-2" :style="{ color: 'var(--text-primary)' }">
             Stay Connected to your
