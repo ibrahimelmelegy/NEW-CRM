@@ -131,7 +131,7 @@ import { ref, computed } from 'vue';
 import { useDocumentArchive, documentTypeLabels } from '~/composables/useDocumentArchive';
 import type { ArchivedDocument } from '~/composables/useDocumentArchive';
 
-definePageMeta({ layout: 'main', middleware: 'auth' });
+definePageMeta({});
 
 const {
   filteredDocuments,

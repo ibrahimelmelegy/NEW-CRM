@@ -78,7 +78,7 @@
 
 <script setup lang="ts">
 import { ref, reactive } from 'vue';
-definePageMeta({ layout: 'main', middleware: 'auth' });
+definePageMeta({});
 
 interface Company { id: string; name: string; industry: string; website: string; status: string; annualRevenue: number; contactCount: number; }
 const KEY = 'crm_companies';

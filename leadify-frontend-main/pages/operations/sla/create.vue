@@ -9,5 +9,5 @@
 
 <script setup lang="ts">
 import DocumentHubWrapper from '~/components/DocumentBuilder/DocumentHubWrapper.vue';
-definePageMeta({ layout: 'main', middleware: 'auth' });
+definePageMeta({});
 </script>

@@ -70,7 +70,7 @@
 
 <script setup lang="ts">
 import { ref, reactive } from 'vue';
-definePageMeta({ layout: 'main', middleware: 'auth' });
+definePageMeta({});
 interface EmailTemplate { id: string; name: string; category: string; subject: string; body: string; usageCount: number; }
 const KEY = 'crm_email_templates';
 const templates = ref<EmailTemplate[]>(JSON.parse(localStorage.getItem(KEY) || '[]'));

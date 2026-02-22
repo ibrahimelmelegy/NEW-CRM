@@ -20,5 +20,5 @@
 </template>
 
 <script setup lang="ts">
-definePageMeta({ layout: 'main', middleware: 'auth' });
+definePageMeta({});
 </script>

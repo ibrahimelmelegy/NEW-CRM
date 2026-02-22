@@ -143,7 +143,7 @@
 import { ref, reactive, computed } from 'vue';
 import { useVirtualOffice } from '~/composables/useVirtualOffice';
 
-definePageMeta({ layout: 'main', middleware: 'auth' });
+definePageMeta({});
 
 const { rooms, currentUser, currentRoom, stats, joinRoom, leaveRoom, setStatus, toggleMute, toggleCamera, toggleScreenShare, addRoom, toggleFocusMode } = useVirtualOffice();
 

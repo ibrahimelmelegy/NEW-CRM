@@ -75,7 +75,7 @@ import { useActivityLog } from '~/composables/useActivityLog';
 import { useReminders } from '~/composables/useReminders';
 import ActivityTimeline from '~/components/ActivityTimelineSimple.vue';
 
-definePageMeta({ layout: 'main', middleware: 'auth' });
+definePageMeta({});
 
 const route = useRoute();
 const contactId = computed(() => route.params.id as string);

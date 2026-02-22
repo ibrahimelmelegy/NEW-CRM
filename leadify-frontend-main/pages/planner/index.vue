@@ -192,7 +192,7 @@
 import { ref, reactive, computed, onMounted, onUnmounted } from 'vue';
 import { usePlanner } from '~/composables/usePlanner';
 
-definePageMeta({ layout: 'main', middleware: 'auth' });
+definePageMeta({});
 
 const {
   todayTasks, focusToday, habits, stats, today,

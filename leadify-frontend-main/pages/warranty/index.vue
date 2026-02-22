@@ -76,7 +76,7 @@
 
 <script setup lang="ts">
 import { ref, reactive, computed } from 'vue';
-definePageMeta({ layout: 'main', middleware: 'auth' });
+definePageMeta({});
 interface Warranty { id: string; productName: string; clientName: string; warrantyType: string; coverage: string; startDate: string; endDate: string; status: string; }
 const KEY = 'crm_warranties';
 const warranties = ref<Warranty[]>(JSON.parse(localStorage.getItem(KEY) || '[]'));

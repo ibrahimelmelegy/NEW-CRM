@@ -38,12 +38,12 @@
           :key="type"
         )
           .flex.items-center.gap-3
-            .w-3.h-3.rounded-full(:style="{ backgroundColor: typeColors[type as string] || '#6b7280' }")
-            span.text-sm.font-semibold {{ typeLabels[type as string] || type }}
+            .w-3.h-3.rounded-full(:style="{ backgroundColor: typeColors[String(type)] || '#6b7280' }")
+            span.text-sm.font-semibold {{ typeLabels[String(type)] || type }}
           .flex.items-center.gap-3
             span.text-sm.font-mono.font-bold {{ count }}
             .h-2.w-20.rounded-full.bg-gray-100
-              .h-2.rounded-full(:style="{ width: `${Math.min(100, ((count as number) / docStats.totalDocs) * 100)}%`, backgroundColor: typeColors[type as string] || '#6b7280' }")
+              .h-2.rounded-full(:style="{ width: `${Math.min(100, (Number(count) / docStats.totalDocs) * 100)}%`, backgroundColor: typeColors[String(type)] || '#6b7280' }")
         .text-center.py-6.text-sm(v-if="Object.keys(docStats.byType).length === 0" style="color: var(--text-muted);") No data
 
     el-card.rounded-2xl(shadow="never" style="border: 1px solid var(--border-default);")
@@ -55,7 +55,7 @@
           :key="status"
         )
           .flex.items-center.gap-3
-            .w-3.h-3.rounded-full(:style="{ backgroundColor: statusColors[status as string] || '#6b7280' }")
+            .w-3.h-3.rounded-full(:style="{ backgroundColor: statusColors[String(status)] || '#6b7280' }")
             span.text-sm.font-semibold {{ status }}
           span.text-sm.font-mono.font-bold {{ count }}
         .text-center.py-6.text-sm(v-if="Object.keys(docStats.byStatus).length === 0" style="color: var(--text-muted);") No data
@@ -71,7 +71,7 @@
           :key="month"
         )
           span.text-sm.font-semibold.font-mono {{ month }}
-          span.text-sm.font-bold(style="color: #22c55e;") {{ (revenue as number).toLocaleString() }} SAR
+          span.text-sm.font-bold(style="color: #22c55e;") {{ Number(revenue).toLocaleString() }} SAR
         .text-center.py-6.text-sm(v-if="Object.keys(docStats.monthlyRevenue).length === 0" style="color: var(--text-muted);") No revenue data
 
     el-card.rounded-2xl(shadow="never" style="border: 1px solid var(--border-default);")
@@ -107,7 +107,7 @@ import { useReminders } from '~/composables/useReminders';
 import { useDocumentArchive } from '~/composables/useDocumentArchive';
 import { useActivityLog } from '~/composables/useActivityLog';
 
-definePageMeta({ layout: 'main', middleware: 'auth' });
+definePageMeta({});
 
 const { stats: docStats } = useDocumentStore();
 const { stats: remStats } = useReminders();

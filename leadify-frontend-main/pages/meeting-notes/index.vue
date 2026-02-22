@@ -56,7 +56,7 @@
 
 <script setup lang="ts">
 import { ref, reactive } from 'vue';
-definePageMeta({ layout: 'main', middleware: 'auth' });
+definePageMeta({});
 interface MeetingNote { id: string; title: string; meetingType: string; date: string; attendees: string; minutes: string; actionItems: string[]; }
 const KEY = 'crm_meeting_notes';
 const notes = ref<MeetingNote[]>(JSON.parse(localStorage.getItem(KEY) || '[]'));

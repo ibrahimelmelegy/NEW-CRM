@@ -84,7 +84,7 @@
 import { ref, reactive } from 'vue';
 import { useCallLog } from '~/composables/useCallLog';
 
-definePageMeta({ layout: 'main', middleware: 'auth' });
+definePageMeta({});
 
 const { calls, stats, logCall, removeCall } = useCallLog();
 const showDialog = ref(false);

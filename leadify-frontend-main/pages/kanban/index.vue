@@ -86,7 +86,7 @@
 <script setup lang="ts">
 import { ref, reactive } from 'vue';
 
-definePageMeta({ layout: 'main', middleware: 'auth' });
+definePageMeta({});
 
 interface KanbanCard { id: string; ref: string; title: string; description: string; columnId: string; priority: string; assignee: string; value: number; }
 

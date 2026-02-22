@@ -81,7 +81,7 @@
 
 <script setup lang="ts">
 import { ref, reactive } from 'vue';
-definePageMeta({ layout: 'main', middleware: 'auth' });
+definePageMeta({});
 interface Product { id: string; name: string; sku: string; category: string; price: number; description: string; emoji: string; inStock: boolean; }
 const KEY = 'crm_products_catalog';
 const products = ref<Product[]>(JSON.parse(localStorage.getItem(KEY) || '[]'));

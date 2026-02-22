@@ -45,12 +45,12 @@
             style="cursor: default;"
           )
             .flex.items-center.gap-3
-              .w-3.h-3.rounded-full(:style="{ backgroundColor: typeColors[type as string] || '#6b7280' }")
-              span.text-sm.font-semibold {{ typeLabels[type as string] || type }}
+              .w-3.h-3.rounded-full(:style="{ backgroundColor: typeColors[String(type)] || '#6b7280' }")
+              span.text-sm.font-semibold {{ typeLabels[String(type)] || type }}
             .flex.items-center.gap-2
               span.text-sm.font-mono.font-bold {{ count }}
               .h-2.rounded-full.bg-gray-100(style="width: 60px;")
-                .h-2.rounded-full.transition-all(:style="{ width: `${Math.min(100, (count as number / stats.totalDocs) * 100)}%`, backgroundColor: typeColors[type as string] || '#6b7280' }")
+                .h-2.rounded-full.transition-all(:style="{ width: `${Math.min(100, (Number(count) / stats.totalDocs) * 100)}%`, backgroundColor: typeColors[String(type)] || '#6b7280' }")
           .text-center.py-8.text-sm(v-if="Object.keys(stats.byType).length === 0" style="color: var(--text-muted);") No documents yet
 
     //- Recent Documents
@@ -119,8 +119,8 @@
     .grid.grid-cols-4.gap-4
       .p-4.rounded-xl.bg-gray-50(v-for="(targets, source) in conversionPaths" :key="source")
         .flex.items-center.gap-2.mb-3
-          .w-3.h-3.rounded-full(:style="{ backgroundColor: typeColors[source as string] || '#6b7280' }")
-          span.text-sm.font-bold {{ typeLabels[source as string] || source }}
+          .w-3.h-3.rounded-full(:style="{ backgroundColor: typeColors[String(source)] || '#6b7280' }")
+          span.text-sm.font-bold {{ typeLabels[String(source)] || source }}
         .space-y-1
           .flex.items-center.gap-1(v-for="target in targets" :key="target")
             span.text-gray-400 →
@@ -132,7 +132,7 @@
 import { useDocumentStore } from '~/composables/useDocumentStore';
 import { conversionPaths } from '~/composables/useDocumentConversion';
 
-definePageMeta({ layout: 'main', middleware: 'auth' });
+definePageMeta({});
 
 const { filteredDocuments, stats, searchQuery } = useDocumentStore();
 

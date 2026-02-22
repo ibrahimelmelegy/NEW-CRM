@@ -95,7 +95,7 @@
 import { ref, computed, reactive } from 'vue';
 import { useReminders } from '~/composables/useReminders';
 
-definePageMeta({ layout: 'main', middleware: 'auth' });
+definePageMeta({});
 
 const { upcoming, overdue, completed, stats, addReminder, completeReminder, removeReminder } = useReminders();
 

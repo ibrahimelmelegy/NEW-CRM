@@ -77,7 +77,7 @@
 <script setup lang="ts">
 import { ref, reactive } from 'vue';
 import { useWebForms } from '~/composables/useWebForms';
-definePageMeta({ layout: 'main', middleware: 'auth' });
+definePageMeta({});
 const { forms, stats, createForm, removeForm, toggleActive } = useWebForms();
 const showDialog = ref(false);
 const newForm = reactive({

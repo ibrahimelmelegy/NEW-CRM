@@ -54,7 +54,7 @@
 
 <script setup lang="ts">
 import { ref, reactive, computed } from 'vue';
-definePageMeta({ layout: 'main', middleware: 'auth' });
+definePageMeta({});
 
 interface WaMessage { id: string; contactName: string; phone: string; message: string; hasAttachment: boolean; docRef?: string; sentAt: string; }
 const STORAGE_KEY = 'crm_whatsapp_messages';

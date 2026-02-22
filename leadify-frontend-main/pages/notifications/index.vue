@@ -70,7 +70,7 @@
 import { ref, computed } from 'vue';
 import { useNotifications } from '~/composables/useNotifications';
 
-definePageMeta({ layout: 'main', middleware: 'auth' });
+definePageMeta({});
 
 const { notifications: crmNotifications, unreadCount, markAsRead, markAllAsRead, clearAll, remove } = useNotifications();
 const activeCategory = ref('all');

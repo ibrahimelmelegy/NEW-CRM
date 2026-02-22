@@ -66,7 +66,7 @@
 <script setup lang="ts">
 import { ref, reactive } from 'vue';
 import { useSignature } from '~/composables/useSignature';
-definePageMeta({ layout: 'main', middleware: 'auth' });
+definePageMeta({});
 const { signatures, stats, requestSignature, removeSignature } = useSignature();
 const showDialog = ref(false);
 const form = reactive({ documentRef: '', documentType: '', signerName: '', signerEmail: '' });
