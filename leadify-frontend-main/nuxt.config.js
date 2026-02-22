@@ -4,6 +4,7 @@ import { defineNuxtConfig } from 'nuxt/config';
 import { visualizer } from 'rollup-plugin-visualizer';
 
 export default defineNuxtConfig({
+  ssr: false,
   app: {
     pageTransition: { name: 'page', mode: 'out-in' },
     layoutTransition: { name: 'fade', mode: 'out-in' },
