@@ -119,6 +119,7 @@ const menu = [
     icon: 'IconSales',
     isOpen: true,
     submenu: [
+      { link: '/sales/documents', name: 'Document Hub', icon: 'ph:files-bold' },
       { link: '/sales/leads', name: 'navigation.leads', icon: 'ph:users-three' },
       { link: '/sales/clients', name: 'navigation.clients', icon: 'ph:briefcase' },
       { link: '/sales/opportunity', name: 'navigation.opportunity', icon: 'ph:lightbulb' },

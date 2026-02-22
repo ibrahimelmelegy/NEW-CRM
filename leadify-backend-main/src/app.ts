@@ -70,6 +70,7 @@ import attachmentRoutes from './attachments/attachmentRoutes';
 import erpnextRoutes from './integrations/erpnext/erpnextRoutes';
 import auditRoutes from './audit/auditRoutes';
 import taskRoutes from './tasks/taskRoutes';
+import plannerRoutes from './tasks/plannerRoutes';
 import zatcaRoutes from './zatca/zatcaRoutes';
 import zakaatRoutes from './zakaat/zakaatRoutes';
 import savedViewRoutes from './savedViews/savedViewRoutes';
@@ -96,6 +97,7 @@ import accountingRoutes from './accounting/accountingRoutes';
 import communicationRoutes from './communication/communicationRoutes';
 import customerSuccessRoutes from './customerSuccess/customerSuccessRoutes';
 import voipRoutes from './communication/voipRoutes';
+import docBuilderRoutes from './docBuilder/docBuilderRoutes';
 
 const fileUpload = require('express-fileupload');
 
@@ -270,6 +272,7 @@ app.use('/api/comments', commentRoutes);
 app.use('/api/attachments', attachmentRoutes);
 app.use('/api/audit', auditRoutes);
 app.use('/api/tasks', taskRoutes);
+app.use('/api/planner', plannerRoutes);
 app.use('/api/zatca', zatcaRoutes);
 app.use('/api/zakaat', zakaatRoutes);
 app.use('/api/saved-views', savedViewRoutes);
@@ -296,6 +299,7 @@ app.use('/api/accounting', accountingRoutes);
 app.use('/api/communications', communicationRoutes);
 app.use('/api/customer-success', customerSuccessRoutes);
 app.use('/api/voip', voipRoutes);
+app.use('/api/doc-builder', docBuilderRoutes);
 
 // Authentication routes
 // Apply strict rate limiting only to login/password-reset endpoints (not /me which is called on every page)

@@ -244,6 +244,16 @@ export enum IntegrationPermissionsEnum {
   MANAGE_WEBHOOKS = 'MANAGE_WEBHOOKS'
 }
 
+export enum DocBuilderPermissionsEnum {
+  VIEW_OWN_DOCUMENTS = 'VIEW_OWN_DOCUMENTS',
+  VIEW_GLOBAL_DOCUMENTS = 'VIEW_GLOBAL_DOCUMENTS',
+  CREATE_DOCUMENTS = 'CREATE_DOCUMENTS',
+  EDIT_DOCUMENTS = 'EDIT_DOCUMENTS',
+  DELETE_DOCUMENTS = 'DELETE_DOCUMENTS',
+  APPROVE_DOCUMENTS = 'APPROVE_DOCUMENTS',
+  SEND_DOCUMENTS = 'SEND_DOCUMENTS'
+}
+
 // Consolidating all permissions
 export const permissions = {
   leads: Object.keys(LeadPermissionsEnum),
@@ -279,7 +289,8 @@ export const permissions = {
   security: Object.keys(SecurityPermissionsEnum),
   communications: Object.keys(CommunicationPermissionsEnum),
   reportBuilder: Object.keys(ReportBuilderPermissionsEnum),
-  integrations: Object.keys(IntegrationPermissionsEnum)
+  integrations: Object.keys(IntegrationPermissionsEnum),
+  docBuilder: Object.keys(DocBuilderPermissionsEnum)
 };
 
 // Function to get all permissions

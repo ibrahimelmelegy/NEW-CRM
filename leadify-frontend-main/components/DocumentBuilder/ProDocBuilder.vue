@@ -560,11 +560,13 @@ import RichTextEditor from './RichTextEditor.vue';
 import type { ProposalData, CustomSection } from './types';
 import { useDocumentArchive } from '~/composables/useDocumentArchive';
 import { getAvailableConversions, convertDocument } from '~/composables/useDocumentConversion';
+import { useDocBuilder } from '~/composables/useDocBuilder';
 import { ArrowDown } from '@element-plus/icons-vue';
 
 const props = withDefaults(defineProps<{
   documentType?: 'proposal' | 'invoice' | 'proforma_invoice' | 'purchase_order' | 'credit_note' | 'contract' | 'rfq' | 'sales_order' | 'quote' | 'delivery_note' | 'sla';
   proposalId?: string;
+  documentId?: string;
   initialData?: any;
 }>(), {
   documentType: 'proposal'
@@ -575,8 +577,11 @@ const emit = defineEmits(['save', 'saved']);
 // Save State
 const saving = ref(false);
 
+const { createDocument, updateDocument } = useDocBuilder();
+
 async function handleSave() {
   if (props.documentType === 'proposal') {
+    // Proposals use the dedicated proposal API for backward compatibility
     saving.value = true;
     try {
       const payload: any = {
@@ -589,7 +594,6 @@ async function handleSave() {
       };
 
       if (props.proposalId) {
-        // Update existing proposal
         const response = await useApiFetch(`proposal/${props.proposalId}`, 'PUT', payload);
         if (response?.success) {
           ElMessage.success('Proposal updated successfully');
@@ -598,7 +602,6 @@ async function handleSave() {
           ElMessage.error(response?.message || 'Failed to update proposal');
         }
       } else {
-        // Create new proposal
         const response = await useApiFetch('proposal', 'POST', payload);
         if (response?.success) {
           ElMessage.success('Proposal created successfully');
@@ -614,7 +617,51 @@ async function handleSave() {
       saving.value = false;
     }
   } else {
-    emit('save', formData);
+    // All other document types use the universal doc-builder API
+    saving.value = true;
+    try {
+      const payload: any = {
+        type: props.documentType,
+        title: formData.title,
+        reference: formData.refNumber,
+        content: JSON.stringify(formData),
+        clientName: formData.clientName || undefined,
+        clientCompany: formData.clientCompany || undefined,
+        clientEmail: formData.clientEmail || undefined,
+        subtotal: subtotal.value || undefined,
+        discount: discountAmount.value || undefined,
+        tax: taxAmount.value || undefined,
+        total: finalTotal.value || undefined,
+        currency: formData.currency || 'SAR',
+        notes: formData.notes || undefined,
+        validUntil: formData.validUntil || undefined,
+      };
+
+      if (props.documentId) {
+        const response = await updateDocument(props.documentId, { ...payload, changeNote: 'Updated via builder' });
+        if (response?.success) {
+          ElMessage.success(`${documentTypeTitle.value} updated successfully`);
+          emit('saved', response.body);
+        } else {
+          ElMessage.error(response?.message || `Failed to update ${documentTypeTitle.value.toLowerCase()}`);
+        }
+      } else {
+        const response = await createDocument(payload);
+        if (response?.success) {
+          ElMessage.success(`${documentTypeTitle.value} created successfully`);
+          emit('saved', response.body);
+          // Navigate to the document detail page
+          const typeSlug = props.documentType.replace(/_/g, '-') + 's';
+          navigateTo(`/sales/${typeSlug}/${response.body?.id}`);
+        } else {
+          ElMessage.error(response?.message || `Failed to create ${documentTypeTitle.value.toLowerCase()}`);
+        }
+      }
+    } catch (error: any) {
+      ElMessage.error(error?.message || 'An error occurred while saving');
+    } finally {
+      saving.value = false;
+    }
   }
 }
 

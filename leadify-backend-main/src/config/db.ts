@@ -94,6 +94,8 @@ import Comment from '../comments/commentModel';
 import Attachment from '../attachments/attachmentModel';
 import AuditTrail from '../audit/auditModel';
 import Task from '../tasks/taskModel';
+import FocusSession from '../tasks/focusSessionModel';
+import DailyHabit from '../tasks/dailyHabitModel';
 import ZatcaInvoice from '../zatca/zatcaModel';
 import ZakaatAssessment from '../zakaat/zakaatModel';
 import SavedView from '../savedViews/savedViewModel';
@@ -156,6 +158,9 @@ import DocumentSignature from '../portal/models/signatureModel';
 // Integration Hub Models
 import IntegrationConfig from '../integration/models/integrationConfigModel';
 import OutgoingWebhook from '../integration/models/outgoingWebhookModel';
+// DocBuilder Models
+import DocBuilderDocument from '../docBuilder/models/docBuilderModel';
+import DocBuilderVersion from '../docBuilder/models/docBuilderVersionModel';
 // SaaS Models
 import Tenant from '../tenant/tenantModel';
 
@@ -334,7 +339,11 @@ const sequelize = new Sequelize({
     DocumentSignature,
     IntegrationConfig,
     OutgoingWebhook,
-    Tenant
+    Tenant,
+    FocusSession,
+    DailyHabit,
+    DocBuilderDocument,
+    DocBuilderVersion
   ], // Path to your models
   logging: process.env.NODE_ENV !== 'production' ? console.log : false
 });

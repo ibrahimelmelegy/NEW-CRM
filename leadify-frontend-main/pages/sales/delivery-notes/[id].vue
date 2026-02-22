@@ -1,5 +1,8 @@
 <template lang="pug">
-DocumentListPage(document-type="delivery_note")
+DocumentDetailPage(
+  documentType="delivery_note"
+  :documentId="$route.params.id as string"
+)
 </template>
 
 <script setup lang="ts">
