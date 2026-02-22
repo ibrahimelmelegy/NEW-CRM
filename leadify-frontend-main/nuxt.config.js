@@ -1,4 +1,4 @@
-// Leadify CRM Frontend Configuration
+// High Point Technology CRM Frontend Configuration
 import { fileURLToPath } from 'node:url'; // استيراد لضمان دقة المسارات
 import { defineNuxtConfig } from 'nuxt/config';
 import { visualizer } from 'rollup-plugin-visualizer';
@@ -8,7 +8,7 @@ export default defineNuxtConfig({
     pageTransition: { name: 'page', mode: 'out-in' },
     layoutTransition: { name: 'fade', mode: 'out-in' },
     head: {
-      title: 'Leadify CRM - Enterprise Customer Relationship Management',
+      title: 'High Point Technology CRM - Enterprise Customer Relationship Management',
       htmlAttrs: {
         lang: 'en'
       },
@@ -26,7 +26,7 @@ export default defineNuxtConfig({
         { name: 'viewport', content: 'width=device-width, initial-scale=1.0' },
         {
           name: 'description',
-          content: 'Leadify CRM - Professional enterprise customer relationship management solution for sales, leads, and opportunity tracking.'
+          content: 'High Point Technology CRM - Professional enterprise customer relationship management solution for sales, leads, and opportunity tracking.'
         },
         { name: 'theme-color', content: '#7849ff' }
       ]

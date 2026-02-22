@@ -5,7 +5,7 @@ teleport(to="body")
       .pwa-prompt-card
         .pwa-prompt-content
           .pwa-app-icon
-            img(src="/images/logo-shape.png" alt="Leadify" width="40" height="40")
+            img(src="/images/logo-shape.png" alt="High Point Technology" width="40" height="40")
           .pwa-prompt-text
             h4.pwa-title {{ $t('pwa.installTitle') }}
             p.pwa-desc {{ $t('pwa.installDescription') }}

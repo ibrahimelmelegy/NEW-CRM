@@ -58,6 +58,11 @@
               span.text-xs(v-if="ticket.assignee" style="color: var(--text-muted)") {{ ticket.assignee?.name }}
               span.text-xs(v-else style="color: var(--text-muted); font-style: italic") Unassigned
             span.text-xs(style="color: var(--text-muted)") {{ formatDate(ticket.createdAt) }}
+
+        //- Empty column placeholder
+        .text-center.py-8(v-if="!getColumnTickets(column.status).length && !loading")
+          Icon(name="ph:ticket" size="24" :style="{ color: column.color, opacity: 0.4 }")
+          p.text-xs.mt-2(style="color: var(--text-muted)") No {{ column.label.toLowerCase() }} tickets
 </template>
 
 <script setup lang="ts">

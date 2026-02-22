@@ -6,7 +6,7 @@ import { ERRORS } from '../utils/error/errors';
 
 const TOTP_PERIOD = 30; // seconds
 const TOTP_DIGITS = 6;
-const APP_NAME = 'Leadify CRM';
+const APP_NAME = 'High Point Technology CRM';
 const ENCRYPTION_ALGORITHM = 'aes-256-gcm';
 const BACKUP_CODE_COUNT = 10;
 const BACKUP_CODE_LENGTH = 8;
@@ -16,7 +16,7 @@ const BACKUP_CODE_LENGTH = 8;
 function getEncryptionKey(): Buffer {
   const key = process.env.TWO_FACTOR_ENCRYPTION_KEY || process.env.SECRET_KEY || 'default-encryption-key-change-me!';
   // Ensure 32-byte key for AES-256
-  return crypto.scryptSync(key, 'leadify-2fa-salt', 32);
+  return crypto.scryptSync(key, 'hpt-crm-2fa-salt', 32);
 }
 
 function encryptSecret(plainSecret: string): string {

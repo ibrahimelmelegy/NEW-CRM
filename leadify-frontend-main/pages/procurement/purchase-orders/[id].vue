@@ -44,7 +44,7 @@
         .flex.justify-between.mb-16
             .company-info
                 img(src="/images/Logo.png" class="h-10 mb-2 opacity-80")
-                p.text-xs.text-muted LEADIFY ERP - GLOBAL PROCUREMENT
+                p.text-xs.text-muted HIGH POINT TECHNOLOGY - GLOBAL PROCUREMENT
             
             .po-header-details.text-right
                 .text-xs.uppercase.tracking-widest.text-muted.mb-1 Order Date
@@ -272,7 +272,7 @@ async function downloadPDFWithTemplate(template: any) {
   const taxTotal = po.value.items?.reduce((acc: number, item: any) => acc + (item.quantity * item.unitPrice * item.tax) / 100, 0) || 0;
 
   const data = {
-    companyName: 'LEADIFY ERP',
+    companyName: 'HIGH POINT TECHNOLOGY',
     companyAddress: '',
     companyPhone: '',
     companyEmail: '',

@@ -11,7 +11,7 @@
         <template v-if="themeStore.isLight">
           <NuxtImg
             src="/images/Logo.png"
-            alt="Leadify CRM"
+            alt="High Point Technology CRM"
             format="webp"
             quality="80"
             class="h-16 w-auto drop-shadow-[0_0_15px_rgba(0,0,0,0.1)] transition-all duration-500"
@@ -20,7 +20,7 @@
         <template v-else>
           <NuxtImg
             src="/images/light-logo.png"
-            alt="Leadify CRM"
+            alt="High Point Technology CRM"
             format="webp"
             quality="80"
             class="h-16 w-auto drop-shadow-[0_0_15px_rgba(255,255,255,0.3)] transition-all duration-500 light-logo-shadow"

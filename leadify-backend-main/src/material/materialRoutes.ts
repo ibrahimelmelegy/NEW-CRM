@@ -13,7 +13,7 @@ const router = express.Router();
  * /api/material/:
  *  post:
  *   summary: Create a new  Material
- *   tags: [ Material ]
+ *   tags: [Material]
  *   security:
  *     - bearerAuth: []
  *   requestBody:

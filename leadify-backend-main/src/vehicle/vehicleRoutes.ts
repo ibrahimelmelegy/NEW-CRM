@@ -16,7 +16,7 @@ const router = express.Router();
  * /api/vehicle/create:
  *  post:
  *   summary: Create a new vehicle
- *   tags: [Vehicle ]
+ *   tags: [Vehicle]
  *   security:
  *     - bearerAuth: []
  *   requestBody:
@@ -80,7 +80,7 @@ router.post(
  * /api/vehicle/update:
  *  post:
  *   summary: update an existing vehicle
- *   tags: [Vehicle ]
+ *   tags: [Vehicle]
  *   security:
  *     - bearerAuth: []
  *   requestBody:
@@ -374,7 +374,7 @@ router.get(
  * /api/vehicle/{id}:
  *  get:
  *   summary: Get a vehicle by ID
- *   tags: [Vehicle ]
+ *   tags: [Vehicle]
  *   parameters:
  *     - in: path
  *       name: id

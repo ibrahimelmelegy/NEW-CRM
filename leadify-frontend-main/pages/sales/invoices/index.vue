@@ -237,7 +237,7 @@ async function downloadInvoiceWithTemplate(template: any) {
   const { generatePDF } = await import('~/utils/pdfExporter');
   const inv = selectedInvoice.value;
   const data = {
-    companyName: 'LEADIFY ERP',
+    companyName: 'HIGH POINT TECHNOLOGY',
     companyAddress: '',
     companyPhone: '',
     companyEmail: '',

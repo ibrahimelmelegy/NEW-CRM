@@ -143,13 +143,13 @@
         <div class="space-y-2 text-xs text-slate-500">
           <p>
             1. Add a CNAME record pointing your domain to
-            <span class="font-mono text-slate-400">app.leadify.cloud</span>
+            <span class="font-mono text-slate-400">app.hp-tech.com</span>
           </p>
           <p>2. Wait for DNS propagation (up to 48 hours)</p>
           <p>3. SSL certificate will be automatically provisioned once DNS is verified</p>
         </div>
         <div class="mt-3 p-3 rounded-lg font-mono text-xs text-slate-400" style="background: rgba(0, 0, 0, 0.2)">
-          Type: CNAME | Host: crm | Value: app.leadify.cloud | TTL: 3600
+          Type: CNAME | Host: crm | Value: app.hp-tech.com | TTL: 3600
         </div>
       </div>
     </div>
@@ -346,7 +346,7 @@ const portalLogoInputRef = ref<HTMLInputElement | null>(null);
 
 // Branding
 const branding = ref({
-  companyName: 'Leadify CRM',
+  companyName: 'High Point Technology CRM',
   tagline: 'Your Business, Simplified',
   primaryColor: '#7849FF',
   secondaryColor: '#A78BFA',
@@ -362,9 +362,9 @@ const domain = ref({
 
 // Email
 const email = ref({
-  fromName: 'Leadify CRM',
-  fromEmail: 'noreply@leadify.cloud',
-  signature: '<p>Best regards,<br/>The Leadify Team</p>',
+  fromName: 'High Point Technology CRM',
+  fromEmail: 'noreply@hp-tech.com',
+  signature: '<p>Best regards,<br/>The High Point Technology Team</p>',
   footer: '123 Business District, Riyadh, Saudi Arabia | Unsubscribe'
 });
 

@@ -1,5 +1,5 @@
 <template lang="pug">
-.approvals-page.p-6
+.approvals-page.p-6(v-loading="pageLoading")
   //- Header
   .flex.items-center.justify-between.mb-6
     div
@@ -168,6 +168,7 @@ definePageMeta({ middleware: 'permissions' });
 
 const activeTab = ref('pending');
 const showCreateRule = ref(false);
+const pageLoading = ref(false);
 
 // Data
 const pendingApprovals = ref<any[]>([

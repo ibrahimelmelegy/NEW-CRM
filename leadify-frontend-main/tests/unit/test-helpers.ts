@@ -1,5 +1,5 @@
 /**
- * Test Utilities for Leadify Frontend
+ * Test Utilities for High Point Technology CRM Frontend
  * ====================================
  * Common mocks, helpers, and factories for unit testing
  */

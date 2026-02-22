@@ -1785,7 +1785,7 @@
         "cancel": "Cancel",
         "issuePO": "Issue PO",
         "aiAutoFill": "AI Auto-Fill",
-        "aiDesc": "Drag & drop a PDF invoice or quotation here. Leadify AI will extract line items, prices, and vendor details automatically.",
+        "aiDesc": "Drag & drop a PDF invoice or quotation here. HPT AI will extract line items, prices, and vendor details automatically.",
         "dropFile": "Drop file or Browse",
         "supported": "Supported: PDF, PNG, JPG",
         "instantProcess": "Instant Process",
@@ -3660,7 +3660,7 @@
         "refreshing": "Refreshing..."
     },
     "pwa": {
-        "installTitle": "Install Leadify CRM",
+        "installTitle": "Install High Point Technology CRM",
         "installDescription": "Add to your home screen for quick access and offline support.",
         "installApp": "Install App",
         "notNow": "Not now"

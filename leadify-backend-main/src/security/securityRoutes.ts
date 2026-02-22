@@ -4,6 +4,13 @@ import fieldPermissionRoutes from './fieldPermissionRoutes';
 import dataShareRoutes from './dataShareRoutes';
 import sessionSecurityRoutes from './sessionSecurityRoutes';
 
+/**
+ * @swagger
+ * tags:
+ *   name: Security
+ *   description: Security — 2FA, field permissions, session management, data sharing
+ */
+
 const router = express.Router();
 
 // 2FA / MFA routes: /api/security/2fa/*

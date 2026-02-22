@@ -1,7 +1,7 @@
-// Leadify CRM - Service Worker
+// High Point Technology CRM - Service Worker
 // Cache-first for static assets, network-first for API calls
 
-const CACHE_VERSION = 'leadify-v3';
+const CACHE_VERSION = 'hpt-crm-v3';
 const STATIC_CACHE = CACHE_VERSION + '-static';
 const DYNAMIC_CACHE = CACHE_VERSION + '-dynamic';
 
@@ -161,7 +161,7 @@ function offlineHTML() {
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Leadify CRM - Offline</title>
+  <title>High Point Technology CRM - Offline</title>
   <style>
     * { margin: 0; padding: 0; box-sizing: border-box; }
     body {

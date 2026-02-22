@@ -266,17 +266,33 @@ function debounceLoad() {
   }, 400);
 }
 
-async function loadActivities() {
+// Store all raw activities for client-side filtering
+const allRawActivities = ref<Activity[]>([]);
+const itemsPerPage = 20;
+
+async function loadActivities(append = false) {
   loading.value = true;
-  const allActivities: Activity[] = [];
+
+  if (!append) {
+    page.value = 1;
+    allRawActivities.value = [];
+  }
+
+  const fetched: Activity[] = [];
+  const limit = itemsPerPage * page.value;
 
   try {
-    // Load from deals
-    const { body: dealBody, success: dealOk } = await useApiFetch('deal?limit=20&sort=-updatedAt');
-    if (dealOk && dealBody) {
-      const deals = (dealBody as any).docs || dealBody || [];
+    // Load from deals, tasks, tickets in parallel
+    const [dealRes, taskRes, ticketRes] = await Promise.all([
+      useApiFetch(`deal?limit=${limit}&sort=-updatedAt`),
+      useApiFetch(`tasks?limit=${limit}&sort=-updatedAt`),
+      useApiFetch(`support/tickets?limit=${Math.ceil(limit / 2)}&sort=-updatedAt`)
+    ]);
+
+    if (dealRes.success && dealRes.body) {
+      const deals = (dealRes.body as any).docs || dealRes.body || [];
       deals.forEach((d: any) => {
-        allActivities.push({
+        fetched.push({
           id: `deal-${d.id}`,
           type: 'deal_update',
           title: `Deal "${d.name}" - ${d.stage || 'Updated'}`,
@@ -295,12 +311,10 @@ async function loadActivities() {
       });
     }
 
-    // Load from tasks
-    const { body: taskBody, success: taskOk } = await useApiFetch('tasks?limit=15&sort=-updatedAt');
-    if (taskOk && taskBody) {
-      const tasks = (taskBody as any).docs || taskBody || [];
+    if (taskRes.success && taskRes.body) {
+      const tasks = (taskRes.body as any).docs || taskRes.body || [];
       tasks.forEach((t: any) => {
-        allActivities.push({
+        fetched.push({
           id: `task-${t.id}`,
           type: 'task',
           title: t.title,
@@ -314,12 +328,10 @@ async function loadActivities() {
       });
     }
 
-    // Load from tickets
-    const { body: ticketBody, success: ticketOk } = await useApiFetch('support/tickets?limit=10&sort=-updatedAt');
-    if (ticketOk && ticketBody) {
-      const tickets = (ticketBody as any).docs || ticketBody || [];
+    if (ticketRes.success && ticketRes.body) {
+      const tickets = (ticketRes.body as any).docs || ticketRes.body || [];
       tickets.forEach((tk: any) => {
-        allActivities.push({
+        fetched.push({
           id: `ticket-${tk.id}`,
           type: 'ticket_update',
           title: tk.subject,
@@ -333,11 +345,12 @@ async function loadActivities() {
       });
     }
 
-    // Sort by date
-    allActivities.sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime());
+    // Sort all by date
+    fetched.sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime());
+    allRawActivities.value = fetched;
 
     // Apply filters
-    let filtered = allActivities;
+    let filtered = fetched;
     if (filterType.value) filtered = filtered.filter(a => a.type === filterType.value);
     if (filterEntity.value) filtered = filtered.filter(a => a.entityType === filterEntity.value);
     if (searchQuery.value) {
@@ -346,13 +359,24 @@ async function loadActivities() {
         a => a.title.toLowerCase().includes(q) || a.description?.toLowerCase().includes(q) || a.entity?.toLowerCase().includes(q)
       );
     }
+    // Apply date range filter
+    if (dateRange.value && dateRange.value[0] && dateRange.value[1]) {
+      const start = new Date(dateRange.value[0]).getTime();
+      const end = new Date(dateRange.value[1]).getTime() + 86400000; // include end day
+      filtered = filtered.filter(a => {
+        const t = new Date(a.createdAt).getTime();
+        return t >= start && t <= end;
+      });
+    }
 
-    activities.value = filtered;
-    hasMore.value = filtered.length >= 40;
+    // Paginate results
+    const paged = filtered.slice(0, page.value * itemsPerPage);
+    activities.value = paged;
+    hasMore.value = paged.length < filtered.length;
 
     // Build recent people
     const peopleMap: Record<string, string> = {};
-    allActivities.forEach(a => {
+    fetched.forEach(a => {
       if (a.user && !peopleMap[a.user]) {
         peopleMap[a.user] = formatTime(a.createdAt);
       }
@@ -369,7 +393,32 @@ async function loadActivities() {
 
 function loadMore() {
   page.value++;
-  loadActivities();
+  // Re-apply pagination from already-loaded data
+  const filtered = applyFilters(allRawActivities.value);
+  const paged = filtered.slice(0, page.value * itemsPerPage);
+  activities.value = paged;
+  hasMore.value = paged.length < filtered.length;
+}
+
+function applyFilters(list: Activity[]): Activity[] {
+  let filtered = list;
+  if (filterType.value) filtered = filtered.filter(a => a.type === filterType.value);
+  if (filterEntity.value) filtered = filtered.filter(a => a.entityType === filterEntity.value);
+  if (searchQuery.value) {
+    const q = searchQuery.value.toLowerCase();
+    filtered = filtered.filter(
+      a => a.title.toLowerCase().includes(q) || a.description?.toLowerCase().includes(q) || a.entity?.toLowerCase().includes(q)
+    );
+  }
+  if (dateRange.value && dateRange.value[0] && dateRange.value[1]) {
+    const start = new Date(dateRange.value[0]).getTime();
+    const end = new Date(dateRange.value[1]).getTime() + 86400000;
+    filtered = filtered.filter(a => {
+      const t = new Date(a.createdAt).getTime();
+      return t >= start && t <= end;
+    });
+  }
+  return filtered;
 }
 
 async function createActivity() {

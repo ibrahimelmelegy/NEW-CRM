@@ -85,7 +85,7 @@ class SlackConnector {
         {
           type: 'context',
           elements: [
-            { type: 'mrkdwn', text: `Sent from *Leadify CRM* at ${new Date().toISOString()}` }
+            { type: 'mrkdwn', text: `Sent from *High Point Technology CRM* at ${new Date().toISOString()}` }
           ]
         }
       ],
@@ -109,7 +109,7 @@ class SlackConnector {
     }
 
     const testPayload: SlackMessage = {
-      text: 'Leadify CRM connection test successful! This integration is working correctly.',
+      text: 'High Point Technology CRM connection test successful! This integration is working correctly.',
       channel: config.channel || undefined
     };
 

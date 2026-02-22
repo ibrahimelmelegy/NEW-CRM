@@ -222,9 +222,9 @@
             <span class="text-sm font-medium text-slate-200">{{ row.feature }}</span>
           </template>
         </el-table-column>
-        <el-table-column label="Leadify (Us)" width="130" align="center">
+        <el-table-column label="HPT (Us)" width="130" align="center">
           <template #default="{ row }">
-            <Icon v-if="row.leadify" name="ph:check-circle-fill" class="w-5 h-5 text-emerald-400" />
+            <Icon v-if="row.ours" name="ph:check-circle-fill" class="w-5 h-5 text-emerald-400" />
             <Icon v-else name="ph:x-circle-fill" class="w-5 h-5 text-slate-600" />
           </template>
         </el-table-column>
@@ -512,18 +512,18 @@ const winLossRecords = ref([
 ]);
 
 const comparisonFeatures = ref([
-  { feature: 'Arabic / RTL Support', leadify: true, competitors: { 1: false, 2: true, 3: false, 4: false } },
-  { feature: 'AI Lead Scoring', leadify: true, competitors: { 1: true, 2: false, 3: true, 4: false } },
-  { feature: 'ZATCA Compliance', leadify: true, competitors: { 1: false, 2: true, 3: false, 4: false } },
-  { feature: 'Pipeline Management', leadify: true, competitors: { 1: true, 2: true, 3: true, 4: true } },
-  { feature: 'Email Campaigns', leadify: true, competitors: { 1: true, 2: false, 3: true, 4: false } },
-  { feature: 'Custom Reports', leadify: true, competitors: { 1: true, 2: false, 3: true, 4: false } },
-  { feature: 'Mobile App', leadify: true, competitors: { 1: true, 2: false, 3: true, 4: true } },
-  { feature: 'API / Webhooks', leadify: true, competitors: { 1: true, 2: false, 3: true, 4: false } },
-  { feature: 'Local Data Residency', leadify: true, competitors: { 1: false, 2: true, 3: false, 4: false } },
-  { feature: 'Social CRM', leadify: true, competitors: { 1: true, 2: false, 3: true, 4: false } },
-  { feature: 'Workflow Automation', leadify: true, competitors: { 1: true, 2: false, 3: true, 4: false } },
-  { feature: 'Free Tier', leadify: false, competitors: { 1: false, 2: false, 3: false, 4: true } }
+  { feature: 'Arabic / RTL Support', ours: true, competitors: { 1: false, 2: true, 3: false, 4: false } },
+  { feature: 'AI Lead Scoring', ours: true, competitors: { 1: true, 2: false, 3: true, 4: false } },
+  { feature: 'ZATCA Compliance', ours: true, competitors: { 1: false, 2: true, 3: false, 4: false } },
+  { feature: 'Pipeline Management', ours: true, competitors: { 1: true, 2: true, 3: true, 4: true } },
+  { feature: 'Email Campaigns', ours: true, competitors: { 1: true, 2: false, 3: true, 4: false } },
+  { feature: 'Custom Reports', ours: true, competitors: { 1: true, 2: false, 3: true, 4: false } },
+  { feature: 'Mobile App', ours: true, competitors: { 1: true, 2: false, 3: true, 4: true } },
+  { feature: 'API / Webhooks', ours: true, competitors: { 1: true, 2: false, 3: true, 4: false } },
+  { feature: 'Local Data Residency', ours: true, competitors: { 1: false, 2: true, 3: false, 4: false } },
+  { feature: 'Social CRM', ours: true, competitors: { 1: true, 2: false, 3: true, 4: false } },
+  { feature: 'Workflow Automation', ours: true, competitors: { 1: true, 2: false, 3: true, 4: false } },
+  { feature: 'Free Tier', ours: false, competitors: { 1: false, 2: false, 3: false, 4: true } }
 ]);
 
 const selectedCompetitor = computed(() => {

@@ -71,7 +71,7 @@ const router = useRouter();
 const user = ref();
 
 const logoSrc = computed(() => {
-  return themeStore.isLight ? '/images/Logo.png' : '/images/lOGO-DARDK-MODE.png';
+  return themeStore.isLight ? '/images/Logo.png' : '/images/light-logo.png';
 });
 
 // Using onMounted to fetch user data safely
@@ -123,7 +123,9 @@ const menu = [
       { link: '/sales/clients', name: 'navigation.clients', icon: 'ph:briefcase' },
       { link: '/sales/opportunity', name: 'navigation.opportunity', icon: 'ph:lightbulb' },
       { link: '/sales/deals', name: 'navigation.deals', icon: 'ph:handshake' },
+      { link: '/sales/quotes', name: 'Quotes', icon: 'ph:chat-teardrop-text-bold' },
       { link: '/sales/sales-orders', name: 'navigation.salesOrders', icon: 'ph:clipboard-text-bold' },
+      { link: '/sales/delivery-notes', name: 'Delivery Notes', icon: 'ph:truck-bold' },
       { link: '/sales/invoices', name: 'navigation.invoices', icon: 'ph:receipt-bold' },
       { link: '/sales/subscriptions', name: 'navigation.subscriptions', icon: 'ph:arrows-clockwise-bold' },
       { link: '/sales/contracts', name: 'navigation.contracts', icon: 'ph:file-doc-bold' },
@@ -262,6 +264,7 @@ const menu = [
     icon: 'ph:currency-circle-dollar-bold',
     isOpen: false,
     submenu: [
+      { link: '/finance/accounting/credit-notes', name: 'Credit Notes', icon: 'ph:arrow-u-down-left-bold' },
       { link: '/finance/expenses', name: 'navigation.expenses', icon: 'ph:receipt-bold' },
       { link: '/finance/budgets', name: 'navigation.budgets', icon: 'ph:wallet-bold' },
       { link: '/finance/payments', name: 'navigation.payments', icon: 'ph:money-bold' },
@@ -367,8 +370,7 @@ const menu = [
       { link: '/settings/data-governance', name: 'navigation.dataGovernance', icon: 'ph:database-bold' },
       { link: '/settings/data-import', name: 'navigation.dataImport', icon: 'ph:upload-bold' },
       { link: '/settings/white-label', name: 'navigation.whiteLabel', icon: 'ph:paint-brush-bold' },
-      { link: '/admin/tests', name: 'navigation.qaCenter', icon: 'ph:test-tube-bold' },
-      { link: '/test', name: 'navigation.permissionsHub', icon: 'ph:key-bold' }
+      { link: '/settings/roles', name: 'navigation.permissionsHub', icon: 'ph:key-bold', role: 'VIEW_ROLES' }
     ]
   }
 ];

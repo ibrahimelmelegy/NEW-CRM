@@ -1,5 +1,5 @@
 <template lang="pug">
-.executive-dashboard.p-6
+.executive-dashboard.p-6(v-loading="refreshing")
   //- Header
   .flex.items-center.justify-between.mb-6
     div
@@ -199,171 +199,153 @@ const quickActions = [
 async function refreshData() {
   refreshing.value = true;
   try {
-    await Promise.all([loadKPIs(), loadRevenue(), loadPipeline(), loadTopReps(), loadRecentDeals()]);
+    // Single API call for all deals - eliminates 4 duplicate requests
+    const [dealRes, clientRes] = await Promise.all([
+      useApiFetch('deal?limit=500'),
+      useApiFetch('client?limit=1')
+    ]);
+
+    const allDeals: any[] = dealRes.success && dealRes.body ? ((dealRes.body as any).docs || dealRes.body || []) : [];
+    const clientCount = clientRes.success && clientRes.body ? ((clientRes.body as any).pagination?.totalItems || (clientRes.body as any).total || 0) : 0;
+
+    processKPIs(allDeals, clientCount);
+    processRevenue(allDeals);
+    processPipeline(allDeals);
+    processTopReps(allDeals);
+    processRecentDeals(allDeals);
+    processGoals(allDeals, clientCount);
+  } catch {
+    /* silent */
   } finally {
     refreshing.value = false;
   }
 }
 
-async function loadKPIs() {
-  try {
-    // Load deals for KPI calculations
-    const { body, success } = await useApiFetch('deal?limit=500');
-    if (!success || !body) return;
-    const data = body as any;
-    const deals = data.docs || data || [];
+function processKPIs(allDeals: any[], clientCount: number) {
+  const wonDeals = allDeals.filter((d: any) => d.stage === 'CLOSED');
+  const lostDeals = allDeals.filter((d: any) => d.stage === 'CANCELLED');
+  const totalValue = wonDeals.reduce((s: number, d: any) => s + Number(d.price || 0), 0);
+  const pipelineVal = allDeals
+    .filter((d: any) => d.stage !== 'CLOSED' && d.stage !== 'CANCELLED')
+    .reduce((s: number, d: any) => s + Number(d.price || 0), 0);
+  const winRate = wonDeals.length + lostDeals.length > 0 ? Math.round((wonDeals.length / (wonDeals.length + lostDeals.length)) * 100) : 0;
+  const avgDeal = wonDeals.length > 0 ? Math.round(totalValue / wonDeals.length) : 0;
 
-    const wonDeals = deals.filter((d: any) => d.status === 'WON');
-    const lostDeals = deals.filter((d: any) => d.status === 'LOST');
-    const totalValue = wonDeals.reduce((s: number, d: any) => s + Number(d.value || 0), 0);
-    const pipelineVal = deals
-      .filter((d: any) => d.status !== 'WON' && d.status !== 'LOST')
-      .reduce((s: number, d: any) => s + Number(d.value || 0), 0);
-    const winRate = wonDeals.length + lostDeals.length > 0 ? Math.round((wonDeals.length / (wonDeals.length + lostDeals.length)) * 100) : 0;
-    const avgDeal = wonDeals.length > 0 ? Math.round(totalValue / wonDeals.length) : 0;
-
-    // Load clients count
-    const clientRes = await useApiFetch('client?limit=1');
-    const clientData = clientRes.body as any;
-    const clientCount = clientData?.pagination?.totalItems || clientData?.total || 0;
-
-    kpiCards.value = [
-      { label: 'Total Revenue', value: '$' + totalValue.toLocaleString(), icon: 'ph:currency-dollar-bold', color: '#10b981', trend: 12 },
-      { label: 'Pipeline Value', value: '$' + pipelineVal.toLocaleString(), icon: 'ph:funnel-bold', color: '#7849ff', trend: 8 },
-      { label: 'Deals Won', value: String(wonDeals.length), icon: 'ph:trophy-bold', color: '#f59e0b', trend: 5 },
-      { label: 'Win Rate', value: winRate + '%', icon: 'ph:target-bold', color: '#3b82f6', trend: 3 },
-      { label: 'Avg Deal Size', value: '$' + avgDeal.toLocaleString(), icon: 'ph:chart-bar-bold', color: '#a855f7', trend: -2 },
-      { label: 'Active Clients', value: String(clientCount), icon: 'ph:users-bold', color: '#06b6d4', trend: 15 }
-    ];
-  } catch {
-    /* silent */
-  }
+  kpiCards.value = [
+    { label: 'Total Revenue', value: '$' + totalValue.toLocaleString(), icon: 'ph:currency-dollar-bold', color: '#10b981', trend: wonDeals.length > 0 ? 12 : 0 },
+    { label: 'Pipeline Value', value: '$' + pipelineVal.toLocaleString(), icon: 'ph:funnel-bold', color: '#7849ff', trend: pipelineVal > 0 ? 8 : 0 },
+    { label: 'Deals Won', value: String(wonDeals.length), icon: 'ph:trophy-bold', color: '#f59e0b', trend: wonDeals.length > 0 ? 5 : 0 },
+    { label: 'Win Rate', value: winRate + '%', icon: 'ph:target-bold', color: '#3b82f6', trend: winRate > 50 ? 3 : winRate > 0 ? -2 : 0 },
+    { label: 'Avg Deal Size', value: '$' + avgDeal.toLocaleString(), icon: 'ph:chart-bar-bold', color: '#a855f7', trend: avgDeal > 0 ? 4 : 0 },
+    { label: 'Active Clients', value: String(clientCount), icon: 'ph:users-bold', color: '#06b6d4', trend: clientCount > 0 ? 15 : 0 }
+  ];
 }
 
-async function loadRevenue() {
-  try {
-    const { body, success } = await useApiFetch('deal?status=WON&limit=500');
-    if (!success || !body) return;
-    const data = body as any;
-    const deals = data.docs || data || [];
-
-    const months: Record<string, number> = {};
-    const now = new Date();
-    for (let i = 11; i >= 0; i--) {
-      const d = new Date(now.getFullYear(), now.getMonth() - i, 1);
-      const key = d.toLocaleDateString('en-US', { month: 'short' });
-      months[key] = 0;
-    }
-
-    deals.forEach((deal: any) => {
-      const d = new Date(deal.closeDate || deal.updatedAt || deal.createdAt);
-      const key = d.toLocaleDateString('en-US', { month: 'short' });
-      if (key in months) months[key] += Number(deal.value || 0);
-    });
-
-    const values = Object.values(months);
-    const maxVal = Math.max(...values, 1);
-    const entries = Object.entries(months);
-
-    revenueData.value = entries.map(([label, value], i) => ({
-      label,
-      value,
-      height: (value / maxVal) * 100,
-      isCurrentMonth: i === entries.length - 1
-    }));
-
-    totalRevenue.value = values.reduce((a, b) => a + b, 0);
-    avgRevenue.value = Math.round(totalRevenue.value / 12);
-  } catch {
-    /* silent */
+function processRevenue(allDeals: any[]) {
+  const wonDeals = allDeals.filter((d: any) => d.stage === 'CLOSED');
+  const months: Record<string, number> = {};
+  const now = new Date();
+  for (let i = 11; i >= 0; i--) {
+    const d = new Date(now.getFullYear(), now.getMonth() - i, 1);
+    const key = d.toLocaleDateString('en-US', { month: 'short' });
+    months[key] = 0;
   }
+
+  wonDeals.forEach((deal: any) => {
+    const d = new Date(deal.closeDate || deal.updatedAt || deal.createdAt);
+    const key = d.toLocaleDateString('en-US', { month: 'short' });
+    if (key in months) months[key] += Number(deal.price || 0);
+  });
+
+  const values = Object.values(months);
+  const maxVal = Math.max(...values, 1);
+  const entries = Object.entries(months);
+
+  revenueData.value = entries.map(([label, value], i) => ({
+    label,
+    value,
+    height: (value / maxVal) * 100,
+    isCurrentMonth: i === entries.length - 1
+  }));
+
+  totalRevenue.value = values.reduce((a, b) => a + b, 0);
+  avgRevenue.value = Math.round(totalRevenue.value / 12);
 }
 
-async function loadPipeline() {
-  try {
-    const { body, success } = await useApiFetch('deal?limit=500');
-    if (!success || !body) return;
-    const data = body as any;
-    const deals = data.docs || data || [];
+function processPipeline(allDeals: any[]) {
+  const stageMap: Record<string, { count: number; value: number }> = {};
+  const stageOrder = ['PROGRESS', 'CLOSED', 'CANCELLED'];
+  const colors = ['#7849ff', '#10b981', '#ef4444'];
 
-    const stageMap: Record<string, { count: number; value: number }> = {};
-    const stageOrder = ['QUALIFIED', 'CONTACT_MADE', 'DEMO_SCHEDULED', 'PROPOSAL_SENT', 'NEGOTIATION'];
-    const colors = ['#7849ff', '#3b82f6', '#06b6d4', '#f59e0b', '#10b981'];
+  stageOrder.forEach(s => {
+    stageMap[s] = { count: 0, value: 0 };
+  });
 
-    stageOrder.forEach(s => {
-      stageMap[s] = { count: 0, value: 0 };
-    });
+  allDeals.forEach((d: any) => {
+    const stage = d.stage || 'PROGRESS';
+    if (!stageMap[stage]) stageMap[stage] = { count: 0, value: 0 };
+    stageMap[stage].count++;
+    stageMap[stage].value += Number(d.price || 0);
+  });
 
-    deals.forEach((d: any) => {
-      const stage = d.stage || 'QUALIFIED';
-      if (!stageMap[stage]) stageMap[stage] = { count: 0, value: 0 };
-      stageMap[stage].count++;
-      stageMap[stage].value += Number(d.value || 0);
-    });
+  const maxCount = Math.max(...Object.values(stageMap).map(s => s.count), 1);
 
-    const maxCount = Math.max(...Object.values(stageMap).map(s => s.count), 1);
-
-    pipelineStages.value = stageOrder.map((name, i) => ({
-      name: name.replace(/_/g, ' '),
-      count: stageMap[name]?.count || 0,
-      value: stageMap[name]?.value || 0,
-      width: ((stageMap[name]?.count || 0) / maxCount) * 100,
-      color: colors[i]
-    }));
-  } catch {
-    /* silent */
-  }
+  pipelineStages.value = stageOrder.map((name, i) => ({
+    name: name.replace(/_/g, ' '),
+    count: stageMap[name]?.count || 0,
+    value: stageMap[name]?.value || 0,
+    width: ((stageMap[name]?.count || 0) / maxCount) * 100,
+    color: colors[i]
+  }));
 }
 
-async function loadTopReps() {
-  try {
-    const { body, success } = await useApiFetch('deal?status=WON&limit=500');
-    if (!success || !body) return;
-    const data = body as any;
-    const deals = data.docs || data || [];
-
-    const repMap: Record<string, { name: string; revenue: number }> = {};
-    deals.forEach((d: any) => {
-      const owner = d.owner || d.assignee;
-      if (!owner) return;
-      const key = owner.id || owner.name;
-      if (!repMap[key]) repMap[key] = { name: owner.name || 'Unknown', revenue: 0 };
-      repMap[key].revenue += Number(d.value || 0);
+function processTopReps(allDeals: any[]) {
+  const wonDeals = allDeals.filter((d: any) => d.stage === 'CLOSED');
+  const repMap: Record<string, { name: string; revenue: number }> = {};
+  wonDeals.forEach((d: any) => {
+    const users = d.users || [];
+    users.forEach((user: any) => {
+      const key = user.id;
+      if (!repMap[key]) repMap[key] = { name: user.name || 'Unknown', revenue: 0 };
+      repMap[key].revenue += Number(d.price || 0);
     });
+  });
 
-    const sorted = Object.values(repMap)
-      .sort((a, b) => b.revenue - a.revenue)
-      .slice(0, 5);
-    const maxRev = sorted[0]?.revenue || 1;
+  const sorted = Object.values(repMap)
+    .sort((a, b) => b.revenue - a.revenue)
+    .slice(0, 5);
+  const maxRev = sorted[0]?.revenue || 1;
 
-    topReps.value = sorted.map(r => ({
-      name: r.name,
-      revenue: r.revenue,
-      progress: Math.round((r.revenue / maxRev) * 100)
-    }));
-  } catch {
-    /* silent */
-  }
+  topReps.value = sorted.map(r => ({
+    name: r.name,
+    revenue: r.revenue,
+    progress: Math.round((r.revenue / maxRev) * 100)
+  }));
 }
 
-async function loadRecentDeals() {
-  try {
-    const { body, success } = await useApiFetch('deal?limit=8&sort=-updatedAt');
-    if (!success || !body) return;
-    const data = body as any;
-    const deals = data.docs || data || [];
+function processRecentDeals(allDeals: any[]) {
+  const sorted = [...allDeals].sort((a, b) => new Date(b.updatedAt || b.createdAt).getTime() - new Date(a.updatedAt || a.createdAt).getTime());
 
-    recentDeals.value = deals.map((d: any) => ({
-      id: d.id,
-      name: d.name,
-      client: d.client?.clientName || d.client?.name || '--',
-      value: d.value || 0,
-      status: d.status,
-      date: d.updatedAt ? new Date(d.updatedAt).toLocaleDateString() : '--'
-    }));
-  } catch {
-    /* silent */
-  }
+  recentDeals.value = sorted.slice(0, 8).map((d: any) => ({
+    id: d.id,
+    name: d.name,
+    client: d.companyName || '--',
+    value: d.price || 0,
+    status: d.stage === 'CLOSED' ? 'WON' : d.stage === 'CANCELLED' ? 'LOST' : 'OPEN',
+    date: d.updatedAt ? new Date(d.updatedAt).toLocaleDateString() : '--'
+  }));
+}
+
+function processGoals(allDeals: any[], clientCount: number) {
+  const wonDeals = allDeals.filter((d: any) => d.stage === 'CLOSED');
+  const totalValue = wonDeals.reduce((s: number, d: any) => s + Number(d.price || 0), 0);
+
+  goals.value = [
+    { label: 'Monthly Revenue', current: '$' + totalValue.toLocaleString(), target: '$100,000', percentage: Math.min(Math.round((totalValue / 100000) * 100), 150) },
+    { label: 'New Clients', current: String(clientCount), target: '20', percentage: Math.min(Math.round((clientCount / 20) * 100), 150) },
+    { label: 'Deals Closed', current: String(wonDeals.length), target: '15', percentage: Math.min(Math.round((wonDeals.length / 15) * 100), 150) },
+    { label: 'Avg Response Time', current: '3.2h', target: '< 4h', percentage: 80 }
+  ];
 }
 
 onMounted(() => {

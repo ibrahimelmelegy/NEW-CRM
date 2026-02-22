@@ -61,6 +61,11 @@
             .flex.items-center.gap-1(v-if="task.dueDate")
               Icon(name="ph:calendar" size="12" :style="{ color: isOverdue(task.dueDate) ? '#ef4444' : 'var(--text-muted)' }")
               span.text-xs(:style="{ color: isOverdue(task.dueDate) ? '#ef4444' : 'var(--text-muted)' }") {{ formatDate(task.dueDate) }}
+
+        //- Empty column placeholder
+        .text-center.py-8(v-if="!getColumnTasks(column.status).length && !loading")
+          Icon(name="ph:stack" size="24" :style="{ color: column.color, opacity: 0.4 }")
+          p.text-xs.mt-2(style="color: var(--text-muted)") Drop tasks here
 </template>
 
 <script setup lang="ts">
@@ -132,10 +137,10 @@ async function onDrop(event: DragEvent, newStatus: string) {
 async function loadTasks() {
   loading.value = true;
   try {
-    const response = showMyOnly.value ? await fetchMyTasks() : await fetchTasks();
-    tasks.value = response.docs || [];
+    const response = showMyOnly.value ? await fetchMyTasks() : await fetchTasks({ limit: '200' });
+    tasks.value = response?.docs || [];
   } catch {
-    /* silent */
+    tasks.value = [];
   } finally {
     loading.value = false;
   }

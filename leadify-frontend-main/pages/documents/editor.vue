@@ -21,7 +21,7 @@
     .mb-6
       h3.text-lg.font-semibold.mb-2(style="color: var(--text-primary)") {{ $t('documentEditor.selectType') }}
       p.text-sm(style="color: var(--text-muted)") {{ $t('documentEditor.selectTypeDesc') }}
-    .grid.gap-5(class="grid-cols-2 md:grid-cols-3 lg:grid-cols-3 xl:grid-cols-6")
+    .grid.gap-5(v-loading="initialLoading" class="grid-cols-2 md:grid-cols-3 lg:grid-cols-3 xl:grid-cols-6")
       .glass-card.p-6.cursor-pointer.text-center.transition-all.rounded-2xl(
         v-for="dt in documentTypes"
         :key="dt.type"
@@ -460,6 +460,7 @@ const documentTypes: DocTypeConfig[] = [
 const selectedType = ref<DocumentType | null>(null);
 const saving = ref(false);
 const showPreviewDialog = ref(false);
+const initialLoading = ref(true);
 
 const deals = ref<Array<{ id: string; name: string }>>([]);
 const clients = ref<Array<{ id: string; name?: string; companyName?: string }>>([]);
@@ -818,11 +819,14 @@ async function handleSaveAndSend() {
       });
       if (result) {
         await markInvoiceSent(result.id);
+        ElNotification({ type: 'success', title: 'Success', message: 'Invoice created and marked as sent' });
         router.push(`/sales/invoices/${result.id}`);
       }
     } else {
-      // For other types, same as save draft
+      // For other types, save then notify (not recursive - inline the save logic)
+      saving.value = false; // handleSaveDraft sets its own saving state
       await handleSaveDraft();
+      return; // handleSaveDraft manages saving state
     }
   } finally {
     saving.value = false;
@@ -866,13 +870,13 @@ async function loadInitialData() {
 
 async function loadInvoices() {
   try {
-    const { body, success } = await useApiFetch('invoices?limit=100');
+    const { body, success } = await useApiFetch('invoices/billing?limit=100');
     if (success && body) {
       const data = body as any;
       invoicesList.value = (data.docs || data || []).map((inv: any) => ({
         id: inv.id,
         invoiceNumber: inv.invoiceNumber || `INV-${inv.id}`,
-        amount: inv.amount || 0
+        amount: inv.total || inv.amount || 0
       }));
     }
   } catch {
@@ -889,7 +893,7 @@ async function loadRecentDocs() {
     switch (selectedType.value) {
       case 'INVOICE':
       case 'PROFORMA_INVOICE':
-        endpoint = 'invoices?limit=5&sort=-createdAt';
+        endpoint = 'invoices/billing?limit=5&sort=-createdAt';
         mapFn = (inv: any) => ({
           id: inv.id,
           number: inv.invoiceNumber || `INV-${inv.id}`,
@@ -930,14 +934,17 @@ async function loadRecentDocs() {
 }
 
 onMounted(async () => {
-  await loadInitialData();
-  await loadInvoices();
-  calculateDueDate();
+  try {
+    await Promise.all([loadInitialData(), loadInvoices()]);
+    calculateDueDate();
 
-  // Handle query params for pre-selection
-  const queryType = route.query.type as string;
-  if (queryType && documentTypes.some(dt => dt.type === queryType)) {
-    selectType(queryType as DocumentType);
+    // Handle query params for pre-selection
+    const queryType = route.query.type as string;
+    if (queryType && documentTypes.some(dt => dt.type === queryType)) {
+      selectType(queryType as DocumentType);
+    }
+  } finally {
+    initialLoading.value = false;
   }
 });
 </script>

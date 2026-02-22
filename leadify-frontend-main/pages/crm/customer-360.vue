@@ -36,7 +36,7 @@
   //- Contact loaded
   template(v-if="selectedContact")
     //- Header Card
-    .glass-card.p-6.rounded-2xl.mb-6
+    .glass-card.p-6.rounded-2xl.mb-6(v-loading="pageLoading")
       .flex.items-start.justify-between
         .flex.items-center.gap-5
           .w-20.h-20.rounded-2xl.flex.items-center.justify-center.text-2xl.font-bold(
@@ -236,6 +236,7 @@ const selectedContact = ref<any>(null);
 const searchLoading = ref(false);
 const searchResults = ref<any[]>([]);
 const activeTab = ref('overview');
+const pageLoading = ref(false);
 
 // Tab data
 const contactDeals = ref<any[]>([]);
@@ -316,6 +317,7 @@ async function loadContact(id?: string) {
   const cid = id || contactId.value;
   if (!cid) return;
 
+  pageLoading.value = true;
   try {
     const { body, success } = await useApiFetch(`client/${cid}`);
     if (success && body) {
@@ -331,11 +333,14 @@ async function loadContact(id?: string) {
         status: data.status || 'active',
         createdAt: data.createdAt
       };
-      // Load all tab data
-      await Promise.all([loadDeals(cid), loadInvoices(cid), loadTickets(cid), loadActivities(cid)]);
+      // Load all tab data first, then build activities from them
+      await Promise.all([loadDeals(cid), loadInvoices(cid), loadTickets(cid)]);
+      buildActivities();
     }
   } catch {
     ElNotification({ type: 'error', title: 'Error', message: 'Could not load contact' });
+  } finally {
+    pageLoading.value = false;
   }
 }
 
@@ -384,8 +389,8 @@ async function loadTickets(clientId: string) {
   }
 }
 
-async function loadActivities(clientId: string) {
-  // Build activities from all loaded data
+function buildActivities() {
+  // Build activities from all loaded data (called after deals/invoices/tickets are loaded)
   const activities: any[] = [];
 
   contactDeals.value.slice(0, 5).forEach(d => {

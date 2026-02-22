@@ -367,7 +367,7 @@ class IntegrationHubService {
 
     const testPayload = {
       event: 'test',
-      payload: { test: true, message: 'Integration Hub webhook test from Leadify CRM' },
+      payload: { test: true, message: 'Integration Hub webhook test from High Point Technology CRM' },
       timestamp: new Date().toISOString()
     };
 

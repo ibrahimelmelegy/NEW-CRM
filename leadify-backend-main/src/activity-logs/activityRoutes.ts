@@ -5,34 +5,36 @@ import { wrapResult } from '../utils/response/responseWrapper';
 import { NextFunction } from 'express-serve-static-core';
 import { AuthenticatedRequest } from '../types';
 
+/**
+ * @swagger
+ * tags:
+ *   name: Activity
+ *   description: Activity logs — track changes across all CRM entities
+ */
+
 const router = express.Router();
 
 /**
  * @swagger
- * /api/activity/{model}/{id}:
+ * /api/activity:
  *   get:
- *     summary: Get a model activities by ID
+ *     summary: Get all recent activity logs
+ *     description: Returns the most recent activity logs across all models
  *     tags: [Activity]
+ *     security:
+ *       - bearerAuth: []
  *     parameters:
- *       - in: path
- *         name: page
- *         required: true
+ *       - in: query
+ *         name: limit
  *         schema:
- *           type: number
- *       - in: path
- *         name: kimit
- *         required: true
- *         schema:
- *           type: number
+ *           type: integer
+ *           default: 100
  *     responses:
  *       200:
- *         description: Activities found
- *       404:
- *         description: Activities not found
+ *         description: List of recent activity logs
  *       500:
- *         description: Internal Server Error
+ *         description: Server error
  */
-// Get all recent activities across all models
 router.get('/', authenticateUser, async (req: AuthenticatedRequest, res: Response, next: NextFunction) => {
   try {
     const limit = Number(req.query.limit) || 100;
@@ -44,6 +46,46 @@ router.get('/', authenticateUser, async (req: AuthenticatedRequest, res: Respons
   }
 });
 
+/**
+ * @swagger
+ * /api/activity/{model}/{id}:
+ *   get:
+ *     summary: Get activity logs for a specific entity
+ *     description: Returns paginated activity logs for a given model and entity ID
+ *     tags: [Activity]
+ *     security:
+ *       - bearerAuth: []
+ *     parameters:
+ *       - in: path
+ *         name: model
+ *         required: true
+ *         schema:
+ *           type: string
+ *         description: Entity model name (e.g. lead, deal, contact)
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         schema:
+ *           type: string
+ *         description: Entity ID
+ *       - in: query
+ *         name: page
+ *         schema:
+ *           type: integer
+ *           default: 1
+ *       - in: query
+ *         name: limit
+ *         schema:
+ *           type: integer
+ *           default: 10
+ *     responses:
+ *       200:
+ *         description: Paginated activity logs for the entity
+ *       404:
+ *         description: Entity not found
+ *       500:
+ *         description: Server error
+ */
 router.get('/:model/:id', authenticateUser, async (req: AuthenticatedRequest, res: Response, next: NextFunction) => {
   try {
     const responseFromService = await getActivityLogs(req.params?.model as any, req.params?.id as string, req.query?.page as any, req.query?.limit as any);

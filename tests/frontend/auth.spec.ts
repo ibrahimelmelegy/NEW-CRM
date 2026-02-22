@@ -24,7 +24,7 @@ test.describe('Authentication Flow', () => {
             await waitForPageLoad(page);
 
             // Check page title
-            await expect(page).toHaveTitle(/Login|CRM|HP Tech|Leadify/i, { timeout: 15000 });
+            await expect(page).toHaveTitle(/Login|CRM|HP Tech|High Point/i, { timeout: 15000 });
 
             // Check form elements exist - use more flexible locators
             await expect(page.locator('input[type="email"], input[type="text"][placeholder*="email" i]').first()).toBeVisible({ timeout: 10000 });

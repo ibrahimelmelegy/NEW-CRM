@@ -17,7 +17,7 @@ describe('useApiFetch.ts', () => {
     vi.clearAllMocks();
 
     // Reset $fetch mock
-    globalThis.$fetch = vi.fn();
+    globalThis.$fetch = vi.fn() as any;
   });
 
   // ============================================
@@ -246,8 +246,8 @@ describe('useApiFetch.ts', () => {
 
       await useApiFetch('auth/reset-password', 'POST', { password: 'new' });
 
-      const callArgs = vi.mocked(globalThis.$fetch).mock.calls[0][1];
-      expect(callArgs.headers).not.toHaveProperty('Authorization');
+      const callArgs = vi.mocked(globalThis.$fetch).mock.calls[0]?.[1] as any;
+      expect(callArgs?.headers).not.toHaveProperty('Authorization');
 
       globalThis.useCookie = originalUseCookie;
     });

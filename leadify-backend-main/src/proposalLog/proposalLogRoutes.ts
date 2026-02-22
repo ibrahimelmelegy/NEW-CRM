@@ -5,17 +5,22 @@ import { validateQuery } from '../middleware/validation';
 import { GetProposalLogsInput } from './inputs/getProposalLogsInput';
 import { ProposalPermissionsEnum } from '../role/roleEnum';
 
-const router = express.Router();
-
-// ** --------------------- POST --------------------- **/
-
-// ** --------------------- PUT --------------------- **/
 /**
  * @swagger
- * /api/proposal-log/:
+ * tags:
+ *   name: Proposal Log
+ *   description: Proposal activity and change logs
+ */
+
+const router = express.Router();
+
+/**
+ * @swagger
+ * /api/proposal-log:
  *   get:
- *     summary: Get all ProposalFinanceTableItems
- *     tags: [ProposalFinanceTableItem]
+ *     summary: Get proposal logs
+ *     description: Returns paginated activity logs for a specific proposal
+ *     tags: [Proposal Log]
  *     security:
  *       - bearerAuth: []
  *     parameters:
@@ -26,29 +31,24 @@ const router = express.Router();
  *           type: string
  *       - in: query
  *         name: page
- *         required: false
  *         schema:
  *           type: integer
- *           minimum: 1
  *           default: 1
  *       - in: query
  *         name: limit
- *         required: false
  *         schema:
  *           type: integer
- *           minimum: 1
  *           default: 10
  *       - in: query
  *         name: searchKey
- *         required: false
  *         schema:
  *           type: string
- *         description: Search key for filtering assets
+ *         description: Search key for filtering logs
  *     responses:
  *       200:
- *         description: List of ProposalFinanceTableItems
+ *         description: Paginated list of proposal logs
  *       500:
- *         description: Internal server error
+ *         description: Server error
  */
 router.get(
   '/',
@@ -57,8 +57,5 @@ router.get(
   validateQuery(GetProposalLogsInput),
   proposalLogController.getProposalLogs
 );
-// ** --------------------- GET --------------------- **/
-
-//** --------------------- DELETE --------------------- */
 
 export default router;

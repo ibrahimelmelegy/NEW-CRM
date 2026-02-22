@@ -4,7 +4,7 @@ import QRCode from 'qrcode';
 import User from './userModel';
 import { AuthenticatedRequest } from '../types';
 
-const APP_NAME = 'Leadify CRM';
+const APP_NAME = 'High Point Technology CRM';
 
 export const setup2FA = async (req: AuthenticatedRequest, res: Response): Promise<void> => {
   try {

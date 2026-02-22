@@ -80,7 +80,7 @@ class WebhookService {
     const webhook = await Webhook.findByPk(id);
     if (!webhook) throw new Error('Webhook not found');
 
-    const testPayload = { test: true, message: 'Webhook test from Leadify CRM' };
+    const testPayload = { test: true, message: 'Webhook test from High Point Technology CRM' };
     const body = JSON.stringify({ event: 'test', payload: testPayload, timestamp: new Date().toISOString() });
     const signature = crypto.createHmac('sha256', webhook.secret).update(body).digest('hex');
 

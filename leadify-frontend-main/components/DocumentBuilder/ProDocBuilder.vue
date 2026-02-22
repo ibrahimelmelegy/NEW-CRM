@@ -1,669 +1,952 @@
-<template lang="pug">
-.pro-doc-builder
-  //- Toolbar
-  ProToolbar(:editor="editor" @toggle-variables="showVariables = !showVariables")
+<template>
+  <div class="pro-doc-builder h-screen flex flex-col bg-slate-50 overflow-hidden font-sans">
+    
+    <!-- Top Navigation Bar -->
+    <header class="h-16 flex items-center justify-between px-6 shrink-0 z-20 m-4 rounded-[2rem]" style="background: var(--glass-bg); backdrop-filter: var(--glass-blur); border: 1px solid var(--glass-border-color); box-shadow: var(--glass-shadow);">
+      <div class="flex items-center gap-4">
+        <div class="flex items-center justify-center w-10 h-10 rounded-xl" style="background: rgba(124, 58, 237, 0.1); color: var(--el-color-primary);">
+          <FileText size="20" />
+        </div>
+        <div>
+          <h1 class="font-bold text-sm flex items-center gap-2" style="color: var(--text-primary);">
+            {{ documentTypeTitle }} Builder
+            <span class="px-2 py-0.5 rounded-full text-[10px] uppercase font-bold tracking-wider" style="background: rgba(59, 130, 246, 0.1); color: #3b82f6;">Beta</span>
+          </h1>
+          <p class="text-xs" style="color: var(--text-muted);">Create professional {{ documentTypeTitle.toLowerCase() }}s with ease</p>
+        </div>
+      </div>
+      
+      <div class="flex items-center gap-3">
+        <el-button 
+          @click="showPreview = !showPreview"
+          :type="showPreview ? 'primary' : 'default'"
+          size="default"
+          class="!rounded-xl"
+        >
+          <component :is="showPreview ? EyeOff : Eye" size="16" class="mr-1.5" />
+          {{ showPreview ? 'Hide Preview' : 'Show Preview' }}
+        </el-button>
 
-  //- Main content area
-  .builder-body.flex.mt-3(style="height: calc(100vh - 220px)")
-    //- Variable Picker (collapsible side panel)
-    transition(name="slide")
-      .variables-panel.glass-card.rounded-xl.overflow-hidden(
-        v-if="showVariables"
-        style="width: 280px; min-width: 280px; border: 1px solid var(--glass-border-color)"
-      )
-        VariablePicker(@insert="handleInsertVariable")
+        <el-divider direction="vertical" />
 
-    //- Editor pane
-    .editor-pane.flex-1.mx-3.glass-card.rounded-xl.overflow-hidden(
-      style="border: 1px solid var(--glass-border-color); background: #f3f4f6"
-    )
-      //- Slash command menu
-      .slash-menu.glass-card.rounded-xl.shadow-lg(
-        v-if="showSlashMenu"
-        :style="slashMenuPosition"
-        ref="slashMenuRef"
-      )
-        .p-2
-          .slash-item.flex.items-center.gap-2.px-3.py-2.rounded-lg.cursor-pointer.transition-all(
-            v-for="(item, index) in filteredSlashItems"
-            :key="item.label"
-            :class="{ active: index === slashMenuIndex }"
-            @click="executeSlashCommand(item)"
-            @mouseenter="slashMenuIndex = index"
-          )
-            .flex.items-center.justify-center.rounded-lg(
-              style="width: 32px; height: 32px; background: rgba(120, 73, 255, 0.08)"
-            )
-              Icon(:name="item.icon" size="16" style="color: #7849ff")
-            div
-              .text-xs.font-semibold(style="color: var(--text-primary)") {{ item.label }}
-              .text-xs(style="color: var(--text-muted)") {{ item.description }}
+        <el-button size="default" class="!rounded-xl" @click="exportPdf">
+          <Download size="16" class="mr-1.5" /> Export PDF
+        </el-button>
+        <el-button size="default" class="!rounded-xl" @click="archiveCurrentDoc">
+          <FileText size="16" class="mr-1.5" /> Archive
+        </el-button>
+        <el-dropdown v-if="availableConversions.length > 0" trigger="click" @command="handleConvert">
+          <el-button size="default" class="!rounded-xl">
+            Convert to... <el-icon class="ml-1"><ArrowDown /></el-icon>
+          </el-button>
+          <template #dropdown>
+            <el-dropdown-menu>
+              <el-dropdown-item v-for="conv in availableConversions" :key="conv.type" :command="conv.type">
+                {{ conv.label }}
+              </el-dropdown-item>
+            </el-dropdown-menu>
+          </template>
+        </el-dropdown>
+        <el-button type="primary" size="default" class="!rounded-xl" style="background: var(--bg-obsidian); border: none;">
+          <Save size="16" class="mr-1.5" /> Save {{ documentTypeTitle }}
+        </el-button>
+      </div>
+    </header>
 
-      //- TipTap Editor Workspace (A4 Background)
-      .editor-workspace.overflow-y-auto(style="height: 100%; display: flex; justify-content: center; padding: 2rem 0;")
-        editor-content.tiptap-editor(:editor="editor")
+    <!-- Main Workspace -->
+    <main class="flex-1 flex overflow-hidden">
+      <!-- Left Sidebar (Steps Navigation) -->
+      <aside class="w-64 bg-white border-r border-gray-200 flex flex-col shrink-0 z-10 p-4">
+        <nav class="space-y-1 mt-4">
+          <button 
+            v-for="step in defaultSteps" 
+            :key="step.id"
+            @click="activeStep = step.id"
+            class="w-full flex items-center gap-3 px-4 py-3 rounded-xl text-left transition-all"
+            :class="activeStep === step.id ? 'bg-violet-50 text-violet-700 font-bold' : 'text-gray-600 hover:bg-gray-50 hover:text-gray-900 font-medium'"
+          >
+            <component :is="step.icon" size="18" :class="activeStep === step.id ? 'text-violet-600' : 'text-gray-400'" />
+            <span class="text-sm">{{ formData.stepLabels?.[step.id] || step.label }}</span>
+          </button>
 
-    //- Preview pane
-    .preview-pane.rounded-xl.overflow-hidden(
-      style="width: 40%; min-width: 320px; border: 1px solid var(--glass-border-color)"
-    )
-      PDFPreview(
-        :htmlContent="editorHtml"
-        :exporting="exporting"
-        @export-pdf="handleExportPDF"
-      )
+          <!-- Custom Sections -->
+          <div v-if="formData.customSections?.length" class="my-4 pt-4 border-t border-gray-100">
+            <p class="px-4 text-[10px] font-bold text-gray-400 uppercase tracking-widest mb-2 flex items-center justify-between">
+               Custom Sections
+               <span class="text-[8px] bg-gray-100 px-1.5 py-0.5 rounded text-gray-400">Drag to reorder</span>
+            </p>
+            <draggable 
+              v-model="formData.customSections" 
+              animation="200"
+              item-key="id"
+              ghost-class="opacity-50"
+              @change="onCustomSectionReorder"
+            >
+               <template #item="{ element: section }">
+                 <button 
+                   @click="activeStep = section.id"
+                   class="w-full flex items-center gap-3 px-4 py-3 rounded-xl text-left transition-all cursor-grab active:cursor-grabbing group"
+                   :class="activeStep === section.id ? 'bg-violet-50 text-violet-700 font-bold' : 'text-gray-600 hover:bg-gray-50 hover:text-gray-900 font-medium'"
+                 >
+                   <GripVertical size="14" class="text-gray-300 opacity-0 group-hover:opacity-100 transition-opacity" />
+                   <Layers size="16" :class="activeStep === section.id ? 'text-violet-600' : 'text-gray-400'" />
+                   <span class="text-sm truncate flex-1">{{ section.title }}</span>
+                 </button>
+               </template>
+            </draggable>
+          </div>
+        </nav>
+
+        <button 
+          @click="addCustomSection"
+          class="mt-auto flex items-center justify-center gap-2 w-full py-3 border-2 border-dashed border-gray-200 text-gray-500 rounded-xl hover:border-violet-300 hover:text-violet-600 hover:bg-violet-50 transition-all text-sm font-bold"
+        >
+          <Plus size="16" /> Add Section
+        </button>
+      </aside>
+
+      <!-- Center (Form Editor) -->
+      <section class="flex-1 overflow-y-auto custom-scrollbar relative p-8 lg:p-12">
+        <div class="max-w-4xl mx-auto pb-24">
+          
+          <!-- Content injected here via step logic -->
+          <div v-if="activeStep === 'branding'" class="space-y-8 animate-in fade-in slide-in-from-bottom-4 duration-500">
+             
+             <!-- Basic Details -->
+             <div class="bg-white p-8 rounded-[2rem] shadow-sm border border-gray-100">
+                <h3 class="text-xl font-bold text-gray-900 mb-6 flex items-center gap-2"><FileText size="20" class="text-violet-500" /> Document Details</h3>
+                <div class="grid grid-cols-2 gap-6">
+                   <div>
+                      <label class="block text-xs font-bold text-gray-500 uppercase tracking-widest mb-2">{{ documentTypeTitle }} Title</label>
+                      <input v-model="formData.title" class="w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-xl focus:border-violet-500 focus:ring-2 focus:ring-violet-200 outline-none transition-all text-sm font-bold text-gray-800" placeholder="e.g. Enterprise CRM Implementation" />
+                   </div>
+                   <div>
+                      <label class="block text-xs font-bold text-gray-500 uppercase tracking-widest mb-2">Reference Number</label>
+                      <input v-model="formData.refNumber" class="w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-xl focus:border-violet-500 focus:ring-2 focus:ring-violet-200 outline-none transition-all text-sm font-bold text-gray-800" />
+                   </div>
+                   <div v-if="!isFullDoc">
+                      <label class="block text-xs font-bold text-gray-500 uppercase tracking-widest mb-2">Due Date</label>
+                      <input type="date" v-model="formData.dueDate" class="w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-xl focus:border-violet-500 focus:ring-2 focus:ring-violet-200 outline-none transition-all text-sm font-bold text-gray-800" />
+                   </div>
+                </div>
+             </div>
+
+             <!-- Client Details -->
+             <div class="bg-white p-8 rounded-[2rem] shadow-sm border border-gray-100">
+                <div class="flex items-center justify-between mb-6">
+                   <h3 class="text-xl font-bold text-gray-900 flex items-center gap-2"><User size="20" class="text-violet-500" /> Client Information</h3>
+                   <el-select 
+                     v-model="selectedClientId" 
+                     placeholder="Select existing client..." 
+                     size="large"
+                     class="w-64 !rounded-xl"
+                     @change="handleClientSelect"
+                     clearable
+                   >
+                      <el-option v-for="client in mockClients" :key="client.id" :label="client.company" :value="client.id" />
+                   </el-select>
+                </div>
+                
+                <div class="grid grid-cols-2 gap-6 mb-6">
+                   <div>
+                      <label class="block text-xs font-bold text-gray-500 uppercase tracking-widest mb-2">Client Company</label>
+                      <input v-model="formData.clientName" class="w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-xl focus:border-violet-500 focus:ring-2 focus:ring-violet-200 outline-none transition-all text-sm font-bold text-gray-800" placeholder="e.g. Acme Corp" />
+                   </div>
+                   <div>
+                      <label class="block text-xs font-bold text-gray-500 uppercase tracking-widest mb-2">Contact Name</label>
+                      <input v-model="formData.clientCompany" class="w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-xl focus:border-violet-500 focus:ring-2 focus:ring-violet-200 outline-none transition-all text-sm font-bold text-gray-800" placeholder="e.g. John Doe" />
+                   </div>
+                </div>
+                <!-- Extended Client Fields (Non-Proposal) -->
+                <div v-if="!isFullDoc" class="grid grid-cols-2 gap-6">
+                   <div>
+                      <label class="block text-xs font-bold text-gray-500 uppercase tracking-widest mb-2">Client Email</label>
+                      <input v-model="formData.clientEmail" type="email" class="w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-xl focus:border-violet-500 focus:ring-2 focus:ring-violet-200 outline-none transition-all text-sm font-bold text-gray-800" placeholder="client@company.com" />
+                   </div>
+                   <div>
+                      <label class="block text-xs font-bold text-gray-500 uppercase tracking-widest mb-2">Client Phone</label>
+                      <input v-model="formData.clientPhone" class="w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-xl focus:border-violet-500 focus:ring-2 focus:ring-violet-200 outline-none transition-all text-sm font-bold text-gray-800" placeholder="+966 5XX XXX XXXX" />
+                   </div>
+                   <div>
+                      <label class="block text-xs font-bold text-gray-500 uppercase tracking-widest mb-2">Client Address</label>
+                      <input v-model="formData.clientAddress" class="w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-xl focus:border-violet-500 focus:ring-2 focus:ring-violet-200 outline-none transition-all text-sm font-bold text-gray-800" placeholder="Street, City, Country" />
+                   </div>
+                   <div>
+                      <label class="block text-xs font-bold text-gray-500 uppercase tracking-widest mb-2">Client Tax ID / VAT</label>
+                      <input v-model="formData.clientTaxId" class="w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-xl focus:border-violet-500 focus:ring-2 focus:ring-violet-200 outline-none transition-all text-sm font-bold text-gray-800" placeholder="3XXXXXXXXXXX03" />
+                   </div>
+                </div>
+             </div>
+
+             <!-- Company Info (Non-Proposal Only) -->
+             <div v-if="!isFullDoc" class="bg-white p-8 rounded-[2rem] shadow-sm border border-gray-100">
+                <h3 class="text-xl font-bold text-gray-900 mb-6 flex items-center gap-2"><FileText size="20" class="text-emerald-500" /> Your Company Details</h3>
+                <div class="grid grid-cols-2 gap-6">
+                   <div>
+                      <label class="block text-xs font-bold text-gray-500 uppercase tracking-widest mb-2">Company Name</label>
+                      <input v-model="formData.companyName" class="w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-xl focus:border-violet-500 focus:ring-2 focus:ring-violet-200 outline-none transition-all text-sm font-bold text-gray-800" placeholder="Your Company Name" />
+                   </div>
+                   <div>
+                      <label class="block text-xs font-bold text-gray-500 uppercase tracking-widest mb-2">Company Email</label>
+                      <input v-model="formData.companyEmail" type="email" class="w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-xl focus:border-violet-500 focus:ring-2 focus:ring-violet-200 outline-none transition-all text-sm font-bold text-gray-800" placeholder="info@company.com" />
+                   </div>
+                   <div>
+                      <label class="block text-xs font-bold text-gray-500 uppercase tracking-widest mb-2">Company Address</label>
+                      <input v-model="formData.companyAddress" class="w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-xl focus:border-violet-500 focus:ring-2 focus:ring-violet-200 outline-none transition-all text-sm font-bold text-gray-800" placeholder="Riyadh, Saudi Arabia" />
+                   </div>
+                   <div>
+                      <label class="block text-xs font-bold text-gray-500 uppercase tracking-widest mb-2">Company Phone</label>
+                      <input v-model="formData.companyPhone" class="w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-xl focus:border-violet-500 focus:ring-2 focus:ring-violet-200 outline-none transition-all text-sm font-bold text-gray-800" placeholder="+966 XX XXX XXXX" />
+                   </div>
+                   <div>
+                      <label class="block text-xs font-bold text-gray-500 uppercase tracking-widest mb-2">Tax ID / VAT Number</label>
+                      <input v-model="formData.companyTaxId" class="w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-xl focus:border-violet-500 focus:ring-2 focus:ring-violet-200 outline-none transition-all text-sm font-bold text-gray-800" placeholder="3XXXXXXXXXXX03" />
+                   </div>
+                </div>
+             </div>
+
+             <!-- Bank Details (Invoices / Proforma / Credit Notes Only) -->
+             <div v-if="['invoice', 'proforma_invoice', 'credit_note'].includes(props.documentType)" class="bg-white p-8 rounded-[2rem] shadow-sm border border-blue-100">
+                <h3 class="text-xl font-bold text-gray-900 mb-6 flex items-center gap-2"><DollarSign size="20" class="text-blue-500" /> Bank & Payment Details</h3>
+                <div class="grid grid-cols-2 gap-6">
+                   <div>
+                      <label class="block text-xs font-bold text-gray-500 uppercase tracking-widest mb-2">Bank Name</label>
+                      <input v-model="formData.bankName" class="w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-xl focus:border-violet-500 focus:ring-2 focus:ring-violet-200 outline-none transition-all text-sm font-bold text-gray-800" placeholder="e.g. Al Rajhi Bank" />
+                   </div>
+                   <div>
+                      <label class="block text-xs font-bold text-gray-500 uppercase tracking-widest mb-2">Account Name</label>
+                      <input v-model="formData.bankAccountName" class="w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-xl focus:border-violet-500 focus:ring-2 focus:ring-violet-200 outline-none transition-all text-sm font-bold text-gray-800" placeholder="Company Account Name" />
+                   </div>
+                   <div>
+                      <label class="block text-xs font-bold text-gray-500 uppercase tracking-widest mb-2">IBAN</label>
+                      <input v-model="formData.bankIban" class="w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-xl focus:border-violet-500 focus:ring-2 focus:ring-violet-200 outline-none transition-all text-sm font-bold text-gray-800 font-mono" placeholder="SA00 0000 0000 0000 0000 0000" />
+                   </div>
+                   <div>
+                      <label class="block text-xs font-bold text-gray-500 uppercase tracking-widest mb-2">SWIFT Code</label>
+                      <input v-model="formData.bankSwift" class="w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-xl focus:border-violet-500 focus:ring-2 focus:ring-violet-200 outline-none transition-all text-sm font-bold text-gray-800 font-mono" placeholder="RJHISARI" />
+                   </div>
+                </div>
+             </div>
+
+             <!-- Branding Options -->
+             <div class="bg-white p-8 rounded-[2rem] shadow-sm border border-gray-100">
+                <h3 class="text-xl font-bold text-gray-900 mb-6 flex items-center gap-2"><Palette size="20" class="text-violet-500" /> Design & Theme</h3>
+                
+                <div class="mb-8">
+                   <label class="block text-xs font-bold text-gray-500 uppercase tracking-widest mb-4">Theme Color</label>
+                   <div class="flex flex-wrap gap-3">
+                      <button 
+                        v-for="(color, name) in themeColors" :key="name"
+                        @click="formData.themeColor = color"
+                        class="w-10 h-10 rounded-full flex items-center justify-center transition-transform hover:scale-110 shadow-sm border-2"
+                        :class="formData.themeColor === color ? 'border-gray-900 scale-110' : 'border-transparent'"
+                        :style="{ backgroundColor: color }"
+                        :title="name"
+                      >
+                         <CheckCircle v-if="formData.themeColor === color" size="16" class="text-white drop-shadow-md" />
+                      </button>
+                      <div class="flex items-center gap-2 px-3 py-1 bg-gray-50 rounded-full border border-gray-200">
+                        <input type="color" v-model="formData.themeColor" class="w-6 h-6 rounded cursor-pointer border-0 bg-transparent p-0" />
+                        <span class="text-xs font-mono text-gray-500">{{ formData.themeColor }}</span>
+                      </div>
+                   </div>
+                </div>
+
+                <div v-if="isFullDoc">
+                   <label class="block text-xs font-bold text-gray-500 uppercase tracking-widest mb-4">Cover Page Style</label>
+                   <p class="text-xs text-gray-400 mb-4">Choose from 32 premium cover page designs.</p>
+                   <div class="grid grid-cols-2 lg:grid-cols-3 gap-4">
+                      <button 
+                        v-for="style in coverStylesList" :key="style.id"
+                        @click="formData.coverStyle = style.id as any"
+                        class="relative aspect-[1/1.414] rounded-xl overflow-hidden border-2 transition-all hover:shadow-lg group text-left"
+                        :class="formData.coverStyle === style.id ? 'border-violet-500 ring-4 ring-violet-500/20' : 'border-gray-200 hover:border-violet-300'"
+                      >
+                         <div class="absolute inset-0 bg-gray-50 flex flex-col justify-end p-3">
+                            <span class="text-xs font-bold text-gray-900 group-hover:text-violet-600 transition-colors">{{ style.label }}</span>
+                            <span class="text-[9px] text-gray-500">{{ style.category }}</span>
+                         </div>
+                         <div v-if="formData.coverStyle === style.id" class="absolute top-2 right-2 bg-violet-500 text-white rounded-full p-1 shadow-md">
+                            <CheckCircle size="12" />
+                         </div>
+                      </button>
+                   </div>
+                </div>
+                <div v-else class="bg-violet-50 border border-violet-100 rounded-xl p-4">
+                   <p class="text-sm text-violet-700 flex items-center gap-2"><CheckCircle size="16" class="text-violet-500" /> This document type uses a pre-designed professional template. The theme color above will be applied automatically.</p>
+                </div>
+             </div>
+          </div>
+
+          <div v-else-if="activeStep === 'executive'" class="space-y-8 animate-in fade-in slide-in-from-bottom-4 duration-500">
+              <div class="bg-white p-8 rounded-[2rem] shadow-sm border border-gray-100">
+                <h3 class="text-xl font-bold text-gray-900 mb-6">Introduction</h3>
+                <RichTextEditor v-model="formData.introduction" placeholder="Write a compelling introduction..." minHeight="300px" />
+             </div>
+             <div class="bg-white p-8 rounded-[2rem] shadow-sm border border-gray-100">
+                <h3 class="text-xl font-bold text-gray-900 mb-6">Objectives</h3>
+                <RichTextEditor v-model="formData.objectives" placeholder="What are the key goals and objectives?" minHeight="200px" />
+             </div>
+          </div>
+          
+           <div v-else-if="activeStep === 'solution'" class="space-y-8 animate-in fade-in slide-in-from-bottom-4 duration-500">
+              <div class="bg-white p-8 rounded-[2rem] shadow-sm border border-gray-100">
+                <h3 class="text-xl font-bold text-gray-900 mb-6">Scope of Work</h3>
+                <RichTextEditor v-model="formData.scopeOfWork" placeholder="Detail the scope of work..." minHeight="300px" />
+              </div>
+              <div class="bg-white p-8 rounded-[2rem] shadow-sm border border-gray-100">
+                <h3 class="text-xl font-bold text-gray-900 mb-6">Methodology</h3>
+                <RichTextEditor v-model="formData.methodology" placeholder="Explain your methodology..." minHeight="200px" />
+              </div>
+          </div>
+          
+           <div v-else-if="activeStep === 'financial'" class="space-y-8 animate-in fade-in slide-in-from-bottom-4 duration-500">
+              <div class="bg-white p-8 rounded-[2rem] shadow-sm border border-gray-100 mb-8">
+                 <div class="flex items-center justify-between mb-8">
+                    <h3 class="text-xl font-bold text-gray-900 flex items-center gap-2">
+                       <DollarSign size="20" class="text-violet-500" /> Pricing & Investment
+                    </h3>
+                    <div class="flex items-center gap-4 bg-gray-50 px-4 py-2 rounded-xl border border-gray-200">
+                       <span class="text-xs font-bold text-gray-500 uppercase tracking-widest">Global Margin</span>
+                       <div class="flex items-center gap-2">
+                          <input type="range" v-model.number="globalMargin" min="0" max="100" class="w-24 accent-violet-600" @input="applyGlobalMargin" />
+                          <span class="text-sm font-bold text-violet-600 w-8">{{ globalMargin }}%</span>
+                       </div>
+                    </div>
+                 </div>
+
+                 <!-- Items Table -->
+                 <div class="overflow-x-auto">
+                    <table class="w-full text-left border-collapse">
+                       <thead>
+                          <tr class="border-b-2 border-gray-100">
+                             <th class="pb-4 text-xs font-bold text-gray-400 uppercase tracking-widest w-[40%]">Description</th>
+                             <th class="pb-4 text-xs font-bold text-gray-400 uppercase tracking-widest w-[15%]">Qty & Unit</th>
+                             <th class="pb-4 text-xs font-bold text-gray-400 uppercase tracking-widest w-[15%]">Cost ({{ formData.currency }})</th>
+                             <th class="pb-4 text-xs font-bold text-gray-400 uppercase tracking-widest w-[10%]">Margin</th>
+                             <th class="pb-4 text-right text-xs font-bold text-gray-400 uppercase tracking-widest w-[15%]">Rate ({{ formData.currency }})</th>
+                             <th class="pb-4 text-right text-xs font-bold text-gray-400 uppercase tracking-widest w-[5%]"></th>
+                          </tr>
+                       </thead>
+                       <tbody class="divide-y divide-gray-50">
+                          <tr v-for="(item, index) in formData.items" :key="item.id" class="group">
+                             <td class="py-4 pr-4">
+                                <input v-model="item.description" class="w-full px-3 py-2 bg-transparent border border-transparent rounded-lg focus:border-violet-300 focus:bg-white focus:ring-2 focus:ring-violet-100 outline-none transition-all text-sm font-bold text-gray-800" placeholder="Item description" />
+                             </td>
+                             <td class="py-4 pr-4">
+                                <div class="flex gap-2">
+                                   <input type="number" v-model.number="item.quantity" class="w-16 px-2 py-2 text-center bg-gray-50 border border-gray-200 rounded-lg focus:border-violet-500 outline-none transition-all text-sm font-bold text-gray-800" min="1" />
+                                   <input v-model="item.unit" class="w-full px-2 py-2 bg-gray-50 border border-gray-200 rounded-lg focus:border-violet-500 outline-none transition-all text-sm text-gray-600" placeholder="Unit" />
+                                </div>
+                             </td>
+                             <td class="py-4 pr-4">
+                                <input type="number" v-model.number="item.cost" @input="recalculateItemRate(index)" class="w-full px-3 py-2 bg-gray-50 border border-gray-200 rounded-lg focus:border-violet-500 outline-none transition-all text-sm font-bold text-gray-800" min="0" />
+                             </td>
+                             <td class="py-4 pr-4 relative">
+                                <input type="number" v-model.number="item.margin" @input="recalculateItemRate(index)" class="w-full pl-3 pr-6 py-2 bg-gray-50 border border-gray-200 rounded-lg focus:border-violet-500 outline-none transition-all text-sm font-bold text-violet-600" min="0" max="100" />
+                                <span class="absolute right-6 top-1/2 -translate-y-1/2 text-xs font-bold text-gray-400">%</span>
+                             </td>
+                             <td class="py-4 text-right">
+                                <input type="number" v-model.number="item.rate" @input="recalculateItemMargin(index)" class="w-full text-right px-3 py-2 bg-transparent border border-transparent rounded-lg focus:border-violet-300 focus:bg-white focus:ring-2 focus:ring-violet-100 outline-none transition-all text-sm font-bold text-gray-900" min="0" />
+                             </td>
+                             <td class="py-4 text-right pl-2">
+                                <button @click="removeItem(index)" class="p-2 text-gray-400 hover:text-red-500 hover:bg-red-50 rounded-lg transition-colors opacity-0 group-hover:opacity-100">
+                                   <Trash2 size="16" />
+                                </button>
+                             </td>
+                          </tr>
+                       </tbody>
+                    </table>
+                 </div>
+
+                 <button @click="addItem" class="mt-4 flex items-center justify-center gap-2 w-full py-3 border-2 border-dashed border-gray-200 text-gray-500 rounded-xl hover:border-violet-300 hover:text-violet-600 hover:bg-violet-50 transition-all text-sm font-bold">
+                    <Plus size="16" /> Add Item
+                 </button>
+              </div>
+
+              <!-- Summary Totals -->
+              <div class="flex gap-8 items-start">
+                 <!-- Config -->
+                 <div class="flex-1 bg-white p-6 rounded-[2rem] shadow-sm border border-gray-100">
+                    <h4 class="text-sm font-bold text-gray-900 mb-6">Tax & Discount Configuration</h4>
+                    <div class="grid grid-cols-2 gap-6">
+                       <div>
+                          <label class="block text-xs font-bold text-gray-500 uppercase tracking-widest mb-2">Discount</label>
+                          <div class="flex gap-2">
+                             <input type="number" v-model.number="formData.discount" class="flex-1 px-4 py-2 bg-gray-50 border border-gray-200 rounded-xl outline-none" min="0" />
+                             <select v-model="formData.discountType" class="w-24 px-2 py-2 bg-gray-50 border border-gray-200 rounded-xl outline-none text-sm font-bold">
+                                <option value="percent">%</option>
+                                <option value="fixed">{{ formData.currency }}</option>
+                             </select>
+                          </div>
+                       </div>
+                       <div>
+                          <label class="block text-xs font-bold text-gray-500 uppercase tracking-widest mb-2">Tax Rate (%)</label>
+                          <input type="number" v-model.number="formData.taxRate" class="w-full px-4 py-2 bg-gray-50 border border-gray-200 rounded-xl outline-none" min="0" max="100" />
+                       </div>
+                       <div>
+                           <label class="block text-xs font-bold text-gray-500 uppercase tracking-widest mb-2">Currency</label>
+                           <select v-model="formData.currency" class="w-full px-4 py-2 bg-gray-50 border border-gray-200 rounded-xl outline-none text-sm font-bold">
+                              <option value="SAR">SAR - Saudi Riyal</option>
+                              <option value="USD">USD - US Dollar</option>
+                              <option value="EUR">EUR - Euro</option>
+                              <option value="GBP">GBP - British Pound</option>
+                              <option value="AED">AED - UAE Dirham</option>
+                              <option value="EGP">EGP - Egyptian Pound</option>
+                              <option value="KWD">KWD - Kuwaiti Dinar</option>
+                              <option value="QAR">QAR - Qatari Riyal</option>
+                              <option value="BHD">BHD - Bahraini Dinar</option>
+                              <option value="OMR">OMR - Omani Rial</option>
+                           </select>
+                        </div>
+                        <div>
+                           <label class="block text-xs font-bold text-gray-500 uppercase tracking-widest mb-2">Document Status</label>
+                           <select v-model="formData.status" class="w-full px-4 py-2 bg-gray-50 border border-gray-200 rounded-xl outline-none text-sm font-bold">
+                              <option value="Draft">Draft</option>
+                              <option value="Sent">Sent</option>
+                              <option value="Approved">Approved / Paid</option>
+                              <option value="Rejected">Rejected / Cancelled</option>
+                              <option value="Archived">Archived</option>
+                           </select>
+                        </div>
+                    </div>
+                 </div>
+
+                 <!-- Live Totals -->
+                 <div class="w-80 bg-gray-900 p-8 rounded-[2rem] text-white shadow-xl relative overflow-hidden">
+                    <div class="absolute top-0 right-0 w-32 h-32 bg-violet-500/20 rounded-full blur-3xl -mr-10 -mt-10"></div>
+                    <h4 class="text-xs font-bold text-gray-400 uppercase tracking-widest mb-6 relative z-10">Investment Summary</h4>
+                    <div class="space-y-4 relative z-10 text-sm">
+                       <div class="flex justify-between items-center text-gray-300">
+                          <span>Subtotal</span>
+                          <span class="font-mono">{{ subtotal.toLocaleString() }}</span>
+                       </div>
+                       <div v-if="formData.discount > 0" class="flex justify-between items-center text-green-400">
+                          <span>Discount</span>
+                          <span class="font-mono">-{{ discountAmount.toLocaleString() }}</span>
+                       </div>
+                       <div class="flex justify-between items-center text-gray-300 border-b border-gray-700 pb-4">
+                          <span>Tax ({{ formData.taxRate }}%)</span>
+                          <span class="font-mono">{{ taxAmount.toLocaleString() }}</span>
+                       </div>
+                       <div class="flex justify-between items-end pt-2">
+                          <span class="text-gray-400 font-bold">Total</span>
+                          <div class="text-right">
+                             <span class="text-xs text-gray-500 mr-2">{{ formData.currency }}</span>
+                             <span class="text-3xl font-bold tracking-tight text-white">{{ finalTotal.toLocaleString() }}</span>
+                          </div>
+                       </div>
+                    </div>
+                 </div>
+              </div>
+          </div>
+          
+           <div v-else-if="activeStep === 'legal'" class="space-y-8 animate-in fade-in slide-in-from-bottom-4 duration-500">
+              <div class="bg-white p-8 rounded-[2rem] shadow-sm border border-gray-100">
+                <h3 class="text-xl font-bold text-gray-900 mb-6">Terms & Conditions</h3>
+                <RichTextEditor v-model="formData.termsAndConditions" placeholder="Enter legal terms..." minHeight="300px" />
+              </div>
+               <div class="bg-white p-8 rounded-[2rem] shadow-sm border border-gray-100">
+                 <h3 class="text-xl font-bold text-gray-900 mb-6">Payment Terms</h3>
+                 <RichTextEditor v-model="formData.paymentTerms" placeholder="Payment schedule..." minHeight="200px" />
+               </div>
+               <!-- Notes -->
+               <div class="bg-white p-8 rounded-[2rem] shadow-sm border border-gray-100">
+                 <h3 class="text-xl font-bold text-gray-900 mb-6">Notes</h3>
+                 <textarea 
+                   v-model="formData.notes" 
+                   class="w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-xl focus:border-violet-500 focus:ring-2 focus:ring-violet-200 outline-none transition-all text-sm text-gray-800 resize-y" 
+                   rows="4" 
+                   placeholder="Any additional notes to include on the document..."
+                 ></textarea>
+               </div>
+           </div>
+
+           <!-- Custom Sections Loop -->
+           <template v-for="(section, index) in formData.customSections" :key="section.id">
+             <div v-show="activeStep === section.id" class="space-y-8 animate-in fade-in slide-in-from-bottom-4 duration-500">
+                <div class="bg-white p-8 rounded-[2rem] shadow-sm border border-gray-100 relative">
+                   <!-- Section Settings -->
+                   <div class="flex items-center justify-between mb-8 pb-6 border-b border-gray-100">
+                     <div class="flex-1 max-w-md">
+                       <label class="block text-xs font-bold text-gray-500 uppercase tracking-widest mb-2">Section Title</label>
+                       <input 
+                         v-model="section.title" 
+                         class="w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-xl focus:border-violet-500 focus:ring-2 focus:ring-violet-200 outline-none transition-all text-sm font-bold text-gray-900" 
+                         placeholder="e.g. Server Architecture" 
+                       />
+                     </div>
+                     <button 
+                       @click="removeCustomSection(index, section.id)" 
+                       class="flex items-center gap-2 px-4 py-2 text-red-600 bg-red-50 hover:bg-red-100 rounded-xl text-sm font-bold transition-colors mt-6"
+                     >
+                       <Trash2 size="16" /> Delete Section
+                     </button>
+                   </div>
+
+                   <!-- Editor -->
+                   <RichTextEditor v-model="section.content" :placeholder="`Write content for ${section.title || 'this section'}...`" minHeight="400px" />
+                </div>
+            </div>
+           </template>
+
+        </div>
+      </section>
+
+      <!-- Right (Live Preview) -->
+      <section 
+        v-show="showPreview" 
+        class="w-[45%] bg-slate-200 overflow-y-auto custom-scrollbar border-l border-gray-300 relative flex flex-col items-center py-12"
+        style="background-image: radial-gradient(#cbd5e1 1.5px, transparent 1.5px); background-size: 24px 24px;"
+        data-print-area
+      >
+        <!-- Scaling Wrapper -->
+        <div class="sticky top-4 z-50 flex items-center gap-2 bg-black/80 backdrop-blur text-white px-4 py-2 rounded-full mb-8 shadow-xl">
+             <button @click="zoom -= 0.1" class="p-1 hover:text-violet-300"><ZoomOut size="16" /></button>
+             <span class="text-xs font-mono font-bold w-12 text-center">{{ Math.round(zoom * 100) }}%</span>
+             <button @click="zoom += 0.1" class="p-1 hover:text-violet-300"><ZoomIn size="16" /></button>
+        </div>
+
+        <div :style="{ transform: `scale(${zoom})`, transformOrigin: 'top center' }" class="transition-transform duration-200 pb-[100px]">
+          <!-- Proposals & Contracts: Full rich template with covers -->
+          <ProposalPrintTemplate 
+            v-if="isFullDoc"
+            :data="formData" 
+          />
+          <!-- All other docs: Fixed professional template -->
+          <FixedDocumentTemplate
+            v-else
+            :data="formData"
+          />
+        </div>
+      </section>
+    </main>
+
+  </div>
 </template>
 
 <script setup lang="ts">
-import { ref, computed, nextTick, onMounted, watch } from 'vue';
-import { useEditor, EditorContent } from '@tiptap/vue-3';
-import StarterKit from '@tiptap/starter-kit';
-import Underline from '@tiptap/extension-underline';
-import { TextStyle, Color } from '@tiptap/extension-text-style';
-import TextAlign from '@tiptap/extension-text-align';
-import Highlight from '@tiptap/extension-highlight';
-import { Table, TableRow, TableCell, TableHeader } from '@tiptap/extension-table';
-import ImageExt from '@tiptap/extension-image';
-import Link from '@tiptap/extension-link';
-import Placeholder from '@tiptap/extension-placeholder';
-import TaskList from '@tiptap/extension-task-list';
-import TaskItem from '@tiptap/extension-task-item';
-import type { JSONContent } from '@tiptap/vue-3';
+import { ref, reactive, computed, watch, nextTick } from 'vue';
+import draggable from 'vuedraggable';
+// Lightweight icon shims using Nuxt Icon (replaces lucide-vue-next)
+import { h, type FunctionalComponent } from 'vue';
 
-import { VariableNode } from './extensions/VariableNode';
-import { SignatureBlock } from './extensions/SignatureBlock';
-import { PageBreak } from './extensions/PageBreak';
-import { PricingTableBlock } from './extensions/PricingTableBlock';
-import { CoverPage } from './extensions/CoverPage';
-import ProToolbar from './ProToolbar.vue';
-import VariablePicker from './VariablePicker.vue';
-import PDFPreview from './PDFPreview.vue';
-import { useDocumentBuilder } from '~/composables/useDocumentBuilder';
+const iconShim = (name: string): FunctionalComponent<{ size?: number | string; class?: string }> =>
+  (props, { attrs }) => h(resolveComponent('Icon'), { name, size: props.size || 20, class: props.class, ...attrs });
 
-// ── Props & Emits ─────────────────────────────────────────────────────
-const props = defineProps<{
-  templateId?: string;
-  initialContent?: JSONContent;
-  variables?: string[];
-}>();
+const FileText = iconShim('ph:file-text');
+const Eye = iconShim('ph:eye');
+const EyeOff = iconShim('ph:eye-slash');
+const Save = iconShim('ph:floppy-disk');
+const Download = iconShim('ph:download-simple');
+const Plus = iconShim('ph:plus');
+const Palette = iconShim('ph:palette');
+const User = iconShim('ph:user');
+const Layers = iconShim('ph:stack');
+const DollarSign = iconShim('ph:currency-dollar');
+const CheckSquare = iconShim('ph:check-square');
+const ZoomOut = iconShim('ph:minus-circle');
+const ZoomIn = iconShim('ph:plus-circle');
+const CheckCircle = iconShim('ph:check-circle');
+const Trash2 = iconShim('ph:trash');
+const GripVertical = iconShim('ph:dots-six-vertical');
 
-const emit = defineEmits<{
-  save: [content: JSONContent];
-  'export-pdf': [];
-}>();
+// Components
+import ProposalPrintTemplate from './ProposalPrintTemplate.vue';
+import FixedDocumentTemplate from './FixedDocumentTemplate.vue';
+import RichTextEditor from './RichTextEditor.vue';
 
-// ── State ─────────────────────────────────────────────────────────────
-const showVariables = ref(false);
-const exporting = ref(false);
-const editorHtml = ref('');
-const { exportPDF } = useDocumentBuilder();
+// Types
+import type { ProposalData, CustomSection } from './types';
+import { useDocumentArchive } from '~/composables/useDocumentArchive';
+import { getAvailableConversions, convertDocument } from '~/composables/useDocumentConversion';
+import { ArrowDown } from '@element-plus/icons-vue';
 
-// ── Slash command menu ────────────────────────────────────────────────
-const showSlashMenu = ref(false);
-const slashMenuPosition = ref({ top: '0px', left: '0px' });
-const slashMenuIndex = ref(0);
-const slashMenuQuery = ref('');
-const slashMenuRef = ref<HTMLElement | null>(null);
+const props = withDefaults(defineProps<{
+  documentType?: 'proposal' | 'invoice' | 'proforma_invoice' | 'purchase_order' | 'credit_note' | 'contract' | 'rfq' | 'sales_order' | 'quote' | 'delivery_note' | 'sla';
+}>(), {
+  documentType: 'proposal'
+});
 
-interface SlashMenuItem {
-  label: string;
-  description: string;
-  icon: string;
-  command: (editor: any) => void;
-}
+const emit = defineEmits(['save']);
 
-const slashItems: SlashMenuItem[] = [
-  {
-    label: 'Heading 1',
-    description: 'Large section heading',
-    icon: 'ph:text-h-one-bold',
-    command: (editor) => editor.chain().focus().toggleHeading({ level: 1 }).run(),
-  },
-  {
-    label: 'Heading 2',
-    description: 'Medium section heading',
-    icon: 'ph:text-h-two-bold',
-    command: (editor) => editor.chain().focus().toggleHeading({ level: 2 }).run(),
-  },
-  {
-    label: 'Heading 3',
-    description: 'Small section heading',
-    icon: 'ph:text-h-three-bold',
-    command: (editor) => editor.chain().focus().toggleHeading({ level: 3 }).run(),
-  },
-  {
-    label: 'Bullet List',
-    description: 'Unordered list of items',
-    icon: 'ph:list-bullets-bold',
-    command: (editor) => editor.chain().focus().toggleBulletList().run(),
-  },
-  {
-    label: 'Numbered List',
-    description: 'Ordered list of items',
-    icon: 'ph:list-numbers-bold',
-    command: (editor) => editor.chain().focus().toggleOrderedList().run(),
-  },
-  {
-    label: 'Task List',
-    description: 'Checklist with checkboxes',
-    icon: 'ph:check-square-bold',
-    command: (editor) => editor.chain().focus().toggleTaskList().run(),
-  },
-  {
-    label: 'Table',
-    description: 'Insert a 3x3 table',
-    icon: 'ph:table-bold',
-    command: (editor) => editor.chain().focus().insertTable({ rows: 3, cols: 3, withHeaderRow: true }).run(),
-  },
-  {
-    label: 'Horizontal Rule',
-    description: 'Visual divider line',
-    icon: 'ph:minus-bold',
-    command: (editor) => editor.chain().focus().setHorizontalRule().run(),
-  },
-  {
-    label: 'Page Break',
-    description: 'Break to next page in PDF',
-    icon: 'ph:scissors-bold',
-    command: (editor) => editor.chain().focus().insertPageBreak().run(),
-  },
-  {
-    label: 'Signature Block',
-    description: 'Signature line with date',
-    icon: 'ph:pen-nib-bold',
-    command: (editor) => editor.chain().focus().insertSignatureBlock({ label: 'Signature', showDate: true }).run(),
-  },
-  {
-    label: 'Blockquote',
-    description: 'Indented quote block',
-    icon: 'ph:quotes-bold',
-    command: (editor) => editor.chain().focus().toggleBlockquote().run(),
-  },
-  {
-    label: 'Pricing Table',
-    description: 'Dynamic calculated pricing table',
-    icon: 'ph:receipt-bold',
-    command: (editor) => editor.chain().focus().insertPricingTable().run(),
-  },
-  {
-    label: 'Cover Page',
-    description: 'A4 Professional Cover Page',
-    icon: 'ph:book-bold',
-    command: (editor) => editor.chain().focus().insertCoverPage().run(),
-  },
-  {
-    label: 'Code Block',
-    description: 'Code snippet block',
-    icon: 'ph:code-bold',
-    command: (editor) => editor.chain().focus().toggleCodeBlock().run(),
-  },
+// Layout State
+const showPreview = ref(true);
+const activeStep = ref('branding');
+const zoom = ref(0.65);
+
+const documentTypeTitle = computed(() => {
+  if (!props.documentType) return 'Proposal';
+  const type = props.documentType.replace('_', ' ');
+  return type.charAt(0).toUpperCase() + type.slice(1);
+});
+
+// Client Selection Logic
+const selectedClientId = ref<string | null>(null);
+
+// Mock data (Would normally be fetched from the API/Store)
+const mockClients = [
+  { id: 'cli_1', company: 'Acme Corp', name: 'John Doe', email: 'john@acmecorp.com' },
+  { id: 'cli_2', company: 'TechNova', name: 'Sarah Smith', email: 'sarah@technova.io' },
+  { id: 'cli_3', company: 'Global Industries', name: 'Michael Chang', email: 'm.chang@globalind.com' }
 ];
 
-const filteredSlashItems = computed(() => {
-  const q = slashMenuQuery.value.toLowerCase();
-  if (!q) return slashItems;
-  return slashItems.filter(
-    (item) =>
-      item.label.toLowerCase().includes(q) ||
-      item.description.toLowerCase().includes(q),
-  );
+const handleClientSelect = (clientId: string) => {
+  if (!clientId) {
+    formData.clientCompany = '';
+    formData.clientName = '';
+    formData.clientEmail = ''; // Assuming email exists in your type
+    return;
+  }
+  const client = mockClients.find(c => c.id === clientId);
+  if (client) {
+    formData.clientCompany = client.company;
+    formData.clientName = client.name;
+    formData.clientEmail = client.email;
+  }
+};
+
+const defaultSteps = computed(() => {
+  const isFullDoc = ['proposal', 'contract'].includes(props.documentType || 'proposal');
+  
+  const steps = [
+    { id: 'branding', label: isFullDoc ? 'Branding & Details' : 'Document Details', icon: Palette },
+    { id: 'executive', label: props.documentType === 'contract' ? 'Contract Summary' : 'Executive Summary', icon: User },
+    { id: 'solution', label: props.documentType === 'contract' ? 'Obligations & Scope' : 'Solution & Scope', icon: Layers },
+    { id: 'financial', label: isFullDoc ? 'Investment' : 'Items & Pricing', icon: DollarSign },
+    { id: 'legal', label: 'Terms & Legal', icon: CheckSquare },
+  ];
+  
+  // Clean up steps based on document type
+  if (!isFullDoc) {
+    return steps.filter(step => step.id !== 'executive' && step.id !== 'solution');
+  }
+  return steps;
 });
 
-// ── TipTap Editor ─────────────────────────────────────────────────────
-const editor = useEditor({
-  content: props.initialContent || {
-    type: 'doc',
-    content: [
-      {
-        type: 'paragraph',
-        content: [],
-      },
-    ],
+const themeColors: Record<string, string> = {
+  'Violet': '#7c3aed',
+  'Blue': '#2563eb',
+  'Emerald': '#10b981',
+  'Rose': '#e11d48',
+  'Amber': '#f59e0b',
+  'Slate': '#475569',
+  'Sky': '#0284c7',
+  'Indigo': '#4f46e5'
+};
+
+const coverStylesList = [
+  { id: 'corporate', label: 'Corporate Minimal', category: 'Professional' },
+  { id: 'business', label: 'Business Classic', category: 'Professional' },
+  { id: 'enterprise', label: 'Enterprise Dark', category: 'Professional' },
+  { id: 'swiss', label: 'Swiss Typography', category: 'Minimalist' },
+  { id: 'minimal', label: 'Clean Minimal', category: 'Minimalist' },
+  { id: 'japaneseminimal', label: 'Japanese Minimal', category: 'Minimalist' },
+  { id: 'blueprintdark', label: 'Blueprint Dark', category: 'Technical' },
+  { id: 'tech', label: 'Tech Grid', category: 'Technical' },
+  { id: 'terminal', label: 'Terminal Connect', category: 'Technical' },
+  { id: 'creative', label: 'Creative Bold', category: 'Creative' },
+  { id: 'modernart', label: 'Modern Art', category: 'Creative' },
+  { id: 'artdeco', label: 'Art Deco', category: 'Creative' },
+  { id: 'geometric', label: 'Geometric Splice', category: 'Modern' },
+  { id: 'gradientsplash', label: 'Gradient Splash', category: 'Modern' },
+  { id: 'neonnight', label: 'Neon Night', category: 'Modern' },
+  { id: 'darkmode', label: 'Dark Mode Focus', category: 'Dark' },
+  { id: 'midnightgradient', label: 'Midnight Gradient', category: 'Dark' },
+  { id: 'architectural', label: 'Architectural', category: 'Specific' },
+  { id: 'brutalist', label: 'Brutalist Raw', category: 'Specific' },
+  { id: 'nature', label: 'Organic Nature', category: 'Specific' },
+  { id: 'abstract', label: 'Abstract Fluid', category: 'Artistic' },
+  { id: 'retropop', label: 'Retro Pop', category: 'Artistic' },
+  { id: 'brushstroke', label: 'Brush Stroke', category: 'Artistic' },
+  { id: 'mondrian', label: 'Mondrian Code', category: 'Artistic' },
+  { id: 'magazineeditorial', label: 'Magazine Editorial', category: 'Editorial' },
+  { id: 'newspaper', label: 'Daily Newspaper', category: 'Editorial' },
+  { id: 'futuristicgrid', label: 'Futuristic Grid', category: 'Experimental' },
+  { id: 'ethereal', label: 'Ethereal Cloud', category: 'Experimental' },
+  { id: 'aurora', label: 'Aurora Borealis', category: 'Experimental' },
+  { id: 'warmboho', label: 'Warm Boho', category: 'Lifestyle' },
+  { id: 'glassmorphism', label: 'Glassmorphism', category: 'UI Trend' },
+  { id: 'boldtypography', label: 'Bold Typography', category: 'Typography' }
+];
+
+const isFullDoc = ['proposal', 'contract'].includes(props.documentType || 'proposal');
+
+// Smart document numbering prefix
+const docRefPrefixes: Record<string, string> = {
+  proposal: 'PRP', contract: 'CTR', invoice: 'INV', proforma_invoice: 'PI', purchase_order: 'PO',
+  credit_note: 'CN', quote: 'QT', rfq: 'RFQ', sales_order: 'SO', delivery_note: 'DN', sla: 'SLA'
+};
+const docDefaultTitles: Record<string, string> = {
+  proposal: 'Project Proposal', contract: 'Service Agreement', invoice: 'Invoice',
+  proforma_invoice: 'Proforma Invoice', purchase_order: 'Purchase Order', credit_note: 'Credit Note',
+  quote: 'Quotation', rfq: 'Request for Quotation', sales_order: 'Sales Order', delivery_note: 'Delivery Note',
+  sla: 'Service Level Agreement'
+};
+const refPrefix = docRefPrefixes[props.documentType] || 'DOC';
+const defaultTitle = docDefaultTitles[props.documentType] || 'Document';
+
+// Mock Form Data (Initial State identical to React version)
+const formData = reactive<ProposalData>({
+  id: Date.now(),
+  refNumber: `${refPrefix}-${new Date().getFullYear()}-${String(Math.floor(1 + Math.random() * 9999)).padStart(4, '0')}`,
+  title: defaultTitle,
+  clientName: '',
+  clientCompany: '',
+  clientEmail: '',
+  date: new Date().toISOString().split('T')[0] || '',
+  validUntil: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000).toISOString().split('T')[0] || '',
+  status: 'Draft',
+  type: 'MIXED',
+  documentType: props.documentType || 'proposal',
+  themeColor: '#7c3aed', // Default violet
+  coverStyle: 'corporate',
+  font: 'sans',
+  logo: '',
+  clientLogo: '',
+  stepOrder: isFullDoc ? ['executive', 'solution', 'financial', 'legal'] : ['financial', 'legal'],
+  stepLabels: {
+    branding: isFullDoc ? 'Branding & Details' : 'Document Details',
+    executive: props.documentType === 'contract' ? 'Contract Summary' : 'Executive Summary',
+    solution: props.documentType === 'contract' ? 'Obligations & Scope' : 'Solution & Scope',
+    financial: isFullDoc ? 'Investment' : 'Items & Pricing',
+    legal: 'Terms & Legal'
   },
-  extensions: [
-    StarterKit.configure({
-      heading: { levels: [1, 2, 3] },
-    }),
-    Underline,
-    TextStyle,
-    Color,
-    TextAlign.configure({
-      types: ['heading', 'paragraph'],
-    }),
-    Highlight.configure({
-      multicolor: true,
-    }),
-    Table.configure({
-      resizable: true,
-    }),
-    TableRow,
-    TableCell,
-    TableHeader,
-    ImageExt.configure({
-      inline: false,
-      allowBase64: true,
-    }),
-    Link.configure({
-      openOnClick: false,
-      autolink: true,
-    }),
-    Placeholder.configure({
-      placeholder: 'Type / to insert blocks, or start writing...',
-    }),
-    TaskList,
-    TaskItem.configure({
-      nested: true,
-    }),
-    VariableNode,
-    SignatureBlock,
-    PageBreak,
-    PricingTableBlock,
-    CoverPage,
+  introduction: '',
+  objectives: '',
+  scopeOfWork: '',
+  methodology: '',
+  phases: [],
+  customSections: [],
+  currency: 'SAR',
+  items: [
+     { id: 1, description: 'Discovery & Planning', quantity: 1, unit: 'Lump Sum', cost: 0, margin: 20, rate: 5000 }
   ],
-  onUpdate: ({ editor: ed }) => {
-    editorHtml.value = ed.getHTML();
-    emit('save', ed.getJSON());
-  },
-  editorProps: {
-    handleKeyDown: (view, event) => {
-      // Slash command trigger
-      if (event.key === '/' && !showSlashMenu.value) {
-        nextTick(() => {
-          openSlashMenu();
-        });
-        return false;
-      }
-
-      // Slash menu navigation
-      if (showSlashMenu.value) {
-        if (event.key === 'ArrowDown') {
-          event.preventDefault();
-          slashMenuIndex.value = (slashMenuIndex.value + 1) % filteredSlashItems.value.length;
-          return true;
-        }
-        if (event.key === 'ArrowUp') {
-          event.preventDefault();
-          slashMenuIndex.value = (slashMenuIndex.value - 1 + filteredSlashItems.value.length) % filteredSlashItems.value.length;
-          return true;
-        }
-        if (event.key === 'Enter') {
-          event.preventDefault();
-          const item = filteredSlashItems.value[slashMenuIndex.value];
-          if (item) executeSlashCommand(item);
-          return true;
-        }
-        if (event.key === 'Escape') {
-          showSlashMenu.value = false;
-          return true;
-        }
-        // Update filter query on typing
-        if (event.key.length === 1) {
-          slashMenuQuery.value += event.key;
-          slashMenuIndex.value = 0;
-        }
-        if (event.key === 'Backspace') {
-          if (slashMenuQuery.value.length > 0) {
-            slashMenuQuery.value = slashMenuQuery.value.slice(0, -1);
-          } else {
-            showSlashMenu.value = false;
-          }
-        }
-      }
-
-      return false;
-    },
-    handleClick: () => {
-      if (showSlashMenu.value) {
-        showSlashMenu.value = false;
-      }
-    },
-  },
+  taxRate: 15,
+  discount: 0,
+  discountType: 'percent',
+  paymentTerms: '',
+  termsAndConditions: '',
+  companyName: '',
+  companyAddress: '',
+  companyPhone: '',
+  companyEmail: '',
+  companyTaxId: '',
+  clientAddress: '',
+  clientPhone: '',
+  clientTaxId: '',
+  bankName: '',
+  bankAccountName: '',
+  bankIban: '',
+  bankSwift: '',
+  notes: '',
+  dueDate: '',
+  version: 1,
+  lastModified: new Date().toISOString()
 });
 
-// Initialize HTML on mount
-onMounted(() => {
-  if (editor.value) {
-    editorHtml.value = editor.value.getHTML();
+const globalMargin = ref(20);
+
+const applyGlobalMargin = () => {
+  formData.items.forEach(item => {
+    item.margin = globalMargin.value;
+    item.rate = item.cost / (1 - (globalMargin.value / 100));
+  });
+};
+
+// ── Export PDF ──────────────────────────────────────────
+const exportPdf = () => {
+  // Force preview open, then print after render
+  const wasHidden = !showPreview.value;
+  showPreview.value = true;
+  
+  nextTick(() => {
+    window.print();
+    if (wasHidden) showPreview.value = false;
+  });
+};
+
+// ── Archive ────────────────────────────────────────────
+const { archiveDocument } = useDocumentArchive();
+
+const archiveCurrentDoc = () => {
+  const success = archiveDocument({
+    id: formData.id,
+    refNumber: formData.refNumber,
+    title: formData.title,
+    documentType: formData.documentType,
+    clientName: formData.clientName || formData.clientCompany || 'Unknown',
+    clientCompany: formData.clientCompany,
+    total: finalTotal.value,
+    currency: formData.currency,
+    status: formData.status,
+    createdAt: formData.date,
+  });
+  if (success) {
+    ElMessage.success(`${formData.refNumber} archived successfully.`);
+  } else {
+    ElMessage.warning('This document is already archived.');
   }
+};
+
+// ── Document Conversion ────────────────────────────────
+const availableConversions = computed(() => getAvailableConversions(props.documentType));
+
+const handleConvert = (targetType: string) => {
+  ElMessageBox.confirm(
+    `Convert this ${documentTypeTitle.value} to ${targetType.replace('_', ' ')}? A new document will be created with the same data.`,
+    'Convert Document',
+    { confirmButtonText: 'Convert', cancelButtonText: 'Cancel', type: 'info' }
+  ).then(() => {
+    const converted = convertDocument(formData, targetType);
+    // Apply converted data
+    Object.assign(formData, converted);
+    ElMessage.success(`Converted to ${targetType.replace('_', ' ')} — Ref: ${converted.refNumber}`);
+  }).catch(() => {});
+};
+
+const recalculateItemRate = (index: number) => {
+  const item = formData.items[index];
+  if (!item) return;
+  if (item.cost >= 0 && item.margin >= 0 && item.margin < 100) {
+    item.rate = item.cost / (1 - (item.margin / 100));
+  }
+};
+
+const recalculateItemMargin = (index: number) => {
+  const item = formData.items[index];
+  if (!item) return;
+  if (item.rate > 0 && item.cost >= 0) {
+    item.margin = ((item.rate - item.cost) / item.rate) * 100;
+  }
+};
+
+const addItem = () => {
+  formData.items.push({
+    id: Date.now(),
+    description: '',
+    quantity: 1,
+    unit: 'Unit',
+    cost: 0,
+    margin: globalMargin.value,
+    rate: 0
+  });
+};
+
+const removeItem = (index: number) => {
+  formData.items.splice(index, 1);
+};
+
+// Computed Financials
+
+const subtotal = computed(() => {
+  return formData.items.reduce((sum, item) => sum + ((item.quantity || 0) * (item.rate || 0)), 0);
 });
 
-// Watch for external content changes
-watch(
-  () => props.initialContent,
-  (newContent) => {
-    if (newContent && editor.value) {
-      const currentJson = JSON.stringify(editor.value.getJSON());
-      const newJson = JSON.stringify(newContent);
-      if (currentJson !== newJson) {
-        editor.value.commands.setContent(newContent);
-        editorHtml.value = editor.value.getHTML();
-      }
+const discountAmount = computed(() => {
+  if (formData.discountType === 'percent') {
+    return subtotal.value * ((formData.discount || 0) / 100);
+  }
+  return formData.discount || 0;
+});
+
+const taxableAmount = computed(() => subtotal.value - discountAmount.value);
+const taxAmount = computed(() => taxableAmount.value * ((formData.taxRate || 0) / 100));
+const finalTotal = computed(() => taxableAmount.value + taxAmount.value);
+
+const addCustomSection = () => {
+  const newSection: CustomSection = {
+    id: `custom_${Date.now()}`,
+    title: 'New Section',
+    content: ''
+  };
+  formData.customSections.push(newSection);
+  formData.stepOrder.push(newSection.id);
+  activeStep.value = newSection.id;
+};
+
+const removeCustomSection = (index: number, id: string) => {
+  if (confirm('Are you sure you want to delete this custom section?')) {
+    formData.customSections.splice(index, 1);
+    const orderIndex = formData.stepOrder.indexOf(id);
+    if (orderIndex > -1) {
+      formData.stepOrder.splice(orderIndex, 1);
     }
-  },
-);
-
-function openSlashMenu() {
-  if (!editor.value) return;
-
-  const { view } = editor.value;
-  const { from } = view.state.selection;
-  const coords = view.coordsAtPos(from);
-  const editorRect = view.dom.closest('.tiptap-editor')?.getBoundingClientRect();
-
-  if (editorRect) {
-    slashMenuPosition.value = {
-      top: `${coords.bottom - editorRect.top + 8}px`,
-      left: `${coords.left - editorRect.left}px`,
-    };
+    if (activeStep.value === id) {
+      activeStep.value = 'branding';
+    }
   }
+};
 
-  showSlashMenu.value = true;
-  slashMenuIndex.value = 0;
-  slashMenuQuery.value = '';
-}
+const onCustomSectionReorder = () => {
+  // Re-sync the stepOrder array to reflect the new customSections order
+  const baseOrder = ['executive', 'solution', 'financial', 'legal']; // Assuming these are fixed at the top
+  const customOrder = formData.customSections.map(s => s.id);
+  
+  // Create a new step order: default steps followed by custom steps
+  // In a more complex app, custom sections could be dragged ANYWHERE, 
+  // but for now, they are dragged among themselves at the bottom.
+  formData.stepOrder = [...baseOrder, ...customOrder];
+};
 
-function executeSlashCommand(item: SlashMenuItem) {
-  if (!editor.value) return;
+// --- Expose API for Parent Components ---
+const getContent = () => {
+  return formData;
+};
 
-  // Delete the "/" character that triggered the menu plus any typed query chars
-  const deleteCount = 1 + slashMenuQuery.value.length;
-  const { from } = editor.value.state.selection;
-  editor.value
-    .chain()
-    .deleteRange({ from: from - deleteCount, to: from })
-    .run();
-
-  item.command(editor.value);
-  showSlashMenu.value = false;
-}
-
-function handleInsertVariable(path: string) {
-  if (!editor.value) return;
-  editor.value.chain().focus().insertVariable(path).run();
-}
-
-async function handleExportPDF() {
-  if (!editor.value) return;
-  exporting.value = true;
-  try {
-    await exportPDF(editor.value.getHTML(), 'document.pdf');
-  } finally {
-    exporting.value = false;
+const setContent = (content: any) => {
+  if (content && typeof content === 'object') {
+     Object.assign(formData, content);
   }
-}
+};
 
-// Expose editor for parent component
+watch(formData, (newVal) => {
+  emit('save', newVal);
+}, { deep: true });
+
 defineExpose({
-  editor,
-  getContent: () => editor.value?.getJSON(),
-  getHTML: () => editor.value?.getHTML(),
-  setContent: (content: JSONContent) => editor.value?.commands.setContent(content),
+  getContent,
+  setContent
 });
+
+// Next steps: Build the Branding Form, Rich Text Editor integration etc.
 </script>
 
 <style scoped>
-.pro-doc-builder {
-  animation: fadeIn 0.3s ease-out;
+.custom-scrollbar::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+.custom-scrollbar::-webkit-scrollbar-track {
+  background: transparent;
+}
+.custom-scrollbar::-webkit-scrollbar-thumb {
+  background-color: #cbd5e1;
+  border-radius: 20px;
+}
+.custom-scrollbar:hover::-webkit-scrollbar-thumb {
+  background-color: #94a3b8;
 }
 
-@keyframes fadeIn {
-  from { opacity: 0; transform: translateY(4px); }
-  to { opacity: 1; transform: translateY(0); }
+/* Print styles: hide everything except preview */
+@media print {
+  header, aside, section:not([data-print-area]) {
+    display: none !important;
+  }
+  main {
+    display: block !important;
+  }
+  [data-print-area] {
+    width: 100% !important;
+    overflow: visible !important;
+    position: absolute !important;
+    left: 0 !important;
+    top: 0 !important;
+    border: none !important;
+    background: white !important;
+  }
+  [data-print-area] > div {
+    transform: none !important;
+  }
 }
-
-.builder-body {
-  gap: 0;
-}
-
-.editor-pane {
-  position: relative;
-  display: flex;
-  flex-direction: column;
-}
-
-.editor-content {
-  flex: 1;
-  overflow-y: auto;
-}
-
-/* Slash command menu */
-.slash-menu {
-  position: absolute;
-  z-index: 100;
-  width: 280px;
-  max-height: 380px;
-  overflow-y: auto;
-  border: 1px solid var(--glass-border-color);
-  background: var(--glass-bg);
-  backdrop-filter: var(--glass-blur);
-}
-
-.slash-item:hover,
-.slash-item.active {
-  background: rgba(120, 73, 255, 0.08);
-}
-
-/* Slide transition for variables panel */
-.slide-enter-active,
-.slide-leave-active {
-  transition: all 0.2s ease;
-}
-
-.slide-enter-from,
-.slide-leave-to {
-  opacity: 0;
-  transform: translateX(-20px);
-  width: 0 !important;
-  min-width: 0 !important;
-  overflow: hidden;
-}
-
-.editor-workspace {
-  background-color: #f1f3f5; /* Light gray workspace */
-  background-image: linear-gradient(rgba(0,0,0,0.03) 1px, transparent 1px),
-  linear-gradient(90deg, rgba(0,0,0,0.03) 1px, transparent 1px);
-  background-size: 20px 20px;
-}
-
-/* TipTap editor styles (The A4 Paper) */
-.editor-pane :deep(.tiptap-editor) {
-  width: 210mm;
-  min-height: 297mm; /* Ensure it stays A4 size at minimum */
-  padding: 40px 60px; /* Internal A4 Margins */
-  background: #ffffff;
-  box-shadow: 0 10px 40px -10px rgba(0,0,0,0.15); /* Premium drop shadow */
-  border-radius: 4px; /* Slight rounding for digital feel */
-  box-sizing: border-box;
-  outline: none;
-  margin-bottom: 40px; /* Space after page */
-}
-
-/* Maintain internal min-height for typing area */
-.editor-pane :deep(.tiptap) {
-  outline: none;
-  min-height: calc(297mm - 80px); /* 80px is top+bottom padding */
-}
-
-.editor-pane :deep(.tiptap > *:first-child) {
-  margin-top: 0;
-}
-
-.editor-pane :deep(.tiptap h1) {
-  font-size: 28px;
-  font-weight: 700;
-  margin: 24px 0 12px 0;
-  color: var(--text-primary);
-  line-height: 1.3;
-}
-
-.editor-pane :deep(.tiptap h2) {
-  font-size: 22px;
-  font-weight: 600;
-  margin: 20px 0 8px 0;
-  color: var(--text-primary);
-  line-height: 1.35;
-}
-
-.editor-pane :deep(.tiptap h3) {
-  font-size: 18px;
-  font-weight: 600;
-  margin: 16px 0 6px 0;
-  color: var(--text-primary);
-  line-height: 1.4;
-}
-
-.editor-pane :deep(.tiptap p) {
-  margin: 0 0 8px 0;
-  color: var(--text-primary);
-  line-height: 1.6;
-}
-
-.editor-pane :deep(.tiptap ul),
-.editor-pane :deep(.tiptap ol) {
-  margin: 8px 0;
-  padding-left: 24px;
-}
-
-.editor-pane :deep(.tiptap li) {
-  margin: 2px 0;
-}
-
-.editor-pane :deep(.tiptap blockquote) {
-  border-left: 3px solid #7849ff;
-  padding: 8px 16px;
-  margin: 12px 0;
-  background: rgba(120, 73, 255, 0.04);
-  border-radius: 0 8px 8px 0;
-}
-
-.editor-pane :deep(.tiptap pre) {
-  background: var(--bg-input);
-  padding: 16px;
-  border-radius: 8px;
-  overflow-x: auto;
-  font-family: 'JetBrains Mono', monospace;
-  font-size: 13px;
-}
-
-.editor-pane :deep(.tiptap code) {
-  background: rgba(120, 73, 255, 0.08);
-  padding: 2px 6px;
-  border-radius: 4px;
-  font-size: 0.9em;
-  font-family: 'JetBrains Mono', monospace;
-}
-
-.editor-pane :deep(.tiptap pre code) {
-  background: none;
-  padding: 0;
-}
-
-.editor-pane :deep(.tiptap hr) {
-  border: none;
-  border-top: 1px solid var(--glass-border-color);
-  margin: 16px 0;
-}
-
-.editor-pane :deep(.tiptap a) {
-  color: #7849ff;
-  text-decoration: underline;
-  cursor: pointer;
-}
-
-.editor-pane :deep(.tiptap img) {
-  max-width: 100%;
-  height: auto;
-  border-radius: 8px;
-  margin: 12px 0;
-}
-
-.editor-pane :deep(.tiptap img.ProseMirror-selectednode) {
-  outline: 2px solid #7849ff;
-  outline-offset: 2px;
-}
-
-/* Table styles */
-.editor-pane :deep(.tiptap table) {
-  width: 100%;
-  border-collapse: collapse;
-  margin: 12px 0;
-  table-layout: fixed;
-}
-
-.editor-pane :deep(.tiptap th),
-.editor-pane :deep(.tiptap td) {
-  border: 1px solid var(--glass-border-color);
-  padding: 8px 12px;
-  text-align: left;
-  vertical-align: top;
-  min-width: 60px;
-  position: relative;
-}
-
-.editor-pane :deep(.tiptap th) {
-  background: rgba(120, 73, 255, 0.06);
-  font-weight: 600;
-}
-
-.editor-pane :deep(.tiptap .selectedCell::after) {
-  background: rgba(120, 73, 255, 0.08);
-  content: '';
-  position: absolute;
-  inset: 0;
-  pointer-events: none;
-  z-index: 2;
-}
-
-.editor-pane :deep(.tiptap .column-resize-handle) {
-  position: absolute;
-  right: -2px;
-  top: 0;
-  bottom: -2px;
-  width: 4px;
-  background-color: #7849ff;
-  pointer-events: none;
-}
-
-.editor-pane :deep(.tiptap .tableWrapper) {
-  overflow-x: auto;
-  margin: 12px 0;
-}
-
-/* Task list */
-.editor-pane :deep(.tiptap ul[data-type="taskList"]) {
-  list-style: none;
-  padding-left: 0;
-}
-
-.editor-pane :deep(.tiptap ul[data-type="taskList"] li) {
-  display: flex;
-  align-items: flex-start;
-  gap: 8px;
-}
-
-.editor-pane :deep(.tiptap ul[data-type="taskList"] li > label) {
-  flex-shrink: 0;
-  margin-top: 4px;
-}
-
-.editor-pane :deep(.tiptap ul[data-type="taskList"] li > div) {
-  flex: 1;
-}
-
-/* Highlight */
-.editor-pane :deep(.tiptap mark) {
-  border-radius: 2px;
-  padding: 1px 2px;
-}
-
-/* Placeholder */
-.editor-pane :deep(.tiptap p.is-editor-empty:first-child::before) {
-  color: var(--text-muted);
-  content: attr(data-placeholder);
-  float: left;
-  height: 0;
-  pointer-events: none;
-}
-
-/* Variable, Signature and PageBreak nodes are rendered by their Vue components */
 </style>

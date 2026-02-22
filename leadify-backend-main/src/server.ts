@@ -1,4 +1,4 @@
-// Leadify CRM Backend Server
+// High Point Technology CRM Backend Server
 import dotenv from 'dotenv';
 dotenv.config();
 import { validateEnvironment } from './config/validateEnv';
@@ -103,6 +103,9 @@ sequelize
 
         const ChurnPredictionScheduler = require('./cron/churnPrediction').default;
         ChurnPredictionScheduler.start();
+
+        const { sessionCleanupCron } = require('./cron/sessionCleanup');
+        sessionCleanupCron.start();
       } catch (e) {
         // Cron job initialization failed - silently handled
       }

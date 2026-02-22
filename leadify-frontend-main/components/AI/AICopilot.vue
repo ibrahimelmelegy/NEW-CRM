@@ -21,7 +21,7 @@
         .flex.items-center.gap-2
           Icon(name="ph:robot-bold" size="24")
           div
-            h3.font-bold.text-md Leadify Copilot
+            h3.font-bold.text-md HPT Copilot
             p.text-xs.opacity-80 AI-Powered Assistant
         button.opacity-70.hover_opacity-100.transition-opacity(@click="closeCopilot")
           Icon(name="ph:arrows-down-bold" size="18")

@@ -1,5 +1,5 @@
 <template lang="pug">
-.goals-page.p-6
+.goals-page.p-6(v-loading="goalsLoading")
   //- Header
   .flex.items-center.justify-between.mb-6
     div
@@ -89,8 +89,8 @@
     p.mt-1(style="color: var(--text-muted)") Create goals to track your team's performance
     el-button.mt-4(type="primary" @click="showCreateGoal = true" class="!bg-[#7849ff] !border-none") Create First Goal
 
-  //- Create Goal Dialog
-  el-dialog(v-model="showCreateGoal" title="Create Goal" width="550px")
+  //- Create/Edit Goal Dialog
+  el-dialog(v-model="showCreateGoal" :title="editingGoalId ? 'Edit Goal' : 'Create Goal'" width="550px" @close="editingGoalId = null")
     el-form(label-position="top")
       el-form-item(label="Goal Name")
         el-input(v-model="newGoal.name" placeholder="e.g., Monthly Revenue Target")
@@ -120,7 +120,7 @@
     template(#footer)
       .flex.justify-end.gap-2
         el-button(@click="showCreateGoal = false") Cancel
-        el-button(type="primary" @click="createGoal" :disabled="!newGoal.name || !newGoal.target" class="!bg-[#7849ff] !border-none") Create Goal
+        el-button(type="primary" @click="createGoal" :disabled="!newGoal.name || !newGoal.target" class="!bg-[#7849ff] !border-none") {{ editingGoalId ? 'Update Goal' : 'Create Goal' }}
 </template>
 
 <script setup lang="ts">
@@ -132,6 +132,8 @@ const selectedPeriod = ref('monthly');
 const viewTab = ref('team');
 const showCreateGoal = ref(false);
 const teamMembers = ref<any[]>([]);
+const editingGoalId = ref<string | null>(null);
+const goalsLoading = ref(false);
 
 interface Goal {
   id: string;
@@ -242,6 +244,7 @@ function getGoalIcon(type: string): string {
 }
 
 function editGoal(goal: Goal) {
+  editingGoalId.value = goal.id;
   newGoal.value = {
     name: goal.name,
     type: goal.type,
@@ -266,25 +269,48 @@ async function deleteGoal(goal: Goal) {
 function createGoal() {
   if (!newGoal.value.name || !newGoal.value.target) return;
 
-  goals.value.push({
-    id: String(Date.now()),
-    name: newGoal.value.name,
-    type: newGoal.value.type,
-    period: newGoal.value.period,
-    target: newGoal.value.type === 'revenue' ? '$' + newGoal.value.target.toLocaleString() : String(newGoal.value.target),
-    current: newGoal.value.type === 'revenue' ? '$0' : '0',
-    percentage: 0,
-    remaining: newGoal.value.target,
-    assignee: newGoal.value.assignee || undefined,
-    isTeam: !newGoal.value.assignee
-  });
+  if (editingGoalId.value) {
+    // Update existing goal
+    const idx = goals.value.findIndex(g => g.id === editingGoalId.value);
+    if (idx !== -1) {
+      const existing = goals.value[idx];
+      goals.value[idx] = {
+        ...existing,
+        name: newGoal.value.name,
+        type: newGoal.value.type,
+        period: newGoal.value.period,
+        target: newGoal.value.type === 'revenue' ? '$' + newGoal.value.target.toLocaleString() : String(newGoal.value.target),
+        remaining: Math.max(newGoal.value.target - parseNum(existing.current), 0),
+        percentage: Math.min(Math.round((parseNum(existing.current) / newGoal.value.target) * 100), 150),
+        assignee: newGoal.value.assignee || undefined,
+        isTeam: !newGoal.value.assignee
+      };
+    }
+    editingGoalId.value = null;
+    ElNotification({ type: 'success', title: 'Updated', message: 'Goal updated successfully' });
+  } else {
+    // Create new goal
+    goals.value.push({
+      id: String(Date.now()),
+      name: newGoal.value.name,
+      type: newGoal.value.type,
+      period: newGoal.value.period,
+      target: newGoal.value.type === 'revenue' ? '$' + newGoal.value.target.toLocaleString() : String(newGoal.value.target),
+      current: newGoal.value.type === 'revenue' ? '$0' : '0',
+      percentage: 0,
+      remaining: newGoal.value.target,
+      assignee: newGoal.value.assignee || undefined,
+      isTeam: !newGoal.value.assignee
+    });
+    ElNotification({ type: 'success', title: 'Created', message: 'Goal created successfully' });
+  }
 
   showCreateGoal.value = false;
   newGoal.value = { name: '', type: 'revenue', period: 'monthly', target: 0, assignee: '', description: '' };
-  ElNotification({ type: 'success', title: 'Created', message: 'Goal created successfully' });
 }
 
 async function loadGoals() {
+  goalsLoading.value = true;
   try {
     // Load real data from deals for revenue goals
     const { body, success } = await useApiFetch('deal?status=WON&limit=500');
@@ -340,6 +366,8 @@ async function loadGoals() {
     }
   } catch {
     /* silent */
+  } finally {
+    goalsLoading.value = false;
   }
 }
 

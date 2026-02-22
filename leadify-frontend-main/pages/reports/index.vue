@@ -1,147 +1,146 @@
 <template lang="pug">
-div
-  ModuleHeader(
-    :title="$t('reports.title')"
-    :subtitle="$t('reportsPage.subtitle')"
-  )
-    template(#actions)
-      NuxtLink(to="/reports/builder")
-        el-button(size="large" type="primary" class="!rounded-2xl !bg-[#7849ff] hover:!bg-[#6a3ae0] !border-none")
-          Icon(name="ph:plus-bold" size="16")
-          span.ml-1 {{ $t('reportsPage.createReport') }}
+.p-6.animate-entrance
+  //- Header
+  .flex.items-center.justify-between.mb-8
+    div
+      h1.text-3xl.font-black.tracking-tight(style="color: var(--text-primary);") 📊 Reports Hub
+      p.text-sm.mt-1(style="color: var(--text-muted);") Comprehensive analytics and reports across your CRM.
 
-  el-tabs.demo-tabs(v-model="activeName")
-    //- Saved Reports Tab
-    el-tab-pane(:label="$t('reportsPage.savedReports')" name="saved")
-      .glass-card.py-6.animate-entrance
-        .px-6.flex.items-center.gap-2.mb-6
-          .input.table-search(class="w-full md:w-[300px]")
-            el-input(size="large" v-model="search" :placeholder="$t('reportsPage.searchReports')" clearable)
-              template(#prefix)
-                Icon(name="ph:magnifying-glass" size="16")
-          el-select(v-model="filterEntity" clearable :placeholder="$t('reportsPage.allEntities')" size="large" class="w-44")
-            el-option(:label="$t('reportsPage.allEntities')" value="")
-            el-option(value="LEAD" :label="$t('navigation.leads')")
-            el-option(value="DEAL" :label="$t('navigation.deals')")
-            el-option(value="OPPORTUNITY" :label="$t('navigation.opportunities')")
-            el-option(value="CLIENT" :label="$t('navigation.clients')")
+  //- Quick Stats Row
+  .grid.grid-cols-6.gap-4.mb-8
+    .relative.overflow-hidden.p-4.rounded-2xl.border(style="border-color: var(--border-default); background: var(--bg-elevated);")
+      p.text-xs.font-bold.uppercase.tracking-widest(style="color: var(--text-muted);") Documents
+      p.text-2xl.font-black.mt-1(style="color: var(--text-primary);") {{ docStats.totalDocs }}
+    .relative.overflow-hidden.p-4.rounded-2xl.border(style="border-color: var(--border-default); background: var(--bg-elevated);")
+      p.text-xs.font-bold.uppercase.tracking-widest(style="color: var(--text-muted);") Revenue
+      p.text-2xl.font-black.mt-1(style="color: #22c55e;") {{ docStats.totalValue.toLocaleString() }}
+    .relative.overflow-hidden.p-4.rounded-2xl.border(style="border-color: var(--border-default); background: var(--bg-elevated);")
+      p.text-xs.font-bold.uppercase.tracking-widest(style="color: var(--text-muted);") Pending
+      p.text-2xl.font-black.mt-1(style="color: #f59e0b;") {{ docStats.pendingValue.toLocaleString() }}
+    .relative.overflow-hidden.p-4.rounded-2xl.border(style="border-color: var(--border-default); background: var(--bg-elevated);")
+      p.text-xs.font-bold.uppercase.tracking-widest(style="color: var(--text-muted);") Reminders
+      p.text-2xl.font-black.mt-1(style="color: #7c3aed;") {{ remStats.pending }}
+    .relative.overflow-hidden.p-4.rounded-2xl.border(style="border-color: var(--border-default); background: var(--bg-elevated);")
+      p.text-xs.font-bold.uppercase.tracking-widest(style="color: var(--text-muted);") Overdue
+      p.text-2xl.font-black.mt-1(style="color: #ef4444;") {{ remStats.overdue }}
+    .relative.overflow-hidden.p-4.rounded-2xl.border(style="border-color: var(--border-default); background: var(--bg-elevated);")
+      p.text-xs.font-bold.uppercase.tracking-widest(style="color: var(--text-muted);") Archived
+      p.text-2xl.font-black.mt-1(style="color: var(--text-muted);") {{ archiveStats.total }}
 
-        el-table(:data="filteredReports" v-loading="loading" style="width: 100%")
-          el-table-column(:label="$t('reportsPage.reportName')" min-width="200")
-            template(#default="{ row }")
-              NuxtLink(:to="`/reports/${row.id}`" class="font-bold hover:underline" style="color: var(--accent-color, #7849ff)") {{ row.name }}
-          el-table-column(:label="$t('reportsPage.entityType')" width="150")
-            template(#default="{ row }")
-              el-tag(size="small" effect="plain" round) {{ row.entityType }}
-          el-table-column(:label="$t('reportsPage.createdBy')" width="160")
-            template(#default="{ row }")
-              span.text-sm {{ row.createdBy?.name || row.userId || '--' }}
-          el-table-column(:label="$t('reportsPage.lastRun')" width="160")
-            template(#default="{ row }")
-              span.text-sm(style="color: var(--text-muted)") {{ row.lastRunAt ? new Date(row.lastRunAt).toLocaleDateString() : '--' }}
-          el-table-column(:label="$t('common.actions')" width="200" fixed="right")
-            template(#default="{ row }")
-              .flex.items-center.gap-1
-                el-button(link size="small" @click="navigateTo(`/reports/${row.id}`)")
-                  Icon(name="ph:play-bold" size="16" style="color: #10B981")
-                el-button(link size="small" @click="editReport(row)")
-                  Icon(name="ph:pencil-simple-bold" size="16" style="color: #3B82F6")
-                ExportButton(:filename="row.name" @export="(format: string) => handleExport(row, format)")
-                el-button(link size="small" @click="confirmDelete(row)")
-                  Icon(name="ph:trash-bold" size="16" class="text-red-400")
-          template(#empty)
-            el-empty(:description="$t('reportsPage.noReports')")
+  //- Two Column: Document Breakdown + Status Breakdown
+  .grid.grid-cols-2.gap-6.mb-8
+    el-card.rounded-2xl(shadow="never" style="border: 1px solid var(--border-default);")
+      template(#header)
+        span.font-bold 📋 Documents by Type
+      .space-y-3
+        .flex.items-center.justify-between.p-3.rounded-xl(
+          v-for="(count, type) in docStats.byType"
+          :key="type"
+        )
+          .flex.items-center.gap-3
+            .w-3.h-3.rounded-full(:style="{ backgroundColor: typeColors[type as string] || '#6b7280' }")
+            span.text-sm.font-semibold {{ typeLabels[type as string] || type }}
+          .flex.items-center.gap-3
+            span.text-sm.font-mono.font-bold {{ count }}
+            .h-2.w-20.rounded-full.bg-gray-100
+              .h-2.rounded-full(:style="{ width: `${Math.min(100, ((count as number) / docStats.totalDocs) * 100)}%`, backgroundColor: typeColors[type as string] || '#6b7280' }")
+        .text-center.py-6.text-sm(v-if="Object.keys(docStats.byType).length === 0" style="color: var(--text-muted);") No data
 
-        .pagination.mt-5.flex.items-center.flex-wrap.gap-2.px-6(class="sm:justify-between justify-center" v-if="filteredReports.length > pageSize")
-          span.text-xs(style="color: var(--text-muted)") {{ filteredReports.length }} {{ $t('common.entries') }}
-          el-pagination(background style="direction:ltr" :pager-count="4" v-model:current-page="currentPage" :page-size="pageSize" layout="prev, pager, next" :total="filteredReports.length")
+    el-card.rounded-2xl(shadow="never" style="border: 1px solid var(--border-default);")
+      template(#header)
+        span.font-bold 📈 Documents by Status
+      .space-y-3
+        .flex.items-center.justify-between.p-3.rounded-xl(
+          v-for="(count, status) in docStats.byStatus"
+          :key="status"
+        )
+          .flex.items-center.gap-3
+            .w-3.h-3.rounded-full(:style="{ backgroundColor: statusColors[status as string] || '#6b7280' }")
+            span.text-sm.font-semibold {{ status }}
+          span.text-sm.font-mono.font-bold {{ count }}
+        .text-center.py-6.text-sm(v-if="Object.keys(docStats.byStatus).length === 0" style="color: var(--text-muted);") No data
 
-    //- Standard Reports Tabs
-    el-tab-pane(:label="$t('reports.tabs.sales')" name="sales")
-      ReportSalesFilter(:user="user")
-    el-tab-pane(:label="$t('reports.tabs.projects')" name="projects")
-      ReportProjectsFilter(:user="user")
-    el-tab-pane(:label="$t('reports.tabs.performance')" name="performance")
-      ReportPerformanceFilter(:user="user")
+  //- Monthly Revenue + Activity
+  .grid.grid-cols-2.gap-6.mb-8
+    el-card.rounded-2xl(shadow="never" style="border: 1px solid var(--border-default);")
+      template(#header)
+        span.font-bold 💰 Monthly Revenue
+      .space-y-2
+        .flex.items-center.justify-between.p-3.rounded-xl(
+          v-for="(revenue, month) in docStats.monthlyRevenue"
+          :key="month"
+        )
+          span.text-sm.font-semibold.font-mono {{ month }}
+          span.text-sm.font-bold(style="color: #22c55e;") {{ (revenue as number).toLocaleString() }} SAR
+        .text-center.py-6.text-sm(v-if="Object.keys(docStats.monthlyRevenue).length === 0" style="color: var(--text-muted);") No revenue data
+
+    el-card.rounded-2xl(shadow="never" style="border: 1px solid var(--border-default);")
+      template(#header)
+        span.font-bold 🕐 Recent Activity
+      .space-y-1
+        .flex.items-center.gap-3.px-3.py-2(v-for="act in recentActivities.slice(0, 10)" :key="act.id")
+          .w-7.h-7.rounded-lg.flex.items-center.justify-center.flex-shrink-0(:style="{ backgroundColor: (actionColors[act.action] || '#6b7280') + '15' }")
+            Icon(:name="actionIcons[act.action] || 'ph:circle'" size="14" :style="{ color: actionColors[act.action] || '#6b7280' }")
+          .flex-1.min-w-0
+            p.text-xs.font-semibold.truncate(style="color: var(--text-primary);") {{ act.description }}
+            p.text-xs.font-mono(style="color: var(--text-muted); opacity: 0.6;") {{ timeAgo(act.timestamp) }}
+        .text-center.py-6.text-sm(v-if="recentActivities.length === 0" style="color: var(--text-muted);") No activity logged
+
+  //- Report Cards
+  el-card.rounded-2xl(shadow="never" style="border: 1px solid var(--border-default);")
+    template(#header)
+      span.font-bold 📑 Quick Navigation
+    .grid.grid-cols-4.gap-4
+      NuxtLink(v-for="report in quickLinks" :key="report.title" :to="report.url")
+        .p-5.rounded-xl.border.text-center.transition-all.cursor-pointer(
+          style="border-color: var(--border-default);"
+          class="hover:shadow-md hover:border-violet-300"
+        )
+          .text-2xl.mb-2 {{ report.icon }}
+          p.text-sm.font-bold(style="color: var(--text-primary);") {{ report.title }}
+          p.text-xs.mt-1(style="color: var(--text-muted);") {{ report.desc }}
 </template>
 
 <script setup lang="ts">
-import { ElMessageBox, ElNotification } from 'element-plus';
-import { fetchSavedReports, deleteSavedReport, exportReportCSV, type SavedReport } from '~/composables/useReportBuilder';
+import { useDocumentStore } from '~/composables/useDocumentStore';
+import { useReminders } from '~/composables/useReminders';
+import { useDocumentArchive } from '~/composables/useDocumentArchive';
+import { useActivityLog } from '~/composables/useActivityLog';
 
-definePageMeta({ middleware: 'permissions' });
+definePageMeta({ layout: 'main', middleware: 'auth' });
 
-const { $i18n } = useNuxtApp();
-const t = $i18n.t;
+const { stats: docStats } = useDocumentStore();
+const { stats: remStats } = useReminders();
+const { stats: archiveStats } = useDocumentArchive();
+const { recent: recentActivities, actionIcons, actionColors } = useActivityLog();
 
-const activeName = ref('saved');
-const user = ref();
-const loading = ref(false);
-const search = ref('');
-const filterEntity = ref('');
-const currentPage = ref(1);
-const pageSize = 15;
-const reports = ref<SavedReport[]>([]);
+const typeLabels: Record<string, string> = {
+  invoice: 'Invoice', proforma_invoice: 'Proforma Invoice', purchase_order: 'Purchase Order',
+  credit_note: 'Credit Note', quote: 'Quotation', rfq: 'RFQ', sales_order: 'Sales Order',
+  delivery_note: 'Delivery Note', contract: 'Contract', proposal: 'Proposal', sla: 'SLA',
+};
+const typeColors: Record<string, string> = {
+  invoice: '#7c3aed', proforma_invoice: '#6d28d9', purchase_order: '#2563eb',
+  credit_note: '#dc2626', quote: '#059669', rfq: '#d97706', sales_order: '#0891b2',
+  delivery_note: '#ea580c', contract: '#4f46e5', proposal: '#7c3aed', sla: '#0d9488',
+};
+const statusColors: Record<string, string> = {
+  Draft: '#6b7280', Sent: '#3b82f6', Approved: '#22c55e', Rejected: '#ef4444', Archived: '#f59e0b',
+};
+const quickLinks = [
+  { icon: '📊', title: 'Document Center', desc: 'All documents', url: '/documents/dashboard' },
+  { icon: '📁', title: 'Archive', desc: 'Archived items', url: '/archive' },
+  { icon: '⏰', title: 'Reminders', desc: 'Follow-ups', url: '/reminders' },
+  { icon: '🔔', title: 'Notifications', desc: 'All alerts', url: '/notifications' },
+];
 
-// Load user
-const response = await useApiFetch('auth/me');
-user.value = response?.body;
-
-// Load saved reports
-async function loadReports() {
-  loading.value = true;
-  try {
-    reports.value = await fetchSavedReports();
-  } finally {
-    loading.value = false;
-  }
+function timeAgo(iso: string): string {
+  const diff = Date.now() - new Date(iso).getTime();
+  const min = Math.floor(diff / 60000);
+  if (min < 1) return 'Just now';
+  if (min < 60) return `${min}m`;
+  const hr = Math.floor(min / 60);
+  if (hr < 24) return `${hr}h`;
+  return `${Math.floor(hr / 24)}d`;
 }
-
-const filteredReports = computed(() => {
-  let result = reports.value;
-  if (search.value) {
-    const q = search.value.toLowerCase();
-    result = result.filter(r => r.name.toLowerCase().includes(q));
-  }
-  if (filterEntity.value) {
-    result = result.filter(r => r.entityType === filterEntity.value);
-  }
-  return result;
-});
-
-function editReport(report: SavedReport) {
-  navigateTo({ path: '/reports/builder', query: { id: report.id } });
-}
-
-async function confirmDelete(report: SavedReport) {
-  try {
-    await ElMessageBox.confirm(t('common.confirmDelete'), t('common.warning'), {
-      confirmButtonText: t('common.delete'),
-      cancelButtonText: t('common.cancel'),
-      type: 'warning'
-    });
-    await deleteSavedReport(report.id);
-    reports.value = reports.value.filter(r => r.id !== report.id);
-    ElNotification({ type: 'success', title: t('common.deleted'), message: '' });
-  } catch {}
-}
-
-async function handleExport(report: SavedReport, format: string) {
-  try {
-    const csv = await exportReportCSV(report.config);
-    if (csv) {
-      const blob = new Blob([csv as string], { type: 'text/csv' });
-      const url = URL.createObjectURL(blob);
-      const a = document.createElement('a');
-      a.href = url;
-      a.download = `${report.name}.${format === 'xlsx' ? 'xlsx' : 'csv'}`;
-      a.click();
-      URL.revokeObjectURL(url);
-    }
-  } catch (e: any) {
-    ElNotification({ type: 'error', title: t('common.error'), message: e?.message || '' });
-  }
-}
-
-onMounted(() => loadReports());
 </script>

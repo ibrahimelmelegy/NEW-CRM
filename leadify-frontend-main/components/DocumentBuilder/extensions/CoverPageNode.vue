@@ -7,7 +7,7 @@ node-view-wrapper.cover-page-wrapper
       .brand-box.mb-auto.flex.items-center.gap-3
         .logo-placeholder.w-12.h-12.rounded-lg.flex.items-center.justify-center(style="background: var(--primary-color, #7849ff); box-shadow: 0 4px 20px rgba(120,73,255,0.4)")
           Icon(name="ph:diamond-fill" size="24" color="white")
-        .text-2xl.font-bold.tracking-widest LEADIFY
+        .text-2xl.font-bold.tracking-widest HIGH POINT TECHNOLOGY
 
       .main-info.mt-auto
         .date-badge.mb-6.inline-block.px-4.py-2.rounded-full.text-sm.font-semibold.tracking-wider(style="background: rgba(255,255,255,0.15); backdrop-filter: blur(12px); border: 1px solid rgba(255,255,255,0.2)") 

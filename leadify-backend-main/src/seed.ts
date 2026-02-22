@@ -51,8 +51,8 @@ async function seed() {
 
 
         // 3. Create Fresh Super Admin (credentials from environment variables)
-        const adminEmail = process.env.ADMIN_EMAIL || 'admin@leadify.com';
-        const adminPassword = process.env.ADMIN_PASSWORD || 'Leadify@Admin2026!';
+        const adminEmail = process.env.ADMIN_EMAIL || 'admin@hp-tech.com';
+        const adminPassword = process.env.ADMIN_PASSWORD || 'HPTech@Admin2026!';
 
         if (adminPassword.length < 8) {
             console.error('ADMIN_PASSWORD must be at least 8 characters.');
