@@ -1,6 +1,4 @@
 import type { JSONContent } from '@tiptap/vue-3';
-import jsPDF from 'jspdf';
-import 'jspdf-autotable';
 import { fetchDocumentTemplate, createDocumentTemplate, updateDocumentTemplate } from '~/composables/useDocumentTemplates';
 
 // ---------------------------------------------------------------------------
@@ -91,69 +89,29 @@ export function useDocumentBuilder() {
 
   // ── Export PDF from HTML ─────────────────────────────────────────────
   async function exportPDF(htmlContent: string, filename?: string) {
-    const doc = new jsPDF({
-      orientation: 'portrait',
-      unit: 'mm',
-      format: 'a4'
-    });
+    const html2pdfModule = await import('html2pdf.js');
+    const html2pdf = html2pdfModule.default || html2pdfModule;
 
-    // Use jsPDF html method for rendering rich content
     const container = document.createElement('div');
     container.innerHTML = htmlContent;
-    container.style.width = '170mm';
-    container.style.padding = '0';
+    container.style.width = '210mm';
     container.style.fontFamily = 'Helvetica, Arial, sans-serif';
     container.style.fontSize = '12px';
     container.style.lineHeight = '1.5';
     container.style.color = '#333';
-
-    // Style all tables for PDF
-    container.querySelectorAll('table').forEach(table => {
-      table.style.width = '100%';
-      table.style.borderCollapse = 'collapse';
-      table.style.marginBottom = '12px';
-    });
-    container.querySelectorAll('th, td').forEach(cell => {
-      (cell as HTMLElement).style.border = '1px solid #ddd';
-      (cell as HTMLElement).style.padding = '6px 8px';
-      (cell as HTMLElement).style.fontSize = '10px';
-    });
-    container.querySelectorAll('th').forEach(th => {
-      (th as HTMLElement).style.background = '#f5f5f5';
-      (th as HTMLElement).style.fontWeight = 'bold';
-    });
-
-    // Style page breaks
-    container.querySelectorAll('[data-type="page-break"]').forEach(el => {
-      (el as HTMLElement).style.pageBreakBefore = 'always';
-    });
-
-    // Style signature blocks for print
-    container.querySelectorAll('[data-type="signature-block"]').forEach(el => {
-      (el as HTMLElement).style.pageBreakInside = 'avoid';
-    });
-
-    // Style variable nodes — replace with plain text for PDF
-    container.querySelectorAll('.variable-node, [data-type="variable"]').forEach(el => {
-      const span = document.createElement('span');
-      span.textContent = el.textContent || '';
-      span.style.fontWeight = '600';
-      span.style.color = '#7849ff';
-      el.replaceWith(span);
-    });
+    container.style.background = 'white';
 
     document.body.appendChild(container);
 
     try {
-      await doc.html(container, {
-        callback: doc => {
-          doc.save(filename || 'document.pdf');
-        },
-        x: 15,
-        y: 15,
-        width: 170,
-        windowWidth: 650
-      });
+      await html2pdf().set({
+        margin: [10, 15, 10, 15],
+        filename: filename || 'document.pdf',
+        image: { type: 'jpeg', quality: 0.98 },
+        html2canvas: { scale: 2, useCORS: true, logging: false },
+        jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' },
+        pagebreak: { mode: ['css', 'legacy'], before: '.proposal-print-page' }
+      }).from(container).save();
     } finally {
       document.body.removeChild(container);
     }

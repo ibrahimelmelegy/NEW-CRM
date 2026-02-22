@@ -1,5 +1,5 @@
 <template>
-    <div :class="`page-container bg-white shadow-2xl mx-auto print:shadow-none print:m-0 ${$attrs.class || ''}`"
+    <div :class="`page-container proposal-print-page force-light-mode bg-white shadow-2xl mx-auto print:shadow-none print:m-0 ${$attrs.class || ''}`"
         :style="{ 
             width: '210mm',
             height: '297mm',
@@ -106,6 +106,19 @@ defineProps<{
         background-color: white !important;
     }
     .no-print { display: none !important; }
+}
+/* Force light mode for print/preview components */
+.force-light-mode {
+    color-scheme: light;
+    background: white;
+    color: #111827;
+    --text-primary: #111827;
+    --text-secondary: #374151;
+    --text-muted: #6b7280;
+}
+/* html2pdf.js page break support */
+.proposal-print-page + .proposal-print-page {
+    page-break-before: always;
 }
 .proposal-header-bg { background: linear-gradient(to bottom, #fcfaff 0%, #ffffff 100%); }
 .proposal-rich-text { font-size: 11pt; }

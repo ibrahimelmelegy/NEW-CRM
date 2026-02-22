@@ -1,162 +1,305 @@
-<template>
-  <div class="react-proposal-container">
-    <!-- Header with controls -->
-    <div class="header">
-      <div class="header-left">
-        <h1 class="title">{{ $t('proposals.management') }}</h1>
-        <span class="badge">{{ $t('proposals.reactVersion') }}</span>
-      </div>
-      <div class="header-right">
-        <el-button type="primary" :icon="Refresh" circle @click="refreshFrame" />
-      </div>
-    </div>
+<template lang="pug">
+.p-6.animate-entrance
+  //- Stats Cards
+  .grid.grid-cols-4.gap-4.mb-6
+    .glass-card.p-5.rounded-2xl(v-for="stat in statsCards" :key="stat.label")
+      .flex.items-center.justify-between
+        div
+          p.text-xs.font-bold.uppercase.tracking-widest(style="color: var(--text-muted)") {{ stat.label }}
+          p.text-2xl.font-bold.mt-1(style="color: var(--text-primary)") {{ stat.value }}
+        .w-10.h-10.rounded-xl.flex.items-center.justify-center(:style="{ background: stat.bg }")
+          Icon(:name="stat.icon" size="20" :style="{ color: stat.color }")
 
-    <!-- React App iframe -->
-    <div class="iframe-wrapper">
-      <iframe ref="reactFrame" :src="reactAppUrl" class="react-iframe" allow="clipboard-write; downloads" @load="onFrameLoad" />
-      <div v-if="loading" class="loading-overlay">
-        <el-icon class="is-loading" :size="40"><Loading /></el-icon>
-        <p>{{ $t('proposals.loading') }}</p>
-      </div>
-    </div>
-  </div>
+  //- Header
+  ModuleHeader(
+    title="Proposals"
+    subtitle="Manage all your business proposals"
+  )
+    template(#actions)
+      NuxtLink(to="/sales/proposals/create")
+        el-button(
+          size="large"
+          type="primary"
+          class="!rounded-2xl"
+          style="background: var(--bg-obsidian); border: none;"
+        )
+          Icon(name="ph:plus" size="18" style="margin-right: 6px;")
+          | New Proposal
+
+  //- Filters
+  .glass-card.p-4.mt-6.rounded-2xl
+    .flex.items-center.gap-4
+      el-input(
+        v-model="searchKey"
+        placeholder="Search proposals..."
+        size="large"
+        class="!rounded-xl max-w-xs"
+        clearable
+        @input="debouncedFetch"
+      )
+        template(#prefix)
+          Icon(name="ph:magnifying-glass" size="18")
+      el-select(
+        v-model="statusFilter"
+        placeholder="All Statuses"
+        size="large"
+        class="w-48"
+        clearable
+        @change="fetchProposals"
+      )
+        el-option(label="All Statuses" value="")
+        el-option(v-for="s in statusOptions" :key="s.value" :label="s.label" :value="s.value")
+      el-select(
+        v-model="typeFilter"
+        placeholder="All Types"
+        size="large"
+        class="w-44"
+        clearable
+        @change="fetchProposals"
+      )
+        el-option(label="All Types" value="")
+        el-option(label="Financial" value="FINANCIAL")
+        el-option(label="Technical" value="TECHNICAL")
+        el-option(label="Mixed" value="MIXED")
+      .ml-auto
+        el-button(size="large" class="!rounded-xl" @click="fetchProposals")
+          Icon(name="ph:arrows-clockwise" size="16" style="margin-right: 6px;")
+          | Refresh
+
+  //- Table
+  .glass-card.mt-4.rounded-2xl.overflow-hidden
+    el-table(
+      :data="proposals"
+      v-loading="loading"
+      stripe
+      style="width: 100%;"
+      @sort-change="handleSortChange"
+    )
+      el-table-column(prop="reference" label="Reference" width="160" sortable="custom")
+        template(#default="{ row }")
+          span.font-mono.font-bold.text-sm {{ row.reference || '—' }}
+      el-table-column(prop="title" label="Title" min-width="200" sortable="custom")
+        template(#default="{ row }")
+          .font-bold {{ row.title }}
+      el-table-column(prop="proposalFor" label="Client" min-width="160")
+        template(#default="{ row }")
+          span {{ row.proposalFor || '—' }}
+      el-table-column(prop="type" label="Type" width="120" sortable="custom")
+        template(#default="{ row }")
+          el-tag(size="small" :type="typeTagColor(row.type)" effect="plain" round) {{ row.type }}
+      el-table-column(prop="status" label="Status" width="160" sortable="custom")
+        template(#default="{ row }")
+          el-tag(size="small" :type="statusTagType(row.status)" effect="dark" round)
+            | {{ formatStatus(row.status) }}
+      el-table-column(prop="createdAt" label="Created" width="130" sortable="custom")
+        template(#default="{ row }")
+          span.text-sm {{ formatDate(row.createdAt) }}
+      el-table-column(label="Actions" width="200" fixed="right")
+        template(#default="{ row }")
+          .flex.items-center.gap-1
+            el-tooltip(content="View / Edit" placement="top")
+              el-button(size="small" circle @click="navigateTo(`/sales/proposals/${row.id}`)")
+                Icon(name="ph:eye" size="14")
+            el-tooltip(v-if="row.status === 'DRAFT'" content="Submit for Approval" placement="top")
+              el-button(size="small" circle type="primary" @click="handleSubmitForApproval(row)")
+                Icon(name="ph:paper-plane-tilt" size="14")
+            el-tooltip(v-if="row.status === 'WAITING_APPROVAL'" content="Approve" placement="top")
+              el-button(size="small" circle type="success" @click="handleApprove(row)")
+                Icon(name="ph:check" size="14")
+            el-tooltip(v-if="row.status === 'WAITING_APPROVAL'" content="Reject" placement="top")
+              el-button(size="small" circle type="danger" @click="openRejectDialog(row)")
+                Icon(name="ph:x" size="14")
+            el-tooltip(content="Delete" placement="top")
+              el-button(size="small" circle type="danger" plain @click="handleDelete(row)")
+                Icon(name="ph:trash" size="14")
+
+    //- Pagination
+    .flex.justify-between.items-center.p-4.border-t(style="border-color: var(--border-default);")
+      span.text-sm(style="color: var(--text-muted)") Showing {{ proposals.length }} of {{ totalItems }} proposals
+      el-pagination(
+        v-model:current-page="currentPage"
+        v-model:page-size="pageSize"
+        :total="totalItems"
+        :page-sizes="[10, 20, 50]"
+        layout="sizes, prev, pager, next"
+        @current-change="fetchProposals"
+        @size-change="fetchProposals"
+      )
+
+  //- Reject Dialog
+  el-dialog(v-model="rejectDialogVisible" title="Reject Proposal" width="420px")
+    p.mb-4(style="color: var(--text-secondary)") Please provide a reason for rejection:
+    el-input(
+      v-model="rejectReason"
+      type="textarea"
+      :rows="3"
+      placeholder="Enter rejection reason..."
+    )
+    template(#footer)
+      el-button(@click="rejectDialogVisible = false") Cancel
+      el-button(type="danger" @click="handleReject" :loading="actionLoading") Reject
 </template>
 
 <script setup lang="ts">
-import { ref, onMounted, onUnmounted } from 'vue';
-import { Refresh, Loading } from '@element-plus/icons-vue';
-import { useI18n } from 'vue-i18n';
-
-const { t } = useI18n();
+import { ref, computed, onMounted } from 'vue';
+import { submitForApproval, approveProposal, rejectProposal, deleteProposal } from '~/composables/useProposals';
 
 definePageMeta({
-  layout: 'full-width',
-  // You might want to adjust permissions based on your needs
   middleware: ['permissions'],
   permission: 'VIEW_OWN_PROPOSALS'
 });
 
-const route = useRoute();
-const router = useRouter();
+const loading = ref(false);
+const actionLoading = ref(false);
+const proposals = ref<any[]>([]);
+const totalItems = ref(0);
+const currentPage = ref(1);
+const pageSize = ref(10);
+const searchKey = ref('');
+const statusFilter = ref('');
+const typeFilter = ref('');
+const sortBy = ref('createdAt');
+const sortOrder = ref('DESC');
 
-// Point to the root of the React app
-const reactAppUrl = ref('http://localhost:3001/');
-const loading = ref(true);
-const reactFrame = ref<HTMLIFrameElement | null>(null);
+const statusOptions = [
+  { label: 'Draft', value: 'DRAFT' },
+  { label: 'Waiting Approval', value: 'WAITING_APPROVAL' },
+  { label: 'Approved', value: 'APPROVED' },
+  { label: 'Rejected', value: 'REJECTED' },
+  { label: 'Archived', value: 'ARCHIVED' },
+];
 
-// Handle messages from React iframe (if needed for value-add integrations)
-const handleMessage = (event: MessageEvent) => {
-  // Validate origin in production used commonly
-  if (event.origin !== 'http://localhost:3001') return;
+// Reject dialog
+const rejectDialogVisible = ref(false);
+const rejectReason = ref('');
+const rejectTarget = ref<any>(null);
 
-  const { action, id } = event.data || {};
+// Stats
+const statsCards = computed(() => [
+  { label: 'Total', value: totalItems.value, icon: 'ph:files', color: '#7c3aed', bg: 'rgba(124,58,237,0.1)' },
+  { label: 'Draft', value: proposals.value.filter(p => p.status === 'DRAFT').length, icon: 'ph:pencil-simple', color: '#6b7280', bg: 'rgba(107,114,128,0.1)' },
+  { label: 'Pending', value: proposals.value.filter(p => p.status === 'WAITING_APPROVAL').length, icon: 'ph:hourglass', color: '#f59e0b', bg: 'rgba(245,158,11,0.1)' },
+  { label: 'Approved', value: proposals.value.filter(p => p.status === 'APPROVED').length, icon: 'ph:check-circle', color: '#10b981', bg: 'rgba(16,185,129,0.1)' },
+]);
 
-  // Example: If the React app sends a message to navigate or notify
-  if (action === 'NAVIGATE_EXTERNAL') {
-    // Handle external navigation if needed
+let debounceTimer: ReturnType<typeof setTimeout> | null = null;
+function debouncedFetch() {
+  if (debounceTimer) clearTimeout(debounceTimer);
+  debounceTimer = setTimeout(() => fetchProposals(), 400);
+}
+
+async function fetchProposals() {
+  loading.value = true;
+  try {
+    const params = new URLSearchParams();
+    params.set('page', String(currentPage.value));
+    params.set('limit', String(pageSize.value));
+    params.set('sortBy', sortBy.value);
+    params.set('sort', sortOrder.value);
+    if (searchKey.value) params.set('searchKey', searchKey.value);
+    if (statusFilter.value) params.append('status', statusFilter.value);
+    if (typeFilter.value) params.append('type', typeFilter.value);
+
+    const response = await useApiFetch(`proposal/?${params.toString()}`);
+    if (response?.success) {
+      proposals.value = response.body?.proposals || [];
+      totalItems.value = response.body?.totalItems || 0;
+    }
+  } catch (error) {
+    console.error('Failed to fetch proposals:', error);
+  } finally {
+    loading.value = false;
   }
-};
+}
+
+function handleSortChange({ prop, order }: any) {
+  if (prop) {
+    sortBy.value = prop;
+    sortOrder.value = order === 'ascending' ? 'ASC' : 'DESC';
+  } else {
+    sortBy.value = 'createdAt';
+    sortOrder.value = 'DESC';
+  }
+  fetchProposals();
+}
+
+function formatStatus(status: string) {
+  return (status || '').replace(/_/g, ' ').replace(/\b\w/g, l => l.toUpperCase());
+}
+
+function statusTagType(status: string) {
+  const map: Record<string, string> = {
+    DRAFT: 'info',
+    WAITING_APPROVAL: 'warning',
+    APPROVED: 'success',
+    REJECTED: 'danger',
+    ARCHIVED: 'info',
+    SENT: '',
+  };
+  return map[status] || '';
+}
+
+function typeTagColor(type: string) {
+  const map: Record<string, string> = { FINANCIAL: 'success', TECHNICAL: '', MIXED: 'warning' };
+  return map[type] || '';
+}
+
+function formatDate(dateStr: string) {
+  if (!dateStr) return '—';
+  return new Date(dateStr).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
+}
+
+async function handleSubmitForApproval(row: any) {
+  try {
+    await ElMessageBox.confirm('Submit this proposal for approval?', 'Confirm', { type: 'info' });
+    actionLoading.value = true;
+    const ok = await submitForApproval(row.id);
+    if (ok) fetchProposals();
+  } catch { /* cancelled */ }
+  finally { actionLoading.value = false; }
+}
+
+async function handleApprove(row: any) {
+  try {
+    await ElMessageBox.confirm('Approve this proposal?', 'Confirm', { type: 'success' });
+    actionLoading.value = true;
+    const ok = await approveProposal(row.id);
+    if (ok) fetchProposals();
+  } catch { /* cancelled */ }
+  finally { actionLoading.value = false; }
+}
+
+function openRejectDialog(row: any) {
+  rejectTarget.value = row;
+  rejectReason.value = '';
+  rejectDialogVisible.value = true;
+}
+
+async function handleReject() {
+  if (!rejectReason.value.trim()) {
+    ElMessage.warning('Please provide a rejection reason');
+    return;
+  }
+  actionLoading.value = true;
+  const ok = await rejectProposal(rejectTarget.value.id, rejectReason.value);
+  if (ok) {
+    rejectDialogVisible.value = false;
+    fetchProposals();
+  }
+  actionLoading.value = false;
+}
+
+async function handleDelete(row: any) {
+  try {
+    await ElMessageBox.confirm(`Delete proposal "${row.title}"? This action cannot be undone.`, 'Delete', { type: 'warning' });
+    actionLoading.value = true;
+    const ok = await deleteProposal(row.id);
+    if (ok) fetchProposals();
+  } catch { /* cancelled */ }
+  finally { actionLoading.value = false; }
+}
 
 onMounted(() => {
-  // Pass auth token to React app via URL query param so it can authenticate immediately
-  const token = useCookie('access_token');
-  if (token.value) {
-    const separator = reactAppUrl.value.includes('?') ? '&' : '?';
-    reactAppUrl.value += `${separator}token=${token.value}`;
-  }
-
-  window.addEventListener('message', handleMessage);
+  fetchProposals();
 });
-
-onUnmounted(() => {
-  window.removeEventListener('message', handleMessage);
-});
-
-const onFrameLoad = () => {
-  loading.value = false;
-};
-
-const refreshFrame = () => {
-  loading.value = true;
-  if (reactFrame.value) {
-    // Force reload the iframe
-    reactFrame.value.src = reactFrame.value.src;
-  }
-};
 </script>
-
-<style scoped>
-.react-proposal-container {
-  display: flex;
-  flex-direction: column;
-  /* Top spacing is 80px defined in layout */
-  height: calc(100vh - 80px);
-  background: white;
-  width: 100%;
-  overflow: hidden;
-}
-
-.header {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  padding: 12px 24px;
-  background: white;
-  border-bottom: 1px solid #e4e7ed;
-}
-
-.header-left {
-  display: flex;
-  align-items: center;
-  gap: 12px;
-}
-
-.title {
-  font-size: 18px;
-  font-weight: 600;
-  color: #303133;
-  margin: 0;
-}
-
-.badge {
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-  color: white;
-  padding: 2px 8px;
-  border-radius: 10px;
-  font-size: 11px;
-  font-weight: 500;
-}
-
-.iframe-wrapper {
-  flex: 1;
-  position: relative;
-  overflow: hidden;
-  width: 100%;
-}
-
-.react-iframe {
-  width: 100%;
-  height: 100%;
-  border: none;
-  display: block;
-}
-
-.loading-overlay {
-  position: absolute;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  background: rgba(255, 255, 255, 0.9);
-  gap: 16px;
-}
-
-.loading-overlay p {
-  color: #606266;
-  font-size: 14px;
-}
-</style>

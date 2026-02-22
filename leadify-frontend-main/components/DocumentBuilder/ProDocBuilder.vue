@@ -47,7 +47,7 @@
             </el-dropdown-menu>
           </template>
         </el-dropdown>
-        <el-button type="primary" size="default" class="!rounded-xl" style="background: var(--bg-obsidian); border: none;">
+        <el-button type="primary" size="default" class="!rounded-xl" style="background: var(--bg-obsidian); border: none;" @click="handleSave" :loading="saving">
           <Save size="16" class="mr-1.5" /> Save {{ documentTypeTitle }}
         </el-button>
       </div>
@@ -564,11 +564,59 @@ import { ArrowDown } from '@element-plus/icons-vue';
 
 const props = withDefaults(defineProps<{
   documentType?: 'proposal' | 'invoice' | 'proforma_invoice' | 'purchase_order' | 'credit_note' | 'contract' | 'rfq' | 'sales_order' | 'quote' | 'delivery_note' | 'sla';
+  proposalId?: string;
+  initialData?: any;
 }>(), {
   documentType: 'proposal'
 });
 
-const emit = defineEmits(['save']);
+const emit = defineEmits(['save', 'saved']);
+
+// Save State
+const saving = ref(false);
+
+async function handleSave() {
+  if (props.documentType === 'proposal') {
+    saving.value = true;
+    try {
+      const payload: any = {
+        title: formData.title,
+        reference: formData.refNumber,
+        proposalFor: formData.clientCompany || formData.clientName,
+        type: formData.type || 'MIXED',
+        content: JSON.stringify(formData),
+        notes: formData.notes || undefined,
+      };
+
+      if (props.proposalId) {
+        // Update existing proposal
+        const response = await useApiFetch(`proposal/${props.proposalId}`, 'PUT', payload);
+        if (response?.success) {
+          ElMessage.success('Proposal updated successfully');
+          emit('saved', { id: props.proposalId, ...payload });
+        } else {
+          ElMessage.error(response?.message || 'Failed to update proposal');
+        }
+      } else {
+        // Create new proposal
+        const response = await useApiFetch('proposal', 'POST', payload);
+        if (response?.success) {
+          ElMessage.success('Proposal created successfully');
+          emit('saved', response.body);
+          navigateTo(`/sales/proposals/${response.body?.id}`);
+        } else {
+          ElMessage.error(response?.message || 'Failed to create proposal');
+        }
+      }
+    } catch (error: any) {
+      ElMessage.error(error?.message || 'An error occurred while saving');
+    } finally {
+      saving.value = false;
+    }
+  } else {
+    emit('save', formData);
+  }
+}
 
 // Layout State
 const showPreview = ref(true);
@@ -745,6 +793,11 @@ const formData = reactive<ProposalData>({
   lastModified: new Date().toISOString()
 });
 
+// Load initial data if provided (edit mode)
+if (props.initialData && typeof props.initialData === 'object') {
+  Object.assign(formData, props.initialData);
+}
+
 const globalMargin = ref(20);
 
 const applyGlobalMargin = () => {
@@ -755,15 +808,45 @@ const applyGlobalMargin = () => {
 };
 
 // ── Export PDF ──────────────────────────────────────────
-const exportPdf = () => {
-  // Force preview open, then print after render
+const exportPdf = async () => {
   const wasHidden = !showPreview.value;
   showPreview.value = true;
-  
-  nextTick(() => {
+
+  await nextTick();
+
+  const printArea = document.querySelector('[data-print-area]');
+  if (!printArea) {
+    ElMessage.error('Preview area not found');
+    return;
+  }
+
+  // Temporarily remove zoom transform for accurate capture
+  const scaleWrapper = printArea.querySelector('[style*="transform"]') as HTMLElement;
+  const origTransform = scaleWrapper?.style.transform;
+  if (scaleWrapper) scaleWrapper.style.transform = 'none';
+
+  try {
+    const html2pdfModule = await import('html2pdf.js');
+    const html2pdf = html2pdfModule.default || html2pdfModule;
+
+    await html2pdf().set({
+      margin: 0,
+      filename: `${formData.refNumber || 'document'}.pdf`,
+      image: { type: 'jpeg', quality: 0.98 },
+      html2canvas: { scale: 2, useCORS: true, logging: false },
+      jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' },
+      pagebreak: { mode: ['css', 'legacy'], before: '.proposal-print-page' }
+    }).from(scaleWrapper || printArea).save();
+
+    ElMessage.success('PDF exported successfully');
+  } catch (err) {
+    console.error('PDF export failed:', err);
+    ElMessage.error('PDF export failed — falling back to print');
     window.print();
+  } finally {
+    if (scaleWrapper && origTransform) scaleWrapper.style.transform = origTransform;
     if (wasHidden) showPreview.value = false;
-  });
+  }
 };
 
 // ── Archive ────────────────────────────────────────────

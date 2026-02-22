@@ -1,5 +1,5 @@
 <template>
-  <div class="proposal-print-template print:block">
+  <div class="proposal-print-template print:block force-light-mode">
     <!-- Cover Page (Proposals Only) -->
     <ProposalPrintCover 
       v-if="data.coverStyle && isFullDoc" 
@@ -280,3 +280,14 @@ const getCustomSectionContent = (id: string) => {
   return sec ? sec.content : '';
 };
 </script>
+
+<style scoped>
+.force-light-mode {
+  color-scheme: light;
+  background: white;
+  color: #111827;
+  --text-primary: #111827;
+  --text-secondary: #374151;
+  --text-muted: #6b7280;
+}
+</style>

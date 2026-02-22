@@ -1,5 +1,5 @@
 <template>
-  <div class="cover-wrapper w-full h-full">
+  <div class="cover-wrapper w-full h-full force-light-mode">
     <!-- Style: corporate -->
 
                 <ProposalPrintPage :isCover="true" :data="data" v-if="data.coverStyle === 'corporate'">
@@ -1592,3 +1592,14 @@ defineProps<{
   typeInfo: any;
 }>();
 </script>
+
+<style scoped>
+.force-light-mode {
+  color-scheme: light;
+  background: white;
+  color: #111827;
+  --text-primary: #111827;
+  --text-secondary: #374151;
+  --text-muted: #6b7280;
+}
+</style>

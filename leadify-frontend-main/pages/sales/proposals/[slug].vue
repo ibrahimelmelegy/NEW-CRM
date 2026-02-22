@@ -1,149 +1,129 @@
 <template>
-  <div class="react-proposal-container">
-    <!-- Header with navigation -->
-    <div class="header">
-      <div class="header-left">
-        <el-button type="default" :icon="ArrowLeft" circle @click="goBack" />
-        <h1 class="title">{{ $t('proposals.details') }}</h1>
-        <span class="badge">{{ $t('proposals.react') }}</span>
-      </div>
-      <div class="header-right">
-        <el-button type="primary" :icon="Refresh" @click="refreshFrame">
-          {{ $t('proposals.refresh') }}
+  <div class="flex flex-col h-screen overflow-hidden">
+    <!-- Header bar for navigation + approval actions -->
+    <div v-if="!loading" class="flex items-center justify-between px-6 py-3 border-b shrink-0" style="border-color: var(--border-default); background: var(--bg-surface);">
+      <div class="flex items-center gap-3">
+        <el-button circle @click="navigateTo('/sales/proposals')">
+          <Icon name="ph:arrow-left" size="18" />
         </el-button>
+        <div>
+          <h1 class="text-lg font-bold" style="color: var(--text-primary);">{{ proposal?.title || 'Proposal' }}</h1>
+          <span class="text-xs font-mono" style="color: var(--text-muted);">{{ proposal?.reference }}</span>
+        </div>
+        <el-tag v-if="proposal?.status" :type="statusTagType(proposal.status)" effect="dark" round size="small">
+          {{ formatStatus(proposal.status) }}
+        </el-tag>
       </div>
+      <ProposalApprovalActions
+        v-if="proposal"
+        :proposal-id="proposal.id"
+        :status="proposal.status"
+        @updated="reloadProposal"
+      />
     </div>
 
-    <!-- React App iframe -->
-    <div class="iframe-wrapper">
-      <iframe ref="reactFrame" :src="reactAppUrl" class="react-iframe" allow="clipboard-write; downloads" @load="onFrameLoad" />
-      <div v-if="loading" class="loading-overlay">
-        <el-icon class="is-loading" :size="40"><Loading /></el-icon>
-        <p>{{ $t('proposals.loadingDetails') }}</p>
-      </div>
+    <!-- Loading -->
+    <div v-if="loading" class="flex-1 flex items-center justify-center">
+      <el-icon class="is-loading" :size="40"><Loading /></el-icon>
+    </div>
+
+    <!-- Builder -->
+    <div v-else-if="parsedContent" class="flex-1 overflow-hidden">
+      <ProDocBuilder
+        document-type="proposal"
+        :proposal-id="proposalId"
+        :initial-data="parsedContent"
+        @saved="onSaved"
+      />
+    </div>
+
+    <!-- Error fallback -->
+    <div v-else class="flex-1 flex flex-col items-center justify-center gap-4">
+      <Icon name="ph:warning-circle" size="48" class="text-red-400" />
+      <p class="text-lg font-bold" style="color: var(--text-primary);">Failed to load proposal</p>
+      <el-button type="primary" @click="reloadProposal">Retry</el-button>
     </div>
   </div>
 </template>
 
 <script setup lang="ts">
-import { ref, onMounted, onUnmounted } from 'vue';
-import { ArrowLeft, Refresh, Loading } from '@element-plus/icons-vue';
-import { useI18n } from 'vue-i18n';
-
-const { t } = useI18n();
+import { ref, onMounted } from 'vue';
+import { Loading } from '@element-plus/icons-vue';
+import { getProposal } from '~/composables/useProposals';
+import ProDocBuilder from '~/components/DocumentBuilder/ProDocBuilder.vue';
+import ProposalApprovalActions from '~/components/DocumentBuilder/ProposalApprovalActions.vue';
 
 definePageMeta({
-  layout: 'default',
+  layout: 'full-width',
   middleware: ['permissions'],
   permission: 'VIEW_OWN_PROPOSALS'
 });
 
-const router = useRouter();
 const route = useRoute();
+const proposalId = computed(() => route.params.slug as string);
 
-// React app URL - view mode
-const reactAppUrl = ref('http://localhost:3001/');
 const loading = ref(true);
-const reactFrame = ref<HTMLIFrameElement | null>(null);
+const proposal = ref<any>(null);
+const parsedContent = ref<any>(null);
 
-// Handle proposal ID from slug
-onMounted(() => {
-  const proposalId = route.params.slug as string;
-  if (proposalId) {
-    reactAppUrl.value = `http://localhost:3001/view/${proposalId}`;
-  }
+function statusTagType(status: string) {
+  const map: Record<string, string> = {
+    DRAFT: 'info',
+    WAITING_APPROVAL: 'warning',
+    APPROVED: 'success',
+    REJECTED: 'danger',
+    ARCHIVED: 'info',
+  };
+  return map[status] || '';
+}
 
-  // Pass auth token
-  const token = useCookie('access_token');
-  if (token.value) {
-    const separator = reactAppUrl.value.includes('?') ? '&' : '?';
-    reactAppUrl.value += `${separator}token=${token.value}`;
-  }
-});
+function formatStatus(status: string) {
+  return (status || '').replace(/_/g, ' ').replace(/\b\w/g, l => l.toUpperCase());
+}
 
-const onFrameLoad = () => {
-  loading.value = false;
-};
-
-const refreshFrame = () => {
+async function reloadProposal() {
   loading.value = true;
-  if (reactFrame.value) {
-    reactFrame.value.src = reactFrame.value.src;
+  try {
+    const data = await getProposal(proposalId.value);
+    proposal.value = data;
+
+    // Parse content JSON back into ProposalData
+    if (data?.content) {
+      try {
+        parsedContent.value = typeof data.content === 'string' ? JSON.parse(data.content) : data.content;
+      } catch {
+        // Content is not valid JSON — use basic fields
+        parsedContent.value = {
+          title: data.title || '',
+          refNumber: data.reference || '',
+          clientCompany: data.proposalFor || '',
+          type: data.type || 'MIXED',
+          notes: data.notes || '',
+        };
+      }
+    } else {
+      // No content saved yet — initialize from proposal fields
+      parsedContent.value = {
+        title: data?.title || '',
+        refNumber: data?.reference || '',
+        clientCompany: data?.proposalFor || '',
+        type: data?.type || 'MIXED',
+        notes: data?.notes || '',
+      };
+    }
+  } catch (error) {
+    console.error('Failed to load proposal:', error);
+    parsedContent.value = null;
+  } finally {
+    loading.value = false;
   }
-};
+}
 
-const goBack = () => {
-  router.push('/sales/proposals');
-};
+function onSaved() {
+  reloadProposal();
+}
+
+onMounted(() => {
+  reloadProposal();
+});
 </script>
-
-<style scoped>
-.react-proposal-container {
-  display: flex;
-  flex-direction: column;
-  height: calc(100vh - 60px);
-  background: white;
-}
-
-.header {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  padding: 12px 24px;
-  background: white;
-  border-bottom: 1px solid #e4e7ed;
-}
-
-.header-left {
-  display: flex;
-  align-items: center;
-  gap: 12px;
-}
-
-.title {
-  font-size: 18px;
-  font-weight: 600;
-  color: #303133;
-  margin: 0;
-}
-
-.badge {
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-  color: white;
-  padding: 2px 8px;
-  border-radius: 10px;
-  font-size: 11px;
-  font-weight: 500;
-}
-
-.iframe-wrapper {
-  flex: 1;
-  position: relative;
-  overflow: hidden;
-}
-
-.react-iframe {
-  width: 100%;
-  height: 100%;
-  border: none;
-}
-
-.loading-overlay {
-  position: absolute;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  background: rgba(255, 255, 255, 0.9);
-  gap: 16px;
-}
-
-.loading-overlay p {
-  color: #606266;
-  font-size: 14px;
-}
-</style>
