@@ -21,7 +21,7 @@ const route = useRoute();
 const loading = ref(false);
 
 // Call API to Get the Staff
-const staff = await getStaff(route.params.slug);
+const staff = await getStaff(route.params.slug as string);
 
 async function submitForm(values: Staff) {
   loading.value = true;

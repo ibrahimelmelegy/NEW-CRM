@@ -190,7 +190,7 @@ function dragOver(index: number) {
 
 async function drop(index: number) {
   if (dragIndex === index) return;
-  const item = stages.value.splice(dragIndex, 1)[0];
+  const item = stages.value.splice(dragIndex, 1)[0]!;
   stages.value.splice(index, 0, item);
   const stageIds = stages.value.map(s => s.id);
   try {

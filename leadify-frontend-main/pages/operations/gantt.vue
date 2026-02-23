@@ -311,7 +311,7 @@ const formatDayName = (d: string) => new Date(d).toLocaleDateString('en', { week
 const formatDay = (d: string) => new Date(d).getDate().toString();
 
 const getBarStyle = (task: GanttTask) => {
-  const timelineStart = new Date(timelineDates.value[0]);
+  const timelineStart = new Date(timelineDates.value[0]!);
   const taskStart = new Date(task.start);
   const taskEnd = new Date(task.end);
   const daysDiff = Math.max(0, (taskStart.getTime() - timelineStart.getTime()) / 86400000);
@@ -328,7 +328,7 @@ const getBarStyle = (task: GanttTask) => {
 const getDependencyLine = (task: GanttTask) => {
   const dep = tasks.value.find(t => t.id === task.dependency);
   if (!dep) return { x1: 0, x2: 0 };
-  const timelineStart = new Date(timelineDates.value[0]);
+  const timelineStart = new Date(timelineDates.value[0]!);
   const depEnd = ((new Date(dep.end).getTime() - timelineStart.getTime()) / 86400000) * cellWidth.value;
   const taskStart = ((new Date(task.start).getTime() - timelineStart.getTime()) / 86400000) * cellWidth.value;
   return { x1: depEnd, x2: taskStart };
@@ -347,7 +347,7 @@ const addTask = () => {
     end: newTask.value.end || '2026-03-15',
     progress: newTask.value.progress,
     assignee: newTask.value.assignee || 'Unassigned',
-    color: colors[tasks.value.length % colors.length],
+    color: colors[tasks.value.length % colors.length]!,
     isMilestone: newTask.value.isMilestone
   });
   showTaskDialog.value = false;

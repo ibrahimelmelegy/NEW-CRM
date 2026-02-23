@@ -51,7 +51,7 @@ const props = defineProps({
   }
 });
 const emits = defineEmits(['getData']);
-const listData = ref([]);
+const listData = ref<string[]>([]);
 const {
   value: inputValue,
   errorMessage,
@@ -66,7 +66,7 @@ watch(
   () => props.value,
   () => {
     if (props.value) {
-      listData.value = props.value;
+      listData.value = props.value as any;
     }
   }
 );

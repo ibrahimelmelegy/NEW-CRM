@@ -324,12 +324,12 @@ async function handleStatusChange(row: any, newStatus: string) {
   try {
     let reason: string | undefined;
     if (newStatus === 'REJECTED') {
-      const { value } = await ElMessageBox.prompt('Enter rejection reason:', 'Reject Document', {
+      const result = await ElMessageBox.prompt('Enter rejection reason:', 'Reject Document', {
         inputPlaceholder: 'Reason for rejection...',
         confirmButtonText: 'Reject',
         cancelButtonText: 'Cancel'
       });
-      reason = value;
+      reason = (result as any).value;
     }
     const response = await changeStatus(row.id, newStatus, reason);
     if (response?.success) {

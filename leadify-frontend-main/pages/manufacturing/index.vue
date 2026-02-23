@@ -311,169 +311,54 @@
 </template>
 
 <script setup lang="ts">
-import { ref, computed } from 'vue';
+import { ref, computed, onMounted } from 'vue';
 import { ElMessage } from 'element-plus';
+import { useManufacturing } from '~/composables/useManufacturing';
 
 definePageMeta({
   layout: 'default',
   middleware: 'permissions'
 });
 
+const {
+  boms, workOrders, qualityChecks,
+  productionEfficiency, qualityIssues,
+  init, createBOM, duplicateBOM,
+  createWorkOrder: apiCreateWorkOrder,
+} = useManufacturing();
+
+onMounted(() => { init(); });
+
 const activeTab = ref('bom');
 const showBomDialog = ref(false);
 const showWorkOrderDialog = ref(false);
 
 const newBom = ref({ productName: '', code: '', version: 1, items: [{ name: '', quantity: 1, unitCost: 0 }] });
-const newWO = ref({ bomId: '', quantity: 1, priority: 'NORMAL', dueDate: '' });
+const newWO = ref({ bomId: 0 as number, quantity: 1, priority: 'NORMAL', dueDate: '' });
 
-const productionEfficiency = ref(87);
-const qualityIssues = ref(3);
-
-const boms = ref([
-  {
-    id: 1,
-    productName: 'Smart Office Hub',
-    code: 'BOM-001',
-    version: 2,
-    isActive: true,
-    totalCost: 2450,
-    items: [
-      { id: 1, name: 'Processor Board', type: 'SUB_ASSEMBLY', quantity: 1, unit: 'pc', unitCost: 850 },
-      { id: 2, name: 'Display Panel 7"', type: 'RAW', quantity: 1, unit: 'pc', unitCost: 320 },
-      { id: 3, name: 'Aluminum Housing', type: 'RAW', quantity: 1, unit: 'pc', unitCost: 180 },
-      { id: 4, name: 'Power Supply Unit', type: 'SUB_ASSEMBLY', quantity: 1, unit: 'pc', unitCost: 150 },
-      { id: 5, name: 'WiFi/BT Module', type: 'RAW', quantity: 1, unit: 'pc', unitCost: 45 }
-    ]
-  },
-  {
-    id: 2,
-    productName: 'Industrial Sensor Kit',
-    code: 'BOM-002',
-    version: 1,
-    isActive: true,
-    totalCost: 680,
-    items: [
-      { id: 1, name: 'Temperature Sensor', type: 'RAW', quantity: 4, unit: 'pc', unitCost: 35 },
-      { id: 2, name: 'Humidity Sensor', type: 'RAW', quantity: 2, unit: 'pc', unitCost: 42 },
-      { id: 3, name: 'Controller Board', type: 'SUB_ASSEMBLY', quantity: 1, unit: 'pc', unitCost: 180 },
-      { id: 4, name: 'Enclosure IP67', type: 'RAW', quantity: 1, unit: 'pc', unitCost: 95 },
-      { id: 5, name: 'Cabling Kit', type: 'RAW', quantity: 1, unit: 'set', unitCost: 60 }
-    ]
-  },
-  {
-    id: 3,
-    productName: 'Solar Power Bank',
-    code: 'BOM-003',
-    version: 3,
-    isActive: false,
-    totalCost: 125,
-    items: [
-      { id: 1, name: 'Solar Panel 5W', type: 'RAW', quantity: 1, unit: 'pc', unitCost: 28 },
-      { id: 2, name: 'Li-Po Battery 10000mAh', type: 'RAW', quantity: 1, unit: 'pc', unitCost: 45 },
-      { id: 3, name: 'Charge Controller', type: 'RAW', quantity: 1, unit: 'pc', unitCost: 12 },
-      { id: 4, name: 'USB-C Port Module', type: 'RAW', quantity: 2, unit: 'pc', unitCost: 8 }
-    ]
+// Production plan is derived from active work orders
+const productionPlan = computed(() => {
+  const days = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
+  const plan = [];
+  const now = new Date();
+  const activeWOs = workOrders.value.filter(w => w.status !== 'COMPLETED' && w.status !== 'CANCELLED');
+  for (let i = 0; i < 5; i++) {
+    const d = new Date(now);
+    d.setDate(d.getDate() + i);
+    plan.push({
+      id: i + 1,
+      day: days[d.getDay()],
+      date: String(d.getDate()),
+      capacity: activeWOs.length > 0 ? Math.min(100, Math.round(activeWOs.length * 25)) : 0,
+      items: activeWOs.slice(0, 2).map(w => ({
+        product: w.productName,
+        quantity: Math.ceil(w.planned / 5),
+        status: w.status === 'IN_PROGRESS' ? 'in_progress' : 'planned',
+      })),
+    });
   }
-]);
-
-const workOrders = ref([
-  {
-    id: 1,
-    woNumber: 'WO-001',
-    productName: 'Smart Office Hub',
-    bomCode: 'BOM-001',
-    planned: 50,
-    produced: 42,
-    priority: 'HIGH',
-    status: 'IN_PROGRESS',
-    dueDate: '2026-02-28'
-  },
-  {
-    id: 2,
-    woNumber: 'WO-002',
-    productName: 'Industrial Sensor Kit',
-    bomCode: 'BOM-002',
-    planned: 200,
-    produced: 200,
-    priority: 'NORMAL',
-    status: 'COMPLETED',
-    dueDate: '2026-02-15'
-  },
-  {
-    id: 3,
-    woNumber: 'WO-003',
-    productName: 'Smart Office Hub',
-    bomCode: 'BOM-001',
-    planned: 100,
-    produced: 0,
-    priority: 'URGENT',
-    status: 'PLANNED',
-    dueDate: '2026-03-15'
-  },
-  {
-    id: 4,
-    woNumber: 'WO-004',
-    productName: 'Solar Power Bank',
-    bomCode: 'BOM-003',
-    planned: 500,
-    produced: 125,
-    priority: 'NORMAL',
-    status: 'IN_PROGRESS',
-    dueDate: '2026-03-10'
-  },
-  {
-    id: 5,
-    woNumber: 'WO-005',
-    productName: 'Industrial Sensor Kit',
-    bomCode: 'BOM-002',
-    planned: 100,
-    produced: 0,
-    priority: 'LOW',
-    status: 'PLANNED',
-    dueDate: '2026-03-20'
-  }
-]);
-
-const productionPlan = ref([
-  {
-    id: 1,
-    day: 'Mon',
-    date: '24',
-    capacity: 85,
-    items: [
-      { product: 'Smart Hub', quantity: 10, status: 'completed' },
-      { product: 'Sensor Kit', quantity: 40, status: 'in_progress' }
-    ]
-  },
-  {
-    id: 2,
-    day: 'Tue',
-    date: '25',
-    capacity: 92,
-    items: [
-      { product: 'Smart Hub', quantity: 12, status: 'planned' },
-      { product: 'Power Bank', quantity: 50, status: 'planned' }
-    ]
-  },
-  {
-    id: 3,
-    day: 'Wed',
-    date: '26',
-    capacity: 78,
-    items: [
-      { product: 'Sensor Kit', quantity: 60, status: 'planned' },
-      { product: 'Power Bank', quantity: 30, status: 'planned' }
-    ]
-  },
-  { id: 4, day: 'Thu', date: '27', capacity: 65, items: [{ product: 'Smart Hub', quantity: 8, status: 'planned' }] },
-  { id: 5, day: 'Fri', date: '28', capacity: 45, items: [{ product: 'Power Bank', quantity: 25, status: 'planned' }] }
-]);
-
-const qualityChecks = ref([
-  { id: 1, woNumber: 'WO-001', product: 'Smart Office Hub', inspector: 'Khalid I.', inspected: 42, passed: 40, defects: 2, result: 'PASS' },
-  { id: 2, woNumber: 'WO-002', product: 'Sensor Kit', inspector: 'Fatima A.', inspected: 200, passed: 196, defects: 4, result: 'PASS' },
-  { id: 3, woNumber: 'WO-004', product: 'Solar Power Bank', inspector: 'Ahmed F.', inspected: 50, passed: 43, defects: 7, result: 'FAIL' }
-]);
+  return plan;
+});
 
 const formatCurrency = (val: number) => {
   if (val >= 1000) return `${(val / 1000).toFixed(1)}K SAR`;
@@ -493,24 +378,47 @@ const getWOStatus = (s: string): 'success' | 'warning' | 'info' | 'danger' | und
 };
 
 const editBom = (bom: any) => ElMessage.info(`Editing: ${bom.productName}`);
-const duplicateBom = (bom: any) => ElMessage.info(`Duplicating: ${bom.code}`);
+const duplicateBom = async (bom: any) => {
+  await duplicateBOM(bom.id);
+  ElMessage.success(`Duplicated: ${bom.code}`);
+};
 const createWOFromBom = (bom: any) => {
   newWO.value.bomId = bom.id;
   showWorkOrderDialog.value = true;
 };
 const viewWorkOrder = (wo: any) => ElMessage.info(`Viewing: ${wo.woNumber}`);
 
-const saveBom = () => {
+const saveBom = async () => {
   if (!newBom.value.productName) {
     ElMessage.warning('Product name required');
     return;
   }
-  ElMessage.success('BOM created');
+  await createBOM({
+    productName: newBom.value.productName,
+    code: newBom.value.code,
+    version: newBom.value.version,
+    items: newBom.value.items.map(i => ({
+      name: i.name,
+      type: 'RAW' as const,
+      quantity: i.quantity,
+      unit: 'pc',
+      unitCost: i.unitCost,
+    })),
+  });
+  newBom.value = { productName: '', code: '', version: 1, items: [{ name: '', quantity: 1, unitCost: 0 }] };
   showBomDialog.value = false;
+  ElMessage.success('BOM created');
 };
 
-const createWorkOrder = () => {
-  ElMessage.success('Work order created');
+const createWorkOrder = async () => {
+  await apiCreateWorkOrder({
+    bomId: newWO.value.bomId || undefined,
+    quantity: newWO.value.quantity,
+    priority: newWO.value.priority,
+    dueDate: newWO.value.dueDate || undefined,
+  });
+  newWO.value = { bomId: 0, quantity: 1, priority: 'NORMAL', dueDate: '' };
   showWorkOrderDialog.value = false;
+  ElMessage.success('Work order created');
 };
 </script>

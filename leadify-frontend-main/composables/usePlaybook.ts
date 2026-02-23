@@ -97,7 +97,7 @@ export function usePlaybook() {
       if (success && body) {
         playbooks.value = body as PlaybookData[];
         if (playbooks.value.length > 0 && !selectedPlaybook.value) {
-          selectedPlaybook.value = playbooks.value[0];
+          selectedPlaybook.value = playbooks.value[0] as any;
         }
       }
     } catch (e) {

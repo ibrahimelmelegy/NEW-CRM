@@ -42,7 +42,7 @@ const trend = computed(() => {
   const last = props.data[props.data.length - 1];
   const prev = props.data[props.data.length - 2];
   if (prev === 0) return 0;
-  return Math.round(((last - prev) / prev) * 100);
+  return Math.round(((last! - prev!) / prev!) * 100);
 });
 
 const chartOptions = computed(() => ({

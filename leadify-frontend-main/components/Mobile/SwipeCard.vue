@@ -77,6 +77,7 @@ const contentStyle = computed(() => ({
 
 function onTouchStart(e: TouchEvent) {
   const touch = e.touches[0];
+  if (!touch) return;
   startX.value = touch.clientX;
   startY.value = touch.clientY;
   currentX.value = translateX.value;
@@ -88,6 +89,7 @@ function onTouchMove(e: TouchEvent) {
   if (!isDragging.value) return;
 
   const touch = e.touches[0];
+  if (!touch) return;
   const diffX = touch.clientX - startX.value;
   const diffY = touch.clientY - startY.value;
 

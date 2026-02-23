@@ -95,14 +95,14 @@ function onTouchStart(e: TouchEvent) {
   if (props.loading) return;
   if (!isScrolledToTop()) return;
 
-  startY.value = e.touches[0].clientY;
+  startY.value = e.touches[0]!.clientY;
   isDragging.value = true;
 }
 
 function onTouchMove(e: TouchEvent) {
   if (!isDragging.value || props.loading) return;
 
-  const currentY = e.touches[0].clientY;
+  const currentY = e.touches[0]!.clientY;
   const diff = currentY - startY.value;
 
   if (diff < 0) {

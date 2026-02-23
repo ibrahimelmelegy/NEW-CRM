@@ -139,7 +139,7 @@ async function loadData() {
   try {
     if (dateRange.value) {
       const [start, end] = dateRange.value;
-      forecasts.value = await fetchForecastByPeriod(selectedPeriod.value, start.toISOString().split('T')[0], end.toISOString().split('T')[0]);
+      forecasts.value = await fetchForecastByPeriod(selectedPeriod.value, start.toISOString().split('T')[0] || '', end.toISOString().split('T')[0] || '');
     } else {
       const response = await fetchForecasts({ period: selectedPeriod.value });
       forecasts.value = response.docs;
@@ -165,7 +165,7 @@ function barHeight(value: number, max: number): number {
 
 function formatPeriodLabel(forecast: ForecastPeriod): string {
   if (forecast.startDate) {
-    return new Date(forecast.startDate).toLocaleDateString(undefined, { month: 'short', year: '2-digit' });
+    return new Date(forecast.startDate!).toLocaleDateString(undefined, { month: 'short', year: '2-digit' }) || '';
   }
   return '';
 }

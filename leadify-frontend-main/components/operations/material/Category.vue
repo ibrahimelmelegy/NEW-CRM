@@ -12,8 +12,6 @@ el-form(
 <script lang="ts" setup>
 import { useForm } from 'vee-validate';
 import * as yup from 'yup';
-import { defineExpose } from 'vue';
-
 // Props
 const props = defineProps({
   name: { type: String, required: true }

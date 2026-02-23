@@ -131,7 +131,7 @@ const rules = {
 };
 
 // Set today as default date
-form.date = new Date().toISOString().split('T')[0];
+form.date = new Date().toISOString().split('T')[0] || '';
 
 // Load invoice if preselected
 if (props.invoiceId) {

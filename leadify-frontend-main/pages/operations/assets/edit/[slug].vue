@@ -19,11 +19,11 @@ definePageMeta({
 const router = useRouter();
 const route = useRoute();
 const loading = ref(false);
-const asset = await getAsset(route.params.slug);
+const asset = await getAsset(route.params.slug as string);
 
 async function submitForm(values: Asset) {
   loading.value = true;
-  await updateAsset({ ...values, id: route.params.slug });
+  await updateAsset({ ...values, id: route.params.slug as string });
   loading.value = false;
 }
 </script>

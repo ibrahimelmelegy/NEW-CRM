@@ -178,10 +178,10 @@ function getTouchCoords(e: TouchEvent) {
   const rect = canvas.getBoundingClientRect();
   const scaleX = canvas.width / rect.width;
   const scaleY = canvas.height / rect.height;
-  const touch = e.touches[0];
+  const touch = e.touches[0]!;
   return {
-    x: (touch.clientX - rect.left) * scaleX,
-    y: (touch.clientY - rect.top) * scaleY
+    x: (touch!.clientX - rect.left) * scaleX,
+    y: (touch!.clientY - rect.top) * scaleY
   };
 }
 

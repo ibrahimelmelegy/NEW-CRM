@@ -32,8 +32,8 @@ describe('AppTable.vue', () => {
       };
 
       expect(requiredProps.columns).toHaveLength(2);
-      expect(requiredProps.columns[0]).toHaveProperty('prop');
-      expect(requiredProps.columns[0]).toHaveProperty('label');
+      expect(requiredProps.columns[0]!).toHaveProperty('prop');
+      expect(requiredProps.columns[0]!).toHaveProperty('label');
     });
 
     it('should define column with sortable option', () => {
@@ -42,8 +42,8 @@ describe('AppTable.vue', () => {
         { prop: 'status', label: 'Status', sortable: false }
       ];
 
-      expect(columns[0].sortable).toBe(true);
-      expect(columns[1].sortable).toBe(false);
+      expect(columns[0]!.sortable).toBe(true);
+      expect(columns[1]!.sortable).toBe(false);
     });
 
     it('should define column with component type', () => {
@@ -54,10 +54,10 @@ describe('AppTable.vue', () => {
         { prop: 'value', label: 'Value', component: 'Text' }
       ];
 
-      expect(columns[0].component).toBe('AvatarText');
-      expect(columns[1].component).toBe('Label');
-      expect(columns[2].component).toBe('Tags');
-      expect(columns[3].component).toBe('Text');
+      expect(columns[0]!.component).toBe('AvatarText');
+      expect(columns[1]!.component).toBe('Label');
+      expect(columns[2]!.component).toBe('Tags');
+      expect(columns[3]!.component).toBe('Text');
     });
 
     it('should define column with width', () => {
@@ -66,8 +66,8 @@ describe('AppTable.vue', () => {
         { prop: 'description', label: 'Description', width: '200' }
       ];
 
-      expect(columns[0].width).toBe('80');
-      expect(columns[1].width).toBe('200');
+      expect(columns[0]!.width).toBe('80');
+      expect(columns[1]!.width).toBe('200');
     });
   });
 
@@ -94,8 +94,8 @@ describe('AppTable.vue', () => {
       ];
 
       expect(filterOptions).toHaveLength(2);
-      expect(filterOptions[0].type).toBe('select');
-      expect(filterOptions[1].type).toBe('daterange');
+      expect(filterOptions[0]!.type).toBe('select');
+      expect(filterOptions[1]!.type).toBe('daterange');
     });
 
     it('should support multiple filter types', () => {

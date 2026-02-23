@@ -115,10 +115,7 @@ async function onDrop(event: DragEvent, newStatus: string) {
   draggedTicket.status = newStatus;
 
   try {
-    await useApiFetch(`support/tickets/${draggedTicket.id}`, {
-      method: 'PUT',
-      body: { status: newStatus }
-    });
+    await useApiFetch(`support/tickets/${draggedTicket.id}`, 'PUT', { status: newStatus });
     ElNotification({ type: 'success', title: 'Updated', message: `Ticket moved to ${newStatus.replace(/_/g, ' ')}` });
   } catch {
     draggedTicket.status = oldStatus;

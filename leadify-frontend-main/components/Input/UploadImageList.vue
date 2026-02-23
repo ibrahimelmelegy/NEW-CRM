@@ -38,7 +38,7 @@ const props = defineProps({
     required: false
   },
   value: {
-    type: String,
+    type: [String, Array] as PropType<string | any[]>,
     default: '',
     required: false
   },
@@ -61,8 +61,8 @@ const props = defineProps({
     default: 2 // 2mb
   },
   formats: {
-    type: Array,
-    default: [
+    type: Array as PropType<string[]>,
+    default: () => [
       'image/jpg',
       'image/jpeg',
       'image/png'
@@ -103,16 +103,16 @@ const loading = ref(false);
 
 const handleUploadRequest = async (params: any) => {
   loading.value = true;
-  const { success, data } = await uploadFile('LECTURER_CV_FILE', params.file);
+  const result = await uploadFile(params) as any;
 
   loading.value = false;
-  return data;
+  return result?.data;
 };
 
 const beforeUpload: UploadProps['beforeUpload'] = rawFile => {
   if (!props.formats.includes(rawFile.type)) {
     ElMessage.error({
-      message: `acceptUpload ${props.formats.map(format => format.split('/').pop()).join(' , ')}`
+      message: `acceptUpload ${props.formats.map((format: string) => format.split('/').pop()).join(' , ')}`
     });
     return false;
   } else if (rawFile.size / 1024 / 1024 > props.sizeInMb) {
@@ -123,7 +123,7 @@ const beforeUpload: UploadProps['beforeUpload'] = rawFile => {
 };
 
 const handleRemove = (file: UploadFile) => {
-  inputValue.value.splice(inputValue.value.indexOf(file), 1);
+  (inputValue.value as any[]).splice((inputValue.value as any[]).indexOf(file), 1);
 };
 
 const handleUploadSuccess: UploadProps['onSuccess'] = (response, uploadFile) => {};
@@ -134,7 +134,7 @@ const {
   handleBlur,
   handleChange,
   meta
-} = useField(props.name, undefined, {
+} = useField<any>(props.name, undefined, {
   initialValue: props.value ? props.value : []
 });
 watchEffect(() => {

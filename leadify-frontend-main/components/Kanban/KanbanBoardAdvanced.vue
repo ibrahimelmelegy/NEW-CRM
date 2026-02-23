@@ -157,14 +157,14 @@ const localCards = ref<Record<string, KanbanCard[]>>({});
 watch(() => props.cards, (newCards) => {
   const cloned: Record<string, KanbanCard[]> = {};
   for (const key of Object.keys(newCards)) {
-    cloned[key] = [...newCards[key]];
+    cloned[key] = [...(newCards[key] ?? [])];
   }
   localCards.value = cloned;
 }, { immediate: true, deep: true });
 
 const getColumnCards = (key: string): KanbanCard[] => {
   if (!localCards.value[key]) localCards.value[key] = [];
-  return localCards.value[key];
+  return localCards.value[key]!;
 };
 
 // ---- Column analytics ----
@@ -174,8 +174,8 @@ const columnStats = computed<Record<string, ColumnStats>>(() => {
   const now = new Date();
 
   for (const col of props.columns) {
-    const cards = localCards.value[col.key] || [];
-    const totalValue = cards.reduce((sum, c) => sum + (c.price || c.estimatedValue || 0), 0);
+    const cards = localCards.value[col.key] ?? [];
+    const totalValue = cards.reduce((sum: number, c: KanbanCard) => sum + (c.price || c.estimatedValue || 0), 0);
 
     // Average days in stage
     let totalDays = 0;
@@ -205,7 +205,8 @@ const columnStats = computed<Record<string, ColumnStats>>(() => {
 function getAllCards(): KanbanCard[] {
   const all: KanbanCard[] = [];
   for (const key of Object.keys(localCards.value)) {
-    all.push(...localCards.value[key]);
+    const cards = localCards.value[key];
+    if (cards) all.push(...cards);
   }
   return all;
 }
@@ -215,8 +216,8 @@ const onDragEnd = (evt: any, toStage: string) => {
   if (!evt.item?._underlying_vm_) return;
   const card = evt.item._underlying_vm_ as KanbanCard;
 
-  const fromStage = Object.entries(props.cards).find(([_, cards]) =>
-    cards.some(c => c.id === card.id)
+  const fromStage = Object.entries(props.cards).find(([_key, cards]) =>
+    cards.some((c: KanbanCard) => c.id === card.id)
   )?.[0];
 
   if (fromStage && fromStage !== toStage) {
@@ -264,15 +265,16 @@ const swimlaneCards = computed<Record<string, Record<string, KanbanCard[]>>>(() 
   for (const lane of swimlanes.value) {
     result[lane.key] = {};
     for (const col of props.columns) {
-      result[lane.key][col.key] = [];
+      result[lane.key]![col.key] = [];
     }
   }
 
   for (const [colKey, cards] of allEntries) {
+    if (!cards) continue;
     for (const card of cards) {
       const laneKey = getCardSwimlaneKey(card);
-      if (result[laneKey] && result[laneKey][colKey]) {
-        result[laneKey][colKey].push(card);
+      if (result[laneKey]?.[colKey]) {
+        result[laneKey]![colKey]!.push(card);
       }
     }
   }
@@ -322,7 +324,7 @@ function buildAssigneeSwimlanes(allCards: KanbanCard[]): Swimlane[] {
     label: data.label,
     color: data.color,
     cardCount: data.cards.length,
-    totalValue: data.cards.reduce((sum, c) => sum + (c.price || c.estimatedValue || 0), 0),
+    totalValue: data.cards.reduce((sum: number, c: KanbanCard) => sum + (c.price || c.estimatedValue || 0), 0),
   }));
 }
 
@@ -348,10 +350,10 @@ function buildPrioritySwimlanes(allCards: KanbanCard[]): Swimlane[] {
     .filter(p => grouped.has(p))
     .map(p => ({
       key: p,
-      label: priorityLabels[p] || p,
+      label: priorityLabels[p] ?? p,
       color: getPriorityColor(p),
       cardCount: grouped.get(p)!.length,
-      totalValue: grouped.get(p)!.reduce((sum, c) => sum + (c.price || c.estimatedValue || 0), 0),
+      totalValue: grouped.get(p)!.reduce((sum: number, c: KanbanCard) => sum + (c.price || c.estimatedValue || 0), 0),
     }));
 }
 
@@ -360,9 +362,9 @@ function buildValueSwimlanes(allCards: KanbanCard[]): Swimlane[] {
 
   for (const card of allCards) {
     const val = card.price ?? card.estimatedValue ?? 0;
-    if (val > 10000) groups.high.push(card);
-    else if (val >= 1000) groups.medium.push(card);
-    else groups.low.push(card);
+    if (val > 10000) groups.high!.push(card);
+    else if (val >= 1000) groups.medium!.push(card);
+    else groups.low!.push(card);
   }
 
   const config: { key: string; label: string; color: string }[] = [
@@ -372,11 +374,11 @@ function buildValueSwimlanes(allCards: KanbanCard[]): Swimlane[] {
   ];
 
   return config
-    .filter(c => groups[c.key].length > 0)
+    .filter(c => groups[c.key]!.length > 0)
     .map(c => ({
       ...c,
-      cardCount: groups[c.key].length,
-      totalValue: groups[c.key].reduce((sum, card) => sum + (card.price || card.estimatedValue || 0), 0),
+      cardCount: groups[c.key]!.length,
+      totalValue: groups[c.key]!.reduce((sum: number, card: KanbanCard) => sum + (card.price || card.estimatedValue || 0), 0),
     }));
 }
 

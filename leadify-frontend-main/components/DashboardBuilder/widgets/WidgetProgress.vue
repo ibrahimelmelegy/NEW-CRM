@@ -43,7 +43,7 @@ interface Target {
 const loading = ref(true);
 const targets = ref<Target[]>([]);
 
-const TARGET_COLORS = ['#8B5CF6', '#3B82F6', '#10B981', '#F59E0B'];
+const TARGET_COLORS: [string, string, string, string] = ['#8B5CF6', '#3B82F6', '#10B981', '#F59E0B'];
 
 async function loadData() {
   loading.value = true;

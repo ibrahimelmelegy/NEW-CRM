@@ -40,6 +40,7 @@ const invoices = ref<Invoice[]>([
     id: uuidv4(),
     invoiceNumber: '',
     amount: null,
+    invoiceDate: null,
     dueDate: null,
     collectedDate: null,
     collected: null
@@ -67,6 +68,7 @@ async function AddInvoice() {
     id: uuidv4(),
     invoiceNumber: '',
     amount: null,
+    invoiceDate: null,
     dueDate: null,
     collectedDate: null,
     collected: null

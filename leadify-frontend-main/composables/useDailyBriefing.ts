@@ -313,8 +313,8 @@ export function useDailyBriefing() {
 
       const calcChange = (sparkline: number[]): number => {
         if (sparkline.length < 2) return 0;
-        const last = sparkline[sparkline.length - 1];
-        const prev = sparkline[sparkline.length - 2];
+        const last = sparkline[sparkline.length - 1]!;
+        const prev = sparkline[sparkline.length - 2]!;
         if (prev === 0) return 0;
         return Math.round(((last - prev) / prev) * 100);
       };

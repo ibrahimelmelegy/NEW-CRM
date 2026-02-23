@@ -28,7 +28,7 @@ export function useCollaborationCursors() {
   // Generate consistent color from userId
   function userColor(userId: number): string {
     const colors = ['#8B5CF6', '#3B82F6', '#10B981', '#F59E0B', '#EF4444', '#EC4899', '#06B6D4', '#F97316'];
-    return colors[userId % colors.length];
+    return colors[userId % colors.length] || '';
   }
 
   // Visible cursors: max 5, same page only, not stale

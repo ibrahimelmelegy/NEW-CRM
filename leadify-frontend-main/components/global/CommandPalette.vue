@@ -231,6 +231,7 @@ async function search(q: string) {
       const data = body as any;
       const docs = data.docs || data || [];
       const config = searches[i];
+      if (!config) return;
 
       docs.forEach((doc: any) => {
         allResults.push({

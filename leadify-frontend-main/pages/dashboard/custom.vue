@@ -193,7 +193,7 @@ const widgetForm = ref({
 onMounted(async () => {
   dashboards.value = await fetchDashboards();
   if (dashboards.value.length) {
-    selectedDashboardId.value = dashboards.value[0].id;
+    selectedDashboardId.value = dashboards.value[0]!.id;
     loadSelectedDashboard();
   }
 });
@@ -247,7 +247,7 @@ function buildChartOption(widget: WidgetView, data: any) {
 }
 
 function editWidget(idx: number) {
-  const w = widgets.value[idx];
+  const w = widgets.value[idx]!;
   editingWidgetIdx.value = idx;
   widgetForm.value = {
     title: w.title,
@@ -265,7 +265,7 @@ function removeWidget(idx: number) {
 
 function confirmWidget() {
   const newWidget: WidgetView = {
-    id: editingWidgetIdx.value >= 0 ? widgets.value[editingWidgetIdx.value].id : `widget-${Date.now()}`,
+    id: editingWidgetIdx.value >= 0 ? widgets.value[editingWidgetIdx.value]!.id : `widget-${Date.now()}`,
     title: widgetForm.value.title || t('customDashboard.untitledWidget'),
     type: widgetForm.value.type,
     config: {

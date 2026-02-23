@@ -74,7 +74,7 @@ const {
   handleChange,
   meta
 } = useField(props.name, undefined, {
-  initialValue: props.isMultiple ? [] : props.firstOption ? props.options[0].value : props.value
+  initialValue: props.isMultiple ? [] : props.firstOption ? (props.options[0] as any).value : props.value
 });
 
 watchEffect(() => {

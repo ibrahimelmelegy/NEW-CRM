@@ -240,7 +240,7 @@ async function handleReject() {
   loadingAction.value = true;
   try {
     await useApiFetch(`procurement/${po.value.id}/reject`, 'PATCH', { rejectionReason: rejectionReason.value });
-    ElNotification({ title: 'Rejected', type: 'danger', message: 'Purchase Order has been rejected' });
+    (ElNotification as any)({ title: 'Rejected', type: 'danger', message: 'Purchase Order has been rejected' });
     rejectDialogVisible.value = false;
     fetchPO();
   } catch (error) {
@@ -306,7 +306,7 @@ async function downloadPDFWithTemplate(template: any) {
 
 async function downloadPDFClassic() {
   const { jsPDF } = await import('jspdf');
-  const { default: autoTable } = await import('jspdf-autotable');
+  const { default: autoTable } = await import('jspdf-autotable') as any;
 
   const doc = new jsPDF();
 

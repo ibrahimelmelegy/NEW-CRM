@@ -29,8 +29,8 @@ export function useHeatmap() {
     const maxCount = Math.max(...data.map(d => d.count), 1);
 
     for (let d = new Date(start); d <= end; d.setDate(d.getDate() + 1)) {
-      const dateStr = d.toISOString().split('T')[0];
-      const count = map.get(dateStr) || 0;
+      const dateStr = d.toISOString().split('T')[0] || '';
+      const count = map.get(dateStr!) || 0;
       let level: 0 | 1 | 2 | 3 | 4 = 0;
       if (count > 0) {
         const ratio = count / maxCount;

@@ -283,7 +283,7 @@ async function handleApplyView(view: any) {
       const res = await useApiFetch(`invoice${qs}`);
       if (res?.success && res?.body) {
         const data = res.body as any;
-        table.data = data.docs || [];
+        table.value.data = data.docs || [];
       }
     } catch {}
   }
@@ -294,12 +294,12 @@ async function handleAdvancedFilter(filterPayload: any) {
     const res = await useApiFetch('search/advanced/invoice', 'POST', filterPayload);
     if (res?.success && res?.body) {
       const data = res.body as any;
-      table.data = data.docs || data || [];
+      table.value.data = data.docs || data || [];
     }
   } catch {}
 }
 
 async function handleClearAdvancedFilter() {
-  await loadData();
+  await loadInvoices();
 }
 </script>

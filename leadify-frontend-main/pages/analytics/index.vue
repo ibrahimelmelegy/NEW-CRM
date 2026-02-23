@@ -186,7 +186,7 @@ const kpiStats = computed(() => [
 
 function getDateRangeParams() {
   if (dateRange.value && dateRange.value.length === 2) {
-    return { start: dateRange.value[0], end: dateRange.value[1] };
+    return { start: dateRange.value[0]!, end: dateRange.value[1]! };
   }
   return undefined;
 }

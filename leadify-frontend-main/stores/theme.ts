@@ -86,9 +86,9 @@ export const useThemeStore = defineStore('theme', () => {
     const preset = activePreset.value;
 
     root.style.setProperty('--accent-color', accentColor.value);
-    root.style.setProperty('--accent-light', preset.accentLight);
-    root.style.setProperty('--gradient-start', preset.gradientStart);
-    root.style.setProperty('--gradient-end', preset.gradientEnd);
+    root.style.setProperty('--accent-light', preset!.accentLight);
+    root.style.setProperty('--gradient-start', preset!.gradientStart);
+    root.style.setProperty('--gradient-end', preset!.gradientEnd);
     root.style.setProperty('--glass-blur', `blur(${glassBlur.value}px)`);
     root.style.setProperty('--glass-opacity', `${glassOpacity.value}`);
     root.style.setProperty('--base-font-size', `${fontSize.value}px`);

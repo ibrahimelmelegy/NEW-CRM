@@ -189,13 +189,14 @@
 </template>
 
 <script setup lang="ts">
-import { ref, reactive, computed, onMounted, onUnmounted } from 'vue';
+import { ref, reactive, computed, watch, onMounted, onUnmounted } from 'vue';
 import { usePlanner } from '~/composables/usePlanner';
 
 definePageMeta({});
 
 const {
-  todayTasks, focusToday, habits, stats, today,
+  todayTasks, focusToday, habits, stats, today, loading,
+  init, loadTasks,
   addTask, completeTask, removeTask, getTasksByDate,
   startFocus, endFocus, toggleHabit, isHabitDone, addHabit,
 } = usePlanner();
@@ -225,34 +226,40 @@ const focusTimerDisplay = computed(() => {
 
 let timerInterval: ReturnType<typeof setInterval> | null = null;
 const timerTick = ref(0);
-onMounted(() => { timerInterval = setInterval(() => { timerTick.value++; }, 1000); });
+onMounted(async () => {
+  timerInterval = setInterval(() => { timerTick.value++; }, 1000);
+  await init();
+});
 onUnmounted(() => { if (timerInterval) clearInterval(timerInterval); });
 
-function saveTask() {
-  addTask({ ...taskForm });
+// Fetch tasks when navigating dates
+watch(viewDate, (date) => { loadTasks(date); });
+
+async function saveTask() {
+  await addTask({ ...taskForm });
   Object.assign(taskForm, { title: '', date: today.value, timeSlot: '09:00', duration: 30, category: 'work', priority: 'medium' });
   showTaskDialog.value = false;
   ElMessage.success('Task planned!');
 }
 
-function beginFocus() {
-  startFocus(focusForm.taskTitle, focusForm.duration);
+async function beginFocus() {
+  await startFocus(focusForm.taskTitle, focusForm.duration);
   Object.assign(focusForm, { taskTitle: '', duration: 25 });
   showFocusDialog.value = false;
   ElMessage.success('Focus session started! 🎯');
 }
 
-function endCurrentFocus() {
-  if (activeFocus.value) { endFocus(activeFocus.value.id); ElMessage.success('Focus session completed! 🏆'); }
+async function endCurrentFocus() {
+  if (activeFocus.value) { await endFocus(activeFocus.value.id); ElMessage.success('Focus session completed! 🏆'); }
 }
 
-function quickFocus(task: any) {
-  startFocus(task.title, task.duration || 25, task.id);
+async function quickFocus(task: any) {
+  await startFocus(task.title, task.duration || 25, task.id);
   ElMessage.success(`Focus: ${task.title}`);
 }
 
-function saveHabit() {
-  addHabit(habitForm.name, habitForm.icon);
+async function saveHabit() {
+  await addHabit(habitForm.name, habitForm.icon);
   Object.assign(habitForm, { name: '', icon: '✅' });
   showHabitDialog.value = false;
   ElMessage.success('Habit added!');

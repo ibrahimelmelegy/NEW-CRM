@@ -10,7 +10,7 @@
           <h1 class="text-lg font-bold" style="color: var(--text-primary);">{{ proposal?.title || 'Proposal' }}</h1>
           <span class="text-xs font-mono" style="color: var(--text-muted);">{{ proposal?.reference }}</span>
         </div>
-        <el-tag v-if="proposal?.status" :type="statusTagType(proposal.status)" effect="dark" round size="small">
+        <el-tag v-if="proposal?.status" :type="statusTagType(proposal.status) as any" effect="dark" round size="small">
           {{ formatStatus(proposal.status) }}
         </el-tag>
       </div>
@@ -55,8 +55,7 @@ import ProposalApprovalActions from '~/components/DocumentBuilder/ProposalApprov
 
 definePageMeta({
   layout: 'full-width',
-  middleware: ['permissions'],
-  permission: 'VIEW_OWN_PROPOSALS'
+  middleware: 'permissions'
 });
 
 const route = useRoute();

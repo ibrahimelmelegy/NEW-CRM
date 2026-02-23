@@ -254,7 +254,7 @@ function processRevenue(allDeals: any[]) {
   wonDeals.forEach((deal: any) => {
     const d = new Date(deal.closeDate || deal.updatedAt || deal.createdAt);
     const key = d.toLocaleDateString('en-US', { month: 'short' });
-    if (key in months) months[key] += Number(deal.price || 0);
+    if (key in months) (months as any)[key] += Number(deal.price || 0);
   });
 
   const values = Object.values(months);
@@ -284,8 +284,8 @@ function processPipeline(allDeals: any[]) {
   allDeals.forEach((d: any) => {
     const stage = d.stage || 'PROGRESS';
     if (!stageMap[stage]) stageMap[stage] = { count: 0, value: 0 };
-    stageMap[stage].count++;
-    stageMap[stage].value += Number(d.price || 0);
+    stageMap[stage]!.count++;
+    stageMap[stage]!.value += Number(d.price || 0);
   });
 
   const maxCount = Math.max(...Object.values(stageMap).map(s => s.count), 1);
@@ -295,7 +295,7 @@ function processPipeline(allDeals: any[]) {
     count: stageMap[name]?.count || 0,
     value: stageMap[name]?.value || 0,
     width: ((stageMap[name]?.count || 0) / maxCount) * 100,
-    color: colors[i]
+    color: colors[i] || ''
   }));
 }
 

@@ -131,7 +131,7 @@ function endDraw() {
 }
 
 function startDrawTouch(e: TouchEvent) {
-  const touch = e.touches[0];
+  const touch = e.touches[0]!;
   const rect = signatureCanvas.value!.getBoundingClientRect();
   isDrawing = true;
   ctx?.beginPath();
@@ -140,7 +140,7 @@ function startDrawTouch(e: TouchEvent) {
 
 function drawTouch(e: TouchEvent) {
   if (!isDrawing || !ctx) return;
-  const touch = e.touches[0];
+  const touch = e.touches[0]!;
   const rect = signatureCanvas.value!.getBoundingClientRect();
   ctx.lineTo(touch.clientX - rect.left, touch.clientY - rect.top);
   ctx.stroke();

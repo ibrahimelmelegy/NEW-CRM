@@ -115,7 +115,7 @@ function parseFlags(args: string[]): Record<string, string> {
   const flags: Record<string, string> = {};
   for (const arg of args) {
     const match = arg.match(/^--(\w+)=(.+)$/);
-    if (match) {
+    if (match?.[1] && match[2]) {
       flags[match[1]] = match[2];
     }
   }
@@ -125,7 +125,7 @@ function parseFlags(args: string[]): Record<string, string> {
 function parseQuotedString(parts: string[]): string {
   const joined = parts.join(' ');
   const match = joined.match(/"([^"]+)"/);
-  if (match) return match[1];
+  if (match?.[1]) return match[1];
   // Also try without quotes
   return parts.filter(p => !p.startsWith('--')).join(' ');
 }
@@ -158,7 +158,7 @@ export function useCommandTerminal() {
     addLine('command', `> ${trimmed}`);
 
     const parts = trimmed.split(/\s+/);
-    const command = parts[0].toLowerCase();
+    const command = (parts[0] ?? '').toLowerCase();
     const args = parts.slice(1);
 
     switch (command) {
@@ -216,7 +216,7 @@ export function useCommandTerminal() {
       return;
     }
 
-    const target = args[0].toLowerCase();
+    const target = (args[0] ?? '').toLowerCase();
     const route = ROUTE_MAP[target];
 
     if (route) {
@@ -239,7 +239,7 @@ export function useCommandTerminal() {
       return;
     }
 
-    const entity = args[0].toLowerCase();
+    const entity = (args[0] ?? '').toLowerCase();
     const endpoint = LIST_ENDPOINT_MAP[entity];
 
     if (!endpoint) {
@@ -259,8 +259,9 @@ export function useCommandTerminal() {
 
     try {
       const response = await useApiFetch(`${endpoint}${queryParams}` as any);
-      if (response?.success && response?.body) {
-        const items = Array.isArray(response.body) ? response.body : (response.body as any)?.docs || (response.body as any)?.rows || [];
+      if (response?.success && response.body) {
+        const body = response.body as any;
+        const items: any[] = Array.isArray(body) ? body : body?.docs || body?.rows || [];
 
         if (items.length === 0) {
           addLine('result', 'No results found.');
@@ -301,9 +302,10 @@ export function useCommandTerminal() {
 
     try {
       const response = await useApiFetch(`search?q=${encodeURIComponent(query)}&limit=10` as any);
-      if (response?.success && response?.body) {
-        const results = (response.body as any)?.docs || response.body || [];
-        const items = Array.isArray(results) ? results : [];
+      if (response?.success && response.body) {
+        const body = response.body as any;
+        const results = body?.docs || body || [];
+        const items: any[] = Array.isArray(results) ? results : [];
 
         if (items.length === 0) {
           addLine('result', 'No results found.');
@@ -332,7 +334,7 @@ export function useCommandTerminal() {
       return;
     }
 
-    const entity = args[0].toLowerCase();
+    const entity = (args[0] ?? '').toLowerCase();
     const route = CREATE_ROUTE_MAP[entity];
 
     if (route) {
@@ -383,7 +385,7 @@ export function useCommandTerminal() {
       return;
     }
 
-    const mode = args[0].toLowerCase();
+    const mode = (args[0] ?? '').toLowerCase();
     if (mode !== 'dark' && mode !== 'light') {
       addLine('error', `Invalid theme: '${mode}'. Use 'dark' or 'light'.`);
       return;
@@ -411,11 +413,11 @@ export function useCommandTerminal() {
     if (direction === 'up') {
       if (historyIndex.value < history.value.length - 1) {
         historyIndex.value++;
-        input.value = history.value[historyIndex.value];
+        input.value = history.value[historyIndex.value] ?? '';
       }
     } else if (historyIndex.value > 0) {
       historyIndex.value--;
-      input.value = history.value[historyIndex.value];
+      input.value = history.value[historyIndex.value] ?? '';
     } else if (historyIndex.value === 0) {
       historyIndex.value = -1;
       input.value = '';
@@ -433,17 +435,17 @@ export function useCommandTerminal() {
 
     if (parts.length === 1) {
       // Autocomplete command name
-      const partial = parts[0].toLowerCase();
+      const partial = (parts[0] ?? '').toLowerCase();
       const matches = ALL_COMMANDS.filter(c => c.startsWith(partial));
       if (matches.length === 1) {
-        input.value = matches[0] + ' ';
+        input.value = (matches[0] ?? '') + ' ';
         suggestions.value = [];
       } else {
         suggestions.value = matches;
       }
     } else if (parts.length === 2) {
-      const command = parts[0].toLowerCase();
-      const partial = parts[1].toLowerCase();
+      const command = (parts[0] ?? '').toLowerCase();
+      const partial = (parts[1] ?? '').toLowerCase();
 
       let targets: string[] = [];
       if (command === 'goto' || command === 'go' || command === 'nav' || command === 'navigate') {
@@ -458,7 +460,7 @@ export function useCommandTerminal() {
 
       const matches = targets.filter(t => t.startsWith(partial));
       if (matches.length === 1) {
-        input.value = `${parts[0]} ${matches[0]} `;
+        input.value = `${parts[0] ?? ''} ${matches[0] ?? ''} `;
         suggestions.value = [];
       } else {
         suggestions.value = matches;

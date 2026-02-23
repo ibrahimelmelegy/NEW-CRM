@@ -283,8 +283,8 @@ describe('useApiCache.ts', () => {
 
       expect(stats.size).toBe(1);
       expect(stats.entries).toHaveLength(1);
-      expect(stats.entries[0].key).toBe('stats-key');
-      expect(stats.entries[0].isValid).toBe(true);
+      expect(stats.entries[0]!.key).toBe('stats-key');
+      expect(stats.entries[0]!.isValid).toBe(true);
     });
 
     it('should show expired entries in stats', async () => {
@@ -299,7 +299,7 @@ describe('useApiCache.ts', () => {
       vi.advanceTimersByTime(1500);
 
       const stats = getCacheStats();
-      expect(stats.entries[0].isValid).toBe(false);
+      expect(stats.entries[0]!.isValid).toBe(false);
 
       vi.useRealTimers();
     });

@@ -140,12 +140,14 @@
 </template>
 
 <script setup lang="ts">
-import { ref, reactive, computed } from 'vue';
+import { ref, reactive, computed, onMounted } from 'vue';
 import { useVirtualOffice } from '~/composables/useVirtualOffice';
 
 definePageMeta({});
 
-const { rooms, currentUser, currentRoom, stats, joinRoom, leaveRoom, setStatus, toggleMute, toggleCamera, toggleScreenShare, addRoom, toggleFocusMode } = useVirtualOffice();
+const { rooms, currentUser, currentRoom, stats, init, joinRoom, leaveRoom, setStatus, toggleMute, toggleCamera, toggleScreenShare, addRoom, toggleFocusMode } = useVirtualOffice();
+
+onMounted(() => { init(); });
 
 const showRoomDialog = ref(false);
 const roomForm = reactive({ name: '', type: 'office' as const, capacity: 10, description: '', icon: '🏢', color: '#7c3aed', isLocked: false });
@@ -153,8 +155,8 @@ const roomForm = reactive({ name: '', type: 'office' as const, capacity: 10, des
 const myOccupant = computed(() => currentRoom.value?.occupants.find(o => o.id === currentUser.value.userId));
 
 function handleStatus(status: string) { setStatus(status as any); }
-function saveRoom() {
-  addRoom({ ...roomForm } as any);
+async function saveRoom() {
+  await addRoom({ ...roomForm } as any);
   Object.assign(roomForm, { name: '', type: 'office', capacity: 10, description: '', icon: '🏢', color: '#7c3aed', isLocked: false });
   showRoomDialog.value = false;
   ElMessage.success('Room created!');

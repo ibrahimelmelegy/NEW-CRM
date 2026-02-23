@@ -205,8 +205,8 @@ async function handleMerge() {
     merging.value = true;
 
     // Build merged data from selections
-    const primaryRecord = mergeSet.value.records[0];
-    const secondaryRecord = mergeSet.value.records[1];
+    const primaryRecord = mergeSet.value.records[0]!;
+    const secondaryRecord = mergeSet.value.records[1]!;
     const mergedData: Record<string, any> = {};
     for (const field of mergeFields.value) {
       const selectedIdx = mergeSelections[field] || 0;

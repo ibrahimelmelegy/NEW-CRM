@@ -253,7 +253,7 @@ function addStep() {
 
 function editStep(idx: number) {
   if (!sequence.value) return;
-  const step = sequence.value.steps[idx];
+  const step = sequence.value.steps[idx]!;
   editingStepIndex.value = idx;
   stepForm.type = step.type;
   stepForm.subject = step.subject;

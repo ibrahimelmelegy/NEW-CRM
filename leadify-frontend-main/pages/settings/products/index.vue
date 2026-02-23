@@ -220,10 +220,10 @@ async function handleSave() {
   try {
     const payload = { ...form };
     if (isEditing.value) {
-      const res = await updateProduct(editingId.value, payload);
+      const res = await updateProduct(editingId.value, payload as any);
       if (res?.success) {
         const idx = products.value.findIndex(p => p.id === editingId.value);
-        if (idx >= 0) Object.assign(products.value[idx], payload);
+        if (idx >= 0) Object.assign(products.value[idx]!, payload);
         dialogVisible.value = false;
         ElNotification({ type: 'success', title: t('common.success'), message: t('common.updatedSuccessfully') });
       }

@@ -124,7 +124,7 @@ async function onDrop(event: DragEvent, newStatus: string) {
   draggedTask.status = newStatus;
 
   try {
-    await updateTask(draggedTask.id, { status: newStatus });
+    await updateTask(draggedTask.id, { status: newStatus } as any);
     ElNotification({ type: 'success', title: 'Updated', message: `Task moved to ${newStatus.replace(/_/g, ' ')}` });
   } catch {
     draggedTask.status = oldStatus;

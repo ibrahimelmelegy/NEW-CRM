@@ -273,7 +273,7 @@ function createGoal() {
     // Update existing goal
     const idx = goals.value.findIndex(g => g.id === editingGoalId.value);
     if (idx !== -1) {
-      const existing = goals.value[idx];
+      const existing = goals.value[idx]!;
       goals.value[idx] = {
         ...existing,
         name: newGoal.value.name,

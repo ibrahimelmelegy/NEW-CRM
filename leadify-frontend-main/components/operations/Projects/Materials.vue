@@ -226,13 +226,14 @@ function removeDuplicatesKeepLast(arr: any) {
 function handleAdditionalMaterialItem(newItem: any) {
   // Iterate over each key in the new item
   for (const key in newItem) {
+    const numKey = Number(key);
     // Check if the key already exists in the existing data
     if (addMaterialItems.value?.hasOwnProperty(key)) {
       // If the key exists, override the existing array with the new array (no addition, only replacement)
-      addMaterialItems.value[key] = newItem[key];
+      addMaterialItems.value[numKey] = newItem[key];
     } else {
       // If the key does not exist, add the new key-value pair
-      addMaterialItems.value[key] = newItem[key];
+      addMaterialItems.value[numKey] = newItem[key];
     }
   }
 }
@@ -297,6 +298,7 @@ interface Material {
   description: string;
   serviceId?: string;
   service?: { price?: number };
+  name?: string;
 }
 
 interface AdditionalMaterial {
@@ -322,6 +324,8 @@ interface MaterialMappedData {
 interface Service {
   id: string;
   name: string;
+  price?: number;
+  type?: string;
 }
 
 function getMaterialMargin(val: any) {

@@ -57,9 +57,10 @@ export function useNotificationCenter() {
     loading.value = true;
     try {
       const res = await useApiFetch('notification?limit=50', 'GET', {}, true);
-      if (res?.success && res?.body) {
-        notifications.value = res.body.docs || [];
-        unreadCount.value = res.body.unreadNotificationsCount || 0;
+      if (res?.success && res.body) {
+        const body = res.body as any;
+        notifications.value = body.docs || [];
+        unreadCount.value = body.unreadNotificationsCount || 0;
       }
     } catch (e) {
       console.error('[NotificationCenter] Failed to fetch:', e);
@@ -72,8 +73,9 @@ export function useNotificationCenter() {
   async function fetchUnreadCount() {
     try {
       const res = await useApiFetch('notification/unread-count', 'GET', {}, true);
-      if (res?.success && res?.body) {
-        unreadCount.value = res.body.count || 0;
+      if (res?.success && res.body) {
+        const body = res.body as any;
+        unreadCount.value = body.count || 0;
       }
     } catch (e) {
       // Silently fail - this is a background poll
@@ -105,11 +107,11 @@ export function useNotificationCenter() {
     const weekAgo = new Date(today);
     weekAgo.setDate(weekAgo.getDate() - 7);
 
-    const groups: Record<string, NotificationData[]> = {
-      today: [],
-      yesterday: [],
-      thisWeek: [],
-      older: []
+    const groups = {
+      today: [] as NotificationData[],
+      yesterday: [] as NotificationData[],
+      thisWeek: [] as NotificationData[],
+      older: [] as NotificationData[]
     };
 
     for (const notif of items) {
@@ -166,8 +168,9 @@ export function useNotificationCenter() {
       const res = await useApiFetch(`notification/read/${id}` as any, 'PUT');
       if (res?.success) {
         const idx = notifications.value.findIndex(n => n.id === id);
-        if (idx !== -1) {
-          notifications.value[idx] = { ...notifications.value[idx], read: 'READ' };
+        const existing = notifications.value[idx];
+        if (idx !== -1 && existing) {
+          notifications.value[idx] = { ...existing, read: 'READ' };
           // Trigger reactivity
           notifications.value = [...notifications.value];
           unreadCount.value = Math.max(0, unreadCount.value - 1);
@@ -184,8 +187,9 @@ export function useNotificationCenter() {
       await useApiFetch(`notification/click/${notif.id}` as any, 'PUT', {}, true);
       // Update local state
       const idx = notifications.value.findIndex(n => n.id === notif.id);
-      if (idx !== -1 && notifications.value[idx].read === 'UN_READ') {
-        notifications.value[idx] = { ...notifications.value[idx], read: 'CLICKED' };
+      const existing = notifications.value[idx];
+      if (idx !== -1 && existing && existing.read === 'UN_READ') {
+        notifications.value[idx] = { ...existing, read: 'CLICKED' };
         notifications.value = [...notifications.value];
         unreadCount.value = Math.max(0, unreadCount.value - 1);
       }
@@ -199,8 +203,9 @@ export function useNotificationCenter() {
     if (!notif.target) return null;
 
     // Derive entity type from notification type
-    let typeAssign = notif.type.split('_')[0]?.toLowerCase();
-    if (!typeAssign) return null;
+    const firstPart = notif.type.split('_')[0];
+    if (!firstPart) return null;
+    let typeAssign = firstPart.toLowerCase();
 
     // Pluralize and map to routes
     if (typeAssign === 'opportunity') {

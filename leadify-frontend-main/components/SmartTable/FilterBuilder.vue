@@ -246,7 +246,7 @@ const onFieldChange = (index: number) => {
   if (!rule) return;
   // Reset operator and value when field changes
   const ops = getOperatorsForField(rule.field);
-  rule.operator = ops[0]?.value || 'equals';
+  rule.operator = ops![0]?.value || 'equals';
   rule.value = rule.operator === 'between' ? ['', ''] : '';
 };
 

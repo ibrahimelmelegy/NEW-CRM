@@ -239,7 +239,7 @@ async function handleSave() {
     ElMessage.warning(t('common.fillRequired'));
     return;
   }
-  if (form.value.lineItems.length === 0 || !form.value.lineItems[0].name) {
+  if (form.value.lineItems.length === 0 || !form.value.lineItems[0]!.name) {
     ElMessage.warning(t('zatca.addItemRequired'));
     return;
   }
@@ -255,7 +255,7 @@ async function handleSave() {
       vatAmount: totals.value.vatAmount,
       totalAmount: totals.value.totalAmount
     };
-    const res = await createZatcaInvoice(payload);
+    const res = await createZatcaInvoice(payload as any);
     if (res.success) {
       ElMessage.success(t('common.created'));
       router.push('/finance/zatca');

@@ -84,7 +84,7 @@ watch(() => props.cards, (newCards) => {
   // Deep clone to avoid mutating parent
   const cloned: Record<string, KanbanCard[]> = {};
   for (const key of Object.keys(newCards)) {
-    cloned[key] = [...newCards[key]];
+    cloned[key] = [...(newCards[key] || [])];
   }
   localCards.value = cloned;
 }, { immediate: true, deep: true });

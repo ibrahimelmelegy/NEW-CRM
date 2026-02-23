@@ -32,7 +32,7 @@ const isDeliveries = ref(false);
 
 const combinedValues = ref<DealValues>({});
 
-const deal = await getDeal(route.params.slug);
+const deal = await getDeal(route.params.slug as string);
 
 function getDealInformation(values: any) {
   combinedValues.value = { ...combinedValues.value, ...values };
@@ -70,10 +70,10 @@ async function saveAllForms() {
         await updateDeal({
           ...combinedValues.value.deal,
           clientId: combinedValues.value.clientId,
-          dealId: route.params.slug
+          dealId: route.params.slug as string
         });
       } else {
-        await updateDeal({ ...combinedValues.value, dealId: route.params.slug });
+        await updateDeal({ ...combinedValues.value, dealId: route.params.slug as string });
       }
       // console.log("combinedValues.value", combinedValues.value);
     }

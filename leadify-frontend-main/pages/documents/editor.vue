@@ -505,7 +505,7 @@ const form = ref({
 
 // --- Computed ---
 const currentTypeConfig = computed<DocTypeConfig>(() => {
-  return documentTypes.find(dt => dt.type === selectedType.value) || documentTypes[0];
+  return documentTypes.find(dt => dt.type === selectedType.value) || documentTypes[0] as any;
 });
 
 const computedTotals = computed(() => {

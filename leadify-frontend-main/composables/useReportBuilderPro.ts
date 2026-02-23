@@ -317,14 +317,15 @@ export function useReportBuilderPro() {
   }
 
   function getActiveModuleFields(): FieldDefinition[] {
-    const moduleKey = config.value.modules[0];
-    return getModuleFields(moduleKey);
+    const moduleKey = config.value.modules[0] as string | undefined;
+    return moduleKey ? getModuleFields(moduleKey) : [];
   }
 
   function getFieldDefinition(fieldName: string): FieldDefinition | undefined {
-    const moduleKey = config.value.modules[0];
+    const moduleKey = config.value.modules[0] as string | undefined;
+    if (!moduleKey) return undefined;
     const mod = MODULE_DEFINITIONS[moduleKey];
-    return mod?.fields.find(f => f.name === fieldName);
+    return mod?.fields.find((f: FieldDefinition) => f.name === fieldName);
   }
 
   // ─── Report Execution ───────────────────────────────────
@@ -467,7 +468,7 @@ export function useReportBuilderPro() {
   async function saveReport(name: string, description?: string): Promise<any> {
     saving.value = true;
     try {
-      const moduleKey = config.value.modules[0];
+      const moduleKey = config.value.modules[0] as string | undefined;
       const entityTypeMap: Record<string, string> = {
         leads: 'LEAD',
         deals: 'DEAL',
@@ -482,7 +483,7 @@ export function useReportBuilderPro() {
       const payload = {
         name,
         description,
-        entityType: entityTypeMap[moduleKey] || moduleKey.toUpperCase(),
+        entityType: (moduleKey ? entityTypeMap[moduleKey] : undefined) || moduleKey?.toUpperCase() || 'LEAD',
         fields: config.value.fields,
         filters: config.value.filters,
         groupBy: config.value.groupBy || null,
@@ -593,7 +594,7 @@ export function useReportBuilderPro() {
     const series: any = {
       type: seriesType,
       data: values,
-      itemStyle: { color: colors[0], borderRadius: chartType === 'bar' || chartType === 'stacked' ? [4, 4, 0, 0] : 0 },
+      itemStyle: { color: colors?.[0], borderRadius: chartType === 'bar' || chartType === 'stacked' ? [4, 4, 0, 0] : 0 },
       smooth: chartType === 'line' || chartType === 'area',
       areaStyle: chartType === 'area' ? { opacity: 0.3 } : undefined,
       stack: chartType === 'stacked' ? 'total' : undefined,

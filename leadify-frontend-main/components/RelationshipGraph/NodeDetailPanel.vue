@@ -44,7 +44,7 @@ function getIcon(type: string): string {
 
 function navigateTo() {
   if (!props.node) return;
-  const [type, id] = props.node.id.split('-');
+  const [type, id] = props.node.id.split('-') as [string, string];
   const routes: Record<string, string> = {
     lead: `/sales/leads/${id}`,
     deal: `/sales/deals/${id}`,

@@ -16,12 +16,12 @@ export default function useQuery(currentPage: Ref<number>, sort: Ref<string>, fi
 
   onMounted(async () => {
     currentPageRef.value = route.query?.pageNumber ? Number(route.query?.pageNumber) : currentPageRef.value;
-    searchRef.value = route.query?.find ? route.query?.find : searchRef.value;
-    sortRef.value = route.query?.sortOption ? decode(route.query?.sortOption || {}) : sortRef.value;
-    filtersRef.value = route.query?.filterOptions ? decode(route.query?.filterOptions || {}) : filtersRef.value;
+    searchRef.value = route.query?.find ? String(route.query?.find) : searchRef.value;
+    sortRef.value = route.query?.sortOption ? decode(String(route.query?.sortOption)) : sortRef.value;
+    filtersRef.value = route.query?.filterOptions ? decode(String(route.query?.filterOptions)) : filtersRef.value;
   });
 
-  function decode(value: object) {
+  function decode(value: string) {
     try {
       const data = JSON.parse(decodeURIComponent(value));
       return data;

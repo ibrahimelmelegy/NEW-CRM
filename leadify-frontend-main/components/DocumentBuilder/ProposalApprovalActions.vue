@@ -2,7 +2,7 @@
   <div class="flex items-center gap-3">
     <!-- Status Badge -->
     <el-tag
-      :type="statusConfig.type"
+      :type="statusConfig.type as any"
       effect="dark"
       round
       size="default"
@@ -94,8 +94,10 @@ const loading = ref(false);
 const rejectDialogVisible = ref(false);
 const rejectReason = ref('');
 
+type TagType = '' | 'success' | 'warning' | 'info' | 'danger';
+
 const statusConfig = computed(() => {
-  const map: Record<string, { label: string; type: string; icon: string }> = {
+  const map: Record<string, { label: string; type: TagType; icon: string }> = {
     DRAFT: { label: 'Draft', type: 'info', icon: 'ph:pencil-simple' },
     WAITING_APPROVAL: { label: 'Waiting Approval', type: 'warning', icon: 'ph:hourglass' },
     APPROVED: { label: 'Approved', type: 'success', icon: 'ph:check-circle' },
@@ -103,7 +105,7 @@ const statusConfig = computed(() => {
     ARCHIVED: { label: 'Archived', type: 'info', icon: 'ph:archive' },
     SENT: { label: 'Sent', type: '', icon: 'ph:paper-plane-tilt' },
   };
-  return map[props.status] || { label: props.status, type: '', icon: 'ph:question' };
+  return map[props.status] || { label: props.status, type: '' as TagType, icon: 'ph:question' };
 });
 
 async function handleSubmit() {

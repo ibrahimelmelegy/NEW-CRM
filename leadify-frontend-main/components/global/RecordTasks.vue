@@ -213,9 +213,9 @@ async function saveTask() {
     };
 
     if (editingTask.value) {
-      await updateTask(editingTask.value.id, data);
+      await updateTask(editingTask.value.id, data as any);
     } else {
-      await createTask(data);
+      await createTask(data as any);
     }
     dialogVisible.value = false;
     await loadTasks();

@@ -274,7 +274,7 @@ const onSubmit = handleSubmit((values: any) => {
     // Prepare submission payload
     const leadId = route.query?.leadId;
     const opportunityId = route.query?.opportunityId;
-    const shouldSubmitWithLead = leadId || (mappedLeads?.length && !switchType.value && values.leadId);
+    const shouldSubmitWithLead = leadId || (mappedLeads.value?.length && !switchType.value && values.leadId);
 
     const payload =
       shouldSubmitWithLead || selectedClient.value

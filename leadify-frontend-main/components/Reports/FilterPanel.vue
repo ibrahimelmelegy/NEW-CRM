@@ -245,13 +245,13 @@ function getFieldOptions(fieldName: string): string[] {
 
 function getOperatorsForField(fieldName: string): { value: string; label: string }[] {
   const type = getFieldType(fieldName);
-  return FILTER_OPERATORS_BY_TYPE[type] || FILTER_OPERATORS_BY_TYPE.text;
+  return FILTER_OPERATORS_BY_TYPE[type] ?? FILTER_OPERATORS_BY_TYPE.text ?? [];
 }
 
 function getOperatorLabel(operator: string, fieldType?: string): string {
   const type = fieldType || 'text';
-  const ops = FILTER_OPERATORS_BY_TYPE[type] || FILTER_OPERATORS_BY_TYPE.text;
-  const op = ops.find(o => o.value === operator);
+  const ops = FILTER_OPERATORS_BY_TYPE[type] ?? FILTER_OPERATORS_BY_TYPE.text ?? [];
+  const op = ops.find((o: { value: string; label: string }) => o.value === operator);
   return op?.label || operator;
 }
 
@@ -262,7 +262,7 @@ function isNoValueOperator(operator: string): boolean {
 function formatFilterValue(filter: ReportFilter): string {
   if (isNoValueOperator(filter.operator)) return '';
   if (Array.isArray(filter.value)) {
-    return filter.value.join(' - ');
+    return (filter.value as any[]).join(' - ');
   }
   return String(filter.value ?? '');
 }
@@ -292,9 +292,9 @@ function clearAll() {
 function updateFilterField(index: number, fieldName: string) {
   const updated = [...props.modelValue];
   const fieldType = getFieldType(fieldName);
-  const operators = FILTER_OPERATORS_BY_TYPE[fieldType] || FILTER_OPERATORS_BY_TYPE.text;
+  const operators = FILTER_OPERATORS_BY_TYPE[fieldType] ?? FILTER_OPERATORS_BY_TYPE.text ?? [];
   updated[index] = {
-    ...updated[index],
+    ...updated[index]!,
     field: fieldName,
     fieldType,
     operator: operators[0]?.value || 'equals',
@@ -305,15 +305,16 @@ function updateFilterField(index: number, fieldName: string) {
 
 function updateFilterProp(index: number, prop: string, value: any) {
   const updated = [...props.modelValue];
-  updated[index] = { ...updated[index], [prop]: value };
+  updated[index] = { ...updated[index]!, [prop]: value };
   emit('update:modelValue', updated);
 }
 
 function updateBetweenValue(index: number, pos: number, value: any) {
   const updated = [...props.modelValue];
-  const current = Array.isArray(updated[index].value) ? [...updated[index].value] : ['', ''];
+  const currentVal = updated[index]!.value;
+  const current: any[] = Array.isArray(currentVal) ? [...currentVal] : ['', ''];
   current[pos] = value;
-  updated[index] = { ...updated[index], value: current };
+  updated[index] = { ...updated[index]!, value: current };
   emit('update:modelValue', updated);
 }
 </script>

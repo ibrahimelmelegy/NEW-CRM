@@ -25,11 +25,8 @@ const loading = ref(false);
 async function submitForm(values: LeadValues) {
   loading.value = true;
   try {
-    const response = await createLead(values);
-    if (response) {
-      ElNotification.success(t('leads.createSuccess'));
-      await router.push('/sales/leads');
-    }
+    await createLead(values);
+    await router.push('/sales/leads');
   } catch (error: any) {
     ElNotification.error(error?.message || t('errors.generic'));
   } finally {

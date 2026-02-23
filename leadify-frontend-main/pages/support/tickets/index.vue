@@ -147,15 +147,15 @@ function handleRowClick(row: any) {
 }
 
 function getStatusColor(status: string): string {
-  return getStatusOption(status).color;
+  return getStatusOption(status)!.color;
 }
 
 function getStatusLabel(status: string): string {
-  return getStatusOption(status).label;
+  return getStatusOption(status)!.label;
 }
 
 function getPriorityColor(priority: string): string {
-  return getPriorityOption(priority).color;
+  return getPriorityOption(priority)!.color;
 }
 
 function formatDate(dateStr: string): string {

@@ -107,7 +107,7 @@ import {
   ActivityDirection,
   ContactType,
   activityTypeOptions,
-  type Activity
+  type CommunicationActivity as Activity
 } from '../../composables/useCommunication';
 
 interface Props {

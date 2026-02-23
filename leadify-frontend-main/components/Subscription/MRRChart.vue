@@ -48,7 +48,7 @@ function formatMonth(month: string): string {
   if (!month) return '';
   const [year, m] = month.split('-');
   const months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
-  return months[parseInt(m, 10) - 1] || month;
+  return months[parseInt(m!, 10) - 1] || month;
 }
 
 function formatAmount(amount: number): string {

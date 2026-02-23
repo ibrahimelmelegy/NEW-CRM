@@ -44,6 +44,7 @@ export function useMobile() {
 
     function onTouchStart(e: TouchEvent) {
       const touch = e.touches[0];
+      if (!touch) return;
       startX = touch.clientX;
       startY = touch.clientY;
       startTime = Date.now();
@@ -56,6 +57,7 @@ export function useMobile() {
       if (!isSwiping.value) return;
 
       const touch = e.touches[0];
+      if (!touch) return;
       const diffX = touch.clientX - startX;
       const diffY = touch.clientY - startY;
       const absDiffX = Math.abs(diffX);

@@ -412,7 +412,7 @@ function triggerFileInput() {
 function handleFileSelect(event: Event) {
   const input = event.target as HTMLInputElement;
   if (input.files?.length) {
-    uploadedFile.value = input.files[0];
+    uploadedFile.value = input.files[0] ?? null;
   }
 }
 
@@ -420,11 +420,11 @@ function handleDrop(event: DragEvent) {
   isDragging.value = false;
   const files = event.dataTransfer?.files;
   if (files?.length) {
-    const file = files[0];
+    const file = files[0]!;
     const validTypes = ['.csv', '.xlsx', '.xls'];
     const ext = '.' + file.name.split('.').pop()?.toLowerCase();
     if (validTypes.includes(ext)) {
-      uploadedFile.value = file;
+      uploadedFile.value = file ?? null;
     } else {
       ElMessage.warning('Please upload a CSV or Excel file');
     }

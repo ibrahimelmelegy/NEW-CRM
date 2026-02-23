@@ -105,7 +105,7 @@ const matchesSearch = (col: SmartTableColumn) => {
 };
 
 const toggleVisibility = (index: number) => {
-  localColumns.value[index].visible = !localColumns.value[index].visible;
+  localColumns.value[index]!.visible = !localColumns.value[index]!.visible;
 };
 
 const selectAll = () => {

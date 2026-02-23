@@ -1,11 +1,14 @@
 /**
  * Virtual Office System
  * Team presence, rooms, status, and virtual workspace management.
+ * Backed by /api/virtual-office REST endpoints + Socket.io real-time events.
  */
-import { ref, computed } from 'vue';
+import { ref, computed, watch } from 'vue';
+import { useApiFetch } from './useApiFetch';
+import { user } from './useUser';
 
 export interface VirtualRoom {
-    id: string;
+    id: number;
     name: string;
     type: 'office' | 'meeting' | 'lounge' | 'focus' | 'call';
     icon: string;
@@ -17,7 +20,7 @@ export interface VirtualRoom {
 }
 
 export interface RoomOccupant {
-    id: string;
+    id: number;
     name: string;
     avatar?: string;
     status: 'available' | 'busy' | 'away' | 'dnd' | 'offline';
@@ -28,44 +31,27 @@ export interface RoomOccupant {
 }
 
 export interface VirtualOfficePresence {
-    userId: string;
+    userId: number;
     name: string;
     status: 'available' | 'busy' | 'away' | 'dnd' | 'offline';
     statusMessage?: string;
-    currentRoomId?: string;
+    currentRoomId?: number;
     lastSeen: string;
     focusMode: boolean;
     avatar?: string;
 }
 
-const ROOMS_KEY = 'crm_virtual_rooms';
-const PRESENCE_KEY = 'crm_user_presence';
-
-function loadRooms(): VirtualRoom[] {
-    try { return JSON.parse(localStorage.getItem(ROOMS_KEY) || 'null') || getDefaultRooms(); }
-    catch { return getDefaultRooms(); }
-}
-
-function getDefaultRooms(): VirtualRoom[] {
-    return [
-        { id: 'main-office', name: 'Main Office', type: 'office', icon: '🏢', color: '#7c3aed', capacity: 50, occupants: [], isLocked: false, description: 'General workspace — open for everyone' },
-        { id: 'meeting-1', name: 'Meeting Room A', type: 'meeting', icon: '🤝', color: '#3b82f6', capacity: 10, occupants: [], isLocked: false, description: 'Client calls & team meetings' },
-        { id: 'meeting-2', name: 'Meeting Room B', type: 'meeting', icon: '📋', color: '#06b6d4', capacity: 8, occupants: [], isLocked: false, description: 'Internal syncs' },
-        { id: 'lounge', name: 'Coffee Lounge', type: 'lounge', icon: '☕', color: '#f59e0b', capacity: 20, occupants: [], isLocked: false, description: 'Casual chat — take a break!' },
-        { id: 'focus', name: 'Focus Zone', type: 'focus', icon: '🎯', color: '#22c55e', capacity: 15, occupants: [], isLocked: false, description: 'Deep work — minimal interruptions' },
-        { id: 'call-room', name: 'Phone Booth', type: 'call', icon: '📞', color: '#ef4444', capacity: 1, occupants: [], isLocked: false, description: 'Private calls' },
-    ];
-}
-
-function saveRooms(rooms: VirtualRoom[]) { localStorage.setItem(ROOMS_KEY, JSON.stringify(rooms)); }
-
-const rooms = ref<VirtualRoom[]>(loadRooms());
+const rooms = ref<VirtualRoom[]>([]);
 const currentUser = ref<VirtualOfficePresence>({
-    userId: 'me', name: 'You', status: 'available',
-    statusMessage: '', currentRoomId: undefined, lastSeen: new Date().toISOString(), focusMode: false,
+    userId: 0, name: 'You', status: 'available',
+    statusMessage: '', currentRoomId: undefined,
+    lastSeen: new Date().toISOString(), focusMode: false,
 });
+const loading = ref(false);
 
 export function useVirtualOffice() {
+    const { socket } = useSocket();
+
     const onlineCount = computed(() => rooms.value.reduce((s, r) => s + r.occupants.length, 0));
     const currentRoom = computed(() => rooms.value.find(r => r.id === currentUser.value.currentRoomId));
 
@@ -76,80 +62,140 @@ export function useVirtualOffice() {
         activeMeetings: rooms.value.filter(r => r.type === 'meeting' && r.occupants.length > 0).length,
     }));
 
-    function joinRoom(roomId: string) {
-        // Leave current room first
-        if (currentUser.value.currentRoomId) leaveRoom();
-        const room = rooms.value.find(r => r.id === roomId);
-        if (!room) return;
-        if (room.occupants.length >= room.capacity) return;
+    // ── Initialize ──
+    async function init() {
+        loading.value = true;
 
-        room.occupants.push({
-            id: currentUser.value.userId, name: currentUser.value.name,
-            status: currentUser.value.status, joinedAt: new Date().toISOString(),
-            isMuted: false, isCameraOn: false, isScreenSharing: false,
+        // Set current user from auth
+        const u = user.value;
+        if (u?.id) {
+            currentUser.value.userId = u.id;
+            currentUser.value.name = u.firstName
+                ? `${u.firstName} ${u.lastName || ''}`.trim()
+                : u.email || 'You';
+            currentUser.value.avatar = u.profilePicture;
+        }
+
+        // Load rooms from API (seeds defaults on first call)
+        const { body, success } = await useApiFetch('virtual-office/rooms');
+        if (success && Array.isArray(body)) {
+            rooms.value = body.map((r: any) => ({ ...r, occupants: [] }));
+        }
+
+        // Announce presence and sync current state via socket
+        socket.value?.emit('vo:presence', {
+            userId: currentUser.value.userId,
+            name: currentUser.value.name,
+            avatar: currentUser.value.avatar,
+        });
+        socket.value?.emit('vo:sync');
+
+        loading.value = false;
+    }
+
+    // ── Socket listeners ──
+    watch(socket, (s) => {
+        if (!s) return;
+
+        // Sync response (initial state)
+        s.on('vo:sync-response', (data: { rooms: Record<number, RoomOccupant[]>; presence: VirtualOfficePresence[] }) => {
+            for (const room of rooms.value) {
+                room.occupants = data.rooms[room.id] || [];
+            }
+            // Check if current user is already in a room
+            const myPresence = data.presence.find(p => p.userId === currentUser.value.userId);
+            if (myPresence?.currentRoomId) {
+                currentUser.value.currentRoomId = myPresence.currentRoomId;
+            }
+        });
+
+        // Room occupant updates
+        s.on('vo:room-update', (data: { roomId: number; occupants: RoomOccupant[] }) => {
+            const room = rooms.value.find(r => r.id === data.roomId);
+            if (room) room.occupants = data.occupants;
+        });
+
+        // Presence updates
+        s.on('vo:presence-update', (_presence: VirtualOfficePresence[]) => {
+            // Could update an online users list if needed
+        });
+
+        // Announce presence
+        s.emit('vo:presence', {
+            userId: currentUser.value.userId,
+            name: currentUser.value.name,
+            avatar: currentUser.value.avatar,
+        });
+        s.emit('vo:sync');
+    });
+
+    // ── Room Actions (via Socket.io for real-time) ──
+    function joinRoom(roomId: number) {
+        const room = rooms.value.find(r => r.id === roomId);
+        if (!room || room.occupants.length >= room.capacity) return;
+
+        socket.value?.emit('vo:join', {
+            roomId,
+            userId: currentUser.value.userId,
+            name: currentUser.value.name,
+            avatar: currentUser.value.avatar,
         });
         currentUser.value.currentRoomId = roomId;
-        saveRooms(rooms.value);
     }
 
     function leaveRoom() {
         if (!currentUser.value.currentRoomId) return;
-        const room = rooms.value.find(r => r.id === currentUser.value.currentRoomId);
-        if (room) room.occupants = room.occupants.filter(o => o.id !== currentUser.value.userId);
+        socket.value?.emit('vo:leave');
         currentUser.value.currentRoomId = undefined;
-        saveRooms(rooms.value);
     }
 
     function setStatus(status: VirtualOfficePresence['status'], message?: string) {
         currentUser.value.status = status;
         if (message !== undefined) currentUser.value.statusMessage = message;
         currentUser.value.lastSeen = new Date().toISOString();
-        // Update in room
-        if (currentUser.value.currentRoomId) {
-            const room = rooms.value.find(r => r.id === currentUser.value.currentRoomId);
-            const occ = room?.occupants.find(o => o.id === currentUser.value.userId);
-            if (occ) occ.status = status;
-            saveRooms(rooms.value);
-        }
+        socket.value?.emit('vo:status', { status, statusMessage: message });
     }
 
     function toggleMute() {
-        const room = rooms.value.find(r => r.id === currentUser.value.currentRoomId);
-        const occ = room?.occupants.find(o => o.id === currentUser.value.userId);
-        if (occ) { occ.isMuted = !occ.isMuted; saveRooms(rooms.value); }
+        socket.value?.emit('vo:toggle', { field: 'isMuted' });
     }
 
     function toggleCamera() {
-        const room = rooms.value.find(r => r.id === currentUser.value.currentRoomId);
-        const occ = room?.occupants.find(o => o.id === currentUser.value.userId);
-        if (occ) { occ.isCameraOn = !occ.isCameraOn; saveRooms(rooms.value); }
+        socket.value?.emit('vo:toggle', { field: 'isCameraOn' });
     }
 
     function toggleScreenShare() {
-        const room = rooms.value.find(r => r.id === currentUser.value.currentRoomId);
-        const occ = room?.occupants.find(o => o.id === currentUser.value.userId);
-        if (occ) { occ.isScreenSharing = !occ.isScreenSharing; saveRooms(rooms.value); }
+        socket.value?.emit('vo:toggle', { field: 'isScreenSharing' });
     }
 
-    function addRoom(data: Omit<VirtualRoom, 'id' | 'occupants'>) {
-        rooms.value.push({ ...data, id: `room_${Date.now()}`, occupants: [] });
-        saveRooms(rooms.value);
+    // ── Room CRUD (via REST API) ──
+    async function addRoom(data: Omit<VirtualRoom, 'id' | 'occupants'>) {
+        const { body, success } = await useApiFetch('virtual-office/rooms', 'POST', data as any);
+        if (success && body) {
+            rooms.value.push({ ...body, occupants: [] });
+        }
     }
 
-    function removeRoom(id: string) {
-        rooms.value = rooms.value.filter(r => r.id !== id);
-        saveRooms(rooms.value);
+    async function removeRoom(id: number) {
+        const { success } = await useApiFetch(`virtual-office/rooms/${id}`, 'DELETE');
+        if (success) rooms.value = rooms.value.filter(r => r.id !== id);
     }
 
     function toggleFocusMode() {
         currentUser.value.focusMode = !currentUser.value.focusMode;
-        if (currentUser.value.focusMode) setStatus('dnd', '🎯 Focus Mode');
-        else setStatus('available', '');
+        socket.value?.emit('vo:focus', { focusMode: currentUser.value.focusMode });
+        if (currentUser.value.focusMode) {
+            currentUser.value.status = 'dnd';
+            currentUser.value.statusMessage = '🎯 Focus Mode';
+        } else {
+            currentUser.value.status = 'available';
+            currentUser.value.statusMessage = '';
+        }
     }
 
     return {
-        rooms, currentUser, currentRoom, stats, onlineCount,
-        joinRoom, leaveRoom, setStatus, toggleMute, toggleCamera,
+        rooms, currentUser, currentRoom, stats, onlineCount, loading,
+        init, joinRoom, leaveRoom, setStatus, toggleMute, toggleCamera,
         toggleScreenShare, addRoom, removeRoom, toggleFocusMode,
     };
 }

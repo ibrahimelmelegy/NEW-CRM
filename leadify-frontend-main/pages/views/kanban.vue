@@ -46,7 +46,7 @@
               <Icon name="ph:plus" class="w-4 h-4 text-slate-500" />
             </el-button>
           </div>
-          <div v-if="col.totalValue" class="text-xs text-slate-500 mt-1">{{ formatCurrency(col.totalValue) }}</div>
+          <div v-if="(col as any).totalValue" class="text-xs text-slate-500 mt-1">{{ formatCurrency((col as any).totalValue) }}</div>
         </div>
 
         <!-- Drop Zone -->

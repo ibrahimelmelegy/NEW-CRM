@@ -48,7 +48,7 @@
         <div class="space-y-4">
           <div v-for="mention in mentions" :key="mention.id" class="glass-panel p-5 rounded-xl hover:border-primary-500/30 transition-all">
             <div class="flex items-start gap-3">
-              <el-avatar :size="40" :src="mention.avatar" class="bg-slate-700 flex-shrink-0">{{ mention.author.charAt(0) }}</el-avatar>
+              <el-avatar :size="40" :src="(mention as any).avatar" class="bg-slate-700 flex-shrink-0">{{ mention.author.charAt(0) }}</el-avatar>
               <div class="flex-1">
                 <div class="flex items-center gap-2 mb-1">
                   <span class="text-sm font-medium text-slate-200">{{ mention.author }}</span>

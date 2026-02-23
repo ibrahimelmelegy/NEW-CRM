@@ -111,7 +111,7 @@ export function useDocumentBuilder() {
         html2canvas: { scale: 2, useCORS: true, logging: false },
         jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' },
         pagebreak: { mode: ['css', 'legacy'], before: '.proposal-print-page' }
-      }).from(container).save();
+      } as any).from(container).save();
     } finally {
       document.body.removeChild(container);
     }

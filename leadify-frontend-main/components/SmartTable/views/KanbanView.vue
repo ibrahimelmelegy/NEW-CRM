@@ -171,9 +171,9 @@ const groupColors = [
 const getGroupColor = (key: string) => {
   if (!groupColorMap.has(key)) {
     const idx = groupColorMap.size % groupColors.length;
-    groupColorMap.set(key, groupColors[idx]);
+    groupColorMap.set(key, groupColors[idx]!);
   }
-  return groupColorMap.get(key);
+  return groupColorMap.get(key) || '';
 };
 
 const getStatusTagType = (status: string): string => {

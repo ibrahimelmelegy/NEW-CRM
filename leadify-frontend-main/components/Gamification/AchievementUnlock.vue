@@ -48,7 +48,7 @@ function launchConfetti() {
       y: canvas.height / 2,
       vx: (Math.random() - 0.5) * 15,
       vy: (Math.random() - 0.5) * 15 - 5,
-      color: colors[Math.floor(Math.random() * colors.length)],
+      color: colors[Math.floor(Math.random() * colors.length)] || '',
       size: Math.random() * 8 + 3,
       life: 1
     });

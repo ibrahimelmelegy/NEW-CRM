@@ -29,8 +29,8 @@ const unitLabel = computed(() => {
     hours: ['hour', 'hours'],
     days: ['day', 'days']
   };
-  const pair = labels[unit] || labels.hours;
-  return delay === 1 ? pair[0] : pair[1];
+  const pair = labels[unit] || labels.hours!;
+  return delay === 1 ? pair![0] : pair![1];
 });
 </script>
 

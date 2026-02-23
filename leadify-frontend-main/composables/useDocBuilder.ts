@@ -160,7 +160,7 @@ export function useDocBuilder() {
     if (response?.success && response.body) {
       currentDocument.value = response.body;
       const idx = documents.value.findIndex(d => d.id === id);
-      if (idx >= 0) documents.value[idx].status = status;
+      if (idx >= 0 && documents.value[idx]) documents.value[idx].status = status;
     }
     return response;
   }

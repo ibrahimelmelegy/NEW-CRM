@@ -1,4 +1,4 @@
-import { Node, mergeAttributes } from '@tiptap/core';
+import { Node, mergeAttributes, InputRule } from '@tiptap/core';
 import { VueNodeViewRenderer } from '@tiptap/vue-3';
 import { defineComponent, h } from 'vue';
 
@@ -128,17 +128,18 @@ export const VariableNode = Node.create<VariableNodeOptions>({
    * to a VariableNode. Example: {{client.name}}
    */
   addInputRules() {
+    const nodeType = this.type;
     return [
-      {
+      new InputRule({
         find: /\{\{([a-zA-Z0-9_.]+)\}\}$/,
         handler: ({ state, range, match }) => {
           const variableName = match[1];
           if (!variableName) return;
 
           const { tr } = state;
-          tr.replaceWith(range.from, range.to, this.type.create({ variableName }));
+          tr.replaceWith(range.from, range.to, nodeType.create({ variableName }));
         }
-      }
+      })
     ];
   }
 });

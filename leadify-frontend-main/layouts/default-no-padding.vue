@@ -142,7 +142,7 @@ const user = ref<any>({});
 
 if (!user.value?.id) {
   const response = await useApiFetch('auth/me');
-  user.value = response?.user;
+  user.value = (response as any)?.user;
 }
 
 const breadcrumbRoutes = computed(() => {

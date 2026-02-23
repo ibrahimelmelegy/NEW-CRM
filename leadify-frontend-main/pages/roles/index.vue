@@ -29,6 +29,15 @@ div
 
 <script setup lang="ts">
 import { Plus } from '@element-plus/icons-vue';
+
+interface Role {
+  id: string;
+  name: string;
+  description?: string;
+  totalAssignedUsers?: number;
+  updatedAt?: string;
+}
+
 const { t } = useI18n();
 const router = useRouter();
 const { hasPermission } = await usePermissions();

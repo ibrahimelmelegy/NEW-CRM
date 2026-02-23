@@ -883,7 +883,7 @@ const exportPdf = async () => {
       html2canvas: { scale: 2, useCORS: true, logging: false },
       jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' },
       pagebreak: { mode: ['css', 'legacy'], before: '.proposal-print-page' }
-    }).from(scaleWrapper || printArea).save();
+    } as any).from(scaleWrapper || printArea).save();
 
     ElMessage.success('PDF exported successfully');
   } catch (err) {

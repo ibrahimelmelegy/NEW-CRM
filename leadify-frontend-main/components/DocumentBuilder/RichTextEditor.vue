@@ -11,50 +11,50 @@
       <div class="w-px h-4 bg-gray-300 mx-1"></div>
 
       <!-- Text Formatting -->
-      <button @click="editor.chain().focus().toggleBold().run()" :class="['p-1.5 hover:bg-gray-200 rounded text-gray-600 transition-colors', { 'bg-gray-200 text-black': editor.isActive('bold') }]" title="Bold"><Bold size="16" /></button>
-      <button @click="editor.chain().focus().toggleItalic().run()" :class="['p-1.5 hover:bg-gray-200 rounded text-gray-600 transition-colors', { 'bg-gray-200 text-black': editor.isActive('italic') }]" title="Italic"><Italic size="16" /></button>
-      <button @click="editor.chain().focus().toggleUnderline().run()" :class="['p-1.5 hover:bg-gray-200 rounded text-gray-600 transition-colors', { 'bg-gray-200 text-black': editor.isActive('underline') }]" title="Underline"><UnderlineIcon size="16" /></button>
-      <button @click="editor.chain().focus().toggleStrike().run()" :class="['p-1.5 hover:bg-gray-200 rounded text-gray-600 transition-colors', { 'bg-gray-200 text-black': editor.isActive('strike') }]" title="Strikethrough"><Strikethrough size="16" /></button>
+      <button @click="editor.chain().focus().toggleBold().run()" :class="['p-1.5 hover:bg-gray-200 rounded text-gray-600 transition-colors', { 'bg-gray-200 text-black': editor.isActive('bold') }]" title="Bold"><Bold :size="16" /></button>
+      <button @click="editor.chain().focus().toggleItalic().run()" :class="['p-1.5 hover:bg-gray-200 rounded text-gray-600 transition-colors', { 'bg-gray-200 text-black': editor.isActive('italic') }]" title="Italic"><Italic :size="16" /></button>
+      <button @click="editor.chain().focus().toggleUnderline().run()" :class="['p-1.5 hover:bg-gray-200 rounded text-gray-600 transition-colors', { 'bg-gray-200 text-black': editor.isActive('underline') }]" title="Underline"><UnderlineIcon :size="16" /></button>
+      <button @click="editor.chain().focus().toggleStrike().run()" :class="['p-1.5 hover:bg-gray-200 rounded text-gray-600 transition-colors', { 'bg-gray-200 text-black': editor.isActive('strike') }]" title="Strikethrough"><Strikethrough :size="16" /></button>
 
       <!-- Advanced Formatting -->
-      <button @click="editor.chain().focus().toggleHighlight().run()" :class="['p-1.5 hover:bg-gray-200 rounded text-gray-600 transition-colors', { 'bg-yellow-200 text-black': editor.isActive('highlight') }]" title="Highlight"><Highlighter size="16" /></button>
+      <button @click="editor.chain().focus().toggleHighlight().run()" :class="['p-1.5 hover:bg-gray-200 rounded text-gray-600 transition-colors', { 'bg-yellow-200 text-black': editor.isActive('highlight') }]" title="Highlight"><Highlighter :size="16" /></button>
       
       <div class="w-px h-4 bg-gray-300 mx-1"></div>
 
       <!-- Alignment & Direction -->
-      <button @click="editor.chain().focus().setTextAlign('left').run()" :class="['p-1.5 hover:bg-gray-200 rounded text-gray-600 transition-colors', { 'bg-gray-200 text-black': editor.isActive({ textAlign: 'left' }) }]" title="Align Left"><AlignLeft size="16" /></button>
-      <button @click="editor.chain().focus().setTextAlign('center').run()" :class="['p-1.5 hover:bg-gray-200 rounded text-gray-600 transition-colors', { 'bg-gray-200 text-black': editor.isActive({ textAlign: 'center' }) }]" title="Align Center"><AlignCenter size="16" /></button>
-      <button @click="editor.chain().focus().setTextAlign('right').run()" :class="['p-1.5 hover:bg-gray-200 rounded text-gray-600 transition-colors', { 'bg-gray-200 text-black': editor.isActive({ textAlign: 'right' }) }]" title="Align Right"><AlignRight size="16" /></button>
-      <button @click="editor.chain().focus().setTextAlign('justify').run()" :class="['p-1.5 hover:bg-gray-200 rounded text-gray-600 transition-colors', { 'bg-gray-200 text-black': editor.isActive({ textAlign: 'justify' }) }]" title="Justify"><AlignJustify size="16" /></button>
+      <button @click="editor.chain().focus().setTextAlign('left').run()" :class="['p-1.5 hover:bg-gray-200 rounded text-gray-600 transition-colors', { 'bg-gray-200 text-black': editor.isActive({ textAlign: 'left' }) }]" title="Align Left"><AlignLeft :size="16" /></button>
+      <button @click="editor.chain().focus().setTextAlign('center').run()" :class="['p-1.5 hover:bg-gray-200 rounded text-gray-600 transition-colors', { 'bg-gray-200 text-black': editor.isActive({ textAlign: 'center' }) }]" title="Align Center"><AlignCenter :size="16" /></button>
+      <button @click="editor.chain().focus().setTextAlign('right').run()" :class="['p-1.5 hover:bg-gray-200 rounded text-gray-600 transition-colors', { 'bg-gray-200 text-black': editor.isActive({ textAlign: 'right' }) }]" title="Align Right"><AlignRight :size="16" /></button>
+      <button @click="editor.chain().focus().setTextAlign('justify').run()" :class="['p-1.5 hover:bg-gray-200 rounded text-gray-600 transition-colors', { 'bg-gray-200 text-black': editor.isActive({ textAlign: 'justify' }) }]" title="Justify"><AlignJustify :size="16" /></button>
 
       <div class="w-px h-4 bg-gray-300 mx-1"></div>
 
       <!-- Lists -->
-      <button @click="editor.chain().focus().toggleBulletList().run()" :class="['p-1.5 hover:bg-gray-200 rounded text-gray-600 transition-colors', { 'bg-gray-200 text-black': editor.isActive('bulletList') }]" title="Bullet List"><List size="16" /></button>
-      <button @click="editor.chain().focus().toggleOrderedList().run()" :class="['p-1.5 hover:bg-gray-200 rounded text-gray-600 transition-colors', { 'bg-gray-200 text-black': editor.isActive('orderedList') }]" title="Ordered List"><ListOrdered size="16" /></button>
-      <button @click="editor.chain().focus().toggleTaskList().run()" :class="['p-1.5 hover:bg-gray-200 rounded text-gray-600 transition-colors', { 'bg-gray-200 text-black': editor.isActive('taskList') }]" title="Task List"><CheckSquare size="16" /></button>
+      <button @click="editor.chain().focus().toggleBulletList().run()" :class="['p-1.5 hover:bg-gray-200 rounded text-gray-600 transition-colors', { 'bg-gray-200 text-black': editor.isActive('bulletList') }]" title="Bullet List"><List :size="16" /></button>
+      <button @click="editor.chain().focus().toggleOrderedList().run()" :class="['p-1.5 hover:bg-gray-200 rounded text-gray-600 transition-colors', { 'bg-gray-200 text-black': editor.isActive('orderedList') }]" title="Ordered List"><ListOrdered :size="16" /></button>
+      <button @click="editor.chain().focus().toggleTaskList().run()" :class="['p-1.5 hover:bg-gray-200 rounded text-gray-600 transition-colors', { 'bg-gray-200 text-black': editor.isActive('taskList') }]" title="Task List"><CheckSquare :size="16" /></button>
 
       <div class="w-px h-4 bg-gray-300 mx-1"></div>
 
       <!-- Tables -->
-      <button @click="editor.chain().focus().insertTable({ rows: 3, cols: 3, withHeaderRow: true }).run()" class="p-1.5 hover:bg-gray-200 rounded text-gray-600 transition-colors" title="Insert Table"><TableIcon size="16" /></button>
+      <button @click="editor.chain().focus().insertTable({ rows: 3, cols: 3, withHeaderRow: true }).run()" class="p-1.5 hover:bg-gray-200 rounded text-gray-600 transition-colors" title="Insert Table"><TableIcon :size="16" /></button>
       <template v-if="editor.isActive('table')">
-        <button @click="editor.chain().focus().addColumnAfter().run()" class="p-1.5 hover:bg-gray-200 rounded text-gray-600" title="Add Column"><Plus size="14" class="rotate-90" /></button>
-        <button @click="editor.chain().focus().deleteColumn().run()" class="p-1.5 hover:bg-gray-200 rounded text-gray-600" title="Delete Column"><Trash2 size="14" class="rotate-90" /></button>
-        <button @click="editor.chain().focus().addRowAfter().run()" class="p-1.5 hover:bg-gray-200 rounded text-gray-600" title="Add Row"><Plus size="14" /></button>
-        <button @click="editor.chain().focus().deleteRow().run()" class="p-1.5 hover:bg-gray-200 rounded text-gray-600" title="Delete Row"><Trash2 size="14" /></button>
+        <button @click="editor.chain().focus().addColumnAfter().run()" class="p-1.5 hover:bg-gray-200 rounded text-gray-600" title="Add Column"><Plus :size="14" class="rotate-90" /></button>
+        <button @click="editor.chain().focus().deleteColumn().run()" class="p-1.5 hover:bg-gray-200 rounded text-gray-600" title="Delete Column"><Trash2 :size="14" class="rotate-90" /></button>
+        <button @click="editor.chain().focus().addRowAfter().run()" class="p-1.5 hover:bg-gray-200 rounded text-gray-600" title="Add Row"><Plus :size="14" /></button>
+        <button @click="editor.chain().focus().deleteRow().run()" class="p-1.5 hover:bg-gray-200 rounded text-gray-600" title="Delete Row"><Trash2 :size="14" /></button>
       </template>
 
       <div class="w-px h-4 bg-gray-300 mx-1"></div>
 
       <!-- Media & Links -->
-      <button @click="setLink" :class="['p-1.5 hover:bg-gray-200 rounded text-gray-600 transition-colors', { 'bg-gray-200 text-black': editor.isActive('link') }]" title="Link"><LinkIcon size="16" /></button>
+      <button @click="setLink" :class="['p-1.5 hover:bg-gray-200 rounded text-gray-600 transition-colors', { 'bg-gray-200 text-black': editor.isActive('link') }]" title="Link"><LinkIcon :size="16" /></button>
 
       <div class="w-px h-4 bg-gray-300 mx-1"></div>
 
       <!-- Utils -->
-      <button @click="editor.chain().focus().undo().run()" class="p-1.5 hover:bg-gray-200 rounded text-gray-600 transition-colors" title="Undo"><Undo size="16" /></button>
-      <button @click="editor.chain().focus().redo().run()" class="p-1.5 hover:bg-gray-200 rounded text-gray-600 transition-colors" title="Redo"><Redo size="16" /></button>
+      <button @click="editor.chain().focus().undo().run()" class="p-1.5 hover:bg-gray-200 rounded text-gray-600 transition-colors" title="Undo"><Undo :size="16" /></button>
+      <button @click="editor.chain().focus().redo().run()" class="p-1.5 hover:bg-gray-200 rounded text-gray-600 transition-colors" title="Redo"><Redo :size="16" /></button>
     </div>
 
     <editor-content :editor="editor" />
@@ -146,7 +146,7 @@ const editor = useEditor({
 // Watch for external value changes
 watch(() => props.modelValue, (newValue) => {
   if (editor.value && newValue !== editor.value.getHTML()) {
-    editor.value.commands.setContent(newValue, false);
+    editor.value.commands.setContent(newValue, false as any);
   }
 });
 
