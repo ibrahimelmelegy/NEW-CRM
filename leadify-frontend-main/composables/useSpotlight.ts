@@ -178,6 +178,84 @@ const spotlightItems: SpotlightItem[] = [
     permissions: ['VIEW_ADDITIONAL_MATERIAL']
   },
 
+  // Planner & Virtual Office
+  {
+    id: 'planner',
+    title: 'Planner',
+    icon: 'ph:calendar-dots-bold',
+    category: 'page',
+    path: '/planner',
+    keywords: ['schedule', 'focus', 'habits', 'time block']
+  },
+  {
+    id: 'virtual-office',
+    title: 'Virtual Office',
+    icon: 'ph:buildings-bold',
+    category: 'page',
+    path: '/virtual-office',
+    keywords: ['rooms', 'presence', 'remote', 'coworking']
+  },
+
+  // Supply Chain
+  {
+    id: 'inventory',
+    title: 'Inventory',
+    icon: 'ph:package-bold',
+    category: 'page',
+    path: '/inventory',
+    keywords: ['stock', 'items', 'products']
+  },
+  {
+    id: 'warehouse',
+    title: 'Warehouse',
+    icon: 'ph:warehouse-bold',
+    category: 'page',
+    path: '/warehouse',
+    keywords: ['storage', 'bins', 'locations']
+  },
+  {
+    id: 'manufacturing',
+    title: 'Manufacturing',
+    icon: 'ph:factory-bold',
+    category: 'page',
+    path: '/manufacturing',
+    keywords: ['bom', 'work orders', 'production', 'quality']
+  },
+  {
+    id: 'shipping',
+    title: 'Shipping',
+    icon: 'ph:truck-bold',
+    category: 'page',
+    path: '/shipping',
+    keywords: ['delivery', 'logistics', 'tracking']
+  },
+
+  // Procurement
+  {
+    id: 'vendors',
+    title: 'Vendors',
+    icon: 'ph:storefront-bold',
+    category: 'page',
+    path: '/procurement/vendors',
+    keywords: ['suppliers']
+  },
+  {
+    id: 'purchase-orders',
+    title: 'Purchase Orders',
+    icon: 'ph:shopping-cart-bold',
+    category: 'page',
+    path: '/procurement/purchase-orders',
+    keywords: ['po', 'buying']
+  },
+  {
+    id: 'rfq',
+    title: 'RFQ',
+    icon: 'ph:files-bold',
+    category: 'page',
+    path: '/procurement/rfq',
+    keywords: ['request for quote', 'quotation']
+  },
+
   // Staff & Roles
   {
     id: 'staff',
@@ -198,7 +276,7 @@ const spotlightItems: SpotlightItem[] = [
     permissions: ['VIEW_ROLES']
   },
 
-  // Reports
+  // Reports & Analytics
   {
     id: 'reports',
     title: 'Reports',
@@ -207,6 +285,340 @@ const spotlightItems: SpotlightItem[] = [
     path: '/reports',
     keywords: ['analytics', 'statistics'],
     permissions: ['EXPORT_OWN_REPORTS', 'EXPORT_GLOBAL_REPORTS', 'EXPORT_SALES_REPORTS', 'EXPORT_PROJECT_REPORTS']
+  },
+  {
+    id: 'report-builder',
+    title: 'Report Builder',
+    icon: 'ph:faders-horizontal-bold',
+    category: 'page',
+    path: '/reports/builder',
+    keywords: ['custom report', 'create report']
+  },
+  {
+    id: 'forecasting',
+    title: 'Forecasting',
+    icon: 'ph:trend-up-bold',
+    category: 'page',
+    path: '/reports/forecasting',
+    keywords: ['prediction', 'revenue forecast']
+  },
+  {
+    id: 'activity-heatmap',
+    title: 'Activity Heatmap',
+    icon: 'ph:squares-four-bold',
+    category: 'page',
+    path: '/analytics/heatmap',
+    keywords: ['heat map', 'activity']
+  },
+  {
+    id: 'relationship-graph',
+    title: 'Relationship Graph',
+    icon: 'ph:graph-bold',
+    category: 'page',
+    path: '/analytics/relationship-graph',
+    keywords: ['network', 'connections']
+  },
+  {
+    id: 'revenue-simulator',
+    title: 'Revenue Simulator',
+    icon: 'ph:chart-line-up-bold',
+    category: 'page',
+    path: '/analytics/simulator',
+    keywords: ['what if', 'scenario']
+  },
+  {
+    id: 'leaderboard',
+    title: 'Leaderboard',
+    icon: 'ph:ranking-bold',
+    category: 'page',
+    path: '/gamification/leaderboard',
+    keywords: ['ranking', 'top performers']
+  },
+  {
+    id: 'achievements',
+    title: 'Achievements',
+    icon: 'ph:medal-bold',
+    category: 'page',
+    path: '/gamification/achievements',
+    keywords: ['badges', 'rewards']
+  },
+
+  // Finance
+  {
+    id: 'expenses',
+    title: 'Expenses',
+    icon: 'ph:receipt-bold',
+    category: 'page',
+    path: '/finance/expenses',
+    keywords: ['cost', 'spending']
+  },
+  {
+    id: 'budgets',
+    title: 'Budgets',
+    icon: 'ph:wallet-bold',
+    category: 'page',
+    path: '/finance/budgets',
+    keywords: ['budget planning']
+  },
+  {
+    id: 'chart-of-accounts',
+    title: 'Chart of Accounts',
+    icon: 'ph:tree-structure-bold',
+    category: 'page',
+    path: '/finance/accounting/chart-of-accounts',
+    keywords: ['accounting', 'ledger']
+  },
+  {
+    id: 'journal-entries',
+    title: 'Journal Entries',
+    icon: 'ph:notebook-bold',
+    category: 'page',
+    path: '/finance/accounting/journal-entries',
+    keywords: ['accounting', 'entries']
+  },
+  {
+    id: 'trial-balance',
+    title: 'Trial Balance',
+    icon: 'ph:scales-bold',
+    category: 'page',
+    path: '/finance/accounting/reports/trial-balance',
+    keywords: ['accounting', 'balance']
+  },
+  {
+    id: 'profit-loss',
+    title: 'Profit & Loss',
+    icon: 'ph:chart-line-up-bold',
+    category: 'page',
+    path: '/finance/accounting/reports/profit-loss',
+    keywords: ['income statement', 'pnl']
+  },
+  {
+    id: 'balance-sheet',
+    title: 'Balance Sheet',
+    icon: 'ph:chart-bar-bold',
+    category: 'page',
+    path: '/finance/accounting/reports/balance-sheet',
+    keywords: ['financial statement']
+  },
+
+  // HR
+  {
+    id: 'employees',
+    title: 'Employees',
+    icon: 'ph:users-bold',
+    category: 'page',
+    path: '/hr/employees',
+    keywords: ['staff', 'team']
+  },
+  {
+    id: 'org-chart',
+    title: 'Org Chart',
+    icon: 'ph:tree-structure-bold',
+    category: 'page',
+    path: '/hr/org-chart',
+    keywords: ['organization', 'hierarchy']
+  },
+  {
+    id: 'departments',
+    title: 'Departments',
+    icon: 'ph:buildings-bold',
+    category: 'page',
+    path: '/hr/departments',
+    keywords: ['teams', 'divisions']
+  },
+  {
+    id: 'attendance',
+    title: 'Attendance',
+    icon: 'ph:clock-bold',
+    category: 'page',
+    path: '/hr/attendance',
+    keywords: ['check in', 'time']
+  },
+  {
+    id: 'leave-requests',
+    title: 'Leave Requests',
+    icon: 'ph:calendar-x-bold',
+    category: 'page',
+    path: '/hr/leave-requests',
+    keywords: ['vacation', 'time off', 'pto']
+  },
+  {
+    id: 'payroll',
+    title: 'Payroll',
+    icon: 'ph:money-bold',
+    category: 'page',
+    path: '/hr/payroll',
+    keywords: ['salary', 'wages']
+  },
+  {
+    id: 'recruitment',
+    title: 'Recruitment',
+    icon: 'ph:user-circle-plus-bold',
+    category: 'page',
+    path: '/hr/recruitment',
+    keywords: ['hiring', 'jobs', 'candidates']
+  },
+  {
+    id: 'training',
+    title: 'Training & LMS',
+    icon: 'ph:graduation-cap-bold',
+    category: 'page',
+    path: '/hr/training',
+    keywords: ['learning', 'courses']
+  },
+
+  // Support
+  {
+    id: 'support-tickets',
+    title: 'Support Tickets',
+    icon: 'ph:ticket-bold',
+    category: 'page',
+    path: '/support/tickets',
+    keywords: ['help desk', 'issues']
+  },
+  {
+    id: 'knowledge-base',
+    title: 'Knowledge Base',
+    icon: 'ph:book-open-bold',
+    category: 'page',
+    path: '/support/knowledge-base',
+    keywords: ['help', 'faq', 'articles']
+  },
+  {
+    id: 'live-chat',
+    title: 'Live Chat',
+    icon: 'ph:chats-bold',
+    category: 'page',
+    path: '/support/live-chat',
+    keywords: ['chat', 'realtime support']
+  },
+
+  // Marketing
+  {
+    id: 'campaigns',
+    title: 'Campaigns',
+    icon: 'ph:envelope-simple-bold',
+    category: 'page',
+    path: '/marketing/campaigns',
+    keywords: ['email', 'marketing']
+  },
+  {
+    id: 'form-builder',
+    title: 'Form Builder',
+    icon: 'ph:textbox-bold',
+    category: 'page',
+    path: '/marketing/form-builder',
+    keywords: ['forms', 'landing page']
+  },
+  {
+    id: 'surveys',
+    title: 'Surveys & NPS',
+    icon: 'ph:chart-bar-bold',
+    category: 'page',
+    path: '/marketing/surveys',
+    keywords: ['feedback', 'nps', 'polls']
+  },
+
+  // Communication
+  {
+    id: 'messaging',
+    title: 'Messaging',
+    icon: 'ph:chat-circle-dots-bold',
+    category: 'page',
+    path: '/messaging',
+    keywords: ['chat', 'messages', 'sms']
+  },
+  {
+    id: 'communication-hub',
+    title: 'Communication Hub',
+    icon: 'ph:phone-list-bold',
+    category: 'page',
+    path: '/communications',
+    keywords: ['calls', 'phone', 'email']
+  },
+  {
+    id: 'ai-assistant',
+    title: 'AI Assistant',
+    icon: 'ph:brain-bold',
+    category: 'page',
+    path: '/ai-assistant',
+    keywords: ['ai', 'chatbot', 'copilot']
+  },
+
+  // Documents & Settings
+  {
+    id: 'documents-all',
+    title: 'Documents',
+    icon: 'ph:folder-bold',
+    category: 'page',
+    path: '/documents',
+    keywords: ['files', 'uploads']
+  },
+  {
+    id: 'e-signatures',
+    title: 'E-Signatures',
+    icon: 'ph:signature-bold',
+    category: 'page',
+    path: '/documents/e-signatures',
+    keywords: ['sign', 'digital signature']
+  },
+  {
+    id: 'automations',
+    title: 'Automations',
+    icon: 'ph:git-merge-bold',
+    category: 'page',
+    path: '/automations',
+    keywords: ['workflow', 'automation', 'journey']
+  },
+  {
+    id: 'calendar',
+    title: 'Calendar',
+    icon: 'ph:calendar-bold',
+    category: 'page',
+    path: '/calendar',
+    keywords: ['schedule', 'events', 'meetings']
+  },
+  {
+    id: 'booking',
+    title: 'Booking',
+    icon: 'ph:calendar-check-bold',
+    category: 'page',
+    path: '/booking',
+    keywords: ['appointment', 'schedule meeting']
+  },
+
+  // Dashboards
+  {
+    id: 'war-room',
+    title: 'War Room',
+    icon: 'ph:crosshair-bold',
+    category: 'page',
+    path: '/dashboard/war-room',
+    keywords: ['command center', 'overview']
+  },
+  {
+    id: 'daily-briefing',
+    title: 'Daily Briefing',
+    icon: 'ph:sun-horizon-bold',
+    category: 'page',
+    path: '/dashboard/briefing',
+    keywords: ['morning', 'summary']
+  },
+  {
+    id: 'dashboard-builder',
+    title: 'Dashboard Builder',
+    icon: 'ph:squares-four-bold',
+    category: 'page',
+    path: '/dashboard/builder',
+    keywords: ['custom dashboard', 'widgets']
+  },
+  {
+    id: 'executive-dashboard',
+    title: 'Executive Dashboard',
+    icon: 'ph:presentation-chart-bold',
+    category: 'page',
+    path: '/dashboards/executive',
+    keywords: ['ceo', 'executive', 'overview']
   },
 
   // Notifications - everyone can see

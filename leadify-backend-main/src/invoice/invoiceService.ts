@@ -2,12 +2,13 @@ import { Op } from 'sequelize';
 import Invoice from '../deal/model/invoiceMode';
 import Deal from '../deal/model/dealModel';
 import User from '../user/userModel';
+import { tenantWhere } from '../utils/tenantScope';
 
 class InvoiceService {
-  async getInvoices(query: { page?: number; limit?: number; status?: string; search?: string }) {
+  async getInvoices(query: { page?: number; limit?: number; status?: string; search?: string }, user?: any) {
     const { page = 1, limit = 20 } = query;
     const offset = (page - 1) * limit;
-    const where: any = {};
+    const where: any = { ...(user ? tenantWhere(user) : {}) };
 
     if (query.status === 'collected') where.collected = true;
     else if (query.status === 'pending') where.collected = { [Op.or]: [false, null] };
@@ -58,8 +59,8 @@ class InvoiceService {
     return invoice.update({ collected: false, collectedDate: null });
   }
 
-  async getSummary() {
-    const all = await Invoice.findAll({ raw: true });
+  async getSummary(user?: any) {
+    const all = await Invoice.findAll({ where: { ...(user ? tenantWhere(user) : {}) }, raw: true });
     const totalAmount = all.reduce((sum, inv) => sum + (inv.amount || 0), 0);
     const collectedAmount = all.filter(inv => inv.collected).reduce((sum, inv) => sum + (inv.amount || 0), 0);
     const pendingAmount = totalAmount - collectedAmount;

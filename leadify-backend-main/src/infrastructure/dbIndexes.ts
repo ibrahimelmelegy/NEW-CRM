@@ -202,6 +202,22 @@ export async function addPerformanceIndexes(sequelize: Sequelize): Promise<void>
     `CREATE INDEX IF NOT EXISTS idx_projects_search ON projects USING GIN (
       to_tsvector('english', COALESCE(name, '') || ' ' || COALESCE(description, ''))
     )`,
+
+    // ─── Planner & Focus ───
+    `CREATE INDEX IF NOT EXISTS idx_tasks_planner ON tasks ("assignedTo", "entityType", date) WHERE "entityType" = 'planner'`,
+    `CREATE INDEX IF NOT EXISTS idx_focus_sessions_user_date ON focus_sessions ("userId", "startedAt" DESC)`,
+    `CREATE INDEX IF NOT EXISTS idx_daily_habits_user ON daily_habits ("userId")`,
+
+    // ─── Virtual Office ───
+    `CREATE INDEX IF NOT EXISTS idx_virtual_rooms_tenant ON virtual_rooms ("tenantId")`,
+
+    // ─── Manufacturing ───
+    `CREATE INDEX IF NOT EXISTS idx_boms_tenant ON boms ("tenantId")`,
+    `CREATE INDEX IF NOT EXISTS idx_bom_items_bom ON bom_items ("bomId")`,
+    `CREATE INDEX IF NOT EXISTS idx_work_orders_tenant_status ON work_orders ("tenantId", status)`,
+    `CREATE INDEX IF NOT EXISTS idx_work_orders_due ON work_orders ("dueDate") WHERE status NOT IN ('COMPLETED', 'CANCELLED')`,
+    `CREATE INDEX IF NOT EXISTS idx_quality_checks_tenant ON quality_checks ("tenantId")`,
+    `CREATE INDEX IF NOT EXISTS idx_quality_checks_wo ON quality_checks ("workOrderId")`,
   ];
 
   let succeeded = 0;

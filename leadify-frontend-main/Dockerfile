@@ -16,12 +16,13 @@ ENV API_BASE_URL=$API_BASE_URL
 ENV BASE_URL=$BASE_URL
 
 ENV NODE_OPTIONS="--max-old-space-size=4096"
-RUN npm run build
+RUN npm run generate
 
 # Stage 2: Serve with Nginx
 FROM nginx:1.27-alpine
 
-# Copy built SPA files
+# Remove default nginx page, copy generated SPA
+RUN rm -rf /usr/share/nginx/html/*
 COPY --from=builder /app/.output/public /usr/share/nginx/html
 
 # Copy nginx configuration

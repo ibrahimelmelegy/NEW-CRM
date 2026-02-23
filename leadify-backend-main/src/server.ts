@@ -10,6 +10,7 @@ import { Sequelize } from 'sequelize-typescript';
 import http from 'http';
 import { Server } from 'socket.io';
 import { setupPresenceHandlers } from './socket/presenceHandler';
+import { setupVirtualOfficeHandlers } from './socket/virtualOfficeHandler';
 
 const PORT = process.env.PORT ? parseInt(process.env.PORT, 10) : 5000;
 const server = http.createServer(app);
@@ -54,6 +55,7 @@ async function runTypoMigration(sequelize: Sequelize) {
 
 // Set up real-time presence tracking
 setupPresenceHandlers(io);
+setupVirtualOfficeHandlers(io);
 
 // Test database connection and sync models
 sequelize

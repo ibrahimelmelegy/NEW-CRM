@@ -6,62 +6,81 @@
 
   //- Mobile Overlay
   div.background-overlay.fixed.top-0.left-0.w-screen.h-full(class='z-[-1]' v-if="mobile && !hideNav" @click="hideNav = true")
-  
+
   transition(:name='mobile ? "side" : "none"')
     el-menu.el-menu-vertical-demo.relative.sidebar-glass(
       class='!pl-[5px] card-auto'
       style="height: 100vh; overflow-y: auto; overflow-x: hidden"
-      v-if="mobile ? !hideNav : true" 
-      :collapse='mobile ? false : !fullNav' 
+      v-if="mobile ? !hideNav : true"
+      :collapse='mobile ? false : !fullNav'
       :default-openeds="defaultOpenMenus"
     )
       //- Logo Area (Expanded)
       .py-5.px-12.flex.items-center.gap-3(v-if="fullNav")
         img(class="cursor-pointer max-h-[50px] w-auto object-contain" :src="logoSrc" @click="router.push('/')")
-      
+
       //- Logo Area (Collapsed)
       .py-5.px-5.flex.items-center.gap-3.relative.z-10(v-if="!fullNav")
         img(class="cursor-pointer h-[50px] w-auto object-contain" src="/images/logo-shape.png" @click="router.push('/')")
-      
+
+      //- ★ Favorites Section
+      el-sub-menu(index="favorites" v-if="favorites.length && fullNav")
+        template(#title)
+          Icon.myicon(size="32" name="ph:star-bold")
+          span.ml-2 {{ $t('navigation.favorites') }}
+
+        div(v-for="(fav, fIndex) in favorites" :key="fav.link")
+          NuxtLink(:to="fav.link")
+            el-menu-item(:index="fav.link" @click="mobileNavigate(fav.link)" :class="{'is-active': route?.fullPath?.includes(fav.link)}")
+              Icon.mr-2.submenu-icon(size="18" :name="fav.icon" v-if="fav.icon")
+              span {{ $t(fav.name) }}
+              Icon.fav-remove(size="14" name="ph:x" @click.prevent.stop="removeFavorite(fav.link)")
+
       //- Menu Mapping
       template(v-for="(navLink, index) in menu" :key="index")
-        //- Submenu Items
-        el-sub-menu(:index='`${index+1}`' v-if="navLink.submenu")
+        //- Submenu Items — hidden if user has no access to any child
+        el-sub-menu(:index='`${index+1}`' v-if="navLink.submenu && hasAccessToSection(navLink)")
           template(#title)
             Icon.myicon(size="32" :name="navLink.icon")
             span.ml-2 {{ $t(navLink.name) }}
-          
-          div(v-for="(subLink, subIndex) in navLink.submenu" :key="subIndex")
-            //- Special Daily Task Logic (Fixed: Removed hardcoded user guard)
+
+          template(v-for="(subLink, subIndex) in navLink.submenu" :key="subIndex")
+            //- Only show items the user has access to (v-if, not grayed out)
             NuxtLink(:to="subLink.link" v-if="!getDisabled(subLink.role)")
-              el-menu-item(:index="subLink.link" @click="mobileNavigate(subLink.link)" :class="{'is-active': route?.fullPath?.includes(subLink.link)}")
+              el-menu-item.menu-item-with-star(:index="subLink.link" @click="mobileNavigate(subLink.link)" :class="{'is-active': route?.fullPath?.includes(subLink.link)}")
                 Icon.mr-2.submenu-icon(size="18" :name="subLink.icon" v-if="subLink.icon")
                 span {{ $t(subLink.name) }}
-            
-            //- Disabled Links Logic (Visible but grayed out)
-            el-menu-item(:index="`${index+1}-${subIndex+1}`" :class="{'disabled-link' : true}" v-else)
-              Icon.mr-2.submenu-icon(size="18" :name="subLink.icon" v-if="subLink.icon")
-              span {{ $t(subLink.name) }}
+                Icon.fav-star(
+                  size="14"
+                  :name="isFavorite(subLink.link) ? 'ph:star-fill' : 'ph:star'"
+                  :class="{ 'is-fav': isFavorite(subLink.link) }"
+                  @click.prevent.stop="toggleFavorite({ link: subLink.link, name: subLink.name, icon: subLink.icon })"
+                  v-if="fullNav"
+                )
 
-        //- Single Level Items
-        template(v-else)
-          el-menu-item(:index='`${index+1}`' :class="{'disabled-link': getDisabled(navLink.role)}" v-if="navLink.link !== '/' && getDisabled(navLink.role)")
-            el-icon: Setting
-            template(#title) {{ $t(navLink.name) }}
-          
-          NuxtLink(:to="navLink.link" v-else)
-            el-menu-item(:index="navLink.link" @click="mobileNavigate(navLink.link)" :class="{'is-active': route?.fullPath?.includes(navLink.link) && navLink.link !== '/'}")
+        //- Single Level Items — hidden if user has no access
+        template(v-else-if="!navLink.submenu && !getDisabled(navLink.role)")
+          NuxtLink(:to="navLink.link")
+            el-menu-item.menu-item-with-star(:index="navLink.link" @click="mobileNavigate(navLink.link)" :class="{'is-active': route?.fullPath?.includes(navLink.link) && navLink.link !== '/'}")
               Icon.myicon.mr-2(size="32" :name="navLink.icon")
-              template(#title) {{ $t(navLink.name) }}
+              template(#title)
+                span {{ $t(navLink.name) }}
+                Icon.fav-star(
+                  size="14"
+                  :name="isFavorite(navLink.link) ? 'ph:star-fill' : 'ph:star'"
+                  :class="{ 'is-fav': isFavorite(navLink.link) }"
+                  @click.prevent.stop="toggleFavorite({ link: navLink.link, name: navLink.name, icon: navLink.icon })"
+                  v-if="fullNav"
+                )
 </template>
 
 <script lang="ts" setup>
 import { ref, computed, onMounted } from 'vue';
 import { storeToRefs } from 'pinia';
-import { Setting } from '@element-plus/icons-vue';
 import { useMain } from '~/stores/common';
 import { useApiFetch } from '~/composables/useApiFetch';
 import { useThemeStore } from '~/stores/theme';
+import { useSidebarFavorites } from '~/composables/useSidebarFavorites';
 
 const themeStore = useThemeStore();
 const mainStore = useMain();
@@ -69,6 +88,8 @@ const { fullNav, mobile, hideNav, permissions } = storeToRefs(mainStore);
 const route = useRoute();
 const router = useRouter();
 const user = ref();
+
+const { favorites, isFavorite, toggleFavorite, removeFavorite } = useSidebarFavorites();
 
 const logoSrc = computed(() => {
   return themeStore.isLight ? '/images/Logo.png' : '/images/light-logo.png';
@@ -97,13 +118,43 @@ function getDisabled(role: string) {
   return false;
 }
 
+/**
+ * Hide entire section if user has no access to ANY child item
+ */
+function hasAccessToSection(navLink: any): boolean {
+  // If section itself has a role requirement, check it
+  if (navLink.role && getDisabled(navLink.role)) return false;
+
+  // If it has a submenu, show section only if user can access at least one child
+  if (navLink.submenu) {
+    return navLink.submenu.some((sub: any) => !getDisabled(sub.role));
+  }
+
+  return true;
+}
+
+// ──────────────────────────────────────────────────────────────
+// Reorganized Menu — consolidated from 32 to 15 top-level items
+// ──────────────────────────────────────────────────────────────
 const menu = [
+  // 1. Home
   { link: '/', name: 'navigation.board', icon: 'IconHome', submenu: false, isOpen: false },
-  { link: '/dashboard/war-room', name: 'navigation.warRoom', icon: 'ph:crosshair-bold', submenu: false, isOpen: false },
-  { link: '/dashboard/briefing', name: 'navigation.dailyBriefing', icon: 'ph:sun-horizon-bold', submenu: false, isOpen: false },
-  { link: '/dashboard/builder', name: 'navigation.dashboardBuilder', icon: 'ph:squares-four-bold', submenu: false, isOpen: false },
-  { link: '/dashboards/executive', name: 'navigation.executiveDashboard', icon: 'ph:presentation-chart-bold', submenu: false, isOpen: false },
-  { link: '/views/kanban', name: 'navigation.kanbanBoard', icon: 'ph:kanban-bold', submenu: false, isOpen: false },
+
+  // 2. Dashboards (merged 5 standalone items)
+  {
+    name: 'navigation.dashboards',
+    icon: 'ph:squares-four-bold',
+    isOpen: false,
+    submenu: [
+      { link: '/dashboard/war-room', name: 'navigation.warRoom', icon: 'ph:crosshair-bold' },
+      { link: '/dashboard/briefing', name: 'navigation.dailyBriefing', icon: 'ph:sun-horizon-bold' },
+      { link: '/dashboard/builder', name: 'navigation.dashboardBuilder', icon: 'ph:squares-four-bold' },
+      { link: '/dashboards/executive', name: 'navigation.executiveDashboard', icon: 'ph:presentation-chart-bold' },
+      { link: '/views/kanban', name: 'navigation.kanbanBoard', icon: 'ph:kanban-bold' }
+    ]
+  },
+
+  // 3. CRM
   {
     name: 'navigation.crm',
     icon: 'ph:address-book-bold',
@@ -114,6 +165,8 @@ const menu = [
       { link: '/notifications', name: 'navigation.notifications', icon: 'ph:bell-bold' }
     ]
   },
+
+  // 4. Sales
   {
     name: 'navigation.sales',
     icon: 'IconSales',
@@ -138,13 +191,20 @@ const menu = [
       { link: '/sales/goals', name: 'navigation.goalsQuotas', icon: 'ph:target-bold' }
     ]
   },
+
+  // 5. Operations (absorbed Tasks, Calendar, Booking, Planner)
   {
     name: 'navigation.operations',
     icon: 'IconOperations',
     isOpen: false,
     submenu: [
       { link: '/operations/projects', name: 'navigation.projects', icon: 'ph:projector-screen-chart' },
+      { link: '/tasks', name: 'navigation.taskList', icon: 'ph:list-bold' },
+      { link: '/tasks/kanban', name: 'navigation.tasksBoard', icon: 'ph:kanban-bold' },
       { link: '/operations/daily-task', name: 'navigation.dailyTasks', icon: 'ph:check-square' },
+      { link: '/planner', name: 'navigation.planner', icon: 'ph:calendar-dots-bold' },
+      { link: '/calendar', name: 'navigation.calendar', icon: 'ph:calendar-bold' },
+      { link: '/booking', name: 'navigation.booking', icon: 'ph:calendar-check-bold' },
       { link: '/operations/vehicle', name: 'navigation.vehicle', icon: 'ph:car' },
       { link: '/operations/manpower', name: 'navigation.manpower', icon: 'ph:users-four' },
       { link: '/operations/additional-material', name: 'navigation.additionalMaterials', icon: 'ph:cube' },
@@ -156,10 +216,12 @@ const menu = [
       { link: '/operations/resource-planner', name: 'navigation.resourcePlanner', icon: 'ph:users-four-bold' }
     ]
   },
+
+  // 6. Procurement
   {
     name: 'navigation.procurement',
     icon: 'ph:shopping-bag',
-    isOpen: true,
+    isOpen: false,
     submenu: [
       { link: '/procurement/vendors', name: 'navigation.vendors', icon: 'ph:storefront' },
       { link: '/procurement/distributors', name: 'navigation.distributors', icon: 'ph:truck' },
@@ -171,43 +233,34 @@ const menu = [
       { link: '/procurement/vendor-scorecard', name: 'navigation.vendorScorecard', icon: 'ph:star-half-bold' }
     ]
   },
+
+  // 7. Supply Chain (merged: Inventory + Warehouse + Manufacturing + Shipping)
   {
-    name: 'navigation.inventory',
+    name: 'navigation.supplyChain',
     icon: 'ph:package-bold',
     isOpen: false,
-    link: '/inventory'
-  },
-  {
-    name: 'navigation.warehouse',
-    icon: 'ph:warehouse-bold',
-    isOpen: false,
-    link: '/warehouse'
-  },
-  {
-    name: 'navigation.manufacturing',
-    icon: 'ph:factory-bold',
-    isOpen: false,
-    link: '/manufacturing'
-  },
-  {
-    name: 'navigation.shipping',
-    icon: 'ph:truck-bold',
-    isOpen: false,
-    link: '/shipping'
-  },
-  {
-    name: 'navigation.tasks',
-    icon: 'ph:list-checks-bold',
-    isOpen: false,
     submenu: [
-      { link: '/tasks', name: 'navigation.taskList', icon: 'ph:list-bold' },
-      { link: '/tasks/kanban', name: 'navigation.tasksBoard', icon: 'ph:kanban-bold' }
+      { link: '/inventory', name: 'navigation.inventory', icon: 'ph:package-bold' },
+      { link: '/warehouse', name: 'navigation.warehouse', icon: 'ph:warehouse-bold' },
+      { link: '/manufacturing', name: 'navigation.manufacturing', icon: 'ph:factory-bold' },
+      { link: '/shipping', name: 'navigation.shipping', icon: 'ph:truck-bold' }
     ]
   },
-  { link: '/messaging', name: 'navigation.messaging', icon: 'ph:chat-circle-dots-bold', submenu: false, isOpen: false },
-  { link: '/communications', name: 'navigation.communicationHub', icon: 'ph:phone-list-bold', submenu: false, isOpen: false },
-  { link: '/ai-assistant', name: 'navigation.aiAssistant', icon: 'ph:brain-bold', submenu: false, isOpen: false },
-  { link: '/customer-success', name: 'navigation.customerSuccess', icon: 'ph:heart-half-bold', submenu: false, isOpen: false },
+
+  // 8. Communication (merged: Messaging + Communications + AI + Virtual Office)
+  {
+    name: 'navigation.communication',
+    icon: 'ph:chat-circle-dots-bold',
+    isOpen: false,
+    submenu: [
+      { link: '/messaging', name: 'navigation.messaging', icon: 'ph:chat-circle-dots-bold' },
+      { link: '/communications', name: 'navigation.communicationHub', icon: 'ph:phone-list-bold' },
+      { link: '/ai-assistant', name: 'navigation.aiAssistant', icon: 'ph:brain-bold' },
+      { link: '/virtual-office', name: 'navigation.virtualOffice', icon: 'ph:buildings-bold' }
+    ]
+  },
+
+  // 9. Marketing
   {
     name: 'navigation.marketing',
     icon: 'ph:megaphone-bold',
@@ -222,18 +275,8 @@ const menu = [
       { link: '/marketing/loyalty', name: 'navigation.loyalty', icon: 'ph:gift-bold' }
     ]
   },
-  {
-    name: 'navigation.calendar',
-    icon: 'ph:calendar-bold',
-    isOpen: false,
-    link: '/calendar'
-  },
-  {
-    name: 'navigation.booking',
-    icon: 'ph:calendar-check-bold',
-    isOpen: false,
-    link: '/booking'
-  },
+
+  // 10. Documents (absorbed Automations)
   {
     name: 'navigation.documents',
     icon: 'ph:folder-open-bold',
@@ -241,25 +284,29 @@ const menu = [
     submenu: [
       { link: '/documents', name: 'navigation.allDocuments', icon: 'ph:folder-bold' },
       { link: '/documents/e-signatures', name: 'navigation.eSignatures', icon: 'ph:signature-bold' },
-      { link: '/documents/editor', name: 'navigation.documentEditor', icon: 'ph:file-plus-bold' }
+      { link: '/documents/editor', name: 'navigation.documentEditor', icon: 'ph:file-plus-bold' },
+      { link: '/automations', name: 'navigation.automations', icon: 'ph:git-merge-bold' }
     ]
   },
+
+  // 11. Analytics & Reports (merged: Reports + Analytics + Gamification)
   {
-    name: 'navigation.automations',
-    icon: 'ph:git-merge-bold',
-    isOpen: false,
-    link: '/automations'
-  },
-  {
-    name: 'navigation.reports',
-    icon: 'IconReport',
+    name: 'navigation.analyticsReports',
+    icon: 'ph:chart-line-bold',
     isOpen: false,
     submenu: [
       { link: '/reports', name: 'navigation.report', icon: 'ph:chart-pie' },
       { link: '/reports/builder', name: 'navigation.reportBuilder', icon: 'ph:faders-horizontal-bold' },
-      { link: '/reports/forecasting', name: 'navigation.forecasting', icon: 'ph:trend-up-bold' }
+      { link: '/reports/forecasting', name: 'navigation.forecasting', icon: 'ph:trend-up-bold' },
+      { link: '/analytics/heatmap', name: 'navigation.activityHeatmap', icon: 'ph:squares-four-bold' },
+      { link: '/analytics/relationship-graph', name: 'navigation.relationshipGraph', icon: 'ph:graph-bold' },
+      { link: '/analytics/simulator', name: 'navigation.revenueSimulator', icon: 'ph:chart-line-up-bold' },
+      { link: '/gamification/leaderboard', name: 'navigation.leaderboard', icon: 'ph:ranking-bold' },
+      { link: '/gamification/achievements', name: 'navigation.achievements', icon: 'ph:medal-bold' }
     ]
   },
+
+  // 12. Finance
   {
     name: 'navigation.finance',
     icon: 'ph:currency-circle-dollar-bold',
@@ -278,6 +325,8 @@ const menu = [
       { link: '/finance/zakaat', name: 'navigation.zakaat', icon: 'ph:hand-coins-bold' }
     ]
   },
+
+  // 13. HR
   {
     name: 'navigation.hr',
     icon: 'ph:identification-badge-bold',
@@ -297,25 +346,8 @@ const menu = [
       { link: '/hr/training', name: 'navigation.training', icon: 'ph:graduation-cap-bold' }
     ]
   },
-  {
-    name: 'navigation.analytics',
-    icon: 'ph:chart-line-bold',
-    isOpen: false,
-    submenu: [
-      { link: '/analytics/heatmap', name: 'navigation.activityHeatmap', icon: 'ph:squares-four-bold' },
-      { link: '/analytics/relationship-graph', name: 'navigation.relationshipGraph', icon: 'ph:graph-bold' },
-      { link: '/analytics/simulator', name: 'navigation.revenueSimulator', icon: 'ph:chart-line-up-bold' }
-    ]
-  },
-  {
-    name: 'navigation.gamification',
-    icon: 'ph:trophy-bold',
-    isOpen: false,
-    submenu: [
-      { link: '/gamification/leaderboard', name: 'navigation.leaderboard', icon: 'ph:ranking-bold' },
-      { link: '/gamification/achievements', name: 'navigation.achievements', icon: 'ph:medal-bold' }
-    ]
-  },
+
+  // 14. Support (absorbed Customer Success)
   {
     name: 'navigation.support',
     icon: 'ph:lifebuoy-bold',
@@ -326,24 +358,20 @@ const menu = [
       { link: '/support/dashboard', name: 'navigation.supportDashboard', icon: 'ph:chart-pie-bold' },
       { link: '/support/canned-responses', name: 'navigation.cannedResponses', icon: 'ph:chat-text-bold' },
       { link: '/support/knowledge-base', name: 'navigation.knowledgeBase', icon: 'ph:book-open-bold' },
-      { link: '/support/live-chat', name: 'navigation.liveChat', icon: 'ph:chats-bold' }
+      { link: '/support/live-chat', name: 'navigation.liveChat', icon: 'ph:chats-bold' },
+      { link: '/customer-success', name: 'navigation.customerSuccess', icon: 'ph:heart-half-bold' }
     ]
   },
-  {
-    name: 'navigation.approvals',
-    icon: 'ph:stamp-bold',
-    isOpen: false,
-    submenu: [
-      { link: '/approvals', name: 'navigation.approvalCenter', icon: 'ph:check-circle-bold' },
-      { link: '/approvals/workflows', name: 'navigation.approvalWorkflows', icon: 'ph:flow-arrow-bold' }
-    ]
-  },
+
+  // 15. Settings (absorbed Approvals)
   {
     name: 'navigation.settings',
     icon: 'ph:gear-bold',
     isOpen: false,
-    role: 'VIEW_SETTINGS', // Higher permission
+    role: 'VIEW_SETTINGS',
     submenu: [
+      { link: '/approvals', name: 'navigation.approvalCenter', icon: 'ph:check-circle-bold' },
+      { link: '/approvals/workflows', name: 'navigation.approvalWorkflows', icon: 'ph:flow-arrow-bold' },
       { link: '/settings/theme-studio', name: 'navigation.themeStudio', icon: 'ph:palette-bold' },
       { link: '/settings/integrations', name: 'navigation.integrations', icon: 'ph:plugs-connected-bold' },
       { link: '/settings/security', name: 'navigation.security', icon: 'ph:lock-bold' },
@@ -449,5 +477,41 @@ function openNav() {
 
 .el-menu--collapse {
   width: calc(var(--el-menu-icon-width) + var(--el-menu-base-level-padding) * 2.5) !important;
+}
+
+// ── Favorites star icon ──
+.fav-star {
+  margin-left: auto;
+  opacity: 0;
+  color: var(--text-secondary, #a1a1aa);
+  cursor: pointer;
+  transition: opacity 0.2s, color 0.2s;
+  flex-shrink: 0;
+
+  &.is-fav {
+    opacity: 1;
+    color: #f59e0b;
+  }
+}
+
+.menu-item-with-star:hover .fav-star {
+  opacity: 1;
+}
+
+.fav-remove {
+  margin-left: auto;
+  opacity: 0;
+  color: var(--text-secondary, #a1a1aa);
+  cursor: pointer;
+  transition: opacity 0.2s, color 0.2s;
+  flex-shrink: 0;
+
+  &:hover {
+    color: #ef4444;
+  }
+}
+
+.el-menu-item:hover .fav-remove {
+  opacity: 1;
 }
 </style>

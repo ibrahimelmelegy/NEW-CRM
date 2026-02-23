@@ -149,7 +149,14 @@
         "goalsQuotas": "الأهداف والحصص",
         "taskList": "قائمة المهام",
         "tasksBoard": "لوحة المهام",
-        "ticketsBoard": "لوحة التذاكر"
+        "ticketsBoard": "لوحة التذاكر",
+        "dashboards": "لوحات المعلومات",
+        "supplyChain": "سلسلة التوريد",
+        "communication": "التواصل",
+        "analyticsReports": "التحليلات والتقارير",
+        "favorites": "المفضلة",
+        "planner": "المخطط",
+        "virtualOffice": "المكتب الافتراضي"
     },
     "automations": {
         "title": "منشئ الرحلات المرئي",

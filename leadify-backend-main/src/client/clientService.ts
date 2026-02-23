@@ -15,6 +15,7 @@ import ClientUsers from './client_UsersModel';
 import * as ExcelJS from 'exceljs';
 import { sendEmail } from '../utils/emailHelper';
 import notificationService from '../notification/notificationService';
+import { tenantWhere } from '../utils/tenantScope';
 
 class ClientService {
   async createClient(input: CreateClientInput, admin: User, t?: Transaction): Promise<Client> {
@@ -114,6 +115,7 @@ class ClientService {
 
     const { rows: clients, count: totalItems } = await Client.findAndCountAll({
       where: {
+        ...tenantWhere(user),
         ...(query.searchKey && {
           [Op.or]: [
             { clientName: { [Op.iLike]: `%${query.searchKey}%` } },

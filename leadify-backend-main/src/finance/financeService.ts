@@ -3,6 +3,7 @@ import Expense from './expenseModel';
 import Budget from './budgetModel';
 import ExpenseCategory from './expenseCategoryModel';
 import User from '../user/userModel';
+import { tenantWhere } from '../utils/tenantScope';
 
 class FinanceService {
   // Categories
@@ -28,9 +29,9 @@ class FinanceService {
   }
 
   // Expenses
-  async getExpenses(query: any) {
+  async getExpenses(query: any, user?: any) {
     const { page = 1, limit = 20, categoryId, status, startDate, endDate, search, searchKey, sortBy = 'date', sort = 'DESC', submittedBy } = query;
-    const where: any = {};
+    const where: any = { ...(user ? tenantWhere(user) : {}) };
     if (categoryId) where.categoryId = categoryId;
     if (status) where.status = status;
     if (submittedBy) where.submittedBy = submittedBy;
@@ -96,11 +97,12 @@ class FinanceService {
     return expense.update({ status: 'REJECTED' });
   }
 
-  async getExpenseSummary() {
+  async getExpenseSummary(user?: any) {
+    const tenantFilter = user ? tenantWhere(user) : {};
     const [total, approved, pending] = await Promise.all([
-      Expense.sum('amount'),
-      Expense.sum('amount', { where: { status: 'APPROVED' } }),
-      Expense.sum('amount', { where: { status: 'PENDING' } })
+      Expense.sum('amount', { where: { ...tenantFilter } }),
+      Expense.sum('amount', { where: { status: 'APPROVED', ...tenantFilter } }),
+      Expense.sum('amount', { where: { status: 'PENDING', ...tenantFilter } })
     ]);
     return { total: total || 0, approved: approved || 0, pending: pending || 0 };
   }

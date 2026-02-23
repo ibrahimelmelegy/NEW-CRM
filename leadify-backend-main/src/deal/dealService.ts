@@ -30,6 +30,7 @@ import { sendEmail } from '../utils/emailHelper';
 import clientService from '../client/clientService';
 import projectService from '../project/projectService';
 import { ProjectCategoryEnum, ProjectStatusEnum } from '../project/projectEnum';
+import { tenantWhere, tenantCreate } from '../utils/tenantScope';
 
 class DealService {
   public async convertLeadTODeal(input: ConvertLeadToDealInput & { userId: string }, admin: User): Promise<Deal> {
@@ -121,18 +122,12 @@ class DealService {
   }
 
   public async createDeal(input: CreateLeadAndDealInput, admin: User): Promise<Deal> {
-    const users = await User.findAll({
-      where: { id: { [Op.in]: input.deal.users } }
-    });
+    // Parallel validation: check users + duplicate in one round-trip
+    const [users, exitingDeal] = await Promise.all([
+      User.findAll({ where: { id: { [Op.in]: input.deal.users } } }),
+      Deal.findOne({ where: { name: input.deal.name, companyName: input.deal.companyName }, attributes: ['name', 'companyName'] }),
+    ]);
     if (!users.length) throw new BaseError(ERRORS.USER_NOT_FOUND);
-
-    const exitingDeal = await Deal.findOne({
-      where: {
-        name: input.deal.name,
-        companyName: input.deal.companyName
-      },
-      attributes: ['name', 'companyName']
-    });
     if (exitingDeal) throw new BaseError(ERRORS.DEAL_ALREADY_EXIST);
     if (input.deal.stage !== DealStageEnums.CANCELLED) delete input.deal.cancelledReason;
 
@@ -220,6 +215,7 @@ class DealService {
 
     const { rows: deals, count: totalItems } = await Deal.findAndCountAll({
       where: {
+        ...tenantWhere(user),
         stage: {
           [Op.ne]: DealStageEnums.CONVERTED
         },

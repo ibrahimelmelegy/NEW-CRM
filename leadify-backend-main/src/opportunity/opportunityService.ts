@@ -15,6 +15,7 @@ import { OpportunityPermissionsEnum } from '../role/roleEnum';
 import OpportunityUsers from './model/oppotyunity_UsersModel';
 import * as ExcelJS from 'exceljs';
 import { sendEmail } from '../utils/emailHelper';
+import { tenantWhere } from '../utils/tenantScope';
 
 class OpportunityService {
   async createOpportunity(input: any, admin: User): Promise<Opportunity | void> {
@@ -116,6 +117,7 @@ class OpportunityService {
 
   async getKanbanOpportunities(user: User): Promise<Record<string, Opportunity[]>> {
     const where: any = {
+      ...tenantWhere(user),
       stage: { [Op.ne]: OpportunityStageEnums.CONVERTED }
     };
 
@@ -190,6 +192,7 @@ class OpportunityService {
 
     const { rows: opportunities, count: totalItems } = await Opportunity.findAndCountAll({
       where: {
+        ...tenantWhere(user),
         stage: { [Op.ne]: OpportunityStageEnums.CONVERTED },
         ...(query.searchKey && {
           [Op.or]: [{ name: { [Op.iLike]: `%${query.searchKey}%` } }]
@@ -298,6 +301,7 @@ class OpportunityService {
 
   async sendOpportunitiesExcelByEmail(query: any, user: User, email: string): Promise<void> {
     const where: any = {
+      ...tenantWhere(user),
       stage: { [Op.ne]: OpportunityStageEnums.CONVERTED },
       ...(query.searchKey && {
         [Op.or]: [{ name: { [Op.iLike]: `%${query.searchKey}%` } }]

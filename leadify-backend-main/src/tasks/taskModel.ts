@@ -140,6 +140,31 @@ class Task extends Model {
   })
   public recurringPattern?: string;
 
+  // Planner-specific fields (nullable to preserve backward compat)
+  @Column({
+    type: DataType.DATEONLY,
+    allowNull: true
+  })
+  public date?: string;
+
+  @Column({
+    type: DataType.STRING(10),
+    allowNull: true
+  })
+  public timeSlot?: string;
+
+  @Column({
+    type: DataType.INTEGER,
+    allowNull: true
+  })
+  public duration?: number;
+
+  @Column({
+    type: DataType.STRING(50),
+    allowNull: true
+  })
+  public category?: string;
+
   @ForeignKey(() => Task)
   @Column({
     type: DataType.INTEGER,

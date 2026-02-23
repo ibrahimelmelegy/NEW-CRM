@@ -4,6 +4,7 @@ import Payslip from './models/payslipModel';
 import SalaryStructure from './models/salaryStructureModel';
 import EndOfService, { EOSStatus } from './models/endOfServiceModel';
 import Employee, { EmployeeStatus } from '../hr/models/employeeModel';
+import { tenantWhere } from '../utils/tenantScope';
 
 class PayrollService {
   // ─── Payroll Runs ────────────────────────────────────────────────────
@@ -17,9 +18,9 @@ class PayrollService {
     });
   }
 
-  async getPayrollRuns(query: any) {
+  async getPayrollRuns(query: any, user?: any) {
     const { page = 1, limit = 20, month, year, status } = query;
-    const where: any = {};
+    const where: any = { ...(user ? tenantWhere(user) : {}) };
     if (month) where.month = month;
     if (year) where.year = year;
     if (status) where.status = status;

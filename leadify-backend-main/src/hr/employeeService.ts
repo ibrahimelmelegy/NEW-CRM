@@ -5,6 +5,7 @@ import EmployeeDocument from './models/employeeDocumentModel';
 import User from '../user/userModel';
 import BaseError from '../utils/error/base-http-exception';
 import { ERRORS } from '../utils/error/errors';
+import { tenantWhere } from '../utils/tenantScope';
 
 interface EmployeeQuery {
   page?: number;
@@ -19,8 +20,9 @@ interface EmployeeQuery {
 }
 
 class EmployeeService {
-  async generateEmployeeNumber(): Promise<string> {
+  async generateEmployeeNumber(tenantId?: string): Promise<string> {
     const lastEmployee = await Employee.findOne({
+      where: { ...(tenantId && { tenantId }) },
       order: [['createdAt', 'DESC']],
       attributes: ['employeeNumber']
     });

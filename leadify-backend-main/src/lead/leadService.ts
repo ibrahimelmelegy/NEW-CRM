@@ -12,6 +12,7 @@ import LeadUsers from './model/lead_UsersModel';
 import * as ExcelJS from 'exceljs';
 import { sendEmail } from '../utils/emailHelper';
 import { io } from '../server';
+import { tenantWhere, tenantCreate } from '../utils/tenantScope';
 
 class LeadService {
   async createLead(input: any, adminId: number, t?: Transaction): Promise<Lead> {
@@ -59,13 +60,13 @@ class LeadService {
     return lead;
   }
 
-  async errorIfLeadWithExistEmail(email: string, id?: string): Promise<void> {
-    const leadWithEmail = await Lead.findOne({ where: { email, ...(id && { id: { [Op.ne]: id } }) } });
+  async errorIfLeadWithExistEmail(email: string, id?: string, tenantId?: string): Promise<void> {
+    const leadWithEmail = await Lead.findOne({ where: { email, ...(id && { id: { [Op.ne]: id } }), ...(tenantId && { tenantId }) } });
     if (leadWithEmail) throw new BaseError(ERRORS.EMAIL_ALREADY_EXISTS);
   }
 
-  async errorIfLeadWithExistPhone(phone: string, id?: string): Promise<void> {
-    const leadWithPhone = await Lead.findOne({ where: { phone, ...(id && { id: { [Op.ne]: id } }) } });
+  async errorIfLeadWithExistPhone(phone: string, id?: string, tenantId?: string): Promise<void> {
+    const leadWithPhone = await Lead.findOne({ where: { phone, ...(id && { id: { [Op.ne]: id } }), ...(tenantId && { tenantId }) } });
     if (leadWithPhone) throw new BaseError(ERRORS.PHONE_ALREADY_EXISTS);
   }
 
@@ -111,6 +112,7 @@ class LeadService {
 
     const { rows: leads, count: totalItems } = await Lead.findAndCountAll({
       where: {
+        ...tenantWhere(user),
         status: {
           [Op.ne]: LeadStatusEnums.CONVERTED
         },

@@ -96,6 +96,11 @@ import AuditTrail from '../audit/auditModel';
 import Task from '../tasks/taskModel';
 import FocusSession from '../tasks/focusSessionModel';
 import DailyHabit from '../tasks/dailyHabitModel';
+import VirtualRoom from '../virtualOffice/virtualRoomModel';
+import BOM from '../manufacturing/bomModel';
+import BOMItem from '../manufacturing/bomItemModel';
+import WorkOrder from '../manufacturing/workOrderModel';
+import QualityCheck from '../manufacturing/qualityCheckModel';
 import ZatcaInvoice from '../zatca/zatcaModel';
 import ZakaatAssessment from '../zakaat/zakaatModel';
 import SavedView from '../savedViews/savedViewModel';
@@ -342,6 +347,11 @@ const sequelize = new Sequelize({
     Tenant,
     FocusSession,
     DailyHabit,
+    VirtualRoom,
+    BOM,
+    BOMItem,
+    WorkOrder,
+    QualityCheck,
     DocBuilderDocument,
     DocBuilderVersion
   ], // Path to your models

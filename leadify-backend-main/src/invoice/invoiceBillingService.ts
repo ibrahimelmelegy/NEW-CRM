@@ -7,15 +7,17 @@ import SalesOrder from '../salesOrder/models/salesOrderModel';
 import SalesOrderItem from '../salesOrder/models/salesOrderItemModel';
 import BaseError from '../utils/error/base-http-exception';
 import { ERRORS } from '../utils/error/errors';
+import { tenantWhere } from '../utils/tenantScope';
 
 class InvoiceBillingService {
     /**
      * Auto-generate the next invoice number in INV-0001 sequence.
      */
-    async generateInvoiceNumber(): Promise<string> {
+    async generateInvoiceNumber(tenantId?: string): Promise<string> {
         const latest = await Invoice.findOne({
             where: {
-                invoiceNumber: { [Op.like]: 'INV-%' }
+                invoiceNumber: { [Op.like]: 'INV-%' },
+                ...(tenantId && { tenantId })
             },
             order: [['id', 'DESC']]
         });
@@ -34,10 +36,11 @@ class InvoiceBillingService {
     /**
      * Auto-generate the next credit note number in CN-0001 sequence.
      */
-    async generateCreditNoteNumber(): Promise<string> {
+    async generateCreditNoteNumber(tenantId?: string): Promise<string> {
         const latest = await CreditNote.findOne({
             where: {
-                creditNoteNumber: { [Op.like]: 'CN-%' }
+                creditNoteNumber: { [Op.like]: 'CN-%' },
+                ...(tenantId && { tenantId })
             },
             order: [['createdAt', 'DESC']]
         });

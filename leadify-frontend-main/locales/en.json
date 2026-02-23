@@ -149,7 +149,14 @@
         "goalsQuotas": "Goals & Quotas",
         "taskList": "Task List",
         "tasksBoard": "Tasks Board",
-        "ticketsBoard": "Tickets Board"
+        "ticketsBoard": "Tickets Board",
+        "dashboards": "Dashboards",
+        "supplyChain": "Supply Chain",
+        "communication": "Communication",
+        "analyticsReports": "Analytics & Reports",
+        "favorites": "Favorites",
+        "planner": "Planner",
+        "virtualOffice": "Virtual Office"
     },
     "automations": {
         "title": "Visual Journey Builder",

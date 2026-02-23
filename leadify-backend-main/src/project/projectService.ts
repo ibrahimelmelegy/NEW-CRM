@@ -37,6 +37,7 @@ import dealService from '../deal/dealService';
 import { DealStageEnums } from '../deal/dealEnum';
 import notificationService from '../notification/notificationService';
 import { Material } from '../material/material.model';
+import { tenantWhere } from '../utils/tenantScope';
 
 const RelationArray = [
   Vehicle,
@@ -437,7 +438,7 @@ class ProjectService {
             [Op.in]: query.category
           }
         }),
-        tenantId: user.tenantId // <-- CORE SAAS SECURITY: Isolate by Workspace
+        ...tenantWhere(user)
       },
       limit,
       offset,
@@ -480,7 +481,7 @@ class ProjectService {
   public async getAllProjects(user: User): Promise<Project[]> {
     return await Project.findAll({
       where: {
-        tenantId: user.tenantId // Isolate by Workspace
+        ...tenantWhere(user)
       },
       attributes: ['id', 'name'],
       order: [['name', 'ASC']]
@@ -498,7 +499,7 @@ class ProjectService {
     const project = await this.projectOrError(
       {
         isCompleted: false,
-        tenantId: user.tenantId
+        ...tenantWhere(user)
       },
       RelationArray
     );
@@ -603,6 +604,7 @@ class ProjectService {
 
   public async sendProjectsExcelByEmail(query: any, user: User, email: string): Promise<void> {
     const where: any = {
+      ...tenantWhere(user),
       isCompleted: true,
       ...(query.searchKey && {
         [Op.or]: [{ name: { [Op.iLike]: `%${query.searchKey}%` } }]
