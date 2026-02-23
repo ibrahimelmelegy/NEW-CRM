@@ -71,6 +71,8 @@ import erpnextRoutes from './integrations/erpnext/erpnextRoutes';
 import auditRoutes from './audit/auditRoutes';
 import taskRoutes from './tasks/taskRoutes';
 import plannerRoutes from './tasks/plannerRoutes';
+import virtualOfficeRoutes from './virtualOffice/virtualOfficeRoutes';
+import manufacturingRoutes from './manufacturing/manufacturingRoutes';
 import zatcaRoutes from './zatca/zatcaRoutes';
 import zakaatRoutes from './zakaat/zakaatRoutes';
 import savedViewRoutes from './savedViews/savedViewRoutes';
@@ -125,8 +127,8 @@ app.use(helmet({
   }
 }));
 
-// 3. HTTPS enforcement (production only)
-if (process.env.NODE_ENV === 'production') {
+// 3. HTTPS enforcement (production only, when FORCE_HTTPS=true)
+if (process.env.NODE_ENV === 'production' && process.env.FORCE_HTTPS === 'true') {
   app.use((req: Request, res: Response, next: NextFunction) => {
     if (req.headers['x-forwarded-proto'] !== 'https') {
       return res.redirect(301, `https://${req.headers.host}${req.url}`);
@@ -273,6 +275,8 @@ app.use('/api/attachments', attachmentRoutes);
 app.use('/api/audit', auditRoutes);
 app.use('/api/tasks', taskRoutes);
 app.use('/api/planner', plannerRoutes);
+app.use('/api/virtual-office', virtualOfficeRoutes);
+app.use('/api/manufacturing', manufacturingRoutes);
 app.use('/api/zatca', zatcaRoutes);
 app.use('/api/zakaat', zakaatRoutes);
 app.use('/api/saved-views', savedViewRoutes);

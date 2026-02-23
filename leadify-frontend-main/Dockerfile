@@ -15,6 +15,7 @@ ARG BASE_URL=https://crm.hp-tech.com/
 ENV API_BASE_URL=$API_BASE_URL
 ENV BASE_URL=$BASE_URL
 
+ENV NODE_OPTIONS="--max-old-space-size=4096"
 RUN npm run build
 
 # Stage 2: Serve with Nginx
