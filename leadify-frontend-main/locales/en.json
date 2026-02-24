@@ -2229,9 +2229,12 @@
   "documentTemplates": {
     "title": "Document Templates",
     "subtitle": "Design professional PDF templates for invoices and purchase orders.",
+    "allTemplates": "All Templates",
     "createTemplate": "Create Template",
     "editTemplate": "Edit Template",
     "seedDefaults": "Load Defaults",
+    "seeded": "Default templates loaded",
+    "cloned": "Template duplicated",
     "noTemplates": "No templates yet",
     "noTemplatesHint": "Create a custom template or load the default professional templates.",
     "invoice": "Invoice",
