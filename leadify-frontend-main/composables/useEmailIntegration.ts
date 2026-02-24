@@ -27,7 +27,7 @@ export interface EmailMessage {
 }
 
 export async function fetchEmailAccounts(): Promise<EmailAccount[]> {
-  const { body, success } = await useApiFetch('email/accounts');
+  const { body, success } = await useApiFetch('email/accounts', 'GET', {}, true);
   if (success && body) {
     const data = body as any;
     return data.docs || data || [];
@@ -45,7 +45,7 @@ export async function disconnectEmailAccount(id: string) {
 
 export async function fetchEmailMessages(query?: Record<string, string>): Promise<{ docs: EmailMessage[]; pagination: any }> {
   const qs = query ? '?' + new URLSearchParams(query).toString() : '';
-  const { body, success } = await useApiFetch(`email/messages${qs}`);
+  const { body, success } = await useApiFetch(`email/messages${qs}`, 'GET', {}, true);
   if (success && body) {
     return body as { docs: EmailMessage[]; pagination: any };
   }

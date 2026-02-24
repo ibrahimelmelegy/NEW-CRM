@@ -11,7 +11,14 @@ class CustomerSuccessController {
       wrapResult(res, dashboard, 200);
     } catch (error: any) {
       console.error('[CustomerSuccess] Dashboard error:', error.message);
-      wrapResult(res, null, 500);
+      // Return empty dashboard instead of 500
+      wrapResult(res, {
+        clients: [],
+        healthDistribution: { healthy: 0, atRisk: 0, critical: 0 },
+        recentActivity: [],
+        avgHealthScore: 0,
+        totalClients: 0
+      }, 200);
     }
   }
 

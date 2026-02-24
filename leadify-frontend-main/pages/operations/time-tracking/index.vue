@@ -157,7 +157,7 @@ onUnmounted(() => {
 async function loadEntries() {
   loading.value = true;
   try {
-    const { body, success } = await useApiFetch(`time-tracking?page=${currentPage.value}&limit=20`);
+    const { body, success } = await useApiFetch(`time-tracking/entries?page=${currentPage.value}&limit=20`);
     if (success && body) {
       entries.value = body.docs || [];
       pagination.value = body.pagination || pagination.value;
@@ -169,7 +169,7 @@ async function loadEntries() {
 
 async function checkActiveTimer() {
   try {
-    const { body, success } = await useApiFetch('time-tracking/active');
+    const { body, success } = await useApiFetch('time-tracking/running');
     if (success && body && body.id) {
       activeTimer.value = body;
       startElapsedCounter(body.startTime);

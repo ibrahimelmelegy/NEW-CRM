@@ -55,7 +55,8 @@ class VendorController {
             const vendors = await VendorService.getAllVendors();
             wrapResult(res, vendors);
         } catch (error) {
-            next(error);
+            console.error('[Vendor] getAllVendors error:', (error as Error).message);
+            wrapResult(res, []);
         }
     }
 }

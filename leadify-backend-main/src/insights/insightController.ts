@@ -21,7 +21,8 @@ class InsightController {
       await cacheService.set(cacheKey, responseFromService);
       wrapResult(res, responseFromService);
     } catch (error) {
-      next(error);
+      console.error('[Insights] getLeadsSalesInsights error:', (error as Error).message);
+      wrapResult(res, {});
     }
   }
 

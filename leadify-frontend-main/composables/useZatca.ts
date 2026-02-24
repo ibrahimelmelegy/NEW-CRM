@@ -108,34 +108,34 @@ export const zatcaStatusOptions = [
 
 export async function fetchZatcaInvoices(query?: Record<string, string>): Promise<{ docs: ZatcaInvoice[]; pagination: ZatcaPagination }> {
   const qs = query ? '?' + new URLSearchParams(query).toString() : '';
-  const { body, success } = await useApiFetch(`finance/zatca${qs}`);
+  const { body, success } = await useApiFetch(`zatca/invoices${qs}`);
   if (success && body) return body as { docs: ZatcaInvoice[]; pagination: ZatcaPagination };
   return { docs: [], pagination: { page: 1, limit: 20, totalItems: 0, totalPages: 0 } };
 }
 
 export async function fetchZatcaInvoice(id: number | string): Promise<ZatcaInvoice | null> {
-  const { body, success } = await useApiFetch(`finance/zatca/${id}`);
+  const { body, success } = await useApiFetch(`zatca/invoices/${id}`);
   return success && body ? (body as ZatcaInvoice) : null;
 }
 
 export async function createZatcaInvoice(data: Partial<ZatcaInvoice>): Promise<any> {
-  return useApiFetch('finance/zatca', 'POST', data as Record<string, any>);
+  return useApiFetch('zatca/invoices', 'POST', data as Record<string, any>);
 }
 
 export async function updateZatcaInvoice(id: number | string, data: Partial<ZatcaInvoice>): Promise<any> {
-  return useApiFetch(`finance/zatca/${id}`, 'PUT', data as Record<string, any>);
+  return useApiFetch(`zatca/invoices/${id}`, 'PUT', data as Record<string, any>);
 }
 
 export async function submitToZatca(id: number | string): Promise<any> {
-  return useApiFetch(`finance/zatca/${id}/submit`, 'POST');
+  return useApiFetch(`zatca/invoices/${id}/submit`, 'POST');
 }
 
 export async function validateZatcaInvoice(data: Partial<ZatcaInvoice>): Promise<any> {
-  return useApiFetch('finance/zatca/validate', 'POST', data as Record<string, any>);
+  return useApiFetch('zatca/validate', 'POST', data as Record<string, any>);
 }
 
 export async function downloadZatcaXml(id: number | string): Promise<any> {
-  const { body, success } = await useApiFetch(`finance/zatca/${id}/xml`);
+  const { body, success } = await useApiFetch(`zatca/invoices/${id}/xml`);
   if (success && body) {
     // body should contain the XML string or a download URL
     const xml = typeof body === 'string' ? body : (body as any).xml || '';
@@ -159,8 +159,16 @@ export async function fetchZatcaSummary(): Promise<{
   cleared: number;
   rejected: number;
 }> {
-  const { body, success } = await useApiFetch('finance/zatca/summary');
-  return success && body
-    ? (body as { total: number; pending: number; cleared: number; rejected: number })
-    : { total: 0, pending: 0, cleared: 0, rejected: 0 };
+  // Summary endpoint doesn't exist yet - compute from invoices list
+  try {
+    const { docs } = await fetchZatcaInvoices({ limit: '1000' });
+    return {
+      total: docs.length,
+      pending: docs.filter(d => d.status === 'PENDING').length,
+      cleared: docs.filter(d => d.status === 'CLEARED').length,
+      rejected: docs.filter(d => d.status === 'REJECTED').length
+    };
+  } catch {
+    return { total: 0, pending: 0, cleared: 0, rejected: 0 };
+  }
 }

@@ -236,11 +236,15 @@ const getScoreColor = (score: number) => {
 
 const fetchDashboard = async () => {
   loading.value = true;
-  const res: any = await useApiFetch('customer-success/dashboard');
-  if (res?.success && res.body) {
-    dashboard.value = res.body;
-    await nextTick();
-    renderCharts();
+  try {
+    const res: any = await useApiFetch('customer-success/dashboard');
+    if (res?.success && res.body) {
+      dashboard.value = res.body;
+      await nextTick();
+      renderCharts();
+    }
+  } catch {
+    // Silently handle - dashboard will show empty state
   }
   loading.value = false;
 };

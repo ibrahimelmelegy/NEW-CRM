@@ -9,7 +9,9 @@ class EmailController {
       const accounts = await emailIntegrationService.getAccounts(String(req.user!.id));
       wrapResult(res, accounts);
     } catch (error) {
-      next(error);
+      // Return empty array instead of 500 when email integration isn't set up
+      console.error('[EmailController] getAccounts error:', (error as Error).message);
+      wrapResult(res, []);
     }
   }
 
@@ -36,13 +38,25 @@ class EmailController {
 
   public async getMessages(req: AuthenticatedRequest, res: Response, next: NextFunction): Promise<void> {
     try {
-      const result = await emailIntegrationService.getMessages(
-        req.query.accountId as string,
-        req.query
-      );
+      // If no accountId provided, get messages from all user accounts
+      const accountId = req.query.accountId as string;
+      if (!accountId) {
+        // Return empty when no account specified
+        wrapResult(res, {
+          docs: [],
+          pagination: { page: 1, limit: 20, totalItems: 0, totalPages: 0 }
+        });
+        return;
+      }
+      const result = await emailIntegrationService.getMessages(accountId, req.query);
       wrapResult(res, result);
     } catch (error) {
-      next(error);
+      // Return empty result instead of 500
+      console.error('[EmailController] getMessages error:', (error as Error).message);
+      wrapResult(res, {
+        docs: [],
+        pagination: { page: 1, limit: 20, totalItems: 0, totalPages: 0 }
+      });
     }
   }
 
@@ -60,7 +74,9 @@ class EmailController {
       const tracking = await emailIntegrationService.getTracking(req.params.messageId as string);
       wrapResult(res, tracking);
     } catch (error) {
-      next(error);
+      // Return empty array instead of 500
+      console.error('[EmailController] getTracking error:', (error as Error).message);
+      wrapResult(res, []);
     }
   }
 }

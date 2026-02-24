@@ -844,11 +844,19 @@ function navigateToDoc(doc: { link: string }) {
 
 // --- Data Loading ---
 async function loadInitialData() {
+  const safeApiFetch = async (url: string) => {
+    try {
+      return await useApiFetch(url);
+    } catch {
+      return { success: false, body: null };
+    }
+  };
+
   const [dealRes, clientRes, vendorRes, projectRes] = await Promise.all([
-    useApiFetch('deal?limit=200'),
-    useApiFetch('client?limit=500'),
-    useApiFetch('vendor/all'),
-    useApiFetch('project?limit=200')
+    safeApiFetch('deal?limit=200'),
+    safeApiFetch('client?limit=500'),
+    safeApiFetch('vendor/all'),
+    safeApiFetch('project?limit=200')
   ]);
 
   if (dealRes.success && dealRes.body) {

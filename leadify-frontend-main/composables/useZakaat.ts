@@ -62,30 +62,30 @@ export const zakaatStatusOptions = [
 
 export async function fetchAssessments(query?: Record<string, string>): Promise<{ docs: ZakaatAssessment[]; pagination: ZakaatPagination }> {
   const qs = query ? '?' + new URLSearchParams(query).toString() : '';
-  const { body, success } = await useApiFetch(`finance/zakaat${qs}`);
+  const { body, success } = await useApiFetch(`zakaat/assessments${qs}`);
   if (success && body) return body as { docs: ZakaatAssessment[]; pagination: ZakaatPagination };
   return { docs: [], pagination: { page: 1, limit: 20, totalItems: 0, totalPages: 0 } };
 }
 
 export async function fetchAssessment(id: number | string): Promise<ZakaatAssessment | null> {
-  const { body, success } = await useApiFetch(`finance/zakaat/${id}`);
+  const { body, success } = await useApiFetch(`zakaat/assessments/${id}`);
   return success && body ? (body as ZakaatAssessment) : null;
 }
 
 export async function createAssessment(data: Partial<ZakaatAssessment>): Promise<any> {
-  return useApiFetch('finance/zakaat', 'POST', data as Record<string, any>);
+  return useApiFetch('zakaat/assessments', 'POST', data as Record<string, any>);
 }
 
 export async function updateAssessment(id: number | string, data: Partial<ZakaatAssessment>): Promise<any> {
-  return useApiFetch(`finance/zakaat/${id}`, 'PUT', data as Record<string, any>);
+  return useApiFetch(`zakaat/assessments/${id}`, 'PUT', data as Record<string, any>);
 }
 
 export async function calculateZakaat(id: number | string): Promise<any> {
-  return useApiFetch(`finance/zakaat/${id}/calculate`, 'POST');
+  return useApiFetch(`zakaat/assessments/${id}/calculate`, 'POST');
 }
 
 export async function getZakaatReport(id: number | string): Promise<any> {
-  const { body, success } = await useApiFetch(`finance/zakaat/${id}/report`);
+  const { body, success } = await useApiFetch(`zakaat/assessments/${id}/report`);
   return success && body ? body : null;
 }
 
@@ -94,8 +94,16 @@ export async function fetchZakaatSummary(): Promise<{
   totalZakaatDue: number;
   currentYearStatus: string;
 }> {
-  const { body, success } = await useApiFetch('finance/zakaat/summary');
-  return success && body
-    ? (body as { totalAssessments: number; totalZakaatDue: number; currentYearStatus: string })
-    : { totalAssessments: 0, totalZakaatDue: 0, currentYearStatus: 'N/A' };
+  // Summary endpoint doesn't exist yet - compute from assessments list
+  try {
+    const { docs } = await fetchAssessments({ limit: '1000' });
+    const totalAssessments = docs.length;
+    const totalZakaatDue = docs.reduce((sum, a) => sum + (a.zakaatDue || 0), 0);
+    const currentYear = new Date().getFullYear().toString();
+    const currentYearAssessment = docs.find(a => a.fiscalYear === currentYear);
+    const currentYearStatus = currentYearAssessment?.status || 'N/A';
+    return { totalAssessments, totalZakaatDue, currentYearStatus };
+  } catch {
+    return { totalAssessments: 0, totalZakaatDue: 0, currentYearStatus: 'N/A' };
+  }
 }

@@ -137,13 +137,21 @@ export function useDailyBriefing() {
     loading.value = true;
 
     try {
+      const safeApiFetch = async (url: string) => {
+        try {
+          return await useApiFetch(url, 'GET', {}, true);
+        } catch {
+          return { success: false, body: null, message: 'Request failed' };
+        }
+      };
+
       const [insightsRes, tasksRes, activityRes, calendarRes, dealsRes, leadsRes] = await Promise.all([
-        useApiFetch('insights/leads-sales', 'GET', {}, true),
-        useApiFetch('daily-task?limit=100', 'GET', {}, true),
-        useApiFetch('activity?page=1&limit=20', 'GET', {}, true),
-        useApiFetch('calendar/events', 'GET', {}, true),
-        useApiFetch('deal?limit=5&sort=DESC&sortBy=createdAt', 'GET', {}, true),
-        useApiFetch('lead?limit=5&sort=DESC&sortBy=createdAt', 'GET', {}, true)
+        safeApiFetch('insights/leads-sales'),
+        safeApiFetch('daily-task?limit=100'),
+        safeApiFetch('activity?page=1&limit=20'),
+        safeApiFetch('calendar'),
+        safeApiFetch('deal?limit=5&sort=DESC&sortBy=createdAt'),
+        safeApiFetch('lead?limit=5&sort=DESC&sortBy=createdAt')
       ]);
 
       // --- Generate Priorities ---

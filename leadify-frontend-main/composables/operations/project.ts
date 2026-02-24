@@ -232,23 +232,16 @@ export const fetchExistingProject = async () => {
 export async function getProjectDraft(): Promise<CombinedProjectValues> {
   try {
     // Make the API call
-    const { body, success, message } = await useApiFetch('project/draft');
+    const { body, success } = await useApiFetch('project/draft');
 
     if (success) {
       // Return the docs (project) from the response
       return body;
-    } else {
-      // If the API call is unsuccessful, throw an error with the message
-      throw new Error(message || 'Failed to fetch draft project');
     }
-  } catch (error) {
-    // Catch and log any errors, either from the API call or from unexpected issues
-    console.error('Error fetching draft project:', error instanceof Error ? error.message : error);
-
-    // Optionally, you could show a notification here if needed
-    // handleError('An error occurred while fetching draft project. Please try again.');
-
-    // Return an empty array as fallback
+    // No draft found is expected when creating a new project - return empty
+    return {};
+  } catch {
+    // Network/server error - return empty silently (no draft is normal)
     return {};
   }
 }
