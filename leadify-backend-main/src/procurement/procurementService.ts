@@ -163,7 +163,7 @@ class ProcurementService {
         const recentTransactions = await PurchaseOrder.findAll({
             limit: 5,
             order: [['createdAt', 'DESC']],
-            include: [{ model: Vendor, attributes: ['name', 'profilePicture'] }],
+            include: [{ model: Vendor, attributes: ['name'] }],
             attributes: ['id', 'poNumber', 'totalAmount', 'status', 'createdAt']
         });
 
