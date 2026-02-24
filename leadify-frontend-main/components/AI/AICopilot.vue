@@ -7,7 +7,7 @@
         class="bg-gradient-to-r from-violet-600 to-indigo-600 hover:scale-110 hover:shadow-indigo-500/50"
         @click="toggleCopilot"
       )
-        Icon(v-if="!isOpen" name="ph:sparkles-bold" size="24" class="text-white")
+        Icon(v-if="!isOpen" name="ph:sparkle-bold" size="24" class="text-white")
         Icon(v-else name="ph:x-bold" size="24" class="text-white")
 
   //- Copilot Panel

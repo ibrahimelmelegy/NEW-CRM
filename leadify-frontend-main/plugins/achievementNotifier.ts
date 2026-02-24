@@ -2,7 +2,7 @@ export default defineNuxtPlugin(() => {
   if (import.meta.server) return;
 
   const config = useRuntimeConfig();
-  const apiBase = config.public.API_BASE_URL?.replace('/api/', '') || 'http://localhost:5000';
+  const apiBase = config.public.API_BASE_URL?.replace(/\/api\/?$/, '') || window.location.origin;
 
   // Dynamically import socket.io-client to avoid SSR issues
   import('socket.io-client')

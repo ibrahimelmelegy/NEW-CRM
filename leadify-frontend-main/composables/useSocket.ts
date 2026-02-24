@@ -6,7 +6,8 @@ export const useSocket = () => {
 
   onMounted(() => {
     // Connect to backend (adjust URL based on environment)
-    const socketUrl = process.env.NODE_ENV === 'production' ? window.location.origin : 'http://localhost:5000';
+    const apiBase = config.public.API_BASE_URL?.replace(/\/api\/?$/, '') || '';
+    const socketUrl = apiBase && !apiBase.startsWith('/') ? apiBase : window.location.origin;
 
     socket.value = io(socketUrl);
 
