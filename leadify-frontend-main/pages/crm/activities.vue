@@ -284,9 +284,9 @@ async function loadActivities(append = false) {
   try {
     // Load from deals, tasks, tickets in parallel
     const [dealRes, taskRes, ticketRes] = await Promise.all([
-      useApiFetch(`deal?limit=${limit}&sort=DESC&sortBy=updatedAt`),
-      useApiFetch(`tasks?limit=${limit}&sort=DESC&sortBy=updatedAt`),
-      useApiFetch(`support/tickets?limit=${Math.ceil(limit / 2)}&sort=DESC&sortBy=updatedAt`)
+      useApiFetch(`deal?limit=${limit}&sort=DESC&sortBy=createdAt`, 'GET', {}, true),
+      useApiFetch(`tasks?limit=${limit}&sort=DESC&sortBy=createdAt`, 'GET', {}, true),
+      useApiFetch(`support/tickets?limit=${Math.ceil(limit / 2)}`, 'GET', {}, true)
     ]);
 
     if (dealRes.success && dealRes.body) {

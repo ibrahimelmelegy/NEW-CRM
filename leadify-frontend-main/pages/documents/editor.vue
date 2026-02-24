@@ -846,7 +846,7 @@ function navigateToDoc(doc: { link: string }) {
 async function loadInitialData() {
   const safeApiFetch = async (url: string) => {
     try {
-      return await useApiFetch(url);
+      return await useApiFetch(url, 'GET', {}, true);
     } catch {
       return { success: false, body: null };
     }
@@ -878,7 +878,7 @@ async function loadInitialData() {
 
 async function loadInvoices() {
   try {
-    const { body, success } = await useApiFetch('invoices/billing?limit=100');
+    const { body, success } = await useApiFetch('invoices/billing?limit=100', 'GET', {}, true);
     if (success && body) {
       const data = body as any;
       invoicesList.value = (data.docs || data || []).map((inv: any) => ({

@@ -231,8 +231,8 @@ export const fetchExistingProject = async () => {
  */
 export async function getProjectDraft(): Promise<CombinedProjectValues> {
   try {
-    // Make the API call
-    const { body, success } = await useApiFetch('project/draft');
+    // Make the API call (silence=true since "no draft" is expected for new projects)
+    const { body, success } = await useApiFetch('project/draft', 'GET', {}, true);
 
     if (success) {
       // Return the docs (project) from the response

@@ -237,7 +237,7 @@ const getScoreColor = (score: number) => {
 const fetchDashboard = async () => {
   loading.value = true;
   try {
-    const res: any = await useApiFetch('customer-success/dashboard');
+    const res: any = await useApiFetch('customer-success/dashboard', 'GET', {}, true);
     if (res?.success && res.body) {
       dashboard.value = res.body;
       await nextTick();
