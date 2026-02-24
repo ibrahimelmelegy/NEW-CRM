@@ -5,16 +5,20 @@ import { CreateOrUpdateSettingInput } from './inputs/createSettingInput';
 import SettingController from './settingController';
 import { SettingsPermissionsEnum } from '../role/roleEnum';
 
-const router = express.Router();
+/**
+ * @swagger
+ * tags:
+ *   name: Setting
+ *   description: Application settings — branding, email config, company info
+ */
 
-//** --------------------- POST --------------------- */
+const router = express.Router();
 
 /**
  * @swagger
- * /api/setting/:
+ * /api/setting:
  *   post:
- *     summary: Create new setting
- *     description: Create a new setting with the provided details. Requires authentication.
+ *     summary: Create or update settings
  *     tags: [Setting]
  *     security:
  *       - bearerAuth: []
@@ -25,32 +29,29 @@ const router = express.Router();
  *           schema:
  *             type: object
  *             properties:
- *              emailApiKey:
- *                type: string
- *              email:
- *                type: string
- *                format: email
- *                maxLength: 50
- *                description: Email address of the setting. Required if phoneNumber is not provided.
- *              name:
- *                type: string
- *              logo:
- *                type: string
- *              favIcon:
- *                type: string
- *              primaryColor:
- *                type: string
- *              secondaryColor:
- *                type: string
+ *               emailApiKey:
+ *                 type: string
+ *               email:
+ *                 type: string
+ *                 format: email
+ *               name:
+ *                 type: string
+ *               logo:
+ *                 type: string
+ *               favIcon:
+ *                 type: string
+ *               primaryColor:
+ *                 type: string
+ *               secondaryColor:
+ *                 type: string
  *     responses:
  *       201:
- *         description: setting created successfully
+ *         description: Settings saved
  *       400:
- *         description: Bad request
+ *         description: Validation error
  *       500:
  *         description: Server error
  */
-
 router.post(
   '/',
   authenticateUser,
@@ -59,25 +60,20 @@ router.post(
   SettingController.createSetting
 );
 
-//** --------------------- GET --------------------- */
-
 /**
  * @swagger
- * /api/api/setting/:
+ * /api/setting:
  *   get:
- *     summary: Get all settings
+ *     summary: Get application settings
  *     tags: [Setting]
+ *     security:
+ *       - bearerAuth: []
  *     responses:
  *       200:
- *         description: Setting Information
- *       400:
- *         description: Bad Request
+ *         description: Current application settings
  *       500:
- *         description: Internal Server Error
+ *         description: Server error
  */
-
 router.get('/', authenticateUser, HasPermission([SettingsPermissionsEnum.VIEW_SETTINGS]), SettingController.getSetting);
-
-//** --------------------- DELETE --------------------- */
 
 export default router;

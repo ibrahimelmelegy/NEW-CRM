@@ -69,7 +69,7 @@ router.post(
  * /api/additional-material/update:
  *  post:
  *   summary: update an existing material
- *   tags: [Additional Material ]
+ *   tags: [Additional Material]
  *   security:
  *     - bearerAuth: []
  *   requestBody:
@@ -123,7 +123,7 @@ router.post(
  * /api/additional-material/:
  *  get:
  *   summary: Get paginated  materials
- *   tags: [Additional Material ]
+ *   tags: [Additional Material]
  *   parameters:
  *     - in: path
  *       name: page
@@ -175,7 +175,7 @@ router.get(
  * /api/additional-material/excel/{email}:
  *   get:
  *     summary: Send additional materials data as an Excel file to the specified email
- *     tags: [Additional Material ]
+ *     tags: [Additional Material]
  *     parameters:
  *       - in: path
  *         name: email
@@ -228,7 +228,7 @@ router.get(
  * /api/additional-material/{id}:
  *  get:
  *   summary: Get a material by ID
- *   tags: [Additional Material ]
+ *   tags: [Additional Material]
  *   parameters:
  *     - in: path
  *       name: id

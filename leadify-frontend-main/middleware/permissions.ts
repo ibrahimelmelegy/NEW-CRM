@@ -9,9 +9,6 @@ export default defineNuxtRouteMiddleware(async to => {
   if (user.value?.role?.name === 'SUPER_ADMIN') return;
 
   if (requiredPermission && !hasPermission(requiredPermission)) {
-    throw createError({
-      statusCode: 403,
-      message: "You don't have permission to access this page"
-    });
+    return navigateTo('/');
   }
 });

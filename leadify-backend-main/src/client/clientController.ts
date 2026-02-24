@@ -53,6 +53,15 @@ class ClientController {
     }
   }
 
+  public async getClientContacts(req: AuthenticatedRequest, res: Response, next: NextFunction): Promise<void> {
+    try {
+      const responseFromService = await ClientService.getClientContacts(req.params.id as string, req.user as User);
+      wrapResult(res, responseFromService);
+    } catch (error) {
+      next(error);
+    }
+  }
+
   public async sendClientsExcelByEmail(req: AuthenticatedRequest, res: Response, next: NextFunction): Promise<void> {
     try {
       await ClientService.sendClientsExcelByEmail(req.query, req.user as User, req.params.email as string);

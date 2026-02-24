@@ -25,7 +25,6 @@ class CacheService {
             return true;
         } catch (error) {
             this.redisAvailable = false;
-            console.error('Redis Connection error, disabling cache temporarily');
             return false;
         }
     }
@@ -36,7 +35,6 @@ class CacheService {
             const data = await redisClient.get(key);
             return data ? JSON.parse(data) : null;
         } catch (error) {
-            console.error(`Cache Get Error [${key}]:`, error);
             return null;
         }
     }
@@ -46,7 +44,7 @@ class CacheService {
         try {
             await redisClient.setEx(key, ttl, JSON.stringify(value));
         } catch (error) {
-            console.error(`Cache Set Error [${key}]:`, error);
+            // Cache set failed - silently handled
         }
     }
 
@@ -55,7 +53,7 @@ class CacheService {
         try {
             await redisClient.del(key);
         } catch (error) {
-            console.error(`Cache Del Error [${key}]:`, error);
+            // Cache delete failed - silently handled
         }
     }
 }

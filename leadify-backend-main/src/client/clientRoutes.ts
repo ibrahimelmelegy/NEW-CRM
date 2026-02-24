@@ -495,6 +495,13 @@ router.get(
  *         description: Internal Server Error
  */
 router.get(
+  '/:id/contacts',
+  authenticateUser,
+  HasPermission([ClientPermissionsEnum.VIEW_GLOBAL_CLIENTS, ClientPermissionsEnum.VIEW_OWN_CLIENTS]),
+  clientController.getClientContacts
+);
+
+router.get(
   '/:id',
   authenticateUser,
   HasPermission([ClientPermissionsEnum.VIEW_GLOBAL_CLIENTS, ClientPermissionsEnum.VIEW_OWN_CLIENTS]),

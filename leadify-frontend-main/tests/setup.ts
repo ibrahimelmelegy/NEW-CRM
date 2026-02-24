@@ -7,47 +7,49 @@
 import { vi } from 'vitest';
 import { ref, computed, reactive, watch, watchEffect, toRefs, onMounted, onUnmounted, onBeforeUnmount, nextTick, h, defineComponent } from 'vue';
 
+const _global = globalThis as any;
+
 // Make Vue reactivity functions globally available
-globalThis.ref = ref;
-globalThis.computed = computed;
-globalThis.reactive = reactive;
-globalThis.watch = watch;
-globalThis.watchEffect = watchEffect;
-globalThis.toRefs = toRefs;
-globalThis.onMounted = onMounted;
-globalThis.onUnmounted = onUnmounted;
-globalThis.onBeforeUnmount = onBeforeUnmount;
-globalThis.nextTick = nextTick;
-globalThis.h = h;
-globalThis.defineComponent = defineComponent;
+_global.ref = ref;
+_global.computed = computed;
+_global.reactive = reactive;
+_global.watch = watch;
+_global.watchEffect = watchEffect;
+_global.toRefs = toRefs;
+_global.onMounted = onMounted;
+_global.onUnmounted = onUnmounted;
+_global.onBeforeUnmount = onBeforeUnmount;
+_global.nextTick = nextTick;
+_global.h = h;
+_global.defineComponent = defineComponent;
 
 // Mock Nuxt composables
-globalThis.useRuntimeConfig = () => ({
-    public: {
-        API_BASE_URL: 'http://localhost:3001/api/v1/'
-    }
+_global.useRuntimeConfig = () => ({
+  public: {
+    API_BASE_URL: 'http://localhost:3001/api/v1/'
+  }
 });
 
-globalThis.useCookie = (name: string) => ({
-    value: name === 'access_token' ? 'mock-token' : null
+_global.useCookie = (name: string) => ({
+  value: name === 'access_token' ? 'mock-token' : null
 });
 
-globalThis.useRoute = () => ({
-    fullPath: '/test',
-    path: '/test',
-    params: { slug: 'test-123' },
-    query: {}
+_global.useRoute = () => ({
+  fullPath: '/test',
+  path: '/test',
+  params: { slug: 'test-123' },
+  query: {}
 });
 
-globalThis.useRouter = () => ({
-    push: vi.fn(),
-    replace: vi.fn(),
-    go: vi.fn(),
-    back: vi.fn(),
-    resolve: vi.fn().mockReturnValue({ name: 'test', path: '/test' })
+_global.useRouter = () => ({
+  push: vi.fn(),
+  replace: vi.fn(),
+  go: vi.fn(),
+  back: vi.fn(),
+  resolve: vi.fn().mockReturnValue({ name: 'test', path: '/test' })
 });
 
-globalThis.navigateTo = vi.fn();
+_global.navigateTo = vi.fn();
 
 // Mock definePageMeta (Nuxt macro)
 globalThis.definePageMeta = vi.fn();
@@ -99,15 +101,15 @@ globalThis.useLazyFetch = vi.fn().mockResolvedValue({ data: ref(null), pending: 
 globalThis.process = { ...globalThis.process, client: true, dev: true };
 
 // Mock $fetch
-globalThis.$fetch = vi.fn().mockResolvedValue({
-    success: true,
-    body: {},
-    message: 'Success'
+_global.$fetch = vi.fn().mockResolvedValue({
+  success: true,
+  body: {},
+  message: 'Success'
 });
 
 // Mock ElNotification
-globalThis.ElNotification = vi.fn();
-globalThis.ElMessage = { success: vi.fn(), error: vi.fn(), warning: vi.fn(), info: vi.fn() };
+_global.ElNotification = vi.fn();
+_global.ElMessage = { success: vi.fn(), error: vi.fn(), warning: vi.fn(), info: vi.fn() };
 
 // Mock onErrorCaptured
-globalThis.onErrorCaptured = vi.fn();
+_global.onErrorCaptured = vi.fn();

@@ -3,11 +3,12 @@
   //- Header
   .flex.items-center.justify-between.mb-10
     .header-content
-      .title.font-bold.text-3xl.mb-2.text-gradient Role
+      .title.font-bold.text-3xl.mb-2.text-gradient {{ $t('roles.title') }}
       .subtitle.text-muted.text-sm.tracking-wide Manage roles and access control
     .flex.items-center.gap-x-3
+      ExportButton(:data="table.data" :columns="exportColumns" :filename="'roles-export'" :title="$t('roles.title')")
       NuxtLink(to="/roles/add-role")
-        el-button(   size='large' :loading="loading" v-if="hasPermission('CREATE_ROLES')" native-type="submit" type="primary" :icon="Plus" class="premium-btn !rounded-2xl px-8 glow-purple glass-button-press")  New Role
+        el-button(   size='large' :loading="loading" v-if="hasPermission('CREATE_ROLES')" native-type="submit" type="primary" :icon="Plus" class="premium-btn !rounded-2xl px-8 glow-purple glass-button-press")  {{ $t('roles.newRole') }}
   .glass-card.p-4(class="!rounded-3xl")
     AppTable(v-slot="{data}" without-filters without-search :filterOptions="filterOptions" :columns="table.columns" position="role" :pageInfo="response.pagination" :data="table.data" :sortOptions="table.sort" @handleRowClick="handleRowClick" searchPlaceholder="roles" class="premium-table")
       .flex.items-center.py-2(@click.stop)
@@ -20,26 +21,44 @@
               el-dropdown-item
                 NuxtLink.flex.items-center(:to="`/roles/${data?.id}`")
                   Icon.text-md.mr-2(name="IconEye" )
-                  p.text-sm View
+                  p.text-sm {{ $t('common.view') }}
               el-dropdown-item(v-if="hasPermission('EDIT_ROLES')")
                 NuxtLink.flex.items-center(:to="`/roles/edit/${data?.id}`")
                   Icon.text-md.mr-2(name="IconEdit" )
-                  p.text-sm Edit
-  ActionModel(v-model="deleteRolePopup" :loading="loadingAction" btn-text="Move to Archive" description-one="Are you sure you want to delete this Role?" icon="/images/delete-image.png" description-two="It will be archived and can be restored later within 30 days." )
+                  p.text-sm {{ $t('common.edit') }}
+  ActionModel(v-model="deleteRolePopup" :loading="loadingAction" :btn-text="$t('roles.moveToArchive')" :description="$t('roles.deleteConfirm')" icon="/images/delete-image.png" )
 </template>
 
 <script setup lang="ts">
 import { Plus } from '@element-plus/icons-vue';
+
+interface Role {
+  id: string;
+  name: string;
+  description?: string;
+  totalAssignedUsers?: number;
+  updatedAt?: string;
+}
+
+const { t } = useI18n();
 const router = useRouter();
 const { hasPermission } = await usePermissions();
 const loadingAction = ref(false);
 const deleteRolePopup = ref(false);
 
+// Export columns
+const exportColumns = [
+  { prop: 'name', label: t('roles.columns.name') },
+  { prop: 'description', label: t('roles.columns.description') },
+  { prop: 'totalAssignedUsers', label: t('roles.columns.totalStaff') },
+  { prop: 'updatedAt', label: t('roles.columns.lastModified') }
+];
+
 const table = reactive({
   columns: [
     {
       prop: 'name',
-      label: 'Role Name',
+      label: t('roles.columns.name'),
       component: 'Text',
       sortable: true,
       type: 'font-bold',
@@ -47,7 +66,7 @@ const table = reactive({
     },
     {
       prop: 'description',
-      label: 'Description',
+      label: t('roles.columns.description'),
       component: 'Text',
       sortable: true,
       type: 'font-default',
@@ -55,7 +74,7 @@ const table = reactive({
     },
     {
       prop: 'totalAssignedUsers',
-      label: 'Total Staff',
+      label: t('roles.columns.totalStaff'),
       component: 'Text',
       sortable: true,
       type: 'font-default',
@@ -63,7 +82,7 @@ const table = reactive({
     },
     {
       prop: 'updatedAt',
-      label: 'Last Modified',
+      label: t('roles.columns.lastModified'),
       component: 'Text',
       sortable: true,
       type: 'font-default',

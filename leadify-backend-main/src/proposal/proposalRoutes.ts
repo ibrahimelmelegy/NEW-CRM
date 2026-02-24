@@ -310,6 +310,45 @@ router.put('/archive/:id', authenticateUser, HasPermission([ProposalPermissionsE
  */
 router.put('/unarchive/:id', authenticateUser, HasPermission([ProposalPermissionsEnum.EDIT_PROPOSALS]), proposalController.unarchiveProposal);
 
+/**
+ * @swagger
+ * /api/proposal/{id}:
+ *   put:
+ *     summary: Update proposal
+ *     tags: [Proposal]
+ *     security:
+ *       - bearerAuth: []
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         schema:
+ *           type: string
+ *         description: The ID of the proposal to update
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             $ref: '#/components/schemas/UpdateProposalInput'
+ *     responses:
+ *       200:
+ *         description: Proposal updated successfully
+ *       400:
+ *         description: Validation error
+ *       623:
+ *         description: Proposal not found
+ *       500:
+ *         description: Internal server error
+ */
+router.put(
+  '/:id',
+  authenticateUser,
+  HasPermission([ProposalPermissionsEnum.EDIT_PROPOSALS]),
+  validateBody(UpdateProposalInput),
+  proposalController.updateProposal
+);
+
 // ** --------------------- DELETE --------------------- **/
 
 /**

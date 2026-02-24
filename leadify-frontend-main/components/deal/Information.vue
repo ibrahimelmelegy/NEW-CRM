@@ -167,54 +167,64 @@ if (props.deal?.cancelledReason) {
 }
 
 //  Get Users
-let users = await useApiFetch('users');
-// Map Users to Select Options
-users = users?.body?.docs?.map((e: any) => ({
-  label: e.name,
-  value: e.id
-}));
-
-//  Get leads
-const response = await getLeads();
-const leads = response.leads;
-//  Map leads to Select Options
-let mappedLeads = leads?.map((e: any) => ({
-  label: e.name,
-  value: e.id
-}));
-
+const users = ref<any[]>([]);
+const mappedLeads = ref<any[]>([]);
 const selectedClient = ref<any>([]);
 const mappedClients = ref<{ label: string; value: any }[]>();
-//  Get clients
-const { clients } = await getClients();
-// Map clients to Select Options
-mappedClients.value = clients?.map((e: any) => ({
-  label: e.clientName,
-  value: e.clientName,
-  id: e.id
-}));
-
-if (props.deal?.clientId) {
-  selectedClient.value = clients?.find((client: any) => client.id === props.deal?.clientId);
-  switchType.value = true;
-}
+const allClients = ref<any[]>([]);
 const selectedLead = ref<string | null>();
 const leadId = route.query?.leadId || props?.deal?.leadId;
 const opportunityId = route.query?.opportunityId;
 
-if (leadId) {
-  let lead: any = leads?.find((l: any) => l.id === leadId);
+onMounted(async () => {
+  // Fetch users
+  const usersRes = await useApiFetch('users');
+  users.value = usersRes?.body?.docs?.map((e: any) => ({
+    label: e.name,
+    value: e.id
+  })) || [];
 
-  if (!lead || opportunityId) {
-    // Always fetch from API if opportunityId exists or local lead was not found
-    lead = await getLead(leadId as string);
+  // Fetch leads
+  const leadsResponse = await getLeads();
+  const leads = leadsResponse.leads;
+  mappedLeads.value = leads?.map((e: any) => ({
+    label: e.name,
+    value: e.id
+  })) || [];
+
+  // Fetch clients
+  const { clients } = await getClients();
+  allClients.value = clients || [];
+  mappedClients.value = clients?.map((e: any) => ({
+    label: e.clientName,
+    value: e.clientName,
+    id: e.id
+  }));
+
+  if (props.deal?.clientId) {
+    selectedClient.value = clients?.find((client: any) => client.id === props.deal?.clientId);
+    switchType.value = true;
   }
 
-  if (lead) {
-    mappedLeads = [...mappedLeads, { label: lead.name, value: lead.id }];
-    selectedLead.value = lead;
+  if (leadId) {
+    let lead: any = leads?.find((l: any) => l.id === leadId);
+
+    if (!lead || opportunityId) {
+      lead = await getLead(leadId as string);
+    }
+
+    if (lead) {
+      mappedLeads.value = [...mappedLeads.value, { label: lead.name, value: lead.id }];
+      selectedLead.value = lead;
+    }
   }
-}
+
+  if (selectedClient.value?.email) {
+    isEmail.value = true;
+  } else if (selectedClient.value?.phone) {
+    isPhone.value = true;
+  }
+});
 
 /**
  * Updates the selectedClient variable when a new lead is selected.
@@ -222,7 +232,7 @@ if (leadId) {
  */
 function getSelectedClient(e: any) {
   // Find the selected lead in the clients array and update the selectedClient variable
-  selectedClient.value = clients?.find((lead: any) => lead.id === e.id);
+  selectedClient.value = allClients.value?.find((lead: any) => lead.id === e.id);
 
   if (selectedClient.value?.email) {
     isEmail.value = true;
@@ -234,12 +244,6 @@ function getSelectedClient(e: any) {
 const isClients = computed(() => {
   return mappedClients.value?.length && switchValue.value ? resolveComponent('InputSelect') : resolveComponent('InputText');
 });
-
-if (selectedClient.value?.email) {
-  isEmail.value = true;
-} else if (selectedClient.value?.phone) {
-  isPhone.value = true;
-}
 
 // Form Validation
 const { handleSubmit, errors, validate, resetForm, values } = useForm({
@@ -270,7 +274,7 @@ const onSubmit = handleSubmit((values: any) => {
     // Prepare submission payload
     const leadId = route.query?.leadId;
     const opportunityId = route.query?.opportunityId;
-    const shouldSubmitWithLead = leadId || (mappedLeads?.length && !switchType.value && values.leadId);
+    const shouldSubmitWithLead = leadId || (mappedLeads.value?.length && !switchType.value && values.leadId);
 
     const payload =
       shouldSubmitWithLead || selectedClient.value

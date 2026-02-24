@@ -15,9 +15,9 @@ const router = express.Router();
  * @swagger
  * /api/proposal-finance-table-item/:
  *   post:
- *     summary: Create a new ProposalFinanceTableItem
+ *     summary: Create a new Proposal Finance Table Item
  *     description: Adds a new item to a proposal finance table.
- *     tags: [ProposalFinanceTableItem]
+ *     tags: [Proposal Finance Table Item]
  *     security:
  *       - bearerAuth: []
  *     requestBody:
@@ -59,7 +59,7 @@ const router = express.Router();
  *                       example: 1
  *     responses:
  *       201:
- *         description: ProposalFinanceTableItem created successfully
+ *         description: Proposal Finance Table Item created successfully
  *       400:
  *         description: Validation error
  *       500:
@@ -79,9 +79,9 @@ router.post(
  * @swagger
  * /api/proposal-finance-table-item/{id}:
  *   put:
- *     summary: Update ProposalFinanceTableItem
+ *     summary: Update Proposal Finance Table Item
  *     description: Updates an existing finance table item.
- *     tags: [ProposalFinanceTableItem]
+ *     tags: [Proposal Finance Table Item]
  *     security:
  *       - bearerAuth: []
  *     parameters:
@@ -90,7 +90,7 @@ router.post(
  *         required: true
  *         schema:
  *           type: string
- *         description: The ID of the ProposalFinanceTableItem to update
+ *         description: The ID of the Proposal Finance Table Item to update
  *     requestBody:
  *       required: true
  *       content:
@@ -121,11 +121,11 @@ router.post(
  *                       example: 1
  *     responses:
  *       200:
- *         description: ProposalFinanceTableItem updated successfully
+ *         description: Proposal Finance Table Item updated successfully
  *       400:
  *         description: Validation error
  *       404:
- *         description: ProposalFinanceTableItem not found
+ *         description: Proposal Finance Table Item not found
  *       500:
  *         description: Internal server error
  */
@@ -143,8 +143,8 @@ router.put(
  * @swagger
  * /api/proposal-finance-table-item/:
  *   get:
- *     summary: Get all ProposalFinanceTableItems
- *     tags: [ProposalFinanceTableItem]
+ *     summary: Get all Proposal Finance Table Items
+ *     tags: [Proposal Finance Table Item]
  *     security:
  *       - bearerAuth: []
  *     parameters:
@@ -176,7 +176,7 @@ router.put(
  *         description: The id of the financeTableId to filter
  *     responses:
  *       200:
- *         description: List of ProposalFinanceTableItems
+ *         description: List of Proposal Finance Table Items
  *       500:
  *         description: Internal server error
  */
@@ -192,8 +192,8 @@ router.get(
  * @swagger
  * /api/proposal-finance-table-item/{id}:
  *   get:
- *     summary: Get a single ProposalFinanceTableItem by ID
- *     tags: [ProposalFinanceTableItem]
+ *     summary: Get a single Proposal Finance Table Item by ID
+ *     tags: [Proposal Finance Table Item]
  *     security:
  *       - bearerAuth: []
  *     parameters:
@@ -202,12 +202,12 @@ router.get(
  *         required: true
  *         schema:
  *           type: string
- *         description: The ID of the ProposalFinanceTableItem to retrieve
+ *         description: The ID of the Proposal Finance Table Item to retrieve
  *     responses:
  *       200:
- *         description: ProposalFinanceTableItem found
+ *         description: Proposal Finance Table Item found
  *       404:
- *         description: ProposalFinanceTableItem not found
+ *         description: Proposal Finance Table Item not found
  *       500:
  *         description: Internal server error
  */
@@ -224,9 +224,9 @@ router.get(
  * @swagger
  * /api/proposal-finance-table-item/{id}:
  *   delete:
- *     summary: Delete ProposalFinanceTableItem
- *     description: Deletes a ProposalFinanceTableItem record by ID.
- *     tags: [ProposalFinanceTableItem]
+ *     summary: Delete Proposal Finance Table Item
+ *     description: Deletes a Proposal Finance Table Item record by ID.
+ *     tags: [Proposal Finance Table Item]
  *     security:
  *       - bearerAuth: []
  *     parameters:
@@ -235,12 +235,12 @@ router.get(
  *         required: true
  *         schema:
  *           type: string
- *         description: The ID of the ProposalFinanceTableItem to delete
+ *         description: The ID of the Proposal Finance Table Item to delete
  *     responses:
  *       200:
- *         description: ProposalFinanceTableItem deleted successfully
+ *         description: Proposal Finance Table Item deleted successfully
  *       404:
- *         description: ProposalFinanceTableItem not found
+ *         description: Proposal Finance Table Item not found
  *       500:
  *         description: Internal server error
  */

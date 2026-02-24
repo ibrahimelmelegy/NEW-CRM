@@ -7,10 +7,13 @@ module.exports = {
     testMatch: ['**/*.test.ts'],
     transform: {
         '^.+\\.tsx?$': ['ts-jest', {
-            isolatedModules: true, // Disable type-checking for speed and to avoid blocking on minor errors
             diagnostics: false     // Disable diagnostics to prevent compilation errors from stopping tests
         }],
     },
+    // Transform ESM modules that Jest can't parse natively
+    transformIgnorePatterns: [
+        'node_modules/(?!(@scure|otplib|@otplib)/)'
+    ],
     // Module aliases (if you use them in tsconfig, add them here too)
     moduleNameMapper: {
         '^@/(.*)$': '<rootDir>/src/$1',

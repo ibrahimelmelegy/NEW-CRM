@@ -19,6 +19,7 @@ const THEME = {
 };
 
 export function getPieChartsData(data: any, colorpallete: any, position = '0%', left = 'center') {
+  if (!data) return {};
   return {
     tooltip: {
       trigger: 'item',
@@ -71,6 +72,7 @@ export function getPieChartsData(data: any, colorpallete: any, position = '0%', 
 }
 
 export function getBarChartData(data: any, colorpallete: any) {
+  if (!data) return {};
   return {
     tooltip: { trigger: 'axis', axisPointer: { type: 'shadow' }, ...THEME.glassTooltip },
     grid: { top: 20, right: 20, bottom: 20, left: 20, containLabel: true },
@@ -120,6 +122,7 @@ function hexToRgba(hex: string, alpha: number) {
 }
 
 export function getBarHorizontalChartData(data: any, colorpallete: any) {
+  if (!data) return {};
   return {
     tooltip: { trigger: 'item', ...THEME.glassTooltip },
     grid: { containLabel: true, bottom: 10, top: 10, right: 30 },
@@ -208,6 +211,7 @@ export function getConversionGauge(value: number) {
 }
 
 export function getIncreaseLineChart(data: any, colorPalette: any) {
+  if (!data) return {};
   return {
     tooltip: { trigger: 'axis', ...THEME.glassTooltip },
     grid: { top: 30, right: 30, bottom: 20, left: 20, containLabel: true },
@@ -436,6 +440,7 @@ export function getBarChartWithLineData(data: any, legend: string[], colorpallet
 }
 
 export function getCenterPieChartsData(data: any, colorpallete: any, title = '') {
+  if (!data) return {};
   return {
     tooltip: {
       trigger: 'item',

@@ -42,11 +42,20 @@
           p.ps-4.h-full.text-sm.font-medium.py-3(class="w-[190px] min-w-[190px] text-[var(--color-text-secondary)]") {{ formatKeyLabel(key) }}
           .grid.gap-4.w-full.text-sm.font-medium.glass-card.py-3.rounded-r-2xl.divide-x(class="grid-cols-2 xl:grid-cols-4 text-[var(--color-text-tertiary)]")
             .px-4.w-full(v-for="permission in getEffectivePermissions(key)" :key="permission") {{ formatPermissionLabel(permission) }}
+
+  el-tabs.mt-6(v-model="activeTab")
+    el-tab-pane(:label="$t('common.timeline')" name="timeline")
+      RecordTimeline(:entityType="'role'" :entityId="slug")
+    el-tab-pane(:label="$t('common.comments')" name="comments")
+      RecordComments(:entityType="'role'" :entityId="slug")
+    el-tab-pane(:label="$t('common.attachments')" name="attachments")
+      RecordAttachments(:entityType="'role'" :entityId="slug")
 </template>
 
 <script lang="ts" setup>
 const route = useRoute();
 const { hasPermission } = await usePermissions();
+const activeTab = ref('timeline');
 
 // Call API to Get the role
 const slug = (Array.isArray(route.params.slug) ? route.params.slug[0] : route.params.slug) as string;

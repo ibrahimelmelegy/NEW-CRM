@@ -9,6 +9,12 @@
 
     <!-- Action Buttons -->
     <div class="flex items-center gap-x-3">
+      <ExportButton
+        :data="finalData"
+        :columns="exportColumns"
+        :filename="'additional-materials-export'"
+        :title="$t('operations.additionalMaterials.title')"
+      />
       <!-- New Material Button -->
       <nuxt-link v-if="hasPermission('CREATE_ADDITIONAL_MATERIAL')" to="/operations/additional-material/add-material">
         <el-button size="large" native-type="submit" type="primary" :icon="Plus" class="premium-btn !rounded-2xl px-8 glow-purple glass-button-press">
@@ -129,6 +135,10 @@
 <script setup lang="ts">
 import { Plus } from '@element-plus/icons-vue';
 const { hasPermission } = await usePermissions();
+
+// Export columns
+const exportColumns = [{ prop: 'name', label: 'Category' }];
+
 const limit = ref(10);
 const isLoading = ref(false);
 const currentPage = ref<number>(1);

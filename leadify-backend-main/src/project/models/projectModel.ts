@@ -12,6 +12,7 @@ import Client from '../../client/clientModel';
 import UserProjects from './projectUsersModel';
 import Lead from '../../lead/leadModel';
 import Deal from '../../deal/model/dealModel';
+import Tenant from '../../tenant/tenantModel';
 import { Material } from '../../material/material.model';
 
 @Table({
@@ -294,6 +295,13 @@ class Project extends Model {
 
   @BelongsToMany(() => Material, () => ProjectMaterial)
   materials?: Material[];
+
+  @ForeignKey(() => Tenant)
+  @Column({ type: DataType.UUID, allowNull: true })
+  public tenantId?: string;
+
+  @BelongsTo(() => Tenant)
+  public tenant!: Tenant;
 }
 
 export default Project;

@@ -26,12 +26,12 @@ const route = useRoute();
 const loading = ref(false);
 
 // Call API to Get the opportunity
-const opportunity = await getOpportunity(route.params.slug);
+const opportunity = await getOpportunity(route.params.slug as string);
 
 // Call API to update the opportunity
 async function submitForm(values: FormattedValues) {
   loading.value = true;
-  await updateOpportunity(values.opportunity, route.params.slug);
+  await updateOpportunity(values.opportunity, route.params.slug as string);
   loading.value = false;
 }
 </script>

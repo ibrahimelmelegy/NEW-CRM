@@ -6,6 +6,14 @@
       .title.font-bold.text-3xl.mb-2.text-gradient {{ $t('opportunities.title') }}
       .subtitle.text-muted.text-sm.tracking-wide Discover and manage sales opportunities
     .flex.items-center.gap-x-3
+      el-button-group
+        el-button(type="primary" size="large" class="!rounded-l-2xl")
+          Icon(name="ph:list-bold" size="18")
+          span.ml-1 {{ $t('kanban.tableView') }}
+        el-button(:type="'default'" size="large" @click="navigateTo('/sales/opportunity/kanban')" class="!rounded-r-2xl")
+          Icon(name="ph:columns-bold" size="18")
+          span.ml-1 {{ $t('kanban.kanbanView') }}
+      ExportButton(:data="exportData" :columns="exportColumns" :filename="'opportunities-export'" :title="$t('opportunities.title')")
       NuxtLink(to="/sales/opportunity/add-opportunity")
         el-button(size='large' :loading="loading" v-if="hasPermission('CREATE_OPPORTUNITIES')" native-type="submit" type="primary" :icon="Plus" class="premium-btn !rounded-2xl px-8 glow-purple glass-button-press") {{ $t('opportunities.newOpp') }}
       //- el-dropdown(trigger="click")
@@ -26,6 +34,9 @@
       //-               NuxtLink.flex.items-center(:to="`/opportunity/1`")
       //-                 Icon.text-md.mr-2(size="20" name="IconArchived" )
       //-                 p.text-sm Archived
+  BulkActions(:count="selectedRows.length" :actions="['delete', 'export']" @bulk-delete="handleBulkDelete" @bulk-export="handleBulkExport" @clear-selection="selectedRows = []")
+  SavedViews(:entityType="'opportunity'" :currentFilters="{}" @apply-view="handleApplyView")
+  AdvancedSearch(:entityType="'opportunity'" :fields="advancedSearchFields" @apply="handleAdvancedFilter" @clear="handleClearAdvancedFilter")
   .glass-card.p-4(class="!rounded-3xl")
     AppTable(v-slot="{data}" v-if="!loadingAction" :filterOptions="filterOptions" :columns="table.columns" position="opportunity" :pageInfo="response.pagination" :data="table.data" :sortOptions="table.sort" @handleRowClick="handleRowClick" :searchPlaceholder="$t('opportunities.title')" class="premium-table")
       .flex.items-center.py-2(@click.stop)
@@ -69,6 +80,28 @@ const { hasPermission } = await usePermissions();
 const loadingAction = ref(false);
 const deleteLeadPopup = ref(false);
 
+// Export columns & data
+const exportColumns = [
+  { prop: 'name', label: t('opportunities.table.name') },
+  { prop: 'stage', label: t('opportunities.table.stage') },
+  { prop: 'estimatedValue', label: t('opportunities.table.budget') },
+  { prop: 'profit', label: t('opportunities.table.profit') },
+  { prop: 'expectedCloseDate', label: t('opportunities.table.closeDate') },
+  { prop: 'priority', label: t('opportunities.table.priority') },
+  { prop: 'assign', label: t('opportunities.table.assigned') },
+  { prop: 'createdAt', label: t('opportunities.table.created') }
+];
+const exportData = computed(() => table.data);
+
+// Bulk actions
+const selectedRows = ref<any[]>([]);
+function handleBulkDelete() {
+  selectedRows.value = [];
+}
+function handleBulkExport() {
+  selectedRows.value = [];
+}
+
 const present = ref('');
 const reasons = ref('');
 const select = ref();
@@ -78,15 +111,15 @@ const wonPopup = ref(false);
 const opportunityPresent = computed(() => [
   {
     label: t('opportunities.convertDeal'),
-    value: "deal",
+    value: 'deal'
   },
   {
     label: t('opportunities.convertProject'),
-    value: "project",
+    value: 'project'
   },
   {
     label: t('common.cancel'),
-    value: "now",
+    value: 'now'
   }
 ]);
 
@@ -220,18 +253,15 @@ const table = reactive({
   data: [] as Opportunities[]
 });
 
-// Call API to Get the lead
-// const response = await getopportunity();
-
-const response = await useTableFilter('opportunity');
+// Call API to Get the opportunity and users in parallel
+const [response, usersResponse] = await Promise.all([useTableFilter('opportunity'), useApiFetch('users')]);
 table.data = response.formattedData;
 
 function handleRowClick(val: any) {
   router.push(`/sales/opportunity/${val.id}`);
 }
 
-const users = await useApiFetch('users');
-const mappedUsers = users?.body?.docs?.map((e: any) => ({
+const mappedUsers = usersResponse?.body?.docs?.map((e: any) => ({
   label: e.name,
   value: e.id
 }));
@@ -268,4 +298,41 @@ const filterOptions = [
     type: 'input'
   }
 ];
+
+// SavedViews & AdvancedSearch
+const advancedSearchFields = [
+  { key: 'name', label: t('opportunities.table.oppName'), type: 'string' },
+  { key: 'stage', label: t('opportunities.table.stage'), type: 'select', options: stageOptions.map(o => ({ value: o.value, label: t(o.label) })) },
+  { key: 'estimatedValue', label: t('opportunities.table.budget'), type: 'number' },
+  {
+    key: 'priority',
+    label: t('opportunities.table.priority'),
+    type: 'select',
+    options: priorityOptions.map(o => ({ value: o.value, label: t(o.label) }))
+  },
+  { key: 'expectedCloseDate', label: t('opportunities.table.closeDate'), type: 'date' },
+  { key: 'createdAt', label: t('opportunities.table.created'), type: 'date' }
+];
+
+async function handleApplyView(view: any) {
+  if (view?.filters) {
+    const res = await useTableFilter('opportunity', view.filters);
+    table.data = res.formattedData;
+  }
+}
+
+async function handleAdvancedFilter(filterPayload: any) {
+  try {
+    const res = await useApiFetch('search/advanced/opportunity', 'POST', filterPayload);
+    if (res?.success && res?.body) {
+      const data = res.body as any;
+      table.data = data.docs || data || [];
+    }
+  } catch {}
+}
+
+async function handleClearAdvancedFilter() {
+  const res = await useTableFilter('opportunity');
+  table.data = res.formattedData;
+}
 </script>

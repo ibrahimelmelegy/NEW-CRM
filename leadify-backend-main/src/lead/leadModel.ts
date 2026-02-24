@@ -1,5 +1,6 @@
 import { AllowNull, BelongsTo, BelongsToMany, Column, DataType, Default, ForeignKey, Model, Table } from 'sequelize-typescript';
 import User from '../user/userModel';
+import Tenant from '../tenant/tenantModel';
 import { LeadSourceEnums, LeadStatusEnums } from './leadEnum';
 import LeadUsers from './model/lead_UsersModel';
 
@@ -74,6 +75,13 @@ class Lead extends Model {
   @Default(0)
   @Column({ type: DataType.INTEGER, allowNull: false })
   public score!: number;
+
+  @ForeignKey(() => Tenant)
+  @Column({ type: DataType.UUID, allowNull: true })
+  public tenantId?: string;
+
+  @BelongsTo(() => Tenant)
+  public tenant!: Tenant;
 }
 
 export default Lead;

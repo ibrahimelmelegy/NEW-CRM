@@ -137,6 +137,123 @@ export enum VendorPermissionsEnum {
   DELETE_VENDORS = 'DELETE_VENDORS'
 }
 
+export enum DocumentTemplatePermissionsEnum {
+  VIEW_DOCUMENT_TEMPLATES = 'VIEW_DOCUMENT_TEMPLATES',
+  CREATE_DOCUMENT_TEMPLATES = 'CREATE_DOCUMENT_TEMPLATES',
+  EDIT_DOCUMENT_TEMPLATES = 'EDIT_DOCUMENT_TEMPLATES',
+  DELETE_DOCUMENT_TEMPLATES = 'DELETE_DOCUMENT_TEMPLATES'
+}
+
+export enum InvoicePermissionsEnum {
+  VIEW_INVOICES = 'VIEW_INVOICES',
+  CREATE_INVOICES = 'CREATE_INVOICES',
+  EDIT_INVOICES = 'EDIT_INVOICES',
+  VOID_INVOICES = 'VOID_INVOICES',
+  SEND_INVOICES = 'SEND_INVOICES',
+  VIEW_AGING = 'VIEW_AGING',
+  CREATE_CREDIT_NOTE = 'CREATE_CREDIT_NOTE'
+}
+
+export enum SalesOrderPermissionsEnum {
+  VIEW_SALES_ORDERS = 'VIEW_SALES_ORDERS',
+  CREATE_SALES_ORDERS = 'CREATE_SALES_ORDERS',
+  EDIT_SALES_ORDERS = 'EDIT_SALES_ORDERS',
+  CONVERT_DEAL_TO_ORDER = 'CONVERT_DEAL_TO_ORDER'
+}
+
+export enum SubscriptionPermissionsEnum {
+  VIEW_SUBSCRIPTIONS = 'VIEW_SUBSCRIPTIONS',
+  CREATE_SUBSCRIPTIONS = 'CREATE_SUBSCRIPTIONS',
+  EDIT_SUBSCRIPTIONS = 'EDIT_SUBSCRIPTIONS',
+  CANCEL_SUBSCRIPTIONS = 'CANCEL_SUBSCRIPTIONS',
+  MANAGE_PLANS = 'MANAGE_PLANS',
+  VIEW_METRICS = 'VIEW_METRICS'
+}
+
+export enum AccountingPermissionsEnum {
+  VIEW_CHART_OF_ACCOUNTS = 'VIEW_CHART_OF_ACCOUNTS',
+  MANAGE_CHART_OF_ACCOUNTS = 'MANAGE_CHART_OF_ACCOUNTS',
+  VIEW_JOURNAL_ENTRIES = 'VIEW_JOURNAL_ENTRIES',
+  CREATE_JOURNAL_ENTRIES = 'CREATE_JOURNAL_ENTRIES',
+  POST_JOURNAL_ENTRIES = 'POST_JOURNAL_ENTRIES',
+  VIEW_FINANCIAL_REPORTS = 'VIEW_FINANCIAL_REPORTS'
+}
+
+export enum PaymentPermissionsEnum {
+  VIEW_PAYMENTS = 'VIEW_PAYMENTS',
+  RECORD_PAYMENTS = 'RECORD_PAYMENTS',
+  VOID_PAYMENTS = 'VOID_PAYMENTS',
+  VIEW_PAYMENT_DASHBOARD = 'VIEW_PAYMENT_DASHBOARD',
+  SEND_PAYMENT_REMINDERS = 'SEND_PAYMENT_REMINDERS'
+}
+
+export enum EmployeePermissionsEnum {
+  VIEW_EMPLOYEES = 'VIEW_EMPLOYEES',
+  CREATE_EMPLOYEES = 'CREATE_EMPLOYEES',
+  EDIT_EMPLOYEES = 'EDIT_EMPLOYEES',
+  TERMINATE_EMPLOYEES = 'TERMINATE_EMPLOYEES',
+  VIEW_ORG_CHART = 'VIEW_ORG_CHART',
+  VIEW_SALARY = 'VIEW_SALARY'
+}
+
+export enum PayrollPermissionsEnum {
+  VIEW_PAYROLL = 'VIEW_PAYROLL',
+  CREATE_PAYROLL_RUN = 'CREATE_PAYROLL_RUN',
+  APPROVE_PAYROLL = 'APPROVE_PAYROLL',
+  PROCESS_PAYROLL = 'PROCESS_PAYROLL',
+  VIEW_PAYSLIPS = 'VIEW_PAYSLIPS',
+  MANAGE_SALARY = 'MANAGE_SALARY'
+}
+
+export enum SupportPermissionsEnum {
+  VIEW_TICKETS = 'VIEW_TICKETS',
+  CREATE_TICKETS = 'CREATE_TICKETS',
+  EDIT_TICKETS = 'EDIT_TICKETS',
+  ASSIGN_TICKETS = 'ASSIGN_TICKETS',
+  RESOLVE_TICKETS = 'RESOLVE_TICKETS',
+  VIEW_INTERNAL_NOTES = 'VIEW_INTERNAL_NOTES',
+  MANAGE_CANNED_RESPONSES = 'MANAGE_CANNED_RESPONSES'
+}
+
+export enum SecurityPermissionsEnum {
+  VIEW_SESSIONS = 'VIEW_SESSIONS',
+  MANAGE_SESSIONS = 'MANAGE_SESSIONS',
+  VIEW_LOGIN_HISTORY = 'VIEW_LOGIN_HISTORY',
+  MANAGE_IP_WHITELIST = 'MANAGE_IP_WHITELIST',
+  EXPORT_DATA = 'EXPORT_DATA'
+}
+
+export enum CommunicationPermissionsEnum {
+  VIEW_ACTIVITIES = 'VIEW_ACTIVITIES',
+  LOG_ACTIVITIES = 'LOG_ACTIVITIES',
+  LOG_CALLS = 'LOG_CALLS',
+  VIEW_STATS = 'VIEW_STATS'
+}
+
+export enum ReportBuilderPermissionsEnum {
+  BUILD_REPORTS = 'BUILD_REPORTS',
+  SAVE_REPORTS = 'SAVE_REPORTS',
+  SCHEDULE_REPORTS = 'SCHEDULE_REPORTS',
+  EXPORT_REPORTS = 'EXPORT_REPORTS'
+}
+
+export enum IntegrationPermissionsEnum {
+  VIEW_INTEGRATIONS = 'VIEW_INTEGRATIONS',
+  CONFIGURE_INTEGRATIONS = 'CONFIGURE_INTEGRATIONS',
+  TEST_INTEGRATIONS = 'TEST_INTEGRATIONS',
+  MANAGE_WEBHOOKS = 'MANAGE_WEBHOOKS'
+}
+
+export enum DocBuilderPermissionsEnum {
+  VIEW_OWN_DOCUMENTS = 'VIEW_OWN_DOCUMENTS',
+  VIEW_GLOBAL_DOCUMENTS = 'VIEW_GLOBAL_DOCUMENTS',
+  CREATE_DOCUMENTS = 'CREATE_DOCUMENTS',
+  EDIT_DOCUMENTS = 'EDIT_DOCUMENTS',
+  DELETE_DOCUMENTS = 'DELETE_DOCUMENTS',
+  APPROVE_DOCUMENTS = 'APPROVE_DOCUMENTS',
+  SEND_DOCUMENTS = 'SEND_DOCUMENTS'
+}
+
 // Consolidating all permissions
 export const permissions = {
   leads: Object.keys(LeadPermissionsEnum),
@@ -159,7 +276,21 @@ export const permissions = {
   financialAndBusinessMetricsWidgets: Object.keys(FinancialAndBusinessMetricsWidgetsPermissionsEnum),
   performanceAndHRWidgets: Object.keys(PerformanceAndHRWidgetsPermissionsEnum),
   procurement: Object.keys(ProcurementPermissionsEnum),
-  vendors: Object.keys(VendorPermissionsEnum)
+  vendors: Object.keys(VendorPermissionsEnum),
+  documentTemplates: Object.keys(DocumentTemplatePermissionsEnum),
+  invoices: Object.keys(InvoicePermissionsEnum),
+  salesOrders: Object.keys(SalesOrderPermissionsEnum),
+  subscriptions: Object.keys(SubscriptionPermissionsEnum),
+  accounting: Object.keys(AccountingPermissionsEnum),
+  payments: Object.keys(PaymentPermissionsEnum),
+  support: Object.keys(SupportPermissionsEnum),
+  employees: Object.keys(EmployeePermissionsEnum),
+  payroll: Object.keys(PayrollPermissionsEnum),
+  security: Object.keys(SecurityPermissionsEnum),
+  communications: Object.keys(CommunicationPermissionsEnum),
+  reportBuilder: Object.keys(ReportBuilderPermissionsEnum),
+  integrations: Object.keys(IntegrationPermissionsEnum),
+  docBuilder: Object.keys(DocBuilderPermissionsEnum)
 };
 
 // Function to get all permissions

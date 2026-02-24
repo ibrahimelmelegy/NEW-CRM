@@ -39,8 +39,11 @@ const isCanceling = ref(false);
 const values = ref<any>({});
 const finalvalues = ref<any>({});
 
-await fetchExistingProject();
-activeStep.value = project.value?.step ? project.value.step - 1 : 0;
+onMounted(async () => {
+  await fetchExistingProject();
+  activeStep.value = project.value?.step ? project.value.step - 1 : 0;
+});
+
 async function submitForm() {
   loading.value = true;
   await completeProject(values.value);

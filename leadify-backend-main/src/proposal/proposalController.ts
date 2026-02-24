@@ -79,7 +79,6 @@ class ProposalController {
 
   public async archiveProposal(req: AuthenticatedRequest, res: Response, next: NextFunction): Promise<void> {
     try {
-      console.log('--- DEBUG: ARCHIVE REQUEST RECEIVED for ID:', req.params.id);
       const responseFromService = await proposalService.archiveProposal(req.params.id as string, req.user as User);
       wrapResult(res, responseFromService);
     } catch (error) {

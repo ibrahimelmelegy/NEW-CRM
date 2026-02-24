@@ -44,7 +44,7 @@ export async function downloadFile(file: string) {
       a.click();
       URL.revokeObjectURL(url);
     })
-    .catch(error => { });
+    .catch(error => {});
 }
 
 export function uploadFile(params: any) {

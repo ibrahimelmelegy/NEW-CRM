@@ -37,6 +37,7 @@ import dealService from '../deal/dealService';
 import { DealStageEnums } from '../deal/dealEnum';
 import notificationService from '../notification/notificationService';
 import { Material } from '../material/material.model';
+import { tenantWhere } from '../utils/tenantScope';
 
 const RelationArray = [
   Vehicle,
@@ -102,9 +103,11 @@ class ProjectService {
         if (input.basicInfo.opportunityId) await this.convertOpportunityToProject(input.basicInfo.opportunityId);
       }
 
-      // Create the project
-      let project = !existingProject ? await Project.create({ ...input.basicInfo }, { transaction }) : existingProject.set({ ...input.basicInfo });
-      existingProject && (await project.save());
+      // Create the project, ensuring it's bound to the user's tenant
+      let project = !existingProject
+        ? await Project.create({ ...input.basicInfo, tenantId: admin.tenantId }, { transaction })
+        : existingProject.set({ ...input.basicInfo });
+      existingProject && (await project.save({ transaction }));
 
       if (input.basicInfo.files?.length) {
         await uploaderService.setFileReferences(input.basicInfo.files.map(file => file.refs).flat(1));
@@ -133,7 +136,6 @@ class ProjectService {
         include: RelationArray
       });
     } catch (error) {
-      console.log(error);
       await transaction?.rollback();
       throw new BaseError((ERRORS[(<any>error).message] as any) || ERRORS.SOMETHING_WENT_WRONG);
     }
@@ -299,14 +301,12 @@ class ProjectService {
         { transaction }
       );
 
-      transaction.commit();
+      await transaction.commit();
       project.isCompleted && (await createActivityLog('project', 'update', project.id, user.id, null, 'Prject materials got updated Successfully'));
 
       return this.recalculateProject(project);
     } catch (error) {
-      console.log(error);
-
-      transaction.rollback();
+      await transaction.rollback();
       throw new BaseError(ERRORS.SOMETHING_WENT_WRONG);
     }
   }
@@ -437,7 +437,8 @@ class ProjectService {
           category: {
             [Op.in]: query.category
           }
-        })
+        }),
+        ...tenantWhere(user)
       },
       limit,
       offset,
@@ -477,8 +478,11 @@ class ProjectService {
     };
   }
 
-  public async getAllProjects(): Promise<Project[]> {
+  public async getAllProjects(user: User): Promise<Project[]> {
     return await Project.findAll({
+      where: {
+        ...tenantWhere(user)
+      },
       attributes: ['id', 'name'],
       order: [['name', 'ASC']]
     });
@@ -491,10 +495,11 @@ class ProjectService {
     return project;
   }
 
-  public async getDraftProject(): Promise<any> {
+  public async getDraftProject(user: User): Promise<any> {
     const project = await this.projectOrError(
       {
-        isCompleted: false
+        isCompleted: false,
+        ...tenantWhere(user)
       },
       RelationArray
     );
@@ -599,6 +604,7 @@ class ProjectService {
 
   public async sendProjectsExcelByEmail(query: any, user: User, email: string): Promise<void> {
     const where: any = {
+      ...tenantWhere(user),
       isCompleted: true,
       ...(query.searchKey && {
         [Op.or]: [{ name: { [Op.iLike]: `%${query.searchKey}%` } }]

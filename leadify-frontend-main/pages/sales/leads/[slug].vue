@@ -19,6 +19,10 @@
             NuxtLink.flex.items-center(:to="`/sales/deals/add-deal?leadId=${lead?.id}`")
               Icon.text-md.mr-2(size="20" name="IconDeal")
               p.text-sm {{ $t('leads.convertToDeal') }}
+          el-dropdown-item
+            NuxtLink.flex.items-center(:to="`/sales/leads/${lead?.id}/journey`")
+              Icon.text-md.mr-2(size="20" name="ph:path-bold")
+              p.text-sm {{ $t('journey.title') }}
 
   el-tabs.demo-tabs(v-model="activeName")
     el-tab-pane(:label="$t('leads.summary')" name="summary")
@@ -90,11 +94,18 @@
       .flex.justify-center.items-center.w-full
         el-button(v-if="activity?.docs?.length > 0" :loading="loading" class="!rounded-2xl mb-2" type='primary' size="large" :disabled="activity?.pagination?.totalPages == activity?.pagination?.page" @click="getActivityPage(Number(activity?.pagination?.page)+1)") {{ $t('common.view') }} More
 
+    el-tab-pane(:label="$t('common.timeline')" name="timeline")
+      RecordTimeline(:entityType="'lead'" :entityId="slug")
+    el-tab-pane(:label="$t('common.comments')" name="comments")
+      RecordComments(:entityType="'lead'" :entityId="slug")
+    el-tab-pane(:label="$t('common.attachments')" name="attachments")
+      RecordAttachments(:entityType="'lead'" :entityId="slug")
+
   AIEmailAssist(v-model="showAiDialog" :context="leadContext")
   AISummarizer(v-model="showSummarizer" :initialText="lead?.notes")
 
 .loading-state.flex.items-center.justify-center.h-64(v-else)
-  el-spinner(size="large")
+  el-icon.is-loading(:size="32" style="color: var(--accent-color, #7849ff)")
 </template>
 
 <script lang="ts" setup>

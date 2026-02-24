@@ -51,13 +51,32 @@ section.layout-container
     .slot-content(:class="{'!px-[20px]': mobile}")
       slot
   
+  //- Command Terminal
+  CommandTerminal
+
+  //- Keyboard Shortcuts Cheat Sheet
+  KeyboardShortcutsOverlay(
+    :visible="cheatSheetVisible"
+    :categories="shortcutCategories"
+    @close="cheatSheetVisible = false"
+  )
+
+  //- Notification Center Flyout
+  NotificationsNotificationCenter(:visible="notificationCenter.visible.value" @close="notificationCenter.close()")
+  //- Onboarding Tour Overlay
+  OnboardingTourOverlay
+  //- Speed Dial (contextual quick actions)
+  SpeedDial
   AIChatbot
+  AICopilot
+  MobileBottomNav
+  PWAInstallPrompt
 </template>
 
 <script setup lang="ts">
 import { useWindowSize, useEventListener } from '@vueuse/core';
 import { storeToRefs } from 'pinia';
-import { ArrowRight } from '@element-plus/icons-vue';
+import { ArrowRight, Search, Plus } from '@element-plus/icons-vue';
 import { ElNotification } from 'element-plus';
 import { useMain } from '~/stores/common';
 
@@ -73,6 +92,20 @@ interface NavRoute {
   label: string;
 }
 
+// Initialize Command Terminal
+const { isOpen: terminalOpen, toggle: toggleTerminal } = useCommandTerminal();
+
+// Initialize Keyboard Shortcuts
+const { cheatSheetVisible, categories: shortcutCategories, register } = useKeyboardShortcuts();
+
+// Register terminal shortcut
+register({
+  keys: 'Ctrl+`',
+  label: 'Command Terminal',
+  category: 'General',
+  action: toggleTerminal
+});
+
 // 1. Setup & Stores
 const mainData = useMain();
 const { fullNav, mobile, hideNav } = storeToRefs(mainData);
@@ -87,6 +120,15 @@ const showNavbar = ref(false);
 const user = ref<UserData | null>(null);
 const notificationCount = ref(0);
 
+// Notification Center
+const notificationCenter = useNotificationCenter();
+// Initial unread count fetch
+notificationCenter.fetchUnreadCount();
+
+function toggleDropdown(val: boolean) {
+  showDropdown.value = val;
+}
+
 // 3. Methods & Listeners
 const handleScroll = () => {
   showNavbar.value = window.scrollY > 10;
@@ -96,6 +138,33 @@ useEventListener(window, 'scroll', handleScroll);
 
 watchEffect(() => {
   mobile.value = width.value < 990;
+});
+
+// Poll unread notification count every 30s
+let notificationPollId: ReturnType<typeof setInterval> | null = null;
+
+onMounted(() => {
+  window.addEventListener('scroll', handleScroll);
+  window.addEventListener('click', handleClickOutside);
+  // Register service worker for PWA
+  if ('serviceWorker' in navigator) {
+    navigator.serviceWorker.register('/sw.js').catch(() => {});
+  }
+  // Start polling for unread notifications
+  notificationPollId = setInterval(() => {
+    if (document.visibilityState === 'visible') {
+      notificationCenter.fetchUnreadCount();
+    }
+  }, 30000);
+});
+
+onUnmounted(() => {
+  window.removeEventListener('scroll', handleScroll);
+  window.removeEventListener('click', handleClickOutside);
+  if (notificationPollId) {
+    clearInterval(notificationPollId);
+    notificationPollId = null;
+  }
 });
 
 function openNav() {
@@ -152,16 +221,34 @@ const breadcrumbRoutes = computed<NavRoute[]>(() => {
   const pathSegments = route.path.split('/').filter(Boolean);
   const uuidRegex = /^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$/;
 
-  return pathSegments
-    .filter(segment => !uuidRegex.test(segment) && isNaN(Number(segment)))
-    .map(segment => {
-      const camelSegment = segment.replace(/-([a-z])/g, (_match, letter: string) => letter.toUpperCase());
-      const navKey = `navigation.${camelSegment}`;
-      return {
-        path: segment,
-        label: t(navKey) !== navKey ? t(navKey) : segment.replace(/[-_]/g, ' ')
-      };
-    });
+  // Check if the last item is a valid ID (UUID or numeric)
+  if (pathSegments.length > 0) {
+    const lastSegment = pathSegments[pathSegments.length - 1];
+
+    // Check for UUID or numeric formats
+    if (lastSegment && (uuidRegex.test(lastSegment) || !isNaN(Number(lastSegment)))) {
+      pathSegments.pop(); // Remove the last item
+    }
+  }
+
+  // Create breadcrumb items with translation support
+  const breadcrumbs = pathSegments.map((segment: any) => {
+    // Convert kebab-case to camelCase for key matching (e.g. daily-tasks -> dailyTasks)
+    const camelSegment = segment ? String(segment).replace(/-([a-z])/g, (match: string, p1: string) => (p1 ? p1.toUpperCase() : '')) : '';
+
+    // Try navigation key first
+    const navKey = `navigation.${camelSegment}`;
+
+    // Check if translation exists, otherwise fallback to Space Case
+    const label = t(navKey) !== navKey ? t(navKey) : segment ? segment.replace(/[-_]/g, ' ') : ''; // fallback
+
+    return {
+      path: segment,
+      label
+    };
+  });
+
+  return breadcrumbs;
 });
 
 const getPath = (routeSegment: NavRoute) => {

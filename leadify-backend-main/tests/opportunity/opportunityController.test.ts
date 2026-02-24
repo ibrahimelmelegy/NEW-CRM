@@ -8,6 +8,9 @@ import { NextFunction, Response } from 'express';
 // Mocks
 jest.mock('../../src/opportunity/opportunityService');
 jest.mock('../../src/utils/response/responseWrapper');
+jest.mock('../../src/server', () => ({
+    io: { emit: jest.fn() }
+}));
 
 describe('OpportunityController', () => {
     let req: any;

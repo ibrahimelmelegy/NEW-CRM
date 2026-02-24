@@ -18,7 +18,7 @@
 <script lang="ts" setup>
 import { ref } from 'vue';
 import { v4 as uuidv4 } from 'uuid'; // To generate unique IDs
-import { ElMessage } from 'element-plus';
+import { ElMessage, ElMessageBox } from 'element-plus';
 import { useI18n } from 'vue-i18n';
 const { t } = useI18n();
 const emit = defineEmits(['onSubmit', 'isValid']);
@@ -40,6 +40,7 @@ const invoices = ref<Invoice[]>([
     id: uuidv4(),
     invoiceNumber: '',
     amount: null,
+    invoiceDate: null,
     dueDate: null,
     collectedDate: null,
     collected: null
@@ -67,6 +68,7 @@ async function AddInvoice() {
     id: uuidv4(),
     invoiceNumber: '',
     amount: null,
+    invoiceDate: null,
     dueDate: null,
     collectedDate: null,
     collected: null
@@ -78,9 +80,17 @@ async function AddInvoice() {
  * @param {string} id - The ID of the invoice to delete.
  * @returns {void}
  */
-function onDelete(id: string) {
-  // Filter out the invoice to be deleted from the list of invoices
-  invoices.value = invoices.value.filter((invoice: Invoice) => invoice.id !== id);
+async function onDelete(id: string) {
+  try {
+    await ElMessageBox.confirm(t('common.deleteConfirm'), t('common.warning'), {
+      confirmButtonText: t('common.confirm'),
+      cancelButtonText: t('common.cancel'),
+      type: 'warning'
+    });
+    invoices.value = invoices.value.filter((invoice: Invoice) => invoice.id !== id);
+  } catch {
+    // User cancelled
+  }
 }
 
 /**

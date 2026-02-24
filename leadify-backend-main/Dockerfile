@@ -1,24 +1,29 @@
-# Use an official Node.js runtime as a parent image
-FROM node:18-alpine
+# Stage 1: Build
+FROM node:20-alpine AS builder
 
-# Set the working directory in the container
 WORKDIR /usr/src/app
 
-# Copy package.json and package-lock.json to the working directory
 COPY package*.json ./
+RUN npm ci --legacy-peer-deps
 
 COPY . .
-# Clean up unnecessary node_modules and dist
-RUN rm -rf node_modules dist
+RUN npm run build
 
-# Install app dependencies with --legacy-peer-deps
-RUN npm install --legacy-peer-deps
+# Stage 2: Production
+FROM node:20-alpine
 
-# Copy all files from the current directory to the working directory
-COPY . .
+WORKDIR /usr/src/app
 
-# Expose the port the app runs on
+# Install only production dependencies
+COPY package*.json ./
+RUN npm ci --legacy-peer-deps --omit=dev
+
+# Copy compiled output
+COPY --from=builder /usr/src/app/dist ./dist
+
+# Create uploads directory
+RUN mkdir -p public/uploads
+
 EXPOSE 5000
 
-# Run the production command
-CMD ["npm", "run", "start"]
+CMD ["node", "dist/src/server.js"]

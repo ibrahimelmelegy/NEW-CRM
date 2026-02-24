@@ -2,7 +2,7 @@
 .flex.items-center.justify-between.mb-8
   .title.font-bold.text-2xl.mb-1.capitalize Edit Additional Material
   .flex.items-center.gap-x-2
-    el-button(size='large' plain type="primary" class="w-full !rounded-2xl" @click="router.back()") Cancel
+    el-button(size='large' plain type="primary" class="w-full !rounded-2xl" @click="router.back()") {{ $t('common.cancel') }}
     el-button(size='large' type="primary" native-type="submit" :loading="loading" :disabled="loading" class="w-full !px-5 !rounded-2xl" @click="onSubmitMaterials") Save
 
 .card.m-auto.p-10.rounded-3xl(class="2xl:w-1/2 w-[90%]" :style="{ backgroundColor: 'var(--color-neutral-background-2)', border: '1px solid var(--color-border-default)' }")
@@ -49,7 +49,7 @@ async function onSubmitMaterials() {
     await updateAdditionalMaterial({ ...finalValues.value, materialId: +(route.params.slug as string) });
     loading.value = false;
   } catch (error) {
-    console.error("Error saving forms:", error);
+    console.error('Error saving forms:', error);
     loading.value = false;
   } finally {
     loading.value = false;

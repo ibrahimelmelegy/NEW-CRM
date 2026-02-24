@@ -27,6 +27,7 @@ import { useForm } from 'vee-validate';
 import * as yup from 'yup';
 import { ref, computed, onMounted } from 'vue';
 import { Plus } from '@element-plus/icons-vue';
+import { ElMessageBox } from 'element-plus';
 
 const props = defineProps({
   loading: Boolean,
@@ -225,13 +226,14 @@ function removeDuplicatesKeepLast(arr: any) {
 function handleAdditionalMaterialItem(newItem: any) {
   // Iterate over each key in the new item
   for (const key in newItem) {
+    const numKey = Number(key);
     // Check if the key already exists in the existing data
     if (addMaterialItems.value?.hasOwnProperty(key)) {
       // If the key exists, override the existing array with the new array (no addition, only replacement)
-      addMaterialItems.value[key] = newItem[key];
+      addMaterialItems.value[numKey] = newItem[key];
     } else {
       // If the key does not exist, add the new key-value pair
-      addMaterialItems.value[key] = newItem[key];
+      addMaterialItems.value[numKey] = newItem[key];
     }
   }
 }
@@ -296,6 +298,7 @@ interface Material {
   description: string;
   serviceId?: string;
   service?: { price?: number };
+  name?: string;
 }
 
 interface AdditionalMaterial {
@@ -321,6 +324,8 @@ interface MaterialMappedData {
 interface Service {
   id: string;
   name: string;
+  price?: number;
+  type?: string;
 }
 
 function getMaterialMargin(val: any) {
@@ -330,8 +335,17 @@ function getMaterialMargin(val: any) {
 
 getMaterial();
 
-function deleteMaterial(id: number) {
-  materials.value = materials.value.filter((material: Material) => material.id !== id);
-  getMaterial();
+async function deleteMaterial(id: number) {
+  try {
+    await ElMessageBox.confirm(t('common.deleteConfirm'), t('common.warning'), {
+      confirmButtonText: t('common.confirm'),
+      cancelButtonText: t('common.cancel'),
+      type: 'warning'
+    });
+    materials.value = materials.value.filter((material: Material) => material.id !== id);
+    getMaterial();
+  } catch {
+    // User cancelled
+  }
 }
 </script>

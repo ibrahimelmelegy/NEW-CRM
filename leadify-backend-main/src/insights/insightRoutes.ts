@@ -1,5 +1,7 @@
 import express from 'express';
 import insightController from './insightController';
+import heatmapController from './heatmapController';
+import relationshipController from './relationshipController';
 import { authenticateUser, HasPermission } from '../middleware/authMiddleware';
 import {
   FinancialAndBusinessMetricsWidgetsPermissionsEnum,
@@ -94,5 +96,12 @@ router.get(
   ]),
   insightController.getPerformanceAndHRInsights
 );
+
+// Heatmap routes
+router.get('/heatmap', authenticateUser, heatmapController.getHeatmap);
+router.get('/heatmap/recent', authenticateUser, heatmapController.getRecentActivity);
+
+// Relationship graph routes
+router.get('/relationship-graph', authenticateUser, relationshipController.getGraph);
 
 export default router;

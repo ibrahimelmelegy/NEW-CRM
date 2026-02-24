@@ -136,7 +136,7 @@ class ProposalService {
   public async updateProposal(id: string, data: UpdateProposalInput, user: User): Promise<Proposal> {
     await this.validateProposalAccess(id, user);
     const proposal = await this.proposalOrError({ id });
-    if (proposal.status !== ProposalStatusEnum.WAITING_APPROVAL) throw new BaseError(ERRORS.INVALID_PROPOSAL_STATUS_TO_UPDATE);
+    if (![ProposalStatusEnum.WAITING_APPROVAL, ProposalStatusEnum.DRAFT].includes(proposal.status as ProposalStatusEnum)) throw new BaseError(ERRORS.INVALID_PROPOSAL_STATUS_TO_UPDATE);
     if (data.reference) await this.errorIfProposalWithExistReference(data.reference, proposal.id);
     if (data.companyLogo) await uploaderService.setFileReferences([data.companyLogo]);
     if (data.fileAttachments?.length) await uploaderService.setFileReferences(data.fileAttachments);

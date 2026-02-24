@@ -214,7 +214,7 @@ if (props.data) {
 
 function getAddMaterialsItem(val: any) {
   finalAddMaterialsItems.value = val;
-  addMaterialsItems.value = val[Object.keys(val)[0]];
+  addMaterialsItems.value = val[Object.keys(val)[0]!];
   updateTableData();
 }
 await fetchAddMaterials(props?.data?.additionalMaterialId);
@@ -223,7 +223,7 @@ function updateMaterialQuantities(selectedItems: any, additionalMaterial: any) {
   return {
     ...additionalMaterial,
     materialItem: additionalMaterial.materialItem?.map((item: any) => {
-      const selectedItem = selectedItems[Object.keys(selectedItems)[0]]?.find((s: any) => s.id === item.id);
+      const selectedItem = selectedItems[Object.keys(selectedItems)[0]!]?.find((s: any) => s.id === item.id);
       return selectedItem ? { ...item, quantity: selectedItem.quantity } : item;
     })
   };

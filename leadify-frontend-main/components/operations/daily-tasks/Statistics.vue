@@ -31,49 +31,49 @@ import VChart from 'vue-echarts';
 const colorpieChart = ['#3498db', '#2ecc71', '#f39c12'];
 const colorbarChart = ['#3498db'];
 
-const dailyTaskStats = ref({});
+const dailyTaskStats = ref<any>({});
 
 onMounted(async () => {
   const dailyTaskStatsRes = await getDailyTaskStatistics();
   dailyTaskStats.value = dailyTaskStatsRes || {};
 });
 
-const cardData = ref([
+const cardData = computed(() => [
   {
     name: 'Active Projects',
-    value: dailyTaskStats.value?.activeTasks,
+    value: dailyTaskStats.value?.activeTasks ?? 0,
     icon: { name: 'fluent:task-list-ltr-24-filled', color: '#3498db' }
   },
   {
     name: 'Completed Projects',
-    value: dailyTaskStats.value?.completedTasks,
+    value: dailyTaskStats.value?.completedTasks ?? 0,
     icon: { name: 'ic:round-task-alt', color: '#2ecc71' }
   },
   {
     name: 'Granted Projects',
-    value: dailyTaskStats.value?.grantedTasks,
+    value: dailyTaskStats.value?.grantedTasks ?? 0,
     icon: { name: 'material-symbols:award-star', color: '#f39c12' }
   },
   {
     name: 'Total Revenue Projects',
-    value: dailyTaskStats.value?.totalRevenue,
+    value: dailyTaskStats.value?.totalRevenue ?? 0,
     icon: { name: 'ic:sharp-monetization-on', color: '#27ae60' }
   }
 ]);
 
-const barChartSalesPerformanceOptions = getBarChartWithLineData(
+const barChartSalesPerformanceOptions = computed(() => getBarChartWithLineData(
   dailyTaskStats.value?.salesPerformance, ['Tasks count', 'Total paid'],
   colorbarChart
-);
-const barChartMonthlyRevenueOptions = getBarChartData(
+));
+const barChartMonthlyRevenueOptions = computed(() => getBarChartData(
   dailyTaskStats.value?.monthlyRevenue,
   colorbarChart
-);
-const pieChartTaskDistributionByClientOptions = getCenterPieChartsData(
+));
+const pieChartTaskDistributionByClientOptions = computed(() => getCenterPieChartsData(
   dailyTaskStats.value?.taskDistributionByClient,
   colorpieChart,
   ''
-);
+));
 
-const pieChartTaskStatusPercentageOptions = getPieChartsData(dailyTaskStats.value?.taskStatusPercentage, colorpieChart);
+const pieChartTaskStatusPercentageOptions = computed(() => getPieChartsData(dailyTaskStats.value?.taskStatusPercentage, colorpieChart));
 </script>

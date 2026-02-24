@@ -1,7 +1,8 @@
 import express, { Request, Response, NextFunction } from 'express';
-import { loginUser, logoutUser, forgotPassword, resetPassword, checkResetToken, getUserProfile } from './authController';
+import { loginUser, logoutUser, forgotPassword, resetPassword, checkResetToken, getUserProfile, registerWorkspace } from './authController';
 import { authenticateUser } from '../middleware/authMiddleware';
 import { setup2FA, verify2FA, disable2FA, validateLoginCode } from './twoFactorController';
+import { authLimiter } from '../middleware/rateLimiter';
 
 const router = express.Router();
 
@@ -35,8 +36,18 @@ const router = express.Router();
  *       500:
  *         description: Server error
  */
-// Authentication route for login
-router.post('/login', loginUser);
+// Authentication route for login (rate-limited to prevent brute force)
+router.post('/login', authLimiter, loginUser);
+
+/**
+ * @swagger
+ * /api/auth/register:
+ *   post:
+ *     summary: Register a new Workspace
+ *     description: Creates a new Workspace (Tenant), an Admin Role, and the founding User. returns a token.
+ *     tags: [Authentication]
+ */
+router.post('/register', authLimiter, registerWorkspace);
 
 /**
  * @swagger
@@ -120,8 +131,8 @@ router.post('/logout', authenticateUser, logoutUser);
  *       500:
  *         description: Server error
  */
-// Forgot password route
-router.post('/forgot-password', forgotPassword);
+// Forgot password route (rate-limited)
+router.post('/forgot-password', authLimiter, forgotPassword);
 
 /**
  * @swagger
@@ -151,8 +162,8 @@ router.post('/forgot-password', forgotPassword);
  *       500:
  *         description: Server error
  */
-// Reset password route
-router.post('/reset-password', resetPassword);
+// Reset password route (rate-limited)
+router.post('/reset-password', authLimiter, resetPassword);
 
 /**
  * @swagger
@@ -277,6 +288,6 @@ router.post('/2fa/disable', authenticateUser, disable2FA);
  *       400:
  *         description: Invalid code
  */
-router.post('/2fa/validate', validateLoginCode);
+router.post('/2fa/validate', authLimiter, validateLoginCode);
 
 export default router;

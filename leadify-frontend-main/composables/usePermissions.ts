@@ -31,3 +31,18 @@ export async function usePermissions(isUpdated = false) {
     hasAnyPermission
   };
 }
+
+/**
+ * Sync wrapper for components that don't need to block on permission loading.
+ * Triggers a background fetch if permissions aren't loaded yet, but returns
+ * immediately with reactive permission checkers.
+ */
+export function usePermissionsSync() {
+  if (!isLoaded.value) {
+    usePermissions().catch(() => {});
+  }
+  return {
+    hasPermission: (permission: string): boolean => permissions.value.includes(permission),
+    hasAnyPermission: (perms: string[]): boolean => perms.some(p => permissions.value.includes(p))
+  };
+}

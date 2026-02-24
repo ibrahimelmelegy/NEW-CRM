@@ -6,6 +6,7 @@
       .title.font-bold.text-3xl.mb-2.text-gradient {{ $t('navigation.manpower') }}
       .subtitle.text-muted.text-sm.tracking-wide Manage workforce and personnel
     .flex.items-center.gap-x-3
+      ExportButton(:data="table.data" :columns="exportColumns" :filename="'manpower-export'" :title="$t('navigation.manpower')")
       NuxtLink(to="/operations/manpower/add-manpower")
         el-button(   size='large' :loading="loading" v-if="hasPermission('CREATE_MANPOWER')" native-type="submit" type="primary" :icon="Plus" class="premium-btn !rounded-2xl px-8 glow-purple glass-button-press")  {{ $t('operations.manpower.new') }}
       //- el-dropdown(trigger="click")
@@ -59,6 +60,17 @@ const router = useRouter();
 const { hasPermission } = await usePermissions();
 const loadingAction = ref(false);
 const deleteLeadPopup = ref(false);
+
+// Export columns
+const exportColumns = [
+  { prop: 'name', label: useI18n().t('operations.manpower.table.fullName') },
+  { prop: 'manpowerContacts', label: useI18n().t('operations.manpower.table.contacts') },
+  { prop: 'role', label: useI18n().t('operations.manpower.table.role') },
+  { prop: 'availabilityStatus', label: useI18n().t('operations.manpower.table.availability') },
+  { prop: 'salary', label: useI18n().t('operations.manpower.table.salary') },
+  { prop: 'totalCost', label: useI18n().t('operations.manpower.table.totalCost') },
+  { prop: 'dailyCost', label: useI18n().t('operations.manpower.table.dailyCost') }
+];
 
 const table = reactive({
   columns: [

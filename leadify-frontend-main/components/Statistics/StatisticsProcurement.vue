@@ -2,35 +2,35 @@
 .p-6.animate-entrance
   .flex.items-center.justify-between.mb-10
     .header-content
-      .page-title.mb-2 Procurement Analytics
-      .subtitle.text-muted Real-time insights into your supply chain
+      .page-title.mb-2 {{ $t('procurement.statistics.title') }}
+      .subtitle.text-muted {{ $t('procurement.statistics.subtitle') }}
 
   //- KPI Cards
   .grid.grid-cols-1.md_grid-cols-2.lg_grid-cols-3.gap-8.mb-10
     .stat-card-primary
       .flex.items-center.justify-between
         div
-          .stat-label Total POs
+          .stat-label {{ $t('procurement.statistics.totalPOs') }}
           .stat-value {{ stats.kpi.totalPos }}
-          .stat-sublabel Lifetime volume
+          .stat-sublabel {{ $t('procurement.statistics.lifetimeVolume') }}
         .icon-box
           Icon(name="ph:shopping-cart-bold")
 
     .stat-card-warning
       .flex.items-center.justify-between
         div
-          .stat-label Total Expenditure
+          .stat-label {{ $t('procurement.statistics.totalExpenditure') }}
           .stat-value {{ formatCurrency(stats.kpi.totalSpend) }}
-          .stat-sublabel Total committed spend
+          .stat-sublabel {{ $t('procurement.statistics.totalCommittedSpend') }}
         .icon-box
           Icon(name="ph:currency-circle-dollar-bold")
 
     .stat-card-danger
       .flex.items-center.justify-between
         div
-          .stat-label Pending Queue
+          .stat-label {{ $t('procurement.statistics.pendingQueue') }}
           .stat-value {{ stats.kpi.pendingCount }}
-          .stat-sublabel Needs attention
+          .stat-sublabel {{ $t('procurement.statistics.needsAttention') }}
         .icon-box
           Icon(name="ph:clock-countdown-bold")
 
@@ -39,14 +39,14 @@
     .chart-card
       .chart-header
         Icon(name="ph:chart-pie-slice-bold")
-        .chart-title Top Suppliers by Volume
+        .chart-title {{ $t('procurement.statistics.topSuppliers') }}
       client-only
         v-chart(:option="vendorChartOption", style="height: 350px", autoresize)
 
     .chart-card
       .chart-header
         Icon(name="ph:chart-line-up-bold")
-        .chart-title Procurement Trend (6 Months)
+        .chart-title {{ $t('procurement.statistics.procurementTrend') }}
       client-only
         v-chart(:option="monthlyChartOption", style="height: 350px", autoresize)
 
@@ -54,25 +54,25 @@
   .premium-table.p-8
       .chart-header
         Icon(name="ph:list-dashes-bold")
-        .chart-title Recent Transactions
+        .chart-title {{ $t('procurement.statistics.recentTransactions') }}
 
       el-table(:data="stats.recentTransactions" style="width: 100%")
-        el-table-column(prop="poNumber" label="PO Number" width="180")
+        el-table-column(prop="poNumber" :label="$t('procurement.statistics.poNumber')" width="180")
           template(#default="{row}")
              span.font-bold {{ row.poNumber }}
-        el-table-column(label="Vendor" width="250")
+        el-table-column(:label="$t('procurement.statistics.vendor')" width="250")
           template(#default="{row}")
              .flex.items-center.gap-3
                .vendor-avatar
                   | {{ row.Vendor?.name?.charAt(0) || '?' }}
                span {{ row.Vendor?.name || 'Unknown' }}
-        el-table-column(prop="totalAmount" label="Amount")
+        el-table-column(prop="totalAmount" :label="$t('procurement.statistics.amount')")
            template(#default="{row}")
               span.font-mono {{ formatCurrency(row.totalAmount) }}
-        el-table-column(prop="status" label="Status")
+        el-table-column(prop="status" :label="$t('procurement.statistics.status')")
            template(#default="{row}")
               el-tag(:type="getStatusType(row.status)" size="small") {{ row.status }}
-        el-table-column(prop="createdAt" label="Date")
+        el-table-column(prop="createdAt" :label="$t('procurement.statistics.date')")
            template(#default="{row}")
               span.text-muted {{ new Date(row.createdAt).toLocaleDateString() }}
 
@@ -105,7 +105,7 @@ onMounted(async () => {
       stats.value = response as any;
     }
   } catch (e) {
-    console.error('Failed to fetch statistics', e);
+    // Failed to fetch statistics - silently handle
   } finally {
     loading.value = false;
   }

@@ -11,23 +11,18 @@ import { sequelize } from '../config/db';
 
 class ProcurementService {
     async createPurchaseOrder(input: any, user: User): Promise<PurchaseOrder> {
-        console.log("DEBUG: createPurchaseOrder input:", JSON.stringify(input));
         const transaction = await sequelize.transaction();
         try {
             const { items, ...poData } = input;
             const poCount = await PurchaseOrder.count();
             const poNumber = `PO-${new Date().getFullYear()}-${(poCount + 1).toString().padStart(4, '0')}`;
 
-            console.log("DEBUG: Creating PO with:", { ...poData, poNumber, createdBy: user.id });
-
             const purchaseOrder = await PurchaseOrder.create(
                 { ...poData, poNumber, createdBy: user.id },
                 { transaction }
             );
-            console.log("DEBUG: PO Created, ID:", purchaseOrder.id);
 
             if (items && Array.isArray(items)) {
-                console.log("DEBUG: Processing items:", items.length);
                 if (items.length === 0) {
                     throw new BaseError(400, 400, "Purchase Order must have at least one item");
                 }
@@ -41,8 +36,7 @@ class ProcurementService {
                         purchaseOrderId: purchaseOrder.id
                     };
                 });
-                const createdItems = await PurchaseOrderItem.bulkCreate(poItems, { transaction });
-                console.log("DEBUG: Items created:", createdItems.length);
+                await PurchaseOrderItem.bulkCreate(poItems, { transaction });
             } else {
                 throw new BaseError(400, 400, "Purchase Order must have items");
             }
@@ -51,10 +45,6 @@ class ProcurementService {
             await createActivityLog('purchaseOrder', 'create', purchaseOrder.id, user.id, null, `Purchase Order ${poNumber} created`);
             return purchaseOrder;
         } catch (error: any) {
-            console.error("DEBUG: createPurchaseOrder ERROR:", error);
-            if (error.name === 'SequelizeValidationError') {
-                console.error("DEBUG: Validation Errors:", error.errors);
-            }
             await transaction.rollback();
             throw error;
         }

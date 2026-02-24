@@ -21,6 +21,10 @@
     el-tab-pane(:label="$t('dashboard.procurement')" name='procurement')
       ClientOnly
         StatisticsProcurement(v-if="selectedTab === 'procurement'")
+
+    el-tab-pane(:label="$t('dashboard.churnPrediction')" name='churnPrediction')
+      ClientOnly
+        StatisticsChurnWidget(v-if="selectedTab === 'churnPrediction'")
 </template>
 
 <script setup lang="ts">

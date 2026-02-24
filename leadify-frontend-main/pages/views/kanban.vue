@@ -1,0 +1,415 @@
+<template>
+  <div class="space-y-6">
+    <!-- Header -->
+    <div class="glass-panel p-6 rounded-2xl">
+      <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
+        <div>
+          <h1 class="text-2xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-blue-400 to-cyan-400">Kanban Board</h1>
+          <p class="text-slate-400 text-sm mt-1">Universal drag-and-drop board view for any entity.</p>
+        </div>
+        <div class="flex gap-2">
+          <el-select v-model="selectedEntity" class="w-44" @change="onEntityChange">
+            <el-option label="Leads" value="leads" />
+            <el-option label="Deals" value="deals" />
+            <el-option label="Tasks" value="tasks" />
+            <el-option label="Support Tickets" value="tickets" />
+            <el-option label="Projects" value="projects" />
+          </el-select>
+          <el-button type="primary" class="!rounded-xl" @click="showAddDialog = true">
+            <Icon name="ph:plus-bold" class="w-4 h-4 mr-2" />
+            Add Item
+          </el-button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Board Stats -->
+    <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
+      <div v-for="col in columns" :key="col.key" class="glass-panel p-4 rounded-xl text-center">
+        <div class="text-2xl font-bold" :style="{ color: col.color }">{{ getColumnCards(col.key).length }}</div>
+        <div class="text-xs text-slate-500 mt-1">{{ col.label }}</div>
+      </div>
+    </div>
+
+    <!-- Kanban Board -->
+    <div class="flex gap-4 overflow-x-auto pb-4" style="min-height: 60vh">
+      <div v-for="col in columns" :key="col.key" class="flex-shrink-0 w-72">
+        <!-- Column Header -->
+        <div class="glass-panel p-3 rounded-xl mb-3">
+          <div class="flex items-center justify-between">
+            <div class="flex items-center gap-2">
+              <div class="w-3 h-3 rounded-full" :style="{ backgroundColor: col.color }"></div>
+              <span class="text-sm font-medium text-slate-200">{{ col.label }}</span>
+              <span class="text-xs text-slate-500 bg-slate-800/60 px-2 py-0.5 rounded-full">{{ getColumnCards(col.key).length }}</span>
+            </div>
+            <el-button text size="small" @click="addToColumn(col.key)">
+              <Icon name="ph:plus" class="w-4 h-4 text-slate-500" />
+            </el-button>
+          </div>
+          <div v-if="(col as any).totalValue" class="text-xs text-slate-500 mt-1">{{ formatCurrency((col as any).totalValue) }}</div>
+        </div>
+
+        <!-- Drop Zone -->
+        <div
+          class="space-y-3 min-h-[200px] rounded-xl p-2 transition-colors"
+          :class="dragOverCol === col.key ? 'bg-primary-500/10 border border-primary-500/30 border-dashed' : ''"
+          @dragover.prevent="dragOverCol = col.key"
+          @dragleave="dragOverCol = ''"
+          @drop="onDrop($event, col.key)"
+        >
+          <!-- Cards -->
+          <div
+            v-for="card in getColumnCards(col.key)"
+            :key="card.id"
+            class="glass-panel p-4 rounded-xl cursor-grab hover:border-primary-500/30 transition-all group"
+            draggable="true"
+            @dragstart="onDragStart($event, card)"
+            @click="openCard(card)"
+          >
+            <!-- Priority Badge -->
+            <div class="flex justify-between items-start mb-2">
+              <el-tag v-if="card.priority" :type="getPriorityType(card.priority)" effect="dark" size="small">
+                {{ card.priority }}
+              </el-tag>
+              <span class="text-xs text-slate-600">{{ card.code }}</span>
+            </div>
+
+            <!-- Card Title -->
+            <h4 class="text-sm font-medium text-slate-200 mb-2">{{ card.title }}</h4>
+
+            <!-- Labels -->
+            <div v-if="card.labels?.length" class="flex gap-1 flex-wrap mb-2">
+              <span v-for="label in card.labels" :key="label" class="text-[10px] px-2 py-0.5 rounded-full" :class="getLabelClass(label)">
+                {{ label }}
+              </span>
+            </div>
+
+            <!-- Card Footer -->
+            <div class="flex items-center justify-between mt-3 pt-2 border-t border-slate-800/60">
+              <div class="flex items-center gap-2">
+                <el-avatar :size="22" class="bg-slate-700">
+                  {{ card.assignee?.charAt(0) || '?' }}
+                </el-avatar>
+                <span class="text-xs text-slate-500">{{ card.assignee }}</span>
+              </div>
+              <div class="flex items-center gap-2 text-xs text-slate-600">
+                <span v-if="card.dueDate" class="flex items-center gap-1" :class="isOverdue(card.dueDate) ? 'text-red-400' : ''">
+                  <Icon name="ph:calendar" class="w-3 h-3" />
+                  {{ formatShortDate(card.dueDate) }}
+                </span>
+                <span v-if="card.comments" class="flex items-center gap-1">
+                  <Icon name="ph:chat-circle" class="w-3 h-3" />
+                  {{ card.comments }}
+                </span>
+                <span v-if="card.attachments" class="flex items-center gap-1">
+                  <Icon name="ph:paperclip" class="w-3 h-3" />
+                  {{ card.attachments }}
+                </span>
+              </div>
+            </div>
+
+            <!-- Progress Bar -->
+            <el-progress
+              v-if="card.progress !== undefined"
+              :percentage="card.progress"
+              :stroke-width="3"
+              :show-text="false"
+              :color="card.progress === 100 ? '#10B981' : '#6366F1'"
+              class="mt-2"
+            />
+          </div>
+
+          <!-- Empty State -->
+          <div v-if="getColumnCards(col.key).length === 0" class="text-center py-8 text-slate-600 text-xs">Drop items here</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Add Item Dialog -->
+    <el-dialog v-model="showAddDialog" title="Add Board Item" width="480px">
+      <el-form label-position="top">
+        <el-form-item label="Title">
+          <el-input v-model="newCard.title" placeholder="Item title" />
+        </el-form-item>
+        <div class="grid grid-cols-2 gap-4">
+          <el-form-item label="Status">
+            <el-select v-model="newCard.status" class="w-full">
+              <el-option v-for="col in columns" :key="col.key" :label="col.label" :value="col.key" />
+            </el-select>
+          </el-form-item>
+          <el-form-item label="Priority">
+            <el-select v-model="newCard.priority" class="w-full">
+              <el-option label="Critical" value="CRITICAL" />
+              <el-option label="High" value="HIGH" />
+              <el-option label="Medium" value="MEDIUM" />
+              <el-option label="Low" value="LOW" />
+            </el-select>
+          </el-form-item>
+        </div>
+        <el-form-item label="Assignee">
+          <el-input v-model="newCard.assignee" placeholder="Assignee name" />
+        </el-form-item>
+        <el-form-item label="Due Date">
+          <el-date-picker v-model="newCard.dueDate" type="date" class="w-full" />
+        </el-form-item>
+      </el-form>
+      <template #footer>
+        <el-button @click="showAddDialog = false">Cancel</el-button>
+        <el-button type="primary" @click="addCard">Add Item</el-button>
+      </template>
+    </el-dialog>
+  </div>
+</template>
+
+<script setup lang="ts">
+import { ref, computed } from 'vue';
+import { ElMessage } from 'element-plus';
+
+definePageMeta({
+  layout: 'default',
+  middleware: 'permissions'
+});
+
+interface BoardCard {
+  id: number;
+  title: string;
+  code: string;
+  status: string;
+  priority?: string;
+  assignee?: string;
+  dueDate?: string;
+  labels?: string[];
+  comments?: number;
+  attachments?: number;
+  progress?: number;
+  value?: number;
+}
+
+const selectedEntity = ref('deals');
+const showAddDialog = ref(false);
+const dragOverCol = ref('');
+let draggedCard: BoardCard | null = null;
+
+const newCard = ref({ title: '', status: 'NEW', priority: 'MEDIUM', assignee: '', dueDate: '' });
+
+const entityColumns: Record<string, { key: string; label: string; color: string }[]> = {
+  leads: [
+    { key: 'NEW', label: 'New', color: '#3B82F6' },
+    { key: 'CONTACTED', label: 'Contacted', color: '#8B5CF6' },
+    { key: 'QUALIFIED', label: 'Qualified', color: '#F59E0B' },
+    { key: 'CONVERTED', label: 'Converted', color: '#10B981' }
+  ],
+  deals: [
+    { key: 'DISCOVERY', label: 'Discovery', color: '#3B82F6' },
+    { key: 'PROPOSAL', label: 'Proposal', color: '#8B5CF6' },
+    { key: 'NEGOTIATION', label: 'Negotiation', color: '#F59E0B' },
+    { key: 'WON', label: 'Won', color: '#10B981' },
+    { key: 'LOST', label: 'Lost', color: '#EF4444' }
+  ],
+  tasks: [
+    { key: 'TODO', label: 'To Do', color: '#64748B' },
+    { key: 'IN_PROGRESS', label: 'In Progress', color: '#3B82F6' },
+    { key: 'REVIEW', label: 'In Review', color: '#F59E0B' },
+    { key: 'DONE', label: 'Done', color: '#10B981' }
+  ],
+  tickets: [
+    { key: 'OPEN', label: 'Open', color: '#EF4444' },
+    { key: 'IN_PROGRESS', label: 'In Progress', color: '#F59E0B' },
+    { key: 'WAITING', label: 'Waiting', color: '#8B5CF6' },
+    { key: 'RESOLVED', label: 'Resolved', color: '#10B981' }
+  ],
+  projects: [
+    { key: 'PLANNING', label: 'Planning', color: '#64748B' },
+    { key: 'ACTIVE', label: 'Active', color: '#3B82F6' },
+    { key: 'ON_HOLD', label: 'On Hold', color: '#F59E0B' },
+    { key: 'COMPLETED', label: 'Completed', color: '#10B981' }
+  ]
+};
+
+const columns = computed(() => entityColumns[selectedEntity.value] || entityColumns.deals);
+
+const cards = ref<BoardCard[]>([
+  {
+    id: 1,
+    title: 'Enterprise CRM License - TechCorp',
+    code: 'DEAL-001',
+    status: 'DISCOVERY',
+    priority: 'HIGH',
+    assignee: 'Ahmed F.',
+    dueDate: '2026-03-15',
+    labels: ['Enterprise', 'Q1'],
+    comments: 5,
+    attachments: 2,
+    value: 150000
+  },
+  {
+    id: 2,
+    title: 'Cloud Migration - StartupX',
+    code: 'DEAL-002',
+    status: 'PROPOSAL',
+    priority: 'CRITICAL',
+    assignee: 'Sara M.',
+    dueDate: '2026-02-28',
+    labels: ['Cloud'],
+    comments: 12,
+    progress: 65,
+    value: 85000
+  },
+  {
+    id: 3,
+    title: 'API Integration Package',
+    code: 'DEAL-003',
+    status: 'NEGOTIATION',
+    priority: 'MEDIUM',
+    assignee: 'Omar H.',
+    dueDate: '2026-03-10',
+    labels: ['Integration'],
+    comments: 3,
+    value: 45000
+  },
+  {
+    id: 4,
+    title: 'Data Analytics Suite',
+    code: 'DEAL-004',
+    status: 'DISCOVERY',
+    priority: 'LOW',
+    assignee: 'Fatima A.',
+    labels: ['Analytics'],
+    comments: 1,
+    value: 32000
+  },
+  {
+    id: 5,
+    title: 'Security Audit Package',
+    code: 'DEAL-005',
+    status: 'WON',
+    priority: 'HIGH',
+    assignee: 'Khalid I.',
+    dueDate: '2026-02-20',
+    labels: ['Security'],
+    progress: 100,
+    value: 72000
+  },
+  {
+    id: 6,
+    title: 'Custom Dashboard Development',
+    code: 'DEAL-006',
+    status: 'PROPOSAL',
+    priority: 'MEDIUM',
+    assignee: 'Ahmed F.',
+    dueDate: '2026-03-20',
+    labels: ['Custom'],
+    comments: 8,
+    attachments: 4,
+    value: 55000
+  },
+  {
+    id: 7,
+    title: 'Mobile App Revamp',
+    code: 'DEAL-007',
+    status: 'NEGOTIATION',
+    priority: 'HIGH',
+    assignee: 'Sara M.',
+    dueDate: '2026-03-05',
+    labels: ['Mobile'],
+    progress: 40,
+    value: 120000
+  },
+  {
+    id: 8,
+    title: 'Training & Onboarding',
+    code: 'DEAL-008',
+    status: 'DISCOVERY',
+    priority: 'LOW',
+    assignee: 'Omar H.',
+    labels: ['Training'],
+    value: 18000
+  }
+]);
+
+const getColumnCards = (status: string) => cards.value.filter(c => c.status === status);
+
+const formatCurrency = (val: number) => {
+  if (val >= 1000000) return `${(val / 1000000).toFixed(1)}M SAR`;
+  if (val >= 1000) return `${(val / 1000).toFixed(1)}K SAR`;
+  return `${val} SAR`;
+};
+
+const formatShortDate = (d: string) => {
+  if (!d) return '';
+  return new Date(d).toLocaleDateString('en', { month: 'short', day: 'numeric' });
+};
+
+const isOverdue = (d: string) => d && new Date(d) < new Date();
+
+const getPriorityType = (p: string): 'success' | 'warning' | 'info' | 'danger' | undefined => {
+  const map: Record<string, 'success' | 'warning' | 'info' | 'danger' | undefined> = {
+    CRITICAL: 'danger',
+    HIGH: 'warning',
+    MEDIUM: undefined,
+    LOW: 'info'
+  };
+  return map[p];
+};
+
+const getLabelClass = (label: string) => {
+  const colors = [
+    'bg-blue-500/20 text-blue-400',
+    'bg-purple-500/20 text-purple-400',
+    'bg-amber-500/20 text-amber-400',
+    'bg-emerald-500/20 text-emerald-400',
+    'bg-rose-500/20 text-rose-400'
+  ];
+  return colors[label.length % colors.length];
+};
+
+const onDragStart = (e: DragEvent, card: BoardCard) => {
+  draggedCard = card;
+  if (e.dataTransfer) {
+    e.dataTransfer.effectAllowed = 'move';
+    e.dataTransfer.setData('text/plain', String(card.id));
+  }
+};
+
+const onDrop = (_e: DragEvent, newStatus: string) => {
+  dragOverCol.value = '';
+  if (draggedCard && draggedCard.status !== newStatus) {
+    const oldStatus = draggedCard.status;
+    draggedCard.status = newStatus;
+    ElMessage.success(`Moved "${draggedCard.title}" from ${oldStatus} to ${newStatus}`);
+  }
+  draggedCard = null;
+};
+
+const addToColumn = (status: string) => {
+  newCard.value.status = status;
+  showAddDialog.value = true;
+};
+
+const addCard = () => {
+  if (!newCard.value.title) {
+    ElMessage.warning('Title is required');
+    return;
+  }
+  cards.value.push({
+    id: Date.now(),
+    title: newCard.value.title,
+    code: `${selectedEntity.value.toUpperCase().slice(0, 4)}-${String(cards.value.length + 1).padStart(3, '0')}`,
+    status: newCard.value.status,
+    priority: newCard.value.priority,
+    assignee: newCard.value.assignee,
+    dueDate: newCard.value.dueDate
+  });
+  showAddDialog.value = false;
+  newCard.value = { title: '', status: 'NEW', priority: 'MEDIUM', assignee: '', dueDate: '' };
+  ElMessage.success('Item added');
+};
+
+const openCard = (card: BoardCard) => {
+  ElMessage.info(`Opening: ${card.title}`);
+};
+
+const onEntityChange = () => {
+  ElMessage.info(`Switched to ${selectedEntity.value} board`);
+};
+</script>

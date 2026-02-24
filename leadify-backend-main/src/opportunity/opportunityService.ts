@@ -15,6 +15,7 @@ import { OpportunityPermissionsEnum } from '../role/roleEnum';
 import OpportunityUsers from './model/oppotyunity_UsersModel';
 import * as ExcelJS from 'exceljs';
 import { sendEmail } from '../utils/emailHelper';
+import { tenantWhere } from '../utils/tenantScope';
 
 class OpportunityService {
   async createOpportunity(input: any, admin: User): Promise<Opportunity | void> {
@@ -114,6 +115,69 @@ class OpportunityService {
     return await opportunity.save();
   }
 
+  async getKanbanOpportunities(user: User): Promise<Record<string, Opportunity[]>> {
+    const where: any = {
+      ...tenantWhere(user),
+      stage: { [Op.ne]: OpportunityStageEnums.CONVERTED }
+    };
+
+    const include: Includeable[] = [
+      {
+        model: User,
+        as: 'users',
+        attributes: ['id', 'name', 'email'],
+        through: { attributes: [] },
+        ...(!user.role.permissions.includes(OpportunityPermissionsEnum.VIEW_GLOBAL_OPPORTUNITIES) && {
+          required: true,
+          where: { id: user.id }
+        })
+      },
+      {
+        model: Lead,
+        as: 'lead',
+        attributes: ['id', 'name', 'companyName']
+      }
+    ];
+
+    const opportunities = await Opportunity.findAll({
+      where,
+      include,
+      attributes: ['id', 'name', 'stage', 'estimatedValue', 'priority', 'expectedCloseDate', 'createdAt'],
+      order: [['createdAt', 'DESC']],
+      limit: 500
+    });
+
+    const grouped: Record<string, Opportunity[]> = {
+      [OpportunityStageEnums.DISCOVERY]: [],
+      [OpportunityStageEnums.PROPOSAL]: [],
+      [OpportunityStageEnums.NEGOTIATION]: [],
+      [OpportunityStageEnums.WON]: [],
+      [OpportunityStageEnums.LOST]: []
+    };
+
+    opportunities.forEach(opp => {
+      if (grouped[opp.stage]) {
+        grouped[opp.stage].push(opp);
+      }
+    });
+
+    return grouped;
+  }
+
+  async updateOpportunityStage(id: string, stage: OpportunityStageEnums, user: User): Promise<Opportunity> {
+    await this.validateOpportunityAccess(id, user);
+    const opportunity = await this.opportunityOrError({ id });
+
+    if (!Object.values(OpportunityStageEnums).includes(stage) || stage === OpportunityStageEnums.CONVERTED) {
+      throw new BaseError(ERRORS.SOMETHING_WENT_WRONG);
+    }
+
+    opportunity.set({ stage });
+    await opportunity.save();
+    await createActivityLog('opportunity', 'update', opportunity.id, user.id, null, `Opportunity stage changed to ${stage}`);
+    return opportunity;
+  }
+
   async opportunityOrError(filter: WhereOptions, joinedTables?: Includeable[]): Promise<Opportunity> {
     const opportunity = await Opportunity.findOne({ where: filter, include: joinedTables || [] });
     if (!opportunity) throw new BaseError(ERRORS.OPPORTUNITY_NOT_FOUND);
@@ -128,6 +192,7 @@ class OpportunityService {
 
     const { rows: opportunities, count: totalItems } = await Opportunity.findAndCountAll({
       where: {
+        ...tenantWhere(user),
         stage: { [Op.ne]: OpportunityStageEnums.CONVERTED },
         ...(query.searchKey && {
           [Op.or]: [{ name: { [Op.iLike]: `%${query.searchKey}%` } }]
@@ -236,6 +301,7 @@ class OpportunityService {
 
   async sendOpportunitiesExcelByEmail(query: any, user: User, email: string): Promise<void> {
     const where: any = {
+      ...tenantWhere(user),
       stage: { [Op.ne]: OpportunityStageEnums.CONVERTED },
       ...(query.searchKey && {
         [Op.or]: [{ name: { [Op.iLike]: `%${query.searchKey}%` } }]

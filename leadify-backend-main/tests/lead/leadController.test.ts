@@ -8,6 +8,9 @@ import { NextFunction, Response } from 'express';
 // Mocks
 jest.mock('../../src/lead/leadService');
 jest.mock('../../src/utils/response/responseWrapper');
+jest.mock('../../src/server', () => ({
+    io: { emit: jest.fn() }
+}));
 
 describe('LeadController', () => {
     let req: any;

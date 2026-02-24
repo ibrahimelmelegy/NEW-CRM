@@ -17,7 +17,7 @@ import { ConvertLeadToDealInput, CreateLeadAndDealInput } from './inputs/convert
 import { CreateDealInvoiceInput, CreateDeliveryDetailsInput } from './inputs/creteDealInput';
 import { GetPaginatedDealsInput } from './inputs/paginated-deals.input';
 import { UpdateDealInput } from './inputs/update-deal.input';
-import DealDelivery from './model/dealDeliveryMode copy';
+import DealDelivery from './model/dealDeliveryModel';
 import Deal from './model/dealModel';
 import Invoice from './model/invoiceMode';
 import { createActivityLog } from '../activity-logs/activityService';
@@ -28,6 +28,9 @@ import userService from '../user/userService';
 import * as ExcelJS from 'exceljs';
 import { sendEmail } from '../utils/emailHelper';
 import clientService from '../client/clientService';
+import projectService from '../project/projectService';
+import { ProjectCategoryEnum, ProjectStatusEnum } from '../project/projectEnum';
+import { tenantWhere, tenantCreate } from '../utils/tenantScope';
 
 class DealService {
   public async convertLeadTODeal(input: ConvertLeadToDealInput & { userId: string }, admin: User): Promise<Deal> {
@@ -85,10 +88,10 @@ class DealService {
       );
 
       if (input.deliveryDetails?.length) {
-        await this.createDealDeliveryDetails(deal.id, input.deliveryDetails);
+        await this.createDealDeliveryDetails(deal.id, input.deliveryDetails, transaction);
       }
       if (input.invoiceDetails?.length) {
-        await this.createDealInvoice(deal.id, input.invoiceDetails);
+        await this.createDealInvoice(deal.id, input.invoiceDetails, transaction);
       }
 
       if (opportunity) {
@@ -101,35 +104,30 @@ class DealService {
         await deal.$set('users', input.users, {
           transaction
         });
+      await transaction.commit();
       if (input.users) {
-        input.users.forEach(async (item: number) => {
-          await notificationService.sendAssignDealNotification({ userId: item, target: deal.id }, deal, admin);
-        });
+        await Promise.all(
+          input.users.map((item: number) =>
+            notificationService.sendAssignDealNotification({ userId: item, target: deal.id }, deal, admin)
+          )
+        );
       }
-      transaction.commit();
-      await createActivityLog('deal', 'create', deal.id, admin.id, transaction, 'Deal created succesfully from lead conversion');
+      await createActivityLog('deal', 'create', deal.id, admin.id, null, 'Deal created succesfully from lead conversion');
 
       return deal;
     } catch (error) {
-      console.log(error);
-      transaction.rollback();
+      await transaction.rollback();
       throw new BaseError(ERRORS[(error as any)?.message as keyof typeof ERRORS] || ERRORS.SOMETHING_WENT_WRONG);
     }
   }
 
   public async createDeal(input: CreateLeadAndDealInput, admin: User): Promise<Deal> {
-    const users = await User.findAll({
-      where: { id: { [Op.in]: input.deal.users } }
-    });
+    // Parallel validation: check users + duplicate in one round-trip
+    const [users, exitingDeal] = await Promise.all([
+      User.findAll({ where: { id: { [Op.in]: input.deal.users } } }),
+      Deal.findOne({ where: { name: input.deal.name, companyName: input.deal.companyName }, attributes: ['name', 'companyName'] }),
+    ]);
     if (!users.length) throw new BaseError(ERRORS.USER_NOT_FOUND);
-
-    const exitingDeal = await Deal.findOne({
-      where: {
-        name: input.deal.name,
-        companyName: input.deal.companyName
-      },
-      attributes: ['name', 'companyName']
-    });
     if (exitingDeal) throw new BaseError(ERRORS.DEAL_ALREADY_EXIST);
     if (input.deal.stage !== DealStageEnums.CANCELLED) delete input.deal.cancelledReason;
 
@@ -188,9 +186,11 @@ class DealService {
           transaction: t
         });
       if (input.deal.users) {
-        input.deal.users.forEach(async (item: number) => {
-          await notificationService.sendAssignDealNotification({ userId: item, target: deal.id }, deal, admin);
-        });
+        await Promise.all(
+          input.deal.users.map((item: number) =>
+            notificationService.sendAssignDealNotification({ userId: item, target: deal.id }, deal, admin)
+          )
+        );
       }
       if (input.deliveryDetails?.length) {
         await this.createDealDeliveryDetails(deal.id, input.deliveryDetails, t);
@@ -202,7 +202,6 @@ class DealService {
       await createActivityLog('deal', 'create', deal.id, admin.id, t, 'Deal created succesfully');
       return deal;
     } catch (error: Error | unknown) {
-      console.log(error);
       await t.rollback();
       throw new BaseError(ERRORS[(error as any)?.message as keyof typeof ERRORS] || ERRORS.SOMETHING_WENT_WRONG);
     }
@@ -216,6 +215,7 @@ class DealService {
 
     const { rows: deals, count: totalItems } = await Deal.findAndCountAll({
       where: {
+        ...tenantWhere(user),
         stage: {
           [Op.ne]: DealStageEnums.CONVERTED
         },
@@ -225,17 +225,17 @@ class DealService {
         ...(query?.stage &&
           isArray(query.stage) &&
           query.stage.length && {
-            stage: {
-              [Op.in]: query.stage
-            }
-          }),
+          stage: {
+            [Op.in]: query.stage
+          }
+        }),
         ...(query?.contractType &&
           isArray(query.contractType) &&
           query.contractType.length && {
-            contractType: {
-              [Op.in]: query.contractType
-            }
-          }),
+          contractType: {
+            [Op.in]: query.contractType
+          }
+        }),
         ...((query.fromDate || query.toDate) && {
           createdAt: {
             ...(query.fromDate && { [Op.gte]: new Date(query.fromDate) }),
@@ -353,9 +353,11 @@ class DealService {
       ...input
     });
     if (users?.length) {
-      users.forEach(async (item: number) => {
-        await notificationService.sendAssignDealNotification({ userId: item, target: deal.id }, deal, user);
-      });
+      await Promise.all(
+        users.map((item: number) =>
+          notificationService.sendAssignDealNotification({ userId: item, target: deal.id }, deal, user)
+        )
+      );
     }
     await createActivityLog('deal', 'update', deal.id, user.id, null, `New updates added suucesfully`);
     await deal.save();
@@ -417,6 +419,83 @@ class DealService {
     );
   }
 
+  public async getKanbanDeals(user: User): Promise<Record<string, Deal[]>> {
+    const where: any = {
+      stage: { [Op.ne]: DealStageEnums.CONVERTED }
+    };
+
+    const include: Includeable[] = [{
+      model: User,
+      as: 'users',
+      attributes: ['id', 'name', 'email'],
+      through: { attributes: [] },
+      ...(!user.role.permissions.includes(DealPermissionsEnum.VIEW_GLOBAL_DEALS) && {
+        required: true,
+        where: { id: user.id }
+      })
+    }];
+
+    const deals = await Deal.findAll({
+      where,
+      include,
+      attributes: ['id', 'name', 'companyName', 'price', 'stage', 'contractType', 'createdAt'],
+      order: [['createdAt', 'DESC']],
+      limit: 500
+    });
+
+    const grouped: Record<string, Deal[]> = {
+      [DealStageEnums.PROGRESS]: [],
+      [DealStageEnums.CLOSED]: [],
+      [DealStageEnums.CANCELLED]: []
+    };
+
+    deals.forEach(deal => {
+      if (grouped[deal.stage]) {
+        grouped[deal.stage].push(deal);
+      }
+    });
+
+    return grouped;
+  }
+
+  public async updateDealStage(dealId: string, stage: DealStageEnums, user: User): Promise<Deal> {
+    await this.validateDealAccess(dealId, user);
+    const deal = await this.dealOrError({ id: dealId });
+
+    if (!Object.values(DealStageEnums).includes(stage) || stage === DealStageEnums.CONVERTED) {
+      throw new BaseError(ERRORS.SOMETHING_WENT_WRONG);
+    }
+
+    deal.set({ stage });
+    await deal.save();
+
+    // --> ORCHESTRATION: Auto-create Project on Deal Won (CLOSED)
+    if (stage === DealStageEnums.CLOSED) {
+      try {
+        await projectService.createProject({
+          basicInfo: {
+            name: `${deal.name} - Auto Project`,
+            type: 'Development', // default
+            category: ProjectCategoryEnum.Direct,
+            clientId: deal.clientId,
+            dealId: deal.id,
+            duration: 30, // Default duration
+            status: ProjectStatusEnum.ACTIVE,
+            assignedUsersIds: [user.id],
+            etimadInfo: {} as any // Bypass strict TS check for non-Etimad projects
+          }
+        }, user);
+        await createActivityLog('deal', 'update', deal.id, user.id, null, `Auto-generated Project for Winning Deal`);
+      } catch (err: any) {
+        // Log but don't fail the deal update if project creation fails (graceful degradation)
+        console.error('Failed to auto-create project from deal:', err.message);
+      }
+    }
+
+    await createActivityLog('deal', 'update', deal.id, user.id, null, `Deal stage changed to ${stage}`);
+    return deal;
+  }
+
   async dealOrError(filter: WhereOptions, joinedTables?: Includeable[]): Promise<Deal> {
     const deal = await Deal.findOne({ where: filter, include: joinedTables || [] });
     if (!deal) throw new BaseError(ERRORS.DEAL_NOT_FOUND);
@@ -445,30 +524,30 @@ class DealService {
       }),
       ...(query.stage?.length &&
         isArray(query.stage) && {
-          stage: { [Op.in]: query.stage }
-        }),
+        stage: { [Op.in]: query.stage }
+      }),
       ...(query?.contractType &&
         isArray(query.contractType) &&
         query.contractType.length && {
-          contractType: {
-            [Op.in]: query.contractType
-          }
-        }),
+        contractType: {
+          [Op.in]: query.contractType
+        }
+      }),
       ...(query.fromDate || query.toDate
         ? {
-            createdAt: {
-              ...(query.fromDate && { [Op.gte]: new Date(query.fromDate) }),
-              ...(query.toDate && { [Op.lte]: new Date(query.toDate) })
-            }
+          createdAt: {
+            ...(query.fromDate && { [Op.gte]: new Date(query.fromDate) }),
+            ...(query.toDate && { [Op.lte]: new Date(query.toDate) })
           }
+        }
         : {}),
       ...(query.fromPrice || query.toPrice
         ? {
-            price: {
-              ...(query.fromPrice && { [Op.gte]: query.fromPrice }),
-              ...(query.toPrice && { [Op.lte]: query.toPrice })
-            }
+          price: {
+            ...(query.fromPrice && { [Op.gte]: query.fromPrice }),
+            ...(query.toPrice && { [Op.lte]: query.toPrice })
           }
+        }
         : {})
     };
 

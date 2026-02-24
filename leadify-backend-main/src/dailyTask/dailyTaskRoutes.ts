@@ -11,7 +11,7 @@ const router = express.Router();
 /**
  * @swagger
  * tags:
- *   name: DailyTask
+ *   name: Daily Task
  *   description: Daily task management
  */
 
@@ -22,7 +22,7 @@ const router = express.Router();
  * /api/daily-task:
  *   post:
  *     summary: Create a new daily task
- *     tags: [DailyTask]
+ *     tags: [Daily Task]
  *     security:
  *       - bearerAuth: []
  *     requestBody:
@@ -91,7 +91,7 @@ router.post('/', authenticateUser, validateBody(CreateDailyTaskInput), dailyTask
  * /api/daily-task/{id}:
  *   put:
  *     summary: Update a daily task
- *     tags: [DailyTask]
+ *     tags: [Daily Task]
  *     security:
  *       - bearerAuth: []
  *     parameters:
@@ -165,7 +165,7 @@ router.put('/:id', authenticateUser, validateBody(UpdateDailyTaskInput), dailyTa
  * /api/daily-task/statistics:
  *   get:
  *     summary: Get daily tasks statistics
- *     tags: [DailyTask]
+ *     tags: [Daily Task]
  *     security:
  *       - bearerAuth: []
  *     responses:
@@ -183,7 +183,7 @@ router.get('/statistics', authenticateUser, dailyTaskController.getDailyTasksSta
  * /api/daily-task:
  *   get:
  *     summary: Get all daily tasks
- *     tags: [DailyTask]
+ *     tags: [Daily Task]
  *     security:
  *       - bearerAuth: []
  *     parameters:
@@ -231,7 +231,7 @@ router.get('/', authenticateUser, validateQuery(GetDailyTasksInput), dailyTaskCo
  * /api/daily-task/{id}:
  *   get:
  *     summary: Get a daily task by ID
- *     tags: [DailyTask]
+ *     tags: [Daily Task]
  *     security:
  *       - bearerAuth: []
  *     parameters:
@@ -258,7 +258,7 @@ router.get('/:id', authenticateUser, dailyTaskController.getDailyTaskById);
  * /api/daily-task/{id}:
  *   delete:
  *     summary: Delete a daily task by ID
- *     tags: [DailyTask]
+ *     tags: [Daily Task]
  *     security:
  *       - bearerAuth: []
  *     parameters:

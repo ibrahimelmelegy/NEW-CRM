@@ -8,10 +8,10 @@ el-form(autocomplete="off" @submit.prevent='onSubmit' ref="myForm" label-positio
         .section-icon: Icon(name="ph:bank-bold" size="20")
         div
           .section-title Asset Details
-      InputText(label="Asset Name" name="name" placeholder="Enter Assets Name" :value="data?.name")
+      InputText(:label="$t('operations.assets.form.name')" name="name" :placeholder="$t('operations.assets.form.namePlaceholder')" :value="data?.name")
       .grid.grid-cols-2.gap-4.mt-4
-        InputText(label="Rent Price" placeholder="Enter Rent Price SAR" name="rentPrice" :value="data?.rentPrice")
-        InputText(label="Buy Price" placeholder="Enter Buy Price SAR" name="buyPrice" :value="data?.buyPrice")
+        InputText(:label="$t('operations.assets.form.rentPrice')" :placeholder="$t('operations.assets.form.rentPricePlaceholder')" name="rentPrice" :value="data?.rentPrice")
+        InputText(:label="$t('operations.assets.form.buyPrice')" :placeholder="$t('operations.assets.form.buyPricePlaceholder')" name="buyPrice" :value="data?.buyPrice")
   slot(name="modal-footer")
 </template>
 

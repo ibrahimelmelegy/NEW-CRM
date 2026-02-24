@@ -1,17 +1,17 @@
 <template lang="pug">
-.p-6.animate-entrance
-  .flex.items-center.justify-between.mb-10
-    .header-content
-      .title.font-bold.text-3xl.mb-2.text-gradient {{ $t('procurement.purchaseOrders.title') }}
-      .subtitle.text-muted.text-sm.tracking-wide {{ $t('procurement.subtitle') }}
-      
-    .flex.items-center.gap-x-4
+div
+  ModuleHeader(
+    :title="$t('procurement.purchaseOrders.title')"
+    :subtitle="$t('procurement.subtitle')"
+  )
+    template(#actions)
+      ExportButton(:data="table.data" :columns="exportColumns" :filename="'purchase-orders-export'" :title="$t('procurement.purchaseOrders.title')")
       NuxtLink(to="/procurement/purchase-orders/create")
         el-button(
-          size='large', 
-          type="primary", 
-          :icon="Plus", 
-          class="premium-btn !rounded-2xl px-8 glow-purple"
+          size='large',
+          type="primary",
+          :icon="Plus",
+          class="!rounded-2xl"
         ) {{ $t('procurement.purchaseOrders.create') }}
   
   .glass-card.p-4(class="!rounded-3xl shadow-glow")
@@ -50,6 +50,16 @@ import { useI18n } from 'vue-i18n';
 const { hasPermission } = await usePermissions();
 const response = await useTableFilter('procurement');
 const { t } = useI18n();
+
+// Export columns
+const exportColumns = [
+  { prop: 'poNumber', label: 'PO Number' },
+  { prop: 'vendor.name', label: t('procurement.purchaseOrders.vendor') },
+  { prop: 'project.name', label: 'Project' },
+  { prop: 'status', label: t('procurement.purchaseOrders.status') },
+  { prop: 'totalAmount', label: t('procurement.purchaseOrders.amount') },
+  { prop: 'createdAt', label: t('procurement.purchaseOrders.date') }
+];
 
 const table = reactive({
   columns: [

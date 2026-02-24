@@ -9,10 +9,10 @@ el-form(autocomplete="off" @submit.prevent='onSubmit' ref="myForm" label-positio
         div
           .section-title Personal Information
       .grid.grid-cols-2.gap-4
-        InputText(label="Full Name" name="name" :value="data?.name")
-        InputSelect(label="Nationality" name="nationality" :options="ManpowerNationalityOptions" :value="data?.nationality")
-        InputText(label="Email" name="email" :value="data?.email" @value="val=> isEmail = !!val")
-        InputPhone(label="Phone Number" name="phone" :value="data?.phone" @validphone="val=> validPhone = val" mode="international" @value="val=> isPhone = !!val")
+        InputText(:label="$t('operations.manpower.form.fullName')" name="name" :value="data?.name")
+        InputSelect(:label="$t('operations.manpower.form.nationality')" name="nationality" :options="ManpowerNationalityOptions" :value="data?.nationality")
+        InputText(:label="$t('operations.manpower.form.email')" name="email" :value="data?.email" @value="val=> isEmail = !!val")
+        InputPhone(:label="$t('operations.manpower.form.phone')" name="phone" :value="data?.phone" @validphone="val=> validPhone = val" mode="international" @value="val=> isPhone = !!val")
 
     //- Role & Status
     .form-section
@@ -21,8 +21,8 @@ el-form(autocomplete="off" @submit.prevent='onSubmit' ref="myForm" label-positio
         div
           .section-title Role & Status
       .grid.grid-cols-2.gap-4
-        InputSelect(label="Role" name="role" isMultiple :options="manpowerRoles" :value="data?.role")
-        InputSelect(label="Availability Status" name="availabilityStatus" :options="manpowerAvailabilityStatus" :value="data?.availabilityStatus")
+        InputSelect(:label="$t('operations.manpower.form.role')" name="role" isMultiple :options="manpowerRoles" :value="data?.role")
+        InputSelect(:label="$t('operations.manpower.form.availabilityStatus')" name="availabilityStatus" :options="manpowerAvailabilityStatus" :value="data?.availabilityStatus")
 
     //- Salary & Compensation
     .form-section
@@ -30,12 +30,12 @@ el-form(autocomplete="off" @submit.prevent='onSubmit' ref="myForm" label-positio
         .section-icon: Icon(name="ph:money-bold" size="20")
         div
           .section-title Salary & Compensation
-      InputText(label="Salary" placeholder="Enter Salary SAR" name="salary" :value="data?.salary")
+      InputText(:label="$t('operations.manpower.form.salary')" :placeholder="$t('operations.manpower.form.salaryPlaceholder')" name="salary" :value="data?.salary")
       .grid.grid-cols-2.gap-4.mt-4
-        InputText(label="V. Allowance" placeholder="Enter V. Allowance SAR" name="variableAllowance" :value="data?.variableAllowance")
-        InputText(label="T. Allowance" placeholder="Enter T. Allowance SAR" name="transportationAllowance" :value="data?.transportationAllowance")
-        InputText(label="Iqama Cost" placeholder="Enter Iqama Cost SAR" name="iqamaCost" :value="data?.iqamaCost")
-        InputText(label="EOF" placeholder="Enter EOF SAR" name="endOfServiceBenefit" :value="data?.endOfServiceBenefit")
+        InputText(:label="$t('operations.manpower.form.variableAllowance')" :placeholder="$t('operations.manpower.form.variableAllowancePlaceholder')" name="variableAllowance" :value="data?.variableAllowance")
+        InputText(:label="$t('operations.manpower.form.transportationAllowance')" :placeholder="$t('operations.manpower.form.transportationAllowancePlaceholder')" name="transportationAllowance" :value="data?.transportationAllowance")
+        InputText(:label="$t('operations.manpower.form.iqamaCost')" :placeholder="$t('operations.manpower.form.iqamaCostPlaceholder')" name="iqamaCost" :value="data?.iqamaCost")
+        InputText(:label="$t('operations.manpower.form.eof')" :placeholder="$t('operations.manpower.form.eofPlaceholder')" name="endOfServiceBenefit" :value="data?.endOfServiceBenefit")
 
     //- Additional Benefits
     .form-section
@@ -44,11 +44,11 @@ el-form(autocomplete="off" @submit.prevent='onSubmit' ref="myForm" label-positio
         div
           .section-title Additional Benefits
       .grid.grid-cols-2.gap-4
-        InputText(label="Saudization (optional)" placeholder="Enter Saudization SAR" name="saudization" :value="data?.saudization")
-        InputText(label="Visa Fees (optional)" placeholder="Enter Visa Fees SAR" name="visaFees" :value="data?.visaFees")
-        InputText(label="Incoming flight ticket (optional)" placeholder="Enter Incoming flight ticket SAR" name="incomingFlightTicket" :value="data?.incomingFlightTicket")
-        InputText(label="Health insurance (optional)" placeholder="Enter Health insurance SAR" name="healthInsurance" :value="data?.healthInsurance")
-      InputText.mt-4(label="General Organization for Social Insurance (optional)" placeholder="Enter General Organization for Social Insurance SAR" name="generalOrganizationForSocialInsurance" :value="data?.generalOrganizationForSocialInsurance")
+        InputText(:label="$t('operations.manpower.form.saudization')" :placeholder="$t('operations.manpower.form.saudizationPlaceholder')" name="saudization" :value="data?.saudization")
+        InputText(:label="$t('operations.manpower.form.visaFees')" :placeholder="$t('operations.manpower.form.visaFeesPlaceholder')" name="visaFees" :value="data?.visaFees")
+        InputText(:label="$t('operations.manpower.form.incomingFlight')" :placeholder="$t('operations.manpower.form.incomingFlightPlaceholder')" name="incomingFlightTicket" :value="data?.incomingFlightTicket")
+        InputText(:label="$t('operations.manpower.form.healthInsurance')" :placeholder="$t('operations.manpower.form.healthInsurancePlaceholder')" name="healthInsurance" :value="data?.healthInsurance")
+      InputText.mt-4(:label="$t('operations.manpower.form.socialInsurance')" :placeholder="$t('operations.manpower.form.socialInsurancePlaceholder')" name="generalOrganizationForSocialInsurance" :value="data?.generalOrganizationForSocialInsurance")
 
     //- Notes
     .form-section
@@ -56,7 +56,7 @@ el-form(autocomplete="off" @submit.prevent='onSubmit' ref="myForm" label-positio
         .section-icon: Icon(name="ph:note-pencil-bold" size="20")
         div
           .section-title Notes
-      InputText(type="textarea" placeholder="Enter Notes" label="Additional Notes (optional)" name="notes" :value="data?.notes")
+      InputText(type="textarea" :placeholder="$t('operations.manpower.form.notesPlaceholder')" :label="$t('operations.manpower.form.notes')" name="notes" :value="data?.notes")
   slot(name="modal-footer")
 </template>
 

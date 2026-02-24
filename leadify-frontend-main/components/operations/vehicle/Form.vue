@@ -10,7 +10,7 @@ el-form(autocomplete="off" @submit.prevent='onSubmit' ref="myForm" label-positio
           .section-title Vehicle Information
       .grid.grid-cols-2.gap-4
         InputText(:label="$t('operations.vehicle.form.plateNumber')" :placeholder="$t('operations.vehicle.form.enterPlate')" name="plate" :value="data?.plate")
-        InputSelect(label="Manufacturer" name="manufacturer" :options="manufacturers" :value="data?.manufacturer")
+        InputSelect(:label="$t('operations.vehicle.form.manufacturer')" name="manufacturer" :options="manufacturers" :value="data?.manufacturer")
 
     //- Cost Details
     .form-section
@@ -20,9 +20,9 @@ el-form(autocomplete="off" @submit.prevent='onSubmit' ref="myForm" label-positio
           .section-title Cost Details
       .grid.grid-cols-2.gap-4
         InputText(:label="$t('operations.vehicle.form.name')" :placeholder="$t('operations.vehicle.form.enterName')" name="rentCost" :value="data?.rentCost")
-        InputText(label="Gas Cost" placeholder="Enter Gas Cost SAR" name="gasCost" :value="data?.gasCost")
-        InputText(label="Oil Cost" placeholder="Enter Oil Cost SAR" name="oilCost" :value="data?.oilCost")
-        InputText(label="Regular Maintenance Cost" placeholder="Enter Regular Maintenance Cost SAR" name="regularMaintenanceCost" :value="data?.regularMaintenanceCost")
+        InputText(:label="$t('operations.vehicle.form.gasCost')" :placeholder="$t('operations.vehicle.form.gasCostPlaceholder')" name="gasCost" :value="data?.gasCost")
+        InputText(:label="$t('operations.vehicle.form.oilCost')" :placeholder="$t('operations.vehicle.form.oilCostPlaceholder')" name="oilCost" :value="data?.oilCost")
+        InputText(:label="$t('operations.vehicle.form.regularMaintenanceCost')" :placeholder="$t('operations.vehicle.form.regularMaintenanceCostPlaceholder')" name="regularMaintenanceCost" :value="data?.regularMaintenanceCost")
   slot(name="modal-footer")
 </template>
 

@@ -6,7 +6,7 @@
         .title.font-medium.text-lg.capitalize(v-if="unreadNotificationsCount == 0" style="color: var(--color-primary); cursor: pointer") {{ $t('notifications.markAllRead') }}
         .title.font-medium.text-lg.capitalize(v-if="unreadNotificationsCount > 0" style="color: var(--color-status-error, #ef4444); cursor: pointer" @click="readNotifications") {{ $t('notifications.markingUnread') }} {{unreadNotificationsCount}}
       .notify.glass-card(class="h-[75vh] mb-2 p-[16px]")
-       el-spinner(size="large" v-if="isLoading" class="nuxt-loading-indicator")
+       el-icon.is-loading(:size="32" v-if="isLoading" style="color: var(--accent-color, #7849ff)")
        el-empty(v-if="finalData?.length ==  0 || !finalData " :description="$t('notifications.noData')" image="/images/emptyNotify.png")
        .item.flex.flex-wrap.gap-2.items-center.justify-center(v-else-if="finalData && finalData?.length > 0")
          .w-full.my-2.p-2(v-for="notify in finalData" :key="notify?.id" :class="`item-data_${notify?.read}`" @click="() => readNotification(notify)")

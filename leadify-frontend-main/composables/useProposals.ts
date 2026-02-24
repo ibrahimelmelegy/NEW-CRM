@@ -312,8 +312,8 @@ export async function updateProposal(values: any): Promise<void> {
       const responseChange =
         values.status == 'reject'
           ? await useApiFetch(`proposal/reject/${values.id}`, 'PUT', {
-            rejectionReason: values.reason
-          })
+              rejectionReason: values.reason
+            })
           : values.status == 'waiting-approval'
             ? await useApiFetch(`proposal/waiting-approval/${values.id}`, 'PUT')
             : await useApiFetch(`proposal/approve/${values.id}`, 'PUT');

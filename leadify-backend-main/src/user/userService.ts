@@ -24,8 +24,8 @@ class UserService {
 
     let superAdmin = await User.findOne({ where: { roleId: role.id } });
     if (!superAdmin) {
-      const seedEmail = process.env.ADMIN_EMAIL || 'admin@leadify.com';
-      const seedPassword = process.env.ADMIN_PASSWORD || 'Leadify@Admin2026!';
+      const seedEmail = process.env.ADMIN_EMAIL || 'admin@hp-tech.com';
+      const seedPassword = process.env.ADMIN_PASSWORD || 'HPTech@Admin2026!';
       if (seedPassword.length < 8) {
         throw new Error('ADMIN_PASSWORD must be at least 8 characters for super admin creation.');
       }

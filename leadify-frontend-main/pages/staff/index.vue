@@ -6,8 +6,12 @@
       .title.font-bold.text-3xl.mb-2.text-gradient {{ $t('staff.title') }}
       .subtitle.text-muted.text-sm.tracking-wide Team and staff management
     .flex.items-center.gap-x-3
+      ExportButton(:data="exportData" :columns="exportColumns" :filename="'staff-export'" :title="$t('staff.title')")
       NuxtLink(to="/staff/add-staff")
         el-button(size='large' :loading="loading" v-if="hasPermission('CREATE_STAFF')" native-type="submit" type="primary" :icon="Plus" class="premium-btn !rounded-2xl px-8 glow-purple glass-button-press") {{ $t('staff.newStaff') }}
+
+  SavedViews(:entityType="'staff'" :currentFilters="{}" @apply-view="handleApplyView")
+  AdvancedSearch(:entityType="'staff'" :fields="advancedSearchFields" @apply="handleAdvancedFilter" @clear="handleClearAdvancedFilter")
 
   .glass-card.p-4(class="!rounded-3xl")
     AppTable(v-slot="{data}" :filterOptions="filterOptions" :columns="table.columns" position="users" :pageInfo="response.pagination" :data="table.data" :sortOptions="table.sort" @handleRowClick="handleRowClick" searchPlaceholder="staff" :loading="loadingAction" class="premium-table")
@@ -38,6 +42,17 @@ const router = useRouter();
 const loadingAction = ref(false);
 const deleteStaffPopup = ref(false);
 const staffActionId = ref();
+
+// Export columns & data
+const exportColumns = [
+  { prop: 'staffDetails', label: t('staff.table.staffName') },
+  { prop: 'email', label: t('staff.table.email') },
+  { prop: 'phone', label: t('staff.table.phone') },
+  { prop: 'roleDetails', label: t('staff.table.role') },
+  { prop: 'status', label: t('staff.table.status') },
+  { prop: 'updatedAt', label: t('staff.table.lastActivity') }
+];
+const exportData = computed(() => table.data);
 
 const table = reactive({
   columns: [
@@ -140,4 +155,36 @@ const filterOptions = [
     options: mappedRoles.value
   }
 ];
+
+// SavedViews & AdvancedSearch
+const advancedSearchFields = [
+  { key: 'name', label: t('staff.table.name'), type: 'string' },
+  { key: 'email', label: t('staff.table.email'), type: 'string' },
+  { key: 'phone', label: t('staff.table.phone'), type: 'string' },
+  { key: 'status', label: t('staff.table.status'), type: 'select', options: staffStatuses.map((s: any) => ({ value: s.value, label: s.label })) },
+  { key: 'roleId', label: t('staff.table.role'), type: 'select', options: mappedRoles.value || [] },
+  { key: 'createdAt', label: t('common.created') || 'Created', type: 'date' }
+];
+
+async function handleApplyView(view: any) {
+  if (view?.filters) {
+    const res = await useTableFilter('users', view.filters);
+    table.data = res.formattedData;
+  }
+}
+
+async function handleAdvancedFilter(filterPayload: any) {
+  try {
+    const res = await useApiFetch('search/advanced/staff', 'POST', filterPayload);
+    if (res?.success && res?.body) {
+      const data = res.body as any;
+      table.data = data.docs || data || [];
+    }
+  } catch {}
+}
+
+async function handleClearAdvancedFilter() {
+  const res = await useTableFilter('users');
+  table.data = res.formattedData;
+}
 </script>

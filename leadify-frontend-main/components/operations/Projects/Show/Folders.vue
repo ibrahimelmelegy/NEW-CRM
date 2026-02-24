@@ -42,15 +42,15 @@
                     el-dropdown-item(@click="editfile(folder)")
                       .flex.items-center
                         Icon.text-md.mr-2(name="IconEdit")
-                        p.text-sm Edit
+                        p.text-sm {{ $t('common.edit') }}
                     el-dropdown-item(@click="showfile(folder?.refs)")
                       .flex.items-center
                         Icon.text-md.mr-2(name="IconEye")
-                        p.text-sm View
+                        p.text-sm {{ $t('common.view') }}
                     el-dropdown-item(@click="deleteFolder(index)")
                       .flex.items-center
                         Icon.text-md.mr-2(size="20", name="IconDelete")
-                        p.text-sm Delete
+                        p.text-sm {{ $t('common.delete') }}
             .mt-2
               .text-2xl.font-bold.mb-1.truncate(
                 @click="showfile(folder?.refs)",
@@ -62,7 +62,7 @@
                 span.text-lg.text-gray-500 {{ folder?.refs?.length }} Files
       el-empty(
         v-else,
-        description="No Folder for this project.",
+        :description="$t('common.noData')",
         image="/images/empty.png"
       )
 el-dialog(
@@ -71,7 +71,7 @@ el-dialog(
   align-center="",
   @close="handleCancel"
 )
-  .title.font-bold.text-xl.capitalize Project Folders
+  .title.font-bold.text-xl.capitalize {{ $t('operations.projects.details.projectFolders') }}
   OperationsProjectsFolders(
     @onSubmit="handleSubmit",
     @onCancel="handleCancel",
@@ -112,6 +112,7 @@ el-dialog(
 
 <script lang="ts" setup>
 import { ref, onMounted, watch } from 'vue';
+import { ElMessageBox } from 'element-plus';
 interface Project {
   id: string;
   files: any[];
@@ -191,6 +192,15 @@ function formattedEtimadProjectInfo(values: any) {
 }
 
 async function deleteFolder(index: number) {
+  try {
+    await ElMessageBox.confirm('Are you sure you want to delete this folder?', 'Warning', {
+      confirmButtonText: 'Confirm',
+      cancelButtonText: 'Cancel',
+      type: 'warning'
+    });
+  } catch {
+    return; // User cancelled
+  }
   const data = [...(props?.project?.files || [])];
   data.splice(index, 1);
   const basicInfo = formattedBasicInfo(props?.project);

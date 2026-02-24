@@ -116,8 +116,6 @@ class VehicleService {
         plate: payload.plate
       }
     });
-    console.log(existingVehicle);
-
     if (existingVehicle) throw new BaseError(ERRORS.VEHICLE_ALREADY_EXIST);
     vehicle.set({ ...payload });
 

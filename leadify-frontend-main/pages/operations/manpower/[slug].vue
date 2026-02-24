@@ -134,6 +134,12 @@ el-tabs.demo-tabs(v-model="activeName" @tab-click="handleClick")
   //-           .flex.items-center.gap-3.gap-x-2.mt-4
   //-             Avatar(:src="item.imageUrl" small)
   //-             p.text-neutral-800.text-xs.font-medium  {{ item.name }}
+  el-tab-pane(:label="$t('common.timeline')" name="timeline")
+    RecordTimeline(:entityType="'manpower'" :entityId="route.params.slug as string")
+  el-tab-pane(:label="$t('common.comments')" name="comments")
+    RecordComments(:entityType="'manpower'" :entityId="route.params.slug as string")
+  el-tab-pane(:label="$t('common.attachments')" name="record-attachments")
+    RecordAttachments(:entityType="'manpower'" :entityId="route.params.slug as string")
 </template>
 <script lang="ts" setup>
 const activeName = ref('summary');

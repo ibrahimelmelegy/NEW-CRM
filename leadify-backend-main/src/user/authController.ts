@@ -10,6 +10,10 @@ import LoginFailure from './models/loginFailureModel';
 import Session from './models/sessionModel';
 import ResetToken from './models/resetTokenModel';
 import PasswordResetLog from './models/passwordResetLogModel';
+import { wrapResult } from '../utils/response/responseWrapper';
+import Tenant from '../tenant/tenantModel';
+import Role from '../role/roleModel';
+import { sequelize } from '../config/db';
 
 dotenv.config();
 
@@ -33,6 +37,68 @@ const transporter = nodemailer.createTransport({
     ciphers: 'SSLv3'
   }
 });
+
+export const registerWorkspace = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
+  const { workspaceName, userName, email, password } = req.body;
+  const transaction = await sequelize.transaction();
+
+  try {
+    // 1. Check if email already exists
+    const existingUser = await User.findOne({ where: { email }, transaction });
+    if (existingUser) {
+      res.status(400).json({ message: 'Email is already registered.' });
+      await transaction.rollback();
+      return;
+    }
+
+    // 2. Create the Tenant (Workspace)
+    const tenant = await Tenant.create({
+      name: workspaceName,
+      status: 'ACTIVE'
+    }, { transaction });
+
+    // 3. Create a default Admin Role for this new Tenant
+    const adminRole = await Role.create({
+      name: 'Admin',
+      description: 'Workspace Administrator with full access.',
+      isAdmin: true,
+      tenantId: tenant.id
+    }, { transaction });
+
+    // 4. Create the founding User
+    const hashedPassword = await bcrypt.hash(password, 10);
+    const user = await User.create({
+      name: userName,
+      email,
+      password: hashedPassword,
+      roleId: adminRole.id,
+      tenantId: tenant.id, // Bind user to the new workspace
+      status: 'ACTIVE'
+    }, { transaction });
+
+    // 5. Automatically log them in (Generate JWT)
+    const token = jwt.sign({ id: user.id, tenantId: tenant.id }, SECRET_KEY, { expiresIn: process.env.JWT_EXPIRATION_TIME || ('7d' as any) });
+    await Session.create({
+      userId: user.id,
+      token,
+      expiresAt: new Date(Date.now() + (Number(process.env.SESSION_EXPIRATION_TIME) || 7) * 24 * 60 * 60 * 1000)
+    }, { transaction });
+
+    // Commit all changes
+    await transaction.commit();
+
+    wrapResult(res, {
+      message: 'Workspace created successfully!',
+      token,
+      tenant: { id: tenant.id, name: tenant.name },
+      user: { id: user.id, name: user.name, email: user.email }
+    });
+
+  } catch (error) {
+    await transaction.rollback();
+    res.status(500).json({ message: 'Failed to create workspace', error: error instanceof Error ? error.message : 'Server error' });
+  }
+};
 
 export const loginUser = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
   const { email, password } = req.body;
@@ -98,7 +164,7 @@ export const loginUser = async (req: Request, res: Response, next: NextFunction)
       expiresAt: new Date(Date.now() + (Number(process.env.SESSION_EXPIRATION_TIME) || 7) * 24 * 60 * 60 * 1000)
     });
 
-    res.status(200).json({ message: 'Login successful', token });
+    wrapResult(res, { token });
   } catch (error) {
     res.status(500).json({ error: error instanceof Error ? error.message : 'Server error' });
   }
@@ -133,9 +199,8 @@ export const getUserProfile = async (req: Request, res: Response, next: NextFunc
       return;
     }
 
-    res.status(200).json({ user });
+    wrapResult(res, user);
   } catch (error) {
-    console.error('Profile fetch error:', error);
     res.status(500).json({ message: 'Failed to retrieve user data', error: error instanceof Error ? error.message : 'Server error' });
   }
 };
@@ -151,7 +216,7 @@ export const logoutUser = async (req: Request, res: Response, next: NextFunction
     const decoded = jwt.verify(token, SECRET_KEY) as { id: string };
     await Session.destroy({ where: { userId: decoded.id, token } });
 
-    res.status(200).json({ message: 'Logged out successfully' });
+    wrapResult(res, { message: 'Logged out successfully' });
   } catch (error) {
     res.status(500).json({ message: 'Logout failed', error: error instanceof Error ? error.message : 'Server error' });
   }
@@ -194,7 +259,7 @@ export const forgotPassword = async (req: Request, res: Response, next: NextFunc
 
     // await transporter.sendMail(mailOptions);
 
-    res.status(200).json({ message: 'Password reset link sent to your email.', resetLink: resetLink });
+    wrapResult(res, { message: 'Password reset link sent to your email.', resetLink });
   } catch (error) {
     res.status(500).json({ message: 'Something went wrong', error: error instanceof Error ? error.message : 'Server error' });
   }
@@ -243,7 +308,7 @@ export const resetPassword = async (req: Request, res: Response, next: NextFunct
 
     // await transporter.sendMail(mailOptions);
 
-    res.status(200).json({ message: 'Password reset successfully' });
+    wrapResult(res, { message: 'Password reset successfully' });
   } catch (error) {
     res.status(500).json({ message: 'Something went wrong', error: error instanceof Error ? error.message : 'Server error' });
   }
@@ -266,7 +331,7 @@ export const checkResetToken = async (req: Request, res: Response, next: NextFun
       return;
     }
 
-    res.status(200).json({ message: 'Token is valid', userId: decoded.id });
+    wrapResult(res, { message: 'Token is valid', userId: decoded.id });
   } catch (error) {
     res.status(400).json({ message: 'Invalid or expired token', error: error instanceof Error ? error.message : 'Server error' });
   }

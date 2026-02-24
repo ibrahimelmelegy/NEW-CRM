@@ -15,9 +15,9 @@ const router = express.Router();
  * @swagger
  * /api/project-manpower/:
  *   post:
- *     summary: Create a new ProjectManpower
+ *     summary: Create a new Project Manpower
  *     description: Associates manpower with a project including additional fields.
- *     tags: [ProjectManpower]
+ *     tags: [Project Manpower]
  *     security:
  *       - bearerAuth: []
  *     requestBody:
@@ -53,7 +53,7 @@ const router = express.Router();
  *                 description: Reason for other costs
  *     responses:
  *       201:
- *         description: ProjectManpower created successfully
+ *         description: Project Manpower created successfully
  *       400:
  *         description: Validation error
  *       500:
@@ -73,9 +73,9 @@ router.post(
  * @swagger
  * /api/project-manpower/{id}:
  *   put:
- *     summary: Update ProjectManpower
+ *     summary: Update Project Manpower
  *     description: Updates an existing project manpower entry.
- *     tags: [ProjectManpower]
+ *     tags: [Project Manpower]
  *     security:
  *       - bearerAuth: []
  *     parameters:
@@ -84,7 +84,7 @@ router.post(
  *         required: true
  *         schema:
  *           type: string
- *         description: The ID of the ProjectManpower to update
+ *         description: The ID of the Project Manpower to update
  *     requestBody:
  *       required: true
  *       content:
@@ -118,11 +118,11 @@ router.post(
  *                 description: Reason for other costs
  *     responses:
  *       200:
- *         description: ProjectManpower updated successfully
+ *         description: Project Manpower updated successfully
  *       400:
  *         description: Validation error
  *       404:
- *         description: ProjectManpower not found
+ *         description: Project Manpower not found
  *       500:
  *         description: Internal server error
  */
@@ -140,8 +140,8 @@ router.put(
  * @swagger
  * /api/project-manpower/:
  *   get:
- *     summary: Get all ProjectManpower records
- *     tags: [ProjectManpower]
+ *     summary: Get all Project Manpower records
+ *     tags: [Project Manpower]
  *     security:
  *       - bearerAuth: []
  *     parameters:
@@ -173,7 +173,7 @@ router.put(
  *         description: The id of the project to filter
  *     responses:
  *       200:
- *         description: List of ProjectManpower records
+ *         description: List of Project Manpower records
  *       500:
  *         description: Internal server error
  */
@@ -189,8 +189,8 @@ router.get(
  * @swagger
  * /api/project-manpower/{id}:
  *   get:
- *     summary: Get a single ProjectManpower by ID
- *     tags: [ProjectManpower]
+ *     summary: Get a single Project Manpower by ID
+ *     tags: [Project Manpower]
  *     security:
  *       - bearerAuth: []
  *     parameters:
@@ -199,12 +199,12 @@ router.get(
  *         required: true
  *         schema:
  *           type: string
- *         description: The ID of the ProjectManpower to retrieve
+ *         description: The ID of the Project Manpower to retrieve
  *     responses:
  *       200:
- *         description: ProjectManpower found
+ *         description: Project Manpower found
  *       404:
- *         description: ProjectManpower not found
+ *         description: Project Manpower not found
  *       500:
  *         description: Internal server error
  */
@@ -221,9 +221,9 @@ router.get(
  * @swagger
  * /api/project-manpower/{id}:
  *   delete:
- *     summary: Delete ProjectManpower
- *     description: Deletes a ProjectManpower record by ID.
- *     tags: [ProjectManpower]
+ *     summary: Delete Project Manpower
+ *     description: Deletes a Project Manpower record by ID.
+ *     tags: [Project Manpower]
  *     security:
  *       - bearerAuth: []
  *     parameters:
@@ -232,12 +232,12 @@ router.get(
  *         required: true
  *         schema:
  *           type: string
- *         description: The ID of the ProjectManpower to delete
+ *         description: The ID of the Project Manpower to delete
  *     responses:
  *       200:
- *         description: ProjectManpower deleted successfully
+ *         description: Project Manpower deleted successfully
  *       404:
- *         description: ProjectManpower not found
+ *         description: Project Manpower not found
  *       500:
  *         description: Internal server error
  */

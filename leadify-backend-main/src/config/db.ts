@@ -2,7 +2,7 @@ import dotenv from 'dotenv';
 import { Sequelize } from 'sequelize-typescript';
 import Asset from '../asset/assetModel';
 import Client from '../client/clientModel';
-import DealDelivery from '../deal/model/dealDeliveryMode copy';
+import DealDelivery from '../deal/model/dealDeliveryModel';
 import Deal from '../deal/model/dealModel';
 import Invoice from '../deal/model/invoiceMode';
 import Lead from '../lead/leadModel';
@@ -54,6 +54,120 @@ import RFQItem from '../procurement/models/rfqItemModel';
 import RFQVendor from '../procurement/models/rfqVendorModel';
 import RFQVendorItem from '../procurement/models/rfqVendorItemModel';
 import Integration from '../integration/integrationModel';
+import Message from '../messaging/messagingModel';
+import CustomField from '../customField/customFieldModel';
+import CustomFieldValue from '../customField/customFieldValueModel';
+import Webhook from '../webhook/webhookModel';
+import TimeEntry from '../timeTracking/timeEntryModel';
+import SavedReport from '../reports/reportModel';
+import WorkflowRule from '../workflow/workflowModel';
+import WorkflowExecution from '../workflow/workflowExecutionModel';
+import Campaign from '../campaign/campaignModel';
+import CampaignRecipient from '../campaign/campaignRecipientModel';
+import EmailTemplate from '../campaign/emailTemplateModel';
+import Contract from '../contract/contractModel';
+import PortalUser from '../portal/portalUserModel';
+import SupportTicket from '../portal/supportTicketModel';
+import DocumentTemplate from '../documentTemplate/documentTemplateModel';
+import KBArticle from '../knowledgeBase/kbArticleModel';
+import Attendance from '../hr/attendanceModel';
+import LeaveRequest from '../hr/leaveRequestModel';
+import ExpenseCategory from '../finance/expenseCategoryModel';
+import CalendarEvent from '../calendar/calendarEventModel';
+import Expense from '../finance/expenseModel';
+import Budget from '../finance/budgetModel';
+import FieldCheckIn from '../fieldOps/checkInModel';
+import Achievement from '../gamification/achievementModel';
+import UserPoints from '../gamification/userPointsModel';
+import UserStreak from '../gamification/streakModel';
+import Challenge from '../gamification/challengeModel';
+import UserChallenge from '../gamification/userChallengeModel';
+import Currency from '../currency/currencyModel';
+import TaxRule from '../currency/taxRuleModel';
+import Product from '../inventory/productModel';
+import StockMovement from '../inventory/stockMovementModel';
+import DocumentFolder from '../documents/documentFolderModel';
+import DocumentFile from '../documents/documentFileModel';
+import ApprovalWorkflow from '../approval/approvalWorkflowModel';
+import ApprovalRequest from '../approval/approvalRequestModel';
+import Comment from '../comments/commentModel';
+import Attachment from '../attachments/attachmentModel';
+import AuditTrail from '../audit/auditModel';
+import Task from '../tasks/taskModel';
+import FocusSession from '../tasks/focusSessionModel';
+import DailyHabit from '../tasks/dailyHabitModel';
+import VirtualRoom from '../virtualOffice/virtualRoomModel';
+import BOM from '../manufacturing/bomModel';
+import BOMItem from '../manufacturing/bomItemModel';
+import WorkOrder from '../manufacturing/workOrderModel';
+import QualityCheck from '../manufacturing/qualityCheckModel';
+import ZatcaInvoice from '../zatca/zatcaModel';
+import ZakaatAssessment from '../zakaat/zakaatModel';
+import SavedView from '../savedViews/savedViewModel';
+import SyncLog from '../integrations/erpnext/syncLogModel';
+import { LeadScoringRule, EntityScore } from '../leadScoring/leadScoringModel';
+import DuplicateSet from '../duplicateDetection/duplicateModel';
+import NotificationPreference from '../notification/notificationPreferenceModel';
+import { SLAPolicy, SLAInstance } from '../sla/slaModel';
+import Dashboard from '../dashboard/dashboardModel';
+import CustomReport from '../reports/customReportModel';
+import TwoFactorAuth from '../security/twoFactorModel';
+import FieldPermission from '../security/fieldPermissionModel';
+import { DataSharingRule, RecordShare } from '../security/dataShareModel';
+import PipelineStage from '../pipelineConfig/pipelineConfigModel';
+import Territory from '../territory/territoryModel';
+import ForecastPeriod from '../forecasting/forecastModel';
+import EmailAccount from '../emailIntegration/emailAccountModel';
+import EmailMessage from '../emailIntegration/emailMessageModel';
+import EmailTracking from '../emailIntegration/emailTrackingModel';
+import ComposerTemplate from '../emailIntegration/emailTemplateModel';
+import Sequence from '../sequences/sequenceModel';
+import { SequenceEnrollment } from '../sequences/sequenceModel';
+import CatalogProduct from '../productCatalog/productModel';
+import PriceRule from '../productCatalog/priceRuleModel';
+import QuoteLine from '../productCatalog/quoteLineModel';
+import Playbook from '../playbook/playbookModel';
+// ERP Module Models
+import InvoiceLineItem from '../invoice/models/invoiceLineItemModel';
+import CreditNote from '../invoice/models/creditNoteModel';
+import Payment from '../payment/models/paymentModel';
+import PaymentReminder from '../payment/models/paymentReminderModel';
+import Employee from '../hr/models/employeeModel';
+import Department from '../hr/models/departmentModel';
+import EmployeeDocument from '../hr/models/employeeDocumentModel';
+import SalaryStructure from '../payroll/models/salaryStructureModel';
+import PayrollRun from '../payroll/models/payrollRunModel';
+import Payslip from '../payroll/models/payslipModel';
+import EndOfService from '../payroll/models/endOfServiceModel';
+import ChartOfAccounts from '../accounting/models/chartOfAccountsModel';
+import JournalEntry from '../accounting/models/journalEntryModel';
+import JournalEntryLine from '../accounting/models/journalEntryLineModel';
+import FiscalYear from '../accounting/models/fiscalYearModel';
+import SalesOrder from '../salesOrder/models/salesOrderModel';
+import SalesOrderItem from '../salesOrder/models/salesOrderItemModel';
+import Fulfillment from '../salesOrder/models/fulfillmentModel';
+import Ticket from '../support/models/ticketModel';
+import TicketMessage from '../support/models/ticketMessageModel';
+import TicketCategory from '../support/models/ticketCategoryModel';
+import CannedResponse from '../support/models/cannedResponseModel';
+import SubscriptionPlan from '../subscription/models/subscriptionPlanModel';
+import CustomerSubscription from '../subscription/models/customerSubscriptionModel';
+import SubscriptionEvent from '../subscription/models/subscriptionEventModel';
+// Security Models
+import LoginHistory from '../security/models/loginHistoryModel';
+import IPWhitelist from '../security/models/ipWhitelistModel';
+// Communication Models
+import CommActivity from '../communication/models/activityModel';
+import CommCallLog from '../communication/models/callLogModel';
+import DocumentSignature from '../portal/models/signatureModel';
+// Integration Hub Models
+import IntegrationConfig from '../integration/models/integrationConfigModel';
+import OutgoingWebhook from '../integration/models/outgoingWebhookModel';
+// DocBuilder Models
+import DocBuilderDocument from '../docBuilder/models/docBuilderModel';
+import DocBuilderVersion from '../docBuilder/models/docBuilderVersionModel';
+// SaaS Models
+import Tenant from '../tenant/tenantModel';
 
 dotenv.config();
 
@@ -106,7 +220,6 @@ const sequelize = new Sequelize({
     MaterialsAdditionalMaterialItem,
     ProjectMaterial,
     Role,
-    MaterialsAdditionalMaterialItem,
     ProjectAdditionalMaterialItem,
     DealActivity,
     OpportunityActivity,
@@ -129,7 +242,118 @@ const sequelize = new Sequelize({
     RFQItem,
     RFQVendor,
     RFQVendorItem,
-    Integration
+    Integration,
+    Message,
+    CustomField,
+    CustomFieldValue,
+    Webhook,
+    TimeEntry,
+    SavedReport,
+    WorkflowRule,
+    WorkflowExecution,
+    Campaign,
+    CampaignRecipient,
+    EmailTemplate,
+    Contract,
+    PortalUser,
+    SupportTicket,
+    DocumentTemplate,
+    KBArticle,
+    Attendance,
+    LeaveRequest,
+    ExpenseCategory,
+    Expense,
+    Budget,
+    CalendarEvent,
+    FieldCheckIn,
+    Achievement,
+    UserPoints,
+    UserStreak,
+    Challenge,
+    UserChallenge,
+    Currency,
+    TaxRule,
+    Product,
+    StockMovement,
+    DocumentFolder,
+    DocumentFile,
+    ApprovalWorkflow,
+    ApprovalRequest,
+    Comment,
+    Attachment,
+    AuditTrail,
+    Task,
+    ZatcaInvoice,
+    ZakaatAssessment,
+    SavedView,
+    SyncLog,
+    LeadScoringRule,
+    EntityScore,
+    DuplicateSet,
+    NotificationPreference,
+    SLAPolicy,
+    SLAInstance,
+    Dashboard,
+    CustomReport,
+    TwoFactorAuth,
+    FieldPermission,
+    DataSharingRule,
+    RecordShare,
+    PipelineStage,
+    Territory,
+    ForecastPeriod,
+    EmailAccount,
+    EmailMessage,
+    EmailTracking,
+    Sequence,
+    SequenceEnrollment,
+    CatalogProduct,
+    PriceRule,
+    QuoteLine,
+    ComposerTemplate,
+    Playbook,
+    SalesOrder,
+    SalesOrderItem,
+    Fulfillment,
+    Ticket,
+    TicketMessage,
+    TicketCategory,
+    CannedResponse,
+    SubscriptionPlan,
+    CustomerSubscription,
+    SubscriptionEvent,
+    InvoiceLineItem,
+    CreditNote,
+    Payment,
+    PaymentReminder,
+    Employee,
+    Department,
+    EmployeeDocument,
+    SalaryStructure,
+    PayrollRun,
+    Payslip,
+    EndOfService,
+    ChartOfAccounts,
+    JournalEntry,
+    JournalEntryLine,
+    FiscalYear,
+    LoginHistory,
+    IPWhitelist,
+    CommActivity,
+    CommCallLog,
+    DocumentSignature,
+    IntegrationConfig,
+    OutgoingWebhook,
+    Tenant,
+    FocusSession,
+    DailyHabit,
+    VirtualRoom,
+    BOM,
+    BOMItem,
+    WorkOrder,
+    QualityCheck,
+    DocBuilderDocument,
+    DocBuilderVersion
   ], // Path to your models
   logging: process.env.NODE_ENV !== 'production' ? console.log : false
 });

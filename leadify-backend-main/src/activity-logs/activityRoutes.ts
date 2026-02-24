@@ -5,32 +5,86 @@ import { wrapResult } from '../utils/response/responseWrapper';
 import { NextFunction } from 'express-serve-static-core';
 import { AuthenticatedRequest } from '../types';
 
+/**
+ * @swagger
+ * tags:
+ *   name: Activity
+ *   description: Activity logs — track changes across all CRM entities
+ */
+
 const router = express.Router();
+
+/**
+ * @swagger
+ * /api/activity:
+ *   get:
+ *     summary: Get all recent activity logs
+ *     description: Returns the most recent activity logs across all models
+ *     tags: [Activity]
+ *     security:
+ *       - bearerAuth: []
+ *     parameters:
+ *       - in: query
+ *         name: limit
+ *         schema:
+ *           type: integer
+ *           default: 100
+ *     responses:
+ *       200:
+ *         description: List of recent activity logs
+ *       500:
+ *         description: Server error
+ */
+router.get('/', authenticateUser, async (req: AuthenticatedRequest, res: Response, next: NextFunction) => {
+  try {
+    const limit = Number(req.query.limit) || 100;
+    const { getAllActivityLogs } = require('./activityService');
+    const logs = await getAllActivityLogs(limit);
+    wrapResult(res, logs);
+  } catch (error) {
+    next(error);
+  }
+});
 
 /**
  * @swagger
  * /api/activity/{model}/{id}:
  *   get:
- *     summary: Get a model activities by ID
+ *     summary: Get activity logs for a specific entity
+ *     description: Returns paginated activity logs for a given model and entity ID
  *     tags: [Activity]
+ *     security:
+ *       - bearerAuth: []
  *     parameters:
  *       - in: path
- *         name: page
+ *         name: model
  *         required: true
  *         schema:
- *           type: number
+ *           type: string
+ *         description: Entity model name (e.g. lead, deal, contact)
  *       - in: path
- *         name: kimit
+ *         name: id
  *         required: true
  *         schema:
- *           type: number
+ *           type: string
+ *         description: Entity ID
+ *       - in: query
+ *         name: page
+ *         schema:
+ *           type: integer
+ *           default: 1
+ *       - in: query
+ *         name: limit
+ *         schema:
+ *           type: integer
+ *           default: 10
  *     responses:
  *       200:
- *         description: Activities found
+ *         description: Paginated activity logs for the entity
  *       404:
- *         description: Activities not found
+ *         description: Entity not found
  *       500:
- *         description: Internal Server Error
+ *         description: Server error
  */
 router.get('/:model/:id', authenticateUser, async (req: AuthenticatedRequest, res: Response, next: NextFunction) => {
   try {

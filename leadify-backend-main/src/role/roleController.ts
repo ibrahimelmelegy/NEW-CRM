@@ -72,9 +72,9 @@ class RoleController {
     }
   }
 
-  public async getPremissions(req: Request, res: Response, next: NextFunction): Promise<void> {
+  public async getPermissions(req: Request, res: Response, next: NextFunction): Promise<void> {
     try {
-      const responseFromService = await roleService.getPremissions();
+      const responseFromService = await roleService.getPermissions();
       wrapResult(res, responseFromService);
     } catch (error) {
       next(error);

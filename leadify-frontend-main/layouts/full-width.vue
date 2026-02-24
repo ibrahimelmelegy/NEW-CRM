@@ -3,6 +3,13 @@
       //- Spotlight Search Component
       Spotlight
 
+      //- Keyboard Shortcuts Cheat Sheet
+      KeyboardShortcutsOverlay(
+        :visible="cheatSheetVisible"
+        :categories="shortcutCategories"
+        @close="cheatSheetVisible = false"
+      )
+
       
       #allTheNav
         .nav
@@ -32,13 +39,15 @@
                             //-     p.text-xs profile
                             el-dropdown-item(@click="logout")
                                 p.text-xs logout
-              .notification.notification-btn(class="rounded-full relative flex items-center justify-center w-10 h-10")
-               NuxtLink.flex.items-center.justify-center.w-full.h-full(:to="`/notification`" )
-                Icon.text-xl(name="ph:bell-bold")
-                div.notification-badge(v-if="response?.unreadNotificationsCount > 0")
+              .notification.premium-nav-btn(@click.stop="notificationCenter.toggle()")
+                .flex.items-center.justify-center.w-full.h-full
+                  Icon.text-xl(name="ph:bell-bold")
+                  div.notification-badge(v-if="notificationCenter.unreadCount.value > 0")
           .mt-4
         .slot-content(class="!mt-[80px]")
             slot
+      //- Notification Center Flyout
+      NotificationsNotificationCenter(:visible="notificationCenter.visible.value" @close="notificationCenter.close()")
   </template>
 <script setup lang="ts">
 import { useWindowSize } from '@vueuse/core';
@@ -51,6 +60,9 @@ import { useMain } from '~/stores/common';
 import { useSpotlight } from '~/composables/useSpotlight';
 useSpotlight();
 
+// Initialize Keyboard Shortcuts
+const { cheatSheetVisible, categories: shortcutCategories } = useKeyboardShortcuts();
+
 const mainData = useMain();
 const { fullNav, mobile, hideNav } = storeToRefs(mainData);
 const { width, height } = useWindowSize();
@@ -60,7 +72,9 @@ const showNavbar = ref(false);
 const showDropdown = ref(false);
 const searchInput = ref('');
 
-const response = await useTableFilter('notification');
+// Notification Center
+const notificationCenter = useNotificationCenter();
+notificationCenter.fetchUnreadCount();
 
 function toggleDropdown(val: boolean) {
   showDropdown.value = val;
@@ -128,7 +142,7 @@ const user = ref<any>({});
 
 if (!user.value?.id) {
   const response = await useApiFetch('auth/me');
-  user.value = response?.user;
+  user.value = (response as any)?.user;
 }
 
 const breadcrumbRoutes = computed(() => {
@@ -139,7 +153,7 @@ const breadcrumbRoutes = computed(() => {
 
   // Check if the last item is a valid ID (UUID or numeric)
   if (pathSegments.length > 0) {
-    const lastSegment = pathSegments[pathSegments.length - 1];
+    const lastSegment = pathSegments[pathSegments.length - 1] || '';
 
     // Check for UUID or numeric formats
     if (uuidRegex.test(lastSegment) || !isNaN(Number(lastSegment))) {
@@ -232,8 +246,8 @@ const getPath = (routeName: string) => {
   width: calc(100% - 260px);
 }
 .collapseMargin {
-  margin-left: 105px;
-  width: calc(100% - 105px) !important;
+  margin-left: 80px;
+  width: calc(100% - 80px) !important;
 }
 .notMargined {
   margin-left: 0px;

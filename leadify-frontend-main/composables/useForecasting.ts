@@ -1,0 +1,56 @@
+import { useApiFetch } from './useApiFetch';
+
+export interface ForecastPeriod {
+  id: string;
+  userId: string;
+  user?: { id: string; name: string };
+  period: 'monthly' | 'quarterly' | 'yearly';
+  startDate: string;
+  endDate: string;
+  target: number;
+  predicted: number;
+  actual: number;
+  closedWon: number;
+  closedLost: number;
+  pipeline: number;
+}
+
+export async function fetchForecasts(query?: Record<string, string>): Promise<{ docs: ForecastPeriod[]; pagination: any }> {
+  const qs = query ? '?' + new URLSearchParams(query).toString() : '';
+  const { body, success } = await useApiFetch(`forecasting${qs}`);
+  if (success && body) {
+    return body as { docs: ForecastPeriod[]; pagination: any };
+  }
+  return { docs: [], pagination: { page: 1, limit: 20, totalItems: 0, totalPages: 0 } };
+}
+
+export async function fetchForecastByPeriod(period: string, startDate: string, endDate: string): Promise<ForecastPeriod[]> {
+  const qs = `?period=${period}&startDate=${startDate}&endDate=${endDate}`;
+  const { body, success } = await useApiFetch(`forecasting/period${qs}`);
+  if (success && body) {
+    const data = body as any;
+    return data.docs || data || [];
+  }
+  return [];
+}
+
+export async function fetchForecastByUser(userId: string): Promise<ForecastPeriod[]> {
+  const { body, success } = await useApiFetch(`forecasting/user/${userId}`);
+  if (success && body) {
+    const data = body as any;
+    return data.docs || data || [];
+  }
+  return [];
+}
+
+export async function createForecast(data: Partial<ForecastPeriod>) {
+  return useApiFetch('forecasting', 'POST', data as Record<string, any>);
+}
+
+export async function updateForecast(id: string, data: Partial<ForecastPeriod>) {
+  return useApiFetch(`forecasting/${id}`, 'PUT', data as Record<string, any>);
+}
+
+export async function calculateFromPipeline(userId: string, period: string) {
+  return useApiFetch('forecasting/calculate', 'POST', { userId, period });
+}

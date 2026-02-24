@@ -1,3 +1,4 @@
+// High Point Technology CRM Backend Server
 import dotenv from 'dotenv';
 dotenv.config();
 import { validateEnvironment } from './config/validateEnv';
@@ -8,6 +9,8 @@ import { Sequelize } from 'sequelize-typescript';
 
 import http from 'http';
 import { Server } from 'socket.io';
+import { setupPresenceHandlers } from './socket/presenceHandler';
+import { setupVirtualOfficeHandlers } from './socket/virtualOfficeHandler';
 
 const PORT = process.env.PORT ? parseInt(process.env.PORT, 10) : 5000;
 const server = http.createServer(app);
@@ -42,7 +45,6 @@ async function runTypoMigration(sequelize: Sequelize) {
       );
 
       if (results.length > 0) {
-        console.log(`[Migration] Renaming 'descripion' to 'description' in ${table}...`);
         await sequelize.query(`ALTER TABLE "${table}" RENAME COLUMN "descripion" TO "description"`);
       }
     } catch (e) {
@@ -51,12 +53,9 @@ async function runTypoMigration(sequelize: Sequelize) {
   }
 }
 
-io.on('connection', (socket) => {
-  console.log('[Socket] New Client Connected:', socket.id);
-  socket.on('disconnect', () => {
-    console.log('[Socket] Client Disconnected:', socket.id);
-  });
-});
+// Set up real-time presence tracking
+setupPresenceHandlers(io);
+setupVirtualOfficeHandlers(io);
 
 // Test database connection and sync models
 sequelize
@@ -68,8 +67,32 @@ sequelize
     await runTypoMigration(sequelize);
 
     // Synchronize all defined models to the database
-    await sequelize.sync({ alter: true });
-    console.log('Database tables created/updated successfully.');
+    try {
+      await sequelize.sync({ alter: true });
+    } catch (syncErr) {
+      console.warn('sync({ alter: true }) failed, attempting basic sync:', (syncErr as Error).message);
+      try {
+        await sequelize.sync();
+      } catch (basicErr) {
+        console.warn('sync() also failed (tables likely already exist):', (basicErr as Error).message);
+      }
+    }
+
+    // Add performance indexes (non-blocking - failures are logged and skipped)
+    try {
+      const { addPerformanceIndexes } = require('./infrastructure/dbIndexes');
+      await addPerformanceIndexes(sequelize);
+    } catch (e) {
+      console.warn('[Startup] Index setup:', (e as Error).message);
+    }
+
+    // Initialize job queue for background processing
+    try {
+      const jobQueue = require('./infrastructure/jobQueue').default;
+      jobQueue.processJobs();
+    } catch (e) {
+      console.warn('[Startup] Job queue:', (e as Error).message);
+    }
 
     // Start the Server
     server.listen(PORT, () => {
@@ -82,8 +105,11 @@ sequelize
 
         const ChurnPredictionScheduler = require('./cron/churnPrediction').default;
         ChurnPredictionScheduler.start();
+
+        const { sessionCleanupCron } = require('./cron/sessionCleanup');
+        sessionCleanupCron.start();
       } catch (e) {
-        console.error("Failed to start Cron Jobs", e);
+        // Cron job initialization failed - silently handled
       }
     });
   })

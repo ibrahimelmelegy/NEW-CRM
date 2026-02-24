@@ -9,12 +9,21 @@ import jwt from 'jsonwebtoken';
 import { Response } from 'express';
 
 // Mocks
+jest.mock('../../src/config/db', () => ({
+    sequelize: { transaction: jest.fn() }
+}));
 jest.mock('../../src/user/userModel');
 jest.mock('../../src/user/models/loginFailureModel');
 jest.mock('../../src/user/models/sessionModel');
+jest.mock('../../src/tenant/tenantModel', () => ({}));
+jest.mock('../../src/role/roleModel', () => ({}));
 jest.mock('bcryptjs');
 jest.mock('jsonwebtoken');
 jest.mock('nodemailer'); // Prevent email side effects
+jest.mock('otplib', () => ({
+    verifySync: jest.fn(),
+    authenticator: { generate: jest.fn(), verify: jest.fn() }
+}));
 
 describe('AuthController - loginUser', () => {
     let req: any;
@@ -26,7 +35,8 @@ describe('AuthController - loginUser', () => {
         req = { body: { email: 'test@test.com', password: 'password123' } };
         res = {
             status: jest.fn().mockReturnThis(),
-            json: jest.fn()
+            json: jest.fn(),
+            send: jest.fn()
         } as unknown as Response;
         next = jest.fn();
 
@@ -48,10 +58,10 @@ describe('AuthController - loginUser', () => {
         expect(User.findOne).toHaveBeenCalledWith({ where: { email: 'test@test.com' } });
         expect(Session.create).toHaveBeenCalledWith(expect.objectContaining({ userId: 1, token: 'fake-token' }));
         expect(res.status).toHaveBeenCalledWith(200);
-        expect(res.json).toHaveBeenCalledWith(expect.objectContaining({ token: 'fake-token' }));
+        expect(res.send).toHaveBeenCalledWith(expect.objectContaining({ body: { token: 'fake-token' } }));
     });
 
-    it('should return 404 if user not found', async () => {
+    it('should return 401 if user not found (prevents user enumeration)', async () => {
         // Arrange
         (User.findOne as jest.Mock<any>).mockResolvedValue(null);
 
@@ -60,7 +70,7 @@ describe('AuthController - loginUser', () => {
 
         // Assert
         expect(LoginFailure.create).toHaveBeenCalled();
-        expect(res.status).toHaveBeenCalledWith(404);
+        expect(res.status).toHaveBeenCalledWith(401);
     });
 
     it('should return 401 if password does not match', async () => {

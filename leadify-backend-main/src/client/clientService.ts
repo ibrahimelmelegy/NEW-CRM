@@ -15,12 +15,13 @@ import ClientUsers from './client_UsersModel';
 import * as ExcelJS from 'exceljs';
 import { sendEmail } from '../utils/emailHelper';
 import notificationService from '../notification/notificationService';
+import { tenantWhere } from '../utils/tenantScope';
 
 class ClientService {
   async createClient(input: CreateClientInput, admin: User, t?: Transaction): Promise<Client> {
     if (input?.leadId) {
       await leadService.leadOrError({ id: input.leadId });
-      Lead.update(
+      await Lead.update(
         {
           status: LeadStatusEnums.CONVERTED
         },
@@ -48,9 +49,11 @@ class ClientService {
     }
 
     if (input.users?.length) {
-      input.users.forEach(async (item: number) => {
-        await notificationService.sendAssignClientNotification({ userId: item, target: client.id }, client, admin);
-      });
+      await Promise.all(
+        input.users.map((item: number) =>
+          notificationService.sendAssignClientNotification({ userId: item, target: client.id }, client, admin)
+        )
+      );
     }
     await createActivityLog('client', 'create', client.id, admin.id, null, 'Client created succesfully');
 
@@ -76,12 +79,26 @@ class ClientService {
     await createActivityLog('client', 'update', client.id, user.id, null, `New updates added suucesfully`);
     if (input.users && Array.isArray(input.users)) await client.$set('users', input.users);
     if (input.users?.length) {
-      input.users.forEach(async (item: number) => {
-        await notificationService.sendAssignClientNotification({ userId: item, target: client.id }, client, user);
-      });
+      await Promise.all(
+        input.users.map((item: number) =>
+          notificationService.sendAssignClientNotification({ userId: item, target: client.id }, client, user)
+        )
+      );
     }
 
     return await client.save();
+  }
+
+  async getClientContacts(clientId: string, user: User): Promise<User[]> {
+    await this.validateClientAccess(clientId, user);
+    const client = await this.clientOrError({ id: clientId }, [
+      {
+        model: User,
+        as: 'users',
+        attributes: ['id', 'name', 'email', 'phone', 'status']
+      }
+    ]);
+    return client.users || [];
   }
 
   async clientOrError(filter: WhereOptions, joinedTables?: Includeable[]): Promise<Client> {
@@ -98,6 +115,7 @@ class ClientService {
 
     const { rows: clients, count: totalItems } = await Client.findAndCountAll({
       where: {
+        ...tenantWhere(user),
         ...(query.searchKey && {
           [Op.or]: [
             { clientName: { [Op.iLike]: `%${query.searchKey}%` } },

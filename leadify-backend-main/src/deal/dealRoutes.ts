@@ -2,6 +2,8 @@ import express from 'express';
 import { authenticateUser, HasPermission } from '../middleware/authMiddleware';
 import { validateBody, validateQuery } from '../middleware/validation';
 import dealController from './dealController';
+import dealMomentumController from './dealMomentumController';
+import dealRoomController from './dealRoomController';
 import { ConvertLeadToDealInput, CreateLeadAndDealInput } from './inputs/convert-lead-to-deal.input';
 import { GetPaginatedDealsInput } from './inputs/paginated-deals.input';
 import { UpdateDealInput } from './inputs/update-deal.input';
@@ -391,7 +393,53 @@ router.post('/update', authenticateUser, HasPermission([DealPermissionsEnum.EDIT
 
 //** --------------------- PUT --------------------- */
 
+router.patch(
+  '/stage',
+  authenticateUser,
+  HasPermission([DealPermissionsEnum.EDIT_DEALS]),
+  dealController.updateDealStage
+);
+
 //** --------------------- GET --------------------- */
+
+router.get(
+  '/kanban',
+  authenticateUser,
+  HasPermission([DealPermissionsEnum.VIEW_GLOBAL_DEALS, DealPermissionsEnum.VIEW_OWN_DEALS]),
+  dealController.getKanbanDeals
+);
+
+/**
+ * @swagger
+ * /api/deal/{id}/momentum:
+ *   get:
+ *     summary: Get momentum score for a deal
+ *     description: Calculate and return momentum metrics (velocity, engagement, progression, responsiveness) for a deal. Requires authentication.
+ *     tags: [Deal]
+ *     security:
+ *       - bearerAuth: []
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         schema:
+ *           type: string
+ *           format: uuid
+ *         description: The ID of the deal
+ *     responses:
+ *       200:
+ *         description: Momentum score calculated successfully
+ *       404:
+ *         description: Deal not found
+ *       500:
+ *         description: Internal Server Error
+ */
+router.get(
+  '/:id/momentum',
+  authenticateUser,
+  HasPermission([DealPermissionsEnum.VIEW_GLOBAL_DEALS, DealPermissionsEnum.VIEW_OWN_DEALS]),
+  dealMomentumController.getMomentum
+);
 
 /**
  * @swagger
@@ -656,6 +704,14 @@ router.get(
  *       500:
  *         description: Internal Server Error
  */
+// Deal Room - must be before /:id
+router.get(
+  '/:id/room',
+  authenticateUser,
+  HasPermission([DealPermissionsEnum.VIEW_GLOBAL_DEALS, DealPermissionsEnum.VIEW_OWN_DEALS]),
+  dealRoomController.getDealRoom
+);
+
 router.get(
   '/:id',
   authenticateUser,

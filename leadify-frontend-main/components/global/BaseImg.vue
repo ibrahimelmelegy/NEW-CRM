@@ -45,7 +45,7 @@ watch(
   }
 );
 
-async function getRedirectedUrlWithHeaders(url) {
+async function getRedirectedUrlWithHeaders(url: string) {
   try {
     const response = await fetch(url, {
       redirect: 'follow',

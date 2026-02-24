@@ -47,10 +47,19 @@
         //-     p Password
         //-   p.text-neutral-800.mb-2 000000000
 
+  el-tabs.mt-6(v-model="activeTab")
+    el-tab-pane(:label="$t('common.timeline')" name="timeline")
+      RecordTimeline(:entityType="'staff'" :entityId="route.params.slug as string")
+    el-tab-pane(:label="$t('common.comments')" name="comments")
+      RecordComments(:entityType="'staff'" :entityId="route.params.slug as string")
+    el-tab-pane(:label="$t('common.attachments')" name="attachments")
+      RecordAttachments(:entityType="'staff'" :entityId="route.params.slug as string")
+
 </template>
 
 <script lang="ts" setup>
 const activeName = ref('summary');
+const activeTab = ref('timeline');
 const route = useRoute();
 const { hasPermission } = await usePermissions();
 // Call API to Get the staff

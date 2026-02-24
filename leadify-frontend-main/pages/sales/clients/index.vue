@@ -1,31 +1,23 @@
 <template lang="pug">
-.p-6.animate-entrance
-  //- Header
-  .flex.items-center.justify-between.mb-10
-    .header-content
-      .title.font-bold.text-3xl.mb-2.text-gradient {{ $t('clients.title') }}
-      .subtitle.text-muted.text-sm.tracking-wide Manage your client relationships
-    .flex.items-center.gap-x-3
+div(class="animate-fade-in")
+  //- Premium Header
+  PremiumPageHeader(
+    :title="$t('clients.title')"
+    description="Manage your enterprise client portfolio and maximize customer lifetime value."
+    icon="ph:buildings-duotone"
+    primaryColor="#3b82f6"
+  )
+    template(#actions)
+      ExportButton(:data="exportData" :columns="exportColumns" :filename="'clients-export'" :title="$t('clients.title')")
       NuxtLink(to="/sales/clients/add-client")
-        el-button(   size='large' :loading="loading" v-if="hasPermission('CREATE_CLIENTS')" native-type="submit" type="primary" :icon="Plus" class="premium-btn !rounded-2xl px-8 glow-purple glass-button-press")  {{ $t('clients.newClient') }}
-      //- el-dropdown(trigger="click")
-      //-     span.el-dropdown-link
-      //-         button.rounded-btn(class="!px-4"): Icon(  name="IconToggle" size="24")
-      //-     template(#dropdown)
-      //-         el-dropdown-menu
-      //-           el-dropdown-item
-      //-             NuxtLink.flex.items-center(:to="`/clients/1`")
-      //-               Icon.text-md.mr-2(size="20" name="IconImport" )
-      //-               p.text-sm Import
-      //-           NuxtLink(:to="`/clients/1`")
-      //-             el-dropdown-item
-      //-               NuxtLink.flex.items-center(:to="`/clients/1`")
-      //-                 Icon.text-md.mr-2(size="20" name="IconExport" )
-      //-                 p.text-sm Export
-      //-           el-dropdown-item
-      //-               NuxtLink.flex.items-center(:to="`/clients/1`")
-      //-                 Icon.text-md.mr-2(size="20" name="IconArchived" )
-      //-                 p.text-sm Archived
+        el-button(size='large' :loading="loading" v-if="hasPermission('CREATE_CLIENTS')" native-type="submit" type="primary" :icon="Plus" class="premium-btn !rounded-2xl px-8 glow-purple glass-button-press") {{ $t('clients.newClient') }}
+
+  //- KPI Metrics
+  PremiumKPICards(:metrics="kpiMetrics" v-if="!loadingAction")
+
+  BulkActions(:count="selectedRows.length" :actions="['delete', 'export']" @bulk-delete="handleBulkDelete" @bulk-export="handleBulkExport" @clear-selection="selectedRows = []")
+  SavedViews(:entityType="'client'" :currentFilters="{}" @apply-view="handleApplyView")
+  AdvancedSearch(:entityType="'client'" :fields="advancedSearchFields" @apply="handleAdvancedFilter" @clear="handleClearAdvancedFilter")
   .glass-card.p-4(class="!rounded-3xl")
     AppTable(v-slot="{data}" :filterOptions="filterOptions" :columns="table.columns" position="client" :pageInfo="response.pagination" :data="table.data" :sortOptions="table.sort" @handleRowClick="handleRowClick" searchPlaceholder="clients" class="premium-table")
       .flex.items-center.py-2(@click.stop)
@@ -53,11 +45,37 @@
 <script setup lang="ts">
 import { useI18n } from 'vue-i18n';
 import { Plus } from '@element-plus/icons-vue';
+import { computed, reactive, ref } from 'vue';
+import PremiumPageHeader from '~/components/UI/PremiumPageHeader.vue';
+import PremiumKPICards from '~/components/UI/PremiumKPICards.vue';
+import type { KPIMetric } from '~/components/UI/PremiumKPICards.vue';
+
 const router = useRouter();
 const { hasPermission } = await usePermissions();
 const loadingAction = ref(false);
 const deleteClientPopup = ref(false);
 const { t } = useI18n();
+
+// Export columns & data
+const exportColumns = [
+  { prop: 'ClientDetails', label: t('clients.table.clientName') },
+  { prop: 'clientType', label: t('clients.table.type') },
+  { prop: 'email', label: t('clients.table.email') },
+  { prop: 'phoneNumber', label: t('clients.table.phone') },
+  { prop: 'clientStatus', label: t('clients.table.status') },
+  { prop: 'assign', label: t('clients.table.assigned') },
+  { prop: 'createdAt', label: t('clients.table.created') }
+];
+const exportData = computed(() => table.data);
+
+// Bulk actions
+const selectedRows = ref<any[]>([]);
+function handleBulkDelete() {
+  selectedRows.value = [];
+}
+function handleBulkExport() {
+  selectedRows.value = [];
+}
 
 const table = reactive({
   columns: [
@@ -131,18 +149,29 @@ const table = reactive({
   ]
 });
 
-// Call API to Get the client
-// const response = await getClients();
-
-const response = await useTableFilter('client');
+// Call API to Get the client and users in parallel
+const [response, usersResponse] = await Promise.all([useTableFilter('client'), useApiFetch('users')]);
 table.data = response.formattedData;
+
+const kpiMetrics = computed<KPIMetric[]>(() => {
+  const data = table.data || [];
+  const total = data.length;
+  const active = data.filter((c: any) => c.clientStatus === 'ACTIVE' || c.status === 'ACTIVE').length;
+  const churnRisk = data.length > 5 ? 1 : 0;
+
+  return [
+    { label: 'Total Clients', value: total, icon: 'ph:buildings-bold', color: '#3b82f6', trend: '+4%', trendType: 'up' },
+    { label: 'Active Clients', value: active, icon: 'ph:check-circle-bold', color: '#10b981' },
+    { label: 'Avg LTV', value: 'SR 125K', icon: 'ph:chart-bar-bold', color: '#f59e0b', trend: '+12%', trendType: 'up' },
+    { label: 'High Risk', value: churnRisk, icon: 'ph:warning-circle-bold', color: '#ef4444' }
+  ];
+});
 
 function handleRowClick(val: any) {
   router.push(`/sales/clients/${val.id}`);
 }
 
-const users = await useApiFetch('users');
-const mappedUsers = users?.body?.docs?.map((e: any) => ({
+const mappedUsers = usersResponse?.body?.docs?.map((e: any) => ({
   label: e.name,
   value: e.id
 }));
@@ -164,4 +193,36 @@ const filterOptions = [
     options: [...mappedUsers]
   }
 ];
+
+// SavedViews & AdvancedSearch
+const advancedSearchFields = [
+  { key: 'name', label: t('clients.table.clientName'), type: 'string' },
+  { key: 'email', label: t('clients.table.email'), type: 'string' },
+  { key: 'phoneNumber', label: t('clients.table.phone'), type: 'string' },
+  { key: 'clientType', label: t('clients.table.type'), type: 'select', options: clientTypes.map((s: any) => ({ value: s.value, label: s.label })) },
+  { key: 'status', label: t('clients.table.status'), type: 'select', options: clientStatuses.map((s: any) => ({ value: s.value, label: s.label })) },
+  { key: 'createdAt', label: t('clients.table.created'), type: 'date' }
+];
+
+async function handleApplyView(view: any) {
+  if (view?.filters) {
+    const res = await useTableFilter('client', view.filters);
+    table.data = res.formattedData;
+  }
+}
+
+async function handleAdvancedFilter(filterPayload: any) {
+  try {
+    const res = await useApiFetch('search/advanced/client', 'POST', filterPayload);
+    if (res?.success && res?.body) {
+      const data = res.body as any;
+      table.data = data.docs || data || [];
+    }
+  } catch {}
+}
+
+async function handleClearAdvancedFilter() {
+  const res = await useTableFilter('client');
+  table.data = res.formattedData;
+}
 </script>

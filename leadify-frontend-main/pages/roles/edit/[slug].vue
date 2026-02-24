@@ -3,7 +3,7 @@ RoleForm( :loading="loading" @submit="submitForm" :data="role")
   .flex.items-center.justify-between.mb-8
     .title.font-bold.text-2xl.mb-1.capitalize Edit Role
     .flex.items-center.gap-x-2
-      el-button(   size='large' plain type="primary" class="w-full !rounded-2xl" @click="router.back()") Cancel
+      el-button(   size='large' plain type="primary" class="w-full !rounded-2xl" @click="router.back()") {{ $t('common.cancel') }}
       el-button(   size='large' type="primary" native-type="submit" :loading="loading"  :disabled="loading" class="w-full !px-5 !rounded-2xl") update
 .card.m-auto.glass-card.rounded-3xl(class="mt-4 p-10")
   h3.text-2xl.font-bold.mb-5 Permissions

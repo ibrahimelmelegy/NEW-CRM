@@ -10,11 +10,13 @@ el-dialog(v-model='dialog' width='480' align-center='' class="glass-dialog !roun
     template(#footer='')
       .flex.gap-3.px-2.pb-2
         el-button.flex-1(class="!rounded-xl !h-11" @click='dialog = false' size="large") {{ $t('common.cancel') }}
-        el-button.flex-1(class="!rounded-xl !h-11" type='primary' @click='confirm' size="large" :loading="loading" :disabled="loading") {{btnText}}
+        el-button.flex-1(class="!rounded-xl !h-11" type='primary' @click='confirm' size="large" :loading="loading" :disabled="loading") {{computedBtnText}}
 
 </template>
 
 <script setup>
+import { useI18n } from 'vue-i18n';
+const { t } = useI18n();
 const props = defineProps({
   title: String,
   description: String,
@@ -24,9 +26,10 @@ const props = defineProps({
   icon: String,
   btnText: {
     type: String,
-    default: 'Confirm'
+    default: ''
   }
 });
+const computedBtnText = computed(() => props.btnText || t('common.confirm'));
 const emit = defineEmits(['confirm']);
 const confirm = () => {
   emit('confirm');

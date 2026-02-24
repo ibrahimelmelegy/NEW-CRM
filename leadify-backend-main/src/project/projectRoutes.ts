@@ -383,13 +383,12 @@ router.put(
 
 // ** --------------------- GET --------------------- **/
 
-// router.get(
-//   '/all',
-//   authenticateUser,
-//   HasPermission([ProjectPermissionsEnum.VIEW_GLOBAL_PROJECTS, ProjectPermissionsEnum.VIEW_OWN_PROJECTS]),
-//   projectController.getAllProjects
-// );
-router.get('/all', projectController.getAllProjects);
+router.get(
+  '/all',
+  authenticateUser,
+  HasPermission([ProjectPermissionsEnum.VIEW_GLOBAL_PROJECTS, ProjectPermissionsEnum.VIEW_OWN_PROJECTS]),
+  projectController.getAllProjects
+);
 
 /**
  * @swagger

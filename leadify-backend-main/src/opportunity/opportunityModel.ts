@@ -3,6 +3,7 @@ import User from '../user/userModel';
 import Lead from '../lead/leadModel';
 import { OpportunityPriorityEnums, OpportunityStageEnums } from './opportunityEnum';
 import Client from '../client/clientModel';
+import Tenant from '../tenant/tenantModel';
 import OpportunityUsers from './model/oppotyunity_UsersModel';
 
 @Table({
@@ -39,7 +40,7 @@ class Opportunity extends Model {
     type: DataType.UUID,
     allowNull: true
   })
-  public clientId!: string;
+  public clientId?: string;
 
   @BelongsTo(() => Client, { as: 'client' })
   public client?: Client;
@@ -95,6 +96,13 @@ class Opportunity extends Model {
     defaultValue: 0
   })
   public profit?: number;
+
+  @ForeignKey(() => Tenant)
+  @Column({ type: DataType.UUID, allowNull: true })
+  public tenantId?: string;
+
+  @BelongsTo(() => Tenant)
+  public tenant!: Tenant;
 }
 
 export default Opportunity;

@@ -19,19 +19,8 @@ export default defineConfig({
       provider: 'v8',
       reporter: ['text', 'json', 'html'],
       reportsDirectory: './coverage',
-      include: [
-        'composables/**/*.ts',
-        'utils/**/*.ts',
-        'components/**/*.vue'
-      ],
-      exclude: [
-        'node_modules',
-        '.nuxt',
-        'tests/**',
-        '**/*.d.ts',
-        '**/*.spec.ts',
-        '**/*.test.ts'
-      ],
+      include: ['composables/**/*.ts', 'utils/**/*.ts', 'components/**/*.vue'],
+      exclude: ['node_modules', '.nuxt', 'tests/**', '**/*.d.ts', '**/*.spec.ts', '**/*.test.ts'],
       // Coverage thresholds - Phase 2.3 baseline
       // Target: 20% composables coverage (up from 2.9%)
       // Critical files (useApiFetch, useApiCache) at 95%+

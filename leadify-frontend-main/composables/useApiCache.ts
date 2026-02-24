@@ -17,8 +17,29 @@ interface RetryOptions {
   retryOn?: number[]; // HTTP status codes to retry on
 }
 
-// Global cache store
+// Global cache store with LRU eviction
+const MAX_CACHE_ENTRIES = 200;
 const cache = new Map<string, CacheEntry<any>>();
+
+/**
+ * Evict oldest entries when cache exceeds max size
+ */
+const evictIfNeeded = () => {
+  if (cache.size <= MAX_CACHE_ENTRIES) return;
+
+  // Remove expired entries first
+  const now = Date.now();
+  for (const [key, entry] of cache) {
+    if (now >= entry.expiresAt) cache.delete(key);
+  }
+
+  // If still over limit, remove oldest entries by timestamp (LRU)
+  if (cache.size > MAX_CACHE_ENTRIES) {
+    const entries = [...cache.entries()].sort((a, b) => a[1].timestamp - b[1].timestamp);
+    const toRemove = entries.slice(0, cache.size - MAX_CACHE_ENTRIES);
+    for (const [key] of toRemove) cache.delete(key);
+  }
+};
 
 /**
  * Generate a cache key from URL and params
@@ -67,12 +88,13 @@ export const useApiCache = <T = any>(fetcher: () => Promise<T>, cacheKey: string
     try {
       const result = await fetcher();
 
-      // Store in cache
+      // Store in cache (with LRU eviction)
       cache.set(cacheKey, {
         data: result,
         timestamp: Date.now(),
         expiresAt: Date.now() + ttl
       });
+      evictIfNeeded();
 
       data.value = result;
       return result;

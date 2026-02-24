@@ -6,6 +6,7 @@
       .title.font-bold.text-3xl.mb-2.text-gradient {{ $t('navigation.services') }}
       .subtitle.text-muted.text-sm.tracking-wide Configure and manage service offerings
     .flex.items-center.gap-x-3
+      ExportButton(:data="table.data" :columns="exportColumns" :filename="'services-export'" :title="$t('navigation.services')")
       NuxtLink(to="/operations/services/add-service")
         el-button(   size='large' :loading="loading" v-if="hasPermission('CREATE_SERVICES')" native-type="submit" type="primary" :icon="Plus" class="premium-btn !rounded-2xl px-8 glow-purple glass-button-press")  {{ $t('operations.services.new') }}
       //- el-dropdown(trigger="click")
@@ -59,6 +60,12 @@ const router = useRouter();
 const { hasPermission } = await usePermissions();
 const loadingAction = ref(false);
 const deleteLeadPopup = ref(false);
+
+// Export columns
+const exportColumns = [
+  { prop: 'type', label: useI18n().t('operations.services.table.type') },
+  { prop: 'price', label: useI18n().t('operations.services.table.price') }
+];
 
 const table = reactive({
   columns: [

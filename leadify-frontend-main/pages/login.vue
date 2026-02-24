@@ -11,7 +11,7 @@
         <template v-if="themeStore.isLight">
           <NuxtImg
             src="/images/Logo.png"
-            alt="Leadify CRM"
+            alt="High Point Technology CRM"
             format="webp"
             quality="80"
             class="h-16 w-auto drop-shadow-[0_0_15px_rgba(0,0,0,0.1)] transition-all duration-500"
@@ -20,7 +20,7 @@
         <template v-else>
           <NuxtImg
             src="/images/light-logo.png"
-            alt="Leadify CRM"
+            alt="High Point Technology CRM"
             format="webp"
             quality="80"
             class="h-16 w-auto drop-shadow-[0_0_15px_rgba(255,255,255,0.3)] transition-all duration-500 light-logo-shadow"
@@ -59,73 +59,85 @@
           ></div>
 
           <div class="relative z-10">
-            <div class="mb-10 text-center md:text-left">
-              <h1 class="text-3xl font-bold theme-text-primary mb-2 tracking-tight">{{ $t('auth.welcomeBack') }}</h1>
-              <p class="theme-text-muted text-sm">{{ $t('auth.enterCredentials') }}</p>
-            </div>
+            <!-- 2FA Step -->
+            <AuthTwoFactorLogin
+              v-if="show2FA"
+              :email="savedEmail"
+              :password="savedPassword"
+              @verified="onTwoFactorVerified"
+              @back="show2FA = false"
+            />
 
-            <el-form
-              ref="myForm"
-              autocomplete="off"
-              label-position="top"
-              :validation-schema="formSchema"
-              class="modern-form"
-              aria-label="Login form"
-              role="form"
-              @submit.prevent="onSubmit"
-            >
-              <div class="space-y-6">
-                <div class="form-group flex flex-col gap-2">
-                  <InputText
-                    placeholder="name@company.com"
-                    name="email"
-                    :label="$t('auth.email')"
-                    class="modern-input"
-                    aria-label="Email address"
-                    aria-required="true"
-                  />
-                </div>
+            <!-- Normal Login Form -->
+            <template v-else>
+              <div class="mb-10 text-center md:text-left">
+                <h1 class="text-3xl font-bold theme-text-primary mb-2 tracking-tight">{{ $t('auth.welcomeBack') }}</h1>
+                <p class="theme-text-muted text-sm">{{ $t('auth.enterCredentials') }}</p>
+              </div>
 
-                <div class="form-group relative flex flex-col gap-2">
-                  <InputText
-                    placeholder="••••••••"
-                    name="password"
-                    type="password"
-                    :label="$t('auth.password')"
-                    class="modern-input"
-                    aria-label="Password"
-                    aria-required="true"
-                  />
-                  <div class="flex justify-end px-1 mt-1">
-                    <nuxt-link
-                      to="/forget-password"
-                      class="text-xs text-[var(--brand-primary)] hover:text-[var(--brand-primary-hover)] transition-colors"
-                      aria-label="Forgot your password? Click here to reset"
-                    >
-                      {{ $t('auth.forgotPassword') }}
-                    </nuxt-link>
+              <el-form
+                ref="myForm"
+                autocomplete="off"
+                label-position="top"
+                :validation-schema="formSchema"
+                class="modern-form"
+                aria-label="Login form"
+                role="form"
+                @submit.prevent="onSubmit"
+              >
+                <div class="space-y-6">
+                  <div class="form-group flex flex-col gap-2">
+                    <InputText
+                      placeholder="name@company.com"
+                      name="email"
+                      :label="$t('auth.email')"
+                      class="modern-input"
+                      aria-label="Email address"
+                      aria-required="true"
+                    />
+                  </div>
+
+                  <div class="form-group relative flex flex-col gap-2">
+                    <InputText
+                      placeholder="••••••••"
+                      name="password"
+                      type="password"
+                      :label="$t('auth.password')"
+                      class="modern-input"
+                      aria-label="Password"
+                      aria-required="true"
+                    />
+                    <div class="flex justify-end px-1 mt-1">
+                      <nuxt-link
+                        to="/forget-password"
+                        class="text-xs text-[var(--brand-primary)] hover:text-[var(--brand-primary-hover)] transition-colors"
+                        aria-label="Forgot your password? Click here to reset"
+                      >
+                        {{ $t('auth.forgotPassword') }}
+                      </nuxt-link>
+                    </div>
                   </div>
                 </div>
-              </div>
 
-              <div class="flex items-center mt-4">
-                <el-checkbox :label="$t('auth.rememberMe')" class="custom-checkbox" aria-label="Keep me logged in checkbox" />
-              </div>
+                <div class="flex items-center mt-4">
+                  <el-checkbox :label="$t('auth.rememberMe')" class="custom-checkbox" aria-label="Keep me logged in checkbox" />
+                </div>
 
-              <el-form-item class="mt-8 mb-0">
-                <el-button
-                  size="large"
-                  :loading="loading"
-                  native-type="submit"
-                  class="login-btn w-full !h-[58px] !rounded-2xl !border-none !text-lg !font-bold !text-white active:scale-[0.98] transition-all"
-                  style="background-color: var(--color-primary); box-shadow: 0 10px 20px -5px var(--color-primary-alpha-50)"
-                  aria-label="Sign in to your account"
-                  :aria-busy="loading"
-                >
-                  {{ $t('auth.login') }}
-                </el-button>
-              </el-form-item>
-            </el-form>
+                <el-form-item class="mt-8 mb-0">
+                  <el-button
+                    size="large"
+                    :loading="loading"
+                    native-type="submit"
+                    class="login-btn w-full !h-[58px] !rounded-2xl !border-none !text-lg !font-bold !text-white active:scale-[0.98] transition-all"
+                    style="background-color: var(--color-primary); box-shadow: 0 10px 20px -5px var(--color-primary-alpha-50)"
+                    aria-label="Sign in to your account"
+                    :aria-busy="loading"
+                  >
+                    {{ $t('auth.login') }}
+                  </el-button>
+                </el-form-item>
+              </el-form>
+            </template>
           </div>
         </div>
 
@@ -153,6 +165,9 @@ const auth = useAuthStore();
 const mainStore = useMain();
 const router = useRouter();
 const loading = ref(false);
+const show2FA = ref(false);
+const savedEmail = ref('');
+const savedPassword = ref('');
 
 // Dynamic Logo Logic
 const logoSrc = computed(() => {
@@ -194,6 +209,14 @@ const onSubmit = handleSubmit(async (values: any) => {
       password: values.password
     });
 
+    // 2FA required — backend returns 206 with requires2FA flag
+    if (response.success && response.body?.requires2FA) {
+      savedEmail.value = values.email;
+      savedPassword.value = values.password;
+      show2FA.value = true;
+      return;
+    }
+
     if (response.success && response.body?.token) {
       const accessToken = useCookie('access_token');
       accessToken.value = response.body.token;
@@ -218,6 +241,19 @@ const onSubmit = handleSubmit(async (values: any) => {
     loading.value = false;
   }
 });
+
+function onTwoFactorVerified(token: string) {
+  const accessToken = useCookie('access_token');
+  accessToken.value = token;
+
+  ElNotification({
+    title: 'Success',
+    type: 'success',
+    message: 'Login Successful'
+  });
+
+  router.push('/');
+}
 </script>
 
 <style lang="scss">

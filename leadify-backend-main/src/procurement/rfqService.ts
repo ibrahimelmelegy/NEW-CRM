@@ -11,11 +11,9 @@ import Project from '../project/models/projectModel';
 
 class RFQService {
     async createRFQ(input: any, user: User): Promise<RFQ> {
-        console.log("DEBUG: createRFQ input:", JSON.stringify(input));
         const transaction = await sequelize.transaction();
         try {
             const { items, ...rfqData } = input;
-            console.log("DEBUG: createRFQ items:", items);
 
             const count = await RFQ.count();
             const rfqNumber = `RFQ-${new Date().getFullYear()}-${(count + 1).toString().padStart(4, '0')}`;
@@ -25,25 +23,19 @@ class RFQService {
                 rfqNumber,
                 createdBy: user.id
             }, { transaction });
-            console.log("DEBUG: RFQ created:", rfq.id);
 
             if (items && Array.isArray(items)) {
                 const rfqItems = items.map((item: any) => ({
                     ...item,
                     rfqId: rfq.id
                 }));
-                const createdItems = await RFQItem.bulkCreate(rfqItems, { transaction });
-                console.log("DEBUG: RFQ Items created:", createdItems.length);
+                await RFQItem.bulkCreate(rfqItems, { transaction });
             }
 
             await transaction.commit();
 
-            // Debugging the result
-            const result = await this.getRFQById(rfq.id);
-            console.log("DEBUG: Final RFQ result items count:", result.items?.length);
-            return result;
+            return await this.getRFQById(rfq.id);
         } catch (error) {
-            console.error("DEBUG: createRFQ Error:", error);
             await transaction.rollback();
             throw error;
         }
@@ -62,7 +54,6 @@ class RFQService {
     }
 
     async sendRFQToVendors(rfqId: string, vendorIds: number[]): Promise<RFQ> {
-        console.log("DEBUG: sendRFQToVendors:", { rfqId, vendorIds });
         const rfq = await this.getRFQById(rfqId);
         const transaction = await sequelize.transaction();
 
@@ -142,6 +133,8 @@ class RFQService {
                 }
             ]
         });
+        if (!rfq) throw new BaseError(ERRORS.RFQ_NOT_FOUND);
+        return rfq;
     }
 
     async getRFQs(query: any): Promise<any> {
