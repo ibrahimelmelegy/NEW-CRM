@@ -6,5 +6,6 @@ DocumentDetailPage(
 </template>
 
 <script setup lang="ts">
+import DocumentDetailPage from '~/components/DocumentBuilder/DocumentDetailPage.vue';
 definePageMeta({ middleware: 'permissions' });
 </script>
