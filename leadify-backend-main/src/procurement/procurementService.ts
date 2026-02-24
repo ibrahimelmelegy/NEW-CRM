@@ -133,7 +133,7 @@ class ProcurementService {
                 [sequelize.fn('SUM', sequelize.col('totalAmount')), 'value']
             ],
             include: [{ model: Vendor, attributes: [] }],
-            group: ['Vendor.id', 'vendor.name'],
+            group: ['vendor.id', 'vendor.name'],
             order: [[sequelize.fn('SUM', sequelize.col('totalAmount')), 'DESC']],
             limit: 5,
             raw: true

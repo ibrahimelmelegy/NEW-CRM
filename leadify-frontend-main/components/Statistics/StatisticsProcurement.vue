@@ -101,11 +101,11 @@ onMounted(async () => {
   loading.value = true;
   try {
     const response = await useApiFetch('procurement/stats');
-    if (response) {
-      stats.value = response as any;
+    if (response?.success && response.body) {
+      stats.value = response.body as any;
     }
   } catch (e) {
-    // Failed to fetch statistics - silently handle
+    // Failed to fetch statistics - keep defaults
   } finally {
     loading.value = false;
   }
