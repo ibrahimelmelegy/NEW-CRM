@@ -213,14 +213,16 @@ const healthChartRef = ref<HTMLElement>();
 const revenueChartRef = ref<HTMLElement>();
 const engagementChartRef = ref<HTMLElement>();
 
-const dashboard = ref<any>({
+const emptyDashboard = {
   summary: { totalClients: 0, healthy: 0, atRisk: 0, critical: 0, avgHealthScore: 0, totalRevenue: 0, avgNps: 0 },
   healthDistribution: [],
   topClients: [],
   atRiskClients: [],
   revenueByMonth: [],
   engagementTrend: []
-});
+};
+
+const dashboard = ref<any>({ ...emptyDashboard });
 
 const formatRevenue = (val: number) => {
   if (val >= 1000000) return `${(val / 1000000).toFixed(1)}M`;
@@ -239,7 +241,8 @@ const fetchDashboard = async () => {
   try {
     const res: any = await useApiFetch('customer-success/dashboard', 'GET', {}, true);
     if (res?.success && res.body) {
-      dashboard.value = res.body;
+      // Merge with defaults to guarantee all required fields exist
+      dashboard.value = { ...emptyDashboard, ...res.body, summary: { ...emptyDashboard.summary, ...(res.body.summary || {}) } };
       await nextTick();
       renderCharts();
     }
