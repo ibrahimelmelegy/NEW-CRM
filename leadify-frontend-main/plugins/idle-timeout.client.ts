@@ -1,8 +1,8 @@
 import { defineNuxtPlugin } from '#app';
 import { useIdle } from '@vueuse/core';
 import { watch } from 'vue';
-import { useAuthStore } from '~/stores/auth';
 import { ElNotification } from 'element-plus';
+import { user } from '~/composables/useUser';
 
 export default defineNuxtPlugin((nuxtApp) => {
     // 30 minutes total timeout
@@ -10,7 +10,6 @@ export default defineNuxtPlugin((nuxtApp) => {
     // Warning at 25 minutes
     const WARNING_TIME = 25 * 60 * 1000;
 
-    // VueUse's useIdle checks global window events (mousemove, keydown, etc.)
     const { idle: isWarningIdle } = useIdle(WARNING_TIME);
     const { idle: isFullyIdle } = useIdle(IDLE_TIMEOUT);
 
@@ -18,8 +17,9 @@ export default defineNuxtPlugin((nuxtApp) => {
 
     nuxtApp.hook('app:mounted', () => {
         watch(isWarningIdle, (isIdleValue) => {
-            const authStore = useAuthStore();
-            if (isIdleValue && authStore.token) {
+            // Check cookie directly (consistent with auth middleware)
+            const accessToken = useCookie('access_token');
+            if (isIdleValue && accessToken.value) {
                 if (!warningShown) {
                     warningShown = true;
                     ElNotification({
@@ -35,15 +35,20 @@ export default defineNuxtPlugin((nuxtApp) => {
         });
 
         watch(isFullyIdle, (isIdleValue) => {
-            const authStore = useAuthStore();
-            if (isIdleValue && authStore.token) {
+            const accessToken = useCookie('access_token');
+            if (isIdleValue && accessToken.value) {
+                // Clear the cookie and user state
+                accessToken.value = null;
+                user.value = null;
+
                 ElNotification({
                     title: 'Session Expired',
                     message: 'You have been logged out due to inactivity.',
                     type: 'info',
                     duration: 5000
                 });
-                authStore.logout();
+
+                navigateTo('/login');
             }
         });
     });

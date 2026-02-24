@@ -422,7 +422,7 @@ async function handleFileUpload(event: Event) {
 
   try {
     const baseUrl = config.public.API_BASE_URL || '';
-    const token = useCookie('token').value;
+    const token = useCookie('access_token').value;
     const response = await $fetch<any>(`${baseUrl}documents/files/upload`, {
       method: 'POST',
       body: formData,

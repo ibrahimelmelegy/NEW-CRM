@@ -40,7 +40,11 @@ export const useApiFetch = async <T = any>(
   isFd: boolean = false
 ): Promise<ApiResponse<T>> => {
   const config = useRuntimeConfig();
-  const accessToken = useCookie('access_token');
+  const accessToken = useCookie('access_token', {
+    path: '/',
+    maxAge: 60 * 60 * 24 * 7, // 7 days
+    sameSite: 'lax' as const
+  });
 
   const defaultOptions = {
     method,

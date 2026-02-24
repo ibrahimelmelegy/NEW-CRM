@@ -1,37 +1,45 @@
-import { defineStore, skipHydrate } from 'pinia';
-import { useLocalStorage } from '@vueuse/core';
+import { defineStore } from 'pinia';
 import { ElNotification } from 'element-plus';
+import { user } from '~/composables/useUser';
 
 export const useAuthStore = defineStore('auth', {
   state: () => ({
-    token: useLocalStorage('access_token', ''),
-    loadingChangePassword: false, // ✅ FIX: Fixed typo
+    loadingChangePassword: false,
     permissions: [] as string[],
     lang: 'en'
   }),
 
-  hydrate(state) {
-    // Re-initialize localStorage refs on client hydration
-    state.token = useLocalStorage('access_token', '').value;
+  getters: {
+    /** Read token from cookie (consistent with middleware & useApiFetch) */
+    token(): string {
+      if (import.meta.server) return '';
+      const cookie = useCookie('access_token', {
+        path: '/',
+        maxAge: 60 * 60 * 24 * 7,
+        sameSite: 'lax' as const
+      });
+      return cookie.value || '';
+    }
   },
 
   actions: {
     setLocale(lang: string) {
       this.lang = lang;
-      // Note: useGqlHeaders should be imported if used
-      // useGqlHeaders({ lang: `eg-${this.lang}` });
     },
 
     setData(token: string) {
-      useLocalStorage('access_token', token);
-      this.token = token;
+      const cookie = useCookie('access_token', {
+        path: '/',
+        maxAge: 60 * 60 * 24 * 7,
+        sameSite: 'lax' as const
+      });
+      cookie.value = token;
     },
 
     async changePassword(input: { oldPassword: string; password: string; confirmPassword: string }) {
-      this.loadingChangePassword = true; // ✅ FIX: Using 'this' instead of calling store again
+      this.loadingChangePassword = true;
 
       try {
-        // ✅ FIX: Using REST API instead of non-existent GraphQL
         const response = await useApiFetch('auth/change-password', 'POST', {
           oldPassword: input.oldPassword,
           newPassword: input.password,
@@ -74,8 +82,22 @@ export const useAuthStore = defineStore('auth', {
     },
 
     async logout() {
-      this.token = '';
-      useLocalStorage('access_token', '');
+      // Clear the cookie (the source of truth)
+      const cookie = useCookie('access_token', {
+        path: '/',
+        maxAge: 60 * 60 * 24 * 7,
+        sameSite: 'lax' as const
+      });
+      cookie.value = null;
+
+      // Clear cached user data
+      user.value = null;
+
+      // Also clear any legacy localStorage entry
+      if (import.meta.client) {
+        localStorage.removeItem('access_token');
+      }
+
       navigateTo('/login');
     }
   }

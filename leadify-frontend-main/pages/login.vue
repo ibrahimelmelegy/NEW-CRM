@@ -216,7 +216,11 @@ const onSubmit = handleSubmit(async (values: any) => {
     }
 
     if (response.success && response.body?.token) {
-      const accessToken = useCookie('access_token');
+      const accessToken = useCookie('access_token', {
+        path: '/',
+        maxAge: 60 * 60 * 24 * 7, // 7 days
+        sameSite: 'lax' as const
+      });
       accessToken.value = response.body.token;
 
       ElNotification({
@@ -241,7 +245,11 @@ const onSubmit = handleSubmit(async (values: any) => {
 });
 
 function onTwoFactorVerified(token: string) {
-  const accessToken = useCookie('access_token');
+  const accessToken = useCookie('access_token', {
+    path: '/',
+    maxAge: 60 * 60 * 24 * 7,
+    sameSite: 'lax' as const
+  });
   accessToken.value = token;
 
   ElNotification({

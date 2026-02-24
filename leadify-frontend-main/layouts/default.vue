@@ -163,16 +163,14 @@ function openNav() {
 }
 async function logout() {
   const response = await useApiFetch('auth/logout', 'POST');
-  if (response?.success) {
-    router.push('/login');
-    const accessToken = useCookie('access_token');
-    accessToken.value = '';
-    ElNotification({
-      title: response.success ? t('common.success') : t('common.error'),
-      type: response.success ? 'success' : 'error',
-      message: response.message
-    });
-  }
+  const accessToken = useCookie('access_token', { path: '/', maxAge: 60 * 60 * 24 * 7, sameSite: 'lax' as const });
+  accessToken.value = null;
+  ElNotification({
+    title: response?.success ? t('common.success') : t('common.error'),
+    type: response?.success ? 'success' : 'error',
+    message: response?.message || 'Logged out'
+  });
+  router.push('/login');
 }
 
 checkwidth();

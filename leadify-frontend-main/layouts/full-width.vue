@@ -114,22 +114,14 @@ function openNav() {
 }
 async function logout() {
   const response = await useApiFetch('auth/logout', 'POST');
-  if (response?.message === 'Logged out successfully') {
-    router.push('/login');
-    const accessToken = useCookie('access_token');
-    accessToken.value = '';
-    ElNotification({
-      title: 'Success',
-      type: 'success',
-      message: response.message
-    });
-  } else {
-    ElNotification({
-      title: 'Error',
-      type: 'error',
-      message: response.message
-    });
-  }
+  const accessToken = useCookie('access_token', { path: '/', maxAge: 60 * 60 * 24 * 7, sameSite: 'lax' as const });
+  accessToken.value = null;
+  ElNotification({
+    title: response?.success ? 'Success' : 'Error',
+    type: response?.success ? 'success' : 'error',
+    message: response?.message || 'Logged out'
+  });
+  router.push('/login');
 }
 
 checkwidth();
