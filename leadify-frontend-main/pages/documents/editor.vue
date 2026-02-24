@@ -878,7 +878,7 @@ async function loadInitialData() {
 
 async function loadInvoices() {
   try {
-    const { body, success } = await useApiFetch('invoices/billing?limit=100', 'GET', {}, true);
+    const { body, success } = await useApiFetch('invoices?limit=100', 'GET', {}, true);
     if (success && body) {
       const data = body as any;
       invoicesList.value = (data.docs || data || []).map((inv: any) => ({
@@ -901,7 +901,7 @@ async function loadRecentDocs() {
     switch (selectedType.value) {
       case 'INVOICE':
       case 'PROFORMA_INVOICE':
-        endpoint = 'invoices/billing?limit=5&sort=-createdAt';
+        endpoint = 'invoices?limit=5';
         mapFn = (inv: any) => ({
           id: inv.id,
           number: inv.invoiceNumber || `INV-${inv.id}`,

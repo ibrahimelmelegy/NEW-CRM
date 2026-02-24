@@ -84,12 +84,13 @@ class ProjectController {
       next(error);
     }
   }
-  public async getDraftProject(req: AuthenticatedRequest, res: Response, next: NextFunction): Promise<void> {
+  public async getDraftProject(req: AuthenticatedRequest, res: Response, _next: NextFunction): Promise<void> {
     try {
       const project = await projectService.getDraftProject(req.user as User);
       wrapResult(res, project, 200);
-    } catch (error) {
-      next(error);
+    } catch {
+      // No draft exists — return 200 with null (not an error condition)
+      wrapResult(res, null, 200);
     }
   }
 
