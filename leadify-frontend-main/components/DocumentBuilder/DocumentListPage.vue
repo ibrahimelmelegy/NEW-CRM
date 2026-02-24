@@ -173,8 +173,6 @@ const props = withDefaults(defineProps<{
   color: '#7c3aed'
 });
 
-definePageMeta({ middleware: 'permissions' });
-
 const { documents, loading, pagination, stats, fetchDocuments, deleteDocument, changeStatus, getStats, createDocument, generatePdf } = useDocBuilder();
 
 // Page config
