@@ -7,25 +7,13 @@
     <div class="relative z-10 w-full max-w-[1200px] px-4 flex flex-col md:flex-row items-center justify-between gap-12 lg:gap-20">
       <!-- Brand & Visual Section -->
       <div class="hidden md:flex flex-1 flex-col items-start space-y-8 animate-fade-in-left">
-        <!-- ✅ FIX: Reliable theme-based logo switch -->
-        <template v-if="themeStore.isLight">
-          <NuxtImg
-            src="/images/Logo.png"
-            alt="High Point Technology CRM"
-            format="webp"
-            quality="80"
-            class="h-16 w-auto drop-shadow-[0_0_15px_rgba(0,0,0,0.1)] transition-all duration-500"
-          />
-        </template>
-        <template v-else>
-          <NuxtImg
-            src="/images/light-logo.png"
-            alt="High Point Technology CRM"
-            format="webp"
-            quality="80"
-            class="h-16 w-auto drop-shadow-[0_0_15px_rgba(255,255,255,0.3)] transition-all duration-500 light-logo-shadow"
-          />
-        </template>
+        <!-- Theme-based logo switch -->
+        <img
+          :src="themeStore.isLight ? '/images/Logo.png' : '/images/light-logo.png'"
+          alt="High Point Technology CRM"
+          class="h-16 w-auto transition-all duration-500"
+          :class="themeStore.isLight ? 'drop-shadow-[0_0_15px_rgba(0,0,0,0.1)]' : 'drop-shadow-[0_0_15px_rgba(255,255,255,0.3)]'"
+        />
         <div class="space-y-4">
           <h2 class="text-4xl lg:text-5xl font-bold leading-tight theme-text-primary">
             {{ $t('auth.elevateExperience') }}
@@ -166,11 +154,6 @@ const loading = ref(false);
 const show2FA = ref(false);
 const savedEmail = ref('');
 const savedPassword = ref('');
-
-// Dynamic Logo Logic
-const logoSrc = computed(() => {
-  return themeStore.isLight ? '/images/Logo.png' : '/images/light-logo.png';
-});
 
 onMounted(() => {
   themeStore.initializeTheme();

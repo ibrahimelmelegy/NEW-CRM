@@ -24,7 +24,8 @@ div(class="animate-fade-in")
                 p.text-sm {{ $t('leads.import') }}
 
   //- KPI Metrics
-  PremiumKPICards(:metrics="kpiMetrics" v-if="!loadingAction")
+  .leads-kpi-grid
+    PremiumKPICards(:metrics="kpiMetrics" v-if="!loadingAction")
 
   input(type="file", ref="fileInput", style="display: none", accept=".xls,.xlsx", @change="handleFileChange")
   // Spinner
@@ -32,29 +33,105 @@ div(class="animate-fade-in")
   BulkActions(:count="selectedRows.length" :actions="['delete', 'export']" @bulk-delete="handleBulkDelete" @bulk-export="handleBulkExport" @clear-selection="selectedRows = []")
   SavedViews(:entityType="'lead'" :currentFilters="currentFilters" @apply-view="handleApplyView")
   AdvancedSearch(:entityType="'lead'" :fields="advancedSearchFields" @apply="handleAdvancedFilter" @clear="handleClearAdvancedFilter")
-  AppTable(v-slot="{data}"  v-if="!loadingAction" :externalLoading="loading" :filterOptions="filterOptions" :columns="table.columns" position="lead" :pageInfo="response.pagination"  :data="table.data" :sortOptions="table.sort" @handleRowClick="handleRowClick" :searchPlaceholder="$t('leads.title')" :key="table.data" )
-    .flex.items-center.py-2(@click.stop)
-        //- NuxtLink.toggle-icon(:to="`/leads/1`")
-        //-     Icon.text-md(name="IconEye" )
 
-        el-dropdown(class="outline-0" trigger="click")
-            span(class="el-dropdown-link")
-              .toggle-icon.text-md
-                  Icon(name="IconToggle"  size="22")
-            template(#dropdown='')
-                el-dropdown-menu
-                    el-dropdown-item
-                      NuxtLink.flex.items-center(:to="`/sales/leads/${data?.id}`")
-                        Icon.text-md.mr-2(name="IconEye" )
-                        p.text-sm {{ $t('leads.view') }}
-                    el-dropdown-item( v-if="hasPermission('EDIT_LEADS')")
-                      NuxtLink.flex.items-center(:to="`/sales/leads/edit/${data?.id}`")
-                        Icon.text-md.mr-2(name="IconEdit" )
-                        p.text-sm {{ $t('leads.edit') }}
-                    //- el-dropdown-item(@click="[deleteLeadPopup=true, userActionId = data?.id]" )
-                    //-     .flex.items-center
-                    //-       Icon.text-md.mr-2(name="IconDelete" )
-                    //-       p.text-sm {{ $t('leads.delete') }}
+  //- Desktop Table View
+  .leads-desktop-view
+    AppTable(v-slot="{data}"  v-if="!loadingAction" :externalLoading="loading" :filterOptions="filterOptions" :columns="table.columns" position="lead" :pageInfo="response.pagination"  :data="table.data" :sortOptions="table.sort" @handleRowClick="handleRowClick" :searchPlaceholder="$t('leads.title')" :key="table.data" )
+      .flex.items-center.py-2(@click.stop)
+          el-dropdown(class="outline-0" trigger="click")
+              span(class="el-dropdown-link")
+                .toggle-icon.text-md
+                    Icon(name="IconToggle"  size="22")
+              template(#dropdown='')
+                  el-dropdown-menu
+                      el-dropdown-item
+                        NuxtLink.flex.items-center(:to="`/sales/leads/${data?.id}`")
+                          Icon.text-md.mr-2(name="IconEye" )
+                          p.text-sm {{ $t('leads.view') }}
+                      el-dropdown-item( v-if="hasPermission('EDIT_LEADS')")
+                        NuxtLink.flex.items-center(:to="`/sales/leads/edit/${data?.id}`")
+                          Icon.text-md.mr-2(name="IconEdit" )
+                          p.text-sm {{ $t('leads.edit') }}
+
+  //- Mobile Card View
+  .leads-mobile-view(v-if="!loadingAction && !loading")
+    //- Mobile Search
+    .mb-4
+      el-input(
+        v-model="mobileSearch"
+        size="large"
+        :placeholder="`${$t('common.search')} ${$t('leads.title')}`"
+        clearable
+        class="!rounded-xl"
+      )
+        template(#prefix)
+          Icon(name="ph:magnifying-glass" size="18" style="color: var(--text-muted)")
+
+    //- Lead Cards
+    .space-y-3
+      .lead-card.glass-card.rounded-2xl.overflow-hidden(
+        v-for="lead in mobileFilteredData"
+        :key="lead.id"
+        @click="handleRowClick(lead)"
+      )
+        .p-4
+          .flex.items-start.justify-between.mb-3
+            .flex.items-center.gap-3.min-w-0.flex-1
+              .lead-avatar.w-10.h-10.rounded-xl.flex.items-center.justify-center.shrink-0.text-sm.font-bold(
+                :style="{ background: getLeadColor(lead.status) + '20', color: getLeadColor(lead.status) }"
+              ) {{ getLeadInitial(lead) }}
+              .min-w-0.flex-1
+                p.text-sm.font-bold.truncate(style="color: var(--text-primary)") {{ lead.leadDetails?.title || lead.name || '--' }}
+                p.text-xs.truncate(style="color: var(--text-muted)") {{ lead.leadDetails?.text || lead.companyName || '' }}
+            el-tag.shrink-0(
+              :type="getStatusType(lead.status)"
+              size="small"
+              effect="dark"
+              round
+            ) {{ lead.status }}
+
+          .grid.grid-cols-2.gap-2
+            .flex.items-center.gap-2(v-if="lead.phone")
+              Icon(name="ph:phone" size="14" style="color: var(--text-muted)")
+              a.text-xs.truncate(
+                :href="`tel:${lead.phone}`"
+                style="color: var(--text-secondary)"
+                @click.stop
+              ) {{ lead.phone }}
+            .flex.items-center.gap-2(v-if="lead.leadSource")
+              Icon(name="ph:funnel" size="14" style="color: var(--text-muted)")
+              span.text-xs.truncate(style="color: var(--text-secondary)") {{ lead.leadSource }}
+            .flex.items-center.gap-2(v-if="lead.assign")
+              Icon(name="ph:user" size="14" style="color: var(--text-muted)")
+              span.text-xs.truncate(style="color: var(--text-secondary)") {{ lead.assign }}
+            .flex.items-center.gap-2(v-if="lead.createdAt")
+              Icon(name="ph:calendar" size="14" style="color: var(--text-muted)")
+              span.text-xs.truncate(style="color: var(--text-secondary)") {{ lead.createdAt }}
+
+        //- Card action bar
+        .flex.items-center.justify-between.px-4.py-2(style="border-top: 1px solid var(--glass-border, rgba(255,255,255,0.08))")
+          .flex.items-center.gap-1
+            el-button(text size="small" @click.stop="navigateTo(`/sales/leads/${lead.id}`)")
+              Icon(name="ph:eye" size="16")
+              span.ml-1.text-xs {{ $t('leads.view') }}
+            el-button(v-if="hasPermission('EDIT_LEADS')" text size="small" @click.stop="navigateTo(`/sales/leads/edit/${lead.id}`)")
+              Icon(name="ph:pencil-simple" size="16")
+              span.ml-1.text-xs {{ $t('leads.edit') }}
+          .flex.items-center.gap-1
+            a.p-2.rounded-lg(v-if="lead.phone" :href="`tel:${lead.phone}`" @click.stop style="color: var(--accent-color, #7849ff)")
+              Icon(name="ph:phone-bold" size="18")
+            a.p-2.rounded-lg(v-if="lead.email" :href="`mailto:${lead.email}`" @click.stop style="color: var(--accent-color, #7849ff)")
+              Icon(name="ph:envelope-bold" size="18")
+
+    //- Empty state
+    .text-center.py-12(v-if="!mobileFilteredData.length")
+      Icon(name="ph:users-three" size="48" style="color: var(--text-muted)")
+      p.text-sm.mt-2(style="color: var(--text-muted)") {{ $t('common.noData') }}
+
+    //- Mobile result count
+    .text-center.mt-4(v-if="mobileFilteredData.length")
+      span.text-xs(style="color: var(--text-muted)") {{ mobileFilteredData.length }} {{ $t('leads.title').toLowerCase() }}
+
   ActionModel(v-model="qualifiedLeadPopup" :loading="loadingAction" :btn-text="$t('common.save')" :description="$t('leads.confirmConversion')" @confirm = "editPresent" )
    template(#input)
     InputSelect(:label="$t('leads.present')" @change ="setPresent" :options="leadPresent"  )
@@ -334,6 +411,46 @@ const exportColumns = [
 ];
 const exportData = computed(() => table.value.data);
 
+// Mobile card view
+const mobileSearch = ref('');
+const mobileFilteredData = computed(() => {
+  const data = table.value.data || [];
+  if (!mobileSearch.value) return data;
+  const q = mobileSearch.value.toLowerCase();
+  return data.filter((lead: any) => {
+    const name = (lead.leadDetails?.title || lead.name || '').toLowerCase();
+    const company = (lead.leadDetails?.text || lead.companyName || '').toLowerCase();
+    const email = (lead.email || '').toLowerCase();
+    const phone = (lead.phone || '').toLowerCase();
+    return name.includes(q) || company.includes(q) || email.includes(q) || phone.includes(q);
+  });
+});
+
+function getLeadInitial(lead: any): string {
+  const name = lead.leadDetails?.title || lead.name || '?';
+  return name.charAt(0).toUpperCase();
+}
+
+function getLeadColor(status: string): string {
+  const map: Record<string, string> = {
+    NEW: '#7849ff',
+    CONTACTED: '#3b82f6',
+    QUALIFIED: '#10b981',
+    DISQUALIFIED: '#ef4444'
+  };
+  return map[status] || '#94a3b8';
+}
+
+function getStatusType(status: string): string {
+  const map: Record<string, string> = {
+    NEW: 'primary',
+    CONTACTED: '',
+    QUALIFIED: 'success',
+    DISQUALIFIED: 'danger'
+  };
+  return map[status] || 'info';
+}
+
 // Bulk actions
 const selectedRows = ref<any[]>([]);
 
@@ -407,3 +524,83 @@ const handleFileChange = async (event: Event) => {
   }
 };
 </script>
+
+<style lang="scss" scoped>
+// Mobile: show card view, hide table
+.leads-mobile-view {
+  display: none;
+}
+
+@media (max-width: 767px) {
+  .leads-mobile-view {
+    display: block;
+  }
+
+  .leads-desktop-view {
+    display: none;
+  }
+
+  // KPI cards: 2-column grid on mobile instead of 1
+  .leads-kpi-grid :deep(.premium-kpi-cards) {
+    grid-template-columns: repeat(2, 1fr) !important;
+    gap: 10px !important;
+    margin-bottom: 16px !important;
+  }
+
+  .leads-kpi-grid :deep(.kpi-card) {
+    padding: 14px !important;
+
+    .text-3xl {
+      font-size: 1.4rem !important;
+    }
+
+    .text-sm {
+      font-size: 0.65rem !important;
+    }
+
+    .w-10 {
+      width: 32px !important;
+      height: 32px !important;
+    }
+  }
+
+  // Header: wrap actions
+  :deep(.premium-page-header) {
+    margin-bottom: 16px !important;
+
+    .actions {
+      flex-wrap: wrap;
+      gap: 8px !important;
+      width: 100%;
+    }
+
+    .actions .el-button {
+      font-size: 13px !important;
+      padding: 8px 12px !important;
+    }
+
+    .content h1 {
+      font-size: 1.3rem !important;
+    }
+  }
+
+  // Lead cards
+  .lead-card {
+    cursor: pointer;
+    transition: all 0.2s ease;
+    -webkit-tap-highlight-color: transparent;
+
+    &:active {
+      transform: scale(0.98);
+      opacity: 0.9;
+    }
+  }
+}
+
+// Tablet: keep table but allow card view toggle
+@media (min-width: 768px) and (max-width: 1024px) {
+  .leads-kpi-grid :deep(.premium-kpi-cards) {
+    grid-template-columns: repeat(2, 1fr) !important;
+  }
+}
+</style>
