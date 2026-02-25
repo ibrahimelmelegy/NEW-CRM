@@ -116,3 +116,19 @@ sequelize
   .catch((err: Error) => {
     console.error('Unable to connect to the database:', err);
   });
+
+// Global error handlers - prevent silent crashes in production
+process.on('uncaughtException', (err) => {
+  console.error('[FATAL] Uncaught Exception:', err);
+  process.exit(1);
+});
+
+process.on('unhandledRejection', (reason) => {
+  console.error('[FATAL] Unhandled Rejection:', reason);
+  process.exit(1);
+});
+
+process.on('SIGTERM', () => {
+  console.log('[Shutdown] SIGTERM received, closing gracefully...');
+  server.close(() => process.exit(0));
+});
