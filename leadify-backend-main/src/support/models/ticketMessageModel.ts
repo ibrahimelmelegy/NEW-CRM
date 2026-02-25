@@ -1,12 +1,4 @@
-import {
-  Column,
-  DataType,
-  Default,
-  ForeignKey,
-  BelongsTo,
-  Model,
-  Table
-} from 'sequelize-typescript';
+import { Column, DataType, Default, ForeignKey, BelongsTo, Model, Table } from 'sequelize-typescript';
 import Ticket from './ticketModel';
 
 export enum SenderType {

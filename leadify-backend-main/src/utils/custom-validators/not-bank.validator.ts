@@ -15,9 +15,9 @@ export function IsNotBlank(validationOptions?: ValidationOptions) {
         validate(value: any) {
           return typeof value === 'string' && value.trim().length > 0;
         },
-        defaultMessage: (options) => `${options!.property} must not be blank`,
-      },
+        defaultMessage: options => `${options!.property} must not be blank`
+      }
     },
-    validationOptions,
+    validationOptions
   );
 }

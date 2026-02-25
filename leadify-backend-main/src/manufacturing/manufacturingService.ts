@@ -13,14 +13,14 @@ class ManufacturingService {
     return BOM.findAll({
       where: { ...tenantWhere(user) },
       include: [{ model: BOMItem, as: 'items' }],
-      order: [['createdAt', 'DESC']],
+      order: [['createdAt', 'DESC']]
     });
   }
 
   async getBOMById(id: number, user: any) {
     const bom = await BOM.findOne({
       where: { id, ...tenantWhere(user) },
-      include: [{ model: BOMItem, as: 'items' }],
+      include: [{ model: BOMItem, as: 'items' }]
     });
     if (!bom) throw new Error('BOM not found');
     return bom;
@@ -30,27 +30,33 @@ class ManufacturingService {
     const t = await sequelize.transaction();
     try {
       const bom = await BOM.create(
-        tenantCreate({
-          productName: data.productName,
-          code: data.code,
-          version: data.version || 1,
-          isActive: data.isActive ?? false,
-          totalCost: 0,
-        }, user),
-        { transaction: t },
+        tenantCreate(
+          {
+            productName: data.productName,
+            code: data.code,
+            version: data.version || 1,
+            isActive: data.isActive ?? false,
+            totalCost: 0
+          },
+          user
+        ),
+        { transaction: t }
       );
 
       let totalCost = 0;
       if (data.items?.length) {
         for (const item of data.items) {
-          await BOMItem.create({
-            bomId: bom.id,
-            name: item.name,
-            type: item.type || 'RAW',
-            quantity: item.quantity || 1,
-            unit: item.unit || 'pc',
-            unitCost: item.unitCost || 0,
-          }, { transaction: t });
+          await BOMItem.create(
+            {
+              bomId: bom.id,
+              name: item.name,
+              type: item.type || 'RAW',
+              quantity: item.quantity || 1,
+              unit: item.unit || 'pc',
+              unitCost: item.unitCost || 0
+            },
+            { transaction: t }
+          );
           totalCost += (item.quantity || 1) * (item.unitCost || 0);
         }
         await bom.update({ totalCost }, { transaction: t });
@@ -70,25 +76,31 @@ class ManufacturingService {
 
     const t = await sequelize.transaction();
     try {
-      await bom.update({
-        productName: data.productName ?? bom.productName,
-        code: data.code ?? bom.code,
-        version: data.version ?? bom.version,
-        isActive: data.isActive ?? bom.isActive,
-      }, { transaction: t });
+      await bom.update(
+        {
+          productName: data.productName ?? bom.productName,
+          code: data.code ?? bom.code,
+          version: data.version ?? bom.version,
+          isActive: data.isActive ?? bom.isActive
+        },
+        { transaction: t }
+      );
 
       if (data.items) {
         await BOMItem.destroy({ where: { bomId: id }, transaction: t });
         let totalCost = 0;
         for (const item of data.items) {
-          await BOMItem.create({
-            bomId: id,
-            name: item.name,
-            type: item.type || 'RAW',
-            quantity: item.quantity || 1,
-            unit: item.unit || 'pc',
-            unitCost: item.unitCost || 0,
-          }, { transaction: t });
+          await BOMItem.create(
+            {
+              bomId: id,
+              name: item.name,
+              type: item.type || 'RAW',
+              quantity: item.quantity || 1,
+              unit: item.unit || 'pc',
+              unitCost: item.unitCost || 0
+            },
+            { transaction: t }
+          );
           totalCost += (item.quantity || 1) * (item.unitCost || 0);
         }
         await bom.update({ totalCost }, { transaction: t });
@@ -118,8 +130,12 @@ class ManufacturingService {
       version: 1,
       isActive: false,
       items: original.items?.map((i: any) => ({
-        name: i.name, type: i.type, quantity: i.quantity, unit: i.unit, unitCost: i.unitCost,
-      })),
+        name: i.name,
+        type: i.type,
+        quantity: i.quantity,
+        unit: i.unit,
+        unitCost: i.unitCost
+      }))
     };
     return this.createBOM(data, user);
   }
@@ -132,7 +148,7 @@ class ManufacturingService {
 
     const last = await WorkOrder.findOne({
       where,
-      order: [['id', 'DESC']],
+      order: [['id', 'DESC']]
     });
     const num = last ? parseInt(last.woNumber.replace('WO-', ''), 10) + 1 : 1;
     return `WO-${String(num).padStart(3, '0')}`;
@@ -145,14 +161,14 @@ class ManufacturingService {
 
     return WorkOrder.findAll({
       where,
-      order: [['createdAt', 'DESC']],
+      order: [['createdAt', 'DESC']]
     });
   }
 
   async getWorkOrderById(id: number, user: any) {
     const wo = await WorkOrder.findOne({
       where: { id, ...tenantWhere(user) },
-      include: [{ model: BOM, as: 'bom', include: [{ model: BOMItem, as: 'items' }] }],
+      include: [{ model: BOM, as: 'bom', include: [{ model: BOMItem, as: 'items' }] }]
     });
     if (!wo) throw new Error('Work order not found');
     return wo;
@@ -173,17 +189,20 @@ class ManufacturingService {
     }
 
     return WorkOrder.create(
-      tenantCreate({
-        woNumber,
-        productName,
-        bomId: data.bomId || null,
-        bomCode,
-        planned: data.quantity || data.planned || 0,
-        produced: 0,
-        priority: data.priority || 'NORMAL',
-        status: 'PLANNED',
-        dueDate: data.dueDate || null,
-      }, user),
+      tenantCreate(
+        {
+          woNumber,
+          productName,
+          bomId: data.bomId || null,
+          bomCode,
+          planned: data.quantity || data.planned || 0,
+          produced: 0,
+          priority: data.priority || 'NORMAL',
+          status: 'PLANNED',
+          dueDate: data.dueDate || null
+        },
+        user
+      )
     );
   }
 
@@ -209,7 +228,7 @@ class ManufacturingService {
   async getQualityChecks(user: any) {
     return QualityCheck.findAll({
       where: { ...tenantWhere(user) },
-      order: [['createdAt', 'DESC']],
+      order: [['createdAt', 'DESC']]
     });
   }
 
@@ -219,16 +238,19 @@ class ManufacturingService {
     const result = passRate >= 0.95 ? 'PASS' : 'FAIL';
 
     return QualityCheck.create(
-      tenantCreate({
-        workOrderId: data.workOrderId || null,
-        woNumber: data.woNumber || null,
-        product: data.product || null,
-        inspector: data.inspector || null,
-        inspected: data.inspected || 0,
-        passed: data.passed || 0,
-        defects,
-        result: data.result || result,
-      }, user),
+      tenantCreate(
+        {
+          workOrderId: data.workOrderId || null,
+          woNumber: data.woNumber || null,
+          product: data.product || null,
+          inspector: data.inspector || null,
+          inspected: data.inspected || 0,
+          passed: data.passed || 0,
+          defects,
+          result: data.result || result
+        },
+        user
+      )
     );
   }
 
@@ -242,11 +264,11 @@ class ManufacturingService {
       WorkOrder.count({ where }),
       WorkOrder.count({ where: { ...where, status: 'COMPLETED' } }),
       WorkOrder.count({ where: { ...where, status: 'IN_PROGRESS' } }),
-      QualityCheck.count({ where: { ...where, result: 'FAIL' } }),
+      QualityCheck.count({ where: { ...where, result: 'FAIL' } })
     ]);
 
-    const totalPlanned = await WorkOrder.sum('planned', { where: { ...where, status: { [Op.in]: ['IN_PROGRESS', 'COMPLETED'] } } }) || 0;
-    const totalProduced = await WorkOrder.sum('produced', { where: { ...where, status: { [Op.in]: ['IN_PROGRESS', 'COMPLETED'] } } }) || 0;
+    const totalPlanned = (await WorkOrder.sum('planned', { where: { ...where, status: { [Op.in]: ['IN_PROGRESS', 'COMPLETED'] } } })) || 0;
+    const totalProduced = (await WorkOrder.sum('produced', { where: { ...where, status: { [Op.in]: ['IN_PROGRESS', 'COMPLETED'] } } })) || 0;
     const efficiency = totalPlanned > 0 ? Math.round((totalProduced / totalPlanned) * 100) : 0;
 
     return { bomCount, woCount, completed, inProgress, qualityIssues, efficiency };

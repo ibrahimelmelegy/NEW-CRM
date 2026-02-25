@@ -9,7 +9,11 @@ import { Uploader } from './uploader.model';
 class UploaderService {
   // Allowed MIME types
   private static readonly ALLOWED_MIME_TYPES = [
-    'image/jpeg', 'image/png', 'image/gif', 'image/webp', 'image/svg+xml',
+    'image/jpeg',
+    'image/png',
+    'image/gif',
+    'image/webp',
+    'image/svg+xml',
     'application/pdf',
     'application/msword',
     'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
@@ -37,9 +41,7 @@ class UploaderService {
     }
 
     // Sanitize filename: remove path traversal characters
-    const sanitizedName = input.name
-      .replace(/\.\./g, '')
-      .replace(/[^a-zA-Z0-9._-]/g, '_');
+    const sanitizedName = input.name.replace(/\.\./g, '').replace(/[^a-zA-Z0-9._-]/g, '_');
 
     // Generate safe file path
     const filePath = new Date().getTime().toString() + '-' + sanitizedName;

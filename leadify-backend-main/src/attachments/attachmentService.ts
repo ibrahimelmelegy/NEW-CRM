@@ -11,7 +11,10 @@ class AttachmentService {
     return { docs: attachments };
   }
 
-  async createAttachment(data: { entityType: string; entityId: number; fileUrl: string; fileName: string; fileSize?: number; mimeType?: string }, userId: number) {
+  async createAttachment(
+    data: { entityType: string; entityId: number; fileUrl: string; fileName: string; fileSize?: number; mimeType?: string },
+    userId: number
+  ) {
     return Attachment.create({ ...data, uploadedBy: userId });
   }
 

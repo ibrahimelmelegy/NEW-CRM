@@ -94,14 +94,10 @@ class GoogleDriveConnector {
       const delimiter = `\r\n--${boundary}\r\n`;
       const closeDelimiter = `\r\n--${boundary}--`;
 
-      const metaPart = delimiter +
-        'Content-Type: application/json; charset=UTF-8\r\n\r\n' +
-        JSON.stringify(metadata);
+      const metaPart = delimiter + 'Content-Type: application/json; charset=UTF-8\r\n\r\n' + JSON.stringify(metadata);
 
-      const mediaPart = delimiter +
-        `Content-Type: ${file.mimeType}\r\n` +
-        'Content-Transfer-Encoding: base64\r\n\r\n' +
-        file.content.toString('base64');
+      const mediaPart =
+        delimiter + `Content-Type: ${file.mimeType}\r\n` + 'Content-Transfer-Encoding: base64\r\n\r\n' + file.content.toString('base64');
 
       const requestBody = metaPart + mediaPart + closeDelimiter;
 
@@ -139,10 +135,7 @@ class GoogleDriveConnector {
   /**
    * List files in a Google Drive folder.
    */
-  async listFiles(
-    folderId: string | undefined,
-    config: GoogleDriveConfig
-  ): Promise<{ success: boolean; files: DriveFile[]; message: string }> {
+  async listFiles(folderId: string | undefined, config: GoogleDriveConfig): Promise<{ success: boolean; files: DriveFile[]; message: string }> {
     try {
       const accessToken = await this.getAccessToken(config);
       const targetFolder = folderId || config.folderId || 'root';

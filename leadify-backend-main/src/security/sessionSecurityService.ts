@@ -62,18 +62,8 @@ class SessionSecurityService {
   /**
    * Get paginated login history for a user with optional filters.
    */
-  public async getLoginHistory(
-    userId: number,
-    tenantId: string | undefined,
-    filters: LoginHistoryFilters = {}
-  ) {
-    const {
-      page = 1,
-      limit = 20,
-      status,
-      startDate,
-      endDate
-    } = filters;
+  public async getLoginHistory(userId: number, tenantId: string | undefined, filters: LoginHistoryFilters = {}) {
+    const { page = 1, limit = 20, status, startDate, endDate } = filters;
 
     const where: any = { userId };
 
@@ -135,7 +125,7 @@ class SessionSecurityService {
       order: [['expiresAt', 'DESC']]
     });
 
-    return sessions.map((session) => ({
+    return sessions.map(session => ({
       id: session.id,
       userId: session.userId,
       token: session.token,
@@ -248,12 +238,7 @@ class SessionSecurityService {
   /**
    * Add an IP address to the whitelist.
    */
-  public async addIPWhitelist(
-    ip: string,
-    label: string,
-    userId: number,
-    tenantId?: string
-  ): Promise<IPWhitelist> {
+  public async addIPWhitelist(ip: string, label: string, userId: number, tenantId?: string): Promise<IPWhitelist> {
     // Check for duplicate IP within the same tenant
     const existing = await IPWhitelist.findOne({
       where: {

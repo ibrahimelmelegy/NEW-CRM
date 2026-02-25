@@ -63,10 +63,7 @@ class TaskService {
       if (dueDateTo) (where.dueDate as any)[Op.lte] = new Date(dueDateTo);
     }
     if (search) {
-      where[Op.or as any] = [
-        { title: { [Op.iLike]: `%${search}%` } },
-        { description: { [Op.iLike]: `%${search}%` } }
-      ];
+      where[Op.or as any] = [{ title: { [Op.iLike]: `%${search}%` } }, { description: { [Op.iLike]: `%${search}%` } }];
     }
 
     const allowedSortFields = ['createdAt', 'dueDate', 'priority', 'status', 'title', 'updatedAt'];
@@ -103,9 +100,7 @@ class TaskService {
         {
           model: Task,
           as: 'subtasks',
-          include: [
-            { model: User, as: 'assignee', attributes: userAttributes }
-          ]
+          include: [{ model: User, as: 'assignee', attributes: userAttributes }]
         },
         {
           model: Task,
@@ -230,15 +225,7 @@ class TaskService {
     const startOfToday = new Date(now.getFullYear(), now.getMonth(), now.getDate());
     const endOfToday = new Date(now.getFullYear(), now.getMonth(), now.getDate(), 23, 59, 59, 999);
 
-    const [
-      totalCount,
-      pendingCount,
-      inProgressCount,
-      completedCount,
-      cancelledCount,
-      overdueCount,
-      dueTodayCount
-    ] = await Promise.all([
+    const [totalCount, pendingCount, inProgressCount, completedCount, cancelledCount, overdueCount, dueTodayCount] = await Promise.all([
       Task.count({ where }),
       Task.count({ where: { ...where, status: TaskStatus.PENDING } }),
       Task.count({ where: { ...where, status: TaskStatus.IN_PROGRESS } }),

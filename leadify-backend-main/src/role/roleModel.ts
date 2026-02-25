@@ -31,7 +31,6 @@ class Role extends Model {
 
   @HasMany(() => User, 'roleId')
   public users!: User[];
-
 }
 
 export default Role;

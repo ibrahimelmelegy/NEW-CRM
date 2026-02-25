@@ -1,20 +1,11 @@
-import {
-  Column,
-  DataType,
-  HasMany,
-  Model,
-  Table,
-} from 'sequelize-typescript';
+import { Column, DataType, HasMany, Model, Table } from 'sequelize-typescript';
 import BOMItem from './bomItemModel';
 
 @Table({
   tableName: 'boms',
   modelName: 'BOM',
   timestamps: true,
-  indexes: [
-    { fields: ['tenantId'] },
-    { fields: ['code'], unique: true },
-  ],
+  indexes: [{ fields: ['tenantId'] }, { fields: ['code'], unique: true }]
 })
 class BOM extends Model {
   @Column({ primaryKey: true, type: DataType.INTEGER, autoIncrement: true })

@@ -1,28 +1,10 @@
-import {
-  AllowNull,
-  BelongsTo,
-  Column,
-  DataType,
-  Default,
-  ForeignKey,
-  Model,
-  Table
-} from 'sequelize-typescript';
+import { AllowNull, BelongsTo, Column, DataType, Default, ForeignKey, Model, Table } from 'sequelize-typescript';
 import User from '../user/userModel';
 
 // ── Condition object stored in the conditions JSONB column ──
 export interface WorkflowCondition {
   field: string;
-  operator:
-  | 'equals'
-  | 'not_equals'
-  | 'contains'
-  | 'greater_than'
-  | 'less_than'
-  | 'is_empty'
-  | 'is_not_empty'
-  | 'in'
-  | 'not_in';
+  operator: 'equals' | 'not_equals' | 'contains' | 'greater_than' | 'less_than' | 'is_empty' | 'is_not_empty' | 'in' | 'not_in';
   value: any;
 }
 
@@ -52,18 +34,7 @@ export enum ConditionLogic {
   OR = 'OR'
 }
 
-export const ENTITY_TYPES = [
-  'lead',
-  'deal',
-  'client',
-  'opportunity',
-  'invoice',
-  'contract',
-  'purchaseOrder',
-  'ticket',
-  'expense',
-  'task'
-] as const;
+export const ENTITY_TYPES = ['lead', 'deal', 'client', 'opportunity', 'invoice', 'contract', 'purchaseOrder', 'ticket', 'expense', 'task'] as const;
 
 export type EntityType = (typeof ENTITY_TYPES)[number];
 
@@ -71,12 +42,7 @@ export type EntityType = (typeof ENTITY_TYPES)[number];
   tableName: 'workflow_rules',
   modelName: 'WorkflowRule',
   timestamps: true,
-  indexes: [
-    { fields: ['entityType'] },
-    { fields: ['triggerType'] },
-    { fields: ['isActive'] },
-    { fields: ['entityType', 'triggerType', 'isActive'] }
-  ]
+  indexes: [{ fields: ['entityType'] }, { fields: ['triggerType'] }, { fields: ['isActive'] }, { fields: ['entityType', 'triggerType', 'isActive'] }]
 })
 class WorkflowRule extends Model {
   @Column({

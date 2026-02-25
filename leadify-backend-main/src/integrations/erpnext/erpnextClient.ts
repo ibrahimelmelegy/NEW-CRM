@@ -60,21 +60,21 @@ function makeRequest(opts: RequestOptions): Promise<{ statusCode: number; body: 
       port: parsed.port || (isHttps ? 443 : 80),
       path: parsed.pathname + parsed.search,
       headers: opts.headers,
-      timeout: opts.timeout || 30000,
+      timeout: opts.timeout || 30000
     };
 
-    const req = lib.request(reqOpts, (res) => {
+    const req = lib.request(reqOpts, res => {
       const chunks: Buffer[] = [];
       res.on('data', (chunk: Buffer) => chunks.push(chunk));
       res.on('end', () => {
         resolve({
           statusCode: res.statusCode || 500,
-          body: Buffer.concat(chunks).toString('utf-8'),
+          body: Buffer.concat(chunks).toString('utf-8')
         });
       });
     });
 
-    req.on('error', (err) => reject(err));
+    req.on('error', err => reject(err));
     req.on('timeout', () => {
       req.destroy();
       reject(new Error('ERPNext request timed out'));
@@ -112,8 +112,8 @@ export class ERPNextClient {
     }
 
     const headers: Record<string, string> = {
-      'Authorization': this.authHeader,
-      'Accept': 'application/json',
+      Authorization: this.authHeader,
+      Accept: 'application/json'
     };
 
     let body: string | undefined;
@@ -133,7 +133,7 @@ export class ERPNextClient {
       console.error(`[ERPNext] Request failed: ${err.message}`);
       throw new ERPNextApiError({
         httpCode: 0,
-        message: `ERPNext connection failed: ${err.message}`,
+        message: `ERPNext connection failed: ${err.message}`
       });
     }
 
@@ -149,7 +149,7 @@ export class ERPNextClient {
       if (response.statusCode >= 400) {
         throw new ERPNextApiError({
           httpCode: response.statusCode,
-          message: `ERPNext returned non-JSON response (HTTP ${response.statusCode})`,
+          message: `ERPNext returned non-JSON response (HTTP ${response.statusCode})`
         });
       }
       parsed = { data: response.body };
@@ -162,7 +162,7 @@ export class ERPNextClient {
         httpCode: response.statusCode,
         message: serverMessages[0] || `ERPNext API error (HTTP ${response.statusCode})`,
         serverMessages,
-        exc_type: parsed.exc_type,
+        exc_type: parsed.exc_type
       });
     }
 
@@ -216,7 +216,14 @@ export class ERPNextClient {
    * List documents of a doctype.
    * GET /api/resource/{doctype}?filters=...&fields=...
    */
-  async getList(doctype: string, filters?: Record<string, any> | Array<[string, string, any]>, fields?: string[], orderBy?: string, limit?: number, offset?: number): Promise<any[]> {
+  async getList(
+    doctype: string,
+    filters?: Record<string, any> | Array<[string, string, any]>,
+    fields?: string[],
+    orderBy?: string,
+    limit?: number,
+    offset?: number
+  ): Promise<any[]> {
     const params: Record<string, string> = {};
 
     if (filters) {

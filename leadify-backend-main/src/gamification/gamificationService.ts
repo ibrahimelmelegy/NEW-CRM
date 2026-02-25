@@ -8,10 +8,7 @@ import UserPoints from './userPointsModel';
 class GamificationService {
   async getLeaderboard(): Promise<any[]> {
     const leaderboard = await UserPoints.findAll({
-      attributes: [
-        'userId',
-        [fn('SUM', col('points')), 'totalPoints']
-      ],
+      attributes: ['userId', [fn('SUM', col('points')), 'totalPoints']],
       include: [
         {
           model: User,
@@ -32,13 +29,7 @@ class GamificationService {
     }));
   }
 
-  async awardPoints(
-    userId: number,
-    points: number,
-    reason: string,
-    entityType?: string,
-    entityId?: string
-  ): Promise<UserPoints> {
+  async awardPoints(userId: number, points: number, reason: string, entityType?: string, entityId?: string): Promise<UserPoints> {
     const user = await User.findByPk(userId);
     if (!user) throw new BaseError(ERRORS.USER_NOT_FOUND);
 
@@ -89,13 +80,7 @@ class GamificationService {
     return achievements;
   }
 
-  async createAchievement(data: {
-    name: string;
-    description?: string;
-    icon?: string;
-    pointsValue: number;
-    criteria?: string;
-  }): Promise<Achievement> {
+  async createAchievement(data: { name: string; description?: string; icon?: string; pointsValue: number; criteria?: string }): Promise<Achievement> {
     const achievement = await Achievement.create(data);
     return achievement;
   }

@@ -85,7 +85,7 @@ export class CreateLeadInput {
 }
 
 export function IsEmailOrPhone(validationOptions?: ValidationOptions) {
-  return function (object: Object, propertyName: string) {
+  return function (object: object, propertyName: string) {
     registerDecorator({
       name: 'isEmailOrPhone',
       target: object.constructor,

@@ -5,11 +5,7 @@ import User from '../user/userModel';
   tableName: 'forecast_periods',
   modelName: 'ForecastPeriod',
   timestamps: true,
-  indexes: [
-    { fields: ['userId'] },
-    { fields: ['period'] },
-    { fields: ['startDate'] }
-  ]
+  indexes: [{ fields: ['userId'] }, { fields: ['period'] }, { fields: ['startDate'] }]
 })
 class ForecastPeriod extends Model {
   @Column({ primaryKey: true, type: DataType.UUID, defaultValue: DataType.UUIDV4 })

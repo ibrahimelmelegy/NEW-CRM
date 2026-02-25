@@ -7,9 +7,7 @@ import Proposal from '../proposal/models/proposalModel';
   tableName: 'proposal_finance_tables',
   modelName: 'ProposalFinanceTable',
   timestamps: true,
-  indexes: [
-    { fields: ['proposalId'] }
-  ]
+  indexes: [{ fields: ['proposalId'] }]
 })
 class ProposalFinanceTable extends Model {
   @Column({

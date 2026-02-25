@@ -1,21 +1,11 @@
-import {
-  BelongsTo,
-  Column,
-  DataType,
-  ForeignKey,
-  Model,
-  Table
-} from 'sequelize-typescript';
+import { BelongsTo, Column, DataType, ForeignKey, Model, Table } from 'sequelize-typescript';
 import User from '../user/userModel';
 
 @Table({
   tableName: 'focus_sessions',
   modelName: 'FocusSession',
   timestamps: true,
-  indexes: [
-    { fields: ['userId'] },
-    { fields: ['startedAt'] }
-  ]
+  indexes: [{ fields: ['userId'] }, { fields: ['startedAt'] }]
 })
 class FocusSession extends Model {
   @Column({

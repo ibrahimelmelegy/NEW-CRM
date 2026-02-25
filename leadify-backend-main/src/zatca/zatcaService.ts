@@ -50,11 +50,7 @@ export interface ZatcaInvoiceQuery {
 function tlvEncode(tag: number, value: string): Buffer {
   const valueBytes = Buffer.from(value, 'utf-8');
   const length = valueBytes.length;
-  return Buffer.concat([
-    Buffer.from([tag]),
-    Buffer.from([length]),
-    valueBytes
-  ]);
+  return Buffer.concat([Buffer.from([tag]), Buffer.from([length]), valueBytes]);
 }
 
 /**
@@ -82,12 +78,7 @@ function generateQRCode(invoice: ZatcaInvoice): string {
 // ---------------------------------------------------------------------------
 
 function escapeXml(str: string): string {
-  return str
-    .replace(/&/g, '&amp;')
-    .replace(/</g, '&lt;')
-    .replace(/>/g, '&gt;')
-    .replace(/"/g, '&quot;')
-    .replace(/'/g, '&apos;');
+  return str.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;').replace(/'/g, '&apos;');
 }
 
 function formatAddress(address: ZatcaAddress, tagName: string): string {
@@ -143,25 +134,20 @@ function generateLineItemXml(item: ZatcaLineItem, index: number): string {
  * Generate UBL 2.1 XML document per ZATCA e-invoicing specification.
  */
 function generateInvoiceXML(invoice: ZatcaInvoice): string {
-  const invoiceTypeCode = invoice.invoiceType === 'STANDARD' || invoice.invoiceType === 'SIMPLIFIED'
-    ? '388'
-    : invoice.invoiceType === 'DEBIT_NOTE'
-      ? '383'
-      : '381'; // CREDIT_NOTE
+  const invoiceTypeCode =
+    invoice.invoiceType === 'STANDARD' || invoice.invoiceType === 'SIMPLIFIED' ? '388' : invoice.invoiceType === 'DEBIT_NOTE' ? '383' : '381'; // CREDIT_NOTE
 
   // Sub-type: 01 = Standard tax invoice, 02 = Simplified tax invoice
   const invoiceSubType = invoice.invoiceType === 'SIMPLIFIED' ? '0200000' : '0100000';
 
-  const lineItemsXml = (invoice.lineItems || [])
-    .map((item, idx) => generateLineItemXml(item, idx))
-    .join('\n');
+  const lineItemsXml = (invoice.lineItems || []).map((item, idx) => generateLineItemXml(item, idx)).join('\n');
 
-  const sellerAddr = typeof invoice.sellerAddress === 'string'
-    ? JSON.parse(invoice.sellerAddress)
-    : invoice.sellerAddress;
+  const sellerAddr = typeof invoice.sellerAddress === 'string' ? JSON.parse(invoice.sellerAddress) : invoice.sellerAddress;
 
   const buyerAddr = invoice.buyerAddress
-    ? (typeof invoice.buyerAddress === 'string' ? JSON.parse(invoice.buyerAddress as any) : invoice.buyerAddress)
+    ? typeof invoice.buyerAddress === 'string'
+      ? JSON.parse(invoice.buyerAddress as any)
+      : invoice.buyerAddress
     : null;
 
   const xml = `<?xml version="1.0" encoding="UTF-8"?>
@@ -177,12 +163,16 @@ function generateInvoiceXML(invoice: ZatcaInvoice): string {
   <cbc:InvoiceTypeCode name="${invoiceSubType}">${invoiceTypeCode}</cbc:InvoiceTypeCode>
   <cbc:DocumentCurrencyCode>SAR</cbc:DocumentCurrencyCode>
   <cbc:TaxCurrencyCode>SAR</cbc:TaxCurrencyCode>
-  ${invoice.previousInvoiceHash ? `<cac:AdditionalDocumentReference>
+  ${
+    invoice.previousInvoiceHash
+      ? `<cac:AdditionalDocumentReference>
     <cbc:ID>PIH</cbc:ID>
     <cac:Attachment>
       <cbc:EmbeddedDocumentBinaryObject mimeCode="text/plain">${invoice.previousInvoiceHash}</cbc:EmbeddedDocumentBinaryObject>
     </cac:Attachment>
-  </cac:AdditionalDocumentReference>` : ''}
+  </cac:AdditionalDocumentReference>`
+      : ''
+  }
   <cac:AdditionalDocumentReference>
     <cbc:ID>QR</cbc:ID>
     <cac:Attachment>
@@ -208,24 +198,36 @@ function generateInvoiceXML(invoice: ZatcaInvoice): string {
   </cac:AccountingSupplierParty>
   <cac:AccountingCustomerParty>
     <cac:Party>
-      ${invoice.buyerVatNumber ? `<cac:PartyIdentification>
+      ${
+        invoice.buyerVatNumber
+          ? `<cac:PartyIdentification>
         <cbc:ID schemeID="CRN">${escapeXml(invoice.buyerVatNumber)}</cbc:ID>
-      </cac:PartyIdentification>` : ''}
+      </cac:PartyIdentification>`
+          : ''
+      }
       ${buyerAddr ? formatAddress(buyerAddr, 'PostalAddress') : ''}
-      ${invoice.buyerVatNumber ? `<cac:PartyTaxScheme>
+      ${
+        invoice.buyerVatNumber
+          ? `<cac:PartyTaxScheme>
         <cbc:CompanyID>${escapeXml(invoice.buyerVatNumber)}</cbc:CompanyID>
         <cac:TaxScheme>
           <cbc:ID>VAT</cbc:ID>
         </cac:TaxScheme>
-      </cac:PartyTaxScheme>` : ''}
+      </cac:PartyTaxScheme>`
+          : ''
+      }
       <cac:PartyLegalEntity>
         <cbc:RegistrationName>${escapeXml(invoice.buyerName)}</cbc:RegistrationName>
       </cac:PartyLegalEntity>
     </cac:Party>
-  </cac:AccountingCustomerParty>${invoice.supplyDate ? `
+  </cac:AccountingCustomerParty>${
+    invoice.supplyDate
+      ? `
   <cac:Delivery>
     <cbc:ActualDeliveryDate>${invoice.supplyDate}</cbc:ActualDeliveryDate>
-  </cac:Delivery>` : ''}
+  </cac:Delivery>`
+      : ''
+  }
   <cac:AllowanceCharge>
     <cbc:ChargeIndicator>false</cbc:ChargeIndicator>
     <cbc:Amount currencyID="SAR">${Number(invoice.totalDiscount).toFixed(2)}</cbc:Amount>
@@ -451,9 +453,7 @@ class ZatcaService {
       clearanceStatus: isSimplified ? null : 'CLEARED',
       validationResults: {
         status: 'PASS',
-        infoMessages: [
-          { type: 'INFO', code: 'XSD_VALID', message: 'Compliant with UBL 2.1 schema' }
-        ],
+        infoMessages: [{ type: 'INFO', code: 'XSD_VALID', message: 'Compliant with UBL 2.1 schema' }],
         warningMessages: [],
         errorMessages: []
       },

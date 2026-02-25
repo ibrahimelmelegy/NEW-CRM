@@ -19,7 +19,7 @@ class ProposalService {
     const content = await ProposalContent.create(data);
 
     // Handle financeTable creation if it exists
-   // await proposalFinanceTableService.createFinanceTable(data, content, user);
+    // await proposalFinanceTableService.createFinanceTable(data, content, user);
     await proposalLogService.createProposalLog(user.id, content.proposalId, ProposalActionEnum.PROPOSAL_CONTENT_CREATED);
     return content;
   }

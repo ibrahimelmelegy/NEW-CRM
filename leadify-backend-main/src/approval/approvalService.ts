@@ -21,13 +21,16 @@ class ApprovalService {
     return ApprovalWorkflow.create(data);
   }
 
-  async updateWorkflow(id: number, data: Partial<{
-    name: string;
-    description: string;
-    entityType: string;
-    steps: Array<{ order: number; approverUserId: number; approverName: string; required: boolean }>;
-    isActive: boolean;
-  }>): Promise<ApprovalWorkflow> {
+  async updateWorkflow(
+    id: number,
+    data: Partial<{
+      name: string;
+      description: string;
+      entityType: string;
+      steps: Array<{ order: number; approverUserId: number; approverName: string; required: boolean }>;
+      isActive: boolean;
+    }>
+  ): Promise<ApprovalWorkflow> {
     const workflow = await ApprovalWorkflow.findByPk(id);
     if (!workflow) throw new BaseError(ERRORS.NOT_FOUND);
     await workflow.update(data);
@@ -91,12 +94,10 @@ class ApprovalService {
       order: [['createdAt', 'DESC']]
     });
 
-    return pendingRequests.filter((request) => {
+    return pendingRequests.filter(request => {
       const workflow = request.workflow;
       if (!workflow || !workflow.steps) return false;
-      const currentStepDef = workflow.steps.find(
-        (s: any) => s.order === request.currentStep
-      );
+      const currentStepDef = workflow.steps.find((s: any) => s.order === request.currentStep);
       return currentStepDef && currentStepDef.approverUserId === userId;
     });
   }

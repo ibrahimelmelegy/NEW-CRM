@@ -90,10 +90,7 @@ class PaymentService {
     }
 
     if (searchKey) {
-      where[Op.or] = [
-        { paymentNumber: { [Op.iLike]: `%${searchKey}%` } },
-        { reference: { [Op.iLike]: `%${searchKey}%` } }
-      ];
+      where[Op.or] = [{ paymentNumber: { [Op.iLike]: `%${searchKey}%` } }, { reference: { [Op.iLike]: `%${searchKey}%` } }];
     }
 
     const { rows: payments, count: totalItems } = await Payment.findAndCountAll({
@@ -195,19 +192,16 @@ class PaymentService {
 
     // Top debtors: clients with highest unpaid invoice amounts
     const topDebtors = await Client.findAll({
-      attributes: [
-        'id',
-        'clientName',
-        'email',
-        [fn('SUM', col('amount')), 'totalOwed']
+      attributes: ['id', 'clientName', 'email', [fn('SUM', col('amount')), 'totalOwed']],
+      include: [
+        {
+          model: Invoice,
+          as: 'invoices',
+          attributes: [],
+          where: { collected: { [Op.or]: [false, null] } },
+          required: true
+        }
       ],
-      include: [{
-        model: Invoice,
-        as: 'invoices',
-        attributes: [],
-        where: { collected: { [Op.or]: [false, null] } },
-        required: true
-      }],
       group: ['Client.id'],
       order: [[literal('"totalOwed"'), 'DESC']],
       limit: 10,
@@ -221,9 +215,7 @@ class PaymentService {
       totalReceivable,
       overdue: totalOverdue,
       collectedMTD,
-      collectionRate: totalReceivable > 0
-        ? Math.round((collectedMTD / (totalReceivable + collectedMTD)) * 100)
-        : 0,
+      collectionRate: totalReceivable > 0 ? Math.round((collectedMTD / (totalReceivable + collectedMTD)) * 100) : 0,
       topDebtors
     };
   }
@@ -238,9 +230,7 @@ class PaymentService {
       include: [{ model: Client, as: 'client', attributes: ['id', 'clientName'] }]
     });
 
-    const totalPaid = payments
-      .filter(p => p.status === PaymentStatusEnum.COMPLETED)
-      .reduce((sum, p) => sum + Number(p.amount), 0);
+    const totalPaid = payments.filter(p => p.status === PaymentStatusEnum.COMPLETED).reduce((sum, p) => sum + Number(p.amount), 0);
 
     return {
       payments,

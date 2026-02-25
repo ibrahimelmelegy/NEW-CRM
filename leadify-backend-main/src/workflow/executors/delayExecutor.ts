@@ -78,7 +78,7 @@ export async function executeDelay(
   const SHORT_DELAY_THRESHOLD = 5 * 60 * 1000; // 5 minutes
 
   if (delayMs <= SHORT_DELAY_THRESHOLD) {
-    await new Promise<void>((resolve) => {
+    await new Promise<void>(resolve => {
       setTimeout(resolve, delayMs);
     });
 
@@ -129,9 +129,7 @@ export async function executeDelay(
  * Checks all pending delay nodes and returns those that are ready to resume.
  * Intended to be called by a cron job at regular intervals.
  */
-export async function getPendingDelays(): Promise<
-  Array<{ executionId: number; nodeId: string; scheduledAt: string }>
-> {
+export async function getPendingDelays(): Promise<Array<{ executionId: number; nodeId: string; scheduledAt: string }>> {
   const now = new Date();
   const executions = await WorkflowExecution.findAll({
     where: { status: 'PARTIAL' },
@@ -144,11 +142,7 @@ export async function getPendingDelays(): Promise<
   for (const exec of executions) {
     const actions = exec.actionsExecuted || [];
     for (const action of actions) {
-      if (
-        action.actionType === 'DELAY' &&
-        action.result?.status === 'WAITING' &&
-        new Date(action.result.scheduledAt) <= now
-      ) {
+      if (action.actionType === 'DELAY' && action.result?.status === 'WAITING' && new Date(action.result.scheduledAt) <= now) {
         ready.push({
           executionId: exec.id,
           nodeId: action.result.nodeId,

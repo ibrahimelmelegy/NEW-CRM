@@ -13,16 +13,7 @@ interface MomentumResult {
   color: string;
 }
 
-const PIPELINE_STAGES = [
-  'PROSPECTING',
-  'QUALIFICATION',
-  'PROPOSAL',
-  'NEGOTIATION',
-  'CLOSING',
-  'CLOSED',
-  'PROGRESS',
-  'CANCELLED'
-];
+const PIPELINE_STAGES = ['PROSPECTING', 'QUALIFICATION', 'PROPOSAL', 'NEGOTIATION', 'CLOSING', 'CLOSED', 'PROGRESS', 'CANCELLED'];
 
 const DEFAULT_AVG_STAGE_DAYS = 14;
 
@@ -55,9 +46,7 @@ class DealMomentumService {
     const responsiveness = this.calculateResponsiveness(createdAt, updatedAt, now);
 
     // --- Composite Score ---
-    const score = Math.round(
-      Math.min(100, Math.max(0, velocity + engagement + progression + responsiveness))
-    );
+    const score = Math.round(Math.min(100, Math.max(0, velocity + engagement + progression + responsiveness)));
 
     // --- Trend (simulated from score) ---
     const trend = this.generateTrend(score);
@@ -155,7 +144,7 @@ class DealMomentumService {
    */
   private generateTrend(score: number): number[] {
     const offsets = [-10, -5, -3, 2, -1, 4, 0];
-    return offsets.map((offset) => Math.min(100, Math.max(0, score + offset)));
+    return offsets.map(offset => Math.min(100, Math.max(0, score + offset)));
   }
 
   /**

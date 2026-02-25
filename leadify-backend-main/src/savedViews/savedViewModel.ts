@@ -1,12 +1,4 @@
-import {
-  Column,
-  DataType,
-  Default,
-  ForeignKey,
-  BelongsTo,
-  Model,
-  Table
-} from 'sequelize-typescript';
+import { Column, DataType, Default, ForeignKey, BelongsTo, Model, Table } from 'sequelize-typescript';
 import User from '../user/userModel';
 
 export type FilterOperator =
@@ -38,10 +30,7 @@ export type ConditionLogic = 'AND' | 'OR';
   tableName: 'saved_views',
   modelName: 'SavedView',
   timestamps: true,
-  indexes: [
-    { fields: ['entityType', 'userId'] },
-    { fields: ['isShared'] }
-  ]
+  indexes: [{ fields: ['entityType', 'userId'] }, { fields: ['isShared'] }]
 })
 class SavedView extends Model {
   @Column({

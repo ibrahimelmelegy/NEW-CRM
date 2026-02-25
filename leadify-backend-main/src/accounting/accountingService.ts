@@ -228,7 +228,10 @@ class AccountingService {
           include: [{ model: ChartOfAccounts, as: 'account', attributes: ['id', 'code', 'name', 'type'] }]
         }
       ],
-      order: [['date', 'DESC'], ['createdAt', 'DESC']],
+      order: [
+        ['date', 'DESC'],
+        ['createdAt', 'DESC']
+      ],
       limit: Number(limit),
       offset
     });
@@ -365,18 +368,20 @@ class AccountingService {
       }
     }
 
-    const trialBalance = accounts.map(account => {
-      const totals = accountTotals[account.id] || { debit: 0, credit: 0 };
-      const netDebit = totals.debit - totals.credit;
-      return {
-        accountId: account.id,
-        code: account.code,
-        name: account.name,
-        type: account.type,
-        debit: netDebit > 0 ? netDebit : 0,
-        credit: netDebit < 0 ? Math.abs(netDebit) : 0
-      };
-    }).filter(row => row.debit !== 0 || row.credit !== 0);
+    const trialBalance = accounts
+      .map(account => {
+        const totals = accountTotals[account.id] || { debit: 0, credit: 0 };
+        const netDebit = totals.debit - totals.credit;
+        return {
+          accountId: account.id,
+          code: account.code,
+          name: account.name,
+          type: account.type,
+          debit: netDebit > 0 ? netDebit : 0,
+          credit: netDebit < 0 ? Math.abs(netDebit) : 0
+        };
+      })
+      .filter(row => row.debit !== 0 || row.credit !== 0);
 
     const totalDebits = trialBalance.reduce((sum, row) => sum + row.debit, 0);
     const totalCredits = trialBalance.reduce((sum, row) => sum + row.credit, 0);

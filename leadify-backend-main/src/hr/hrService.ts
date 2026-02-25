@@ -17,7 +17,10 @@ class HRService {
     const { rows, count } = await Attendance.findAndCountAll({
       where,
       include: [{ model: User, attributes: ['id', 'name', 'profilePicture'] }],
-      order: [['date', 'DESC'], ['checkIn', 'ASC']],
+      order: [
+        ['date', 'DESC'],
+        ['checkIn', 'ASC']
+      ],
       limit: Number(limit),
       offset
     });

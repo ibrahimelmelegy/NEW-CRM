@@ -52,8 +52,20 @@ const MODULE_FIELDS: Record<string, ModuleDefinition> = {
       { name: 'name', label: 'Name', type: 'text', icon: 'ph:user' },
       { name: 'email', label: 'Email', type: 'text', icon: 'ph:envelope' },
       { name: 'phone', label: 'Phone', type: 'text', icon: 'ph:phone' },
-      { name: 'status', label: 'Status', type: 'select', icon: 'ph:flag', options: ['NEW', 'CONTACTED', 'QUALIFIED', 'PROPOSAL', 'NEGOTIATION', 'WON', 'LOST'] },
-      { name: 'leadSource', label: 'Source', type: 'select', icon: 'ph:globe', options: ['EMAIL', 'WEBSITE', 'REFERRAL', 'SOCIAL_MEDIA', 'COLD_CALL', 'EVENT', 'OTHER'] },
+      {
+        name: 'status',
+        label: 'Status',
+        type: 'select',
+        icon: 'ph:flag',
+        options: ['NEW', 'CONTACTED', 'QUALIFIED', 'PROPOSAL', 'NEGOTIATION', 'WON', 'LOST']
+      },
+      {
+        name: 'leadSource',
+        label: 'Source',
+        type: 'select',
+        icon: 'ph:globe',
+        options: ['EMAIL', 'WEBSITE', 'REFERRAL', 'SOCIAL_MEDIA', 'COLD_CALL', 'EVENT', 'OTHER']
+      },
       { name: 'companyName', label: 'Company', type: 'text', icon: 'ph:buildings' },
       { name: 'score', label: 'Score', type: 'number', icon: 'ph:star' },
       { name: 'createdAt', label: 'Created At', type: 'date', icon: 'ph:calendar' }
@@ -66,8 +78,20 @@ const MODULE_FIELDS: Record<string, ModuleDefinition> = {
     fields: [
       { name: 'name', label: 'Name', type: 'text', icon: 'ph:tag' },
       { name: 'price', label: 'Price', type: 'number', icon: 'ph:currency-dollar' },
-      { name: 'stage', label: 'Stage', type: 'select', icon: 'ph:funnel', options: ['QUALIFYING', 'MEETING', 'PROPOSAL', 'NEGOTIATION', 'CLOSED_WON', 'CLOSED_LOST'] },
-      { name: 'contractType', label: 'Contract Type', type: 'select', icon: 'ph:file-text', options: ['SERVICE', 'PRODUCT', 'SUBSCRIPTION', 'MAINTENANCE'] },
+      {
+        name: 'stage',
+        label: 'Stage',
+        type: 'select',
+        icon: 'ph:funnel',
+        options: ['QUALIFYING', 'MEETING', 'PROPOSAL', 'NEGOTIATION', 'CLOSED_WON', 'CLOSED_LOST']
+      },
+      {
+        name: 'contractType',
+        label: 'Contract Type',
+        type: 'select',
+        icon: 'ph:file-text',
+        options: ['SERVICE', 'PRODUCT', 'SUBSCRIPTION', 'MAINTENANCE']
+      },
       { name: 'signatureDate', label: 'Signature Date', type: 'date', icon: 'ph:pen' },
       { name: 'createdAt', label: 'Created At', type: 'date', icon: 'ph:calendar' }
     ]
@@ -81,7 +105,13 @@ const MODULE_FIELDS: Record<string, ModuleDefinition> = {
       { name: 'email', label: 'Email', type: 'text', icon: 'ph:envelope' },
       { name: 'phoneNumber', label: 'Phone', type: 'text', icon: 'ph:phone' },
       { name: 'companyName', label: 'Company', type: 'text', icon: 'ph:buildings' },
-      { name: 'industry', label: 'Industry', type: 'select', icon: 'ph:factory', options: ['TECHNOLOGY', 'HEALTHCARE', 'FINANCE', 'RETAIL', 'MANUFACTURING', 'EDUCATION', 'OTHER'] },
+      {
+        name: 'industry',
+        label: 'Industry',
+        type: 'select',
+        icon: 'ph:factory',
+        options: ['TECHNOLOGY', 'HEALTHCARE', 'FINANCE', 'RETAIL', 'MANUFACTURING', 'EDUCATION', 'OTHER']
+      },
       { name: 'clientStatus', label: 'Status', type: 'select', icon: 'ph:flag', options: ['ACTIVE', 'INACTIVE', 'PROSPECT'] },
       { name: 'createdAt', label: 'Created At', type: 'date', icon: 'ph:calendar' }
     ]
@@ -92,7 +122,13 @@ const MODULE_FIELDS: Record<string, ModuleDefinition> = {
     icon: 'ph:shopping-cart',
     fields: [
       { name: 'orderNumber', label: 'Order Number', type: 'text', icon: 'ph:hash' },
-      { name: 'status', label: 'Status', type: 'select', icon: 'ph:flag', options: ['DRAFT', 'CONFIRMED', 'PROCESSING', 'SHIPPED', 'DELIVERED', 'CANCELLED'] },
+      {
+        name: 'status',
+        label: 'Status',
+        type: 'select',
+        icon: 'ph:flag',
+        options: ['DRAFT', 'CONFIRMED', 'PROCESSING', 'SHIPPED', 'DELIVERED', 'CANCELLED']
+      },
       { name: 'total', label: 'Total Amount', type: 'number', icon: 'ph:currency-dollar' },
       { name: 'subtotal', label: 'Subtotal', type: 'number', icon: 'ph:currency-dollar' },
       { name: 'taxAmount', label: 'Tax Amount', type: 'number', icon: 'ph:receipt' },
@@ -135,7 +171,13 @@ const MODULE_FIELDS: Record<string, ModuleDefinition> = {
       { name: 'ticketNumber', label: 'Ticket Number', type: 'text', icon: 'ph:hash' },
       { name: 'subject', label: 'Subject', type: 'text', icon: 'ph:text-aa' },
       { name: 'priority', label: 'Priority', type: 'select', icon: 'ph:warning', options: ['LOW', 'MEDIUM', 'HIGH', 'URGENT'] },
-      { name: 'status', label: 'Status', type: 'select', icon: 'ph:flag', options: ['OPEN', 'IN_PROGRESS', 'WAITING_CUSTOMER', 'RESOLVED', 'CLOSED'] },
+      {
+        name: 'status',
+        label: 'Status',
+        type: 'select',
+        icon: 'ph:flag',
+        options: ['OPEN', 'IN_PROGRESS', 'WAITING_CUSTOMER', 'RESOLVED', 'CLOSED']
+      },
       { name: 'source', label: 'Source', type: 'select', icon: 'ph:globe', options: ['EMAIL', 'PORTAL', 'PHONE', 'CHAT'] },
       { name: 'createdAt', label: 'Created At', type: 'date', icon: 'ph:calendar' }
     ]
@@ -150,7 +192,13 @@ const MODULE_FIELDS: Record<string, ModuleDefinition> = {
       { name: 'lastName', label: 'Last Name', type: 'text', icon: 'ph:user' },
       { name: 'email', label: 'Email', type: 'text', icon: 'ph:envelope' },
       { name: 'jobTitle', label: 'Position', type: 'text', icon: 'ph:briefcase' },
-      { name: 'employmentType', label: 'Employment Type', type: 'select', icon: 'ph:clock', options: ['FULL_TIME', 'PART_TIME', 'CONTRACT', 'INTERN'] },
+      {
+        name: 'employmentType',
+        label: 'Employment Type',
+        type: 'select',
+        icon: 'ph:clock',
+        options: ['FULL_TIME', 'PART_TIME', 'CONTRACT', 'INTERN']
+      },
       { name: 'status', label: 'Status', type: 'select', icon: 'ph:flag', options: ['ACTIVE', 'ON_LEAVE', 'TERMINATED', 'PROBATION'] },
       { name: 'salary', label: 'Salary', type: 'number', icon: 'ph:currency-dollar' },
       { name: 'hireDate', label: 'Hire Date', type: 'date', icon: 'ph:calendar' },
@@ -264,20 +312,14 @@ class ReportBuilderService {
     const moduleDef = MODULE_FIELDS[moduleKey];
     if (!moduleDef) return {};
 
-    const numericFields = moduleDef.fields
-      .filter(f => f.type === 'number')
-      .map(f => f.name);
+    const numericFields = moduleDef.fields.filter(f => f.type === 'number').map(f => f.name);
 
-    const activeNumericFields = config.fields
-      ? numericFields.filter(f => config.fields.includes(f))
-      : numericFields;
+    const activeNumericFields = config.fields ? numericFields.filter(f => config.fields.includes(f)) : numericFields;
 
     const summary: Record<string, { sum: number; avg: number; min: number; max: number; count: number }> = {};
 
     for (const field of activeNumericFields) {
-      const values = data
-        .map((row: any) => Number(row[field]))
-        .filter(v => !isNaN(v));
+      const values = data.map((row: any) => Number(row[field])).filter(v => !isNaN(v));
 
       if (values.length > 0) {
         summary[field] = {
@@ -392,15 +434,17 @@ class ReportBuilderService {
 
     const headers = fields && fields.length > 0 ? fields : Object.keys(data[0]);
     const rows = data.map((row: any) =>
-      headers.map(h => {
-        const val = row[h];
-        if (val === null || val === undefined) return '';
-        const str = String(val);
-        if (str.includes(',') || str.includes('"') || str.includes('\n')) {
-          return `"${str.replace(/"/g, '""')}"`;
-        }
-        return str;
-      }).join(',')
+      headers
+        .map(h => {
+          const val = row[h];
+          if (val === null || val === undefined) return '';
+          const str = String(val);
+          if (str.includes(',') || str.includes('"') || str.includes('\n')) {
+            return `"${str.replace(/"/g, '""')}"`;
+          }
+          return str;
+        })
+        .join(',')
     );
 
     return [headers.join(','), ...rows].join('\n');
@@ -413,9 +457,7 @@ class ReportBuilderService {
     if (!data || !data.length) return { headers: [], rows: [] };
 
     const headers = fields && fields.length > 0 ? fields : Object.keys(data[0]);
-    const rows = data.map((row: any) =>
-      headers.map(h => row[h] ?? '')
-    );
+    const rows = data.map((row: any) => headers.map(h => row[h] ?? ''));
 
     return { headers, rows };
   }

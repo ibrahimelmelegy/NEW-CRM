@@ -5,11 +5,7 @@ import User from '../user/userModel';
   tableName: 'territories',
   modelName: 'Territory',
   timestamps: true,
-  indexes: [
-    { fields: ['name'] },
-    { fields: ['parentId'] },
-    { fields: ['assignedUserId'] }
-  ]
+  indexes: [{ fields: ['name'] }, { fields: ['parentId'] }, { fields: ['assignedUserId'] }]
 })
 class Territory extends Model {
   @Column({

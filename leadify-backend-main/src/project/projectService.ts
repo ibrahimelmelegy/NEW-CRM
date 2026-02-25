@@ -104,7 +104,7 @@ class ProjectService {
       }
 
       // Create the project, ensuring it's bound to the user's tenant
-      let project = !existingProject
+      const project = !existingProject
         ? await Project.create({ ...input.basicInfo, tenantId: admin.tenantId }, { transaction })
         : existingProject.set({ ...input.basicInfo });
       existingProject && (await project.save({ transaction }));
@@ -422,22 +422,22 @@ class ProjectService {
         }),
         ...(query.status &&
           query.status.length > 0 && {
-          status: {
-            [Op.in]: query.status
-          }
-        }),
+            status: {
+              [Op.in]: query.status
+            }
+          }),
         ...(query.type &&
           query.type.length > 0 && {
-          status: {
-            [Op.in]: query.type
-          }
-        }),
+            status: {
+              [Op.in]: query.type
+            }
+          }),
         ...(query.category &&
           query.category.length > 0 && {
-          category: {
-            [Op.in]: query.category
-          }
-        }),
+            category: {
+              [Op.in]: query.category
+            }
+          }),
         ...tenantWhere(user)
       },
       limit,
@@ -617,26 +617,26 @@ class ProjectService {
       }),
       ...(query.fromStartDate || query.toStartDate
         ? {
-          startDate: {
-            ...(query.fromStartDate && { [Op.gte]: new Date(query.fromStartDate) }),
-            ...(query.toStartDate && { [Op.lte]: new Date(query.toStartDate) })
+            startDate: {
+              ...(query.fromStartDate && { [Op.gte]: new Date(query.fromStartDate) }),
+              ...(query.toStartDate && { [Op.lte]: new Date(query.toStartDate) })
+            }
           }
-        }
         : {}),
       ...(query.fromEndDate || query.toEndDate
         ? {
-          endDate: {
-            ...(query.fromEndDate && { [Op.gte]: new Date(query.fromEndDate) }),
-            ...(query.toEndDate && { [Op.lte]: new Date(query.toEndDate) })
+            endDate: {
+              ...(query.fromEndDate && { [Op.gte]: new Date(query.fromEndDate) }),
+              ...(query.toEndDate && { [Op.lte]: new Date(query.toEndDate) })
+            }
           }
-        }
         : {}),
       ...(query.category &&
         query.category.length > 0 && {
-        category: {
-          [Op.in]: query.category
-        }
-      })
+          category: {
+            [Op.in]: query.category
+          }
+        })
     };
 
     if (!user.role.permissions.includes(ProjectPermissionsEnum.VIEW_GLOBAL_PROJECTS)) {

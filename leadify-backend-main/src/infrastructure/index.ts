@@ -18,5 +18,5 @@ export {
   exportLimiter,
   aiLimiter,
   userUploadLimiter,
-  webhookLimiter,
+  webhookLimiter
 } from './rateLimitEnhanced';

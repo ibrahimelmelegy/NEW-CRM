@@ -114,9 +114,7 @@ class CommunicationService {
     });
 
     // For call activities, also fetch call log details
-    const activityIds = rows
-      .filter((a) => a.type === ActivityType.CALL)
-      .map((a) => a.id);
+    const activityIds = rows.filter(a => a.type === ActivityType.CALL).map(a => a.id);
 
     let callLogsMap: Record<number, CommCallLog> = {};
     if (activityIds.length > 0) {
@@ -130,7 +128,7 @@ class CommunicationService {
     }
 
     // Attach call log data to activity metadata for call entries
-    const enrichedRows = rows.map((activity) => {
+    const enrichedRows = rows.map(activity => {
       const plain = activity.toJSON() as any;
       if (plain.type === ActivityType.CALL && callLogsMap[plain.id]) {
         plain.callLog = callLogsMap[plain.id].toJSON();
@@ -150,11 +148,7 @@ class CommunicationService {
   }
 
   // ─── Get Activity Stats ──────────────────────────────────────────────────
-  public async getActivityStats(
-    userId: number | null,
-    tenantId: string | null,
-    dateRange?: { start?: string; end?: string }
-  ): Promise<any> {
+  public async getActivityStats(userId: number | null, tenantId: string | null, dateRange?: { start?: string; end?: string }): Promise<any> {
     const where: any = {};
     if (userId) where.userId = userId;
     if (tenantId) where.tenantId = tenantId;
@@ -226,10 +220,7 @@ class CommunicationService {
 
     let avgCallDuration = 0;
     if (callActivities.length > 0) {
-      const totalDuration = callActivities.reduce(
-        (sum, a) => sum + (a.duration || 0),
-        0
-      );
+      const totalDuration = callActivities.reduce((sum, a) => sum + (a.duration || 0), 0);
       avgCallDuration = Math.round(totalDuration / callActivities.length);
     }
 
@@ -247,12 +238,7 @@ class CommunicationService {
     currentWeekWhere.createdAt = { [Op.gte]: weekStart };
     const currentTotal = await CommActivity.count({ where: currentWeekWhere });
 
-    const trend =
-      prevTotal > 0
-        ? Math.round(((currentTotal - prevTotal) / prevTotal) * 100)
-        : currentTotal > 0
-          ? 100
-          : 0;
+    const trend = prevTotal > 0 ? Math.round(((currentTotal - prevTotal) / prevTotal) * 100) : currentTotal > 0 ? 100 : 0;
 
     // Breakdown by type
     const byType: Record<string, number> = {};
@@ -282,11 +268,7 @@ class CommunicationService {
   }
 
   // ─── Get Recent Activities ───────────────────────────────────────────────
-  public async getRecentActivities(
-    userId: number,
-    tenantId: string | null,
-    limit: number = 20
-  ): Promise<CommActivity[]> {
+  public async getRecentActivities(userId: number, tenantId: string | null, limit: number = 20): Promise<CommActivity[]> {
     const where: any = { userId };
     if (tenantId) where.tenantId = tenantId;
 

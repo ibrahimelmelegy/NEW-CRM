@@ -26,7 +26,7 @@ interface UserPresence {
 
 // In-memory stores for real-time presence
 const roomOccupants = new Map<string, RoomOccupant>(); // socketId → occupant
-const userPresence = new Map<string, UserPresence>();   // socketId → presence
+const userPresence = new Map<string, UserPresence>(); // socketId → presence
 
 function getRoomOccupants(roomId: number): RoomOccupant[] {
   return Array.from(roomOccupants.values()).filter(o => o.roomId === roomId);
@@ -38,7 +38,6 @@ function getAllPresence(): UserPresence[] {
 
 export function setupVirtualOfficeHandlers(io: Server) {
   io.on('connection', (socket: Socket) => {
-
     // User announces presence in virtual office
     socket.on('vo:presence', (data: { userId: number; name: string; avatar?: string }) => {
       userPresence.set(socket.id, {
@@ -49,7 +48,7 @@ export function setupVirtualOfficeHandlers(io: Server) {
         statusMessage: '',
         currentRoomId: undefined,
         focusMode: false,
-        lastSeen: new Date().toISOString(),
+        lastSeen: new Date().toISOString()
       });
       io.emit('vo:presence-update', getAllPresence());
     });
@@ -77,7 +76,7 @@ export function setupVirtualOfficeHandlers(io: Server) {
         isMuted: false,
         isCameraOn: false,
         isScreenSharing: false,
-        roomId: data.roomId,
+        roomId: data.roomId
       });
 
       socket.join(`vo-room-${data.roomId}`);

@@ -6,10 +6,7 @@ const routePattern = './**/*/**/*Routes.ts';
 const altRoutePattern = './**/*/**/*.routes.ts';
 
 // Get all files matching both patterns
-const routeFiles = [
-  ...glob.sync(routePattern),
-  ...glob.sync(altRoutePattern)
-];
+const routeFiles = [...glob.sync(routePattern), ...glob.sync(altRoutePattern)];
 const url = process.env.BASE_URL || 'https://staging-api.hp-tech.com/';
 
 const swaggerOptions: swaggerJsdoc.Options = {
@@ -154,7 +151,7 @@ const swaggerOptions: swaggerJsdoc.Options = {
       { name: 'Two-Factor Authentication', description: '2FA/MFA setup and verification' },
       { name: 'Session Security', description: 'Session management, IP whitelist, login history' },
       { name: 'Field Permissions', description: 'Field-level access control' },
-      { name: 'Data Sharing', description: 'Data sharing rules between users/teams' },
+      { name: 'Data Sharing', description: 'Data sharing rules between users/teams' }
     ],
     components: {
       securitySchemes: {

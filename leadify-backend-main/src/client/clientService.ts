@@ -50,9 +50,7 @@ class ClientService {
 
     if (input.users?.length) {
       await Promise.all(
-        input.users.map((item: number) =>
-          notificationService.sendAssignClientNotification({ userId: item, target: client.id }, client, admin)
-        )
+        input.users.map((item: number) => notificationService.sendAssignClientNotification({ userId: item, target: client.id }, client, admin))
       );
     }
     await createActivityLog('client', 'create', client.id, admin.id, null, 'Client created succesfully');
@@ -80,9 +78,7 @@ class ClientService {
     if (input.users && Array.isArray(input.users)) await client.$set('users', input.users);
     if (input.users?.length) {
       await Promise.all(
-        input.users.map((item: number) =>
-          notificationService.sendAssignClientNotification({ userId: item, target: client.id }, client, user)
-        )
+        input.users.map((item: number) => notificationService.sendAssignClientNotification({ userId: item, target: client.id }, client, user))
       );
     }
 

@@ -2,24 +2,19 @@ import { Table, Column, Model, DataType, Index } from 'sequelize-typescript';
 
 export enum SyncDirection {
   PUSH = 'PUSH',
-  PULL = 'PULL',
+  PULL = 'PULL'
 }
 
 export enum SyncStatus {
   SUCCESS = 'SUCCESS',
   FAILED = 'FAILED',
-  PENDING = 'PENDING',
+  PENDING = 'PENDING'
 }
 
 @Table({
   tableName: 'integration_sync_logs',
   timestamps: true,
-  indexes: [
-    { fields: ['integration'] },
-    { fields: ['entityType', 'entityId'] },
-    { fields: ['externalId'] },
-    { fields: ['status'] },
-  ],
+  indexes: [{ fields: ['integration'] }, { fields: ['entityType', 'entityId'] }, { fields: ['externalId'] }, { fields: ['status'] }]
 })
 export default class SyncLog extends Model {
   @Column({ type: DataType.INTEGER, primaryKey: true, autoIncrement: true })

@@ -53,19 +53,14 @@ class ERPNextSyncService {
 
   // ---- Sync Log helpers ----
 
-  private async createSyncLog(params: {
-    direction: SyncDirection;
-    entityType: string;
-    entityId: string;
-    requestData?: object;
-  }): Promise<SyncLog> {
+  private async createSyncLog(params: { direction: SyncDirection; entityType: string; entityId: string; requestData?: object }): Promise<SyncLog> {
     return SyncLog.create({
       integration: 'erpnext',
       direction: params.direction,
       entityType: params.entityType,
       entityId: params.entityId,
       status: SyncStatus.PENDING,
-      requestData: params.requestData || null,
+      requestData: params.requestData || null
     });
   }
 
@@ -74,7 +69,7 @@ class ERPNextSyncService {
       status: SyncStatus.SUCCESS,
       externalId,
       responseData: responseData || null,
-      syncedAt: new Date(),
+      syncedAt: new Date()
     });
   }
 
@@ -83,7 +78,7 @@ class ERPNextSyncService {
       status: SyncStatus.FAILED,
       errorMessage,
       responseData: responseData || null,
-      syncedAt: new Date(),
+      syncedAt: new Date()
     });
   }
 
@@ -94,14 +89,14 @@ class ERPNextSyncService {
     const config = this.getConfig();
 
     const invoice = await Invoice.findByPk(invoiceId, {
-      include: [{ model: Deal, as: 'deal', include: [{ model: Client, as: 'client' }] }],
+      include: [{ model: Deal, as: 'deal', include: [{ model: Client, as: 'client' }] }]
     });
     if (!invoice) {
       throw new Error(`Invoice #${invoiceId} not found`);
     }
 
     const deal = (invoice as any).deal as Deal | undefined;
-    const crmClient = deal ? (deal as any).client as Client | undefined : undefined;
+    const crmClient = deal ? ((deal as any).client as Client | undefined) : undefined;
 
     // Map CRM invoice -> ERPNext Sales Invoice
     const customerName = crmClient?.clientName || crmClient?.companyName || deal?.companyName || 'Walk-in Customer';
@@ -123,16 +118,16 @@ class ERPNextSyncService {
           description: deal?.name || `CRM Invoice ${invoice.invoiceNumber}`,
           qty: 1,
           rate: Number(invoice.amount),
-          amount: Number(invoice.amount),
-        },
-      ],
+          amount: Number(invoice.amount)
+        }
+      ]
     };
 
     const syncLog = await this.createSyncLog({
       direction: SyncDirection.PUSH,
       entityType: 'invoice',
       entityId: String(invoiceId),
-      requestData: erpnextData,
+      requestData: erpnextData
     });
 
     try {
@@ -150,9 +145,7 @@ class ERPNextSyncService {
       await this.markSuccess(syncLog, erpnextName, result);
       return { success: true, erpnextName };
     } catch (err: any) {
-      const message = err instanceof ERPNextApiError
-        ? `ERPNext API Error (${err.httpCode}): ${err.message}`
-        : err.message || 'Unknown error';
+      const message = err instanceof ERPNextApiError ? `ERPNext API Error (${err.httpCode}): ${err.message}` : err.message || 'Unknown error';
       await this.markFailed(syncLog, message, err instanceof ERPNextApiError ? { serverMessages: err.serverMessages } : undefined);
       return { success: false, error: message };
     }
@@ -166,7 +159,7 @@ class ERPNextSyncService {
     const syncLog = await this.createSyncLog({
       direction: SyncDirection.PULL,
       entityType: 'payment',
-      entityId: erpnextPaymentName,
+      entityId: erpnextPaymentName
     });
 
     try {
@@ -174,9 +167,7 @@ class ERPNextSyncService {
       await this.markSuccess(syncLog, erpnextPaymentName, payment);
       return { success: true, data: payment };
     } catch (err: any) {
-      const message = err instanceof ERPNextApiError
-        ? `ERPNext API Error (${err.httpCode}): ${err.message}`
-        : err.message || 'Unknown error';
+      const message = err instanceof ERPNextApiError ? `ERPNext API Error (${err.httpCode}): ${err.message}` : err.message || 'Unknown error';
       await this.markFailed(syncLog, message);
       return { success: false, error: message };
     }
@@ -198,7 +189,7 @@ class ERPNextSyncService {
       customer_type: crmClient.clientType === 'Individual' ? 'Individual' : 'Company',
       customer_group: 'All Customer Groups',
       territory: 'All Territories',
-      crm_client_id: clientId,
+      crm_client_id: clientId
     };
 
     // Map address fields if available
@@ -213,7 +204,7 @@ class ERPNextSyncService {
       direction: SyncDirection.PUSH,
       entityType: 'client',
       entityId: clientId,
-      requestData: erpnextData,
+      requestData: erpnextData
     });
 
     try {
@@ -230,9 +221,7 @@ class ERPNextSyncService {
       await this.markSuccess(syncLog, erpnextName, result);
       return { success: true, erpnextName };
     } catch (err: any) {
-      const message = err instanceof ERPNextApiError
-        ? `ERPNext API Error (${err.httpCode}): ${err.message}`
-        : err.message || 'Unknown error';
+      const message = err instanceof ERPNextApiError ? `ERPNext API Error (${err.httpCode}): ${err.message}` : err.message || 'Unknown error';
       await this.markFailed(syncLog, message, err instanceof ERPNextApiError ? { serverMessages: err.serverMessages } : undefined);
       return { success: false, error: message };
     }
@@ -253,7 +242,7 @@ class ERPNextSyncService {
       supplier_name: vendor.name,
       supplier_group: 'All Supplier Groups',
       supplier_type: 'Company',
-      crm_vendor_id: String(vendorId),
+      crm_vendor_id: String(vendorId)
     };
 
     if (vendor.email) {
@@ -270,7 +259,7 @@ class ERPNextSyncService {
       direction: SyncDirection.PUSH,
       entityType: 'vendor',
       entityId: String(vendorId),
-      requestData: erpnextData,
+      requestData: erpnextData
     });
 
     try {
@@ -287,9 +276,7 @@ class ERPNextSyncService {
       await this.markSuccess(syncLog, erpnextName, result);
       return { success: true, erpnextName };
     } catch (err: any) {
-      const message = err instanceof ERPNextApiError
-        ? `ERPNext API Error (${err.httpCode}): ${err.message}`
-        : err.message || 'Unknown error';
+      const message = err instanceof ERPNextApiError ? `ERPNext API Error (${err.httpCode}): ${err.message}` : err.message || 'Unknown error';
       await this.markFailed(syncLog, message, err instanceof ERPNextApiError ? { serverMessages: err.serverMessages } : undefined);
       return { success: false, error: message };
     }
@@ -304,8 +291,8 @@ class ERPNextSyncService {
     const po = await PurchaseOrder.findByPk(poId, {
       include: [
         { model: Vendor, as: 'vendor' },
-        { model: PurchaseOrderItem, as: 'items' },
-      ],
+        { model: PurchaseOrderItem, as: 'items' }
+      ]
     });
     if (!po) {
       throw new Error(`Purchase Order #${poId} not found`);
@@ -314,13 +301,13 @@ class ERPNextSyncService {
     const vendor = (po as any).vendor as Vendor | undefined;
     const items = ((po as any).items || []) as PurchaseOrderItem[];
 
-    const erpnextItems = items.map((item) => ({
+    const erpnextItems = items.map(item => ({
       item_code: 'Services', // Default; can be mapped if product catalog synced
       item_name: item.description,
       description: item.description,
       qty: item.quantity,
       rate: Number(item.unitPrice),
-      amount: Number(item.unitPrice) * item.quantity,
+      amount: Number(item.unitPrice) * item.quantity
     }));
 
     const erpnextData: Record<string, any> = {
@@ -333,14 +320,14 @@ class ERPNextSyncService {
       schedule_date: po.dueDate ? new Date(po.dueDate).toISOString().split('T')[0] : new Date().toISOString().split('T')[0],
       crm_po_id: String(poId),
       crm_po_number: po.poNumber,
-      items: erpnextItems,
+      items: erpnextItems
     };
 
     const syncLog = await this.createSyncLog({
       direction: SyncDirection.PUSH,
       entityType: 'po',
       entityId: String(poId),
-      requestData: erpnextData,
+      requestData: erpnextData
     });
 
     try {
@@ -357,9 +344,7 @@ class ERPNextSyncService {
       await this.markSuccess(syncLog, erpnextName, result);
       return { success: true, erpnextName };
     } catch (err: any) {
-      const message = err instanceof ERPNextApiError
-        ? `ERPNext API Error (${err.httpCode}): ${err.message}`
-        : err.message || 'Unknown error';
+      const message = err instanceof ERPNextApiError ? `ERPNext API Error (${err.httpCode}): ${err.message}` : err.message || 'Unknown error';
       await this.markFailed(syncLog, message, err instanceof ERPNextApiError ? { serverMessages: err.serverMessages } : undefined);
       return { success: false, error: message };
     }
@@ -394,7 +379,7 @@ class ERPNextSyncService {
     try {
       const result = await client.getMethod('erpnext.accounts.utils.get_balance_on', {
         company: config.company,
-        date: new Date().toISOString().split('T')[0],
+        date: new Date().toISOString().split('T')[0]
       });
       return result.message;
     } catch (err: any) {
@@ -428,7 +413,7 @@ class ERPNextSyncService {
         period_start_date: fromDate,
         period_end_date: toDate,
         filter_based_on: 'Date Range',
-        periodicity: 'Monthly',
+        periodicity: 'Monthly'
       });
       return result.message;
     } catch (err: any) {
@@ -449,7 +434,7 @@ class ERPNextSyncService {
         to_fiscal_year: date.substring(0, 4),
         period_start_date: `${date.substring(0, 4)}-01-01`,
         period_end_date: date,
-        periodicity: 'Yearly',
+        periodicity: 'Yearly'
       });
       return result.message;
     } catch (err: any) {
@@ -466,14 +451,25 @@ class ERPNextSyncService {
     try {
       const defaultFilters: Record<string, any> = {
         company: config.company,
-        docstatus: 1, // submitted entries only
+        docstatus: 1 // submitted entries only
       };
       const mergedFilters = { ...defaultFilters, ...filters };
 
       const payments = await client.getList(
         'Payment Entry',
         mergedFilters,
-        ['name', 'payment_type', 'party_type', 'party', 'paid_amount', 'received_amount', 'posting_date', 'reference_no', 'status', 'mode_of_payment'],
+        [
+          'name',
+          'payment_type',
+          'party_type',
+          'party',
+          'paid_amount',
+          'received_amount',
+          'posting_date',
+          'reference_no',
+          'status',
+          'mode_of_payment'
+        ],
         'posting_date desc',
         100
       );
@@ -512,7 +508,7 @@ class ERPNextSyncService {
       // Get last successful sync
       const lastLog = await SyncLog.findOne({
         where: { integration: 'erpnext', status: SyncStatus.SUCCESS },
-        order: [['syncedAt', 'DESC']],
+        order: [['syncedAt', 'DESC']]
       });
 
       return {
@@ -521,7 +517,7 @@ class ERPNextSyncService {
         user: pingResult.user,
         company: config.company,
         baseUrl: config.baseUrl,
-        lastSync: lastLog?.syncedAt || null,
+        lastSync: lastLog?.syncedAt || null
       };
     } catch (err: any) {
       return {
@@ -529,7 +525,7 @@ class ERPNextSyncService {
         enabled: true,
         baseUrl: config.baseUrl,
         company: config.company,
-        error: err.message || 'Connection failed',
+        error: err.message || 'Connection failed'
       };
     }
   }
@@ -555,7 +551,7 @@ class ERPNextSyncService {
       where,
       order: [['createdAt', 'DESC']],
       limit,
-      offset,
+      offset
     });
 
     return { logs: rows, total: count };
@@ -573,9 +569,9 @@ class ERPNextSyncService {
         direction: SyncDirection.PUSH,
         entityType,
         entityId,
-        status: SyncStatus.SUCCESS,
+        status: SyncStatus.SUCCESS
       },
-      order: [['syncedAt', 'DESC']],
+      order: [['syncedAt', 'DESC']]
     });
 
     return lastSync?.externalId || null;

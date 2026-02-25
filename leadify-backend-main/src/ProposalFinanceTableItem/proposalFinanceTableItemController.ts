@@ -16,7 +16,11 @@ class ProposalFinanceTableItemController {
 
   public async updateProposalFinanceTableItem(req: AuthenticatedRequest, res: Response, next: NextFunction): Promise<void> {
     try {
-      const responseFromService = await proposalFinanceTableItemService.updateProposalFinanceTableItem(req.params.id as string, req.body, req.user as User);
+      const responseFromService = await proposalFinanceTableItemService.updateProposalFinanceTableItem(
+        req.params.id as string,
+        req.body,
+        req.user as User
+      );
       wrapResult(res, responseFromService);
     } catch (error) {
       next(error);

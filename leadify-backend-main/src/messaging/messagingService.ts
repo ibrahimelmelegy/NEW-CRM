@@ -5,7 +5,13 @@ import whatsappService from '../integration/whatsappService';
 import User from '../user/userModel';
 
 class MessagingService {
-  async sendMessage(userId: number, contactPhone: string, contactName: string | undefined, content: string, provider: string = MessageProvider.WHATSAPP) {
+  async sendMessage(
+    userId: number,
+    contactPhone: string,
+    contactName: string | undefined,
+    content: string,
+    provider: string = MessageProvider.WHATSAPP
+  ) {
     const message = await Message.create({
       contactPhone,
       contactName,

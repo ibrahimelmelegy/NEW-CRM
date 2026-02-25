@@ -61,12 +61,7 @@ const router = express.Router();
  *       500:
  *         description: Server error
  */
-router.post(
-  '/tickets',
-  authenticateUser,
-  HasPermission([SupportPermissionsEnum.CREATE_TICKETS]),
-  supportController.createTicket
-);
+router.post('/tickets', authenticateUser, HasPermission([SupportPermissionsEnum.CREATE_TICKETS]), supportController.createTicket);
 
 /**
  * @swagger
@@ -109,12 +104,7 @@ router.post(
  *       500:
  *         description: Server error
  */
-router.get(
-  '/tickets',
-  authenticateUser,
-  HasPermission([SupportPermissionsEnum.VIEW_TICKETS]),
-  supportController.getTickets
-);
+router.get('/tickets', authenticateUser, HasPermission([SupportPermissionsEnum.VIEW_TICKETS]), supportController.getTickets);
 
 /**
  * @swagger
@@ -140,12 +130,7 @@ router.get(
  *       500:
  *         description: Server error
  */
-router.get(
-  '/tickets/:id',
-  authenticateUser,
-  HasPermission([SupportPermissionsEnum.VIEW_TICKETS]),
-  supportController.getTicketById
-);
+router.get('/tickets/:id', authenticateUser, HasPermission([SupportPermissionsEnum.VIEW_TICKETS]), supportController.getTicketById);
 
 /**
  * @swagger
@@ -182,12 +167,7 @@ router.get(
  *       500:
  *         description: Server error
  */
-router.patch(
-  '/tickets/:id/assign',
-  authenticateUser,
-  HasPermission([SupportPermissionsEnum.ASSIGN_TICKETS]),
-  supportController.assignTicket
-);
+router.patch('/tickets/:id/assign', authenticateUser, HasPermission([SupportPermissionsEnum.ASSIGN_TICKETS]), supportController.assignTicket);
 
 /**
  * @swagger
@@ -213,12 +193,7 @@ router.patch(
  *       500:
  *         description: Server error
  */
-router.patch(
-  '/tickets/:id/resolve',
-  authenticateUser,
-  HasPermission([SupportPermissionsEnum.RESOLVE_TICKETS]),
-  supportController.resolveTicket
-);
+router.patch('/tickets/:id/resolve', authenticateUser, HasPermission([SupportPermissionsEnum.RESOLVE_TICKETS]), supportController.resolveTicket);
 
 /**
  * @swagger
@@ -243,12 +218,7 @@ router.patch(
  *       500:
  *         description: Server error
  */
-router.patch(
-  '/tickets/:id/close',
-  authenticateUser,
-  HasPermission([SupportPermissionsEnum.RESOLVE_TICKETS]),
-  supportController.closeTicket
-);
+router.patch('/tickets/:id/close', authenticateUser, HasPermission([SupportPermissionsEnum.RESOLVE_TICKETS]), supportController.closeTicket);
 
 /**
  * @swagger
@@ -301,12 +271,7 @@ router.patch(
  *       500:
  *         description: Server error
  */
-router.post(
-  '/tickets/:id/messages',
-  authenticateUser,
-  HasPermission([SupportPermissionsEnum.EDIT_TICKETS]),
-  supportController.addMessage
-);
+router.post('/tickets/:id/messages', authenticateUser, HasPermission([SupportPermissionsEnum.EDIT_TICKETS]), supportController.addMessage);
 
 /**
  * @swagger
@@ -347,12 +312,7 @@ router.post(
  *       500:
  *         description: Server error
  */
-router.post(
-  '/tickets/:id/csat',
-  authenticateUser,
-  HasPermission([SupportPermissionsEnum.VIEW_TICKETS]),
-  supportController.submitCSAT
-);
+router.post('/tickets/:id/csat', authenticateUser, HasPermission([SupportPermissionsEnum.VIEW_TICKETS]), supportController.submitCSAT);
 
 // ─── Dashboard ────────────────────────────────────────────────────────────────
 
@@ -371,12 +331,7 @@ router.post(
  *       500:
  *         description: Server error
  */
-router.get(
-  '/dashboard',
-  authenticateUser,
-  HasPermission([SupportPermissionsEnum.VIEW_TICKETS]),
-  supportController.getDashboard
-);
+router.get('/dashboard', authenticateUser, HasPermission([SupportPermissionsEnum.VIEW_TICKETS]), supportController.getDashboard);
 
 // ─── Canned Responses ─────────────────────────────────────────────────────────
 
@@ -395,12 +350,7 @@ router.get(
  *       500:
  *         description: Server error
  */
-router.get(
-  '/canned-responses',
-  authenticateUser,
-  HasPermission([SupportPermissionsEnum.VIEW_TICKETS]),
-  supportController.getCannedResponses
-);
+router.get('/canned-responses', authenticateUser, HasPermission([SupportPermissionsEnum.VIEW_TICKETS]), supportController.getCannedResponses);
 
 /**
  * @swagger
@@ -529,12 +479,7 @@ router.delete(
  *       500:
  *         description: Server error
  */
-router.get(
-  '/categories',
-  authenticateUser,
-  HasPermission([SupportPermissionsEnum.VIEW_TICKETS]),
-  supportController.getCategories
-);
+router.get('/categories', authenticateUser, HasPermission([SupportPermissionsEnum.VIEW_TICKETS]), supportController.getCategories);
 
 /**
  * @swagger
@@ -569,12 +514,7 @@ router.get(
  *       500:
  *         description: Server error
  */
-router.post(
-  '/categories',
-  authenticateUser,
-  HasPermission([SupportPermissionsEnum.EDIT_TICKETS]),
-  supportController.createCategory
-);
+router.post('/categories', authenticateUser, HasPermission([SupportPermissionsEnum.EDIT_TICKETS]), supportController.createCategory);
 
 /**
  * @swagger
@@ -612,12 +552,7 @@ router.post(
  *       500:
  *         description: Server error
  */
-router.put(
-  '/categories/:id',
-  authenticateUser,
-  HasPermission([SupportPermissionsEnum.EDIT_TICKETS]),
-  supportController.updateCategory
-);
+router.put('/categories/:id', authenticateUser, HasPermission([SupportPermissionsEnum.EDIT_TICKETS]), supportController.updateCategory);
 
 /**
  * @swagger
@@ -642,11 +577,6 @@ router.put(
  *       500:
  *         description: Server error
  */
-router.delete(
-  '/categories/:id',
-  authenticateUser,
-  HasPermission([SupportPermissionsEnum.EDIT_TICKETS]),
-  supportController.deleteCategory
-);
+router.delete('/categories/:id', authenticateUser, HasPermission([SupportPermissionsEnum.EDIT_TICKETS]), supportController.deleteCategory);
 
 export default router;

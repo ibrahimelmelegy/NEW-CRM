@@ -82,11 +82,7 @@ class ReportBuilderController {
   async exportReport(req: AuthenticatedRequest, res: Response, next: NextFunction) {
     try {
       const format = req.body.format || 'csv';
-      const result = await reportBuilderService.exportReport(
-        Number(req.params.id),
-        format,
-        req.user!.id
-      );
+      const result = await reportBuilderService.exportReport(Number(req.params.id), format, req.user!.id);
 
       if (format === 'csv') {
         res.setHeader('Content-Type', 'text/csv');
@@ -107,11 +103,7 @@ class ReportBuilderController {
   async scheduleReport(req: AuthenticatedRequest, res: Response, next: NextFunction) {
     try {
       const schedule = req.body.schedule;
-      const report = await reportBuilderService.scheduleReport(
-        Number(req.params.id),
-        schedule,
-        req.user!.id
-      );
+      const report = await reportBuilderService.scheduleReport(Number(req.params.id), schedule, req.user!.id);
       wrapResult(res, report);
     } catch (error) {
       next(error);

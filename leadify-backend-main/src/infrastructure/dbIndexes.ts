@@ -119,7 +119,7 @@ export async function addPerformanceIndexes(sequelize: Sequelize): Promise<void>
     //   entityType+entityId, parentTaskId
     // ──────────────────────────────────────────────────────────────────
     'CREATE INDEX IF NOT EXISTS idx_tasks_assigned_status ON tasks("assignedTo", status)',
-    'CREATE INDEX IF NOT EXISTS idx_tasks_due_active ON tasks("dueDate") WHERE status NOT IN (\'COMPLETED\', \'CANCELLED\')',
+    "CREATE INDEX IF NOT EXISTS idx_tasks_due_active ON tasks(\"dueDate\") WHERE status NOT IN ('COMPLETED', 'CANCELLED')",
 
     // ──────────────────────────────────────────────────────────────────
     // Audit Trail (table: "audit_trail", PK: integer)
@@ -217,7 +217,7 @@ export async function addPerformanceIndexes(sequelize: Sequelize): Promise<void>
     `CREATE INDEX IF NOT EXISTS idx_work_orders_tenant_status ON work_orders ("tenantId", status)`,
     `CREATE INDEX IF NOT EXISTS idx_work_orders_due ON work_orders ("dueDate") WHERE status NOT IN ('COMPLETED', 'CANCELLED')`,
     `CREATE INDEX IF NOT EXISTS idx_quality_checks_tenant ON quality_checks ("tenantId")`,
-    `CREATE INDEX IF NOT EXISTS idx_quality_checks_wo ON quality_checks ("workOrderId")`,
+    `CREATE INDEX IF NOT EXISTS idx_quality_checks_wo ON quality_checks ("workOrderId")`
   ];
 
   let succeeded = 0;
@@ -237,7 +237,5 @@ export async function addPerformanceIndexes(sequelize: Sequelize): Promise<void>
     }
   }
 
-  console.log(
-    `[DB Index] Performance indexes: ${succeeded} created/verified, ${skipped} skipped (total: ${indexes.length})`
-  );
+  console.log(`[DB Index] Performance indexes: ${succeeded} created/verified, ${skipped} skipped (total: ${indexes.length})`);
 }

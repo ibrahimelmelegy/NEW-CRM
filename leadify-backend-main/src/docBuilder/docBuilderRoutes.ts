@@ -98,12 +98,7 @@ router.post(
  *       201:
  *         description: Document converted successfully
  */
-router.post(
-  '/:id/convert',
-  authenticateUser,
-  HasPermission([DocBuilderPermissionsEnum.CREATE_DOCUMENTS]),
-  docBuilderController.convertDocument
-);
+router.post('/:id/convert', authenticateUser, HasPermission([DocBuilderPermissionsEnum.CREATE_DOCUMENTS]), docBuilderController.convertDocument);
 
 /**
  * @swagger
@@ -164,12 +159,7 @@ router.post(
  *       200:
  *         description: Document sent successfully
  */
-router.post(
-  '/:id/send',
-  authenticateUser,
-  HasPermission([DocBuilderPermissionsEnum.SEND_DOCUMENTS]),
-  docBuilderController.sendDocument
-);
+router.post('/:id/send', authenticateUser, HasPermission([DocBuilderPermissionsEnum.SEND_DOCUMENTS]), docBuilderController.sendDocument);
 
 /**
  * @swagger
@@ -294,12 +284,7 @@ router.put(
  *       200:
  *         description: Document archived successfully
  */
-router.delete(
-  '/:id',
-  authenticateUser,
-  HasPermission([DocBuilderPermissionsEnum.DELETE_DOCUMENTS]),
-  docBuilderController.deleteDocument
-);
+router.delete('/:id', authenticateUser, HasPermission([DocBuilderPermissionsEnum.DELETE_DOCUMENTS]), docBuilderController.deleteDocument);
 
 // ** --------------------- GET --------------------- **/
 

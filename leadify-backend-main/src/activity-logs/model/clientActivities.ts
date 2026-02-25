@@ -15,6 +15,6 @@ export class ClientActivity extends ActivityModelClass {
   })
   public clientId!: string;
 
-  @BelongsTo(() => Client, { as: 'client'})
+  @BelongsTo(() => Client, { as: 'client' })
   public client!: Client;
 }

@@ -159,10 +159,7 @@ class CustomReportService {
 
   async getReports(userId: number, entityType?: string) {
     const where: any = {
-      [Op.or]: [
-        { userId },
-        { isShared: true }
-      ]
+      [Op.or]: [{ userId }, { isShared: true }]
     };
     if (entityType) {
       where.entityType = entityType;
@@ -188,9 +185,7 @@ class CustomReportService {
     const report = await CustomReport.findByPk(id);
     if (!report) throw new BaseError(ERRORS.REPORT_NOT_FOUND, 404);
 
-    const filtersToUse = overrideFilters && overrideFilters.length > 0
-      ? overrideFilters
-      : report.filters;
+    const filtersToUse = overrideFilters && overrideFilters.length > 0 ? overrideFilters : report.filters;
 
     return this.buildAndRunQuery(
       report.entityType,
@@ -216,7 +211,7 @@ class CustomReportService {
     const where = buildFilterWhere(filters);
 
     // Build attributes
-    let attributes: any = fields && fields.length > 0 ? fields : undefined;
+    const attributes: any = fields && fields.length > 0 ? fields : undefined;
 
     // Build query options
     const queryOptions: any = {
@@ -336,16 +331,18 @@ class CustomReportService {
 
     const headers = Object.keys(data[0]);
     const rows = data.map((row: any) =>
-      headers.map(h => {
-        const val = row[h];
-        if (val === null || val === undefined) return '';
-        const str = String(val);
-        // Escape commas, quotes, and newlines in CSV
-        if (str.includes(',') || str.includes('"') || str.includes('\n')) {
-          return `"${str.replace(/"/g, '""')}"`;
-        }
-        return str;
-      }).join(',')
+      headers
+        .map(h => {
+          const val = row[h];
+          if (val === null || val === undefined) return '';
+          const str = String(val);
+          // Escape commas, quotes, and newlines in CSV
+          if (str.includes(',') || str.includes('"') || str.includes('\n')) {
+            return `"${str.replace(/"/g, '""')}"`;
+          }
+          return str;
+        })
+        .join(',')
     );
 
     return [headers.join(','), ...rows].join('\n');

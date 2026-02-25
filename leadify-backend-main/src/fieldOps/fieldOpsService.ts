@@ -62,18 +62,21 @@ class FieldOpsService {
 
   async getTeamLocations() {
     // Get the latest check-in for each user
-    const latestCheckIns = await sequelize.query(`
+    const latestCheckIns = await sequelize.query(
+      `
       SELECT DISTINCT ON ("userId") *
       FROM field_check_ins
       ORDER BY "userId", "createdAt" DESC
-    `, {
-      model: FieldCheckIn,
-      mapToModel: true
-    });
+    `,
+      {
+        model: FieldCheckIn,
+        mapToModel: true
+      }
+    );
 
     // Load user data for each check-in
     const checkInsWithUsers = await Promise.all(
-      latestCheckIns.map(async (checkIn) => {
+      latestCheckIns.map(async checkIn => {
         const user = await User.findByPk(checkIn.userId, {
           attributes: ['id', 'name', 'email', 'profilePicture']
         });

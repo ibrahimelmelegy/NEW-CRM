@@ -393,12 +393,7 @@ router.post('/update', authenticateUser, HasPermission([DealPermissionsEnum.EDIT
 
 //** --------------------- PUT --------------------- */
 
-router.patch(
-  '/stage',
-  authenticateUser,
-  HasPermission([DealPermissionsEnum.EDIT_DEALS]),
-  dealController.updateDealStage
-);
+router.patch('/stage', authenticateUser, HasPermission([DealPermissionsEnum.EDIT_DEALS]), dealController.updateDealStage);
 
 //** --------------------- GET --------------------- */
 

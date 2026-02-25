@@ -223,6 +223,11 @@ router.post('/:id/send', authenticateUser, HasPermission([ProcurementPermissions
  *       500:
  *         description: Server error
  */
-router.post('/:id/vendors/:vendorId/response', authenticateUser, HasPermission([ProcurementPermissionsEnum.CREATE_PROCUREMENT]), RFQController.addVendorResponse);
+router.post(
+  '/:id/vendors/:vendorId/response',
+  authenticateUser,
+  HasPermission([ProcurementPermissionsEnum.CREATE_PROCUREMENT]),
+  RFQController.addVendorResponse
+);
 
 export default router;

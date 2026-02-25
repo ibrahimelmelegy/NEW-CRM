@@ -128,14 +128,14 @@ class InsightService {
         attributes: [[Sequelize.fn('SUM', Sequelize.col('Deal.price')), 'totalRevenue']],
         include: query.userId
           ? [
-            {
-              model: User,
-              as: 'users',
-              attributes: [], // explicitly avoid selecting any user fields
-              through: { attributes: [] },
-              where: { id: query.userId }
-            }
-          ]
+              {
+                model: User,
+                as: 'users',
+                attributes: [], // explicitly avoid selecting any user fields
+                through: { attributes: [] },
+                where: { id: query.userId }
+              }
+            ]
           : [],
         raw: true, // ensures no model mapping and omits implicit primary key injection
         subQuery: false // prevents subquery generation which could pull in unwanted columns
@@ -316,14 +316,14 @@ class InsightService {
         attributes: [[Sequelize.fn('SUM', Sequelize.col('Deal.price')), 'totalRevenue']],
         include: query.userId
           ? [
-            {
-              model: User,
-              as: 'users',
-              attributes: [], // explicitly avoid selecting any user fields
-              through: { attributes: [] },
-              where: { id: query.userId }
-            }
-          ]
+              {
+                model: User,
+                as: 'users',
+                attributes: [], // explicitly avoid selecting any user fields
+                through: { attributes: [] },
+                where: { id: query.userId }
+              }
+            ]
           : [],
         raw: true, // ensures no model mapping and omits implicit primary key injection
         subQuery: false // prevents subquery generation which could pull in unwanted columns
@@ -429,4 +429,3 @@ class InsightService {
   }
 }
 export default new InsightService();
-

@@ -63,10 +63,7 @@ class SavedViewService {
     return SavedView.findAll({
       where: {
         entityType,
-        [Op.or]: [
-          { userId },
-          { isShared: true }
-        ]
+        [Op.or]: [{ userId }, { isShared: true }]
       },
       order: [
         ['isDefault', 'DESC'],
@@ -117,9 +114,7 @@ class SavedViewService {
    */
   applyView(view: SavedView): { where: WhereOptions; order: Order } {
     const where = this.buildWhereClause(view.filters || [], 'AND');
-    const order: Order = view.sortBy
-      ? [[view.sortBy, view.sortOrder || 'DESC']]
-      : [['createdAt', 'DESC']];
+    const order: Order = view.sortBy ? [[view.sortBy, view.sortOrder || 'DESC']] : [['createdAt', 'DESC']];
 
     return { where, order };
   }
@@ -133,7 +128,7 @@ class SavedViewService {
       return {};
     }
 
-    const conditions: WhereOptions[] = filters.map((filter) => {
+    const conditions: WhereOptions[] = filters.map(filter => {
       return this.buildSingleCondition(filter);
     });
 
@@ -189,18 +184,12 @@ class SavedViewService {
 
       case 'is_empty':
         return {
-          [Op.or]: [
-            { [field]: { [Op.is]: null as any } },
-            { [field]: { [Op.eq]: '' } }
-          ]
+          [Op.or]: [{ [field]: { [Op.is]: null as any } }, { [field]: { [Op.eq]: '' } }]
         };
 
       case 'is_not_empty':
         return {
-          [Op.and]: [
-            { [field]: { [Op.not]: null as any } },
-            { [field]: { [Op.ne]: '' } }
-          ]
+          [Op.and]: [{ [field]: { [Op.not]: null as any } }, { [field]: { [Op.ne]: '' } }]
         };
 
       case 'in':

@@ -38,9 +38,9 @@ interface EndpointStats {
 // ─── Configuration ──────────────────────────────────────────────────
 
 const SLOW_THRESHOLD_MS = 2000;
-const BUFFER_SIZE = 10000;          // Max entries in the ring buffer
-const FLUSH_INTERVAL_MS = 60000;    // Summary flush interval (1 minute)
-const SLOW_LOG_IMMEDIATE = true;    // Log slow requests immediately to stderr
+const BUFFER_SIZE = 10000; // Max entries in the ring buffer
+const FLUSH_INTERVAL_MS = 60000; // Summary flush interval (1 minute)
+const SLOW_LOG_IMMEDIATE = true; // Log slow requests immediately to stderr
 
 // ─── Ring Buffer ────────────────────────────────────────────────────
 
@@ -64,10 +64,7 @@ class RingBuffer<T> {
       return this.buffer.slice(0, this.count);
     }
     // Buffer is full: return in chronological order
-    return [
-      ...this.buffer.slice(this.writeIndex),
-      ...this.buffer.slice(0, this.writeIndex),
-    ];
+    return [...this.buffer.slice(this.writeIndex), ...this.buffer.slice(0, this.writeIndex)];
   }
 
   clear(): void {
@@ -106,7 +103,11 @@ class RequestMetrics {
     // Aggregate per endpoint (method + path pattern)
     const key = `${entry.method} ${this.normalizePath(entry.path)}`;
     const stats = this.endpointStats.get(key) || {
-      count: 0, totalMs: 0, maxMs: 0, slowCount: 0, errors: 0,
+      count: 0,
+      totalMs: 0,
+      maxMs: 0,
+      slowCount: 0,
+      errors: 0
     };
 
     stats.count++;
@@ -123,11 +124,13 @@ class RequestMetrics {
    * This groups "/api/lead/abc-123-def" and "/api/lead/xyz-456-ghi" together.
    */
   private normalizePath(path: string): string {
-    return path
-      // Replace UUIDs
-      .replace(/[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}/gi, ':id')
-      // Replace numeric IDs
-      .replace(/\/\d+/g, '/:id');
+    return (
+      path
+        // Replace UUIDs
+        .replace(/[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}/gi, ':id')
+        // Replace numeric IDs
+        .replace(/\/\d+/g, '/:id')
+    );
   }
 
   /**
@@ -145,32 +148,28 @@ class RequestMetrics {
 
     if (recentEntries.length === 0) return;
 
-    const avgDuration =
-      recentEntries.reduce((sum, e) => sum + e.durationMs, 0) / recentEntries.length;
+    const avgDuration = recentEntries.reduce((sum, e) => sum + e.durationMs, 0) / recentEntries.length;
     const slowCount = recentEntries.filter(e => e.slow).length;
     const errorCount = recentEntries.filter(e => e.statusCode >= 400).length;
     const rps = (recentEntries.length / periodSec).toFixed(1);
 
     console.log(
       `[RequestLogger] Period: ${recentEntries.length} reqs, ` +
-      `${rps} req/s, avg ${avgDuration.toFixed(0)}ms, ` +
-      `${slowCount} slow, ${errorCount} errors`
+        `${rps} req/s, avg ${avgDuration.toFixed(0)}ms, ` +
+        `${slowCount} slow, ${errorCount} errors`
     );
 
     // Log top 5 slowest endpoints
     const sorted = Array.from(this.endpointStats.entries())
       .filter(([_, s]) => s.count > 0)
-      .sort((a, b) => (b[1].totalMs / b[1].count) - (a[1].totalMs / a[1].count))
+      .sort((a, b) => b[1].totalMs / b[1].count - a[1].totalMs / a[1].count)
       .slice(0, 5);
 
     if (sorted.length > 0 && sorted[0][1].totalMs / sorted[0][1].count > 500) {
       console.log('[RequestLogger] Slowest endpoints:');
       for (const [endpoint, stats] of sorted) {
         const avg = (stats.totalMs / stats.count).toFixed(0);
-        console.log(
-          `  ${endpoint}: avg ${avg}ms, max ${stats.maxMs}ms, ` +
-          `${stats.count} calls, ${stats.slowCount} slow`
-        );
+        console.log(`  ${endpoint}: avg ${avg}ms, max ${stats.maxMs}ms, ` + `${stats.count} calls, ${stats.slowCount} slow`);
       }
     }
   }
@@ -188,11 +187,9 @@ class RequestMetrics {
       totalErrors: this.totalErrors,
       lastMinute: {
         requests: recentEntries.length,
-        avgDurationMs: recentEntries.length > 0
-          ? Math.round(recentEntries.reduce((s, e) => s + e.durationMs, 0) / recentEntries.length)
-          : 0,
+        avgDurationMs: recentEntries.length > 0 ? Math.round(recentEntries.reduce((s, e) => s + e.durationMs, 0) / recentEntries.length) : 0,
         slowRequests: recentEntries.filter(e => e.slow).length,
-        errors: recentEntries.filter(e => e.statusCode >= 400).length,
+        errors: recentEntries.filter(e => e.statusCode >= 400).length
       },
       topEndpoints: Array.from(this.endpointStats.entries())
         .sort((a, b) => b[1].count - a[1].count)
@@ -203,10 +200,8 @@ class RequestMetrics {
           avgMs: Math.round(stats.totalMs / stats.count),
           maxMs: stats.maxMs,
           slowCount: stats.slowCount,
-          errorRate: stats.count > 0
-            ? ((stats.errors / stats.count) * 100).toFixed(1) + '%'
-            : '0%',
-        })),
+          errorRate: stats.count > 0 ? ((stats.errors / stats.count) * 100).toFixed(1) + '%' : '0%'
+        }))
     };
   }
 
@@ -267,7 +262,7 @@ export function requestLoggerMiddleware(req: Request, res: Response, next: NextF
       userId,
       ip: req.ip || req.socket.remoteAddress || 'unknown',
       timestamp: startMs,
-      slow,
+      slow
     };
 
     requestMetrics.record(entry);
@@ -276,7 +271,7 @@ export function requestLoggerMiddleware(req: Request, res: Response, next: NextF
     if (slow && SLOW_LOG_IMMEDIATE) {
       console.warn(
         `[SLOW REQUEST] ${entry.method} ${entry.path} - ${entry.durationMs.toFixed(0)}ms ` +
-        `(status: ${entry.statusCode}, user: ${userId || 'anonymous'}, ip: ${entry.ip})`
+          `(status: ${entry.statusCode}, user: ${userId || 'anonymous'}, ip: ${entry.ip})`
       );
     }
 

@@ -164,7 +164,7 @@ class ERPNextController {
         status: status as string | undefined,
         direction: direction as string | undefined,
         limit: limit ? Number(limit) : undefined,
-        offset: offset ? Number(offset) : undefined,
+        offset: offset ? Number(offset) : undefined
       });
       wrapResult(res, result);
     } catch (error) {

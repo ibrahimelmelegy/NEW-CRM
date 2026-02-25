@@ -9,14 +9,14 @@ const ENV_VARS: EnvVar[] = [
   {
     name: 'SECRET_KEY',
     required: true,
-    validator: (v) => v.length >= 64,
-    hint: 'Must be at least 64 characters. Generate with: node -e "console.log(require(\'crypto\').randomBytes(64).toString(\'hex\'))"'
+    validator: v => v.length >= 64,
+    hint: "Must be at least 64 characters. Generate with: node -e \"console.log(require('crypto').randomBytes(64).toString('hex'))\""
   },
   {
     name: 'ENCRYPTION_KEY',
     required: true,
-    validator: (v) => /^[0-9a-f]{64}$/i.test(v),
-    hint: 'Must be exactly 64 hex characters (32 bytes). Generate with: node -e "console.log(require(\'crypto\').randomBytes(32).toString(\'hex\'))"'
+    validator: v => /^[0-9a-f]{64}$/i.test(v),
+    hint: "Must be exactly 64 hex characters (32 bytes). Generate with: node -e \"console.log(require('crypto').randomBytes(32).toString('hex'))\""
   },
   {
     name: 'DB_HOST',
@@ -26,7 +26,7 @@ const ENV_VARS: EnvVar[] = [
   {
     name: 'DB_PORT',
     required: true,
-    validator: (v) => !isNaN(parseInt(v, 10)) && parseInt(v, 10) > 0,
+    validator: v => !isNaN(parseInt(v, 10)) && parseInt(v, 10) > 0,
     hint: 'Must be a valid port number'
   },
   {
@@ -37,7 +37,7 @@ const ENV_VARS: EnvVar[] = [
   {
     name: 'DB_PASSWORD',
     required: true,
-    validator: (v) => v.length >= 8,
+    validator: v => v.length >= 8,
     hint: 'Database password must be at least 8 characters'
   },
   {
@@ -48,13 +48,13 @@ const ENV_VARS: EnvVar[] = [
   {
     name: 'PORT',
     required: false,
-    validator: (v) => !isNaN(parseInt(v, 10)) && parseInt(v, 10) > 0 && parseInt(v, 10) <= 65535,
+    validator: v => !isNaN(parseInt(v, 10)) && parseInt(v, 10) > 0 && parseInt(v, 10) <= 65535,
     hint: 'Must be a valid port number (1-65535). Defaults to 5000.'
   },
   {
     name: 'NODE_ENV',
     required: false,
-    validator: (v) => ['development', 'production', 'test'].includes(v),
+    validator: v => ['development', 'production', 'test'].includes(v),
     hint: 'Should be "development", "production", or "test"'
   },
   {
@@ -70,13 +70,13 @@ const ENV_VARS: EnvVar[] = [
   {
     name: 'LOGIN_MAX_ATTEMPTS',
     required: false,
-    validator: (v) => !isNaN(parseInt(v, 10)) && parseInt(v, 10) > 0,
+    validator: v => !isNaN(parseInt(v, 10)) && parseInt(v, 10) > 0,
     hint: 'Max login attempts before lockout. Defaults to 5.'
   },
   {
     name: 'LOGIN_LOCK_TIME_MS',
     required: false,
-    validator: (v) => !isNaN(parseInt(v, 10)) && parseInt(v, 10) > 0,
+    validator: v => !isNaN(parseInt(v, 10)) && parseInt(v, 10) > 0,
     hint: 'Lockout duration in milliseconds. Defaults to 900000 (15 minutes).'
   }
 ];

@@ -29,10 +29,10 @@ const router = express.Router();
  */
 // Aging report (must be before /:id to avoid route conflict)
 router.get(
-    '/aging-report',
-    authenticateUser,
-    HasPermission([InvoicePermissionsEnum.VIEW_AGING, InvoicePermissionsEnum.VIEW_INVOICES]),
-    invoiceBillingController.getAgingReport
+  '/aging-report',
+  authenticateUser,
+  HasPermission([InvoicePermissionsEnum.VIEW_AGING, InvoicePermissionsEnum.VIEW_INVOICES]),
+  invoiceBillingController.getAgingReport
 );
 
 /**
@@ -97,12 +97,7 @@ router.get(
  *         description: Server error
  */
 // Create invoice with line items
-router.post(
-    '/create',
-    authenticateUser,
-    HasPermission([InvoicePermissionsEnum.CREATE_INVOICES]),
-    invoiceBillingController.createInvoice
-);
+router.post('/create', authenticateUser, HasPermission([InvoicePermissionsEnum.CREATE_INVOICES]), invoiceBillingController.createInvoice);
 
 /**
  * @swagger
@@ -131,10 +126,10 @@ router.post(
  */
 // Create invoice from sales order
 router.post(
-    '/from-order/:orderId',
-    authenticateUser,
-    HasPermission([InvoicePermissionsEnum.CREATE_INVOICES]),
-    invoiceBillingController.createFromOrder
+  '/from-order/:orderId',
+  authenticateUser,
+  HasPermission([InvoicePermissionsEnum.CREATE_INVOICES]),
+  invoiceBillingController.createFromOrder
 );
 
 /**
@@ -161,12 +156,7 @@ router.post(
  *         description: Server error
  */
 // Get invoice detail with line items
-router.get(
-    '/:id',
-    authenticateUser,
-    HasPermission([InvoicePermissionsEnum.VIEW_INVOICES]),
-    invoiceBillingController.getInvoiceDetail
-);
+router.get('/:id', authenticateUser, HasPermission([InvoicePermissionsEnum.VIEW_INVOICES]), invoiceBillingController.getInvoiceDetail);
 
 /**
  * @swagger
@@ -221,12 +211,7 @@ router.get(
  *         description: Server error
  */
 // Update invoice
-router.put(
-    '/:id',
-    authenticateUser,
-    HasPermission([InvoicePermissionsEnum.EDIT_INVOICES]),
-    invoiceBillingController.updateInvoice
-);
+router.put('/:id', authenticateUser, HasPermission([InvoicePermissionsEnum.EDIT_INVOICES]), invoiceBillingController.updateInvoice);
 
 /**
  * @swagger
@@ -251,12 +236,7 @@ router.put(
  *         description: Server error
  */
 // Mark sent
-router.patch(
-    '/:id/send',
-    authenticateUser,
-    HasPermission([InvoicePermissionsEnum.SEND_INVOICES]),
-    invoiceBillingController.markSent
-);
+router.patch('/:id/send', authenticateUser, HasPermission([InvoicePermissionsEnum.SEND_INVOICES]), invoiceBillingController.markSent);
 
 /**
  * @swagger
@@ -284,12 +264,7 @@ router.patch(
  *         description: Server error
  */
 // Void invoice
-router.patch(
-    '/:id/void',
-    authenticateUser,
-    HasPermission([InvoicePermissionsEnum.VOID_INVOICES]),
-    invoiceBillingController.voidInvoice
-);
+router.patch('/:id/void', authenticateUser, HasPermission([InvoicePermissionsEnum.VOID_INVOICES]), invoiceBillingController.voidInvoice);
 
 /**
  * @swagger
@@ -337,10 +312,10 @@ router.patch(
  */
 // Issue credit note
 router.post(
-    '/:id/credit-note',
-    authenticateUser,
-    HasPermission([InvoicePermissionsEnum.CREATE_CREDIT_NOTE]),
-    invoiceBillingController.createCreditNote
+  '/:id/credit-note',
+  authenticateUser,
+  HasPermission([InvoicePermissionsEnum.CREATE_CREDIT_NOTE]),
+  invoiceBillingController.createCreditNote
 );
 
 export default router;

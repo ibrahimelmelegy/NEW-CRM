@@ -6,10 +6,7 @@ import DocBuilderDocument from './docBuilderModel';
   tableName: 'doc_builder_versions',
   modelName: 'DocBuilderVersion',
   timestamps: true,
-  indexes: [
-    { fields: ['documentId'] },
-    { fields: ['version'] }
-  ]
+  indexes: [{ fields: ['documentId'] }, { fields: ['version'] }]
 })
 class DocBuilderVersion extends Model {
   @Column({

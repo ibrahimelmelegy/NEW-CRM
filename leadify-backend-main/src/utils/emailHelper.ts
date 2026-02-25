@@ -1,9 +1,8 @@
-import settingService from "../setting/settingService";
-import BaseError from "./error/base-http-exception";
-import { ERRORS } from "./error/errors";
+import settingService from '../setting/settingService';
+import BaseError from './error/base-http-exception';
+import { ERRORS } from './error/errors';
 
 const SibApiV3Sdk = require('sib-api-v3-sdk');
-
 
 const defaultClient = SibApiV3Sdk.ApiClient.instance;
 
@@ -22,16 +21,10 @@ interface SendEmailOptions {
   attachment?: EmailAttachment;
 }
 
-export async function sendEmail({
-  to,
-  subject,
-  text,
-  html,
-  attachment
-}: SendEmailOptions): Promise<void> {
+export async function sendEmail({ to, subject, text, html, attachment }: SendEmailOptions): Promise<void> {
   const setting = await settingService.getSetting();
   if (!setting?.emailApiKey) throw new BaseError(ERRORS.MISSING_EMAIL_CONFIGURATION);
-  defaultClient.authentications['api-key'].apiKey = setting.emailApiKey;//process.env.BREVO_API_KEY!;
+  defaultClient.authentications['api-key'].apiKey = setting.emailApiKey; //process.env.BREVO_API_KEY!;
 
   const emailParams = {
     to: [{ email: to }],

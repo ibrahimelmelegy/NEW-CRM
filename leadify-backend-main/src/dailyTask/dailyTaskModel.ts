@@ -30,7 +30,7 @@ class DailyTask extends Model {
 
   @ForeignKey(() => User)
   @Column({
-    type: DataType.INTEGER, 
+    type: DataType.INTEGER,
     allowNull: false
   })
   public salesRepresentativeId!: number;
@@ -40,7 +40,7 @@ class DailyTask extends Model {
 
   @ForeignKey(() => User)
   @Column({
-    type: DataType.INTEGER, 
+    type: DataType.INTEGER,
     allowNull: false
   })
   public userId!: number;
@@ -57,7 +57,6 @@ class DailyTask extends Model {
 
   @BelongsTo(() => Client, { as: 'client' })
   public client?: Client;
-
 
   @Column({
     type: DataType.ENUM(...Object.values(DailyTaskStatusEnum)),

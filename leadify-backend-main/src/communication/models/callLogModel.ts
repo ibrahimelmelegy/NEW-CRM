@@ -1,11 +1,4 @@
-import {
-  Column,
-  DataType,
-  ForeignKey,
-  BelongsTo,
-  Model,
-  Table
-} from 'sequelize-typescript';
+import { Column, DataType, ForeignKey, BelongsTo, Model, Table } from 'sequelize-typescript';
 import CommActivity from './activityModel';
 
 export enum CallOutcome {

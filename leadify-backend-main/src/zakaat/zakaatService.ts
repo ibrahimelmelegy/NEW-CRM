@@ -129,10 +129,7 @@ class ZakaatService {
     }
 
     if (query.search) {
-      where[Op.or as any] = [
-        { fiscalYear: { [Op.iLike]: `%${query.search}%` } },
-        { companyId: { [Op.iLike]: `%${query.search}%` } }
-      ];
+      where[Op.or as any] = [{ fiscalYear: { [Op.iLike]: `%${query.search}%` } }, { companyId: { [Op.iLike]: `%${query.search}%` } }];
     }
 
     const { rows, count } = await ZakaatAssessment.findAndCountAll({
@@ -249,23 +246,26 @@ class ZakaatService {
       fiscalYear: assessment.fiscalYear,
       companyId: assessment.companyId,
       status: assessment.status,
-      assetBreakdown: breakdown ? {
-        currentAssets: {
-          cashAndBank: Number(breakdown.cashAndBank) || 0,
-          receivables: Number(breakdown.receivables) || 0,
-          inventory: Number(breakdown.inventory) || 0,
-          investments: Number(breakdown.investments) || 0,
-          prepaidExpenses: Number(breakdown.prepaidExpenses) || 0,
-          subtotal: (Number(breakdown.cashAndBank) || 0) +
-                    (Number(breakdown.receivables) || 0) +
-                    (Number(breakdown.inventory) || 0) +
-                    (Number(breakdown.investments) || 0) +
-                    (Number(breakdown.prepaidExpenses) || 0)
-        },
-        fixedAssets: Number(breakdown.fixedAssets) || 0,
-        totalAssets: Number(assessment.totalAssets),
-        liabilities: Number(breakdown.liabilities) || 0
-      } : null,
+      assetBreakdown: breakdown
+        ? {
+            currentAssets: {
+              cashAndBank: Number(breakdown.cashAndBank) || 0,
+              receivables: Number(breakdown.receivables) || 0,
+              inventory: Number(breakdown.inventory) || 0,
+              investments: Number(breakdown.investments) || 0,
+              prepaidExpenses: Number(breakdown.prepaidExpenses) || 0,
+              subtotal:
+                (Number(breakdown.cashAndBank) || 0) +
+                (Number(breakdown.receivables) || 0) +
+                (Number(breakdown.inventory) || 0) +
+                (Number(breakdown.investments) || 0) +
+                (Number(breakdown.prepaidExpenses) || 0)
+            },
+            fixedAssets: Number(breakdown.fixedAssets) || 0,
+            totalAssets: Number(assessment.totalAssets),
+            liabilities: Number(breakdown.liabilities) || 0
+          }
+        : null,
       calculation: {
         totalAssets: Number(assessment.totalAssets),
         exemptAssets: Number(assessment.exemptAssets),
@@ -275,11 +275,13 @@ class ZakaatService {
         zakaatDue: Number(assessment.zakaatDue)
       },
       notes: assessment.notes,
-      preparedBy: assessment.creator ? {
-        id: assessment.creator.id,
-        name: (assessment.creator as any).name,
-        email: (assessment.creator as any).email
-      } : null,
+      preparedBy: assessment.creator
+        ? {
+            id: assessment.creator.id,
+            name: (assessment.creator as any).name,
+            email: (assessment.creator as any).email
+          }
+        : null,
       generatedAt: new Date().toISOString()
     };
   }

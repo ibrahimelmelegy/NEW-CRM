@@ -11,22 +11,85 @@ import { io } from '../server';
 // Achievement definitions with auto-check criteria
 const ACHIEVEMENT_DEFINITIONS = [
   // Sales Hero
-  { name: 'First Blood', description: 'Close your first deal', criteria: 'deals_closed_1', category: 'sales_hero', pointsValue: 50, icon: 'ph:trophy' },
+  {
+    name: 'First Blood',
+    description: 'Close your first deal',
+    criteria: 'deals_closed_1',
+    category: 'sales_hero',
+    pointsValue: 50,
+    icon: 'ph:trophy'
+  },
   { name: 'Deal Machine', description: 'Close 10 deals', criteria: 'deals_closed_10', category: 'sales_hero', pointsValue: 200, icon: 'ph:fire' },
   { name: 'Sales Legend', description: 'Close 50 deals', criteria: 'deals_closed_50', category: 'sales_hero', pointsValue: 500, icon: 'ph:crown' },
   // Speed Demon
-  { name: 'Quick Draw', description: 'Close a deal within 7 days', criteria: 'fast_close_7', category: 'speed_demon', pointsValue: 100, icon: 'ph:lightning' },
-  { name: 'Speed Runner', description: 'Create 5 leads in one day', criteria: 'leads_daily_5', category: 'speed_demon', pointsValue: 75, icon: 'ph:rocket' },
+  {
+    name: 'Quick Draw',
+    description: 'Close a deal within 7 days',
+    criteria: 'fast_close_7',
+    category: 'speed_demon',
+    pointsValue: 100,
+    icon: 'ph:lightning'
+  },
+  {
+    name: 'Speed Runner',
+    description: 'Create 5 leads in one day',
+    criteria: 'leads_daily_5',
+    category: 'speed_demon',
+    pointsValue: 75,
+    icon: 'ph:rocket'
+  },
   // Streak Master
-  { name: 'Getting Started', description: '3-day activity streak', criteria: 'streak_3', category: 'streak_master', pointsValue: 30, icon: 'ph:flame' },
+  {
+    name: 'Getting Started',
+    description: '3-day activity streak',
+    criteria: 'streak_3',
+    category: 'streak_master',
+    pointsValue: 30,
+    icon: 'ph:flame'
+  },
   { name: 'On Fire', description: '7-day activity streak', criteria: 'streak_7', category: 'streak_master', pointsValue: 100, icon: 'ph:fire' },
-  { name: 'Unstoppable', description: '30-day activity streak', criteria: 'streak_30', category: 'streak_master', pointsValue: 500, icon: 'ph:meteor' },
+  {
+    name: 'Unstoppable',
+    description: '30-day activity streak',
+    criteria: 'streak_30',
+    category: 'streak_master',
+    pointsValue: 500,
+    icon: 'ph:meteor'
+  },
   // Team Player
-  { name: 'Helping Hand', description: 'Earn 100 total points', criteria: 'points_100', category: 'team_player', pointsValue: 25, icon: 'ph:hands-clapping' },
-  { name: 'Top Performer', description: 'Earn 1000 total points', criteria: 'points_1000', category: 'team_player', pointsValue: 200, icon: 'ph:medal' },
+  {
+    name: 'Helping Hand',
+    description: 'Earn 100 total points',
+    criteria: 'points_100',
+    category: 'team_player',
+    pointsValue: 25,
+    icon: 'ph:hands-clapping'
+  },
+  {
+    name: 'Top Performer',
+    description: 'Earn 1000 total points',
+    criteria: 'points_1000',
+    category: 'team_player',
+    pointsValue: 200,
+    icon: 'ph:medal'
+  },
   // Deal Closer
-  { name: 'Big Fish', description: 'Close a deal worth $50,000+', criteria: 'big_deal_50k', category: 'deal_closer', pointsValue: 300, icon: 'ph:money' },
-  { name: 'Whale Hunter', description: 'Close a deal worth $100,000+', criteria: 'big_deal_100k', category: 'deal_closer', pointsValue: 500, icon: 'ph:star-four' }
+  {
+    name: 'Big Fish',
+    description: 'Close a deal worth $50,000+',
+    criteria: 'big_deal_50k',
+    category: 'deal_closer',
+    pointsValue: 300,
+    icon: 'ph:money'
+  },
+  {
+    name: 'Whale Hunter',
+    description: 'Close a deal worth $100,000+',
+    criteria: 'big_deal_100k',
+    category: 'deal_closer',
+    pointsValue: 500,
+    icon: 'ph:star-four'
+  }
 ];
 
 class AchievementEngine {

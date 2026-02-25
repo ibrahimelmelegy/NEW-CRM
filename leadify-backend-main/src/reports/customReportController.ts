@@ -34,11 +34,7 @@ class CustomReportController {
 
   async updateReport(req: AuthenticatedRequest, res: Response, next: NextFunction) {
     try {
-      const report = await customReportService.updateReport(
-        Number(req.params.id),
-        req.body,
-        req.user!.id
-      );
+      const report = await customReportService.updateReport(Number(req.params.id), req.body, req.user!.id);
       wrapResult(res, report);
     } catch (error) {
       next(error);
@@ -57,10 +53,7 @@ class CustomReportController {
   async executeReport(req: AuthenticatedRequest, res: Response, next: NextFunction) {
     try {
       const overrideFilters = req.body.filters;
-      const data = await customReportService.executeReport(
-        Number(req.params.id),
-        overrideFilters
-      );
+      const data = await customReportService.executeReport(Number(req.params.id), overrideFilters);
       wrapResult(res, data);
     } catch (error) {
       next(error);

@@ -45,11 +45,7 @@ class SequenceController {
 
   public async enrollEntity(req: AuthenticatedRequest, res: Response, next: NextFunction): Promise<void> {
     try {
-      const enrollment = await sequenceService.enrollEntity(
-        req.params.id as string,
-        req.body.entityType,
-        req.body.entityId
-      );
+      const enrollment = await sequenceService.enrollEntity(req.params.id as string, req.body.entityType, req.body.entityId);
       wrapResult(res, enrollment, 201);
     } catch (error) {
       next(error);

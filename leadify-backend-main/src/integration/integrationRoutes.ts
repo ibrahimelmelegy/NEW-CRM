@@ -213,12 +213,7 @@ router.get('/hub/configured', authenticateUser, hubController.getConfigured);
  *       400:
  *         description: Missing type/config or invalid integration type
  */
-router.post(
-  '/hub/configure',
-  authenticateUser,
-  HasPermission([IntegrationPermissionsEnum.CONFIGURE_INTEGRATIONS]),
-  hubController.configure
-);
+router.post('/hub/configure', authenticateUser, HasPermission([IntegrationPermissionsEnum.CONFIGURE_INTEGRATIONS]), hubController.configure);
 
 // ─── Outgoing Webhooks (before wildcard hub routes) ──────────────────────────
 
@@ -279,12 +274,7 @@ router.get('/hub/webhooks', authenticateUser, hubController.getWebhooks);
  *       400:
  *         description: Missing required fields
  */
-router.post(
-  '/hub/webhooks',
-  authenticateUser,
-  HasPermission([IntegrationPermissionsEnum.MANAGE_WEBHOOKS]),
-  hubController.createWebhook
-);
+router.post('/hub/webhooks', authenticateUser, HasPermission([IntegrationPermissionsEnum.MANAGE_WEBHOOKS]), hubController.createWebhook);
 
 /**
  * @swagger
@@ -328,12 +318,7 @@ router.post(
  *       404:
  *         description: Webhook not found
  */
-router.put(
-  '/hub/webhooks/:id',
-  authenticateUser,
-  HasPermission([IntegrationPermissionsEnum.MANAGE_WEBHOOKS]),
-  hubController.updateWebhook
-);
+router.put('/hub/webhooks/:id', authenticateUser, HasPermission([IntegrationPermissionsEnum.MANAGE_WEBHOOKS]), hubController.updateWebhook);
 
 /**
  * @swagger
@@ -356,12 +341,7 @@ router.put(
  *       404:
  *         description: Webhook not found
  */
-router.delete(
-  '/hub/webhooks/:id',
-  authenticateUser,
-  HasPermission([IntegrationPermissionsEnum.MANAGE_WEBHOOKS]),
-  hubController.deleteWebhook
-);
+router.delete('/hub/webhooks/:id', authenticateUser, HasPermission([IntegrationPermissionsEnum.MANAGE_WEBHOOKS]), hubController.deleteWebhook);
 
 /**
  * @swagger
@@ -437,11 +417,6 @@ router.post('/hub/:type/test', authenticateUser, hubController.testConnection);
  *       200:
  *         description: Integration removed
  */
-router.delete(
-  '/hub/:id',
-  authenticateUser,
-  HasPermission([IntegrationPermissionsEnum.CONFIGURE_INTEGRATIONS]),
-  hubController.remove
-);
+router.delete('/hub/:id', authenticateUser, HasPermission([IntegrationPermissionsEnum.CONFIGURE_INTEGRATIONS]), hubController.remove);
 
 export default router;

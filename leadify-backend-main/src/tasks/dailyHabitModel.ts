@@ -1,20 +1,11 @@
-import {
-  BelongsTo,
-  Column,
-  DataType,
-  ForeignKey,
-  Model,
-  Table
-} from 'sequelize-typescript';
+import { BelongsTo, Column, DataType, ForeignKey, Model, Table } from 'sequelize-typescript';
 import User from '../user/userModel';
 
 @Table({
   tableName: 'daily_habits',
   modelName: 'DailyHabit',
   timestamps: true,
-  indexes: [
-    { fields: ['userId'] }
-  ]
+  indexes: [{ fields: ['userId'] }]
 })
 class DailyHabit extends Model {
   @Column({

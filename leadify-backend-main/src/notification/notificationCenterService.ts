@@ -77,9 +77,7 @@ class NotificationCenterService {
    */
   private async getChannelPrefs(userId: number, type: string): Promise<NotificationChannels> {
     const pref = await NotificationPreference.findOne({ where: { userId } });
-    const prefsMap: NotificationPreferencesMap = pref
-      ? pref.preferences
-      : DEFAULT_NOTIFICATION_PREFERENCES;
+    const prefsMap: NotificationPreferencesMap = pref ? pref.preferences : DEFAULT_NOTIFICATION_PREFERENCES;
 
     const key = typeToPreferenceKey(type);
     return prefsMap[key] || { inApp: true, email: false, push: false };
@@ -142,10 +140,7 @@ class NotificationCenterService {
   /**
    * Send a notification to multiple users.
    */
-  async sendBulkNotification(
-    userIds: number[],
-    data: Omit<SendNotificationData, 'userId'>
-  ): Promise<(Notification | null)[]> {
+  async sendBulkNotification(userIds: number[], data: Omit<SendNotificationData, 'userId'>): Promise<(Notification | null)[]> {
     const results: (Notification | null)[] = [];
     for (const userId of userIds) {
       const notification = await this.sendNotification({ ...data, userId });
@@ -157,15 +152,12 @@ class NotificationCenterService {
   /**
    * Send a notification to all users that have a specific role.
    */
-  async sendRoleNotification(
-    roleName: string,
-    data: Omit<SendNotificationData, 'userId'>
-  ): Promise<(Notification | null)[]> {
+  async sendRoleNotification(roleName: string, data: Omit<SendNotificationData, 'userId'>): Promise<(Notification | null)[]> {
     const role = await Role.findOne({ where: { name: roleName } });
     if (!role) return [];
 
     const users = await User.findAll({ where: { roleId: role.id } });
-    const userIds = users.map((u) => u.id);
+    const userIds = users.map(u => u.id);
 
     return this.sendBulkNotification(userIds, data);
   }
@@ -173,7 +165,10 @@ class NotificationCenterService {
   /**
    * Get paginated notifications for a user, with optional filters.
    */
-  async getNotifications(userId: number, query: GetNotificationsQuery): Promise<{
+  async getNotifications(
+    userId: number,
+    query: GetNotificationsQuery
+  ): Promise<{
     unreadNotificationsCount: number;
     docs: Notification[];
     pagination: { page: number; limit: number; totalItems: number; totalPages: number };
@@ -234,10 +229,7 @@ class NotificationCenterService {
    * Mark all unread notifications as read for a user.
    */
   async markAllAsRead(userId: number): Promise<void> {
-    await Notification.update(
-      { read: NotificationReadEnums.READ },
-      { where: { userId, read: NotificationReadEnums.UN_READ } }
-    );
+    await Notification.update({ read: NotificationReadEnums.READ }, { where: { userId, read: NotificationReadEnums.UN_READ } });
   }
 
   /**
@@ -266,10 +258,7 @@ class NotificationCenterService {
   /**
    * Update a user's notification preferences (partial merge).
    */
-  async updateUserPreferences(
-    userId: number,
-    preferences: Partial<NotificationPreferencesMap>
-  ): Promise<NotificationPreference> {
+  async updateUserPreferences(userId: number, preferences: Partial<NotificationPreferencesMap>): Promise<NotificationPreference> {
     let pref = await NotificationPreference.findOne({ where: { userId } });
     if (!pref) {
       pref = await NotificationPreference.create({

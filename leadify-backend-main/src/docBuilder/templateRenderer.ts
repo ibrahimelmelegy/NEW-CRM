@@ -58,11 +58,7 @@ interface DocumentContent {
 
 function escapeHtml(str: string): string {
   if (!str) return '';
-  return str
-    .replace(/&/g, '&amp;')
-    .replace(/</g, '&lt;')
-    .replace(/>/g, '&gt;')
-    .replace(/"/g, '&quot;');
+  return str.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
 }
 
 function formatCurrency(amount: number, currency: string = 'SAR'): string {
@@ -80,16 +76,16 @@ export function renderDocumentHtml(content: DocumentContent, type: string): stri
   const items = content.items || [];
 
   const subtotal = items.reduce((sum, item) => sum + (item.quantity || 0) * (item.rate || 0), 0);
-  const discountAmount = content.discountType === 'percent'
-    ? subtotal * ((content.discount || 0) / 100)
-    : (content.discount || 0);
+  const discountAmount = content.discountType === 'percent' ? subtotal * ((content.discount || 0) / 100) : content.discount || 0;
   const taxableAmount = subtotal - discountAmount;
   const taxAmount = taxableAmount * ((content.taxRate || 0) / 100);
   const total = taxableAmount + taxAmount;
 
   const typeLabel = (type || 'document').replace(/_/g, ' ').replace(/\b\w/g, l => l.toUpperCase());
 
-  const itemRows = items.map((item, i) => `
+  const itemRows = items
+    .map(
+      (item, i) => `
     <tr>
       <td style="padding: 12px 16px; border-bottom: 1px solid #f1f5f9;">${i + 1}</td>
       <td style="padding: 12px 16px; border-bottom: 1px solid #f1f5f9; font-weight: 600;">${escapeHtml(item.description)}</td>
@@ -98,14 +94,20 @@ export function renderDocumentHtml(content: DocumentContent, type: string): stri
       <td style="padding: 12px 16px; border-bottom: 1px solid #f1f5f9; text-align: right;">${formatCurrency(item.rate, currency)}</td>
       <td style="padding: 12px 16px; border-bottom: 1px solid #f1f5f9; text-align: right; font-weight: 700;">${formatCurrency(item.quantity * item.rate, currency)}</td>
     </tr>
-  `).join('');
+  `
+    )
+    .join('');
 
-  const customSectionsHtml = (content.customSections || []).map(section => `
+  const customSectionsHtml = (content.customSections || [])
+    .map(
+      section => `
     <div style="margin-bottom: 24px;">
       <h3 style="font-size: 16px; font-weight: 700; color: #1e293b; margin-bottom: 8px;">${escapeHtml(section.title)}</h3>
       <div style="color: #475569; line-height: 1.6;">${section.content || ''}</div>
     </div>
-  `).join('');
+  `
+    )
+    .join('');
 
   const isFullDoc = ['proposal', 'contract'].includes(type);
 
@@ -151,17 +153,23 @@ export function renderDocumentHtml(content: DocumentContent, type: string): stri
     ${content.clientTaxId ? `<p style="font-size: 12px; color: #94a3b8;">VAT: ${escapeHtml(content.clientTaxId)}</p>` : ''}
   </div>
 
-  ${isFullDoc ? `
+  ${
+    isFullDoc
+      ? `
   <!-- Content Sections -->
   ${content.introduction ? `<div style="margin-bottom: 24px;"><h3 style="font-size: 16px; font-weight: 700; color: ${color}; margin-bottom: 8px;">Introduction</h3><div style="color: #475569; line-height: 1.7;">${content.introduction}</div></div>` : ''}
   ${content.objectives ? `<div style="margin-bottom: 24px;"><h3 style="font-size: 16px; font-weight: 700; color: ${color}; margin-bottom: 8px;">Objectives</h3><div style="color: #475569; line-height: 1.7;">${content.objectives}</div></div>` : ''}
   ${content.scopeOfWork ? `<div style="margin-bottom: 24px;"><h3 style="font-size: 16px; font-weight: 700; color: ${color}; margin-bottom: 8px;">Scope of Work</h3><div style="color: #475569; line-height: 1.7;">${content.scopeOfWork}</div></div>` : ''}
   ${content.methodology ? `<div style="margin-bottom: 24px;"><h3 style="font-size: 16px; font-weight: 700; color: ${color}; margin-bottom: 8px;">Methodology</h3><div style="color: #475569; line-height: 1.7;">${content.methodology}</div></div>` : ''}
   ${customSectionsHtml}
-  ` : ''}
+  `
+      : ''
+  }
 
   <!-- Items Table -->
-  ${items.length > 0 ? `
+  ${
+    items.length > 0
+      ? `
   <table style="width: 100%; border-collapse: collapse; margin-bottom: 24px; font-size: 13px;">
     <thead>
       <tr style="background: ${color}; color: #fff;">
@@ -177,7 +185,9 @@ export function renderDocumentHtml(content: DocumentContent, type: string): stri
       ${itemRows}
     </tbody>
   </table>
-  ` : ''}
+  `
+      : ''
+  }
 
   <!-- Totals -->
   <div style="display: flex; justify-content: flex-end; margin-bottom: 30px;">
@@ -186,18 +196,26 @@ export function renderDocumentHtml(content: DocumentContent, type: string): stri
         <td style="padding: 8px 0; color: #64748b;">Subtotal</td>
         <td style="padding: 8px 0; text-align: right; font-weight: 600;">${formatCurrency(subtotal, currency)}</td>
       </tr>
-      ${discountAmount > 0 ? `
+      ${
+        discountAmount > 0
+          ? `
       <tr>
         <td style="padding: 8px 0; color: #64748b;">Discount${content.discountType === 'percent' ? ` (${content.discount}%)` : ''}</td>
         <td style="padding: 8px 0; text-align: right; color: #ef4444;">-${formatCurrency(discountAmount, currency)}</td>
       </tr>
-      ` : ''}
-      ${(content.taxRate || 0) > 0 ? `
+      `
+          : ''
+      }
+      ${
+        (content.taxRate || 0) > 0
+          ? `
       <tr>
         <td style="padding: 8px 0; color: #64748b;">VAT (${content.taxRate}%)</td>
         <td style="padding: 8px 0; text-align: right;">${formatCurrency(taxAmount, currency)}</td>
       </tr>
-      ` : ''}
+      `
+          : ''
+      }
       <tr style="border-top: 2px solid ${color};">
         <td style="padding: 12px 0; font-weight: 800; font-size: 16px; color: ${color};">Total</td>
         <td style="padding: 12px 0; text-align: right; font-weight: 800; font-size: 16px; color: ${color};">${formatCurrency(total, currency)}</td>
@@ -206,7 +224,9 @@ export function renderDocumentHtml(content: DocumentContent, type: string): stri
   </div>
 
   <!-- Bank Details -->
-  ${content.bankName ? `
+  ${
+    content.bankName
+      ? `
   <div style="background: #f0f9ff; border: 1px solid #bae6fd; border-radius: 8px; padding: 16px; margin-bottom: 24px;">
     <h3 style="font-size: 11px; font-weight: 700; color: #0284c7; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 8px;">Bank Details</h3>
     <p style="font-size: 13px; color: #0c4a6e;"><strong>Bank:</strong> ${escapeHtml(content.bankName)}</p>
@@ -214,27 +234,41 @@ export function renderDocumentHtml(content: DocumentContent, type: string): stri
     ${content.bankIban ? `<p style="font-size: 13px; color: #0c4a6e;"><strong>IBAN:</strong> ${escapeHtml(content.bankIban)}</p>` : ''}
     ${content.bankSwift ? `<p style="font-size: 13px; color: #0c4a6e;"><strong>SWIFT:</strong> ${escapeHtml(content.bankSwift)}</p>` : ''}
   </div>
-  ` : ''}
+  `
+      : ''
+  }
 
   <!-- Terms -->
-  ${content.paymentTerms ? `
+  ${
+    content.paymentTerms
+      ? `
   <div style="margin-bottom: 20px;">
     <h3 style="font-size: 14px; font-weight: 700; color: #1e293b; margin-bottom: 6px;">Payment Terms</h3>
     <div style="font-size: 13px; color: #475569; line-height: 1.6;">${content.paymentTerms}</div>
   </div>
-  ` : ''}
-  ${content.termsAndConditions ? `
+  `
+      : ''
+  }
+  ${
+    content.termsAndConditions
+      ? `
   <div style="margin-bottom: 20px;">
     <h3 style="font-size: 14px; font-weight: 700; color: #1e293b; margin-bottom: 6px;">Terms & Conditions</h3>
     <div style="font-size: 12px; color: #64748b; line-height: 1.6;">${content.termsAndConditions}</div>
   </div>
-  ` : ''}
-  ${content.notes ? `
+  `
+      : ''
+  }
+  ${
+    content.notes
+      ? `
   <div style="background: #fffbeb; border: 1px solid #fcd34d; border-radius: 8px; padding: 12px; margin-bottom: 20px;">
     <h3 style="font-size: 12px; font-weight: 700; color: #92400e; margin-bottom: 4px;">Notes</h3>
     <div style="font-size: 12px; color: #78350f;">${content.notes}</div>
   </div>
-  ` : ''}
+  `
+      : ''
+  }
 
   <!-- Footer -->
   <div style="margin-top: 40px; padding-top: 20px; border-top: 1px solid #e2e8f0; text-align: center;">

@@ -8,7 +8,9 @@ class AttachmentController {
     try {
       const { entityType, entityId } = req.query;
       wrapResult(res, await attachmentService.getAttachments(entityType as string, Number(entityId)));
-    } catch (error) { next(error); }
+    } catch (error) {
+      next(error);
+    }
   }
 
   async createAttachment(req: AuthenticatedRequest, res: Response, next: NextFunction) {
@@ -23,13 +25,17 @@ class AttachmentController {
         mimeType: file?.mimetype || req.body.mimeType
       };
       wrapResult(res, await attachmentService.createAttachment(data, req.user?.id!), 201);
-    } catch (error) { next(error); }
+    } catch (error) {
+      next(error);
+    }
   }
 
   async deleteAttachment(req: AuthenticatedRequest, res: Response, next: NextFunction) {
     try {
       wrapResult(res, await attachmentService.deleteAttachment(Number(req.params.id), req.user?.id!));
-    } catch (error) { next(error); }
+    } catch (error) {
+      next(error);
+    }
   }
 }
 

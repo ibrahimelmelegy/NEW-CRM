@@ -127,16 +127,16 @@ class LeadService {
         }),
         ...(query.status &&
           query.status.length > 0 && {
-          status: {
-            [Op.in]: query.status // Matches any value in the array
-          }
-        }),
+            status: {
+              [Op.in]: query.status // Matches any value in the array
+            }
+          }),
         ...(query.leadSource &&
           query.leadSource.length > 0 && {
-          leadSource: {
-            [Op.in]: query.leadSource // Matches any value in the array
-          }
-        }),
+            leadSource: {
+              [Op.in]: query.leadSource // Matches any value in the array
+            }
+          }),
         ...((query.fromDate || query.toDate) && {
           createdAt: {
             ...(query.fromDate && { [Op.gte]: new Date(query.fromDate) }),

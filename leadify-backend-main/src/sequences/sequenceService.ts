@@ -9,10 +9,7 @@ class SequenceService {
     const where: WhereOptions = {};
 
     if (searchKey) {
-      (where as any)[Op.or] = [
-        { name: { [Op.iLike]: `%${searchKey}%` } },
-        { description: { [Op.iLike]: `%${searchKey}%` } }
-      ];
+      (where as any)[Op.or] = [{ name: { [Op.iLike]: `%${searchKey}%` } }, { description: { [Op.iLike]: `%${searchKey}%` } }];
     }
 
     if (isActive !== undefined && isActive !== '') {

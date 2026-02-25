@@ -5,11 +5,7 @@ import User from '../user/userModel';
   tableName: 'time_entries',
   modelName: 'TimeEntry',
   timestamps: true,
-  indexes: [
-    { fields: ['userId'] },
-    { fields: ['entityType', 'entityId'] },
-    { fields: ['startTime'] }
-  ]
+  indexes: [{ fields: ['userId'] }, { fields: ['entityType', 'entityId'] }, { fields: ['startTime'] }]
 })
 class TimeEntry extends Model {
   @Column({

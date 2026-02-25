@@ -5,10 +5,7 @@ import { ERRORS } from '../utils/error/errors';
 /**
  * Get all field permissions for a specific role and entity type.
  */
-export async function getFieldPermissions(
-  roleId: string,
-  entityType: string
-): Promise<FieldPermission[]> {
+export async function getFieldPermissions(roleId: string, entityType: string): Promise<FieldPermission[]> {
   const permissions = await FieldPermission.findAll({
     where: { roleId, entityType },
     order: [['fieldName', 'ASC']]
@@ -20,12 +17,7 @@ export async function getFieldPermissions(
  * Set a single field permission for a role/entity/field combination.
  * Uses upsert to create or update.
  */
-export async function setFieldPermission(
-  roleId: string,
-  entityType: string,
-  fieldName: string,
-  access: FieldAccess
-): Promise<FieldPermission> {
+export async function setFieldPermission(roleId: string, entityType: string, fieldName: string, access: FieldAccess): Promise<FieldPermission> {
   const [permission] = await FieldPermission.upsert(
     {
       roleId,
@@ -72,11 +64,7 @@ export async function bulkSetPermissions(
  * Filter entity data by removing hidden fields and marking non-editable fields.
  * Returns a new object with only the fields the role can see.
  */
-export async function filterEntityFields<T extends Record<string, any>>(
-  entity: T,
-  roleId: string,
-  entityType: string
-): Promise<Partial<T>> {
+export async function filterEntityFields<T extends Record<string, any>>(entity: T, roleId: string, entityType: string): Promise<Partial<T>> {
   const permissions = await FieldPermission.findAll({
     where: { roleId, entityType }
   });
@@ -106,10 +94,7 @@ export async function filterEntityFields<T extends Record<string, any>>(
 /**
  * Get list of field names that are editable for a given role and entity type.
  */
-export async function getEditableFields(
-  roleId: string,
-  entityType: string
-): Promise<string[]> {
+export async function getEditableFields(roleId: string, entityType: string): Promise<string[]> {
   const permissions = await FieldPermission.findAll({
     where: { roleId, entityType, access: FieldAccess.EDITABLE }
   });
@@ -120,11 +105,7 @@ export async function getEditableFields(
  * Check the access level for a specific field.
  * Returns the access level, or VISIBLE as default if no explicit permission is set.
  */
-export async function checkFieldAccess(
-  roleId: string,
-  entityType: string,
-  fieldName: string
-): Promise<FieldAccess> {
+export async function checkFieldAccess(roleId: string, entityType: string, fieldName: string): Promise<FieldAccess> {
   const permission = await FieldPermission.findOne({
     where: { roleId, entityType, fieldName }
   });

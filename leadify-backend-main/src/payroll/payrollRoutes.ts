@@ -142,7 +142,12 @@ router.get('/runs/:id', authenticateUser, HasPermission([PayrollPermissionsEnum.
  *       500:
  *         description: Server error
  */
-router.patch('/runs/:id/calculate', authenticateUser, HasPermission([PayrollPermissionsEnum.CREATE_PAYROLL_RUN]), payrollController.calculatePayslips);
+router.patch(
+  '/runs/:id/calculate',
+  authenticateUser,
+  HasPermission([PayrollPermissionsEnum.CREATE_PAYROLL_RUN]),
+  payrollController.calculatePayslips
+);
 
 /**
  * @swagger
@@ -370,7 +375,12 @@ router.post('/salary-structures', authenticateUser, HasPermission([PayrollPermis
  *       500:
  *         description: Server error
  */
-router.put('/salary-structures/:id', authenticateUser, HasPermission([PayrollPermissionsEnum.MANAGE_SALARY]), payrollController.updateSalaryStructure);
+router.put(
+  '/salary-structures/:id',
+  authenticateUser,
+  HasPermission([PayrollPermissionsEnum.MANAGE_SALARY]),
+  payrollController.updateSalaryStructure
+);
 
 // ─── End of Service ───────────────────────────────────────────────────────────
 
@@ -398,7 +408,12 @@ router.put('/salary-structures/:id', authenticateUser, HasPermission([PayrollPer
  *       500:
  *         description: Server error
  */
-router.post('/end-of-service/:employeeId', authenticateUser, HasPermission([PayrollPermissionsEnum.VIEW_PAYROLL]), payrollController.calculateEndOfService);
+router.post(
+  '/end-of-service/:employeeId',
+  authenticateUser,
+  HasPermission([PayrollPermissionsEnum.VIEW_PAYROLL]),
+  payrollController.calculateEndOfService
+);
 
 /**
  * @swagger
@@ -426,7 +441,12 @@ router.post('/end-of-service/:employeeId', authenticateUser, HasPermission([Payr
  *       500:
  *         description: Server error
  */
-router.patch('/end-of-service/:id/approve', authenticateUser, HasPermission([PayrollPermissionsEnum.APPROVE_PAYROLL]), payrollController.approveEndOfService);
+router.patch(
+  '/end-of-service/:id/approve',
+  authenticateUser,
+  HasPermission([PayrollPermissionsEnum.APPROVE_PAYROLL]),
+  payrollController.approveEndOfService
+);
 
 /**
  * @swagger

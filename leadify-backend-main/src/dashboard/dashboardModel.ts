@@ -42,11 +42,7 @@ export interface LayoutItem {
   tableName: 'dashboards',
   modelName: 'Dashboard',
   timestamps: true,
-  indexes: [
-    { fields: ['userId'] },
-    { fields: ['isDefault'] },
-    { fields: ['role'] }
-  ]
+  indexes: [{ fields: ['userId'] }, { fields: ['isDefault'] }, { fields: ['role'] }]
 })
 class Dashboard extends Model {
   @Column({

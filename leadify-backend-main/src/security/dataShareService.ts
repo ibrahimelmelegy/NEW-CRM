@@ -91,20 +91,14 @@ export async function revokeShare(shareId: number): Promise<void> {
 /**
  * Get all shares for a specific record.
  */
-export async function getRecordShares(
-  entityType: string,
-  entityId: string
-): Promise<RecordShare[]> {
+export async function getRecordShares(entityType: string, entityId: string): Promise<RecordShare[]> {
   const now = new Date();
 
   return RecordShare.findAll({
     where: {
       entityType,
       entityId,
-      [Op.or]: [
-        { expiresAt: null },
-        { expiresAt: { [Op.gt]: now } }
-      ]
+      [Op.or]: [{ expiresAt: null }, { expiresAt: { [Op.gt]: now } }]
     },
     include: [
       { model: User, as: 'sharedWithUser', attributes: ['id', 'name', 'email'] },
@@ -142,10 +136,7 @@ export async function canUserAccess(
       entityType,
       entityId,
       sharedWithUserId: userId,
-      [Op.or]: [
-        { expiresAt: null },
-        { expiresAt: { [Op.gt]: now } }
-      ]
+      [Op.or]: [{ expiresAt: null }, { expiresAt: { [Op.gt]: now } }]
     }
   });
 
@@ -159,10 +150,7 @@ export async function canUserAccess(
       entityType,
       entityId,
       sharedWithRoleId: roleId,
-      [Op.or]: [
-        { expiresAt: null },
-        { expiresAt: { [Op.gt]: now } }
-      ]
+      [Op.or]: [{ expiresAt: null }, { expiresAt: { [Op.gt]: now } }]
     }
   });
 
@@ -177,11 +165,7 @@ export async function canUserAccess(
  * Get all record IDs of a given entity type that a user can access.
  * Useful for filtering query results by accessible records.
  */
-export async function getAccessibleRecordIds(
-  userId: number,
-  roleId: string,
-  entityType: string
-): Promise<{ ids: string[]; fullAccess: boolean }> {
+export async function getAccessibleRecordIds(userId: number, roleId: string, entityType: string): Promise<{ ids: string[]; fullAccess: boolean }> {
   // Check default sharing rule
   const rule = await DataSharingRule.findOne({ where: { entityType } });
   if (rule) {
@@ -200,16 +184,10 @@ export async function getAccessibleRecordIds(
   const shares = await RecordShare.findAll({
     where: {
       entityType,
-      [Op.or]: [
-        { sharedWithUserId: userId },
-        { sharedWithRoleId: roleId }
-      ],
+      [Op.or]: [{ sharedWithUserId: userId }, { sharedWithRoleId: roleId }],
       [Op.and]: [
         {
-          [Op.or]: [
-            { expiresAt: null },
-            { expiresAt: { [Op.gt]: now } }
-          ]
+          [Op.or]: [{ expiresAt: null }, { expiresAt: { [Op.gt]: now } }]
         }
       ]
     },

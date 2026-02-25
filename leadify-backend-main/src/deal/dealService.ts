@@ -107,9 +107,7 @@ class DealService {
       await transaction.commit();
       if (input.users) {
         await Promise.all(
-          input.users.map((item: number) =>
-            notificationService.sendAssignDealNotification({ userId: item, target: deal.id }, deal, admin)
-          )
+          input.users.map((item: number) => notificationService.sendAssignDealNotification({ userId: item, target: deal.id }, deal, admin))
         );
       }
       await createActivityLog('deal', 'create', deal.id, admin.id, null, 'Deal created succesfully from lead conversion');
@@ -125,7 +123,7 @@ class DealService {
     // Parallel validation: check users + duplicate in one round-trip
     const [users, exitingDeal] = await Promise.all([
       User.findAll({ where: { id: { [Op.in]: input.deal.users } } }),
-      Deal.findOne({ where: { name: input.deal.name, companyName: input.deal.companyName }, attributes: ['name', 'companyName'] }),
+      Deal.findOne({ where: { name: input.deal.name, companyName: input.deal.companyName }, attributes: ['name', 'companyName'] })
     ]);
     if (!users.length) throw new BaseError(ERRORS.USER_NOT_FOUND);
     if (exitingDeal) throw new BaseError(ERRORS.DEAL_ALREADY_EXIST);
@@ -187,9 +185,7 @@ class DealService {
         });
       if (input.deal.users) {
         await Promise.all(
-          input.deal.users.map((item: number) =>
-            notificationService.sendAssignDealNotification({ userId: item, target: deal.id }, deal, admin)
-          )
+          input.deal.users.map((item: number) => notificationService.sendAssignDealNotification({ userId: item, target: deal.id }, deal, admin))
         );
       }
       if (input.deliveryDetails?.length) {
@@ -225,17 +221,17 @@ class DealService {
         ...(query?.stage &&
           isArray(query.stage) &&
           query.stage.length && {
-          stage: {
-            [Op.in]: query.stage
-          }
-        }),
+            stage: {
+              [Op.in]: query.stage
+            }
+          }),
         ...(query?.contractType &&
           isArray(query.contractType) &&
           query.contractType.length && {
-          contractType: {
-            [Op.in]: query.contractType
-          }
-        }),
+            contractType: {
+              [Op.in]: query.contractType
+            }
+          }),
         ...((query.fromDate || query.toDate) && {
           createdAt: {
             ...(query.fromDate && { [Op.gte]: new Date(query.fromDate) }),
@@ -353,11 +349,7 @@ class DealService {
       ...input
     });
     if (users?.length) {
-      await Promise.all(
-        users.map((item: number) =>
-          notificationService.sendAssignDealNotification({ userId: item, target: deal.id }, deal, user)
-        )
-      );
+      await Promise.all(users.map((item: number) => notificationService.sendAssignDealNotification({ userId: item, target: deal.id }, deal, user)));
     }
     await createActivityLog('deal', 'update', deal.id, user.id, null, `New updates added suucesfully`);
     await deal.save();
@@ -424,16 +416,18 @@ class DealService {
       stage: { [Op.ne]: DealStageEnums.CONVERTED }
     };
 
-    const include: Includeable[] = [{
-      model: User,
-      as: 'users',
-      attributes: ['id', 'name', 'email'],
-      through: { attributes: [] },
-      ...(!user.role.permissions.includes(DealPermissionsEnum.VIEW_GLOBAL_DEALS) && {
-        required: true,
-        where: { id: user.id }
-      })
-    }];
+    const include: Includeable[] = [
+      {
+        model: User,
+        as: 'users',
+        attributes: ['id', 'name', 'email'],
+        through: { attributes: [] },
+        ...(!user.role.permissions.includes(DealPermissionsEnum.VIEW_GLOBAL_DEALS) && {
+          required: true,
+          where: { id: user.id }
+        })
+      }
+    ];
 
     const deals = await Deal.findAll({
       where,
@@ -472,19 +466,22 @@ class DealService {
     // --> ORCHESTRATION: Auto-create Project on Deal Won (CLOSED)
     if (stage === DealStageEnums.CLOSED) {
       try {
-        await projectService.createProject({
-          basicInfo: {
-            name: `${deal.name} - Auto Project`,
-            type: 'Development', // default
-            category: ProjectCategoryEnum.Direct,
-            clientId: deal.clientId,
-            dealId: deal.id,
-            duration: 30, // Default duration
-            status: ProjectStatusEnum.ACTIVE,
-            assignedUsersIds: [user.id],
-            etimadInfo: {} as any // Bypass strict TS check for non-Etimad projects
-          }
-        }, user);
+        await projectService.createProject(
+          {
+            basicInfo: {
+              name: `${deal.name} - Auto Project`,
+              type: 'Development', // default
+              category: ProjectCategoryEnum.Direct,
+              clientId: deal.clientId,
+              dealId: deal.id,
+              duration: 30, // Default duration
+              status: ProjectStatusEnum.ACTIVE,
+              assignedUsersIds: [user.id],
+              etimadInfo: {} as any // Bypass strict TS check for non-Etimad projects
+            }
+          },
+          user
+        );
         await createActivityLog('deal', 'update', deal.id, user.id, null, `Auto-generated Project for Winning Deal`);
       } catch (err: any) {
         // Log but don't fail the deal update if project creation fails (graceful degradation)
@@ -524,30 +521,30 @@ class DealService {
       }),
       ...(query.stage?.length &&
         isArray(query.stage) && {
-        stage: { [Op.in]: query.stage }
-      }),
+          stage: { [Op.in]: query.stage }
+        }),
       ...(query?.contractType &&
         isArray(query.contractType) &&
         query.contractType.length && {
-        contractType: {
-          [Op.in]: query.contractType
-        }
-      }),
+          contractType: {
+            [Op.in]: query.contractType
+          }
+        }),
       ...(query.fromDate || query.toDate
         ? {
-          createdAt: {
-            ...(query.fromDate && { [Op.gte]: new Date(query.fromDate) }),
-            ...(query.toDate && { [Op.lte]: new Date(query.toDate) })
+            createdAt: {
+              ...(query.fromDate && { [Op.gte]: new Date(query.fromDate) }),
+              ...(query.toDate && { [Op.lte]: new Date(query.toDate) })
+            }
           }
-        }
         : {}),
       ...(query.fromPrice || query.toPrice
         ? {
-          price: {
-            ...(query.fromPrice && { [Op.gte]: query.fromPrice }),
-            ...(query.toPrice && { [Op.lte]: query.toPrice })
+            price: {
+              ...(query.fromPrice && { [Op.gte]: query.fromPrice }),
+              ...(query.toPrice && { [Op.lte]: query.toPrice })
+            }
           }
-        }
         : {})
     };
 

@@ -5,7 +5,7 @@ class VirtualOfficeService {
   async getRooms(user: any) {
     return VirtualRoom.findAll({
       where: { ...tenantWhere(user) },
-      order: [['createdAt', 'ASC']],
+      order: [['createdAt', 'ASC']]
     });
   }
 
@@ -19,10 +19,10 @@ class VirtualOfficeService {
           color: data.color || '#7c3aed',
           capacity: data.capacity || 10,
           description: data.description || null,
-          isLocked: data.isLocked || false,
+          isLocked: data.isLocked || false
         },
-        user,
-      ),
+        user
+      )
     );
   }
 
@@ -51,12 +51,10 @@ class VirtualOfficeService {
       { name: 'Meeting Room B', type: 'meeting', icon: '📋', color: '#06b6d4', capacity: 8, description: 'Internal syncs' },
       { name: 'Coffee Lounge', type: 'lounge', icon: '☕', color: '#f59e0b', capacity: 20, description: 'Casual chat — take a break!' },
       { name: 'Focus Zone', type: 'focus', icon: '🎯', color: '#22c55e', capacity: 15, description: 'Deep work — minimal interruptions' },
-      { name: 'Phone Booth', type: 'call', icon: '📞', color: '#ef4444', capacity: 1, description: 'Private calls' },
+      { name: 'Phone Booth', type: 'call', icon: '📞', color: '#ef4444', capacity: 1, description: 'Private calls' }
     ];
 
-    await VirtualRoom.bulkCreate(
-      defaults.map((r) => ({ ...r, isLocked: false, tenantId })),
-    );
+    await VirtualRoom.bulkCreate(defaults.map(r => ({ ...r, isLocked: false, tenantId })));
   }
 }
 

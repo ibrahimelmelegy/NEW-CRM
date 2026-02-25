@@ -11,14 +11,18 @@ class DocumentController {
       const parentId = req.query.parentId ? Number(req.query.parentId) : undefined;
       const result = await documentService.getFolders(parentId);
       wrapResult(res, result);
-    } catch (error) { next(error); }
+    } catch (error) {
+      next(error);
+    }
   }
 
   async getFolderTree(req: Request, res: Response, next: NextFunction) {
     try {
       const result = await documentService.getFolderTree();
       wrapResult(res, result);
-    } catch (error) { next(error); }
+    } catch (error) {
+      next(error);
+    }
   }
 
   async createFolder(req: AuthenticatedRequest, res: Response, next: NextFunction) {
@@ -28,21 +32,27 @@ class DocumentController {
         createdBy: req.user?.id
       });
       wrapResult(res, result, 201);
-    } catch (error) { next(error); }
+    } catch (error) {
+      next(error);
+    }
   }
 
   async updateFolder(req: Request, res: Response, next: NextFunction) {
     try {
       const result = await documentService.updateFolder(Number(req.params.id), req.body);
       wrapResult(res, result);
-    } catch (error) { next(error); }
+    } catch (error) {
+      next(error);
+    }
   }
 
   async deleteFolder(req: Request, res: Response, next: NextFunction) {
     try {
       const result = await documentService.deleteFolder(Number(req.params.id));
       wrapResult(res, result);
-    } catch (error) { next(error); }
+    } catch (error) {
+      next(error);
+    }
   }
 
   // ==================== FILES ====================
@@ -58,7 +68,9 @@ class DocumentController {
 
       const result = await documentService.getFiles(query);
       wrapResult(res, result);
-    } catch (error) { next(error); }
+    } catch (error) {
+      next(error);
+    }
   }
 
   async getRecentFiles(req: Request, res: Response, next: NextFunction) {
@@ -66,14 +78,18 @@ class DocumentController {
       const limit = req.query.limit ? Number(req.query.limit) : 10;
       const result = await documentService.getRecentFiles(limit);
       wrapResult(res, result);
-    } catch (error) { next(error); }
+    } catch (error) {
+      next(error);
+    }
   }
 
   async getFileById(req: Request, res: Response, next: NextFunction) {
     try {
       const result = await documentService.getFileById(Number(req.params.id));
       wrapResult(res, result);
-    } catch (error) { next(error); }
+    } catch (error) {
+      next(error);
+    }
   }
 
   async createFile(req: AuthenticatedRequest, res: Response, next: NextFunction) {
@@ -83,21 +99,27 @@ class DocumentController {
         uploadedBy: req.user?.id
       });
       wrapResult(res, result, 201);
-    } catch (error) { next(error); }
+    } catch (error) {
+      next(error);
+    }
   }
 
   async updateFile(req: Request, res: Response, next: NextFunction) {
     try {
       const result = await documentService.updateFile(Number(req.params.id), req.body);
       wrapResult(res, result);
-    } catch (error) { next(error); }
+    } catch (error) {
+      next(error);
+    }
   }
 
   async deleteFile(req: Request, res: Response, next: NextFunction) {
     try {
       const result = await documentService.deleteFile(Number(req.params.id));
       wrapResult(res, result);
-    } catch (error) { next(error); }
+    } catch (error) {
+      next(error);
+    }
   }
 }
 

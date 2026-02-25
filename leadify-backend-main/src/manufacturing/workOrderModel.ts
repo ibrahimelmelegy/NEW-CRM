@@ -1,22 +1,11 @@
-import {
-  BelongsTo,
-  Column,
-  DataType,
-  ForeignKey,
-  Model,
-  Table,
-} from 'sequelize-typescript';
+import { BelongsTo, Column, DataType, ForeignKey, Model, Table } from 'sequelize-typescript';
 import BOM from './bomModel';
 
 @Table({
   tableName: 'work_orders',
   modelName: 'WorkOrder',
   timestamps: true,
-  indexes: [
-    { fields: ['tenantId'] },
-    { fields: ['woNumber'], unique: true },
-    { fields: ['status'] },
-  ],
+  indexes: [{ fields: ['tenantId'] }, { fields: ['woNumber'], unique: true }, { fields: ['status'] }]
 })
 class WorkOrder extends Model {
   @Column({ primaryKey: true, type: DataType.INTEGER, autoIncrement: true })

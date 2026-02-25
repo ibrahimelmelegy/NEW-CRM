@@ -21,7 +21,7 @@ class SettingService {
   }
 
   async getSetting(): Promise<Setting | null> {
-    let existingSetting = await Setting.findOne({});
+    const existingSetting = await Setting.findOne({});
     return existingSetting;
   }
 }

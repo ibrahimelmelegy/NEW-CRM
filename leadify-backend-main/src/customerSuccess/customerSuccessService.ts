@@ -57,9 +57,7 @@ class CustomerSuccessService {
       attributes: ['id', 'price', 'stage', 'createdAt']
     });
 
-    const activeDeals = deals.filter((d: any) =>
-      !['CLOSED_WON', 'CLOSED_LOST'].includes(d.stage)
-    ).length;
+    const activeDeals = deals.filter((d: any) => !['CLOSED_WON', 'CLOSED_LOST'].includes(d.stage)).length;
 
     const wonDeals = deals.filter((d: any) => d.stage === 'CLOSED_WON');
     const totalRevenue = wonDeals.reduce((sum: number, d: any) => sum + (d.price || 0), 0);
@@ -92,9 +90,7 @@ class CustomerSuccessService {
     });
 
     const lastActivityDate = lastActivity?.createdAt || null;
-    const daysSinceLastActivity = lastActivityDate
-      ? Math.floor((now.getTime() - new Date(lastActivityDate).getTime()) / (1000 * 60 * 60 * 24))
-      : 999;
+    const daysSinceLastActivity = lastActivityDate ? Math.floor((now.getTime() - new Date(lastActivityDate).getTime()) / (1000 * 60 * 60 * 24)) : 999;
 
     // ─── Score Calculations ──────────────────────────────────────────────────
     // Engagement Score (0-100): Based on recent activity frequency
@@ -126,11 +122,7 @@ class CustomerSuccessService {
     else if (daysSinceLastActivity > 30) activityScore = Math.max(0, activityScore - 20);
 
     // Overall Score: Weighted average
-    const overallScore = Math.round(
-      engagementScore * 0.35 +
-      revenueScore * 0.35 +
-      activityScore * 0.30
-    );
+    const overallScore = Math.round(engagementScore * 0.35 + revenueScore * 0.35 + activityScore * 0.3);
 
     // Risk Level
     let riskLevel: 'HEALTHY' | 'AT_RISK' | 'CRITICAL';
@@ -139,9 +131,12 @@ class CustomerSuccessService {
     else riskLevel = 'CRITICAL';
 
     // Simulated NPS score based on engagement
-    const npsScore = overallScore >= 70 ? Math.floor(Math.random() * 3) + 8
-      : overallScore >= 40 ? Math.floor(Math.random() * 3) + 5
-      : Math.floor(Math.random() * 4) + 1;
+    const npsScore =
+      overallScore >= 70
+        ? Math.floor(Math.random() * 3) + 8
+        : overallScore >= 40
+          ? Math.floor(Math.random() * 3) + 5
+          : Math.floor(Math.random() * 4) + 1;
 
     // Get assigned users
     const assignedUsers: Array<{ id: number; name: string }> = [];
@@ -181,12 +176,14 @@ class CustomerSuccessService {
         ...where,
         clientStatus: { [Op.ne]: 'INACTIVE' }
       },
-      include: [{
-        model: User,
-        as: 'users',
-        attributes: ['id', 'name'],
-        through: { attributes: [] }
-      }],
+      include: [
+        {
+          model: User,
+          as: 'users',
+          attributes: ['id', 'name'],
+          through: { attributes: [] }
+        }
+      ],
       attributes: ['id', 'clientName', 'companyName', 'email', 'clientStatus', 'createdAt'],
       limit: 200
     });
@@ -204,13 +201,9 @@ class CustomerSuccessService {
     const healthy = healthScores.filter(h => h.riskLevel === 'HEALTHY').length;
     const atRisk = healthScores.filter(h => h.riskLevel === 'AT_RISK').length;
     const critical = healthScores.filter(h => h.riskLevel === 'CRITICAL').length;
-    const avgScore = healthScores.length > 0
-      ? Math.round(healthScores.reduce((s, h) => s + h.overallScore, 0) / healthScores.length)
-      : 0;
+    const avgScore = healthScores.length > 0 ? Math.round(healthScores.reduce((s, h) => s + h.overallScore, 0) / healthScores.length) : 0;
     const totalRevenue = healthScores.reduce((s, h) => s + h.totalRevenue, 0);
-    const avgNps = healthScores.length > 0
-      ? +(healthScores.reduce((s, h) => s + (h.npsScore || 0), 0) / healthScores.length).toFixed(1)
-      : 0;
+    const avgNps = healthScores.length > 0 ? +(healthScores.reduce((s, h) => s + (h.npsScore || 0), 0) / healthScores.length).toFixed(1) : 0;
 
     // Revenue by month (last 6 months)
     const revenueByMonth = await this.getRevenueByMonth(tenantId);
@@ -224,11 +217,13 @@ class CustomerSuccessService {
         contactType: 'CLIENT',
         ...(tenantId ? { tenantId } : {})
       },
-      include: [{
-        model: User,
-        as: 'user',
-        attributes: ['id', 'name', 'profilePicture']
-      }],
+      include: [
+        {
+          model: User,
+          as: 'user',
+          attributes: ['id', 'name', 'profilePicture']
+        }
+      ],
       order: [['createdAt', 'DESC']],
       limit: 10
     });
@@ -262,12 +257,14 @@ class CustomerSuccessService {
   // ─── Get Single Client Health Detail ────────────────────────────────────────
   public async getClientHealth(clientId: string, tenantId?: string): Promise<HealthScore | null> {
     const client = await Client.findByPk(clientId, {
-      include: [{
-        model: User,
-        as: 'users',
-        attributes: ['id', 'name'],
-        through: { attributes: [] }
-      }]
+      include: [
+        {
+          model: User,
+          as: 'users',
+          attributes: ['id', 'name'],
+          through: { attributes: [] }
+        }
+      ]
     });
 
     if (!client) return null;
@@ -290,7 +287,7 @@ class CustomerSuccessService {
       };
       if (tenantId) where.tenantId = tenantId;
 
-      const result = await Deal.sum('price', { where }) || 0;
+      const result = (await Deal.sum('price', { where })) || 0;
       months.push({ month: monthName, revenue: result });
     }
 

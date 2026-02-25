@@ -1,15 +1,6 @@
 import { Op } from 'sequelize';
-import WorkflowRule, {
-  ConditionLogic,
-  EntityType,
-  TriggerType,
-  WorkflowAction,
-  WorkflowCondition
-} from './workflowModel';
-import WorkflowExecution, {
-  ActionExecutionResult,
-  ExecutionStatus
-} from './workflowExecutionModel';
+import WorkflowRule, { ConditionLogic, EntityType, TriggerType, WorkflowAction, WorkflowCondition } from './workflowModel';
+import WorkflowExecution, { ActionExecutionResult, ExecutionStatus } from './workflowExecutionModel';
 import User from '../user/userModel';
 import Notification from '../notification/notificationModel';
 import DailyTask from '../dailyTask/dailyTaskModel';
@@ -95,10 +86,7 @@ async function getRules(query: RulesQuery) {
   if (query.triggerType) where.triggerType = query.triggerType;
   if (query.isActive !== undefined) where.isActive = query.isActive === 'true';
   if (query.search) {
-    where[Op.or] = [
-      { name: { [Op.iLike]: `%${query.search}%` } },
-      { description: { [Op.iLike]: `%${query.search}%` } }
-    ];
+    where[Op.or] = [{ name: { [Op.iLike]: `%${query.search}%` } }, { description: { [Op.iLike]: `%${query.search}%` } }];
   }
 
   const { rows: docs, count: totalItems } = await WorkflowRule.findAndCountAll({
@@ -224,11 +212,9 @@ function evaluateConditions(
 ): boolean {
   if (!conditions || conditions.length === 0) return true;
 
-  const results = conditions.map((cond) => evaluateSingleCondition(entity, cond));
+  const results = conditions.map(cond => evaluateSingleCondition(entity, cond));
 
-  return conditionLogic === ConditionLogic.AND
-    ? results.every(Boolean)
-    : results.some(Boolean);
+  return conditionLogic === ConditionLogic.AND ? results.every(Boolean) : results.some(Boolean);
 }
 
 function evaluateSingleCondition(entity: Record<string, any>, cond: WorkflowCondition): boolean {
@@ -240,7 +226,9 @@ function evaluateSingleCondition(entity: Record<string, any>, cond: WorkflowCond
     case 'not_equals':
       return String(fieldValue) !== String(cond.value);
     case 'contains':
-      return String(fieldValue ?? '').toLowerCase().includes(String(cond.value).toLowerCase());
+      return String(fieldValue ?? '')
+        .toLowerCase()
+        .includes(String(cond.value).toLowerCase());
     case 'greater_than':
       return Number(fieldValue) > Number(cond.value);
     case 'less_than':
@@ -250,11 +238,19 @@ function evaluateSingleCondition(entity: Record<string, any>, cond: WorkflowCond
     case 'is_not_empty':
       return fieldValue !== null && fieldValue !== undefined && fieldValue !== '';
     case 'in': {
-      const list = Array.isArray(cond.value) ? cond.value : String(cond.value).split(',').map((s: string) => s.trim());
+      const list = Array.isArray(cond.value)
+        ? cond.value
+        : String(cond.value)
+            .split(',')
+            .map((s: string) => s.trim());
       return list.includes(String(fieldValue));
     }
     case 'not_in': {
-      const list = Array.isArray(cond.value) ? cond.value : String(cond.value).split(',').map((s: string) => s.trim());
+      const list = Array.isArray(cond.value)
+        ? cond.value
+        : String(cond.value)
+            .split(',')
+            .map((s: string) => s.trim());
       return !list.includes(String(fieldValue));
     }
     default:
@@ -296,18 +292,12 @@ async function executeUpdateField(
   if (!Model) throw new Error(`Unknown entity type: ${entityType}`);
 
   const resolvedValue = resolveTemplate(action.value, entity);
-  await Model.update(
-    { [action.field]: resolvedValue },
-    { where: { id: entityId } }
-  );
+  await Model.update({ [action.field]: resolvedValue }, { where: { id: entityId } });
 
   return { field: action.field, newValue: resolvedValue };
 }
 
-async function executeCreateRecord(
-  action: Extract<WorkflowAction, { type: 'CREATE_RECORD' }>,
-  entity: Record<string, any>
-): Promise<any> {
+async function executeCreateRecord(action: Extract<WorkflowAction, { type: 'CREATE_RECORD' }>, entity: Record<string, any>): Promise<any> {
   const registry = getModelRegistry();
   const Model = registry[action.entityType];
   if (!Model) throw new Error(`Unknown entity type for record creation: ${action.entityType}`);
@@ -322,10 +312,7 @@ async function executeCreateRecord(
   return { entityType: action.entityType, id: created.id };
 }
 
-async function executeSendEmail(
-  action: Extract<WorkflowAction, { type: 'SEND_EMAIL' }>,
-  entity: Record<string, any>
-): Promise<any> {
+async function executeSendEmail(action: Extract<WorkflowAction, { type: 'SEND_EMAIL' }>, entity: Record<string, any>): Promise<any> {
   const to = resolveTemplate(action.to, entity);
   const subject = resolveTemplate(action.subject, entity);
   const body = resolveTemplate(action.body, entity);
@@ -407,10 +394,7 @@ async function executeCreateTask(
   return { taskId: task.id, title, assignedTo, dueDate };
 }
 
-async function executeWebhook(
-  action: Extract<WorkflowAction, { type: 'WEBHOOK' }>,
-  entity: Record<string, any>
-): Promise<any> {
+async function executeWebhook(action: Extract<WorkflowAction, { type: 'WEBHOOK' }>, entity: Record<string, any>): Promise<any> {
   const url = resolveTemplate(action.url, entity);
   const method = (action.method || 'POST').toUpperCase();
 
@@ -460,11 +444,7 @@ async function executeWebhook(
   }
 }
 
-async function executeAssignment(
-  action: Extract<WorkflowAction, { type: 'ASSIGN_TO' }>,
-  entityType: string,
-  entityId: string
-): Promise<any> {
+async function executeAssignment(action: Extract<WorkflowAction, { type: 'ASSIGN_TO' }>, entityType: string, entityId: string): Promise<any> {
   const registry = getModelRegistry();
   const Model = registry[entityType];
   if (!Model) throw new Error(`Unknown entity type: ${entityType}`);
@@ -484,10 +464,7 @@ async function executeAssignment(
   // Try to update the entity directly (works for models with userId field)
   // For models with M2M user associations, we handle gracefully
   try {
-    await Model.update(
-      { userId: assignUserId },
-      { where: { id: entityId } }
-    );
+    await Model.update({ userId: assignUserId }, { where: { id: entityId } });
   } catch {
     // Some models use join tables rather than direct userId
     // Attempt a generic approach – log success anyway
@@ -644,7 +621,7 @@ async function executeWorkflow(
   }
 
   // If every action failed, mark as FAILED
-  if (actionResults.every((r) => r.status === 'FAILED')) {
+  if (actionResults.every(r => r.status === 'FAILED')) {
     overallStatus = ExecutionStatus.FAILED;
   }
 
@@ -665,18 +642,22 @@ async function executeWorkflow(
   // If we hit a delay node, dispatch the rest of the actions to BullMQ
   if (hasDelayedActions && actionsToQueue.length > 0) {
     const delayAction = rule.actions.find(a => a.type === 'DELAY');
-    const delayMs = ((delayAction?.days || 0) * 86400000) + ((delayAction?.hours || 0) * 3600000);
+    const delayMs = (delayAction?.days || 0) * 86400000 + (delayAction?.hours || 0) * 3600000;
 
     const { workflowQueue } = require('./workflowQueue');
-    await workflowQueue.add('delayed-workflow', {
-      executionId: execution.id,
-      ruleId: rule.id,
-      entityType: trigger.entityType,
-      entityId: trigger.entityId,
-      actions: actionsToQueue,
-      entityData: entity,
-      triggerUserId: userId
-    }, { delay: delayMs });
+    await workflowQueue.add(
+      'delayed-workflow',
+      {
+        executionId: execution.id,
+        ruleId: rule.id,
+        entityType: trigger.entityType,
+        entityId: trigger.entityId,
+        actions: actionsToQueue,
+        entityData: entity,
+        triggerUserId: userId
+      },
+      { delay: delayMs }
+    );
 
     // Mark as Partial since it's queued
     await execution.update({ status: ExecutionStatus.PARTIAL });
@@ -723,9 +704,7 @@ async function processEntityEvent(
       [Op.or]: [
         { triggerType },
         // ON_FIELD_CHANGE rules also fire on ON_UPDATE if a watched field changed
-        ...(triggerType === TriggerType.ON_UPDATE
-          ? [{ triggerType: TriggerType.ON_FIELD_CHANGE }]
-          : [])
+        ...(triggerType === TriggerType.ON_UPDATE ? [{ triggerType: TriggerType.ON_FIELD_CHANGE }] : [])
       ]
     };
 
@@ -737,7 +716,7 @@ async function processEntityEvent(
     if (rules.length === 0) return [];
 
     // Resolve the current entity data
-    const entity = newData || await fetchEntity(entityType, entityId);
+    const entity = newData || (await fetchEntity(entityType, entityId));
     if (!entity) return [];
 
     const executions: WorkflowExecution[] = [];
@@ -763,11 +742,16 @@ async function processEntityEvent(
         if (!evaluateConditions(entity, rule.conditions, rule.conditionLogic)) continue;
 
         // Execute the workflow
-        const execution = await executeWorkflow(rule, entity, {
-          type: triggerType,
-          entityType,
-          entityId
-        }, userId);
+        const execution = await executeWorkflow(
+          rule,
+          entity,
+          {
+            type: triggerType,
+            entityType,
+            entityId
+          },
+          userId
+        );
 
         executions.push(execution);
       } catch (error: any) {
@@ -822,7 +806,7 @@ async function testRule(
 
   const conditionsMatch = evaluateConditions(sampleData, rule.conditions, rule.conditionLogic);
 
-  const resolvedActions = rule.actions.map((action) => {
+  const resolvedActions = rule.actions.map(action => {
     const resolved: Record<string, any> = { type: action.type };
 
     for (const [key, val] of Object.entries(action)) {
@@ -876,7 +860,7 @@ async function executeDelayedActions(
     }
   }
 
-  if (actionResults.every((r) => r.status === 'FAILED')) {
+  if (actionResults.every(r => r.status === 'FAILED')) {
     overallStatus = ExecutionStatus.FAILED;
   }
 
@@ -907,11 +891,16 @@ async function manualExecute(ruleId: number, userId: number): Promise<WorkflowEx
     _triggeredAt: new Date().toISOString()
   };
 
-  const execution = await executeWorkflow(rule, entity, {
-    type: TriggerType.MANUAL,
-    entityType: rule.entityType,
-    entityId: 'manual-trigger'
-  }, userId);
+  const execution = await executeWorkflow(
+    rule,
+    entity,
+    {
+      type: TriggerType.MANUAL,
+      entityType: rule.entityType,
+      entityId: 'manual-trigger'
+    },
+    userId
+  );
 
   return execution;
 }
@@ -941,11 +930,40 @@ function getTemplates() {
       entityType: 'lead',
       triggerType: TriggerType.ON_CREATE,
       nodes: [
-        { id: 'tpl-1', type: 'triggerNode', position: { x: 300, y: 30 }, data: { label: 'New Lead Created', nodeType: 'trigger', config: { entityType: 'lead', triggerType: 'ON_CREATE' } } },
-        { id: 'tpl-2', type: 'actionNode', position: { x: 300, y: 150 }, data: { label: 'Auto-Assign', nodeType: 'action', config: { type: 'ASSIGN_TO', method: 'round_robin' } } },
-        { id: 'tpl-3', type: 'actionNode', position: { x: 300, y: 270 }, data: { label: 'Welcome Email', nodeType: 'action', config: { type: 'SEND_EMAIL', to: '{{email}}', subject: 'Welcome!', body: 'Thank you for your interest, {{name}}.' } } },
-        { id: 'tpl-4', type: 'delayNode', position: { x: 300, y: 390 }, data: { label: 'Wait 3 Days', nodeType: 'delay', config: { delay: 3, unit: 'days' } } },
-        { id: 'tpl-5', type: 'actionNode', position: { x: 300, y: 510 }, data: { label: 'Follow-up Task', nodeType: 'action', config: { type: 'CREATE_TASK', title: 'Follow up with {{name}}', dueInDays: 1 } } }
+        {
+          id: 'tpl-1',
+          type: 'triggerNode',
+          position: { x: 300, y: 30 },
+          data: { label: 'New Lead Created', nodeType: 'trigger', config: { entityType: 'lead', triggerType: 'ON_CREATE' } }
+        },
+        {
+          id: 'tpl-2',
+          type: 'actionNode',
+          position: { x: 300, y: 150 },
+          data: { label: 'Auto-Assign', nodeType: 'action', config: { type: 'ASSIGN_TO', method: 'round_robin' } }
+        },
+        {
+          id: 'tpl-3',
+          type: 'actionNode',
+          position: { x: 300, y: 270 },
+          data: {
+            label: 'Welcome Email',
+            nodeType: 'action',
+            config: { type: 'SEND_EMAIL', to: '{{email}}', subject: 'Welcome!', body: 'Thank you for your interest, {{name}}.' }
+          }
+        },
+        {
+          id: 'tpl-4',
+          type: 'delayNode',
+          position: { x: 300, y: 390 },
+          data: { label: 'Wait 3 Days', nodeType: 'delay', config: { delay: 3, unit: 'days' } }
+        },
+        {
+          id: 'tpl-5',
+          type: 'actionNode',
+          position: { x: 300, y: 510 },
+          data: { label: 'Follow-up Task', nodeType: 'action', config: { type: 'CREATE_TASK', title: 'Follow up with {{name}}', dueInDays: 1 } }
+        }
       ],
       edges: [
         { id: 'tpl-e1', source: 'tpl-1', target: 'tpl-2', animated: true },
@@ -961,10 +979,46 @@ function getTemplates() {
       entityType: 'deal',
       triggerType: TriggerType.ON_FIELD_CHANGE,
       nodes: [
-        { id: 'tpl-1', type: 'triggerNode', position: { x: 300, y: 30 }, data: { label: 'Deal Won', nodeType: 'trigger', config: { entityType: 'deal', triggerType: 'ON_FIELD_CHANGE', triggerField: 'stage', triggerValue: 'WON' } } },
-        { id: 'tpl-2', type: 'actionNode', position: { x: 300, y: 150 }, data: { label: 'Create Sales Order', nodeType: 'action', config: { type: 'CREATE_RECORD', entityType: 'invoice', data: { dealId: '{{id}}', amount: '{{amount}}' } } } },
-        { id: 'tpl-3', type: 'actionNode', position: { x: 300, y: 270 }, data: { label: 'Generate Invoice', nodeType: 'action', config: { type: 'SEND_EMAIL', to: '{{client.email}}', subject: 'Invoice for {{name}}', body: 'Please find your invoice attached.' } } },
-        { id: 'tpl-4', type: 'actionNode', position: { x: 300, y: 390 }, data: { label: 'Notify Team', nodeType: 'action', config: { type: 'SEND_NOTIFICATION', role: 'Sales Manager', title: 'Deal Won!', message: '{{name}} has been won for {{amount}}.' } } }
+        {
+          id: 'tpl-1',
+          type: 'triggerNode',
+          position: { x: 300, y: 30 },
+          data: {
+            label: 'Deal Won',
+            nodeType: 'trigger',
+            config: { entityType: 'deal', triggerType: 'ON_FIELD_CHANGE', triggerField: 'stage', triggerValue: 'WON' }
+          }
+        },
+        {
+          id: 'tpl-2',
+          type: 'actionNode',
+          position: { x: 300, y: 150 },
+          data: {
+            label: 'Create Sales Order',
+            nodeType: 'action',
+            config: { type: 'CREATE_RECORD', entityType: 'invoice', data: { dealId: '{{id}}', amount: '{{amount}}' } }
+          }
+        },
+        {
+          id: 'tpl-3',
+          type: 'actionNode',
+          position: { x: 300, y: 270 },
+          data: {
+            label: 'Generate Invoice',
+            nodeType: 'action',
+            config: { type: 'SEND_EMAIL', to: '{{client.email}}', subject: 'Invoice for {{name}}', body: 'Please find your invoice attached.' }
+          }
+        },
+        {
+          id: 'tpl-4',
+          type: 'actionNode',
+          position: { x: 300, y: 390 },
+          data: {
+            label: 'Notify Team',
+            nodeType: 'action',
+            config: { type: 'SEND_NOTIFICATION', role: 'Sales Manager', title: 'Deal Won!', message: '{{name}} has been won for {{amount}}.' }
+          }
+        }
       ],
       edges: [
         { id: 'tpl-e1', source: 'tpl-1', target: 'tpl-2', animated: true },
@@ -979,11 +1033,49 @@ function getTemplates() {
       entityType: 'ticket',
       triggerType: TriggerType.ON_CREATE,
       nodes: [
-        { id: 'tpl-1', type: 'triggerNode', position: { x: 300, y: 30 }, data: { label: 'Ticket Created', nodeType: 'trigger', config: { entityType: 'ticket', triggerType: 'ON_CREATE' } } },
-        { id: 'tpl-2', type: 'actionNode', position: { x: 300, y: 150 }, data: { label: 'Auto-Assign', nodeType: 'action', config: { type: 'ASSIGN_TO', method: 'least_loaded' } } },
-        { id: 'tpl-3', type: 'conditionNode', position: { x: 300, y: 270 }, data: { label: 'SLA Check', nodeType: 'condition', config: { field: 'priority', operator: 'equals', value: 'HIGH' } } },
-        { id: 'tpl-4', type: 'actionNode', position: { x: 150, y: 410 }, data: { label: 'Escalate to Manager', nodeType: 'action', config: { type: 'SEND_NOTIFICATION', role: 'Support Manager', title: 'Urgent Ticket', message: 'Ticket #{{id}} requires escalation: {{subject}}' } } },
-        { id: 'tpl-5', type: 'actionNode', position: { x: 450, y: 410 }, data: { label: 'Standard Process', nodeType: 'action', config: { type: 'SEND_NOTIFICATION', title: 'New Ticket', message: 'Ticket #{{id}} assigned to you.' } } }
+        {
+          id: 'tpl-1',
+          type: 'triggerNode',
+          position: { x: 300, y: 30 },
+          data: { label: 'Ticket Created', nodeType: 'trigger', config: { entityType: 'ticket', triggerType: 'ON_CREATE' } }
+        },
+        {
+          id: 'tpl-2',
+          type: 'actionNode',
+          position: { x: 300, y: 150 },
+          data: { label: 'Auto-Assign', nodeType: 'action', config: { type: 'ASSIGN_TO', method: 'least_loaded' } }
+        },
+        {
+          id: 'tpl-3',
+          type: 'conditionNode',
+          position: { x: 300, y: 270 },
+          data: { label: 'SLA Check', nodeType: 'condition', config: { field: 'priority', operator: 'equals', value: 'HIGH' } }
+        },
+        {
+          id: 'tpl-4',
+          type: 'actionNode',
+          position: { x: 150, y: 410 },
+          data: {
+            label: 'Escalate to Manager',
+            nodeType: 'action',
+            config: {
+              type: 'SEND_NOTIFICATION',
+              role: 'Support Manager',
+              title: 'Urgent Ticket',
+              message: 'Ticket #{{id}} requires escalation: {{subject}}'
+            }
+          }
+        },
+        {
+          id: 'tpl-5',
+          type: 'actionNode',
+          position: { x: 450, y: 410 },
+          data: {
+            label: 'Standard Process',
+            nodeType: 'action',
+            config: { type: 'SEND_NOTIFICATION', title: 'New Ticket', message: 'Ticket #{{id}} assigned to you.' }
+          }
+        }
       ],
       edges: [
         { id: 'tpl-e1', source: 'tpl-1', target: 'tpl-2', animated: true },
@@ -999,10 +1091,39 @@ function getTemplates() {
       entityType: 'task',
       triggerType: TriggerType.ON_CREATE,
       nodes: [
-        { id: 'tpl-1', type: 'triggerNode', position: { x: 300, y: 30 }, data: { label: 'New Employee', nodeType: 'trigger', config: { entityType: 'task', triggerType: 'ON_CREATE' } } },
-        { id: 'tpl-2', type: 'actionNode', position: { x: 300, y: 150 }, data: { label: 'Create Accounts', nodeType: 'action', config: { type: 'CREATE_TASK', title: 'Create accounts for {{name}}', dueInDays: 1 } } },
-        { id: 'tpl-3', type: 'actionNode', position: { x: 300, y: 270 }, data: { label: 'Assign Mentor', nodeType: 'action', config: { type: 'ASSIGN_TO', method: 'least_loaded' } } },
-        { id: 'tpl-4', type: 'actionNode', position: { x: 300, y: 390 }, data: { label: 'Schedule Orientation', nodeType: 'action', config: { type: 'SEND_EMAIL', to: '{{email}}', subject: 'Welcome Orientation', body: 'Welcome aboard, {{name}}! Your orientation is scheduled.' } } }
+        {
+          id: 'tpl-1',
+          type: 'triggerNode',
+          position: { x: 300, y: 30 },
+          data: { label: 'New Employee', nodeType: 'trigger', config: { entityType: 'task', triggerType: 'ON_CREATE' } }
+        },
+        {
+          id: 'tpl-2',
+          type: 'actionNode',
+          position: { x: 300, y: 150 },
+          data: { label: 'Create Accounts', nodeType: 'action', config: { type: 'CREATE_TASK', title: 'Create accounts for {{name}}', dueInDays: 1 } }
+        },
+        {
+          id: 'tpl-3',
+          type: 'actionNode',
+          position: { x: 300, y: 270 },
+          data: { label: 'Assign Mentor', nodeType: 'action', config: { type: 'ASSIGN_TO', method: 'least_loaded' } }
+        },
+        {
+          id: 'tpl-4',
+          type: 'actionNode',
+          position: { x: 300, y: 390 },
+          data: {
+            label: 'Schedule Orientation',
+            nodeType: 'action',
+            config: {
+              type: 'SEND_EMAIL',
+              to: '{{email}}',
+              subject: 'Welcome Orientation',
+              body: 'Welcome aboard, {{name}}! Your orientation is scheduled.'
+            }
+          }
+        }
       ],
       edges: [
         { id: 'tpl-e1', source: 'tpl-1', target: 'tpl-2', animated: true },
@@ -1017,11 +1138,62 @@ function getTemplates() {
       entityType: 'invoice',
       triggerType: TriggerType.ON_FIELD_CHANGE,
       nodes: [
-        { id: 'tpl-1', type: 'triggerNode', position: { x: 300, y: 30 }, data: { label: 'Invoice Overdue', nodeType: 'trigger', config: { entityType: 'invoice', triggerType: 'ON_FIELD_CHANGE', triggerField: 'status', triggerValue: 'OVERDUE' } } },
-        { id: 'tpl-2', type: 'actionNode', position: { x: 300, y: 150 }, data: { label: 'Send Reminder', nodeType: 'action', config: { type: 'SEND_EMAIL', to: '{{client.email}}', subject: 'Invoice Reminder - {{invoiceNumber}}', body: 'This is a friendly reminder that invoice {{invoiceNumber}} is overdue.' } } },
-        { id: 'tpl-3', type: 'delayNode', position: { x: 300, y: 270 }, data: { label: 'Wait 7 Days', nodeType: 'delay', config: { delay: 7, unit: 'days' } } },
-        { id: 'tpl-4', type: 'actionNode', position: { x: 300, y: 390 }, data: { label: 'Final Notice', nodeType: 'action', config: { type: 'SEND_EMAIL', to: '{{client.email}}', subject: 'Final Notice - {{invoiceNumber}}', body: 'URGENT: Invoice {{invoiceNumber}} is still unpaid. Please settle immediately.' } } },
-        { id: 'tpl-5', type: 'actionNode', position: { x: 300, y: 510 }, data: { label: 'Create Follow-up Task', nodeType: 'action', config: { type: 'CREATE_TASK', title: 'Follow up on overdue invoice {{invoiceNumber}}', dueInDays: 1 } } }
+        {
+          id: 'tpl-1',
+          type: 'triggerNode',
+          position: { x: 300, y: 30 },
+          data: {
+            label: 'Invoice Overdue',
+            nodeType: 'trigger',
+            config: { entityType: 'invoice', triggerType: 'ON_FIELD_CHANGE', triggerField: 'status', triggerValue: 'OVERDUE' }
+          }
+        },
+        {
+          id: 'tpl-2',
+          type: 'actionNode',
+          position: { x: 300, y: 150 },
+          data: {
+            label: 'Send Reminder',
+            nodeType: 'action',
+            config: {
+              type: 'SEND_EMAIL',
+              to: '{{client.email}}',
+              subject: 'Invoice Reminder - {{invoiceNumber}}',
+              body: 'This is a friendly reminder that invoice {{invoiceNumber}} is overdue.'
+            }
+          }
+        },
+        {
+          id: 'tpl-3',
+          type: 'delayNode',
+          position: { x: 300, y: 270 },
+          data: { label: 'Wait 7 Days', nodeType: 'delay', config: { delay: 7, unit: 'days' } }
+        },
+        {
+          id: 'tpl-4',
+          type: 'actionNode',
+          position: { x: 300, y: 390 },
+          data: {
+            label: 'Final Notice',
+            nodeType: 'action',
+            config: {
+              type: 'SEND_EMAIL',
+              to: '{{client.email}}',
+              subject: 'Final Notice - {{invoiceNumber}}',
+              body: 'URGENT: Invoice {{invoiceNumber}} is still unpaid. Please settle immediately.'
+            }
+          }
+        },
+        {
+          id: 'tpl-5',
+          type: 'actionNode',
+          position: { x: 300, y: 510 },
+          data: {
+            label: 'Create Follow-up Task',
+            nodeType: 'action',
+            config: { type: 'CREATE_TASK', title: 'Follow up on overdue invoice {{invoiceNumber}}', dueInDays: 1 }
+          }
+        }
       ],
       edges: [
         { id: 'tpl-e1', source: 'tpl-1', target: 'tpl-2', animated: true },

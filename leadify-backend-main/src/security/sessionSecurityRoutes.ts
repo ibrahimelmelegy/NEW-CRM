@@ -26,12 +26,7 @@ const router = express.Router();
  *       200:
  *         description: List of active sessions with current session flagged
  */
-router.get(
-  '/sessions',
-  authenticateUser,
-  HasPermission([SecurityPermissionsEnum.VIEW_SESSIONS]),
-  sessionSecurityController.getActiveSessions
-);
+router.get('/sessions', authenticateUser, HasPermission([SecurityPermissionsEnum.VIEW_SESSIONS]), sessionSecurityController.getActiveSessions);
 
 /**
  * @swagger
@@ -143,12 +138,7 @@ router.get(
  *       200:
  *         description: List of whitelisted IP addresses
  */
-router.get(
-  '/ip-whitelist',
-  authenticateUser,
-  HasPermission([SecurityPermissionsEnum.MANAGE_IP_WHITELIST]),
-  sessionSecurityController.getIPWhitelist
-);
+router.get('/ip-whitelist', authenticateUser, HasPermission([SecurityPermissionsEnum.MANAGE_IP_WHITELIST]), sessionSecurityController.getIPWhitelist);
 
 /**
  * @swagger
@@ -228,12 +218,7 @@ router.delete(
  *       200:
  *         description: Security dashboard metrics
  */
-router.get(
-  '/dashboard',
-  authenticateUser,
-  HasPermission([SecurityPermissionsEnum.VIEW_SESSIONS]),
-  sessionSecurityController.getDashboard
-);
+router.get('/dashboard', authenticateUser, HasPermission([SecurityPermissionsEnum.VIEW_SESSIONS]), sessionSecurityController.getDashboard);
 
 // ─── GDPR Data Export ────────────────────────────────────────────────────────
 
@@ -249,11 +234,6 @@ router.get(
  *       200:
  *         description: User data export
  */
-router.post(
-  '/export-data',
-  authenticateUser,
-  HasPermission([SecurityPermissionsEnum.EXPORT_DATA]),
-  sessionSecurityController.exportData
-);
+router.post('/export-data', authenticateUser, HasPermission([SecurityPermissionsEnum.EXPORT_DATA]), sessionSecurityController.exportData);
 
 export default router;

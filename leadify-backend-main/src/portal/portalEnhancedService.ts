@@ -192,9 +192,18 @@ class PortalEnhancedService {
     const projects = await Project.findAll({
       where: { clientId },
       attributes: [
-        'id', 'name', 'status', 'startDate', 'endDate',
-        'isCompleted', 'duration', 'description', 'category',
-        'totalCost', 'grandTotal', 'createdAt'
+        'id',
+        'name',
+        'status',
+        'startDate',
+        'endDate',
+        'isCompleted',
+        'duration',
+        'description',
+        'category',
+        'totalCost',
+        'grandTotal',
+        'createdAt'
       ],
       order: [['createdAt', 'DESC']]
     });

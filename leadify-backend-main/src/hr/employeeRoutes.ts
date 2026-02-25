@@ -61,12 +61,7 @@ router.get(
  *       500:
  *         description: Server error
  */
-router.get(
-  '/expiring-documents',
-  authenticateUser,
-  HasPermission([EmployeePermissionsEnum.VIEW_EMPLOYEES]),
-  employeeController.getExpiringDocuments
-);
+router.get('/expiring-documents', authenticateUser, HasPermission([EmployeePermissionsEnum.VIEW_EMPLOYEES]), employeeController.getExpiringDocuments);
 
 // ─── Employees CRUD ───────────────────────────────────────────────────────────
 
@@ -152,12 +147,7 @@ router.get(
  *       500:
  *         description: Server error
  */
-router.post(
-  '/employees',
-  authenticateUser,
-  HasPermission([EmployeePermissionsEnum.CREATE_EMPLOYEES]),
-  employeeController.createEmployee
-);
+router.post('/employees', authenticateUser, HasPermission([EmployeePermissionsEnum.CREATE_EMPLOYEES]), employeeController.createEmployee);
 
 /**
  * @swagger
@@ -210,12 +200,7 @@ router.post(
  *       500:
  *         description: Server error
  */
-router.get(
-  '/employees',
-  authenticateUser,
-  HasPermission([EmployeePermissionsEnum.VIEW_EMPLOYEES]),
-  employeeController.getEmployees
-);
+router.get('/employees', authenticateUser, HasPermission([EmployeePermissionsEnum.VIEW_EMPLOYEES]), employeeController.getEmployees);
 
 /**
  * @swagger
@@ -240,12 +225,7 @@ router.get(
  *       500:
  *         description: Server error
  */
-router.get(
-  '/employees/:id',
-  authenticateUser,
-  HasPermission([EmployeePermissionsEnum.VIEW_EMPLOYEES]),
-  employeeController.getEmployeeById
-);
+router.get('/employees/:id', authenticateUser, HasPermission([EmployeePermissionsEnum.VIEW_EMPLOYEES]), employeeController.getEmployeeById);
 
 /**
  * @swagger
@@ -320,12 +300,7 @@ router.get(
  *       500:
  *         description: Server error
  */
-router.put(
-  '/employees/:id',
-  authenticateUser,
-  HasPermission([EmployeePermissionsEnum.EDIT_EMPLOYEES]),
-  employeeController.updateEmployee
-);
+router.put('/employees/:id', authenticateUser, HasPermission([EmployeePermissionsEnum.EDIT_EMPLOYEES]), employeeController.updateEmployee);
 
 // ─── Direct Reports ───────────────────────────────────────────────────────────
 
@@ -410,12 +385,7 @@ router.get(
  *       500:
  *         description: Server error
  */
-router.post(
-  '/employees/:id/documents',
-  authenticateUser,
-  HasPermission([EmployeePermissionsEnum.EDIT_EMPLOYEES]),
-  employeeController.addDocument
-);
+router.post('/employees/:id/documents', authenticateUser, HasPermission([EmployeePermissionsEnum.EDIT_EMPLOYEES]), employeeController.addDocument);
 
 /**
  * @swagger
@@ -441,12 +411,7 @@ router.post(
  *       500:
  *         description: Server error
  */
-router.get(
-  '/employees/:id/documents',
-  authenticateUser,
-  HasPermission([EmployeePermissionsEnum.VIEW_EMPLOYEES]),
-  employeeController.getDocuments
-);
+router.get('/employees/:id/documents', authenticateUser, HasPermission([EmployeePermissionsEnum.VIEW_EMPLOYEES]), employeeController.getDocuments);
 
 // ─── Departments ──────────────────────────────────────────────────────────────
 
@@ -464,12 +429,7 @@ router.get(
  *       500:
  *         description: Server error
  */
-router.get(
-  '/departments',
-  authenticateUser,
-  HasPermission([EmployeePermissionsEnum.VIEW_EMPLOYEES]),
-  departmentController.getDepartments
-);
+router.get('/departments', authenticateUser, HasPermission([EmployeePermissionsEnum.VIEW_EMPLOYEES]), departmentController.getDepartments);
 
 /**
  * @swagger
@@ -486,12 +446,7 @@ router.get(
  *       500:
  *         description: Server error
  */
-router.get(
-  '/departments/tree',
-  authenticateUser,
-  HasPermission([EmployeePermissionsEnum.VIEW_EMPLOYEES]),
-  departmentController.getDepartmentTree
-);
+router.get('/departments/tree', authenticateUser, HasPermission([EmployeePermissionsEnum.VIEW_EMPLOYEES]), departmentController.getDepartmentTree);
 
 /**
  * @swagger
@@ -516,12 +471,7 @@ router.get(
  *       500:
  *         description: Server error
  */
-router.get(
-  '/departments/:id',
-  authenticateUser,
-  HasPermission([EmployeePermissionsEnum.VIEW_EMPLOYEES]),
-  departmentController.getDepartmentById
-);
+router.get('/departments/:id', authenticateUser, HasPermission([EmployeePermissionsEnum.VIEW_EMPLOYEES]), departmentController.getDepartmentById);
 
 /**
  * @swagger
@@ -563,12 +513,7 @@ router.get(
  *       500:
  *         description: Server error
  */
-router.post(
-  '/departments',
-  authenticateUser,
-  HasPermission([EmployeePermissionsEnum.CREATE_EMPLOYEES]),
-  departmentController.createDepartment
-);
+router.post('/departments', authenticateUser, HasPermission([EmployeePermissionsEnum.CREATE_EMPLOYEES]), departmentController.createDepartment);
 
 /**
  * @swagger
@@ -611,12 +556,7 @@ router.post(
  *       500:
  *         description: Server error
  */
-router.put(
-  '/departments/:id',
-  authenticateUser,
-  HasPermission([EmployeePermissionsEnum.EDIT_EMPLOYEES]),
-  departmentController.updateDepartment
-);
+router.put('/departments/:id', authenticateUser, HasPermission([EmployeePermissionsEnum.EDIT_EMPLOYEES]), departmentController.updateDepartment);
 
 /**
  * @swagger
@@ -641,11 +581,6 @@ router.put(
  *       500:
  *         description: Server error
  */
-router.delete(
-  '/departments/:id',
-  authenticateUser,
-  HasPermission([EmployeePermissionsEnum.EDIT_EMPLOYEES]),
-  departmentController.deleteDepartment
-);
+router.delete('/departments/:id', authenticateUser, HasPermission([EmployeePermissionsEnum.EDIT_EMPLOYEES]), departmentController.deleteDepartment);
 
 export default router;

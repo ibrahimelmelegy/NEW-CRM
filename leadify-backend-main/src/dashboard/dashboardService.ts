@@ -168,10 +168,7 @@ class DashboardService {
 
   async getDashboards(userId: number, role?: string) {
     const whereClause: any = {
-      [Op.or]: [
-        { userId },
-        { isShared: true }
-      ]
+      [Op.or]: [{ userId }, { isShared: true }]
     };
     if (role) {
       whereClause[Op.or].push({ role });
@@ -179,7 +176,10 @@ class DashboardService {
 
     return Dashboard.findAll({
       where: whereClause,
-      order: [['isDefault', 'DESC'], ['createdAt', 'DESC']],
+      order: [
+        ['isDefault', 'DESC'],
+        ['createdAt', 'DESC']
+      ],
       include: [{ model: User, attributes: ['id', 'name', 'email'] }]
     });
   }
@@ -194,10 +194,7 @@ class DashboardService {
 
   async setDefault(id: number, userId: number) {
     // Remove default from all other dashboards for this user
-    await Dashboard.update(
-      { isDefault: false },
-      { where: { userId, isDefault: true } }
-    );
+    await Dashboard.update({ isDefault: false }, { where: { userId, isDefault: true } });
     // Set the chosen dashboard as default
     const dashboard = await Dashboard.findOne({ where: { id, userId } });
     if (!dashboard) throw new BaseError(ERRORS.DASHBOARD_NOT_FOUND, 404);
@@ -299,10 +296,12 @@ class DashboardService {
 
     return {
       labels: results.map((r: any) => r[groupBy]),
-      datasets: [{
-        data: results.map((r: any) => Number(r.value || 0)),
-        chartType: config.chartType || 'bar'
-      }]
+      datasets: [
+        {
+          data: results.map((r: any) => Number(r.value || 0)),
+          chartType: config.chartType || 'bar'
+        }
+      ]
     };
   }
 
@@ -378,7 +377,8 @@ class DashboardService {
       ...recentLeads.map((l: any) => ({ entityType: 'lead', ...l })),
       ...recentDeals.map((d: any) => ({ entityType: 'deal', ...d })),
       ...recentOpportunities.map((o: any) => ({ entityType: 'opportunity', ...o }))
-    ].sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime())
+    ]
+      .sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime())
       .slice(0, limit);
 
     return { activities };
@@ -412,41 +412,38 @@ class DashboardService {
         [fn('SUM', col('Deal.price')), 'totalRevenue'],
         [fn('COUNT', col('Deal.id')), 'dealCount']
       ],
-      include: [{
-        model: User,
-        as: 'users',
-        attributes: ['id', 'name'],
-        through: { attributes: [] }
-      }],
+      include: [
+        {
+          model: User,
+          as: 'users',
+          attributes: ['id', 'name'],
+          through: { attributes: [] }
+        }
+      ],
       group: ['users.id', 'users.name'],
       order: [[literal('"totalRevenue"'), 'DESC']],
       limit,
       raw: false
     });
 
-    const leaderboard = results.map((r: any) => {
-      const userData = r.users?.[0];
-      return {
-        userId: userData?.id,
-        userName: userData?.name,
-        totalRevenue: Number(r.getDataValue('totalRevenue') || 0),
-        dealCount: Number(r.getDataValue('dealCount') || 0)
-      };
-    }).filter((entry: any) => entry.userId);
+    const leaderboard = results
+      .map((r: any) => {
+        const userData = r.users?.[0];
+        return {
+          userId: userData?.id,
+          userName: userData?.name,
+          totalRevenue: Number(r.getDataValue('totalRevenue') || 0),
+          dealCount: Number(r.getDataValue('dealCount') || 0)
+        };
+      })
+      .filter((entry: any) => entry.userId);
 
     return { leaderboard };
   }
 
   // ─── PREDEFINED ANALYTICS ENDPOINTS ───────────────────
   async getExecutiveSummary() {
-    const [
-      totalRevenueResult,
-      activeDealsCount,
-      totalLeads,
-      convertedLeads,
-      pendingTasks,
-      overdueProjects
-    ] = await Promise.all([
+    const [totalRevenueResult, activeDealsCount, totalLeads, convertedLeads, pendingTasks, overdueProjects] = await Promise.all([
       Deal.findOne({
         where: { stage: DealStageEnums.CLOSED },
         attributes: [[fn('SUM', col('price')), 'totalRevenue']],
@@ -475,9 +472,7 @@ class DashboardService {
     ]);
 
     const totalRevenue = Number((totalRevenueResult as any)?.totalRevenue || 0);
-    const conversionRate = totalLeads > 0
-      ? Number(((convertedLeads / totalLeads) * 100).toFixed(2))
-      : 0;
+    const conversionRate = totalLeads > 0 ? Number(((convertedLeads / totalLeads) * 100).toFixed(2)) : 0;
 
     return {
       totalRevenue,
@@ -493,11 +488,7 @@ class DashboardService {
 
     const stageResults = await Deal.findAll({
       where: dateWhere,
-      attributes: [
-        'stage',
-        [fn('COUNT', col('id')), 'count'],
-        [fn('SUM', col('price')), 'totalValue']
-      ],
+      attributes: ['stage', [fn('COUNT', col('id')), 'count'], [fn('SUM', col('price')), 'totalValue']],
       group: ['stage'],
       raw: true
     });
@@ -595,37 +586,43 @@ class DashboardService {
         const [dealsWon, dealRevenue, leadsCreated, tasksCompleted] = await Promise.all([
           Deal.count({
             where: { ...dateWhere, stage: DealStageEnums.CLOSED },
-            include: [{
-              model: User,
-              as: 'users',
-              where: { id: user.id },
-              through: { attributes: [] },
-              required: true
-            }]
+            include: [
+              {
+                model: User,
+                as: 'users',
+                where: { id: user.id },
+                through: { attributes: [] },
+                required: true
+              }
+            ]
           }),
           Deal.findOne({
             where: { ...dateWhere, stage: DealStageEnums.CLOSED },
             attributes: [[fn('SUM', col('Deal.price')), 'revenue']],
-            include: [{
-              model: User,
-              as: 'users',
-              where: { id: user.id },
-              attributes: [],
-              through: { attributes: [] },
-              required: true
-            }],
+            include: [
+              {
+                model: User,
+                as: 'users',
+                where: { id: user.id },
+                attributes: [],
+                through: { attributes: [] },
+                required: true
+              }
+            ],
             raw: true,
             subQuery: false
           }),
           Lead.count({
             where: dateWhere,
-            include: [{
-              model: User,
-              as: 'users',
-              where: { id: user.id },
-              through: { attributes: [] },
-              required: true
-            }]
+            include: [
+              {
+                model: User,
+                as: 'users',
+                where: { id: user.id },
+                through: { attributes: [] },
+                required: true
+              }
+            ]
           }),
           DailyTask.count({
             where: {
@@ -694,10 +691,7 @@ class DashboardService {
 
     const results = await Lead.findAll({
       where: dateWhere,
-      attributes: [
-        'leadSource',
-        [fn('COUNT', col('id')), 'count']
-      ],
+      attributes: ['leadSource', [fn('COUNT', col('id')), 'count']],
       group: ['leadSource'],
       raw: true
     });
@@ -762,7 +756,7 @@ class DashboardService {
     ];
 
     const results = await Promise.all(
-      funnelStages.map(async (stage) => ({
+      funnelStages.map(async stage => ({
         name: stage.name,
         value: await (stage.model as any).count({ where: stage.where })
       }))

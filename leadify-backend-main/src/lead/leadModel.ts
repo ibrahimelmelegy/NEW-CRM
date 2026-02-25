@@ -8,12 +8,7 @@ import LeadUsers from './model/lead_UsersModel';
   tableName: 'leads',
   modelName: 'Lead',
   timestamps: true,
-  indexes: [
-    { fields: ['name'] },
-    { fields: ['email'] },
-    { fields: ['phone'] },
-    { fields: ['status'] }
-  ]
+  indexes: [{ fields: ['name'] }, { fields: ['email'] }, { fields: ['phone'] }, { fields: ['status'] }]
 })
 class Lead extends Model {
   @Column({
@@ -51,7 +46,6 @@ class Lead extends Model {
   @AllowNull(true)
   @Column({ type: DataType.STRING })
   public otherSource?: string;
-
 
   @BelongsToMany(() => User, {
     through: () => LeadUsers, // Join table

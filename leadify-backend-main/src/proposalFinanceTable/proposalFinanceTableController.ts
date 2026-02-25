@@ -54,7 +54,11 @@ class ProposalFinanceTableController {
 
   public async deleteFinanceTableCustomColumn(req: AuthenticatedRequest, res: Response, next: NextFunction): Promise<void> {
     try {
-      await proposalFinanceTableService.deleteFinanceTableCustomColumn(req.params.id as string, req.params.customColumnKey as string, req.user as User);
+      await proposalFinanceTableService.deleteFinanceTableCustomColumn(
+        req.params.id as string,
+        req.params.customColumnKey as string,
+        req.user as User
+      );
       wrapResult(res);
     } catch (error) {
       next(error);

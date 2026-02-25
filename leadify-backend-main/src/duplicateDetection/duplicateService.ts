@@ -40,8 +40,8 @@ class DuplicateService {
     if (!str) return '';
     return str
       .toLowerCase()
-      .replace(/[^a-z0-9\s]/g, '')  // remove special chars
-      .replace(/\s+/g, ' ')          // collapse whitespace
+      .replace(/[^a-z0-9\s]/g, '') // remove special chars
+      .replace(/\s+/g, ' ') // collapse whitespace
       .trim();
   }
 
@@ -64,9 +64,9 @@ class DuplicateService {
       for (let j = 1; j <= n; j++) {
         const cost = s1[i - 1] === s2[j - 1] ? 0 : 1;
         currRow[j] = Math.min(
-          currRow[j - 1]! + 1,       // insertion
-          prevRow[j]! + 1,           // deletion
-          prevRow[j - 1]! + cost     // substitution
+          currRow[j - 1]! + 1, // insertion
+          prevRow[j]! + 1, // deletion
+          prevRow[j - 1]! + cost // substitution
         );
       }
 
@@ -87,7 +87,11 @@ class DuplicateService {
 
   // ---- Match Score Calculation ----
 
-  calculateMatchScore(record1: Record<string, any>, record2: Record<string, any>, entityType: string): {
+  calculateMatchScore(
+    record1: Record<string, any>,
+    record2: Record<string, any>,
+    entityType: string
+  ): {
     score: number;
     matchedFields: Array<{ field: string; value1: any; value2: any; similarity: number }>;
   } {
@@ -120,8 +124,14 @@ class DuplicateService {
         }
 
         // Company name (fuzzy >80%) + name (fuzzy >80%) = 85
-        if (fields.companyName && record1[fields.companyName] && record2[fields.companyName] &&
-            fields.name && record1[fields.name] && record2[fields.name]) {
+        if (
+          fields.companyName &&
+          record1[fields.companyName] &&
+          record2[fields.companyName] &&
+          fields.name &&
+          record1[fields.name] &&
+          record2[fields.name]
+        ) {
           const companySimilarity = this.fuzzyMatch(record1[fields.companyName], record2[fields.companyName]);
           const nameSimilarity = this.fuzzyMatch(record1[fields.name], record2[fields.name]);
           if (companySimilarity > 80 && nameSimilarity > 80) {
@@ -376,9 +386,7 @@ class DuplicateService {
       const dupData = dupRecord.toJSON() as Record<string, any>;
 
       // Fill empty fields in master with data from duplicate
-      const fillableFields = fields
-        ? Object.values(fields).filter(Boolean)
-        : [];
+      const fillableFields = fields ? Object.values(fields).filter(Boolean) : [];
 
       for (const field of fillableFields) {
         if ((!masterData[field] || masterData[field] === '') && dupData[field]) {

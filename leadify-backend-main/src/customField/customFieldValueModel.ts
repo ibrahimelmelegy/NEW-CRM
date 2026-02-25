@@ -5,10 +5,7 @@ import CustomField from './customFieldModel';
   tableName: 'custom_field_values',
   modelName: 'CustomFieldValue',
   timestamps: true,
-  indexes: [
-    { fields: ['entityId', 'entityType'] },
-    { fields: ['customFieldId'] }
-  ]
+  indexes: [{ fields: ['entityId', 'entityType'] }, { fields: ['customFieldId'] }]
 })
 class CustomFieldValue extends Model {
   @Column({

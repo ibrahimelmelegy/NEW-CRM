@@ -283,7 +283,12 @@ router.patch('/:id/status', authenticateUser, HasPermission([SalesOrderPermissio
  *         description: Server error
  */
 // Convert deal to sales order
-router.post('/from-deal/:dealId', authenticateUser, HasPermission([SalesOrderPermissionsEnum.CONVERT_DEAL_TO_ORDER]), SalesOrderController.convertDealToOrder);
+router.post(
+  '/from-deal/:dealId',
+  authenticateUser,
+  HasPermission([SalesOrderPermissionsEnum.CONVERT_DEAL_TO_ORDER]),
+  SalesOrderController.convertDealToOrder
+);
 
 /**
  * @swagger
@@ -389,6 +394,11 @@ router.post('/:id/fulfillment', authenticateUser, HasPermission([SalesOrderPermi
  *         description: Server error
  */
 // Update a fulfillment record
-router.patch('/:id/fulfillment/:fid', authenticateUser, HasPermission([SalesOrderPermissionsEnum.EDIT_SALES_ORDERS]), SalesOrderController.updateFulfillment);
+router.patch(
+  '/:id/fulfillment/:fid',
+  authenticateUser,
+  HasPermission([SalesOrderPermissionsEnum.EDIT_SALES_ORDERS]),
+  SalesOrderController.updateFulfillment
+);
 
 export default router;

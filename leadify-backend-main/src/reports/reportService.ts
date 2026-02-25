@@ -45,14 +45,24 @@ class ReportService {
       for (const filter of config.filters) {
         const { field, operator, value } = filter;
         switch (operator) {
-          case 'equals': where[field] = value; break;
-          case 'contains': where[field] = { [Op.iLike]: `%${value}%` }; break;
-          case 'greaterThan': where[field] = { [Op.gt]: value }; break;
-          case 'lessThan': where[field] = { [Op.lt]: value }; break;
+          case 'equals':
+            where[field] = value;
+            break;
+          case 'contains':
+            where[field] = { [Op.iLike]: `%${value}%` };
+            break;
+          case 'greaterThan':
+            where[field] = { [Op.gt]: value };
+            break;
+          case 'lessThan':
+            where[field] = { [Op.lt]: value };
+            break;
           case 'between':
             where[field] = { [Op.between]: [value[0], value[1]] };
             break;
-          case 'in': where[field] = { [Op.in]: value }; break;
+          case 'in':
+            where[field] = { [Op.in]: value };
+            break;
         }
       }
     }
@@ -66,10 +76,7 @@ class ReportService {
     };
 
     if (config.groupBy) {
-      queryOptions.attributes = [
-        config.groupBy,
-        [fn('COUNT', col('id')), 'count']
-      ];
+      queryOptions.attributes = [config.groupBy, [fn('COUNT', col('id')), 'count']];
       queryOptions.group = [config.groupBy];
       delete queryOptions.limit;
     }
@@ -83,12 +90,16 @@ class ReportService {
     if (!data.length) return '';
 
     const headers = Object.keys(data[0]);
-    const rows = data.map((row: any) => headers.map(h => {
-      const val = row[h];
-      if (val === null || val === undefined) return '';
-      const str = String(val);
-      return str.includes(',') || str.includes('"') ? `"${str.replace(/"/g, '""')}"` : str;
-    }).join(','));
+    const rows = data.map((row: any) =>
+      headers
+        .map(h => {
+          const val = row[h];
+          if (val === null || val === undefined) return '';
+          const str = String(val);
+          return str.includes(',') || str.includes('"') ? `"${str.replace(/"/g, '""')}"` : str;
+        })
+        .join(',')
+    );
 
     return [headers.join(','), ...rows].join('\n');
   }

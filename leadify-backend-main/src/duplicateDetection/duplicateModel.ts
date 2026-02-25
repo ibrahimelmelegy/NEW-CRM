@@ -12,11 +12,7 @@ export enum DuplicateStatus {
   tableName: 'duplicate_sets',
   modelName: 'DuplicateSet',
   timestamps: true,
-  indexes: [
-    { fields: ['entityType'] },
-    { fields: ['status'] },
-    { fields: ['masterRecordId'] }
-  ]
+  indexes: [{ fields: ['entityType'] }, { fields: ['status'] }, { fields: ['masterRecordId'] }]
 })
 class DuplicateSet extends Model {
   @Column({ primaryKey: true, type: DataType.INTEGER, autoIncrement: true })

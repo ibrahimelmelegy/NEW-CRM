@@ -10,12 +10,7 @@ import OpportunityUsers from './model/oppotyunity_UsersModel';
   tableName: 'opportunities',
   modelName: 'Opportunity',
   timestamps: true,
-  indexes: [
-    { fields: ['leadId'] },
-    { fields: ['clientId'] },
-    { fields: ['stage'] },
-    { fields: ['name'] }
-  ]
+  indexes: [{ fields: ['leadId'] }, { fields: ['clientId'] }, { fields: ['stage'] }, { fields: ['name'] }]
 })
 class Opportunity extends Model {
   @Column({

@@ -6,16 +6,11 @@ class HeatmapService {
     const startDate = `${year}-01-01`;
     const endDate = `${year}-12-31`;
 
-    const activityTables = [
-      'leadActivities',
-      'dealActivities',
-      'opportunityActivities',
-      'clientActivities',
-      'projectActivities'
-    ];
+    const activityTables = ['leadActivities', 'dealActivities', 'opportunityActivities', 'clientActivities', 'projectActivities'];
 
-    const unionQueries = activityTables.map(table =>
-      `SELECT DATE("createdAt") as activity_date, COUNT(*) as cnt FROM "${table}" WHERE "createdAt" >= :startDate AND "createdAt" <= :endDate ${userId ? 'AND "userId" = :userId' : ''} GROUP BY DATE("createdAt")`
+    const unionQueries = activityTables.map(
+      table =>
+        `SELECT DATE("createdAt") as activity_date, COUNT(*) as cnt FROM "${table}" WHERE "createdAt" >= :startDate AND "createdAt" <= :endDate ${userId ? 'AND "userId" = :userId' : ''} GROUP BY DATE("createdAt")`
     );
 
     const sql = `

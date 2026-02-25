@@ -23,10 +23,7 @@ export enum ScoreGrade {
   tableName: 'lead_scoring_rules',
   modelName: 'LeadScoringRule',
   timestamps: true,
-  indexes: [
-    { fields: ['entityType'] },
-    { fields: ['isActive'] }
-  ]
+  indexes: [{ fields: ['entityType'] }, { fields: ['isActive'] }]
 })
 class LeadScoringRule extends Model {
   @Column({ primaryKey: true, type: DataType.INTEGER, autoIncrement: true })
@@ -59,11 +56,7 @@ class LeadScoringRule extends Model {
   tableName: 'entity_scores',
   modelName: 'EntityScore',
   timestamps: true,
-  indexes: [
-    { unique: true, fields: ['entityType', 'entityId'] },
-    { fields: ['score'] },
-    { fields: ['grade'] }
-  ]
+  indexes: [{ unique: true, fields: ['entityType', 'entityId'] }, { fields: ['score'] }, { fields: ['grade'] }]
 })
 class EntityScore extends Model {
   @Column({ primaryKey: true, type: DataType.INTEGER, autoIncrement: true })

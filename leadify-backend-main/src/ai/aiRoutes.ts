@@ -95,13 +95,10 @@ router.post('/summarize-meeting', authenticateUser, summarizeMeeting);
  *         description: Server error
  */
 router.get(
-    '/churn-dashboard',
-    authenticateUser,
-    HasPermission([
-        LeadAndSalesWidgetsPermissionsEnum.VIEW_GLOBAL_LEAD_SALES_WIDGETS,
-        LeadAndSalesWidgetsPermissionsEnum.VIEW_OWN_LEAD_SALES_WIDGETS
-    ]),
-    getChurnDashboard
+  '/churn-dashboard',
+  authenticateUser,
+  HasPermission([LeadAndSalesWidgetsPermissionsEnum.VIEW_GLOBAL_LEAD_SALES_WIDGETS, LeadAndSalesWidgetsPermissionsEnum.VIEW_OWN_LEAD_SALES_WIDGETS]),
+  getChurnDashboard
 );
 
 // ─── Sales Coach ──────────────────────────────────────────────────────────────

@@ -6,7 +6,7 @@ import 'reflect-metadata';
 
 // Type definition for ClassConstructor
 type ClassConstructor<T> = {
-  new(...args: any[]): T;
+  new (...args: any[]): T;
 };
 
 // Helper function to format errors recursively

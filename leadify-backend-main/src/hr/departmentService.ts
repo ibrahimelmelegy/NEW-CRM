@@ -13,19 +13,17 @@ class DepartmentService {
 
   async getDepartments() {
     const departments = await Department.findAll({
-      include: [
-        { model: Department, as: 'parent', attributes: ['id', 'name'] }
-      ],
+      include: [{ model: Department, as: 'parent', attributes: ['id', 'name'] }],
       order: [['name', 'ASC']]
     });
 
     // Count employees per department
-    const employeeCounts = await Employee.findAll({
+    const employeeCounts = (await Employee.findAll({
       attributes: ['departmentId', [fn('COUNT', col('id')), 'employeeCount']],
       where: { departmentId: { [Op.ne]: null } },
       group: ['departmentId'],
       raw: true
-    }) as any[];
+    })) as any[];
 
     const countMap = new Map<string, number>();
     for (const row of employeeCounts) {
@@ -83,18 +81,18 @@ class DepartmentService {
   }
 
   async getDepartmentTree() {
-    const departments = await Department.findAll({
+    const departments = (await Department.findAll({
       order: [['name', 'ASC']],
       raw: true
-    }) as any[];
+    })) as any[];
 
     // Count employees per department
-    const employeeCounts = await Employee.findAll({
+    const employeeCounts = (await Employee.findAll({
       attributes: ['departmentId', [fn('COUNT', col('id')), 'employeeCount']],
       where: { departmentId: { [Op.ne]: null } },
       group: ['departmentId'],
       raw: true
-    }) as any[];
+    })) as any[];
 
     const countMap = new Map<string, number>();
     for (const row of employeeCounts) {

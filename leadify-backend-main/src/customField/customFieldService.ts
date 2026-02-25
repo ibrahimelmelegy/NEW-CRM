@@ -27,9 +27,7 @@ class CustomFieldService {
   }
 
   async reorderFields(fields: { id: string; sortOrder: number }[]) {
-    await Promise.all(
-      fields.map(f => CustomField.update({ sortOrder: f.sortOrder }, { where: { id: f.id } }))
-    );
+    await Promise.all(fields.map(f => CustomField.update({ sortOrder: f.sortOrder }, { where: { id: f.id } })));
   }
 
   async getValuesForEntity(entityId: string, entityType: string) {

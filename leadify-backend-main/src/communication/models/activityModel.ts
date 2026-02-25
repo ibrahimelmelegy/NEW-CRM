@@ -1,11 +1,4 @@
-import {
-  Column,
-  DataType,
-  ForeignKey,
-  BelongsTo,
-  Model,
-  Table
-} from 'sequelize-typescript';
+import { Column, DataType, ForeignKey, BelongsTo, Model, Table } from 'sequelize-typescript';
 import User from '../../user/userModel';
 
 export enum ActivityType {
@@ -31,12 +24,7 @@ export enum ActivityDirection {
   tableName: 'comm_activities',
   modelName: 'CommActivity',
   timestamps: true,
-  indexes: [
-    { fields: ['contactId', 'contactType'] },
-    { fields: ['userId'] },
-    { fields: ['type'] },
-    { fields: ['createdAt'] }
-  ]
+  indexes: [{ fields: ['contactId', 'contactType'] }, { fields: ['userId'] }, { fields: ['type'] }, { fields: ['createdAt'] }]
 })
 class CommActivity extends Model {
   @Column({ primaryKey: true, type: DataType.INTEGER, autoIncrement: true })

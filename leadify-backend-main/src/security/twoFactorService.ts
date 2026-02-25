@@ -115,10 +115,7 @@ function verifyTOTP(secret: string, token: string, window: number = 1): boolean 
   for (let offset = -window; offset <= window; offset++) {
     const expectedToken = generateTOTP(secret, offset);
     // Constant-time comparison to prevent timing attacks
-    if (
-      token.length === expectedToken.length &&
-      crypto.timingSafeEqual(Buffer.from(token), Buffer.from(expectedToken))
-    ) {
+    if (token.length === expectedToken.length && crypto.timingSafeEqual(Buffer.from(token), Buffer.from(expectedToken))) {
       return true;
     }
   }
@@ -238,10 +235,7 @@ export async function disable2FA(userId: number, token: string): Promise<void> {
   });
 
   // Also update the User model for backward compatibility
-  await User.update(
-    { twoFactorEnabled: false, twoFactorSecret: null },
-    { where: { id: userId } }
-  );
+  await User.update({ twoFactorEnabled: false, twoFactorSecret: null }, { where: { id: userId } });
 }
 
 /**
@@ -328,9 +322,7 @@ export async function getSetupData(userId: number): Promise<{
 
   const plainSecret = decryptSecret(twoFactor.secret);
   const qrUrl = generateOtpauthURI(plainSecret, user.email);
-  const backupCodesRemaining = twoFactor.backupCodes
-    ? (twoFactor.backupCodes as string[]).length
-    : 0;
+  const backupCodesRemaining = twoFactor.backupCodes ? (twoFactor.backupCodes as string[]).length : 0;
 
   return {
     secret: plainSecret,

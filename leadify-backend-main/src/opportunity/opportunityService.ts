@@ -310,27 +310,27 @@ class OpportunityService {
       ...(query.priority?.length && { priority: { [Op.in]: query.priority } }),
       ...(query.fromDate || query.toDate
         ? {
-          createdAt: {
-            ...(query.fromDate && { [Op.gte]: new Date(query.fromDate) }),
-            ...(query.toDate && { [Op.lte]: new Date(query.toDate) })
+            createdAt: {
+              ...(query.fromDate && { [Op.gte]: new Date(query.fromDate) }),
+              ...(query.toDate && { [Op.lte]: new Date(query.toDate) })
+            }
           }
-        }
         : {}),
       ...(query.fromExpectedCloseDate || query.toExpectedCloseDate
         ? {
-          expectedCloseDate: {
-            ...(query.fromExpectedCloseDate && { [Op.gte]: new Date(query.fromExpectedCloseDate) }),
-            ...(query.toExpectedCloseDate && { [Op.lte]: new Date(query.toExpectedCloseDate) })
+            expectedCloseDate: {
+              ...(query.fromExpectedCloseDate && { [Op.gte]: new Date(query.fromExpectedCloseDate) }),
+              ...(query.toExpectedCloseDate && { [Op.lte]: new Date(query.toExpectedCloseDate) })
+            }
           }
-        }
         : {}),
       ...(query.fromEstimatedValue || query.toEstimatedValue
         ? {
-          estimatedValue: {
-            ...(query.fromEstimatedValue && { [Op.gte]: query.fromEstimatedValue }),
-            ...(query.toEstimatedValue && { [Op.lte]: query.toEstimatedValue })
+            estimatedValue: {
+              ...(query.fromEstimatedValue && { [Op.gte]: query.fromEstimatedValue }),
+              ...(query.toEstimatedValue && { [Op.lte]: query.toEstimatedValue })
+            }
           }
-        }
         : {}),
       ...((query.fromProfit || query.toProfit) && {
         profit: {

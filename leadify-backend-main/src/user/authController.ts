@@ -52,37 +52,49 @@ export const registerWorkspace = async (req: Request, res: Response, next: NextF
     }
 
     // 2. Create the Tenant (Workspace)
-    const tenant = await Tenant.create({
-      name: workspaceName,
-      status: 'ACTIVE'
-    }, { transaction });
+    const tenant = await Tenant.create(
+      {
+        name: workspaceName,
+        status: 'ACTIVE'
+      },
+      { transaction }
+    );
 
     // 3. Create a default Admin Role for this new Tenant
-    const adminRole = await Role.create({
-      name: 'Admin',
-      description: 'Workspace Administrator with full access.',
-      isAdmin: true,
-      tenantId: tenant.id
-    }, { transaction });
+    const adminRole = await Role.create(
+      {
+        name: 'Admin',
+        description: 'Workspace Administrator with full access.',
+        isAdmin: true,
+        tenantId: tenant.id
+      },
+      { transaction }
+    );
 
     // 4. Create the founding User
     const hashedPassword = await bcrypt.hash(password, 10);
-    const user = await User.create({
-      name: userName,
-      email,
-      password: hashedPassword,
-      roleId: adminRole.id,
-      tenantId: tenant.id, // Bind user to the new workspace
-      status: 'ACTIVE'
-    }, { transaction });
+    const user = await User.create(
+      {
+        name: userName,
+        email,
+        password: hashedPassword,
+        roleId: adminRole.id,
+        tenantId: tenant.id, // Bind user to the new workspace
+        status: 'ACTIVE'
+      },
+      { transaction }
+    );
 
     // 5. Automatically log them in (Generate JWT)
     const token = jwt.sign({ id: user.id, tenantId: tenant.id }, SECRET_KEY, { expiresIn: process.env.JWT_EXPIRATION_TIME || ('7d' as any) });
-    await Session.create({
-      userId: user.id,
-      token,
-      expiresAt: new Date(Date.now() + (Number(process.env.SESSION_EXPIRATION_TIME) || 7) * 24 * 60 * 60 * 1000)
-    }, { transaction });
+    await Session.create(
+      {
+        userId: user.id,
+        token,
+        expiresAt: new Date(Date.now() + (Number(process.env.SESSION_EXPIRATION_TIME) || 7) * 24 * 60 * 60 * 1000)
+      },
+      { transaction }
+    );
 
     // Commit all changes
     await transaction.commit();
@@ -93,7 +105,6 @@ export const registerWorkspace = async (req: Request, res: Response, next: NextF
       tenant: { id: tenant.id, name: tenant.name },
       user: { id: user.id, name: user.name, email: user.email }
     });
-
   } catch (error) {
     await transaction.rollback();
     res.status(500).json({ message: 'Failed to create workspace', error: error instanceof Error ? error.message : 'Server error' });

@@ -26,11 +26,7 @@ const router = express.Router();
  *         description: Server error
  */
 // Dashboard overview
-router.get(
-  '/dashboard',
-  authenticateUser,
-  customerSuccessController.getDashboard
-);
+router.get('/dashboard', authenticateUser, customerSuccessController.getDashboard);
 
 /**
  * @swagger
@@ -56,10 +52,6 @@ router.get(
  *         description: Server error
  */
 // Single client health score
-router.get(
-  '/client/:id/health',
-  authenticateUser,
-  customerSuccessController.getClientHealth
-);
+router.get('/client/:id/health', authenticateUser, customerSuccessController.getClientHealth);
 
 export default router;

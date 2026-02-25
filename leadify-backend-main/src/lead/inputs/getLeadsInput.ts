@@ -36,7 +36,7 @@ export class GetLeadsInput {
   @IsArray({ message: 'Source must be an array' }) // Validate that it's an array
   @ArrayUnique({ message: 'Source array must not contain duplicate values' }) // Ensure no duplicates
   @IsIn(Object.values(LeadSourceEnums), {
-    each: true, 
+    each: true,
     message: `Each leadSource must be one of: ${Object.values(LeadSourceEnums).join(', ')}`
   })
   leadSource?: LeadSourceEnums[];

@@ -15,9 +15,7 @@ class SearchController {
       const page = parseInt(req.query.page as string, 10) || 1;
       const limit = parseInt(req.query.limit as string, 10) || 10;
 
-      const entityTypes = entityTypesParam
-        ? entityTypesParam.split(',').map((t) => t.trim())
-        : undefined;
+      const entityTypes = entityTypesParam ? entityTypesParam.split(',').map(t => t.trim()) : undefined;
 
       const results = await searchService.search(q, entityTypes, page, limit);
       wrapResult(res, results);
@@ -34,24 +32,9 @@ class SearchController {
   async advancedSearch(req: AuthenticatedRequest, res: Response, next: NextFunction) {
     try {
       const { entityType } = req.params;
-      const {
-        filters = [],
-        conditionLogic = 'AND',
-        sortBy,
-        sort = 'DESC',
-        page = 1,
-        limit = 20
-      } = req.body;
+      const { filters = [], conditionLogic = 'AND', sortBy, sort = 'DESC', page = 1, limit = 20 } = req.body;
 
-      const results = await searchService.advancedSearch(
-        entityType as string,
-        filters,
-        conditionLogic,
-        sortBy,
-        sort,
-        page,
-        limit
-      );
+      const results = await searchService.advancedSearch(entityType as string, filters, conditionLogic, sortBy, sort, page, limit);
 
       wrapResult(res, results);
     } catch (error) {

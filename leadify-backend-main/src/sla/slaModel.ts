@@ -1,6 +1,4 @@
-import {
-  Table, Column, Model, DataType, ForeignKey, BelongsTo, HasMany, Default, Index
-} from 'sequelize-typescript';
+import { Table, Column, Model, DataType, ForeignKey, BelongsTo, HasMany, Default, Index } from 'sequelize-typescript';
 import User from '../user/userModel';
 
 // ─── Interfaces ──────────────────────────────────────────────────────────
@@ -20,9 +18,9 @@ export interface EscalationRule {
 }
 
 export interface BusinessHoursConfig {
-  start: string;    // e.g. '08:00'
-  end: string;      // e.g. '17:00'
-  timezone: string;  // e.g. 'Asia/Riyadh'
+  start: string; // e.g. '08:00'
+  end: string; // e.g. '17:00'
+  timezone: string; // e.g. 'Asia/Riyadh'
   workDays: number[]; // e.g. [0,1,2,3,4] (Sun-Thu for Saudi Arabia)
 }
 
@@ -39,10 +37,7 @@ export enum SLAInstanceStatus {
   tableName: 'sla_policies',
   modelName: 'SLAPolicy',
   timestamps: true,
-  indexes: [
-    { fields: ['entityType'] },
-    { fields: ['isActive'] }
-  ]
+  indexes: [{ fields: ['entityType'] }, { fields: ['isActive'] }]
 })
 export class SLAPolicy extends Model {
   @Column({ type: DataType.INTEGER, primaryKey: true, autoIncrement: true })

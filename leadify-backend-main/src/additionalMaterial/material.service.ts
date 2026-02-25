@@ -36,7 +36,7 @@ class MaterialService {
 
     return await this.getMaterial(material.id);
   }
-  
+
   public async getMaterials(input: GetPaginatedAdditionalMaterialInput): Promise<IPaginationRes<AdditionalMaterial>> {
     const page = input.page || 1;
     const limit = input.limit || 10;

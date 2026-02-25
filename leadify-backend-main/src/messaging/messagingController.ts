@@ -11,13 +11,7 @@ class MessagingController {
         return res.status(400).json({ message: 'contactPhone and content are required' });
       }
 
-      const message = await messagingService.sendMessage(
-        req.user!.id,
-        contactPhone,
-        contactName,
-        content,
-        provider
-      );
+      const message = await messagingService.sendMessage(req.user!.id, contactPhone, contactName, content, provider);
       wrapResult(res, message, 201);
     } catch (error) {
       next(error);
@@ -76,11 +70,7 @@ class MessagingController {
         const messageData = body.entry[0].changes[0].value.messages[0];
         const contact = body.entry[0].changes[0].value.contacts?.[0];
 
-        await messagingService.recordInboundMessage(
-          messageData.from,
-          messageData.text?.body || '',
-          messageData.id
-        );
+        await messagingService.recordInboundMessage(messageData.from, messageData.text?.body || '', messageData.id);
       }
 
       res.sendStatus(200);

@@ -13,9 +13,9 @@
 
 export interface JobOptions {
   attempts?: number;
-  backoff?: number;   // ms between retries (exponential)
-  delay?: number;     // initial delay before first attempt (ms)
-  priority?: number;  // lower = higher priority (default 0)
+  backoff?: number; // ms between retries (exponential)
+  delay?: number; // initial delay before first attempt (ms)
+  priority?: number; // lower = higher priority (default 0)
 }
 
 export interface JobDefinition {
@@ -54,7 +54,7 @@ class JobQueue {
   private jobCounter = 0;
   private stats = {
     totalProcessed: 0,
-    totalFailed: 0,
+    totalFailed: 0
   };
   private processing = false;
 
@@ -66,7 +66,7 @@ class JobQueue {
     this.queues.set(name, {
       name,
       concurrency,
-      activeCount: 0,
+      activeCount: 0
     });
     this.jobQueues.set(name, []);
   }
@@ -103,11 +103,11 @@ class JobQueue {
         attempts: options?.attempts ?? 3,
         backoff: options?.backoff ?? 1000,
         delay: options?.delay ?? 0,
-        priority: options?.priority ?? 0,
+        priority: options?.priority ?? 0
       },
       status: options?.delay ? 'delayed' : 'waiting',
       attempts: 0,
-      createdAt: Date.now(),
+      createdAt: Date.now()
     };
 
     this.jobs.set(jobId, job);
@@ -196,9 +196,7 @@ class JobQueue {
         job.error = err.message;
         job.completedAt = Date.now();
         this.stats.totalFailed++;
-        console.error(
-          `[JobQueue] Job ${job.id} in "${job.queueName}" permanently failed after ${job.attempts} attempts: ${err.message}`
-        );
+        console.error(`[JobQueue] Job ${job.id} in "${job.queueName}" permanently failed after ${job.attempts} attempts: ${err.message}`);
       }
     } finally {
       queueConfig.activeCount--;
@@ -216,13 +214,13 @@ class JobQueue {
 
     // Standard CRM queues with appropriate concurrency
     const standardQueues: Array<{ name: string; concurrency: number }> = [
-      { name: 'email', concurrency: 5 },          // Email sending
-      { name: 'pdf', concurrency: 3 },             // PDF generation
-      { name: 'sync', concurrency: 2 },            // ERPNext sync
-      { name: 'notifications', concurrency: 10 },  // Push notifications
-      { name: 'reports', concurrency: 2 },          // Report generation
-      { name: 'scoring', concurrency: 3 },          // Lead scoring calculations
-      { name: 'audit', concurrency: 5 },            // Audit log writes (non-blocking)
+      { name: 'email', concurrency: 5 }, // Email sending
+      { name: 'pdf', concurrency: 3 }, // PDF generation
+      { name: 'sync', concurrency: 2 }, // ERPNext sync
+      { name: 'notifications', concurrency: 10 }, // Push notifications
+      { name: 'reports', concurrency: 2 }, // Report generation
+      { name: 'scoring', concurrency: 3 }, // Lead scoring calculations
+      { name: 'audit', concurrency: 5 } // Audit log writes (non-blocking)
     ];
 
     for (const { name, concurrency } of standardQueues) {
@@ -262,9 +260,7 @@ class JobQueue {
       createdAt: job.createdAt,
       startedAt: job.startedAt,
       completedAt: job.completedAt,
-      durationMs: job.completedAt && job.startedAt
-        ? job.completedAt - job.startedAt
-        : undefined,
+      durationMs: job.completedAt && job.startedAt ? job.completedAt - job.startedAt : undefined
     };
   }
 
@@ -283,11 +279,21 @@ class JobQueue {
     for (const job of this.jobs.values()) {
       if (job.queueName !== queueName) continue;
       switch (job.status) {
-        case 'waiting': result.waiting++; break;
-        case 'active': result.active++; break;
-        case 'completed': result.completed++; break;
-        case 'failed': result.failed++; break;
-        case 'delayed': result.delayed++; break;
+        case 'waiting':
+          result.waiting++;
+          break;
+        case 'active':
+          result.active++;
+          break;
+        case 'completed':
+          result.completed++;
+          break;
+        case 'failed':
+          result.failed++;
+          break;
+        case 'delayed':
+          result.delayed++;
+          break;
       }
     }
 
@@ -312,7 +318,7 @@ class JobQueue {
     return {
       totalProcessed: this.stats.totalProcessed,
       totalFailed: this.stats.totalFailed,
-      queues,
+      queues
     };
   }
 
@@ -325,10 +331,7 @@ class JobQueue {
     let removed = 0;
 
     for (const [jobId, job] of this.jobs.entries()) {
-      if (
-        (job.status === 'completed' || job.status === 'failed') &&
-        (job.completedAt ?? job.createdAt) < cutoff
-      ) {
+      if ((job.status === 'completed' || job.status === 'failed') && (job.completedAt ?? job.createdAt) < cutoff) {
         this.jobs.delete(jobId);
         removed++;
       }
@@ -342,11 +345,14 @@ class JobQueue {
 const jobQueue = new JobQueue();
 
 // Auto-cleanup every 30 minutes to prevent memory leaks
-setInterval(() => {
-  const removed = jobQueue.cleanup();
-  if (removed > 0) {
-    console.log(`[JobQueue] Cleaned up ${removed} old jobs`);
-  }
-}, 30 * 60 * 1000).unref();
+setInterval(
+  () => {
+    const removed = jobQueue.cleanup();
+    if (removed > 0) {
+      console.log(`[JobQueue] Cleaned up ${removed} old jobs`);
+    }
+  },
+  30 * 60 * 1000
+).unref();
 
 export default jobQueue;

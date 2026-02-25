@@ -126,25 +126,18 @@ class SearchService {
    * Global full-text search across multiple entity types.
    * Returns results grouped by entity type.
    */
-  async search(
-    query: string,
-    entityTypes?: string[],
-    page: number = 1,
-    limit: number = 10
-  ): Promise<SearchResult[]> {
+  async search(query: string, entityTypes?: string[], page: number = 1, limit: number = 10): Promise<SearchResult[]> {
     if (!query || query.trim().length === 0) {
       return [];
     }
 
-    const typesToSearch = entityTypes && entityTypes.length > 0
-      ? entityTypes.filter((t) => modelMap[t])
-      : Object.keys(modelMap);
+    const typesToSearch = entityTypes && entityTypes.length > 0 ? entityTypes.filter(t => modelMap[t]) : Object.keys(modelMap);
 
     const offset = (page - 1) * limit;
     const searchTerm = query.trim();
 
     const results = await Promise.all(
-      typesToSearch.map(async (entityType) => {
+      typesToSearch.map(async entityType => {
         const Model = modelMap[entityType];
         const fields = globalSearchFieldsMap[entityType];
 
@@ -153,7 +146,7 @@ class SearchService {
         }
 
         // Build an OR condition: search across all text fields
-        const whereConditions: WhereOptions[] = fields.map((field) => ({
+        const whereConditions: WhereOptions[] = fields.map(field => ({
           [field]: { [Op.iLike]: `%${searchTerm}%` }
         }));
 
@@ -175,7 +168,7 @@ class SearchService {
     );
 
     // Only return entity types that have results
-    return results.filter((r) => r.total > 0);
+    return results.filter(r => r.total > 0);
   }
 
   /**
@@ -201,9 +194,7 @@ class SearchService {
     const where = savedViewService.buildWhereClause(filters, conditionLogic);
 
     // Build order
-    const order: Order = sortBy
-      ? [[sortBy, sort]]
-      : [['createdAt', 'DESC']];
+    const order: Order = sortBy ? [[sortBy, sort]] : [['createdAt', 'DESC']];
 
     const { count, rows } = await Model.findAndCountAll({
       where,

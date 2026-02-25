@@ -1,17 +1,10 @@
-import {
-  Column,
-  DataType,
-  Model,
-  Table,
-} from 'sequelize-typescript';
+import { Column, DataType, Model, Table } from 'sequelize-typescript';
 
 @Table({
   tableName: 'virtual_rooms',
   modelName: 'VirtualRoom',
   timestamps: true,
-  indexes: [
-    { fields: ['tenantId'] },
-  ],
+  indexes: [{ fields: ['tenantId'] }]
 })
 class VirtualRoom extends Model {
   @Column({ primaryKey: true, type: DataType.INTEGER, autoIncrement: true })

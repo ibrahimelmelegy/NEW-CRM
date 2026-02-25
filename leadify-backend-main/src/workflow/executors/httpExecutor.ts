@@ -40,10 +40,7 @@ function resolveVariables(template: string, data: Record<string, any>): string {
 /**
  * Deep-resolves all string values in an object, substituting {{variable}} placeholders.
  */
-function resolveObjectVariables(
-  obj: Record<string, any>,
-  data: Record<string, any>
-): Record<string, any> {
+function resolveObjectVariables(obj: Record<string, any>, data: Record<string, any>): Record<string, any> {
   const resolved: Record<string, any> = {};
   for (const [key, val] of Object.entries(obj)) {
     if (typeof val === 'string') {
@@ -106,7 +103,7 @@ async function performRequest(
  * Sleeps for the specified number of milliseconds.
  */
 function sleep(ms: number): Promise<void> {
-  return new Promise((resolve) => setTimeout(resolve, ms));
+  return new Promise(resolve => setTimeout(resolve, ms));
 }
 
 /**
@@ -116,10 +113,7 @@ function sleep(ms: number): Promise<void> {
  * - Implements exponential backoff retry strategy
  * - Returns structured response data for downstream nodes
  */
-export async function executeHttp(
-  nodeConfig: HttpNodeConfig,
-  context: HttpContext
-): Promise<HttpExecutionResult> {
+export async function executeHttp(nodeConfig: HttpNodeConfig, context: HttpContext): Promise<HttpExecutionResult> {
   const { entityData } = context;
   const maxRetries = Math.min(nodeConfig.retries || 0, 5); // Cap at 5 retries
   const timeoutMs = Math.min(nodeConfig.timeoutMs || 30000, 60000); // Cap at 60s
@@ -171,13 +165,7 @@ export async function executeHttp(
         await sleep(backoffMs);
       }
 
-      const result = await performRequest(
-        resolvedUrl,
-        method,
-        resolvedHeaders,
-        resolvedBody,
-        timeoutMs
-      );
+      const result = await performRequest(resolvedUrl, method, resolvedHeaders, resolvedBody, timeoutMs);
 
       const totalTimeMs = Date.now() - startTime;
 
@@ -200,17 +188,13 @@ export async function executeHttp(
 
       // Abort errors (timeout) should not retry
       if (err.name === 'AbortError') {
-        throw new Error(
-          `HTTP request timed out after ${timeoutMs}ms to ${resolvedUrl} (attempt ${attempts})`
-        );
+        throw new Error(`HTTP request timed out after ${timeoutMs}ms to ${resolvedUrl} (attempt ${attempts})`);
       }
     }
   }
 
   const totalTimeMs = Date.now() - startTime;
-  throw new Error(
-    `HTTP request failed after ${attempts} attempt(s) to ${resolvedUrl}: ${lastError?.message || 'Unknown error'} (${totalTimeMs}ms)`
-  );
+  throw new Error(`HTTP request failed after ${attempts} attempt(s) to ${resolvedUrl}: ${lastError?.message || 'Unknown error'} (${totalTimeMs}ms)`);
 }
 
 export default {

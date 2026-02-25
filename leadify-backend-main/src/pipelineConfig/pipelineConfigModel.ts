@@ -4,10 +4,7 @@ import { Table, Column, Model, DataType, Default } from 'sequelize-typescript';
   tableName: 'pipeline_stages',
   modelName: 'PipelineStage',
   timestamps: true,
-  indexes: [
-    { fields: ['entityType'] },
-    { fields: ['order'] }
-  ]
+  indexes: [{ fields: ['entityType'] }, { fields: ['order'] }]
 })
 class PipelineStage extends Model {
   @Column({

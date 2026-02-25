@@ -1,12 +1,5 @@
 import { Op, fn, col, literal } from 'sequelize';
-import {
-  SLAPolicy,
-  SLAInstance,
-  SLAInstanceStatus,
-  SLAConditions,
-  EscalationRule,
-  BusinessHoursConfig
-} from './slaModel';
+import { SLAPolicy, SLAInstance, SLAInstanceStatus, SLAConditions, EscalationRule, BusinessHoursConfig } from './slaModel';
 import User from '../user/userModel';
 import BaseError from '../utils/error/base-http-exception';
 import { ERRORS } from '../utils/error/errors';
@@ -47,8 +40,8 @@ interface GetPoliciesQuery {
 
 interface SLAStatusResult {
   instance: SLAInstance;
-  responseTimeRemaining: number | null;   // minutes remaining, null if responded
-  resolutionTimeRemaining: number | null;  // minutes remaining, null if resolved
+  responseTimeRemaining: number | null; // minutes remaining, null if responded
+  resolutionTimeRemaining: number | null; // minutes remaining, null if resolved
   responseBreached: boolean;
   resolutionBreached: boolean;
   status: string;
@@ -104,9 +97,7 @@ class SLAService {
 
     const { rows, count } = await SLAPolicy.findAndCountAll({
       where,
-      include: [
-        { model: User, as: 'creator', attributes: ['id', 'name', 'email'] }
-      ],
+      include: [{ model: User, as: 'creator', attributes: ['id', 'name', 'email'] }],
       order: [['createdAt', 'DESC']],
       limit,
       offset
@@ -125,9 +116,7 @@ class SLAService {
 
   async getPolicyById(id: number): Promise<SLAPolicy> {
     const policy = await SLAPolicy.findByPk(id, {
-      include: [
-        { model: User, as: 'creator', attributes: ['id', 'name', 'email'] }
-      ]
+      include: [{ model: User, as: 'creator', attributes: ['id', 'name', 'email'] }]
     });
     if (!policy) throw new BaseError(ERRORS.NOT_FOUND);
     return policy;
@@ -139,11 +128,7 @@ class SLAService {
    * Start an SLA for a given entity. Finds the best matching active SLA policy
    * and creates an SLA instance with computed deadlines.
    */
-  async startSLA(
-    entityType: string,
-    entityId: string,
-    entityData: Record<string, any> = {}
-  ): Promise<SLAInstance | null> {
+  async startSLA(entityType: string, entityId: string, entityData: Record<string, any> = {}): Promise<SLAInstance | null> {
     // Find all active policies for this entity type
     const policies = await SLAPolicy.findAll({
       where: { entityType, isActive: true },
@@ -157,21 +142,11 @@ class SLAService {
     if (!matchedPolicy) return null;
 
     const now = new Date();
-    const businessHoursConfig = matchedPolicy.businessHoursOnly
-      ? matchedPolicy.businessHours
-      : null;
+    const businessHoursConfig = matchedPolicy.businessHoursOnly ? matchedPolicy.businessHours : null;
 
-    const responseDeadline = this.calculateDeadline(
-      now,
-      matchedPolicy.responseTimeMinutes,
-      businessHoursConfig
-    );
+    const responseDeadline = this.calculateDeadline(now, matchedPolicy.responseTimeMinutes, businessHoursConfig);
 
-    const resolutionDeadline = this.calculateDeadline(
-      now,
-      matchedPolicy.resolutionTimeMinutes,
-      businessHoursConfig
-    );
+    const resolutionDeadline = this.calculateDeadline(now, matchedPolicy.resolutionTimeMinutes, businessHoursConfig);
 
     return SLAInstance.create({
       slaPolicyId: matchedPolicy.id,
@@ -284,12 +259,8 @@ class SLAService {
     const pausedMinutes = Math.floor(pausedMs / 60000);
 
     // Extend deadlines by the paused duration
-    const newResponseDeadline = new Date(
-      instance.responseDeadline.getTime() + pausedMs
-    );
-    const newResolutionDeadline = new Date(
-      instance.resolutionDeadline.getTime() + pausedMs
-    );
+    const newResponseDeadline = new Date(instance.responseDeadline.getTime() + pausedMs);
+    const newResolutionDeadline = new Date(instance.resolutionDeadline.getTime() + pausedMs);
 
     await instance.update({
       status: SLAInstanceStatus.ACTIVE,
@@ -388,14 +359,10 @@ class SLAService {
       const policy = instance.policy;
       if (!policy || !policy.escalationRules || policy.escalationRules.length === 0) continue;
 
-      const elapsedMinutes = Math.floor(
-        (now.getTime() - instance.startedAt.getTime()) / 60000
-      ) - instance.pausedDurationMinutes;
+      const elapsedMinutes = Math.floor((now.getTime() - instance.startedAt.getTime()) / 60000) - instance.pausedDurationMinutes;
 
       // Sort escalation rules by afterMinutes ascending
-      const sortedRules = [...policy.escalationRules].sort(
-        (a, b) => a.afterMinutes - b.afterMinutes
-      );
+      const sortedRules = [...policy.escalationRules].sort((a, b) => a.afterMinutes - b.afterMinutes);
 
       // Find the highest escalation level that should have triggered
       let targetLevel = 0;
@@ -482,10 +449,7 @@ class SLAService {
   /**
    * Get aggregate SLA metrics for a given entity type within a date range.
    */
-  async getSLAMetrics(
-    entityType: string,
-    dateRange?: { from?: string; to?: string }
-  ): Promise<SLAMetrics> {
+  async getSLAMetrics(entityType: string, dateRange?: { from?: string; to?: string }): Promise<SLAMetrics> {
     const where: any = { entityType };
 
     if (dateRange?.from || dateRange?.to) {
@@ -515,28 +479,28 @@ class SLAService {
 
     // Calculate average response time (for those that have responded)
     const respondedInstances = instances.filter(i => i.firstRespondedAt);
-    const avgResponseTime = respondedInstances.length > 0
-      ? respondedInstances.reduce((sum, i) => {
-          const responseMs = i.firstRespondedAt!.getTime() - i.startedAt.getTime();
-          return sum + (responseMs / 60000);
-        }, 0) / respondedInstances.length
-      : 0;
+    const avgResponseTime =
+      respondedInstances.length > 0
+        ? respondedInstances.reduce((sum, i) => {
+            const responseMs = i.firstRespondedAt!.getTime() - i.startedAt.getTime();
+            return sum + responseMs / 60000;
+          }, 0) / respondedInstances.length
+        : 0;
 
     // Calculate average resolution time (for those that have been resolved)
     const resolvedInstances = instances.filter(i => i.resolvedAt);
-    const avgResolutionTime = resolvedInstances.length > 0
-      ? resolvedInstances.reduce((sum, i) => {
-          const resolutionMs = i.resolvedAt!.getTime() - i.startedAt.getTime();
-          return sum + (resolutionMs / 60000);
-        }, 0) / resolvedInstances.length
-      : 0;
+    const avgResolutionTime =
+      resolvedInstances.length > 0
+        ? resolvedInstances.reduce((sum, i) => {
+            const resolutionMs = i.resolvedAt!.getTime() - i.startedAt.getTime();
+            return sum + resolutionMs / 60000;
+          }, 0) / resolvedInstances.length
+        : 0;
 
     const responseBreachCount = instances.filter(i => i.responseBreached).length;
     const resolutionBreachCount = instances.filter(i => i.resolutionBreached).length;
 
-    const activeCount = instances.filter(
-      i => i.status === SLAInstanceStatus.ACTIVE || i.status === SLAInstanceStatus.PAUSED
-    ).length;
+    const activeCount = instances.filter(i => i.status === SLAInstanceStatus.ACTIVE || i.status === SLAInstanceStatus.PAUSED).length;
     const completedCount = instances.filter(i => i.status === SLAInstanceStatus.COMPLETED).length;
     const breachedCount = instances.filter(i => i.status === SLAInstanceStatus.BREACHED).length;
 
@@ -565,10 +529,7 @@ class SLAService {
    * A policy matches if all its conditions are satisfied by entityData.
    * More specific policies (more conditions) are preferred.
    */
-  private findMatchingPolicy(
-    policies: SLAPolicy[],
-    entityData: Record<string, any>
-  ): SLAPolicy | null {
+  private findMatchingPolicy(policies: SLAPolicy[], entityData: Record<string, any>): SLAPolicy | null {
     let bestMatch: SLAPolicy | null = null;
     let bestScore = -1;
 
@@ -607,11 +568,7 @@ class SLAService {
    * Calculate a deadline by adding business-aware minutes to a start time.
    * If businessHoursConfig is null, simply adds calendar minutes.
    */
-  calculateDeadline(
-    startTime: Date,
-    minutes: number,
-    businessHoursConfig: BusinessHoursConfig | null
-  ): Date {
+  calculateDeadline(startTime: Date, minutes: number, businessHoursConfig: BusinessHoursConfig | null): Date {
     if (!businessHoursConfig) {
       // Calendar time (24/7)
       return new Date(startTime.getTime() + minutes * 60000);
@@ -623,7 +580,7 @@ class SLAService {
     const [endHour, endMin] = end.split(':').map(Number);
 
     // Business minutes per day
-    const businessMinutesPerDay = (endHour * 60 + endMin) - (startHour * 60 + startMin);
+    const businessMinutesPerDay = endHour * 60 + endMin - (startHour * 60 + startMin);
 
     if (businessMinutesPerDay <= 0) {
       // Invalid config, fall back to calendar time
@@ -700,12 +657,7 @@ class SLAService {
   /**
    * Find the start of the next work day after the given date.
    */
-  private nextWorkDayStart(
-    date: Date,
-    workDays: number[],
-    startHour: number,
-    startMin: number
-  ): Date {
+  private nextWorkDayStart(date: Date, workDays: number[], startHour: number, startMin: number): Date {
     const result = new Date(date.getTime());
     result.setDate(result.getDate() + 1);
     result.setHours(startHour, startMin, 0, 0);

@@ -16,9 +16,10 @@ class PipelineConfigService {
   }
 
   async createStage(data: any): Promise<PipelineStage> {
-    const maxOrder = await PipelineStage.max('order', {
-      where: { entityType: data.entityType || 'deal' }
-    }) as number || 0;
+    const maxOrder =
+      ((await PipelineStage.max('order', {
+        where: { entityType: data.entityType || 'deal' }
+      })) as number) || 0;
     data.order = maxOrder + 1;
     return PipelineStage.create(data);
   }

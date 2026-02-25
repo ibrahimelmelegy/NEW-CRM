@@ -25,7 +25,7 @@ export enum SortByEnum {
   email = 'email',
   phoneNumber = 'phoneNumber',
   clientStatus = 'clientStatus',
-  createdAt = 'createdAt',
+  createdAt = 'createdAt'
 }
 
 export enum ClientIndustryEnums {
@@ -50,5 +50,5 @@ export enum ClientIndustryEnums {
   MARKETING_ADVERTISING = 'Marketing & Advertising',
   NON_PROFIT_NGOS = 'Non-Profit & NGOs',
   TELECOMMUNICATIONS = 'Telecommunications',
-  TRANSPORTATION_LOGISTICS = 'Transportation & Logistics',
+  TRANSPORTATION_LOGISTICS = 'Transportation & Logistics'
 }

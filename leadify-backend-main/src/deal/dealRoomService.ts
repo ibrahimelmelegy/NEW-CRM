@@ -11,9 +11,7 @@ import { Op } from 'sequelize';
 class DealRoomService {
   async getDealRoom(dealId: string): Promise<any> {
     const deal = await Deal.findByPk(dealId, {
-      include: [
-        { model: User, as: 'users' }
-      ]
+      include: [{ model: User, as: 'users' }]
     });
     if (!deal) throw new Error('Deal not found');
 

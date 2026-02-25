@@ -144,12 +144,7 @@ router.put(
  *       200:
  *         description: Paginated list of templates
  */
-router.get(
-  '/',
-  authenticateUser,
-  HasPermission([DocumentTemplatePermissionsEnum.VIEW_DOCUMENT_TEMPLATES]),
-  documentTemplateController.getTemplates
-);
+router.get('/', authenticateUser, HasPermission([DocumentTemplatePermissionsEnum.VIEW_DOCUMENT_TEMPLATES]), documentTemplateController.getTemplates);
 
 /**
  * @swagger

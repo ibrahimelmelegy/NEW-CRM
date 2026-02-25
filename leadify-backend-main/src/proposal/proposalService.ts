@@ -136,7 +136,8 @@ class ProposalService {
   public async updateProposal(id: string, data: UpdateProposalInput, user: User): Promise<Proposal> {
     await this.validateProposalAccess(id, user);
     const proposal = await this.proposalOrError({ id });
-    if (![ProposalStatusEnum.WAITING_APPROVAL, ProposalStatusEnum.DRAFT].includes(proposal.status as ProposalStatusEnum)) throw new BaseError(ERRORS.INVALID_PROPOSAL_STATUS_TO_UPDATE);
+    if (![ProposalStatusEnum.WAITING_APPROVAL, ProposalStatusEnum.DRAFT].includes(proposal.status as ProposalStatusEnum))
+      throw new BaseError(ERRORS.INVALID_PROPOSAL_STATUS_TO_UPDATE);
     if (data.reference) await this.errorIfProposalWithExistReference(data.reference, proposal.id);
     if (data.companyLogo) await uploaderService.setFileReferences([data.companyLogo]);
     if (data.fileAttachments?.length) await uploaderService.setFileReferences(data.fileAttachments);
@@ -170,26 +171,27 @@ class ProposalService {
             ...(query.toDate && { [Op.lte]: new Date(query.toDate) })
           }
         }),
-        ...((query.year && query.month) && {
-          createdAt: {
-            [Op.and]: [
-              { [Op.gte]: new Date(`${query.year}-${query.month}-01T00:00:00.000Z`) },
-              { [Op.lt]: new Date(new Date(`${query.year}-${query.month}-01T00:00:00.000Z`).setMonth(parseInt(query.month))) }
-            ]
-          }
-        }),
+        ...(query.year &&
+          query.month && {
+            createdAt: {
+              [Op.and]: [
+                { [Op.gte]: new Date(`${query.year}-${query.month}-01T00:00:00.000Z`) },
+                { [Op.lt]: new Date(new Date(`${query.year}-${query.month}-01T00:00:00.000Z`).setMonth(parseInt(query.month))) }
+              ]
+            }
+          }),
         ...(query.status &&
           query.status.length > 0 && {
-          status: {
-            [Op.in]: query.status // Matches any value in the array
-          }
-        }),
+            status: {
+              [Op.in]: query.status // Matches any value in the array
+            }
+          }),
         ...(query.type &&
           query.type.length > 0 && {
-          type: {
-            [Op.in]: query.type // Matches any value in the array
-          }
-        })
+            type: {
+              [Op.in]: query.type // Matches any value in the array
+            }
+          })
       },
       include: [
         {
@@ -327,7 +329,7 @@ class ProposalService {
     ]);
 
     // Convert to JSON to ensure all nested associations are plain objects
-    let proposalData = proposal?.toJSON();
+    const proposalData = proposal?.toJSON();
 
     // Dynamically determine the related entity and assign it
     // CRITICAL FIX: Populate client information from the related entity
@@ -339,10 +341,10 @@ class ProposalService {
 
     proposalData.relatedEntity = related
       ? {
-        id: related.id,
-        name: related.name,
-        client: related.client ? { id: related.client.id, name: related.client.clientName } : null
-      }
+          id: related.id,
+          name: related.name,
+          client: related.client ? { id: related.client.id, name: related.client.clientName } : null
+        }
       : null;
 
     // Remove raw related entity fields

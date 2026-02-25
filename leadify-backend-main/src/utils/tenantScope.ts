@@ -7,8 +7,8 @@
  */
 
 interface UserWithTenant {
-    tenantId?: string | null;
-    [key: string]: any;
+  tenantId?: string | null;
+  [key: string]: any;
 }
 
 /**
@@ -16,7 +16,7 @@ interface UserWithTenant {
  * Returns {} if user has no tenantId (backward compatible with single-tenant setups).
  */
 export function tenantWhere(user: UserWithTenant): { tenantId?: string } {
-    return user?.tenantId ? { tenantId: user.tenantId } : {};
+  return user?.tenantId ? { tenantId: user.tenantId } : {};
 }
 
 /**
@@ -24,5 +24,5 @@ export function tenantWhere(user: UserWithTenant): { tenantId?: string } {
  * Returns data unchanged if user has no tenantId.
  */
 export function tenantCreate<T extends Record<string, any>>(data: T, user: UserWithTenant): T & { tenantId?: string } {
-    return user?.tenantId ? { ...data, tenantId: user.tenantId } : data;
+  return user?.tenantId ? { ...data, tenantId: user.tenantId } : data;
 }

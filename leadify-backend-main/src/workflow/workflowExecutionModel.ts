@@ -1,13 +1,4 @@
-import {
-  AllowNull,
-  BelongsTo,
-  Column,
-  DataType,
-  Default,
-  ForeignKey,
-  Model,
-  Table
-} from 'sequelize-typescript';
+import { AllowNull, BelongsTo, Column, DataType, Default, ForeignKey, Model, Table } from 'sequelize-typescript';
 import WorkflowRule from './workflowModel';
 
 // ── Per-action result stored in actionsExecuted JSONB ──
@@ -29,12 +20,7 @@ export enum ExecutionStatus {
   modelName: 'WorkflowExecution',
   timestamps: true,
   updatedAt: false, // immutable log – only createdAt
-  indexes: [
-    { fields: ['workflowRuleId'] },
-    { fields: ['entityType', 'entityId'] },
-    { fields: ['status'] },
-    { fields: ['createdAt'] }
-  ]
+  indexes: [{ fields: ['workflowRuleId'] }, { fields: ['entityType', 'entityId'] }, { fields: ['status'] }, { fields: ['createdAt'] }]
 })
 class WorkflowExecution extends Model {
   @Column({

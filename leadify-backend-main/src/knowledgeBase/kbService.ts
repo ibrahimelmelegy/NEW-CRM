@@ -36,7 +36,10 @@ class KBService {
     const { rows, count } = await KBArticle.findAndCountAll({
       where,
       include: [{ model: User, as: 'author', attributes: ['id', 'name', 'profilePicture'] }],
-      order: [['sortOrder', 'ASC'], ['createdAt', 'DESC']],
+      order: [
+        ['sortOrder', 'ASC'],
+        ['createdAt', 'DESC']
+      ],
       limit: Number(limit),
       offset
     });

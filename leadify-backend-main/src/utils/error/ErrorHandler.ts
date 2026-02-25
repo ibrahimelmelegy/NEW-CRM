@@ -20,7 +20,7 @@ export default (error: Error, req: Request, res: Response, next: NextFunction): 
     code: internalCode,
     success: false,
     message: message || error.message,
-    body: {},
+    body: {}
   };
 
   if (statusCode === 500) {

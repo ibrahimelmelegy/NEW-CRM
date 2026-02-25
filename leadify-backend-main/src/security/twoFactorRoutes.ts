@@ -31,26 +31,22 @@ const router = express.Router();
  *       400:
  *         description: 2FA already enabled
  */
-router.post(
-  '/setup',
-  authenticateUser,
-  async (req: AuthenticatedRequest, res: Response, next: NextFunction) => {
-    try {
-      if (!req.user) {
-        res.status(401).json({ message: 'Unauthorized' });
-        return;
-      }
-      const result = await generateSecret(req.user.id);
-      wrapResult(res, {
-        message: 'Scan the QR code with your authenticator app, then verify with a code.',
-        secret: result.secret,
-        qrUrl: result.qrUrl
-      });
-    } catch (error) {
-      next(error);
+router.post('/setup', authenticateUser, async (req: AuthenticatedRequest, res: Response, next: NextFunction) => {
+  try {
+    if (!req.user) {
+      res.status(401).json({ message: 'Unauthorized' });
+      return;
     }
+    const result = await generateSecret(req.user.id);
+    wrapResult(res, {
+      message: 'Scan the QR code with your authenticator app, then verify with a code.',
+      secret: result.secret,
+      qrUrl: result.qrUrl
+    });
+  } catch (error) {
+    next(error);
   }
-);
+});
 
 /**
  * @swagger
@@ -77,30 +73,26 @@ router.post(
  *       400:
  *         description: Invalid code or setup not initiated
  */
-router.post(
-  '/enable',
-  authenticateUser,
-  async (req: AuthenticatedRequest, res: Response, next: NextFunction) => {
-    try {
-      if (!req.user) {
-        res.status(401).json({ message: 'Unauthorized' });
-        return;
-      }
-      const { token } = req.body;
-      if (!token) {
-        res.status(400).json({ message: 'Verification token is required' });
-        return;
-      }
-      const result = await enable2FA(req.user.id, token);
-      wrapResult(res, {
-        message: '2FA has been enabled successfully. Save your backup codes securely.',
-        backupCodes: result.backupCodes
-      });
-    } catch (error) {
-      next(error);
+router.post('/enable', authenticateUser, async (req: AuthenticatedRequest, res: Response, next: NextFunction) => {
+  try {
+    if (!req.user) {
+      res.status(401).json({ message: 'Unauthorized' });
+      return;
     }
+    const { token } = req.body;
+    if (!token) {
+      res.status(400).json({ message: 'Verification token is required' });
+      return;
+    }
+    const result = await enable2FA(req.user.id, token);
+    wrapResult(res, {
+      message: '2FA has been enabled successfully. Save your backup codes securely.',
+      backupCodes: result.backupCodes
+    });
+  } catch (error) {
+    next(error);
   }
-);
+});
 
 /**
  * @swagger
@@ -127,27 +119,23 @@ router.post(
  *       400:
  *         description: Invalid code or 2FA not enabled
  */
-router.post(
-  '/disable',
-  authenticateUser,
-  async (req: AuthenticatedRequest, res: Response, next: NextFunction) => {
-    try {
-      if (!req.user) {
-        res.status(401).json({ message: 'Unauthorized' });
-        return;
-      }
-      const { token } = req.body;
-      if (!token) {
-        res.status(400).json({ message: 'Current 2FA code is required to disable' });
-        return;
-      }
-      await disable2FA(req.user.id, token);
-      wrapResult(res, { message: '2FA has been disabled successfully.' });
-    } catch (error) {
-      next(error);
+router.post('/disable', authenticateUser, async (req: AuthenticatedRequest, res: Response, next: NextFunction) => {
+  try {
+    if (!req.user) {
+      res.status(401).json({ message: 'Unauthorized' });
+      return;
     }
+    const { token } = req.body;
+    if (!token) {
+      res.status(400).json({ message: 'Current 2FA code is required to disable' });
+      return;
+    }
+    await disable2FA(req.user.id, token);
+    wrapResult(res, { message: '2FA has been disabled successfully.' });
+  } catch (error) {
+    next(error);
   }
-);
+});
 
 /**
  * @swagger
@@ -178,36 +166,32 @@ router.post(
  *       400:
  *         description: Invalid code
  */
-router.post(
-  '/verify',
-  authLimiter,
-  async (req: AuthenticatedRequest, res: Response, next: NextFunction) => {
-    try {
-      const { userId, token, isBackupCode } = req.body;
-      if (!userId || !token) {
-        res.status(400).json({ message: 'User ID and verification token are required' });
-        return;
-      }
-
-      let valid = false;
-
-      if (isBackupCode) {
-        valid = await verifyBackupCode(userId, token);
-      } else {
-        valid = await verifyToken(userId, token);
-      }
-
-      if (!valid) {
-        res.status(400).json({ message: 'Invalid verification code' });
-        return;
-      }
-
-      wrapResult(res, { message: '2FA code verified', valid: true });
-    } catch (error) {
-      next(error);
+router.post('/verify', authLimiter, async (req: AuthenticatedRequest, res: Response, next: NextFunction) => {
+  try {
+    const { userId, token, isBackupCode } = req.body;
+    if (!userId || !token) {
+      res.status(400).json({ message: 'User ID and verification token are required' });
+      return;
     }
+
+    let valid = false;
+
+    if (isBackupCode) {
+      valid = await verifyBackupCode(userId, token);
+    } else {
+      valid = await verifyToken(userId, token);
+    }
+
+    if (!valid) {
+      res.status(400).json({ message: 'Invalid verification code' });
+      return;
+    }
+
+    wrapResult(res, { message: '2FA code verified', valid: true });
+  } catch (error) {
+    next(error);
   }
-);
+});
 
 /**
  * @swagger
@@ -224,25 +208,21 @@ router.post(
  *       400:
  *         description: 2FA not enabled
  */
-router.post(
-  '/backup-codes',
-  authenticateUser,
-  async (req: AuthenticatedRequest, res: Response, next: NextFunction) => {
-    try {
-      if (!req.user) {
-        res.status(401).json({ message: 'Unauthorized' });
-        return;
-      }
-      const codes = await generateBackupCodes(req.user.id);
-      wrapResult(res, {
-        message: 'New backup codes generated. Previous codes are no longer valid. Store these securely.',
-        backupCodes: codes
-      });
-    } catch (error) {
-      next(error);
+router.post('/backup-codes', authenticateUser, async (req: AuthenticatedRequest, res: Response, next: NextFunction) => {
+  try {
+    if (!req.user) {
+      res.status(401).json({ message: 'Unauthorized' });
+      return;
     }
+    const codes = await generateBackupCodes(req.user.id);
+    wrapResult(res, {
+      message: 'New backup codes generated. Previous codes are no longer valid. Store these securely.',
+      backupCodes: codes
+    });
+  } catch (error) {
+    next(error);
   }
-);
+});
 
 /**
  * @swagger
@@ -257,25 +237,21 @@ router.post(
  *       200:
  *         description: 2FA status returned
  */
-router.get(
-  '/status',
-  authenticateUser,
-  async (req: AuthenticatedRequest, res: Response, next: NextFunction) => {
-    try {
-      if (!req.user) {
-        res.status(401).json({ message: 'Unauthorized' });
-        return;
-      }
-      const setupData = await getSetupData(req.user.id);
-      wrapResult(res, {
-        isEnabled: setupData.isEnabled,
-        method: setupData.method,
-        backupCodesRemaining: setupData.backupCodesRemaining
-      });
-    } catch (error) {
-      next(error);
+router.get('/status', authenticateUser, async (req: AuthenticatedRequest, res: Response, next: NextFunction) => {
+  try {
+    if (!req.user) {
+      res.status(401).json({ message: 'Unauthorized' });
+      return;
     }
+    const setupData = await getSetupData(req.user.id);
+    wrapResult(res, {
+      isEnabled: setupData.isEnabled,
+      method: setupData.method,
+      backupCodesRemaining: setupData.backupCodesRemaining
+    });
+  } catch (error) {
+    next(error);
   }
-);
+});
 
 export default router;

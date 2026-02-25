@@ -3,13 +3,7 @@ import AuditTrail, { AuditAction, AuditFieldChange, AuditMetadata } from './audi
 import User from '../user/userModel';
 
 // Fields that should never appear in audit diffs
-const IGNORED_FIELDS = new Set([
-  'updatedAt',
-  'createdAt',
-  'deletedAt',
-  'password',
-  'twoFactorSecret'
-]);
+const IGNORED_FIELDS = new Set(['updatedAt', 'createdAt', 'deletedAt', 'password', 'twoFactorSecret']);
 
 /**
  * Compare two objects and produce an array of field-level changes.
@@ -86,12 +80,7 @@ export async function logChange(
 /**
  * Get paginated audit trail for a specific entity.
  */
-export async function getAuditTrail(
-  entityType: string,
-  entityId: string | number,
-  page: number = 1,
-  limit: number = 20
-) {
+export async function getAuditTrail(entityType: string, entityId: string | number, page: number = 1, limit: number = 20) {
   const offset = (page - 1) * limit;
 
   const { rows: docs, count: totalItems } = await AuditTrail.findAndCountAll({
@@ -125,11 +114,7 @@ export async function getAuditTrail(
 /**
  * Get the change history for a specific field on a specific entity.
  */
-export async function getFieldHistory(
-  entityType: string,
-  entityId: string | number,
-  fieldName: string
-) {
+export async function getFieldHistory(entityType: string, entityId: string | number, fieldName: string) {
   // Fetch all audit entries for this entity that have changes for the specified field.
   // We use a JSONB query to filter only entries where the changes array contains
   // an object with the matching field name.
@@ -152,11 +137,9 @@ export async function getFieldHistory(
   });
 
   // Extract only the relevant field change from each entry
-  return entries.map((entry) => {
+  return entries.map(entry => {
     const entryJson = entry.toJSON() as any;
-    const fieldChange = entryJson.changes?.find(
-      (c: AuditFieldChange) => c.field === fieldName
-    );
+    const fieldChange = entryJson.changes?.find((c: AuditFieldChange) => c.field === fieldName);
     return {
       id: entryJson.id,
       action: entryJson.action,
@@ -173,11 +156,7 @@ export async function getFieldHistory(
 /**
  * Get paginated audit log for a specific user.
  */
-export async function getUserAuditLog(
-  userId: number,
-  page: number = 1,
-  limit: number = 20
-) {
+export async function getUserAuditLog(userId: number, page: number = 1, limit: number = 20) {
   const offset = (page - 1) * limit;
 
   const { rows: docs, count: totalItems } = await AuditTrail.findAndCountAll({
@@ -210,7 +189,7 @@ export interface AuditLogFilters {
   userId?: number;
   action?: AuditAction;
   dateFrom?: string; // ISO date string
-  dateTo?: string;   // ISO date string
+  dateTo?: string; // ISO date string
   page?: number;
   limit?: number;
 }

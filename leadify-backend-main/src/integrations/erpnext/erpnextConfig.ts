@@ -24,7 +24,7 @@ export function loadERPNextConfig(): ERPNextConfig {
     apiSecret: process.env.ERPNEXT_API_SECRET || '',
     company: process.env.ERPNEXT_COMPANY || '',
     defaultCurrency: process.env.ERPNEXT_CURRENCY || 'SAR',
-    enabled: process.env.ERPNEXT_ENABLED === 'true',
+    enabled: process.env.ERPNEXT_ENABLED === 'true'
   };
 }
 

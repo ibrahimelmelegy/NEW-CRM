@@ -43,17 +43,7 @@ class EmployeeService {
   }
 
   async getEmployees(query: EmployeeQuery) {
-    const {
-      page = 1,
-      limit = 20,
-      departmentId,
-      status,
-      search,
-      managerId,
-      employmentType,
-      sortBy = 'createdAt',
-      sort = 'DESC'
-    } = query;
+    const { page = 1, limit = 20, departmentId, status, search, managerId, employmentType, sortBy = 'createdAt', sort = 'DESC' } = query;
 
     const where: any = {};
 
@@ -120,9 +110,7 @@ class EmployeeService {
   async getOrgChart() {
     const employees = await Employee.findAll({
       attributes: ['id', 'firstName', 'lastName', 'jobTitle', 'managerId', 'departmentId', 'status'],
-      include: [
-        { model: Department, as: 'department', attributes: ['id', 'name', 'code'] }
-      ],
+      include: [{ model: Department, as: 'department', attributes: ['id', 'name', 'code'] }],
       where: { status: { [Op.ne]: 'TERMINATED' } },
       order: [['firstName', 'ASC']]
     });
@@ -152,9 +140,7 @@ class EmployeeService {
   async getByDepartment(departmentId: string) {
     return Employee.findAll({
       where: { departmentId },
-      include: [
-        { model: Department, as: 'department', attributes: ['id', 'name', 'code'] }
-      ],
+      include: [{ model: Department, as: 'department', attributes: ['id', 'name', 'code'] }],
       order: [['firstName', 'ASC']]
     });
   }
@@ -162,9 +148,7 @@ class EmployeeService {
   async getDirectReports(managerId: string) {
     return Employee.findAll({
       where: { managerId },
-      include: [
-        { model: Department, as: 'department', attributes: ['id', 'name', 'code'] }
-      ],
+      include: [{ model: Department, as: 'department', attributes: ['id', 'name', 'code'] }],
       order: [['firstName', 'ASC']]
     });
   }

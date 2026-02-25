@@ -34,7 +34,7 @@ function rateLimitResponse(message: string) {
     res.status(429).json({
       success: false,
       message,
-      retryAfter: res.getHeader('Retry-After'),
+      retryAfter: res.getHeader('Retry-After')
     });
   };
 }
@@ -49,7 +49,7 @@ export const authenticatedLimiter = rateLimit({
   standardHeaders: true,
   legacyHeaders: false,
   keyGenerator: userOrIpKeyGenerator,
-  handler: rateLimitResponse('Too many requests. Please slow down and try again later.'),
+  handler: rateLimitResponse('Too many requests. Please slow down and try again later.')
 });
 
 // ─── Endpoint-Specific Limiters for Heavy Operations ────────────────
@@ -64,7 +64,7 @@ export const reportLimiter = rateLimit({
   standardHeaders: true,
   legacyHeaders: false,
   keyGenerator: userOrIpKeyGenerator,
-  handler: rateLimitResponse('Report generation limit exceeded. Please wait before running another report.'),
+  handler: rateLimitResponse('Report generation limit exceeded. Please wait before running another report.')
 });
 
 /**
@@ -77,7 +77,7 @@ export const pdfLimiter = rateLimit({
   standardHeaders: true,
   legacyHeaders: false,
   keyGenerator: userOrIpKeyGenerator,
-  handler: rateLimitResponse('PDF generation limit exceeded. Please wait before generating another PDF.'),
+  handler: rateLimitResponse('PDF generation limit exceeded. Please wait before generating another PDF.')
 });
 
 /**
@@ -90,7 +90,7 @@ export const bulkOperationLimiter = rateLimit({
   standardHeaders: true,
   legacyHeaders: false,
   keyGenerator: userOrIpKeyGenerator,
-  handler: rateLimitResponse('Bulk operation limit exceeded. Please wait before performing another bulk action.'),
+  handler: rateLimitResponse('Bulk operation limit exceeded. Please wait before performing another bulk action.')
 });
 
 /**
@@ -103,7 +103,7 @@ export const searchLimiter = rateLimit({
   standardHeaders: true,
   legacyHeaders: false,
   keyGenerator: userOrIpKeyGenerator,
-  handler: rateLimitResponse('Search rate limit exceeded. Please wait before searching again.'),
+  handler: rateLimitResponse('Search rate limit exceeded. Please wait before searching again.')
 });
 
 /**
@@ -116,7 +116,7 @@ export const exportLimiter = rateLimit({
   standardHeaders: true,
   legacyHeaders: false,
   keyGenerator: userOrIpKeyGenerator,
-  handler: rateLimitResponse('Export limit exceeded. Please wait before exporting again.'),
+  handler: rateLimitResponse('Export limit exceeded. Please wait before exporting again.')
 });
 
 /**
@@ -129,7 +129,7 @@ export const aiLimiter = rateLimit({
   standardHeaders: true,
   legacyHeaders: false,
   keyGenerator: userOrIpKeyGenerator,
-  handler: rateLimitResponse('AI request limit exceeded. Please wait before making another AI request.'),
+  handler: rateLimitResponse('AI request limit exceeded. Please wait before making another AI request.')
 });
 
 /**
@@ -142,7 +142,7 @@ export const userUploadLimiter = rateLimit({
   standardHeaders: true,
   legacyHeaders: false,
   keyGenerator: userOrIpKeyGenerator,
-  handler: rateLimitResponse('Upload limit exceeded. Please wait before uploading again.'),
+  handler: rateLimitResponse('Upload limit exceeded. Please wait before uploading again.')
 });
 
 /**
@@ -155,5 +155,5 @@ export const webhookLimiter = rateLimit({
   standardHeaders: true,
   legacyHeaders: false,
   keyGenerator: userOrIpKeyGenerator,
-  handler: rateLimitResponse('Webhook rate limit exceeded.'),
+  handler: rateLimitResponse('Webhook rate limit exceeded.')
 });

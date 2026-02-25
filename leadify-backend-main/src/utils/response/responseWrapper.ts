@@ -1,5 +1,5 @@
-import { Response } from "express"; // Import Response type from Express
-import { constants } from "../constants"; // Adjust the path to your constants file
+import { Response } from 'express'; // Import Response type from Express
+import { constants } from '../constants'; // Adjust the path to your constants file
 
 // Define the function type
 interface WrapResult {

@@ -12,14 +12,18 @@ class CustomerSuccessController {
     } catch (error: any) {
       console.error('[CustomerSuccess] Dashboard error:', error.message);
       // Return empty dashboard matching frontend shape instead of 500
-      wrapResult(res, {
-        summary: { totalClients: 0, healthy: 0, atRisk: 0, critical: 0, avgHealthScore: 0, totalRevenue: 0, avgNps: 0 },
-        healthDistribution: [],
-        topClients: [],
-        atRiskClients: [],
-        revenueByMonth: [],
-        engagementTrend: []
-      }, 200);
+      wrapResult(
+        res,
+        {
+          summary: { totalClients: 0, healthy: 0, atRisk: 0, critical: 0, avgHealthScore: 0, totalRevenue: 0, avgNps: 0 },
+          healthDistribution: [],
+          topClients: [],
+          atRiskClients: [],
+          revenueByMonth: [],
+          engagementTrend: []
+        },
+        200
+      );
     }
   }
 

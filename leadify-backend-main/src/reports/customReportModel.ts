@@ -3,7 +3,19 @@ import User from '../user/userModel';
 
 export interface ReportFilter {
   field: string;
-  operator: 'equals' | 'not_equals' | 'contains' | 'greater_than' | 'less_than' | 'gte' | 'lte' | 'between' | 'in' | 'not_in' | 'is_null' | 'is_not_null';
+  operator:
+    | 'equals'
+    | 'not_equals'
+    | 'contains'
+    | 'greater_than'
+    | 'less_than'
+    | 'gte'
+    | 'lte'
+    | 'between'
+    | 'in'
+    | 'not_in'
+    | 'is_null'
+    | 'is_not_null';
   value: any;
 }
 
@@ -32,10 +44,7 @@ export interface ReportChartConfig {
   tableName: 'custom_reports',
   modelName: 'CustomReport',
   timestamps: true,
-  indexes: [
-    { fields: ['entityType'] },
-    { fields: ['userId'] }
-  ]
+  indexes: [{ fields: ['entityType'] }, { fields: ['userId'] }]
 })
 class CustomReport extends Model {
   @Column({

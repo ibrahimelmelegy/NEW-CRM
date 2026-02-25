@@ -41,16 +41,7 @@ class SupportService {
   }
 
   public async getTickets(query: any): Promise<IPaginationRes<Ticket>> {
-    const {
-      page = 1,
-      limit = 20,
-      status,
-      priority,
-      assignedTo,
-      categoryId,
-      search,
-      clientId
-    } = query;
+    const { page = 1, limit = 20, status, priority, assignedTo, categoryId, search, clientId } = query;
 
     const where: any = {};
 
@@ -276,9 +267,7 @@ class SupportService {
 
     let slaComplianceRate = 100;
     if (ticketsWithSLA.length > 0) {
-      const compliant = ticketsWithSLA.filter(
-        (t) => new Date(t.resolvedAt!) <= new Date(t.slaDeadline!)
-      ).length;
+      const compliant = ticketsWithSLA.filter(t => new Date(t.resolvedAt!) <= new Date(t.slaDeadline!)).length;
       slaComplianceRate = Math.round((compliant / ticketsWithSLA.length) * 100 * 10) / 10;
     }
 
@@ -324,9 +313,7 @@ class SupportService {
         resolvedAt: { [Op.eq]: null },
         status: { [Op.notIn]: [TicketStatus.RESOLVED, TicketStatus.CLOSED] }
       },
-      include: [
-        { model: User, as: 'assignee', attributes: ['id', 'name', 'email'] }
-      ]
+      include: [{ model: User, as: 'assignee', attributes: ['id', 'name', 'email'] }]
     });
 
     return breachedTickets;
@@ -337,10 +324,7 @@ class SupportService {
     const where: any = {};
     if (query.category) where.category = query.category;
     if (query.search) {
-      where[Op.or] = [
-        { title: { [Op.iLike]: `%${query.search}%` } },
-        { body: { [Op.iLike]: `%${query.search}%` } }
-      ];
+      where[Op.or] = [{ title: { [Op.iLike]: `%${query.search}%` } }, { body: { [Op.iLike]: `%${query.search}%` } }];
     }
 
     return CannedResponse.findAll({ where, order: [['title', 'ASC']] });

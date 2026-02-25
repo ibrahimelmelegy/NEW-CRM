@@ -26,9 +26,7 @@ class DocumentService {
 
   async getFolderTree() {
     const folders = await DocumentFolder.findAll({
-      include: [
-        { model: DocumentFolder, as: 'children', attributes: ['id', 'name', 'color', 'parentId'] }
-      ],
+      include: [{ model: DocumentFolder, as: 'children', attributes: ['id', 'name', 'color', 'parentId'] }],
       order: [['name', 'ASC']]
     });
 
@@ -99,10 +97,7 @@ class DocumentService {
     }
 
     if (search) {
-      where[Op.or] = [
-        { name: { [Op.iLike]: `%${search}%` } },
-        { originalName: { [Op.iLike]: `%${search}%` } }
-      ];
+      where[Op.or] = [{ name: { [Op.iLike]: `%${search}%` } }, { originalName: { [Op.iLike]: `%${search}%` } }];
     }
 
     if (tags) {

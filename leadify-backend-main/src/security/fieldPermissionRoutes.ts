@@ -3,12 +3,7 @@ import { authenticateUser, HasPermission } from '../middleware/authMiddleware';
 import { wrapResult } from '../utils/response/responseWrapper';
 import { AuthenticatedRequest } from '../types';
 import { FieldAccess } from './fieldPermissionModel';
-import {
-  getFieldPermissions,
-  bulkSetPermissions,
-  getEditableFields,
-  checkFieldAccess
-} from './fieldPermissionService';
+import { getFieldPermissions, bulkSetPermissions, getEditableFields, checkFieldAccess } from './fieldPermissionService';
 
 const router = express.Router();
 
@@ -150,22 +145,18 @@ router.put(
  *       200:
  *         description: Editable field names returned
  */
-router.get(
-  '/editable/:entityType',
-  authenticateUser,
-  async (req: AuthenticatedRequest, res: Response, next: NextFunction) => {
-    try {
-      if (!req.user) {
-        res.status(401).json({ message: 'Unauthorized' });
-        return;
-      }
-      const entityType = req.params.entityType as string;
-      const fields = await getEditableFields(req.user.roleId, entityType);
-      wrapResult(res, fields);
-    } catch (error) {
-      next(error);
+router.get('/editable/:entityType', authenticateUser, async (req: AuthenticatedRequest, res: Response, next: NextFunction) => {
+  try {
+    if (!req.user) {
+      res.status(401).json({ message: 'Unauthorized' });
+      return;
     }
+    const entityType = req.params.entityType as string;
+    const fields = await getEditableFields(req.user.roleId, entityType);
+    wrapResult(res, fields);
+  } catch (error) {
+    next(error);
   }
-);
+});
 
 export default router;

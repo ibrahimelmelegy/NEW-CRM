@@ -50,15 +50,13 @@ export async function getAllActivityLogs(limit: number = 100) {
         limit: perModel,
         order: [['createdAt', 'DESC']],
         include: [userInclude],
-        attributes: ['id', 'description', 'status', 'userId', 'createdAt'],
+        attributes: ['id', 'description', 'status', 'userId', 'createdAt']
       });
       return logs.map((log: any) => ({ ...log.toJSON(), entityType: modelName }));
     })
   );
 
-  const allLogs = results
-    .filter((r): r is PromiseFulfilledResult<any[]> => r.status === 'fulfilled')
-    .flatMap(r => r.value);
+  const allLogs = results.filter((r): r is PromiseFulfilledResult<any[]> => r.status === 'fulfilled').flatMap(r => r.value);
 
   allLogs.sort((a: any, b: any) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime());
   return allLogs.slice(0, limit);
@@ -73,7 +71,7 @@ export async function getActivityLogs(model: ActivityModel, modelId: string, pag
     limit,
     offset,
     order: [['createdAt', 'DESC']],
-    include: [userInclude],
+    include: [userInclude]
   });
 
   return {

@@ -323,7 +323,12 @@ router.get('/:id', authenticateUser, HasPermission([SubscriptionPermissionsEnum.
  *       500:
  *         description: Server error
  */
-router.patch('/:id/cancel', authenticateUser, HasPermission([SubscriptionPermissionsEnum.CANCEL_SUBSCRIPTIONS]), subscriptionController.cancelSubscription);
+router.patch(
+  '/:id/cancel',
+  authenticateUser,
+  HasPermission([SubscriptionPermissionsEnum.CANCEL_SUBSCRIPTIONS]),
+  subscriptionController.cancelSubscription
+);
 
 /**
  * @swagger
@@ -360,6 +365,11 @@ router.patch('/:id/cancel', authenticateUser, HasPermission([SubscriptionPermiss
  *       500:
  *         description: Server error
  */
-router.patch('/:id/change-plan', authenticateUser, HasPermission([SubscriptionPermissionsEnum.EDIT_SUBSCRIPTIONS]), subscriptionController.changePlan);
+router.patch(
+  '/:id/change-plan',
+  authenticateUser,
+  HasPermission([SubscriptionPermissionsEnum.EDIT_SUBSCRIPTIONS]),
+  subscriptionController.changePlan
+);
 
 export default router;

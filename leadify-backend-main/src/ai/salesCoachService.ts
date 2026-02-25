@@ -194,10 +194,7 @@ class SalesCoachService {
     if (deals.length === 0) return 30;
 
     const now = new Date();
-    const totalAge = deals.reduce((sum, d) =>
-      sum + Math.floor((now.getTime() - new Date(d.createdAt).getTime()) / (1000 * 60 * 60 * 24)),
-      0
-    );
+    const totalAge = deals.reduce((sum, d) => sum + Math.floor((now.getTime() - new Date(d.createdAt).getTime()) / (1000 * 60 * 60 * 24)), 0);
     return totalAge / deals.length;
   }
 }

@@ -67,7 +67,7 @@ export function auditUpdate(
         // Only log if the response indicates success (2xx)
         if (_res.statusCode >= 200 && _res.statusCode < 300) {
           // Fire-and-forget: do not block the response
-          captureAuditAfterUpdate(req).catch((err) => {
+          captureAuditAfterUpdate(req).catch(err => {
             console.error('[AuditMiddleware] Failed to write audit log:', err);
           });
         }
@@ -77,7 +77,7 @@ export function auditUpdate(
       const originalSend = _res.send.bind(_res);
       _res.send = function auditedSend(body: any) {
         if (_res.statusCode >= 200 && _res.statusCode < 300) {
-          captureAuditAfterUpdate(req).catch((err) => {
+          captureAuditAfterUpdate(req).catch(err => {
             console.error('[AuditMiddleware] Failed to write audit log:', err);
           });
         }
@@ -102,9 +102,7 @@ async function captureAuditAfterUpdate(req: AuthenticatedRequest): Promise<void>
   const entityType = (req as any)._auditEntityType as string | undefined;
   const entityId = (req as any)._auditEntityId as string | undefined;
   const fieldLabels = (req as any)._auditFieldLabels as Record<string, string> | undefined;
-  const actionResolver = (req as any)._auditActionResolver as
-    | ((req: AuthenticatedRequest, old: Record<string, unknown>) => AuditAction)
-    | undefined;
+  const actionResolver = (req as any)._auditActionResolver as ((req: AuthenticatedRequest, old: Record<string, unknown>) => AuditAction) | undefined;
   const modelClass = (req as any)._auditModelClass as AuditableModel | undefined;
 
   if (!oldValues || !entityType || !entityId || !modelClass) return;
@@ -127,13 +125,11 @@ async function captureAuditAfterUpdate(req: AuthenticatedRequest): Promise<void>
   let action = AuditAction.UPDATE;
   if (actionResolver) {
     action = actionResolver(req, oldValues);
-  } else if (changes.some((c) => c.field === 'status')) {
+  } else if (changes.some(c => c.field === 'status')) {
     action = AuditAction.STATUS_CHANGE;
-  } else if (changes.some((c) => c.field === 'assignedTo' || c.field === 'userId' || c.field.endsWith('Id'))) {
+  } else if (changes.some(c => c.field === 'assignedTo' || c.field === 'userId' || c.field.endsWith('Id'))) {
     // Heuristic: if only assignment-related fields changed, mark as ASSIGNMENT
-    const assignmentFields = changes.filter(
-      (c) => c.field === 'assignedTo' || c.field === 'userId' || c.field.endsWith('Id')
-    );
+    const assignmentFields = changes.filter(c => c.field === 'assignedTo' || c.field === 'userId' || c.field.endsWith('Id'));
     if (assignmentFields.length === changes.length) {
       action = AuditAction.ASSIGNMENT;
     }

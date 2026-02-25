@@ -58,12 +58,7 @@ const router = express.Router();
  *       500:
  *         description: Server error
  */
-router.get(
-  '/',
-  authenticateUser,
-  HasPermission([SettingsPermissionsEnum.VIEW_SETTINGS]),
-  workflowController.getRules
-);
+router.get('/', authenticateUser, HasPermission([SettingsPermissionsEnum.VIEW_SETTINGS]), workflowController.getRules);
 
 /**
  * @swagger
@@ -96,12 +91,7 @@ router.get(
  *       500:
  *         description: Server error
  */
-router.get(
-  '/rules',
-  authenticateUser,
-  HasPermission([SettingsPermissionsEnum.VIEW_SETTINGS]),
-  workflowController.getRules
-);
+router.get('/rules', authenticateUser, HasPermission([SettingsPermissionsEnum.VIEW_SETTINGS]), workflowController.getRules);
 
 /**
  * @swagger
@@ -126,12 +116,7 @@ router.get(
  *       500:
  *         description: Server error
  */
-router.get(
-  '/rules/:id',
-  authenticateUser,
-  HasPermission([SettingsPermissionsEnum.VIEW_SETTINGS]),
-  workflowController.getRuleById
-);
+router.get('/rules/:id', authenticateUser, HasPermission([SettingsPermissionsEnum.VIEW_SETTINGS]), workflowController.getRuleById);
 
 /**
  * @swagger
@@ -223,12 +208,7 @@ router.get(
  *       500:
  *         description: Server error
  */
-router.post(
-  '/rules',
-  authenticateUser,
-  HasPermission([SettingsPermissionsEnum.EDIT_SETTINGS]),
-  workflowController.createRule
-);
+router.post('/rules', authenticateUser, HasPermission([SettingsPermissionsEnum.EDIT_SETTINGS]), workflowController.createRule);
 
 /**
  * @swagger
@@ -285,12 +265,7 @@ router.post(
  *       500:
  *         description: Server error
  */
-router.put(
-  '/rules/:id',
-  authenticateUser,
-  HasPermission([SettingsPermissionsEnum.EDIT_SETTINGS]),
-  workflowController.updateRule
-);
+router.put('/rules/:id', authenticateUser, HasPermission([SettingsPermissionsEnum.EDIT_SETTINGS]), workflowController.updateRule);
 
 /**
  * @swagger
@@ -315,12 +290,7 @@ router.put(
  *       500:
  *         description: Server error
  */
-router.delete(
-  '/rules/:id',
-  authenticateUser,
-  HasPermission([SettingsPermissionsEnum.EDIT_SETTINGS]),
-  workflowController.deleteRule
-);
+router.delete('/rules/:id', authenticateUser, HasPermission([SettingsPermissionsEnum.EDIT_SETTINGS]), workflowController.deleteRule);
 
 /**
  * @swagger
@@ -345,12 +315,7 @@ router.delete(
  *       500:
  *         description: Server error
  */
-router.patch(
-  '/rules/:id/toggle',
-  authenticateUser,
-  HasPermission([SettingsPermissionsEnum.EDIT_SETTINGS]),
-  workflowController.toggleRule
-);
+router.patch('/rules/:id/toggle', authenticateUser, HasPermission([SettingsPermissionsEnum.EDIT_SETTINGS]), workflowController.toggleRule);
 
 /**
  * @swagger
@@ -383,12 +348,7 @@ router.patch(
  *       500:
  *         description: Server error
  */
-router.post(
-  '/rules/:id/test',
-  authenticateUser,
-  HasPermission([SettingsPermissionsEnum.EDIT_SETTINGS]),
-  workflowController.testRule
-);
+router.post('/rules/:id/test', authenticateUser, HasPermission([SettingsPermissionsEnum.EDIT_SETTINGS]), workflowController.testRule);
 
 /**
  * @swagger
@@ -413,12 +373,7 @@ router.post(
  *       500:
  *         description: Server error
  */
-router.post(
-  '/rules/:id/execute',
-  authenticateUser,
-  HasPermission([SettingsPermissionsEnum.EDIT_SETTINGS]),
-  workflowController.manualExecute
-);
+router.post('/rules/:id/execute', authenticateUser, HasPermission([SettingsPermissionsEnum.EDIT_SETTINGS]), workflowController.manualExecute);
 
 /**
  * @swagger
@@ -435,11 +390,7 @@ router.post(
  *       500:
  *         description: Server error
  */
-router.get(
-  '/templates',
-  authenticateUser,
-  workflowController.getTemplates
-);
+router.get('/templates', authenticateUser, workflowController.getTemplates);
 
 /**
  * @swagger
@@ -481,12 +432,7 @@ router.get(
  *       500:
  *         description: Server error
  */
-router.get(
-  '/executions',
-  authenticateUser,
-  HasPermission([SettingsPermissionsEnum.VIEW_SETTINGS]),
-  workflowController.getExecutions
-);
+router.get('/executions', authenticateUser, HasPermission([SettingsPermissionsEnum.VIEW_SETTINGS]), workflowController.getExecutions);
 
 /**
  * @swagger
@@ -511,12 +457,7 @@ router.get(
  *       500:
  *         description: Server error
  */
-router.get(
-  '/executions/:runId',
-  authenticateUser,
-  HasPermission([SettingsPermissionsEnum.VIEW_SETTINGS]),
-  workflowController.getExecutionDetail
-);
+router.get('/executions/:runId', authenticateUser, HasPermission([SettingsPermissionsEnum.VIEW_SETTINGS]), workflowController.getExecutionDetail);
 
 /**
  * @swagger

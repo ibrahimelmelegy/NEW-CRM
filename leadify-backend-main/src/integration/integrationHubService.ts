@@ -108,9 +108,7 @@ const INTEGRATION_CATALOG: CatalogEntry[] = [
     description: 'Connect to 5000+ apps with automated workflows',
     icon: 'logos:zapier-icon',
     category: 'Developer',
-    configFields: [
-      { key: 'webhookUrl', label: 'Webhook URL', type: 'url', placeholder: 'https://hooks.zapier.com/...', required: true }
-    ]
+    configFields: [{ key: 'webhookUrl', label: 'Webhook URL', type: 'url', placeholder: 'https://hooks.zapier.com/...', required: true }]
   },
   {
     type: IntegrationType.MAILCHIMP,
@@ -129,9 +127,7 @@ const INTEGRATION_CATALOG: CatalogEntry[] = [
     description: 'Bi-directional CRM sync with HubSpot contacts and deals',
     icon: 'logos:hubspot',
     category: 'Marketing',
-    configFields: [
-      { key: 'apiKey', label: 'Private App Token', type: 'password', placeholder: 'pat-na1-...', required: true }
-    ]
+    configFields: [{ key: 'apiKey', label: 'Private App Token', type: 'password', placeholder: 'pat-na1-...', required: true }]
   },
   {
     type: IntegrationType.JIRA,
@@ -183,12 +179,7 @@ class IntegrationHubService {
   }
 
   // ── Configure / Update integration ───────────────────────────────────────
-  async configureIntegration(
-    type: IntegrationType,
-    config: Record<string, any>,
-    userId?: number,
-    tenantId?: string
-  ): Promise<IntegrationConfig> {
+  async configureIntegration(type: IntegrationType, config: Record<string, any>, userId?: number, tenantId?: string): Promise<IntegrationConfig> {
     const encryptedConfig = encryptConfig(config);
 
     // Find existing or create

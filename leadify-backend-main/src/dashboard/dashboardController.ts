@@ -34,11 +34,7 @@ class DashboardController {
 
   async updateDashboard(req: AuthenticatedRequest, res: Response, next: NextFunction) {
     try {
-      const dashboard = await dashboardService.updateDashboard(
-        Number(req.params.id),
-        req.body,
-        req.user!.id
-      );
+      const dashboard = await dashboardService.updateDashboard(Number(req.params.id), req.body, req.user!.id);
       wrapResult(res, dashboard);
     } catch (error) {
       next(error);
@@ -56,10 +52,7 @@ class DashboardController {
 
   async setDefault(req: AuthenticatedRequest, res: Response, next: NextFunction) {
     try {
-      const dashboard = await dashboardService.setDefault(
-        Number(req.params.id),
-        req.user!.id
-      );
+      const dashboard = await dashboardService.setDefault(Number(req.params.id), req.user!.id);
       wrapResult(res, dashboard);
     } catch (error) {
       next(error);
@@ -96,7 +89,7 @@ class DashboardController {
 
   async getRevenue(req: AuthenticatedRequest, res: Response, next: NextFunction) {
     try {
-      const period = req.query.period as string || 'monthly';
+      const period = (req.query.period as string) || 'monthly';
       const dateRange = req.query.dateRange as string | undefined;
       const data = await dashboardService.getRevenueChart(period, dateRange);
       wrapResult(res, data);

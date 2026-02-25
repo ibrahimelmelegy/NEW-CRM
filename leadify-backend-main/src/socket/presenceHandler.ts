@@ -14,13 +14,7 @@ const activeUsers = new Map<string, PresenceUser>();
 
 export function setupPresenceHandlers(io: Server) {
   io.on('connection', (socket: Socket) => {
-
-    socket.on('presence:join', (data: {
-      page: string;
-      userId?: number;
-      name?: string;
-      profilePicture?: string;
-    }) => {
+    socket.on('presence:join', (data: { page: string; userId?: number; name?: string; profilePicture?: string }) => {
       activeUsers.set(socket.id, {
         socketId: socket.id,
         userId: data.userId || 0,

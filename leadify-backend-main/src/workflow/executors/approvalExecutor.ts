@@ -75,15 +75,10 @@ async function resolveApproverUserIds(config: ApprovalConfig): Promise<number[]>
  *
  * Sends real-time notifications to the approver(s) via Socket.io.
  */
-export async function executeApproval(
-  nodeConfig: ApprovalConfig,
-  context: ApprovalContext
-): Promise<ApprovalRecord> {
+export async function executeApproval(nodeConfig: ApprovalConfig, context: ApprovalContext): Promise<ApprovalRecord> {
   const approverIds = await resolveApproverUserIds(nodeConfig);
 
-  const timeoutAt = nodeConfig.timeout
-    ? new Date(Date.now() + nodeConfig.timeout * 60 * 60 * 1000).toISOString()
-    : undefined;
+  const timeoutAt = nodeConfig.timeout ? new Date(Date.now() + nodeConfig.timeout * 60 * 60 * 1000).toISOString() : undefined;
 
   const approvalId = `approval-${context.executionId}-${context.nodeId}-${Date.now()}`;
 
@@ -174,11 +169,7 @@ export async function resolveApproval(
 
   // Find and update the matching approval record
   for (const action of actions) {
-    if (
-      action.actionType === 'APPROVAL' &&
-      action.result?.nodeId === nodeId &&
-      action.result?.status === 'PENDING'
-    ) {
+    if (action.actionType === 'APPROVAL' && action.result?.nodeId === nodeId && action.result?.status === 'PENDING') {
       action.result.status = decision;
       action.result.resolvedAt = new Date().toISOString();
       action.result.resolvedBy = resolvedBy;
@@ -229,11 +220,7 @@ export async function processTimedOutApprovals(): Promise<number> {
     let modified = false;
 
     for (const action of actions) {
-      if (
-        action.actionType === 'APPROVAL' &&
-        action.result?.status === 'PENDING' &&
-        action.result?.timeoutAt
-      ) {
+      if (action.actionType === 'APPROVAL' && action.result?.status === 'PENDING' && action.result?.timeoutAt) {
         if (new Date(action.result.timeoutAt) <= now) {
           action.result.status = 'TIMED_OUT';
           action.result.resolvedAt = now.toISOString();

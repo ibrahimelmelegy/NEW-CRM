@@ -1,13 +1,4 @@
-import {
-  Column,
-  DataType,
-  Default,
-  ForeignKey,
-  BelongsTo,
-  HasMany,
-  Model,
-  Table
-} from 'sequelize-typescript';
+import { Column, DataType, Default, ForeignKey, BelongsTo, HasMany, Model, Table } from 'sequelize-typescript';
 import User from '../../user/userModel';
 import Client from '../../client/clientModel';
 import TicketCategory from './ticketCategoryModel';

@@ -160,11 +160,26 @@ class DocBuilderService {
         ]
       ],
       attributes: [
-        'id', 'type', 'reference', 'title', 'status', 'version',
-        'clientName', 'clientCompany', 'clientEmail',
-        'subtotal', 'discount', 'tax', 'total', 'currency',
-        'pdfUrl', 'sentAt', 'validUntil', 'createdBy',
-        'createdAt', 'updatedAt'
+        'id',
+        'type',
+        'reference',
+        'title',
+        'status',
+        'version',
+        'clientName',
+        'clientCompany',
+        'clientEmail',
+        'subtotal',
+        'discount',
+        'tax',
+        'total',
+        'currency',
+        'pdfUrl',
+        'sentAt',
+        'validUntil',
+        'createdBy',
+        'createdAt',
+        'updatedAt'
       ]
     });
 
@@ -240,28 +255,33 @@ class DocBuilderService {
       existing = await DocBuilderDocument.findOne({ where: { reference } });
     }
 
-    const newDoc = await DocBuilderDocument.create(tenantCreate({
-      type: targetType,
-      reference,
-      title: source.title,
-      status: DocStatusEnum.DRAFT,
-      content: source.content,
-      version: 1,
-      clientName: source.clientName,
-      clientCompany: source.clientCompany,
-      clientEmail: source.clientEmail,
-      subtotal: source.subtotal,
-      discount: source.discount,
-      tax: source.tax,
-      total: source.total,
-      currency: source.currency,
-      relatedEntityId: source.relatedEntityId,
-      relatedEntityType: source.relatedEntityType,
-      parentDocumentId: source.id,
-      createdBy: user.id,
-      notes: source.notes,
-      tags: source.tags
-    }, user));
+    const newDoc = await DocBuilderDocument.create(
+      tenantCreate(
+        {
+          type: targetType,
+          reference,
+          title: source.title,
+          status: DocStatusEnum.DRAFT,
+          content: source.content,
+          version: 1,
+          clientName: source.clientName,
+          clientCompany: source.clientCompany,
+          clientEmail: source.clientEmail,
+          subtotal: source.subtotal,
+          discount: source.discount,
+          tax: source.tax,
+          total: source.total,
+          currency: source.currency,
+          relatedEntityId: source.relatedEntityId,
+          relatedEntityType: source.relatedEntityType,
+          parentDocumentId: source.id,
+          createdBy: user.id,
+          notes: source.notes,
+          tags: source.tags
+        },
+        user
+      )
+    );
 
     // Create initial version for converted document
     await DocBuilderVersion.create({

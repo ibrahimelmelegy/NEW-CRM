@@ -84,9 +84,7 @@ class SlackConnector {
         },
         {
           type: 'context',
-          elements: [
-            { type: 'mrkdwn', text: `Sent from *High Point Technology CRM* at ${new Date().toISOString()}` }
-          ]
+          elements: [{ type: 'mrkdwn', text: `Sent from *High Point Technology CRM* at ${new Date().toISOString()}` }]
         }
       ],
       attachments: [{ color }]

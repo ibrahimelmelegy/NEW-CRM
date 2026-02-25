@@ -1,21 +1,11 @@
-import {
-  BelongsTo,
-  Column,
-  DataType,
-  ForeignKey,
-  Model,
-  Table,
-} from 'sequelize-typescript';
+import { BelongsTo, Column, DataType, ForeignKey, Model, Table } from 'sequelize-typescript';
 import WorkOrder from './workOrderModel';
 
 @Table({
   tableName: 'quality_checks',
   modelName: 'QualityCheck',
   timestamps: true,
-  indexes: [
-    { fields: ['tenantId'] },
-    { fields: ['workOrderId'] },
-  ],
+  indexes: [{ fields: ['tenantId'] }, { fields: ['workOrderId'] }]
 })
 class QualityCheck extends Model {
   @Column({ primaryKey: true, type: DataType.INTEGER, autoIncrement: true })

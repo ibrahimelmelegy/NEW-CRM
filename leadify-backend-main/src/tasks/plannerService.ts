@@ -74,8 +74,21 @@ class PlannerService {
     const [todayTotal, todayCompleted, weekTotal, weekCompleted] = await Promise.all([
       Task.count({ where: { assignedTo: userId, entityType: 'planner', date: today } }),
       Task.count({ where: { assignedTo: userId, entityType: 'planner', date: today, status: TaskStatus.COMPLETED } }),
-      Task.count({ where: { assignedTo: userId, entityType: 'planner', date: { [Op.between]: [startOfWeek.toISOString().split('T')[0], endOfWeek.toISOString().split('T')[0]] } } }),
-      Task.count({ where: { assignedTo: userId, entityType: 'planner', date: { [Op.between]: [startOfWeek.toISOString().split('T')[0], endOfWeek.toISOString().split('T')[0]] }, status: TaskStatus.COMPLETED } })
+      Task.count({
+        where: {
+          assignedTo: userId,
+          entityType: 'planner',
+          date: { [Op.between]: [startOfWeek.toISOString().split('T')[0], endOfWeek.toISOString().split('T')[0]] }
+        }
+      }),
+      Task.count({
+        where: {
+          assignedTo: userId,
+          entityType: 'planner',
+          date: { [Op.between]: [startOfWeek.toISOString().split('T')[0], endOfWeek.toISOString().split('T')[0]] },
+          status: TaskStatus.COMPLETED
+        }
+      })
     ]);
 
     return {

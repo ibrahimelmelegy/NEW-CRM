@@ -24,13 +24,7 @@ class WorkflowEngineLegacy {
     const entityType = trigger.split('_')[0].toLowerCase();
     const triggerType = this.mapTrigger(trigger);
 
-    await workflowService.processEntityEvent(
-      entityType,
-      entityId || entityData?.id || '',
-      triggerType,
-      null,
-      entityData
-    );
+    await workflowService.processEntityEvent(entityType, entityId || entityData?.id || '', triggerType, null, entityData);
   }
 
   private mapTrigger(trigger: string): TriggerType {

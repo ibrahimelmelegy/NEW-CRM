@@ -4,7 +4,6 @@ import Service from '../service/serviceModel';
 import Project from '../project/models/projectModel';
 import ProjectMaterial from '../project/models/peojectMaterial';
 
-
 @Table({
   tableName: 'materials',
   modelName: 'Material',

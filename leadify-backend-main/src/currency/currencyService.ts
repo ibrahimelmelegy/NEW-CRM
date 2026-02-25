@@ -4,7 +4,12 @@ import TaxRule from './taxRuleModel';
 class CurrencyService {
   // Currencies
   async getCurrencies() {
-    return Currency.findAll({ order: [['isDefault', 'DESC'], ['code', 'ASC']] });
+    return Currency.findAll({
+      order: [
+        ['isDefault', 'DESC'],
+        ['code', 'ASC']
+      ]
+    });
   }
 
   async createCurrency(data: any) {
@@ -36,10 +41,7 @@ class CurrencyService {
   }
 
   async convert(amount: number, fromCode: string, toCode: string) {
-    const [from, to] = await Promise.all([
-      Currency.findOne({ where: { code: fromCode } }),
-      Currency.findOne({ where: { code: toCode } })
-    ]);
+    const [from, to] = await Promise.all([Currency.findOne({ where: { code: fromCode } }), Currency.findOne({ where: { code: toCode } })]);
     if (!from || !to) throw new Error('Currency not found');
     const result = (amount / Number(from.exchangeRate)) * Number(to.exchangeRate);
     return { amount, from: fromCode, to: toCode, result: Math.round(result * 100) / 100 };

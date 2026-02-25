@@ -109,23 +109,25 @@ const app: Application = express();
 app.set('trust proxy', 1);
 
 // 2. Security headers (helmet)
-app.use(helmet({
-  contentSecurityPolicy: {
-    directives: {
-      defaultSrc: ["'self'"],
-      scriptSrc: ["'self'"],
-      styleSrc: ["'self'", "'unsafe-inline'", "https://fonts.googleapis.com"],
-      imgSrc: ["'self'", "data:", "blob:"],
-      fontSrc: ["'self'", "https://fonts.gstatic.com"],
-      connectSrc: ["'self'"],
+app.use(
+  helmet({
+    contentSecurityPolicy: {
+      directives: {
+        defaultSrc: ["'self'"],
+        scriptSrc: ["'self'"],
+        styleSrc: ["'self'", "'unsafe-inline'", 'https://fonts.googleapis.com'],
+        imgSrc: ["'self'", 'data:', 'blob:'],
+        fontSrc: ["'self'", 'https://fonts.gstatic.com'],
+        connectSrc: ["'self'"]
+      }
+    },
+    crossOriginEmbedderPolicy: false,
+    hsts: {
+      maxAge: 31536000,
+      includeSubDomains: true
     }
-  },
-  crossOriginEmbedderPolicy: false,
-  hsts: {
-    maxAge: 31536000,
-    includeSubDomains: true
-  }
-}));
+  })
+);
 
 // 3. HTTPS enforcement (production only, when FORCE_HTTPS=true)
 if (process.env.NODE_ENV === 'production' && process.env.FORCE_HTTPS === 'true') {
@@ -159,17 +161,17 @@ app.use(cookieParser(process.env.SECRET_KEY || 'csrf-secret'));
 app.use(sanitizeInput);
 
 // 7. CORS (single configured call)
-const CORS_ORIGINS = process.env.CORS_ORIGINS
-  ? process.env.CORS_ORIGINS.split(',').map(o => o.trim())
-  : ['http://localhost:3060'];
+const CORS_ORIGINS = process.env.CORS_ORIGINS ? process.env.CORS_ORIGINS.split(',').map(o => o.trim()) : ['http://localhost:3060'];
 
-app.use(cors({
-  origin: CORS_ORIGINS,
-  credentials: true,
-  methods: ['GET', 'POST', 'PUT', 'PATCH', 'DELETE', 'OPTIONS'],
-  allowedHeaders: ['Content-Type', 'Authorization', 'X-Tenant-ID', 'Accept-Language', 'X-CSRF-Token'],
-  maxAge: 86400
-}));
+app.use(
+  cors({
+    origin: CORS_ORIGINS,
+    credentials: true,
+    methods: ['GET', 'POST', 'PUT', 'PATCH', 'DELETE', 'OPTIONS'],
+    allowedHeaders: ['Content-Type', 'Authorization', 'X-Tenant-ID', 'Accept-Language', 'X-CSRF-Token'],
+    maxAge: 86400
+  })
+);
 
 // 8. CSRF protection setup
 const { doubleCsrfProtection, generateCsrfToken } = doubleCsrf({
@@ -180,9 +182,9 @@ const { doubleCsrfProtection, generateCsrfToken } = doubleCsrf({
     httpOnly: true,
     sameSite: 'strict' as const,
     secure: process.env.NODE_ENV === 'production',
-    path: '/',
+    path: '/'
   },
-  getCsrfTokenFromRequest: (req: Request) => req.headers['x-csrf-token'] as string,
+  getCsrfTokenFromRequest: (req: Request) => req.headers['x-csrf-token'] as string
 });
 
 // Expose CSRF token endpoint for frontend
@@ -207,13 +209,15 @@ if (process.env.NODE_ENV !== 'production') {
 }
 
 // 10. File upload with limits
-app.use(fileUpload({
-  limits: { fileSize: 10 * 1024 * 1024 }, // 10 MB max
-  abortOnLimit: true,
-  responseOnLimit: 'File size exceeds the 10MB limit.',
-  safeFileNames: true,
-  preserveExtension: true
-}));
+app.use(
+  fileUpload({
+    limits: { fileSize: 10 * 1024 * 1024 }, // 10 MB max
+    abortOnLimit: true,
+    responseOnLimit: 'File size exceeds the 10MB limit.',
+    safeFileNames: true,
+    preserveExtension: true
+  })
+);
 
 // --- API Routes ---
 app.use('/api/insights', insightRoutes);

@@ -28,7 +28,10 @@ class PayrollService {
     const offset = (Number(page) - 1) * Number(limit);
     const { rows, count } = await PayrollRun.findAndCountAll({
       where,
-      order: [['year', 'DESC'], ['month', 'DESC']],
+      order: [
+        ['year', 'DESC'],
+        ['month', 'DESC']
+      ],
       limit: Number(limit),
       offset
     });
@@ -46,15 +49,19 @@ class PayrollService {
 
   async getPayrollRunById(id: string) {
     const run = await PayrollRun.findByPk(id, {
-      include: [{
-        model: Payslip,
-        as: 'payslips',
-        include: [{
-          model: Employee,
-          as: 'employee',
-          attributes: ['id', 'employeeNumber', 'firstName', 'lastName', 'email', 'departmentId']
-        }]
-      }]
+      include: [
+        {
+          model: Payslip,
+          as: 'payslips',
+          include: [
+            {
+              model: Employee,
+              as: 'employee',
+              attributes: ['id', 'employeeNumber', 'firstName', 'lastName', 'email', 'departmentId']
+            }
+          ]
+        }
+      ]
     });
     if (!run) throw new Error('Payroll run not found');
     return run;
@@ -177,11 +184,13 @@ class PayrollService {
 
     const { rows, count } = await Payslip.findAndCountAll({
       where: { employeeId },
-      include: [{
-        model: PayrollRun,
-        as: 'payrollRun',
-        attributes: ['id', 'month', 'year', 'status']
-      }],
+      include: [
+        {
+          model: PayrollRun,
+          as: 'payrollRun',
+          attributes: ['id', 'month', 'year', 'status']
+        }
+      ],
       order: [['createdAt', 'DESC']],
       limit: Number(limit),
       offset
@@ -208,11 +217,13 @@ class PayrollService {
     const offset = (Number(page) - 1) * Number(limit);
     const { rows, count } = await SalaryStructure.findAndCountAll({
       where,
-      include: [{
-        model: Employee,
-        as: 'employee',
-        attributes: ['id', 'employeeNumber', 'firstName', 'lastName', 'email']
-      }],
+      include: [
+        {
+          model: Employee,
+          as: 'employee',
+          attributes: ['id', 'employeeNumber', 'firstName', 'lastName', 'email']
+        }
+      ],
       order: [['effectiveDate', 'DESC']],
       limit: Number(limit),
       offset
@@ -232,11 +243,13 @@ class PayrollService {
   async createSalaryStructure(data: any) {
     const structure = await SalaryStructure.create(data);
     return SalaryStructure.findByPk(structure.id, {
-      include: [{
-        model: Employee,
-        as: 'employee',
-        attributes: ['id', 'employeeNumber', 'firstName', 'lastName', 'email']
-      }]
+      include: [
+        {
+          model: Employee,
+          as: 'employee',
+          attributes: ['id', 'employeeNumber', 'firstName', 'lastName', 'email']
+        }
+      ]
     });
   }
 
@@ -245,11 +258,13 @@ class PayrollService {
     if (!structure) throw new Error('Salary structure not found');
     await structure.update(data);
     return SalaryStructure.findByPk(id, {
-      include: [{
-        model: Employee,
-        as: 'employee',
-        attributes: ['id', 'employeeNumber', 'firstName', 'lastName', 'email']
-      }]
+      include: [
+        {
+          model: Employee,
+          as: 'employee',
+          attributes: ['id', 'employeeNumber', 'firstName', 'lastName', 'email']
+        }
+      ]
     });
   }
 
@@ -270,7 +285,10 @@ class PayrollService {
 
     // Use salary from structure or fallback to employee.salary
     const lastSalary = salaryStructure
-      ? Number(salaryStructure.basicSalary) + Number(salaryStructure.housingAllowance || 0) + Number(salaryStructure.transportAllowance || 0) + Number(salaryStructure.otherAllowances || 0)
+      ? Number(salaryStructure.basicSalary) +
+        Number(salaryStructure.housingAllowance || 0) +
+        Number(salaryStructure.transportAllowance || 0) +
+        Number(salaryStructure.otherAllowances || 0)
       : Number(employee.salary) || 0;
 
     // Calculate years of service

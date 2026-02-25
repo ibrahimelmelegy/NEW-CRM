@@ -62,12 +62,7 @@ const router = express.Router();
  *       201:
  *         description: Activity logged successfully
  */
-router.post(
-  '/activities',
-  authenticateUser,
-  HasPermission([CommunicationPermissionsEnum.LOG_ACTIVITIES]),
-  communicationController.logActivity
-);
+router.post('/activities', authenticateUser, HasPermission([CommunicationPermissionsEnum.LOG_ACTIVITIES]), communicationController.logActivity);
 
 /**
  * @swagger
@@ -154,12 +149,7 @@ router.get(
  *       200:
  *         description: Activity updated successfully
  */
-router.put(
-  '/activities/:id',
-  authenticateUser,
-  HasPermission([CommunicationPermissionsEnum.LOG_ACTIVITIES]),
-  communicationController.updateActivity
-);
+router.put('/activities/:id', authenticateUser, HasPermission([CommunicationPermissionsEnum.LOG_ACTIVITIES]), communicationController.updateActivity);
 
 /**
  * @swagger
@@ -248,12 +238,7 @@ router.delete(
  *       201:
  *         description: Call logged successfully
  */
-router.post(
-  '/calls',
-  authenticateUser,
-  HasPermission([CommunicationPermissionsEnum.LOG_CALLS]),
-  communicationController.logCall
-);
+router.post('/calls', authenticateUser, HasPermission([CommunicationPermissionsEnum.LOG_CALLS]), communicationController.logCall);
 
 // ─── Stats & Recent ──────────────────────────────────────────────────────────
 
@@ -287,12 +272,7 @@ router.post(
  *       200:
  *         description: Activity statistics
  */
-router.get(
-  '/stats',
-  authenticateUser,
-  HasPermission([CommunicationPermissionsEnum.VIEW_STATS]),
-  communicationController.getStats
-);
+router.get('/stats', authenticateUser, HasPermission([CommunicationPermissionsEnum.VIEW_STATS]), communicationController.getStats);
 
 /**
  * @swagger
@@ -313,11 +293,6 @@ router.get(
  *       200:
  *         description: List of recent activities
  */
-router.get(
-  '/recent',
-  authenticateUser,
-  HasPermission([CommunicationPermissionsEnum.VIEW_ACTIVITIES]),
-  communicationController.getRecent
-);
+router.get('/recent', authenticateUser, HasPermission([CommunicationPermissionsEnum.VIEW_ACTIVITIES]), communicationController.getRecent);
 
 export default router;

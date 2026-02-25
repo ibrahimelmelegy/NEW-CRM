@@ -6,19 +6,11 @@ import { io } from '../server';
 
 class CommunicationController {
   // ─── Log Activity ────────────────────────────────────────────────────────
-  public async logActivity(
-    req: AuthenticatedRequest,
-    res: Response,
-    next: NextFunction
-  ): Promise<void> {
+  public async logActivity(req: AuthenticatedRequest, res: Response, next: NextFunction): Promise<void> {
     try {
       const userId = (req.user as any)?.id;
       const tenantId = (req.user as any)?.tenantId;
-      const activity = await communicationService.logActivity(
-        req.body,
-        userId,
-        tenantId
-      );
+      const activity = await communicationService.logActivity(req.body, userId, tenantId);
       io.emit('activity:created', {
         id: activity.id,
         type: activity.type,
@@ -32,19 +24,11 @@ class CommunicationController {
   }
 
   // ─── Log Call ────────────────────────────────────────────────────────────
-  public async logCall(
-    req: AuthenticatedRequest,
-    res: Response,
-    next: NextFunction
-  ): Promise<void> {
+  public async logCall(req: AuthenticatedRequest, res: Response, next: NextFunction): Promise<void> {
     try {
       const userId = (req.user as any)?.id;
       const tenantId = (req.user as any)?.tenantId;
-      const result = await communicationService.logCall(
-        req.body,
-        userId,
-        tenantId
-      );
+      const result = await communicationService.logCall(req.body, userId, tenantId);
       io.emit('activity:call_logged', {
         id: result.activity.id,
         contactId: result.activity.contactId,
@@ -57,19 +41,14 @@ class CommunicationController {
   }
 
   // ─── Get Timeline ────────────────────────────────────────────────────────
-  public async getTimeline(
-    req: AuthenticatedRequest,
-    res: Response,
-    next: NextFunction
-  ): Promise<void> {
+  public async getTimeline(req: AuthenticatedRequest, res: Response, next: NextFunction): Promise<void> {
     try {
       const { contactType, contactId } = req.params;
       const { page, limit } = req.query;
-      const result = await communicationService.getTimeline(
-        contactId as string,
-        contactType as string,
-        { page: Number(page) || 1, limit: Number(limit) || 20 }
-      );
+      const result = await communicationService.getTimeline(contactId as string, contactType as string, {
+        page: Number(page) || 1,
+        limit: Number(limit) || 20
+      });
       wrapResult(res, result);
     } catch (error) {
       next(error);
@@ -77,15 +56,9 @@ class CommunicationController {
   }
 
   // ─── Get Activity Stats ──────────────────────────────────────────────────
-  public async getStats(
-    req: AuthenticatedRequest,
-    res: Response,
-    next: NextFunction
-  ): Promise<void> {
+  public async getStats(req: AuthenticatedRequest, res: Response, next: NextFunction): Promise<void> {
     try {
-      const userId = req.query.userId
-        ? Number(req.query.userId)
-        : (req.user as any)?.id;
+      const userId = req.query.userId ? Number(req.query.userId) : (req.user as any)?.id;
       const tenantId = (req.user as any)?.tenantId || null;
       const dateRange =
         req.query.start && req.query.end
@@ -94,11 +67,7 @@ class CommunicationController {
               end: req.query.end as string
             }
           : undefined;
-      const stats = await communicationService.getActivityStats(
-        userId,
-        tenantId,
-        dateRange
-      );
+      const stats = await communicationService.getActivityStats(userId, tenantId, dateRange);
       wrapResult(res, stats);
     } catch (error) {
       next(error);
@@ -106,20 +75,12 @@ class CommunicationController {
   }
 
   // ─── Get Recent Activities ───────────────────────────────────────────────
-  public async getRecent(
-    req: AuthenticatedRequest,
-    res: Response,
-    next: NextFunction
-  ): Promise<void> {
+  public async getRecent(req: AuthenticatedRequest, res: Response, next: NextFunction): Promise<void> {
     try {
       const userId = (req.user as any)?.id;
       const tenantId = (req.user as any)?.tenantId || null;
       const limit = Number(req.query.limit) || 20;
-      const activities = await communicationService.getRecentActivities(
-        userId,
-        tenantId,
-        limit
-      );
+      const activities = await communicationService.getRecentActivities(userId, tenantId, limit);
       wrapResult(res, activities);
     } catch (error) {
       next(error);
@@ -127,19 +88,11 @@ class CommunicationController {
   }
 
   // ─── Update Activity ─────────────────────────────────────────────────────
-  public async updateActivity(
-    req: AuthenticatedRequest,
-    res: Response,
-    next: NextFunction
-  ): Promise<void> {
+  public async updateActivity(req: AuthenticatedRequest, res: Response, next: NextFunction): Promise<void> {
     try {
       const userId = (req.user as any)?.id;
       const id = Number(req.params.id);
-      const activity = await communicationService.updateActivity(
-        id,
-        req.body,
-        userId
-      );
+      const activity = await communicationService.updateActivity(id, req.body, userId);
       io.emit('activity:updated', {
         id: activity.id,
         contactId: activity.contactId,
@@ -152,11 +105,7 @@ class CommunicationController {
   }
 
   // ─── Delete Activity ─────────────────────────────────────────────────────
-  public async deleteActivity(
-    req: AuthenticatedRequest,
-    res: Response,
-    next: NextFunction
-  ): Promise<void> {
+  public async deleteActivity(req: AuthenticatedRequest, res: Response, next: NextFunction): Promise<void> {
     try {
       const userId = (req.user as any)?.id;
       const id = Number(req.params.id);

@@ -72,7 +72,7 @@ export class CreateDealInput {
   @Expose()
   @IsOptional()
   @IsNotEmpty()
-  @IsInt({ message: 'Assigned user must be an integer',each: true })
+  @IsInt({ message: 'Assigned user must be an integer', each: true })
   users?: number[];
 
   @Expose()

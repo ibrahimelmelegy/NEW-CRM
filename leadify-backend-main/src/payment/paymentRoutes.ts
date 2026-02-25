@@ -55,12 +55,7 @@ const router = express.Router();
  *       500:
  *         description: Server error
  */
-router.post(
-  '/',
-  authenticateUser,
-  HasPermission([PaymentPermissionsEnum.RECORD_PAYMENTS]),
-  paymentController.recordPayment
-);
+router.post('/', authenticateUser, HasPermission([PaymentPermissionsEnum.RECORD_PAYMENTS]), paymentController.recordPayment);
 
 /**
  * @swagger
@@ -98,12 +93,7 @@ router.post(
  *       404:
  *         description: Invoice not found
  */
-router.post(
-  '/remind/:invoiceId',
-  authenticateUser,
-  HasPermission([PaymentPermissionsEnum.SEND_PAYMENT_REMINDERS]),
-  paymentController.sendReminder
-);
+router.post('/remind/:invoiceId', authenticateUser, HasPermission([PaymentPermissionsEnum.SEND_PAYMENT_REMINDERS]), paymentController.sendReminder);
 
 // ** --------------------- GET --------------------- **/
 
@@ -119,12 +109,7 @@ router.post(
  *       200:
  *         description: Dashboard data with KPIs and top debtors
  */
-router.get(
-  '/dashboard',
-  authenticateUser,
-  HasPermission([PaymentPermissionsEnum.VIEW_PAYMENT_DASHBOARD]),
-  paymentController.getCollectionDashboard
-);
+router.get('/dashboard', authenticateUser, HasPermission([PaymentPermissionsEnum.VIEW_PAYMENT_DASHBOARD]), paymentController.getCollectionDashboard);
 
 /**
  * @swagger
@@ -173,12 +158,7 @@ router.get(
  *       200:
  *         description: Paginated list of payments
  */
-router.get(
-  '/',
-  authenticateUser,
-  HasPermission([PaymentPermissionsEnum.VIEW_PAYMENTS]),
-  paymentController.getPayments
-);
+router.get('/', authenticateUser, HasPermission([PaymentPermissionsEnum.VIEW_PAYMENTS]), paymentController.getPayments);
 
 /**
  * @swagger
@@ -199,12 +179,7 @@ router.get(
  *       200:
  *         description: Client payment history with summary
  */
-router.get(
-  '/client/:clientId',
-  authenticateUser,
-  HasPermission([PaymentPermissionsEnum.VIEW_PAYMENTS]),
-  paymentController.getClientPaymentHistory
-);
+router.get('/client/:clientId', authenticateUser, HasPermission([PaymentPermissionsEnum.VIEW_PAYMENTS]), paymentController.getClientPaymentHistory);
 
 /**
  * @swagger
@@ -227,12 +202,7 @@ router.get(
  *       654:
  *         description: Payment not found
  */
-router.get(
-  '/:id',
-  authenticateUser,
-  HasPermission([PaymentPermissionsEnum.VIEW_PAYMENTS]),
-  paymentController.getPaymentById
-);
+router.get('/:id', authenticateUser, HasPermission([PaymentPermissionsEnum.VIEW_PAYMENTS]), paymentController.getPaymentById);
 
 // ** --------------------- PATCH --------------------- **/
 
@@ -258,11 +228,6 @@ router.get(
  *       654:
  *         description: Payment not found
  */
-router.patch(
-  '/:id/void',
-  authenticateUser,
-  HasPermission([PaymentPermissionsEnum.VOID_PAYMENTS]),
-  paymentController.voidPayment
-);
+router.patch('/:id/void', authenticateUser, HasPermission([PaymentPermissionsEnum.VOID_PAYMENTS]), paymentController.voidPayment);
 
 export default router;

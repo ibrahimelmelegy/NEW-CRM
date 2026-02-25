@@ -96,8 +96,7 @@ class EtimadProject extends Model {
   public projectId!: string;
 
   @BelongsTo(() => Project, { as: 'project' })
-  public project!: Project
-
+  public project!: Project;
 }
 
 export default EtimadProject;

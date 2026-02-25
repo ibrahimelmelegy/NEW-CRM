@@ -37,9 +37,7 @@ class CacheService {
         this.lastAttempt = Date.now();
         await Promise.race([
           redisClient.connect(),
-          new Promise((_, reject) =>
-            setTimeout(() => reject(new Error('Redis connection timeout')), 3000)
-          ),
+          new Promise((_, reject) => setTimeout(() => reject(new Error('Redis connection timeout')), 3000))
         ]);
       }
       this.redisAvailable = true;
@@ -104,11 +102,7 @@ class CacheService {
    * Get a value from cache, or compute it using the fetcher function and cache the result.
    * This is the most common caching pattern - eliminates cache stampede for cold keys.
    */
-  async getOrSet<T>(
-    key: string,
-    fetcher: () => Promise<T>,
-    ttlSeconds: number = this.defaultTTL
-  ): Promise<T> {
+  async getOrSet<T>(key: string, fetcher: () => Promise<T>, ttlSeconds: number = this.defaultTTL): Promise<T> {
     const cached = await this.get<T>(key);
     if (cached !== null) {
       return cached;
@@ -135,7 +129,7 @@ class CacheService {
       do {
         const result = await redisClient.scan(String(cursor), {
           MATCH: pattern,
-          COUNT: 100,
+          COUNT: 100
         });
 
         cursor = typeof result.cursor === 'string' ? parseInt(result.cursor, 10) : result.cursor;
@@ -161,11 +155,7 @@ class CacheService {
    * Cache user permissions for fast authorization checks.
    * Default TTL: 10 minutes (permissions don't change frequently).
    */
-  async cacheUserPermissions(
-    userId: number,
-    permissions: string[],
-    ttl: number = 600
-  ): Promise<void> {
+  async cacheUserPermissions(userId: number, permissions: string[], ttl: number = 600): Promise<void> {
     await this.set(`user:${userId}:permissions`, permissions, ttl);
   }
 
@@ -188,11 +178,7 @@ class CacheService {
    * Cache dropdown/select options (e.g., lead sources, deal stages, industries).
    * Default TTL: 30 minutes (these rarely change).
    */
-  async cacheDropdownOptions(
-    key: string,
-    options: any[],
-    ttl: number = 1800
-  ): Promise<void> {
+  async cacheDropdownOptions(key: string, options: any[], ttl: number = 1800): Promise<void> {
     await this.set(`dropdown:${key}`, options, ttl);
   }
 
@@ -207,12 +193,7 @@ class CacheService {
    * Cache a paginated list result (e.g., lead listing page 1).
    * Short TTL since list data changes frequently.
    */
-  async cacheListResult(
-    entity: string,
-    queryHash: string,
-    data: any,
-    ttl: number = 60
-  ): Promise<void> {
+  async cacheListResult(entity: string, queryHash: string, data: any, ttl: number = 60): Promise<void> {
     await this.set(`list:${entity}:${queryHash}`, data, ttl);
   }
 
@@ -261,7 +242,7 @@ class CacheService {
       misses: this.misses,
       hitRate,
       keys,
-      redisAvailable: this.redisAvailable,
+      redisAvailable: this.redisAvailable
     };
   }
 

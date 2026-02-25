@@ -46,7 +46,12 @@ class PortalService {
   async getDashboard(clientId: string) {
     const [deals, tickets] = await Promise.all([
       Deal.findAll({ where: { clientId }, attributes: ['id', 'name', 'status', 'createdAt'], order: [['createdAt', 'DESC']], limit: 5 }),
-      SupportTicket.findAll({ where: { '$portalUser.clientId$': clientId }, include: [{ model: PortalUser, attributes: [] }], order: [['createdAt', 'DESC']], limit: 5 })
+      SupportTicket.findAll({
+        where: { '$portalUser.clientId$': clientId },
+        include: [{ model: PortalUser, attributes: [] }],
+        order: [['createdAt', 'DESC']],
+        limit: 5
+      })
     ]);
     return { deals, tickets };
   }

@@ -3,18 +3,18 @@ import { ActivityModelClass } from './activities';
 import Vendor from '../../vendor/vendorModel';
 
 @Table({
-    tableName: 'vendorActivities',
-    modelName: 'VendorActivity',
-    timestamps: true
+  tableName: 'vendorActivities',
+  modelName: 'VendorActivity',
+  timestamps: true
 })
 export class VendorActivity extends ActivityModelClass {
-    @ForeignKey(() => Vendor)
-    @Column({
-        type: DataType.INTEGER,
-        allowNull: false
-    })
-    public vendorId!: number;
+  @ForeignKey(() => Vendor)
+  @Column({
+    type: DataType.INTEGER,
+    allowNull: false
+  })
+  public vendorId!: number;
 
-    @BelongsTo(() => Vendor, { as: 'vendor' })
-    public vendor!: Vendor;
+  @BelongsTo(() => Vendor, { as: 'vendor' })
+  public vendor!: Vendor;
 }
