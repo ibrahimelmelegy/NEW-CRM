@@ -288,7 +288,9 @@
     "all": "All",
     "saveView": "Save View",
     "renameView": "Rename View",
-    "advancedFilters": "Advanced Filters"
+    "advancedFilters": "Advanced Filters",
+    "call": "Call",
+    "email": "Email"
   },
   "auth": {
     "login": "Sign In",

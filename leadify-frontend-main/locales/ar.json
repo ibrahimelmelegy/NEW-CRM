@@ -288,7 +288,9 @@
     "all": "الكل",
     "saveView": "حفظ العرض",
     "renameView": "إعادة تسمية العرض",
-    "advancedFilters": "بحث متقدم"
+    "advancedFilters": "بحث متقدم",
+    "call": "اتصال",
+    "email": "بريد إلكتروني"
   },
   "activities": {
     "types": {

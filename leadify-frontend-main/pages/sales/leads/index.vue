@@ -53,84 +53,88 @@ div(class="animate-fade-in")
                           Icon.text-md.mr-2(name="IconEdit" )
                           p.text-sm {{ $t('leads.edit') }}
 
-  //- Mobile Card View
-  .leads-mobile-view(v-if="!loadingAction && !loading")
-    //- Mobile Search
-    .mb-4
-      el-input(
-        v-model="mobileSearch"
-        size="large"
-        :placeholder="`${$t('common.search')} ${$t('leads.title')}`"
-        clearable
-        class="!rounded-xl"
-      )
-        template(#prefix)
-          Icon(name="ph:magnifying-glass" size="18" style="color: var(--text-muted)")
+  //- Mobile App View
+  .leads-mobile-view(v-if="!loadingAction")
+    PullToRefresh(:loading="mobileRefreshing" @refresh="handleMobileRefresh")
+      //- Mobile Search
+      .mb-3
+        el-input(
+          v-model="mobileSearch"
+          size="large"
+          :placeholder="`${$t('common.search')} ${$t('leads.title')}`"
+          clearable
+          class="!rounded-xl"
+        )
+          template(#prefix)
+            Icon(name="ph:magnifying-glass" size="18" style="color: var(--text-muted)")
 
-    //- Lead Cards
-    .space-y-3
-      .lead-card.glass-card.rounded-2xl.overflow-hidden(
-        v-for="lead in mobileFilteredData"
-        :key="lead.id"
-        @click="handleRowClick(lead)"
-      )
-        .p-4
-          .flex.items-start.justify-between.mb-3
-            .flex.items-center.gap-3.min-w-0.flex-1
-              .lead-avatar.w-10.h-10.rounded-xl.flex.items-center.justify-center.shrink-0.text-sm.font-bold(
-                :style="{ background: getLeadColor(lead.status) + '20', color: getLeadColor(lead.status) }"
-              ) {{ getLeadInitial(lead) }}
-              .min-w-0.flex-1
-                p.text-sm.font-bold.truncate(style="color: var(--text-primary)") {{ lead.leadDetails?.title || lead.name || '--' }}
-                p.text-xs.truncate(style="color: var(--text-muted)") {{ lead.leadDetails?.text || lead.companyName || '' }}
-            el-tag.shrink-0(
-              :type="getStatusType(lead.status)"
-              size="small"
-              effect="dark"
-              round
-            ) {{ lead.status }}
+      //- Status Filter Pills
+      .status-pills.flex.gap-2.mb-4.overflow-x-auto.pb-2.-mx-1.px-1
+        button.status-pill(
+          v-for="filter in statusFilters"
+          :key="filter.value"
+          :class="{ 'status-pill--active': mobileStatusFilter === filter.value }"
+          :style="mobileStatusFilter === filter.value ? { background: filter.color, borderColor: filter.color } : {}"
+          @click="setMobileStatusFilter(filter.value)"
+        )
+          span {{ filter.label }}
+          span.status-pill__count(v-if="filter.count > 0") {{ filter.count }}
 
-          .grid.grid-cols-2.gap-2
-            .flex.items-center.gap-2(v-if="lead.phone")
-              Icon(name="ph:phone" size="14" style="color: var(--text-muted)")
-              a.text-xs.truncate(
-                :href="`tel:${lead.phone}`"
-                style="color: var(--text-secondary)"
-                @click.stop
-              ) {{ lead.phone }}
-            .flex.items-center.gap-2(v-if="lead.leadSource")
-              Icon(name="ph:funnel" size="14" style="color: var(--text-muted)")
-              span.text-xs.truncate(style="color: var(--text-secondary)") {{ lead.leadSource }}
-            .flex.items-center.gap-2(v-if="lead.assign")
-              Icon(name="ph:user" size="14" style="color: var(--text-muted)")
-              span.text-xs.truncate(style="color: var(--text-secondary)") {{ lead.assign }}
-            .flex.items-center.gap-2(v-if="lead.createdAt")
-              Icon(name="ph:calendar" size="14" style="color: var(--text-muted)")
-              span.text-xs.truncate(style="color: var(--text-secondary)") {{ lead.createdAt }}
+      //- Lead Cards with Swipe Actions
+      .space-y-3(v-if="mobileFilteredData.length")
+        SwipeCard(
+          v-for="lead in mobileFilteredData"
+          :key="lead.id"
+          :rightActions="getSwipeRightActions(lead)"
+          :leftActions="getSwipeLeftActions(lead)"
+          @action="(name) => handleSwipeAction(name, lead)"
+        )
+          .lead-card.p-4(@click="handleRowClick(lead)")
+            .flex.items-start.justify-between.mb-3
+              .flex.items-center.gap-3.min-w-0.flex-1
+                .lead-avatar.w-10.h-10.rounded-xl.flex.items-center.justify-center.shrink-0.text-sm.font-bold(
+                  :style="{ background: getLeadColor(lead.status) + '20', color: getLeadColor(lead.status) }"
+                ) {{ getLeadInitial(lead) }}
+                .min-w-0.flex-1
+                  p.text-sm.font-bold.truncate(style="color: var(--text-primary)") {{ lead.leadDetails?.title || lead.name || '--' }}
+                  p.text-xs.truncate(style="color: var(--text-muted)") {{ lead.leadDetails?.text || lead.companyName || '' }}
+              el-tag.shrink-0(
+                :type="getStatusType(lead.status)"
+                size="small"
+                effect="dark"
+                round
+              ) {{ lead.status }}
 
-        //- Card action bar
-        .flex.items-center.justify-between.px-4.py-2(style="border-top: 1px solid var(--glass-border, rgba(255,255,255,0.08))")
-          .flex.items-center.gap-1
-            el-button(text size="small" @click.stop="navigateTo(`/sales/leads/${lead.id}`)")
-              Icon(name="ph:eye" size="16")
-              span.ml-1.text-xs {{ $t('leads.view') }}
-            el-button(v-if="hasPermission('EDIT_LEADS')" text size="small" @click.stop="navigateTo(`/sales/leads/edit/${lead.id}`)")
-              Icon(name="ph:pencil-simple" size="16")
-              span.ml-1.text-xs {{ $t('leads.edit') }}
-          .flex.items-center.gap-1
-            a.p-2.rounded-lg(v-if="lead.phone" :href="`tel:${lead.phone}`" @click.stop style="color: var(--accent-color, #7849ff)")
-              Icon(name="ph:phone-bold" size="18")
-            a.p-2.rounded-lg(v-if="lead.email" :href="`mailto:${lead.email}`" @click.stop style="color: var(--accent-color, #7849ff)")
-              Icon(name="ph:envelope-bold" size="18")
+            .grid.grid-cols-2.gap-2
+              .flex.items-center.gap-2(v-if="lead.phone")
+                Icon(name="ph:phone" size="14" style="color: var(--text-muted)")
+                a.text-xs.truncate(
+                  :href="`tel:${lead.phone}`"
+                  style="color: var(--text-secondary)"
+                  @click.stop
+                ) {{ lead.phone }}
+              .flex.items-center.gap-2(v-if="lead.leadSource")
+                Icon(name="ph:funnel" size="14" style="color: var(--text-muted)")
+                span.text-xs.truncate(style="color: var(--text-secondary)") {{ lead.leadSource }}
+              .flex.items-center.gap-2(v-if="lead.assign")
+                Icon(name="ph:user" size="14" style="color: var(--text-muted)")
+                span.text-xs.truncate(style="color: var(--text-secondary)") {{ lead.assign }}
+              .flex.items-center.gap-2(v-if="lead.createdAt")
+                Icon(name="ph:calendar" size="14" style="color: var(--text-muted)")
+                span.text-xs.truncate(style="color: var(--text-secondary)") {{ lead.createdAt }}
 
-    //- Empty state
-    .text-center.py-12(v-if="!mobileFilteredData.length")
-      Icon(name="ph:users-three" size="48" style="color: var(--text-muted)")
-      p.text-sm.mt-2(style="color: var(--text-muted)") {{ $t('common.noData') }}
+      //- Empty state
+      .text-center.py-12(v-if="!mobileFilteredData.length")
+        Icon(name="ph:users-three" size="48" style="color: var(--text-muted)")
+        p.text-sm.mt-2(style="color: var(--text-muted)") {{ $t('common.noData') }}
 
-    //- Mobile result count
-    .text-center.mt-4(v-if="mobileFilteredData.length")
-      span.text-xs(style="color: var(--text-muted)") {{ mobileFilteredData.length }} {{ $t('leads.title').toLowerCase() }}
+      //- Mobile result count
+      .text-center.mt-4.pb-20(v-if="mobileFilteredData.length")
+        span.text-xs(style="color: var(--text-muted)") {{ mobileFilteredData.length }} {{ $t('leads.title').toLowerCase() }}
+
+    //- Floating Action Button
+    .mobile-fab(v-if="canCreateLeads" @click="navigateTo('/sales/leads/add-lead')")
+      Icon(name="ph:plus-bold" size="24")
 
   ActionModel(v-model="qualifiedLeadPopup" :loading="loadingAction" :btn-text="$t('common.save')" :description="$t('leads.confirmConversion')" @confirm = "editPresent" )
    template(#input)
@@ -411,10 +415,33 @@ const exportColumns = [
 ];
 const exportData = computed(() => table.value.data);
 
-// Mobile card view
+// Mobile app view
+const { vibrate } = useMobile();
 const mobileSearch = ref('');
-const mobileFilteredData = computed(() => {
+const mobileStatusFilter = ref('ALL');
+const mobileRefreshing = ref(false);
+
+const statusFilters = computed(() => {
   const data = table.value.data || [];
+  return [
+    { value: 'ALL', label: t('common.all'), color: '#7849ff', count: data.length },
+    { value: 'NEW', label: t('crm.stages.new'), color: '#7849ff', count: data.filter((l: any) => l.status === 'NEW').length },
+    { value: 'CONTACTED', label: t('crm.stages.contacted'), color: '#3b82f6', count: data.filter((l: any) => l.status === 'CONTACTED').length },
+    { value: 'QUALIFIED', label: t('crm.stages.qualified'), color: '#10b981', count: data.filter((l: any) => l.status === 'QUALIFIED').length },
+    { value: 'DISQUALIFIED', label: t('crm.stages.lost'), color: '#ef4444', count: data.filter((l: any) => l.status === 'DISQUALIFIED').length }
+  ];
+});
+
+function setMobileStatusFilter(value: string) {
+  mobileStatusFilter.value = value;
+  vibrate();
+}
+
+const mobileFilteredData = computed(() => {
+  let data = table.value.data || [];
+  if (mobileStatusFilter.value !== 'ALL') {
+    data = data.filter((lead: any) => lead.status === mobileStatusFilter.value);
+  }
   if (!mobileSearch.value) return data;
   const q = mobileSearch.value.toLowerCase();
   return data.filter((lead: any) => {
@@ -425,6 +452,56 @@ const mobileFilteredData = computed(() => {
     return name.includes(q) || company.includes(q) || email.includes(q) || phone.includes(q);
   });
 });
+
+async function handleMobileRefresh() {
+  mobileRefreshing.value = true;
+  try {
+    response = await useTableFilter('lead');
+    table.value.data = response.formattedData;
+    vibrate([10, 30, 10]);
+  } finally {
+    mobileRefreshing.value = false;
+  }
+}
+
+function getSwipeRightActions(lead: any) {
+  const actions = [];
+  if (lead.phone) {
+    actions.push({ name: 'call', label: t('common.call'), icon: 'ph:phone-bold', color: '#10B981' });
+  }
+  if (lead.email) {
+    actions.push({ name: 'email', label: t('common.email'), icon: 'ph:envelope-bold', color: '#3B82F6' });
+  }
+  return actions;
+}
+
+function getSwipeLeftActions(lead: any) {
+  const actions = [
+    { name: 'view', label: t('leads.view'), icon: 'ph:eye-bold', color: '#7849FF' }
+  ];
+  if (hasPermission('EDIT_LEADS')) {
+    actions.push({ name: 'edit', label: t('leads.edit'), icon: 'ph:pencil-simple-bold', color: '#F59E0B' });
+  }
+  return actions;
+}
+
+function handleSwipeAction(name: string, lead: any) {
+  vibrate();
+  switch (name) {
+    case 'call':
+      window.location.href = `tel:${lead.phone}`;
+      break;
+    case 'email':
+      window.location.href = `mailto:${lead.email}`;
+      break;
+    case 'view':
+      navigateTo(`/sales/leads/${lead.id}`);
+      break;
+    case 'edit':
+      navigateTo(`/sales/leads/edit/${lead.id}`);
+      break;
+  }
+}
 
 function getLeadInitial(lead: any): string {
   const name = lead.leadDetails?.title || lead.name || '?';
@@ -540,11 +617,31 @@ const handleFileChange = async (event: Event) => {
     display: none;
   }
 
-  // KPI cards: 2-column grid on mobile instead of 1
+  // Hide desktop header on mobile (FAB replaces add button)
+  :deep(.premium-page-header) {
+    margin-bottom: 12px !important;
+
+    .actions {
+      flex-wrap: wrap;
+      gap: 8px !important;
+      width: 100%;
+    }
+
+    .actions .el-button {
+      font-size: 13px !important;
+      padding: 8px 12px !important;
+    }
+
+    .content h1 {
+      font-size: 1.3rem !important;
+    }
+  }
+
+  // KPI cards: 2-column grid on mobile
   .leads-kpi-grid :deep(.premium-kpi-cards) {
     grid-template-columns: repeat(2, 1fr) !important;
     gap: 10px !important;
-    margin-bottom: 16px !important;
+    margin-bottom: 12px !important;
   }
 
   .leads-kpi-grid :deep(.kpi-card) {
@@ -564,35 +661,97 @@ const handleFileChange = async (event: Event) => {
     }
   }
 
-  // Header: wrap actions
-  :deep(.premium-page-header) {
-    margin-bottom: 16px !important;
-
-    .actions {
-      flex-wrap: wrap;
-      gap: 8px !important;
-      width: 100%;
-    }
-
-    .actions .el-button {
-      font-size: 13px !important;
-      padding: 8px 12px !important;
-    }
-
-    .content h1 {
-      font-size: 1.3rem !important;
-    }
-  }
-
   // Lead cards
   .lead-card {
     cursor: pointer;
+    -webkit-tap-highlight-color: transparent;
+    background: var(--glass-bg, rgba(255, 255, 255, 0.06));
+    border: 1px solid var(--glass-border, rgba(255, 255, 255, 0.08));
+
+    &:active {
+      opacity: 0.85;
+    }
+  }
+}
+
+// Status filter pills
+.status-pills {
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+
+  &::-webkit-scrollbar {
+    display: none;
+  }
+}
+
+.status-pill {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 8px 14px;
+  border-radius: 100px;
+  border: 1px solid var(--glass-border, rgba(255, 255, 255, 0.15));
+  background: var(--glass-bg, rgba(255, 255, 255, 0.06));
+  color: var(--text-secondary);
+  font-size: 12px;
+  font-weight: 600;
+  white-space: nowrap;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  -webkit-tap-highlight-color: transparent;
+  min-height: 36px;
+
+  &:active {
+    transform: scale(0.95);
+  }
+
+  &--active {
+    color: #fff;
+    border-color: transparent;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.15);
+  }
+
+  &__count {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 20px;
+    height: 20px;
+    padding: 0 5px;
+    border-radius: 10px;
+    background: rgba(255, 255, 255, 0.2);
+    font-size: 10px;
+    font-weight: 700;
+  }
+}
+
+// Floating Action Button
+.mobile-fab {
+  display: none;
+}
+
+@media (max-width: 767px) {
+  .mobile-fab {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: fixed;
+    bottom: calc(80px + env(safe-area-inset-bottom, 0px) + 16px);
+    right: 20px;
+    width: 56px;
+    height: 56px;
+    border-radius: 16px;
+    background: linear-gradient(135deg, #7849ff, #9b6dff);
+    color: #fff;
+    box-shadow: 0 6px 24px rgba(120, 73, 255, 0.4);
+    cursor: pointer;
+    z-index: 40;
     transition: all 0.2s ease;
     -webkit-tap-highlight-color: transparent;
 
     &:active {
-      transform: scale(0.98);
-      opacity: 0.9;
+      transform: scale(0.9);
+      box-shadow: 0 3px 12px rgba(120, 73, 255, 0.3);
     }
   }
 }
