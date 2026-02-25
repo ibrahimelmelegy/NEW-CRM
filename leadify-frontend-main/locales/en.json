@@ -1049,6 +1049,12 @@
     "errors": {
       "fillInvoices": "Please fill in all the required invoice fields.",
       "fillDeliveries": "Please fill in all the required delivery fields."
+    },
+    "kpi": {
+      "totalDeals": "Total Deals",
+      "dealsWon": "Deals Won",
+      "totalRevenue": "Total Revenue",
+      "pendingDeals": "Pending Deals"
     }
   },
   "leads": {

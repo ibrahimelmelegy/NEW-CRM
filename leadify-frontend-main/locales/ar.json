@@ -972,6 +972,12 @@
     "errors": {
       "fillInvoices": "يرجى تعبئة جميع حقول الفاتورة المطلوبة.",
       "fillDeliveries": "يرجى تعبئة جميع حقول التسليم المطلوبة."
+    },
+    "kpi": {
+      "totalDeals": "إجمالي الصفقات",
+      "dealsWon": "الصفقات المكسوبة",
+      "totalRevenue": "إجمالي الإيرادات",
+      "pendingDeals": "الصفقات المعلقة"
     }
   },
   "dashboard": {
