@@ -14,13 +14,17 @@ if (typeof window !== 'undefined') {
   try {
     const saved = localStorage.getItem(STORAGE_KEY);
     if (saved) favorites.value = JSON.parse(saved);
-  } catch { /* ignore parse errors */ }
+  } catch {
+    /* ignore parse errors */
+  }
 }
 
 function persist() {
   try {
     localStorage.setItem(STORAGE_KEY, JSON.stringify(favorites.value));
-  } catch { /* ignore storage errors */ }
+  } catch {
+    /* ignore storage errors */
+  }
 }
 
 export function useSidebarFavorites() {

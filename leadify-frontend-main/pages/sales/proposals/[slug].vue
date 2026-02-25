@@ -1,25 +1,24 @@
 <template>
   <div class="flex flex-col h-screen overflow-hidden">
     <!-- Header bar for navigation + approval actions -->
-    <div v-if="!loading" class="flex items-center justify-between px-6 py-3 border-b shrink-0" style="border-color: var(--border-default); background: var(--bg-surface);">
+    <div
+      v-if="!loading"
+      class="flex items-center justify-between px-6 py-3 border-b shrink-0"
+      style="border-color: var(--border-default); background: var(--bg-surface)"
+    >
       <div class="flex items-center gap-3">
         <el-button circle @click="navigateTo('/sales/proposals')">
           <Icon name="ph:arrow-left" size="18" />
         </el-button>
         <div>
-          <h1 class="text-lg font-bold" style="color: var(--text-primary);">{{ proposal?.title || 'Proposal' }}</h1>
-          <span class="text-xs font-mono" style="color: var(--text-muted);">{{ proposal?.reference }}</span>
+          <h1 class="text-lg font-bold" style="color: var(--text-primary)">{{ proposal?.title || 'Proposal' }}</h1>
+          <span class="text-xs font-mono" style="color: var(--text-muted)">{{ proposal?.reference }}</span>
         </div>
         <el-tag v-if="proposal?.status" :type="statusTagType(proposal.status) as any" effect="dark" round size="small">
           {{ formatStatus(proposal.status) }}
         </el-tag>
       </div>
-      <ProposalApprovalActions
-        v-if="proposal"
-        :proposal-id="proposal.id"
-        :status="proposal.status"
-        @updated="reloadProposal"
-      />
+      <ProposalApprovalActions v-if="proposal" :proposal-id="proposal.id" :status="proposal.status" @updated="reloadProposal" />
     </div>
 
     <!-- Loading -->
@@ -29,18 +28,13 @@
 
     <!-- Builder -->
     <div v-else-if="parsedContent" class="flex-1 overflow-hidden">
-      <ProDocBuilder
-        document-type="proposal"
-        :proposal-id="proposalId"
-        :initial-data="parsedContent"
-        @saved="onSaved"
-      />
+      <ProDocBuilder document-type="proposal" :proposal-id="proposalId" :initial-data="parsedContent" @saved="onSaved" />
     </div>
 
     <!-- Error fallback -->
     <div v-else class="flex-1 flex flex-col items-center justify-center gap-4">
       <Icon name="ph:warning-circle" size="48" class="text-red-400" />
-      <p class="text-lg font-bold" style="color: var(--text-primary);">Failed to load proposal</p>
+      <p class="text-lg font-bold" style="color: var(--text-primary)">Failed to load proposal</p>
       <el-button type="primary" @click="reloadProposal">Retry</el-button>
     </div>
   </div>
@@ -71,7 +65,7 @@ function statusTagType(status: string) {
     WAITING_APPROVAL: 'warning',
     APPROVED: 'success',
     REJECTED: 'danger',
-    ARCHIVED: 'info',
+    ARCHIVED: 'info'
   };
   return map[status] || '';
 }
@@ -97,7 +91,7 @@ async function reloadProposal() {
           refNumber: data.reference || '',
           clientCompany: data.proposalFor || '',
           type: data.type || 'MIXED',
-          notes: data.notes || '',
+          notes: data.notes || ''
         };
       }
     } else {
@@ -107,7 +101,7 @@ async function reloadProposal() {
         refNumber: data?.reference || '',
         clientCompany: data?.proposalFor || '',
         type: data?.type || 'MIXED',
-        notes: data?.notes || '',
+        notes: data?.notes || ''
       };
     }
   } catch (error) {

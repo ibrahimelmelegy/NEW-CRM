@@ -321,13 +321,20 @@ definePageMeta({
 });
 
 const {
-  boms, workOrders, qualityChecks,
-  productionEfficiency, qualityIssues,
-  init, createBOM, duplicateBOM,
-  createWorkOrder: apiCreateWorkOrder,
+  boms,
+  workOrders,
+  qualityChecks,
+  productionEfficiency,
+  qualityIssues,
+  init,
+  createBOM,
+  duplicateBOM,
+  createWorkOrder: apiCreateWorkOrder
 } = useManufacturing();
 
-onMounted(() => { init(); });
+onMounted(() => {
+  init();
+});
 
 const activeTab = ref('bom');
 const showBomDialog = ref(false);
@@ -353,8 +360,8 @@ const productionPlan = computed(() => {
       items: activeWOs.slice(0, 2).map(w => ({
         product: w.productName,
         quantity: Math.ceil(w.planned / 5),
-        status: w.status === 'IN_PROGRESS' ? 'in_progress' : 'planned',
-      })),
+        status: w.status === 'IN_PROGRESS' ? 'in_progress' : 'planned'
+      }))
     });
   }
   return plan;
@@ -402,8 +409,8 @@ const saveBom = async () => {
       type: 'RAW' as const,
       quantity: i.quantity,
       unit: 'pc',
-      unitCost: i.unitCost,
-    })),
+      unitCost: i.unitCost
+    }))
   });
   newBom.value = { productName: '', code: '', version: 1, items: [{ name: '', quantity: 1, unitCost: 0 }] };
   showBomDialog.value = false;
@@ -415,7 +422,7 @@ const createWorkOrder = async () => {
     bomId: newWO.value.bomId || undefined,
     quantity: newWO.value.quantity,
     priority: newWO.value.priority,
-    dueDate: newWO.value.dueDate || undefined,
+    dueDate: newWO.value.dueDate || undefined
   });
   newWO.value = { bomId: 0, quantity: 1, priority: 'NORMAL', dueDate: '' };
   showWorkOrderDialog.value = false;

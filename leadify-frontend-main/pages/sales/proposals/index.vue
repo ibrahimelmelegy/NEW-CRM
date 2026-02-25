@@ -138,7 +138,7 @@ const statusOptions = [
   { label: 'Approved', value: 'APPROVED' },
   { label: 'Rejected', value: 'REJECTED' },
   { label: 'Sent', value: 'SENT' },
-  { label: 'Archived', value: 'ARCHIVED' },
+  { label: 'Archived', value: 'ARCHIVED' }
 ];
 
 const rejectDialogVisible = ref(false);
@@ -149,7 +149,7 @@ const kpiMetrics = computed<KPIMetric[]>(() => [
   { label: 'Total Proposals', value: totalItems.value, icon: 'ph:file-text-bold', color: '#7c3aed' },
   { label: 'Draft', value: proposals.value.filter(p => p.status === 'DRAFT').length, icon: 'ph:pencil-simple-bold', color: '#6b7280' },
   { label: 'Pending', value: proposals.value.filter(p => p.status === 'WAITING_APPROVAL').length, icon: 'ph:clock-bold', color: '#f59e0b' },
-  { label: 'Approved', value: proposals.value.filter(p => p.status === 'APPROVED').length, icon: 'ph:check-circle-bold', color: '#10b981' },
+  { label: 'Approved', value: proposals.value.filter(p => p.status === 'APPROVED').length, icon: 'ph:check-circle-bold', color: '#10b981' }
 ]);
 
 let debounceTimer: ReturnType<typeof setTimeout> | null = null;
@@ -199,8 +199,12 @@ function formatStatus(status: string) {
 
 function statusTagType(status: string) {
   const map: Record<string, string> = {
-    DRAFT: 'info', WAITING_APPROVAL: 'warning', APPROVED: 'success',
-    REJECTED: 'danger', ARCHIVED: 'info', SENT: '',
+    DRAFT: 'info',
+    WAITING_APPROVAL: 'warning',
+    APPROVED: 'success',
+    REJECTED: 'danger',
+    ARCHIVED: 'info',
+    SENT: ''
   };
   return map[status] || '';
 }
@@ -221,8 +225,11 @@ async function handleSubmitForApproval(row: any) {
     actionLoading.value = true;
     const ok = await submitForApproval(row.id);
     if (ok) fetchProposals();
-  } catch { /* cancelled */ }
-  finally { actionLoading.value = false; }
+  } catch {
+    /* cancelled */
+  } finally {
+    actionLoading.value = false;
+  }
 }
 
 async function handleApprove(row: any) {
@@ -231,8 +238,11 @@ async function handleApprove(row: any) {
     actionLoading.value = true;
     const ok = await approveProposal(row.id);
     if (ok) fetchProposals();
-  } catch { /* cancelled */ }
-  finally { actionLoading.value = false; }
+  } catch {
+    /* cancelled */
+  } finally {
+    actionLoading.value = false;
+  }
 }
 
 function openRejectDialog(row: any) {
@@ -261,8 +271,11 @@ async function handleDelete(row: any) {
     actionLoading.value = true;
     const ok = await deleteProposal(row.id);
     if (ok) fetchProposals();
-  } catch { /* cancelled */ }
-  finally { actionLoading.value = false; }
+  } catch {
+    /* cancelled */
+  } finally {
+    actionLoading.value = false;
+  }
 }
 
 onMounted(() => fetchProposals());

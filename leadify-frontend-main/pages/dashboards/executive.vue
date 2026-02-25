@@ -200,13 +200,11 @@ async function refreshData() {
   refreshing.value = true;
   try {
     // Single API call for all deals - eliminates 4 duplicate requests
-    const [dealRes, clientRes] = await Promise.all([
-      useApiFetch('deal?limit=500'),
-      useApiFetch('client?limit=1')
-    ]);
+    const [dealRes, clientRes] = await Promise.all([useApiFetch('deal?limit=500'), useApiFetch('client?limit=1')]);
 
-    const allDeals: any[] = dealRes.success && dealRes.body ? ((dealRes.body as any).docs || dealRes.body || []) : [];
-    const clientCount = clientRes.success && clientRes.body ? ((clientRes.body as any).pagination?.totalItems || (clientRes.body as any).total || 0) : 0;
+    const allDeals: any[] = dealRes.success && dealRes.body ? (dealRes.body as any).docs || dealRes.body || [] : [];
+    const clientCount =
+      clientRes.success && clientRes.body ? (clientRes.body as any).pagination?.totalItems || (clientRes.body as any).total || 0 : 0;
 
     processKPIs(allDeals, clientCount);
     processRevenue(allDeals);
@@ -232,7 +230,13 @@ function processKPIs(allDeals: any[], clientCount: number) {
   const avgDeal = wonDeals.length > 0 ? Math.round(totalValue / wonDeals.length) : 0;
 
   kpiCards.value = [
-    { label: 'Total Revenue', value: '$' + totalValue.toLocaleString(), icon: 'ph:currency-dollar-bold', color: '#10b981', trend: wonDeals.length > 0 ? 12 : 0 },
+    {
+      label: 'Total Revenue',
+      value: '$' + totalValue.toLocaleString(),
+      icon: 'ph:currency-dollar-bold',
+      color: '#10b981',
+      trend: wonDeals.length > 0 ? 12 : 0
+    },
     { label: 'Pipeline Value', value: '$' + pipelineVal.toLocaleString(), icon: 'ph:funnel-bold', color: '#7849ff', trend: pipelineVal > 0 ? 8 : 0 },
     { label: 'Deals Won', value: String(wonDeals.length), icon: 'ph:trophy-bold', color: '#f59e0b', trend: wonDeals.length > 0 ? 5 : 0 },
     { label: 'Win Rate', value: winRate + '%', icon: 'ph:target-bold', color: '#3b82f6', trend: winRate > 50 ? 3 : winRate > 0 ? -2 : 0 },
@@ -341,7 +345,12 @@ function processGoals(allDeals: any[], clientCount: number) {
   const totalValue = wonDeals.reduce((s: number, d: any) => s + Number(d.price || 0), 0);
 
   goals.value = [
-    { label: 'Monthly Revenue', current: '$' + totalValue.toLocaleString(), target: '$100,000', percentage: Math.min(Math.round((totalValue / 100000) * 100), 150) },
+    {
+      label: 'Monthly Revenue',
+      current: '$' + totalValue.toLocaleString(),
+      target: '$100,000',
+      percentage: Math.min(Math.round((totalValue / 100000) * 100), 150)
+    },
     { label: 'New Clients', current: String(clientCount), target: '20', percentage: Math.min(Math.round((clientCount / 20) * 100), 150) },
     { label: 'Deals Closed', current: String(wonDeals.length), target: '15', percentage: Math.min(Math.round((wonDeals.length / 15) * 100), 150) },
     { label: 'Avg Response Time', current: '3.2h', target: '< 4h', percentage: 80 }

@@ -137,15 +137,31 @@ definePageMeta({});
 const { filteredDocuments, stats, searchQuery } = useDocumentStore();
 
 const typeLabels: Record<string, string> = {
-  invoice: 'Invoice', proforma_invoice: 'Proforma Invoice', purchase_order: 'Purchase Order',
-  credit_note: 'Credit Note', quote: 'Quotation', rfq: 'RFQ', sales_order: 'Sales Order',
-  delivery_note: 'Delivery Note', contract: 'Contract', proposal: 'Proposal', sla: 'SLA',
+  invoice: 'Invoice',
+  proforma_invoice: 'Proforma Invoice',
+  purchase_order: 'Purchase Order',
+  credit_note: 'Credit Note',
+  quote: 'Quotation',
+  rfq: 'RFQ',
+  sales_order: 'Sales Order',
+  delivery_note: 'Delivery Note',
+  contract: 'Contract',
+  proposal: 'Proposal',
+  sla: 'SLA'
 };
 
 const typeColors: Record<string, string> = {
-  invoice: '#7c3aed', proforma_invoice: '#6d28d9', purchase_order: '#2563eb',
-  credit_note: '#dc2626', quote: '#059669', rfq: '#d97706', sales_order: '#0891b2',
-  delivery_note: '#ea580c', contract: '#4f46e5', proposal: '#7c3aed', sla: '#0d9488',
+  invoice: '#7c3aed',
+  proforma_invoice: '#6d28d9',
+  purchase_order: '#2563eb',
+  credit_note: '#dc2626',
+  quote: '#059669',
+  rfq: '#d97706',
+  sales_order: '#0891b2',
+  delivery_note: '#ea580c',
+  contract: '#4f46e5',
+  proposal: '#7c3aed',
+  sla: '#0d9488'
 };
 
 const quickActions = [
@@ -154,12 +170,16 @@ const quickActions = [
   { type: 'purchase_order', label: 'Purchase Order', icon: '🛒', url: '/procurement/purchase-orders/create' },
   { type: 'proposal', label: 'Proposal', icon: '📊', url: '/sales/proposals/create' },
   { type: 'contract', label: 'Contract', icon: '📝', url: '/sales/contracts/create' },
-  { type: 'sla', label: 'SLA', icon: '🛡️', url: '/operations/sla/create' },
+  { type: 'sla', label: 'SLA', icon: '🛡️', url: '/operations/sla/create' }
 ];
 
 function tagType(status: string): '' | 'success' | 'warning' | 'danger' | 'info' {
   const map: Record<string, '' | 'success' | 'warning' | 'danger' | 'info'> = {
-    Draft: 'info', Sent: '', Approved: 'success', Rejected: 'danger', Archived: 'warning',
+    Draft: 'info',
+    Sent: '',
+    Approved: 'success',
+    Rejected: 'danger',
+    Archived: 'warning'
   };
   return map[status] || 'info';
 }

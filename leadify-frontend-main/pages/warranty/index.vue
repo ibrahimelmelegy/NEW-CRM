@@ -77,7 +77,16 @@
 <script setup lang="ts">
 import { ref, reactive, computed } from 'vue';
 definePageMeta({});
-interface Warranty { id: string; productName: string; clientName: string; warrantyType: string; coverage: string; startDate: string; endDate: string; status: string; }
+interface Warranty {
+  id: string;
+  productName: string;
+  clientName: string;
+  warrantyType: string;
+  coverage: string;
+  startDate: string;
+  endDate: string;
+  status: string;
+}
 const KEY = 'crm_warranties';
 const warranties = ref<Warranty[]>(JSON.parse(localStorage.getItem(KEY) || '[]'));
 const showDialog = ref(false);
@@ -89,18 +98,26 @@ const expiringSoon = computed(() => {
   return warranties.value.filter(w => w.status === 'active' && w.endDate >= today && w.endDate <= in30);
 });
 
-function isExpiringSoon(date: string): boolean { const d = new Date(date); return d.getTime() - Date.now() < 30 * 86400000 && d.getTime() > Date.now(); }
+function isExpiringSoon(date: string): boolean {
+  const d = new Date(date);
+  return d.getTime() - Date.now() < 30 * 86400000 && d.getTime() > Date.now();
+}
 
 function saveWarranty() {
   warranties.value.unshift({
-    ...form, id: `war_${Date.now()}`, status: 'active',
+    ...form,
+    id: `war_${Date.now()}`,
+    status: 'active',
     startDate: form.startDate ? new Date(form.startDate).toISOString().slice(0, 10) : '',
-    endDate: form.endDate ? new Date(form.endDate).toISOString().slice(0, 10) : '',
+    endDate: form.endDate ? new Date(form.endDate).toISOString().slice(0, 10) : ''
   });
   localStorage.setItem(KEY, JSON.stringify(warranties.value));
   Object.assign(form, { productName: '', clientName: '', warrantyType: 'Warranty', coverage: '', startDate: '', endDate: '' });
   showDialog.value = false;
   ElMessage.success('Warranty added!');
 }
-function removeWarranty(id: string) { warranties.value = warranties.value.filter(w => w.id !== id); localStorage.setItem(KEY, JSON.stringify(warranties.value)); }
+function removeWarranty(id: string) {
+  warranties.value = warranties.value.filter(w => w.id !== id);
+  localStorage.setItem(KEY, JSON.stringify(warranties.value));
+}
 </script>

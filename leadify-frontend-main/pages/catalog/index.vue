@@ -82,7 +82,16 @@
 <script setup lang="ts">
 import { ref, reactive } from 'vue';
 definePageMeta({});
-interface Product { id: string; name: string; sku: string; category: string; price: number; description: string; emoji: string; inStock: boolean; }
+interface Product {
+  id: string;
+  name: string;
+  sku: string;
+  category: string;
+  price: number;
+  description: string;
+  emoji: string;
+  inStock: boolean;
+}
 const KEY = 'crm_products_catalog';
 const products = ref<Product[]>(JSON.parse(localStorage.getItem(KEY) || '[]'));
 const showDialog = ref(false);
@@ -95,5 +104,8 @@ function saveProduct() {
   showDialog.value = false;
   ElMessage.success('Product added to catalog!');
 }
-function removeProduct(id: string) { products.value = products.value.filter(p => p.id !== id); localStorage.setItem(KEY, JSON.stringify(products.value)); }
+function removeProduct(id: string) {
+  products.value = products.value.filter(p => p.id !== id);
+  localStorage.setItem(KEY, JSON.stringify(products.value));
+}
 </script>

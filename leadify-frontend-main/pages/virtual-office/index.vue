@@ -145,16 +145,34 @@ import { useVirtualOffice } from '~/composables/useVirtualOffice';
 
 definePageMeta({});
 
-const { rooms, currentUser, currentRoom, stats, init, joinRoom, leaveRoom, setStatus, toggleMute, toggleCamera, toggleScreenShare, addRoom, toggleFocusMode } = useVirtualOffice();
+const {
+  rooms,
+  currentUser,
+  currentRoom,
+  stats,
+  init,
+  joinRoom,
+  leaveRoom,
+  setStatus,
+  toggleMute,
+  toggleCamera,
+  toggleScreenShare,
+  addRoom,
+  toggleFocusMode
+} = useVirtualOffice();
 
-onMounted(() => { init(); });
+onMounted(() => {
+  init();
+});
 
 const showRoomDialog = ref(false);
 const roomForm = reactive({ name: '', type: 'office' as const, capacity: 10, description: '', icon: '🏢', color: '#7c3aed', isLocked: false });
 
 const myOccupant = computed(() => currentRoom.value?.occupants.find(o => o.id === currentUser.value.userId));
 
-function handleStatus(status: string) { setStatus(status as any); }
+function handleStatus(status: string) {
+  setStatus(status as any);
+}
 async function saveRoom() {
   await addRoom({ ...roomForm } as any);
   Object.assign(roomForm, { name: '', type: 'office', capacity: 10, description: '', icon: '🏢', color: '#7c3aed', isLocked: false });

@@ -102,8 +102,11 @@ const { upcoming, overdue, completed, stats, addReminder, completeReminder, remo
 const activeTab = ref('upcoming');
 const showCreateDialog = ref(false);
 const form = reactive({
-  title: '', description: '', type: 'follow_up' as const,
-  priority: 'medium' as const, dueDate: '',
+  title: '',
+  description: '',
+  type: 'follow_up' as const,
+  priority: 'medium' as const,
+  dueDate: ''
 });
 
 const displayedReminders = computed(() => {
@@ -119,9 +122,11 @@ function toggleComplete(rem: any) {
 function createReminder() {
   if (!form.title || !form.dueDate) return;
   addReminder({
-    title: form.title, description: form.description,
-    type: form.type as any, priority: form.priority as any,
-    dueDate: new Date(form.dueDate).toISOString(),
+    title: form.title,
+    description: form.description,
+    type: form.type as any,
+    priority: form.priority as any,
+    dueDate: new Date(form.dueDate).toISOString()
   });
   Object.assign(form, { title: '', description: '', type: 'follow_up', priority: 'medium', dueDate: '' });
   showCreateDialog.value = false;

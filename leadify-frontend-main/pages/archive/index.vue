@@ -133,17 +133,8 @@ import type { ArchivedDocument } from '~/composables/useDocumentArchive';
 
 definePageMeta({});
 
-const {
-  filteredDocuments,
-  stats,
-  typeFilter,
-  searchQuery,
-  restoreDocument,
-  permanentlyDelete,
-  bulkRestore,
-  bulkDelete,
-  archivedDocuments,
-} = useDocumentArchive();
+const { filteredDocuments, stats, typeFilter, searchQuery, restoreDocument, permanentlyDelete, bulkRestore, bulkDelete, archivedDocuments } =
+  useDocumentArchive();
 
 const selectedRows = ref<ArchivedDocument[]>([]);
 const selectedIds = computed(() => selectedRows.value.map(r => ({ id: r.id, documentType: r.documentType })));
@@ -159,54 +150,66 @@ function handleSelectionChange(rows: ArchivedDocument[]) {
 }
 
 function handleRestore(row: ArchivedDocument) {
-  ElMessageBox.confirm(
-    `Restore "${row.title}" (${row.refNumber})?`,
-    'Restore Document',
-    { confirmButtonText: 'Restore', cancelButtonText: 'Cancel', type: 'info' }
-  ).then(() => {
-    restoreDocument(row.id, row.documentType);
-    ElMessage.success(`"${row.refNumber}" restored successfully.`);
-  }).catch(() => {});
+  ElMessageBox.confirm(`Restore "${row.title}" (${row.refNumber})?`, 'Restore Document', {
+    confirmButtonText: 'Restore',
+    cancelButtonText: 'Cancel',
+    type: 'info'
+  })
+    .then(() => {
+      restoreDocument(row.id, row.documentType);
+      ElMessage.success(`"${row.refNumber}" restored successfully.`);
+    })
+    .catch(() => {});
 }
 
 function handleDelete(row: ArchivedDocument) {
-  ElMessageBox.confirm(
-    `Permanently delete "${row.title}" (${row.refNumber})? This action cannot be undone.`,
-    'Delete Permanently',
-    { confirmButtonText: 'Delete', cancelButtonText: 'Cancel', type: 'warning' }
-  ).then(() => {
-    permanentlyDelete(row.id, row.documentType);
-    ElMessage.success(`"${row.refNumber}" permanently deleted.`);
-  }).catch(() => {});
+  ElMessageBox.confirm(`Permanently delete "${row.title}" (${row.refNumber})? This action cannot be undone.`, 'Delete Permanently', {
+    confirmButtonText: 'Delete',
+    cancelButtonText: 'Cancel',
+    type: 'warning'
+  })
+    .then(() => {
+      permanentlyDelete(row.id, row.documentType);
+      ElMessage.success(`"${row.refNumber}" permanently deleted.`);
+    })
+    .catch(() => {});
 }
 
 function handleBulkRestore() {
-  ElMessageBox.confirm(
-    `Restore ${selectedIds.value.length} document(s)?`,
-    'Bulk Restore',
-    { confirmButtonText: 'Restore All', cancelButtonText: 'Cancel', type: 'info' }
-  ).then(() => {
-    const count = bulkRestore(selectedIds.value);
-    ElMessage.success(`${count} document(s) restored.`);
-    selectedRows.value = [];
-  }).catch(() => {});
+  ElMessageBox.confirm(`Restore ${selectedIds.value.length} document(s)?`, 'Bulk Restore', {
+    confirmButtonText: 'Restore All',
+    cancelButtonText: 'Cancel',
+    type: 'info'
+  })
+    .then(() => {
+      const count = bulkRestore(selectedIds.value);
+      ElMessage.success(`${count} document(s) restored.`);
+      selectedRows.value = [];
+    })
+    .catch(() => {});
 }
 
 function handleBulkDelete() {
-  ElMessageBox.confirm(
-    `Permanently delete ${selectedIds.value.length} document(s)? This cannot be undone.`,
-    'Bulk Delete',
-    { confirmButtonText: 'Delete All', cancelButtonText: 'Cancel', type: 'warning' }
-  ).then(() => {
-    const count = bulkDelete(selectedIds.value);
-    ElMessage.success(`${count} document(s) permanently deleted.`);
-    selectedRows.value = [];
-  }).catch(() => {});
+  ElMessageBox.confirm(`Permanently delete ${selectedIds.value.length} document(s)? This cannot be undone.`, 'Bulk Delete', {
+    confirmButtonText: 'Delete All',
+    cancelButtonText: 'Cancel',
+    type: 'warning'
+  })
+    .then(() => {
+      const count = bulkDelete(selectedIds.value);
+      ElMessage.success(`${count} document(s) permanently deleted.`);
+      selectedRows.value = [];
+    })
+    .catch(() => {});
 }
 
 function statusTagType(status: string): '' | 'success' | 'warning' | 'danger' | 'info' {
   const map: Record<string, '' | 'success' | 'warning' | 'danger' | 'info'> = {
-    Draft: 'info', Sent: '', Approved: 'success', Rejected: 'danger', Archived: 'warning',
+    Draft: 'info',
+    Sent: '',
+    Approved: 'success',
+    Rejected: 'danger',
+    Archived: 'warning'
   };
   return map[status] || 'info';
 }

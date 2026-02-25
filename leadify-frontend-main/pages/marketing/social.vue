@@ -331,7 +331,8 @@ const mentions = ref([
     author: 'Sarah Tech',
     handle: 'sarahtech_sa',
     platform: 'LinkedIn',
-    content: 'Looking for a CRM solution with strong Arabic language support. Anyone tried High Point Technology? Need recommendations for a 50-person sales team.',
+    content:
+      'Looking for a CRM solution with strong Arabic language support. Anyone tried High Point Technology? Need recommendations for a 50-person sales team.',
     likes: 23,
     comments: 18,
     shares: 5,
@@ -344,7 +345,8 @@ const mentions = ref([
     author: 'Digital Saudi',
     handle: 'digitalsaudi',
     platform: 'Twitter',
-    content: 'The reporting in @habortech needs work. Dashboard loading times are too slow for enterprise-level data volumes. Hope they fix this soon.',
+    content:
+      'The reporting in @habortech needs work. Dashboard loading times are too slow for enterprise-level data volumes. Hope they fix this soon.',
     likes: 15,
     comments: 7,
     shares: 2,
@@ -399,7 +401,8 @@ const scheduledPosts = ref([
   },
   {
     id: 3,
-    content: 'Customer success story: How TechCorp increased their sales pipeline by 300% using High Point Technology CRM. Full case study coming soon!',
+    content:
+      'Customer success story: How TechCorp increased their sales pipeline by 300% using High Point Technology CRM. Full case study coming soon!',
     platforms: ['Twitter', 'LinkedIn', 'Facebook'],
     scheduledDate: 'Feb 26',
     scheduledTime: '9:00 AM',

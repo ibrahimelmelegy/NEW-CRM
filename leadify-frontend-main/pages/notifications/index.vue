@@ -81,7 +81,7 @@ const categories = [
   { label: 'Invoices', value: 'invoice' },
   { label: 'Reminders', value: 'reminder' },
   { label: 'System', value: 'system' },
-  { label: 'Clients', value: 'client' },
+  { label: 'Clients', value: 'client' }
 ];
 
 const filteredNotifications = computed(() => {

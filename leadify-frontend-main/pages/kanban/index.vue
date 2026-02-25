@@ -88,7 +88,16 @@ import { ref, reactive } from 'vue';
 
 definePageMeta({});
 
-interface KanbanCard { id: string; ref: string; title: string; description: string; columnId: string; priority: string; assignee: string; value: number; }
+interface KanbanCard {
+  id: string;
+  ref: string;
+  title: string;
+  description: string;
+  columnId: string;
+  priority: string;
+  assignee: string;
+  value: number;
+}
 
 const columns = [
   { id: 'new', title: '🆕 New Lead', color: '#6b7280' },
@@ -96,20 +105,26 @@ const columns = [
   { id: 'proposal', title: '📄 Proposal', color: '#f59e0b' },
   { id: 'negotiation', title: '🤝 Negotiation', color: '#8b5cf6' },
   { id: 'won', title: '✅ Won', color: '#22c55e' },
-  { id: 'lost', title: '❌ Lost', color: '#ef4444' },
+  { id: 'lost', title: '❌ Lost', color: '#ef4444' }
 ];
 
 const STORAGE_KEY = 'crm_kanban_cards';
 const cards = ref<KanbanCard[]>(JSON.parse(localStorage.getItem(STORAGE_KEY) || '[]'));
-function persist() { localStorage.setItem(STORAGE_KEY, JSON.stringify(cards.value)); }
+function persist() {
+  localStorage.setItem(STORAGE_KEY, JSON.stringify(cards.value));
+}
 
 const showDialog = ref(false);
 const form = reactive({ title: '', description: '', columnId: 'new', priority: 'medium', assignee: '', value: 0 });
 let draggedCard: KanbanCard | null = null;
 
-function getColumnCards(colId: string) { return cards.value.filter(c => c.columnId === colId); }
+function getColumnCards(colId: string) {
+  return cards.value.filter(c => c.columnId === colId);
+}
 
-function addCard() { showDialog.value = true; }
+function addCard() {
+  showDialog.value = true;
+}
 function saveCard() {
   cards.value.push({ ...form, id: `k_${Date.now()}`, ref: `DEAL-${String(cards.value.length + 1).padStart(3, '0')}` });
   persist();
@@ -118,10 +133,24 @@ function saveCard() {
 }
 function moveCard(cardId: string, targetCol: string) {
   const card = cards.value.find(c => c.id === cardId);
-  if (card) { card.columnId = targetCol; persist(); }
+  if (card) {
+    card.columnId = targetCol;
+    persist();
+  }
 }
-function dragStart(card: KanbanCard) { draggedCard = card; }
-function dragEnd() { draggedCard = null; }
-function dropCard(colId: string) { if (draggedCard) { moveCard(draggedCard.id, colId); draggedCard = null; } }
-function priorityTag(p: string): '' | 'success' | 'warning' | 'danger' { return { low: 'success' as const, medium: 'warning' as const, high: 'danger' as const }[p] || ''; }
+function dragStart(card: KanbanCard) {
+  draggedCard = card;
+}
+function dragEnd() {
+  draggedCard = null;
+}
+function dropCard(colId: string) {
+  if (draggedCard) {
+    moveCard(draggedCard.id, colId);
+    draggedCard = null;
+  }
+}
+function priorityTag(p: string): '' | 'success' | 'warning' | 'danger' {
+  return { low: 'success' as const, medium: 'warning' as const, high: 'danger' as const }[p] || '';
+}
 </script>

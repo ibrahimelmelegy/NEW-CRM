@@ -81,15 +81,19 @@ definePageMeta({});
 const { forms, stats, createForm, removeForm, toggleActive } = useWebForms();
 const showDialog = ref(false);
 const newForm = reactive({
-  name: '', thankYouMessage: 'Thank you!', isActive: true,
+  name: '',
+  thankYouMessage: 'Thank you!',
+  isActive: true,
   fields: [
     { id: '1', label: 'Full Name', type: 'text' as const, required: true },
     { id: '2', label: 'Email', type: 'email' as const, required: true },
     { id: '3', label: 'Phone', type: 'phone' as const, required: false },
-    { id: '4', label: 'Message', type: 'textarea' as const, required: false },
-  ],
+    { id: '4', label: 'Message', type: 'textarea' as const, required: false }
+  ]
 });
-function addField() { newForm.fields.push({ id: `f_${Date.now()}`, label: '', type: 'text', required: false }); }
+function addField() {
+  newForm.fields.push({ id: `f_${Date.now()}`, label: '', type: 'text', required: false });
+}
 function saveForm() {
   createForm({ name: newForm.name, fields: newForm.fields as any, thankYouMessage: newForm.thankYouMessage, isActive: true });
   showDialog.value = false;

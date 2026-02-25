@@ -183,13 +183,62 @@ const currentPage = ref(1);
 
 const documentTypes = [
   { type: 'quote', label: 'Quote', icon: 'ph:quotes-bold', color: '#3b82f6', createPath: '/sales/quotes/create', detailBase: '/sales/quotes' },
-  { type: 'invoice', label: 'Invoice', icon: 'ph:receipt-bold', color: '#10b981', createPath: '/sales/invoices/create', detailBase: '/sales/invoices' },
-  { type: 'proforma_invoice', label: 'Proforma Invoice', icon: 'ph:file-text-bold', color: '#8b5cf6', createPath: '/sales/proforma-invoices/create', detailBase: '/sales/proforma-invoices' },
-  { type: 'purchase_order', label: 'Purchase Order', icon: 'ph:shopping-cart-bold', color: '#f59e0b', createPath: '/sales/purchase-orders/create', detailBase: '/sales/purchase-orders' },
-  { type: 'contract', label: 'Contract', icon: 'ph:handshake-bold', color: '#6366f1', createPath: '/sales/contracts/create', detailBase: '/sales/contracts' },
-  { type: 'sales_order', label: 'Sales Order', icon: 'ph:package-bold', color: '#0ea5e9', createPath: '/sales/sales-orders/create', detailBase: '/sales/sales-orders' },
-  { type: 'delivery_note', label: 'Delivery Note', icon: 'ph:truck-bold', color: '#84cc16', createPath: '/sales/delivery-notes/create', detailBase: '/sales/delivery-notes' },
-  { type: 'credit_note', label: 'Credit Note', icon: 'ph:note-bold', color: '#ef4444', createPath: '/sales/credit-notes/create', detailBase: '/sales/credit-notes' },
+  {
+    type: 'invoice',
+    label: 'Invoice',
+    icon: 'ph:receipt-bold',
+    color: '#10b981',
+    createPath: '/sales/invoices/create',
+    detailBase: '/sales/invoices'
+  },
+  {
+    type: 'proforma_invoice',
+    label: 'Proforma Invoice',
+    icon: 'ph:file-text-bold',
+    color: '#8b5cf6',
+    createPath: '/sales/proforma-invoices/create',
+    detailBase: '/sales/proforma-invoices'
+  },
+  {
+    type: 'purchase_order',
+    label: 'Purchase Order',
+    icon: 'ph:shopping-cart-bold',
+    color: '#f59e0b',
+    createPath: '/sales/purchase-orders/create',
+    detailBase: '/sales/purchase-orders'
+  },
+  {
+    type: 'contract',
+    label: 'Contract',
+    icon: 'ph:handshake-bold',
+    color: '#6366f1',
+    createPath: '/sales/contracts/create',
+    detailBase: '/sales/contracts'
+  },
+  {
+    type: 'sales_order',
+    label: 'Sales Order',
+    icon: 'ph:package-bold',
+    color: '#0ea5e9',
+    createPath: '/sales/sales-orders/create',
+    detailBase: '/sales/sales-orders'
+  },
+  {
+    type: 'delivery_note',
+    label: 'Delivery Note',
+    icon: 'ph:truck-bold',
+    color: '#84cc16',
+    createPath: '/sales/delivery-notes/create',
+    detailBase: '/sales/delivery-notes'
+  },
+  {
+    type: 'credit_note',
+    label: 'Credit Note',
+    icon: 'ph:note-bold',
+    color: '#ef4444',
+    createPath: '/sales/credit-notes/create',
+    detailBase: '/sales/credit-notes'
+  },
   { type: 'rfq', label: 'RFQ', icon: 'ph:clipboard-text-bold', color: '#14b8a6', createPath: '/sales/rfqs/create', detailBase: '/sales/rfqs' },
   { type: 'sla', label: 'SLA', icon: 'ph:shield-check-bold', color: '#a855f7', createPath: '/sales/slas/create', detailBase: '/sales/slas' }
 ];
@@ -237,8 +286,14 @@ function formatStatus(status: string) {
 
 function statusTagType(status: string): string {
   const map: Record<string, string> = {
-    DRAFT: 'info', PENDING_APPROVAL: 'warning', APPROVED: 'success',
-    REJECTED: 'danger', SENT: '', PAID: 'success', CANCELLED: 'info', ARCHIVED: 'info'
+    DRAFT: 'info',
+    PENDING_APPROVAL: 'warning',
+    APPROVED: 'success',
+    REJECTED: 'danger',
+    SENT: '',
+    PAID: 'success',
+    CANCELLED: 'info',
+    ARCHIVED: 'info'
   };
   return map[status] || '';
 }

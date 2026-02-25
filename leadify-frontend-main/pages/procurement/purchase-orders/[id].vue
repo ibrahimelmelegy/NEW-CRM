@@ -306,7 +306,7 @@ async function downloadPDFWithTemplate(template: any) {
 
 async function downloadPDFClassic() {
   const { jsPDF } = await import('jspdf');
-  const { default: autoTable } = await import('jspdf-autotable') as any;
+  const { default: autoTable } = (await import('jspdf-autotable')) as any;
 
   const doc = new jsPDF();
 

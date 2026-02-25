@@ -195,10 +195,23 @@ import { usePlanner } from '~/composables/usePlanner';
 definePageMeta({});
 
 const {
-  todayTasks, focusToday, habits, stats, today, loading,
-  init, loadTasks,
-  addTask, completeTask, removeTask, getTasksByDate,
-  startFocus, endFocus, toggleHabit, isHabitDone, addHabit,
+  todayTasks,
+  focusToday,
+  habits,
+  stats,
+  today,
+  loading,
+  init,
+  loadTasks,
+  addTask,
+  completeTask,
+  removeTask,
+  getTasksByDate,
+  startFocus,
+  endFocus,
+  toggleHabit,
+  isHabitDone,
+  addHabit
 } = usePlanner();
 
 const viewDate = ref(today.value);
@@ -227,13 +240,19 @@ const focusTimerDisplay = computed(() => {
 let timerInterval: ReturnType<typeof setInterval> | null = null;
 const timerTick = ref(0);
 onMounted(async () => {
-  timerInterval = setInterval(() => { timerTick.value++; }, 1000);
+  timerInterval = setInterval(() => {
+    timerTick.value++;
+  }, 1000);
   await init();
 });
-onUnmounted(() => { if (timerInterval) clearInterval(timerInterval); });
+onUnmounted(() => {
+  if (timerInterval) clearInterval(timerInterval);
+});
 
 // Fetch tasks when navigating dates
-watch(viewDate, (date) => { loadTasks(date); });
+watch(viewDate, date => {
+  loadTasks(date);
+});
 
 async function saveTask() {
   await addTask({ ...taskForm });
@@ -250,7 +269,10 @@ async function beginFocus() {
 }
 
 async function endCurrentFocus() {
-  if (activeFocus.value) { await endFocus(activeFocus.value.id); ElMessage.success('Focus session completed! 🏆'); }
+  if (activeFocus.value) {
+    await endFocus(activeFocus.value.id);
+    ElMessage.success('Focus session completed! 🏆');
+  }
 }
 
 async function quickFocus(task: any) {
@@ -269,6 +291,14 @@ function categoryColor(c: string): string {
   return { work: '#7c3aed', meeting: '#3b82f6', personal: '#22c55e', health: '#ef4444', learning: '#f59e0b', admin: '#6b7280' }[c] || '#6b7280';
 }
 
-function prevDay(d: string): string { const dt = new Date(d); dt.setDate(dt.getDate() - 1); return dt.toISOString().slice(0, 10); }
-function nextDay(d: string): string { const dt = new Date(d); dt.setDate(dt.getDate() + 1); return dt.toISOString().slice(0, 10); }
+function prevDay(d: string): string {
+  const dt = new Date(d);
+  dt.setDate(dt.getDate() - 1);
+  return dt.toISOString().slice(0, 10);
+}
+function nextDay(d: string): string {
+  const dt = new Date(d);
+  dt.setDate(dt.getDate() + 1);
+  return dt.toISOString().slice(0, 10);
+}
 </script>

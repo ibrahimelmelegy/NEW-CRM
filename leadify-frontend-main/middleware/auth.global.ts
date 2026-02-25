@@ -40,7 +40,7 @@ export default defineNuxtRouteMiddleware(async (to, _from) => {
   // CASE 2: Token exists — check if we need to verify with the server
   const now = Date.now();
   const hasCachedUser = !!user.value?.id;
-  const needsVerification = !hasCachedUser || (now - lastVerifiedAt > VERIFY_INTERVAL);
+  const needsVerification = !hasCachedUser || now - lastVerifiedAt > VERIFY_INTERVAL;
 
   if (needsVerification) {
     try {
@@ -76,9 +76,7 @@ export default defineNuxtRouteMiddleware(async (to, _from) => {
   }
 
   // CASE 4: Permission-based route protection
-  const requiredPermissions = Object.entries(protectedRoutes).find(
-    ([route]) => to.path.startsWith(route)
-  )?.[1];
+  const requiredPermissions = Object.entries(protectedRoutes).find(([route]) => to.path.startsWith(route))?.[1];
 
   if (requiredPermissions && requiredPermissions.length > 0) {
     const userRole: string = user.value?.role?.name || '';

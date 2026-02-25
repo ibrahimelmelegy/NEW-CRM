@@ -80,7 +80,15 @@
 import { ref, reactive } from 'vue';
 definePageMeta({});
 
-interface Company { id: string; name: string; industry: string; website: string; status: string; annualRevenue: number; contactCount: number; }
+interface Company {
+  id: string;
+  name: string;
+  industry: string;
+  website: string;
+  status: string;
+  annualRevenue: number;
+  contactCount: number;
+}
 const KEY = 'crm_companies';
 const companies = ref<Company[]>(JSON.parse(localStorage.getItem(KEY) || '[]'));
 const showDialog = ref(false);

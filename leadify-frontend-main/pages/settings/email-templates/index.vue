@@ -71,7 +71,14 @@
 <script setup lang="ts">
 import { ref, reactive } from 'vue';
 definePageMeta({});
-interface EmailTemplate { id: string; name: string; category: string; subject: string; body: string; usageCount: number; }
+interface EmailTemplate {
+  id: string;
+  name: string;
+  category: string;
+  subject: string;
+  body: string;
+  usageCount: number;
+}
 const KEY = 'crm_email_templates';
 const templates = ref<EmailTemplate[]>(JSON.parse(localStorage.getItem(KEY) || '[]'));
 const showDialog = ref(false);
@@ -84,7 +91,10 @@ function saveTemplate() {
   showDialog.value = false;
   ElMessage.success('Template created!');
 }
-function removeTemplate(id: string) { templates.value = templates.value.filter(t => t.id !== id); localStorage.setItem(KEY, JSON.stringify(templates.value)); }
+function removeTemplate(id: string) {
+  templates.value = templates.value.filter(t => t.id !== id);
+  localStorage.setItem(KEY, JSON.stringify(templates.value));
+}
 function copyTemplate(tmpl: EmailTemplate) {
   navigator.clipboard.writeText(`Subject: ${tmpl.subject}\n\n${tmpl.body}`);
   tmpl.usageCount++;

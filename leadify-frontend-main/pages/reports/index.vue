@@ -115,23 +115,43 @@ const { stats: archiveStats } = useDocumentArchive();
 const { recent: recentActivities, actionIcons, actionColors } = useActivityLog();
 
 const typeLabels: Record<string, string> = {
-  invoice: 'Invoice', proforma_invoice: 'Proforma Invoice', purchase_order: 'Purchase Order',
-  credit_note: 'Credit Note', quote: 'Quotation', rfq: 'RFQ', sales_order: 'Sales Order',
-  delivery_note: 'Delivery Note', contract: 'Contract', proposal: 'Proposal', sla: 'SLA',
+  invoice: 'Invoice',
+  proforma_invoice: 'Proforma Invoice',
+  purchase_order: 'Purchase Order',
+  credit_note: 'Credit Note',
+  quote: 'Quotation',
+  rfq: 'RFQ',
+  sales_order: 'Sales Order',
+  delivery_note: 'Delivery Note',
+  contract: 'Contract',
+  proposal: 'Proposal',
+  sla: 'SLA'
 };
 const typeColors: Record<string, string> = {
-  invoice: '#7c3aed', proforma_invoice: '#6d28d9', purchase_order: '#2563eb',
-  credit_note: '#dc2626', quote: '#059669', rfq: '#d97706', sales_order: '#0891b2',
-  delivery_note: '#ea580c', contract: '#4f46e5', proposal: '#7c3aed', sla: '#0d9488',
+  invoice: '#7c3aed',
+  proforma_invoice: '#6d28d9',
+  purchase_order: '#2563eb',
+  credit_note: '#dc2626',
+  quote: '#059669',
+  rfq: '#d97706',
+  sales_order: '#0891b2',
+  delivery_note: '#ea580c',
+  contract: '#4f46e5',
+  proposal: '#7c3aed',
+  sla: '#0d9488'
 };
 const statusColors: Record<string, string> = {
-  Draft: '#6b7280', Sent: '#3b82f6', Approved: '#22c55e', Rejected: '#ef4444', Archived: '#f59e0b',
+  Draft: '#6b7280',
+  Sent: '#3b82f6',
+  Approved: '#22c55e',
+  Rejected: '#ef4444',
+  Archived: '#f59e0b'
 };
 const quickLinks = [
   { icon: '📊', title: 'Document Center', desc: 'All documents', url: '/documents/dashboard' },
   { icon: '📁', title: 'Archive', desc: 'Archived items', url: '/archive' },
   { icon: '⏰', title: 'Reminders', desc: 'Follow-ups', url: '/reminders' },
-  { icon: '🔔', title: 'Notifications', desc: 'All alerts', url: '/notifications' },
+  { icon: '🔔', title: 'Notifications', desc: 'All alerts', url: '/notifications' }
 ];
 
 function timeAgo(iso: string): string {

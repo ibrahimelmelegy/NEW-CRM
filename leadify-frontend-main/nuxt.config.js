@@ -27,7 +27,8 @@ export default defineNuxtConfig({
         { name: 'viewport', content: 'width=device-width, initial-scale=1.0' },
         {
           name: 'description',
-          content: 'High Point Technology CRM - Professional enterprise customer relationship management solution for sales, leads, and opportunity tracking.'
+          content:
+            'High Point Technology CRM - Professional enterprise customer relationship management solution for sales, leads, and opportunity tracking.'
         },
         { name: 'theme-color', content: '#7849ff' }
       ]

@@ -91,7 +91,14 @@ const showDialog = ref(false);
 const form = reactive({ contactName: '', phone: '', direction: 'outbound' as const, outcome: 'answered' as const, durationMin: 5, notes: '' });
 
 function saveCall() {
-  logCall({ contactName: form.contactName, phone: form.phone, direction: form.direction as any, outcome: form.outcome as any, duration: form.durationMin * 60, notes: form.notes });
+  logCall({
+    contactName: form.contactName,
+    phone: form.phone,
+    direction: form.direction as any,
+    outcome: form.outcome as any,
+    duration: form.durationMin * 60,
+    notes: form.notes
+  });
   Object.assign(form, { contactName: '', phone: '', direction: 'outbound', outcome: 'answered', durationMin: 5, notes: '' });
   showDialog.value = false;
   ElMessage.success('Call logged!');
@@ -105,6 +112,9 @@ function formatDuration(seconds: number): string {
 }
 
 function outcomeType(o: string): '' | 'success' | 'warning' | 'danger' | 'info' {
-  return { answered: 'success' as const, no_answer: 'danger' as const, voicemail: 'warning' as const, busy: 'info' as const, callback: '' as const }[o] || '';
+  return (
+    { answered: 'success' as const, no_answer: 'danger' as const, voicemail: 'warning' as const, busy: 'info' as const, callback: '' as const }[o] ||
+    ''
+  );
 }
 </script>

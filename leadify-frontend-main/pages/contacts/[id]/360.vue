@@ -89,31 +89,38 @@ const contact = computed(() => ({
   name: `Contact #${contactId.value}`,
   company: 'Example Corp',
   email: 'contact@example.com',
-  phone: '+966 50 000 0000',
+  phone: '+966 50 000 0000'
 }));
 
 const contactInitials = computed(() => {
   const name = contact.value.name || 'U';
-  return name.split(' ').map(w => w[0]).join('').toUpperCase().slice(0, 2);
+  return name
+    .split(' ')
+    .map(w => w[0])
+    .join('')
+    .toUpperCase()
+    .slice(0, 2);
 });
 
-const customerDocs = computed(() =>
-  documents.value.filter(d => d.clientName?.includes(contactId.value) || d.id === contactId.value)
-);
+const customerDocs = computed(() => documents.value.filter(d => d.clientName?.includes(contactId.value) || d.id === contactId.value));
 
-const lifetimeValue = computed(() =>
-  customerDocs.value.reduce((sum, d) => sum + (d.total || 0), 0)
-);
+const lifetimeValue = computed(() => customerDocs.value.reduce((sum, d) => sum + (d.total || 0), 0));
 
 const customerActivities = computed(() => getByContact(contactId.value));
 
-const customerReminders = computed(() =>
-  upcoming.value.filter(r => r.relatedTo?.id === contactId.value)
-);
+const customerReminders = computed(() => upcoming.value.filter(r => r.relatedTo?.id === contactId.value));
 
 const typeColors: Record<string, string> = {
-  invoice: '#7c3aed', proforma_invoice: '#6d28d9', purchase_order: '#2563eb',
-  credit_note: '#dc2626', quote: '#059669', rfq: '#d97706', sales_order: '#0891b2',
-  delivery_note: '#ea580c', contract: '#4f46e5', proposal: '#7c3aed', sla: '#0d9488',
+  invoice: '#7c3aed',
+  proforma_invoice: '#6d28d9',
+  purchase_order: '#2563eb',
+  credit_note: '#dc2626',
+  quote: '#059669',
+  rfq: '#d97706',
+  sales_order: '#0891b2',
+  delivery_note: '#ea580c',
+  contract: '#4f46e5',
+  proposal: '#7c3aed',
+  sla: '#0d9488'
 };
 </script>

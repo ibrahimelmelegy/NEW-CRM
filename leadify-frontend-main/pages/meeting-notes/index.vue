@@ -57,18 +57,34 @@
 <script setup lang="ts">
 import { ref, reactive } from 'vue';
 definePageMeta({});
-interface MeetingNote { id: string; title: string; meetingType: string; date: string; attendees: string; minutes: string; actionItems: string[]; }
+interface MeetingNote {
+  id: string;
+  title: string;
+  meetingType: string;
+  date: string;
+  attendees: string;
+  minutes: string;
+  actionItems: string[];
+}
 const KEY = 'crm_meeting_notes';
 const notes = ref<MeetingNote[]>(JSON.parse(localStorage.getItem(KEY) || '[]'));
 const showDialog = ref(false);
 const form = reactive({ title: '', meetingType: 'Client', date: '', attendees: '', minutes: '', actionItemsText: '' });
 
 function saveNote() {
-  notes.value.unshift({ ...form, id: `mn_${Date.now()}`, date: form.date ? new Date(form.date).toISOString() : new Date().toISOString(), actionItems: form.actionItemsText.split('\n').filter(Boolean) });
+  notes.value.unshift({
+    ...form,
+    id: `mn_${Date.now()}`,
+    date: form.date ? new Date(form.date).toISOString() : new Date().toISOString(),
+    actionItems: form.actionItemsText.split('\n').filter(Boolean)
+  });
   localStorage.setItem(KEY, JSON.stringify(notes.value));
   Object.assign(form, { title: '', meetingType: 'Client', date: '', attendees: '', minutes: '', actionItemsText: '' });
   showDialog.value = false;
   ElMessage.success('Meeting note saved!');
 }
-function removeNote(id: string) { notes.value = notes.value.filter(n => n.id !== id); localStorage.setItem(KEY, JSON.stringify(notes.value)); }
+function removeNote(id: string) {
+  notes.value = notes.value.filter(n => n.id !== id);
+  localStorage.setItem(KEY, JSON.stringify(notes.value));
+}
 </script>

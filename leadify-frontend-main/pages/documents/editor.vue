@@ -505,7 +505,7 @@ const form = ref({
 
 // --- Computed ---
 const currentTypeConfig = computed<DocTypeConfig>(() => {
-  return documentTypes.find(dt => dt.type === selectedType.value) || documentTypes[0] as any;
+  return documentTypes.find(dt => dt.type === selectedType.value) || (documentTypes[0] as any);
 });
 
 const computedTotals = computed(() => {
@@ -826,7 +826,7 @@ async function handleSaveAndSend() {
       // For other types, save then notify (not recursive - inline the save logic)
       saving.value = false; // handleSaveDraft sets its own saving state
       await handleSaveDraft();
-      return; // handleSaveDraft manages saving state
+      // handleSaveDraft manages saving state
     }
   } finally {
     saving.value = false;

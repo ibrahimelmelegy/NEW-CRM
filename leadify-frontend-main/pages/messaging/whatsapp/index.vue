@@ -56,7 +56,15 @@
 import { ref, reactive, computed } from 'vue';
 definePageMeta({});
 
-interface WaMessage { id: string; contactName: string; phone: string; message: string; hasAttachment: boolean; docRef?: string; sentAt: string; }
+interface WaMessage {
+  id: string;
+  contactName: string;
+  phone: string;
+  message: string;
+  hasAttachment: boolean;
+  docRef?: string;
+  sentAt: string;
+}
 const STORAGE_KEY = 'crm_whatsapp_messages';
 const messages = ref<WaMessage[]>(JSON.parse(localStorage.getItem(STORAGE_KEY) || '[]'));
 
@@ -70,9 +78,13 @@ const todayCount = computed(() => {
 
 function sendMessage() {
   const msg: WaMessage = {
-    id: `wa_${Date.now()}`, contactName: form.contactName, phone: form.phone,
-    message: form.message, hasAttachment: !!form.docRef, docRef: form.docRef,
-    sentAt: new Date().toISOString(),
+    id: `wa_${Date.now()}`,
+    contactName: form.contactName,
+    phone: form.phone,
+    message: form.message,
+    hasAttachment: !!form.docRef,
+    docRef: form.docRef,
+    sentAt: new Date().toISOString()
   };
   messages.value.unshift(msg);
   localStorage.setItem(STORAGE_KEY, JSON.stringify(messages.value));

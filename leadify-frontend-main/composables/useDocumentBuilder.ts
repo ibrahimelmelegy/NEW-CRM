@@ -104,14 +104,17 @@ export function useDocumentBuilder() {
     document.body.appendChild(container);
 
     try {
-      await html2pdf().set({
-        margin: [10, 15, 10, 15],
-        filename: filename || 'document.pdf',
-        image: { type: 'jpeg', quality: 0.98 },
-        html2canvas: { scale: 2, useCORS: true, logging: false },
-        jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' },
-        pagebreak: { mode: ['css', 'legacy'], before: '.proposal-print-page' }
-      } as any).from(container).save();
+      await html2pdf()
+        .set({
+          margin: [10, 15, 10, 15],
+          filename: filename || 'document.pdf',
+          image: { type: 'jpeg', quality: 0.98 },
+          html2canvas: { scale: 2, useCORS: true, logging: false },
+          jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' },
+          pagebreak: { mode: ['css', 'legacy'], before: '.proposal-print-page' }
+        } as any)
+        .from(container)
+        .save();
     } finally {
       document.body.removeChild(container);
     }
