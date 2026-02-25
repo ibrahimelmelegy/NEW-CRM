@@ -7,47 +7,69 @@ div
       ExportButton(:data="table.data" :columns="exportColumns" :filename="'assets-export'" :title="$t('navigation.assets')")
       NuxtLink(to="/operations/assets/add-asset")
         el-button(   size='large' :loading="loading" v-if="hasPermission('CREATE_ASSETS')" native-type="submit" type="primary" :icon="Plus" class="w-full !my-4 !rounded-2xl")  {{ $t('operations.assets.new') }}
-      //- el-dropdown(trigger="click")
-      //-     span.el-dropdown-link
-      //-         button.rounded-btn(class="!px-4"): Icon(  name="IconToggle" size="24")
-      //-     template(#dropdown)
-      //-         el-dropdown-menu
-      //-           el-dropdown-item
-      //-             NuxtLink.flex.items-center(:to="`/leads/1`")
-      //-               Icon.text-md.mr-2(size="20" name="IconImport" )
-      //-               p.text-sm Import
-      //-           NuxtLink(:to="`/leads/1`")
-      //-             el-dropdown-item
-      //-               NuxtLink.flex.items-center(:to="`/leads/1`")
-      //-                 Icon.text-md.mr-2(size="20" name="IconExport" )
-      //-                 p.text-sm Export
-      //-           el-dropdown-item
-      //-               NuxtLink.flex.items-center(:to="`/leads/1`")
-      //-                 Icon.text-md.mr-2(size="20" name="IconArchived" )
-      //-                 p.text-sm Archived
-  AppTable(v-slot="{data}" :filterOptions="filterOptions" :columns="table.columns" position="asset" :pageInfo="response.pagination" :data="table.data" :sortOptions="table.sort" @handleRowClick="handleRowClick" :searchPlaceholder="$t('navigation.assets')" )
-    .flex.items-center.py-2(@click.stop)
-        //- NuxtLink.toggle-icon(:to="`/leads/1`")
-        //-     Icon.text-md(name="IconEye" )
 
-        el-dropdown(class="outline-0" trigger="click")
-            span(class="el-dropdown-link")
-              .toggle-icon.text-md
-                  Icon(name="IconToggle"  size="22")
-            template(#dropdown='')
-                el-dropdown-menu
-                    el-dropdown-item
-                      NuxtLink.flex.items-center(:to="`/operations/assets/${data?.id}`")
-                        Icon.text-md.mr-2(name="IconEye" )
-                        p.text-sm {{ $t('common.view') }}
-                    el-dropdown-item(v-if="hasPermission('EDIT_ASSETS')")
-                      NuxtLink.flex.items-center(:to="`/operations/assets/edit/${data?.id}`")
-                        Icon.text-md.mr-2(name="IconEdit" )
-                        p.text-sm {{ $t('common.edit') }}
-                    //- el-dropdown-item(@click="[deleteLeadPopup=true, userActionId = data?.id]" )
-                    //-     .flex.items-center
-                    //-       Icon.text-md.mr-2(name="IconDelete" )
-                    //-       p.text-sm Delete
+  //- Desktop Table
+  .assets-desktop-view
+    AppTable(v-slot="{data}" :filterOptions="filterOptions" :columns="table.columns" position="asset" :pageInfo="response.pagination" :data="table.data" :sortOptions="table.sort" @handleRowClick="handleRowClick" :searchPlaceholder="$t('navigation.assets')" )
+      .flex.items-center.py-2(@click.stop)
+          el-dropdown(class="outline-0" trigger="click")
+              span(class="el-dropdown-link")
+                .toggle-icon.text-md
+                    Icon(name="IconToggle"  size="22")
+              template(#dropdown='')
+                  el-dropdown-menu
+                      el-dropdown-item
+                        NuxtLink.flex.items-center(:to="`/operations/assets/${data?.id}`")
+                          Icon.text-md.mr-2(name="IconEye" )
+                          p.text-sm {{ $t('common.view') }}
+                      el-dropdown-item(v-if="hasPermission('EDIT_ASSETS')")
+                        NuxtLink.flex.items-center(:to="`/operations/assets/edit/${data?.id}`")
+                          Icon.text-md.mr-2(name="IconEdit" )
+                          p.text-sm {{ $t('common.edit') }}
+
+  //- Mobile Card View
+  .assets-mobile-view
+    PullToRefresh(:loading="mobileRefreshing" @refresh="handleMobileRefresh")
+      .mb-3
+        el-input(v-model="mobileSearch" size="large" :placeholder="`${$t('common.search')} ${$t('navigation.assets')}`" clearable class="!rounded-xl")
+          template(#prefix)
+            Icon(name="ph:magnifying-glass" size="18" style="color: var(--text-muted)")
+
+      .space-y-3(v-if="mobileFilteredData.length")
+        SwipeCard(
+          v-for="asset in mobileFilteredData"
+          :key="asset.id"
+          :leftActions="getSwipeLeftActions(asset)"
+          :rightActions="[]"
+          @action="(name) => handleSwipeAction(name, asset)"
+        )
+          .entity-card.p-4(@click="handleRowClick(asset)")
+            .flex.items-start.justify-between.mb-3
+              .flex.items-center.gap-3.min-w-0.flex-1
+                .w-10.h-10.rounded-xl.flex.items-center.justify-center.shrink-0.text-sm.font-bold(
+                  :style="{ background: '#8b5cf620', color: '#8b5cf6' }"
+                ) {{ (asset.name || '?').charAt(0).toUpperCase() }}
+                .min-w-0.flex-1
+                  p.text-sm.font-bold.truncate(style="color: var(--text-primary)") {{ asset.name || '--' }}
+
+            .grid.grid-cols-2.gap-2
+              .flex.items-center.gap-2(v-if="asset.rentPrice")
+                Icon(name="ph:hand-coins" size="14" style="color: var(--text-muted)")
+                span.text-xs.truncate(style="color: var(--text-secondary)") Rent: {{ asset.rentPrice }}
+              .flex.items-center.gap-2(v-if="asset.buyPrice")
+                Icon(name="ph:tag" size="14" style="color: var(--text-muted)")
+                span.text-xs.truncate(style="color: var(--text-secondary)") Buy: {{ asset.buyPrice }}
+
+      .text-center.py-12(v-if="!mobileFilteredData.length")
+        Icon(name="ph:package" size="48" style="color: var(--text-muted)")
+        p.text-sm.mt-2(style="color: var(--text-muted)") {{ $t('common.noData') }}
+
+      .text-center.mt-4.pb-20(v-if="mobileFilteredData.length")
+        span.text-xs(style="color: var(--text-muted)") {{ mobileFilteredData.length }} {{ $t('navigation.assets').toLowerCase() }}
+
+    .mobile-fab(v-if="hasPermission('CREATE_ASSETS')" @click="navigateTo('/operations/assets/add-asset')")
+      Icon(name="ph:plus-bold" size="24")
+
   ActionModel(v-model="deleteLeadPopup" :loading="loadingAction" :btn-text="$t('common.moveToArchive')" :description-one="$t('common.archiveConfirmation')" icon="/images/delete-image.png" :description-two="$t('common.archiveDescription')" )
 </template>
 
@@ -57,6 +79,7 @@ const router = useRouter();
 const { hasPermission } = await usePermissions();
 const loadingAction = ref(false);
 const deleteLeadPopup = ref(false);
+const loading = ref(false);
 
 // Export columns
 const exportColumns = [
@@ -119,4 +142,44 @@ const filterOptions = [
     type: 'input'
   }
 ];
+
+// Mobile
+const { vibrate } = useMobile();
+const mobileSearch = ref('');
+const mobileRefreshing = ref(false);
+
+const mobileFilteredData = computed(() => {
+  let data = table.data || [];
+  if (!mobileSearch.value) return data;
+  const q = mobileSearch.value.toLowerCase();
+  return data.filter((a: any) => {
+    const name = (a.name || '').toLowerCase();
+    return name.includes(q);
+  });
+});
+
+async function handleMobileRefresh() {
+  mobileRefreshing.value = true;
+  try {
+    const res = await useTableFilter('asset');
+    table.data = res.formattedData;
+    vibrate([10, 30, 10]);
+  } finally { mobileRefreshing.value = false; }
+}
+
+function getSwipeLeftActions(_asset: any) {
+  const actions = [{ name: 'view', label: useI18n().t('common.view'), icon: 'ph:eye-bold', color: '#8b5cf6' }];
+  if (hasPermission('EDIT_ASSETS')) actions.push({ name: 'edit', label: useI18n().t('common.edit'), icon: 'ph:pencil-simple-bold', color: '#F59E0B' });
+  return actions;
+}
+
+function handleSwipeAction(name: string, asset: any) {
+  vibrate();
+  if (name === 'view') navigateTo(`/operations/assets/${asset.id}`);
+  if (name === 'edit') navigateTo(`/operations/assets/edit/${asset.id}`);
+}
 </script>
+
+<style lang="scss" scoped>
+@include mobile-list-page('assets', #8b5cf6);
+</style>

@@ -13,20 +13,88 @@ div
         Icon(name="ph:sign-out-bold" size="16" class="mr-1")
         span {{ $t('hr.attendance.checkOut') }}
 
-  StatCards(:stats="summaryStats")
+  .att-kpi-grid
+    StatCards(:stats="summaryStats")
 
-  AppTable(
-    v-slot="{data}"
-    :externalLoading="loading"
-    :filterOptions="filterOptions"
-    :columns="table.columns"
-    position="hr/attendance"
-    :pageInfo="pagination"
-    :data="table.data"
-    :searchPlaceholder="$t('hr.attendance.title')"
-    :key="table.data"
-    :withoutAction="true"
-  )
+  //- Desktop Table View
+  .att-desktop-view
+    AppTable(
+      v-slot="{data}"
+      :externalLoading="loading"
+      :filterOptions="filterOptions"
+      :columns="table.columns"
+      position="hr/attendance"
+      :pageInfo="pagination"
+      :data="table.data"
+      :searchPlaceholder="$t('hr.attendance.title')"
+      :key="table.data"
+      :withoutAction="true"
+    )
+
+  //- Mobile Card View
+  .att-mobile-view
+    PullToRefresh(:loading="mobileRefreshing" @refresh="handleMobileRefresh")
+      //- Mobile Search
+      .mb-3
+        el-input(
+          v-model="mobileSearch"
+          size="large"
+          :placeholder="`${$t('common.search')} ${$t('hr.attendance.title')}`"
+          clearable
+          class="!rounded-xl"
+        )
+          template(#prefix)
+            Icon(name="ph:magnifying-glass" size="18" style="color: var(--text-muted)")
+
+      //- Status Filter Pills
+      .status-pills.flex.gap-2.mb-4.overflow-x-auto.pb-2.-mx-1.px-1
+        button.status-pill(
+          v-for="filter in statusFilters"
+          :key="filter.value"
+          :class="{ 'status-pill--active': mobileStatusFilter === filter.value }"
+          :style="mobileStatusFilter === filter.value ? { background: filter.color, borderColor: filter.color } : {}"
+          @click="setMobileStatusFilter(filter.value)"
+        )
+          span {{ filter.label }}
+          span.status-pill__count(v-if="filter.count > 0") {{ filter.count }}
+
+      //- Attendance Cards
+      .space-y-3(v-if="mobileFilteredData.length")
+        .entity-card.p-4(v-for="record in mobileFilteredData" :key="record.id")
+          .flex.items-start.justify-between.mb-3
+            .flex.items-center.gap-3.min-w-0.flex-1
+              .w-10.h-10.rounded-xl.flex.items-center.justify-center.shrink-0.text-sm.font-bold(
+                :style="{ background: getStatusColor(record.status) + '20', color: getStatusColor(record.status) }"
+              ) {{ getInitial(record) }}
+              .min-w-0.flex-1
+                p.text-sm.font-bold.truncate(style="color: var(--text-primary)") {{ record.employeeDetails?.title || '—' }}
+                p.text-xs.truncate(style="color: var(--text-muted)") {{ record.date || '' }}
+            el-tag.shrink-0(
+              :type="getTagType(record.status)"
+              size="small"
+              effect="dark"
+              round
+            ) {{ record.status }}
+
+          .grid.grid-cols-2.gap-2
+            .flex.items-center.gap-2(v-if="record.checkInTime && record.checkInTime !== '—'")
+              Icon(name="ph:sign-in" size="14" style="color: var(--text-muted)")
+              span.text-xs(style="color: var(--text-secondary)") {{ record.checkInTime }}
+            .flex.items-center.gap-2(v-if="record.checkOutTime && record.checkOutTime !== '—'")
+              Icon(name="ph:sign-out" size="14" style="color: var(--text-muted)")
+              span.text-xs(style="color: var(--text-secondary)") {{ record.checkOutTime }}
+            .flex.items-center.gap-2.col-span-2(v-if="record.notes")
+              Icon(name="ph:note" size="14" style="color: var(--text-muted)")
+              span.text-xs.truncate(style="color: var(--text-secondary)") {{ record.notes }}
+
+      //- Empty state
+      .text-center.py-12(v-if="!mobileFilteredData.length")
+        Icon(name="ph:calendar-check" size="48" style="color: var(--text-muted)")
+        p.text-sm.mt-2(style="color: var(--text-muted)") {{ $t('common.noData') }}
+
+      //- Mobile result count
+      .text-center.mt-4.pb-20(v-if="mobileFilteredData.length")
+        span.text-xs(style="color: var(--text-muted)") {{ mobileFilteredData.length }} {{ $t('hr.attendance.title').toLowerCase() }}
 
 </template>
 
@@ -145,4 +213,81 @@ async function refreshData() {
   pagination.value = result.value.pagination;
   loading.value = false;
 }
+
+// --- Mobile card view ---
+const { vibrate } = useMobile();
+const mobileSearch = ref('');
+const mobileStatusFilter = ref('ALL');
+const mobileRefreshing = ref(false);
+
+const statusFilters = computed(() => {
+  const data = table.value.data || [];
+  return [
+    { value: 'ALL', label: t('hr.attendance.allStatuses') || 'All', color: '#22c55e', count: data.length },
+    { value: 'PRESENT', label: t('hr.attendance.present'), color: '#22c55e', count: data.filter((r: any) => r.status === 'PRESENT').length },
+    { value: 'LATE', label: t('hr.attendance.late'), color: '#f59e0b', count: data.filter((r: any) => r.status === 'LATE').length },
+    { value: 'ABSENT', label: t('hr.attendance.absent'), color: '#ef4444', count: data.filter((r: any) => r.status === 'ABSENT').length }
+  ];
+});
+
+function setMobileStatusFilter(value: string) {
+  mobileStatusFilter.value = value;
+  vibrate();
+}
+
+const mobileFilteredData = computed(() => {
+  let data = table.value.data || [];
+  if (mobileStatusFilter.value !== 'ALL') {
+    data = data.filter((r: any) => r.status === mobileStatusFilter.value);
+  }
+  if (!mobileSearch.value) return data;
+  const q = mobileSearch.value.toLowerCase();
+  return data.filter((r: any) => {
+    const name = (r.employeeDetails?.title || '').toLowerCase();
+    const date = (r.date || '').toLowerCase();
+    const notes = (r.notes || '').toLowerCase();
+    return name.includes(q) || date.includes(q) || notes.includes(q);
+  });
+});
+
+async function handleMobileRefresh() {
+  mobileRefreshing.value = true;
+  try {
+    await refreshData();
+    vibrate([10, 30, 10]);
+  } finally {
+    mobileRefreshing.value = false;
+  }
+}
+
+function getInitial(record: any): string {
+  const name = record.employeeDetails?.title || '?';
+  return name.charAt(0).toUpperCase();
+}
+
+function getStatusColor(status: string): string {
+  const map: Record<string, string> = {
+    PRESENT: '#22c55e',
+    LATE: '#f59e0b',
+    ABSENT: '#ef4444',
+    HALF_DAY: '#3b82f6',
+    ON_LEAVE: '#94a3b8'
+  };
+  return map[status] || '#94a3b8';
+}
+
+function getTagType(status: string): string {
+  const map: Record<string, string> = {
+    PRESENT: 'success',
+    LATE: 'warning',
+    ABSENT: 'danger',
+    HALF_DAY: '',
+    ON_LEAVE: 'info'
+  };
+  return map[status] || 'info';
+}
 </script>
+
+<style lang="scss" scoped>
+@include mobile-list-page('att', #22c55e);
+</style>

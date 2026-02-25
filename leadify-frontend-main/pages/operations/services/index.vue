@@ -7,47 +7,66 @@ div
       ExportButton(:data="table.data" :columns="exportColumns" :filename="'services-export'" :title="$t('navigation.services')")
       NuxtLink(to="/operations/services/add-service")
         el-button(   size='large' :loading="loading" v-if="hasPermission('CREATE_SERVICES')" native-type="submit" type="primary" :icon="Plus" class="w-full !my-4 !rounded-2xl")  {{ $t('operations.services.new') }}
-      //- el-dropdown(trigger="click")
-      //-     span.el-dropdown-link
-      //-         button.rounded-btn(class="!px-4"): Icon(  name="IconToggle" size="24")
-      //-     template(#dropdown)
-      //-         el-dropdown-menu
-      //-           el-dropdown-item
-      //-             NuxtLink.flex.items-center(:to="`/leads/1`")
-      //-               Icon.text-md.mr-2(size="20" name="IconImport" )
-      //-               p.text-sm Import
-      //-           NuxtLink(:to="`/leads/1`")
-      //-             el-dropdown-item
-      //-               NuxtLink.flex.items-center(:to="`/leads/1`")
-      //-                 Icon.text-md.mr-2(size="20" name="IconExport" )
-      //-                 p.text-sm Export
-      //-           el-dropdown-item
-      //-               NuxtLink.flex.items-center(:to="`/leads/1`")
-      //-                 Icon.text-md.mr-2(size="20" name="IconArchived" )
-      //-                 p.text-sm Archived
-  AppTable(v-slot="{data}" without-filters :columns="table.columns" position="service" :pageInfo="response.pagination" :data="table.data" :sortOptions="table.sort" @handleRowClick="handleRowClick" :searchPlaceholder="$t('navigation.services')" )
-    .flex.items-center.py-2(@click.stop)
-        //- NuxtLink.toggle-icon(:to="`/leads/1`")
-        //-     Icon.text-md(name="IconEye" )
 
-        el-dropdown(class="outline-0" trigger="click")
-            span(class="el-dropdown-link")
-              .toggle-icon.text-md
-                  Icon(name="IconToggle"  size="22")
-            template(#dropdown='')
-                el-dropdown-menu
-                    el-dropdown-item
-                      NuxtLink.flex.items-center(:to="`/operations/services/${data?.id}`")
-                        Icon.text-md.mr-2(name="IconEye" )
-                        p.text-sm {{ $t('common.view') }}
-                    el-dropdown-item(v-if="hasPermission('EDIT_SERVICES')")
-                      NuxtLink.flex.items-center(:to="`/operations/services/edit/${data?.id}`")
-                        Icon.text-md.mr-2(name="IconEdit" )
-                        p.text-sm {{ $t('common.edit') }}
-                    //- el-dropdown-item(@click="[deleteLeadPopup=true, userActionId = data?.id]" )
-                    //-     .flex.items-center
-                    //-       Icon.text-md.mr-2(name="IconDelete" )
-                    //-       p.text-sm Delete
+  //- Desktop Table
+  .services-desktop-view
+    AppTable(v-slot="{data}" without-filters :columns="table.columns" position="service" :pageInfo="response.pagination" :data="table.data" :sortOptions="table.sort" @handleRowClick="handleRowClick" :searchPlaceholder="$t('navigation.services')" )
+      .flex.items-center.py-2(@click.stop)
+          el-dropdown(class="outline-0" trigger="click")
+              span(class="el-dropdown-link")
+                .toggle-icon.text-md
+                    Icon(name="IconToggle"  size="22")
+              template(#dropdown='')
+                  el-dropdown-menu
+                      el-dropdown-item
+                        NuxtLink.flex.items-center(:to="`/operations/services/${data?.id}`")
+                          Icon.text-md.mr-2(name="IconEye" )
+                          p.text-sm {{ $t('common.view') }}
+                      el-dropdown-item(v-if="hasPermission('EDIT_SERVICES')")
+                        NuxtLink.flex.items-center(:to="`/operations/services/edit/${data?.id}`")
+                          Icon.text-md.mr-2(name="IconEdit" )
+                          p.text-sm {{ $t('common.edit') }}
+
+  //- Mobile Card View
+  .services-mobile-view
+    PullToRefresh(:loading="mobileRefreshing" @refresh="handleMobileRefresh")
+      .mb-3
+        el-input(v-model="mobileSearch" size="large" :placeholder="`${$t('common.search')} ${$t('navigation.services')}`" clearable class="!rounded-xl")
+          template(#prefix)
+            Icon(name="ph:magnifying-glass" size="18" style="color: var(--text-muted)")
+
+      .space-y-3(v-if="mobileFilteredData.length")
+        SwipeCard(
+          v-for="svc in mobileFilteredData"
+          :key="svc.id"
+          :leftActions="getSwipeLeftActions(svc)"
+          :rightActions="[]"
+          @action="(name) => handleSwipeAction(name, svc)"
+        )
+          .entity-card.p-4(@click="handleRowClick(svc)")
+            .flex.items-start.justify-between.mb-3
+              .flex.items-center.gap-3.min-w-0.flex-1
+                .w-10.h-10.rounded-xl.flex.items-center.justify-center.shrink-0.text-sm.font-bold(
+                  :style="{ background: '#f59e0b20', color: '#f59e0b' }"
+                ) {{ (svc.type || '?').charAt(0).toUpperCase() }}
+                .min-w-0.flex-1
+                  p.text-sm.font-bold.truncate(style="color: var(--text-primary)") {{ svc.type || '--' }}
+
+            .grid.grid-cols-2.gap-2
+              .flex.items-center.gap-2(v-if="svc.price")
+                Icon(name="ph:money" size="14" style="color: var(--text-muted)")
+                span.text-xs.font-semibold.truncate(style="color: var(--text-secondary)") {{ svc.price }}
+
+      .text-center.py-12(v-if="!mobileFilteredData.length")
+        Icon(name="ph:wrench" size="48" style="color: var(--text-muted)")
+        p.text-sm.mt-2(style="color: var(--text-muted)") {{ $t('common.noData') }}
+
+      .text-center.mt-4.pb-20(v-if="mobileFilteredData.length")
+        span.text-xs(style="color: var(--text-muted)") {{ mobileFilteredData.length }} {{ $t('navigation.services').toLowerCase() }}
+
+    .mobile-fab(v-if="hasPermission('CREATE_SERVICES')" @click="navigateTo('/operations/services/add-service')")
+      Icon(name="ph:plus-bold" size="24")
+
   ActionModel(v-model="deleteLeadPopup" :loading="loadingAction" :btn-text="$t('common.moveToArchive')" :description-one="$t('common.archiveConfirmation')" icon="/images/delete-image.png" :description-two="$t('common.archiveDescription')" )
 </template>
 
@@ -57,6 +76,7 @@ const router = useRouter();
 const { hasPermission } = await usePermissions();
 const loadingAction = ref(false);
 const deleteLeadPopup = ref(false);
+const loading = ref(false);
 
 // Export columns
 const exportColumns = [
@@ -97,4 +117,44 @@ table.data = response.formattedData;
 function handleRowClick(val: any) {
   router.push(`/operations/services/${val.id}`);
 }
+
+// Mobile
+const { vibrate } = useMobile();
+const mobileSearch = ref('');
+const mobileRefreshing = ref(false);
+
+const mobileFilteredData = computed(() => {
+  let data = table.data || [];
+  if (!mobileSearch.value) return data;
+  const q = mobileSearch.value.toLowerCase();
+  return data.filter((s: any) => {
+    const type = (s.type || '').toLowerCase();
+    return type.includes(q);
+  });
+});
+
+async function handleMobileRefresh() {
+  mobileRefreshing.value = true;
+  try {
+    const res = await useTableFilter('service');
+    table.data = res.formattedData;
+    vibrate([10, 30, 10]);
+  } finally { mobileRefreshing.value = false; }
+}
+
+function getSwipeLeftActions(_svc: any) {
+  const actions = [{ name: 'view', label: useI18n().t('common.view'), icon: 'ph:eye-bold', color: '#f59e0b' }];
+  if (hasPermission('EDIT_SERVICES')) actions.push({ name: 'edit', label: useI18n().t('common.edit'), icon: 'ph:pencil-simple-bold', color: '#F59E0B' });
+  return actions;
+}
+
+function handleSwipeAction(name: string, svc: any) {
+  vibrate();
+  if (name === 'view') navigateTo(`/operations/services/${svc.id}`);
+  if (name === 'edit') navigateTo(`/operations/services/edit/${svc.id}`);
+}
 </script>
+
+<style lang="scss" scoped>
+@include mobile-list-page('services', #f59e0b);
+</style>

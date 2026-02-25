@@ -7,47 +7,76 @@ div
       ExportButton(:data="table.data" :columns="exportColumns" :filename="'vehicles-export'" :title="$t('navigation.vehicle')")
       NuxtLink(to="/operations/vehicle/add-vehicle")
         el-button(   size='large' :loading="loading" v-if="hasPermission('CREATE_VEHICLES')" native-type="submit" type="primary" :icon="Plus" class="w-full !my-4 !rounded-2xl")  {{ $t('operations.vehicles.new') }}
-      //- el-dropdown(trigger="click")
-      //-     span.el-dropdown-link
-      //-         button.rounded-btn(class="!px-4"): Icon(  name="IconToggle" size="24")
-      //-     template(#dropdown)
-      //-         el-dropdown-menu
-      //-           el-dropdown-item
-      //-             NuxtLink.flex.items-center(:to="`/leads/1`")
-      //-               Icon.text-md.mr-2(size="20" name="IconImport" )
-      //-               p.text-sm Import
-      //-           NuxtLink(:to="`/leads/1`")
-      //-             el-dropdown-item
-      //-               NuxtLink.flex.items-center(:to="`/leads/1`")
-      //-                 Icon.text-md.mr-2(size="20" name="IconExport" )
-      //-                 p.text-sm Export
-      //-           el-dropdown-item
-      //-               NuxtLink.flex.items-center(:to="`/leads/1`")
-      //-                 Icon.text-md.mr-2(size="20" name="IconArchived" )
-      //-                 p.text-sm Archived
-  AppTable(v-slot="{data}" :columns="table.columns" :filterOptions="filterOptions" position="vehicle" :pageInfo="response.pagination" :data="table.data" :sortOptions="table.sort" @handleRowClick="handleRowClick" :searchPlaceholder="$t('navigation.vehicle')" )
-    .flex.items-center.py-2(@click.stop)
-        //- NuxtLink.toggle-icon(:to="`/leads/1`")
-        //-     Icon.text-md(name="IconEye" )
 
-        el-dropdown(class="outline-0" trigger="click")
-            span(class="el-dropdown-link")
-              .toggle-icon.text-md
-                  Icon(name="IconToggle"  size="22")
-            template(#dropdown='')
-                el-dropdown-menu
-                    el-dropdown-item
-                      NuxtLink.flex.items-center(:to="`/operations/vehicle/${data?.id}`")
-                        Icon.text-md.mr-2(name="IconEye" )
-                        p.text-sm {{ $t('common.view') }}
-                    el-dropdown-item(v-if="hasPermission('EDIT_VEHICLES')")
-                      NuxtLink.flex.items-center(:to="`/operations/vehicle/edit/${data?.id}`")
-                        Icon.text-md.mr-2(name="IconEdit" )
-                        p.text-sm {{ $t('common.edit') }}
-                    //- el-dropdown-item(@click="[deleteLeadPopup=true, userActionId = data?.id]" )
-                    //-     .flex.items-center
-                    //-       Icon.text-md.mr-2(name="IconDelete" )
-                    //-       p.text-sm Delete
+  //- Desktop Table
+  .vehicle-desktop-view
+    AppTable(v-slot="{data}" :columns="table.columns" :filterOptions="filterOptions" position="vehicle" :pageInfo="response.pagination" :data="table.data" :sortOptions="table.sort" @handleRowClick="handleRowClick" :searchPlaceholder="$t('navigation.vehicle')" )
+      .flex.items-center.py-2(@click.stop)
+          el-dropdown(class="outline-0" trigger="click")
+              span(class="el-dropdown-link")
+                .toggle-icon.text-md
+                    Icon(name="IconToggle"  size="22")
+              template(#dropdown='')
+                  el-dropdown-menu
+                      el-dropdown-item
+                        NuxtLink.flex.items-center(:to="`/operations/vehicle/${data?.id}`")
+                          Icon.text-md.mr-2(name="IconEye" )
+                          p.text-sm {{ $t('common.view') }}
+                      el-dropdown-item(v-if="hasPermission('EDIT_VEHICLES')")
+                        NuxtLink.flex.items-center(:to="`/operations/vehicle/edit/${data?.id}`")
+                          Icon.text-md.mr-2(name="IconEdit" )
+                          p.text-sm {{ $t('common.edit') }}
+
+  //- Mobile Card View
+  .vehicle-mobile-view
+    PullToRefresh(:loading="mobileRefreshing" @refresh="handleMobileRefresh")
+      .mb-3
+        el-input(v-model="mobileSearch" size="large" :placeholder="`${$t('common.search')} ${$t('navigation.vehicle')}`" clearable class="!rounded-xl")
+          template(#prefix)
+            Icon(name="ph:magnifying-glass" size="18" style="color: var(--text-muted)")
+
+      .space-y-3(v-if="mobileFilteredData.length")
+        SwipeCard(
+          v-for="v in mobileFilteredData"
+          :key="v.id"
+          :leftActions="getSwipeLeftActions(v)"
+          :rightActions="[]"
+          @action="(name) => handleSwipeAction(name, v)"
+        )
+          .entity-card.p-4(@click="handleRowClick(v)")
+            .flex.items-start.justify-between.mb-3
+              .flex.items-center.gap-3.min-w-0.flex-1
+                .w-10.h-10.rounded-xl.flex.items-center.justify-center.shrink-0.text-sm.font-bold(
+                  :style="{ background: '#3b82f620', color: '#3b82f6' }"
+                ) {{ (v.plate || '?').charAt(0).toUpperCase() }}
+                .min-w-0.flex-1
+                  p.text-sm.font-bold.truncate(style="color: var(--text-primary)") {{ v.plate || '--' }}
+                  p.text-xs.truncate(style="color: var(--text-muted)") {{ v.manufacturer || '' }}
+
+            .grid.grid-cols-2.gap-2
+              .flex.items-center.gap-2(v-if="v.rentCost")
+                Icon(name="ph:hand-coins" size="14" style="color: var(--text-muted)")
+                span.text-xs.truncate(style="color: var(--text-secondary)") Rent: {{ v.rentCost }}
+              .flex.items-center.gap-2(v-if="v.gasCost")
+                Icon(name="ph:gas-pump" size="14" style="color: var(--text-muted)")
+                span.text-xs.truncate(style="color: var(--text-secondary)") Gas: {{ v.gasCost }}
+              .flex.items-center.gap-2(v-if="v.oilCost")
+                Icon(name="ph:drop" size="14" style="color: var(--text-muted)")
+                span.text-xs.truncate(style="color: var(--text-secondary)") Oil: {{ v.oilCost }}
+              .flex.items-center.gap-2(v-if="v.regularMaintenanceCost")
+                Icon(name="ph:wrench" size="14" style="color: var(--text-muted)")
+                span.text-xs.truncate(style="color: var(--text-secondary)") Maint: {{ v.regularMaintenanceCost }}
+
+      .text-center.py-12(v-if="!mobileFilteredData.length")
+        Icon(name="ph:car" size="48" style="color: var(--text-muted)")
+        p.text-sm.mt-2(style="color: var(--text-muted)") {{ $t('common.noData') }}
+
+      .text-center.mt-4.pb-20(v-if="mobileFilteredData.length")
+        span.text-xs(style="color: var(--text-muted)") {{ mobileFilteredData.length }} {{ $t('navigation.vehicle').toLowerCase() }}
+
+    .mobile-fab(v-if="hasPermission('CREATE_VEHICLES')" @click="navigateTo('/operations/vehicle/add-vehicle')")
+      Icon(name="ph:plus-bold" size="24")
+
   ActionModel(v-model="deleteLeadPopup" :loading="loadingAction" :btn-text="$t('common.moveToArchive')" :description-one="$t('common.archiveConfirmation')" icon="/images/delete-image.png" :description-two="$t('common.archiveDescription')" )
 </template>
 
@@ -57,6 +86,7 @@ const router = useRouter();
 const { hasPermission } = await usePermissions();
 const loadingAction = ref(false);
 const deleteLeadPopup = ref(false);
+const loading = ref(false);
 
 // Export columns
 const exportColumns = [
@@ -161,4 +191,45 @@ const filterOptions = [
     type: 'input'
   }
 ];
+
+// Mobile
+const { vibrate } = useMobile();
+const mobileSearch = ref('');
+const mobileRefreshing = ref(false);
+
+const mobileFilteredData = computed(() => {
+  let data = table.data || [];
+  if (!mobileSearch.value) return data;
+  const q = mobileSearch.value.toLowerCase();
+  return data.filter((v: any) => {
+    const plate = (v.plate || '').toLowerCase();
+    const mfr = (v.manufacturer || '').toLowerCase();
+    return plate.includes(q) || mfr.includes(q);
+  });
+});
+
+async function handleMobileRefresh() {
+  mobileRefreshing.value = true;
+  try {
+    const res = await useTableFilter('vehicle');
+    table.data = res.formattedData;
+    vibrate([10, 30, 10]);
+  } finally { mobileRefreshing.value = false; }
+}
+
+function getSwipeLeftActions(_v: any) {
+  const actions = [{ name: 'view', label: useI18n().t('common.view'), icon: 'ph:eye-bold', color: '#3b82f6' }];
+  if (hasPermission('EDIT_VEHICLES')) actions.push({ name: 'edit', label: useI18n().t('common.edit'), icon: 'ph:pencil-simple-bold', color: '#F59E0B' });
+  return actions;
+}
+
+function handleSwipeAction(name: string, v: any) {
+  vibrate();
+  if (name === 'view') navigateTo(`/operations/vehicle/${v.id}`);
+  if (name === 'edit') navigateTo(`/operations/vehicle/edit/${v.id}`);
+}
 </script>
+
+<style lang="scss" scoped>
+@include mobile-list-page('vehicle', #3b82f6);
+</style>

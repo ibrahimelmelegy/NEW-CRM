@@ -15,40 +15,98 @@ div
     el-tab-pane(:label="$t('tasks.allTasks')" name="all")
     el-tab-pane(:label="$t('tasks.myTasks')" name="my")
 
-  //- Table
+  //- Desktop Table
   el-icon.is-loading(:size="32" v-if="loadingAction" style="color: var(--accent-color, #7849ff)")
-  AppTable(
-    v-slot="{ data }"
-    v-if="!loadingAction"
-    :externalLoading="loading"
-    :filterOptions="filterOptions"
-    :columns="table.columns"
-    position="tasks"
-    :pageInfo="pagination"
-    :data="table.data"
-    :searchPlaceholder="$t('tasks.title')"
-    @handleRowClick="handleRowClick"
-    :key="tableKey"
-  )
-    .flex.items-center.py-2(@click.stop)
-      el-dropdown(class="outline-0" trigger="click")
-        span(class="el-dropdown-link")
-          .toggle-icon.text-md
-            Icon(name="IconToggle" size="22")
-        template(#dropdown)
-          el-dropdown-menu
-            el-dropdown-item
-              NuxtLink.flex.items-center(:to="`/tasks/${data?.id}`")
-                Icon.text-md.mr-2(name="IconEye")
-                p.text-sm {{ $t('tasks.viewTask') }}
-            el-dropdown-item(@click="handleComplete(data)")
-              .flex.items-center
-                Icon.text-md.mr-2(name="ph:check-circle-bold")
-                p.text-sm {{ data?.status === 'DONE' ? $t('tasks.reopen') : $t('tasks.markComplete') }}
-            el-dropdown-item(@click="handleDelete(data)")
-              .flex.items-center
-                Icon.text-md.mr-2(name="IconDelete")
-                p.text-sm {{ $t('tasks.deleteTask') }}
+  .tasks-desktop-view
+    AppTable(
+      v-slot="{ data }"
+      v-if="!loadingAction"
+      :externalLoading="loading"
+      :filterOptions="filterOptions"
+      :columns="table.columns"
+      position="tasks"
+      :pageInfo="pagination"
+      :data="table.data"
+      :searchPlaceholder="$t('tasks.title')"
+      @handleRowClick="handleRowClick"
+      :key="tableKey"
+    )
+      .flex.items-center.py-2(@click.stop)
+        el-dropdown(class="outline-0" trigger="click")
+          span(class="el-dropdown-link")
+            .toggle-icon.text-md
+              Icon(name="IconToggle" size="22")
+          template(#dropdown)
+            el-dropdown-menu
+              el-dropdown-item
+                NuxtLink.flex.items-center(:to="`/tasks/${data?.id}`")
+                  Icon.text-md.mr-2(name="IconEye")
+                  p.text-sm {{ $t('tasks.viewTask') }}
+              el-dropdown-item(@click="handleComplete(data)")
+                .flex.items-center
+                  Icon.text-md.mr-2(name="ph:check-circle-bold")
+                  p.text-sm {{ data?.status === 'DONE' ? $t('tasks.reopen') : $t('tasks.markComplete') }}
+              el-dropdown-item(@click="handleDelete(data)")
+                .flex.items-center
+                  Icon.text-md.mr-2(name="IconDelete")
+                  p.text-sm {{ $t('tasks.deleteTask') }}
+
+  //- Mobile Card View
+  .tasks-mobile-view(v-if="!loadingAction")
+    PullToRefresh(:loading="mobileRefreshing" @refresh="handleMobileRefresh")
+      .mb-3
+        el-input(v-model="mobileSearch" size="large" :placeholder="`${$t('common.search')} ${$t('tasks.title')}`" clearable class="!rounded-xl")
+          template(#prefix)
+            Icon(name="ph:magnifying-glass" size="18" style="color: var(--text-muted)")
+
+      .status-pills.flex.gap-2.mb-4.overflow-x-auto.pb-2.-mx-1.px-1
+        button.status-pill(
+          v-for="filter in mobileTaskFilters"
+          :key="filter.value"
+          :class="{ 'status-pill--active': mobileTaskStatus === filter.value }"
+          :style="mobileTaskStatus === filter.value ? { background: filter.color, borderColor: filter.color } : {}"
+          @click="mobileTaskStatus = filter.value; vibrate()"
+        )
+          span {{ filter.label }}
+          span.status-pill__count(v-if="filter.count > 0") {{ filter.count }}
+
+      .space-y-3(v-if="mobileFilteredTasks.length")
+        SwipeCard(
+          v-for="task in mobileFilteredTasks"
+          :key="task.id"
+          :rightActions="[{ name: 'complete', label: task.status === 'DONE' ? $t('tasks.reopen') : $t('tasks.markComplete'), icon: 'ph:check-circle-bold', color: '#10B981' }]"
+          :leftActions="[{ name: 'view', label: $t('tasks.viewTask'), icon: 'ph:eye-bold', color: '#7849FF' }]"
+          @action="(name) => handleTaskSwipe(name, task)"
+        )
+          .entity-card.p-4(@click="handleRowClick(task)")
+            .flex.items-start.justify-between.mb-3
+              .flex.items-center.gap-3.min-w-0.flex-1
+                .w-10.h-10.rounded-xl.flex.items-center.justify-center.shrink-0.text-sm.font-bold(
+                  :style="{ background: getTaskColor(task.status) + '20', color: getTaskColor(task.status) }"
+                )
+                  Icon(:name="task.status === 'DONE' ? 'ph:check-circle' : 'ph:list-checks'" size="18")
+                .min-w-0.flex-1
+                  p.text-sm.font-bold.truncate(style="color: var(--text-primary)") {{ task.taskDetails?.name || task.title || '--' }}
+                  p.text-xs.truncate(style="color: var(--text-muted)") {{ task.assign || '' }}
+              el-tag.shrink-0(:type="getTaskTagType(task.status)" size="small" effect="dark" round) {{ task.status }}
+
+            .grid.grid-cols-2.gap-2
+              .flex.items-center.gap-2(v-if="task.priority")
+                Icon(name="ph:flag" size="14" style="color: var(--text-muted)")
+                span.text-xs.truncate(:style="{ color: getPriorityColor(task.priority) }") {{ task.priority }}
+              .flex.items-center.gap-2(v-if="task.dueDate && task.dueDate !== '-'")
+                Icon(name="ph:calendar" size="14" style="color: var(--text-muted)")
+                span.text-xs.truncate(style="color: var(--text-secondary)") {{ task.dueDate }}
+
+      .text-center.py-12(v-if="!mobileFilteredTasks.length")
+        Icon(name="ph:list-checks" size="48" style="color: var(--text-muted)")
+        p.text-sm.mt-2(style="color: var(--text-muted)") {{ $t('common.noData') }}
+
+      .text-center.mt-4.pb-20(v-if="mobileFilteredTasks.length")
+        span.text-xs(style="color: var(--text-muted)") {{ mobileFilteredTasks.length }} {{ $t('tasks.title').toLowerCase() }}
+
+    .mobile-fab(@click="navigateTo('/tasks/create')")
+      Icon(name="ph:plus-bold" size="24")
 </template>
 
 <script setup lang="ts">
@@ -239,4 +297,63 @@ async function handleDelete(data: any) {
     ElNotification({ type: 'success', title: t('common.success'), message: t('common.deleted') });
   } catch {}
 }
+
+// Mobile
+const { vibrate } = useMobile();
+const mobileSearch = ref('');
+const mobileTaskStatus = ref('ALL');
+const mobileRefreshing = ref(false);
+
+const mobileTaskFilters = computed(() => {
+  const data = table.value.data || [];
+  return [
+    { value: 'ALL', label: t('common.all'), color: '#7849ff', count: data.length },
+    { value: 'TODO', label: t('tasks.status.TODO'), color: '#94a3b8', count: data.filter((t: any) => t.status === 'TODO').length },
+    { value: 'IN_PROGRESS', label: t('tasks.status.IN_PROGRESS'), color: '#3b82f6', count: data.filter((t: any) => t.status === 'IN_PROGRESS').length },
+    { value: 'DONE', label: t('tasks.status.DONE'), color: '#10b981', count: data.filter((t: any) => t.status === 'DONE').length }
+  ];
+});
+
+const mobileFilteredTasks = computed(() => {
+  let data = table.value.data || [];
+  if (mobileTaskStatus.value !== 'ALL') data = data.filter((tk: any) => tk.status === mobileTaskStatus.value);
+  if (!mobileSearch.value) return data;
+  const q = mobileSearch.value.toLowerCase();
+  return data.filter((tk: any) => {
+    const name = (tk.taskDetails?.name || tk.title || '').toLowerCase();
+    const assign = (tk.assign || '').toLowerCase();
+    return name.includes(q) || assign.includes(q);
+  });
+});
+
+async function handleMobileRefresh() {
+  mobileRefreshing.value = true;
+  try {
+    await handleTabChange(activeTab.value);
+    vibrate([10, 30, 10]);
+  } finally { mobileRefreshing.value = false; }
+}
+
+function handleTaskSwipe(name: string, task: any) {
+  vibrate();
+  if (name === 'view') navigateTo(`/tasks/${task.id}`);
+  if (name === 'complete') handleComplete(task);
+}
+
+function getTaskColor(status: string): string {
+  const map: Record<string, string> = { TODO: '#94a3b8', IN_PROGRESS: '#3b82f6', DONE: '#10b981', CANCELLED: '#ef4444' };
+  return map[status] || '#94a3b8';
+}
+function getTaskTagType(status: string): string {
+  const map: Record<string, string> = { TODO: 'info', IN_PROGRESS: '', DONE: 'success', CANCELLED: 'danger' };
+  return map[status] || 'info';
+}
+function getPriorityColor(priority: string): string {
+  const map: Record<string, string> = { LOW: '#94a3b8', MEDIUM: '#f59e0b', HIGH: '#ef4444', URGENT: '#dc2626' };
+  return map[priority] || 'var(--text-secondary)';
+}
 </script>
+
+<style lang="scss" scoped>
+@include mobile-list-page('tasks', #7849ff);
+</style>

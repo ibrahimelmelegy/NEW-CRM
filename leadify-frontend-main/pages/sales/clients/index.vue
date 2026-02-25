@@ -13,34 +13,94 @@ div(class="animate-fade-in")
         el-button(size='large' :loading="loading" v-if="hasPermission('CREATE_CLIENTS')" native-type="submit" type="primary" :icon="Plus" class="!rounded-xl shadow-lg shadow-primary/30 active:scale-95 transition-transform") {{ $t('clients.newClient') }}
 
   //- KPI Metrics
-  PremiumKPICards(:metrics="kpiMetrics" v-if="!loadingAction")
+  .clients-kpi-grid
+    PremiumKPICards(:metrics="kpiMetrics" v-if="!loadingAction")
 
   BulkActions(:count="selectedRows.length" :actions="['delete', 'export']" @bulk-delete="handleBulkDelete" @bulk-export="handleBulkExport" @clear-selection="selectedRows = []")
   SavedViews(:entityType="'client'" :currentFilters="{}" @apply-view="handleApplyView")
   AdvancedSearch(:entityType="'client'" :fields="advancedSearchFields" @apply="handleAdvancedFilter" @clear="handleClearAdvancedFilter")
-  AppTable(v-slot="{data}" :filterOptions="filterOptions" :columns="table.columns" position="client" :pageInfo="response.pagination" :data="table.data" :sortOptions="table.sort" @handleRowClick="handleRowClick" searchPlaceholder="clients" )
-    .flex.items-center.py-2(@click.stop)
-        //- NuxtLink.toggle-icon(:to="`/clients/1`")
-        //-     Icon.text-md(name="IconEye" )
 
-        el-dropdown(class="outline-0" trigger="click")
-            span(class="el-dropdown-link")
-              .toggle-icon.text-md
-                  Icon(name="IconToggle"  size="22")
-            template(#dropdown='')
-                el-dropdown-menu
-                    el-dropdown-item
-                      NuxtLink.flex.items-center(:to="`/sales/clients/${data?.id}`")
-                        Icon.text-md.mr-2(name="IconEye" )
-                        p.text-sm {{ $t('common.view') }}
-                    el-dropdown-item(v-if="hasPermission('EDIT_CLIENTS')")
-                      NuxtLink.flex.items-center(:to="`/sales/clients/edit/${data?.id}`")
-                        Icon.text-md.mr-2(name="IconEdit" )
-                        p.text-sm {{ $t('common.edit') }}
-                    //- el-dropdown-item(@click="[deleteclientPopup=true, userActionId = data?.id]" )
-                    //-     .flex.items-center
-                    //-       Icon.text-md.mr-2(name="IconDelete" )
-                    //-       p.text-sm Delete
+  //- Desktop Table
+  .clients-desktop-view
+    AppTable(v-slot="{data}" :filterOptions="filterOptions" :columns="table.columns" position="client" :pageInfo="response.pagination" :data="table.data" :sortOptions="table.sort" @handleRowClick="handleRowClick" searchPlaceholder="clients" )
+      .flex.items-center.py-2(@click.stop)
+          el-dropdown(class="outline-0" trigger="click")
+              span(class="el-dropdown-link")
+                .toggle-icon.text-md
+                    Icon(name="IconToggle"  size="22")
+              template(#dropdown='')
+                  el-dropdown-menu
+                      el-dropdown-item
+                        NuxtLink.flex.items-center(:to="`/sales/clients/${data?.id}`")
+                          Icon.text-md.mr-2(name="IconEye" )
+                          p.text-sm {{ $t('common.view') }}
+                      el-dropdown-item(v-if="hasPermission('EDIT_CLIENTS')")
+                        NuxtLink.flex.items-center(:to="`/sales/clients/edit/${data?.id}`")
+                          Icon.text-md.mr-2(name="IconEdit" )
+                          p.text-sm {{ $t('common.edit') }}
+
+  //- Mobile Card View
+  .clients-mobile-view(v-if="!loadingAction")
+    PullToRefresh(:loading="mobileRefreshing" @refresh="handleMobileRefresh")
+      .mb-3
+        el-input(v-model="mobileSearch" size="large" :placeholder="`${$t('common.search')} ${$t('clients.title')}`" clearable class="!rounded-xl")
+          template(#prefix)
+            Icon(name="ph:magnifying-glass" size="18" style="color: var(--text-muted)")
+
+      .status-pills.flex.gap-2.mb-4.overflow-x-auto.pb-2.-mx-1.px-1
+        button.status-pill(
+          v-for="filter in mobileFilters"
+          :key="filter.value"
+          :class="{ 'status-pill--active': mobileStatusFilter === filter.value }"
+          :style="mobileStatusFilter === filter.value ? { background: filter.color, borderColor: filter.color } : {}"
+          @click="mobileStatusFilter = filter.value; vibrate()"
+        )
+          span {{ filter.label }}
+          span.status-pill__count(v-if="filter.count > 0") {{ filter.count }}
+
+      .space-y-3(v-if="mobileFilteredData.length")
+        SwipeCard(
+          v-for="client in mobileFilteredData"
+          :key="client.id"
+          :rightActions="getSwipeRightActions(client)"
+          :leftActions="getSwipeLeftActions(client)"
+          @action="(name) => handleSwipeAction(name, client)"
+        )
+          .entity-card.p-4(@click="handleRowClick(client)")
+            .flex.items-start.justify-between.mb-3
+              .flex.items-center.gap-3.min-w-0.flex-1
+                .w-10.h-10.rounded-xl.flex.items-center.justify-center.shrink-0.text-sm.font-bold(
+                  :style="{ background: '#3b82f620', color: '#3b82f6' }"
+                ) {{ (client.ClientDetails?.title || client.name || '?').charAt(0).toUpperCase() }}
+                .min-w-0.flex-1
+                  p.text-sm.font-bold.truncate(style="color: var(--text-primary)") {{ client.ClientDetails?.title || client.name || '--' }}
+                  p.text-xs.truncate(style="color: var(--text-muted)") {{ client.clientType || '' }}
+              el-tag.shrink-0(:type="client.clientStatus === 'ACTIVE' ? 'success' : 'info'" size="small" effect="dark" round) {{ client.clientStatus }}
+
+            .grid.grid-cols-2.gap-2
+              .flex.items-center.gap-2(v-if="client.email")
+                Icon(name="ph:envelope" size="14" style="color: var(--text-muted)")
+                a.text-xs.truncate(:href="`mailto:${client.email}`" style="color: var(--text-secondary)" @click.stop) {{ client.email }}
+              .flex.items-center.gap-2(v-if="client.phoneNumber")
+                Icon(name="ph:phone" size="14" style="color: var(--text-muted)")
+                a.text-xs.truncate(:href="`tel:${client.phoneNumber}`" style="color: var(--text-secondary)" @click.stop) {{ client.phoneNumber }}
+              .flex.items-center.gap-2(v-if="client.assign")
+                Icon(name="ph:user" size="14" style="color: var(--text-muted)")
+                span.text-xs.truncate(style="color: var(--text-secondary)") {{ client.assign }}
+              .flex.items-center.gap-2(v-if="client.createdAt")
+                Icon(name="ph:calendar" size="14" style="color: var(--text-muted)")
+                span.text-xs.truncate(style="color: var(--text-secondary)") {{ client.createdAt }}
+
+      .text-center.py-12(v-if="!mobileFilteredData.length")
+        Icon(name="ph:buildings" size="48" style="color: var(--text-muted)")
+        p.text-sm.mt-2(style="color: var(--text-muted)") {{ $t('common.noData') }}
+
+      .text-center.mt-4.pb-20(v-if="mobileFilteredData.length")
+        span.text-xs(style="color: var(--text-muted)") {{ mobileFilteredData.length }} {{ $t('clients.title').toLowerCase() }}
+
+    .mobile-fab(v-if="hasPermission('CREATE_CLIENTS')" @click="navigateTo('/sales/clients/add-client')")
+      Icon(name="ph:plus-bold" size="24")
+
   ActionModel(v-model="deleteClientPopup" :loading="loadingAction" btn-text="Move to Archive" description-one="Are you sure you want to delete this Client?" icon="/images/delete-image.png" description-two="It will be archived and can be restored later within 30 days." )
 </template>
 
@@ -227,4 +287,71 @@ async function handleClearAdvancedFilter() {
   const res = await useTableFilter('client');
   table.data = res.formattedData;
 }
+
+// Mobile
+const { vibrate } = useMobile();
+const mobileSearch = ref('');
+const mobileStatusFilter = ref('ALL');
+const mobileRefreshing = ref(false);
+const loading = ref(false);
+
+const mobileFilters = computed(() => {
+  const data = table.data || [];
+  return [
+    { value: 'ALL', label: t('common.all'), color: '#3b82f6', count: data.length },
+    { value: 'ACTIVE', label: 'Active', color: '#10b981', count: data.filter((c: any) => c.clientStatus === 'ACTIVE' || c.status === 'ACTIVE').length },
+    { value: 'INACTIVE', label: 'Inactive', color: '#94a3b8', count: data.filter((c: any) => c.clientStatus === 'INACTIVE' || c.status === 'INACTIVE').length }
+  ];
+});
+
+const mobileFilteredData = computed(() => {
+  let data = table.data || [];
+  if (mobileStatusFilter.value !== 'ALL') {
+    data = data.filter((c: any) => (c.clientStatus || c.status) === mobileStatusFilter.value);
+  }
+  if (!mobileSearch.value) return data;
+  const q = mobileSearch.value.toLowerCase();
+  return data.filter((c: any) => {
+    const name = (c.ClientDetails?.title || c.name || '').toLowerCase();
+    const email = (c.email || '').toLowerCase();
+    const phone = (c.phoneNumber || '').toLowerCase();
+    return name.includes(q) || email.includes(q) || phone.includes(q);
+  });
+});
+
+async function handleMobileRefresh() {
+  mobileRefreshing.value = true;
+  try {
+    const res = await useTableFilter('client');
+    table.data = res.formattedData;
+    vibrate([10, 30, 10]);
+  } finally { mobileRefreshing.value = false; }
+}
+
+function getSwipeRightActions(client: any) {
+  const actions = [];
+  if (client.phoneNumber) actions.push({ name: 'call', label: t('common.call'), icon: 'ph:phone-bold', color: '#10B981' });
+  if (client.email) actions.push({ name: 'email', label: t('common.email'), icon: 'ph:envelope-bold', color: '#3B82F6' });
+  return actions;
+}
+
+function getSwipeLeftActions(_client: any) {
+  const actions = [{ name: 'view', label: t('common.view'), icon: 'ph:eye-bold', color: '#3b82f6' }];
+  if (hasPermission('EDIT_CLIENTS')) actions.push({ name: 'edit', label: t('common.edit'), icon: 'ph:pencil-simple-bold', color: '#F59E0B' });
+  return actions;
+}
+
+function handleSwipeAction(name: string, client: any) {
+  vibrate();
+  switch (name) {
+    case 'call': window.location.href = `tel:${client.phoneNumber}`; break;
+    case 'email': window.location.href = `mailto:${client.email}`; break;
+    case 'view': navigateTo(`/sales/clients/${client.id}`); break;
+    case 'edit': navigateTo(`/sales/clients/edit/${client.id}`); break;
+  }
+}
 </script>
+
+<style lang="scss" scoped>
+@include mobile-list-page('clients', #3b82f6);
+</style>

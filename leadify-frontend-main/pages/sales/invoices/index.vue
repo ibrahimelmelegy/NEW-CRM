@@ -12,37 +12,93 @@ div
   SavedViews(:entityType="'invoice'" :currentFilters="{}" @apply-view="handleApplyView")
   AdvancedSearch(:entityType="'invoice'" :fields="advancedSearchFields" @apply="handleAdvancedFilter" @clear="handleClearAdvancedFilter")
 
-  AppTable(
-    v-slot="{data}"
-    :externalLoading="loading"
-    :filterOptions="filterOptions"
-    :columns="table.columns"
-    position="invoices"
-    :pageInfo="pagination"
-    :data="table.data"
-    @handleRowClick="handleRowClick"
-    :searchPlaceholder="$t('invoices.title')"
-    :key="table.data"
-  )
-    .flex.items-center.py-2(@click.stop)
-      el-dropdown(class="outline-0" trigger="click")
-        span(class="el-dropdown-link")
-          .toggle-icon.text-md
-            Icon(name="IconToggle" size="22")
-        template(#dropdown)
-          el-dropdown-menu
-            el-dropdown-item(v-if="!data?.collected" @click="handleCollect(data?.id)")
-              .flex.items-center
-                Icon.text-md.mr-2(name="ph:check-circle-bold")
-                p.text-sm {{ $t('invoices.markCollected') }}
-            el-dropdown-item(v-else @click="handleUncollect(data?.id)")
-              .flex.items-center
-                Icon.text-md.mr-2(name="ph:arrow-counter-clockwise-bold")
-                p.text-sm {{ $t('invoices.undo') }}
-            el-dropdown-item(@click="exportInvoicePDF(data)")
-              .flex.items-center
-                Icon.text-md.mr-2(name="ph:file-pdf-bold")
-                p.text-sm PDF
+  //- Desktop Table
+  .inv-desktop-view
+    AppTable(
+      v-slot="{data}"
+      :externalLoading="loading"
+      :filterOptions="filterOptions"
+      :columns="table.columns"
+      position="invoices"
+      :pageInfo="pagination"
+      :data="table.data"
+      @handleRowClick="handleRowClick"
+      :searchPlaceholder="$t('invoices.title')"
+      :key="table.data"
+    )
+      .flex.items-center.py-2(@click.stop)
+        el-dropdown(class="outline-0" trigger="click")
+          span(class="el-dropdown-link")
+            .toggle-icon.text-md
+              Icon(name="IconToggle" size="22")
+          template(#dropdown)
+            el-dropdown-menu
+              el-dropdown-item(v-if="!data?.collected" @click="handleCollect(data?.id)")
+                .flex.items-center
+                  Icon.text-md.mr-2(name="ph:check-circle-bold")
+                  p.text-sm {{ $t('invoices.markCollected') }}
+              el-dropdown-item(v-else @click="handleUncollect(data?.id)")
+                .flex.items-center
+                  Icon.text-md.mr-2(name="ph:arrow-counter-clockwise-bold")
+                  p.text-sm {{ $t('invoices.undo') }}
+              el-dropdown-item(@click="exportInvoicePDF(data)")
+                .flex.items-center
+                  Icon.text-md.mr-2(name="ph:file-pdf-bold")
+                  p.text-sm PDF
+
+  //- Mobile Card View
+  .inv-mobile-view
+    PullToRefresh(:loading="mobileRefreshing" @refresh="handleMobileRefresh")
+      .mb-3
+        el-input(v-model="mobileSearch" size="large" :placeholder="`${$t('common.search')} ${$t('invoices.title')}`" clearable class="!rounded-xl")
+          template(#prefix)
+            Icon(name="ph:magnifying-glass" size="18" style="color: var(--text-muted)")
+
+      .status-pills.flex.gap-2.mb-4.overflow-x-auto.pb-2.-mx-1.px-1
+        button.status-pill(
+          v-for="filter in mobileInvFilters"
+          :key="filter.value"
+          :class="{ 'status-pill--active': mobileInvStatus === filter.value }"
+          :style="mobileInvStatus === filter.value ? { background: filter.color, borderColor: filter.color } : {}"
+          @click="mobileInvStatus = filter.value; vibrate()"
+        )
+          span {{ filter.label }}
+          span.status-pill__count(v-if="filter.count > 0") {{ filter.count }}
+
+      .space-y-3(v-if="mobileFilteredInvoices.length")
+        SwipeCard(
+          v-for="inv in mobileFilteredInvoices"
+          :key="inv.id"
+          :rightActions="[{ name: inv.collected ? 'uncollect' : 'collect', label: inv.collected ? $t('invoices.undo') : $t('invoices.markCollected'), icon: inv.collected ? 'ph:arrow-counter-clockwise-bold' : 'ph:check-circle-bold', color: inv.collected ? '#f59e0b' : '#10B981' }]"
+          :leftActions="[{ name: 'pdf', label: 'PDF', icon: 'ph:file-pdf-bold', color: '#EF4444' }]"
+          @action="(name) => handleInvSwipe(name, inv)"
+        )
+          .entity-card.p-4(@click="handleRowClick(inv)")
+            .flex.items-start.justify-between.mb-3
+              .flex.items-center.gap-3.min-w-0.flex-1
+                .w-10.h-10.rounded-xl.flex.items-center.justify-center.shrink-0.text-sm.font-bold(
+                  :style="{ background: inv.collected ? '#10b98120' : '#f59e0b20', color: inv.collected ? '#10b981' : '#f59e0b' }"
+                )
+                  Icon(:name="inv.collected ? 'ph:check-circle' : 'ph:clock'" size="18")
+                .min-w-0.flex-1
+                  p.text-sm.font-bold.truncate(style="color: var(--text-primary)") {{ inv.invoiceNumber || '--' }}
+                  p.text-xs.truncate(style="color: var(--text-muted)") {{ inv.dealDetails?.title || '' }}
+              el-tag.shrink-0(:type="inv.collected ? 'success' : 'warning'" size="small" effect="dark" round) {{ inv.statusLabel }}
+
+            .grid.grid-cols-2.gap-2
+              .flex.items-center.gap-2
+                Icon(name="ph:money" size="14" style="color: var(--text-muted)")
+                span.text-xs.font-semibold.truncate(style="color: var(--text-secondary)") {{ inv.formattedAmount }}
+              .flex.items-center.gap-2(v-if="inv.formattedDate")
+                Icon(name="ph:calendar" size="14" style="color: var(--text-muted)")
+                span.text-xs.truncate(style="color: var(--text-secondary)") {{ inv.formattedDate }}
+
+      .text-center.py-12(v-if="!mobileFilteredInvoices.length")
+        Icon(name="ph:receipt" size="48" style="color: var(--text-muted)")
+        p.text-sm.mt-2(style="color: var(--text-muted)") {{ $t('common.noData') }}
+
+      .text-center.mt-4.pb-20(v-if="mobileFilteredInvoices.length")
+        span.text-xs(style="color: var(--text-muted)") {{ mobileFilteredInvoices.length }} {{ $t('invoices.title').toLowerCase() }}
 
   //- Template Selector
   el-dialog(v-model="showTemplateSelector" :title="$t('invoices.selectTemplate') || 'Select Invoice Template'" width="500px")
@@ -302,4 +358,52 @@ async function handleAdvancedFilter(filterPayload: any) {
 async function handleClearAdvancedFilter() {
   await loadInvoices();
 }
+
+// Mobile
+const { vibrate } = useMobile();
+const mobileSearch = ref('');
+const mobileInvStatus = ref('ALL');
+const mobileRefreshing = ref(false);
+
+const mobileInvFilters = computed(() => {
+  const data = table.value.data || [];
+  return [
+    { value: 'ALL', label: t('common.all'), color: '#7849ff', count: data.length },
+    { value: 'COLLECTED', label: t('invoices.collected'), color: '#22c55e', count: data.filter((i: any) => i.statusLabel === 'COLLECTED').length },
+    { value: 'PENDING', label: t('invoices.pending'), color: '#f59e0b', count: data.filter((i: any) => i.statusLabel === 'PENDING').length }
+  ];
+});
+
+const mobileFilteredInvoices = computed(() => {
+  let data = table.value.data || [];
+  if (mobileInvStatus.value !== 'ALL') data = data.filter((i: any) => i.statusLabel === mobileInvStatus.value);
+  if (!mobileSearch.value) return data;
+  const q = mobileSearch.value.toLowerCase();
+  return data.filter((i: any) => {
+    const num = (i.invoiceNumber || '').toLowerCase();
+    const deal = (i.dealDetails?.title || '').toLowerCase();
+    return num.includes(q) || deal.includes(q);
+  });
+});
+
+async function handleMobileRefresh() {
+  mobileRefreshing.value = true;
+  try {
+    await Promise.all([loadInvoices(), loadSummary()]);
+    vibrate([10, 30, 10]);
+  } finally { mobileRefreshing.value = false; }
+}
+
+function handleInvSwipe(name: string, inv: any) {
+  vibrate();
+  switch (name) {
+    case 'collect': handleCollect(inv.id); break;
+    case 'uncollect': handleUncollect(inv.id); break;
+    case 'pdf': exportInvoicePDF(inv); break;
+  }
+}
 </script>
+
+<style lang="scss" scoped>
+@include mobile-list-page('inv', #7849ff);
+</style>

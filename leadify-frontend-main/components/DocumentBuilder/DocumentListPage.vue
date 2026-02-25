@@ -57,84 +57,161 @@
           Icon(name="ph:arrows-clockwise" size="16" class="mr-1")
           | Refresh
 
-  //- Table
-  .glass-card.rounded-2xl.overflow-hidden(v-loading="loading")
-    el-table(
-      :data="documents"
-      stripe
-      style="width: 100%;"
-      @sort-change="handleSort"
-      :default-sort="{ prop: 'createdAt', order: 'descending' }"
-    )
-      el-table-column(prop="reference" label="Reference" width="160" sortable="custom")
-        template(#default="{ row }")
-          span.font-mono.font-bold.text-sm {{ row.reference }}
-      el-table-column(prop="title" label="Title" min-width="200" sortable="custom")
-        template(#default="{ row }")
-          NuxtLink(:to="`${detailBaseUrl}/${row.id}`" class="font-bold hover:text-purple-600 transition-colors")
-            | {{ row.title }}
-      el-table-column(prop="clientName" label="Client" min-width="160")
-        template(#default="{ row }")
-          .flex.flex-col
-            span.font-medium {{ row.clientName || '—' }}
-            span.text-xs.text-gray-400(v-if="row.clientCompany") {{ row.clientCompany }}
-      el-table-column(prop="status" label="Status" width="150" sortable="custom")
-        template(#default="{ row }")
-          el-dropdown(trigger="click" @command="(cmd: string) => handleStatusChange(row, cmd)")
-            el-tag(
-              :type="statusTagType(row.status)"
-              size="small"
-              round
-              effect="dark"
-              class="cursor-pointer"
-            ) {{ formatStatus(row.status) }}
-            template(#dropdown)
-              el-dropdown-menu
-                el-dropdown-item(
-                  v-for="s in getNextStatuses(row.status)"
-                  :key="s"
-                  :command="s"
-                ) {{ formatStatus(s) }}
-      el-table-column(prop="total" label="Total" width="150" sortable="custom" align="right")
-        template(#default="{ row }")
-          span.font-bold(v-if="row.total") {{ Number(row.total).toLocaleString('en-US', { minimumFractionDigits: 2 }) }}
-          span.text-gray-400(v-else) —
-          span.text-xs.text-gray-400.ml-1(v-if="row.total") {{ row.currency || 'SAR' }}
-      el-table-column(prop="createdAt" label="Created" width="140" sortable="custom")
-        template(#default="{ row }")
-          span.text-sm {{ formatDate(row.createdAt) }}
-      el-table-column(label="Actions" width="160" fixed="right")
-        template(#default="{ row }")
-          .flex.gap-1
-            el-tooltip(content="View / Edit" placement="top")
-              NuxtLink(:to="`${detailBaseUrl}/${row.id}`")
-                el-button(size="small" circle plain)
-                  Icon(name="ph:pencil-simple" size="14")
-            el-tooltip(content="Duplicate" placement="top")
-              el-button(size="small" circle plain @click="handleDuplicate(row)")
-                Icon(name="ph:copy" size="14")
-            el-tooltip(content="Export PDF" placement="top")
-              el-button(size="small" circle plain @click="handleExportPdf(row)")
-                Icon(name="ph:file-pdf" size="14")
-            el-tooltip(content="Send" placement="top")
-              el-button(size="small" circle plain @click="openSendDialog(row)")
-                Icon(name="ph:paper-plane-tilt" size="14")
-            el-tooltip(content="Delete" placement="top")
-              el-button(size="small" circle type="danger" plain @click="handleDelete(row)")
-                Icon(name="ph:trash" size="14")
-
-    //- Pagination
-    .p-4.flex.justify-between.items-center.border-t(style="border-color: var(--glass-border-color)")
-      span.text-sm(style="color: var(--text-muted)") Showing {{ documents.length }} of {{ pagination.totalItems }} documents
-      el-pagination(
-        v-model:current-page="currentPage"
-        v-model:page-size="pageSize"
-        :page-sizes="[10, 20, 50, 100]"
-        :total="pagination.totalItems"
-        layout="sizes, prev, pager, next"
-        @current-change="handlePageChange"
-        @size-change="handlePageSizeChange"
+  //- Desktop Table
+  .doc-desktop-view
+    .glass-card.rounded-2xl.overflow-hidden(v-loading="loading")
+      el-table(
+        :data="documents"
+        stripe
+        style="width: 100%;"
+        @sort-change="handleSort"
+        :default-sort="{ prop: 'createdAt', order: 'descending' }"
       )
+        el-table-column(prop="reference" label="Reference" width="160" sortable="custom")
+          template(#default="{ row }")
+            span.font-mono.font-bold.text-sm {{ row.reference }}
+        el-table-column(prop="title" label="Title" min-width="200" sortable="custom")
+          template(#default="{ row }")
+            NuxtLink(:to="`${detailBaseUrl}/${row.id}`" class="font-bold hover:text-purple-600 transition-colors")
+              | {{ row.title }}
+        el-table-column(prop="clientName" label="Client" min-width="160")
+          template(#default="{ row }")
+            .flex.flex-col
+              span.font-medium {{ row.clientName || '—' }}
+              span.text-xs.text-gray-400(v-if="row.clientCompany") {{ row.clientCompany }}
+        el-table-column(prop="status" label="Status" width="150" sortable="custom")
+          template(#default="{ row }")
+            el-dropdown(trigger="click" @command="(cmd: string) => handleStatusChange(row, cmd)")
+              el-tag(
+                :type="statusTagType(row.status)"
+                size="small"
+                round
+                effect="dark"
+                class="cursor-pointer"
+              ) {{ formatStatus(row.status) }}
+              template(#dropdown)
+                el-dropdown-menu
+                  el-dropdown-item(
+                    v-for="s in getNextStatuses(row.status)"
+                    :key="s"
+                    :command="s"
+                  ) {{ formatStatus(s) }}
+        el-table-column(prop="total" label="Total" width="150" sortable="custom" align="right")
+          template(#default="{ row }")
+            span.font-bold(v-if="row.total") {{ Number(row.total).toLocaleString('en-US', { minimumFractionDigits: 2 }) }}
+            span.text-gray-400(v-else) —
+            span.text-xs.text-gray-400.ml-1(v-if="row.total") {{ row.currency || 'SAR' }}
+        el-table-column(prop="createdAt" label="Created" width="140" sortable="custom")
+          template(#default="{ row }")
+            span.text-sm {{ formatDate(row.createdAt) }}
+        el-table-column(label="Actions" width="160" fixed="right")
+          template(#default="{ row }")
+            .flex.gap-1
+              el-tooltip(content="View / Edit" placement="top")
+                NuxtLink(:to="`${detailBaseUrl}/${row.id}`")
+                  el-button(size="small" circle plain)
+                    Icon(name="ph:pencil-simple" size="14")
+              el-tooltip(content="Duplicate" placement="top")
+                el-button(size="small" circle plain @click="handleDuplicate(row)")
+                  Icon(name="ph:copy" size="14")
+              el-tooltip(content="Export PDF" placement="top")
+                el-button(size="small" circle plain @click="handleExportPdf(row)")
+                  Icon(name="ph:file-pdf" size="14")
+              el-tooltip(content="Send" placement="top")
+                el-button(size="small" circle plain @click="openSendDialog(row)")
+                  Icon(name="ph:paper-plane-tilt" size="14")
+              el-tooltip(content="Delete" placement="top")
+                el-button(size="small" circle type="danger" plain @click="handleDelete(row)")
+                  Icon(name="ph:trash" size="14")
+
+      //- Pagination
+      .p-4.flex.justify-between.items-center.border-t(style="border-color: var(--glass-border-color)")
+        span.text-sm(style="color: var(--text-muted)") Showing {{ documents.length }} of {{ pagination.totalItems }} documents
+        el-pagination(
+          v-model:current-page="currentPage"
+          v-model:page-size="pageSize"
+          :page-sizes="[10, 20, 50, 100]"
+          :total="pagination.totalItems"
+          layout="sizes, prev, pager, next"
+          @current-change="handlePageChange"
+          @size-change="handlePageSizeChange"
+        )
+
+  //- Mobile Card View
+  .doc-mobile-view
+    PullToRefresh(:loading="mobileRefreshing" @refresh="handleMobileRefresh")
+      //- Mobile Search
+      .mb-3
+        el-input(
+          v-model="mobileSearch"
+          size="large"
+          :placeholder="`Search ${pageTitle.toLowerCase()}...`"
+          clearable
+          class="!rounded-xl"
+        )
+          template(#prefix)
+            Icon(name="ph:magnifying-glass" size="18" style="color: var(--text-muted)")
+
+      //- Status Filter Pills
+      .doc-status-pills.flex.gap-2.mb-4.overflow-x-auto.pb-2.-mx-1.px-1
+        button.doc-pill(
+          v-for="filter in mobileStatusFilters"
+          :key="filter.value"
+          :class="{ 'doc-pill--active': mobileStatusFilter === filter.value }"
+          :style="mobileStatusFilter === filter.value ? { background: filter.color, borderColor: filter.color } : {}"
+          @click="mobileStatusFilter = filter.value; vibrate()"
+        )
+          span {{ filter.label }}
+
+      //- Document Cards
+      .space-y-3(v-if="mobileFilteredDocs.length")
+        SwipeCard(
+          v-for="doc in mobileFilteredDocs"
+          :key="doc.id"
+          :rightActions="[{ name: 'pdf', label: 'PDF', icon: 'ph:file-pdf-bold', color: '#EF4444' }]"
+          :leftActions="[{ name: 'view', label: 'View', icon: 'ph:eye-bold', color: pageColor }, { name: 'send', label: 'Send', icon: 'ph:paper-plane-tilt-bold', color: '#3B82F6' }]"
+          @action="(name) => handleMobileSwipe(name, doc)"
+        )
+          .doc-card.p-4(@click="navigateTo(`${detailBaseUrl}/${doc.id}`)")
+            .flex.items-start.justify-between.mb-3
+              .flex.items-center.gap-3.min-w-0.flex-1
+                .doc-avatar.w-10.h-10.rounded-xl.flex.items-center.justify-center.shrink-0(
+                  :style="{ background: pageColor + '20', color: pageColor }"
+                )
+                  Icon(:name="pageIcon" size="18")
+                .min-w-0.flex-1
+                  p.text-sm.font-bold.truncate(style="color: var(--text-primary)") {{ doc.title || doc.reference || '—' }}
+                  p.text-xs.font-mono.truncate(style="color: var(--text-muted)") {{ doc.reference }}
+              el-tag.shrink-0(
+                :type="statusTagType(doc.status)"
+                size="small"
+                effect="dark"
+                round
+              ) {{ formatStatus(doc.status) }}
+
+            .grid.grid-cols-2.gap-2
+              .flex.items-center.gap-2(v-if="doc.clientName")
+                Icon(name="ph:user" size="14" style="color: var(--text-muted)")
+                span.text-xs.truncate(style="color: var(--text-secondary)") {{ doc.clientName }}
+              .flex.items-center.gap-2(v-if="doc.total")
+                Icon(name="ph:money" size="14" style="color: var(--text-muted)")
+                span.text-xs.font-semibold.truncate(style="color: var(--text-secondary)") {{ Number(doc.total).toLocaleString('en-US', { minimumFractionDigits: 2 }) }} {{ doc.currency || 'SAR' }}
+              .flex.items-center.gap-2(v-if="doc.createdAt")
+                Icon(name="ph:calendar" size="14" style="color: var(--text-muted)")
+                span.text-xs.truncate(style="color: var(--text-secondary)") {{ formatDate(doc.createdAt) }}
+
+      //- Empty state
+      .text-center.py-12(v-if="!mobileFilteredDocs.length")
+        Icon(:name="pageIcon" size="48" style="color: var(--text-muted)")
+        p.text-sm.mt-2(style="color: var(--text-muted)") No {{ pageTitle.toLowerCase() }} found
+
+      //- Result count
+      .text-center.mt-4.pb-20(v-if="mobileFilteredDocs.length")
+        span.text-xs(style="color: var(--text-muted)") {{ mobileFilteredDocs.length }} {{ pageTitle.toLowerCase() }}
+
+    //- FAB
+    .doc-mobile-fab(@click="navigateTo(createUrl)")
+      Icon(name="ph:plus-bold" size="24")
 
   //- Send Dialog
   SendDocumentDialog(
@@ -395,4 +472,136 @@ watch(() => props.documentType, () => {
   currentPage.value = 1;
   loadData();
 });
+
+// Mobile
+const { vibrate } = useMobile();
+const mobileSearch = ref('');
+const mobileStatusFilter = ref('ALL');
+const mobileRefreshing = ref(false);
+
+const mobileStatusFilters = [
+  { value: 'ALL', label: 'All', color: '#7c3aed' },
+  { value: 'DRAFT', label: 'Draft', color: '#6b7280' },
+  { value: 'PENDING_APPROVAL', label: 'Pending', color: '#f59e0b' },
+  { value: 'APPROVED', label: 'Approved', color: '#10b981' },
+  { value: 'SENT', label: 'Sent', color: '#3b82f6' },
+  { value: 'PAID', label: 'Paid', color: '#22c55e' }
+];
+
+const mobileFilteredDocs = computed(() => {
+  let data = documents.value || [];
+  if (mobileStatusFilter.value !== 'ALL') {
+    data = data.filter((d: any) => d.status === mobileStatusFilter.value);
+  }
+  if (!mobileSearch.value) return data;
+  const q = mobileSearch.value.toLowerCase();
+  return data.filter((d: any) => {
+    const title = (d.title || '').toLowerCase();
+    const ref = (d.reference || '').toLowerCase();
+    const client = (d.clientName || '').toLowerCase();
+    return title.includes(q) || ref.includes(q) || client.includes(q);
+  });
+});
+
+async function handleMobileRefresh() {
+  mobileRefreshing.value = true;
+  try {
+    await loadData();
+    vibrate([10, 30, 10]);
+  } finally {
+    mobileRefreshing.value = false;
+  }
+}
+
+function handleMobileSwipe(name: string, doc: any) {
+  vibrate();
+  switch (name) {
+    case 'view':
+      navigateTo(`${detailBaseUrl.value}/${doc.id}`);
+      break;
+    case 'pdf':
+      handleExportPdf(doc);
+      break;
+    case 'send':
+      openSendDialog(doc);
+      break;
+  }
+}
 </script>
+
+<style lang="scss" scoped>
+.doc-mobile-view { display: none; }
+
+@media (max-width: 767px) {
+  .doc-mobile-view { display: block; }
+  .doc-desktop-view { display: none; }
+
+  .doc-card {
+    cursor: pointer;
+    -webkit-tap-highlight-color: transparent;
+    background: var(--glass-bg, rgba(255, 255, 255, 0.06));
+    border: 1px solid var(--glass-border, rgba(255, 255, 255, 0.08));
+    border-radius: 16px;
+    &:active { opacity: 0.85; }
+  }
+}
+
+.doc-status-pills {
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+  &::-webkit-scrollbar { display: none; }
+}
+
+.doc-pill {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 8px 14px;
+  border-radius: 100px;
+  border: 1px solid var(--glass-border, rgba(255, 255, 255, 0.15));
+  background: var(--glass-bg, rgba(255, 255, 255, 0.06));
+  color: var(--text-secondary);
+  font-size: 12px;
+  font-weight: 600;
+  white-space: nowrap;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  -webkit-tap-highlight-color: transparent;
+  min-height: 36px;
+  &:active { transform: scale(0.95); }
+  &--active {
+    color: #fff;
+    border-color: transparent;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.15);
+  }
+}
+
+.doc-mobile-fab {
+  display: none;
+}
+
+@media (max-width: 767px) {
+  .doc-mobile-fab {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: fixed;
+    bottom: calc(80px + env(safe-area-inset-bottom, 0px) + 16px);
+    right: 20px;
+    width: 56px;
+    height: 56px;
+    border-radius: 16px;
+    background: linear-gradient(135deg, #7c3aed, #a78bfa);
+    color: #fff;
+    box-shadow: 0 6px 24px rgba(124, 58, 237, 0.4);
+    cursor: pointer;
+    z-index: 40;
+    transition: all 0.2s ease;
+    -webkit-tap-highlight-color: transparent;
+    &:active {
+      transform: scale(0.9);
+      box-shadow: 0 3px 12px rgba(124, 58, 237, 0.3);
+    }
+  }
+}
+</style>

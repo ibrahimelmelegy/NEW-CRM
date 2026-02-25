@@ -15,46 +15,108 @@ div
 
   BulkActions(:count="selectedRows.length" :actions="['delete', 'export']" @bulk-delete="bulkDelete" @bulk-export="bulkExport" @clear-selection="selectedRows = []")
 
-  AppTable(
-    v-slot="{data}"
-    :externalLoading="loading"
-    :filterOptions="filterOptions"
-    :columns="table.columns"
-    position="finance/expenses"
-    :pageInfo="response.pagination"
-    :data="table.data"
-    :sortOptions="table.sort"
-    @handleRowClick="handleRowClick"
-    :searchPlaceholder="$t('finance.expenses.title')"
-    :key="table.data"
-  )
-    .flex.items-center.py-2(@click.stop)
-      el-dropdown(class="outline-0" trigger="click")
-        span(class="el-dropdown-link")
-          .toggle-icon.text-md
-            Icon(name="IconToggle" size="22")
-        template(#dropdown)
-          el-dropdown-menu
-            el-dropdown-item
-              NuxtLink.flex.items-center(:to="`/finance/expenses/${data?.id}`")
-                Icon.text-md.mr-2(name="IconEye")
-                p.text-sm {{ $t('common.view') }}
-            el-dropdown-item
-              NuxtLink.flex.items-center(:to="`/finance/expenses/create?edit=${data?.id}`")
-                Icon.text-md.mr-2(name="IconEdit")
-                p.text-sm {{ $t('common.edit') }}
-            el-dropdown-item(v-if="data?.status === 'PENDING'" @click="handleApprove(data?.id)")
-              .flex.items-center
-                Icon.text-md.mr-2(name="ph:check-circle-bold")
-                p.text-sm {{ $t('finance.expenses.approved') || 'Approve' }}
-            el-dropdown-item(v-if="data?.status === 'PENDING'" @click="handleReject(data?.id)")
-              .flex.items-center
-                Icon.text-md.mr-2(name="ph:x-circle-bold")
-                p.text-sm {{ $t('finance.expenses.rejected') || 'Reject' }}
-            el-dropdown-item(@click="[deleteId = data?.id, deletePopup = true]")
-              .flex.items-center
-                Icon.text-md.mr-2(name="IconDelete")
-                p.text-sm {{ $t('common.delete') }}
+  //- Desktop Table
+  .exp-desktop-view
+    AppTable(
+      v-slot="{data}"
+      :externalLoading="loading"
+      :filterOptions="filterOptions"
+      :columns="table.columns"
+      position="finance/expenses"
+      :pageInfo="response.pagination"
+      :data="table.data"
+      :sortOptions="table.sort"
+      @handleRowClick="handleRowClick"
+      :searchPlaceholder="$t('finance.expenses.title')"
+      :key="table.data"
+    )
+      .flex.items-center.py-2(@click.stop)
+        el-dropdown(class="outline-0" trigger="click")
+          span(class="el-dropdown-link")
+            .toggle-icon.text-md
+              Icon(name="IconToggle" size="22")
+          template(#dropdown)
+            el-dropdown-menu
+              el-dropdown-item
+                NuxtLink.flex.items-center(:to="`/finance/expenses/${data?.id}`")
+                  Icon.text-md.mr-2(name="IconEye")
+                  p.text-sm {{ $t('common.view') }}
+              el-dropdown-item
+                NuxtLink.flex.items-center(:to="`/finance/expenses/create?edit=${data?.id}`")
+                  Icon.text-md.mr-2(name="IconEdit")
+                  p.text-sm {{ $t('common.edit') }}
+              el-dropdown-item(v-if="data?.status === 'PENDING'" @click="handleApprove(data?.id)")
+                .flex.items-center
+                  Icon.text-md.mr-2(name="ph:check-circle-bold")
+                  p.text-sm {{ $t('finance.expenses.approved') || 'Approve' }}
+              el-dropdown-item(v-if="data?.status === 'PENDING'" @click="handleReject(data?.id)")
+                .flex.items-center
+                  Icon.text-md.mr-2(name="ph:x-circle-bold")
+                  p.text-sm {{ $t('finance.expenses.rejected') || 'Reject' }}
+              el-dropdown-item(@click="[deleteId = data?.id, deletePopup = true]")
+                .flex.items-center
+                  Icon.text-md.mr-2(name="IconDelete")
+                  p.text-sm {{ $t('common.delete') }}
+
+  //- Mobile Card View
+  .exp-mobile-view
+    PullToRefresh(:loading="mobileRefreshing" @refresh="handleMobileRefresh")
+      .mb-3
+        el-input(v-model="mobileSearch" size="large" :placeholder="`${$t('common.search')} ${$t('finance.expenses.title')}`" clearable class="!rounded-xl")
+          template(#prefix)
+            Icon(name="ph:magnifying-glass" size="18" style="color: var(--text-muted)")
+
+      .status-pills.flex.gap-2.mb-4.overflow-x-auto.pb-2.-mx-1.px-1
+        button.status-pill(
+          v-for="filter in mobileExpFilters"
+          :key="filter.value"
+          :class="{ 'status-pill--active': mobileExpStatus === filter.value }"
+          :style="mobileExpStatus === filter.value ? { background: filter.color, borderColor: filter.color } : {}"
+          @click="mobileExpStatus = filter.value; vibrate()"
+        )
+          span {{ filter.label }}
+          span.status-pill__count(v-if="filter.count > 0") {{ filter.count }}
+
+      .space-y-3(v-if="mobileFilteredExpenses.length")
+        SwipeCard(
+          v-for="exp in mobileFilteredExpenses"
+          :key="exp.id"
+          :rightActions="exp.status === 'PENDING' ? [{ name: 'approve', label: $t('finance.expenses.approved') || 'Approve', icon: 'ph:check-circle-bold', color: '#22c55e' }] : []"
+          :leftActions="[{ name: 'view', label: $t('common.view'), icon: 'ph:eye-bold', color: '#7849FF' }]"
+          @action="(name) => handleExpSwipe(name, exp)"
+        )
+          .entity-card.p-4(@click="handleRowClick(exp)")
+            .flex.items-start.justify-between.mb-3
+              .flex.items-center.gap-3.min-w-0.flex-1
+                .w-10.h-10.rounded-xl.flex.items-center.justify-center.shrink-0.text-sm.font-bold(
+                  :style="{ background: getExpStatusColor(exp.status) + '20', color: getExpStatusColor(exp.status) }"
+                )
+                  Icon(:name="getExpStatusIcon(exp.status)" size="18")
+                .min-w-0.flex-1
+                  p.text-sm.font-bold.truncate(style="color: var(--text-primary)") {{ exp.expenseDetails?.title || exp.description || '--' }}
+                  p.text-xs.truncate(style="color: var(--text-muted)") {{ exp.categoryName || '' }}
+              el-tag.shrink-0(:type="getExpTagType(exp.status)" size="small" effect="dark" round) {{ exp.status }}
+
+            .grid.grid-cols-2.gap-2
+              .flex.items-center.gap-2
+                Icon(name="ph:money" size="14" style="color: var(--text-muted)")
+                span.text-xs.font-semibold.truncate(style="color: var(--text-secondary)") {{ exp.amount }}
+              .flex.items-center.gap-2(v-if="exp.submitterName")
+                Icon(name="ph:user" size="14" style="color: var(--text-muted)")
+                span.text-xs.truncate(style="color: var(--text-secondary)") {{ exp.submitterName }}
+              .flex.items-center.gap-2(v-if="exp.date")
+                Icon(name="ph:calendar" size="14" style="color: var(--text-muted)")
+                span.text-xs.truncate(style="color: var(--text-secondary)") {{ exp.date }}
+
+      .text-center.py-12(v-if="!mobileFilteredExpenses.length")
+        Icon(name="ph:receipt" size="48" style="color: var(--text-muted)")
+        p.text-sm.mt-2(style="color: var(--text-muted)") {{ $t('common.noData') }}
+
+      .text-center.mt-4.pb-20(v-if="mobileFilteredExpenses.length")
+        span.text-xs(style="color: var(--text-muted)") {{ mobileFilteredExpenses.length }} {{ $t('finance.expenses.title').toLowerCase() }}
+
+    .mobile-fab(@click="navigateTo('/finance/expenses/create')")
+      Icon(name="ph:plus-bold" size="24")
 
   ActionModel(v-model="deletePopup" :loading="deleting" :description="$t('common.confirmDelete')" @confirm="confirmDelete")
   ImportDialog(v-model="showImport" endpoint="finance/expenses/import" @success="refreshData")
@@ -271,4 +333,68 @@ function bulkExport() {
 function formatCurrency(amount: number): string {
   return new Intl.NumberFormat('en-US', { style: 'currency', currency: 'SAR', minimumFractionDigits: 0 }).format(amount || 0);
 }
+
+// Mobile
+const { vibrate } = useMobile();
+const mobileSearch = ref('');
+const mobileExpStatus = ref('ALL');
+const mobileRefreshing = ref(false);
+
+const mobileExpFilters = computed(() => {
+  const data = table.value.data || [];
+  return [
+    { value: 'ALL', label: t('common.all') || 'All', color: '#7849ff', count: data.length },
+    { value: 'PENDING', label: t('finance.expenses.pending'), color: '#f59e0b', count: data.filter((e: any) => e.status === 'PENDING').length },
+    { value: 'APPROVED', label: t('finance.expenses.approved'), color: '#22c55e', count: data.filter((e: any) => e.status === 'APPROVED').length },
+    { value: 'REJECTED', label: t('finance.expenses.rejected'), color: '#ef4444', count: data.filter((e: any) => e.status === 'REJECTED').length }
+  ];
+});
+
+const mobileFilteredExpenses = computed(() => {
+  let data = table.value.data || [];
+  if (mobileExpStatus.value !== 'ALL') data = data.filter((e: any) => e.status === mobileExpStatus.value);
+  if (!mobileSearch.value) return data;
+  const q = mobileSearch.value.toLowerCase();
+  return data.filter((e: any) => {
+    const desc = (e.expenseDetails?.title || e.description || '').toLowerCase();
+    const cat = (e.categoryName || '').toLowerCase();
+    const sub = (e.submitterName || '').toLowerCase();
+    return desc.includes(q) || cat.includes(q) || sub.includes(q);
+  });
+});
+
+async function handleMobileRefresh() {
+  mobileRefreshing.value = true;
+  try {
+    await refreshData();
+    vibrate([10, 30, 10]);
+  } finally { mobileRefreshing.value = false; }
+}
+
+function handleExpSwipe(name: string, exp: any) {
+  vibrate();
+  switch (name) {
+    case 'approve': handleApprove(exp.id); break;
+    case 'view': navigateTo(`/finance/expenses/${exp.id}`); break;
+  }
+}
+
+function getExpStatusColor(status: string): string {
+  const map: Record<string, string> = { PENDING: '#f59e0b', APPROVED: '#22c55e', REJECTED: '#ef4444' };
+  return map[status] || '#94a3b8';
+}
+
+function getExpStatusIcon(status: string): string {
+  const map: Record<string, string> = { PENDING: 'ph:clock', APPROVED: 'ph:check-circle', REJECTED: 'ph:x-circle' };
+  return map[status] || 'ph:receipt';
+}
+
+function getExpTagType(status: string): string {
+  const map: Record<string, string> = { PENDING: 'warning', APPROVED: 'success', REJECTED: 'danger' };
+  return map[status] || 'info';
+}
 </script>
+
+<style lang="scss" scoped>
+@include mobile-list-page('exp', #7849ff);
+</style>

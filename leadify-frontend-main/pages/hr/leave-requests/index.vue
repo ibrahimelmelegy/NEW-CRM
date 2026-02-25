@@ -8,47 +8,123 @@ div
     template(#actions)
       ExportButton(:data="table.data" :columns="exportColumns" :filename="'leave-requests-export'" :title="$t('hr.leave.title')")
 
-  StatCards(:stats="summaryStats")
+  .leave-kpi-grid
+    StatCards(:stats="summaryStats")
 
-  AppTable(
-    v-slot="{data}"
-    :externalLoading="loading"
-    :filterOptions="filterOptions"
-    :columns="table.columns"
-    position="hr/leave-requests"
-    :pageInfo="pagination"
-    :data="table.data"
-    @handleRowClick="handleRowClick"
-    :searchPlaceholder="$t('hr.leave.title')"
-    :key="table.data"
-  )
-    .flex.items-center.py-2(@click.stop)
-      el-dropdown(class="outline-0" trigger="click")
-        span(class="el-dropdown-link")
-          .toggle-icon.text-md
-            Icon(name="IconToggle" size="22")
-        template(#dropdown)
-          el-dropdown-menu
-            el-dropdown-item
-              NuxtLink.flex.items-center(:to="`/hr/leave-requests/${data?.id}`")
-                Icon.text-md.mr-2(name="IconEye")
-                p.text-sm {{ $t('common.view') }}
-            el-dropdown-item(v-if="data?.status === 'PENDING'" @click="handleApprove(data?.id)")
-              .flex.items-center
-                Icon.text-md.mr-2(name="ph:check-circle-bold")
-                p.text-sm {{ $t('hr.leave.approve') }}
-            el-dropdown-item(v-if="data?.status === 'PENDING'" @click="[rejectId = data?.id, rejectPopup = true]")
-              .flex.items-center
-                Icon.text-md.mr-2(name="ph:x-circle-bold")
-                p.text-sm {{ $t('hr.leave.reject') }}
-            el-dropdown-item(v-if="data?.status === 'PENDING'" @click="handleCancel(data?.id)")
-              .flex.items-center
-                Icon.text-md.mr-2(name="ph:prohibit-bold")
-                p.text-sm {{ $t('common.cancel') }}
-            el-dropdown-item(@click="[deleteId = data?.id, deletePopup = true]")
-              .flex.items-center
-                Icon.text-md.mr-2(name="IconDelete")
-                p.text-sm {{ $t('common.delete') }}
+  //- Desktop Table View
+  .leave-desktop-view
+    AppTable(
+      v-slot="{data}"
+      :externalLoading="loading"
+      :filterOptions="filterOptions"
+      :columns="table.columns"
+      position="hr/leave-requests"
+      :pageInfo="pagination"
+      :data="table.data"
+      @handleRowClick="handleRowClick"
+      :searchPlaceholder="$t('hr.leave.title')"
+      :key="table.data"
+    )
+      .flex.items-center.py-2(@click.stop)
+        el-dropdown(class="outline-0" trigger="click")
+          span(class="el-dropdown-link")
+            .toggle-icon.text-md
+              Icon(name="IconToggle" size="22")
+          template(#dropdown)
+            el-dropdown-menu
+              el-dropdown-item
+                NuxtLink.flex.items-center(:to="`/hr/leave-requests/${data?.id}`")
+                  Icon.text-md.mr-2(name="IconEye")
+                  p.text-sm {{ $t('common.view') }}
+              el-dropdown-item(v-if="data?.status === 'PENDING'" @click="handleApprove(data?.id)")
+                .flex.items-center
+                  Icon.text-md.mr-2(name="ph:check-circle-bold")
+                  p.text-sm {{ $t('hr.leave.approve') }}
+              el-dropdown-item(v-if="data?.status === 'PENDING'" @click="[rejectId = data?.id, rejectPopup = true]")
+                .flex.items-center
+                  Icon.text-md.mr-2(name="ph:x-circle-bold")
+                  p.text-sm {{ $t('hr.leave.reject') }}
+              el-dropdown-item(v-if="data?.status === 'PENDING'" @click="handleCancel(data?.id)")
+                .flex.items-center
+                  Icon.text-md.mr-2(name="ph:prohibit-bold")
+                  p.text-sm {{ $t('common.cancel') }}
+              el-dropdown-item(@click="[deleteId = data?.id, deletePopup = true]")
+                .flex.items-center
+                  Icon.text-md.mr-2(name="IconDelete")
+                  p.text-sm {{ $t('common.delete') }}
+
+  //- Mobile Card View
+  .leave-mobile-view
+    PullToRefresh(:loading="mobileRefreshing" @refresh="handleMobileRefresh")
+      //- Mobile Search
+      .mb-3
+        el-input(
+          v-model="mobileSearch"
+          size="large"
+          :placeholder="`${$t('common.search')} ${$t('hr.leave.title')}`"
+          clearable
+          class="!rounded-xl"
+        )
+          template(#prefix)
+            Icon(name="ph:magnifying-glass" size="18" style="color: var(--text-muted)")
+
+      //- Status Filter Pills
+      .status-pills.flex.gap-2.mb-4.overflow-x-auto.pb-2.-mx-1.px-1
+        button.status-pill(
+          v-for="filter in statusFilters"
+          :key="filter.value"
+          :class="{ 'status-pill--active': mobileStatusFilter === filter.value }"
+          :style="mobileStatusFilter === filter.value ? { background: filter.color, borderColor: filter.color } : {}"
+          @click="setMobileStatusFilter(filter.value)"
+        )
+          span {{ filter.label }}
+          span.status-pill__count(v-if="filter.count > 0") {{ filter.count }}
+
+      //- Leave Request Cards with Swipe Actions
+      .space-y-3(v-if="mobileFilteredData.length")
+        SwipeCard(
+          v-for="request in mobileFilteredData"
+          :key="request.id"
+          :rightActions="getSwipeRightActions(request)"
+          :leftActions="getSwipeLeftActions(request)"
+          @action="(name) => handleSwipeAction(name, request)"
+        )
+          .entity-card.p-4(@click="handleRowClick(request)")
+            .flex.items-start.justify-between.mb-3
+              .flex.items-center.gap-3.min-w-0.flex-1
+                .w-10.h-10.rounded-xl.flex.items-center.justify-center.shrink-0.text-sm.font-bold(
+                  :style="{ background: getStatusColor(request.status) + '20', color: getStatusColor(request.status) }"
+                ) {{ getInitial(request) }}
+                .min-w-0.flex-1
+                  p.text-sm.font-bold.truncate(style="color: var(--text-primary)") {{ request.employeeDetails?.title || '—' }}
+                  p.text-xs.truncate(style="color: var(--text-muted)") {{ request.leaveTypeLabel || '' }}
+              el-tag.shrink-0(
+                :type="getTagType(request.status)"
+                size="small"
+                effect="dark"
+                round
+              ) {{ request.status }}
+
+            .grid.grid-cols-2.gap-2
+              .flex.items-center.gap-2(v-if="request.period")
+                Icon(name="ph:calendar-blank" size="14" style="color: var(--text-muted)")
+                span.text-xs.truncate(style="color: var(--text-secondary)") {{ request.period }}
+              .flex.items-center.gap-2.col-span-2(v-if="request.reason")
+                Icon(name="ph:chat-text" size="14" style="color: var(--text-muted)")
+                span.text-xs.truncate(style="color: var(--text-secondary)") {{ request.reason }}
+
+      //- Empty state
+      .text-center.py-12(v-if="!mobileFilteredData.length")
+        Icon(name="ph:calendar-x" size="48" style="color: var(--text-muted)")
+        p.text-sm.mt-2(style="color: var(--text-muted)") {{ $t('common.noData') }}
+
+      //- Mobile result count
+      .text-center.mt-4.pb-20(v-if="mobileFilteredData.length")
+        span.text-xs(style="color: var(--text-muted)") {{ mobileFilteredData.length }} {{ $t('hr.leave.title').toLowerCase() }}
+
+    //- Floating Action Button
+    .mobile-fab(@click="navigateTo('/hr/leave-requests/create')")
+      Icon(name="ph:plus-bold" size="24")
 
   ActionModel(v-model="deletePopup" :loading="deleting" :description="$t('common.confirmDelete')" @confirm="confirmDelete")
 
@@ -204,4 +280,107 @@ async function refreshData() {
   pagination.value = result.value.pagination;
   loading.value = false;
 }
+
+// --- Mobile card view ---
+const { vibrate } = useMobile();
+const mobileSearch = ref('');
+const mobileStatusFilter = ref('ALL');
+const mobileRefreshing = ref(false);
+
+const statusFilters = computed(() => {
+  const data = table.value.data || [];
+  return [
+    { value: 'ALL', label: t('hr.leave.allStatuses') || 'All', color: '#f59e0b', count: data.length },
+    { value: 'PENDING', label: t('hr.leave.pending'), color: '#f59e0b', count: data.filter((r: any) => r.status === 'PENDING').length },
+    { value: 'APPROVED', label: t('hr.leave.approved'), color: '#22c55e', count: data.filter((r: any) => r.status === 'APPROVED').length },
+    { value: 'REJECTED', label: t('hr.leave.rejected'), color: '#ef4444', count: data.filter((r: any) => r.status === 'REJECTED').length }
+  ];
+});
+
+function setMobileStatusFilter(value: string) {
+  mobileStatusFilter.value = value;
+  vibrate();
+}
+
+const mobileFilteredData = computed(() => {
+  let data = table.value.data || [];
+  if (mobileStatusFilter.value !== 'ALL') {
+    data = data.filter((r: any) => r.status === mobileStatusFilter.value);
+  }
+  if (!mobileSearch.value) return data;
+  const q = mobileSearch.value.toLowerCase();
+  return data.filter((r: any) => {
+    const name = (r.employeeDetails?.title || '').toLowerCase();
+    const type = (r.leaveTypeLabel || '').toLowerCase();
+    const reason = (r.reason || '').toLowerCase();
+    const period = (r.period || '').toLowerCase();
+    return name.includes(q) || type.includes(q) || reason.includes(q) || period.includes(q);
+  });
+});
+
+async function handleMobileRefresh() {
+  mobileRefreshing.value = true;
+  try {
+    await refreshData();
+    vibrate([10, 30, 10]);
+  } finally {
+    mobileRefreshing.value = false;
+  }
+}
+
+function getSwipeRightActions(request: any) {
+  if (request.status !== 'PENDING') return [];
+  return [
+    { name: 'approve', label: t('hr.leave.approve'), icon: 'ph:check-circle-bold', color: '#22c55e' }
+  ];
+}
+
+function getSwipeLeftActions(request: any) {
+  if (request.status !== 'PENDING') return [];
+  return [
+    { name: 'reject', label: t('hr.leave.reject'), icon: 'ph:x-circle-bold', color: '#ef4444' }
+  ];
+}
+
+function handleSwipeAction(name: string, request: any) {
+  vibrate();
+  switch (name) {
+    case 'approve':
+      handleApprove(request.id);
+      break;
+    case 'reject':
+      rejectId.value = request.id;
+      rejectPopup.value = true;
+      break;
+  }
+}
+
+function getInitial(request: any): string {
+  const name = request.employeeDetails?.title || '?';
+  return name.charAt(0).toUpperCase();
+}
+
+function getStatusColor(status: string): string {
+  const map: Record<string, string> = {
+    PENDING: '#f59e0b',
+    APPROVED: '#22c55e',
+    REJECTED: '#ef4444',
+    CANCELLED: '#94a3b8'
+  };
+  return map[status] || '#94a3b8';
+}
+
+function getTagType(status: string): string {
+  const map: Record<string, string> = {
+    PENDING: 'warning',
+    APPROVED: 'success',
+    REJECTED: 'danger',
+    CANCELLED: 'info'
+  };
+  return map[status] || 'info';
+}
 </script>
+
+<style lang="scss" scoped>
+@include mobile-list-page('leave', #f59e0b);
+</style>

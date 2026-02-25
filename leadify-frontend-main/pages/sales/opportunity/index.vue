@@ -35,29 +35,88 @@ div
   BulkActions(:count="selectedRows.length" :actions="['delete', 'export']" @bulk-delete="handleBulkDelete" @bulk-export="handleBulkExport" @clear-selection="selectedRows = []")
   SavedViews(:entityType="'opportunity'" :currentFilters="{}" @apply-view="handleApplyView")
   AdvancedSearch(:entityType="'opportunity'" :fields="advancedSearchFields" @apply="handleAdvancedFilter" @clear="handleClearAdvancedFilter")
-  AppTable(v-slot="{data}" v-if="!loadingAction" :filterOptions="filterOptions" :columns="table.columns" position="opportunity" :pageInfo="response.pagination" :data="table.data" :sortOptions="table.sort" @handleRowClick="handleRowClick" :searchPlaceholder="$t('opportunities.title')" )
-    .flex.items-center.py-2(@click.stop)
-        //- NuxtLink.toggle-icon(:to="`/opportunities/1`")
-        //-     Icon.text-md(name="IconEye" )
 
-        el-dropdown(class="outline-0" trigger="click")
-            span(class="el-dropdown-link")
-              .toggle-icon.text-md
-                  Icon(name="IconToggle"  size="22")
-            template(#dropdown='')
-                el-dropdown-menu
-                    el-dropdown-item
-                      NuxtLink.flex.items-center(:to="`/sales/opportunity/${data?.id}`")
-                        Icon.text-md.mr-2(name="IconEye" )
-                        p.text-sm {{ $t('common.view') }}
-                    el-dropdown-item( v-if="hasPermission('EDIT_OPPORTUNITIES')")
-                      NuxtLink.flex.items-center(:to="`/sales/opportunity/edit/${data?.id}`")
-                        Icon.text-md.mr-2(name="IconEdit" )
-                        p.text-sm {{ $t('common.edit') }}
-                    //- el-dropdown-item(@click="[deleteLeadPopup=true, userActionId = data?.id]" )
-                    //-     .flex.items-center
-                    //-       Icon.text-md.mr-2(name="IconDelete" )
-                    //-       p.text-sm Delete
+  //- Desktop Table
+  .opp-desktop-view
+    AppTable(v-slot="{data}" v-if="!loadingAction" :filterOptions="filterOptions" :columns="table.columns" position="opportunity" :pageInfo="response.pagination" :data="table.data" :sortOptions="table.sort" @handleRowClick="handleRowClick" :searchPlaceholder="$t('opportunities.title')" )
+      .flex.items-center.py-2(@click.stop)
+          el-dropdown(class="outline-0" trigger="click")
+              span(class="el-dropdown-link")
+                .toggle-icon.text-md
+                    Icon(name="IconToggle"  size="22")
+              template(#dropdown='')
+                  el-dropdown-menu
+                      el-dropdown-item
+                        NuxtLink.flex.items-center(:to="`/sales/opportunity/${data?.id}`")
+                          Icon.text-md.mr-2(name="IconEye" )
+                          p.text-sm {{ $t('common.view') }}
+                      el-dropdown-item( v-if="hasPermission('EDIT_OPPORTUNITIES')")
+                        NuxtLink.flex.items-center(:to="`/sales/opportunity/edit/${data?.id}`")
+                          Icon.text-md.mr-2(name="IconEdit" )
+                          p.text-sm {{ $t('common.edit') }}
+
+  //- Mobile Card View
+  .opp-mobile-view(v-if="!loadingAction")
+    PullToRefresh(:loading="mobileRefreshing" @refresh="handleMobileRefresh")
+      .mb-3
+        el-input(v-model="mobileSearch" size="large" :placeholder="`${$t('common.search')} ${$t('opportunities.title')}`" clearable class="!rounded-xl")
+          template(#prefix)
+            Icon(name="ph:magnifying-glass" size="18" style="color: var(--text-muted)")
+
+      .status-pills.flex.gap-2.mb-4.overflow-x-auto.pb-2.-mx-1.px-1
+        button.status-pill(
+          v-for="filter in mobileStageFilters"
+          :key="filter.value"
+          :class="{ 'status-pill--active': mobileStageFilter === filter.value }"
+          :style="mobileStageFilter === filter.value ? { background: filter.color, borderColor: filter.color } : {}"
+          @click="mobileStageFilter = filter.value; vibrate()"
+        )
+          span {{ filter.label }}
+          span.status-pill__count(v-if="filter.count > 0") {{ filter.count }}
+
+      .space-y-3(v-if="mobileFilteredData.length")
+        SwipeCard(
+          v-for="opp in mobileFilteredData"
+          :key="opp.id"
+          :rightActions="[{ name: 'kanban', label: $t('kanban.kanbanView'), icon: 'ph:columns-bold', color: '#10B981' }]"
+          :leftActions="getMobileLeftActions(opp)"
+          @action="(name) => handleMobileSwipe(name, opp)"
+        )
+          .entity-card.p-4(@click="handleRowClick(opp)")
+            .flex.items-start.justify-between.mb-3
+              .flex.items-center.gap-3.min-w-0.flex-1
+                .w-10.h-10.rounded-xl.flex.items-center.justify-center.shrink-0.text-sm.font-bold(
+                  :style="{ background: getOppColor(opp.stage) + '20', color: getOppColor(opp.stage) }"
+                ) {{ (opp.name || '?').charAt(0).toUpperCase() }}
+                .min-w-0.flex-1
+                  p.text-sm.font-bold.truncate(style="color: var(--text-primary)") {{ opp.name || '--' }}
+                  p.text-xs.truncate(style="color: var(--text-muted)") {{ opp.assign || '' }}
+              el-tag.shrink-0(:type="getOppTagType(opp.stage)" size="small" effect="dark" round) {{ opp.stage }}
+
+            .grid.grid-cols-2.gap-2
+              .flex.items-center.gap-2(v-if="opp.estimatedValue")
+                Icon(name="ph:money" size="14" style="color: var(--text-muted)")
+                span.text-xs.font-semibold.truncate(style="color: var(--text-secondary)") {{ opp.estimatedValue }}
+              .flex.items-center.gap-2(v-if="opp.priority")
+                Icon(name="ph:flag" size="14" style="color: var(--text-muted)")
+                span.text-xs.truncate(style="color: var(--text-secondary)") {{ opp.priority }}
+              .flex.items-center.gap-2(v-if="opp.expectedCloseDate")
+                Icon(name="ph:calendar" size="14" style="color: var(--text-muted)")
+                span.text-xs.truncate(style="color: var(--text-secondary)") {{ opp.expectedCloseDate }}
+              .flex.items-center.gap-2(v-if="opp.profit")
+                Icon(name="ph:chart-line-up" size="14" style="color: var(--text-muted)")
+                span.text-xs.truncate(style="color: var(--text-secondary)") {{ opp.profit }}
+
+      .text-center.py-12(v-if="!mobileFilteredData.length")
+        Icon(name="ph:target" size="48" style="color: var(--text-muted)")
+        p.text-sm.mt-2(style="color: var(--text-muted)") {{ $t('common.noData') }}
+
+      .text-center.mt-4.pb-20(v-if="mobileFilteredData.length")
+        span.text-xs(style="color: var(--text-muted)") {{ mobileFilteredData.length }} {{ $t('opportunities.title').toLowerCase() }}
+
+    .mobile-fab(v-if="hasPermission('CREATE_OPPORTUNITIES')" @click="navigateTo('/sales/opportunity/add-opportunity')")
+      Icon(name="ph:plus-bold" size="24")
+
   ActionModel(v-model="deleteLeadPopup" :loading="loadingAction" :btn-text="$t('opportunities.archiveTitle')" :description-one="$t('opportunities.deleteDesc1')" icon="/images/delete-image.png" :description-two="$t('opportunities.deleteDesc2')" )
   ActionModel(v-model="wonPopup" :loading="loadingAction" :btn-text="$t('common.save')" :description="$t('opportunities.wonDesc')" @confirm = " editPresent" )
    template(#input)
@@ -332,4 +391,73 @@ async function handleClearAdvancedFilter() {
   const res = await useTableFilter('opportunity');
   table.data = res.formattedData;
 }
+
+// Mobile
+const { vibrate } = useMobile();
+const mobileSearch = ref('');
+const mobileStageFilter = ref('ALL');
+const mobileRefreshing = ref(false);
+const loading = ref(false);
+
+const mobileStageFilters = computed(() => {
+  const data = table.data || [];
+  return [
+    { value: 'ALL', label: t('common.all'), color: '#f59e0b', count: data.length },
+    { value: 'DISCOVERY', label: 'Discovery', color: '#3b82f6', count: data.filter((o: any) => o.stage === 'DISCOVERY').length },
+    { value: 'PROPOSAL', label: 'Proposal', color: '#8b5cf6', count: data.filter((o: any) => o.stage === 'PROPOSAL').length },
+    { value: 'NEGOTIATION', label: 'Negotiation', color: '#f59e0b', count: data.filter((o: any) => o.stage === 'NEGOTIATION').length },
+    { value: 'WON', label: 'Won', color: '#10b981', count: data.filter((o: any) => o.stage === 'WON').length },
+    { value: 'LOST', label: 'Lost', color: '#ef4444', count: data.filter((o: any) => o.stage === 'LOST').length }
+  ];
+});
+
+const mobileFilteredData = computed(() => {
+  let data = table.data || [];
+  if (mobileStageFilter.value !== 'ALL') data = data.filter((o: any) => o.stage === mobileStageFilter.value);
+  if (!mobileSearch.value) return data;
+  const q = mobileSearch.value.toLowerCase();
+  return data.filter((o: any) => {
+    const name = (o.name || '').toLowerCase();
+    const assign = (o.assign || '').toLowerCase();
+    return name.includes(q) || assign.includes(q);
+  });
+});
+
+async function handleMobileRefresh() {
+  mobileRefreshing.value = true;
+  try {
+    const res = await useTableFilter('opportunity');
+    table.data = res.formattedData;
+    vibrate([10, 30, 10]);
+  } finally { mobileRefreshing.value = false; }
+}
+
+function getMobileLeftActions(_opp: any) {
+  const actions = [{ name: 'view', label: t('common.view'), icon: 'ph:eye-bold', color: '#f59e0b' }];
+  if (hasPermission('EDIT_OPPORTUNITIES')) actions.push({ name: 'edit', label: t('common.edit'), icon: 'ph:pencil-simple-bold', color: '#F59E0B' });
+  return actions;
+}
+
+function handleMobileSwipe(name: string, opp: any) {
+  vibrate();
+  switch (name) {
+    case 'kanban': navigateTo('/sales/opportunity/kanban'); break;
+    case 'view': navigateTo(`/sales/opportunity/${opp.id}`); break;
+    case 'edit': navigateTo(`/sales/opportunity/edit/${opp.id}`); break;
+  }
+}
+
+function getOppColor(stage: string): string {
+  const map: Record<string, string> = { DISCOVERY: '#3b82f6', PROPOSAL: '#8b5cf6', NEGOTIATION: '#f59e0b', WON: '#10b981', LOST: '#ef4444' };
+  return map[stage] || '#94a3b8';
+}
+
+function getOppTagType(stage: string): string {
+  const map: Record<string, string> = { DISCOVERY: '', PROPOSAL: 'primary', NEGOTIATION: 'warning', WON: 'success', LOST: 'danger' };
+  return map[stage] || 'info';
+}
 </script>
+
+<style lang="scss" scoped>
+@include mobile-list-page('opp', #f59e0b);
+</style>

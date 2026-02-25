@@ -17,35 +17,56 @@
                   Icon.mr-2(name="IconAdd", size="20")
                 p.text-sm {{ $t('operations.dailyTasks.buttons.addProject') }}
         .flex.justify-center.items-center.h-64(v-if="loading")
-          .animate-spin.rounded-full.h-12.w-12.border-4.border-primary-purple-400.border-t-transparent 
-        AppTable(
-          v-else
-          v-slot="{ data }",
-          :columns="activeColumns",
-          :data="activeProjects",
-          :loading="loading",
-          :pageInfo="activeProjectsPagination",
-          @page-change="handlePageChange",
-          @search="handleSearch",
-          without-filters,
-          position="daily-task"
-        )
-         .flex.items-center.py-2(@click.stop)
-           el-dropdown(class="outline-0" trigger="click")
-            span(class="el-dropdown-link")
-              .toggle-icon.text-md
-                  Icon(name="IconToggle"  size="22")
-            template(#dropdown='')
-                el-dropdown-menu
-                    el-dropdown-item
-                      NuxtLink.flex.items-center(:to="`/operations/daily-task/${data?.id}`")
-                        Icon.text-md.mr-2(name="IconEye" )
-                        p.text-sm View
-                    el-dropdown-item
-                      NuxtLink.flex.items-center(:to="`/operations/daily-task/edits/${data?.id}`")
-                        Icon.text-md.mr-2(name="IconEdit" )
-                        p.text-sm Edit
-  
+          .animate-spin.rounded-full.h-12.w-12.border-4.border-primary-purple-400.border-t-transparent
+        .dtask-desktop-view(v-else)
+          AppTable(
+            v-slot="{ data }",
+            :columns="activeColumns",
+            :data="activeProjects",
+            :loading="loading",
+            :pageInfo="activeProjectsPagination",
+            @page-change="handlePageChange",
+            @search="handleSearch",
+            without-filters,
+            position="daily-task"
+          )
+           .flex.items-center.py-2(@click.stop)
+             el-dropdown(class="outline-0" trigger="click")
+              span(class="el-dropdown-link")
+                .toggle-icon.text-md
+                    Icon(name="IconToggle"  size="22")
+              template(#dropdown='')
+                  el-dropdown-menu
+                      el-dropdown-item
+                        NuxtLink.flex.items-center(:to="`/operations/daily-task/${data?.id}`")
+                          Icon.text-md.mr-2(name="IconEye" )
+                          p.text-sm View
+                      el-dropdown-item
+                        NuxtLink.flex.items-center(:to="`/operations/daily-task/edits/${data?.id}`")
+                          Icon.text-md.mr-2(name="IconEdit" )
+                          p.text-sm Edit
+        //- Mobile card view for active tab
+        .dtask-mobile-view(v-if="!loading")
+          .space-y-3(v-if="activeProjects.length")
+            .entity-card.p-4(v-for="task in activeProjects" :key="task.id" @click="handleView(task)")
+              .flex.items-start.justify-between.mb-3
+                .flex.items-center.gap-3.min-w-0.flex-1
+                  .w-10.h-10.rounded-xl.flex.items-center.justify-center.shrink-0.text-sm.font-bold(
+                    :style="{ background: '#f59e0b20', color: '#f59e0b' }"
+                  ) {{ (task.name || '?').charAt(0).toUpperCase() }}
+                  .min-w-0.flex-1
+                    p.text-sm.font-bold.truncate(style="color: var(--text-primary)") {{ task.clientName || '--' }}
+                    p.text-xs.truncate(style="color: var(--text-muted)") {{ task.createdAt || '' }}
+                el-tag.shrink-0(:type="getTaskTagType(task.status)" size="small" effect="dark" round) {{ task.status }}
+              .flex.flex-col.gap-1
+                p.text-xs.truncate(v-if="task.name" style="color: var(--text-secondary)") {{ task.name }}
+                .flex.items-center.gap-2(v-if="task.assignedToName")
+                  Icon(name="ph:user" size="14" style="color: var(--text-muted)")
+                  span.text-xs.truncate(style="color: var(--text-secondary)") {{ task.assignedToName }}
+          .text-center.py-12(v-if="!activeProjects.length")
+            Icon(name="ph:clipboard-text" size="48" style="color: var(--text-muted)")
+            p.text-sm.mt-2(style="color: var(--text-muted)") {{ $t('common.noData') }}
+
     el-tab-pane(:label="$t('operations.dailyTasks.tabs.completed')" name="completed")
       .glass-card.p-10.rounded-3xl.mt-3
         .flex.items-center.justify-between.m-5
@@ -61,34 +82,56 @@
                   Icon.mr-2(name="IconAdd", size="20")
                   p.text-sm {{ $t('operations.dailyTasks.buttons.addProject') }}
         .flex.justify-center.items-center.h-64(v-if="loading")
-          .animate-spin.rounded-full.h-12.w-12.border-4.border-primary-purple-400.border-t-transparent 
-        AppTable(
-          v-else
-          v-slot="{ data }",
-          :columns="completedColumns",
-          :data="completedProjects",
-          :loading="loading",
-          :pageInfo="completedProjectsPagination",
-          @page-change="handlePageChange",
-          @search="handleSearch",
-          without-filters,
-          position="daily-task"
-        )
-         .flex.items-center.py-2(@click.stop)
-          el-dropdown(class="outline-0" trigger="click")
-            span(class="el-dropdown-link")
-              .toggle-icon.text-md
-                  Icon(name="IconToggle"  size="22")
-            template(#dropdown='')
-                el-dropdown-menu
-                    el-dropdown-item
-                      NuxtLink.flex.items-center(:to="`/operations/daily-task/${data?.id}`")
-                        Icon.text-md.mr-2(name="IconEye" )
-                        p.text-sm View
-                    el-dropdown-item
-                      NuxtLink.flex.items-center(:to="`/operations/daily-task/edits/${data?.id}`")
-                        Icon.text-md.mr-2(name="IconEdit" )
-                        p.text-sm Edit
+          .animate-spin.rounded-full.h-12.w-12.border-4.border-primary-purple-400.border-t-transparent
+        .dtask-desktop-view(v-else)
+          AppTable(
+            v-slot="{ data }",
+            :columns="completedColumns",
+            :data="completedProjects",
+            :loading="loading",
+            :pageInfo="completedProjectsPagination",
+            @page-change="handlePageChange",
+            @search="handleSearch",
+            without-filters,
+            position="daily-task"
+          )
+           .flex.items-center.py-2(@click.stop)
+            el-dropdown(class="outline-0" trigger="click")
+              span(class="el-dropdown-link")
+                .toggle-icon.text-md
+                    Icon(name="IconToggle"  size="22")
+              template(#dropdown='')
+                  el-dropdown-menu
+                      el-dropdown-item
+                        NuxtLink.flex.items-center(:to="`/operations/daily-task/${data?.id}`")
+                          Icon.text-md.mr-2(name="IconEye" )
+                          p.text-sm View
+                      el-dropdown-item
+                        NuxtLink.flex.items-center(:to="`/operations/daily-task/edits/${data?.id}`")
+                          Icon.text-md.mr-2(name="IconEdit" )
+                          p.text-sm Edit
+        //- Mobile card view for completed tab
+        .dtask-mobile-view(v-if="!loading")
+          .space-y-3(v-if="completedProjects.length")
+            .entity-card.p-4(v-for="task in completedProjects" :key="task.id" @click="handleView(task)")
+              .flex.items-start.justify-between.mb-3
+                .flex.items-center.gap-3.min-w-0.flex-1
+                  .w-10.h-10.rounded-xl.flex.items-center.justify-center.shrink-0.text-sm.font-bold(
+                    :style="{ background: '#f59e0b20', color: '#f59e0b' }"
+                  ) {{ (task.name || '?').charAt(0).toUpperCase() }}
+                  .min-w-0.flex-1
+                    p.text-sm.font-bold.truncate(style="color: var(--text-primary)") {{ task.clientName || '--' }}
+                    p.text-xs.truncate(style="color: var(--text-muted)") {{ task.createdAt || '' }}
+                el-tag.shrink-0(:type="getTaskTagType(task.status)" size="small" effect="dark" round) {{ task.status }}
+              .flex.flex-col.gap-1
+                p.text-xs.truncate(v-if="task.name" style="color: var(--text-secondary)") {{ task.name }}
+                .flex.items-center.gap-2(v-if="task.assignedToName")
+                  Icon(name="ph:user" size="14" style="color: var(--text-muted)")
+                  span.text-xs.truncate(style="color: var(--text-secondary)") {{ task.assignedToName }}
+          .text-center.py-12(v-if="!completedProjects.length")
+            Icon(name="ph:clipboard-text" size="48" style="color: var(--text-muted)")
+            p.text-sm.mt-2(style="color: var(--text-muted)") {{ $t('common.noData') }}
+
     el-tab-pane(:label="$t('operations.dailyTasks.tabs.granted')" name="granted")
       .glass-card.p-10.rounded-3xl.mt-3
         .flex.items-center.justify-between.m-5
@@ -104,33 +147,54 @@
                 Icon.mr-2(name="IconAdd", size="20")
                 p.text-sm {{ $t('operations.dailyTasks.buttons.addProject') }}
         .flex.justify-center.items-center.h-64(v-if="loading")
-          .animate-spin.rounded-full.h-12.w-12.border-4.border-primary-purple-400.border-t-transparent       
-        AppTable(
-          v-else
-          v-slot="{ data }",
-          :columns="grantedColumns",
-          :loading="loading",
-          :pageInfo="grantedProjectsPagination",
-          :data="grantedProjects",
-          @handleRowClick="handleView",
-          without-filters,
-          position="daily-task"
-        )
-         .flex.items-center.py-2(@click.stop)
-           el-dropdown(class="outline-0" trigger="click")
-            span(class="el-dropdown-link")
-              .toggle-icon.text-md
-                  Icon(name="IconToggle"  size="22")
-            template(#dropdown='')
-                el-dropdown-menu
-                    el-dropdown-item
-                      NuxtLink.flex.items-center(:to="`/operations/daily-task/${data?.id}`")
-                        Icon.text-md.mr-2(name="IconEye" )
-                        p.text-sm View
-                    el-dropdown-item
-                      NuxtLink.flex.items-center(:to="`/operations/daily-task/edits/${data?.id}`")
-                        Icon.text-md.mr-2(name="IconEdit" )
-                        p.text-sm Edit
+          .animate-spin.rounded-full.h-12.w-12.border-4.border-primary-purple-400.border-t-transparent
+        .dtask-desktop-view(v-else)
+          AppTable(
+            v-slot="{ data }",
+            :columns="grantedColumns",
+            :loading="loading",
+            :pageInfo="grantedProjectsPagination",
+            :data="grantedProjects",
+            @handleRowClick="handleView",
+            without-filters,
+            position="daily-task"
+          )
+           .flex.items-center.py-2(@click.stop)
+             el-dropdown(class="outline-0" trigger="click")
+              span(class="el-dropdown-link")
+                .toggle-icon.text-md
+                    Icon(name="IconToggle"  size="22")
+              template(#dropdown='')
+                  el-dropdown-menu
+                      el-dropdown-item
+                        NuxtLink.flex.items-center(:to="`/operations/daily-task/${data?.id}`")
+                          Icon.text-md.mr-2(name="IconEye" )
+                          p.text-sm View
+                      el-dropdown-item
+                        NuxtLink.flex.items-center(:to="`/operations/daily-task/edits/${data?.id}`")
+                          Icon.text-md.mr-2(name="IconEdit" )
+                          p.text-sm Edit
+        //- Mobile card view for granted tab
+        .dtask-mobile-view(v-if="!loading")
+          .space-y-3(v-if="grantedProjects.length")
+            .entity-card.p-4(v-for="task in grantedProjects" :key="task.id" @click="handleView(task)")
+              .flex.items-start.justify-between.mb-3
+                .flex.items-center.gap-3.min-w-0.flex-1
+                  .w-10.h-10.rounded-xl.flex.items-center.justify-center.shrink-0.text-sm.font-bold(
+                    :style="{ background: '#f59e0b20', color: '#f59e0b' }"
+                  ) {{ (task.name || '?').charAt(0).toUpperCase() }}
+                  .min-w-0.flex-1
+                    p.text-sm.font-bold.truncate(style="color: var(--text-primary)") {{ task.clientName || '--' }}
+                    p.text-xs.truncate(style="color: var(--text-muted)") {{ task.createdAt || '' }}
+                el-tag.shrink-0(:type="getTaskTagType(task.status)" size="small" effect="dark" round) {{ task.status }}
+              .flex.flex-col.gap-1
+                p.text-xs.truncate(v-if="task.name" style="color: var(--text-secondary)") {{ task.name }}
+                .flex.items-center.gap-2(v-if="task.assignedToName")
+                  Icon(name="ph:user" size="14" style="color: var(--text-muted)")
+                  span.text-xs.truncate(style="color: var(--text-secondary)") {{ task.assignedToName }}
+          .text-center.py-12(v-if="!grantedProjects.length")
+            Icon(name="ph:clipboard-text" size="48" style="color: var(--text-muted)")
+            p.text-sm.mt-2(style="color: var(--text-muted)") {{ $t('common.noData') }}
   </template>
 
 <script setup>
@@ -369,15 +433,6 @@ const grantedColumns = [
     pdf: 'Down Payment',
     type: 'font-default'
   },
-  // {
-  //   prop: "startDate",
-  //   label: "Start Date",
-  //   component: "Text",
-  //   sortable: true,
-  //   width: 200,
-  //   pdf: "Start",
-  //   type: "font-default",
-  // },
   {
     prop: 'salesRepresentativeName',
     label: useI18n().t('operations.dailyTasks.table.salesRep'),
@@ -549,9 +604,17 @@ const formatDate = date => {
 const handleView = row => {
   router.push(`/operations/daily-task/${row?.id}`);
 };
+
+// Mobile helper
+function getTaskTagType(status) {
+  const map = { ACTIVE: 'warning', ON_HOLD: 'info', COMPLETED: 'success', WAITING_FOR_CONTRACT: '', CONTRACT_SIGNED: 'success' };
+  return map[status] || 'info';
+}
 </script>
 
-<style scoped>
+<style lang="scss" scoped>
+@include mobile-list-page('dtask', #f59e0b);
+
 .demo-tabs {
   @apply w-full;
 }
