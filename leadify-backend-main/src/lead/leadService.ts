@@ -13,6 +13,7 @@ import * as ExcelJS from 'exceljs';
 import { sendEmail } from '../utils/emailHelper';
 import { io } from '../server';
 import { tenantWhere, tenantCreate } from '../utils/tenantScope';
+import { clampPagination } from '../utils/pagination';
 
 class LeadService {
   async createLead(input: any, adminId: number, t?: Transaction): Promise<Lead> {
@@ -105,8 +106,7 @@ class LeadService {
   }
 
   async getLeads(query: any, user: User): Promise<any> {
-    const { page = 1, limit = 10 } = query;
-    const offset = (Number(page) - 1) * Number(limit);
+    const { page, limit, offset } = clampPagination(query);
 
     if (!user.role.permissions.includes(LeadPermissionsEnum.VIEW_GLOBAL_LEADS)) query.userId = user.id;
 

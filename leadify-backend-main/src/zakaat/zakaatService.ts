@@ -1,6 +1,7 @@
 import { Op } from 'sequelize';
 import ZakaatAssessment, { ZakaatBreakdown } from './zakaatModel';
 import User from '../user/userModel';
+import { clampPagination } from '../utils/pagination';
 
 // ---------------------------------------------------------------------------
 // Types
@@ -116,8 +117,7 @@ class ZakaatService {
    * List assessments with pagination and filtering.
    */
   async getAssessments(query: AssessmentQuery) {
-    const { page = 1, limit = 20 } = query;
-    const offset = (page - 1) * limit;
+    const { page, limit, offset } = clampPagination(query, 20);
     const where: any = {};
 
     if (query.status) {

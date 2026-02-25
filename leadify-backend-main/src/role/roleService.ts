@@ -5,6 +5,7 @@ import BaseError from '../utils/error/base-http-exception';
 import { ERRORS } from '../utils/error/errors';
 import { getAllPermissions, getPermissionsGroupedByName } from './roleEnum';
 import { createRoleUserCountLoader } from './roleDataLoader';
+import { clampPagination } from '../utils/pagination';
 
 class RoleService {
   public async createSuperAdminRole(): Promise<Role> {
@@ -46,8 +47,8 @@ class RoleService {
    * @returns {Promise<any>}
    */
   public async getRoles(query: any): Promise<any> {
-    const { page = 1, limit = 10, searchKey } = query;
-    const offset = (Number(page) - 1) * Number(limit);
+    const { page, limit, offset } = clampPagination(query);
+    const { searchKey } = query;
 
     const { rows: roles, count: totalItems } = await Role.findAndCountAll({
       where: {
@@ -55,7 +56,7 @@ class RoleService {
           [Op.or]: [{ name: { [Op.iLike]: `%${searchKey}%` } }]
         })
       },
-      limit: Number(limit),
+      limit,
       offset,
       order: [['createdAt', 'DESC']],
       attributes: { exclude: ['permissions'] }

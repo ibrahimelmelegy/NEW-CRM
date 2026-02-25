@@ -1,4 +1,5 @@
 import { Includeable, Op, Transaction, WhereOptions } from 'sequelize';
+import { clampPagination } from '../utils/pagination';
 import { LeadStatusEnums } from '../lead/leadEnum';
 import Lead from '../lead/leadModel';
 import uploaderService from '../uploader/uploader.service';
@@ -104,8 +105,7 @@ class ClientService {
   }
 
   async getClients(query: any, user: User): Promise<any> {
-    const { page = 1, limit = 10 } = query;
-    const offset = (Number(page) - 1) * Number(limit);
+    const { page, limit, offset } = clampPagination(query);
 
     if (!user.role.permissions.includes(ClientPermissionsEnum.VIEW_GLOBAL_CLIENTS)) query.userId = user.id;
 

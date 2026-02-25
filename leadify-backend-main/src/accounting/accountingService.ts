@@ -1,4 +1,5 @@
 import { Op } from 'sequelize';
+import { clampPagination } from '../utils/pagination';
 import ChartOfAccounts, { AccountType } from './models/chartOfAccountsModel';
 import JournalEntry, { JournalEntryStatus, JournalEntrySourceType } from './models/journalEntryModel';
 import JournalEntryLine from './models/journalEntryLineModel';
@@ -198,7 +199,8 @@ class AccountingService {
   }
 
   async getJournalEntries(query: any) {
-    const { page = 1, limit = 20, status, sourceType, startDate, endDate, search } = query;
+    const { page, limit, offset } = clampPagination(query, 20);
+    const { status, sourceType, startDate, endDate, search } = query;
     const where: any = {};
 
     if (status) where.status = status;
@@ -217,8 +219,6 @@ class AccountingService {
         { reference: { [Op.iLike]: `%${search}%` } }
       ];
     }
-
-    const offset = (Number(page) - 1) * Number(limit);
     const { rows, count } = await JournalEntry.findAndCountAll({
       where,
       include: [
@@ -232,17 +232,17 @@ class AccountingService {
         ['date', 'DESC'],
         ['createdAt', 'DESC']
       ],
-      limit: Number(limit),
+      limit,
       offset
     });
 
     return {
       docs: rows,
       pagination: {
-        page: Number(page),
-        limit: Number(limit),
+        page,
+        limit,
         totalItems: count,
-        totalPages: Math.ceil(count / Number(limit))
+        totalPages: Math.ceil(count / limit)
       }
     };
   }

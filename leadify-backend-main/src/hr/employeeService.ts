@@ -1,4 +1,5 @@
 import { Op } from 'sequelize';
+import { clampPagination } from '../utils/pagination';
 import Employee from './models/employeeModel';
 import Department from './models/departmentModel';
 import EmployeeDocument from './models/employeeDocumentModel';
@@ -43,7 +44,8 @@ class EmployeeService {
   }
 
   async getEmployees(query: EmployeeQuery) {
-    const { page = 1, limit = 20, departmentId, status, search, managerId, employmentType, sortBy = 'createdAt', sort = 'DESC' } = query;
+    const { page, limit, offset } = clampPagination(query, 20);
+    const { departmentId, status, search, managerId, employmentType, sortBy = 'createdAt', sort = 'DESC' } = query;
 
     const where: any = {};
 
@@ -61,8 +63,6 @@ class EmployeeService {
         { jobTitle: { [Op.iLike]: `%${search}%` } }
       ];
     }
-
-    const offset = (Number(page) - 1) * Number(limit);
     const { rows, count } = await Employee.findAndCountAll({
       where,
       include: [
@@ -70,17 +70,17 @@ class EmployeeService {
         { model: Employee, as: 'manager', attributes: ['id', 'firstName', 'lastName', 'jobTitle'] }
       ],
       order: [[sortBy, sort.toUpperCase()]],
-      limit: Number(limit),
+      limit,
       offset
     });
 
     return {
       docs: rows,
       pagination: {
-        page: Number(page),
-        limit: Number(limit),
+        page,
+        limit,
         totalItems: count,
-        totalPages: Math.ceil(count / Number(limit))
+        totalPages: Math.ceil(count / limit)
       }
     };
   }

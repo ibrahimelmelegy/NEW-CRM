@@ -12,6 +12,7 @@ import { UserSortByEnum } from './userEnum';
 import * as ExcelJS from 'exceljs';
 import { sendEmail } from '../utils/emailHelper';
 import uploaderService from '../uploader/uploader.service';
+import { clampPagination } from '../utils/pagination';
 
 class UserService {
   public async createSuperAdmin(): Promise<User> {
@@ -83,9 +84,8 @@ class UserService {
    * @returns Paginated users
    */
   public async getUsers(query: any): Promise<any> {
-    const { page = 1, limit = 10, searchKey, status, roleId } = query;
-
-    const offset = (Number(page) - 1) * Number(limit);
+    const { page, limit, offset } = clampPagination(query);
+    const { searchKey, status, roleId } = query;
 
     const { rows: users, count: totalItems } = await User.findAndCountAll({
       where: {
@@ -95,7 +95,7 @@ class UserService {
           [Op.or]: [{ name: { [Op.iLike]: `%${searchKey}%` } }, { email: { [Op.iLike]: `%${searchKey}%` } }]
         })
       },
-      limit: Number(limit),
+      limit,
       offset,
       order: [
         [

@@ -8,6 +8,7 @@ import Client from '../client/clientModel';
 import { IPaginationRes } from '../types';
 import BaseError from '../utils/error/base-http-exception';
 import { ERRORS } from '../utils/error/errors';
+import { clampPagination } from '../utils/pagination';
 
 class SupportService {
   // ─── Ticket Number Generation ─────────────────────────────────────────
@@ -41,7 +42,8 @@ class SupportService {
   }
 
   public async getTickets(query: any): Promise<IPaginationRes<Ticket>> {
-    const { page = 1, limit = 20, status, priority, assignedTo, categoryId, search, clientId } = query;
+    const { page, limit, offset } = clampPagination(query, 20);
+    const { status, priority, assignedTo, categoryId, search, clientId } = query;
 
     const where: any = {};
 
@@ -58,8 +60,6 @@ class SupportService {
         { description: { [Op.iLike]: `%${search}%` } }
       ];
     }
-
-    const offset = (Number(page) - 1) * Number(limit);
     const { rows, count } = await Ticket.findAndCountAll({
       where,
       include: [
@@ -68,17 +68,17 @@ class SupportService {
         { model: TicketCategory, as: 'category', attributes: ['id', 'name'] }
       ],
       order: [['createdAt', 'DESC']],
-      limit: Number(limit),
+      limit,
       offset
     });
 
     return {
       docs: rows,
       pagination: {
-        page: Number(page),
-        limit: Number(limit),
+        page,
+        limit,
         totalItems: count,
-        totalPages: Math.ceil(count / Number(limit))
+        totalPages: Math.ceil(count / limit)
       }
     };
   }

@@ -1,4 +1,5 @@
 import { Op, WhereOptions } from 'sequelize';
+import { clampPagination } from '../utils/pagination';
 import PurchaseOrder, { POStatusEnum } from './models/purchaseOrderModel';
 import PurchaseOrderItem from './models/purchaseOrderItemModel';
 import Vendor from '../vendor/vendorModel';
@@ -73,8 +74,8 @@ class ProcurementService {
   }
 
   async getPurchaseOrders(query: any): Promise<any> {
-    const { page = 1, limit = 10, searchKey, status, projectId, vendorId } = query;
-    const offset = (Number(page) - 1) * Number(limit);
+    const { page, limit, offset } = clampPagination(query);
+    const { searchKey, status, projectId, vendorId } = query;
 
     const { rows: pos, count: totalItems } = await PurchaseOrder.findAndCountAll({
       where: {
@@ -89,18 +90,18 @@ class ProcurementService {
         { model: Vendor, attributes: ['id', 'name'] },
         { model: Project, attributes: ['id', 'name'] }
       ],
-      limit: Number(limit),
-      offset: Number(offset),
+      limit,
+      offset,
       order: [['createdAt', 'DESC']]
     });
 
     return {
       docs: pos,
       pagination: {
-        page: Number(page),
-        limit: Number(limit),
+        page,
+        limit,
         totalItems,
-        totalPages: Math.ceil(totalItems / (Number(limit) || 10))
+        totalPages: Math.ceil(totalItems / limit)
       }
     };
   }

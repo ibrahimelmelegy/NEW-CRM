@@ -1,10 +1,11 @@
 import { Op, WhereOptions } from 'sequelize';
 import Sequence, { SequenceEnrollment } from './sequenceModel';
+import { clampPagination } from '../utils/pagination';
 
 class SequenceService {
   async getSequences(query: any): Promise<any> {
-    const { page = 1, limit = 10, searchKey, isActive } = query;
-    const offset = (Number(page) - 1) * Number(limit);
+    const { page, limit, offset } = clampPagination(query);
+    const { searchKey, isActive } = query;
 
     const where: WhereOptions = {};
 
@@ -18,18 +19,18 @@ class SequenceService {
 
     const { rows: docs, count: totalItems } = await Sequence.findAndCountAll({
       where,
-      limit: Number(limit),
-      offset: Number(offset),
+      limit,
+      offset,
       order: [['createdAt', 'DESC']]
     });
 
     return {
       docs,
       pagination: {
-        page: Number(page),
-        limit: Number(limit),
+        page,
+        limit,
         totalItems,
-        totalPages: Math.ceil(totalItems / (Number(limit) || 10))
+        totalPages: Math.ceil(totalItems / limit)
       }
     };
   }

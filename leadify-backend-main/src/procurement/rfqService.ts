@@ -8,6 +8,7 @@ import Vendor from '../vendor/vendorModel';
 import BaseError from '../utils/error/base-http-exception';
 import { ERRORS } from '../utils/error/errors';
 import Project from '../project/models/projectModel';
+import { clampPagination } from '../utils/pagination';
 
 class RFQService {
   async createRFQ(input: any, user: User): Promise<RFQ> {
@@ -134,23 +135,22 @@ class RFQService {
   }
 
   async getRFQs(query: any): Promise<any> {
-    const { page = 1, limit = 10 } = query;
-    const offset = (Number(page) - 1) * Number(limit);
+    const { page, limit, offset } = clampPagination(query);
 
     const { rows: docs, count: totalItems } = await RFQ.findAndCountAll({
       include: [{ model: Project, attributes: ['name'] }],
-      limit: Number(limit),
-      offset: Number(offset),
+      limit,
+      offset,
       order: [['createdAt', 'DESC']]
     });
 
     return {
       docs,
       pagination: {
-        page: Number(page),
-        limit: Number(limit),
+        page,
+        limit,
         totalItems,
-        totalPages: Math.ceil(totalItems / (Number(limit) || 10))
+        totalPages: Math.ceil(totalItems / limit)
       }
     };
   }

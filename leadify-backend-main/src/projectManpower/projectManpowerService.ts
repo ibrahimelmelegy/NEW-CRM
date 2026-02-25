@@ -8,6 +8,7 @@ import Manpower from '../manpower/manpowerModel';
 import projectService from '../project/projectService';
 import User from '../user/userModel';
 import { createActivityLog } from '../activity-logs/activityService';
+import { clampPagination } from '../utils/pagination';
 
 class ProjectManpowerService {
   public async createProjectManpower(data: any, user: User): Promise<ProjectManpower> {
@@ -67,8 +68,7 @@ class ProjectManpowerService {
   }
 
   public async getProjectManpowers(query: any): Promise<any> {
-    const { page = 1, limit = 10 } = query;
-    const offset = (Number(page) - 1) * Number(limit);
+    const { page, limit, offset } = clampPagination(query);
 
     const { rows: manpowers, count: totalItems } = await ProjectManpower.findAndCountAll({
       where: {
@@ -77,7 +77,7 @@ class ProjectManpowerService {
           [Op.or]: [{ totalCost: { [Op.iLike]: `%${query.searchKey}%` } }]
         })
       },
-      limit: Number(limit),
+      limit,
       offset,
       order: [['createdAt', 'DESC']],
       include: [

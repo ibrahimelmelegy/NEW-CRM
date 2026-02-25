@@ -4,6 +4,7 @@ import Lead from '../lead/leadModel';
 import Client from '../client/clientModel';
 import Opportunity from '../opportunity/opportunityModel';
 import User from '../user/userModel';
+import { clampPagination } from '../utils/pagination';
 
 // Map entity types to their Sequelize models
 const entityModelMap: Record<string, any> = {
@@ -33,27 +34,27 @@ class LeadScoringService {
   }
 
   async getRules(query: any) {
-    const { page = 1, limit = 30, entityType, isActive, sortBy = 'createdAt', sort = 'DESC' } = query;
+    const { page, limit, offset } = clampPagination(query, 30);
+    const { entityType, isActive, sortBy = 'createdAt', sort = 'DESC' } = query;
     const where: any = {};
     if (entityType) where.entityType = entityType;
     if (isActive !== undefined) where.isActive = isActive === 'true' || isActive === true;
 
-    const offset = (Number(page) - 1) * Number(limit);
     const { rows, count } = await LeadScoringRule.findAndCountAll({
       where,
       include: [{ model: User, as: 'creator', attributes: ['id', 'name'] }],
       order: [[sortBy, sort]],
-      limit: Number(limit),
+      limit,
       offset
     });
 
     return {
       docs: rows,
       pagination: {
-        page: Number(page),
-        limit: Number(limit),
+        page,
+        limit,
         totalItems: count,
-        totalPages: Math.ceil(count / Number(limit))
+        totalPages: Math.ceil(count / limit)
       }
     };
   }

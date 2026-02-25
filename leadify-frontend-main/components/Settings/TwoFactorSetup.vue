@@ -104,7 +104,7 @@ async function startSetup() {
     const result = await setup2FA();
     if (result) {
       qrCode.value = result.qrCode;
-      secret.value = result.secret;
+      secret.value = result.manualEntryKey;
       step.value = 'scan';
       nextTick(() => inputRefs.value[0]?.focus?.());
     }

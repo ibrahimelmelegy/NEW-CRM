@@ -1,11 +1,13 @@
 import { Op } from 'sequelize';
+import { clampPagination } from '../utils/pagination';
 import FieldCheckIn from './checkInModel';
 import User from '../user/userModel';
 import { sequelize } from '../config/db';
 
 class FieldOpsService {
   async getCheckIns(query: any) {
-    const { page = 1, limit = 20, userId, type, startDate, endDate } = query;
+    const { page, limit, offset } = clampPagination(query, 20);
+    const { userId, type, startDate, endDate } = query;
     const where: any = {};
 
     if (userId) where.userId = userId;
@@ -13,8 +15,6 @@ class FieldOpsService {
     if (startDate && endDate) {
       where.createdAt = { [Op.between]: [startDate, endDate] };
     }
-
-    const offset = (Number(page) - 1) * Number(limit);
     const { rows, count } = await FieldCheckIn.findAndCountAll({
       where,
       include: [
@@ -24,17 +24,17 @@ class FieldOpsService {
         }
       ],
       order: [['createdAt', 'DESC']],
-      limit: Number(limit),
+      limit,
       offset
     });
 
     return {
       docs: rows,
       pagination: {
-        page: Number(page),
-        limit: Number(limit),
+        page,
+        limit,
         totalItems: count,
-        totalPages: Math.ceil(count / Number(limit))
+        totalPages: Math.ceil(count / limit)
       }
     };
   }

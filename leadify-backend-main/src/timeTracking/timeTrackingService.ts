@@ -1,6 +1,7 @@
 import { Op } from 'sequelize';
 import TimeEntry from './timeEntryModel';
 import User from '../user/userModel';
+import { clampPagination } from '../utils/pagination';
 
 class TimeTrackingService {
   async startTimer(userId: number, data: { entityType?: string; entityId?: string; entityName?: string; description?: string }) {
@@ -42,8 +43,7 @@ class TimeTrackingService {
   }
 
   async getEntries(userId: number, query: { startDate?: string; endDate?: string; entityType?: string; page?: number; limit?: number }) {
-    const { page = 1, limit = 50 } = query;
-    const offset = (page - 1) * limit;
+    const { page, limit, offset } = clampPagination(query, 50);
     const where: any = { userId };
 
     if (query.startDate) where.startTime = { [Op.gte]: new Date(query.startDate) };

@@ -1,4 +1,5 @@
 import { Includeable, Op, WhereOptions } from 'sequelize';
+import { clampPagination } from '../utils/pagination';
 import Proposal from './models/proposalModel';
 import { UpdateProposalInput } from './inputs/updateProposalInput';
 import BaseError from '../utils/error/base-http-exception';
@@ -149,8 +150,7 @@ class ProposalService {
   }
 
   public async getProposals(query: any, user: User): Promise<any> {
-    const { page = 1, limit = 10 } = query;
-    const offset = (Number(page) - 1) * Number(limit);
+    const { page, limit, offset } = clampPagination(query);
 
     if (!user.role.permissions.includes(ProposalPermissionsEnum.VIEW_GLOBAL_PROPOSALS)) query.userId = user.id;
 
@@ -223,7 +223,7 @@ class ProposalService {
           })
         }
       ],
-      limit: Number(limit),
+      limit,
       offset,
       distinct: true, // <-- THIS is crucial so count is not duplicated due to joins
       order: [

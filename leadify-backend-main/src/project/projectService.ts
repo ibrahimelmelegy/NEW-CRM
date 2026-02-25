@@ -1,4 +1,5 @@
 import { Includeable, Op, Sequelize, WhereOptions } from 'sequelize';
+import { clampPagination } from '../utils/pagination';
 import Asset from '../asset/assetModel';
 import { sequelize } from '../config/db';
 import { LeadStatusEnums, SortEnum } from '../lead/leadEnum';
@@ -399,8 +400,7 @@ class ProjectService {
   }
 
   public async getProjects(query: any, user: User): Promise<any> {
-    const { page = 1, limit = 10 } = query;
-    const offset = (Number(page) - 1) * Number(limit);
+    const { page, limit, offset } = clampPagination(query);
 
     if (!user.role.permissions.includes(ProjectPermissionsEnum.VIEW_GLOBAL_PROJECTS)) query.userId = user.id;
 

@@ -1,4 +1,5 @@
 import { Op } from 'sequelize';
+import { clampPagination } from '../utils/pagination';
 import DuplicateSet, { DuplicateStatus } from './duplicateModel';
 import Lead from '../lead/leadModel';
 import Client from '../client/clientModel';
@@ -303,27 +304,26 @@ class DuplicateService {
   // ---- List duplicate sets with filters ----
 
   async getDuplicateSets(query: any) {
-    const { page = 1, limit = 30, entityType, status, sortBy = 'createdAt', sort = 'DESC' } = query;
+    const { page, limit, offset } = clampPagination(query, 30);
+    const { entityType, status, sortBy = 'createdAt', sort = 'DESC' } = query;
     const where: any = {};
     if (entityType) where.entityType = entityType;
     if (status) where.status = status;
-
-    const offset = (Number(page) - 1) * Number(limit);
     const { rows, count } = await DuplicateSet.findAndCountAll({
       where,
       include: [{ model: User, as: 'resolver', attributes: ['id', 'name'] }],
       order: [[sortBy, sort]],
-      limit: Number(limit),
+      limit,
       offset
     });
 
     return {
       docs: rows,
       pagination: {
-        page: Number(page),
-        limit: Number(limit),
+        page,
+        limit,
         totalItems: count,
-        totalPages: Math.ceil(count / Number(limit))
+        totalPages: Math.ceil(count / limit)
       }
     };
   }

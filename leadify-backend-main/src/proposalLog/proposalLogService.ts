@@ -2,6 +2,7 @@ import { Op } from 'sequelize';
 import ProposalLog from './proposalLogModel';
 import User from '../user/userModel';
 import proposalService from '../proposal/proposalService';
+import { clampPagination } from '../utils/pagination';
 
 class ProposalLogService {
   public async createProposalLog(userId: number, proposalId: string, action: string): Promise<void> {
@@ -11,8 +12,7 @@ class ProposalLogService {
   public async getProposalLogs(query: any, user: User): Promise<any> {
     await proposalService.validateProposalAccess(query.proposalId, user);
 
-    const { page = 1, limit = 10 } = query;
-    const offset = (Number(page) - 1) * Number(limit);
+    const { page, limit, offset } = clampPagination(query);
 
     const { rows: items, count: totalItems } = await ProposalLog.findAndCountAll({
       where: {
@@ -21,7 +21,7 @@ class ProposalLogService {
           [Op.or]: [{ action: { [Op.iLike]: `%${query.searchKey}%` } }]
         })
       },
-      limit: Number(limit),
+      limit,
       offset,
       include: [
         {

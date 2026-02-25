@@ -4,6 +4,7 @@ import Budget from './budgetModel';
 import ExpenseCategory from './expenseCategoryModel';
 import User from '../user/userModel';
 import { tenantWhere } from '../utils/tenantScope';
+import { clampPagination } from '../utils/pagination';
 
 class FinanceService {
   // Categories
@@ -30,7 +31,8 @@ class FinanceService {
 
   // Expenses
   async getExpenses(query: any, user?: any) {
-    const { page = 1, limit = 20, categoryId, status, startDate, endDate, search, searchKey, sortBy = 'date', sort = 'DESC', submittedBy } = query;
+    const { page, limit, offset } = clampPagination(query, 20);
+    const { categoryId, status, startDate, endDate, search, searchKey, sortBy = 'date', sort = 'DESC', submittedBy } = query;
     const where: any = { ...(user ? tenantWhere(user) : {}) };
     if (categoryId) where.categoryId = categoryId;
     if (status) where.status = status;
@@ -39,7 +41,6 @@ class FinanceService {
     const searchTerm = search || searchKey;
     if (searchTerm) where.description = { [Op.iLike]: `%${searchTerm}%` };
 
-    const offset = (Number(page) - 1) * Number(limit);
     const { rows, count } = await Expense.findAndCountAll({
       where,
       include: [
@@ -47,13 +48,13 @@ class FinanceService {
         { model: User, as: 'submitter', attributes: ['id', 'name', 'profilePicture'] }
       ],
       order: [[sortBy, sort]],
-      limit: Number(limit),
+      limit,
       offset
     });
 
     return {
       docs: rows,
-      pagination: { page: Number(page), limit: Number(limit), totalItems: count, totalPages: Math.ceil(count / Number(limit)) }
+      pagination: { page, limit, totalItems: count, totalPages: Math.ceil(count / limit) }
     };
   }
 
@@ -109,22 +110,22 @@ class FinanceService {
 
   // Budgets
   async getBudgets(query: any) {
-    const { page = 1, limit = 20, search, sortBy = 'startDate', sort = 'DESC' } = query;
+    const { page, limit, offset } = clampPagination(query, 20);
+    const { search, sortBy = 'startDate', sort = 'DESC' } = query;
     const where: any = {};
     if (search) where.name = { [Op.iLike]: `%${search}%` };
 
-    const offset = (Number(page) - 1) * Number(limit);
     const { rows, count } = await Budget.findAndCountAll({
       where,
       include: [{ model: ExpenseCategory, attributes: ['id', 'name', 'color'] }],
       order: [[sortBy, sort]],
-      limit: Number(limit),
+      limit,
       offset
     });
 
     return {
       docs: rows,
-      pagination: { page: Number(page), limit: Number(limit), totalItems: count, totalPages: Math.ceil(count / Number(limit)) }
+      pagination: { page, limit, totalItems: count, totalPages: Math.ceil(count / limit) }
     };
   }
 

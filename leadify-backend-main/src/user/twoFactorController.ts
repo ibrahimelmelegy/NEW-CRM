@@ -33,7 +33,7 @@ export const setup2FA = async (req: AuthenticatedRequest, res: Response): Promis
 
     res.status(200).json({
       message: '2FA setup initiated. Scan the QR code with your authenticator app, then verify with a code.',
-      secret,
+      manualEntryKey: secret,
       qrCode: qrCodeDataUrl
     });
   } catch (error) {

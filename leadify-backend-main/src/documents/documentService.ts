@@ -1,4 +1,5 @@
 import { Op } from 'sequelize';
+import { clampPagination } from '../utils/pagination';
 import DocumentFolder from './documentFolderModel';
 import DocumentFile from './documentFileModel';
 import User from '../user/userModel';
@@ -87,7 +88,8 @@ class DocumentService {
   // ==================== FILES ====================
 
   async getFiles(query: { folderId?: number; search?: string; tags?: string; page?: number; limit?: number }) {
-    const { folderId, search, tags, page = 1, limit = 50 } = query;
+    const { page, limit, offset } = clampPagination(query, 50);
+    const { folderId, search, tags } = query;
     const where: any = {};
 
     if (folderId) {
@@ -104,8 +106,6 @@ class DocumentService {
       const tagList = typeof tags === 'string' ? tags.split(',') : tags;
       where.tags = { [Op.overlap]: tagList };
     }
-
-    const offset = (Number(page) - 1) * Number(limit);
     const { rows, count } = await DocumentFile.findAndCountAll({
       where,
       include: [
@@ -113,17 +113,17 @@ class DocumentService {
         { model: DocumentFolder, as: 'folder', attributes: ['id', 'name', 'color'] }
       ],
       order: [['createdAt', 'DESC']],
-      limit: Number(limit),
+      limit,
       offset
     });
 
     return {
       docs: rows,
       pagination: {
-        page: Number(page),
-        limit: Number(limit),
+        page,
+        limit,
         totalItems: count,
-        totalPages: Math.ceil(count / Number(limit))
+        totalPages: Math.ceil(count / limit)
       }
     };
   }

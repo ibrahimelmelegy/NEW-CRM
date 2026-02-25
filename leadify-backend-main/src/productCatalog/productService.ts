@@ -1,11 +1,12 @@
 import { Op, WhereOptions } from 'sequelize';
 import CatalogProduct from './productModel';
 import PriceRule from './priceRuleModel';
+import { clampPagination } from '../utils/pagination';
 
 class ProductService {
   async getProducts(query: any): Promise<any> {
-    const { page = 1, limit = 10, searchKey, category, isActive } = query;
-    const offset = (Number(page) - 1) * Number(limit);
+    const { page, limit, offset } = clampPagination(query);
+    const { searchKey, category, isActive } = query;
 
     const where: WhereOptions = {};
 
@@ -27,8 +28,8 @@ class ProductService {
 
     const { rows: docs, count: totalItems } = await CatalogProduct.findAndCountAll({
       where,
-      limit: Number(limit),
-      offset: Number(offset),
+      limit,
+      offset,
       order: [['createdAt', 'DESC']],
       include: [{ model: PriceRule, required: false }]
     });
@@ -36,10 +37,10 @@ class ProductService {
     return {
       docs,
       pagination: {
-        page: Number(page),
-        limit: Number(limit),
+        page,
+        limit,
         totalItems,
-        totalPages: Math.ceil(totalItems / (Number(limit) || 10))
+        totalPages: Math.ceil(totalItems / limit)
       }
     };
   }

@@ -5,6 +5,7 @@ import SubscriptionEvent, { SubscriptionEventTypeEnum } from './models/subscript
 import Client from '../client/clientModel';
 import BaseError from '../utils/error/base-http-exception';
 import { ERRORS } from '../utils/error/errors';
+import { clampPagination } from '../utils/pagination';
 
 class SubscriptionService {
   // =====================
@@ -128,8 +129,8 @@ class SubscriptionService {
   }
 
   async getSubscriptions(query: any): Promise<any> {
-    const { page = 1, limit = 10, status, clientId, searchKey } = query;
-    const offset = (Number(page) - 1) * Number(limit);
+    const { page, limit, offset } = clampPagination(query);
+    const { status, clientId, searchKey } = query;
 
     const where: WhereOptions = {};
 
@@ -164,18 +165,18 @@ class SubscriptionService {
     const { rows: docs, count: totalItems } = await CustomerSubscription.findAndCountAll({
       where,
       include: includeOptions,
-      limit: Number(limit),
-      offset: Number(offset),
+      limit,
+      offset,
       order: [['createdAt', 'DESC']]
     });
 
     return {
       docs,
       pagination: {
-        page: Number(page),
-        limit: Number(limit),
+        page,
+        limit,
         totalItems,
-        totalPages: Math.ceil(totalItems / (Number(limit) || 10))
+        totalPages: Math.ceil(totalItems / limit)
       }
     };
   }

@@ -1,7 +1,7 @@
 import { ElNotification } from 'element-plus';
 
 export interface TwoFactorSetupResponse {
-  secret: string;
+  manualEntryKey: string;
   qrCode: string;
   message: string;
 }

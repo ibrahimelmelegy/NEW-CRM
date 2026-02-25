@@ -2,6 +2,7 @@ import { Op } from 'sequelize';
 import DocumentTemplate, { DocumentTemplateType, TemplateLayout } from './documentTemplateModel';
 import BaseError from '../utils/error/base-http-exception';
 import { ERRORS } from '../utils/error/errors';
+import { clampPagination } from '../utils/pagination';
 
 const INVOICE_VARIABLES = [
   'companyName',
@@ -1094,8 +1095,8 @@ class DocumentTemplateService {
   }
 
   public async getTemplates(query: any): Promise<any> {
-    const { page = 1, limit = 10, type, searchKey } = query;
-    const offset = (Number(page) - 1) * Number(limit);
+    const { page, limit, offset } = clampPagination(query);
+    const { type, searchKey } = query;
 
     const where: any = {};
     if (type) where.type = type;
@@ -1105,7 +1106,7 @@ class DocumentTemplateService {
 
     const { rows: docs, count: totalItems } = await DocumentTemplate.findAndCountAll({
       where,
-      limit: Number(limit),
+      limit,
       offset,
       order: [
         ['isDefault', 'DESC'],
@@ -1116,10 +1117,10 @@ class DocumentTemplateService {
     return {
       docs,
       pagination: {
-        page: Number(page),
-        limit: Number(limit),
+        page,
+        limit,
         totalItems,
-        totalPages: Math.ceil(totalItems / Number(limit))
+        totalPages: Math.ceil(totalItems / limit)
       }
     };
   }

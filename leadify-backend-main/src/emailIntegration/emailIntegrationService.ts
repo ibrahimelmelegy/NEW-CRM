@@ -1,4 +1,5 @@
 import { Op, WhereOptions } from 'sequelize';
+import { clampPagination } from '../utils/pagination';
 import EmailAccount from './emailAccountModel';
 import EmailMessage from './emailMessageModel';
 import EmailTracking from './emailTrackingModel';
@@ -23,8 +24,8 @@ class EmailIntegrationService {
   }
 
   async getMessages(accountId: string, query: any): Promise<any> {
-    const { folder, page = 1, limit = 20 } = query;
-    const offset = (Number(page) - 1) * Number(limit);
+    const { page, limit, offset } = clampPagination(query, 20);
+    const { folder } = query;
 
     const where: WhereOptions = { accountId } as any;
     if (folder) {
@@ -33,8 +34,8 @@ class EmailIntegrationService {
 
     const { rows: docs, count: totalItems } = await EmailMessage.findAndCountAll({
       where,
-      limit: Number(limit),
-      offset: Number(offset),
+      limit,
+      offset,
       order: [['sentAt', 'DESC']],
       include: [{ model: EmailAccount, attributes: ['id', 'email', 'provider'] }]
     });
@@ -42,10 +43,10 @@ class EmailIntegrationService {
     return {
       docs,
       pagination: {
-        page: Number(page),
-        limit: Number(limit),
+        page,
+        limit,
         totalItems,
-        totalPages: Math.ceil(totalItems / (Number(limit) || 20))
+        totalPages: Math.ceil(totalItems / limit)
       }
     };
   }

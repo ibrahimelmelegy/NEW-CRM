@@ -16,6 +16,7 @@ import OpportunityUsers from './model/oppotyunity_UsersModel';
 import * as ExcelJS from 'exceljs';
 import { sendEmail } from '../utils/emailHelper';
 import { tenantWhere } from '../utils/tenantScope';
+import { clampPagination } from '../utils/pagination';
 
 class OpportunityService {
   async createOpportunity(input: any, admin: User): Promise<Opportunity | void> {
@@ -185,8 +186,7 @@ class OpportunityService {
   }
 
   async getOpportunities(query: any, user: User): Promise<any> {
-    const { page = 1, limit = 10 } = query;
-    const offset = (Number(page) - 1) * Number(limit);
+    const { page, limit, offset } = clampPagination(query);
 
     if (!user.role.permissions.includes(OpportunityPermissionsEnum.VIEW_GLOBAL_OPPORTUNITIES)) query.userId = user.id;
 

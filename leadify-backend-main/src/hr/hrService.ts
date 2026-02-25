@@ -1,4 +1,5 @@
 import { Op } from 'sequelize';
+import { clampPagination } from '../utils/pagination';
 import Attendance from './attendanceModel';
 import LeaveRequest from './leaveRequestModel';
 import User from '../user/userModel';
@@ -6,14 +7,14 @@ import User from '../user/userModel';
 class HRService {
   // Attendance
   async getAttendance(query: any) {
-    const { page = 1, limit = 30, userId, date, startDate, endDate, status, searchKey, sortBy, sort } = query;
+    const { page, limit, offset } = clampPagination(query, 30);
+    const { userId, date, startDate, endDate, status, searchKey, sortBy, sort } = query;
     const where: any = {};
     if (userId) where.userId = userId;
     if (date) where.date = date;
     if (status) where.status = status;
     if (startDate && endDate) where.date = { [Op.between]: [startDate, endDate] };
 
-    const offset = (Number(page) - 1) * Number(limit);
     const { rows, count } = await Attendance.findAndCountAll({
       where,
       include: [{ model: User, attributes: ['id', 'name', 'profilePicture'] }],
@@ -21,13 +22,13 @@ class HRService {
         ['date', 'DESC'],
         ['checkIn', 'ASC']
       ],
-      limit: Number(limit),
+      limit,
       offset
     });
 
     return {
       docs: rows,
-      pagination: { page: Number(page), limit: Number(limit), totalItems: count, totalPages: Math.ceil(count / Number(limit)) }
+      pagination: { page, limit, totalItems: count, totalPages: Math.ceil(count / limit) }
     };
   }
 
@@ -83,24 +84,24 @@ class HRService {
   }
 
   async getLeaveRequests(query: any) {
-    const { page = 1, limit = 20, userId, status, leaveType, searchKey, sortBy, sort } = query;
+    const { page, limit, offset } = clampPagination(query, 20);
+    const { userId, status, leaveType, searchKey, sortBy, sort } = query;
     const where: any = {};
     if (userId) where.userId = userId;
     if (status) where.status = status;
     if (leaveType) where.leaveType = leaveType;
 
-    const offset = (Number(page) - 1) * Number(limit);
     const { rows, count } = await LeaveRequest.findAndCountAll({
       where,
       include: [{ model: User, attributes: ['id', 'name', 'profilePicture'] }],
       order: [['createdAt', 'DESC']],
-      limit: Number(limit),
+      limit,
       offset
     });
 
     return {
       docs: rows,
-      pagination: { page: Number(page), limit: Number(limit), totalItems: count, totalPages: Math.ceil(count / Number(limit)) }
+      pagination: { page, limit, totalItems: count, totalPages: Math.ceil(count / limit) }
     };
   }
 

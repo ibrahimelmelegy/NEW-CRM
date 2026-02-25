@@ -1,4 +1,5 @@
 import { Op } from 'sequelize';
+import { clampPagination } from '../utils/pagination';
 import ForecastPeriod from './forecastModel';
 import Deal from '../deal/model/dealModel';
 import { DealStageEnums } from '../deal/dealEnum';
@@ -12,13 +13,12 @@ interface ForecastQuery {
 
 class ForecastService {
   async getForecasts(query: ForecastQuery) {
-    const { userId, period, page = 1, limit = 20 } = query;
+    const { page, limit, offset } = clampPagination(query, 20);
+    const { userId, period } = query;
     const where: any = {};
 
     if (userId) where.userId = userId;
     if (period) where.period = period;
-
-    const offset = (page - 1) * limit;
     const { rows: docs, count: totalItems } = await ForecastPeriod.findAndCountAll({
       where,
       order: [['startDate', 'DESC']],

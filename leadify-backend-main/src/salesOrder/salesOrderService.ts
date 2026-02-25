@@ -7,6 +7,7 @@ import Deal from '../deal/model/dealModel';
 import BaseError from '../utils/error/base-http-exception';
 import { ERRORS } from '../utils/error/errors';
 import { sequelize } from '../config/db';
+import { clampPagination } from '../utils/pagination';
 
 class SalesOrderService {
   /**
@@ -97,8 +98,8 @@ class SalesOrderService {
    * Get paginated list of orders with filters
    */
   async getOrders(query: any): Promise<any> {
-    const { page = 1, limit = 10, searchKey, status, clientId } = query;
-    const offset = (Number(page) - 1) * Number(limit);
+    const { page, limit, offset } = clampPagination(query);
+    const { searchKey, status, clientId } = query;
 
     const where: WhereOptions = {};
 
@@ -115,18 +116,18 @@ class SalesOrderService {
     const { rows: docs, count: totalItems } = await SalesOrder.findAndCountAll({
       where,
       include: [{ model: Client, as: 'client', attributes: ['id', 'clientName', 'email', 'companyName'] }],
-      limit: Number(limit),
-      offset: Number(offset),
+      limit,
+      offset,
       order: [['createdAt', 'DESC']]
     });
 
     return {
       docs,
       pagination: {
-        page: Number(page),
-        limit: Number(limit),
+        page,
+        limit,
         totalItems,
-        totalPages: Math.ceil(totalItems / (Number(limit) || 10))
+        totalPages: Math.ceil(totalItems / limit)
       }
     };
   }

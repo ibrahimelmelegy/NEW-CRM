@@ -31,6 +31,7 @@ import clientService from '../client/clientService';
 import projectService from '../project/projectService';
 import { ProjectCategoryEnum, ProjectStatusEnum } from '../project/projectEnum';
 import { tenantWhere, tenantCreate } from '../utils/tenantScope';
+import { clampPagination } from '../utils/pagination';
 
 class DealService {
   public async convertLeadTODeal(input: ConvertLeadToDealInput & { userId: string }, admin: User): Promise<Deal> {
@@ -204,8 +205,7 @@ class DealService {
   }
 
   public async getDeals(query: GetPaginatedDealsInput, user: User): Promise<IPaginationRes<Deal>> {
-    const { page = 1, limit = 10 } = query;
-    const offset = (Number(page) - 1) * Number(limit);
+    const { page, limit, offset } = clampPagination(query);
 
     if (!user.role.permissions.includes(DealPermissionsEnum.VIEW_GLOBAL_DEALS)) query.userId = user.id;
 

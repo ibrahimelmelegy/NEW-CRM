@@ -8,6 +8,7 @@ import { ManpowerSortByEnum } from './manpowerEnum';
 import { SortEnum } from '../lead/leadEnum';
 import * as ExcelJS from 'exceljs';
 import { sendEmail } from '../utils/emailHelper';
+import { clampPagination } from '../utils/pagination';
 
 class ManpowerService {
   private calculateCosts(data: {
@@ -87,9 +88,7 @@ class ManpowerService {
   }
 
   public async getManpowers(query: any): Promise<any> {
-    const { page = 1, limit = 10 } = query;
-
-    const offset = (Number(page) - 1) * Number(limit);
+    const { page, limit, offset } = clampPagination(query);
     const { rows: manpowers, count: totalItems } = await Manpower.findAndCountAll({
       where: {
         ...(query.searchKey && {
@@ -150,7 +149,7 @@ class ManpowerService {
           }
         })
       },
-      limit: Number(limit),
+      limit,
       offset,
       order: [
         [

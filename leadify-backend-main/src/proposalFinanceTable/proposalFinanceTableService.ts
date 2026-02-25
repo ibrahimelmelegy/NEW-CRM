@@ -3,7 +3,9 @@ import BaseError from '../utils/error/base-http-exception';
 import { ERRORS } from '../utils/error/errors';
 import ProposalFinanceTable from './proposalFinanceTableModel';
 import materialService from '../additionalMaterial/material.service';
-import { Includeable, WhereOptions, Op, Sequelize } from 'sequelize';
+import { Includeable, WhereOptions, Op, Sequelize, QueryTypes } from 'sequelize';
+import { sequelize } from '../config/db';
+import { clampPagination } from '../utils/pagination';
 import { ProposalActionEnum } from '../proposalLog/proposalLogEnum';
 import proposalLogService from '../proposalLog/proposalLogService';
 import User from '../user/userModel';
@@ -126,8 +128,7 @@ class ProposalFinanceTableService {
   }
 
   public async getFinanceTables(query: any): Promise<any> {
-    const { page = 1, limit = 10 } = query;
-    const offset = (Number(page) - 1) * Number(limit);
+    const { page, limit, offset } = clampPagination(query);
 
     const { rows: tables, count: totalItems } = await ProposalFinanceTable.findAndCountAll({
       where: {
@@ -136,7 +137,7 @@ class ProposalFinanceTableService {
           [Op.or]: [{ grandTotalPrice: { [Op.iLike]: `%${query.searchKey}%` } }]
         })
       },
-      limit: Number(limit),
+      limit,
       offset,
       order: [['createdAt', 'DESC']]
     });
@@ -170,24 +171,25 @@ class ProposalFinanceTableService {
   }
 
   public async deleteFinanceTableCustomColumn(id: string, customColumnKey: string, user: User): Promise<void> {
+    // Validate customColumnKey to prevent SQL injection
+    if (!/^[a-zA-Z0-9_-]+$/.test(customColumnKey)) {
+      throw new BaseError(ERRORS.SOMETHING_WENT_WRONG);
+    }
+
     const table = await this.proposalFinanceTableOrError({ id });
     await proposalService.validateProposalAccess(table.proposalId, user);
 
-    await ProposalFinanceTableItem.update(
-      {
-        customColumns: Sequelize.literal(`
-      COALESCE(
-        (
-          SELECT jsonb_agg(elem)
+    await sequelize.query(
+      `UPDATE "ProposalFinanceTableItems"
+       SET "customColumns" = COALESCE(
+         (SELECT jsonb_agg(elem)
           FROM jsonb_array_elements("customColumns") AS elem
-          WHERE elem->>'key' != '${customColumnKey}'
-        ), '[]'::jsonb
-      )
-    `)
-      },
+          WHERE elem->>'key' != :columnKey
+         ), '[]'::jsonb)
+       WHERE "financeTableId" = :tableId`,
       {
-        where: { financeTableId: id },
-        returning: true
+        replacements: { columnKey: customColumnKey, tableId: id },
+        type: QueryTypes.UPDATE
       }
     );
 

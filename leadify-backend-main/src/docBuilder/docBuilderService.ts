@@ -1,6 +1,7 @@
 import * as fs from 'fs';
 import * as path from 'path';
 import { Op, WhereOptions, Includeable } from 'sequelize';
+import { clampPagination } from '../utils/pagination';
 import DocBuilderDocument, { DocTypeEnum, DocStatusEnum } from './models/docBuilderModel';
 import DocBuilderVersion from './models/docBuilderVersionModel';
 import BaseError from '../utils/error/base-http-exception';
@@ -94,8 +95,7 @@ class DocBuilderService {
   }
 
   public async getDocuments(query: any, user: User): Promise<any> {
-    const { page = 1, limit = 20 } = query;
-    const offset = (Number(page) - 1) * Number(limit);
+    const { page, limit, offset } = clampPagination(query, 20);
 
     const where: WhereOptions = {
       ...tenantWhere(user)
@@ -150,7 +150,7 @@ class DocBuilderService {
           attributes: ['id', 'name']
         }
       ],
-      limit: Number(limit),
+      limit,
       offset,
       distinct: true,
       order: [
@@ -186,10 +186,10 @@ class DocBuilderService {
     return {
       docs: documents,
       pagination: {
-        page: Number(page),
-        limit: Number(limit),
+        page,
+        limit,
         totalItems,
-        totalPages: Math.ceil(totalItems / Number(limit))
+        totalPages: Math.ceil(totalItems / limit)
       }
     };
   }

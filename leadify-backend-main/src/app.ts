@@ -122,12 +122,22 @@ app.use(
       }
     },
     crossOriginEmbedderPolicy: false,
+    referrerPolicy: { policy: 'strict-origin-when-cross-origin' },
     hsts: {
       maxAge: 31536000,
       includeSubDomains: true
     }
   })
 );
+
+// Permissions-Policy header
+app.use((_req: Request, res: Response, next: NextFunction) => {
+  res.setHeader(
+    'Permissions-Policy',
+    'camera=(), microphone=(), geolocation=(self), payment=()'
+  );
+  next();
+});
 
 // 3. HTTPS enforcement (production only, when FORCE_HTTPS=true)
 if (process.env.NODE_ENV === 'production' && process.env.FORCE_HTTPS === 'true') {

@@ -5,6 +5,7 @@ import SalaryStructure from './models/salaryStructureModel';
 import EndOfService, { EOSStatus } from './models/endOfServiceModel';
 import Employee, { EmployeeStatus } from '../hr/models/employeeModel';
 import { tenantWhere } from '../utils/tenantScope';
+import { clampPagination } from '../utils/pagination';
 
 class PayrollService {
   // ─── Payroll Runs ────────────────────────────────────────────────────
@@ -19,30 +20,30 @@ class PayrollService {
   }
 
   async getPayrollRuns(query: any, user?: any) {
-    const { page = 1, limit = 20, month, year, status } = query;
+    const { page, limit, offset } = clampPagination(query, 20);
+    const { month, year, status } = query;
     const where: any = { ...(user ? tenantWhere(user) : {}) };
     if (month) where.month = month;
     if (year) where.year = year;
     if (status) where.status = status;
 
-    const offset = (Number(page) - 1) * Number(limit);
     const { rows, count } = await PayrollRun.findAndCountAll({
       where,
       order: [
         ['year', 'DESC'],
         ['month', 'DESC']
       ],
-      limit: Number(limit),
+      limit,
       offset
     });
 
     return {
       docs: rows,
       pagination: {
-        page: Number(page),
-        limit: Number(limit),
+        page,
+        limit,
         totalItems: count,
-        totalPages: Math.ceil(count / Number(limit))
+        totalPages: Math.ceil(count / limit)
       }
     };
   }
@@ -179,8 +180,7 @@ class PayrollService {
   // ─── Payslips ────────────────────────────────────────────────────────
 
   async getEmployeePayslips(employeeId: string, query: any = {}) {
-    const { page = 1, limit = 20 } = query;
-    const offset = (Number(page) - 1) * Number(limit);
+    const { page, limit, offset } = clampPagination(query, 20);
 
     const { rows, count } = await Payslip.findAndCountAll({
       where: { employeeId },
@@ -192,17 +192,17 @@ class PayrollService {
         }
       ],
       order: [['createdAt', 'DESC']],
-      limit: Number(limit),
+      limit,
       offset
     });
 
     return {
       docs: rows,
       pagination: {
-        page: Number(page),
-        limit: Number(limit),
+        page,
+        limit,
         totalItems: count,
-        totalPages: Math.ceil(count / Number(limit))
+        totalPages: Math.ceil(count / limit)
       }
     };
   }
@@ -210,11 +210,11 @@ class PayrollService {
   // ─── Salary Structures ──────────────────────────────────────────────
 
   async getSalaryStructures(query: any) {
-    const { page = 1, limit = 20, employeeId } = query;
+    const { page, limit, offset } = clampPagination(query, 20);
+    const { employeeId } = query;
     const where: any = {};
     if (employeeId) where.employeeId = employeeId;
 
-    const offset = (Number(page) - 1) * Number(limit);
     const { rows, count } = await SalaryStructure.findAndCountAll({
       where,
       include: [
@@ -225,17 +225,17 @@ class PayrollService {
         }
       ],
       order: [['effectiveDate', 'DESC']],
-      limit: Number(limit),
+      limit,
       offset
     });
 
     return {
       docs: rows,
       pagination: {
-        page: Number(page),
-        limit: Number(limit),
+        page,
+        limit,
         totalItems: count,
-        totalPages: Math.ceil(count / Number(limit))
+        totalPages: Math.ceil(count / limit)
       }
     };
   }

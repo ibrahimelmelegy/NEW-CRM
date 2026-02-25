@@ -39,10 +39,12 @@ async function runTypoMigration(sequelize: Sequelize) {
   for (const table of tables) {
     try {
       const [results]: any = await sequelize.query(
-        `SELECT column_name FROM information_schema.columns WHERE table_name='${table}' AND column_name='descripion'`
+        `SELECT column_name FROM information_schema.columns WHERE table_name = :tableName AND column_name = 'descripion'`,
+        { replacements: { tableName: table } }
       );
 
       if (results.length > 0) {
+        // Table names cannot be parameterized in SQL; values are from a hardcoded allowlist above
         await sequelize.query(`ALTER TABLE "${table}" RENAME COLUMN "descripion" TO "description"`);
       }
     } catch (e) {

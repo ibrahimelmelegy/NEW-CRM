@@ -3,11 +3,11 @@ import Invoice from '../deal/model/invoiceMode';
 import Deal from '../deal/model/dealModel';
 import User from '../user/userModel';
 import { tenantWhere } from '../utils/tenantScope';
+import { clampPagination } from '../utils/pagination';
 
 class InvoiceService {
   async getInvoices(query: { page?: number; limit?: number; status?: string; search?: string }, user?: any) {
-    const { page = 1, limit = 20 } = query;
-    const offset = (page - 1) * limit;
+    const { page, limit, offset } = clampPagination(query, 20);
     const where: any = { ...(user ? tenantWhere(user) : {}) };
 
     if (query.status === 'collected') where.collected = true;

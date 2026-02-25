@@ -5,6 +5,7 @@ import BaseError from '../utils/error/base-http-exception';
 import { ERRORS } from '../utils/error/errors';
 import * as ExcelJS from 'exceljs';
 import { sendEmail } from '../utils/emailHelper';
+import { clampPagination } from '../utils/pagination';
 
 class ServiceService {
   public async createService(data: any): Promise<Service> {
@@ -22,9 +23,7 @@ class ServiceService {
   }
 
   public async getServices(query: any): Promise<any> {
-    const { page = 1, limit = 10 } = query;
-
-    const offset = (Number(page) - 1) * Number(limit);
+    const { page, limit, offset } = clampPagination(query);
 
     const { rows: services, count: totalItems } = await Service.findAndCountAll({
       where: {
@@ -38,7 +37,7 @@ class ServiceService {
           }
         })
       },
-      limit: Number(limit),
+      limit,
       offset,
       order: [['createdAt', 'DESC']]
     });

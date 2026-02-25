@@ -1,6 +1,7 @@
 import { createHash } from 'crypto';
 import { Op } from 'sequelize';
 import ZatcaInvoice, { ZatcaAddress, ZatcaLineItem } from './zatcaModel';
+import { clampPagination } from '../utils/pagination';
 
 // ---------------------------------------------------------------------------
 // Types
@@ -485,8 +486,7 @@ class ZatcaService {
    * List ZATCA invoices with pagination and filtering.
    */
   async getZatcaInvoices(query: ZatcaInvoiceQuery) {
-    const { page = 1, limit = 20 } = query;
-    const offset = (page - 1) * limit;
+    const { page, limit, offset } = clampPagination(query, 20);
     const where: any = {};
 
     if (query.status) {

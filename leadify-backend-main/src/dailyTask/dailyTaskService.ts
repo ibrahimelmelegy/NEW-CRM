@@ -1,4 +1,5 @@
 import { col, fn, Includeable, literal, Op, Sequelize, WhereOptions } from 'sequelize';
+import { clampPagination } from '../utils/pagination';
 import DailyTask from './dailyTaskModel';
 import { UpdateDailyTaskInput } from './inputs/updateDailyTaskInput';
 import BaseError from '../utils/error/base-http-exception';
@@ -30,8 +31,7 @@ class DailyTaskService {
   }
 
   public async getDailyTasks(query: any): Promise<any> {
-    const { page = 1, limit = 10 } = query;
-    const offset = (Number(page) - 1) * Number(limit);
+    const { page, limit, offset } = clampPagination(query);
 
     const { rows: tasks, count: totalItems } = await DailyTask.findAndCountAll({
       where: {
@@ -62,7 +62,7 @@ class DailyTaskService {
           attributes: ['clientName']
         }
       ],
-      limit: Number(limit),
+      limit,
       offset,
       order: [['createdAt', 'DESC']]
     });

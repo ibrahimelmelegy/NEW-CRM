@@ -4,11 +4,12 @@ import StockMovement from './stockMovementModel';
 import User from '../user/userModel';
 import BaseError from '../utils/error/base-http-exception';
 import { ERRORS } from '../utils/error/errors';
+import { clampPagination } from '../utils/pagination';
 
 class InventoryService {
   async getProducts(query: any): Promise<any> {
-    const { page = 1, limit = 10, searchKey, category, warehouse, isActive } = query;
-    const offset = (Number(page) - 1) * Number(limit);
+    const { page, limit, offset } = clampPagination(query);
+    const { searchKey, category, warehouse, isActive } = query;
 
     const where: WhereOptions = {};
 
@@ -34,18 +35,18 @@ class InventoryService {
 
     const { rows: products, count: totalItems } = await Product.findAndCountAll({
       where,
-      limit: Number(limit),
-      offset: Number(offset),
+      limit,
+      offset,
       order: [['createdAt', 'DESC']]
     });
 
     return {
       docs: products,
       pagination: {
-        page: Number(page),
-        limit: Number(limit),
+        page,
+        limit,
         totalItems,
-        totalPages: Math.ceil(totalItems / (Number(limit) || 10))
+        totalPages: Math.ceil(totalItems / limit)
       }
     };
   }

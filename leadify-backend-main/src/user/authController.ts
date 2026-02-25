@@ -34,7 +34,7 @@ const transporter = nodemailer.createTransport({
     pass: process.env.EMAIL_PASS as string
   },
   tls: {
-    ciphers: 'SSLv3'
+    minVersion: 'TLSv1.2'
   }
 });
 
@@ -238,39 +238,39 @@ export const forgotPassword = async (req: Request, res: Response, next: NextFunc
 
   try {
     const user = await User.findOne({ where: { email } });
-    if (!user) {
-      res.status(404).json({ message: 'User not found' });
-      return;
+
+    // Always return the same response regardless of whether the user exists
+    // to prevent user enumeration attacks
+    if (user) {
+      await ResetToken.destroy({ where: { userId: user.id } });
+
+      const resetToken = jwt.sign({ id: user.id, email: user.email }, SECRET_KEY, { expiresIn: '24h' });
+      await ResetToken.create({
+        userId: user.id,
+        token: resetToken,
+        expiresAt: new Date(Date.now() + 24 * 60 * 60 * 1000)
+      });
+
+      const resetLink = `${req.protocol}://${req.get('host')}/reset-password?token=${resetToken}`;
+
+      // TODO: Uncomment when email is configured
+      // const mailOptions = {
+      //     from: process.env.EMAIL_USER as string,
+      //     to: user.email,
+      //     subject: 'Password Reset Request',
+      //     html: `
+      //         <p>Hi,</p>
+      //         <p>It looks like you requested a password reset. Don't worry, we've got you covered!</p>
+      //         <p>Please click on the button below to reset your password. The link is valid for 24 hours:</p>
+      //         <a href="${resetLink}" style="background-color:#007bff;color:white;padding:10px 20px;text-decoration:none;border-radius:5px;">Reset Password</a>
+      //         <p>If you didn't request this, you can safely ignore this email.</p>
+      //         <p>Best Regards,</p>
+      //     `
+      // };
+      // await transporter.sendMail(mailOptions);
     }
 
-    await ResetToken.destroy({ where: { userId: user.id } });
-
-    const resetToken = jwt.sign({ id: user.id, email: user.email }, SECRET_KEY, { expiresIn: '24h' });
-    await ResetToken.create({
-      userId: user.id,
-      token: resetToken,
-      expiresAt: new Date(Date.now() + 24 * 60 * 60 * 1000)
-    });
-
-    const resetLink = `${req.protocol}://${req.get('host')}/reset-password?token=${resetToken}`;
-
-    // const mailOptions = {
-    //     from: process.env.EMAIL_USER as string,
-    //     to: user.email,
-    //     subject: 'Password Reset Request',
-    //     html: `
-    //         <p>Hi,</p>
-    //         <p>It looks like you requested a password reset. Don’t worry, we’ve got you covered!</p>
-    //         <p>Please click on the button below to reset your password. The link is valid for 24 hours:</p>
-    //         <a href="${resetLink}" style="background-color:#007bff;color:white;padding:10px 20px;text-decoration:none;border-radius:5px;">Reset Password</a>
-    //         <p>If you didn’t request this, you can safely ignore this email.</p>
-    //         <p>Best Regards,</p>
-    //     `
-    // };
-
-    // await transporter.sendMail(mailOptions);
-
-    wrapResult(res, { message: 'Password reset link sent to your email.', resetLink });
+    wrapResult(res, { message: 'If an account with that email exists, a password reset link has been sent.' });
   } catch (error) {
     res.status(500).json({ message: 'Something went wrong', error: error instanceof Error ? error.message : 'Server error' });
   }

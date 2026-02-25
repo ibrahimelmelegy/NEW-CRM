@@ -9,6 +9,7 @@ import User from '../user/userModel';
 import ProposalContent from '../proposalContent/proposalContentModel';
 import { ProposalActionEnum } from '../proposalLog/proposalLogEnum';
 import proposalService from '../proposal/proposalService';
+import { clampPagination } from '../utils/pagination';
 class ProposalFinanceTableItemService {
   public async createProposalFinanceTableItem(data: any, user: User): Promise<ProposalFinanceTableItem> {
     const material = await materialService.materialOrError({ id: data.materialId });
@@ -57,8 +58,7 @@ class ProposalFinanceTableItemService {
   }
 
   public async getProposalFinanceTableItems(query: any): Promise<any> {
-    const { page = 1, limit = 10 } = query;
-    const offset = (Number(page) - 1) * Number(limit);
+    const { page, limit, offset } = clampPagination(query);
 
     const { rows: items, count: totalItems } = await ProposalFinanceTableItem.findAndCountAll({
       where: {
@@ -67,7 +67,7 @@ class ProposalFinanceTableItemService {
           [Op.or]: [{ description: { [Op.iLike]: `%${query.searchKey}%` } }]
         })
       },
-      limit: Number(limit),
+      limit,
       offset,
       order: [['createdAt', 'DESC']]
     });

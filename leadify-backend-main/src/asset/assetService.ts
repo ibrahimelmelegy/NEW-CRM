@@ -1,4 +1,5 @@
 import { Op } from 'sequelize';
+import { clampPagination } from '../utils/pagination';
 import Asset from './assetModel';
 import { UpdateAssetInput } from './inputs/updateAssetInput';
 import BaseError from '../utils/error/base-http-exception';
@@ -24,9 +25,7 @@ class AssetService {
   }
 
   public async getAssets(query: any): Promise<any> {
-    const { page = 1, limit = 10 } = query;
-
-    const offset = (Number(page) - 1) * Number(limit);
+    const { page, limit, offset } = clampPagination(query);
 
     const { rows: assets, count: totalItems } = await Asset.findAndCountAll({
       where: {
@@ -46,7 +45,7 @@ class AssetService {
           }
         })
       },
-      limit: Number(limit),
+      limit,
       offset,
       order: [
         [

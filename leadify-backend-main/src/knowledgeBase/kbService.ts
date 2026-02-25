@@ -1,6 +1,7 @@
 import { Op } from 'sequelize';
 import KBArticle, { ArticleStatus } from './kbArticleModel';
 import User from '../user/userModel';
+import { clampPagination } from '../utils/pagination';
 
 class KBService {
   async createArticle(data: any, authorId?: number) {
@@ -18,7 +19,8 @@ class KBService {
   }
 
   async getArticles(query: any) {
-    const { page = 1, limit = 20, search, category, status, tag } = query;
+    const { page, limit, offset } = clampPagination(query, 20);
+    const { search, category, status, tag } = query;
     const where: any = {};
 
     if (search) {
@@ -31,8 +33,6 @@ class KBService {
     if (category) where.category = category;
     if (status) where.status = status;
     if (tag) where.tags = { [Op.contains]: [tag] };
-
-    const offset = (Number(page) - 1) * Number(limit);
     const { rows, count } = await KBArticle.findAndCountAll({
       where,
       include: [{ model: User, as: 'author', attributes: ['id', 'name', 'profilePicture'] }],
@@ -40,17 +40,17 @@ class KBService {
         ['sortOrder', 'ASC'],
         ['createdAt', 'DESC']
       ],
-      limit: Number(limit),
+      limit,
       offset
     });
 
     return {
       docs: rows,
       pagination: {
-        page: Number(page),
-        limit: Number(limit),
+        page,
+        limit,
         totalItems: count,
-        totalPages: Math.ceil(count / Number(limit))
+        totalPages: Math.ceil(count / limit)
       }
     };
   }

@@ -5,6 +5,7 @@ import Invoice from '../deal/model/invoiceMode';
 import Client from '../client/clientModel';
 import BaseError from '../utils/error/base-http-exception';
 import { ERRORS } from '../utils/error/errors';
+import { clampPagination } from '../utils/pagination';
 
 class PaymentService {
   /**
@@ -74,8 +75,8 @@ class PaymentService {
    * List payments with filters and pagination
    */
   public async getPayments(query: any): Promise<any> {
-    const { page = 1, limit = 10, clientId, method, status, startDate, endDate, searchKey } = query;
-    const offset = (Number(page) - 1) * Number(limit);
+    const { page, limit, offset } = clampPagination(query);
+    const { clientId, method, status, startDate, endDate, searchKey } = query;
 
     const where: any = {};
 
@@ -96,7 +97,7 @@ class PaymentService {
     const { rows: payments, count: totalItems } = await Payment.findAndCountAll({
       where,
       include: [{ model: Client, as: 'client', attributes: ['id', 'clientName', 'email'] }],
-      limit: Number(limit),
+      limit,
       offset,
       order: [['createdAt', 'DESC']]
     });
@@ -104,10 +105,10 @@ class PaymentService {
     return {
       docs: payments,
       pagination: {
-        page: Number(page),
-        limit: Number(limit),
+        page,
+        limit,
         totalItems,
-        totalPages: Math.ceil(totalItems / Number(limit))
+        totalPages: Math.ceil(totalItems / limit)
       }
     };
   }
