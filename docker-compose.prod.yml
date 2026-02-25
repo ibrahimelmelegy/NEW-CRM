@@ -13,6 +13,11 @@ services:
       interval: 10s
       timeout: 5s
       retries: 5
+    deploy:
+      resources:
+        limits:
+          memory: 1G
+          cpus: "0.5"
 
   redis:
     image: redis:7-alpine
@@ -25,6 +30,11 @@ services:
       interval: 10s
       timeout: 5s
       retries: 5
+    deploy:
+      resources:
+        limits:
+          memory: 256M
+          cpus: "0.25"
 
   backend:
     build:
@@ -43,6 +53,11 @@ services:
         condition: service_healthy
     volumes:
       - uploads:/usr/src/app/public/uploads
+    deploy:
+      resources:
+        limits:
+          memory: 2G
+          cpus: "1.0"
 
   frontend:
     build:
@@ -60,6 +75,11 @@ services:
     volumes:
       - ./nginx/ssl:/etc/nginx/ssl:ro
       - ./nginx/certbot:/var/www/certbot:ro
+    deploy:
+      resources:
+        limits:
+          memory: 512M
+          cpus: "0.5"
 
 volumes:
   pgdata:

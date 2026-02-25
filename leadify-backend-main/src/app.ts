@@ -197,6 +197,11 @@ const { doubleCsrfProtection, generateCsrfToken } = doubleCsrf({
   getCsrfTokenFromRequest: (req: Request) => req.headers['x-csrf-token'] as string
 });
 
+// Health check endpoint (no auth required)
+app.get('/api/health', (_req: Request, res: Response) => {
+  res.json({ status: 'ok', timestamp: new Date().toISOString() });
+});
+
 // Expose CSRF token endpoint for frontend
 app.get('/api/csrf-token', (req: Request, res: Response) => {
   const token = generateCsrfToken(req, res);
