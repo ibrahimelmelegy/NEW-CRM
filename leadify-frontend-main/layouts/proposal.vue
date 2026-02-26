@@ -206,15 +206,15 @@ const handlePrint = async () => {
   border-radius: 50%;
 }
 .marginedStart {
-  margin-left: 260px;
+  margin-inline-start: 260px;
   width: calc(100% - 260px);
 }
 .collapseMargin {
-  margin-left: 80px;
+  margin-inline-start: 80px;
   width: calc(100% - 80px) !important;
 }
 .notMargined {
-  margin-left: 0px;
+  margin-inline-start: 0px;
   width: 100% !important;
 }
 // .background-overlay {
