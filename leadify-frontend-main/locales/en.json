@@ -4368,5 +4368,17 @@
     "assign": "Assign",
     "changeStatus": "Change Status",
     "export": "Export Selected"
+  },
+  "activities": {
+    "types": {
+      "assigned": "User Assigned",
+      "update": "Data Updated",
+      "restored": "Restored",
+      "create": "Created",
+      "delete": "Deleted",
+      "archived": "Archived",
+      "import": "Imported",
+      "export": "Exported"
+    }
   }
 }
