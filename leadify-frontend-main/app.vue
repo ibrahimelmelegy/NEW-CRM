@@ -22,6 +22,10 @@ watch(locale, (val) => {
   if (import.meta.client) {
     document.documentElement.dir = val === 'ar' ? 'rtl' : 'ltr';
     document.documentElement.lang = val;
+    // Chrome applies translateX(-viewport) to <html> when dir=rtl + overflow-x:hidden,
+    // creating a containing block that breaks all position:fixed elements.
+    // Force transform:none via inline style to override Chrome's rendering engine behavior.
+    document.documentElement.style.transform = 'none';
   }
 }, { immediate: true });
 </script>
