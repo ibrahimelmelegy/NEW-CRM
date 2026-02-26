@@ -105,7 +105,7 @@ export default defineNuxtConfig({
       { code: 'ar', name: 'العربية', file: 'ar.json', dir: 'rtl' }
     ],
     defaultLocale: 'en',
-    lazy: true,
+    lazy: false,
     restructureDir: '.',
     // تحويل المسار النسبي إلى مسار مطلق متوافق مع نظام Windows
     langDir: 'locales',
