@@ -29,8 +29,10 @@ const themeStore = useThemeStore();
   position: fixed;
   z-index: -1;
   inset: 0;
-  width: 100vw;
-  height: 100vh;
+  // width/height removed — inset:0 stretches to fill viewport
+  // 100vw includes scrollbar width, causing overflow that triggers
+  // Chrome's RTL transform on <html>, breaking all fixed positioning
+  overflow: hidden;
   background-color: #0a0a0f;
   transition: background-color 0.3s ease;
   
