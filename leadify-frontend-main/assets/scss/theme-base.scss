@@ -11,6 +11,10 @@ html {
     font-size: 16px;
     scroll-behavior: smooth;
     overflow-x: hidden;
+    // Chrome applies translateX(-viewport) to <html> in RTL + overflow-x:hidden,
+    // which creates a new containing block and breaks all position:fixed elements.
+    // Explicitly setting transform:none prevents this Chrome behavior.
+    transform: none;
 }
 
 body {
