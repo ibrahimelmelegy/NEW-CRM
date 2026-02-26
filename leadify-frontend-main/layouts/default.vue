@@ -125,10 +125,7 @@ let notificationPollId: ReturnType<typeof setInterval> | null = null;
 onMounted(() => {
   window.addEventListener('scroll', handleScroll);
   window.addEventListener('click', handleClickOutside);
-  // Register service worker for PWA
-  if ('serviceWorker' in navigator) {
-    navigator.serviceWorker.register('/sw.js').catch(() => {});
-  }
+  // Service worker removed — SW is self-destroying to clear stale caches
   // Start polling for unread notifications
   notificationPollId = setInterval(() => {
     if (document.visibilityState === 'visible') {

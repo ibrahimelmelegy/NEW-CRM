@@ -28,8 +28,7 @@ const themeStore = useThemeStore();
 .professional-background {
   position: fixed;
   z-index: -1;
-  top: 0;
-  left: 0;
+  inset: 0;
   width: 100vw;
   height: 100vh;
   background-color: #0a0a0f;

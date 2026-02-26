@@ -187,19 +187,19 @@ const getPath = (routeName: string) => {
   z-index: 3;
 
   bottom: 38px;
-  left: 260px;
+  inset-inline-start: 260px;
   transition: all 0.2s ease-in;
   &.margined {
-    left: 0px;
+    inset-inline-start: 0px;
   }
 }
 #allTheNav {
   position: relative;
-  left: 0;
+  inset-inline-start: 0;
   .nav {
     top: 0;
     z-index: 100;
-    left: 0;
+    inset-inline-start: 0;
     position: fixed;
     padding-bottom: 3rem;
   }
@@ -209,7 +209,7 @@ const getPath = (routeName: string) => {
   width: 100%;
   transition: all 0.2s ease-in;
   top: 0;
-  left: 0;
+  inset-inline-start: 0;
   // border-bottom: 1px solid $border;
 }
 
@@ -220,7 +220,7 @@ const getPath = (routeName: string) => {
     padding: 2rem;
     z-index: 1000;
     border-radius: 0px 0 50px 0px;
-    left: 0;
+    inset-inline-start: 0;
     // width: calc(100% + 5px);
     top: 0;
     width: 100%;

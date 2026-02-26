@@ -156,20 +156,20 @@ const handlePrint = async () => {
   z-index: 3;
 
   bottom: 38px;
-  left: 260px;
+  inset-inline-start: 260px;
   transition: all 0.2s ease-in;
   &.margined {
-    left: 0px;
+    inset-inline-start: 0px;
   }
 }
 #allTheNav {
   position: relative;
-  left: 0;
+  inset-inline-start: 0;
   .nav {
     top: 0;
     background: #ffffff;
     z-index: 100;
-    left: 0;
+    inset-inline-start: 0;
     position: fixed;
     padding-bottom: 3rem;
   }
@@ -182,7 +182,7 @@ const handlePrint = async () => {
   transition: all 0.2s ease-in;
   background: #ffffff;
   top: 0;
-  left: 0;
+  inset-inline-start: 0;
   border-bottom: 1px solid #e7e6e9 !important;
 }
 
@@ -193,7 +193,7 @@ const handlePrint = async () => {
     padding: 2rem;
     z-index: 1000;
     border-radius: 0px 0 50px 0px;
-    left: 0;
+    inset-inline-start: 0;
     // width: calc(100% + 5px);
     top: 0;
     width: 100%;
