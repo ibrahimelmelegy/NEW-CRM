@@ -156,7 +156,11 @@
     "analyticsReports": "Analytics & Reports",
     "favorites": "Favorites",
     "planner": "Planner",
-    "virtualOffice": "Virtual Office"
+    "virtualOffice": "Virtual Office",
+    "documentHub": "Document Hub",
+    "quotes": "Quotes",
+    "deliveryNotes": "Delivery Notes",
+    "creditNotes": "Credit Notes"
   },
   "automations": {
     "title": "Visual Journey Builder",

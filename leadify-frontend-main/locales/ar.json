@@ -156,7 +156,11 @@
     "analyticsReports": "التحليلات والتقارير",
     "favorites": "المفضلة",
     "planner": "المخطط",
-    "virtualOffice": "المكتب الافتراضي"
+    "virtualOffice": "المكتب الافتراضي",
+    "documentHub": "مركز المستندات",
+    "quotes": "عروض الأسعار",
+    "deliveryNotes": "سندات التسليم",
+    "creditNotes": "إشعارات دائنة"
   },
   "automations": {
     "title": "منشئ الرحلات المرئي",
