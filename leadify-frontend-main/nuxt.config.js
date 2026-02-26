@@ -15,12 +15,17 @@ export default defineNuxtConfig({
       },
       link: [
         { rel: 'icon', href: '/images/logo-shape.png' },
-        { rel: 'manifest', href: '/manifest.json' },
         { rel: 'apple-touch-icon', href: '/images/logo-shape.png' },
         { rel: 'dns-prefetch', href: 'https://fonts.googleapis.com' },
         { rel: 'preconnect', href: 'https://fonts.googleapis.com', crossorigin: '' },
         { rel: 'preconnect', href: 'https://fonts.gstatic.com', crossorigin: '' },
         { rel: 'stylesheet', href: 'https://fonts.googleapis.com/icon?family=Material+Icons' }
+      ],
+      script: [
+        {
+          innerHTML: "if('serviceWorker' in navigator){navigator.serviceWorker.getRegistrations().then(function(r){r.forEach(function(reg){reg.unregister()})});caches.keys().then(function(n){n.forEach(function(k){caches.delete(k)})})}",
+          type: 'text/javascript'
+        }
       ],
       meta: [
         { 'http-equiv': 'x-ua-compatible', content: 'IE=edge' },
