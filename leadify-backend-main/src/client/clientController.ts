@@ -99,6 +99,96 @@ class ClientController {
       next(error);
     }
   }
+
+  public async getCompanyHierarchy(req: AuthenticatedRequest, res: Response, next: NextFunction): Promise<void> {
+    try {
+      const responseFromService = await ClientService.getCompanyHierarchy(req.params.id as string);
+      wrapResult(res, responseFromService);
+    } catch (error) {
+      next(error);
+    }
+  }
+
+  public async getCompanyTimeline(req: AuthenticatedRequest, res: Response, next: NextFunction): Promise<void> {
+    try {
+      const limit = req.query.limit ? parseInt(req.query.limit as string, 10) : 50;
+      const responseFromService = await ClientService.getCompanyTimeline(req.params.id as string, limit);
+      wrapResult(res, responseFromService);
+    } catch (error) {
+      next(error);
+    }
+  }
+
+  public async getCompanyRevenue(req: AuthenticatedRequest, res: Response, next: NextFunction): Promise<void> {
+    try {
+      const responseFromService = await ClientService.getCompanyRevenue(req.params.id as string);
+      wrapResult(res, responseFromService);
+    } catch (error) {
+      next(error);
+    }
+  }
+
+  public async createCompanyNote(req: AuthenticatedRequest, res: Response, next: NextFunction): Promise<void> {
+    try {
+      const { content, attachments } = req.body;
+      const responseFromService = await ClientService.createCompanyNote(
+        req.params.id as string,
+        content,
+        req.user!.id,
+        attachments
+      );
+      wrapResult(res, responseFromService, 201);
+    } catch (error) {
+      next(error);
+    }
+  }
+
+  public async getCompanyNotes(req: AuthenticatedRequest, res: Response, next: NextFunction): Promise<void> {
+    try {
+      const responseFromService = await ClientService.getCompanyNotes(req.params.id as string);
+      wrapResult(res, responseFromService);
+    } catch (error) {
+      next(error);
+    }
+  }
+
+  public async updateCompanyNote(req: AuthenticatedRequest, res: Response, next: NextFunction): Promise<void> {
+    try {
+      const responseFromService = await ClientService.updateCompanyNote(req.params.noteId as string, req.body);
+      wrapResult(res, responseFromService);
+    } catch (error) {
+      next(error);
+    }
+  }
+
+  public async deleteCompanyNote(req: AuthenticatedRequest, res: Response, next: NextFunction): Promise<void> {
+    try {
+      await ClientService.deleteCompanyNote(req.params.noteId as string);
+      wrapResult(res);
+    } catch (error) {
+      next(error);
+    }
+  }
+
+  public async bulkUpdateCompanies(req: AuthenticatedRequest, res: Response, next: NextFunction): Promise<void> {
+    try {
+      const { companyIds, updates } = req.body;
+      const responseFromService = await ClientService.bulkUpdateCompanies(companyIds, updates, req.user as User);
+      wrapResult(res, { updatedCount: responseFromService });
+    } catch (error) {
+      next(error);
+    }
+  }
+
+  public async mergeCompanies(req: AuthenticatedRequest, res: Response, next: NextFunction): Promise<void> {
+    try {
+      const { sourceId, targetId } = req.body;
+      const responseFromService = await ClientService.mergeCompanies(sourceId, targetId, req.user as User);
+      wrapResult(res, responseFromService);
+    } catch (error) {
+      next(error);
+    }
+  }
 }
 
 export default new ClientController();

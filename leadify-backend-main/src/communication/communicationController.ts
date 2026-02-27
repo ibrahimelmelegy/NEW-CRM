@@ -134,6 +134,73 @@ class CommunicationController {
     }
   }
 
+  // ─── Create Meeting Note ─────────────────────────────────────────────────
+  public async createMeetingNote(req: AuthenticatedRequest, res: Response, next: NextFunction): Promise<void> {
+    try {
+      const userId = (req.user as any)?.id;
+      const tenantId = (req.user as any)?.tenantId;
+      const result = await communicationService.createMeetingNote(req.body, userId, tenantId);
+      io.emit('meeting:created', { id: result.activity.id });
+      wrapResult(res, result, 201);
+    } catch (error) {
+      next(error);
+    }
+  }
+
+  // ─── Update Meeting Note ─────────────────────────────────────────────────
+  public async updateMeetingNote(req: AuthenticatedRequest, res: Response, next: NextFunction): Promise<void> {
+    try {
+      const userId = (req.user as any)?.id;
+      const activityId = Number(req.params.id);
+      const result = await communicationService.updateMeetingNote(activityId, req.body, userId);
+      io.emit('meeting:updated', { id: activityId });
+      wrapResult(res, result);
+    } catch (error) {
+      next(error);
+    }
+  }
+
+  // ─── Delete Meeting Note ─────────────────────────────────────────────────
+  public async deleteMeetingNote(req: AuthenticatedRequest, res: Response, next: NextFunction): Promise<void> {
+    try {
+      const userId = (req.user as any)?.id;
+      const activityId = Number(req.params.id);
+      await communicationService.deleteMeetingNote(activityId, userId);
+      io.emit('meeting:deleted', { id: activityId });
+      wrapResult(res, { deleted: true });
+    } catch (error) {
+      next(error);
+    }
+  }
+
+  // ─── Get Call Analytics ──────────────────────────────────────────────────
+  public async getCallAnalytics(req: AuthenticatedRequest, res: Response, next: NextFunction): Promise<void> {
+    try {
+      const tenantId = (req.user as any)?.tenantId || null;
+      const dateRange =
+        req.query.start && req.query.end
+          ? { start: req.query.start as string, end: req.query.end as string }
+          : undefined;
+      const analytics = await communicationService.getCallAnalytics(tenantId, dateRange);
+      wrapResult(res, analytics);
+    } catch (error) {
+      next(error);
+    }
+  }
+
+  // ─── Search Participants ─────────────────────────────────────────────────
+  public async searchParticipants(req: AuthenticatedRequest, res: Response, next: NextFunction): Promise<void> {
+    try {
+      const tenantId = (req.user as any)?.tenantId || null;
+      const search = req.query.search as string || '';
+      const limit = Number(req.query.limit) || 10;
+      const participants = await communicationService.searchParticipants(search, tenantId, limit);
+      wrapResult(res, participants);
+    } catch (error) {
+      next(error);
+    }
+  }
+
   // ─── Delete Activity ─────────────────────────────────────────────────────
   public async deleteActivity(req: AuthenticatedRequest, res: Response, next: NextFunction): Promise<void> {
     try {

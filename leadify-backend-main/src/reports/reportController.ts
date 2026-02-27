@@ -59,6 +59,35 @@ class ReportController {
       next(error);
     }
   }
+
+  async exportExcel(req: AuthenticatedRequest, res: Response, next: NextFunction) {
+    try {
+      const buffer = await reportService.exportExcel(req.body);
+      res.setHeader('Content-Type', 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
+      res.setHeader('Content-Disposition', 'attachment; filename=report.xlsx');
+      res.send(buffer);
+    } catch (error) {
+      next(error);
+    }
+  }
+
+  async getAnalytics(req: AuthenticatedRequest, res: Response, next: NextFunction) {
+    try {
+      const { entityType, startDate, endDate } = req.query;
+      if (!entityType) {
+        res.status(400).json({ message: 'entityType is required' });
+        return;
+      }
+      const analytics = await reportService.getAnalytics(
+        entityType as string,
+        startDate as string,
+        endDate as string
+      );
+      wrapResult(res, analytics);
+    } catch (error) {
+      next(error);
+    }
+  }
 }
 
 export default new ReportController();

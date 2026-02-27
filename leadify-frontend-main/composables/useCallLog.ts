@@ -1,6 +1,6 @@
 /**
- * Call Log System — API-backed
- * Track all phone calls with clients — duration, notes, outcomes.
+ * Call Log System — API-backed with Analytics
+ * Track all phone calls with clients — duration, notes, outcomes, recordings, transcriptions.
  */
 import { ref, computed } from 'vue';
 import { useApiFetch } from './useApiFetch';
@@ -12,13 +12,29 @@ export interface CallEntry {
   phone: string;
   direction: 'inbound' | 'outbound';
   outcome: 'answered' | 'no_answer' | 'voicemail' | 'busy' | 'callback';
+  disposition?: string;
   duration: number; // seconds
+  recordingUrl?: string;
+  transcription?: string;
   notes: string;
   createdAt: string;
   followUpDate?: string;
 }
 
+export interface CallAnalytics {
+  totalCalls: number;
+  totalDuration: number;
+  avgDuration: number;
+  durationDistribution: Record<string, number>;
+  byOutcome: Record<string, number>;
+  byDisposition: Record<string, number>;
+  byHour: Record<number, number>;
+  byDirection: { INBOUND: number; OUTBOUND: number };
+  dailyVolume: Record<string, number>;
+}
+
 const calls = ref<CallEntry[]>([]);
+const analytics = ref<CallAnalytics | null>(null);
 const loading = ref(false);
 
 function mapOutcome(backendOutcome?: string): CallEntry['outcome'] {
@@ -27,7 +43,12 @@ function mapOutcome(backendOutcome?: string): CallEntry['outcome'] {
     NO_ANSWER: 'no_answer',
     VOICEMAIL: 'voicemail',
     BUSY: 'busy',
-    LEFT_MESSAGE: 'callback'
+    LEFT_MESSAGE: 'callback',
+    INTERESTED: 'answered',
+    NOT_INTERESTED: 'no_answer',
+    FOLLOW_UP: 'callback',
+    CALLBACK: 'callback',
+    FAILED: 'no_answer'
   };
   return map[backendOutcome || ''] || 'answered';
 }
@@ -41,6 +62,18 @@ function mapOutcomeToBackend(outcome: string): string {
     callback: 'LEFT_MESSAGE'
   };
   return map[outcome] || 'CONNECTED';
+}
+
+function mapDispositionToBackend(disposition: string): string {
+  const map: Record<string, string> = {
+    interested: 'INTERESTED',
+    not_interested: 'NOT_INTERESTED',
+    follow_up: 'FOLLOW_UP',
+    voicemail: 'VOICEMAIL',
+    no_answer: 'NO_ANSWER',
+    callback: 'CALLBACK'
+  };
+  return map[disposition] || disposition.toUpperCase();
 }
 
 export function useCallLog() {
@@ -73,13 +106,32 @@ export function useCallLog() {
           phone: a.callLog?.phoneNumber || '',
           direction: (a.direction || 'OUTBOUND').toLowerCase() as any,
           outcome: mapOutcome(a.callLog?.outcome),
+          disposition: a.callLog?.disposition?.toLowerCase(),
           duration: a.duration || a.callLog?.duration || 0,
+          recordingUrl: a.callLog?.recordingUrl,
+          transcription: a.callLog?.transcription,
           notes: a.body || a.callLog?.notes || '',
           createdAt: a.createdAt
         }));
       }
     } finally {
       loading.value = false;
+    }
+  }
+
+  async function fetchAnalytics(dateRange?: { start: string; end: string }) {
+    try {
+      const queryParams = dateRange
+        ? `?start=${dateRange.start}&end=${dateRange.end}`
+        : '';
+      const { body, success } = await useApiFetch(
+        `communications/call-analytics${queryParams}`
+      );
+      if (success && body) {
+        analytics.value = body as CallAnalytics;
+      }
+    } catch (error) {
+      console.error('Failed to fetch call analytics:', error);
     }
   }
 
@@ -95,6 +147,9 @@ export function useCallLog() {
       phoneNumber: data.phone,
       duration: data.duration,
       outcome: mapOutcomeToBackend(data.outcome),
+      disposition: data.disposition ? mapDispositionToBackend(data.disposition) : undefined,
+      recordingUrl: data.recordingUrl,
+      transcription: data.transcription,
       notes: data.notes
     };
     const { success } = await useApiFetch('communications/calls', 'POST', payload);
@@ -114,5 +169,14 @@ export function useCallLog() {
     }
   }
 
-  return { calls: sorted, stats, logCall, removeCall, fetchCalls, loading };
+  return {
+    calls: sorted,
+    stats,
+    analytics,
+    logCall,
+    removeCall,
+    fetchCalls,
+    fetchAnalytics,
+    loading
+  };
 }

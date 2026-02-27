@@ -70,6 +70,48 @@ class ForecastController {
       next(error);
     }
   }
+
+  async getHistoricalComparison(req: AuthenticatedRequest, res: Response, next: NextFunction) {
+    try {
+      const { period, startDate, endDate } = req.query;
+      if (!period || !startDate || !endDate) {
+        res.status(400).json({ message: 'period, startDate, and endDate are required' });
+        return;
+      }
+      wrapResult(res, await forecastService.getHistoricalComparison(period as string, startDate as string, endDate as string));
+    } catch (error) {
+      next(error);
+    }
+  }
+
+  async getScenarioProjection(req: AuthenticatedRequest, res: Response, next: NextFunction) {
+    try {
+      const { winRateAdjustment, dealValueAdjustment } = req.body;
+      wrapResult(
+        res,
+        await forecastService.getScenarioProjection(
+          String(req.user!.id),
+          Number(winRateAdjustment || 0),
+          Number(dealValueAdjustment || 0)
+        )
+      );
+    } catch (error) {
+      next(error);
+    }
+  }
+
+  async getTeamBreakdown(req: AuthenticatedRequest, res: Response, next: NextFunction) {
+    try {
+      const { period, startDate, endDate } = req.query;
+      if (!period || !startDate || !endDate) {
+        res.status(400).json({ message: 'period, startDate, and endDate are required' });
+        return;
+      }
+      wrapResult(res, await forecastService.getTeamBreakdown(period as string, startDate as string, endDate as string));
+    } catch (error) {
+      next(error);
+    }
+  }
 }
 
 export default new ForecastController();

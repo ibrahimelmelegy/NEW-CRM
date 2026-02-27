@@ -18,8 +18,29 @@ class FormBuilderController {
   }
   async submitForm(req: AuthenticatedRequest, res: Response, next: NextFunction) {
     try {
-      const result = await service.submitForm(Number(req.params.id), req.body, { source: req.headers.referer, ipAddress: req.ip });
+      const { utmSource, utmMedium, utmCampaign, utmContent, utmTerm, ...formData } = req.body;
+      const utmParams = { utmSource, utmMedium, utmCampaign, utmContent, utmTerm };
+      const result = await service.submitForm(
+        Number(req.params.id),
+        formData,
+        {
+          source: req.headers.referer,
+          ipAddress: req.ip,
+          utmParams,
+          userAgent: req.headers['user-agent']
+        }
+      );
       wrapResult(res, result, 201);
+    } catch (e) { next(e); }
+  }
+  async trackFormView(req: AuthenticatedRequest, res: Response, next: NextFunction) {
+    try { wrapResult(res, await service.trackFormView(Number(req.params.id))); } catch (e) { next(e); }
+  }
+  async getFormByToken(req: AuthenticatedRequest, res: Response, next: NextFunction) {
+    try {
+      const form = await service.getFormByEmbedToken(req.params.token as string);
+      if (!form) { wrapResult(res, { message: 'Form not found' }, 404); return; }
+      wrapResult(res, form);
     } catch (e) { next(e); }
   }
   async getSubmissions(req: AuthenticatedRequest, res: Response, next: NextFunction) {

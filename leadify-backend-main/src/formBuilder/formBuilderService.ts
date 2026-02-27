@@ -16,7 +16,14 @@ interface ValidationError {
 }
 
 class FormBuilderService {
-  async createTemplate(data: any, tenantId?: string) { return FormTemplate.create({ ...data, tenantId }); }
+  async createTemplate(data: any, tenantId?: string) {
+    const embedToken = this.generateEmbedToken();
+    return FormTemplate.create({ ...data, tenantId, embedToken });
+  }
+
+  private generateEmbedToken(): string {
+    return `emb_${Math.random().toString(36).substring(2, 15)}${Date.now().toString(36)}`;
+  }
 
   async getTemplates(query: any, tenantId?: string) {
     const { page, limit, offset } = clampPagination(query);
@@ -43,12 +50,61 @@ class FormBuilderService {
     return true;
   }
 
-  async submitForm(formId: number, data: any, meta?: { source?: string; ipAddress?: string }) {
+  async submitForm(formId: number, data: any, meta?: { source?: string; ipAddress?: string; utmParams?: Record<string, any>; userAgent?: string }) {
     const form = await FormTemplate.findByPk(formId);
     if (!form) return null;
-    const submission = await FormSubmission.create({ formId, data, source: meta?.source, ipAddress: meta?.ipAddress, tenantId: form.tenantId });
+
+    // Rate limiting check (simple IP-based)
+    if (meta?.ipAddress && form.rateLimit > 0) {
+      const recentSubmissions = await FormSubmission.count({
+        where: {
+          formId,
+          ipAddress: meta.ipAddress,
+          createdAt: { [Op.gte]: new Date(Date.now() - 3600000) } // Last hour
+        }
+      });
+      if (recentSubmissions >= form.rateLimit) {
+        throw new Error('Rate limit exceeded. Please try again later.');
+      }
+    }
+
+    const submission = await FormSubmission.create({
+      formId,
+      data,
+      source: meta?.source,
+      ipAddress: meta?.ipAddress,
+      utmParams: meta?.utmParams,
+      userAgent: meta?.userAgent,
+      tenantId: form.tenantId
+    });
     await form.increment('submissionCount');
+
+    // Send auto-response email if enabled
+    if (form.autoResponse?.enabled && data.email) {
+      await this.sendAutoResponseEmail(form, data);
+    }
+
     return submission;
+  }
+
+  private async sendAutoResponseEmail(form: FormTemplate, data: Record<string, any>) {
+    try {
+      // TODO: Integrate with email service
+      console.log(`Auto-response email for form ${form.id} to ${data.email}`);
+    } catch (e) {
+      console.error('Failed to send auto-response:', e);
+    }
+  }
+
+  async trackFormView(formId: number) {
+    const form = await FormTemplate.findByPk(formId);
+    if (!form) return null;
+    await form.increment('viewCount');
+    return { viewCount: form.viewCount + 1 };
+  }
+
+  async getFormByEmbedToken(token: string) {
+    return FormTemplate.findOne({ where: { embedToken: token, status: 'ACTIVE' } });
   }
 
   async getSubmissions(query: any, tenantId?: string) {
@@ -143,7 +199,7 @@ class FormBuilderService {
 
   /**
    * Analytics for a form: total submissions, daily submissions (last 30 days),
-   * and field completion rates.
+   * and field completion rates, conversion rate, source breakdown.
    */
   async getFormAnalytics(formId: number) {
     const form = await FormTemplate.findByPk(formId);
@@ -154,6 +210,8 @@ class FormBuilderService {
 
     // Total submissions
     const totalSubmissions = await FormSubmission.count({ where: { formId } });
+    const totalViews = form.viewCount || 0;
+    const conversionRate = totalViews > 0 ? Math.round((totalSubmissions / totalViews) * 10000) / 100 : 0;
 
     // Submissions per day (last 30 days)
     const dailySubmissions = await FormSubmission.findAll({
@@ -166,6 +224,17 @@ class FormBuilderService {
       order: [[fn('DATE', col('createdAt')), 'ASC']],
       raw: true,
     }) as unknown as Array<{ date: string; count: string }>;
+
+    // Source breakdown
+    const sourceBreakdown = await FormSubmission.findAll({
+      where: { formId },
+      attributes: [
+        ['source', 'source'],
+        [fn('COUNT', col('id')), 'count'],
+      ],
+      group: ['source'],
+      raw: true,
+    }) as unknown as Array<{ source: string; count: string }>;
 
     // Field completion rates
     const fields: FormField[] = form.fields || [];
@@ -194,7 +263,10 @@ class FormBuilderService {
       formId,
       formName: form.name,
       totalSubmissions,
+      totalViews,
+      conversionRate,
       dailySubmissions: dailySubmissions.map((d) => ({ date: d.date, count: Number(d.count) })),
+      sourceBreakdown: sourceBreakdown.map((s) => ({ source: s.source || 'direct', count: Number(s.count) })),
       fieldCompletionRates,
     };
   }

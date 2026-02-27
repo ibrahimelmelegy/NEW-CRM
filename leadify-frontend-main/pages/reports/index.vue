@@ -1,12 +1,31 @@
 <template lang="pug">
 .p-6.animate-entrance
   //- Header
-  .flex.items-center.justify-between.mb-8
+  .flex.items-center.justify-between.mb-8(class="flex-col md:flex-row gap-4")
     div
       h1.text-3xl.font-black.tracking-tight.flex.items-center.gap-3(style="color: var(--text-primary);")
         Icon(name="ph:chart-bar-bold" size="32" style="color: #7849ff")
         | {{ $t('reports.hub') }}
       p.text-sm.mt-1(style="color: var(--text-muted);") {{ $t('reports.hubSubtitle') }}
+
+    //- Date Range Filter and Export Buttons
+    .flex.items-center.gap-3(class="flex-wrap")
+      el-date-picker(
+        v-model="dateRange"
+        type="daterange"
+        :range-separator="$t('reports.dateRange')"
+        :start-placeholder="$t('reports.startDate')"
+        :end-placeholder="$t('reports.endDate')"
+        @change="loadData"
+        size="default"
+        style="width: 280px"
+      )
+      el-button(type="primary" @click="handleExport('csv')" :loading="exporting" plain)
+        Icon(name="ph:file-csv-bold" size="18")
+        span.ml-2 {{ $t('reports.exportAsCSV') }}
+      el-button(type="success" @click="handleExport('excel')" :loading="exporting" plain)
+        Icon(name="ph:file-xls-bold" size="18")
+        span.ml-2 {{ $t('reports.exportAsExcel') }}
 
   //- Quick Stats Row
   .grid.grid-cols-6.gap-4.mb-8
@@ -96,13 +115,41 @@
             p.text-xs.font-mono(style="color: var(--text-muted); opacity: 0.6;") {{ timeAgo(act.timestamp) }}
         .text-center.py-6.text-sm(v-if="recentActivities.length === 0" style="color: var(--text-muted);") No activity logged
 
+  //- Analytics Charts Section
+  .grid.gap-6.mb-8(class="grid-cols-1 lg:grid-cols-2")
+    //- Bar Chart - Document Type Distribution
+    el-card.rounded-2xl(shadow="never" style="border: 1px solid var(--border-default);")
+      template(#header)
+        .flex.items-center.justify-between
+          span.font-bold.flex.items-center.gap-2
+            Icon(name="ph:chart-bar-bold" size="18" style="color: #7849ff")
+            | {{ $t('reports.documentsByType') }}
+          el-button(size="small" text @click="drillDownType = 'type'")
+            | {{ $t('reports.viewDetails') }}
+      VChart.w-full(v-if="Object.keys(docStats.byType).length" :option="typeChartOption" style="height: 300px" autoresize)
+      .text-center.py-12(v-else)
+        p.text-sm(style="color: var(--text-muted);") {{ $t('reports.noDataAvailable') }}
+
+    //- Pie Chart - Document Status Distribution
+    el-card.rounded-2xl(shadow="never" style="border: 1px solid var(--border-default);")
+      template(#header)
+        .flex.items-center.justify-between
+          span.font-bold.flex.items-center.gap-2
+            Icon(name="ph:chart-pie-bold" size="18" style="color: #22c55e")
+            | {{ $t('reports.documentsByStatus') }}
+          el-button(size="small" text @click="drillDownType = 'status'")
+            | {{ $t('reports.viewDetails') }}
+      VChart.w-full(v-if="Object.keys(docStats.byStatus).length" :option="statusChartOption" style="height: 300px" autoresize)
+      .text-center.py-12(v-else)
+        p.text-sm(style="color: var(--text-muted);") {{ $t('reports.noDataAvailable') }}
+
   //- Report Cards
   el-card.rounded-2xl(shadow="never" style="border: 1px solid var(--border-default);")
     template(#header)
       span.font-bold.flex.items-center.gap-2
           Icon(name="ph:compass-bold" size="18" style="color: #3b82f6")
           | {{ $t('reports.quickNavigation') }}
-    .grid.grid-cols-4.gap-4
+    .grid.gap-4(class="grid-cols-1 sm:grid-cols-2 lg:grid-cols-4")
       NuxtLink(v-for="report in quickLinks" :key="report.title" :to="report.url")
         .p-5.rounded-xl.border.text-center.transition-all.cursor-pointer(
           style="border-color: var(--border-default);"
@@ -112,13 +159,42 @@
             Icon(:name="report.icon" size="28" style="color: #7849ff")
           p.text-sm.font-bold(style="color: var(--text-primary);") {{ report.title }}
           p.text-xs.mt-1(style="color: var(--text-muted);") {{ report.desc }}
+
+  //- Drill-down Dialog
+  el-dialog(
+    v-model="showDrillDown"
+    :title="drillDownTitle"
+    width="700px"
+    :destroy-on-close="true"
+  )
+    .space-y-4(v-if="drillDownData.length")
+      .flex.items-center.justify-between.p-4.rounded-xl.border(
+        v-for="item in drillDownData"
+        :key="item.label"
+        style="border-color: var(--border-default);"
+      )
+        .flex.items-center.gap-3
+          .w-4.h-4.rounded-full(:style="{ backgroundColor: item.color }")
+          span.font-semibold {{ item.label }}
+        .flex.items-center.gap-4
+          span.text-lg.font-bold {{ item.value }}
+          span.text-sm(style="color: var(--text-muted);") {{ item.percentage }}%
+    .text-center.py-12(v-else)
+      p.text-sm(style="color: var(--text-muted);") {{ $t('reports.noDataAvailable') }}
+    template(#footer)
+      el-button(@click="showDrillDown = false") {{ $t('reports.closeDetails') }}
 </template>
 
 <script setup lang="ts">
+import { ref, computed, watch } from 'vue';
+import VChart from 'vue-echarts';
+import { graphic } from 'echarts';
 import { useDocumentStore } from '~/composables/useDocumentStore';
 import { useReminders } from '~/composables/useReminders';
 import { useDocumentArchive } from '~/composables/useDocumentArchive';
 import { useActivityLog } from '~/composables/useActivityLog';
+import { useApiFetch } from '~/composables/useApiFetch';
+import { ElMessage } from 'element-plus';
 
 definePageMeta({});
 
@@ -126,6 +202,15 @@ const { stats: docStats } = useDocumentStore();
 const { stats: remStats } = useReminders();
 const { stats: archiveStats } = useDocumentArchive();
 const { recent: recentActivities, actionIcons, actionColors } = useActivityLog();
+
+const dateRange = ref<[Date, Date] | null>(null);
+const exporting = ref(false);
+const showDrillDown = ref(false);
+const drillDownType = ref<'type' | 'status' | null>(null);
+
+watch(drillDownType, (newVal) => {
+  if (newVal) showDrillDown.value = true;
+});
 
 const typeLabels: Record<string, string> = {
   invoice: 'Invoice',
@@ -175,5 +260,151 @@ function timeAgo(iso: string): string {
   const hr = Math.floor(min / 60);
   if (hr < 24) return `${hr}h`;
   return `${Math.floor(hr / 24)}d`;
+}
+
+// Chart options
+const typeChartOption = computed(() => {
+  const data = Object.entries(docStats.byType).map(([type, count]) => ({
+    name: typeLabels[type] || type,
+    value: count,
+    itemStyle: { color: typeColors[type] || '#6b7280' }
+  }));
+
+  return {
+    tooltip: {
+      trigger: 'axis',
+      axisPointer: { type: 'shadow' },
+      backgroundColor: 'rgba(30, 30, 45, 0.85)',
+      borderColor: 'rgba(120, 73, 255, 0.3)',
+      borderWidth: 1,
+      textStyle: { color: '#fff' }
+    },
+    grid: { top: 20, right: 20, bottom: 40, left: 60, containLabel: true },
+    xAxis: {
+      type: 'category',
+      data: data.map(d => d.name),
+      axisLabel: { rotate: 45, color: '#94A3B8' },
+      axisLine: { show: false },
+      axisTick: { show: false }
+    },
+    yAxis: {
+      type: 'value',
+      splitLine: { lineStyle: { type: 'dashed', color: 'rgba(255,255,255,0.05)' } },
+      axisLabel: { color: '#64748B' }
+    },
+    series: [{
+      type: 'bar',
+      data: data,
+      barWidth: '50%',
+      itemStyle: { borderRadius: [6, 6, 0, 0] }
+    }]
+  };
+});
+
+const statusChartOption = computed(() => {
+  const data = Object.entries(docStats.byStatus).map(([status, count]) => ({
+    name: status,
+    value: count,
+    itemStyle: { color: statusColors[status] || '#6b7280' }
+  }));
+
+  return {
+    tooltip: {
+      trigger: 'item',
+      backgroundColor: 'rgba(30, 30, 45, 0.85)',
+      borderColor: 'rgba(120, 73, 255, 0.3)',
+      borderWidth: 1,
+      textStyle: { color: '#fff' },
+      formatter: '{b}: {c} ({d}%)'
+    },
+    legend: {
+      bottom: 0,
+      textStyle: { color: '#94A3B8' }
+    },
+    series: [{
+      type: 'pie',
+      radius: ['40%', '70%'],
+      avoidLabelOverlap: true,
+      label: { show: false },
+      emphasis: {
+        label: { show: true, fontSize: 16, fontWeight: 'bold' }
+      },
+      data: data
+    }]
+  };
+});
+
+const drillDownTitle = computed(() => {
+  if (drillDownType.value === 'type') return 'Document Type Details';
+  if (drillDownType.value === 'status') return 'Document Status Details';
+  return 'Details';
+});
+
+const drillDownData = computed(() => {
+  if (!drillDownType.value) return [];
+
+  const source = drillDownType.value === 'type' ? docStats.byType : docStats.byStatus;
+  const colors = drillDownType.value === 'type' ? typeColors : statusColors;
+  const labels = drillDownType.value === 'type' ? typeLabels : {};
+
+  const total = Object.values(source).reduce((sum, val) => sum + Number(val), 0);
+
+  return Object.entries(source).map(([key, value]) => ({
+    label: labels[key] || key,
+    value: value,
+    percentage: total > 0 ? ((Number(value) / total) * 100).toFixed(1) : 0,
+    color: colors[key] || '#6b7280'
+  })).sort((a, b) => Number(b.value) - Number(a.value));
+});
+
+async function loadData() {
+  // This would trigger a reload of data with date range filter
+  // For now, we use the existing composables
+  console.log('Loading data with date range:', dateRange.value);
+}
+
+async function handleExport(format: 'csv' | 'excel') {
+  exporting.value = true;
+  try {
+    const config: any = {
+      entityType: 'DEAL', // You can make this dynamic
+      columns: ['id', 'title', 'price', 'stage', 'createdAt']
+    };
+
+    if (dateRange.value) {
+      config.startDate = dateRange.value[0].toISOString().split('T')[0];
+      config.endDate = dateRange.value[1].toISOString().split('T')[0];
+    }
+
+    const endpoint = format === 'csv' ? 'report-builder/export-csv' : 'report-builder/export-excel';
+
+    const response = await fetch(`${useRuntimeConfig().public.apiBaseUrl}/${endpoint}`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization: `Bearer ${localStorage.getItem('token')}`
+      },
+      body: JSON.stringify(config)
+    });
+
+    if (!response.ok) throw new Error('Export failed');
+
+    const blob = await response.blob();
+    const url = window.URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = `report.${format === 'csv' ? 'csv' : 'xlsx'}`;
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+    window.URL.revokeObjectURL(url);
+
+    ElMessage.success(`Report exported as ${format.toUpperCase()}`);
+  } catch (error) {
+    console.error('Export failed:', error);
+    ElMessage.error('Failed to export report');
+  } finally {
+    exporting.value = false;
+  }
 }
 </script>

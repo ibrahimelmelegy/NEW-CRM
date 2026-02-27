@@ -105,6 +105,28 @@ export interface TicketMetrics {
   avgCSAT: number;
   ticketsByPriority: Record<string, number>;
   ticketsByStatus: Record<string, number>;
+  breachedCount: number;
+  atRiskCount: number;
+}
+
+export interface SLAConfig {
+  id: string;
+  priority: string;
+  responseTimeHours: number;
+  resolutionTimeHours: number;
+  isActive: boolean;
+}
+
+export interface AgentWorkload {
+  agent: {
+    id: number;
+    name: string;
+    email: string;
+    profilePicture?: string;
+  };
+  openTickets: number;
+  resolvedToday: number;
+  avgCSAT: number;
 }
 
 // ─── Status / Priority Labels ─────────────────────────────────────────────────
@@ -227,4 +249,36 @@ export async function updateCategory(id: string, data: Record<string, any>) {
 
 export async function deleteCategory(id: string) {
   return useApiFetch(`support/categories/${id}`, 'DELETE');
+}
+
+// ─── SLA Configuration ────────────────────────────────────────────────────────
+
+export async function fetchSLAConfigs() {
+  return useApiFetch('support/sla-configs');
+}
+
+export async function createSLAConfig(data: Record<string, any>) {
+  return useApiFetch('support/sla-configs', 'POST', data);
+}
+
+export async function updateSLAConfig(id: string, data: Record<string, any>) {
+  return useApiFetch(`support/sla-configs/${id}`, 'PUT', data);
+}
+
+export async function deleteSLAConfig(id: string) {
+  return useApiFetch(`support/sla-configs/${id}`, 'DELETE');
+}
+
+// ─── Agent Workload & SLA Breaches ────────────────────────────────────────────
+
+export async function fetchAgentWorkload() {
+  return useApiFetch('support/agent-workload');
+}
+
+export async function fetchSLABreaches() {
+  return useApiFetch('support/sla-breaches');
+}
+
+export async function autoAssignTicket(id: string) {
+  return useApiFetch(`support/tickets/${id}/auto-assign`, 'POST');
 }

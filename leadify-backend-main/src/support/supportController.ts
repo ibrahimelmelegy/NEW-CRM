@@ -179,6 +179,74 @@ class SupportController {
       next(error);
     }
   }
+
+  // ─── SLA Configuration ────────────────────────────────────────────────
+  public async getSLAConfigs(req: AuthenticatedRequest, res: Response, next: NextFunction): Promise<void> {
+    try {
+      const configs = await supportService.getSLAConfigs();
+      wrapResult(res, configs);
+    } catch (error) {
+      next(error);
+    }
+  }
+
+  public async createSLAConfig(req: AuthenticatedRequest, res: Response, next: NextFunction): Promise<void> {
+    try {
+      const data = { ...req.body, tenantId: (req.user as any)?.tenantId };
+      const config = await supportService.createSLAConfig(data);
+      wrapResult(res, config, 201);
+    } catch (error) {
+      next(error);
+    }
+  }
+
+  public async updateSLAConfig(req: AuthenticatedRequest, res: Response, next: NextFunction): Promise<void> {
+    try {
+      const config = await supportService.updateSLAConfig(req.params.id as string, req.body);
+      wrapResult(res, config);
+    } catch (error) {
+      next(error);
+    }
+  }
+
+  public async deleteSLAConfig(req: AuthenticatedRequest, res: Response, next: NextFunction): Promise<void> {
+    try {
+      await supportService.deleteSLAConfig(req.params.id as string);
+      wrapResult(res, { deleted: true });
+    } catch (error) {
+      next(error);
+    }
+  }
+
+  // ─── Agent Workload ───────────────────────────────────────────────────
+  public async getAgentWorkload(req: AuthenticatedRequest, res: Response, next: NextFunction): Promise<void> {
+    try {
+      const workload = await supportService.getAgentWorkload();
+      wrapResult(res, workload);
+    } catch (error) {
+      next(error);
+    }
+  }
+
+  // ─── SLA Breaches ─────────────────────────────────────────────────────
+  public async getSLABreaches(req: AuthenticatedRequest, res: Response, next: NextFunction): Promise<void> {
+    try {
+      const breaches = await supportService.checkSLABreaches();
+      wrapResult(res, breaches);
+    } catch (error) {
+      next(error);
+    }
+  }
+
+  // ─── Auto-assign ──────────────────────────────────────────────────────
+  public async autoAssignTicket(req: AuthenticatedRequest, res: Response, next: NextFunction): Promise<void> {
+    try {
+      const ticket = await supportService.autoAssign(req.params.id as string);
+      wrapResult(res, ticket);
+    } catch (error) {
+      next(error);
+    }
+  }
 }
 
 export default new SupportController();

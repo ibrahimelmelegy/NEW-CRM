@@ -578,6 +578,69 @@ router.get(
 );
 
 router.get(
+  '/:id/hierarchy',
+  authenticateUser,
+  HasPermission([ClientPermissionsEnum.VIEW_GLOBAL_CLIENTS, ClientPermissionsEnum.VIEW_OWN_CLIENTS]),
+  clientController.getCompanyHierarchy
+);
+
+router.get(
+  '/:id/timeline',
+  authenticateUser,
+  HasPermission([ClientPermissionsEnum.VIEW_GLOBAL_CLIENTS, ClientPermissionsEnum.VIEW_OWN_CLIENTS]),
+  clientController.getCompanyTimeline
+);
+
+router.get(
+  '/:id/revenue',
+  authenticateUser,
+  HasPermission([ClientPermissionsEnum.VIEW_GLOBAL_CLIENTS, ClientPermissionsEnum.VIEW_OWN_CLIENTS]),
+  clientController.getCompanyRevenue
+);
+
+router.get(
+  '/:id/notes',
+  authenticateUser,
+  HasPermission([ClientPermissionsEnum.VIEW_GLOBAL_CLIENTS, ClientPermissionsEnum.VIEW_OWN_CLIENTS]),
+  clientController.getCompanyNotes
+);
+
+router.post(
+  '/:id/notes',
+  authenticateUser,
+  HasPermission([ClientPermissionsEnum.EDIT_CLIENTS]),
+  clientController.createCompanyNote
+);
+
+router.put(
+  '/notes/:noteId',
+  authenticateUser,
+  HasPermission([ClientPermissionsEnum.EDIT_CLIENTS]),
+  clientController.updateCompanyNote
+);
+
+router.delete(
+  '/notes/:noteId',
+  authenticateUser,
+  HasPermission([ClientPermissionsEnum.EDIT_CLIENTS]),
+  clientController.deleteCompanyNote
+);
+
+router.post(
+  '/bulk-update',
+  authenticateUser,
+  HasPermission([ClientPermissionsEnum.EDIT_CLIENTS]),
+  clientController.bulkUpdateCompanies
+);
+
+router.post(
+  '/merge',
+  authenticateUser,
+  HasPermission([ClientPermissionsEnum.EDIT_CLIENTS]),
+  clientController.mergeCompanies
+);
+
+router.get(
   '/:id',
   authenticateUser,
   HasPermission([ClientPermissionsEnum.VIEW_GLOBAL_CLIENTS, ClientPermissionsEnum.VIEW_OWN_CLIENTS]),

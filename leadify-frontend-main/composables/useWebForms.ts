@@ -8,6 +8,7 @@ import { useApiFetch } from './useApiFetch';
 export interface WebForm {
   id: number;
   name: string;
+  description?: string;
   fields: WebFormField[];
   thankYouMessage: string;
   redirectUrl?: string;
@@ -15,9 +16,17 @@ export interface WebForm {
   status: string;
   submissions: number;
   submissionCount: number;
+  viewCount?: number;
   createLead: boolean;
   createdAt: string;
   embedCode?: string;
+  embedToken?: string;
+  enableRecaptcha?: boolean;
+  enableHoneypot?: boolean;
+  rateLimit?: number;
+  styling?: Record<string, any>;
+  autoResponse?: { enabled: boolean; subject?: string; body?: string };
+  conditionalLogic?: Array<{ fieldId: string; condition: string; value: any; showFields: string[] }>;
 }
 
 export interface WebFormField {
@@ -27,6 +36,7 @@ export interface WebFormField {
   required: boolean;
   placeholder?: string;
   options?: string[];
+  conditionalLogic?: any;
 }
 
 const forms = ref<WebForm[]>([]);
@@ -34,11 +44,18 @@ const loading = ref(false);
 
 export function useWebForms() {
   const activeForms = computed(() => forms.value.filter(f => f.status === 'ACTIVE'));
-  const stats = computed(() => ({
-    total: forms.value.length,
-    active: activeForms.value.length,
-    totalSubmissions: forms.value.reduce((s, f) => s + (f.submissionCount || 0), 0)
-  }));
+  const stats = computed(() => {
+    const totalSubmissions = forms.value.reduce((s, f) => s + (f.submissionCount || 0), 0);
+    const totalViews = forms.value.reduce((s, f) => s + (f.viewCount || 0), 0);
+    const avgConversion = totalViews > 0 ? Math.round((totalSubmissions / totalViews) * 100) : 0;
+    return {
+      total: forms.value.length,
+      active: activeForms.value.length,
+      totalSubmissions,
+      totalViews,
+      avgConversion
+    };
+  });
 
   async function fetchForms() {
     loading.value = true;
@@ -52,7 +69,7 @@ export function useWebForms() {
           isActive: f.status === 'ACTIVE',
           submissions: f.submissionCount || 0,
           thankYouMessage: f.thankYouMessage || '',
-          embedCode: `<iframe src="${window.location.origin}/portal/form/${f.id}" width="100%" height="600" frameborder="0"></iframe>`
+          embedCode: `<iframe src="${window.location.origin}/portal/form/${f.embedToken || f.id}" width="100%" height="600" frameborder="0"></iframe>`
         }));
       }
     } finally {
@@ -60,27 +77,17 @@ export function useWebForms() {
     }
   }
 
-  async function createForm(data: {
-    name: string;
-    fields: WebFormField[];
-    thankYouMessage: string;
-    redirectUrl?: string;
-    createLead?: boolean;
-  }): Promise<boolean> {
+  async function createForm(data: any): Promise<boolean> {
     const { success } = await useApiFetch('form-builder/templates', 'POST', {
-      name: data.name,
-      fields: data.fields,
-      thankYouMessage: data.thankYouMessage,
-      redirectUrl: data.redirectUrl,
-      createLead: data.createLead || false,
+      ...data,
       status: 'ACTIVE'
     });
     if (success) await fetchForms();
     return success;
   }
 
-  async function updateForm(id: number, updates: Partial<WebForm>) {
-    const { success } = await useApiFetch(`form-builder/templates/${id}`, 'PUT', updates as any);
+  async function updateForm(id: number, updates: any) {
+    const { success } = await useApiFetch(`form-builder/templates/${id}`, 'PUT', updates);
     if (success) await fetchForms();
     return success;
   }
@@ -97,9 +104,15 @@ export function useWebForms() {
     const f = forms.value.find(x => x.id === id);
     if (f) {
       const newStatus = f.status === 'ACTIVE' ? 'ARCHIVED' : 'ACTIVE';
-      await updateForm(id, { status: newStatus } as any);
+      await updateForm(id, { status: newStatus });
     }
   }
 
-  return { forms, activeForms, stats, fetchForms, createForm, updateForm, removeForm, toggleActive, loading };
+  async function getFormAnalytics(formId: number) {
+    const { body, success } = await useApiFetch(`form-builder/templates/${formId}/analytics`);
+    if (success && body) return body;
+    return null;
+  }
+
+  return { forms, activeForms, stats, fetchForms, createForm, updateForm, removeForm, toggleActive, getFormAnalytics, loading };
 }

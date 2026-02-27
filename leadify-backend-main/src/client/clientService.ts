@@ -21,6 +21,9 @@ import Deal from '../deal/model/dealModel';
 import { DealStageEnums } from '../deal/dealEnum';
 import Invoice from '../deal/model/invoiceMode';
 import CommActivity from '../communication/models/activityModel';
+import CompanyNote from './companyNoteModel';
+import CallLog from '../communication/models/callLogModel';
+import MeetingNote from '../communication/models/meetingNoteModel';
 
 class ClientService {
   async createClient(input: CreateClientInput, admin: User, t?: Transaction): Promise<Client> {
@@ -510,6 +513,295 @@ class ClientService {
         content: attachment
       }
     });
+  }
+
+  // ─── Company Hierarchy ───────────────────────────────────────────────────
+  async getCompanyHierarchy(companyId: string): Promise<any> {
+    const company = await this.clientOrError({ id: companyId });
+
+    // Get all subsidiaries (recursive)
+    const subsidiaries = await this.getSubsidiariesRecursive(companyId);
+
+    // Get parent chain
+    const parentChain = await this.getParentChain(companyId);
+
+    return {
+      company: {
+        id: company.id,
+        name: company.clientName,
+        companyName: company.companyName,
+        parentCompanyId: company.parentCompanyId
+      },
+      subsidiaries,
+      parentChain
+    };
+  }
+
+  private async getSubsidiariesRecursive(parentId: string): Promise<any[]> {
+    const children = await Client.findAll({
+      where: { parentCompanyId: parentId },
+      attributes: ['id', 'clientName', 'companyName', 'parentCompanyId', 'industry']
+    });
+
+    const result = [];
+    for (const child of children) {
+      const grandChildren = await this.getSubsidiariesRecursive(child.id);
+      result.push({
+        id: child.id,
+        name: child.clientName,
+        companyName: child.companyName,
+        industry: child.industry,
+        children: grandChildren
+      });
+    }
+    return result;
+  }
+
+  private async getParentChain(companyId: string): Promise<any[]> {
+    const chain = [];
+    let currentId: string | undefined = companyId;
+
+    while (currentId) {
+      const company: any = await Client.findOne({
+        where: { id: currentId },
+        attributes: ['id', 'clientName', 'companyName', 'parentCompanyId']
+      });
+
+      if (!company || company.id === companyId) {
+        currentId = company?.parentCompanyId;
+        continue;
+      }
+
+      chain.unshift({
+        id: company.id,
+        name: company.clientName,
+        companyName: company.companyName
+      });
+
+      currentId = company.parentCompanyId;
+    }
+
+    return chain;
+  }
+
+  // ─── Company Timeline ────────────────────────────────────────────────────
+  async getCompanyTimeline(companyId: string, limit = 50): Promise<any[]> {
+    await this.clientOrError({ id: companyId });
+
+    // Fetch deals
+    const deals = await Deal.findAll({
+      where: { clientId: companyId },
+      attributes: ['id', 'dealName', 'stage', 'price', 'createdAt', 'updatedAt'],
+      limit: 20,
+      order: [['createdAt', 'DESC']]
+    });
+
+    // Fetch communication activities
+    const activities = await CommActivity.findAll({
+      where: { contactId: companyId, contactType: 'CLIENT' },
+      attributes: ['id', 'type', 'subject', 'description', 'createdAt'],
+      limit: 30,
+      order: [['createdAt', 'DESC']],
+      include: [
+        {
+          model: User,
+          as: 'user',
+          attributes: ['id', 'name']
+        }
+      ]
+    });
+
+    // Fetch call logs
+    const calls = await CallLog.findAll({
+      where: { contactId: companyId, contactType: 'CLIENT' },
+      attributes: ['id', 'direction', 'duration', 'status', 'notes', 'createdAt'],
+      limit: 20,
+      order: [['createdAt', 'DESC']]
+    });
+
+    // Fetch meeting notes
+    const meetings = await MeetingNote.findAll({
+      where: { relatedToId: companyId, relatedToType: 'CLIENT' },
+      attributes: ['id', 'title', 'notes', 'meetingDate', 'createdAt'],
+      limit: 20,
+      order: [['createdAt', 'DESC']]
+    });
+
+    // Combine and sort all timeline items
+    const timeline = [
+      ...deals.map((d: any) => ({
+        id: d.id,
+        type: 'DEAL',
+        title: d.dealName,
+        description: `Deal ${d.stage} - $${d.price}`,
+        timestamp: d.createdAt,
+        data: d.toJSON()
+      })),
+      ...activities.map((a: any) => ({
+        id: a.id,
+        type: 'ACTIVITY',
+        title: a.subject || a.type,
+        description: a.description,
+        timestamp: a.createdAt,
+        user: a.user,
+        data: a.toJSON()
+      })),
+      ...calls.map((c: any) => ({
+        id: c.id,
+        type: 'CALL',
+        title: `${c.direction} Call`,
+        description: c.notes || `${c.status} - ${c.duration}s`,
+        timestamp: c.createdAt,
+        data: c.toJSON()
+      })),
+      ...meetings.map((m: any) => ({
+        id: m.id,
+        type: 'MEETING',
+        title: m.title,
+        description: m.notes,
+        timestamp: m.meetingDate || m.createdAt,
+        data: m.toJSON()
+      }))
+    ];
+
+    return timeline.sort((a, b) => new Date(b.timestamp).getTime() - new Date(a.timestamp).getTime()).slice(0, limit);
+  }
+
+  // ─── Company Revenue Analytics ───────────────────────────────────────────
+  async getCompanyRevenue(companyId: string): Promise<{
+    totalRevenue: number;
+    wonDeals: number;
+    avgDealSize: number;
+    lifetimeValue: number;
+    revenueByMonth: Array<{ month: string; revenue: number }>;
+  }> {
+    await this.clientOrError({ id: companyId });
+
+    const wonDeals = await Deal.findAll({
+      where: {
+        clientId: companyId,
+        stage: DealStageEnums.CLOSED
+      },
+      attributes: ['price', 'createdAt']
+    });
+
+    const totalRevenue = wonDeals.reduce((sum, deal) => sum + (Number(deal.price) || 0), 0);
+    const avgDealSize = wonDeals.length > 0 ? totalRevenue / wonDeals.length : 0;
+
+    // Group by month
+    const revenueByMonth: Record<string, number> = {};
+    wonDeals.forEach(deal => {
+      const month = new Date(deal.createdAt).toISOString().substring(0, 7); // YYYY-MM
+      revenueByMonth[month] = (revenueByMonth[month] || 0) + (Number(deal.price) || 0);
+    });
+
+    const revenueByMonthArray = Object.entries(revenueByMonth)
+      .map(([month, revenue]) => ({ month, revenue }))
+      .sort((a, b) => a.month.localeCompare(b.month));
+
+    return {
+      totalRevenue,
+      wonDeals: wonDeals.length,
+      avgDealSize,
+      lifetimeValue: totalRevenue, // Can be enhanced with recurring revenue calculations
+      revenueByMonth: revenueByMonthArray
+    };
+  }
+
+  // ─── Company Notes ───────────────────────────────────────────────────────
+  async createCompanyNote(companyId: string, content: string, userId: number, attachments?: string[]): Promise<CompanyNote> {
+    await this.clientOrError({ id: companyId });
+
+    const note = await CompanyNote.create({
+      companyId,
+      userId,
+      content,
+      attachments: attachments || []
+    });
+
+    return note;
+  }
+
+  async getCompanyNotes(companyId: string): Promise<CompanyNote[]> {
+    await this.clientOrError({ id: companyId });
+
+    const notes = await CompanyNote.findAll({
+      where: { companyId },
+      include: [
+        {
+          model: User,
+          as: 'user',
+          attributes: ['id', 'name', 'email']
+        }
+      ],
+      order: [
+        ['isPinned', 'DESC'],
+        ['createdAt', 'DESC']
+      ]
+    });
+
+    return notes;
+  }
+
+  async updateCompanyNote(noteId: string, updates: Partial<CompanyNote>): Promise<CompanyNote> {
+    const note = await CompanyNote.findByPk(noteId);
+    if (!note) throw new BaseError(ERRORS.NOT_FOUND);
+
+    await note.update(updates);
+    return note;
+  }
+
+  async deleteCompanyNote(noteId: string): Promise<void> {
+    const note = await CompanyNote.findByPk(noteId);
+    if (!note) throw new BaseError(ERRORS.NOT_FOUND);
+
+    await note.destroy();
+  }
+
+  // ─── Bulk Operations ─────────────────────────────────────────────────────
+  async bulkUpdateCompanies(companyIds: string[], updates: any, user: User): Promise<number> {
+    const updateCount = await Client.update(updates, {
+      where: {
+        id: { [Op.in]: companyIds },
+        ...tenantWhere(user)
+      }
+    });
+
+    return updateCount[0];
+  }
+
+  async mergeCompanies(sourceId: string, targetId: string, user: User): Promise<Client> {
+    const [source, target] = await Promise.all([
+      this.clientOrError({ id: sourceId }),
+      this.clientOrError({ id: targetId })
+    ]);
+
+    // Merge logic: move all deals, notes, activities to target
+    await Deal.update({ clientId: targetId }, { where: { clientId: sourceId } });
+    await CommActivity.update({ contactId: targetId }, { where: { contactId: sourceId, contactType: 'CLIENT' } });
+    await CompanyNote.update({ companyId: targetId }, { where: { companyId: sourceId } });
+
+    // Merge custom fields (prefer target, but add missing from source)
+    const mergedCustomFields = {
+      ...source.customFields,
+      ...target.customFields
+    };
+    target.customFields = mergedCustomFields;
+
+    // Merge users
+    const sourceUsers = await source.$get('users');
+    if (sourceUsers) {
+      await target.$add('users', sourceUsers);
+    }
+
+    await target.save();
+
+    // Delete source company
+    await source.destroy();
+
+    await createActivityLog('client', 'update', targetId, user.id, null, `Merged company ${source.clientName} into ${target.clientName}`);
+
+    return target;
   }
 }
 

@@ -138,6 +138,119 @@ class ForecastService {
 
     return forecast;
   }
+
+  async getHistoricalComparison(period: string, startDate: string, endDate: string) {
+    // Get current period data
+    const current = await this.getByPeriod(period, startDate, endDate);
+
+    // Calculate previous period dates
+    const start = new Date(startDate);
+    const end = new Date(endDate);
+    const duration = end.getTime() - start.getTime();
+
+    const prevStart = new Date(start.getTime() - duration);
+    const prevEnd = new Date(start);
+
+    // Get previous period data
+    const previous = await this.getByPeriod(
+      period,
+      prevStart.toISOString().split('T')[0],
+      prevEnd.toISOString().split('T')[0]
+    );
+
+    // Calculate totals
+    const currentTotals = current.reduce(
+      (acc, f) => ({
+        target: acc.target + (f.target || 0),
+        actual: acc.actual + (f.actual || 0),
+        pipeline: acc.pipeline + (f.pipeline || 0)
+      }),
+      { target: 0, actual: 0, pipeline: 0 }
+    );
+
+    const previousTotals = previous.reduce(
+      (acc, f) => ({
+        target: acc.target + (f.target || 0),
+        actual: acc.actual + (f.actual || 0),
+        pipeline: acc.pipeline + (f.pipeline || 0)
+      }),
+      { target: 0, actual: 0, pipeline: 0 }
+    );
+
+    // Calculate growth percentages
+    const growth = {
+      target: previousTotals.target ? ((currentTotals.target - previousTotals.target) / previousTotals.target) * 100 : 0,
+      actual: previousTotals.actual ? ((currentTotals.actual - previousTotals.actual) / previousTotals.actual) * 100 : 0,
+      pipeline: previousTotals.pipeline ? ((currentTotals.pipeline - previousTotals.pipeline) / previousTotals.pipeline) * 100 : 0
+    };
+
+    return {
+      current: { data: current, totals: currentTotals },
+      previous: { data: previous, totals: previousTotals },
+      growth
+    };
+  }
+
+  async getScenarioProjection(userId: string, winRateAdjustment: number, dealValueAdjustment: number) {
+    // Get all open deals for the user
+    const deals = await Deal.findAll({
+      where: {
+        stage: { [Op.notIn]: [DealStageEnums.CLOSED, DealStageEnums.CANCELLED, DealStageEnums.CONVERTED] }
+      }
+    });
+
+    const baseWinRate = 0.5; // Default 50% win rate
+    const adjustedWinRate = Math.max(0, Math.min(1, baseWinRate + winRateAdjustment / 100));
+
+    let projectedRevenue = 0;
+    for (const deal of deals) {
+      const baseValue = deal.price || 0;
+      const adjustedValue = baseValue * (1 + dealValueAdjustment / 100);
+      projectedRevenue += adjustedValue * adjustedWinRate;
+    }
+
+    return {
+      baseWinRate: baseWinRate * 100,
+      adjustedWinRate: adjustedWinRate * 100,
+      dealValueAdjustment,
+      projectedRevenue,
+      dealsInPipeline: deals.length
+    };
+  }
+
+  async getTeamBreakdown(period: string, startDate: string, endDate: string) {
+    const forecasts = await ForecastPeriod.findAll({
+      where: {
+        period,
+        startDate: { [Op.gte]: new Date(startDate) },
+        endDate: { [Op.lte]: new Date(endDate) }
+      },
+      order: [['userId', 'ASC']]
+    });
+
+    // Group by user
+    const byUser: Record<string, any> = {};
+    for (const f of forecasts) {
+      const uid = f.userId;
+      if (!byUser[uid]) {
+        byUser[uid] = {
+          userId: uid,
+          target: 0,
+          actual: 0,
+          pipeline: 0,
+          closedWon: 0,
+          closedLost: 0
+        };
+      }
+      byUser[uid].target += f.target || 0;
+      byUser[uid].actual += f.actual || 0;
+      byUser[uid].pipeline += f.pipeline || 0;
+      byUser[uid].closedWon += f.closedWon || 0;
+      byUser[uid].closedLost += f.closedLost || 0;
+    }
+
+    return Object.values(byUser);
+  }
 }
 
 export default new ForecastService();

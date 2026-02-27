@@ -74,5 +74,38 @@ class BookingController {
       wrapResult(res, await service.getUpcomingBookings(staffId, (req.user as any)?.tenantId));
     } catch (e) { next(e); }
   }
+
+  async getBookingAnalytics(req: AuthenticatedRequest, res: Response, next: NextFunction) {
+    try {
+      const { staffId, dateFrom, dateTo } = req.query as any;
+      wrapResult(res, await service.getBookingAnalytics(staffId ? Number(staffId) : undefined, (req.user as any)?.tenantId, dateFrom, dateTo));
+    } catch (e) { next(e); }
+  }
+
+  // ─── Booking Pages ───────────────────────────────────────────────────────────
+
+  async createBookingPage(req: AuthenticatedRequest, res: Response, next: NextFunction) {
+    try { wrapResult(res, await service.createBookingPage(req.body, (req.user as any)?.tenantId), 201); } catch (e) { next(e); }
+  }
+
+  async getBookingPages(req: AuthenticatedRequest, res: Response, next: NextFunction) {
+    try { wrapResult(res, await service.getBookingPages(req.query, (req.user as any)?.tenantId)); } catch (e) { next(e); }
+  }
+
+  async updateBookingPage(req: AuthenticatedRequest, res: Response, next: NextFunction) {
+    try { wrapResult(res, await service.updateBookingPage(Number(req.params.id), req.body)); } catch (e) { next(e); }
+  }
+
+  async deleteBookingPage(req: AuthenticatedRequest, res: Response, next: NextFunction) {
+    try { await service.deleteBookingPage(Number(req.params.id)); wrapResult(res, { deleted: true }); } catch (e) { next(e); }
+  }
+
+  async getBookingPageBySlug(req: AuthenticatedRequest, res: Response, next: NextFunction) {
+    try {
+      const page = await service.getBookingPageBySlug(req.params.slug as string);
+      if (!page) return res.status(404).send({ success: false, message: 'Booking page not found' });
+      wrapResult(res, page);
+    } catch (e) { next(e); }
+  }
 }
 export default new BookingController();

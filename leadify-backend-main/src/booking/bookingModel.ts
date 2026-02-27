@@ -26,6 +26,9 @@ export class BookingSlot extends Model {
   @Column({ type: DataType.BOOLEAN, allowNull: false, defaultValue: true })
   public isActive!: boolean;
 
+  @Column({ type: DataType.STRING(50), allowNull: false, defaultValue: 'UTC' })
+  public timezone!: string;
+
   @Column({ type: DataType.STRING, allowNull: true })
   public tenantId?: string;
 }
@@ -68,6 +71,9 @@ export class Booking extends Model {
   @Column({ type: DataType.STRING(5), allowNull: false })
   public endTime!: string;
 
+  @Column({ type: DataType.STRING(50), allowNull: false, defaultValue: 'UTC' })
+  public timezone!: string;
+
   @Column({ type: DataType.STRING(20), allowNull: false, defaultValue: 'CONFIRMED' })
   public status!: 'PENDING' | 'CONFIRMED' | 'CANCELLED' | 'COMPLETED' | 'NO_SHOW';
 
@@ -76,6 +82,63 @@ export class Booking extends Model {
 
   @Column({ type: DataType.TEXT, allowNull: true })
   public notes?: string;
+
+  @Column({ type: DataType.STRING(200), allowNull: true })
+  public location?: string;
+
+  @Column({ type: DataType.BOOLEAN, allowNull: false, defaultValue: false })
+  public reminderSent!: boolean;
+
+  @Column({ type: DataType.BOOLEAN, allowNull: false, defaultValue: false })
+  public confirmationSent!: boolean;
+
+  @Column({ type: DataType.STRING, allowNull: true })
+  public tenantId?: string;
+}
+
+@Table({ tableName: 'comm_booking_pages', timestamps: true })
+export class BookingPage extends Model {
+  @Column({ primaryKey: true, type: DataType.INTEGER, autoIncrement: true })
+  public id!: number;
+
+  @Column({ type: DataType.STRING(200), allowNull: false })
+  public name!: string;
+
+  @Column({ type: DataType.TEXT, allowNull: true })
+  public description?: string;
+
+  @Column({ type: DataType.INTEGER, allowNull: false, defaultValue: 30 })
+  public duration!: number;
+
+  @Column({ type: DataType.STRING(50), allowNull: false, defaultValue: 'ONE_ON_ONE' })
+  public type!: 'ONE_ON_ONE' | 'GROUP' | 'ROUND_ROBIN';
+
+  @Column({ type: DataType.INTEGER, allowNull: false, defaultValue: 0 })
+  public bufferTime!: number;
+
+  @Column({ type: DataType.INTEGER, allowNull: true })
+  public maxBookingsPerDay?: number;
+
+  @Column({ type: DataType.JSONB, allowNull: true })
+  public workingHours?: Record<string, { start: string; end: string; enabled: boolean }>;
+
+  @Column({ type: DataType.JSONB, allowNull: true })
+  public blackoutDates?: string[];
+
+  @Column({ type: DataType.JSONB, allowNull: true })
+  public customFields?: Array<{ name: string; label: string; type: string; required: boolean }>;
+
+  @Column({ type: DataType.JSONB, allowNull: true })
+  public branding?: { logo?: string; primaryColor?: string; backgroundColor?: string };
+
+  @Column({ type: DataType.STRING, allowNull: true })
+  public slug?: string;
+
+  @Column({ type: DataType.BOOLEAN, allowNull: false, defaultValue: true })
+  public isActive!: boolean;
+
+  @Column({ type: DataType.INTEGER, allowNull: false, defaultValue: 0 })
+  public bookingCount!: number;
 
   @Column({ type: DataType.STRING, allowNull: true })
   public tenantId?: string;

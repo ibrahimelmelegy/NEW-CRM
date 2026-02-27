@@ -15,7 +15,7 @@ export class FormTemplate extends Model {
   public status!: 'DRAFT' | 'ACTIVE' | 'ARCHIVED';
 
   @Column({ type: DataType.JSONB, allowNull: true })
-  public fields?: Array<{ name: string; type: string; label: string; required: boolean; options?: string[] }>;
+  public fields?: Array<{ name: string; type: string; label: string; required: boolean; options?: string[]; conditionalLogic?: any }>;
 
   @Column({ type: DataType.JSONB, allowNull: true })
   public settings?: Record<string, any>;
@@ -31,6 +31,30 @@ export class FormTemplate extends Model {
 
   @Column({ type: DataType.INTEGER, allowNull: false, defaultValue: 0 })
   public submissionCount!: number;
+
+  @Column({ type: DataType.INTEGER, allowNull: false, defaultValue: 0 })
+  public viewCount!: number;
+
+  @Column({ type: DataType.STRING, allowNull: true })
+  public embedToken?: string;
+
+  @Column({ type: DataType.BOOLEAN, allowNull: false, defaultValue: false })
+  public enableRecaptcha!: boolean;
+
+  @Column({ type: DataType.BOOLEAN, allowNull: false, defaultValue: true })
+  public enableHoneypot!: boolean;
+
+  @Column({ type: DataType.INTEGER, allowNull: false, defaultValue: 10 })
+  public rateLimit!: number;
+
+  @Column({ type: DataType.JSONB, allowNull: true })
+  public styling?: Record<string, any>;
+
+  @Column({ type: DataType.JSONB, allowNull: true })
+  public autoResponse?: { enabled: boolean; subject?: string; body?: string };
+
+  @Column({ type: DataType.JSONB, allowNull: true })
+  public conditionalLogic?: Array<{ fieldId: string; condition: string; value: any; showFields: string[] }>;
 
   @Column({ type: DataType.STRING, allowNull: true })
   public tenantId?: string;
@@ -58,6 +82,12 @@ export class FormSubmission extends Model {
 
   @Column({ type: DataType.STRING, allowNull: true })
   public leadId?: string;
+
+  @Column({ type: DataType.JSONB, allowNull: true })
+  public utmParams?: Record<string, any>;
+
+  @Column({ type: DataType.STRING, allowNull: true })
+  public userAgent?: string;
 
   @Column({ type: DataType.STRING, allowNull: true })
   public tenantId?: string;

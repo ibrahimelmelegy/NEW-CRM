@@ -54,3 +54,17 @@ export async function updateForecast(id: string, data: Partial<ForecastPeriod>) 
 export async function calculateFromPipeline(userId: string, period: string) {
   return useApiFetch('forecasting/calculate', 'POST', { userId, period });
 }
+
+export async function fetchHistoricalComparison(period: string, startDate: string, endDate: string) {
+  const qs = `?period=${period}&startDate=${startDate}&endDate=${endDate}`;
+  return useApiFetch(`forecasting/historical-comparison${qs}`);
+}
+
+export async function runScenario(winRateAdjustment: number, dealValueAdjustment: number) {
+  return useApiFetch('forecasting/scenario', 'POST', { winRateAdjustment, dealValueAdjustment });
+}
+
+export async function fetchTeamBreakdown(period: string, startDate: string, endDate: string) {
+  const qs = `?period=${period}&startDate=${startDate}&endDate=${endDate}`;
+  return useApiFetch(`forecasting/team-breakdown${qs}`);
+}

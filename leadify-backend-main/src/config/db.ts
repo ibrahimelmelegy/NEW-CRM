@@ -2,6 +2,7 @@ import dotenv from 'dotenv';
 import { Sequelize } from 'sequelize-typescript';
 import Asset from '../asset/assetModel';
 import Client from '../client/clientModel';
+import CompanyNote from '../client/companyNoteModel';
 import DealDelivery from '../deal/model/dealDeliveryModel';
 import Deal from '../deal/model/dealModel';
 import Invoice from '../deal/model/invoiceMode';
@@ -150,6 +151,7 @@ import Ticket from '../support/models/ticketModel';
 import TicketMessage from '../support/models/ticketMessageModel';
 import TicketCategory from '../support/models/ticketCategoryModel';
 import CannedResponse from '../support/models/cannedResponseModel';
+import SLAConfig from '../support/models/slaConfigModel';
 import SubscriptionPlan from '../subscription/models/subscriptionPlanModel';
 import CustomerSubscription from '../subscription/models/customerSubscriptionModel';
 import SubscriptionEvent from '../subscription/models/subscriptionEventModel';
@@ -159,6 +161,7 @@ import IPWhitelist from '../security/models/ipWhitelistModel';
 // Communication Models
 import CommActivity from '../communication/models/activityModel';
 import CommCallLog from '../communication/models/callLogModel';
+import CommMeetingNote from '../communication/models/meetingNoteModel';
 import DocumentSignature from '../portal/models/signatureModel';
 // Integration Hub Models
 import IntegrationConfig from '../integration/models/integrationConfigModel';
@@ -252,6 +255,7 @@ const sequelize = new Sequelize({
     Material,
     ProposalUsers,
     Client,
+    CompanyNote,
     ProposalLog,
     MaterialsAdditionalMaterialItem,
     ProjectMaterial,
@@ -355,6 +359,7 @@ const sequelize = new Sequelize({
     TicketMessage,
     TicketCategory,
     CannedResponse,
+    SLAConfig,
     SubscriptionPlan,
     CustomerSubscription,
     SubscriptionEvent,
@@ -377,6 +382,7 @@ const sequelize = new Sequelize({
     IPWhitelist,
     CommActivity,
     CommCallLog,
+    CommMeetingNote,
     DocumentSignature,
     IntegrationConfig,
     OutgoingWebhook,

@@ -3,6 +3,7 @@ import Ticket, { TicketStatus, TicketPriority } from './models/ticketModel';
 import TicketMessage from './models/ticketMessageModel';
 import TicketCategory from './models/ticketCategoryModel';
 import CannedResponse from './models/cannedResponseModel';
+import SLAConfig from './models/slaConfigModel';
 import User from '../user/userModel';
 import Client from '../client/clientModel';
 import { IPaginationRes } from '../types';
@@ -29,14 +30,28 @@ class SupportService {
     return `TKT-${String(nextNum).padStart(4, '0')}`;
   }
 
+  // ─── SLA Calculation ──────────────────────────────────────────────────
+  private async calculateSLADeadline(priority: string): Promise<Date | null> {
+    const slaConfig = await SLAConfig.findOne({ where: { priority, isActive: true } });
+    if (!slaConfig) return null;
+
+    const now = new Date();
+    const deadline = new Date(now.getTime() + slaConfig.resolutionTimeHours * 60 * 60 * 1000);
+    return deadline;
+  }
+
   // ─── Tickets ──────────────────────────────────────────────────────────
   public async createTicket(data: any): Promise<Ticket> {
     const ticketNumber = await this.generateTicketNumber();
+    const priority = data.priority || TicketPriority.MEDIUM;
+    const slaDeadline = await this.calculateSLADeadline(priority);
+
     const ticket = await Ticket.create({
       ...data,
       ticketNumber,
       status: data.status || TicketStatus.OPEN,
-      priority: data.priority || TicketPriority.MEDIUM
+      priority,
+      slaDeadline
     });
     return ticket;
   }
@@ -295,14 +310,90 @@ class SupportService {
       ticketsByStatus[s] = await Ticket.count({ where: { status: s } });
     }
 
+    // SLA breach data
+    const breachedCount = await Ticket.count({
+      where: {
+        slaDeadline: { [Op.lt]: new Date() },
+        resolvedAt: { [Op.eq]: null },
+        status: { [Op.notIn]: [TicketStatus.RESOLVED, TicketStatus.CLOSED] }
+      }
+    });
+
+    // At-risk tickets (within 2 hours of breach)
+    const atRiskThreshold = new Date(Date.now() + 2 * 60 * 60 * 1000);
+    const atRiskCount = await Ticket.count({
+      where: {
+        slaDeadline: { [Op.between]: [new Date(), atRiskThreshold] },
+        resolvedAt: { [Op.eq]: null },
+        status: { [Op.notIn]: [TicketStatus.RESOLVED, TicketStatus.CLOSED] }
+      }
+    });
+
     return {
       openCount,
       avgResolutionTime,
       slaComplianceRate,
       avgCSAT,
       ticketsByPriority,
-      ticketsByStatus
+      ticketsByStatus,
+      breachedCount,
+      atRiskCount
     };
+  }
+
+  // ─── Agent Workload ───────────────────────────────────────────────────
+  public async getAgentWorkload(): Promise<any[]> {
+    const agents = await User.findAll({
+      attributes: ['id', 'name', 'email', 'profilePicture']
+    });
+
+    const workload = await Promise.all(
+      agents.map(async agent => {
+        const openTickets = await Ticket.count({
+          where: {
+            assignedTo: agent.id,
+            status: { [Op.in]: [TicketStatus.OPEN, TicketStatus.IN_PROGRESS, TicketStatus.WAITING_CUSTOMER] }
+          }
+        });
+
+        const resolvedToday = await Ticket.count({
+          where: {
+            assignedTo: agent.id,
+            status: TicketStatus.RESOLVED,
+            resolvedAt: { [Op.gte]: new Date(new Date().setHours(0, 0, 0, 0)) }
+          }
+        });
+
+        // Avg CSAT for this agent
+        const agentRatedTickets = await Ticket.findAll({
+          where: {
+            assignedTo: agent.id,
+            csatRating: { [Op.ne]: null }
+          },
+          attributes: ['csatRating']
+        });
+
+        let avgCSAT = 0;
+        if (agentRatedTickets.length > 0) {
+          const totalRating = agentRatedTickets.reduce((sum, t) => sum + (t.csatRating || 0), 0);
+          avgCSAT = Math.round((totalRating / agentRatedTickets.length) * 10) / 10;
+        }
+
+        return {
+          agent: {
+            id: agent.id,
+            name: agent.name,
+            email: agent.email,
+            profilePicture: agent.profilePicture
+          },
+          openTickets,
+          resolvedToday,
+          avgCSAT
+        };
+      })
+    );
+
+    return workload.sort((a, b) => b.openTickets - a.openTickets);
   }
 
   // ─── SLA Breach Check ─────────────────────────────────────────────────
@@ -371,6 +462,28 @@ class SupportService {
     const category = await TicketCategory.findByPk(id);
     if (!category) throw new BaseError(ERRORS.NOT_FOUND);
     await category.destroy();
+  }
+
+  // ─── SLA Configuration ────────────────────────────────────────────────
+  public async getSLAConfigs(): Promise<SLAConfig[]> {
+    return SLAConfig.findAll({ order: [['priority', 'ASC']] });
+  }
+
+  public async createSLAConfig(data: any): Promise<SLAConfig> {
+    return SLAConfig.create(data);
+  }
+
+  public async updateSLAConfig(id: string, data: any): Promise<SLAConfig> {
+    const config = await SLAConfig.findByPk(id);
+    if (!config) throw new BaseError(ERRORS.NOT_FOUND);
+    await config.update(data);
+    return config;
+  }
+
+  public async deleteSLAConfig(id: string): Promise<void> {
+    const config = await SLAConfig.findByPk(id);
+    if (!config) throw new BaseError(ERRORS.NOT_FOUND);
+    await config.destroy();
   }
 }
 

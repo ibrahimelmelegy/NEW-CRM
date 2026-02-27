@@ -92,6 +92,35 @@ class Client extends Model {
   })
   public fileUpload?: string[];
 
+  @ForeignKey(() => Client)
+  @Column({
+    type: DataType.UUID,
+    allowNull: true
+  })
+  public parentCompanyId?: string;
+
+  @BelongsTo(() => Client, { as: 'parentCompany', foreignKey: 'parentCompanyId' })
+  public parentCompany?: Client;
+
+  @Column({
+    type: DataType.JSONB,
+    allowNull: true,
+    defaultValue: {}
+  })
+  public customFields?: Record<string, any>;
+
+  @Column({
+    type: DataType.STRING,
+    allowNull: true
+  })
+  public website?: string;
+
+  @Column({
+    type: DataType.DECIMAL(15, 2),
+    allowNull: true
+  })
+  public annualRevenue?: number;
+
   @ForeignKey(() => Lead)
   @Column({
     type: DataType.UUID,

@@ -69,3 +69,88 @@ export async function fetchAvailableFields(entityType: string): Promise<ReportFi
   }
   return [];
 }
+
+export interface ReportConfig {
+  entityType: 'LEAD' | 'DEAL' | 'OPPORTUNITY' | 'CLIENT';
+  columns?: string[];
+  filters?: Array<{
+    field: string;
+    operator: 'equals' | 'contains' | 'greaterThan' | 'lessThan' | 'between' | 'in';
+    value: any;
+  }>;
+  groupBy?: string;
+  sortBy?: string;
+  sortOrder?: 'ASC' | 'DESC';
+  startDate?: string;
+  endDate?: string;
+}
+
+export interface ReportAnalytics {
+  total: number;
+  byStatus: Array<{ status: string; count: number }>;
+  timeline: Array<{ month: string; count: number }>;
+  valueMetrics: {
+    totalValue: number;
+    avgValue: number;
+    maxValue: number;
+  } | null;
+}
+
+export async function executeReportConfig(config: ReportConfig) {
+  return useApiFetch('report-builder/execute', 'POST', config as any);
+}
+
+export async function exportReportCSV(config: ReportConfig): Promise<Blob> {
+  const response = await fetch(`${useRuntimeConfig().public.apiBaseUrl}/report-builder/export-csv`, {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+      Authorization: `Bearer ${localStorage.getItem('token')}`
+    },
+    body: JSON.stringify(config)
+  });
+
+  if (!response.ok) throw new Error('CSV export failed');
+  return response.blob();
+}
+
+export async function exportReportExcel(config: ReportConfig): Promise<Blob> {
+  const response = await fetch(`${useRuntimeConfig().public.apiBaseUrl}/report-builder/export-excel`, {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+      Authorization: `Bearer ${localStorage.getItem('token')}`
+    },
+    body: JSON.stringify(config)
+  });
+
+  if (!response.ok) throw new Error('Excel export failed');
+  return response.blob();
+}
+
+export async function fetchReportAnalytics(
+  entityType: string,
+  startDate?: string,
+  endDate?: string
+): Promise<ReportAnalytics | null> {
+  const params = new URLSearchParams({ entityType });
+  if (startDate) params.append('startDate', startDate);
+  if (endDate) params.append('endDate', endDate);
+
+  const { body, success } = await useApiFetch(`report-builder/analytics?${params.toString()}`);
+  if (success && body) {
+    return body as ReportAnalytics;
+  }
+  return null;
+}
+
+export function downloadBlob(blob: Blob, filename: string) {
+  const url = window.URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url;
+  a.download = filename;
+  document.body.appendChild(a);
+  a.click();
+  document.body.removeChild(a);
+  window.URL.revokeObjectURL(url);
+}

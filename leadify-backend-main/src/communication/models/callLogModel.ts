@@ -6,7 +6,12 @@ export enum CallOutcome {
   NO_ANSWER = 'NO_ANSWER',
   VOICEMAIL = 'VOICEMAIL',
   BUSY = 'BUSY',
-  LEFT_MESSAGE = 'LEFT_MESSAGE'
+  LEFT_MESSAGE = 'LEFT_MESSAGE',
+  INTERESTED = 'INTERESTED',
+  NOT_INTERESTED = 'NOT_INTERESTED',
+  FOLLOW_UP = 'FOLLOW_UP',
+  CALLBACK = 'CALLBACK',
+  FAILED = 'FAILED'
 }
 
 @Table({
@@ -36,6 +41,12 @@ class CommCallLog extends Model {
 
   @Column({ type: DataType.STRING, allowNull: true })
   public recordingUrl?: string;
+
+  @Column({ type: DataType.TEXT, allowNull: true })
+  public transcription?: string;
+
+  @Column({ type: DataType.STRING, allowNull: true })
+  public disposition?: string;
 
   @Column({ type: DataType.TEXT, allowNull: true })
   public notes?: string;

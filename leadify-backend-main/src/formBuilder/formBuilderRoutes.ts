@@ -11,6 +11,8 @@ router.put('/templates/:id', authenticateUser, HasPermission([FormBuilderPermiss
 router.delete('/templates/:id', authenticateUser, HasPermission([FormBuilderPermissionsEnum.DELETE_FORMS]), c.deleteTemplate);
 router.get('/templates/:id/analytics', authenticateUser, HasPermission([FormBuilderPermissionsEnum.VIEW_FORMS]), c.getFormAnalytics);
 router.post('/templates/:id/submit', c.submitForm); // Public form submission — no auth
+router.post('/templates/:id/view', c.trackFormView); // Public view tracking — no auth
+router.get('/public/:token', c.getFormByToken); // Public form fetch by embed token — no auth
 router.get('/submissions', authenticateUser, HasPermission([FormBuilderPermissionsEnum.VIEW_SUBMISSIONS]), c.getSubmissions);
 
 export default router;

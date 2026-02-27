@@ -83,7 +83,7 @@ import { CanvasRenderer } from 'echarts/renderers';
 import { BarChart, PieChart, LineChart } from 'echarts/charts';
 import { TitleComponent, TooltipComponent, LegendComponent, GridComponent } from 'echarts/components';
 import VChart from 'vue-echarts';
-import { fetchSavedReports, executeReport, exportReportCSV, type SavedReport, type ReportConfig } from '~/composables/useReportBuilder';
+import { fetchSavedReports, executeReport, exportReportBuilderCSV, type SavedReport, type ReportBuilderConfig } from '~/composables/useReportBuilder';
 
 use([CanvasRenderer, BarChart, PieChart, LineChart, TitleComponent, TooltipComponent, LegendComponent, GridComponent]);
 
@@ -169,7 +169,7 @@ async function runReport() {
   running.value = true;
   resultPage.value = 1;
   try {
-    const configWithOverrides: ReportConfig = {
+    const configWithOverrides: ReportBuilderConfig = {
       ...report.value.config,
       filters: filterOverrides.value.filter(f => f.field && f.value)
     };
@@ -184,7 +184,7 @@ async function runReport() {
 async function handleExport(format: string) {
   if (!report.value) return;
   try {
-    const csv = await exportReportCSV(report.value.config);
+    const csv = await exportReportBuilderCSV(report.value.config);
     if (csv) {
       const mimeType = format === 'xlsx' ? 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' : 'text/csv';
       const blob = new Blob([csv as string], { type: mimeType });

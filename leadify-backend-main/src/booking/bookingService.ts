@@ -1,5 +1,5 @@
-import { Op } from 'sequelize';
-import { BookingSlot, Booking } from './bookingModel';
+import { Op, fn, col } from 'sequelize';
+import { BookingSlot, Booking, BookingPage } from './bookingModel';
 import User from '../user/userModel';
 import Client from '../client/clientModel';
 import { clampPagination } from '../utils/pagination';
@@ -215,6 +215,99 @@ class BookingService {
       order: [['date', 'ASC'], ['startTime', 'ASC']]
     });
     return bookings;
+  }
+
+  /**
+   * Get booking analytics: total bookings, confirmed, pending, cancelled, no-show rate, popular time slots.
+   */
+  async getBookingAnalytics(staffId?: number, tenantId?: string, dateFrom?: string, dateTo?: string) {
+    const where: any = {};
+    if (staffId) where.staffId = staffId;
+    if (tenantId) where.tenantId = tenantId;
+    if (dateFrom && dateTo) where.date = { [Op.between]: [dateFrom, dateTo] };
+
+    const totalBookings = await Booking.count({ where });
+    const confirmedBookings = await Booking.count({ where: { ...where, status: 'CONFIRMED' } });
+    const pendingBookings = await Booking.count({ where: { ...where, status: 'PENDING' } });
+    const cancelledBookings = await Booking.count({ where: { ...where, status: 'CANCELLED' } });
+    const noShowBookings = await Booking.count({ where: { ...where, status: 'NO_SHOW' } });
+
+    const noShowRate = totalBookings > 0 ? Math.round((noShowBookings / totalBookings) * 10000) / 100 : 0;
+
+    // Popular time slots
+    const popularSlots = await Booking.findAll({
+      where,
+      attributes: [
+        ['startTime', 'slot'],
+        [fn('COUNT', col('id')), 'count'],
+      ],
+      group: ['startTime'],
+      order: [[fn('COUNT', col('id')), 'DESC']],
+      limit: 10,
+      raw: true,
+    }) as unknown as Array<{ slot: string; count: string }>;
+
+    // Booking trends (daily counts)
+    const thirtyDaysAgo = new Date();
+    thirtyDaysAgo.setDate(thirtyDaysAgo.getDate() - 30);
+    const dailyTrend = await Booking.findAll({
+      where: { ...where, createdAt: { [Op.gte]: thirtyDaysAgo } },
+      attributes: [
+        [fn('DATE', col('createdAt')), 'date'],
+        [fn('COUNT', col('id')), 'count'],
+      ],
+      group: [fn('DATE', col('createdAt'))],
+      order: [[fn('DATE', col('createdAt')), 'ASC']],
+      raw: true,
+    }) as unknown as Array<{ date: string; count: string }>;
+
+    return {
+      totalBookings,
+      confirmedBookings,
+      pendingBookings,
+      cancelledBookings,
+      noShowBookings,
+      noShowRate,
+      popularSlots: popularSlots.map((s) => ({ slot: s.slot, count: Number(s.count) })),
+      dailyTrend: dailyTrend.map((d) => ({ date: d.date, count: Number(d.count) })),
+    };
+  }
+
+  // ─── Booking Pages ───────────────────────────────────────────────────────────
+
+  async createBookingPage(data: any, tenantId?: string) {
+    const slug = data.slug || this.generateSlug(data.name);
+    return BookingPage.create({ ...data, slug, tenantId });
+  }
+
+  async getBookingPages(query: any, tenantId?: string) {
+    const where: any = {};
+    if (tenantId) where.tenantId = tenantId;
+    if (query.isActive !== undefined) where.isActive = query.isActive;
+    const pages = await BookingPage.findAll({ where, order: [['createdAt', 'DESC']] });
+    return pages;
+  }
+
+  async updateBookingPage(id: number, data: any) {
+    const page = await BookingPage.findByPk(id);
+    if (!page) return null;
+    await page.update(data);
+    return page;
+  }
+
+  async deleteBookingPage(id: number) {
+    const page = await BookingPage.findByPk(id);
+    if (!page) return false;
+    await page.destroy();
+    return true;
+  }
+
+  async getBookingPageBySlug(slug: string) {
+    return BookingPage.findOne({ where: { slug, isActive: true } });
+  }
+
+  private generateSlug(name: string): string {
+    return name.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '') + '-' + Date.now().toString(36);
   }
 }
 export default new BookingService();

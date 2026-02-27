@@ -1,4 +1,4 @@
-export interface ReportConfig {
+export interface ReportBuilderConfig {
   entityType: string;
   columns: string[];
   filters: { field: string; operator: string; value: any }[];
@@ -12,7 +12,7 @@ export interface SavedReport {
   id: string;
   name: string;
   entityType: string;
-  config: ReportConfig;
+  config: ReportBuilderConfig;
   createdAt: string;
 }
 
@@ -38,7 +38,7 @@ export async function fetchSavedReports(): Promise<SavedReport[]> {
   return [];
 }
 
-export async function createSavedReport(data: { name: string; entityType: string; config: ReportConfig }) {
+export async function createSavedReport(data: { name: string; entityType: string; config: ReportBuilderConfig }) {
   return useApiFetch('report-builder', 'POST', data as any);
 }
 
@@ -50,13 +50,13 @@ export async function deleteSavedReport(id: string) {
   return useApiFetch(`report-builder/${id}`, 'DELETE');
 }
 
-export async function executeReport(config: ReportConfig) {
+export async function executeReport(config: ReportBuilderConfig) {
   const { body, success } = await useApiFetch('report-builder/execute', 'POST', config as any);
   if (success && Array.isArray(body)) return body;
   return [];
 }
 
-export async function exportReportCSV(config: ReportConfig) {
+export async function exportReportBuilderCSV(config: ReportBuilderConfig) {
   const { body, success } = await useApiFetch('report-builder/export-csv', 'POST', config as any);
   return body;
 }

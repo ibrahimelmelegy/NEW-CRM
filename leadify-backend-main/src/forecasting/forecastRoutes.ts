@@ -239,4 +239,109 @@ router.put('/:id', authenticateUser, forecastController.update);
  */
 router.post('/calculate', authenticateUser, forecastController.calculateFromPipeline);
 
+/**
+ * @swagger
+ * /api/forecasting/historical-comparison:
+ *   get:
+ *     summary: Get historical comparison between current and previous period
+ *     tags: [Forecasting]
+ *     security:
+ *       - bearerAuth: []
+ *     parameters:
+ *       - in: query
+ *         name: period
+ *         required: true
+ *         schema:
+ *           type: string
+ *           enum: [monthly, quarterly, yearly]
+ *         description: Forecast period type
+ *       - in: query
+ *         name: startDate
+ *         required: true
+ *         schema:
+ *           type: string
+ *           format: date
+ *         description: Current period start date
+ *       - in: query
+ *         name: endDate
+ *         required: true
+ *         schema:
+ *           type: string
+ *           format: date
+ *         description: Current period end date
+ *     responses:
+ *       200:
+ *         description: Comparison data with growth percentages
+ *       400:
+ *         description: Missing required parameters
+ */
+router.get('/historical-comparison', authenticateUser, forecastController.getHistoricalComparison);
+
+/**
+ * @swagger
+ * /api/forecasting/scenario:
+ *   post:
+ *     summary: Project revenue based on what-if scenarios
+ *     tags: [Forecasting]
+ *     security:
+ *       - bearerAuth: []
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             properties:
+ *               winRateAdjustment:
+ *                 type: number
+ *                 description: Percentage adjustment to win rate (e.g., 10 for +10%)
+ *                 default: 0
+ *               dealValueAdjustment:
+ *                 type: number
+ *                 description: Percentage adjustment to deal values (e.g., -5 for -5%)
+ *                 default: 0
+ *     responses:
+ *       200:
+ *         description: Projected revenue based on adjustments
+ */
+router.post('/scenario', authenticateUser, forecastController.getScenarioProjection);
+
+/**
+ * @swagger
+ * /api/forecasting/team-breakdown:
+ *   get:
+ *     summary: Get forecast breakdown by team member
+ *     tags: [Forecasting]
+ *     security:
+ *       - bearerAuth: []
+ *     parameters:
+ *       - in: query
+ *         name: period
+ *         required: true
+ *         schema:
+ *           type: string
+ *           enum: [monthly, quarterly, yearly]
+ *         description: Forecast period type
+ *       - in: query
+ *         name: startDate
+ *         required: true
+ *         schema:
+ *           type: string
+ *           format: date
+ *         description: Start date for the range
+ *       - in: query
+ *         name: endDate
+ *         required: true
+ *         schema:
+ *           type: string
+ *           format: date
+ *         description: End date for the range
+ *     responses:
+ *       200:
+ *         description: Per-user forecast breakdown
+ *       400:
+ *         description: Missing required parameters
+ */
+router.get('/team-breakdown', authenticateUser, forecastController.getTeamBreakdown);
+
 export default router;

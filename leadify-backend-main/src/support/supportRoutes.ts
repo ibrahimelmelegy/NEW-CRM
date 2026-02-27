@@ -333,6 +333,66 @@ router.post('/tickets/:id/csat', authenticateUser, HasPermission([SupportPermiss
  */
 router.get('/dashboard', authenticateUser, HasPermission([SupportPermissionsEnum.VIEW_TICKETS]), supportController.getDashboard);
 
+/**
+ * @swagger
+ * /api/support/agent-workload:
+ *   get:
+ *     summary: Get agent workload
+ *     description: Returns current workload for all support agents
+ *     tags: [Support]
+ *     security:
+ *       - bearerAuth: []
+ *     responses:
+ *       200:
+ *         description: Agent workload data
+ *       500:
+ *         description: Server error
+ */
+router.get('/agent-workload', authenticateUser, HasPermission([SupportPermissionsEnum.VIEW_TICKETS]), supportController.getAgentWorkload);
+
+/**
+ * @swagger
+ * /api/support/sla-breaches:
+ *   get:
+ *     summary: Get SLA breaches
+ *     description: Returns all tickets that have breached their SLA deadline
+ *     tags: [Support]
+ *     security:
+ *       - bearerAuth: []
+ *     responses:
+ *       200:
+ *         description: List of breached tickets
+ *       500:
+ *         description: Server error
+ */
+router.get('/sla-breaches', authenticateUser, HasPermission([SupportPermissionsEnum.VIEW_TICKETS]), supportController.getSLABreaches);
+
+/**
+ * @swagger
+ * /api/support/tickets/{id}/auto-assign:
+ *   post:
+ *     summary: Auto-assign ticket
+ *     description: Automatically assigns ticket to agent with lowest workload
+ *     tags: [Support]
+ *     security:
+ *       - bearerAuth: []
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         schema:
+ *           type: string
+ *           format: uuid
+ *     responses:
+ *       200:
+ *         description: Ticket auto-assigned
+ *       404:
+ *         description: Ticket not found
+ *       500:
+ *         description: Server error
+ */
+router.post('/tickets/:id/auto-assign', authenticateUser, HasPermission([SupportPermissionsEnum.ASSIGN_TICKETS]), supportController.autoAssignTicket);
+
 // ─── Canned Responses ─────────────────────────────────────────────────────────
 
 /**
@@ -578,5 +638,125 @@ router.put('/categories/:id', authenticateUser, HasPermission([SupportPermission
  *         description: Server error
  */
 router.delete('/categories/:id', authenticateUser, HasPermission([SupportPermissionsEnum.EDIT_TICKETS]), supportController.deleteCategory);
+
+// ─── SLA Configuration ────────────────────────────────────────────────────────
+
+/**
+ * @swagger
+ * /api/support/sla-configs:
+ *   get:
+ *     summary: Get SLA configurations
+ *     description: Returns SLA time targets by priority
+ *     tags: [Support]
+ *     security:
+ *       - bearerAuth: []
+ *     responses:
+ *       200:
+ *         description: List of SLA configs
+ *       500:
+ *         description: Server error
+ */
+router.get('/sla-configs', authenticateUser, HasPermission([SupportPermissionsEnum.VIEW_TICKETS]), supportController.getSLAConfigs);
+
+/**
+ * @swagger
+ * /api/support/sla-configs:
+ *   post:
+ *     summary: Create SLA configuration
+ *     tags: [Support]
+ *     security:
+ *       - bearerAuth: []
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             required:
+ *               - priority
+ *               - responseTimeHours
+ *               - resolutionTimeHours
+ *             properties:
+ *               priority:
+ *                 type: string
+ *                 enum: [LOW, MEDIUM, HIGH, URGENT]
+ *               responseTimeHours:
+ *                 type: integer
+ *                 description: Target response time in hours
+ *               resolutionTimeHours:
+ *                 type: integer
+ *                 description: Target resolution time in hours
+ *               isActive:
+ *                 type: boolean
+ *                 default: true
+ *     responses:
+ *       201:
+ *         description: SLA config created
+ *       500:
+ *         description: Server error
+ */
+router.post('/sla-configs', authenticateUser, HasPermission([SupportPermissionsEnum.EDIT_TICKETS]), supportController.createSLAConfig);
+
+/**
+ * @swagger
+ * /api/support/sla-configs/{id}:
+ *   put:
+ *     summary: Update SLA configuration
+ *     tags: [Support]
+ *     security:
+ *       - bearerAuth: []
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         schema:
+ *           type: string
+ *           format: uuid
+ *     requestBody:
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             properties:
+ *               responseTimeHours:
+ *                 type: integer
+ *               resolutionTimeHours:
+ *                 type: integer
+ *               isActive:
+ *                 type: boolean
+ *     responses:
+ *       200:
+ *         description: SLA config updated
+ *       404:
+ *         description: Not found
+ *       500:
+ *         description: Server error
+ */
+router.put('/sla-configs/:id', authenticateUser, HasPermission([SupportPermissionsEnum.EDIT_TICKETS]), supportController.updateSLAConfig);
+
+/**
+ * @swagger
+ * /api/support/sla-configs/{id}:
+ *   delete:
+ *     summary: Delete SLA configuration
+ *     tags: [Support]
+ *     security:
+ *       - bearerAuth: []
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         schema:
+ *           type: string
+ *           format: uuid
+ *     responses:
+ *       200:
+ *         description: SLA config deleted
+ *       404:
+ *         description: Not found
+ *       500:
+ *         description: Server error
+ */
+router.delete('/sla-configs/:id', authenticateUser, HasPermission([SupportPermissionsEnum.EDIT_TICKETS]), supportController.deleteSLAConfig);
 
 export default router;

@@ -347,4 +347,65 @@ router.post('/execute', authenticateUser, reportController.executeReport);
  */
 router.post('/export-csv', authenticateUser, reportController.exportCSV);
 
+/**
+ * @swagger
+ * /api/report-builder/export-excel:
+ *   post:
+ *     summary: Execute a report and export results as Excel
+ *     tags: [Report Builder]
+ *     security:
+ *       - bearerAuth: []
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             $ref: '#/components/schemas/ReportConfig'
+ *     responses:
+ *       200:
+ *         description: Excel file download
+ *         content:
+ *           application/vnd.openxmlformats-officedocument.spreadsheetml.sheet:
+ *             schema:
+ *               type: string
+ *               format: binary
+ */
+router.post('/export-excel', authenticateUser, reportController.exportExcel);
+
+/**
+ * @swagger
+ * /api/report-builder/analytics:
+ *   get:
+ *     summary: Get analytics for an entity type with optional date range
+ *     tags: [Report Builder]
+ *     security:
+ *       - bearerAuth: []
+ *     parameters:
+ *       - in: query
+ *         name: entityType
+ *         required: true
+ *         schema:
+ *           type: string
+ *           enum: [LEAD, DEAL, OPPORTUNITY, CLIENT]
+ *         description: Entity type to analyze
+ *       - in: query
+ *         name: startDate
+ *         schema:
+ *           type: string
+ *           format: date
+ *         description: Start date for the range
+ *       - in: query
+ *         name: endDate
+ *         schema:
+ *           type: string
+ *           format: date
+ *         description: End date for the range
+ *     responses:
+ *       200:
+ *         description: Analytics data including totals, distributions, and timelines
+ *       400:
+ *         description: Missing required entityType
+ */
+router.get('/analytics', authenticateUser, reportController.getAnalytics);
+
 export default router;
