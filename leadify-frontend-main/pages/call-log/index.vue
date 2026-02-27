@@ -29,13 +29,17 @@
       template(#header)
         .flex.items-center.justify-between
           span.font-bold {{ $t('callLog.durationDistribution') }}
-      div(ref="durationChartRef" style="width: 100%; height: 300px;")
+          el-button(text size="small" @click="drillDownDuration")
+            Icon(name="ph:arrow-square-out" size="14")
+      div(ref="durationChartRef" style="width: 100%; height: 300px;" @click="drillDownDuration")
 
     el-card.rounded-2xl(shadow="never" style="border: 1px solid var(--border-default);")
       template(#header)
         .flex.items-center.justify-between
           span.font-bold {{ $t('callLog.callsByOutcome') }}
-      div(ref="outcomeChartRef" style="width: 100%; height: 300px;")
+          el-button(text size="small" @click="drillDownOutcome")
+            Icon(name="ph:arrow-square-out" size="14")
+      div(ref="outcomeChartRef" style="width: 100%; height: 300px;" @click="drillDownOutcome")
 
     el-card.rounded-2xl(shadow="never" style="border: 1px solid var(--border-default);")
       template(#header)
@@ -55,9 +59,86 @@
       Icon(:name="showAnalytics ? 'ph:chart-line-down' : 'ph:chart-line-up'" size="16" style="margin-right: 4px;")
       | {{ showAnalytics ? $t('callLog.hideAnalytics') : $t('callLog.showAnalytics') }}
 
+  //- Advanced Filters & Bulk Actions
+  el-card.rounded-2xl.mb-4(shadow="never" style="border: 1px solid var(--border-default);")
+    .p-4
+      .flex.items-center.justify-between.flex-wrap.gap-4
+        .flex.items-center.gap-2.flex-wrap
+          el-select(v-model="filters.outcome" :placeholder="$t('callLog.filterByOutcome')" clearable style="width: 160px;" size="small")
+            el-option(:label="$t('common.all')" value="")
+            el-option(v-for="opt in ['answered', 'no_answer', 'voicemail', 'busy', 'callback']" :key="opt" :label="$t('callLog.outcomes.' + opt)" :value="opt")
+          el-select(v-model="filters.disposition" :placeholder="$t('callLog.filterByDisposition')" clearable style="width: 180px;" size="small")
+            el-option(:label="$t('common.all')" value="")
+            el-option(v-for="disp in ['interested', 'not_interested', 'follow_up', 'voicemail', 'no_answer', 'callback']" :key="disp" :label="$t('callLog.dispositions.' + disp)" :value="disp")
+          el-select(v-model="filters.agent" :placeholder="$t('callLog.filterByAgent')" clearable filterable style="width: 160px;" size="small")
+            el-option(:label="$t('common.all')" value="")
+            el-option(v-for="agent in availableAgents" :key="agent.id" :label="agent.name" :value="agent.id")
+          el-date-picker(
+            v-model="filters.dateRange"
+            type="daterange"
+            :placeholder="$t('callLog.selectDateRange')"
+            size="small"
+            style="width: 240px;"
+            :start-placeholder="$t('callLog.startDate')"
+            :end-placeholder="$t('callLog.endDate')"
+          )
+          .flex.items-center.gap-2
+            span.text-xs(style="color: var(--text-muted);") {{ $t('callLog.duration') }}:
+            el-input-number(v-model="filters.durationMin" :min="0" :placeholder="$t('callLog.min')" size="small" style="width: 80px;")
+            span.text-xs(style="color: var(--text-muted);") -
+            el-input-number(v-model="filters.durationMax" :min="0" :placeholder="$t('callLog.max')" size="small" style="width: 80px;")
+          el-input(v-model="filters.search" :placeholder="$t('callLog.searchCalls')" clearable size="small" style="width: 200px;")
+            template(#prefix)
+              Icon(name="ph:magnifying-glass" size="14")
+          el-button(size="small" @click="applyFilters")
+            Icon(name="ph:funnel" size="14" style="margin-right: 4px;")
+            | {{ $t('callLog.applyFilters') }}
+          el-button(size="small" @click="clearFilters" v-if="hasActiveFilters")
+            Icon(name="ph:x" size="14" style="margin-right: 4px;")
+            | {{ $t('callLog.clearFilters') }}
+        .flex.items-center.gap-2(v-if="selectedCalls.length > 0")
+          el-tag(type="info" size="small") {{ selectedCalls.length }} {{ $t('callLog.selected') }}
+          el-button(size="small" type="primary" @click="showBulkReassignDialog = true")
+            Icon(name="ph:user-switch" size="14" style="margin-right: 4px;")
+            | {{ $t('callLog.bulkReassign') }}
+          el-button(size="small" type="success" @click="bulkExport")
+            Icon(name="ph:download" size="14" style="margin-right: 4px;")
+            | {{ $t('callLog.bulkExport') }}
+          el-button(size="small" type="danger" @click="bulkDelete")
+            Icon(name="ph:trash" size="14" style="margin-right: 4px;")
+            | {{ $t('callLog.bulkDelete') }}
+
+  //- Tags Section
+  el-card.rounded-2xl.mb-4(shadow="never" style="border: 1px solid var(--border-default);" v-if="showTagsSection")
+    .p-4
+      .flex.items-center.justify-between.mb-3
+        h3.text-sm.font-bold(style="color: var(--text-primary);") {{ $t('callLog.callTags') }}
+        el-button(size="small" @click="showAddTagDialog = true")
+          Icon(name="ph:tag" size="14" style="margin-right: 4px;")
+          | {{ $t('callLog.addTag') }}
+      .flex.flex-wrap.gap-2
+        el-tag(
+          v-for="tag in availableTags"
+          :key="tag.id"
+          :type="tag.color"
+          size="small"
+          closable
+          @close="removeTag(tag.id)"
+          @click="filterByTag(tag)"
+          class="cursor-pointer"
+        )
+          | {{ tag.name }} ({{ tag.count }})
+
   //- Table
   el-card.rounded-2xl(shadow="never" style="border: 1px solid var(--border-default);")
-    el-table(:data="calls" v-loading="callLoading" style="width: 100%" :empty-text="emptyText")
+    el-table(
+      :data="filteredCalls"
+      v-loading="callLoading"
+      style="width: 100%"
+      :empty-text="emptyText"
+      @selection-change="handleSelectionChange"
+    )
+      el-table-column(type="selection" width="55")
       el-table-column(:label="$t('callLog.direction')" width="100")
         template(#default="{ row }")
           el-tag(:type="row.direction === 'inbound' ? 'success' : 'primary'" size="small" round effect="plain")
@@ -94,6 +175,19 @@
           )
             Icon(name="ph:play-circle" size="18")
           span.text-xs.text-gray-400(v-else) —
+      el-table-column(:label="$t('callLog.tags')" width="180")
+        template(#default="{ row }")
+          .flex.flex-wrap.gap-1
+            el-tag(v-for="tag in row.tags" :key="tag.id" :type="tag.color" size="small" effect="plain") {{ tag.name }}
+            el-button(text circle size="small" @click.stop="addTagToCall(row)")
+              Icon(name="ph:tag" size="12")
+      el-table-column(:label="$t('callLog.qualityScore')" width="120" align="center")
+        template(#default="{ row }")
+          .flex.items-center.gap-1.justify-center(v-if="row.qualityScore !== null && row.qualityScore !== undefined")
+            el-rate(v-model="row.qualityScore" disabled size="small" :max="5")
+            span.text-xs.font-mono {{ row.qualityScore }}/5
+          el-button(v-else text circle size="small" type="primary" @click.stop="rateCallQuality(row)")
+            Icon(name="ph:star" size="14")
       el-table-column(:label="$t('callLog.notes')" min-width="200")
         template(#default="{ row }")
           p.text-xs.text-gray-500.line-clamp-2 {{ row.notes || '—' }}
@@ -191,6 +285,45 @@
           p.text-sm.whitespace-pre-wrap {{ selectedCall.notes }}
     template(#footer)
       el-button(@click="showDetailsDialog = false") {{ $t('common.close') }}
+
+  //- Add Tag Dialog
+  el-dialog(v-model="showAddTagDialog" :title="$t('callLog.addTags')" width="500px")
+    el-form(label-position="top")
+      el-form-item(:label="$t('callLog.selectTags')")
+        el-select(v-model="form.tags" multiple class="w-full" :placeholder="$t('callLog.selectTagsPlaceholder')")
+          el-option(v-for="tag in availableTags" :key="tag.id" :label="tag.name" :value="tag.id")
+            el-tag(:type="tag.color" size="small" effect="plain") {{ tag.name }}
+    template(#footer)
+      el-button(@click="showAddTagDialog = false") {{ $t('common.cancel') }}
+      el-button(type="primary" @click="saveCallTags") {{ $t('common.save') }}
+
+  //- Bulk Reassign Dialog
+  el-dialog(v-model="showBulkReassignDialog" :title="$t('callLog.bulkReassign')" width="450px")
+    el-form(label-position="top")
+      el-form-item(:label="$t('callLog.assignTo')")
+        el-select(v-model="bulkReassignForm.agentId" class="w-full" :placeholder="$t('callLog.selectAgent')")
+          el-option(v-for="agent in availableAgents" :key="agent.id" :label="agent.name" :value="agent.id")
+      p.text-sm.text-gray-500.mt-2
+        | {{ $t('callLog.reassignConfirmMsg', { count: selectedCalls.length }) }}
+    template(#footer)
+      el-button(@click="showBulkReassignDialog = false") {{ $t('common.cancel') }}
+      el-button(type="primary" @click="bulkReassign") {{ $t('callLog.reassign') }}
+
+  //- Quality Rating Dialog
+  el-dialog(v-model="showQualityRatingDialog" :title="$t('callLog.rateCallQuality')" width="500px")
+    el-form(label-position="top" v-if="callForRating")
+      .mb-4
+        p.text-xs.text-gray-500.mb-1 {{ $t('callLog.contact') }}
+        p.text-sm.font-bold {{ callForRating.contactName }} - {{ callForRating.phone }}
+      el-form-item(:label="$t('callLog.qualityScore')")
+        .flex.items-center.gap-3
+          el-rate(v-model="qualityRatingForm.score" :max="5" size="large" show-text)
+          span.text-sm.font-mono {{ qualityRatingForm.score }}/5
+      el-form-item(:label="$t('callLog.qualityNotes')")
+        el-input(v-model="qualityRatingForm.notes" type="textarea" :rows="3" :placeholder="$t('callLog.qualityNotesPlaceholder')")
+    template(#footer)
+      el-button(@click="showQualityRatingDialog = false") {{ $t('common.cancel') }}
+      el-button(type="primary" @click="saveQualityRating") {{ $t('common.save') }}
 </template>
 
 <script setup lang="ts">
@@ -198,6 +331,7 @@ import { ref, reactive, onMounted, computed, nextTick, watch } from 'vue';
 import { useCallLog } from '~/composables/useCallLog';
 import { useI18n } from 'vue-i18n';
 import * as echarts from 'echarts';
+import { ElMessage, ElMessageBox } from 'element-plus';
 
 definePageMeta({});
 
@@ -207,8 +341,15 @@ const { calls, stats, logCall, removeCall, fetchCalls, fetchAnalytics, analytics
 const showDialog = ref(false);
 const showDetailsDialog = ref(false);
 const showAnalytics = ref(false);
+const showTagsSection = ref(true);
+const showAddTagDialog = ref(false);
+const showBulkReassignDialog = ref(false);
+const showQualityRatingDialog = ref(false);
 const saving = ref(false);
 const selectedCall = ref<any>(null);
+const selectedCalls = ref<any[]>([]);
+const callForRating = ref<any>(null);
+
 const form = reactive({
   contactName: '',
   phone: '',
@@ -218,8 +359,48 @@ const form = reactive({
   durationMin: 5,
   recordingUrl: '',
   transcription: '',
+  notes: '',
+  tags: [] as number[],
+  qualityScore: 0
+});
+
+const filters = reactive({
+  outcome: '',
+  disposition: '',
+  agent: '',
+  dateRange: null as any,
+  durationMin: null as number | null,
+  durationMax: null as number | null,
+  search: '',
+  tagId: null as number | null
+});
+
+const newTag = reactive({
+  name: '',
+  color: 'primary'
+});
+
+const bulkReassignForm = reactive({
+  agentId: null as number | null
+});
+
+const qualityRatingForm = reactive({
+  score: 5,
   notes: ''
 });
+
+const availableTags = ref<any[]>([
+  { id: 1, name: 'Hot Lead', color: 'danger', count: 12 },
+  { id: 2, name: 'Follow-up', color: 'warning', count: 8 },
+  { id: 3, name: 'Qualified', color: 'success', count: 15 },
+  { id: 4, name: 'Cold Call', color: 'info', count: 20 }
+]);
+
+const availableAgents = ref<any[]>([
+  { id: 1, name: 'John Smith' },
+  { id: 2, name: 'Sarah Johnson' },
+  { id: 3, name: 'Mike Wilson' }
+]);
 
 const durationChartRef = ref<HTMLElement>();
 const outcomeChartRef = ref<HTMLElement>();
@@ -227,6 +408,58 @@ const hourChartRef = ref<HTMLElement>();
 const trendChartRef = ref<HTMLElement>();
 
 const emptyText = computed(() => $t('common.noData'));
+
+const filteredCalls = computed(() => {
+  let result = calls.value;
+
+  if (filters.outcome) {
+    result = result.filter((c: any) => c.outcome === filters.outcome);
+  }
+
+  if (filters.disposition) {
+    result = result.filter((c: any) => c.disposition === filters.disposition);
+  }
+
+  if (filters.agent) {
+    result = result.filter((c: any) => c.agentId === filters.agent);
+  }
+
+  if (filters.dateRange && filters.dateRange.length === 2) {
+    const [start, end] = filters.dateRange;
+    result = result.filter((c: any) => {
+      const callDate = new Date(c.createdAt);
+      return callDate >= start && callDate <= end;
+    });
+  }
+
+  if (filters.durationMin !== null) {
+    result = result.filter((c: any) => c.duration >= (filters.durationMin! * 60));
+  }
+
+  if (filters.durationMax !== null) {
+    result = result.filter((c: any) => c.duration <= (filters.durationMax! * 60));
+  }
+
+  if (filters.search) {
+    const query = filters.search.toLowerCase();
+    result = result.filter((c: any) =>
+      c.contactName?.toLowerCase().includes(query) ||
+      c.phone?.toLowerCase().includes(query) ||
+      c.notes?.toLowerCase().includes(query)
+    );
+  }
+
+  if (filters.tagId) {
+    result = result.filter((c: any) => c.tags?.some((t: any) => t.id === filters.tagId));
+  }
+
+  return result;
+});
+
+const hasActiveFilters = computed(() => {
+  return filters.outcome || filters.disposition || filters.agent || filters.dateRange ||
+         filters.durationMin !== null || filters.durationMax !== null || filters.search || filters.tagId;
+});
 
 onMounted(() => {
   fetchCalls();
@@ -318,6 +551,171 @@ function viewDetails(call: any) {
 function playRecording(call: any) {
   selectedCall.value = call;
   showDetailsDialog.value = true;
+}
+
+function handleSelectionChange(selection: any[]) {
+  selectedCalls.value = selection;
+}
+
+function applyFilters() {
+  ElMessage.success($t('callLog.filtersApplied'));
+}
+
+function clearFilters() {
+  Object.assign(filters, {
+    outcome: '',
+    disposition: '',
+    agent: '',
+    dateRange: null,
+    durationMin: null,
+    durationMax: null,
+    search: '',
+    tagId: null
+  });
+  ElMessage.info($t('callLog.filtersCleared'));
+}
+
+async function bulkDelete() {
+  try {
+    await ElMessageBox.confirm(
+      $t('callLog.confirmBulkDelete', { count: selectedCalls.value.length }),
+      $t('common.warning'),
+      { type: 'warning' }
+    );
+
+    for (const call of selectedCalls.value) {
+      await removeCall(call.id);
+    }
+
+    selectedCalls.value = [];
+    ElMessage.success($t('callLog.bulkDeleteSuccess'));
+  } catch {
+    // User cancelled
+  }
+}
+
+async function bulkExport() {
+  try {
+    const data = selectedCalls.value.map(call => ({
+      Contact: call.contactName,
+      Phone: call.phone,
+      Direction: call.direction,
+      Outcome: call.outcome,
+      Disposition: call.disposition,
+      Duration: formatDuration(call.duration),
+      Date: formatDate(call.createdAt),
+      Notes: call.notes || ''
+    }));
+
+    const csv = [
+      Object.keys(data[0]).join(','),
+      ...data.map(row => Object.values(row).join(','))
+    ].join('\n');
+
+    const blob = new Blob([csv], { type: 'text/csv' });
+    const url = window.URL.createObjectURL(blob);
+    const link = document.createElement('a');
+    link.href = url;
+    link.download = `call-log-export-${new Date().toISOString().split('T')[0]}.csv`;
+    link.click();
+
+    ElMessage.success($t('callLog.exportSuccess'));
+  } catch (error) {
+    ElMessage.error($t('callLog.exportFailed'));
+  }
+}
+
+async function bulkReassign() {
+  if (!bulkReassignForm.agentId) {
+    ElMessage.warning($t('callLog.selectAgent'));
+    return;
+  }
+
+  try {
+    // API call to bulk reassign
+    await useApiFetch('call-log/bulk-reassign', 'POST', {
+      callIds: selectedCalls.value.map(c => c.id),
+      agentId: bulkReassignForm.agentId
+    });
+
+    showBulkReassignDialog.value = false;
+    selectedCalls.value = [];
+    await fetchCalls();
+    ElMessage.success($t('callLog.reassignSuccess'));
+  } catch {
+    ElMessage.error($t('callLog.reassignFailed'));
+  }
+}
+
+function addTagToCall(call: any) {
+  selectedCall.value = call;
+  showAddTagDialog.value = true;
+}
+
+async function saveCallTags() {
+  if (!selectedCall.value) return;
+
+  try {
+    await useApiFetch(`call-log/${selectedCall.value.id}`, 'PUT', {
+      tags: form.tags
+    });
+
+    showAddTagDialog.value = false;
+    await fetchCalls();
+    ElMessage.success($t('callLog.tagsUpdated'));
+  } catch {
+    ElMessage.error($t('callLog.tagsUpdateFailed'));
+  }
+}
+
+function removeTag(tagId: number) {
+  availableTags.value = availableTags.value.filter(t => t.id !== tagId);
+}
+
+function filterByTag(tag: any) {
+  filters.tagId = filters.tagId === tag.id ? null : tag.id;
+}
+
+function rateCallQuality(call: any) {
+  callForRating.value = call;
+  qualityRatingForm.score = call.qualityScore || 5;
+  qualityRatingForm.notes = '';
+  showQualityRatingDialog.value = true;
+}
+
+async function saveQualityRating() {
+  if (!callForRating.value) return;
+
+  try {
+    await useApiFetch(`call-log/${callForRating.value.id}/quality`, 'PUT', {
+      qualityScore: qualityRatingForm.score,
+      qualityNotes: qualityRatingForm.notes
+    });
+
+    showQualityRatingDialog.value = false;
+    await fetchCalls();
+    ElMessage.success($t('callLog.qualityRated'));
+  } catch {
+    ElMessage.error($t('callLog.qualityRatingFailed'));
+  }
+}
+
+function drillDownDuration() {
+  // Filter calls by clicking on duration chart - show modal with breakdown
+  ElMessageBox.alert(
+    $t('callLog.drillDownDurationMsg'),
+    $t('callLog.durationBreakdown'),
+    { confirmButtonText: $t('common.ok') }
+  );
+}
+
+function drillDownOutcome() {
+  // Filter calls by outcome - could show detailed breakdown
+  ElMessageBox.alert(
+    $t('callLog.drillDownOutcomeMsg'),
+    $t('callLog.outcomeBreakdown'),
+    { confirmButtonText: $t('common.ok') }
+  );
 }
 
 function renderCharts() {

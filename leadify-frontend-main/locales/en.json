@@ -325,7 +325,11 @@
     "amount": "Amount",
     "category": "Category",
     "status": "Status",
-    "date": "Date"
+    "date": "Date",
+    "name": "Name",
+    "type": "Type",
+    "size": "Size",
+    "uploadedAt": "Uploaded At"
   },
   "auth": {
     "login": "Sign In",
@@ -521,6 +525,15 @@
       "uploadImage": "Upload Image",
       "optional": "(Optional)",
       "imageHint": "JPG, JPEG, PNG, GIF (5 MB Maximum)"
+    },
+    "analytics": {
+      "totalActive": "Total Active",
+      "departments": "Departments",
+      "recentHires": "Recent Hires",
+      "avgTenure": "Avg Tenure",
+      "months": "Months",
+      "departmentDistribution": "Department Distribution",
+      "roleDistribution": "Role Distribution"
     }
   },
   "reports": {
@@ -1160,6 +1173,8 @@
       "type": "Type",
       "email": "Email",
       "phone": "Phone",
+      "ltv": "Lifetime Value",
+      "healthScore": "Health Score",
       "status": "Status",
       "assigned": "Assigned",
       "created": "Created"
@@ -1201,6 +1216,60 @@
       "status": "Status",
       "type": "Type",
       "assigned": "Assigned User"
+    },
+    "kpi": {
+      "totalClients": "Total Clients",
+      "activeClients": "Active Clients",
+      "inactiveClients": "Inactive Clients",
+      "totalRevenue": "Total Revenue",
+      "avgDealSize": "Avg Deal Size"
+    },
+    "segments": {
+      "enterprise": "Enterprise",
+      "growing": "Growing",
+      "atRisk": "At Risk",
+      "churning": "Churning"
+    }
+  },
+  "customer360": {
+    "title": "Customer 360° View",
+    "searchPrompt": "Search for a contact or client to see their complete profile",
+    "searchPlaceholder": "Search by name, email, or company...",
+    "aiSummaryTitle": "AI Customer Summary",
+    "generatingInsights": "Generating customer insights...",
+    "recentActivity": "Recent Activity",
+    "noRecentActivity": "No recent activity",
+    "contactDetails": "Contact Details",
+    "linkedDocuments": "Linked Documents",
+    "addDocument": "Add Document",
+    "noDocuments": "No documents found",
+    "addNotePlaceholder": "Add a note about this customer...",
+    "addNote": "Add Note",
+    "noNotes": "No notes yet",
+    "tabs": {
+      "overview": "Overview",
+      "deals": "Deals",
+      "invoices": "Invoices",
+      "tickets": "Tickets",
+      "documents": "Documents",
+      "notes": "Notes"
+    },
+    "stats": {
+      "totalDeals": "Total Deals",
+      "revenue": "Revenue",
+      "openTickets": "Open Tickets",
+      "invoices": "Invoices",
+      "engagement": "Engagement",
+      "sentiment": "Sentiment"
+    },
+    "fields": {
+      "fullName": "Full Name",
+      "email": "Email",
+      "phone": "Phone",
+      "company": "Company",
+      "position": "Position",
+      "source": "Source",
+      "created": "Created"
     }
   },
   "opportunities": {
@@ -1592,7 +1661,16 @@
         "type": "Project Type",
         "startDate": "Start Date",
         "endDate": "End Date"
-      }
+      },
+      "kpi": {
+        "totalProjects": "Total Projects",
+        "activeProjects": "Active Projects",
+        "completed": "Completed",
+        "avgDuration": "Avg Duration",
+        "onTimeDelivery": "On-Time Delivery",
+        "totalBudget": "Total Budget"
+      },
+      "days": "Days"
     },
     "vehicles": {
       "title": "Vehicles",
@@ -2528,7 +2606,11 @@
       "totalExpenses": "Total Expenses",
       "pendingExpenses": "Pending Expenses",
       "activeBudgets": "Active Budgets",
-      "collectionRate": "Collection Rate"
+      "collectionRate": "Collection Rate",
+      "startDate": "Start Date",
+      "endDate": "End Date",
+      "filterByCategory": "Filter by Category",
+      "refreshed": "Dashboard Refreshed"
     }
   },
   "fieldOps": {
@@ -4609,7 +4691,28 @@
     "notes": "Notes",
     "size": "Company Size",
     "marketShare": "Market Share",
-    "rating": "Rating"
+    "rating": "Rating",
+    "pricingInfo": "Pricing Information",
+    "pricingModel": "Pricing Model",
+    "basePrice": "Base Price",
+    "enterprisePrice": "Enterprise Price",
+    "pricingNotes": "Pricing Notes",
+    "pricingNotesPlaceholder": "Special offers, discounts...",
+    "pricingComparison": "Pricing Comparison",
+    "featureComparison": "Feature Comparison Matrix",
+    "feature": "Feature",
+    "editFeatures": "Edit Feature Matrix",
+    "featureMatrixDesc": "Manage features to compare across competitors.",
+    "addFeaturePlaceholder": "Enter feature name",
+    "winLossReasons": "Win/Loss Reason Analysis",
+    "winReasons": "Top Win Reasons",
+    "lossReasons": "Top Loss Reasons",
+    "activityTimeline": "Recent Competitor Activity",
+    "totalEngagements": "Total Engagements",
+    "winRate": "Win Rate",
+    "competitiveIntel": "Competitive Intelligence",
+    "pricingTab": "Pricing",
+    "analytics": "Analytics"
   },
   "loyaltyRewards": {
     "title": "Loyalty & Rewards",
@@ -5096,22 +5199,55 @@
     "title": "Email Templates",
     "subtitle": "Pre-built email templates for quick communication.",
     "newTemplate": "New Template",
+    "editTemplate": "Edit Template",
     "totalTemplates": "Total Templates",
     "categories": "Categories",
     "timesUsed": "Times Used",
+    "mostUsed": "Most Used",
     "used": "Used",
     "subject": "Subject",
     "body": "Body",
     "copy": "Copy",
+    "preview": "Preview",
+    "sendTest": "Test",
     "createFirst": "Create your first email template",
+    "noMatchingTemplates": "No templates match your search",
     "templateName": "Template Name",
     "category": "Category",
     "subjectLine": "Subject Line",
     "placeholderHint": "Use {name}, {company}, {product} as dynamic placeholders.",
     "saveTemplate": "Save Template",
     "templateCreated": "Template created successfully!",
+    "templateUpdated": "Template updated successfully!",
     "templateDeleted": "Template deleted successfully!",
-    "templateCopied": "Template copied to clipboard!"
+    "templateCopied": "Template copied to clipboard!",
+    "searchTemplates": "Search templates...",
+    "filterByCategory": "Filter by category",
+    "richText": "Rich Text",
+    "html": "HTML",
+    "templateVariables": "Template Variables",
+    "availableVariables": "Available Variables",
+    "varName": "Recipient name",
+    "varEmail": "Recipient email",
+    "varCompany": "Company name",
+    "varProduct": "Product name",
+    "varDeal": "Deal title",
+    "varValue": "Deal value",
+    "varDate": "Current date",
+    "varSenderName": "Your name",
+    "varSenderEmail": "Your email",
+    "variableInserted": "Variable inserted",
+    "sendTestEmail": "Send Test Email",
+    "recipientEmail": "Recipient Email",
+    "enterEmail": "Enter email address",
+    "testEmailHint": "A test email will be sent with sample data for the variables.",
+    "send": "Send",
+    "testEmailSent": "Test email sent successfully!",
+    "validEmailRequired": "Please enter a valid email address",
+    "today": "Today",
+    "yesterday": "Yesterday",
+    "subjectPlaceholder": "Re: Your inquiry",
+    "bodyPlaceholder": "Dear {name},\n\nThank you for your interest..."
   },
   "analytics": {
     "totalEarned": "Total Earned",
@@ -5969,7 +6105,52 @@
       "voicemail": "Left Voicemail",
       "no_answer": "No Answer",
       "callback": "Callback Requested"
-    }
+    },
+    "filterByOutcome": "Filter by Outcome",
+    "filterByDisposition": "Filter by Disposition",
+    "filterByAgent": "Filter by Agent",
+    "selectDateRange": "Select Date Range",
+    "startDate": "Start Date",
+    "endDate": "End Date",
+    "min": "Min",
+    "max": "Max",
+    "searchCalls": "Search calls...",
+    "applyFilters": "Apply Filters",
+    "clearFilters": "Clear Filters",
+    "filtersApplied": "Filters applied successfully",
+    "filtersCleared": "Filters cleared",
+    "selected": "selected",
+    "bulkReassign": "Bulk Reassign",
+    "bulkExport": "Bulk Export",
+    "bulkDelete": "Bulk Delete",
+    "confirmBulkDelete": "Are you sure you want to delete {count} call(s)?",
+    "bulkDeleteSuccess": "Calls deleted successfully",
+    "exportSuccess": "Calls exported successfully",
+    "exportFailed": "Failed to export calls",
+    "selectAgent": "Select an agent",
+    "assignTo": "Assign to",
+    "reassignConfirmMsg": "Reassign {count} call(s) to the selected agent?",
+    "reassign": "Reassign",
+    "reassignSuccess": "Calls reassigned successfully",
+    "reassignFailed": "Failed to reassign calls",
+    "callTags": "Call Tags",
+    "addTag": "Add Tag",
+    "addTags": "Add Tags",
+    "selectTags": "Select Tags",
+    "selectTagsPlaceholder": "Choose tags for this call...",
+    "tagsUpdated": "Tags updated successfully",
+    "tagsUpdateFailed": "Failed to update tags",
+    "tags": "Tags",
+    "qualityScore": "Quality Score",
+    "rateCallQuality": "Rate Call Quality",
+    "qualityNotes": "Quality Notes",
+    "qualityNotesPlaceholder": "Add notes about call quality...",
+    "qualityRated": "Call quality rated successfully",
+    "qualityRatingFailed": "Failed to rate call quality",
+    "durationBreakdown": "Duration Breakdown",
+    "outcomeBreakdown": "Outcome Breakdown",
+    "drillDownDurationMsg": "Click on any duration segment to see detailed call breakdown",
+    "drillDownOutcomeMsg": "Click on any outcome segment to filter calls by that outcome"
   },
   "meetingNotes": {
     "title": "Meeting Notes",
@@ -6018,6 +6199,21 @@
       "pending": "Pending",
       "completed": "Completed",
       "overdue": "Overdue"
-    }
+    },
+    "analytics": "Analytics",
+    "meetingsThisWeek": "Meetings This Week",
+    "actionItemsPending": "Pending Action Items",
+    "avgDuration": "Avg Duration",
+    "searchNotes": "Search notes, action items, participants...",
+    "export": "Export",
+    "exportMinutes": "Export Meeting Minutes",
+    "exportDescription": "Download this meeting note in your preferred format",
+    "exportPDF": "Export as PDF",
+    "exportWord": "Export as Word Document",
+    "exportMarkdown": "Export as Markdown",
+    "exportingPDF": "Generating PDF...",
+    "exportingWord": "Generating Word document...",
+    "exportSuccess": "Meeting note exported successfully",
+    "exportFailed": "Failed to export meeting note"
   }
 }

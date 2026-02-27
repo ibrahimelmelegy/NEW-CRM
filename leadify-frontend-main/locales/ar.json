@@ -325,7 +325,11 @@
     "amount": "المبلغ",
     "category": "الفئة",
     "status": "الحالة",
-    "date": "التاريخ"
+    "date": "التاريخ",
+    "name": "الاسم",
+    "type": "النوع",
+    "size": "الحجم",
+    "uploadedAt": "تاريخ الرفع"
   },
   "activities": {
     "types": {
@@ -537,6 +541,15 @@
       "uploadImage": "تحميل صورة",
       "optional": "(اختياري)",
       "imageHint": "JPG, JPEG, PNG, GIF (الحد الأقصى 5 ميجابايت)"
+    },
+    "analytics": {
+      "totalActive": "إجمالي النشطين",
+      "departments": "الأقسام",
+      "recentHires": "التوظيفات الحديثة",
+      "avgTenure": "متوسط مدة الخدمة",
+      "months": "شهور",
+      "departmentDistribution": "توزيع الأقسام",
+      "roleDistribution": "توزيع الأدوار"
     }
   },
   "reports": {
@@ -1123,6 +1136,8 @@
       "type": "النوع",
       "email": "البريد الإلكتروني",
       "phone": "رقم الهاتف",
+      "ltv": "القيمة الدائمة",
+      "healthScore": "مؤشر الصحة",
       "status": "الحالة",
       "assigned": "المعين",
       "created": "تاريخ الإنشاء"
@@ -1164,6 +1179,60 @@
       "status": "الحالة",
       "type": "النوع",
       "assigned": "المستخدم المعين"
+    },
+    "kpi": {
+      "totalClients": "إجمالي العملاء",
+      "activeClients": "العملاء النشطون",
+      "inactiveClients": "العملاء غير النشطين",
+      "totalRevenue": "إجمالي الإيرادات",
+      "avgDealSize": "متوسط حجم الصفقة"
+    },
+    "segments": {
+      "enterprise": "مؤسسات كبرى",
+      "growing": "في نمو",
+      "atRisk": "معرض للخطر",
+      "churning": "متوقف"
+    }
+  },
+  "customer360": {
+    "title": "رؤية 360° للعميل",
+    "searchPrompt": "ابحث عن جهة اتصال أو عميل لرؤية الملف الشخصي الكامل",
+    "searchPlaceholder": "البحث بالاسم أو البريد أو الشركة...",
+    "aiSummaryTitle": "ملخص العميل بالذكاء الاصطناعي",
+    "generatingInsights": "جاري إنشاء رؤى العميل...",
+    "recentActivity": "النشاط الأخير",
+    "noRecentActivity": "لا يوجد نشاط حديث",
+    "contactDetails": "تفاصيل الاتصال",
+    "linkedDocuments": "المستندات المرتبطة",
+    "addDocument": "إضافة مستند",
+    "noDocuments": "لا توجد مستندات",
+    "addNotePlaceholder": "أضف ملاحظة عن هذا العميل...",
+    "addNote": "إضافة ملاحظة",
+    "noNotes": "لا توجد ملاحظات حتى الآن",
+    "tabs": {
+      "overview": "نظرة عامة",
+      "deals": "الصفقات",
+      "invoices": "الفواتير",
+      "tickets": "التذاكر",
+      "documents": "المستندات",
+      "notes": "الملاحظات"
+    },
+    "stats": {
+      "totalDeals": "إجمالي الصفقات",
+      "revenue": "الإيرادات",
+      "openTickets": "التذاكر المفتوحة",
+      "invoices": "الفواتير",
+      "engagement": "التفاعل",
+      "sentiment": "المعنويات"
+    },
+    "fields": {
+      "fullName": "الاسم الكامل",
+      "email": "البريد الإلكتروني",
+      "phone": "الهاتف",
+      "company": "الشركة",
+      "position": "المنصب",
+      "source": "المصدر",
+      "created": "تاريخ الإنشاء"
     }
   },
   "leads": {
@@ -1602,7 +1671,16 @@
         "type": "نوع المشروع",
         "startDate": "تاريخ البدء",
         "endDate": "تاريخ الانتهاء"
-      }
+      },
+      "kpi": {
+        "totalProjects": "إجمالي المشاريع",
+        "activeProjects": "المشاريع النشطة",
+        "completed": "المكتملة",
+        "avgDuration": "متوسط المدة",
+        "onTimeDelivery": "التسليم في الوقت المحدد",
+        "totalBudget": "إجمالي الميزانية"
+      },
+      "days": "أيام"
     },
     "vehicles": {
       "title": "المركبات",
@@ -2544,7 +2622,11 @@
       "totalExpenses": "إجمالي المصروفات",
       "pendingExpenses": "المصروفات المعلقة",
       "activeBudgets": "الميزانيات النشطة",
-      "collectionRate": "معدل التحصيل"
+      "collectionRate": "معدل التحصيل",
+      "startDate": "تاريخ البداية",
+      "endDate": "تاريخ النهاية",
+      "filterByCategory": "تصفية حسب الفئة",
+      "refreshed": "تم تحديث اللوحة"
     }
   },
   "fieldOps": {
@@ -4625,7 +4707,28 @@
     "notes": "ملاحظات",
     "size": "حجم الشركة",
     "marketShare": "حصة السوق",
-    "rating": "التقييم"
+    "rating": "التقييم",
+    "pricingInfo": "معلومات التسعير",
+    "pricingModel": "نموذج التسعير",
+    "basePrice": "السعر الأساسي",
+    "enterprisePrice": "سعر المؤسسات",
+    "pricingNotes": "ملاحظات التسعير",
+    "pricingNotesPlaceholder": "عروض خاصة، خصومات...",
+    "pricingComparison": "مقارنة الأسعار",
+    "featureComparison": "مصفوفة مقارنة الميزات",
+    "feature": "الميزة",
+    "editFeatures": "تحرير مصفوفة الميزات",
+    "featureMatrixDesc": "إدارة الميزات للمقارنة بين المنافسين.",
+    "addFeaturePlaceholder": "أدخل اسم الميزة",
+    "winLossReasons": "تحليل أسباب الفوز/الخسارة",
+    "winReasons": "أهم أسباب الفوز",
+    "lossReasons": "أهم أسباب الخسارة",
+    "activityTimeline": "نشاط المنافسين الأخير",
+    "totalEngagements": "إجمالي المشاركات",
+    "winRate": "معدل الفوز",
+    "competitiveIntel": "الاستخبارات التنافسية",
+    "pricingTab": "التسعير",
+    "analytics": "التحليلات"
   },
   "loyaltyRewards": {
     "title": "الولاء والمكافآت",
@@ -5100,22 +5203,55 @@
     "title": "قوالب البريد الإلكتروني",
     "subtitle": "قوالب بريد إلكتروني جاهزة للتواصل السريع.",
     "newTemplate": "قالب جديد",
+    "editTemplate": "تعديل القالب",
     "totalTemplates": "إجمالي القوالب",
     "categories": "الفئات",
     "timesUsed": "مرات الاستخدام",
+    "mostUsed": "الأكثر استخدامًا",
     "used": "مستخدم",
     "subject": "الموضوع",
     "body": "المحتوى",
     "copy": "نسخ",
+    "preview": "معاينة",
+    "sendTest": "اختبار",
     "createFirst": "أنشئ أول قالب بريد إلكتروني",
+    "noMatchingTemplates": "لا توجد قوالب مطابقة للبحث",
     "templateName": "اسم القالب",
     "category": "الفئة",
     "subjectLine": "سطر الموضوع",
     "placeholderHint": "استخدم {name} و{company} و{product} كعناصر نائبة ديناميكية.",
     "saveTemplate": "حفظ القالب",
     "templateCreated": "تم إنشاء القالب بنجاح!",
+    "templateUpdated": "تم تحديث القالب بنجاح!",
     "templateDeleted": "تم حذف القالب بنجاح!",
-    "templateCopied": "تم نسخ القالب إلى الحافظة!"
+    "templateCopied": "تم نسخ القالب إلى الحافظة!",
+    "searchTemplates": "البحث في القوالب...",
+    "filterByCategory": "تصفية حسب الفئة",
+    "richText": "نص منسق",
+    "html": "HTML",
+    "templateVariables": "متغيرات القالب",
+    "availableVariables": "المتغيرات المتاحة",
+    "varName": "اسم المستلم",
+    "varEmail": "بريد المستلم",
+    "varCompany": "اسم الشركة",
+    "varProduct": "اسم المنتج",
+    "varDeal": "عنوان الصفقة",
+    "varValue": "قيمة الصفقة",
+    "varDate": "التاريخ الحالي",
+    "varSenderName": "اسمك",
+    "varSenderEmail": "بريدك الإلكتروني",
+    "variableInserted": "تم إدراج المتغير",
+    "sendTestEmail": "إرسال بريد تجريبي",
+    "recipientEmail": "البريد الإلكتروني للمستلم",
+    "enterEmail": "أدخل عنوان البريد الإلكتروني",
+    "testEmailHint": "سيتم إرسال بريد تجريبي مع بيانات عينة للمتغيرات.",
+    "send": "إرسال",
+    "testEmailSent": "تم إرسال البريد التجريبي بنجاح!",
+    "validEmailRequired": "يرجى إدخال عنوان بريد إلكتروني صحيح",
+    "today": "اليوم",
+    "yesterday": "أمس",
+    "subjectPlaceholder": "بخصوص: استفسارك",
+    "bodyPlaceholder": "عزيزي {name}،\n\nشكرًا لاهتمامك..."
   },
   "analytics": {
     "totalEarned": "إجمالي المكتسب",
@@ -5939,7 +6075,52 @@
       "voicemail": "ترك بريد صوتي",
       "no_answer": "لا إجابة",
       "callback": "طلب معاودة الاتصال"
-    }
+    },
+    "filterByOutcome": "تصفية حسب النتيجة",
+    "filterByDisposition": "تصفية حسب التصنيف",
+    "filterByAgent": "تصفية حسب الموظف",
+    "selectDateRange": "اختر النطاق الزمني",
+    "startDate": "تاريخ البدء",
+    "endDate": "تاريخ الانتهاء",
+    "min": "الحد الأدنى",
+    "max": "الحد الأقصى",
+    "searchCalls": "البحث في المكالمات...",
+    "applyFilters": "تطبيق الفلاتر",
+    "clearFilters": "مسح الفلاتر",
+    "filtersApplied": "تم تطبيق الفلاتر بنجاح",
+    "filtersCleared": "تم مسح الفلاتر",
+    "selected": "محدد",
+    "bulkReassign": "إعادة تعيين جماعية",
+    "bulkExport": "تصدير جماعي",
+    "bulkDelete": "حذف جماعي",
+    "confirmBulkDelete": "هل أنت متأكد من حذف {count} مكالمة؟",
+    "bulkDeleteSuccess": "تم حذف المكالمات بنجاح",
+    "exportSuccess": "تم تصدير المكالمات بنجاح",
+    "exportFailed": "فشل تصدير المكالمات",
+    "selectAgent": "اختر موظف",
+    "assignTo": "تعيين إلى",
+    "reassignConfirmMsg": "إعادة تعيين {count} مكالمة إلى الموظف المحدد؟",
+    "reassign": "إعادة تعيين",
+    "reassignSuccess": "تم إعادة تعيين المكالمات بنجاح",
+    "reassignFailed": "فشل إعادة تعيين المكالمات",
+    "callTags": "وسوم المكالمات",
+    "addTag": "إضافة وسم",
+    "addTags": "إضافة وسوم",
+    "selectTags": "اختر الوسوم",
+    "selectTagsPlaceholder": "اختر وسوم لهذه المكالمة...",
+    "tagsUpdated": "تم تحديث الوسوم بنجاح",
+    "tagsUpdateFailed": "فشل تحديث الوسوم",
+    "tags": "الوسوم",
+    "qualityScore": "تقييم الجودة",
+    "rateCallQuality": "تقييم جودة المكالمة",
+    "qualityNotes": "ملاحظات الجودة",
+    "qualityNotesPlaceholder": "أضف ملاحظات حول جودة المكالمة...",
+    "qualityRated": "تم تقييم جودة المكالمة بنجاح",
+    "qualityRatingFailed": "فشل تقييم جودة المكالمة",
+    "durationBreakdown": "تفصيل المدة",
+    "outcomeBreakdown": "تفصيل النتائج",
+    "drillDownDurationMsg": "انقر على أي قطاع من المدة لرؤية التفاصيل",
+    "drillDownOutcomeMsg": "انقر على أي قطاع من النتائج لتصفية المكالمات"
   },
   "meetingNotes": {
     "title": "ملاحظات الاجتماعات",
@@ -5988,6 +6169,21 @@
       "pending": "معلق",
       "completed": "مكتمل",
       "overdue": "متأخر"
-    }
+    },
+    "analytics": "التحليلات",
+    "meetingsThisWeek": "اجتماعات هذا الأسبوع",
+    "actionItemsPending": "مهام قيد الانتظار",
+    "avgDuration": "متوسط المدة",
+    "searchNotes": "البحث في الملاحظات والمهام والمشاركين...",
+    "export": "تصدير",
+    "exportMinutes": "تصدير محضر الاجتماع",
+    "exportDescription": "تحميل هذه الملاحظة بالصيغة المفضلة",
+    "exportPDF": "تصدير بصيغة PDF",
+    "exportWord": "تصدير بصيغة Word",
+    "exportMarkdown": "تصدير بصيغة Markdown",
+    "exportingPDF": "جاري إنشاء PDF...",
+    "exportingWord": "جاري إنشاء مستند Word...",
+    "exportSuccess": "تم تصدير ملاحظة الاجتماع بنجاح",
+    "exportFailed": "فشل تصدير ملاحظة الاجتماع"
   }
 }

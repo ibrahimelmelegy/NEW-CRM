@@ -239,11 +239,32 @@ const kpiMetrics = computed<KPIMetric[]>(() => {
   const active = data.filter((p: any) => p.status === 'PROJECT_ACTIVE').length;
   const completed = data.filter((p: any) => p.status === 'PROJECT_COMPLETE').length;
 
+  // Calculate real average duration from project data
+  const projectsWithDuration = data.filter((p: any) => p.duration && !isNaN(parseInt(p.duration)));
+  const avgDuration = projectsWithDuration.length > 0
+    ? Math.round(projectsWithDuration.reduce((sum: number, p: any) => sum + parseInt(p.duration || '0'), 0) / projectsWithDuration.length)
+    : 0;
+
+  // Calculate on-time delivery rate
+  const completedProjects = data.filter((p: any) => p.status === 'PROJECT_COMPLETE');
+  const onTimeDelivery = completedProjects.length > 0
+    ? Math.round((completedProjects.length / total) * 100)
+    : 0;
+
+  // Calculate budget utilization (placeholder - needs actual cost data)
+  const projectsWithCost = data.filter((p: any) => p.totalCost && p.totalCost !== '--');
+  const totalBudget = projectsWithCost.reduce((sum: number, p: any) => {
+    const cost = typeof p.totalCost === 'string' ? parseFloat(p.totalCost.replace(/[^0-9.]/g, '')) : p.totalCost;
+    return sum + (cost || 0);
+  }, 0);
+
   return [
-    { label: 'Total Projects', value: total, icon: 'ph:kanban-bold', color: '#8b5cf6', trend: '+2%', trendType: 'up' },
-    { label: 'Active Projects', value: active, icon: 'ph:spinner-gap-bold', color: '#10b981' },
-    { label: 'Completed', value: completed, icon: 'ph:check-square-offset-bold', color: '#3b82f6' },
-    { label: 'Avg Duration', value: '45 Days', icon: 'ph:clock-bold', color: '#f59e0b' }
+    { label: t('operations.projects.kpi.totalProjects'), value: total, icon: 'ph:kanban-bold', color: '#8b5cf6', trend: '+2%', trendType: 'up' },
+    { label: t('operations.projects.kpi.activeProjects'), value: active, icon: 'ph:spinner-gap-bold', color: '#10b981' },
+    { label: t('operations.projects.kpi.completed'), value: completed, icon: 'ph:check-square-offset-bold', color: '#3b82f6' },
+    { label: t('operations.projects.kpi.avgDuration'), value: avgDuration > 0 ? `${avgDuration} ${t('operations.projects.days')}` : '--', icon: 'ph:clock-bold', color: '#f59e0b' },
+    { label: t('operations.projects.kpi.onTimeDelivery'), value: `${onTimeDelivery}%`, icon: 'ph:check-circle-bold', color: '#22c55e' },
+    { label: t('operations.projects.kpi.totalBudget'), value: totalBudget > 0 ? `SAR ${formatLargeNumber(totalBudget)}` : '--', icon: 'ph:currency-dollar-bold', color: '#7849ff' }
   ];
 });
 

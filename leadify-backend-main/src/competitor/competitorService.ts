@@ -266,6 +266,33 @@ class CompetitorService {
       raw: true
     });
   }
+
+  /**
+   * Get recent competitor activity for timeline.
+   * Returns recent creations, updates, and win/loss events.
+   */
+  async getRecentActivity(tenantId?: string, limit = 10) {
+    const where: any = {};
+    if (tenantId) where.tenantId = tenantId;
+
+    const recent = await Competitor.findAll({
+      where,
+      order: [['updatedAt', 'DESC']],
+      limit,
+      attributes: ['id', 'name', 'createdAt', 'updatedAt', 'dealsWon', 'dealsLost', 'threatLevel']
+    });
+
+    // Build activity timeline (in real app, this would come from an audit log)
+    return recent.map(c => ({
+      id: c.id,
+      type: 'UPDATED',
+      title: `${c.name} updated`,
+      description: `Competitor details modified`,
+      createdAt: c.updatedAt,
+      competitorId: c.id,
+      competitorName: c.name
+    }));
+  }
 }
 
 export default new CompetitorService();

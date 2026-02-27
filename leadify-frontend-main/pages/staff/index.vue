@@ -8,6 +8,55 @@
         NuxtLink(to="/staff/add-staff")
           el-button(size='large' :loading="loading" v-if="hasPermission('CREATE_STAFF')" native-type="submit" type="primary" :icon="Plus" class="w-full !my-4 !rounded-2xl") {{ $t('staff.newStaff') }}
 
+    //- KPI Analytics Section
+    .grid.gap-4.mb-6(class="grid-cols-2 md:grid-cols-4")
+      .glass-card.p-5.rounded-2xl
+        .flex.items-center.justify-between
+          div
+            p.text-xs.font-medium.uppercase.tracking-wide(style="color: var(--text-muted)") {{ $t('staff.analytics.totalActive') }}
+            p.text-2xl.font-bold.mt-1(style="color: #7849ff") {{ staffAnalytics.totalActive }}
+          .w-10.h-10.rounded-xl.flex.items-center.justify-center(style="background: #7849ff20")
+            Icon(name="ph:users-bold" size="20" style="color: #7849ff")
+      .glass-card.p-5.rounded-2xl
+        .flex.items-center.justify-between
+          div
+            p.text-xs.font-medium.uppercase.tracking-wide(style="color: var(--text-muted)") {{ $t('staff.analytics.departments') }}
+            p.text-2xl.font-bold.mt-1(style="color: #10b981") {{ staffAnalytics.departmentCount }}
+          .w-10.h-10.rounded-xl.flex.items-center.justify-center(style="background: #10b98120")
+            Icon(name="ph:building-office-bold" size="20" style="color: #10b981")
+      .glass-card.p-5.rounded-2xl
+        .flex.items-center.justify-between
+          div
+            p.text-xs.font-medium.uppercase.tracking-wide(style="color: var(--text-muted)") {{ $t('staff.analytics.recentHires') }}
+            p.text-2xl.font-bold.mt-1(style="color: #3b82f6") {{ staffAnalytics.recentHires }}
+          .w-10.h-10.rounded-xl.flex.items-center.justify-center(style="background: #3b82f620")
+            Icon(name="ph:user-plus-bold" size="20" style="color: #3b82f6")
+      .glass-card.p-5.rounded-2xl
+        .flex.items-center.justify-between
+          div
+            p.text-xs.font-medium.uppercase.tracking-wide(style="color: var(--text-muted)") {{ $t('staff.analytics.avgTenure') }}
+            p.text-2xl.font-bold.mt-1(style="color: #f59e0b") {{ staffAnalytics.avgTenure }}
+          .w-10.h-10.rounded-xl.flex.items-center.justify-center(style="background: #f59e0b20")
+            Icon(name="ph:calendar-blank-bold" size="20" style="color: #f59e0b")
+
+    //- Charts Row
+    .grid.gap-6.mb-6(class="grid-cols-1 md:grid-cols-2" v-if="!loadingAction")
+      .glass-card.p-6.rounded-2xl
+        h3.text-lg.font-bold.mb-4(style="color: var(--text-primary)") {{ $t('staff.analytics.departmentDistribution') }}
+        ClientOnly
+          VChart(v-if="departmentChartOption" :option="departmentChartOption" autoresize style="height: 300px")
+        .text-center.py-12(v-if="!departmentChartOption")
+          Icon(name="ph:chart-pie" size="48" style="color: var(--text-muted)")
+          p.mt-2.text-sm(style="color: var(--text-muted)") {{ $t('common.noData') }}
+
+      .glass-card.p-6.rounded-2xl
+        h3.text-lg.font-bold.mb-4(style="color: var(--text-primary)") {{ $t('staff.analytics.roleDistribution') }}
+        ClientOnly
+          VChart(v-if="roleChartOption" :option="roleChartOption" autoresize style="height: 300px")
+        .text-center.py-12(v-if="!roleChartOption")
+          Icon(name="ph:chart-bar" size="48" style="color: var(--text-muted)")
+          p.mt-2.text-sm(style="color: var(--text-muted)") {{ $t('common.noData') }}
+
     SavedViews(:entityType="'staff'" :currentFilters="{}" @apply-view="handleApplyView")
     AdvancedSearch(:entityType="'staff'" :fields="advancedSearchFields" @apply="handleAdvancedFilter" @clear="handleClearAdvancedFilter")
 
@@ -91,6 +140,15 @@
 
 <script setup lang="ts">
 import { Plus } from '@element-plus/icons-vue';
+import { use } from 'echarts/core';
+import { CanvasRenderer } from 'echarts/renderers';
+import { BarChart, PieChart } from 'echarts/charts';
+import { TitleComponent, TooltipComponent, LegendComponent, GridComponent } from 'echarts/components';
+import VChart from 'vue-echarts';
+import { getPieChartsData } from '~/composables/charts';
+
+use([CanvasRenderer, BarChart, PieChart, TitleComponent, TooltipComponent, LegendComponent, GridComponent]);
+
 const { hasPermission } = await usePermissions();
 const { t } = useI18n();
 const router = useRouter();
@@ -171,6 +229,114 @@ const table = reactive({
 // Call API to Get the staff
 const response = await useTableFilter('users');
 table.data = response.formattedData;
+
+// Staff Analytics
+const staffAnalytics = computed(() => {
+  const data = table.data || [];
+  const activeStaff = data.filter((s: any) => s.status === 'ACTIVE');
+
+  // Department count (extracted from role or department field)
+  const departments = new Set<string>();
+  data.forEach((s: any) => {
+    const dept = s.department || s.roleDetails?.split('-')[0]?.trim() || 'Unknown';
+    departments.add(dept);
+  });
+
+  // Recent hires (last 30 days)
+  const thirtyDaysAgo = new Date();
+  thirtyDaysAgo.setDate(thirtyDaysAgo.getDate() - 30);
+  const recentHires = data.filter((s: any) => {
+    if (!s.createdAt) return false;
+    return new Date(s.createdAt) > thirtyDaysAgo;
+  }).length;
+
+  // Average tenure (in months)
+  const staffWithDates = data.filter((s: any) => s.createdAt);
+  const avgTenureMonths = staffWithDates.length > 0
+    ? Math.round(staffWithDates.reduce((sum: number, s: any) => {
+        const months = Math.max(0, Math.floor((new Date().getTime() - new Date(s.createdAt).getTime()) / (1000 * 60 * 60 * 24 * 30)));
+        return sum + months;
+      }, 0) / staffWithDates.length)
+    : 0;
+
+  return {
+    totalActive: activeStaff.length,
+    departmentCount: departments.size,
+    recentHires,
+    avgTenure: avgTenureMonths > 0 ? `${avgTenureMonths} ${t('staff.analytics.months')}` : '--'
+  };
+});
+
+// Department Distribution Chart
+const departmentChartOption = computed(() => {
+  const data = table.data || [];
+  if (!data.length) return null;
+
+  const deptMap = new Map<string, number>();
+  data.forEach((s: any) => {
+    const dept = s.department || s.roleDetails?.split('-')[0]?.trim() || 'Unknown';
+    deptMap.set(dept, (deptMap.get(dept) || 0) + 1);
+  });
+
+  const chartData = Array.from(deptMap.entries()).map(([name, value]) => ({ name, value }));
+  if (!chartData.length) return null;
+
+  const colors = ['#7849FF', '#10B981', '#3B82F6', '#F59E0B', '#EF4444', '#8B5CF6', '#EC4899', '#14B8A6'];
+  return getPieChartsData(chartData, colors);
+});
+
+// Role Distribution Chart
+const roleChartOption = computed(() => {
+  const data = table.data || [];
+  if (!data.length) return null;
+
+  const roleMap = new Map<string, number>();
+  data.forEach((s: any) => {
+    const role = s.roleDetails || 'Unknown';
+    roleMap.set(role, (roleMap.get(role) || 0) + 1);
+  });
+
+  const roles = Array.from(roleMap.keys()).slice(0, 10); // Top 10 roles
+  const counts = roles.map(r => roleMap.get(r) || 0);
+
+  if (!roles.length) return null;
+
+  return {
+    tooltip: {
+      trigger: 'axis',
+      axisPointer: { type: 'shadow' },
+      backgroundColor: 'rgba(30, 30, 45, 0.85)',
+      borderColor: 'rgba(120, 73, 255, 0.3)',
+      borderWidth: 1,
+      padding: [12, 16],
+      textStyle: { color: '#fff' }
+    },
+    grid: { top: 20, right: 20, bottom: 60, left: 20, containLabel: true },
+    xAxis: {
+      type: 'category',
+      data: roles,
+      axisLabel: { color: '#94A3B8', rotate: 45, fontSize: 11 },
+      axisLine: { show: false },
+      axisTick: { show: false }
+    },
+    yAxis: {
+      type: 'value',
+      splitLine: { lineStyle: { type: 'dashed' as const, color: 'rgba(255,255,255,0.05)' } },
+      axisLabel: { color: '#64748B' }
+    },
+    series: [
+      {
+        type: 'bar',
+        data: counts,
+        barWidth: '40%',
+        itemStyle: {
+          borderRadius: [6, 6, 0, 0],
+          color: '#7849ff'
+        }
+      }
+    ]
+  };
+});
 
 function handleRowClick(val: any) {
   router.push(`/staff/${val.id}`);

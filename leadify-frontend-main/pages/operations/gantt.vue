@@ -4,22 +4,22 @@
     <div class="glass-panel p-6 rounded-2xl">
       <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
         <div>
-          <h1 class="text-2xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-indigo-400 to-blue-400">Gantt Timeline</h1>
-          <p class="text-slate-400 text-sm mt-1">Visualize project schedules, dependencies, and milestones.</p>
+          <h1 class="text-2xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-indigo-400 to-blue-400">{{ $t('gantt.title') }}</h1>
+          <p class="text-slate-400 text-sm mt-1">{{ $t('gantt.subtitle') }}</p>
         </div>
         <div class="flex gap-2">
           <el-button-group>
-            <el-button :type="viewMode === 'week' ? 'primary' : 'default'" size="small" @click="viewMode = 'week'">Week</el-button>
-            <el-button :type="viewMode === 'month' ? 'primary' : 'default'" size="small" @click="viewMode = 'month'">Month</el-button>
-            <el-button :type="viewMode === 'quarter' ? 'primary' : 'default'" size="small" @click="viewMode = 'quarter'">Quarter</el-button>
+            <el-button :type="viewMode === 'week' ? 'primary' : 'default'" size="small" @click="viewMode = 'week'">{{ $t('gantt.week') }}</el-button>
+            <el-button :type="viewMode === 'month' ? 'primary' : 'default'" size="small" @click="viewMode = 'month'">{{ $t('gantt.month') }}</el-button>
+            <el-button :type="viewMode === 'quarter' ? 'primary' : 'default'" size="small" @click="viewMode = 'quarter'">{{ $t('gantt.quarter') }}</el-button>
           </el-button-group>
           <el-button :type="showCriticalPath ? 'warning' : 'default'" size="small" @click="showCriticalPath = !showCriticalPath">
             <Icon name="ph:lightning-bold" class="w-4 h-4 mr-1" />
-            Critical Path
+            {{ $t('gantt.criticalPath') }}
           </el-button>
           <el-button type="primary" class="!rounded-xl" @click="openAddDialog">
             <Icon name="ph:plus-bold" class="w-4 h-4 mr-2" />
-            Add Task
+            {{ $t('gantt.addTask') }}
           </el-button>
         </div>
       </div>
@@ -29,23 +29,23 @@
     <div class="grid grid-cols-2 md:grid-cols-5 gap-4">
       <div class="glass-panel p-4 rounded-xl text-center">
         <div class="text-2xl font-bold text-slate-200">{{ tasks.length }}</div>
-        <div class="text-xs text-slate-500 mt-1">Total Tasks</div>
+        <div class="text-xs text-slate-500 mt-1">{{ $t('gantt.totalTasks') }}</div>
       </div>
       <div class="glass-panel p-4 rounded-xl text-center">
         <div class="text-2xl font-bold text-emerald-400">{{ tasks.filter(t => t.progress === 100).length }}</div>
-        <div class="text-xs text-slate-500 mt-1">Completed</div>
+        <div class="text-xs text-slate-500 mt-1">{{ $t('gantt.completed') }}</div>
       </div>
       <div class="glass-panel p-4 rounded-xl text-center">
         <div class="text-2xl font-bold text-blue-400">{{ tasks.filter(t => t.progress > 0 && t.progress < 100).length }}</div>
-        <div class="text-xs text-slate-500 mt-1">In Progress</div>
+        <div class="text-xs text-slate-500 mt-1">{{ $t('gantt.inProgress') }}</div>
       </div>
       <div class="glass-panel p-4 rounded-xl text-center">
         <div class="text-2xl font-bold text-red-400">{{ overdueTasks }}</div>
-        <div class="text-xs text-slate-500 mt-1">Overdue</div>
+        <div class="text-xs text-slate-500 mt-1">{{ $t('gantt.overdue') }}</div>
       </div>
       <div class="glass-panel p-4 rounded-xl text-center">
         <div class="text-2xl font-bold text-indigo-400">{{ overallProgress }}%</div>
-        <div class="text-xs text-slate-500 mt-1">Overall Progress</div>
+        <div class="text-xs text-slate-500 mt-1">{{ $t('gantt.overallProgress') }}</div>
       </div>
     </div>
 
@@ -54,7 +54,7 @@
       <!-- Timeline Header -->
       <div class="flex border-b border-slate-800/60">
         <div class="w-72 flex-shrink-0 p-3 border-r border-slate-800/60">
-          <span class="text-sm font-medium text-slate-300">Task Name</span>
+          <span class="text-sm font-medium text-slate-300">{{ $t('gantt.taskName') }}</span>
         </div>
         <div ref="timelineHeaderRef" class="flex-1 flex overflow-x-auto relative" @scroll="syncScroll('header', $event)">
           <div
@@ -73,7 +73,7 @@
             class="absolute top-0 bottom-0 w-0.5 bg-red-500 z-10 pointer-events-none"
             :style="{ left: todayOffset + 'px' }"
           >
-            <div class="absolute -top-0 left-1/2 -translate-x-1/2 bg-red-500 text-white text-[8px] px-1 rounded-b font-bold whitespace-nowrap">TODAY</div>
+            <div class="absolute -top-0 left-1/2 -translate-x-1/2 bg-red-500 text-white text-[8px] px-1 rounded-b font-bold whitespace-nowrap">{{ $t('gantt.today') }}</div>
           </div>
         </div>
       </div>
@@ -96,8 +96,8 @@
               <div class="flex items-center gap-2 mt-1">
                 <el-avatar :size="18" class="bg-slate-700 text-[10px]">{{ task.assignee?.charAt(0) }}</el-avatar>
                 <span class="text-[10px] text-slate-500">{{ task.assignee }}</span>
-                <el-tag v-if="task.isMilestone" type="warning" effect="dark" size="small" class="!text-[10px]">Milestone</el-tag>
-                <el-tag v-if="showCriticalPath && isCriticalTask(task)" type="danger" effect="dark" size="small" class="!text-[10px]">Critical</el-tag>
+                <el-tag v-if="task.isMilestone" type="warning" effect="dark" size="small" class="!text-[10px]">{{ $t('gantt.milestone') }}</el-tag>
+                <el-tag v-if="showCriticalPath && isCriticalTask(task)" type="danger" effect="dark" size="small" class="!text-[10px]">{{ $t('gantt.critical') }}</el-tag>
               </div>
             </div>
             <!-- Delete button visible on hover -->
@@ -177,7 +177,7 @@
       <!-- Empty State -->
       <div v-if="!loading && tasks.length === 0" class="p-12 text-center">
         <Icon name="ph:calendar-blank-bold" class="w-16 h-16 text-slate-600 mx-auto mb-4" />
-        <p class="text-slate-500">No tasks scheduled. Add your first task to get started.</p>
+        <p class="text-slate-500">{{ $t('gantt.noTasks') }}</p>
       </div>
     </div>
 
@@ -185,64 +185,64 @@
     <div class="flex items-center gap-4 text-xs text-slate-500 flex-wrap">
       <div class="flex items-center gap-1">
         <div class="w-3 h-3 bg-red-500 rounded-sm"></div>
-        Today Line
+        {{ $t('gantt.todayLine') }}
       </div>
       <div class="flex items-center gap-1">
         <div class="w-3 h-3 rounded-sm bg-blue-500/40"></div>
-        In Progress
+        {{ $t('gantt.inProgress') }}
       </div>
       <div class="flex items-center gap-1">
         <div class="w-3 h-3 rounded-sm bg-emerald-500/40"></div>
-        Completed
+        {{ $t('gantt.completed') }}
       </div>
       <div class="flex items-center gap-1">
         <Icon name="ph:diamond-fill" class="w-3 h-3 text-amber-400" />
-        Milestone
+        {{ $t('gantt.milestone') }}
       </div>
       <div class="flex items-center gap-1">
         <div class="w-4 border-t border-dashed border-indigo-400"></div>
-        Dependency
+        {{ $t('gantt.dependency') }}
       </div>
       <div class="flex items-center gap-1">
         <div class="w-3 h-3 rounded-sm bg-red-500/40 ring-1 ring-red-500"></div>
-        Critical Path
+        {{ $t('gantt.criticalPath') }}
       </div>
       <div class="flex items-center gap-1">
         <div class="w-2 h-4 bg-white/20 border border-slate-500 rounded-sm cursor-col-resize"></div>
-        Drag to Resize
+        {{ $t('gantt.dragToResize') }}
       </div>
     </div>
 
     <!-- Add/Edit Task Dialog -->
-    <el-dialog v-model="showTaskDialog" :title="isEditing ? 'Edit Task' : 'Add Gantt Task'" width="520px" :close-on-click-modal="false">
+    <el-dialog v-model="showTaskDialog" :title="isEditing ? $t('gantt.editTask') : $t('gantt.addGanttTask')" width="520px" :close-on-click-modal="false">
       <el-form label-position="top">
-        <el-form-item label="Task Name">
-          <el-input v-model="taskForm.name" placeholder="e.g., Backend API Development" />
+        <el-form-item :label="$t('gantt.taskName')">
+          <el-input v-model="taskForm.name" :placeholder="$t('gantt.taskNamePlaceholder')" />
         </el-form-item>
         <div class="grid grid-cols-2 gap-4">
-          <el-form-item label="Start Date">
+          <el-form-item :label="$t('gantt.startDate')">
             <el-date-picker v-model="taskForm.start" type="date" class="w-full" />
           </el-form-item>
-          <el-form-item label="End Date">
+          <el-form-item :label="$t('gantt.endDate')">
             <el-date-picker v-model="taskForm.end" type="date" class="w-full" />
           </el-form-item>
         </div>
         <div class="grid grid-cols-2 gap-4">
-          <el-form-item label="Priority">
+          <el-form-item :label="$t('gantt.priority')">
             <el-select v-model="taskForm.priority" class="w-full">
-              <el-option label="Low" value="LOW" />
-              <el-option label="Medium" value="MEDIUM" />
-              <el-option label="High" value="HIGH" />
-              <el-option label="Urgent" value="URGENT" />
+              <el-option :label="$t('gantt.priorityLow')" value="LOW" />
+              <el-option :label="$t('gantt.priorityMedium')" value="MEDIUM" />
+              <el-option :label="$t('gantt.priorityHigh')" value="HIGH" />
+              <el-option :label="$t('gantt.priorityUrgent')" value="URGENT" />
             </el-select>
           </el-form-item>
-          <el-form-item label="Progress">
+          <el-form-item :label="$t('gantt.progress')">
             <el-slider v-model="taskForm.progress" :step="5" />
           </el-form-item>
         </div>
         <div class="grid grid-cols-2 gap-4">
-          <el-form-item label="Dependency (Parent Task)">
-            <el-select v-model="taskForm.parentTaskId" class="w-full" clearable placeholder="None">
+          <el-form-item :label="$t('gantt.dependency')">
+            <el-select v-model="taskForm.parentTaskId" class="w-full" clearable :placeholder="$t('gantt.none')">
               <el-option
                 v-for="t in availableDependencies"
                 :key="t.id"
@@ -251,15 +251,15 @@
               />
             </el-select>
           </el-form-item>
-          <el-form-item label="Milestone">
+          <el-form-item :label="$t('gantt.milestone')">
             <el-switch v-model="taskForm.isMilestone" />
           </el-form-item>
         </div>
       </el-form>
       <template #footer>
-        <el-button @click="showTaskDialog = false">Cancel</el-button>
-        <el-button v-if="isEditing" type="danger" plain :loading="deleting" @click="confirmDeleteTask(editingTask!)">Delete</el-button>
-        <el-button type="primary" :loading="saving" @click="saveTask">{{ isEditing ? 'Update' : 'Add Task' }}</el-button>
+        <el-button @click="showTaskDialog = false">{{ $t('common.cancel') }}</el-button>
+        <el-button v-if="isEditing" type="danger" plain :loading="deleting" @click="confirmDeleteTask(editingTask!)">{{ $t('common.delete') }}</el-button>
+        <el-button type="primary" :loading="saving" @click="saveTask">{{ isEditing ? $t('gantt.update') : $t('gantt.addTask') }}</el-button>
       </template>
     </el-dialog>
 

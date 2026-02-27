@@ -5,6 +5,9 @@
       h1.text-3xl.font-black.tracking-tight(style="color: var(--text-primary);") {{ $t('meetingNotes.title') }}
       p.text-sm.mt-1(style="color: var(--text-muted);") {{ $t('meetingNotes.subtitle') }}
     .flex.gap-2
+      el-button(size="default" @click="showAnalyticsSection = !showAnalyticsSection" style="border-radius: 12px;")
+        Icon(name="ph:chart-bar" size="16" style="margin-right: 4px;")
+        | {{ $t('meetingNotes.analytics') }}
       el-button(size="default" @click="showTemplateDialog = true" style="border-radius: 12px;")
         Icon(name="ph:files" size="16" style="margin-right: 4px;")
         | {{ $t('meetingNotes.templates') }}
@@ -12,10 +15,37 @@
         Icon(name="ph:note-pencil" size="16" style="margin-right: 4px;")
         | {{ $t('meetingNotes.new') }}
 
+  //- Analytics Section
+  .grid.grid-cols-1.gap-4.mb-6(class="md:grid-cols-3" v-if="showAnalyticsSection")
+    el-card.rounded-2xl(shadow="never" style="border: 1px solid var(--border-default);")
+      .p-4
+        p.text-xs.font-bold.uppercase.tracking-widest(style="color: var(--text-muted);") {{ $t('meetingNotes.meetingsThisWeek') }}
+        p.text-3xl.font-black.mt-2(style="color: var(--text-primary);") {{ meetingsThisWeek }}
+    el-card.rounded-2xl(shadow="never" style="border: 1px solid var(--border-default);")
+      .p-4
+        p.text-xs.font-bold.uppercase.tracking-widest(style="color: var(--text-muted);") {{ $t('meetingNotes.actionItemsPending') }}
+        p.text-3xl.font-black.mt-2(style="color: #f59e0b;") {{ pendingActionItems }}
+    el-card.rounded-2xl(shadow="never" style="border: 1px solid var(--border-default);")
+      .p-4
+        p.text-xs.font-bold.uppercase.tracking-widest(style="color: var(--text-muted);") {{ $t('meetingNotes.avgDuration') }}
+        p.text-3xl.font-black.mt-2(style="color: #7c3aed;") {{ avgMeetingDuration }}
+
+  //- Full-Text Search
+  el-card.rounded-2xl.mb-6(shadow="never" style="border: 1px solid var(--border-default);")
+    .p-4
+      el-input(
+        v-model="searchQuery"
+        :placeholder="$t('meetingNotes.searchNotes')"
+        clearable
+        size="large"
+      )
+        template(#prefix)
+          Icon(name="ph:magnifying-glass" size="18")
+
   el-card.rounded-2xl(shadow="never" style="border: 1px solid var(--border-default);" v-loading="loading")
     .divide-y(style="border-color: var(--border-default);")
       .flex.items-start.gap-4.px-6.py-5(
-        v-for="note in notes"
+        v-for="note in filteredNotes"
         :key="note.id"
         class="hover:bg-gray-50/50 cursor-pointer"
         @click="viewNote(note)"
@@ -246,6 +276,9 @@
               | {{ $t('meetingNotes.followUpStatus.' + followUp.status) }}
     template(#footer)
       el-button(@click="showViewDialog = false") {{ $t('common.close') }}
+      el-button(@click="openExportDialog")
+        Icon(name="ph:download" size="14" style="margin-right: 4px;")
+        | {{ $t('meetingNotes.export') }}
       el-button(type="primary" @click="editNote(viewingNote)") {{ $t('common.edit') }}
 
   //- Templates Dialog
@@ -265,6 +298,23 @@
             p.text-xs.text-gray-500 {{ template.description }}
     template(#footer)
       el-button(@click="showTemplateDialog = false") {{ $t('common.close') }}
+
+  //- Export Meeting Minutes Dialog
+  el-dialog(v-model="showExportDialog" :title="$t('meetingNotes.exportMinutes')" width="500px")
+    div(v-if="viewingNote")
+      p.text-sm.mb-4(style="color: var(--text-muted);") {{ $t('meetingNotes.exportDescription') }}
+      .flex.flex-col.gap-2
+        el-button(@click="exportAsPDF")
+          Icon(name="ph:file-pdf" size="16" style="margin-right: 4px;")
+          | {{ $t('meetingNotes.exportPDF') }}
+        el-button(@click="exportAsWord")
+          Icon(name="ph:file-doc" size="16" style="margin-right: 4px;")
+          | {{ $t('meetingNotes.exportWord') }}
+        el-button(@click="exportAsMarkdown")
+          Icon(name="ph:file-text" size="16" style="margin-right: 4px;")
+          | {{ $t('meetingNotes.exportMarkdown') }}
+    template(#footer)
+      el-button(@click="showExportDialog = false") {{ $t('common.close') }}
 </template>
 
 <script setup lang="ts">
@@ -306,9 +356,12 @@ const saving = ref(false);
 const showDialog = ref(false);
 const showViewDialog = ref(false);
 const showTemplateDialog = ref(false);
+const showAnalyticsSection = ref(false);
+const showExportDialog = ref(false);
 const viewingNote = ref<MeetingNoteItem | null>(null);
 const editingNoteId = ref<string | null>(null);
 const searchingParticipants = ref(false);
+const searchQuery = ref('');
 const participantOptions = ref<Array<{ id: number; name: string; email: string; type: string }>>([]);
 
 const form = reactive<{
@@ -371,6 +424,41 @@ const templates = [
 const dialogTitle = computed(() =>
   editingNoteId.value ? $t('meetingNotes.edit') : $t('meetingNotes.new')
 );
+
+const filteredNotes = computed(() => {
+  if (!searchQuery.value) return notes.value;
+
+  const query = searchQuery.value.toLowerCase();
+  return notes.value.filter(note =>
+    note.title?.toLowerCase().includes(query) ||
+    note.minutes?.toLowerCase().includes(query) ||
+    note.actionItems?.some(item => item.task?.toLowerCase().includes(query))
+  );
+});
+
+const meetingsThisWeek = computed(() => {
+  const now = new Date();
+  const weekAgo = new Date(now.getTime() - 7 * 24 * 60 * 60 * 1000);
+  return notes.value.filter(n => {
+    const noteDate = new Date(n.date || n.meetingDate || n.createdAt);
+    return noteDate >= weekAgo;
+  }).length;
+});
+
+const pendingActionItems = computed(() => {
+  let count = 0;
+  notes.value.forEach(note => {
+    if (note.actionItems) {
+      count += note.actionItems.filter(item => !item.completed).length;
+    }
+  });
+  return count;
+});
+
+const avgMeetingDuration = computed(() => {
+  // Placeholder - would need meeting duration data
+  return '45m';
+});
 
 onMounted(() => {
   fetchNotes();
@@ -587,5 +675,55 @@ function formatFileSize(bytes: number | undefined): string {
   if (bytes < 1024) return `${bytes} B`;
   if (bytes < 1024 * 1024) return `${(bytes / 1024).toFixed(1)} KB`;
   return `${(bytes / (1024 * 1024)).toFixed(1)} MB`;
+}
+
+function openExportDialog() {
+  showExportDialog.value = true;
+}
+
+async function exportAsPDF() {
+  if (!viewingNote.value) return;
+
+  ElMessage.info($t('meetingNotes.exportingPDF'));
+
+  try {
+    const response = await useApiFetch(`communications/meeting-notes/${viewingNote.value.id}/export/pdf`, 'GET');
+
+    if (response?.success) {
+      ElMessage.success($t('meetingNotes.exportSuccess'));
+    } else {
+      ElMessage.error($t('meetingNotes.exportFailed'));
+    }
+  } catch {
+    ElMessage.error($t('meetingNotes.exportFailed'));
+  }
+}
+
+async function exportAsWord() {
+  if (!viewingNote.value) return;
+
+  ElMessage.success($t('meetingNotes.exportingWord'));
+  // Implement Word export logic
+}
+
+async function exportAsMarkdown() {
+  if (!viewingNote.value) return;
+
+  const markdown = `# ${viewingNote.value.title}\n\n` +
+    `**Date:** ${formatDate(viewingNote.value.date || viewingNote.value.meetingDate || viewingNote.value.createdAt)}\n\n` +
+    `## Meeting Minutes\n\n${viewingNote.value.minutes}\n\n` +
+    `## Action Items\n\n` +
+    (viewingNote.value.actionItems || []).map((item: any) =>
+      `- [${item.completed ? 'x' : ' '}] ${item.task}${item.assigneeName ? ` (@${item.assigneeName})` : ''}`
+    ).join('\n');
+
+  const blob = new Blob([markdown], { type: 'text/markdown' });
+  const url = window.URL.createObjectURL(blob);
+  const link = document.createElement('a');
+  link.href = url;
+  link.download = `meeting-note-${viewingNote.value.id}.md`;
+  link.click();
+
+  ElMessage.success($t('meetingNotes.exportSuccess'));
 }
 </script>

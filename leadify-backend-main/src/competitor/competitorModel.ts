@@ -48,6 +48,18 @@ export default class Competitor extends Model {
   @Column({ type: DataType.INTEGER, allowNull: true, defaultValue: 0 })
   public dealsLost?: number;
 
+  @Column({ type: DataType.STRING(50), allowNull: true })
+  public pricingModel?: 'SUBSCRIPTION' | 'ONE_TIME' | 'FREEMIUM' | 'USAGE_BASED' | 'ENTERPRISE';
+
+  @Column({ type: DataType.DECIMAL(12, 2), allowNull: true })
+  public basePrice?: number;
+
+  @Column({ type: DataType.DECIMAL(12, 2), allowNull: true })
+  public enterprisePrice?: number;
+
+  @Column({ type: DataType.TEXT, allowNull: true })
+  public pricingNotes?: string;
+
   @Column({ type: DataType.STRING, allowNull: true })
   public tenantId?: string;
 

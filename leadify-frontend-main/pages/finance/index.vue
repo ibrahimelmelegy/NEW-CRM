@@ -5,12 +5,48 @@ div
     :subtitle="$t('finance.dashboard.subtitle')"
   )
     template(#actions)
+      el-date-picker(
+        v-model="dateRange"
+        type="daterange"
+        :start-placeholder="$t('finance.dashboard.startDate')"
+        :end-placeholder="$t('finance.dashboard.endDate')"
+        size="large"
+        class="!rounded-2xl mr-3"
+        @change="handleDateRangeChange"
+        clearable
+      )
+      el-select(
+        v-model="categoryFilter"
+        :placeholder="$t('finance.dashboard.filterByCategory')"
+        size="large"
+        clearable
+        class="!rounded-2xl mr-3"
+        style="width: 200px"
+        @change="applyFilters"
+      )
+        el-option(
+          v-for="cat in categories"
+          :key="cat.id"
+          :label="cat.name"
+          :value="cat.id"
+        )
       el-button(size="large" type="primary" @click="refreshAll" :loading="refreshing" class="!rounded-2xl")
         Icon(name="ph:arrows-clockwise-bold" size="16")
         span.ml-1 {{ $t('common.refresh') }}
 
-  //- KPI Stat Cards
-  StatCards(:stats="kpiCards" :columns="5")
+  //- KPI Stat Cards with Drill-down
+  .grid.gap-4.mb-6(class="grid-cols-1 md:grid-cols-5")
+    .glass-card.p-5.rounded-2xl.cursor-pointer.transition-all.hover_scale-105(
+      v-for="stat in kpiCards"
+      :key="stat.label"
+      @click="handleKPIDrilldown(stat.label)"
+    )
+      .flex.items-center.justify-between
+        div
+          p.text-xs.font-medium.uppercase.tracking-wide(style="color: var(--text-muted)") {{ stat.label }}
+          p.text-2xl.font-bold.mt-1(:style="{ color: stat.color }") {{ stat.value }}
+        .w-10.h-10.rounded-xl.flex.items-center.justify-center(:style="{ background: stat.color + '20' }")
+          Icon(:name="stat.icon" size="20" :style="{ color: stat.color }")
 
   //- Charts Row
   .grid.grid-cols-1.gap-6.mt-2(class="lg:grid-cols-2")
@@ -137,6 +173,10 @@ use([CanvasRenderer, BarChart, PieChart, TitleComponent, TooltipComponent, Legen
 definePageMeta({ middleware: 'permissions' });
 
 const { t } = useI18n();
+
+// Filters
+const dateRange = ref<[Date, Date] | null>(null);
+const categoryFilter = ref<string | null>(null);
 
 // Loading states
 const refreshing = ref(false);
@@ -306,9 +346,19 @@ const cashFlowOption = computed(() => {
 async function loadExpenses() {
   loadingExpenses.value = true;
   try {
+    // Build filters
+    const filters: any = { limit: '50', sort: 'DATE_DESC' };
+    if (dateRange.value) {
+      filters.startDate = dateRange.value[0].toISOString();
+      filters.endDate = dateRange.value[1].toISOString();
+    }
+    if (categoryFilter.value) {
+      filters.categoryId = categoryFilter.value;
+    }
+
     const [summaryRes, expensesRes, cats] = await Promise.all([
       fetchExpenseSummary(),
-      fetchExpenses({ limit: '10', sort: 'DATE_DESC' }),
+      fetchExpenses(filters),
       fetchExpenseCategories()
     ]);
     expenseSummary.value = summaryRes;
@@ -346,11 +396,25 @@ async function loadCollectionData() {
   }
 }
 
+function handleDateRangeChange() {
+  applyFilters();
+}
+
+async function applyFilters() {
+  refreshing.value = true;
+  try {
+    await loadExpenses();
+    await loadBudgets();
+  } finally {
+    refreshing.value = false;
+  }
+}
+
 async function refreshAll() {
   refreshing.value = true;
   try {
     await Promise.all([loadExpenses(), loadBudgets(), loadCollectionData()]);
-    ElNotification({ type: 'success', title: 'Dashboard Refreshed', message: '' });
+    ElNotification({ type: 'success', title: t('finance.dashboard.refreshed'), message: '' });
   } finally {
     refreshing.value = false;
   }
@@ -377,6 +441,16 @@ function getBudgetColor(budget: BudgetItem): string {
   if (pct >= 90) return '#ef4444';
   if (pct >= 70) return '#f59e0b';
   return '#22c55e';
+}
+
+function handleKPIDrilldown(label: string) {
+  if (label === t('finance.dashboard.totalExpenses')) {
+    navigateTo('/finance/expenses');
+  } else if (label === t('finance.dashboard.activeBudgets')) {
+    navigateTo('/finance/budgets');
+  } else if (label === t('finance.dashboard.pendingExpenses')) {
+    navigateTo('/finance/expenses?status=PENDING');
+  }
 }
 
 // Init

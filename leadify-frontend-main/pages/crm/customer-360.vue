@@ -4,8 +4,8 @@
   .glass-card.p-6.rounded-2xl.mb-6(v-if="!selectedContact")
     .text-center.py-12
       Icon(name="ph:address-book-bold" size="48" style="color: #7849ff")
-      h2.text-2xl.font-bold.mt-4(style="color: var(--text-primary)") Customer 360° View
-      p.mt-2.mb-6(style="color: var(--text-muted)") Search for a contact or client to see their complete profile
+      h2.text-2xl.font-bold.mt-4(style="color: var(--text-primary)") {{ $t('customer360.title') }}
+      p.mt-2.mb-6(style="color: var(--text-muted)") {{ $t('customer360.searchPrompt') }}
       .max-w-lg.mx-auto
         el-select(
           v-model="contactId"
@@ -14,7 +14,7 @@
           reserve-keyword
           :remote-method="searchContacts"
           :loading="searchLoading"
-          placeholder="Search by name, email, or company..."
+          :placeholder="$t('customer360.searchPlaceholder')"
           size="large"
           style="width: 100%"
           @change="loadContact"
@@ -57,22 +57,22 @@
         .flex.gap-2
           el-button(plain @click="clearContact")
             Icon(name="ph:arrow-left" size="16")
-            span.ml-1 Back
+            span.ml-1 {{ $t('common.back') }}
           el-button(type="primary" class="!bg-[#7849ff] !border-none")
             Icon(name="ph:pencil-simple" size="16")
-            span.ml-1 Edit
+            span.ml-1 {{ $t('common.edit') }}
 
     //- AI Summary Card
     .glass-card.p-5.rounded-2xl.mb-6(v-if="selectedContact && !aiLoading && aiSummary")
       .flex.items-center.gap-2.mb-3
         .w-8.h-8.rounded-xl.flex.items-center.justify-center(style="background: linear-gradient(135deg, #7849ff, #a855f7)")
           Icon(name="ph:sparkle-bold" size="16" style="color: white")
-        h3.text-sm.font-bold(style="color: var(--text-primary)") AI Customer Summary
+        h3.text-sm.font-bold(style="color: var(--text-primary)") {{ $t('customer360.aiSummaryTitle') }}
       p.text-sm.leading-relaxed(style="color: var(--text-secondary)") {{ aiSummary }}
     .glass-card.p-5.rounded-2xl.mb-6(v-if="aiLoading")
       .flex.items-center.gap-3
         el-icon.is-loading(:size="20" style="color: #7849ff")
-        span.text-sm(style="color: var(--text-muted)") Generating customer insights...
+        span.text-sm(style="color: var(--text-muted)") {{ $t('customer360.generatingInsights') }}
 
     //- Stats Cards
     .grid.gap-4.mb-6(class="grid-cols-2 md:grid-cols-4")
@@ -92,14 +92,14 @@
           template(#label)
             .flex.items-center.gap-2
               Icon(name="ph:squares-four" size="16")
-              span Overview
+              span {{ $t('customer360.tabs.overview') }}
           .p-6
             .grid.gap-6(class="lg:grid-cols-2")
               //- Recent Activity
               div
                 h3.text-sm.font-bold.mb-4(style="color: var(--text-primary)")
                   Icon(name="ph:clock-counter-clockwise" size="16" class="mr-2" style="color: #7849ff")
-                  | Recent Activity
+                  | {{ $t('customer360.recentActivity') }}
                 .space-y-3
                   .flex.items-start.gap-3(v-for="(act, i) in recentActivities" :key="i")
                     .w-8.h-8.rounded-full.flex.items-center.justify-center.flex-shrink-0(:style="{ background: act.color + '20' }")
@@ -108,13 +108,13 @@
                       p.text-sm.font-medium(style="color: var(--text-primary)") {{ act.title }}
                       p.text-xs(style="color: var(--text-muted)") {{ act.time }}
                   .text-center.py-6(v-if="!recentActivities.length")
-                    p.text-sm(style="color: var(--text-muted)") No recent activity
+                    p.text-sm(style="color: var(--text-muted)") {{ $t('customer360.noRecentActivity') }}
 
               //- Contact Details
               div
                 h3.text-sm.font-bold.mb-4(style="color: var(--text-primary)")
                   Icon(name="ph:user" size="16" class="mr-2" style="color: #7849ff")
-                  | Contact Details
+                  | {{ $t('customer360.contactDetails') }}
                 .space-y-3
                   .flex.justify-between.py-2(v-for="(detail, i) in contactDetails" :key="i" style="border-bottom: 1px solid var(--glass-border)")
                     span.text-sm(style="color: var(--text-muted)") {{ detail.label }}
@@ -125,7 +125,7 @@
           template(#label)
             .flex.items-center.gap-2
               Icon(name="ph:handshake" size="16")
-              span Deals
+              span {{ $t('customer360.tabs.deals') }}
               el-badge(:value="contactDeals.length" :hidden="!contactDeals.length" type="primary")
           .p-6
             el-table(:data="contactDeals" v-loading="loadingDeals" stripe)
@@ -153,7 +153,7 @@
           template(#label)
             .flex.items-center.gap-2
               Icon(name="ph:receipt" size="16")
-              span Invoices
+              span {{ $t('customer360.tabs.invoices') }}
               el-badge(:value="contactInvoices.length" :hidden="!contactInvoices.length" type="primary")
           .p-6
             el-table(:data="contactInvoices" v-loading="loadingInvoices" stripe)
@@ -181,7 +181,7 @@
           template(#label)
             .flex.items-center.gap-2
               Icon(name="ph:ticket" size="16")
-              span Tickets
+              span {{ $t('customer360.tabs.tickets') }}
               el-badge(:value="contactTickets.length" :hidden="!contactTickets.length" type="primary")
           .p-6
             el-table(:data="contactTickets" v-loading="loadingTickets" stripe)
@@ -204,12 +204,48 @@
               Icon(name="ph:ticket" size="32" style="color: var(--text-muted)")
               p.mt-2(style="color: var(--text-muted)") No support tickets
 
+        //- Documents Tab
+        el-tab-pane(name="documents")
+          template(#label)
+            .flex.items-center.gap-2
+              Icon(name="ph:file-text" size="16")
+              span {{ $t('customer360.tabs.documents') }}
+              el-badge(:value="contactDocuments.length" :hidden="!contactDocuments.length" type="primary")
+          .p-6
+            .mb-4.flex.items-center.justify-between
+              h3.text-sm.font-bold(style="color: var(--text-primary)") {{ $t('customer360.linkedDocuments') }}
+              el-button(size="small" type="primary" class="!bg-[#7849ff] !border-none")
+                Icon(name="ph:plus-bold" size="14")
+                span.ml-1 {{ $t('customer360.addDocument') }}
+            el-table(:data="contactDocuments" v-loading="loadingDocuments" stripe)
+              el-table-column(:label="$t('common.name')" min-width="200")
+                template(#default="{ row }")
+                  .flex.items-center.gap-2
+                    Icon(:name="getDocIcon(row.type)" size="18" :style="{ color: getDocColor(row.type) }")
+                    span.font-semibold {{ row.name }}
+              el-table-column(:label="$t('common.type')" width="130")
+                template(#default="{ row }")
+                  el-tag(size="small" effect="plain" round) {{ row.type }}
+              el-table-column(:label="$t('common.size')" width="100")
+                template(#default="{ row }")
+                  span {{ formatFileSize(row.size) }}
+              el-table-column(:label="$t('common.uploadedAt')" width="150")
+                template(#default="{ row }")
+                  span {{ row.uploadedAt ? new Date(row.uploadedAt).toLocaleDateString() : '--' }}
+              el-table-column(:label="$t('common.actions')" width="100" align="center")
+                template(#default="{ row }")
+                  el-button(link type="primary" @click="downloadDocument(row)")
+                    Icon(name="ph:download-bold" size="16")
+            .text-center.py-8(v-if="!contactDocuments.length && !loadingDocuments")
+              Icon(name="ph:file-text" size="32" style="color: var(--text-muted)")
+              p.mt-2(style="color: var(--text-muted)") {{ $t('customer360.noDocuments') }}
+
         //- Notes Tab
         el-tab-pane(name="notes")
           template(#label)
             .flex.items-center.gap-2
               Icon(name="ph:note" size="16")
-              span Notes
+              span {{ $t('customer360.tabs.notes') }}
           .p-6
             //- Add Note
             .mb-6
@@ -217,10 +253,10 @@
                 v-model="newNote"
                 type="textarea"
                 :rows="3"
-                placeholder="Add a note about this customer..."
+                :placeholder="$t('customer360.addNotePlaceholder')"
               )
               .flex.justify-end.mt-2
-                el-button(type="primary" size="small" @click="addNote" :loading="savingNote" :disabled="!newNote.trim()" class="!bg-[#7849ff] !border-none") Add Note
+                el-button(type="primary" size="small" @click="addNote" :loading="savingNote" :disabled="!newNote.trim()" class="!bg-[#7849ff] !border-none") {{ $t('customer360.addNote') }}
             //- Notes List
             .space-y-3
               .p-4.rounded-xl(v-for="(note, i) in contactNotes" :key="i" style="background: var(--bg-input); border: 1px solid var(--glass-border)")
@@ -233,7 +269,7 @@
                       span.text-xs(style="color: var(--text-muted)") {{ note.createdAt ? new Date(note.createdAt).toLocaleDateString() : 'Just now' }}
             .text-center.py-8(v-if="!contactNotes.length")
               Icon(name="ph:note" size="32" style="color: var(--text-muted)")
-              p.mt-2(style="color: var(--text-muted)") No notes yet
+              p.mt-2(style="color: var(--text-muted)") {{ $t('customer360.noNotes') }}
 </template>
 
 <script setup lang="ts">
@@ -255,22 +291,52 @@ const contactDeals = ref<any[]>([]);
 const contactInvoices = ref<any[]>([]);
 const contactTickets = ref<any[]>([]);
 const contactNotes = ref<any[]>([]);
+const contactDocuments = ref<any[]>([]);
 const recentActivities = ref<any[]>([]);
 const loadingDeals = ref(false);
 const loadingInvoices = ref(false);
 const loadingTickets = ref(false);
+const loadingDocuments = ref(false);
 const newNote = ref('');
 const savingNote = ref(false);
 const aiSummary = ref('');
 const aiLoading = ref(false);
 
+// Engagement scoring calculation
+const engagementScore = computed(() => {
+  // Calculate based on activity frequency, recency, deal activity
+  const totalActivities = recentActivities.value.length;
+  const dealCount = contactDeals.value.length;
+  const openTickets = contactTickets.value.filter(t => t.status !== 'CLOSED' && t.status !== 'RESOLVED').length;
+
+  // Scoring logic: 0-100 scale
+  let score = 0;
+  score += Math.min(dealCount * 10, 40); // Max 40 points from deals
+  score += Math.min(totalActivities * 2, 30); // Max 30 points from activities
+  score += openTickets > 0 ? 10 : 0; // 10 points for active engagement (tickets)
+  score += contactInvoices.value.length > 0 ? 20 : 0; // 20 points for invoices
+
+  return Math.min(score, 100);
+});
+
+// Sentiment indicator based on ticket analysis
+const sentimentIndicator = computed(() => {
+  const openTickets = contactTickets.value.filter(t => t.status !== 'CLOSED' && t.status !== 'RESOLVED');
+  const urgentTickets = openTickets.filter(t => t.priority === 'URGENT' || t.priority === 'HIGH');
+
+  if (urgentTickets.length > 0) return { label: 'Needs Attention', color: '#ef4444', icon: 'ph:warning-circle-bold' };
+  if (openTickets.length > 2) return { label: 'At Risk', color: '#f59e0b', icon: 'ph:warning-bold' };
+  if (contactDeals.value.filter(d => d.status === 'WON').length > 0) return { label: 'Positive', color: '#10b981', icon: 'ph:smiley-bold' };
+  return { label: 'Neutral', color: '#64748b', icon: 'ph:minus-circle-bold' };
+});
+
 // Stats
 const contactStats = computed(() => [
-  { label: 'Total Deals', value: contactDeals.value.length, icon: 'ph:handshake-bold', color: '#7849ff' },
+  { label: t('customer360.stats.totalDeals'), value: contactDeals.value.length, icon: 'ph:handshake-bold', color: '#7849ff' },
   {
-    label: 'Revenue',
+    label: t('customer360.stats.revenue'),
     value:
-      '$' +
+      'SAR ' +
       contactDeals.value
         .filter(d => d.status === 'WON')
         .reduce((sum, d) => sum + Number(d.value || 0), 0)
@@ -279,25 +345,27 @@ const contactStats = computed(() => [
     color: '#10b981'
   },
   {
-    label: 'Open Tickets',
+    label: t('customer360.stats.openTickets'),
     value: contactTickets.value.filter(t => t.status !== 'CLOSED' && t.status !== 'RESOLVED').length,
     icon: 'ph:ticket-bold',
     color: '#f59e0b'
   },
-  { label: 'Invoices', value: contactInvoices.value.length, icon: 'ph:receipt-bold', color: '#3b82f6' }
+  { label: t('customer360.stats.invoices'), value: contactInvoices.value.length, icon: 'ph:receipt-bold', color: '#3b82f6' },
+  { label: t('customer360.stats.engagement'), value: `${engagementScore.value}%`, icon: 'ph:trend-up-bold', color: '#8b5cf6' },
+  { label: t('customer360.stats.sentiment'), value: sentimentIndicator.value.label, icon: sentimentIndicator.value.icon, color: sentimentIndicator.value.color }
 ]);
 
 const contactDetails = computed(() => {
   if (!selectedContact.value) return [];
   const c = selectedContact.value;
   return [
-    { label: 'Full Name', value: c.name || '--' },
-    { label: 'Email', value: c.email || '--' },
-    { label: 'Phone', value: c.phone || '--' },
-    { label: 'Company', value: c.company || c.clientName || '--' },
-    { label: 'Position', value: c.position || c.jobTitle || '--' },
-    { label: 'Source', value: c.source || '--' },
-    { label: 'Created', value: c.createdAt ? new Date(c.createdAt).toLocaleDateString() : '--' }
+    { label: t('customer360.fields.fullName'), value: c.name || '--' },
+    { label: t('customer360.fields.email'), value: c.email || '--' },
+    { label: t('customer360.fields.phone'), value: c.phone || '--' },
+    { label: t('customer360.fields.company'), value: c.company || c.clientName || '--' },
+    { label: t('customer360.fields.position'), value: c.position || c.jobTitle || '--' },
+    { label: t('customer360.fields.source'), value: c.source || '--' },
+    { label: t('customer360.fields.created'), value: c.createdAt ? new Date(c.createdAt).toLocaleDateString() : '--' }
   ].filter(d => d.value !== '--');
 });
 
@@ -348,7 +416,7 @@ async function loadContact(id?: string) {
         createdAt: data.createdAt
       };
       // Load all tab data first, then build activities from them
-      await Promise.all([loadDeals(cid), loadInvoices(cid), loadTickets(cid), loadNotes(cid)]);
+      await Promise.all([loadDeals(cid), loadInvoices(cid), loadTickets(cid), loadNotes(cid), loadDocuments(cid)]);
       buildActivities();
       generateAiSummary(cid);
     }
@@ -490,6 +558,60 @@ async function loadNotes(clientId: string) {
   }
 }
 
+async function loadDocuments(clientId: string) {
+  loadingDocuments.value = true;
+  try {
+    const { body, success } = await useApiFetch(`documents?clientId=${clientId}&limit=50`);
+    if (success && body) {
+      const data = body as any;
+      contactDocuments.value = data.docs || data || [];
+    }
+  } catch {
+    /* silent */
+  } finally {
+    loadingDocuments.value = false;
+  }
+}
+
+function getDocIcon(type: string): string {
+  const map: Record<string, string> = {
+    pdf: 'ph:file-pdf',
+    doc: 'ph:file-doc',
+    docx: 'ph:file-doc',
+    xls: 'ph:file-xls',
+    xlsx: 'ph:file-xls',
+    image: 'ph:file-image',
+    jpg: 'ph:file-image',
+    png: 'ph:file-image'
+  };
+  return map[type?.toLowerCase()] || 'ph:file-text';
+}
+
+function getDocColor(type: string): string {
+  const map: Record<string, string> = {
+    pdf: '#ef4444',
+    doc: '#3b82f6',
+    docx: '#3b82f6',
+    xls: '#10b981',
+    xlsx: '#10b981',
+    image: '#f59e0b',
+    jpg: '#f59e0b',
+    png: '#f59e0b'
+  };
+  return map[type?.toLowerCase()] || '#64748b';
+}
+
+function formatFileSize(bytes: number): string {
+  if (!bytes) return '--';
+  if (bytes < 1024) return bytes + ' B';
+  if (bytes < 1024 * 1024) return (bytes / 1024).toFixed(1) + ' KB';
+  return (bytes / (1024 * 1024)).toFixed(1) + ' MB';
+}
+
+function downloadDocument(doc: any) {
+  if (doc.url) window.open(doc.url, '_blank');
+}
+
 async function generateAiSummary(clientId: string) {
   aiLoading.value = true;
   aiSummary.value = '';
@@ -524,9 +646,12 @@ function clearContact() {
   contactInvoices.value = [];
   contactTickets.value = [];
   contactNotes.value = [];
+  contactDocuments.value = [];
   recentActivities.value = [];
   aiSummary.value = '';
 }
+
+const { t } = useI18n();
 
 onMounted(() => {
   if (contactId.value) {

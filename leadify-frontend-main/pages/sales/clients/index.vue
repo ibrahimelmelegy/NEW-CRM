@@ -16,6 +16,37 @@ div(class="animate-fade-in")
   .clients-kpi-grid
     PremiumKPICards(:metrics="kpiMetrics" v-if="!loadingAction")
 
+  //- Client Segments Analysis
+  .grid.gap-4.mb-6(class="grid-cols-2 md:grid-cols-4" v-if="!loadingDeals")
+    .glass-card.p-5.rounded-2xl
+      .flex.items-center.justify-between
+        div
+          p.text-xs.font-medium.uppercase.tracking-wide(style="color: var(--text-muted)") {{ $t('clients.segments.enterprise') }}
+          p.text-2xl.font-bold.mt-1(style="color: #7849ff") {{ clientSegments.enterprise }}
+        .w-10.h-10.rounded-xl.flex.items-center.justify-center(style="background: #7849ff20")
+          Icon(name="ph:crown-bold" size="20" style="color: #7849ff")
+    .glass-card.p-5.rounded-2xl
+      .flex.items-center.justify-between
+        div
+          p.text-xs.font-medium.uppercase.tracking-wide(style="color: var(--text-muted)") {{ $t('clients.segments.growing') }}
+          p.text-2xl.font-bold.mt-1(style="color: #10b981") {{ clientSegments.growing }}
+        .w-10.h-10.rounded-xl.flex.items-center.justify-center(style="background: #10b98120")
+          Icon(name="ph:trend-up-bold" size="20" style="color: #10b981")
+    .glass-card.p-5.rounded-2xl
+      .flex.items-center.justify-between
+        div
+          p.text-xs.font-medium.uppercase.tracking-wide(style="color: var(--text-muted)") {{ $t('clients.segments.atRisk') }}
+          p.text-2xl.font-bold.mt-1(style="color: #f59e0b") {{ clientSegments.atRisk }}
+        .w-10.h-10.rounded-xl.flex.items-center.justify-center(style="background: #f59e0b20")
+          Icon(name="ph:warning-bold" size="20" style="color: #f59e0b")
+    .glass-card.p-5.rounded-2xl
+      .flex.items-center.justify-between
+        div
+          p.text-xs.font-medium.uppercase.tracking-wide(style="color: var(--text-muted)") {{ $t('clients.segments.churning') }}
+          p.text-2xl.font-bold.mt-1(style="color: #ef4444") {{ clientSegments.churning }}
+        .w-10.h-10.rounded-xl.flex.items-center.justify-center(style="background: #ef444420")
+          Icon(name="ph:sign-out-bold" size="20" style="color: #ef4444")
+
   BulkActions(:count="selectedRows.length" :actions="['delete', 'export']" @bulk-delete="handleBulkDelete" @bulk-export="handleBulkExport" @clear-selection="selectedRows = []")
   SavedViews(:entityType="'client'" :currentFilters="{}" @apply-view="handleApplyView")
   AdvancedSearch(:entityType="'client'" :fields="advancedSearchFields" @apply="handleAdvancedFilter" @clear="handleClearAdvancedFilter")
@@ -145,7 +176,8 @@ async function handleBulkDelete() {
     const ids = selectedRows.value.map((r: any) => r.id);
     await Promise.all(ids.map((id: any) => useApiFetch(`client/${id}`, 'DELETE')));
     const res = await useTableFilter('client');
-    table.data = res.formattedData;
+    rawClientData.value = res.formattedData;
+    table.data = enrichedClientData.value as any;
     selectedRows.value = [];
     ElNotification({ type: 'success', title: t('common.success'), message: `${ids.length} client(s) deleted` });
   } catch {
@@ -204,6 +236,22 @@ const table = reactive({
       width: 200
     },
     {
+      prop: 'ltv',
+      label: t('clients.table.ltv'),
+      component: 'Text',
+      sortable: true,
+      type: 'font-bold',
+      width: 150
+    },
+    {
+      prop: 'healthScore',
+      label: t('clients.table.healthScore'),
+      component: 'Label',
+      sortable: true,
+      type: 'outline',
+      width: 150
+    },
+    {
       prop: 'clientStatus',
       label: t('clients.table.status'),
       component: 'Label',
@@ -243,7 +291,129 @@ const table = reactive({
 
 // Call API to Get the client and users in parallel
 const [response, usersResponse] = await Promise.all([useTableFilter('client'), useApiFetch('users')]);
-table.data = response.formattedData;
+const rawClientData = ref(response.formattedData);
+
+// Enrich client data with LTV and health score
+const enrichedClientData = computed(() => {
+  const clients = rawClientData.value || [];
+  const deals = clientDeals.value || [];
+
+  // Calculate LTV for each client
+  const clientLTVMap = new Map<string, number>();
+  const clientDealCountMap = new Map<string, number>();
+
+  deals.filter((d: any) => d.status === 'WON').forEach((deal: any) => {
+    const clientId = deal.clientId;
+    if (clientId) {
+      const currentLTV = clientLTVMap.get(clientId) || 0;
+      clientLTVMap.set(clientId, currentLTV + Number(deal.value || 0));
+
+      const currentCount = clientDealCountMap.get(clientId) || 0;
+      clientDealCountMap.set(clientId, currentCount + 1);
+    }
+  });
+
+  return clients.map((client: any) => {
+    const ltv = clientLTVMap.get(client.id) || 0;
+    const dealCount = clientDealCountMap.get(client.id) || 0;
+    const isActive = client.clientStatus === 'ACTIVE' || client.status === 'ACTIVE';
+
+    // Calculate health score: Excellent (90+), Good (70-89), Fair (50-69), Poor (<50)
+    let healthScore = 0;
+    if (isActive) healthScore += 40;
+    if (dealCount > 0) healthScore += 30;
+    if (ltv >= 50000) healthScore += 30;
+    else if (ltv >= 10000) healthScore += 20;
+    else if (ltv > 0) healthScore += 10;
+
+    let healthLabel = 'Poor';
+    if (healthScore >= 90) healthLabel = 'Excellent';
+    else if (healthScore >= 70) healthLabel = 'Good';
+    else if (healthScore >= 50) healthLabel = 'Fair';
+
+    return {
+      ...client,
+      ltv: ltv > 0 ? `SAR ${formatLargeNumber(ltv)}` : '--',
+      healthScore: healthLabel
+    };
+  });
+});
+
+table.data = enrichedClientData.value as any;
+
+// Data state for deals (used to calculate LTV and revenue)
+const clientDeals = ref<any[]>([]);
+const loadingDeals = ref(true);
+
+// Load deals data for LTV and revenue calculations
+async function loadClientDeals() {
+  loadingDeals.value = true;
+  try {
+    const { body, success } = await useApiFetch('deal?limit=1000');
+    if (success && body) {
+      const data = body as any;
+      clientDeals.value = data.docs || data || [];
+    }
+  } catch {
+    /* silent */
+  } finally {
+    loadingDeals.value = false;
+  }
+}
+
+// Calculate client segments
+const clientSegments = computed(() => {
+  const data = table.data || [];
+  const deals = clientDeals.value || [];
+
+  // Calculate LTV for each client
+  const clientLTVMap = new Map<string, number>();
+  deals.filter((d: any) => d.status === 'WON').forEach((deal: any) => {
+    const clientId = deal.clientId;
+    if (clientId) {
+      const current = clientLTVMap.get(clientId) || 0;
+      clientLTVMap.set(clientId, current + Number(deal.value || 0));
+    }
+  });
+
+  // Categorize clients by LTV
+  let enterprise = 0;
+  let growing = 0;
+  let atRisk = 0;
+  let churning = 0;
+
+  data.forEach((client: any) => {
+    const ltv = clientLTVMap.get(client.id) || 0;
+    const isActive = client.clientStatus === 'ACTIVE' || client.status === 'ACTIVE';
+
+    if (ltv >= 100000) {
+      enterprise++;
+    } else if (ltv >= 20000 && ltv < 100000) {
+      growing++;
+    } else if (ltv > 0 && ltv < 20000 && isActive) {
+      atRisk++;
+    } else if (!isActive) {
+      churning++;
+    }
+  });
+
+  return { enterprise, growing, atRisk, churning };
+});
+
+// Revenue analytics
+const revenueAnalytics = computed(() => {
+  const deals = clientDeals.value || [];
+  const wonDeals = deals.filter((d: any) => d.status === 'WON');
+
+  const totalRevenue = wonDeals.reduce((sum: number, d: any) => sum + Number(d.value || 0), 0);
+  const avgDealSize = wonDeals.length > 0 ? totalRevenue / wonDeals.length : 0;
+
+  return {
+    totalRevenue,
+    avgDealSize,
+    wonDealsCount: wonDeals.length
+  };
+});
 
 const kpiMetrics = computed<KPIMetric[]>(() => {
   const data = table.data || [];
@@ -252,9 +422,11 @@ const kpiMetrics = computed<KPIMetric[]>(() => {
   const inactive = data.filter((c: any) => c.clientStatus === 'INACTIVE' || c.status === 'INACTIVE').length;
 
   return [
-    { label: 'Total Clients', value: total, icon: 'ph:buildings-bold', color: '#3b82f6' },
-    { label: 'Active Clients', value: active, icon: 'ph:check-circle-bold', color: '#10b981' },
-    { label: 'Inactive Clients', value: inactive, icon: 'ph:pause-circle-bold', color: '#f59e0b' }
+    { label: t('clients.kpi.totalClients'), value: total, icon: 'ph:buildings-bold', color: '#3b82f6' },
+    { label: t('clients.kpi.activeClients'), value: active, icon: 'ph:check-circle-bold', color: '#10b981' },
+    { label: t('clients.kpi.inactiveClients'), value: inactive, icon: 'ph:pause-circle-bold', color: '#f59e0b' },
+    { label: t('clients.kpi.totalRevenue'), value: `SAR ${formatLargeNumber(revenueAnalytics.value.totalRevenue)}`, icon: 'ph:currency-dollar-bold', color: '#8b5cf6' },
+    { label: t('clients.kpi.avgDealSize'), value: `SAR ${formatLargeNumber(revenueAnalytics.value.avgDealSize)}`, icon: 'ph:chart-line-bold', color: '#06b6d4' }
   ];
 });
 
@@ -298,7 +470,8 @@ const advancedSearchFields = [
 async function handleApplyView(view: any) {
   if (view?.filters) {
     const res = await useTableFilter('client', view.filters);
-    table.data = res.formattedData;
+    rawClientData.value = res.formattedData;
+    table.data = enrichedClientData.value as any;
   }
 }
 
@@ -307,15 +480,27 @@ async function handleAdvancedFilter(filterPayload: any) {
     const res = await useApiFetch('search/advanced/client', 'POST', filterPayload);
     if (res?.success && res?.body) {
       const data = res.body as any;
-      table.data = data.docs || data || [];
+      rawClientData.value = data.docs || data || [];
+      table.data = enrichedClientData.value as any;
     }
   } catch {}
 }
 
 async function handleClearAdvancedFilter() {
   const res = await useTableFilter('client');
-  table.data = res.formattedData;
+  rawClientData.value = res.formattedData;
+  table.data = enrichedClientData.value as any;
 }
+
+// Watch for changes in enriched data
+watch(enrichedClientData, (newData) => {
+  table.data = newData as any;
+});
+
+// Load deals on mount
+onMounted(() => {
+  loadClientDeals();
+});
 
 // Mobile
 const { vibrate } = useMobile();

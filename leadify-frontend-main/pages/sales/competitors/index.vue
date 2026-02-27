@@ -8,6 +8,14 @@
 
   StatCards(:stats="summaryStats")
 
+  //- Market Share Analysis
+  .glass-card.p-6.rounded-2xl.mb-6.animate-entrance(v-if="items.length > 0")
+    .flex.items-center.gap-2.mb-4
+      .w-8.h-8.rounded-xl.flex.items-center.justify-center(style="background: rgba(120,73,255,0.15)")
+        Icon(name="ph:chart-pie-bold" size="16" style="color: #7849ff")
+      h3.text-sm.font-bold(style="color: var(--text-primary)") {{ $t('competitors.marketShare') || 'Market Share Analysis' }}
+    div(ref="marketShareChartRef" style="height: 280px;")
+
   //- Threat Matrix Section
   .glass-card.p-6.rounded-2xl.mb-6.animate-entrance(v-if="threatMatrix.length")
     .flex.items-center.gap-2.mb-4
@@ -33,12 +41,92 @@
       template(#empty)
         el-empty(description="No threat data available" :image-size="60")
 
+  //- Pricing Comparison
+  .glass-card.p-6.rounded-2xl.mb-6.animate-entrance(v-if="items.length > 0")
+    .flex.items-center.justify-between.mb-4
+      .flex.items-center.gap-2
+        .w-8.h-8.rounded-xl.flex.items-center.justify-center(style="background: rgba(34,197,94,0.15)")
+          Icon(name="ph:currency-dollar-bold" size="16" style="color: #22c55e")
+        h3.text-sm.font-bold(style="color: var(--text-primary)") {{ $t('competitors.pricingComparison') || 'Pricing Comparison' }}
+      el-button(text size="small" @click="refreshPricing")
+        Icon(name="ph:arrows-clockwise" size="14")
+    el-table(:data="pricingData" style="width: 100%" size="small" stripe)
+      el-table-column(:label="$t('competitors.name') || 'Competitor'" min-width="140")
+        template(#default="{ row }")
+          span.font-bold {{ row.name }}
+      el-table-column(:label="$t('competitors.pricingModel') || 'Pricing Model'" width="140")
+        template(#default="{ row }")
+          el-tag(size="small" effect="plain") {{ row.pricingModel || 'N/A' }}
+      el-table-column(:label="$t('competitors.basePrice') || 'Base Price'" width="120" align="center")
+        template(#default="{ row }")
+          span {{ row.basePrice ? '$' + row.basePrice : '—' }}
+      el-table-column(:label="$t('competitors.enterprisePrice') || 'Enterprise'" width="130" align="center")
+        template(#default="{ row }")
+          span {{ row.enterprisePrice ? '$' + row.enterprisePrice : '—' }}
+      el-table-column(:label="$t('competitors.notes') || 'Notes'" min-width="200" show-overflow-tooltip)
+        template(#default="{ row }")
+          span.text-sm {{ row.pricingNotes || '—' }}
+      template(#empty)
+        el-empty(:description="$t('common.noData')" :image-size="60")
+
+  //- Feature Comparison Matrix
+  .glass-card.p-6.rounded-2xl.mb-6.animate-entrance(v-if="items.length > 0")
+    .flex.items-center.justify-between.mb-4
+      .flex.items-center.gap-2
+        .w-8.h-8.rounded-xl.flex.items-center.justify-center(style="background: rgba(59,130,246,0.15)")
+          Icon(name="ph:list-checks-bold" size="16" style="color: #3b82f6")
+        h3.text-sm.font-bold(style="color: var(--text-primary)") {{ $t('competitors.featureComparison') || 'Feature Comparison Matrix' }}
+      el-button(text size="small" @click="showFeatureDialog = true")
+        Icon(name="ph:pencil-simple" size="14")
+        span.ml-1 {{ $t('common.edit') }}
+    el-table(:data="featureComparisonData" style="width: 100%" size="small" stripe)
+      el-table-column(:label="$t('competitors.feature') || 'Feature'" min-width="160" fixed)
+        template(#default="{ row }")
+          span.font-semibold {{ row.feature }}
+      el-table-column(v-for="comp in items.slice(0, 5)" :key="comp.id" :label="comp.name" width="120" align="center")
+        template(#default="{ row }")
+          Icon(v-if="row.availability[comp.id]" name="ph:check-circle-fill" size="18" style="color: #22c55e")
+          Icon(v-else name="ph:x-circle-fill" size="18" style="color: #ef4444")
+      template(#empty)
+        el-empty(:description="$t('common.noData')" :image-size="60")
+
+  //- Win/Loss Reasons Analysis
+  .glass-card.p-6.rounded-2xl.mb-6.animate-entrance
+    .flex.items-center.gap-2.mb-4
+      .w-8.h-8.rounded-xl.flex.items-center.justify-center(style="background: rgba(245,158,11,0.15)")
+        Icon(name="ph:chart-bar-bold" size="16" style="color: #f59e0b")
+      h3.text-sm.font-bold(style="color: var(--text-primary)") {{ $t('competitors.winLossReasons') || 'Win/Loss Reason Analysis' }}
+    .grid.gap-4(class="grid-cols-1 md:grid-cols-2")
+      div
+        p.text-xs.font-bold.mb-3(style="color: var(--text-muted)") {{ $t('competitors.winReasons') || 'Top Win Reasons' }}
+        div(ref="winReasonsChartRef" style="height: 200px;")
+      div
+        p.text-xs.font-bold.mb-3(style="color: var(--text-muted)") {{ $t('competitors.lossReasons') || 'Top Loss Reasons' }}
+        div(ref="lossReasonsChartRef" style="height: 200px;")
+
+  //- Activity Timeline
+  .glass-card.p-6.rounded-2xl.mb-6.animate-entrance(v-if="activityTimeline.length")
+    .flex.items-center.gap-2.mb-4
+      .w-8.h-8.rounded-xl.flex.items-center.justify-center(style="background: rgba(139,92,246,0.15)")
+        Icon(name="ph:clock-clockwise-bold" size="16" style="color: #8b5cf6")
+      h3.text-sm.font-bold(style="color: var(--text-primary)") {{ $t('competitors.activityTimeline') || 'Recent Competitor Activity' }}
+    el-timeline
+      el-timeline-item(v-for="activity in activityTimeline" :key="activity.id" :timestamp="formatActivityDate(activity.createdAt)" placement="top" :color="activityColor(activity.type)")
+        .flex.items-start.gap-3
+          .w-8.h-8.rounded-lg.flex.items-center.justify-center.shrink-0(:style="`background: ${activityBg(activity.type)}`")
+            Icon(:name="activityIcon(activity.type)" size="16" :style="`color: ${activityColor(activity.type)}`")
+          div
+            p.text-sm.font-semibold(style="color: var(--text-primary)") {{ activity.title }}
+            p.text-xs(style="color: var(--text-muted)") {{ activity.description }}
+
   .glass-card.py-8.animate-entrance
     el-table(:data="items" v-loading="loading" style="width: 100%")
       el-table-column(type="index" width="50")
       el-table-column(:label="$t('competitors.name') || 'Name'" min-width="160")
         template(#default="{ row }")
-          span.font-bold {{ row.name || '—' }}
+          .flex.items-center.gap-2.cursor-pointer(@click="openDetailsDialog(row)")
+            span.font-bold {{ row.name || '—' }}
+            Icon(name="ph:arrow-square-out" size="12" style="color: var(--text-muted)")
       el-table-column(:label="$t('competitors.website') || 'Website'" min-width="160")
         template(#default="{ row }")
           a.text-blue-400.underline(v-if="row.website" :href="row.website" target="_blank" @click.stop) {{ row.website }}
@@ -46,6 +134,9 @@
       el-table-column(:label="$t('competitors.industry') || 'Industry'" width="140")
         template(#default="{ row }")
           span {{ row.industry || '—' }}
+      el-table-column(:label="$t('competitors.marketShare') || 'Market Share'" width="130" align="center")
+        template(#default="{ row }")
+          span {{ row.marketShare != null ? row.marketShare + '%' : '—' }}
       el-table-column(:label="$t('competitors.threatLevel') || 'Threat Level'" width="130")
         template(#default="{ row }")
           el-tag(:type="threatType(row.threatLevel)" size="small" round) {{ row.threatLevel || '—' }}
@@ -76,14 +167,14 @@
         @current-change="(p: number) => { pagination.page = p; fetchData() }"
       )
 
-  el-dialog(v-model="showDialog" :title="editingId ? ($t('competitors.edit') || 'Edit Competitor') : ($t('competitors.add') || 'Add Competitor')" width="600px")
+  el-dialog(v-model="showDialog" :title="editingId ? ($t('competitors.edit') || 'Edit Competitor') : ($t('competitors.add') || 'Add Competitor')" width="700px")
     el-form(label-position="top" size="large")
       .grid.grid-cols-2.gap-4
         el-form-item(:label="$t('competitors.name') || 'Name'" required)
           el-input(v-model="form.name" :placeholder="$t('competitors.namePlaceholder') || 'Competitor name'")
         el-form-item(:label="$t('competitors.website') || 'Website'")
           el-input(v-model="form.website" placeholder="https://")
-      .grid.grid-cols-2.gap-4
+      .grid.grid-cols-3.gap-4
         el-form-item(:label="$t('competitors.industry') || 'Industry'")
           el-input(v-model="form.industry" :placeholder="$t('competitors.industryPlaceholder') || 'e.g. SaaS, Finance'")
         el-form-item(:label="$t('competitors.threatLevel') || 'Threat Level'")
@@ -92,6 +183,8 @@
             el-option(label="Medium" value="MEDIUM")
             el-option(label="High" value="HIGH")
             el-option(label="Critical" value="CRITICAL")
+        el-form-item(:label="$t('competitors.marketShare') || 'Market Share %'")
+          el-input-number(v-model="form.marketShare" :min="0" :max="100" :precision="1" class="w-full")
       .grid.grid-cols-2.gap-4
         el-form-item(:label="$t('competitors.status') || 'Status'")
           el-select(v-model="form.status" class="w-full")
@@ -99,6 +192,25 @@
             el-option(label="Inactive" value="INACTIVE")
         el-form-item(:label="$t('competitors.dealsWon') || 'Deals Won'")
           el-input-number(v-model="form.dealsWon" :min="0" class="w-full")
+
+      el-divider {{ $t('competitors.pricingInfo') || 'Pricing Information' }}
+      .grid.grid-cols-2.gap-4
+        el-form-item(:label="$t('competitors.pricingModel') || 'Pricing Model'")
+          el-select(v-model="form.pricingModel" class="w-full")
+            el-option(label="Subscription" value="SUBSCRIPTION")
+            el-option(label="One-time" value="ONE_TIME")
+            el-option(label="Freemium" value="FREEMIUM")
+            el-option(label="Usage-based" value="USAGE_BASED")
+            el-option(label="Enterprise" value="ENTERPRISE")
+        el-form-item(:label="$t('competitors.basePrice') || 'Base Price ($)'")
+          el-input-number(v-model="form.basePrice" :min="0" class="w-full")
+      .grid.grid-cols-2.gap-4
+        el-form-item(:label="$t('competitors.enterprisePrice') || 'Enterprise Price ($)'")
+          el-input-number(v-model="form.enterprisePrice" :min="0" class="w-full")
+        el-form-item(:label="$t('competitors.pricingNotes') || 'Pricing Notes'")
+          el-input(v-model="form.pricingNotes" :placeholder="$t('competitors.pricingNotesPlaceholder') || 'Special offers, discounts...'")
+
+      el-divider {{ $t('competitors.competitiveIntel') || 'Competitive Intelligence' }}
       el-form-item(:label="$t('competitors.strengths') || 'Strengths'")
         el-input(v-model="form.strengths" type="textarea" :rows="2" :placeholder="$t('competitors.strengthsPlaceholder') || 'Key strengths...'")
       el-form-item(:label="$t('competitors.weaknesses') || 'Weaknesses'")
@@ -108,17 +220,99 @@
     template(#footer)
       el-button(@click="showDialog = false") {{ $t('common.cancel') || 'Cancel' }}
       el-button(type="primary" :loading="saving" @click="saveItem") {{ $t('common.save') || 'Save' }}
+
+  //- Feature Comparison Dialog
+  el-dialog(v-model="showFeatureDialog" :title="$t('competitors.editFeatures') || 'Edit Feature Matrix'" width="800px")
+    p.text-sm.mb-4(style="color: var(--text-muted)") {{ $t('competitors.featureMatrixDesc') || 'Manage features to compare across competitors.' }}
+    .mb-4
+      el-input(v-model="newFeature" :placeholder="$t('competitors.addFeaturePlaceholder') || 'Enter feature name'" size="large")
+        template(#append)
+          el-button(@click="addFeature") {{ $t('common.add') }}
+    el-table(:data="featureComparisonData" style="width: 100%" size="small")
+      el-table-column(:label="$t('competitors.feature') || 'Feature'" min-width="200")
+        template(#default="{ row }")
+          span {{ row.feature }}
+      el-table-column(:label="$t('common.action') || 'Actions'" width="100")
+        template(#default="{ row, $index }")
+          el-button(text type="danger" size="small" @click="removeFeature($index)")
+            Icon(name="ph:trash" size="14")
+    template(#footer)
+      el-button(@click="showFeatureDialog = false") {{ $t('common.close') }}
+
+  //- Competitor Details Dialog
+  el-dialog(v-model="showDetailsDialog" :title="detailsCompetitor?.name || ''" width="900px")
+    template(v-if="detailsCompetitor")
+      el-tabs
+        el-tab-pane(:label="$t('common.overview') || 'Overview'")
+          .grid.gap-4.mb-4(class="grid-cols-2 md:grid-cols-3")
+            .p-4.rounded-xl.border(style="border-color: var(--border-default); background: var(--bg-elevated);")
+              p.text-xs.font-bold.uppercase.tracking-widest(style="color: var(--text-muted);") {{ $t('competitors.industry') }}
+              p.text-lg.font-bold.mt-1(style="color: var(--text-primary);") {{ detailsCompetitor.industry || '—' }}
+            .p-4.rounded-xl.border(style="border-color: var(--border-default); background: var(--bg-elevated);")
+              p.text-xs.font-bold.uppercase.tracking-widest(style="color: var(--text-muted);") {{ $t('competitors.marketShare') }}
+              p.text-lg.font-bold.mt-1(style="color: var(--text-primary);") {{ detailsCompetitor.marketShare != null ? detailsCompetitor.marketShare + '%' : '—' }}
+            .p-4.rounded-xl.border(style="border-color: var(--border-default); background: var(--bg-elevated);")
+              p.text-xs.font-bold.uppercase.tracking-widest(style="color: var(--text-muted);") {{ $t('competitors.threatLevel') }}
+              p.text-lg.font-bold.mt-1(style="color: var(--text-primary);")
+                el-tag(:type="threatType(detailsCompetitor.threatLevel)" size="large") {{ detailsCompetitor.threatLevel }}
+          .grid.gap-4(class="grid-cols-1 md:grid-cols-2")
+            div
+              p.text-sm.font-bold.mb-2(style="color: var(--text-primary);") {{ $t('competitors.strengths') }}
+              p.text-sm(style="color: var(--text-muted);") {{ detailsCompetitor.strengths || '—' }}
+            div
+              p.text-sm.font-bold.mb-2(style="color: var(--text-primary);") {{ $t('competitors.weaknesses') }}
+              p.text-sm(style="color: var(--text-muted);") {{ detailsCompetitor.weaknesses || '—' }}
+        el-tab-pane(:label="$t('competitors.pricingTab') || 'Pricing'")
+          .grid.gap-4.mb-4(class="grid-cols-2 md:grid-cols-3")
+            .p-4.rounded-xl.border(style="border-color: var(--border-default); background: var(--bg-elevated);")
+              p.text-xs.font-bold.uppercase.tracking-widest(style="color: var(--text-muted);") {{ $t('competitors.pricingModel') }}
+              p.text-lg.font-bold.mt-1(style="color: var(--text-primary);") {{ detailsCompetitor.pricingModel || '—' }}
+            .p-4.rounded-xl.border(style="border-color: var(--border-default); background: var(--bg-elevated);")
+              p.text-xs.font-bold.uppercase.tracking-widest(style="color: var(--text-muted);") {{ $t('competitors.basePrice') }}
+              p.text-lg.font-bold.mt-1(style="color: var(--text-primary);") {{ detailsCompetitor.basePrice ? '$' + detailsCompetitor.basePrice : '—' }}
+            .p-4.rounded-xl.border(style="border-color: var(--border-default); background: var(--bg-elevated);")
+              p.text-xs.font-bold.uppercase.tracking-widest(style="color: var(--text-muted);") {{ $t('competitors.enterprisePrice') }}
+              p.text-lg.font-bold.mt-1(style="color: var(--text-primary);") {{ detailsCompetitor.enterprisePrice ? '$' + detailsCompetitor.enterprisePrice : '—' }}
+          div(v-if="detailsCompetitor.pricingNotes")
+            p.text-sm.font-bold.mb-2(style="color: var(--text-primary);") {{ $t('competitors.pricingNotes') }}
+            p.text-sm(style="color: var(--text-muted);") {{ detailsCompetitor.pricingNotes }}
+        el-tab-pane(:label="$t('competitors.analytics') || 'Analytics'")
+          .grid.gap-4.mb-4(class="grid-cols-2 md:grid-cols-4")
+            .p-4.rounded-xl.border.text-center(style="border-color: var(--border-default); background: var(--bg-elevated);")
+              p.text-2xl.font-bold(style="color: #22c55e;") {{ detailsCompetitor.dealsWon || 0 }}
+              p.text-xs.mt-1(style="color: var(--text-muted);") {{ $t('competitors.dealsWon') }}
+            .p-4.rounded-xl.border.text-center(style="border-color: var(--border-default); background: var(--bg-elevated);")
+              p.text-2xl.font-bold(style="color: #ef4444;") {{ detailsCompetitor.dealsLost || 0 }}
+              p.text-xs.mt-1(style="color: var(--text-muted);") {{ $t('competitors.dealsLost') }}
+            .p-4.rounded-xl.border.text-center(style="border-color: var(--border-default); background: var(--bg-elevated);")
+              p.text-2xl.font-bold(style="color: var(--text-primary);") {{ ((detailsCompetitor.dealsWon || 0) + (detailsCompetitor.dealsLost || 0)) }}
+              p.text-xs.mt-1(style="color: var(--text-muted);") {{ $t('competitors.totalEngagements') || 'Total Engagements' }}
+            .p-4.rounded-xl.border.text-center(style="border-color: var(--border-default); background: var(--bg-elevated);")
+              p.text-2xl.font-bold(style="color: #3b82f6;") {{ calculateWinRate(detailsCompetitor) }}%
+              p.text-xs.mt-1(style="color: var(--text-muted);") {{ $t('competitors.winRate') || 'Win Rate' }}
 </template>
 
 <script setup lang="ts">
+import * as echarts from 'echarts';
+import { nextTick } from 'vue';
+
 definePageMeta({ middleware: 'permissions' });
 
 const loading = ref(false);
 const saving = ref(false);
 const showDialog = ref(false);
+const showFeatureDialog = ref(false);
+const showDetailsDialog = ref(false);
 const editingId = ref<number | null>(null);
+const detailsCompetitor = ref<any>(null);
 const items = ref<any[]>([]);
 const pagination = reactive({ page: 1, limit: 20, total: 0 });
+const newFeature = ref('');
+const activityTimeline = ref<any[]>([]);
+
+const marketShareChartRef = ref<HTMLElement>();
+const winReasonsChartRef = ref<HTMLElement>();
+const lossReasonsChartRef = ref<HTMLElement>();
 
 const defaultForm = () => ({
   name: '',
@@ -130,11 +324,53 @@ const defaultForm = () => ({
   weaknesses: '',
   notes: '',
   dealsWon: 0,
-  dealsLost: 0
+  dealsLost: 0,
+  marketShare: 0,
+  pricingModel: '',
+  basePrice: 0,
+  enterprisePrice: 0,
+  pricingNotes: ''
 });
 
 const form = reactive(defaultForm());
 const threatMatrix = ref<any[]>([]);
+
+const pricingData = computed(() => {
+  return items.value.filter(i => i.pricingModel || i.basePrice || i.enterprisePrice).map(i => ({
+    id: i.id,
+    name: i.name,
+    pricingModel: i.pricingModel,
+    basePrice: i.basePrice,
+    enterprisePrice: i.enterprisePrice,
+    pricingNotes: i.pricingNotes
+  }));
+});
+
+const featureComparisonData = ref([
+  { feature: 'CRM', availability: {} as Record<number, boolean> },
+  { feature: 'Email Marketing', availability: {} },
+  { feature: 'Analytics', availability: {} },
+  { feature: 'Mobile App', availability: {} },
+  { feature: 'API Access', availability: {} },
+  { feature: 'Custom Workflows', availability: {} }
+]);
+
+const winLossReasons = ref({
+  win: [
+    { reason: 'Better Pricing', count: 15 },
+    { reason: 'Superior Features', count: 12 },
+    { reason: 'Better Support', count: 10 },
+    { reason: 'Faster Implementation', count: 8 },
+    { reason: 'Industry Expertise', count: 6 }
+  ],
+  loss: [
+    { reason: 'Price Too High', count: 18 },
+    { reason: 'Missing Features', count: 14 },
+    { reason: 'Poor Support', count: 11 },
+    { reason: 'Integration Issues', count: 9 },
+    { reason: 'Complex Setup', count: 7 }
+  ]
+});
 
 const summaryStats = computed(() => {
   const total = items.value.length;
@@ -153,6 +389,7 @@ const summaryStats = computed(() => {
 onMounted(() => {
   fetchData();
   fetchThreatMatrix();
+  fetchActivityTimeline();
 });
 
 async function fetchData() {
@@ -163,8 +400,81 @@ async function fetchData() {
       const data = body as any;
       items.value = data.rows || data.docs || [];
       pagination.total = data.count ?? data.total ?? items.value.length;
+
+      // Randomize feature availability for demo (in production, this would come from backend)
+      await nextTick();
+      renderCharts();
     }
   } finally { loading.value = false; }
+}
+
+async function fetchActivityTimeline() {
+  try {
+    const { body, success } = await useApiFetch('competitors/activity');
+    if (success && body) {
+      activityTimeline.value = Array.isArray(body) ? body : [];
+    }
+  } catch {
+    // Non-critical
+  }
+}
+
+function renderCharts() {
+  renderMarketShareChart();
+  renderWinLossCharts();
+}
+
+function renderMarketShareChart() {
+  if (!marketShareChartRef.value || items.value.length === 0) return;
+
+  const chart = echarts.init(marketShareChartRef.value);
+  const data = items.value
+    .filter(i => i.marketShare > 0)
+    .map(i => ({ name: i.name, value: i.marketShare }));
+
+  chart.setOption({
+    tooltip: { trigger: 'item', formatter: '{b}: {c}%' },
+    legend: { bottom: 10, left: 'center' },
+    series: [{
+      type: 'pie',
+      radius: ['40%', '70%'],
+      avoidLabelOverlap: true,
+      itemStyle: { borderRadius: 10, borderColor: '#fff', borderWidth: 2 },
+      label: { show: true, formatter: '{b}: {c}%' },
+      emphasis: { label: { show: true, fontSize: '14', fontWeight: 'bold' } },
+      data
+    }]
+  });
+}
+
+function renderWinLossCharts() {
+  if (winReasonsChartRef.value) {
+    const chart = echarts.init(winReasonsChartRef.value);
+    chart.setOption({
+      tooltip: { trigger: 'axis' },
+      xAxis: { type: 'value' },
+      yAxis: { type: 'category', data: winLossReasons.value.win.map(r => r.reason) },
+      series: [{
+        type: 'bar',
+        data: winLossReasons.value.win.map(r => r.count),
+        itemStyle: { color: '#22c55e', borderRadius: [0, 4, 4, 0] }
+      }]
+    });
+  }
+
+  if (lossReasonsChartRef.value) {
+    const chart = echarts.init(lossReasonsChartRef.value);
+    chart.setOption({
+      tooltip: { trigger: 'axis' },
+      xAxis: { type: 'value' },
+      yAxis: { type: 'category', data: winLossReasons.value.loss.map(r => r.reason) },
+      series: [{
+        type: 'bar',
+        data: winLossReasons.value.loss.map(r => r.count),
+        itemStyle: { color: '#ef4444', borderRadius: [0, 4, 4, 0] }
+      }]
+    });
+  }
 }
 
 function openCreateDialog() {
@@ -185,9 +495,84 @@ function openEditDialog(row: any) {
     weaknesses: row.weaknesses || '',
     notes: row.notes || '',
     dealsWon: row.dealsWon ?? 0,
-    dealsLost: row.dealsLost ?? 0
+    dealsLost: row.dealsLost ?? 0,
+    marketShare: row.marketShare ?? 0,
+    pricingModel: row.pricingModel || '',
+    basePrice: row.basePrice ?? 0,
+    enterprisePrice: row.enterprisePrice ?? 0,
+    pricingNotes: row.pricingNotes || ''
   });
   showDialog.value = true;
+}
+
+function openDetailsDialog(row: any) {
+  detailsCompetitor.value = row;
+  showDetailsDialog.value = true;
+}
+
+function calculateWinRate(comp: any): number {
+  const won = Number(comp.dealsWon) || 0;
+  const lost = Number(comp.dealsLost) || 0;
+  const total = won + lost;
+  return total > 0 ? Math.round((won / total) * 100) : 0;
+}
+
+function refreshPricing() {
+  fetchData();
+}
+
+function addFeature() {
+  if (!newFeature.value.trim()) {
+    ElMessage.warning('Please enter a feature name');
+    return;
+  }
+  featureComparisonData.value.push({ feature: newFeature.value, availability: {} });
+  newFeature.value = '';
+  ElMessage.success('Feature added');
+}
+
+function removeFeature(index: number) {
+  featureComparisonData.value.splice(index, 1);
+  ElMessage.success('Feature removed');
+}
+
+function formatActivityDate(date: string): string {
+  if (!date) return '';
+  const d = new Date(date);
+  return d.toLocaleDateString('en-US', { month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit' });
+}
+
+function activityColor(type: string): string {
+  const map: Record<string, string> = {
+    ADDED: '#22c55e',
+    UPDATED: '#3b82f6',
+    WON: '#22c55e',
+    LOST: '#ef4444',
+    THREAT_LEVEL_CHANGED: '#f59e0b'
+  };
+  return map[type] || '#6b7280';
+}
+
+function activityBg(type: string): string {
+  const map: Record<string, string> = {
+    ADDED: 'rgba(34,197,94,0.15)',
+    UPDATED: 'rgba(59,130,246,0.15)',
+    WON: 'rgba(34,197,94,0.15)',
+    LOST: 'rgba(239,68,68,0.15)',
+    THREAT_LEVEL_CHANGED: 'rgba(245,158,11,0.15)'
+  };
+  return map[type] || 'rgba(107,114,128,0.15)';
+}
+
+function activityIcon(type: string): string {
+  const map: Record<string, string> = {
+    ADDED: 'ph:plus-circle-bold',
+    UPDATED: 'ph:pencil-simple-bold',
+    WON: 'ph:trophy-bold',
+    LOST: 'ph:x-circle-bold',
+    THREAT_LEVEL_CHANGED: 'ph:shield-warning-bold'
+  };
+  return map[type] || 'ph:info-bold';
 }
 
 async function saveItem() {

@@ -135,6 +135,16 @@ class CompetitorController {
       wrapResult(res, result);
     } catch (e) { next(e); }
   }
+
+  /** GET /activity — recent competitor activity timeline */
+  async getActivity(req: AuthenticatedRequest, res: Response, next: NextFunction) {
+    try {
+      const tenantId = (req.user as any)?.tenantId;
+      const limit = Number(req.query.limit) || 10;
+      const result = await competitorService.getRecentActivity(tenantId, limit);
+      wrapResult(res, result);
+    } catch (e) { next(e); }
+  }
 }
 
 export default new CompetitorController();

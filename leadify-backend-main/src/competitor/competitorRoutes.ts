@@ -6,6 +6,7 @@ import controller from './competitorController';
 const router = express.Router();
 
 // ─── Analytics (specific routes BEFORE parameterised routes) ────────────────
+router.get('/activity', authenticateUser, HasPermission([CompetitorPermissionsEnum.VIEW_COMPETITORS]), controller.getActivity);
 router.get('/threat-matrix', authenticateUser, HasPermission([CompetitorPermissionsEnum.VIEW_COMPETITORS]), controller.threatMatrix);
 router.get('/analytics/landscape', authenticateUser, HasPermission([CompetitorPermissionsEnum.VIEW_COMPETITORS]), controller.marketLandscape);
 router.get('/analytics/top-threats', authenticateUser, HasPermission([CompetitorPermissionsEnum.VIEW_COMPETITORS]), controller.topThreats);
