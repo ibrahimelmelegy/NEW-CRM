@@ -1,12 +1,13 @@
 /**
- * Activity Log / Timeline System
+ * Activity Log / Timeline System — API-backed via Audit Trail
  * Track all user activities across the CRM.
  */
 
 import { ref, computed } from 'vue';
+import { useApiFetch } from './useApiFetch';
 
 export interface ActivityEntry {
-  id: string;
+  id: string | number;
   action: 'created' | 'updated' | 'deleted' | 'archived' | 'converted' | 'sent' | 'called' | 'meeting' | 'note' | 'signed';
   entityType: 'document' | 'contact' | 'deal' | 'task' | 'invoice' | 'reminder';
   entityId?: string | number;
@@ -17,35 +18,79 @@ export interface ActivityEntry {
   metadata?: Record<string, unknown>;
 }
 
-const STORAGE_KEY = 'crm_activity_log';
+const activities = ref<ActivityEntry[]>([]);
+const loading = ref(false);
 
-function load(): ActivityEntry[] {
-  if (typeof window === 'undefined') return [];
-  try {
-    return JSON.parse(localStorage.getItem(STORAGE_KEY) || '[]');
-  } catch {
-    return [];
-  }
-}
-function save(items: ActivityEntry[]) {
-  if (typeof window !== 'undefined') localStorage.setItem(STORAGE_KEY, JSON.stringify(items));
-}
-
-const activities = ref<ActivityEntry[]>(load());
+const actionMap: Record<string, ActivityEntry['action']> = {
+  CREATE: 'created',
+  UPDATE: 'updated',
+  DELETE: 'deleted',
+  ARCHIVE: 'archived',
+  STATUS_CHANGE: 'updated',
+  ASSIGNMENT: 'updated',
+  RESTORE: 'created'
+};
 
 export function useActivityLog() {
   const sorted = computed(() => [...activities.value].sort((a, b) => new Date(b.timestamp).getTime() - new Date(a.timestamp).getTime()));
 
   const recent = computed(() => sorted.value.slice(0, 50));
 
+  async function fetchActivities(page = 1) {
+    loading.value = true;
+    try {
+      const { body, success } = await useApiFetch(`audit?page=${page}&limit=100`);
+      if (success && body) {
+        const data = body as any;
+        const docs = data.docs || data || [];
+        activities.value = docs.map((a: any) => ({
+          id: a.id,
+          action: actionMap[a.action] || 'updated',
+          entityType: (a.entityType || '').toLowerCase(),
+          entityId: a.entityId,
+          entityLabel: a.entityLabel || `${a.entityType} #${a.entityId}`,
+          description: a.description || `${a.action} ${a.entityType} #${a.entityId}`,
+          user: a.user?.name || a.userName || undefined,
+          timestamp: a.createdAt,
+          metadata: a.changes || a.metadata
+        }));
+      }
+    } finally {
+      loading.value = false;
+    }
+  }
+
+  async function fetchByEntity(entityType: string, entityId?: string | number) {
+    const url = entityId
+      ? `audit/${entityType}/${entityId}`
+      : `audit?entityType=${entityType}&limit=100`;
+    const { body, success } = await useApiFetch(url);
+    if (success && body) {
+      const data = body as any;
+      const docs = data.docs || data || [];
+      return docs.map((a: any) => ({
+        id: a.id,
+        action: actionMap[a.action] || 'updated',
+        entityType: (a.entityType || '').toLowerCase(),
+        entityId: a.entityId,
+        entityLabel: a.entityLabel || `${a.entityType} #${a.entityId}`,
+        description: a.description || `${a.action} ${a.entityType} #${a.entityId}`,
+        user: a.user?.name || a.userName || undefined,
+        timestamp: a.createdAt,
+        metadata: a.changes || a.metadata
+      })) as ActivityEntry[];
+    }
+    return [];
+  }
+
   function log(entry: Omit<ActivityEntry, 'id' | 'timestamp'>) {
+    // Push locally for instant UX — audit trail is created server-side automatically
     activities.value.unshift({
       ...entry,
       id: `act_${Date.now()}_${Math.random().toString(36).slice(2, 6)}`,
       timestamp: new Date().toISOString()
     });
     if (activities.value.length > 500) activities.value = activities.value.slice(0, 500);
-    save(activities.value);
   }
 
   function getByEntity(entityType: string, entityId?: string | number): ActivityEntry[] {
@@ -58,7 +103,6 @@ export function useActivityLog() {
 
   function clearAll() {
     activities.value = [];
-    save(activities.value);
   }
 
   const actionIcons: Record<string, string> = {
@@ -94,7 +138,10 @@ export function useActivityLog() {
     getByEntity,
     getByContact,
     clearAll,
+    fetchActivities,
+    fetchByEntity,
     actionIcons,
-    actionColors
+    actionColors,
+    loading
   };
 }

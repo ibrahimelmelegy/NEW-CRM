@@ -1,6 +1,7 @@
 import express from 'express';
 import campaignController from './campaignController';
-import { authenticateUser } from '../middleware/authMiddleware';
+import { authenticateUser, HasPermission } from '../middleware/authMiddleware';
+import { CampaignPermissionsEnum } from '../role/roleEnum';
 
 /**
  * @swagger
@@ -25,7 +26,7 @@ const router = express.Router();
  *       500:
  *         description: Server error
  */
-router.get('/', authenticateUser, campaignController.getCampaigns);
+router.get('/', authenticateUser, HasPermission([CampaignPermissionsEnum.VIEW_CAMPAIGNS]), campaignController.getCampaigns);
 
 /**
  * @swagger
@@ -41,7 +42,7 @@ router.get('/', authenticateUser, campaignController.getCampaigns);
  *       500:
  *         description: Server error
  */
-router.get('/templates', authenticateUser, campaignController.getTemplates);
+router.get('/templates', authenticateUser, HasPermission([CampaignPermissionsEnum.MANAGE_TEMPLATES]), campaignController.getTemplates);
 
 /**
  * @swagger
@@ -82,7 +83,7 @@ router.get('/templates', authenticateUser, campaignController.getTemplates);
  *       500:
  *         description: Server error
  */
-router.post('/templates', authenticateUser, campaignController.createTemplate);
+router.post('/templates', authenticateUser, HasPermission([CampaignPermissionsEnum.MANAGE_TEMPLATES]), campaignController.createTemplate);
 
 /**
  * @swagger
@@ -107,7 +108,7 @@ router.post('/templates', authenticateUser, campaignController.createTemplate);
  *       500:
  *         description: Server error
  */
-router.delete('/templates/:id', authenticateUser, campaignController.deleteTemplate);
+router.delete('/templates/:id', authenticateUser, HasPermission([CampaignPermissionsEnum.MANAGE_TEMPLATES]), campaignController.deleteTemplate);
 
 /**
  * @swagger
@@ -132,7 +133,7 @@ router.delete('/templates/:id', authenticateUser, campaignController.deleteTempl
  *       500:
  *         description: Server error
  */
-router.get('/:id', authenticateUser, campaignController.getCampaignById);
+router.get('/:id', authenticateUser, HasPermission([CampaignPermissionsEnum.VIEW_CAMPAIGNS]), campaignController.getCampaignById);
 
 /**
  * @swagger
@@ -184,7 +185,7 @@ router.get('/:id', authenticateUser, campaignController.getCampaignById);
  *       500:
  *         description: Server error
  */
-router.post('/', authenticateUser, campaignController.create);
+router.post('/', authenticateUser, HasPermission([CampaignPermissionsEnum.CREATE_CAMPAIGNS]), campaignController.create);
 
 /**
  * @swagger
@@ -236,7 +237,7 @@ router.post('/', authenticateUser, campaignController.create);
  *       500:
  *         description: Server error
  */
-router.put('/:id', authenticateUser, campaignController.update);
+router.put('/:id', authenticateUser, HasPermission([CampaignPermissionsEnum.EDIT_CAMPAIGNS]), campaignController.update);
 
 /**
  * @swagger
@@ -261,7 +262,7 @@ router.put('/:id', authenticateUser, campaignController.update);
  *       500:
  *         description: Server error
  */
-router.delete('/:id', authenticateUser, campaignController.delete);
+router.delete('/:id', authenticateUser, HasPermission([CampaignPermissionsEnum.DELETE_CAMPAIGNS]), campaignController.delete);
 
 /**
  * @swagger
@@ -289,7 +290,7 @@ router.delete('/:id', authenticateUser, campaignController.delete);
  *       500:
  *         description: Server error
  */
-router.post('/:id/send', authenticateUser, campaignController.send);
+router.post('/:id/send', authenticateUser, HasPermission([CampaignPermissionsEnum.SEND_CAMPAIGNS]), campaignController.send);
 
 /**
  * @swagger
@@ -315,6 +316,6 @@ router.post('/:id/send', authenticateUser, campaignController.send);
  *       500:
  *         description: Server error
  */
-router.get('/:id/analytics', authenticateUser, campaignController.getAnalytics);
+router.get('/:id/analytics', authenticateUser, HasPermission([CampaignPermissionsEnum.VIEW_CAMPAIGNS]), campaignController.getAnalytics);
 
 export default router;

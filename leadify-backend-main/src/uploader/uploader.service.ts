@@ -1,6 +1,5 @@
-import { promises as fs } from 'fs';
-import { join } from 'path';
 import { Op } from 'sequelize';
+import storageService from '../storage/storageService';
 import BaseError from '../utils/error/base-http-exception';
 import { ERRORS } from '../utils/error/errors';
 import { FileModel } from './uploader.enum';
@@ -43,39 +42,23 @@ class UploaderService {
     // Sanitize filename: remove path traversal characters
     const sanitizedName = input.name.replace(/\.\./g, '').replace(/[^a-zA-Z0-9._-]/g, '_');
 
-    // Generate safe file path
-    const filePath = new Date().getTime().toString() + '-' + sanitizedName;
-    const uploadPath = join(process.cwd(), 'public', 'uploads');
+    // Generate safe storage key
+    const key = new Date().getTime().toString() + '-' + sanitizedName;
     try {
-      // Ensure the upload directory exists
-      await fs.mkdir(uploadPath, { recursive: true });
-
-      // Move file to destination using a promise wrapper for async/await
-      await this.moveFile(input, join(uploadPath, filePath));
+      // Upload via storage provider (local filesystem or DO Spaces)
+      await storageService.upload(input.data, key, input.mimetype || 'application/octet-stream');
 
       // Save the file details to the database
       await Uploader.create({
         name: input.name,
-        path: filePath,
+        path: key,
         model: model // FileModel is passed as a parameter
       });
 
-      return filePath;
+      return key;
     } catch (error) {
       throw new BaseError(ERRORS.FILE_ERROR); // Handle specific file upload errors
     }
-  }
-
-  private async moveFile(input: any, destination: string): Promise<void> {
-    return new Promise<void>((resolve, reject) => {
-      input.mv(destination, (err: any) => {
-        if (err) {
-          reject(new BaseError(ERRORS.FILE_ERROR));
-        } else {
-          resolve();
-        }
-      });
-    });
   }
 
   public async setFileReferences(paths: string[]): Promise<void> {

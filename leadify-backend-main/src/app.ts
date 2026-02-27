@@ -7,7 +7,7 @@ import i18next from 'i18next';
 import Backend from 'i18next-fs-backend';
 import middleware from 'i18next-http-middleware';
 import { doubleCsrf } from 'csrf-csrf';
-import { generalLimiter, uploadLimiter } from './middleware/rateLimiter';
+import { generalLimiter, uploadLimiter, authLimiter, apiIntensiveLimiter, exportLimiter, webhookLimiter } from './middleware/rateLimiter';
 import { sanitizeInput } from './middleware/sanitize';
 import assetRoutes from './asset/assetRoutes';
 import clientRoutes from './client/clientRoutes';
@@ -18,6 +18,7 @@ import manpowerRoutes from './manpower/manpowerRoutes';
 import AdditionalMaterialRoutes from './additionalMaterial/additionalMaterialRoutes';
 import materialRoutes from './material/materialRoutes';
 import notificationRoutes from './notification/notificationRoutes';
+import unsubscribeRoutes from './notification/unsubscribeRoutes';
 import opportunityRoutes from './opportunity/opportunityRoutes';
 import projectRoutes from './project/projectRoutes';
 import projectManpowerRoutes from './projectManpower/projectManpowerRoutes';
@@ -100,6 +101,25 @@ import communicationRoutes from './communication/communicationRoutes';
 import customerSuccessRoutes from './customerSuccess/customerSuccessRoutes';
 import voipRoutes from './communication/voipRoutes';
 import docBuilderRoutes from './docBuilder/docBuilderRoutes';
+// ─── New Module Routes ────────────────────────────────────────────────────────
+import performanceRoutes from './hr/performance/performanceRoutes';
+import recruitmentRoutes from './hr/recruitment/recruitmentRoutes';
+import trainingRoutes from './hr/training/trainingRoutes';
+import commissionRoutes from './commission/commissionRoutes';
+import competitorRoutes from './competitor/competitorRoutes';
+import cpqRoutes from './cpq/cpqRoutes';
+import abTestRoutes from './abTesting/abTestRoutes';
+import formBuilderRoutes from './formBuilder/formBuilderRoutes';
+import loyaltyRoutes from './loyalty/loyaltyRoutes';
+import socialCrmRoutes from './socialCrm/socialCrmRoutes';
+import surveyRoutes from './survey/surveyRoutes';
+import liveChatRoutes from './liveChat/liveChatRoutes';
+import bookingRoutes from './booking/bookingRoutes';
+import warehouseRoutes from './warehouse/warehouseRoutes';
+import vendorScorecardRoutes from './vendorScorecard/vendorScorecardRoutes';
+import warrantyRoutes from './warranty/warrantyRoutes';
+import shippingRoutes from './shipping/shippingRoutes';
+import goalRoutes from './goals/goalRoutes';
 
 const fileUpload = require('express-fileupload');
 
@@ -263,14 +283,14 @@ app.use('/api/daily-task', dailyTaskRoutes);
 app.use('/api/vendor', vendorRoutes);
 app.use('/api/procurement', procurementRoutes);
 app.use('/api/rfq', rfqRoutes);
-app.use('/api/ai', aiRoutes);
+app.use('/api/ai', apiIntensiveLimiter, aiRoutes);
 app.use('/api/integrations', integrationRoutes);
 app.use('/api/integrations/erpnext', erpnextRoutes);
 app.use('/api/messaging', messagingRoutes);
 app.use('/api/custom-fields', customFieldRoutes);
-app.use('/api/webhooks', webhookRoutes);
+app.use('/api/webhooks', webhookLimiter, webhookRoutes);
 app.use('/api/time-tracking', timeTrackingRoutes);
-app.use('/api/report-builder', reportBuilderRoutes);
+app.use('/api/report-builder', apiIntensiveLimiter, reportBuilderRoutes);
 app.use('/api/invoices', invoiceRoutes);
 app.use('/api/invoices/billing', invoiceBillingRoutes);
 app.use('/api/workflows', workflowRoutes);
@@ -299,12 +319,12 @@ app.use('/api/manufacturing', manufacturingRoutes);
 app.use('/api/zatca', zatcaRoutes);
 app.use('/api/zakaat', zakaatRoutes);
 app.use('/api/saved-views', savedViewRoutes);
-app.use('/api/search', searchRoutes);
+app.use('/api/search', apiIntensiveLimiter, searchRoutes);
 app.use('/api/lead-scoring', leadScoringRoutes);
 app.use('/api/duplicates', duplicateRoutes);
 app.use('/api/sla', slaRoutes);
 app.use('/api/dashboards', dashboardRoutes);
-app.use('/api/reports', customReportRoutes);
+app.use('/api/reports', apiIntensiveLimiter, customReportRoutes);
 app.use('/api/security', securityRoutes);
 app.use('/api/pipeline-config', pipelineConfigRoutes);
 app.use('/api/territories', territoryRoutes);
@@ -323,16 +343,46 @@ app.use('/api/communications', communicationRoutes);
 app.use('/api/customer-success', customerSuccessRoutes);
 app.use('/api/voip', voipRoutes);
 app.use('/api/doc-builder', docBuilderRoutes);
+// ─── New Module Routes ────────────────────────────────────────────────────────
+app.use('/api/hr/performance', performanceRoutes);
+app.use('/api/hr/recruitment', recruitmentRoutes);
+app.use('/api/hr/training', trainingRoutes);
+app.use('/api/commissions', commissionRoutes);
+app.use('/api/competitors', competitorRoutes);
+app.use('/api/cpq', cpqRoutes);
+app.use('/api/ab-tests', abTestRoutes);
+app.use('/api/form-builder', formBuilderRoutes);
+app.use('/api/loyalty', loyaltyRoutes);
+app.use('/api/social-crm', socialCrmRoutes);
+app.use('/api/surveys', surveyRoutes);
+app.use('/api/live-chat', liveChatRoutes);
+app.use('/api/bookings', bookingRoutes);
+app.use('/api/warehouse', warehouseRoutes);
+app.use('/api/vendor-scorecard', vendorScorecardRoutes);
+app.use('/api/warranty', warrantyRoutes);
+app.use('/api/shipping', shippingRoutes);
+app.use('/api/goals', goalRoutes);
 
-// Authentication routes
-// Apply strict rate limiting only to login/password-reset endpoints (not /me which is called on every page)
+// Public notification unsubscribe (no auth required)
+app.use('/api/notifications', unsubscribeRoutes);
+
+// Authentication routes — strict rate limiting on login/password-reset
+app.use('/api/auth/login', authLimiter);
+app.use('/api/auth/forgot-password', authLimiter);
+app.use('/api/auth/reset-password', authLimiter);
 app.use('/api/auth', authRoutes);
 
 // BullMQ Queue Dashboard (Optional: Secure this middleware in production)
 app.use('/api/admin/queues', serverAdapter.getRouter());
 
-// Serve static files from the 'public' directory
-app.use('/assets', express.static('public/uploads'));
+// Serve static files — redirect to CDN when using cloud storage
+if (process.env.STORAGE_PROVIDER === 'spaces' && process.env.DO_SPACES_CDN_URL) {
+  app.use('/assets', (req: Request, res: Response) => {
+    res.redirect(301, `${process.env.DO_SPACES_CDN_URL}${req.path}`);
+  });
+} else {
+  app.use('/assets', express.static('public/uploads'));
+}
 
 // Set up Swagger documentation route
 app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerDocs));

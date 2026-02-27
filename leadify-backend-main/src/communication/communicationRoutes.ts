@@ -240,6 +240,14 @@ router.delete(
  */
 router.post('/calls', authenticateUser, HasPermission([CommunicationPermissionsEnum.LOG_CALLS]), communicationController.logCall);
 
+// ─── Call Logs ──────────────────────────────────────────────────────────────
+
+router.get('/call-logs', authenticateUser, HasPermission([CommunicationPermissionsEnum.VIEW_ACTIVITIES]), communicationController.getCallLogs);
+
+// ─── Meeting Notes ──────────────────────────────────────────────────────────
+
+router.get('/meeting-notes', authenticateUser, HasPermission([CommunicationPermissionsEnum.VIEW_ACTIVITIES]), communicationController.getMeetingNotes);
+
 // ─── Stats & Recent ──────────────────────────────────────────────────────────
 
 /**

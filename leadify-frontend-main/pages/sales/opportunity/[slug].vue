@@ -1,7 +1,15 @@
 <template lang="pug">
 .flex.items-center.justify-between.mb-5.mt-5
   .title.font-bold.text-2xl.mb-1.capitalize {{ $t('opportunities.details') }}
-  el-dropdown(trigger="click")
+  .flex.items-center.gap-x-3
+    NuxtLink(
+      v-if="hasPermission('CREATE_DEALS') && opportunity?.stage !== 'WON' && opportunity?.stage !== 'LOST' && opportunity?.stage !== 'CONVERTED'"
+      :to="`/sales/deals/add-deal?opportunityId=${opportunity?.id}&leadId=${lead?.id}`"
+    )
+      el-button(size="large" type="success" class="!rounded-2xl")
+        Icon(name="ph:arrows-clockwise-bold" size="18" class="mr-1")
+        | {{ $t('opportunities.convertDeal') || 'Convert to Deal' }}
+    el-dropdown(trigger="click")
       span.el-dropdown-link
           button.rounded-btn(class="!px-4"): Icon(  name="IconToggle" size="24")
       template(#dropdown)

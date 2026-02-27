@@ -1,4 +1,5 @@
 import { Op } from 'sequelize';
+import jwt from 'jsonwebtoken';
 import Notification from './notificationModel';
 import NotificationPreference, {
   DEFAULT_NOTIFICATION_PREFERENCES,
@@ -6,11 +7,28 @@ import NotificationPreference, {
   NotificationPreferencesMap
 } from './notificationPreferenceModel';
 import { NotificationReadEnums, NotificationTypeEnums } from './notificationEnum';
+import { renderNotificationEmail } from './notificationEmailTemplates';
+import { sendEmail } from '../utils/emailHelper';
 import User from '../user/userModel';
 import Role from '../role/roleModel';
 import BaseError from '../utils/error/base-http-exception';
 import { ERRORS } from '../utils/error/errors';
 import { SortEnum } from '../lead/leadEnum';
+
+// Simple in-memory throttle: max 10 notification emails per user per hour
+const emailThrottle: Map<number, number[]> = new Map();
+const EMAIL_THROTTLE_LIMIT = 10;
+const EMAIL_THROTTLE_WINDOW = 60 * 60 * 1000; // 1 hour
+
+function canSendEmail(userId: number): boolean {
+  const now = Date.now();
+  const timestamps = emailThrottle.get(userId) || [];
+  const recent = timestamps.filter(t => now - t < EMAIL_THROTTLE_WINDOW);
+  emailThrottle.set(userId, recent);
+  if (recent.length >= EMAIL_THROTTLE_LIMIT) return false;
+  recent.push(now);
+  return true;
+}
 
 let ioInstance: any = null;
 
@@ -122,10 +140,40 @@ class NotificationCenterService {
       }
     }
 
-    // Email notification (placeholder - integrate with your email provider)
-    if (channels.email) {
-      // TODO: Integrate with email service (e.g. SendGrid, SES, Nodemailer)
-      // await emailService.send({ to: userId, subject: data.title, body: data.message });
+    // Email notification via Brevo
+    if (channels.email && canSendEmail(data.userId)) {
+      try {
+        const user = await User.findByPk(data.userId);
+        if (user?.email) {
+          const secret = process.env.SECRET_KEY || 'default-secret';
+          const prefKey = typeToPreferenceKey(data.type);
+          const unsubscribeToken = jwt.sign(
+            { userId: data.userId, notificationType: prefKey },
+            secret,
+            { expiresIn: '30d' }
+          );
+          const frontendUrl = process.env.FRONTEND_URL || 'http://localhost:3060';
+          const unsubscribeUrl = `${process.env.BACKEND_URL || 'http://localhost:3000'}/api/notifications/unsubscribe?token=${unsubscribeToken}`;
+          const actionUrl = data.actionUrl ? `${frontendUrl}${data.actionUrl}` : undefined;
+
+          const html = renderNotificationEmail({
+            type: data.type,
+            title: data.title,
+            message: data.message,
+            actionUrl,
+            unsubscribeUrl
+          });
+
+          await sendEmail({
+            to: user.email,
+            subject: data.title,
+            text: data.message,
+            html
+          });
+        }
+      } catch (emailError) {
+        console.error('Failed to send notification email:', emailError);
+      }
     }
 
     // Push notification (placeholder - integrate with your push provider)

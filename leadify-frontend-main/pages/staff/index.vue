@@ -13,7 +13,7 @@
 
     //- Desktop Table
     .staff-desktop-view
-      AppTable(v-slot="{data}" :filterOptions="filterOptions" :columns="table.columns" position="users" :pageInfo="response.pagination" :data="table.data" :sortOptions="table.sort" @handleRowClick="handleRowClick" searchPlaceholder="staff" :loading="loadingAction" )
+      AppTable(v-slot="{data}" :filterOptions="filterOptions" :columns="table.columns" position="users" :pageInfo="response.pagination" :data="table.data" :sortOptions="table.sort" @handleRowClick="handleRowClick" searchPlaceholder="staff" :loading="loadingAction" emptyIcon="ph:users-bold" emptyMessage="No staff members yet" emptyDescription="Add your first team member to get started" emptyActionHref="/staff/add-staff" emptyActionLabel="Add Staff" )
         .flex.items-center.py-2(@click.stop)
             el-dropdown(class="outline-0" trigger="click")
                 span(class="el-dropdown-link")

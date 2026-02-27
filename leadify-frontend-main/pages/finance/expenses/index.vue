@@ -29,6 +29,11 @@ div
       @handleRowClick="handleRowClick"
       :searchPlaceholder="$t('finance.expenses.title')"
       :key="table.data"
+      emptyIcon="ph:money-bold"
+      emptyMessage="No expenses yet"
+      emptyDescription="Record your first expense to start tracking spending"
+      emptyActionHref="/finance/expenses/create"
+      :emptyActionLabel="$t('finance.expenses.addExpense')"
     )
       .flex.items-center.py-2(@click.stop)
         el-dropdown(class="outline-0" trigger="click")

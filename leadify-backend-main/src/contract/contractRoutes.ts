@@ -1,6 +1,7 @@
 import express from 'express';
 import contractController from './contractController';
-import { authenticateUser } from '../middleware/authMiddleware';
+import { authenticateUser, HasPermission } from '../middleware/authMiddleware';
+import { ContractPermissionsEnum } from '../role/roleEnum';
 
 /**
  * @swagger
@@ -27,7 +28,7 @@ const router = express.Router();
  *         description: Server error
  */
 // Authenticated routes
-router.get('/', authenticateUser, contractController.getAll);
+router.get('/', authenticateUser, HasPermission([ContractPermissionsEnum.VIEW_CONTRACTS]), contractController.getAll);
 
 /**
  * @swagger
@@ -52,7 +53,7 @@ router.get('/', authenticateUser, contractController.getAll);
  *       500:
  *         description: Server error
  */
-router.get('/:id', authenticateUser, contractController.getById);
+router.get('/:id', authenticateUser, HasPermission([ContractPermissionsEnum.VIEW_CONTRACTS]), contractController.getById);
 
 /**
  * @swagger
@@ -92,7 +93,7 @@ router.get('/:id', authenticateUser, contractController.getById);
  *       500:
  *         description: Server error
  */
-router.post('/', authenticateUser, contractController.create);
+router.post('/', authenticateUser, HasPermission([ContractPermissionsEnum.CREATE_CONTRACTS]), contractController.create);
 
 /**
  * @swagger
@@ -135,7 +136,7 @@ router.post('/', authenticateUser, contractController.create);
  *       500:
  *         description: Server error
  */
-router.put('/:id', authenticateUser, contractController.update);
+router.put('/:id', authenticateUser, HasPermission([ContractPermissionsEnum.EDIT_CONTRACTS]), contractController.update);
 
 /**
  * @swagger
@@ -160,7 +161,7 @@ router.put('/:id', authenticateUser, contractController.update);
  *       500:
  *         description: Server error
  */
-router.delete('/:id', authenticateUser, contractController.delete);
+router.delete('/:id', authenticateUser, HasPermission([ContractPermissionsEnum.DELETE_CONTRACTS]), contractController.delete);
 
 /**
  * @swagger
@@ -186,7 +187,7 @@ router.delete('/:id', authenticateUser, contractController.delete);
  *       500:
  *         description: Server error
  */
-router.post('/:id/send', authenticateUser, contractController.sendForSignature);
+router.post('/:id/send', authenticateUser, HasPermission([ContractPermissionsEnum.SEND_FOR_SIGNATURE]), contractController.sendForSignature);
 
 /**
  * @swagger

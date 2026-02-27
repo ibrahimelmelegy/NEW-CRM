@@ -53,7 +53,7 @@
         </div>
       </div>
 
-      <el-table :data="filteredDocuments" class="glass-table" stripe>
+      <el-table v-loading="loading" :data="filteredDocuments" class="glass-table" stripe>
         <el-table-column label="Document" min-width="250">
           <template #default="{ row }">
             <div class="flex items-center gap-3">
@@ -160,7 +160,7 @@
       </el-form>
       <template #footer>
         <el-button @click="showSendDialog = false">Cancel</el-button>
-        <el-button type="primary" @click="sendForSignature">
+        <el-button type="primary" :loading="sending" @click="sendForSignature">
           <Icon name="ph:paper-plane-tilt-bold" class="w-4 h-4 mr-2" />
           Send
         </el-button>
@@ -170,108 +170,136 @@
 </template>
 
 <script setup lang="ts">
-import { ref, computed } from 'vue';
+import { ref, computed, onMounted } from 'vue';
 import { ElMessage } from 'element-plus';
+import { useApiFetch } from '~/composables/useApiFetch';
 
 definePageMeta({
   layout: 'default',
   middleware: 'permissions'
 });
 
+// ---------- Reactive state ----------
 const filterStatus = ref('');
 const searchQuery = ref('');
 const showSendDialog = ref(false);
+const loading = ref(false);
+const sending = ref(false);
 
 const newSignRequest = ref({
   name: '',
   message: '',
-  expiryDate: null,
+  expiryDate: null as Date | null,
   recipients: [{ name: '', email: '' }]
 });
 
-const documents = ref([
-  {
-    id: 1,
-    name: 'Service Agreement - Acme Corp',
-    type: 'CONTRACT',
-    pages: 12,
-    status: 'SIGNED',
-    signedCount: 2,
-    totalSigners: 2,
-    sentDate: '2026-02-15',
-    recipients: [
-      { name: 'John Smith', email: 'john@acme.com' },
-      { name: 'Sara Ahmed', email: 'sara@company.com' }
-    ]
-  },
-  {
-    id: 2,
-    name: 'NDA - TechStart Inc',
-    type: 'NDA',
-    pages: 4,
-    status: 'PENDING',
-    signedCount: 1,
-    totalSigners: 2,
-    sentDate: '2026-02-18',
-    recipients: [
-      { name: 'Mike Johnson', email: 'mike@techstart.com' },
-      { name: 'Ali Hassan', email: 'ali@company.com' }
-    ]
-  },
-  {
-    id: 3,
-    name: 'SOW - Project Alpha',
-    type: 'SOW',
-    pages: 8,
-    status: 'PENDING',
-    signedCount: 0,
-    totalSigners: 3,
-    sentDate: '2026-02-19',
-    recipients: [
-      { name: 'Lisa Park', email: 'lisa@client.com' },
-      { name: 'David Kim', email: 'david@client.com' },
-      { name: 'Omar Farooq', email: 'omar@company.com' }
-    ]
-  },
-  {
-    id: 4,
-    name: 'Employment Contract - New Hire',
-    type: 'CONTRACT',
-    pages: 6,
-    status: 'SIGNED',
-    signedCount: 2,
-    totalSigners: 2,
-    sentDate: '2026-02-10',
-    recipients: [
-      { name: 'Khalid Ibrahim', email: 'khalid@hire.com' },
-      { name: 'HR Dept', email: 'hr@company.com' }
-    ]
-  },
-  {
-    id: 5,
-    name: 'Lease Agreement - Office B',
-    type: 'LEASE',
-    pages: 15,
-    status: 'EXPIRED',
-    signedCount: 0,
-    totalSigners: 2,
-    sentDate: '2026-01-15',
-    recipients: [{ name: 'Property Manager', email: 'pm@building.com' }]
-  },
-  {
-    id: 6,
-    name: 'Vendor Agreement - Supplier X',
-    type: 'CONTRACT',
-    pages: 10,
-    status: 'DECLINED',
-    signedCount: 0,
-    totalSigners: 1,
-    sentDate: '2026-02-01',
-    recipients: [{ name: 'Vendor Rep', email: 'rep@vendor.com' }]
-  }
-]);
+// ---------- Contract → display-document mapping ----------
 
-const avgSignTime = computed(() => '1.3 days');
+interface DisplayDocument {
+  id: string;
+  name: string;
+  type: string;
+  pages: number;
+  status: 'SIGNED' | 'PENDING' | 'EXPIRED' | 'DECLINED';
+  signedCount: number;
+  totalSigners: number;
+  sentDate: string;
+  recipients: { name: string; email: string }[];
+  _raw: any; // keep raw contract for actions
+}
+
+const documents = ref<DisplayDocument[]>([]);
+
+/**
+ * Map backend Contract status to the display status the UI understands.
+ * Backend statuses: DRAFT | SENT | VIEWED | SIGNED | EXPIRED | CANCELLED
+ */
+function mapStatus(backendStatus: string): DisplayDocument['status'] {
+  switch (backendStatus) {
+    case 'SIGNED':
+      return 'SIGNED';
+    case 'EXPIRED':
+      return 'EXPIRED';
+    case 'CANCELLED':
+      return 'DECLINED';
+    // DRAFT, SENT, VIEWED are all "awaiting" states
+    default:
+      return 'PENDING';
+  }
+}
+
+/**
+ * Derive a document type from the contract title for icon/color display.
+ */
+function deriveType(title: string): string {
+  const lower = title.toLowerCase();
+  if (lower.includes('nda') || lower.includes('non-disclosure')) return 'NDA';
+  if (lower.includes('sow') || lower.includes('scope of work') || lower.includes('statement of work')) return 'SOW';
+  if (lower.includes('lease')) return 'LEASE';
+  return 'CONTRACT';
+}
+
+/**
+ * Convert a raw Contract from the API into the display shape the template expects.
+ */
+function mapContract(c: any): DisplayDocument {
+  const isSigned = c.status === 'SIGNED' || !!c.signedAt;
+  return {
+    id: c.id,
+    name: c.title,
+    type: deriveType(c.title),
+    pages: 1, // backend does not track page count
+    status: mapStatus(c.status),
+    signedCount: isSigned ? 1 : 0,
+    totalSigners: 1,
+    sentDate: c.createdAt || '',
+    recipients: c.signerName || c.signerEmail
+      ? [{ name: c.signerName || '', email: c.signerEmail || '' }]
+      : [],
+    _raw: c
+  };
+}
+
+// ---------- Fetch contracts from API ----------
+
+async function fetchDocuments() {
+  loading.value = true;
+  try {
+    const res = await useApiFetch('contracts?limit=100');
+    if (res?.success) {
+      const raw = res.body?.docs || res.body || [];
+      const list = Array.isArray(raw) ? raw : [];
+      documents.value = list.map(mapContract);
+    } else {
+      ElMessage.error(res?.message || 'Failed to load contracts');
+    }
+  } catch (e: any) {
+    ElMessage.error('Failed to load contracts');
+    console.error(e);
+  } finally {
+    loading.value = false;
+  }
+}
+
+onMounted(fetchDocuments);
+
+// ---------- Computed ----------
+
+const avgSignTime = computed(() => {
+  const signed = documents.value.filter(d => d.status === 'SIGNED' && d._raw?.signedAt && d._raw?.createdAt);
+  if (!signed.length) return 'N/A';
+  const totalMs = signed.reduce((sum, d) => {
+    const created = new Date(d._raw.createdAt).getTime();
+    const signedAt = new Date(d._raw.signedAt).getTime();
+    return sum + (signedAt - created);
+  }, 0);
+  const avgDays = totalMs / signed.length / (1000 * 60 * 60 * 24);
+  if (avgDays < 1) {
+    const avgHours = Math.round(totalMs / signed.length / (1000 * 60 * 60));
+    return avgHours <= 1 ? '< 1 hr' : `${avgHours} hrs`;
+  }
+  return `${avgDays.toFixed(1)} days`;
+});
 
 const filteredDocuments = computed(() => {
   let result = documents.value;
@@ -279,6 +307,8 @@ const filteredDocuments = computed(() => {
   if (searchQuery.value) result = result.filter(d => d.name.toLowerCase().includes(searchQuery.value.toLowerCase()));
   return result;
 });
+
+// ---------- UI helpers ----------
 
 const getDocBg = (type: string) => {
   const map: Record<string, string> = { CONTRACT: 'bg-blue-500/10', NDA: 'bg-purple-500/10', SOW: 'bg-amber-500/10', LEASE: 'bg-teal-500/10' };
@@ -317,16 +347,76 @@ const getSignStatusColor = (s: string) => {
 
 const formatDate = (d: string) => (d ? new Date(d).toLocaleDateString('en', { month: 'short', day: 'numeric' }) : '-');
 
-const viewDocument = (doc: any) => ElMessage.info(`Viewing: ${doc.name}`);
-const sendReminder = (doc: any) => ElMessage.success(`Reminder sent for: ${doc.name}`);
-const downloadDocument = (doc: any) => ElMessage.info(`Downloading: ${doc.name}`);
+// ---------- Actions ----------
 
-const sendForSignature = () => {
-  if (!newSignRequest.value.name) {
+const viewDocument = (doc: DisplayDocument) => {
+  navigateTo(`/documents/contracts/${doc.id}`);
+};
+
+const sendReminder = async (doc: DisplayDocument) => {
+  try {
+    const res = await useApiFetch(`contracts/${doc.id}/send`, 'POST', {});
+    if (res?.success) {
+      ElMessage.success(`Reminder sent to ${doc.recipients[0]?.name || 'signer'}`);
+    } else {
+      ElMessage.error(res?.message || 'Failed to send reminder');
+    }
+  } catch {
+    ElMessage.error('Failed to send reminder');
+  }
+};
+
+const downloadDocument = (doc: DisplayDocument) => ElMessage.info(`Downloading: ${doc.name}`);
+
+const sendForSignature = async () => {
+  const req = newSignRequest.value;
+  if (!req.name) {
     ElMessage.warning('Document name is required');
     return;
   }
-  ElMessage.success('Document sent for signature');
-  showSendDialog.value = false;
+  if (!req.recipients.length || !req.recipients[0].email) {
+    ElMessage.warning('At least one recipient with an email is required');
+    return;
+  }
+
+  sending.value = true;
+  try {
+    // Step 1: Create the contract
+    const createRes = await useApiFetch('contracts', 'POST', {
+      title: req.name,
+      content: req.message || '',
+      signerName: req.recipients[0].name,
+      signerEmail: req.recipients[0].email,
+      ...(req.expiryDate ? { expiresAt: req.expiryDate } : {})
+    });
+
+    if (!createRes?.success || !createRes.body) {
+      ElMessage.error(createRes?.message || 'Failed to create contract');
+      return;
+    }
+
+    const contractId = createRes.body.id;
+
+    // Step 2: Send for signature (generates token + emails signer)
+    const sendRes = await useApiFetch(`contracts/${contractId}/send`, 'POST', {});
+
+    if (sendRes?.success) {
+      ElMessage.success('Document sent for signature');
+      showSendDialog.value = false;
+      // Reset form
+      newSignRequest.value = { name: '', message: '', expiryDate: null, recipients: [{ name: '', email: '' }] };
+      // Refresh list
+      await fetchDocuments();
+    } else {
+      ElMessage.error(sendRes?.message || 'Contract created but failed to send for signature');
+      // Still refresh to show the draft
+      await fetchDocuments();
+    }
+  } catch (e: any) {
+    ElMessage.error('Failed to send document for signature');
+    console.error(e);
+  } finally {
+    sending.value = false;
+  }
 };
 </script>

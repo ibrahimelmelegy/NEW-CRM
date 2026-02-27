@@ -26,3 +26,30 @@ export const uploadLimiter = rateLimit({
   legacyHeaders: false,
   message: { message: 'Too many upload requests, please try again later.' }
 });
+
+// Intensive API operations (search, reports, AI): 100 requests per 15 minutes per IP
+export const apiIntensiveLimiter = rateLimit({
+  windowMs: 15 * 60 * 1000,
+  max: 100,
+  standardHeaders: true,
+  legacyHeaders: false,
+  message: { message: 'Too many intensive requests, please try again later.' }
+});
+
+// Export rate limit: 10 exports per hour per IP
+export const exportLimiter = rateLimit({
+  windowMs: 60 * 60 * 1000,
+  max: 10,
+  standardHeaders: true,
+  legacyHeaders: false,
+  message: { message: 'Too many export requests, please try again later.' }
+});
+
+// Webhook rate limit: 500 requests per 15 minutes per IP
+export const webhookLimiter = rateLimit({
+  windowMs: 15 * 60 * 1000,
+  max: 500,
+  standardHeaders: true,
+  legacyHeaders: false,
+  message: { message: 'Too many webhook requests, please try again later.' }
+});

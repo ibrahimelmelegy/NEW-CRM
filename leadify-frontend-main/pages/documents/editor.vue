@@ -42,6 +42,30 @@
       //- Main Form (8 cols)
       .space-y-6(class="col-span-12 xl:col-span-8")
 
+        //- Template Picker
+        .glass-card.p-6.rounded-3xl(v-if="templates.length > 0")
+          .flex.items-center.gap-3.mb-4
+            .rounded-xl(class="p-2.5" style="background: rgba(168, 85, 247, 0.12)")
+              Icon(name="ph:layout-bold" size="22" style="color: #a855f7")
+            h3.font-bold(style="color: var(--text-primary)") {{ $t('documentEditor.templatePicker') }}
+          el-select(
+            v-model="form.templateId"
+            :placeholder="$t('documentEditor.selectTemplate')"
+            clearable
+            style="width: 100%"
+            size="large"
+          )
+            el-option(
+              v-for="tmpl in templates"
+              :key="tmpl.id"
+              :label="tmpl.name"
+              :value="tmpl.id"
+            )
+              .flex.items-center.gap-2
+                Icon(name="ph:file-text-bold" size="16" style="color: #a855f7")
+                span {{ tmpl.name }}
+                el-tag(v-if="tmpl.isDefault" size="small" type="success" effect="plain" round class="ml-2") Default
+
         //- Smart Header - Invoice
         .glass-card.p-8.rounded-3xl(v-if="selectedType === 'INVOICE' || selectedType === 'PROFORMA_INVOICE'")
           .flex.items-center.gap-3.mb-6
@@ -469,11 +493,13 @@ const projects = ref<Array<{ id: string; name: string }>>([]);
 const salesOrders = ref<Array<{ id: string; orderNumber: string }>>([]);
 const invoicesList = ref<Array<{ id: number; invoiceNumber: string; amount: number }>>([]);
 const recentDocs = ref<Array<{ id: string; number: string; date: string; link: string }>>([]);
+const templates = ref<Array<{ id: string; name: string; type: string; isDefault: boolean }>>([]);
 
 const paymentTermsOptions = PAYMENT_TERMS_OPTIONS;
 
 const form = ref({
   // Common
+  templateId: '' as string,
   date: new Date(),
   currency: 'SAR',
   notes: '',
@@ -604,6 +630,7 @@ function selectType(type: DocumentType) {
   selectedType.value = type;
   resetForm();
   loadRecentDocs();
+  loadTemplates(type);
 }
 
 function resetType() {
@@ -611,8 +638,27 @@ function resetType() {
   resetForm();
 }
 
+async function loadTemplates(type: string) {
+  templates.value = [];
+  try {
+    const { body, success } = await useApiFetch(`document-templates?type=${type.toUpperCase()}&limit=50`);
+    if (success && body) {
+      const data = body as any;
+      templates.value = (data.docs || data || []).map((t: any) => ({
+        id: t.id,
+        name: t.name,
+        type: t.type,
+        isDefault: t.isDefault || false
+      }));
+    }
+  } catch {
+    /* silent — templates are optional */
+  }
+}
+
 function resetForm() {
   form.value.lineItems = [{ description: '', quantity: 1, unitPrice: 0, taxRate: 0, discountRate: 0, lineTotal: 0 }];
+  form.value.templateId = '';
   form.value.dealId = '';
   form.value.salesOrderId = '';
   form.value.invoiceDate = new Date();

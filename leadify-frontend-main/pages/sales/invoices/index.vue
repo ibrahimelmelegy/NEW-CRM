@@ -25,6 +25,11 @@ div
       @handleRowClick="handleRowClick"
       :searchPlaceholder="$t('invoices.title')"
       :key="table.data"
+      emptyIcon="ph:file-text-bold"
+      emptyMessage="No invoices yet"
+      emptyDescription="Create your first invoice to start billing"
+      emptyActionHref="/sales/invoices/create"
+      emptyActionLabel="Create Invoice"
     )
       .flex.items-center.py-2(@click.stop)
         el-dropdown(class="outline-0" trigger="click")

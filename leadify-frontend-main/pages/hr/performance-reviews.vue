@@ -8,7 +8,7 @@
           <p class="text-slate-400 text-sm mt-1">Track employee performance, set goals, and manage review cycles.</p>
         </div>
         <div class="flex gap-2">
-          <el-select v-model="selectedCycle" placeholder="Review Cycle" class="w-48">
+          <el-select v-model="selectedCycle" placeholder="Review Cycle" class="w-48" @change="fetchReviews">
             <el-option label="Q1 2026" value="Q1-2026" />
             <el-option label="Q4 2025" value="Q4-2025" />
             <el-option label="Q3 2025" value="Q3-2025" />
@@ -48,7 +48,7 @@
 
     <!-- Reviews Table -->
     <div class="glass-panel p-6 rounded-2xl">
-      <el-table :data="reviews" class="glass-table" stripe style="width: 100%">
+      <el-table :data="reviews" class="glass-table" stripe style="width: 100%" v-loading="loading">
         <el-table-column label="Employee" min-width="200">
           <template #default="{ row }">
             <div class="flex items-center gap-3">
@@ -134,7 +134,7 @@
       </el-form>
       <template #footer>
         <el-button @click="showNewReviewDialog = false">Cancel</el-button>
-        <el-button type="primary" @click="createReview">Start Review</el-button>
+        <el-button type="primary" :loading="creating" @click="createReview">Start Review</el-button>
       </template>
     </el-dialog>
   </div>
@@ -155,63 +155,103 @@ const selectedCycle = ref('Q1-2026');
 const showNewReviewDialog = ref(false);
 const ratingChartRef = ref<HTMLElement>();
 const deptChartRef = ref<HTMLElement>();
+const loading = ref(false);
+const creating = ref(false);
 
-// Sample data structure - will connect to real API
-const reviews = ref<any[]>([
-  {
-    id: 1,
-    employeeName: 'Ahmed Al-Farsi',
-    department: 'Sales',
-    reviewType: 'QUARTERLY',
-    overallRating: 4.2,
-    goalsCompleted: 85,
-    status: 'COMPLETED',
-    reviewDate: '2026-01-15'
-  },
-  {
-    id: 2,
-    employeeName: 'Sara Mohammed',
-    department: 'Marketing',
-    reviewType: 'QUARTERLY',
-    overallRating: 4.8,
-    goalsCompleted: 95,
-    status: 'COMPLETED',
-    reviewDate: '2026-01-18'
-  },
-  {
-    id: 3,
-    employeeName: 'Omar Hassan',
-    department: 'Engineering',
-    reviewType: 'QUARTERLY',
-    overallRating: 3.5,
-    goalsCompleted: 70,
-    status: 'IN_PROGRESS',
-    reviewDate: '2026-02-01'
-  },
-  {
-    id: 4,
-    employeeName: 'Fatima Ali',
-    department: 'HR',
-    reviewType: 'ANNUAL',
-    overallRating: 4.0,
-    goalsCompleted: 80,
-    status: 'COMPLETED',
-    reviewDate: '2026-01-20'
-  },
-  {
-    id: 5,
-    employeeName: 'Khalid Ibrahim',
-    department: 'Sales',
-    reviewType: 'QUARTERLY',
-    overallRating: 3.8,
-    goalsCompleted: 75,
-    status: 'PENDING',
-    reviewDate: '2026-02-10'
-  }
-]);
-
+const reviews = ref<any[]>([]);
 const employees = ref<any[]>([]);
-const newReview = ref({ employeeId: '', reviewType: 'QUARTERLY', period: null });
+const newReview = ref({ employeeId: '', reviewType: 'QUARTERLY', period: null as any });
+
+// --------------- helpers to map backend → display fields ---------------
+
+/**
+ * Calculate goal completion percentage from the goals JSONB array.
+ * Each goal has { title, status, weight }. We sum the weights of goals
+ * whose status is 'COMPLETED' (or 'DONE'/'MET') and divide by total weight.
+ * If no weights are present, fall back to simple count ratio.
+ */
+function calcGoalCompletion(goals: any[] | null | undefined): number {
+  if (!goals || !Array.isArray(goals) || goals.length === 0) return 0;
+
+  const hasWeights = goals.some((g) => g.weight != null && g.weight > 0);
+
+  if (hasWeights) {
+    const totalWeight = goals.reduce((sum, g) => sum + (Number(g.weight) || 0), 0);
+    if (totalWeight === 0) return 0;
+    const completedWeight = goals
+      .filter((g) => ['COMPLETED', 'DONE', 'MET'].includes(String(g.status).toUpperCase()))
+      .reduce((sum, g) => sum + (Number(g.weight) || 0), 0);
+    return Math.round((completedWeight / totalWeight) * 100);
+  }
+
+  // Fallback: simple count
+  const completed = goals.filter((g) =>
+    ['COMPLETED', 'DONE', 'MET'].includes(String(g.status).toUpperCase())
+  ).length;
+  return Math.round((completed / goals.length) * 100);
+}
+
+/**
+ * Derive a reviewType label from the period string.
+ * The backend `period` field is a free-form STRING (e.g. "Q1-2026", "ANNUAL-2025").
+ */
+function deriveReviewType(period: string | undefined): string {
+  if (!period) return 'QUARTERLY';
+  const upper = period.toUpperCase();
+  if (upper.startsWith('ANNUAL')) return 'ANNUAL';
+  if (upper.includes('PROBATION')) return 'PROBATION';
+  if (upper.includes('PROJECT')) return 'PROJECT';
+  return 'QUARTERLY';
+}
+
+/** Map a raw backend PerformanceReview record into the shape the template expects. */
+function mapReview(raw: any): any {
+  return {
+    id: raw.id,
+    employeeName: raw.employee
+      ? `${raw.employee.firstName || ''} ${raw.employee.lastName || ''}`.trim()
+      : `Employee #${raw.employeeId}`,
+    department: raw.employee?.department || '-',
+    reviewType: deriveReviewType(raw.period),
+    overallRating: Number(raw.overallRating) || 0,
+    goalsCompleted: calcGoalCompletion(raw.goals),
+    status: raw.status || 'DRAFT',
+    reviewDate: raw.reviewDate || raw.createdAt || '',
+    avatar: raw.employee?.profilePicture || undefined,
+    // Keep the raw record for detail navigation
+    _raw: raw
+  };
+}
+
+// --------------- API calls ---------------
+
+const fetchReviews = async () => {
+  loading.value = true;
+  try {
+    const query = selectedCycle.value ? `?period=${selectedCycle.value}` : '';
+    const res: any = await useApiFetch(`hr/performance${query}`);
+    if (res?.success) {
+      const docs = res.body?.docs || res.body || [];
+      reviews.value = (Array.isArray(docs) ? docs : []).map(mapReview);
+    } else {
+      reviews.value = [];
+    }
+  } catch (e) {
+    console.error('Failed to fetch performance reviews', e);
+    reviews.value = [];
+  } finally {
+    loading.value = false;
+  }
+};
+
+const fetchEmployees = async () => {
+  const res: any = await useApiFetch('hr/employees?limit=100');
+  if (res?.success) {
+    employees.value = res.body?.docs || res.body || [];
+  }
+};
+
+// --------------- computed KPIs ---------------
 
 const avgRating = computed(() => {
   if (!reviews.value.length) return 0;
@@ -223,6 +263,8 @@ const goalCompletion = computed(() => {
   return Math.round(reviews.value.reduce((s, r) => s + r.goalsCompleted, 0) / reviews.value.length);
 });
 
+// --------------- UI helpers ---------------
+
 const getProgressColor = (pct: number) => {
   if (pct >= 80) return '#10B981';
   if (pct >= 60) return '#F59E0B';
@@ -232,7 +274,9 @@ const getProgressColor = (pct: number) => {
 const getReviewStatusType = (status: string): 'success' | 'warning' | 'info' | 'danger' | undefined => {
   const map: Record<string, 'success' | 'warning' | 'info' | 'danger' | undefined> = {
     COMPLETED: 'success',
+    ACKNOWLEDGED: 'success',
     IN_PROGRESS: 'warning',
+    DRAFT: 'info',
     PENDING: 'info',
     CANCELLED: 'danger'
   };
@@ -241,21 +285,69 @@ const getReviewStatusType = (status: string): 'success' | 'warning' | 'info' | '
 
 const formatDate = (d: string) => (d ? new Date(d).toLocaleDateString('en', { month: 'short', day: 'numeric', year: 'numeric' }) : '-');
 
-const viewReview = (review: any) => ElMessage.info(`Viewing review for ${review.employeeName}`);
-const createReview = () => {
-  ElMessage.success('Performance review started');
-  showNewReviewDialog.value = false;
-};
+// --------------- actions ---------------
 
-const fetchEmployees = async () => {
-  const res: any = await useApiFetch('hr/employees?limit=100');
-  if (res?.success) {
-    employees.value = res.body?.docs || res.body || [];
+const viewReview = async (review: any) => {
+  const router = useRouter();
+  // Navigate to detail view if route exists, otherwise show info
+  try {
+    await router.push(`/hr/performance-reviews/${review.id}`);
+  } catch {
+    ElMessage.info(`Viewing review for ${review.employeeName}`);
   }
 };
 
+const createReview = async () => {
+  if (!newReview.value.employeeId) {
+    ElMessage.warning('Please select an employee');
+    return;
+  }
+
+  creating.value = true;
+  try {
+    // Build period string from the selected review cycle / date range
+    let periodStr = selectedCycle.value || '';
+    if (newReview.value.period && Array.isArray(newReview.value.period) && newReview.value.period.length === 2) {
+      const start = new Date(newReview.value.period[0]).toISOString().slice(0, 10);
+      const end = new Date(newReview.value.period[1]).toISOString().slice(0, 10);
+      periodStr = `${start} to ${end}`;
+    }
+
+    const payload: Record<string, any> = {
+      employeeId: Number(newReview.value.employeeId),
+      period: periodStr,
+      status: 'DRAFT',
+      reviewDate: new Date().toISOString().slice(0, 10)
+    };
+
+    const res: any = await useApiFetch('hr/performance', 'POST', payload);
+    if (res?.success) {
+      ElMessage.success('Performance review started');
+      showNewReviewDialog.value = false;
+      newReview.value = { employeeId: '', reviewType: 'QUARTERLY', period: null };
+      // Reload reviews to include the new one
+      await fetchReviews();
+    } else {
+      ElMessage.error(res?.message || 'Failed to create review');
+    }
+  } catch (e: any) {
+    ElMessage.error(e?.message || 'Failed to create review');
+  } finally {
+    creating.value = false;
+  }
+};
+
+// --------------- charts ---------------
+
 const renderCharts = () => {
+  // ---- Rating Distribution (bar chart) ----
   if (ratingChartRef.value) {
+    const buckets = [0, 0, 0, 0, 0]; // 1-star, 2-star, 3-star, 4-star, 5-star
+    reviews.value.forEach((r) => {
+      const idx = Math.min(Math.max(Math.round(r.overallRating) - 1, 0), 4);
+      buckets[idx]++;
+    });
+
     const chart = echarts.init(ratingChartRef.value);
     chart.setOption({
       tooltip: { trigger: 'axis', backgroundColor: '#1e293b', borderColor: '#334155', textStyle: { color: '#e2e8f0' } },
@@ -270,7 +362,7 @@ const renderCharts = () => {
       series: [
         {
           type: 'bar',
-          data: [0, 0, 1, 3, 1],
+          data: buckets,
           itemStyle: {
             color: new echarts.graphic.LinearGradient(0, 0, 0, 1, [
               { offset: 0, color: '#8B5CF6' },
@@ -284,18 +376,42 @@ const renderCharts = () => {
     });
   }
 
+  // ---- Department Performance (radar chart) ----
   if (deptChartRef.value) {
-    const chart = echarts.init(deptChartRef.value);
-    chart.setOption({
-      tooltip: { trigger: 'axis', backgroundColor: '#1e293b', borderColor: '#334155', textStyle: { color: '#e2e8f0' } },
-      radar: {
-        indicator: [
+    // Aggregate average ratings per department from real data
+    const deptMap: Record<string, { sum: number; count: number }> = {};
+    reviews.value.forEach((r) => {
+      const dept = r.department || 'Other';
+      if (!deptMap[dept]) deptMap[dept] = { sum: 0, count: 0 };
+      deptMap[dept].sum += r.overallRating;
+      deptMap[dept].count++;
+    });
+
+    // Build indicator and value arrays from the data
+    const departments = Object.keys(deptMap);
+    // If we have data, use real departments; otherwise show placeholders
+    const indicators = departments.length > 0
+      ? departments.map((name) => ({ name, max: 5 }))
+      : [
           { name: 'Sales', max: 5 },
           { name: 'Marketing', max: 5 },
           { name: 'Engineering', max: 5 },
           { name: 'HR', max: 5 },
           { name: 'Operations', max: 5 }
-        ],
+        ];
+
+    const values = departments.length > 0
+      ? departments.map((dept) => {
+          const entry = deptMap[dept];
+          return Number((entry.sum / entry.count).toFixed(1));
+        })
+      : [0, 0, 0, 0, 0];
+
+    const chart = echarts.init(deptChartRef.value);
+    chart.setOption({
+      tooltip: { trigger: 'axis', backgroundColor: '#1e293b', borderColor: '#334155', textStyle: { color: '#e2e8f0' } },
+      radar: {
+        indicator: indicators,
         axisName: { color: '#94a3b8' },
         splitArea: { areaStyle: { color: ['rgba(30,41,59,0.5)', 'rgba(30,41,59,0.3)'] } },
         splitLine: { lineStyle: { color: '#334155' } },
@@ -306,7 +422,7 @@ const renderCharts = () => {
           type: 'radar',
           data: [
             {
-              value: [4.0, 4.8, 3.5, 4.0, 3.7],
+              value: values,
               name: 'Avg Rating',
               areaStyle: { color: 'rgba(99,102,241,0.2)' },
               lineStyle: { color: '#6366F1', width: 2 },
@@ -319,8 +435,10 @@ const renderCharts = () => {
   }
 };
 
+// --------------- lifecycle ---------------
+
 onMounted(async () => {
-  fetchEmployees();
+  await Promise.all([fetchReviews(), fetchEmployees()]);
   await nextTick();
   renderCharts();
 });

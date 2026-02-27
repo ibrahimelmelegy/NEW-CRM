@@ -96,7 +96,7 @@
 
     <!-- List View -->
     <div v-if="viewMode === 'list'" class="glass-panel p-6 rounded-2xl">
-      <el-table :data="bookings" class="glass-table" stripe>
+      <el-table :data="bookings" class="glass-table" stripe v-loading="loading">
         <el-table-column label="Booking" min-width="250">
           <template #default="{ row }">
             <div class="flex items-center gap-3">
@@ -230,7 +230,7 @@
       </el-form>
       <template #footer>
         <el-button @click="showBookingDialog = false">Cancel</el-button>
-        <el-button type="primary" @click="createBooking">Schedule</el-button>
+        <el-button type="primary" :loading="submitting" @click="createBooking">Schedule</el-button>
       </template>
     </el-dialog>
 
@@ -265,117 +265,94 @@
 </template>
 
 <script setup lang="ts">
-import { ref, computed } from 'vue';
+import { ref, computed, onMounted } from 'vue';
 import { ElMessage } from 'element-plus';
+import { useApiFetch } from '~/composables/useApiFetch';
 
 definePageMeta({
   layout: 'default',
   middleware: 'permissions'
 });
 
+// ---------- Color palette for booking types ----------
+const TYPE_COLORS: Record<string, string> = {
+  DEMO: '#6366F1',
+  MEETING: '#10B981',
+  CONSULTATION: '#F59E0B',
+  FOLLOWUP: '#8B5CF6'
+};
+const FALLBACK_COLORS = ['#EC4899', '#14B8A6', '#3B82F6', '#EF4444', '#A855F7', '#F97316'];
+
+function colorForBooking(type: string | undefined, index: number): string {
+  if (type && TYPE_COLORS[type]) return TYPE_COLORS[type];
+  return FALLBACK_COLORS[index % FALLBACK_COLORS.length];
+}
+
+// ---------- Helpers to compute hour & duration from HH:MM strings ----------
+function parseHourFromTime(time: string): number {
+  if (!time) return 0;
+  const [hStr] = time.split(':');
+  return parseInt(hStr, 10);
+}
+
+function computeDurationMinutes(start: string, end: string): number {
+  if (!start || !end) return 30; // sensible default
+  const [sh, sm] = start.split(':').map(Number);
+  const [eh, em] = end.split(':').map(Number);
+  return (eh * 60 + em) - (sh * 60 + sm);
+}
+
+// ---------- Map raw API booking to the shape the UI expects ----------
+interface UIBooking {
+  id: number;
+  title: string;
+  clientName: string;
+  date: string;
+  time: string;
+  duration: number;
+  type: string;
+  host: string;
+  status: string;
+  color: string;
+  hour: number;
+}
+
+function mapBooking(raw: any, index: number): UIBooking {
+  const type = raw.type || '';
+  const clientName = raw.clientName || raw.client?.name || '';
+  const host = raw.staff?.name || '';
+  const startTime = raw.startTime || '';
+  const endTime = raw.endTime || '';
+
+  return {
+    id: raw.id,
+    title: type && clientName ? `${type} - ${clientName}` : type || clientName || `Booking #${raw.id}`,
+    clientName,
+    date: raw.date || '',
+    time: startTime,
+    duration: computeDurationMinutes(startTime, endTime),
+    type,
+    host,
+    status: raw.status || 'PENDING',
+    color: colorForBooking(type, index),
+    hour: parseHourFromTime(startTime)
+  };
+}
+
+// ---------- State ----------
 const viewMode = ref('day');
 const showBookingDialog = ref(false);
 const showBookingTypeDialog = ref(false);
 const currentDate = ref(new Date());
+const loading = ref(false);
+const submitting = ref(false);
 
 const newBooking = ref({ title: '', clientName: '', date: '', time: '', duration: 30, type: 'MEETING', location: '', notes: '' });
 const newPage = ref({ name: '', duration: 30, type: 'ONE_ON_ONE', buffer: 10 });
 
 const timeSlots = Array.from({ length: 12 }, (_, i) => i + 8); // 8 AM to 7 PM
 
-const bookings = ref([
-  {
-    id: 1,
-    title: 'Product Demo - TechCorp',
-    clientName: 'Ahmed Al-Farsi',
-    date: '2026-02-20',
-    time: '09:00',
-    duration: 60,
-    type: 'DEMO',
-    host: 'Sara M.',
-    status: 'CONFIRMED',
-    color: '#6366F1',
-    hour: 9
-  },
-  {
-    id: 2,
-    title: 'Q1 Strategy Meeting',
-    clientName: 'Internal',
-    date: '2026-02-20',
-    time: '10:30',
-    duration: 90,
-    type: 'MEETING',
-    host: 'Ahmed F.',
-    status: 'CONFIRMED',
-    color: '#10B981',
-    hour: 10
-  },
-  {
-    id: 3,
-    title: 'Consultation - StartupX',
-    clientName: 'Omar Hassan',
-    date: '2026-02-20',
-    time: '13:00',
-    duration: 45,
-    type: 'CONSULTATION',
-    host: 'Fatima A.',
-    status: 'PENDING',
-    color: '#F59E0B',
-    hour: 13
-  },
-  {
-    id: 4,
-    title: 'Follow-up - Deal #234',
-    clientName: 'Khalid Ibrahim',
-    date: '2026-02-20',
-    time: '14:00',
-    duration: 30,
-    type: 'FOLLOWUP',
-    host: 'Sara M.',
-    status: 'CONFIRMED',
-    color: '#8B5CF6',
-    hour: 14
-  },
-  {
-    id: 5,
-    title: 'Demo - Enterprise Plan',
-    clientName: 'Noura Salem',
-    date: '2026-02-20',
-    time: '16:00',
-    duration: 60,
-    type: 'DEMO',
-    host: 'Omar H.',
-    status: 'PENDING',
-    color: '#EC4899',
-    hour: 16
-  },
-  {
-    id: 6,
-    title: 'Partnership Review',
-    clientName: 'Yusuf Ahmed',
-    date: '2026-02-21',
-    time: '11:00',
-    duration: 45,
-    type: 'MEETING',
-    host: 'Ahmed F.',
-    status: 'CONFIRMED',
-    color: '#14B8A6',
-    hour: 11
-  },
-  {
-    id: 7,
-    title: 'Technical Onboarding',
-    clientName: 'Layla M.',
-    date: '2026-02-21',
-    time: '09:00',
-    duration: 120,
-    type: 'CONSULTATION',
-    host: 'Omar H.',
-    status: 'CONFIRMED',
-    color: '#3B82F6',
-    hour: 9
-  }
-]);
+const bookings = ref<UIBooking[]>([]);
 
 const bookingPages = ref([
   { id: 1, name: '30-min Demo Call', duration: 30, type: 'One-on-One', bookings: 45, icon: 'ph:presentation-chart-bold', color: '#6366F1' },
@@ -383,9 +360,40 @@ const bookingPages = ref([
   { id: 3, name: '15-min Quick Chat', duration: 15, type: 'Round Robin', bookings: 89, icon: 'ph:chat-circle-bold', color: '#F59E0B' }
 ]);
 
-const todayBookings = computed(() => bookings.value.filter(b => b.date === '2026-02-20').length);
-const weekBookings = computed(() => bookings.value.length);
-const noShowRate = ref(4.2);
+// ---------- Date helpers ----------
+function toDateString(d: Date): string {
+  const y = d.getFullYear();
+  const m = String(d.getMonth() + 1).padStart(2, '0');
+  const day = String(d.getDate()).padStart(2, '0');
+  return `${y}-${m}-${day}`;
+}
+
+function getWeekRange(d: Date): { start: string; end: string } {
+  const dayOfWeek = d.getDay(); // 0=Sun
+  const startOfWeek = new Date(d);
+  startOfWeek.setDate(d.getDate() - dayOfWeek);
+  const endOfWeek = new Date(startOfWeek);
+  endOfWeek.setDate(startOfWeek.getDate() + 6);
+  return { start: toDateString(startOfWeek), end: toDateString(endOfWeek) };
+}
+
+// ---------- Computed stats ----------
+const todayBookings = computed(() => {
+  const todayStr = toDateString(new Date());
+  return bookings.value.filter(b => b.date === todayStr).length;
+});
+
+const weekBookings = computed(() => {
+  const { start, end } = getWeekRange(new Date());
+  return bookings.value.filter(b => b.date >= start && b.date <= end).length;
+});
+
+const noShowRate = computed(() => {
+  const total = bookings.value.length;
+  if (total === 0) return 0;
+  const noShows = bookings.value.filter(b => b.status === 'NO_SHOW').length;
+  return parseFloat(((noShows / total) * 100).toFixed(1));
+});
 
 const currentDateLabel = computed(() => {
   return currentDate.value.toLocaleDateString('en', { weekday: 'long', month: 'long', day: 'numeric', year: 'numeric' });
@@ -394,7 +402,10 @@ const currentDateLabel = computed(() => {
 const formatHour = (h: number) => `${h > 12 ? h - 12 : h}:00 ${h >= 12 ? 'PM' : 'AM'}`;
 const formatDate = (d: string) => (d ? new Date(d).toLocaleDateString('en', { weekday: 'short', month: 'short', day: 'numeric' }) : '-');
 
-const getBookingsForHour = (hour: number) => bookings.value.filter(b => b.hour === hour && b.date === '2026-02-20');
+const getBookingsForHour = (hour: number) => {
+  const dateStr = toDateString(currentDate.value);
+  return bookings.value.filter(b => b.hour === hour && b.date === dateStr);
+};
 
 const getBookingStatusType = (s: string): 'success' | 'warning' | 'info' | 'danger' | undefined => {
   const m: Record<string, 'success' | 'warning' | 'info' | 'danger' | undefined> = {
@@ -416,31 +427,133 @@ const goToToday = () => {
   currentDate.value = new Date();
 };
 
-const openBooking = (b: any) => ElMessage.info(`Opening: ${b.title}`);
-const confirmBooking = (b: any) => {
-  b.status = 'CONFIRMED';
-  ElMessage.success('Booking confirmed');
+// ---------- API: Fetch bookings ----------
+async function fetchBookings() {
+  loading.value = true;
+  try {
+    const res = await useApiFetch('bookings?limit=500');
+    if (res?.success) {
+      const raw: any[] = res.body?.docs || res.body || [];
+      bookings.value = raw.map((b, i) => mapBooking(b, i));
+    } else {
+      ElMessage.error(res?.message || 'Failed to load bookings');
+    }
+  } catch (e: any) {
+    ElMessage.error('Failed to load bookings');
+  } finally {
+    loading.value = false;
+  }
+}
+
+// ---------- API: Create booking ----------
+const createBooking = async () => {
+  if (!newBooking.value.clientName) {
+    ElMessage.warning('Client name is required');
+    return;
+  }
+
+  // Build startTime HH:MM from the time picker value
+  let startTime = '';
+  if (newBooking.value.time) {
+    const t = newBooking.value.time;
+    if (typeof t === 'string') {
+      startTime = t;
+    } else if (t instanceof Date) {
+      startTime = `${String(t.getHours()).padStart(2, '0')}:${String(t.getMinutes()).padStart(2, '0')}`;
+    }
+  }
+
+  // Compute endTime from startTime + duration
+  let endTime = '';
+  if (startTime) {
+    const [sh, sm] = startTime.split(':').map(Number);
+    const totalMin = sh * 60 + sm + (newBooking.value.duration || 30);
+    const eh = Math.floor(totalMin / 60);
+    const em = totalMin % 60;
+    endTime = `${String(eh).padStart(2, '0')}:${String(em).padStart(2, '0')}`;
+  }
+
+  // Build date as YYYY-MM-DD string
+  let dateStr = '';
+  if (newBooking.value.date) {
+    const d = newBooking.value.date;
+    if (typeof d === 'string') {
+      dateStr = d;
+    } else if (d instanceof Date) {
+      dateStr = toDateString(d);
+    }
+  }
+
+  const payload = {
+    clientName: newBooking.value.clientName,
+    date: dateStr,
+    startTime,
+    endTime,
+    type: newBooking.value.type,
+    notes: newBooking.value.notes
+  };
+
+  submitting.value = true;
+  try {
+    const res = await useApiFetch('bookings', 'POST', payload);
+    if (res?.success) {
+      ElMessage.success('Booking scheduled');
+      showBookingDialog.value = false;
+      // Reset form
+      newBooking.value = { title: '', clientName: '', date: '', time: '', duration: 30, type: 'MEETING', location: '', notes: '' };
+      // Refresh list
+      await fetchBookings();
+    } else {
+      ElMessage.error(res?.message || 'Failed to create booking');
+    }
+  } catch (e: any) {
+    ElMessage.error('Failed to create booking');
+  } finally {
+    submitting.value = false;
+  }
 };
-const cancelBooking = (b: any) => {
-  b.status = 'CANCELLED';
-  ElMessage.success('Booking cancelled');
+
+// ---------- API: Confirm booking ----------
+const confirmBooking = async (b: UIBooking) => {
+  try {
+    const res = await useApiFetch(`bookings/${b.id}`, 'PUT', { status: 'CONFIRMED' });
+    if (res?.success) {
+      b.status = 'CONFIRMED';
+      ElMessage.success('Booking confirmed');
+    } else {
+      ElMessage.error(res?.message || 'Failed to confirm booking');
+    }
+  } catch (e: any) {
+    ElMessage.error('Failed to confirm booking');
+  }
 };
+
+// ---------- API: Cancel booking ----------
+const cancelBooking = async (b: UIBooking) => {
+  try {
+    const res = await useApiFetch(`bookings/${b.id}`, 'PUT', { status: 'CANCELLED' });
+    if (res?.success) {
+      b.status = 'CANCELLED';
+      ElMessage.success('Booking cancelled');
+    } else {
+      ElMessage.error(res?.message || 'Failed to cancel booking');
+    }
+  } catch (e: any) {
+    ElMessage.error('Failed to cancel booking');
+  }
+};
+
+const openBooking = (b: UIBooking) => ElMessage.info(`Opening: ${b.title}`);
+
 const quickBook = (hour: number) => {
-  newBooking.value.time = `${hour}:00`;
+  newBooking.value.time = `${String(hour).padStart(2, '0')}:00`;
+  newBooking.value.date = toDateString(currentDate.value);
   showBookingDialog.value = true;
 };
+
 const copyBookingLink = (page: any) => {
   navigator.clipboard?.writeText(`https://book.example.com/${page.id}`);
   ElMessage.success('Link copied!');
-};
-
-const createBooking = () => {
-  if (!newBooking.value.title) {
-    ElMessage.warning('Title required');
-    return;
-  }
-  ElMessage.success('Booking scheduled');
-  showBookingDialog.value = false;
 };
 
 const createBookingPage = () => {
@@ -448,7 +561,26 @@ const createBookingPage = () => {
     ElMessage.warning('Page name required');
     return;
   }
+  // Add locally (no backend endpoint for booking pages)
+  const pageIcons = ['ph:presentation-chart-bold', 'ph:video-camera-bold', 'ph:chat-circle-bold', 'ph:calendar-bold'];
+  const pageColors = ['#6366F1', '#10B981', '#F59E0B', '#EC4899', '#3B82F6'];
+  const nextId = bookingPages.value.length > 0 ? Math.max(...bookingPages.value.map(p => p.id)) + 1 : 1;
+  bookingPages.value.push({
+    id: nextId,
+    name: newPage.value.name,
+    duration: newPage.value.duration,
+    type: newPage.value.type === 'ONE_ON_ONE' ? 'One-on-One' : newPage.value.type === 'GROUP' ? 'Group' : 'Round Robin',
+    bookings: 0,
+    icon: pageIcons[nextId % pageIcons.length],
+    color: pageColors[nextId % pageColors.length]
+  });
   ElMessage.success('Booking page created');
   showBookingTypeDialog.value = false;
+  newPage.value = { name: '', duration: 30, type: 'ONE_ON_ONE', buffer: 10 };
 };
+
+// ---------- Init ----------
+onMounted(() => {
+  fetchBookings();
+});
 </script>

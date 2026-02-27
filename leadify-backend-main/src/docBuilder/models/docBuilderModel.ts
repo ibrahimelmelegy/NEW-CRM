@@ -2,6 +2,7 @@ import { Table, Column, Model, DataType, AllowNull, Default, HasMany, BelongsTo,
 import User from '../../user/userModel';
 import Tenant from '../../tenant/tenantModel';
 import DocBuilderVersion from './docBuilderVersionModel';
+import DocumentTemplate from '../../documentTemplate/documentTemplateModel';
 
 export enum DocTypeEnum {
   QUOTE = 'quote',
@@ -175,6 +176,15 @@ class DocBuilderDocument extends Model {
   // Version history
   @HasMany(() => DocBuilderVersion, { foreignKey: 'documentId', as: 'versions' })
   public versions?: DocBuilderVersion[];
+
+  // Template reference
+  @ForeignKey(() => DocumentTemplate)
+  @AllowNull(true)
+  @Column({ type: DataType.UUID })
+  public templateId?: string;
+
+  @BelongsTo(() => DocumentTemplate, { foreignKey: 'templateId', as: 'template' })
+  public template?: DocumentTemplate;
 
   // Multi-tenancy
   @ForeignKey(() => Tenant)

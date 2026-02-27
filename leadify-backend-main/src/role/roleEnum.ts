@@ -254,6 +254,204 @@ export enum DocBuilderPermissionsEnum {
   SEND_DOCUMENTS = 'SEND_DOCUMENTS'
 }
 
+export enum GoalPermissionsEnum {
+  VIEW_GOALS = 'VIEW_GOALS',
+  CREATE_GOALS = 'CREATE_GOALS',
+  EDIT_GOALS = 'EDIT_GOALS',
+  DELETE_GOALS = 'DELETE_GOALS'
+}
+
+export enum BookingPermissionsEnum {
+  VIEW_BOOKINGS = 'VIEW_BOOKINGS',
+  CREATE_BOOKINGS = 'CREATE_BOOKINGS',
+  EDIT_BOOKINGS = 'EDIT_BOOKINGS',
+  DELETE_BOOKINGS = 'DELETE_BOOKINGS',
+  MANAGE_SLOTS = 'MANAGE_SLOTS'
+}
+
+export enum SocialCrmPermissionsEnum {
+  VIEW_SOCIAL_CRM = 'VIEW_SOCIAL_CRM',
+  CREATE_SOCIAL_CRM = 'CREATE_SOCIAL_CRM',
+  EDIT_SOCIAL_CRM = 'EDIT_SOCIAL_CRM',
+  DELETE_SOCIAL_CRM = 'DELETE_SOCIAL_CRM'
+}
+
+export enum CommissionPermissionsEnum {
+  VIEW_COMMISSIONS = 'VIEW_COMMISSIONS',
+  CREATE_COMMISSIONS = 'CREATE_COMMISSIONS',
+  EDIT_COMMISSIONS = 'EDIT_COMMISSIONS',
+  DELETE_COMMISSIONS = 'DELETE_COMMISSIONS'
+}
+
+export enum CompetitorPermissionsEnum {
+  VIEW_COMPETITORS = 'VIEW_COMPETITORS',
+  CREATE_COMPETITORS = 'CREATE_COMPETITORS',
+  EDIT_COMPETITORS = 'EDIT_COMPETITORS',
+  DELETE_COMPETITORS = 'DELETE_COMPETITORS'
+}
+
+export enum CpqPermissionsEnum {
+  VIEW_CPQ = 'VIEW_CPQ',
+  CREATE_CPQ = 'CREATE_CPQ',
+  EDIT_CPQ = 'EDIT_CPQ',
+  DELETE_CPQ = 'DELETE_CPQ'
+}
+
+export enum AbTestPermissionsEnum {
+  VIEW_AB_TESTS = 'VIEW_AB_TESTS',
+  CREATE_AB_TESTS = 'CREATE_AB_TESTS',
+  EDIT_AB_TESTS = 'EDIT_AB_TESTS',
+  DELETE_AB_TESTS = 'DELETE_AB_TESTS'
+}
+
+export enum FormBuilderPermissionsEnum {
+  VIEW_FORMS = 'VIEW_FORMS',
+  CREATE_FORMS = 'CREATE_FORMS',
+  EDIT_FORMS = 'EDIT_FORMS',
+  DELETE_FORMS = 'DELETE_FORMS',
+  VIEW_SUBMISSIONS = 'VIEW_SUBMISSIONS'
+}
+
+export enum LoyaltyPermissionsEnum {
+  VIEW_LOYALTY = 'VIEW_LOYALTY',
+  CREATE_LOYALTY = 'CREATE_LOYALTY',
+  EDIT_LOYALTY = 'EDIT_LOYALTY',
+  DELETE_LOYALTY = 'DELETE_LOYALTY',
+  MANAGE_POINTS = 'MANAGE_POINTS'
+}
+
+export enum SurveyPermissionsEnum {
+  VIEW_SURVEYS = 'VIEW_SURVEYS',
+  CREATE_SURVEYS = 'CREATE_SURVEYS',
+  EDIT_SURVEYS = 'EDIT_SURVEYS',
+  DELETE_SURVEYS = 'DELETE_SURVEYS',
+  VIEW_RESPONSES = 'VIEW_RESPONSES'
+}
+
+export enum LiveChatPermissionsEnum {
+  VIEW_CONVERSATIONS = 'VIEW_CONVERSATIONS',
+  CREATE_CONVERSATIONS = 'CREATE_CONVERSATIONS',
+  EDIT_CONVERSATIONS = 'EDIT_CONVERSATIONS',
+  DELETE_CONVERSATIONS = 'DELETE_CONVERSATIONS',
+  SEND_MESSAGES = 'SEND_MESSAGES'
+}
+
+export enum WarehousePermissionsEnum {
+  VIEW_WAREHOUSES = 'VIEW_WAREHOUSES',
+  CREATE_WAREHOUSES = 'CREATE_WAREHOUSES',
+  EDIT_WAREHOUSES = 'EDIT_WAREHOUSES',
+  DELETE_WAREHOUSES = 'DELETE_WAREHOUSES',
+  MANAGE_ZONES = 'MANAGE_ZONES',
+  MANAGE_TRANSFERS = 'MANAGE_TRANSFERS'
+}
+
+export enum VendorScorecardPermissionsEnum {
+  VIEW_VENDOR_SCORECARDS = 'VIEW_VENDOR_SCORECARDS',
+  CREATE_VENDOR_SCORECARDS = 'CREATE_VENDOR_SCORECARDS',
+  EDIT_VENDOR_SCORECARDS = 'EDIT_VENDOR_SCORECARDS',
+  DELETE_VENDOR_SCORECARDS = 'DELETE_VENDOR_SCORECARDS'
+}
+
+export enum WarrantyPermissionsEnum {
+  VIEW_WARRANTIES = 'VIEW_WARRANTIES',
+  CREATE_WARRANTIES = 'CREATE_WARRANTIES',
+  EDIT_WARRANTIES = 'EDIT_WARRANTIES',
+  DELETE_WARRANTIES = 'DELETE_WARRANTIES',
+  MANAGE_CLAIMS = 'MANAGE_CLAIMS'
+}
+
+export enum ShippingPermissionsEnum {
+  VIEW_SHIPMENTS = 'VIEW_SHIPMENTS',
+  CREATE_SHIPMENTS = 'CREATE_SHIPMENTS',
+  EDIT_SHIPMENTS = 'EDIT_SHIPMENTS',
+  DELETE_SHIPMENTS = 'DELETE_SHIPMENTS',
+  MANAGE_RATES = 'MANAGE_RATES'
+}
+
+export enum ManufacturingPermissionsEnum {
+  VIEW_MANUFACTURING = 'VIEW_MANUFACTURING',
+  CREATE_MANUFACTURING = 'CREATE_MANUFACTURING',
+  EDIT_MANUFACTURING = 'EDIT_MANUFACTURING',
+  DELETE_MANUFACTURING = 'DELETE_MANUFACTURING'
+}
+
+export enum HRPermissionsEnum {
+  VIEW_ATTENDANCE = 'VIEW_ATTENDANCE',
+  MANAGE_ATTENDANCE = 'MANAGE_ATTENDANCE',
+  VIEW_LEAVE_REQUESTS = 'VIEW_LEAVE_REQUESTS',
+  CREATE_LEAVE_REQUESTS = 'CREATE_LEAVE_REQUESTS',
+  APPROVE_LEAVE_REQUESTS = 'APPROVE_LEAVE_REQUESTS',
+  DELETE_LEAVE_REQUESTS = 'DELETE_LEAVE_REQUESTS'
+}
+
+export enum PerformancePermissionsEnum {
+  VIEW_PERFORMANCE = 'VIEW_PERFORMANCE',
+  CREATE_PERFORMANCE = 'CREATE_PERFORMANCE',
+  EDIT_PERFORMANCE = 'EDIT_PERFORMANCE',
+  DELETE_PERFORMANCE = 'DELETE_PERFORMANCE'
+}
+
+export enum RecruitmentPermissionsEnum {
+  VIEW_RECRUITMENT = 'VIEW_RECRUITMENT',
+  CREATE_RECRUITMENT = 'CREATE_RECRUITMENT',
+  EDIT_RECRUITMENT = 'EDIT_RECRUITMENT',
+  DELETE_RECRUITMENT = 'DELETE_RECRUITMENT'
+}
+
+export enum TrainingPermissionsEnum {
+  VIEW_TRAINING = 'VIEW_TRAINING',
+  CREATE_TRAINING = 'CREATE_TRAINING',
+  EDIT_TRAINING = 'EDIT_TRAINING',
+  DELETE_TRAINING = 'DELETE_TRAINING'
+}
+
+export enum FinancePermissionsEnum {
+  VIEW_EXPENSES = 'VIEW_EXPENSES',
+  CREATE_EXPENSES = 'CREATE_EXPENSES',
+  EDIT_EXPENSES = 'EDIT_EXPENSES',
+  DELETE_EXPENSES = 'DELETE_EXPENSES',
+  APPROVE_EXPENSES = 'APPROVE_EXPENSES',
+  VIEW_BUDGETS = 'VIEW_BUDGETS',
+  CREATE_BUDGETS = 'CREATE_BUDGETS',
+  EDIT_BUDGETS = 'EDIT_BUDGETS',
+  DELETE_BUDGETS = 'DELETE_BUDGETS',
+  VIEW_CATEGORIES = 'VIEW_CATEGORIES',
+  MANAGE_CATEGORIES = 'MANAGE_CATEGORIES'
+}
+
+export enum CampaignPermissionsEnum {
+  VIEW_CAMPAIGNS = 'VIEW_CAMPAIGNS',
+  CREATE_CAMPAIGNS = 'CREATE_CAMPAIGNS',
+  EDIT_CAMPAIGNS = 'EDIT_CAMPAIGNS',
+  DELETE_CAMPAIGNS = 'DELETE_CAMPAIGNS',
+  SEND_CAMPAIGNS = 'SEND_CAMPAIGNS',
+  MANAGE_TEMPLATES = 'MANAGE_TEMPLATES'
+}
+
+export enum ContractPermissionsEnum {
+  VIEW_CONTRACTS = 'VIEW_CONTRACTS',
+  CREATE_CONTRACTS = 'CREATE_CONTRACTS',
+  EDIT_CONTRACTS = 'EDIT_CONTRACTS',
+  DELETE_CONTRACTS = 'DELETE_CONTRACTS',
+  SEND_FOR_SIGNATURE = 'SEND_FOR_SIGNATURE'
+}
+
+export enum ApprovalPermissionsEnum {
+  VIEW_APPROVALS = 'VIEW_APPROVALS',
+  CREATE_APPROVALS = 'CREATE_APPROVALS',
+  MANAGE_WORKFLOWS = 'MANAGE_WORKFLOWS',
+  APPROVE_REQUESTS = 'APPROVE_REQUESTS',
+  REJECT_REQUESTS = 'REJECT_REQUESTS'
+}
+
+export enum InventoryPermissionsEnum {
+  VIEW_INVENTORY = 'VIEW_INVENTORY',
+  CREATE_INVENTORY = 'CREATE_INVENTORY',
+  EDIT_INVENTORY = 'EDIT_INVENTORY',
+  DELETE_INVENTORY = 'DELETE_INVENTORY',
+  MANAGE_MOVEMENTS = 'MANAGE_MOVEMENTS'
+}
+
 // Consolidating all permissions
 export const permissions = {
   leads: Object.keys(LeadPermissionsEnum),
@@ -290,7 +488,32 @@ export const permissions = {
   communications: Object.keys(CommunicationPermissionsEnum),
   reportBuilder: Object.keys(ReportBuilderPermissionsEnum),
   integrations: Object.keys(IntegrationPermissionsEnum),
-  docBuilder: Object.keys(DocBuilderPermissionsEnum)
+  docBuilder: Object.keys(DocBuilderPermissionsEnum),
+  goals: Object.keys(GoalPermissionsEnum),
+  bookings: Object.keys(BookingPermissionsEnum),
+  socialCrm: Object.keys(SocialCrmPermissionsEnum),
+  commissions: Object.keys(CommissionPermissionsEnum),
+  competitors: Object.keys(CompetitorPermissionsEnum),
+  cpq: Object.keys(CpqPermissionsEnum),
+  abTests: Object.keys(AbTestPermissionsEnum),
+  formBuilder: Object.keys(FormBuilderPermissionsEnum),
+  loyalty: Object.keys(LoyaltyPermissionsEnum),
+  surveys: Object.keys(SurveyPermissionsEnum),
+  liveChat: Object.keys(LiveChatPermissionsEnum),
+  warehouses: Object.keys(WarehousePermissionsEnum),
+  vendorScorecards: Object.keys(VendorScorecardPermissionsEnum),
+  warranties: Object.keys(WarrantyPermissionsEnum),
+  shipping: Object.keys(ShippingPermissionsEnum),
+  manufacturing: Object.keys(ManufacturingPermissionsEnum),
+  hr: Object.keys(HRPermissionsEnum),
+  performance: Object.keys(PerformancePermissionsEnum),
+  recruitment: Object.keys(RecruitmentPermissionsEnum),
+  training: Object.keys(TrainingPermissionsEnum),
+  finance: Object.keys(FinancePermissionsEnum),
+  campaigns: Object.keys(CampaignPermissionsEnum),
+  contracts: Object.keys(ContractPermissionsEnum),
+  approvals: Object.keys(ApprovalPermissionsEnum),
+  inventory: Object.keys(InventoryPermissionsEnum)
 };
 
 // Function to get all permissions

@@ -62,6 +62,18 @@
             Icon(name="ph:pencil-simple" size="16")
             span.ml-1 Edit
 
+    //- AI Summary Card
+    .glass-card.p-5.rounded-2xl.mb-6(v-if="selectedContact && !aiLoading && aiSummary")
+      .flex.items-center.gap-2.mb-3
+        .w-8.h-8.rounded-xl.flex.items-center.justify-center(style="background: linear-gradient(135deg, #7849ff, #a855f7)")
+          Icon(name="ph:sparkle-bold" size="16" style="color: white")
+        h3.text-sm.font-bold(style="color: var(--text-primary)") AI Customer Summary
+      p.text-sm.leading-relaxed(style="color: var(--text-secondary)") {{ aiSummary }}
+    .glass-card.p-5.rounded-2xl.mb-6(v-if="aiLoading")
+      .flex.items-center.gap-3
+        el-icon.is-loading(:size="20" style="color: #7849ff")
+        span.text-sm(style="color: var(--text-muted)") Generating customer insights...
+
     //- Stats Cards
     .grid.gap-4.mb-6(class="grid-cols-2 md:grid-cols-4")
       .glass-card.p-5.rounded-2xl(v-for="stat in contactStats" :key="stat.label")
@@ -249,6 +261,8 @@ const loadingInvoices = ref(false);
 const loadingTickets = ref(false);
 const newNote = ref('');
 const savingNote = ref(false);
+const aiSummary = ref('');
+const aiLoading = ref(false);
 
 // Stats
 const contactStats = computed(() => [
@@ -336,6 +350,7 @@ async function loadContact(id?: string) {
       // Load all tab data first, then build activities from them
       await Promise.all([loadDeals(cid), loadInvoices(cid), loadTickets(cid)]);
       buildActivities();
+      generateAiSummary(cid);
     }
   } catch {
     ElNotification({ type: 'error', title: 'Error', message: 'Could not load contact' });
@@ -439,6 +454,33 @@ async function addNote() {
   }
 }
 
+async function generateAiSummary(clientId: string) {
+  aiLoading.value = true;
+  aiSummary.value = '';
+  try {
+    const res: any = await useApiFetch('ai/chat', 'POST', {
+      message: `Give a brief 2-3 sentence customer summary for client ID ${clientId}. Include deal status, revenue, and engagement level.`
+    });
+    if (res?.success && res.body) {
+      aiSummary.value = res.body.reply || res.body.response || res.body.message || '';
+    }
+    if (!aiSummary.value) {
+      // Build a local summary from loaded data
+      const deals = contactDeals.value;
+      const revenue = deals.filter(d => d.status === 'WON').reduce((s, d) => s + Number(d.value || 0), 0);
+      const openTickets = contactTickets.value.filter(t => t.status !== 'CLOSED' && t.status !== 'RESOLVED').length;
+      aiSummary.value = `This customer has ${deals.length} deal(s) totaling $${revenue.toLocaleString()} in won revenue. There are ${openTickets} open support ticket(s) and ${contactInvoices.value.length} invoice(s) on record.`;
+    }
+  } catch {
+    const deals = contactDeals.value;
+    const revenue = deals.filter(d => d.status === 'WON').reduce((s, d) => s + Number(d.value || 0), 0);
+    const openTickets = contactTickets.value.filter(t => t.status !== 'CLOSED' && t.status !== 'RESOLVED').length;
+    aiSummary.value = `This customer has ${deals.length} deal(s) totaling $${revenue.toLocaleString()} in won revenue. There are ${openTickets} open support ticket(s) and ${contactInvoices.value.length} invoice(s) on record.`;
+  } finally {
+    aiLoading.value = false;
+  }
+}
+
 function clearContact() {
   selectedContact.value = null;
   contactId.value = '';
@@ -447,6 +489,7 @@ function clearContact() {
   contactTickets.value = [];
   contactNotes.value = [];
   recentActivities.value = [];
+  aiSummary.value = '';
 }
 
 onMounted(() => {

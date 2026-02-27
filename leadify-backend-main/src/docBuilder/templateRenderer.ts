@@ -1,7 +1,12 @@
 /**
  * Server-side HTML template renderer for document PDF generation.
  * Takes document content JSON and type, renders to static HTML string.
+ *
+ * Supports two rendering paths:
+ * 1. renderDocumentHtml() — hardcoded layout (legacy, used when no template is selected)
+ * 2. renderWithTemplate() — uses DocumentTemplate layout + brand settings via templateEngine
  */
+import { renderFromTemplate, type BrandSettings } from './templateEngine';
 
 interface LineItem {
   description: string;
@@ -111,13 +116,15 @@ export function renderDocumentHtml(content: DocumentContent, type: string): stri
 
   const isFullDoc = ['proposal', 'contract'].includes(type);
 
+  const fontFamily = "'Segoe UI', system-ui, -apple-system, sans-serif";
+
   return `<!DOCTYPE html>
 <html lang="en">
 <head>
   <meta charset="UTF-8">
   <style>
     * { margin: 0; padding: 0; box-sizing: border-box; }
-    body { font-family: 'Segoe UI', system-ui, -apple-system, sans-serif; color: #1e293b; background: #fff; }
+    body { font-family: ${fontFamily}; color: #1e293b; background: #fff; }
     @page { size: A4; margin: 20mm; }
   </style>
 </head>
@@ -276,4 +283,21 @@ export function renderDocumentHtml(content: DocumentContent, type: string): stri
   </div>
 </body>
 </html>`;
+}
+
+/**
+ * Render a document using a DocumentTemplate's HTML layout + brand settings.
+ * Falls back to renderDocumentHtml() if no templateHtml is provided.
+ */
+export function renderWithTemplate(
+  content: DocumentContent,
+  type: string,
+  templateHtml?: string,
+  brand?: BrandSettings
+): string {
+  if (!templateHtml) {
+    return renderDocumentHtml(content, type);
+  }
+
+  return renderFromTemplate(templateHtml, content as Record<string, any>, brand);
 }

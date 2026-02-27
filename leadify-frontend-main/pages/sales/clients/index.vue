@@ -22,7 +22,7 @@ div(class="animate-fade-in")
 
   //- Desktop Table
   .clients-desktop-view
-    AppTable(v-slot="{data}" :filterOptions="filterOptions" :columns="table.columns" position="client" :pageInfo="response.pagination" :data="table.data" :sortOptions="table.sort" @handleRowClick="handleRowClick" searchPlaceholder="clients" )
+    AppTable(v-slot="{data}" :filterOptions="filterOptions" :columns="table.columns" position="client" :pageInfo="response.pagination" :data="table.data" :sortOptions="table.sort" @handleRowClick="handleRowClick" searchPlaceholder="clients" emptyIcon="ph:buildings-bold" emptyMessage="No clients yet" emptyDescription="Add your first client to manage customer relationships" emptyActionHref="/sales/clients/create" emptyActionLabel="Add Client" )
       .flex.items-center.py-2(@click.stop)
           el-dropdown(class="outline-0" trigger="click")
               span(class="el-dropdown-link")

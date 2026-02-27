@@ -1,6 +1,7 @@
 import { Router } from 'express';
 import approvalController from './approvalController';
-import { authenticateUser } from '../middleware/authMiddleware';
+import { authenticateUser, HasPermission } from '../middleware/authMiddleware';
+import { ApprovalPermissionsEnum } from '../role/roleEnum';
 
 const router = Router();
 
@@ -25,7 +26,7 @@ const router = Router();
  *       200:
  *         description: List of approval workflows
  */
-router.get('/workflows', authenticateUser, approvalController.getWorkflows);
+router.get('/workflows', authenticateUser, HasPermission([ApprovalPermissionsEnum.MANAGE_WORKFLOWS]), approvalController.getWorkflows);
 
 /**
  * @swagger
@@ -84,7 +85,7 @@ router.get('/workflows', authenticateUser, approvalController.getWorkflows);
  *       201:
  *         description: Workflow created
  */
-router.post('/workflows', authenticateUser, approvalController.createWorkflow);
+router.post('/workflows', authenticateUser, HasPermission([ApprovalPermissionsEnum.MANAGE_WORKFLOWS]), approvalController.createWorkflow);
 
 /**
  * @swagger
@@ -137,7 +138,7 @@ router.post('/workflows', authenticateUser, approvalController.createWorkflow);
  *       200:
  *         description: Workflow updated
  */
-router.put('/workflows/:id', authenticateUser, approvalController.updateWorkflow);
+router.put('/workflows/:id', authenticateUser, HasPermission([ApprovalPermissionsEnum.MANAGE_WORKFLOWS]), approvalController.updateWorkflow);
 
 /**
  * @swagger
@@ -158,7 +159,7 @@ router.put('/workflows/:id', authenticateUser, approvalController.updateWorkflow
  *       200:
  *         description: Workflow deleted
  */
-router.delete('/workflows/:id', authenticateUser, approvalController.deleteWorkflow);
+router.delete('/workflows/:id', authenticateUser, HasPermission([ApprovalPermissionsEnum.MANAGE_WORKFLOWS]), approvalController.deleteWorkflow);
 
 // Request routes
 
@@ -203,7 +204,7 @@ router.delete('/workflows/:id', authenticateUser, approvalController.deleteWorkf
  *       200:
  *         description: Paginated list of approval requests
  */
-router.get('/requests', authenticateUser, approvalController.getRequests);
+router.get('/requests', authenticateUser, HasPermission([ApprovalPermissionsEnum.VIEW_APPROVALS]), approvalController.getRequests);
 
 /**
  * @swagger
@@ -217,7 +218,7 @@ router.get('/requests', authenticateUser, approvalController.getRequests);
  *       200:
  *         description: List of pending approval requests assigned to the current user
  */
-router.get('/requests/pending', authenticateUser, approvalController.getPendingApprovals);
+router.get('/requests/pending', authenticateUser, HasPermission([ApprovalPermissionsEnum.VIEW_APPROVALS]), approvalController.getPendingApprovals);
 
 /**
  * @swagger
@@ -258,7 +259,7 @@ router.get('/requests/pending', authenticateUser, approvalController.getPendingA
  *       201:
  *         description: Approval request created
  */
-router.post('/requests', authenticateUser, approvalController.createRequest);
+router.post('/requests', authenticateUser, HasPermission([ApprovalPermissionsEnum.CREATE_APPROVALS]), approvalController.createRequest);
 
 /**
  * @swagger
@@ -288,7 +289,7 @@ router.post('/requests', authenticateUser, approvalController.createRequest);
  *       200:
  *         description: Step approved
  */
-router.post('/requests/:id/approve', authenticateUser, approvalController.approveStep);
+router.post('/requests/:id/approve', authenticateUser, HasPermission([ApprovalPermissionsEnum.APPROVE_REQUESTS]), approvalController.approveStep);
 
 /**
  * @swagger
@@ -318,7 +319,7 @@ router.post('/requests/:id/approve', authenticateUser, approvalController.approv
  *       200:
  *         description: Step rejected
  */
-router.post('/requests/:id/reject', authenticateUser, approvalController.rejectStep);
+router.post('/requests/:id/reject', authenticateUser, HasPermission([ApprovalPermissionsEnum.REJECT_REQUESTS]), approvalController.rejectStep);
 
 /**
  * @swagger
@@ -339,6 +340,6 @@ router.post('/requests/:id/reject', authenticateUser, approvalController.rejectS
  *       200:
  *         description: Request cancelled
  */
-router.post('/requests/:id/cancel', authenticateUser, approvalController.cancelRequest);
+router.post('/requests/:id/cancel', authenticateUser, HasPermission([ApprovalPermissionsEnum.CREATE_APPROVALS]), approvalController.cancelRequest);
 
 export default router;

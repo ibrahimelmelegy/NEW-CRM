@@ -1,511 +1,610 @@
-<template>
-  <div class="space-y-6">
-    <!-- Header -->
-    <div class="glass-panel p-6 rounded-2xl">
-      <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
-        <div>
-          <h1 class="text-2xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-amber-400 to-yellow-400">Warehouse Management</h1>
-          <p class="text-slate-400 text-sm mt-1">Manage warehouse locations, bin storage, stock transfers, and receiving.</p>
-        </div>
-        <div class="flex gap-2">
-          <el-button class="!rounded-xl" @click="showTransferDialog = true">
-            <Icon name="ph:arrows-left-right-bold" class="w-4 h-4 mr-2" />
-            Transfer Stock
-          </el-button>
-          <el-button type="primary" class="!rounded-xl" @click="showReceiveDialog = true">
-            <Icon name="ph:package-bold" class="w-4 h-4 mr-2" />
-            Receive Stock
-          </el-button>
-        </div>
-      </div>
-    </div>
+<template lang="pug">
+div.animate-fade-in
+  //- Header
+  .flex.items-center.justify-between.mb-6
+    div
+      h2.text-2xl.font-bold(style="color: var(--text-primary)") {{ $t('warehouse.title') || 'Warehouse Management' }}
+      p.text-sm.mt-1(style="color: var(--text-muted)") {{ $t('warehouse.subtitle') || 'Manage warehouses, zones, and stock transfers.' }}
+    .flex.items-center.gap-3
+      el-button(
+        type="primary"
+        size="large"
+        @click="openCreateDialog"
+        class="!rounded-xl"
+      )
+        Icon(name="ph:plus-bold" size="16" class="mr-1")
+        | {{ createButtonLabel }}
 
-    <!-- Stats -->
-    <div class="grid grid-cols-2 md:grid-cols-5 gap-4">
-      <div class="glass-panel p-4 rounded-xl text-center">
-        <div class="text-2xl font-bold text-slate-200">{{ warehouses.length }}</div>
-        <div class="text-xs text-slate-500 mt-1">Warehouses</div>
-      </div>
-      <div class="glass-panel p-4 rounded-xl text-center">
-        <div class="text-2xl font-bold text-emerald-400">{{ totalBins }}</div>
-        <div class="text-xs text-slate-500 mt-1">Total Bins</div>
-      </div>
-      <div class="glass-panel p-4 rounded-xl text-center">
-        <div class="text-2xl font-bold text-blue-400">{{ totalSKUs }}</div>
-        <div class="text-xs text-slate-500 mt-1">Active SKUs</div>
-      </div>
-      <div class="glass-panel p-4 rounded-xl text-center">
-        <div class="text-2xl font-bold text-amber-400">{{ pendingTransfers }}</div>
-        <div class="text-xs text-slate-500 mt-1">Pending Transfers</div>
-      </div>
-      <div class="glass-panel p-4 rounded-xl text-center">
-        <div class="text-2xl font-bold text-red-400">{{ lowStockItems }}</div>
-        <div class="text-xs text-slate-500 mt-1">Low Stock Alerts</div>
-      </div>
-    </div>
+  //- Tabs
+  el-tabs(v-model="activeTab" type="border-card" class="warehouse-tabs")
+    //- ========== WAREHOUSES TAB ==========
+    el-tab-pane(:label="$t('warehouse.warehouses') || 'Warehouses'" name="warehouses")
+      .flex.items-center.justify-between.mb-4
+        el-input(
+          v-model="warehouseSearch"
+          :placeholder="$t('warehouse.searchWarehouses') || 'Search warehouses...'"
+          clearable
+          size="large"
+          style="max-width: 320px"
+          class="!rounded-xl"
+        )
+          template(#prefix)
+            Icon(name="ph:magnifying-glass" size="16" style="color: var(--text-muted)")
 
-    <!-- Tabs -->
-    <el-tabs v-model="activeTab" class="glass-tabs">
-      <!-- Warehouses -->
-      <el-tab-pane label="Warehouses" name="warehouses">
-        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-          <div v-for="wh in warehouses" :key="wh.id" class="glass-panel p-5 rounded-xl hover:border-primary-500/30 transition-all">
-            <div class="flex justify-between items-start mb-3">
-              <div class="flex items-center gap-3">
-                <div class="w-12 h-12 rounded-xl bg-gradient-to-br flex items-center justify-center" :class="wh.gradient">
-                  <Icon name="ph:warehouse-bold" class="w-6 h-6 text-white" />
-                </div>
-                <div>
-                  <h4 class="text-sm font-medium text-slate-200">{{ wh.name }}</h4>
-                  <p class="text-xs text-slate-500">{{ wh.location }}</p>
-                </div>
-              </div>
-              <el-tag :type="wh.isActive ? 'success' : 'info'" effect="dark" size="small">
-                {{ wh.isActive ? 'Active' : 'Inactive' }}
-              </el-tag>
-            </div>
+      el-table(:data="filteredWarehouses" v-loading="loadingWarehouses" stripe style="width: 100%")
+        el-table-column(:label="$t('warehouse.name') || 'Name'" prop="name" min-width="180" sortable)
+          template(#default="{ row }")
+            .flex.items-center.gap-2
+              Icon(name="ph:warehouse-bold" size="18" style="color: #7849ff")
+              span.text-sm.font-semibold(style="color: var(--text-primary)") {{ row.name || '--' }}
+        el-table-column(:label="$t('warehouse.location') || 'Location'" prop="location" width="200")
+          template(#default="{ row }")
+            span.text-sm(style="color: var(--text-primary)") {{ row.location || '--' }}
+        el-table-column(:label="$t('warehouse.manager') || 'Manager'" prop="manager" width="160")
+          template(#default="{ row }")
+            span.text-sm(style="color: var(--text-primary)") {{ row.managerName || row.manager || '--' }}
+        el-table-column(:label="$t('warehouse.capacity') || 'Capacity'" width="140" align="center")
+          template(#default="{ row }")
+            span.text-sm(style="color: var(--text-primary)") {{ row.capacity || 0 }}
+        el-table-column(:label="$t('warehouse.occupancy') || 'Occupancy'" width="180" align="center")
+          template(#default="{ row }")
+            .flex.items-center.gap-2
+              el-progress(
+                :percentage="row.capacity ? Math.round((row.currentOccupancy / row.capacity) * 100) : 0"
+                :stroke-width="8"
+                :color="getOccupancyColor(row)"
+                style="width: 100px"
+              )
+              span.text-xs(style="color: var(--text-muted)") {{ row.currentOccupancy || 0 }}/{{ row.capacity || 0 }}
+        el-table-column(:label="$t('warehouse.status') || 'Status'" width="130" align="center")
+          template(#default="{ row }")
+            el-tag(
+              :type="row.status === 'ACTIVE' ? 'success' : row.status === 'MAINTENANCE' ? 'warning' : 'info'"
+              size="small"
+              effect="dark"
+              round
+            ) {{ row.status || 'ACTIVE' }}
+        el-table-column(:label="$t('common.actions') || 'Actions'" width="120" align="center" fixed="right")
+          template(#default="{ row }")
+            .flex.items-center.justify-center.gap-1
+              el-button(size="small" @click="openEditWarehouse(row)" class="!rounded-lg")
+                Icon(name="ph:pencil-bold" size="14")
+              el-button(size="small" type="danger" plain @click="deleteWarehouse(row)" class="!rounded-lg")
+                Icon(name="ph:trash-bold" size="14")
 
-            <!-- Capacity Bar -->
-            <div class="mb-3">
-              <div class="flex justify-between text-xs text-slate-500 mb-1">
-                <span>Capacity</span>
-                <span>{{ wh.usedBins }}/{{ wh.totalBins }} bins</span>
-              </div>
-              <el-progress
-                :percentage="Math.round((wh.usedBins / wh.totalBins) * 100)"
-                :stroke-width="6"
-                :color="wh.usedBins / wh.totalBins > 0.9 ? '#EF4444' : wh.usedBins / wh.totalBins > 0.7 ? '#F59E0B' : '#10B981'"
-                :show-text="false"
-              />
-            </div>
+      .text-center.py-12(v-if="!filteredWarehouses.length && !loadingWarehouses")
+        Icon(name="ph:warehouse" size="48" style="color: var(--text-muted)")
+        p.text-sm.mt-2(style="color: var(--text-muted)") {{ $t('warehouse.noWarehouses') || 'No warehouses found' }}
 
-            <!-- Warehouse Stats -->
-            <div class="grid grid-cols-3 gap-2 pt-3 border-t border-slate-800/60">
-              <div class="text-center">
-                <div class="text-sm font-bold text-slate-200">{{ wh.skuCount }}</div>
-                <div class="text-[10px] text-slate-500">SKUs</div>
-              </div>
-              <div class="text-center">
-                <div class="text-sm font-bold text-slate-200">{{ wh.zones }}</div>
-                <div class="text-[10px] text-slate-500">Zones</div>
-              </div>
-              <div class="text-center">
-                <div class="text-sm font-bold text-slate-200">{{ wh.staff }}</div>
-                <div class="text-[10px] text-slate-500">Staff</div>
-              </div>
-            </div>
-          </div>
-        </div>
-      </el-tab-pane>
+    //- ========== ZONES TAB ==========
+    el-tab-pane(:label="$t('warehouse.zones') || 'Zones'" name="zones")
+      .flex.items-center.justify-between.mb-4
+        el-input(
+          v-model="zoneSearch"
+          :placeholder="$t('warehouse.searchZones') || 'Search zones...'"
+          clearable
+          size="large"
+          style="max-width: 320px"
+          class="!rounded-xl"
+        )
+          template(#prefix)
+            Icon(name="ph:magnifying-glass" size="16" style="color: var(--text-muted)")
 
-      <!-- Bin Locations -->
-      <el-tab-pane label="Bin Locations" name="bins">
-        <div class="glass-panel p-6 rounded-xl">
-          <div class="flex justify-between items-center mb-4">
-            <div class="flex gap-2">
-              <el-select v-model="selectedWarehouse" placeholder="Warehouse" class="w-44">
-                <el-option v-for="wh in warehouses" :key="wh.id" :label="wh.name" :value="wh.id" />
-              </el-select>
-              <el-input v-model="binSearch" placeholder="Search bins..." prefix-icon="Search" clearable class="!w-48" />
-            </div>
-            <el-button type="primary" size="small" @click="showBinDialog = true">
-              <Icon name="ph:plus-bold" class="w-4 h-4 mr-2" />
-              Add Bin
-            </el-button>
-          </div>
+      el-table(:data="filteredZones" v-loading="loadingZones" stripe style="width: 100%")
+        el-table-column(:label="$t('warehouse.warehouseName') || 'Warehouse'" prop="warehouseName" width="200")
+          template(#default="{ row }")
+            span.text-sm.font-semibold(style="color: var(--text-primary)") {{ row.warehouseName || row.warehouseId || '--' }}
+        el-table-column(:label="$t('warehouse.zoneName') || 'Zone Name'" prop="name" min-width="180" sortable)
+          template(#default="{ row }")
+            .flex.items-center.gap-2
+              Icon(name="ph:squares-four-bold" size="16" style="color: #f59e0b")
+              span.text-sm.font-semibold(style="color: var(--text-primary)") {{ row.name || '--' }}
+        el-table-column(:label="$t('warehouse.zoneType') || 'Type'" prop="type" width="150")
+          template(#default="{ row }")
+            el-tag(size="small" effect="plain" round) {{ row.type || '--' }}
+        el-table-column(:label="$t('warehouse.capacity') || 'Capacity'" prop="capacity" width="130" align="center")
+          template(#default="{ row }")
+            span.text-sm(style="color: var(--text-primary)") {{ row.capacity || 0 }}
+        el-table-column(:label="$t('common.actions') || 'Actions'" width="100" align="center" fixed="right")
+          template(#default="{ row }")
+            el-button(size="small" type="danger" plain @click="deleteZone(row)" class="!rounded-lg")
+              Icon(name="ph:trash-bold" size="14")
 
-          <!-- Bin Grid Visualization -->
-          <div class="mb-6">
-            <h4 class="text-xs text-slate-500 mb-3">Zone A - Receiving</h4>
-            <div class="flex gap-2 flex-wrap">
-              <div
-                v-for="bin in binGrid.slice(0, 20)"
-                :key="bin.code"
-                class="w-16 h-16 rounded-lg flex flex-col items-center justify-center text-[10px] cursor-pointer transition-all hover:scale-105"
-                :class="getBinClass(bin)"
-                @click="selectBin(bin)"
-              >
-                <div class="font-medium">{{ bin.code }}</div>
-                <div class="text-[8px] mt-0.5">{{ bin.items }}items</div>
-              </div>
-            </div>
-          </div>
-          <div>
-            <h4 class="text-xs text-slate-500 mb-3">Zone B - Storage</h4>
-            <div class="flex gap-2 flex-wrap">
-              <div
-                v-for="bin in binGrid.slice(20, 40)"
-                :key="bin.code"
-                class="w-16 h-16 rounded-lg flex flex-col items-center justify-center text-[10px] cursor-pointer transition-all hover:scale-105"
-                :class="getBinClass(bin)"
-                @click="selectBin(bin)"
-              >
-                <div class="font-medium">{{ bin.code }}</div>
-                <div class="text-[8px] mt-0.5">{{ bin.items }}items</div>
-              </div>
-            </div>
-          </div>
-        </div>
-      </el-tab-pane>
+      .text-center.py-12(v-if="!filteredZones.length && !loadingZones")
+        Icon(name="ph:squares-four" size="48" style="color: var(--text-muted)")
+        p.text-sm.mt-2(style="color: var(--text-muted)") {{ $t('warehouse.noZones') || 'No zones found' }}
 
-      <!-- Stock Transfers -->
-      <el-tab-pane label="Transfers" name="transfers">
-        <el-table :data="transfers" class="glass-table" stripe>
-          <el-table-column prop="transferId" label="Transfer ID" width="130" />
-          <el-table-column label="From" min-width="150">
-            <template #default="{ row }">
-              <div class="text-sm text-slate-200">{{ row.fromWarehouse }}</div>
-              <div class="text-xs text-slate-500">{{ row.fromBin }}</div>
-            </template>
-          </el-table-column>
-          <el-table-column label="To" min-width="150">
-            <template #default="{ row }">
-              <div class="text-sm text-slate-200">{{ row.toWarehouse }}</div>
-              <div class="text-xs text-slate-500">{{ row.toBin }}</div>
-            </template>
-          </el-table-column>
-          <el-table-column label="Items" width="100" align="center">
-            <template #default="{ row }">
-              <span class="text-sm text-slate-200">{{ row.itemCount }}</span>
-            </template>
-          </el-table-column>
-          <el-table-column label="Status" width="120" align="center">
-            <template #default="{ row }">
-              <el-tag :type="getTransferStatus(row.status)" effect="dark" size="small">{{ row.status }}</el-tag>
-            </template>
-          </el-table-column>
-          <el-table-column label="Date" width="120">
-            <template #default="{ row }">
-              <span class="text-sm text-slate-400">{{ formatDate(row.date) }}</span>
-            </template>
-          </el-table-column>
-          <el-table-column label="Actions" width="100" align="center">
-            <template #default="{ row }">
-              <el-button v-if="row.status === 'PENDING'" text type="primary" size="small" @click="approveTransfer(row)">Approve</el-button>
-              <el-button v-else text type="info" size="small" @click="viewTransfer(row)">View</el-button>
-            </template>
-          </el-table-column>
-        </el-table>
-      </el-tab-pane>
+    //- ========== TRANSFERS TAB ==========
+    el-tab-pane(:label="$t('warehouse.transfers') || 'Transfers'" name="transfers")
+      .flex.items-center.justify-between.mb-4
+        el-input(
+          v-model="transferSearch"
+          :placeholder="$t('warehouse.searchTransfers') || 'Search transfers...'"
+          clearable
+          size="large"
+          style="max-width: 320px"
+          class="!rounded-xl"
+        )
+          template(#prefix)
+            Icon(name="ph:magnifying-glass" size="16" style="color: var(--text-muted)")
 
-      <!-- Receiving -->
-      <el-tab-pane label="Receiving" name="receiving">
-        <div class="space-y-4">
-          <div v-for="receipt in receipts" :key="receipt.id" class="glass-panel p-5 rounded-xl">
-            <div class="flex justify-between items-start mb-3">
-              <div>
-                <h4 class="text-sm font-medium text-slate-200">{{ receipt.poNumber }}</h4>
-                <p class="text-xs text-slate-500">{{ receipt.vendor }} - Expected {{ formatDate(receipt.expectedDate) }}</p>
-              </div>
-              <el-tag
-                :type="receipt.status === 'RECEIVED' ? 'success' : receipt.status === 'PARTIAL' ? 'warning' : 'info'"
-                effect="dark"
-                size="small"
-              >
-                {{ receipt.status }}
-              </el-tag>
-            </div>
-            <el-progress
-              :percentage="Math.round((receipt.received / receipt.expected) * 100)"
-              :stroke-width="4"
-              :color="receipt.received === receipt.expected ? '#10B981' : '#F59E0B'"
-              class="mb-2"
-            />
-            <div class="flex justify-between text-xs text-slate-500">
-              <span>{{ receipt.received }}/{{ receipt.expected }} items received</span>
-              <span>{{ receipt.warehouse }}</span>
-            </div>
-          </div>
-        </div>
-      </el-tab-pane>
-    </el-tabs>
+      el-table(:data="filteredTransfers" v-loading="loadingTransfers" stripe style="width: 100%")
+        el-table-column(:label="$t('warehouse.transferNumber') || 'Transfer #'" prop="transferNumber" width="160" sortable)
+          template(#default="{ row }")
+            span.font-mono.font-bold(style="color: #7849ff") {{ row.transferNumber || '--' }}
+        el-table-column(:label="$t('warehouse.fromWarehouse') || 'From'" prop="fromWarehouseName" width="180")
+          template(#default="{ row }")
+            span.text-sm(style="color: var(--text-primary)") {{ row.fromWarehouseName || row.fromWarehouseId || '--' }}
+        el-table-column(:label="$t('warehouse.toWarehouse') || 'To'" prop="toWarehouseName" width="180")
+          template(#default="{ row }")
+            span.text-sm(style="color: var(--text-primary)") {{ row.toWarehouseName || row.toWarehouseId || '--' }}
+        el-table-column(:label="$t('warehouse.items') || 'Items'" width="100" align="center")
+          template(#default="{ row }")
+            el-tag(size="small" effect="plain" round) {{ row.items?.length || row.itemCount || 0 }}
+        el-table-column(:label="$t('warehouse.status') || 'Status'" width="140" align="center")
+          template(#default="{ row }")
+            el-tag(
+              :type="getTransferStatusType(row.status)"
+              size="small"
+              effect="dark"
+              round
+            ) {{ row.status || '--' }}
+        el-table-column(:label="$t('warehouse.createdAt') || 'Created'" width="140" sortable)
+          template(#default="{ row }")
+            span.text-sm(style="color: var(--text-muted)") {{ formatDate(row.createdAt) }}
+        el-table-column(:label="$t('warehouse.completedAt') || 'Completed'" width="140")
+          template(#default="{ row }")
+            span.text-sm(style="color: var(--text-muted)") {{ row.completedAt ? formatDate(row.completedAt) : '--' }}
+        el-table-column(:label="$t('common.actions') || 'Actions'" width="100" align="center" fixed="right")
+          template(#default="{ row }")
+            el-button(
+              v-if="row.status === 'PENDING' || row.status === 'IN_TRANSIT'"
+              size="small"
+              @click="updateTransferStatus(row)"
+              class="!rounded-lg"
+            )
+              Icon(name="ph:check-bold" size="14")
 
-    <!-- Transfer Dialog -->
-    <el-dialog v-model="showTransferDialog" title="Stock Transfer" width="500px">
-      <el-form label-position="top">
-        <div class="grid grid-cols-2 gap-4">
-          <el-form-item label="From Warehouse">
-            <el-select v-model="transfer.from" class="w-full">
-              <el-option v-for="wh in warehouses" :key="wh.id" :label="wh.name" :value="wh.name" />
-            </el-select>
-          </el-form-item>
-          <el-form-item label="To Warehouse">
-            <el-select v-model="transfer.to" class="w-full">
-              <el-option v-for="wh in warehouses" :key="wh.id" :label="wh.name" :value="wh.name" />
-            </el-select>
-          </el-form-item>
-        </div>
-        <el-form-item label="Items">
-          <el-input v-model="transfer.items" placeholder="SKU or product name" />
-        </el-form-item>
-        <el-form-item label="Quantity">
-          <el-input-number v-model="transfer.quantity" :min="1" class="!w-full" />
-        </el-form-item>
-        <el-form-item label="Notes">
-          <el-input v-model="transfer.notes" type="textarea" :rows="2" />
-        </el-form-item>
-      </el-form>
-      <template #footer>
-        <el-button @click="showTransferDialog = false">Cancel</el-button>
-        <el-button type="primary" @click="createTransfer">Create Transfer</el-button>
-      </template>
-    </el-dialog>
+      .text-center.py-12(v-if="!filteredTransfers.length && !loadingTransfers")
+        Icon(name="ph:arrows-left-right" size="48" style="color: var(--text-muted)")
+        p.text-sm.mt-2(style="color: var(--text-muted)") {{ $t('warehouse.noTransfers') || 'No transfers found' }}
 
-    <!-- Receive Dialog -->
-    <el-dialog v-model="showReceiveDialog" title="Receive Stock" width="500px">
-      <el-form label-position="top">
-        <el-form-item label="Purchase Order">
-          <el-select v-model="receive.poNumber" class="w-full" filterable>
-            <el-option v-for="r in receipts.filter(r => r.status !== 'RECEIVED')" :key="r.id" :label="r.poNumber" :value="r.poNumber" />
-          </el-select>
-        </el-form-item>
-        <el-form-item label="Warehouse">
-          <el-select v-model="receive.warehouse" class="w-full">
-            <el-option v-for="wh in warehouses" :key="wh.id" :label="wh.name" :value="wh.name" />
-          </el-select>
-        </el-form-item>
-        <el-form-item label="Bin Location">
-          <el-input v-model="receive.bin" placeholder="e.g., A-01-01" />
-        </el-form-item>
-        <el-form-item label="Quantity Received">
-          <el-input-number v-model="receive.quantity" :min="1" class="!w-full" />
-        </el-form-item>
-      </el-form>
-      <template #footer>
-        <el-button @click="showReceiveDialog = false">Cancel</el-button>
-        <el-button type="primary" @click="receiveStock">Confirm Receipt</el-button>
-      </template>
-    </el-dialog>
+  //- ========== CREATE / EDIT WAREHOUSE DIALOG ==========
+  el-dialog(
+    v-model="warehouseDialogVisible"
+    :title="editingWarehouse ? ($t('warehouse.editWarehouse') || 'Edit Warehouse') : ($t('warehouse.newWarehouse') || 'New Warehouse')"
+    width="550px"
+    :close-on-click-modal="false"
+  )
+    el-form(:model="warehouseForm" label-position="top")
+      el-form-item(:label="$t('warehouse.name') || 'Name'" required)
+        el-input(v-model="warehouseForm.name" :placeholder="$t('warehouse.name') || 'Warehouse Name'")
+      el-form-item(:label="$t('warehouse.location') || 'Location'")
+        el-input(v-model="warehouseForm.location" :placeholder="$t('warehouse.location') || 'Location'")
+      .grid.gap-4(class="grid-cols-2")
+        el-form-item(:label="$t('warehouse.manager') || 'Manager'")
+          el-input(v-model="warehouseForm.manager" :placeholder="$t('warehouse.manager') || 'Manager'")
+        el-form-item(:label="$t('warehouse.capacity') || 'Capacity'")
+          el-input-number(v-model="warehouseForm.capacity" :min="0" style="width: 100%")
+      .grid.gap-4(class="grid-cols-2")
+        el-form-item(:label="$t('warehouse.occupancy') || 'Current Occupancy'")
+          el-input-number(v-model="warehouseForm.currentOccupancy" :min="0" style="width: 100%")
+        el-form-item(:label="$t('warehouse.status') || 'Status'")
+          el-select(v-model="warehouseForm.status" style="width: 100%")
+            el-option(label="Active" value="ACTIVE")
+            el-option(label="Inactive" value="INACTIVE")
+            el-option(label="Maintenance" value="MAINTENANCE")
+    template(#footer)
+      el-button(@click="warehouseDialogVisible = false") {{ $t('common.cancel') || 'Cancel' }}
+      el-button(type="primary" :loading="saving" @click="saveWarehouse") {{ $t('common.save') || 'Save' }}
 
-    <!-- Bin Dialog -->
-    <el-dialog v-model="showBinDialog" title="Add Bin Location" width="400px">
-      <el-form label-position="top">
-        <el-form-item label="Bin Code">
-          <el-input v-model="newBin.code" placeholder="e.g., A-03-02" />
-        </el-form-item>
-        <el-form-item label="Zone">
-          <el-select v-model="newBin.zone" class="w-full">
-            <el-option label="Zone A - Receiving" value="A" />
-            <el-option label="Zone B - Storage" value="B" />
-            <el-option label="Zone C - Picking" value="C" />
-            <el-option label="Zone D - Shipping" value="D" />
-          </el-select>
-        </el-form-item>
-        <el-form-item label="Max Capacity">
-          <el-input-number v-model="newBin.maxCapacity" :min="1" class="!w-full" />
-        </el-form-item>
-      </el-form>
-      <template #footer>
-        <el-button @click="showBinDialog = false">Cancel</el-button>
-        <el-button type="primary" @click="addBin">Add Bin</el-button>
-      </template>
-    </el-dialog>
-  </div>
+  //- ========== CREATE ZONE DIALOG ==========
+  el-dialog(
+    v-model="zoneDialogVisible"
+    :title="$t('warehouse.newZone') || 'New Zone'"
+    width="500px"
+    :close-on-click-modal="false"
+  )
+    el-form(:model="zoneForm" label-position="top")
+      el-form-item(:label="$t('warehouse.warehouseName') || 'Warehouse'" required)
+        el-select(v-model="zoneForm.warehouseId" :placeholder="$t('warehouse.selectWarehouse') || 'Select Warehouse'" style="width: 100%" filterable)
+          el-option(
+            v-for="wh in warehouses"
+            :key="wh.id"
+            :label="wh.name"
+            :value="wh.id"
+          )
+      el-form-item(:label="$t('warehouse.zoneName') || 'Zone Name'" required)
+        el-input(v-model="zoneForm.name" :placeholder="$t('warehouse.zoneName') || 'Zone Name'")
+      .grid.gap-4(class="grid-cols-2")
+        el-form-item(:label="$t('warehouse.zoneType') || 'Type'")
+          el-select(v-model="zoneForm.type" style="width: 100%")
+            el-option(label="Storage" value="STORAGE")
+            el-option(label="Picking" value="PICKING")
+            el-option(label="Receiving" value="RECEIVING")
+            el-option(label="Shipping" value="SHIPPING")
+            el-option(label="Quarantine" value="QUARANTINE")
+        el-form-item(:label="$t('warehouse.capacity') || 'Capacity'")
+          el-input-number(v-model="zoneForm.capacity" :min="0" style="width: 100%")
+    template(#footer)
+      el-button(@click="zoneDialogVisible = false") {{ $t('common.cancel') || 'Cancel' }}
+      el-button(type="primary" :loading="saving" @click="saveZone") {{ $t('common.save') || 'Save' }}
+
+  //- ========== CREATE TRANSFER DIALOG ==========
+  el-dialog(
+    v-model="transferDialogVisible"
+    :title="$t('warehouse.newTransfer') || 'New Transfer'"
+    width="550px"
+    :close-on-click-modal="false"
+  )
+    el-form(:model="transferForm" label-position="top")
+      .grid.gap-4(class="grid-cols-2")
+        el-form-item(:label="$t('warehouse.fromWarehouse') || 'From Warehouse'" required)
+          el-select(v-model="transferForm.fromWarehouseId" :placeholder="$t('warehouse.selectWarehouse') || 'Select'" style="width: 100%" filterable)
+            el-option(
+              v-for="wh in warehouses"
+              :key="wh.id"
+              :label="wh.name"
+              :value="wh.id"
+            )
+        el-form-item(:label="$t('warehouse.toWarehouse') || 'To Warehouse'" required)
+          el-select(v-model="transferForm.toWarehouseId" :placeholder="$t('warehouse.selectWarehouse') || 'Select'" style="width: 100%" filterable)
+            el-option(
+              v-for="wh in warehouses"
+              :key="wh.id"
+              :label="wh.name"
+              :value="wh.id"
+            )
+      el-form-item(:label="$t('warehouse.notes') || 'Notes'")
+        el-input(v-model="transferForm.notes" type="textarea" :rows="3" :placeholder="$t('warehouse.transferNotes') || 'Transfer notes...'")
+    template(#footer)
+      el-button(@click="transferDialogVisible = false") {{ $t('common.cancel') || 'Cancel' }}
+      el-button(type="primary" :loading="saving" @click="saveTransfer") {{ $t('common.save') || 'Save' }}
 </template>
 
 <script setup lang="ts">
-import { ref, computed } from 'vue';
-import { ElMessage } from 'element-plus';
+import { ref, reactive, computed, onMounted } from 'vue';
+import { ElNotification, ElMessageBox } from 'element-plus';
 
-definePageMeta({
-  layout: 'default',
-  middleware: 'permissions'
+definePageMeta({ middleware: 'permissions' });
+
+const { $i18n } = useNuxtApp();
+const t = $i18n.t;
+
+// State
+const activeTab = ref('warehouses');
+const saving = ref(false);
+
+// Warehouses
+const loadingWarehouses = ref(false);
+const warehouses = ref<any[]>([]);
+const warehouseSearch = ref('');
+const warehouseDialogVisible = ref(false);
+const editingWarehouse = ref<any>(null);
+const warehouseForm = reactive({
+  name: '',
+  location: '',
+  manager: '',
+  capacity: 0,
+  currentOccupancy: 0,
+  status: 'ACTIVE'
 });
 
-const activeTab = ref('warehouses');
-const selectedWarehouse = ref('');
-const binSearch = ref('');
-const showTransferDialog = ref(false);
-const showReceiveDialog = ref(false);
-const showBinDialog = ref(false);
+// Zones
+const loadingZones = ref(false);
+const zones = ref<any[]>([]);
+const zoneSearch = ref('');
+const zoneDialogVisible = ref(false);
+const zoneForm = reactive({
+  warehouseId: '' as any,
+  name: '',
+  type: 'STORAGE',
+  capacity: 0
+});
 
-const transfer = ref({ from: '', to: '', items: '', quantity: 1, notes: '' });
-const receive = ref({ poNumber: '', warehouse: '', bin: '', quantity: 1 });
-const newBin = ref({ code: '', zone: 'A', maxCapacity: 50 });
+// Transfers
+const loadingTransfers = ref(false);
+const transfers = ref<any[]>([]);
+const transferSearch = ref('');
+const transferDialogVisible = ref(false);
+const transferForm = reactive({
+  fromWarehouseId: '' as any,
+  toWarehouseId: '' as any,
+  notes: ''
+});
 
-const warehouses = ref([
-  {
-    id: 1,
-    name: 'Main Warehouse',
-    location: 'Riyadh Industrial Area',
-    isActive: true,
-    usedBins: 145,
-    totalBins: 200,
-    skuCount: 342,
-    zones: 4,
-    staff: 12,
-    gradient: 'from-blue-500 to-blue-600'
-  },
-  {
-    id: 2,
-    name: 'East Distribution Center',
-    location: 'Dammam Port Zone',
-    isActive: true,
-    usedBins: 78,
-    totalBins: 120,
-    skuCount: 186,
-    zones: 3,
-    staff: 8,
-    gradient: 'from-emerald-500 to-emerald-600'
-  },
-  {
-    id: 3,
-    name: 'West Fulfillment Hub',
-    location: 'Jeddah Free Zone',
-    isActive: true,
-    usedBins: 56,
-    totalBins: 80,
-    skuCount: 124,
-    zones: 2,
-    staff: 6,
-    gradient: 'from-purple-500 to-purple-600'
-  },
-  {
-    id: 4,
-    name: 'Overflow Storage',
-    location: 'Riyadh South',
-    isActive: false,
-    usedBins: 12,
-    totalBins: 50,
-    skuCount: 28,
-    zones: 1,
-    staff: 2,
-    gradient: 'from-amber-500 to-amber-600'
-  }
-]);
+// Create button label based on active tab
+const createButtonLabel = computed(() => {
+  if (activeTab.value === 'zones') return t('warehouse.newZone') || 'New Zone';
+  if (activeTab.value === 'transfers') return t('warehouse.newTransfer') || 'New Transfer';
+  return t('warehouse.newWarehouse') || 'New Warehouse';
+});
 
-const binGrid = ref(
-  Array.from({ length: 40 }, (_, i) => ({
-    code: `${i < 20 ? 'A' : 'B'}-${String(Math.floor(i / 4) + 1).padStart(2, '0')}-${String((i % 4) + 1).padStart(2, '0')}`,
-    items: Math.floor(Math.random() * 30),
-    maxCapacity: 30,
-    status: Math.random() > 0.2 ? (Math.random() > 0.5 ? 'occupied' : 'partial') : 'empty'
-  }))
-);
+function openCreateDialog() {
+  if (activeTab.value === 'warehouses') openCreateWarehouse();
+  else if (activeTab.value === 'zones') openCreateZone();
+  else if (activeTab.value === 'transfers') openCreateTransfer();
+}
 
-const transfers = ref([
-  {
-    id: 1,
-    transferId: 'TRF-001',
-    fromWarehouse: 'Main Warehouse',
-    fromBin: 'A-01-01',
-    toWarehouse: 'East Distribution',
-    toBin: 'B-02-03',
-    itemCount: 50,
-    status: 'COMPLETED',
-    date: '2026-02-18'
-  },
-  {
-    id: 2,
-    transferId: 'TRF-002',
-    fromWarehouse: 'Main Warehouse',
-    fromBin: 'B-03-02',
-    toWarehouse: 'West Fulfillment',
-    toBin: 'A-01-01',
-    itemCount: 25,
-    status: 'IN_TRANSIT',
-    date: '2026-02-19'
-  },
-  {
-    id: 3,
-    transferId: 'TRF-003',
-    fromWarehouse: 'East Distribution',
-    fromBin: 'A-02-01',
-    toWarehouse: 'Main Warehouse',
-    toBin: 'C-01-04',
-    itemCount: 15,
-    status: 'PENDING',
-    date: '2026-02-20'
-  },
-  {
-    id: 4,
-    transferId: 'TRF-004',
-    fromWarehouse: 'West Fulfillment',
-    fromBin: 'A-03-01',
-    toWarehouse: 'East Distribution',
-    toBin: 'B-01-02',
-    itemCount: 100,
-    status: 'COMPLETED',
-    date: '2026-02-15'
-  }
-]);
+// Helpers
+function getOccupancyColor(row: any): string {
+  const pct = row.capacity ? (row.currentOccupancy / row.capacity) * 100 : 0;
+  if (pct >= 90) return '#ef4444';
+  if (pct >= 70) return '#f59e0b';
+  return '#22c55e';
+}
 
-const receipts = ref([
-  {
-    id: 1,
-    poNumber: 'PO-2026-001',
-    vendor: 'Tech Supplies Co.',
-    expectedDate: '2026-02-22',
-    warehouse: 'Main Warehouse',
-    expected: 200,
-    received: 200,
-    status: 'RECEIVED'
-  },
-  {
-    id: 2,
-    poNumber: 'PO-2026-002',
-    vendor: 'Office World',
-    expectedDate: '2026-02-25',
-    warehouse: 'East Distribution',
-    expected: 150,
-    received: 80,
-    status: 'PARTIAL'
-  },
-  {
-    id: 3,
-    poNumber: 'PO-2026-003',
-    vendor: 'Industrial Parts Ltd.',
-    expectedDate: '2026-02-28',
-    warehouse: 'Main Warehouse',
-    expected: 75,
-    received: 0,
-    status: 'PENDING'
-  }
-]);
-
-const totalBins = computed(() => warehouses.value.reduce((s, w) => s + w.totalBins, 0));
-const totalSKUs = computed(() => warehouses.value.reduce((s, w) => s + w.skuCount, 0));
-const pendingTransfers = computed(() => transfers.value.filter(t => t.status === 'PENDING' || t.status === 'IN_TRANSIT').length);
-const lowStockItems = ref(12);
-
-const getBinClass = (bin: any) => {
-  if (bin.status === 'empty') return 'bg-slate-800/30 text-slate-600 border border-slate-700/30';
-  if (bin.items / bin.maxCapacity > 0.8) return 'bg-red-500/20 text-red-400 border border-red-500/30';
-  if (bin.items / bin.maxCapacity > 0.5) return 'bg-amber-500/20 text-amber-400 border border-amber-500/30';
-  return 'bg-emerald-500/20 text-emerald-400 border border-emerald-500/30';
-};
-
-const getTransferStatus = (s: string): 'success' | 'warning' | 'info' | 'danger' | undefined => {
-  const m: Record<string, 'success' | 'warning' | 'info' | 'danger' | undefined> = {
+function getTransferStatusType(status: string): string {
+  const map: Record<string, string> = {
+    PENDING: 'warning',
+    IN_TRANSIT: 'primary',
     COMPLETED: 'success',
-    IN_TRANSIT: 'warning',
-    PENDING: 'info',
     CANCELLED: 'danger'
   };
-  return m[s] || 'info';
-};
+  return map[status] || 'info';
+}
 
-const formatDate = (d: string) => (d ? new Date(d).toLocaleDateString('en', { month: 'short', day: 'numeric' }) : '-');
+function formatDate(dateStr: string): string {
+  if (!dateStr) return '--';
+  return new Date(dateStr).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
+}
 
-const selectBin = (bin: any) => ElMessage.info(`Selected bin: ${bin.code} (${bin.items} items)`);
-const approveTransfer = (t: any) => {
-  t.status = 'IN_TRANSIT';
-  ElMessage.success('Transfer approved');
-};
-const viewTransfer = (t: any) => ElMessage.info(`Viewing transfer: ${t.transferId}`);
+// Filtered data
+const filteredWarehouses = computed(() => {
+  if (!warehouseSearch.value) return warehouses.value;
+  const q = warehouseSearch.value.toLowerCase();
+  return warehouses.value.filter((w: any) => {
+    return (w.name || '').toLowerCase().includes(q) || (w.location || '').toLowerCase().includes(q);
+  });
+});
 
-const createTransfer = () => {
-  ElMessage.success('Stock transfer created');
-  showTransferDialog.value = false;
-};
+const filteredZones = computed(() => {
+  if (!zoneSearch.value) return zones.value;
+  const q = zoneSearch.value.toLowerCase();
+  return zones.value.filter((z: any) => {
+    return (z.name || '').toLowerCase().includes(q) || (z.warehouseName || '').toLowerCase().includes(q);
+  });
+});
 
-const receiveStock = () => {
-  ElMessage.success('Stock received');
-  showReceiveDialog.value = false;
-};
+const filteredTransfers = computed(() => {
+  if (!transferSearch.value) return transfers.value;
+  const q = transferSearch.value.toLowerCase();
+  return transfers.value.filter((tr: any) => {
+    return (tr.transferNumber || '').toLowerCase().includes(q) ||
+      (tr.fromWarehouseName || '').toLowerCase().includes(q) ||
+      (tr.toWarehouseName || '').toLowerCase().includes(q);
+  });
+});
 
-const addBin = () => {
-  ElMessage.success(`Bin ${newBin.value.code} added`);
-  showBinDialog.value = false;
-};
+// ========== WAREHOUSE CRUD ==========
+async function loadWarehouses() {
+  loadingWarehouses.value = true;
+  try {
+    const res = await useApiFetch('warehouse');
+    if (res?.success) {
+      warehouses.value = res.body?.docs || res.body || [];
+    }
+  } catch {
+    // silent
+  } finally {
+    loadingWarehouses.value = false;
+  }
+}
+
+function openCreateWarehouse() {
+  editingWarehouse.value = null;
+  warehouseForm.name = '';
+  warehouseForm.location = '';
+  warehouseForm.manager = '';
+  warehouseForm.capacity = 0;
+  warehouseForm.currentOccupancy = 0;
+  warehouseForm.status = 'ACTIVE';
+  warehouseDialogVisible.value = true;
+}
+
+function openEditWarehouse(wh: any) {
+  editingWarehouse.value = wh;
+  warehouseForm.name = wh.name || '';
+  warehouseForm.location = wh.location || '';
+  warehouseForm.manager = wh.manager || '';
+  warehouseForm.capacity = wh.capacity || 0;
+  warehouseForm.currentOccupancy = wh.currentOccupancy || 0;
+  warehouseForm.status = wh.status || 'ACTIVE';
+  warehouseDialogVisible.value = true;
+}
+
+async function saveWarehouse() {
+  if (!warehouseForm.name.trim()) {
+    ElNotification({ type: 'warning', title: t('common.warning') || 'Warning', message: t('common.fillRequired') || 'Please fill required fields' });
+    return;
+  }
+  saving.value = true;
+  try {
+    const payload = { ...warehouseForm };
+    if (editingWarehouse.value) {
+      await useApiFetch(`warehouse/${editingWarehouse.value.id}`, 'PUT', payload);
+    } else {
+      await useApiFetch('warehouse', 'POST', payload);
+    }
+    ElNotification({ type: 'success', title: t('common.success') || 'Success', message: t('common.saved') || 'Saved' });
+    warehouseDialogVisible.value = false;
+    await loadWarehouses();
+  } catch {
+    ElNotification({ type: 'error', title: t('common.error') || 'Error', message: t('common.error') || 'Error' });
+  } finally {
+    saving.value = false;
+  }
+}
+
+async function deleteWarehouse(wh: any) {
+  try {
+    await ElMessageBox.confirm(
+      t('common.confirmDelete') || 'Are you sure?',
+      t('common.warning') || 'Warning',
+      { type: 'warning' }
+    );
+    await useApiFetch(`warehouse/${wh.id}`, 'DELETE');
+    ElNotification({ type: 'success', title: t('common.success') || 'Success', message: t('common.deleted') || 'Deleted' });
+    await loadWarehouses();
+  } catch {
+    // cancelled
+  }
+}
+
+// ========== ZONE CRUD ==========
+async function loadZones() {
+  loadingZones.value = true;
+  try {
+    const res = await useApiFetch('warehouse/zones');
+    if (res?.success) {
+      zones.value = res.body?.docs || res.body || [];
+    }
+  } catch {
+    // silent
+  } finally {
+    loadingZones.value = false;
+  }
+}
+
+function openCreateZone() {
+  zoneForm.warehouseId = '';
+  zoneForm.name = '';
+  zoneForm.type = 'STORAGE';
+  zoneForm.capacity = 0;
+  zoneDialogVisible.value = true;
+}
+
+async function saveZone() {
+  if (!zoneForm.name.trim() || !zoneForm.warehouseId) {
+    ElNotification({ type: 'warning', title: t('common.warning') || 'Warning', message: t('common.fillRequired') || 'Please fill required fields' });
+    return;
+  }
+  saving.value = true;
+  try {
+    await useApiFetch('warehouse/zones', 'POST', { ...zoneForm });
+    ElNotification({ type: 'success', title: t('common.success') || 'Success', message: t('common.saved') || 'Saved' });
+    zoneDialogVisible.value = false;
+    await loadZones();
+  } catch {
+    ElNotification({ type: 'error', title: t('common.error') || 'Error', message: t('common.error') || 'Error' });
+  } finally {
+    saving.value = false;
+  }
+}
+
+async function deleteZone(zone: any) {
+  try {
+    await ElMessageBox.confirm(
+      t('common.confirmDelete') || 'Are you sure?',
+      t('common.warning') || 'Warning',
+      { type: 'warning' }
+    );
+    await useApiFetch(`warehouse/zones/${zone.id}`, 'DELETE');
+    ElNotification({ type: 'success', title: t('common.success') || 'Success', message: t('common.deleted') || 'Deleted' });
+    await loadZones();
+  } catch {
+    // cancelled
+  }
+}
+
+// ========== TRANSFER CRUD ==========
+async function loadTransfers() {
+  loadingTransfers.value = true;
+  try {
+    const res = await useApiFetch('warehouse/transfers');
+    if (res?.success) {
+      transfers.value = res.body?.docs || res.body || [];
+    }
+  } catch {
+    // silent
+  } finally {
+    loadingTransfers.value = false;
+  }
+}
+
+function openCreateTransfer() {
+  transferForm.fromWarehouseId = '';
+  transferForm.toWarehouseId = '';
+  transferForm.notes = '';
+  transferDialogVisible.value = true;
+}
+
+async function saveTransfer() {
+  if (!transferForm.fromWarehouseId || !transferForm.toWarehouseId) {
+    ElNotification({ type: 'warning', title: t('common.warning') || 'Warning', message: t('common.fillRequired') || 'Please fill required fields' });
+    return;
+  }
+  if (transferForm.fromWarehouseId === transferForm.toWarehouseId) {
+    ElNotification({ type: 'warning', title: t('common.warning') || 'Warning', message: t('warehouse.sameWarehouseError') || 'Source and destination cannot be the same' });
+    return;
+  }
+  saving.value = true;
+  try {
+    await useApiFetch('warehouse/transfers', 'POST', { ...transferForm });
+    ElNotification({ type: 'success', title: t('common.success') || 'Success', message: t('common.saved') || 'Saved' });
+    transferDialogVisible.value = false;
+    await loadTransfers();
+  } catch {
+    ElNotification({ type: 'error', title: t('common.error') || 'Error', message: t('common.error') || 'Error' });
+  } finally {
+    saving.value = false;
+  }
+}
+
+async function updateTransferStatus(transfer: any) {
+  const nextStatus = transfer.status === 'PENDING' ? 'IN_TRANSIT' : 'COMPLETED';
+  try {
+    await useApiFetch(`warehouse/transfers/${transfer.id}`, 'PUT', { status: nextStatus });
+    ElNotification({ type: 'success', title: t('common.success') || 'Success', message: t('common.saved') || 'Saved' });
+    await loadTransfers();
+  } catch {
+    ElNotification({ type: 'error', title: t('common.error') || 'Error', message: t('common.error') || 'Error' });
+  }
+}
+
+onMounted(() => {
+  loadWarehouses();
+  loadZones();
+  loadTransfers();
+});
 </script>
+
+<style lang="scss" scoped>
+.animate-fade-in {
+  animation: fadeIn 0.4s ease-out;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(8px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.warehouse-tabs {
+  background: transparent !important;
+  border: none !important;
+  box-shadow: none !important;
+
+  :deep(.el-tabs__header) {
+    background: transparent;
+    border-bottom: 1px solid var(--border-default);
+  }
+
+  :deep(.el-tabs__content) {
+    padding: 16px 0;
+  }
+
+  :deep(.el-tabs__item) {
+    color: var(--text-muted);
+
+    &.is-active {
+      color: #7849ff;
+    }
+  }
+}
+</style>

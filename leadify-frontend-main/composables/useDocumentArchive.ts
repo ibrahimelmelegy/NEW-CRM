@@ -1,9 +1,10 @@
 /**
- * Universal Document Archiving System
+ * Universal Document Archiving System — API-backed via /api/documents
  * Centralized composable for archiving/restoring/managing documents across all types.
  */
 
 import { ref, computed } from 'vue';
+import { useApiFetch } from './useApiFetch';
 
 // ── Types ──────────────────────────────────────────────
 export interface ArchivedDocument {
@@ -51,26 +52,9 @@ export const documentTypeLabels: Record<string, { label: string; icon: string; c
   sla: { label: 'SLA', icon: 'ph:shield-check', color: '#0d9488' }
 };
 
-// ── Persistent Store (localStorage-backed) ─────────────
-const STORAGE_KEY = 'crm_archived_documents';
-
-function loadFromStorage(): ArchivedDocument[] {
-  if (typeof window === 'undefined') return [];
-  try {
-    const raw = localStorage.getItem(STORAGE_KEY);
-    return raw ? JSON.parse(raw) : [];
-  } catch {
-    return [];
-  }
-}
-
-function saveToStorage(docs: ArchivedDocument[]) {
-  if (typeof window === 'undefined') return;
-  localStorage.setItem(STORAGE_KEY, JSON.stringify(docs));
-}
-
 // ── Global State ───────────────────────────────────────
-const archivedDocuments = ref<ArchivedDocument[]>(loadFromStorage());
+const archivedDocuments = ref<ArchivedDocument[]>([]);
+const loading = ref(false);
 
 export function useDocumentArchive() {
   // ── Filters ──
@@ -81,13 +65,9 @@ export function useDocumentArchive() {
   // ── Computed ──
   const filteredDocuments = computed(() => {
     let docs = archivedDocuments.value;
-
-    // Type filter
     if (typeFilter.value !== 'all') {
       docs = docs.filter(d => d.documentType === typeFilter.value);
     }
-
-    // Search filter
     if (searchQuery.value.trim()) {
       const q = searchQuery.value.toLowerCase();
       docs = docs.filter(
@@ -98,14 +78,10 @@ export function useDocumentArchive() {
           d.clientCompany?.toLowerCase().includes(q)
       );
     }
-
-    // Date range filter
     if (dateRange.value) {
       const [start, end] = dateRange.value;
       docs = docs.filter(d => d.archivedAt >= start && d.archivedAt <= end);
     }
-
-    // Sort by archivedAt descending
     return docs.sort((a, b) => new Date(b.archivedAt).getTime() - new Date(a.archivedAt).getTime());
   });
 
@@ -120,36 +96,70 @@ export function useDocumentArchive() {
     return { total, byType, totalValue };
   });
 
+  async function fetchArchived() {
+    loading.value = true;
+    try {
+      const { body, success } = await useApiFetch('documents/files?tags=archived&limit=200');
+      if (success && body) {
+        const data = body as any;
+        const docs = data.docs || data || [];
+        archivedDocuments.value = docs.map((f: any) => ({
+          id: f.id,
+          refNumber: f.name || '',
+          title: f.originalName || f.name || '',
+          documentType: (f.tags || []).find((t: string) => t !== 'archived') || 'document',
+          clientName: f.uploader?.name || '',
+          clientCompany: '',
+          total: f.size || 0,
+          currency: '',
+          status: 'archived',
+          createdAt: f.createdAt,
+          archivedAt: f.updatedAt || f.createdAt,
+          archivedBy: f.uploader?.name
+        }));
+      }
+    } finally {
+      loading.value = false;
+    }
+  }
+
   // ── Actions ──
-  function archiveDocument(doc: Omit<ArchivedDocument, 'archivedAt'>): boolean {
-    // Check if already archived
+  async function archiveDocument(doc: Omit<ArchivedDocument, 'archivedAt'>): Promise<boolean> {
     if (archivedDocuments.value.some(d => d.id === doc.id && d.documentType === doc.documentType)) {
       return false;
     }
-
+    // Update document tags to include 'archived'
+    if (typeof doc.id === 'number') {
+      await useApiFetch(`documents/files/${doc.id}`, 'PUT', {
+        tags: ['archived', doc.documentType]
+      });
+    }
     archivedDocuments.value.push({
       ...doc,
       archivedAt: new Date().toISOString()
     });
-    saveToStorage(archivedDocuments.value);
     return true;
   }
 
-  function restoreDocument(id: string | number, documentType: string): ArchivedDocument | null {
+  async function restoreDocument(id: string | number, documentType: string): Promise<ArchivedDocument | null> {
     const index = archivedDocuments.value.findIndex(d => d.id === id && d.documentType === documentType);
     if (index === -1) return null;
-
+    if (typeof id === 'number') {
+      await useApiFetch(`documents/files/${id}`, 'PUT', {
+        tags: [documentType]
+      });
+    }
     const [restored] = archivedDocuments.value.splice(index, 1);
-    saveToStorage(archivedDocuments.value);
     return restored ?? null;
   }
 
-  function permanentlyDelete(id: string | number, documentType: string): boolean {
+  async function permanentlyDelete(id: string | number, documentType: string): Promise<boolean> {
     const index = archivedDocuments.value.findIndex(d => d.id === id && d.documentType === documentType);
     if (index === -1) return false;
-
+    if (typeof id === 'number') {
+      await useApiFetch(`documents/files/${id}`, 'DELETE');
+    }
     archivedDocuments.value.splice(index, 1);
-    saveToStorage(archivedDocuments.value);
     return true;
   }
 
@@ -188,15 +198,12 @@ export function useDocumentArchive() {
   }
 
   return {
-    // State
     archivedDocuments,
     filteredDocuments,
     stats,
     typeFilter,
     searchQuery,
     dateRange,
-
-    // Actions
     archiveDocument,
     restoreDocument,
     permanentlyDelete,
@@ -205,8 +212,8 @@ export function useDocumentArchive() {
     bulkDelete,
     isArchived,
     getArchivedByType,
-
-    // Constants
+    fetchArchived,
+    loading,
     documentTypeLabels
   };
 }

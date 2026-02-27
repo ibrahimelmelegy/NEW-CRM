@@ -1,9 +1,20 @@
-import { BelongsTo, Column, DataType, Default, ForeignKey, Model, Table } from 'sequelize-typescript';
+import { BelongsTo, Column, DataType, Default, ForeignKey, Model, Table, AllowNull } from 'sequelize-typescript';
 import User from '../user/userModel';
+import Tenant from '../tenant/tenantModel';
 
 export enum DocumentTemplateType {
   INVOICE = 'INVOICE',
-  PURCHASE_ORDER = 'PURCHASE_ORDER'
+  QUOTE = 'QUOTE',
+  CONTRACT = 'CONTRACT',
+  PURCHASE_ORDER = 'PURCHASE_ORDER',
+  SALES_ORDER = 'SALES_ORDER',
+  DELIVERY_NOTE = 'DELIVERY_NOTE',
+  CREDIT_NOTE = 'CREDIT_NOTE',
+  PROFORMA_INVOICE = 'PROFORMA_INVOICE',
+  RFQ = 'RFQ',
+  SLA = 'SLA',
+  PROPOSAL = 'PROPOSAL',
+  GENERIC = 'GENERIC'
 }
 
 export interface TemplateElement {
@@ -89,6 +100,18 @@ class DocumentTemplate extends Model {
 
   @BelongsTo(() => User, { as: 'user' })
   public user?: User;
+
+  @Default('custom')
+  @Column({
+    type: DataType.ENUM('system', 'custom'),
+    allowNull: false
+  })
+  public category!: 'system' | 'custom';
+
+  @ForeignKey(() => Tenant)
+  @AllowNull(true)
+  @Column({ type: DataType.UUID })
+  public tenantId?: string;
 }
 
 export default DocumentTemplate;

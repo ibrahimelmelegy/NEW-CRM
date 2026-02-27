@@ -162,6 +162,8 @@ const menu = [
     submenu: [
       { link: '/crm/customer-360', name: 'navigation.customer360', icon: 'ph:user-circle-bold' },
       { link: '/crm/activities', name: 'navigation.activityTimeline', icon: 'ph:clock-counter-clockwise-bold' },
+      { link: '/companies', name: 'navigation.companies', icon: 'ph:buildings-bold' },
+      { link: '/reminders', name: 'navigation.reminders', icon: 'ph:bell-ringing-bold' },
       { link: '/notifications', name: 'navigation.notifications', icon: 'ph:bell-bold' }
     ]
   },
@@ -188,6 +190,7 @@ const menu = [
       { link: '/sales/cpq', name: 'navigation.cpq', icon: 'ph:calculator-bold' },
       { link: '/sales/commissions', name: 'navigation.commissions', icon: 'ph:currency-dollar-bold' },
       { link: '/sales/competitors', name: 'navigation.competitors', icon: 'ph:binoculars-bold' },
+      { link: '/sales/proforma-invoices', name: 'navigation.proformaInvoices', icon: 'ph:file-text-bold' },
       { link: '/sales/goals', name: 'navigation.goalsQuotas', icon: 'ph:target-bold' }
     ]
   },
@@ -243,7 +246,8 @@ const menu = [
       { link: '/inventory', name: 'navigation.inventory', icon: 'ph:package-bold' },
       { link: '/warehouse', name: 'navigation.warehouse', icon: 'ph:warehouse-bold' },
       { link: '/manufacturing', name: 'navigation.manufacturing', icon: 'ph:factory-bold' },
-      { link: '/shipping', name: 'navigation.shipping', icon: 'ph:truck-bold' }
+      { link: '/shipping', name: 'navigation.shipping', icon: 'ph:truck-bold' },
+      { link: '/catalog', name: 'navigation.catalog', icon: 'ph:storefront-bold' }
     ]
   },
 
@@ -255,6 +259,8 @@ const menu = [
     submenu: [
       { link: '/messaging', name: 'navigation.messaging', icon: 'ph:chat-circle-dots-bold' },
       { link: '/communications', name: 'navigation.communicationHub', icon: 'ph:phone-list-bold' },
+      { link: '/call-log', name: 'navigation.callLog', icon: 'ph:phone-bold' },
+      { link: '/meeting-notes', name: 'navigation.meetingNotes', icon: 'ph:note-pencil-bold' },
       { link: '/ai-assistant', name: 'navigation.aiAssistant', icon: 'ph:brain-bold' },
       { link: '/virtual-office', name: 'navigation.virtualOffice', icon: 'ph:buildings-bold' }
     ]
@@ -271,8 +277,9 @@ const menu = [
       { link: '/marketing/ab-testing', name: 'navigation.abTesting', icon: 'ph:flask-bold' },
       { link: '/marketing/form-builder', name: 'navigation.formBuilder', icon: 'ph:textbox-bold' },
       { link: '/marketing/surveys', name: 'navigation.surveys', icon: 'ph:chart-bar-bold' },
-      { link: '/marketing/social', name: 'navigation.socialCrm', icon: 'ph:share-network-bold' },
-      { link: '/marketing/loyalty', name: 'navigation.loyalty', icon: 'ph:gift-bold' }
+      { link: '/marketing/social-crm', name: 'navigation.socialCrm', icon: 'ph:share-network-bold' },
+      { link: '/marketing/loyalty', name: 'navigation.loyalty', icon: 'ph:gift-bold' },
+      { link: '/web-forms', name: 'navigation.webForms', icon: 'ph:browser-bold' }
     ]
   },
 
@@ -285,6 +292,7 @@ const menu = [
       { link: '/documents', name: 'navigation.allDocuments', icon: 'ph:folder-bold' },
       { link: '/documents/e-signatures', name: 'navigation.eSignatures', icon: 'ph:signature-bold' },
       { link: '/documents/editor', name: 'navigation.documentEditor', icon: 'ph:file-plus-bold' },
+      { link: '/archive', name: 'navigation.archive', icon: 'ph:archive-bold' },
       { link: '/automations', name: 'navigation.automations', icon: 'ph:git-merge-bold' }
     ]
   },
@@ -296,6 +304,7 @@ const menu = [
     isOpen: false,
     submenu: [
       { link: '/reports', name: 'navigation.report', icon: 'ph:chart-pie' },
+      { link: '/reports/custom-reports', name: 'navigation.customReports', icon: 'ph:file-magnifying-glass-bold' },
       { link: '/reports/builder', name: 'navigation.reportBuilder', icon: 'ph:faders-horizontal-bold' },
       { link: '/reports/forecasting', name: 'navigation.forecasting', icon: 'ph:trend-up-bold' },
       { link: '/analytics/heatmap', name: 'navigation.activityHeatmap', icon: 'ph:squares-four-bold' },
@@ -359,7 +368,8 @@ const menu = [
       { link: '/support/canned-responses', name: 'navigation.cannedResponses', icon: 'ph:chat-text-bold' },
       { link: '/support/knowledge-base', name: 'navigation.knowledgeBase', icon: 'ph:book-open-bold' },
       { link: '/support/live-chat', name: 'navigation.liveChat', icon: 'ph:chats-bold' },
-      { link: '/customer-success', name: 'navigation.customerSuccess', icon: 'ph:heart-half-bold' }
+      { link: '/customer-success', name: 'navigation.customerSuccess', icon: 'ph:heart-half-bold' },
+      { link: '/warranty', name: 'navigation.warranty', icon: 'ph:shield-check-bold' }
     ]
   },
 
@@ -378,6 +388,7 @@ const menu = [
       { link: '/settings/custom-fields', name: 'navigation.customFields', icon: 'ph:sliders-horizontal-bold' },
       { link: '/settings/webhooks', name: 'navigation.webhooks', icon: 'ph:webhooks-logo-bold' },
       { link: '/settings/document-templates', name: 'navigation.documentTemplates', icon: 'ph:file-pdf-bold' },
+      { link: '/settings/email-templates', name: 'navigation.emailTemplates', icon: 'ph:envelope-open-bold' },
       { link: '/settings/workflows', name: 'navigation.workflows', icon: 'ph:lightning-bold' },
       { link: '/settings/portal-users', name: 'navigation.portalUsers', icon: 'ph:users-three-bold' },
       { link: '/settings/currencies', name: 'navigation.currencies', icon: 'ph:coins-bold' },
@@ -398,6 +409,7 @@ const menu = [
       { link: '/settings/assignment-rules', name: 'navigation.assignmentRules', icon: 'ph:user-switch-bold' },
       { link: '/settings/data-governance', name: 'navigation.dataGovernance', icon: 'ph:database-bold' },
       { link: '/settings/data-import', name: 'navigation.dataImport', icon: 'ph:upload-bold' },
+      { link: '/settings/branding', name: 'navigation.branding', icon: 'ph:paint-brush-household-bold' },
       { link: '/settings/white-label', name: 'navigation.whiteLabel', icon: 'ph:paint-brush-bold' },
       { link: '/settings/roles', name: 'navigation.permissionsHub', icon: 'ph:key-bold', role: 'VIEW_ROLES' }
     ]

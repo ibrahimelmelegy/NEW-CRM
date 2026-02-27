@@ -1,16 +1,17 @@
-import * as fs from 'fs';
-import * as path from 'path';
 import DocBuilderDocument from './models/docBuilderModel';
-import { renderDocumentHtml } from './templateRenderer';
+import { renderWithTemplate } from './templateRenderer';
+import DocumentTemplate from '../documentTemplate/documentTemplateModel';
+import Setting from '../setting/settingModel';
+import storageService from '../storage/storageService';
 import BaseError from '../utils/error/base-http-exception';
 import { ERRORS } from '../utils/error/errors';
+import type { BrandSettings } from './templateEngine';
 
 class PdfService {
-  private uploadDir = path.join(process.cwd(), 'public', 'uploads', 'doc-builder');
-
   /**
    * Generate a PDF for a document.
    * Uses Puppeteer if available, otherwise generates an HTML file that can be printed to PDF.
+   * Files are stored via storageService (local or DO Spaces).
    */
   public async generatePdf(documentId: string): Promise<string> {
     const document = await DocBuilderDocument.findByPk(documentId);
@@ -23,13 +24,30 @@ class PdfService {
       content = {};
     }
 
-    const html = renderDocumentHtml(content, document.type);
-    const dir = path.join(this.uploadDir, documentId);
-
-    // Ensure directory exists
-    if (!fs.existsSync(dir)) {
-      fs.mkdirSync(dir, { recursive: true });
+    // Load template and brand settings
+    let templateHtml: string | undefined;
+    if (document.templateId) {
+      const template = await DocumentTemplate.findByPk(document.templateId);
+      if (template?.layout) {
+        templateHtml = (template.layout as any).templateHtml;
+      }
     }
+
+    const settings = await Setting.findOne();
+    const brand: BrandSettings = settings ? {
+      companyName: settings.name || undefined,
+      logo: settings.logo || undefined,
+      primaryColor: settings.primaryColor || undefined,
+      accentColor: settings.accentColor || undefined,
+      fontFamily: settings.fontFamily || undefined,
+      companyAddress: settings.companyAddress || undefined,
+      companyPhone: settings.companyPhone || undefined,
+      companyEmail: settings.email || undefined,
+      companyTaxId: settings.companyTaxId || undefined,
+      brandFooterText: settings.brandFooterText || undefined
+    } : {};
+
+    const html = renderWithTemplate(content, document.type, templateHtml, brand);
 
     try {
       // Try Puppeteer for proper PDF generation
@@ -41,9 +59,7 @@ class PdfService {
       const page = await browser.newPage();
       await page.setContent(html, { waitUntil: 'networkidle0' });
 
-      const pdfPath = path.join(dir, `v${document.version}.pdf`);
-      await page.pdf({
-        path: pdfPath,
+      const pdfBuffer = await page.pdf({
         format: 'A4',
         printBackground: true,
         margin: { top: '20mm', right: '15mm', bottom: '20mm', left: '15mm' }
@@ -51,16 +67,19 @@ class PdfService {
 
       await browser.close();
 
-      const pdfUrl = `/assets/doc-builder/${documentId}/v${document.version}.pdf`;
+      const key = `doc-builder/${documentId}/v${document.version}.pdf`;
+      await storageService.upload(Buffer.from(pdfBuffer), key, 'application/pdf');
+
+      const pdfUrl = storageService.getUrl(key);
       await document.update({ pdfUrl });
 
       return pdfUrl;
     } catch {
       // Fallback: save HTML file (can be opened in browser and printed to PDF)
-      const htmlPath = path.join(dir, `v${document.version}.html`);
-      fs.writeFileSync(htmlPath, html);
+      const key = `doc-builder/${documentId}/v${document.version}.html`;
+      await storageService.upload(Buffer.from(html), key, 'text/html');
 
-      const htmlUrl = `/assets/doc-builder/${documentId}/v${document.version}.html`;
+      const htmlUrl = storageService.getUrl(key);
       await document.update({ pdfUrl: htmlUrl });
 
       return htmlUrl;
@@ -71,11 +90,6 @@ class PdfService {
    * Generate PDF from raw HTML content.
    */
   public async generatePdfFromHtml(html: string, filename: string): Promise<string> {
-    const dir = path.join(this.uploadDir, 'custom');
-    if (!fs.existsSync(dir)) {
-      fs.mkdirSync(dir, { recursive: true });
-    }
-
     try {
       const puppeteer = require('puppeteer');
       const browser = await puppeteer.launch({
@@ -85,21 +99,22 @@ class PdfService {
       const page = await browser.newPage();
       await page.setContent(html, { waitUntil: 'networkidle0' });
 
-      const pdfPath = path.join(dir, `${filename}.pdf`);
-      await page.pdf({
-        path: pdfPath,
+      const pdfBuffer = await page.pdf({
         format: 'A4',
         printBackground: true,
         margin: { top: '20mm', right: '15mm', bottom: '20mm', left: '15mm' }
       });
 
       await browser.close();
-      return `/assets/doc-builder/custom/${filename}.pdf`;
+
+      const key = `doc-builder/custom/${filename}.pdf`;
+      await storageService.upload(Buffer.from(pdfBuffer), key, 'application/pdf');
+      return storageService.getUrl(key);
     } catch {
       // Fallback: save HTML
-      const htmlPath = path.join(dir, `${filename}.html`);
-      fs.writeFileSync(htmlPath, html);
-      return `/assets/doc-builder/custom/${filename}.html`;
+      const key = `doc-builder/custom/${filename}.html`;
+      await storageService.upload(Buffer.from(html), key, 'text/html');
+      return storageService.getUrl(key);
     }
   }
 }

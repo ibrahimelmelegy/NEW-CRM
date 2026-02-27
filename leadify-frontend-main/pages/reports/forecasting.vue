@@ -35,37 +35,12 @@
         p.text-xs.font-semibold.uppercase.mb-2(style="color: var(--text-muted)") Attainment
         p.text-3xl.font-bold(:style="{ color: attainmentColor }") {{ totals.target > 0 ? Math.round((totals.actual / totals.target) * 100) : 0 }}%
 
-    //- Chart Placeholder
+    //- ECharts Grouped Bar Chart
     .glass-card.p-6.mb-8
       h3.text-lg.font-bold.mb-4(style="color: var(--text-primary)") Revenue vs Target
-      .grid.gap-4(v-if="forecasts.length" class="grid-cols-1")
-        .flex.items-end.gap-2.h-48
-          .flex.flex-col.items-center.flex-1(v-for="forecast in forecasts" :key="forecast.id")
-            .flex.gap-1.items-end.h-40.w-full.justify-center
-              .rounded-t-md(
-                :style="{ width: '20px', height: barHeight(forecast.target, maxValue) + 'px', background: '#7849ff40' }"
-                :title="'Target: ' + formatCurrency(forecast.target)"
-              )
-              .rounded-t-md(
-                :style="{ width: '20px', height: barHeight(forecast.actual, maxValue) + 'px', background: '#22c55e' }"
-                :title="'Actual: ' + formatCurrency(forecast.actual)"
-              )
-              .rounded-t-md(
-                :style="{ width: '20px', height: barHeight(forecast.pipeline, maxValue) + 'px', background: '#3b82f680' }"
-                :title="'Pipeline: ' + formatCurrency(forecast.pipeline)"
-              )
-            .text-xs.mt-2(style="color: var(--text-muted)") {{ formatPeriodLabel(forecast) }}
-
-      .flex.items-center.justify-center.gap-6.mt-4
-        .flex.items-center.gap-2
-          .w-3.h-3.rounded-sm(style="background: #7849ff40")
-          span.text-xs(style="color: var(--text-muted)") Target
-        .flex.items-center.gap-2
-          .w-3.h-3.rounded-sm(style="background: #22c55e")
-          span.text-xs(style="color: var(--text-muted)") Actual
-        .flex.items-center.gap-2
-          .w-3.h-3.rounded-sm(style="background: #3b82f680")
-          span.text-xs(style="color: var(--text-muted)") Pipeline
+      VChart.w-full(v-if="forecasts.length" :option="chartOption" :style="{ height: '350px' }" autoresize)
+      .text-center.py-12(v-else)
+        p.text-sm(style="color: var(--text-muted)") No forecast data available
 
     //- Rep Table
     .glass-card.p-6
@@ -96,6 +71,8 @@
 
 <script setup lang="ts">
 import { ref, computed } from 'vue';
+import { graphic } from 'echarts';
+import VChart from 'vue-echarts';
 import { fetchForecasts, fetchForecastByPeriod } from '~/composables/useForecasting';
 import type { ForecastPeriod } from '~/composables/useForecasting';
 
@@ -132,6 +109,76 @@ const attainmentColor = computed(() => {
   if (pct >= 100) return '#22c55e';
   if (pct >= 70) return '#f59e0b';
   return '#ef4444';
+});
+
+const chartOption = computed(() => {
+  const labels = forecasts.value.map(f => formatPeriodLabel(f));
+  const tooltipStyle = {
+    backgroundColor: 'rgba(30, 30, 45, 0.85)',
+    borderColor: 'rgba(120, 73, 255, 0.3)',
+    borderWidth: 1,
+    padding: [12, 16],
+    textStyle: { color: '#fff' },
+    extraCssText: 'backdrop-filter: blur(12px); box-shadow: 0 12px 40px rgba(0,0,0,0.5); border-radius: 16px;'
+  };
+  return {
+    tooltip: { trigger: 'axis', axisPointer: { type: 'shadow' }, ...tooltipStyle },
+    legend: { data: ['Target', 'Actual', 'Pipeline'], textStyle: { color: '#94A3B8' }, bottom: 0 },
+    grid: { top: 30, right: 30, bottom: 50, left: 30, containLabel: true },
+    xAxis: {
+      type: 'category',
+      data: labels,
+      axisLabel: { color: '#94A3B8', fontWeight: 500 },
+      axisLine: { show: false },
+      axisTick: { show: false }
+    },
+    yAxis: {
+      type: 'value',
+      splitLine: { lineStyle: { type: 'dashed', color: 'rgba(255,255,255,0.05)' } },
+      axisLabel: { color: '#64748B', formatter: (v: number) => v >= 1000 ? `${(v/1000).toFixed(0)}K` : v }
+    },
+    series: [
+      {
+        name: 'Target',
+        type: 'bar',
+        barWidth: '20%',
+        data: forecasts.value.map(f => f.target || 0),
+        itemStyle: {
+          borderRadius: [6, 6, 0, 0],
+          color: new graphic.LinearGradient(0, 0, 0, 1, [
+            { offset: 0, color: '#7849FF' },
+            { offset: 1, color: 'rgba(120, 73, 255, 0.3)' }
+          ])
+        }
+      },
+      {
+        name: 'Actual',
+        type: 'bar',
+        barWidth: '20%',
+        data: forecasts.value.map(f => f.actual || 0),
+        itemStyle: {
+          borderRadius: [6, 6, 0, 0],
+          color: new graphic.LinearGradient(0, 0, 0, 1, [
+            { offset: 0, color: '#22c55e' },
+            { offset: 1, color: 'rgba(34, 197, 94, 0.3)' }
+          ])
+        }
+      },
+      {
+        name: 'Pipeline',
+        type: 'bar',
+        barWidth: '20%',
+        data: forecasts.value.map(f => f.pipeline || 0),
+        itemStyle: {
+          borderRadius: [6, 6, 0, 0],
+          color: new graphic.LinearGradient(0, 0, 0, 1, [
+            { offset: 0, color: '#3b82f6' },
+            { offset: 1, color: 'rgba(59, 130, 246, 0.3)' }
+          ])
+        }
+      }
+    ]
+  };
 });
 
 async function loadData() {

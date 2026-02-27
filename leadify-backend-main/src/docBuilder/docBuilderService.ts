@@ -1,9 +1,9 @@
-import * as fs from 'fs';
-import * as path from 'path';
 import { Op, WhereOptions, Includeable } from 'sequelize';
 import { clampPagination } from '../utils/pagination';
 import DocBuilderDocument, { DocTypeEnum, DocStatusEnum } from './models/docBuilderModel';
 import DocBuilderVersion from './models/docBuilderVersionModel';
+import DocumentTemplate from '../documentTemplate/documentTemplateModel';
+import Setting from '../setting/settingModel';
 import BaseError from '../utils/error/base-http-exception';
 import { ERRORS } from '../utils/error/errors';
 import User from '../user/userModel';
@@ -12,7 +12,9 @@ import { DocBuilderPermissionsEnum } from '../role/roleEnum';
 import { SortEnum } from '../lead/leadEnum';
 import { DocSortByEnum } from './inputs/getDocsInput';
 import { sendEmail } from '../utils/emailHelper';
-import { renderDocumentHtml } from './templateRenderer';
+import { renderDocumentHtml, renderWithTemplate } from './templateRenderer';
+import storageService from '../storage/storageService';
+import type { BrandSettings } from './templateEngine';
 
 const REF_PREFIXES: Record<string, string> = {
   quote: 'QT',
@@ -402,19 +404,10 @@ class DocBuilderService {
       </div>
     `;
 
-    // Read PDF/HTML file and attach if exists
+    // Attachment handling — PDF URL is now a storage key or CDN URL
     let attachment: { name: string; content: string } | undefined;
-    if (pdfUrl) {
-      const filePath = path.join(process.cwd(), 'public', 'uploads', 'doc-builder', pdfUrl.replace('/assets/doc-builder/', ''));
-      if (fs.existsSync(filePath)) {
-        const fileContent = fs.readFileSync(filePath);
-        const ext = path.extname(filePath).slice(1);
-        attachment = {
-          name: `${document.reference}.${ext}`,
-          content: fileContent.toString('base64')
-        };
-      }
-    }
+    // Note: attachment via cloud storage requires signed URL download; skipped for now
+    // The email contains the document reference and the PDF can be accessed via the CRM
 
     await sendEmail({
       to: data.to,
@@ -428,6 +421,71 @@ class DocBuilderService {
     await document.update({ status: DocStatusEnum.SENT, sentAt: new Date() });
 
     return document;
+  }
+
+  /**
+   * Load brand settings from the Settings table.
+   */
+  public async getBrandSettings(): Promise<BrandSettings> {
+    const settings = await Setting.findOne();
+    if (!settings) return {};
+    return {
+      companyName: settings.name || undefined,
+      logo: settings.logo || undefined,
+      primaryColor: settings.primaryColor || undefined,
+      accentColor: settings.accentColor || undefined,
+      fontFamily: settings.fontFamily || undefined,
+      companyAddress: settings.companyAddress || undefined,
+      companyPhone: settings.companyPhone || undefined,
+      companyEmail: settings.email || undefined,
+      companyTaxId: settings.companyTaxId || undefined,
+      brandFooterText: settings.brandFooterText || undefined
+    };
+  }
+
+  /**
+   * Render a document to HTML using its template (if set) and brand settings.
+   */
+  public async renderDocument(document: DocBuilderDocument): Promise<string> {
+    let content: any = {};
+    try {
+      content = document.content ? JSON.parse(document.content) : {};
+    } catch {
+      content = {};
+    }
+
+    // Load template if document has one
+    let templateHtml: string | undefined;
+    if (document.templateId) {
+      const template = await DocumentTemplate.findByPk(document.templateId);
+      if (template?.layout) {
+        templateHtml = (template.layout as any).templateHtml;
+      }
+    }
+
+    const brand = await this.getBrandSettings();
+    return renderWithTemplate(content, document.type, templateHtml, brand);
+  }
+
+  /**
+   * Generate PDFs for multiple documents at once.
+   */
+  public async generateBulkPdf(ids: string[], user: User): Promise<{ id: string; pdfUrl: string }[]> {
+    const results: { id: string; pdfUrl: string }[] = [];
+    const pdfService = require('./pdfService').default;
+
+    for (const id of ids) {
+      try {
+        const doc = await this.documentOrError({ id, ...tenantWhere(user) });
+        const pdfUrl = await pdfService.generatePdf(doc.id);
+        results.push({ id: doc.id, pdfUrl });
+      } catch {
+        // Skip documents that fail, continue with rest
+        results.push({ id, pdfUrl: '' });
+      }
+    }
+
+    return results;
   }
 
   private async documentOrError(filter: WhereOptions, includes?: Includeable[]): Promise<DocBuilderDocument> {

@@ -1,15 +1,35 @@
 <template lang="pug">
 .flex.items-center.justify-between.mb-5.mt-5
   .title.font-bold.text-2xl.mb-1.capitalize {{ $t('deals.details') }}
-  el-dropdown(trigger="click")
-      span.el-dropdown-link
-          button.rounded-btn(class="!px-4"): Icon(  name="IconToggle" size="24")
-      template(#dropdown)
-          el-dropdown-menu
-            el-dropdown-item(v-if="hasPermission('EDIT_DEALS')")
-              NuxtLink.flex.items-center(:to="`/sales/deals/edit/${deal?.id}`")
-                Icon.text-md.mr-2(size="20" name="IconEdit" )
-                p.text-sm {{ $t('common.edit') }}
+  .flex.items-center.gap-x-3
+    el-button(v-if="hasPermission('CREATE_PROPOSALS')" size="large" class="!rounded-2xl" @click="createQuoteFromDeal")
+      Icon(name="ph:file-text-bold" size="18" class="mr-1")
+      | {{ $t('deals.createQuote') || 'Create Quote' }}
+    el-dropdown(trigger="click")
+        span.el-dropdown-link
+            button.rounded-btn(class="!px-4"): Icon(  name="IconToggle" size="24")
+        template(#dropdown)
+            el-dropdown-menu
+              el-dropdown-item(v-if="hasPermission('EDIT_DEALS')")
+                NuxtLink.flex.items-center(:to="`/sales/deals/edit/${deal?.id}`")
+                  Icon.text-md.mr-2(size="20" name="IconEdit" )
+                  p.text-sm {{ $t('common.edit') }}
+
+//- Pipeline Stage Stepper
+.glass-card.rounded-2xl.p-6.mb-6(v-if="pipelineStages.length")
+  .flex.items-center.justify-between.mb-3
+    p.text-sm.font-medium(style="color: var(--text-muted)") {{ $t('deals.pipeline') || 'Pipeline Progress' }}
+    el-tag(:type="currentStageType" size="small" effect="dark" round) {{ deal?.stage || 'N/A' }}
+  .flex.items-center.gap-1
+    .flex-1(v-for="(stage, idx) in pipelineStages" :key="stage.id")
+      .relative
+        .h-2.rounded-full.transition-all.duration-300(
+          :style="{ backgroundColor: getStepColor(stage, idx) }"
+        )
+        .text-center.mt-2
+          .text-xs.font-medium(:style="{ color: isStageActive(stage, idx) ? stage.color : 'var(--text-muted)' }") {{ stage.name }}
+          .text-xs(v-if="stage.probability" style="color: var(--text-muted)") {{ stage.probability }}%
+
 el-tabs.demo-tabs(v-model="activeName", @tab-click="handleClick")
   el-tab-pane(:label="$t('deals.tabs.summary')", name="summary")
     .flex-1.glass-card.p-10.rounded-3xl.mt-3
@@ -45,7 +65,7 @@ el-tabs.demo-tabs(v-model="activeName", @tab-click="handleClick")
             .font-medium.mb-2.flex.items-center(style="color: var(--text-muted)")
               Icon(name="f7:money-dollar-circle" size="20" class="mr-2")
               p {{ $t('deals.table.price') }}
-            p.mb-2(style="color: var(--text-primary)") {{deal?.price}}
+            p.mb-2.text-xl.font-bold(style="color: var(--text-primary)") {{ Number(deal?.price || 0).toLocaleString() }} SAR
           div
             .font-medium.mb-2.flex.items-center(style="color: var(--text-muted)")
               Icon(name="tabler:category-2" size="20" class="mr-2")
@@ -92,19 +112,63 @@ el-tabs.demo-tabs(v-model="activeName", @tab-click="handleClick")
     RecordAttachments(:entityType="'deal'" :entityId="route.params.slug as string")
 </template>
 <script lang="ts" setup>
+import { fetchPipelineStages } from '@/composables/useKanban';
+import type { PipelineStage } from '@/composables/useKanban';
+
 const { hasPermission } = await usePermissions();
 const { $i18n } = useNuxtApp();
 const t = $i18n.t;
 const activeName = ref('summary');
 const route = useRoute();
+const router = useRouter();
 const loading = ref(false);
 
 const activity = ref();
+const pipelineStages = ref<PipelineStage[]>([]);
 
 // Call API to Get the deal
 const deal = await getDeal(route.params.slug as string);
 const activityResponse = await getOpportunityActivity((route.params.slug as string) + `?limit=10` + '&&page=1');
 activity.value = activityResponse;
+
+// Load pipeline stages for stepper
+fetchPipelineStages('deal').then(stages => {
+  pipelineStages.value = stages;
+});
+
+// Pipeline stepper helpers
+const currentStageIndex = computed(() => {
+  if (!deal?.stage || !pipelineStages.value.length) return -1;
+  return pipelineStages.value.findIndex(s => s.name === deal.stage || s.name.toUpperCase() === deal.stage);
+});
+
+const currentStageType = computed(() => {
+  const stage = deal?.stage;
+  if (stage === 'CLOSED' || stage === 'Closed Won') return 'success';
+  if (stage === 'CANCELLED' || stage === 'Closed Lost') return 'danger';
+  return 'primary';
+});
+
+function isStageActive(stage: PipelineStage, idx: number): boolean {
+  return idx <= currentStageIndex.value;
+}
+
+function getStepColor(stage: PipelineStage, idx: number): string {
+  if (idx <= currentStageIndex.value) return stage.color;
+  return 'var(--el-border-color)';
+}
+
+function handleClick() {}
+
+// Create quote from deal
+function createQuoteFromDeal() {
+  const query: Record<string, string> = {
+    relatedEntityId: deal.id,
+    relatedEntityType: 'Deal',
+    proposalFor: deal.companyName || deal.name
+  };
+  router.push({ path: '/sales/proposals/add-proposal', query });
+}
 
 const getActivityPage = async (page: number) => {
   try {

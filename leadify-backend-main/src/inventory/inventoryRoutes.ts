@@ -1,6 +1,7 @@
 import { Router } from 'express';
 import InventoryController from './inventoryController';
-import { authenticateUser } from '../middleware/authMiddleware';
+import { authenticateUser, HasPermission } from '../middleware/authMiddleware';
+import { InventoryPermissionsEnum } from '../role/roleEnum';
 
 /**
  * @swagger
@@ -28,7 +29,7 @@ const router = Router();
  *       500:
  *         description: Server error
  */
-router.get('/products/low-stock', authenticateUser, InventoryController.getLowStock);
+router.get('/products/low-stock', authenticateUser, HasPermission([InventoryPermissionsEnum.VIEW_INVENTORY]), InventoryController.getLowStock);
 
 /**
  * @swagger
@@ -45,7 +46,7 @@ router.get('/products/low-stock', authenticateUser, InventoryController.getLowSt
  *       500:
  *         description: Server error
  */
-router.get('/products/categories', authenticateUser, InventoryController.getCategories);
+router.get('/products/categories', authenticateUser, HasPermission([InventoryPermissionsEnum.VIEW_INVENTORY]), InventoryController.getCategories);
 
 /**
  * @swagger
@@ -62,7 +63,7 @@ router.get('/products/categories', authenticateUser, InventoryController.getCate
  *       500:
  *         description: Server error
  */
-router.get('/products/warehouses', authenticateUser, InventoryController.getWarehouses);
+router.get('/products/warehouses', authenticateUser, HasPermission([InventoryPermissionsEnum.VIEW_INVENTORY]), InventoryController.getWarehouses);
 
 // ─── Product CRUD ─────────────────────────────────────────────────────────────
 
@@ -108,7 +109,7 @@ router.get('/products/warehouses', authenticateUser, InventoryController.getWare
  *       500:
  *         description: Server error
  */
-router.get('/products', authenticateUser, InventoryController.getProducts);
+router.get('/products', authenticateUser, HasPermission([InventoryPermissionsEnum.VIEW_INVENTORY]), InventoryController.getProducts);
 
 /**
  * @swagger
@@ -132,7 +133,7 @@ router.get('/products', authenticateUser, InventoryController.getProducts);
  *       500:
  *         description: Server error
  */
-router.get('/products/:id', authenticateUser, InventoryController.getProductById);
+router.get('/products/:id', authenticateUser, HasPermission([InventoryPermissionsEnum.VIEW_INVENTORY]), InventoryController.getProductById);
 
 /**
  * @swagger
@@ -189,7 +190,7 @@ router.get('/products/:id', authenticateUser, InventoryController.getProductById
  *       500:
  *         description: Server error
  */
-router.post('/products', authenticateUser, InventoryController.createProduct);
+router.post('/products', authenticateUser, HasPermission([InventoryPermissionsEnum.CREATE_INVENTORY]), InventoryController.createProduct);
 
 /**
  * @swagger
@@ -241,7 +242,7 @@ router.post('/products', authenticateUser, InventoryController.createProduct);
  *       500:
  *         description: Server error
  */
-router.put('/products/:id', authenticateUser, InventoryController.updateProduct);
+router.put('/products/:id', authenticateUser, HasPermission([InventoryPermissionsEnum.EDIT_INVENTORY]), InventoryController.updateProduct);
 
 /**
  * @swagger
@@ -265,7 +266,7 @@ router.put('/products/:id', authenticateUser, InventoryController.updateProduct)
  *       500:
  *         description: Server error
  */
-router.delete('/products/:id', authenticateUser, InventoryController.deleteProduct);
+router.delete('/products/:id', authenticateUser, HasPermission([InventoryPermissionsEnum.DELETE_INVENTORY]), InventoryController.deleteProduct);
 
 // ─── Stock Movements ──────────────────────────────────────────────────────────
 
@@ -293,7 +294,7 @@ router.delete('/products/:id', authenticateUser, InventoryController.deleteProdu
  *       500:
  *         description: Server error
  */
-router.get('/products/:id/movements', authenticateUser, InventoryController.getMovements);
+router.get('/products/:id/movements', authenticateUser, HasPermission([InventoryPermissionsEnum.VIEW_INVENTORY]), InventoryController.getMovements);
 
 /**
  * @swagger
@@ -335,6 +336,6 @@ router.get('/products/:id/movements', authenticateUser, InventoryController.getM
  *       500:
  *         description: Server error
  */
-router.post('/movements', authenticateUser, InventoryController.addMovement);
+router.post('/movements', authenticateUser, HasPermission([InventoryPermissionsEnum.MANAGE_MOVEMENTS]), InventoryController.addMovement);
 
 export default router;

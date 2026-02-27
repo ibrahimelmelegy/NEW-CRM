@@ -3,8 +3,10 @@
   //- Header
   .flex.items-center.justify-between.mb-8
     div
-      h1.text-3xl.font-black.tracking-tight(style="color: var(--text-primary);") 📊 Reports Hub
-      p.text-sm.mt-1(style="color: var(--text-muted);") Comprehensive analytics and reports across your CRM.
+      h1.text-3xl.font-black.tracking-tight.flex.items-center.gap-3(style="color: var(--text-primary);")
+        Icon(name="ph:chart-bar-bold" size="32" style="color: #7849ff")
+        | {{ $t('reports.hub') }}
+      p.text-sm.mt-1(style="color: var(--text-muted);") {{ $t('reports.hubSubtitle') }}
 
   //- Quick Stats Row
   .grid.grid-cols-6.gap-4.mb-8
@@ -31,7 +33,9 @@
   .grid.grid-cols-2.gap-6.mb-8
     el-card.rounded-2xl(shadow="never" style="border: 1px solid var(--border-default);")
       template(#header)
-        span.font-bold 📋 Documents by Type
+        span.font-bold.flex.items-center.gap-2
+          Icon(name="ph:clipboard-text-bold" size="18" style="color: #7849ff")
+          | {{ $t('reports.documentsByType') }}
       .space-y-3
         .flex.items-center.justify-between.p-3.rounded-xl(
           v-for="(count, type) in docStats.byType"
@@ -48,7 +52,9 @@
 
     el-card.rounded-2xl(shadow="never" style="border: 1px solid var(--border-default);")
       template(#header)
-        span.font-bold 📈 Documents by Status
+        span.font-bold.flex.items-center.gap-2
+          Icon(name="ph:trend-up-bold" size="18" style="color: #22c55e")
+          | {{ $t('reports.documentsByStatus') }}
       .space-y-3
         .flex.items-center.justify-between.p-3.rounded-xl(
           v-for="(count, status) in docStats.byStatus"
@@ -64,7 +70,9 @@
   .grid.grid-cols-2.gap-6.mb-8
     el-card.rounded-2xl(shadow="never" style="border: 1px solid var(--border-default);")
       template(#header)
-        span.font-bold 💰 Monthly Revenue
+        span.font-bold.flex.items-center.gap-2
+          Icon(name="ph:currency-circle-dollar-bold" size="18" style="color: #10b981")
+          | {{ $t('reports.monthlyRevenue') }}
       .space-y-2
         .flex.items-center.justify-between.p-3.rounded-xl(
           v-for="(revenue, month) in docStats.monthlyRevenue"
@@ -76,7 +84,9 @@
 
     el-card.rounded-2xl(shadow="never" style="border: 1px solid var(--border-default);")
       template(#header)
-        span.font-bold 🕐 Recent Activity
+        span.font-bold.flex.items-center.gap-2
+          Icon(name="ph:clock-counter-clockwise-bold" size="18" style="color: #f59e0b")
+          | {{ $t('reports.recentActivity') }}
       .space-y-1
         .flex.items-center.gap-3.px-3.py-2(v-for="act in recentActivities.slice(0, 10)" :key="act.id")
           .w-7.h-7.rounded-lg.flex.items-center.justify-center.flex-shrink-0(:style="{ backgroundColor: (actionColors[act.action] || '#6b7280') + '15' }")
@@ -89,14 +99,17 @@
   //- Report Cards
   el-card.rounded-2xl(shadow="never" style="border: 1px solid var(--border-default);")
     template(#header)
-      span.font-bold 📑 Quick Navigation
+      span.font-bold.flex.items-center.gap-2
+          Icon(name="ph:compass-bold" size="18" style="color: #3b82f6")
+          | {{ $t('reports.quickNavigation') }}
     .grid.grid-cols-4.gap-4
       NuxtLink(v-for="report in quickLinks" :key="report.title" :to="report.url")
         .p-5.rounded-xl.border.text-center.transition-all.cursor-pointer(
           style="border-color: var(--border-default);"
           class="hover:shadow-md hover:border-violet-300"
         )
-          .text-2xl.mb-2 {{ report.icon }}
+          .flex.justify-center.mb-2
+            Icon(:name="report.icon" size="28" style="color: #7849ff")
           p.text-sm.font-bold(style="color: var(--text-primary);") {{ report.title }}
           p.text-xs.mt-1(style="color: var(--text-muted);") {{ report.desc }}
 </template>
@@ -148,10 +161,10 @@ const statusColors: Record<string, string> = {
   Archived: '#f59e0b'
 };
 const quickLinks = [
-  { icon: '📊', title: 'Document Center', desc: 'All documents', url: '/documents/dashboard' },
-  { icon: '📁', title: 'Archive', desc: 'Archived items', url: '/archive' },
-  { icon: '⏰', title: 'Reminders', desc: 'Follow-ups', url: '/reminders' },
-  { icon: '🔔', title: 'Notifications', desc: 'All alerts', url: '/notifications' }
+  { icon: 'ph:chart-bar-bold', title: 'Document Center', desc: 'All documents', url: '/documents/dashboard' },
+  { icon: 'ph:archive-bold', title: 'Archive', desc: 'Archived items', url: '/archive' },
+  { icon: 'ph:alarm-bold', title: 'Reminders', desc: 'Follow-ups', url: '/reminders' },
+  { icon: 'ph:bell-bold', title: 'Notifications', desc: 'All alerts', url: '/notifications' }
 ];
 
 function timeAgo(iso: string): string {

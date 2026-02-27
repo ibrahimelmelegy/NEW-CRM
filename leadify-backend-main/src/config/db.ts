@@ -168,6 +168,32 @@ import DocBuilderDocument from '../docBuilder/models/docBuilderModel';
 import DocBuilderVersion from '../docBuilder/models/docBuilderVersionModel';
 // SaaS Models
 import Tenant from '../tenant/tenantModel';
+// ─── New Module Models ────────────────────────────────────────────────────────
+// HR Extensions
+import PerformanceReview from '../hr/performance/performanceModel';
+import { JobPosting, Applicant } from '../hr/recruitment/recruitmentModel';
+import { TrainingProgram, TrainingEnrollment } from '../hr/training/trainingModel';
+// Sales Extensions
+import Commission from '../commission/commissionModel';
+import Competitor from '../competitor/competitorModel';
+import { PriceBook, PriceBookEntry } from '../cpq/cpqModel';
+// Marketing Extensions
+import ABTest from '../abTesting/abTestModel';
+import { FormTemplate, FormSubmission } from '../formBuilder/formBuilderModel';
+import { LoyaltyProgram, LoyaltyPoints } from '../loyalty/loyaltyModel';
+import SocialProfile from '../socialCrm/socialCrmModel';
+import { Survey, SurveyResponse } from '../survey/surveyModel';
+// Communications Extensions
+import { ChatConversation, ChatMessage } from '../liveChat/liveChatModel';
+import { BookingSlot, Booking } from '../booking/bookingModel';
+// Warehouse
+import { Warehouse, WarehouseZone, StockTransfer } from '../warehouse/warehouseModel';
+// Vendor Scorecard
+import VendorScorecard from '../vendorScorecard/vendorScorecardModel';
+// After-Sales
+import { Warranty, WarrantyClaim } from '../warranty/warrantyModel';
+import { Shipment, ShippingRate } from '../shipping/shippingModel';
+import Goal from '../goals/goalModel';
 
 dotenv.config();
 
@@ -353,7 +379,38 @@ const sequelize = new Sequelize({
     WorkOrder,
     QualityCheck,
     DocBuilderDocument,
-    DocBuilderVersion
+    DocBuilderVersion,
+    // ─── New Module Models ─────────────────────────────────────────────────
+    PerformanceReview,
+    JobPosting,
+    Applicant,
+    TrainingProgram,
+    TrainingEnrollment,
+    Commission,
+    Competitor,
+    PriceBook,
+    PriceBookEntry,
+    ABTest,
+    FormTemplate,
+    FormSubmission,
+    LoyaltyProgram,
+    LoyaltyPoints,
+    SocialProfile,
+    Survey,
+    SurveyResponse,
+    ChatConversation,
+    ChatMessage,
+    BookingSlot,
+    Booking,
+    Warehouse,
+    WarehouseZone,
+    StockTransfer,
+    VendorScorecard,
+    Warranty,
+    WarrantyClaim,
+    Shipment,
+    ShippingRate,
+    Goal
   ], // Path to your models
   logging: process.env.NODE_ENV !== 'production' ? console.log : false
 });

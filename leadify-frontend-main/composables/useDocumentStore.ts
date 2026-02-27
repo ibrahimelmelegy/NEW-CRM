@@ -1,10 +1,11 @@
 /**
- * Universal Document Store
- * Central localStorage-backed store for all saved documents across types.
+ * Universal Document Store — API-backed via /api/documents
+ * Central store for all saved documents across types.
  * Supports CRUD, filtering, linking, and statistics.
  */
 
 import { ref, computed } from 'vue';
+import { useApiFetch } from './useApiFetch';
 
 // ── Types ──────────────────────────────────────────────
 export interface StoredDocument {
@@ -30,26 +31,9 @@ export interface LinkedDocRef {
   relationship: 'parent' | 'child' | 'related';
 }
 
-// ── Persistence ────────────────────────────────────────
-const STORAGE_KEY = 'crm_document_store';
-
-function load(): StoredDocument[] {
-  if (typeof window === 'undefined') return [];
-  try {
-    const raw = localStorage.getItem(STORAGE_KEY);
-    return raw ? JSON.parse(raw) : [];
-  } catch {
-    return [];
-  }
-}
-
-function save(docs: StoredDocument[]) {
-  if (typeof window === 'undefined') return;
-  localStorage.setItem(STORAGE_KEY, JSON.stringify(docs));
-}
-
 // ── Global Reactive State ──────────────────────────────
-const documents = ref<StoredDocument[]>(load());
+const documents = ref<StoredDocument[]>([]);
+const loading = ref(false);
 
 export function useDocumentStore() {
   // ── Filters ──
@@ -92,20 +76,56 @@ export function useDocumentStore() {
     return { totalDocs, totalValue, byType, byStatus, monthlyRevenue, pendingCount, approvedCount, pendingValue };
   });
 
+  async function fetchDocuments() {
+    loading.value = true;
+    try {
+      const { body, success } = await useApiFetch('documents/files?limit=200');
+      if (success && body) {
+        const data = body as any;
+        const docs = data.docs || data || [];
+        documents.value = docs.map((f: any) => ({
+          id: f.id,
+          refNumber: f.name || '',
+          title: f.originalName || f.name || '',
+          documentType: (f.tags || [])[0] || 'document',
+          clientName: f.uploader?.name || '',
+          clientCompany: '',
+          total: f.size || 0,
+          currency: '',
+          status: (f.tags || []).includes('archived') ? 'Archived' : 'Active',
+          createdAt: f.createdAt,
+          updatedAt: f.updatedAt || f.createdAt,
+          linkedDocuments: [],
+          convertedFrom: undefined
+        }));
+      }
+    } finally {
+      loading.value = false;
+    }
+  }
+
   // ── CRUD ──
-  function addDocument(doc: StoredDocument) {
+  async function addDocument(doc: StoredDocument) {
     const existing = documents.value.findIndex(d => d.id === doc.id);
     if (existing >= 0) {
       documents.value[existing] = { ...doc, updatedAt: new Date().toISOString() };
+      if (typeof doc.id === 'number') {
+        await useApiFetch(`documents/files/${doc.id}`, 'PUT', {
+          name: doc.refNumber,
+          originalName: doc.title,
+          tags: [doc.documentType, doc.status]
+        });
+      }
     } else {
       documents.value.push({ ...doc, updatedAt: new Date().toISOString() });
     }
-    save(documents.value);
   }
 
-  function removeDocument(id: string | number) {
+  async function removeDocument(id: string | number) {
     documents.value = documents.value.filter(d => d.id !== id);
-    save(documents.value);
+    if (typeof id === 'number') {
+      await useApiFetch(`documents/files/${id}`, 'DELETE');
+    }
   }
 
   function getDocument(id: string | number): StoredDocument | undefined {
@@ -126,18 +146,15 @@ export function useDocumentStore() {
     const target = documents.value.find(d => d.id === targetId);
     if (!source || !target) return false;
 
-    // Add link to source
     if (!source.linkedDocuments.some(l => l.id === targetId)) {
       source.linkedDocuments.push({ id: target.id, refNumber: target.refNumber, documentType: target.documentType, relationship });
     }
 
-    // Add reverse link to target
     const reverseRel = relationship === 'parent' ? 'child' : relationship === 'child' ? 'parent' : 'related';
     if (!target.linkedDocuments.some(l => l.id === sourceId)) {
       target.linkedDocuments.push({ id: source.id, refNumber: source.refNumber, documentType: source.documentType, relationship: reverseRel });
     }
 
-    save(documents.value);
     return true;
   }
 
@@ -146,7 +163,6 @@ export function useDocumentStore() {
     const target = documents.value.find(d => d.id === targetId);
     if (source) source.linkedDocuments = source.linkedDocuments.filter(l => l.id !== targetId);
     if (target) target.linkedDocuments = target.linkedDocuments.filter(l => l.id !== sourceId);
-    save(documents.value);
   }
 
   function getLinkedDocuments(id: string | number): LinkedDocRef[] {
@@ -168,6 +184,8 @@ export function useDocumentStore() {
     getRecent,
     linkDocuments,
     unlinkDocuments,
-    getLinkedDocuments
+    getLinkedDocuments,
+    fetchDocuments,
+    loading
   };
 }

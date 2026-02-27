@@ -44,7 +44,11 @@
     <!-- Workload Heatmap -->
     <div class="glass-panel p-6 rounded-2xl">
       <h3 class="text-sm font-medium text-slate-300 mb-4">Weekly Workload Heatmap</h3>
-      <div class="overflow-x-auto">
+      <div v-if="loading" class="flex items-center justify-center py-12">
+        <el-icon class="is-loading text-2xl text-blue-400 mr-2"><Loading /></el-icon>
+        <span class="text-slate-400">Loading resources...</span>
+      </div>
+      <div v-else class="overflow-x-auto">
         <table class="w-full">
           <thead>
             <tr>
@@ -160,55 +164,211 @@
       </el-form>
       <template #footer>
         <el-button @click="showAllocateDialog = false">Cancel</el-button>
-        <el-button type="primary" @click="allocateResource">Allocate</el-button>
+        <el-button type="primary" :loading="allocating" @click="allocateResource">Allocate</el-button>
       </template>
     </el-dialog>
   </div>
 </template>
 
 <script setup lang="ts">
-import { ref, computed } from 'vue';
+import { ref, computed, onMounted } from 'vue';
 import { ElMessage } from 'element-plus';
+import { Loading } from '@element-plus/icons-vue';
+import { useApiFetch } from '~/composables/useApiFetch';
 
 definePageMeta({
   layout: 'default',
   middleware: 'permissions'
 });
 
+// ──────────────────────────────────────────────────
+// Reactive state
+// ──────────────────────────────────────────────────
 const selectedWeek = ref('');
 const showAllocateDialog = ref(false);
+const loading = ref(false);
+const allocating = ref(false);
 const newAlloc = ref({ resourceId: '', projectId: '', hoursPerDay: 4, duration: '1w' });
 const weekDays = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri'];
 
-const resources = ref([
-  { id: 1, name: 'Ahmed Al-Farsi', role: 'Senior Developer', maxHoursPerDay: 8, weeklyHours: [8, 7, 8, 6, 4] },
-  { id: 2, name: 'Sara Mohammed', role: 'UI/UX Designer', maxHoursPerDay: 8, weeklyHours: [6, 8, 5, 8, 7] },
-  { id: 3, name: 'Omar Hassan', role: 'Backend Developer', maxHoursPerDay: 8, weeklyHours: [8, 8, 8, 8, 8] },
-  { id: 4, name: 'Fatima Ali', role: 'QA Engineer', maxHoursPerDay: 8, weeklyHours: [4, 6, 3, 5, 2] },
-  { id: 5, name: 'Khalid Ibrahim', role: 'Project Manager', maxHoursPerDay: 8, weeklyHours: [6, 5, 7, 6, 5] },
-  { id: 6, name: 'Noura Salem', role: 'DevOps Engineer', maxHoursPerDay: 8, weeklyHours: [3, 4, 2, 5, 3] }
-]);
+// Color palette for project badges
+const PROJECT_COLORS = ['#6366F1', '#8B5CF6', '#3B82F6', '#10B981', '#F59E0B', '#EF4444', '#EC4899', '#14B8A6', '#F97316', '#06B6D4'];
 
-const projects = ref([
-  { id: 1, name: 'CRM Platform v3', hours: 120, budget: 160, color: '#6366F1' },
-  { id: 2, name: 'Mobile App Redesign', hours: 80, budget: 100, color: '#8B5CF6' },
-  { id: 3, name: 'API Gateway', hours: 45, budget: 80, color: '#3B82F6' },
-  { id: 4, name: 'Data Migration', hours: 30, budget: 40, color: '#10B981' }
-]);
+interface Resource {
+  id: string;
+  name: string;
+  role: string;
+  maxHoursPerDay: number;
+  weeklyHours: number[];
+}
 
-const skills = ref([
-  { name: 'Frontend (Vue/React)', people: 3, allocated: 96, available: 24 },
-  { name: 'Backend (Node.js)', people: 2, allocated: 72, available: 8 },
-  { name: 'UI/UX Design', people: 1, allocated: 34, available: 6 },
-  { name: 'DevOps/Infrastructure', people: 1, allocated: 17, available: 23 },
-  { name: 'QA/Testing', people: 1, allocated: 20, available: 20 }
-]);
+interface ProjectAllocation {
+  id: string;
+  name: string;
+  hours: number;
+  budget: number;
+  color: string;
+}
 
+interface RawAllocation {
+  id: string;
+  projectId: string;
+  manpowerId: string;
+  estimatedWorkDays: number;
+  actualWorkDays: number;
+  mission: string[];
+  durationCost: number;
+  totalCost: number;
+  project?: any;
+  manpower?: any;
+}
+
+const resources = ref<Resource[]>([]);
+const projects = ref<ProjectAllocation[]>([]);
+const rawAllocations = ref<RawAllocation[]>([]);
+
+// ──────────────────────────────────────────────────
+// Computed: skills derived from employee positions
+// ──────────────────────────────────────────────────
+const skills = computed(() => {
+  // Group resources by role/jobTitle
+  const roleMap = new Map<string, { people: number; allocated: number }>();
+
+  for (const res of resources.value) {
+    const roleName = res.role || 'Unassigned';
+    if (!roleMap.has(roleName)) {
+      roleMap.set(roleName, { people: 0, allocated: 0 });
+    }
+    const entry = roleMap.get(roleName)!;
+    entry.people += 1;
+    entry.allocated += res.weeklyHours.reduce((a, b) => a + b, 0);
+  }
+
+  return Array.from(roleMap.entries()).map(([name, data]) => ({
+    name,
+    people: data.people,
+    allocated: data.allocated,
+    // Available = (people * 40h/week) - allocated
+    available: Math.max(0, data.people * 40 - data.allocated)
+  }));
+});
+
+// ──────────────────────────────────────────────────
+// Computed: KPI metrics
+// ──────────────────────────────────────────────────
 const availableCapacity = computed(() => resources.value.length * 40);
 const allocatedHours = computed(() => resources.value.reduce((s, r) => s + r.weeklyHours.reduce((a: number, b: number) => a + b, 0), 0));
-const utilizationRate = computed(() => Math.round((allocatedHours.value / availableCapacity.value) * 100));
+const utilizationRate = computed(() => availableCapacity.value > 0 ? Math.round((allocatedHours.value / availableCapacity.value) * 100) : 0);
 const overallocated = computed(() => resources.value.filter(r => r.weeklyHours.some((h: number) => h > r.maxHoursPerDay)).length);
 
+// ──────────────────────────────────────────────────
+// Data fetching
+// ──────────────────────────────────────────────────
+
+/**
+ * Convert estimatedWorkDays into a 5-day weekly hours distribution.
+ * Each work day is treated as 8 hours. We spread the allocation across
+ * Mon-Fri evenly, capping at 8h per day.
+ */
+function distributeWorkDays(estimatedWorkDays: number): number[] {
+  const hoursPerDay = 8;
+  const totalHours = estimatedWorkDays * hoursPerDay;
+  // Spread across 5 days evenly
+  const perDay = Math.min(hoursPerDay, Math.round(totalHours / 5));
+  return [perDay, perDay, perDay, perDay, perDay];
+}
+
+/**
+ * Merge multiple allocation arrays by summing each day's hours.
+ */
+function mergeWeeklyHours(existing: number[], additional: number[]): number[] {
+  return existing.map((h, i) => h + (additional[i] || 0));
+}
+
+async function fetchData() {
+  loading.value = true;
+  try {
+    // Fetch all three endpoints in parallel
+    const [employeesRes, projectsRes, allocationsRes] = await Promise.all([
+      useApiFetch('hr/employees?limit=500'),
+      useApiFetch('project?limit=1000'),
+      useApiFetch('project-manpower?limit=1000')
+    ]);
+
+    // ── Process employees → resources ──
+    const employeeList: any[] = employeesRes?.success
+      ? (employeesRes.body?.docs || employeesRes.body || [])
+      : [];
+
+    // ── Process allocations ──
+    const allocationList: RawAllocation[] = allocationsRes?.success
+      ? (allocationsRes.body?.docs || allocationsRes.body || [])
+      : [];
+    rawAllocations.value = allocationList;
+
+    // Build a map: employeeId → aggregated weeklyHours
+    // Note: project-manpower uses manpowerId which may reference the Manpower table.
+    // We also index by employee id so if there's overlap it gets picked up.
+    const employeeHoursMap = new Map<string, number[]>();
+    for (const alloc of allocationList) {
+      const empId = alloc.manpowerId;
+      if (!empId) continue;
+      const addHours = distributeWorkDays(alloc.estimatedWorkDays || 0);
+      const existing = employeeHoursMap.get(empId) || [0, 0, 0, 0, 0];
+      employeeHoursMap.set(empId, mergeWeeklyHours(existing, addHours));
+    }
+
+    // Map employees to resource format
+    resources.value = employeeList.map((emp: any) => {
+      const id = emp.id;
+      const weeklyHours = employeeHoursMap.get(id) || [0, 0, 0, 0, 0];
+      return {
+        id,
+        name: `${emp.firstName || ''} ${emp.lastName || ''}`.trim() || emp.email || 'Unknown',
+        role: emp.jobTitle || emp.position || 'Unassigned',
+        maxHoursPerDay: 8,
+        weeklyHours
+      };
+    });
+
+    // ── Process projects ──
+    const projectList: any[] = projectsRes?.success
+      ? (projectsRes.body?.docs || projectsRes.body || [])
+      : [];
+
+    // Build a map: projectId → total allocated hours from project-manpower
+    const projectHoursMap = new Map<string, number>();
+    for (const alloc of allocationList) {
+      const pid = alloc.projectId;
+      if (!pid) continue;
+      const hours = (alloc.estimatedWorkDays || 0) * 8;
+      projectHoursMap.set(pid, (projectHoursMap.get(pid) || 0) + hours);
+    }
+
+    projects.value = projectList.map((proj: any, index: number) => {
+      // Budget hours: use resourceCount * duration (days) * 8, or fallback to a reasonable default
+      // The project model has `duration` (float, days) and `resourceCount`.
+      const budgetHours = (proj.resourceCount || 1) * (proj.duration || 20) * 8;
+      const allocatedProjectHours = projectHoursMap.get(proj.id) || 0;
+      return {
+        id: proj.id,
+        name: proj.name || 'Untitled Project',
+        hours: allocatedProjectHours,
+        budget: budgetHours || 160,
+        color: PROJECT_COLORS[index % PROJECT_COLORS.length]
+      };
+    });
+  } catch (err) {
+    console.error('Failed to load resource planner data:', err);
+    ElMessage.error('Failed to load resource planner data');
+  } finally {
+    loading.value = false;
+  }
+}
+
+// ──────────────────────────────────────────────────
+// Heatmap & utility helpers
+// ──────────────────────────────────────────────────
 const getHeatmapClass = (hours: number, max: number) => {
   const ratio = hours / max;
   if (ratio === 0) return 'bg-slate-800/30 text-slate-600';
@@ -237,8 +397,64 @@ const editDayAllocation = (res: any, dayIdx: number) => {
   ElMessage.info(`Editing ${res.name}'s ${weekDays[dayIdx]} allocation`);
 };
 
-const allocateResource = () => {
-  ElMessage.success('Resource allocated');
-  showAllocateDialog.value = false;
+// ──────────────────────────────────────────────────
+// Allocate resource → POST /api/project-manpower
+// ──────────────────────────────────────────────────
+
+/** Map duration select value to estimated work days */
+function durationToWorkDays(duration: string, hoursPerDay: number): number {
+  const daysPerWeek = 5;
+  switch (duration) {
+    case '1w': return daysPerWeek;
+    case '2w': return daysPerWeek * 2;
+    case '1m': return daysPerWeek * 4;
+    case '3m': return daysPerWeek * 12;
+    default: return daysPerWeek;
+  }
+}
+
+const allocateResource = async () => {
+  const { resourceId, projectId, hoursPerDay, duration } = newAlloc.value;
+
+  if (!resourceId || !projectId) {
+    ElMessage.warning('Please select both a resource and a project');
+    return;
+  }
+
+  allocating.value = true;
+  try {
+    const estimatedWorkDays = durationToWorkDays(duration, hoursPerDay);
+
+    const res = await useApiFetch('project-manpower', 'POST', {
+      projectId,
+      manpowerId: resourceId,
+      estimatedWorkDays,
+      actualWorkDays: 0,
+      mission: ['Standard']
+    });
+
+    if (res?.success) {
+      ElMessage.success('Resource allocated successfully');
+      showAllocateDialog.value = false;
+      // Reset form
+      newAlloc.value = { resourceId: '', projectId: '', hoursPerDay: 4, duration: '1w' };
+      // Refresh data to reflect new allocation
+      await fetchData();
+    } else {
+      ElMessage.error(res?.message || 'Failed to allocate resource');
+    }
+  } catch (err: any) {
+    console.error('Allocation error:', err);
+    ElMessage.error(err?.message || 'Failed to allocate resource');
+  } finally {
+    allocating.value = false;
+  }
 };
+
+// ──────────────────────────────────────────────────
+// Lifecycle
+// ──────────────────────────────────────────────────
+onMounted(() => {
+  fetchData();
+});
 </script>

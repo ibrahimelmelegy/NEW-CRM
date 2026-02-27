@@ -1,6 +1,7 @@
 import express from 'express';
 import financeController from './financeController';
-import { authenticateUser } from '../middleware/authMiddleware';
+import { authenticateUser, HasPermission } from '../middleware/authMiddleware';
+import { FinancePermissionsEnum } from '../role/roleEnum';
 
 /**
  * @swagger
@@ -27,7 +28,7 @@ const router = express.Router();
  *       500:
  *         description: Server error
  */
-router.get('/categories', authenticateUser, financeController.getCategories);
+router.get('/categories', authenticateUser, HasPermission([FinancePermissionsEnum.VIEW_CATEGORIES]), financeController.getCategories);
 
 /**
  * @swagger
@@ -63,7 +64,7 @@ router.get('/categories', authenticateUser, financeController.getCategories);
  *       500:
  *         description: Server error
  */
-router.post('/categories', authenticateUser, financeController.createCategory);
+router.post('/categories', authenticateUser, HasPermission([FinancePermissionsEnum.MANAGE_CATEGORIES]), financeController.createCategory);
 
 /**
  * @swagger
@@ -99,7 +100,7 @@ router.post('/categories', authenticateUser, financeController.createCategory);
  *       500:
  *         description: Server error
  */
-router.put('/categories/:id', authenticateUser, financeController.updateCategory);
+router.put('/categories/:id', authenticateUser, HasPermission([FinancePermissionsEnum.MANAGE_CATEGORIES]), financeController.updateCategory);
 
 /**
  * @swagger
@@ -123,7 +124,7 @@ router.put('/categories/:id', authenticateUser, financeController.updateCategory
  *       500:
  *         description: Server error
  */
-router.delete('/categories/:id', authenticateUser, financeController.deleteCategory);
+router.delete('/categories/:id', authenticateUser, HasPermission([FinancePermissionsEnum.MANAGE_CATEGORIES]), financeController.deleteCategory);
 
 // ─── Expenses ─────────────────────────────────────────────────────────────────
 
@@ -182,7 +183,7 @@ router.delete('/categories/:id', authenticateUser, financeController.deleteCateg
  *       500:
  *         description: Server error
  */
-router.get('/expenses', authenticateUser, financeController.getExpenses);
+router.get('/expenses', authenticateUser, HasPermission([FinancePermissionsEnum.VIEW_EXPENSES]), financeController.getExpenses);
 
 /**
  * @swagger
@@ -199,7 +200,7 @@ router.get('/expenses', authenticateUser, financeController.getExpenses);
  *       500:
  *         description: Server error
  */
-router.get('/expenses/summary', authenticateUser, financeController.getExpenseSummary);
+router.get('/expenses/summary', authenticateUser, HasPermission([FinancePermissionsEnum.VIEW_EXPENSES]), financeController.getExpenseSummary);
 
 /**
  * @swagger
@@ -223,7 +224,7 @@ router.get('/expenses/summary', authenticateUser, financeController.getExpenseSu
  *       500:
  *         description: Server error
  */
-router.get('/expenses/:id', authenticateUser, financeController.getExpenseById);
+router.get('/expenses/:id', authenticateUser, HasPermission([FinancePermissionsEnum.VIEW_EXPENSES]), financeController.getExpenseById);
 
 /**
  * @swagger
@@ -274,7 +275,7 @@ router.get('/expenses/:id', authenticateUser, financeController.getExpenseById);
  *       500:
  *         description: Server error
  */
-router.post('/expenses', authenticateUser, financeController.createExpense);
+router.post('/expenses', authenticateUser, HasPermission([FinancePermissionsEnum.CREATE_EXPENSES]), financeController.createExpense);
 
 /**
  * @swagger
@@ -322,7 +323,7 @@ router.post('/expenses', authenticateUser, financeController.createExpense);
  *       500:
  *         description: Server error
  */
-router.put('/expenses/:id', authenticateUser, financeController.updateExpense);
+router.put('/expenses/:id', authenticateUser, HasPermission([FinancePermissionsEnum.EDIT_EXPENSES]), financeController.updateExpense);
 
 /**
  * @swagger
@@ -346,7 +347,7 @@ router.put('/expenses/:id', authenticateUser, financeController.updateExpense);
  *       500:
  *         description: Server error
  */
-router.delete('/expenses/:id', authenticateUser, financeController.deleteExpense);
+router.delete('/expenses/:id', authenticateUser, HasPermission([FinancePermissionsEnum.DELETE_EXPENSES]), financeController.deleteExpense);
 
 /**
  * @swagger
@@ -370,7 +371,7 @@ router.delete('/expenses/:id', authenticateUser, financeController.deleteExpense
  *       500:
  *         description: Server error
  */
-router.patch('/expenses/:id/approve', authenticateUser, financeController.approveExpense);
+router.patch('/expenses/:id/approve', authenticateUser, HasPermission([FinancePermissionsEnum.APPROVE_EXPENSES]), financeController.approveExpense);
 
 /**
  * @swagger
@@ -394,7 +395,7 @@ router.patch('/expenses/:id/approve', authenticateUser, financeController.approv
  *       500:
  *         description: Server error
  */
-router.patch('/expenses/:id/reject', authenticateUser, financeController.rejectExpense);
+router.patch('/expenses/:id/reject', authenticateUser, HasPermission([FinancePermissionsEnum.APPROVE_EXPENSES]), financeController.rejectExpense);
 
 // ─── Budgets ──────────────────────────────────────────────────────────────────
 
@@ -428,7 +429,7 @@ router.patch('/expenses/:id/reject', authenticateUser, financeController.rejectE
  *       500:
  *         description: Server error
  */
-router.get('/budgets', authenticateUser, financeController.getBudgets);
+router.get('/budgets', authenticateUser, HasPermission([FinancePermissionsEnum.VIEW_BUDGETS]), financeController.getBudgets);
 
 /**
  * @swagger
@@ -452,7 +453,7 @@ router.get('/budgets', authenticateUser, financeController.getBudgets);
  *       500:
  *         description: Server error
  */
-router.get('/budgets/:id', authenticateUser, financeController.getBudgetById);
+router.get('/budgets/:id', authenticateUser, HasPermission([FinancePermissionsEnum.VIEW_BUDGETS]), financeController.getBudgetById);
 
 /**
  * @swagger
@@ -500,7 +501,7 @@ router.get('/budgets/:id', authenticateUser, financeController.getBudgetById);
  *       500:
  *         description: Server error
  */
-router.post('/budgets', authenticateUser, financeController.createBudget);
+router.post('/budgets', authenticateUser, HasPermission([FinancePermissionsEnum.CREATE_BUDGETS]), financeController.createBudget);
 
 /**
  * @swagger
@@ -546,7 +547,7 @@ router.post('/budgets', authenticateUser, financeController.createBudget);
  *       500:
  *         description: Server error
  */
-router.put('/budgets/:id', authenticateUser, financeController.updateBudget);
+router.put('/budgets/:id', authenticateUser, HasPermission([FinancePermissionsEnum.EDIT_BUDGETS]), financeController.updateBudget);
 
 /**
  * @swagger
@@ -570,6 +571,6 @@ router.put('/budgets/:id', authenticateUser, financeController.updateBudget);
  *       500:
  *         description: Server error
  */
-router.delete('/budgets/:id', authenticateUser, financeController.deleteBudget);
+router.delete('/budgets/:id', authenticateUser, HasPermission([FinancePermissionsEnum.DELETE_BUDGETS]), financeController.deleteBudget);
 
 export default router;

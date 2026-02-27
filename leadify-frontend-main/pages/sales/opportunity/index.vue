@@ -38,7 +38,7 @@ div
 
   //- Desktop Table
   .opp-desktop-view
-    AppTable(v-slot="{data}" v-if="!loadingAction" :filterOptions="filterOptions" :columns="table.columns" position="opportunity" :pageInfo="response.pagination" :data="table.data" :sortOptions="table.sort" @handleRowClick="handleRowClick" :searchPlaceholder="$t('opportunities.title')" )
+    AppTable(v-slot="{data}" v-if="!loadingAction" :filterOptions="filterOptions" :columns="table.columns" position="opportunity" :pageInfo="response.pagination" :data="table.data" :sortOptions="table.sort" @handleRowClick="handleRowClick" :searchPlaceholder="$t('opportunities.title')" emptyIcon="ph:target-bold" emptyMessage="No opportunities yet" emptyDescription="Create an opportunity to track your sales pipeline" emptyActionHref="/sales/opportunity/create" emptyActionLabel="Create Opportunity" )
       .flex.items-center.py-2(@click.stop)
           el-dropdown(class="outline-0" trigger="click")
               span(class="el-dropdown-link")

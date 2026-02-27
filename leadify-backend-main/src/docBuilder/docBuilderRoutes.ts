@@ -98,6 +98,38 @@ router.post(
  *       201:
  *         description: Document converted successfully
  */
+/**
+ * @swagger
+ * /api/doc-builder/bulk-pdf:
+ *   post:
+ *     summary: Generate PDFs for multiple documents
+ *     tags: [DocBuilder]
+ *     security:
+ *       - bearerAuth: []
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             required:
+ *               - ids
+ *             properties:
+ *               ids:
+ *                 type: array
+ *                 items:
+ *                   type: string
+ *     responses:
+ *       200:
+ *         description: Bulk PDFs generated
+ */
+router.post(
+  '/bulk-pdf',
+  authenticateUser,
+  HasPermission([DocBuilderPermissionsEnum.VIEW_OWN_DOCUMENTS, DocBuilderPermissionsEnum.VIEW_GLOBAL_DOCUMENTS]),
+  docBuilderController.generateBulkPdf
+);
+
 router.post('/:id/convert', authenticateUser, HasPermission([DocBuilderPermissionsEnum.CREATE_DOCUMENTS]), docBuilderController.convertDocument);
 
 /**
@@ -287,6 +319,25 @@ router.put(
 router.delete('/:id', authenticateUser, HasPermission([DocBuilderPermissionsEnum.DELETE_DOCUMENTS]), docBuilderController.deleteDocument);
 
 // ** --------------------- GET --------------------- **/
+
+/**
+ * @swagger
+ * /api/doc-builder/brand-settings:
+ *   get:
+ *     summary: Get brand settings for document rendering
+ *     tags: [DocBuilder]
+ *     security:
+ *       - bearerAuth: []
+ *     responses:
+ *       200:
+ *         description: Brand settings
+ */
+router.get(
+  '/brand-settings',
+  authenticateUser,
+  HasPermission([DocBuilderPermissionsEnum.VIEW_OWN_DOCUMENTS, DocBuilderPermissionsEnum.VIEW_GLOBAL_DOCUMENTS]),
+  docBuilderController.getBrandSettings
+);
 
 /**
  * @swagger

@@ -21,7 +21,7 @@ div(class="animate-fade-in")
   AdvancedSearch(:entityType="'project'" :fields="advancedSearchFields" @apply="handleAdvancedFilter" @clear="handleClearAdvancedFilter")
 
   .proj-desktop-view
-    AppTable(v-slot="{data}"  :filterOptions="filterOptions" :columns="table.columns" position="project" :pageInfo="response.pagination" :data="table.data" :sortOptions="table.sort" @handleRowClick="handleRowClick" :searchPlaceholder="$t('operations.projects.title')" )
+    AppTable(v-slot="{data}"  :filterOptions="filterOptions" :columns="table.columns" position="project" :pageInfo="response.pagination" :data="table.data" :sortOptions="table.sort" @handleRowClick="handleRowClick" :searchPlaceholder="$t('operations.projects.title')" emptyIcon="ph:kanban-bold" emptyMessage="No projects yet" emptyDescription="Create your first project to manage deliverables" emptyActionHref="/operations/projects/create" emptyActionLabel="Create Project" )
       .flex.items-center.py-2(@click.stop)
           el-dropdown(class="outline-0" trigger="click")
               span(class="el-dropdown-link")

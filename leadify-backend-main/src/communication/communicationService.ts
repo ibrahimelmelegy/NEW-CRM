@@ -337,6 +337,95 @@ class CommunicationService {
     await activity.destroy();
   }
 
+  // ─── Get All Call Logs ───────────────────────────────────────────────────
+  public async getCallLogs(
+    tenantId: string | null,
+    pagination: { page?: number; limit?: number; search?: string }
+  ): Promise<IPaginationRes<any>> {
+    const page = Number(pagination.page) || 1;
+    const limit = Math.min(100, Math.max(1, Number(pagination.limit) || 20));
+    const offset = (page - 1) * limit;
+
+    const where: any = { type: ActivityType.CALL };
+    if (tenantId) where.tenantId = tenantId;
+    if (pagination.search) {
+      where[Op.or] = [
+        { subject: { [Op.iLike]: `%${pagination.search}%` } },
+        { contactId: { [Op.iLike]: `%${pagination.search}%` } }
+      ];
+    }
+
+    const { rows, count } = await CommActivity.findAndCountAll({
+      where,
+      include: [
+        { model: User, as: 'user', attributes: ['id', 'name', 'email', 'profilePicture'] }
+      ],
+      order: [['createdAt', 'DESC']],
+      limit,
+      offset
+    });
+
+    // Enrich with call log details
+    const activityIds = rows.map(a => a.id);
+    let callLogsMap: Record<number, CommCallLog> = {};
+    if (activityIds.length > 0) {
+      const callLogs = await CommCallLog.findAll({
+        where: { activityId: { [Op.in]: activityIds } }
+      });
+      callLogsMap = callLogs.reduce((map: Record<number, CommCallLog>, log) => {
+        map[log.activityId] = log;
+        return map;
+      }, {});
+    }
+
+    const enrichedRows = rows.map(activity => {
+      const plain = activity.toJSON() as any;
+      if (callLogsMap[plain.id]) {
+        plain.callLog = callLogsMap[plain.id].toJSON();
+      }
+      return plain;
+    });
+
+    return {
+      docs: enrichedRows,
+      pagination: { page, limit, totalItems: count, totalPages: Math.ceil(count / limit) }
+    };
+  }
+
+  // ─── Get All Meeting Notes ─────────────────────────────────────────────────
+  public async getMeetingNotes(
+    tenantId: string | null,
+    pagination: { page?: number; limit?: number; search?: string }
+  ): Promise<IPaginationRes<CommActivity>> {
+    const page = Number(pagination.page) || 1;
+    const limit = Math.min(100, Math.max(1, Number(pagination.limit) || 20));
+    const offset = (page - 1) * limit;
+
+    const where: any = { type: ActivityType.MEETING };
+    if (tenantId) where.tenantId = tenantId;
+    if (pagination.search) {
+      where[Op.or] = [
+        { subject: { [Op.iLike]: `%${pagination.search}%` } },
+        { body: { [Op.iLike]: `%${pagination.search}%` } }
+      ];
+    }
+
+    const { rows, count } = await CommActivity.findAndCountAll({
+      where,
+      include: [
+        { model: User, as: 'user', attributes: ['id', 'name', 'email', 'profilePicture'] }
+      ],
+      order: [['createdAt', 'DESC']],
+      limit,
+      offset
+    });
+
+    return {
+      docs: rows,
+      pagination: { page, limit, totalItems: count, totalPages: Math.ceil(count / limit) }
+    };
+  }
+
   // ─── Helper: Get Activity By ID ──────────────────────────────────────────
   private async getActivityById(id: number): Promise<CommActivity> {
     const activity = await CommActivity.findByPk(id, {

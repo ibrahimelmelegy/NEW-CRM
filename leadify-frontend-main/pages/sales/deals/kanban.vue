@@ -13,6 +13,13 @@ div
       NuxtLink(to="/sales/deals/add-deal" v-if="hasPermission('CREATE_DEALS')")
         el-button(size='large' type="primary" :icon="Plus" class="!rounded-2xl") {{ $t('deals.newDeal') }}
 
+  //- Pipeline value summary
+  .grid.gap-4.mb-6(:class="pipelineStages.length <= 4 ? 'grid-cols-' + pipelineStages.length : 'grid-cols-4'" v-if="pipelineStages.length")
+    .glass-card.rounded-2xl.p-4.text-center(v-for="stage in pipelineStages" :key="stage.id")
+      .text-xs.font-medium.uppercase.tracking-wider.mb-1(style="color: var(--text-muted)") {{ stage.name }}
+      .text-xl.font-bold(:style="{ color: stage.color }") {{ formatCurrency(sumValue(stage.name)) }}
+      .text-xs.mt-1(style="color: var(--text-muted)") {{ (kanbanCards[stage.name] || []).length }} {{ $t('deals.title').toLowerCase() }}
+
   //- Kanban Toolbar
   KanbanToolbar(
     :swimlane-mode="swimlaneMode"
@@ -37,8 +44,8 @@ div
 <script setup lang="ts">
 import { Plus } from '@element-plus/icons-vue';
 import { ElNotification } from 'element-plus';
-import { fetchDealKanban, updateDealStage, getStageColor } from '@/composables/useKanban';
-import type { KanbanCard } from '@/composables/useKanban';
+import { fetchDealKanban, updateDealStage, fetchPipelineStages } from '@/composables/useKanban';
+import type { KanbanCard, PipelineStage } from '@/composables/useKanban';
 
 const router = useRouter();
 const { hasPermission } = await usePermissions();
@@ -47,18 +54,38 @@ const t = $i18n.t;
 
 const loading = ref(true);
 const kanbanCards = ref<Record<string, KanbanCard[]>>({});
+const pipelineStages = ref<PipelineStage[]>([]);
 const swimlaneMode = ref<'none' | 'assignee' | 'priority' | 'value'>('none');
 const activeFilter = ref('all');
 const kanbanBoardRef = ref<{ toggleAllLanes: () => void } | null>(null);
 
-const columns = computed(() => [
-  { key: 'PROGRESS', label: t('kanban.stages.progress'), color: getStageColor('PROGRESS'), totalValue: sumValue('PROGRESS') },
-  { key: 'CLOSED', label: t('kanban.stages.closed'), color: getStageColor('CLOSED'), totalValue: sumValue('CLOSED') },
-  { key: 'CANCELLED', label: t('kanban.stages.cancelled'), color: getStageColor('CANCELLED'), totalValue: sumValue('CANCELLED') }
-]);
+// Fallback stages when pipeline config is empty
+const fallbackStages = [
+  { key: 'PROGRESS', label: t('kanban.stages.progress'), color: '#3B82F6' },
+  { key: 'CLOSED', label: t('kanban.stages.closed'), color: '#10B981' },
+  { key: 'CANCELLED', label: t('kanban.stages.cancelled'), color: '#EF4444' }
+];
+
+const columns = computed(() => {
+  if (pipelineStages.value.length > 0) {
+    return pipelineStages.value.map(stage => ({
+      key: stage.name,
+      label: stage.name,
+      color: stage.color,
+      totalValue: sumValue(stage.name)
+    }));
+  }
+  return fallbackStages.map(s => ({ ...s, totalValue: sumValue(s.key) }));
+});
 
 function sumValue(stage: string): number {
   return (kanbanCards.value[stage] || []).reduce((sum, card) => sum + (card.price || 0), 0);
+}
+
+function formatCurrency(value: number): string {
+  if (value >= 1000000) return `${(value / 1000000).toFixed(1)}M SAR`;
+  if (value >= 1000) return `${(value / 1000).toFixed(0)}K SAR`;
+  return `${value} SAR`;
 }
 
 // Total card count across all stages
@@ -107,7 +134,12 @@ function onToggleAll() {
 
 async function loadKanban() {
   loading.value = true;
-  kanbanCards.value = await fetchDealKanban();
+  const [stages, cards] = await Promise.all([
+    fetchPipelineStages('deal'),
+    fetchDealKanban()
+  ]);
+  pipelineStages.value = stages;
+  kanbanCards.value = cards;
   loading.value = false;
 }
 

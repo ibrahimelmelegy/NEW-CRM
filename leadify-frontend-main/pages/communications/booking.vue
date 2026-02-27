@@ -1,0 +1,374 @@
+<template lang="pug">
+div.animate-fade-in
+  //- Header
+  .flex.items-center.justify-between.mb-6
+    div
+      h2.text-2xl.font-bold(style="color: var(--text-primary)") {{ $t('booking.title') || 'Bookings & Appointments' }}
+      p.text-sm.mt-1(style="color: var(--text-muted)") {{ $t('booking.subtitle') || 'Schedule and manage client appointments and meetings.' }}
+    .flex.items-center.gap-3
+      el-button(type="primary" size="large" @click="openCreateDialog" class="!rounded-xl")
+        Icon(name="ph:plus-bold" size="16" class="mr-1")
+        | {{ $t('booking.newBooking') || 'New Booking' }}
+
+  //- Stats Cards
+  .grid.gap-4.mb-6(class="grid-cols-2 md:grid-cols-4")
+    .glass-card.p-5.rounded-2xl
+      .flex.items-center.gap-3
+        .w-10.h-10.rounded-xl.flex.items-center.justify-center(style="background: rgba(120, 73, 255, 0.15)")
+          Icon(name="ph:calendar-check-bold" size="20" style="color: #7849ff")
+        div
+          p.text-2xl.font-bold(style="color: var(--text-primary)") {{ stats.total }}
+          p.text-xs(style="color: var(--text-muted)") {{ $t('booking.totalBookings') || 'Total Bookings' }}
+    .glass-card.p-5.rounded-2xl
+      .flex.items-center.gap-3
+        .w-10.h-10.rounded-xl.flex.items-center.justify-center(style="background: rgba(59, 130, 246, 0.15)")
+          Icon(name="ph:clock-bold" size="20" style="color: #3b82f6")
+        div
+          p.text-2xl.font-bold(style="color: var(--text-primary)") {{ stats.today }}
+          p.text-xs(style="color: var(--text-muted)") {{ $t('booking.today') || 'Today' }}
+    .glass-card.p-5.rounded-2xl
+      .flex.items-center.gap-3
+        .w-10.h-10.rounded-xl.flex.items-center.justify-center(style="background: rgba(245, 158, 11, 0.15)")
+          Icon(name="ph:calendar-bold" size="20" style="color: #f59e0b")
+        div
+          p.text-2xl.font-bold(style="color: var(--text-primary)") {{ stats.upcoming }}
+          p.text-xs(style="color: var(--text-muted)") {{ $t('booking.upcoming') || 'Upcoming' }}
+    .glass-card.p-5.rounded-2xl
+      .flex.items-center.gap-3
+        .w-10.h-10.rounded-xl.flex.items-center.justify-center(style="background: rgba(34, 197, 94, 0.15)")
+          Icon(name="ph:check-circle-bold" size="20" style="color: #22c55e")
+        div
+          p.text-2xl.font-bold(style="color: var(--text-primary)") {{ stats.completed }}
+          p.text-xs(style="color: var(--text-muted)") {{ $t('booking.completed') || 'Completed' }}
+
+  //- Loading
+  .flex.items-center.justify-center.py-20(v-if="loading")
+    el-icon.is-loading(:size="32" style="color: var(--accent-color, #7849ff)")
+
+  //- Bookings Table
+  .glass-card.p-4(v-else)
+    .flex.items-center.justify-between.mb-4
+      el-input(
+        v-model="searchQuery"
+        :placeholder="$t('booking.search') || 'Search bookings...'"
+        clearable
+        style="max-width: 320px"
+        size="large"
+        class="!rounded-xl"
+      )
+        template(#prefix)
+          Icon(name="ph:magnifying-glass" size="16" style="color: var(--text-muted)")
+      .flex.items-center.gap-2
+        el-select(v-model="statusFilter" clearable :placeholder="$t('booking.filterStatus') || 'Filter Status'" size="large" style="width: 160px")
+          el-option(label="All" value="")
+          el-option(label="Pending" value="PENDING")
+          el-option(label="Confirmed" value="CONFIRMED")
+          el-option(label="Cancelled" value="CANCELLED")
+          el-option(label="Completed" value="COMPLETED")
+          el-option(label="No Show" value="NO_SHOW")
+
+    el-table(:data="filteredBookings" v-loading="loading" stripe style="width: 100%" @row-click="handleRowClick" row-class-name="cursor-pointer")
+      el-table-column(:label="$t('booking.clientName') || 'Client / Name'" min-width="180")
+        template(#default="{ row }")
+          .flex.items-center.gap-2
+            .w-8.h-8.rounded-full.flex.items-center.justify-center.text-xs.font-bold(
+              :style="{ background: '#7849ff20', color: '#7849ff' }"
+            ) {{ (row.clientName || '?').charAt(0).toUpperCase() }}
+            div
+              p.text-sm.font-semibold(style="color: var(--text-primary)") {{ row.clientName || '--' }}
+              p.text-xs(style="color: var(--text-muted)") {{ row.clientEmail || '' }}
+      el-table-column(:label="$t('booking.staff') || 'Staff'" prop="staffName" width="150")
+        template(#default="{ row }")
+          span.text-sm(style="color: var(--text-primary)") {{ row.staffName || row.staffId || '--' }}
+      el-table-column(:label="$t('booking.date') || 'Date'" prop="date" width="130" sortable)
+        template(#default="{ row }")
+          span.text-sm(style="color: var(--text-primary)") {{ formatDate(row.date) }}
+      el-table-column(:label="$t('booking.time') || 'Time'" width="150")
+        template(#default="{ row }")
+          span.text-sm(style="color: var(--text-primary)") {{ row.startTime || '--' }} - {{ row.endTime || '--' }}
+      el-table-column(:label="$t('booking.type') || 'Type'" prop="type" width="130")
+        template(#default="{ row }")
+          el-tag(size="small" effect="plain" round) {{ row.type || 'MEETING' }}
+      el-table-column(:label="$t('booking.status') || 'Status'" width="140" align="center")
+        template(#default="{ row }")
+          el-tag(
+            :type="getStatusType(row.status)"
+            size="small"
+            effect="dark"
+            round
+          ) {{ row.status }}
+      el-table-column(:label="$t('booking.notes') || 'Notes'" prop="notes" min-width="180" show-overflow-tooltip)
+        template(#default="{ row }")
+          span.text-sm(style="color: var(--text-muted)") {{ row.notes || '--' }}
+      el-table-column(:label="$t('common.actions') || 'Actions'" width="120" align="center" fixed="right")
+        template(#default="{ row }")
+          .flex.items-center.justify-center.gap-1(@click.stop)
+            el-button(size="small" @click="openEditDialog(row)" class="!rounded-lg")
+              Icon(name="ph:pencil-bold" size="14")
+            el-button(size="small" type="danger" plain @click="handleDelete(row)" class="!rounded-lg")
+              Icon(name="ph:trash-bold" size="14")
+
+    //- Empty state
+    .text-center.py-12(v-if="!filteredBookings.length && !loading")
+      Icon(name="ph:calendar-blank" size="48" style="color: var(--text-muted)")
+      p.text-sm.mt-2(style="color: var(--text-muted)") {{ $t('booking.noBookings') || 'No bookings found' }}
+
+  //- Create / Edit Dialog
+  el-dialog(
+    v-model="dialogVisible"
+    :title="editingBooking ? ($t('booking.editBooking') || 'Edit Booking') : ($t('booking.newBooking') || 'New Booking')"
+    width="600px"
+    :close-on-click-modal="false"
+  )
+    el-form(:model="form" label-position="top")
+      .grid.gap-4(class="grid-cols-1 md:grid-cols-2")
+        el-form-item(:label="$t('booking.clientName') || 'Client Name'" required)
+          el-input(v-model="form.clientName" :placeholder="$t('booking.clientName') || 'Client Name'")
+        el-form-item(:label="$t('booking.clientEmail') || 'Client Email'")
+          el-input(v-model="form.clientEmail" :placeholder="$t('booking.clientEmail') || 'Client Email'" type="email")
+      .grid.gap-4(class="grid-cols-1 md:grid-cols-2")
+        el-form-item(:label="$t('booking.staff') || 'Staff Member'" required)
+          el-select(v-model="form.staffId" :placeholder="$t('booking.selectStaff') || 'Select Staff'" style="width: 100%" filterable)
+            el-option(
+              v-for="user in staffList"
+              :key="user.id"
+              :label="user.name"
+              :value="user.id"
+            )
+        el-form-item(:label="$t('booking.type') || 'Type'")
+          el-select(v-model="form.type" style="width: 100%")
+            el-option(label="Meeting" value="MEETING")
+            el-option(label="Call" value="CALL")
+            el-option(label="Demo" value="DEMO")
+            el-option(label="Consultation" value="CONSULTATION")
+            el-option(label="Follow-up" value="FOLLOW_UP")
+      .grid.gap-4(class="grid-cols-1 md:grid-cols-3")
+        el-form-item(:label="$t('booking.date') || 'Date'" required)
+          el-date-picker(
+            v-model="form.date"
+            type="date"
+            :placeholder="$t('booking.selectDate') || 'Select Date'"
+            style="width: 100%"
+            value-format="YYYY-MM-DD"
+          )
+        el-form-item(:label="$t('booking.startTime') || 'Start Time'" required)
+          el-time-picker(
+            v-model="form.startTime"
+            :placeholder="$t('booking.startTime') || 'Start'"
+            style="width: 100%"
+            format="HH:mm"
+            value-format="HH:mm"
+          )
+        el-form-item(:label="$t('booking.endTime') || 'End Time'" required)
+          el-time-picker(
+            v-model="form.endTime"
+            :placeholder="$t('booking.endTime') || 'End'"
+            style="width: 100%"
+            format="HH:mm"
+            value-format="HH:mm"
+          )
+      el-form-item(:label="$t('booking.notes') || 'Notes'")
+        el-input(v-model="form.notes" type="textarea" :rows="3" :placeholder="$t('booking.notesPlaceholder') || 'Any additional notes...'")
+    template(#footer)
+      el-button(@click="dialogVisible = false") {{ $t('common.cancel') || 'Cancel' }}
+      el-button(type="primary" :loading="saving" @click="handleSave") {{ $t('common.save') || 'Save' }}
+</template>
+
+<script setup lang="ts">
+import { ref, reactive, computed, onMounted } from 'vue';
+import { ElNotification, ElMessageBox } from 'element-plus';
+
+definePageMeta({ middleware: 'permissions' });
+
+const { $i18n } = useNuxtApp();
+const t = $i18n.t;
+
+// State
+const loading = ref(false);
+const saving = ref(false);
+const searchQuery = ref('');
+const statusFilter = ref('');
+const bookings = ref<any[]>([]);
+const staffList = ref<any[]>([]);
+const dialogVisible = ref(false);
+const editingBooking = ref<any>(null);
+
+const form = reactive({
+  staffId: '' as any,
+  clientName: '',
+  clientEmail: '',
+  date: '',
+  startTime: '',
+  endTime: '',
+  type: 'MEETING',
+  notes: ''
+});
+
+// Stats
+const stats = computed(() => {
+  const data = bookings.value;
+  const today = new Date().toISOString().split('T')[0];
+  return {
+    total: data.length,
+    today: data.filter((b: any) => b.date === today).length,
+    upcoming: data.filter((b: any) => b.date > today && b.status !== 'CANCELLED').length,
+    completed: data.filter((b: any) => b.status === 'COMPLETED').length
+  };
+});
+
+// Status helper
+function getStatusType(status: string): string {
+  const map: Record<string, string> = {
+    PENDING: 'warning',
+    CONFIRMED: 'success',
+    CANCELLED: 'danger',
+    COMPLETED: '',
+    NO_SHOW: 'info'
+  };
+  return map[status] || 'info';
+}
+
+// Filtering
+const filteredBookings = computed(() => {
+  let data = bookings.value;
+  if (statusFilter.value) {
+    data = data.filter((b: any) => b.status === statusFilter.value);
+  }
+  if (searchQuery.value) {
+    const q = searchQuery.value.toLowerCase();
+    data = data.filter((b: any) => {
+      const name = (b.clientName || '').toLowerCase();
+      const email = (b.clientEmail || '').toLowerCase();
+      const staff = (b.staffName || '').toLowerCase();
+      const notes = (b.notes || '').toLowerCase();
+      return name.includes(q) || email.includes(q) || staff.includes(q) || notes.includes(q);
+    });
+  }
+  return data;
+});
+
+// Formatting
+function formatDate(dateStr: string): string {
+  if (!dateStr) return '--';
+  return new Date(dateStr).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
+}
+
+// API
+async function loadBookings() {
+  loading.value = true;
+  try {
+    const res = await useApiFetch('bookings');
+    if (res?.success) {
+      bookings.value = res.body?.docs || res.body || [];
+    }
+  } catch {
+    // silent
+  } finally {
+    loading.value = false;
+  }
+}
+
+async function loadStaff() {
+  try {
+    const res = await useApiFetch('users');
+    if (res?.body?.docs) {
+      staffList.value = res.body.docs;
+    }
+  } catch {
+    // silent
+  }
+}
+
+function openCreateDialog() {
+  editingBooking.value = null;
+  form.staffId = '';
+  form.clientName = '';
+  form.clientEmail = '';
+  form.date = '';
+  form.startTime = '';
+  form.endTime = '';
+  form.type = 'MEETING';
+  form.notes = '';
+  dialogVisible.value = true;
+}
+
+function openEditDialog(booking: any) {
+  editingBooking.value = booking;
+  form.staffId = booking.staffId || '';
+  form.clientName = booking.clientName || '';
+  form.clientEmail = booking.clientEmail || '';
+  form.date = booking.date || '';
+  form.startTime = booking.startTime || '';
+  form.endTime = booking.endTime || '';
+  form.type = booking.type || 'MEETING';
+  form.notes = booking.notes || '';
+  dialogVisible.value = true;
+}
+
+function handleRowClick(row: any) {
+  openEditDialog(row);
+}
+
+async function handleSave() {
+  if (!form.clientName.trim() || !form.staffId || !form.date || !form.startTime || !form.endTime) {
+    ElNotification({ type: 'warning', title: t('common.warning') || 'Warning', message: t('common.fillRequired') || 'Please fill required fields' });
+    return;
+  }
+  saving.value = true;
+  try {
+    const payload = { ...form };
+    let res;
+    if (editingBooking.value) {
+      res = await useApiFetch(`bookings/${editingBooking.value.id}`, 'PUT', payload);
+    } else {
+      res = await useApiFetch('bookings', 'POST', payload);
+    }
+    if (res?.success) {
+      ElNotification({ type: 'success', title: t('common.success') || 'Success', message: t('common.saved') || 'Saved' });
+      dialogVisible.value = false;
+      await loadBookings();
+    }
+  } catch {
+    ElNotification({ type: 'error', title: t('common.error') || 'Error', message: t('common.error') || 'Error' });
+  } finally {
+    saving.value = false;
+  }
+}
+
+async function handleDelete(booking: any) {
+  try {
+    await ElMessageBox.confirm(
+      t('common.confirmDelete') || 'Are you sure you want to delete this booking?',
+      t('common.warning') || 'Warning',
+      { type: 'warning' }
+    );
+    await useApiFetch(`bookings/${booking.id}`, 'DELETE');
+    ElNotification({ type: 'success', title: t('common.success') || 'Success', message: t('common.deleted') || 'Deleted' });
+    await loadBookings();
+  } catch {
+    // cancelled or error
+  }
+}
+
+onMounted(() => {
+  loadBookings();
+  loadStaff();
+});
+</script>
+
+<style lang="scss" scoped>
+.animate-fade-in {
+  animation: fadeIn 0.4s ease-out;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(8px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+</style>

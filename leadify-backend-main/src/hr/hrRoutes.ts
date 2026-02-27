@@ -1,6 +1,7 @@
 import express from 'express';
 import hrController from './hrController';
-import { authenticateUser } from '../middleware/authMiddleware';
+import { authenticateUser, HasPermission } from '../middleware/authMiddleware';
+import { HRPermissionsEnum } from '../role/roleEnum';
 
 /**
  * @swagger
@@ -68,7 +69,7 @@ const router = express.Router();
  *       500:
  *         description: Server error
  */
-router.get('/attendance', authenticateUser, hrController.getAttendance);
+router.get('/attendance', authenticateUser, HasPermission([HRPermissionsEnum.VIEW_ATTENDANCE]), hrController.getAttendance);
 
 /**
  * @swagger
@@ -87,7 +88,7 @@ router.get('/attendance', authenticateUser, hrController.getAttendance);
  *       500:
  *         description: Server error
  */
-router.post('/attendance/check-in', authenticateUser, hrController.checkIn);
+router.post('/attendance/check-in', authenticateUser, HasPermission([HRPermissionsEnum.MANAGE_ATTENDANCE]), hrController.checkIn);
 
 /**
  * @swagger
@@ -106,7 +107,7 @@ router.post('/attendance/check-in', authenticateUser, hrController.checkIn);
  *       500:
  *         description: Server error
  */
-router.post('/attendance/check-out', authenticateUser, hrController.checkOut);
+router.post('/attendance/check-out', authenticateUser, HasPermission([HRPermissionsEnum.MANAGE_ATTENDANCE]), hrController.checkOut);
 
 /**
  * @swagger
@@ -153,7 +154,7 @@ router.post('/attendance/check-out', authenticateUser, hrController.checkOut);
  *       500:
  *         description: Server error
  */
-router.post('/attendance', authenticateUser, hrController.createAttendance);
+router.post('/attendance', authenticateUser, HasPermission([HRPermissionsEnum.MANAGE_ATTENDANCE]), hrController.createAttendance);
 
 /**
  * @swagger
@@ -199,7 +200,7 @@ router.post('/attendance', authenticateUser, hrController.createAttendance);
  *       500:
  *         description: Server error
  */
-router.put('/attendance/:id', authenticateUser, hrController.updateAttendance);
+router.put('/attendance/:id', authenticateUser, HasPermission([HRPermissionsEnum.MANAGE_ATTENDANCE]), hrController.updateAttendance);
 
 /**
  * @swagger
@@ -223,7 +224,7 @@ router.put('/attendance/:id', authenticateUser, hrController.updateAttendance);
  *       500:
  *         description: Server error
  */
-router.delete('/attendance/:id', authenticateUser, hrController.deleteAttendance);
+router.delete('/attendance/:id', authenticateUser, HasPermission([HRPermissionsEnum.MANAGE_ATTENDANCE]), hrController.deleteAttendance);
 
 // ─── Leave Requests ───────────────────────────────────────────────────────────
 
@@ -270,7 +271,7 @@ router.delete('/attendance/:id', authenticateUser, hrController.deleteAttendance
  *       500:
  *         description: Server error
  */
-router.get('/leave-requests', authenticateUser, hrController.getLeaveRequests);
+router.get('/leave-requests', authenticateUser, HasPermission([HRPermissionsEnum.VIEW_LEAVE_REQUESTS]), hrController.getLeaveRequests);
 
 /**
  * @swagger
@@ -294,7 +295,7 @@ router.get('/leave-requests', authenticateUser, hrController.getLeaveRequests);
  *       500:
  *         description: Server error
  */
-router.get('/leave-requests/:id', authenticateUser, hrController.getLeaveRequestById);
+router.get('/leave-requests/:id', authenticateUser, HasPermission([HRPermissionsEnum.VIEW_LEAVE_REQUESTS]), hrController.getLeaveRequestById);
 
 /**
  * @swagger
@@ -335,7 +336,7 @@ router.get('/leave-requests/:id', authenticateUser, hrController.getLeaveRequest
  *       500:
  *         description: Server error
  */
-router.post('/leave-requests', authenticateUser, hrController.createLeaveRequest);
+router.post('/leave-requests', authenticateUser, HasPermission([HRPermissionsEnum.CREATE_LEAVE_REQUESTS]), hrController.createLeaveRequest);
 
 /**
  * @swagger
@@ -359,7 +360,7 @@ router.post('/leave-requests', authenticateUser, hrController.createLeaveRequest
  *       500:
  *         description: Server error
  */
-router.patch('/leave-requests/:id/approve', authenticateUser, hrController.approveLeaveRequest);
+router.patch('/leave-requests/:id/approve', authenticateUser, HasPermission([HRPermissionsEnum.APPROVE_LEAVE_REQUESTS]), hrController.approveLeaveRequest);
 
 /**
  * @swagger
@@ -395,7 +396,7 @@ router.patch('/leave-requests/:id/approve', authenticateUser, hrController.appro
  *       500:
  *         description: Server error
  */
-router.patch('/leave-requests/:id/reject', authenticateUser, hrController.rejectLeaveRequest);
+router.patch('/leave-requests/:id/reject', authenticateUser, HasPermission([HRPermissionsEnum.APPROVE_LEAVE_REQUESTS]), hrController.rejectLeaveRequest);
 
 /**
  * @swagger
@@ -420,7 +421,7 @@ router.patch('/leave-requests/:id/reject', authenticateUser, hrController.reject
  *       500:
  *         description: Server error
  */
-router.patch('/leave-requests/:id/cancel', authenticateUser, hrController.cancelLeaveRequest);
+router.patch('/leave-requests/:id/cancel', authenticateUser, HasPermission([HRPermissionsEnum.CREATE_LEAVE_REQUESTS]), hrController.cancelLeaveRequest);
 
 /**
  * @swagger
@@ -444,6 +445,6 @@ router.patch('/leave-requests/:id/cancel', authenticateUser, hrController.cancel
  *       500:
  *         description: Server error
  */
-router.delete('/leave-requests/:id', authenticateUser, hrController.deleteLeaveRequest);
+router.delete('/leave-requests/:id', authenticateUser, HasPermission([HRPermissionsEnum.DELETE_LEAVE_REQUESTS]), hrController.deleteLeaveRequest);
 
 export default router;

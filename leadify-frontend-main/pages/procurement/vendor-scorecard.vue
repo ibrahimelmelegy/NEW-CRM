@@ -1,457 +1,374 @@
-<template>
-  <div class="space-y-6">
-    <!-- Header -->
-    <div class="glass-panel p-6 rounded-2xl">
-      <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
-        <div>
-          <h1 class="text-2xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-orange-400 to-amber-400">Vendor Scorecard</h1>
-          <p class="text-slate-400 text-sm mt-1">Evaluate vendor performance, compare suppliers, and identify at-risk partners.</p>
-        </div>
-        <div class="flex gap-2">
-          <el-select v-model="selectedPeriod" class="w-36">
-            <el-option label="Q1 2026" value="Q1-2026" />
-            <el-option label="Q4 2025" value="Q4-2025" />
-            <el-option label="Q3 2025" value="Q3-2025" />
-          </el-select>
-          <el-button type="primary" class="!rounded-xl" @click="showEvaluationDialog = true">
-            <Icon name="ph:plus-bold" class="w-4 h-4 mr-2" />
-            New Evaluation
-          </el-button>
-        </div>
-      </div>
-    </div>
+<template lang="pug">
+div.animate-fade-in
+  //- Header
+  .flex.items-center.justify-between.mb-6
+    div
+      h2.text-2xl.font-bold(style="color: var(--text-primary)") {{ $t('vendorScorecard.title') || 'Vendor Scorecard' }}
+      p.text-sm.mt-1(style="color: var(--text-muted)") {{ $t('vendorScorecard.subtitle') || 'Evaluate and track vendor performance across key metrics.' }}
+    .flex.items-center.gap-3
+      el-button(type="primary" size="large" @click="openCreateDialog" class="!rounded-xl")
+        Icon(name="ph:plus-bold" size="16" class="mr-1")
+        | {{ $t('vendorScorecard.newScorecard') || 'New Evaluation' }}
 
-    <!-- Stats -->
-    <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
-      <div class="glass-panel p-4 rounded-xl text-center">
-        <div class="text-2xl font-bold text-slate-200">{{ vendors.length }}</div>
-        <div class="text-xs text-slate-500 mt-1">Total Vendors</div>
-      </div>
-      <div class="glass-panel p-4 rounded-xl text-center">
-        <div class="text-2xl font-bold text-orange-400">{{ avgScore.toFixed(1) }}</div>
-        <div class="text-xs text-slate-500 mt-1">Avg Score</div>
-      </div>
-      <div class="glass-panel p-4 rounded-xl text-center">
-        <div class="text-2xl font-bold text-emerald-400">{{ topRatedCount }}</div>
-        <div class="text-xs text-slate-500 mt-1">Top-Rated (4.0+)</div>
-      </div>
-      <div class="glass-panel p-4 rounded-xl text-center">
-        <div class="text-2xl font-bold text-red-400">{{ atRiskCount }}</div>
-        <div class="text-xs text-slate-500 mt-1">At-Risk (&lt;2.5)</div>
-      </div>
-    </div>
+  //- Stats Cards
+  .grid.gap-4.mb-6(class="grid-cols-2 md:grid-cols-4")
+    .glass-card.p-5.rounded-2xl
+      .flex.items-center.gap-3
+        .w-10.h-10.rounded-xl.flex.items-center.justify-center(style="background: rgba(120, 73, 255, 0.15)")
+          Icon(name="ph:clipboard-text-bold" size="20" style="color: #7849ff")
+        div
+          p.text-2xl.font-bold(style="color: var(--text-primary)") {{ stats.total }}
+          p.text-xs(style="color: var(--text-muted)") {{ $t('vendorScorecard.totalScorecards') || 'Total Scorecards' }}
+    .glass-card.p-5.rounded-2xl
+      .flex.items-center.gap-3
+        .w-10.h-10.rounded-xl.flex.items-center.justify-center(style="background: rgba(34, 197, 94, 0.15)")
+          Icon(name="ph:star-bold" size="20" style="color: #22c55e")
+        div
+          p.text-2xl.font-bold(:style="{ color: getScoreColor(stats.avgQuality) }") {{ stats.avgQuality.toFixed(1) }}
+          p.text-xs(style="color: var(--text-muted)") {{ $t('vendorScorecard.avgQuality') || 'Avg Quality' }}
+    .glass-card.p-5.rounded-2xl
+      .flex.items-center.gap-3
+        .w-10.h-10.rounded-xl.flex.items-center.justify-center(style="background: rgba(59, 130, 246, 0.15)")
+          Icon(name="ph:truck-bold" size="20" style="color: #3b82f6")
+        div
+          p.text-2xl.font-bold(:style="{ color: getScoreColor(stats.avgDelivery) }") {{ stats.avgDelivery.toFixed(1) }}
+          p.text-xs(style="color: var(--text-muted)") {{ $t('vendorScorecard.avgDelivery') || 'Avg Delivery' }}
+    .glass-card.p-5.rounded-2xl
+      .flex.items-center.gap-3
+        .w-10.h-10.rounded-xl.flex.items-center.justify-center(style="background: rgba(245, 158, 11, 0.15)")
+          Icon(name="ph:chart-bar-bold" size="20" style="color: #f59e0b")
+        div
+          p.text-2xl.font-bold(:style="{ color: getScoreColor(stats.avgOverall) }") {{ stats.avgOverall.toFixed(1) }}
+          p.text-xs(style="color: var(--text-muted)") {{ $t('vendorScorecard.avgOverall') || 'Avg Overall' }}
 
-    <!-- Main Content -->
-    <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
-      <!-- Vendor Performance Table -->
-      <div class="lg:col-span-2 glass-panel p-6 rounded-xl">
-        <div class="flex justify-between items-center mb-4">
-          <h3 class="text-lg font-medium text-slate-200">Vendor Performance</h3>
-          <el-input v-model="searchText" placeholder="Search vendors..." clearable class="!w-48" size="small">
-            <template #prefix>
-              <Icon name="ph:magnifying-glass" class="w-4 h-4" />
-            </template>
-          </el-input>
-        </div>
-        <el-table :data="filteredVendors" class="glass-table" stripe row-class-name="cursor-pointer" @row-click="selectVendor">
-          <el-table-column label="Vendor" min-width="180">
-            <template #default="{ row }">
-              <div class="flex items-center gap-3">
-                <div class="w-8 h-8 rounded-lg flex items-center justify-center text-sm font-bold" :class="getVendorAvatarClass(row.overallScore)">
-                  {{ row.name.charAt(0) }}
-                </div>
-                <div>
-                  <div class="text-sm font-medium text-slate-200">{{ row.name }}</div>
-                  <div class="text-xs text-slate-500">{{ row.category }}</div>
-                </div>
-              </div>
-            </template>
-          </el-table-column>
-          <el-table-column label="Quality" width="130" align="center">
-            <template #default="{ row }">
-              <el-rate v-model="row.qualityScore" disabled :max="5" size="small" />
-            </template>
-          </el-table-column>
-          <el-table-column label="Delivery" width="100" align="center">
-            <template #default="{ row }">
-              <span class="text-sm font-medium" :class="getScoreColor(row.deliveryScore)">{{ row.deliveryScore.toFixed(1) }}</span>
-            </template>
-          </el-table-column>
-          <el-table-column label="Pricing" width="100" align="center">
-            <template #default="{ row }">
-              <span class="text-sm font-medium" :class="getScoreColor(row.pricingScore)">{{ row.pricingScore.toFixed(1) }}</span>
-            </template>
-          </el-table-column>
-          <el-table-column label="Overall" width="110" align="center">
-            <template #default="{ row }">
-              <div class="flex items-center justify-center gap-1">
-                <span class="text-sm font-bold" :class="getScoreColor(row.overallScore)">{{ row.overallScore.toFixed(1) }}</span>
-                <Icon
-                  :name="row.trend === 'up' ? 'ph:arrow-up-bold' : row.trend === 'down' ? 'ph:arrow-down-bold' : 'ph:minus-bold'"
-                  class="w-3 h-3"
-                  :class="row.trend === 'up' ? 'text-emerald-400' : row.trend === 'down' ? 'text-red-400' : 'text-slate-500'"
-                />
-              </div>
-            </template>
-          </el-table-column>
-          <el-table-column label="Status" width="100" align="center">
-            <template #default="{ row }">
-              <el-tag :type="getStatusType(row.overallScore)" effect="dark" size="small">
-                {{ getStatusLabel(row.overallScore) }}
-              </el-tag>
-            </template>
-          </el-table-column>
-        </el-table>
-      </div>
+  //- Loading
+  .flex.items-center.justify-center.py-20(v-if="loading")
+    el-icon.is-loading(:size="32" style="color: var(--accent-color, #7849ff)")
 
-      <!-- Radar Chart Placeholder / Selected Vendor -->
-      <div class="glass-panel p-6 rounded-xl">
-        <h3 class="text-lg font-medium text-slate-200 mb-4">Vendor Comparison</h3>
-        <div v-if="selectedVendor">
-          <div class="text-center mb-4">
-            <div
-              class="w-16 h-16 rounded-2xl mx-auto flex items-center justify-center text-2xl font-bold mb-2"
-              :class="getVendorAvatarClass(selectedVendor.overallScore)"
-            >
-              {{ selectedVendor.name.charAt(0) }}
-            </div>
-            <h4 class="text-sm font-bold text-slate-200">{{ selectedVendor.name }}</h4>
-            <p class="text-xs text-slate-500">{{ selectedVendor.category }}</p>
-          </div>
+  //- Scorecards Table
+  .glass-card.p-4(v-else)
+    .flex.items-center.justify-between.mb-4
+      el-input(
+        v-model="searchQuery"
+        :placeholder="$t('vendorScorecard.search') || 'Search scorecards...'"
+        clearable
+        size="large"
+        style="max-width: 320px"
+        class="!rounded-xl"
+      )
+        template(#prefix)
+          Icon(name="ph:magnifying-glass" size="16" style="color: var(--text-muted)")
 
-          <!-- Radar-like Score Breakdown -->
-          <div class="space-y-3 mt-6">
-            <div v-for="metric in vendorMetrics" :key="metric.label">
-              <div class="flex justify-between items-center mb-1">
-                <span class="text-xs text-slate-400">{{ metric.label }}</span>
-                <span class="text-xs font-bold" :class="getScoreColor(metric.score)">{{ metric.score.toFixed(1) }}/5.0</span>
-              </div>
-              <el-progress
-                :percentage="(metric.score / 5) * 100"
-                :stroke-width="8"
-                :show-text="false"
-                :color="metric.score >= 4 ? '#10B981' : metric.score >= 3 ? '#F59E0B' : '#EF4444'"
-              />
-            </div>
-          </div>
+    el-table(:data="filteredScorecards" v-loading="loading" stripe style="width: 100%")
+      el-table-column(:label="$t('vendorScorecard.vendor') || 'Vendor'" min-width="200" sortable)
+        template(#default="{ row }")
+          .flex.items-center.gap-2
+            .w-8.h-8.rounded-full.flex.items-center.justify-center.text-xs.font-bold(
+              :style="{ background: '#7849ff20', color: '#7849ff' }"
+            ) {{ (row.vendorName || row.vendorId || '?').toString().charAt(0).toUpperCase() }}
+            span.text-sm.font-semibold(style="color: var(--text-primary)") {{ row.vendorName || row.vendorId || '--' }}
+      el-table-column(:label="$t('vendorScorecard.period') || 'Period'" prop="period" width="140" sortable)
+        template(#default="{ row }")
+          el-tag(size="small" effect="plain" round) {{ row.period || '--' }}
+      el-table-column(:label="$t('vendorScorecard.qualityScore') || 'Quality'" width="140" align="center" sortable)
+        template(#default="{ row }")
+          .flex.items-center.gap-2.justify-center
+            el-progress(
+              :percentage="(row.qualityScore / 5) * 100"
+              :stroke-width="6"
+              :color="getScoreColor(row.qualityScore)"
+              :show-text="false"
+              style="width: 60px"
+            )
+            span.text-sm.font-bold(:style="{ color: getScoreColor(row.qualityScore) }") {{ row.qualityScore?.toFixed(1) || '0.0' }}
+      el-table-column(:label="$t('vendorScorecard.deliveryScore') || 'Delivery'" width="140" align="center" sortable)
+        template(#default="{ row }")
+          .flex.items-center.gap-2.justify-center
+            el-progress(
+              :percentage="(row.deliveryScore / 5) * 100"
+              :stroke-width="6"
+              :color="getScoreColor(row.deliveryScore)"
+              :show-text="false"
+              style="width: 60px"
+            )
+            span.text-sm.font-bold(:style="{ color: getScoreColor(row.deliveryScore) }") {{ row.deliveryScore?.toFixed(1) || '0.0' }}
+      el-table-column(:label="$t('vendorScorecard.priceScore') || 'Price'" width="140" align="center" sortable)
+        template(#default="{ row }")
+          .flex.items-center.gap-2.justify-center
+            el-progress(
+              :percentage="(row.priceScore / 5) * 100"
+              :stroke-width="6"
+              :color="getScoreColor(row.priceScore)"
+              :show-text="false"
+              style="width: 60px"
+            )
+            span.text-sm.font-bold(:style="{ color: getScoreColor(row.priceScore) }") {{ row.priceScore?.toFixed(1) || '0.0' }}
+      el-table-column(:label="$t('vendorScorecard.communicationScore') || 'Communication'" width="160" align="center" sortable)
+        template(#default="{ row }")
+          .flex.items-center.gap-2.justify-center
+            el-progress(
+              :percentage="(row.communicationScore / 5) * 100"
+              :stroke-width="6"
+              :color="getScoreColor(row.communicationScore)"
+              :show-text="false"
+              style="width: 60px"
+            )
+            span.text-sm.font-bold(:style="{ color: getScoreColor(row.communicationScore) }") {{ row.communicationScore?.toFixed(1) || '0.0' }}
+      el-table-column(:label="$t('vendorScorecard.overallScore') || 'Overall'" width="140" align="center" sortable)
+        template(#default="{ row }")
+          .flex.items-center.gap-2.justify-center
+            .w-10.h-10.rounded-full.flex.items-center.justify-center.text-sm.font-bold(
+              :style="{ background: getScoreColor(getOverallScore(row)) + '20', color: getScoreColor(getOverallScore(row)) }"
+            ) {{ getOverallScore(row).toFixed(1) }}
+      el-table-column(:label="$t('common.actions') || 'Actions'" width="120" align="center" fixed="right")
+        template(#default="{ row }")
+          .flex.items-center.justify-center.gap-1
+            el-button(size="small" @click="openEditDialog(row)" class="!rounded-lg")
+              Icon(name="ph:pencil-bold" size="14")
+            el-button(size="small" type="danger" plain @click="handleDelete(row)" class="!rounded-lg")
+              Icon(name="ph:trash-bold" size="14")
 
-          <!-- Vendor Details -->
-          <div class="mt-6 space-y-3 pt-4 border-t border-slate-800/60">
-            <div class="flex justify-between text-sm">
-              <span class="text-slate-500">Contract Value</span>
-              <span class="text-slate-200 font-medium">{{ formatCurrency(selectedVendor.contractValue) }}</span>
-            </div>
-            <div class="flex justify-between text-sm">
-              <span class="text-slate-500">Active Since</span>
-              <span class="text-slate-200">{{ selectedVendor.activeSince }}</span>
-            </div>
-            <div class="flex justify-between text-sm">
-              <span class="text-slate-500">Orders (YTD)</span>
-              <span class="text-slate-200">{{ selectedVendor.ordersYTD }}</span>
-            </div>
-            <div class="flex justify-between text-sm">
-              <span class="text-slate-500">On-Time %</span>
-              <span class="font-medium" :class="selectedVendor.onTimePercent >= 90 ? 'text-emerald-400' : 'text-amber-400'">
-                {{ selectedVendor.onTimePercent }}%
-              </span>
-            </div>
-          </div>
+    //- Empty state
+    .text-center.py-12(v-if="!filteredScorecards.length && !loading")
+      Icon(name="ph:clipboard-text" size="48" style="color: var(--text-muted)")
+      p.text-sm.mt-2(style="color: var(--text-muted)") {{ $t('vendorScorecard.noScorecards') || 'No scorecards found' }}
 
-          <div class="mt-4 flex gap-2">
-            <el-button size="small" type="primary" class="flex-1" @click="evaluateVendor(selectedVendor)">
-              <Icon name="ph:clipboard-text-bold" class="w-4 h-4 mr-1" />
-              Evaluate
-            </el-button>
-            <el-button size="small" class="flex-1" @click="viewHistory(selectedVendor)">
-              <Icon name="ph:clock-counter-clockwise-bold" class="w-4 h-4 mr-1" />
-              History
-            </el-button>
-          </div>
-        </div>
-        <div v-else class="flex flex-col items-center justify-center py-12">
-          <Icon name="ph:chart-polar-bold" class="w-16 h-16 text-slate-600 mb-4" />
-          <p class="text-sm text-slate-500 text-center">Select a vendor from the table to view detailed performance metrics</p>
-        </div>
-      </div>
-    </div>
+  //- Create / Edit Dialog
+  el-dialog(
+    v-model="dialogVisible"
+    :title="editingScorecard ? ($t('vendorScorecard.editScorecard') || 'Edit Scorecard') : ($t('vendorScorecard.newScorecard') || 'New Evaluation')"
+    width="600px"
+    :close-on-click-modal="false"
+  )
+    el-form(:model="form" label-position="top")
+      .grid.gap-4(class="grid-cols-1 md:grid-cols-2")
+        el-form-item(:label="$t('vendorScorecard.vendor') || 'Vendor'" required)
+          el-select(v-model="form.vendorId" :placeholder="$t('vendorScorecard.selectVendor') || 'Select Vendor'" style="width: 100%" filterable)
+            el-option(
+              v-for="vendor in vendors"
+              :key="vendor.id"
+              :label="vendor.name"
+              :value="vendor.id"
+            )
+        el-form-item(:label="$t('vendorScorecard.period') || 'Period'" required)
+          el-input(v-model="form.period" :placeholder="'e.g. Q1-2026'")
 
-    <!-- Evaluation Dialog -->
-    <el-dialog v-model="showEvaluationDialog" title="Vendor Evaluation" width="600px">
-      <el-form label-position="top">
-        <el-form-item label="Vendor">
-          <el-select v-model="evaluationForm.vendorId" placeholder="Select vendor" class="w-full">
-            <el-option v-for="v in vendors" :key="v.id" :label="v.name" :value="v.id" />
-          </el-select>
-        </el-form-item>
-        <el-form-item label="Evaluation Period">
-          <el-date-picker v-model="evaluationForm.period" type="month" placeholder="Select month" class="w-full" />
-        </el-form-item>
+      //- Score Sliders
+      .glass-card.p-4.mb-4.rounded-xl
+        h4.text-sm.font-bold.mb-4(style="color: var(--text-primary)")
+          Icon(name="ph:star-bold" size="16" class="mr-1" style="color: #f59e0b")
+          | {{ $t('vendorScorecard.scores') || 'Performance Scores (1-5)' }}
+        .grid.gap-6(class="grid-cols-1 md:grid-cols-2")
+          el-form-item(:label="$t('vendorScorecard.qualityScore') || 'Quality Score'")
+            .flex.items-center.gap-3
+              el-slider(v-model="form.qualityScore" :min="1" :max="5" :step="0.5" style="flex: 1" :marks="scoreMarks")
+              span.text-lg.font-bold.w-10.text-center(:style="{ color: getScoreColor(form.qualityScore) }") {{ form.qualityScore }}
+          el-form-item(:label="$t('vendorScorecard.deliveryScore') || 'Delivery Score'")
+            .flex.items-center.gap-3
+              el-slider(v-model="form.deliveryScore" :min="1" :max="5" :step="0.5" style="flex: 1" :marks="scoreMarks")
+              span.text-lg.font-bold.w-10.text-center(:style="{ color: getScoreColor(form.deliveryScore) }") {{ form.deliveryScore }}
+          el-form-item(:label="$t('vendorScorecard.priceScore') || 'Price Score'")
+            .flex.items-center.gap-3
+              el-slider(v-model="form.priceScore" :min="1" :max="5" :step="0.5" style="flex: 1" :marks="scoreMarks")
+              span.text-lg.font-bold.w-10.text-center(:style="{ color: getScoreColor(form.priceScore) }") {{ form.priceScore }}
+          el-form-item(:label="$t('vendorScorecard.communicationScore') || 'Communication Score'")
+            .flex.items-center.gap-3
+              el-slider(v-model="form.communicationScore" :min="1" :max="5" :step="0.5" style="flex: 1" :marks="scoreMarks")
+              span.text-lg.font-bold.w-10.text-center(:style="{ color: getScoreColor(form.communicationScore) }") {{ form.communicationScore }}
 
-        <div class="space-y-4 mt-2">
-          <h4 class="text-sm font-medium text-slate-300">Performance Criteria</h4>
-          <div v-for="criterion in evaluationCriteria" :key="criterion.key" class="glass-panel p-4 rounded-xl">
-            <div class="flex justify-between items-center mb-2">
-              <div>
-                <span class="text-sm font-medium text-slate-200">{{ criterion.label }}</span>
-                <p class="text-xs text-slate-500">{{ criterion.description }}</p>
-              </div>
-              <span class="text-sm font-bold text-orange-400">{{ evaluationForm.scores[criterion.key] || 0 }}/5</span>
-            </div>
-            <el-rate v-model="evaluationForm.scores[criterion.key]" :max="5" allow-half show-score />
-          </div>
-        </div>
+        //- Overall preview
+        .flex.items-center.justify-center.mt-4.pt-4.border-t(style="border-color: var(--border-default)")
+          .text-center
+            p.text-xs.mb-1(style="color: var(--text-muted)") {{ $t('vendorScorecard.overallScore') || 'Overall Score' }}
+            .w-16.h-16.rounded-full.flex.items-center.justify-center.text-xl.font-bold.mx-auto(
+              :style="{ background: getScoreColor(formOverallScore) + '20', color: getScoreColor(formOverallScore) }"
+            ) {{ formOverallScore.toFixed(1) }}
 
-        <el-form-item label="Notes" class="mt-4">
-          <el-input v-model="evaluationForm.notes" type="textarea" :rows="3" placeholder="Additional comments about vendor performance..." />
-        </el-form-item>
-      </el-form>
-      <template #footer>
-        <el-button @click="showEvaluationDialog = false">Cancel</el-button>
-        <el-button type="primary" @click="submitEvaluation">Submit Evaluation</el-button>
-      </template>
-    </el-dialog>
-  </div>
+      el-form-item(:label="$t('vendorScorecard.notes') || 'Notes'")
+        el-input(v-model="form.notes" type="textarea" :rows="3" :placeholder="$t('vendorScorecard.notesPlaceholder') || 'Additional comments about vendor performance...'")
+
+    template(#footer)
+      el-button(@click="dialogVisible = false") {{ $t('common.cancel') || 'Cancel' }}
+      el-button(type="primary" :loading="saving" @click="handleSave") {{ $t('common.save') || 'Save' }}
 </template>
 
 <script setup lang="ts">
-import { ref, computed } from 'vue';
-import { ElMessage } from 'element-plus';
+import { ref, reactive, computed, onMounted } from 'vue';
+import { ElNotification, ElMessageBox } from 'element-plus';
 
-definePageMeta({ layout: 'default', middleware: 'permissions' });
+definePageMeta({ middleware: 'permissions' });
 
-const selectedPeriod = ref('Q1-2026');
-const searchText = ref('');
-const showEvaluationDialog = ref(false);
-const selectedVendorId = ref<number | null>(null);
+const { $i18n } = useNuxtApp();
+const t = $i18n.t;
 
-const vendors = ref([
-  {
-    id: 1,
-    name: 'Al-Rajhi Materials',
-    category: 'Raw Materials',
-    qualityScore: 4.5,
-    deliveryScore: 4.2,
-    pricingScore: 3.8,
-    overallScore: 4.2,
-    trend: 'up' as const,
-    contractValue: 1250000,
-    activeSince: 'Jan 2023',
-    ordersYTD: 48,
-    onTimePercent: 94
-  },
-  {
-    id: 2,
-    name: 'Gulf Tech Supplies',
-    category: 'IT Equipment',
-    qualityScore: 4.0,
-    deliveryScore: 3.5,
-    pricingScore: 4.2,
-    overallScore: 3.9,
-    trend: 'stable' as const,
-    contractValue: 870000,
-    activeSince: 'Mar 2022',
-    ordersYTD: 32,
-    onTimePercent: 88
-  },
-  {
-    id: 3,
-    name: 'Saudi Steel Corp',
-    category: 'Construction',
-    qualityScore: 4.8,
-    deliveryScore: 4.6,
-    pricingScore: 3.5,
-    overallScore: 4.3,
-    trend: 'up' as const,
-    contractValue: 2100000,
-    activeSince: 'Jun 2021',
-    ordersYTD: 56,
-    onTimePercent: 96
-  },
-  {
-    id: 4,
-    name: 'Riyadh Logistics',
-    category: 'Logistics',
-    qualityScore: 3.2,
-    deliveryScore: 2.8,
-    pricingScore: 4.0,
-    overallScore: 3.3,
-    trend: 'down' as const,
-    contractValue: 450000,
-    activeSince: 'Sep 2024',
-    ordersYTD: 18,
-    onTimePercent: 72
-  },
-  {
-    id: 5,
-    name: 'Desert Packaging',
-    category: 'Packaging',
-    qualityScore: 2.0,
-    deliveryScore: 2.2,
-    pricingScore: 3.5,
-    overallScore: 2.4,
-    trend: 'down' as const,
-    contractValue: 180000,
-    activeSince: 'Nov 2024',
-    ordersYTD: 12,
-    onTimePercent: 65
-  },
-  {
-    id: 6,
-    name: 'MENA Office Solutions',
-    category: 'Office Supplies',
-    qualityScore: 3.8,
-    deliveryScore: 4.0,
-    pricingScore: 4.5,
-    overallScore: 4.1,
-    trend: 'up' as const,
-    contractValue: 320000,
-    activeSince: 'Feb 2023',
-    ordersYTD: 24,
-    onTimePercent: 91
-  },
-  {
-    id: 7,
-    name: 'Jeddah Chemicals',
-    category: 'Chemicals',
-    qualityScore: 4.2,
-    deliveryScore: 3.9,
-    pricingScore: 3.6,
-    overallScore: 3.9,
-    trend: 'stable' as const,
-    contractValue: 560000,
-    activeSince: 'Aug 2022',
-    ordersYTD: 38,
-    onTimePercent: 87
-  },
-  {
-    id: 8,
-    name: 'Eastern Textiles',
-    category: 'Textiles',
-    qualityScore: 1.8,
-    deliveryScore: 2.0,
-    pricingScore: 4.2,
-    overallScore: 2.3,
-    trend: 'down' as const,
-    contractValue: 95000,
-    activeSince: 'Apr 2025',
-    ordersYTD: 6,
-    onTimePercent: 58
-  }
-]);
+// State
+const loading = ref(false);
+const saving = ref(false);
+const searchQuery = ref('');
+const scorecards = ref<any[]>([]);
+const vendors = ref<any[]>([]);
+const dialogVisible = ref(false);
+const editingScorecard = ref<any>(null);
 
-const evaluationCriteria = ref([
-  { key: 'quality', label: 'Quality', description: 'Product/service quality and consistency' },
-  { key: 'delivery', label: 'Delivery', description: 'On-time delivery and logistics reliability' },
-  { key: 'pricing', label: 'Pricing', description: 'Competitiveness and value for money' },
-  { key: 'communication', label: 'Communication', description: 'Responsiveness and clarity of communication' },
-  { key: 'compliance', label: 'Compliance', description: 'Regulatory and contractual compliance' }
-]);
+const scoreMarks = { 1: '1', 2: '2', 3: '3', 4: '4', 5: '5' };
 
-const evaluationForm = ref<{
-  vendorId: number | null;
-  period: string;
-  scores: Record<string, number>;
-  notes: string;
-}>({
-  vendorId: null,
+const form = reactive({
+  vendorId: '' as any,
   period: '',
-  scores: { quality: 0, delivery: 0, pricing: 0, communication: 0, compliance: 0 },
+  qualityScore: 3 as number,
+  deliveryScore: 3 as number,
+  priceScore: 3 as number,
+  communicationScore: 3 as number,
   notes: ''
 });
 
-const filteredVendors = computed(() => {
-  if (!searchText.value) return vendors.value;
-  const s = searchText.value.toLowerCase();
-  return vendors.value.filter(v => v.name.toLowerCase().includes(s) || v.category.toLowerCase().includes(s));
+// Score color helper
+function getScoreColor(score: number): string {
+  if (score >= 4) return '#22c55e';
+  if (score >= 3) return '#f59e0b';
+  return '#ef4444';
+}
+
+// Overall score calculator
+function getOverallScore(row: any): number {
+  const scores = [row.qualityScore || 0, row.deliveryScore || 0, row.priceScore || 0, row.communicationScore || 0];
+  const valid = scores.filter(s => s > 0);
+  return valid.length ? valid.reduce((a, b) => a + b, 0) / valid.length : 0;
+}
+
+const formOverallScore = computed(() => {
+  const scores = [form.qualityScore, form.deliveryScore, form.priceScore, form.communicationScore];
+  return scores.reduce((a, b) => a + b, 0) / scores.length;
 });
 
-const avgScore = computed(() => {
-  if (!vendors.value.length) return 0;
-  return vendors.value.reduce((s, v) => s + v.overallScore, 0) / vendors.value.length;
+// Stats
+const stats = computed(() => {
+  const data = scorecards.value;
+  const total = data.length;
+  const avgQuality = total ? data.reduce((sum: number, s: any) => sum + (s.qualityScore || 0), 0) / total : 0;
+  const avgDelivery = total ? data.reduce((sum: number, s: any) => sum + (s.deliveryScore || 0), 0) / total : 0;
+  const avgOverall = total ? data.reduce((sum: number, s: any) => sum + getOverallScore(s), 0) / total : 0;
+  return { total, avgQuality, avgDelivery, avgOverall };
 });
 
-const topRatedCount = computed(() => vendors.value.filter(v => v.overallScore >= 4.0).length);
-const atRiskCount = computed(() => vendors.value.filter(v => v.overallScore < 2.5).length);
-
-const selectedVendor = computed(() => {
-  if (selectedVendorId.value === null) return null;
-  return vendors.value.find(v => v.id === selectedVendorId.value) || null;
+// Filtering
+const filteredScorecards = computed(() => {
+  if (!searchQuery.value) return scorecards.value;
+  const q = searchQuery.value.toLowerCase();
+  return scorecards.value.filter((s: any) => {
+    const vendor = (s.vendorName || s.vendorId || '').toString().toLowerCase();
+    const period = (s.period || '').toLowerCase();
+    return vendor.includes(q) || period.includes(q);
+  });
 });
 
-const vendorMetrics = computed(() => {
-  if (!selectedVendor.value) return [];
-  const v = selectedVendor.value;
-  return [
-    { label: 'Quality', score: v.qualityScore },
-    { label: 'Delivery', score: v.deliveryScore },
-    { label: 'Pricing', score: v.pricingScore },
-    { label: 'Communication', score: (v.qualityScore + v.deliveryScore) / 2 },
-    { label: 'Compliance', score: (v.overallScore + v.deliveryScore) / 2 }
-  ];
-});
+// API
+async function loadScorecards() {
+  loading.value = true;
+  try {
+    const res = await useApiFetch('vendor-scorecard');
+    if (res?.success) {
+      scorecards.value = res.body?.docs || res.body || [];
+    }
+  } catch {
+    // silent
+  } finally {
+    loading.value = false;
+  }
+}
 
-const formatCurrency = (val: number) => {
-  if (!val) return '0 SAR';
-  if (val >= 1000000) return `${(val / 1000000).toFixed(1)}M SAR`;
-  if (val >= 1000) return `${(val / 1000).toFixed(1)}K SAR`;
-  return `${val} SAR`;
-};
+async function loadVendors() {
+  try {
+    const res = await useApiFetch('vendor');
+    if (res?.success) {
+      vendors.value = res.body?.docs || res.body || [];
+    }
+  } catch {
+    // silent
+  }
+}
 
-const getScoreColor = (score: number): string => {
-  if (score >= 4.0) return 'text-emerald-400';
-  if (score >= 3.0) return 'text-amber-400';
-  return 'text-red-400';
-};
+function openCreateDialog() {
+  editingScorecard.value = null;
+  form.vendorId = '';
+  form.period = '';
+  form.qualityScore = 3;
+  form.deliveryScore = 3;
+  form.priceScore = 3;
+  form.communicationScore = 3;
+  form.notes = '';
+  dialogVisible.value = true;
+}
 
-const getVendorAvatarClass = (score: number): string => {
-  if (score >= 4.0) return 'bg-emerald-500/20 text-emerald-400';
-  if (score >= 3.0) return 'bg-amber-500/20 text-amber-400';
-  return 'bg-red-500/20 text-red-400';
-};
+function openEditDialog(scorecard: any) {
+  editingScorecard.value = scorecard;
+  form.vendorId = scorecard.vendorId || '';
+  form.period = scorecard.period || '';
+  form.qualityScore = scorecard.qualityScore || 3;
+  form.deliveryScore = scorecard.deliveryScore || 3;
+  form.priceScore = scorecard.priceScore || 3;
+  form.communicationScore = scorecard.communicationScore || 3;
+  form.notes = scorecard.notes || '';
+  dialogVisible.value = true;
+}
 
-const getStatusType = (score: number): 'success' | 'warning' | 'danger' | undefined => {
-  if (score >= 4.0) return 'success';
-  if (score >= 2.5) return 'warning';
-  return 'danger';
-};
-
-const getStatusLabel = (score: number): string => {
-  if (score >= 4.0) return 'Excellent';
-  if (score >= 3.0) return 'Good';
-  if (score >= 2.5) return 'Fair';
-  return 'At Risk';
-};
-
-const selectVendor = (row: any) => {
-  selectedVendorId.value = row.id;
-};
-
-const evaluateVendor = (vendor: any) => {
-  evaluationForm.value.vendorId = vendor.id;
-  showEvaluationDialog.value = true;
-};
-
-const viewHistory = (vendor: any) => {
-  ElMessage.info(`Viewing evaluation history for ${vendor.name}`);
-};
-
-const submitEvaluation = () => {
-  if (!evaluationForm.value.vendorId) {
-    ElMessage.warning('Please select a vendor');
+async function handleSave() {
+  if (!form.vendorId || !form.period.trim()) {
+    ElNotification({ type: 'warning', title: t('common.warning') || 'Warning', message: t('common.fillRequired') || 'Please fill required fields' });
     return;
   }
-  const scores = Object.values(evaluationForm.value.scores);
-  if (scores.includes(0)) {
-    ElMessage.warning('Please rate all criteria');
-    return;
+  saving.value = true;
+  try {
+    const payload = { ...form };
+    if (editingScorecard.value) {
+      await useApiFetch(`vendor-scorecard/${editingScorecard.value.id}`, 'PUT', payload);
+    } else {
+      await useApiFetch('vendor-scorecard', 'POST', payload);
+    }
+    ElNotification({ type: 'success', title: t('common.success') || 'Success', message: t('common.saved') || 'Saved' });
+    dialogVisible.value = false;
+    await loadScorecards();
+  } catch {
+    ElNotification({ type: 'error', title: t('common.error') || 'Error', message: t('common.error') || 'Error' });
+  } finally {
+    saving.value = false;
   }
-  ElMessage.success('Vendor evaluation submitted successfully');
-  showEvaluationDialog.value = false;
-  evaluationForm.value = {
-    vendorId: null,
-    period: '',
-    scores: { quality: 0, delivery: 0, pricing: 0, communication: 0, compliance: 0 },
-    notes: ''
-  };
-};
+}
+
+async function handleDelete(scorecard: any) {
+  try {
+    await ElMessageBox.confirm(
+      t('common.confirmDelete') || 'Are you sure you want to delete this scorecard?',
+      t('common.warning') || 'Warning',
+      { type: 'warning' }
+    );
+    await useApiFetch(`vendor-scorecard/${scorecard.id}`, 'DELETE');
+    ElNotification({ type: 'success', title: t('common.success') || 'Success', message: t('common.deleted') || 'Deleted' });
+    await loadScorecards();
+  } catch {
+    // cancelled or error
+  }
+}
+
+onMounted(() => {
+  loadScorecards();
+  loadVendors();
+});
 </script>
+
+<style lang="scss" scoped>
+.animate-fade-in {
+  animation: fadeIn 0.4s ease-out;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(8px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+</style>

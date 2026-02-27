@@ -14,159 +14,171 @@
       </div>
     </div>
 
-    <!-- Progress Overview -->
-    <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
-      <div class="glass-panel p-5 rounded-xl">
-        <div class="flex items-center justify-between mb-2">
-          <span class="text-xs text-slate-500">Company Goals</span>
-          <Icon name="ph:buildings-bold" class="w-4 h-4 text-indigo-400" />
-        </div>
-        <div class="text-2xl font-bold text-slate-200">{{ companyGoals.length }}</div>
-        <el-progress :percentage="avgProgress(companyGoals)" :stroke-width="4" :show-text="false" color="#6366F1" class="mt-2" />
-      </div>
-      <div class="glass-panel p-5 rounded-xl">
-        <div class="flex items-center justify-between mb-2">
-          <span class="text-xs text-slate-500">Team Goals</span>
-          <Icon name="ph:users-three-bold" class="w-4 h-4 text-emerald-400" />
-        </div>
-        <div class="text-2xl font-bold text-slate-200">{{ teamGoals.length }}</div>
-        <el-progress :percentage="avgProgress(teamGoals)" :stroke-width="4" :show-text="false" color="#10B981" class="mt-2" />
-      </div>
-      <div class="glass-panel p-5 rounded-xl">
-        <div class="flex items-center justify-between mb-2">
-          <span class="text-xs text-slate-500">Personal Goals</span>
-          <Icon name="ph:user-bold" class="w-4 h-4 text-amber-400" />
-        </div>
-        <div class="text-2xl font-bold text-slate-200">{{ personalGoals.length }}</div>
-        <el-progress :percentage="avgProgress(personalGoals)" :stroke-width="4" :show-text="false" color="#F59E0B" class="mt-2" />
-      </div>
-      <div class="glass-panel p-5 rounded-xl">
-        <div class="flex items-center justify-between mb-2">
-          <span class="text-xs text-slate-500">Overall Progress</span>
-          <Icon name="ph:chart-line-up-bold" class="w-4 h-4 text-teal-400" />
-        </div>
-        <div class="text-2xl font-bold text-teal-400">{{ avgProgress(allGoals) }}%</div>
-        <el-progress :percentage="avgProgress(allGoals)" :stroke-width="4" :show-text="false" color="#14B8A6" class="mt-2" />
-      </div>
+    <!-- Loading State -->
+    <div v-if="loading" class="flex justify-center py-12">
+      <el-icon class="is-loading text-teal-400" :size="32"><Loading /></el-icon>
     </div>
 
-    <!-- Goals Kanban View -->
-    <el-tabs v-model="viewMode" class="glass-tabs">
-      <el-tab-pane label="Board View" name="board">
-        <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
-          <!-- Not Started -->
-          <div>
-            <div class="flex items-center gap-2 mb-4">
-              <div class="w-3 h-3 rounded-full bg-slate-500"></div>
-              <h3 class="text-sm font-medium text-slate-400">Not Started</h3>
-              <span class="text-xs text-slate-600">({{ notStartedGoals.length }})</span>
-            </div>
-            <div class="space-y-3">
-              <div v-for="goal in notStartedGoals" :key="goal.id" class="glass-panel p-4 rounded-xl hover:border-slate-600 transition">
-                <div class="flex items-start justify-between">
-                  <h4 class="text-sm font-medium text-slate-200">{{ goal.title }}</h4>
-                  <el-tag :type="getLevelType(goal.level)" effect="dark" size="small">{{ goal.level }}</el-tag>
-                </div>
-                <p class="text-xs text-slate-500 mt-2 line-clamp-2">{{ goal.description }}</p>
-                <div class="mt-3">
-                  <el-progress :percentage="goal.progress" :stroke-width="4" :color="getProgressColor(goal.progress)" />
-                </div>
-                <div class="flex items-center justify-between mt-3 text-xs text-slate-500">
-                  <span>{{ goal.keyResults?.length || 0 }} Key Results</span>
-                  <span>Due: {{ formatDate(goal.dueDate) }}</span>
-                </div>
-              </div>
-            </div>
+    <!-- Progress Overview -->
+    <div v-else class="space-y-6">
+      <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
+        <div class="glass-panel p-5 rounded-xl">
+          <div class="flex items-center justify-between mb-2">
+            <span class="text-xs text-slate-500">Company Goals</span>
+            <Icon name="ph:buildings-bold" class="w-4 h-4 text-indigo-400" />
           </div>
+          <div class="text-2xl font-bold text-slate-200">{{ companyGoals.length }}</div>
+          <el-progress :percentage="avgProgress(companyGoals)" :stroke-width="4" :show-text="false" color="#6366F1" class="mt-2" />
+        </div>
+        <div class="glass-panel p-5 rounded-xl">
+          <div class="flex items-center justify-between mb-2">
+            <span class="text-xs text-slate-500">Team Goals</span>
+            <Icon name="ph:users-three-bold" class="w-4 h-4 text-emerald-400" />
+          </div>
+          <div class="text-2xl font-bold text-slate-200">{{ teamGoals.length }}</div>
+          <el-progress :percentage="avgProgress(teamGoals)" :stroke-width="4" :show-text="false" color="#10B981" class="mt-2" />
+        </div>
+        <div class="glass-panel p-5 rounded-xl">
+          <div class="flex items-center justify-between mb-2">
+            <span class="text-xs text-slate-500">Personal Goals</span>
+            <Icon name="ph:user-bold" class="w-4 h-4 text-amber-400" />
+          </div>
+          <div class="text-2xl font-bold text-slate-200">{{ personalGoals.length }}</div>
+          <el-progress :percentage="avgProgress(personalGoals)" :stroke-width="4" :show-text="false" color="#F59E0B" class="mt-2" />
+        </div>
+        <div class="glass-panel p-5 rounded-xl">
+          <div class="flex items-center justify-between mb-2">
+            <span class="text-xs text-slate-500">Overall Progress</span>
+            <Icon name="ph:chart-line-up-bold" class="w-4 h-4 text-teal-400" />
+          </div>
+          <div class="text-2xl font-bold text-teal-400">{{ avgProgress(allGoals) }}%</div>
+          <el-progress :percentage="avgProgress(allGoals)" :stroke-width="4" :show-text="false" color="#14B8A6" class="mt-2" />
+        </div>
+      </div>
 
-          <!-- In Progress -->
-          <div>
-            <div class="flex items-center gap-2 mb-4">
-              <div class="w-3 h-3 rounded-full bg-blue-500"></div>
-              <h3 class="text-sm font-medium text-slate-400">In Progress</h3>
-              <span class="text-xs text-slate-600">({{ inProgressGoals.length }})</span>
-            </div>
-            <div class="space-y-3">
-              <div
-                v-for="goal in inProgressGoals"
-                :key="goal.id"
-                class="glass-panel p-4 rounded-xl border-l-2 border-blue-500 hover:border-blue-400 transition"
-              >
-                <div class="flex items-start justify-between">
-                  <h4 class="text-sm font-medium text-slate-200">{{ goal.title }}</h4>
-                  <el-tag :type="getLevelType(goal.level)" effect="dark" size="small">{{ goal.level }}</el-tag>
-                </div>
-                <p class="text-xs text-slate-500 mt-2 line-clamp-2">{{ goal.description }}</p>
-                <div class="mt-3">
-                  <el-progress :percentage="goal.progress" :stroke-width="4" :color="getProgressColor(goal.progress)" />
-                </div>
-                <!-- Key Results -->
-                <div v-if="goal.keyResults?.length" class="mt-3 space-y-1">
-                  <div v-for="kr in goal.keyResults.slice(0, 3)" :key="kr.id" class="flex items-center gap-2 text-xs">
-                    <el-checkbox :model-value="kr.completed" size="small" disabled />
-                    <span class="text-slate-400" :class="kr.completed ? 'line-through' : ''">{{ kr.title }}</span>
+      <!-- Goals Kanban View -->
+      <el-tabs v-model="viewMode" class="glass-tabs">
+        <el-tab-pane label="Board View" name="board">
+          <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+            <!-- Not Started -->
+            <div>
+              <div class="flex items-center gap-2 mb-4">
+                <div class="w-3 h-3 rounded-full bg-slate-500"></div>
+                <h3 class="text-sm font-medium text-slate-400">Not Started</h3>
+                <span class="text-xs text-slate-600">({{ notStartedGoals.length }})</span>
+              </div>
+              <div class="space-y-3">
+                <div v-for="goal in notStartedGoals" :key="goal.id" class="glass-panel p-4 rounded-xl hover:border-slate-600 transition">
+                  <div class="flex items-start justify-between">
+                    <h4 class="text-sm font-medium text-slate-200">{{ goal.title }}</h4>
+                    <el-tag :type="getLevelType(goal.level)" effect="dark" size="small">{{ goal.level }}</el-tag>
+                  </div>
+                  <p class="text-xs text-slate-500 mt-2 line-clamp-2">{{ goal.description }}</p>
+                  <div class="mt-3">
+                    <el-progress :percentage="goal.progress" :stroke-width="4" :color="getProgressColor(goal.progress)" />
+                  </div>
+                  <div class="flex items-center justify-between mt-3 text-xs text-slate-500">
+                    <span>{{ goal.keyResults?.length || 0 }} Key Results</span>
+                    <span>Due: {{ formatDate(goal.dueDate) }}</span>
                   </div>
                 </div>
-                <div class="flex items-center justify-between mt-3 text-xs text-slate-500">
-                  <span>{{ goal.owner }}</span>
-                  <span>Due: {{ formatDate(goal.dueDate) }}</span>
+              </div>
+            </div>
+
+            <!-- In Progress -->
+            <div>
+              <div class="flex items-center gap-2 mb-4">
+                <div class="w-3 h-3 rounded-full bg-blue-500"></div>
+                <h3 class="text-sm font-medium text-slate-400">In Progress</h3>
+                <span class="text-xs text-slate-600">({{ inProgressGoals.length }})</span>
+              </div>
+              <div class="space-y-3">
+                <div
+                  v-for="goal in inProgressGoals"
+                  :key="goal.id"
+                  class="glass-panel p-4 rounded-xl border-l-2 border-blue-500 hover:border-blue-400 transition"
+                >
+                  <div class="flex items-start justify-between">
+                    <h4 class="text-sm font-medium text-slate-200">{{ goal.title }}</h4>
+                    <el-tag :type="getLevelType(goal.level)" effect="dark" size="small">{{ goal.level }}</el-tag>
+                  </div>
+                  <p class="text-xs text-slate-500 mt-2 line-clamp-2">{{ goal.description }}</p>
+                  <div class="mt-3">
+                    <el-progress :percentage="goal.progress" :stroke-width="4" :color="getProgressColor(goal.progress)" />
+                  </div>
+                  <!-- Key Results -->
+                  <div v-if="goal.keyResults?.length" class="mt-3 space-y-1">
+                    <div v-for="kr in goal.keyResults.slice(0, 3)" :key="kr.id" class="flex items-center gap-2 text-xs">
+                      <el-checkbox :model-value="kr.completed" size="small" disabled />
+                      <span class="text-slate-400" :class="kr.completed ? 'line-through' : ''">{{ kr.title }}</span>
+                    </div>
+                  </div>
+                  <div class="flex items-center justify-between mt-3 text-xs text-slate-500">
+                    <span>{{ goal.owner }}</span>
+                    <span>Due: {{ formatDate(goal.dueDate) }}</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Completed -->
+            <div>
+              <div class="flex items-center gap-2 mb-4">
+                <div class="w-3 h-3 rounded-full bg-emerald-500"></div>
+                <h3 class="text-sm font-medium text-slate-400">Completed</h3>
+                <span class="text-xs text-slate-600">({{ completedGoals.length }})</span>
+              </div>
+              <div class="space-y-3">
+                <div v-for="goal in completedGoals" :key="goal.id" class="glass-panel p-4 rounded-xl border-l-2 border-emerald-500 opacity-80">
+                  <div class="flex items-start justify-between">
+                    <h4 class="text-sm font-medium text-slate-200">{{ goal.title }}</h4>
+                    <Icon name="ph:check-circle-bold" class="w-5 h-5 text-emerald-400" />
+                  </div>
+                  <p class="text-xs text-slate-500 mt-2">{{ goal.description }}</p>
+                  <div class="mt-3">
+                    <el-progress :percentage="100" :stroke-width="4" color="#10B981" />
+                  </div>
                 </div>
               </div>
             </div>
           </div>
+        </el-tab-pane>
 
-          <!-- Completed -->
-          <div>
-            <div class="flex items-center gap-2 mb-4">
-              <div class="w-3 h-3 rounded-full bg-emerald-500"></div>
-              <h3 class="text-sm font-medium text-slate-400">Completed</h3>
-              <span class="text-xs text-slate-600">({{ completedGoals.length }})</span>
-            </div>
-            <div class="space-y-3">
-              <div v-for="goal in completedGoals" :key="goal.id" class="glass-panel p-4 rounded-xl border-l-2 border-emerald-500 opacity-80">
-                <div class="flex items-start justify-between">
-                  <h4 class="text-sm font-medium text-slate-200">{{ goal.title }}</h4>
-                  <Icon name="ph:check-circle-bold" class="w-5 h-5 text-emerald-400" />
-                </div>
-                <p class="text-xs text-slate-500 mt-2">{{ goal.description }}</p>
-                <div class="mt-3">
-                  <el-progress :percentage="100" :stroke-width="4" color="#10B981" />
-                </div>
-              </div>
-            </div>
+        <el-tab-pane label="List View" name="list">
+          <div class="glass-panel p-6 rounded-xl">
+            <el-table :data="allGoals" class="glass-table" stripe>
+              <el-table-column prop="title" label="Goal" min-width="200" />
+              <el-table-column prop="level" label="Level" width="120">
+                <template #default="{ row }">
+                  <el-tag :type="getLevelType(row.level)" effect="dark" size="small">{{ row.level }}</el-tag>
+                </template>
+              </el-table-column>
+              <el-table-column label="Progress" width="160">
+                <template #default="{ row }">
+                  <div class="flex items-center gap-2">
+                    <el-progress :percentage="row.progress" :stroke-width="4" :color="getProgressColor(row.progress)" class="flex-1" />
+                    <el-button text size="small" @click="openProgressDialog(row)">
+                      <Icon name="ph:pencil-simple-bold" class="w-3.5 h-3.5 text-slate-400" />
+                    </el-button>
+                  </div>
+                </template>
+              </el-table-column>
+              <el-table-column prop="owner" label="Owner" width="140" />
+              <el-table-column label="Due Date" width="120">
+                <template #default="{ row }">
+                  <span class="text-sm text-slate-400">{{ formatDate(row.dueDate) }}</span>
+                </template>
+              </el-table-column>
+              <el-table-column label="Status" width="120" align="center">
+                <template #default="{ row }">
+                  <el-tag :type="getStatusType(row.status)" effect="dark" size="small">{{ row.status }}</el-tag>
+                </template>
+              </el-table-column>
+            </el-table>
           </div>
-        </div>
-      </el-tab-pane>
-
-      <el-tab-pane label="List View" name="list">
-        <div class="glass-panel p-6 rounded-xl">
-          <el-table :data="allGoals" class="glass-table" stripe>
-            <el-table-column prop="title" label="Goal" min-width="200" />
-            <el-table-column prop="level" label="Level" width="120">
-              <template #default="{ row }">
-                <el-tag :type="getLevelType(row.level)" effect="dark" size="small">{{ row.level }}</el-tag>
-              </template>
-            </el-table-column>
-            <el-table-column label="Progress" width="160">
-              <template #default="{ row }">
-                <el-progress :percentage="row.progress" :stroke-width="4" :color="getProgressColor(row.progress)" />
-              </template>
-            </el-table-column>
-            <el-table-column prop="owner" label="Owner" width="140" />
-            <el-table-column label="Due Date" width="120">
-              <template #default="{ row }">
-                <span class="text-sm text-slate-400">{{ formatDate(row.dueDate) }}</span>
-              </template>
-            </el-table-column>
-            <el-table-column label="Status" width="120" align="center">
-              <template #default="{ row }">
-                <el-tag :type="getStatusType(row.status)" effect="dark" size="small">{{ row.status }}</el-tag>
-              </template>
-            </el-table-column>
-          </el-table>
-        </div>
-      </el-tab-pane>
-    </el-tabs>
+        </el-tab-pane>
+      </el-tabs>
+    </div>
 
     <!-- New Goal Dialog -->
     <el-dialog v-model="showGoalDialog" title="Create New Goal" width="560px">
@@ -189,6 +201,9 @@
             <el-date-picker v-model="newGoal.dueDate" type="date" class="w-full" />
           </el-form-item>
         </div>
+        <el-form-item label="Owner">
+          <el-input v-model="newGoal.owner" placeholder="e.g., Marketing, John Doe" />
+        </el-form-item>
         <el-form-item label="Key Results">
           <div class="space-y-2 w-full">
             <div v-for="(kr, idx) in newGoal.keyResults" :key="idx" class="flex gap-2">
@@ -206,113 +221,83 @@
       </el-form>
       <template #footer>
         <el-button @click="showGoalDialog = false">Cancel</el-button>
-        <el-button type="primary" @click="createGoal">Create Goal</el-button>
+        <el-button type="primary" :loading="saving" @click="createGoal">Create Goal</el-button>
+      </template>
+    </el-dialog>
+
+    <!-- Update Progress Dialog -->
+    <el-dialog v-model="showProgressDialog" title="Update Goal Progress" width="420px">
+      <div v-if="editingGoal" class="space-y-4">
+        <h4 class="text-sm font-medium text-slate-200">{{ editingGoal.title }}</h4>
+        <el-form-item label="Progress (%)">
+          <el-slider v-model="editProgress" :min="0" :max="100" :step="5" show-input />
+        </el-form-item>
+        <el-form-item label="Status">
+          <el-select v-model="editStatus" class="w-full">
+            <el-option label="Not Started" value="NOT_STARTED" />
+            <el-option label="In Progress" value="IN_PROGRESS" />
+            <el-option label="Completed" value="COMPLETED" />
+            <el-option label="Cancelled" value="CANCELLED" />
+          </el-select>
+        </el-form-item>
+      </div>
+      <template #footer>
+        <el-button @click="showProgressDialog = false">Cancel</el-button>
+        <el-button type="primary" :loading="saving" @click="updateGoalProgress">Save</el-button>
       </template>
     </el-dialog>
   </div>
 </template>
 
 <script setup lang="ts">
-import { ref, computed } from 'vue';
+import { ref, computed, onMounted } from 'vue';
 import { ElMessage } from 'element-plus';
+import { Loading } from '@element-plus/icons-vue';
+import { useApiFetch } from '~/composables/useApiFetch';
 
 definePageMeta({
   layout: 'default',
   middleware: 'permissions'
 });
 
+interface KeyResult {
+  id: number;
+  title: string;
+  completed: boolean;
+}
+
+interface Goal {
+  id: number;
+  title: string;
+  description: string;
+  level: string;
+  status: string;
+  progress: number;
+  owner: string;
+  dueDate: string;
+  keyResults: KeyResult[];
+  parentGoalId?: number | null;
+}
+
 const viewMode = ref('board');
 const showGoalDialog = ref(false);
+const showProgressDialog = ref(false);
+const loading = ref(false);
+const saving = ref(false);
+const editingGoal = ref<Goal | null>(null);
+const editProgress = ref(0);
+const editStatus = ref('NOT_STARTED');
+
 const newGoal = ref({
   title: '',
   description: '',
   level: 'PERSONAL',
+  owner: '',
   dueDate: new Date().toISOString().slice(0, 10),
-  keyResults: [{ id: Date.now(), title: '', completed: false }]
+  keyResults: [{ id: Date.now(), title: '', completed: false }] as KeyResult[]
 });
 
-const allGoals = ref([
-  {
-    id: 1,
-    title: 'Increase Q1 Revenue by 25%',
-    description: 'Drive revenue growth through new client acquisition and upselling',
-    level: 'COMPANY',
-    status: 'IN_PROGRESS',
-    progress: 62,
-    owner: 'Leadership',
-    dueDate: '2026-03-31',
-    keyResults: [
-      { id: 1, title: 'Close 15 new enterprise deals', completed: false },
-      { id: 2, title: 'Upsell 20% of existing clients', completed: true },
-      { id: 3, title: 'Reduce churn to under 5%', completed: false }
-    ]
-  },
-  {
-    id: 2,
-    title: 'Launch Marketing Automation',
-    description: 'Implement full marketing automation pipeline',
-    level: 'TEAM',
-    status: 'IN_PROGRESS',
-    progress: 45,
-    owner: 'Marketing',
-    dueDate: '2026-02-28',
-    keyResults: [
-      { id: 4, title: 'Set up email sequences', completed: true },
-      { id: 5, title: 'Configure lead scoring', completed: false }
-    ]
-  },
-  {
-    id: 3,
-    title: 'Achieve 95% Customer Satisfaction',
-    description: 'Improve customer support response times and quality',
-    level: 'COMPANY',
-    status: 'IN_PROGRESS',
-    progress: 78,
-    owner: 'Support',
-    dueDate: '2026-03-31',
-    keyResults: [
-      { id: 6, title: 'Response time under 2 hours', completed: true },
-      { id: 7, title: 'CSAT score above 4.5', completed: true },
-      { id: 8, title: 'Zero critical tickets unresolved over 48h', completed: false }
-    ]
-  },
-  {
-    id: 4,
-    title: 'Complete Sales Training Program',
-    description: 'Train all sales reps on new CRM features',
-    level: 'PERSONAL',
-    status: 'COMPLETED',
-    progress: 100,
-    owner: 'Ahmed Al-Farsi',
-    dueDate: '2026-01-31',
-    keyResults: []
-  },
-  {
-    id: 5,
-    title: 'Hire 5 New Engineers',
-    description: 'Expand engineering team for product development',
-    level: 'TEAM',
-    status: 'NOT_STARTED',
-    progress: 0,
-    owner: 'HR',
-    dueDate: '2026-04-30',
-    keyResults: [
-      { id: 9, title: 'Post job listings', completed: false },
-      { id: 10, title: 'Screen 50 candidates', completed: false }
-    ]
-  },
-  {
-    id: 6,
-    title: 'Reduce Operational Costs by 10%',
-    description: 'Optimize processes and reduce overhead',
-    level: 'COMPANY',
-    status: 'NOT_STARTED',
-    progress: 0,
-    owner: 'Operations',
-    dueDate: '2026-06-30',
-    keyResults: []
-  }
-]);
+const allGoals = ref<Goal[]>([]);
 
 const companyGoals = computed(() => allGoals.value.filter(g => g.level === 'COMPANY'));
 const teamGoals = computed(() => allGoals.value.filter(g => g.level === 'TEAM'));
@@ -321,7 +306,7 @@ const notStartedGoals = computed(() => allGoals.value.filter(g => g.status === '
 const inProgressGoals = computed(() => allGoals.value.filter(g => g.status === 'IN_PROGRESS'));
 const completedGoals = computed(() => allGoals.value.filter(g => g.status === 'COMPLETED'));
 
-const avgProgress = (goals: any[]) => {
+const avgProgress = (goals: Goal[]) => {
   if (!goals.length) return 0;
   return Math.round(goals.reduce((s, g) => s + g.progress, 0) / goals.length);
 };
@@ -342,33 +327,119 @@ const getStatusType = (status: string): 'success' | 'warning' | 'info' | 'danger
   const map: Record<string, 'success' | 'warning' | 'info' | 'danger' | undefined> = {
     COMPLETED: 'success',
     IN_PROGRESS: 'warning',
-    NOT_STARTED: 'info'
+    NOT_STARTED: 'info',
+    CANCELLED: 'danger'
   };
   return map[status] || 'info';
 };
 
 const formatDate = (d: string) => (d ? new Date(d).toLocaleDateString('en', { month: 'short', day: 'numeric' }) : '-');
 
-const createGoal = () => {
+// Fetch all goals from API
+const fetchGoals = async () => {
+  loading.value = true;
+  try {
+    const res = await useApiFetch('goals?limit=100');
+    if (res?.success) {
+      allGoals.value = res.body?.docs || res.body || [];
+    } else {
+      ElMessage.error(res?.message || 'Failed to load goals');
+    }
+  } catch (err) {
+    ElMessage.error('Failed to load goals');
+  } finally {
+    loading.value = false;
+  }
+};
+
+// Create a new goal via API
+const createGoal = async () => {
   if (!newGoal.value.title) {
     ElMessage.warning('Goal title is required');
     return;
   }
-  allGoals.value.unshift({
-    id: Date.now(),
-    ...newGoal.value,
+
+  // Filter out empty key results
+  const keyResults = newGoal.value.keyResults.filter(kr => kr.title.trim());
+
+  // Format dueDate to YYYY-MM-DD string if it's a Date object
+  const dueDate = newGoal.value.dueDate instanceof Date
+    ? newGoal.value.dueDate.toISOString().slice(0, 10)
+    : newGoal.value.dueDate;
+
+  const payload = {
+    title: newGoal.value.title,
+    description: newGoal.value.description,
+    level: newGoal.value.level,
+    owner: newGoal.value.owner || 'Me',
+    dueDate,
     status: 'NOT_STARTED',
     progress: 0,
-    owner: 'Me'
-  });
-  showGoalDialog.value = false;
-  newGoal.value = {
-    title: '',
-    description: '',
-    level: 'PERSONAL',
-    dueDate: new Date().toISOString().slice(0, 10),
-    keyResults: [{ id: Date.now(), title: '', completed: false }]
+    keyResults
   };
-  ElMessage.success('Goal created successfully');
+
+  saving.value = true;
+  try {
+    const res = await useApiFetch('goals', 'POST', payload);
+    if (res?.success) {
+      ElMessage.success('Goal created successfully');
+      showGoalDialog.value = false;
+      // Reset the form
+      newGoal.value = {
+        title: '',
+        description: '',
+        level: 'PERSONAL',
+        owner: '',
+        dueDate: new Date().toISOString().slice(0, 10),
+        keyResults: [{ id: Date.now(), title: '', completed: false }]
+      };
+      // Refresh goals list from server
+      await fetchGoals();
+    } else {
+      ElMessage.error(res?.message || 'Failed to create goal');
+    }
+  } catch (err) {
+    ElMessage.error('Failed to create goal');
+  } finally {
+    saving.value = false;
+  }
 };
+
+// Open progress update dialog
+const openProgressDialog = (goal: Goal) => {
+  editingGoal.value = goal;
+  editProgress.value = goal.progress;
+  editStatus.value = goal.status;
+  showProgressDialog.value = true;
+};
+
+// Update goal progress and status via API
+const updateGoalProgress = async () => {
+  if (!editingGoal.value) return;
+
+  saving.value = true;
+  try {
+    const res = await useApiFetch(`goals/${editingGoal.value.id}`, 'PUT', {
+      progress: editProgress.value,
+      status: editStatus.value
+    });
+    if (res?.success) {
+      ElMessage.success('Goal updated successfully');
+      showProgressDialog.value = false;
+      editingGoal.value = null;
+      // Refresh goals list from server
+      await fetchGoals();
+    } else {
+      ElMessage.error(res?.message || 'Failed to update goal');
+    }
+  } catch (err) {
+    ElMessage.error('Failed to update goal');
+  } finally {
+    saving.value = false;
+  }
+};
+
+onMounted(() => {
+  fetchGoals();
+});
 </script>

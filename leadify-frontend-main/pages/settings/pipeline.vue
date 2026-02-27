@@ -66,7 +66,7 @@
               @click="form.color = color"
             )
         el-form-item(label="Probability %")
-          el-input-number(v-model="form.probability" :min="0" :max="100" style="width: 100%")
+          el-slider(v-model="form.probability" :min="0" :max="100" :step="5" show-input :show-input-controls="false" input-size="small")
       .flex.items-center.gap-6
         el-checkbox(v-model="form.isDefault") Default Stage
         el-checkbox(v-model="form.isWon") Won Stage

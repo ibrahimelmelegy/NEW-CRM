@@ -104,6 +104,36 @@ class CommunicationController {
     }
   }
 
+  // ─── Get Call Logs ───────────────────────────────────────────────────────
+  public async getCallLogs(req: AuthenticatedRequest, res: Response, next: NextFunction): Promise<void> {
+    try {
+      const tenantId = (req.user as any)?.tenantId || null;
+      const result = await communicationService.getCallLogs(tenantId, {
+        page: Number(req.query.page) || 1,
+        limit: Number(req.query.limit) || 20,
+        search: req.query.search as string
+      });
+      wrapResult(res, result);
+    } catch (error) {
+      next(error);
+    }
+  }
+
+  // ─── Get Meeting Notes ─────────────────────────────────────────────────────
+  public async getMeetingNotes(req: AuthenticatedRequest, res: Response, next: NextFunction): Promise<void> {
+    try {
+      const tenantId = (req.user as any)?.tenantId || null;
+      const result = await communicationService.getMeetingNotes(tenantId, {
+        page: Number(req.query.page) || 1,
+        limit: Number(req.query.limit) || 20,
+        search: req.query.search as string
+      });
+      wrapResult(res, result);
+    } catch (error) {
+      next(error);
+    }
+  }
+
   // ─── Delete Activity ─────────────────────────────────────────────────────
   public async deleteActivity(req: AuthenticatedRequest, res: Response, next: NextFunction): Promise<void> {
     try {

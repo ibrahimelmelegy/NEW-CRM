@@ -15,6 +15,31 @@ export interface KanbanCard {
   [key: string]: any;
 }
 
+export interface PipelineStage {
+  id: string;
+  name: string;
+  order: number;
+  color: string;
+  probability: number;
+  entityType: string;
+  isDefault: boolean;
+  isWon: boolean;
+  isLost: boolean;
+}
+
+export async function fetchPipelineStages(entityType: string = 'deal'): Promise<PipelineStage[]> {
+  try {
+    const { body, success } = await useApiFetch(`pipeline-config?entityType=${entityType}`);
+    if (success && body?.docs) {
+      return (body.docs as PipelineStage[]).sort((a, b) => a.order - b.order);
+    }
+    return [];
+  } catch (error) {
+    console.error('Error fetching pipeline stages:', error);
+    return [];
+  }
+}
+
 export async function fetchDealKanban(): Promise<Record<string, KanbanCard[]>> {
   try {
     const { body, success, message } = await useApiFetch('deal/kanban');

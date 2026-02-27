@@ -21,7 +21,7 @@
     </div>
 
     <!-- Social Accounts -->
-    <div class="grid grid-cols-2 md:grid-cols-5 gap-4">
+    <div v-loading="loading" class="grid grid-cols-2 md:grid-cols-5 gap-4">
       <div
         v-for="account in socialAccounts"
         :key="account.platform"
@@ -96,6 +96,10 @@
                 </div>
               </div>
             </div>
+          </div>
+          <div v-if="mentions.length === 0 && !loading" class="glass-panel p-12 rounded-2xl text-center">
+            <Icon name="ph:chat-circle-dots-bold" class="w-16 h-16 text-slate-600 mx-auto mb-4" />
+            <p class="text-slate-500">No mentions or feed items yet</p>
           </div>
         </div>
       </el-tab-pane>
@@ -289,175 +293,219 @@
 </template>
 
 <script setup lang="ts">
-import { ref } from 'vue';
+import { ref, computed, onMounted } from 'vue';
 import { ElMessage } from 'element-plus';
+import { useApiFetch } from '~/composables/useApiFetch';
 
 definePageMeta({
   layout: 'default',
   middleware: 'permissions'
 });
 
+// ── State ──────────────────────────────────────────────────────────────────────
+const loading = ref(false);
 const activeTab = ref('feed');
 const selectedPlatform = ref('');
 const showComposeDialog = ref(false);
 const showConnectDialog = ref(false);
 
-const newPost = ref({ content: '', platforms: ['Twitter'], date: '', time: '' });
+const newPost = ref({ content: '', platforms: [] as string[], date: '', time: '' });
 
-const socialAccounts = ref([
-  { platform: 'Twitter', icon: 'ph:twitter-logo-bold', iconColor: 'text-blue-400', followers: '12.5K', connected: true },
-  { platform: 'LinkedIn', icon: 'ph:linkedin-logo-bold', iconColor: 'text-blue-600', followers: '8.2K', connected: true },
-  { platform: 'Facebook', icon: 'ph:facebook-logo-bold', iconColor: 'text-blue-500', followers: '15.3K', connected: true },
-  { platform: 'Instagram', icon: 'ph:instagram-logo-bold', iconColor: 'text-pink-400', followers: '6.8K', connected: false },
-  { platform: 'YouTube', icon: 'ph:youtube-logo-bold', iconColor: 'text-red-500', followers: '2.1K', connected: false }
-]);
+// ── Platform display helpers (static mapping) ──────────────────────────────────
+const platformMeta: Record<string, { icon: string; iconColor: string }> = {
+  TWITTER:    { icon: 'ph:twitter-logo-bold',    iconColor: 'text-blue-400' },
+  LINKEDIN:   { icon: 'ph:linkedin-logo-bold',   iconColor: 'text-blue-600' },
+  FACEBOOK:   { icon: 'ph:facebook-logo-bold',   iconColor: 'text-blue-500' },
+  INSTAGRAM:  { icon: 'ph:instagram-logo-bold',  iconColor: 'text-pink-400' },
+  TIKTOK:     { icon: 'ph:tiktok-logo-bold',     iconColor: 'text-slate-200' },
+  YOUTUBE:    { icon: 'ph:youtube-logo-bold',     iconColor: 'text-red-500' }
+};
 
-const mentions = ref([
-  {
-    id: 1,
-    author: 'Tech Arabia',
-    handle: 'techarabia',
-    platform: 'Twitter',
-    content: 'Just switched to @habortech CRM and the automation features are incredible! Saved us 10 hours/week already. #CRM #SaaS',
-    likes: 45,
-    comments: 12,
-    shares: 8,
-    sentiment: 'positive',
-    isLead: false,
-    timeAgo: '2h ago'
-  },
-  {
-    id: 2,
-    author: 'Sarah Tech',
-    handle: 'sarahtech_sa',
-    platform: 'LinkedIn',
-    content:
-      'Looking for a CRM solution with strong Arabic language support. Anyone tried High Point Technology? Need recommendations for a 50-person sales team.',
-    likes: 23,
-    comments: 18,
-    shares: 5,
-    sentiment: 'neutral',
-    isLead: true,
-    timeAgo: '4h ago'
-  },
-  {
-    id: 3,
-    author: 'Digital Saudi',
-    handle: 'digitalsaudi',
-    platform: 'Twitter',
-    content:
-      'The reporting in @habortech needs work. Dashboard loading times are too slow for enterprise-level data volumes. Hope they fix this soon.',
-    likes: 15,
-    comments: 7,
-    shares: 2,
-    sentiment: 'negative',
-    isLead: false,
-    timeAgo: '6h ago'
-  },
-  {
-    id: 4,
-    author: 'Gulf Business Hub',
-    handle: 'gulfbizhub',
-    platform: 'Facebook',
-    content: 'Great webinar by the High Point Technology team on CRM best practices for SMBs in the MENA region! Excellent insights on lead scoring.',
-    likes: 89,
-    comments: 24,
-    shares: 31,
-    sentiment: 'positive',
-    isLead: false,
-    timeAgo: '1d ago'
-  },
-  {
-    id: 5,
-    author: 'Startup Riyadh',
-    handle: 'startupriyadh',
-    platform: 'Twitter',
-    content: 'Can @habortech integrate with our existing ERP system? Looking for seamless data flow between sales and operations.',
-    likes: 8,
-    comments: 3,
-    shares: 1,
-    sentiment: 'neutral',
-    isLead: true,
-    timeAgo: '1d ago'
+function formatFollowers(n: number): string {
+  if (n >= 1000000) return (n / 1000000).toFixed(1) + 'M';
+  if (n >= 1000) return (n / 1000).toFixed(1) + 'K';
+  return String(n);
+}
+
+function platformDisplayName(key: string): string {
+  const names: Record<string, string> = {
+    TWITTER: 'Twitter', LINKEDIN: 'LinkedIn', FACEBOOK: 'Facebook',
+    INSTAGRAM: 'Instagram', TIKTOK: 'TikTok', YOUTUBE: 'YouTube'
+  };
+  return names[key] || key;
+}
+
+// ── Profiles from API (raw backend records) ────────────────────────────────────
+interface SocialProfile {
+  id: number;
+  clientId: string;
+  platform: string;
+  handle: string;
+  profileUrl: string;
+  followers: number;
+  engagement: number;
+  sentiment: string;
+  lastActivity: string;
+  notes: string;
+  tenantId: string;
+}
+
+const profiles = ref<SocialProfile[]>([]);
+
+// ── Derived: socialAccounts (what the template cards iterate) ───────────────────
+const socialAccounts = computed(() => {
+  if (profiles.value.length === 0) return [];
+  // Group by platform, aggregate followers
+  const grouped: Record<string, { followers: number; connected: boolean }> = {};
+  for (const p of profiles.value) {
+    const key = p.platform.toUpperCase();
+    if (!grouped[key]) grouped[key] = { followers: 0, connected: true };
+    grouped[key].followers += p.followers || 0;
   }
-]);
+  return Object.entries(grouped).map(([key, val]) => ({
+    platform: platformDisplayName(key),
+    icon: platformMeta[key]?.icon || 'ph:globe-bold',
+    iconColor: platformMeta[key]?.iconColor || 'text-slate-400',
+    followers: formatFollowers(val.followers),
+    connected: val.connected
+  }));
+});
 
-const scheduledPosts = ref([
-  {
-    id: 1,
-    content: 'Excited to announce our new AI-powered lead scoring feature! Predict conversion probability with 94% accuracy. #AI #CRM #SalesTech',
-    platforms: ['Twitter', 'LinkedIn'],
-    scheduledDate: 'Feb 22',
-    scheduledTime: '10:00 AM',
-    status: 'SCHEDULED'
-  },
-  {
-    id: 2,
-    content: 'Join our upcoming webinar: "CRM Best Practices for Growing Businesses" - Register now! Link in bio.',
-    platforms: ['LinkedIn', 'Facebook'],
-    scheduledDate: 'Feb 24',
-    scheduledTime: '2:00 PM',
-    status: 'SCHEDULED'
-  },
-  {
-    id: 3,
-    content:
-      'Customer success story: How TechCorp increased their sales pipeline by 300% using High Point Technology CRM. Full case study coming soon!',
-    platforms: ['Twitter', 'LinkedIn', 'Facebook'],
-    scheduledDate: 'Feb 26',
-    scheduledTime: '9:00 AM',
-    status: 'SCHEDULED'
+// ── Derived: mentions (built from profiles since no separate endpoint) ─────────
+const mentions = computed(() => {
+  return profiles.value.map((p, idx) => ({
+    id: p.id,
+    author: p.handle || 'Unknown',
+    handle: p.handle || '',
+    platform: platformDisplayName(p.platform.toUpperCase()),
+    content: p.notes || '',
+    likes: p.engagement || 0,
+    comments: 0,
+    shares: 0,
+    sentiment: (p.sentiment || 'neutral').toLowerCase(),
+    isLead: !!p.clientId,
+    timeAgo: p.lastActivity ? getTimeAgo(p.lastActivity) : ''
+  })).filter(m => m.content); // only show profiles that have notes as "mentions"
+});
+
+// ── Sentiment computed from profiles ───────────────────────────────────────────
+const sentimentData = computed(() => {
+  const total = profiles.value.length || 1;
+  let pos = 0, neu = 0, neg = 0;
+  for (const p of profiles.value) {
+    const s = (p.sentiment || '').toUpperCase();
+    if (s === 'POSITIVE') pos++;
+    else if (s === 'NEGATIVE') neg++;
+    else neu++;
   }
-]);
+  return {
+    positive: Math.round((pos / total) * 100),
+    neutral: Math.round((neu / total) * 100),
+    negative: Math.round((neg / total) * 100)
+  };
+});
 
-const engagementData = ref([
-  { date: 'Feb 14', likes: 120, comments: 45, shares: 23 },
-  { date: 'Feb 15', likes: 145, comments: 52, shares: 30 },
-  { date: 'Feb 16', likes: 98, comments: 38, shares: 18 },
-  { date: 'Feb 17', likes: 167, comments: 61, shares: 42 },
-  { date: 'Feb 18', likes: 134, comments: 48, shares: 25 },
-  { date: 'Feb 19', likes: 189, comments: 72, shares: 38 },
-  { date: 'Feb 20', likes: 156, comments: 55, shares: 32 }
-]);
+// ── Analytics: engagement data derived from profiles ───────────────────────────
+const engagementData = computed(() => {
+  // Group by lastActivity date and sum engagement values
+  const byDate: Record<string, { likes: number; comments: number; shares: number }> = {};
+  for (const p of profiles.value) {
+    const dateKey = p.lastActivity
+      ? new Date(p.lastActivity).toLocaleDateString('en-US', { month: 'short', day: 'numeric' })
+      : 'Unknown';
+    if (!byDate[dateKey]) byDate[dateKey] = { likes: 0, comments: 0, shares: 0 };
+    byDate[dateKey].likes += p.engagement || 0;
+  }
+  return Object.entries(byDate).map(([date, vals]) => ({
+    date,
+    likes: vals.likes,
+    comments: vals.comments,
+    shares: vals.shares
+  }));
+});
 
-const sentimentData = ref({ positive: 62, neutral: 25, negative: 13 });
+// ── Hashtags / Influencers: computed from profile data ─────────────────────────
+const trendingHashtags = computed(() => {
+  const counts: Record<string, number> = {};
+  for (const p of profiles.value) {
+    if (!p.notes) continue;
+    const tags = p.notes.match(/#(\w+)/g);
+    if (tags) {
+      for (const t of tags) {
+        const name = t.replace('#', '');
+        counts[name] = (counts[name] || 0) + 1;
+      }
+    }
+  }
+  return Object.entries(counts)
+    .sort((a, b) => b[1] - a[1])
+    .slice(0, 10)
+    .map(([name, count]) => ({ name, count }));
+});
 
-const trendingHashtags = ref([
-  { name: 'CRM', count: 234 },
-  { name: 'SaaS', count: 189 },
-  { name: 'SalesTech', count: 156 },
-  { name: 'HPTech', count: 145 },
-  { name: 'AI', count: 123 },
-  { name: 'MENA', count: 98 },
-  { name: 'DigitalTransformation', count: 87 },
-  { name: 'B2B', count: 76 }
-]);
+const influencers = computed(() => {
+  return [...profiles.value]
+    .sort((a, b) => (b.followers || 0) - (a.followers || 0))
+    .slice(0, 5)
+    .map(p => ({
+      name: p.handle || 'Unknown',
+      handle: p.handle || '',
+      followers: formatFollowers(p.followers || 0),
+      engagementRate: p.followers > 0 ? Number(((p.engagement / p.followers) * 100).toFixed(1)) : 0
+    }));
+});
 
-const influencers = ref([
-  { name: 'Tech Arabia', handle: 'techarabia', followers: '45.2K', engagementRate: 4.8 },
-  { name: 'Gulf Business Hub', handle: 'gulfbizhub', followers: '32.1K', engagementRate: 3.9 },
-  { name: 'Saudi Startups', handle: 'saudistartups', followers: '28.7K', engagementRate: 5.2 },
-  { name: 'Digital Saudi', handle: 'digitalsaudi', followers: '21.4K', engagementRate: 3.1 }
-]);
+// ── Scheduled posts: local ref (no separate backend endpoint) ──────────────────
+const scheduledPosts = ref<{
+  id: number;
+  content: string;
+  platforms: string[];
+  scheduledDate: string;
+  scheduledTime: string;
+  status: string;
+}[]>([]);
 
+// ── Available platforms for the connect dialog ─────────────────────────────────
 const availablePlatforms = ref([
-  { name: 'Twitter/X', icon: 'ph:twitter-logo-bold', color: 'text-blue-400', description: 'Connect your Twitter account for mentions and posting' },
-  { name: 'LinkedIn', icon: 'ph:linkedin-logo-bold', color: 'text-blue-600', description: 'Monitor LinkedIn company page and personal profiles' },
-  { name: 'Facebook', icon: 'ph:facebook-logo-bold', color: 'text-blue-500', description: 'Manage Facebook pages and groups' },
-  { name: 'Instagram', icon: 'ph:instagram-logo-bold', color: 'text-pink-400', description: 'Track mentions and manage Instagram business profile' }
+  { name: 'Twitter/X', icon: 'ph:twitter-logo-bold', color: 'text-blue-400', description: 'Connect your Twitter account for mentions and posting', apiPlatform: 'TWITTER' },
+  { name: 'LinkedIn', icon: 'ph:linkedin-logo-bold', color: 'text-blue-600', description: 'Monitor LinkedIn company page and personal profiles', apiPlatform: 'LINKEDIN' },
+  { name: 'Facebook', icon: 'ph:facebook-logo-bold', color: 'text-blue-500', description: 'Manage Facebook pages and groups', apiPlatform: 'FACEBOOK' },
+  { name: 'Instagram', icon: 'ph:instagram-logo-bold', color: 'text-pink-400', description: 'Track mentions and manage Instagram business profile', apiPlatform: 'INSTAGRAM' }
 ]);
+
+// ── Helpers ─────────────────────────────────────────────────────────────────────
+function getTimeAgo(dateStr: string): string {
+  const now = new Date();
+  const past = new Date(dateStr);
+  const diffMs = now.getTime() - past.getTime();
+  const diffMins = Math.floor(diffMs / 60000);
+  if (diffMins < 60) return `${diffMins}m ago`;
+  const diffHours = Math.floor(diffMins / 60);
+  if (diffHours < 24) return `${diffHours}h ago`;
+  const diffDays = Math.floor(diffHours / 24);
+  return `${diffDays}d ago`;
+}
 
 const getPlatformIcon = (p: string) => {
   const m: Record<string, string> = {
     Twitter: 'ph:twitter-logo-bold',
     LinkedIn: 'ph:linkedin-logo-bold',
     Facebook: 'ph:facebook-logo-bold',
-    Instagram: 'ph:instagram-logo-bold'
+    Instagram: 'ph:instagram-logo-bold',
+    TikTok: 'ph:tiktok-logo-bold',
+    YouTube: 'ph:youtube-logo-bold'
   };
   return m[p] || 'ph:globe-bold';
 };
 const getPlatformColor = (p: string) => {
-  const m: Record<string, string> = { Twitter: 'text-blue-400', LinkedIn: 'text-blue-600', Facebook: 'text-blue-500', Instagram: 'text-pink-400' };
+  const m: Record<string, string> = {
+    Twitter: 'text-blue-400',
+    LinkedIn: 'text-blue-600',
+    Facebook: 'text-blue-500',
+    Instagram: 'text-pink-400',
+    TikTok: 'text-slate-200',
+    YouTube: 'text-red-500'
+  };
   return m[p] || 'text-slate-400';
 };
 
@@ -466,17 +514,75 @@ const getSentimentType = (s: string): 'success' | 'warning' | 'danger' | undefin
   return m[s];
 };
 
+// ── API: Fetch profiles ────────────────────────────────────────────────────────
+async function fetchProfiles() {
+  loading.value = true;
+  try {
+    const res = await useApiFetch('social-crm');
+    if (res?.success) {
+      profiles.value = res.body?.docs || res.body || [];
+    } else {
+      console.error('Failed to load social profiles:', res?.message);
+    }
+  } catch (e) {
+    console.error('Error fetching social profiles:', e);
+  } finally {
+    loading.value = false;
+  }
+}
+
+// ── API: Connect platform (create profile) ─────────────────────────────────────
+const connectPlatform = async (name: string) => {
+  const platformEntry = availablePlatforms.value.find(p => p.name === name);
+  const apiPlatform = platformEntry?.apiPlatform || name.toUpperCase().replace('/X', '');
+
+  try {
+    const res = await useApiFetch('social-crm', 'POST', {
+      platform: apiPlatform,
+      handle: '',
+      profileUrl: '',
+      followers: 0,
+      engagement: 0,
+      sentiment: 'NEUTRAL'
+    });
+
+    if (res?.success) {
+      ElMessage.success(`${name} connected successfully`);
+      showConnectDialog.value = false;
+      await fetchProfiles();
+    } else {
+      ElMessage.error(res?.message || `Failed to connect ${name}`);
+    }
+  } catch (e) {
+    ElMessage.error(`Error connecting ${name}`);
+  }
+};
+
+// ── API: Delete profile ────────────────────────────────────────────────────────
+const deleteProfile = async (id: number) => {
+  try {
+    const res = await useApiFetch(`social-crm/${id}`, 'DELETE');
+    if (res?.success) {
+      ElMessage.success('Profile deleted');
+      await fetchProfiles();
+    } else {
+      ElMessage.error(res?.message || 'Failed to delete profile');
+    }
+  } catch (e) {
+    ElMessage.error('Error deleting profile');
+  }
+};
+
+// ── Actions: Mentions ──────────────────────────────────────────────────────────
 const replyToMention = (m: any) => ElMessage.info(`Replying to @${m.handle}`);
 const convertToLead = (m: any) => ElMessage.success(`Converting @${m.handle} to lead`);
 const assignMention = (m: any) => ElMessage.info(`Assigning mention from @${m.handle}`);
+
+// ── Actions: Scheduled posts (local) ───────────────────────────────────────────
 const editPost = (p: any) => ElMessage.info('Editing post');
 const deletePost = (p: any) => {
   scheduledPosts.value = scheduledPosts.value.filter(sp => sp.id !== p.id);
   ElMessage.success('Post deleted');
-};
-const connectPlatform = (name: string) => {
-  ElMessage.info(`Connecting ${name}...`);
-  showConnectDialog.value = false;
 };
 
 const publishNow = () => {
@@ -486,6 +592,7 @@ const publishNow = () => {
   }
   ElMessage.success('Post published!');
   showComposeDialog.value = false;
+  newPost.value = { content: '', platforms: [], date: '', time: '' };
 };
 
 const schedulePost = () => {
@@ -493,7 +600,26 @@ const schedulePost = () => {
     ElMessage.warning('Content required');
     return;
   }
+  const id = scheduledPosts.value.length ? Math.max(...scheduledPosts.value.map(p => p.id)) + 1 : 1;
+  scheduledPosts.value.push({
+    id,
+    content: newPost.value.content,
+    platforms: [...newPost.value.platforms],
+    scheduledDate: newPost.value.date
+      ? new Date(newPost.value.date).toLocaleDateString('en-US', { month: 'short', day: 'numeric' })
+      : 'TBD',
+    scheduledTime: newPost.value.time
+      ? new Date(newPost.value.time).toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit' })
+      : 'TBD',
+    status: 'SCHEDULED'
+  });
   ElMessage.success('Post scheduled!');
   showComposeDialog.value = false;
+  newPost.value = { content: '', platforms: [], date: '', time: '' };
 };
+
+// ── Init ───────────────────────────────────────────────────────────────────────
+onMounted(() => {
+  fetchProfiles();
+});
 </script>

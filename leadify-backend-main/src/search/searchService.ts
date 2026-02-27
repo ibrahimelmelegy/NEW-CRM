@@ -1,4 +1,5 @@
-import { Op, WhereOptions, Order } from 'sequelize';
+import { Op, WhereOptions, Order, literal, fn, col } from 'sequelize';
+import { sequelize } from '../config/db';
 import Lead from '../lead/leadModel';
 import Deal from '../deal/model/dealModel';
 import Client from '../client/clientModel';
@@ -105,10 +106,22 @@ const globalSearchFieldsMap: Record<string, string[]> = {
   contract: ['title', 'signerName', 'signerEmail']
 };
 
+// Tables that have search_vector columns (after migration)
+const ftsEnabledTables: Record<string, string> = {
+  lead: 'Leads',
+  deal: 'Deals',
+  client: 'Clients',
+  opportunity: 'Opportunities',
+  project: 'Projects',
+  invoice: 'invoices',
+  contract: 'contracts'
+};
+
 interface SearchResult {
   entityType: string;
   results: any[];
   total: number;
+  highlights?: Record<string, string>[];
 }
 
 interface PaginatedResult<T> {
@@ -124,7 +137,7 @@ interface PaginatedResult<T> {
 class SearchService {
   /**
    * Global full-text search across multiple entity types.
-   * Returns results grouped by entity type.
+   * Uses PostgreSQL tsvector for ranked results when available, falls back to ILIKE.
    */
   async search(query: string, entityTypes?: string[], page: number = 1, limit: number = 10): Promise<SearchResult[]> {
     if (!query || query.trim().length === 0) {
@@ -145,7 +158,34 @@ class SearchService {
           return { entityType, results: [], total: 0 };
         }
 
-        // Build an OR condition: search across all text fields
+        const tableName = ftsEnabledTables[entityType];
+
+        // Try tsvector-based search first (ranked results)
+        if (tableName) {
+          try {
+            const tsQuery = searchTerm.split(/\s+/).filter(Boolean).join(' & ');
+            const { count, rows } = await Model.findAndCountAll({
+              where: literal(`search_vector @@ plainto_tsquery('english', ${sequelize.escape(searchTerm)})`),
+              attributes: {
+                include: [
+                  [literal(`ts_rank(search_vector, plainto_tsquery('english', ${sequelize.escape(searchTerm)}))`), 'search_rank']
+                ]
+              },
+              limit,
+              offset,
+              order: [[literal('search_rank'), 'DESC']]
+            });
+
+            if (count > 0) {
+              return { entityType, results: rows, total: count };
+            }
+            // If tsvector returned 0 results, fall through to ILIKE for partial matches
+          } catch {
+            // search_vector column may not exist yet — fall through to ILIKE
+          }
+        }
+
+        // ILIKE fallback for tables without search vectors or partial match needs
         const whereConditions: WhereOptions[] = fields.map(field => ({
           [field]: { [Op.iLike]: `%${searchTerm}%` }
         }));

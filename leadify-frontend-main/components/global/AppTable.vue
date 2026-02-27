@@ -47,8 +47,16 @@
             el-table-column(:label="$t('common.action')" min-width="150" fixed="right" v-if="!withoutAction")
               template(#default="scope")
                   slot(:data="scope.row")
-            template(#empty style="text-align: center; padding: 20px;")
-              el-empty(:description="$t('common.noData')" image="/images/empty.png")
+            template(#empty)
+              .text-center.py-8
+                Icon(:name="emptyIcon || 'ph:database'" size="48" style="color: var(--text-muted)")
+                p.mt-3.text-sm.font-medium(style="color: var(--text-muted)") {{ emptyMessage || $t('common.noData') }}
+                p.mt-1.text-xs(v-if="emptyDescription" style="color: var(--text-muted); opacity: 0.7") {{ emptyDescription }}
+                .mt-4(v-if="emptyActionHref")
+                  NuxtLink(:to="emptyActionHref")
+                    el-button(type="primary" size="default" class="!rounded-2xl")
+                      Icon(name="ph:plus-bold" size="14" class="mr-1")
+                      | {{ emptyActionLabel || 'Create' }}
         el-dialog(v-model='fileShow'   class=" !bg-transparent  !shadow-none xl:!w-1/3 lg:!w-1/3 sm:!w-[90%] !w-full " align-center='' )
                 LazyImg.m-auto(:src="srcOverlay" :key="srcOverlay" )
 
@@ -130,6 +138,30 @@ const props = defineProps({
   externalLoading: {
     type: Boolean,
     required: false,
+    default: false
+  },
+  emptyIcon: {
+    type: String,
+    default: ''
+  },
+  emptyMessage: {
+    type: String,
+    default: ''
+  },
+  emptyDescription: {
+    type: String,
+    default: ''
+  },
+  emptyActionHref: {
+    type: String,
+    default: ''
+  },
+  emptyActionLabel: {
+    type: String,
+    default: ''
+  },
+  loading: {
+    type: Boolean,
     default: false
   }
 });

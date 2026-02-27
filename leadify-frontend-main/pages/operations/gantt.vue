@@ -46,7 +46,7 @@
     </div>
 
     <!-- Gantt Chart -->
-    <div class="glass-panel rounded-2xl overflow-hidden">
+    <div v-loading="loading" class="glass-panel rounded-2xl overflow-hidden">
       <!-- Timeline Header -->
       <div class="flex border-b border-slate-800/60">
         <div class="w-72 flex-shrink-0 p-3 border-r border-slate-800/60">
@@ -130,7 +130,7 @@
       </div>
 
       <!-- Empty State -->
-      <div v-if="tasks.length === 0" class="p-12 text-center">
+      <div v-if="!loading && tasks.length === 0" class="p-12 text-center">
         <Icon name="ph:calendar-blank-bold" class="w-16 h-16 text-slate-600 mx-auto mb-4" />
         <p class="text-slate-500">No tasks scheduled. Add your first task to get started.</p>
       </div>
@@ -188,7 +188,7 @@
       </el-form>
       <template #footer>
         <el-button @click="showTaskDialog = false">Cancel</el-button>
-        <el-button type="primary" @click="addTask">Add Task</el-button>
+        <el-button type="primary" :loading="saving" @click="addTask">Add Task</el-button>
       </template>
     </el-dialog>
 
@@ -204,8 +204,10 @@
 </template>
 
 <script setup lang="ts">
-import { ref, computed } from 'vue';
+import { ref, computed, onMounted } from 'vue';
 import { ElMessage } from 'element-plus';
+import { useApiFetch } from '~/composables/useApiFetch';
+import { user } from '~/composables/useUser';
 
 definePageMeta({
   layout: 'default',
@@ -224,68 +226,124 @@ interface GanttTask {
   dependency?: number;
 }
 
+/** Color palette for auto-assigning colors to tasks */
+const GANTT_COLORS = ['#3B82F6', '#8B5CF6', '#10B981', '#EC4899', '#6366F1', '#14B8A6', '#F59E0B', '#EF4444'];
+
 const viewMode = ref('month');
 const showTaskDialog = ref(false);
+const loading = ref(false);
+const saving = ref(false);
 const cellWidth = computed(() => (viewMode.value === 'week' ? 80 : viewMode.value === 'month' ? 40 : 20));
 
 const newTask = ref({ name: '', start: '', end: '', assignee: '', progress: 0, isMilestone: false });
 
-const tasks = ref<GanttTask[]>([
-  { id: 1, name: 'Project Planning & Requirements', start: '2026-02-01', end: '2026-02-14', progress: 100, assignee: 'Ahmed F.', color: '#10B981' },
-  { id: 2, name: 'UI/UX Design Phase', start: '2026-02-10', end: '2026-02-28', progress: 85, assignee: 'Sara M.', color: '#8B5CF6', dependency: 1 },
-  {
-    id: 3,
-    name: 'Backend API Development',
-    start: '2026-02-15',
-    end: '2026-03-15',
-    progress: 60,
-    assignee: 'Omar H.',
-    color: '#3B82F6',
-    dependency: 1
-  },
-  {
-    id: 4,
-    name: 'Frontend Implementation',
-    start: '2026-02-20',
-    end: '2026-03-20',
-    progress: 40,
-    assignee: 'Fatima A.',
-    color: '#6366F1',
-    dependency: 2
-  },
-  {
-    id: 5,
-    name: 'Design Review Milestone',
-    start: '2026-02-28',
-    end: '2026-02-28',
-    progress: 0,
-    assignee: 'Khalid I.',
-    color: '#F59E0B',
-    isMilestone: true
-  },
-  { id: 6, name: 'Integration Testing', start: '2026-03-10', end: '2026-03-25', progress: 15, assignee: 'Ahmed F.', color: '#EC4899', dependency: 3 },
-  {
-    id: 7,
-    name: 'User Acceptance Testing',
-    start: '2026-03-20',
-    end: '2026-04-01',
-    progress: 0,
-    assignee: 'Sara M.',
-    color: '#14B8A6',
-    dependency: 6
-  },
-  {
-    id: 8,
-    name: 'Production Deployment',
-    start: '2026-04-01',
-    end: '2026-04-01',
-    progress: 0,
-    assignee: 'Omar H.',
-    color: '#F59E0B',
-    isMilestone: true,
-    dependency: 7
+const tasks = ref<GanttTask[]>([]);
+
+// ---------------------------------------------------------------------------
+// Helpers: parse gantt metadata stored in the Task model's tags JSONB field
+// ---------------------------------------------------------------------------
+
+interface GanttMeta {
+  color?: string;
+  isMilestone?: boolean;
+}
+
+/**
+ * Parse optional gantt metadata that is stored as a JSON string inside the
+ * `tags` array.  We look for the first element that parses as an object
+ * containing a `color` or `isMilestone` key.
+ */
+function parseGanttMeta(tags: any[]): GanttMeta {
+  if (!Array.isArray(tags)) return {};
+  for (const tag of tags) {
+    if (typeof tag === 'string') {
+      try {
+        const parsed = JSON.parse(tag);
+        if (parsed && typeof parsed === 'object' && ('color' in parsed || 'isMilestone' in parsed)) {
+          return parsed as GanttMeta;
+        }
+      } catch {
+        // not JSON -- skip
+      }
+    } else if (tag && typeof tag === 'object' && ('color' in tag || 'isMilestone' in tag)) {
+      return tag as GanttMeta;
+    }
   }
-]);
+  return {};
+}
+
+/**
+ * Derive a progress percentage from the backend Task status.
+ * The `duration` field on the Task model is used to persist an explicit
+ * progress value (0-100) when available.
+ */
+function statusToProgress(status: string, duration?: number | null): number {
+  // If duration holds an explicit progress value, honour it
+  if (typeof duration === 'number' && duration >= 0 && duration <= 100) return duration;
+  switch (status) {
+    case 'COMPLETED':
+      return 100;
+    case 'IN_PROGRESS':
+      return 50;
+    case 'CANCELLED':
+      return 0;
+    case 'PENDING':
+    default:
+      return 0;
+  }
+}
+
+/** Map a raw backend Task record to a GanttTask for the chart */
+function mapApiTaskToGantt(apiTask: any, index: number): GanttTask {
+  const meta = parseGanttMeta(apiTask.tags || []);
+  const today = new Date().toISOString().slice(0, 10);
+
+  // Determine start and end dates
+  const start = apiTask.date || (apiTask.dueDate ? apiTask.dueDate.slice(0, 10) : today);
+  const end = apiTask.dueDate ? apiTask.dueDate.slice(0, 10) : start;
+
+  return {
+    id: apiTask.id,
+    name: apiTask.title,
+    start,
+    end,
+    progress: statusToProgress(apiTask.status, apiTask.duration),
+    assignee: apiTask.assignee?.name || 'Unassigned',
+    color: meta.color || GANTT_COLORS[index % GANTT_COLORS.length]!,
+    isMilestone: meta.isMilestone || false,
+    dependency: apiTask.parentTaskId || undefined
+  };
+}
+
+// ---------------------------------------------------------------------------
+// Fetch tasks from the API
+// ---------------------------------------------------------------------------
+
+async function fetchTasks() {
+  loading.value = true;
+  try {
+    const { body, success } = await useApiFetch('tasks?limit=200&entityType=GANTT&sortBy=createdAt&sort=ASC');
+    if (success && body) {
+      const data = (body as any).docs || body;
+      if (Array.isArray(data)) {
+        tasks.value = data.map((t: any, i: number) => mapApiTaskToGantt(t, i));
+      }
+    }
+  } catch (e) {
+    console.error('Failed to fetch gantt tasks:', e);
+    ElMessage.error('Failed to load tasks');
+  } finally {
+    loading.value = false;
+  }
+}
+
+onMounted(() => {
+  fetchTasks();
+});
+
+// ---------------------------------------------------------------------------
+// Computed stats
+// ---------------------------------------------------------------------------
 
 const overdueTasks = computed(() => tasks.value.filter(t => new Date(t.end) < new Date() && t.progress < 100).length);
 const overallProgress = computed(() => {
@@ -293,13 +351,23 @@ const overallProgress = computed(() => {
   return Math.round(tasks.value.reduce((s, t) => s + t.progress, 0) / tasks.value.length);
 });
 
+// ---------------------------------------------------------------------------
 // Generate timeline dates
+// ---------------------------------------------------------------------------
+
 const timelineDates = computed(() => {
   const dates: string[] = [];
-  const start = new Date('2026-02-01');
+  // Determine the earliest start across all tasks, falling back to today
+  let earliest = new Date();
+  if (tasks.value.length) {
+    const starts = tasks.value.map(t => new Date(t.start).getTime());
+    earliest = new Date(Math.min(...starts));
+    // Pad a few days before the earliest task
+    earliest.setDate(earliest.getDate() - 3);
+  }
   const days = viewMode.value === 'week' ? 14 : viewMode.value === 'month' ? 60 : 120;
   for (let i = 0; i < days; i++) {
-    const d = new Date(start);
+    const d = new Date(earliest);
     d.setDate(d.getDate() + i);
     dates.push(d.toISOString().slice(0, 10));
   }
@@ -309,6 +377,10 @@ const timelineDates = computed(() => {
 const isToday = (d: string) => d === new Date().toISOString().slice(0, 10);
 const formatDayName = (d: string) => new Date(d).toLocaleDateString('en', { weekday: 'short' }).slice(0, 2);
 const formatDay = (d: string) => new Date(d).getDate().toString();
+
+// ---------------------------------------------------------------------------
+// Bar rendering
+// ---------------------------------------------------------------------------
 
 const getBarStyle = (task: GanttTask) => {
   const timelineStart = new Date(timelineDates.value[0]!);
@@ -334,25 +406,69 @@ const getDependencyLine = (task: GanttTask) => {
   return { x1: depEnd, x2: taskStart };
 };
 
-const addTask = () => {
+// ---------------------------------------------------------------------------
+// Add task via API
+// ---------------------------------------------------------------------------
+
+function formatDateStr(val: any): string {
+  if (!val) return '';
+  if (typeof val === 'string') return val.slice(0, 10);
+  if (val instanceof Date) return val.toISOString().slice(0, 10);
+  return '';
+}
+
+const addTask = async () => {
   if (!newTask.value.name) {
     ElMessage.warning('Task name required');
     return;
   }
-  const colors = ['#3B82F6', '#8B5CF6', '#10B981', '#EC4899', '#6366F1', '#14B8A6'];
-  tasks.value.push({
-    id: Date.now(),
-    name: newTask.value.name,
-    start: newTask.value.start || '2026-03-01',
-    end: newTask.value.end || '2026-03-15',
-    progress: newTask.value.progress,
-    assignee: newTask.value.assignee || 'Unassigned',
-    color: colors[tasks.value.length % colors.length]!,
+
+  saving.value = true;
+
+  const startStr = formatDateStr(newTask.value.start) || new Date().toISOString().slice(0, 10);
+  const endStr = formatDateStr(newTask.value.end) || startStr;
+  const color = GANTT_COLORS[tasks.value.length % GANTT_COLORS.length]!;
+
+  // Derive status from progress
+  let status = 'PENDING';
+  if (newTask.value.progress >= 100) status = 'COMPLETED';
+  else if (newTask.value.progress > 0) status = 'IN_PROGRESS';
+
+  // Build gantt metadata to persist in tags
+  const ganttMeta: GanttMeta = {
+    color,
     isMilestone: newTask.value.isMilestone
-  });
-  showTaskDialog.value = false;
-  newTask.value = { name: '', start: '', end: '', assignee: '', progress: 0, isMilestone: false };
-  ElMessage.success('Task added');
+  };
+
+  const payload: Record<string, any> = {
+    title: newTask.value.name,
+    date: startStr,
+    dueDate: endStr,
+    status,
+    priority: 'MEDIUM',
+    entityType: 'GANTT',
+    duration: newTask.value.progress, // store progress percentage
+    tags: [JSON.stringify(ganttMeta)],
+    assignedTo: user.value?.id || 1
+  };
+
+  try {
+    const { body, success } = await useApiFetch('tasks', 'POST', payload);
+    if (success && body) {
+      const created = (body as any);
+      tasks.value.push(mapApiTaskToGantt(created, tasks.value.length));
+      showTaskDialog.value = false;
+      newTask.value = { name: '', start: '', end: '', assignee: '', progress: 0, isMilestone: false };
+      ElMessage.success('Task added');
+    } else {
+      ElMessage.error('Failed to create task');
+    }
+  } catch (e) {
+    console.error('Failed to add gantt task:', e);
+    ElMessage.error('Failed to create task');
+  } finally {
+    saving.value = false;
+  }
 };
 
 const editTask = (task: GanttTask) => ElMessage.info(`Editing: ${task.name}`);

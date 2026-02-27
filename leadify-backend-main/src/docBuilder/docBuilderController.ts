@@ -105,6 +105,25 @@ class DocBuilderController {
     }
   }
 
+  public async generateBulkPdf(req: AuthenticatedRequest, res: Response, next: NextFunction): Promise<void> {
+    try {
+      const { ids } = req.body;
+      const result = await docBuilderService.generateBulkPdf(ids, req.user as User);
+      wrapResult(res, result);
+    } catch (error) {
+      next(error);
+    }
+  }
+
+  public async getBrandSettings(_req: AuthenticatedRequest, res: Response, next: NextFunction): Promise<void> {
+    try {
+      const result = await docBuilderService.getBrandSettings();
+      wrapResult(res, result);
+    } catch (error) {
+      next(error);
+    }
+  }
+
   public async sendDocument(req: AuthenticatedRequest, res: Response, next: NextFunction): Promise<void> {
     try {
       const result = await docBuilderService.sendDocument(req.params.id as string, req.body, req.user as User);

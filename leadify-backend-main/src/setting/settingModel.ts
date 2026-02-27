@@ -60,6 +60,42 @@ class Setting extends Model {
     allowNull: true
   })
   public secondaryColor?: string;
+
+  @Column({
+    type: DataType.STRING,
+    allowNull: true
+  })
+  public accentColor?: string;
+
+  @Column({
+    type: DataType.STRING(100),
+    allowNull: true
+  })
+  public fontFamily?: string;
+
+  @Column({
+    type: DataType.STRING(500),
+    allowNull: true
+  })
+  public companyAddress?: string;
+
+  @Column({
+    type: DataType.STRING(50),
+    allowNull: true
+  })
+  public companyPhone?: string;
+
+  @Column({
+    type: DataType.STRING(100),
+    allowNull: true
+  })
+  public companyTaxId?: string;
+
+  @Column({
+    type: DataType.STRING(500),
+    allowNull: true
+  })
+  public brandFooterText?: string;
 }
 
 export default Setting;

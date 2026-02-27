@@ -1,12 +1,13 @@
 /**
- * Reminders & Follow-up System
+ * Reminders & Follow-up System — API-backed via Calendar Events
  * Manage scheduled reminders with auto-notification triggers.
  */
 
 import { ref, computed } from 'vue';
+import { useApiFetch } from './useApiFetch';
 
 export interface Reminder {
-  id: string;
+  id: string | number;
   title: string;
   description: string;
   type: 'follow_up' | 'payment' | 'deadline' | 'meeting' | 'custom';
@@ -18,21 +19,8 @@ export interface Reminder {
   createdAt: string;
 }
 
-const STORAGE_KEY = 'crm_reminders';
-
-function load(): Reminder[] {
-  if (typeof window === 'undefined') return [];
-  try {
-    return JSON.parse(localStorage.getItem(STORAGE_KEY) || '[]');
-  } catch {
-    return [];
-  }
-}
-function save(items: Reminder[]) {
-  if (typeof window !== 'undefined') localStorage.setItem(STORAGE_KEY, JSON.stringify(items));
-}
-
-const reminders = ref<Reminder[]>(load());
+const reminders = ref<Reminder[]>([]);
+const loading = ref(false);
 
 export function useReminders() {
   const upcoming = computed(() =>
@@ -64,37 +52,103 @@ export function useReminders() {
     urgentCount: upcoming.value.filter(r => r.priority === 'urgent').length
   }));
 
-  function addReminder(data: Omit<Reminder, 'id' | 'completed' | 'createdAt'>): Reminder {
-    const reminder: Reminder = {
-      ...data,
-      id: `rem_${Date.now()}_${Math.random().toString(36).slice(2, 6)}`,
-      completed: false,
-      createdAt: new Date().toISOString()
-    };
-    reminders.value.push(reminder);
-    save(reminders.value);
-    return reminder;
+  async function fetchReminders() {
+    loading.value = true;
+    try {
+      const { body, success } = await useApiFetch('calendar?eventType=REMINDER&limit=200');
+      if (success && body) {
+        const data = body as any;
+        const docs = data.docs || data || [];
+        reminders.value = docs.map((e: any) => ({
+          id: e.id,
+          title: e.title || '',
+          description: e.description || '',
+          type: e.color === '#ef4444' ? 'payment'
+            : e.color === '#f59e0b' ? 'deadline'
+            : e.color === '#7c3aed' ? 'meeting'
+            : e.color === '#3b82f6' ? 'follow_up'
+            : 'custom',
+          priority: e.recurrence === 'urgent' ? 'urgent'
+            : e.recurrence === 'high' ? 'high'
+            : e.recurrence === 'low' ? 'low'
+            : 'medium',
+          dueDate: e.startDate || e.createdAt,
+          completed: e.endDate && new Date(e.endDate) < new Date(e.startDate),
+          completedAt: e.endDate && new Date(e.endDate) < new Date(e.startDate) ? e.endDate : undefined,
+          relatedTo: e.location ? { type: 'custom', id: '', label: e.location } : undefined,
+          createdAt: e.createdAt
+        }));
+      }
+    } finally {
+      loading.value = false;
+    }
   }
 
-  function completeReminder(id: string) {
+  const typeColorMap: Record<string, string> = {
+    follow_up: '#3b82f6',
+    payment: '#ef4444',
+    deadline: '#f59e0b',
+    meeting: '#7c3aed',
+    custom: '#6b7280'
+  };
+
+  async function addReminder(data: Omit<Reminder, 'id' | 'completed' | 'createdAt'>): Promise<Reminder | null> {
+    const { body, success } = await useApiFetch('calendar', 'POST', {
+      title: data.title,
+      description: data.description,
+      startDate: data.dueDate,
+      endDate: data.dueDate,
+      allDay: true,
+      eventType: 'REMINDER',
+      color: typeColorMap[data.type] || '#6b7280',
+      recurrence: data.priority,
+      location: data.relatedTo?.label || ''
+    });
+    if (success) {
+      await fetchReminders();
+      return reminders.value[0] || null;
+    }
+    return null;
+  }
+
+  async function completeReminder(id: string | number) {
     const r = reminders.value.find(x => x.id === id);
     if (r) {
       r.completed = true;
       r.completedAt = new Date().toISOString();
-      save(reminders.value);
+      if (typeof id === 'number') {
+        // Mark as completed by setting endDate before startDate
+        await useApiFetch(`calendar/${id}`, 'PUT', {
+          endDate: new Date(0).toISOString(),
+          description: `[COMPLETED] ${r.description}`
+        });
+      }
     }
   }
 
-  function removeReminder(id: string) {
+  async function removeReminder(id: string | number) {
     reminders.value = reminders.value.filter(r => r.id !== id);
-    save(reminders.value);
+    if (typeof id === 'number') {
+      await useApiFetch(`calendar/${id}`, 'DELETE');
+    }
   }
 
-  function updateReminder(id: string, updates: Partial<Reminder>) {
+  async function updateReminder(id: string | number, updates: Partial<Reminder>) {
     const r = reminders.value.find(x => x.id === id);
     if (r) {
       Object.assign(r, updates);
-      save(reminders.value);
+      if (typeof id === 'number') {
+        const payload: Record<string, any> = {};
+        if (updates.title) payload.title = updates.title;
+        if (updates.description) payload.description = updates.description;
+        if (updates.dueDate) {
+          payload.startDate = updates.dueDate;
+          payload.endDate = updates.dueDate;
+        }
+        if (updates.type) payload.color = typeColorMap[updates.type] || '#6b7280';
+        if (updates.priority) payload.recurrence = updates.priority;
+        await useApiFetch(`calendar/${id}`, 'PUT', payload);
+      }
     }
   }
 
@@ -108,6 +162,8 @@ export function useReminders() {
     addReminder,
     completeReminder,
     removeReminder,
-    updateReminder
+    updateReminder,
+    fetchReminders,
+    loading
   };
 }
