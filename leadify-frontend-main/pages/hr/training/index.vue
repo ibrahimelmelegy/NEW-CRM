@@ -13,6 +13,54 @@ div
         Icon(name="ph:plus-bold" size="16")
         span.ml-1 {{ $t('hr.training.newEnrollment') || 'New Enrollment' }}
 
+  //- Training Dashboard
+  .glass-card.p-6.rounded-2xl.mb-6(v-loading="dashboardLoading")
+    .flex.items-center.gap-2.mb-4
+      Icon(name="ph:chart-pie-slice-bold" size="20" style="color: #7849ff")
+      span.text-sm.font-semibold(style="color: var(--text-primary)") Training Dashboard
+    el-row(:gutter="16")
+      el-col(:xs="12" :sm="8" :md="4")
+        .glass-card.p-4.rounded-xl.text-center
+          .flex.items-center.justify-center.mb-2
+            Icon(name="ph:graduation-cap-bold" size="20" style="color: #7849ff")
+          .text-2xl.font-bold(style="color: #7849ff") {{ dashboardData.totalPrograms }}
+          .text-xs.mt-1(style="color: var(--text-muted)") Total Programs
+      el-col(:xs="12" :sm="8" :md="4")
+        .glass-card.p-4.rounded-xl.text-center
+          .flex.items-center.justify-center.mb-2
+            Icon(name="ph:users-bold" size="20" style="color: #3b82f6")
+          .text-2xl.font-bold(style="color: #3b82f6") {{ dashboardData.activeEnrollments }}
+          .text-xs.mt-1(style="color: var(--text-muted)") Active Enrollments
+      el-col(:xs="12" :sm="8" :md="4")
+        .glass-card.p-4.rounded-xl.text-center
+          .flex.items-center.justify-center.mb-2
+            Icon(name="ph:check-circle-bold" size="20" style="color: #22c55e")
+          .text-2xl.font-bold(style="color: #22c55e") {{ dashboardData.completionRate }}%
+          .text-xs.mt-1(style="color: var(--text-muted)") Completion Rate
+      el-col(:xs="12" :sm="8" :md="4")
+        .glass-card.p-4.rounded-xl.text-center
+          .flex.items-center.justify-center.mb-2
+            Icon(name="ph:calendar-bold" size="20" style="color: #f59e0b")
+          .text-2xl.font-bold(style="color: #f59e0b") {{ dashboardData.upcoming }}
+          .text-xs.mt-1(style="color: var(--text-muted)") Upcoming Programs
+      el-col(:xs="24" :sm="8" :md="4")
+        .glass-card.p-4.rounded-xl.text-center
+          .flex.items-center.justify-center.mb-2
+            Icon(name="ph:warning-bold" size="20" style="color: #ef4444")
+          .text-2xl.font-bold(style="color: #ef4444") {{ dashboardData.overdue }}
+          .text-xs.mt-1(style="color: var(--text-muted)") Overdue
+    //- Top Categories
+    div(v-if="dashboardData.topCategories.length" class="mt-4")
+      .text-xs.font-semibold.mb-2(style="color: var(--text-muted)") Top Categories
+      .flex.flex-wrap.gap-2
+        .inline-flex.items-center.gap-1.px-3.py-1.rounded-full(
+          v-for="cat in dashboardData.topCategories"
+          :key="cat.name"
+          style="background: rgba(120, 73, 255, 0.1); border: 1px solid rgba(120, 73, 255, 0.2)"
+        )
+          span.text-xs.font-medium(style="color: #a78bfa") {{ cat.name }}
+          span.text-xs.font-bold(style="color: var(--text-primary)") ({{ cat.count }})
+
   //- Stats Cards
   .grid.grid-cols-2.gap-4.mb-6(class="lg:grid-cols-4")
     .glass-card.p-5.rounded-2xl.text-center
@@ -78,6 +126,15 @@ div
                 el-button(text type="danger" size="small" @click="handleDeleteProgram(row)")
                   Icon(name="ph:trash-bold" size="16")
 
+        .flex.justify-end.mt-4
+          el-pagination(
+            :current-page="programsPagination.page"
+            :page-size="programsPagination.limit"
+            :total="programsPagination.total"
+            layout="total, prev, pager, next"
+            @current-change="(p: number) => { programsPagination.page = p; loadData() }"
+          )
+
     //- Enrollments Tab
     el-tab-pane(:label="$t('hr.training.enrollments') || 'Enrollments'" name="enrollments")
       //- Filters
@@ -120,6 +177,15 @@ div
                   Icon(name="ph:pencil-bold" size="16")
                 el-button(text type="danger" size="small" @click="handleDeleteEnrollment(row)")
                   Icon(name="ph:trash-bold" size="16")
+
+        .flex.justify-end.mt-4
+          el-pagination(
+            :current-page="enrollmentsPagination.page"
+            :page-size="enrollmentsPagination.limit"
+            :total="enrollmentsPagination.total"
+            layout="total, prev, pager, next"
+            @current-change="(p: number) => { enrollmentsPagination.page = p; loadData() }"
+          )
 
   //- Program Dialog
   el-dialog(v-model="programDialogVisible" :title="editingProgram ? ($t('hr.training.editProgram') || 'Edit Program') : ($t('hr.training.newProgram') || 'New Program')" width="600px" destroy-on-close)
@@ -197,6 +263,7 @@ const editingProgram = ref<any>(null);
 const programSearch = ref('');
 const programStatusFilter = ref('');
 const programs = ref<any[]>([]);
+const programsPagination = reactive({ page: 1, limit: 20, total: 0 });
 
 // Enrollments state
 const enrollmentDialogVisible = ref(false);
@@ -204,9 +271,21 @@ const editingEnrollment = ref<any>(null);
 const enrollmentSearch = ref('');
 const enrollmentStatusFilter = ref('');
 const enrollments = ref<any[]>([]);
+const enrollmentsPagination = reactive({ page: 1, limit: 20, total: 0 });
 
 // Employees for enrollment select
 const employees = ref<any[]>([]);
+
+// Dashboard state
+const dashboardLoading = ref(false);
+const dashboardData = reactive({
+  totalPrograms: 0,
+  activeEnrollments: 0,
+  completionRate: 0,
+  upcoming: 0,
+  overdue: 0,
+  topCategories: [] as Array<{ name: string; count: number }>
+});
 
 const PROGRAM_STATUSES = [
   { value: 'ACTIVE', label: 'Active', type: 'success' },
@@ -443,17 +522,19 @@ async function loadData() {
   loading.value = true;
   try {
     const [programsRes, enrollmentsRes, empRes] = await Promise.all([
-      useApiFetch('hr/training/programs'),
-      useApiFetch('hr/training/enrollments'),
+      useApiFetch(`hr/training/programs?page=${programsPagination.page}&limit=${programsPagination.limit}`),
+      useApiFetch(`hr/training/enrollments?page=${enrollmentsPagination.page}&limit=${enrollmentsPagination.limit}`),
       useApiFetch('hr/employees?limit=500')
     ]);
     if (programsRes?.success && programsRes.body) {
       const data = programsRes.body as any;
-      programs.value = data.docs || data || [];
+      programs.value = data.rows || data.docs || data || [];
+      programsPagination.total = data.count ?? data.total ?? programs.value.length;
     }
     if (enrollmentsRes?.success && enrollmentsRes.body) {
       const data = enrollmentsRes.body as any;
-      enrollments.value = data.docs || data || [];
+      enrollments.value = data.rows || data.docs || data || [];
+      enrollmentsPagination.total = data.count ?? data.total ?? enrollments.value.length;
     }
     if (empRes?.success && empRes.body) {
       const data = empRes.body as any;
@@ -468,8 +549,33 @@ async function loadData() {
   }
 }
 
+// Training Dashboard fetch
+async function loadDashboard() {
+  dashboardLoading.value = true;
+  try {
+    const res = await useApiFetch('hr/training/dashboard');
+    if (res?.success && res.body) {
+      const d = res.body as any;
+      dashboardData.totalPrograms = d.totalPrograms ?? 0;
+      dashboardData.activeEnrollments = d.activeEnrollments ?? 0;
+      dashboardData.completionRate = d.completionRate ?? 0;
+      dashboardData.upcoming = d.upcoming ?? d.upcomingPrograms ?? 0;
+      dashboardData.overdue = d.overdue ?? 0;
+      dashboardData.topCategories = (d.topCategories || []).map((c: any) => ({
+        name: c.name || c.category || '--',
+        count: c.count ?? 0
+      }));
+    }
+  } catch {
+    // Dashboard data is supplementary; silently ignore errors
+  } finally {
+    dashboardLoading.value = false;
+  }
+}
+
 onMounted(() => {
   loadData();
+  loadDashboard();
 });
 </script>
 

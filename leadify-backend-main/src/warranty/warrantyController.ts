@@ -25,5 +25,41 @@ class WarrantyController {
   async updateClaim(req: AuthenticatedRequest, res: Response, next: NextFunction) {
     try { wrapResult(res, await service.updateClaim(Number(req.params.id), req.body)); } catch (e) { next(e); }
   }
+
+  // ─── New Business Logic Endpoints ────────────────────────────────────────────
+
+  async checkCoverage(req: AuthenticatedRequest, res: Response, next: NextFunction) {
+    try {
+      const warrantyId = Number(req.params.id);
+      const claimDate = req.query.claimDate as string | undefined;
+      wrapResult(res, await service.checkWarrantyCoverage(warrantyId, claimDate));
+    } catch (e) { next(e); }
+  }
+
+  async createClaimWithValidation(req: AuthenticatedRequest, res: Response, next: NextFunction) {
+    try {
+      wrapResult(res, await service.createClaimWithValidation(req.body, (req.user as any)?.tenantId), 201);
+    } catch (e: any) {
+      if (e.statusCode === 400) {
+        return res.status(400).send({ success: false, message: e.message, coverage: e.coverage });
+      }
+      next(e);
+    }
+  }
+
+  async getExpiringWarranties(req: AuthenticatedRequest, res: Response, next: NextFunction) {
+    try {
+      const tenantId = (req.user as any)?.tenantId;
+      const daysAhead = req.query.daysAhead ? Number(req.query.daysAhead) : 30;
+      wrapResult(res, await service.getExpiringWarranties(tenantId, daysAhead));
+    } catch (e) { next(e); }
+  }
+
+  async getWarrantyAnalytics(req: AuthenticatedRequest, res: Response, next: NextFunction) {
+    try {
+      const tenantId = (req.user as any)?.tenantId;
+      wrapResult(res, await service.getWarrantyAnalytics(tenantId));
+    } catch (e) { next(e); }
+  }
 }
 export default new WarrantyController();

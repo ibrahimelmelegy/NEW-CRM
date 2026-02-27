@@ -61,9 +61,11 @@ div
         el-table-column(:label="$t('marketing.abTesting.confidence') || 'Confidence'" prop="confidence" width="130" align="center")
           template(#default="{ row }")
             span.text-sm.font-bold(:style="{ color: row.confidence >= 95 ? '#22c55e' : row.confidence >= 80 ? '#f59e0b' : 'var(--text-muted)' }") {{ row.confidence != null ? row.confidence + '%' : '--' }}
-        el-table-column(:label="$t('common.actions') || 'Actions'" width="120" align="center")
+        el-table-column(:label="$t('common.actions') || 'Actions'" width="180" align="center")
           template(#default="{ row }")
             .flex.items-center.justify-center.gap-1(@click.stop)
+              el-button(text size="small" type="success" @click.stop="openResultsDialog(row)" :disabled="row.status === 'DRAFT'")
+                Icon(name="ph:chart-line-bold" size="16")
               el-button(text size="small" type="primary" @click.stop="openEditDialog(row)")
                 Icon(name="ph:pencil-bold" size="16")
               el-button(text size="small" type="danger" @click.stop="handleDelete(row)")
@@ -72,6 +74,15 @@ div
       .text-center.py-8(v-if="!filteredData.length && !loading")
         Icon(name="ph:flask" size="48" style="color: var(--text-muted)")
         p.text-sm.mt-2(style="color: var(--text-muted)") {{ $t('common.noData') || 'No data found' }}
+
+      .flex.justify-end.mt-4
+        el-pagination(
+          :current-page="pagination.page"
+          :page-size="pagination.limit"
+          :total="pagination.total"
+          layout="total, prev, pager, next"
+          @current-change="(p: number) => { pagination.page = p; fetchData() }"
+        )
 
   //- Create / Edit Dialog
   el-dialog(v-model="dialogVisible" :title="editingItem ? ($t('common.edit') || 'Edit') : ($t('marketing.abTesting.newTest') || 'New Test')" width="600px" destroy-on-close)
@@ -97,10 +108,70 @@ div
     template(#footer)
       el-button(@click="dialogVisible = false") {{ $t('common.cancel') || 'Cancel' }}
       el-button(type="primary" @click="handleSave" :loading="saving") {{ $t('common.save') || 'Save' }}
+
+  //- Results Dialog
+  el-dialog(v-model="resultsDialogVisible" :title="($t('marketing.abTesting.results') || 'Test Results') + (selectedTest ? ' - ' + selectedTest.name : '')" width="720px" destroy-on-close)
+    .flex.items-center.justify-center.py-8(v-if="loadingResults")
+      el-icon.is-loading(:size="24" style="color: var(--accent-color, #7849ff)")
+    template(v-else-if="testResults")
+      //- Statistical Significance & Confidence
+      .glass-card.p-5.mb-6
+        .flex.items-center.justify-between.mb-4
+          .flex.items-center.gap-3
+            h4.text-base.font-bold(style="color: var(--text-primary)") {{ $t('marketing.abTesting.statisticalAnalysis') || 'Statistical Analysis' }}
+            el-tag(
+              :type="testResults.isSignificant ? 'success' : 'info'"
+              size="default"
+              effect="dark"
+              round
+            ) {{ testResults.isSignificant ? ($t('marketing.abTesting.significant') || 'Significant') : ($t('marketing.abTesting.notSignificant') || 'Not Significant') }}
+          .text-right
+            p.text-xs.uppercase.tracking-wider.mb-1(style="color: var(--text-muted)") {{ $t('marketing.abTesting.confidence') || 'Confidence Level' }}
+            p.text-2xl.font-bold(:style="{ color: testResults.confidence >= 95 ? '#22c55e' : testResults.confidence >= 80 ? '#f59e0b' : 'var(--text-muted)' }") {{ testResults.confidence != null ? testResults.confidence.toFixed(1) + '%' : '--' }}
+
+      //- Variants Table
+      .glass-card.p-5.mb-6
+        h4.text-base.font-bold.mb-4(style="color: var(--text-primary)") {{ $t('marketing.abTesting.variantResults') || 'Variant Results' }}
+        el-table(:data="testResults.variants || []" style="width: 100%" stripe)
+          el-table-column(:label="$t('marketing.abTesting.variant') || 'Variant'" prop="name" min-width="150")
+            template(#default="{ row }")
+              .flex.items-center.gap-2
+                span.text-sm.font-semibold(style="color: var(--text-primary)") {{ row.name }}
+                el-tag(v-if="testResults.winner === row.name" type="success" size="small" effect="dark" round)
+                  Icon(name="ph:trophy-bold" size="12" class="mr-1")
+                  | {{ $t('marketing.abTesting.winner') || 'Winner' }}
+          el-table-column(:label="$t('marketing.abTesting.impressions') || 'Impressions'" prop="impressions" width="140" align="center")
+            template(#default="{ row }")
+              span.text-sm.font-bold(style="color: var(--text-primary)") {{ (row.impressions || 0).toLocaleString() }}
+          el-table-column(:label="$t('marketing.abTesting.conversions') || 'Conversions'" prop="conversions" width="140" align="center")
+            template(#default="{ row }")
+              span.text-sm.font-bold(style="color: #3b82f6") {{ (row.conversions || 0).toLocaleString() }}
+          el-table-column(:label="$t('marketing.abTesting.conversionRate') || 'Conversion Rate'" width="160" align="center")
+            template(#default="{ row }")
+              .flex.items-center.justify-center.gap-2
+                el-progress(
+                  :percentage="row.impressions ? Math.round((row.conversions / row.impressions) * 10000) / 100 : 0"
+                  :stroke-width="8"
+                  :show-text="false"
+                  :color="row.impressions && (row.conversions / row.impressions) >= 0.05 ? '#22c55e' : '#f59e0b'"
+                  style="width: 60px"
+                )
+                span.text-sm.font-bold(:style="{ color: row.impressions && (row.conversions / row.impressions) >= 0.05 ? '#22c55e' : '#f59e0b' }") {{ row.impressions ? ((row.conversions / row.impressions) * 100).toFixed(2) : '0.00' }}%
+
+      //- Declare Winner
+      .flex.justify-center(v-if="selectedTest && selectedTest.status !== 'DRAFT' && !selectedTest.winner")
+        el-button(type="success" size="large" class="!rounded-2xl" @click="declareWinner" :loading="declaringWinner")
+          Icon(name="ph:trophy-bold" size="16" class="mr-1")
+          | {{ $t('marketing.abTesting.declareWinner') || 'Declare Winner' }}
+
+    template(v-else)
+      .text-center.py-8
+        Icon(name="ph:chart-line" size="48" style="color: var(--text-muted)")
+        p.text-sm.mt-2(style="color: var(--text-muted)") {{ $t('marketing.abTesting.noResults') || 'No results available yet' }}
 </template>
 
 <script setup lang="ts">
-import { ref, computed, onMounted } from 'vue';
+import { ref, reactive, computed, onMounted } from 'vue';
 import { ElMessage, ElMessageBox } from 'element-plus';
 
 definePageMeta({ middleware: 'permissions' });
@@ -111,10 +182,16 @@ const t = $i18n.t;
 const loading = ref(false);
 const saving = ref(false);
 const dialogVisible = ref(false);
+const resultsDialogVisible = ref(false);
+const loadingResults = ref(false);
+const declaringWinner = ref(false);
 const editingItem = ref<any>(null);
+const selectedTest = ref<any>(null);
+const testResults = ref<any>(null);
 const search = ref('');
 const filterStatus = ref('');
 const items = ref<any[]>([]);
+const pagination = reactive({ page: 1, limit: 20, total: 0 });
 
 const typeOptions = [
   { label: 'Email', value: 'EMAIL' },
@@ -200,9 +277,11 @@ function handleRowClick(row: any) {
 async function fetchData() {
   loading.value = true;
   try {
-    const res = await useApiFetch('ab-tests');
+    const res = await useApiFetch(`ab-tests?page=${pagination.page}&limit=${pagination.limit}`);
     if (res.success && res.body) {
-      items.value = Array.isArray(res.body) ? res.body : (res.body as any).docs || [];
+      const data = res.body as any;
+      items.value = data.rows || data.docs || (Array.isArray(data) ? data : []);
+      pagination.total = data.count ?? data.total ?? items.value.length;
     }
   } catch (err) {
     ElMessage.error(t('common.error') || 'Failed to load data');
@@ -289,6 +368,48 @@ async function handleDelete(item: any) {
     }
   } catch {
     // User cancelled
+  }
+}
+
+// Results
+async function openResultsDialog(test: any) {
+  selectedTest.value = test;
+  testResults.value = null;
+  resultsDialogVisible.value = true;
+  loadingResults.value = true;
+  try {
+    const res = await useApiFetch(`ab-tests/${test.id}/results`);
+    if (res.success && res.body) {
+      testResults.value = res.body;
+    }
+  } catch {
+    ElMessage.error(t('common.error') || 'Failed to load results');
+  } finally {
+    loadingResults.value = false;
+  }
+}
+
+async function declareWinner() {
+  if (!selectedTest.value) return;
+  try {
+    await ElMessageBox.confirm(
+      t('marketing.abTesting.confirmDeclareWinner') || 'Are you sure you want to declare the winner based on the current results? This action cannot be undone.',
+      t('common.warning') || 'Warning',
+      { type: 'warning', confirmButtonText: t('marketing.abTesting.declareWinner') || 'Declare Winner', cancelButtonText: t('common.cancel') || 'Cancel' }
+    );
+    declaringWinner.value = true;
+    const res = await useApiFetch(`ab-tests/${selectedTest.value.id}/declare-winner`, 'PUT');
+    if (res.success) {
+      ElMessage.success(t('marketing.abTesting.winnerDeclared') || 'Winner declared successfully');
+      resultsDialogVisible.value = false;
+      await fetchData();
+    } else {
+      ElMessage.error(res.message || t('common.error') || 'Failed to declare winner');
+    }
+  } catch {
+    // User cancelled
+  } finally {
+    declaringWinner.value = false;
   }
 }
 

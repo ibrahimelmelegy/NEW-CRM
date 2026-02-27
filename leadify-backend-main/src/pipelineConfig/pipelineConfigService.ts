@@ -2,6 +2,17 @@ import PipelineStage from './pipelineConfigModel';
 import BaseError from '../utils/error/base-http-exception';
 import { ERRORS } from '../utils/error/errors';
 
+/**
+ * Transition rule derived from pipeline stage configuration.
+ * Each rule describes an allowed move from one stage to another.
+ */
+interface TransitionRule {
+  fromStage: string;
+  toStage: string;
+  fromOrder: number;
+  toOrder: number;
+}
+
 class PipelineConfigService {
   async getStages(entityType?: string): Promise<PipelineStage[]> {
     const where: any = {};
@@ -40,6 +51,104 @@ class PipelineConfigService {
       await PipelineStage.update({ order: i + 1 }, { where: { id: stageIds[i] } });
     }
     return this.getStages(entityType);
+  }
+
+  /**
+   * Returns allowed stage transitions derived from pipeline configuration.
+   *
+   * The default rule set allows:
+   *   - Forward transitions: any stage can move to the next stage in order.
+   *   - Backward transitions: any stage can move to the previous stage in order.
+   *   - Lost/cancelled: any non-terminal stage can move to an isLost stage.
+   *   - Reopen: an isLost stage can move back to the first (isDefault) stage.
+   *
+   * NOTE: This does not yet replace the hardcoded DEAL_STAGE_TRANSITIONS or
+   * OPP_STAGE_TRANSITIONS maps in the respective services. It provides the
+   * infrastructure so that pipeline config can override defaults in the future
+   * when a tenant has customized their pipeline stages.
+   */
+  async getTransitionRules(entityType: string): Promise<TransitionRule[]> {
+    const stages = await this.getStages(entityType);
+    if (stages.length === 0) return [];
+
+    const rules: TransitionRule[] = [];
+
+    for (let i = 0; i < stages.length; i++) {
+      const current = stages[i];
+
+      // Terminal stages (isWon) have no outgoing transitions
+      if (current.isWon) continue;
+
+      // Forward transition to next stage in order
+      if (i + 1 < stages.length) {
+        const next = stages[i + 1];
+        rules.push({
+          fromStage: current.name,
+          toStage: next.name,
+          fromOrder: current.order,
+          toOrder: next.order
+        });
+      }
+
+      // Backward transition to previous stage in order
+      if (i - 1 >= 0 && !current.isLost) {
+        const prev = stages[i - 1];
+        rules.push({
+          fromStage: current.name,
+          toStage: prev.name,
+          fromOrder: current.order,
+          toOrder: prev.order
+        });
+      }
+
+      // Any non-terminal, non-lost stage can transition to a lost stage
+      if (!current.isLost) {
+        const lostStages = stages.filter(s => s.isLost);
+        for (const lost of lostStages) {
+          // Avoid duplicate if the lost stage is already the next stage
+          if (lost.order !== (stages[i + 1]?.order)) {
+            rules.push({
+              fromStage: current.name,
+              toStage: lost.name,
+              fromOrder: current.order,
+              toOrder: lost.order
+            });
+          }
+        }
+      }
+
+      // A lost stage can reopen to the default (first) stage
+      if (current.isLost) {
+        const defaultStage = stages.find(s => s.isDefault) || stages[0];
+        rules.push({
+          fromStage: current.name,
+          toStage: defaultStage.name,
+          fromOrder: current.order,
+          toOrder: defaultStage.order
+        });
+      }
+    }
+
+    return rules;
+  }
+
+  /**
+   * Checks whether a specific stage transition is allowed based on pipeline config.
+   *
+   * NOTE: This does not yet replace the hardcoded transition validation in
+   * dealService or opportunityService. It is provided as infrastructure so that
+   * pipeline config can override the default hardcoded transitions in the future.
+   * To enable dynamic transitions, the respective service methods would call this
+   * instead of (or in addition to) their static transition maps.
+   */
+  async validateTransition(entityType: string, fromStage: string, toStage: string): Promise<boolean> {
+    const rules = await this.getTransitionRules(entityType);
+
+    // If no pipeline stages are configured for this entity type, fall back to
+    // allowing the transition (the hardcoded maps in the services will enforce).
+    if (rules.length === 0) return true;
+
+    return rules.some(rule => rule.fromStage === fromStage && rule.toStage === toStage);
   }
 }
 

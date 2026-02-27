@@ -28,5 +28,38 @@ class ShippingController {
   async deleteRate(req: AuthenticatedRequest, res: Response, next: NextFunction) {
     try { await service.deleteRate(Number(req.params.id)); wrapResult(res, { deleted: true }); } catch (e) { next(e); }
   }
+
+  // ─── New Business Logic Endpoints ────────────────────────────────────────────
+
+  async calculateRate(req: AuthenticatedRequest, res: Response, next: NextFunction) {
+    try {
+      const { weight, zone } = req.query as any;
+      if (!weight) return res.status(400).send({ success: false, message: 'weight query param is required' });
+      wrapResult(res, await service.calculateShippingRate(Number(weight), zone, (req.user as any)?.tenantId));
+    } catch (e) { next(e); }
+  }
+
+  async updateShipmentStatus(req: AuthenticatedRequest, res: Response, next: NextFunction) {
+    try {
+      const { status } = req.body;
+      if (!status) return res.status(400).send({ success: false, message: 'status is required in the request body' });
+      wrapResult(res, await service.updateShipmentStatus(Number(req.params.id), status));
+    } catch (e) { next(e); }
+  }
+
+  async getShipmentTracking(req: AuthenticatedRequest, res: Response, next: NextFunction) {
+    try {
+      const trackingNumber = req.params.trackingNumber as string;
+      if (!trackingNumber) return res.status(400).send({ success: false, message: 'trackingNumber param is required' });
+      wrapResult(res, await service.getShipmentTracking(trackingNumber));
+    } catch (e) { next(e); }
+  }
+
+  async getShippingAnalytics(req: AuthenticatedRequest, res: Response, next: NextFunction) {
+    try {
+      const tenantId = (req.user as any)?.tenantId;
+      wrapResult(res, await service.getShippingAnalytics(tenantId));
+    } catch (e) { next(e); }
+  }
 }
 export default new ShippingController();

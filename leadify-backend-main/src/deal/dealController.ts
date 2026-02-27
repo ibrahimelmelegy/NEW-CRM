@@ -107,6 +107,41 @@ class DealController {
       next(error);
     }
   }
+
+  public async getWeightedPipeline(req: AuthenticatedRequest, res: Response, next: NextFunction): Promise<void> {
+    try {
+      const tenantId = (req.user as User).tenantId || undefined;
+      const responseFromService = await dealService.getWeightedPipeline(tenantId);
+      wrapResult(res, responseFromService);
+    } catch (error) {
+      next(error);
+    }
+  }
+
+  public async getStaleDealAlerts(req: AuthenticatedRequest, res: Response, next: NextFunction): Promise<void> {
+    try {
+      const tenantId = (req.user as User).tenantId || undefined;
+      const staleDays = req.query.staleDays ? Number(req.query.staleDays) : 14;
+      const responseFromService = await dealService.getStaleDealAlerts(tenantId, staleDays);
+      wrapResult(res, responseFromService);
+    } catch (error) {
+      next(error);
+    }
+  }
+
+  public async getWinLossAnalysis(req: AuthenticatedRequest, res: Response, next: NextFunction): Promise<void> {
+    try {
+      const tenantId = (req.user as User).tenantId || undefined;
+      const period = {
+        from: req.query.from as string | undefined,
+        to: req.query.to as string | undefined
+      };
+      const responseFromService = await dealService.getWinLossAnalysis(tenantId, period);
+      wrapResult(res, responseFromService);
+    } catch (error) {
+      next(error);
+    }
+  }
 }
 
 export default new DealController();

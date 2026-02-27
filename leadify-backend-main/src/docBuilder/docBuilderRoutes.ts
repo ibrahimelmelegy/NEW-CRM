@@ -195,6 +195,43 @@ router.post('/:id/send', authenticateUser, HasPermission([DocBuilderPermissionsE
 
 /**
  * @swagger
+ * /api/doc-builder/{id}/request-approval:
+ *   post:
+ *     summary: Request approval for a document
+ *     tags: [DocBuilder]
+ *     security:
+ *       - bearerAuth: []
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         schema:
+ *           type: string
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             required:
+ *               - approverId
+ *             properties:
+ *               approverId:
+ *                 type: integer
+ *                 description: The user ID of the approver
+ *     responses:
+ *       200:
+ *         description: Approval requested successfully
+ */
+router.post(
+  '/:id/request-approval',
+  authenticateUser,
+  HasPermission([DocBuilderPermissionsEnum.EDIT_DOCUMENTS]),
+  docBuilderController.requestApproval
+);
+
+/**
+ * @swagger
  * /api/doc-builder/{id}/versions/{versionId}/restore:
  *   post:
  *     summary: Restore a previous version
@@ -256,6 +293,79 @@ router.post(
  *       200:
  *         description: Status updated successfully
  */
+/**
+ * @swagger
+ * /api/doc-builder/{id}/approve:
+ *   put:
+ *     summary: Approve a document (must be the assigned approver)
+ *     tags: [DocBuilder]
+ *     security:
+ *       - bearerAuth: []
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         schema:
+ *           type: string
+ *     requestBody:
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             properties:
+ *               comments:
+ *                 type: string
+ *                 description: Optional approval comments
+ *     responses:
+ *       200:
+ *         description: Document approved successfully
+ *       403:
+ *         description: Not the assigned approver
+ */
+router.put(
+  '/:id/approve',
+  authenticateUser,
+  docBuilderController.approveDocument
+);
+
+/**
+ * @swagger
+ * /api/doc-builder/{id}/reject:
+ *   put:
+ *     summary: Reject a document (must be the assigned approver)
+ *     tags: [DocBuilder]
+ *     security:
+ *       - bearerAuth: []
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         schema:
+ *           type: string
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             required:
+ *               - reason
+ *             properties:
+ *               reason:
+ *                 type: string
+ *                 description: Rejection reason
+ *     responses:
+ *       200:
+ *         description: Document rejected successfully
+ *       403:
+ *         description: Not the assigned approver
+ */
+router.put(
+  '/:id/reject',
+  authenticateUser,
+  docBuilderController.rejectDocument
+);
+
 router.put(
   '/:id/status',
   authenticateUser,

@@ -40,6 +40,54 @@ class PerformanceController {
       wrapResult(res, { deleted: true });
     } catch (e) { next(e); }
   }
+
+  async calculateRating(req: AuthenticatedRequest, res: Response, next: NextFunction) {
+    try {
+      const result = await performanceService.calculateOverallRating(Number(req.params.id));
+      wrapResult(res, result);
+    } catch (e) { next(e); }
+  }
+
+  async getDistribution(req: AuthenticatedRequest, res: Response, next: NextFunction) {
+    try {
+      const tenantId = (req.user as any)?.tenantId;
+      const result = await performanceService.getPerformanceDistribution(tenantId, req.query.period as string);
+      wrapResult(res, result);
+    } catch (e) { next(e); }
+  }
+
+  async getTeamPerformance(req: AuthenticatedRequest, res: Response, next: NextFunction) {
+    try {
+      const result = await performanceService.getTeamPerformance(
+        req.params.managerId as string,
+        req.query.period as string
+      );
+      wrapResult(res, result);
+    } catch (e) { next(e); }
+  }
+
+  async comparePerformance(req: AuthenticatedRequest, res: Response, next: NextFunction) {
+    try {
+      const periods = (req.query.periods as string || '').split(',').filter(Boolean);
+      const result = await performanceService.comparePerformance(Number(req.params.employeeId), periods);
+      wrapResult(res, result);
+    } catch (e) { next(e); }
+  }
+
+  async submitReview(req: AuthenticatedRequest, res: Response, next: NextFunction) {
+    try {
+      const result = await performanceService.submitReview(Number(req.params.id));
+      wrapResult(res, result);
+    } catch (e) { next(e); }
+  }
+
+  async approveReview(req: AuthenticatedRequest, res: Response, next: NextFunction) {
+    try {
+      const approverId = (req.user as any)?.id;
+      const result = await performanceService.approveReview(Number(req.params.id), approverId);
+      wrapResult(res, result);
+    } catch (e) { next(e); }
+  }
 }
 
 export default new PerformanceController();

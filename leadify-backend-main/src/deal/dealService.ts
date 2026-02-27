@@ -32,6 +32,34 @@ import projectService from '../project/projectService';
 import { ProjectCategoryEnum, ProjectStatusEnum } from '../project/projectEnum';
 import { tenantWhere, tenantCreate } from '../utils/tenantScope';
 import { clampPagination } from '../utils/pagination';
+import { io } from '../server';
+
+/**
+ * Defines which stage transitions are allowed for deals.
+ * Key = current stage, Value = array of stages that can be transitioned to.
+ * CONVERTED is an internal stage set during lead conversion and cannot be manually entered.
+ */
+const DEAL_STAGE_TRANSITIONS: Record<string, string[]> = {
+  [DealStageEnums.PROGRESS]: [DealStageEnums.NEGOTIATION, DealStageEnums.CLOSED, DealStageEnums.CANCELLED],
+  [DealStageEnums.NEGOTIATION]: [DealStageEnums.PROGRESS, DealStageEnums.CLOSED, DealStageEnums.CANCELLED],
+  [DealStageEnums.CLOSED]: [DealStageEnums.ARCHIVED],
+  [DealStageEnums.CANCELLED]: [DealStageEnums.PROGRESS],
+  [DealStageEnums.ARCHIVED]: [],
+  [DealStageEnums.CONVERTED]: []
+};
+
+/**
+ * Auto-assigned probability percentages per deal stage.
+ * These represent the likelihood of closing the deal at each stage.
+ */
+const DEAL_STAGE_PROBABILITY: Record<string, number> = {
+  [DealStageEnums.PROGRESS]: 25,
+  [DealStageEnums.NEGOTIATION]: 50,
+  [DealStageEnums.CLOSED]: 100,
+  [DealStageEnums.CANCELLED]: 0,
+  [DealStageEnums.ARCHIVED]: 100,
+  [DealStageEnums.CONVERTED]: 100
+};
 
 class DealService {
   public async convertLeadTODeal(input: ConvertLeadToDealInput & { userId: string }, admin: User): Promise<Deal> {
@@ -345,6 +373,16 @@ class DealService {
     delete input.deletedInvoiceIds;
     delete input.invoiceDetails;
     delete input.deliveryDetails;
+
+    // If the update includes a stage change, validate the transition and auto-set probability
+    if (input.stage && input.stage !== deal.stage) {
+      if (input.stage === DealStageEnums.CONVERTED) {
+        throw new BaseError(ERRORS.SOMETHING_WENT_WRONG);
+      }
+      this.validateDealStageTransition(deal.stage, input.stage);
+      input.probability = DEAL_STAGE_PROBABILITY[input.stage] ?? 0;
+    }
+
     deal.set({
       ...input
     });
@@ -439,8 +477,10 @@ class DealService {
 
     const grouped: Record<string, Deal[]> = {
       [DealStageEnums.PROGRESS]: [],
+      [DealStageEnums.NEGOTIATION]: [],
       [DealStageEnums.CLOSED]: [],
-      [DealStageEnums.CANCELLED]: []
+      [DealStageEnums.CANCELLED]: [],
+      [DealStageEnums.ARCHIVED]: []
     };
 
     deals.forEach(deal => {
@@ -460,8 +500,17 @@ class DealService {
       throw new BaseError(ERRORS.SOMETHING_WENT_WRONG);
     }
 
-    deal.set({ stage });
+    // Validate that this stage transition is allowed
+    this.validateDealStageTransition(deal.stage, stage);
+
+    // Auto-set probability based on the new stage
+    const fromStage = deal.stage;
+    const probability = DEAL_STAGE_PROBABILITY[stage] ?? 0;
+    deal.set({ stage, probability });
     await deal.save();
+
+    // Emit detailed stage change event via Socket.io
+    io.emit('deal:stage_changed', { dealId, fromStage, toStage: stage, userId: user.id });
 
     // --> ORCHESTRATION: Auto-create Project on Deal Won (CLOSED)
     if (stage === DealStageEnums.CLOSED) {
@@ -493,6 +542,17 @@ class DealService {
     return deal;
   }
 
+  /**
+   * Validates that a deal stage transition is allowed.
+   * Throws INVALID_STAGE_TRANSITION if the transition is not permitted.
+   */
+  private validateDealStageTransition(currentStage: string, newStage: string): void {
+    const allowed = DEAL_STAGE_TRANSITIONS[currentStage];
+    if (!allowed || !allowed.includes(newStage)) {
+      throw new BaseError(ERRORS.INVALID_STAGE_TRANSITION);
+    }
+  }
+
   async dealOrError(filter: WhereOptions, joinedTables?: Includeable[]): Promise<Deal> {
     const deal = await Deal.findOne({ where: filter, include: joinedTables || [] });
     if (!deal) throw new BaseError(ERRORS.DEAL_NOT_FOUND);
@@ -509,6 +569,186 @@ class DealService {
   private async isUserAssignedToDeal(dealId: string, userId: number): Promise<boolean> {
     const assignment = await DealUsers.findOne({ where: { dealId, userId } });
     return !!assignment; // Returns true if assigned, false otherwise
+  }
+
+  // ─── Enterprise Analytics: Weighted Pipeline ──────────────────────────────
+  public async getWeightedPipeline(tenantId?: string): Promise<{
+    totalPipelineValue: number;
+    weightedValue: number;
+    dealCount: number;
+    byStage: Record<string, { count: number; totalValue: number; weightedValue: number; avgProbability: number }>;
+  }> {
+    const where: any = {
+      stage: { [Op.notIn]: [DealStageEnums.CLOSED, DealStageEnums.CANCELLED, DealStageEnums.ARCHIVED, DealStageEnums.CONVERTED] },
+      ...(tenantId ? { tenantId } : {})
+    };
+
+    const deals = await Deal.findAll({
+      where,
+      attributes: ['id', 'price', 'probability', 'stage'],
+      raw: true
+    });
+
+    const byStage: Record<string, { count: number; totalValue: number; weightedValue: number; totalProbability: number }> = {};
+    let totalPipelineValue = 0;
+    let weightedValue = 0;
+
+    for (const deal of deals) {
+      const price = Number(deal.price) || 0;
+      const prob = Number(deal.probability) || 0;
+      const weighted = price * (prob / 100);
+
+      totalPipelineValue += price;
+      weightedValue += weighted;
+
+      if (!byStage[deal.stage]) {
+        byStage[deal.stage] = { count: 0, totalValue: 0, weightedValue: 0, totalProbability: 0 };
+      }
+      byStage[deal.stage].count += 1;
+      byStage[deal.stage].totalValue += price;
+      byStage[deal.stage].weightedValue += weighted;
+      byStage[deal.stage].totalProbability += prob;
+    }
+
+    // Convert totalProbability to avgProbability
+    const result: Record<string, { count: number; totalValue: number; weightedValue: number; avgProbability: number }> = {};
+    for (const [stage, data] of Object.entries(byStage)) {
+      result[stage] = {
+        count: data.count,
+        totalValue: data.totalValue,
+        weightedValue: data.weightedValue,
+        avgProbability: data.count > 0 ? Math.round((data.totalProbability / data.count) * 100) / 100 : 0
+      };
+    }
+
+    return {
+      totalPipelineValue,
+      weightedValue: Math.round(weightedValue * 100) / 100,
+      dealCount: deals.length,
+      byStage: result
+    };
+  }
+
+  // ─── Enterprise Analytics: Stale Deal Alerts ─────────────────────────────
+  public async getStaleDealAlerts(tenantId?: string, staleDays: number = 14): Promise<any[]> {
+    const cutoffDate = new Date();
+    cutoffDate.setDate(cutoffDate.getDate() - staleDays);
+
+    const deals = await Deal.findAll({
+      where: {
+        stage: { [Op.notIn]: [DealStageEnums.CLOSED, DealStageEnums.CANCELLED, DealStageEnums.ARCHIVED, DealStageEnums.CONVERTED] },
+        updatedAt: { [Op.lt]: cutoffDate },
+        ...(tenantId ? { tenantId } : {})
+      },
+      include: [
+        {
+          model: User,
+          as: 'users',
+          attributes: ['id', 'name', 'email'],
+          through: { attributes: [] }
+        }
+      ],
+      order: [['updatedAt', 'ASC']],
+      attributes: ['id', 'name', 'companyName', 'price', 'stage', 'probability', 'updatedAt', 'createdAt']
+    });
+
+    const now = new Date();
+    return deals.map(deal => {
+      const plain = deal.toJSON() as any;
+      const updatedAt = new Date(plain.updatedAt);
+      plain.daysStale = Math.floor((now.getTime() - updatedAt.getTime()) / (1000 * 60 * 60 * 24));
+      return plain;
+    });
+  }
+
+  // ─── Enterprise Analytics: Win/Loss Analysis ─────────────────────────────
+  public async getWinLossAnalysis(tenantId?: string, period?: { from?: string; to?: string }): Promise<{
+    totalWon: number;
+    totalLost: number;
+    winRate: number;
+    avgWonDealSize: number;
+    avgLostDealSize: number;
+    avgDaysToClose: number;
+    byMonth: Array<{ month: string; won: number; lost: number; winRate: number }>;
+  }> {
+    const where: any = {
+      stage: { [Op.in]: [DealStageEnums.CLOSED, DealStageEnums.CANCELLED] },
+      ...(tenantId ? { tenantId } : {})
+    };
+
+    if (period?.from || period?.to) {
+      where.updatedAt = {
+        ...(period.from && { [Op.gte]: new Date(period.from) }),
+        ...(period.to && { [Op.lte]: new Date(period.to) })
+      };
+    }
+
+    const deals = await Deal.findAll({
+      where,
+      attributes: ['id', 'price', 'stage', 'createdAt', 'updatedAt'],
+      raw: true
+    });
+
+    let totalWon = 0;
+    let totalLost = 0;
+    let wonValueSum = 0;
+    let lostValueSum = 0;
+    let totalDaysToClose = 0;
+    let wonCount = 0;
+
+    const monthMap: Record<string, { won: number; lost: number }> = {};
+
+    for (const deal of deals) {
+      const price = Number(deal.price) || 0;
+      const createdAt = new Date(deal.createdAt);
+      const updatedAt = new Date(deal.updatedAt);
+      const daysToClose = Math.floor((updatedAt.getTime() - createdAt.getTime()) / (1000 * 60 * 60 * 24));
+      const monthKey = `${updatedAt.getFullYear()}-${String(updatedAt.getMonth() + 1).padStart(2, '0')}`;
+
+      if (!monthMap[monthKey]) {
+        monthMap[monthKey] = { won: 0, lost: 0 };
+      }
+
+      if (deal.stage === DealStageEnums.CLOSED) {
+        totalWon++;
+        wonValueSum += price;
+        totalDaysToClose += daysToClose;
+        wonCount++;
+        monthMap[monthKey].won++;
+      } else if (deal.stage === DealStageEnums.CANCELLED) {
+        totalLost++;
+        lostValueSum += price;
+        monthMap[monthKey].lost++;
+      }
+    }
+
+    const totalDeals = totalWon + totalLost;
+    const winRate = totalDeals > 0 ? Math.round((totalWon / totalDeals) * 10000) / 100 : 0;
+    const avgWonDealSize = wonCount > 0 ? Math.round(wonValueSum / wonCount) : 0;
+    const avgLostDealSize = totalLost > 0 ? Math.round(lostValueSum / totalLost) : 0;
+    const avgDaysToClose = wonCount > 0 ? Math.round(totalDaysToClose / wonCount) : 0;
+
+    // Sort months chronologically
+    const byMonth = Object.entries(monthMap)
+      .sort(([a], [b]) => a.localeCompare(b))
+      .map(([month, data]) => ({
+        month,
+        won: data.won,
+        lost: data.lost,
+        winRate: (data.won + data.lost) > 0
+          ? Math.round((data.won / (data.won + data.lost)) * 10000) / 100
+          : 0
+      }));
+
+    return {
+      totalWon,
+      totalLost,
+      winRate,
+      avgWonDealSize,
+      avgLostDealSize,
+      avgDaysToClose,
+      byMonth
+    };
   }
 
   public async sendDealsExcelByEmail(query: GetPaginatedDealsInput, user: User, email: string): Promise<void> {

@@ -15,6 +15,60 @@ div.animate-fade-in
         Icon(name="ph:plus-bold" size="16" class="mr-1")
         | {{ createButtonLabel }}
 
+  //- KPI Dashboard Cards
+  .grid.gap-4.mb-6(class="grid-cols-2 md:grid-cols-4")
+    .glass-card.p-5.rounded-2xl
+      .flex.items-center.gap-3
+        .w-10.h-10.rounded-xl.flex.items-center.justify-center(style="background: rgba(120, 73, 255, 0.15)")
+          Icon(name="ph:warehouse-bold" size="20" style="color: #7849ff")
+        div
+          p.text-2xl.font-bold(style="color: var(--text-primary)") {{ kpiData.totalWarehouses }}
+          p.text-xs(style="color: var(--text-muted)") {{ $t('warehouse.totalWarehouses') || 'Total Warehouses' }}
+    .glass-card.p-5.rounded-2xl
+      .flex.items-center.gap-3
+        .w-10.h-10.rounded-xl.flex.items-center.justify-center(style="background: rgba(59, 130, 246, 0.15)")
+          Icon(name="ph:package-bold" size="20" style="color: #3b82f6")
+        div
+          p.text-2xl.font-bold(style="color: var(--text-primary)") {{ kpiData.totalStockItems }}
+          p.text-xs(style="color: var(--text-muted)") {{ $t('warehouse.totalStockItems') || 'Total Stock Items' }}
+    .glass-card.p-5.rounded-2xl
+      .flex.items-center.gap-3
+        .w-10.h-10.rounded-xl.flex.items-center.justify-center(style="background: rgba(239, 68, 68, 0.15)")
+          Icon(name="ph:warning-bold" size="20" style="color: #ef4444")
+        div
+          p.text-2xl.font-bold(style="color: #ef4444") {{ kpiData.lowStockAlerts }}
+          p.text-xs(style="color: var(--text-muted)") {{ $t('warehouse.lowStockAlerts') || 'Low Stock Alerts' }}
+    .glass-card.p-5.rounded-2xl
+      .flex.items-center.gap-3
+        .w-10.h-10.rounded-xl.flex.items-center.justify-center(style="background: rgba(245, 158, 11, 0.15)")
+          Icon(name="ph:arrows-left-right-bold" size="20" style="color: #f59e0b")
+        div
+          p.text-2xl.font-bold(style="color: #f59e0b") {{ kpiData.pendingTransfers }}
+          p.text-xs(style="color: var(--text-muted)") {{ $t('warehouse.pendingTransfers') || 'Pending Transfers' }}
+
+  //- Low Stock Alerts Panel
+  .glass-card.p-5.rounded-2xl.mb-6(v-if="lowStockItems.length")
+    .flex.items-center.justify-between.mb-4
+      h3.text-lg.font-bold(style="color: var(--text-primary)")
+        Icon(name="ph:warning-octagon-bold" size="20" class="mr-2" style="color: #ef4444")
+        | {{ $t('warehouse.lowStockAlertsPanel') || 'Low Stock Alerts' }}
+      el-tag(type="danger" size="small" effect="dark" round) {{ lowStockItems.length }} {{ $t('warehouse.items') || 'items' }}
+    .space-y-2
+      .flex.items-center.justify-between.p-3.rounded-xl(
+        v-for="(item, idx) in lowStockItems"
+        :key="idx"
+        style="background: var(--bg-elevated); border: 1px solid var(--border-default)"
+      )
+        .flex.items-center.gap-3
+          .w-9.h-9.rounded-lg.flex.items-center.justify-center(style="background: rgba(239, 68, 68, 0.1)")
+            Icon(name="ph:cube-bold" size="16" style="color: #ef4444")
+          div
+            p.text-sm.font-semibold(style="color: var(--text-primary)") {{ item.productName || item.name || '--' }}
+            p.text-xs(style="color: var(--text-muted)") {{ item.warehouseName || item.warehouse || '--' }}
+        .text-end
+          p.text-sm.font-bold(:style="{ color: (item.currentQuantity || item.quantity || 0) <= 5 ? '#ef4444' : '#f59e0b' }") {{ item.currentQuantity || item.quantity || 0 }} {{ $t('warehouse.units') || 'units' }}
+          p.text-xs(style="color: var(--text-muted)") {{ $t('warehouse.threshold') || 'Threshold' }}: {{ item.threshold || 10 }}
+
   //- Tabs
   el-tabs(v-model="activeTab" type="border-card" class="warehouse-tabs")
     //- ========== WAREHOUSES TAB ==========
@@ -76,6 +130,15 @@ div.animate-fade-in
         Icon(name="ph:warehouse" size="48" style="color: var(--text-muted)")
         p.text-sm.mt-2(style="color: var(--text-muted)") {{ $t('warehouse.noWarehouses') || 'No warehouses found' }}
 
+      .flex.justify-end.mt-4
+        el-pagination(
+          :current-page="warehousesPagination.page"
+          :page-size="warehousesPagination.limit"
+          :total="warehousesPagination.total"
+          layout="total, prev, pager, next"
+          @current-change="(p: number) => { warehousesPagination.page = p; loadWarehouses() }"
+        )
+
     //- ========== ZONES TAB ==========
     el-tab-pane(:label="$t('warehouse.zones') || 'Zones'" name="zones")
       .flex.items-center.justify-between.mb-4
@@ -113,6 +176,15 @@ div.animate-fade-in
       .text-center.py-12(v-if="!filteredZones.length && !loadingZones")
         Icon(name="ph:squares-four" size="48" style="color: var(--text-muted)")
         p.text-sm.mt-2(style="color: var(--text-muted)") {{ $t('warehouse.noZones') || 'No zones found' }}
+
+      .flex.justify-end.mt-4
+        el-pagination(
+          :current-page="zonesPagination.page"
+          :page-size="zonesPagination.limit"
+          :total="zonesPagination.total"
+          layout="total, prev, pager, next"
+          @current-change="(p: number) => { zonesPagination.page = p; loadZones() }"
+        )
 
     //- ========== TRANSFERS TAB ==========
     el-tab-pane(:label="$t('warehouse.transfers') || 'Transfers'" name="transfers")
@@ -168,6 +240,15 @@ div.animate-fade-in
       .text-center.py-12(v-if="!filteredTransfers.length && !loadingTransfers")
         Icon(name="ph:arrows-left-right" size="48" style="color: var(--text-muted)")
         p.text-sm.mt-2(style="color: var(--text-muted)") {{ $t('warehouse.noTransfers') || 'No transfers found' }}
+
+      .flex.justify-end.mt-4
+        el-pagination(
+          :current-page="transfersPagination.page"
+          :page-size="transfersPagination.limit"
+          :total="transfersPagination.total"
+          layout="total, prev, pager, next"
+          @current-change="(p: number) => { transfersPagination.page = p; loadTransfers() }"
+        )
 
   //- ========== CREATE / EDIT WAREHOUSE DIALOG ==========
   el-dialog(
@@ -275,9 +356,19 @@ const t = $i18n.t;
 const activeTab = ref('warehouses');
 const saving = ref(false);
 
+// KPI Dashboard
+const kpiData = reactive({
+  totalWarehouses: 0,
+  totalStockItems: 0,
+  lowStockAlerts: 0,
+  pendingTransfers: 0
+});
+const lowStockItems = ref<any[]>([]);
+
 // Warehouses
 const loadingWarehouses = ref(false);
 const warehouses = ref<any[]>([]);
+const warehousesPagination = reactive({ page: 1, limit: 20, total: 0 });
 const warehouseSearch = ref('');
 const warehouseDialogVisible = ref(false);
 const editingWarehouse = ref<any>(null);
@@ -293,6 +384,7 @@ const warehouseForm = reactive({
 // Zones
 const loadingZones = ref(false);
 const zones = ref<any[]>([]);
+const zonesPagination = reactive({ page: 1, limit: 20, total: 0 });
 const zoneSearch = ref('');
 const zoneDialogVisible = ref(false);
 const zoneForm = reactive({
@@ -305,6 +397,7 @@ const zoneForm = reactive({
 // Transfers
 const loadingTransfers = ref(false);
 const transfers = ref<any[]>([]);
+const transfersPagination = reactive({ page: 1, limit: 20, total: 0 });
 const transferSearch = ref('');
 const transferDialogVisible = ref(false);
 const transferForm = reactive({
@@ -380,9 +473,11 @@ const filteredTransfers = computed(() => {
 async function loadWarehouses() {
   loadingWarehouses.value = true;
   try {
-    const res = await useApiFetch('warehouse');
+    const res = await useApiFetch(`warehouse?page=${warehousesPagination.page}&limit=${warehousesPagination.limit}`);
     if (res?.success) {
-      warehouses.value = res.body?.docs || res.body || [];
+      const data = res.body as any;
+      warehouses.value = data?.rows || data?.docs || data || [];
+      warehousesPagination.total = data?.count ?? data?.total ?? warehouses.value.length;
     }
   } catch {
     // silent
@@ -455,9 +550,11 @@ async function deleteWarehouse(wh: any) {
 async function loadZones() {
   loadingZones.value = true;
   try {
-    const res = await useApiFetch('warehouse/zones');
+    const res = await useApiFetch(`warehouse/zones?page=${zonesPagination.page}&limit=${zonesPagination.limit}`);
     if (res?.success) {
-      zones.value = res.body?.docs || res.body || [];
+      const data = res.body as any;
+      zones.value = data?.rows || data?.docs || data || [];
+      zonesPagination.total = data?.count ?? data?.total ?? zones.value.length;
     }
   } catch {
     // silent
@@ -511,9 +608,11 @@ async function deleteZone(zone: any) {
 async function loadTransfers() {
   loadingTransfers.value = true;
   try {
-    const res = await useApiFetch('warehouse/transfers');
+    const res = await useApiFetch(`warehouse/transfers?page=${transfersPagination.page}&limit=${transfersPagination.limit}`);
     if (res?.success) {
-      transfers.value = res.body?.docs || res.body || [];
+      const data = res.body as any;
+      transfers.value = data?.rows || data?.docs || data || [];
+      transfersPagination.total = data?.count ?? data?.total ?? transfers.value.length;
     }
   } catch {
     // silent
@@ -562,10 +661,44 @@ async function updateTransferStatus(transfer: any) {
   }
 }
 
-onMounted(() => {
-  loadWarehouses();
-  loadZones();
-  loadTransfers();
+// KPI Computation (derived from loaded data)
+function computeKpis() {
+  kpiData.totalWarehouses = warehouses.value.length;
+  kpiData.pendingTransfers = transfers.value.filter((t: any) => t.status === 'PENDING').length;
+}
+
+// Low Stock Alerts
+async function loadLowStock() {
+  try {
+    const res = await useApiFetch('warehouse/low-stock?threshold=10');
+    if (res?.success) {
+      const data = res.body as any;
+      lowStockItems.value = data?.rows || data?.docs || data || [];
+      kpiData.lowStockAlerts = lowStockItems.value.length;
+    }
+  } catch {
+    // silent
+  }
+}
+
+// Stock Items count
+async function loadStockCount() {
+  try {
+    const res = await useApiFetch('warehouse/stock?limit=1');
+    if (res?.success) {
+      const data = res.body as any;
+      kpiData.totalStockItems = data?.count ?? data?.total ?? 0;
+    }
+  } catch {
+    // silent
+  }
+}
+
+onMounted(async () => {
+  await Promise.all([loadWarehouses(), loadZones(), loadTransfers()]);
+  computeKpis();
+  loadLowStock();
+  loadStockCount();
 });
 </script>
 

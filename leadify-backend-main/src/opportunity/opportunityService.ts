@@ -17,6 +17,34 @@ import * as ExcelJS from 'exceljs';
 import { sendEmail } from '../utils/emailHelper';
 import { tenantWhere } from '../utils/tenantScope';
 import { clampPagination } from '../utils/pagination';
+import { io } from '../server';
+
+/**
+ * Defines which stage transitions are allowed for opportunities.
+ * Key = current stage, Value = array of stages that can be transitioned to.
+ * CONVERTED is an internal stage set during deal conversion and cannot be manually entered.
+ */
+const OPP_STAGE_TRANSITIONS: Record<string, string[]> = {
+  [OpportunityStageEnums.DISCOVERY]: [OpportunityStageEnums.PROPOSAL, OpportunityStageEnums.LOST],
+  [OpportunityStageEnums.PROPOSAL]: [OpportunityStageEnums.DISCOVERY, OpportunityStageEnums.NEGOTIATION, OpportunityStageEnums.LOST],
+  [OpportunityStageEnums.NEGOTIATION]: [OpportunityStageEnums.PROPOSAL, OpportunityStageEnums.WON, OpportunityStageEnums.LOST],
+  [OpportunityStageEnums.WON]: [],
+  [OpportunityStageEnums.LOST]: [OpportunityStageEnums.DISCOVERY],
+  [OpportunityStageEnums.CONVERTED]: []
+};
+
+/**
+ * Auto-assigned probability percentages per opportunity stage.
+ * These represent the likelihood of winning the opportunity at each stage.
+ */
+const OPP_STAGE_PROBABILITY: Record<string, number> = {
+  [OpportunityStageEnums.DISCOVERY]: 10,
+  [OpportunityStageEnums.PROPOSAL]: 25,
+  [OpportunityStageEnums.NEGOTIATION]: 50,
+  [OpportunityStageEnums.WON]: 100,
+  [OpportunityStageEnums.LOST]: 0,
+  [OpportunityStageEnums.CONVERTED]: 100
+};
 
 class OpportunityService {
   async createOpportunity(input: any, admin: User): Promise<Opportunity | void> {
@@ -84,16 +112,27 @@ class OpportunityService {
     } else if (!input.users.includes(admin.id)) {
       input.users.push(admin.id);
     }
-    const opportunity = await Opportunity.create(input);
-    if (input.users && Array.isArray(input.users)) await opportunity.$set('users', input.users);
 
-    await leadService.updateLead(input.leadId, { status: LeadStatusEnums.CONVERTED }, admin);
-    for (const userId of input.users) {
-      await notificationService.sendAssignOpportunityNotification({ userId, target: opportunity.id }, opportunity, admin);
+    const transaction = await sequelize.transaction();
+    try {
+      const opportunity = await Opportunity.create(input, { transaction });
+      if (input.users && Array.isArray(input.users)) await opportunity.$set('users', input.users, { transaction });
+
+      await leadService.updateLead(input.leadId, { status: LeadStatusEnums.CONVERTED }, admin);
+
+      await transaction.commit();
+
+      // Notifications and activity logs after commit (non-transactional side effects)
+      for (const userId of input.users) {
+        await notificationService.sendAssignOpportunityNotification({ userId, target: opportunity.id }, opportunity, admin);
+      }
+      await createActivityLog('opportunity', 'create', opportunity.id, admin.id, undefined, 'Opportunity created succesfully with convert lead');
+
+      return opportunity;
+    } catch (error) {
+      await transaction.rollback();
+      throw error;
     }
-    await createActivityLog('opportunity', 'create', opportunity.id, admin.id, undefined, 'Opportunity created succesfully with convert lead');
-
-    return opportunity;
   }
 
   async updateOpportunity(id: string, input: any, user: User): Promise<Opportunity> {
@@ -107,6 +146,15 @@ class OpportunityService {
       for (const userId of users) {
         await notificationService.sendAssignOpportunityNotification({ userId, target: opportunity.id }, opportunity, user);
       }
+    }
+
+    // If the update includes a stage change, validate the transition and auto-set probability
+    if (input.stage && input.stage !== opportunity.stage) {
+      if (input.stage === OpportunityStageEnums.CONVERTED) {
+        throw new BaseError(ERRORS.SOMETHING_WENT_WRONG);
+      }
+      this.validateOpportunityStageTransition(opportunity.stage, input.stage);
+      input.probability = OPP_STAGE_PROBABILITY[input.stage] ?? 0;
     }
 
     opportunity.set(input);
@@ -173,10 +221,31 @@ class OpportunityService {
       throw new BaseError(ERRORS.SOMETHING_WENT_WRONG);
     }
 
-    opportunity.set({ stage });
+    // Validate that this stage transition is allowed
+    this.validateOpportunityStageTransition(opportunity.stage, stage);
+
+    // Auto-set probability based on the new stage
+    const fromStage = opportunity.stage;
+    const probability = OPP_STAGE_PROBABILITY[stage] ?? 0;
+    opportunity.set({ stage, probability });
     await opportunity.save();
+
+    // Emit detailed stage change event via Socket.io
+    io.emit('opportunity:stage_changed', { opportunityId: id, fromStage, toStage: stage, userId: user.id });
+
     await createActivityLog('opportunity', 'update', opportunity.id, user.id, null, `Opportunity stage changed to ${stage}`);
     return opportunity;
+  }
+
+  /**
+   * Validates that an opportunity stage transition is allowed.
+   * Throws INVALID_STAGE_TRANSITION if the transition is not permitted.
+   */
+  private validateOpportunityStageTransition(currentStage: string, newStage: string): void {
+    const allowed = OPP_STAGE_TRANSITIONS[currentStage];
+    if (!allowed || !allowed.includes(newStage)) {
+      throw new BaseError(ERRORS.INVALID_STAGE_TRANSITION);
+    }
   }
 
   async opportunityOrError(filter: WhereOptions, joinedTables?: Includeable[]): Promise<Opportunity> {

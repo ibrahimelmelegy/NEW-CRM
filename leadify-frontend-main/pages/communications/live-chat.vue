@@ -10,6 +10,37 @@ div.animate-fade-in
         Icon(name="ph:plus-bold" size="16" class="mr-1")
         | {{ $t('liveChat.newConversation') || 'New Conversation' }}
 
+  //- Metrics Bar
+  .grid.gap-4.mb-6(:class="'grid-cols-1 md:grid-cols-2 lg:grid-cols-4'")
+    .glass-card.p-4.animate-entrance
+      .flex.items-center.justify-between
+        div
+          p.text-xs.font-medium.mb-1.uppercase.tracking-wider(style="color: var(--text-muted)") {{ $t('liveChat.activeConversations') || 'Active Conversations' }}
+          p.text-2xl.font-bold(style="color: #22c55e") {{ chatMetrics.activeConversations ?? '--' }}
+        .w-12.h-12.rounded-2xl.flex.items-center.justify-center(style="background: rgba(34, 197, 94, 0.15)")
+          Icon(name="ph:chat-circle-dots-bold" size="24" style="color: #22c55e")
+    .glass-card.p-4.animate-entrance(style="animation-delay: 0.05s")
+      .flex.items-center.justify-between
+        div
+          p.text-xs.font-medium.mb-1.uppercase.tracking-wider(style="color: var(--text-muted)") {{ $t('liveChat.waitingInQueue') || 'Waiting in Queue' }}
+          p.text-2xl.font-bold(:style="{ color: queueColor }") {{ chatMetrics.waitingInQueue ?? '--' }}
+        .w-12.h-12.rounded-2xl.flex.items-center.justify-center(:style="{ background: queueColor + '15' }")
+          Icon(name="ph:queue-bold" size="24" :style="{ color: queueColor }")
+    .glass-card.p-4.animate-entrance(style="animation-delay: 0.1s")
+      .flex.items-center.justify-between
+        div
+          p.text-xs.font-medium.mb-1.uppercase.tracking-wider(style="color: var(--text-muted)") {{ $t('liveChat.avgResponseTime') || 'Avg Response Time' }}
+          p.text-2xl.font-bold(style="color: #3b82f6") {{ chatMetrics.avgResponseTime || '--' }}
+        .w-12.h-12.rounded-2xl.flex.items-center.justify-center(style="background: rgba(59, 130, 246, 0.15)")
+          Icon(name="ph:clock-bold" size="24" style="color: #3b82f6")
+    .glass-card.p-4.animate-entrance(style="animation-delay: 0.15s")
+      .flex.items-center.justify-between
+        div
+          p.text-xs.font-medium.mb-1.uppercase.tracking-wider(style="color: var(--text-muted)") {{ $t('liveChat.avgResolutionTime') || 'Avg Resolution Time' }}
+          p.text-2xl.font-bold(style="color: #8b5cf6") {{ chatMetrics.avgResolutionTime || '--' }}
+        .w-12.h-12.rounded-2xl.flex.items-center.justify-center(style="background: rgba(139, 92, 246, 0.15)")
+          Icon(name="ph:timer-bold" size="24" style="color: #8b5cf6")
+
   //- Main Chat Layout
   .chat-layout.flex.gap-4(style="height: calc(100vh - 220px)")
     //- Conversation List (Left Panel)
@@ -196,6 +227,20 @@ const selectedConversation = ref<any>(null);
 const newMessage = ref('');
 const createDialogVisible = ref(false);
 const messagesContainer = ref<HTMLElement | null>(null);
+const chatMetrics = ref<any>({
+  activeConversations: null,
+  waitingInQueue: null,
+  avgResponseTime: null,
+  avgResolutionTime: null
+});
+
+const queueColor = computed(() => {
+  const q = chatMetrics.value.waitingInQueue;
+  if (q == null) return '#6b7280';
+  if (q > 10) return '#ef4444';
+  if (q >= 5) return '#f59e0b';
+  return '#22c55e';
+});
 
 const createForm = reactive({
   visitorName: '',
@@ -401,8 +446,21 @@ async function createConversation() {
   }
 }
 
+// Metrics
+async function loadMetrics() {
+  try {
+    const res = await useApiFetch('live-chat/metrics');
+    if (res?.success && res.body) {
+      chatMetrics.value = res.body;
+    }
+  } catch {
+    // Silent - metrics are supplementary
+  }
+}
+
 onMounted(() => {
   loadConversations();
+  loadMetrics();
 });
 </script>
 

@@ -8,6 +8,16 @@
 
   StatCards(:stats="summaryStats")
 
+  //- Commission Summary Dashboard
+  .grid.gap-4.mb-6(class="grid-cols-2 md:grid-cols-4" v-if="commissionSummary")
+    .glass-card.p-5.rounded-2xl.animate-entrance(v-for="stat in dashboardStats" :key="stat.label")
+      .flex.items-center.justify-between
+        div
+          p.text-xs.font-medium.uppercase.tracking-wide(style="color: var(--text-muted)") {{ stat.label }}
+          p.text-2xl.font-bold.mt-1(:style="{ color: stat.color }") {{ stat.value }}
+        .w-10.h-10.rounded-xl.flex.items-center.justify-center(:style="{ background: stat.color + '20' }")
+          Icon(:name="stat.icon" size="20" :style="{ color: stat.color }")
+
   .glass-card.py-8.animate-entrance
     el-table(:data="items" v-loading="loading" style="width: 100%")
       el-table-column(type="index" width="50")
@@ -43,6 +53,15 @@
       template(#empty)
         el-empty(:description="$t('common.noData') || 'No commissions yet'")
 
+    .flex.justify-end.mt-4
+      el-pagination(
+        :current-page="pagination.page"
+        :page-size="pagination.limit"
+        :total="pagination.total"
+        layout="total, prev, pager, next"
+        @current-change="(p: number) => { pagination.page = p; fetchData() }"
+      )
+
   el-dialog(v-model="showDialog" :title="$t('commissions.add') || 'Add Commission'" width="500px")
     el-form(label-position="top" size="large")
       .grid.grid-cols-2.gap-4
@@ -67,6 +86,8 @@ const saving = ref(false);
 const showDialog = ref(false);
 const items = ref<any[]>([]);
 const form = reactive({ amount: 0, rate: 5, dealValue: 0, notes: '' });
+const pagination = reactive({ page: 1, limit: 20, total: 0 });
+const commissionSummary = ref<any>(null);
 
 const summaryStats = computed(() => {
   const total = items.value.reduce((s, i) => s + Number(i.amount || 0), 0);
@@ -80,13 +101,31 @@ const summaryStats = computed(() => {
   ];
 });
 
-onMounted(() => fetchData());
+const dashboardStats = computed(() => {
+  const s = commissionSummary.value;
+  if (!s) return [];
+  return [
+    { label: 'Total Earned', value: Number(s.totalEarned || 0).toLocaleString() + ' SAR', icon: 'ph:wallet-bold', color: '#7849ff' },
+    { label: 'Total Paid', value: Number(s.totalPaid || 0).toLocaleString() + ' SAR', icon: 'ph:check-circle-bold', color: '#22c55e' },
+    { label: 'Total Pending', value: Number(s.totalPending || 0).toLocaleString() + ' SAR', icon: 'ph:hourglass-bold', color: '#f59e0b' },
+    { label: 'Avg Commission Rate', value: (Number(s.avgRate || 0)).toFixed(1) + '%', icon: 'ph:percent-bold', color: '#3b82f6' }
+  ];
+});
+
+onMounted(() => {
+  fetchData();
+  fetchCommissionSummary();
+});
 
 async function fetchData() {
   loading.value = true;
   try {
-    const { body, success } = await useApiFetch('commissions?limit=100');
-    if (success && body) items.value = (body as any).docs || [];
+    const { body, success } = await useApiFetch(`commissions?page=${pagination.page}&limit=${pagination.limit}`);
+    if (success && body) {
+      const data = body as any;
+      items.value = data.rows || data.docs || [];
+      pagination.total = data.count ?? data.total ?? items.value.length;
+    }
   } finally { loading.value = false; }
 }
 
@@ -106,6 +145,21 @@ async function updateStatus(id: number, status: string) {
 async function handleDelete(id: number) {
   const { success } = await useApiFetch(`commissions/${id}`, 'DELETE');
   if (success) { ElMessage.success('Deleted'); await fetchData(); }
+}
+
+async function fetchCommissionSummary() {
+  try {
+    const { body: userData } = await useApiFetch('auth/me');
+    const userId = userData?.id;
+    if (userId) {
+      const { body, success } = await useApiFetch(`commissions/summary/${userId}`);
+      if (success && body) {
+        commissionSummary.value = body;
+      }
+    }
+  } catch {
+    // Summary fetch is non-critical; silently ignore
+  }
 }
 
 function statusType(s: string) {

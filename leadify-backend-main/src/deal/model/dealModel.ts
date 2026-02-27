@@ -40,6 +40,9 @@ class Deal extends Model {
   @Column({ type: DataType.ENUM(...Object.values(DealStageEnums)), allowNull: true })
   stage!: DealStageEnums;
 
+  @Column({ type: DataType.FLOAT, allowNull: true, defaultValue: 0 })
+  public probability?: number;
+
   @Column({ type: DataType.STRING, allowNull: true })
   cancelledReason?: string;
 

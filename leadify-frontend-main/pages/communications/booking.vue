@@ -41,6 +41,100 @@ div.animate-fade-in
           p.text-2xl.font-bold(style="color: var(--text-primary)") {{ stats.completed }}
           p.text-xs(style="color: var(--text-muted)") {{ $t('booking.completed') || 'Completed' }}
 
+  //- Upcoming Bookings
+  .glass-card.p-5.rounded-2xl.mb-6
+    .flex.items-center.justify-between.mb-4
+      h3.text-lg.font-bold(style="color: var(--text-primary)")
+        Icon(name="ph:calendar-dots-bold" size="20" class="mr-2" style="color: #7849ff")
+        | {{ $t('booking.upcomingBookings') || 'Upcoming Bookings' }}
+      el-button(size="small" text @click="loadUpcoming" :loading="loadingUpcoming")
+        Icon(name="ph:arrows-clockwise" size="14")
+    .flex.items-center.justify-center.py-6(v-if="loadingUpcoming")
+      el-icon.is-loading(:size="20" style="color: var(--accent-color, #7849ff)")
+    .space-y-3(v-else-if="upcomingBookings.length")
+      .flex.items-center.justify-between.p-3.rounded-xl(
+        v-for="(ub, idx) in upcomingBookings"
+        :key="idx"
+        style="background: var(--bg-elevated); border: 1px solid var(--border-default)"
+      )
+        .flex.items-center.gap-3
+          .w-10.h-10.rounded-xl.flex.items-center.justify-center(style="background: rgba(120, 73, 255, 0.1)")
+            Icon(name="ph:calendar-check" size="18" style="color: #7849ff")
+          div
+            p.text-sm.font-semibold(style="color: var(--text-primary)") {{ ub.clientName || '--' }}
+            p.text-xs(style="color: var(--text-muted)") {{ ub.staffName || ub.staffId || '--' }} &middot; {{ ub.type || 'MEETING' }}
+        .text-end
+          p.text-sm.font-bold(style="color: #7849ff") {{ formatDate(ub.date) }}
+          p.text-xs(style="color: var(--text-muted)") {{ ub.startTime || '--' }} - {{ ub.endTime || '--' }}
+    .text-center.py-6(v-else)
+      Icon(name="ph:calendar-blank" size="32" style="color: var(--text-muted)")
+      p.text-xs.mt-1(style="color: var(--text-muted)") {{ $t('booking.noUpcoming') || 'No upcoming bookings' }}
+
+  //- Availability Checker
+  .glass-card.p-5.rounded-2xl.mb-6
+    h3.text-lg.font-bold.mb-4(style="color: var(--text-primary)")
+      Icon(name="ph:clock-countdown-bold" size="20" class="mr-2" style="color: #3b82f6")
+      | {{ $t('booking.availabilityChecker') || 'Availability Checker' }}
+    el-row(:gutter="16" align="bottom")
+      el-col(:span="8")
+        el-form-item(:label="$t('booking.staff') || 'Staff Member'" style="margin-bottom: 0")
+          el-select(
+            v-model="availStaffId"
+            :placeholder="$t('booking.selectStaff') || 'Select Staff'"
+            style="width: 100%"
+            size="large"
+            filterable
+            clearable
+          )
+            el-option(
+              v-for="user in staffList"
+              :key="user.id"
+              :label="user.name"
+              :value="user.id"
+            )
+      el-col(:span="8")
+        el-form-item(:label="$t('booking.date') || 'Date'" style="margin-bottom: 0")
+          el-date-picker(
+            v-model="availDate"
+            type="date"
+            :placeholder="$t('booking.selectDate') || 'Select Date'"
+            style="width: 100%"
+            size="large"
+            value-format="YYYY-MM-DD"
+          )
+      el-col(:span="8")
+        el-button(
+          type="primary"
+          size="large"
+          @click="checkAvailability"
+          :loading="loadingAvailability"
+          :disabled="!availStaffId || !availDate"
+          class="!rounded-xl"
+          style="width: 100%"
+        )
+          Icon(name="ph:magnifying-glass-bold" size="16" class="mr-1")
+          | {{ $t('booking.check') || 'Check Availability' }}
+    //- Available Slots
+    .mt-4(v-if="availableSlots !== null")
+      .flex.items-center.gap-2.mb-3(v-if="availableSlots.length")
+        Icon(name="ph:check-circle-bold" size="16" style="color: #22c55e")
+        span.text-sm.font-semibold(style="color: var(--text-primary)") {{ $t('booking.availableSlots') || 'Available Time Slots' }}
+      .flex.flex-wrap.gap-2(v-if="availableSlots.length")
+        el-tag(
+          v-for="(slot, idx) in availableSlots"
+          :key="idx"
+          size="large"
+          effect="plain"
+          round
+          style="cursor: pointer"
+          @click="prefillSlot(slot)"
+        )
+          Icon(name="ph:clock" size="14" class="mr-1")
+          | {{ slot.startTime || slot.start || slot }} {{ slot.endTime ? '- ' + slot.endTime : '' }}
+      .flex.items-center.gap-2(v-else)
+        Icon(name="ph:x-circle-bold" size="16" style="color: #ef4444")
+        span.text-sm(style="color: #ef4444") {{ $t('booking.noSlots') || 'No available slots for this date' }}
+
   //- Loading
   .flex.items-center.justify-center.py-20(v-if="loading")
     el-icon.is-loading(:size="32" style="color: var(--accent-color, #7849ff)")
@@ -204,6 +298,16 @@ const form = reactive({
   notes: ''
 });
 
+// Upcoming Bookings
+const loadingUpcoming = ref(false);
+const upcomingBookings = ref<any[]>([]);
+
+// Availability Checker
+const availStaffId = ref('' as any);
+const availDate = ref('');
+const loadingAvailability = ref(false);
+const availableSlots = ref<any[] | null>(null);
+
 // Stats
 const stats = computed(() => {
   const data = bookings.value;
@@ -350,9 +454,55 @@ async function handleDelete(booking: any) {
   }
 }
 
+// Upcoming Bookings API
+async function loadUpcoming() {
+  loadingUpcoming.value = true;
+  try {
+    const res = await useApiFetch('booking?limit=5&sort=date');
+    if (res?.success) {
+      upcomingBookings.value = res.body?.docs || res.body || [];
+    }
+  } catch {
+    // silent
+  } finally {
+    loadingUpcoming.value = false;
+  }
+}
+
+// Availability Checker API
+async function checkAvailability() {
+  if (!availStaffId.value || !availDate.value) return;
+  loadingAvailability.value = true;
+  availableSlots.value = null;
+  try {
+    const res = await useApiFetch(`booking/available-slots?staffId=${availStaffId.value}&date=${availDate.value}`);
+    if (res?.success) {
+      availableSlots.value = res.body?.slots || res.body || [];
+    } else {
+      availableSlots.value = [];
+    }
+  } catch {
+    availableSlots.value = [];
+  } finally {
+    loadingAvailability.value = false;
+  }
+}
+
+function prefillSlot(slot: any) {
+  const start = slot.startTime || slot.start || (typeof slot === 'string' ? slot : '');
+  const end = slot.endTime || slot.end || '';
+  form.staffId = availStaffId.value;
+  form.date = availDate.value;
+  form.startTime = start;
+  form.endTime = end;
+  editingBooking.value = null;
+  dialogVisible.value = true;
+}
+
 onMounted(() => {
   loadBookings();
   loadStaff();
+  loadUpcoming();
 });
 </script>
 

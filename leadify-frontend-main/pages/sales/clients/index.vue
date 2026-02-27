@@ -107,6 +107,7 @@ div(class="animate-fade-in")
 <script setup lang="ts">
 import { useI18n } from 'vue-i18n';
 import { Plus } from '@element-plus/icons-vue';
+import { ElNotification, ElMessageBox } from 'element-plus';
 import { computed, reactive, ref } from 'vue';
 import PremiumPageHeader from '~/components/UI/PremiumPageHeader.vue';
 import PremiumKPICards from '~/components/UI/PremiumKPICards.vue';
@@ -132,11 +133,40 @@ const exportData = computed(() => table.data);
 
 // Bulk actions
 const selectedRows = ref<any[]>([]);
-function handleBulkDelete() {
-  selectedRows.value = [];
+async function handleBulkDelete() {
+  if (!selectedRows.value.length) return;
+  try {
+    await ElMessageBox.confirm(
+      `Are you sure you want to delete ${selectedRows.value.length} client(s)?`,
+      t('common.warning') || 'Warning',
+      { type: 'warning', confirmButtonText: t('common.delete') || 'Delete', cancelButtonText: t('common.cancel') || 'Cancel' }
+    );
+    loading.value = true;
+    const ids = selectedRows.value.map((r: any) => r.id);
+    await Promise.all(ids.map((id: any) => useApiFetch(`client/${id}`, 'DELETE')));
+    const res = await useTableFilter('client');
+    table.data = res.formattedData;
+    selectedRows.value = [];
+    ElNotification({ type: 'success', title: t('common.success'), message: `${ids.length} client(s) deleted` });
+  } catch {
+    // User cancelled or error
+  } finally {
+    loading.value = false;
+  }
 }
-function handleBulkExport() {
-  selectedRows.value = [];
+async function handleBulkExport() {
+  if (!selectedRows.value.length) return;
+  try {
+    loading.value = true;
+    const ids = selectedRows.value.map((r: any) => r.id);
+    await useApiFetch('client/export', 'POST', { ids });
+    ElNotification({ type: 'success', title: t('common.success'), message: 'Export sent to your email' });
+    selectedRows.value = [];
+  } catch {
+    ElNotification({ type: 'error', title: t('common.error'), message: 'Export failed' });
+  } finally {
+    loading.value = false;
+  }
 }
 
 const table = reactive({
@@ -219,13 +249,12 @@ const kpiMetrics = computed<KPIMetric[]>(() => {
   const data = table.data || [];
   const total = data.length;
   const active = data.filter((c: any) => c.clientStatus === 'ACTIVE' || c.status === 'ACTIVE').length;
-  const churnRisk = data.length > 5 ? 1 : 0;
+  const inactive = data.filter((c: any) => c.clientStatus === 'INACTIVE' || c.status === 'INACTIVE').length;
 
   return [
-    { label: 'Total Clients', value: total, icon: 'ph:buildings-bold', color: '#3b82f6', trend: '+4%', trendType: 'up' },
+    { label: 'Total Clients', value: total, icon: 'ph:buildings-bold', color: '#3b82f6' },
     { label: 'Active Clients', value: active, icon: 'ph:check-circle-bold', color: '#10b981' },
-    { label: 'Avg LTV', value: 'SR 125K', icon: 'ph:chart-bar-bold', color: '#f59e0b', trend: '+12%', trendType: 'up' },
-    { label: 'High Risk', value: churnRisk, icon: 'ph:warning-circle-bold', color: '#ef4444' }
+    { label: 'Inactive Clients', value: inactive, icon: 'ph:pause-circle-bold', color: '#f59e0b' }
   ];
 });
 

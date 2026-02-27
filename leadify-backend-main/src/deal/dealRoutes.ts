@@ -406,6 +406,92 @@ router.get(
 
 /**
  * @swagger
+ * /api/deal/analytics/weighted-pipeline:
+ *   get:
+ *     summary: Get weighted pipeline analytics
+ *     description: Calculate weighted pipeline value for all active deals. Returns total pipeline value, weighted value, deal count, and breakdown by stage.
+ *     tags: [Deal]
+ *     security:
+ *       - bearerAuth: []
+ *     responses:
+ *       200:
+ *         description: Weighted pipeline analytics
+ *       500:
+ *         description: Internal Server Error
+ */
+router.get(
+  '/analytics/weighted-pipeline',
+  authenticateUser,
+  HasPermission([DealPermissionsEnum.VIEW_GLOBAL_DEALS]),
+  dealController.getWeightedPipeline
+);
+
+/**
+ * @swagger
+ * /api/deal/analytics/stale-alerts:
+ *   get:
+ *     summary: Get stale deal alerts
+ *     description: Find deals that have not been updated in N days and are still active.
+ *     tags: [Deal]
+ *     security:
+ *       - bearerAuth: []
+ *     parameters:
+ *       - in: query
+ *         name: staleDays
+ *         schema:
+ *           type: integer
+ *           default: 14
+ *         description: Number of days since last update to consider a deal stale
+ *     responses:
+ *       200:
+ *         description: List of stale deals sorted by most stale first
+ *       500:
+ *         description: Internal Server Error
+ */
+router.get(
+  '/analytics/stale-alerts',
+  authenticateUser,
+  HasPermission([DealPermissionsEnum.VIEW_GLOBAL_DEALS]),
+  dealController.getStaleDealAlerts
+);
+
+/**
+ * @swagger
+ * /api/deal/analytics/win-loss:
+ *   get:
+ *     summary: Get win/loss analysis
+ *     description: Analyze won vs lost deals with win rate, average deal sizes, average time to close, and monthly breakdown.
+ *     tags: [Deal]
+ *     security:
+ *       - bearerAuth: []
+ *     parameters:
+ *       - in: query
+ *         name: from
+ *         schema:
+ *           type: string
+ *           format: date
+ *         description: Start date for analysis period (ISO 8601)
+ *       - in: query
+ *         name: to
+ *         schema:
+ *           type: string
+ *           format: date
+ *         description: End date for analysis period (ISO 8601)
+ *     responses:
+ *       200:
+ *         description: Win/loss analysis results
+ *       500:
+ *         description: Internal Server Error
+ */
+router.get(
+  '/analytics/win-loss',
+  authenticateUser,
+  HasPermission([DealPermissionsEnum.VIEW_GLOBAL_DEALS]),
+  dealController.getWinLossAnalysis
+);
+
+/**
+ * @swagger
  * /api/deal/{id}/momentum:
  *   get:
  *     summary: Get momentum score for a deal

@@ -36,43 +36,125 @@ function escapeHtml(str: string): string {
 }
 
 /**
- * Process {{#each items}}...{{/each}} blocks.
+ * Process a single {{#each}} block body for one item, replacing scoped variables
+ * and recursively handling any nested {{#each}} blocks within.
+ */
+function renderEachItem(body: string, item: any, index: number, parentData: Record<string, any>): string {
+  let rendered = body;
+
+  // Replace {{@index}} and {{@number}}
+  rendered = rendered.replace(/\{\{@index\}\}/g, String(index));
+  rendered = rendered.replace(/\{\{@number\}\}/g, String(index + 1));
+
+  // Build a merged context: parent data + current item properties (item takes priority)
+  const itemContext: Record<string, any> = { ...parentData };
+  if (typeof item === 'object' && item !== null) {
+    Object.assign(itemContext, item);
+  }
+
+  // Recursively process any nested {{#each}} blocks using the merged item context
+  rendered = processEachBlocks(rendered, itemContext);
+
+  // Replace {{this.field}} with item.field
+  rendered = rendered.replace(/\{\{this\.(\w+(?:\.\w+)*)\}\}/g, (_m: string, field: string) => {
+    const val = resolvePath(item, field);
+    return val != null ? escapeHtml(String(val)) : '';
+  });
+
+  // Replace {{field}} that matches item keys (scoped to current item)
+  if (typeof item === 'object' && item !== null) {
+    for (const key of Object.keys(item)) {
+      const regex = new RegExp(`\\{\\{${key}\\}\\}`, 'g');
+      rendered = rendered.replace(regex, item[key] != null ? escapeHtml(String(item[key])) : '');
+    }
+  }
+
+  return rendered;
+}
+
+/**
+ * Process {{#each items}}...{{/each}} blocks with support for nested loops.
  * Inside the block, {{this.field}} or {{field}} references the current item.
  * {{@index}} gives the 0-based index, {{@number}} gives 1-based.
+ *
+ * Nesting strategy: the regex matches only leaf-level (innermost) blocks.
+ * For each outer block, after expanding its items, inner {{#each}} blocks are
+ * recursively processed with the child item's data merged into the context.
+ * This supports at least 2 levels of nesting (e.g. items -> item.subItems).
  */
 function processEachBlocks(template: string, data: Record<string, any>): string {
-  const eachRegex = /\{\{#each\s+(\w+(?:\.\w+)*)\}\}([\s\S]*?)\{\{\/each\}\}/g;
+  // Match outermost {{#each}} blocks by finding the opening tag and then
+  // manually locating the matching {{/each}} (accounting for nesting depth).
+  const openTag = /\{\{#each\s+(\w+(?:\.\w+)*)\}\}/g;
 
-  return template.replace(eachRegex, (_match, arrayPath: string, body: string) => {
-    const items = resolvePath(data, arrayPath);
-    if (!Array.isArray(items) || items.length === 0) return '';
+  let result = '';
+  let lastIndex = 0;
+  let match: RegExpExecArray | null;
 
-    return items
-      .map((item, index) => {
-        // Create a context where item fields are accessible directly and via "this."
-        let rendered = body;
-        // Replace {{@index}} and {{@number}}
-        rendered = rendered.replace(/\{\{@index\}\}/g, String(index));
-        rendered = rendered.replace(/\{\{@number\}\}/g, String(index + 1));
+  while ((match = openTag.exec(template)) !== null) {
+    const arrayPath = match[1];
+    const bodyStart = match.index + match[0].length;
 
-        // Replace {{this.field}} with item.field
-        rendered = rendered.replace(/\{\{this\.(\w+(?:\.\w+)*)\}\}/g, (_m: string, field: string) => {
-          const val = resolvePath(item, field);
-          return val != null ? escapeHtml(String(val)) : '';
-        });
+    // Find the matching {{/each}} by counting nesting depth
+    let depth = 1;
+    const openRe = /\{\{#each\s+\w+(?:\.\w+)*\}\}/g;
+    const closeRe = /\{\{\/each\}\}/g;
 
-        // Replace {{field}} that matches item keys (scoped to current item)
-        if (typeof item === 'object' && item !== null) {
-          for (const key of Object.keys(item)) {
-            const regex = new RegExp(`\\{\\{${key}\\}\\}`, 'g');
-            rendered = rendered.replace(regex, item[key] != null ? escapeHtml(String(item[key])) : '');
-          }
+    // Collect all open and close tag positions after bodyStart
+    const tags: { pos: number; type: 'open' | 'close'; length: number }[] = [];
+
+    openRe.lastIndex = bodyStart;
+    let tagMatch: RegExpExecArray | null;
+    while ((tagMatch = openRe.exec(template)) !== null) {
+      tags.push({ pos: tagMatch.index, type: 'open', length: tagMatch[0].length });
+    }
+    closeRe.lastIndex = bodyStart;
+    while ((tagMatch = closeRe.exec(template)) !== null) {
+      tags.push({ pos: tagMatch.index, type: 'close', length: tagMatch[0].length });
+    }
+    tags.sort((a, b) => a.pos - b.pos);
+
+    let bodyEnd = -1;
+    let closeEnd = -1;
+    for (const tag of tags) {
+      if (tag.type === 'open') {
+        depth++;
+      } else {
+        depth--;
+        if (depth === 0) {
+          bodyEnd = tag.pos;
+          closeEnd = tag.pos + tag.length;
+          break;
         }
+      }
+    }
 
-        return rendered;
-      })
-      .join('');
-  });
+    if (bodyEnd === -1) {
+      // Malformed template — no matching close tag; skip this block
+      result += template.substring(lastIndex, match.index + match[0].length);
+      lastIndex = match.index + match[0].length;
+      continue;
+    }
+
+    // Append everything before this {{#each}} block
+    result += template.substring(lastIndex, match.index);
+
+    const body = template.substring(bodyStart, bodyEnd);
+    const items = resolvePath(data, arrayPath);
+
+    if (Array.isArray(items) && items.length > 0) {
+      result += items.map((item, index) => renderEachItem(body, item, index, data)).join('');
+    }
+
+    lastIndex = closeEnd;
+    // Reset openTag regex to continue after the close tag
+    openTag.lastIndex = closeEnd;
+  }
+
+  // Append any remaining template after the last block
+  result += template.substring(lastIndex);
+
+  return result;
 }
 
 /**

@@ -70,6 +70,35 @@ class ClientController {
       next(error);
     }
   }
+
+  public async getHealthScore(req: AuthenticatedRequest, res: Response, next: NextFunction): Promise<void> {
+    try {
+      const responseFromService = await ClientService.calculateHealthScore(req.params.id as string);
+      wrapResult(res, responseFromService);
+    } catch (error) {
+      next(error);
+    }
+  }
+
+  public async segmentClients(req: AuthenticatedRequest, res: Response, next: NextFunction): Promise<void> {
+    try {
+      const tenantId = (req.user as User).tenantId || undefined;
+      const responseFromService = await ClientService.segmentClients(tenantId);
+      wrapResult(res, responseFromService);
+    } catch (error) {
+      next(error);
+    }
+  }
+
+  public async getClientAnalytics(req: AuthenticatedRequest, res: Response, next: NextFunction): Promise<void> {
+    try {
+      const tenantId = (req.user as User).tenantId || undefined;
+      const responseFromService = await ClientService.getClientAnalytics(tenantId);
+      wrapResult(res, responseFromService);
+    } catch (error) {
+      next(error);
+    }
+  }
 }
 
 export default new ClientController();

@@ -49,6 +49,33 @@ class CpqController {
       wrapResult(res, { deleted: true });
     } catch (e) { next(e); }
   }
+
+  /** POST /generate-quote — generate a full quote from price book entries */
+  async generateQuote(req: AuthenticatedRequest, res: Response, next: NextFunction) {
+    try {
+      const { priceBookId, items, discountRules, taxRate } = req.body;
+      if (!priceBookId || !items || !Array.isArray(items)) {
+        return wrapResult(res, { message: 'priceBookId and items array are required' }, 400);
+      }
+      const result = await cpqService.generateQuote(priceBookId, items, { discountRules, taxRate });
+      if (!result.success) {
+        return wrapResult(res, result, 422);
+      }
+      wrapResult(res, result);
+    } catch (e) { next(e); }
+  }
+
+  /** POST /validate-pricing — validate entries before quoting */
+  async validatePricing(req: AuthenticatedRequest, res: Response, next: NextFunction) {
+    try {
+      const { priceBookId, items } = req.body;
+      if (!priceBookId || !items) {
+        return wrapResult(res, { message: 'priceBookId and items are required' }, 400);
+      }
+      const result = await cpqService.validatePricing(priceBookId, items);
+      wrapResult(res, result, result.valid ? 200 : 422);
+    } catch (e) { next(e); }
+  }
 }
 
 export default new CpqController();

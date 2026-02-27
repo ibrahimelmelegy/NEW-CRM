@@ -23,6 +23,16 @@ div(class="animate-fade-in")
   .deals-kpi-grid
     PremiumKPICards(:metrics="kpiMetrics" v-if="!loadingAction")
 
+  //- Pipeline Analytics
+  .grid.gap-4.mb-6(class="grid-cols-2 md:grid-cols-4" v-if="pipelineAnalytics")
+    .glass-card.p-5.rounded-2xl.animate-entrance(v-for="stat in pipelineStats" :key="stat.label")
+      .flex.items-center.justify-between
+        div
+          p.text-xs.font-medium.uppercase.tracking-wide(style="color: var(--text-muted)") {{ stat.label }}
+          p.text-2xl.font-bold.mt-1(:style="{ color: stat.color }") {{ stat.value }}
+        .w-10.h-10.rounded-xl.flex.items-center.justify-center(:style="{ background: stat.color + '20' }")
+          Icon(:name="stat.icon" size="20" :style="{ color: stat.color }")
+
   BulkActions(:count="selectedRows.length" :actions="['delete', 'export']" @bulk-delete="handleBulkDelete" @bulk-export="handleBulkExport" @clear-selection="selectedRows = []")
   SavedViews(:entityType="'deal'" :currentFilters="{}" @apply-view="handleApplyView")
   AdvancedSearch(:entityType="'deal'" :fields="advancedSearchFields" @apply="handleAdvancedFilter" @clear="handleClearAdvancedFilter")
@@ -130,6 +140,7 @@ div(class="animate-fade-in")
 
 <script setup lang="ts">
 import { Plus } from '@element-plus/icons-vue';
+import { ElNotification, ElMessageBox } from 'element-plus';
 import { computed, reactive, ref } from 'vue';
 import PremiumPageHeader from '~/components/UI/PremiumPageHeader.vue';
 import PremiumKPICards from '~/components/UI/PremiumKPICards.vue';
@@ -143,6 +154,7 @@ const { vibrate } = useMobile();
 const loadingAction = ref(false);
 const loading = ref(false);
 const deleteLeadPopup = ref(false);
+const pipelineAnalytics = ref<any>(null);
 
 // Export columns & data
 const exportColumns = [
@@ -157,11 +169,40 @@ const exportData = computed(() => table.data);
 
 // Bulk actions
 const selectedRows = ref<any[]>([]);
-function handleBulkDelete() {
-  selectedRows.value = [];
+async function handleBulkDelete() {
+  if (!selectedRows.value.length) return;
+  try {
+    await ElMessageBox.confirm(
+      `Are you sure you want to delete ${selectedRows.value.length} deal(s)?`,
+      t('common.warning') || 'Warning',
+      { type: 'warning', confirmButtonText: t('common.delete') || 'Delete', cancelButtonText: t('common.cancel') || 'Cancel' }
+    );
+    loading.value = true;
+    const ids = selectedRows.value.map((r: any) => r.id);
+    await Promise.all(ids.map((id: any) => useApiFetch(`deal/${id}`, 'DELETE')));
+    const res = await useTableFilter('deal');
+    table.data = res.formattedData;
+    selectedRows.value = [];
+    ElNotification({ type: 'success', title: t('common.success'), message: `${ids.length} deal(s) deleted` });
+  } catch {
+    // User cancelled or error
+  } finally {
+    loading.value = false;
+  }
 }
-function handleBulkExport() {
-  selectedRows.value = [];
+async function handleBulkExport() {
+  if (!selectedRows.value.length) return;
+  try {
+    loading.value = true;
+    const ids = selectedRows.value.map((r: any) => r.id);
+    await useApiFetch('deal/export', 'POST', { ids });
+    ElNotification({ type: 'success', title: t('common.success'), message: 'Export sent to your email' });
+    selectedRows.value = [];
+  } catch {
+    ElNotification({ type: 'error', title: t('common.error'), message: 'Export failed' });
+  } finally {
+    loading.value = false;
+  }
 }
 
 const table = reactive({
@@ -223,6 +264,9 @@ const table = reactive({
 const [response, usersResponse] = await Promise.all([useTableFilter('deal'), useApiFetch('users')]);
 table.data = response.formattedData;
 
+// Fetch pipeline analytics (non-blocking)
+fetchPipelineAnalytics();
+
 const kpiMetrics = computed<KPIMetric[]>(() => {
   const data = table.data || [];
   const total = data.length;
@@ -235,12 +279,35 @@ const kpiMetrics = computed<KPIMetric[]>(() => {
   const pending = data.filter((d: any) => d.stage !== 'WON' && d.stage !== 'LOST').length;
 
   return [
-    { label: t('deals.kpi.totalDeals'), value: total, icon: 'ph:handshake-bold', color: '#10b981', trend: '+8%', trendType: 'up' },
-    { label: t('deals.kpi.dealsWon'), value: wonDeals, icon: 'ph:trophy-bold', color: '#f59e0b', trend: 'Trending', trendType: 'up' },
-    { label: t('deals.kpi.totalRevenue'), value: totalRevenue, icon: 'ph:money-bold', color: '#3b82f6', trend: '+15%', trendType: 'up' },
+    { label: t('deals.kpi.totalDeals'), value: total, icon: 'ph:handshake-bold', color: '#10b981' },
+    { label: t('deals.kpi.dealsWon'), value: wonDeals, icon: 'ph:trophy-bold', color: '#f59e0b' },
+    { label: t('deals.kpi.totalRevenue'), value: totalRevenue, icon: 'ph:money-bold', color: '#3b82f6' },
     { label: t('deals.kpi.pendingDeals'), value: pending, icon: 'ph:hourglass-bold', color: '#8b5cf6' }
   ];
 });
+
+const pipelineStats = computed(() => {
+  const p = pipelineAnalytics.value;
+  if (!p) return [];
+  const fmtCurrency = (v: number) => Number(v || 0).toLocaleString('en-US', { style: 'currency', currency: 'SAR', maximumFractionDigits: 0 });
+  return [
+    { label: t('deals.pipeline.totalValue') || 'Total Pipeline Value', value: fmtCurrency(p.totalPipelineValue || 0), icon: 'ph:funnel-bold', color: '#8b5cf6' },
+    { label: t('deals.pipeline.weightedValue') || 'Weighted Value', value: fmtCurrency(p.weightedPipelineValue || 0), icon: 'ph:scales-bold', color: '#3b82f6' },
+    { label: t('deals.pipeline.dealCount') || 'Deal Count', value: p.dealCount ?? 0, icon: 'ph:stack-bold', color: '#10b981' },
+    { label: t('deals.pipeline.winRate') || 'Win Rate', value: (Number(p.winRate || 0)).toFixed(1) + '%', icon: 'ph:trophy-bold', color: '#f59e0b' }
+  ];
+});
+
+async function fetchPipelineAnalytics() {
+  try {
+    const { body, success } = await useApiFetch('deal/analytics/weighted-pipeline');
+    if (success && body) {
+      pipelineAnalytics.value = body;
+    }
+  } catch {
+    // Pipeline analytics is non-critical
+  }
+}
 
 function handleRowClick(val: any) {
   router.push(`/sales/deals/${val.id}`);

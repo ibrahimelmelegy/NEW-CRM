@@ -48,6 +48,50 @@ class InvoiceController {
       next(error);
     }
   }
+
+  async calculateTotals(req: AuthenticatedRequest, res: Response, next: NextFunction) {
+    try {
+      const { items, taxRate, discountAmount, discountType } = req.body;
+      if (!items || !Array.isArray(items)) {
+        return wrapResult(res, { error: 'items array is required' }, 400);
+      }
+      const totals = invoiceService.calculateInvoiceTotals(items, taxRate, discountAmount, discountType);
+      wrapResult(res, totals);
+    } catch (error) {
+      next(error);
+    }
+  }
+
+  async getAgingReport(req: AuthenticatedRequest, res: Response, next: NextFunction) {
+    try {
+      const tenantId = (req.user as any)?.tenantId || undefined;
+      const report = await invoiceService.getAgingReport(tenantId);
+      wrapResult(res, report);
+    } catch (error) {
+      next(error);
+    }
+  }
+
+  async getRevenueSummary(req: AuthenticatedRequest, res: Response, next: NextFunction) {
+    try {
+      const tenantId = (req.user as any)?.tenantId || undefined;
+      const period = Number(req.query.period) || 12;
+      const summary = await invoiceService.getRevenueSummary(tenantId, period);
+      wrapResult(res, summary);
+    } catch (error) {
+      next(error);
+    }
+  }
+
+  async getOverdueInvoices(req: AuthenticatedRequest, res: Response, next: NextFunction) {
+    try {
+      const tenantId = (req.user as any)?.tenantId || undefined;
+      const invoices = await invoiceService.getOverdueInvoices(tenantId);
+      wrapResult(res, invoices);
+    } catch (error) {
+      next(error);
+    }
+  }
 }
 
 export default new InvoiceController();

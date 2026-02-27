@@ -1,6 +1,6 @@
 import { BelongsTo, Column, DataType, Default, ForeignKey, Model, Table } from 'sequelize-typescript';
 import User from '../user/userModel';
-import { NotificationReadEnums, NotificationTypeEnums } from './notificationEnum';
+import { NotificationReadEnums, NotificationTypeEnums, NotificationPriorityEnum } from './notificationEnum';
 
 @Table({
   tableName: 'notifications',
@@ -47,6 +47,31 @@ class Notification extends Model {
     allowNull: true
   })
   public target?: string;
+
+  @Default(NotificationPriorityEnum.MEDIUM)
+  @Column({
+    type: DataType.ENUM(...Object.values(NotificationPriorityEnum)),
+    allowNull: false
+  })
+  public priority!: string;
+
+  @Column({
+    type: DataType.STRING,
+    allowNull: true
+  })
+  public entityType?: string;
+
+  @Column({
+    type: DataType.STRING,
+    allowNull: true
+  })
+  public entityId?: string;
+
+  @Column({
+    type: DataType.STRING,
+    allowNull: true
+  })
+  public title?: string;
 }
 
 export default Notification;

@@ -5,14 +5,19 @@ import c from './warehouseController';
 
 const router = express.Router();
 
+router.get('/low-stock', authenticateUser, HasPermission([WarehousePermissionsEnum.VIEW_WAREHOUSES]), c.getLowStockAlerts);
 router.get('/', authenticateUser, HasPermission([WarehousePermissionsEnum.VIEW_WAREHOUSES]), c.getWarehouses);
 router.post('/', authenticateUser, HasPermission([WarehousePermissionsEnum.CREATE_WAREHOUSES]), c.createWarehouse);
 router.put('/:id', authenticateUser, HasPermission([WarehousePermissionsEnum.EDIT_WAREHOUSES]), c.updateWarehouse);
 router.delete('/:id', authenticateUser, HasPermission([WarehousePermissionsEnum.DELETE_WAREHOUSES]), c.deleteWarehouse);
+router.get('/:id/stock-summary', authenticateUser, HasPermission([WarehousePermissionsEnum.VIEW_WAREHOUSES]), c.getStockSummary);
+router.put('/:id/stock', authenticateUser, HasPermission([WarehousePermissionsEnum.MANAGE_TRANSFERS]), c.updateStockLevels);
+router.get('/:id/movement', authenticateUser, HasPermission([WarehousePermissionsEnum.VIEW_WAREHOUSES]), c.getInventoryMovement);
 router.post('/zones', authenticateUser, HasPermission([WarehousePermissionsEnum.MANAGE_ZONES]), c.createZone);
 router.delete('/zones/:id', authenticateUser, HasPermission([WarehousePermissionsEnum.MANAGE_ZONES]), c.deleteZone);
 router.get('/transfers', authenticateUser, HasPermission([WarehousePermissionsEnum.MANAGE_TRANSFERS]), c.getTransfers);
 router.post('/transfers', authenticateUser, HasPermission([WarehousePermissionsEnum.MANAGE_TRANSFERS]), c.createTransfer);
 router.put('/transfers/:id', authenticateUser, HasPermission([WarehousePermissionsEnum.MANAGE_TRANSFERS]), c.updateTransfer);
+router.put('/transfers/:id/process', authenticateUser, HasPermission([WarehousePermissionsEnum.MANAGE_TRANSFERS]), c.processTransfer);
 
 export default router;

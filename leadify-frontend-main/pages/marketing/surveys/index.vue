@@ -62,9 +62,11 @@ div
         el-table-column(:label="$t('common.createdAt') || 'Created'" prop="createdAt" width="150" sortable)
           template(#default="{ row }")
             span.text-sm {{ formatDate(row.createdAt) }}
-        el-table-column(:label="$t('common.actions') || 'Actions'" width="120" align="center")
+        el-table-column(:label="$t('common.actions') || 'Actions'" width="160" align="center")
           template(#default="{ row }")
             .flex.items-center.justify-center.gap-1
+              el-button(text size="small" type="success" @click.stop="openAnalyticsDialog(row)" :disabled="!row.responseCount")
+                Icon(name="ph:chart-bar-bold" size="16")
               el-button(text size="small" type="primary" @click.stop="openEditDialog(row)")
                 Icon(name="ph:pencil-bold" size="16")
               el-button(text size="small" type="danger" @click.stop="handleDelete(row)")
@@ -73,6 +75,15 @@ div
       .text-center.py-8(v-if="!filteredData.length && !loading")
         Icon(name="ph:clipboard-text" size="48" style="color: var(--text-muted)")
         p.text-sm.mt-2(style="color: var(--text-muted)") {{ $t('common.noData') || 'No surveys found' }}
+
+      .flex.justify-end.mt-4
+        el-pagination(
+          :current-page="pagination.page"
+          :page-size="pagination.limit"
+          :total="pagination.total"
+          layout="total, prev, pager, next"
+          @current-change="(p: number) => { pagination.page = p; fetchData() }"
+        )
 
   //- Create / Edit Dialog
   el-dialog(v-model="dialogVisible" :title="editingItem ? ($t('common.edit') || 'Edit Survey') : ($t('marketing.surveys.newSurvey') || 'New Survey')" width="640px" destroy-on-close)
@@ -143,10 +154,87 @@ div
       .text-center.py-6(v-if="!responses.length")
         Icon(name="ph:inbox" size="40" style="color: var(--text-muted)")
         p.text-sm.mt-2(style="color: var(--text-muted)") {{ $t('marketing.surveys.noResponses') || 'No responses yet' }}
+
+  //- Analytics Dialog
+  el-dialog(v-model="analyticsDialogVisible" :title="($t('marketing.surveys.analytics') || 'Survey Analytics') + (analyticsSurvey ? ' - ' + analyticsSurvey.title : '')" width="720px" destroy-on-close)
+    .flex.items-center.justify-center.py-8(v-if="loadingAnalytics")
+      el-icon.is-loading(:size="24" style="color: var(--accent-color, #7849ff)")
+    template(v-else)
+      el-row(:gutter="20")
+        //- NPS Score
+        el-col(:xs="24" :md="12")
+          .glass-card.p-5.mb-4
+            .flex.items-center.gap-2.mb-4
+              Icon(name="ph:gauge-bold" size="20" style="color: #7849ff")
+              h4.text-sm.font-bold.uppercase.tracking-wider(style="color: var(--text-muted)") {{ $t('marketing.surveys.npsScore') || 'NPS Score' }}
+            .text-center.mb-4
+              p.font-bold(
+                :style="{ fontSize: '48px', lineHeight: '1', color: npsData.score < 0 ? '#ef4444' : npsData.score <= 50 ? '#f59e0b' : '#22c55e' }"
+              ) {{ npsData.score != null ? npsData.score : '--' }}
+              p.text-xs.mt-1(style="color: var(--text-muted)") {{ npsData.score < 0 ? ($t('marketing.surveys.needsImprovement') || 'Needs Improvement') : npsData.score <= 50 ? ($t('marketing.surveys.good') || 'Good') : ($t('marketing.surveys.excellent') || 'Excellent') }}
+            .space-y-2
+              .flex.items-center.justify-between
+                .flex.items-center.gap-2
+                  .w-3.h-3.rounded-full(style="background: #22c55e")
+                  span.text-sm(style="color: var(--text-primary)") {{ $t('marketing.surveys.promoters') || 'Promoters' }}
+                span.text-sm.font-bold(style="color: #22c55e") {{ npsData.promoters || 0 }}%
+              .flex.items-center.justify-between
+                .flex.items-center.gap-2
+                  .w-3.h-3.rounded-full(style="background: #f59e0b")
+                  span.text-sm(style="color: var(--text-primary)") {{ $t('marketing.surveys.passives') || 'Passives' }}
+                span.text-sm.font-bold(style="color: #f59e0b") {{ npsData.passives || 0 }}%
+              .flex.items-center.justify-between
+                .flex.items-center.gap-2
+                  .w-3.h-3.rounded-full(style="background: #ef4444")
+                  span.text-sm(style="color: var(--text-primary)") {{ $t('marketing.surveys.detractors') || 'Detractors' }}
+                span.text-sm.font-bold(style="color: #ef4444") {{ npsData.detractors || 0 }}%
+              //- NPS bar
+              .flex.h-4.rounded-lg.overflow-hidden.mt-2
+                .transition-all(v-if="npsData.promoters > 0" :style="{ width: npsData.promoters + '%', background: '#22c55e' }")
+                .transition-all(v-if="npsData.passives > 0" :style="{ width: npsData.passives + '%', background: '#f59e0b' }")
+                .transition-all(v-if="npsData.detractors > 0" :style="{ width: npsData.detractors + '%', background: '#ef4444' }")
+
+        //- Completion Rate
+        el-col(:xs="24" :md="12")
+          .glass-card.p-5.mb-4
+            .flex.items-center.gap-2.mb-4
+              Icon(name="ph:check-circle-bold" size="20" style="color: #22c55e")
+              h4.text-sm.font-bold.uppercase.tracking-wider(style="color: var(--text-muted)") {{ $t('marketing.surveys.completionRate') || 'Completion Rate' }}
+            .text-center.mb-4
+              el-progress(
+                type="dashboard"
+                :percentage="completionData.rate || 0"
+                :width="140"
+                :stroke-width="12"
+                :color="completionData.rate >= 70 ? '#22c55e' : completionData.rate >= 40 ? '#f59e0b' : '#ef4444'"
+              )
+                template(#default="{ percentage }")
+                  span.text-2xl.font-bold(:style="{ color: completionData.rate >= 70 ? '#22c55e' : completionData.rate >= 40 ? '#f59e0b' : '#ef4444' }") {{ percentage }}%
+            .space-y-2
+              .flex.items-center.justify-between
+                .flex.items-center.gap-2
+                  Icon(name="ph:play-circle-bold" size="16" style="color: #3b82f6")
+                  span.text-sm(style="color: var(--text-primary)") {{ $t('marketing.surveys.started') || 'Started' }}
+                span.text-sm.font-bold(style="color: #3b82f6") {{ completionData.started || 0 }}
+              .flex.items-center.justify-between
+                .flex.items-center.gap-2
+                  Icon(name="ph:check-circle-bold" size="16" style="color: #22c55e")
+                  span.text-sm(style="color: var(--text-primary)") {{ $t('marketing.surveys.completed') || 'Completed' }}
+                span.text-sm.font-bold(style="color: #22c55e") {{ completionData.completed || 0 }}
+              .flex.items-center.justify-between
+                .flex.items-center.gap-2
+                  Icon(name="ph:x-circle-bold" size="16" style="color: #ef4444")
+                  span.text-sm(style="color: var(--text-primary)") {{ $t('marketing.surveys.abandoned') || 'Abandoned' }}
+                span.text-sm.font-bold(style="color: #ef4444") {{ (completionData.started || 0) - (completionData.completed || 0) }}
+
+      //- No data fallback
+      .text-center.py-8(v-if="!npsData.score && !completionData.rate")
+        Icon(name="ph:chart-bar" size="48" style="color: var(--text-muted)")
+        p.text-sm.mt-2(style="color: var(--text-muted)") {{ $t('marketing.surveys.noAnalytics') || 'Not enough data for analytics' }}
 </template>
 
 <script setup lang="ts">
-import { ref, computed, onMounted } from 'vue';
+import { ref, reactive, computed, onMounted } from 'vue';
 import { ElMessage, ElMessageBox } from 'element-plus';
 
 definePageMeta({ middleware: 'permissions' });
@@ -158,13 +246,19 @@ const loading = ref(false);
 const saving = ref(false);
 const dialogVisible = ref(false);
 const responsesDialogVisible = ref(false);
+const analyticsDialogVisible = ref(false);
 const loadingResponses = ref(false);
+const loadingAnalytics = ref(false);
 const editingItem = ref<any>(null);
 const selectedSurvey = ref<any>(null);
+const analyticsSurvey = ref<any>(null);
 const search = ref('');
 const filterStatus = ref('');
 const items = ref<any[]>([]);
+const pagination = reactive({ page: 1, limit: 20, total: 0 });
 const responses = ref<any[]>([]);
+const npsData = ref<any>({ score: null, promoters: 0, passives: 0, detractors: 0 });
+const completionData = ref<any>({ rate: 0, started: 0, completed: 0 });
 
 interface QuestionItem {
   text: string;
@@ -250,9 +344,11 @@ function removeQuestion(idx: number) {
 async function fetchData() {
   loading.value = true;
   try {
-    const res = await useApiFetch('surveys');
+    const res = await useApiFetch(`surveys?page=${pagination.page}&limit=${pagination.limit}`);
     if (res.success && res.body) {
-      items.value = Array.isArray(res.body) ? res.body : (res.body as any).docs || [];
+      const data = res.body as any;
+      items.value = data.rows || data.docs || (Array.isArray(data) ? data : []);
+      pagination.total = data.count ?? data.total ?? items.value.length;
     }
   } catch {
     ElMessage.error(t('common.error') || 'Failed to load surveys');
@@ -377,6 +473,31 @@ async function openResponsesDialog(survey: any) {
     ElMessage.error(t('common.error') || 'Failed to load responses');
   } finally {
     loadingResponses.value = false;
+  }
+}
+
+// Analytics
+async function openAnalyticsDialog(survey: any) {
+  analyticsSurvey.value = survey;
+  npsData.value = { score: null, promoters: 0, passives: 0, detractors: 0 };
+  completionData.value = { rate: 0, started: 0, completed: 0 };
+  analyticsDialogVisible.value = true;
+  loadingAnalytics.value = true;
+  try {
+    const [npsRes, completionRes] = await Promise.all([
+      useApiFetch(`surveys/${survey.id}/nps`),
+      useApiFetch(`surveys/${survey.id}/completion-rate`)
+    ]);
+    if (npsRes.success && npsRes.body) {
+      npsData.value = npsRes.body;
+    }
+    if (completionRes.success && completionRes.body) {
+      completionData.value = completionRes.body;
+    }
+  } catch {
+    ElMessage.error(t('common.error') || 'Failed to load analytics');
+  } finally {
+    loadingAnalytics.value = false;
   }
 }
 

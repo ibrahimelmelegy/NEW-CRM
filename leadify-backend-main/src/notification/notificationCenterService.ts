@@ -1,4 +1,4 @@
-import { Op } from 'sequelize';
+import { Op, fn, col, literal } from 'sequelize';
 import jwt from 'jsonwebtoken';
 import Notification from './notificationModel';
 import NotificationPreference, {
@@ -6,7 +6,7 @@ import NotificationPreference, {
   NotificationChannels,
   NotificationPreferencesMap
 } from './notificationPreferenceModel';
-import { NotificationReadEnums, NotificationTypeEnums } from './notificationEnum';
+import { NotificationReadEnums, NotificationTypeEnums, NotificationPriorityEnum, TYPE_PRIORITY_MAP } from './notificationEnum';
 import { renderNotificationEmail } from './notificationEmailTemplates';
 import { sendEmail } from '../utils/emailHelper';
 import User from '../user/userModel';
@@ -51,6 +51,7 @@ export interface SendNotificationData {
   entityType?: string;
   entityId?: string;
   actionUrl?: string;
+  priority?: NotificationPriorityEnum;
 }
 
 interface GetNotificationsQuery {
@@ -83,7 +84,10 @@ function typeToPreferenceKey(type: string): string {
     SLA_WARNING: 'sla_warning',
     INVOICE_OVERDUE: 'invoice_overdue',
     CONTRACT_EXPIRING: 'contract_expiring',
-    SYSTEM_ALERT: 'system_alert'
+    SYSTEM_ALERT: 'system_alert',
+    [NotificationTypeEnums.DOCUMENT_APPROVAL_REQUESTED]: 'document_approval_requested',
+    [NotificationTypeEnums.DOCUMENT_APPROVED]: 'document_approved',
+    [NotificationTypeEnums.DOCUMENT_REJECTED]: 'document_rejected'
   };
   return mapping[type] || type.toLowerCase();
 }
@@ -103,22 +107,31 @@ class NotificationCenterService {
 
   /**
    * Send a notification to a single user, respecting their preferences.
+   * Priority is resolved from the explicit `data.priority`, the type-based default,
+   * or falls back to MEDIUM. CRITICAL priority always triggers email regardless
+   * of user preferences.
    * Returns the created Notification (or null if inApp is disabled).
    */
   async sendNotification(data: SendNotificationData): Promise<Notification | null> {
     const channels = await this.getChannelPrefs(data.userId, data.type);
+    const priority = data.priority || TYPE_PRIORITY_MAP[data.type] || NotificationPriorityEnum.MEDIUM;
+    const isCritical = priority === NotificationPriorityEnum.CRITICAL;
 
     let notification: Notification | null = null;
 
-    // In-app notification
-    if (channels.inApp) {
+    // In-app notification (always create for CRITICAL, otherwise respect preference)
+    if (channels.inApp || isCritical) {
       notification = await Notification.create({
         userId: data.userId,
         body_en: data.message,
         body_ar: data.message,
         type: data.type,
+        title: data.title,
         target: data.actionUrl || data.entityId || null,
-        read: NotificationReadEnums.UN_READ
+        read: NotificationReadEnums.UN_READ,
+        priority,
+        entityType: data.entityType || null,
+        entityId: data.entityId || null
       });
 
       // Emit real-time event via Socket.io
@@ -131,6 +144,7 @@ class NotificationCenterService {
             type: data.type,
             title: data.title,
             message: data.message,
+            priority,
             entityType: data.entityType,
             entityId: data.entityId,
             actionUrl: data.actionUrl,
@@ -140,8 +154,9 @@ class NotificationCenterService {
       }
     }
 
-    // Email notification via Brevo
-    if (channels.email && canSendEmail(data.userId)) {
+    // Email notification — CRITICAL always sends email regardless of preferences
+    const shouldSendEmail = isCritical || (channels.email && canSendEmail(data.userId));
+    if (shouldSendEmail) {
       try {
         const user = await User.findByPk(data.userId);
         if (user?.email) {
@@ -156,9 +171,10 @@ class NotificationCenterService {
           const unsubscribeUrl = `${process.env.BACKEND_URL || 'http://localhost:3000'}/api/notifications/unsubscribe?token=${unsubscribeToken}`;
           const actionUrl = data.actionUrl ? `${frontendUrl}${data.actionUrl}` : undefined;
 
+          const priorityPrefix = isCritical ? '[CRITICAL] ' : priority === NotificationPriorityEnum.HIGH ? '[HIGH] ' : '';
           const html = renderNotificationEmail({
             type: data.type,
-            title: data.title,
+            title: `${priorityPrefix}${data.title}`,
             message: data.message,
             actionUrl,
             unsubscribeUrl
@@ -166,7 +182,7 @@ class NotificationCenterService {
 
           await sendEmail({
             to: user.email,
-            subject: data.title,
+            subject: `${priorityPrefix}${data.title}`,
             text: data.message,
             html
           });
@@ -176,13 +192,61 @@ class NotificationCenterService {
       }
     }
 
-    // Push notification (placeholder - integrate with your push provider)
-    if (channels.push) {
-      // TODO: Integrate with push service (e.g. Firebase Cloud Messaging, OneSignal)
-      // await pushService.send({ userId, title: data.title, body: data.message });
+    // Push notification via web-push (when user has a registered subscription)
+    if (channels.push || isCritical) {
+      try {
+        await this.sendWebPush(data.userId, data.title, data.message, data.actionUrl);
+      } catch (pushError) {
+        // Silent failure — push is best-effort
+        console.error('Failed to send push notification:', pushError);
+      }
     }
 
     return notification;
+  }
+
+  /**
+   * Send a web push notification to a user if they have a registered subscription.
+   * Uses the web-push library with VAPID keys from environment variables.
+   * Silently skips if web-push is not installed or no subscription is found.
+   */
+  private async sendWebPush(userId: number, title: string, message: string, actionUrl?: string): Promise<void> {
+    try {
+      const webpush = require('web-push');
+      const PushSubscription = require('./pushSubscriptionModel').default;
+
+      const vapidPublic = process.env.VAPID_PUBLIC_KEY;
+      const vapidPrivate = process.env.VAPID_PRIVATE_KEY;
+      const vapidEmail = process.env.VAPID_EMAIL || 'mailto:admin@leadify.com';
+
+      if (!vapidPublic || !vapidPrivate) return;
+
+      webpush.setVapidDetails(vapidEmail, vapidPublic, vapidPrivate);
+
+      const subscriptions = await PushSubscription.findAll({ where: { userId } });
+      if (!subscriptions || subscriptions.length === 0) return;
+
+      const payload = JSON.stringify({
+        title,
+        body: message,
+        icon: '/icon-192.png',
+        badge: '/badge-72.png',
+        data: { actionUrl: actionUrl || '/' }
+      });
+
+      for (const sub of subscriptions) {
+        try {
+          await webpush.sendNotification(sub.subscription, payload);
+        } catch (err: any) {
+          // If subscription expired (410 Gone), remove it
+          if (err?.statusCode === 410) {
+            await sub.destroy();
+          }
+        }
+      }
+    } catch {
+      // web-push not installed or PushSubscription model not available — skip silently
+    }
   }
 
   /**
@@ -336,6 +400,190 @@ class NotificationCenterService {
     });
 
     return deleted;
+  }
+
+  /**
+   * Get a notification digest for a user since a given date.
+   * Returns unread notifications grouped by type with counts and latest messages.
+   */
+  async getDigest(
+    userId: number,
+    since: Date
+  ): Promise<{
+    totalUnread: number;
+    groups: { type: string; count: number; priority: string; latestMessage: string; latestAt: Date }[];
+    oldestUnread: Date | null;
+  }> {
+    // Get counts grouped by type
+    const groupRows = await Notification.findAll({
+      where: {
+        userId,
+        read: NotificationReadEnums.UN_READ,
+        createdAt: { [Op.gte]: since }
+      },
+      attributes: [
+        'type',
+        'priority',
+        [fn('COUNT', col('id')), 'count'],
+        [fn('MAX', col('createdAt')), 'latestAt']
+      ],
+      group: ['type', 'priority'],
+      raw: true,
+      order: [[fn('MAX', col('createdAt')), 'DESC']]
+    }) as any[];
+
+    // Get the latest message per type for preview
+    const groups: { type: string; count: number; priority: string; latestMessage: string; latestAt: Date }[] = [];
+
+    for (const row of groupRows) {
+      // Fetch the latest notification of this type for the preview
+      const latest = await Notification.findOne({
+        where: {
+          userId,
+          type: row.type,
+          read: NotificationReadEnums.UN_READ,
+          createdAt: { [Op.gte]: since }
+        },
+        order: [['createdAt', 'DESC']],
+        attributes: ['body_en']
+      });
+
+      groups.push({
+        type: row.type,
+        count: Number(row.count) || 0,
+        priority: row.priority || NotificationPriorityEnum.MEDIUM,
+        latestMessage: latest?.body_en || '',
+        latestAt: new Date(row.latestAt)
+      });
+    }
+
+    const totalUnread = groups.reduce((sum, g) => sum + g.count, 0);
+
+    // Oldest unread notification date
+    const oldest = await Notification.findOne({
+      where: {
+        userId,
+        read: NotificationReadEnums.UN_READ,
+        createdAt: { [Op.gte]: since }
+      },
+      order: [['createdAt', 'ASC']],
+      attributes: ['createdAt']
+    });
+
+    return {
+      totalUnread,
+      groups,
+      oldestUnread: oldest ? oldest.createdAt : null
+    };
+  }
+
+  /**
+   * Send batch/collapsed notifications. If multiple notifications of the same type
+   * are pending for a user within a time window, collapse them into a single notification.
+   * E.g., "You have 5 new lead assignments" instead of 5 separate notifications.
+   *
+   * @param notifications Array of notification data to send
+   * @param collapseWindowMinutes Time window to check for existing pending notifications (default 30 min)
+   */
+  async sendBatchNotifications(
+    notifications: SendNotificationData[],
+    collapseWindowMinutes: number = 30
+  ): Promise<(Notification | null)[]> {
+    // Group notifications by userId + type
+    const grouped = new Map<string, SendNotificationData[]>();
+    for (const n of notifications) {
+      const key = `${n.userId}:${n.type}`;
+      if (!grouped.has(key)) grouped.set(key, []);
+      grouped.get(key)!.push(n);
+    }
+
+    const results: (Notification | null)[] = [];
+    const windowStart = new Date(Date.now() - collapseWindowMinutes * 60 * 1000);
+
+    for (const [key, group] of grouped) {
+      const { userId, type } = group[0];
+
+      // Check how many unread notifications of the same type exist within the window
+      const existingCount = await Notification.count({
+        where: {
+          userId,
+          type,
+          read: NotificationReadEnums.UN_READ,
+          createdAt: { [Op.gte]: windowStart }
+        }
+      });
+
+      const totalCount = existingCount + group.length;
+
+      if (totalCount > 1 && group.length > 1) {
+        // Collapse: send one summary notification instead of many
+        const typeLabel = type.replace(/_/g, ' ').toLowerCase();
+        const collapsedData: SendNotificationData = {
+          userId,
+          type,
+          title: group[0].title,
+          message: `You have ${totalCount} new ${typeLabel} notifications.`,
+          entityType: group[0].entityType,
+          actionUrl: group[0].actionUrl,
+          priority: group[0].priority
+        };
+
+        const result = await this.sendNotification(collapsedData);
+        results.push(result);
+      } else {
+        // Send individually — not enough to collapse
+        for (const n of group) {
+          const result = await this.sendNotification(n);
+          results.push(result);
+        }
+      }
+    }
+
+    return results;
+  }
+
+  /**
+   * Register a push subscription for a user.
+   * Stores the browser push subscription object for web push notifications.
+   */
+  async registerPushSubscription(
+    userId: number,
+    subscription: { endpoint: string; keys: { p256dh: string; auth: string } }
+  ): Promise<any> {
+    try {
+      const PushSubscription = require('./pushSubscriptionModel').default;
+
+      // Upsert: if same endpoint exists, update; otherwise create
+      const existing = await PushSubscription.findOne({
+        where: { userId, endpoint: subscription.endpoint }
+      });
+
+      if (existing) {
+        await existing.update({ subscription });
+        return existing;
+      }
+
+      return await PushSubscription.create({
+        userId,
+        endpoint: subscription.endpoint,
+        subscription
+      });
+    } catch {
+      // PushSubscription model not available — skip silently
+      return null;
+    }
+  }
+
+  /**
+   * Unregister a push subscription for a user.
+   */
+  async unregisterPushSubscription(userId: number, endpoint: string): Promise<void> {
+    try {
+      const PushSubscription = require('./pushSubscriptionModel').default;
+      await PushSubscription.destroy({ where: { userId, endpoint } });
+    } catch {
+      // Model not available — skip silently
+    }
   }
 }
 

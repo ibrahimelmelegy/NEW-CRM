@@ -142,7 +142,7 @@ div(class="animate-fade-in")
 </template>
 
 <script setup lang="ts">
-import { ElNotification } from 'element-plus';
+import { ElNotification, ElMessageBox } from 'element-plus';
 import { Plus } from '@element-plus/icons-vue';
 import { computed, ref, watch, unref, shallowRef, isRef, onMounted, onBeforeMount } from 'vue';
 import { leadStates, leadSources } from '@/composables/useLeads';
@@ -233,15 +233,14 @@ const table = ref({
 const kpiMetrics = computed<KPIMetric[]>(() => {
   const data = table.value.data || [];
   const total = data.length;
-  // Estimate stats purely for visual impact. In production backend should supply these.
   const newLeads = data.filter((l: any) => l.status === 'NEW').length;
   const qualified = data.filter((l: any) => l.status === 'QUALIFIED').length;
   const contacted = data.filter((l: any) => l.status === 'CONTACTED').length;
   const rate = total > 0 ? Math.round((qualified / total) * 100) : 0;
 
   return [
-    { label: 'Total Leads', value: total, icon: 'ph:users-three-bold', color: '#7849ff', trend: '+12%', trendType: 'up' },
-    { label: 'New Pipeline', value: newLeads, icon: 'ph:sparkle-bold', color: '#10b981', trend: 'Trending', trendType: 'up' },
+    { label: 'Total Leads', value: total, icon: 'ph:users-three-bold', color: '#7849ff' },
+    { label: 'New Pipeline', value: newLeads, icon: 'ph:sparkle-bold', color: '#10b981' },
     { label: 'Qualified', value: qualified, icon: 'ph:check-circle-bold', color: '#f59e0b' },
     { label: 'Conversion', value: rate + '%', icon: 'ph:chart-line-up-bold', color: '#3b82f6' }
   ];
@@ -532,13 +531,40 @@ function getStatusType(status: string): string {
 const selectedRows = ref<any[]>([]);
 
 async function handleBulkDelete() {
-  // Placeholder for bulk delete - depends on API
-  selectedRows.value = [];
+  if (!selectedRows.value.length) return;
+  try {
+    await ElMessageBox.confirm(
+      `Are you sure you want to delete ${selectedRows.value.length} lead(s)?`,
+      t('common.warning') || 'Warning',
+      { type: 'warning', confirmButtonText: t('common.delete') || 'Delete', cancelButtonText: t('common.cancel') || 'Cancel' }
+    );
+    loading.value = true;
+    const ids = selectedRows.value.map((r: any) => r.id);
+    await Promise.all(ids.map((id: any) => useApiFetch(`lead/${id}`, 'DELETE')));
+    response = await useTableFilter('lead');
+    table.value.data = response.formattedData;
+    selectedRows.value = [];
+    ElNotification({ type: 'success', title: t('common.success'), message: `${ids.length} lead(s) deleted` });
+  } catch {
+    // User cancelled or error
+  } finally {
+    loading.value = false;
+  }
 }
 
-function handleBulkExport() {
-  // Triggers the ExportButton behavior via the selected rows
-  selectedRows.value = [];
+async function handleBulkExport() {
+  if (!selectedRows.value.length) return;
+  try {
+    loading.value = true;
+    const ids = selectedRows.value.map((r: any) => r.id);
+    await useApiFetch('lead/export', 'POST', { ids });
+    ElNotification({ type: 'success', title: t('common.success'), message: t('leads.exportSuccess') || 'Export sent to your email' });
+    selectedRows.value = [];
+  } catch {
+    ElNotification({ type: 'error', title: t('common.error'), message: t('leads.errors.exportFailed') || 'Export failed' });
+  } finally {
+    loading.value = false;
+  }
 }
 
 // implement import leads

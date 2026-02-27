@@ -3,7 +3,7 @@ import notificationService from '../notification/notificationService';
 import User from '../user/userModel';
 import BaseError from '../utils/error/base-http-exception';
 import { ERRORS } from '../utils/error/errors';
-import { LeadStatusEnums, SortByEnum, SortEnum, LeadSourceEnums } from './leadEnum';
+import { LeadStatusEnums, SortByEnum, SortEnum } from './leadEnum';
 import Lead from './leadModel';
 import { createActivityLog } from '../activity-logs/activityService';
 import xlsx from 'xlsx';
@@ -15,11 +15,101 @@ import { io } from '../server';
 import { tenantWhere, tenantCreate } from '../utils/tenantScope';
 import { clampPagination } from '../utils/pagination';
 
+// ---------------------------------------------------------------------------
+// Configurable Lead Scoring Rules Engine
+// ---------------------------------------------------------------------------
+
+export interface ScoringRule {
+  field: string;
+  condition: 'exists' | 'equals' | 'contains' | 'greater_than';
+  value?: any;
+  points: number;
+  /** Optional group key. When multiple rules share a group, only the highest-
+   *  scoring match within that group is counted (e.g. source quality tiers). */
+  group?: string;
+}
+
+export const DEFAULT_SCORING_RULES: ScoringRule[] = [
+  // Contact completeness (max 30)
+  { field: 'email', condition: 'exists', points: 10 },
+  { field: 'phone', condition: 'exists', points: 10 },
+  { field: 'company', condition: 'exists', points: 10 },
+  // Source quality (max 25) -- only the best match counts
+  { field: 'source', condition: 'equals', value: 'REFERRAL', points: 25, group: 'source_quality' },
+  { field: 'source', condition: 'equals', value: 'WEBSITE', points: 20, group: 'source_quality' },
+  { field: 'source', condition: 'equals', value: 'LINKEDIN', points: 15, group: 'source_quality' },
+  { field: 'source', condition: 'equals', value: 'COLD_CALL', points: 5, group: 'source_quality' },
+  // Engagement (max 25)
+  { field: 'notes', condition: 'exists', points: 10 },
+  { field: 'assignedUsers', condition: 'exists', points: 5 },
+  // Budget / value indicators (max 20) -- only the best match counts
+  { field: 'budget', condition: 'greater_than', value: 50000, points: 20, group: 'budget_tier' },
+  { field: 'budget', condition: 'greater_than', value: 10000, points: 10, group: 'budget_tier' },
+  { field: 'budget', condition: 'exists', points: 5, group: 'budget_tier' },
+];
+
+/**
+ * Evaluate a single rule condition against a lead data object.
+ * Returns true when the rule's condition is satisfied.
+ */
+function evaluateCondition(lead: any, rule: ScoringRule): boolean {
+  const fieldValue = lead[rule.field];
+
+  switch (rule.condition) {
+    case 'exists':
+      if (Array.isArray(fieldValue)) return fieldValue.length > 0;
+      return !!fieldValue;
+    case 'equals':
+      return fieldValue === rule.value;
+    case 'contains':
+      if (typeof fieldValue === 'string') return fieldValue.includes(rule.value);
+      if (Array.isArray(fieldValue)) return fieldValue.includes(rule.value);
+      return false;
+    case 'greater_than':
+      return typeof fieldValue === 'number' && fieldValue > rule.value;
+    default:
+      return false;
+  }
+}
+
+/**
+ * Score a lead against a set of rules.
+ *
+ * Rules that share a `group` key are treated as mutually-exclusive tiers --
+ * only the highest-scoring match within each group contributes to the total.
+ * Ungrouped rules are additive.
+ *
+ * The final score is capped at 100.
+ */
+export function evaluateScore(lead: any, rules: ScoringRule[] = DEFAULT_SCORING_RULES): number {
+  let total = 0;
+
+  // Collect the best score per group
+  const groupBest: Record<string, number> = {};
+
+  for (const rule of rules) {
+    if (!evaluateCondition(lead, rule)) continue;
+
+    if (rule.group) {
+      // For grouped rules, keep only the highest match
+      groupBest[rule.group] = Math.max(groupBest[rule.group] ?? 0, rule.points);
+    } else {
+      total += rule.points;
+    }
+  }
+
+  // Add group winners
+  for (const pts of Object.values(groupBest)) {
+    total += pts;
+  }
+
+  return Math.min(total, 100);
+}
+
 class LeadService {
   async createLead(input: any, adminId: number, t?: Transaction): Promise<Lead> {
     const { users: inputUsers, ...leadData } = input;
 
-    if (input.email) await this.errorIfLeadWithExistEmail(input.email);
     if (input.email) await this.errorIfLeadWithExistEmail(input.email);
     if (input.phone) await this.errorIfLeadWithExistPhone(input.phone);
 
@@ -77,7 +167,6 @@ class LeadService {
 
     if (input.email) await this.errorIfLeadWithExistEmail(input.email, lead.id);
     if (input.phone) await this.errorIfLeadWithExistPhone(input.phone, lead.id);
-    if (input.phone) await this.errorIfLeadWithExistPhone(input.phone, lead.id);
 
     // 🧠 Recalculate Score on Update
     const updatedData = { ...lead.toJSON(), ...input };
@@ -92,7 +181,7 @@ class LeadService {
     }
     if (input.users && Array.isArray(input.users)) await lead.$set('users', input.users);
     lead.set(input);
-    await createActivityLog('lead', 'update', lead.id, user.id, null, `New updates added suucesfully`);
+    await createActivityLog('lead', 'update', lead.id, user.id, null, `New updates added successfully`);
     users?.length && (await notificationService.sendAssignLeadNotification({ userId: user.id, target: lead.id }));
     const updatedLead = await lead.save();
     io.emit('lead:updated', updatedLead); // Emit event after update
@@ -242,8 +331,7 @@ class LeadService {
         status: status || LeadStatusEnums.NEW,
         users: existingUsers?.length && existingUsers.map(user => user.id)[0],
         notes: notes,
-        lastContactDate: lastContactDate,
-        x: 'as'
+        lastContactDate: lastContactDate
       });
     }
 
@@ -272,39 +360,27 @@ class LeadService {
     return !!assignment; // Returns true if assigned, false otherwise
   }
 
-  private calculateScore(lead: any): number {
-    let score = 0;
+  /**
+   * Calculate lead score using the configurable rules engine.
+   *
+   * Maps internal lead field names (e.g. companyName, leadSource, users) to the
+   * canonical rule field names (company, source, assignedUsers) so the default
+   * rules work out-of-the-box regardless of the field naming convention used
+   * by callers.
+   *
+   * Accepts an optional custom rule set; defaults to DEFAULT_SCORING_RULES.
+   */
+  calculateScore(lead: any, rules?: ScoringRule[]): number {
+    // Normalise lead fields to the canonical names used by the scoring rules
+    const normalised: Record<string, any> = {
+      ...lead,
+      // Alias mappings for backward compatibility
+      company: lead.company || lead.companyName,
+      source: lead.source || lead.leadSource,
+      assignedUsers: lead.assignedUsers || lead.users,
+    };
 
-    // 1. Core Contacts (60 points)
-    if (lead.email) score += 30;
-    if (lead.phone) score += 30;
-
-    // 2. Business Context (15 points)
-    if (lead.companyName) score += 15;
-
-    // 3. Source Quality (15 points)
-    if (lead.leadSource === LeadSourceEnums.SOCIAL_MEDIA || lead.leadSource === 'REFERRAL') {
-      score += 15;
-    } else if (lead.leadSource === LeadSourceEnums.WEBSITE) {
-      score += 10;
-    }
-
-    // 4. Interaction & Recency (10 points) - "Intelligent Intelligence"
-    if (lead.notes && lead.notes.length > 20) score += 5; // Points for detailed notes
-
-    // Points for status progression
-    if (lead.status !== LeadStatusEnums.NEW) score += 5;
-
-    // Recency bonus: if contacted in last 7 days
-    if (lead.lastContactDate) {
-      const sevenDaysAgo = new Date();
-      sevenDaysAgo.setDate(sevenDaysAgo.getDate() - 7);
-      if (new Date(lead.lastContactDate) > sevenDaysAgo) {
-        score += 5;
-      }
-    }
-
-    return Math.min(score, 100);
+    return evaluateScore(normalised, rules);
   }
 
   async sendLeadsExcelByEmail(query: any, user: User, email: string): Promise<void> {

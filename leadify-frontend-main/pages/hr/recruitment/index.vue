@@ -28,6 +28,51 @@ div
       .text-2xl.font-bold(style="color: #f59e0b") {{ applicants.filter(a => a.stage === 'INTERVIEW').length }}
       .text-xs.mt-1(style="color: var(--text-muted)") {{ $t('hr.recruitment.inInterview') || 'In Interview' }}
 
+  //- Recruitment Funnel Section
+  .glass-card.p-6.rounded-2xl.mb-6
+    .flex.items-center.justify-between.mb-4
+      .flex.items-center.gap-2
+        Icon(name="ph:funnel-bold" size="20" style="color: #3b82f6")
+        span.text-sm.font-semibold(style="color: var(--text-primary)") Recruitment Funnel
+      el-select(v-model="selectedPostingId" :placeholder="$t('hr.recruitment.selectPosting') || 'Select a job posting'" size="small" style="width: 260px" @change="loadFunnel" filterable)
+        el-option(v-for="p in postings" :key="p.id" :label="p.title" :value="p.id")
+    div(v-if="!selectedPostingId")
+      .text-center.py-6
+        Icon(name="ph:funnel-simple-bold" size="40" style="color: var(--text-muted); opacity: 0.3")
+        p.text-sm.mt-2(style="color: var(--text-muted)") Select a job posting to view its recruitment funnel
+    div(v-else v-loading="funnelLoading")
+      //- Funnel Pipeline
+      .flex.items-end.gap-1.mb-4(class="flex-wrap md:flex-nowrap" style="min-height: 120px")
+        .flex-1.text-center(v-for="(stage, idx) in funnelStages" :key="stage.name" style="min-width: 80px")
+          .mx-auto.rounded-t-lg.transition-all.duration-500(
+            :style="{ width: funnelBarWidth(stage.count), height: funnelBarHeight(stage.count) + 'px', background: stage.color, minHeight: '24px', minWidth: '40px' }"
+          )
+            .text-xs.font-bold.text-white.pt-1 {{ stage.count }}
+          .text-xs.font-medium.mt-2(style="color: var(--text-primary)") {{ stage.name }}
+          div.text-xs(v-if="idx > 0" class="mt-0.5" style="color: var(--text-muted)")
+            span(v-if="funnelStages[idx - 1].count > 0") {{ Math.round((stage.count / funnelStages[idx - 1].count) * 100) }}%
+            span(v-else) --
+      //- Funnel Table
+      .glass-card.rounded-xl.overflow-hidden.mt-4(style="border: 1px solid var(--border-default, rgba(255,255,255,0.06))")
+        el-table(:data="funnelStages" style="width: 100%" size="small")
+          el-table-column(label="Stage" min-width="140")
+            template(#default="{ row }")
+              .flex.items-center.gap-2
+                .w-3.h-3.rounded-full(:style="{ background: row.color }")
+                span.text-sm.font-medium(style="color: var(--text-primary)") {{ row.name }}
+          el-table-column(label="Count" width="100" align="center")
+            template(#default="{ row }")
+              span.text-sm.font-bold(style="color: var(--text-primary)") {{ row.count }}
+          el-table-column(label="Conversion" width="120" align="center")
+            template(#default="{ row, $index }")
+              span.text-sm(v-if="$index === 0" style="color: var(--text-muted)") --
+              span.text-sm.font-semibold(v-else-if="funnelStages[$index - 1].count > 0" :style="{ color: conversionColor(row.count, funnelStages[$index - 1].count) }") {{ Math.round((row.count / funnelStages[$index - 1].count) * 100) }}%
+              span.text-sm(v-else style="color: var(--text-muted)") --
+          el-table-column(label="Drop-off" width="120" align="center")
+            template(#default="{ row, $index }")
+              span.text-sm(v-if="$index === 0" style="color: var(--text-muted)") --
+              span.text-sm(v-else style="color: #ef4444") {{ Math.max(0, funnelStages[$index - 1].count - row.count) }}
+
   //- Tabs
   el-tabs(v-model="activeTab")
     //- Job Postings Tab
@@ -75,6 +120,15 @@ div
                 el-button(text type="danger" size="small" @click="handleDeletePosting(row)")
                   Icon(name="ph:trash-bold" size="16")
 
+        .flex.justify-end.mt-4
+          el-pagination(
+            :current-page="postingsPagination.page"
+            :page-size="postingsPagination.limit"
+            :total="postingsPagination.total"
+            layout="total, prev, pager, next"
+            @current-change="(p: number) => { postingsPagination.page = p; loadData() }"
+          )
+
     //- Applicants Tab
     el-tab-pane(:label="$t('hr.recruitment.applicants') || 'Applicants'" name="applicants")
       //- Filters
@@ -119,6 +173,15 @@ div
                   Icon(name="ph:pencil-bold" size="16")
                 el-button(text type="danger" size="small" @click="handleDeleteApplicant(row)")
                   Icon(name="ph:trash-bold" size="16")
+
+        .flex.justify-end.mt-4
+          el-pagination(
+            :current-page="applicantsPagination.page"
+            :page-size="applicantsPagination.limit"
+            :total="applicantsPagination.total"
+            layout="total, prev, pager, next"
+            @current-change="(p: number) => { applicantsPagination.page = p; loadData() }"
+          )
 
   //- Job Posting Dialog
   el-dialog(v-model="postingDialogVisible" :title="editingPosting ? ($t('hr.recruitment.editPosting') || 'Edit Job Posting') : ($t('hr.recruitment.newPosting') || 'New Job Posting')" width="600px" destroy-on-close)
@@ -203,6 +266,7 @@ const editingPosting = ref<any>(null);
 const postingSearch = ref('');
 const postingStatusFilter = ref('');
 const postings = ref<any[]>([]);
+const postingsPagination = reactive({ page: 1, limit: 20, total: 0 });
 
 // Applicants state
 const applicantDialogVisible = ref(false);
@@ -210,8 +274,28 @@ const editingApplicant = ref<any>(null);
 const applicantSearch = ref('');
 const applicantStageFilter = ref('');
 const applicants = ref<any[]>([]);
+const applicantsPagination = reactive({ page: 1, limit: 20, total: 0 });
 
 const departments = ref<string[]>(['Engineering', 'Sales', 'Marketing', 'HR', 'Operations', 'Finance', 'Design', 'Product']);
+
+// Funnel state
+const selectedPostingId = ref<number | string>('');
+const funnelLoading = ref(false);
+
+interface FunnelStage {
+  name: string;
+  count: number;
+  color: string;
+}
+
+const funnelStages = ref<FunnelStage[]>([
+  { name: 'Applied', count: 0, color: '#6366f1' },
+  { name: 'Screening', count: 0, color: '#3b82f6' },
+  { name: 'Interview', count: 0, color: '#f59e0b' },
+  { name: 'Assessment', count: 0, color: '#8b5cf6' },
+  { name: 'Offer', count: 0, color: '#22c55e' },
+  { name: 'Hired', count: 0, color: '#10b981' }
+]);
 
 const POSTING_STATUSES = [
   { value: 'OPEN', label: 'Open', type: 'success' },
@@ -444,19 +528,63 @@ async function loadData() {
   loading.value = true;
   try {
     const [postingsRes, applicantsRes] = await Promise.all([
-      useApiFetch('hr/recruitment/postings'),
-      useApiFetch('hr/recruitment/applicants')
+      useApiFetch(`hr/recruitment/postings?page=${postingsPagination.page}&limit=${postingsPagination.limit}`),
+      useApiFetch(`hr/recruitment/applicants?page=${applicantsPagination.page}&limit=${applicantsPagination.limit}`)
     ]);
     if (postingsRes?.success && postingsRes.body) {
       const data = postingsRes.body as any;
-      postings.value = data.docs || data || [];
+      postings.value = data.rows || data.docs || data || [];
+      postingsPagination.total = data.count ?? data.total ?? postings.value.length;
     }
     if (applicantsRes?.success && applicantsRes.body) {
       const data = applicantsRes.body as any;
-      applicants.value = data.docs || data || [];
+      applicants.value = data.rows || data.docs || data || [];
+      applicantsPagination.total = data.count ?? data.total ?? applicants.value.length;
     }
   } finally {
     loading.value = false;
+  }
+}
+
+// Funnel helpers
+function funnelBarWidth(count: number): string {
+  const max = Math.max(...funnelStages.value.map(s => s.count), 1);
+  return Math.max(40, Math.round((count / max) * 100)) + '%';
+}
+
+function funnelBarHeight(count: number): number {
+  const max = Math.max(...funnelStages.value.map(s => s.count), 1);
+  return Math.max(24, Math.round((count / max) * 100));
+}
+
+function conversionColor(current: number, previous: number): string {
+  if (!previous) return 'var(--text-muted)';
+  const pct = (current / previous) * 100;
+  if (pct >= 60) return '#22c55e';
+  if (pct >= 30) return '#f59e0b';
+  return '#ef4444';
+}
+
+async function loadFunnel() {
+  if (!selectedPostingId.value) return;
+  funnelLoading.value = true;
+  try {
+    const res = await useApiFetch(`hr/recruitment/postings/${selectedPostingId.value}/funnel`);
+    if (res?.success && res.body) {
+      const d = res.body as any;
+      funnelStages.value = [
+        { name: 'Applied', count: d.applied ?? 0, color: '#6366f1' },
+        { name: 'Screening', count: d.screening ?? 0, color: '#3b82f6' },
+        { name: 'Interview', count: d.interview ?? 0, color: '#f59e0b' },
+        { name: 'Assessment', count: d.assessment ?? 0, color: '#8b5cf6' },
+        { name: 'Offer', count: d.offer ?? 0, color: '#22c55e' },
+        { name: 'Hired', count: d.hired ?? 0, color: '#10b981' }
+      ];
+    }
+  } catch {
+    // Funnel data is supplementary; silently ignore errors
+  } finally {
+    funnelLoading.value = false;
   }
 }
 

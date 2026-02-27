@@ -31,5 +31,49 @@ class WarehouseController {
   async updateTransfer(req: AuthenticatedRequest, res: Response, next: NextFunction) {
     try { wrapResult(res, await service.updateTransfer(Number(req.params.id), req.body)); } catch (e) { next(e); }
   }
+
+  // ─── New Business Logic Endpoints ────────────────────────────────────────────
+
+  async updateStockLevels(req: AuthenticatedRequest, res: Response, next: NextFunction) {
+    try {
+      const warehouseId = Number(req.params.id);
+      const { items } = req.body;
+      if (!items || !Array.isArray(items)) {
+        return res.status(400).send({ success: false, message: 'items array is required' });
+      }
+      wrapResult(res, await service.updateStockLevels(warehouseId, items));
+    } catch (e) { next(e); }
+  }
+
+  async processTransfer(req: AuthenticatedRequest, res: Response, next: NextFunction) {
+    try {
+      wrapResult(res, await service.processTransfer(Number(req.params.id)));
+    } catch (e) { next(e); }
+  }
+
+  async getLowStockAlerts(req: AuthenticatedRequest, res: Response, next: NextFunction) {
+    try {
+      const tenantId = (req.user as any)?.tenantId;
+      const threshold = req.query.threshold ? Number(req.query.threshold) : 10;
+      wrapResult(res, await service.getLowStockAlerts(tenantId, threshold));
+    } catch (e) { next(e); }
+  }
+
+  async getStockSummary(req: AuthenticatedRequest, res: Response, next: NextFunction) {
+    try {
+      wrapResult(res, await service.getStockSummary(Number(req.params.id)));
+    } catch (e) { next(e); }
+  }
+
+  async getInventoryMovement(req: AuthenticatedRequest, res: Response, next: NextFunction) {
+    try {
+      const warehouseId = Number(req.params.id);
+      const { dateFrom, dateTo } = req.query as any;
+      if (!dateFrom || !dateTo) {
+        return res.status(400).send({ success: false, message: 'dateFrom and dateTo query params are required' });
+      }
+      wrapResult(res, await service.getInventoryMovement(warehouseId, dateFrom, dateTo));
+    } catch (e) { next(e); }
+  }
 }
 export default new WarehouseController();

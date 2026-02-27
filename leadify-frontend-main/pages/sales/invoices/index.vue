@@ -9,6 +9,31 @@ div
 
   StatCards(:stats="summaryStats")
 
+  //- Analytics Section
+  .grid.gap-4.mb-6(class="grid-cols-2 md:grid-cols-4")
+    .glass-card.p-5.rounded-2xl(v-for="stat in analyticsStats" :key="stat.label")
+      .flex.items-center.justify-between
+        div
+          p.text-xs.font-medium.uppercase.tracking-wide(style="color: var(--text-muted)") {{ stat.label }}
+          p.text-2xl.font-bold.mt-1(:style="{ color: stat.color }") {{ stat.value }}
+        .w-10.h-10.rounded-xl.flex.items-center.justify-center(:style="{ background: stat.color + '20' }")
+          Icon(:name="stat.icon" size="20" :style="{ color: stat.color }")
+
+  //- Aging Report Card
+  .glass-card.p-6.rounded-2xl.mb-6(v-if="agingReport")
+    .flex.items-center.gap-2.mb-4
+      .w-8.h-8.rounded-xl.flex.items-center.justify-center(style="background: rgba(120,73,255,0.15)")
+        Icon(name="ph:clock-countdown-bold" size="16" style="color: #7849ff")
+      h3.text-sm.font-bold(style="color: var(--text-primary)") {{ $t('invoices.agingReport') || 'Aging Report' }}
+      .ml-auto
+        span.text-xs(style="color: var(--text-muted)") {{ $t('invoices.totalOutstanding') || 'Total Outstanding' }}:
+        span.text-sm.font-bold.ml-1(style="color: #ef4444") {{ formatCurrency(agingReport.totalOutstanding || 0) }}
+    .grid.gap-3(class="grid-cols-2 md:grid-cols-4")
+      .rounded-xl.p-4.text-center(v-for="bucket in agingBuckets" :key="bucket.label" :style="{ background: bucket.bg, border: `1px solid ${bucket.borderColor}` }")
+        p.text-xs.font-medium.mb-1(:style="{ color: bucket.color }") {{ bucket.label }}
+        p.text-lg.font-bold(:style="{ color: bucket.color }") {{ formatCurrency(bucket.amount) }}
+        p.text-xs.mt-1(style="color: var(--text-muted)") {{ bucket.count }} {{ $t('invoices.title').toLowerCase() }}
+
   SavedViews(:entityType="'invoice'" :currentFilters="{}" @apply-view="handleApplyView")
   AdvancedSearch(:entityType="'invoice'" :fields="advancedSearchFields" @apply="handleAdvancedFilter" @clear="handleClearAdvancedFilter")
 
@@ -127,6 +152,8 @@ div
 import { ElNotification } from 'element-plus';
 import type { InvoiceItem, InvoiceSummary } from '~/composables/useInvoices';
 import { fetchInvoices, fetchInvoiceSummary, markCollected, markUncollected } from '~/composables/useInvoices';
+import { getAgingReport } from '~/composables/useInvoiceBilling';
+import type { AgingReport } from '~/composables/useInvoiceBilling';
 
 definePageMeta({ middleware: 'permissions' });
 const { $i18n } = useNuxtApp();
@@ -151,6 +178,37 @@ const collecting = ref<number | null>(null);
 const invoices = ref<InvoiceItem[]>([]);
 const summary = ref<InvoiceSummary>({ totalInvoices: 0, totalAmount: 0, collectedAmount: 0, pendingAmount: 0, collectedCount: 0, pendingCount: 0 });
 const pagination = ref({ page: 1, limit: 20, totalItems: 0, totalPages: 0 });
+
+// Aging report data
+const agingReport = ref<AgingReport | null>(null);
+
+const analyticsStats = computed(() => {
+  const s = summary.value;
+  const overdueCount = (table.value.data || []).filter((r: any) => {
+    if (r.statusLabel === 'COLLECTED') return false;
+    if (!r.invoiceDate) return false;
+    const dueDate = new Date(r.invoiceDate);
+    dueDate.setDate(dueDate.getDate() + 30);
+    return new Date() > dueDate;
+  }).length;
+  return [
+    { label: t('invoices.totalRevenue') || 'Total Revenue', value: formatCurrency(s.totalAmount), icon: 'ph:chart-line-up-bold', color: '#7849ff' },
+    { label: t('invoices.collected') || 'Collected', value: formatCurrency(s.collectedAmount), icon: 'ph:check-circle-bold', color: '#22c55e' },
+    { label: t('invoices.outstanding') || 'Outstanding', value: formatCurrency(s.pendingAmount), icon: 'ph:warning-circle-bold', color: '#f59e0b' },
+    { label: t('invoices.overdueCount') || 'Overdue', value: overdueCount, icon: 'ph:alarm-bold', color: '#ef4444' }
+  ];
+});
+
+const agingBuckets = computed(() => {
+  if (!agingReport.value?.buckets) return [];
+  const b = agingReport.value.buckets;
+  return [
+    { label: 'Current', amount: b.current?.amount || 0, count: b.current?.count || 0, color: '#22c55e', bg: 'rgba(34,197,94,0.08)', borderColor: 'rgba(34,197,94,0.2)' },
+    { label: '1-30 Days', amount: b.thirtyDays?.amount || 0, count: b.thirtyDays?.count || 0, color: '#f59e0b', bg: 'rgba(245,158,11,0.08)', borderColor: 'rgba(245,158,11,0.2)' },
+    { label: '31-60 Days', amount: b.sixtyDays?.amount || 0, count: b.sixtyDays?.count || 0, color: '#f97316', bg: 'rgba(249,115,22,0.08)', borderColor: 'rgba(249,115,22,0.2)' },
+    { label: '90+ Days', amount: b.ninetyPlus?.amount || 0, count: b.ninetyPlus?.count || 0, color: '#ef4444', bg: 'rgba(239,68,68,0.08)', borderColor: 'rgba(239,68,68,0.2)' }
+  ];
+});
 
 const summaryStats = computed(() => [
   { label: t('invoices.totalInvoices'), value: summary.value.totalInvoices, icon: 'ph:file-text-bold', color: '#7849ff' },
@@ -199,7 +257,7 @@ const filterOptions = computed(() => [
 ]);
 
 onMounted(async () => {
-  await Promise.all([loadInvoices(), loadSummary()]);
+  await Promise.all([loadInvoices(), loadSummary(), loadAgingReport()]);
 });
 
 async function loadInvoices() {
@@ -216,6 +274,15 @@ async function loadInvoices() {
 
 async function loadSummary() {
   summary.value = await fetchInvoiceSummary();
+}
+
+async function loadAgingReport() {
+  try {
+    const report = await getAgingReport();
+    if (report) agingReport.value = report;
+  } catch {
+    // Aging report is non-critical
+  }
 }
 
 function formatRow(inv: InvoiceItem) {

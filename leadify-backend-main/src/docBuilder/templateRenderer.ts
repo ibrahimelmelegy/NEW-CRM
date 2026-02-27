@@ -75,7 +75,7 @@ function formatDate(dateStr?: string): string {
   return new Date(dateStr).toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' });
 }
 
-export function renderDocumentHtml(content: DocumentContent, type: string): string {
+export function renderDocumentHtml(content: DocumentContent, type: string, watermark?: string): string {
   const color = content.themeColor || '#7c3aed';
   const currency = content.currency || 'SAR';
   const items = content.items || [];
@@ -118,6 +118,10 @@ export function renderDocumentHtml(content: DocumentContent, type: string): stri
 
   const fontFamily = "'Segoe UI', system-ui, -apple-system, sans-serif";
 
+  const watermarkHtml = watermark
+    ? `<div style="position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%) rotate(-45deg); font-size: 120px; color: rgba(0,0,0,0.06); font-weight: 900; pointer-events: none; z-index: 1000; white-space: nowrap;">${escapeHtml(watermark)}</div>`
+    : '';
+
   return `<!DOCTYPE html>
 <html lang="en">
 <head>
@@ -129,6 +133,7 @@ export function renderDocumentHtml(content: DocumentContent, type: string): stri
   </style>
 </head>
 <body>
+  ${watermarkHtml}
   <!-- Header -->
   <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 40px; padding-bottom: 20px; border-bottom: 3px solid ${color};">
     <div>
@@ -288,16 +293,31 @@ export function renderDocumentHtml(content: DocumentContent, type: string): stri
 /**
  * Render a document using a DocumentTemplate's HTML layout + brand settings.
  * Falls back to renderDocumentHtml() if no templateHtml is provided.
+ * If watermark is provided, a semi-transparent diagonal overlay is added to the output.
  */
 export function renderWithTemplate(
   content: DocumentContent,
   type: string,
   templateHtml?: string,
-  brand?: BrandSettings
+  brand?: BrandSettings,
+  watermark?: string
 ): string {
   if (!templateHtml) {
-    return renderDocumentHtml(content, type);
+    return renderDocumentHtml(content, type, watermark);
   }
 
-  return renderFromTemplate(templateHtml, content as Record<string, any>, brand);
+  let html = renderFromTemplate(templateHtml, content as Record<string, any>, brand);
+
+  // Inject watermark overlay into template-rendered HTML
+  if (watermark) {
+    const watermarkHtml = `<div style="position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%) rotate(-45deg); font-size: 120px; color: rgba(0,0,0,0.06); font-weight: 900; pointer-events: none; z-index: 1000; white-space: nowrap;">${escapeHtml(watermark)}</div>`;
+    // Insert right after <body> tag if present, otherwise prepend
+    if (html.includes('<body')) {
+      html = html.replace(/(<body[^>]*>)/, `$1${watermarkHtml}`);
+    } else {
+      html = watermarkHtml + html;
+    }
+  }
+
+  return html;
 }

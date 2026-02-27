@@ -90,6 +90,60 @@ class NotificationController {
       next(error);
     }
   }
+
+  /**
+   * Get notification digest: unread notifications grouped by type with counts.
+   * Query param `since` is an ISO date string; defaults to 24 hours ago.
+   */
+  public async getDigest(req: AuthenticatedRequest, res: Response, next: NextFunction): Promise<void> {
+    try {
+      const userId = req.user!.id;
+      const sinceParam = req.query.since as string;
+      const since = sinceParam ? new Date(sinceParam) : new Date(Date.now() - 24 * 60 * 60 * 1000);
+      const digest = await notificationCenterService.getDigest(userId, since);
+      wrapResult(res, digest);
+    } catch (error) {
+      next(error);
+    }
+  }
+
+  /**
+   * Register a browser push subscription for the authenticated user.
+   * Body: { endpoint, keys: { p256dh, auth } }
+   */
+  public async registerPushSubscription(req: AuthenticatedRequest, res: Response, next: NextFunction): Promise<void> {
+    try {
+      const userId = req.user!.id;
+      const { endpoint, keys } = req.body;
+      if (!endpoint || !keys?.p256dh || !keys?.auth) {
+        wrapResult(res, { message: 'Invalid subscription data' }, 400);
+        return;
+      }
+      const result = await notificationCenterService.registerPushSubscription(userId, { endpoint, keys });
+      wrapResult(res, result, 201);
+    } catch (error) {
+      next(error);
+    }
+  }
+
+  /**
+   * Unregister a push subscription for the authenticated user.
+   * Body: { endpoint }
+   */
+  public async unregisterPushSubscription(req: AuthenticatedRequest, res: Response, next: NextFunction): Promise<void> {
+    try {
+      const userId = req.user!.id;
+      const { endpoint } = req.body;
+      if (!endpoint) {
+        wrapResult(res, { message: 'Endpoint is required' }, 400);
+        return;
+      }
+      await notificationCenterService.unregisterPushSubscription(userId, endpoint);
+      wrapResult(res);
+    } catch (error) {
+      next(error);
+    }
+  }
 }
 
 export default new NotificationController();

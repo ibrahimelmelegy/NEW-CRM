@@ -90,6 +90,13 @@ class Opportunity extends Model {
     allowNull: true,
     defaultValue: 0
   })
+  public probability?: number;
+
+  @Column({
+    type: DataType.FLOAT,
+    allowNull: true,
+    defaultValue: 0
+  })
   public profit?: number;
 
   @ForeignKey(() => Tenant)

@@ -126,6 +126,7 @@ div
 
 <script setup lang="ts">
 import { Plus } from '@element-plus/icons-vue';
+import { ElNotification, ElMessageBox } from 'element-plus';
 import { stageOptions, priorityOptions } from '@/composables/useOpportunity';
 import useTableFilter from '@/composables/useTableFilter';
 const router = useRouter();
@@ -151,11 +152,40 @@ const exportData = computed(() => table.data);
 
 // Bulk actions
 const selectedRows = ref<any[]>([]);
-function handleBulkDelete() {
-  selectedRows.value = [];
+async function handleBulkDelete() {
+  if (!selectedRows.value.length) return;
+  try {
+    await ElMessageBox.confirm(
+      `Are you sure you want to delete ${selectedRows.value.length} opportunity(ies)?`,
+      t('common.warning') || 'Warning',
+      { type: 'warning', confirmButtonText: t('common.delete') || 'Delete', cancelButtonText: t('common.cancel') || 'Cancel' }
+    );
+    loadingAction.value = true;
+    const ids = selectedRows.value.map((r: any) => r.id);
+    await Promise.all(ids.map((id: any) => useApiFetch(`opportunity/${id}`, 'DELETE')));
+    const res = await useTableFilter('opportunity');
+    table.data = res.formattedData;
+    selectedRows.value = [];
+    ElNotification({ type: 'success', title: t('common.success'), message: `${ids.length} opportunity(ies) deleted` });
+  } catch {
+    // User cancelled or error
+  } finally {
+    loadingAction.value = false;
+  }
 }
-function handleBulkExport() {
-  selectedRows.value = [];
+async function handleBulkExport() {
+  if (!selectedRows.value.length) return;
+  try {
+    loadingAction.value = true;
+    const ids = selectedRows.value.map((r: any) => r.id);
+    await useApiFetch('opportunity/export', 'POST', { ids });
+    ElNotification({ type: 'success', title: t('common.success'), message: 'Export sent to your email' });
+    selectedRows.value = [];
+  } catch {
+    ElNotification({ type: 'error', title: t('common.error'), message: 'Export failed' });
+  } finally {
+    loadingAction.value = false;
+  }
 }
 
 const present = ref('');

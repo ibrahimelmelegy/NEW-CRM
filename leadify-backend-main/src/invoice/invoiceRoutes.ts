@@ -147,6 +147,10 @@ const router = express.Router();
 
 router.get('/', authenticateUser, invoiceController.getInvoices);
 router.get('/summary', authenticateUser, invoiceController.getSummary);
+router.get('/aging-report', authenticateUser, invoiceController.getAgingReport);
+router.get('/revenue-summary', authenticateUser, invoiceController.getRevenueSummary);
+router.get('/overdue', authenticateUser, invoiceController.getOverdueInvoices);
+router.post('/calculate-totals', authenticateUser, invoiceController.calculateTotals);
 router.get('/:id', authenticateUser, invoiceController.getInvoiceById);
 router.put('/:id/collect', authenticateUser, HasPermission([DealPermissionsEnum.EDIT_DEALS]), invoiceController.markCollected);
 router.put('/:id/uncollect', authenticateUser, HasPermission([DealPermissionsEnum.EDIT_DEALS]), invoiceController.markUncollected);

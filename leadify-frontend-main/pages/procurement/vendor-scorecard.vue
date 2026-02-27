@@ -10,6 +10,63 @@ div.animate-fade-in
         Icon(name="ph:plus-bold" size="16" class="mr-1")
         | {{ $t('vendorScorecard.newScorecard') || 'New Evaluation' }}
 
+  //- Vendor Rankings
+  .glass-card.p-5.rounded-2xl.mb-6
+    .flex.items-center.justify-between.mb-4
+      h3.text-lg.font-bold(style="color: var(--text-primary)")
+        Icon(name="ph:trophy-bold" size="20" class="mr-2" style="color: #f59e0b")
+        | {{ $t('vendorScorecard.rankings') || 'Vendor Rankings' }}
+      el-button(size="small" text @click="loadRankings" :loading="loadingRankings")
+        Icon(name="ph:arrows-clockwise" size="14")
+    .flex.items-center.justify-center.py-6(v-if="loadingRankings")
+      el-icon.is-loading(:size="20" style="color: var(--accent-color, #7849ff)")
+    .space-y-2(v-else-if="vendorRankings.length")
+      .flex.items-center.justify-between.p-3.rounded-xl(
+        v-for="(vr, idx) in vendorRankings"
+        :key="idx"
+        style="background: var(--bg-elevated); border: 1px solid var(--border-default)"
+      )
+        .flex.items-center.gap-3
+          .w-9.h-9.rounded-full.flex.items-center.justify-center.text-sm.font-black(
+            :style="{ background: idx < 3 ? '#f59e0b20' : 'var(--bg-elevated)', color: idx < 3 ? '#f59e0b' : 'var(--text-muted)', border: '1px solid var(--border-default)' }"
+          ) {{ idx + 1 }}
+          div
+            p.text-sm.font-semibold(style="color: var(--text-primary)") {{ vr.vendorName || vr.name || '--' }}
+            p.text-xs(v-if="vr.percentile != null" style="color: var(--text-muted)") Top {{ vr.percentile }}%
+        .flex.items-center.gap-3
+          .w-12.h-12.rounded-full.flex.items-center.justify-center.text-sm.font-bold(
+            :style="{ background: getRankScoreColor(vr.overallScore || vr.score || 0) + '20', color: getRankScoreColor(vr.overallScore || vr.score || 0) }"
+          ) {{ (vr.overallScore || vr.score || 0).toFixed(1) }}
+    .text-center.py-6(v-else)
+      Icon(name="ph:trophy" size="32" style="color: var(--text-muted)")
+      p.text-xs.mt-1(style="color: var(--text-muted)") {{ $t('vendorScorecard.noRankings') || 'No rankings available' }}
+
+  //- Benchmark Card
+  el-row.mb-6(:gutter="16" v-if="benchmark")
+    el-col(:span="24")
+      .glass-card.p-5.rounded-2xl
+        .flex.items-center.justify-between.mb-4
+          h3.text-lg.font-bold(style="color: var(--text-primary)")
+            Icon(name="ph:chart-bar-horizontal-bold" size="20" class="mr-2" style="color: #3b82f6")
+            | {{ $t('vendorScorecard.benchmark') || 'Vendor Benchmark (Averages)' }}
+        el-row(:gutter="16")
+          el-col(:span="6")
+            .text-center.p-3.rounded-xl(style="background: var(--bg-elevated); border: 1px solid var(--border-default)")
+              p.text-xs.mb-1(style="color: var(--text-muted)") {{ $t('vendorScorecard.avgQuality') || 'Avg Quality' }}
+              p.text-2xl.font-bold(:style="{ color: getScoreColor(benchmark.avgQuality || 0) }") {{ (benchmark.avgQuality || 0).toFixed(1) }}
+          el-col(:span="6")
+            .text-center.p-3.rounded-xl(style="background: var(--bg-elevated); border: 1px solid var(--border-default)")
+              p.text-xs.mb-1(style="color: var(--text-muted)") {{ $t('vendorScorecard.avgDelivery') || 'Avg Delivery' }}
+              p.text-2xl.font-bold(:style="{ color: getScoreColor(benchmark.avgDelivery || 0) }") {{ (benchmark.avgDelivery || 0).toFixed(1) }}
+          el-col(:span="6")
+            .text-center.p-3.rounded-xl(style="background: var(--bg-elevated); border: 1px solid var(--border-default)")
+              p.text-xs.mb-1(style="color: var(--text-muted)") {{ $t('vendorScorecard.avgPrice') || 'Avg Price' }}
+              p.text-2xl.font-bold(:style="{ color: getScoreColor(benchmark.avgPrice || 0) }") {{ (benchmark.avgPrice || 0).toFixed(1) }}
+          el-col(:span="6")
+            .text-center.p-3.rounded-xl(style="background: var(--bg-elevated); border: 1px solid var(--border-default)")
+              p.text-xs.mb-1(style="color: var(--text-muted)") {{ $t('vendorScorecard.avgCommunication') || 'Avg Communication' }}
+              p.text-2xl.font-bold(:style="{ color: getScoreColor(benchmark.avgCommunication || 0) }") {{ (benchmark.avgCommunication || 0).toFixed(1) }}
+
   //- Stats Cards
   .grid.gap-4.mb-6(class="grid-cols-2 md:grid-cols-4")
     .glass-card.p-5.rounded-2xl
@@ -210,6 +267,11 @@ const vendors = ref<any[]>([]);
 const dialogVisible = ref(false);
 const editingScorecard = ref<any>(null);
 
+// Rankings & Benchmark
+const loadingRankings = ref(false);
+const vendorRankings = ref<any[]>([]);
+const benchmark = ref<any>(null);
+
 const scoreMarks = { 1: '1', 2: '2', 3: '3', 4: '4', 5: '5' };
 
 const form = reactive({
@@ -226,6 +288,14 @@ const form = reactive({
 function getScoreColor(score: number): string {
   if (score >= 4) return '#22c55e';
   if (score >= 3) return '#f59e0b';
+  return '#ef4444';
+}
+
+// Ranking score color (uses 0-100 scale)
+function getRankScoreColor(score: number): string {
+  if (score > 80) return '#22c55e';
+  if (score >= 60) return '#f59e0b';
+  if (score >= 4) return getScoreColor(score); // 1-5 scale fallback
   return '#ef4444';
 }
 
@@ -350,9 +420,38 @@ async function handleDelete(scorecard: any) {
   }
 }
 
+// Rankings API
+async function loadRankings() {
+  loadingRankings.value = true;
+  try {
+    const res = await useApiFetch('vendor-scorecard/ranking');
+    if (res?.success) {
+      vendorRankings.value = res.body?.docs || res.body || [];
+    }
+  } catch {
+    // silent
+  } finally {
+    loadingRankings.value = false;
+  }
+}
+
+// Benchmark API
+async function loadBenchmark() {
+  try {
+    const res = await useApiFetch('vendor-scorecard/benchmark');
+    if (res?.success && res.body) {
+      benchmark.value = res.body;
+    }
+  } catch {
+    // silent
+  }
+}
+
 onMounted(() => {
   loadScorecards();
   loadVendors();
+  loadRankings();
+  loadBenchmark();
 });
 </script>
 

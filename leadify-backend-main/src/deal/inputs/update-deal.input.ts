@@ -92,4 +92,7 @@ export class UpdateDealInput extends FindDealInput {
   @Expose()
   @IsUUID()
   clientId?: string;
+
+  // Auto-set by the service when stage changes; not user-facing input
+  probability?: number;
 }

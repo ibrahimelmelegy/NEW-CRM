@@ -76,6 +76,64 @@ router.get('/unread-count', authenticateUser, notificationController.getUnreadCo
  */
 router.get('/preferences', authenticateUser, notificationController.getPreferences);
 
+/**
+ * @swagger
+ * /api/notification/digest:
+ *   get:
+ *     summary: Get notification digest (unread grouped by type)
+ *     tags: [Notification]
+ *     security:
+ *       - bearerAuth: []
+ *     parameters:
+ *       - in: query
+ *         name: since
+ *         schema:
+ *           type: string
+ *           format: date-time
+ *         description: ISO date from which to compute the digest. Defaults to 24h ago.
+ *     responses:
+ *       200:
+ *         description: Notification digest with grouped counts and latest messages
+ */
+router.get('/digest', authenticateUser, notificationController.getDigest);
+
+//** --------------------- POST --------------------- */
+
+/**
+ * @swagger
+ * /api/notification/push-subscription:
+ *   post:
+ *     summary: Register a browser push subscription
+ *     tags: [Notification]
+ *     security:
+ *       - bearerAuth: []
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             required:
+ *               - endpoint
+ *               - keys
+ *             properties:
+ *               endpoint:
+ *                 type: string
+ *               keys:
+ *                 type: object
+ *                 properties:
+ *                   p256dh:
+ *                     type: string
+ *                   auth:
+ *                     type: string
+ *     responses:
+ *       201:
+ *         description: Push subscription registered
+ *       400:
+ *         description: Invalid subscription data
+ */
+router.post('/push-subscription', authenticateUser, notificationController.registerPushSubscription);
+
 //** --------------------- PUT --------------------- */
 
 /**
@@ -165,6 +223,31 @@ router.put('/read/:id', authenticateUser, notificationController.markAsRead);
 router.put('/preferences', authenticateUser, notificationController.updatePreferences);
 
 //** --------------------- DELETE --------------------- */
+
+/**
+ * @swagger
+ * /api/notification/push-subscription:
+ *   delete:
+ *     summary: Unregister a browser push subscription
+ *     tags: [Notification]
+ *     security:
+ *       - bearerAuth: []
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             required:
+ *               - endpoint
+ *             properties:
+ *               endpoint:
+ *                 type: string
+ *     responses:
+ *       200:
+ *         description: Push subscription removed
+ */
+router.delete('/push-subscription', authenticateUser, notificationController.unregisterPushSubscription);
 
 /**
  * @swagger

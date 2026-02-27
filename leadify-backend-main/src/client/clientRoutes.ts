@@ -458,6 +458,50 @@ router.get(
 
 /**
  * @swagger
+ * /api/client/analytics:
+ *   get:
+ *     summary: Get client analytics
+ *     description: Returns total clients, new this month, average health score, segment distribution, and top 10 clients by deal value.
+ *     tags: [Client]
+ *     security:
+ *       - bearerAuth: []
+ *     responses:
+ *       200:
+ *         description: Client analytics data
+ *       500:
+ *         description: Internal Server Error
+ */
+router.get(
+  '/analytics',
+  authenticateUser,
+  HasPermission([ClientPermissionsEnum.VIEW_GLOBAL_CLIENTS]),
+  clientController.getClientAnalytics
+);
+
+/**
+ * @swagger
+ * /api/client/segments:
+ *   get:
+ *     summary: Get client segmentation
+ *     description: Categorize all clients into segments (ENTERPRISE, GROWING, AT_RISK, CHURNING) based on health scores.
+ *     tags: [Client]
+ *     security:
+ *       - bearerAuth: []
+ *     responses:
+ *       200:
+ *         description: Client segmentation data
+ *       500:
+ *         description: Internal Server Error
+ */
+router.get(
+  '/segments',
+  authenticateUser,
+  HasPermission([ClientPermissionsEnum.VIEW_GLOBAL_CLIENTS]),
+  clientController.segmentClients
+);
+
+/**
+ * @swagger
  * /api/client/all:
  *   get:
  *     summary: Get all clients with name and id only
@@ -494,6 +538,38 @@ router.get(
  *       500:
  *         description: Internal Server Error
  */
+/**
+ * @swagger
+ * /api/client/{id}/health-score:
+ *   get:
+ *     summary: Get client health score
+ *     description: Compute a 0-100 health score for a client based on deals, activity, invoices, touchpoints, and assigned users.
+ *     tags: [Client]
+ *     security:
+ *       - bearerAuth: []
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         schema:
+ *           type: string
+ *           format: uuid
+ *         description: The client ID
+ *     responses:
+ *       200:
+ *         description: Client health score with factor breakdown
+ *       404:
+ *         description: Client not found
+ *       500:
+ *         description: Internal Server Error
+ */
+router.get(
+  '/:id/health-score',
+  authenticateUser,
+  HasPermission([ClientPermissionsEnum.VIEW_GLOBAL_CLIENTS, ClientPermissionsEnum.VIEW_OWN_CLIENTS]),
+  clientController.getHealthScore
+);
+
 router.get(
   '/:id/contacts',
   authenticateUser,

@@ -14,13 +14,89 @@
       </div>
     </div>
 
+    <!-- Stats Dashboard -->
+    <div v-if="!loading" class="space-y-4">
+      <el-row :gutter="16">
+        <el-col :xs="12" :sm="8" :md="4" :lg="4">
+          <div class="glass-panel p-5 rounded-xl text-center">
+            <div class="flex items-center justify-center mb-2">
+              <Icon name="ph:target-bold" class="w-5 h-5 text-indigo-400" />
+            </div>
+            <div class="text-2xl font-bold text-slate-200">{{ statsData.totalGoals }}</div>
+            <div class="text-xs text-slate-500 mt-1">Total Goals</div>
+          </div>
+        </el-col>
+        <el-col :xs="12" :sm="8" :md="4" :lg="4">
+          <div class="glass-panel p-5 rounded-xl text-center">
+            <div class="flex items-center justify-center mb-2">
+              <Icon name="ph:check-circle-bold" class="w-5 h-5 text-emerald-400" />
+            </div>
+            <div class="text-2xl font-bold text-emerald-400">{{ statsData.completed }}</div>
+            <div class="text-xs text-slate-500 mt-1">Completed</div>
+          </div>
+        </el-col>
+        <el-col :xs="12" :sm="8" :md="4" :lg="4">
+          <div class="glass-panel p-5 rounded-xl text-center">
+            <div class="flex items-center justify-center mb-2">
+              <Icon name="ph:spinner-bold" class="w-5 h-5 text-blue-400" />
+            </div>
+            <div class="text-2xl font-bold text-blue-400">{{ statsData.inProgress }}</div>
+            <div class="text-xs text-slate-500 mt-1">In Progress</div>
+          </div>
+        </el-col>
+        <el-col :xs="12" :sm="8" :md="4" :lg="4">
+          <div class="glass-panel p-5 rounded-xl text-center">
+            <div class="flex items-center justify-center mb-2">
+              <Icon name="ph:warning-bold" class="w-5 h-5 text-red-400" />
+            </div>
+            <div class="text-2xl font-bold text-red-400">{{ statsData.overdue }}</div>
+            <div class="text-xs text-slate-500 mt-1">Overdue</div>
+          </div>
+        </el-col>
+        <el-col :xs="24" :sm="8" :md="4" :lg="4">
+          <div class="glass-panel p-5 rounded-xl text-center">
+            <div class="flex items-center justify-center mb-2">
+              <Icon name="ph:chart-line-up-bold" class="w-5 h-5 text-amber-400" />
+            </div>
+            <div class="text-2xl font-bold text-amber-400">{{ statsData.avgProgress }}%</div>
+            <div class="text-xs text-slate-500 mt-1">Avg Progress</div>
+          </div>
+        </el-col>
+      </el-row>
+
+      <!-- Overdue Goals Alert Panel -->
+      <div v-if="overdueGoals.length" class="glass-panel p-5 rounded-xl border border-red-500/30">
+        <div class="flex items-center gap-2 mb-4">
+          <Icon name="ph:warning-circle-bold" class="w-5 h-5 text-red-400" />
+          <h3 class="text-sm font-semibold text-red-400">Overdue Goals ({{ overdueGoals.length }})</h3>
+        </div>
+        <div class="space-y-2">
+          <div
+            v-for="og in overdueGoals"
+            :key="og.id"
+            class="flex items-center justify-between p-3 rounded-lg"
+            style="background: rgba(239, 68, 68, 0.08)"
+          >
+            <div class="flex-1 min-w-0">
+              <span class="text-sm font-medium text-slate-200 truncate block">{{ og.title }}</span>
+              <span class="text-xs text-slate-500">Owner: {{ og.owner }}</span>
+            </div>
+            <div class="flex items-center gap-4 shrink-0 ml-4">
+              <span class="text-xs text-slate-500">Due: {{ formatDate(og.dueDate) }}</span>
+              <span class="text-xs font-bold text-red-400">{{ og.daysOverdue }}d overdue</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
     <!-- Loading State -->
     <div v-if="loading" class="flex justify-center py-12">
       <el-icon class="is-loading text-teal-400" :size="32"><Loading /></el-icon>
     </div>
 
     <!-- Progress Overview -->
-    <div v-else class="space-y-6">
+    <div v-if="!loading" class="space-y-6">
       <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
         <div class="glass-panel p-5 rounded-xl">
           <div class="flex items-center justify-between mb-2">
@@ -299,6 +375,25 @@ const newGoal = ref({
 
 const allGoals = ref<Goal[]>([]);
 
+// Stats dashboard data
+const statsData = ref({
+  totalGoals: 0,
+  completed: 0,
+  inProgress: 0,
+  overdue: 0,
+  avgProgress: 0
+});
+
+interface OverdueGoal {
+  id: number;
+  title: string;
+  owner: string;
+  dueDate: string;
+  daysOverdue: number;
+}
+
+const overdueGoals = ref<OverdueGoal[]>([]);
+
 const companyGoals = computed(() => allGoals.value.filter(g => g.level === 'COMPANY'));
 const teamGoals = computed(() => allGoals.value.filter(g => g.level === 'TEAM'));
 const personalGoals = computed(() => allGoals.value.filter(g => g.level === 'PERSONAL'));
@@ -439,7 +534,53 @@ const updateGoalProgress = async () => {
   }
 };
 
+// Fetch stats from API
+const fetchStats = async () => {
+  try {
+    const res = await useApiFetch('goals/stats');
+    if (res?.success && res.body) {
+      const d = res.body as any;
+      statsData.value = {
+        totalGoals: d.totalGoals ?? d.total ?? 0,
+        completed: d.completed ?? 0,
+        inProgress: d.inProgress ?? 0,
+        overdue: d.overdue ?? 0,
+        avgProgress: d.avgProgress ?? 0
+      };
+    }
+  } catch {
+    // Stats are supplementary; silently ignore errors
+  }
+};
+
+// Fetch overdue goals from API
+const fetchOverdueGoals = async () => {
+  try {
+    const res = await useApiFetch('goals/overdue');
+    if (res?.success && res.body) {
+      const docs = (res.body as any).docs || res.body || [];
+      overdueGoals.value = docs.map((g: any) => {
+        const dueDate = new Date(g.dueDate);
+        const now = new Date();
+        const diffMs = now.getTime() - dueDate.getTime();
+        const daysOverdue = Math.max(0, Math.floor(diffMs / (1000 * 60 * 60 * 24)));
+        return {
+          id: g.id,
+          title: g.title,
+          owner: g.owner || '--',
+          dueDate: g.dueDate,
+          daysOverdue: g.daysOverdue ?? daysOverdue
+        };
+      });
+    }
+  } catch {
+    // Overdue data is supplementary; silently ignore errors
+  }
+};
+
 onMounted(() => {
   fetchGoals();
+  fetchStats();
+  fetchOverdueGoals();
 });
 </script>

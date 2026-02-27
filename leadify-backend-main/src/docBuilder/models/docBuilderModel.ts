@@ -173,6 +173,27 @@ class DocBuilderDocument extends Model {
   @Column({ type: DataType.STRING(500) })
   public rejectionReason?: string;
 
+  // Approval workflow
+  @AllowNull(true)
+  @ForeignKey(() => User)
+  @Column({ type: DataType.INTEGER })
+  public approverId?: number;
+
+  @BelongsTo(() => User, { foreignKey: 'approverId', as: 'approver' })
+  public approver?: User;
+
+  @AllowNull(true)
+  @Column({ type: DataType.DATE })
+  public approvedAt?: Date;
+
+  @AllowNull(true)
+  @Column({ type: DataType.DATE })
+  public approvalRequestedAt?: Date;
+
+  @AllowNull(true)
+  @Column({ type: DataType.TEXT })
+  public approverComments?: string;
+
   // Version history
   @HasMany(() => DocBuilderVersion, { foreignKey: 'documentId', as: 'versions' })
   public versions?: DocBuilderVersion[];

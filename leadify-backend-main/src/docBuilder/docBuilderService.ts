@@ -1,4 +1,4 @@
-import { Op, WhereOptions, Includeable } from 'sequelize';
+import { Op, WhereOptions, Includeable, fn, col, literal } from 'sequelize';
 import { clampPagination } from '../utils/pagination';
 import DocBuilderDocument, { DocTypeEnum, DocStatusEnum } from './models/docBuilderModel';
 import DocBuilderVersion from './models/docBuilderVersionModel';
@@ -15,6 +15,7 @@ import { sendEmail } from '../utils/emailHelper';
 import { renderDocumentHtml, renderWithTemplate } from './templateRenderer';
 import storageService from '../storage/storageService';
 import type { BrandSettings } from './templateEngine';
+import notificationCenterService from '../notification/notificationCenterService';
 
 const REF_PREFIXES: Record<string, string> = {
   quote: 'QT',
@@ -207,6 +208,7 @@ class DocBuilderService {
       where,
       include: [
         { model: User, as: 'creator', attributes: ['id', 'name'] },
+        { model: User, as: 'approver', attributes: ['id', 'name'] },
         {
           model: DocBuilderVersion,
           as: 'versions',
@@ -355,32 +357,58 @@ class DocBuilderService {
       if (types.length > 0) (where as any).type = { [Op.in]: types };
     }
 
-    const documents = await DocBuilderDocument.findAll({
+    // Total count and total value via SQL
+    const totalResult = await DocBuilderDocument.findOne({
       where,
-      attributes: ['type', 'status', 'total', 'currency']
-    });
+      attributes: [
+        [fn('COUNT', col('id')), 'total'],
+        [fn('COALESCE', fn('SUM', col('total')), 0), 'totalValue']
+      ],
+      raw: true
+    }) as any;
 
-    const stats = {
-      total: documents.length,
-      byStatus: {} as Record<string, number>,
-      byType: {} as Record<string, number>,
-      totalValue: 0,
-      valueByType: {} as Record<string, number>
-    };
+    // Counts grouped by status
+    const byStatusRows = await DocBuilderDocument.findAll({
+      where,
+      attributes: [
+        'status',
+        [fn('COUNT', col('id')), 'count']
+      ],
+      group: ['status'],
+      raw: true
+    }) as any[];
 
-    for (const doc of documents) {
-      const docJson = doc.toJSON();
-      // By status
-      stats.byStatus[docJson.status] = (stats.byStatus[docJson.status] || 0) + 1;
-      // By type
-      stats.byType[docJson.type] = (stats.byType[docJson.type] || 0) + 1;
-      // Totals
-      const total = Number(docJson.total) || 0;
-      stats.totalValue += total;
-      stats.valueByType[docJson.type] = (stats.valueByType[docJson.type] || 0) + total;
+    // Counts and value grouped by type
+    const byTypeRows = await DocBuilderDocument.findAll({
+      where,
+      attributes: [
+        'type',
+        [fn('COUNT', col('id')), 'count'],
+        [fn('COALESCE', fn('SUM', col('total')), 0), 'value']
+      ],
+      group: ['type'],
+      raw: true
+    }) as any[];
+
+    const byStatus: Record<string, number> = {};
+    for (const row of byStatusRows) {
+      byStatus[row.status] = Number(row.count) || 0;
     }
 
-    return stats;
+    const byType: Record<string, number> = {};
+    const valueByType: Record<string, number> = {};
+    for (const row of byTypeRows) {
+      byType[row.type] = Number(row.count) || 0;
+      valueByType[row.type] = Number(row.value) || 0;
+    }
+
+    return {
+      total: Number(totalResult?.total) || 0,
+      byStatus,
+      byType,
+      totalValue: Number(totalResult?.totalValue) || 0,
+      valueByType
+    };
   }
 
   public async sendDocument(id: string, data: { to: string; subject: string; message?: string }, user: User): Promise<DocBuilderDocument> {
@@ -404,10 +432,24 @@ class DocBuilderService {
       </div>
     `;
 
-    // Attachment handling — PDF URL is now a storage key or CDN URL
+    // Attachment handling — download PDF from storage and attach as base64
     let attachment: { name: string; content: string } | undefined;
-    // Note: attachment via cloud storage requires signed URL download; skipped for now
-    // The email contains the document reference and the PDF can be accessed via the CRM
+    if (pdfUrl) {
+      try {
+        const signedUrl = await storageService.getSignedUrl(pdfUrl);
+        const response = await fetch(signedUrl);
+        if (response.ok) {
+          const arrayBuffer = await response.arrayBuffer();
+          const base64Content = Buffer.from(arrayBuffer).toString('base64');
+          attachment = {
+            name: `${document.reference || 'document'}.pdf`,
+            content: base64Content
+          };
+        }
+      } catch {
+        // If PDF download fails, send email without attachment
+      }
+    }
 
     await sendEmail({
       to: data.to,
@@ -445,8 +487,10 @@ class DocBuilderService {
 
   /**
    * Render a document to HTML using its template (if set) and brand settings.
+   * Automatically applies a watermark for DRAFT status documents, or when
+   * an explicit watermark string is provided.
    */
-  public async renderDocument(document: DocBuilderDocument): Promise<string> {
+  public async renderDocument(document: DocBuilderDocument, watermark?: string): Promise<string> {
     let content: any = {};
     try {
       content = document.content ? JSON.parse(document.content) : {};
@@ -463,8 +507,11 @@ class DocBuilderService {
       }
     }
 
+    // Apply watermark automatically for DRAFT status, or use explicit watermark
+    const effectiveWatermark = watermark || (document.status === DocStatusEnum.DRAFT ? 'DRAFT' : undefined);
+
     const brand = await this.getBrandSettings();
-    return renderWithTemplate(content, document.type, templateHtml, brand);
+    return renderWithTemplate(content, document.type, templateHtml, brand, effectiveWatermark);
   }
 
   /**
@@ -486,6 +533,139 @@ class DocBuilderService {
     }
 
     return results;
+  }
+
+  /**
+   * Request approval for a document. Sets status to PENDING_APPROVAL and notifies the approver.
+   */
+  public async requestApproval(documentId: string, approverId: number, user: User): Promise<DocBuilderDocument> {
+    const document = await this.documentOrError({ id: documentId, ...tenantWhere(user) });
+
+    // Validate approver exists
+    const approver = await User.findByPk(approverId);
+    if (!approver) throw new BaseError(ERRORS.USER_NOT_FOUND);
+
+    // Cannot request approval from yourself
+    if (approverId === user.id) throw new BaseError(ERRORS.DOC_BUILDER_INVALID_STATUS);
+
+    await document.update({
+      status: DocStatusEnum.PENDING_APPROVAL,
+      approverId,
+      approvalRequestedAt: new Date(),
+      // Clear any previous approval/rejection data
+      approvedAt: null,
+      approverComments: null,
+      rejectionReason: null
+    });
+
+    // Notify the approver
+    await notificationCenterService.sendNotification({
+      userId: approverId,
+      type: 'APPROVAL_REQUESTED',
+      title: 'Document Approval Requested',
+      message: `${user.name || 'A user'} has requested your approval for document "${document.title}" (${document.reference}).`,
+      entityType: 'document',
+      entityId: document.id,
+      actionUrl: `/documents/builder/${document.id}`
+    });
+
+    return document;
+  }
+
+  /**
+   * Approve a document. Validates the approver matches the assigned approver.
+   */
+  public async approveDocument(documentId: string, approverId: number, comments?: string): Promise<DocBuilderDocument> {
+    const document = await this.documentOrError({ id: documentId });
+
+    // Validate document is pending approval
+    if (document.status !== DocStatusEnum.PENDING_APPROVAL) {
+      throw new BaseError(ERRORS.DOC_BUILDER_INVALID_STATUS);
+    }
+
+    // Validate the approver matches
+    if (document.approverId !== approverId) {
+      throw new BaseError(ERRORS.ACCESS_DENIED, 403);
+    }
+
+    await document.update({
+      status: DocStatusEnum.APPROVED,
+      approvedAt: new Date(),
+      approverComments: comments || null
+    });
+
+    // Emit socket event
+    const io = (() => {
+      try { return require('../server').io; } catch { return null; }
+    })();
+    if (io) {
+      io.emit('document:approved', {
+        documentId: document.id,
+        reference: document.reference,
+        approverId
+      });
+    }
+
+    // Notify the document owner
+    await notificationCenterService.sendNotification({
+      userId: document.createdBy,
+      type: 'PROPOSAL_APPROVED',
+      title: 'Document Approved',
+      message: `Your document "${document.title}" (${document.reference}) has been approved.${comments ? ` Comments: ${comments}` : ''}`,
+      entityType: 'document',
+      entityId: document.id,
+      actionUrl: `/documents/builder/${document.id}`
+    });
+
+    return document;
+  }
+
+  /**
+   * Reject a document. Validates the approver matches the assigned approver.
+   */
+  public async rejectDocument(documentId: string, approverId: number, reason: string): Promise<DocBuilderDocument> {
+    const document = await this.documentOrError({ id: documentId });
+
+    // Validate document is pending approval
+    if (document.status !== DocStatusEnum.PENDING_APPROVAL) {
+      throw new BaseError(ERRORS.DOC_BUILDER_INVALID_STATUS);
+    }
+
+    // Validate the approver matches
+    if (document.approverId !== approverId) {
+      throw new BaseError(ERRORS.ACCESS_DENIED, 403);
+    }
+
+    await document.update({
+      status: DocStatusEnum.REJECTED,
+      rejectionReason: reason
+    });
+
+    // Emit socket event
+    const io = (() => {
+      try { return require('../server').io; } catch { return null; }
+    })();
+    if (io) {
+      io.emit('document:rejected', {
+        documentId: document.id,
+        reference: document.reference,
+        approverId,
+        reason
+      });
+    }
+
+    // Notify the document owner
+    await notificationCenterService.sendNotification({
+      userId: document.createdBy,
+      type: 'PROPOSAL_REJECTED',
+      title: 'Document Rejected',
+      message: `Your document "${document.title}" (${document.reference}) has been rejected. Reason: ${reason}`,
+      entityType: 'document',
+      entityId: document.id,
+      actionUrl: `/documents/builder/${document.id}`
+    });
+
+    return document;
   }
 
   private async documentOrError(filter: WhereOptions, includes?: Includeable[]): Promise<DocBuilderDocument> {

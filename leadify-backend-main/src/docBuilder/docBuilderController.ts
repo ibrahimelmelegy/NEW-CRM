@@ -141,6 +141,47 @@ class DocBuilderController {
       next(error);
     }
   }
+
+  public async requestApproval(req: AuthenticatedRequest, res: Response, next: NextFunction): Promise<void> {
+    try {
+      const result = await docBuilderService.requestApproval(
+        req.params.id as string,
+        req.body.approverId,
+        req.user as User
+      );
+      wrapResult(res, result);
+    } catch (error) {
+      next(error);
+    }
+  }
+
+  public async approveDocument(req: AuthenticatedRequest, res: Response, next: NextFunction): Promise<void> {
+    try {
+      const user = req.user as User;
+      const result = await docBuilderService.approveDocument(
+        req.params.id as string,
+        user.id,
+        req.body.comments
+      );
+      wrapResult(res, result);
+    } catch (error) {
+      next(error);
+    }
+  }
+
+  public async rejectDocument(req: AuthenticatedRequest, res: Response, next: NextFunction): Promise<void> {
+    try {
+      const user = req.user as User;
+      const result = await docBuilderService.rejectDocument(
+        req.params.id as string,
+        user.id,
+        req.body.reason
+      );
+      wrapResult(res, result);
+    } catch (error) {
+      next(error);
+    }
+  }
 }
 
 export default new DocBuilderController();

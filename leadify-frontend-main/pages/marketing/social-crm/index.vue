@@ -11,6 +11,52 @@ div
 
   StatCards(:stats="summaryStats")
 
+  //- Social CRM Dashboard
+  .glass-card.p-6.mb-6(v-if="socialDashboard && !loading")
+    .flex.items-center.gap-2.mb-5
+      Icon(name="ph:chart-pie-slice-bold" size="20" style="color: #7849ff")
+      h3.text-base.font-bold(style="color: var(--text-primary)") {{ $t('marketing.socialCrm.dashboard') || 'Social CRM Dashboard' }}
+
+    el-row(:gutter="20")
+      el-col(:xs="24" :sm="12" :md="8")
+        .glass-card.p-4.text-center
+          p.text-xs.uppercase.tracking-wider.mb-1(style="color: var(--text-muted)") {{ $t('marketing.socialCrm.totalProfiles') || 'Total Profiles' }}
+          p.text-2xl.font-bold(style="color: #7849ff") {{ (socialDashboard.totalProfiles || 0).toLocaleString() }}
+      el-col(:xs="24" :sm="12" :md="8")
+        .glass-card.p-4.text-center
+          p.text-xs.uppercase.tracking-wider.mb-1(style="color: var(--text-muted)") {{ $t('marketing.socialCrm.avgEngagement') || 'Avg Engagement Score' }}
+          p.text-2xl.font-bold(style="color: #3b82f6") {{ socialDashboard.avgEngagementScore != null ? socialDashboard.avgEngagementScore.toFixed(1) + '%' : '--' }}
+      el-col(:xs="24" :sm="24" :md="8")
+        .glass-card.p-4
+          p.text-xs.uppercase.tracking-wider.mb-3.text-center(style="color: var(--text-muted)") {{ $t('marketing.socialCrm.sentimentBreakdown') || 'Sentiment Breakdown' }}
+          .flex.items-center.justify-center.gap-3
+            .flex.items-center.gap-2
+              el-tag(type="success" size="default" effect="dark" round)
+                Icon(name="ph:smiley-bold" size="14" class="mr-1")
+                | {{ socialDashboard.sentimentBreakdown?.positive || 0 }}
+            .flex.items-center.gap-2
+              el-tag(type="warning" size="default" effect="plain" round)
+                Icon(name="ph:smiley-meh-bold" size="14" class="mr-1")
+                | {{ socialDashboard.sentimentBreakdown?.neutral || 0 }}
+            .flex.items-center.gap-2
+              el-tag(type="danger" size="default" effect="dark" round)
+                Icon(name="ph:smiley-sad-bold" size="14" class="mr-1")
+                | {{ socialDashboard.sentimentBreakdown?.negative || 0 }}
+          //- Sentiment bar
+          .flex.h-4.rounded-lg.overflow-hidden.mt-3(v-if="sentimentTotal > 0")
+            .transition-all(
+              v-if="socialDashboard.sentimentBreakdown?.positive"
+              :style="{ width: ((socialDashboard.sentimentBreakdown.positive / sentimentTotal) * 100) + '%', background: '#22c55e' }"
+            )
+            .transition-all(
+              v-if="socialDashboard.sentimentBreakdown?.neutral"
+              :style="{ width: ((socialDashboard.sentimentBreakdown.neutral / sentimentTotal) * 100) + '%', background: '#f59e0b' }"
+            )
+            .transition-all(
+              v-if="socialDashboard.sentimentBreakdown?.negative"
+              :style="{ width: ((socialDashboard.sentimentBreakdown.negative / sentimentTotal) * 100) + '%', background: '#ef4444' }"
+            )
+
   //- Loading
   .flex.items-center.justify-center.py-20(v-if="loading")
     el-icon.is-loading(:size="32" style="color: var(--accent-color, #7849ff)")
@@ -82,6 +128,15 @@ div
         Icon(name="ph:users-three" size="48" style="color: var(--text-muted)")
         p.text-sm.mt-2(style="color: var(--text-muted)") {{ $t('common.noData') || 'No social profiles found' }}
 
+      .flex.justify-end.mt-4
+        el-pagination(
+          :current-page="pagination.page"
+          :page-size="pagination.limit"
+          :total="pagination.total"
+          layout="total, prev, pager, next"
+          @current-change="(p: number) => { pagination.page = p; fetchData() }"
+        )
+
   //- Create / Edit Dialog
   el-dialog(v-model="dialogVisible" :title="editingItem ? ($t('common.edit') || 'Edit Profile') : ($t('marketing.socialCrm.addProfile') || 'Add Social Profile')" width="560px" destroy-on-close)
     el-form(:model="form" label-position="top")
@@ -111,7 +166,7 @@ div
 </template>
 
 <script setup lang="ts">
-import { ref, computed, onMounted } from 'vue';
+import { ref, reactive, computed, onMounted } from 'vue';
 import { ElMessage, ElMessageBox } from 'element-plus';
 
 definePageMeta({ middleware: 'permissions' });
@@ -127,6 +182,8 @@ const search = ref('');
 const filterPlatform = ref('');
 const filterSentiment = ref('');
 const items = ref<any[]>([]);
+const pagination = reactive({ page: 1, limit: 20, total: 0 });
+const socialDashboard = ref<any>(null);
 
 const platformOptions = [
   { label: 'Twitter', value: 'TWITTER' },
@@ -239,9 +296,11 @@ function formatDate(d: string): string {
 async function fetchData() {
   loading.value = true;
   try {
-    const res = await useApiFetch('social-crm');
+    const res = await useApiFetch(`social-crm?page=${pagination.page}&limit=${pagination.limit}`);
     if (res.success && res.body) {
-      items.value = Array.isArray(res.body) ? res.body : (res.body as any).docs || [];
+      const data = res.body as any;
+      items.value = data.rows || data.docs || (Array.isArray(data) ? data : []);
+      pagination.total = data.count ?? data.total ?? items.value.length;
     }
   } catch {
     ElMessage.error(t('common.error') || 'Failed to load social profiles');
@@ -322,8 +381,27 @@ async function handleDelete(item: any) {
   }
 }
 
+// Dashboard
+async function fetchDashboard() {
+  try {
+    const res = await useApiFetch('social-crm/dashboard');
+    if (res.success && res.body) {
+      socialDashboard.value = res.body;
+    }
+  } catch {
+    // Silent - dashboard is supplementary
+  }
+}
+
+const sentimentTotal = computed(() => {
+  if (!socialDashboard.value?.sentimentBreakdown) return 0;
+  const s = socialDashboard.value.sentimentBreakdown;
+  return (s.positive || 0) + (s.neutral || 0) + (s.negative || 0);
+});
+
 onMounted(() => {
   fetchData();
+  fetchDashboard();
 });
 </script>
 

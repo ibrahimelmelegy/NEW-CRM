@@ -11,6 +11,49 @@ div
 
   StatCards(:stats="summaryStats")
 
+  //- Dashboard Section
+  .glass-card.p-6.mb-6(v-if="dashboardData && !loading")
+    .flex.items-center.gap-2.mb-5
+      Icon(name="ph:chart-pie-slice-bold" size="20" style="color: #7849ff")
+      h3.text-base.font-bold(style="color: var(--text-primary)") {{ $t('marketing.loyalty.dashboard') || 'Loyalty Dashboard' }}
+
+    el-row(:gutter="20")
+      //- KPI Cards
+      el-col(:xs="24" :sm="12" :md="6")
+        .glass-card.p-4.text-center
+          p.text-xs.uppercase.tracking-wider.mb-1(style="color: var(--text-muted)") {{ $t('marketing.loyalty.totalMembers') || 'Total Members' }}
+          p.text-2xl.font-bold(style="color: #7849ff") {{ (dashboardData.totalMembers || 0).toLocaleString() }}
+      el-col(:xs="24" :sm="12" :md="6")
+        .glass-card.p-4.text-center
+          p.text-xs.uppercase.tracking-wider.mb-1(style="color: var(--text-muted)") {{ $t('marketing.loyalty.pointsIssued') || 'Points Issued' }}
+          p.text-2xl.font-bold(style="color: #3b82f6") {{ (dashboardData.pointsIssued || 0).toLocaleString() }}
+      el-col(:xs="24" :sm="12" :md="6")
+        .glass-card.p-4.text-center
+          p.text-xs.uppercase.tracking-wider.mb-1(style="color: var(--text-muted)") {{ $t('marketing.loyalty.pointsRedeemed') || 'Points Redeemed' }}
+          p.text-2xl.font-bold(style="color: #f59e0b") {{ (dashboardData.pointsRedeemed || 0).toLocaleString() }}
+      el-col(:xs="24" :sm="12" :md="6")
+        .glass-card.p-4.text-center
+          p.text-xs.uppercase.tracking-wider.mb-1(style="color: var(--text-muted)") {{ $t('marketing.loyalty.avgBalance') || 'Avg Balance' }}
+          p.text-2xl.font-bold(style="color: #22c55e") {{ (dashboardData.avgBalance || 0).toLocaleString() }}
+
+    //- Tier Distribution
+    .mt-5(v-if="dashboardData.tierDistribution && dashboardData.tierDistribution.length")
+      p.text-sm.font-semibold.mb-3(style="color: var(--text-primary)") {{ $t('marketing.loyalty.tierDistribution') || 'Tier Distribution' }}
+      .flex.flex-wrap.gap-3
+        .glass-card.px-4.py-3.flex.items-center.gap-3(v-for="tier in dashboardData.tierDistribution" :key="tier.tier")
+          .w-3.h-3.rounded-full(:style="{ background: getTierColor(tier.tier) }")
+          span.text-sm.font-semibold(style="color: var(--text-primary)") {{ tier.tier }}
+          el-tag(:color="getTierColor(tier.tier)" effect="dark" size="small" round style="border: none; color: #fff") {{ tier.count }}
+      //- Tier bar chart
+      .mt-3(v-if="tierTotal > 0")
+        .flex.h-6.rounded-xl.overflow-hidden
+          .transition-all.flex.items-center.justify-center(
+            v-for="tier in dashboardData.tierDistribution"
+            :key="'bar-' + tier.tier"
+            :style="{ width: ((tier.count / tierTotal) * 100) + '%', background: getTierColor(tier.tier), minWidth: tier.count > 0 ? '24px' : '0' }"
+          )
+            span.text-xs.font-bold.text-white(v-if="(tier.count / tierTotal) >= 0.08") {{ Math.round((tier.count / tierTotal) * 100) }}%
+
   //- Loading
   .flex.items-center.justify-center.py-20(v-if="loading")
     el-icon.is-loading(:size="32" style="color: var(--accent-color, #7849ff)")
@@ -65,6 +108,15 @@ div
             Icon(name="ph:crown" size="48" style="color: var(--text-muted)")
             p.text-sm.mt-2(style="color: var(--text-muted)") {{ $t('common.noData') || 'No programs found' }}
 
+          .flex.justify-end.mt-4
+            el-pagination(
+              :current-page="programsPagination.page"
+              :page-size="programsPagination.limit"
+              :total="programsPagination.total"
+              layout="total, prev, pager, next"
+              @current-change="(p: number) => { programsPagination.page = p; fetchPrograms() }"
+            )
+
       //- Points History Tab
       el-tab-pane(:label="$t('marketing.loyalty.pointsHistory') || 'Points History'" name="points")
         .glass-card.p-6
@@ -106,6 +158,15 @@ div
           .text-center.py-8(v-if="!filteredPoints.length")
             Icon(name="ph:coins" size="48" style="color: var(--text-muted)")
             p.text-sm.mt-2(style="color: var(--text-muted)") {{ $t('common.noData') || 'No transactions found' }}
+
+          .flex.justify-end.mt-4
+            el-pagination(
+              :current-page="pointsPagination.page"
+              :page-size="pointsPagination.limit"
+              :total="pointsPagination.total"
+              layout="total, prev, pager, next"
+              @current-change="(p: number) => { pointsPagination.page = p; fetchPoints() }"
+            )
 
   //- Program Dialog
   el-dialog(v-model="programDialogVisible" :title="editingProgram ? ($t('common.edit') || 'Edit Program') : ($t('marketing.loyalty.newProgram') || 'New Program')" width="560px" destroy-on-close)
@@ -163,7 +224,7 @@ div
 </template>
 
 <script setup lang="ts">
-import { ref, computed, onMounted } from 'vue';
+import { ref, reactive, computed, onMounted } from 'vue';
 import { ElMessage, ElMessageBox } from 'element-plus';
 
 definePageMeta({ middleware: 'permissions' });
@@ -180,7 +241,10 @@ const editingProgram = ref<any>(null);
 const programSearch = ref('');
 const pointsSearch = ref('');
 const programs = ref<any[]>([]);
+const programsPagination = reactive({ page: 1, limit: 20, total: 0 });
 const points = ref<any[]>([]);
+const pointsPagination = reactive({ page: 1, limit: 20, total: 0 });
+const dashboardData = ref<any>(null);
 
 const defaultProgramForm = () => ({
   name: '',
@@ -257,9 +321,11 @@ function formatDate(d: string): string {
 async function fetchPrograms() {
   loading.value = true;
   try {
-    const res = await useApiFetch('loyalty/programs');
+    const res = await useApiFetch(`loyalty/programs?page=${programsPagination.page}&limit=${programsPagination.limit}`);
     if (res.success && res.body) {
-      programs.value = Array.isArray(res.body) ? res.body : (res.body as any).docs || [];
+      const data = res.body as any;
+      programs.value = data.rows || data.docs || (Array.isArray(data) ? data : []);
+      programsPagination.total = data.count ?? data.total ?? programs.value.length;
     }
   } catch {
     ElMessage.error(t('common.error') || 'Failed to load programs');
@@ -270,9 +336,11 @@ async function fetchPrograms() {
 
 async function fetchPoints() {
   try {
-    const res = await useApiFetch('loyalty/points');
+    const res = await useApiFetch(`loyalty/points?page=${pointsPagination.page}&limit=${pointsPagination.limit}`);
     if (res.success && res.body) {
-      points.value = Array.isArray(res.body) ? res.body : (res.body as any).docs || [];
+      const data = res.body as any;
+      points.value = data.rows || data.docs || (Array.isArray(data) ? data : []);
+      pointsPagination.total = data.count ?? data.total ?? points.value.length;
     }
   } catch {
     // Silent - points tab may not be active
@@ -380,9 +448,37 @@ async function handleSavePoints() {
   }
 }
 
+// Dashboard
+async function fetchDashboard() {
+  try {
+    const res = await useApiFetch('loyalty/dashboard');
+    if (res.success && res.body) {
+      dashboardData.value = res.body;
+    }
+  } catch {
+    // Silent - dashboard is supplementary
+  }
+}
+
+function getTierColor(tier: string): string {
+  const map: Record<string, string> = {
+    BRONZE: '#cd7f32',
+    SILVER: '#94a3b8',
+    GOLD: '#f59e0b',
+    PLATINUM: '#7849ff'
+  };
+  return map[tier?.toUpperCase()] || '#6b7280';
+}
+
+const tierTotal = computed(() => {
+  if (!dashboardData.value?.tierDistribution) return 0;
+  return dashboardData.value.tierDistribution.reduce((sum: number, t: any) => sum + (t.count || 0), 0);
+});
+
 onMounted(() => {
   fetchPrograms();
   fetchPoints();
+  fetchDashboard();
 });
 </script>
 

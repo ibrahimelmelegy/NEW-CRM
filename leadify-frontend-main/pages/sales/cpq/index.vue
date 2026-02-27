@@ -8,6 +8,12 @@
 
   StatCards(:stats="summaryStats")
 
+  //- Generate Quote Button
+  .mb-4.animate-entrance
+    el-button(type="success" size="large" @click="showQuoteDialog = true" class="premium-btn")
+      Icon(name="ph:calculator-bold" size="20")
+      span.mx-1 {{ $t('cpq.generateQuote') || 'Generate Quote' }}
+
   .glass-card.py-8.animate-entrance
     el-tabs(v-model="activeTab" class="px-4")
       //- Price Books Tab
@@ -37,6 +43,15 @@
                 Icon(name="ph:trash" size="14")
           template(#empty)
             el-empty(:description="$t('common.noData') || 'No price books yet'")
+
+        .flex.justify-end.mt-4
+          el-pagination(
+            :current-page="booksPagination.page"
+            :page-size="booksPagination.limit"
+            :total="booksPagination.total"
+            layout="total, prev, pager, next"
+            @current-change="(p: number) => { booksPagination.page = p; fetchBooks() }"
+          )
 
       //- Entries Tab
       el-tab-pane(:label="$t('cpq.entries') || 'Entries'" name="entries")
@@ -68,6 +83,15 @@
                 Icon(name="ph:trash" size="14")
           template(#empty)
             el-empty(:description="$t('common.noData') || 'No pricing entries yet'")
+
+        .flex.justify-end.mt-4
+          el-pagination(
+            :current-page="entriesPagination.page"
+            :page-size="entriesPagination.limit"
+            :total="entriesPagination.total"
+            layout="total, prev, pager, next"
+            @current-change="(p: number) => { entriesPagination.page = p; fetchEntries() }"
+          )
 
   //- Price Book Dialog
   el-dialog(v-model="showBookDialog" :title="editingBookId ? ($t('cpq.editPriceBook') || 'Edit Price Book') : ($t('cpq.addPriceBook') || 'Add Price Book')" width="500px")
@@ -118,6 +142,74 @@
     template(#footer)
       el-button(@click="showEntryDialog = false") {{ $t('common.cancel') || 'Cancel' }}
       el-button(type="primary" :loading="savingEntry" @click="saveEntry") {{ $t('common.save') || 'Save' }}
+
+  //- Generate Quote Dialog
+  el-dialog(v-model="showQuoteDialog" :title="$t('cpq.generateQuote') || 'Generate Quote'" width="700px" destroy-on-close)
+    el-form(label-position="top" size="large")
+      el-form-item(:label="$t('cpq.selectPriceBook') || 'Select Price Book'" required)
+        el-select(v-model="quoteForm.priceBookId" class="w-full" :placeholder="$t('cpq.selectPriceBook') || 'Select a price book'")
+          el-option(v-for="book in books.filter(b => b.isActive)" :key="book.id" :label="book.name" :value="book.id")
+
+      .flex.items-center.justify-between.mb-3
+        h4.text-sm.font-bold(style="color: var(--text-primary)") {{ $t('cpq.lineItems') || 'Line Items' }}
+        el-button(type="primary" text size="small" @click="addQuoteLineItem")
+          Icon(name="ph:plus-bold" size="14")
+          span.ml-1 {{ $t('cpq.addItem') || 'Add Item' }}
+
+      .space-y-3
+        .grid.grid-cols-12.gap-3.items-end(v-for="(item, idx) in quoteForm.items" :key="idx")
+          .col-span-6
+            el-form-item(:label="idx === 0 ? ($t('cpq.entry') || 'Product Entry') : ''" class="!mb-0")
+              el-select(v-model="item.entryId" class="w-full" :placeholder="$t('cpq.selectEntry') || 'Select entry'" filterable)
+                el-option(v-for="entry in entries" :key="entry.id" :label="`${entry.productName} — ${Number(entry.unitPrice || 0).toLocaleString()} SAR`" :value="entry.id")
+          .col-span-3
+            el-form-item(:label="idx === 0 ? ($t('cpq.quantity') || 'Quantity') : ''" class="!mb-0")
+              el-input-number(v-model="item.quantity" :min="1" class="w-full" size="large")
+          .col-span-3.flex.items-center.gap-2
+            el-form-item(:label="idx === 0 ? ' ' : ''" class="!mb-0 flex-1")
+              span.text-sm.font-bold(style="color: var(--text-secondary)") {{ getLineItemPrice(item) }}
+            el-button(v-if="quoteForm.items.length > 1" text circle size="small" type="danger" @click="quoteForm.items.splice(idx, 1)")
+              Icon(name="ph:x-bold" size="14")
+
+      el-form-item(:label="$t('cpq.taxRate') || 'Tax Rate %'" class="mt-4")
+        el-input-number(v-model="quoteForm.taxRate" :min="0" :max="100" :precision="2" class="w-full")
+
+    //- Quote Result
+    .glass-card.p-5.rounded-2xl.mt-4(v-if="quoteResult")
+      h4.text-sm.font-bold.mb-3(style="color: var(--text-primary)") {{ $t('cpq.quoteResult') || 'Quote Summary' }}
+      el-table(:data="quoteResult.lineItems || []" size="small" style="width: 100%" class="mb-4")
+        el-table-column(label="Product" min-width="160")
+          template(#default="{ row }")
+            span.font-bold {{ row.productName || row.entryId }}
+        el-table-column(label="Qty" width="80" align="center")
+          template(#default="{ row }")
+            span {{ row.quantity }}
+        el-table-column(label="Unit Price" width="120" align="right")
+          template(#default="{ row }")
+            span {{ Number(row.unitPrice || 0).toLocaleString() }} SAR
+        el-table-column(label="Amount" width="130" align="right")
+          template(#default="{ row }")
+            span.font-bold {{ Number(row.amount || 0).toLocaleString() }} SAR
+
+      .space-y-2(style="border-top: 1px solid var(--glass-border, rgba(255,255,255,0.1))" class="pt-3")
+        .flex.justify-between.text-sm
+          span(style="color: var(--text-muted)") Subtotal
+          span.font-bold(style="color: var(--text-primary)") {{ Number(quoteResult.subtotal || 0).toLocaleString() }} SAR
+        .flex.justify-between.text-sm(v-if="quoteResult.discount")
+          span(style="color: var(--text-muted)") Discount
+          span.font-bold.text-green-500 -{{ Number(quoteResult.discount || 0).toLocaleString() }} SAR
+        .flex.justify-between.text-sm
+          span(style="color: var(--text-muted)") Tax ({{ quoteForm.taxRate }}%)
+          span.font-bold(style="color: var(--text-primary)") {{ Number(quoteResult.tax || 0).toLocaleString() }} SAR
+        .flex.justify-between.text-lg.font-bold.pt-2(style="border-top: 1px solid var(--glass-border, rgba(255,255,255,0.1))")
+          span(style="color: var(--text-primary)") Total
+          span(style="color: #22c55e") {{ Number(quoteResult.total || 0).toLocaleString() }} SAR
+
+    template(#footer)
+      el-button(@click="showQuoteDialog = false") {{ $t('common.cancel') || 'Cancel' }}
+      el-button(type="success" :loading="calculatingQuote" @click="calculateQuote")
+        Icon(name="ph:calculator-bold" size="16")
+        span.ml-1 {{ $t('cpq.calculate') || 'Calculate' }}
 </template>
 
 <script setup lang="ts">
@@ -131,6 +223,7 @@ const savingBook = ref(false);
 const showBookDialog = ref(false);
 const editingBookId = ref<number | null>(null);
 const books = ref<any[]>([]);
+const booksPagination = reactive({ page: 1, limit: 20, total: 0 });
 
 const defaultBookForm = () => ({
   name: '',
@@ -148,6 +241,7 @@ const savingEntry = ref(false);
 const showEntryDialog = ref(false);
 const editingEntryId = ref<number | null>(null);
 const entries = ref<any[]>([]);
+const entriesPagination = reactive({ page: 1, limit: 20, total: 0 });
 
 const defaultEntryForm = () => ({
   productName: '',
@@ -191,8 +285,12 @@ onMounted(() => {
 async function fetchBooks() {
   loadingBooks.value = true;
   try {
-    const { body, success } = await useApiFetch('cpq/price-books?limit=100');
-    if (success && body) books.value = (body as any).docs || [];
+    const { body, success } = await useApiFetch(`cpq/price-books?page=${booksPagination.page}&limit=${booksPagination.limit}`);
+    if (success && body) {
+      const data = body as any;
+      books.value = data.rows || data.docs || [];
+      booksPagination.total = data.count ?? data.total ?? books.value.length;
+    }
   } finally { loadingBooks.value = false; }
 }
 
@@ -234,8 +332,12 @@ async function handleDeleteBook(id: number) {
 async function fetchEntries() {
   loadingEntries.value = true;
   try {
-    const { body, success } = await useApiFetch('cpq/entries?limit=100');
-    if (success && body) entries.value = (body as any).docs || [];
+    const { body, success } = await useApiFetch(`cpq/entries?page=${entriesPagination.page}&limit=${entriesPagination.limit}`);
+    if (success && body) {
+      const data = body as any;
+      entries.value = data.rows || data.docs || [];
+      entriesPagination.total = data.count ?? data.total ?? entries.value.length;
+    }
   } finally { loadingEntries.value = false; }
 }
 
@@ -273,6 +375,57 @@ async function saveEntry() {
 async function handleDeleteEntry(id: number) {
   const { success } = await useApiFetch(`cpq/entries/${id}`, 'DELETE');
   if (success) { ElMessage.success('Deleted'); await fetchEntries(); }
+}
+
+// --- Generate Quote ---
+const showQuoteDialog = ref(false);
+const calculatingQuote = ref(false);
+const quoteResult = ref<any>(null);
+
+const quoteForm = reactive({
+  priceBookId: null as number | null,
+  items: [{ entryId: null as number | null, quantity: 1 }] as { entryId: number | null; quantity: number }[],
+  taxRate: 15
+});
+
+function addQuoteLineItem() {
+  quoteForm.items.push({ entryId: null, quantity: 1 });
+}
+
+function getLineItemPrice(item: { entryId: number | null; quantity: number }): string {
+  if (!item.entryId) return '—';
+  const entry = entries.value.find((e: any) => e.id === item.entryId);
+  if (!entry) return '—';
+  const total = Number(entry.unitPrice || 0) * item.quantity;
+  return total.toLocaleString() + ' SAR';
+}
+
+async function calculateQuote() {
+  if (!quoteForm.priceBookId) {
+    ElMessage.warning('Please select a price book');
+    return;
+  }
+  const validItems = quoteForm.items.filter(i => i.entryId);
+  if (!validItems.length) {
+    ElMessage.warning('Please add at least one line item');
+    return;
+  }
+  calculatingQuote.value = true;
+  try {
+    const payload = {
+      priceBookId: quoteForm.priceBookId,
+      items: validItems.map(i => ({ entryId: i.entryId, quantity: i.quantity })),
+      taxRate: quoteForm.taxRate
+    };
+    const { body, success } = await useApiFetch('cpq/generate-quote', 'POST', payload);
+    if (success && body) {
+      quoteResult.value = body;
+    } else {
+      ElMessage.error('Failed to generate quote');
+    }
+  } finally {
+    calculatingQuote.value = false;
+  }
 }
 
 // --- Shared ---

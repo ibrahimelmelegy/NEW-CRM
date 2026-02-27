@@ -15,6 +15,136 @@ div.animate-fade-in
         Icon(name="ph:plus-bold" size="16" class="mr-1")
         | {{ activeTab === 'rates' ? ($t('shipping.newRate') || 'New Rate') : ($t('shipping.newShipment') || 'New Shipment') }}
 
+  //- Analytics Cards (from API)
+  .grid.gap-4.mb-6(class="grid-cols-2 md:grid-cols-4")
+    .glass-card.p-5.rounded-2xl
+      .flex.items-center.gap-3
+        .w-10.h-10.rounded-xl.flex.items-center.justify-center(style="background: rgba(120, 73, 255, 0.15)")
+          Icon(name="ph:package-bold" size="20" style="color: #7849ff")
+        div
+          p.text-2xl.font-bold(style="color: var(--text-primary)") {{ analytics.totalShipments }}
+          p.text-xs(style="color: var(--text-muted)") {{ $t('shipping.totalShipments') || 'Total Shipments' }}
+    .glass-card.p-5.rounded-2xl
+      .flex.items-center.gap-3
+        .w-10.h-10.rounded-xl.flex.items-center.justify-center(style="background: rgba(34, 197, 94, 0.15)")
+          Icon(name="ph:check-circle-bold" size="20" style="color: #22c55e")
+        div
+          p.text-2xl.font-bold(style="color: #22c55e") {{ analytics.delivered }}
+          p.text-xs(style="color: var(--text-muted)") {{ $t('shipping.delivered') || 'Delivered' }}
+    .glass-card.p-5.rounded-2xl
+      .flex.items-center.gap-3
+        .w-10.h-10.rounded-xl.flex.items-center.justify-center(style="background: rgba(59, 130, 246, 0.15)")
+          Icon(name="ph:truck-bold" size="20" style="color: #3b82f6")
+        div
+          p.text-2xl.font-bold(style="color: #3b82f6") {{ analytics.inTransit }}
+          p.text-xs(style="color: var(--text-muted)") {{ $t('shipping.inTransit') || 'In Transit' }}
+    .glass-card.p-5.rounded-2xl
+      .flex.items-center.gap-3
+        .w-10.h-10.rounded-xl.flex.items-center.justify-center(style="background: rgba(245, 158, 11, 0.15)")
+          Icon(name="ph:timer-bold" size="20" style="color: #f59e0b")
+        div
+          p.text-2xl.font-bold(style="color: #f59e0b") {{ analytics.onTimeRate }}%
+          p.text-xs(style="color: var(--text-muted)") {{ $t('shipping.onTimeRate') || 'On-Time Rate' }}
+
+  //- Track Shipment & Rate Calculator
+  el-row(:gutter="16" class="mb-6")
+    el-col(:span="14")
+      .glass-card.p-5.rounded-2xl.h-full
+        h3.text-lg.font-bold.mb-4(style="color: var(--text-primary)")
+          Icon(name="ph:magnifying-glass-bold" size="20" class="mr-2" style="color: #7849ff")
+          | {{ $t('shipping.trackShipment') || 'Track Shipment' }}
+        .flex.items-center.gap-3.mb-4
+          el-input(
+            v-model="trackingInput"
+            :placeholder="$t('shipping.enterTracking') || 'Enter tracking number...'"
+            size="large"
+            clearable
+            class="!rounded-xl"
+            @keyup.enter="trackShipment"
+          )
+            template(#prefix)
+              Icon(name="ph:barcode" size="16" style="color: var(--text-muted)")
+          el-button(
+            type="primary"
+            size="large"
+            @click="trackShipment"
+            :loading="loadingTracking"
+            :disabled="!trackingInput.trim()"
+            class="!rounded-xl"
+          )
+            Icon(name="ph:magnifying-glass-bold" size="16" class="mr-1")
+            | {{ $t('shipping.track') || 'Track' }}
+        //- Tracked Shipment Result
+        .p-4.rounded-xl(
+          v-if="trackedShipment"
+          style="background: var(--bg-elevated); border: 1px solid var(--border-default)"
+        )
+          .flex.items-center.justify-between.mb-3
+            .flex.items-center.gap-2
+              Icon(name="ph:package-bold" size="18" style="color: #7849ff")
+              span.font-mono.font-bold(style="color: #7849ff") {{ trackedShipment.shipmentNumber || trackedShipment.trackingNumber || '--' }}
+            el-tag(
+              :type="getShipmentStatusType(trackedShipment.status)"
+              size="small"
+              effect="dark"
+              round
+            ) {{ trackedShipment.status || '--' }}
+          el-row(:gutter="12")
+            el-col(:span="8")
+              p.text-xs(style="color: var(--text-muted)") {{ $t('shipping.carrier') || 'Carrier' }}
+              p.text-sm.font-semibold(style="color: var(--text-primary)") {{ trackedShipment.carrier || '--' }}
+            el-col(:span="8")
+              p.text-xs(style="color: var(--text-muted)") {{ $t('shipping.origin') || 'Origin' }}
+              p.text-sm.font-semibold(style="color: var(--text-primary)") {{ trackedShipment.origin || '--' }}
+            el-col(:span="8")
+              p.text-xs(style="color: var(--text-muted)") {{ $t('shipping.destination') || 'Destination' }}
+              p.text-sm.font-semibold(style="color: var(--text-primary)") {{ trackedShipment.destination || '--' }}
+          el-row.mt-3(:gutter="12")
+            el-col(:span="8")
+              p.text-xs(style="color: var(--text-muted)") {{ $t('shipping.recipient') || 'Recipient' }}
+              p.text-sm.font-semibold(style="color: var(--text-primary)") {{ trackedShipment.recipientName || '--' }}
+            el-col(:span="8")
+              p.text-xs(style="color: var(--text-muted)") {{ $t('shipping.weight') || 'Weight' }}
+              p.text-sm.font-semibold(style="color: var(--text-primary)") {{ trackedShipment.weight ? trackedShipment.weight + ' kg' : '--' }}
+            el-col(:span="8")
+              p.text-xs(style="color: var(--text-muted)") {{ $t('shipping.estimatedDelivery') || 'Est. Delivery' }}
+              p.text-sm.font-semibold(style="color: var(--text-primary)") {{ trackedShipment.estimatedDelivery ? formatDate(trackedShipment.estimatedDelivery) : '--' }}
+        .text-center.py-4(v-else-if="trackingNotFound")
+          Icon(name="ph:x-circle" size="32" style="color: #ef4444")
+          p.text-sm.mt-1(style="color: #ef4444") {{ $t('shipping.trackingNotFound') || 'Shipment not found for this tracking number' }}
+
+    el-col(:span="10")
+      .glass-card.p-5.rounded-2xl.h-full
+        h3.text-lg.font-bold.mb-4(style="color: var(--text-primary)")
+          Icon(name="ph:calculator-bold" size="20" class="mr-2" style="color: #f59e0b")
+          | {{ $t('shipping.rateCalculator') || 'Rate Calculator' }}
+        el-form(label-position="top" size="large")
+          el-form-item(:label="$t('shipping.weight') || 'Weight (kg)'")
+            el-input-number(v-model="calcWeight" :min="0.1" :precision="2" style="width: 100%")
+          el-form-item(:label="$t('shipping.zone') || 'Zone'")
+            el-select(v-model="calcZone" :placeholder="$t('shipping.selectZone') || 'Select Zone'" style="width: 100%" clearable)
+              el-option(label="Domestic" value="Domestic")
+              el-option(label="International" value="International")
+              el-option(label="Express" value="Express")
+              el-option(label="Economy" value="Economy")
+          el-button(
+            type="primary"
+            @click="calculateRate"
+            :loading="loadingCalcRate"
+            :disabled="!calcWeight || !calcZone"
+            style="width: 100%"
+            class="!rounded-xl"
+          )
+            Icon(name="ph:calculator-bold" size="16" class="mr-1")
+            | {{ $t('shipping.calculate') || 'Calculate' }}
+        .p-4.rounded-xl.mt-4.text-center(
+          v-if="calculatedRate !== null"
+          style="background: var(--bg-elevated); border: 1px solid var(--border-default)"
+        )
+          p.text-xs(style="color: var(--text-muted)") {{ $t('shipping.estimatedCost') || 'Estimated Shipping Cost' }}
+          p.text-3xl.font-black.mt-1(style="color: #7849ff") {{ formatCurrency(calculatedRate.rate || calculatedRate.cost || calculatedRate, calculatedRate.currency) }}
+          p.text-xs.mt-1(v-if="calculatedRate.estimatedDays" style="color: var(--text-muted)") {{ $t('shipping.estimatedDays') || 'Est. Days' }}: {{ calculatedRate.estimatedDays }}
+
   //- Tabs
   el-tabs(v-model="activeTab" type="border-card" class="shipping-tabs")
     //- ========== SHIPMENTS TAB ==========
@@ -122,6 +252,15 @@ div.animate-fade-in
         Icon(name="ph:package" size="48" style="color: var(--text-muted)")
         p.text-sm.mt-2(style="color: var(--text-muted)") {{ $t('shipping.noShipments') || 'No shipments found' }}
 
+      .flex.justify-end.mt-4
+        el-pagination(
+          :current-page="shipmentsPagination.page"
+          :page-size="shipmentsPagination.limit"
+          :total="shipmentsPagination.total"
+          layout="total, prev, pager, next"
+          @current-change="(p: number) => { shipmentsPagination.page = p; loadShipments() }"
+        )
+
     //- ========== RATES TAB ==========
     el-tab-pane(:label="$t('shipping.rates') || 'Rates'" name="rates")
       .flex.items-center.justify-between.mb-4
@@ -175,6 +314,15 @@ div.animate-fade-in
       .text-center.py-12(v-if="!filteredRates.length && !loadingRates")
         Icon(name="ph:currency-circle-dollar" size="48" style="color: var(--text-muted)")
         p.text-sm.mt-2(style="color: var(--text-muted)") {{ $t('shipping.noRates') || 'No shipping rates found' }}
+
+      .flex.justify-end.mt-4
+        el-pagination(
+          :current-page="ratesPagination.page"
+          :page-size="ratesPagination.limit"
+          :total="ratesPagination.total"
+          layout="total, prev, pager, next"
+          @current-change="(p: number) => { ratesPagination.page = p; loadRates() }"
+        )
 
   //- ========== CREATE / EDIT SHIPMENT DIALOG ==========
   el-dialog(
@@ -271,9 +419,30 @@ const t = $i18n.t;
 const activeTab = ref('shipments');
 const saving = ref(false);
 
+// Analytics from API
+const analytics = reactive({
+  totalShipments: 0,
+  delivered: 0,
+  inTransit: 0,
+  onTimeRate: 0
+});
+
+// Track Shipment
+const trackingInput = ref('');
+const loadingTracking = ref(false);
+const trackedShipment = ref<any>(null);
+const trackingNotFound = ref(false);
+
+// Rate Calculator
+const calcWeight = ref(1);
+const calcZone = ref('');
+const loadingCalcRate = ref(false);
+const calculatedRate = ref<any>(null);
+
 // Shipments
 const loadingShipments = ref(false);
 const shipments = ref<any[]>([]);
+const shipmentsPagination = reactive({ page: 1, limit: 20, total: 0 });
 const shipmentSearch = ref('');
 const shipmentStatusFilter = ref('');
 const shipmentDialogVisible = ref(false);
@@ -293,6 +462,7 @@ const shipmentForm = reactive({
 // Rates
 const loadingRates = ref(false);
 const rates = ref<any[]>([]);
+const ratesPagination = reactive({ page: 1, limit: 20, total: 0 });
 const rateSearch = ref('');
 const rateDialogVisible = ref(false);
 const editingRate = ref<any>(null);
@@ -382,9 +552,11 @@ const filteredRates = computed(() => {
 async function loadShipments() {
   loadingShipments.value = true;
   try {
-    const res = await useApiFetch('shipping');
+    const res = await useApiFetch(`shipping?page=${shipmentsPagination.page}&limit=${shipmentsPagination.limit}`);
     if (res?.success) {
-      shipments.value = res.body?.docs || res.body || [];
+      const data = res.body as any;
+      shipments.value = data?.rows || data?.docs || data || [];
+      shipmentsPagination.total = data?.count ?? data?.total ?? shipments.value.length;
     }
   } catch {
     // silent
@@ -463,9 +635,11 @@ async function deleteShipment(shipment: any) {
 async function loadRates() {
   loadingRates.value = true;
   try {
-    const res = await useApiFetch('shipping/rates');
+    const res = await useApiFetch(`shipping/rates?page=${ratesPagination.page}&limit=${ratesPagination.limit}`);
     if (res?.success) {
-      rates.value = res.body?.docs || res.body || [];
+      const data = res.body as any;
+      rates.value = data?.rows || data?.docs || data || [];
+      ratesPagination.total = data?.count ?? data?.total ?? rates.value.length;
     }
   } catch {
     // silent
@@ -538,9 +712,63 @@ async function deleteRate(rate: any) {
   }
 }
 
+// Analytics API
+async function loadAnalytics() {
+  try {
+    const res = await useApiFetch('shipping/analytics');
+    if (res?.success) {
+      const data = res.body as any;
+      analytics.totalShipments = data?.totalShipments ?? data?.total ?? 0;
+      analytics.delivered = data?.delivered ?? 0;
+      analytics.inTransit = data?.inTransit ?? 0;
+      analytics.onTimeRate = data?.onTimeRate ?? 0;
+    }
+  } catch {
+    // silent
+  }
+}
+
+// Track Shipment API
+async function trackShipment() {
+  if (!trackingInput.value.trim()) return;
+  loadingTracking.value = true;
+  trackedShipment.value = null;
+  trackingNotFound.value = false;
+  try {
+    const res = await useApiFetch(`shipping/track/${encodeURIComponent(trackingInput.value.trim())}`);
+    if (res?.success && res.body) {
+      trackedShipment.value = res.body;
+    } else {
+      trackingNotFound.value = true;
+    }
+  } catch {
+    trackingNotFound.value = true;
+  } finally {
+    loadingTracking.value = false;
+  }
+}
+
+// Rate Calculator API
+async function calculateRate() {
+  if (!calcWeight.value || !calcZone.value) return;
+  loadingCalcRate.value = true;
+  calculatedRate.value = null;
+  try {
+    const res = await useApiFetch(`shipping/calculate-rate?weight=${calcWeight.value}&zone=${encodeURIComponent(calcZone.value)}`);
+    if (res?.success && res.body) {
+      calculatedRate.value = res.body;
+    }
+  } catch {
+    // silent
+  } finally {
+    loadingCalcRate.value = false;
+  }
+}
+
 onMounted(() => {
   loadShipments();
   loadRates();
+  loadAnalytics();
 });
 </script>
 

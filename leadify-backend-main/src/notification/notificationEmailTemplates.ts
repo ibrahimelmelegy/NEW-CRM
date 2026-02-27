@@ -31,7 +31,10 @@ const TYPE_COLORS: Record<string, string> = {
   SLA_WARNING: '#f59e0b',
   INVOICE_OVERDUE: '#ef4444',
   CONTRACT_EXPIRING: '#f59e0b',
-  SYSTEM_ALERT: '#64748b'
+  SYSTEM_ALERT: '#64748b',
+  DOCUMENT_APPROVAL_REQUESTED: '#8b5cf6',
+  DOCUMENT_APPROVED: '#22c55e',
+  DOCUMENT_REJECTED: '#ef4444'
 };
 
 export function renderNotificationEmail(data: NotificationEmailData): string {

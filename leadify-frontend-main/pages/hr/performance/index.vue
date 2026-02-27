@@ -25,6 +25,65 @@ div
       .text-2xl.font-bold(style="color: #22c55e") {{ reviews.filter(r => r.status === 'COMPLETED').length }}
       .text-xs.mt-1(style="color: var(--text-muted)") {{ $t('hr.performance.completed') || 'Completed' }}
 
+  //- Rating Distribution Section
+  .glass-card.p-6.rounded-2xl.mb-6
+    .flex.items-center.justify-between.mb-4
+      .flex.items-center.gap-2
+        Icon(name="ph:chart-bar-horizontal-bold" size="20" style="color: #7849ff")
+        span.text-sm.font-semibold(style="color: var(--text-primary)") Rating Distribution
+      el-select(v-model="distributionPeriod" size="small" style="width: 160px" @change="loadDistribution")
+        el-option(label="Q1 2026" value="Q1-2026")
+        el-option(label="Q2 2026" value="Q2-2026")
+        el-option(label="Q3 2026" value="Q3-2026")
+        el-option(label="Q4 2026" value="Q4-2026")
+        el-option(label="Annual 2025" value="ANNUAL-2025")
+        el-option(label="Annual 2026" value="ANNUAL-2026")
+    .space-y-3(v-loading="distributionLoading")
+      //- Outstanding (4-5)
+      .flex.items-center.gap-3
+        .w-40.text-xs.font-medium.shrink-0(style="color: #22c55e") Outstanding (4-5)
+        .flex-1.relative
+          .h-7.rounded-lg.overflow-hidden(style="background: rgba(255,255,255,0.05)")
+            .h-full.rounded-lg.transition-all.duration-500(
+              :style="{ width: distributionBarWidth(distribution.outstanding), background: 'linear-gradient(90deg, #22c55e, #16a34a)' }"
+            )
+        .w-20.text-xs.text-right.shrink-0(style="color: var(--text-primary)")
+          span.font-bold {{ distribution.outstanding }}
+          span(style="color: var(--text-muted)") &nbsp;({{ distributionPct(distribution.outstanding) }}%)
+      //- Exceeds (3-4)
+      .flex.items-center.gap-3
+        .w-40.text-xs.font-medium.shrink-0(style="color: #3b82f6") Exceeds (3-4)
+        .flex-1.relative
+          .h-7.rounded-lg.overflow-hidden(style="background: rgba(255,255,255,0.05)")
+            .h-full.rounded-lg.transition-all.duration-500(
+              :style="{ width: distributionBarWidth(distribution.exceeds), background: 'linear-gradient(90deg, #3b82f6, #2563eb)' }"
+            )
+        .w-20.text-xs.text-right.shrink-0(style="color: var(--text-primary)")
+          span.font-bold {{ distribution.exceeds }}
+          span(style="color: var(--text-muted)") &nbsp;({{ distributionPct(distribution.exceeds) }}%)
+      //- Meets (2-3)
+      .flex.items-center.gap-3
+        .w-40.text-xs.font-medium.shrink-0(style="color: #f59e0b") Meets (2-3)
+        .flex-1.relative
+          .h-7.rounded-lg.overflow-hidden(style="background: rgba(255,255,255,0.05)")
+            .h-full.rounded-lg.transition-all.duration-500(
+              :style="{ width: distributionBarWidth(distribution.meets), background: 'linear-gradient(90deg, #f59e0b, #d97706)' }"
+            )
+        .w-20.text-xs.text-right.shrink-0(style="color: var(--text-primary)")
+          span.font-bold {{ distribution.meets }}
+          span(style="color: var(--text-muted)") &nbsp;({{ distributionPct(distribution.meets) }}%)
+      //- Needs Improvement (1-2)
+      .flex.items-center.gap-3
+        .w-40.text-xs.font-medium.shrink-0(style="color: #ef4444") Needs Improvement (1-2)
+        .flex-1.relative
+          .h-7.rounded-lg.overflow-hidden(style="background: rgba(255,255,255,0.05)")
+            .h-full.rounded-lg.transition-all.duration-500(
+              :style="{ width: distributionBarWidth(distribution.needsImprovement), background: 'linear-gradient(90deg, #ef4444, #dc2626)' }"
+            )
+        .w-20.text-xs.text-right.shrink-0(style="color: var(--text-primary)")
+          span.font-bold {{ distribution.needsImprovement }}
+          span(style="color: var(--text-muted)") &nbsp;({{ distributionPct(distribution.needsImprovement) }}%)
+
   //- Filters
   .flex.items-center.gap-3.mb-4
     el-input(v-model="search" :placeholder="$t('common.search') || 'Search'" clearable style="width: 260px" size="large" class="!rounded-xl")
@@ -68,6 +127,15 @@ div
               Icon(name="ph:pencil-bold" size="16")
             el-button(text type="danger" size="small" @click="handleDelete(row)")
               Icon(name="ph:trash-bold" size="16")
+
+    .flex.justify-end.mt-4
+      el-pagination(
+        :current-page="pagination.page"
+        :page-size="pagination.limit"
+        :total="pagination.total"
+        layout="total, prev, pager, next"
+        @current-change="(p: number) => { pagination.page = p; loadData() }"
+      )
 
   //- Create/Edit Dialog
   el-dialog(v-model="dialogVisible" :title="editingItem ? ($t('hr.performance.editReview') || 'Edit Review') : ($t('hr.performance.newReview') || 'New Review')" width="600px" destroy-on-close)
@@ -120,6 +188,17 @@ const statusFilter = ref('');
 
 const reviews = ref<any[]>([]);
 const employees = ref<any[]>([]);
+const pagination = reactive({ page: 1, limit: 20, total: 0 });
+
+// Distribution state
+const distributionPeriod = ref('Q1-2026');
+const distributionLoading = ref(false);
+const distribution = reactive({
+  outstanding: 0,
+  exceeds: 0,
+  meets: 0,
+  needsImprovement: 0
+});
 
 const REVIEW_STATUSES = [
   { value: 'PENDING', label: 'Pending', type: 'warning' },
@@ -251,12 +330,13 @@ async function loadData() {
   loading.value = true;
   try {
     const [reviewsRes, empRes] = await Promise.all([
-      useApiFetch('hr/performance'),
+      useApiFetch(`hr/performance?page=${pagination.page}&limit=${pagination.limit}`),
       useApiFetch('hr/employees?limit=500')
     ]);
     if (reviewsRes?.success && reviewsRes.body) {
       const data = reviewsRes.body as any;
-      reviews.value = data.docs || data || [];
+      reviews.value = data.rows || data.docs || data || [];
+      pagination.total = data.count ?? data.total ?? reviews.value.length;
     }
     if (empRes?.success && empRes.body) {
       const data = empRes.body as any;
@@ -271,8 +351,44 @@ async function loadData() {
   }
 }
 
+// Distribution helpers
+function distributionTotal(): number {
+  return distribution.outstanding + distribution.exceeds + distribution.meets + distribution.needsImprovement;
+}
+
+function distributionPct(count: number): string {
+  const total = distributionTotal();
+  if (!total) return '0';
+  return Math.round((count / total) * 100).toString();
+}
+
+function distributionBarWidth(count: number): string {
+  const total = distributionTotal();
+  if (!total) return '0%';
+  return Math.max(2, Math.round((count / total) * 100)) + '%';
+}
+
+async function loadDistribution() {
+  distributionLoading.value = true;
+  try {
+    const res = await useApiFetch(`hr/performance/distribution?period=${distributionPeriod.value}`);
+    if (res?.success && res.body) {
+      const d = res.body as any;
+      distribution.outstanding = d.outstanding ?? 0;
+      distribution.exceeds = d.exceeds ?? 0;
+      distribution.meets = d.meets ?? 0;
+      distribution.needsImprovement = d.needsImprovement ?? 0;
+    }
+  } catch {
+    // Distribution is supplementary; silently ignore errors
+  } finally {
+    distributionLoading.value = false;
+  }
+}
+
 onMounted(() => {
   loadData();
+  loadDistribution();
 });
 </script>
 

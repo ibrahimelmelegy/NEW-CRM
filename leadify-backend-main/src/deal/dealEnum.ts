@@ -1,7 +1,9 @@
 export enum DealStageEnums {
   PROGRESS = 'PROGRESS',
+  NEGOTIATION = 'NEGOTIATION',
   CANCELLED = 'CANCELLED',
   CLOSED = 'CLOSED',
+  ARCHIVED = 'ARCHIVED',
   CONVERTED = 'CONVERTED'
 }
 export enum ContractTypeEnums {

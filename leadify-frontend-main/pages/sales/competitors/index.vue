@@ -8,6 +8,31 @@
 
   StatCards(:stats="summaryStats")
 
+  //- Threat Matrix Section
+  .glass-card.p-6.rounded-2xl.mb-6.animate-entrance(v-if="threatMatrix.length")
+    .flex.items-center.gap-2.mb-4
+      .w-8.h-8.rounded-xl.flex.items-center.justify-center(style="background: rgba(239,68,68,0.15)")
+        Icon(name="ph:shield-warning-bold" size="16" style="color: #ef4444")
+      h3.text-sm.font-bold(style="color: var(--text-primary)") {{ $t('competitors.threatMatrix') || 'Threat Matrix' }}
+    el-table(:data="threatMatrix" style="width: 100%" size="small")
+      el-table-column(:label="$t('competitors.name') || 'Competitor'" min-width="160")
+        template(#default="{ row }")
+          span.font-bold {{ row.name || '—' }}
+      el-table-column(:label="$t('competitors.threatLevel') || 'Threat Level'" width="140" align="center")
+        template(#default="{ row }")
+          el-tag(:color="threatColor(row.threatLevel)" effect="dark" size="small" round style="border: none; color: #fff") {{ row.threatLevel }}
+      el-table-column(label="Win Rate" width="120" align="center")
+        template(#default="{ row }")
+          span.font-bold.text-green-500 {{ row.winRate != null ? row.winRate + '%' : '—' }}
+      el-table-column(label="Loss Rate" width="120" align="center")
+        template(#default="{ row }")
+          span.font-bold.text-red-500 {{ row.lossRate != null ? row.lossRate + '%' : '—' }}
+      el-table-column(label="Engagements" width="130" align="center")
+        template(#default="{ row }")
+          span.font-bold {{ row.totalEngagements ?? 0 }}
+      template(#empty)
+        el-empty(description="No threat data available" :image-size="60")
+
   .glass-card.py-8.animate-entrance
     el-table(:data="items" v-loading="loading" style="width: 100%")
       el-table-column(type="index" width="50")
@@ -41,6 +66,15 @@
             Icon(name="ph:trash" size="14")
       template(#empty)
         el-empty(:description="$t('common.noData') || 'No competitors tracked yet'")
+
+    .flex.justify-end.mt-4
+      el-pagination(
+        :current-page="pagination.page"
+        :page-size="pagination.limit"
+        :total="pagination.total"
+        layout="total, prev, pager, next"
+        @current-change="(p: number) => { pagination.page = p; fetchData() }"
+      )
 
   el-dialog(v-model="showDialog" :title="editingId ? ($t('competitors.edit') || 'Edit Competitor') : ($t('competitors.add') || 'Add Competitor')" width="600px")
     el-form(label-position="top" size="large")
@@ -84,6 +118,7 @@ const saving = ref(false);
 const showDialog = ref(false);
 const editingId = ref<number | null>(null);
 const items = ref<any[]>([]);
+const pagination = reactive({ page: 1, limit: 20, total: 0 });
 
 const defaultForm = () => ({
   name: '',
@@ -99,6 +134,7 @@ const defaultForm = () => ({
 });
 
 const form = reactive(defaultForm());
+const threatMatrix = ref<any[]>([]);
 
 const summaryStats = computed(() => {
   const total = items.value.length;
@@ -114,13 +150,20 @@ const summaryStats = computed(() => {
   ];
 });
 
-onMounted(() => fetchData());
+onMounted(() => {
+  fetchData();
+  fetchThreatMatrix();
+});
 
 async function fetchData() {
   loading.value = true;
   try {
-    const { body, success } = await useApiFetch('competitors?limit=100');
-    if (success && body) items.value = (body as any).docs || [];
+    const { body, success } = await useApiFetch(`competitors?page=${pagination.page}&limit=${pagination.limit}`);
+    if (success && body) {
+      const data = body as any;
+      items.value = data.rows || data.docs || [];
+      pagination.total = data.count ?? data.total ?? items.value.length;
+    }
   } finally { loading.value = false; }
 }
 
@@ -167,6 +210,27 @@ async function saveItem() {
 async function handleDelete(id: number) {
   const { success } = await useApiFetch(`competitors/${id}`, 'DELETE');
   if (success) { ElMessage.success('Deleted'); await fetchData(); }
+}
+
+async function fetchThreatMatrix() {
+  try {
+    const { body, success } = await useApiFetch('competitors/threat-matrix');
+    if (success && body) {
+      threatMatrix.value = Array.isArray(body) ? body : (body as any).rows || [];
+    }
+  } catch {
+    // Non-critical; silently ignore
+  }
+}
+
+function threatColor(level: string): string {
+  const map: Record<string, string> = {
+    CRITICAL: '#ef4444',
+    HIGH: '#f97316',
+    MEDIUM: '#eab308',
+    LOW: '#22c55e'
+  };
+  return map[level] || '#6b7280';
 }
 
 function threatType(level: string) {

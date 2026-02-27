@@ -17,6 +17,10 @@ import * as ExcelJS from 'exceljs';
 import { sendEmail } from '../utils/emailHelper';
 import notificationService from '../notification/notificationService';
 import { tenantWhere } from '../utils/tenantScope';
+import Deal from '../deal/model/dealModel';
+import { DealStageEnums } from '../deal/dealEnum';
+import Invoice from '../deal/model/invoiceMode';
+import CommActivity from '../communication/models/activityModel';
 
 class ClientService {
   async createClient(input: CreateClientInput, admin: User, t?: Transaction): Promise<Client> {
@@ -187,16 +191,240 @@ class ClientService {
     return clients;
   }
 
-  public async validateClientAccess(leadId: string, user: User): Promise<void> {
+  public async validateClientAccess(clientId: string, user: User): Promise<void> {
     if (user.role.permissions.includes(ClientPermissionsEnum.VIEW_GLOBAL_CLIENTS)) return;
 
-    const isAssigned = await this.isUserAssignedToClient(leadId, user.id);
+    const isAssigned = await this.isUserAssignedToClient(clientId, user.id);
     if (!isAssigned) throw new BaseError(ERRORS.ACCESS_DENIED);
   }
 
-  private async isUserAssignedToClient(leadId: string, userId: number): Promise<boolean> {
-    const assignment = await ClientUsers.findOne({ where: { leadId, userId } });
+  private async isUserAssignedToClient(clientId: string, userId: number): Promise<boolean> {
+    const assignment = await ClientUsers.findOne({ where: { clientId, userId } });
     return !!assignment; // Returns true if assigned, false otherwise
+  }
+
+  // ─── Enterprise: Client Health Score ───────────────────────────────────────
+  async calculateHealthScore(clientId: string): Promise<{
+    score: number;
+    factors: Array<{ name: string; points: number; met: boolean }>;
+  }> {
+    const client = await this.clientOrError({ id: clientId }, [
+      {
+        model: User,
+        as: 'users',
+        attributes: ['id'],
+        through: { attributes: [] }
+      }
+    ]);
+
+    const factors: Array<{ name: string; points: number; met: boolean }> = [];
+    let score = 0;
+
+    // Factor 1: Has active deals? +20
+    const activeDeals = await Deal.count({
+      where: {
+        clientId,
+        stage: { [Op.notIn]: [DealStageEnums.CLOSED, DealStageEnums.CANCELLED, DealStageEnums.ARCHIVED, DealStageEnums.CONVERTED] }
+      }
+    });
+    const hasActiveDeals = activeDeals > 0;
+    factors.push({ name: 'Has active deals', points: 20, met: hasActiveDeals });
+    if (hasActiveDeals) score += 20;
+
+    // Factor 2: Has recent activity (last 30 days)? +25
+    const thirtyDaysAgo = new Date();
+    thirtyDaysAgo.setDate(thirtyDaysAgo.getDate() - 30);
+    const recentActivityCount = await CommActivity.count({
+      where: {
+        contactId: clientId,
+        contactType: 'CLIENT',
+        createdAt: { [Op.gte]: thirtyDaysAgo }
+      }
+    });
+    const hasRecentActivity = recentActivityCount > 0;
+    factors.push({ name: 'Recent activity (last 30 days)', points: 25, met: hasRecentActivity });
+    if (hasRecentActivity) score += 25;
+
+    // Factor 3: Has paid invoices? +20
+    const paidInvoices = await Invoice.count({
+      where: {
+        collected: true
+      },
+      include: [
+        {
+          model: Deal,
+          as: 'deal',
+          attributes: [],
+          where: { clientId },
+          required: true
+        }
+      ]
+    });
+    const hasPaidInvoices = paidInvoices > 0;
+    factors.push({ name: 'Has paid invoices', points: 20, met: hasPaidInvoices });
+    if (hasPaidInvoices) score += 20;
+
+    // Factor 4: Number of touchpoints (emails, calls, meetings) in last 90 days
+    const ninetyDaysAgo = new Date();
+    ninetyDaysAgo.setDate(ninetyDaysAgo.getDate() - 90);
+    const touchpoints = await CommActivity.count({
+      where: {
+        contactId: clientId,
+        contactType: 'CLIENT',
+        type: { [Op.in]: ['EMAIL', 'CALL', 'MEETING'] },
+        createdAt: { [Op.gte]: ninetyDaysAgo }
+      }
+    });
+    let touchpointPoints = 0;
+    if (touchpoints >= 5) touchpointPoints = 20;
+    else if (touchpoints >= 3) touchpointPoints = 10;
+    else if (touchpoints >= 1) touchpointPoints = 5;
+    factors.push({ name: `Touchpoints in 90 days (${touchpoints})`, points: touchpointPoints, met: touchpoints > 0 });
+    score += touchpointPoints;
+
+    // Factor 5: Has assigned users? +15
+    const hasUsers = client.users && client.users.length > 0;
+    factors.push({ name: 'Has assigned users', points: 15, met: !!hasUsers });
+    if (hasUsers) score += 15;
+
+    return { score, factors };
+  }
+
+  // ─── Enterprise: Client Segmentation ─────────────────────────────────────
+  async segmentClients(tenantId?: string): Promise<{
+    segments: Record<string, { count: number; clients: Array<{ id: string; clientName: string; score: number }> }>;
+    totalClients: number;
+  }> {
+    const where: any = tenantId ? { tenantId } : {};
+    const clients = await Client.findAll({
+      where,
+      attributes: ['id', 'clientName']
+    });
+
+    const segments: Record<string, { count: number; clients: Array<{ id: string; clientName: string; score: number }> }> = {
+      ENTERPRISE: { count: 0, clients: [] },
+      GROWING: { count: 0, clients: [] },
+      AT_RISK: { count: 0, clients: [] },
+      CHURNING: { count: 0, clients: [] }
+    };
+
+    for (const client of clients) {
+      const { score } = await this.calculateHealthScore(client.id);
+      const entry = { id: client.id, clientName: client.clientName, score };
+
+      if (score >= 80) {
+        segments.ENTERPRISE.count++;
+        segments.ENTERPRISE.clients.push(entry);
+      } else if (score >= 60) {
+        segments.GROWING.count++;
+        segments.GROWING.clients.push(entry);
+      } else if (score >= 40) {
+        segments.AT_RISK.count++;
+        segments.AT_RISK.clients.push(entry);
+      } else {
+        segments.CHURNING.count++;
+        segments.CHURNING.clients.push(entry);
+      }
+    }
+
+    return { segments, totalClients: clients.length };
+  }
+
+  // ─── Enterprise: Client Analytics ────────────────────────────────────────
+  async getClientAnalytics(tenantId?: string): Promise<{
+    totalClients: number;
+    newThisMonth: number;
+    avgHealthScore: number;
+    segmentDistribution: Record<string, number>;
+    topByDealValue: Array<{ id: string; clientName: string; totalDealValue: number }>;
+  }> {
+    const where: any = tenantId ? { tenantId } : {};
+
+    // Total clients
+    const totalClients = await Client.count({ where });
+
+    // New this month
+    const startOfMonth = new Date();
+    startOfMonth.setDate(1);
+    startOfMonth.setHours(0, 0, 0, 0);
+    const newThisMonth = await Client.count({
+      where: {
+        ...where,
+        createdAt: { [Op.gte]: startOfMonth }
+      }
+    });
+
+    // Calculate health scores for all clients
+    const allClients = await Client.findAll({
+      where,
+      attributes: ['id', 'clientName']
+    });
+
+    let totalScore = 0;
+    const segmentDistribution: Record<string, number> = {
+      ENTERPRISE: 0,
+      GROWING: 0,
+      AT_RISK: 0,
+      CHURNING: 0
+    };
+
+    for (const client of allClients) {
+      const { score } = await this.calculateHealthScore(client.id);
+      totalScore += score;
+
+      if (score >= 80) segmentDistribution.ENTERPRISE++;
+      else if (score >= 60) segmentDistribution.GROWING++;
+      else if (score >= 40) segmentDistribution.AT_RISK++;
+      else segmentDistribution.CHURNING++;
+    }
+
+    const avgHealthScore = allClients.length > 0 ? Math.round((totalScore / allClients.length) * 100) / 100 : 0;
+
+    // Top 10 clients by deal value -- query from Deal side since Client lacks HasMany Deal
+    const dealsByClient = await Deal.findAll({
+      where: {
+        stage: { [Op.ne]: DealStageEnums.CONVERTED },
+        clientId: { [Op.ne]: null }
+      },
+      attributes: ['clientId', 'price'],
+      raw: true
+    });
+
+    const clientDealMap: Record<string, number> = {};
+    for (const d of dealsByClient) {
+      if (d.clientId) {
+        clientDealMap[d.clientId] = (clientDealMap[d.clientId] || 0) + (Number(d.price) || 0);
+      }
+    }
+
+    const topClientIds = Object.entries(clientDealMap)
+      .sort(([, a], [, b]) => b - a)
+      .slice(0, 10)
+      .map(([id]) => id);
+
+    const topClientsData = topClientIds.length > 0
+      ? await Client.findAll({
+          where: { id: { [Op.in]: topClientIds } },
+          attributes: ['id', 'clientName']
+        })
+      : [];
+
+    const topByDealValue = topClientIds.map(id => {
+      const c = topClientsData.find(cl => cl.id === id);
+      return {
+        id,
+        clientName: c?.clientName || 'Unknown',
+        totalDealValue: clientDealMap[id] || 0
+      };
+    });
+
+    return {
+      totalClients,
+      newThisMonth,
+      avgHealthScore,
+      segmentDistribution,
+      topByDealValue
+    };
   }
 
   public async sendClientsExcelByEmail(query: any, user: User, email: string): Promise<void> {

@@ -36,6 +36,34 @@ class CompetitorController {
       wrapResult(res, { deleted: true });
     } catch (e) { next(e); }
   }
+
+  /** GET /analysis/:id — win/loss analysis for a specific competitor */
+  async analysis(req: AuthenticatedRequest, res: Response, next: NextFunction) {
+    try {
+      const tenantId = (req.user as any)?.tenantId;
+      const result = await competitorService.getCompetitorAnalysis(Number(req.params.id), tenantId);
+      if (!result) return wrapResult(res, { message: 'Competitor not found' }, 404);
+      wrapResult(res, result);
+    } catch (e) { next(e); }
+  }
+
+  /** GET /threat-matrix — all competitors ranked by threat */
+  async threatMatrix(req: AuthenticatedRequest, res: Response, next: NextFunction) {
+    try {
+      const tenantId = (req.user as any)?.tenantId;
+      const result = await competitorService.getThreatMatrix(tenantId);
+      wrapResult(res, result);
+    } catch (e) { next(e); }
+  }
+
+  /** PUT /:id/threat-level — auto-recalculate threat level */
+  async updateThreatLevel(req: AuthenticatedRequest, res: Response, next: NextFunction) {
+    try {
+      const result = await competitorService.updateThreatLevel(Number(req.params.id), req.body);
+      if (!result) return wrapResult(res, { message: 'Competitor not found' }, 404);
+      wrapResult(res, result);
+    } catch (e) { next(e); }
+  }
 }
 
 export default new CompetitorController();

@@ -26,6 +26,9 @@ export interface NotificationPreferencesMap {
   invoice_overdue: NotificationChannels;
   contract_expiring: NotificationChannels;
   system_alert: NotificationChannels;
+  document_approval_requested: NotificationChannels;
+  document_approved: NotificationChannels;
+  document_rejected: NotificationChannels;
   [key: string]: NotificationChannels;
 }
 
@@ -47,7 +50,10 @@ export const DEFAULT_NOTIFICATION_PREFERENCES: NotificationPreferencesMap = {
   proposal_assigned: { inApp: true, email: true, push: false },
   invoice_overdue: { inApp: true, email: true, push: true },
   contract_expiring: { inApp: true, email: true, push: false },
-  system_alert: { inApp: true, email: false, push: false }
+  system_alert: { inApp: true, email: false, push: false },
+  document_approval_requested: { inApp: true, email: true, push: false },
+  document_approved: { inApp: true, email: true, push: false },
+  document_rejected: { inApp: true, email: true, push: false }
 };
 
 @Table({
