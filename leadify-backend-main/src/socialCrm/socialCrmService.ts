@@ -1,5 +1,5 @@
 import { Op, fn, col } from 'sequelize';
-import SocialProfile from './socialCrmModel';
+import SocialProfile, { SocialPost } from './socialCrmModel';
 import Client from '../client/clientModel';
 import { clampPagination } from '../utils/pagination';
 
@@ -189,6 +189,36 @@ class SocialCrmService {
       sentimentDistribution: sentimentCounts,
       topPerformingProfiles: topProfiles,
     };
+  }
+
+  // ── Social Posts CRUD ─────────────────────────────────────────────────────
+  async createPost(data: any, tenantId?: string) {
+    return SocialPost.create({ ...data, tenantId });
+  }
+
+  async getPosts(query: any, tenantId?: string) {
+    const { page, limit, offset } = clampPagination(query);
+    const where: any = {};
+    if (tenantId) where.tenantId = tenantId;
+    if (query.status) where.status = query.status;
+    const { rows, count } = await SocialPost.findAndCountAll({
+      where, order: [['createdAt', 'DESC']], limit, offset
+    });
+    return { docs: rows, pagination: { page, limit, totalItems: count, totalPages: Math.ceil(count / limit) } };
+  }
+
+  async updatePost(id: number, data: any) {
+    const item = await SocialPost.findByPk(id);
+    if (!item) return null;
+    await item.update(data);
+    return item;
+  }
+
+  async deletePost(id: number) {
+    const item = await SocialPost.findByPk(id);
+    if (!item) return false;
+    await item.destroy();
+    return true;
   }
 
   /**

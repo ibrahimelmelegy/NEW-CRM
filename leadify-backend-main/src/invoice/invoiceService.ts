@@ -1,6 +1,7 @@
 import { Op, fn, col, literal, cast, QueryTypes } from 'sequelize';
 import Invoice from '../deal/model/invoiceMode';
 import Deal from '../deal/model/dealModel';
+import Client from '../client/clientModel';
 import User from '../user/userModel';
 import { tenantWhere } from '../utils/tenantScope';
 import { clampPagination } from '../utils/pagination';
@@ -74,7 +75,7 @@ class InvoiceService {
 
   async getInvoiceById(id: number) {
     const invoice = await Invoice.findByPk(id, {
-      include: [{ model: Deal, as: 'deal' }]
+      include: [{ model: Deal, as: 'deal', include: [{ model: Client, as: 'client' }] }]
     });
     if (!invoice) throw new Error('Invoice not found');
     return invoice;

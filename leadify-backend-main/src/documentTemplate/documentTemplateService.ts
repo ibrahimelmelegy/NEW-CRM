@@ -1082,16 +1082,50 @@ const DEFAULT_TEMPLATES = [
   }
 ];
 
+/**
+ * Map frontend email template fields (body -> emailBody, category -> emailCategory)
+ * to model column names to avoid conflicts with existing model columns.
+ */
+function mapEmailFields(data: any): any {
+  const mapped = { ...data };
+  if (mapped.body !== undefined && mapped.type === 'EMAIL') {
+    mapped.emailBody = mapped.body;
+    delete mapped.body;
+  }
+  if (mapped.category !== undefined && mapped.type === 'EMAIL') {
+    mapped.emailCategory = mapped.category;
+    delete mapped.category;
+  }
+  return mapped;
+}
+
+/**
+ * Reshape a document template record to expose email-friendly field names
+ * for email-type templates (emailBody -> body, emailCategory -> category).
+ */
+function reshapeForEmail(doc: any): any {
+  if (!doc) return doc;
+  const plain = doc.toJSON ? doc.toJSON() : { ...doc };
+  if (plain.type === 'EMAIL') {
+    plain.body = plain.emailBody || '';
+    plain.category = plain.emailCategory || '';
+  }
+  return plain;
+}
+
 class DocumentTemplateService {
-  public async createTemplate(data: any, userId?: string): Promise<DocumentTemplate> {
-    return await DocumentTemplate.create({ ...data, userId });
+  public async createTemplate(data: any, userId?: string): Promise<any> {
+    const mapped = mapEmailFields(data);
+    const created = await DocumentTemplate.create({ ...mapped, userId });
+    return reshapeForEmail(created);
   }
 
-  public async updateTemplate(id: string, data: any): Promise<DocumentTemplate> {
+  public async updateTemplate(id: string, data: any): Promise<any> {
     const template = await DocumentTemplate.findByPk(id);
     if (!template) throw new BaseError(ERRORS.DOCUMENT_TEMPLATE_NOT_FOUND);
-    await template.update(data);
-    return template;
+    const mapped = mapEmailFields({ ...data, type: data.type || template.type });
+    await template.update(mapped);
+    return reshapeForEmail(template);
   }
 
   public async getTemplates(query: any): Promise<any> {
@@ -1115,7 +1149,7 @@ class DocumentTemplateService {
     });
 
     return {
-      docs,
+      docs: docs.map(reshapeForEmail),
       pagination: {
         page,
         limit,
@@ -1125,10 +1159,10 @@ class DocumentTemplateService {
     };
   }
 
-  public async getTemplateById(id: string): Promise<DocumentTemplate> {
+  public async getTemplateById(id: string): Promise<any> {
     const template = await DocumentTemplate.findByPk(id);
     if (!template) throw new BaseError(ERRORS.DOCUMENT_TEMPLATE_NOT_FOUND);
-    return template;
+    return reshapeForEmail(template);
   }
 
   public async deleteTemplate(id: string): Promise<void> {

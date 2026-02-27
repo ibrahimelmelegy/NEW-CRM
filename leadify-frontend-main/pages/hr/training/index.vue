@@ -91,7 +91,7 @@ div
 
       //- Programs Table
       .glass-card.rounded-2xl.overflow-hidden
-        el-table(:data="filteredPrograms" v-loading="loading" style="width: 100%" stripe)
+        el-table(:data="filteredPrograms" v-loading="loading" style="width: 100%" stripe @row-click="navigateToProgram")
           el-table-column(:label="$t('hr.training.programTitle') || 'Title'" min-width="220")
             template(#default="{ row }")
               .flex.items-center.gap-3
@@ -252,6 +252,7 @@ definePageMeta({ middleware: 'permissions' });
 
 const { $i18n } = useNuxtApp();
 const t = $i18n.t;
+const router = useRouter();
 
 const loading = ref(false);
 const saving = ref(false);
@@ -379,6 +380,10 @@ function getProgressColor(progress: number): string {
   if (progress >= 80) return '#22c55e';
   if (progress >= 50) return '#f59e0b';
   return '#3b82f6';
+}
+
+function navigateToProgram(row: any) {
+  if (row?.id) router.push(`/hr/training/${row.id}`);
 }
 
 // Program CRUD

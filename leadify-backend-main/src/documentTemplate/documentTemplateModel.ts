@@ -14,7 +14,8 @@ export enum DocumentTemplateType {
   RFQ = 'RFQ',
   SLA = 'SLA',
   PROPOSAL = 'PROPOSAL',
-  GENERIC = 'GENERIC'
+  GENERIC = 'GENERIC',
+  EMAIL = 'EMAIL'
 }
 
 export interface TemplateElement {
@@ -62,9 +63,9 @@ class DocumentTemplate extends Model {
 
   @Column({
     type: DataType.JSONB,
-    allowNull: false
+    allowNull: true
   })
-  public layout!: TemplateLayout;
+  public layout?: TemplateLayout;
 
   @Column({
     type: DataType.JSONB,
@@ -107,6 +108,24 @@ class DocumentTemplate extends Model {
     allowNull: false
   })
   public category!: 'system' | 'custom';
+
+  // ── Email template fields ──────────────────────────────────────────────
+  @AllowNull(true)
+  @Column({ type: DataType.STRING(255) })
+  public subject?: string;
+
+  @AllowNull(true)
+  @Column({ type: DataType.TEXT })
+  public emailBody?: string;
+
+  @AllowNull(true)
+  @Column({ type: DataType.STRING(100) })
+  public emailCategory?: string;
+
+  @Default(0)
+  @AllowNull(true)
+  @Column({ type: DataType.INTEGER })
+  public usageCount?: number;
 
   @ForeignKey(() => Tenant)
   @AllowNull(true)

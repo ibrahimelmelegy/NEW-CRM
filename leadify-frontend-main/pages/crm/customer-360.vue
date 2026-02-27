@@ -348,7 +348,7 @@ async function loadContact(id?: string) {
         createdAt: data.createdAt
       };
       // Load all tab data first, then build activities from them
-      await Promise.all([loadDeals(cid), loadInvoices(cid), loadTickets(cid)]);
+      await Promise.all([loadDeals(cid), loadInvoices(cid), loadTickets(cid), loadNotes(cid)]);
       buildActivities();
       generateAiSummary(cid);
     }
@@ -442,15 +442,51 @@ async function addNote() {
   if (!newNote.value.trim() || !selectedContact.value) return;
   savingNote.value = true;
   try {
-    contactNotes.value.unshift({
-      content: newNote.value,
-      createdBy: 'You',
-      createdAt: new Date().toISOString()
-    });
-    newNote.value = '';
-    ElNotification({ type: 'success', title: 'Note Added', message: 'Note saved successfully' });
+    const payload = {
+      type: 'NOTE',
+      contactId: selectedContact.value.id,
+      contactType: 'CLIENT',
+      subject: newNote.value.trim().substring(0, 100),
+      body: newNote.value.trim()
+    };
+    const { body, success } = await useApiFetch('communications/activities', 'POST', payload);
+    if (success && body) {
+      const activity = body as any;
+      contactNotes.value.unshift({
+        id: activity.id,
+        content: activity.body || activity.subject,
+        createdBy: activity.user?.name || 'You',
+        createdAt: activity.createdAt
+      });
+      newNote.value = '';
+      ElNotification({ type: 'success', title: 'Note Added', message: 'Note saved successfully' });
+    } else {
+      ElNotification({ type: 'error', title: 'Error', message: 'Failed to save note' });
+    }
+  } catch {
+    ElNotification({ type: 'error', title: 'Error', message: 'Failed to save note' });
   } finally {
     savingNote.value = false;
+  }
+}
+
+async function loadNotes(clientId: string) {
+  try {
+    const { body, success } = await useApiFetch(`communications/timeline/CLIENT/${clientId}?limit=50`);
+    if (success && body) {
+      const data = body as any;
+      const docs = data.docs || data || [];
+      contactNotes.value = docs
+        .filter((a: any) => a.type === 'NOTE')
+        .map((a: any) => ({
+          id: a.id,
+          content: a.body || a.subject,
+          createdBy: a.user?.name || 'Unknown',
+          createdAt: a.createdAt
+        }));
+    }
+  } catch {
+    /* silent - notes will just be empty */
   }
 }
 

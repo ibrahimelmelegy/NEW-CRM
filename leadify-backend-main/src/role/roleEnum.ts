@@ -483,6 +483,21 @@ export enum InventoryPermissionsEnum {
   MANAGE_MOVEMENTS = 'MANAGE_MOVEMENTS'
 }
 
+export enum MeetingNotePermissionsEnum {
+  VIEW_MEETING_NOTES = 'VIEW_MEETING_NOTES',
+  CREATE_MEETING_NOTES = 'CREATE_MEETING_NOTES',
+  EDIT_MEETING_NOTES = 'EDIT_MEETING_NOTES',
+  DELETE_MEETING_NOTES = 'DELETE_MEETING_NOTES'
+}
+
+export enum ESignaturePermissionsEnum {
+  VIEW_E_SIGNATURES = 'VIEW_E_SIGNATURES',
+  CREATE_E_SIGNATURES = 'CREATE_E_SIGNATURES',
+  EDIT_E_SIGNATURES = 'EDIT_E_SIGNATURES',
+  DELETE_E_SIGNATURES = 'DELETE_E_SIGNATURES',
+  SIGN_DOCUMENTS = 'SIGN_DOCUMENTS'
+}
+
 // Consolidating all permissions
 export const permissions = {
   leads: Object.keys(LeadPermissionsEnum),
@@ -548,7 +563,9 @@ export const permissions = {
   ecCategories: Object.keys(EcCategoryPermissionsEnum),
   ecCoupons: Object.keys(EcCouponPermissionsEnum),
   ecReviews: Object.keys(EcReviewPermissionsEnum),
-  ecCarts: Object.keys(EcCartPermissionsEnum)
+  ecCarts: Object.keys(EcCartPermissionsEnum),
+  meetingNotes: Object.keys(MeetingNotePermissionsEnum),
+  eSignatures: Object.keys(ESignaturePermissionsEnum)
 };
 
 // Function to get all permissions

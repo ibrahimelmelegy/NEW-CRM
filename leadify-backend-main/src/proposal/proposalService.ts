@@ -551,6 +551,64 @@ class ProposalService {
     return proposal;
   }
 
+  /**
+   * Load a proposal with all relations needed for PDF rendering.
+   * Returns a plain object with all data flattened for the HTML template.
+   */
+  public async getProposalForPdf(id: string, user: User): Promise<any> {
+    await this.validateProposalAccess(id, user);
+
+    const proposal = await this.proposalOrError({ id }, [
+      {
+        model: Opportunity,
+        as: 'opportunity',
+        attributes: ['id', 'name'],
+        required: false,
+        include: [{ model: Client, as: 'client' }]
+      },
+      {
+        model: Deal,
+        as: 'deal',
+        attributes: ['id', 'name'],
+        required: false,
+        include: [{ model: Client, as: 'client' }]
+      },
+      {
+        model: Project,
+        as: 'project',
+        attributes: ['id', 'name'],
+        required: false,
+        include: [{ model: Client, as: 'client' }]
+      },
+      {
+        model: User,
+        as: 'users',
+        attributes: ['id', 'name'],
+        through: { attributes: [] }
+      },
+      {
+        model: ProposalFinanceTable,
+        as: 'financeTable',
+        include: [
+          {
+            model: ProposalFinanceTableItem,
+            as: 'items'
+          }
+        ]
+      }
+    ]);
+
+    const data = proposal.toJSON();
+    const related = data.opportunity || data.deal || data.project;
+    const client = related?.client || null;
+
+    return {
+      ...data,
+      client,
+      relatedEntity: related ? { id: related.id, name: related.name } : null
+    };
+  }
+
   public async deleteProposal(id: string, user: User): Promise<void> {
     const isSuperAdmin = user.role?.name === 'Super Admin' || user.role?.name === 'SUPER_ADMIN' || user.role?.permissions?.includes('SUPER_ADMIN');
     const hasPermission = user.role?.permissions?.includes(ProposalPermissionsEnum.DELETE_PROPOSALS);

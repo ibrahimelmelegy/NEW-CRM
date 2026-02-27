@@ -471,6 +471,51 @@ export async function archiveProposal(id: string | number): Promise<boolean> {
 }
 
 /**
+ * Download proposal as PDF from server-side generation endpoint.
+ * Triggers a browser download of the generated file.
+ * @param id - Proposal ID
+ * @param reference - Optional reference number for the filename
+ */
+export async function downloadProposalPdf(id: string | number, reference?: string): Promise<boolean> {
+  try {
+    const config = useRuntimeConfig();
+    const accessToken = useCookie('access_token', {
+      path: '/',
+      maxAge: 60 * 60 * 24 * 7,
+      sameSite: 'lax' as const
+    });
+
+    const response = await $fetch(`${config.public.API_BASE_URL}proposal/${id}/pdf`, {
+      method: 'GET',
+      headers: {
+        ...(accessToken.value && { Authorization: `Bearer ${accessToken.value}` })
+      },
+      responseType: 'blob'
+    });
+
+    const blob = response as Blob;
+    const url = URL.createObjectURL(blob);
+    const link = document.createElement('a');
+    link.href = url;
+    link.download = `Proposal-${reference || id}.pdf`;
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+    URL.revokeObjectURL(url);
+
+    ElNotification({
+      type: 'success',
+      title: 'Success',
+      message: 'Proposal PDF downloaded successfully'
+    });
+    return true;
+  } catch (error) {
+    handleError(error instanceof Error ? error.message : 'Failed to download PDF');
+    return false;
+  }
+}
+
+/**
  * Delete proposal
  * @param id - Proposal ID
  */

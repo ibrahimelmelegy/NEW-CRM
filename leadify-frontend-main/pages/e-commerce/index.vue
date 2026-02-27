@@ -120,7 +120,7 @@ div.p-4.space-y-6.animate-fade-in(class="md_p-6")
           span.font-mono.font-bold(style="color: #7849ff;") {{ row.orderNumber || row.documentNumber || `#${row.id?.slice(-6) || '--'}` }}
       el-table-column(:label="$t('ecommerce.client') || 'Client'" min-width="180")
         template(#default="{ row }")
-          span.font-medium(style="color: var(--text-primary);") {{ row.clientName || row.client?.name || '--' }}
+          span.font-medium(style="color: var(--text-primary);") {{ row.clientName || row.client?.clientName || row.client?.name || '--' }}
       el-table-column(:label="$t('common.status') || 'Status'" width="140" align="center")
         template(#default="{ row }")
           el-tag(
@@ -248,6 +248,16 @@ import {
   fetchProducts,
   type CatalogProduct
 } from '~/composables/useProductCatalog';
+import { getSalesOrders } from '~/composables/useSalesOrders';
+import type { SalesOrder } from '~/composables/useSalesOrders';
+import {
+  fetchCoupons,
+  fetchReviews,
+  fetchCarts,
+  fetchAbandonedCarts,
+  CouponStatusEnum,
+  ReviewStatusEnum
+} from '~/composables/useEcommerce';
 
 definePageMeta({ middleware: 'permissions' });
 
@@ -265,9 +275,11 @@ const totalOrders = ref(0);
 const activeProducts = ref(0);
 const totalCarts = ref(0);
 const convertedCarts = ref(0);
+const allOrderRevenue = ref(0);
 
 // Data
 const recentOrders = ref<any[]>([]);
+const allFetchedOrders = ref<any[]>([]);
 const allProducts = ref<CatalogProduct[]>([]);
 const lowStockItems = ref<any[]>([]);
 
@@ -290,7 +302,7 @@ const couponForm = reactive({
 
 // Computed KPIs
 const totalRevenue = computed(() => {
-  return recentOrders.value.reduce((sum, o) => sum + (o.totalAmount || o.total || 0), 0);
+  return allOrderRevenue.value;
 });
 
 const conversionRate = computed(() => {
@@ -305,45 +317,49 @@ const topProducts = computed(() => {
     .slice(0, 5);
 });
 
-// Revenue chart data (mock from recent orders, grouped by day labels)
+// Revenue chart data derived from real orders grouped by day of week
 const revenueChartData = computed(() => {
-  const days = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'];
-  const values = days.map((_, i) => {
-    // Distribute orders across days for visualization
-    const dayOrders = recentOrders.value.filter((_, idx) => idx % 7 === i);
-    return dayOrders.reduce((sum, o) => sum + (o.totalAmount || o.total || 0), 0);
-  });
+  const dayLabels = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'];
+  const values = new Array(7).fill(0);
+
+  for (const order of allFetchedOrders.value) {
+    if (order.createdAt) {
+      const dayIndex = (new Date(order.createdAt).getDay() + 6) % 7; // Monday=0 ... Sunday=6
+      values[dayIndex] += (order.total || order.totalAmount || 0);
+    }
+  }
+
   const maxVal = Math.max(...values, 1);
-  return days.map((label, i) => ({
+  return dayLabels.map((label, i) => ({
     label,
     value: values[i],
     height: Math.max((values[i] / maxVal) * 100, 5)
   }));
 });
 
-// Order status donut
+// Order status donut derived from fetched orders
 const orderStatusData = computed(() => {
   const statuses = [
     { key: 'CONFIRMED', label: t('ecommerce.confirmed') || 'Confirmed', color: '#22c55e' },
-    { key: 'PENDING', label: t('ecommerce.pending') || 'Pending', color: '#f59e0b' },
+    { key: 'DRAFT', label: t('ecommerce.pending') || 'Draft', color: '#f59e0b' },
     { key: 'PROCESSING', label: t('ecommerce.processing') || 'Processing', color: '#3b82f6' },
     { key: 'SHIPPED', label: t('ecommerce.shipped') || 'Shipped', color: '#7849ff' },
     { key: 'CANCELLED', label: t('ecommerce.cancelled') || 'Cancelled', color: '#ef4444' }
   ];
   return statuses.map(s => ({
     ...s,
-    count: recentOrders.value.filter(o => (o.status || 'PENDING').toUpperCase() === s.key).length
+    count: allFetchedOrders.value.filter(o => (o.status || 'DRAFT').toUpperCase() === s.key).length
   }));
 });
 
 const donutSegments = computed(() => {
-  const total = totalOrders.value || 1;
+  const totalStatusCount = orderStatusData.value.reduce((sum, s) => sum + s.count, 0) || 1;
   const circumference = 100;
   let cumulativeOffset = 25; // Start from top
   return orderStatusData.value
     .filter(s => s.count > 0)
     .map(s => {
-      const pct = (s.count / total) * circumference;
+      const pct = (s.count / totalStatusCount) * circumference;
       const segment = {
         color: s.color,
         dash: `${pct} ${circumference - pct}`,
@@ -397,12 +413,14 @@ async function loadDashboardData() {
 async function loadOrders() {
   loadingOrders.value = true;
   try {
-    const res = await useApiFetch('sales-orders?limit=10&sort=-createdAt');
-    if (res?.success && res.body) {
-      const data = res.body as any;
-      recentOrders.value = data?.docs || data?.rows || data || [];
-      totalOrders.value = data?.pagination?.totalItems ?? data?.count ?? recentOrders.value.length;
-    }
+    // Fetch a larger batch to get accurate stats for charts and KPIs
+    const result = await getSalesOrders('limit=50&page=1');
+    allFetchedOrders.value = result.orders || [];
+    totalOrders.value = result.pagination?.totalItems ?? allFetchedOrders.value.length;
+    allOrderRevenue.value = allFetchedOrders.value.reduce((sum: number, o: SalesOrder) => sum + (o.total || 0), 0);
+
+    // Take 5 most recent for the Recent Orders table
+    recentOrders.value = allFetchedOrders.value.slice(0, 5);
   } catch {
     // silent
   } finally {
@@ -440,11 +458,16 @@ async function loadLowStock() {
 
 async function loadCartData() {
   try {
-    const res = await useApiFetch('ecommerce/cart?limit=1');
-    if (res?.success && res.body) {
-      const data = res.body as any;
-      totalCarts.value = data?.pagination?.totalItems ?? 0;
-      convertedCarts.value = data?.converted ?? Math.round(totalCarts.value * 0.35);
+    const [cartsResult, abandonedResult] = await Promise.allSettled([
+      fetchCarts({ limit: '1' }),
+      fetchAbandonedCarts({ limit: '1' })
+    ]);
+    if (cartsResult.status === 'fulfilled') {
+      totalCarts.value = cartsResult.value.pagination?.totalItems ?? 0;
+    }
+    if (abandonedResult.status === 'fulfilled') {
+      const abandonedCount = abandonedResult.value.pagination?.totalItems ?? 0;
+      convertedCarts.value = Math.max(totalCarts.value - abandonedCount, 0);
     }
   } catch {
     // silent - endpoint may not exist yet
@@ -453,15 +476,22 @@ async function loadCartData() {
 
 async function loadQuickStats() {
   try {
-    const res = await useApiFetch('ecommerce/dashboard-stats');
-    if (res?.success && res.body) {
-      const data = res.body as any;
-      activeCoupons.value = data?.activeCoupons ?? 0;
-      pendingReviews.value = data?.pendingReviews ?? 0;
-      abandonedCarts.value = data?.abandonedCarts ?? 0;
+    const [couponsResult, reviewsResult, abandonedResult] = await Promise.allSettled([
+      fetchCoupons({ status: CouponStatusEnum.ACTIVE, limit: '1' } as Record<string, string>),
+      fetchReviews({ status: ReviewStatusEnum.PENDING, limit: '1' } as Record<string, string>),
+      fetchAbandonedCarts({ limit: '1' })
+    ]);
+    if (couponsResult.status === 'fulfilled') {
+      activeCoupons.value = couponsResult.value.pagination?.totalItems ?? 0;
+    }
+    if (reviewsResult.status === 'fulfilled') {
+      pendingReviews.value = reviewsResult.value.pagination?.totalItems ?? 0;
+    }
+    if (abandonedResult.status === 'fulfilled') {
+      abandonedCarts.value = abandonedResult.value.pagination?.totalItems ?? 0;
     }
   } catch {
-    // silent - endpoint may not exist yet
+    // silent - endpoints may not exist yet
   }
 }
 

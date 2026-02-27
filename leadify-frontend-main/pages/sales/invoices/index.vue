@@ -133,6 +133,18 @@ div
   //- Template Selector
   el-dialog(v-model="showTemplateSelector" :title="$t('invoices.selectTemplate') || 'Select Invoice Template'" width="500px")
     .space-y-3
+      //- Server-side standard PDF option
+      .glass-card.p-3.rounded-xl.cursor-pointer.flex.items-center.justify-between(
+        @click="downloadServerPdf(selectedInvoice)"
+        style="border: 1px solid rgba(120,73,255,0.3)"
+      )
+        .flex.items-center.gap-3
+          Icon(name="ph:file-pdf-bold" size="24" style="color: #7849ff")
+          div
+            .font-bold(style="color: var(--text-primary)") Standard PDF
+            .text-xs(style="color: var(--text-muted)") Server-generated professional layout
+        Icon(name="ph:arrow-right" size="18" style="color: var(--text-muted)")
+      //- Custom templates
       .glass-card.p-3.rounded-xl.cursor-pointer.flex.items-center.justify-between(
         v-for="tpl in invoiceTemplates"
         :key="tpl.id"
@@ -151,7 +163,7 @@ div
 <script setup lang="ts">
 import { ElNotification } from 'element-plus';
 import type { InvoiceItem, InvoiceSummary } from '~/composables/useInvoices';
-import { fetchInvoices, fetchInvoiceSummary, markCollected, markUncollected } from '~/composables/useInvoices';
+import { fetchInvoices, fetchInvoiceSummary, markCollected, markUncollected, downloadInvoicePdf } from '~/composables/useInvoices';
 import { getAgingReport } from '~/composables/useInvoiceBilling';
 import type { AgingReport } from '~/composables/useInvoiceBilling';
 
@@ -351,12 +363,18 @@ const selectedInvoice = ref<any>(null);
 async function exportInvoicePDF(row: any) {
   const { fetchDocumentTemplates } = await import('~/composables/useDocumentTemplates');
   const result = await fetchDocumentTemplates({ type: 'INVOICE', limit: '50' });
-  if (result.docs.length > 0) {
-    invoiceTemplates.value = result.docs;
-    selectedInvoice.value = row;
-    showTemplateSelector.value = true;
+  invoiceTemplates.value = result.docs || [];
+  selectedInvoice.value = row;
+  showTemplateSelector.value = true;
+}
+
+async function downloadServerPdf(inv: any) {
+  showTemplateSelector.value = false;
+  const success = await downloadInvoicePdf(inv.id, inv.invoiceNumber);
+  if (success) {
+    ElNotification({ type: 'success', title: t('common.success'), message: 'PDF downloaded' });
   } else {
-    ElNotification({ type: 'info', title: 'No Templates', message: 'Create invoice templates in Settings > Document Templates' });
+    ElNotification({ type: 'error', title: 'Error', message: 'Failed to generate PDF' });
   }
 }
 

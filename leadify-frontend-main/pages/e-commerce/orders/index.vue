@@ -94,7 +94,7 @@ div.animate-fade-in
         ) {{ row.orderNumber || '--' }}
     el-table-column(:label="$t('salesOrders.client') || 'Client'" min-width="160")
       template(#default="{ row }")
-        span.text-sm(style="color: var(--text-primary)") {{ row.client?.name || row.clientId || '--' }}
+        span.text-sm(style="color: var(--text-primary)") {{ row.client?.clientName || row.client?.name || row.clientId || '--' }}
     el-table-column(:label="$t('salesOrders.status') || 'Status'" width="140" align="center")
       template(#default="{ row }")
         el-tag(
@@ -266,7 +266,7 @@ async function loadOrders() {
     const params = new URLSearchParams();
     params.set('page', String(pagination.page));
     params.set('limit', String(pagination.limit));
-    if (search.value.trim()) params.set('search', search.value.trim());
+    if (search.value.trim()) params.set('searchKey', search.value.trim());
     if (statusFilter.value && statusFilter.value !== 'ALL') params.set('status', statusFilter.value);
     if (dateRange.value?.length === 2) {
       params.set('startDate', dateRange.value[0]);
@@ -335,7 +335,7 @@ function exportCSV() {
   const headers = ['Order #', 'Client', 'Status', 'Items', 'Subtotal', 'Tax', 'Total', 'Currency', 'Date'];
   const rows = orders.value.map(o => [
     o.orderNumber || '',
-    o.client?.name || o.clientId || '',
+    o.client?.clientName || o.client?.name || o.clientId || '',
     o.status || '',
     String(o.items?.length || 0),
     String(o.subtotal || 0),

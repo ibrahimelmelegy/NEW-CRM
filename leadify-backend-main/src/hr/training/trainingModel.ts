@@ -1,4 +1,4 @@
-import { Table, Column, Model, DataType, ForeignKey, BelongsTo } from 'sequelize-typescript';
+import { Table, Column, Model, DataType, ForeignKey, BelongsTo, HasMany } from 'sequelize-typescript';
 import Employee from '../models/employeeModel';
 
 @Table({ tableName: 'hr_training_programs', timestamps: true })
@@ -21,6 +21,9 @@ export class TrainingProgram extends Model {
   @Column({ type: DataType.STRING(100), allowNull: true })
   public category?: string;
 
+  @Column({ type: DataType.STRING(100), allowNull: true })
+  public department?: string;
+
   @Column({ type: DataType.INTEGER, allowNull: true })
   public durationHours?: number;
 
@@ -39,8 +42,17 @@ export class TrainingProgram extends Model {
   @Column({ type: DataType.DATEONLY, allowNull: true })
   public endDate?: string;
 
+  @Column({ type: DataType.JSONB, allowNull: true })
+  public materials?: Array<{ name: string; url: string; type: string }>;
+
+  @Column({ type: DataType.INTEGER, allowNull: true })
+  public createdBy?: number;
+
   @Column({ type: DataType.STRING, allowNull: true })
   public tenantId?: string;
+
+  @HasMany(() => TrainingEnrollment, { foreignKey: 'programId', as: 'enrollments' })
+  public enrollments?: TrainingEnrollment[];
 }
 
 @Table({ tableName: 'hr_training_enrollments', timestamps: true })
@@ -76,6 +88,9 @@ export class TrainingEnrollment extends Model {
 
   @Column({ type: DataType.TEXT, allowNull: true })
   public feedback?: string;
+
+  @Column({ type: DataType.INTEGER, allowNull: true, validate: { min: 1, max: 5 } })
+  public rating?: number;
 
   @Column({ type: DataType.STRING, allowNull: true })
   public tenantId?: string;

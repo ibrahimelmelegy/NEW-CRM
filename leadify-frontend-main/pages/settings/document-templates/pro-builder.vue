@@ -83,7 +83,7 @@ const builder = useDocumentBuilder();
 
 const templateId = computed(() => (route.query.id as string) || null);
 const templateName = ref('Untitled Template');
-const templateType = ref<'INVOICE' | 'PURCHASE_ORDER'>('INVOICE');
+const templateType = ref<import('~/composables/useDocumentTemplates').DocumentTemplateType>('INVOICE');
 const showPicker = ref(false);
 const initialContent = ref<JSONContent | null>(null);
 const docBuilderRef = ref<InstanceType<typeof ProDocBuilder> | null>(null);

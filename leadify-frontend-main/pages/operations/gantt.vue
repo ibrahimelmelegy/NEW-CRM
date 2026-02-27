@@ -13,7 +13,7 @@
             <el-button :type="viewMode === 'month' ? 'primary' : 'default'" size="small" @click="viewMode = 'month'">Month</el-button>
             <el-button :type="viewMode === 'quarter' ? 'primary' : 'default'" size="small" @click="viewMode = 'quarter'">Quarter</el-button>
           </el-button-group>
-          <el-button type="primary" class="!rounded-xl" @click="showTaskDialog = true">
+          <el-button type="primary" class="!rounded-xl" @click="openAddDialog">
             <Icon name="ph:plus-bold" class="w-4 h-4 mr-2" />
             Add Task
           </el-button>
@@ -52,7 +52,7 @@
         <div class="w-72 flex-shrink-0 p-3 border-r border-slate-800/60">
           <span class="text-sm font-medium text-slate-300">Task Name</span>
         </div>
-        <div class="flex-1 flex overflow-x-auto">
+        <div ref="timelineHeaderRef" class="flex-1 flex overflow-x-auto" @scroll="syncScroll('header', $event)">
           <div
             v-for="(date, idx) in timelineDates"
             :key="idx"
@@ -80,11 +80,21 @@
                 <el-tag v-if="task.isMilestone" type="warning" effect="dark" size="small" class="!text-[10px]">Milestone</el-tag>
               </div>
             </div>
+            <!-- Delete button visible on hover -->
+            <el-button
+              size="small"
+              type="danger"
+              plain
+              class="!rounded-lg opacity-0 group-hover:opacity-100 transition-opacity !p-1"
+              @click.stop="confirmDeleteTask(task)"
+            >
+              <Icon name="ph:trash-bold" class="w-3 h-3" />
+            </el-button>
           </div>
         </div>
 
         <!-- Gantt Bar Area -->
-        <div class="flex-1 relative overflow-x-auto" style="min-height: 48px">
+        <div class="flex-1 relative overflow-x-auto" style="min-height: 48px" @scroll="syncScroll('row', $event)">
           <div class="flex h-full">
             <div
               v-for="(date, idx) in timelineDates"
@@ -160,35 +170,53 @@
       </div>
     </div>
 
-    <!-- Add Task Dialog -->
-    <el-dialog v-model="showTaskDialog" title="Add Gantt Task" width="520px">
+    <!-- Add/Edit Task Dialog -->
+    <el-dialog v-model="showTaskDialog" :title="isEditing ? 'Edit Task' : 'Add Gantt Task'" width="520px" :close-on-click-modal="false">
       <el-form label-position="top">
         <el-form-item label="Task Name">
-          <el-input v-model="newTask.name" placeholder="e.g., Backend API Development" />
+          <el-input v-model="taskForm.name" placeholder="e.g., Backend API Development" />
         </el-form-item>
         <div class="grid grid-cols-2 gap-4">
           <el-form-item label="Start Date">
-            <el-date-picker v-model="newTask.start" type="date" class="w-full" />
+            <el-date-picker v-model="taskForm.start" type="date" class="w-full" />
           </el-form-item>
           <el-form-item label="End Date">
-            <el-date-picker v-model="newTask.end" type="date" class="w-full" />
+            <el-date-picker v-model="taskForm.end" type="date" class="w-full" />
           </el-form-item>
         </div>
         <div class="grid grid-cols-2 gap-4">
-          <el-form-item label="Assignee">
-            <el-input v-model="newTask.assignee" placeholder="Name" />
+          <el-form-item label="Priority">
+            <el-select v-model="taskForm.priority" class="w-full">
+              <el-option label="Low" value="LOW" />
+              <el-option label="Medium" value="MEDIUM" />
+              <el-option label="High" value="HIGH" />
+              <el-option label="Urgent" value="URGENT" />
+            </el-select>
           </el-form-item>
           <el-form-item label="Progress">
-            <el-slider v-model="newTask.progress" :step="5" />
+            <el-slider v-model="taskForm.progress" :step="5" />
           </el-form-item>
         </div>
-        <el-form-item label="Milestone">
-          <el-switch v-model="newTask.isMilestone" />
-        </el-form-item>
+        <div class="grid grid-cols-2 gap-4">
+          <el-form-item label="Dependency (Parent Task)">
+            <el-select v-model="taskForm.parentTaskId" class="w-full" clearable placeholder="None">
+              <el-option
+                v-for="t in availableDependencies"
+                :key="t.id"
+                :label="t.name"
+                :value="t.id"
+              />
+            </el-select>
+          </el-form-item>
+          <el-form-item label="Milestone">
+            <el-switch v-model="taskForm.isMilestone" />
+          </el-form-item>
+        </div>
       </el-form>
       <template #footer>
         <el-button @click="showTaskDialog = false">Cancel</el-button>
-        <el-button type="primary" :loading="saving" @click="addTask">Add Task</el-button>
+        <el-button v-if="isEditing" type="danger" plain :loading="deleting" @click="confirmDeleteTask(editingTask!)">Delete</el-button>
+        <el-button type="primary" :loading="saving" @click="saveTask">{{ isEditing ? 'Update' : 'Add Task' }}</el-button>
       </template>
     </el-dialog>
 
@@ -205,7 +233,7 @@
 
 <script setup lang="ts">
 import { ref, computed, onMounted } from 'vue';
-import { ElMessage } from 'element-plus';
+import { ElMessage, ElMessageBox } from 'element-plus';
 import { useApiFetch } from '~/composables/useApiFetch';
 import { user } from '~/composables/useUser';
 
@@ -233,11 +261,31 @@ const viewMode = ref('month');
 const showTaskDialog = ref(false);
 const loading = ref(false);
 const saving = ref(false);
+const deleting = ref(false);
+const isEditing = ref(false);
+const editingTask = ref<GanttTask | null>(null);
 const cellWidth = computed(() => (viewMode.value === 'week' ? 80 : viewMode.value === 'month' ? 40 : 20));
+const timelineHeaderRef = ref<HTMLElement>();
 
-const newTask = ref({ name: '', start: '', end: '', assignee: '', progress: 0, isMilestone: false });
+const taskForm = ref({
+  name: '',
+  start: '' as any,
+  end: '' as any,
+  progress: 0,
+  isMilestone: false,
+  priority: 'MEDIUM',
+  parentTaskId: null as number | null
+});
 
 const tasks = ref<GanttTask[]>([]);
+
+// Available dependencies for the parent task selector (exclude self when editing)
+const availableDependencies = computed(() => {
+  if (isEditing.value && editingTask.value) {
+    return tasks.value.filter(t => t.id !== editingTask.value!.id);
+  }
+  return tasks.value;
+});
 
 // ---------------------------------------------------------------------------
 // Helpers: parse gantt metadata stored in the Task model's tags JSONB field
@@ -379,6 +427,19 @@ const formatDayName = (d: string) => new Date(d).toLocaleDateString('en', { week
 const formatDay = (d: string) => new Date(d).getDate().toString();
 
 // ---------------------------------------------------------------------------
+// Scroll sync between header and task rows
+// ---------------------------------------------------------------------------
+
+function syncScroll(_source: string, event: Event) {
+  const target = event.target as HTMLElement;
+  if (!target) return;
+  // Sync header scroll with body rows (simple approach)
+  if (timelineHeaderRef.value && target !== timelineHeaderRef.value) {
+    timelineHeaderRef.value.scrollLeft = target.scrollLeft;
+  }
+}
+
+// ---------------------------------------------------------------------------
 // Bar rendering
 // ---------------------------------------------------------------------------
 
@@ -407,7 +468,7 @@ const getDependencyLine = (task: GanttTask) => {
 };
 
 // ---------------------------------------------------------------------------
-// Add task via API
+// Date formatting helper
 // ---------------------------------------------------------------------------
 
 function formatDateStr(val: any): string {
@@ -417,59 +478,176 @@ function formatDateStr(val: any): string {
   return '';
 }
 
-const addTask = async () => {
-  if (!newTask.value.name) {
+// ---------------------------------------------------------------------------
+// Open Add dialog (reset form)
+// ---------------------------------------------------------------------------
+
+function openAddDialog() {
+  isEditing.value = false;
+  editingTask.value = null;
+  taskForm.value = {
+    name: '',
+    start: '',
+    end: '',
+    progress: 0,
+    isMilestone: false,
+    priority: 'MEDIUM',
+    parentTaskId: null
+  };
+  showTaskDialog.value = true;
+}
+
+// ---------------------------------------------------------------------------
+// Open Edit dialog (populate form from task)
+// ---------------------------------------------------------------------------
+
+function editTask(task: GanttTask) {
+  isEditing.value = true;
+  editingTask.value = task;
+  taskForm.value = {
+    name: task.name,
+    start: task.start,
+    end: task.end,
+    progress: task.progress,
+    isMilestone: task.isMilestone || false,
+    priority: 'MEDIUM',
+    parentTaskId: task.dependency || null
+  };
+  showTaskDialog.value = true;
+}
+
+// ---------------------------------------------------------------------------
+// Build the API payload from form values
+// ---------------------------------------------------------------------------
+
+function buildPayload(colorOverride?: string): Record<string, any> {
+  const startStr = formatDateStr(taskForm.value.start) || new Date().toISOString().slice(0, 10);
+  const endStr = formatDateStr(taskForm.value.end) || startStr;
+  const color = colorOverride || GANTT_COLORS[tasks.value.length % GANTT_COLORS.length]!;
+
+  // Derive status from progress
+  let status = 'PENDING';
+  if (taskForm.value.progress >= 100) status = 'COMPLETED';
+  else if (taskForm.value.progress > 0) status = 'IN_PROGRESS';
+
+  // Build gantt metadata to persist in tags
+  const ganttMeta: GanttMeta = {
+    color,
+    isMilestone: taskForm.value.isMilestone
+  };
+
+  const payload: Record<string, any> = {
+    title: taskForm.value.name,
+    date: startStr,
+    dueDate: endStr,
+    status,
+    priority: taskForm.value.priority,
+    entityType: 'GANTT',
+    duration: taskForm.value.progress, // store progress percentage
+    tags: [JSON.stringify(ganttMeta)],
+    assignedTo: user.value?.id || 1
+  };
+
+  if (taskForm.value.parentTaskId) {
+    payload.parentTaskId = taskForm.value.parentTaskId;
+  }
+
+  return payload;
+}
+
+// ---------------------------------------------------------------------------
+// Save task (Add or Update)
+// ---------------------------------------------------------------------------
+
+const saveTask = async () => {
+  if (!taskForm.value.name) {
     ElMessage.warning('Task name required');
     return;
   }
 
   saving.value = true;
 
-  const startStr = formatDateStr(newTask.value.start) || new Date().toISOString().slice(0, 10);
-  const endStr = formatDateStr(newTask.value.end) || startStr;
-  const color = GANTT_COLORS[tasks.value.length % GANTT_COLORS.length]!;
-
-  // Derive status from progress
-  let status = 'PENDING';
-  if (newTask.value.progress >= 100) status = 'COMPLETED';
-  else if (newTask.value.progress > 0) status = 'IN_PROGRESS';
-
-  // Build gantt metadata to persist in tags
-  const ganttMeta: GanttMeta = {
-    color,
-    isMilestone: newTask.value.isMilestone
-  };
-
-  const payload: Record<string, any> = {
-    title: newTask.value.name,
-    date: startStr,
-    dueDate: endStr,
-    status,
-    priority: 'MEDIUM',
-    entityType: 'GANTT',
-    duration: newTask.value.progress, // store progress percentage
-    tags: [JSON.stringify(ganttMeta)],
-    assignedTo: user.value?.id || 1
-  };
-
   try {
-    const { body, success } = await useApiFetch('tasks', 'POST', payload);
-    if (success && body) {
-      const created = (body as any);
-      tasks.value.push(mapApiTaskToGantt(created, tasks.value.length));
-      showTaskDialog.value = false;
-      newTask.value = { name: '', start: '', end: '', assignee: '', progress: 0, isMilestone: false };
-      ElMessage.success('Task added');
+    if (isEditing.value && editingTask.value) {
+      // UPDATE existing task via PUT
+      const payload = buildPayload(editingTask.value.color);
+      const { success } = await useApiFetch(`tasks/${editingTask.value.id}`, 'PUT', payload);
+      if (success) {
+        // Update local task in place
+        const idx = tasks.value.findIndex(t => t.id === editingTask.value!.id);
+        if (idx !== -1) {
+          const existing = tasks.value[idx]!;
+          tasks.value[idx] = {
+            id: existing.id,
+            name: taskForm.value.name,
+            start: formatDateStr(taskForm.value.start) || existing.start,
+            end: formatDateStr(taskForm.value.end) || existing.end,
+            progress: taskForm.value.progress,
+            assignee: existing.assignee,
+            color: existing.color,
+            isMilestone: taskForm.value.isMilestone,
+            dependency: taskForm.value.parentTaskId || undefined
+          };
+        }
+        showTaskDialog.value = false;
+        ElMessage.success('Task updated');
+      } else {
+        ElMessage.error('Failed to update task');
+      }
     } else {
-      ElMessage.error('Failed to create task');
+      // CREATE new task via POST
+      const payload = buildPayload();
+      const { body, success } = await useApiFetch('tasks', 'POST', payload);
+      if (success && body) {
+        const created = body as any;
+        tasks.value.push(mapApiTaskToGantt(created, tasks.value.length));
+        showTaskDialog.value = false;
+        ElMessage.success('Task added');
+      } else {
+        ElMessage.error('Failed to create task');
+      }
     }
   } catch (e) {
-    console.error('Failed to add gantt task:', e);
-    ElMessage.error('Failed to create task');
+    console.error('Failed to save gantt task:', e);
+    ElMessage.error('Failed to save task');
   } finally {
     saving.value = false;
   }
 };
 
-const editTask = (task: GanttTask) => ElMessage.info(`Editing: ${task.name}`);
+// ---------------------------------------------------------------------------
+// Delete task
+// ---------------------------------------------------------------------------
+
+async function confirmDeleteTask(task: GanttTask) {
+  try {
+    await ElMessageBox.confirm(
+      `Are you sure you want to delete "${task.name}"?`,
+      'Delete Task',
+      { type: 'warning', confirmButtonText: 'Delete', cancelButtonText: 'Cancel' }
+    );
+    await deleteTask(task);
+  } catch {
+    // cancelled
+  }
+}
+
+async function deleteTask(task: GanttTask) {
+  deleting.value = true;
+  try {
+    const { success } = await useApiFetch(`tasks/${task.id}`, 'DELETE');
+    if (success) {
+      tasks.value = tasks.value.filter(t => t.id !== task.id);
+      showTaskDialog.value = false;
+      ElMessage.success('Task deleted');
+    } else {
+      ElMessage.error('Failed to delete task');
+    }
+  } catch (e) {
+    console.error('Failed to delete gantt task:', e);
+    ElMessage.error('Failed to delete task');
+  } finally {
+    deleting.value = false;
+  }
+}
 </script>

@@ -1,5 +1,5 @@
 import { Expose } from 'class-transformer';
-import { IsString, MaxLength, IsEnum, IsObject, IsBoolean, IsOptional } from 'class-validator';
+import { IsString, MaxLength, IsEnum, IsObject, IsBoolean, IsOptional, IsInt, Min } from 'class-validator';
 import { DocumentTemplateType } from '../documentTemplateModel';
 
 export class UpdateTemplateDto {
@@ -11,7 +11,7 @@ export class UpdateTemplateDto {
 
   @Expose()
   @IsOptional()
-  @IsEnum(DocumentTemplateType, { message: 'Type must be INVOICE or PURCHASE_ORDER.' })
+  @IsEnum(DocumentTemplateType, { message: 'Type must be a valid document template type.' })
   type?: DocumentTemplateType;
 
   @Expose()
@@ -38,4 +38,28 @@ export class UpdateTemplateDto {
   @IsOptional()
   @IsBoolean()
   isDefault?: boolean;
+
+  // Email template fields
+  @Expose()
+  @IsOptional()
+  @IsString()
+  @MaxLength(255)
+  subject?: string;
+
+  @Expose()
+  @IsOptional()
+  @IsString()
+  body?: string;
+
+  @Expose()
+  @IsOptional()
+  @IsString()
+  @MaxLength(100)
+  category?: string;
+
+  @Expose()
+  @IsOptional()
+  @IsInt()
+  @Min(0)
+  usageCount?: number;
 }

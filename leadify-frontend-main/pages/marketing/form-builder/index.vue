@@ -251,8 +251,12 @@ async function fetchData() {
     const res = await useApiFetch(`form-builder/templates?page=${pagination.page}&limit=${pagination.limit}`);
     if (res.success && res.body) {
       const data = res.body as any;
-      items.value = data.rows || data.docs || (Array.isArray(data) ? data : []);
-      pagination.total = data.count ?? data.total ?? items.value.length;
+      const rawItems = data.rows || data.docs || (Array.isArray(data) ? data : []);
+      items.value = rawItems.map((item: any) => ({
+        ...item,
+        fieldsCount: item.fieldsCount ?? (Array.isArray(item.fields) ? item.fields.length : 0)
+      }));
+      pagination.total = data.count ?? data.total ?? data.pagination?.totalItems ?? items.value.length;
     }
   } catch {
     ElMessage.error(t('common.error') || 'Failed to load forms');

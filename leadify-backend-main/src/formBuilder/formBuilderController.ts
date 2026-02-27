@@ -25,5 +25,21 @@ class FormBuilderController {
   async getSubmissions(req: AuthenticatedRequest, res: Response, next: NextFunction) {
     try { wrapResult(res, await service.getSubmissions(req.query, (req.user as any)?.tenantId)); } catch (e) { next(e); }
   }
+  async getFormAnalytics(req: AuthenticatedRequest, res: Response, next: NextFunction) {
+    try {
+      const result = await service.getFormAnalytics(Number(req.params.id));
+      if (!result) { wrapResult(res, { message: 'Form not found' }, 404); return; }
+      // Reshape to match frontend expectations
+      wrapResult(res, {
+        totalSubmissions: result.totalSubmissions,
+        conversionRate: result.totalSubmissions > 0 ? Math.round((result.totalSubmissions / Math.max(result.totalSubmissions, 1)) * 100 * 10) / 10 : 0,
+        dailyTrend: result.dailySubmissions.map(d => ({ date: d.date, count: d.count })),
+        fieldCompletionRates: Object.entries(result.fieldCompletionRates).map(([field, data]) => ({
+          field,
+          rate: data.rate
+        }))
+      });
+    } catch (e) { next(e); }
+  }
 }
 export default new FormBuilderController();

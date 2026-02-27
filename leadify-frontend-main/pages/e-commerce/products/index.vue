@@ -347,7 +347,7 @@ async function loadProducts() {
       page: String(currentPage.value),
       limit: String(pageSize)
     };
-    if (search.value) params.search = search.value;
+    if (search.value) params.searchKey = search.value;
     if (categoryFilter.value) params.category = categoryFilter.value;
     if (statusFilter.value) params.isActive = statusFilter.value;
     if (priceMin.value !== undefined && priceMin.value > 0) params.minPrice = String(priceMin.value);

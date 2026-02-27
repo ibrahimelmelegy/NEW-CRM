@@ -17,16 +17,32 @@ export interface TemplateLayout {
   proContent?: any;
 }
 
+export type DocumentTemplateType =
+  | 'INVOICE'
+  | 'PURCHASE_ORDER'
+  | 'QUOTE'
+  | 'CONTRACT'
+  | 'SALES_ORDER'
+  | 'DELIVERY_NOTE'
+  | 'CREDIT_NOTE'
+  | 'PROFORMA_INVOICE'
+  | 'RFQ'
+  | 'SLA'
+  | 'PROPOSAL'
+  | 'GENERIC';
+
 export interface DocumentTemplate {
   id: string;
   name: string;
-  type: 'INVOICE' | 'PURCHASE_ORDER';
+  type: DocumentTemplateType;
   layout: TemplateLayout;
   headerConfig?: Record<string, any>;
   footerConfig?: Record<string, any>;
   tableConfig?: Record<string, any>;
   isDefault: boolean;
+  category?: 'system' | 'custom';
   userId?: string;
+  tenantId?: string;
   createdAt?: string;
   updatedAt?: string;
 }

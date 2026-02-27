@@ -9,6 +9,9 @@ div
       :subtitle="$t('documentTemplates.subtitle') || 'Design professional PDF templates for invoices and purchase orders.'"
     )
       template(#actions)
+        el-button(size="large" @click="handleSeedDefaults" :loading="seeding" class="!rounded-2xl")
+          Icon(name="ph:download-bold" size="16" class="mr-1")
+          span {{ $t('documentTemplates.seedDefaults') || 'Load Defaults' }}
         el-button(size="large" @click="openDialog()" type="primary" class="!rounded-2xl")
           Icon(name="ph:plus-bold" size="16" class="mr-1")
           span {{ $t('documentTemplates.createTemplate') || 'Create Template' }}
@@ -22,6 +25,9 @@ div
           el-radio-button(value="") {{ $t('common.all') || 'All' }}
           el-radio-button(value="INVOICE") {{ $t('documentTemplates.invoice') || 'Invoice' }}
           el-radio-button(value="PURCHASE_ORDER") {{ $t('documentTemplates.purchaseOrder') || 'Purchase Order' }}
+          el-radio-button(value="QUOTE") Quote
+          el-radio-button(value="CONTRACT") Contract
+          el-radio-button(value="PROPOSAL") Proposal
         .input.table-search(class="w-full md:w-[250px]")
           el-input(
             size="large"
@@ -49,14 +55,18 @@ div
             template(#default="{ row }")
               .flex.items-center.gap-3
                 .w-9.h-9.rounded-xl.flex.items-center.justify-center.shrink-0(
-                  :style="{ background: row.type === 'INVOICE' ? '#7849ff15' : '#f59e0b15' }"
+                  :style="{ background: getTypeColor(row.type) + '15' }"
                 )
                   Icon(
-                    :name="row.type === 'INVOICE' ? 'ph:receipt-bold' : 'ph:shopping-cart-bold'"
+                    :name="getTypeIcon(row.type)"
                     size="18"
-                    :style="{ color: row.type === 'INVOICE' ? '#7849ff' : '#f59e0b' }"
+                    :style="{ color: getTypeColor(row.type) }"
                   )
-                span.font-semibold(style="color: var(--text-primary)") {{ row.name }}
+                div
+                  span.font-semibold(style="color: var(--text-primary)") {{ row.name }}
+                  .flex.items-center.gap-1(v-if="row.category === 'system'" class="mt-0.5")
+                    Icon(name="ph:lock-bold" size="10" style="color: var(--text-muted)")
+                    span.text-xs(style="color: var(--text-muted)") System
 
           el-table-column(:label="$t('documentTemplates.builder.templateType') || 'Type'" prop="type" width="180")
             template(#default="{ row }")
@@ -64,29 +74,50 @@ div
                 size="small"
                 effect="dark"
                 round
-                :class="row.type === 'INVOICE' ? '!bg-purple-500/20 !text-white !border-purple-500/30' : '!bg-orange-500/20 !text-white !border-orange-500/30'"
-              ) {{ row.type === 'INVOICE' ? ($t('documentTemplates.invoice') || 'Invoice') : ($t('documentTemplates.purchaseOrder') || 'Purchase Order') }}
+                :style="{ background: getTypeColor(row.type) + '20', color: '#fff', borderColor: getTypeColor(row.type) + '30' }"
+              ) {{ getTypeLabel(row.type) }}
 
-          el-table-column(:label="$t('documentTemplates.default') || 'Default'" prop="isDefault" width="120" align="center")
+          el-table-column(label="Category" width="120" align="center")
+            template(#default="{ row }")
+              el-tag(
+                v-if="row.category === 'system'"
+                size="small"
+                type="info"
+                effect="plain"
+                round
+              ) System
+              el-tag(
+                v-else
+                size="small"
+                effect="plain"
+                round
+              ) Custom
+
+          el-table-column(:label="$t('documentTemplates.default') || 'Default'" prop="isDefault" width="100" align="center")
             template(#default="{ row }")
               el-tag(v-if="row.isDefault" size="small" type="success" effect="plain" round) {{ $t('documentTemplates.default') || 'Default' }}
               span.text-xs(v-else style="color: var(--text-muted)") --
 
-          el-table-column(:label="$t('documentTemplates.elements') || 'Elements'" width="120" align="center")
+          el-table-column(:label="$t('documentTemplates.elements') || 'Elements'" width="100" align="center")
             template(#default="{ row }")
               span.text-sm(style="color: var(--text-muted)") {{ row.layout?.elements?.length || 0 }}
 
-          el-table-column(:label="$t('common.createdAt') || 'Created'" width="160")
+          el-table-column(:label="$t('common.createdAt') || 'Created'" width="140")
             template(#default="{ row }")
               span.text-sm(style="color: var(--text-muted)") {{ formatDate(row.createdAt) }}
 
-          el-table-column(:label="$t('common.actions') || 'Actions'" width="120" align="center")
+          el-table-column(:label="$t('common.actions') || 'Actions'" width="160" align="center")
             template(#default="{ row }")
               .flex.items-center.justify-center.gap-1(@click.stop)
-                el-button(size="small" @click="openDialog(row)" class="!rounded-lg")
-                  Icon(name="ph:pencil-bold" size="14")
-                el-button(size="small" type="danger" plain @click="handleDelete(row)" class="!rounded-lg")
-                  Icon(name="ph:trash-bold" size="14")
+                el-tooltip(content="Duplicate" placement="top")
+                  el-button(size="small" @click="handleClone(row)" :loading="cloneLoadingId === row.id" class="!rounded-lg")
+                    Icon(name="ph:copy-bold" size="14")
+                el-tooltip(:content="row.category === 'system' ? 'System templates are read-only' : 'Edit'" placement="top")
+                  el-button(size="small" @click="openDialog(row)" :disabled="row.category === 'system'" class="!rounded-lg")
+                    Icon(name="ph:pencil-bold" size="14")
+                el-tooltip(:content="row.category === 'system' ? 'Cannot delete system templates' : 'Delete'" placement="top")
+                  el-button(size="small" type="danger" plain @click="handleDelete(row)" :disabled="row.category === 'system'" class="!rounded-lg")
+                    Icon(name="ph:trash-bold" size="14")
 
         //- Empty state
         .text-center.py-16(v-if="!templates.length && !loading")
@@ -94,6 +125,9 @@ div
           p.mt-4.text-lg.font-medium(style="color: var(--text-primary)") {{ $t('documentTemplates.noTemplates') || 'No templates yet' }}
           p.mt-1.text-sm(style="color: var(--text-muted)") {{ $t('documentTemplates.noTemplatesHint') || 'Create a custom template or load the default professional templates.' }}
           .flex.justify-center.gap-3.mt-6
+            el-button(@click="handleSeedDefaults" :loading="seeding" class="!rounded-2xl")
+              Icon(name="ph:download-bold" size="16" class="mr-1")
+              span {{ $t('documentTemplates.seedDefaults') || 'Load Defaults' }}
             el-button(@click="openDialog()" type="primary" class="!rounded-2xl")
               Icon(name="ph:plus-bold" size="16" class="mr-1")
               span {{ $t('documentTemplates.createTemplate') || 'Create Template' }}
@@ -115,28 +149,49 @@ div
     //- Create/Edit Dialog
     el-dialog(
       v-model="dialogVisible"
-      :title="editingTemplate ? ($t('documentTemplates.editTemplate') || 'Edit Template') : ($t('documentTemplates.createTemplate') || 'Create Template')"
-      width="500px"
+      :title="dialogTitle"
+      width="600px"
       :close-on-click-modal="false"
     )
       el-form(:model="form" label-position="top")
-        el-form-item(:label="$t('common.name') || 'Name'" required)
-          el-input(v-model="form.name" :placeholder="$t('documentTemplates.builder.templateName') || 'Template Name'")
+        el-form-item(:label="nameLabel" required)
+          el-input(v-model="form.name" :placeholder="templateNamePlaceholder")
 
-        el-form-item(:label="$t('documentTemplates.builder.templateType') || 'Type'" required)
-          el-select(v-model="form.type" style="width: 100%")
-            el-option(:label="$t('documentTemplates.invoice') || 'Invoice'" value="INVOICE")
-            el-option(:label="$t('documentTemplates.purchaseOrder') || 'Purchase Order'" value="PURCHASE_ORDER")
+        .grid.grid-cols-2.gap-4
+          el-form-item(:label="typeLabel" required)
+            el-select(v-model="form.type" style="width: 100%" @change="updateVariablesForType")
+              el-option(v-for="opt in templateTypeOptions" :key="opt.value" :label="opt.label" :value="opt.value")
+
+          el-form-item(label="Page Size")
+            el-select(v-model="form.pageSize" style="width: 100%")
+              el-option(label="A4" value="A4")
+              el-option(label="Letter" value="Letter")
+              el-option(label="Legal" value="Legal")
 
         el-form-item
           el-checkbox(v-model="form.isDefault") {{ $t('documentTemplates.default') || 'Set as Default' }}
+
+        //- Variable Reference Panel
+        el-form-item(label="Available Variables")
+          .p-3.rounded-lg.border.border-slate-700.max-h-40.overflow-y-auto(style="background: var(--bg-elevated)")
+            .flex.flex-wrap.gap-2
+              el-tag(
+                v-for="v in currentVariables"
+                :key="v"
+                size="small"
+                effect="plain"
+                class="!cursor-pointer"
+                @click="copyVariable(v)"
+              )
+                span.font-mono.text-xs {{ formatVar(v) }}
+            p.text-xs.mt-2(style="color: var(--text-muted)") Click a variable to copy it to clipboard.
 
       template(#footer)
         el-button(@click="dialogVisible = false") {{ $t('common.cancel') || 'Cancel' }}
         el-button(type="primary" @click="handleSave" :loading="saving") {{ $t('common.save') || 'Save' }}
 
     //- Delete confirmation
-    ActionModel(v-model="deletePopup" :loading="deleting" :description="$t('common.confirmDelete') || 'Are you sure you want to delete this item?'" @confirm="confirmDelete")
+    ActionModel(v-model="deletePopup" :loading="deleting" :description="deleteConfirmText" @confirm="confirmDelete")
 </template>
 
 <script setup lang="ts">
@@ -146,14 +201,25 @@ import {
   fetchDocumentTemplates,
   createDocumentTemplate,
   updateDocumentTemplate,
-  deleteDocumentTemplate
+  deleteDocumentTemplate,
+  cloneDocumentTemplate,
+  seedDefaultTemplates
 } from '~/composables/useDocumentTemplates';
-
-definePageMeta({});
 
 const { $i18n } = useNuxtApp();
 const t = $i18n.t;
 const route = useRoute();
+
+// Pre-computed labels to avoid complex $t() expressions in Pug attributes
+const dialogTitle = computed(() =>
+  editingTemplate.value
+    ? (t('documentTemplates.editTemplate') || 'Edit Template')
+    : (t('documentTemplates.createTemplate') || 'Create Template')
+);
+const nameLabel = computed(() => t('common.name') || 'Name');
+const typeLabel = computed(() => t('documentTemplates.builder.templateType') || 'Type');
+const templateNamePlaceholder = computed(() => t('documentTemplates.builder.templateName') || 'Template Name');
+const deleteConfirmText = computed(() => t('common.confirmDelete') || 'Are you sure you want to delete this item?');
 
 // Determine if a child route (builder/pro-builder) is active
 const isChildRoute = computed(() => {
@@ -161,11 +227,28 @@ const isChildRoute = computed(() => {
   return path !== '/settings/document-templates' && path !== '/settings/document-templates/';
 });
 
+const templateTypeOptions = [
+  { label: 'Invoice', value: 'INVOICE' },
+  { label: 'Purchase Order', value: 'PURCHASE_ORDER' },
+  { label: 'Quote', value: 'QUOTE' },
+  { label: 'Contract', value: 'CONTRACT' },
+  { label: 'Sales Order', value: 'SALES_ORDER' },
+  { label: 'Delivery Note', value: 'DELIVERY_NOTE' },
+  { label: 'Credit Note', value: 'CREDIT_NOTE' },
+  { label: 'Proforma Invoice', value: 'PROFORMA_INVOICE' },
+  { label: 'RFQ', value: 'RFQ' },
+  { label: 'SLA', value: 'SLA' },
+  { label: 'Proposal', value: 'PROPOSAL' },
+  { label: 'Generic', value: 'GENERIC' }
+];
+
 // State
 const templates = ref<DocumentTemplate[]>([]);
 const loading = ref(true);
 const saving = ref(false);
 const deleting = ref(false);
+const seeding = ref(false);
+const cloneLoadingId = ref<string | null>(null);
 const dialogVisible = ref(false);
 const deletePopup = ref(false);
 const deleteId = ref<string | null>(null);
@@ -176,11 +259,138 @@ const pagination = ref({ totalItems: 0, page: 1, limit: 20, totalPages: 0 });
 
 let searchTimeout: ReturnType<typeof setTimeout>;
 
+// Variable definitions by template type
+const INVOICE_VARS = [
+  'companyName', 'companyAddress', 'companyPhone', 'companyEmail', 'companyLogo',
+  'invoiceNumber', 'date', 'dueDate', 'clientName', 'clientAddress', 'clientPhone',
+  'clientEmail', 'items', 'subtotal', 'tax', 'total', 'notes'
+];
+
+const PO_VARS = [
+  'companyName', 'companyAddress', 'companyPhone', 'companyEmail', 'companyLogo',
+  'poNumber', 'date', 'deliveryDate', 'vendorName', 'vendorAddress', 'vendorPhone',
+  'vendorEmail', 'projectName', 'items', 'subtotal', 'tax', 'total', 'notes'
+];
+
+const QUOTE_VARS = [
+  'companyName', 'companyAddress', 'companyPhone', 'companyEmail', 'companyLogo',
+  'quoteNumber', 'date', 'validUntil', 'clientName', 'clientAddress',
+  'items', 'subtotal', 'tax', 'total', 'notes', 'termsAndConditions'
+];
+
+const CONTRACT_VARS = [
+  'companyName', 'companyAddress', 'companyLogo', 'contractNumber', 'date',
+  'startDate', 'endDate', 'clientName', 'clientAddress', 'description',
+  'scope', 'termsAndConditions', 'totalValue', 'notes', 'signatureDate'
+];
+
+const GENERIC_VARS = [
+  'companyName', 'companyAddress', 'companyPhone', 'companyEmail', 'companyLogo',
+  'documentNumber', 'date', 'recipientName', 'recipientAddress',
+  'items', 'subtotal', 'tax', 'total', 'notes'
+];
+
 const form = reactive({
   name: '',
-  type: 'INVOICE' as 'INVOICE' | 'PURCHASE_ORDER',
-  isDefault: false
+  type: 'INVOICE' as string,
+  isDefault: false,
+  pageSize: 'A4'
 });
+
+// Variables based on selected type
+const currentVariables = computed(() => {
+  switch (form.type) {
+    case 'INVOICE':
+    case 'PROFORMA_INVOICE':
+    case 'CREDIT_NOTE':
+      return INVOICE_VARS;
+    case 'PURCHASE_ORDER':
+    case 'RFQ':
+      return PO_VARS;
+    case 'QUOTE':
+    case 'PROPOSAL':
+    case 'SALES_ORDER':
+      return QUOTE_VARS;
+    case 'CONTRACT':
+    case 'SLA':
+      return CONTRACT_VARS;
+    default:
+      return GENERIC_VARS;
+  }
+});
+
+function updateVariablesForType() {
+  // Reactivity handles this via computed
+}
+
+function formatVar(v: string): string {
+  return '{{' + v + '}}';
+}
+
+function copyVariable(v: string) {
+  const text = `{{${v}}}`;
+  navigator.clipboard.writeText(text).then(() => {
+    ElNotification({ type: 'success', title: 'Copied', message: `${text} copied to clipboard`, duration: 1500 });
+  }).catch(() => {
+    // Clipboard not available, show info
+    ElNotification({ type: 'info', title: 'Variable', message: text, duration: 2000 });
+  });
+}
+
+// Type display helpers
+function getTypeColor(type: string): string {
+  const colors: Record<string, string> = {
+    INVOICE: '#7849ff',
+    PURCHASE_ORDER: '#f59e0b',
+    QUOTE: '#3b82f6',
+    CONTRACT: '#10b981',
+    SALES_ORDER: '#8b5cf6',
+    DELIVERY_NOTE: '#06b6d4',
+    CREDIT_NOTE: '#ef4444',
+    PROFORMA_INVOICE: '#a855f7',
+    RFQ: '#f97316',
+    SLA: '#14b8a6',
+    PROPOSAL: '#ec4899',
+    GENERIC: '#64748b'
+  };
+  return colors[type] || '#64748b';
+}
+
+function getTypeIcon(type: string): string {
+  const icons: Record<string, string> = {
+    INVOICE: 'ph:receipt-bold',
+    PURCHASE_ORDER: 'ph:shopping-cart-bold',
+    QUOTE: 'ph:quotes-bold',
+    CONTRACT: 'ph:handshake-bold',
+    SALES_ORDER: 'ph:package-bold',
+    DELIVERY_NOTE: 'ph:truck-bold',
+    CREDIT_NOTE: 'ph:arrow-u-up-left-bold',
+    PROFORMA_INVOICE: 'ph:receipt-bold',
+    RFQ: 'ph:clipboard-text-bold',
+    SLA: 'ph:shield-check-bold',
+    PROPOSAL: 'ph:presentation-chart-bold',
+    GENERIC: 'ph:file-doc-bold'
+  };
+  return icons[type] || 'ph:file-doc-bold';
+}
+
+function getTypeLabel(type: string): string {
+  const labels: Record<string, string> = {
+    INVOICE: t('documentTemplates.invoice') || 'Invoice',
+    PURCHASE_ORDER: t('documentTemplates.purchaseOrder') || 'Purchase Order',
+    QUOTE: 'Quote',
+    CONTRACT: 'Contract',
+    SALES_ORDER: 'Sales Order',
+    DELIVERY_NOTE: 'Delivery Note',
+    CREDIT_NOTE: 'Credit Note',
+    PROFORMA_INVOICE: 'Proforma Invoice',
+    RFQ: 'RFQ',
+    SLA: 'SLA',
+    PROPOSAL: 'Proposal',
+    GENERIC: 'Generic'
+  };
+  return labels[type] || type;
+}
 
 // Summary stats
 const summaryStats = computed(() => {
@@ -260,21 +470,33 @@ function handlePageChange(page: number) {
 }
 
 function handleRowClick(row: DocumentTemplate) {
+  // System templates open in read-only context (just view)
   openDialog(row);
 }
 
 // Dialog
 function openDialog(template?: DocumentTemplate) {
   if (template) {
+    // System templates: show info only, not editable
+    if ((template as any).category === 'system') {
+      ElNotification({
+        type: 'info',
+        title: 'System Template',
+        message: 'System templates are read-only. Use "Duplicate" to create an editable copy.'
+      });
+      return;
+    }
     editingTemplate.value = template;
     form.name = template.name;
     form.type = template.type;
     form.isDefault = template.isDefault;
+    form.pageSize = template.layout?.pageSize || 'A4';
   } else {
     editingTemplate.value = null;
     form.name = '';
     form.type = 'INVOICE';
     form.isDefault = false;
+    form.pageSize = 'A4';
   }
   dialogVisible.value = true;
 }
@@ -293,23 +515,28 @@ async function handleSave() {
   try {
     const payload: Partial<DocumentTemplate> = {
       name: form.name,
-      type: form.type,
+      type: form.type as any,
       isDefault: form.isDefault
     };
 
     let result;
     if (editingTemplate.value) {
+      // Update: also allow changing layout pageSize
+      if (editingTemplate.value.layout) {
+        payload.layout = {
+          ...editingTemplate.value.layout,
+          pageSize: form.pageSize
+        };
+      }
       result = await updateDocumentTemplate(editingTemplate.value.id, payload);
     } else {
       // New templates get a default empty layout
       payload.layout = {
-        pageSize: 'A4',
+        pageSize: form.pageSize,
         orientation: 'portrait',
         margins: { top: 20, right: 15, bottom: 20, left: 15 },
         elements: [],
-        variables: form.type === 'INVOICE'
-          ? ['companyName', 'invoiceNumber', 'date', 'clientName', 'items', 'subtotal', 'tax', 'total']
-          : ['companyName', 'poNumber', 'date', 'vendorName', 'items', 'subtotal', 'tax', 'total']
+        variables: currentVariables.value
       };
       result = await createDocumentTemplate(payload);
     }
@@ -334,8 +561,76 @@ async function handleSave() {
   }
 }
 
+// Clone / Duplicate
+async function handleClone(template: DocumentTemplate) {
+  cloneLoadingId.value = template.id;
+  try {
+    const result = await cloneDocumentTemplate(template.id);
+    if (result.success) {
+      ElNotification({
+        type: 'success',
+        title: t('common.success') || 'Success',
+        message: t('documentTemplates.cloned') || 'Template duplicated'
+      });
+      await loadTemplates();
+    } else {
+      ElNotification({
+        type: 'error',
+        title: t('common.error') || 'Error',
+        message: result.message || 'Failed to duplicate template'
+      });
+    }
+  } catch {
+    ElNotification({
+      type: 'error',
+      title: t('common.error') || 'Error',
+      message: 'Failed to duplicate template'
+    });
+  } finally {
+    cloneLoadingId.value = null;
+  }
+}
+
+// Seed defaults
+async function handleSeedDefaults() {
+  seeding.value = true;
+  try {
+    const result = await seedDefaultTemplates();
+    if (result.success) {
+      ElNotification({
+        type: 'success',
+        title: t('common.success') || 'Success',
+        message: t('documentTemplates.seeded') || 'Default templates loaded'
+      });
+      await loadTemplates();
+    } else {
+      ElNotification({
+        type: 'error',
+        title: t('common.error') || 'Error',
+        message: result.message || 'Failed to load default templates'
+      });
+    }
+  } catch {
+    ElNotification({
+      type: 'error',
+      title: t('common.error') || 'Error',
+      message: 'Failed to load default templates'
+    });
+  } finally {
+    seeding.value = false;
+  }
+}
+
 // Delete
 function handleDelete(template: DocumentTemplate) {
+  if ((template as any).category === 'system') {
+    ElNotification({
+      type: 'warning',
+      title: 'System Template',
+      message: 'System templates cannot be deleted.'
+    });
+    return;
+  }
   deleteId.value = template.id;
   deletePopup.value = true;
 }

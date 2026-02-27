@@ -13,6 +13,13 @@ class TrainingController {
     } catch (e) { next(e); }
   }
 
+  async getProgramById(req: AuthenticatedRequest, res: Response, next: NextFunction) {
+    try {
+      const result = await trainingService.getProgramById(Number(req.params.id));
+      wrapResult(res, result);
+    } catch (e) { next(e); }
+  }
+
   async getPrograms(req: AuthenticatedRequest, res: Response, next: NextFunction) {
     try {
       const tenantId = (req.user as any)?.tenantId;

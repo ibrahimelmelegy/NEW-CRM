@@ -204,7 +204,7 @@
 
       <!-- Scheduled Posts -->
       <el-tab-pane label="Scheduled" name="scheduled">
-        <div class="space-y-4">
+        <div v-loading="postsLoading" class="space-y-4">
           <div v-for="post in scheduledPosts" :key="post.id" class="glass-panel p-5 rounded-xl">
             <div class="flex items-start gap-3">
               <div class="flex gap-1 flex-shrink-0">
@@ -263,9 +263,9 @@
         </div>
       </el-form>
       <template #footer>
-        <el-button @click="showComposeDialog = false">Cancel</el-button>
-        <el-button @click="publishNow">Publish Now</el-button>
-        <el-button type="primary" @click="schedulePost">Schedule</el-button>
+        <el-button @click="showComposeDialog = false; editingPostId = null">Cancel</el-button>
+        <el-button :loading="postSaving" @click="publishNow">Publish Now</el-button>
+        <el-button type="primary" :loading="postSaving" @click="schedulePost">Schedule</el-button>
       </template>
     </el-dialog>
 
@@ -455,7 +455,7 @@ const influencers = computed(() => {
     }));
 });
 
-// ── Scheduled posts: local ref (no separate backend endpoint) ──────────────────
+// ── Scheduled posts (from API) ──────────────────────────────────────────────
 const scheduledPosts = ref<{
   id: number;
   content: string;
@@ -464,6 +464,8 @@ const scheduledPosts = ref<{
   scheduledTime: string;
   status: string;
 }[]>([]);
+const postsLoading = ref(false);
+const postSaving = ref(false);
 
 // ── Available platforms for the connect dialog ─────────────────────────────────
 const availablePlatforms = ref([
@@ -578,48 +580,136 @@ const replyToMention = (m: any) => ElMessage.info(`Replying to @${m.handle}`);
 const convertToLead = (m: any) => ElMessage.success(`Converting @${m.handle} to lead`);
 const assignMention = (m: any) => ElMessage.info(`Assigning mention from @${m.handle}`);
 
-// ── Actions: Scheduled posts (local) ───────────────────────────────────────────
-const editPost = (p: any) => ElMessage.info('Editing post');
-const deletePost = (p: any) => {
-  scheduledPosts.value = scheduledPosts.value.filter(sp => sp.id !== p.id);
-  ElMessage.success('Post deleted');
+// ── API: Fetch scheduled posts ──────────────────────────────────────────────
+async function fetchPosts() {
+  postsLoading.value = true;
+  try {
+    const res = await useApiFetch('social-crm/posts');
+    if (res?.success) {
+      const docs = res.body?.docs || res.body || [];
+      scheduledPosts.value = docs.map((p: any) => ({
+        id: p.id,
+        content: p.content || '',
+        platforms: p.platforms || [],
+        scheduledDate: p.scheduledDate
+          ? new Date(p.scheduledDate).toLocaleDateString('en-US', { month: 'short', day: 'numeric' })
+          : 'TBD',
+        scheduledTime: p.scheduledTime || 'TBD',
+        status: p.status || 'SCHEDULED'
+      }));
+    }
+  } catch (e) {
+    console.error('Error fetching posts:', e);
+  } finally {
+    postsLoading.value = false;
+  }
+}
+
+// ── Actions: Scheduled posts (API-backed) ──────────────────────────────────
+const editPost = (p: any) => {
+  newPost.value = {
+    content: p.content,
+    platforms: [...p.platforms],
+    date: '',
+    time: ''
+  };
+  editingPostId.value = p.id;
+  showComposeDialog.value = true;
 };
 
-const publishNow = () => {
+const editingPostId = ref<number | null>(null);
+
+const deletePost = async (p: any) => {
+  try {
+    const res = await useApiFetch(`social-crm/posts/${p.id}`, 'DELETE');
+    if (res?.success) {
+      ElMessage.success('Post deleted');
+      await fetchPosts();
+    } else {
+      ElMessage.error(res?.message || 'Failed to delete post');
+    }
+  } catch (e) {
+    ElMessage.error('Error deleting post');
+  }
+};
+
+const publishNow = async () => {
   if (!newPost.value.content) {
     ElMessage.warning('Content required');
     return;
   }
-  ElMessage.success('Post published!');
-  showComposeDialog.value = false;
-  newPost.value = { content: '', platforms: [], date: '', time: '' };
+  postSaving.value = true;
+  try {
+    const payload = {
+      content: newPost.value.content,
+      platforms: newPost.value.platforms,
+      scheduledDate: newPost.value.date ? new Date(newPost.value.date).toISOString().split('T')[0] : null,
+      scheduledTime: newPost.value.time
+        ? new Date(newPost.value.time).toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit', hour12: false })
+        : null,
+      status: 'PUBLISHED'
+    };
+
+    if (editingPostId.value) {
+      const res = await useApiFetch(`social-crm/posts/${editingPostId.value}`, 'PUT', payload);
+      if (!res?.success) { ElMessage.error(res?.message || 'Update failed'); return; }
+    } else {
+      const res = await useApiFetch('social-crm/posts', 'POST', payload);
+      if (!res?.success) { ElMessage.error(res?.message || 'Publish failed'); return; }
+    }
+
+    ElMessage.success('Post published!');
+    showComposeDialog.value = false;
+    editingPostId.value = null;
+    newPost.value = { content: '', platforms: [], date: '', time: '' };
+    await fetchPosts();
+  } catch (e) {
+    ElMessage.error('Error publishing post');
+  } finally {
+    postSaving.value = false;
+  }
 };
 
-const schedulePost = () => {
+const schedulePost = async () => {
   if (!newPost.value.content) {
     ElMessage.warning('Content required');
     return;
   }
-  const id = scheduledPosts.value.length ? Math.max(...scheduledPosts.value.map(p => p.id)) + 1 : 1;
-  scheduledPosts.value.push({
-    id,
-    content: newPost.value.content,
-    platforms: [...newPost.value.platforms],
-    scheduledDate: newPost.value.date
-      ? new Date(newPost.value.date).toLocaleDateString('en-US', { month: 'short', day: 'numeric' })
-      : 'TBD',
-    scheduledTime: newPost.value.time
-      ? new Date(newPost.value.time).toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit' })
-      : 'TBD',
-    status: 'SCHEDULED'
-  });
-  ElMessage.success('Post scheduled!');
-  showComposeDialog.value = false;
-  newPost.value = { content: '', platforms: [], date: '', time: '' };
+  postSaving.value = true;
+  try {
+    const payload = {
+      content: newPost.value.content,
+      platforms: newPost.value.platforms,
+      scheduledDate: newPost.value.date ? new Date(newPost.value.date).toISOString().split('T')[0] : null,
+      scheduledTime: newPost.value.time
+        ? new Date(newPost.value.time).toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit', hour12: false })
+        : null,
+      status: 'SCHEDULED'
+    };
+
+    if (editingPostId.value) {
+      const res = await useApiFetch(`social-crm/posts/${editingPostId.value}`, 'PUT', payload);
+      if (!res?.success) { ElMessage.error(res?.message || 'Update failed'); return; }
+    } else {
+      const res = await useApiFetch('social-crm/posts', 'POST', payload);
+      if (!res?.success) { ElMessage.error(res?.message || 'Schedule failed'); return; }
+    }
+
+    ElMessage.success('Post scheduled!');
+    showComposeDialog.value = false;
+    editingPostId.value = null;
+    newPost.value = { content: '', platforms: [], date: '', time: '' };
+    await fetchPosts();
+  } catch (e) {
+    ElMessage.error('Error scheduling post');
+  } finally {
+    postSaving.value = false;
+  }
 };
 
 // ── Init ───────────────────────────────────────────────────────────────────────
 onMounted(() => {
   fetchProfiles();
+  fetchPosts();
 });
 </script>

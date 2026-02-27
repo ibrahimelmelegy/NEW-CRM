@@ -181,7 +181,7 @@ import { PriceBook, PriceBookEntry } from '../cpq/cpqModel';
 import ABTest from '../abTesting/abTestModel';
 import { FormTemplate, FormSubmission } from '../formBuilder/formBuilderModel';
 import { LoyaltyProgram, LoyaltyPoints } from '../loyalty/loyaltyModel';
-import SocialProfile from '../socialCrm/socialCrmModel';
+import SocialProfile, { SocialPost } from '../socialCrm/socialCrmModel';
 import { Survey, SurveyResponse } from '../survey/surveyModel';
 // Communications Extensions
 import { ChatConversation, ChatMessage } from '../liveChat/liveChatModel';
@@ -199,6 +199,8 @@ import EcCategory from '../ecommerce/category/categoryModel';
 import EcCoupon from '../ecommerce/coupon/couponModel';
 import EcReview from '../ecommerce/review/reviewModel';
 import { EcCart, EcCartItem } from '../ecommerce/cart/cartModel';
+import MeetingNote from '../meetingNote/meetingNoteModel';
+import ESignature from '../eSignature/eSignatureModel';
 
 dotenv.config();
 
@@ -401,6 +403,7 @@ const sequelize = new Sequelize({
     LoyaltyProgram,
     LoyaltyPoints,
     SocialProfile,
+    SocialPost,
     Survey,
     SurveyResponse,
     ChatConversation,
@@ -421,7 +424,10 @@ const sequelize = new Sequelize({
     EcCoupon,
     EcReview,
     EcCart,
-    EcCartItem
+    EcCartItem,
+    // Meeting Notes & E-Signatures
+    MeetingNote,
+    ESignature
   ], // Path to your models
   logging: process.env.NODE_ENV !== 'production' ? console.log : false
 });

@@ -17,7 +17,8 @@ export async function fetchPipelineStages(entityType?: string): Promise<Pipeline
   const { body, success } = await useApiFetch(`pipeline-config${qs}`);
   if (success && body) {
     const data = body as any;
-    return data.docs || data || [];
+    const stages: PipelineStage[] = data.docs || data || [];
+    return stages.sort((a, b) => a.order - b.order);
   }
   return [];
 }

@@ -280,8 +280,12 @@ async function fetchData() {
     const res = await useApiFetch(`ab-tests?page=${pagination.page}&limit=${pagination.limit}`);
     if (res.success && res.body) {
       const data = res.body as any;
-      items.value = data.rows || data.docs || (Array.isArray(data) ? data : []);
-      pagination.total = data.count ?? data.total ?? items.value.length;
+      items.value = (data.docs || data.rows || (Array.isArray(data) ? data : [])).map((item: any) => ({
+        ...item,
+        winner: item.winnerVariant || null,
+        confidence: item.confidence != null ? Number(item.confidence) : null
+      }));
+      pagination.total = data.pagination?.totalItems ?? data.count ?? data.total ?? items.value.length;
     }
   } catch (err) {
     ElMessage.error(t('common.error') || 'Failed to load data');
@@ -380,7 +384,18 @@ async function openResultsDialog(test: any) {
   try {
     const res = await useApiFetch(`ab-tests/${test.id}/results`);
     if (res.success && res.body) {
-      testResults.value = res.body;
+      const data = res.body as any;
+      // Derive overall significance and confidence from variant significance data
+      const variantsWithSig = (data.variants || []).filter((v: any) => v.significance);
+      const bestSignificance = variantsWithSig.length > 0
+        ? variantsWithSig.reduce((best: any, v: any) => (v.significance.confidenceLevel > (best?.confidenceLevel || 0)) ? v.significance : best, null)
+        : null;
+      testResults.value = {
+        ...data,
+        winner: test.winner || test.winnerVariant || null,
+        isSignificant: bestSignificance?.isSignificant || false,
+        confidence: bestSignificance?.confidenceLevel ?? (test.confidence != null ? Number(test.confidence) : null)
+      };
     }
   } catch {
     ElMessage.error(t('common.error') || 'Failed to load results');

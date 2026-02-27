@@ -71,6 +71,7 @@
 
 <script setup lang="ts">
 import { ref, reactive, onMounted } from 'vue';
+import { ElMessage } from 'element-plus';
 
 definePageMeta({});
 
@@ -94,28 +95,51 @@ const form = reactive({ name: '', category: 'Sales', subject: '', body: '' });
 async function fetchTemplates() {
   loading.value = true;
   try {
-    const { body, success } = await useApiFetch('document-templates?type=email', 'GET');
+    const { body, success } = await useApiFetch('document-templates?type=EMAIL', 'GET');
     if (success && body) {
-      templates.value = body;
+      const docs = (body as any).docs || (Array.isArray(body) ? body : []);
+      templates.value = docs.map((d: any) => ({
+        id: d.id,
+        name: d.name || '',
+        category: d.category || d.emailCategory || '',
+        subject: d.subject || '',
+        body: d.body || d.emailBody || '',
+        usageCount: d.usageCount || 0
+      }));
     }
   } catch (e) {
     console.error('Failed to fetch email templates:', e);
+    ElMessage.error($t('common.error'));
   } finally {
     loading.value = false;
   }
 }
 
 async function saveTemplate() {
+  if (!form.name.trim()) {
+    ElMessage.warning($t('common.fillRequired') || 'Please fill required fields');
+    return;
+  }
   saving.value = true;
   try {
-    const payload = { ...form, type: 'email', usageCount: 0 };
+    const payload = {
+      name: form.name,
+      subject: form.subject,
+      body: form.body,
+      category: form.category,
+      type: 'EMAIL',
+      usageCount: 0
+    };
     const { body, success } = await useApiFetch('document-templates', 'POST', payload);
-    if (success && body) {
-      templates.value.unshift(body);
+    if (success) {
+      // Reload from server to get consistent data
+      await fetchTemplates();
+      Object.assign(form, { name: '', category: 'Sales', subject: '', body: '' });
+      showDialog.value = false;
+      ElMessage.success($t('emailTemplates.templateCreated'));
+    } else {
+      ElMessage.error((body as any)?.message || $t('common.error'));
     }
-    Object.assign(form, { name: '', category: 'Sales', subject: '', body: '' });
-    showDialog.value = false;
-    ElMessage.success($t('emailTemplates.templateCreated'));
   } catch (e) {
     console.error('Failed to save template:', e);
     ElMessage.error($t('common.error'));
@@ -130,6 +154,8 @@ async function removeTemplate(id: string) {
     if (success) {
       templates.value = templates.value.filter(t => t.id !== id);
       ElMessage.success($t('emailTemplates.templateDeleted'));
+    } else {
+      ElMessage.error($t('common.error'));
     }
   } catch (e) {
     console.error('Failed to delete template:', e);
@@ -138,10 +164,14 @@ async function removeTemplate(id: string) {
 }
 
 async function copyTemplate(tmpl: EmailTemplate) {
-  navigator.clipboard.writeText(`Subject: ${tmpl.subject}\n\n${tmpl.body}`);
+  try {
+    await navigator.clipboard.writeText(`Subject: ${tmpl.subject}\n\n${tmpl.body}`);
+  } catch {
+    // Fallback: clipboard might not be available
+  }
   tmpl.usageCount = (tmpl.usageCount || 0) + 1;
   try {
-    await useApiFetch(`document-templates/${tmpl.id}`, 'PUT', { usageCount: tmpl.usageCount });
+    await useApiFetch(`document-templates/${tmpl.id}`, 'PUT', { usageCount: tmpl.usageCount, type: 'EMAIL' });
   } catch (e) {
     console.error('Failed to update usage count:', e);
   }

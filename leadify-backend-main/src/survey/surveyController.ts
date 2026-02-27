@@ -25,5 +25,28 @@ class SurveyController {
   async getResponses(req: AuthenticatedRequest, res: Response, next: NextFunction) {
     try { wrapResult(res, await service.getResponses(req.query, (req.user as any)?.tenantId)); } catch (e) { next(e); }
   }
+
+  // ──────────── Analytics Endpoints ────────────
+  async getNPS(req: AuthenticatedRequest, res: Response, next: NextFunction) {
+    try { wrapResult(res, await service.calculateNPS(Number(req.params.id))); } catch (e) { next(e); }
+  }
+  async getAnalytics(req: AuthenticatedRequest, res: Response, next: NextFunction) {
+    try { wrapResult(res, await service.getResponseAnalytics(Number(req.params.id))); } catch (e) { next(e); }
+  }
+  async getCompletionRate(req: AuthenticatedRequest, res: Response, next: NextFunction) {
+    try { wrapResult(res, await service.getSurveyCompletionRate(Number(req.params.id))); } catch (e) { next(e); }
+  }
+  async closeSurvey(req: AuthenticatedRequest, res: Response, next: NextFunction) {
+    try { wrapResult(res, await service.closeSurvey(Number(req.params.id))); } catch (e) { next(e); }
+  }
+  async exportResponses(req: AuthenticatedRequest, res: Response, next: NextFunction) {
+    try {
+      const result = await service.exportResponsesCSV(Number(req.params.id));
+      if (!result) { return wrapResult(res, null, 404); }
+      res.setHeader('Content-Type', 'text/csv');
+      res.setHeader('Content-Disposition', `attachment; filename="survey-${req.params.id}-responses.csv"`);
+      res.send(result);
+    } catch (e) { next(e); }
+  }
 }
 export default new SurveyController();

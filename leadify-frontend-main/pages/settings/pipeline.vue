@@ -189,14 +189,28 @@ function dragOver(index: number) {
 }
 
 async function drop(index: number) {
-  if (dragIndex === index) return;
+  if (dragIndex === index || dragIndex < 0) return;
+  // Optimistic reorder
+  const originalStages = [...stages.value];
   const item = stages.value.splice(dragIndex, 1)[0]!;
   stages.value.splice(index, 0, item);
   const stageIds = stages.value.map(s => s.id);
   try {
-    await reorderPipelineStages(entityType.value, stageIds);
+    const { success } = await reorderPipelineStages(entityType.value, stageIds);
+    if (success) {
+      // Update local order values to reflect new positions
+      stages.value.forEach((s, i) => { s.order = i + 1; });
+      ElNotification({ type: 'success', title: t('common.success'), message: t('common.saved') });
+    } else {
+      // Revert on API failure
+      stages.value = originalStages;
+      ElNotification({ type: 'error', title: t('common.error'), message: t('common.error') });
+    }
   } catch {
-    await loadStages(); // Revert on error
+    stages.value = originalStages;
+    ElNotification({ type: 'error', title: t('common.error'), message: t('common.error') });
+  } finally {
+    dragIndex = -1;
   }
 }
 </script>

@@ -4,9 +4,12 @@
     div
       h1.text-3xl.font-black.tracking-tight(style="color: var(--text-primary);") {{ $t('kanbanBoard.title') }}
       p.text-sm.mt-1(style="color: var(--text-muted);") {{ $t('kanbanBoard.subtitle') }}
-    el-button(type="primary" size="default" @click="addCard" style="background: var(--bg-obsidian); border: none; border-radius: 12px;")
-      Icon(name="ph:plus" size="16" style="margin-right: 4px;")
-      | {{ $t('kanbanBoard.addItem') }}
+    .flex.items-center.gap-3
+      //- Toggle between Deal and Opportunity kanban
+      el-segmented(v-model="viewMode" :options="viewOptions" @change="onViewChange" size="default")
+      el-button(type="primary" size="default" @click="addCard" style="background: var(--bg-obsidian); border: none; border-radius: 12px;" :disabled="viewMode === 'opportunity'")
+        Icon(name="ph:plus" size="16" style="margin-right: 4px;")
+        | {{ $t('kanbanBoard.addItem') }}
 
   //- Kanban Columns
   .flex.gap-5.overflow-x-auto.pb-6(v-loading="loading" style="min-height: 70vh;")
@@ -31,9 +34,9 @@
         )
           .flex.items-center.justify-between.mb-2
             span.text-xs.font-mono.font-bold(style="color: var(--text-muted);") {{ card.ref }}
-            el-tag(size="small" round :type="priorityTag(card.priority)") {{ card.priority }}
+            el-tag(v-if="card.priority" size="small" round :type="priorityTag(card.priority)") {{ card.priority }}
           p.text-sm.font-bold(style="color: var(--text-primary);") {{ card.title }}
-          p.text-xs.mt-1.line-clamp-2(style="color: var(--text-muted);") {{ card.description }}
+          p.text-xs.mt-1.line-clamp-2(v-if="card.description" style="color: var(--text-muted);") {{ card.description }}
           .flex.items-center.justify-between.mt-3
             .flex.items-center.gap-1
               Icon(name="ph:user" size="12" style="color: var(--text-muted);")
@@ -57,7 +60,7 @@
           class="hover:border-violet-300 hover:bg-violet-50/30"
         ) {{ $t('kanbanBoard.dropHere') }}
 
-  //- Add Card Dialog
+  //- Add Card Dialog (only for deals)
   el-dialog(v-model="showDialog" :title="$t('kanbanBoard.addItem')" width="480px")
     el-form(label-position="top" size="large")
       el-form-item(:label="$t('kanbanBoard.cardTitle')")
@@ -84,12 +87,50 @@
 </template>
 
 <script setup lang="ts">
-import { ref, reactive, onMounted } from 'vue';
+import { ref, reactive, computed, onMounted } from 'vue';
+import { ElMessage } from 'element-plus';
+import {
+  fetchDealKanban,
+  fetchOpportunityKanban,
+  updateDealStage,
+  updateOpportunityStage,
+  getStageColor,
+  getPriorityColor,
+  type KanbanCard as ApiKanbanCard
+} from '~/composables/useKanban';
 
 definePageMeta({});
 
 const { $t } = useNuxtApp();
 
+// ─── View mode toggle ───────────────────────────────────────────────────────
+type ViewMode = 'deal' | 'opportunity';
+const viewMode = ref<ViewMode>('deal');
+const viewOptions = computed(() => [
+  { label: $t('kanbanBoard.deals'), value: 'deal' },
+  { label: $t('kanbanBoard.opportunities'), value: 'opportunity' }
+]);
+
+// ─── Column definitions per view mode ───────────────────────────────────────
+const dealStages = [
+  { id: 'PROGRESS', title: 'In Progress', color: '#3B82F6' },
+  { id: 'NEGOTIATION', title: 'Negotiation', color: '#8B5CF6' },
+  { id: 'CLOSED', title: 'Closed', color: '#22c55e' },
+  { id: 'CANCELLED', title: 'Cancelled', color: '#EF4444' },
+  { id: 'ARCHIVED', title: 'Archived', color: '#6B7280' }
+];
+
+const opportunityStages = [
+  { id: 'DISCOVERY', title: 'Discovery', color: '#8B5CF6' },
+  { id: 'PROPOSAL', title: 'Proposal', color: '#F59E0B' },
+  { id: 'NEGOTIATION', title: 'Negotiation', color: '#3B82F6' },
+  { id: 'WON', title: 'Won', color: '#10B981' },
+  { id: 'LOST', title: 'Lost', color: '#EF4444' }
+];
+
+const columns = computed(() => viewMode.value === 'deal' ? dealStages : opportunityStages);
+
+// ─── Internal card type ─────────────────────────────────────────────────────
 interface KanbanCard {
   id: string;
   ref: string;
@@ -101,58 +142,108 @@ interface KanbanCard {
   value: number;
 }
 
-const columns = [
-  { id: 'new', title: 'New Lead', color: '#6b7280' },
-  { id: 'qualified', title: 'Qualified', color: '#3b82f6' },
-  { id: 'proposal', title: 'Proposal', color: '#f59e0b' },
-  { id: 'negotiation', title: 'Negotiation', color: '#8b5cf6' },
-  { id: 'won', title: 'Won', color: '#22c55e' },
-  { id: 'lost', title: 'Lost', color: '#ef4444' }
-];
-
 const cards = ref<KanbanCard[]>([]);
 const showDialog = ref(false);
 const loading = ref(false);
 const saving = ref(false);
-const form = reactive({ title: '', description: '', columnId: 'new', priority: 'medium', assignee: '', value: 0 });
+const form = reactive({ title: '', description: '', columnId: 'PROGRESS', priority: 'medium', assignee: '', value: 0 });
 let draggedCard: KanbanCard | null = null;
 
 function getColumnCards(colId: string) {
   return cards.value.filter(c => c.columnId === colId);
 }
 
-async function fetchTasks() {
+// ─── Map API response to internal card format ───────────────────────────────
+function mapDealCards(data: Record<string, ApiKanbanCard[]>): KanbanCard[] {
+  const result: KanbanCard[] = [];
+  for (const [stage, items] of Object.entries(data)) {
+    for (const item of items) {
+      result.push({
+        id: String(item.id),
+        ref: `DEAL-${String(item.id).slice(-4).padStart(4, '0')}`,
+        title: item.name || '',
+        description: item.companyName || '',
+        columnId: stage,
+        priority: (item.contractType || '').toLowerCase(),
+        assignee: item.users?.[0]?.name || '',
+        value: item.price || 0
+      });
+    }
+  }
+  return result;
+}
+
+function mapOpportunityCards(data: Record<string, ApiKanbanCard[]>): KanbanCard[] {
+  const result: KanbanCard[] = [];
+  for (const [stage, items] of Object.entries(data)) {
+    for (const item of items) {
+      result.push({
+        id: String(item.id),
+        ref: `OPP-${String(item.id).slice(-4).padStart(4, '0')}`,
+        title: item.name || '',
+        description: item.lead?.companyName || item.lead?.name || '',
+        columnId: stage,
+        priority: (item.priority || '').toLowerCase(),
+        assignee: item.users?.[0]?.name || '',
+        value: item.estimatedValue || 0
+      });
+    }
+  }
+  return result;
+}
+
+// ─── Fetch data from real API ───────────────────────────────────────────────
+async function fetchData() {
   loading.value = true;
   try {
-    const { body, success } = await useApiFetch('tasks', 'GET');
-    if (success && body) {
-      cards.value = body;
+    if (viewMode.value === 'deal') {
+      const data = await fetchDealKanban();
+      cards.value = mapDealCards(data);
+    } else {
+      const data = await fetchOpportunityKanban();
+      cards.value = mapOpportunityCards(data);
     }
   } catch (e) {
-    console.error('Failed to fetch tasks:', e);
+    console.error('Failed to fetch kanban data:', e);
+    ElMessage.error($t('kanbanBoard.loadError'));
   } finally {
     loading.value = false;
   }
 }
 
+function onViewChange() {
+  // Reset form default column based on view mode
+  form.columnId = viewMode.value === 'deal' ? 'PROGRESS' : 'DISCOVERY';
+  fetchData();
+}
+
+// ─── Add card (deal only for now) ───────────────────────────────────────────
 function addCard() {
+  form.columnId = columns.value[0]?.id || 'PROGRESS';
   showDialog.value = true;
 }
 
 async function saveCard() {
+  if (!form.title.trim()) return;
   saving.value = true;
   try {
-    const payload = {
-      ...form,
-      ref: `DEAL-${String(cards.value.length + 1).padStart(3, '0')}`
+    // Create a deal via the deal API
+    const payload: Record<string, any> = {
+      name: form.title,
+      companyName: form.description,
+      stage: form.columnId,
+      price: form.value
     };
-    const { body, success } = await useApiFetch('tasks', 'POST', payload);
+    const { body, success } = await useApiFetch('deal/create', 'POST', payload);
     if (success && body) {
-      cards.value.push(body);
+      // Refresh from API to get accurate data
+      await fetchData();
+      ElMessage.success($t('kanbanBoard.cardAdded'));
+    } else {
+      ElMessage.error($t('common.error'));
     }
-    Object.assign(form, { title: '', description: '', columnId: 'new', priority: 'medium', assignee: '', value: 0 });
+    Object.assign(form, { title: '', description: '', columnId: columns.value[0]?.id || 'PROGRESS', priority: 'medium', assignee: '', value: 0 });
     showDialog.value = false;
-    ElMessage.success($t('kanbanBoard.cardAdded'));
   } catch (e) {
     console.error('Failed to save card:', e);
     ElMessage.error($t('common.error'));
@@ -161,24 +252,36 @@ async function saveCard() {
   }
 }
 
+// ─── Move card (calls real stage-update API) ────────────────────────────────
 async function moveCard(cardId: string, targetCol: string) {
   const card = cards.value.find(c => c.id === cardId);
-  if (card) {
-    const previousCol = card.columnId;
-    card.columnId = targetCol;
-    try {
-      const { success } = await useApiFetch(`tasks/${cardId}`, 'PUT', { columnId: targetCol });
-      if (!success) {
-        card.columnId = previousCol;
-        ElMessage.error($t('common.error'));
-      }
-    } catch (e) {
-      card.columnId = previousCol;
-      console.error('Failed to move card:', e);
+  if (!card) return;
+
+  const previousCol = card.columnId;
+  // Optimistic UI update
+  card.columnId = targetCol;
+
+  let ok = false;
+  try {
+    if (viewMode.value === 'deal') {
+      ok = await updateDealStage(cardId, targetCol);
+    } else {
+      ok = await updateOpportunityStage(cardId, targetCol);
     }
+    if (ok) {
+      ElMessage.success($t('kanbanBoard.cardMoved'));
+    } else {
+      // Revert on failure
+      card.columnId = previousCol;
+    }
+  } catch (e) {
+    card.columnId = previousCol;
+    console.error('Failed to move card:', e);
+    ElMessage.error($t('kanbanBoard.moveError'));
   }
 }
 
+// ─── Drag and drop ──────────────────────────────────────────────────────────
 function dragStart(card: KanbanCard) {
   draggedCard = card;
 }
@@ -191,11 +294,13 @@ function dropCard(colId: string) {
     draggedCard = null;
   }
 }
+
 function priorityTag(p: string): '' | 'success' | 'warning' | 'danger' {
-  return { low: 'success' as const, medium: 'warning' as const, high: 'danger' as const }[p] || '';
+  const lower = (p || '').toLowerCase();
+  return { low: 'success' as const, medium: 'warning' as const, high: 'danger' as const, very_high: 'danger' as const, very_low: 'success' as const }[lower] || '';
 }
 
 onMounted(() => {
-  fetchTasks();
+  fetchData();
 });
 </script>

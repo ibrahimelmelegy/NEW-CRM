@@ -87,8 +87,8 @@ div.animate-fade-in(v-loading="loading")
             v-if="order.client?.id"
             :to="`/sales/clients/${order.client.id}`"
             style="color: #7849ff"
-          ) {{ order.client.name || '--' }}
-          p.text-sm.font-semibold(v-else style="color: var(--text-primary)") {{ order.client?.name || order.clientId || '--' }}
+          ) {{ order.client.clientName || order.client.name || '--' }}
+          p.text-sm.font-semibold(v-else style="color: var(--text-primary)") {{ order.client?.clientName || order.client?.name || order.clientId || '--' }}
         div
           p.text-xs(style="color: var(--text-muted)") {{ $t('salesOrders.shippingAddress') || 'Shipping Address' }}
           p.text-sm.font-semibold(style="color: var(--text-primary)") {{ order.shippingAddress || '--' }}

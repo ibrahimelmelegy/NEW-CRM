@@ -9,6 +9,36 @@ import type { BrandSettings } from './templateEngine';
 
 class PdfService {
   /**
+   * Generate a PDF buffer from raw HTML string.
+   * Uses Puppeteer for rendering. Returns the raw Buffer (useful for streaming
+   * directly as an HTTP response without storing to disk/cloud).
+   * Falls back to returning the HTML as a Buffer if Puppeteer is unavailable.
+   */
+  public async generatePdfBuffer(html: string): Promise<{ buffer: Buffer; isPdf: boolean }> {
+    try {
+      const puppeteer = require('puppeteer');
+      const browser = await puppeteer.launch({
+        headless: true,
+        args: ['--no-sandbox', '--disable-setuid-sandbox']
+      });
+      const page = await browser.newPage();
+      await page.setContent(html, { waitUntil: 'networkidle0' });
+
+      const pdfBuffer = await page.pdf({
+        format: 'A4',
+        printBackground: true,
+        margin: { top: '20mm', right: '15mm', bottom: '20mm', left: '15mm' }
+      });
+
+      await browser.close();
+      return { buffer: Buffer.from(pdfBuffer), isPdf: true };
+    } catch {
+      // Fallback: return HTML buffer so caller can still send a file
+      return { buffer: Buffer.from(html), isPdf: false };
+    }
+  }
+
+  /**
    * Generate a PDF for a document.
    * Uses Puppeteer if available, otherwise generates an HTML file that can be printed to PDF.
    * Files are stored via storageService (local or DO Spaces).

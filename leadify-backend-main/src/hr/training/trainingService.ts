@@ -10,6 +10,16 @@ class TrainingService {
     return TrainingProgram.create({ ...data, tenantId });
   }
 
+  async getProgramById(id: number) {
+    return TrainingProgram.findByPk(id, {
+      include: [
+        { model: TrainingEnrollment, as: 'enrollments', include: [
+          { model: Employee, as: 'employee', attributes: ['id', 'firstName', 'lastName', 'jobTitle'] }
+        ]}
+      ]
+    });
+  }
+
   async getPrograms(query: any, tenantId?: string) {
     const { page, limit, offset } = clampPagination(query);
     const where: any = {};

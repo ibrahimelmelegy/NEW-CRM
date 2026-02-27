@@ -151,6 +151,35 @@ router.get('/aging-report', authenticateUser, invoiceController.getAgingReport);
 router.get('/revenue-summary', authenticateUser, invoiceController.getRevenueSummary);
 router.get('/overdue', authenticateUser, invoiceController.getOverdueInvoices);
 router.post('/calculate-totals', authenticateUser, invoiceController.calculateTotals);
+/**
+ * @swagger
+ * /api/invoices/{id}/pdf:
+ *   get:
+ *     summary: Generate and download invoice as PDF
+ *     tags: [Invoice]
+ *     security:
+ *       - bearerAuth: []
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         schema:
+ *           type: integer
+ *         description: Invoice ID
+ *     responses:
+ *       200:
+ *         description: PDF file download
+ *         content:
+ *           application/pdf:
+ *             schema:
+ *               type: string
+ *               format: binary
+ *       404:
+ *         description: Invoice not found
+ *       500:
+ *         description: Server error
+ */
+router.get('/:id/pdf', authenticateUser, invoiceController.generatePdf);
 router.get('/:id', authenticateUser, invoiceController.getInvoiceById);
 router.put('/:id/collect', authenticateUser, HasPermission([DealPermissionsEnum.EDIT_DEALS]), invoiceController.markCollected);
 router.put('/:id/uncollect', authenticateUser, HasPermission([DealPermissionsEnum.EDIT_DEALS]), invoiceController.markUncollected);

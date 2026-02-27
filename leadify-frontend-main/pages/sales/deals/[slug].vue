@@ -112,8 +112,8 @@ el-tabs.demo-tabs(v-model="activeName", @tab-click="handleClick")
     RecordAttachments(:entityType="'deal'" :entityId="route.params.slug as string")
 </template>
 <script lang="ts" setup>
-import { fetchPipelineStages } from '@/composables/useKanban';
-import type { PipelineStage } from '@/composables/useKanban';
+import { fetchPipelineStages } from '@/composables/usePipelineConfig';
+import type { PipelineStage } from '@/composables/usePipelineConfig';
 
 const { hasPermission } = await usePermissions();
 const { $i18n } = useNuxtApp();

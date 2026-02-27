@@ -271,5 +271,49 @@ class SurveyService {
       },
     };
   }
+  /**
+   * Export all survey responses as CSV.
+   * Columns: Response ID, Respondent, Date, then one column per question.
+   */
+  async exportResponsesCSV(surveyId: number): Promise<string | null> {
+    const survey = await Survey.findByPk(surveyId);
+    if (!survey) return null;
+
+    const questions: SurveyQuestion[] = survey.questions || [];
+    const responses = await SurveyResponse.findAll({ where: { surveyId }, order: [['createdAt', 'ASC']] });
+
+    // Build CSV header
+    const headers = ['Response ID', 'Respondent Name', 'Respondent Email', 'Completed At'];
+    for (const q of questions) {
+      headers.push(q.text.replace(/"/g, '""'));
+    }
+
+    const rows: string[] = [headers.map(h => `"${h}"`).join(',')];
+
+    for (const resp of responses) {
+      const answers = resp.answers as Record<string, any>;
+      const row: string[] = [
+        String(resp.id),
+        `"${(resp.respondentName || '').replace(/"/g, '""')}"`,
+        `"${(resp.respondentEmail || '').replace(/"/g, '""')}"`,
+        resp.completedAt ? new Date(resp.completedAt).toISOString() : ''
+      ];
+
+      for (const q of questions) {
+        const val = answers[q.id];
+        if (val === undefined || val === null) {
+          row.push('');
+        } else if (Array.isArray(val)) {
+          row.push(`"${val.join('; ').replace(/"/g, '""')}"`);
+        } else {
+          row.push(`"${String(val).replace(/"/g, '""')}"`);
+        }
+      }
+
+      rows.push(row.join(','));
+    }
+
+    return rows.join('\n');
+  }
 }
 export default new SurveyService();

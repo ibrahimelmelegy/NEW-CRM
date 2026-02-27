@@ -92,7 +92,7 @@ const templateId = computed(() => route.query.id as string | undefined);
 const isEditing = computed(() => !!templateId.value);
 
 const templateName = ref('Untitled Template');
-const templateType = ref<'INVOICE' | 'PURCHASE_ORDER'>('INVOICE');
+const templateType = ref<import('~/composables/useDocumentTemplates').DocumentTemplateType>('INVOICE');
 const orientation = ref<'portrait' | 'landscape'>('portrait');
 const margins = ref({ top: 20, right: 15, bottom: 20, left: 15 });
 const elements = ref<TemplateElement[]>([]);

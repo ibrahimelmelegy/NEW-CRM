@@ -62,7 +62,7 @@
               </div>
               <div>
                 <div class="text-sm font-medium text-slate-200">{{ row.name }}</div>
-                <div class="text-xs text-slate-500">{{ row.type }} - {{ row.pages }} pages</div>
+                <div class="text-xs text-slate-500">{{ row.type }}</div>
               </div>
             </div>
           </template>
@@ -88,7 +88,7 @@
           <template #default="{ row }">
             <div class="flex items-center gap-2">
               <el-progress
-                :percentage="(row.signedCount / row.totalSigners) * 100"
+                :percentage="row.totalSigners > 0 ? (row.signedCount / row.totalSigners) * 100 : 0"
                 :stroke-width="4"
                 :show-text="false"
                 :color="getSignStatusColor(row.status)"
@@ -112,8 +112,8 @@
               <el-button v-if="row.status === 'PENDING'" text type="warning" size="small" @click="sendReminder(row)">
                 <Icon name="ph:bell-ringing-bold" class="w-4 h-4" />
               </el-button>
-              <el-button text type="info" size="small" @click="downloadDocument(row)">
-                <Icon name="ph:download-bold" class="w-4 h-4" />
+              <el-button text type="danger" size="small" @click="deleteSignature(row)">
+                <Icon name="ph:trash-bold" class="w-4 h-4" />
               </el-button>
             </div>
           </template>
@@ -193,43 +193,24 @@ const newSignRequest = ref({
   recipients: [{ name: '', email: '' }]
 });
 
-// ---------- Contract → display-document mapping ----------
+// ---------- E-Signature → display-document mapping ----------
 
 interface DisplayDocument {
   id: string;
   name: string;
   type: string;
-  pages: number;
   status: 'SIGNED' | 'PENDING' | 'EXPIRED' | 'DECLINED';
   signedCount: number;
   totalSigners: number;
   sentDate: string;
-  recipients: { name: string; email: string }[];
-  _raw: any; // keep raw contract for actions
+  recipients: { name: string; email: string; status?: string; signedAt?: string | null }[];
+  _raw: any;
 }
 
 const documents = ref<DisplayDocument[]>([]);
 
 /**
- * Map backend Contract status to the display status the UI understands.
- * Backend statuses: DRAFT | SENT | VIEWED | SIGNED | EXPIRED | CANCELLED
- */
-function mapStatus(backendStatus: string): DisplayDocument['status'] {
-  switch (backendStatus) {
-    case 'SIGNED':
-      return 'SIGNED';
-    case 'EXPIRED':
-      return 'EXPIRED';
-    case 'CANCELLED':
-      return 'DECLINED';
-    // DRAFT, SENT, VIEWED are all "awaiting" states
-    default:
-      return 'PENDING';
-  }
-}
-
-/**
- * Derive a document type from the contract title for icon/color display.
+ * Derive a document type from the title for icon/color display.
  */
 function deriveType(title: string): string {
   const lower = title.toLowerCase();
@@ -240,41 +221,40 @@ function deriveType(title: string): string {
 }
 
 /**
- * Convert a raw Contract from the API into the display shape the template expects.
+ * Convert a raw ESignature record from the API into the display shape the template expects.
  */
-function mapContract(c: any): DisplayDocument {
-  const isSigned = c.status === 'SIGNED' || !!c.signedAt;
+function mapRecord(record: any): DisplayDocument {
+  const recipients = record.recipients || [];
+  const signedCount = recipients.filter((r: any) => r.status === 'SIGNED').length;
+  const totalSigners = recipients.length;
   return {
-    id: c.id,
-    name: c.title,
-    type: deriveType(c.title),
-    pages: 1, // backend does not track page count
-    status: mapStatus(c.status),
-    signedCount: isSigned ? 1 : 0,
-    totalSigners: 1,
-    sentDate: c.createdAt || '',
-    recipients: c.signerName || c.signerEmail
-      ? [{ name: c.signerName || '', email: c.signerEmail || '' }]
-      : [],
-    _raw: c
+    id: record.id,
+    name: record.title,
+    type: deriveType(record.title),
+    status: record.status,
+    signedCount,
+    totalSigners,
+    sentDate: record.sentAt || record.createdAt || '',
+    recipients,
+    _raw: record
   };
 }
 
-// ---------- Fetch contracts from API ----------
+// ---------- Fetch e-signatures from API ----------
 
 async function fetchDocuments() {
   loading.value = true;
   try {
-    const res = await useApiFetch('contracts?limit=100');
+    const res = await useApiFetch('e-signatures?limit=100');
     if (res?.success) {
       const raw = res.body?.docs || res.body || [];
       const list = Array.isArray(raw) ? raw : [];
-      documents.value = list.map(mapContract);
+      documents.value = list.map(mapRecord);
     } else {
-      ElMessage.error(res?.message || 'Failed to load contracts');
+      ElMessage.error(res?.message || 'Failed to load e-signatures');
     }
   } catch (e: any) {
-    ElMessage.error('Failed to load contracts');
+    ElMessage.error('Failed to load e-signatures');
     console.error(e);
   } finally {
     loading.value = false;
@@ -286,16 +266,25 @@ onMounted(fetchDocuments);
 // ---------- Computed ----------
 
 const avgSignTime = computed(() => {
-  const signed = documents.value.filter(d => d.status === 'SIGNED' && d._raw?.signedAt && d._raw?.createdAt);
+  const signed = documents.value.filter(d => d.status === 'SIGNED' && d._raw?.createdAt);
   if (!signed.length) return 'N/A';
-  const totalMs = signed.reduce((sum, d) => {
-    const created = new Date(d._raw.createdAt).getTime();
-    const signedAt = new Date(d._raw.signedAt).getTime();
-    return sum + (signedAt - created);
-  }, 0);
-  const avgDays = totalMs / signed.length / (1000 * 60 * 60 * 24);
+  // Compute average time from sentAt to the last recipient signedAt
+  let totalMs = 0;
+  let count = 0;
+  for (const d of signed) {
+    const sentTime = new Date(d._raw.sentAt || d._raw.createdAt).getTime();
+    const signedRecipients = (d._raw.recipients || []).filter((r: any) => r.signedAt);
+    if (signedRecipients.length > 0) {
+      // Use the last signer's time
+      const lastSignedAt = Math.max(...signedRecipients.map((r: any) => new Date(r.signedAt).getTime()));
+      totalMs += (lastSignedAt - sentTime);
+      count++;
+    }
+  }
+  if (!count) return 'N/A';
+  const avgDays = totalMs / count / (1000 * 60 * 60 * 24);
   if (avgDays < 1) {
-    const avgHours = Math.round(totalMs / signed.length / (1000 * 60 * 60));
+    const avgHours = Math.round(totalMs / count / (1000 * 60 * 60));
     return avgHours <= 1 ? '< 1 hr' : `${avgHours} hrs`;
   }
   return `${avgDays.toFixed(1)} days`;
@@ -350,14 +339,14 @@ const formatDate = (d: string) => (d ? new Date(d).toLocaleDateString('en', { mo
 // ---------- Actions ----------
 
 const viewDocument = (doc: DisplayDocument) => {
-  navigateTo(`/documents/contracts/${doc.id}`);
+  ElMessage.info(`Viewing: ${doc.name}`);
 };
 
 const sendReminder = async (doc: DisplayDocument) => {
   try {
-    const res = await useApiFetch(`contracts/${doc.id}/send`, 'POST', {});
+    const res = await useApiFetch(`e-signatures/${doc.id}/remind`, 'POST', {});
     if (res?.success) {
-      ElMessage.success(`Reminder sent to ${doc.recipients[0]?.name || 'signer'}`);
+      ElMessage.success(`Reminder sent to ${res.body?.pendingRecipients || 0} pending recipient(s)`);
     } else {
       ElMessage.error(res?.message || 'Failed to send reminder');
     }
@@ -366,7 +355,19 @@ const sendReminder = async (doc: DisplayDocument) => {
   }
 };
 
-const downloadDocument = (doc: DisplayDocument) => ElMessage.info(`Downloading: ${doc.name}`);
+const deleteSignature = async (doc: DisplayDocument) => {
+  try {
+    const res = await useApiFetch(`e-signatures/${doc.id}`, 'DELETE');
+    if (res?.success) {
+      documents.value = documents.value.filter(d => d.id !== doc.id);
+      ElMessage.success('Document deleted');
+    } else {
+      ElMessage.error(res?.message || 'Failed to delete');
+    }
+  } catch {
+    ElMessage.error('Failed to delete');
+  }
+};
 
 const sendForSignature = async () => {
   const req = newSignRequest.value;
@@ -381,36 +382,22 @@ const sendForSignature = async () => {
 
   sending.value = true;
   try {
-    // Step 1: Create the contract
-    const createRes = await useApiFetch('contracts', 'POST', {
+    const payload: any = {
       title: req.name,
-      content: req.message || '',
-      signerName: req.recipients[0].name,
-      signerEmail: req.recipients[0].email,
+      message: req.message || '',
+      recipients: req.recipients.filter(r => r.email),
       ...(req.expiryDate ? { expiresAt: req.expiryDate } : {})
-    });
+    };
 
-    if (!createRes?.success || !createRes.body) {
-      ElMessage.error(createRes?.message || 'Failed to create contract');
-      return;
-    }
+    const res = await useApiFetch('e-signatures', 'POST', payload);
 
-    const contractId = createRes.body.id;
-
-    // Step 2: Send for signature (generates token + emails signer)
-    const sendRes = await useApiFetch(`contracts/${contractId}/send`, 'POST', {});
-
-    if (sendRes?.success) {
+    if (res?.success) {
       ElMessage.success('Document sent for signature');
       showSendDialog.value = false;
-      // Reset form
       newSignRequest.value = { name: '', message: '', expiryDate: null, recipients: [{ name: '', email: '' }] };
-      // Refresh list
       await fetchDocuments();
     } else {
-      ElMessage.error(sendRes?.message || 'Contract created but failed to send for signature');
-      // Still refresh to show the draft
-      await fetchDocuments();
+      ElMessage.error(res?.message || 'Failed to send for signature');
     }
   } catch (e: any) {
     ElMessage.error('Failed to send document for signature');

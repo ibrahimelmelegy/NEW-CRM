@@ -9,6 +9,7 @@ router.get('/templates', authenticateUser, HasPermission([FormBuilderPermissions
 router.post('/templates', authenticateUser, HasPermission([FormBuilderPermissionsEnum.CREATE_FORMS]), c.createTemplate);
 router.put('/templates/:id', authenticateUser, HasPermission([FormBuilderPermissionsEnum.EDIT_FORMS]), c.updateTemplate);
 router.delete('/templates/:id', authenticateUser, HasPermission([FormBuilderPermissionsEnum.DELETE_FORMS]), c.deleteTemplate);
+router.get('/templates/:id/analytics', authenticateUser, HasPermission([FormBuilderPermissionsEnum.VIEW_FORMS]), c.getFormAnalytics);
 router.post('/templates/:id/submit', c.submitForm); // Public form submission — no auth
 router.get('/submissions', authenticateUser, HasPermission([FormBuilderPermissionsEnum.VIEW_SUBMISSIONS]), c.getSubmissions);
 

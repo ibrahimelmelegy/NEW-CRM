@@ -317,3 +317,92 @@ export async function applyCartCoupon(cartId: string, couponCode: string) {
 export async function convertCartToOrder(cartId: string) {
   return useApiFetch(`ecommerce/cart/${cartId}/convert`, 'POST');
 }
+
+// ─── Dashboard Stats API ───────────────────────────────────────────────────
+
+export interface EcDashboardStats {
+  totalOrders: number
+  totalRevenue: number
+  activeProducts: number
+  activeCoupons: number
+  pendingReviews: number
+  abandonedCarts: number
+  totalCarts: number
+  convertedCarts: number
+  ordersByStatus: Record<string, number>
+  recentOrders: any[]
+}
+
+/**
+ * Aggregate dashboard stats from catalog + sales-orders + ecommerce APIs.
+ * Fetches real data in parallel and assembles a stats object.
+ */
+export async function fetchEcDashboardStats(): Promise<EcDashboardStats> {
+  const stats: EcDashboardStats = {
+    totalOrders: 0,
+    totalRevenue: 0,
+    activeProducts: 0,
+    activeCoupons: 0,
+    pendingReviews: 0,
+    abandonedCarts: 0,
+    totalCarts: 0,
+    convertedCarts: 0,
+    ordersByStatus: {},
+    recentOrders: []
+  };
+
+  // Fetch all data in parallel
+  const [ordersRes, productsRes, couponsRes, reviewsRes, cartsRes, abandonedRes] = await Promise.allSettled([
+    useApiFetch('sales-orders?limit=50&page=1'),
+    useApiFetch('catalog/products?limit=1&isActive=true'),
+    fetchCoupons({ status: CouponStatusEnum.ACTIVE, limit: '1' } as Record<string, string>),
+    fetchReviews({ status: ReviewStatusEnum.PENDING, limit: '1' } as Record<string, string>),
+    fetchCarts({ limit: '1' } as Record<string, string>),
+    fetchAbandonedCarts({ limit: '1' } as Record<string, string>)
+  ]);
+
+  // Process orders
+  if (ordersRes.status === 'fulfilled' && ordersRes.value?.success && ordersRes.value.body) {
+    const data = ordersRes.value.body as any;
+    const orders = data?.docs || data?.rows || [];
+    stats.totalOrders = data?.pagination?.totalItems ?? orders.length;
+    stats.recentOrders = orders.slice(0, 5);
+    stats.totalRevenue = orders.reduce((sum: number, o: any) => sum + (o.total || o.totalAmount || 0), 0);
+
+    // Count by status
+    for (const order of orders) {
+      const st = (order.status || 'DRAFT').toUpperCase();
+      stats.ordersByStatus[st] = (stats.ordersByStatus[st] || 0) + 1;
+    }
+  }
+
+  // Process products
+  if (productsRes.status === 'fulfilled' && productsRes.value?.success && productsRes.value.body) {
+    const data = productsRes.value.body as any;
+    stats.activeProducts = data?.pagination?.totalItems ?? 0;
+  }
+
+  // Process coupons
+  if (couponsRes.status === 'fulfilled') {
+    stats.activeCoupons = couponsRes.value.pagination?.totalItems ?? 0;
+  }
+
+  // Process reviews
+  if (reviewsRes.status === 'fulfilled') {
+    stats.pendingReviews = reviewsRes.value.pagination?.totalItems ?? 0;
+  }
+
+  // Process carts
+  if (cartsRes.status === 'fulfilled') {
+    stats.totalCarts = cartsRes.value.pagination?.totalItems ?? 0;
+  }
+
+  // Process abandoned carts
+  if (abandonedRes.status === 'fulfilled') {
+    stats.abandonedCarts = abandonedRes.value.pagination?.totalItems ?? 0;
+  }
+
+  stats.convertedCarts = Math.max(stats.totalCarts - stats.abandonedCarts, 0);
+
+  return stats;
+}

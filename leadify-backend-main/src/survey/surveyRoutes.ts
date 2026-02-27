@@ -10,7 +10,14 @@ router.get('/:id', authenticateUser, HasPermission([SurveyPermissionsEnum.VIEW_S
 router.post('/', authenticateUser, HasPermission([SurveyPermissionsEnum.CREATE_SURVEYS]), c.create);
 router.put('/:id', authenticateUser, HasPermission([SurveyPermissionsEnum.EDIT_SURVEYS]), c.update);
 router.delete('/:id', authenticateUser, HasPermission([SurveyPermissionsEnum.DELETE_SURVEYS]), c.delete);
-router.post('/:id/respond', c.submitResponse); // Public survey response — no auth
+router.post('/:id/respond', c.submitResponse); // Public survey response -- no auth
 router.get('/:id/responses', authenticateUser, HasPermission([SurveyPermissionsEnum.VIEW_RESPONSES]), c.getResponses);
+
+// Analytics endpoints
+router.get('/:id/nps', authenticateUser, HasPermission([SurveyPermissionsEnum.VIEW_RESPONSES]), c.getNPS);
+router.get('/:id/analytics', authenticateUser, HasPermission([SurveyPermissionsEnum.VIEW_RESPONSES]), c.getAnalytics);
+router.get('/:id/completion-rate', authenticateUser, HasPermission([SurveyPermissionsEnum.VIEW_RESPONSES]), c.getCompletionRate);
+router.put('/:id/close', authenticateUser, HasPermission([SurveyPermissionsEnum.EDIT_SURVEYS]), c.closeSurvey);
+router.get('/:id/export', authenticateUser, HasPermission([SurveyPermissionsEnum.VIEW_RESPONSES]), c.exportResponses);
 
 export default router;

@@ -157,6 +157,14 @@
                     )
                       Eye(:size="16")
 
+                    //- Download PDF
+                    button.p-2.text-gray-400.rounded-xl.transition-all(
+                      class="hover:text-purple-600 hover:bg-purple-50"
+                      title="Download PDF"
+                      @click="handleDownloadPdf(p)"
+                    )
+                      Download(:size="16")
+
                     //- Submit for Approval (Draft only)
                     button.p-2.text-blue-400.rounded-xl.transition-all(
                       v-if="p.status === 'DRAFT'"
@@ -362,12 +370,13 @@ import {
   approveProposal,
   rejectProposal,
   deleteProposal,
-  archiveProposal
+  archiveProposal,
+  downloadProposalPdf
 } from '~/composables/useProposals';
 import {
   FileText, Plus, Search, TrendingUp, Edit, Trash2, Eye, Percent, DollarSign,
   Folder, FolderOpen, FolderSearch, Archive, CheckCircle, XCircle, Clock,
-  AlertCircle, MoreHorizontal, SlidersHorizontal, Send
+  AlertCircle, MoreHorizontal, SlidersHorizontal, Send, Download
 } from 'lucide-vue-next';
 
 definePageMeta({ middleware: 'permissions' });
@@ -756,6 +765,10 @@ async function handleArchive(row: any) {
   } finally {
     actionLoading.value = false;
   }
+}
+
+async function handleDownloadPdf(row: any) {
+  await downloadProposalPdf(row.id, row.reference);
 }
 
 async function handleDelete(row: any) {

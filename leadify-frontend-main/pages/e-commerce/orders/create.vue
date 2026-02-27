@@ -36,7 +36,7 @@ div.animate-fade-in
               el-option(
                 v-for="c in clientOptions"
                 :key="c.id"
-                :label="c.name"
+                :label="c.clientName || c.name"
                 :value="c.id"
               )
         //- Selected client info
@@ -48,7 +48,7 @@ div.animate-fade-in
             .w-10.h-10.rounded-xl.flex.items-center.justify-center(style="background: rgba(120, 73, 255, 0.15)")
               Icon(name="ph:user-bold" size="18" style="color: #7849ff")
             div
-              p.text-sm.font-bold(style="color: var(--text-primary)") {{ selectedClient.name }}
+              p.text-sm.font-bold(style="color: var(--text-primary)") {{ selectedClient.clientName || selectedClient.name }}
               p.text-xs(style="color: var(--text-muted)") {{ selectedClient.email || selectedClient.phone || 'Client selected' }}
 
       //- Step 2: Add Items
@@ -153,7 +153,7 @@ div.animate-fade-in
         //- Client
         .mb-4(v-if="selectedClient")
           p.text-xs(style="color: var(--text-muted)") {{ $t('salesOrders.client') || 'Client' }}
-          p.text-sm.font-semibold(style="color: var(--text-primary)") {{ selectedClient.name }}
+          p.text-sm.font-semibold(style="color: var(--text-primary)") {{ selectedClient.clientName || selectedClient.name }}
 
         //- Items summary
         .mb-4(v-if="orderItems.length")
@@ -253,7 +253,7 @@ async function searchClients(query: string) {
   if (!query || query.length < 1) return;
   loadingClients.value = true;
   try {
-    const res = await useApiFetch(`client?search=${encodeURIComponent(query)}&limit=20`);
+    const res = await useApiFetch(`client?searchKey=${encodeURIComponent(query)}&limit=20`);
     if (res?.success && res.body) {
       const data = res.body as any;
       clientOptions.value = data?.docs || data?.rows || data || [];
@@ -274,7 +274,7 @@ async function searchProducts(query: string) {
   if (!query || query.length < 1) return;
   loadingProducts.value = true;
   try {
-    const result = await fetchProducts({ search: query, limit: '20' });
+    const result = await fetchProducts({ searchKey: query, limit: '20' });
     productOptions.value = result.docs;
   } catch {
     // silent

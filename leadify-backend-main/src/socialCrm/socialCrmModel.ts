@@ -1,6 +1,30 @@
 import { Table, Column, Model, DataType, ForeignKey, BelongsTo } from 'sequelize-typescript';
 import Client from '../client/clientModel';
 
+@Table({ tableName: 'mkt_social_posts', timestamps: true })
+export class SocialPost extends Model {
+  @Column({ primaryKey: true, type: DataType.INTEGER, autoIncrement: true })
+  public id!: number;
+
+  @Column({ type: DataType.TEXT, allowNull: false })
+  public content!: string;
+
+  @Column({ type: DataType.JSONB, allowNull: false, defaultValue: [] })
+  public platforms!: string[];
+
+  @Column({ type: DataType.DATEONLY, allowNull: true })
+  public scheduledDate?: string;
+
+  @Column({ type: DataType.STRING(10), allowNull: true })
+  public scheduledTime?: string;
+
+  @Column({ type: DataType.STRING(20), allowNull: false, defaultValue: 'SCHEDULED' })
+  public status!: 'SCHEDULED' | 'PUBLISHED' | 'DRAFT';
+
+  @Column({ type: DataType.STRING, allowNull: true })
+  public tenantId?: string;
+}
+
 @Table({ tableName: 'mkt_social_profiles', timestamps: true })
 export default class SocialProfile extends Model {
   @Column({ primaryKey: true, type: DataType.INTEGER, autoIncrement: true })

@@ -8,7 +8,7 @@
           <p class="text-slate-400 text-sm mt-1">Manage team workload, capacity, and resource allocation across projects.</p>
         </div>
         <div class="flex gap-2">
-          <el-date-picker v-model="selectedWeek" type="week" placeholder="Select week" format="[Week] ww" class="w-40" />
+          <el-date-picker v-model="selectedWeek" type="week" placeholder="Select week" format="[Week] ww" class="w-40" @change="handleWeekChange" />
           <el-button type="primary" class="!rounded-xl" @click="showAllocateDialog = true">
             <Icon name="ph:plus-bold" class="w-4 h-4 mr-2" />
             Allocate
@@ -43,7 +43,10 @@
 
     <!-- Workload Heatmap -->
     <div class="glass-panel p-6 rounded-2xl">
-      <h3 class="text-sm font-medium text-slate-300 mb-4">Weekly Workload Heatmap</h3>
+      <div class="flex items-center justify-between mb-4">
+        <h3 class="text-sm font-medium text-slate-300">Weekly Workload Heatmap</h3>
+        <span class="text-xs text-slate-500">{{ weekRangeLabel }}</span>
+      </div>
       <div v-if="loading" class="flex items-center justify-center py-12">
         <el-icon class="is-loading text-2xl text-blue-400 mr-2"><Loading /></el-icon>
         <span class="text-slate-400">Loading resources...</span>
@@ -53,7 +56,7 @@
           <thead>
             <tr>
               <th class="text-left p-2 text-xs text-slate-500 w-48">Resource</th>
-              <th v-for="day in weekDays" :key="day" class="text-center p-2 text-xs text-slate-500 w-24">{{ day }}</th>
+              <th v-for="(day, idx) in weekDayLabels" :key="idx" class="text-center p-2 text-xs text-slate-500 w-24">{{ day }}</th>
               <th class="text-center p-2 text-xs text-slate-500 w-24">Total</th>
               <th class="text-center p-2 text-xs text-slate-500 w-32">Utilization</th>
             </tr>
@@ -83,7 +86,7 @@
               </td>
               <td class="text-center p-2">
                 <el-progress
-                  :percentage="Math.round((res.weeklyHours.reduce((a: number, b: number) => a + b, 0) / (res.maxHoursPerDay * 5)) * 100)"
+                  :percentage="Math.min(Math.round((res.weeklyHours.reduce((a: number, b: number) => a + b, 0) / (res.maxHoursPerDay * 5)) * 100), 200)"
                   :stroke-width="6"
                   :color="getUtilColor(res)"
                   :show-text="true"
@@ -93,6 +96,12 @@
             </tr>
           </tbody>
         </table>
+
+        <!-- Empty resource state -->
+        <div v-if="!loading && resources.length === 0" class="text-center py-12">
+          <Icon name="ph:users-bold" class="w-12 h-12 text-slate-600 mx-auto mb-3" />
+          <p class="text-slate-500 text-sm">No team members found. Add employees in HR module first.</p>
+        </div>
       </div>
     </div>
 
@@ -101,7 +110,7 @@
       <!-- By Project -->
       <div class="glass-panel p-6 rounded-2xl">
         <h3 class="text-sm font-medium text-slate-300 mb-4">Allocation by Project</h3>
-        <div class="space-y-3">
+        <div v-if="projects.length" class="space-y-3">
           <div v-for="proj in projects" :key="proj.id" class="flex items-center gap-3">
             <div class="w-3 h-3 rounded-full" :style="{ backgroundColor: proj.color }"></div>
             <div class="flex-1">
@@ -109,16 +118,19 @@
                 <span class="text-sm text-slate-200">{{ proj.name }}</span>
                 <span class="text-xs text-slate-500">{{ proj.hours }}h / {{ proj.budget }}h</span>
               </div>
-              <el-progress :percentage="Math.round((proj.hours / proj.budget) * 100)" :stroke-width="4" :color="proj.color" :show-text="false" />
+              <el-progress :percentage="Math.min(Math.round((proj.hours / proj.budget) * 100), 100)" :stroke-width="4" :color="proj.color" :show-text="false" />
             </div>
           </div>
+        </div>
+        <div v-else class="text-center py-8">
+          <p class="text-slate-500 text-sm">No projects with allocations.</p>
         </div>
       </div>
 
       <!-- Skill Matrix -->
       <div class="glass-panel p-6 rounded-2xl">
         <h3 class="text-sm font-medium text-slate-300 mb-4">Skill Availability</h3>
-        <div class="space-y-3">
+        <div v-if="skills.length" class="space-y-3">
           <div v-for="skill in skills" :key="skill.name" class="flex items-center justify-between p-3 rounded-lg bg-slate-800/30">
             <div>
               <div class="text-sm text-slate-200">{{ skill.name }}</div>
@@ -132,25 +144,28 @@
             </div>
           </div>
         </div>
+        <div v-else class="text-center py-8">
+          <p class="text-slate-500 text-sm">No skill data available.</p>
+        </div>
       </div>
     </div>
 
     <!-- Allocate Dialog -->
-    <el-dialog v-model="showAllocateDialog" title="Allocate Resource" width="500px">
+    <el-dialog v-model="showAllocateDialog" title="Allocate Resource" width="500px" :close-on-click-modal="false">
       <el-form label-position="top">
         <el-form-item label="Resource">
-          <el-select v-model="newAlloc.resourceId" class="w-full" filterable>
+          <el-select v-model="newAlloc.resourceId" class="w-full" filterable placeholder="Select team member">
             <el-option v-for="r in resources" :key="r.id" :label="r.name" :value="r.id" />
           </el-select>
         </el-form-item>
         <el-form-item label="Project">
-          <el-select v-model="newAlloc.projectId" class="w-full">
+          <el-select v-model="newAlloc.projectId" class="w-full" filterable placeholder="Select project">
             <el-option v-for="p in projects" :key="p.id" :label="p.name" :value="p.id" />
           </el-select>
         </el-form-item>
         <div class="grid grid-cols-2 gap-4">
           <el-form-item label="Hours per Day">
-            <el-input-number v-model="newAlloc.hoursPerDay" :min="1" :max="8" class="!w-full" />
+            <el-input-number v-model="newAlloc.hoursPerDay" :min="1" :max="12" class="!w-full" />
           </el-form-item>
           <el-form-item label="Duration">
             <el-select v-model="newAlloc.duration" class="w-full">
@@ -167,6 +182,35 @@
         <el-button type="primary" :loading="allocating" @click="allocateResource">Allocate</el-button>
       </template>
     </el-dialog>
+
+    <!-- Edit Day Allocation Dialog -->
+    <el-dialog v-model="showDayEditDialog" title="Edit Day Allocation" width="400px" :close-on-click-modal="false">
+      <div v-if="editingDay.resource" class="space-y-4">
+        <div class="flex items-center gap-3 p-3 rounded-lg bg-slate-800/30">
+          <el-avatar :size="32" class="bg-slate-700">{{ editingDay.resource?.name.charAt(0) }}</el-avatar>
+          <div>
+            <div class="text-sm font-medium text-slate-200">{{ editingDay.resource?.name }}</div>
+            <div class="text-xs text-slate-500">{{ weekDayLabels[editingDay.dayIndex] }}</div>
+          </div>
+        </div>
+        <el-form label-position="top">
+          <el-form-item label="Hours">
+            <el-input-number v-model="editingDay.hours" :min="0" :max="16" :step="0.5" class="!w-full" />
+          </el-form-item>
+        </el-form>
+        <div class="flex items-center gap-2 text-xs">
+          <span class="text-slate-500">Capacity:</span>
+          <span :class="editingDay.hours > (editingDay.resource?.maxHoursPerDay || 8) ? 'text-red-400' : 'text-emerald-400'">
+            {{ editingDay.hours }}h / {{ editingDay.resource?.maxHoursPerDay || 8 }}h
+          </span>
+          <span v-if="editingDay.hours > (editingDay.resource?.maxHoursPerDay || 8)" class="text-red-400 font-medium">(Over-allocated)</span>
+        </div>
+      </div>
+      <template #footer>
+        <el-button @click="showDayEditDialog = false">Cancel</el-button>
+        <el-button type="primary" @click="applyDayEdit">Apply</el-button>
+      </template>
+    </el-dialog>
   </div>
 </template>
 
@@ -181,11 +225,12 @@ definePageMeta({
   middleware: 'permissions'
 });
 
-// ──────────────────────────────────────────────────
+// --------------------------------------------------
 // Reactive state
-// ──────────────────────────────────────────────────
-const selectedWeek = ref('');
+// --------------------------------------------------
+const selectedWeek = ref<Date | string>(new Date());
 const showAllocateDialog = ref(false);
+const showDayEditDialog = ref(false);
 const loading = ref(false);
 const allocating = ref(false);
 const newAlloc = ref({ resourceId: '', projectId: '', hoursPerDay: 4, duration: '1w' });
@@ -227,9 +272,60 @@ const resources = ref<Resource[]>([]);
 const projects = ref<ProjectAllocation[]>([]);
 const rawAllocations = ref<RawAllocation[]>([]);
 
-// ──────────────────────────────────────────────────
+// Day edit state
+const editingDay = ref<{
+  resource: Resource | null;
+  dayIndex: number;
+  hours: number;
+}>({
+  resource: null,
+  dayIndex: 0,
+  hours: 0
+});
+
+// --------------------------------------------------
+// Week helpers
+// --------------------------------------------------
+
+function getWeekStart(d: Date): Date {
+  const date = new Date(d);
+  const day = date.getDay();
+  // Monday = 1, Sunday = 0
+  const diff = day === 0 ? -6 : 1 - day;
+  date.setDate(date.getDate() + diff);
+  date.setHours(0, 0, 0, 0);
+  return date;
+}
+
+const weekStartDate = computed(() => {
+  const d = selectedWeek.value instanceof Date ? selectedWeek.value : new Date(selectedWeek.value || Date.now());
+  return getWeekStart(d);
+});
+
+const weekDayLabels = computed(() => {
+  const start = weekStartDate.value;
+  return weekDays.map((name, i) => {
+    const d = new Date(start);
+    d.setDate(d.getDate() + i);
+    return `${name} ${d.getDate()}/${d.getMonth() + 1}`;
+  });
+});
+
+const weekRangeLabel = computed(() => {
+  const start = weekStartDate.value;
+  const end = new Date(start);
+  end.setDate(end.getDate() + 4);
+  const fmt = (d: Date) => `${d.getDate()}/${d.getMonth() + 1}`;
+  return `${fmt(start)} - ${fmt(end)}`;
+});
+
+function handleWeekChange() {
+  fetchData();
+}
+
+// --------------------------------------------------
 // Computed: skills derived from employee positions
-// ──────────────────────────────────────────────────
+// --------------------------------------------------
 const skills = computed(() => {
   // Group resources by role/jobTitle
   const roleMap = new Map<string, { people: number; allocated: number }>();
@@ -253,17 +349,17 @@ const skills = computed(() => {
   }));
 });
 
-// ──────────────────────────────────────────────────
+// --------------------------------------------------
 // Computed: KPI metrics
-// ──────────────────────────────────────────────────
+// --------------------------------------------------
 const availableCapacity = computed(() => resources.value.length * 40);
 const allocatedHours = computed(() => resources.value.reduce((s, r) => s + r.weeklyHours.reduce((a: number, b: number) => a + b, 0), 0));
 const utilizationRate = computed(() => availableCapacity.value > 0 ? Math.round((allocatedHours.value / availableCapacity.value) * 100) : 0);
 const overallocated = computed(() => resources.value.filter(r => r.weeklyHours.some((h: number) => h > r.maxHoursPerDay)).length);
 
-// ──────────────────────────────────────────────────
+// --------------------------------------------------
 // Data fetching
-// ──────────────────────────────────────────────────
+// --------------------------------------------------
 
 /**
  * Convert estimatedWorkDays into a 5-day weekly hours distribution.
@@ -295,20 +391,18 @@ async function fetchData() {
       useApiFetch('project-manpower?limit=1000')
     ]);
 
-    // ── Process employees → resources ──
+    // -- Process employees -> resources --
     const employeeList: any[] = employeesRes?.success
       ? (employeesRes.body?.docs || employeesRes.body || [])
       : [];
 
-    // ── Process allocations ──
+    // -- Process allocations --
     const allocationList: RawAllocation[] = allocationsRes?.success
       ? (allocationsRes.body?.docs || allocationsRes.body || [])
       : [];
     rawAllocations.value = allocationList;
 
-    // Build a map: employeeId → aggregated weeklyHours
-    // Note: project-manpower uses manpowerId which may reference the Manpower table.
-    // We also index by employee id so if there's overlap it gets picked up.
+    // Build a map: employeeId -> aggregated weeklyHours
     const employeeHoursMap = new Map<string, number[]>();
     for (const alloc of allocationList) {
       const empId = alloc.manpowerId;
@@ -331,12 +425,12 @@ async function fetchData() {
       };
     });
 
-    // ── Process projects ──
+    // -- Process projects --
     const projectList: any[] = projectsRes?.success
       ? (projectsRes.body?.docs || projectsRes.body || [])
       : [];
 
-    // Build a map: projectId → total allocated hours from project-manpower
+    // Build a map: projectId -> total allocated hours from project-manpower
     const projectHoursMap = new Map<string, number>();
     for (const alloc of allocationList) {
       const pid = alloc.projectId;
@@ -346,8 +440,7 @@ async function fetchData() {
     }
 
     projects.value = projectList.map((proj: any, index: number) => {
-      // Budget hours: use resourceCount * duration (days) * 8, or fallback to a reasonable default
-      // The project model has `duration` (float, days) and `resourceCount`.
+      // Budget hours: use resourceCount * duration (days) * 8, or fallback
       const budgetHours = (proj.resourceCount || 1) * (proj.duration || 20) * 8;
       const allocatedProjectHours = projectHoursMap.get(proj.id) || 0;
       return {
@@ -355,7 +448,7 @@ async function fetchData() {
         name: proj.name || 'Untitled Project',
         hours: allocatedProjectHours,
         budget: budgetHours || 160,
-        color: PROJECT_COLORS[index % PROJECT_COLORS.length]
+        color: PROJECT_COLORS[index % PROJECT_COLORS.length]!
       };
     });
   } catch (err) {
@@ -366,9 +459,9 @@ async function fetchData() {
   }
 }
 
-// ──────────────────────────────────────────────────
+// --------------------------------------------------
 // Heatmap & utility helpers
-// ──────────────────────────────────────────────────
+// --------------------------------------------------
 const getHeatmapClass = (hours: number, max: number) => {
   const ratio = hours / max;
   if (ratio === 0) return 'bg-slate-800/30 text-slate-600';
@@ -393,16 +486,35 @@ const getUtilColor = (res: any) => {
   return '#10B981';
 };
 
-const editDayAllocation = (res: any, dayIdx: number) => {
-  ElMessage.info(`Editing ${res.name}'s ${weekDays[dayIdx]} allocation`);
-};
+// --------------------------------------------------
+// Edit day allocation (inline dialog)
+// --------------------------------------------------
 
-// ──────────────────────────────────────────────────
-// Allocate resource → POST /api/project-manpower
-// ──────────────────────────────────────────────────
+function editDayAllocation(res: Resource, dayIdx: number) {
+  editingDay.value = {
+    resource: res,
+    dayIndex: dayIdx,
+    hours: res.weeklyHours[dayIdx] || 0
+  };
+  showDayEditDialog.value = true;
+}
+
+function applyDayEdit() {
+  if (!editingDay.value.resource) return;
+  const res = resources.value.find(r => r.id === editingDay.value.resource!.id);
+  if (res) {
+    res.weeklyHours[editingDay.value.dayIndex] = editingDay.value.hours;
+  }
+  showDayEditDialog.value = false;
+  ElMessage.success('Day allocation updated locally');
+}
+
+// --------------------------------------------------
+// Allocate resource -> POST /api/project-manpower
+// --------------------------------------------------
 
 /** Map duration select value to estimated work days */
-function durationToWorkDays(duration: string, hoursPerDay: number): number {
+function durationToWorkDays(duration: string): number {
   const daysPerWeek = 5;
   switch (duration) {
     case '1w': return daysPerWeek;
@@ -423,7 +535,7 @@ const allocateResource = async () => {
 
   allocating.value = true;
   try {
-    const estimatedWorkDays = durationToWorkDays(duration, hoursPerDay);
+    const estimatedWorkDays = durationToWorkDays(duration);
 
     const res = await useApiFetch('project-manpower', 'POST', {
       projectId,
@@ -451,9 +563,9 @@ const allocateResource = async () => {
   }
 };
 
-// ──────────────────────────────────────────────────
+// --------------------------------------------------
 // Lifecycle
-// ──────────────────────────────────────────────────
+// --------------------------------------------------
 onMounted(() => {
   fetchData();
 });

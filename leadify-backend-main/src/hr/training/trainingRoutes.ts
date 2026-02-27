@@ -7,6 +7,7 @@ const router = express.Router();
 
 // Programs
 router.get('/programs', authenticateUser, HasPermission([TrainingPermissionsEnum.VIEW_TRAINING]), controller.getPrograms);
+router.get('/programs/:id', authenticateUser, HasPermission([TrainingPermissionsEnum.VIEW_TRAINING]), controller.getProgramById);
 router.post('/programs', authenticateUser, HasPermission([TrainingPermissionsEnum.CREATE_TRAINING]), controller.createProgram);
 router.put('/programs/:id', authenticateUser, HasPermission([TrainingPermissionsEnum.EDIT_TRAINING]), controller.updateProgram);
 router.delete('/programs/:id', authenticateUser, HasPermission([TrainingPermissionsEnum.DELETE_TRAINING]), controller.deleteProgram);

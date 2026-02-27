@@ -614,6 +614,41 @@ router.get(
 
 /**
  * @swagger
+ * /api/proposal/{id}/pdf:
+ *   get:
+ *     summary: Generate and download proposal as PDF
+ *     tags: [Proposal]
+ *     security:
+ *       - bearerAuth: []
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         schema:
+ *           type: string
+ *         description: The ID of the proposal
+ *     responses:
+ *       200:
+ *         description: PDF file download
+ *         content:
+ *           application/pdf:
+ *             schema:
+ *               type: string
+ *               format: binary
+ *       623:
+ *         description: Proposal not found
+ *       500:
+ *         description: Internal server error
+ */
+router.get(
+  '/:id/pdf',
+  authenticateUser,
+  HasPermission([ProposalPermissionsEnum.VIEW_OWN_PROPOSALS, ProposalPermissionsEnum.VIEW_GLOBAL_PROPOSALS]),
+  proposalController.generatePdf
+);
+
+/**
+ * @swagger
  * /api/proposal/{id}:
  *   get:
  *     summary: Get a single proposal by ID

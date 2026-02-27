@@ -38,6 +38,7 @@ div
         v-loading="loading"
         style="width: 100%"
         stripe
+        @row-click="navigateToSurvey"
       )
         el-table-column(:label="$t('marketing.surveys.surveyTitle') || 'Title'" prop="title" min-width="240" sortable)
           template(#default="{ row }")
@@ -241,6 +242,7 @@ definePageMeta({ middleware: 'permissions' });
 
 const { $i18n } = useNuxtApp();
 const t = $i18n.t;
+const router = useRouter();
 
 const loading = ref(false);
 const saving = ref(false);
@@ -308,6 +310,10 @@ const filteredData = computed(() => {
     (i.description || '').toLowerCase().includes(q)
   );
 });
+
+function navigateToSurvey(row: any) {
+  if (row?.id) router.push(`/marketing/surveys/${row.id}`);
+}
 
 function getStatusType(status: string): string {
   const map: Record<string, string> = {

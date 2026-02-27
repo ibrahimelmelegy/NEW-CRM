@@ -44,8 +44,10 @@ div
 <script setup lang="ts">
 import { Plus } from '@element-plus/icons-vue';
 import { ElNotification } from 'element-plus';
-import { fetchOpportunityKanban, updateOpportunityStage, getStageColor, fetchPipelineStages } from '@/composables/useKanban';
-import type { KanbanCard, PipelineStage } from '@/composables/useKanban';
+import { fetchOpportunityKanban, updateOpportunityStage, getStageColor } from '@/composables/useKanban';
+import { fetchPipelineStages } from '@/composables/usePipelineConfig';
+import type { KanbanCard } from '@/composables/useKanban';
+import type { PipelineStage } from '@/composables/usePipelineConfig';
 
 const router = useRouter();
 const { hasPermission } = await usePermissions();
