@@ -1,108 +1,350 @@
 <template lang="pug">
-.p-6.animate-entrance
-  PremiumPageHeader(
-    title="Proposals"
-    description="Manage all your business proposals"
-    icon="ph:file-text-bold"
-    primaryColor="#7c3aed"
-  )
-    template(#actions)
-      NuxtLink(to="/sales/proposals/create")
-        el-button(size="large" type="primary" class="!rounded-2xl" style="background: var(--bg-obsidian); border: none;")
-          Icon(name="ph:plus" size="18" style="margin-right: 6px;")
-          | New Proposal
-
-  //- KPI Cards
-  PremiumKPICards(:metrics="kpiMetrics")
-
-  //- Filters
-  .glass-card.p-4.rounded-2xl.mb-4
-    .flex.items-center.gap-4
-      el-input(
-        v-model="searchKey"
-        placeholder="Search proposals..."
-        size="large"
-        class="!rounded-xl max-w-xs"
-        clearable
-        @input="debouncedFetch"
+.p-8.w-full.mx-auto.space-y-8.font-sans.animate-entrance
+  //- Header
+  .flex.flex-col.md_flex-row.justify-between.items-start.md_items-center.gap-4
+    div
+      h2.text-2xl.font-extrabold.text-gray-900.tracking-tight Proposals Dashboard
+      p.text-gray-500.mt-1.font-medium.text-sm Manage, track, and analyze your sales proposals.
+    NuxtLink(to="/sales/proposals/create")
+      button.bg-gray-900.text-white.px-6.py-3.rounded-2xl.flex.items-center.gap-2.font-bold.transition-all.shadow-xl.shadow-gray-200(
+        class="hover:bg-black hover:-translate-y-1 active:scale-95"
       )
-        template(#prefix)
-          Icon(name="ph:magnifying-glass" size="18")
+        Plus(:size="18")
+        | New Proposal
 
-      el-select(v-model="statusFilter" placeholder="All Statuses" size="large" class="w-48" clearable @change="fetchProposals")
-        el-option(label="All Statuses" value="")
-        el-option(v-for="s in statusOptions" :key="s.value" :label="s.label" :value="s.value")
+  .flex.flex-col.lg_flex-row.gap-8.items-start
+    //- Main content
+    .flex-1.w-full.space-y-8
 
-      el-select(v-model="typeFilter" placeholder="All Types" size="large" class="w-44" clearable @change="fetchProposals")
-        el-option(label="All Types" value="")
-        el-option(label="Financial" value="FINANCIAL")
-        el-option(label="Technical" value="TECHNICAL")
-        el-option(label="Mixed" value="MIXED")
+      //- KPI Cards
+      .grid.grid-cols-1.md_grid-cols-3.gap-6
 
-      .ml-auto
-        el-button(size="large" class="!rounded-xl" @click="fetchProposals")
-          Icon(name="ph:arrows-clockwise" size="16" style="margin-right: 6px;")
-          | Refresh
+        //- Pipeline Value Card
+        .md_col-span-1.rounded-2xl.p-8.text-white.shadow-xl.shadow-violet-200.relative.overflow-hidden.group.transition-transform.duration-300(
+          class="bg-gradient-to-br from-violet-600 to-indigo-700 hover:scale-[1.02]"
+          style="border-radius: 2rem;"
+        )
+          .absolute.top-0.right-0.p-6.opacity-10.transition-opacity(class="group-hover:opacity-20")
+            DollarSign(:size="80")
+          .relative.z-10
+            p.text-violet-100.font-bold.text-xs.uppercase.tracking-wider.mb-2 Total Pipeline Value
+            h3.text-4xl.font-extrabold.mb-4
+              | {{ stats.pipelineValue.toLocaleString() }}
+              span.text-xl.opacity-70.font-medium.ml-1 SAR
+            .flex.items-center.gap-2.text-xs.w-fit.px-3.py-1_5.rounded-xl.font-medium(
+              class="bg-white/20 backdrop-blur-md border border-white/10"
+            )
+              TrendingUp(:size="14")
+              span Active Opportunities
 
-  //- Table
-  .glass-card.rounded-2xl.overflow-hidden
-    el-table(:data="proposals" v-loading="loading" stripe style="width: 100%;" @sort-change="handleSortChange")
-      el-table-column(prop="reference" label="Reference" width="160" sortable="custom")
-        template(#default="{ row }")
-          span.font-mono.font-bold.text-sm {{ row.reference || '—' }}
+        //- Win Rate Card
+        .bg-white.p-8.border.border-gray-100.shadow-sm.relative.overflow-hidden.group.transition-shadow(
+          class="hover:shadow-md"
+          style="border-radius: 2rem;"
+        )
+          .absolute.right-0.top-0.p-6.opacity-5.transition-opacity(class="group-hover:opacity-10")
+            Percent(:size="64")
+          p.text-gray-400.text-xs.font-bold.uppercase.tracking-wider.mb-2 Win Rate
+          h3.text-4xl.font-extrabold.text-gray-900 {{ stats.winRate.toFixed(1) }}%
+          .mt-6.w-full.bg-gray-100.rounded-full.h-2.overflow-hidden
+            .bg-emerald-500.h-full.rounded-full.transition-all.duration-1000.ease-out(
+              :style="{ width: `${stats.winRate}%` }"
+            )
+          p.text-xs.text-gray-400.mt-2.font-medium Based on approved vs rejected
 
-      el-table-column(prop="title" label="Title" min-width="200" sortable="custom")
-        template(#default="{ row }")
-          NuxtLink(:to="`/sales/proposals/${row.id}`" class="font-bold hover:text-purple-600 transition-colors")
-            | {{ row.title }}
+        //- Action Needed Card
+        .bg-white.p-8.border.border-gray-100.shadow-sm.relative.overflow-hidden.group.transition-shadow(
+          class="hover:shadow-md"
+          style="border-radius: 2rem;"
+        )
+          .absolute.right-0.top-0.p-6.opacity-5.transition-opacity(class="group-hover:opacity-10")
+            Clock(:size="64")
+          p.text-gray-400.text-xs.font-bold.uppercase.tracking-wider.mb-2 Action Needed
+          h3.text-4xl.font-extrabold.text-amber-500 {{ stats.counts.pending }}
+          p.text-gray-900.font-bold.mt-1 Pending Proposals
+          .mt-4.flex.items-center.gap-2.text-xs.text-amber-600.bg-amber-50.w-fit.px-3.py-1_5.rounded-xl.font-bold
+            AlertCircle(:size="14")
+            span In Review
 
-      el-table-column(prop="proposalFor" label="Client" min-width="160")
-        template(#default="{ row }")
-          span {{ row.proposalFor || '—' }}
-
-      el-table-column(prop="type" label="Type" width="120" sortable="custom")
-        template(#default="{ row }")
-          el-tag(size="small" :type="typeTagColor(row.type)" effect="plain" round) {{ row.type }}
-
-      el-table-column(prop="status" label="Status" width="160" sortable="custom")
-        template(#default="{ row }")
-          el-tag(size="small" :type="statusTagType(row.status)" effect="dark" round) {{ formatStatus(row.status) }}
-
-      el-table-column(prop="createdAt" label="Created" width="130" sortable="custom")
-        template(#default="{ row }")
-          span.text-sm {{ formatDate(row.createdAt) }}
-
-      el-table-column(label="Actions" width="200" fixed="right")
-        template(#default="{ row }")
-          .flex.items-center.gap-1
-            el-tooltip(content="View / Edit" placement="top")
-              el-button(size="small" circle @click="navigateTo(`/sales/proposals/${row.id}`)")
-                Icon(name="ph:eye" size="14")
-            el-tooltip(v-if="row.status === 'DRAFT'" content="Submit for Approval" placement="top")
-              el-button(size="small" circle type="primary" @click="handleSubmitForApproval(row)")
-                Icon(name="ph:paper-plane-tilt" size="14")
-            el-tooltip(v-if="row.status === 'WAITING_APPROVAL'" content="Approve" placement="top")
-              el-button(size="small" circle type="success" @click="handleApprove(row)")
-                Icon(name="ph:check" size="14")
-            el-tooltip(v-if="row.status === 'WAITING_APPROVAL'" content="Reject" placement="top")
-              el-button(size="small" circle type="danger" @click="openRejectDialog(row)")
-                Icon(name="ph:x" size="14")
-            el-tooltip(content="Delete" placement="top")
-              el-button(size="small" circle type="danger" plain @click="handleDelete(row)")
-                Icon(name="ph:trash" size="14")
-
-    //- Pagination
-    .flex.justify-between.items-center.p-4.border-t(style="border-color: var(--border-default);")
-      span.text-sm(style="color: var(--text-muted)") Showing {{ proposals.length }} of {{ totalItems }} proposals
-      el-pagination(
-        v-model:current-page="currentPage"
-        v-model:page-size="pageSize"
-        :total="totalItems"
-        :page-sizes="[10, 20, 50]"
-        layout="sizes, prev, pager, next"
-        @current-change="fetchProposals"
-        @size-change="fetchProposals"
+      //- Table Section
+      .bg-white.shadow-sm.border.border-gray-100.overflow-hidden(
+        style="border-radius: 2rem; min-width: 0;"
       )
+        //- Status tabs + Search
+        .p-6.border-b.border-gray-100.flex.flex-col.md_flex-row.justify-between.items-center.gap-4.bg-white
+
+          //- Status Tabs
+          .flex.p-1.rounded-xl.overflow-x-auto.max-w-full.no-scrollbar(
+            class="bg-gray-100/80"
+          )
+            button(
+              v-for="status in statusTabs"
+              :key="status"
+              @click="statusFilter = status"
+              :class="[\
+                'px-4 py-2 rounded-lg text-xs font-bold transition-all whitespace-nowrap',\
+                statusFilter === status\
+                  ? 'bg-white text-gray-900 shadow-sm'\
+                  : 'text-gray-500 hover:text-gray-700 hover:bg-gray-200/50'\
+              ]"
+            ) {{ status }}
+
+          //- Search
+          .flex.gap-3.items-center.w-full(class="md:w-auto")
+            .relative.flex-1(class="md:flex-initial")
+              Search.absolute.left-3.top-1_x2f_2.transform.-translate-y-1_x2f_2.text-gray-400(:size="16")
+              input.pl-10.pr-4.py-2_5.border.border-gray-200.rounded-xl.text-sm.w-full.transition-all.font-medium(
+                type="text"
+                placeholder="Search title, client, ref..."
+                v-model="searchTerm"
+                class="focus:outline-none focus:ring-2 focus:ring-violet-500 md:w-64 bg-gray-50/50 focus:bg-white"
+              )
+            button.p-2_5.text-gray-500.rounded-xl.border.border-gray-200.bg-white.transition-colors(
+              class="hover:bg-gray-100"
+            )
+              SlidersHorizontal(:size="18")
+
+        //- Data Table
+        .overflow-x-auto
+          table.w-full.text-left(v-loading="loading")
+            thead.border-b.border-gray-100(class="bg-gray-50/50")
+              tr
+                th.px-8.py-5.text-xs.font-bold.text-gray-400.uppercase.tracking-wider Proposal Details
+                th.px-6.py-5.text-xs.font-bold.text-gray-400.uppercase.tracking-wider Value
+                th.px-6.py-5.text-xs.font-bold.text-gray-400.uppercase.tracking-wider Status
+                th.px-6.py-5.text-xs.font-bold.text-gray-400.uppercase.tracking-wider Date
+                th.px-8.py-5.text-right.text-xs.font-bold.text-gray-400.uppercase.tracking-wider Actions
+            tbody.divide-y.divide-gray-50
+              tr(
+                v-for="p in paginatedProposals"
+                :key="p.id"
+                class="hover:bg-gray-50/80 transition-colors group cursor-default"
+              )
+                //- Proposal Details
+                td.px-8.py-5
+                  .flex.items-center.gap-4
+                    .w-10.h-10.rounded-2xl.bg-white.border.border-gray-100.flex.items-center.justify-center.text-violet-600.shadow-sm.flex-shrink-0.transition-transform(
+                      class="group-hover:scale-110"
+                    )
+                      FileText(:size="18")
+                    .min-w-0
+                      p.font-bold.text-gray-900.text-sm.truncate {{ p.title }}
+                      p.text-xs.text-gray-500.truncate.font-medium
+                        | {{ p.proposalFor || p.clientCompany || '—' }} &bull;
+                        span.font-mono.text-gray-400.ml-1 {{ p.reference || p.refNumber || '—' }}
+
+                //- Value
+                td.px-6.py-5
+                  span.font-extrabold.text-gray-900.text-sm.whitespace-nowrap.block {{ computeTotal(p).toLocaleString() }} {{ p.currency || 'SAR' }}
+
+                //- Status
+                td.px-6.py-5
+                  span.px-3.py-1_5.rounded-lg.text-xs.font-bold.border.whitespace-nowrap(
+                    :class="getStatusColor(mapStatus(p.status))"
+                    style="font-size: 11px;"
+                  ) {{ getDisplayStatus(mapStatus(p.status)) }}
+
+                //- Date
+                td.px-6.py-5.text-xs.text-gray-500.font-medium.whitespace-nowrap {{ formatDate(p.createdAt || p.date) }}
+
+                //- Actions
+                td.px-8.py-5.text-right
+                  .flex.justify-end.gap-2.opacity-0.transition-opacity(class="group-hover:opacity-100")
+                    button.p-2.text-gray-400.rounded-xl.transition-all(
+                      class="hover:text-blue-600 hover:bg-blue-50"
+                      title="View"
+                      @click="navigateTo(`/sales/proposals/${p.id}`)"
+                    )
+                      Eye(:size="16")
+
+                    //- Submit for Approval (Draft only)
+                    button.p-2.text-blue-400.rounded-xl.transition-all(
+                      v-if="p.status === 'DRAFT'"
+                      class="hover:text-blue-600 hover:bg-blue-50"
+                      title="Submit for Approval"
+                      @click="handleSubmitForApproval(p)"
+                    )
+                      Send(:size="16")
+
+                    //- Approve (Waiting Approval only)
+                    button.p-2.text-emerald-400.rounded-xl.transition-all(
+                      v-if="p.status === 'WAITING_APPROVAL'"
+                      class="hover:text-emerald-600 hover:bg-emerald-50"
+                      title="Approve"
+                      @click="handleApprove(p)"
+                    )
+                      CheckCircle(:size="16")
+
+                    //- Reject (Waiting Approval only)
+                    button.p-2.text-red-400.rounded-xl.transition-all(
+                      v-if="p.status === 'WAITING_APPROVAL'"
+                      class="hover:text-red-600 hover:bg-red-50"
+                      title="Reject"
+                      @click="openRejectDialog(p)"
+                    )
+                      XCircle(:size="16")
+
+                    //- Edit
+                    button.p-2.text-gray-400.rounded-xl.transition-all(
+                      class="hover:text-violet-600 hover:bg-violet-50"
+                      title="Edit"
+                      @click="navigateTo(`/sales/proposals/${p.id}`)"
+                    )
+                      Edit(:size="16")
+
+                    //- Archive / Unarchive
+                    button.p-2.rounded-xl.transition-all(
+                      v-if="p.status !== 'ARCHIVED'"
+                      class="text-gray-400 hover:text-amber-600 hover:bg-amber-50"
+                      title="Archive"
+                      @click="handleArchive(p)"
+                    )
+                      Archive(:size="16")
+                    button.p-2.rounded-xl.transition-all(
+                      v-else
+                      class="text-amber-600 hover:text-amber-800 hover:bg-amber-50"
+                      title="Unarchive"
+                      @click="handleArchive(p)"
+                    )
+                      Archive(:size="16")
+
+                    //- Delete
+                    button.p-2.text-gray-400.rounded-xl.transition-all(
+                      class="hover:text-red-600 hover:bg-red-50"
+                      title="Delete"
+                      @click="handleDelete(p)"
+                    )
+                      Trash2(:size="16")
+
+          //- Empty state
+          .p-20.text-center.flex.flex-col.items-center(v-if="filteredProposals.length === 0 && !loading")
+            .bg-gray-50.p-6.rounded-full.mb-4
+              FolderSearch(:size="32" class="text-gray-300")
+            h3.text-gray-900.font-bold.mb-1 No proposals found
+            p.text-gray-500.text-sm Try adjusting your filters or search terms.
+
+        //- Pagination
+        .flex.justify-between.items-center.p-6.border-t.border-gray-100(v-if="filteredProposals.length > 0")
+          span.text-sm.text-gray-400.font-medium
+            | Showing {{ paginationStart }}–{{ paginationEnd }} of {{ filteredProposals.length }} proposals
+          .flex.items-center.gap-2
+            button.px-3.py-1_5.rounded-lg.text-xs.font-bold.border.border-gray-200.transition-colors(
+              :disabled="currentPage === 1"
+              :class="currentPage === 1 ? 'text-gray-300 cursor-not-allowed' : 'text-gray-600 hover:bg-gray-50'"
+              @click="currentPage = currentPage - 1"
+            ) Previous
+            template(v-for="page in visiblePages" :key="page")
+              button.w-8.h-8.rounded-lg.text-xs.font-bold.transition-colors(
+                v-if="page !== '...'"
+                :class="currentPage === page ? 'bg-gray-900 text-white' : 'text-gray-500 hover:bg-gray-100'"
+                @click="currentPage = Number(page)"
+              ) {{ page }}
+              span.w-8.h-8.flex.items-center.justify-center.text-gray-400.text-xs(v-else) ...
+            button.px-3.py-1_5.rounded-lg.text-xs.font-bold.border.border-gray-200.transition-colors(
+              :disabled="currentPage === totalPages"
+              :class="currentPage === totalPages ? 'text-gray-300 cursor-not-allowed' : 'text-gray-600 hover:bg-gray-50'"
+              @click="currentPage = currentPage + 1"
+            ) Next
+
+    //- Sidebar
+    .w-full.lg_w-80.space-y-8.flex-shrink-0
+
+      //- Pipeline Distribution Chart
+      .bg-white.p-6.border.border-gray-100.shadow-sm.relative.overflow-hidden(
+        style="border-radius: 2rem;"
+      )
+        .flex.justify-between.items-center.mb-6
+          h3.text-sm.font-bold.text-gray-900 Pipeline Distribution
+          button.text-gray-400(class="hover:text-gray-600")
+            MoreHorizontal(:size="16")
+
+        //- CSS Donut Chart
+        .h-56.w-full.relative.flex.items-center.justify-center
+          svg.w-44.h-44(viewBox="0 0 160 160")
+            circle(
+              v-for="(seg, idx) in chartSegments"
+              :key="idx"
+              cx="80" cy="80" r="60"
+              fill="none"
+              :stroke="seg.color"
+              stroke-width="20"
+              :stroke-dasharray="seg.dashArray"
+              :stroke-dashoffset="seg.dashOffset"
+              stroke-linecap="round"
+              :class="['transition-all duration-700 ease-out cursor-pointer', `hover:opacity-80`]"
+              @mouseenter="hoveredSegment = idx"
+              @mouseleave="hoveredSegment = null"
+            )
+          //- Center label
+          .absolute.top-1_x2f_2.left-1_x2f_2.transform.-translate-x-1_x2f_2.-translate-y-1_x2f_2.text-center
+            span.block.text-3xl.font-extrabold.text-gray-900 {{ stats.total }}
+            span.text-gray-400.font-bold.uppercase.tracking-wider(style="font-size: 10px;") Total
+
+        //- Tooltip
+        .absolute.bg-white.p-3.rounded-xl.shadow-xl.border.border-gray-100.text-xs.z-50.pointer-events-none.transition-opacity.duration-200(
+          v-if="hoveredSegment !== null && stats.statusDist[hoveredSegment]"
+          :style="{ top: '60px', left: '50%', transform: 'translateX(-50%)' }"
+        )
+          p.font-bold.text-gray-900 {{ stats.statusDist[hoveredSegment].name }}
+          p.text-gray-500 {{ stats.statusDist[hoveredSegment].value }} Proposals
+
+        //- Legend
+        .space-y-3.mt-4
+          .flex.justify-between.items-center.text-xs.font-medium(
+            v-for="(s, idx) in stats.statusDist"
+            :key="s.name"
+          )
+            .flex.items-center.gap-2
+              .w-2_5.h-2_5.rounded-full(:style="{ backgroundColor: CHART_COLORS[idx % CHART_COLORS.length] }")
+              span.text-gray-600 {{ s.displayName }}
+            span.font-bold.text-gray-900 {{ s.value }}
+
+      //- Archive Tree
+      .bg-white.border.border-gray-100.shadow-sm.p-6.max-h-125.overflow-y-auto.custom-scrollbar(
+        style="border-radius: 2rem;"
+      )
+        .flex.items-center.justify-between.mb-6.pb-4.border-b.border-gray-100
+          .flex.items-center.gap-2.text-gray-900.font-bold.text-sm
+            .p-1_5.bg-violet-50.text-violet-600.rounded-lg
+              FolderOpen(:size="16")
+            h3 Archive
+          button.font-bold.text-violet-600.px-2.py-1.rounded.transition-colors(
+            style="font-size: 10px;"
+            class="hover:bg-violet-50"
+            @click="resetArchiveFilter"
+          ) Reset
+
+        .space-y-1
+          template(v-if="Object.keys(archiveTree).length > 0")
+            .space-y-1(v-for="year in Object.keys(archiveTree)" :key="year")
+              button.flex.items-center.gap-3.w-full.text-left.px-3.py-2.rounded-xl.text-sm.font-bold.transition-colors(
+                :class="selectedYear === year ? 'bg-gray-900 text-white shadow-md' : 'text-gray-600 hover:bg-gray-50'"
+                @click="toggleYear(year)"
+              )
+                FolderOpen(v-if="selectedYear === year" :size="16")
+                Folder(v-else :size="16")
+                | {{ year }}
+
+              //- Months
+              .ml-4.pl-3.border-l-2.border-gray-100.space-y-1.mt-1(v-if="selectedYear === year")
+                div(v-for="month in Object.keys(archiveTree[year])" :key="month")
+                  button.flex.items-center.gap-2.w-full.text-left.px-3.py-1_5.rounded-lg.text-xs.font-medium.transition-colors(
+                    :class="selectedMonth === month ? 'text-violet-700 bg-violet-50' : 'text-gray-500 hover:text-gray-900 hover:bg-gray-50'"
+                    @click="toggleMonth(month)"
+                  ) {{ monthNames[parseInt(month) - 1] }}
+
+                  //- Days
+                  .ml-3.pl-3.border-l-2.border-gray-100.space-y-1.mt-1.mb-1(v-if="selectedMonth === month")
+                    button.block.w-full.text-left.px-3.py-1.font-bold.rounded-lg.transition-colors(
+                      v-for="day in archiveTree[year][month]"
+                      :key="day"
+                      style="font-size: 10px;"
+                      :class="selectedDay === day ? 'text-white bg-violet-500 shadow-sm' : 'text-gray-400 hover:text-violet-600'"
+                      @click="toggleDay(day)"
+                    ) {{ day }}th
+
+          //- Empty archive
+          .text-xs.text-gray-400.text-center.py-8(v-else) No archives found
 
   //- Reject Dialog
   el-dialog(v-model="rejectDialogVisible" title="Reject Proposal" width="420px")
@@ -115,65 +357,334 @@
 
 <script setup lang="ts">
 import { ref, computed, onMounted } from 'vue';
-import { submitForApproval, approveProposal, rejectProposal, deleteProposal } from '~/composables/useProposals';
-import type { KPIMetric } from '~/components/UI/PremiumKPICards.vue';
+import {
+  submitForApproval,
+  approveProposal,
+  rejectProposal,
+  deleteProposal,
+  archiveProposal
+} from '~/composables/useProposals';
+import {
+  FileText, Plus, Search, TrendingUp, Edit, Trash2, Eye, Percent, DollarSign,
+  Folder, FolderOpen, FolderSearch, Archive, CheckCircle, XCircle, Clock,
+  AlertCircle, MoreHorizontal, SlidersHorizontal, Send
+} from 'lucide-vue-next';
 
 definePageMeta({ middleware: 'permissions' });
 
+// ─── State ───────────────────────────────────────────────────────────
 const loading = ref(false);
 const actionLoading = ref(false);
 const proposals = ref<any[]>([]);
 const totalItems = ref(0);
+const searchTerm = ref('');
+const statusFilter = ref('All');
 const currentPage = ref(1);
-const pageSize = ref(10);
-const searchKey = ref('');
-const statusFilter = ref('');
-const typeFilter = ref('');
-const sortBy = ref('createdAt');
-const sortOrder = ref('DESC');
+const pageSize = 10;
 
-const statusOptions = [
-  { label: 'Draft', value: 'DRAFT' },
-  { label: 'Waiting Approval', value: 'WAITING_APPROVAL' },
-  { label: 'Approved', value: 'APPROVED' },
-  { label: 'Rejected', value: 'REJECTED' },
-  { label: 'Sent', value: 'SENT' },
-  { label: 'Archived', value: 'ARCHIVED' }
-];
+// Archive tree filter state
+const selectedYear = ref<string | null>(null);
+const selectedMonth = ref<string | null>(null);
+const selectedDay = ref<string | null>(null);
 
+// Reject dialog
 const rejectDialogVisible = ref(false);
 const rejectReason = ref('');
 const rejectTarget = ref<any>(null);
 
-const kpiMetrics = computed<KPIMetric[]>(() => [
-  { label: 'Total Proposals', value: totalItems.value, icon: 'ph:file-text-bold', color: '#7c3aed' },
-  { label: 'Draft', value: proposals.value.filter(p => p.status === 'DRAFT').length, icon: 'ph:pencil-simple-bold', color: '#6b7280' },
-  { label: 'Pending', value: proposals.value.filter(p => p.status === 'WAITING_APPROVAL').length, icon: 'ph:clock-bold', color: '#f59e0b' },
-  { label: 'Approved', value: proposals.value.filter(p => p.status === 'APPROVED').length, icon: 'ph:check-circle-bold', color: '#10b981' }
-]);
+// Chart hover
+const hoveredSegment = ref<number | null>(null);
 
-let debounceTimer: ReturnType<typeof setTimeout> | null = null;
-function debouncedFetch() {
-  if (debounceTimer) clearTimeout(debounceTimer);
-  debounceTimer = setTimeout(() => fetchProposals(), 400);
+// ─── Constants ───────────────────────────────────────────────────────
+const CHART_COLORS = ['#94a3b8', '#f59e0b', '#3b82f6', '#10b981', '#ef4444', '#64748b'];
+const statusTabs = ['All', 'Sent', 'Pending', 'Draft', 'Approved', 'Canceled', 'Archived'];
+const monthNames = [
+  'January', 'February', 'March', 'April', 'May', 'June',
+  'July', 'August', 'September', 'October', 'November', 'December'
+];
+
+// ─── Status Mapping ──────────────────────────────────────────────────
+// API statuses → display statuses
+function mapStatus(apiStatus: string): string {
+  const map: Record<string, string> = {
+    DRAFT: 'Draft',
+    WAITING_APPROVAL: 'In Review',
+    APPROVED: 'Approved',
+    REJECTED: 'Rejected',
+    SENT: 'Sent',
+    ARCHIVED: 'Archived'
+  };
+  return map[apiStatus] || apiStatus;
 }
 
+function getDisplayStatus(status: string): string {
+  if (status === 'In Review') return 'Pending';
+  if (status === 'Rejected') return 'Canceled';
+  return status;
+}
+
+function getStatusColor(status: string): string {
+  const map: Record<string, string> = {
+    Draft: 'bg-gray-100 text-gray-600 border-gray-200',
+    'In Review': 'bg-amber-50 text-amber-600 border-amber-100',
+    Sent: 'bg-blue-50 text-blue-600 border-blue-100',
+    Approved: 'bg-emerald-50 text-emerald-600 border-emerald-100',
+    Rejected: 'bg-red-50 text-red-600 border-red-100',
+    Archived: 'bg-slate-100 text-slate-600 border-slate-200'
+  };
+  return map[status] || 'bg-gray-100 text-gray-600 border-gray-200';
+}
+
+// ─── Financial Computations ──────────────────────────────────────────
+function computeTotal(p: any): number {
+  // Try to extract from content JSON (API stores financial data as JSON)
+  let items: any[] = [];
+  if (p.items && Array.isArray(p.items)) {
+    items = p.items;
+  } else if (p.content) {
+    try {
+      const parsed = typeof p.content === 'string' ? JSON.parse(p.content) : p.content;
+      items = parsed?.items || parsed?.financialItems || [];
+    } catch {
+      // content is not JSON
+    }
+  }
+
+  if (items.length === 0) return p.totalPrice || p.total || 0;
+
+  const subtotal = items.reduce((sum: number, item: any) => {
+    return sum + ((item.quantity || item.qty || 0) * (item.rate || item.unitPrice || item.price || 0));
+  }, 0);
+
+  const discount = p.discountType === 'percent'
+    ? subtotal * ((p.discount || 0) / 100)
+    : (p.discount || 0);
+  const taxRate = p.taxRate || 0;
+  return (subtotal - discount) * (1 + taxRate / 100);
+}
+
+// ─── Archive Tree ────────────────────────────────────────────────────
+const archiveTree = computed(() => {
+  const tree: Record<string, Record<string, string[]>> = {};
+
+  proposals.value.forEach((p: any) => {
+    const dateStr = p.createdAt || p.date;
+    if (!dateStr) return;
+    const date = new Date(dateStr);
+    if (isNaN(date.getTime())) return;
+
+    const year = date.getFullYear().toString();
+    const month = (date.getMonth() + 1).toString().padStart(2, '0');
+    const day = date.getDate().toString().padStart(2, '0');
+
+    if (!tree[year]) tree[year] = {};
+    if (!tree[year][month]) tree[year][month] = [];
+    if (!tree[year][month].includes(day)) tree[year][month].push(day);
+  });
+
+  // Sort descending
+  const sortedTree: Record<string, Record<string, string[]>> = {};
+  Object.keys(tree).sort().reverse().forEach(year => {
+    sortedTree[year] = {};
+    Object.keys(tree[year]).sort().reverse().forEach(month => {
+      sortedTree[year][month] = tree[year][month].sort().reverse();
+    });
+  });
+
+  return sortedTree;
+});
+
+// ─── Filtered Proposals ──────────────────────────────────────────────
+const filteredProposals = computed(() => {
+  return proposals.value.filter((p: any) => {
+    // Search
+    const term = searchTerm.value.toLowerCase();
+    const title = (p.title || '').toLowerCase();
+    const client = (p.proposalFor || p.clientName || p.clientCompany || '').toLowerCase();
+    const refNum = (p.reference || p.refNumber || '').toLowerCase();
+    const matchesSearch = title.includes(term) || client.includes(term) || refNum.includes(term);
+    if (!matchesSearch) return false;
+
+    // Status filter
+    const displayStatus = mapStatus(p.status);
+    if (statusFilter.value === 'Archived') {
+      if (displayStatus !== 'Archived') return false;
+    } else if (statusFilter.value === 'All') {
+      if (displayStatus === 'Archived') return false;
+    } else {
+      if (statusFilter.value === 'Pending' && displayStatus !== 'In Review') return false;
+      if (statusFilter.value === 'Canceled' && displayStatus !== 'Rejected') return false;
+      if (statusFilter.value === 'Sent' && displayStatus !== 'Sent') return false;
+      if (statusFilter.value === 'Draft' && displayStatus !== 'Draft') return false;
+      if (statusFilter.value === 'Approved' && displayStatus !== 'Approved') return false;
+      if (displayStatus === 'Archived') return false;
+    }
+
+    // Date tree filter
+    const dateStr = p.createdAt || p.date;
+    if (dateStr && (selectedYear.value || selectedMonth.value || selectedDay.value)) {
+      const date = new Date(dateStr);
+      const year = date.getFullYear().toString();
+      const month = (date.getMonth() + 1).toString().padStart(2, '0');
+      const day = date.getDate().toString().padStart(2, '0');
+
+      if (selectedYear.value && year !== selectedYear.value) return false;
+      if (selectedMonth.value && month !== selectedMonth.value) return false;
+      if (selectedDay.value && day !== selectedDay.value) return false;
+    }
+
+    return true;
+  });
+});
+
+// ─── Stats ───────────────────────────────────────────────────────────
+const stats = computed(() => {
+  const all = proposals.value;
+  const total = all.length;
+
+  const pipelineValue = all.reduce((sum: number, p: any) => {
+    const s = mapStatus(p.status);
+    if (s === 'Sent' || s === 'Draft' || s === 'In Review') {
+      return sum + computeTotal(p);
+    }
+    return sum;
+  }, 0);
+
+  const approvedCount = all.filter((p: any) => mapStatus(p.status) === 'Approved').length;
+  const rejectedCount = all.filter((p: any) => mapStatus(p.status) === 'Rejected').length;
+  const closedCount = approvedCount + rejectedCount;
+  const winRate = closedCount > 0 ? (approvedCount / closedCount) * 100 : 0;
+
+  const statusDist = [
+    { name: 'Draft', displayName: 'Draft', value: all.filter((p: any) => mapStatus(p.status) === 'Draft').length },
+    { name: 'Pending', displayName: 'Pending', value: all.filter((p: any) => mapStatus(p.status) === 'In Review').length },
+    { name: 'Sent', displayName: 'Sent', value: all.filter((p: any) => mapStatus(p.status) === 'Sent').length },
+    { name: 'Approved', displayName: 'Approved', value: approvedCount },
+    { name: 'Canceled', displayName: 'Canceled', value: rejectedCount },
+    { name: 'Archived', displayName: 'Archived', value: all.filter((p: any) => mapStatus(p.status) === 'Archived').length }
+  ].filter(d => d.value > 0);
+
+  return {
+    total,
+    pipelineValue,
+    winRate,
+    statusDist,
+    counts: {
+      draft: all.filter((p: any) => mapStatus(p.status) === 'Draft').length,
+      sent: all.filter((p: any) => mapStatus(p.status) === 'Sent').length,
+      pending: all.filter((p: any) => mapStatus(p.status) === 'In Review').length,
+      canceled: rejectedCount
+    }
+  };
+});
+
+// ─── SVG Donut Chart Segments ────────────────────────────────────────
+const chartSegments = computed(() => {
+  const dist = stats.value.statusDist;
+  const total = dist.reduce((sum, s) => sum + s.value, 0);
+  if (total === 0) return [];
+
+  const circumference = 2 * Math.PI * 60; // r = 60
+  const gapAngle = 4; // degrees of gap between segments
+  const gapLength = (gapAngle / 360) * circumference;
+  const totalGap = dist.length * gapLength;
+  const availableLength = circumference - totalGap;
+
+  let offset = -circumference / 4; // Start from top (12 o'clock)
+  return dist.map((s, idx) => {
+    const segLength = (s.value / total) * availableLength;
+    const dashArray = `${segLength} ${circumference - segLength}`;
+    const dashOffset = -offset;
+    offset += segLength + gapLength;
+
+    return {
+      color: CHART_COLORS[idx % CHART_COLORS.length],
+      dashArray,
+      dashOffset
+    };
+  });
+});
+
+// ─── Pagination ──────────────────────────────────────────────────────
+const totalPages = computed(() => Math.max(1, Math.ceil(filteredProposals.value.length / pageSize)));
+const paginationStart = computed(() => Math.min((currentPage.value - 1) * pageSize + 1, filteredProposals.value.length));
+const paginationEnd = computed(() => Math.min(currentPage.value * pageSize, filteredProposals.value.length));
+
+const paginatedProposals = computed(() => {
+  const start = (currentPage.value - 1) * pageSize;
+  return filteredProposals.value.slice(start, start + pageSize);
+});
+
+const visiblePages = computed(() => {
+  const pages: (number | string)[] = [];
+  const tp = totalPages.value;
+  const cp = currentPage.value;
+
+  if (tp <= 7) {
+    for (let i = 1; i <= tp; i++) pages.push(i);
+  } else {
+    pages.push(1);
+    if (cp > 3) pages.push('...');
+    const start = Math.max(2, cp - 1);
+    const end = Math.min(tp - 1, cp + 1);
+    for (let i = start; i <= end; i++) pages.push(i);
+    if (cp < tp - 2) pages.push('...');
+    pages.push(tp);
+  }
+  return pages;
+});
+
+// Reset page on filter change
+watch([searchTerm, statusFilter, selectedYear, selectedMonth, selectedDay], () => {
+  currentPage.value = 1;
+});
+
+// ─── Archive Tree Navigation ─────────────────────────────────────────
+function toggleYear(year: string) {
+  if (selectedYear.value === year) {
+    selectedYear.value = null;
+  } else {
+    selectedYear.value = year;
+  }
+  selectedMonth.value = null;
+  selectedDay.value = null;
+}
+
+function toggleMonth(month: string) {
+  if (selectedMonth.value === month) {
+    selectedMonth.value = null;
+  } else {
+    selectedMonth.value = month;
+  }
+  selectedDay.value = null;
+}
+
+function toggleDay(day: string) {
+  selectedDay.value = selectedDay.value === day ? null : day;
+}
+
+function resetArchiveFilter() {
+  selectedYear.value = null;
+  selectedMonth.value = null;
+  selectedDay.value = null;
+}
+
+// ─── Formatting ──────────────────────────────────────────────────────
+function formatDate(dateStr: string) {
+  if (!dateStr) return '--';
+  const d = new Date(dateStr);
+  if (isNaN(d.getTime())) return dateStr;
+  return d.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
+}
+
+// ─── API ─────────────────────────────────────────────────────────────
 async function fetchProposals() {
   loading.value = true;
   try {
-    const params = new URLSearchParams();
-    params.set('page', String(currentPage.value));
-    params.set('limit', String(pageSize.value));
-    params.set('sortBy', sortBy.value);
-    params.set('sort', sortOrder.value);
-    if (searchKey.value) params.set('searchKey', searchKey.value);
-    if (statusFilter.value) params.append('status', statusFilter.value);
-    if (typeFilter.value) params.append('type', typeFilter.value);
-
-    const response = await useApiFetch(`proposal/?${params.toString()}`);
+    const response = await useApiFetch('proposal/?page=1&limit=500');
     if (response?.success) {
       proposals.value = response.body?.docs || response.body?.proposals || [];
-      totalItems.value = response.body?.pagination?.totalItems || response.body?.totalItems || 0;
+      totalItems.value = response.body?.pagination?.totalItems || response.body?.totalItems || proposals.value.length;
     }
   } catch (error) {
     console.error('Failed to fetch proposals:', error);
@@ -182,43 +693,7 @@ async function fetchProposals() {
   }
 }
 
-function handleSortChange({ prop, order }: any) {
-  if (prop) {
-    sortBy.value = prop;
-    sortOrder.value = order === 'ascending' ? 'ASC' : 'DESC';
-  } else {
-    sortBy.value = 'createdAt';
-    sortOrder.value = 'DESC';
-  }
-  fetchProposals();
-}
-
-function formatStatus(status: string) {
-  return (status || '').replace(/_/g, ' ').replace(/\b\w/g, l => l.toUpperCase());
-}
-
-function statusTagType(status: string) {
-  const map: Record<string, string> = {
-    DRAFT: 'info',
-    WAITING_APPROVAL: 'warning',
-    APPROVED: 'success',
-    REJECTED: 'danger',
-    ARCHIVED: 'info',
-    SENT: ''
-  };
-  return map[status] || '';
-}
-
-function typeTagColor(type: string) {
-  const map: Record<string, string> = { FINANCIAL: 'success', TECHNICAL: '', MIXED: 'warning' };
-  return map[type] || '';
-}
-
-function formatDate(dateStr: string) {
-  if (!dateStr) return '—';
-  return new Date(dateStr).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
-}
-
+// ─── Actions ─────────────────────────────────────────────────────────
 async function handleSubmitForApproval(row: any) {
   try {
     await ElMessageBox.confirm('Submit this proposal for approval?', 'Confirm', { type: 'info' });
@@ -265,9 +740,31 @@ async function handleReject() {
   actionLoading.value = false;
 }
 
+async function handleArchive(row: any) {
+  try {
+    const action = row.status === 'ARCHIVED' ? 'unarchive' : 'archive';
+    await ElMessageBox.confirm(
+      `${action === 'archive' ? 'Archive' : 'Unarchive'} proposal "${row.title}"?`,
+      'Confirm',
+      { type: 'warning' }
+    );
+    actionLoading.value = true;
+    const ok = await archiveProposal(row.id);
+    if (ok) fetchProposals();
+  } catch {
+    /* cancelled */
+  } finally {
+    actionLoading.value = false;
+  }
+}
+
 async function handleDelete(row: any) {
   try {
-    await ElMessageBox.confirm(`Delete proposal "${row.title}"? This action cannot be undone.`, 'Delete', { type: 'warning' });
+    await ElMessageBox.confirm(
+      `Delete proposal "${row.title}"? This action cannot be undone.`,
+      'Delete',
+      { type: 'warning' }
+    );
     actionLoading.value = true;
     const ok = await deleteProposal(row.id);
     if (ok) fetchProposals();
@@ -278,5 +775,46 @@ async function handleDelete(row: any) {
   }
 }
 
+// ─── Init ────────────────────────────────────────────────────────────
 onMounted(() => fetchProposals());
 </script>
+
+<style scoped>
+.animate-entrance {
+  animation: fadeSlideUp 0.5s ease-out;
+}
+@keyframes fadeSlideUp {
+  from {
+    opacity: 0;
+    transform: translateY(12px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* Hide scrollbar for status tabs */
+.no-scrollbar::-webkit-scrollbar {
+  display: none;
+}
+.no-scrollbar {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+
+/* Custom scrollbar for archive tree */
+.custom-scrollbar::-webkit-scrollbar {
+  width: 4px;
+}
+.custom-scrollbar::-webkit-scrollbar-track {
+  background: transparent;
+}
+.custom-scrollbar::-webkit-scrollbar-thumb {
+  background: #e5e7eb;
+  border-radius: 99px;
+}
+.custom-scrollbar::-webkit-scrollbar-thumb:hover {
+  background: #d1d5db;
+}
+</style>

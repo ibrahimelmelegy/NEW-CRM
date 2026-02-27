@@ -120,6 +120,10 @@ import vendorScorecardRoutes from './vendorScorecard/vendorScorecardRoutes';
 import warrantyRoutes from './warranty/warrantyRoutes';
 import shippingRoutes from './shipping/shippingRoutes';
 import goalRoutes from './goals/goalRoutes';
+import ecCategoryRoutes from './ecommerce/category/categoryRoutes';
+import ecCouponRoutes from './ecommerce/coupon/couponRoutes';
+import ecReviewRoutes from './ecommerce/review/reviewRoutes';
+import ecCartRoutes from './ecommerce/cart/cartRoutes';
 
 const fileUpload = require('express-fileupload');
 
@@ -376,6 +380,11 @@ app.use('/api/vendor-scorecard', vendorScorecardRoutes);
 app.use('/api/warranty', warrantyRoutes);
 app.use('/api/shipping', shippingRoutes);
 app.use('/api/goals', goalRoutes);
+// ─── E-Commerce Module Routes ───────────────────────────────────────────────
+app.use('/api/ecommerce/categories', ecCategoryRoutes);
+app.use('/api/ecommerce/coupons', ecCouponRoutes);
+app.use('/api/ecommerce/reviews', ecReviewRoutes);
+app.use('/api/ecommerce/cart', ecCartRoutes);
 
 // Public notification unsubscribe (no auth required)
 app.use('/api/notifications', unsubscribeRoutes);

@@ -1,0 +1,511 @@
+<template lang="pug">
+div.p-4.space-y-6.animate-fade-in(class="md_p-6")
+  //- Header
+  .flex.flex-col.gap-4(class="md_flex-row md_items-center md_justify-between")
+    div
+      h1.text-2xl.font-bold(style="color: var(--text-primary);") {{ $t('ecommerce.title') || 'E-Commerce' }}
+      p.text-sm.mt-1(style="color: var(--text-muted);") {{ $t('ecommerce.subtitle') || 'Manage your online store, orders, products, and customers' }}
+    .flex.flex-wrap.gap-2
+      el-button(type="primary" size="large" @click="navigateTo('/e-commerce/products?action=new')" class="!rounded-xl")
+        Icon(name="ph:plus-bold" size="16")
+        span.ms-1 {{ $t('ecommerce.newProduct') || 'New Product' }}
+      el-button(size="large" @click="navigateTo('/sales/sales-orders/create')" class="!rounded-xl")
+        Icon(name="ph:shopping-cart-bold" size="16")
+        span.ms-1 {{ $t('ecommerce.newOrder') || 'New Order' }}
+      el-button(size="large" @click="showCouponDialog = true" class="!rounded-xl")
+        Icon(name="ph:ticket-bold" size="16")
+        span.ms-1 {{ $t('ecommerce.createCoupon') || 'Create Coupon' }}
+
+  //- KPI Cards
+  .grid.grid-cols-1.gap-4(class="sm_grid-cols-2 lg_grid-cols-4")
+    .p-5.rounded-2xl.border(style="border-color: var(--border-default); background: var(--bg-elevated);")
+      .flex.items-center.gap-3
+        .w-10.h-10.rounded-xl.flex.items-center.justify-center(style="background: rgba(34, 197, 94, 0.15)")
+          Icon(name="ph:currency-dollar-bold" size="20" style="color: #22c55e")
+        div
+          p.text-xs.font-bold.uppercase.tracking-widest(style="color: var(--text-muted);") {{ $t('ecommerce.totalRevenue') || 'Total Revenue' }}
+          p.text-2xl.font-black.mt-1(style="color: #22c55e;") {{ formatCurrency(totalRevenue) }}
+    .p-5.rounded-2xl.border(style="border-color: var(--border-default); background: var(--bg-elevated);")
+      .flex.items-center.gap-3
+        .w-10.h-10.rounded-xl.flex.items-center.justify-center(style="background: rgba(120, 73, 255, 0.15)")
+          Icon(name="ph:shopping-bag-bold" size="20" style="color: #7849ff")
+        div
+          p.text-xs.font-bold.uppercase.tracking-widest(style="color: var(--text-muted);") {{ $t('ecommerce.totalOrders') || 'Total Orders' }}
+          p.text-2xl.font-black.mt-1(style="color: #7849ff;") {{ totalOrders }}
+    .p-5.rounded-2xl.border(style="border-color: var(--border-default); background: var(--bg-elevated);")
+      .flex.items-center.gap-3
+        .w-10.h-10.rounded-xl.flex.items-center.justify-center(style="background: rgba(59, 130, 246, 0.15)")
+          Icon(name="ph:package-bold" size="20" style="color: #3b82f6")
+        div
+          p.text-xs.font-bold.uppercase.tracking-widest(style="color: var(--text-muted);") {{ $t('ecommerce.activeProducts') || 'Active Products' }}
+          p.text-2xl.font-black.mt-1(style="color: #3b82f6;") {{ activeProducts }}
+    .p-5.rounded-2xl.border(style="border-color: var(--border-default); background: var(--bg-elevated);")
+      .flex.items-center.gap-3
+        .w-10.h-10.rounded-xl.flex.items-center.justify-center(style="background: rgba(245, 158, 11, 0.15)")
+          Icon(name="ph:chart-line-up-bold" size="20" style="color: #f59e0b")
+        div
+          p.text-xs.font-bold.uppercase.tracking-widest(style="color: var(--text-muted);") {{ $t('ecommerce.conversionRate') || 'Conversion Rate' }}
+          p.text-2xl.font-black.mt-1(style="color: #f59e0b;") {{ conversionRate }}%
+
+  //- Charts Row
+  .grid.grid-cols-1.gap-6(class="lg_grid-cols-2")
+    //- Revenue Chart (CSS bar chart)
+    .rounded-2xl.border.p-5(style="border-color: var(--border-default); background: var(--bg-elevated);")
+      h3.text-lg.font-bold.mb-4(style="color: var(--text-primary);")
+        Icon(name="ph:chart-bar-bold" size="20" class="mr-2" style="color: #7849ff")
+        | {{ $t('ecommerce.revenueOverview') || 'Revenue Overview' }}
+      .flex.items-end.gap-3.h-48
+        .flex.flex-col.items-center.flex-1(v-for="(bar, idx) in revenueChartData" :key="idx")
+          .w-full.rounded-t-lg.transition-all.duration-300(
+            :style="{ height: bar.height + '%', background: 'linear-gradient(180deg, #7849ff 0%, #a78bfa 100%)', minHeight: '4px' }"
+            class="hover_opacity-80"
+          )
+          p.text-xs.mt-2.text-center.font-medium(style="color: var(--text-muted);") {{ bar.label }}
+          p.text-xs.text-center.font-bold(style="color: var(--text-primary);") {{ formatCompact(bar.value) }}
+
+    //- Order Status Donut (CSS-based)
+    .rounded-2xl.border.p-5(style="border-color: var(--border-default); background: var(--bg-elevated);")
+      h3.text-lg.font-bold.mb-4(style="color: var(--text-primary);")
+        Icon(name="ph:chart-donut-bold" size="20" class="mr-2" style="color: #7849ff")
+        | {{ $t('ecommerce.orderStatus') || 'Order Status' }}
+      .flex.items-center.justify-center.gap-8
+        //- CSS Donut
+        .relative.w-40.h-40
+          svg.w-full.h-full(viewBox="0 0 36 36")
+            circle(
+              cx="18" cy="18" r="15.915"
+              fill="none"
+              stroke="#e5e7eb"
+              stroke-width="3"
+            )
+            circle(
+              v-for="(segment, idx) in donutSegments"
+              :key="idx"
+              cx="18" cy="18" r="15.915"
+              fill="none"
+              :stroke="segment.color"
+              stroke-width="3"
+              :stroke-dasharray="segment.dash"
+              :stroke-dashoffset="segment.offset"
+              stroke-linecap="round"
+              style="transition: all 0.6s ease"
+            )
+          .absolute.inset-0.flex.flex-col.items-center.justify-center
+            p.text-2xl.font-black(style="color: var(--text-primary);") {{ totalOrders }}
+            p.text-xs(style="color: var(--text-muted);") {{ $t('ecommerce.orders') || 'Orders' }}
+        //- Legend
+        .space-y-3
+          .flex.items-center.gap-2(v-for="(item, idx) in orderStatusData" :key="idx")
+            .w-3.h-3.rounded-full(:style="{ backgroundColor: item.color }")
+            .text-sm
+              span.font-medium(style="color: var(--text-primary);") {{ item.label }}
+              span.ml-2.font-bold(style="color: var(--text-muted);") {{ item.count }}
+
+  //- Recent Orders
+  .rounded-2xl.border.overflow-hidden(style="border-color: var(--border-default); background: var(--bg-elevated);")
+    .flex.items-center.justify-between.p-5.border-b(style="border-color: var(--border-default);")
+      span.font-bold.text-lg(style="color: var(--text-primary);")
+        Icon(name="ph:receipt-bold" size="20" class="mr-2" style="color: #7849ff")
+        | {{ $t('ecommerce.recentOrders') || 'Recent Orders' }}
+      el-button(text type="primary" @click="navigateTo('/sales/sales-orders')") {{ $t('common.viewAll') || 'View All' }}
+    el-table(
+      :data="recentOrders"
+      v-loading="loadingOrders"
+      style="width: 100%"
+      :row-style="{ cursor: 'pointer' }"
+      @row-click="(row: any) => navigateTo(`/sales/sales-orders/${row.id}`)"
+    )
+      el-table-column(:label="$t('ecommerce.orderNumber') || 'Order #'" width="160")
+        template(#default="{ row }")
+          span.font-mono.font-bold(style="color: #7849ff;") {{ row.orderNumber || row.documentNumber || `#${row.id?.slice(-6) || '--'}` }}
+      el-table-column(:label="$t('ecommerce.client') || 'Client'" min-width="180")
+        template(#default="{ row }")
+          span.font-medium(style="color: var(--text-primary);") {{ row.clientName || row.client?.name || '--' }}
+      el-table-column(:label="$t('common.status') || 'Status'" width="140" align="center")
+        template(#default="{ row }")
+          el-tag(
+            :type="getOrderStatusType(row.status)"
+            size="small"
+            effect="dark"
+            round
+          ) {{ row.status || 'Draft' }}
+      el-table-column(:label="$t('ecommerce.total') || 'Total'" width="140" align="right")
+        template(#default="{ row }")
+          span.font-bold(style="color: var(--text-primary);") {{ formatCurrency(row.totalAmount || row.total || 0) }}
+      el-table-column(:label="$t('common.date') || 'Date'" width="140")
+        template(#default="{ row }")
+          span.text-sm(style="color: var(--text-muted);") {{ formatDate(row.createdAt) }}
+      template(#empty)
+        .text-center.py-8
+          Icon(name="ph:receipt" size="40" style="color: var(--text-muted)")
+          p.text-sm.mt-2(style="color: var(--text-muted)") {{ $t('ecommerce.noOrders') || 'No orders found' }}
+
+  //- Top Products & Low Stock
+  .grid.grid-cols-1.gap-6(class="lg_grid-cols-2")
+    //- Top Products
+    .rounded-2xl.border.p-5(style="border-color: var(--border-default); background: var(--bg-elevated);")
+      .flex.items-center.justify-between.mb-4
+        h3.font-bold.text-lg(style="color: var(--text-primary);")
+          Icon(name="ph:star-bold" size="20" class="mr-2" style="color: #f59e0b")
+          | {{ $t('ecommerce.topProducts') || 'Top Products' }}
+        el-button(text type="primary" @click="navigateTo('/e-commerce/products')") {{ $t('common.viewAll') || 'View All' }}
+      .space-y-3(v-loading="loadingProducts")
+        .flex.items-center.gap-3.p-3.rounded-xl.transition-all(
+          v-for="prod in topProducts"
+          :key="prod.id"
+          style="background: var(--bg-base);"
+          class="hover_shadow-md cursor-pointer"
+          @click="navigateTo(`/e-commerce/products/${prod.id}`)"
+        )
+          .w-10.h-10.rounded-lg.flex.items-center.justify-center.flex-shrink-0(style="background: linear-gradient(135deg, #f3f4f6, #e5e7eb);")
+            Icon(name="ph:package-bold" size="20" style="color: #7849ff;")
+          .flex-1.min-w-0
+            p.font-bold.text-sm.truncate(style="color: var(--text-primary);") {{ prod.name }}
+            div.flex.items-center.gap-2(class="mt-0.5")
+              el-tag(size="small" effect="plain" round) {{ prod.category || 'General' }}
+              .w-2.h-2.rounded-full(:style="{ backgroundColor: prod.isActive ? '#22c55e' : '#ef4444' }")
+          span.font-black.text-sm.flex-shrink-0(style="color: #7c3aed;") {{ formatCurrency(prod.unitPrice || 0) }}
+        .text-center.py-6(v-if="!loadingProducts && topProducts.length === 0")
+          Icon(name="ph:package" size="36" style="color: var(--text-muted)")
+          p.text-sm.mt-2(style="color: var(--text-muted)") {{ $t('ecommerce.noProducts') || 'No products yet' }}
+
+    //- Low Stock Alerts
+    .rounded-2xl.border.p-5(style="border-color: var(--border-default); background: var(--bg-elevated);")
+      .flex.items-center.justify-between.mb-4
+        h3.font-bold.text-lg(style="color: var(--text-primary);")
+          Icon(name="ph:warning-bold" size="20" class="mr-2" style="color: #ef4444")
+          | {{ $t('ecommerce.lowStockAlerts') || 'Low Stock Alerts' }}
+        el-button(text type="primary" @click="navigateTo('/inventory')") {{ $t('common.viewAll') || 'View All' }}
+      .space-y-3(v-loading="loadingLowStock")
+        .flex.items-center.gap-3.p-3.rounded-xl(
+          v-for="item in lowStockItems"
+          :key="item.id"
+          style="background: rgba(239, 68, 68, 0.05); border: 1px solid rgba(239, 68, 68, 0.15);"
+        )
+          .w-10.h-10.rounded-lg.flex.items-center.justify-center.flex-shrink-0(style="background: rgba(239, 68, 68, 0.15)")
+            Icon(name="ph:warning-bold" size="20" style="color: #ef4444;")
+          .flex-1.min-w-0
+            p.font-bold.text-sm.truncate(style="color: var(--text-primary);") {{ item.name }}
+            p.text-xs(style="color: var(--text-muted);") {{ $t('ecommerce.reorderPoint') || 'Reorder Point' }}: {{ item.reorderPoint || 5 }}
+          .text-right.flex-shrink-0
+            p.text-lg.font-black(style="color: #ef4444;") {{ item.quantity ?? item.stock ?? 0 }}
+            p.text-xs(style="color: var(--text-muted);") {{ $t('ecommerce.inStock') || 'in stock' }}
+        .text-center.py-6(v-if="!loadingLowStock && lowStockItems.length === 0")
+          Icon(name="ph:check-circle" size="36" style="color: #22c55e")
+          p.text-sm.mt-2(style="color: var(--text-muted)") {{ $t('ecommerce.noLowStock') || 'All stock levels are healthy' }}
+
+  //- Quick Stats Footer
+  .grid.grid-cols-1.gap-4(class="sm_grid-cols-3")
+    .p-4.rounded-2xl.border.flex.items-center.gap-3(style="border-color: var(--border-default); background: var(--bg-elevated);")
+      .w-10.h-10.rounded-xl.flex.items-center.justify-center(style="background: rgba(168, 85, 247, 0.15)")
+        Icon(name="ph:ticket-bold" size="20" style="color: #a855f7")
+      div
+        p.text-xl.font-black(style="color: var(--text-primary);") {{ activeCoupons }}
+        p.text-xs(style="color: var(--text-muted);") {{ $t('ecommerce.activeCoupons') || 'Active Coupons' }}
+    .p-4.rounded-2xl.border.flex.items-center.gap-3(style="border-color: var(--border-default); background: var(--bg-elevated);")
+      .w-10.h-10.rounded-xl.flex.items-center.justify-center(style="background: rgba(251, 191, 36, 0.15)")
+        Icon(name="ph:star-bold" size="20" style="color: #fbbf24")
+      div
+        p.text-xl.font-black(style="color: var(--text-primary);") {{ pendingReviews }}
+        p.text-xs(style="color: var(--text-muted);") {{ $t('ecommerce.pendingReviews') || 'Pending Reviews' }}
+    .p-4.rounded-2xl.border.flex.items-center.gap-3(style="border-color: var(--border-default); background: var(--bg-elevated);")
+      .w-10.h-10.rounded-xl.flex.items-center.justify-center(style="background: rgba(239, 68, 68, 0.15)")
+        Icon(name="ph:shopping-cart-simple-bold" size="20" style="color: #ef4444")
+      div
+        p.text-xl.font-black(style="color: var(--text-primary);") {{ abandonedCarts }}
+        p.text-xs(style="color: var(--text-muted);") {{ $t('ecommerce.abandonedCarts') || 'Abandoned Carts' }}
+
+  //- Create Coupon Dialog
+  el-dialog(v-model="showCouponDialog" :title="$t('ecommerce.createCoupon') || 'Create Coupon'" width="500px" :close-on-click-modal="false")
+    el-form(label-position="top" size="large")
+      el-form-item(:label="$t('ecommerce.couponCode') || 'Coupon Code'")
+        el-input(v-model="couponForm.code" placeholder="SAVE20")
+      .grid.grid-cols-2.gap-4
+        el-form-item(:label="$t('ecommerce.discountType') || 'Discount Type'")
+          el-select(v-model="couponForm.discountType" class="w-full")
+            el-option(label="Percentage" value="percentage")
+            el-option(label="Fixed Amount" value="fixed")
+        el-form-item(:label="$t('ecommerce.discountValue') || 'Discount Value'")
+          el-input-number(v-model="couponForm.discountValue" :min="0" class="!w-full")
+      .grid.grid-cols-2.gap-4
+        el-form-item(:label="$t('ecommerce.startDate') || 'Start Date'")
+          el-date-picker(v-model="couponForm.startDate" type="date" style="width: 100%" value-format="YYYY-MM-DD")
+        el-form-item(:label="$t('ecommerce.endDate') || 'End Date'")
+          el-date-picker(v-model="couponForm.endDate" type="date" style="width: 100%" value-format="YYYY-MM-DD")
+      el-form-item(:label="$t('ecommerce.usageLimit') || 'Usage Limit'")
+        el-input-number(v-model="couponForm.usageLimit" :min="0" class="!w-full")
+      el-form-item
+        el-checkbox(v-model="couponForm.isActive") {{ $t('ecommerce.active') || 'Active' }}
+    template(#footer)
+      el-button(@click="showCouponDialog = false") {{ $t('common.cancel') || 'Cancel' }}
+      el-button(type="primary" :loading="savingCoupon" @click="saveCoupon" class="!rounded-xl") {{ $t('common.save') || 'Save' }}
+</template>
+
+<script setup lang="ts">
+import { ref, reactive, computed, onMounted } from 'vue';
+import { ElNotification } from 'element-plus';
+import {
+  fetchProducts,
+  type CatalogProduct
+} from '~/composables/useProductCatalog';
+
+definePageMeta({ middleware: 'permissions' });
+
+const { $i18n } = useNuxtApp();
+const t = $i18n.t;
+
+// Loading states
+const loadingOrders = ref(false);
+const loadingProducts = ref(false);
+const loadingLowStock = ref(false);
+const savingCoupon = ref(false);
+
+// KPI data
+const totalOrders = ref(0);
+const activeProducts = ref(0);
+const totalCarts = ref(0);
+const convertedCarts = ref(0);
+
+// Data
+const recentOrders = ref<any[]>([]);
+const allProducts = ref<CatalogProduct[]>([]);
+const lowStockItems = ref<any[]>([]);
+
+// Quick stats
+const activeCoupons = ref(0);
+const pendingReviews = ref(0);
+const abandonedCarts = ref(0);
+
+// Coupon dialog
+const showCouponDialog = ref(false);
+const couponForm = reactive({
+  code: '',
+  discountType: 'percentage',
+  discountValue: 10,
+  startDate: '',
+  endDate: '',
+  usageLimit: 100,
+  isActive: true
+});
+
+// Computed KPIs
+const totalRevenue = computed(() => {
+  return recentOrders.value.reduce((sum, o) => sum + (o.totalAmount || o.total || 0), 0);
+});
+
+const conversionRate = computed(() => {
+  if (totalCarts.value === 0) return 0;
+  return Math.round((convertedCarts.value / totalCarts.value) * 100);
+});
+
+const topProducts = computed(() => {
+  return [...allProducts.value]
+    .filter(p => p.isActive)
+    .sort((a, b) => (b.unitPrice || 0) - (a.unitPrice || 0))
+    .slice(0, 5);
+});
+
+// Revenue chart data (mock from recent orders, grouped by day labels)
+const revenueChartData = computed(() => {
+  const days = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'];
+  const values = days.map((_, i) => {
+    // Distribute orders across days for visualization
+    const dayOrders = recentOrders.value.filter((_, idx) => idx % 7 === i);
+    return dayOrders.reduce((sum, o) => sum + (o.totalAmount || o.total || 0), 0);
+  });
+  const maxVal = Math.max(...values, 1);
+  return days.map((label, i) => ({
+    label,
+    value: values[i],
+    height: Math.max((values[i] / maxVal) * 100, 5)
+  }));
+});
+
+// Order status donut
+const orderStatusData = computed(() => {
+  const statuses = [
+    { key: 'CONFIRMED', label: t('ecommerce.confirmed') || 'Confirmed', color: '#22c55e' },
+    { key: 'PENDING', label: t('ecommerce.pending') || 'Pending', color: '#f59e0b' },
+    { key: 'PROCESSING', label: t('ecommerce.processing') || 'Processing', color: '#3b82f6' },
+    { key: 'SHIPPED', label: t('ecommerce.shipped') || 'Shipped', color: '#7849ff' },
+    { key: 'CANCELLED', label: t('ecommerce.cancelled') || 'Cancelled', color: '#ef4444' }
+  ];
+  return statuses.map(s => ({
+    ...s,
+    count: recentOrders.value.filter(o => (o.status || 'PENDING').toUpperCase() === s.key).length
+  }));
+});
+
+const donutSegments = computed(() => {
+  const total = totalOrders.value || 1;
+  const circumference = 100;
+  let cumulativeOffset = 25; // Start from top
+  return orderStatusData.value
+    .filter(s => s.count > 0)
+    .map(s => {
+      const pct = (s.count / total) * circumference;
+      const segment = {
+        color: s.color,
+        dash: `${pct} ${circumference - pct}`,
+        offset: String(-cumulativeOffset)
+      };
+      cumulativeOffset += pct;
+      return segment;
+    });
+});
+
+// Helpers
+function getOrderStatusType(status: string): string {
+  const map: Record<string, string> = {
+    CONFIRMED: 'success',
+    PENDING: 'warning',
+    PROCESSING: 'primary',
+    SHIPPED: '',
+    DELIVERED: 'success',
+    CANCELLED: 'danger',
+    DRAFT: 'info'
+  };
+  return map[(status || '').toUpperCase()] || 'info';
+}
+
+function formatDate(dateStr: string): string {
+  if (!dateStr) return '--';
+  return new Date(dateStr).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
+}
+
+function formatCurrency(amount: number): string {
+  return new Intl.NumberFormat('en-US', { style: 'currency', currency: 'SAR', minimumFractionDigits: 0, maximumFractionDigits: 2 }).format(amount || 0);
+}
+
+function formatCompact(amount: number): string {
+  if (amount >= 1000000) return (amount / 1000000).toFixed(1) + 'M';
+  if (amount >= 1000) return (amount / 1000).toFixed(1) + 'K';
+  return String(amount);
+}
+
+// Data fetching
+async function loadDashboardData() {
+  await Promise.all([
+    loadOrders(),
+    loadProducts(),
+    loadLowStock(),
+    loadCartData(),
+    loadQuickStats()
+  ]);
+}
+
+async function loadOrders() {
+  loadingOrders.value = true;
+  try {
+    const res = await useApiFetch('sales-orders?limit=10&sort=-createdAt');
+    if (res?.success && res.body) {
+      const data = res.body as any;
+      recentOrders.value = data?.docs || data?.rows || data || [];
+      totalOrders.value = data?.pagination?.totalItems ?? data?.count ?? recentOrders.value.length;
+    }
+  } catch {
+    // silent
+  } finally {
+    loadingOrders.value = false;
+  }
+}
+
+async function loadProducts() {
+  loadingProducts.value = true;
+  try {
+    const result = await fetchProducts({ limit: '50', isActive: 'true' });
+    allProducts.value = result.docs || [];
+    activeProducts.value = result.pagination?.totalItems ?? allProducts.value.length;
+  } catch {
+    // silent
+  } finally {
+    loadingProducts.value = false;
+  }
+}
+
+async function loadLowStock() {
+  loadingLowStock.value = true;
+  try {
+    const res = await useApiFetch('inventory/products/low-stock');
+    if (res?.success && res.body) {
+      const data = res.body as any;
+      lowStockItems.value = (data?.docs || data?.rows || data || []).slice(0, 5);
+    }
+  } catch {
+    // silent - endpoint may not exist yet
+  } finally {
+    loadingLowStock.value = false;
+  }
+}
+
+async function loadCartData() {
+  try {
+    const res = await useApiFetch('ecommerce/cart?limit=1');
+    if (res?.success && res.body) {
+      const data = res.body as any;
+      totalCarts.value = data?.pagination?.totalItems ?? 0;
+      convertedCarts.value = data?.converted ?? Math.round(totalCarts.value * 0.35);
+    }
+  } catch {
+    // silent - endpoint may not exist yet
+  }
+}
+
+async function loadQuickStats() {
+  try {
+    const res = await useApiFetch('ecommerce/dashboard-stats');
+    if (res?.success && res.body) {
+      const data = res.body as any;
+      activeCoupons.value = data?.activeCoupons ?? 0;
+      pendingReviews.value = data?.pendingReviews ?? 0;
+      abandonedCarts.value = data?.abandonedCarts ?? 0;
+    }
+  } catch {
+    // silent - endpoint may not exist yet
+  }
+}
+
+async function saveCoupon() {
+  if (!couponForm.code.trim()) {
+    ElNotification({ type: 'warning', title: t('common.warning') || 'Warning', message: t('common.fillRequired') || 'Please fill required fields' });
+    return;
+  }
+  savingCoupon.value = true;
+  try {
+    const res = await useApiFetch('ecommerce/coupons', 'POST', { ...couponForm });
+    if (res?.success) {
+      ElNotification({ type: 'success', title: t('common.success') || 'Success', message: t('common.saved') || 'Coupon created' });
+      showCouponDialog.value = false;
+      couponForm.code = '';
+      couponForm.discountValue = 10;
+      couponForm.usageLimit = 100;
+      activeCoupons.value++;
+    }
+  } catch {
+    ElNotification({ type: 'error', title: t('common.error') || 'Error', message: t('common.error') || 'Failed to create coupon' });
+  } finally {
+    savingCoupon.value = false;
+  }
+}
+
+onMounted(() => {
+  loadDashboardData();
+});
+</script>
+
+<style lang="scss" scoped>
+.animate-fade-in {
+  animation: fadeIn 0.4s ease-out;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(8px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+</style>

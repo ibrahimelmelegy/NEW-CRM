@@ -194,6 +194,11 @@ import VendorScorecard from '../vendorScorecard/vendorScorecardModel';
 import { Warranty, WarrantyClaim } from '../warranty/warrantyModel';
 import { Shipment, ShippingRate } from '../shipping/shippingModel';
 import Goal from '../goals/goalModel';
+// E-Commerce Models
+import EcCategory from '../ecommerce/category/categoryModel';
+import EcCoupon from '../ecommerce/coupon/couponModel';
+import EcReview from '../ecommerce/review/reviewModel';
+import { EcCart, EcCartItem } from '../ecommerce/cart/cartModel';
 
 dotenv.config();
 
@@ -410,7 +415,13 @@ const sequelize = new Sequelize({
     WarrantyClaim,
     Shipment,
     ShippingRate,
-    Goal
+    Goal,
+    // E-Commerce Models
+    EcCategory,
+    EcCoupon,
+    EcReview,
+    EcCart,
+    EcCartItem
   ], // Path to your models
   logging: process.env.NODE_ENV !== 'production' ? console.log : false
 });

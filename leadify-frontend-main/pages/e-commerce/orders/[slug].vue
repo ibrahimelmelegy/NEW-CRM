@@ -1,0 +1,506 @@
+<template lang="pug">
+div.animate-fade-in(v-loading="loading")
+  //- Breadcrumb
+  el-breadcrumb.mb-4(separator="/")
+    el-breadcrumb-item(:to="{ path: '/' }") {{ $t('common.home') || 'Home' }}
+    el-breadcrumb-item(:to="{ path: '/e-commerce/orders' }") {{ $t('salesOrders.title') || 'Orders' }}
+    el-breadcrumb-item {{ order.orderNumber || '...' }}
+
+  //- Header Row
+  .flex.items-center.justify-between.mb-6
+    .flex.items-center.gap-4
+      h2.text-2xl.font-bold(style="color: var(--text-primary)") {{ order.orderNumber || '--' }}
+      el-tag(
+        v-if="order.status"
+        :type="getStatusType(order.status)"
+        size="large"
+        effect="dark"
+        round
+      ) {{ order.status }}
+    .flex.items-center.gap-3
+      el-button(size="large" @click="navigateTo('/e-commerce/orders')" class="!rounded-xl")
+        Icon(name="ph:arrow-left-bold" size="16" class="mr-1")
+        | {{ $t('common.back') || 'Back' }}
+      el-button(size="large" @click="printOrder" class="!rounded-xl")
+        Icon(name="ph:printer-bold" size="16" class="mr-1")
+        | {{ $t('common.print') || 'Print' }}
+      el-button(type="primary" size="large" @click="openStatusDialog" class="!rounded-xl")
+        Icon(name="ph:swap-bold" size="16" class="mr-1")
+        | {{ $t('salesOrders.status') || 'Edit Status' }}
+
+  //- Status Timeline
+  .glass-card.p-5.rounded-2xl.mb-6(v-if="order.status")
+    .flex.items-center.gap-1
+      .flex-1(v-for="(step, idx) in statusSteps" :key="step.value")
+        .relative
+          .h-2.rounded-full.transition-all.duration-300(
+            :style="{ backgroundColor: getStepColor(step, idx) }"
+          )
+          .text-center.mt-2
+            .text-xs.font-medium(:style="{ color: isStepActive(step, idx) ? '#7849ff' : 'var(--text-muted)' }") {{ step.label }}
+
+  //- Order Info Cards Row
+  .grid.gap-6.mb-6(class="grid-cols-1 md_grid-cols-2")
+    //- Left: Order Details
+    el-card.rounded-2xl(shadow="never" style="border: 1px solid var(--border-default)")
+      template(#header)
+        .flex.items-center.gap-2
+          Icon(name="ph:file-text-bold" size="18" style="color: #7849ff")
+          span.font-bold(style="color: var(--text-primary)") {{ $t('salesOrders.title') || 'Order Details' }}
+      .grid.gap-4(class="grid-cols-2")
+        div
+          p.text-xs(style="color: var(--text-muted)") {{ $t('salesOrders.orderNumber') || 'Order Number' }}
+          p.text-sm.font-semibold.font-mono(style="color: var(--text-primary)") {{ order.orderNumber || '--' }}
+        div
+          p.text-xs(style="color: var(--text-muted)") {{ $t('salesOrders.status') || 'Status' }}
+          el-tag(
+            v-if="order.status"
+            :type="getStatusType(order.status)"
+            size="small"
+            effect="dark"
+            round
+          ) {{ order.status }}
+          span.text-sm(v-else style="color: var(--text-primary)") --
+        div
+          p.text-xs(style="color: var(--text-muted)") {{ $t('common.date') || 'Date' }}
+          p.text-sm.font-semibold(style="color: var(--text-primary)") {{ formatDate(order.createdAt) }}
+        div
+          p.text-xs(style="color: var(--text-muted)") {{ $t('salesOrders.paymentTerms') || 'Payment Terms' }}
+          p.text-sm.font-semibold(style="color: var(--text-primary)") {{ order.paymentTerms || '--' }}
+        div
+          p.text-xs(style="color: var(--text-muted)") {{ $t('salesOrders.currency') || 'Currency' }}
+          p.text-sm.font-semibold(style="color: var(--text-primary)") {{ order.currency || 'SAR' }}
+      .mt-4(v-if="order.notes")
+        p.text-xs(style="color: var(--text-muted)") {{ $t('salesOrders.notes') || 'Notes' }}
+        p.text-sm.mt-1(style="color: var(--text-primary)") {{ order.notes }}
+
+    //- Right: Client Info
+    el-card.rounded-2xl(shadow="never" style="border: 1px solid var(--border-default)")
+      template(#header)
+        .flex.items-center.gap-2
+          Icon(name="ph:user-bold" size="18" style="color: #7849ff")
+          span.font-bold(style="color: var(--text-primary)") {{ $t('salesOrders.client') || 'Client Info' }}
+      .grid.gap-4
+        div
+          p.text-xs(style="color: var(--text-muted)") {{ $t('salesOrders.client') || 'Client' }}
+          NuxtLink.text-sm.font-semibold.underline(
+            v-if="order.client?.id"
+            :to="`/sales/clients/${order.client.id}`"
+            style="color: #7849ff"
+          ) {{ order.client.name || '--' }}
+          p.text-sm.font-semibold(v-else style="color: var(--text-primary)") {{ order.client?.name || order.clientId || '--' }}
+        div
+          p.text-xs(style="color: var(--text-muted)") {{ $t('salesOrders.shippingAddress') || 'Shipping Address' }}
+          p.text-sm.font-semibold(style="color: var(--text-primary)") {{ order.shippingAddress || '--' }}
+
+  //- Line Items Section
+  el-card.rounded-2xl.mb-6(shadow="never" style="border: 1px solid var(--border-default)")
+    template(#header)
+      .flex.items-center.gap-2
+        Icon(name="ph:list-bullets-bold" size="18" style="color: #7849ff")
+        span.font-bold(style="color: var(--text-primary)") {{ $t('salesOrders.items') || 'Order Items' }}
+    el-table(:data="order.items || []" stripe style="width: 100%")
+      el-table-column(label="#" width="60" align="center")
+        template(#default="{ $index }") {{ $index + 1 }}
+      el-table-column(:label="$t('salesOrders.description') || 'Description'" min-width="200")
+        template(#default="{ row }")
+          span.text-sm(style="color: var(--text-primary)") {{ row.description || '--' }}
+      el-table-column(:label="$t('salesOrders.quantity') || 'Quantity'" width="100" align="center")
+        template(#default="{ row }")
+          span.text-sm(style="color: var(--text-primary)") {{ row.quantity || 0 }}
+      el-table-column(:label="$t('salesOrders.unitPrice') || 'Unit Price'" width="130" align="right")
+        template(#default="{ row }")
+          span.text-sm(style="color: var(--text-primary)") {{ formatCurrency(row.unitPrice) }}
+      el-table-column(:label="$t('salesOrders.taxRate') || 'Tax %'" width="100" align="center")
+        template(#default="{ row }")
+          span.text-sm(style="color: var(--text-muted)") {{ row.taxRate || 0 }}%
+      el-table-column(:label="$t('salesOrders.discountRate') || 'Discount %'" width="110" align="center")
+        template(#default="{ row }")
+          span.text-sm(style="color: var(--text-muted)") {{ row.discountRate || 0 }}%
+      el-table-column(:label="$t('salesOrders.lineTotal') || 'Line Total'" width="140" align="right")
+        template(#default="{ row }")
+          span.text-sm.font-semibold(style="color: var(--text-primary)") {{ formatCurrency(row.lineTotal) }}
+
+    //- Totals Footer
+    .flex.justify-end.mt-4
+      .w-72
+        .flex.justify-between.py-2(style="border-bottom: 1px solid var(--border-default)")
+          span.text-sm(style="color: var(--text-muted)") {{ $t('salesOrders.subtotal') || 'Subtotal' }}
+          span.text-sm.font-semibold(style="color: var(--text-primary)") {{ formatCurrency(order.subtotal) }}
+        .flex.justify-between.py-2(style="border-bottom: 1px solid var(--border-default)")
+          span.text-sm(style="color: var(--text-muted)") {{ $t('salesOrders.taxAmount') || 'Tax' }}
+          span.text-sm(style="color: var(--text-primary)") {{ formatCurrency(order.taxAmount) }}
+        .flex.justify-between.py-2(style="border-bottom: 1px solid var(--border-default)")
+          span.text-sm(style="color: var(--text-muted)") {{ $t('salesOrders.discountAmount') || 'Discount' }}
+          span.text-sm(style="color: var(--text-primary)") -{{ formatCurrency(order.discountAmount) }}
+        .flex.justify-between.py-3
+          span.text-base.font-bold(style="color: var(--text-primary)") {{ $t('salesOrders.total') || 'Total' }}
+          span.text-base.font-bold(style="color: #7849ff") {{ formatCurrency(order.total, order.currency) }}
+
+  //- Fulfillment Section
+  el-card.rounded-2xl.mb-6(shadow="never" style="border: 1px solid var(--border-default)")
+    template(#header)
+      .flex.items-center.justify-between
+        .flex.items-center.gap-2
+          Icon(name="ph:package-bold" size="18" style="color: #7849ff")
+          span.font-bold(style="color: var(--text-primary)") {{ $t('salesOrders.fulfillment') || 'Fulfillment' }}
+        el-button(type="primary" size="small" @click="openAddFulfillment" class="!rounded-lg")
+          Icon(name="ph:plus-bold" size="14" class="mr-1")
+          | {{ $t('salesOrders.addFulfillment') || 'Add Fulfillment' }}
+
+    //- Fulfillment list
+    .space-y-4(v-if="order.fulfillments?.length")
+      .p-4.rounded-xl(
+        v-for="(ful, idx) in order.fulfillments"
+        :key="ful.id || idx"
+        style="background: var(--bg-elevated); border: 1px solid var(--border-default)"
+      )
+        .flex.items-center.justify-between.mb-3
+          .flex.items-center.gap-3
+            .w-8.h-8.rounded-lg.flex.items-center.justify-center(style="background: rgba(120, 73, 255, 0.15)")
+              Icon(name="ph:truck-bold" size="16" style="color: #7849ff")
+            span.font-semibold.text-sm(style="color: var(--text-primary)") {{ ($t('salesOrders.fulfillment') || 'Fulfillment') + ' #' + (idx + 1) }}
+          .flex.items-center.gap-2
+            el-tag(
+              :type="getFulfillmentStatusType(ful.status)"
+              size="small"
+              effect="dark"
+              round
+            ) {{ ful.status || '--' }}
+            el-button(size="small" @click="openEditFulfillment(ful)" class="!rounded-lg")
+              Icon(name="ph:pencil-bold" size="14")
+        .grid.gap-3(class="grid-cols-2 md_grid-cols-4")
+          div
+            p.text-xs(style="color: var(--text-muted)") {{ $t('salesOrders.carrier') || 'Carrier' }}
+            p.text-sm.font-semibold(style="color: var(--text-primary)") {{ ful.carrier || '--' }}
+          div
+            p.text-xs(style="color: var(--text-muted)") {{ $t('salesOrders.trackingNumber') || 'Tracking #' }}
+            p.text-sm.font-semibold.font-mono(style="color: var(--text-primary)") {{ ful.trackingNumber || '--' }}
+          div
+            p.text-xs(style="color: var(--text-muted)") {{ $t('salesOrders.shippedDate') || 'Shipped Date' }}
+            p.text-sm.font-semibold(style="color: var(--text-primary)") {{ formatDate(ful.shippedDate) }}
+          div
+            p.text-xs(style="color: var(--text-muted)") {{ $t('salesOrders.deliveredDate') || 'Delivered Date' }}
+            p.text-sm.font-semibold(style="color: var(--text-primary)") {{ formatDate(ful.deliveredDate) }}
+        .mt-2(v-if="ful.notes")
+          p.text-xs(style="color: var(--text-muted)") {{ $t('salesOrders.notes') || 'Notes' }}
+          p.text-sm(style="color: var(--text-primary)") {{ ful.notes }}
+
+    //- Empty fulfillment
+    .text-center.py-8(v-else)
+      Icon(name="ph:package" size="40" style="color: var(--text-muted)")
+      p.text-sm.mt-2(style="color: var(--text-muted)") {{ $t('common.noData') || 'No fulfillments yet' }}
+
+  //- Status Update Dialog
+  el-dialog(
+    v-model="statusDialogVisible"
+    :title="$t('salesOrders.status') || 'Update Status'"
+    width="420px"
+    :close-on-click-modal="false"
+  )
+    el-form(label-position="top")
+      el-form-item(:label="$t('salesOrders.status') || 'Status'" required)
+        el-select(v-model="newStatus" style="width: 100%" size="large")
+          el-option(
+            v-for="opt in salesOrderStatusOptions"
+            :key="opt.value"
+            :label="opt.label"
+            :value="opt.value"
+          )
+    template(#footer)
+      el-button(@click="statusDialogVisible = false") {{ $t('common.cancel') || 'Cancel' }}
+      el-button(type="primary" :loading="saving" @click="confirmStatusUpdate") {{ $t('common.confirm') || 'Confirm' }}
+
+  //- Add Fulfillment Dialog
+  el-dialog(
+    v-model="addFulDialogVisible"
+    :title="$t('salesOrders.addFulfillment') || 'Add Fulfillment'"
+    width="550px"
+    :close-on-click-modal="false"
+  )
+    el-form(:model="fulfillmentForm" label-position="top")
+      .grid.gap-4(class="grid-cols-1 md_grid-cols-2")
+        el-form-item(:label="$t('salesOrders.carrier') || 'Carrier'")
+          el-input(v-model="fulfillmentForm.carrier" :placeholder="$t('salesOrders.carrier') || 'e.g. DHL, FedEx'")
+        el-form-item(:label="$t('salesOrders.trackingNumber') || 'Tracking Number'")
+          el-input(v-model="fulfillmentForm.trackingNumber" :placeholder="$t('salesOrders.trackingNumber') || 'Tracking Number'")
+      el-form-item(:label="$t('salesOrders.status') || 'Status'")
+        el-select(v-model="fulfillmentForm.status" style="width: 100%")
+          el-option(
+            v-for="opt in fulfillmentStatusOptions"
+            :key="opt.value"
+            :label="opt.label"
+            :value="opt.value"
+          )
+      el-form-item(:label="$t('salesOrders.notes') || 'Notes'")
+        el-input(v-model="fulfillmentForm.notes" type="textarea" :rows="3" :placeholder="$t('salesOrders.notes') || 'Notes'")
+    template(#footer)
+      el-button(@click="addFulDialogVisible = false") {{ $t('common.cancel') || 'Cancel' }}
+      el-button(type="primary" :loading="saving" @click="confirmAddFulfillment") {{ $t('common.save') || 'Save' }}
+
+  //- Edit Fulfillment Dialog
+  el-dialog(
+    v-model="editFulDialogVisible"
+    :title="$t('salesOrders.fulfillment') || 'Update Fulfillment'"
+    width="550px"
+    :close-on-click-modal="false"
+  )
+    el-form(:model="editFulForm" label-position="top")
+      .grid.gap-4(class="grid-cols-1 md_grid-cols-2")
+        el-form-item(:label="$t('salesOrders.carrier') || 'Carrier'")
+          el-input(v-model="editFulForm.carrier" :placeholder="$t('salesOrders.carrier') || 'Carrier'")
+        el-form-item(:label="$t('salesOrders.trackingNumber') || 'Tracking Number'")
+          el-input(v-model="editFulForm.trackingNumber" :placeholder="$t('salesOrders.trackingNumber') || 'Tracking Number'")
+      el-form-item(:label="$t('salesOrders.status') || 'Status'")
+        el-select(v-model="editFulForm.status" style="width: 100%")
+          el-option(
+            v-for="opt in fulfillmentStatusOptions"
+            :key="opt.value"
+            :label="opt.label"
+            :value="opt.value"
+          )
+      .grid.gap-4(class="grid-cols-1 md_grid-cols-2")
+        el-form-item(:label="$t('salesOrders.shippedDate') || 'Shipped Date'")
+          el-date-picker(
+            v-model="editFulForm.shippedDate"
+            type="date"
+            :placeholder="$t('common.select') || 'Select date'"
+            style="width: 100%"
+            value-format="YYYY-MM-DD"
+          )
+        el-form-item(:label="$t('salesOrders.deliveredDate') || 'Delivered Date'")
+          el-date-picker(
+            v-model="editFulForm.deliveredDate"
+            type="date"
+            :placeholder="$t('common.select') || 'Select date'"
+            style="width: 100%"
+            value-format="YYYY-MM-DD"
+          )
+      el-form-item(:label="$t('salesOrders.notes') || 'Notes'")
+        el-input(v-model="editFulForm.notes" type="textarea" :rows="3" :placeholder="$t('salesOrders.notes') || 'Notes'")
+    template(#footer)
+      el-button(@click="editFulDialogVisible = false") {{ $t('common.cancel') || 'Cancel' }}
+      el-button(type="primary" :loading="saving" @click="confirmEditFulfillment") {{ $t('common.save') || 'Save' }}
+</template>
+
+<script setup lang="ts">
+import { ref, reactive, computed, onMounted } from 'vue';
+import {
+  getSalesOrderById,
+  updateSalesOrderStatus,
+  addFulfillment,
+  updateFulfillment,
+  SalesOrderStatusEnum,
+  FulfillmentStatusEnum,
+  salesOrderStatusOptions,
+  fulfillmentStatusOptions
+} from '~/composables/useSalesOrders';
+import type { SalesOrder, Fulfillment } from '~/composables/useSalesOrders';
+
+definePageMeta({ middleware: 'permissions' });
+
+const { $i18n } = useNuxtApp();
+const t = $i18n.t;
+const route = useRoute();
+
+const orderId = computed(() => route.params.slug as string);
+
+// State
+const loading = ref(false);
+const saving = ref(false);
+const order = ref<SalesOrder>({} as SalesOrder);
+
+// Status dialog
+const statusDialogVisible = ref(false);
+const newStatus = ref(SalesOrderStatusEnum.DRAFT);
+
+// Fulfillment dialogs
+const addFulDialogVisible = ref(false);
+const editFulDialogVisible = ref(false);
+const editingFulId = ref('');
+
+const fulfillmentForm = reactive({
+  carrier: '',
+  trackingNumber: '',
+  status: FulfillmentStatusEnum.PENDING as string,
+  notes: ''
+});
+
+const editFulForm = reactive({
+  carrier: '',
+  trackingNumber: '',
+  status: FulfillmentStatusEnum.PENDING as string,
+  shippedDate: '',
+  deliveredDate: '',
+  notes: ''
+});
+
+// Status timeline steps
+const statusSteps = [
+  { label: t('salesOrders.statusDraft') || 'Draft', value: SalesOrderStatusEnum.DRAFT },
+  { label: t('salesOrders.statusConfirmed') || 'Confirmed', value: SalesOrderStatusEnum.CONFIRMED },
+  { label: t('salesOrders.statusProcessing') || 'Processing', value: SalesOrderStatusEnum.PROCESSING },
+  { label: t('salesOrders.statusShipped') || 'Shipped', value: SalesOrderStatusEnum.SHIPPED },
+  { label: t('salesOrders.statusDelivered') || 'Delivered', value: SalesOrderStatusEnum.DELIVERED }
+];
+
+const currentStepIndex = computed(() => {
+  if (order.value.status === SalesOrderStatusEnum.CANCELLED) return -1;
+  return statusSteps.findIndex(s => s.value === order.value.status);
+});
+
+function isStepActive(step: { value: string }, idx: number): boolean {
+  if (order.value.status === SalesOrderStatusEnum.CANCELLED) return false;
+  return idx <= currentStepIndex.value;
+}
+
+function getStepColor(step: { value: string }, idx: number): string {
+  if (order.value.status === SalesOrderStatusEnum.CANCELLED) return 'var(--border-default)';
+  if (idx <= currentStepIndex.value) return '#7849ff';
+  return 'var(--border-default)';
+}
+
+// Helpers
+function getStatusType(status?: string): string {
+  const map: Record<string, string> = {
+    DRAFT: 'info',
+    CONFIRMED: '',
+    PROCESSING: 'warning',
+    SHIPPED: '',
+    DELIVERED: 'success',
+    CANCELLED: 'danger'
+  };
+  return map[status || ''] || 'info';
+}
+
+function getFulfillmentStatusType(status?: string): string {
+  const map: Record<string, string> = {
+    PENDING: 'info',
+    PACKED: 'warning',
+    SHIPPED: '',
+    DELIVERED: 'success'
+  };
+  return map[status || ''] || 'info';
+}
+
+function formatDate(dateStr?: string): string {
+  if (!dateStr) return '--';
+  return new Date(dateStr).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
+}
+
+function formatCurrency(amount?: number, currency?: string): string {
+  return new Intl.NumberFormat('en-US', {
+    style: 'currency',
+    currency: currency || order.value.currency || 'SAR',
+    minimumFractionDigits: 0,
+    maximumFractionDigits: 2
+  }).format(amount || 0);
+}
+
+function printOrder() {
+  window.print();
+}
+
+// Data loading
+async function loadOrder() {
+  if (!orderId.value) return;
+  loading.value = true;
+  try {
+    order.value = await getSalesOrderById(orderId.value);
+  } catch {
+    // silent
+  } finally {
+    loading.value = false;
+  }
+}
+
+// Status update
+function openStatusDialog() {
+  newStatus.value = (order.value.status as SalesOrderStatusEnum) || SalesOrderStatusEnum.DRAFT;
+  statusDialogVisible.value = true;
+}
+
+async function confirmStatusUpdate() {
+  if (!orderId.value) return;
+  saving.value = true;
+  try {
+    const result = await updateSalesOrderStatus(orderId.value, newStatus.value);
+    if (result) {
+      statusDialogVisible.value = false;
+      await loadOrder();
+    }
+  } finally {
+    saving.value = false;
+  }
+}
+
+// Add fulfillment
+function openAddFulfillment() {
+  fulfillmentForm.carrier = '';
+  fulfillmentForm.trackingNumber = '';
+  fulfillmentForm.status = FulfillmentStatusEnum.PENDING;
+  fulfillmentForm.notes = '';
+  addFulDialogVisible.value = true;
+}
+
+async function confirmAddFulfillment() {
+  if (!orderId.value) return;
+  saving.value = true;
+  try {
+    const result = await addFulfillment(orderId.value, { ...fulfillmentForm });
+    if (result) {
+      addFulDialogVisible.value = false;
+      await loadOrder();
+    }
+  } finally {
+    saving.value = false;
+  }
+}
+
+// Edit fulfillment
+function openEditFulfillment(ful: Fulfillment) {
+  editingFulId.value = ful.id || '';
+  editFulForm.carrier = ful.carrier || '';
+  editFulForm.trackingNumber = ful.trackingNumber || '';
+  editFulForm.status = ful.status || FulfillmentStatusEnum.PENDING;
+  editFulForm.shippedDate = ful.shippedDate || '';
+  editFulForm.deliveredDate = ful.deliveredDate || '';
+  editFulForm.notes = ful.notes || '';
+  editFulDialogVisible.value = true;
+}
+
+async function confirmEditFulfillment() {
+  if (!orderId.value || !editingFulId.value) return;
+  saving.value = true;
+  try {
+    const result = await updateFulfillment(orderId.value, editingFulId.value, { ...editFulForm });
+    if (result) {
+      editFulDialogVisible.value = false;
+      await loadOrder();
+    }
+  } finally {
+    saving.value = false;
+  }
+}
+
+onMounted(() => {
+  loadOrder();
+});
+</script>
+
+<style lang="scss" scoped>
+.animate-fade-in {
+  animation: fadeIn 0.4s ease-out;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(8px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+</style>

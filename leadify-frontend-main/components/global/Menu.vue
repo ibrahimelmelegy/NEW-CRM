@@ -134,7 +134,7 @@ function hasAccessToSection(navLink: any): boolean {
 }
 
 // ──────────────────────────────────────────────────────────────
-// Reorganized Menu — consolidated from 32 to 15 top-level items
+// Reorganized Menu — consolidated from 32 to 16 top-level items
 // ──────────────────────────────────────────────────────────────
 const menu = [
   // 1. Home
@@ -237,7 +237,22 @@ const menu = [
     ]
   },
 
-  // 7. Supply Chain (merged: Inventory + Warehouse + Manufacturing + Shipping)
+  // 7. E-Commerce
+  {
+    name: 'navigation.ecommerce',
+    icon: 'ph:shopping-bag-open-bold',
+    isOpen: false,
+    submenu: [
+      { link: '/e-commerce', name: 'navigation.ecommerceDashboard', icon: 'ph:chart-pie-slice-bold' },
+      { link: '/e-commerce/products', name: 'navigation.ecProducts', icon: 'ph:package-bold' },
+      { link: '/e-commerce/orders', name: 'navigation.ecOrders', icon: 'ph:receipt-bold' },
+      { link: '/e-commerce/categories', name: 'navigation.ecCategories', icon: 'ph:folder-notch-bold' },
+      { link: '/e-commerce/coupons', name: 'navigation.ecCoupons', icon: 'ph:ticket-bold' },
+      { link: '/e-commerce/reviews', name: 'navigation.ecReviews', icon: 'ph:star-bold' }
+    ]
+  },
+
+  // 8. Supply Chain (merged: Inventory + Warehouse + Manufacturing + Shipping)
   {
     name: 'navigation.supplyChain',
     icon: 'ph:package-bold',
@@ -251,7 +266,7 @@ const menu = [
     ]
   },
 
-  // 8. Communication (merged: Messaging + Communications + AI + Virtual Office)
+  // 9. Communication (merged: Messaging + Communications + AI + Virtual Office)
   {
     name: 'navigation.communication',
     icon: 'ph:chat-circle-dots-bold',
@@ -266,7 +281,7 @@ const menu = [
     ]
   },
 
-  // 9. Marketing
+  // 10. Marketing
   {
     name: 'navigation.marketing',
     icon: 'ph:megaphone-bold',
@@ -283,7 +298,7 @@ const menu = [
     ]
   },
 
-  // 10. Documents (absorbed Automations)
+  // 11. Documents (absorbed Automations)
   {
     name: 'navigation.documents',
     icon: 'ph:folder-open-bold',
@@ -297,7 +312,7 @@ const menu = [
     ]
   },
 
-  // 11. Analytics & Reports (merged: Reports + Analytics + Gamification)
+  // 12. Analytics & Reports (merged: Reports + Analytics + Gamification)
   {
     name: 'navigation.analyticsReports',
     icon: 'ph:chart-line-bold',
@@ -315,7 +330,7 @@ const menu = [
     ]
   },
 
-  // 12. Finance
+  // 13. Finance
   {
     name: 'navigation.finance',
     icon: 'ph:currency-circle-dollar-bold',
@@ -335,7 +350,7 @@ const menu = [
     ]
   },
 
-  // 13. HR
+  // 14. HR
   {
     name: 'navigation.hr',
     icon: 'ph:identification-badge-bold',
@@ -356,7 +371,7 @@ const menu = [
     ]
   },
 
-  // 14. Support (absorbed Customer Success)
+  // 15. Support (absorbed Customer Success)
   {
     name: 'navigation.support',
     icon: 'ph:lifebuoy-bold',
@@ -373,7 +388,7 @@ const menu = [
     ]
   },
 
-  // 15. Settings (absorbed Approvals)
+  // 16. Settings (absorbed Approvals)
   {
     name: 'navigation.settings',
     icon: 'ph:gear-bold',
