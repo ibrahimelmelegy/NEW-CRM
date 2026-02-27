@@ -178,6 +178,10 @@ div
               el-table-column(:label="$t('loyalty.lifetimePoints') || 'Lifetime Pts'" width="140" align="center")
                 template(#default="{ row }")
                   span.text-sm(style="color: var(--text-muted)") {{ (row.totalEarned || 0).toLocaleString() }}
+              el-table-column(:label="$t('loyalty.expiringPoints') || 'Expiring Soon'" width="140" align="center")
+                template(#default="{ row }")
+                  span.text-sm.font-bold(v-if="row.expiringPoints" style="color: #f59e0b") {{ row.expiringPoints }}
+                  span.text-sm(v-else style="color: var(--text-muted)") —
               el-table-column(:label="$t('loyalty.joinDate') || 'Joined'" width="130")
                 template(#default="{ row }")
                   span.text-sm(style="color: var(--text-muted)") {{ formatDate(row.firstTransaction) }}
@@ -323,6 +327,23 @@ div
         el-form-item(:label="$t('loyalty.pointsPerCurrency') || 'Points per Currency Unit'")
           el-input-number(v-model="programForm.pointsPerCurrency" :min="0" :step="0.1" class="!w-full")
       //- Tiers
+      el-form-item(:label="$t('loyalty.pointsAccrualRules') || 'Points Accrual Rules'")
+        .space-y-2
+          .flex.items-center.gap-2(v-for="(rule, idx) in programForm.accrualRules" :key="idx")
+            el-input(v-model="rule.name" :placeholder="$t('loyalty.ruleName') || 'Rule Name'" style="flex: 2")
+            el-input-number(v-model="rule.pointsPerUnit" :min="0" :precision="1" :placeholder="'Points'" style="flex: 1")
+            el-button(text type="danger" @click="programForm.accrualRules.splice(idx, 1)")
+              Icon(name="ph:x-bold" size="14")
+          el-button(text type="primary" @click="programForm.accrualRules.push({ name: '', pointsPerUnit: 1 })")
+            Icon(name="ph:plus-bold" size="14")
+            span.ml-1 {{ $t('loyalty.addRule') || 'Add Rule' }}
+
+      el-form-item(:label="$t('loyalty.pointsExpiration') || 'Points Expiration'")
+        .flex.items-center.gap-3
+          el-checkbox(v-model="programForm.enableExpiration") {{ $t('loyalty.enableExpiration') || 'Enable expiration' }}
+          el-input-number(v-if="programForm.enableExpiration" v-model="programForm.expirationDays" :min="1" :placeholder="'Days'" style="width: 120px")
+          span.text-xs(v-if="programForm.enableExpiration" style="color: var(--text-muted)") {{ $t('loyalty.daysAfterEarned') || 'days after earned' }}
+
       el-form-item(:label="$t('loyalty.tiers') || 'Tiers'")
         .space-y-2
           .flex.items-center.gap-2(v-for="(tier, idx) in programForm.tiers" :key="idx")
@@ -493,6 +514,9 @@ const defaultProgramForm = () => ({
   description: '',
   status: 'ACTIVE',
   pointsPerCurrency: 1,
+  enableExpiration: false,
+  expirationDays: 365,
+  accrualRules: [{ name: 'Purchase', pointsPerUnit: 1 }] as any[],
   tiers: [{ name: 'Bronze', minPoints: 0, benefits: [] }, { name: 'Silver', minPoints: 1000, benefits: [] }, { name: 'Gold', minPoints: 5000, benefits: [] }, { name: 'Platinum', minPoints: 20000, benefits: [] }] as any[]
 });
 

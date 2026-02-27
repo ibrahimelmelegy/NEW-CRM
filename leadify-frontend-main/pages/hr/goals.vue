@@ -4,12 +4,12 @@
     <div class="glass-panel p-6 rounded-2xl">
       <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
         <div>
-          <h1 class="text-2xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-teal-400 to-cyan-400">Goals & OKRs</h1>
-          <p class="text-slate-400 text-sm mt-1">Set objectives, track key results, and align team goals across the organization.</p>
+          <h1 class="text-2xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-teal-400 to-cyan-400">{{ $t('hr.goals.title') }}</h1>
+          <p class="text-slate-400 text-sm mt-1">{{ $t('hr.goals.subtitle') }}</p>
         </div>
         <el-button type="primary" class="!rounded-xl" @click="showGoalDialog = true">
           <Icon name="ph:target-bold" class="w-4 h-4 mr-2" />
-          Create Goal
+          {{ $t('hr.goals.createGoal') }}
         </el-button>
       </div>
     </div>
@@ -23,7 +23,7 @@
               <Icon name="ph:target-bold" class="w-5 h-5 text-indigo-400" />
             </div>
             <div class="text-2xl font-bold text-slate-200">{{ statsData.totalGoals }}</div>
-            <div class="text-xs text-slate-500 mt-1">Total Goals</div>
+            <div class="text-xs text-slate-500 mt-1">{{ $t('hr.goals.totalGoals') }}</div>
           </div>
         </el-col>
         <el-col :xs="12" :sm="8" :md="4" :lg="4">
@@ -32,7 +32,7 @@
               <Icon name="ph:check-circle-bold" class="w-5 h-5 text-emerald-400" />
             </div>
             <div class="text-2xl font-bold text-emerald-400">{{ statsData.completed }}</div>
-            <div class="text-xs text-slate-500 mt-1">Completed</div>
+            <div class="text-xs text-slate-500 mt-1">{{ $t('hr.goals.completed') }}</div>
           </div>
         </el-col>
         <el-col :xs="12" :sm="8" :md="4" :lg="4">
@@ -41,7 +41,7 @@
               <Icon name="ph:spinner-bold" class="w-5 h-5 text-blue-400" />
             </div>
             <div class="text-2xl font-bold text-blue-400">{{ statsData.inProgress }}</div>
-            <div class="text-xs text-slate-500 mt-1">In Progress</div>
+            <div class="text-xs text-slate-500 mt-1">{{ $t('hr.goals.inProgress') }}</div>
           </div>
         </el-col>
         <el-col :xs="12" :sm="8" :md="4" :lg="4">
@@ -50,7 +50,7 @@
               <Icon name="ph:warning-bold" class="w-5 h-5 text-red-400" />
             </div>
             <div class="text-2xl font-bold text-red-400">{{ statsData.overdue }}</div>
-            <div class="text-xs text-slate-500 mt-1">Overdue</div>
+            <div class="text-xs text-slate-500 mt-1">{{ $t('hr.goals.overdue') }}</div>
           </div>
         </el-col>
         <el-col :xs="24" :sm="8" :md="4" :lg="4">
@@ -59,7 +59,7 @@
               <Icon name="ph:chart-line-up-bold" class="w-5 h-5 text-amber-400" />
             </div>
             <div class="text-2xl font-bold text-amber-400">{{ statsData.avgProgress }}%</div>
-            <div class="text-xs text-slate-500 mt-1">Avg Progress</div>
+            <div class="text-xs text-slate-500 mt-1">{{ $t('hr.goals.avgProgress') }}</div>
           </div>
         </el-col>
       </el-row>
@@ -68,7 +68,7 @@
       <div v-if="overdueGoals.length" class="glass-panel p-5 rounded-xl border border-red-500/30">
         <div class="flex items-center gap-2 mb-4">
           <Icon name="ph:warning-circle-bold" class="w-5 h-5 text-red-400" />
-          <h3 class="text-sm font-semibold text-red-400">Overdue Goals ({{ overdueGoals.length }})</h3>
+          <h3 class="text-sm font-semibold text-red-400">{{ $t('hr.goals.overdueGoals') }} ({{ overdueGoals.length }})</h3>
         </div>
         <div class="space-y-2">
           <div
@@ -100,7 +100,7 @@
       <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
         <div class="glass-panel p-5 rounded-xl">
           <div class="flex items-center justify-between mb-2">
-            <span class="text-xs text-slate-500">Company Goals</span>
+            <span class="text-xs text-slate-500">{{ $t('hr.goals.companyGoals') }}</span>
             <Icon name="ph:buildings-bold" class="w-4 h-4 text-indigo-400" />
           </div>
           <div class="text-2xl font-bold text-slate-200">{{ companyGoals.length }}</div>
@@ -108,7 +108,7 @@
         </div>
         <div class="glass-panel p-5 rounded-xl">
           <div class="flex items-center justify-between mb-2">
-            <span class="text-xs text-slate-500">Team Goals</span>
+            <span class="text-xs text-slate-500">{{ $t('hr.goals.teamGoals') }}</span>
             <Icon name="ph:users-three-bold" class="w-4 h-4 text-emerald-400" />
           </div>
           <div class="text-2xl font-bold text-slate-200">{{ teamGoals.length }}</div>
@@ -116,7 +116,7 @@
         </div>
         <div class="glass-panel p-5 rounded-xl">
           <div class="flex items-center justify-between mb-2">
-            <span class="text-xs text-slate-500">Personal Goals</span>
+            <span class="text-xs text-slate-500">{{ $t('hr.goals.personalGoals') }}</span>
             <Icon name="ph:user-bold" class="w-4 h-4 text-amber-400" />
           </div>
           <div class="text-2xl font-bold text-slate-200">{{ personalGoals.length }}</div>
@@ -124,7 +124,7 @@
         </div>
         <div class="glass-panel p-5 rounded-xl">
           <div class="flex items-center justify-between mb-2">
-            <span class="text-xs text-slate-500">Overall Progress</span>
+            <span class="text-xs text-slate-500">{{ $t('hr.goals.overallProgress') }}</span>
             <Icon name="ph:chart-line-up-bold" class="w-4 h-4 text-teal-400" />
           </div>
           <div class="text-2xl font-bold text-teal-400">{{ avgProgress(allGoals) }}%</div>
@@ -134,13 +134,13 @@
 
       <!-- Goals Kanban View -->
       <el-tabs v-model="viewMode" class="glass-tabs">
-        <el-tab-pane label="Board View" name="board">
+        <el-tab-pane :label="$t('hr.goals.boardView')" name="board">
           <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
             <!-- Not Started -->
             <div>
               <div class="flex items-center gap-2 mb-4">
                 <div class="w-3 h-3 rounded-full bg-slate-500"></div>
-                <h3 class="text-sm font-medium text-slate-400">Not Started</h3>
+                <h3 class="text-sm font-medium text-slate-400">{{ $t('hr.goals.notStarted') }}</h3>
                 <span class="text-xs text-slate-600">({{ notStartedGoals.length }})</span>
               </div>
               <div class="space-y-3">
@@ -154,8 +154,8 @@
                     <el-progress :percentage="goal.progress" :stroke-width="4" :color="getProgressColor(goal.progress)" />
                   </div>
                   <div class="flex items-center justify-between mt-3 text-xs text-slate-500">
-                    <span>{{ goal.keyResults?.length || 0 }} Key Results</span>
-                    <span>Due: {{ formatDate(goal.dueDate) }}</span>
+                    <span>{{ goal.keyResults?.length || 0 }} {{ $t('hr.goals.keyResults') }}</span>
+                    <span>{{ $t('hr.goals.date') }}: {{ formatDate(goal.dueDate) }}</span>
                   </div>
                 </div>
               </div>
@@ -165,7 +165,7 @@
             <div>
               <div class="flex items-center gap-2 mb-4">
                 <div class="w-3 h-3 rounded-full bg-blue-500"></div>
-                <h3 class="text-sm font-medium text-slate-400">In Progress</h3>
+                <h3 class="text-sm font-medium text-slate-400">{{ $t('hr.goals.inProgress') }}</h3>
                 <span class="text-xs text-slate-600">({{ inProgressGoals.length }})</span>
               </div>
               <div class="space-y-3">
@@ -191,7 +191,7 @@
                   </div>
                   <div class="flex items-center justify-between mt-3 text-xs text-slate-500">
                     <span>{{ goal.owner }}</span>
-                    <span>Due: {{ formatDate(goal.dueDate) }}</span>
+                    <span>{{ $t('hr.goals.date') }}: {{ formatDate(goal.dueDate) }}</span>
                   </div>
                 </div>
               </div>
@@ -201,7 +201,7 @@
             <div>
               <div class="flex items-center gap-2 mb-4">
                 <div class="w-3 h-3 rounded-full bg-emerald-500"></div>
-                <h3 class="text-sm font-medium text-slate-400">Completed</h3>
+                <h3 class="text-sm font-medium text-slate-400">{{ $t('hr.goals.completed') }}</h3>
                 <span class="text-xs text-slate-600">({{ completedGoals.length }})</span>
               </div>
               <div class="space-y-3">
@@ -220,16 +220,16 @@
           </div>
         </el-tab-pane>
 
-        <el-tab-pane label="List View" name="list">
+        <el-tab-pane :label="$t('hr.goals.listView')" name="list">
           <div class="glass-panel p-6 rounded-xl">
             <el-table :data="allGoals" class="glass-table" stripe>
-              <el-table-column prop="title" label="Goal" min-width="200" />
-              <el-table-column prop="level" label="Level" width="120">
+              <el-table-column prop="title" :label="$t('hr.goals.goal')" min-width="200" />
+              <el-table-column prop="level" :label="$t('hr.goals.level')" width="120">
                 <template #default="{ row }">
                   <el-tag :type="getLevelType(row.level)" effect="dark" size="small">{{ row.level }}</el-tag>
                 </template>
               </el-table-column>
-              <el-table-column label="Progress" width="160">
+              <el-table-column :label="$t('hr.goals.progress')" width="160">
                 <template #default="{ row }">
                   <div class="flex items-center gap-2">
                     <el-progress :percentage="row.progress" :stroke-width="4" :color="getProgressColor(row.progress)" class="flex-1" />
@@ -239,13 +239,13 @@
                   </div>
                 </template>
               </el-table-column>
-              <el-table-column prop="owner" label="Owner" width="140" />
-              <el-table-column label="Due Date" width="120">
+              <el-table-column prop="owner" :label="$t('hr.goals.owner')" width="140" />
+              <el-table-column :label="$t('hr.goals.date')" width="120">
                 <template #default="{ row }">
                   <span class="text-sm text-slate-400">{{ formatDate(row.dueDate) }}</span>
                 </template>
               </el-table-column>
-              <el-table-column label="Status" width="120" align="center">
+              <el-table-column :label="$t('hr.goals.status')" width="120" align="center">
                 <template #default="{ row }">
                   <el-tag :type="getStatusType(row.status)" effect="dark" size="small">{{ row.status }}</el-tag>
                 </template>
@@ -257,69 +257,69 @@
     </div>
 
     <!-- New Goal Dialog -->
-    <el-dialog v-model="showGoalDialog" title="Create New Goal" width="560px">
+    <el-dialog v-model="showGoalDialog" :title="$t('hr.goals.createGoal')" width="560px">
       <el-form label-position="top">
-        <el-form-item label="Goal Title">
-          <el-input v-model="newGoal.title" placeholder="e.g., Increase quarterly revenue by 20%" />
+        <el-form-item :label="$t('hr.goals.goalTitle')">
+          <el-input v-model="newGoal.title" :placeholder="$t('hr.goals.goalTitlePlaceholder')" />
         </el-form-item>
-        <el-form-item label="Description">
-          <el-input v-model="newGoal.description" type="textarea" :rows="2" placeholder="Describe the objective..." />
+        <el-form-item :label="$t('hr.goals.description')">
+          <el-input v-model="newGoal.description" type="textarea" :rows="2" :placeholder="$t('hr.goals.descriptionPlaceholder')" />
         </el-form-item>
         <div class="grid grid-cols-2 gap-4">
-          <el-form-item label="Level">
+          <el-form-item :label="$t('hr.goals.level')">
             <el-select v-model="newGoal.level" class="w-full">
-              <el-option label="Company" value="COMPANY" />
-              <el-option label="Team" value="TEAM" />
-              <el-option label="Personal" value="PERSONAL" />
+              <el-option :label="$t('hr.goals.company')" value="COMPANY" />
+              <el-option :label="$t('hr.goals.team')" value="TEAM" />
+              <el-option :label="$t('hr.goals.personal')" value="PERSONAL" />
             </el-select>
           </el-form-item>
-          <el-form-item label="Due Date">
+          <el-form-item :label="$t('hr.goals.date')">
             <el-date-picker v-model="newGoal.dueDate" type="date" class="w-full" />
           </el-form-item>
         </div>
-        <el-form-item label="Owner">
-          <el-input v-model="newGoal.owner" placeholder="e.g., Marketing, John Doe" />
+        <el-form-item :label="$t('hr.goals.owner')">
+          <el-input v-model="newGoal.owner" :placeholder="$t('hr.goals.ownerPlaceholder')" />
         </el-form-item>
-        <el-form-item label="Key Results">
+        <el-form-item :label="$t('hr.goals.keyResults')">
           <div class="space-y-2 w-full">
             <div v-for="(kr, idx) in newGoal.keyResults" :key="idx" class="flex gap-2">
-              <el-input v-model="kr.title" placeholder="Key result..." class="flex-1" />
+              <el-input v-model="kr.title" :placeholder="$t('hr.goals.keyResultPlaceholder')" class="flex-1" />
               <el-button text type="danger" @click="newGoal.keyResults.splice(idx, 1)">
                 <Icon name="ph:x-bold" class="w-4 h-4" />
               </el-button>
             </div>
             <el-button text type="primary" @click="newGoal.keyResults.push({ id: Date.now(), title: '', completed: false })">
               <Icon name="ph:plus-bold" class="w-4 h-4 mr-1" />
-              Add Key Result
+              {{ $t('hr.goals.addKeyResult') }}
             </el-button>
           </div>
         </el-form-item>
       </el-form>
       <template #footer>
-        <el-button @click="showGoalDialog = false">Cancel</el-button>
-        <el-button type="primary" :loading="saving" @click="createGoal">Create Goal</el-button>
+        <el-button @click="showGoalDialog = false">{{ $t('common.cancel') }}</el-button>
+        <el-button type="primary" :loading="saving" @click="createGoal">{{ $t('hr.goals.createGoalBtn') }}</el-button>
       </template>
     </el-dialog>
 
     <!-- Update Progress Dialog -->
-    <el-dialog v-model="showProgressDialog" title="Update Goal Progress" width="420px">
+    <el-dialog v-model="showProgressDialog" :title="$t('hr.goals.updateProgress')" width="420px">
       <div v-if="editingGoal" class="space-y-4">
         <h4 class="text-sm font-medium text-slate-200">{{ editingGoal.title }}</h4>
-        <el-form-item label="Progress (%)">
+        <el-form-item :label="$t('hr.goals.progressPercent')">
           <el-slider v-model="editProgress" :min="0" :max="100" :step="5" show-input />
         </el-form-item>
-        <el-form-item label="Status">
+        <el-form-item :label="$t('hr.goals.status')">
           <el-select v-model="editStatus" class="w-full">
-            <el-option label="Not Started" value="NOT_STARTED" />
-            <el-option label="In Progress" value="IN_PROGRESS" />
-            <el-option label="Completed" value="COMPLETED" />
-            <el-option label="Cancelled" value="CANCELLED" />
+            <el-option :label="$t('hr.goals.notStartedStatus')" value="NOT_STARTED" />
+            <el-option :label="$t('hr.goals.inProgressStatus')" value="IN_PROGRESS" />
+            <el-option :label="$t('hr.goals.completedStatus')" value="COMPLETED" />
+            <el-option :label="$t('hr.goals.cancelledStatus')" value="CANCELLED" />
           </el-select>
         </el-form-item>
       </div>
       <template #footer>
-        <el-button @click="showProgressDialog = false">Cancel</el-button>
-        <el-button type="primary" :loading="saving" @click="updateGoalProgress">Save</el-button>
+        <el-button @click="showProgressDialog = false">{{ $t('common.cancel') }}</el-button>
+        <el-button type="primary" :loading="saving" @click="updateGoalProgress">{{ $t('common.save') }}</el-button>
       </template>
     </el-dialog>
   </div>

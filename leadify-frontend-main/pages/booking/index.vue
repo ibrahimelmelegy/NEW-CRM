@@ -107,8 +107,27 @@
             el-button(text type="danger" size="small" @click="cancelBooking(row)")
               Icon(name="ph:x-bold" class="w-4 h-4")
 
-  //- Booking Pages
+  //- Staff Availability Section
   .p-6.rounded-2xl.border(style="border-color: var(--border-default); background: var(--bg-elevated);")
+    .flex.justify-between.items-center.mb-4
+      h3.text-sm.font-medium(style="color: var(--text-primary);") {{ $t('booking.staffAvailability') || 'Staff Availability Rules' }}
+      el-button(type="primary" size="small" @click="showAvailabilityDialog = true")
+        Icon(name="ph:clock-bold" class="w-4 h-4 mr-2")
+        | {{ $t('booking.setAvailability') || 'Set Availability' }}
+    .grid.gap-3(class="grid-cols-1 md:grid-cols-2")
+      .p-3.rounded-lg.border(
+        v-for="staff in staffAvailability"
+        :key="staff.id"
+        style="border-color: var(--border-default); background: var(--bg-base);"
+      )
+        .flex.items-center.gap-3
+          el-avatar(:size="32") {{ staff.name?.charAt(0) }}
+          div.flex-1
+            p.text-sm.font-medium(style="color: var(--text-primary)") {{ staff.name }}
+            p.text-xs(style="color: var(--text-muted)") {{ staff.availableSlots || 'No availability set' }}
+
+  //- Booking Pages
+  .p-6.rounded-2xl.border.mt-6(style="border-color: var(--border-default); background: var(--bg-elevated);")
     .flex.justify-between.items-center.mb-4
       h3.text-sm.font-medium(style="color: var(--text-primary);") {{ $t('booking.bookingPages') }}
       el-button(type="primary" size="small" @click="showBookingTypeDialog = true")
@@ -177,6 +196,18 @@
         el-input(v-model="newBooking.location" :placeholder="$t('booking.locationPlaceholder')")
       el-form-item(:label="$t('booking.notes')")
         el-input(v-model="newBooking.notes" type="textarea" :rows="2")
+      el-form-item
+        el-checkbox(v-model="newBooking.isRecurring") {{ $t('booking.recurringBooking') || 'Recurring Booking' }}
+        el-select(v-if="newBooking.isRecurring" v-model="newBooking.recurringPattern" class="ml-2" style="width: 150px")
+          el-option(label="Daily" value="DAILY")
+          el-option(label="Weekly" value="WEEKLY")
+          el-option(label="Bi-weekly" value="BIWEEKLY")
+          el-option(label="Monthly" value="MONTHLY")
+      el-form-item(v-if="newBooking.isRecurring" :label="$t('booking.reminderConfig') || 'Reminder'")
+        .flex.items-center.gap-2
+          el-checkbox(v-model="newBooking.sendReminder") {{ $t('booking.sendReminder') || 'Send reminder' }}
+          el-input-number(v-if="newBooking.sendReminder" v-model="newBooking.reminderMinutes" :min="5" :max="1440" :step="5" class="!w-28")
+          span.text-xs(v-if="newBooking.sendReminder" style="color: var(--text-muted)") {{ $t('booking.minutesBefore') || 'min before' }}
     template(#footer)
       el-button(@click="showBookingDialog = false") {{ $t('common.cancel') }}
       el-button(type="primary" :loading="submitting" @click="createBooking") {{ $t('booking.schedule') }}
@@ -284,6 +315,7 @@ function mapBooking(raw: any, index: number): UIBooking {
 const viewMode = ref('day');
 const showBookingDialog = ref(false);
 const showBookingTypeDialog = ref(false);
+const showAvailabilityDialog = ref(false);
 const currentDate = ref(new Date());
 const loading = ref(false);
 const submitting = ref(false);
@@ -299,8 +331,14 @@ const newBooking = ref({
   type: 'MEETING',
   location: '',
   notes: '',
-  timezone: Intl.DateTimeFormat().resolvedOptions().timeZone || 'UTC'
+  timezone: Intl.DateTimeFormat().resolvedOptions().timeZone || 'UTC',
+  isRecurring: false,
+  recurringPattern: 'WEEKLY',
+  sendReminder: false,
+  reminderMinutes: 15
 });
+
+const staffAvailability = ref<any[]>([]);
 
 const newPage = ref({
   name: '',
@@ -595,9 +633,21 @@ const createBookingPage = async () => {
   }
 };
 
+async function fetchStaffAvailability() {
+  try {
+    const res = await useApiFetch('bookings/staff-availability');
+    if (res?.success && res?.body) {
+      staffAvailability.value = res.body;
+    }
+  } catch (e) {
+    console.error('Failed to fetch staff availability:', e);
+  }
+}
+
 onMounted(() => {
   fetchBookings();
   fetchBookingPages();
   fetchAnalytics();
+  fetchStaffAvailability();
 });
 </script>

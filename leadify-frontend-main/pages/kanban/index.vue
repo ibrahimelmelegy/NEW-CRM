@@ -7,6 +7,15 @@
     .flex.items-center.gap-3
       //- Toggle between Deal and Opportunity kanban
       el-segmented(v-model="viewMode" :options="viewOptions" @change="onViewChange" size="default")
+      //- Advanced Filters
+      .flex.items-center.gap-2
+        el-select(v-model="filters.assignee" placeholder="All Assignees" clearable size="default" style="width: 160px" @change="fetchData")
+          el-option(v-for="user in assignees" :key="user.value" :label="user.label" :value="user.value")
+        el-date-picker(v-model="filters.dateRange" type="daterange" range-separator="-" start-placeholder="Start" end-placeholder="End" size="default" @change="fetchData" style="width: 240px")
+        el-select(v-model="filters.priority" placeholder="All Priorities" clearable size="default" style="width: 140px" @change="fetchData")
+          el-option(label="Low" value="low")
+          el-option(label="Medium" value="medium")
+          el-option(label="High" value="high")
       el-button(type="primary" size="default" @click="addCard" style="background: var(--bg-obsidian); border: none; border-radius: 12px;" :disabled="viewMode === 'opportunity'")
         Icon(name="ph:plus" size="16" style="margin-right: 4px;")
         | {{ $t('kanbanBoard.addItem') }}
@@ -149,8 +158,28 @@ const saving = ref(false);
 const form = reactive({ title: '', description: '', columnId: 'PROGRESS', priority: 'medium', assignee: '', value: 0 });
 let draggedCard: KanbanCard | null = null;
 
+// Advanced filters
+const filters = reactive({
+  assignee: '',
+  dateRange: null as [string, string] | null,
+  priority: ''
+});
+
+const assignees = ref<any[]>([]);
+
 function getColumnCards(colId: string) {
-  return cards.value.filter(c => c.columnId === colId);
+  let filtered = cards.value.filter(c => c.columnId === colId);
+
+  // Apply filters
+  if (filters.assignee) {
+    filtered = filtered.filter(c => c.assignee === filters.assignee);
+  }
+  if (filters.priority) {
+    filtered = filtered.filter(c => c.priority === filters.priority);
+  }
+  // Date range filter would need additional date field in card model
+
+  return filtered;
 }
 
 // ─── Map API response to internal card format ───────────────────────────────
@@ -208,6 +237,18 @@ async function fetchData() {
     ElMessage.error($t('kanbanBoard.loadError'));
   } finally {
     loading.value = false;
+  }
+}
+
+// Fetch assignees for filter
+async function fetchAssignees() {
+  try {
+    const res = await useApiFetch('users');
+    if (res?.success && res?.body?.docs) {
+      assignees.value = res.body.docs.map((u: any) => ({ label: u.name, value: u.name }));
+    }
+  } catch {
+    // Silent fail
   }
 }
 
@@ -302,5 +343,6 @@ function priorityTag(p: string): '' | 'success' | 'warning' | 'danger' {
 
 onMounted(() => {
   fetchData();
+  fetchAssignees();
 });
 </script>

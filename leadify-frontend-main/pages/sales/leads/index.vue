@@ -304,6 +304,22 @@ const updateTableColumns = () => {
       width: 150
     },
     {
+      prop: 'score',
+      label: t('leads.table.score'),
+      component: 'Text',
+      sortable: true,
+      type: 'font-bold',
+      width: 100
+    },
+    {
+      prop: 'lastActivity',
+      label: t('leads.table.lastActivity'),
+      component: 'Text',
+      sortable: true,
+      type: 'font-default',
+      width: 150
+    },
+    {
       prop: 'assign',
       label: t('leads.table.assigned'),
       component: 'Text',

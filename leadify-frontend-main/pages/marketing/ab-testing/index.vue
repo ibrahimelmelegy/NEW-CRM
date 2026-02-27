@@ -15,8 +15,32 @@ div
   .flex.items-center.justify-center.py-20(v-if="loading")
     el-icon.is-loading(:size="32" style="color: var(--accent-color, #7849ff)")
 
-  //- Table
-  template(v-else)
+  //- Mobile Card View
+  .grid.gap-4.mb-6(v-if="!loading && isMobileView" class="grid-cols-1 md:grid-cols-2")
+    .glass-card.p-5.rounded-2xl(v-for="test in filteredData" :key="test.id" @click="openEditDialog(test)")
+      .flex.items-center.justify-between.mb-3
+        h3.text-base.font-bold(style="color: var(--text-primary)") {{ test.name }}
+        el-tag(:type="getStatusType(test.status)" size="small" effect="dark") {{ test.status }}
+      .space-y-2
+        .flex.items-center.justify-between
+          span.text-xs(style="color: var(--text-muted)") {{ $t('common.type') }}
+          el-tag(size="small" effect="plain") {{ test.type }}
+        .flex.items-center.justify-between(v-if="test.winner")
+          span.text-xs(style="color: var(--text-muted)") {{ $t('marketing.abTesting.winner') }}
+          span.text-sm.font-semibold(style="color: #22c55e") {{ test.winner }}
+        .flex.items-center.justify-between(v-if="test.confidence != null")
+          span.text-xs(style="color: var(--text-muted)") {{ $t('marketing.abTesting.confidence') }}
+          span.text-sm.font-bold(:style="{ color: test.confidence >= 95 ? '#22c55e' : test.confidence >= 80 ? '#f59e0b' : 'var(--text-muted)' }") {{ test.confidence }}%
+      .flex.items-center.gap-2.mt-4(@click.stop)
+        el-button(text size="small" type="success" @click="openResultsDialog(test)" :disabled="test.status === 'DRAFT'")
+          Icon(name="ph:chart-line-bold" size="14")
+        el-button(text size="small" type="primary" @click="openEditDialog(test)")
+          Icon(name="ph:pencil-bold" size="14")
+        el-button(text size="small" type="danger" @click="handleDelete(test)")
+          Icon(name="ph:trash-bold" size="14")
+
+  //- Table (Desktop)
+  template(v-else-if="!loading && !isMobileView")
     .glass-card.p-6
       .flex.items-center.justify-between.mb-4
         el-input(
@@ -30,6 +54,9 @@ div
           template(#prefix)
             Icon(name="ph:magnifying-glass" size="18" style="color: var(--text-muted)")
         .flex.items-center.gap-2
+          el-button(size="default" @click="showSampleSizeCalculator = true")
+            Icon(name="ph:calculator" size="14" class="mr-1")
+            | {{ $t('marketing.abTesting.sampleSizeCalc') }}
           el-select(v-model="filterStatus" clearable :placeholder="$t('common.status') || 'Status'" style="width: 160px")
             el-option(v-for="s in statusOptions" :key="s.value" :label="s.label" :value="s.value")
 
@@ -84,8 +111,41 @@ div
           @current-change="(p: number) => { pagination.page = p; fetchData() }"
         )
 
+  //- Sample Size Calculator Dialog
+  el-dialog(v-model="showSampleSizeCalculator" :title="$t('marketing.abTesting.sampleSizeCalc')" width="560px")
+    .glass-card.p-5.mb-4
+      .flex.items-center.gap-2.mb-3
+        Icon(name="ph:info-bold" size="18" style="color: #3b82f6")
+        h4.text-sm.font-bold(style="color: var(--text-primary)") {{ $t('marketing.abTesting.calcInstructions') }}
+      p.text-xs(style="color: var(--text-muted)") {{ $t('marketing.abTesting.calcInstructionsText') }}
+    el-form(label-position="top")
+      .grid.gap-4(class="grid-cols-2")
+        el-form-item(:label="$t('marketing.abTesting.baselineConversion')")
+          el-input-number(v-model="sampleCalc.baselineConversion" :min="0" :max="100" :precision="2" class="!w-full")
+            template(#suffix)
+              | %
+        el-form-item(:label="$t('marketing.abTesting.minDetectableEffect')")
+          el-input-number(v-model="sampleCalc.minEffect" :min="0" :max="100" :precision="2" class="!w-full")
+            template(#suffix)
+              | %
+      .grid.gap-4(class="grid-cols-2")
+        el-form-item(:label="$t('marketing.abTesting.confidenceLevel')")
+          el-select(v-model="sampleCalc.confidenceLevel" class="w-full")
+            el-option(label="90%" :value="90")
+            el-option(label="95%" :value="95")
+            el-option(label="99%" :value="99")
+        el-form-item(:label="$t('marketing.abTesting.statisticalPower')")
+          el-select(v-model="sampleCalc.power" class="w-full")
+            el-option(label="80%" :value="80")
+            el-option(label="90%" :value="90")
+            el-option(label="95%" :value="95")
+    .glass-card.p-5.text-center
+      p.text-xs.uppercase.tracking-wider.mb-2(style="color: var(--text-muted)") {{ $t('marketing.abTesting.recommendedSampleSize') }}
+      p.text-4xl.font-bold(style="color: #7849ff") {{ calculatedSampleSize.toLocaleString() }}
+      p.text-xs.mt-1(style="color: var(--text-muted)") {{ $t('marketing.abTesting.perVariant') }}
+
   //- Create / Edit Dialog
-  el-dialog(v-model="dialogVisible" :title="editingItem ? ($t('common.edit') || 'Edit') : ($t('marketing.abTesting.newTest') || 'New Test')" width="600px" destroy-on-close)
+  el-dialog(v-model="dialogVisible" :title="editingItem ? ($t('common.edit') || 'Edit') : ($t('marketing.abTesting.newTest') || 'New Test')" width="640px" destroy-on-close)
     el-form(:model="form" label-position="top" ref="formRef")
       el-form-item(:label="$t('common.name') || 'Name'" required)
         el-input(v-model="form.name" :placeholder="$t('marketing.abTesting.namePlaceholder') || 'e.g., Subject Line Test'")
@@ -101,8 +161,15 @@ div
           el-date-picker(v-model="form.startDate" type="date" class="w-full" value-format="YYYY-MM-DD")
         el-form-item(:label="$t('common.endDate') || 'End Date'")
           el-date-picker(v-model="form.endDate" type="date" class="w-full" value-format="YYYY-MM-DD")
-      el-form-item(:label="$t('marketing.abTesting.variants') || 'Variants (JSON)'")
-        el-input(v-model="form.variants" type="textarea" :rows="4" :placeholder="$t('marketing.abTesting.variantsPlaceholder') || '[{\"name\":\"Variant A\"},{\"name\":\"Variant B\"}]'")
+      el-form-item(:label="$t('marketing.abTesting.variants') || 'Variants'")
+        .space-y-2
+          .flex.items-center.gap-2(v-for="(variant, idx) in formVariants" :key="idx")
+            el-input(v-model="variant.name" :placeholder="`${$t('marketing.abTesting.variant')} ${idx + 1}`")
+            el-button(text type="danger" @click="formVariants.splice(idx, 1)" :disabled="formVariants.length <= 2")
+              Icon(name="ph:x-bold" size="14")
+          el-button(type="primary" plain size="small" @click="formVariants.push({ name: '' })")
+            Icon(name="ph:plus-bold" size="12" class="mr-1")
+            | {{ $t('marketing.abTesting.addVariant') }}
       el-form-item(:label="$t('common.notes') || 'Notes'")
         el-input(v-model="form.notes" type="textarea" :rows="2" :placeholder="$t('marketing.abTesting.notesPlaceholder') || 'Additional notes about this test'")
     template(#footer)
@@ -171,7 +238,7 @@ div
 </template>
 
 <script setup lang="ts">
-import { ref, reactive, computed, onMounted } from 'vue';
+import { ref, reactive, computed, onMounted, onUnmounted } from 'vue';
 import { ElMessage, ElMessageBox } from 'element-plus';
 
 definePageMeta({ middleware: 'permissions' });
@@ -183,6 +250,7 @@ const loading = ref(false);
 const saving = ref(false);
 const dialogVisible = ref(false);
 const resultsDialogVisible = ref(false);
+const showSampleSizeCalculator = ref(false);
 const loadingResults = ref(false);
 const declaringWinner = ref(false);
 const editingItem = ref<any>(null);
@@ -192,6 +260,28 @@ const search = ref('');
 const filterStatus = ref('');
 const items = ref<any[]>([]);
 const pagination = reactive({ page: 1, limit: 20, total: 0 });
+const isMobileView = ref(false);
+const formVariants = ref<any[]>([{ name: 'Variant A' }, { name: 'Variant B' }]);
+
+const sampleCalc = reactive({
+  baselineConversion: 5,
+  minEffect: 10,
+  confidenceLevel: 95,
+  power: 80
+});
+
+const calculatedSampleSize = computed(() => {
+  const p1 = sampleCalc.baselineConversion / 100;
+  const p2 = p1 * (1 + sampleCalc.minEffect / 100);
+  const z_alpha = sampleCalc.confidenceLevel === 95 ? 1.96 : sampleCalc.confidenceLevel === 99 ? 2.576 : 1.645;
+  const z_beta = sampleCalc.power === 80 ? 0.84 : sampleCalc.power === 90 ? 1.28 : 1.645;
+  const pooled = (p1 + p2) / 2;
+  const n = Math.ceil(
+    (Math.pow(z_alpha, 2) * 2 * pooled * (1 - pooled) + Math.pow(z_beta, 2) * (p1 * (1 - p1) + p2 * (1 - p2))) /
+    Math.pow(p2 - p1, 2)
+  );
+  return n > 0 ? n : 0;
+});
 
 const typeOptions = [
   { label: 'Email', value: 'EMAIL' },
@@ -302,13 +392,17 @@ function openCreateDialog() {
 
 function openEditDialog(item: any) {
   editingItem.value = item;
+  const variantsData = item.variants
+    ? (typeof item.variants === 'string' ? JSON.parse(item.variants) : item.variants)
+    : [{ name: 'Variant A' }, { name: 'Variant B' }];
+  formVariants.value = Array.isArray(variantsData) ? variantsData : [{ name: 'Variant A' }, { name: 'Variant B' }];
   form.value = {
     name: item.name || '',
     type: item.type || 'EMAIL',
     status: item.status || 'DRAFT',
     startDate: item.startDate || '',
     endDate: item.endDate || '',
-    variants: item.variants ? (typeof item.variants === 'string' ? item.variants : JSON.stringify(item.variants, null, 2)) : '',
+    variants: '',
     notes: item.notes || ''
   };
   dialogVisible.value = true;
@@ -321,16 +415,14 @@ async function handleSave() {
   }
   saving.value = true;
   try {
-    let parsedVariants = form.value.variants;
-    if (typeof parsedVariants === 'string' && parsedVariants.trim()) {
-      try {
-        parsedVariants = JSON.parse(parsedVariants);
-      } catch {
-        // Keep as string if not valid JSON
-      }
+    const validVariants = formVariants.value.filter(v => v.name.trim());
+    if (validVariants.length < 2) {
+      ElMessage.warning(t('marketing.abTesting.minTwoVariants') || 'At least two variants are required');
+      saving.value = false;
+      return;
     }
 
-    const payload = { ...form.value, variants: parsedVariants };
+    const payload = { ...form.value, variants: validVariants };
 
     if (editingItem.value) {
       const res = await useApiFetch(`ab-tests/${editingItem.value.id}`, 'PUT', payload);
@@ -428,8 +520,18 @@ async function declareWinner() {
   }
 }
 
+function checkMobileView() {
+  isMobileView.value = window.innerWidth < 768;
+}
+
 onMounted(() => {
   fetchData();
+  checkMobileView();
+  window.addEventListener('resize', checkMobileView);
+});
+
+onUnmounted(() => {
+  window.removeEventListener('resize', checkMobileView);
 });
 </script>
 

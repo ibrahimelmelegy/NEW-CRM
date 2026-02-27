@@ -15,47 +15,90 @@ div
   .glass-card.p-6.mb-6(v-if="socialDashboard && !loading")
     .flex.items-center.gap-2.mb-5
       Icon(name="ph:chart-pie-slice-bold" size="20" style="color: #7849ff")
-      h3.text-base.font-bold(style="color: var(--text-primary)") {{ $t('marketing.socialCrm.dashboard') || 'Social CRM Dashboard' }}
+      h3.text-base.font-bold(style="color: var(--text-primary)") {{ $t('marketing.socialCrm.dashboard') }}
 
     el-row(:gutter="20")
-      el-col(:xs="24" :sm="12" :md="8")
+      el-col(:xs="24" :sm="12" :md="6")
         .glass-card.p-4.text-center
-          p.text-xs.uppercase.tracking-wider.mb-1(style="color: var(--text-muted)") {{ $t('marketing.socialCrm.totalProfiles') || 'Total Profiles' }}
+          p.text-xs.uppercase.tracking-wider.mb-1(style="color: var(--text-muted)") {{ $t('marketing.socialCrm.totalProfiles') }}
           p.text-2xl.font-bold(style="color: #7849ff") {{ (socialDashboard.totalProfiles || 0).toLocaleString() }}
-      el-col(:xs="24" :sm="12" :md="8")
+      el-col(:xs="24" :sm="12" :md="6")
         .glass-card.p-4.text-center
-          p.text-xs.uppercase.tracking-wider.mb-1(style="color: var(--text-muted)") {{ $t('marketing.socialCrm.avgEngagement') || 'Avg Engagement Score' }}
+          p.text-xs.uppercase.tracking-wider.mb-1(style="color: var(--text-muted)") {{ $t('marketing.socialCrm.avgEngagement') }}
           p.text-2xl.font-bold(style="color: #3b82f6") {{ socialDashboard.avgEngagementScore != null ? socialDashboard.avgEngagementScore.toFixed(1) + '%' : '--' }}
-      el-col(:xs="24" :sm="24" :md="8")
+      el-col(:xs="24" :sm="12" :md="6")
+        .glass-card.p-4.text-center
+          p.text-xs.uppercase.tracking-wider.mb-1(style="color: var(--text-muted)") {{ $t('marketing.socialCrm.totalEngagements') }}
+          p.text-2xl.font-bold(style="color: #22c55e") {{ formatNumber(socialDashboard.totalEngagements || 0) }}
+      el-col(:xs="24" :sm="12" :md="6")
+        .glass-card.p-4.text-center
+          p.text-xs.uppercase.tracking-wider.mb-1(style="color: var(--text-muted)") {{ $t('marketing.socialCrm.profileHealth') }}
+          .flex.items-center.justify-center.gap-2
+            el-progress(
+              type="circle"
+              :percentage="socialDashboard.avgProfileHealth || 0"
+              :width="60"
+              :stroke-width="6"
+              :color="getHealthColor(socialDashboard.avgProfileHealth)"
+            )
+
+    //- Engagement Trends & Follower Growth
+    el-row(:gutter="20" class="mt-4")
+      el-col(:xs="24" :md="12")
         .glass-card.p-4
-          p.text-xs.uppercase.tracking-wider.mb-3.text-center(style="color: var(--text-muted)") {{ $t('marketing.socialCrm.sentimentBreakdown') || 'Sentiment Breakdown' }}
-          .flex.items-center.justify-center.gap-3
-            .flex.items-center.gap-2
-              el-tag(type="success" size="default" effect="dark" round)
-                Icon(name="ph:smiley-bold" size="14" class="mr-1")
-                | {{ socialDashboard.sentimentBreakdown?.positive || 0 }}
-            .flex.items-center.gap-2
-              el-tag(type="warning" size="default" effect="plain" round)
-                Icon(name="ph:smiley-meh-bold" size="14" class="mr-1")
-                | {{ socialDashboard.sentimentBreakdown?.neutral || 0 }}
-            .flex.items-center.gap-2
-              el-tag(type="danger" size="default" effect="dark" round)
-                Icon(name="ph:smiley-sad-bold" size="14" class="mr-1")
-                | {{ socialDashboard.sentimentBreakdown?.negative || 0 }}
-          //- Sentiment bar
-          .flex.h-4.rounded-lg.overflow-hidden.mt-3(v-if="sentimentTotal > 0")
-            .transition-all(
-              v-if="socialDashboard.sentimentBreakdown?.positive"
-              :style="{ width: ((socialDashboard.sentimentBreakdown.positive / sentimentTotal) * 100) + '%', background: '#22c55e' }"
-            )
-            .transition-all(
-              v-if="socialDashboard.sentimentBreakdown?.neutral"
-              :style="{ width: ((socialDashboard.sentimentBreakdown.neutral / sentimentTotal) * 100) + '%', background: '#f59e0b' }"
-            )
-            .transition-all(
-              v-if="socialDashboard.sentimentBreakdown?.negative"
-              :style="{ width: ((socialDashboard.sentimentBreakdown.negative / sentimentTotal) * 100) + '%', background: '#ef4444' }"
-            )
+          .flex.items-center.gap-2.mb-3
+            Icon(name="ph:trend-up-bold" size="18" style="color: #3b82f6")
+            h4.text-sm.font-bold(style="color: var(--text-primary)") {{ $t('marketing.socialCrm.engagementTrends') }}
+          .flex.items-end.gap-1(style="height: 100px" v-if="socialDashboard.engagementTrends?.length")
+            .flex.flex-col.items-center.flex-1(v-for="trend in socialDashboard.engagementTrends" :key="trend.date")
+              .w-full.rounded-t-md.transition-all(
+                :style="{ height: maxEngagement > 0 ? Math.max((trend.count / maxEngagement) * 100, 4) + 'px' : '4px', background: 'linear-gradient(to top, #3b82f6, #60a5fa)', minHeight: '4px' }"
+              )
+              p.text-xs.mt-1(style="color: var(--text-muted); font-size: 10px") {{ formatShortDate(trend.date) }}
+          p.text-xs.text-center.py-4(v-else style="color: var(--text-muted)") {{ $t('marketing.socialCrm.noData') }}
+
+      el-col(:xs="24" :md="12")
+        .glass-card.p-4
+          .flex.items-center.gap-2.mb-3
+            Icon(name="ph:users-three-bold" size="18" style="color: #22c55e")
+            h4.text-sm.font-bold(style="color: var(--text-primary)") {{ $t('marketing.socialCrm.followerGrowth') }}
+          .flex.items-end.gap-1(style="height: 100px" v-if="socialDashboard.followerGrowth?.length")
+            .flex.flex-col.items-center.flex-1(v-for="growth in socialDashboard.followerGrowth" :key="growth.date")
+              .w-full.rounded-t-md.transition-all(
+                :style="{ height: maxFollowers > 0 ? Math.max((growth.count / maxFollowers) * 100, 4) + 'px' : '4px', background: 'linear-gradient(to top, #22c55e, #4ade80)', minHeight: '4px' }"
+              )
+              p.text-xs.mt-1(style="color: var(--text-muted); font-size: 10px") {{ formatShortDate(growth.date) }}
+          p.text-xs.text-center.py-4(v-else style="color: var(--text-muted)") {{ $t('marketing.socialCrm.noData') }}
+
+    //- Sentiment Bar
+    .glass-card.p-4.mt-4
+      p.text-xs.uppercase.tracking-wider.mb-3.text-center(style="color: var(--text-muted)") {{ $t('marketing.socialCrm.sentimentBreakdown') }}
+      .flex.items-center.justify-center.gap-3.mb-3
+        .flex.items-center.gap-2
+          el-tag(type="success" size="default" effect="dark" round)
+            Icon(name="ph:smiley-bold" size="14" class="mr-1")
+            | {{ socialDashboard.sentimentBreakdown?.positive || 0 }}
+        .flex.items-center.gap-2
+          el-tag(type="warning" size="default" effect="plain" round)
+            Icon(name="ph:smiley-meh-bold" size="14" class="mr-1")
+            | {{ socialDashboard.sentimentBreakdown?.neutral || 0 }}
+        .flex.items-center.gap-2
+          el-tag(type="danger" size="default" effect="dark" round)
+            Icon(name="ph:smiley-sad-bold" size="14" class="mr-1")
+            | {{ socialDashboard.sentimentBreakdown?.negative || 0 }}
+      .flex.h-4.rounded-lg.overflow-hidden(v-if="sentimentTotal > 0")
+        .transition-all(
+          v-if="socialDashboard.sentimentBreakdown?.positive"
+          :style="{ width: ((socialDashboard.sentimentBreakdown.positive / sentimentTotal) * 100) + '%', background: '#22c55e' }"
+        )
+        .transition-all(
+          v-if="socialDashboard.sentimentBreakdown?.neutral"
+          :style="{ width: ((socialDashboard.sentimentBreakdown.neutral / sentimentTotal) * 100) + '%', background: '#f59e0b' }"
+        )
+        .transition-all(
+          v-if="socialDashboard.sentimentBreakdown?.negative"
+          :style="{ width: ((socialDashboard.sentimentBreakdown.negative / sentimentTotal) * 100) + '%', background: '#ef4444' }"
+        )
 
   //- Loading
   .flex.items-center.justify-center.py-20(v-if="loading")
@@ -105,9 +148,17 @@ div
         el-table-column(:label="$t('marketing.socialCrm.followers') || 'Followers'" prop="followers" width="130" align="center" sortable)
           template(#default="{ row }")
             span.text-sm.font-bold(style="color: var(--text-primary)") {{ formatNumber(row.followers) }}
-        el-table-column(:label="$t('marketing.socialCrm.engagement') || 'Engagement'" prop="engagementRate" width="140" align="center" sortable)
+        el-table-column(:label="$t('marketing.socialCrm.engagement') || 'Engagement'" prop="engagementRate" width="160" align="center" sortable)
           template(#default="{ row }")
-            span.text-sm.font-semibold(v-if="row.engagementRate != null" :style="{ color: row.engagementRate >= 3 ? '#22c55e' : row.engagementRate >= 1 ? '#f59e0b' : 'var(--text-muted)' }") {{ row.engagementRate }}%
+            .flex.items-center.justify-center.gap-2(v-if="row.engagementRate != null")
+              el-progress(
+                :percentage="Math.min(row.engagementRate * 10, 100)"
+                :stroke-width="6"
+                :show-text="false"
+                :color="row.engagementRate >= 3 ? '#22c55e' : row.engagementRate >= 1 ? '#f59e0b' : '#ef4444'"
+                style="width: 50px"
+              )
+              span.text-sm.font-semibold(:style="{ color: row.engagementRate >= 3 ? '#22c55e' : row.engagementRate >= 1 ? '#f59e0b' : '#ef4444' }") {{ row.engagementRate }}%
             span.text-sm(v-else style="color: var(--text-muted)") --
         el-table-column(:label="$t('marketing.socialCrm.sentiment') || 'Sentiment'" prop="sentiment" width="130" align="center")
           template(#default="{ row }")
@@ -398,6 +449,32 @@ const sentimentTotal = computed(() => {
   const s = socialDashboard.value.sentimentBreakdown;
   return (s.positive || 0) + (s.neutral || 0) + (s.negative || 0);
 });
+
+const maxEngagement = computed(() => {
+  if (!socialDashboard.value?.engagementTrends?.length) return 0;
+  return Math.max(...socialDashboard.value.engagementTrends.map((t: any) => t.count || 0));
+});
+
+const maxFollowers = computed(() => {
+  if (!socialDashboard.value?.followerGrowth?.length) return 0;
+  return Math.max(...socialDashboard.value.followerGrowth.map((g: any) => g.count || 0));
+});
+
+function getHealthColor(health: number): string {
+  if (health >= 80) return '#22c55e';
+  if (health >= 50) return '#f59e0b';
+  return '#ef4444';
+}
+
+function formatShortDate(d: string): string {
+  if (!d) return '';
+  try {
+    const date = new Date(d);
+    return `${date.getMonth() + 1}/${date.getDate()}`;
+  } catch {
+    return d;
+  }
+}
 
 onMounted(() => {
   fetchData();

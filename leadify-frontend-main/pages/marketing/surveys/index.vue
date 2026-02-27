@@ -60,14 +60,20 @@ div
               span.font-bold {{ row.responseCount || 0 }}
               Icon(name="ph:arrow-square-out" size="14" class="ml-1")
             span.text-sm(v-else style="color: var(--text-muted)") 0
+        el-table-column(:label="$t('marketing.surveys.publicLink') || 'Public Link'" width="130" align="center")
+          template(#default="{ row }")
+            el-button(text size="small" type="success" @click.stop="copyPublicLink(row)")
+              Icon(name="ph:link-bold" size="14")
         el-table-column(:label="$t('common.createdAt') || 'Created'" prop="createdAt" width="150" sortable)
           template(#default="{ row }")
             span.text-sm {{ formatDate(row.createdAt) }}
-        el-table-column(:label="$t('common.actions') || 'Actions'" width="160" align="center")
+        el-table-column(:label="$t('common.actions') || 'Actions'" width="200" align="center")
           template(#default="{ row }")
             .flex.items-center.justify-center.gap-1
               el-button(text size="small" type="success" @click.stop="openAnalyticsDialog(row)" :disabled="!row.responseCount")
                 Icon(name="ph:chart-bar-bold" size="16")
+              el-button(text size="small" type="warning" @click.stop="exportResponses(row)" :disabled="!row.responseCount")
+                Icon(name="ph:download-simple-bold" size="16")
               el-button(text size="small" type="primary" @click.stop="openEditDialog(row)")
                 Icon(name="ph:pencil-bold" size="16")
               el-button(text size="small" type="danger" @click.stop="handleDelete(row)")
@@ -267,6 +273,7 @@ interface QuestionItem {
   type: string;
   required: boolean;
   options: string[];
+  description?: string;
 }
 
 const statusOptions = [
@@ -280,7 +287,7 @@ const defaultForm = () => ({
   title: '',
   description: '',
   status: 'DRAFT',
-  questions: [{ text: '', type: 'TEXT', required: false, options: ['', ''] }] as QuestionItem[]
+  questions: [{ text: '', type: 'TEXT', required: false, options: ['', ''], description: '' }] as QuestionItem[]
 });
 
 const form = ref(defaultForm());
@@ -335,7 +342,36 @@ function formatDate(d: string): string {
 }
 
 function addQuestion() {
-  form.value.questions.push({ text: '', type: 'TEXT', required: false, options: ['', ''] });
+  form.value.questions.push({ text: '', type: 'TEXT', required: false, options: ['', ''], description: '' });
+}
+
+async function copyPublicLink(survey: any) {
+  const url = `${window.location.origin}/public/survey/${survey.id}`;
+  try {
+    await navigator.clipboard.writeText(url);
+    ElMessage.success(t('marketing.surveys.linkCopied') || 'Public link copied to clipboard');
+  } catch {
+    ElMessage.error(t('common.error') || 'Failed to copy link');
+  }
+}
+
+async function exportResponses(survey: any) {
+  try {
+    const res = await useApiFetch(`surveys/${survey.id}/responses/export`, 'GET');
+    if (res.success && res.body) {
+      const csvData = res.body as any;
+      const blob = new Blob([csvData.csv || ''], { type: 'text/csv' });
+      const url = window.URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = `survey-${survey.id}-responses.csv`;
+      a.click();
+      window.URL.revokeObjectURL(url);
+      ElMessage.success(t('marketing.surveys.exportSuccess') || 'Responses exported successfully');
+    }
+  } catch {
+    ElMessage.error(t('common.error') || 'Failed to export responses');
+  }
 }
 
 function removeQuestion(idx: number) {

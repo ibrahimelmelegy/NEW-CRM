@@ -3,14 +3,14 @@
   //- Header
   .flex.flex-col.md_flex-row.justify-between.items-start.md_items-center.gap-4
     div
-      h2.text-2xl.font-extrabold.text-gray-900.tracking-tight Proposals Dashboard
-      p.text-gray-500.mt-1.font-medium.text-sm Manage, track, and analyze your sales proposals.
+      h2.text-2xl.font-extrabold.text-gray-900.tracking-tight {{ $t('proposals.title') }}
+      p.text-gray-500.mt-1.font-medium.text-sm {{ $t('proposals.subtitle') }}
     NuxtLink(to="/sales/proposals/create")
       button.bg-gray-900.text-white.px-6.py-3.rounded-2xl.flex.items-center.gap-2.font-bold.transition-all.shadow-xl.shadow-gray-200(
         class="hover:bg-black hover:-translate-y-1 active:scale-95"
       )
         Plus(:size="18")
-        | New Proposal
+        | {{ $t('proposals.newProposal') }}
 
   .flex.flex-col.lg_flex-row.gap-8.items-start
     //- Main content
@@ -27,7 +27,7 @@
           .absolute.top-0.right-0.p-6.opacity-10.transition-opacity(class="group-hover:opacity-20")
             DollarSign(:size="80")
           .relative.z-10
-            p.text-violet-100.font-bold.text-xs.uppercase.tracking-wider.mb-2 Total Pipeline Value
+            p.text-violet-100.font-bold.text-xs.uppercase.tracking-wider.mb-2 {{ $t('proposals.totalPipeline') }}
             h3.text-4xl.font-extrabold.mb-4
               | {{ stats.pipelineValue.toLocaleString() }}
               span.text-xl.opacity-70.font-medium.ml-1 SAR
@@ -35,7 +35,7 @@
               class="bg-white/20 backdrop-blur-md border border-white/10"
             )
               TrendingUp(:size="14")
-              span Active Opportunities
+              span {{ $t('proposals.activeOpportunities') }}
 
         //- Win Rate Card
         .bg-white.p-8.border.border-gray-100.shadow-sm.relative.overflow-hidden.group.transition-shadow(
@@ -44,13 +44,13 @@
         )
           .absolute.right-0.top-0.p-6.opacity-5.transition-opacity(class="group-hover:opacity-10")
             Percent(:size="64")
-          p.text-gray-400.text-xs.font-bold.uppercase.tracking-wider.mb-2 Win Rate
+          p.text-gray-400.text-xs.font-bold.uppercase.tracking-wider.mb-2 {{ $t('proposals.winRate') }}
           h3.text-4xl.font-extrabold.text-gray-900 {{ stats.winRate.toFixed(1) }}%
           .mt-6.w-full.bg-gray-100.rounded-full.h-2.overflow-hidden
             .bg-emerald-500.h-full.rounded-full.transition-all.duration-1000.ease-out(
               :style="{ width: `${stats.winRate}%` }"
             )
-          p.text-xs.text-gray-400.mt-2.font-medium Based on approved vs rejected
+          p.text-xs.text-gray-400.mt-2.font-medium {{ $t('proposals.basedOnApproved') }}
 
         //- Action Needed Card
         .bg-white.p-8.border.border-gray-100.shadow-sm.relative.overflow-hidden.group.transition-shadow(
@@ -59,12 +59,12 @@
         )
           .absolute.right-0.top-0.p-6.opacity-5.transition-opacity(class="group-hover:opacity-10")
             Clock(:size="64")
-          p.text-gray-400.text-xs.font-bold.uppercase.tracking-wider.mb-2 Action Needed
+          p.text-gray-400.text-xs.font-bold.uppercase.tracking-wider.mb-2 {{ $t('proposals.actionNeeded') }}
           h3.text-4xl.font-extrabold.text-amber-500 {{ stats.counts.pending }}
-          p.text-gray-900.font-bold.mt-1 Pending Proposals
+          p.text-gray-900.font-bold.mt-1 {{ $t('proposals.pendingProposals') }}
           .mt-4.flex.items-center.gap-2.text-xs.text-amber-600.bg-amber-50.w-fit.px-3.py-1_5.rounded-xl.font-bold
             AlertCircle(:size="14")
-            span In Review
+            span {{ $t('proposals.inReview') }}
 
       //- Table Section
       .bg-white.shadow-sm.border.border-gray-100.overflow-hidden(
@@ -95,7 +95,7 @@
               Search.absolute.left-3.top-1_x2f_2.transform.-translate-y-1_x2f_2.text-gray-400(:size="16")
               input.pl-10.pr-4.py-2_5.border.border-gray-200.rounded-xl.text-sm.w-full.transition-all.font-medium(
                 type="text"
-                placeholder="Search title, client, ref..."
+                :placeholder="$t('proposals.searchPlaceholder')"
                 v-model="searchTerm"
                 class="focus:outline-none focus:ring-2 focus:ring-violet-500 md:w-64 bg-gray-50/50 focus:bg-white"
               )
@@ -109,11 +109,11 @@
           table.w-full.text-left(v-loading="loading")
             thead.border-b.border-gray-100(class="bg-gray-50/50")
               tr
-                th.px-8.py-5.text-xs.font-bold.text-gray-400.uppercase.tracking-wider Proposal Details
-                th.px-6.py-5.text-xs.font-bold.text-gray-400.uppercase.tracking-wider Value
-                th.px-6.py-5.text-xs.font-bold.text-gray-400.uppercase.tracking-wider Status
-                th.px-6.py-5.text-xs.font-bold.text-gray-400.uppercase.tracking-wider Date
-                th.px-8.py-5.text-right.text-xs.font-bold.text-gray-400.uppercase.tracking-wider Actions
+                th.px-8.py-5.text-xs.font-bold.text-gray-400.uppercase.tracking-wider {{ $t('proposals.proposalDetails') }}
+                th.px-6.py-5.text-xs.font-bold.text-gray-400.uppercase.tracking-wider {{ $t('proposals.value') }}
+                th.px-6.py-5.text-xs.font-bold.text-gray-400.uppercase.tracking-wider {{ $t('proposals.status') }}
+                th.px-6.py-5.text-xs.font-bold.text-gray-400.uppercase.tracking-wider {{ $t('proposals.date') }}
+                th.px-8.py-5.text-right.text-xs.font-bold.text-gray-400.uppercase.tracking-wider {{ $t('proposals.actions') }}
             tbody.divide-y.divide-gray-50
               tr(
                 v-for="p in paginatedProposals"
@@ -228,19 +228,19 @@
           .p-20.text-center.flex.flex-col.items-center(v-if="filteredProposals.length === 0 && !loading")
             .bg-gray-50.p-6.rounded-full.mb-4
               FolderSearch(:size="32" class="text-gray-300")
-            h3.text-gray-900.font-bold.mb-1 No proposals found
-            p.text-gray-500.text-sm Try adjusting your filters or search terms.
+            h3.text-gray-900.font-bold.mb-1 {{ $t('proposals.noProposalsFound') }}
+            p.text-gray-500.text-sm {{ $t('proposals.adjustFilters') }}
 
         //- Pagination
         .flex.justify-between.items-center.p-6.border-t.border-gray-100(v-if="filteredProposals.length > 0")
           span.text-sm.text-gray-400.font-medium
-            | Showing {{ paginationStart }}–{{ paginationEnd }} of {{ filteredProposals.length }} proposals
+            | {{ $t('proposals.showing') }} {{ paginationStart }}–{{ paginationEnd }} {{ $t('proposals.of') }} {{ filteredProposals.length }} {{ $t('proposals.proposals') }}
           .flex.items-center.gap-2
             button.px-3.py-1_5.rounded-lg.text-xs.font-bold.border.border-gray-200.transition-colors(
               :disabled="currentPage === 1"
               :class="currentPage === 1 ? 'text-gray-300 cursor-not-allowed' : 'text-gray-600 hover:bg-gray-50'"
               @click="currentPage = currentPage - 1"
-            ) Previous
+            ) {{ $t('proposals.previous') }}
             template(v-for="page in visiblePages" :key="page")
               button.w-8.h-8.rounded-lg.text-xs.font-bold.transition-colors(
                 v-if="page !== '...'"
@@ -252,7 +252,7 @@
               :disabled="currentPage === totalPages"
               :class="currentPage === totalPages ? 'text-gray-300 cursor-not-allowed' : 'text-gray-600 hover:bg-gray-50'"
               @click="currentPage = currentPage + 1"
-            ) Next
+            ) {{ $t('proposals.next') }}
 
     //- Sidebar
     .w-full.lg_w-80.space-y-8.flex-shrink-0
@@ -262,7 +262,7 @@
         style="border-radius: 2rem;"
       )
         .flex.justify-between.items-center.mb-6
-          h3.text-sm.font-bold.text-gray-900 Pipeline Distribution
+          h3.text-sm.font-bold.text-gray-900 {{ $t('proposals.pipelineDistribution') }}
           button.text-gray-400(class="hover:text-gray-600")
             MoreHorizontal(:size="16")
 
@@ -286,7 +286,7 @@
           //- Center label
           .absolute.top-1_x2f_2.left-1_x2f_2.transform.-translate-x-1_x2f_2.-translate-y-1_x2f_2.text-center
             span.block.text-3xl.font-extrabold.text-gray-900 {{ stats.total }}
-            span.text-gray-400.font-bold.uppercase.tracking-wider(style="font-size: 10px;") Total
+            span.text-gray-400.font-bold.uppercase.tracking-wider(style="font-size: 10px;") {{ $t('common.total') }}
 
         //- Tooltip
         .absolute.bg-white.p-3.rounded-xl.shadow-xl.border.border-gray-100.text-xs.z-50.pointer-events-none.transition-opacity.duration-200(
@@ -315,12 +315,12 @@
           .flex.items-center.gap-2.text-gray-900.font-bold.text-sm
             .p-1_5.bg-violet-50.text-violet-600.rounded-lg
               FolderOpen(:size="16")
-            h3 Archive
+            h3 {{ $t('proposals.archive') }}
           button.font-bold.text-violet-600.px-2.py-1.rounded.transition-colors(
             style="font-size: 10px;"
             class="hover:bg-violet-50"
             @click="resetArchiveFilter"
-          ) Reset
+          ) {{ $t('proposals.reset') }}
 
         .space-y-1
           template(v-if="Object.keys(archiveTree).length > 0")
@@ -352,15 +352,15 @@
                     ) {{ day }}th
 
           //- Empty archive
-          .text-xs.text-gray-400.text-center.py-8(v-else) No archives found
+          .text-xs.text-gray-400.text-center.py-8(v-else) {{ $t('proposals.noProposalsFound') }}
 
   //- Reject Dialog
-  el-dialog(v-model="rejectDialogVisible" title="Reject Proposal" width="420px")
-    p.mb-4(style="color: var(--text-secondary)") Please provide a reason for rejection:
-    el-input(v-model="rejectReason" type="textarea" :rows="3" placeholder="Enter rejection reason...")
+  el-dialog(v-model="rejectDialogVisible" :title="$t('proposals.rejected')" width="420px")
+    p.mb-4(style="color: var(--text-secondary)") {{ $t('common.confirmDelete') }}
+    el-input(v-model="rejectReason" type="textarea" :rows="3" :placeholder="$t('common.comments')")
     template(#footer)
-      el-button(@click="rejectDialogVisible = false") Cancel
-      el-button(type="danger" @click="handleReject" :loading="actionLoading") Reject
+      el-button(@click="rejectDialogVisible = false") {{ $t('common.cancel') }}
+      el-button(type="danger" @click="handleReject" :loading="actionLoading") {{ $t('proposals.rejected') }}
 </template>
 
 <script setup lang="ts">

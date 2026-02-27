@@ -84,6 +84,23 @@
         @current-change="(p: number) => { pagination.page = p; fetchData() }"
       )
 
+  //- Commission Forecast Section
+  .glass-card.p-5.rounded-2xl.mt-6(v-if="forecastData")
+    h3.text-sm.font-medium.mb-4(style="color: var(--text-muted)") {{ $t('commissions.forecast') || 'Commission Forecast' }}
+    .grid.gap-4(class="grid-cols-2 md:grid-cols-4")
+      .text-center.p-3.rounded-lg(style="background: var(--bg-base)")
+        p.text-xs.uppercase.tracking-wider.mb-1(style="color: var(--text-muted)") {{ $t('commissions.thisMonth') || 'This Month' }}
+        p.text-lg.font-bold(style="color: #7849ff") {{ Number(forecastData.thisMonth || 0).toLocaleString() }} SAR
+      .text-center.p-3.rounded-lg(style="background: var(--bg-base)")
+        p.text-xs.uppercase.tracking-wider.mb-1(style="color: var(--text-muted)") {{ $t('commissions.nextMonth') || 'Next Month' }}
+        p.text-lg.font-bold(style="color: #3b82f6") {{ Number(forecastData.nextMonth || 0).toLocaleString() }} SAR
+      .text-center.p-3.rounded-lg(style="background: var(--bg-base)")
+        p.text-xs.uppercase.tracking-wider.mb-1(style="color: var(--text-muted)") {{ $t('commissions.thisQuarter') || 'This Quarter' }}
+        p.text-lg.font-bold(style="color: #22c55e") {{ Number(forecastData.thisQuarter || 0).toLocaleString() }} SAR
+      .text-center.p-3.rounded-lg(style="background: var(--bg-base)")
+        p.text-xs.uppercase.tracking-wider.mb-1(style="color: var(--text-muted)") {{ $t('commissions.projected') || 'Projected' }}
+        p.text-lg.font-bold(style="color: #f59e0b") {{ Number(forecastData.projected || 0).toLocaleString() }} SAR
+
   //- Analytics Section
   .grid.gap-6.mt-6(class="grid-cols-1 lg:grid-cols-2" v-if="analyticsData")
     //- Commission by Period
@@ -150,6 +167,7 @@ const form = reactive({ amount: 0, rate: 5, dealValue: 0, notes: '' });
 const pagination = reactive({ page: 1, limit: 20, total: 0 });
 const kpiData = ref<any>(null);
 const analyticsData = ref<any>(null);
+const forecastData = ref<any>(null);
 
 const filters = reactive({
   status: '',
@@ -198,6 +216,7 @@ onMounted(() => {
   fetchData();
   fetchDashboardKPIs();
   fetchAnalytics();
+  fetchForecast();
 });
 
 async function fetchData() {
@@ -231,6 +250,17 @@ async function fetchAnalytics() {
     const { body, success } = await useApiFetch('commissions/analytics?period=monthly');
     if (success && body) {
       analyticsData.value = body;
+    }
+  } catch {
+    // Non-critical
+  }
+}
+
+async function fetchForecast() {
+  try {
+    const { body, success } = await useApiFetch('commissions/forecast');
+    if (success && body) {
+      forecastData.value = body;
     }
   } catch {
     // Non-critical
@@ -294,3 +324,29 @@ function statusType(s: string) {
   return { PENDING: 'warning', APPROVED: '', PAID: 'success', REJECTED: 'danger' }[s] || '';
 }
 </script>
+
+<style lang="scss" scoped>
+@media (max-width: 768px) {
+  .glass-card {
+    padding: 1rem !important;
+  }
+
+  .grid {
+    grid-template-columns: repeat(2, 1fr) !important;
+    gap: 0.75rem !important;
+  }
+
+  .dashboard-stats .grid {
+    grid-template-columns: repeat(2, 1fr) !important;
+  }
+
+  :deep(.el-table) {
+    font-size: 12px;
+  }
+
+  :deep(.el-pagination) {
+    justify-content: center;
+    flex-wrap: wrap;
+  }
+}
+</style>

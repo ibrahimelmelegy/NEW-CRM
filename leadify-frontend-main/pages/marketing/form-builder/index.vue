@@ -100,6 +100,22 @@ div
             el-checkbox(v-model="form.createLead") {{ $t('marketing.formBuilder.autoCreateLead') || 'Auto-create lead' }}
       el-form-item(:label="$t('marketing.formBuilder.thankYouMessage') || 'Thank You Message'")
         el-input(v-model="form.thankYouMessage" type="textarea" :rows="2" :placeholder="$t('marketing.formBuilder.thankYouPlaceholder') || 'Thank you for your submission!'")
+
+      //- Field Builder (preview)
+      el-form-item(:label="$t('marketing.formBuilder.formFields') || 'Form Fields (preview)'")
+        .glass-card.p-4
+          p.text-xs.mb-3(style="color: var(--text-muted)") {{ $t('marketing.formBuilder.dragDropInfo') || 'Drag and drop to reorder fields. Click Edit Form to manage fields.' }}
+          .space-y-2
+            .glass-card.p-3.flex.items-center.justify-between.cursor-move(v-for="(field, idx) in formFieldsPreview" :key="idx" style="border: 1px solid var(--border-default)")
+              .flex.items-center.gap-2
+                Icon(name="ph:dots-six-vertical" size="16" style="color: var(--text-muted)")
+                span.text-sm.font-semibold(style="color: var(--text-primary)") {{ field.label || field.name }}
+                el-tag(size="small" effect="plain") {{ field.type }}
+              el-tag(v-if="field.required" type="danger" size="small" round) {{ $t('common.required') }}
+          el-button(type="primary" plain class="!rounded-xl w-full mt-3" @click="openFieldEditor()")
+            Icon(name="ph:pencil-simple-bold" size="14" class="mr-1")
+            | {{ $t('marketing.formBuilder.editFields') }}
+
     template(#footer)
       el-button(@click="dialogVisible = false") {{ $t('common.cancel') || 'Cancel' }}
       el-button(type="primary" @click="handleSave" :loading="saving") {{ $t('common.save') || 'Save' }}
@@ -208,10 +224,12 @@ const defaultForm = () => ({
   description: '',
   status: 'DRAFT',
   thankYouMessage: '',
-  createLead: false
+  createLead: false,
+  fields: []
 });
 
 const form = ref(defaultForm());
+const formFieldsPreview = ref<any[]>([]);
 
 // Stats
 const summaryStats = computed(() => {
@@ -273,14 +291,20 @@ function openCreateDialog() {
 
 function openEditDialog(item: any) {
   editingItem.value = item;
+  formFieldsPreview.value = item.fields && Array.isArray(item.fields) ? item.fields : [];
   form.value = {
     name: item.name || '',
     description: item.description || '',
     status: item.status || 'DRAFT',
     thankYouMessage: item.thankYouMessage || '',
-    createLead: item.createLead || false
+    createLead: item.createLead || false,
+    fields: formFieldsPreview.value
   };
   dialogVisible.value = true;
+}
+
+function openFieldEditor() {
+  ElMessage.info(t('marketing.formBuilder.fieldEditorInfo') || 'Field editor will open in a separate view (to be implemented)');
 }
 
 async function handleSave() {

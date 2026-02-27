@@ -9,8 +9,8 @@ div
         Icon(name="ph:plus-bold" size="16")
         span.ml-1 {{ $t('calendar.addEvent') }}
 
-  //- Stats Row
-  .grid.grid-cols-2(class="md:grid-cols-4 gap-4 mb-6")
+  //- Stats Row + Quick Analytics
+  .grid.grid-cols-2(class="md:grid-cols-5 gap-4 mb-6")
     .glass-card.p-4.rounded-xl.text-center.animate-entrance
       .flex.items-center.justify-center.mb-2
         Icon(name="ph:calendar-bold" size="20" style="color: #7849ff")
@@ -31,6 +31,25 @@ div
         Icon(name="ph:calendar-dots-bold" size="20" style="color: #f59e0b")
       .text-2xl.font-bold(style="color: #f59e0b") {{ thisWeekCount }}
       .text-xs.mt-1(style="color: var(--text-muted)") {{ $t('calendar.thisWeekEvents') }}
+    .glass-card.p-4.rounded-xl.text-center.animate-entrance
+      .flex.items-center.justify-center.mb-2
+        Icon(name="ph:star-bold" size="20" style="color: #8b5cf6")
+      .text-2xl.font-bold(style="color: #8b5cf6") {{ busiestDay }}
+      .text-xs.mt-1(style="color: var(--text-muted)") {{ $t('calendar.busiestDay') }}
+
+  //- Mini Analytics Section
+  .glass-card.p-4.rounded-xl.mb-6.animate-entrance
+    h3.text-sm.font-medium.mb-4(style="color: var(--text-primary)") {{ $t('calendar.quickAnalytics') || 'Quick Analytics' }}
+    .grid.gap-4(class="grid-cols-3 md:grid-cols-3")
+      div
+        p.text-xs.uppercase.tracking-wider.mb-1(style="color: var(--text-muted)") {{ $t('calendar.completionRate') || 'Completion Rate' }}
+        p.text-lg.font-bold(style="color: #22c55e") {{ completionRate }}%
+      div
+        p.text-xs.uppercase.tracking-wider.mb-1(style="color: var(--text-muted)") {{ $t('calendar.avgDuration') || 'Avg Duration' }}
+        p.text-lg.font-bold(style="color: #3b82f6") {{ avgDuration }}h
+      div
+        p.text-xs.uppercase.tracking-wider.mb-1(style="color: var(--text-muted)") {{ $t('calendar.upcomingToday') || 'Today' }}
+        p.text-lg.font-bold(style="color: #f59e0b") {{ todayEvents.length }}
 
   //- Main Layout: Sidebar + Calendar
   .flex.gap-6.animate-entrance(class="flex-col lg:flex-row")
@@ -409,6 +428,7 @@ div
       .flex.items-center.gap-6.mb-4
         el-checkbox(v-model="form.allDay") {{ $t('calendar.allDay') }}
         el-checkbox(v-model="form.isPrivate") {{ $t('calendar.private') }}
+        el-checkbox(v-model="form.isRecurring") {{ $t('calendar.recurring') || 'Recurring' }}
 
       //- Attendees
       el-form-item(:label="$t('calendar.attendees')")
@@ -478,6 +498,7 @@ const form = reactive({
   reminder: 0,
   status: 'SCHEDULED',
   isPrivate: false,
+  isRecurring: false,
   attendees: [] as Array<{ name: string; email: string; status: string }>
 });
 
@@ -562,6 +583,45 @@ const thisWeekCount = computed(() => {
   const ws = weekStart.toISOString();
   const we = weekEnd.toISOString();
   return events.value.filter(e => e.startDate >= ws && e.startDate <= we).length;
+});
+
+// Analytics
+const completionRate = computed(() => {
+  const total = events.value.length;
+  if (total === 0) return 0;
+  const completed = completedCount.value;
+  return Math.round((completed / total) * 100);
+});
+
+const avgDuration = computed(() => {
+  if (!events.value.length) return 0;
+  let total = 0;
+  let count = 0;
+  events.value.forEach(e => {
+    if (!e.allDay && e.startDate && e.endDate) {
+      const start = new Date(e.startDate).getTime();
+      const end = new Date(e.endDate).getTime();
+      const hours = (end - start) / (1000 * 60 * 60);
+      if (hours > 0 && hours < 24) {
+        total += hours;
+        count++;
+      }
+    }
+  });
+  return count > 0 ? (total / count).toFixed(1) : 0;
+});
+
+const busiestDay = computed(() => {
+  if (!events.value.length) return '-';
+  const dayCounts: Record<string, number> = {};
+  events.value.forEach(e => {
+    const day = e.startDate.split('T')[0];
+    dayCounts[day] = (dayCounts[day] || 0) + 1;
+  });
+  const sorted = Object.entries(dayCounts).sort((a, b) => b[1] - a[1]);
+  if (sorted.length === 0) return '-';
+  const date = new Date(sorted[0][0]);
+  return date.toLocaleDateString('en-US', { weekday: 'short', month: 'short', day: 'numeric' });
 });
 
 // ─── Mini Calendar ──────────────────────────────────────────────────────────

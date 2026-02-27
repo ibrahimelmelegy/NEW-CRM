@@ -53,6 +53,35 @@
             @current-change="(p: number) => { booksPagination.page = p; fetchBooks() }"
           )
 
+      //- Discount Rules Tab
+      el-tab-pane(:label="$t('cpq.discountRules') || 'Discount Rules'" name="discounts")
+        .mb-4.flex.justify-between.items-center
+          p.text-sm(style="color: var(--text-muted)") {{ $t('cpq.discountRulesDesc') || 'Configure automatic discount rules based on quantity, customer tier, or promotion periods.' }}
+          el-button(type="primary" size="default" @click="showDiscountDialog = true")
+            Icon(name="ph:plus-bold" size="16")
+            span.mx-1 {{ $t('cpq.addDiscountRule') || 'Add Rule' }}
+
+        .space-y-3
+          .glass-card.p-4.rounded-xl(v-for="rule in discountRules" :key="rule.id" style="border: 1px solid var(--border-default)")
+            .flex.items-start.justify-between
+              div
+                p.text-sm.font-bold(style="color: var(--text-primary)") {{ rule.name }}
+                p.text-xs.mt-1(style="color: var(--text-muted)") {{ rule.type }}: {{ rule.description }}
+                .flex.items-center.gap-3.mt-2
+                  el-tag(size="small" effect="dark") {{ rule.discountValue }}% off
+                  el-tag(v-if="rule.minQuantity" size="small" type="info") Min Qty: {{ rule.minQuantity }}
+                  el-tag(v-if="rule.isActive" size="small" type="success") Active
+                  el-tag(v-else size="small" type="info") Inactive
+              .flex.gap-1
+                el-button(text size="small" type="primary" @click="editDiscountRule(rule)")
+                  Icon(name="ph:pencil-simple" size="14")
+                el-button(text size="small" type="danger" @click="deleteDiscountRule(rule.id)")
+                  Icon(name="ph:trash" size="14")
+
+          .text-center.py-6(v-if="!discountRules.length")
+            Icon(name="ph:percent" size="48" style="color: var(--text-muted); opacity: 0.4")
+            p.text-sm.mt-2(style="color: var(--text-muted)") {{ $t('cpq.noDiscountRules') || 'No discount rules configured yet.' }}
+
       //- Entries Tab
       el-tab-pane(:label="$t('cpq.entries') || 'Entries'" name="entries")
         el-table(:data="entries" v-loading="loadingEntries" style="width: 100%")
@@ -210,6 +239,9 @@
       el-button(type="success" :loading="calculatingQuote" @click="calculateQuote")
         Icon(name="ph:calculator-bold" size="16")
         span.ml-1 {{ $t('cpq.calculate') || 'Calculate' }}
+      el-button(v-if="quoteResult" type="primary" :loading="convertingToDeal" @click="convertQuoteToDeal")
+        Icon(name="ph:handshake-bold" size="16")
+        span.ml-1 {{ $t('cpq.convertToDeal') || 'Convert to Deal' }}
 </template>
 
 <script setup lang="ts">
@@ -279,6 +311,7 @@ const summaryStats = computed(() => {
 onMounted(() => {
   fetchBooks();
   fetchEntries();
+  fetchDiscountRules();
 });
 
 // --- Price Book CRUD ---
@@ -379,8 +412,11 @@ async function handleDeleteEntry(id: number) {
 
 // --- Generate Quote ---
 const showQuoteDialog = ref(false);
+const showDiscountDialog = ref(false);
 const calculatingQuote = ref(false);
+const convertingToDeal = ref(false);
 const quoteResult = ref<any>(null);
+const discountRules = ref<any[]>([]);
 
 const quoteForm = reactive({
   priceBookId: null as number | null,
@@ -425,6 +461,54 @@ async function calculateQuote() {
     }
   } finally {
     calculatingQuote.value = false;
+  }
+}
+
+async function convertQuoteToDeal() {
+  if (!quoteResult.value) return;
+  convertingToDeal.value = true;
+  try {
+    const { success } = await useApiFetch('cpq/convert-to-deal', 'POST', {
+      quote: quoteResult.value,
+      priceBookId: quoteForm.priceBookId
+    });
+    if (success) {
+      ElMessage.success('Quote converted to deal successfully');
+      showQuoteDialog.value = false;
+      quoteResult.value = null;
+    } else {
+      ElMessage.error('Failed to convert quote to deal');
+    }
+  } finally {
+    convertingToDeal.value = false;
+  }
+}
+
+// Discount Rules
+async function fetchDiscountRules() {
+  try {
+    const { body, success } = await useApiFetch('cpq/discount-rules');
+    if (success && body) {
+      discountRules.value = Array.isArray(body) ? body : (body.docs || body.rows || []);
+    }
+  } catch {
+    // Silent
+  }
+}
+
+function editDiscountRule(rule: any) {
+  ElMessage.info('Edit discount rule: ' + rule.name);
+}
+
+async function deleteDiscountRule(id: number) {
+  try {
+    const { success } = await useApiFetch(`cpq/discount-rules/${id}`, 'DELETE');
+    if (success) {
+      ElMessage.success('Discount rule deleted');
+      await fetchDiscountRules();
+    }
+  } catch {
+    ElMessage.error('Failed to delete discount rule');
   }
 }
 

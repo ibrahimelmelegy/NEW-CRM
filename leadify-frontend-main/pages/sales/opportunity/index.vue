@@ -303,6 +303,22 @@ const table = reactive({
       width: 150
     },
     {
+      prop: 'winProbability',
+      label: t('opportunities.table.winProbability'),
+      component: 'Text',
+      sortable: true,
+      type: 'font-bold',
+      width: 130
+    },
+    {
+      prop: 'weightedValue',
+      label: t('opportunities.table.weightedValue'),
+      component: 'Text',
+      sortable: true,
+      type: 'font-default',
+      width: 150
+    },
+    {
       prop: 'expectedCloseDate',
       label: t('opportunities.table.closeDate'),
       component: 'Text',

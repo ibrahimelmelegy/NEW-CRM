@@ -4,11 +4,11 @@
     <div class="glass-panel p-6 rounded-2xl">
       <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
         <div>
-          <h1 class="text-2xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-violet-400 to-purple-400">Performance Reviews</h1>
-          <p class="text-slate-400 text-sm mt-1">Track employee performance, set goals, and manage review cycles.</p>
+          <h1 class="text-2xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-violet-400 to-purple-400">{{ $t('hr.performance.title') }}</h1>
+          <p class="text-slate-400 text-sm mt-1">{{ $t('hr.performance.subtitle') }}</p>
         </div>
         <div class="flex gap-2">
-          <el-select v-model="selectedCycle" placeholder="Review Cycle" class="w-48" @change="fetchReviews">
+          <el-select v-model="selectedCycle" :placeholder="$t('hr.performance.period')" class="w-48" @change="fetchReviews">
             <el-option label="Q1 2026" value="Q1-2026" />
             <el-option label="Q4 2025" value="Q4-2025" />
             <el-option label="Q3 2025" value="Q3-2025" />
@@ -16,7 +16,7 @@
           </el-select>
           <el-button type="primary" class="!rounded-xl" @click="showNewReviewDialog = true">
             <Icon name="ph:plus-bold" class="w-4 h-4 mr-2" />
-            New Review
+            {{ $t('hr.performance.newReview') }}
           </el-button>
         </div>
       </div>
@@ -26,30 +26,30 @@
     <div class="grid grid-cols-2 md:grid-cols-5 gap-4">
       <div class="glass-panel p-4 rounded-xl text-center">
         <div class="text-2xl font-bold text-slate-200">{{ reviews.length }}</div>
-        <div class="text-xs text-slate-500 mt-1">Total Reviews</div>
+        <div class="text-xs text-slate-500 mt-1">{{ $t('hr.performance.totalReviews') }}</div>
       </div>
       <div class="glass-panel p-4 rounded-xl text-center">
         <div class="text-2xl font-bold text-emerald-400">{{ reviews.filter(r => r.status === 'COMPLETED').length }}</div>
-        <div class="text-xs text-slate-500 mt-1">Completed</div>
+        <div class="text-xs text-slate-500 mt-1">{{ $t('hr.performance.completed') }}</div>
       </div>
       <div class="glass-panel p-4 rounded-xl text-center">
         <div class="text-2xl font-bold text-amber-400">{{ reviews.filter(r => r.status === 'IN_PROGRESS').length }}</div>
-        <div class="text-xs text-slate-500 mt-1">In Progress</div>
+        <div class="text-xs text-slate-500 mt-1">{{ $t('hr.goals.inProgress') }}</div>
       </div>
       <div class="glass-panel p-4 rounded-xl text-center">
         <div class="text-2xl font-bold text-indigo-400">{{ avgRating }}/5</div>
-        <div class="text-xs text-slate-500 mt-1">Avg Rating</div>
+        <div class="text-xs text-slate-500 mt-1">{{ $t('hr.performance.avgRating') }}</div>
       </div>
       <div class="glass-panel p-4 rounded-xl text-center">
         <div class="text-2xl font-bold text-teal-400">{{ goalCompletion }}%</div>
-        <div class="text-xs text-slate-500 mt-1">Goal Completion</div>
+        <div class="text-xs text-slate-500 mt-1">{{ $t('hr.goals.completed') }}</div>
       </div>
     </div>
 
     <!-- Reviews Table -->
     <div class="glass-panel p-6 rounded-2xl">
       <el-table :data="reviews" class="glass-table" stripe style="width: 100%" v-loading="loading">
-        <el-table-column label="Employee" min-width="200">
+        <el-table-column :label="$t('hr.performance.employee')" min-width="200">
           <template #default="{ row }">
             <div class="flex items-center gap-3">
               <el-avatar :size="36" :src="row.avatar" class="bg-slate-700">
@@ -62,12 +62,12 @@
             </div>
           </template>
         </el-table-column>
-        <el-table-column prop="reviewType" label="Type" width="130">
+        <el-table-column prop="reviewType" :label="$t('common.type')" width="130">
           <template #default="{ row }">
             <el-tag effect="dark" size="small">{{ row.reviewType }}</el-tag>
           </template>
         </el-table-column>
-        <el-table-column label="Overall Rating" width="180" align="center">
+        <el-table-column :label="$t('hr.performance.rating')" width="180" align="center">
           <template #default="{ row }">
             <div class="flex items-center justify-center gap-2">
               <el-rate v-model="row.overallRating" disabled :max="5" size="small" />
@@ -75,22 +75,22 @@
             </div>
           </template>
         </el-table-column>
-        <el-table-column label="Goals Met" width="120" align="center">
+        <el-table-column :label="$t('hr.goals.completed')" width="120" align="center">
           <template #default="{ row }">
             <el-progress :percentage="row.goalsCompleted" :stroke-width="4" :color="getProgressColor(row.goalsCompleted)" :show-text="true" />
           </template>
         </el-table-column>
-        <el-table-column label="Status" width="120" align="center">
+        <el-table-column :label="$t('hr.performance.status')" width="120" align="center">
           <template #default="{ row }">
             <el-tag :type="getReviewStatusType(row.status)" effect="dark" size="small">{{ row.status }}</el-tag>
           </template>
         </el-table-column>
-        <el-table-column prop="reviewDate" label="Date" width="120">
+        <el-table-column prop="reviewDate" :label="$t('hr.performance.date')" width="120">
           <template #default="{ row }">
             <span class="text-sm text-slate-400">{{ formatDate(row.reviewDate) }}</span>
           </template>
         </el-table-column>
-        <el-table-column label="Actions" width="100" align="center">
+        <el-table-column :label="$t('common.actions')" width="100" align="center">
           <template #default="{ row }">
             <el-button text type="primary" size="small" @click="viewReview(row)">
               <Icon name="ph:eye-bold" class="w-4 h-4" />
@@ -103,24 +103,24 @@
     <!-- Performance Distribution Chart -->
     <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
       <div class="glass-panel p-6 rounded-2xl">
-        <h3 class="text-sm font-medium text-slate-300 mb-4">Rating Distribution</h3>
+        <h3 class="text-sm font-medium text-slate-300 mb-4">{{ $t('hr.performance.ratingDistribution') }}</h3>
         <div ref="ratingChartRef" class="w-full h-64"></div>
       </div>
       <div class="glass-panel p-6 rounded-2xl">
-        <h3 class="text-sm font-medium text-slate-300 mb-4">Department Performance</h3>
+        <h3 class="text-sm font-medium text-slate-300 mb-4">{{ $t('common.departments') }}</h3>
         <div ref="deptChartRef" class="w-full h-64"></div>
       </div>
     </div>
 
     <!-- New Review Dialog -->
-    <el-dialog v-model="showNewReviewDialog" title="Start Performance Review" width="560px">
+    <el-dialog v-model="showNewReviewDialog" :title="$t('hr.performance.newReview')" width="560px">
       <el-form label-position="top">
-        <el-form-item label="Employee">
-          <el-select v-model="newReview.employeeId" placeholder="Select employee" class="w-full" filterable>
+        <el-form-item :label="$t('hr.performance.employee')">
+          <el-select v-model="newReview.employeeId" :placeholder="$t('hr.performance.selectEmployee')" class="w-full" filterable>
             <el-option v-for="emp in employees" :key="emp.id" :label="emp.name" :value="emp.id" />
           </el-select>
         </el-form-item>
-        <el-form-item label="Review Type">
+        <el-form-item :label="$t('common.type')">
           <el-select v-model="newReview.reviewType" class="w-full">
             <el-option label="Quarterly" value="QUARTERLY" />
             <el-option label="Annual" value="ANNUAL" />
@@ -128,13 +128,13 @@
             <el-option label="Project-Based" value="PROJECT" />
           </el-select>
         </el-form-item>
-        <el-form-item label="Review Period">
+        <el-form-item :label="$t('hr.performance.period')">
           <el-date-picker v-model="newReview.period" type="daterange" start-placeholder="Start" end-placeholder="End" class="w-full" />
         </el-form-item>
       </el-form>
       <template #footer>
-        <el-button @click="showNewReviewDialog = false">Cancel</el-button>
-        <el-button type="primary" :loading="creating" @click="createReview">Start Review</el-button>
+        <el-button @click="showNewReviewDialog = false">{{ $t('common.cancel') }}</el-button>
+        <el-button type="primary" :loading="creating" @click="createReview">{{ $t('hr.performance.newReview') }}</el-button>
       </template>
     </el-dialog>
   </div>
