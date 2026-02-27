@@ -96,6 +96,54 @@ class Setting extends Model {
     allowNull: true
   })
   public brandFooterText?: string;
+
+  @Column({
+    type: DataType.STRING(255),
+    allowNull: true
+  })
+  public companyWebsite?: string;
+
+  @Column({
+    type: DataType.STRING(20),
+    allowNull: true,
+    defaultValue: 'INV-'
+  })
+  public invoicePrefix?: string;
+
+  @Column({
+    type: DataType.STRING(20),
+    allowNull: true,
+    defaultValue: 'QT-'
+  })
+  public quotePrefix?: string;
+
+  @Column({
+    type: DataType.STRING(10),
+    allowNull: true,
+    defaultValue: 'USD'
+  })
+  public defaultCurrency?: string;
+
+  @Column({
+    type: DataType.STRING(10),
+    allowNull: true,
+    defaultValue: 'en'
+  })
+  public defaultLanguage?: string;
+
+  @Column({
+    type: DataType.STRING(20),
+    allowNull: true,
+    defaultValue: 'DD/MM/YYYY'
+  })
+  public dateFormat?: string;
+
+  @Column({
+    type: DataType.STRING(50),
+    allowNull: true,
+    defaultValue: 'Asia/Riyadh'
+  })
+  public timezone?: string;
 }
 
 export default Setting;

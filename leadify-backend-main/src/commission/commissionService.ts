@@ -12,6 +12,20 @@ interface CommissionTier {
   rate: number;   // rate as a decimal, e.g. 0.05 for 5%
 }
 
+/** Commission Plan types */
+export type CommissionPlanType = 'PERCENTAGE' | 'TIERED' | 'FLAT';
+
+export interface CommissionPlan {
+  type: CommissionPlanType;
+  name: string;
+  /** For PERCENTAGE plans: a single rate (e.g. 5 = 5%) */
+  rate?: number;
+  /** For TIERED plans: array of tiers */
+  tiers?: CommissionTier[];
+  /** For FLAT plans: fixed amount per deal */
+  flatAmount?: number;
+}
+
 class CommissionService {
   // ─── Existing CRUD ──────────────────────────────────────────────────────────
 
@@ -201,6 +215,200 @@ class CommissionService {
     });
 
     return results;
+  }
+
+  // ─── Commission Plans (stateless calculation) ─────────────────────────────
+
+  /**
+   * Apply a commission plan to a deal and create the commission record.
+   * Supports percentage, tiered, and flat-fee plans.
+   */
+  async applyCommissionPlan(dealId: string, userId: number, plan: CommissionPlan, tenantId?: string) {
+    const deal = await Deal.findByPk(dealId);
+    if (!deal) throw new Error(`Deal ${dealId} not found`);
+
+    const dealValue = Number(deal.price) || 0;
+    if (dealValue <= 0 && plan.type !== 'FLAT') throw new Error('Deal has no positive value');
+
+    let amount = 0;
+    let rate: number | undefined;
+    let notes = '';
+
+    switch (plan.type) {
+      case 'PERCENTAGE': {
+        rate = plan.rate ?? 5;
+        amount = parseFloat(((dealValue * rate) / 100).toFixed(2));
+        notes = `${plan.name}: ${rate}% of ${dealValue}`;
+        break;
+      }
+      case 'TIERED': {
+        if (!plan.tiers?.length) throw new Error('Tiered plan requires tiers array');
+        const result = this.calculateTieredCommission(dealValue, plan.tiers);
+        amount = result.total;
+        notes = `${plan.name}: tiered commission on ${dealValue} = ${amount}`;
+        break;
+      }
+      case 'FLAT': {
+        amount = plan.flatAmount ?? 0;
+        notes = `${plan.name}: flat fee ${amount} per deal`;
+        break;
+      }
+    }
+
+    const commission = await Commission.create({
+      staffId: userId,
+      dealId,
+      amount,
+      rate,
+      dealValue,
+      status: 'PENDING',
+      tenantId,
+      notes
+    });
+
+    try { io.emit('commission:created', { id: commission.id, staffId: userId, dealId, amount, status: 'PENDING' }); } catch {}
+    return commission;
+  }
+
+  // ─── Deal-Won Auto-Commission ─────────────────────────────────────────────
+
+  /**
+   * Called when a deal moves to CLOSED/WON status.
+   * Creates a commission record for the deal owner.
+   * Skips if a commission for this deal already exists.
+   */
+  async onDealWon(dealId: string, userId: number, tenantId?: string, rateOverride?: number) {
+    // Check for existing commission on this deal to avoid duplicates
+    const existing = await Commission.findOne({ where: { dealId, staffId: userId } });
+    if (existing) return existing;
+
+    return this.calculateCommission(dealId, userId, tenantId, rateOverride);
+  }
+
+  // ─── Bulk Payout ──────────────────────────────────────────────────────────
+
+  /**
+   * Mark multiple commissions as PAID in a single transaction.
+   * Useful for monthly/quarterly payout runs.
+   */
+  async bulkPayout(ids: number[]) {
+    const now = new Date();
+    const [affectedCount] = await Commission.update(
+      { status: 'PAID', paidAt: now },
+      { where: { id: { [Op.in]: ids }, status: { [Op.ne]: 'PAID' } } }
+    );
+    try { io.emit('commission:bulkPaid', { count: affectedCount }); } catch {}
+    return { paidCount: affectedCount };
+  }
+
+  // ─── Analytics ─────────────────────────────────────────────────────────────
+
+  /**
+   * Commission analytics: aggregated stats across the tenant.
+   * Filterable by period, staffId, dealType.
+   */
+  async getAnalytics(tenantId?: string, query?: {
+    startDate?: string;
+    endDate?: string;
+    staffId?: number;
+    period?: 'monthly' | 'quarterly';
+  }) {
+    const where: any = {};
+    if (tenantId) where.tenantId = tenantId;
+    if (query?.staffId) where.staffId = query.staffId;
+    if (query?.startDate || query?.endDate) {
+      where.createdAt = {};
+      if (query?.startDate) where.createdAt[Op.gte] = new Date(query.startDate);
+      if (query?.endDate) where.createdAt[Op.lte] = new Date(query.endDate);
+    }
+
+    // Totals
+    const totals = await Commission.findOne({
+      attributes: [
+        [fn('COALESCE', fn('SUM', col('amount')), 0), 'totalEarned'],
+        [fn('COALESCE', fn('SUM', literal(`CASE WHEN status = 'PAID' THEN amount ELSE 0 END`)), 0), 'totalPaid'],
+        [fn('COALESCE', fn('SUM', literal(`CASE WHEN status = 'PENDING' THEN amount ELSE 0 END`)), 0), 'totalPending'],
+        [fn('COALESCE', fn('SUM', literal(`CASE WHEN status = 'APPROVED' THEN amount ELSE 0 END`)), 0), 'totalApproved'],
+        [fn('COALESCE', fn('SUM', literal(`CASE WHEN status = 'REJECTED' THEN amount ELSE 0 END`)), 0), 'totalRejected'],
+        [fn('COUNT', col('id')), 'totalRecords'],
+        [fn('COALESCE', fn('AVG', col('rate')), 0), 'avgRate'],
+        [fn('COALESCE', fn('AVG', col('amount')), 0), 'avgCommission']
+      ],
+      where,
+      raw: true
+    });
+
+    // Group format based on requested period
+    const groupFormat = query?.period === 'quarterly' ? 'YYYY-"Q"Q' : 'YYYY-MM';
+    const byPeriod = await Commission.findAll({
+      attributes: [
+        [fn('to_char', col('createdAt'), groupFormat), 'period'],
+        [fn('SUM', col('amount')), 'earned'],
+        [fn('SUM', literal(`CASE WHEN status = 'PAID' THEN amount ELSE 0 END`)), 'paid'],
+        [fn('SUM', literal(`CASE WHEN status = 'PENDING' THEN amount ELSE 0 END`)), 'pending'],
+        [fn('COUNT', col('id')), 'count']
+      ],
+      where,
+      group: [fn('to_char', col('createdAt'), groupFormat)],
+      order: [[fn('to_char', col('createdAt'), groupFormat), 'DESC']],
+      raw: true
+    });
+
+    // By sales rep (top earners)
+    const byRep = await Commission.findAll({
+      attributes: [
+        'staffId',
+        [fn('SUM', col('amount')), 'totalEarned'],
+        [fn('COUNT', col('Commission.id')), 'dealCount'],
+        [fn('AVG', col('rate')), 'avgRate']
+      ],
+      where,
+      include: [{ model: User, as: 'staff', attributes: ['id', 'name', 'email'] }],
+      group: ['staffId', 'staff.id'],
+      order: [[fn('SUM', col('amount')), 'DESC']],
+      limit: 20,
+      raw: false
+    });
+
+    // By status breakdown
+    const byStatus = await Commission.findAll({
+      attributes: [
+        'status',
+        [fn('COUNT', col('id')), 'count'],
+        [fn('SUM', col('amount')), 'total']
+      ],
+      where,
+      group: ['status'],
+      raw: true
+    });
+
+    return { totals, byPeriod, byRep, byStatus };
+  }
+
+  // ─── Global KPI Summary (for dashboard cards) ─────────────────────────────
+
+  /**
+   * Quick KPI stats for the commission dashboard.
+   * Works without a userId — returns totals for the entire tenant.
+   */
+  async getDashboardKPIs(tenantId?: string) {
+    const where: any = {};
+    if (tenantId) where.tenantId = tenantId;
+
+    const result = await Commission.findOne({
+      attributes: [
+        [fn('COALESCE', fn('SUM', col('amount')), 0), 'totalEarned'],
+        [fn('COALESCE', fn('SUM', literal(`CASE WHEN status = 'PAID' THEN amount ELSE 0 END`)), 0), 'totalPaid'],
+        [fn('COALESCE', fn('SUM', literal(`CASE WHEN status = 'PENDING' THEN amount ELSE 0 END`)), 0), 'totalPending'],
+        [fn('COALESCE', fn('SUM', literal(`CASE WHEN status = 'APPROVED' THEN amount ELSE 0 END`)), 0), 'totalApproved'],
+        [fn('COUNT', col('id')), 'totalRecords'],
+        [fn('COALESCE', fn('AVG', col('rate')), 0), 'avgRate']
+      ],
+      where,
+      raw: true
+    });
+
+    return result;
   }
 }
 

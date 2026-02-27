@@ -49,6 +49,24 @@ class ProjectManpowerController {
       next(error);
     }
   }
+
+  public async utilizationReport(req: AuthenticatedRequest, res: Response, next: NextFunction): Promise<void> {
+    try {
+      const responseFromService = await projectManpowerService.getUtilizationReport(req.query);
+      wrapResult(res, responseFromService);
+    } catch (error) {
+      next(error);
+    }
+  }
+
+  public async allocationsByManpower(req: AuthenticatedRequest, res: Response, next: NextFunction): Promise<void> {
+    try {
+      const responseFromService = await projectManpowerService.getAllocationsByManpower(req.params.manpowerId as string);
+      wrapResult(res, responseFromService);
+    } catch (error) {
+      next(error);
+    }
+  }
 }
 
 export default new ProjectManpowerController();

@@ -17,6 +17,15 @@ div.animate-fade-in(v-loading="loading")
         effect="dark"
         round
       ) {{ order.status }}
+      el-tag(
+        v-if="order.paymentStatus"
+        :type="getPaymentStatusType(order.paymentStatus)"
+        size="large"
+        effect="plain"
+        round
+      )
+        Icon(name="ph:credit-card-bold" size="14" class="mr-1")
+        | {{ order.paymentStatus }}
     .flex.items-center.gap-3
       el-button(size="large" @click="navigateTo('/e-commerce/orders')" class="!rounded-xl")
         Icon(name="ph:arrow-left-bold" size="16" class="mr-1")
@@ -24,6 +33,9 @@ div.animate-fade-in(v-loading="loading")
       el-button(size="large" @click="printOrder" class="!rounded-xl")
         Icon(name="ph:printer-bold" size="16" class="mr-1")
         | {{ $t('common.print') || 'Print' }}
+      el-button(size="large" @click="openPaymentStatusDialog" class="!rounded-xl")
+        Icon(name="ph:credit-card-bold" size="16" class="mr-1")
+        | {{ $t('salesOrders.paymentStatus') || 'Payment' }}
       el-button(type="primary" size="large" @click="openStatusDialog" class="!rounded-xl")
         Icon(name="ph:swap-bold" size="16" class="mr-1")
         | {{ $t('salesOrders.status') || 'Edit Status' }}
@@ -64,6 +76,16 @@ div.animate-fade-in(v-loading="loading")
         div
           p.text-xs(style="color: var(--text-muted)") {{ $t('common.date') || 'Date' }}
           p.text-sm.font-semibold(style="color: var(--text-primary)") {{ formatDate(order.createdAt) }}
+        div
+          p.text-xs(style="color: var(--text-muted)") {{ $t('salesOrders.paymentStatus') || 'Payment Status' }}
+          el-tag(
+            v-if="order.paymentStatus"
+            :type="getPaymentStatusType(order.paymentStatus)"
+            size="small"
+            effect="dark"
+            round
+          ) {{ order.paymentStatus }}
+          span.text-sm(v-else style="color: var(--text-primary)") --
         div
           p.text-xs(style="color: var(--text-muted)") {{ $t('salesOrders.paymentTerms') || 'Payment Terms' }}
           p.text-sm.font-semibold(style="color: var(--text-primary)") {{ order.paymentTerms || '--' }}
@@ -211,6 +233,26 @@ div.animate-fade-in(v-loading="loading")
       el-button(@click="statusDialogVisible = false") {{ $t('common.cancel') || 'Cancel' }}
       el-button(type="primary" :loading="saving" @click="confirmStatusUpdate") {{ $t('common.confirm') || 'Confirm' }}
 
+  //- Payment Status Update Dialog
+  el-dialog(
+    v-model="paymentStatusDialogVisible"
+    :title="$t('salesOrders.paymentStatus') || 'Update Payment Status'"
+    width="420px"
+    :close-on-click-modal="false"
+  )
+    el-form(label-position="top")
+      el-form-item(:label="$t('salesOrders.paymentStatus') || 'Payment Status'" required)
+        el-select(v-model="newPaymentStatus" style="width: 100%" size="large")
+          el-option(
+            v-for="opt in paymentStatusOptions"
+            :key="opt.value"
+            :label="opt.label"
+            :value="opt.value"
+          )
+    template(#footer)
+      el-button(@click="paymentStatusDialogVisible = false") {{ $t('common.cancel') || 'Cancel' }}
+      el-button(type="primary" :loading="saving" @click="confirmPaymentStatusUpdate") {{ $t('common.confirm') || 'Confirm' }}
+
   //- Add Fulfillment Dialog
   el-dialog(
     v-model="addFulDialogVisible"
@@ -288,11 +330,14 @@ import { ref, reactive, computed, onMounted } from 'vue';
 import {
   getSalesOrderById,
   updateSalesOrderStatus,
+  updatePaymentStatus,
   addFulfillment,
   updateFulfillment,
   SalesOrderStatusEnum,
+  PaymentStatusEnum,
   FulfillmentStatusEnum,
   salesOrderStatusOptions,
+  paymentStatusOptions,
   fulfillmentStatusOptions
 } from '~/composables/useSalesOrders';
 import type { SalesOrder, Fulfillment } from '~/composables/useSalesOrders';
@@ -313,6 +358,10 @@ const order = ref<SalesOrder>({} as SalesOrder);
 // Status dialog
 const statusDialogVisible = ref(false);
 const newStatus = ref(SalesOrderStatusEnum.DRAFT);
+
+// Payment status dialog
+const paymentStatusDialogVisible = ref(false);
+const newPaymentStatus = ref(PaymentStatusEnum.PENDING);
 
 // Fulfillment dialogs
 const addFulDialogVisible = ref(false);
@@ -373,6 +422,16 @@ function getStatusType(status?: string): string {
   return map[status || ''] || 'info';
 }
 
+function getPaymentStatusType(status?: string): string {
+  const map: Record<string, string> = {
+    PENDING: 'warning',
+    PAID: 'success',
+    PARTIAL: 'info',
+    REFUNDED: 'danger'
+  };
+  return map[status || ''] || 'info';
+}
+
 function getFulfillmentStatusType(status?: string): string {
   const map: Record<string, string> = {
     PENDING: 'info',
@@ -427,6 +486,26 @@ async function confirmStatusUpdate() {
     const result = await updateSalesOrderStatus(orderId.value, newStatus.value);
     if (result) {
       statusDialogVisible.value = false;
+      await loadOrder();
+    }
+  } finally {
+    saving.value = false;
+  }
+}
+
+// Payment status update
+function openPaymentStatusDialog() {
+  newPaymentStatus.value = (order.value.paymentStatus as PaymentStatusEnum) || PaymentStatusEnum.PENDING;
+  paymentStatusDialogVisible.value = true;
+}
+
+async function confirmPaymentStatusUpdate() {
+  if (!orderId.value) return;
+  saving.value = true;
+  try {
+    const result = await updatePaymentStatus(orderId.value, newPaymentStatus.value);
+    if (result) {
+      paymentStatusDialogVisible.value = false;
       await loadOrder();
     }
   } finally {

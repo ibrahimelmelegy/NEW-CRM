@@ -333,7 +333,10 @@ export enum LiveChatPermissionsEnum {
   CREATE_CONVERSATIONS = 'CREATE_CONVERSATIONS',
   EDIT_CONVERSATIONS = 'EDIT_CONVERSATIONS',
   DELETE_CONVERSATIONS = 'DELETE_CONVERSATIONS',
-  SEND_MESSAGES = 'SEND_MESSAGES'
+  SEND_MESSAGES = 'SEND_MESSAGES',
+  ASSIGN_AGENTS = 'ASSIGN_AGENTS',
+  TRANSFER_CONVERSATIONS = 'TRANSFER_CONVERSATIONS',
+  VIEW_CHAT_METRICS = 'VIEW_CHAT_METRICS'
 }
 
 export enum WarehousePermissionsEnum {
@@ -397,6 +400,20 @@ export enum EcCartPermissionsEnum {
   VIEW_EC_CARTS = 'VIEW_EC_CARTS',
   MANAGE_EC_CARTS = 'MANAGE_EC_CARTS',
   CONVERT_EC_CARTS = 'CONVERT_EC_CARTS'
+}
+
+export enum EcProductPermissionsEnum {
+  VIEW_EC_PRODUCTS = 'VIEW_EC_PRODUCTS',
+  CREATE_EC_PRODUCTS = 'CREATE_EC_PRODUCTS',
+  EDIT_EC_PRODUCTS = 'EDIT_EC_PRODUCTS',
+  DELETE_EC_PRODUCTS = 'DELETE_EC_PRODUCTS',
+  MANAGE_EC_INVENTORY = 'MANAGE_EC_INVENTORY',
+  VIEW_EC_ANALYTICS = 'VIEW_EC_ANALYTICS',
+  BULK_IMPORT_PRODUCTS = 'BULK_IMPORT_PRODUCTS'
+}
+
+export enum EcDashboardPermissionsEnum {
+  VIEW_EC_DASHBOARD = 'VIEW_EC_DASHBOARD'
 }
 
 export enum ManufacturingPermissionsEnum {
@@ -498,6 +515,24 @@ export enum ESignaturePermissionsEnum {
   SIGN_DOCUMENTS = 'SIGN_DOCUMENTS'
 }
 
+export enum CalendarPermissionsEnum {
+  VIEW_CALENDAR = 'VIEW_CALENDAR',
+  CREATE_CALENDAR = 'CREATE_CALENDAR',
+  EDIT_CALENDAR = 'EDIT_CALENDAR',
+  DELETE_CALENDAR = 'DELETE_CALENDAR'
+}
+
+export enum WhatsAppPermissionsEnum {
+  VIEW_WHATSAPP_CONTACTS = 'VIEW_WHATSAPP_CONTACTS',
+  MANAGE_WHATSAPP_CONTACTS = 'MANAGE_WHATSAPP_CONTACTS',
+  VIEW_WHATSAPP_MESSAGES = 'VIEW_WHATSAPP_MESSAGES',
+  SEND_WHATSAPP_MESSAGES = 'SEND_WHATSAPP_MESSAGES',
+  SEND_WHATSAPP_BULK = 'SEND_WHATSAPP_BULK',
+  VIEW_WHATSAPP_TEMPLATES = 'VIEW_WHATSAPP_TEMPLATES',
+  MANAGE_WHATSAPP_TEMPLATES = 'MANAGE_WHATSAPP_TEMPLATES',
+  VIEW_WHATSAPP_ANALYTICS = 'VIEW_WHATSAPP_ANALYTICS'
+}
+
 // Consolidating all permissions
 export const permissions = {
   leads: Object.keys(LeadPermissionsEnum),
@@ -564,8 +599,12 @@ export const permissions = {
   ecCoupons: Object.keys(EcCouponPermissionsEnum),
   ecReviews: Object.keys(EcReviewPermissionsEnum),
   ecCarts: Object.keys(EcCartPermissionsEnum),
+  ecProducts: Object.keys(EcProductPermissionsEnum),
+  ecDashboard: Object.keys(EcDashboardPermissionsEnum),
   meetingNotes: Object.keys(MeetingNotePermissionsEnum),
-  eSignatures: Object.keys(ESignaturePermissionsEnum)
+  eSignatures: Object.keys(ESignaturePermissionsEnum),
+  calendar: Object.keys(CalendarPermissionsEnum),
+  whatsapp: Object.keys(WhatsAppPermissionsEnum)
 };
 
 // Function to get all permissions

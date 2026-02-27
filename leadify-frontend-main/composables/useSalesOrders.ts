@@ -34,6 +34,20 @@ export const salesOrderStatusOptions = [
   { label: 'Cancelled', value: SalesOrderStatusEnum.CANCELLED }
 ];
 
+export enum PaymentStatusEnum {
+  PENDING = 'PENDING',
+  PAID = 'PAID',
+  PARTIAL = 'PARTIAL',
+  REFUNDED = 'REFUNDED'
+}
+
+export const paymentStatusOptions = [
+  { label: 'Pending', value: PaymentStatusEnum.PENDING },
+  { label: 'Paid', value: PaymentStatusEnum.PAID },
+  { label: 'Partial', value: PaymentStatusEnum.PARTIAL },
+  { label: 'Refunded', value: PaymentStatusEnum.REFUNDED }
+];
+
 export enum FulfillmentStatusEnum {
   PENDING = 'PENDING',
   PACKED = 'PACKED',
@@ -75,8 +89,10 @@ export interface SalesOrder {
   id?: string;
   orderNumber?: string;
   status?: string;
+  paymentStatus?: string;
   dealId?: string;
   clientId?: string;
+  createdBy?: string;
   subtotal?: number;
   taxAmount?: number;
   discountAmount?: number;
@@ -190,6 +206,26 @@ export async function updateSalesOrderStatus(id: string, status: string): Promis
 }
 
 /**
+ * Update the payment status of a sales order
+ */
+export async function updatePaymentStatus(id: string, paymentStatus: string): Promise<SalesOrder | null> {
+  try {
+    const response = await useApiFetch(`sales-orders/${id}/payment-status`, 'PATCH', { paymentStatus });
+
+    if (response?.success) {
+      handleSuccess(`Payment status updated to ${paymentStatus}`);
+      return response.body;
+    } else {
+      handleError(response?.message || 'Failed to update payment status');
+      return null;
+    }
+  } catch (error) {
+    handleError(error instanceof Error ? error.message : 'Unknown error');
+    return null;
+  }
+}
+
+/**
  * Convert a deal to a sales order
  */
 export async function convertDealToOrder(dealId: string): Promise<SalesOrder | null> {
@@ -247,4 +283,51 @@ export async function updateFulfillment(orderId: string, fid: string, data: any)
     handleError(error instanceof Error ? error.message : 'Unknown error');
     return null;
   }
+}
+
+/**
+ * Delete a sales order
+ */
+export async function deleteSalesOrder(id: string): Promise<boolean> {
+  try {
+    const response = await useApiFetch(`sales-orders/${id}`, 'DELETE');
+
+    if (response?.success) {
+      handleSuccess('Sales order deleted successfully');
+      return true;
+    } else {
+      handleError(response?.message || 'Failed to delete sales order');
+      return false;
+    }
+  } catch (error) {
+    handleError(error instanceof Error ? error.message : 'Unknown error');
+    return false;
+  }
+}
+
+/**
+ * Fetch order analytics
+ */
+export async function getSalesOrderAnalytics(query?: string) {
+  const endpoint = query ? `sales-orders/analytics?${query}` : 'sales-orders/analytics';
+  const { body, success } = await useApiFetch(endpoint);
+  if (success && body) {
+    return body;
+  }
+  return null;
+}
+
+/**
+ * Fetch orders for a specific client
+ */
+export async function getClientOrders(clientId: string, query?: string): Promise<SalesOrderListResult> {
+  const endpoint = query ? `sales-orders/client/${clientId}?${query}` : `sales-orders/client/${clientId}`;
+  const { body, success } = await useApiFetch(endpoint);
+  if (success && body) {
+    return {
+      orders: body.docs || [],
+      pagination: body.pagination || { totalItems: 0, page: 1, limit: 10, totalPages: 1 }
+    };
+  }
+  return { orders: [], pagination: { totalItems: 0, page: 1, limit: 10, totalPages: 1 } };
 }

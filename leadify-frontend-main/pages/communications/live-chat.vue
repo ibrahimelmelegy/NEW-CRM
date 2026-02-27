@@ -78,9 +78,10 @@ div.animate-fade-in
           :style="{ borderColor: 'var(--border-default)' }"
           @click="selectConversation(conv)"
         )
-          .w-10.h-10.rounded-full.flex.items-center.justify-center.shrink-0.text-sm.font-bold(
-            :style="{ background: getStatusColor(conv.status) + '20', color: getStatusColor(conv.status) }"
-          ) {{ (conv.visitorName || '?').charAt(0).toUpperCase() }}
+          .relative
+            .w-10.h-10.rounded-full.flex.items-center.justify-center.shrink-0.text-sm.font-bold(
+              :style="{ background: getStatusColor(conv.status) + '20', color: getStatusColor(conv.status) }"
+            ) {{ (conv.visitorName || '?').charAt(0).toUpperCase() }}
           .flex-1.min-w-0
             .flex.items-center.justify-between.mb-1
               span.text-sm.font-semibold.truncate(style="color: var(--text-primary)") {{ conv.visitorName || '--' }}
@@ -93,11 +94,12 @@ div.animate-fade-in
                 round
               ) {{ conv.status }}
               el-tag(size="small" effect="plain" round) {{ conv.channel || 'WEB' }}
+              el-tag(v-if="conv.priority && conv.priority !== 'NORMAL'" :type="getPriorityType(conv.priority)" size="small" effect="plain" round) {{ conv.priority }}
             p.text-xs.truncate(style="color: var(--text-muted)") {{ conv.lastMessage || $t('liveChat.noMessages') || 'No messages yet' }}
-          .flex.flex-col.items-end.gap-1(v-if="conv.messageCount")
+          .flex.flex-col.items-end.gap-1(v-if="conv.unreadCount && conv.unreadCount > 0")
             .w-5.h-5.rounded-full.flex.items-center.justify-center.text-xs.font-bold(
               style="background: #7849ff; color: #fff"
-            ) {{ conv.messageCount > 9 ? '9+' : conv.messageCount }}
+            ) {{ conv.unreadCount > 9 ? '9+' : conv.unreadCount }}
 
         //- Empty state
         .text-center.py-12(v-if="!loadingConversations && !filteredConversations.length")
@@ -118,7 +120,23 @@ div.animate-fade-in
               .flex.items-center.gap-2
                 span.text-xs(style="color: var(--text-muted)") {{ selectedConversation.visitorEmail || '' }}
                 el-tag(:type="getStatusTagType(selectedConversation.status)" size="small" effect="dark" round) {{ selectedConversation.status }}
+                span.text-xs(v-if="selectedConversation.staff" style="color: var(--text-muted)")
+                  Icon(name="ph:user-bold" size="12" class="mr-1" style="display: inline")
+                  | {{ selectedConversation.staff?.name || '' }}
           .flex.items-center.gap-2
+            //- Assign Agent
+            el-dropdown(trigger="click" @command="handleAssignAgent")
+              el-button(size="small" plain class="!rounded-lg")
+                Icon(name="ph:user-switch-bold" size="14" class="mr-1")
+                | {{ $t('liveChat.assignAgent') || 'Assign' }}
+              template(#dropdown)
+                el-dropdown-menu
+                  el-dropdown-item(command="auto")
+                    Icon(name="ph:magic-wand-bold" size="14" class="mr-1")
+                    | {{ $t('liveChat.autoAssign') || 'Auto-Assign' }}
+                  el-dropdown-item(v-for="agent in agents" :key="agent.id" :command="agent.id")
+                    | {{ agent.name }}
+            //- Status
             el-select(
               v-model="selectedConversation.status"
               size="small"
@@ -130,6 +148,18 @@ div.animate-fade-in
               el-option(label="WAITING" value="WAITING")
               el-option(label="RESOLVED" value="RESOLVED")
               el-option(label="CLOSED" value="CLOSED")
+            //- Resolve button
+            el-button(
+              v-if="selectedConversation.status !== 'RESOLVED' && selectedConversation.status !== 'CLOSED'"
+              size="small"
+              type="success"
+              plain
+              @click="resolveConversation"
+              class="!rounded-lg"
+            )
+              Icon(name="ph:check-circle-bold" size="14" class="mr-1")
+              | {{ $t('liveChat.resolve') || 'Resolve' }}
+            //- Delete button
             el-button(size="small" type="danger" plain @click="deleteConversation" class="!rounded-lg")
               Icon(name="ph:trash-bold" size="14")
 
@@ -138,19 +168,50 @@ div.animate-fade-in
           .message-wrapper(
             v-for="msg in messages"
             :key="msg.id"
-            :class="msg.senderType === 'STAFF' ? 'flex justify-end' : 'flex justify-start'"
+            :class="getMessageAlignment(msg.senderType)"
           )
+            //- System messages (centered)
+            .system-message.text-center.py-2(v-if="msg.senderType === 'SYSTEM' || msg.messageType === 'SYSTEM'")
+              .inline-flex.items-center.gap-1.px-3.py-1.rounded-full.text-xs(style="background: var(--bg-elevated); color: var(--text-muted); border: 1px solid var(--border-default)")
+                Icon(name="ph:info-bold" size="12")
+                | {{ msg.content }}
+            //- Regular messages
             .message-bubble.max-w-md.p-3.rounded-2xl(
+              v-else
               :class="msg.senderType === 'STAFF' ? 'staff-bubble' : 'client-bubble'"
             )
               p.text-sm(style="color: inherit") {{ msg.content }}
               .flex.items-center.justify-end.gap-2.mt-1
                 span.text-xs.opacity-60 {{ msg.senderName || '' }}
                 span.text-xs.opacity-60 {{ formatTime(msg.createdAt) }}
+                Icon(v-if="msg.senderType === 'STAFF' && msg.isRead" name="ph:checks-bold" size="12" style="opacity: 0.6")
+
+          //- Typing indicator
+          .flex.justify-start(v-if="typingUser")
+            .typing-indicator.px-4.py-2.rounded-2xl(style="background: var(--bg-elevated); border: 1px solid var(--border-default)")
+              .flex.items-center.gap-2
+                span.text-xs(style="color: var(--text-muted)") {{ typingUser }}
+                .typing-dots
+                  span.dot
+                  span.dot
+                  span.dot
 
           .text-center.py-8(v-if="!loadingMessages && !messages.length")
             Icon(name="ph:chat-circle" size="40" style="color: var(--text-muted)")
             p.text-sm.mt-2(style="color: var(--text-muted)") {{ $t('liveChat.startConversation') || 'Start the conversation' }}
+
+        //- Canned Responses Bar
+        .flex.gap-2.px-4.py-2.border-t.overflow-x-auto(v-if="cannedResponses.length" style="border-color: var(--border-default)")
+          el-tag(
+            v-for="cr in cannedResponses"
+            :key="cr.id"
+            size="small"
+            effect="plain"
+            class="cursor-pointer shrink-0"
+            @click="useCannedResponse(cr.text)"
+          )
+            Icon(name="ph:lightning-bold" size="12" class="mr-1")
+            | {{ cr.label }}
 
         //- Message Input
         .p-4.border-t(style="border-color: var(--border-default)")
@@ -161,6 +222,7 @@ div.animate-fade-in
               size="large"
               class="!rounded-xl"
               @keyup.enter="sendMessage"
+              @input="handleTyping"
             )
             el-button(
               type="primary"
@@ -198,6 +260,12 @@ div.animate-fade-in
           el-option(label="Facebook" value="FACEBOOK")
           el-option(label="Instagram" value="INSTAGRAM")
           el-option(label="SMS" value="SMS")
+      el-form-item(:label="$t('liveChat.priority') || 'Priority'")
+        el-select(v-model="createForm.priority" style="width: 100%")
+          el-option(label="Low" value="LOW")
+          el-option(label="Normal" value="NORMAL")
+          el-option(label="High" value="HIGH")
+          el-option(label="Urgent" value="URGENT")
       el-form-item(:label="$t('liveChat.subject') || 'Subject'")
         el-input(v-model="createForm.subject" :placeholder="$t('liveChat.subject') || 'Subject'")
     template(#footer)
@@ -206,15 +274,19 @@ div.animate-fade-in
 </template>
 
 <script setup lang="ts">
-import { ref, reactive, computed, onMounted, nextTick } from 'vue';
+import { ref, reactive, computed, onMounted, onUnmounted, nextTick, watch } from 'vue';
 import { ElNotification, ElMessageBox } from 'element-plus';
+import { user } from '~/composables/useUser';
 
 definePageMeta({ middleware: 'permissions' });
 
 const { $i18n } = useNuxtApp();
 const t = $i18n.t;
 
-// State
+// ───────── Socket.io Setup ─────────────────────────────────────────────────
+const { socket } = useSocket();
+
+// ───────── State ───────────────────────────────────────────────────────────
 const loadingConversations = ref(false);
 const loadingMessages = ref(false);
 const saving = ref(false);
@@ -227,11 +299,17 @@ const selectedConversation = ref<any>(null);
 const newMessage = ref('');
 const createDialogVisible = ref(false);
 const messagesContainer = ref<HTMLElement | null>(null);
+const cannedResponses = ref<any[]>([]);
+const agents = ref<any[]>([]);
+const typingUser = ref<string | null>(null);
+let typingTimeout: ReturnType<typeof setTimeout> | null = null;
+let previousConversationId: number | null = null;
+
 const chatMetrics = ref<any>({
   activeConversations: null,
   waitingInQueue: null,
   avgResponseTime: null,
-  avgResolutionTime: null
+  avgResolutionTime: null,
 });
 
 const queueColor = computed(() => {
@@ -246,17 +324,19 @@ const createForm = reactive({
   visitorName: '',
   visitorEmail: '',
   channel: 'WEB',
-  subject: ''
+  priority: 'NORMAL',
+  subject: '',
 });
 
-// Status helpers
+// ───────── Status / Priority Helpers ───────────────────────────────────────
+
 function getStatusColor(status: string): string {
   const map: Record<string, string> = {
     OPEN: '#f59e0b',
     ACTIVE: '#22c55e',
     WAITING: '#3b82f6',
     RESOLVED: '#6b7280',
-    CLOSED: '#3b82f6'
+    CLOSED: '#3b82f6',
   };
   return map[status] || '#94a3b8';
 }
@@ -267,12 +347,28 @@ function getStatusTagType(status: string): string {
     ACTIVE: 'success',
     WAITING: 'info',
     RESOLVED: '',
-    CLOSED: 'info'
+    CLOSED: 'info',
   };
   return map[status] || 'info';
 }
 
-// Filters
+function getPriorityType(priority: string): string {
+  const map: Record<string, string> = {
+    LOW: 'info',
+    NORMAL: '',
+    HIGH: 'warning',
+    URGENT: 'danger',
+  };
+  return map[priority] || '';
+}
+
+function getMessageAlignment(senderType: string): string {
+  if (senderType === 'SYSTEM') return 'flex justify-center';
+  return senderType === 'STAFF' ? 'flex justify-end' : 'flex justify-start';
+}
+
+// ───────── Filters ─────────────────────────────────────────────────────────
+
 const statusFilters = computed(() => {
   const data = conversations.value;
   return [
@@ -281,7 +377,7 @@ const statusFilters = computed(() => {
     { value: 'ACTIVE', label: 'Active', type: 'success', count: data.filter((c: any) => c.status === 'ACTIVE').length },
     { value: 'WAITING', label: 'Waiting', type: 'info', count: data.filter((c: any) => c.status === 'WAITING').length },
     { value: 'RESOLVED', label: 'Resolved', type: '', count: data.filter((c: any) => c.status === 'RESOLVED').length },
-    { value: 'CLOSED', label: 'Closed', type: 'info', count: data.filter((c: any) => c.status === 'CLOSED').length }
+    { value: 'CLOSED', label: 'Closed', type: 'info', count: data.filter((c: any) => c.status === 'CLOSED').length },
   ];
 });
 
@@ -302,7 +398,8 @@ const filteredConversations = computed(() => {
   return data;
 });
 
-// Time formatting
+// ───────── Time Formatting ─────────────────────────────────────────────────
+
 function formatTime(dateStr: string): string {
   if (!dateStr) return '';
   const d = new Date(dateStr);
@@ -316,7 +413,8 @@ function formatTime(dateStr: string): string {
   return d.toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
 }
 
-// API calls
+// ───────── API Calls ───────────────────────────────────────────────────────
+
 async function loadConversations() {
   loadingConversations.value = true;
   try {
@@ -347,106 +445,31 @@ async function loadMessages(conversationId: number) {
   }
 }
 
-function selectConversation(conv: any) {
-  selectedConversation.value = conv;
-  messages.value = [];
-  loadMessages(conv.id);
-}
-
-function scrollToBottom() {
-  if (messagesContainer.value) {
-    messagesContainer.value.scrollTop = messagesContainer.value.scrollHeight;
-  }
-}
-
-async function sendMessage() {
-  if (!newMessage.value.trim() || !selectedConversation.value) return;
-  sendingMessage.value = true;
+async function loadAgents() {
   try {
-    const payload = {
-      conversationId: selectedConversation.value.id,
-      content: newMessage.value.trim(),
-      senderType: 'STAFF'
-    };
-    const res = await useApiFetch('live-chat/messages', 'POST', payload);
+    const res = await useApiFetch('users?limit=100');
     if (res?.success) {
-      newMessage.value = '';
-      await loadMessages(selectedConversation.value.id);
-      // Update last message in conversation list
-      const conv = conversations.value.find((c: any) => c.id === selectedConversation.value.id);
-      if (conv) {
-        conv.lastMessage = payload.content;
-        conv.updatedAt = new Date().toISOString();
-      }
+      agents.value = (res.body?.docs || res.body || []).map((u: any) => ({
+        id: u.id,
+        name: u.name || u.email,
+      }));
     }
   } catch {
-    ElNotification({ type: 'error', title: t('common.error') || 'Error', message: t('liveChat.sendFailed') || 'Failed to send message' });
-  } finally {
-    sendingMessage.value = false;
+    // silent
   }
 }
 
-async function updateConversationStatus() {
-  if (!selectedConversation.value) return;
+async function loadCannedResponses() {
   try {
-    await useApiFetch(`live-chat/conversations/${selectedConversation.value.id}`, 'PUT', {
-      status: selectedConversation.value.status
-    });
-    ElNotification({ type: 'success', title: t('common.success') || 'Success', message: t('common.saved') || 'Saved' });
-    await loadConversations();
-  } catch {
-    ElNotification({ type: 'error', title: t('common.error') || 'Error', message: t('common.error') || 'Error' });
-  }
-}
-
-async function deleteConversation() {
-  if (!selectedConversation.value) return;
-  try {
-    await ElMessageBox.confirm(
-      t('common.confirmDelete') || 'Are you sure you want to delete this conversation?',
-      t('common.warning') || 'Warning',
-      { type: 'warning' }
-    );
-    await useApiFetch(`live-chat/conversations/${selectedConversation.value.id}`, 'DELETE');
-    ElNotification({ type: 'success', title: t('common.success') || 'Success', message: t('common.deleted') || 'Deleted' });
-    selectedConversation.value = null;
-    messages.value = [];
-    await loadConversations();
-  } catch {
-    // cancelled or error
-  }
-}
-
-// Create dialog
-function openCreateDialog() {
-  createForm.visitorName = '';
-  createForm.visitorEmail = '';
-  createForm.channel = 'WEB';
-  createForm.subject = '';
-  createDialogVisible.value = true;
-}
-
-async function createConversation() {
-  if (!createForm.visitorName.trim()) {
-    ElNotification({ type: 'warning', title: t('common.warning') || 'Warning', message: t('common.fillRequired') || 'Please fill required fields' });
-    return;
-  }
-  saving.value = true;
-  try {
-    const res = await useApiFetch('live-chat/conversations', 'POST', { ...createForm });
+    const res = await useApiFetch('live-chat/canned-responses');
     if (res?.success) {
-      ElNotification({ type: 'success', title: t('common.success') || 'Success', message: t('common.saved') || 'Saved' });
-      createDialogVisible.value = false;
-      await loadConversations();
+      cannedResponses.value = Array.isArray(res.body) ? res.body : [];
     }
   } catch {
-    ElNotification({ type: 'error', title: t('common.error') || 'Error', message: t('common.error') || 'Error' });
-  } finally {
-    saving.value = false;
+    // silent
   }
 }
 
-// Metrics
 async function loadMetrics() {
   try {
     const res = await useApiFetch('live-chat/metrics');
@@ -458,9 +481,421 @@ async function loadMetrics() {
   }
 }
 
+// ───────── Conversation Selection with Socket Room Management ──────────────
+
+function selectConversation(conv: any) {
+  // Leave previous conversation room
+  if (previousConversationId && socket.value) {
+    socket.value.emit('chat:leave', {
+      conversationId: previousConversationId,
+      userId: user.value?.id,
+    });
+  }
+
+  selectedConversation.value = conv;
+  messages.value = [];
+  typingUser.value = null;
+  loadMessages(conv.id);
+
+  // Join new conversation room
+  if (socket.value) {
+    socket.value.emit('chat:join', {
+      conversationId: conv.id,
+      userId: user.value?.id,
+      name: user.value?.name,
+    });
+  }
+
+  previousConversationId = conv.id;
+
+  // Mark messages as read
+  markAsRead(conv.id);
+}
+
+function scrollToBottom() {
+  if (messagesContainer.value) {
+    messagesContainer.value.scrollTop = messagesContainer.value.scrollHeight;
+  }
+}
+
+async function markAsRead(conversationId: number) {
+  try {
+    await useApiFetch(`live-chat/conversations/${conversationId}/read`, 'PUT');
+    // Update local unread count
+    const conv = conversations.value.find((c: any) => c.id === conversationId);
+    if (conv) conv.unreadCount = 0;
+  } catch {
+    // silent
+  }
+}
+
+// ───────── Message Sending ─────────────────────────────────────────────────
+
+async function sendMessage() {
+  if (!newMessage.value.trim() || !selectedConversation.value) return;
+  sendingMessage.value = true;
+
+  // Stop typing indicator
+  if (socket.value && selectedConversation.value) {
+    socket.value.emit('chat:typing', {
+      conversationId: selectedConversation.value.id,
+      userId: user.value?.id,
+      name: user.value?.name,
+      isTyping: false,
+    });
+  }
+
+  try {
+    const payload = {
+      conversationId: selectedConversation.value.id,
+      content: newMessage.value.trim(),
+      senderType: 'STAFF',
+    };
+    const res = await useApiFetch('live-chat/messages', 'POST', payload);
+    if (res?.success) {
+      newMessage.value = '';
+      // The Socket.io event handler will add the message to the list,
+      // but in case it is slow, also load from API
+      await loadMessages(selectedConversation.value.id);
+      // Update conversation list item
+      const conv = conversations.value.find((c: any) => c.id === selectedConversation.value.id);
+      if (conv) {
+        conv.lastMessage = payload.content;
+        conv.updatedAt = new Date().toISOString();
+      }
+    }
+  } catch {
+    ElNotification({
+      type: 'error',
+      title: t('common.error') || 'Error',
+      message: t('liveChat.sendFailed') || 'Failed to send message',
+    });
+  } finally {
+    sendingMessage.value = false;
+  }
+}
+
+// ───────── Typing Indicator ────────────────────────────────────────────────
+
+function handleTyping() {
+  if (!socket.value || !selectedConversation.value) return;
+
+  socket.value.emit('chat:typing', {
+    conversationId: selectedConversation.value.id,
+    userId: user.value?.id,
+    name: user.value?.name,
+    isTyping: true,
+  });
+}
+
+// ───────── Canned Responses ────────────────────────────────────────────────
+
+function useCannedResponse(text: string) {
+  newMessage.value = text;
+}
+
+// ───────── Agent Assignment ────────────────────────────────────────────────
+
+async function handleAssignAgent(command: string | number) {
+  if (!selectedConversation.value) return;
+  const convId = selectedConversation.value.id;
+
+  try {
+    if (command === 'auto') {
+      await useApiFetch(`live-chat/conversations/${convId}/auto-assign`, 'PUT');
+    } else {
+      await useApiFetch(`live-chat/conversations/${convId}/assign`, 'PUT', { agentId: command });
+    }
+    ElNotification({
+      type: 'success',
+      title: t('common.success') || 'Success',
+      message: t('liveChat.agentAssigned') || 'Agent assigned',
+    });
+    await loadConversations();
+    // Refresh selected conversation data
+    const updated = conversations.value.find((c: any) => c.id === convId);
+    if (updated) selectedConversation.value = updated;
+  } catch {
+    ElNotification({
+      type: 'error',
+      title: t('common.error') || 'Error',
+      message: t('common.error') || 'Error',
+    });
+  }
+}
+
+// ───────── Status Updates ──────────────────────────────────────────────────
+
+async function updateConversationStatus() {
+  if (!selectedConversation.value) return;
+  try {
+    await useApiFetch(`live-chat/conversations/${selectedConversation.value.id}`, 'PUT', {
+      status: selectedConversation.value.status,
+    });
+    ElNotification({
+      type: 'success',
+      title: t('common.success') || 'Success',
+      message: t('common.saved') || 'Saved',
+    });
+    await loadConversations();
+    await loadMetrics();
+  } catch {
+    ElNotification({
+      type: 'error',
+      title: t('common.error') || 'Error',
+      message: t('common.error') || 'Error',
+    });
+  }
+}
+
+async function resolveConversation() {
+  if (!selectedConversation.value) return;
+  try {
+    await useApiFetch(`live-chat/conversations/${selectedConversation.value.id}/resolve`, 'PUT', {});
+    ElNotification({
+      type: 'success',
+      title: t('common.success') || 'Success',
+      message: t('liveChat.conversationResolved') || 'Conversation resolved',
+    });
+    selectedConversation.value.status = 'RESOLVED';
+    await loadConversations();
+    await loadMetrics();
+  } catch {
+    ElNotification({
+      type: 'error',
+      title: t('common.error') || 'Error',
+      message: t('common.error') || 'Error',
+    });
+  }
+}
+
+// ───────── Delete ──────────────────────────────────────────────────────────
+
+async function deleteConversation() {
+  if (!selectedConversation.value) return;
+  try {
+    await ElMessageBox.confirm(
+      t('common.confirmDelete') || 'Are you sure you want to delete this conversation?',
+      t('common.warning') || 'Warning',
+      { type: 'warning' }
+    );
+    await useApiFetch(`live-chat/conversations/${selectedConversation.value.id}`, 'DELETE');
+    ElNotification({
+      type: 'success',
+      title: t('common.success') || 'Success',
+      message: t('common.deleted') || 'Deleted',
+    });
+    // Leave room
+    if (socket.value && selectedConversation.value) {
+      socket.value.emit('chat:leave', {
+        conversationId: selectedConversation.value.id,
+        userId: user.value?.id,
+      });
+    }
+    previousConversationId = null;
+    selectedConversation.value = null;
+    messages.value = [];
+    await loadConversations();
+    await loadMetrics();
+  } catch {
+    // cancelled or error
+  }
+}
+
+// ───────── Create ──────────────────────────────────────────────────────────
+
+function openCreateDialog() {
+  createForm.visitorName = '';
+  createForm.visitorEmail = '';
+  createForm.channel = 'WEB';
+  createForm.priority = 'NORMAL';
+  createForm.subject = '';
+  createDialogVisible.value = true;
+}
+
+async function createConversation() {
+  if (!createForm.visitorName.trim()) {
+    ElNotification({
+      type: 'warning',
+      title: t('common.warning') || 'Warning',
+      message: t('common.fillRequired') || 'Please fill required fields',
+    });
+    return;
+  }
+  saving.value = true;
+  try {
+    const res = await useApiFetch('live-chat/conversations', 'POST', { ...createForm });
+    if (res?.success) {
+      ElNotification({
+        type: 'success',
+        title: t('common.success') || 'Success',
+        message: t('common.saved') || 'Saved',
+      });
+      createDialogVisible.value = false;
+      await loadConversations();
+      await loadMetrics();
+    }
+  } catch {
+    ElNotification({
+      type: 'error',
+      title: t('common.error') || 'Error',
+      message: t('common.error') || 'Error',
+    });
+  } finally {
+    saving.value = false;
+  }
+}
+
+// ───────── Socket.io Event Handlers ────────────────────────────────────────
+
+function setupSocketListeners() {
+  if (!socket.value) return;
+
+  // New message received in the current conversation room
+  socket.value.on('chat:message', (data: any) => {
+    if (selectedConversation.value && data.conversationId === selectedConversation.value.id) {
+      // Avoid duplicate messages (already added by API response)
+      const exists = messages.value.some((m: any) => m.id === data.id);
+      if (!exists) {
+        messages.value.push(data);
+        nextTick(() => scrollToBottom());
+      }
+      // Clear typing indicator
+      typingUser.value = null;
+    }
+  });
+
+  // Global message sent event - update conversation list
+  socket.value.on('chat:message_sent', (data: any) => {
+    const conv = conversations.value.find((c: any) => c.id === data.conversationId);
+    if (conv) {
+      conv.lastMessage = data.content || conv.lastMessage;
+      conv.updatedAt = new Date().toISOString();
+      if (selectedConversation.value?.id !== data.conversationId && data.senderType !== 'STAFF') {
+        conv.unreadCount = (conv.unreadCount || 0) + 1;
+      }
+    }
+  });
+
+  // Typing indicator
+  socket.value.on('chat:typing', (data: any) => {
+    if (selectedConversation.value && data.conversationId === selectedConversation.value.id) {
+      if (data.isTyping && data.userId !== user.value?.id) {
+        typingUser.value = data.name || 'Someone';
+        // Auto-clear after 4 seconds
+        if (typingTimeout) clearTimeout(typingTimeout);
+        typingTimeout = setTimeout(() => {
+          typingUser.value = null;
+        }, 4000);
+      } else {
+        typingUser.value = null;
+      }
+    }
+  });
+
+  // Conversation status updates
+  socket.value.on('chat:conversation_updated', (data: any) => {
+    const conv = conversations.value.find((c: any) => c.id === data.conversationId);
+    if (conv) {
+      if (data.status) conv.status = data.status;
+      if (data.staffId) conv.staffId = data.staffId;
+    }
+    if (selectedConversation.value?.id === data.conversationId) {
+      if (data.status) selectedConversation.value.status = data.status;
+    }
+  });
+
+  // New conversation created (by another agent or visitor)
+  socket.value.on('chat:new_conversation', () => {
+    loadConversations();
+    loadMetrics();
+  });
+
+  // Conversation deleted
+  socket.value.on('chat:conversation_deleted', (data: any) => {
+    conversations.value = conversations.value.filter((c: any) => c.id !== data.conversationId);
+    if (selectedConversation.value?.id === data.conversationId) {
+      selectedConversation.value = null;
+      messages.value = [];
+    }
+    loadMetrics();
+  });
+
+  // Messages read
+  socket.value.on('chat:messages_read', (data: any) => {
+    if (selectedConversation.value && data.conversationId === selectedConversation.value.id) {
+      // Mark all messages as read in the UI
+      messages.value.forEach((m: any) => {
+        if (!m.isRead && m.senderId !== String(data.readerId)) {
+          m.isRead = true;
+          m.readAt = data.readAt;
+        }
+      });
+    }
+  });
+
+  // Agent assigned
+  socket.value.on('chat:assigned', (data: any) => {
+    const conv = conversations.value.find((c: any) => c.id === data.conversationId);
+    if (conv) {
+      conv.staffId = data.agentId;
+      if (data.status) conv.status = data.status;
+    }
+  });
+
+  // Register as online agent
+  socket.value.emit('chat:agent_online', {
+    userId: user.value?.id,
+    name: user.value?.name,
+  });
+}
+
+function cleanupSocketListeners() {
+  if (!socket.value) return;
+  socket.value.off('chat:message');
+  socket.value.off('chat:message_sent');
+  socket.value.off('chat:typing');
+  socket.value.off('chat:conversation_updated');
+  socket.value.off('chat:new_conversation');
+  socket.value.off('chat:conversation_deleted');
+  socket.value.off('chat:messages_read');
+  socket.value.off('chat:assigned');
+
+  // Leave current room
+  if (previousConversationId) {
+    socket.value.emit('chat:leave', {
+      conversationId: previousConversationId,
+      userId: user.value?.id,
+    });
+  }
+
+  // Go offline
+  socket.value.emit('chat:agent_offline');
+}
+
+// ───────── Lifecycle ───────────────────────────────────────────────────────
+
+// Watch for socket connection (it connects asynchronously)
+watch(
+  () => socket.value,
+  (sock) => {
+    if (sock) {
+      setupSocketListeners();
+    }
+  },
+  { immediate: true }
+);
+
 onMounted(() => {
   loadConversations();
   loadMetrics();
+  loadCannedResponses();
+  loadAgents();
+});
+
+onUnmounted(() => {
+  cleanupSocketListeners();
+  if (typingTimeout) clearTimeout(typingTimeout);
 });
 </script>
 
@@ -497,6 +932,44 @@ onMounted(() => {
   color: var(--text-primary);
   border: 1px solid var(--border-default);
   border-bottom-left-radius: 6px;
+}
+
+.system-message {
+  .inline-flex {
+    font-style: italic;
+  }
+}
+
+// Typing indicator animation
+.typing-indicator {
+  .typing-dots {
+    display: inline-flex;
+    align-items: center;
+    gap: 3px;
+
+    .dot {
+      width: 6px;
+      height: 6px;
+      border-radius: 50%;
+      background: var(--text-muted);
+      animation: typing-bounce 1.4s infinite ease-in-out both;
+
+      &:nth-child(1) { animation-delay: 0s; }
+      &:nth-child(2) { animation-delay: 0.2s; }
+      &:nth-child(3) { animation-delay: 0.4s; }
+    }
+  }
+}
+
+@keyframes typing-bounce {
+  0%, 80%, 100% {
+    transform: scale(0.6);
+    opacity: 0.4;
+  }
+  40% {
+    transform: scale(1);
+    opacity: 1;
+  }
 }
 
 @media (max-width: 767px) {

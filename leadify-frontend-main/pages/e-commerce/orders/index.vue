@@ -103,6 +103,16 @@ div.animate-fade-in
           effect="dark"
           round
         ) {{ row.status || '--' }}
+    el-table-column(:label="$t('salesOrders.paymentStatus') || 'Payment'" width="130" align="center")
+      template(#default="{ row }")
+        el-tag(
+          v-if="row.paymentStatus"
+          :type="getPaymentStatusType(row.paymentStatus)"
+          size="small"
+          effect="plain"
+          round
+        ) {{ row.paymentStatus }}
+        span.text-sm(v-else style="color: var(--text-muted)") --
     el-table-column(:label="$t('salesOrders.items') || 'Items'" width="90" align="center")
       template(#default="{ row }")
         span.text-sm(style="color: var(--text-primary)") {{ row.items?.length || 0 }}
@@ -182,6 +192,7 @@ import { ElMessageBox } from 'element-plus';
 import {
   getSalesOrders,
   updateSalesOrderStatus,
+  deleteSalesOrder,
   SalesOrderStatusEnum,
   salesOrderStatusOptions
 } from '~/composables/useSalesOrders';
@@ -241,6 +252,16 @@ function getStatusType(status?: string): string {
     SHIPPED: '',
     DELIVERED: 'success',
     CANCELLED: 'danger'
+  };
+  return map[status || ''] || 'info';
+}
+
+function getPaymentStatusType(status?: string): string {
+  const map: Record<string, string> = {
+    PENDING: 'warning',
+    PAID: 'success',
+    PARTIAL: 'info',
+    REFUNDED: 'danger'
   };
   return map[status || ''] || 'info';
 }
@@ -322,8 +343,8 @@ async function deleteOrder(order: SalesOrder) {
       t('common.warning') || 'Warning',
       { type: 'warning' }
     );
-    await useApiFetch(`sales-orders/${order.id}`, 'DELETE');
-    await loadOrders();
+    const success = await deleteSalesOrder(order.id!);
+    if (success) await loadOrders();
   } catch {
     // cancelled
   }

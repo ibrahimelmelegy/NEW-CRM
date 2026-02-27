@@ -288,8 +288,8 @@ async function fetchBooks() {
     const { body, success } = await useApiFetch(`cpq/price-books?page=${booksPagination.page}&limit=${booksPagination.limit}`);
     if (success && body) {
       const data = body as any;
-      books.value = data.rows || data.docs || [];
-      booksPagination.total = data.count ?? data.total ?? books.value.length;
+      books.value = data.docs || data.rows || [];
+      booksPagination.total = data.pagination?.totalItems ?? data.count ?? data.total ?? books.value.length;
     }
   } finally { loadingBooks.value = false; }
 }
@@ -335,8 +335,8 @@ async function fetchEntries() {
     const { body, success } = await useApiFetch(`cpq/entries?page=${entriesPagination.page}&limit=${entriesPagination.limit}`);
     if (success && body) {
       const data = body as any;
-      entries.value = data.rows || data.docs || [];
-      entriesPagination.total = data.count ?? data.total ?? entries.value.length;
+      entries.value = data.docs || data.rows || [];
+      entriesPagination.total = data.pagination?.totalItems ?? data.count ?? data.total ?? entries.value.length;
     }
   } finally { loadingEntries.value = false; }
 }

@@ -10,12 +10,7 @@ export enum PaymentMethodEnum {
   ONLINE = 'ONLINE'
 }
 
-export enum PaymentStatusEnum {
-  COMPLETED = 'COMPLETED',
-  PENDING = 'PENDING',
-  FAILED = 'FAILED',
-  VOIDED = 'VOIDED'
-}
+// PaymentStatusEnum and paymentStatusOptions are exported from useSalesOrders.ts
 
 export const paymentMethodOptions = [
   { label: 'Cash', value: PaymentMethodEnum.CASH },
@@ -23,13 +18,6 @@ export const paymentMethodOptions = [
   { label: 'Credit Card', value: PaymentMethodEnum.CREDIT_CARD },
   { label: 'Check', value: PaymentMethodEnum.CHECK },
   { label: 'Online', value: PaymentMethodEnum.ONLINE }
-];
-
-export const paymentStatusOptions = [
-  { label: 'Completed', value: PaymentStatusEnum.COMPLETED },
-  { label: 'Pending', value: PaymentStatusEnum.PENDING },
-  { label: 'Failed', value: PaymentStatusEnum.FAILED },
-  { label: 'Voided', value: PaymentStatusEnum.VOIDED }
 ];
 
 export const paymentStatusColors: Record<string, string> = {

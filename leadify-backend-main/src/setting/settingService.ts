@@ -10,11 +10,12 @@ class SettingService {
       existingSetting = await Setting.create({});
     }
 
-    if (input.logo) {
-      await uploaderService.setFileReferences([input.logo]);
-    }
-    if (input.secondaryColor) {
-      await uploaderService.setFileReferences([input.secondaryColor]);
+    if (input.logo && !input.logo.startsWith('data:')) {
+      try {
+        await uploaderService.setFileReferences([input.logo]);
+      } catch {
+        // Logo may be a data URL or external URL — skip file reference
+      }
     }
     existingSetting.set(input);
     return existingSetting.save();

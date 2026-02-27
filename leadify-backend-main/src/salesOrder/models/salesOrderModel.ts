@@ -12,6 +12,13 @@ export enum SalesOrderStatusEnum {
   CANCELLED = 'CANCELLED'
 }
 
+export enum PaymentStatusEnum {
+  PENDING = 'PENDING',
+  PAID = 'PAID',
+  PARTIAL = 'PARTIAL',
+  REFUNDED = 'REFUNDED'
+}
+
 @Table({
   tableName: 'sales_orders',
   modelName: 'SalesOrder',
@@ -61,6 +68,15 @@ class SalesOrder extends Model {
 
   @Column({ type: DataType.STRING, allowNull: true })
   public paymentTerms?: string;
+
+  @Column({
+    type: DataType.ENUM(...Object.values(PaymentStatusEnum)),
+    defaultValue: PaymentStatusEnum.PENDING
+  })
+  public paymentStatus!: string;
+
+  @Column({ type: DataType.UUID, allowNull: true })
+  public createdBy?: string;
 
   @Column({ type: DataType.TEXT, allowNull: true })
   public shippingAddress?: string;

@@ -9,14 +9,14 @@ div.p-4.space-y-6.animate-fade-in(class="md_p-6")
       el-button(type="primary" size="large" @click="navigateTo('/e-commerce/products?action=new')" class="!rounded-xl")
         Icon(name="ph:plus-bold" size="16")
         span.ms-1 {{ $t('ecommerce.newProduct') || 'New Product' }}
-      el-button(size="large" @click="navigateTo('/sales/sales-orders/create')" class="!rounded-xl")
+      el-button(size="large" @click="navigateTo('/e-commerce/orders/create')" class="!rounded-xl")
         Icon(name="ph:shopping-cart-bold" size="16")
         span.ms-1 {{ $t('ecommerce.newOrder') || 'New Order' }}
       el-button(size="large" @click="showCouponDialog = true" class="!rounded-xl")
         Icon(name="ph:ticket-bold" size="16")
         span.ms-1 {{ $t('ecommerce.createCoupon') || 'Create Coupon' }}
 
-  //- KPI Cards
+  //- KPI Cards -- all wired to real analytics data
   .grid.grid-cols-1.gap-4(class="sm_grid-cols-2 lg_grid-cols-4")
     .p-5.rounded-2xl.border(style="border-color: var(--border-default); background: var(--bg-elevated);")
       .flex.items-center.gap-3
@@ -24,32 +24,32 @@ div.p-4.space-y-6.animate-fade-in(class="md_p-6")
           Icon(name="ph:currency-dollar-bold" size="20" style="color: #22c55e")
         div
           p.text-xs.font-bold.uppercase.tracking-widest(style="color: var(--text-muted);") {{ $t('ecommerce.totalRevenue') || 'Total Revenue' }}
-          p.text-2xl.font-black.mt-1(style="color: #22c55e;") {{ formatCurrency(totalRevenue) }}
+          p.text-2xl.font-black.mt-1(style="color: #22c55e;") {{ formatCurrency(kpi.totalRevenue) }}
     .p-5.rounded-2xl.border(style="border-color: var(--border-default); background: var(--bg-elevated);")
       .flex.items-center.gap-3
         .w-10.h-10.rounded-xl.flex.items-center.justify-center(style="background: rgba(120, 73, 255, 0.15)")
           Icon(name="ph:shopping-bag-bold" size="20" style="color: #7849ff")
         div
           p.text-xs.font-bold.uppercase.tracking-widest(style="color: var(--text-muted);") {{ $t('ecommerce.totalOrders') || 'Total Orders' }}
-          p.text-2xl.font-black.mt-1(style="color: #7849ff;") {{ totalOrders }}
+          p.text-2xl.font-black.mt-1(style="color: #7849ff;") {{ kpi.totalOrders }}
     .p-5.rounded-2xl.border(style="border-color: var(--border-default); background: var(--bg-elevated);")
       .flex.items-center.gap-3
         .w-10.h-10.rounded-xl.flex.items-center.justify-center(style="background: rgba(59, 130, 246, 0.15)")
           Icon(name="ph:package-bold" size="20" style="color: #3b82f6")
         div
           p.text-xs.font-bold.uppercase.tracking-widest(style="color: var(--text-muted);") {{ $t('ecommerce.activeProducts') || 'Active Products' }}
-          p.text-2xl.font-black.mt-1(style="color: #3b82f6;") {{ activeProducts }}
+          p.text-2xl.font-black.mt-1(style="color: #3b82f6;") {{ kpi.activeProducts }}
     .p-5.rounded-2xl.border(style="border-color: var(--border-default); background: var(--bg-elevated);")
       .flex.items-center.gap-3
         .w-10.h-10.rounded-xl.flex.items-center.justify-center(style="background: rgba(245, 158, 11, 0.15)")
           Icon(name="ph:chart-line-up-bold" size="20" style="color: #f59e0b")
         div
           p.text-xs.font-bold.uppercase.tracking-widest(style="color: var(--text-muted);") {{ $t('ecommerce.conversionRate') || 'Conversion Rate' }}
-          p.text-2xl.font-black.mt-1(style="color: #f59e0b;") {{ conversionRate }}%
+          p.text-2xl.font-black.mt-1(style="color: #f59e0b;") {{ kpi.conversionRate }}%
 
   //- Charts Row
   .grid.grid-cols-1.gap-6(class="lg_grid-cols-2")
-    //- Revenue Chart (CSS bar chart)
+    //- Revenue Chart -- real data from analytics
     .rounded-2xl.border.p-5(style="border-color: var(--border-default); background: var(--bg-elevated);")
       h3.text-lg.font-bold.mb-4(style="color: var(--text-primary);")
         Icon(name="ph:chart-bar-bold" size="20" class="mr-2" style="color: #7849ff")
@@ -63,7 +63,7 @@ div.p-4.space-y-6.animate-fade-in(class="md_p-6")
           p.text-xs.mt-2.text-center.font-medium(style="color: var(--text-muted);") {{ bar.label }}
           p.text-xs.text-center.font-bold(style="color: var(--text-primary);") {{ formatCompact(bar.value) }}
 
-    //- Order Status Donut (CSS-based)
+    //- Order Status Donut -- real counts from analytics
     .rounded-2xl.border.p-5(style="border-color: var(--border-default); background: var(--bg-elevated);")
       h3.text-lg.font-bold.mb-4(style="color: var(--text-primary);")
         Icon(name="ph:chart-donut-bold" size="20" class="mr-2" style="color: #7849ff")
@@ -91,7 +91,7 @@ div.p-4.space-y-6.animate-fade-in(class="md_p-6")
               style="transition: all 0.6s ease"
             )
           .absolute.inset-0.flex.flex-col.items-center.justify-center
-            p.text-2xl.font-black(style="color: var(--text-primary);") {{ totalOrders }}
+            p.text-2xl.font-black(style="color: var(--text-primary);") {{ kpi.totalOrders }}
             p.text-xs(style="color: var(--text-muted);") {{ $t('ecommerce.orders') || 'Orders' }}
         //- Legend
         .space-y-3
@@ -107,13 +107,13 @@ div.p-4.space-y-6.animate-fade-in(class="md_p-6")
       span.font-bold.text-lg(style="color: var(--text-primary);")
         Icon(name="ph:receipt-bold" size="20" class="mr-2" style="color: #7849ff")
         | {{ $t('ecommerce.recentOrders') || 'Recent Orders' }}
-      el-button(text type="primary" @click="navigateTo('/sales/sales-orders')") {{ $t('common.viewAll') || 'View All' }}
+      el-button(text type="primary" @click="navigateTo('/e-commerce/orders')") {{ $t('common.viewAll') || 'View All' }}
     el-table(
       :data="recentOrders"
       v-loading="loadingOrders"
       style="width: 100%"
       :row-style="{ cursor: 'pointer' }"
-      @row-click="(row: any) => navigateTo(`/sales/sales-orders/${row.id}`)"
+      @row-click="(row: any) => navigateTo(`/e-commerce/orders/${row.id}`)"
     )
       el-table-column(:label="$t('ecommerce.orderNumber') || 'Order #'" width="160")
         template(#default="{ row }")
@@ -200,19 +200,19 @@ div.p-4.space-y-6.animate-fade-in(class="md_p-6")
       .w-10.h-10.rounded-xl.flex.items-center.justify-center(style="background: rgba(168, 85, 247, 0.15)")
         Icon(name="ph:ticket-bold" size="20" style="color: #a855f7")
       div
-        p.text-xl.font-black(style="color: var(--text-primary);") {{ activeCoupons }}
+        p.text-xl.font-black(style="color: var(--text-primary);") {{ kpi.activeCoupons }}
         p.text-xs(style="color: var(--text-muted);") {{ $t('ecommerce.activeCoupons') || 'Active Coupons' }}
     .p-4.rounded-2xl.border.flex.items-center.gap-3(style="border-color: var(--border-default); background: var(--bg-elevated);")
       .w-10.h-10.rounded-xl.flex.items-center.justify-center(style="background: rgba(251, 191, 36, 0.15)")
         Icon(name="ph:star-bold" size="20" style="color: #fbbf24")
       div
-        p.text-xl.font-black(style="color: var(--text-primary);") {{ pendingReviews }}
+        p.text-xl.font-black(style="color: var(--text-primary);") {{ kpi.pendingReviews }}
         p.text-xs(style="color: var(--text-muted);") {{ $t('ecommerce.pendingReviews') || 'Pending Reviews' }}
     .p-4.rounded-2xl.border.flex.items-center.gap-3(style="border-color: var(--border-default); background: var(--bg-elevated);")
       .w-10.h-10.rounded-xl.flex.items-center.justify-center(style="background: rgba(239, 68, 68, 0.15)")
         Icon(name="ph:shopping-cart-simple-bold" size="20" style="color: #ef4444")
       div
-        p.text-xl.font-black(style="color: var(--text-primary);") {{ abandonedCarts }}
+        p.text-xl.font-black(style="color: var(--text-primary);") {{ kpi.abandonedCarts }}
         p.text-xs(style="color: var(--text-muted);") {{ $t('ecommerce.abandonedCarts') || 'Abandoned Carts' }}
 
   //- Create Coupon Dialog
@@ -248,8 +248,6 @@ import {
   fetchProducts,
   type CatalogProduct
 } from '~/composables/useProductCatalog';
-import { getSalesOrders } from '~/composables/useSalesOrders';
-import type { SalesOrder } from '~/composables/useSalesOrders';
 import {
   fetchCoupons,
   fetchReviews,
@@ -270,23 +268,25 @@ const loadingProducts = ref(false);
 const loadingLowStock = ref(false);
 const savingCoupon = ref(false);
 
-// KPI data
-const totalOrders = ref(0);
-const activeProducts = ref(0);
-const totalCarts = ref(0);
-const convertedCarts = ref(0);
-const allOrderRevenue = ref(0);
+// Reactive KPIs from real API data
+const kpi = reactive({
+  totalRevenue: 0,
+  totalOrders: 0,
+  activeProducts: 0,
+  conversionRate: 0,
+  activeCoupons: 0,
+  pendingReviews: 0,
+  abandonedCarts: 0,
+  totalCarts: 0,
+  convertedCarts: 0,
+  ordersByStatus: {} as Record<string, number>,
+  revenueByDayOfWeek: {} as Record<string, number>
+});
 
 // Data
 const recentOrders = ref<any[]>([]);
-const allFetchedOrders = ref<any[]>([]);
 const allProducts = ref<CatalogProduct[]>([]);
 const lowStockItems = ref<any[]>([]);
-
-// Quick stats
-const activeCoupons = ref(0);
-const pendingReviews = ref(0);
-const abandonedCarts = ref(0);
 
 // Coupon dialog
 const showCouponDialog = ref(false);
@@ -300,16 +300,6 @@ const couponForm = reactive({
   isActive: true
 });
 
-// Computed KPIs
-const totalRevenue = computed(() => {
-  return allOrderRevenue.value;
-});
-
-const conversionRate = computed(() => {
-  if (totalCarts.value === 0) return 0;
-  return Math.round((convertedCarts.value / totalCarts.value) * 100);
-});
-
 const topProducts = computed(() => {
   return [...allProducts.value]
     .filter(p => p.isActive)
@@ -317,27 +307,20 @@ const topProducts = computed(() => {
     .slice(0, 5);
 });
 
-// Revenue chart data derived from real orders grouped by day of week
+// Revenue chart -- driven by real analytics API data
 const revenueChartData = computed(() => {
-  const dayLabels = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'];
-  const values = new Array(7).fill(0);
-
-  for (const order of allFetchedOrders.value) {
-    if (order.createdAt) {
-      const dayIndex = (new Date(order.createdAt).getDay() + 6) % 7; // Monday=0 ... Sunday=6
-      values[dayIndex] += (order.total || order.totalAmount || 0);
-    }
-  }
-
+  const dayOrder = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'];
+  const data = kpi.revenueByDayOfWeek;
+  const values = dayOrder.map(d => data[d] || 0);
   const maxVal = Math.max(...values, 1);
-  return dayLabels.map((label, i) => ({
+  return dayOrder.map((label, i) => ({
     label,
-    value: values[i],
-    height: Math.max((values[i] / maxVal) * 100, 5)
+    value: values[i]!,
+    height: Math.max((values[i]! / maxVal) * 100, 5)
   }));
 });
 
-// Order status donut derived from fetched orders
+// Order status donut -- driven by real analytics API data
 const orderStatusData = computed(() => {
   const statuses = [
     { key: 'CONFIRMED', label: t('ecommerce.confirmed') || 'Confirmed', color: '#22c55e' },
@@ -348,7 +331,7 @@ const orderStatusData = computed(() => {
   ];
   return statuses.map(s => ({
     ...s,
-    count: allFetchedOrders.value.filter(o => (o.status || 'DRAFT').toUpperCase() === s.key).length
+    count: kpi.ordersByStatus[s.key] || 0
   }));
 });
 
@@ -402,27 +385,33 @@ function formatCompact(amount: number): string {
 // Data fetching
 async function loadDashboardData() {
   await Promise.all([
-    loadOrders(),
+    loadAnalytics(),
     loadProducts(),
     loadLowStock(),
-    loadCartData(),
     loadQuickStats()
   ]);
 }
 
-async function loadOrders() {
+/**
+ * Load order analytics from the real backend endpoint.
+ * This replaces the old approach of fetching 50 orders and computing client-side.
+ */
+async function loadAnalytics() {
   loadingOrders.value = true;
   try {
-    // Fetch a larger batch to get accurate stats for charts and KPIs
-    const result = await getSalesOrders('limit=50&page=1');
-    allFetchedOrders.value = result.orders || [];
-    totalOrders.value = result.pagination?.totalItems ?? allFetchedOrders.value.length;
-    allOrderRevenue.value = allFetchedOrders.value.reduce((sum: number, o: SalesOrder) => sum + (o.total || 0), 0);
+    const { body, success } = await useApiFetch('sales-orders/analytics');
+    if (success && body) {
+      const data = body as any;
+      kpi.totalRevenue = Number(data.totalRevenue || 0);
+      kpi.totalOrders = Number(data.totalOrders || 0);
+      kpi.ordersByStatus = data.ordersByStatus || {};
+      kpi.revenueByDayOfWeek = data.revenueByDayOfWeek || {};
 
-    // Take 5 most recent for the Recent Orders table
-    recentOrders.value = allFetchedOrders.value.slice(0, 5);
+      // Recent orders from analytics response
+      recentOrders.value = (data.recentOrders || []).slice(0, 5);
+    }
   } catch {
-    // silent
+    // silent -- fallback to empty
   } finally {
     loadingOrders.value = false;
   }
@@ -433,7 +422,7 @@ async function loadProducts() {
   try {
     const result = await fetchProducts({ limit: '50', isActive: 'true' });
     allProducts.value = result.docs || [];
-    activeProducts.value = result.pagination?.totalItems ?? allProducts.value.length;
+    kpi.activeProducts = result.pagination?.totalItems ?? allProducts.value.length;
   } catch {
     // silent
   } finally {
@@ -444,7 +433,7 @@ async function loadProducts() {
 async function loadLowStock() {
   loadingLowStock.value = true;
   try {
-    const res = await useApiFetch('inventory/products/low-stock');
+    const res = await useApiFetch('catalog/products/low-stock');
     if (res?.success && res.body) {
       const data = res.body as any;
       lowStockItems.value = (data?.docs || data?.rows || data || []).slice(0, 5);
@@ -456,40 +445,28 @@ async function loadLowStock() {
   }
 }
 
-async function loadCartData() {
+async function loadQuickStats() {
   try {
-    const [cartsResult, abandonedResult] = await Promise.allSettled([
+    const [couponsResult, reviewsResult, cartsResult, abandonedResult] = await Promise.allSettled([
+      fetchCoupons({ status: CouponStatusEnum.ACTIVE, limit: '1' } as Record<string, string>),
+      fetchReviews({ status: ReviewStatusEnum.PENDING, limit: '1' } as Record<string, string>),
       fetchCarts({ limit: '1' }),
       fetchAbandonedCarts({ limit: '1' })
     ]);
-    if (cartsResult.status === 'fulfilled') {
-      totalCarts.value = cartsResult.value.pagination?.totalItems ?? 0;
-    }
-    if (abandonedResult.status === 'fulfilled') {
-      const abandonedCount = abandonedResult.value.pagination?.totalItems ?? 0;
-      convertedCarts.value = Math.max(totalCarts.value - abandonedCount, 0);
-    }
-  } catch {
-    // silent - endpoint may not exist yet
-  }
-}
-
-async function loadQuickStats() {
-  try {
-    const [couponsResult, reviewsResult, abandonedResult] = await Promise.allSettled([
-      fetchCoupons({ status: CouponStatusEnum.ACTIVE, limit: '1' } as Record<string, string>),
-      fetchReviews({ status: ReviewStatusEnum.PENDING, limit: '1' } as Record<string, string>),
-      fetchAbandonedCarts({ limit: '1' })
-    ]);
     if (couponsResult.status === 'fulfilled') {
-      activeCoupons.value = couponsResult.value.pagination?.totalItems ?? 0;
+      kpi.activeCoupons = couponsResult.value.pagination?.totalItems ?? 0;
     }
     if (reviewsResult.status === 'fulfilled') {
-      pendingReviews.value = reviewsResult.value.pagination?.totalItems ?? 0;
+      kpi.pendingReviews = reviewsResult.value.pagination?.totalItems ?? 0;
+    }
+    if (cartsResult.status === 'fulfilled') {
+      kpi.totalCarts = cartsResult.value.pagination?.totalItems ?? 0;
     }
     if (abandonedResult.status === 'fulfilled') {
-      abandonedCarts.value = abandonedResult.value.pagination?.totalItems ?? 0;
+      kpi.abandonedCarts = abandonedResult.value.pagination?.totalItems ?? 0;
     }
+    kpi.convertedCarts = Math.max(kpi.totalCarts - kpi.abandonedCarts, 0);
+    kpi.conversionRate = kpi.totalCarts > 0 ? Math.round((kpi.convertedCarts / kpi.totalCarts) * 100) : 0;
   } catch {
     // silent - endpoints may not exist yet
   }
@@ -509,7 +486,7 @@ async function saveCoupon() {
       couponForm.code = '';
       couponForm.discountValue = 10;
       couponForm.usageLimit = 100;
-      activeCoupons.value++;
+      kpi.activeCoupons++;
     }
   } catch {
     ElNotification({ type: 'error', title: t('common.error') || 'Error', message: t('common.error') || 'Failed to create coupon' });

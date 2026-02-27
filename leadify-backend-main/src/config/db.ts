@@ -176,7 +176,8 @@ import { TrainingProgram, TrainingEnrollment } from '../hr/training/trainingMode
 // Sales Extensions
 import Commission from '../commission/commissionModel';
 import Competitor from '../competitor/competitorModel';
-import { PriceBook, PriceBookEntry } from '../cpq/cpqModel';
+import CompetitorDeal from '../competitor/competitorDealModel';
+import { PriceBook, PriceBookEntry, CpqQuote, PricingRule } from '../cpq/cpqModel';
 // Marketing Extensions
 import ABTest from '../abTesting/abTestModel';
 import { FormTemplate, FormSubmission } from '../formBuilder/formBuilderModel';
@@ -201,6 +202,8 @@ import EcReview from '../ecommerce/review/reviewModel';
 import { EcCart, EcCartItem } from '../ecommerce/cart/cartModel';
 import MeetingNote from '../meetingNote/meetingNoteModel';
 import ESignature from '../eSignature/eSignatureModel';
+// WhatsApp Models
+import { WhatsAppContact, WhatsAppMessage, WhatsAppTemplate } from '../whatsapp/whatsappModel';
 
 dotenv.config();
 
@@ -395,8 +398,11 @@ const sequelize = new Sequelize({
     TrainingEnrollment,
     Commission,
     Competitor,
+    CompetitorDeal,
     PriceBook,
     PriceBookEntry,
+    CpqQuote,
+    PricingRule,
     ABTest,
     FormTemplate,
     FormSubmission,
@@ -427,7 +433,11 @@ const sequelize = new Sequelize({
     EcCartItem,
     // Meeting Notes & E-Signatures
     MeetingNote,
-    ESignature
+    ESignature,
+    // WhatsApp
+    WhatsAppContact,
+    WhatsAppMessage,
+    WhatsAppTemplate
   ], // Path to your models
   logging: process.env.NODE_ENV !== 'production' ? console.log : false
 });

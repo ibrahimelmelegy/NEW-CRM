@@ -86,6 +86,68 @@ class CommissionController {
       wrapResult(res, result);
     } catch (e) { next(e); }
   }
+
+  /** POST /apply-plan — apply a commission plan to a deal */
+  async applyPlan(req: AuthenticatedRequest, res: Response, next: NextFunction) {
+    try {
+      const tenantId = (req.user as any)?.tenantId;
+      const { dealId, userId, plan } = req.body;
+      if (!dealId || !userId || !plan) {
+        return wrapResult(res, { message: 'dealId, userId, and plan are required' }, 400);
+      }
+      const result = await commissionService.applyCommissionPlan(dealId, userId, plan, tenantId);
+      wrapResult(res, result, 201);
+    } catch (e) { next(e); }
+  }
+
+  /** POST /deal-won — auto-create commission when a deal is won */
+  async dealWon(req: AuthenticatedRequest, res: Response, next: NextFunction) {
+    try {
+      const tenantId = (req.user as any)?.tenantId;
+      const { dealId, userId, rate } = req.body;
+      if (!dealId || !userId) {
+        return wrapResult(res, { message: 'dealId and userId are required' }, 400);
+      }
+      const result = await commissionService.onDealWon(dealId, userId, tenantId, rate);
+      wrapResult(res, result, 201);
+    } catch (e) { next(e); }
+  }
+
+  /** POST /bulk-payout — mark multiple commissions as paid */
+  async bulkPayout(req: AuthenticatedRequest, res: Response, next: NextFunction) {
+    try {
+      const { ids } = req.body;
+      if (!ids || !Array.isArray(ids) || ids.length === 0) {
+        return wrapResult(res, { message: 'ids array is required' }, 400);
+      }
+      const result = await commissionService.bulkPayout(ids);
+      wrapResult(res, result);
+    } catch (e) { next(e); }
+  }
+
+  /** GET /analytics — commission analytics */
+  async analytics(req: AuthenticatedRequest, res: Response, next: NextFunction) {
+    try {
+      const tenantId = (req.user as any)?.tenantId;
+      const query = {
+        startDate: req.query.startDate as string | undefined,
+        endDate: req.query.endDate as string | undefined,
+        staffId: req.query.staffId ? Number(req.query.staffId) : undefined,
+        period: (req.query.period as 'monthly' | 'quarterly') || 'monthly'
+      };
+      const result = await commissionService.getAnalytics(tenantId, query);
+      wrapResult(res, result);
+    } catch (e) { next(e); }
+  }
+
+  /** GET /dashboard-kpis — quick KPI stats for dashboard */
+  async dashboardKPIs(req: AuthenticatedRequest, res: Response, next: NextFunction) {
+    try {
+      const tenantId = (req.user as any)?.tenantId;
+      const result = await commissionService.getDashboardKPIs(tenantId);
+      wrapResult(res, result);
+    } catch (e) { next(e); }
+  }
 }
 
 export default new CommissionController();

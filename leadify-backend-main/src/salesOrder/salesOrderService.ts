@@ -1,5 +1,5 @@
-import { Op, WhereOptions } from 'sequelize';
-import SalesOrder, { SalesOrderStatusEnum } from './models/salesOrderModel';
+import { Op, WhereOptions, fn, col, literal } from 'sequelize';
+import SalesOrder, { SalesOrderStatusEnum, PaymentStatusEnum } from './models/salesOrderModel';
 import SalesOrderItem from './models/salesOrderItemModel';
 import Fulfillment, { FulfillmentStatusEnum } from './models/fulfillmentModel';
 import Client from '../client/clientModel';
@@ -73,7 +73,8 @@ class SalesOrderService {
           ...orderData,
           orderNumber,
           ...totals,
-          status: orderData.status || SalesOrderStatusEnum.DRAFT
+          status: orderData.status || SalesOrderStatusEnum.DRAFT,
+          paymentStatus: orderData.paymentStatus || PaymentStatusEnum.PENDING
         },
         { transaction }
       );
@@ -99,12 +100,15 @@ class SalesOrderService {
    */
   async getOrders(query: any): Promise<any> {
     const { page, limit, offset } = clampPagination(query);
-    const { searchKey, status, clientId } = query;
+    const { searchKey, status, clientId, paymentStatus, startDate, endDate } = query;
 
     const where: WhereOptions = {};
 
     if (searchKey) {
-      (where as any)[Op.or] = [{ orderNumber: { [Op.iLike]: `%${searchKey}%` } }];
+      (where as any)[Op.or] = [
+        { orderNumber: { [Op.iLike]: `%${searchKey}%` } },
+        { notes: { [Op.iLike]: `%${searchKey}%` } }
+      ];
     }
     if (status) {
       (where as any).status = status;
@@ -112,13 +116,31 @@ class SalesOrderService {
     if (clientId) {
       (where as any).clientId = clientId;
     }
+    if (paymentStatus) {
+      (where as any).paymentStatus = paymentStatus;
+    }
+
+    // Date range filtering
+    if (startDate || endDate) {
+      (where as any).createdAt = {};
+      if (startDate) (where as any).createdAt[Op.gte] = new Date(startDate);
+      if (endDate) {
+        const end = new Date(endDate);
+        end.setHours(23, 59, 59, 999);
+        (where as any).createdAt[Op.lte] = end;
+      }
+    }
 
     const { rows: docs, count: totalItems } = await SalesOrder.findAndCountAll({
       where,
-      include: [{ model: Client, as: 'client', attributes: ['id', 'clientName', 'email', 'companyName'] }],
+      include: [
+        { model: Client, as: 'client', attributes: ['id', 'clientName', 'email', 'companyName'] },
+        { model: SalesOrderItem, as: 'items' }
+      ],
       limit,
       offset,
-      order: [['createdAt', 'DESC']]
+      order: [['createdAt', 'DESC']],
+      distinct: true
     });
 
     return {
@@ -185,10 +207,39 @@ class SalesOrderService {
   }
 
   /**
-   * Update order status
+   * Valid status transitions (forward only, except CANCELLED is always allowed)
+   */
+  private static STATUS_ORDER = [
+    SalesOrderStatusEnum.DRAFT,
+    SalesOrderStatusEnum.CONFIRMED,
+    SalesOrderStatusEnum.PROCESSING,
+    SalesOrderStatusEnum.SHIPPED,
+    SalesOrderStatusEnum.DELIVERED
+  ];
+
+  /**
+   * Update order status with transition validation
    */
   async updateStatus(id: string, status: SalesOrderStatusEnum): Promise<SalesOrder> {
     const order = await this.getOrderById(id);
+    const currentStatus = order.status as SalesOrderStatusEnum;
+
+    // CANCELLED is always allowed
+    if (status !== SalesOrderStatusEnum.CANCELLED) {
+      const currentIdx = SalesOrderService.STATUS_ORDER.indexOf(currentStatus);
+      const targetIdx = SalesOrderService.STATUS_ORDER.indexOf(status);
+
+      // Cannot go backwards (except from CANCELLED)
+      if (currentStatus !== SalesOrderStatusEnum.CANCELLED && targetIdx < currentIdx) {
+        throw new BaseError(400, 400, `Cannot transition from ${currentStatus} to ${status}. Status can only move forward.`);
+      }
+    }
+
+    // If delivered, cannot be changed (except to CANCELLED for refund purposes)
+    if (currentStatus === SalesOrderStatusEnum.DELIVERED && status !== SalesOrderStatusEnum.CANCELLED) {
+      throw new BaseError(400, 400, 'Delivered orders cannot change status (except to Cancelled for refunds).');
+    }
+
     await order.update({ status });
     return await this.getOrderById(id);
   }
@@ -277,6 +328,205 @@ class SalesOrderService {
 
     await fulfillment.update(data);
     return fulfillment;
+  }
+
+  /**
+   * Update payment status of an order
+   */
+  async updatePaymentStatus(id: string, paymentStatus: PaymentStatusEnum): Promise<SalesOrder> {
+    const order = await this.getOrderById(id);
+
+    // Validate payment status value
+    if (!Object.values(PaymentStatusEnum).includes(paymentStatus)) {
+      throw new BaseError(400, 400, `Invalid payment status: ${paymentStatus}. Must be one of: ${Object.values(PaymentStatusEnum).join(', ')}`);
+    }
+
+    await order.update({ paymentStatus });
+    return await this.getOrderById(id);
+  }
+
+  /**
+   * Delete a sales order and all associated items/fulfillments
+   */
+  async deleteOrder(id: string): Promise<void> {
+    const order = await SalesOrder.findByPk(id);
+    if (!order) throw new BaseError(ERRORS.NOT_FOUND, 404, 'Sales order not found');
+
+    await Fulfillment.destroy({ where: { salesOrderId: id } });
+    await SalesOrderItem.destroy({ where: { salesOrderId: id } });
+    await order.destroy();
+  }
+
+  /**
+   * Get orders for a specific client
+   */
+  async getClientOrders(clientId: string, query: any): Promise<any> {
+    const { page, limit, offset } = clampPagination(query);
+
+    const { rows: docs, count: totalItems } = await SalesOrder.findAndCountAll({
+      where: { clientId },
+      include: [
+        { model: Client, as: 'client', attributes: ['id', 'clientName', 'email', 'companyName'] },
+        { model: SalesOrderItem, as: 'items' }
+      ],
+      limit,
+      offset,
+      order: [['createdAt', 'DESC']],
+      distinct: true
+    });
+
+    return {
+      docs,
+      pagination: {
+        page,
+        limit,
+        totalItems,
+        totalPages: Math.ceil(totalItems / limit)
+      }
+    };
+  }
+
+  /**
+   * Convert cart to a sales order
+   */
+  async convertCartToOrder(cartData: any): Promise<SalesOrder> {
+    const { clientId, items, currency, notes, shippingAddress, couponDiscount } = cartData;
+
+    if (!items || !Array.isArray(items) || items.length === 0) {
+      throw new BaseError(400, 400, 'Cart must have at least one item');
+    }
+
+    const orderItems = items.map((item: any) => ({
+      productId: item.productId,
+      description: item.productName || item.description || 'Cart item',
+      quantity: item.quantity || 1,
+      unitPrice: item.unitPrice || 0,
+      taxRate: item.taxRate || 15,
+      discountRate: item.discountRate || 0
+    }));
+
+    const orderData: any = {
+      clientId,
+      currency: currency || 'SAR',
+      notes: notes || 'Converted from cart',
+      shippingAddress: shippingAddress || '',
+      items: orderItems
+    };
+
+    // Apply coupon discount as a global discount
+    if (couponDiscount && couponDiscount > 0) {
+      orderData.notes = `${orderData.notes} | Coupon discount: ${couponDiscount}`;
+    }
+
+    return this.createOrder(orderData);
+  }
+
+  /**
+   * Order analytics: revenue, counts, averages, status distribution
+   */
+  async getOrderAnalytics(query?: any): Promise<any> {
+    const where: WhereOptions = {};
+
+    // Optional date range
+    if (query?.startDate || query?.endDate) {
+      (where as any).createdAt = {};
+      if (query.startDate) (where as any).createdAt[Op.gte] = new Date(query.startDate);
+      if (query.endDate) {
+        const end = new Date(query.endDate);
+        end.setHours(23, 59, 59, 999);
+        (where as any).createdAt[Op.lte] = end;
+      }
+    }
+
+    // Total counts and sums
+    const [totalOrders, orderStats, statusCounts, recentOrders] = await Promise.all([
+      SalesOrder.count({ where }),
+      SalesOrder.findOne({
+        attributes: [
+          [fn('COALESCE', fn('SUM', col('total')), 0), 'totalRevenue'],
+          [fn('COALESCE', fn('AVG', col('total')), 0), 'avgOrderValue'],
+          [fn('COALESCE', fn('SUM', col('subtotal')), 0), 'totalSubtotal'],
+          [fn('COALESCE', fn('SUM', col('taxAmount')), 0), 'totalTax'],
+          [fn('COALESCE', fn('SUM', col('discountAmount')), 0), 'totalDiscount']
+        ],
+        where,
+        raw: true
+      }) as any,
+      SalesOrder.findAll({
+        attributes: [
+          'status',
+          [fn('COUNT', col('id')), 'count']
+        ],
+        where,
+        group: ['status'],
+        raw: true
+      }),
+      SalesOrder.findAll({
+        where,
+        include: [
+          { model: Client, as: 'client', attributes: ['id', 'clientName', 'email'] },
+          { model: SalesOrderItem, as: 'items' }
+        ],
+        order: [['createdAt', 'DESC']],
+        limit: 5
+      })
+    ]);
+
+    // Build status distribution map
+    const ordersByStatus: Record<string, number> = {};
+    for (const sc of (statusCounts || [])) {
+      ordersByStatus[(sc as any).status] = parseInt((sc as any).count, 10);
+    }
+
+    // Revenue grouped by day of week (Mon-Sun) using SQL
+    const revenueByDow = await SalesOrder.findAll({
+      attributes: [
+        [fn('EXTRACT', literal(`DOW FROM "createdAt"`)), 'dow'],
+        [fn('COALESCE', fn('SUM', col('total')), 0), 'revenue']
+      ],
+      where,
+      group: [fn('EXTRACT', literal(`DOW FROM "createdAt"`))],
+      order: [[fn('EXTRACT', literal(`DOW FROM "createdAt"`)), 'ASC']],
+      raw: true
+    }) as any[];
+
+    // Map DOW (0=Sun...6=Sat) -> {Mon,Tue,...,Sun}
+    const dayNames = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
+    const revenueByDayOfWeek: Record<string, number> = {};
+    for (const name of dayNames) revenueByDayOfWeek[name] = 0;
+    for (const row of revenueByDow || []) {
+      const dowIndex = parseInt(row.dow, 10);
+      if (dayNames[dowIndex]) {
+        revenueByDayOfWeek[dayNames[dowIndex]!] = parseFloat(row.revenue || 0);
+      }
+    }
+
+    // Revenue grouped by month for trend
+    const revenueByMonth = await SalesOrder.findAll({
+      attributes: [
+        [fn('to_char', col('createdAt'), 'YYYY-MM'), 'month'],
+        [fn('COALESCE', fn('SUM', col('total')), 0), 'revenue'],
+        [fn('COUNT', col('id')), 'count']
+      ],
+      where,
+      group: [fn('to_char', col('createdAt'), 'YYYY-MM')],
+      order: [[fn('to_char', col('createdAt'), 'YYYY-MM'), 'DESC']],
+      limit: 12,
+      raw: true
+    }) as any[];
+
+    return {
+      totalOrders,
+      totalRevenue: parseFloat(orderStats?.totalRevenue || 0),
+      avgOrderValue: parseFloat(orderStats?.avgOrderValue || 0),
+      totalSubtotal: parseFloat(orderStats?.totalSubtotal || 0),
+      totalTax: parseFloat(orderStats?.totalTax || 0),
+      totalDiscount: parseFloat(orderStats?.totalDiscount || 0),
+      ordersByStatus,
+      revenueByDayOfWeek,
+      revenueByMonth,
+      recentOrders
+    };
   }
 }
 

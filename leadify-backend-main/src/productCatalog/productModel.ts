@@ -37,6 +37,37 @@ class CatalogProduct extends Model {
   @Column({ type: DataType.JSONB, allowNull: true })
   public metadata?: object;
 
+  // ─── Inventory fields ─────────────────────────────────────────────────────
+  @Default(0)
+  @Column({ type: DataType.INTEGER, defaultValue: 0 })
+  public stockQuantity!: number;
+
+  @Default(10)
+  @Column({ type: DataType.INTEGER, defaultValue: 10 })
+  public lowStockThreshold!: number;
+
+  // ─── Media & Variants ─────────────────────────────────────────────────────
+  @Column({ type: DataType.JSONB, allowNull: true, defaultValue: [] })
+  public images?: string[];
+
+  @Column({ type: DataType.JSONB, allowNull: true, defaultValue: [] })
+  public variants?: object[];
+
+  // ─── Weight / Dimensions ──────────────────────────────────────────────────
+  @Column({ type: DataType.FLOAT, allowNull: true })
+  public weight?: number;
+
+  @Column({ type: DataType.STRING, allowNull: true })
+  public weightUnit?: string;
+
+  // ─── Price History (JSONB array of { price, date }) ───────────────────────
+  @Column({ type: DataType.JSONB, allowNull: true, defaultValue: [] })
+  public priceHistory?: object[];
+
+  // ─── Tenant ───────────────────────────────────────────────────────────────
+  @Column({ type: DataType.STRING, allowNull: true })
+  public tenantId?: string;
+
   @HasMany(() => PriceRule)
   public priceRules?: PriceRule[];
 }

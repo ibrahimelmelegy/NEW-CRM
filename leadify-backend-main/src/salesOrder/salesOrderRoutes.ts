@@ -12,6 +12,63 @@ import { SalesOrderPermissionsEnum } from '../role/roleEnum';
 
 const router = Router();
 
+// ─── IMPORTANT: Named routes MUST come before parameterized /:id routes ─────
+
+/**
+ * @swagger
+ * /api/sales-orders/analytics:
+ *   get:
+ *     summary: Get order analytics
+ *     description: Returns aggregated order statistics — total revenue, avg order value, status breakdown, revenue by day/month
+ *     tags: [Sales Order]
+ *     security:
+ *       - bearerAuth: []
+ *     parameters:
+ *       - in: query
+ *         name: startDate
+ *         schema:
+ *           type: string
+ *           format: date
+ *       - in: query
+ *         name: endDate
+ *         schema:
+ *           type: string
+ *           format: date
+ *     responses:
+ *       200:
+ *         description: Order analytics data
+ */
+// Order analytics (MUST be before /:id)
+router.get('/analytics', authenticateUser, HasPermission([SalesOrderPermissionsEnum.VIEW_SALES_ORDERS]), SalesOrderController.getOrderAnalytics);
+
+/**
+ * @swagger
+ * /api/sales-orders/client/{clientId}:
+ *   get:
+ *     summary: Get orders for a specific client
+ *     description: Returns paginated orders history for a client
+ *     tags: [Sales Order]
+ *     security:
+ *       - bearerAuth: []
+ *     parameters:
+ *       - in: path
+ *         name: clientId
+ *         required: true
+ *         schema:
+ *           type: string
+ *           format: uuid
+ *     responses:
+ *       200:
+ *         description: Paginated client order history
+ */
+// Get client orders (MUST be before /:id)
+router.get(
+  '/client/:clientId',
+  authenticateUser,
+  HasPermission([SalesOrderPermissionsEnum.VIEW_SALES_ORDERS]),
+  SalesOrderController.getClientOrders
+);
+
 /**
  * @swagger
  * /api/sales-orders:
@@ -42,6 +99,10 @@ const router = Router();
  *                 default: SAR
  *               paymentTerms:
  *                 type: string
+ *               paymentStatus:
+ *                 type: string
+ *                 enum: [PENDING, PAID, PARTIAL, REFUNDED]
+ *                 default: PENDING
  *               shippingAddress:
  *                 type: string
  *               notes:
@@ -84,10 +145,89 @@ router.post('/', authenticateUser, HasPermission([SalesOrderPermissionsEnum.CREA
 
 /**
  * @swagger
+ * /api/sales-orders/from-deal/{dealId}:
+ *   post:
+ *     summary: Convert deal to sales order
+ *     description: Automatically creates a sales order from an existing deal, copying relevant details
+ *     tags: [Sales Order]
+ *     security:
+ *       - bearerAuth: []
+ *     parameters:
+ *       - in: path
+ *         name: dealId
+ *         required: true
+ *         schema:
+ *           type: string
+ *           format: uuid
+ *         description: Deal ID to convert
+ *     responses:
+ *       201:
+ *         description: Sales order created from deal
+ *       404:
+ *         description: Deal not found
+ *       500:
+ *         description: Server error
+ */
+// Convert deal to sales order
+router.post(
+  '/from-deal/:dealId',
+  authenticateUser,
+  HasPermission([SalesOrderPermissionsEnum.CONVERT_DEAL_TO_ORDER]),
+  SalesOrderController.convertDealToOrder
+);
+
+/**
+ * @swagger
+ * /api/sales-orders/from-cart:
+ *   post:
+ *     summary: Convert a cart to a sales order
+ *     description: Creates a sales order from cart items
+ *     tags: [Sales Order]
+ *     security:
+ *       - bearerAuth: []
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             required:
+ *               - clientId
+ *               - items
+ *             properties:
+ *               clientId:
+ *                 type: string
+ *                 format: uuid
+ *               items:
+ *                 type: array
+ *                 items:
+ *                   type: object
+ *               currency:
+ *                 type: string
+ *               shippingAddress:
+ *                 type: string
+ *               notes:
+ *                 type: string
+ *               couponDiscount:
+ *                 type: number
+ *     responses:
+ *       201:
+ *         description: Sales order created from cart
+ */
+// Convert cart to sales order
+router.post(
+  '/from-cart',
+  authenticateUser,
+  HasPermission([SalesOrderPermissionsEnum.CREATE_SALES_ORDERS]),
+  SalesOrderController.convertCartToOrder
+);
+
+/**
+ * @swagger
  * /api/sales-orders:
  *   get:
  *     summary: List sales orders
- *     description: Returns paginated sales orders with optional filters by status, client, and search by order number
+ *     description: Returns paginated sales orders with optional filters by status, client, date range, and search by order number
  *     tags: [Sales Order]
  *     security:
  *       - bearerAuth: []
@@ -106,17 +246,32 @@ router.post('/', authenticateUser, HasPermission([SalesOrderPermissionsEnum.CREA
  *         name: searchKey
  *         schema:
  *           type: string
- *         description: Search by order number
+ *         description: Search by order number or notes
  *       - in: query
  *         name: status
  *         schema:
  *           type: string
- *           enum: [draft, confirmed, processing, shipped, delivered, cancelled]
+ *           enum: [DRAFT, CONFIRMED, PROCESSING, SHIPPED, DELIVERED, CANCELLED]
  *       - in: query
  *         name: clientId
  *         schema:
  *           type: string
  *           format: uuid
+ *       - in: query
+ *         name: paymentStatus
+ *         schema:
+ *           type: string
+ *           enum: [PENDING, PAID, PARTIAL, REFUNDED]
+ *       - in: query
+ *         name: startDate
+ *         schema:
+ *           type: string
+ *           format: date
+ *       - in: query
+ *         name: endDate
+ *         schema:
+ *           type: string
+ *           format: date
  *     responses:
  *       200:
  *         description: Paginated list of sales orders with client info
@@ -125,6 +280,8 @@ router.post('/', authenticateUser, HasPermission([SalesOrderPermissionsEnum.CREA
  */
 // List all sales orders with pagination/filters
 router.get('/', authenticateUser, HasPermission([SalesOrderPermissionsEnum.VIEW_SALES_ORDERS]), SalesOrderController.getOrders);
+
+// ─── Parameterized /:id routes below ────────────────────────────────────────
 
 /**
  * @swagger
@@ -185,6 +342,9 @@ router.get('/:id', authenticateUser, HasPermission([SalesOrderPermissionsEnum.VI
  *                 type: string
  *               paymentTerms:
  *                 type: string
+ *               paymentStatus:
+ *                 type: string
+ *                 enum: [PENDING, PAID, PARTIAL, REFUNDED]
  *               shippingAddress:
  *                 type: string
  *               notes:
@@ -223,7 +383,7 @@ router.put('/:id', authenticateUser, HasPermission([SalesOrderPermissionsEnum.ED
  * /api/sales-orders/{id}/status:
  *   patch:
  *     summary: Update order status
- *     description: Transition order to a new status (draft → confirmed → processing → shipped → delivered, or cancelled)
+ *     description: Transition order to a new status (draft -> confirmed -> processing -> shipped -> delivered, or cancelled)
  *     tags: [Sales Order]
  *     security:
  *       - bearerAuth: []
@@ -245,7 +405,7 @@ router.put('/:id', authenticateUser, HasPermission([SalesOrderPermissionsEnum.ED
  *             properties:
  *               status:
  *                 type: string
- *                 enum: [draft, confirmed, processing, shipped, delivered, cancelled]
+ *                 enum: [DRAFT, CONFIRMED, PROCESSING, SHIPPED, DELIVERED, CANCELLED]
  *     responses:
  *       200:
  *         description: Order status updated
@@ -259,36 +419,42 @@ router.patch('/:id/status', authenticateUser, HasPermission([SalesOrderPermissio
 
 /**
  * @swagger
- * /api/sales-orders/from-deal/{dealId}:
- *   post:
- *     summary: Convert deal to sales order
- *     description: Automatically creates a sales order from an existing deal, copying relevant details
+ * /api/sales-orders/{id}/payment-status:
+ *   patch:
+ *     summary: Update payment status
+ *     description: Update the payment status of a sales order (PENDING, PAID, PARTIAL, REFUNDED)
  *     tags: [Sales Order]
  *     security:
  *       - bearerAuth: []
  *     parameters:
  *       - in: path
- *         name: dealId
+ *         name: id
  *         required: true
  *         schema:
  *           type: string
  *           format: uuid
- *         description: Deal ID to convert
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             required:
+ *               - paymentStatus
+ *             properties:
+ *               paymentStatus:
+ *                 type: string
+ *                 enum: [PENDING, PAID, PARTIAL, REFUNDED]
  *     responses:
- *       201:
- *         description: Sales order created from deal
+ *       200:
+ *         description: Payment status updated
  *       404:
- *         description: Deal not found
+ *         description: Sales order not found
  *       500:
  *         description: Server error
  */
-// Convert deal to sales order
-router.post(
-  '/from-deal/:dealId',
-  authenticateUser,
-  HasPermission([SalesOrderPermissionsEnum.CONVERT_DEAL_TO_ORDER]),
-  SalesOrderController.convertDealToOrder
-);
+// Update payment status
+router.patch('/:id/payment-status', authenticateUser, HasPermission([SalesOrderPermissionsEnum.EDIT_SALES_ORDERS]), SalesOrderController.updatePaymentStatus);
 
 /**
  * @swagger
@@ -315,8 +481,8 @@ router.post(
  *             properties:
  *               status:
  *                 type: string
- *                 enum: [pending, packed, shipped, delivered]
- *                 default: pending
+ *                 enum: [PENDING, PACKED, SHIPPED, DELIVERED]
+ *                 default: PENDING
  *               trackingNumber:
  *                 type: string
  *               carrier:
@@ -372,7 +538,7 @@ router.post('/:id/fulfillment', authenticateUser, HasPermission([SalesOrderPermi
  *             properties:
  *               status:
  *                 type: string
- *                 enum: [pending, packed, shipped, delivered]
+ *                 enum: [PENDING, PACKED, SHIPPED, DELIVERED]
  *               trackingNumber:
  *                 type: string
  *               carrier:
@@ -400,5 +566,32 @@ router.patch(
   HasPermission([SalesOrderPermissionsEnum.EDIT_SALES_ORDERS]),
   SalesOrderController.updateFulfillment
 );
+
+/**
+ * @swagger
+ * /api/sales-orders/{id}:
+ *   delete:
+ *     summary: Delete a sales order
+ *     description: Permanently deletes a sales order and all associated items and fulfillments
+ *     tags: [Sales Order]
+ *     security:
+ *       - bearerAuth: []
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         schema:
+ *           type: string
+ *           format: uuid
+ *     responses:
+ *       200:
+ *         description: Sales order deleted
+ *       404:
+ *         description: Sales order not found
+ *       500:
+ *         description: Server error
+ */
+// Delete a sales order
+router.delete('/:id', authenticateUser, HasPermission([SalesOrderPermissionsEnum.EDIT_SALES_ORDERS]), SalesOrderController.deleteOrder);
 
 export default router;

@@ -6,10 +6,78 @@ import { authenticateUser } from '../middleware/authMiddleware';
  * @swagger
  * tags:
  *   name: Product Catalog
- *   description: Product catalog and quote line items
+ *   description: Product catalog, inventory, price rules, reviews, and quote line items
  */
 
 const router = Router();
+
+// ─── Product Analytics ──────────────────────────────────────────────────────
+
+/**
+ * @swagger
+ * /api/catalog/products/analytics:
+ *   get:
+ *     summary: Get product analytics
+ *     tags: [Product Catalog]
+ *     security:
+ *       - bearerAuth: []
+ *     responses:
+ *       200:
+ *         description: Product analytics data
+ */
+router.get('/products/analytics', authenticateUser, productController.getProductAnalytics);
+
+/**
+ * @swagger
+ * /api/catalog/products/low-stock:
+ *   get:
+ *     summary: Get low-stock products
+ *     tags: [Product Catalog]
+ *     security:
+ *       - bearerAuth: []
+ *     parameters:
+ *       - in: query
+ *         name: page
+ *         schema:
+ *           type: integer
+ *           default: 1
+ *       - in: query
+ *         name: limit
+ *         schema:
+ *           type: integer
+ *           default: 10
+ *     responses:
+ *       200:
+ *         description: Low stock products list
+ */
+router.get('/products/low-stock', authenticateUser, productController.getLowStockProducts);
+
+/**
+ * @swagger
+ * /api/catalog/products/bulk-import:
+ *   post:
+ *     summary: Bulk import products
+ *     tags: [Product Catalog]
+ *     security:
+ *       - bearerAuth: []
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             required:
+ *               - products
+ *             properties:
+ *               products:
+ *                 type: array
+ *                 items:
+ *                   type: object
+ *     responses:
+ *       201:
+ *         description: Import results
+ */
+router.post('/products/bulk-import', authenticateUser, productController.bulkImport);
 
 // ─── Product CRUD ─────────────────────────────────────────────────────────────
 
@@ -36,7 +104,7 @@ const router = Router();
  *         name: searchKey
  *         schema:
  *           type: string
- *         description: Search by name or SKU
+ *         description: Search by name, SKU, or description
  *       - in: query
  *         name: category
  *         schema:
@@ -45,11 +113,22 @@ const router = Router();
  *         name: isActive
  *         schema:
  *           type: boolean
+ *       - in: query
+ *         name: minPrice
+ *         schema:
+ *           type: number
+ *       - in: query
+ *         name: maxPrice
+ *         schema:
+ *           type: number
+ *       - in: query
+ *         name: lowStock
+ *         schema:
+ *           type: boolean
+ *         description: Filter products below low stock threshold
  *     responses:
  *       200:
  *         description: Paginated product list
- *       500:
- *         description: Server error
  */
 router.get('/products', authenticateUser, productController.getProducts);
 
@@ -74,7 +153,6 @@ router.get('/products', authenticateUser, productController.getProducts);
  *                 type: string
  *               sku:
  *                 type: string
- *                 description: Unique SKU
  *               description:
  *                 type: string
  *               category:
@@ -88,17 +166,50 @@ router.get('/products', authenticateUser, productController.getProducts);
  *               isActive:
  *                 type: boolean
  *                 default: true
+ *               stockQuantity:
+ *                 type: integer
+ *                 default: 0
+ *               lowStockThreshold:
+ *                 type: integer
+ *                 default: 10
+ *               images:
+ *                 type: array
+ *                 items:
+ *                   type: string
+ *               variants:
+ *                 type: array
+ *                 items:
+ *                   type: object
  *               metadata:
  *                 type: object
  *     responses:
  *       201:
  *         description: Product created
- *       400:
- *         description: Validation error
- *       500:
- *         description: Server error
  */
 router.post('/products', authenticateUser, productController.createProduct);
+
+/**
+ * @swagger
+ * /api/catalog/products/{id}:
+ *   get:
+ *     summary: Get a single product by ID
+ *     tags: [Product Catalog]
+ *     security:
+ *       - bearerAuth: []
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         schema:
+ *           type: string
+ *           format: uuid
+ *     responses:
+ *       200:
+ *         description: Product detail with price rules
+ *       404:
+ *         description: Not found
+ */
+router.get('/products/:id', authenticateUser, productController.getProductById);
 
 /**
  * @swagger
@@ -115,35 +226,11 @@ router.post('/products', authenticateUser, productController.createProduct);
  *         schema:
  *           type: string
  *           format: uuid
- *     requestBody:
- *       content:
- *         application/json:
- *           schema:
- *             type: object
- *             properties:
- *               name:
- *                 type: string
- *               sku:
- *                 type: string
- *               description:
- *                 type: string
- *               category:
- *                 type: string
- *               unitPrice:
- *                 type: number
- *               currency:
- *                 type: string
- *               isActive:
- *                 type: boolean
- *               metadata:
- *                 type: object
  *     responses:
  *       200:
  *         description: Product updated
  *       404:
  *         description: Not found
- *       500:
- *         description: Server error
  */
 router.put('/products/:id', authenticateUser, productController.updateProduct);
 
@@ -167,10 +254,118 @@ router.put('/products/:id', authenticateUser, productController.updateProduct);
  *         description: Product deleted
  *       404:
  *         description: Not found
- *       500:
- *         description: Server error
  */
 router.delete('/products/:id', authenticateUser, productController.deleteProduct);
+
+// ─── Inventory ──────────────────────────────────────────────────────────────
+
+/**
+ * @swagger
+ * /api/catalog/products/{id}/stock:
+ *   patch:
+ *     summary: Update product stock quantity
+ *     tags: [Product Catalog]
+ *     security:
+ *       - bearerAuth: []
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         schema:
+ *           type: string
+ *           format: uuid
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             required:
+ *               - quantity
+ *             properties:
+ *               quantity:
+ *                 type: number
+ *               operation:
+ *                 type: string
+ *                 enum: [set, add, subtract]
+ *                 default: set
+ *     responses:
+ *       200:
+ *         description: Stock updated
+ */
+router.patch('/products/:id/stock', authenticateUser, productController.updateStock);
+
+// ─── Price Rules ────────────────────────────────────────────────────────────
+
+/**
+ * @swagger
+ * /api/catalog/products/{id}/price-rules:
+ *   get:
+ *     summary: Get price rules for a product
+ *     tags: [Product Catalog]
+ *     security:
+ *       - bearerAuth: []
+ */
+router.get('/products/:id/price-rules', authenticateUser, productController.getProductPriceRules);
+
+/**
+ * @swagger
+ * /api/catalog/products/{id}/price-rules:
+ *   post:
+ *     summary: Create a price rule for a product
+ *     tags: [Product Catalog]
+ *     security:
+ *       - bearerAuth: []
+ */
+router.post('/products/:id/price-rules', authenticateUser, productController.createPriceRule);
+
+/**
+ * @swagger
+ * /api/catalog/products/{id}/price-rules/{ruleId}:
+ *   put:
+ *     summary: Update a price rule
+ *     tags: [Product Catalog]
+ *     security:
+ *       - bearerAuth: []
+ */
+router.put('/products/:id/price-rules/:ruleId', authenticateUser, productController.updatePriceRule);
+
+/**
+ * @swagger
+ * /api/catalog/products/{id}/price-rules/{ruleId}:
+ *   delete:
+ *     summary: Delete a price rule
+ *     tags: [Product Catalog]
+ *     security:
+ *       - bearerAuth: []
+ */
+router.delete('/products/:id/price-rules/:ruleId', authenticateUser, productController.deletePriceRule);
+
+// ─── Product Reviews ────────────────────────────────────────────────────────
+
+/**
+ * @swagger
+ * /api/catalog/products/{id}/reviews:
+ *   get:
+ *     summary: Get reviews for a specific product
+ *     tags: [Product Catalog]
+ *     security:
+ *       - bearerAuth: []
+ */
+router.get('/products/:id/reviews', authenticateUser, productController.getProductReviews);
+
+// ─── Product Activity ───────────────────────────────────────────────────────
+
+/**
+ * @swagger
+ * /api/catalog/products/{id}/activity:
+ *   get:
+ *     summary: Get activity log for a specific product
+ *     tags: [Product Catalog]
+ *     security:
+ *       - bearerAuth: []
+ */
+router.get('/products/:id/activity', authenticateUser, productController.getProductActivity);
 
 // ─── Quote Line Items ─────────────────────────────────────────────────────────
 
@@ -182,18 +377,6 @@ router.delete('/products/:id', authenticateUser, productController.deleteProduct
  *     tags: [Product Catalog]
  *     security:
  *       - bearerAuth: []
- *     parameters:
- *       - in: path
- *         name: quoteId
- *         required: true
- *         schema:
- *           type: string
- *           format: uuid
- *     responses:
- *       200:
- *         description: List of quote line items
- *       500:
- *         description: Server error
  */
 router.get('/quotes/:quoteId/lines', authenticateUser, productController.getQuoteLines);
 
@@ -205,38 +388,6 @@ router.get('/quotes/:quoteId/lines', authenticateUser, productController.getQuot
  *     tags: [Product Catalog]
  *     security:
  *       - bearerAuth: []
- *     requestBody:
- *       required: true
- *       content:
- *         application/json:
- *           schema:
- *             type: object
- *             required:
- *               - quoteId
- *               - productId
- *               - unitPrice
- *             properties:
- *               quoteId:
- *                 type: string
- *                 format: uuid
- *               productId:
- *                 type: string
- *                 format: uuid
- *               quantity:
- *                 type: number
- *                 default: 1
- *               unitPrice:
- *                 type: number
- *               discount:
- *                 type: number
- *                 default: 0
- *     responses:
- *       201:
- *         description: Line item added
- *       400:
- *         description: Validation error
- *       500:
- *         description: Server error
  */
 router.post('/quotes/lines', authenticateUser, productController.addQuoteLine);
 
@@ -248,32 +399,6 @@ router.post('/quotes/lines', authenticateUser, productController.addQuoteLine);
  *     tags: [Product Catalog]
  *     security:
  *       - bearerAuth: []
- *     parameters:
- *       - in: path
- *         name: id
- *         required: true
- *         schema:
- *           type: string
- *           format: uuid
- *     requestBody:
- *       content:
- *         application/json:
- *           schema:
- *             type: object
- *             properties:
- *               quantity:
- *                 type: number
- *               unitPrice:
- *                 type: number
- *               discount:
- *                 type: number
- *     responses:
- *       200:
- *         description: Line item updated
- *       404:
- *         description: Not found
- *       500:
- *         description: Server error
  */
 router.put('/quotes/lines/:id', authenticateUser, productController.updateQuoteLine);
 
@@ -285,20 +410,6 @@ router.put('/quotes/lines/:id', authenticateUser, productController.updateQuoteL
  *     tags: [Product Catalog]
  *     security:
  *       - bearerAuth: []
- *     parameters:
- *       - in: path
- *         name: id
- *         required: true
- *         schema:
- *           type: string
- *           format: uuid
- *     responses:
- *       200:
- *         description: Line item removed
- *       404:
- *         description: Not found
- *       500:
- *         description: Server error
  */
 router.delete('/quotes/lines/:id', authenticateUser, productController.removeQuoteLine);
 

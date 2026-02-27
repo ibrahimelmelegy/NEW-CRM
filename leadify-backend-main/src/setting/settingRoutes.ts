@@ -76,4 +76,40 @@ router.post(
  */
 router.get('/', authenticateUser, HasPermission([SettingsPermissionsEnum.VIEW_SETTINGS]), SettingController.getSetting);
 
+/**
+ * @swagger
+ * /api/setting/{id}:
+ *   put:
+ *     summary: Update settings by ID
+ *     tags: [Setting]
+ *     security:
+ *       - bearerAuth: []
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         schema:
+ *           type: string
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *     responses:
+ *       200:
+ *         description: Settings updated
+ *       400:
+ *         description: Validation error
+ *       500:
+ *         description: Server error
+ */
+router.put(
+  '/:id',
+  authenticateUser,
+  HasPermission([SettingsPermissionsEnum.EDIT_SETTINGS]),
+  validateBody(CreateOrUpdateSettingInput),
+  SettingController.createSetting
+);
+
 export default router;

@@ -9,6 +9,59 @@ import { ProjectPermissionsEnum } from '../role/roleEnum';
 
 const router = express.Router();
 
+// ** --------------------- SPECIFIC ROUTES (before parameterised) ----- **/
+
+/**
+ * @swagger
+ * /api/project-manpower/utilization:
+ *   get:
+ *     summary: Get utilization report across all manpower resources
+ *     tags: [Project Manpower]
+ *     security:
+ *       - bearerAuth: []
+ *     parameters:
+ *       - in: query
+ *         name: maxCapacityDays
+ *         schema:
+ *           type: integer
+ *           default: 22
+ *         description: Max capacity days per resource for utilization calculation
+ *     responses:
+ *       200:
+ *         description: Utilization report with summary and per-resource data
+ */
+router.get(
+  '/utilization',
+  authenticateUser,
+  HasPermission([ProjectPermissionsEnum.VIEW_GLOBAL_PROJECTS, ProjectPermissionsEnum.VIEW_OWN_PROJECTS]),
+  projectManpowerController.utilizationReport
+);
+
+/**
+ * @swagger
+ * /api/project-manpower/by-manpower/{manpowerId}:
+ *   get:
+ *     summary: Get all allocations for a specific manpower resource
+ *     tags: [Project Manpower]
+ *     security:
+ *       - bearerAuth: []
+ *     parameters:
+ *       - in: path
+ *         name: manpowerId
+ *         required: true
+ *         schema:
+ *           type: string
+ *     responses:
+ *       200:
+ *         description: List of allocations for the manpower resource
+ */
+router.get(
+  '/by-manpower/:manpowerId',
+  authenticateUser,
+  HasPermission([ProjectPermissionsEnum.VIEW_GLOBAL_PROJECTS, ProjectPermissionsEnum.VIEW_OWN_PROJECTS]),
+  projectManpowerController.allocationsByManpower
+);
+
 // ** --------------------- POST --------------------- **/
 
 /**

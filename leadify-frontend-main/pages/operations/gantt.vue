@@ -13,6 +13,10 @@
             <el-button :type="viewMode === 'month' ? 'primary' : 'default'" size="small" @click="viewMode = 'month'">Month</el-button>
             <el-button :type="viewMode === 'quarter' ? 'primary' : 'default'" size="small" @click="viewMode = 'quarter'">Quarter</el-button>
           </el-button-group>
+          <el-button :type="showCriticalPath ? 'warning' : 'default'" size="small" @click="showCriticalPath = !showCriticalPath">
+            <Icon name="ph:lightning-bold" class="w-4 h-4 mr-1" />
+            Critical Path
+          </el-button>
           <el-button type="primary" class="!rounded-xl" @click="openAddDialog">
             <Icon name="ph:plus-bold" class="w-4 h-4 mr-2" />
             Add Task
@@ -52,7 +56,7 @@
         <div class="w-72 flex-shrink-0 p-3 border-r border-slate-800/60">
           <span class="text-sm font-medium text-slate-300">Task Name</span>
         </div>
-        <div ref="timelineHeaderRef" class="flex-1 flex overflow-x-auto" @scroll="syncScroll('header', $event)">
+        <div ref="timelineHeaderRef" class="flex-1 flex overflow-x-auto relative" @scroll="syncScroll('header', $event)">
           <div
             v-for="(date, idx) in timelineDates"
             :key="idx"
@@ -63,6 +67,14 @@
             <div class="text-[10px] text-slate-600">{{ formatDayName(date) }}</div>
             <div class="text-xs text-slate-400">{{ formatDay(date) }}</div>
           </div>
+          <!-- Today vertical line in header -->
+          <div
+            v-if="todayOffset >= 0"
+            class="absolute top-0 bottom-0 w-0.5 bg-red-500 z-10 pointer-events-none"
+            :style="{ left: todayOffset + 'px' }"
+          >
+            <div class="absolute -top-0 left-1/2 -translate-x-1/2 bg-red-500 text-white text-[8px] px-1 rounded-b font-bold whitespace-nowrap">TODAY</div>
+          </div>
         </div>
       </div>
 
@@ -71,13 +83,21 @@
         <!-- Task Info -->
         <div class="w-72 flex-shrink-0 p-3 border-r border-slate-800/60">
           <div class="flex items-center gap-2">
-            <div class="w-2 h-2 rounded-full" :style="{ backgroundColor: task.color }"></div>
+            <div
+              class="w-2 h-2 rounded-full flex-shrink-0"
+              :style="{ backgroundColor: task.color }"
+              :class="showCriticalPath && isCriticalTask(task) ? 'ring-2 ring-red-500 ring-offset-1 ring-offset-slate-900' : ''"
+            ></div>
             <div class="flex-1 min-w-0">
-              <div class="text-sm font-medium text-slate-200 truncate">{{ task.name }}</div>
+              <div
+                class="text-sm font-medium truncate"
+                :class="showCriticalPath && isCriticalTask(task) ? 'text-red-400' : 'text-slate-200'"
+              >{{ task.name }}</div>
               <div class="flex items-center gap-2 mt-1">
                 <el-avatar :size="18" class="bg-slate-700 text-[10px]">{{ task.assignee?.charAt(0) }}</el-avatar>
                 <span class="text-[10px] text-slate-500">{{ task.assignee }}</span>
                 <el-tag v-if="task.isMilestone" type="warning" effect="dark" size="small" class="!text-[10px]">Milestone</el-tag>
+                <el-tag v-if="showCriticalPath && isCriticalTask(task)" type="danger" effect="dark" size="small" class="!text-[10px]">Critical</el-tag>
               </div>
             </div>
             <!-- Delete button visible on hover -->
@@ -104,10 +124,19 @@
               :class="isToday(date) ? 'bg-primary-500/5' : ''"
             ></div>
           </div>
+
+          <!-- Today vertical line in rows -->
+          <div
+            v-if="todayOffset >= 0"
+            class="absolute top-0 bottom-0 w-0.5 bg-red-500/40 z-[5] pointer-events-none"
+            :style="{ left: todayOffset + 'px' }"
+          ></div>
+
           <!-- Actual Bar -->
           <div
             class="absolute top-3 h-6 rounded-md flex items-center px-2 cursor-pointer transition-all hover:brightness-110"
             :style="getBarStyle(task)"
+            :class="showCriticalPath && isCriticalTask(task) ? 'ring-1 ring-red-500' : ''"
             @click="editTask(task)"
           >
             <template v-if="task.isMilestone">
@@ -121,6 +150,12 @@
               ></div>
               <span class="text-[10px] text-white font-medium relative z-10">{{ task.progress }}%</span>
             </template>
+            <!-- Resize handle (right edge) -->
+            <div
+              v-if="!task.isMilestone"
+              class="absolute right-0 top-0 w-2 h-full cursor-col-resize hover:bg-white/20 rounded-r-md z-20"
+              @mousedown.stop.prevent="startResize($event, task)"
+            ></div>
           </div>
 
           <!-- Dependency Arrow -->
@@ -147,10 +182,10 @@
     </div>
 
     <!-- Today Indicator Legend -->
-    <div class="flex items-center gap-4 text-xs text-slate-500">
+    <div class="flex items-center gap-4 text-xs text-slate-500 flex-wrap">
       <div class="flex items-center gap-1">
-        <div class="w-3 h-1 bg-primary-500 rounded"></div>
-        Today
+        <div class="w-3 h-3 bg-red-500 rounded-sm"></div>
+        Today Line
       </div>
       <div class="flex items-center gap-1">
         <div class="w-3 h-3 rounded-sm bg-blue-500/40"></div>
@@ -167,6 +202,14 @@
       <div class="flex items-center gap-1">
         <div class="w-4 border-t border-dashed border-indigo-400"></div>
         Dependency
+      </div>
+      <div class="flex items-center gap-1">
+        <div class="w-3 h-3 rounded-sm bg-red-500/40 ring-1 ring-red-500"></div>
+        Critical Path
+      </div>
+      <div class="flex items-center gap-1">
+        <div class="w-2 h-4 bg-white/20 border border-slate-500 rounded-sm cursor-col-resize"></div>
+        Drag to Resize
       </div>
     </div>
 
@@ -232,7 +275,7 @@
 </template>
 
 <script setup lang="ts">
-import { ref, computed, onMounted } from 'vue';
+import { ref, computed, onMounted, onUnmounted } from 'vue';
 import { ElMessage, ElMessageBox } from 'element-plus';
 import { useApiFetch } from '~/composables/useApiFetch';
 import { user } from '~/composables/useUser';
@@ -259,6 +302,7 @@ const GANTT_COLORS = ['#3B82F6', '#8B5CF6', '#10B981', '#EC4899', '#6366F1', '#1
 
 const viewMode = ref('month');
 const showTaskDialog = ref(false);
+const showCriticalPath = ref(false);
 const loading = ref(false);
 const saving = ref(false);
 const deleting = ref(false);
@@ -296,11 +340,6 @@ interface GanttMeta {
   isMilestone?: boolean;
 }
 
-/**
- * Parse optional gantt metadata that is stored as a JSON string inside the
- * `tags` array.  We look for the first element that parses as an object
- * containing a `color` or `isMilestone` key.
- */
 function parseGanttMeta(tags: any[]): GanttMeta {
   if (!Array.isArray(tags)) return {};
   for (const tag of tags) {
@@ -320,33 +359,20 @@ function parseGanttMeta(tags: any[]): GanttMeta {
   return {};
 }
 
-/**
- * Derive a progress percentage from the backend Task status.
- * The `duration` field on the Task model is used to persist an explicit
- * progress value (0-100) when available.
- */
 function statusToProgress(status: string, duration?: number | null): number {
-  // If duration holds an explicit progress value, honour it
   if (typeof duration === 'number' && duration >= 0 && duration <= 100) return duration;
   switch (status) {
-    case 'COMPLETED':
-      return 100;
-    case 'IN_PROGRESS':
-      return 50;
-    case 'CANCELLED':
-      return 0;
+    case 'COMPLETED': return 100;
+    case 'IN_PROGRESS': return 50;
+    case 'CANCELLED': return 0;
     case 'PENDING':
-    default:
-      return 0;
+    default: return 0;
   }
 }
 
-/** Map a raw backend Task record to a GanttTask for the chart */
 function mapApiTaskToGantt(apiTask: any, index: number): GanttTask {
   const meta = parseGanttMeta(apiTask.tags || []);
   const today = new Date().toISOString().slice(0, 10);
-
-  // Determine start and end dates
   const start = apiTask.date || (apiTask.dueDate ? apiTask.dueDate.slice(0, 10) : today);
   const end = apiTask.dueDate ? apiTask.dueDate.slice(0, 10) : start;
 
@@ -400,17 +426,110 @@ const overallProgress = computed(() => {
 });
 
 // ---------------------------------------------------------------------------
+// Critical Path computation
+// ---------------------------------------------------------------------------
+
+/**
+ * Compute critical path: tasks that, if delayed, delay the project end.
+ * Uses a simplified forward/backward pass algorithm.
+ */
+const criticalTaskIds = computed(() => {
+  if (!tasks.value.length) return new Set<number>();
+
+  const taskMap = new Map(tasks.value.map(t => [t.id, t]));
+  const earlyStart = new Map<number, number>();
+  const earlyFinish = new Map<number, number>();
+  const lateStart = new Map<number, number>();
+  const lateFinish = new Map<number, number>();
+
+  const toMs = (d: string) => new Date(d).getTime();
+  const DAY = 86400000;
+
+  // Forward pass: compute early start and early finish
+  const processed = new Set<number>();
+  function forwardPass(task: GanttTask) {
+    if (processed.has(task.id)) return;
+    const dep = task.dependency ? taskMap.get(task.dependency) : null;
+    if (dep && !processed.has(dep.id)) forwardPass(dep);
+
+    const depFinish = dep ? (earlyFinish.get(dep.id) || toMs(dep.end)) : 0;
+    const es = Math.max(toMs(task.start), depFinish);
+    const duration = Math.max(DAY, toMs(task.end) - toMs(task.start));
+    const ef = es + duration;
+
+    earlyStart.set(task.id, es);
+    earlyFinish.set(task.id, ef);
+    processed.add(task.id);
+  }
+
+  for (const task of tasks.value) forwardPass(task);
+
+  // Find project end (max early finish)
+  let projectEnd = 0;
+  for (const ef of earlyFinish.values()) {
+    if (ef > projectEnd) projectEnd = ef;
+  }
+
+  // Backward pass: compute late start and late finish
+  // Build a reverse dependency map: who depends on me?
+  const dependents = new Map<number, number[]>();
+  for (const task of tasks.value) {
+    if (task.dependency) {
+      if (!dependents.has(task.dependency)) dependents.set(task.dependency, []);
+      dependents.get(task.dependency)!.push(task.id);
+    }
+  }
+
+  const backProcessed = new Set<number>();
+  function backwardPass(task: GanttTask) {
+    if (backProcessed.has(task.id)) return;
+    const deps = dependents.get(task.id) || [];
+    for (const depId of deps) {
+      const depTask = taskMap.get(depId);
+      if (depTask && !backProcessed.has(depId)) backwardPass(depTask);
+    }
+
+    const lf = deps.length > 0
+      ? Math.min(...deps.map(d => lateStart.get(d) || projectEnd))
+      : projectEnd;
+    const duration = Math.max(DAY, toMs(task.end) - toMs(task.start));
+    const ls = lf - duration;
+
+    lateFinish.set(task.id, lf);
+    lateStart.set(task.id, ls);
+    backProcessed.add(task.id);
+  }
+
+  for (const task of tasks.value) backwardPass(task);
+
+  // Critical tasks: float = lateStart - earlyStart === 0
+  const critical = new Set<number>();
+  for (const task of tasks.value) {
+    const es = earlyStart.get(task.id) || 0;
+    const ls = lateStart.get(task.id) || 0;
+    const slack = Math.abs(ls - es);
+    if (slack < DAY && task.progress < 100) {
+      critical.add(task.id);
+    }
+  }
+
+  return critical;
+});
+
+function isCriticalTask(task: GanttTask): boolean {
+  return criticalTaskIds.value.has(task.id);
+}
+
+// ---------------------------------------------------------------------------
 // Generate timeline dates
 // ---------------------------------------------------------------------------
 
 const timelineDates = computed(() => {
   const dates: string[] = [];
-  // Determine the earliest start across all tasks, falling back to today
   let earliest = new Date();
   if (tasks.value.length) {
     const starts = tasks.value.map(t => new Date(t.start).getTime());
     earliest = new Date(Math.min(...starts));
-    // Pad a few days before the earliest task
     earliest.setDate(earliest.getDate() - 3);
   }
   const days = viewMode.value === 'week' ? 14 : viewMode.value === 'month' ? 60 : 120;
@@ -422,9 +541,20 @@ const timelineDates = computed(() => {
   return dates;
 });
 
-const isToday = (d: string) => d === new Date().toISOString().slice(0, 10);
+const todayStr = new Date().toISOString().slice(0, 10);
+const isToday = (d: string) => d === todayStr;
 const formatDayName = (d: string) => new Date(d).toLocaleDateString('en', { weekday: 'short' }).slice(0, 2);
 const formatDay = (d: string) => new Date(d).getDate().toString();
+
+// Today line offset (px from left of timeline)
+const todayOffset = computed(() => {
+  if (!timelineDates.value.length) return -1;
+  const timelineStart = new Date(timelineDates.value[0]!);
+  const today = new Date(todayStr);
+  const daysDiff = (today.getTime() - timelineStart.getTime()) / 86400000;
+  if (daysDiff < 0 || daysDiff > timelineDates.value.length) return -1;
+  return daysDiff * cellWidth.value + cellWidth.value / 2;
+});
 
 // ---------------------------------------------------------------------------
 // Scroll sync between header and task rows
@@ -433,7 +563,6 @@ const formatDay = (d: string) => new Date(d).getDate().toString();
 function syncScroll(_source: string, event: Event) {
   const target = event.target as HTMLElement;
   if (!target) return;
-  // Sync header scroll with body rows (simple approach)
   if (timelineHeaderRef.value && target !== timelineHeaderRef.value) {
     timelineHeaderRef.value.scrollLeft = target.scrollLeft;
   }
@@ -466,6 +595,80 @@ const getDependencyLine = (task: GanttTask) => {
   const taskStart = ((new Date(task.start).getTime() - timelineStart.getTime()) / 86400000) * cellWidth.value;
   return { x1: depEnd, x2: taskStart };
 };
+
+// ---------------------------------------------------------------------------
+// Drag-to-Resize: change end date by dragging the right edge of a bar
+// ---------------------------------------------------------------------------
+
+let resizingTask: GanttTask | null = null;
+let resizeStartX = 0;
+let resizeOriginalEnd = '';
+
+function startResize(event: MouseEvent, task: GanttTask) {
+  resizingTask = task;
+  resizeStartX = event.clientX;
+  resizeOriginalEnd = task.end;
+  document.addEventListener('mousemove', onResizeMove);
+  document.addEventListener('mouseup', onResizeEnd);
+}
+
+function onResizeMove(event: MouseEvent) {
+  if (!resizingTask) return;
+  const dx = event.clientX - resizeStartX;
+  const daysDelta = Math.round(dx / cellWidth.value);
+  if (daysDelta === 0) return;
+
+  const newEnd = new Date(resizeOriginalEnd);
+  newEnd.setDate(newEnd.getDate() + daysDelta);
+  // Don't allow end before start
+  if (newEnd.getTime() < new Date(resizingTask.start).getTime()) return;
+  resizingTask.end = newEnd.toISOString().slice(0, 10);
+}
+
+async function onResizeEnd() {
+  document.removeEventListener('mousemove', onResizeMove);
+  document.removeEventListener('mouseup', onResizeEnd);
+
+  if (!resizingTask || resizingTask.end === resizeOriginalEnd) {
+    resizingTask = null;
+    return;
+  }
+
+  const task = resizingTask;
+  resizingTask = null;
+
+  // Persist the new end date via API
+  try {
+    const ganttMeta: GanttMeta = { color: task.color, isMilestone: task.isMilestone };
+    let status = 'PENDING';
+    if (task.progress >= 100) status = 'COMPLETED';
+    else if (task.progress > 0) status = 'IN_PROGRESS';
+
+    const { success } = await useApiFetch(`tasks/${task.id}`, 'PUT', {
+      dueDate: task.end,
+      date: task.start,
+      duration: task.progress,
+      status,
+      entityType: 'GANTT',
+      tags: [JSON.stringify(ganttMeta)]
+    });
+    if (success) {
+      ElMessage.success('Duration updated');
+    } else {
+      // Revert
+      task.end = resizeOriginalEnd;
+      ElMessage.error('Failed to update duration');
+    }
+  } catch {
+    task.end = resizeOriginalEnd;
+    ElMessage.error('Failed to update duration');
+  }
+}
+
+onUnmounted(() => {
+  document.removeEventListener('mousemove', onResizeMove);
+  document.removeEventListener('mouseup', onResizeEnd);
+});
 
 // ---------------------------------------------------------------------------
 // Date formatting helper
@@ -525,12 +728,10 @@ function buildPayload(colorOverride?: string): Record<string, any> {
   const endStr = formatDateStr(taskForm.value.end) || startStr;
   const color = colorOverride || GANTT_COLORS[tasks.value.length % GANTT_COLORS.length]!;
 
-  // Derive status from progress
   let status = 'PENDING';
   if (taskForm.value.progress >= 100) status = 'COMPLETED';
   else if (taskForm.value.progress > 0) status = 'IN_PROGRESS';
 
-  // Build gantt metadata to persist in tags
   const ganttMeta: GanttMeta = {
     color,
     isMilestone: taskForm.value.isMilestone
@@ -543,7 +744,7 @@ function buildPayload(colorOverride?: string): Record<string, any> {
     status,
     priority: taskForm.value.priority,
     entityType: 'GANTT',
-    duration: taskForm.value.progress, // store progress percentage
+    duration: taskForm.value.progress,
     tags: [JSON.stringify(ganttMeta)],
     assignedTo: user.value?.id || 1
   };
@@ -569,11 +770,9 @@ const saveTask = async () => {
 
   try {
     if (isEditing.value && editingTask.value) {
-      // UPDATE existing task via PUT
       const payload = buildPayload(editingTask.value.color);
       const { success } = await useApiFetch(`tasks/${editingTask.value.id}`, 'PUT', payload);
       if (success) {
-        // Update local task in place
         const idx = tasks.value.findIndex(t => t.id === editingTask.value!.id);
         if (idx !== -1) {
           const existing = tasks.value[idx]!;
@@ -595,7 +794,6 @@ const saveTask = async () => {
         ElMessage.error('Failed to update task');
       }
     } else {
-      // CREATE new task via POST
       const payload = buildPayload();
       const { body, success } = await useApiFetch('tasks', 'POST', payload);
       if (success && body) {

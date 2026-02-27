@@ -124,8 +124,11 @@ import ecCategoryRoutes from './ecommerce/category/categoryRoutes';
 import ecCouponRoutes from './ecommerce/coupon/couponRoutes';
 import ecReviewRoutes from './ecommerce/review/reviewRoutes';
 import ecCartRoutes from './ecommerce/cart/cartRoutes';
+import ecProductRoutes from './ecommerce/product/ecProductRoutes';
+import ecDashboardRoutes from './ecommerce/dashboard/ecDashboardRoutes';
 import meetingNoteRoutes from './meetingNote/meetingNoteRoutes';
 import eSignatureRoutes from './eSignature/eSignatureRoutes';
+import whatsappRoutes from './whatsapp/whatsappRoutes';
 
 const fileUpload = require('express-fileupload');
 
@@ -387,9 +390,13 @@ app.use('/api/ecommerce/categories', ecCategoryRoutes);
 app.use('/api/ecommerce/coupons', ecCouponRoutes);
 app.use('/api/ecommerce/reviews', ecReviewRoutes);
 app.use('/api/ecommerce/cart', ecCartRoutes);
+app.use('/api/ecommerce/products', ecProductRoutes);
+app.use('/api/ecommerce/dashboard', ecDashboardRoutes);
 // ─── Meeting Notes & E-Signatures ───────────────────────────────────────────
 app.use('/api/meeting-notes', meetingNoteRoutes);
 app.use('/api/e-signatures', eSignatureRoutes);
+// ─── WhatsApp Module ─────────────────────────────────────────────────────────
+app.use('/api/whatsapp', whatsappRoutes);
 
 // Public notification unsubscribe (no auth required)
 app.use('/api/notifications', unsubscribeRoutes);

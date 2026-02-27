@@ -2,7 +2,7 @@ import { NextFunction, Response } from 'express';
 import { AuthenticatedRequest } from '../types';
 import { wrapResult } from '../utils/response/responseWrapper';
 import SalesOrderService from './salesOrderService';
-import { SalesOrderStatusEnum } from './models/salesOrderModel';
+import { SalesOrderStatusEnum, PaymentStatusEnum } from './models/salesOrderModel';
 import { io } from '../server';
 
 class SalesOrderController {
@@ -80,6 +80,55 @@ class SalesOrderController {
       const fulfillment = await SalesOrderService.updateFulfillment(req.params.id as string, req.params.fid as string, req.body);
       io.emit('salesOrder:fulfillmentUpdated', fulfillment);
       wrapResult(res, fulfillment);
+    } catch (error) {
+      next(error);
+    }
+  }
+
+  public async updatePaymentStatus(req: AuthenticatedRequest, res: Response, next: NextFunction): Promise<void> {
+    try {
+      const { paymentStatus } = req.body;
+      const order = await SalesOrderService.updatePaymentStatus(req.params.id as string, paymentStatus as PaymentStatusEnum);
+      io.emit('salesOrder:paymentStatusUpdated', order);
+      wrapResult(res, order);
+    } catch (error) {
+      next(error);
+    }
+  }
+
+  public async deleteOrder(req: AuthenticatedRequest, res: Response, next: NextFunction): Promise<void> {
+    try {
+      await SalesOrderService.deleteOrder(req.params.id as string);
+      io.emit('salesOrder:deleted', { id: req.params.id });
+      wrapResult(res, { deleted: true });
+    } catch (error) {
+      next(error);
+    }
+  }
+
+  public async getClientOrders(req: AuthenticatedRequest, res: Response, next: NextFunction): Promise<void> {
+    try {
+      const result = await SalesOrderService.getClientOrders(req.params.clientId as string, req.query);
+      wrapResult(res, result);
+    } catch (error) {
+      next(error);
+    }
+  }
+
+  public async convertCartToOrder(req: AuthenticatedRequest, res: Response, next: NextFunction): Promise<void> {
+    try {
+      const order = await SalesOrderService.convertCartToOrder(req.body);
+      io.emit('salesOrder:created', order);
+      wrapResult(res, order, 201);
+    } catch (error) {
+      next(error);
+    }
+  }
+
+  public async getOrderAnalytics(req: AuthenticatedRequest, res: Response, next: NextFunction): Promise<void> {
+    try {
+      const analytics = await SalesOrderService.getOrderAnalytics(req.query);
+      wrapResult(res, analytics);
     } catch (error) {
       next(error);
     }
