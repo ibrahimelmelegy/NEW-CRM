@@ -1,6 +1,7 @@
 import { Router } from 'express';
 import couponController from './couponController';
-import { authenticateUser } from '../../middleware/authMiddleware';
+import { authenticateUser, HasPermission } from '../../middleware/authMiddleware';
+import { EcCouponPermissionsEnum } from '../../role/roleEnum';
 
 /**
  * @swagger
@@ -51,7 +52,7 @@ const router = Router();
  *       500:
  *         description: Server error
  */
-router.get('/', authenticateUser, couponController.getCoupons);
+router.get('/', authenticateUser, HasPermission([EcCouponPermissionsEnum.VIEW_EC_COUPONS]), couponController.getCoupons);
 
 /**
  * @swagger
@@ -76,7 +77,7 @@ router.get('/', authenticateUser, couponController.getCoupons);
  *       500:
  *         description: Server error
  */
-router.get('/:id', authenticateUser, couponController.getCouponById);
+router.get('/:id', authenticateUser, HasPermission([EcCouponPermissionsEnum.VIEW_EC_COUPONS]), couponController.getCouponById);
 
 /**
  * @swagger
@@ -111,7 +112,7 @@ router.get('/:id', authenticateUser, couponController.getCouponById);
  *       500:
  *         description: Server error
  */
-router.post('/validate', authenticateUser, couponController.validateCoupon);
+router.post('/validate', authenticateUser, HasPermission([EcCouponPermissionsEnum.APPLY_EC_COUPONS]), couponController.validateCoupon);
 
 /**
  * @swagger
@@ -141,7 +142,7 @@ router.post('/validate', authenticateUser, couponController.validateCoupon);
  *       500:
  *         description: Server error
  */
-router.post('/apply', authenticateUser, couponController.applyCoupon);
+router.post('/apply', authenticateUser, HasPermission([EcCouponPermissionsEnum.APPLY_EC_COUPONS]), couponController.applyCoupon);
 
 /**
  * @swagger
@@ -212,7 +213,7 @@ router.post('/apply', authenticateUser, couponController.applyCoupon);
  *       500:
  *         description: Server error
  */
-router.post('/', authenticateUser, couponController.createCoupon);
+router.post('/', authenticateUser, HasPermission([EcCouponPermissionsEnum.CREATE_EC_COUPONS]), couponController.createCoupon);
 
 /**
  * @swagger
@@ -277,7 +278,7 @@ router.post('/', authenticateUser, couponController.createCoupon);
  *       500:
  *         description: Server error
  */
-router.put('/:id', authenticateUser, couponController.updateCoupon);
+router.put('/:id', authenticateUser, HasPermission([EcCouponPermissionsEnum.EDIT_EC_COUPONS]), couponController.updateCoupon);
 
 /**
  * @swagger
@@ -302,6 +303,6 @@ router.put('/:id', authenticateUser, couponController.updateCoupon);
  *       500:
  *         description: Server error
  */
-router.delete('/:id', authenticateUser, couponController.deleteCoupon);
+router.delete('/:id', authenticateUser, HasPermission([EcCouponPermissionsEnum.DELETE_EC_COUPONS]), couponController.deleteCoupon);
 
 export default router;

@@ -368,6 +368,37 @@ export enum ShippingPermissionsEnum {
   MANAGE_RATES = 'MANAGE_RATES'
 }
 
+// ─── E-Commerce Permissions ─────────────────────────────────────────────────
+
+export enum EcCategoryPermissionsEnum {
+  VIEW_EC_CATEGORIES = 'VIEW_EC_CATEGORIES',
+  CREATE_EC_CATEGORIES = 'CREATE_EC_CATEGORIES',
+  EDIT_EC_CATEGORIES = 'EDIT_EC_CATEGORIES',
+  DELETE_EC_CATEGORIES = 'DELETE_EC_CATEGORIES'
+}
+
+export enum EcCouponPermissionsEnum {
+  VIEW_EC_COUPONS = 'VIEW_EC_COUPONS',
+  CREATE_EC_COUPONS = 'CREATE_EC_COUPONS',
+  EDIT_EC_COUPONS = 'EDIT_EC_COUPONS',
+  DELETE_EC_COUPONS = 'DELETE_EC_COUPONS',
+  APPLY_EC_COUPONS = 'APPLY_EC_COUPONS'
+}
+
+export enum EcReviewPermissionsEnum {
+  VIEW_EC_REVIEWS = 'VIEW_EC_REVIEWS',
+  CREATE_EC_REVIEWS = 'CREATE_EC_REVIEWS',
+  MODERATE_EC_REVIEWS = 'MODERATE_EC_REVIEWS',
+  RESPOND_EC_REVIEWS = 'RESPOND_EC_REVIEWS',
+  DELETE_EC_REVIEWS = 'DELETE_EC_REVIEWS'
+}
+
+export enum EcCartPermissionsEnum {
+  VIEW_EC_CARTS = 'VIEW_EC_CARTS',
+  MANAGE_EC_CARTS = 'MANAGE_EC_CARTS',
+  CONVERT_EC_CARTS = 'CONVERT_EC_CARTS'
+}
+
 export enum ManufacturingPermissionsEnum {
   VIEW_MANUFACTURING = 'VIEW_MANUFACTURING',
   CREATE_MANUFACTURING = 'CREATE_MANUFACTURING',
@@ -513,7 +544,11 @@ export const permissions = {
   campaigns: Object.keys(CampaignPermissionsEnum),
   contracts: Object.keys(ContractPermissionsEnum),
   approvals: Object.keys(ApprovalPermissionsEnum),
-  inventory: Object.keys(InventoryPermissionsEnum)
+  inventory: Object.keys(InventoryPermissionsEnum),
+  ecCategories: Object.keys(EcCategoryPermissionsEnum),
+  ecCoupons: Object.keys(EcCouponPermissionsEnum),
+  ecReviews: Object.keys(EcReviewPermissionsEnum),
+  ecCarts: Object.keys(EcCartPermissionsEnum)
 };
 
 // Function to get all permissions

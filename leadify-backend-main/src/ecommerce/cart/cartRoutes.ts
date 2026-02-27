@@ -1,20 +1,21 @@
 import { Router } from 'express';
 import cartController from './cartController';
-import { authenticateUser } from '../../middleware/authMiddleware';
+import { authenticateUser, HasPermission } from '../../middleware/authMiddleware';
+import { EcCartPermissionsEnum } from '../../role/roleEnum';
 
 const router = Router();
 
 // ─── Shopping Cart ───────────────────────────────────────────────────────────
 
-router.get('/', authenticateUser, cartController.getCarts);
-router.get('/abandoned', authenticateUser, cartController.getAbandonedCarts);
-router.get('/active/:clientId', authenticateUser, cartController.getActiveCart);
-router.get('/:id', authenticateUser, cartController.getCartById);
-router.post('/:id/items', authenticateUser, cartController.addItem);
-router.put('/items/:itemId', authenticateUser, cartController.updateItem);
-router.delete('/items/:itemId', authenticateUser, cartController.removeItem);
-router.delete('/:id/clear', authenticateUser, cartController.clearCart);
-router.post('/:id/apply-coupon', authenticateUser, cartController.applyCoupon);
-router.post('/:id/convert', authenticateUser, cartController.convertToOrder);
+router.get('/', authenticateUser, HasPermission([EcCartPermissionsEnum.VIEW_EC_CARTS]), cartController.getCarts);
+router.get('/abandoned', authenticateUser, HasPermission([EcCartPermissionsEnum.VIEW_EC_CARTS]), cartController.getAbandonedCarts);
+router.get('/active/:clientId', authenticateUser, HasPermission([EcCartPermissionsEnum.VIEW_EC_CARTS]), cartController.getActiveCart);
+router.get('/:id', authenticateUser, HasPermission([EcCartPermissionsEnum.VIEW_EC_CARTS]), cartController.getCartById);
+router.post('/:id/items', authenticateUser, HasPermission([EcCartPermissionsEnum.MANAGE_EC_CARTS]), cartController.addItem);
+router.put('/items/:itemId', authenticateUser, HasPermission([EcCartPermissionsEnum.MANAGE_EC_CARTS]), cartController.updateItem);
+router.delete('/items/:itemId', authenticateUser, HasPermission([EcCartPermissionsEnum.MANAGE_EC_CARTS]), cartController.removeItem);
+router.delete('/:id/clear', authenticateUser, HasPermission([EcCartPermissionsEnum.MANAGE_EC_CARTS]), cartController.clearCart);
+router.post('/:id/apply-coupon', authenticateUser, HasPermission([EcCartPermissionsEnum.MANAGE_EC_CARTS]), cartController.applyCoupon);
+router.post('/:id/convert', authenticateUser, HasPermission([EcCartPermissionsEnum.CONVERT_EC_CARTS]), cartController.convertToOrder);
 
 export default router;

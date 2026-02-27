@@ -1,6 +1,7 @@
 import { Router } from 'express';
 import categoryController from './categoryController';
-import { authenticateUser } from '../../middleware/authMiddleware';
+import { authenticateUser, HasPermission } from '../../middleware/authMiddleware';
+import { EcCategoryPermissionsEnum } from '../../role/roleEnum';
 
 /**
  * @swagger
@@ -50,7 +51,7 @@ const router = Router();
  *       500:
  *         description: Server error
  */
-router.get('/', authenticateUser, categoryController.getCategories);
+router.get('/', authenticateUser, HasPermission([EcCategoryPermissionsEnum.VIEW_EC_CATEGORIES]), categoryController.getCategories);
 
 /**
  * @swagger
@@ -66,7 +67,7 @@ router.get('/', authenticateUser, categoryController.getCategories);
  *       500:
  *         description: Server error
  */
-router.get('/tree', authenticateUser, categoryController.getCategoryTree);
+router.get('/tree', authenticateUser, HasPermission([EcCategoryPermissionsEnum.VIEW_EC_CATEGORIES]), categoryController.getCategoryTree);
 
 /**
  * @swagger
@@ -91,7 +92,7 @@ router.get('/tree', authenticateUser, categoryController.getCategoryTree);
  *       500:
  *         description: Server error
  */
-router.get('/:id', authenticateUser, categoryController.getCategoryById);
+router.get('/:id', authenticateUser, HasPermission([EcCategoryPermissionsEnum.VIEW_EC_CATEGORIES]), categoryController.getCategoryById);
 
 /**
  * @swagger
@@ -133,7 +134,7 @@ router.get('/:id', authenticateUser, categoryController.getCategoryById);
  *       500:
  *         description: Server error
  */
-router.post('/', authenticateUser, categoryController.createCategory);
+router.post('/', authenticateUser, HasPermission([EcCategoryPermissionsEnum.CREATE_EC_CATEGORIES]), categoryController.createCategory);
 
 /**
  * @swagger
@@ -177,7 +178,7 @@ router.post('/', authenticateUser, categoryController.createCategory);
  *       500:
  *         description: Server error
  */
-router.put('/:id', authenticateUser, categoryController.updateCategory);
+router.put('/:id', authenticateUser, HasPermission([EcCategoryPermissionsEnum.EDIT_EC_CATEGORIES]), categoryController.updateCategory);
 
 /**
  * @swagger
@@ -204,6 +205,6 @@ router.put('/:id', authenticateUser, categoryController.updateCategory);
  *       500:
  *         description: Server error
  */
-router.delete('/:id', authenticateUser, categoryController.deleteCategory);
+router.delete('/:id', authenticateUser, HasPermission([EcCategoryPermissionsEnum.DELETE_EC_CATEGORIES]), categoryController.deleteCategory);
 
 export default router;
