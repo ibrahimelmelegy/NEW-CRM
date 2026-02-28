@@ -7,6 +7,13 @@ div.animate-fade-in
       p.text-sm.mt-1(style="color: var(--text-muted)") {{ $t('warehouse.subtitle') }}
     .flex.items-center.gap-3
       el-button(
+        size="large"
+        @click="activeTab === 'transfers' ? exportTransfersCSV() : exportWarehousesCSV()"
+        class="!rounded-xl"
+      )
+        Icon(name="ph:download-bold" size="16" class="mr-1")
+        | {{ $t('common.export') }}
+      el-button(
         type="primary"
         size="large"
         @click="openCreateDialog"
@@ -85,7 +92,21 @@ div.animate-fade-in
           template(#prefix)
             Icon(name="ph:magnifying-glass" size="16" style="color: var(--text-muted)")
 
-      el-table(:data="filteredWarehouses" v-loading="loadingWarehouses" stripe style="width: 100%")
+      //- Bulk Actions Bar
+      .flex.items-center.gap-2.mb-3(v-if="selectedWarehouses.length")
+        span.text-sm.font-medium(style="color: var(--text-primary)") {{ selectedWarehouses.length }} {{ $t('common.selected') }}
+        el-button(size="small" type="danger" @click="bulkDeleteWarehouses" class="!rounded-xl")
+          Icon(name="ph:trash-bold" size="14")
+          span.ml-1 {{ $t('common.delete') }}
+        el-button(size="small" @click="bulkChangeWarehouseStatus('INACTIVE')" class="!rounded-xl")
+          Icon(name="ph:pause-bold" size="14")
+          span.ml-1 Deactivate
+        el-button(size="small" @click="exportWarehousesCSV" class="!rounded-xl")
+          Icon(name="ph:download-bold" size="14")
+          span.ml-1 {{ $t('common.export') }}
+
+      el-table(:data="filteredWarehouses" v-loading="loadingWarehouses" stripe style="width: 100%" @selection-change="handleWarehouseSelectionChange")
+        el-table-column(type="selection" width="40")
         el-table-column(:label="$t('warehouse.name')" prop="name" min-width="180" sortable)
           template(#default="{ row }")
             .flex.items-center.gap-2
@@ -200,7 +221,15 @@ div.animate-fade-in
           template(#prefix)
             Icon(name="ph:magnifying-glass" size="16" style="color: var(--text-muted)")
 
-      el-table(:data="filteredTransfers" v-loading="loadingTransfers" stripe style="width: 100%")
+      //- Bulk Actions Bar
+      .flex.items-center.gap-2.mb-3(v-if="selectedTransfers.length")
+        span.text-sm.font-medium(style="color: var(--text-primary)") {{ selectedTransfers.length }} {{ $t('common.selected') }}
+        el-button(size="small" @click="exportTransfersCSV" class="!rounded-xl")
+          Icon(name="ph:download-bold" size="14")
+          span.ml-1 {{ $t('common.export') }}
+
+      el-table(:data="filteredTransfers" v-loading="loadingTransfers" stripe style="width: 100%" @selection-change="handleTransferSelectionChange")
+        el-table-column(type="selection" width="40")
         el-table-column(:label="$t('warehouse.transferNumber')" prop="transferNumber" width="160" sortable)
           template(#default="{ row }")
             span.font-mono.font-bold(style="color: #7849ff") {{ row.transferNumber || '--' }}
@@ -355,6 +384,12 @@ const t = $i18n.t;
 // State
 const activeTab = ref('warehouses');
 const saving = ref(false);
+
+// Bulk Selection
+const selectedWarehouses = ref<any[]>([]);
+const selectedTransfers = ref<any[]>([]);
+const handleWarehouseSelectionChange = (rows: any[]) => { selectedWarehouses.value = rows; };
+const handleTransferSelectionChange = (rows: any[]) => { selectedTransfers.value = rows; };
 
 // KPI Dashboard
 const kpiData = reactive({
@@ -692,6 +727,95 @@ async function loadStockCount() {
   } catch (e: any) {
     ElMessage.error(t('common.error'));
   }
+}
+
+// ========== BULK ACTIONS ==========
+async function bulkDeleteWarehouses() {
+  if (!selectedWarehouses.value.length) return;
+  try {
+    await ElMessageBox.confirm(
+      t('common.confirmBulkDelete', { count: selectedWarehouses.value.length }),
+      t('common.warning'),
+      { type: 'warning' }
+    );
+    for (const row of selectedWarehouses.value) {
+      await useApiFetch(`warehouse/${row.id}`, 'DELETE');
+    }
+    selectedWarehouses.value = [];
+    await loadWarehouses();
+    computeKpis();
+    ElNotification({ type: 'success', title: t('common.success'), message: t('common.deleted') });
+  } catch {
+    // cancelled
+  }
+}
+
+async function bulkChangeWarehouseStatus(newStatus: string) {
+  if (!selectedWarehouses.value.length) return;
+  try {
+    await ElMessageBox.confirm(
+      `Change ${selectedWarehouses.value.length} warehouse(s) to ${newStatus}?`,
+      t('common.warning'),
+      { type: 'warning' }
+    );
+    for (const row of selectedWarehouses.value) {
+      await useApiFetch(`warehouse/${row.id}`, 'PUT', { status: newStatus });
+    }
+    selectedWarehouses.value = [];
+    await loadWarehouses();
+    ElNotification({ type: 'success', title: t('common.success'), message: t('common.saved') });
+  } catch {
+    // cancelled
+  }
+}
+
+function exportWarehousesCSV() {
+  const data = selectedWarehouses.value.length ? selectedWarehouses.value : filteredWarehouses.value;
+  if (!data.length) return;
+  const headers = ['Name', 'Location', 'Manager', 'Capacity', 'Occupancy', 'Status'];
+  const csv = [headers.join(','), ...data.map((row: any) =>
+    [
+      `"${row.name || ''}"`,
+      `"${row.location || ''}"`,
+      `"${row.managerName || row.manager || ''}"`,
+      row.capacity || 0,
+      row.currentOccupancy || 0,
+      `"${row.status || 'ACTIVE'}"`
+    ].join(',')
+  )].join('\n');
+  const blob = new Blob([csv], { type: 'text/csv' });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url;
+  a.download = `warehouses-${Date.now()}.csv`;
+  a.click();
+  URL.revokeObjectURL(url);
+  ElMessage.success(t('common.exported'));
+}
+
+function exportTransfersCSV() {
+  const data = selectedTransfers.value.length ? selectedTransfers.value : filteredTransfers.value;
+  if (!data.length) return;
+  const headers = ['Transfer #', 'From Warehouse', 'To Warehouse', 'Items', 'Status', 'Created', 'Completed'];
+  const csv = [headers.join(','), ...data.map((row: any) =>
+    [
+      `"${row.transferNumber || ''}"`,
+      `"${row.fromWarehouseName || row.fromWarehouseId || ''}"`,
+      `"${row.toWarehouseName || row.toWarehouseId || ''}"`,
+      row.items?.length || row.itemCount || 0,
+      `"${row.status || ''}"`,
+      `"${formatDate(row.createdAt)}"`,
+      `"${row.completedAt ? formatDate(row.completedAt) : ''}"`
+    ].join(',')
+  )].join('\n');
+  const blob = new Blob([csv], { type: 'text/csv' });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url;
+  a.download = `warehouse-transfers-${Date.now()}.csv`;
+  a.click();
+  URL.revokeObjectURL(url);
+  ElMessage.success(t('common.exported'));
 }
 
 onMounted(async () => {

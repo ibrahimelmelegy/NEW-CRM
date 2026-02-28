@@ -161,6 +161,7 @@ const menu = [
     isOpen: false,
     submenu: [
       { link: '/crm/customer-360', name: 'navigation.customer360', icon: 'ph:user-circle-bold' },
+      { link: '/crm/customer-health', name: 'navigation.customerHealth', icon: 'ph:first-aid-kit-bold' },
       { link: '/crm/activities', name: 'navigation.activityTimeline', icon: 'ph:clock-counter-clockwise-bold' },
       { link: '/companies', name: 'navigation.companies', icon: 'ph:buildings-bold' },
       { link: '/reminders', name: 'navigation.reminders', icon: 'ph:bell-ringing-bold' },
@@ -186,12 +187,13 @@ const menu = [
       { link: '/sales/subscriptions', name: 'navigation.subscriptions', icon: 'ph:arrows-clockwise-bold' },
       { link: '/sales/contracts', name: 'navigation.contracts', icon: 'ph:file-doc-bold' },
       { link: '/sales/proposals', name: 'navigation.proposals', icon: 'ph:file-text' },
-      { link: '/sales/playbook', name: 'navigation.salesPlaybook', icon: 'ph:book-open-bold' },
+      { link: '/sales/playbooks', name: 'navigation.salesPlaybooks', icon: 'ph:book-open-bold' },
       { link: '/sales/cpq', name: 'navigation.cpq', icon: 'ph:calculator-bold' },
       { link: '/sales/commissions', name: 'navigation.commissions', icon: 'ph:currency-dollar-bold' },
       { link: '/sales/competitors', name: 'navigation.competitors', icon: 'ph:binoculars-bold' },
       { link: '/sales/proforma-invoices', name: 'navigation.proformaInvoices', icon: 'ph:file-text-bold' },
-      { link: '/sales/goals', name: 'navigation.goalsQuotas', icon: 'ph:target-bold' }
+      { link: '/sales/goals', name: 'navigation.goalsQuotas', icon: 'ph:target-bold' },
+      { link: '/sales/revenue-intelligence', name: 'navigation.revenueIntelligence', icon: 'ph:chart-line-up-bold' }
     ]
   },
 

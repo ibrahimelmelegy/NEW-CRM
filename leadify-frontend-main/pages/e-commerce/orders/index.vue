@@ -84,8 +84,25 @@ div.animate-fade-in
     el-tab-pane(:label="$t('salesOrders.statusDelivered')" name="DELIVERED")
     el-tab-pane(:label="$t('salesOrders.statusCancelled')" name="CANCELLED")
 
+  //- Bulk Actions Bar
+  .flex.items-center.gap-2.mb-3(v-if="selectedRows.length")
+    span.text-sm.font-medium(style="color: var(--text-primary)") {{ selectedRows.length }} {{ $t('common.selected') }}
+    el-button(size="small" type="danger" @click="bulkDelete" class="!rounded-xl")
+      Icon(name="ph:trash-bold" size="14")
+      span.ml-1 {{ $t('common.delete') }}
+    el-button(size="small" @click="bulkMarkShipped" class="!rounded-xl")
+      Icon(name="ph:truck-bold" size="14")
+      span.ml-1 {{ $t('salesOrders.shipped') }}
+    el-button(size="small" @click="bulkMarkDelivered" class="!rounded-xl")
+      Icon(name="ph:check-circle-bold" size="14")
+      span.ml-1 {{ $t('salesOrders.statusDelivered') }}
+    el-button(size="small" @click="exportSelectedCSV" class="!rounded-xl")
+      Icon(name="ph:download-bold" size="14")
+      span.ml-1 {{ $t('common.export') }}
+
   //- Orders Table
-  el-table(:data="orders" v-loading="loading" stripe style="width: 100%")
+  el-table(:data="orders" v-loading="loading" stripe style="width: 100%" @selection-change="handleSelectionChange")
+    el-table-column(type="selection" width="40")
     el-table-column(:label="$t('salesOrders.orderNumber')" width="160" sortable)
       template(#default="{ row }")
         span.font-mono.font-bold.cursor-pointer(
@@ -207,6 +224,10 @@ const t = $i18n.t;
 const loading = ref(false);
 const saving = ref(false);
 const orders = ref<SalesOrder[]>([]);
+
+// Bulk Selection
+const selectedRows = ref<any[]>([]);
+const handleSelectionChange = (rows: any[]) => { selectedRows.value = rows; };
 const search = ref('');
 const statusFilter = ref('ALL');
 const dateRange = ref<string[]>([]);
@@ -348,6 +369,90 @@ async function deleteOrder(order: SalesOrder) {
   } catch {
     // cancelled
   }
+}
+
+// Bulk Actions
+async function bulkDelete() {
+  if (!selectedRows.value.length) return;
+  try {
+    await ElMessageBox.confirm(
+      t('common.confirmBulkDelete', { count: selectedRows.value.length }),
+      t('common.warning'),
+      { type: 'warning' }
+    );
+    for (const row of selectedRows.value) {
+      await deleteSalesOrder(row.id);
+    }
+    selectedRows.value = [];
+    await loadOrders();
+    ElMessage.success(t('common.deleted'));
+  } catch {
+    // User cancelled
+  }
+}
+
+async function bulkMarkShipped() {
+  if (!selectedRows.value.length) return;
+  try {
+    await ElMessageBox.confirm(
+      `Mark ${selectedRows.value.length} order(s) as shipped?`,
+      t('common.warning'),
+      { type: 'warning' }
+    );
+    for (const row of selectedRows.value) {
+      await updateSalesOrderStatus(row.id, SalesOrderStatusEnum.SHIPPED);
+    }
+    selectedRows.value = [];
+    await loadOrders();
+    ElMessage.success(t('common.saved'));
+  } catch {
+    // User cancelled
+  }
+}
+
+async function bulkMarkDelivered() {
+  if (!selectedRows.value.length) return;
+  try {
+    await ElMessageBox.confirm(
+      `Mark ${selectedRows.value.length} order(s) as delivered?`,
+      t('common.warning'),
+      { type: 'warning' }
+    );
+    for (const row of selectedRows.value) {
+      await updateSalesOrderStatus(row.id, SalesOrderStatusEnum.DELIVERED);
+    }
+    selectedRows.value = [];
+    await loadOrders();
+    ElMessage.success(t('common.saved'));
+  } catch {
+    // User cancelled
+  }
+}
+
+function exportSelectedCSV() {
+  const data = selectedRows.value.length ? selectedRows.value : orders.value;
+  if (!data.length) return;
+  const headers = ['Order #', 'Client', 'Status', 'Items', 'Subtotal', 'Tax', 'Total', 'Currency', 'Date'];
+  const rows = data.map((o: any) => [
+    o.orderNumber || '',
+    o.client?.clientName || o.client?.name || o.clientId || '',
+    o.status || '',
+    String(o.items?.length || 0),
+    String(o.subtotal || 0),
+    String(o.taxAmount || 0),
+    String(o.total || 0),
+    o.currency || 'SAR',
+    o.createdAt ? new Date(o.createdAt).toISOString().split('T')[0] : ''
+  ]);
+  const csv = [headers, ...rows].map(r => r.map(c => `"${c}"`).join(',')).join('\n');
+  const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
+  const url = URL.createObjectURL(blob);
+  const link = document.createElement('a');
+  link.href = url;
+  link.download = `orders-${new Date().toISOString().split('T')[0]}.csv`;
+  link.click();
+  URL.revokeObjectURL(url);
+  ElMessage.success(t('common.exported'));
 }
 
 // Export CSV

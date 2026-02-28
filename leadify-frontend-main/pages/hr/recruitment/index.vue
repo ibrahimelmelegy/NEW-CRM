@@ -6,6 +6,12 @@ div
     :subtitle="$t('recruitment.subtitle')"
   )
     template(#actions)
+      el-button(v-if="activeTab === 'postings'" size="large" @click="exportPostingsCSV" class="!rounded-2xl")
+        Icon(name="ph:download-bold" size="16")
+        span.ml-1 {{ $t('common.export') }}
+      el-button(v-if="activeTab === 'applicants'" size="large" @click="exportApplicantsCSV" class="!rounded-2xl")
+        Icon(name="ph:download-bold" size="16")
+        span.ml-1 {{ $t('common.export') }}
       el-button(v-if="activeTab === 'postings'" size="large" type="primary" @click="openPostingDialog()" class="!rounded-2xl")
         Icon(name="ph:plus-bold" size="16")
         span.ml-1 {{ $t('recruitment.newPosting') }}
@@ -38,9 +44,23 @@ div
             template(#prefix)
               Icon(name="ph:magnifying-glass" size="18" style="color: var(--text-muted)")
 
+        //- Bulk Actions Bar
+        .flex.items-center.gap-2.mb-3(v-if="selectedPostings.length")
+          span.text-sm.font-medium(style="color: var(--text-primary)") {{ selectedPostings.length }} {{ $t('common.selected') }}
+          el-button(size="small" type="danger" @click="bulkDeletePostings" class="!rounded-xl")
+            Icon(name="ph:trash-bold" size="14")
+            span.ml-1 {{ $t('common.delete') }}
+          el-button(size="small" @click="bulkClosePostings" class="!rounded-xl")
+            Icon(name="ph:x-circle-bold" size="14")
+            span.ml-1 {{ $t('recruitment.closed') }}
+          el-button(size="small" @click="exportPostingsCSV" class="!rounded-xl")
+            Icon(name="ph:download-bold" size="14")
+            span.ml-1 {{ $t('common.export') }}
+
         //- Desktop Table (hidden on mobile)
         .glass-card.rounded-2xl.overflow-hidden.hidden(class="md:block")
-          el-table(:data="filteredPostings" style="width: 100%" stripe @row-click="navigateToPosting")
+          el-table(:data="filteredPostings" style="width: 100%" stripe @row-click="navigateToPosting" @selection-change="handlePostingSelectionChange")
+            el-table-column(type="selection" width="40")
             el-table-column(:label="$t('recruitment.jobTitle')" min-width="220")
               template(#default="{ row }")
                 .flex.items-center.gap-3.cursor-pointer
@@ -139,9 +159,20 @@ div
             template(#prefix)
               Icon(name="ph:magnifying-glass" size="18" style="color: var(--text-muted)")
 
+        //- Bulk Actions Bar
+        .flex.items-center.gap-2.mb-3(v-if="selectedApplicants.length")
+          span.text-sm.font-medium(style="color: var(--text-primary)") {{ selectedApplicants.length }} {{ $t('common.selected') }}
+          el-button(size="small" type="danger" @click="bulkDeleteApplicants" class="!rounded-xl")
+            Icon(name="ph:trash-bold" size="14")
+            span.ml-1 {{ $t('common.delete') }}
+          el-button(size="small" @click="exportApplicantsCSV" class="!rounded-xl")
+            Icon(name="ph:download-bold" size="14")
+            span.ml-1 {{ $t('common.export') }}
+
         //- Desktop Table
         .glass-card.rounded-2xl.overflow-hidden.hidden(class="md:block")
-          el-table(:data="filteredApplicants" style="width: 100%" stripe)
+          el-table(:data="filteredApplicants" style="width: 100%" stripe @selection-change="handleApplicantSelectionChange")
+            el-table-column(type="selection" width="40")
             el-table-column(:label="$t('recruitment.applicantName')" min-width="200")
               template(#default="{ row }")
                 .flex.items-center.gap-3
@@ -331,6 +362,12 @@ div
 import { ref, computed, reactive, onMounted } from 'vue';
 import { ElMessage, ElMessageBox } from 'element-plus';
 import { useApiFetch } from '~/composables/useApiFetch';
+
+// ─── Bulk Selection & Export ─────────────────────────────
+const selectedPostings = ref<any[]>([]);
+const selectedApplicants = ref<any[]>([]);
+const handlePostingSelectionChange = (rows: any[]) => { selectedPostings.value = rows; };
+const handleApplicantSelectionChange = (rows: any[]) => { selectedApplicants.value = rows; };
 
 definePageMeta({ middleware: 'permissions' });
 
@@ -723,6 +760,114 @@ async function handleMoveStage() {
   } finally {
     saving.value = false;
   }
+}
+
+// ─── Bulk Actions ────────────────────────────────────────
+async function bulkDeletePostings() {
+  if (!selectedPostings.value.length) return;
+  try {
+    await ElMessageBox.confirm(
+      t('common.confirmBulkDelete', { count: selectedPostings.value.length }),
+      t('common.warning'),
+      { type: 'warning' }
+    );
+    for (const row of selectedPostings.value) {
+      await useApiFetch(`hr/recruitment/postings/${row.id}`, 'DELETE');
+    }
+    selectedPostings.value = [];
+    await fetchPostings();
+    ElMessage.success(t('common.deleted'));
+  } catch {
+    // User cancelled
+  }
+}
+
+async function bulkClosePostings() {
+  if (!selectedPostings.value.length) return;
+  try {
+    await ElMessageBox.confirm(
+      `Close ${selectedPostings.value.length} selected posting(s)?`,
+      t('common.warning'),
+      { type: 'warning' }
+    );
+    for (const row of selectedPostings.value) {
+      await useApiFetch(`hr/recruitment/postings/${row.id}`, 'PUT', { status: 'CLOSED' });
+    }
+    selectedPostings.value = [];
+    await fetchPostings();
+    ElMessage.success(t('common.saved'));
+  } catch {
+    // User cancelled
+  }
+}
+
+function exportPostingsCSV() {
+  const data = filteredPostings.value;
+  if (!data.length) return;
+  const headers = ['Title', 'Department', 'Location', 'Type', 'Open Positions', 'Status', 'Posted Date'];
+  const csv = [headers.join(','), ...data.map((row: any) =>
+    [
+      `"${row.title || ''}"`,
+      `"${row.department?.name || row.department || ''}"`,
+      `"${row.location || ''}"`,
+      `"${formatType(row.type)}"`,
+      row.openPositions || 1,
+      `"${row.status || ''}"`,
+      `"${formatDate(row.createdAt)}"`
+    ].join(',')
+  )].join('\n');
+  const blob = new Blob([csv], { type: 'text/csv' });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url;
+  a.download = `recruitment-postings-${Date.now()}.csv`;
+  a.click();
+  URL.revokeObjectURL(url);
+  ElMessage.success(t('common.exported'));
+}
+
+async function bulkDeleteApplicants() {
+  if (!selectedApplicants.value.length) return;
+  try {
+    await ElMessageBox.confirm(
+      t('common.confirmBulkDelete', { count: selectedApplicants.value.length }),
+      t('common.warning'),
+      { type: 'warning' }
+    );
+    for (const row of selectedApplicants.value) {
+      await useApiFetch(`hr/recruitment/applicants/${row.id}`, 'DELETE');
+    }
+    selectedApplicants.value = [];
+    await fetchApplicants();
+    ElMessage.success(t('common.deleted'));
+  } catch {
+    // User cancelled
+  }
+}
+
+function exportApplicantsCSV() {
+  const data = filteredApplicants.value;
+  if (!data.length) return;
+  const headers = ['Name', 'Email', 'Job Posting', 'Stage', 'Source', 'Rating', 'Applied Date'];
+  const csv = [headers.join(','), ...data.map((row: any) =>
+    [
+      `"${row.name || ''}"`,
+      `"${row.email || ''}"`,
+      `"${row.jobPosting?.title || row.jobPostingTitle || ''}"`,
+      `"${row.stage || ''}"`,
+      `"${row.source || ''}"`,
+      row.rating || 0,
+      `"${formatDate(row.createdAt)}"`
+    ].join(',')
+  )].join('\n');
+  const blob = new Blob([csv], { type: 'text/csv' });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url;
+  a.download = `recruitment-applicants-${Date.now()}.csv`;
+  a.click();
+  URL.revokeObjectURL(url);
+  ElMessage.success(t('common.exported'));
 }
 
 // ─── Init ────────────────────────────────────────────────

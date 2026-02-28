@@ -6,6 +6,9 @@ div
     :subtitle="$t('support.dashboardSubtitle')"
   )
     template(#actions)
+      el-button(size="large" @click="exportTicketsCSV" class="!rounded-2xl")
+        Icon(name="ph:download-bold" size="16")
+        span.ml-1 {{ $t('common.export') }}
       el-button(size="large" @click="showFilters = !showFilters" class="!rounded-2xl")
         Icon(name="ph:funnel-bold" size="16")
         span.ml-1 {{ $t('support.advancedFilters') }}
@@ -182,7 +185,21 @@ div
       NuxtLink(to="/support/tickets")
         el-button(text type="primary") {{ $t('common.viewAll') }}
 
-    el-table(:data="recentTickets" v-loading="loadingRecent" style="width: 100%" @row-click="handleRowClick" row-class-name="cursor-pointer" stripe)
+    //- Bulk Actions Bar
+    .flex.items-center.gap-2.mb-3(v-if="selectedRows.length")
+      span.text-sm.font-medium(style="color: var(--text-primary)") {{ selectedRows.length }} {{ $t('common.selected') }}
+      el-button(size="small" type="success" @click="bulkResolveTickets" class="!rounded-xl")
+        Icon(name="ph:check-circle-bold" size="14")
+        span.ml-1 {{ $t('support.resolve') }}
+      el-button(size="small" @click="bulkAutoAssignTickets" class="!rounded-xl")
+        Icon(name="ph:user-plus-bold" size="14")
+        span.ml-1 {{ $t('support.autoAssign') }}
+      el-button(size="small" @click="exportTicketsCSV" class="!rounded-xl")
+        Icon(name="ph:download-bold" size="14")
+        span.ml-1 {{ $t('common.export') }}
+
+    el-table(:data="recentTickets" v-loading="loadingRecent" style="width: 100%" @row-click="handleRowClick" row-class-name="cursor-pointer" stripe @selection-change="handleSelectionChange")
+      el-table-column(type="selection" width="40")
       el-table-column(label="#" width="120")
         template(#default="{ row }")
           span.font-mono.font-bold(style="color: #7849ff") {{ row.ticketNumber }}
@@ -277,7 +294,7 @@ import {
   ticketPriorityOptions
 } from '@/composables/useSupport';
 import type { TicketMetrics, AgentWorkload } from '@/composables/useSupport';
-import { ElMessage } from 'element-plus';
+import { ElMessage, ElMessageBox } from 'element-plus';
 
 const router = useRouter();
 const { t } = useI18n();
@@ -291,6 +308,10 @@ const showFilters = ref(false);
 const drawerVisible = ref(false);
 const selectedTicket = ref<any>(null);
 const assigning = ref(false);
+
+// Bulk Selection
+const selectedRows = ref<any[]>([]);
+const handleSelectionChange = (rows: any[]) => { selectedRows.value = rows; };
 
 const filters = ref({
   status: [] as string[],
@@ -572,6 +593,69 @@ function getSLATagType(ticket: any): string {
   if (diff < 0) return 'danger';
   if (hours <= 2) return 'warning';
   return 'success';
+}
+
+// Bulk Actions
+async function bulkResolveTickets() {
+  if (!selectedRows.value.length) return;
+  try {
+    await ElMessageBox.confirm(
+      `Resolve ${selectedRows.value.length} selected ticket(s)?`,
+      t('common.warning'),
+      { type: 'warning' }
+    );
+    for (const row of selectedRows.value) {
+      await resolveTicket(row.id);
+    }
+    selectedRows.value = [];
+    await Promise.all([loadDashboard(), loadRecentTickets(), loadAgentWorkload()]);
+    ElMessage.success(t('common.success'));
+  } catch {
+    // User cancelled
+  }
+}
+
+async function bulkAutoAssignTickets() {
+  if (!selectedRows.value.length) return;
+  try {
+    await ElMessageBox.confirm(
+      `Auto-assign ${selectedRows.value.length} selected ticket(s)?`,
+      t('common.warning'),
+      { type: 'warning' }
+    );
+    for (const row of selectedRows.value) {
+      await autoAssignTicket(row.id);
+    }
+    selectedRows.value = [];
+    await Promise.all([loadDashboard(), loadRecentTickets(), loadAgentWorkload()]);
+    ElMessage.success(t('common.success'));
+  } catch {
+    // User cancelled
+  }
+}
+
+function exportTicketsCSV() {
+  const data = selectedRows.value.length ? selectedRows.value : recentTickets.value;
+  if (!data.length) return;
+  const headers = ['Ticket #', 'Subject', 'Status', 'Priority', 'Assignee', 'Created'];
+  const csv = [headers.join(','), ...data.map((row: any) =>
+    [
+      `"${row.ticketNumber || ''}"`,
+      `"${(row.subject || '').replace(/"/g, '""')}"`,
+      `"${row.status || ''}"`,
+      `"${row.priority || ''}"`,
+      `"${row.assignee?.name || ''}"`,
+      `"${formatDate(row.createdAt)}"`
+    ].join(',')
+  )].join('\n');
+  const blob = new Blob([csv], { type: 'text/csv' });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url;
+  a.download = `support-tickets-${Date.now()}.csv`;
+  a.click();
+  URL.revokeObjectURL(url);
+  ElMessage.success(t('common.exported'));
 }
 
 onMounted(async () => {

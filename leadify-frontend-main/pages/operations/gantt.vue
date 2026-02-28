@@ -17,6 +17,10 @@
             <Icon name="ph:lightning-bold" class="w-4 h-4 mr-1" />
             {{ $t('gantt.criticalPath') }}
           </el-button>
+          <el-button class="!rounded-xl" @click="exportTasksCSV">
+            <Icon name="ph:download-bold" class="w-4 h-4 mr-1" />
+            {{ $t('common.export') }}
+          </el-button>
           <el-button type="primary" class="!rounded-xl" @click="openAddDialog">
             <Icon name="ph:plus-bold" class="w-4 h-4 mr-2" />
             {{ $t('gantt.addTask') }}
@@ -49,11 +53,33 @@
       </div>
     </div>
 
+    <!-- Bulk Actions Bar -->
+    <div v-if="selectedTaskCount > 0" class="glass-panel p-3 rounded-xl flex items-center gap-3 flex-wrap">
+      <span class="text-sm font-medium" style="color: var(--text-primary)">{{ selectedTaskCount }} {{ $t('common.selected') }}</span>
+      <el-button size="small" type="success" class="!rounded-xl" @click="bulkUpdateStatus('COMPLETED')">
+        <Icon name="ph:check-circle-bold" class="w-3.5 h-3.5 mr-1" />
+        {{ $t('gantt.completed') }}
+      </el-button>
+      <el-button size="small" class="!rounded-xl" @click="bulkUpdateStatus('IN_PROGRESS')">
+        <Icon name="ph:play-bold" class="w-3.5 h-3.5 mr-1" />
+        {{ $t('gantt.inProgress') }}
+      </el-button>
+      <el-button size="small" type="danger" class="!rounded-xl" @click="bulkDeleteTasks">
+        <Icon name="ph:trash-bold" class="w-3.5 h-3.5 mr-1" />
+        {{ $t('common.delete') }}
+      </el-button>
+      <el-button size="small" class="!rounded-xl" @click="exportTasksCSV">
+        <Icon name="ph:download-bold" class="w-3.5 h-3.5 mr-1" />
+        {{ $t('common.export') }}
+      </el-button>
+    </div>
+
     <!-- Gantt Chart -->
     <div v-loading="loading" class="glass-panel rounded-2xl overflow-hidden">
       <!-- Timeline Header -->
       <div class="flex border-b border-slate-800/60">
-        <div class="w-72 flex-shrink-0 p-3 border-r border-slate-800/60">
+        <div class="w-72 flex-shrink-0 p-3 border-r border-slate-800/60 flex items-center gap-2">
+          <el-checkbox v-model="selectAll" @change="toggleSelectAll" size="small" />
           <span class="text-sm font-medium text-slate-300">{{ $t('gantt.taskName') }}</span>
         </div>
         <div ref="timelineHeaderRef" class="flex-1 flex overflow-x-auto relative" @scroll="syncScroll('header', $event)">
@@ -83,6 +109,7 @@
         <!-- Task Info -->
         <div class="w-72 flex-shrink-0 p-3 border-r border-slate-800/60">
           <div class="flex items-center gap-2">
+            <el-checkbox :model-value="selectedTaskIds.has(task.id)" @change="toggleTaskSelection(task.id)" size="small" @click.stop />
             <div
               class="w-2 h-2 rounded-full flex-shrink-0"
               :style="{ backgroundColor: task.color }"
@@ -311,6 +338,30 @@ const saving = ref(false);
 const deleting = ref(false);
 const isEditing = ref(false);
 const editingTask = ref<GanttTask | null>(null);
+
+// Bulk Selection
+const selectedTaskIds = ref<Set<number>>(new Set());
+const selectAll = ref(false);
+
+function toggleTaskSelection(taskId: number) {
+  if (selectedTaskIds.value.has(taskId)) {
+    selectedTaskIds.value.delete(taskId);
+  } else {
+    selectedTaskIds.value.add(taskId);
+  }
+  selectedTaskIds.value = new Set(selectedTaskIds.value); // trigger reactivity
+  selectAll.value = tasks.value.length > 0 && selectedTaskIds.value.size === tasks.value.length;
+}
+
+function toggleSelectAll() {
+  if (selectAll.value) {
+    selectedTaskIds.value = new Set(tasks.value.map(t => t.id));
+  } else {
+    selectedTaskIds.value = new Set();
+  }
+}
+
+const selectedTaskCount = computed(() => selectedTaskIds.value.size);
 const cellWidth = computed(() => (viewMode.value === 'week' ? 80 : viewMode.value === 'month' ? 40 : 20));
 const timelineHeaderRef = ref<HTMLElement>();
 
@@ -819,6 +870,86 @@ const saveTask = async () => {
 // ---------------------------------------------------------------------------
 // Delete task
 // ---------------------------------------------------------------------------
+
+// ---------------------------------------------------------------------------
+// Bulk Actions
+// ---------------------------------------------------------------------------
+
+async function bulkUpdateStatus(newStatus: string) {
+  if (!selectedTaskIds.value.size) return;
+  try {
+    await ElMessageBox.confirm(
+      `Update ${selectedTaskIds.value.size} task(s) to ${newStatus}?`,
+      t('common.warning'),
+      { type: 'warning' }
+    );
+    const progress = newStatus === 'COMPLETED' ? 100 : newStatus === 'IN_PROGRESS' ? 50 : 0;
+    for (const id of selectedTaskIds.value) {
+      const task = tasks.value.find(t => t.id === id);
+      if (task) {
+        const ganttMeta: GanttMeta = { color: task.color, isMilestone: task.isMilestone };
+        await useApiFetch(`tasks/${id}`, 'PUT', {
+          status: newStatus,
+          duration: progress,
+          entityType: 'GANTT',
+          tags: [JSON.stringify(ganttMeta)]
+        });
+        task.progress = progress;
+      }
+    }
+    selectedTaskIds.value = new Set();
+    selectAll.value = false;
+    ElMessage.success(t('common.saved'));
+  } catch {
+    // User cancelled
+  }
+}
+
+async function bulkDeleteTasks() {
+  if (!selectedTaskIds.value.size) return;
+  try {
+    await ElMessageBox.confirm(
+      t('common.confirmBulkDelete', { count: selectedTaskIds.value.size }),
+      t('common.warning'),
+      { type: 'warning' }
+    );
+    for (const id of selectedTaskIds.value) {
+      await useApiFetch(`tasks/${id}`, 'DELETE');
+    }
+    tasks.value = tasks.value.filter(t => !selectedTaskIds.value.has(t.id));
+    selectedTaskIds.value = new Set();
+    selectAll.value = false;
+    ElMessage.success(t('common.deleted'));
+  } catch {
+    // User cancelled
+  }
+}
+
+function exportTasksCSV() {
+  const data = selectedTaskIds.value.size
+    ? tasks.value.filter(t => selectedTaskIds.value.has(t.id))
+    : tasks.value;
+  if (!data.length) return;
+  const headers = ['Task Name', 'Assignee', 'Start Date', 'End Date', 'Progress', 'Milestone'];
+  const csv = [headers.join(','), ...data.map((task: GanttTask) =>
+    [
+      `"${task.name || ''}"`,
+      `"${task.assignee || ''}"`,
+      `"${task.start || ''}"`,
+      `"${task.end || ''}"`,
+      `${task.progress || 0}%`,
+      task.isMilestone ? 'Yes' : 'No'
+    ].join(',')
+  )].join('\n');
+  const blob = new Blob([csv], { type: 'text/csv' });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url;
+  a.download = `gantt-tasks-${Date.now()}.csv`;
+  a.click();
+  URL.revokeObjectURL(url);
+  ElMessage.success(t('common.exported'));
+}
 
 async function confirmDeleteTask(task: GanttTask) {
   try {
