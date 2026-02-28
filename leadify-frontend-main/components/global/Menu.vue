@@ -153,7 +153,8 @@ const menu = [
       { link: '/dashboard/briefing', name: 'navigation.dailyBriefing', icon: 'ph:sun-horizon-bold' },
       { link: '/dashboard/builder', name: 'navigation.dashboardBuilder', icon: 'ph:squares-four-bold' },
       { link: '/dashboards/executive', name: 'navigation.executiveDashboard', icon: 'ph:presentation-chart-bold' },
-      { link: '/views/kanban', name: 'navigation.kanbanBoard', icon: 'ph:kanban-bold' }
+      { link: '/views/kanban', name: 'navigation.kanbanBoard', icon: 'ph:kanban-bold' },
+      { link: '/dashboards/team-performance', name: 'navigation.teamPerformance', icon: 'ph:chart-bar-bold' }
     ]
   },
 
@@ -249,7 +250,8 @@ const menu = [
       { link: '/procurement/purchase-orders', name: 'navigation.purchaseOrders', icon: 'ph:shopping-cart' },
       { link: '/procurement/rfq', name: 'navigation.rfq', icon: 'ph:files' },
       { link: '/procurement/statistics', name: 'navigation.statistics', icon: 'ph:chart-bar' },
-      { link: '/procurement/vendor-scorecard', name: 'navigation.vendorScorecard', icon: 'ph:star-half-bold' }
+      { link: '/procurement/vendor-scorecard', name: 'navigation.vendorScorecard', icon: 'ph:star-half-bold' },
+      { link: '/procurement/purchase-analytics', name: 'navigation.purchaseAnalytics', icon: 'ph:chart-pie-slice-bold' }
     ]
   },
 
@@ -280,7 +282,9 @@ const menu = [
       { link: '/manufacturing', name: 'navigation.manufacturing', icon: 'ph:factory-bold' },
       { link: '/shipping', name: 'navigation.shipping', icon: 'ph:truck-bold' },
       { link: '/catalog', name: 'navigation.catalog', icon: 'ph:storefront-bold' },
-      { link: '/supply-chain/demand-forecasting', name: 'navigation.demandForecasting', icon: 'ph:chart-line-bold' }
+      { link: '/supply-chain/demand-forecasting', name: 'navigation.demandForecasting', icon: 'ph:chart-line-bold' },
+      { link: '/supply-chain/quality-control', name: 'navigation.qualityControl', icon: 'ph:seal-check-bold' },
+      { link: '/supply-chain/shipment-tracker', name: 'navigation.shipmentTracker', icon: 'ph:map-pin-bold' }
     ]
   },
 
@@ -295,7 +299,8 @@ const menu = [
       { link: '/call-log', name: 'navigation.callLog', icon: 'ph:phone-bold' },
       { link: '/meeting-notes', name: 'navigation.meetingNotes', icon: 'ph:note-pencil-bold' },
       { link: '/ai-assistant', name: 'navigation.aiAssistant', icon: 'ph:brain-bold' },
-      { link: '/virtual-office', name: 'navigation.virtualOffice', icon: 'ph:buildings-bold' }
+      { link: '/virtual-office', name: 'navigation.virtualOffice', icon: 'ph:buildings-bold' },
+      { link: '/communications/unified-inbox', name: 'navigation.unifiedInbox', icon: 'ph:tray-bold' }
     ]
   },
 
@@ -332,7 +337,8 @@ const menu = [
       { link: '/archive', name: 'navigation.archive', icon: 'ph:archive-bold' },
       { link: '/automations', name: 'navigation.automations', icon: 'ph:git-merge-bold' },
       { link: '/automations/templates', name: 'navigation.automationTemplates', icon: 'ph:files-bold' },
-      { link: '/automations/monitor', name: 'navigation.workflowMonitor', icon: 'ph:activity-bold' }
+      { link: '/automations/monitor', name: 'navigation.workflowMonitor', icon: 'ph:activity-bold' },
+      { link: '/documents/asset-library', name: 'navigation.assetLibrary', icon: 'ph:image-bold' }
     ]
   },
 
