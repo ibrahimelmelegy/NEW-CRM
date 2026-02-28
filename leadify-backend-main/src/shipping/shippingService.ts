@@ -197,6 +197,77 @@ class ShippingService {
   }
 
   /**
+   * Get all available carrier rates for a specific weight and zone,
+   * grouped by carrier for easy comparison.
+   * Returns carriers sorted by cheapest rate first.
+   */
+  async getCarrierRates(weight: number, zone?: string, tenantId?: string) {
+    if (!weight || weight <= 0) throw new Error('Weight must be a positive number');
+
+    const where: any = {
+      isActive: true,
+      weightMin: { [Op.lte]: weight },
+      weightMax: { [Op.gte]: weight }
+    };
+    if (zone) where.zone = zone;
+    if (tenantId) where.tenantId = tenantId;
+
+    const rates = await ShippingRate.findAll({ where, order: [['rate', 'ASC']] });
+
+    // Group by carrier
+    const byCarrier: Record<string, Array<{ zone: string | undefined; rate: number; currency: string; estimatedDays: number | undefined }>> = {};
+    for (const r of rates) {
+      if (!byCarrier[r.carrier]) byCarrier[r.carrier] = [];
+      byCarrier[r.carrier].push({
+        zone: r.zone,
+        rate: Number(r.rate),
+        currency: r.currency,
+        estimatedDays: r.estimatedDays
+      });
+    }
+
+    // Sort carriers by their cheapest rate
+    const carriers = Object.entries(byCarrier)
+      .map(([carrier, options]) => ({
+        carrier,
+        cheapestRate: Math.min(...options.map(o => o.rate)),
+        options
+      }))
+      .sort((a, b) => a.cheapestRate - b.cheapestRate);
+
+    return {
+      weight,
+      zone: zone || 'ALL',
+      totalOptions: rates.length,
+      carriers
+    };
+  }
+
+  /**
+   * Bulk update shipment statuses. Validates each transition independently.
+   * Returns a list of results with success/failure per shipment.
+   */
+  async bulkUpdateStatus(updates: Array<{ id: number; status: string }>) {
+    const results: Array<{ id: number; success: boolean; error?: string; shipment?: any }> = [];
+
+    for (const update of updates) {
+      try {
+        const shipment = await this.updateShipmentStatus(update.id, update.status);
+        results.push({ id: update.id, success: true, shipment });
+      } catch (err: any) {
+        results.push({ id: update.id, success: false, error: err.message });
+      }
+    }
+
+    const successCount = results.filter(r => r.success).length;
+    const failCount = results.filter(r => !r.success).length;
+
+    try { io.emit('shipping:bulk_status_updated', { successCount, failCount }); } catch {}
+
+    return { total: updates.length, successCount, failCount, results };
+  }
+
+  /**
    * Aggregate shipping analytics for a tenant:
    * total shipments, breakdown by status, on-time rate, average delivery time.
    */

@@ -101,6 +101,23 @@ router.get('/stats', authenticateUser, HasPermission([ProcurementPermissionsEnum
 
 /**
  * @swagger
+ * /api/procurement/vendor-comparison:
+ *   get:
+ *     summary: Get vendor comparison
+ *     description: Compare vendors by PO history, spend, fulfillment rate, and rejection rate
+ *     tags: [Procurement]
+ *     security:
+ *       - bearerAuth: []
+ *     responses:
+ *       200:
+ *         description: Vendor comparison data
+ *       500:
+ *         description: Server error
+ */
+router.get('/vendor-comparison', authenticateUser, HasPermission([ProcurementPermissionsEnum.VIEW_PROCUREMENT]), ProcurementController.getVendorComparison);
+
+/**
+ * @swagger
  * /api/procurement:
  *   get:
  *     summary: List purchase orders
@@ -218,6 +235,48 @@ router.patch('/:id/approve', authenticateUser, HasPermission([ProcurementPermiss
  *         description: Server error
  */
 router.patch('/:id/reject', authenticateUser, HasPermission([ProcurementPermissionsEnum.REJECT_PROCUREMENT]), ProcurementController.rejectPO);
+
+/**
+ * @swagger
+ * /api/procurement/{id}/receive:
+ *   patch:
+ *     summary: Receive a purchase order
+ *     description: Marks an approved PO as received and records item variances
+ *     tags: [Procurement]
+ *     security:
+ *       - bearerAuth: []
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         schema:
+ *           type: string
+ *     requestBody:
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             properties:
+ *               receivedItems:
+ *                 type: array
+ *                 items:
+ *                   type: object
+ *                   properties:
+ *                     itemId:
+ *                       type: integer
+ *                     receivedQuantity:
+ *                       type: integer
+ *     responses:
+ *       200:
+ *         description: Purchase order received
+ *       400:
+ *         description: PO not in correct status
+ *       404:
+ *         description: Purchase order not found
+ *       500:
+ *         description: Server error
+ */
+router.patch('/:id/receive', authenticateUser, HasPermission([ProcurementPermissionsEnum.APPROVE_PROCUREMENT]), ProcurementController.receivePO);
 
 /**
  * @swagger

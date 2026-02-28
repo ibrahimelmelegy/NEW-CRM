@@ -393,6 +393,96 @@ router.get('/sla-breaches', authenticateUser, HasPermission([SupportPermissionsE
  */
 router.post('/tickets/:id/auto-assign', authenticateUser, HasPermission([SupportPermissionsEnum.ASSIGN_TICKETS]), supportController.autoAssignTicket);
 
+/**
+ * @swagger
+ * /api/support/tickets/{id}/escalate:
+ *   patch:
+ *     summary: Escalate a ticket
+ *     description: Bumps priority, optionally reassigns, and adds escalation note
+ *     tags: [Support]
+ *     security:
+ *       - bearerAuth: []
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         schema:
+ *           type: string
+ *           format: uuid
+ *     requestBody:
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             properties:
+ *               assignTo:
+ *                 type: string
+ *                 description: User ID to reassign to
+ *               reason:
+ *                 type: string
+ *                 description: Escalation reason
+ *     responses:
+ *       200:
+ *         description: Ticket escalated
+ *       404:
+ *         description: Ticket not found
+ *       500:
+ *         description: Server error
+ */
+router.patch('/tickets/:id/escalate', authenticateUser, HasPermission([SupportPermissionsEnum.ASSIGN_TICKETS]), supportController.escalateTicket);
+
+/**
+ * @swagger
+ * /api/support/tickets/{id}/reopen:
+ *   patch:
+ *     summary: Reopen a resolved or closed ticket
+ *     tags: [Support]
+ *     security:
+ *       - bearerAuth: []
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         schema:
+ *           type: string
+ *           format: uuid
+ *     requestBody:
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             properties:
+ *               reason:
+ *                 type: string
+ *     responses:
+ *       200:
+ *         description: Ticket reopened
+ *       404:
+ *         description: Ticket not found
+ *       400:
+ *         description: Ticket is not in a reopenable state
+ *       500:
+ *         description: Server error
+ */
+router.patch('/tickets/:id/reopen', authenticateUser, HasPermission([SupportPermissionsEnum.EDIT_TICKETS]), supportController.reopenTicket);
+
+/**
+ * @swagger
+ * /api/support/sla-compliance:
+ *   get:
+ *     summary: Get SLA compliance report
+ *     description: Detailed compliance rates by priority, breached tickets, and at-risk tickets
+ *     tags: [Support]
+ *     security:
+ *       - bearerAuth: []
+ *     responses:
+ *       200:
+ *         description: SLA compliance report
+ *       500:
+ *         description: Server error
+ */
+router.get('/sla-compliance', authenticateUser, HasPermission([SupportPermissionsEnum.VIEW_TICKETS]), supportController.getSLAComplianceReport);
+
 // ─── Canned Responses ─────────────────────────────────────────────────────────
 
 /**

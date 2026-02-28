@@ -247,6 +247,37 @@ class SupportController {
       next(error);
     }
   }
+
+  // ─── Escalation ─────────────────────────────────────────────────────
+  public async escalateTicket(req: AuthenticatedRequest, res: Response, next: NextFunction): Promise<void> {
+    try {
+      const ticket = await supportService.escalateTicket(req.params.id as string, req.body);
+      io.emit('ticket:escalated', { ticketId: ticket.id });
+      wrapResult(res, ticket);
+    } catch (error) {
+      next(error);
+    }
+  }
+
+  // ─── Reopen ─────────────────────────────────────────────────────────
+  public async reopenTicket(req: AuthenticatedRequest, res: Response, next: NextFunction): Promise<void> {
+    try {
+      const ticket = await supportService.reopenTicket(req.params.id as string, req.body?.reason);
+      wrapResult(res, ticket);
+    } catch (error) {
+      next(error);
+    }
+  }
+
+  // ─── SLA Compliance Report ──────────────────────────────────────────
+  public async getSLAComplianceReport(req: AuthenticatedRequest, res: Response, next: NextFunction): Promise<void> {
+    try {
+      const report = await supportService.getSLAComplianceReport();
+      wrapResult(res, report);
+    } catch (error) {
+      next(error);
+    }
+  }
 }
 
 export default new SupportController();

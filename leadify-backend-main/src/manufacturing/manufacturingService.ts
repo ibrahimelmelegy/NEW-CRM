@@ -1,10 +1,11 @@
-import { Op } from 'sequelize';
+import { Op, fn, col, literal } from 'sequelize';
 import { sequelize } from '../config/db';
 import BOM from './bomModel';
 import BOMItem from './bomItemModel';
 import WorkOrder from './workOrderModel';
 import QualityCheck from './qualityCheckModel';
 import { tenantWhere, tenantCreate } from '../utils/tenantScope';
+import { io } from '../server';
 
 class ManufacturingService {
   // ─── BOM ───────────────────────────────────────────────────────────
@@ -252,6 +253,180 @@ class ManufacturingService {
         user
       )
     );
+  }
+
+  // ─── Delete Work Order ──────────────────────────────────────────────
+
+  async deleteWorkOrder(id: number, user: any) {
+    const wo = await WorkOrder.findOne({ where: { id, ...tenantWhere(user) } });
+    if (!wo) throw new Error('Work order not found');
+    if (wo.status === 'IN_PROGRESS') {
+      throw new Error('Cannot delete an in-progress work order. Cancel it first.');
+    }
+    await wo.destroy();
+    try { io.emit('manufacturing:work_order_deleted', { id, woNumber: wo.woNumber }); } catch {}
+    return { deleted: true };
+  }
+
+  // ─── Track Production ──────────────────────────────────────────────
+
+  /**
+   * Record a production run against a work order.
+   * Adds the produced quantity, validates it does not exceed planned,
+   * automatically transitions status, and logs a quality check if defects are reported.
+   */
+  async trackProduction(id: number, data: { produced: number; defects?: number; inspector?: string; notes?: string }, user: any) {
+    const wo = await WorkOrder.findOne({ where: { id, ...tenantWhere(user) } });
+    if (!wo) throw new Error('Work order not found');
+    if (wo.status === 'COMPLETED') throw new Error('Work order is already completed');
+    if (wo.status === 'CANCELLED') throw new Error('Cannot track production on a cancelled work order');
+
+    const increment = Math.max(0, data.produced);
+    const newProduced = Math.min(wo.produced + increment, wo.planned);
+    const status = newProduced >= wo.planned ? 'COMPLETED' : 'IN_PROGRESS';
+
+    await wo.update({ produced: newProduced, status });
+
+    // If defects are reported, create a quality check record automatically
+    let qualityCheck = null;
+    if (data.defects !== undefined && data.defects > 0) {
+      const passed = increment - Math.min(data.defects, increment);
+      const passRate = increment > 0 ? passed / increment : 0;
+      qualityCheck = await QualityCheck.create(
+        tenantCreate({
+          workOrderId: id,
+          woNumber: wo.woNumber,
+          product: wo.productName,
+          inspector: data.inspector || null,
+          inspected: increment,
+          passed,
+          defects: Math.min(data.defects, increment),
+          result: passRate >= 0.95 ? 'PASS' : 'FAIL'
+        }, user)
+      );
+    }
+
+    try {
+      io.emit('manufacturing:production_tracked', {
+        workOrderId: id,
+        woNumber: wo.woNumber,
+        produced: newProduced,
+        planned: wo.planned,
+        status,
+        percentComplete: wo.planned > 0 ? Math.round((newProduced / wo.planned) * 100) : 0
+      });
+    } catch {}
+
+    return { workOrder: wo, qualityCheck, percentComplete: wo.planned > 0 ? Math.round((newProduced / wo.planned) * 100) : 0 };
+  }
+
+  // ─── Production Metrics ────────────────────────────────────────────
+
+  /**
+   * Return detailed production metrics for the tenant:
+   * overall efficiency, throughput by status, quality pass rate,
+   * overdue work orders, and top products by volume.
+   */
+  async getProductionMetrics(user: any) {
+    const where = tenantWhere(user);
+
+    // Work order counts by status
+    const statuses = ['PLANNED', 'IN_PROGRESS', 'COMPLETED', 'ON_HOLD', 'CANCELLED'];
+    const statusCounts: Record<string, number> = {};
+    for (const s of statuses) {
+      statusCounts[s] = await WorkOrder.count({ where: { ...where, status: s } });
+    }
+
+    // Total planned vs produced across all non-cancelled work orders
+    const activeWhere = { ...where, status: { [Op.notIn]: ['CANCELLED'] } };
+    const totalPlanned = (await WorkOrder.sum('planned', { where: activeWhere })) || 0;
+    const totalProduced = (await WorkOrder.sum('produced', { where: activeWhere })) || 0;
+    const overallEfficiency = totalPlanned > 0 ? Math.round((totalProduced / totalPlanned) * 100) : 0;
+
+    // Quality metrics
+    const totalInspected = (await QualityCheck.sum('inspected', { where })) || 0;
+    const totalPassed = (await QualityCheck.sum('passed', { where })) || 0;
+    const totalDefects = (await QualityCheck.sum('defects', { where })) || 0;
+    const qualityPassRate = totalInspected > 0 ? Math.round((totalPassed / totalInspected) * 100) : 100;
+
+    // Overdue work orders (past dueDate, not completed/cancelled)
+    const today = new Date().toISOString().slice(0, 10);
+    const overdueCount = await WorkOrder.count({
+      where: {
+        ...where,
+        dueDate: { [Op.lt]: today },
+        status: { [Op.notIn]: ['COMPLETED', 'CANCELLED'] }
+      }
+    });
+
+    // Top 5 products by total produced quantity
+    const topProducts = await WorkOrder.findAll({
+      where: activeWhere,
+      attributes: ['productName', [fn('SUM', col('produced')), 'totalProduced'], [fn('SUM', col('planned')), 'totalPlanned']],
+      group: ['productName'],
+      order: [[literal('"totalProduced"'), 'DESC']],
+      limit: 5,
+      raw: true
+    }) as unknown as Array<{ productName: string; totalProduced: string; totalPlanned: string }>;
+
+    return {
+      statusCounts,
+      totalPlanned,
+      totalProduced,
+      overallEfficiency,
+      quality: { totalInspected, totalPassed, totalDefects, passRate: qualityPassRate },
+      overdueCount,
+      topProducts: topProducts.map(p => ({
+        productName: p.productName,
+        totalProduced: Number(p.totalProduced),
+        totalPlanned: Number(p.totalPlanned),
+        efficiency: Number(p.totalPlanned) > 0 ? Math.round((Number(p.totalProduced) / Number(p.totalPlanned)) * 100) : 0
+      }))
+    };
+  }
+
+  // ─── Get BOM Cost Breakdown ────────────────────────────────────────
+
+  /**
+   * Return a detailed cost breakdown for a BOM, including per-item
+   * line cost, percentage of total, and material type summary.
+   */
+  async getBOMCostBreakdown(id: number, user: any) {
+    const bom = await this.getBOMById(id, user);
+    const items = bom.items || [];
+
+    const totalCost = Number(bom.totalCost) || 0;
+    const breakdown = items.map((item: any) => {
+      const lineCost = Number(item.quantity) * Number(item.unitCost);
+      return {
+        name: item.name,
+        type: item.type,
+        quantity: Number(item.quantity),
+        unit: item.unit,
+        unitCost: Number(item.unitCost),
+        lineCost,
+        percentOfTotal: totalCost > 0 ? Math.round((lineCost / totalCost) * 10000) / 100 : 0
+      };
+    });
+
+    // Group by material type
+    const byType: Record<string, { count: number; totalCost: number }> = {};
+    for (const item of breakdown) {
+      if (!byType[item.type]) byType[item.type] = { count: 0, totalCost: 0 };
+      byType[item.type].count++;
+      byType[item.type].totalCost += item.lineCost;
+    }
+
+    return {
+      bomId: bom.id,
+      productName: bom.productName,
+      code: bom.code,
+      version: bom.version,
+      totalCost,
+      itemCount: items.length,
+      breakdown,
+      byType
+    };
   }
 
   // ─── Stats ────────────────────────────────────────────────────────

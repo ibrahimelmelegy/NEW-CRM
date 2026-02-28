@@ -104,6 +104,42 @@ class ManufacturingController {
     }
   }
 
+  async deleteWorkOrder(req: Request, res: Response, next: NextFunction) {
+    try {
+      const result = await manufacturingService.deleteWorkOrder(Number(req.params.id), (req as any).user);
+      return wrapResult(res, result);
+    } catch (error) {
+      next(error);
+    }
+  }
+
+  async trackProduction(req: Request, res: Response, next: NextFunction) {
+    try {
+      const result = await manufacturingService.trackProduction(Number(req.params.id), req.body, (req as any).user);
+      return wrapResult(res, result);
+    } catch (error) {
+      next(error);
+    }
+  }
+
+  async getProductionMetrics(req: Request, res: Response, next: NextFunction) {
+    try {
+      const result = await manufacturingService.getProductionMetrics((req as any).user);
+      return wrapResult(res, result);
+    } catch (error) {
+      next(error);
+    }
+  }
+
+  async getBOMCostBreakdown(req: Request, res: Response, next: NextFunction) {
+    try {
+      const result = await manufacturingService.getBOMCostBreakdown(Number(req.params.id), (req as any).user);
+      return wrapResult(res, result);
+    } catch (error) {
+      next(error);
+    }
+  }
+
   // Quality Checks
   async getQualityChecks(req: Request, res: Response, next: NextFunction) {
     try {

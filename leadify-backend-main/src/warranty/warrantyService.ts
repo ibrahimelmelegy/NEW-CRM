@@ -71,6 +71,70 @@ class WarrantyService {
   // ─── Business Logic ──────────────────────────────────────────────────────────
 
   /**
+   * Extend a warranty's end date by a given number of days.
+   * Optionally upgrades the warranty type to EXTENDED.
+   * Only ACTIVE warranties can be extended.
+   */
+  async extendWarranty(id: number, data: { extensionDays: number; reason?: string; upgradeType?: boolean }) {
+    const warranty = await Warranty.findByPk(id);
+    if (!warranty) throw new Error('Warranty not found');
+    if (warranty.status !== 'ACTIVE') {
+      throw new Error(`Cannot extend warranty with status "${warranty.status}". Only ACTIVE warranties can be extended.`);
+    }
+    if (!data.extensionDays || data.extensionDays <= 0) {
+      throw new Error('extensionDays must be a positive number');
+    }
+
+    const currentEnd = new Date(warranty.endDate);
+    currentEnd.setDate(currentEnd.getDate() + data.extensionDays);
+    const newEndDate = currentEnd.toISOString().slice(0, 10);
+
+    const updateData: any = { endDate: newEndDate };
+    if (data.upgradeType) {
+      updateData.type = 'EXTENDED';
+    }
+    if (data.reason) {
+      updateData.terms = warranty.terms
+        ? `${warranty.terms}\n[Extension ${new Date().toISOString().slice(0, 10)}]: ${data.reason}`
+        : `[Extension ${new Date().toISOString().slice(0, 10)}]: ${data.reason}`;
+    }
+
+    await warranty.update(updateData);
+    try {
+      io.emit('warranty:extended', {
+        id: warranty.id,
+        productName: warranty.productName,
+        previousEndDate: warranty.endDate,
+        newEndDate,
+        extensionDays: data.extensionDays
+      });
+    } catch {}
+
+    return warranty;
+  }
+
+  /**
+   * Bulk-expire warranties whose endDate has passed.
+   * Returns the count of warranties moved from ACTIVE to EXPIRED.
+   */
+  async expireOverdueWarranties(tenantId?: string) {
+    const today = new Date().toISOString().slice(0, 10);
+    const where: any = { status: 'ACTIVE', endDate: { [Op.lt]: today } };
+    if (tenantId) where.tenantId = tenantId;
+
+    const [affectedCount] = await Warranty.update(
+      { status: 'EXPIRED' },
+      { where }
+    );
+
+    if (affectedCount > 0) {
+      try { io.emit('warranty:bulk_expired', { tenantId, count: affectedCount }); } catch {}
+    }
+
+    return { expiredCount: affectedCount };
+  }
+
+  /**
    * Check whether a warranty covers a claim on a given date.
    * Returns coverage status, days remaining, and the coverage type.
    */

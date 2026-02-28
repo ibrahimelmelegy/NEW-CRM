@@ -61,5 +61,23 @@ class ShippingController {
       wrapResult(res, await service.getShippingAnalytics(tenantId));
     } catch (e) { next(e); }
   }
+
+  async getCarrierRates(req: AuthenticatedRequest, res: Response, next: NextFunction) {
+    try {
+      const { weight, zone } = req.query as any;
+      if (!weight) return res.status(400).send({ success: false, message: 'weight query param is required' });
+      wrapResult(res, await service.getCarrierRates(Number(weight), zone, (req.user as any)?.tenantId));
+    } catch (e) { next(e); }
+  }
+
+  async bulkUpdateStatus(req: AuthenticatedRequest, res: Response, next: NextFunction) {
+    try {
+      const { updates } = req.body;
+      if (!updates || !Array.isArray(updates) || updates.length === 0) {
+        return res.status(400).send({ success: false, message: 'updates array is required' });
+      }
+      wrapResult(res, await service.bulkUpdateStatus(updates));
+    } catch (e) { next(e); }
+  }
 }
 export default new ShippingController();

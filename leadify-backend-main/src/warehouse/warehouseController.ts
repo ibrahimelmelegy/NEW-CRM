@@ -65,6 +65,22 @@ class WarehouseController {
     } catch (e) { next(e); }
   }
 
+  async pickAndPack(req: AuthenticatedRequest, res: Response, next: NextFunction) {
+    try {
+      const warehouseId = Number(req.params.id);
+      const { items, orderId } = req.body;
+      if (!items || !Array.isArray(items) || items.length === 0) {
+        return res.status(400).send({ success: false, message: 'items array is required and must not be empty' });
+      }
+      wrapResult(res, await service.pickAndPack(warehouseId, items, orderId));
+    } catch (e: any) {
+      if (e.shortages) {
+        return res.status(400).send({ success: false, message: e.message, shortages: e.shortages });
+      }
+      next(e);
+    }
+  }
+
   async getInventoryMovement(req: AuthenticatedRequest, res: Response, next: NextFunction) {
     try {
       const warehouseId = Number(req.params.id);

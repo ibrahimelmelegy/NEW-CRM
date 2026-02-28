@@ -12,6 +12,8 @@ router.post('/', authenticateUser, HasPermission([WarrantyPermissionsEnum.CREATE
 router.put('/:id', authenticateUser, HasPermission([WarrantyPermissionsEnum.EDIT_WARRANTIES]), c.updateWarranty);
 router.delete('/:id', authenticateUser, HasPermission([WarrantyPermissionsEnum.DELETE_WARRANTIES]), c.deleteWarranty);
 router.get('/:id/coverage', authenticateUser, HasPermission([WarrantyPermissionsEnum.VIEW_WARRANTIES]), c.checkCoverage);
+router.post('/:id/extend', authenticateUser, HasPermission([WarrantyPermissionsEnum.EDIT_WARRANTIES]), c.extendWarranty);
+router.post('/expire-overdue', authenticateUser, HasPermission([WarrantyPermissionsEnum.EDIT_WARRANTIES]), c.expireOverdue);
 router.get('/claims', authenticateUser, HasPermission([WarrantyPermissionsEnum.MANAGE_CLAIMS]), c.getClaims);
 router.post('/claims', authenticateUser, HasPermission([WarrantyPermissionsEnum.MANAGE_CLAIMS]), c.createClaim);
 router.post('/claims/validated', authenticateUser, HasPermission([WarrantyPermissionsEnum.MANAGE_CLAIMS]), c.createClaimWithValidation);

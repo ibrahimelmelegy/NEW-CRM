@@ -3,7 +3,8 @@ import Ticket from './ticketModel';
 
 export enum SenderType {
   AGENT = 'AGENT',
-  CUSTOMER = 'CUSTOMER'
+  CUSTOMER = 'CUSTOMER',
+  SYSTEM = 'SYSTEM'
 }
 
 @Table({
@@ -19,8 +20,8 @@ class TicketMessage extends Model {
   @Column({ type: DataType.UUID, allowNull: false })
   public ticketId!: string;
 
-  @Column({ type: DataType.UUID, allowNull: false })
-  public senderId!: string;
+  @Column({ type: DataType.UUID, allowNull: true })
+  public senderId?: string;
 
   @Default(SenderType.AGENT)
   @Column({ type: DataType.STRING, allowNull: false })

@@ -10,6 +10,7 @@ import { IPaginationRes } from '../types';
 import BaseError from '../utils/error/base-http-exception';
 import { ERRORS } from '../utils/error/errors';
 import { clampPagination } from '../utils/pagination';
+import { io } from '../server';
 
 class SupportService {
   // ─── Ticket Number Generation ─────────────────────────────────────────
@@ -203,6 +204,197 @@ class SupportService {
     }
 
     return ticket;
+  }
+
+  // ─── Escalation ──────────────────────────────────────────────────────
+  /**
+   * Escalate a ticket: bumps priority to the next level (MEDIUM->HIGH->URGENT),
+   * optionally reassigns to a senior agent, and adds an internal escalation note.
+   */
+  public async escalateTicket(ticketId: string, data?: { assignTo?: string; reason?: string }): Promise<Ticket> {
+    const ticket = await Ticket.findByPk(ticketId);
+    if (!ticket) throw new BaseError(ERRORS.NOT_FOUND);
+
+    if (ticket.status === TicketStatus.RESOLVED || ticket.status === TicketStatus.CLOSED) {
+      throw new BaseError(400, 400, 'Cannot escalate a resolved or closed ticket');
+    }
+
+    // Bump priority
+    const priorityLadder = [TicketPriority.LOW, TicketPriority.MEDIUM, TicketPriority.HIGH, TicketPriority.URGENT];
+    const currentIndex = priorityLadder.indexOf(ticket.priority as TicketPriority);
+    const newPriority = currentIndex < priorityLadder.length - 1
+      ? priorityLadder[currentIndex + 1]
+      : TicketPriority.URGENT;
+
+    const updateData: any = { priority: newPriority };
+
+    // Recalculate SLA deadline based on new priority
+    const newSlaDeadline = await this.calculateSLADeadline(newPriority);
+    if (newSlaDeadline) {
+      updateData.slaDeadline = newSlaDeadline;
+    }
+
+    // Reassign if specified
+    if (data?.assignTo) {
+      const user = await User.findByPk(data.assignTo);
+      if (!user) throw new BaseError(ERRORS.USER_NOT_FOUND);
+      updateData.assignedTo = data.assignTo;
+    }
+
+    await ticket.update(updateData);
+
+    // Add an internal escalation note
+    const reason = data?.reason || 'Ticket escalated';
+    await TicketMessage.create({
+      ticketId,
+      senderId: null,
+      senderType: 'SYSTEM',
+      body: `[ESCALATION] Priority changed to ${newPriority}. Reason: ${reason}`,
+      isInternal: true
+    });
+
+    try {
+      io.emit('ticket:escalated', {
+        ticketId: ticket.id,
+        ticketNumber: ticket.ticketNumber,
+        previousPriority: priorityLadder[currentIndex],
+        newPriority,
+        assignedTo: updateData.assignedTo || ticket.assignedTo
+      });
+    } catch {}
+
+    return this.getTicketById(ticketId);
+  }
+
+  // ─── Reopen ─────────────────────────────────────────────────────────
+  /**
+   * Reopen a resolved or closed ticket. Resets resolvedAt and moves
+   * status back to IN_PROGRESS.
+   */
+  public async reopenTicket(ticketId: string, reason?: string): Promise<Ticket> {
+    const ticket = await Ticket.findByPk(ticketId);
+    if (!ticket) throw new BaseError(ERRORS.NOT_FOUND);
+
+    if (ticket.status !== TicketStatus.RESOLVED && ticket.status !== TicketStatus.CLOSED) {
+      throw new BaseError(400, 400, `Cannot reopen ticket with status "${ticket.status}". Only RESOLVED or CLOSED tickets can be reopened.`);
+    }
+
+    await ticket.update({
+      status: TicketStatus.IN_PROGRESS,
+      resolvedAt: null
+    });
+
+    // Add an internal note documenting the reopen
+    await TicketMessage.create({
+      ticketId,
+      senderId: null,
+      senderType: 'SYSTEM',
+      body: `[REOPENED] ${reason || 'Ticket reopened by agent'}`,
+      isInternal: true
+    });
+
+    try { io.emit('ticket:reopened', { ticketId: ticket.id, ticketNumber: ticket.ticketNumber }); } catch {}
+    return this.getTicketById(ticketId);
+  }
+
+  // ─── SLA Compliance Report ──────────────────────────────────────────
+  /**
+   * Generate a detailed SLA compliance report.
+   * Returns compliance rates by priority, breach trends, and at-risk tickets.
+   */
+  public async getSLAComplianceReport(): Promise<any> {
+    // Per-priority compliance
+    const priorities = Object.values(TicketPriority);
+    const complianceByPriority: Record<string, { total: number; compliant: number; breached: number; rate: number }> = {};
+
+    for (const priority of priorities) {
+      const ticketsWithSLA = await Ticket.findAll({
+        where: {
+          priority,
+          slaDeadline: { [Op.ne]: null },
+          resolvedAt: { [Op.ne]: null }
+        },
+        attributes: ['slaDeadline', 'resolvedAt']
+      });
+
+      const total = ticketsWithSLA.length;
+      const compliant = ticketsWithSLA.filter(t => new Date(t.resolvedAt!) <= new Date(t.slaDeadline!)).length;
+      const breached = total - compliant;
+
+      complianceByPriority[priority] = {
+        total,
+        compliant,
+        breached,
+        rate: total > 0 ? Math.round((compliant / total) * 10000) / 100 : 100
+      };
+    }
+
+    // Currently breached (open tickets past SLA deadline)
+    const currentlyBreached = await Ticket.findAll({
+      where: {
+        slaDeadline: { [Op.lt]: new Date() },
+        resolvedAt: { [Op.eq]: null },
+        status: { [Op.notIn]: [TicketStatus.RESOLVED, TicketStatus.CLOSED] }
+      },
+      include: [
+        { model: User, as: 'assignee', attributes: ['id', 'name', 'email'] },
+        { model: Client, as: 'client', attributes: ['id', 'clientName'] }
+      ],
+      order: [['slaDeadline', 'ASC']]
+    });
+
+    // At-risk (within 4 hours of breach)
+    const atRiskThreshold = new Date(Date.now() + 4 * 60 * 60 * 1000);
+    const atRisk = await Ticket.findAll({
+      where: {
+        slaDeadline: { [Op.between]: [new Date(), atRiskThreshold] },
+        resolvedAt: { [Op.eq]: null },
+        status: { [Op.notIn]: [TicketStatus.RESOLVED, TicketStatus.CLOSED] }
+      },
+      include: [
+        { model: User, as: 'assignee', attributes: ['id', 'name', 'email'] }
+      ],
+      order: [['slaDeadline', 'ASC']]
+    });
+
+    // Overall compliance
+    const allWithSLA = await Ticket.findAll({
+      where: { slaDeadline: { [Op.ne]: null }, resolvedAt: { [Op.ne]: null } },
+      attributes: ['slaDeadline', 'resolvedAt']
+    });
+    const overallTotal = allWithSLA.length;
+    const overallCompliant = allWithSLA.filter(t => new Date(t.resolvedAt!) <= new Date(t.slaDeadline!)).length;
+
+    return {
+      overall: {
+        total: overallTotal,
+        compliant: overallCompliant,
+        breached: overallTotal - overallCompliant,
+        complianceRate: overallTotal > 0 ? Math.round((overallCompliant / overallTotal) * 10000) / 100 : 100
+      },
+      byPriority: complianceByPriority,
+      currentlyBreached: currentlyBreached.map(t => ({
+        id: t.id,
+        ticketNumber: t.ticketNumber,
+        subject: t.subject,
+        priority: t.priority,
+        slaDeadline: t.slaDeadline,
+        breachedByHours: Math.round((Date.now() - new Date(t.slaDeadline!).getTime()) / (1000 * 60 * 60) * 10) / 10,
+        assignee: t.assignee,
+        client: t.client
+      })),
+      atRisk: atRisk.map(t => ({
+        id: t.id,
+        ticketNumber: t.ticketNumber,
+        subject: t.subject,
+        priority: t.priority,
+        slaDeadline: t.slaDeadline,
+        hoursRemaining: Math.round((new Date(t.slaDeadline!).getTime() - Date.now()) / (1000 * 60 * 60) * 10) / 10,
+        assignee: t.assignee
+      })),
+      breachedCount: currentlyBreached.length,
+      atRiskCount: atRisk.length
+    };
   }
 
   // ─── Resolve & Close ──────────────────────────────────────────────────

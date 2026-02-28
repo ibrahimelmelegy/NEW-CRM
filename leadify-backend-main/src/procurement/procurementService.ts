@@ -176,6 +176,106 @@ class ProcurementService {
       recentTransactions
     };
   }
+  /**
+   * Receive a purchase order: validates it is in APPROVED status,
+   * then transitions to "Received" (Archived) status. Records the receipt
+   * and computes any variance between ordered and received quantities.
+   */
+  async receivePurchaseOrder(id: string, receivedItems: Array<{ itemId: number; receivedQuantity: number }>, user: User): Promise<PurchaseOrder> {
+    const po = await this.poOrError({ id });
+
+    if (po.status !== POStatusEnum.APPROVED) {
+      throw new BaseError(400, 400, `Cannot receive a PO with status "${po.status}". Only Approved POs can be received.`);
+    }
+
+    const transaction = await sequelize.transaction();
+    try {
+      // If received items are provided, compute variance per line item
+      const variances: Array<{ itemId: number; ordered: number; received: number; variance: number }> = [];
+      if (receivedItems && receivedItems.length > 0) {
+        for (const ri of receivedItems) {
+          const poItem = po.items?.find((item: any) => item.id === ri.itemId);
+          if (poItem) {
+            const variance = ri.receivedQuantity - poItem.quantity;
+            variances.push({
+              itemId: ri.itemId,
+              ordered: poItem.quantity,
+              received: ri.receivedQuantity,
+              variance
+            });
+          }
+        }
+      }
+
+      po.status = POStatusEnum.ARCHIVED;
+      await po.save({ transaction });
+
+      await transaction.commit();
+
+      await createActivityLog(
+        'purchaseOrder', 'update', po.id, user.id, null,
+        `PO ${po.poNumber} received. ${variances.length} items checked.`
+      );
+
+      return Object.assign(po, { variances });
+    } catch (error) {
+      await transaction.rollback();
+      throw error;
+    }
+  }
+
+  /**
+   * Compare vendors based on their PO history:
+   * total POs, total spend, average order value, on-time delivery count,
+   * rejection rate. Returns vendors sorted by total spend descending.
+   */
+  async getVendorComparison(): Promise<any> {
+    const vendors = await Vendor.findAll({ attributes: ['id', 'name'] });
+
+    const comparison = await Promise.all(
+      vendors.map(async (vendor: any) => {
+        const allPOs = await PurchaseOrder.findAll({
+          where: { vendorId: vendor.id }
+        });
+
+        const totalPOs = allPOs.length;
+        if (totalPOs === 0) return null;
+
+        const totalSpend = allPOs.reduce((sum: number, po: any) => sum + Number(po.totalAmount || 0), 0);
+        const avgOrderValue = totalPOs > 0 ? Math.round((totalSpend / totalPOs) * 100) / 100 : 0;
+
+        const approvedCount = allPOs.filter((po: any) => po.status === POStatusEnum.APPROVED || po.status === POStatusEnum.ARCHIVED).length;
+        const rejectedCount = allPOs.filter((po: any) => po.status === POStatusEnum.REJECTED).length;
+        const pendingCount = allPOs.filter((po: any) => po.status === POStatusEnum.PENDING).length;
+        const rejectionRate = totalPOs > 0 ? Math.round((rejectedCount / totalPOs) * 10000) / 100 : 0;
+
+        // On-time: POs that were archived (received) before or on dueDate
+        const onTimeCount = allPOs.filter((po: any) => {
+          if (po.status !== POStatusEnum.ARCHIVED || !po.dueDate) return false;
+          return new Date(po.updatedAt) <= new Date(po.dueDate);
+        }).length;
+
+        return {
+          vendorId: vendor.id,
+          vendorName: vendor.name,
+          totalPOs,
+          totalSpend,
+          avgOrderValue,
+          approvedCount,
+          rejectedCount,
+          pendingCount,
+          rejectionRate,
+          onTimeCount,
+          fulfillmentRate: totalPOs > 0 ? Math.round((approvedCount / totalPOs) * 10000) / 100 : 0
+        };
+      })
+    );
+
+    return comparison
+      .filter(Boolean)
+      .sort((a: any, b: any) => b.totalSpend - a.totalSpend);
+  }
+
   async removePurchaseOrder(id: string, user: User): Promise<void> {
     const transaction = await sequelize.transaction();
     try {

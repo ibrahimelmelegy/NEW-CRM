@@ -290,6 +290,65 @@ class WarehouseService {
   }
 
   /**
+   * Pick & pack operation: validates stock availability, creates outbound transfer records
+   * for each item, decrements stock, and returns a packing slip summary.
+   * items: Array<{ productName, quantity }>
+   * orderId is an optional reference to a sales order or shipment.
+   */
+  async pickAndPack(warehouseId: number, items: Array<{ productName: string; quantity: number }>, orderId?: string) {
+    const warehouse = await Warehouse.findByPk(warehouseId);
+    if (!warehouse) throw new Error('Warehouse not found');
+
+    const ledger = await this.buildStockLedger(warehouseId);
+
+    // Validate stock for all items before committing
+    const shortages: Array<{ productName: string; requested: number; available: number }> = [];
+    for (const item of items) {
+      const available = ledger.get(item.productName) || 0;
+      if (available < item.quantity) {
+        shortages.push({ productName: item.productName, requested: item.quantity, available });
+      }
+    }
+    if (shortages.length > 0) {
+      throw Object.assign(new Error('Insufficient stock for pick & pack'), { shortages });
+    }
+
+    // Create an outbound adjustment transfer to record the pick
+    const transferNumber = `PICK-${Date.now().toString(36).toUpperCase()}`;
+    const transfer = await StockTransfer.create({
+      transferNumber,
+      fromWarehouseId: warehouseId,
+      toWarehouseId: 0, // outbound fulfillment
+      items: items.map(i => ({ productId: 0, productName: i.productName, quantity: i.quantity })),
+      status: 'RECEIVED',
+      shippedDate: new Date().toISOString().slice(0, 10),
+      receivedDate: new Date().toISOString().slice(0, 10),
+      notes: orderId ? `Pick & Pack for order ${orderId}` : 'Pick & Pack fulfillment',
+      tenantId: warehouse.tenantId
+    });
+
+    // Update warehouse occupancy
+    const updatedLedger = await this.buildStockLedger(warehouseId);
+    let totalQty = 0;
+    for (const qty of updatedLedger.values()) totalQty += Math.max(qty, 0);
+    await warehouse.update({ currentOccupancy: totalQty });
+
+    const packingSlip = {
+      transferNumber,
+      warehouseId,
+      warehouseName: warehouse.name,
+      orderId: orderId || null,
+      items: items.map(i => ({ productName: i.productName, quantity: i.quantity })),
+      totalItems: items.length,
+      totalQuantity: items.reduce((sum, i) => sum + i.quantity, 0),
+      packedAt: new Date().toISOString()
+    };
+
+    try { io.emit('warehouse:pick_pack_completed', packingSlip); } catch {}
+    return packingSlip;
+  }
+
+  /**
    * Return inbound and outbound transfer movements for a warehouse within a date range.
    */
   async getInventoryMovement(warehouseId: number, dateFrom: string, dateTo: string) {

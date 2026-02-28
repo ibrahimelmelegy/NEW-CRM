@@ -61,5 +61,23 @@ class WarrantyController {
       wrapResult(res, await service.getWarrantyAnalytics(tenantId));
     } catch (e) { next(e); }
   }
+
+  async extendWarranty(req: AuthenticatedRequest, res: Response, next: NextFunction) {
+    try {
+      const id = Number(req.params.id);
+      const { extensionDays, reason, upgradeType } = req.body;
+      if (!extensionDays || extensionDays <= 0) {
+        return res.status(400).send({ success: false, message: 'extensionDays must be a positive number' });
+      }
+      wrapResult(res, await service.extendWarranty(id, { extensionDays, reason, upgradeType }));
+    } catch (e) { next(e); }
+  }
+
+  async expireOverdue(req: AuthenticatedRequest, res: Response, next: NextFunction) {
+    try {
+      const tenantId = (req.user as any)?.tenantId;
+      wrapResult(res, await service.expireOverdueWarranties(tenantId));
+    } catch (e) { next(e); }
+  }
 }
 export default new WarrantyController();

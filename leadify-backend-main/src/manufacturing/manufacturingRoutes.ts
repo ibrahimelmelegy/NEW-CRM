@@ -21,6 +21,14 @@ router.get('/work-orders/:id', HasPermission([ManufacturingPermissionsEnum.VIEW_
 router.post('/work-orders', HasPermission([ManufacturingPermissionsEnum.CREATE_MANUFACTURING]), manufacturingController.createWorkOrder);
 router.patch('/work-orders/:id', HasPermission([ManufacturingPermissionsEnum.EDIT_MANUFACTURING]), manufacturingController.updateWorkOrder);
 router.patch('/work-orders/:id/production', HasPermission([ManufacturingPermissionsEnum.EDIT_MANUFACTURING]), manufacturingController.updateProduction);
+router.post('/work-orders/:id/track', HasPermission([ManufacturingPermissionsEnum.EDIT_MANUFACTURING]), manufacturingController.trackProduction);
+router.delete('/work-orders/:id', HasPermission([ManufacturingPermissionsEnum.DELETE_MANUFACTURING]), manufacturingController.deleteWorkOrder);
+
+// Production Metrics
+router.get('/production-metrics', HasPermission([ManufacturingPermissionsEnum.VIEW_MANUFACTURING]), manufacturingController.getProductionMetrics);
+
+// BOM Cost Breakdown
+router.get('/bom/:id/cost-breakdown', HasPermission([ManufacturingPermissionsEnum.VIEW_MANUFACTURING]), manufacturingController.getBOMCostBreakdown);
 
 // Quality Checks
 router.get('/quality', HasPermission([ManufacturingPermissionsEnum.VIEW_MANUFACTURING]), manufacturingController.getQualityChecks);

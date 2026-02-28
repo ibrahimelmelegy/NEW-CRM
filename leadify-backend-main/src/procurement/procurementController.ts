@@ -64,6 +64,29 @@ class ProcurementController {
       next(error);
     }
   }
+  public async receivePO(req: AuthenticatedRequest, res: Response, next: NextFunction): Promise<void> {
+    try {
+      const { receivedItems } = req.body;
+      const po = await ProcurementService.receivePurchaseOrder(
+        req.params.id as string,
+        receivedItems || [],
+        req.user as User
+      );
+      wrapResult(res, po);
+    } catch (error) {
+      next(error);
+    }
+  }
+
+  public async getVendorComparison(req: AuthenticatedRequest, res: Response, next: NextFunction): Promise<void> {
+    try {
+      const comparison = await ProcurementService.getVendorComparison();
+      wrapResult(res, comparison);
+    } catch (error) {
+      next(error);
+    }
+  }
+
   public async deletePurchaseOrder(req: AuthenticatedRequest, res: Response, next: NextFunction): Promise<void> {
     try {
       await ProcurementService.removePurchaseOrder(req.params.id as string, req.user as User);
