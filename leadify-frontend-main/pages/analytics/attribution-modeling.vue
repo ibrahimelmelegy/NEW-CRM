@@ -314,7 +314,8 @@
 </template>
 
 <script setup lang="ts">
-import { ref, computed } from 'vue';
+import { ref, computed, onMounted } from 'vue';
+import { useApiFetch } from '~/composables/useApiFetch';
 
 definePageMeta({ title: 'Attribution Modeling' });
 
@@ -326,6 +327,7 @@ const dateRange = ref<[Date, Date] | null>(null);
 const activeTab = ref('channels');
 const showCampaignDetail = ref(false);
 const selectedCampaign = ref<any>(null);
+const loading = ref(false);
 
 // ─── Attribution Models ─────────────────────────────────────
 const attributionModels = computed(() => [
@@ -362,7 +364,7 @@ const modelWeights: Record<string, Record<string, number>> = {
 };
 
 // ─── Base Channel Data ──────────────────────────────────────
-const baseChannels = [
+const mockBaseChannels = [
   { channel: 'Paid Search', baseRevenue: 482000, deals: 67, conversionRate: 12.4, roi: 4.2, color: '#7849ff' },
   { channel: 'Email', baseRevenue: 395000, deals: 54, conversionRate: 9.8, roi: 6.1, color: '#3b82f6' },
   { channel: 'Organic Search', baseRevenue: 328000, deals: 48, conversionRate: 7.2, roi: 8.5, color: '#22c55e' },
@@ -372,10 +374,12 @@ const baseChannels = [
   { channel: 'Events', baseRevenue: 164000, deals: 22, conversionRate: 8.9, roi: 2.8, color: '#f97316' },
 ];
 
+const baseChannels = ref<any[]>(mockBaseChannels);
+
 // ─── Computed Channel Data ──────────────────────────────────
 const channelData = computed(() => {
   const weights = modelWeights[selectedModel.value] || modelWeights.linear;
-  const channels = baseChannels.map(ch => {
+  const channels = baseChannels.value.map(ch => {
     const weight = weights![ch.channel] || 1.0;
     const revenue = Math.round(ch.baseRevenue * weight);
     return {
@@ -389,7 +393,7 @@ const channelData = computed(() => {
   const totalRevenue = channels.reduce((sum, ch) => sum + ch.revenue, 0);
   return channels.map(ch => ({
     ...ch,
-    sharePercent: Math.round((ch.revenue / totalRevenue) * 100),
+    sharePercent: totalRevenue > 0 ? Math.round((ch.revenue / totalRevenue) * 100) : 0,
   }));
 });
 
@@ -504,13 +508,15 @@ const journeyStages = computed(() => {
 });
 
 // ─── Top Conversion Paths ───────────────────────────────────
-const topPaths = ref([
+const mockTopPaths = [
   { steps: ['Organic Search', 'Email', 'Direct'], revenue: 187000, conversions: 28 },
   { steps: ['Paid Search', 'Referral', 'Email', 'Direct'], revenue: 156000, conversions: 22 },
   { steps: ['Social Media', 'Email', 'Email', 'Direct'], revenue: 134000, conversions: 19 },
   { steps: ['Events', 'Email', 'Paid Search', 'Direct'], revenue: 112000, conversions: 15 },
   { steps: ['Referral', 'Direct'], revenue: 98000, conversions: 14 },
-]);
+];
+
+const topPaths = ref<any[]>([]);
 
 // ─── Model Comparison Data ──────────────────────────────────
 const comparisonData = computed(() => [
@@ -592,13 +598,96 @@ const defaultDeals = [
   { dealName: 'Standard Deal C', dealValue: 28000, stage: 'Proposal', touchCount: 5, attributedValue: 14000 },
 ];
 
+// ─── Channel Color Map ──────────────────────────────────────
+const channelColors: Record<string, string> = {
+  'Paid Search': '#7849ff',
+  'Email': '#3b82f6',
+  'Organic Search': '#22c55e',
+  'Social Media': '#06b6d4',
+  'Referral': '#f59e0b',
+  'Direct': '#ec4899',
+  'Events': '#f97316',
+};
+
+// ─── Data Loading ───────────────────────────────────────────
+async function loadData() {
+  loading.value = true;
+  try {
+    // Fetch attribution and channels in parallel
+    const [touchpointsRes, channelsRes] = await Promise.all([
+      useApiFetch('attribution' as any).catch(() => null),
+      useApiFetch('attribution/channels' as any).catch(() => null),
+    ]);
+
+    // ── Channel performance from GET /attribution/channels ──
+    if (channelsRes?.success && channelsRes.body) {
+      const channelList = Array.isArray(channelsRes.body) ? channelsRes.body
+        : Array.isArray((channelsRes.body as any)?.channels) ? (channelsRes.body as any).channels
+        : Array.isArray((channelsRes.body as any)?.docs) ? (channelsRes.body as any).docs : null;
+
+      if (channelList && channelList.length > 0) {
+        baseChannels.value = channelList.map((ch: any) => ({
+          channel: ch.channel || ch.name || 'Unknown',
+          baseRevenue: parseFloat(ch.baseRevenue || ch.revenue || ch.attributedRevenue || 0),
+          deals: parseInt(ch.deals || ch.dealsInfluenced || 0),
+          conversionRate: parseFloat(ch.conversionRate || 0),
+          roi: parseFloat(ch.roi || 0),
+          color: ch.color || channelColors[ch.channel || ch.name] || '#7849ff',
+        }));
+      } else {
+        baseChannels.value = mockBaseChannels;
+      }
+    } else {
+      baseChannels.value = mockBaseChannels;
+    }
+
+    // ── Top paths from GET /attribution touchpoints ──
+    if (touchpointsRes?.success && touchpointsRes.body) {
+      const docs = Array.isArray(touchpointsRes.body) ? touchpointsRes.body
+        : Array.isArray((touchpointsRes.body as any)?.docs) ? (touchpointsRes.body as any).docs
+        : Array.isArray((touchpointsRes.body as any)?.paths) ? (touchpointsRes.body as any).paths : null;
+
+      if (docs && docs.length > 0) {
+        // Try to extract path data from touchpoints
+        const pathsFromApi = docs
+          .filter((d: any) => d.steps || d.path || d.touchpoints)
+          .map((d: any) => ({
+            steps: d.steps || d.path || d.touchpoints || [],
+            revenue: parseFloat(d.revenue || d.attributedRevenue || 0),
+            conversions: parseInt(d.conversions || d.conversionCount || 0),
+          }));
+
+        if (pathsFromApi.length > 0) {
+          topPaths.value = pathsFromApi;
+        } else {
+          topPaths.value = mockTopPaths;
+        }
+      } else {
+        topPaths.value = mockTopPaths;
+      }
+    } else {
+      topPaths.value = mockTopPaths;
+    }
+  } catch (e) {
+    console.error('Failed to load attribution data, using mock data', e);
+    baseChannels.value = mockBaseChannels;
+    topPaths.value = mockTopPaths;
+  } finally {
+    loading.value = false;
+  }
+}
+
+onMounted(() => {
+  loadData();
+});
+
 // ─── Actions ────────────────────────────────────────────────
 function onModelChange() {
   // Reactive computed properties handle the recalculation
 }
 
 function refreshData() {
-  // In a real app, this would re-fetch from API
+  loadData();
 }
 
 function exportCampaigns() {

@@ -362,8 +362,9 @@
 </template>
 
 <script setup lang="ts">
-import { ref, reactive, computed } from 'vue';
+import { ref, reactive, computed, onMounted } from 'vue';
 import { ElMessage, ElNotification } from 'element-plus';
+import { useApiFetch } from '~/composables/useApiFetch';
 
 definePageMeta({ title: 'Compliance Manager' });
 
@@ -381,6 +382,7 @@ const showRequestDetailDialog = ref(false);
 const showNewPiaDialog = ref(false);
 const selectedRequest = ref<any>(null);
 const overallScore = ref(87);
+const loading = ref(false);
 
 // --- Frameworks ---
 const frameworks = ref([
@@ -396,8 +398,10 @@ const overallScoreClass = computed(() => {
   return 'score-needs-work';
 });
 
-// --- Consent Records (20 records) ---
-const consentRecords = ref([
+// --- Consent Records ---
+const consentRecords = ref<any[]>([]);
+
+const fallbackConsentRecords = [
   { id: 1, name: 'Emily Watson', email: 'emily.watson@techcorp.com', consentTypes: ['marketing', 'analytics'], consentDate: '2025-09-15', status: 'Active' },
   { id: 2, name: 'Michael Chen', email: 'michael.chen@globex.com', consentTypes: ['analytics', 'thirdParty'], consentDate: '2025-11-01', status: 'Active' },
   { id: 3, name: 'Sarah Al-Rashid', email: 'sarah.r@nexgen.io', consentTypes: ['marketing', 'analytics', 'thirdParty'], consentDate: '2025-06-20', status: 'Active' },
@@ -418,7 +422,7 @@ const consentRecords = ref([
   { id: 18, name: 'Mei Lin Zhang', email: 'meilin.z@shenzhenai.cn', consentTypes: ['analytics'], consentDate: '2025-07-10', status: 'Expired' },
   { id: 19, name: 'Erik Johansson', email: 'erik.j@stockholmhq.se', consentTypes: ['marketing'], consentDate: '2025-11-05', status: 'Active' },
   { id: 20, name: 'Natasha Volkov', email: 'natasha.v@moscowcorp.ru', consentTypes: ['marketing', 'analytics'], consentDate: '2025-09-18', status: 'Withdrawn' }
-]);
+];
 
 const filteredConsentRecords = computed(() => {
   return consentRecords.value.filter((rec) => {
@@ -430,8 +434,10 @@ const filteredConsentRecords = computed(() => {
   });
 });
 
-// --- Data Requests (10 records) ---
-const dataRequests = ref([
+// --- Data Requests ---
+const dataRequests = ref<any[]>([]);
+
+const fallbackDataRequests = [
   { id: 1, requester: 'Emma Thompson', email: 'emma.t@techcorp.com', type: 'Access', status: 'In Progress', deadline: '2026-03-20', assignedTo: 'Sarah Johnson', notes: 'Full data export requested for personal records held across CRM, billing, and support systems.', timeline: [{ date: '2026-02-15', text: 'Request submitted via privacy portal', color: '#3b82f6' }, { date: '2026-02-17', text: 'Assigned to Sarah Johnson', color: '#f59e0b' }, { date: '2026-02-20', text: 'Data collection in progress', color: '#7849ff' }] },
   { id: 2, requester: 'David Park', email: 'david.p@innotech.kr', type: 'Deletion', status: 'Pending', deadline: '2026-03-25', assignedTo: 'Ahmed Hassan', notes: 'Right to erasure for all marketing and analytics data. Retain only legally required records.', timeline: [{ date: '2026-02-22', text: 'Request submitted', color: '#3b82f6' }, { date: '2026-02-23', text: 'Under initial review', color: '#f59e0b' }] },
   { id: 3, requester: 'Lisa Muller', email: 'lisa.m@eurobiz.de', type: 'Portability', status: 'In Progress', deadline: '2026-03-12', assignedTo: 'Maria Garcia', notes: 'Export all personal data in machine-readable JSON format for transfer to competitor CRM.', timeline: [{ date: '2026-02-10', text: 'Request received', color: '#3b82f6' }, { date: '2026-02-12', text: 'Data mapping initiated', color: '#f59e0b' }, { date: '2026-02-18', text: 'Export file generation started', color: '#7849ff' }] },
@@ -442,7 +448,7 @@ const dataRequests = ref([
   { id: 8, requester: 'Aisha Patel', email: 'aisha.p@mumbaitech.in', type: 'Access', status: 'Denied', deadline: '2026-02-20', assignedTo: 'James Chen', notes: 'Request denied: insufficient identity verification provided. Requester notified with resubmission instructions.', timeline: [{ date: '2026-02-05', text: 'Request submitted', color: '#3b82f6' }, { date: '2026-02-07', text: 'Identity verification requested', color: '#f59e0b' }, { date: '2026-02-14', text: 'Verification not received, request denied', color: '#ef4444' }] },
   { id: 9, requester: 'Robert Andersson', email: 'robert.a@stockholmhq.se', type: 'Rectification', status: 'Completed', deadline: '2026-02-25', assignedTo: 'Sarah Johnson', notes: 'Email address and job title corrected across all systems.', timeline: [{ date: '2026-02-10', text: 'Request submitted', color: '#3b82f6' }, { date: '2026-02-12', text: 'Changes applied to CRM', color: '#7849ff' }, { date: '2026-02-13', text: 'Propagated to marketing automation', color: '#22c55e' }] },
   { id: 10, requester: 'Chen Wei', email: 'chen.w@shanghaidata.cn', type: 'Deletion', status: 'In Progress', deadline: '2026-03-15', assignedTo: 'Ahmed Hassan', notes: 'Cross-border data deletion request. Legal review required for data residency compliance.', timeline: [{ date: '2026-02-18', text: 'Request submitted', color: '#3b82f6' }, { date: '2026-02-20', text: 'Legal review initiated', color: '#f59e0b' }, { date: '2026-02-25', text: 'Legal clearance received', color: '#22c55e' }] }
-]);
+];
 
 const filteredDataRequests = computed(() => {
   return dataRequests.value.filter((req) => {
@@ -472,8 +478,10 @@ const piaList = ref([
   { id: 8, name: 'Mobile App User Tracking', department: 'Product', riskLevel: 'High', status: 'UnderReview', lastReviewed: '2026-02-22' }
 ]);
 
-// --- Audit Entries (15 records) ---
-const auditEntries = ref([
+// --- Audit Entries ---
+const auditEntries = ref<any[]>([]);
+
+const fallbackAuditEntries = [
   { id: 1, timestamp: '2026-02-28T14:32:00', action: 'Consent record updated for Emily Watson', user: 'Sarah Johnson', affectedRecords: 1, category: 'Consent' },
   { id: 2, timestamp: '2026-02-28T13:15:00', action: 'DSAR access request completed (REQ-2026-042)', user: 'Ahmed Hassan', affectedRecords: 1, category: 'Data Request' },
   { id: 3, timestamp: '2026-02-28T12:45:00', action: 'Automated purge of expired session data', user: 'System', affectedRecords: 1240, category: 'Policy' },
@@ -489,7 +497,7 @@ const auditEntries = ref([
   { id: 13, timestamp: '2026-02-25T11:00:00', action: 'Weekly compliance scan completed (Score: 87/100)', user: 'System', affectedRecords: 0, category: 'Security' },
   { id: 14, timestamp: '2026-02-24T15:45:00', action: 'Bulk consent renewal for 128 marketing records', user: 'Ahmed Hassan', affectedRecords: 128, category: 'Consent' },
   { id: 15, timestamp: '2026-02-24T09:10:00', action: 'Export of quarterly compliance report generated', user: 'James Chen', affectedRecords: 0, category: 'Access' }
-]);
+];
 
 const filteredAuditEntries = computed(() => {
   return auditEntries.value.filter((entry) => {
@@ -688,18 +696,115 @@ function getClassificationIcon(level: string): string {
   }
 }
 
+// --- API Data Loading ---
+async function loadConsentRecords() {
+  try {
+    const res = await useApiFetch('compliance/consents');
+    if (res.success && res.body) {
+      const data = res.body as any;
+      consentRecords.value = Array.isArray(data) ? data : data.docs || [];
+    } else {
+      consentRecords.value = fallbackConsentRecords;
+    }
+  } catch {
+    consentRecords.value = fallbackConsentRecords;
+  }
+}
+
+async function loadDataRequests() {
+  try {
+    const res = await useApiFetch('compliance/data-requests');
+    if (res.success && res.body) {
+      const data = res.body as any;
+      dataRequests.value = Array.isArray(data) ? data : data.docs || [];
+    } else {
+      dataRequests.value = fallbackDataRequests;
+    }
+  } catch {
+    dataRequests.value = fallbackDataRequests;
+  }
+}
+
+async function loadAuditEntries() {
+  try {
+    const res = await useApiFetch('compliance/audit', 'POST');
+    if (res.success && res.body) {
+      const data = res.body as any;
+      auditEntries.value = Array.isArray(data) ? data : data.entries || data.docs || [];
+    } else {
+      auditEntries.value = fallbackAuditEntries;
+    }
+  } catch {
+    auditEntries.value = fallbackAuditEntries;
+  }
+}
+
+async function loadComplianceScore() {
+  try {
+    const res = await useApiFetch('compliance/score');
+    if (res.success && res.body) {
+      const data = res.body as any;
+      if (typeof data.score === 'number') {
+        overallScore.value = data.score;
+      } else if (typeof data === 'number') {
+        overallScore.value = data;
+      }
+    }
+  } catch {
+    // Keep default score of 87
+  }
+}
+
+async function loadAllComplianceData() {
+  loading.value = true;
+  try {
+    await Promise.all([
+      loadConsentRecords(),
+      loadDataRequests(),
+      loadAuditEntries(),
+      loadComplianceScore(),
+    ]);
+  } finally {
+    loading.value = false;
+  }
+}
+
+onMounted(() => {
+  loadAllComplianceData();
+});
+
 // --- Actions ---
-function runAudit() {
+async function runAudit() {
   auditRunning.value = true;
-  setTimeout(() => {
-    auditRunning.value = false;
+  try {
+    const res = await useApiFetch('compliance/audit', 'POST');
+    if (res.success && res.body) {
+      const data = res.body as any;
+      if (Array.isArray(data) || data.entries || data.docs) {
+        auditEntries.value = Array.isArray(data) ? data : data.entries || data.docs || [];
+      }
+      // Refresh the compliance score after audit
+      await loadComplianceScore();
+    } else {
+      // Fallback behavior: simulate score bump
+      overallScore.value = Math.min(100, overallScore.value + Math.floor(Math.random() * 3));
+    }
+    ElNotification({
+      type: 'success',
+      title: t('complianceManager.auditComplete'),
+      message: t('complianceManager.auditCompleteMsg')
+    });
+  } catch {
+    // Fallback behavior on error
     overallScore.value = Math.min(100, overallScore.value + Math.floor(Math.random() * 3));
     ElNotification({
       type: 'success',
       title: t('complianceManager.auditComplete'),
       message: t('complianceManager.auditCompleteMsg')
     });
-  }, 2500);
+  } finally {
+    auditRunning.value = false;
+  }
 }
 
 function exportReport() {

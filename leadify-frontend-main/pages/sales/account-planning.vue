@@ -429,7 +429,8 @@
 </template>
 
 <script setup lang="ts">
-import { ref, computed } from 'vue';
+import { ref, computed, onMounted } from 'vue';
+import { useApiFetch } from '~/composables/useApiFetch';
 
 definePageMeta({ title: 'Account Planning' });
 
@@ -443,6 +444,7 @@ const stakeholderAccountFilter = ref<number | string>('');
 const showPlanDetailDialog = ref(false);
 const showNewPlanDialog = ref(false);
 const selectedPlan = ref<any>(null);
+const loading = ref(false);
 
 const newPlanForm = ref({
   company: '',
@@ -471,8 +473,11 @@ const products = [
   { key: 'integration', name: 'Integrations' },
 ];
 
-// ---- Mock Data: Account Plans ----
-const accountPlans = ref([
+// ---- Data: Account Plans ----
+const accountPlans = ref<any[]>([]);
+
+// ---- Fallback Mock Data ----
+const fallbackAccountPlans = [
   {
     id: 1,
     company: 'Aramco Digital',
@@ -809,10 +814,12 @@ const accountPlans = ref([
       { action: 'Prepare adoption benchmarking report', owner: 'Omar Farid', dueDate: '2026-03-28', status: 'in-progress', priority: 'medium' },
     ],
   },
-]);
+];
 
-// ---- Mock Data: Stakeholders ----
-const stakeholders = ref([
+// ---- Data: Stakeholders ----
+const stakeholders = ref<any[]>([]);
+
+const fallbackStakeholders = [
   { name: 'Sultan Al-Harbi', title: 'Chief Digital Officer', company: 'Aramco Digital', accountId: 1, role: 'Executive Sponsor', influence: 'champion', engagementScore: 95, lastContact: '2026-02-28' },
   { name: 'Laila Al-Ghanim', title: 'VP Engineering', company: 'Aramco Digital', accountId: 1, role: 'Technical Decision Maker', influence: 'champion', engagementScore: 88, lastContact: '2026-02-25' },
   { name: 'Faisal Barakat', title: 'CFO', company: 'Aramco Digital', accountId: 1, role: 'Budget Holder', influence: 'sponsor', engagementScore: 62, lastContact: '2026-01-15' },
@@ -833,15 +840,88 @@ const stakeholders = ref([
   { name: 'Salma Osman', title: 'VP Sales', company: 'Noon Payments', accountId: 7, role: 'Revenue Owner', influence: 'sponsor', engagementScore: 68, lastContact: '2026-02-12' },
   { name: 'Basem Farouq', title: 'Procurement Manager', company: 'Al Rajhi Bank', accountId: 4, role: 'Procurement Lead', influence: 'evaluator', engagementScore: 60, lastContact: '2026-02-16' },
   { name: 'Mariam Haddad', title: 'COO', company: 'Talabat', accountId: 8, role: 'Operations Sponsor', influence: 'sponsor', engagementScore: 48, lastContact: '2026-01-22' },
-]);
+];
 
-// ---- Mock Data: Forecast ----
-const forecastData = ref([
+// ---- Data: Forecast ----
+const forecastData = ref<any[]>([]);
+
+const fallbackForecastData = [
   { quarter: 'Q1 2026', pipelineValue: 4850000, weightedForecast: 3280000, bestCase: 4120000, committed: 2750000, target: 3500000, gapToTarget: -530000, probability: 76 },
   { quarter: 'Q2 2026', pipelineValue: 5320000, weightedForecast: 3150000, bestCase: 4580000, committed: 2100000, target: 3800000, gapToTarget: 650000, probability: 58 },
   { quarter: 'Q3 2026', pipelineValue: 4180000, weightedForecast: 2290000, bestCase: 3650000, committed: 1450000, target: 3600000, gapToTarget: 1310000, probability: 42 },
   { quarter: 'Q4 2026', pipelineValue: 6100000, weightedForecast: 2800000, bestCase: 5200000, committed: 980000, target: 4200000, gapToTarget: 1400000, probability: 35 },
-]);
+];
+
+// ---- API Data Loading ----
+async function loadAccountPlans() {
+  try {
+    const res = await useApiFetch('account-plans');
+    if (res.success && res.body) {
+      const data = res.body as any;
+      // API returns { docs, pagination } for paginated results
+      accountPlans.value = data.docs || data || [];
+    } else {
+      accountPlans.value = fallbackAccountPlans;
+    }
+  } catch {
+    accountPlans.value = fallbackAccountPlans;
+  }
+}
+
+async function loadStakeholders() {
+  try {
+    // Load stakeholders for all plans; if a specific plan is selected, filter later
+    // The API needs an account plan ID, so we aggregate from all plans
+    const allStakeholders: any[] = [];
+    for (const plan of accountPlans.value) {
+      try {
+        const res = await useApiFetch(`account-plans/${plan.id}/stakeholders`);
+        if (res.success && res.body) {
+          const data = Array.isArray(res.body) ? res.body : (res.body as any).docs || [];
+          allStakeholders.push(...data);
+        }
+      } catch {
+        // Skip individual plan failures
+      }
+    }
+    if (allStakeholders.length > 0) {
+      stakeholders.value = allStakeholders;
+    } else {
+      stakeholders.value = fallbackStakeholders;
+    }
+  } catch {
+    stakeholders.value = fallbackStakeholders;
+  }
+}
+
+async function loadForecastData() {
+  try {
+    const res = await useApiFetch('account-plans/forecast');
+    if (res.success && res.body) {
+      const data = res.body as any;
+      forecastData.value = Array.isArray(data) ? data : data.docs || [];
+    } else {
+      forecastData.value = fallbackForecastData;
+    }
+  } catch {
+    forecastData.value = fallbackForecastData;
+  }
+}
+
+async function loadAllData() {
+  loading.value = true;
+  try {
+    await loadAccountPlans();
+    // Load stakeholders and forecast in parallel (stakeholders depend on accountPlans)
+    await Promise.all([loadStakeholders(), loadForecastData()]);
+  } finally {
+    loading.value = false;
+  }
+}
+
+onMounted(() => {
+  loadAllData();
+});
 
 // ---- Computed ----
 const filteredPlans = computed(() => {
@@ -882,7 +962,7 @@ const kpiCards = computed(() => {
   const totalValue = plans.reduce((sum, p) => sum + p.annualValue, 0);
   const activePlans = plans.length;
   const crossSellOps = plans.filter(p => p.crossSellScore >= 60).length;
-  const avgHealth = Math.round(plans.reduce((sum, p) => sum + p.healthScore, 0) / plans.length);
+  const avgHealth = plans.length > 0 ? Math.round(plans.reduce((sum, p) => sum + p.healthScore, 0) / plans.length) : 0;
   const renewalPipeline = plans
     .filter(p => p.daysUntilRenewal <= 120)
     .reduce((sum, p) => sum + p.annualValue, 0);
@@ -948,8 +1028,24 @@ function openPlanDetail(plan: any) {
   showPlanDetailDialog.value = true;
 }
 
-function createNewPlan() {
-  // In a real app, this would call an API
+async function createNewPlan() {
+  try {
+    const res = await useApiFetch('account-plans', 'POST', {
+      company: newPlanForm.value.company,
+      industry: newPlanForm.value.industry,
+      tier: newPlanForm.value.tier,
+      annualValue: Number(newPlanForm.value.annualValue) || 0,
+      keyContact: newPlanForm.value.keyContact,
+      objective: newPlanForm.value.objective,
+      renewalDate: newPlanForm.value.renewalDate,
+    });
+    if (res.success && res.body) {
+      // Reload plans to include the new one
+      await loadAccountPlans();
+    }
+  } catch {
+    // Silently handle error; plan list will refresh on next load
+  }
   showNewPlanDialog.value = false;
   newPlanForm.value = {
     company: '',

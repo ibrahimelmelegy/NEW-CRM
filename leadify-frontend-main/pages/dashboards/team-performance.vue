@@ -322,6 +322,7 @@
 import { ref, computed, onMounted } from 'vue';
 import { graphic } from 'echarts';
 import VChart from 'vue-echarts';
+import { useApiFetch } from '~/composables/useApiFetch';
 
 definePageMeta({ title: 'Team Performance' });
 
@@ -458,7 +459,7 @@ const kpiCards = computed(() => [
 ]);
 
 // ─── Team Members Data ──────────────────────────────────────
-const teamMembers = ref([
+const teamMembersFallback = [
   { name: 'Sarah Mitchell', initials: 'SM', role: 'Senior Sales Rep', tasksCompleted: 32, dealsClosed: 8, revenue: '$142K', activityScore: 94, performanceLevel: 'excellent', avatarColor: '#7849ff' },
   { name: 'James Rodriguez', initials: 'JR', role: 'Account Executive', tasksCompleted: 28, dealsClosed: 6, revenue: '$118K', activityScore: 87, performanceLevel: 'excellent', avatarColor: '#3b82f6' },
   { name: 'Emily Chen', initials: 'EC', role: 'Business Dev Manager', tasksCompleted: 25, dealsClosed: 5, revenue: '$96K', activityScore: 82, performanceLevel: 'good', avatarColor: '#22c55e' },
@@ -469,7 +470,9 @@ const teamMembers = ref([
   { name: 'Alex Martinez', initials: 'AM', role: 'Sales Rep', tasksCompleted: 19, dealsClosed: 3, revenue: '$61K', activityScore: 70, performanceLevel: 'good', avatarColor: '#ef4444' },
   { name: 'Sophie Turner', initials: 'ST', role: 'Account Executive', tasksCompleted: 14, dealsClosed: 2, revenue: '$45K', activityScore: 52, performanceLevel: 'average', avatarColor: '#10b981' },
   { name: 'Chris Baker', initials: 'CB', role: 'Junior Sales Rep', tasksCompleted: 10, dealsClosed: 1, revenue: '$18K', activityScore: 38, performanceLevel: 'needs-improvement', avatarColor: '#f97316' }
-]);
+];
+
+const teamMembers = ref<any[]>([]);
 
 // ─── Top Performer ──────────────────────────────────────────
 const topPerformer = computed(() => ({
@@ -482,16 +485,16 @@ const topPerformer = computed(() => ({
 }));
 
 // ─── Goals Data ─────────────────────────────────────────────
-const departmentGoals = ref([
+const departmentGoalsFallback = [
   { name: 'Q1 Revenue Target', owner: 'Sales Department', target: 500000, current: 420000, percentage: 84, dueDate: 'Mar 31, 2026', status: 'on-track', type: 'department' },
   { name: 'New Client Acquisition', owner: 'Business Development', target: 30, current: 22, percentage: 73, dueDate: 'Mar 31, 2026', status: 'on-track', type: 'department' },
   { name: 'Customer Retention Rate', owner: 'Account Management', target: 95, current: 91, percentage: 96, dueDate: 'Mar 31, 2026', status: 'on-track', type: 'department' },
   { name: 'Pipeline Growth', owner: 'Sales Department', target: 200, current: 145, percentage: 73, dueDate: 'Mar 31, 2026', status: 'at-risk', type: 'department' },
   { name: 'Lead Response Time', owner: 'Sales Operations', target: 100, current: 68, percentage: 68, dueDate: 'Feb 28, 2026', status: 'at-risk', type: 'department' },
   { name: 'Training Completion', owner: 'HR Department', target: 24, current: 18, percentage: 75, dueDate: 'Apr 15, 2026', status: 'on-track', type: 'department' }
-]);
+];
 
-const individualGoals = ref([
+const individualGoalsFallback = [
   { name: 'Close 10 Enterprise Deals', owner: 'Sarah Mitchell', target: 10, current: 8, percentage: 80, dueDate: 'Mar 31, 2026', status: 'on-track', type: 'individual' },
   { name: 'Generate $200K Revenue', owner: 'James Rodriguez', target: 200000, current: 118000, percentage: 59, dueDate: 'Mar 31, 2026', status: 'at-risk', type: 'individual' },
   { name: 'Onboard 5 New Accounts', owner: 'Emily Chen', target: 5, current: 3, percentage: 60, dueDate: 'Mar 15, 2026', status: 'at-risk', type: 'individual' },
@@ -500,7 +503,10 @@ const individualGoals = ref([
   { name: 'Complete Certification', owner: 'Daniel Kim', target: 1, current: 0, percentage: 0, dueDate: 'Feb 28, 2026', status: 'behind', type: 'individual' },
   { name: '50 Cold Calls per Week', owner: 'Rachel Foster', target: 50, current: 32, percentage: 64, dueDate: 'Ongoing', status: 'at-risk', type: 'individual' },
   { name: 'Reduce Churn by 5%', owner: 'Alex Martinez', target: 5, current: 2, percentage: 40, dueDate: 'Mar 31, 2026', status: 'behind', type: 'individual' }
-]);
+];
+
+const departmentGoals = ref<any[]>([]);
+const individualGoals = ref<any[]>([]);
 
 const filteredGoals = computed(() => {
   return goalView.value === 'department' ? departmentGoals.value : individualGoals.value;
@@ -554,7 +560,7 @@ const goalCompletionChartOption = computed(() => ({
 }));
 
 // ─── Recent Activities ──────────────────────────────────────
-const recentActivities = ref([
+const recentActivitiesFallback = [
   { memberName: 'Sarah Mitchell', action: t('teamPerformance.callsMade') + ' - Contacted Acme Corp about renewal', icon: 'ph:phone-bold', color: '#7849ff', timestamp: '2 min ago' },
   { memberName: 'James Rodriguez', action: t('teamPerformance.emailsSent') + ' - Follow-up proposal to TechStart Inc', icon: 'ph:envelope-bold', color: '#3b82f6', timestamp: '8 min ago' },
   { memberName: 'Emily Chen', action: t('teamPerformance.meetingsHeld') + ' - Demo with GlobalTech Solutions', icon: 'ph:video-camera-bold', color: '#22c55e', timestamp: '15 min ago' },
@@ -575,7 +581,9 @@ const recentActivities = ref([
   { memberName: 'Alex Martinez', action: t('teamPerformance.emailsSent') + ' - Monthly newsletter to accounts', icon: 'ph:envelope-bold', color: '#3b82f6', timestamp: '4h ago' },
   { memberName: 'Sophie Turner', action: t('teamPerformance.callsMade') + ' - Reconnect with former client', icon: 'ph:phone-bold', color: '#7849ff', timestamp: '4h 15min ago' },
   { memberName: 'Chris Baker', action: t('teamPerformance.meetingsHeld') + ' - Training session attendance', icon: 'ph:video-camera-bold', color: '#22c55e', timestamp: '4h 30min ago' }
-]);
+];
+
+const recentActivities = ref<any[]>([]);
 
 // ─── Activity Heatmap ───────────────────────────────────────
 const activityHeatmapOption = computed(() => {
@@ -729,20 +737,60 @@ const capacityMembers = computed(() => [
   { name: 'Chris B.', role: 'Jr. Sales Rep', utilization: 46 }
 ]);
 
-// ─── Refresh ────────────────────────────────────────────────
+// ─── Data Loading ───────────────────────────────────────────
+async function loadData() {
+  loading.value = true;
+  try {
+    // Wire teamMembers from users API
+    const usersRes = await useApiFetch('users');
+    if (usersRes.success && Array.isArray(usersRes.body)) {
+      teamMembers.value = usersRes.body;
+    } else {
+      teamMembers.value = teamMembersFallback;
+    }
+  } catch {
+    teamMembers.value = teamMembersFallback;
+  }
+
+  try {
+    // Wire goals from goals API
+    const goalsRes = await useApiFetch('goals');
+    if (goalsRes.success && Array.isArray(goalsRes.body)) {
+      departmentGoals.value = (goalsRes.body as any[]).filter((g: any) => g.type === 'department');
+      individualGoals.value = (goalsRes.body as any[]).filter((g: any) => g.type === 'individual');
+      if (departmentGoals.value.length === 0) departmentGoals.value = departmentGoalsFallback;
+      if (individualGoals.value.length === 0) individualGoals.value = individualGoalsFallback;
+    } else {
+      departmentGoals.value = departmentGoalsFallback;
+      individualGoals.value = individualGoalsFallback;
+    }
+  } catch {
+    departmentGoals.value = departmentGoalsFallback;
+    individualGoals.value = individualGoalsFallback;
+  }
+
+  try {
+    // Wire recentActivities from activity API
+    const actRes = await useApiFetch('activity');
+    if (actRes.success && Array.isArray(actRes.body)) {
+      recentActivities.value = actRes.body;
+    } else {
+      recentActivities.value = recentActivitiesFallback;
+    }
+  } catch {
+    recentActivities.value = recentActivitiesFallback;
+  }
+
+  loading.value = false;
+}
+
 function refreshData() {
   refreshing.value = true;
-  setTimeout(() => {
-    refreshing.value = false;
-  }, 800);
+  loadData().finally(() => { refreshing.value = false; });
 }
 
 // ─── Init ───────────────────────────────────────────────────
-onMounted(() => {
-  setTimeout(() => {
-    loading.value = false;
-  }, 800);
-});
+onMounted(() => { loadData(); });
 </script>
 
 <style lang="scss" scoped>

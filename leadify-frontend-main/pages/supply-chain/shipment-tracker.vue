@@ -338,6 +338,7 @@
 import { ref, computed, onMounted } from 'vue';
 import { graphic } from 'echarts';
 import VChart from 'vue-echarts';
+import { useApiFetch } from '~/composables/useApiFetch';
 
 definePageMeta({ title: 'Shipment Tracker' });
 
@@ -354,11 +355,6 @@ const tableDateRange = ref<[Date, Date] | null>(null);
 const expandedRows = ref<string[]>([]);
 
 // ─── Lifecycle ──────────────────────────────────────────────
-onMounted(() => {
-  setTimeout(() => {
-    loading.value = false;
-  }, 800);
-});
 
 // ─── Constants ──────────────────────────────────────────────
 const progressSteps = [
@@ -468,7 +464,7 @@ interface TrackingEvent {
   description: string;
 }
 
-const liveShipments = ref<Shipment[]>([
+const liveShipmentsFallback: Shipment[] = [
   {
     trackingNumber: 'FDX-2024-78542',
     customer: 'Ahmed Al-Rashid',
@@ -671,11 +667,12 @@ const liveShipments = ref<Shipment[]>([
       { date: '2026-02-22 12:00', location: 'Paris', status: 'Picked Up', description: 'Package collected' }
     ]
   }
-]);
+];
+
+const liveShipments = ref<Shipment[]>([]);
 
 // ─── Table Shipments (18 items with varied events) ──────────
-const tableShipments = ref<Shipment[]>([
-  ...liveShipments.value,
+const tableShipmentsFallbackExtra: Shipment[] = [
   {
     trackingNumber: 'ARX-2024-88901',
     customer: 'Tariq Al-Mutairi',
@@ -776,7 +773,9 @@ const tableShipments = ref<Shipment[]>([
       { date: '2026-02-25 14:30', location: 'Casablanca', status: 'Picked Up', description: 'Collected from shipper' }
     ]
   }
-]);
+];
+
+const tableShipments = ref<Shipment[]>([]);
 
 // ─── Filtered Live Shipments ────────────────────────────────
 const filteredLiveShipments = computed(() => {
@@ -874,13 +873,15 @@ function isStepLineCompleted(status: string, stepIdx: number): boolean {
 }
 
 // ─── Carrier Performance Data ───────────────────────────────
-const carrierData = ref([
+const carrierDataFallback = [
   { name: 'FedEx', color: '#4D148C', totalShipments: 2845, onTimePercent: 96.4, avgTransitDays: 3.2, costPerShipment: 45.80, rating: 4.5 },
   { name: 'DHL', color: '#FFCC00', totalShipments: 3120, onTimePercent: 95.1, avgTransitDays: 3.8, costPerShipment: 42.50, rating: 4.3 },
   { name: 'UPS', color: '#351C15', totalShipments: 1960, onTimePercent: 93.7, avgTransitDays: 4.1, costPerShipment: 48.20, rating: 4.2 },
   { name: 'Aramex', color: '#E95E2E', totalShipments: 4250, onTimePercent: 91.8, avgTransitDays: 4.5, costPerShipment: 28.90, rating: 4.0 },
   { name: 'SMSA', color: '#0066B3', totalShipments: 5680, onTimePercent: 94.2, avgTransitDays: 2.1, costPerShipment: 18.50, rating: 4.4 }
-]);
+];
+
+const carrierData = ref<any[]>([]);
 
 // ─── Carrier Performance Trend Chart ────────────────────────
 const carrierTrendChartOption = computed(() => {
@@ -1222,16 +1223,51 @@ const exceptionTrendChartOption = computed(() => {
   };
 });
 
+// ─── Data Loading ───────────────────────────────────────────
+async function loadData() {
+  loading.value = true;
+  try {
+    const res = await useApiFetch('shipping');
+    if (res.success && Array.isArray(res.body)) {
+      liveShipments.value = res.body as any;
+      tableShipments.value = res.body as any;
+      // Aggregate carrier data from shipments if available
+      const carrierMap = new Map<string, any>();
+      (res.body as any[]).forEach((s: any) => {
+        if (s.carrier && !carrierMap.has(s.carrier)) {
+          carrierMap.set(s.carrier, { name: s.carrier, color: '#64748b', totalShipments: 0, onTimePercent: 0, avgTransitDays: 0, costPerShipment: 0, rating: 0 });
+        }
+        if (s.carrier) {
+          carrierMap.get(s.carrier).totalShipments++;
+        }
+      });
+      if (carrierMap.size > 0) {
+        carrierData.value = Array.from(carrierMap.values());
+      } else {
+        carrierData.value = carrierDataFallback;
+      }
+    } else {
+      liveShipments.value = liveShipmentsFallback;
+      tableShipments.value = [...liveShipmentsFallback, ...tableShipmentsFallbackExtra];
+      carrierData.value = carrierDataFallback;
+    }
+  } catch {
+    liveShipments.value = liveShipmentsFallback;
+    tableShipments.value = [...liveShipmentsFallback, ...tableShipmentsFallbackExtra];
+    carrierData.value = carrierDataFallback;
+  }
+  loading.value = false;
+}
+
+onMounted(() => { loadData(); });
+
 // ─── Actions ────────────────────────────────────────────────
 function handleNewShipment() {
   ElMessage.info(t('shipmentTracker.newShipment'));
 }
 
 function refreshData() {
-  loading.value = true;
-  setTimeout(() => {
-    loading.value = false;
-  }, 800);
+  loadData();
 }
 
 function copyTracking(trackingNumber: string) {

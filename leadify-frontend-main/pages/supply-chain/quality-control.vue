@@ -372,6 +372,7 @@
 import { ref, computed, onMounted } from 'vue';
 import { graphic } from 'echarts';
 import VChart from 'vue-echarts';
+import { useApiFetch } from '~/composables/useApiFetch';
 
 definePageMeta({ title: 'Quality Control' });
 
@@ -385,12 +386,6 @@ const inspectionTypeFilter = ref('');
 const inspectionStatusFilter = ref('');
 const showNewInspectionDialog = ref(false);
 const showChecklistDialog = ref(false);
-
-onMounted(() => {
-  setTimeout(() => {
-    loading.value = false;
-  }, 800);
-});
 
 // ─── Tooltip Style ──────────────────────────────────────────
 const tooltipStyle = {
@@ -444,8 +439,8 @@ const inspectorList = [
   'Fatima Al-Sayed'
 ];
 
-// ─── Inspection Records ─────────────────────────────────────
-const inspectionRecords = ref([
+// ─── Inspection Records (fallback mock data) ────────────────
+const inspectionRecordsFallback = [
   { id: 'INS-2026-001', product: 'Steel Beam Grade A', batch: 'BTH-4521', inspector: 'Ahmed Al-Rashid', type: 'Incoming', status: 'Passed', date: '2026-02-28', score: 98 },
   { id: 'INS-2026-002', product: 'Copper Wire 12mm', batch: 'BTH-4522', inspector: 'Sarah Johnson', type: 'In-Process', status: 'Passed', date: '2026-02-28', score: 95 },
   { id: 'INS-2026-003', product: 'Hydraulic Pump Unit', batch: 'BTH-4523', inspector: 'Omar Khalil', type: 'Final', status: 'Failed', date: '2026-02-27', score: 62 },
@@ -458,7 +453,9 @@ const inspectionRecords = ref([
   { id: 'INS-2026-010', product: 'Ceramic Bearings Kit', batch: 'BTH-4530', inspector: 'Maria Santos', type: 'In-Process', status: 'Passed', date: '2026-02-24', score: 94 },
   { id: 'INS-2026-011', product: 'Glass Fiber Composite', batch: 'BTH-4531', inspector: 'James Chen', type: 'Final', status: 'Pending', date: '2026-02-24', score: 0 },
   { id: 'INS-2026-012', product: 'Rubber Gasket Set', batch: 'BTH-4532', inspector: 'Fatima Al-Sayed', type: 'Incoming', status: 'Passed', date: '2026-02-23', score: 96 }
-]);
+];
+
+const inspectionRecords = ref<any[]>([]);
 
 const filteredInspections = computed(() => {
   let items = inspectionRecords.value;
@@ -484,8 +481,8 @@ const filteredInspections = computed(() => {
   return items;
 });
 
-// ─── Defect Records ─────────────────────────────────────────
-const defectRecords = ref([
+// ─── Defect Records (mock with API fallback) ────────────────
+const defectRecordsFallback = [
   { id: 'DEF-001', product: 'Hydraulic Pump Unit', defectType: 'Seal Leakage', severity: 'Critical', reportedBy: 'Omar Khalil', assignedTo: 'Ahmed Al-Rashid', status: 'Open', date: '2026-02-27', images: 3 },
   { id: 'DEF-002', product: 'PVC Insulation Roll', defectType: 'Surface Contamination', severity: 'Major', reportedBy: 'Sarah Johnson', assignedTo: 'James Chen', status: 'In Progress', date: '2026-02-25', images: 2 },
   { id: 'DEF-003', product: 'Steel Beam Grade A', defectType: 'Dimensional Deviation', severity: 'Minor', reportedBy: 'Ahmed Al-Rashid', assignedTo: 'Omar Khalil', status: 'Resolved', date: '2026-02-22', images: 1 },
@@ -495,17 +492,21 @@ const defectRecords = ref([
   { id: 'DEF-007', product: 'Aluminum Extrusion', defectType: 'Surface Scratch', severity: 'Minor', reportedBy: 'Omar Khalil', assignedTo: 'James Chen', status: 'Resolved', date: '2026-02-20', images: 2 },
   { id: 'DEF-008', product: 'Rubber Gasket Set', defectType: 'Hardness Out of Spec', severity: 'Major', reportedBy: 'Ahmed Al-Rashid', assignedTo: 'Omar Khalil', status: 'In Progress', date: '2026-02-24', images: 1 },
   { id: 'DEF-009', product: 'Stainless Steel Pipe', defectType: 'Weld Porosity', severity: 'Critical', reportedBy: 'Sarah Johnson', assignedTo: 'Ahmed Al-Rashid', status: 'Open', date: '2026-02-28', images: 3 }
-]);
+];
 
-// ─── Checklist Templates ────────────────────────────────────
-const checklistTemplates = ref([
+const defectRecords = ref<any[]>([]);
+
+// ─── Checklist Templates (mock with API fallback) ───────────
+const checklistTemplatesFallback = [
   { name: 'Incoming Material Inspection', category: 'Manufacturing', itemCount: 15, lastUsed: '2026-02-28', timesUsed: 142, color: '#3b82f6' },
   { name: 'Final Product QA', category: 'Manufacturing', itemCount: 22, lastUsed: '2026-02-27', timesUsed: 98, color: '#22c55e' },
   { name: 'Packaging Integrity Check', category: 'Packaging', itemCount: 10, lastUsed: '2026-02-26', timesUsed: 76, color: '#f59e0b' },
   { name: 'Safety Compliance Audit', category: 'Safety', itemCount: 28, lastUsed: '2026-02-25', timesUsed: 34, color: '#ef4444' },
   { name: 'Environmental Standards', category: 'Environmental', itemCount: 18, lastUsed: '2026-02-22', timesUsed: 21, color: '#8b5cf6' },
   { name: 'Regulatory Compliance', category: 'Compliance', itemCount: 32, lastUsed: '2026-02-20', timesUsed: 45, color: '#06b6d4' }
-]);
+];
+
+const checklistTemplates = ref<any[]>([]);
 
 // ─── New Inspection Form ────────────────────────────────────
 const newInspectionForm = ref({
@@ -983,12 +984,35 @@ function getScoreColor(score: number): string {
   return '#94a3b8';
 }
 
+// ─── Data Loading ───────────────────────────────────────────
+async function loadData() {
+  loading.value = true;
+  try {
+    // Load inspection records from manufacturing API
+    const inspRes = await useApiFetch('manufacturing');
+    if (inspRes.success && Array.isArray(inspRes.body)) {
+      inspectionRecords.value = inspRes.body;
+    } else {
+      inspectionRecords.value = inspectionRecordsFallback;
+    }
+  } catch {
+    inspectionRecords.value = inspectionRecordsFallback;
+  }
+
+  // Defect records: keep as mock (no dedicated API)
+  defectRecords.value = defectRecordsFallback;
+
+  // Checklist templates: keep as mock (no dedicated API)
+  checklistTemplates.value = checklistTemplatesFallback;
+
+  loading.value = false;
+}
+
+onMounted(() => { loadData(); });
+
 // ─── Actions ────────────────────────────────────────────────
 function refreshData() {
-  loading.value = true;
-  setTimeout(() => {
-    loading.value = false;
-  }, 800);
+  loadData();
 }
 
 function exportReport() {

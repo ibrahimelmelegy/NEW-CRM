@@ -414,6 +414,7 @@
 <script lang="ts" setup>
 import { ref, computed, onMounted } from 'vue';
 import VChart from 'vue-echarts';
+import { useApiFetch } from '~/composables/useApiFetch';
 
 definePageMeta({ title: 'Asset Library' });
 
@@ -510,8 +511,8 @@ const kpiCards = computed(() => [
   },
 ]);
 
-// ─── Mock Assets (16 items) ─────────────────────────────────
-const assets = ref<Asset[]>([
+// ─── Mock Assets (fallback data) ─────────────────────────────
+const assetsFallback: Asset[] = [
   { id: 1, name: 'Brand Guidelines 2026.pdf', type: 'Document', size: '4.2 MB', uploadedBy: 'Sarah Ahmed', date: '2026-02-25', tags: ['Brand', 'Guidelines'] },
   { id: 2, name: 'Product Hero Shot.png', type: 'Image', size: '8.7 MB', uploadedBy: 'Omar Hassan', date: '2026-02-24', tags: ['Product', 'Marketing'] },
   { id: 3, name: 'Q4 Revenue Report.xlsx', type: 'Spreadsheet', size: '1.8 MB', uploadedBy: 'Fatima Ali', date: '2026-02-23', tags: ['Finance', 'Report'] },
@@ -528,7 +529,9 @@ const assets = ref<Asset[]>([
   { id: 14, name: 'Webinar Recording Feb.mp4', type: 'Video', size: '512 MB', uploadedBy: 'Nour Saleh', date: '2026-02-12', tags: ['Marketing', 'Webinar'] },
   { id: 15, name: 'Employee Handbook.pdf', type: 'Document', size: '3.5 MB', uploadedBy: 'Fatima Ali', date: '2026-02-11', tags: ['HR', 'Handbook'] },
   { id: 16, name: 'App Wireframes.fig', type: 'Other', size: '18.3 MB', uploadedBy: 'Khalid Ibrahim', date: '2026-02-10', tags: ['Design', 'Product'] },
-]);
+];
+
+const assets = ref<Asset[]>([]);
 
 // ─── All Tags ───────────────────────────────────────────────
 const allTags = computed(() => {
@@ -948,12 +951,24 @@ function restoreVersion(entry: VersionEntry) {
   }).catch(() => {});
 }
 
+// ─── Data Loading ───────────────────────────────────────────
+async function loadData() {
+  loading.value = true;
+  try {
+    const res = await useApiFetch('documents');
+    if (res.success && Array.isArray(res.body)) {
+      assets.value = res.body as any;
+    } else {
+      assets.value = assetsFallback;
+    }
+  } catch {
+    assets.value = assetsFallback;
+  }
+  loading.value = false;
+}
+
 // ─── Lifecycle ──────────────────────────────────────────────
-onMounted(() => {
-  setTimeout(() => {
-    loading.value = false;
-  }, 800);
-});
+onMounted(() => { loadData(); });
 </script>
 
 <style lang="scss" scoped>

@@ -341,6 +341,7 @@
 import { ref, computed, onMounted } from 'vue';
 import { graphic } from 'echarts';
 import VChart from 'vue-echarts';
+import { useApiFetch } from '~/composables/useApiFetch';
 
 definePageMeta({ title: 'Purchase Analytics' });
 
@@ -351,21 +352,7 @@ const loading = ref(true);
 const activeTab = ref('spend');
 const dateRange = ref<[Date, Date] | null>(null);
 
-// ─── Lifecycle ──────────────────────────────────────────────
-onMounted(() => {
-  setTimeout(() => {
-    loading.value = false;
-  }, 800);
-});
-
 // ─── Actions ────────────────────────────────────────────────
-function refreshData() {
-  loading.value = true;
-  setTimeout(() => {
-    loading.value = false;
-  }, 800);
-}
-
 function exportReport() {
   // placeholder for export
 }
@@ -508,7 +495,7 @@ const spendTrendOption = computed(() => ({
 }));
 
 // ─── Top 10 Suppliers ───────────────────────────────────────
-const topSuppliers = ref([
+const topSuppliersFallback = [
   { rank: 1, name: 'GlobalTech Industries', category: 'Electronics', totalSpend: '$312,400', percentOfTotal: 25.2, trendDir: 'up' },
   { rank: 2, name: 'RawMat Solutions', category: 'Raw Materials', totalSpend: '$278,900', percentOfTotal: 22.5, trendDir: 'up' },
   { rank: 3, name: 'PackRight Corp', category: 'Packaging', totalSpend: '$185,200', percentOfTotal: 14.9, trendDir: 'down' },
@@ -519,7 +506,9 @@ const topSuppliers = ref([
   { rank: 8, name: 'OfficeHub Supplies', category: 'Office Supplies', totalSpend: '$52,800', percentOfTotal: 4.3, trendDir: 'down' },
   { rank: 9, name: 'ChemWorks Ltd', category: 'Raw Materials', totalSpend: '$41,200', percentOfTotal: 3.3, trendDir: 'up' },
   { rank: 10, name: 'SecureIT Partners', category: 'Software', totalSpend: '$35,700', percentOfTotal: 2.9, trendDir: 'down' },
-]);
+];
+
+const topSuppliers = ref<any[]>([]);
 
 // ─── Budget vs Actual ───────────────────────────────────────
 const budgetVsActualOption = computed(() => ({
@@ -612,7 +601,7 @@ function getRankClass(rank: number): string {
 // TAB 2: Supplier Performance
 // ═══════════════════════════════════════════════════════════════
 
-const supplierScorecard = ref([
+const supplierScorecardFallback = [
   { name: 'GlobalTech Industries', onTimeDelivery: 96, qualityScore: 92, responsiveness: 5, overallRating: 4.7, trend: 'up' },
   { name: 'RawMat Solutions', onTimeDelivery: 89, qualityScore: 88, responsiveness: 4, overallRating: 4.2, trend: 'up' },
   { name: 'PackRight Corp', onTimeDelivery: 93, qualityScore: 85, responsiveness: 4, overallRating: 4.0, trend: 'stable' },
@@ -623,7 +612,9 @@ const supplierScorecard = ref([
   { name: 'OfficeHub Supplies', onTimeDelivery: 94, qualityScore: 86, responsiveness: 4, overallRating: 4.1, trend: 'stable' },
   { name: 'ChemWorks Ltd', onTimeDelivery: 88, qualityScore: 90, responsiveness: 4, overallRating: 4.0, trend: 'up' },
   { name: 'SecureIT Partners', onTimeDelivery: 90, qualityScore: 87, responsiveness: 3, overallRating: 3.8, trend: 'stable' },
-]);
+];
+
+const supplierScorecard = ref<any[]>([]);
 
 function getDeliveryColor(pct: number): string {
   if (pct >= 95) return '#22c55e';
@@ -755,7 +746,7 @@ const performanceTrendOption = computed(() => ({
 // TAB 3: Cost Optimization
 // ═══════════════════════════════════════════════════════════════
 
-const savingsOpportunities = ref([
+const savingsOpportunitiesFallback = [
   {
     description: 'Consolidate packaging suppliers from 5 to 2 preferred vendors',
     savings: '$42,000/yr',
@@ -804,7 +795,9 @@ const savingsOpportunities = ref([
     statusKey: 'identified',
     icon: 'ph:warehouse-bold',
   },
-]);
+];
+
+const savingsOpportunities = ref<any[]>([]);
 
 function getEffortType(effort: string): string {
   if (effort === 'Low') return 'success';
@@ -830,8 +823,8 @@ function getStatusType(status: string): string {
   return 'info';
 }
 
-// ─── Price Variance Data ────────────────────────────────────
-const priceVarianceData = ref([
+// ─── Price Variance Data (mock with API fallback) ───────────
+const priceVarianceDataFallback = [
   { item: 'Steel Sheets (per ton)', contracted: '$1,200', actual: '$1,248', variancePct: 4.0 },
   { item: 'Copper Wire (per kg)', contracted: '$8.50', actual: '$8.25', variancePct: -2.9 },
   { item: 'Cardboard Boxes (per 1000)', contracted: '$320', actual: '$315', variancePct: -1.6 },
@@ -840,7 +833,9 @@ const priceVarianceData = ref([
   { item: 'Adhesive Tape (per roll)', contracted: '$3.20', actual: '$3.25', variancePct: 1.6 },
   { item: 'Plastic Pellets (per kg)', contracted: '$2.10', actual: '$2.35', variancePct: 11.9 },
   { item: 'Safety Gloves (per box)', contracted: '$12.00', actual: '$11.40', variancePct: -5.0 },
-]);
+];
+
+const priceVarianceData = ref<any[]>([]);
 
 function getVarianceTextColor(pct: number): string {
   if (pct > 2) return '#ef4444';
@@ -1045,7 +1040,7 @@ const leadTimeOption = computed(() => ({
 }));
 
 // ─── Reorder Suggestions ────────────────────────────────────
-const reorderSuggestions = ref([
+const reorderSuggestionsFallback = [
   {
     name: 'Steel Sheets',
     currentStock: 240,
@@ -1126,7 +1121,61 @@ const reorderSuggestions = ref([
     stockLabel: 'In Stock',
     autoReorder: true,
   },
-]);
+];
+
+const reorderSuggestions = ref<any[]>([]);
+
+// ─── Data Loading ───────────────────────────────────────────
+async function loadData() {
+  loading.value = true;
+  try {
+    // Wire topSuppliers from procurement API
+    const procRes = await useApiFetch('procurement');
+    if (procRes.success && Array.isArray(procRes.body)) {
+      topSuppliers.value = procRes.body;
+    } else {
+      topSuppliers.value = topSuppliersFallback;
+    }
+  } catch {
+    topSuppliers.value = topSuppliersFallback;
+  }
+
+  try {
+    // Wire supplierScorecard from vendor-scorecard/ranking API
+    const scoreRes = await useApiFetch('vendor-scorecard/ranking');
+    if (scoreRes.success && Array.isArray(scoreRes.body)) {
+      supplierScorecard.value = scoreRes.body;
+    } else {
+      supplierScorecard.value = supplierScorecardFallback;
+    }
+  } catch {
+    supplierScorecard.value = supplierScorecardFallback;
+  }
+
+  try {
+    // Wire reorderSuggestions from demand-forecasting API
+    const reorderRes = await useApiFetch('demand-forecasting');
+    if (reorderRes.success && Array.isArray(reorderRes.body)) {
+      reorderSuggestions.value = reorderRes.body;
+    } else {
+      reorderSuggestions.value = reorderSuggestionsFallback;
+    }
+  } catch {
+    reorderSuggestions.value = reorderSuggestionsFallback;
+  }
+
+  // Mock data that stays as fallback (no dedicated API)
+  savingsOpportunities.value = savingsOpportunitiesFallback;
+  priceVarianceData.value = priceVarianceDataFallback;
+
+  loading.value = false;
+}
+
+function refreshData() {
+  loadData();
+}
+
+onMounted(() => { loadData(); });
 </script>
 
 <style lang="scss" scoped>

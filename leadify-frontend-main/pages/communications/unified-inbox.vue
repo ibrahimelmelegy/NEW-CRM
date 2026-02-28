@@ -291,6 +291,7 @@
 
 <script lang="ts" setup>
 import { ref, computed, onMounted, nextTick } from 'vue'
+import { useApiFetch } from '~/composables/useApiFetch'
 
 definePageMeta({ title: 'Unified Inbox' })
 
@@ -417,8 +418,8 @@ const replyChannelOptions = computed(() => [
   { label: t('unifiedInbox.social'), value: 'social' }
 ])
 
-// --- Mock Conversations ---
-const conversations = ref<Conversation[]>([
+// --- Mock Conversations (fallback) ---
+const conversationsFallback: Conversation[] = [
   {
     id: 1,
     contactName: 'Sarah Al-Rashid',
@@ -691,7 +692,9 @@ const conversations = ref<Conversation[]>([
     starred: false,
     archived: true
   }
-])
+]
+
+const conversations = ref<Conversation[]>([])
 
 // --- Message Threads ---
 const messageThreads = ref<Record<number, Message[]>>({
@@ -1008,12 +1011,24 @@ function sendReply() {
   })
 }
 
+// --- Data Loading ---
+async function loadData() {
+  loading.value = true
+  try {
+    const res = await useApiFetch('communications/recent')
+    if (res.success && Array.isArray(res.body)) {
+      conversations.value = res.body as any
+    } else {
+      conversations.value = conversationsFallback
+    }
+  } catch {
+    conversations.value = conversationsFallback
+  }
+  loading.value = false
+}
+
 // --- Lifecycle ---
-onMounted(() => {
-  setTimeout(() => {
-    loading.value = false
-  }, 800)
-})
+onMounted(() => { loadData() })
 </script>
 
 <style lang="scss" scoped>

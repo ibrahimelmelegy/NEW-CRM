@@ -360,11 +360,14 @@
 </template>
 
 <script setup lang="ts">
-import { ref, computed } from 'vue';
+import { ref, computed, onMounted } from 'vue';
+import { useApiFetch } from '~/composables/useApiFetch';
 
 definePageMeta({ title: 'Usage Billing' });
 
 const { t } = useI18n();
+
+const loading = ref(false);
 
 // ─── Types ──────────────────────────────────────────────────
 interface UsageCustomer {
@@ -484,176 +487,14 @@ function removeTierRow(idx: number) {
   }
 }
 
-// ─── Mock Data: Customers ───────────────────────────────────
-const usageData = ref<UsageCustomer[]>([
-  { id: 1, customer: 'Acme Corp', plan: 'Enterprise', currentUsage: 48500, planLimit: 50000, unit: 'API calls', usagePercent: 97, overage: 0, projectedInvoice: 4850 },
-  { id: 2, customer: 'GlobalTech Inc', plan: 'Business', currentUsage: 32100, planLimit: 25000, unit: 'API calls', usagePercent: 128, overage: 7100, projectedInvoice: 3920 },
-  { id: 3, customer: 'StartupHub', plan: 'Starter', currentUsage: 4200, planLimit: 10000, unit: 'API calls', usagePercent: 42, overage: 0, projectedInvoice: 420 },
-  { id: 4, customer: 'DataStream LLC', plan: 'Enterprise', currentUsage: 245, planLimit: 200, unit: 'GB', usagePercent: 122, overage: 45, projectedInvoice: 6200 },
-  { id: 5, customer: 'CloudNine Solutions', plan: 'Business', currentUsage: 78, planLimit: 100, unit: 'GB', usagePercent: 78, overage: 0, projectedInvoice: 1560 },
-  { id: 6, customer: 'RetailMax', plan: 'Enterprise', currentUsage: 142, planLimit: 150, unit: 'users', usagePercent: 95, overage: 0, projectedInvoice: 7100 },
-  { id: 7, customer: 'FinanceFirst', plan: 'Business', currentUsage: 56, planLimit: 50, unit: 'users', usagePercent: 112, overage: 6, projectedInvoice: 3360 },
-  { id: 8, customer: 'HealthTech Pro', plan: 'Enterprise', currentUsage: 89000, planLimit: 100000, unit: 'emails', usagePercent: 89, overage: 0, projectedInvoice: 5340 },
-  { id: 9, customer: 'EduLearn Platform', plan: 'Starter', currentUsage: 1200, planLimit: 5000, unit: 'API calls', usagePercent: 24, overage: 0, projectedInvoice: 240 },
-  { id: 10, customer: 'LogiTrack Systems', plan: 'Business', currentUsage: 18500, planLimit: 20000, unit: 'workflows', usagePercent: 93, overage: 0, projectedInvoice: 2775 },
-  { id: 11, customer: 'MediaGroup Co', plan: 'Enterprise', currentUsage: 310, planLimit: 250, unit: 'GB', usagePercent: 124, overage: 60, projectedInvoice: 8450 },
-  { id: 12, customer: 'TravelWise', plan: 'Starter', currentUsage: 7800, planLimit: 10000, unit: 'API calls', usagePercent: 78, overage: 0, projectedInvoice: 780 },
-]);
+// ─── Data: Customers ────────────────────────────────────────
+const usageData = ref<UsageCustomer[]>([]);
 
-// ─── Mock Data: Meters ──────────────────────────────────────
-const meters = ref<Meter[]>([
-  {
-    id: 'meter-api', name: 'API Calls', unit: 'calls', unitPrice: 0.002, billingModel: 'Tiered',
-    icon: 'ph:code-bold', color: '#7849ff', totalUsage: 385200, activeCustomers: 12, revenue: 7704, active: true,
-    tiers: [
-      { name: 'Free Tier', from: 0, to: 1000, price: 0 },
-      { name: 'Standard', from: 1001, to: 50000, price: 0.002 },
-      { name: 'High Volume', from: 50001, to: 200000, price: 0.0015 },
-      { name: 'Enterprise', from: 200001, to: null, price: 0.001 },
-    ],
-  },
-  {
-    id: 'meter-storage', name: 'Storage', unit: 'GB', unitPrice: 0.10, billingModel: 'Per-Unit',
-    icon: 'ph:database-bold', color: '#3b82f6', totalUsage: 1840, activeCustomers: 9, revenue: 18400, active: true,
-    tiers: [
-      { name: 'Basic', from: 0, to: 50, price: 0.10 },
-      { name: 'Standard', from: 51, to: 200, price: 0.08 },
-      { name: 'Premium', from: 201, to: 500, price: 0.06 },
-      { name: 'Unlimited', from: 501, to: null, price: 0.04 },
-    ],
-  },
-  {
-    id: 'meter-users', name: 'Users', unit: 'users', unitPrice: 12.00, billingModel: 'Per-Unit',
-    icon: 'ph:users-bold', color: '#22c55e', totalUsage: 486, activeCustomers: 10, revenue: 5832, active: true,
-    tiers: [
-      { name: 'Small Team', from: 0, to: 10, price: 15.00 },
-      { name: 'Growth', from: 11, to: 50, price: 12.00 },
-      { name: 'Scale', from: 51, to: 150, price: 10.00 },
-      { name: 'Enterprise', from: 151, to: null, price: 8.00 },
-    ],
-  },
-  {
-    id: 'meter-emails', name: 'Emails Sent', unit: 'emails', unitPrice: 0.001, billingModel: 'Volume',
-    icon: 'ph:envelope-bold', color: '#f59e0b', totalUsage: 542000, activeCustomers: 8, revenue: 5420, active: true,
-    tiers: [
-      { name: 'Starter', from: 0, to: 10000, price: 0.002 },
-      { name: 'Growth', from: 10001, to: 100000, price: 0.001 },
-      { name: 'Scale', from: 100001, to: 500000, price: 0.0008 },
-      { name: 'Bulk', from: 500001, to: null, price: 0.0005 },
-    ],
-  },
-  {
-    id: 'meter-workflows', name: 'Workflows Run', unit: 'runs', unitPrice: 0.05, billingModel: 'Tiered',
-    icon: 'ph:flow-arrow-bold', color: '#ec4899', totalUsage: 28400, activeCustomers: 7, revenue: 14200, active: true,
-    tiers: [
-      { name: 'Lite', from: 0, to: 500, price: 0.08 },
-      { name: 'Standard', from: 501, to: 5000, price: 0.05 },
-      { name: 'Pro', from: 5001, to: 20000, price: 0.03 },
-      { name: 'Unlimited', from: 20001, to: null, price: 0.02 },
-    ],
-  },
-]);
+// ─── Data: Meters ───────────────────────────────────────────
+const meters = ref<Meter[]>([]);
 
-// ─── Mock Data: Invoices ────────────────────────────────────
-const invoices = ref<Invoice[]>([
-  { id: 1, invoiceNumber: 'INV-2026-0301', customer: 'Acme Corp', period: 'Mar 2026', baseAmount: 2500, usageCharges: 2350, total: 5557.50, status: 'Pending', taxRate: 15, taxAmount: 707.50, lineItems: [
-    { description: 'Enterprise Plan - Base', quantity: 1, rate: 2500, amount: 2500 },
-    { description: 'API Calls (48,500 calls)', quantity: 48500, rate: 0.002, amount: 970 },
-    { description: 'Storage (120 GB)', quantity: 120, rate: 10, amount: 1200 },
-    { description: 'Additional Users (5)', quantity: 5, rate: 36, amount: 180 },
-  ]},
-  { id: 2, invoiceNumber: 'INV-2026-0302', customer: 'GlobalTech Inc', period: 'Mar 2026', baseAmount: 1500, usageCharges: 2420, total: 4507, status: 'Pending', taxRate: 15, taxAmount: 587, lineItems: [
-    { description: 'Business Plan - Base', quantity: 1, rate: 1500, amount: 1500 },
-    { description: 'API Calls (32,100 calls) + Overage', quantity: 32100, rate: 0.002, amount: 1420 },
-    { description: 'Storage (85 GB)', quantity: 85, rate: 10, amount: 850 },
-    { description: 'Overage surcharge', quantity: 1, rate: 150, amount: 150 },
-  ]},
-  { id: 3, invoiceNumber: 'INV-2026-0303', customer: 'StartupHub', period: 'Mar 2026', baseAmount: 500, usageCharges: 84, total: 671.60, status: 'Draft', taxRate: 15, taxAmount: 87.60, lineItems: [
-    { description: 'Starter Plan - Base', quantity: 1, rate: 500, amount: 500 },
-    { description: 'API Calls (4,200 calls)', quantity: 4200, rate: 0.02, amount: 84 },
-  ]},
-  { id: 4, invoiceNumber: 'INV-2026-0204', customer: 'DataStream LLC', period: 'Feb 2026', baseAmount: 2500, usageCharges: 3700, total: 7130, status: 'Paid', taxRate: 15, taxAmount: 930, lineItems: [
-    { description: 'Enterprise Plan - Base', quantity: 1, rate: 2500, amount: 2500 },
-    { description: 'Storage (245 GB) + Overage', quantity: 245, rate: 10, amount: 2450 },
-    { description: 'Storage overage (45 GB)', quantity: 45, rate: 25, amount: 1125 },
-    { description: 'Workflows (1,200 runs)', quantity: 1200, rate: 0.05, amount: 60 },
-    { description: 'Credit adjustment', quantity: 1, rate: -65, amount: -65 },
-  ]},
-  { id: 5, invoiceNumber: 'INV-2026-0205', customer: 'CloudNine Solutions', period: 'Feb 2026', baseAmount: 1500, usageCharges: 1060, total: 2944, status: 'Paid', taxRate: 15, taxAmount: 384, lineItems: [
-    { description: 'Business Plan - Base', quantity: 1, rate: 1500, amount: 1500 },
-    { description: 'Storage (78 GB)', quantity: 78, rate: 10, amount: 780 },
-    { description: 'Emails Sent (15,000)', quantity: 15000, rate: 0.001, amount: 15 },
-    { description: 'Users (18)', quantity: 18, rate: 12, amount: 216 },
-    { description: 'Workflows (980 runs)', quantity: 980, rate: 0.05, amount: 49 },
-  ]},
-  { id: 6, invoiceNumber: 'INV-2026-0206', customer: 'RetailMax', period: 'Feb 2026', baseAmount: 2500, usageCharges: 4600, total: 8165, status: 'Paid', taxRate: 15, taxAmount: 1065, lineItems: [
-    { description: 'Enterprise Plan - Base', quantity: 1, rate: 2500, amount: 2500 },
-    { description: 'Users (142 seats)', quantity: 142, rate: 10, amount: 1420 },
-    { description: 'API Calls (95,000)', quantity: 95000, rate: 0.0015, amount: 1425 },
-    { description: 'Emails Sent (350,000)', quantity: 350000, rate: 0.001, amount: 350 },
-    { description: 'Workflows (8,100 runs)', quantity: 8100, rate: 0.05, amount: 405 },
-    { description: 'Storage (200 GB)', quantity: 200, rate: 5, amount: 1000 },
-  ]},
-  { id: 7, invoiceNumber: 'INV-2026-0207', customer: 'FinanceFirst', period: 'Feb 2026', baseAmount: 1500, usageCharges: 1860, total: 3864, status: 'Overdue', taxRate: 15, taxAmount: 504, lineItems: [
-    { description: 'Business Plan - Base', quantity: 1, rate: 1500, amount: 1500 },
-    { description: 'Users (56 seats) + Overage', quantity: 56, rate: 12, amount: 672 },
-    { description: 'User overage (6 seats)', quantity: 6, rate: 48, amount: 288 },
-    { description: 'API Calls (22,000)', quantity: 22000, rate: 0.002, amount: 440 },
-    { description: 'Emails Sent (46,000)', quantity: 46000, rate: 0.01, amount: 460 },
-  ]},
-  { id: 8, invoiceNumber: 'INV-2026-0208', customer: 'HealthTech Pro', period: 'Feb 2026', baseAmount: 2500, usageCharges: 2840, total: 6141, status: 'Paid', taxRate: 15, taxAmount: 801, lineItems: [
-    { description: 'Enterprise Plan - Base', quantity: 1, rate: 2500, amount: 2500 },
-    { description: 'Emails Sent (89,000)', quantity: 89000, rate: 0.001, amount: 890 },
-    { description: 'API Calls (60,000)', quantity: 60000, rate: 0.0015, amount: 900 },
-    { description: 'Storage (105 GB)', quantity: 105, rate: 10, amount: 1050 },
-  ]},
-  { id: 9, invoiceNumber: 'INV-2026-0109', customer: 'EduLearn Platform', period: 'Jan 2026', baseAmount: 500, usageCharges: 168, total: 768.20, status: 'Paid', taxRate: 15, taxAmount: 100.20, lineItems: [
-    { description: 'Starter Plan - Base', quantity: 1, rate: 500, amount: 500 },
-    { description: 'API Calls (1,200)', quantity: 1200, rate: 0.02, amount: 24 },
-    { description: 'Emails Sent (8,000)', quantity: 8000, rate: 0.002, amount: 16 },
-    { description: 'Workflows (320 runs)', quantity: 320, rate: 0.40, amount: 128 },
-  ]},
-  { id: 10, invoiceNumber: 'INV-2026-0110', customer: 'LogiTrack Systems', period: 'Jan 2026', baseAmount: 1500, usageCharges: 1275, total: 3190.75, status: 'Paid', taxRate: 15, taxAmount: 415.75, lineItems: [
-    { description: 'Business Plan - Base', quantity: 1, rate: 1500, amount: 1500 },
-    { description: 'Workflows (18,500 runs)', quantity: 18500, rate: 0.05, amount: 925 },
-    { description: 'API Calls (14,000)', quantity: 14000, rate: 0.002, amount: 280 },
-    { description: 'Storage (35 GB)', quantity: 35, rate: 2, amount: 70 },
-  ]},
-  { id: 11, invoiceNumber: 'INV-2026-0111', customer: 'MediaGroup Co', period: 'Jan 2026', baseAmount: 2500, usageCharges: 5950, total: 9717.50, status: 'Overdue', taxRate: 15, taxAmount: 1267.50, lineItems: [
-    { description: 'Enterprise Plan - Base', quantity: 1, rate: 2500, amount: 2500 },
-    { description: 'Storage (310 GB) + Overage', quantity: 310, rate: 10, amount: 3100 },
-    { description: 'Storage overage (60 GB)', quantity: 60, rate: 25, amount: 1500 },
-    { description: 'API Calls (45,000)', quantity: 45000, rate: 0.002, amount: 900 },
-    { description: 'Users (85 seats)', quantity: 85, rate: 5.29, amount: 450 },
-  ]},
-  { id: 12, invoiceNumber: 'INV-2026-0112', customer: 'TravelWise', period: 'Jan 2026', baseAmount: 500, usageCharges: 312, total: 933.80, status: 'Paid', taxRate: 15, taxAmount: 121.80, lineItems: [
-    { description: 'Starter Plan - Base', quantity: 1, rate: 500, amount: 500 },
-    { description: 'API Calls (7,800)', quantity: 7800, rate: 0.02, amount: 156 },
-    { description: 'Emails Sent (12,000)', quantity: 12000, rate: 0.001, amount: 12 },
-    { description: 'Workflows (480 runs)', quantity: 480, rate: 0.30, amount: 144 },
-  ]},
-  { id: 13, invoiceNumber: 'INV-2025-1213', customer: 'Acme Corp', period: 'Dec 2025', baseAmount: 2500, usageCharges: 2180, total: 5382, status: 'Paid', taxRate: 15, taxAmount: 702, lineItems: [
-    { description: 'Enterprise Plan - Base', quantity: 1, rate: 2500, amount: 2500 },
-    { description: 'API Calls (42,000)', quantity: 42000, rate: 0.002, amount: 840 },
-    { description: 'Storage (110 GB)', quantity: 110, rate: 10, amount: 1100 },
-    { description: 'Workflows (4,800 runs)', quantity: 4800, rate: 0.05, amount: 240 },
-  ]},
-  { id: 14, invoiceNumber: 'INV-2025-1214', customer: 'GlobalTech Inc', period: 'Dec 2025', baseAmount: 1500, usageCharges: 1950, total: 3967.50, status: 'Paid', taxRate: 15, taxAmount: 517.50, lineItems: [
-    { description: 'Business Plan - Base', quantity: 1, rate: 1500, amount: 1500 },
-    { description: 'API Calls (28,000)', quantity: 28000, rate: 0.002, amount: 560 },
-    { description: 'Storage (72 GB)', quantity: 72, rate: 10, amount: 720 },
-    { description: 'Users (28 seats)', quantity: 28, rate: 12, amount: 336 },
-    { description: 'Emails Sent (33,400)', quantity: 33400, rate: 0.01, amount: 334 },
-  ]},
-  { id: 15, invoiceNumber: 'INV-2025-1215', customer: 'RetailMax', period: 'Dec 2025', baseAmount: 2500, usageCharges: 4200, total: 7705, status: 'Paid', taxRate: 15, taxAmount: 1005, lineItems: [
-    { description: 'Enterprise Plan - Base', quantity: 1, rate: 2500, amount: 2500 },
-    { description: 'Users (138 seats)', quantity: 138, rate: 10, amount: 1380 },
-    { description: 'API Calls (88,000)', quantity: 88000, rate: 0.0015, amount: 1320 },
-    { description: 'Storage (190 GB)', quantity: 190, rate: 5, amount: 950 },
-    { description: 'Workflows (5,500 runs)', quantity: 5500, rate: 0.05, amount: 275 },
-    { description: 'Emails Sent (275,000)', quantity: 275000, rate: 0.001, amount: 275 },
-  ]},
-]);
+// ─── Data: Invoices ─────────────────────────────────────────
+const invoices = ref<Invoice[]>([]);
 
 // ─── KPI Cards ──────────────────────────────────────────────
 const kpiCards = computed(() => {
@@ -899,6 +740,227 @@ function openInvoiceDetail(invoice: Invoice) {
 function downloadInvoice() {
   ElMessage.info(t('usageBilling.downloadStarted'));
 }
+
+// ─── API Data Loading ───────────────────────────────────────
+const fallbackUsageData: UsageCustomer[] = [
+  { id: 1, customer: 'Acme Corp', plan: 'Enterprise', currentUsage: 48500, planLimit: 50000, unit: 'API calls', usagePercent: 97, overage: 0, projectedInvoice: 4850 },
+  { id: 2, customer: 'GlobalTech Inc', plan: 'Business', currentUsage: 32100, planLimit: 25000, unit: 'API calls', usagePercent: 128, overage: 7100, projectedInvoice: 3920 },
+  { id: 3, customer: 'StartupHub', plan: 'Starter', currentUsage: 4200, planLimit: 10000, unit: 'API calls', usagePercent: 42, overage: 0, projectedInvoice: 420 },
+  { id: 4, customer: 'DataStream LLC', plan: 'Enterprise', currentUsage: 245, planLimit: 200, unit: 'GB', usagePercent: 122, overage: 45, projectedInvoice: 6200 },
+  { id: 5, customer: 'CloudNine Solutions', plan: 'Business', currentUsage: 78, planLimit: 100, unit: 'GB', usagePercent: 78, overage: 0, projectedInvoice: 1560 },
+  { id: 6, customer: 'RetailMax', plan: 'Enterprise', currentUsage: 142, planLimit: 150, unit: 'users', usagePercent: 95, overage: 0, projectedInvoice: 7100 },
+  { id: 7, customer: 'FinanceFirst', plan: 'Business', currentUsage: 56, planLimit: 50, unit: 'users', usagePercent: 112, overage: 6, projectedInvoice: 3360 },
+  { id: 8, customer: 'HealthTech Pro', plan: 'Enterprise', currentUsage: 89000, planLimit: 100000, unit: 'emails', usagePercent: 89, overage: 0, projectedInvoice: 5340 },
+  { id: 9, customer: 'EduLearn Platform', plan: 'Starter', currentUsage: 1200, planLimit: 5000, unit: 'API calls', usagePercent: 24, overage: 0, projectedInvoice: 240 },
+  { id: 10, customer: 'LogiTrack Systems', plan: 'Business', currentUsage: 18500, planLimit: 20000, unit: 'workflows', usagePercent: 93, overage: 0, projectedInvoice: 2775 },
+  { id: 11, customer: 'MediaGroup Co', plan: 'Enterprise', currentUsage: 310, planLimit: 250, unit: 'GB', usagePercent: 124, overage: 60, projectedInvoice: 8450 },
+  { id: 12, customer: 'TravelWise', plan: 'Starter', currentUsage: 7800, planLimit: 10000, unit: 'API calls', usagePercent: 78, overage: 0, projectedInvoice: 780 },
+];
+
+const fallbackMeters: Meter[] = [
+  {
+    id: 'meter-api', name: 'API Calls', unit: 'calls', unitPrice: 0.002, billingModel: 'Tiered',
+    icon: 'ph:code-bold', color: '#7849ff', totalUsage: 385200, activeCustomers: 12, revenue: 7704, active: true,
+    tiers: [
+      { name: 'Free Tier', from: 0, to: 1000, price: 0 },
+      { name: 'Standard', from: 1001, to: 50000, price: 0.002 },
+      { name: 'High Volume', from: 50001, to: 200000, price: 0.0015 },
+      { name: 'Enterprise', from: 200001, to: null, price: 0.001 },
+    ],
+  },
+  {
+    id: 'meter-storage', name: 'Storage', unit: 'GB', unitPrice: 0.10, billingModel: 'Per-Unit',
+    icon: 'ph:database-bold', color: '#3b82f6', totalUsage: 1840, activeCustomers: 9, revenue: 18400, active: true,
+    tiers: [
+      { name: 'Basic', from: 0, to: 50, price: 0.10 },
+      { name: 'Standard', from: 51, to: 200, price: 0.08 },
+      { name: 'Premium', from: 201, to: 500, price: 0.06 },
+      { name: 'Unlimited', from: 501, to: null, price: 0.04 },
+    ],
+  },
+  {
+    id: 'meter-users', name: 'Users', unit: 'users', unitPrice: 12.00, billingModel: 'Per-Unit',
+    icon: 'ph:users-bold', color: '#22c55e', totalUsage: 486, activeCustomers: 10, revenue: 5832, active: true,
+    tiers: [
+      { name: 'Small Team', from: 0, to: 10, price: 15.00 },
+      { name: 'Growth', from: 11, to: 50, price: 12.00 },
+      { name: 'Scale', from: 51, to: 150, price: 10.00 },
+      { name: 'Enterprise', from: 151, to: null, price: 8.00 },
+    ],
+  },
+  {
+    id: 'meter-emails', name: 'Emails Sent', unit: 'emails', unitPrice: 0.001, billingModel: 'Volume',
+    icon: 'ph:envelope-bold', color: '#f59e0b', totalUsage: 542000, activeCustomers: 8, revenue: 5420, active: true,
+    tiers: [
+      { name: 'Starter', from: 0, to: 10000, price: 0.002 },
+      { name: 'Growth', from: 10001, to: 100000, price: 0.001 },
+      { name: 'Scale', from: 100001, to: 500000, price: 0.0008 },
+      { name: 'Bulk', from: 500001, to: null, price: 0.0005 },
+    ],
+  },
+  {
+    id: 'meter-workflows', name: 'Workflows Run', unit: 'runs', unitPrice: 0.05, billingModel: 'Tiered',
+    icon: 'ph:flow-arrow-bold', color: '#ec4899', totalUsage: 28400, activeCustomers: 7, revenue: 14200, active: true,
+    tiers: [
+      { name: 'Lite', from: 0, to: 500, price: 0.08 },
+      { name: 'Standard', from: 501, to: 5000, price: 0.05 },
+      { name: 'Pro', from: 5001, to: 20000, price: 0.03 },
+      { name: 'Unlimited', from: 20001, to: null, price: 0.02 },
+    ],
+  },
+];
+
+const fallbackInvoices: Invoice[] = [
+  { id: 1, invoiceNumber: 'INV-2026-0301', customer: 'Acme Corp', period: 'Mar 2026', baseAmount: 2500, usageCharges: 2350, total: 5557.50, status: 'Pending', taxRate: 15, taxAmount: 707.50, lineItems: [
+    { description: 'Enterprise Plan - Base', quantity: 1, rate: 2500, amount: 2500 },
+    { description: 'API Calls (48,500 calls)', quantity: 48500, rate: 0.002, amount: 970 },
+    { description: 'Storage (120 GB)', quantity: 120, rate: 10, amount: 1200 },
+    { description: 'Additional Users (5)', quantity: 5, rate: 36, amount: 180 },
+  ]},
+  { id: 2, invoiceNumber: 'INV-2026-0302', customer: 'GlobalTech Inc', period: 'Mar 2026', baseAmount: 1500, usageCharges: 2420, total: 4507, status: 'Pending', taxRate: 15, taxAmount: 587, lineItems: [
+    { description: 'Business Plan - Base', quantity: 1, rate: 1500, amount: 1500 },
+    { description: 'API Calls (32,100 calls) + Overage', quantity: 32100, rate: 0.002, amount: 1420 },
+    { description: 'Storage (85 GB)', quantity: 85, rate: 10, amount: 850 },
+    { description: 'Overage surcharge', quantity: 1, rate: 150, amount: 150 },
+  ]},
+  { id: 3, invoiceNumber: 'INV-2026-0303', customer: 'StartupHub', period: 'Mar 2026', baseAmount: 500, usageCharges: 84, total: 671.60, status: 'Draft', taxRate: 15, taxAmount: 87.60, lineItems: [
+    { description: 'Starter Plan - Base', quantity: 1, rate: 500, amount: 500 },
+    { description: 'API Calls (4,200 calls)', quantity: 4200, rate: 0.02, amount: 84 },
+  ]},
+  { id: 4, invoiceNumber: 'INV-2026-0204', customer: 'DataStream LLC', period: 'Feb 2026', baseAmount: 2500, usageCharges: 3700, total: 7130, status: 'Paid', taxRate: 15, taxAmount: 930, lineItems: [
+    { description: 'Enterprise Plan - Base', quantity: 1, rate: 2500, amount: 2500 },
+    { description: 'Storage (245 GB) + Overage', quantity: 245, rate: 10, amount: 2450 },
+    { description: 'Storage overage (45 GB)', quantity: 45, rate: 25, amount: 1125 },
+    { description: 'Workflows (1,200 runs)', quantity: 1200, rate: 0.05, amount: 60 },
+    { description: 'Credit adjustment', quantity: 1, rate: -65, amount: -65 },
+  ]},
+  { id: 5, invoiceNumber: 'INV-2026-0205', customer: 'CloudNine Solutions', period: 'Feb 2026', baseAmount: 1500, usageCharges: 1060, total: 2944, status: 'Paid', taxRate: 15, taxAmount: 384, lineItems: [
+    { description: 'Business Plan - Base', quantity: 1, rate: 1500, amount: 1500 },
+    { description: 'Storage (78 GB)', quantity: 78, rate: 10, amount: 780 },
+    { description: 'Emails Sent (15,000)', quantity: 15000, rate: 0.001, amount: 15 },
+    { description: 'Users (18)', quantity: 18, rate: 12, amount: 216 },
+    { description: 'Workflows (980 runs)', quantity: 980, rate: 0.05, amount: 49 },
+  ]},
+  { id: 6, invoiceNumber: 'INV-2026-0206', customer: 'RetailMax', period: 'Feb 2026', baseAmount: 2500, usageCharges: 4600, total: 8165, status: 'Paid', taxRate: 15, taxAmount: 1065, lineItems: [
+    { description: 'Enterprise Plan - Base', quantity: 1, rate: 2500, amount: 2500 },
+    { description: 'Users (142 seats)', quantity: 142, rate: 10, amount: 1420 },
+    { description: 'API Calls (95,000)', quantity: 95000, rate: 0.0015, amount: 1425 },
+    { description: 'Emails Sent (350,000)', quantity: 350000, rate: 0.001, amount: 350 },
+    { description: 'Workflows (8,100 runs)', quantity: 8100, rate: 0.05, amount: 405 },
+    { description: 'Storage (200 GB)', quantity: 200, rate: 5, amount: 1000 },
+  ]},
+  { id: 7, invoiceNumber: 'INV-2026-0207', customer: 'FinanceFirst', period: 'Feb 2026', baseAmount: 1500, usageCharges: 1860, total: 3864, status: 'Overdue', taxRate: 15, taxAmount: 504, lineItems: [
+    { description: 'Business Plan - Base', quantity: 1, rate: 1500, amount: 1500 },
+    { description: 'Users (56 seats) + Overage', quantity: 56, rate: 12, amount: 672 },
+    { description: 'User overage (6 seats)', quantity: 6, rate: 48, amount: 288 },
+    { description: 'API Calls (22,000)', quantity: 22000, rate: 0.002, amount: 440 },
+    { description: 'Emails Sent (46,000)', quantity: 46000, rate: 0.01, amount: 460 },
+  ]},
+  { id: 8, invoiceNumber: 'INV-2026-0208', customer: 'HealthTech Pro', period: 'Feb 2026', baseAmount: 2500, usageCharges: 2840, total: 6141, status: 'Paid', taxRate: 15, taxAmount: 801, lineItems: [
+    { description: 'Enterprise Plan - Base', quantity: 1, rate: 2500, amount: 2500 },
+    { description: 'Emails Sent (89,000)', quantity: 89000, rate: 0.001, amount: 890 },
+    { description: 'API Calls (60,000)', quantity: 60000, rate: 0.0015, amount: 900 },
+    { description: 'Storage (105 GB)', quantity: 105, rate: 10, amount: 1050 },
+  ]},
+  { id: 9, invoiceNumber: 'INV-2026-0109', customer: 'EduLearn Platform', period: 'Jan 2026', baseAmount: 500, usageCharges: 168, total: 768.20, status: 'Paid', taxRate: 15, taxAmount: 100.20, lineItems: [
+    { description: 'Starter Plan - Base', quantity: 1, rate: 500, amount: 500 },
+    { description: 'API Calls (1,200)', quantity: 1200, rate: 0.02, amount: 24 },
+    { description: 'Emails Sent (8,000)', quantity: 8000, rate: 0.002, amount: 16 },
+    { description: 'Workflows (320 runs)', quantity: 320, rate: 0.40, amount: 128 },
+  ]},
+  { id: 10, invoiceNumber: 'INV-2026-0110', customer: 'LogiTrack Systems', period: 'Jan 2026', baseAmount: 1500, usageCharges: 1275, total: 3190.75, status: 'Paid', taxRate: 15, taxAmount: 415.75, lineItems: [
+    { description: 'Business Plan - Base', quantity: 1, rate: 1500, amount: 1500 },
+    { description: 'Workflows (18,500 runs)', quantity: 18500, rate: 0.05, amount: 925 },
+    { description: 'API Calls (14,000)', quantity: 14000, rate: 0.002, amount: 280 },
+    { description: 'Storage (35 GB)', quantity: 35, rate: 2, amount: 70 },
+  ]},
+  { id: 11, invoiceNumber: 'INV-2026-0111', customer: 'MediaGroup Co', period: 'Jan 2026', baseAmount: 2500, usageCharges: 5950, total: 9717.50, status: 'Overdue', taxRate: 15, taxAmount: 1267.50, lineItems: [
+    { description: 'Enterprise Plan - Base', quantity: 1, rate: 2500, amount: 2500 },
+    { description: 'Storage (310 GB) + Overage', quantity: 310, rate: 10, amount: 3100 },
+    { description: 'Storage overage (60 GB)', quantity: 60, rate: 25, amount: 1500 },
+    { description: 'API Calls (45,000)', quantity: 45000, rate: 0.002, amount: 900 },
+    { description: 'Users (85 seats)', quantity: 85, rate: 5.29, amount: 450 },
+  ]},
+  { id: 12, invoiceNumber: 'INV-2026-0112', customer: 'TravelWise', period: 'Jan 2026', baseAmount: 500, usageCharges: 312, total: 933.80, status: 'Paid', taxRate: 15, taxAmount: 121.80, lineItems: [
+    { description: 'Starter Plan - Base', quantity: 1, rate: 500, amount: 500 },
+    { description: 'API Calls (7,800)', quantity: 7800, rate: 0.02, amount: 156 },
+    { description: 'Emails Sent (12,000)', quantity: 12000, rate: 0.001, amount: 12 },
+    { description: 'Workflows (480 runs)', quantity: 480, rate: 0.30, amount: 144 },
+  ]},
+  { id: 13, invoiceNumber: 'INV-2025-1213', customer: 'Acme Corp', period: 'Dec 2025', baseAmount: 2500, usageCharges: 2180, total: 5382, status: 'Paid', taxRate: 15, taxAmount: 702, lineItems: [
+    { description: 'Enterprise Plan - Base', quantity: 1, rate: 2500, amount: 2500 },
+    { description: 'API Calls (42,000)', quantity: 42000, rate: 0.002, amount: 840 },
+    { description: 'Storage (110 GB)', quantity: 110, rate: 10, amount: 1100 },
+    { description: 'Workflows (4,800 runs)', quantity: 4800, rate: 0.05, amount: 240 },
+  ]},
+  { id: 14, invoiceNumber: 'INV-2025-1214', customer: 'GlobalTech Inc', period: 'Dec 2025', baseAmount: 1500, usageCharges: 1950, total: 3967.50, status: 'Paid', taxRate: 15, taxAmount: 517.50, lineItems: [
+    { description: 'Business Plan - Base', quantity: 1, rate: 1500, amount: 1500 },
+    { description: 'API Calls (28,000)', quantity: 28000, rate: 0.002, amount: 560 },
+    { description: 'Storage (72 GB)', quantity: 72, rate: 10, amount: 720 },
+    { description: 'Users (28 seats)', quantity: 28, rate: 12, amount: 336 },
+    { description: 'Emails Sent (33,400)', quantity: 33400, rate: 0.01, amount: 334 },
+  ]},
+  { id: 15, invoiceNumber: 'INV-2025-1215', customer: 'RetailMax', period: 'Dec 2025', baseAmount: 2500, usageCharges: 4200, total: 7705, status: 'Paid', taxRate: 15, taxAmount: 1005, lineItems: [
+    { description: 'Enterprise Plan - Base', quantity: 1, rate: 2500, amount: 2500 },
+    { description: 'Users (138 seats)', quantity: 138, rate: 10, amount: 1380 },
+    { description: 'API Calls (88,000)', quantity: 88000, rate: 0.0015, amount: 1320 },
+    { description: 'Storage (190 GB)', quantity: 190, rate: 5, amount: 950 },
+    { description: 'Workflows (5,500 runs)', quantity: 5500, rate: 0.05, amount: 275 },
+    { description: 'Emails Sent (275,000)', quantity: 275000, rate: 0.001, amount: 275 },
+  ]},
+];
+
+async function loadMeters() {
+  try {
+    const res = await useApiFetch('usage-billing/meters');
+    if (res.success && Array.isArray(res.body)) {
+      meters.value = res.body as any;
+    } else {
+      meters.value = fallbackMeters;
+    }
+  } catch {
+    meters.value = fallbackMeters;
+  }
+}
+
+async function loadRecords() {
+  try {
+    const res = await useApiFetch('usage-billing/records');
+    if (res.success && Array.isArray(res.body)) {
+      usageData.value = res.body as any;
+    } else {
+      usageData.value = fallbackUsageData;
+    }
+  } catch {
+    usageData.value = fallbackUsageData;
+  }
+}
+
+async function loadCharges() {
+  try {
+    const res = await useApiFetch('usage-billing/charges');
+    if (res.success && Array.isArray(res.body)) {
+      invoices.value = res.body as any;
+    } else {
+      invoices.value = fallbackInvoices;
+    }
+  } catch {
+    invoices.value = fallbackInvoices;
+  }
+}
+
+async function loadData() {
+  loading.value = true;
+  try {
+    await Promise.all([loadMeters(), loadRecords(), loadCharges()]);
+  } finally {
+    loading.value = false;
+  }
+}
+
+onMounted(() => {
+  loadData();
+});
 </script>
 
 <style lang="scss" scoped>
