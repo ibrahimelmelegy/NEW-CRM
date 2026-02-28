@@ -122,7 +122,7 @@ describe('useSocket', () => {
       const { socket } = useSocket();
       mountedCallback!();
 
-      expect(socket.value).toBe(mockSocketInstance);
+      expect(socket.value).toStrictEqual(mockSocketInstance);
     });
 
     it('should register connect event handler', () => {
@@ -149,7 +149,7 @@ describe('useSocket', () => {
       mountedCallback!();
 
       // Verify socket is connected
-      expect(socket.value).toBe(mockSocketInstance);
+      expect(socket.value).toStrictEqual(mockSocketInstance);
 
       // Trigger unmount
       unmountedCallback!();

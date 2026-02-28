@@ -27,7 +27,7 @@ export const CONTRACT_STATUSES = [
 ];
 
 export function getContractStatusType(status: string) {
-  return CONTRACT_STATUSES.find(s => s.value === status)?.type || 'info';
+  return CONTRACT_STATUSES.find(s => s.value === status)?.type ?? 'info';
 }
 
 export async function fetchContracts(): Promise<Contract[]> {
