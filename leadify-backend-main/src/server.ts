@@ -12,6 +12,7 @@ import { Server } from 'socket.io';
 import { setupPresenceHandlers } from './socket/presenceHandler';
 import { setupVirtualOfficeHandlers } from './socket/virtualOfficeHandler';
 import { setupLiveChatHandlers } from './socket/liveChatHandler';
+import { setupCrmSocketHandlers } from './socket/socketHandlers';
 
 const PORT = process.env.PORT ? parseInt(process.env.PORT, 10) : 5000;
 const server = http.createServer(app);
@@ -54,10 +55,11 @@ async function runTypoMigration(sequelize: Sequelize) {
   }
 }
 
-// Set up real-time presence tracking
+// Set up real-time socket handlers
 setupPresenceHandlers(io);
 setupVirtualOfficeHandlers(io);
 setupLiveChatHandlers(io);
+setupCrmSocketHandlers(io);
 
 // Test database connection and sync models
 sequelize

@@ -17,6 +17,7 @@ import * as ExcelJS from 'exceljs';
 import { sendEmail } from '../utils/emailHelper';
 import notificationService from '../notification/notificationService';
 import { tenantWhere } from '../utils/tenantScope';
+import { io } from '../server';
 import Deal from '../deal/model/dealModel';
 import { DealStageEnums } from '../deal/dealEnum';
 import Invoice from '../deal/model/invoiceMode';
@@ -63,6 +64,7 @@ class ClientService {
     }
     await createActivityLog('client', 'create', client.id, admin.id, null, 'Client created succesfully');
 
+    try { io.emit('client:created', { id: client.id, clientName: client.clientName, companyName: client.companyName }); } catch {}
     return client;
   }
 
@@ -90,7 +92,9 @@ class ClientService {
       );
     }
 
-    return await client.save();
+    const updatedClient = await client.save();
+    try { io.emit('client:updated', { id: updatedClient.id, clientName: updatedClient.clientName, companyName: updatedClient.companyName }); } catch {}
+    return updatedClient;
   }
 
   async getClientContacts(clientId: string, user: User): Promise<User[]> {

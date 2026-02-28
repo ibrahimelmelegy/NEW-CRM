@@ -512,6 +512,13 @@ class DealService {
     // Emit detailed stage change event via Socket.io
     io.emit('deal:stage_changed', { dealId, fromStage, toStage: stage, userId: user.id });
 
+    // Emit semantic won/lost events for dashboard widgets and notifications
+    if (stage === DealStageEnums.CLOSED) {
+      io.emit('deal:won', { dealId, name: deal.name, price: deal.price, userId: user.id });
+    } else if (stage === DealStageEnums.CANCELLED) {
+      io.emit('deal:lost', { dealId, name: deal.name, price: deal.price, userId: user.id });
+    }
+
     // --> ORCHESTRATION: Auto-create Project on Deal Won (CLOSED)
     if (stage === DealStageEnums.CLOSED) {
       try {

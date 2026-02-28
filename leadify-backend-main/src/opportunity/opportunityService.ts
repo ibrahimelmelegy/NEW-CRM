@@ -90,6 +90,7 @@ class OpportunityService {
         await notificationService.sendAssignOpportunityNotification({ userId, target: opportunity.id }, opportunity, admin);
 
       await transaction.commit();
+      io.emit('opportunity:created', { id: opportunity.id, name: opportunity.name, stage: opportunity.stage });
       return opportunity;
     } catch (error) {
       await transaction.rollback();
@@ -128,6 +129,7 @@ class OpportunityService {
       }
       await createActivityLog('opportunity', 'create', opportunity.id, admin.id, undefined, 'Opportunity created succesfully with convert lead');
 
+      io.emit('opportunity:created', { id: opportunity.id, name: opportunity.name, stage: opportunity.stage });
       return opportunity;
     } catch (error) {
       await transaction.rollback();
@@ -161,7 +163,9 @@ class OpportunityService {
     await createActivityLog('opportunity', 'update', opportunity.id, user.id, null, `New updates added suucesfully`);
     if (input.users && Array.isArray(input.users)) await opportunity.$set('users', input.users);
 
-    return await opportunity.save();
+    const updatedOpportunity = await opportunity.save();
+    io.emit('opportunity:updated', { id: updatedOpportunity.id, name: updatedOpportunity.name, stage: updatedOpportunity.stage });
+    return updatedOpportunity;
   }
 
   async getKanbanOpportunities(user: User): Promise<Record<string, Opportunity[]>> {
