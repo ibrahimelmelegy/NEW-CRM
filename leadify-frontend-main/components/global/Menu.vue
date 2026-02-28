@@ -169,7 +169,8 @@ const menu = [
       { link: '/companies', name: 'navigation.companies', icon: 'ph:buildings-bold' },
       { link: '/reminders', name: 'navigation.reminders', icon: 'ph:bell-ringing-bold' },
       { link: '/notifications', name: 'navigation.notifications', icon: 'ph:bell-bold' },
-      { link: '/crm/onboarding', name: 'navigation.customerOnboarding', icon: 'ph:rocket-launch-bold' }
+      { link: '/crm/onboarding', name: 'navigation.customerOnboarding', icon: 'ph:rocket-launch-bold' },
+      { link: '/crm/journey-builder', name: 'navigation.journeyBuilder', icon: 'ph:path-bold' }
     ]
   },
 
@@ -310,7 +311,8 @@ const menu = [
       { link: '/marketing/social-crm', name: 'navigation.socialCrm', icon: 'ph:share-network-bold' },
       { link: '/marketing/loyalty', name: 'navigation.loyalty', icon: 'ph:gift-bold' },
       { link: '/web-forms', name: 'navigation.webForms', icon: 'ph:browser-bold' },
-      { link: '/marketing/events', name: 'navigation.eventManagement', icon: 'ph:calendar-star-bold' }
+      { link: '/marketing/events', name: 'navigation.eventManagement', icon: 'ph:calendar-star-bold' },
+      { link: '/marketing/abm', name: 'navigation.abm', icon: 'ph:target-bold' }
     ]
   },
 
@@ -344,7 +346,9 @@ const menu = [
       { link: '/analytics/simulator', name: 'navigation.revenueSimulator', icon: 'ph:chart-line-up-bold' },
       { link: '/gamification/leaderboard', name: 'navigation.leaderboard', icon: 'ph:ranking-bold' },
       { link: '/gamification/achievements', name: 'navigation.achievements', icon: 'ph:medal-bold' },
-      { link: '/analytics/advanced', name: 'navigation.advancedAnalytics', icon: 'ph:chart-scatter-bold' }
+      { link: '/analytics/advanced', name: 'navigation.advancedAnalytics', icon: 'ph:chart-scatter-bold' },
+      { link: '/analytics/subscriptions', name: 'navigation.subscriptionAnalyticsNav', icon: 'ph:chart-line-bold' },
+      { link: '/analytics/ai-insights', name: 'navigation.aiInsights', icon: 'ph:brain-bold' }
     ]
   },
 
@@ -402,7 +406,8 @@ const menu = [
       { link: '/support/knowledge-base', name: 'navigation.knowledgeBase', icon: 'ph:book-open-bold' },
       { link: '/support/live-chat', name: 'navigation.liveChat', icon: 'ph:chats-bold' },
       { link: '/customer-success', name: 'navigation.customerSuccess', icon: 'ph:heart-half-bold' },
-      { link: '/warranty', name: 'navigation.warranty', icon: 'ph:shield-check-bold' }
+      { link: '/warranty', name: 'navigation.warranty', icon: 'ph:shield-check-bold' },
+      { link: '/support/feedback', name: 'navigation.feedbackNps', icon: 'ph:chat-circle-dots-bold' }
     ]
   },
 
@@ -445,6 +450,7 @@ const menu = [
       { link: '/settings/branding', name: 'navigation.branding', icon: 'ph:paint-brush-household-bold' },
       { link: '/settings/white-label', name: 'navigation.whiteLabel', icon: 'ph:paint-brush-bold' },
       { link: '/settings/customer-portal', name: 'navigation.customerPortal', icon: 'ph:monitor-bold' },
+      { link: '/settings/compliance', name: 'navigation.complianceCenter', icon: 'ph:shield-warning-bold' },
       { link: '/settings/roles', name: 'navigation.permissionsHub', icon: 'ph:key-bold', role: 'VIEW_ROLES' }
     ]
   }

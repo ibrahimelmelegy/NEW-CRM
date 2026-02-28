@@ -30,7 +30,7 @@
         :style="{ border: opt.recommended ? '2px solid #7849ff' : '1px solid var(--border-default)', animationDelay: `${idx * 0.08}s` }"
       )
         //- Recommended badge
-        .absolute.top-0.left-1\/2.-translate-x-1\/2.-translate-y-1\/2(v-if="opt.recommended")
+        .absolute.top-0(v-if="opt.recommended" class="left-1/2 -translate-x-1/2 -translate-y-1/2")
           el-tag(type="primary" effect="dark" size="small" round style="background: #7849ff; border-color: #7849ff")
             Icon(name="ph:star-bold" size="12" class="mr-1")
             span {{ $t('quoteComparison.recommended') }}
