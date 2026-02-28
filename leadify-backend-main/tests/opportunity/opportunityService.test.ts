@@ -11,7 +11,7 @@ import { createActivityLog } from '../../src/activity-logs/activityService';
 import { OpportunityPermissionsEnum } from '../../src/role/roleEnum';
 import { ERRORS } from '../../src/utils/error/errors';
 import BaseError from '../../src/utils/error/base-http-exception';
-import OpportunityUsers from '../../src/opportunity/model/oppotyunity_UsersModel';
+import OpportunityUsers from '../../src/opportunity/model/opportunity_UsersModel';
 
 // Mocks
 jest.mock('../../src/opportunity/opportunityModel');
@@ -21,7 +21,7 @@ jest.mock('../../src/user/userModel');
 jest.mock('../../src/lead/leadService');
 jest.mock('../../src/notification/notificationService');
 jest.mock('../../src/activity-logs/activityService');
-jest.mock('../../src/opportunity/model/oppotyunity_UsersModel');
+jest.mock('../../src/opportunity/model/opportunity_UsersModel');
 jest.mock('../../src/utils/emailHelper');
 jest.mock('../../src/server', () => ({
     io: {
