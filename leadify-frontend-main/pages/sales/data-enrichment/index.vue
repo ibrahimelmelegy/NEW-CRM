@@ -602,13 +602,13 @@ const distributionChartOption = computed(() => {
     xAxis: {
       type: 'category',
       data: buckets.map((b) => b.label),
-      axisLabel: { color: 'var(--text-muted)' },
-      axisLine: { lineStyle: { color: 'var(--border-default)' } },
+      axisLabel: { color: '#94A3B8' },
+      axisLine: { lineStyle: { color: 'rgba(148,163,184,0.2)' } },
     },
     yAxis: {
       type: 'value',
-      axisLabel: { color: 'var(--text-muted)' },
-      splitLine: { lineStyle: { color: 'var(--border-default)', type: 'dashed' } },
+      axisLabel: { color: '#94A3B8' },
+      splitLine: { lineStyle: { color: 'rgba(148,163,184,0.15)', type: 'dashed' } },
     },
     series: [
       {
@@ -777,7 +777,7 @@ function loadDemoContacts() {
 async function enrichContact(contact: Contact) {
   contact.enriching = true;
   try {
-    const res: any = await useApiFetch(`data-enrichment/enrich/${contact.id}`, { method: 'POST' });
+    const res: any = await useApiFetch(`data-enrichment/enrich/${contact.id}`, 'POST');
     if (res?.body) {
       Object.assign(contact, res.body);
     } else {
@@ -806,7 +806,7 @@ async function handleBulkEnrich() {
   enrichingAll.value = true;
   try {
     const ids = selectedContacts.value.map((c) => c.id);
-    await useApiFetch('data-enrichment/bulk-enrich', { method: 'POST', body: { ids } });
+    await useApiFetch('data-enrichment/bulk-enrich', 'POST', { ids });
     ElNotification({
       title: t('dataEnrichment.bulkEnrichSuccess'),
       message: `${ids.length} ${t('dataEnrichment.contactsEnriched')}`,
@@ -836,7 +836,7 @@ async function handleBulkEnrich() {
 async function runFullEnrichment() {
   runningFullEnrich.value = true;
   try {
-    await useApiFetch('data-enrichment/run-full', { method: 'POST' });
+    await useApiFetch('data-enrichment/run-full', 'POST');
     ElNotification({ title: t('dataEnrichment.enrichmentStarted'), type: 'success' });
     await loadDashboard();
   } catch {
@@ -924,10 +924,7 @@ function loadDemoLog() {
 async function saveAutoRules() {
   savingRules.value = true;
   try {
-    await useApiFetch('data-enrichment/rules', {
-      method: 'PUT',
-      body: { ...autoRules },
-    });
+    await useApiFetch('data-enrichment/rules', 'PUT', { ...autoRules });
     ElNotification({ title: t('dataEnrichment.rulesSaved'), type: 'success' });
   } catch {
     await new Promise((r) => setTimeout(r, 800));

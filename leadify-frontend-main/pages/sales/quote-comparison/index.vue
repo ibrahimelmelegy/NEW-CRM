@@ -178,7 +178,7 @@ import { ElMessage } from 'element-plus';
 
 definePageMeta({ middleware: 'permissions' });
 
-const { t } = useI18n();
+const { t, locale } = useI18n();
 
 // --- Default feature list ---
 const defaultFeatures = () => [
@@ -352,12 +352,12 @@ const valueAnalysisRows = computed(() => {
   return [
     {
       metric: t('quoteComparison.totalCost') + ` (${months} ${t('quoteComparison.months')})`,
-      values: totalCosts.map(v => '$' + v.toLocaleString()),
+      values: totalCosts.map(v => new Intl.NumberFormat(locale.value, { style: 'currency', currency: 'USD', minimumFractionDigits: 0, maximumFractionDigits: 0 }).format(v)),
       bestIndex: bestTotalCost
     },
     {
       metric: t('quoteComparison.costPerUser'),
-      values: costPerUser.map(v => '$' + Math.round(v).toLocaleString()),
+      values: costPerUser.map(v => new Intl.NumberFormat(locale.value, { style: 'currency', currency: 'USD', minimumFractionDigits: 0, maximumFractionDigits: 0 }).format(Math.round(v))),
       bestIndex: bestCostPerUser
     },
     {

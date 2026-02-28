@@ -183,7 +183,7 @@
                 div
                   .text-sm.font-semibold(style="color: var(--text-primary)") {{ feature.label }}
                   .text-xs(style="color: var(--text-muted)") {{ feature.description }}
-              el-switch(v-model="feature.enabled" active-color="#7849ff")
+              el-switch(v-model="featureEnabledState[feature.key]" active-color="#7849ff")
 
             //- Preview of what customers see
             .feature-preview.rounded-xl.p-3.mt-2(v-if="feature.enabled")
@@ -430,10 +430,9 @@ import { ElNotification, ElMessageBox, ElMessage } from 'element-plus';
 import { useApiFetch } from '~/composables/useApiFetch';
 
 const router = useRouter();
-const { $i18n } = useNuxtApp();
-const t = $i18n.t;
+const { t } = useI18n();
 
-definePageMeta({ title: 'Customer Portal' });
+definePageMeta({ middleware: 'permissions' });
 
 // ── State ──
 const loading = ref(true);
@@ -480,7 +479,19 @@ const fontOptions = [
 ];
 
 // ── Portal Features ──
-const portalFeatures = reactive([
+const featureEnabledState = reactive<Record<string, boolean>>({
+  viewDeals: true,
+  viewInvoices: true,
+  submitTickets: true,
+  knowledgeBase: true,
+  updateProfile: true,
+  signContracts: false,
+  documentLibrary: false,
+  submitForms: false,
+  liveChat: false,
+});
+
+const portalFeatures = computed(() => [
   {
     key: 'viewDeals',
     label: t('customerPortal.viewDeals'),
@@ -488,7 +499,7 @@ const portalFeatures = reactive([
     icon: 'ph:handshake-bold',
     color: '#7849ff',
     bgColor: 'rgba(120, 73, 255, 0.1)',
-    enabled: true,
+    enabled: featureEnabledState.viewDeals,
     previewItems: [t('customerPortal.dealPipeline'), t('customerPortal.dealAmount'), t('customerPortal.dealStage')],
   },
   {
@@ -498,7 +509,7 @@ const portalFeatures = reactive([
     icon: 'ph:receipt-bold',
     color: '#3b82f6',
     bgColor: 'rgba(59, 130, 246, 0.1)',
-    enabled: true,
+    enabled: featureEnabledState.viewInvoices,
     previewItems: [t('customerPortal.invoiceList'), t('customerPortal.downloadPdf'), t('customerPortal.paymentStatus')],
   },
   {
@@ -508,7 +519,7 @@ const portalFeatures = reactive([
     icon: 'ph:ticket-bold',
     color: '#f59e0b',
     bgColor: 'rgba(245, 158, 11, 0.1)',
-    enabled: true,
+    enabled: featureEnabledState.submitTickets,
     previewItems: [t('customerPortal.createTicket'), t('customerPortal.trackStatus'), t('customerPortal.addComments')],
   },
   {
@@ -518,7 +529,7 @@ const portalFeatures = reactive([
     icon: 'ph:book-open-bold',
     color: '#22c55e',
     bgColor: 'rgba(34, 197, 94, 0.1)',
-    enabled: true,
+    enabled: featureEnabledState.knowledgeBase,
     previewItems: [t('customerPortal.browseArticles'), t('customerPortal.searchKb'), t('customerPortal.helpfulVotes')],
   },
   {
@@ -528,7 +539,7 @@ const portalFeatures = reactive([
     icon: 'ph:user-circle-bold',
     color: '#8b5cf6',
     bgColor: 'rgba(139, 92, 246, 0.1)',
-    enabled: true,
+    enabled: featureEnabledState.updateProfile,
     previewItems: [t('customerPortal.editDetails'), t('customerPortal.changePassword'), t('customerPortal.managePrefs')],
   },
   {
@@ -538,7 +549,7 @@ const portalFeatures = reactive([
     icon: 'ph:signature-bold',
     color: '#ec4899',
     bgColor: 'rgba(236, 72, 153, 0.1)',
-    enabled: false,
+    enabled: featureEnabledState.signContracts,
     previewItems: [t('customerPortal.viewContracts'), t('customerPortal.eSign'), t('customerPortal.downloadSigned')],
   },
   {
@@ -548,7 +559,7 @@ const portalFeatures = reactive([
     icon: 'ph:folder-open-bold',
     color: '#06b6d4',
     bgColor: 'rgba(6, 182, 212, 0.1)',
-    enabled: false,
+    enabled: featureEnabledState.documentLibrary,
     previewItems: [t('customerPortal.sharedDocs'), t('customerPortal.uploadFiles'), t('customerPortal.versionHistory')],
   },
   {
@@ -558,7 +569,7 @@ const portalFeatures = reactive([
     icon: 'ph:textbox-bold',
     color: '#10b981',
     bgColor: 'rgba(16, 185, 129, 0.1)',
-    enabled: false,
+    enabled: featureEnabledState.submitForms,
     previewItems: [t('customerPortal.availableForms'), t('customerPortal.formSubmissions'), t('customerPortal.formHistory')],
   },
   {
@@ -568,7 +579,7 @@ const portalFeatures = reactive([
     icon: 'ph:chats-bold',
     color: '#ef4444',
     bgColor: 'rgba(239, 68, 68, 0.1)',
-    enabled: false,
+    enabled: featureEnabledState.liveChat,
     previewItems: [t('customerPortal.startChat'), t('customerPortal.chatHistory'), t('customerPortal.fileSharing')],
   },
 ]);
@@ -978,8 +989,9 @@ async function loadPortalConfig() {
       if (data.faqs) faqs.value = data.faqs;
       if (data.features) {
         data.features.forEach((feat: any) => {
-          const found = portalFeatures.find(f => f.key === feat.key);
-          if (found) found.enabled = feat.enabled;
+          if (feat.key in featureEnabledState) {
+            featureEnabledState[feat.key] = feat.enabled;
+          }
         });
       }
       if (data.analytics) {
@@ -998,7 +1010,7 @@ async function handleSave() {
   try {
     const payload = {
       ...config,
-      features: portalFeatures.map(f => ({ key: f.key, enabled: f.enabled })),
+      features: portalFeatures.value.map(f => ({ key: f.key, enabled: f.enabled })),
       articles: articles.value,
       faqs: faqs.value,
     };

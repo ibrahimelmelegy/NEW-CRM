@@ -189,10 +189,10 @@
             p.text-2xl.font-bold(style="color: #22c55e") {{ winLossSummary.winRate }}%
           .p-4.rounded-xl.border.text-center(style="border-color: var(--border-default); background: var(--bg-elevated)")
             p.text-xs.font-bold.uppercase.tracking-widest.mb-1(style="color: var(--text-muted)") {{ $t('salesEnablement.avgDealSizeWon') }}
-            p.text-2xl.font-bold(style="color: #7849ff") ${{ formatNumber(winLossSummary.avgDealSizeWon) }}
+            p.text-2xl.font-bold(style="color: #7849ff") {{ formatCurrency(winLossSummary.avgDealSizeWon) }}
           .p-4.rounded-xl.border.text-center(style="border-color: var(--border-default); background: var(--bg-elevated)")
             p.text-xs.font-bold.uppercase.tracking-widest.mb-1(style="color: var(--text-muted)") {{ $t('salesEnablement.avgDealSizeLost') }}
-            p.text-2xl.font-bold(style="color: #ef4444") ${{ formatNumber(winLossSummary.avgDealSizeLost) }}
+            p.text-2xl.font-bold(style="color: #ef4444") {{ formatCurrency(winLossSummary.avgDealSizeLost) }}
           .p-4.rounded-xl.border.text-center(style="border-color: var(--border-default); background: var(--bg-elevated)")
             p.text-xs.font-bold.uppercase.tracking-widest.mb-1(style="color: var(--text-muted)") {{ $t('salesEnablement.totalDealsAnalyzed') }}
             p.text-2xl.font-bold(style="color: #3b82f6") {{ winLossSummary.totalDeals }}
@@ -243,7 +243,7 @@
                   | {{ row.status === 'won' ? $t('salesEnablement.won') : $t('salesEnablement.lost') }}
             el-table-column(:label="$t('salesEnablement.amount')" width="140" align="right")
               template(#default="{ row }")
-                span.text-sm.font-bold(:style="{ color: row.status === 'won' ? '#22c55e' : '#ef4444' }") ${{ formatNumber(row.amount) }}
+                span.text-sm.font-bold(:style="{ color: row.status === 'won' ? '#22c55e' : '#ef4444' }") {{ formatCurrency(row.amount) }}
             el-table-column(:label="$t('salesEnablement.reason')" min-width="200")
               template(#default="{ row }")
                 span.text-sm(style="color: var(--text-secondary)") {{ row.reason }}
@@ -350,7 +350,7 @@
 <script setup lang="ts">
 definePageMeta({ middleware: 'permissions' });
 
-const { t } = useI18n();
+const { t, locale } = useI18n();
 
 // ──────────────────────────────────────────
 // State
@@ -510,7 +510,7 @@ const kpiStats = computed(() => {
     { label: t('salesEnablement.totalResources'), value: totalResources, icon: 'ph:files-bold', color: '#7849ff' },
     { label: t('salesEnablement.battleCardsCount'), value: totalBattleCards, icon: 'ph:shield-bold', color: '#3b82f6' },
     { label: t('salesEnablement.winRate'), value: avgWin + '%', icon: 'ph:trophy-bold', color: '#22c55e' },
-    { label: t('salesEnablement.avgDealSize'), value: '$' + formatNumber(avgDealSize), icon: 'ph:currency-dollar-bold', color: '#f59e0b' }
+    { label: t('salesEnablement.avgDealSize'), value: formatCurrency(avgDealSize), icon: 'ph:currency-dollar-bold', color: '#f59e0b' }
   ];
 });
 
@@ -761,7 +761,7 @@ function downloadResource(res: any) {
 // Win/Loss Export
 // ──────────────────────────────────────────
 function exportWinLossReport() {
-  const headers = ['Deal Name', 'Status', 'Amount', 'Reason', 'Competitor', 'Closed Date'];
+  const headers = [t('salesEnablement.dealName'), t('salesEnablement.status'), t('salesEnablement.amount'), t('salesEnablement.reason'), t('salesEnablement.competitorInvolved'), t('salesEnablement.closedDate')];
   const rows = recentDeals.value.map(d => [
     d.dealName, d.status, d.amount, d.reason, d.competitor || 'N/A', d.closedDate
   ]);
@@ -781,11 +781,15 @@ function exportWinLossReport() {
 // ──────────────────────────────────────────
 function formatDate(date: string): string {
   if (!date) return '—';
-  return new Date(date).toLocaleDateString('en-GB', { day: '2-digit', month: 'short', year: '2-digit' });
+  return new Date(date).toLocaleDateString(locale.value, { day: '2-digit', month: 'short', year: '2-digit' });
 }
 
 function formatNumber(num: number): string {
-  return num.toLocaleString();
+  return num.toLocaleString(locale.value);
+}
+
+function formatCurrency(value: number): string {
+  return new Intl.NumberFormat(locale.value, { style: 'currency', currency: 'USD', minimumFractionDigits: 0, maximumFractionDigits: 0 }).format(value);
 }
 
 function capitalize(str: string): string {

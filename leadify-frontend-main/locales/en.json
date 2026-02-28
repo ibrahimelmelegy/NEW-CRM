@@ -8127,6 +8127,7 @@
     "selectEvent": "Select an event...",
     "selectEventPrompt": "Select an event to view registrations and attendees",
     "attendeeName": "Attendee Name",
+    "email": "Email",
     "company": "Company",
     "registrationDate": "Registration Date",
     "attendanceStatus": "Attendance",

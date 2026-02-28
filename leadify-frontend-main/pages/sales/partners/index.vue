@@ -392,7 +392,7 @@
 </template>
 
 <script setup lang="ts">
-import { ref, reactive, computed, onMounted, watch, nextTick } from 'vue';
+import { ref, reactive, computed, onMounted, onBeforeUnmount, watch, nextTick } from 'vue';
 import { ElMessage, ElMessageBox, ElNotification } from 'element-plus';
 import * as echarts from 'echarts';
 
@@ -906,12 +906,12 @@ function initRevenueByPartnerChart() {
     xAxis: {
       type: 'category',
       data: names,
-      axisLabel: { color: 'var(--text-muted)', rotate: 25, fontSize: 10 }
+      axisLabel: { color: '#94a3b8', rotate: 25, fontSize: 10 }
     },
     yAxis: {
       type: 'value',
       name: t('partnerManagement.revenue'),
-      axisLabel: { color: 'var(--text-muted)', formatter: (v: number) => (v / 1000000).toFixed(1) + 'M' }
+      axisLabel: { color: '#94a3b8', formatter: (v: number) => (v / 1000000).toFixed(1) + 'M' }
     },
     series: [{
       name: t('partnerManagement.revenue'),
@@ -940,23 +940,29 @@ function initRevenueByTierChart() {
 
   tierChart.setOption({
     tooltip: { trigger: 'item', formatter: (params: any) => `${params.name}<br/>${t('partnerManagement.revenue')}: <b>${Number(params.value).toLocaleString()} SAR</b> (${params.percent}%)` },
-    legend: { bottom: '0%', textStyle: { color: 'var(--text-muted)' } },
+    legend: { bottom: '0%', textStyle: { color: '#94a3b8' } },
     series: [{
       type: 'pie',
       radius: ['40%', '70%'],
       center: ['50%', '45%'],
       avoidLabelOverlap: true,
-      itemStyle: { borderRadius: 8, borderColor: 'var(--bg-elevated)', borderWidth: 2 },
+      itemStyle: { borderRadius: 8, borderColor: '#1e1e2e', borderWidth: 2 },
       label: { show: true, formatter: '{b}\n{d}%', fontSize: 11 },
       data
     }]
   });
 }
 
+function handleResize() {
+  partnerChart?.resize();
+  tierChart?.resize();
+}
+
 function initCharts() {
   nextTick(() => {
     initRevenueByPartnerChart();
     initRevenueByTierChart();
+    window.addEventListener('resize', handleResize);
   });
 }
 
@@ -980,6 +986,12 @@ watch(performancePeriod, () => {
 // ──────────────────────────────────────────
 onMounted(() => {
   loadDemoData();
+});
+
+onBeforeUnmount(() => {
+  partnerChart?.dispose();
+  tierChart?.dispose();
+  window.removeEventListener('resize', handleResize);
 });
 </script>
 

@@ -93,7 +93,8 @@
           .w-10.h-10.rounded-xl.flex.items-center.justify-center(style="background: rgba(59, 130, 246, 0.15)")
             Icon(name="ph:chart-bar-bold" size="22" style="color: #3b82f6")
           h3.text-lg.font-bold(style="color: var(--text-primary)") {{ $t('roiCalculator.breakdown') }}
-        VChart.w-full(:option="breakdownChartOption" :style="{ height: '320px' }" autoresize)
+        ClientOnly
+          VChart.w-full(:option="breakdownChartOption" :style="{ height: '320px' }" autoresize)
 
       //- Comparison Table
       .glass-card.p-6.rounded-2xl.animate-entrance
@@ -130,7 +131,7 @@ import { ElMessage } from 'element-plus';
 
 definePageMeta({ middleware: 'permissions' });
 
-const { t } = useI18n();
+const { t, locale } = useI18n();
 
 // --- Current costs form ---
 const form = reactive({
@@ -257,7 +258,7 @@ const breakdownChartOption = computed(() => {
       type: 'category',
       data: categories,
       axisLabel: { color: '#94A3B8', fontSize: 11 },
-      axisLine: { lineStyle: { color: 'rgba(255,255,255,0.1)' } }
+      axisLine: { lineStyle: { color: 'rgba(148,163,184,0.2)' } }
     },
     yAxis: {
       type: 'value',
@@ -269,7 +270,7 @@ const breakdownChartOption = computed(() => {
           return v.toString();
         }
       },
-      splitLine: { lineStyle: { color: 'rgba(255,255,255,0.05)' } }
+      splitLine: { lineStyle: { color: 'rgba(148,163,184,0.1)' } }
     },
     series: [{
       type: 'bar',
@@ -329,9 +330,9 @@ const comparisonRows = computed(() => [
 // --- Helpers ---
 function formatCurrency(value: number): string {
   if (Math.abs(value) >= 1000000) {
-    return '$' + (value / 1000000).toFixed(1) + 'M';
+    return new Intl.NumberFormat(locale.value, { style: 'currency', currency: 'USD', notation: 'compact', maximumFractionDigits: 1 }).format(value);
   }
-  return '$' + value.toLocaleString();
+  return new Intl.NumberFormat(locale.value, { style: 'currency', currency: 'USD', minimumFractionDigits: 0, maximumFractionDigits: 0 }).format(value);
 }
 
 function resetForm() {

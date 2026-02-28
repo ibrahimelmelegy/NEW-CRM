@@ -370,8 +370,7 @@ import VChart from 'vue-echarts';
 
 definePageMeta({ middleware: 'permissions' });
 
-const { $i18n } = useNuxtApp();
-const t = $i18n.t;
+const { t, locale } = useI18n();
 
 const loading = ref(false);
 const saving = ref(false);
@@ -620,7 +619,7 @@ const performanceChartOption = computed(() => {
       {
         type: 'value',
         name: t('eventManagement.revenue'),
-        axisLabel: { color: '#94a3b8', formatter: (v: number) => '$' + (v / 1000) + 'k' },
+        axisLabel: { color: '#94a3b8', formatter: (v: number) => new Intl.NumberFormat(locale.value, { style: 'currency', currency: 'USD', notation: 'compact', maximumFractionDigits: 1 }).format(v) },
         splitLine: { show: false }
       }
     ],
@@ -704,17 +703,15 @@ function getAttendanceType(attendance: string): string {
 function formatDate(d: string): string {
   if (!d) return '--';
   try {
-    return new Date(d).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
+    return new Date(d).toLocaleDateString(locale.value, { month: 'short', day: 'numeric', year: 'numeric' });
   } catch {
     return d;
   }
 }
 
 function formatCurrency(val: number): string {
-  if (!val) return '$0';
-  if (val >= 1000000) return '$' + (val / 1000000).toFixed(1) + 'M';
-  if (val >= 1000) return '$' + (val / 1000).toFixed(0) + 'k';
-  return '$' + val;
+  if (!val) return new Intl.NumberFormat(locale.value, { style: 'currency', currency: 'USD', minimumFractionDigits: 0, maximumFractionDigits: 0 }).format(0);
+  return new Intl.NumberFormat(locale.value, { style: 'currency', currency: 'USD', notation: 'compact', maximumFractionDigits: 1 }).format(val);
 }
 
 // ─── Actions ──────────────────────────────────────────────
@@ -815,7 +812,7 @@ function sendBulkReminder() {
 function exportAttendees() {
   const data = selectedAttendees.value.length ? selectedAttendees.value : selectedEventAttendees.value;
   if (!data.length) return;
-  const headers = ['Name', 'Email', 'Company', 'Registration Date', 'Attendance', 'Lead Score'];
+  const headers = [t('eventManagement.attendeeName'), t('eventManagement.email'), t('eventManagement.company'), t('eventManagement.registrationDate'), t('eventManagement.attendanceStatus'), t('eventManagement.leadScore')];
   const csv = [headers.join(','), ...data.map((row: any) =>
     [
       `"${row.name || ''}"`,
@@ -839,7 +836,7 @@ function exportAttendees() {
 function exportEvents() {
   const data = filteredEvents.value;
   if (!data.length) return;
-  const headers = ['Event Name', 'Type', 'Date', 'Location', 'Capacity', 'Registered', 'Status'];
+  const headers = [t('eventManagement.eventName'), t('eventManagement.type'), t('eventManagement.date'), t('eventManagement.location'), t('eventManagement.capacity'), t('eventManagement.registered'), t('common.status')];
   const csv = [headers.join(','), ...data.map((row: any) =>
     [
       `"${row.name || ''}"`,
