@@ -208,7 +208,9 @@ const menu = [
       { link: '/sales/quote-comparison', name: 'navigation.quoteComparison', icon: 'ph:scales-bold' },
       { link: '/sales/roi-calculator', name: 'navigation.roiCalculator', icon: 'ph:calculator-bold' },
       { link: '/sales/enablement', name: 'navigation.salesEnablement', icon: 'ph:presentation-chart-bold' },
-      { link: '/sales/partners', name: 'navigation.partnerManagement', icon: 'ph:handshake-bold' }
+      { link: '/sales/partners', name: 'navigation.partnerManagement', icon: 'ph:handshake-bold' },
+      { link: '/sales/account-planning', name: 'navigation.accountPlanning', icon: 'ph:strategy-bold' },
+      { link: '/sales/ai-lead-scoring', name: 'navigation.aiLeadScoring', icon: 'ph:robot-bold' }
     ]
   },
 
@@ -359,7 +361,9 @@ const menu = [
       { link: '/gamification/achievements', name: 'navigation.achievements', icon: 'ph:medal-bold' },
       { link: '/analytics/advanced', name: 'navigation.advancedAnalytics', icon: 'ph:chart-scatter-bold' },
       { link: '/analytics/subscriptions', name: 'navigation.subscriptionAnalyticsNav', icon: 'ph:chart-line-bold' },
-      { link: '/analytics/ai-insights', name: 'navigation.aiInsights', icon: 'ph:brain-bold' }
+      { link: '/analytics/ai-insights', name: 'navigation.aiInsights', icon: 'ph:brain-bold' },
+      { link: '/analytics/customer-lifetime-value', name: 'navigation.customerLifetimeValue', icon: 'ph:heartbeat-bold' },
+      { link: '/analytics/attribution-modeling', name: 'navigation.attributionModeling', icon: 'ph:flow-arrow-bold' }
     ]
   },
 
@@ -379,7 +383,8 @@ const menu = [
       { link: '/finance/accounting/reports/profit-loss', name: 'navigation.profitLoss', icon: 'ph:chart-line-up-bold' },
       { link: '/finance/accounting/reports/balance-sheet', name: 'navigation.balanceSheet', icon: 'ph:chart-bar-bold' },
       { link: '/finance/zatca', name: 'navigation.zatca', icon: 'ph:stamp-bold' },
-      { link: '/finance/zakaat', name: 'navigation.zakaat', icon: 'ph:hand-coins-bold' }
+      { link: '/finance/zakaat', name: 'navigation.zakaat', icon: 'ph:hand-coins-bold' },
+      { link: '/finance/usage-billing', name: 'navigation.usageBilling', icon: 'ph:gauge-bold' }
     ]
   },
 
@@ -463,7 +468,8 @@ const menu = [
       { link: '/settings/customer-portal', name: 'navigation.customerPortal', icon: 'ph:monitor-bold' },
       { link: '/settings/compliance', name: 'navigation.complianceCenter', icon: 'ph:shield-warning-bold' },
       { link: '/settings/roles', name: 'navigation.permissionsHub', icon: 'ph:key-bold', role: 'VIEW_ROLES' },
-      { link: '/settings/api-marketplace', name: 'navigation.apiMarketplace', icon: 'ph:plugs-bold' }
+      { link: '/settings/api-marketplace', name: 'navigation.apiMarketplace', icon: 'ph:plugs-bold' },
+      { link: '/settings/compliance-manager', name: 'navigation.complianceManager', icon: 'ph:detective-bold' }
     ]
   }
 ];
