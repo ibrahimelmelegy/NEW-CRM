@@ -261,7 +261,7 @@ describe('DealService', () => {
 
             const result = await dealService.updateDealStage('deal-123', DealStageEnums.CLOSED, mockAdminUser);
 
-            expect(mockDealData.set).toHaveBeenCalledWith({ stage: DealStageEnums.CLOSED });
+            expect(mockDealData.set).toHaveBeenCalledWith({ stage: DealStageEnums.CLOSED, probability: 100 });
             expect(mockDealData.save).toHaveBeenCalled();
         });
 
