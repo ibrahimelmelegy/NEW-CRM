@@ -168,7 +168,8 @@ const menu = [
       { link: '/crm/activities', name: 'navigation.activityTimeline', icon: 'ph:clock-counter-clockwise-bold' },
       { link: '/companies', name: 'navigation.companies', icon: 'ph:buildings-bold' },
       { link: '/reminders', name: 'navigation.reminders', icon: 'ph:bell-ringing-bold' },
-      { link: '/notifications', name: 'navigation.notifications', icon: 'ph:bell-bold' }
+      { link: '/notifications', name: 'navigation.notifications', icon: 'ph:bell-bold' },
+      { link: '/crm/onboarding', name: 'navigation.customerOnboarding', icon: 'ph:rocket-launch-bold' }
     ]
   },
 
@@ -202,7 +203,9 @@ const menu = [
       { link: '/sales/product-catalog', name: 'navigation.productCatalog', icon: 'ph:storefront-bold' },
       { link: '/sales/data-enrichment', name: 'navigation.dataEnrichment', icon: 'ph:magic-wand-bold' },
       { link: '/sales/quote-comparison', name: 'navigation.quoteComparison', icon: 'ph:scales-bold' },
-      { link: '/sales/roi-calculator', name: 'navigation.roiCalculator', icon: 'ph:calculator-bold' }
+      { link: '/sales/roi-calculator', name: 'navigation.roiCalculator', icon: 'ph:calculator-bold' },
+      { link: '/sales/enablement', name: 'navigation.salesEnablement', icon: 'ph:presentation-chart-bold' },
+      { link: '/sales/partners', name: 'navigation.partnerManagement', icon: 'ph:handshake-bold' }
     ]
   },
 
@@ -306,7 +309,8 @@ const menu = [
       { link: '/marketing/surveys', name: 'navigation.surveys', icon: 'ph:chart-bar-bold' },
       { link: '/marketing/social-crm', name: 'navigation.socialCrm', icon: 'ph:share-network-bold' },
       { link: '/marketing/loyalty', name: 'navigation.loyalty', icon: 'ph:gift-bold' },
-      { link: '/web-forms', name: 'navigation.webForms', icon: 'ph:browser-bold' }
+      { link: '/web-forms', name: 'navigation.webForms', icon: 'ph:browser-bold' },
+      { link: '/marketing/events', name: 'navigation.eventManagement', icon: 'ph:calendar-star-bold' }
     ]
   },
 
