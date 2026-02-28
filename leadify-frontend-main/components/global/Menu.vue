@@ -140,6 +140,9 @@ const menu = [
   // 1. Home
   { link: '/', name: 'navigation.board', icon: 'IconHome', submenu: false, isOpen: false },
 
+  // Team Hub — real-time collaboration
+  { link: '/collaboration', name: 'navigation.teamHub', icon: 'ph:users-four-bold', submenu: false, isOpen: false },
+
   // 2. Dashboards (merged 5 standalone items)
   {
     name: 'navigation.dashboards',
@@ -186,6 +189,7 @@ const menu = [
       { link: '/sales/invoices', name: 'navigation.invoices', icon: 'ph:receipt-bold' },
       { link: '/sales/subscriptions', name: 'navigation.subscriptions', icon: 'ph:arrows-clockwise-bold' },
       { link: '/sales/contracts', name: 'navigation.contracts', icon: 'ph:file-doc-bold' },
+      { link: '/sales/contract-lifecycle', name: 'navigation.contractLifecycle', icon: 'ph:scroll-bold' },
       { link: '/sales/proposals', name: 'navigation.proposals', icon: 'ph:file-text' },
       { link: '/sales/playbooks', name: 'navigation.salesPlaybooks', icon: 'ph:book-open-bold' },
       { link: '/sales/cpq', name: 'navigation.cpq', icon: 'ph:calculator-bold' },
@@ -310,7 +314,8 @@ const menu = [
       { link: '/documents/e-signatures', name: 'navigation.eSignatures', icon: 'ph:signature-bold' },
       { link: '/documents/editor', name: 'navigation.documentEditor', icon: 'ph:file-plus-bold' },
       { link: '/archive', name: 'navigation.archive', icon: 'ph:archive-bold' },
-      { link: '/automations', name: 'navigation.automations', icon: 'ph:git-merge-bold' }
+      { link: '/automations', name: 'navigation.automations', icon: 'ph:git-merge-bold' },
+      { link: '/automations/templates', name: 'navigation.automationTemplates', icon: 'ph:files-bold' }
     ]
   },
 
@@ -328,7 +333,8 @@ const menu = [
       { link: '/analytics/relationship-graph', name: 'navigation.relationshipGraph', icon: 'ph:graph-bold' },
       { link: '/analytics/simulator', name: 'navigation.revenueSimulator', icon: 'ph:chart-line-up-bold' },
       { link: '/gamification/leaderboard', name: 'navigation.leaderboard', icon: 'ph:ranking-bold' },
-      { link: '/gamification/achievements', name: 'navigation.achievements', icon: 'ph:medal-bold' }
+      { link: '/gamification/achievements', name: 'navigation.achievements', icon: 'ph:medal-bold' },
+      { link: '/analytics/advanced', name: 'navigation.advancedAnalytics', icon: 'ph:chart-scatter-bold' }
     ]
   },
 
