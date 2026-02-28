@@ -12,7 +12,7 @@ import Client from '../client/clientModel';
 import { sequelize } from '../config/db';
 import { createActivityLog } from '../activity-logs/activityService';
 import { OpportunityPermissionsEnum } from '../role/roleEnum';
-import OpportunityUsers from './model/oppotyunity_UsersModel';
+import OpportunityUsers from './model/opportunity_UsersModel';
 import * as ExcelJS from 'exceljs';
 import { sendEmail } from '../utils/emailHelper';
 import { tenantWhere } from '../utils/tenantScope';

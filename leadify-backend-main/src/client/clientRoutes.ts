@@ -6,7 +6,7 @@ import { CreateClientInput } from './inputs/createClientInput'; // DTO for body 
 import { GetClientsInput } from './inputs/getClientsInput';
 import { UpdateClientInput } from './inputs/updateClientInput';
 import { ClientPermissionsEnum } from '../role/roleEnum';
-import { validateEmailConfiguration, validateEmailParam } from '../middleware/customMiddlewar';
+import { validateEmailConfiguration, validateEmailParam } from '../middleware/customMiddleware';
 
 const router = express.Router();
 

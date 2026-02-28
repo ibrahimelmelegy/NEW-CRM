@@ -14,7 +14,7 @@ import uploaderService from '../uploader/uploader.service';
 import User from '../user/userModel';
 import BaseError from '../utils/error/base-http-exception';
 import { ERRORS } from '../utils/error/errors';
-import { Vehicle } from '../vehicle/vahicle.model';
+import { Vehicle } from '../vehicle/vehicle.model';
 import { AssociatingManpowerToProjectInput } from './inputs/associatingManpowerInput';
 import { completeProjectCreationInput } from './inputs/completeProjectCreationInput';
 import { CreateProjectInput } from './inputs/create-project.input';

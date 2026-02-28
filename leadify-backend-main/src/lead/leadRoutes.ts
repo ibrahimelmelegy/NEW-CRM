@@ -7,7 +7,7 @@ import { CreateLeadInput } from './inputs/createLeadInput'; // DTO for body vali
 import { UpdateLeadInput } from './inputs/updateLeadInput';
 import { GetLeadsInput } from './inputs/getLeadsInput';
 import { LeadPermissionsEnum } from '../role/roleEnum';
-import { validateEmailConfiguration, validateEmailParam } from '../middleware/customMiddlewar';
+import { validateEmailConfiguration, validateEmailParam } from '../middleware/customMiddleware';
 
 const router = express.Router();
 

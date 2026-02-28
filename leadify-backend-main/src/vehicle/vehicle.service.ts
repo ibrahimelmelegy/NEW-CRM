@@ -5,7 +5,7 @@ import BaseError from '../utils/error/base-http-exception';
 import { ERRORS } from '../utils/error/errors';
 import { CreateVehicleInput, UpdateVehicleInput } from './inputs/create-vehicle.input';
 import { GetPaginatedVehicleInput } from './inputs/paginated-vehicle.input';
-import { Vehicle } from './vahicle.model';
+import { Vehicle } from './vehicle.model';
 import { VehicleSortByEnum } from './vehivle.enum';
 import * as ExcelJS from 'exceljs';
 import { sendEmail } from '../utils/emailHelper';

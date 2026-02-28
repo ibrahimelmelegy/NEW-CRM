@@ -4,7 +4,7 @@ import Lead from '../lead/leadModel';
 import { OpportunityPriorityEnums, OpportunityStageEnums } from './opportunityEnum';
 import Client from '../client/clientModel';
 import Tenant from '../tenant/tenantModel';
-import OpportunityUsers from './model/oppotyunity_UsersModel';
+import OpportunityUsers from './model/opportunity_UsersModel';
 
 @Table({
   tableName: 'opportunities',

@@ -15,7 +15,7 @@ import Role from './role/roleModel';
 import Lead from './lead/leadModel';
 import LeadUsers from './lead/model/lead_UsersModel';
 import Opportunity from './opportunity/opportunityModel';
-import OpportunityUsers from './opportunity/model/oppotyunity_UsersModel';
+import OpportunityUsers from './opportunity/model/opportunity_UsersModel';
 import Deal from './deal/model/dealModel';
 import DealUsers from './deal/model/deal_UsersModel';
 import Invoice from './deal/model/invoiceMode';

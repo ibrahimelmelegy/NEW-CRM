@@ -68,15 +68,22 @@ sequelize
     // Automated migration for 'descripion' typo
     await runTypoMigration(sequelize);
 
-    // Synchronize all defined models to the database
-    try {
-      await sequelize.sync({ alter: true });
-    } catch (syncErr) {
-      console.warn('sync({ alter: true }) failed, attempting basic sync:', (syncErr as Error).message);
+    // Database sync — development only. Production uses migrations.
+    if (process.env.NODE_ENV === 'production') {
+      // In production, verify connection only — schema managed by migrations
+      console.log('Database connection established (production mode — migrations manage schema)');
+    } else {
+      // Development: auto-sync for convenience
       try {
-        await sequelize.sync();
-      } catch (basicErr) {
-        console.warn('sync() also failed (tables likely already exist):', (basicErr as Error).message);
+        await sequelize.sync({ alter: true });
+        console.log('Database synced (development mode)');
+      } catch (syncErr) {
+        console.warn('sync({ alter: true }) failed, attempting basic sync:', (syncErr as Error).message);
+        try {
+          await sequelize.sync();
+        } catch (basicErr) {
+          console.warn('sync() also failed (tables likely already exist):', (basicErr as Error).message);
+        }
       }
     }
 
@@ -130,7 +137,24 @@ process.on('unhandledRejection', (reason) => {
   process.exit(1);
 });
 
-process.on('SIGTERM', () => {
-  console.log('[Shutdown] SIGTERM received, closing gracefully...');
-  server.close(() => process.exit(0));
-});
+// Graceful shutdown
+function gracefulShutdown(signal: string) {
+  console.log(`\n${signal} received. Starting graceful shutdown...`);
+
+  server.close(() => {
+    console.log('HTTP server closed');
+    sequelize.close().then(() => {
+      console.log('Database connection closed');
+      process.exit(0);
+    });
+  });
+
+  // Force shutdown after 30 seconds
+  setTimeout(() => {
+    console.error('Forced shutdown after timeout');
+    process.exit(1);
+  }, 30000);
+}
+
+process.on('SIGTERM', () => gracefulShutdown('SIGTERM'));
+process.on('SIGINT', () => gracefulShutdown('SIGINT'));

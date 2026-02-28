@@ -8,7 +8,7 @@ import { GetProposalsInput } from './inputs/getProposalsInput';
 import { RejectProposalInput } from './inputs/rejectProposalInput';
 import { AssignUserToProposalInput } from './inputs/assignUsersToProposalInput';
 import { ProposalPermissionsEnum } from '../role/roleEnum';
-import { validateEmailConfiguration, validateEmailParam } from '../middleware/customMiddlewar';
+import { validateEmailConfiguration, validateEmailParam } from '../middleware/customMiddleware';
 
 const router = express.Router();
 

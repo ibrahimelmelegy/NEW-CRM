@@ -5,7 +5,7 @@ import { CreateVehicleInput, UpdateVehicleInput } from './inputs/create-vehicle.
 import { GetPaginatedVehicleInput } from './inputs/paginated-vehicle.input';
 import vehicleController from './vehicle.controller';
 import { VehiclePermissionsEnum } from '../role/roleEnum';
-import { validateEmailConfiguration, validateEmailParam } from '../middleware/customMiddlewar';
+import { validateEmailConfiguration, validateEmailParam } from '../middleware/customMiddleware';
 
 const router = express.Router();
 

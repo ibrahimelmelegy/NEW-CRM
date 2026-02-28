@@ -10,7 +10,7 @@ import projectController from './projectController';
 import { AssociatingVehiclesToProjectInput } from './inputs/associatingVehiclesInput';
 import { AssociatingMaterialsToProjectInput } from './inputs/associatingMaterialsInput';
 import { ProjectPermissionsEnum } from '../role/roleEnum';
-import { validateEmailConfiguration, validateEmailParam } from '../middleware/customMiddlewar';
+import { validateEmailConfiguration, validateEmailParam } from '../middleware/customMiddleware';
 
 const router = express.Router();
 

@@ -3,7 +3,7 @@ import Opportunity from '../../opportunity/opportunityModel';
 import ProjectAsset from '../../projectAsset/projectAssetModel';
 import ProjectManpower from '../../projectManpower/projectManpowerModel';
 import User from '../../user/userModel';
-import { Vehicle } from '../../vehicle/vahicle.model';
+import { Vehicle } from '../../vehicle/vehicle.model';
 import { ProjectCategoryEnum, ProjectStatusEnum } from '../projectEnum';
 import EtimadProject from './etimadProjectModel';
 import ProjectMaterial from './peojectMaterial';

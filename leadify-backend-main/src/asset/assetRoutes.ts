@@ -6,7 +6,7 @@ import { CreateAssetInput } from './inputs/createAssetInput';
 import { UpdateAssetInput } from './inputs/updateAssetInput';
 import { GetAssetsInput } from './inputs/getAssetsInput';
 import { AssetPermissionsEnum } from '../role/roleEnum';
-import { validateEmailConfiguration, validateEmailParam } from '../middleware/customMiddlewar';
+import { validateEmailConfiguration, validateEmailParam } from '../middleware/customMiddleware';
 
 const router = express.Router();
 

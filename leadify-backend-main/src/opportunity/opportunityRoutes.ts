@@ -7,7 +7,7 @@ import { GetOpportunitiesInput } from './inputs/getOpportunitiesInput';
 import { ConvertLeadToOpportunityInput } from './inputs/convertLeadToOpportunityInput';
 import { CreateLeadAndOpportunityInput } from './inputs/createOpportunityInput';
 import { OpportunityPermissionsEnum } from '../role/roleEnum';
-import { validateEmailConfiguration, validateEmailParam } from '../middleware/customMiddlewar';
+import { validateEmailConfiguration, validateEmailParam } from '../middleware/customMiddleware';
 
 const router = express.Router();
 

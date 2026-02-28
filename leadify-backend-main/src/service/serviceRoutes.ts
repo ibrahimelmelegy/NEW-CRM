@@ -6,7 +6,7 @@ import { CreateServiceInput } from './inputs/createServiceInput';
 import { UpdateServiceInput } from './inputs/updateServiceInput';
 import { GetServicesInput } from './inputs/getServicesInput';
 import { ServicePermissionsEnum } from '../role/roleEnum';
-import { validateEmailConfiguration, validateEmailParam } from '../middleware/customMiddlewar';
+import { validateEmailConfiguration, validateEmailParam } from '../middleware/customMiddleware';
 
 const router = express.Router();
 

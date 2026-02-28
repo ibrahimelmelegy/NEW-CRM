@@ -11,7 +11,8 @@ import { generalLimiter, uploadLimiter, authLimiter, apiIntensiveLimiter, export
 import { sanitizeInput } from './middleware/sanitize';
 import assetRoutes from './asset/assetRoutes';
 import clientRoutes from './client/clientRoutes';
-import { swaggerDocs, swaggerUi } from './config/swagger';
+import { swaggerSpec, swaggerUi } from './config/swagger';
+import healthRoutes from './health/healthRoutes';
 import dealRoutes from './deal/dealRoutes';
 import leadRoutes from './lead/leadRoutes';
 import manpowerRoutes from './manpower/manpowerRoutes';
@@ -226,10 +227,15 @@ const { doubleCsrfProtection, generateCsrfToken } = doubleCsrf({
   getCsrfTokenFromRequest: (req: Request) => req.headers['x-csrf-token'] as string
 });
 
-// Health check endpoint (no auth required)
-app.get('/api/health', (_req: Request, res: Response) => {
-  res.json({ status: 'ok', timestamp: new Date().toISOString() });
-});
+// Health checks — no auth required
+app.use('/api', healthRoutes);
+
+// Swagger API docs — no auth required
+app.use('/api/docs', swaggerUi.serve, swaggerUi.setup(swaggerSpec, {
+  customCss: '.swagger-ui .topbar { display: none }',
+  customSiteTitle: 'Leadify CRM API Documentation',
+}));
+app.get('/api/docs.json', (_req, res) => res.json(swaggerSpec));
 
 // Expose CSRF token endpoint for frontend
 app.get('/api/csrf-token', (req: Request, res: Response) => {
@@ -419,8 +425,8 @@ if (process.env.STORAGE_PROVIDER === 'spaces' && process.env.DO_SPACES_CDN_URL) 
   app.use('/assets', express.static('public/uploads'));
 }
 
-// Set up Swagger documentation route
-app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerDocs));
+// Legacy Swagger docs route (redirects to new location)
+app.get('/api-docs', (_req, res) => res.redirect('/api/docs'));
 
 // Error Handling Middleware
 app.use((err: Error, req: Request, res: Response, next: NextFunction) => {

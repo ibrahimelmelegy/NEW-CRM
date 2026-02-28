@@ -8,7 +8,7 @@ import { ConvertLeadToDealInput, CreateLeadAndDealInput } from './inputs/convert
 import { GetPaginatedDealsInput } from './inputs/paginated-deals.input';
 import { UpdateDealInput } from './inputs/update-deal.input';
 import { DealPermissionsEnum } from '../role/roleEnum';
-import { validateEmailConfiguration, validateEmailParam } from '../middleware/customMiddlewar';
+import { validateEmailConfiguration, validateEmailParam } from '../middleware/customMiddleware';
 
 const router = express.Router();
 

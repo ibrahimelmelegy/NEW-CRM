@@ -5,7 +5,7 @@ import { CreateAdditionalMaterialInput, UpdateAdditionalMaterialInput } from './
 import { GetPaginatedAdditionalMaterialInput } from './inputs/paginated-material.input';
 import AdditionalMaterialController from './additionalMaterial.controller';
 import { AdditionalMaterialPermissionsEnum } from '../role/roleEnum';
-import { validateEmailConfiguration, validateEmailParam } from '../middleware/customMiddlewar';
+import { validateEmailConfiguration, validateEmailParam } from '../middleware/customMiddleware';
 
 const router = express.Router();
 

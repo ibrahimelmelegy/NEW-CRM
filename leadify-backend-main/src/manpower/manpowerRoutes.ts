@@ -6,7 +6,7 @@ import { CreateManpowerInput } from './inputs/createManpowerInput';
 import { UpdateManpowerInput } from './inputs/updateManpowerInput';
 import { GetManpowersInput } from './inputs/getManpowersInput';
 import { ManpowerPermissionsEnum } from '../role/roleEnum';
-import { validateEmailConfiguration, validateEmailParam } from '../middleware/customMiddlewar';
+import { validateEmailConfiguration, validateEmailParam } from '../middleware/customMiddleware';
 
 const router = express.Router();
 
