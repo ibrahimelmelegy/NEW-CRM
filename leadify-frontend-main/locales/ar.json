@@ -7657,7 +7657,36 @@
     "contactsEnriched": "جهات اتصال تم إثراؤها",
     "enrichmentStarted": "بدأ الإثراء",
     "enrichmentRunning": "الإثراء الكامل يعمل في الخلفية",
-    "rulesSaved": "تم حفظ قواعد الإثراء التلقائي"
+    "rulesSaved": "تم حفظ قواعد الإثراء التلقائي",
+    "log": {
+      "autoEnriched": "إثراء تلقائي لـ 45 جهة اتصال من بحث النطاق",
+      "manualEnrichment": "إثراء يدوي: أحمد الراشد - إضافة الصناعة وحجم الشركة",
+      "bulkEnriched": "إثراء جماعي لـ 120 جهة اتصال من استيراد CRM",
+      "weeklyRefreshCompleted": "اكتمل التحديث الأسبوعي: تم تحديث 230 سجل",
+      "importedEnriched": "استيراد وإثراء 85 جهة اتصال من نماذج الويب",
+      "manualVerification": "إثراء يدوي: سارة جونسون - التحقق من البريد وإضافة ملفات التواصل",
+      "emailSignatureExtraction": "استخراج توقيع البريد الإلكتروني: تحديث 32 جهة اتصال",
+      "twoHoursAgo": "منذ ساعتين",
+      "fiveHoursAgo": "منذ 5 ساعات",
+      "oneDayAgo": "منذ يوم واحد",
+      "threeDaysAgo": "منذ 3 أيام",
+      "fiveDaysAgo": "منذ 5 أيام",
+      "oneWeekAgo": "منذ أسبوع",
+      "domainLookupApi": "واجهة بحث النطاق",
+      "manualEntry": "إدخال يدوي",
+      "csvImportEnrichment": "استيراد CSV + إثراء",
+      "scheduledRefresh": "تحديث مجدول",
+      "webFormIntegration": "تكامل نماذج الويب",
+      "manualVerificationSource": "التحقق اليدوي",
+      "emailSignatureParser": "محلل توقيع البريد الإلكتروني",
+      "size": "الحجم",
+      "companySize": "حجم الشركة",
+      "linkedin": "لينكد إن",
+      "revenue": "الإيرادات",
+      "employeeCount": "عدد الموظفين",
+      "emailVerified": "تم التحقق من البريد",
+      "twitter": "تويتر"
+    }
   },
   "quoteComparison": {
     "title": "مقارنة العروض",
@@ -7701,7 +7730,16 @@
     "minOptions": "الحد الأدنى 2 خيارات عرض مطلوبة",
     "pdfGenerating": "جارٍ إنشاء مقارنة PDF...",
     "comparisonSaved": "تم حفظ مقارنة العروض بنجاح",
-    "shareSent": "تمت مشاركة المقارنة مع العميل"
+    "shareSent": "تمت مشاركة المقارنة مع العميل",
+    "storagePlaceholder": "مثال: 50 جيجابايت",
+    "featureCrmCore": "نظام CRM الأساسي",
+    "featureEmailIntegration": "تكامل البريد الإلكتروني",
+    "featureReportingAnalytics": "التقارير والتحليلات",
+    "featureApiAccess": "الوصول لـ API",
+    "featureCustomWorkflows": "سير العمل المخصص",
+    "featureDedicatedSupport": "الدعم المخصص",
+    "featureWhiteLabel": "العلامة البيضاء",
+    "featureSlaGuarantee": "ضمان اتفاقية الخدمة"
   },
   "roiCalculator": {
     "title": "حاسبة العائد على الاستثمار",
@@ -8051,7 +8089,16 @@
     "completedEvents": "الفعاليات المكتملة",
     "totalAttendees": "إجمالي الحاضرين",
     "conversionRate": "معدل التحويل",
-    "revenueAttributed": "الإيرادات المنسوبة"
+    "revenueAttributed": "الإيرادات المنسوبة",
+    "tagOptions": {
+      "marketing": "التسويق",
+      "sales": "المبيعات",
+      "product": "المنتج",
+      "engineering": "الهندسة",
+      "leadership": "القيادة",
+      "onboarding": "التأهيل",
+      "training": "التدريب"
+    }
   },
   "customerOnboarding": {
     "title": "تأهيل العملاء",
@@ -8223,7 +8270,10 @@
     "setupCompleted": "اكتمل الإعداد التقني",
     "setupDelayed": "تأخرت مرحلة الإعداد — تحتاج اهتمام",
     "welcomeSetupDone": "اكتمل الترحيب والإعداد",
-    "configTrainingDone": "اكتمل التكوين والتدريب"
+    "configTrainingDone": "اكتمل التكوين والتدريب",
+    "daySuffix": "ي",
+    "kpiChange": "{value}",
+    "removeItem": "إزالة عنصر"
   },
   "customerPortal": {
     "title": "بوابة العملاء",
@@ -8354,6 +8404,13 @@
     "last30Days": "تتبع مقاييس تفاعل البوابة",
     "logins": "تسجيلات الدخول",
     "ticketsLabel": "التذاكر",
-    "kbViewsLabel": "مشاهدات قاعدة المعرفة"
+    "kbViewsLabel": "مشاهدات قاعدة المعرفة",
+    "categories": {
+      "gettingStarted": "البدء السريع",
+      "account": "الحساب",
+      "billing": "الفواتير",
+      "technical": "الدعم الفني",
+      "general": "عام"
+    }
   }
 }

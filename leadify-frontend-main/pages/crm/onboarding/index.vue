@@ -13,11 +13,12 @@
       el-input(
         v-model="searchQuery"
         :placeholder="$t('customerOnboarding.search')"
-        prefix-icon="Search"
         clearable
         style="width: 260px"
         size="large"
       )
+        template(#prefix)
+          Icon(name="ph:magnifying-glass" size="16" style="color: var(--text-muted)")
       el-button(type="primary" size="large" @click="showNewOnboardingDialog = true" class="!bg-[#7849ff] !border-none !rounded-xl")
         Icon(name="ph:plus-bold" size="16")
         span.ml-2 {{ $t('customerOnboarding.newOnboarding') }}
@@ -42,7 +43,7 @@
             p.kpi-label {{ $t('customerOnboarding.completionRate') }}
             .flex.items-baseline.gap-2
               p.kpi-value {{ completionRate }}%
-              span.kpi-pct.text-emerald-400 +5%
+              span.kpi-pct.text-emerald-400 {{ $t('customerOnboarding.kpiChange', { value: '+5%' }) }}
           .kpi-icon-wrap.completion-icon
             Icon(name="ph:check-circle-bold" size="24")
 
@@ -139,10 +140,10 @@
             template(#default="{ row }")
               .flex.items-center.gap-1.justify-center
                 el-tooltip(:content="$t('customerOnboarding.viewDetail')")
-                  el-button(link type="primary" @click.stop="openOnboardingDetail(row)")
+                  el-button(link type="primary" @click.stop="openOnboardingDetail(row)" :aria-label="$t('customerOnboarding.viewDetail')")
                     Icon(name="ph:eye-bold" size="18")
                 el-tooltip(:content="$t('customerOnboarding.sendReminder')")
-                  el-button(link type="warning" @click.stop="sendReminder(row)")
+                  el-button(link type="warning" @click.stop="sendReminder(row)" :aria-label="$t('customerOnboarding.sendReminder')")
                     Icon(name="ph:bell-bold" size="18")
 
         .p-4.flex.justify-center(style="border-top: 1px solid var(--glass-border)")
@@ -182,7 +183,7 @@
                   h4.text-sm.font-bold(style="color: var(--text-primary)") {{ tmpl.name }}
                   p.text-xs.mt-1(style="color: var(--text-muted)") {{ tmpl.description }}
               el-dropdown(trigger="click" @command="handleTemplateAction($event, tmpl)")
-                el-button(text size="small" @click.stop)
+                el-button(text size="small" @click.stop :aria-label="$t('customerOnboarding.actions')")
                   Icon(name="ph:dots-three-vertical" size="16")
                 template(#dropdown)
                   el-dropdown-menu
@@ -202,7 +203,7 @@
                 p.text-lg.font-bold(style="color: var(--text-primary)") {{ tmpl.phasesCount }}
                 p.text-xs(style="color: var(--text-muted)") {{ $t('customerOnboarding.phases') }}
               .text-center.p-3.rounded-xl(style="background: var(--bg-elevated)")
-                p.text-lg.font-bold(style="color: var(--text-primary)") {{ tmpl.avgCompletionDays }}d
+                p.text-lg.font-bold(style="color: var(--text-primary)") {{ tmpl.avgCompletionDays }}{{ $t('customerOnboarding.daySuffix') }}
                 p.text-xs(style="color: var(--text-muted)") {{ $t('customerOnboarding.avgCompletion') }}
               .text-center.p-3.rounded-xl(style="background: var(--bg-elevated)")
                 p.text-lg.font-bold(style="color: var(--text-primary)") {{ tmpl.usageCount }}
@@ -354,7 +355,7 @@
             template(#default="{ row }")
               .flex.items-center.justify-center.gap-1
                 Icon(name="ph:lightning-bold" size="14" :style="{ color: row.timeToFirstValue <= 7 ? '#22c55e' : row.timeToFirstValue <= 14 ? '#f59e0b' : '#ef4444' }")
-                span.text-sm.font-bold(:style="{ color: row.timeToFirstValue <= 7 ? '#22c55e' : row.timeToFirstValue <= 14 ? '#f59e0b' : '#ef4444' }") {{ row.timeToFirstValue }}d
+                span.text-sm.font-bold(:style="{ color: row.timeToFirstValue <= 7 ? '#22c55e' : row.timeToFirstValue <= 14 ? '#f59e0b' : '#ef4444' }") {{ row.timeToFirstValue }}{{ $t('customerOnboarding.daySuffix') }}
 
           el-table-column(:label="$t('customerOnboarding.totalDuration')" width="150" align="center")
             template(#default="{ row }")
@@ -422,7 +423,7 @@
               .flex.items-center.gap-2
                 el-input-number(v-model="phase.duration" :min="1" :max="90" size="small" style="width: 120px")
                 span.text-xs(style="color: var(--text-muted)") {{ $t('customerOnboarding.days') }}
-                el-button(size="small" type="danger" text @click="removePhase(pIdx)")
+                el-button(size="small" type="danger" text @click="removePhase(pIdx)" :aria-label="$t('customerOnboarding.delete')")
                   Icon(name="ph:trash" size="14")
             el-input(v-model="phase.description" type="textarea" :rows="1" :placeholder="$t('customerOnboarding.phaseDescription')" size="small")
             .mt-3
@@ -433,7 +434,7 @@
                   | {{ $t('customerOnboarding.addItem') }}
               .flex.items-center.gap-2.mb-2(v-for="(item, iIdx) in phase.checklistItems" :key="iIdx")
                 el-input(v-model="phase.checklistItems[iIdx]" :placeholder="$t('customerOnboarding.itemName')" size="small" style="flex: 1")
-                el-button(size="small" type="danger" text @click="phase.checklistItems.splice(iIdx, 1)")
+                el-button(size="small" type="danger" text @click="phase.checklistItems.splice(iIdx, 1)" :aria-label="$t('customerOnboarding.removeItem')")
                   Icon(name="ph:x" size="12")
 
     template(#footer)
@@ -481,7 +482,7 @@ import { graphic } from 'echarts';
 
 definePageMeta({ middleware: 'permissions' });
 
-const { t } = useI18n();
+const { t, locale } = useI18n();
 
 // ── State ──────────────────────────────────────────────
 const activeTab = ref('active');
@@ -495,8 +496,8 @@ const expandedPhases = ref<number[]>([0]);
 const showNewOnboardingDialog = ref(false);
 const showTemplateDialog = ref(false);
 const showDetailDialog = ref(false);
-const editingTemplate = ref<any>(null);
-const detailOnboarding = ref<any>(null);
+const editingTemplate = ref<OnboardingTemplate | null>(null);
+const detailOnboarding = ref<OnboardingRecord | null>(null);
 
 // ── Interfaces ─────────────────────────────────────────
 interface OnboardingTask {
@@ -625,14 +626,14 @@ const currentMilestoneStep = computed(() => {
 const ttvMetrics = computed(() => [
   {
     label: t('customerOnboarding.avgTimeToFirstValue'),
-    value: '8.5d',
+    value: '8.5' + t('customerOnboarding.daySuffix'),
     icon: 'ph:lightning-bold',
     color: '#7849ff',
     trend: -12
   },
   {
     label: t('customerOnboarding.avgOnboardingDuration'),
-    value: avgDuration.value + 'd',
+    value: avgDuration.value + t('customerOnboarding.daySuffix'),
     icon: 'ph:timer-bold',
     color: '#3b82f6',
     trend: -8
@@ -655,9 +656,11 @@ const ttvMetrics = computed(() => [
 
 // ── ECharts: Duration Trend ────────────────────────────
 const durationTrendOption = computed(() => {
+  const getMonthName = (monthIndex: number) =>
+    new Date(2026, monthIndex, 1).toLocaleDateString(locale.value, { month: 'short' });
   const months = trendPeriod.value === '12m'
-    ? ['Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec', 'Jan', 'Feb']
-    : ['Sep', 'Oct', 'Nov', 'Dec', 'Jan', 'Feb'];
+    ? [2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 0, 1].map(getMonthName)
+    : [8, 9, 10, 11, 0, 1].map(getMonthName);
   const durations = trendPeriod.value === '12m'
     ? [42, 39, 38, 36, 35, 33, 32, 30, 29, 28, 27, 26]
     : [33, 32, 30, 29, 27, 26];
@@ -690,7 +693,7 @@ const durationTrendOption = computed(() => {
     yAxis: {
       type: 'value',
       splitLine: { lineStyle: { type: 'dashed' as const, color: 'rgba(255,255,255,0.05)' } },
-      axisLabel: { color: '#64748B', formatter: '{value}d' }
+      axisLabel: { color: '#64748B', formatter: `{value}${t('customerOnboarding.daySuffix')}` }
     },
     series: [
       {
@@ -850,7 +853,7 @@ function getNpsColor(score: number): string {
 
 function formatDate(date: string): string {
   if (!date) return '';
-  return new Date(date).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
+  return new Date(date).toLocaleDateString(locale.value, { month: 'short', day: 'numeric', year: 'numeric' });
 }
 
 function togglePhase(idx: number) {
@@ -867,7 +870,7 @@ function onTaskToggle(phaseIdx: number, taskIdx: number) {
   const phase = selectedOnboarding.value.phases[phaseIdx];
   const task = phase.tasks[taskIdx];
   task.status = task.completed ? 'completed' : 'pending';
-  phase.completedTasks = phase.tasks.filter(t => t.completed).length;
+  phase.completedTasks = phase.tasks.filter(task => task.completed).length;
   phase.progress = phase.totalTasks > 0 ? Math.round((phase.completedTasks / phase.totalTasks) * 100) : 0;
   // Recalculate onboarding progress
   const totalTasks = selectedOnboarding.value.phases.reduce((s, p) => s + p.totalTasks, 0);
@@ -1105,10 +1108,11 @@ function seedDemoData() {
   const makePhases = (tmplId: string, progress: number): OnboardingPhase[] => {
     const tmpl = templates.value.find(tp => tp.id === tmplId);
     if (!tmpl) return [];
-    let remainingProgress = progress;
-    return tmpl.phases.map((p) => {
-      const phaseProg = Math.min(remainingProgress, 100);
-      remainingProgress = Math.max(0, remainingProgress - 100);
+    const phaseCount = tmpl.phases.length;
+    const phaseShare = 100 / phaseCount;
+    return tmpl.phases.map((p, phaseIndex) => {
+      const phaseStart = phaseIndex * phaseShare;
+      const phaseProg = Math.round(Math.min(100, Math.max(0, ((progress - phaseStart) / phaseShare) * 100)));
       const completedCount = Math.round((phaseProg / 100) * p.checklistItems.length);
       return {
         name: p.name,

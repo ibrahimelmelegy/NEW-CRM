@@ -39,3 +39,15 @@
         color: var(--text-primary) !important;
     }
 }
+
+// 6. Global premium button style
+.premium-btn {
+    background: linear-gradient(135deg, #7849ff 0%, #5a2fd4 100%);
+    border: none;
+    color: #fff;
+    font-weight: 600;
+
+    &:hover {
+        background: linear-gradient(135deg, #8b5cf6 0%, #7849ff 100%);
+    }
+}

@@ -365,7 +365,7 @@
             h3.text-lg.font-bold(style="color: var(--text-primary)")
               Icon(name="ph:clock-counter-clockwise-bold" size="20" class="mr-2" style="color: #3b82f6")
               | {{ $t('dataEnrichment.enrichmentLog') }}
-            el-button(size="small" text @click="loadEnrichmentLog" :loading="loadingLog")
+            el-button(size="small" text @click="loadEnrichmentLog" :loading="loadingLog" :aria-label="$t('dataEnrichment.enrichmentLog')")
               Icon(name="ph:arrows-clockwise" size="14")
 
           //- Empty State
@@ -467,21 +467,6 @@ definePageMeta({ middleware: 'permissions' });
 
 const { t } = useI18n();
 
-// ─── State ───────────────────────────────────────────
-const loading = ref(true);
-const loadingContacts = ref(false);
-const loadingLog = ref(false);
-const enrichingAll = ref(false);
-const runningFullEnrich = ref(false);
-const savingRules = ref(false);
-const activeTab = ref('quality');
-const searchQuery = ref('');
-const qualityFilter = ref('');
-const currentPage = ref(1);
-const pageSize = ref(20);
-const totalContacts = ref(0);
-const selectedContacts = ref<any[]>([]);
-
 // ─── Interfaces ──────────────────────────────────────
 interface Contact {
   id: string;
@@ -503,6 +488,21 @@ interface LogEntry {
   source: string;
   fieldsUpdated: string[];
 }
+
+// ─── State ───────────────────────────────────────────
+const loading = ref(true);
+const loadingContacts = ref(false);
+const loadingLog = ref(false);
+const enrichingAll = ref(false);
+const runningFullEnrich = ref(false);
+const savingRules = ref(false);
+const activeTab = ref('quality');
+const searchQuery = ref('');
+const qualityFilter = ref('');
+const currentPage = ref(1);
+const pageSize = ref(20);
+const totalContacts = ref(0);
+const selectedContacts = ref<Contact[]>([]);
 
 // ─── KPI Data ────────────────────────────────────────
 const kpi = reactive({
@@ -539,9 +539,6 @@ const autoRules = reactive({
 
 // ─── Enrichment Log ──────────────────────────────────
 const enrichmentLog = ref<LogEntry[]>([]);
-
-// ─── Score distribution data for chart ───────────────
-const scoreDistribution = ref<number[]>([]);
 
 // ─── Computed ────────────────────────────────────────
 const totalWeight = computed(() =>
@@ -704,7 +701,7 @@ function rebalanceWeights(changed: keyof typeof scoringWeights) {
 async function loadDashboard() {
   loading.value = true;
   try {
-    const [kpiRes, contactsRes]: any[] = await Promise.all([
+    const [kpiRes, contactsRes] = await Promise.all([
       useApiFetch('data-enrichment/kpi'),
       useApiFetch('data-enrichment/contacts?page=1&limit=20'),
     ]);
@@ -871,52 +868,52 @@ function loadDemoLog() {
   enrichmentLog.value = [
     {
       type: 'auto',
-      message: 'Auto-enriched 45 contacts from domain lookup',
-      timestamp: '2 hours ago',
-      source: 'Domain Lookup API',
-      fieldsUpdated: ['Company', 'Industry', 'Size', 'Location'],
+      message: t('dataEnrichment.log.autoEnriched'),
+      timestamp: t('dataEnrichment.log.twoHoursAgo'),
+      source: t('dataEnrichment.log.domainLookupApi'),
+      fieldsUpdated: [t('dataEnrichment.company'), t('dataEnrichment.industry'), t('dataEnrichment.log.size'), t('dataEnrichment.location')],
     },
     {
       type: 'manual',
-      message: 'Manual enrichment: Ahmed Al-Rashid - added industry, company size',
-      timestamp: '5 hours ago',
-      source: 'Manual Entry',
-      fieldsUpdated: ['Industry', 'Company Size'],
+      message: t('dataEnrichment.log.manualEnrichment'),
+      timestamp: t('dataEnrichment.log.fiveHoursAgo'),
+      source: t('dataEnrichment.log.manualEntry'),
+      fieldsUpdated: [t('dataEnrichment.industry'), t('dataEnrichment.log.companySize')],
     },
     {
       type: 'bulk',
-      message: 'Bulk enriched 120 contacts from CRM import',
-      timestamp: '1 day ago',
-      source: 'CSV Import + Enrichment',
-      fieldsUpdated: ['Email', 'Phone', 'LinkedIn', 'Job Title'],
+      message: t('dataEnrichment.log.bulkEnriched'),
+      timestamp: t('dataEnrichment.log.oneDayAgo'),
+      source: t('dataEnrichment.log.csvImportEnrichment'),
+      fieldsUpdated: [t('dataEnrichment.email'), t('dataEnrichment.phone'), t('dataEnrichment.log.linkedin'), t('dataEnrichment.jobTitle')],
     },
     {
       type: 'auto',
-      message: 'Weekly refresh completed: 230 records updated',
-      timestamp: '3 days ago',
-      source: 'Scheduled Refresh',
-      fieldsUpdated: ['Revenue', 'Employee Count', 'Tech Stack'],
+      message: t('dataEnrichment.log.weeklyRefreshCompleted'),
+      timestamp: t('dataEnrichment.log.threeDaysAgo'),
+      source: t('dataEnrichment.log.scheduledRefresh'),
+      fieldsUpdated: [t('dataEnrichment.log.revenue'), t('dataEnrichment.log.employeeCount'), t('dataEnrichment.techStack')],
     },
     {
       type: 'import',
-      message: 'Imported and enriched 85 contacts from web form submissions',
-      timestamp: '5 days ago',
-      source: 'Web Form Integration',
-      fieldsUpdated: ['Company', 'Industry', 'Phone', 'Location'],
+      message: t('dataEnrichment.log.importedEnriched'),
+      timestamp: t('dataEnrichment.log.fiveDaysAgo'),
+      source: t('dataEnrichment.log.webFormIntegration'),
+      fieldsUpdated: [t('dataEnrichment.company'), t('dataEnrichment.industry'), t('dataEnrichment.phone'), t('dataEnrichment.location')],
     },
     {
       type: 'manual',
-      message: 'Manual enrichment: Sarah Johnson - verified email, added social profiles',
-      timestamp: '1 week ago',
-      source: 'Manual Verification',
-      fieldsUpdated: ['Email Verified', 'LinkedIn', 'Twitter'],
+      message: t('dataEnrichment.log.manualVerification'),
+      timestamp: t('dataEnrichment.log.oneWeekAgo'),
+      source: t('dataEnrichment.log.manualVerificationSource'),
+      fieldsUpdated: [t('dataEnrichment.log.emailVerified'), t('dataEnrichment.log.linkedin'), t('dataEnrichment.log.twitter')],
     },
     {
       type: 'auto',
-      message: 'Email signature extraction: 32 contacts updated',
-      timestamp: '1 week ago',
-      source: 'Email Signature Parser',
-      fieldsUpdated: ['Phone', 'Job Title', 'Company'],
+      message: t('dataEnrichment.log.emailSignatureExtraction'),
+      timestamp: t('dataEnrichment.log.oneWeekAgo'),
+      source: t('dataEnrichment.log.emailSignatureParser'),
+      fieldsUpdated: [t('dataEnrichment.phone'), t('dataEnrichment.jobTitle'), t('dataEnrichment.company')],
     },
   ];
 }

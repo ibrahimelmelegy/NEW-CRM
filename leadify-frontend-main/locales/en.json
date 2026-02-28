@@ -7731,7 +7731,14 @@
     "last30Days": "Track portal engagement metrics",
     "logins": "Logins",
     "ticketsLabel": "Tickets",
-    "kbViewsLabel": "KB Views"
+    "kbViewsLabel": "KB Views",
+    "categories": {
+      "gettingStarted": "Getting Started",
+      "account": "Account",
+      "billing": "Billing",
+      "technical": "Technical",
+      "general": "General"
+    }
   },
   "dataEnrichment": {
     "title": "Data Enrichment",
@@ -7818,7 +7825,36 @@
     "contactsEnriched": "contacts enriched",
     "enrichmentStarted": "Enrichment Started",
     "enrichmentRunning": "Full enrichment is running in the background",
-    "rulesSaved": "Auto-enrichment rules saved"
+    "rulesSaved": "Auto-enrichment rules saved",
+    "log": {
+      "autoEnriched": "Auto-enriched 45 contacts from domain lookup",
+      "manualEnrichment": "Manual enrichment: Ahmed Al-Rashid - added industry, company size",
+      "bulkEnriched": "Bulk enriched 120 contacts from CRM import",
+      "weeklyRefreshCompleted": "Weekly refresh completed: 230 records updated",
+      "importedEnriched": "Imported and enriched 85 contacts from web form submissions",
+      "manualVerification": "Manual enrichment: Sarah Johnson - verified email, added social profiles",
+      "emailSignatureExtraction": "Email signature extraction: 32 contacts updated",
+      "twoHoursAgo": "2 hours ago",
+      "fiveHoursAgo": "5 hours ago",
+      "oneDayAgo": "1 day ago",
+      "threeDaysAgo": "3 days ago",
+      "fiveDaysAgo": "5 days ago",
+      "oneWeekAgo": "1 week ago",
+      "domainLookupApi": "Domain Lookup API",
+      "manualEntry": "Manual Entry",
+      "csvImportEnrichment": "CSV Import + Enrichment",
+      "scheduledRefresh": "Scheduled Refresh",
+      "webFormIntegration": "Web Form Integration",
+      "manualVerificationSource": "Manual Verification",
+      "emailSignatureParser": "Email Signature Parser",
+      "size": "Size",
+      "companySize": "Company Size",
+      "linkedin": "LinkedIn",
+      "revenue": "Revenue",
+      "employeeCount": "Employee Count",
+      "emailVerified": "Email Verified",
+      "twitter": "Twitter"
+    }
   },
   "quoteComparison": {
     "title": "Quote Comparison",
@@ -7862,7 +7898,16 @@
     "minOptions": "Minimum 2 quote options required",
     "pdfGenerating": "Generating PDF comparison...",
     "comparisonSaved": "Quote comparison saved successfully",
-    "shareSent": "Comparison shared with client"
+    "shareSent": "Comparison shared with client",
+    "storagePlaceholder": "e.g. 50 GB",
+    "featureCrmCore": "CRM Core",
+    "featureEmailIntegration": "Email Integration",
+    "featureReportingAnalytics": "Reporting & Analytics",
+    "featureApiAccess": "API Access",
+    "featureCustomWorkflows": "Custom Workflows",
+    "featureDedicatedSupport": "Dedicated Support",
+    "featureWhiteLabel": "White Label",
+    "featureSlaGuarantee": "SLA Guarantee"
   },
   "roiCalculator": {
     "title": "ROI Calculator",
@@ -8212,7 +8257,16 @@
     "completedEvents": "Completed Events",
     "totalAttendees": "Total Attendees",
     "conversionRate": "Conversion Rate",
-    "revenueAttributed": "Revenue Attributed"
+    "revenueAttributed": "Revenue Attributed",
+    "tagOptions": {
+      "marketing": "Marketing",
+      "sales": "Sales",
+      "product": "Product",
+      "engineering": "Engineering",
+      "leadership": "Leadership",
+      "onboarding": "Onboarding",
+      "training": "Training"
+    }
   },
   "customerOnboarding": {
     "title": "Customer Onboarding",
@@ -8384,6 +8438,9 @@
     "setupCompleted": "Technical setup completed",
     "setupDelayed": "Setup phase delayed — needs attention",
     "welcomeSetupDone": "Welcome & Setup completed",
-    "configTrainingDone": "Configuration & Training completed"
+    "configTrainingDone": "Configuration & Training completed",
+    "daySuffix": "d",
+    "kpiChange": "{value}",
+    "removeItem": "Remove item"
   }
 }

@@ -241,7 +241,7 @@ const breakdownChartOption = computed(() => {
     tooltip: {
       trigger: 'axis',
       axisPointer: { type: 'shadow' },
-      backgroundColor: 'rgba(30, 30, 45, 0.85)',
+      backgroundColor: 'rgba(0, 0, 0, 0.75)',
       borderColor: 'rgba(120, 73, 255, 0.3)',
       borderWidth: 1,
       padding: [12, 16],

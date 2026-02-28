@@ -77,11 +77,11 @@ div
               el-table-column(:label="$t('common.actions')" width="140" align="center")
                 template(#default="{ row }")
                   .flex.items-center.justify-center.gap-1
-                    el-button(text size="small" type="primary" @click.stop="openEventDialog(row)")
+                    el-button(text size="small" type="primary" :aria-label="$t('common.edit')" @click.stop="openEventDialog(row)")
                       Icon(name="ph:pencil-bold" size="16")
-                    el-button(text size="small" type="info" @click.stop="duplicateEvent(row)")
+                    el-button(text size="small" type="info" :aria-label="$t('eventManagement.copy')" @click.stop="duplicateEvent(row)")
                       Icon(name="ph:copy-bold" size="16")
-                    el-button(text size="small" type="danger" @click.stop="handleDeleteEvent(row)")
+                    el-button(text size="small" type="danger" :aria-label="$t('common.delete')" @click.stop="handleDeleteEvent(row)")
                       Icon(name="ph:trash-bold" size="16")
 
           //- Mobile Cards
@@ -368,6 +368,36 @@ import { ref, reactive, computed, onMounted } from 'vue';
 import { ElMessage, ElMessageBox } from 'element-plus';
 import VChart from 'vue-echarts';
 
+interface EventItem {
+  id: number;
+  name: string;
+  type: string;
+  date: string;
+  endDate: string;
+  location: string;
+  venue: string;
+  meetingLink: string;
+  capacity: number;
+  registered: number;
+  status: string;
+  description: string;
+  tags: string[];
+  leadsGenerated: number;
+  opportunities: number;
+  revenue: number;
+  cost: number;
+}
+
+interface Attendee {
+  id: number;
+  name: string;
+  email: string;
+  company: string;
+  registrationDate: string;
+  attendance: string;
+  leadScore: number;
+}
+
 definePageMeta({ middleware: 'permissions' });
 
 const { t, locale } = useI18n();
@@ -376,12 +406,12 @@ const loading = ref(false);
 const saving = ref(false);
 const activeTab = ref('events');
 const eventDialogVisible = ref(false);
-const editingEvent = ref<any>(null);
+const editingEvent = ref<EventItem | null>(null);
 const eventSearch = ref('');
 const filterType = ref('');
 const filterStatus = ref('');
 const selectedEventId = ref<string | number>('');
-const selectedAttendees = ref<any[]>([]);
+const selectedAttendees = ref<Attendee[]>([]);
 const chartPeriod = ref('6m');
 
 // ─── Options ──────────────────────────────────────────────
@@ -399,10 +429,18 @@ const statusOptions = computed(() => [
   { label: t('eventManagement.statuses.cancelled'), value: 'cancelled' }
 ]);
 
-const availableTags = ['Marketing', 'Sales', 'Product', 'Engineering', 'Leadership', 'Onboarding', 'Training'];
+const availableTags = computed(() => [
+  t('eventManagement.tagOptions.marketing'),
+  t('eventManagement.tagOptions.sales'),
+  t('eventManagement.tagOptions.product'),
+  t('eventManagement.tagOptions.engineering'),
+  t('eventManagement.tagOptions.leadership'),
+  t('eventManagement.tagOptions.onboarding'),
+  t('eventManagement.tagOptions.training')
+]);
 
 // ─── Demo Data ────────────────────────────────────────────
-const events = ref<any[]>([
+const events = ref<EventItem[]>([
   { id: 1, name: 'Q1 Product Webinar', type: 'webinar', date: '2026-03-15T10:00:00', endDate: '2026-03-15T11:30:00', location: 'virtual', venue: '', meetingLink: 'https://meet.example.com/q1-webinar', capacity: 500, registered: 387, status: 'upcoming', description: 'Quarterly product updates and roadmap review', tags: ['Product', 'Marketing'], leadsGenerated: 142, opportunities: 28, revenue: 85000, cost: 2500 },
   { id: 2, name: 'Annual Sales Conference 2026', type: 'conference', date: '2026-04-20T09:00:00', endDate: '2026-04-22T17:00:00', location: 'physical', venue: 'Grand Hyatt, Dubai', meetingLink: '', capacity: 300, registered: 256, status: 'upcoming', description: 'Three-day sales conference with keynotes and workshops', tags: ['Sales', 'Leadership'], leadsGenerated: 0, opportunities: 0, revenue: 0, cost: 45000 },
   { id: 3, name: 'CRM Mastery Workshop', type: 'workshop', date: '2026-02-10T14:00:00', endDate: '2026-02-10T17:00:00', location: 'virtual', venue: '', meetingLink: 'https://meet.example.com/crm-workshop', capacity: 80, registered: 73, status: 'completed', description: 'Hands-on workshop for advanced CRM techniques', tags: ['Training', 'Sales'], leadsGenerated: 56, opportunities: 12, revenue: 34000, cost: 1200 },
@@ -413,7 +451,7 @@ const events = ref<any[]>([
   { id: 8, name: 'Pipeline Management Workshop', type: 'workshop', date: '2025-12-05T14:00:00', endDate: '2025-12-05T16:00:00', location: 'virtual', venue: '', meetingLink: '', capacity: 100, registered: 91, status: 'completed', description: 'Training workshop for effective pipeline management', tags: ['Sales', 'Training'], leadsGenerated: 45, opportunities: 10, revenue: 28000, cost: 900 }
 ]);
 
-const attendeesData = ref<Record<number, any[]>>({
+const attendeesData = ref<Record<number, Attendee[]>>({
   1: [
     { id: 1, name: 'Ahmed Al-Rashid', email: 'ahmed@company.com', company: 'Tech Solutions', registrationDate: '2026-02-20', attendance: 'registered', leadScore: 85 },
     { id: 2, name: 'Sarah Johnson', email: 'sarah@enterprise.io', company: 'Enterprise Inc', registrationDate: '2026-02-18', attendance: 'registered', leadScore: 72 },
@@ -715,7 +753,7 @@ function formatCurrency(val: number): string {
 }
 
 // ─── Actions ──────────────────────────────────────────────
-function openEventDialog(event?: any) {
+function openEventDialog(event?: EventItem) {
   if (event && event.id) {
     editingEvent.value = event;
     eventForm.value = {
@@ -771,7 +809,7 @@ async function handleSaveEvent() {
   }
 }
 
-async function handleDeleteEvent(event: any) {
+async function handleDeleteEvent(event: EventItem) {
   try {
     await ElMessageBox.confirm(
       t('common.confirmDelete'),
@@ -785,7 +823,7 @@ async function handleDeleteEvent(event: any) {
   }
 }
 
-function duplicateEvent(event: any) {
+function duplicateEvent(event: EventItem) {
   const duplicate = {
     ...event,
     id: Date.now(),
@@ -800,7 +838,7 @@ function duplicateEvent(event: any) {
   ElMessage.success(t('eventManagement.eventDuplicated'));
 }
 
-function handleAttendeeSelection(rows: any[]) {
+function handleAttendeeSelection(rows: Attendee[]) {
   selectedAttendees.value = rows;
 }
 
@@ -813,7 +851,7 @@ function exportAttendees() {
   const data = selectedAttendees.value.length ? selectedAttendees.value : selectedEventAttendees.value;
   if (!data.length) return;
   const headers = [t('eventManagement.attendeeName'), t('eventManagement.email'), t('eventManagement.company'), t('eventManagement.registrationDate'), t('eventManagement.attendanceStatus'), t('eventManagement.leadScore')];
-  const csv = [headers.join(','), ...data.map((row: any) =>
+  const csv = [headers.join(','), ...data.map((row: Attendee) =>
     [
       `"${row.name || ''}"`,
       `"${row.email || ''}"`,
@@ -837,7 +875,7 @@ function exportEvents() {
   const data = filteredEvents.value;
   if (!data.length) return;
   const headers = [t('eventManagement.eventName'), t('eventManagement.type'), t('eventManagement.date'), t('eventManagement.location'), t('eventManagement.capacity'), t('eventManagement.registered'), t('common.status')];
-  const csv = [headers.join(','), ...data.map((row: any) =>
+  const csv = [headers.join(','), ...data.map((row: EventItem) =>
     [
       `"${row.name || ''}"`,
       `"${row.type || ''}"`,

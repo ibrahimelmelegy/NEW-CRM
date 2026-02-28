@@ -50,9 +50,9 @@
                 span.text-sm.font-bold(:style="{ color: winRateColor(row.winRate) }") {{ row.winRate }}%
           el-table-column(:label="$t('common.action')" width="100" fixed="right")
             template(#default="{ row }")
-              el-button(text circle size="small" type="primary" @click="openBattleCardDialog(row)")
+              el-button(text circle size="small" type="primary" :aria-label="$t('common.edit')" @click="openBattleCardDialog(row)")
                 Icon(name="ph:pencil-simple" size="14")
-              el-button(text circle size="small" type="danger" @click="deleteBattleCard(row.id)")
+              el-button(text circle size="small" type="danger" :aria-label="$t('common.delete')" @click="deleteBattleCard(row.id)")
                 Icon(name="ph:trash" size="14")
           template(#empty)
             el-empty(:description="$t('common.noData')")
@@ -87,9 +87,9 @@
                   Icon(:name="objectionCategoryIcon(obj.category)" size="16" :style="{ color: objectionCategoryColor(obj.category) }")
                 el-tag(size="small" :type="objectionCategoryTagType(obj.category)" effect="dark" round) {{ $t(`salesEnablement.cat${capitalize(obj.category)}`) }}
               .flex.items-center.gap-1
-                el-button(text circle size="small" type="primary" @click="openObjectionDialog(obj)")
+                el-button(text circle size="small" type="primary" :aria-label="$t('common.edit')" @click="openObjectionDialog(obj)")
                   Icon(name="ph:pencil-simple" size="14")
-                el-button(text circle size="small" type="danger" @click="deleteObjection(obj.id)")
+                el-button(text circle size="small" type="danger" :aria-label="$t('common.delete')" @click="deleteObjection(obj.id)")
                   Icon(name="ph:trash" size="14")
 
             //- Objection text
@@ -170,9 +170,9 @@
                     Icon(name="ph:download-simple" size="14")
                     span.ml-1 {{ $t('salesEnablement.download') }}
                 .flex.items-center.gap-1
-                  el-button(text circle size="small" type="primary" @click="openResourceEditDialog(res)")
+                  el-button(text circle size="small" type="primary" :aria-label="$t('common.edit')" @click="openResourceEditDialog(res)")
                     Icon(name="ph:pencil-simple" size="14")
-                  el-button(text circle size="small" type="danger" @click="deleteResource(res.id)")
+                  el-button(text circle size="small" type="danger" :aria-label="$t('common.delete')" @click="deleteResource(res.id)")
                     Icon(name="ph:trash" size="14")
 
           //- Empty state
@@ -261,7 +261,7 @@
 
   //- ============ BATTLE CARD DIALOG ============
   el-dialog(v-model="showBattleCardDialog" :title="editingBattleCardId ? $t('salesEnablement.editBattleCard') : $t('salesEnablement.addBattleCard')" width="650px" destroy-on-close)
-    el-form(label-position="top" size="large")
+    el-form(:model="battleCardForm" label-position="top" size="large")
       el-form-item(:label="$t('salesEnablement.competitorName')" required)
         el-input(v-model="battleCardForm.competitorName" :placeholder="$t('salesEnablement.competitorNamePlaceholder')")
       .grid.grid-cols-2.gap-4
@@ -283,7 +283,7 @@
 
   //- ============ OBJECTION DIALOG ============
   el-dialog(v-model="showObjectionDialog" :title="editingObjectionId ? $t('salesEnablement.editObjection') : $t('salesEnablement.addObjection')" width="600px" destroy-on-close)
-    el-form(label-position="top" size="large")
+    el-form(:model="objectionForm" label-position="top" size="large")
       .grid.grid-cols-2.gap-4
         el-form-item(:label="$t('salesEnablement.category')" required)
           el-select(v-model="objectionForm.category" class="w-full")
@@ -303,7 +303,7 @@
 
   //- ============ UPLOAD RESOURCE DIALOG ============
   el-dialog(v-model="showUploadDialog" :title="$t('salesEnablement.uploadResource')" width="550px" destroy-on-close)
-    el-form(label-position="top" size="large")
+    el-form(:model="resourceForm" label-position="top" size="large")
       el-form-item(:label="$t('salesEnablement.resourceTitle')" required)
         el-input(v-model="resourceForm.title" :placeholder="$t('salesEnablement.resourceTitlePlaceholder')")
       .grid.grid-cols-2.gap-4
@@ -328,7 +328,7 @@
 
   //- ============ EDIT RESOURCE DIALOG ============
   el-dialog(v-model="showResourceEditDialog" :title="$t('salesEnablement.editResource')" width="550px" destroy-on-close)
-    el-form(label-position="top" size="large")
+    el-form(:model="resourceForm" label-position="top" size="large")
       el-form-item(:label="$t('salesEnablement.resourceTitle')" required)
         el-input(v-model="resourceForm.title" :placeholder="$t('salesEnablement.resourceTitlePlaceholder')")
       .grid.grid-cols-2.gap-4
@@ -348,6 +348,46 @@
 </template>
 
 <script setup lang="ts">
+interface BattleCard {
+  id: number;
+  competitorName: string;
+  lastUpdated: string;
+  strengths: string[];
+  weaknesses: string[];
+  winRate: number;
+  talkingPoints: string;
+  pricingNotes: string;
+}
+
+interface Objection {
+  id: number;
+  category: string;
+  objectionText: string;
+  response: string;
+  successRate: number;
+}
+
+interface Resource {
+  id: number;
+  title: string;
+  type: string;
+  fileSize: string;
+  lastUpdated: string;
+  downloadCount: number;
+  viewCount: number;
+  description: string;
+}
+
+interface Deal {
+  id: number;
+  dealName: string;
+  status: string;
+  amount: number;
+  reason: string;
+  competitor: string;
+  closedDate: string;
+}
+
 definePageMeta({ middleware: 'permissions' });
 
 const { t, locale } = useI18n();
@@ -582,7 +622,7 @@ function handlePrimaryAction() {
 // ──────────────────────────────────────────
 // Battle Card CRUD
 // ──────────────────────────────────────────
-function openBattleCardDialog(card?: any) {
+function openBattleCardDialog(card?: BattleCard) {
   if (card) {
     editingBattleCardId.value = card.id;
     Object.assign(battleCardForm, {
@@ -635,7 +675,7 @@ function deleteBattleCard(id: number) {
 // ──────────────────────────────────────────
 // Objection CRUD
 // ──────────────────────────────────────────
-function openObjectionDialog(obj?: any) {
+function openObjectionDialog(obj?: Objection) {
   if (obj) {
     editingObjectionId.value = obj.id;
     Object.assign(objectionForm, {
@@ -709,7 +749,7 @@ function saveResource() {
   }, 400);
 }
 
-function openResourceEditDialog(res: any) {
+function openResourceEditDialog(res: Resource) {
   editingResourceId.value = res.id;
   Object.assign(resourceForm, {
     title: res.title,
@@ -752,7 +792,7 @@ function deleteResource(id: number) {
     .catch(() => { /* cancelled */ });
 }
 
-function downloadResource(res: any) {
+function downloadResource(res: Resource) {
   res.downloadCount++;
   ElMessage.success(t('salesEnablement.downloadStarted'));
 }
@@ -765,7 +805,7 @@ function exportWinLossReport() {
   const rows = recentDeals.value.map(d => [
     d.dealName, d.status, d.amount, d.reason, d.competitor || 'N/A', d.closedDate
   ]);
-  const csv = [headers, ...rows].map(r => r.map((c: any) => `"${String(c).replace(/"/g, '""')}"`).join(',')).join('\n');
+  const csv = [headers, ...rows].map(r => r.map((c: string | number) => `"${String(c).replace(/"/g, '""')}"`).join(',')).join('\n');
   const blob = new Blob(['\uFEFF' + csv], { type: 'text/csv;charset=utf-8;' });
   const url = URL.createObjectURL(blob);
   const a = document.createElement('a');

@@ -69,7 +69,7 @@
           el-form-item(:label="$t('quoteComparison.userLimit')" class="!mb-0")
             el-input(v-model="opt.userLimit" :placeholder="$t('quoteComparison.unlimited')" size="default")
           el-form-item(:label="$t('quoteComparison.storageLimit')" class="!mb-0")
-            el-input(v-model="opt.storageLimit" placeholder="e.g. 50 GB" size="default")
+            el-input(v-model="opt.storageLimit" :placeholder="$t('quoteComparison.storagePlaceholder')" size="default")
           el-form-item(:label="$t('quoteComparison.supportLevel')" class="!mb-0")
             el-select(v-model="opt.supportLevel" class="w-full" size="default")
               el-option(:label="$t('quoteComparison.emailSupport')" value="Email")
@@ -182,14 +182,14 @@ const { t, locale } = useI18n();
 
 // --- Default feature list ---
 const defaultFeatures = () => [
-  { name: 'CRM Core', included: true },
-  { name: 'Email Integration', included: true },
-  { name: 'Reporting & Analytics', included: true },
-  { name: 'API Access', included: false },
-  { name: 'Custom Workflows', included: false },
-  { name: 'Dedicated Support', included: false },
-  { name: 'White Label', included: false },
-  { name: 'SLA Guarantee', included: false }
+  { name: t('quoteComparison.featureCrmCore'), included: true },
+  { name: t('quoteComparison.featureEmailIntegration'), included: true },
+  { name: t('quoteComparison.featureReportingAnalytics'), included: true },
+  { name: t('quoteComparison.featureApiAccess'), included: false },
+  { name: t('quoteComparison.featureCustomWorkflows'), included: false },
+  { name: t('quoteComparison.featureDedicatedSupport'), included: false },
+  { name: t('quoteComparison.featureWhiteLabel'), included: false },
+  { name: t('quoteComparison.featureSlaGuarantee'), included: false }
 ];
 
 // --- Quote options ---
@@ -436,3 +436,26 @@ function handleShareWithClient() {
   ElMessage.info(t('quoteComparison.shareSent'));
 }
 </script>
+
+<style lang="scss" scoped>
+.premium-btn {
+  background: linear-gradient(135deg, #7849ff 0%, #5a2fd4 100%);
+  border: none;
+  color: #fff;
+  font-weight: 600;
+  &:hover {
+    background: linear-gradient(135deg, #8b5cf6 0%, #7849ff 100%);
+  }
+}
+.glass-card {
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+  &:hover { transform: translateY(-1px); }
+}
+.animate-entrance {
+  animation: slideUp 0.4s ease-out;
+}
+@keyframes slideUp {
+  from { opacity: 0; transform: translateY(16px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+</style>

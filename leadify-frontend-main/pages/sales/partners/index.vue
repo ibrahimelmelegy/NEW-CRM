@@ -69,13 +69,13 @@
             template(#default="{ row }")
               .flex.items-center.justify-center.gap-1
                 el-tooltip(:content="$t('common.edit')")
-                  el-button(text circle size="small" type="primary" @click="openPartnerDialog(row)")
+                  el-button(text circle size="small" type="primary" :aria-label="$t('common.edit')" @click="openPartnerDialog(row)")
                     Icon(name="ph:pencil-simple" size="14")
                 el-tooltip(:content="$t('common.view')")
-                  el-button(text circle size="small" @click="openPartnerDetail(row)")
+                  el-button(text circle size="small" :aria-label="$t('common.view')" @click="openPartnerDetail(row)")
                     Icon(name="ph:eye-bold" size="14")
                 el-tooltip(:content="$t('common.delete')")
-                  el-button(text circle size="small" type="danger" @click="handleDeletePartner(row)")
+                  el-button(text circle size="small" type="danger" :aria-label="$t('common.delete')" @click="handleDeletePartner(row)")
                     Icon(name="ph:trash" size="14")
           template(#empty)
             el-empty(:description="$t('partnerManagement.noPartners')")
@@ -125,10 +125,10 @@
             template(#default="{ row }")
               .flex.items-center.justify-center.gap-1(v-if="row.status === 'pending'")
                 el-tooltip(:content="$t('partnerManagement.approve')")
-                  el-button(type="success" size="small" circle @click="handleDealAction(row, 'approved')")
+                  el-button(type="success" size="small" circle :aria-label="$t('partnerManagement.approve')" @click="handleDealAction(row, 'approved')")
                     Icon(name="ph:check-bold" size="14")
                 el-tooltip(:content="$t('partnerManagement.reject')")
-                  el-button(type="danger" size="small" circle @click="handleDealAction(row, 'rejected')")
+                  el-button(type="danger" size="small" circle :aria-label="$t('partnerManagement.reject')" @click="handleDealAction(row, 'rejected')")
                     Icon(name="ph:x-bold" size="14")
               span.text-xs(v-else style="color: var(--text-muted)") {{ $t('partnerManagement.processed') }}
           template(#empty)
@@ -224,7 +224,7 @@
                       p.text-xs(style="color: var(--text-muted)") {{ $t('partnerManagement.revenueThreshold') }}: {{ formatCurrency(tier.revenueThreshold) }}
                   .flex.items-center.gap-1
                     el-tooltip(:content="$t('common.edit')")
-                      el-button(text circle size="small" @click="openTierDialog(tier)")
+                      el-button(text circle size="small" :aria-label="$t('common.edit')" @click="openTierDialog(tier)")
                         Icon(name="ph:pencil-simple" size="14")
 
                 .grid.grid-cols-3.gap-3.mb-3
@@ -396,6 +396,51 @@ import { ref, reactive, computed, onMounted, onBeforeUnmount, watch, nextTick } 
 import { ElMessage, ElMessageBox, ElNotification } from 'element-plus';
 import * as echarts from 'echarts';
 
+interface Partner {
+  id: string;
+  companyName: string;
+  contactPerson: string;
+  email: string;
+  phone: string;
+  tier: string;
+  region: string;
+  activeDeals: number;
+  totalRevenue: number;
+  status: string;
+  address: string;
+  notes: string;
+}
+
+interface DealRegistration {
+  id: string;
+  dealName: string;
+  partnerName: string;
+  customerName: string;
+  amount: number;
+  stage: string;
+  registrationDate: string;
+  expiryDate: string;
+  status: string;
+}
+
+interface TierConfiguration {
+  name: string;
+  revenueThreshold: number;
+  discountPercent: number;
+  commissionPercent: number;
+  partnerCount: number;
+  color: string;
+  benefits: string[];
+}
+
+interface CoMarketingFund {
+  id: string;
+  partnerName: string;
+  allocated: number;
+  spent: number;
+  campaignsRun: number;
+}
+
 definePageMeta({ middleware: 'permissions' });
 
 const { t } = useI18n();
@@ -408,15 +453,15 @@ const loading = ref(false);
 const saving = ref(false);
 
 // Partners
-const partners = ref<any[]>([]);
+const partners = ref<Partner[]>([]);
 const partnerSearch = ref('');
 const filterTier = ref('');
 const filterRegion = ref('');
 const filterPartnerStatus = ref('');
 const showPartnerDialog = ref(false);
 const showPartnerDrawer = ref(false);
-const editingPartner = ref<any>(null);
-const detailPartner = ref<any>(null);
+const editingPartner = ref<Partner | null>(null);
+const detailPartner = ref<Partner | null>(null);
 
 const tierOptions = ['Platinum', 'Gold', 'Silver', 'Bronze'];
 const regionOptions = ['Middle East', 'North America', 'Europe', 'Asia Pacific', 'Africa', 'Latin America'];
@@ -435,7 +480,7 @@ const defaultPartnerForm = () => ({
 const partnerForm = reactive(defaultPartnerForm());
 
 // Deal Registration
-const dealRegistrations = ref<any[]>([]);
+const dealRegistrations = ref<DealRegistration[]>([]);
 const dealSearch = ref('');
 const filterDealStatus = ref('');
 
@@ -447,9 +492,9 @@ let partnerChart: echarts.ECharts | null = null;
 let tierChart: echarts.ECharts | null = null;
 
 // Tier Management
-const tierConfigurations = ref<any[]>([]);
+const tierConfigurations = ref<TierConfiguration[]>([]);
 const showTierDialog = ref(false);
-const editingTier = ref<any>(null);
+const editingTier = ref<TierConfiguration | null>(null);
 
 const defaultTierForm = () => ({
   name: '',
@@ -474,7 +519,7 @@ const defaultBenefitOptions = [
 ];
 
 // Co-Marketing
-const coMarketingFunds = ref<any[]>([]);
+const coMarketingFunds = ref<CoMarketingFund[]>([]);
 const showCoMarketingDialog = ref(false);
 
 const defaultCoMarketingForm = () => ({
@@ -669,12 +714,12 @@ function getConversionColor(rate: number): string {
   return '#ef4444';
 }
 
-function getUtilization(row: any): number {
+function getUtilization(row: CoMarketingFund): number {
   if (!row.allocated) return 0;
   return Math.round((row.spent / row.allocated) * 100);
 }
 
-function getUtilizationColor(row: any): string {
+function getUtilizationColor(row: CoMarketingFund): string {
   const util = getUtilization(row);
   if (util >= 90) return '#ef4444';
   if (util >= 60) return '#f59e0b';
@@ -684,7 +729,7 @@ function getUtilizationColor(row: any): string {
 // ──────────────────────────────────────────
 // Partner CRUD
 // ──────────────────────────────────────────
-function openPartnerDialog(partner?: any) {
+function openPartnerDialog(partner?: Partner) {
   if (partner) {
     editingPartner.value = partner;
     Object.assign(partnerForm, {
@@ -736,12 +781,12 @@ function savePartner() {
   }
 }
 
-function openPartnerDetail(partner: any) {
+function openPartnerDetail(partner: Partner) {
   detailPartner.value = partner;
   showPartnerDrawer.value = true;
 }
 
-async function handleDeletePartner(partner: any) {
+async function handleDeletePartner(partner: Partner) {
   try {
     await ElMessageBox.confirm(
       t('partnerManagement.confirmDelete'),
@@ -758,7 +803,7 @@ async function handleDeletePartner(partner: any) {
 // ──────────────────────────────────────────
 // Deal Actions
 // ──────────────────────────────────────────
-function handleDealAction(deal: any, newStatus: string) {
+function handleDealAction(deal: DealRegistration, newStatus: string) {
   const idx = dealRegistrations.value.findIndex(d => d.id === deal.id);
   if (idx >= 0) {
     dealRegistrations.value[idx].status = newStatus;
@@ -774,7 +819,7 @@ function handleDealAction(deal: any, newStatus: string) {
 // ──────────────────────────────────────────
 // Tier Configuration
 // ──────────────────────────────────────────
-function openTierDialog(tier?: any) {
+function openTierDialog(tier?: TierConfiguration) {
   if (tier) {
     editingTier.value = tier;
     Object.assign(tierForm, {
@@ -869,7 +914,7 @@ function exportPartners() {
     p.totalRevenue,
     p.status
   ]);
-  const csv = [headers, ...rows].map(r => r.map((c: any) => `"${String(c).replace(/"/g, '""')}"`).join(',')).join('\n');
+  const csv = [headers, ...rows].map(r => r.map((c: string | number) => `"${String(c).replace(/"/g, '""')}"`).join(',')).join('\n');
   const blob = new Blob(['\uFEFF' + csv], { type: 'text/csv;charset=utf-8;' });
   const url = URL.createObjectURL(blob);
   const a = document.createElement('a');

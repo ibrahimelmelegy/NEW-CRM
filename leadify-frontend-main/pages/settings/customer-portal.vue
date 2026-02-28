@@ -3,7 +3,7 @@
   //- Header
   .flex.items-center.justify-between.mb-8
     .flex.items-center.gap-4
-      el-button(circle plain @click="router.push('/settings')" class="!w-11 !h-11")
+      el-button(circle plain @click="goBack()" :aria-label="$t('errors.goBack')" class="!w-11 !h-11")
         Icon(name="ph:arrow-left-bold" size="18")
       div
         h2.text-3xl.font-black(style="color: var(--text-primary)") {{ $t('customerPortal.title') }}
@@ -317,9 +317,9 @@
                     el-tag(:type="article.status === 'published' ? 'success' : 'info'" size="small" round) {{ article.status === 'published' ? $t('customerPortal.published') : $t('customerPortal.draft') }}
                   .text-xs.mt-1(style="color: var(--text-muted)") {{ article.category }}
                 .flex.items-center.gap-2
-                  el-button(size="small" @click="openArticleDialog(article)" class="!rounded-lg")
+                  el-button(size="small" @click="openArticleDialog(article)" :aria-label="$t('common.edit')" class="!rounded-lg")
                     Icon(name="ph:pencil-bold" size="14")
-                  el-button(size="small" type="danger" plain @click="deleteArticle(idx)" class="!rounded-lg")
+                  el-button(size="small" type="danger" plain @click="deleteArticle(idx)" :aria-label="$t('common.delete')" class="!rounded-lg")
                     Icon(name="ph:trash-bold" size="14")
 
             .text-center.py-12(v-else)
@@ -345,9 +345,9 @@
                     p.text-xs.mt-2.ml-8(style="color: var(--text-muted)") {{ faq.answer }}
                   .flex.items-center.gap-2.ml-4
                     el-switch(v-model="faq.visible" active-color="#7849ff" size="small")
-                    el-button(size="small" @click="openFaqDialog(faq)" class="!rounded-lg")
+                    el-button(size="small" @click="openFaqDialog(faq)" :aria-label="$t('common.edit')" class="!rounded-lg")
                       Icon(name="ph:pencil-bold" size="14")
-                    el-button(size="small" type="danger" plain @click="deleteFaq(idx)" class="!rounded-lg")
+                    el-button(size="small" type="danger" plain @click="deleteFaq(idx)" :aria-label="$t('common.delete')" class="!rounded-lg")
                       Icon(name="ph:trash-bold" size="14")
 
             .text-center.py-12(v-else)
@@ -429,7 +429,7 @@ import { ref, reactive, computed, onMounted, nextTick, watch, onBeforeUnmount } 
 import { ElNotification, ElMessageBox, ElMessage } from 'element-plus';
 import { useApiFetch } from '~/composables/useApiFetch';
 
-const router = useRouter();
+const { goBack } = useSafeBack('/settings');
 const { t } = useI18n();
 
 definePageMeta({ middleware: 'permissions' });
@@ -642,8 +642,14 @@ const articleForm = reactive({
 });
 
 const articleCategories = computed(() => {
+  const defaults = [
+    t('customerPortal.categories.gettingStarted'),
+    t('customerPortal.categories.account'),
+    t('customerPortal.categories.billing'),
+    t('customerPortal.categories.technical'),
+  ];
   const cats = new Set(articles.value.map(a => a.category).filter(Boolean));
-  return ['Getting Started', 'Account', 'Billing', 'Technical', ...cats];
+  return [...defaults, ...Array.from(cats).filter(c => !defaults.includes(c))];
 });
 
 function openArticleDialog(article?: Article) {
@@ -734,8 +740,14 @@ const faqForm = reactive({
 });
 
 const faqCategories = computed(() => {
+  const defaults = [
+    t('customerPortal.categories.general'),
+    t('customerPortal.categories.billing'),
+    t('customerPortal.categories.technical'),
+    t('customerPortal.categories.account'),
+  ];
   const cats = new Set(faqs.value.map(f => f.category).filter(Boolean));
-  return ['General', 'Billing', 'Technical', 'Account', ...cats];
+  return [...defaults, ...Array.from(cats).filter(c => !defaults.includes(c))];
 });
 
 function openFaqDialog(faq?: Faq) {
