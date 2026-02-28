@@ -199,7 +199,10 @@ const menu = [
       { link: '/sales/goals', name: 'navigation.goalsOkrs', icon: 'ph:crosshair-bold' },
       { link: '/sales/revenue-intelligence', name: 'navigation.revenueIntelligence', icon: 'ph:chart-line-up-bold' },
       { link: '/sales/territories', name: 'navigation.territoryManagement', icon: 'ph:map-pin-area-bold' },
-      { link: '/sales/product-catalog', name: 'navigation.productCatalog', icon: 'ph:storefront-bold' }
+      { link: '/sales/product-catalog', name: 'navigation.productCatalog', icon: 'ph:storefront-bold' },
+      { link: '/sales/data-enrichment', name: 'navigation.dataEnrichment', icon: 'ph:magic-wand-bold' },
+      { link: '/sales/quote-comparison', name: 'navigation.quoteComparison', icon: 'ph:scales-bold' },
+      { link: '/sales/roi-calculator', name: 'navigation.roiCalculator', icon: 'ph:calculator-bold' }
     ]
   },
 
@@ -437,6 +440,7 @@ const menu = [
       { link: '/settings/data-import', name: 'navigation.dataImport', icon: 'ph:upload-bold' },
       { link: '/settings/branding', name: 'navigation.branding', icon: 'ph:paint-brush-household-bold' },
       { link: '/settings/white-label', name: 'navigation.whiteLabel', icon: 'ph:paint-brush-bold' },
+      { link: '/settings/customer-portal', name: 'navigation.customerPortal', icon: 'ph:monitor-bold' },
       { link: '/settings/roles', name: 'navigation.permissionsHub', icon: 'ph:key-bold', role: 'VIEW_ROLES' }
     ]
   }
