@@ -291,6 +291,9 @@
 <script setup lang="ts">
 import { ref, computed } from 'vue';
 import { ElMessage } from 'element-plus';
+import { useI18n } from 'vue-i18n';
+
+const { t } = useI18n();
 
 definePageMeta({ layout: 'default', middleware: 'permissions' });
 
@@ -420,10 +423,10 @@ const duplicatePlan = (p: any) => ElMessage.info(`Cloning: ${p.name}`);
 const viewPayout = (p: any) => ElMessage.info(`Viewing: ${p.payoutId}`);
 const savePlan = () => {
   if (!newPlan.value.name) {
-    ElMessage.warning('Plan name required');
+    ElMessage.warning(t('common.fillRequired'));
     return;
   }
-  ElMessage.success('Commission plan created');
+  ElMessage.success(t('commissions.planCreated'));
   showPlanDialog.value = false;
 };
 </script>

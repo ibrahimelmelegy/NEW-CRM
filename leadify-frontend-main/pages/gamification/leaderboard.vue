@@ -309,10 +309,10 @@ const topScorer = computed(() => (leaderboard.value.length > 0 ? leaderboard.val
 const totalPoints = computed(() => leaderboard.value.reduce((sum, e) => sum + e.totalPoints, 0));
 
 const summaryStats = computed(() => [
-  { label: t('gamification.totalUsers') || 'Total Users', value: leaderboard.value.length, icon: 'ph:users-bold', color: '#7849ff' },
-  { label: t('gamification.totalPoints') || 'Total Points', value: totalPoints.value, icon: 'ph:star-bold', color: '#f59e0b' },
-  { label: t('gamification.topScorer') || 'Top Scorer', value: topScorer.value, icon: 'ph:crown-bold', color: '#22c55e' },
-  { label: t('gamification.achievements') || 'Achievements', value: achievements.value.length, icon: 'ph:trophy-bold', color: '#ef4444' }
+  { label: t('gamification.totalUsers'), value: leaderboard.value.length, icon: 'ph:users-bold', color: '#7849ff' },
+  { label: t('gamification.totalPoints'), value: totalPoints.value, icon: 'ph:star-bold', color: '#f59e0b' },
+  { label: t('gamification.topScorer'), value: topScorer.value, icon: 'ph:crown-bold', color: '#22c55e' },
+  { label: t('gamification.achievements'), value: achievements.value.length, icon: 'ph:trophy-bold', color: '#ef4444' }
 ]);
 
 const getMedalIcon = (index: number) => {

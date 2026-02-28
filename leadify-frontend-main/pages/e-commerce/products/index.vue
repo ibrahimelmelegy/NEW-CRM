@@ -3,8 +3,8 @@ div.p-4.space-y-6.animate-fade-in(class="md_p-6")
   //- Header
   .flex.flex-col.gap-4(class="md_flex-row md_items-center md_justify-between")
     div
-      h1.text-2xl.font-bold(style="color: var(--text-primary);") {{ $t('ecommerce.products') || 'Products' }}
-      p.text-sm.mt-1(style="color: var(--text-muted);") {{ $t('ecommerce.productsSubtitle') || 'Manage your product catalog, pricing, and inventory' }}
+      h1.text-2xl.font-bold(style="color: var(--text-primary);") {{ $t('ecommerce.products.title') }}
+      p.text-sm.mt-1(style="color: var(--text-muted);") {{ $t('ecommerce.products.subtitle') }}
     .flex.items-center.gap-3
       //- View toggle
       .flex.border.rounded-lg.overflow-hidden(style="border-color: var(--border-default);")
@@ -20,13 +20,13 @@ div.p-4.space-y-6.animate-fade-in(class="md_p-6")
           Icon(name="ph:list-bold" size="16")
       el-button(type="primary" size="large" @click="openCreateDialog" class="!rounded-xl")
         Icon(name="ph:plus-bold" size="16" class="mr-1")
-        | {{ $t('ecommerce.addProduct') || 'Add Product' }}
+        | {{ $t('ecommerce.products.addProduct') }}
 
   //- Filters Bar
   .flex.flex-wrap.items-center.gap-3
     el-input(
       v-model="search"
-      :placeholder="$t('common.search') + ' ' + ($t('ecommerce.products') || 'products') + '...'"
+      :placeholder="$t('common.search') + ' ' + $t('ecommerce.products.title') + '...'"
       clearable
       size="large"
       @input="debounceLoad"
@@ -38,7 +38,7 @@ div.p-4.space-y-6.animate-fade-in(class="md_p-6")
     el-select(
       v-model="categoryFilter"
       clearable
-      :placeholder="$t('ecommerce.allCategories') || 'All Categories'"
+      :placeholder="$t('ecommerce.products.allCategories')"
       @change="resetAndLoad"
       size="large"
       style="width: 180px"
@@ -47,18 +47,18 @@ div.p-4.space-y-6.animate-fade-in(class="md_p-6")
     el-select(
       v-model="statusFilter"
       clearable
-      :placeholder="$t('ecommerce.allStatuses') || 'All Statuses'"
+      :placeholder="$t('ecommerce.products.allStatuses')"
       @change="resetAndLoad"
       size="large"
       style="width: 160px"
     )
-      el-option(:label="$t('ecommerce.active') || 'Active'" value="true")
-      el-option(:label="$t('ecommerce.inactive') || 'Inactive'" value="false")
+      el-option(:label="$t('ecommerce.products.active')" value="true")
+      el-option(:label="$t('ecommerce.products.inactive')" value="false")
     .flex.items-center.gap-2
       el-input-number(
         v-model="priceMin"
         :min="0"
-        :placeholder="$t('ecommerce.minPrice') || 'Min'"
+        :placeholder="$t('ecommerce.products.minPrice')"
         size="large"
         controls-position="right"
         style="width: 120px"
@@ -68,7 +68,7 @@ div.p-4.space-y-6.animate-fade-in(class="md_p-6")
       el-input-number(
         v-model="priceMax"
         :min="0"
-        :placeholder="$t('ecommerce.maxPrice') || 'Max'"
+        :placeholder="$t('ecommerce.products.maxPrice')"
         size="large"
         controls-position="right"
         style="width: 120px"
@@ -82,28 +82,28 @@ div.p-4.space-y-6.animate-fade-in(class="md_p-6")
         .w-10.h-10.rounded-xl.flex.items-center.justify-center(style="background: rgba(120, 73, 255, 0.15)")
           Icon(name="ph:package-bold" size="20" style="color: #7849ff")
         div
-          p.text-xs.font-bold.uppercase.tracking-widest(style="color: var(--text-muted);") {{ $t('ecommerce.totalProducts') || 'Total Products' }}
+          p.text-xs.font-bold.uppercase.tracking-widest(style="color: var(--text-muted);") {{ $t('ecommerce.products.totalProducts') }}
           p.text-2xl.font-black(class="mt-0.5" style="color: var(--text-primary);") {{ pagination.totalItems }}
     .p-4.rounded-2xl.border(style="border-color: var(--border-default); background: var(--bg-elevated);")
       .flex.items-center.gap-3
         .w-10.h-10.rounded-xl.flex.items-center.justify-center(style="background: rgba(34, 197, 94, 0.15)")
           Icon(name="ph:check-circle-bold" size="20" style="color: #22c55e")
         div
-          p.text-xs.font-bold.uppercase.tracking-widest(style="color: var(--text-muted);") {{ $t('ecommerce.activeProducts') || 'Active' }}
+          p.text-xs.font-bold.uppercase.tracking-widest(style="color: var(--text-muted);") {{ $t('ecommerce.products.activeProducts') }}
           p.text-2xl.font-black(class="mt-0.5" style="color: #22c55e;") {{ activeCount }}
     .p-4.rounded-2xl.border(style="border-color: var(--border-default); background: var(--bg-elevated);")
       .flex.items-center.gap-3
         .w-10.h-10.rounded-xl.flex.items-center.justify-center(style="background: rgba(59, 130, 246, 0.15)")
           Icon(name="ph:tag-bold" size="20" style="color: #3b82f6")
         div
-          p.text-xs.font-bold.uppercase.tracking-widest(style="color: var(--text-muted);") {{ $t('ecommerce.categoriesCount') || 'Categories' }}
+          p.text-xs.font-bold.uppercase.tracking-widest(style="color: var(--text-muted);") {{ $t('ecommerce.products.categories') }}
           p.text-2xl.font-black(class="mt-0.5" style="color: #3b82f6;") {{ categories.length }}
     .p-4.rounded-2xl.border(style="border-color: var(--border-default); background: var(--bg-elevated);")
       .flex.items-center.gap-3
         .w-10.h-10.rounded-xl.flex.items-center.justify-center(style="background: rgba(245, 158, 11, 0.15)")
           Icon(name="ph:money-bold" size="20" style="color: #f59e0b")
         div
-          p.text-xs.font-bold.uppercase.tracking-widest(style="color: var(--text-muted);") {{ $t('ecommerce.inventoryValue') || 'Inventory Value' }}
+          p.text-xs.font-bold.uppercase.tracking-widest(style="color: var(--text-muted);") {{ $t('ecommerce.products.inventoryValue') }}
           p.text-2xl.font-black(class="mt-0.5" style="color: #f59e0b;") {{ formatCurrency(inventoryValue) }}
 
   //- Product Grid View
@@ -136,13 +136,13 @@ div.p-4.space-y-6.animate-fade-in(class="md_p-6")
               size="small"
               effect="dark"
               round
-            ) {{ prod.isActive ? ($t('ecommerce.active') || 'Active') : ($t('ecommerce.inactive') || 'Inactive') }}
+            ) {{ prod.isActive ? $t('ecommerce.products.active') : $t('ecommerce.products.inactive') }}
         .p-4
           .flex.items-center.justify-between.mb-1
             el-tag(size="small" round effect="plain") {{ prod.category || 'General' }}
             span.text-xs.font-mono(style="color: var(--text-muted);") {{ prod.sku || '--' }}
           h3.text-sm.font-bold.mt-2.line-clamp-1(style="color: var(--text-primary);") {{ prod.name }}
-          p.text-xs.line-clamp-2.mt-1.mb-3(style="color: var(--text-muted);") {{ prod.description || $t('ecommerce.noDescription') || 'No description' }}
+          p.text-xs.line-clamp-2.mt-1.mb-3(style="color: var(--text-muted);") {{ prod.description || $t('ecommerce.products.noDescription') }}
           .flex.items-center.justify-between
             span.text-lg.font-black(style="color: #7c3aed;") {{ (prod.unitPrice || 0).toLocaleString() }}
               span.text-xs.font-normal.ml-1 {{ prod.currency || 'SAR' }}
@@ -150,16 +150,16 @@ div.p-4.space-y-6.animate-fade-in(class="md_p-6")
     //- Empty State
     .rounded-2xl.border-2.border-dashed.text-center.p-12(v-if="!loading && products.length === 0" style="border-color: var(--border-default); color: var(--text-muted);")
       Icon(name="ph:package" size="52")
-      p.text-sm.mt-3.font-medium {{ $t('ecommerce.noProductsFound') || 'No products found' }}
+      p.text-sm.mt-3.font-medium {{ $t('ecommerce.products.noProducts') }}
       el-button.mt-4(type="primary" @click="openCreateDialog" class="!rounded-xl")
         Icon(name="ph:plus-bold" size="16" class="mr-1")
-        | {{ $t('ecommerce.addProduct') || 'Add Product' }}
+        | {{ $t('ecommerce.products.addProduct') }}
 
   //- Product List View
   .rounded-2xl.border.overflow-hidden(v-if="viewMode === 'list'" style="border-color: var(--border-default); background: var(--bg-elevated);")
     el-table(:data="products" v-loading="loading" style="width: 100%" :row-style="{ cursor: 'pointer' }" @row-click="(row: any) => navigateTo(`/e-commerce/products/${row.id}`)")
       el-table-column(type="index" width="50")
-      el-table-column(:label="$t('ecommerce.product') || 'Product'" min-width="240")
+      el-table-column(:label="$t('ecommerce.products.product')" min-width="240")
         template(#default="{ row }")
           .flex.items-center.gap-3
             .w-10.h-10.rounded-lg.flex.items-center.justify-center.flex-shrink-0(style="background: linear-gradient(135deg, #f3f4f6, #e5e7eb);")
@@ -167,22 +167,22 @@ div.p-4.space-y-6.animate-fade-in(class="md_p-6")
             div
               .font-bold(style="color: var(--text-primary);") {{ row.name }}
               .text-xs(style="color: var(--text-muted);") {{ row.sku || '--' }}
-      el-table-column(:label="$t('common.category') || 'Category'" width="140")
+      el-table-column(:label="$t('common.category')" width="140")
         template(#default="{ row }")
           el-tag(v-if="row.category" size="small" effect="dark" round class="!border-purple-500/30 !text-white !bg-purple-500/20") {{ row.category }}
           span(v-else) --
-      el-table-column(:label="$t('ecommerce.price') || 'Price'" width="140" align="right" sortable sort-by="unitPrice")
+      el-table-column(:label="$t('ecommerce.products.price')" width="140" align="right" sortable sort-by="unitPrice")
         template(#default="{ row }")
           span.font-bold(style="color: #7c3aed;") {{ formatCurrency(row.unitPrice || 0) }}
-      el-table-column(:label="$t('common.status') || 'Status'" width="120" align="center")
+      el-table-column(:label="$t('common.status')" width="120" align="center")
         template(#default="{ row }")
           el-tag(
             :type="row.isActive ? 'success' : 'danger'"
             size="small"
             effect="dark"
             round
-          ) {{ row.isActive ? ($t('ecommerce.active') || 'Active') : ($t('ecommerce.inactive') || 'Inactive') }}
-      el-table-column(:label="$t('common.actions') || 'Actions'" width="120" fixed="right" align="center")
+          ) {{ row.isActive ? $t('ecommerce.products.active') : $t('ecommerce.products.inactive') }}
+      el-table-column(:label="$t('common.actions')" width="120" fixed="right" align="center")
         template(#default="{ row }")
           .flex.items-center.justify-center.gap-1(@click.stop)
             el-button(size="small" @click.stop="editProduct(row)" class="!rounded-lg")
@@ -192,11 +192,11 @@ div.p-4.space-y-6.animate-fade-in(class="md_p-6")
       template(#empty)
         .text-center.py-8
           Icon(name="ph:package" size="40" style="color: var(--text-muted)")
-          p.text-sm.mt-2(style="color: var(--text-muted)") {{ $t('ecommerce.noProductsFound') || 'No products found' }}
+          p.text-sm.mt-2(style="color: var(--text-muted)") {{ $t('ecommerce.products.noProducts') }}
 
   //- Pagination
   .flex.items-center.flex-wrap.gap-2(class="sm_justify-between justify-center" v-if="pagination.totalPages > 1")
-    span.text-xs(style="color: var(--text-muted);") {{ pagination.totalItems }} {{ $t('common.entries') || 'entries' }}
+    span.text-xs(style="color: var(--text-muted);") {{ pagination.totalItems }} {{ $t('common.entries') }}
     el-pagination(
       background
       style="direction:ltr"
@@ -211,45 +211,45 @@ div.p-4.space-y-6.animate-fade-in(class="md_p-6")
   //- Create/Edit Product Dialog
   el-dialog(
     v-model="showDialog"
-    :title="editingId ? ($t('ecommerce.editProduct') || 'Edit Product') : ($t('ecommerce.addProduct') || 'Add Product')"
+    :title="editingId ? $t('ecommerce.products.editProduct') : $t('ecommerce.products.addProduct')"
     width="600px"
     :close-on-click-modal="false"
   )
     el-form(ref="formRef" :model="form" :rules="formRules" label-position="top" size="large")
-      el-form-item(:label="$t('ecommerce.productName') || 'Product Name'" prop="name")
-        el-input(v-model="form.name" :placeholder="$t('ecommerce.productNamePlaceholder') || 'Enter product name'")
+      el-form-item(:label="$t('ecommerce.products.productName')" prop="name")
+        el-input(v-model="form.name" :placeholder="$t('ecommerce.products.productNamePlaceholder')")
       .grid.grid-cols-2.gap-4
-        el-form-item(:label="$t('ecommerce.sku') || 'SKU'")
+        el-form-item(:label="$t('ecommerce.products.sku')")
           el-input(v-model="form.sku" placeholder="SKU-001")
-        el-form-item(:label="$t('common.category') || 'Category'")
-          el-select(v-model="form.category" class="w-full" allow-create filterable :placeholder="$t('ecommerce.selectCategory') || 'Select category'")
+        el-form-item(:label="$t('common.category')")
+          el-select(v-model="form.category" class="w-full" allow-create filterable :placeholder="$t('ecommerce.products.selectCategory')")
             el-option(v-for="cat in categories" :key="cat.id || cat" :value="cat.name || cat" :label="cat.name || cat")
       .grid.grid-cols-2.gap-4
-        el-form-item(:label="$t('ecommerce.price') || 'Price'" prop="unitPrice")
+        el-form-item(:label="$t('ecommerce.products.price')" prop="unitPrice")
           el-input-number(v-model="form.unitPrice" :min="0" :precision="2" class="!w-full")
-        el-form-item(:label="$t('ecommerce.currency') || 'Currency'")
+        el-form-item(:label="$t('ecommerce.products.currency')")
           el-select(v-model="form.currency" class="w-full")
             el-option(label="SAR" value="SAR")
             el-option(label="USD" value="USD")
             el-option(label="EUR" value="EUR")
             el-option(label="GBP" value="GBP")
-      el-form-item(:label="$t('common.description') || 'Description'")
-        el-input(v-model="form.description" type="textarea" :rows="3" :placeholder="$t('ecommerce.descriptionPlaceholder') || 'Enter product description'")
+      el-form-item(:label="$t('common.description')")
+        el-input(v-model="form.description" type="textarea" :rows="3" :placeholder="$t('ecommerce.products.descriptionPlaceholder')")
       el-form-item
-        el-switch(v-model="form.isActive" :active-text="$t('ecommerce.active') || 'Active'" :inactive-text="$t('ecommerce.inactive') || 'Inactive'")
+        el-switch(v-model="form.isActive" :active-text="$t('ecommerce.products.active')" :inactive-text="$t('ecommerce.products.inactive')")
     template(#footer)
-      el-button(@click="showDialog = false") {{ $t('common.cancel') || 'Cancel' }}
-      el-button(type="primary" :loading="saving" @click="saveProduct" class="!rounded-xl") {{ $t('common.save') || 'Save' }}
+      el-button(@click="showDialog = false") {{ $t('common.cancel') }}
+      el-button(type="primary" :loading="saving" @click="saveProduct" class="!rounded-xl") {{ $t('common.save') }}
 
   //- Delete Confirmation
-  el-dialog(v-model="showDeleteConfirm" :title="$t('common.confirm') || 'Confirm'" width="400px")
+  el-dialog(v-model="showDeleteConfirm" :title="$t('common.confirm')" width="400px")
     .text-center.py-4
       Icon(name="ph:warning-bold" size="48" style="color: #ef4444;")
-      p.mt-4.text-sm(style="color: var(--text-primary);") {{ $t('common.confirmDelete') || 'Are you sure you want to delete this product?' }}
+      p.mt-4.text-sm(style="color: var(--text-primary);") {{ $t('common.confirmDelete') }}
       p.text-xs.mt-1(style="color: var(--text-muted);") {{ deletingProduct?.name }}
     template(#footer)
-      el-button(@click="showDeleteConfirm = false") {{ $t('common.cancel') || 'Cancel' }}
-      el-button(type="danger" :loading="deleting" @click="handleDelete" class="!rounded-xl") {{ $t('common.delete') || 'Delete' }}
+      el-button(@click="showDeleteConfirm = false") {{ $t('common.cancel') }}
+      el-button(type="danger" :loading="deleting" @click="handleDelete" class="!rounded-xl") {{ $t('common.delete') }}
 </template>
 
 <script setup lang="ts">
@@ -309,8 +309,8 @@ const form = reactive({
 });
 
 const formRules: FormRules = {
-  name: [{ required: true, message: t('common.fillRequired') || 'Product name is required', trigger: 'blur' }],
-  unitPrice: [{ type: 'number', min: 0, message: t('ecommerce.pricePositive') || 'Price must be >= 0', trigger: 'blur' }]
+  name: [{ required: true, message: t('common.fillRequired'), trigger: 'blur' }],
+  unitPrice: [{ type: 'number', min: 0, message: t('ecommerce.products.pricePositive'), trigger: 'blur' }]
 };
 
 // Delete
@@ -416,14 +416,14 @@ async function saveProduct() {
     if (editingId.value) {
       const res = await updateProduct(editingId.value, { ...form });
       if (res.success) {
-        ElNotification({ type: 'success', title: t('common.success') || 'Success', message: t('common.saved') || 'Product updated' });
+        ElNotification({ type: 'success', title: t('common.success'), message: t('common.saved') });
         showDialog.value = false;
         await loadProducts();
       }
     } else {
       const res = await createProduct({ ...form });
       if (res.success) {
-        ElNotification({ type: 'success', title: t('common.success') || 'Success', message: t('common.created') || 'Product created' });
+        ElNotification({ type: 'success', title: t('common.success'), message: t('common.created') });
         showDialog.value = false;
         await loadProducts();
       }
@@ -444,7 +444,7 @@ async function handleDelete() {
   try {
     const res = await deleteProduct(deletingProduct.value.id);
     if (res.success) {
-      ElNotification({ type: 'success', title: t('common.success') || 'Success', message: t('common.deleted') || 'Product deleted' });
+      ElNotification({ type: 'success', title: t('common.success'), message: t('common.deleted') });
       showDeleteConfirm.value = false;
       deletingProduct.value = null;
       await loadProducts();

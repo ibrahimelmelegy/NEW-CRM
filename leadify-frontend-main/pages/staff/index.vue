@@ -386,7 +386,7 @@ const advancedSearchFields = [
   { key: 'phone', label: t('staff.table.phone'), type: 'string' },
   { key: 'status', label: t('staff.table.status'), type: 'select', options: staffStatuses.map((s: any) => ({ value: s.value, label: s.label })) },
   { key: 'roleId', label: t('staff.table.role'), type: 'select', options: mappedRoles.value || [] },
-  { key: 'createdAt', label: t('common.created') || 'Created', type: 'date' }
+  { key: 'createdAt', label: t('common.created'), type: 'date' }
 ];
 
 async function handleApplyView(view: any) {

@@ -274,6 +274,9 @@
 <script setup lang="ts">
 import { ref, computed } from 'vue';
 import { ElMessage } from 'element-plus';
+import { useI18n } from 'vue-i18n';
+
+const { t } = useI18n();
 
 definePageMeta({
   layout: 'default',
@@ -436,12 +439,12 @@ const escalationsTriggered = computed(() => escalationRules.value.reduce((s, e) 
 const editRule = (rule: any) => ElMessage.info(`Editing: ${rule.name}`);
 const deleteRule = (rule: any) => {
   rules.value = rules.value.filter(r => r.id !== rule.id);
-  ElMessage.success('Rule deleted');
+  ElMessage.success(t('common.deleted'));
 };
 
 const saveRule = () => {
   if (!newRule.value.name) {
-    ElMessage.warning('Rule name required');
+    ElMessage.warning(t('common.fillRequired'));
     return;
   }
   rules.value.push({
@@ -457,6 +460,6 @@ const saveRule = () => {
     triggerCount: 0
   });
   showRuleDialog.value = false;
-  ElMessage.success('Rule created');
+  ElMessage.success(t('assignmentRules.ruleCreated'));
 };
 </script>

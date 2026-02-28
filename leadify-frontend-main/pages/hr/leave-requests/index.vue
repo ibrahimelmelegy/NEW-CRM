@@ -131,7 +131,7 @@ div
   //- Reject dialog
   el-dialog(v-model="rejectPopup" :title="$t('hr.leave.reject')" width="500px")
     el-form(label-position="top")
-      el-form-item(:label="$t('hr.leave.rejectionReason') || 'Reason'")
+      el-form-item(:label="$t('hr.leave.rejectionReason')")
         el-input(v-model="rejectReason" type="textarea" :rows="3")
     template(#footer)
       el-button(@click="rejectPopup = false") {{ $t('common.cancel') }}
@@ -152,7 +152,7 @@ const router = useRouter();
 const exportColumns = [
   { prop: 'employeeDetails', label: t('hr.leave.employee') },
   { prop: 'leaveTypeLabel', label: t('hr.leave.type') },
-  { prop: 'period', label: t('hr.leave.period') || 'Period' },
+  { prop: 'period', label: t('hr.leave.period') },
   { prop: 'reason', label: t('hr.leave.reason') },
   { prop: 'status', label: t('hr.leave.status') }
 ];
@@ -177,10 +177,10 @@ const summaryStats = computed(() => {
   const approved = docs.filter((r: any) => r.status === 'APPROVED').length;
   const rejected = docs.filter((r: any) => r.status === 'REJECTED').length;
   return [
-    { label: t('hr.leave.pending') || 'Pending', value: pending, icon: 'ph:clock-bold', color: '#f59e0b' },
-    { label: t('hr.leave.approved') || 'Approved', value: approved, icon: 'ph:check-circle-bold', color: '#22c55e' },
-    { label: t('hr.leave.rejected') || 'Rejected', value: rejected, icon: 'ph:x-circle-bold', color: '#ef4444' },
-    { label: t('hr.leave.total') || 'Total', value: docs.length, icon: 'ph:calendar-bold', color: '#7849ff' }
+    { label: t('hr.leave.pending'), value: pending, icon: 'ph:clock-bold', color: '#f59e0b' },
+    { label: t('hr.leave.approved'), value: approved, icon: 'ph:check-circle-bold', color: '#22c55e' },
+    { label: t('hr.leave.rejected'), value: rejected, icon: 'ph:x-circle-bold', color: '#ef4444' },
+    { label: t('hr.leave.total'), value: docs.length, icon: 'ph:calendar-bold', color: '#7849ff' }
   ];
 });
 
@@ -203,7 +203,7 @@ const updateColumns = () => {
   table.value.columns = [
     { prop: 'employeeDetails', label: t('hr.leave.employee'), component: 'AvatarText', type: 'font-bold', width: 200 },
     { prop: 'leaveTypeLabel', label: t('hr.leave.type'), component: 'Text', type: 'font-default', width: 120 },
-    { prop: 'period', label: t('hr.leave.period') || 'Period', component: 'Text', type: 'font-default', width: 200 },
+    { prop: 'period', label: t('hr.leave.period'), component: 'Text', type: 'font-default', width: 200 },
     { prop: 'reason', label: t('hr.leave.reason'), component: 'Text', type: 'font-default', width: 200 },
     {
       prop: 'status',
@@ -229,7 +229,7 @@ function handleRowClick(row: any) {
 async function handleApprove(id: number) {
   const res = await approveLeave(id);
   if (res.success) {
-    ElNotification({ type: 'success', title: t('common.success'), message: t('hr.leave.approved') || 'Approved' });
+    ElNotification({ type: 'success', title: t('common.success'), message: t('hr.leave.approved') });
     await refreshData();
   }
 }
@@ -240,7 +240,7 @@ async function confirmReject() {
   try {
     const res = await rejectLeave(rejectId.value, rejectReason.value);
     if (res.success) {
-      ElNotification({ type: 'success', title: t('common.success'), message: t('hr.leave.rejected') || 'Rejected' });
+      ElNotification({ type: 'success', title: t('common.success'), message: t('hr.leave.rejected') });
       rejectPopup.value = false;
       rejectReason.value = '';
       await refreshData();
@@ -253,7 +253,7 @@ async function confirmReject() {
 async function handleCancel(id: number) {
   const res = await cancelLeave(id);
   if (res.success) {
-    ElNotification({ type: 'success', title: t('common.success'), message: t('hr.leave.cancelled') || 'Cancelled' });
+    ElNotification({ type: 'success', title: t('common.success'), message: t('hr.leave.cancelled') });
     await refreshData();
   }
 }
@@ -290,7 +290,7 @@ const mobileRefreshing = ref(false);
 const statusFilters = computed(() => {
   const data = table.value.data || [];
   return [
-    { value: 'ALL', label: t('hr.leave.allStatuses') || 'All', color: '#f59e0b', count: data.length },
+    { value: 'ALL', label: t('hr.leave.allStatuses'), color: '#f59e0b', count: data.length },
     { value: 'PENDING', label: t('hr.leave.pending'), color: '#f59e0b', count: data.filter((r: any) => r.status === 'PENDING').length },
     { value: 'APPROVED', label: t('hr.leave.approved'), color: '#22c55e', count: data.filter((r: any) => r.status === 'APPROVED').length },
     { value: 'REJECTED', label: t('hr.leave.rejected'), color: '#ef4444', count: data.filter((r: any) => r.status === 'REJECTED').length }

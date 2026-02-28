@@ -2,9 +2,9 @@
 div.p-4.space-y-6.animate-fade-in(class="md_p-6")
   //- Breadcrumb
   el-breadcrumb(separator="/")
-    el-breadcrumb-item(:to="{ path: '/e-commerce' }") {{ $t('ecommerce.title') || 'E-Commerce' }}
-    el-breadcrumb-item(:to="{ path: '/e-commerce/products' }") {{ $t('ecommerce.products') || 'Products' }}
-    el-breadcrumb-item {{ product?.name || $t('common.loading') || 'Loading...' }}
+    el-breadcrumb-item(:to="{ path: '/e-commerce' }") {{ $t('ecommerce.title') }}
+    el-breadcrumb-item(:to="{ path: '/e-commerce/products' }") {{ $t('ecommerce.products.title') }}
+    el-breadcrumb-item {{ product?.name || $t('common.loading') }}
 
   //- Loading State
   div(v-loading="loading" v-if="loading" style="min-height: 400px;")
@@ -12,11 +12,11 @@ div.p-4.space-y-6.animate-fade-in(class="md_p-6")
   //- Not Found
   .text-center.py-16(v-else-if="!product && !loading")
     Icon(name="ph:warning" size="64" style="color: var(--text-muted);")
-    h2.text-xl.font-bold.mt-4(style="color: var(--text-primary);") {{ $t('ecommerce.productNotFound') || 'Product Not Found' }}
-    p.text-sm.mt-2(style="color: var(--text-muted);") {{ $t('ecommerce.productNotFoundDesc') || 'The product you are looking for does not exist or has been deleted.' }}
+    h2.text-xl.font-bold.mt-4(style="color: var(--text-primary);") {{ $t('ecommerce.products.productNotFound') }}
+    p.text-sm.mt-2(style="color: var(--text-muted);") {{ $t('ecommerce.products.productNotFoundDesc') }}
     el-button.mt-4(type="primary" @click="navigateTo('/e-commerce/products')" class="!rounded-xl")
       Icon(name="ph:arrow-left-bold" size="16" class="mr-1")
-      | {{ $t('ecommerce.backToProducts') || 'Back to Products' }}
+      | {{ $t('ecommerce.products.backToProducts') }}
 
   //- Product Content
   template(v-else-if="product")
@@ -34,18 +34,18 @@ div.p-4.space-y-6.animate-fade-in(class="md_p-6")
               size="small"
               effect="dark"
               round
-            ) {{ product.isActive ? ($t('ecommerce.active') || 'Active') : ($t('ecommerce.inactive') || 'Inactive') }}
+            ) {{ product.isActive ? $t('ecommerce.products.active') : $t('ecommerce.products.inactive') }}
             span.text-xs.font-mono(style="color: var(--text-muted);") SKU: {{ product.sku || '--' }}
       .flex.items-center.gap-2
         el-button(size="large" @click="navigateTo('/e-commerce/products')" class="!rounded-xl")
           Icon(name="ph:arrow-left-bold" size="16" class="mr-1")
-          | {{ $t('common.back') || 'Back' }}
+          | {{ $t('common.back') }}
         el-button(type="danger" size="large" plain @click="showDeleteConfirm = true" class="!rounded-xl")
           Icon(name="ph:trash-bold" size="16" class="mr-1")
-          | {{ $t('common.delete') || 'Delete' }}
+          | {{ $t('common.delete') }}
         el-button(type="primary" size="large" :loading="saving" @click="handleSave" class="!rounded-xl")
           Icon(name="ph:floppy-disk-bold" size="16" class="mr-1")
-          | {{ $t('common.save') || 'Save Changes' }}
+          | {{ $t('common.save') }}
 
     //- Product Info Section
     .grid.grid-cols-1.gap-6(class="lg_grid-cols-3")
@@ -62,89 +62,89 @@ div.p-4.space-y-6.animate-fade-in(class="md_p-6")
           )
             .text-center
               Icon(name="ph:upload-bold" size="32" style="color: white;")
-              p.text-sm.mt-2(style="color: white;") {{ $t('ecommerce.uploadImage') || 'Upload Image' }}
+              p.text-sm.mt-2(style="color: white;") {{ $t('ecommerce.products.uploadImage') }}
         .p-4
-          p.text-xs.text-center(style="color: var(--text-muted);") {{ $t('ecommerce.imageHint') || 'Click to upload product image. Recommended: 800x800px' }}
+          p.text-xs.text-center(style="color: var(--text-muted);") {{ $t('ecommerce.products.imageHint') }}
 
       //- Details Form (Right - spans 2 cols)
       .rounded-2xl.border.p-5(class="lg_col-span-2" style="border-color: var(--border-default); background: var(--bg-elevated);")
         h3.text-lg.font-bold.mb-4(style="color: var(--text-primary);")
           Icon(name="ph:info-bold" size="20" class="mr-2" style="color: #7849ff")
-          | {{ $t('ecommerce.productDetails') || 'Product Details' }}
+          | {{ $t('ecommerce.products.productDetails') }}
         el-form(ref="formRef" :model="form" :rules="formRules" label-position="top" size="large")
-          el-form-item(:label="$t('ecommerce.productName') || 'Product Name'" prop="name")
+          el-form-item(:label="$t('ecommerce.products.productName')" prop="name")
             el-input(v-model="form.name")
           .grid.grid-cols-1.gap-4(class="md_grid-cols-2")
-            el-form-item(:label="$t('ecommerce.sku') || 'SKU'")
+            el-form-item(:label="$t('ecommerce.products.sku')")
               el-input(v-model="form.sku" placeholder="SKU-001")
-            el-form-item(:label="$t('common.category') || 'Category'")
+            el-form-item(:label="$t('common.category')")
               el-select(v-model="form.category" class="w-full" allow-create filterable)
                 el-option(v-for="cat in categories" :key="cat" :value="cat" :label="cat")
           .grid.grid-cols-1.gap-4(class="md_grid-cols-2")
-            el-form-item(:label="$t('ecommerce.price') || 'Price'" prop="unitPrice")
+            el-form-item(:label="$t('ecommerce.products.price')" prop="unitPrice")
               el-input-number(v-model="form.unitPrice" :min="0" :precision="2" class="!w-full")
-            el-form-item(:label="$t('ecommerce.currency') || 'Currency'")
+            el-form-item(:label="$t('ecommerce.products.currency')")
               el-select(v-model="form.currency" class="w-full")
                 el-option(label="SAR" value="SAR")
                 el-option(label="USD" value="USD")
                 el-option(label="EUR" value="EUR")
                 el-option(label="GBP" value="GBP")
-          el-form-item(:label="$t('common.description') || 'Description'")
+          el-form-item(:label="$t('common.description')")
             el-input(v-model="form.description" type="textarea" :rows="4")
           el-form-item
-            el-switch(v-model="form.isActive" :active-text="$t('ecommerce.active') || 'Active'" :inactive-text="$t('ecommerce.inactive') || 'Inactive'")
+            el-switch(v-model="form.isActive" :active-text="$t('ecommerce.products.active')" :inactive-text="$t('ecommerce.products.inactive')")
 
     //- Tabs Section
     el-tabs(v-model="activeTab" type="border-card" class="product-tabs")
       //- Overview Tab
-      el-tab-pane(:label="$t('ecommerce.overview') || 'Overview'" name="overview")
+      el-tab-pane(:label="$t('ecommerce.products.overview')" name="overview")
         .grid.grid-cols-1.gap-6(class="md_grid-cols-2")
           //- Product Metadata
           .rounded-xl.p-5(style="background: var(--bg-base); border: 1px solid var(--border-default);")
             h4.font-bold.mb-4(style="color: var(--text-primary);")
               Icon(name="ph:list-bullets-bold" size="18" class="mr-2" style="color: #7849ff")
-              | {{ $t('ecommerce.metadata') || 'Metadata' }}
+              | {{ $t('ecommerce.products.metadata') }}
             .space-y-3
               .flex.items-center.justify-between.py-2.border-b(style="border-color: var(--border-default);")
-                span.text-sm(style="color: var(--text-muted);") {{ $t('ecommerce.productId') || 'Product ID' }}
+                span.text-sm(style="color: var(--text-muted);") {{ $t('ecommerce.products.productId') }}
                 span.text-sm.font-mono.font-bold(style="color: var(--text-primary);") {{ product.id }}
               .flex.items-center.justify-between.py-2.border-b(style="border-color: var(--border-default);")
-                span.text-sm(style="color: var(--text-muted);") {{ $t('ecommerce.createdAt') || 'Created At' }}
+                span.text-sm(style="color: var(--text-muted);") {{ $t('ecommerce.products.createdAt') }}
                 span.text-sm(style="color: var(--text-primary);") {{ formatDate(product.createdAt) }}
               .flex.items-center.justify-between.py-2.border-b(style="border-color: var(--border-default);")
-                span.text-sm(style="color: var(--text-muted);") {{ $t('ecommerce.updatedAt') || 'Updated At' }}
+                span.text-sm(style="color: var(--text-muted);") {{ $t('ecommerce.products.updatedAt') }}
                 span.text-sm(style="color: var(--text-primary);") {{ formatDate(product.updatedAt) }}
               .flex.items-center.justify-between.py-2
-                span.text-sm(style="color: var(--text-muted);") {{ $t('common.status') || 'Status' }}
+                span.text-sm(style="color: var(--text-muted);") {{ $t('common.status') }}
                 el-tag(:type="product.isActive ? 'success' : 'danger'" size="small" effect="dark" round) {{ product.isActive ? 'Active' : 'Inactive' }}
 
           //- Pricing Summary
           .rounded-xl.p-5(style="background: var(--bg-base); border: 1px solid var(--border-default);")
             h4.font-bold.mb-4(style="color: var(--text-primary);")
               Icon(name="ph:money-bold" size="18" class="mr-2" style="color: #22c55e")
-              | {{ $t('ecommerce.pricingSummary') || 'Pricing Summary' }}
+              | {{ $t('ecommerce.products.pricingSummary') }}
             .space-y-3
               .flex.items-center.justify-between.py-2.border-b(style="border-color: var(--border-default);")
-                span.text-sm(style="color: var(--text-muted);") {{ $t('ecommerce.basePrice') || 'Base Price' }}
+                span.text-sm(style="color: var(--text-muted);") {{ $t('ecommerce.products.basePrice') }}
                 span.text-lg.font-black(style="color: #7c3aed;") {{ formatCurrency(product.unitPrice || 0) }}
               .flex.items-center.justify-between.py-2.border-b(style="border-color: var(--border-default);")
-                span.text-sm(style="color: var(--text-muted);") {{ $t('ecommerce.currency') || 'Currency' }}
+                span.text-sm(style="color: var(--text-muted);") {{ $t('ecommerce.products.currency') }}
                 span.text-sm.font-bold(style="color: var(--text-primary);") {{ product.currency || 'SAR' }}
               .flex.items-center.justify-between.py-2
-                span.text-sm(style="color: var(--text-muted);") {{ $t('common.category') || 'Category' }}
+                span.text-sm(style="color: var(--text-muted);") {{ $t('common.category') }}
                 el-tag(size="small" round effect="plain") {{ product.category || 'General' }}
 
       //- Reviews Tab
-      el-tab-pane(:label="$t('ecommerce.reviews') || 'Reviews'" name="reviews")
+      el-tab-pane(:label="$t('ecommerce.products.reviews')" name="reviews")
         //- Review Stats
         .grid.grid-cols-1.gap-4.mb-6(class="md_grid-cols-3")
           .rounded-xl.p-5.text-center(style="background: var(--bg-base); border: 1px solid var(--border-default);")
             p.text-4xl.font-black(style="color: #f59e0b;") {{ avgRating.toFixed(1) }}
             .flex.items-center.justify-center.gap-1.mt-1
               Icon(v-for="i in 5" :key="i" name="ph:star-fill" size="16" :style="{ color: i <= Math.round(avgRating) ? '#f59e0b' : '#e5e7eb' }")
-            p.text-xs.mt-1(style="color: var(--text-muted);") {{ reviews.length }} {{ $t('ecommerce.totalReviews') || 'reviews' }}
+            p.text-xs.mt-1(style="color: var(--text-muted);") {{ reviews.length }} {{ $t('ecommerce.products.totalReviews') }}
           .rounded-xl.p-5(class="md_col-span-2" style="background: var(--bg-base); border: 1px solid var(--border-default);")
-            h4.font-bold.mb-3(style="color: var(--text-primary);") {{ $t('ecommerce.ratingDistribution') || 'Rating Distribution' }}
+            h4.font-bold.mb-3(style="color: var(--text-primary);") {{ $t('ecommerce.products.ratingDistribution') }}
             .space-y-2
               .flex.items-center.gap-3(v-for="star in [5, 4, 3, 2, 1]" :key="star")
                 span.text-xs.font-bold.w-8.text-right(style="color: var(--text-muted);") {{ star }}
@@ -169,42 +169,42 @@ div.p-4.space-y-6.animate-fade-in(class="md_p-6")
                 span.font-bold.text-sm(style="color: var(--text-primary);") {{ review.customerName || review.author || 'Anonymous' }}
               .flex.items-center.gap-1
                 Icon(v-for="i in 5" :key="i" name="ph:star-fill" size="14" :style="{ color: i <= (review.rating || 0) ? '#f59e0b' : '#e5e7eb' }")
-            p.text-sm(style="color: var(--text-muted);") {{ review.comment || review.text || $t('ecommerce.noComment') || 'No comment' }}
+            p.text-sm(style="color: var(--text-muted);") {{ review.comment || review.text || $t('ecommerce.products.noComment') }}
             p.text-xs.mt-2(style="color: var(--text-muted);") {{ formatDate(review.createdAt) }}
           .text-center.py-8(v-if="!loadingReviews && reviews.length === 0")
             Icon(name="ph:star" size="40" style="color: var(--text-muted)")
-            p.text-sm.mt-2(style="color: var(--text-muted)") {{ $t('ecommerce.noReviews') || 'No reviews yet' }}
+            p.text-sm.mt-2(style="color: var(--text-muted)") {{ $t('ecommerce.products.noReviews') }}
 
       //- Price Rules Tab
-      el-tab-pane(:label="$t('ecommerce.priceRules') || 'Price Rules'" name="priceRules")
+      el-tab-pane(:label="$t('ecommerce.products.priceRules')" name="priceRules")
         .flex.items-center.justify-between.mb-4
-          h4.font-bold(style="color: var(--text-primary);") {{ $t('ecommerce.priceRulesDesc') || 'Special pricing rules for this product' }}
+          h4.font-bold(style="color: var(--text-primary);") {{ $t('ecommerce.products.priceRulesDesc') }}
           el-button(type="primary" size="default" @click="showPriceRuleDialog = true" class="!rounded-xl")
             Icon(name="ph:plus-bold" size="14" class="mr-1")
-            | {{ $t('ecommerce.addPriceRule') || 'Add Rule' }}
+            | {{ $t('ecommerce.products.addPriceRule') }}
         el-table(:data="priceRules" v-loading="loadingPriceRules" style="width: 100%")
-          el-table-column(:label="$t('ecommerce.ruleName') || 'Rule'" min-width="180")
+          el-table-column(:label="$t('ecommerce.products.ruleName')" min-width="180")
             template(#default="{ row }")
               span.font-bold(style="color: var(--text-primary);") {{ row.name || row.ruleName || '--' }}
-          el-table-column(:label="$t('ecommerce.discountType') || 'Type'" width="140")
+          el-table-column(:label="$t('ecommerce.products.discountType')" width="140")
             template(#default="{ row }")
               el-tag(size="small" effect="plain" round) {{ row.discountType || row.type || '--' }}
-          el-table-column(:label="$t('ecommerce.discountValue') || 'Value'" width="120" align="center")
+          el-table-column(:label="$t('ecommerce.products.discountValue')" width="120" align="center")
             template(#default="{ row }")
               span.font-bold(style="color: #7c3aed;") {{ row.discountValue || row.value || 0 }}{{ row.discountType === 'percentage' ? '%' : '' }}
-          el-table-column(:label="$t('ecommerce.validUntil') || 'Valid Until'" width="140")
+          el-table-column(:label="$t('ecommerce.products.validUntil')" width="140")
             template(#default="{ row }")
               span.text-sm(style="color: var(--text-muted);") {{ formatDate(row.validUntil || row.endDate) }}
-          el-table-column(:label="$t('common.status') || 'Status'" width="100" align="center")
+          el-table-column(:label="$t('common.status')" width="100" align="center")
             template(#default="{ row }")
               el-tag(:type="row.isActive ? 'success' : 'info'" size="small" effect="dark" round) {{ row.isActive ? 'Active' : 'Expired' }}
           template(#empty)
             .text-center.py-8
               Icon(name="ph:tag" size="40" style="color: var(--text-muted)")
-              p.text-sm.mt-2(style="color: var(--text-muted)") {{ $t('ecommerce.noPriceRules') || 'No price rules' }}
+              p.text-sm.mt-2(style="color: var(--text-muted)") {{ $t('ecommerce.products.noPriceRules') }}
 
       //- Activity Tab
-      el-tab-pane(:label="$t('ecommerce.activity') || 'Activity'" name="activity")
+      el-tab-pane(:label="$t('ecommerce.products.activity')" name="activity")
         .space-y-3(v-loading="loadingActivity")
           .flex.items-start.gap-3.p-3.rounded-xl(
             v-for="(entry, idx) in activityLog"
@@ -220,37 +220,37 @@ div.p-4.space-y-6.animate-fade-in(class="md_p-6")
                 span.text-xs(v-if="entry.user || entry.userName" style="color: var(--text-muted);") &middot; {{ entry.userName || entry.user }}
           .text-center.py-8(v-if="!loadingActivity && activityLog.length === 0")
             Icon(name="ph:clock-counter-clockwise" size="40" style="color: var(--text-muted)")
-            p.text-sm.mt-2(style="color: var(--text-muted)") {{ $t('ecommerce.noActivity') || 'No activity recorded' }}
+            p.text-sm.mt-2(style="color: var(--text-muted)") {{ $t('ecommerce.products.noActivity') }}
 
   //- Delete Confirmation Dialog
-  el-dialog(v-model="showDeleteConfirm" :title="$t('common.confirm') || 'Confirm'" width="400px")
+  el-dialog(v-model="showDeleteConfirm" :title="$t('common.confirm')" width="400px")
     .text-center.py-4
       Icon(name="ph:warning-bold" size="48" style="color: #ef4444;")
-      p.mt-4.text-sm(style="color: var(--text-primary);") {{ $t('ecommerce.deleteProductConfirm') || 'Are you sure you want to delete this product?' }}
+      p.mt-4.text-sm(style="color: var(--text-primary);") {{ $t('ecommerce.products.deleteProductConfirm') }}
       p.text-xs.mt-1(style="color: var(--text-muted);") {{ product?.name }}
     template(#footer)
-      el-button(@click="showDeleteConfirm = false") {{ $t('common.cancel') || 'Cancel' }}
-      el-button(type="danger" :loading="deleting" @click="handleDeleteProduct" class="!rounded-xl") {{ $t('common.delete') || 'Delete' }}
+      el-button(@click="showDeleteConfirm = false") {{ $t('common.cancel') }}
+      el-button(type="danger" :loading="deleting" @click="handleDeleteProduct" class="!rounded-xl") {{ $t('common.delete') }}
 
   //- Price Rule Dialog
-  el-dialog(v-model="showPriceRuleDialog" :title="$t('ecommerce.addPriceRule') || 'Add Price Rule'" width="500px" :close-on-click-modal="false")
+  el-dialog(v-model="showPriceRuleDialog" :title="$t('ecommerce.products.addPriceRule')" width="500px" :close-on-click-modal="false")
     el-form(label-position="top" size="large")
-      el-form-item(:label="$t('ecommerce.ruleName') || 'Rule Name'")
-        el-input(v-model="priceRuleForm.name" :placeholder="$t('ecommerce.ruleNamePlaceholder') || 'e.g., Summer Sale Discount'")
+      el-form-item(:label="$t('ecommerce.products.ruleName')")
+        el-input(v-model="priceRuleForm.name" :placeholder="$t('ecommerce.products.ruleNamePlaceholder')")
       .grid.grid-cols-2.gap-4
-        el-form-item(:label="$t('ecommerce.discountType') || 'Discount Type'")
+        el-form-item(:label="$t('ecommerce.products.discountType')")
           el-select(v-model="priceRuleForm.discountType" class="w-full")
             el-option(label="Percentage" value="percentage")
             el-option(label="Fixed Amount" value="fixed")
-        el-form-item(:label="$t('ecommerce.discountValue') || 'Discount Value'")
+        el-form-item(:label="$t('ecommerce.products.discountValue')")
           el-input-number(v-model="priceRuleForm.discountValue" :min="0" class="!w-full")
-      el-form-item(:label="$t('ecommerce.validUntil') || 'Valid Until'")
+      el-form-item(:label="$t('ecommerce.products.validUntil')")
         el-date-picker(v-model="priceRuleForm.validUntil" type="date" style="width: 100%" value-format="YYYY-MM-DD")
       el-form-item
-        el-checkbox(v-model="priceRuleForm.isActive") {{ $t('ecommerce.active') || 'Active' }}
+        el-checkbox(v-model="priceRuleForm.isActive") {{ $t('ecommerce.products.active') }}
     template(#footer)
-      el-button(@click="showPriceRuleDialog = false") {{ $t('common.cancel') || 'Cancel' }}
-      el-button(type="primary" :loading="savingPriceRule" @click="savePriceRule" class="!rounded-xl") {{ $t('common.save') || 'Save' }}
+      el-button(@click="showPriceRuleDialog = false") {{ $t('common.cancel') }}
+      el-button(type="primary" :loading="savingPriceRule" @click="savePriceRule" class="!rounded-xl") {{ $t('common.save') }}
 </template>
 
 <script setup lang="ts">
@@ -299,8 +299,8 @@ const form = reactive({
 });
 
 const formRules: FormRules = {
-  name: [{ required: true, message: t('common.fillRequired') || 'Name is required', trigger: 'blur' }],
-  unitPrice: [{ type: 'number', min: 0, message: t('ecommerce.pricePositive') || 'Price must be >= 0', trigger: 'blur' }]
+  name: [{ required: true, message: t('common.fillRequired'), trigger: 'blur' }],
+  unitPrice: [{ type: 'number', min: 0, message: t('ecommerce.products.pricePositive'), trigger: 'blur' }]
 };
 
 // Categories for select
@@ -481,10 +481,10 @@ async function handleSave() {
       if (product.value) {
         Object.assign(product.value, form);
       }
-      ElNotification({ type: 'success', title: t('common.success') || 'Success', message: t('common.saved') || 'Product updated' });
+      ElNotification({ type: 'success', title: t('common.success'), message: t('common.saved') });
     }
   } catch {
-    ElNotification({ type: 'error', title: t('common.error') || 'Error', message: t('common.error') || 'Failed to save' });
+    ElNotification({ type: 'error', title: t('common.error'), message: t('common.error') });
   } finally {
     saving.value = false;
   }
@@ -495,11 +495,11 @@ async function handleDeleteProduct() {
   try {
     const res = await deleteProduct(productId.value);
     if (res.success) {
-      ElNotification({ type: 'success', title: t('common.success') || 'Success', message: t('common.deleted') || 'Product deleted' });
+      ElNotification({ type: 'success', title: t('common.success'), message: t('common.deleted') });
       navigateTo('/e-commerce/products');
     }
   } catch {
-    ElNotification({ type: 'error', title: t('common.error') || 'Error', message: t('common.error') || 'Failed to delete' });
+    ElNotification({ type: 'error', title: t('common.error'), message: t('common.error') });
   } finally {
     deleting.value = false;
   }
@@ -507,14 +507,14 @@ async function handleDeleteProduct() {
 
 async function savePriceRule() {
   if (!priceRuleForm.name.trim()) {
-    ElNotification({ type: 'warning', title: t('common.warning') || 'Warning', message: t('common.fillRequired') || 'Please fill required fields' });
+    ElNotification({ type: 'warning', title: t('common.warning'), message: t('common.fillRequired') });
     return;
   }
   savingPriceRule.value = true;
   try {
     const res = await useApiFetch(`ecommerce/products/${productId.value}/price-rules`, 'POST', { ...priceRuleForm });
     if (res?.success) {
-      ElNotification({ type: 'success', title: t('common.success') || 'Success', message: t('common.saved') || 'Price rule created' });
+      ElNotification({ type: 'success', title: t('common.success'), message: t('common.saved') });
       showPriceRuleDialog.value = false;
       priceRuleForm.name = '';
       priceRuleForm.discountValue = 10;
@@ -522,7 +522,7 @@ async function savePriceRule() {
       await loadPriceRules();
     }
   } catch {
-    ElNotification({ type: 'error', title: t('common.error') || 'Error', message: t('common.error') || 'Failed to save' });
+    ElNotification({ type: 'error', title: t('common.error'), message: t('common.error') });
   } finally {
     savingPriceRule.value = false;
   }

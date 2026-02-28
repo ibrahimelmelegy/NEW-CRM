@@ -233,6 +233,8 @@ definePageMeta({
   middleware: 'permissions'
 });
 
+const { t } = useI18n();
+
 const activeTab = ref('forms');
 let dragField = '';
 
@@ -480,7 +482,7 @@ const editForm = (form: any) => {
 const previewForm = (form: any) => ElMessage.info(`Preview: ${form.name}`);
 const copyFormLink = (form: any) => {
   navigator.clipboard?.writeText(`https://forms.example.com/${form.id}`);
-  ElMessage.success('Link copied!');
+  ElMessage.success(t('common.copied'));
 };
 const viewSubmissions = (form: any) => ElMessage.info(`${form.submissions} submissions for ${form.name}`);
 const useTemplate = (tmpl: any) => {
@@ -488,7 +490,7 @@ const useTemplate = (tmpl: any) => {
   activeTab.value = 'builder';
 };
 const saveForm = () => {
-  ElMessage.success('Form saved!');
+  ElMessage.success(t('common.saved'));
   activeTab.value = 'forms';
 };
 </script>

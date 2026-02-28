@@ -187,7 +187,15 @@
     "createNew": "Create Journey",
     "noAutomations": "No Automations Yet",
     "noAutomationsDesc": "Build your first visual journey to automate repetitive tasks and scale your processes.",
-    "createFirst": "Create First Journey"
+    "createFirst": "Create First Journey",
+    "journeyCreated": "Journey created",
+    "toggleFailed": "Failed to toggle workflow",
+    "logsComingSoon": "Execution logs feature coming soon",
+    "deleted": "Automation deleted",
+    "confirmDelete": "Are you sure you want to delete this automation?",
+    "journeySaved": "Journey saved successfully",
+    "saveFailed": "Failed to save journey",
+    "settingsComingSoon": "Settings dialog to change Entity/Trigger coming soon"
   },
   "themeStudio": {
     "title": "Theme Studio",
@@ -257,6 +265,7 @@
     "status": "Status",
     "analytics": "Analytics",
     "copiedToClipboard": "Copied to clipboard",
+    "copied": "Copied!",
     "view": "View",
     "download": "Download",
     "upload": "Upload",
@@ -299,6 +308,12 @@
     "fillRequired": "Please fill in all required fields",
     "confirmDelete": "Are you sure you want to delete this?",
     "saved": "Saved successfully",
+    "saveFailed": "Failed to save",
+    "loadFailed": "Failed to load data",
+    "fetchError": "Failed to fetch data",
+    "downloadFailed": "Download failed",
+    "copied": "Copied to clipboard",
+    "warning": "Warning",
     "comingSoon": "Coming soon",
     "comments": "Comments",
     "attachments": "Attachments",
@@ -330,7 +345,10 @@
     "name": "Name",
     "type": "Type",
     "size": "Size",
-    "uploadedAt": "Uploaded At"
+    "uploadedAt": "Uploaded At",
+    "downloadFailed": "Download failed",
+    "copied": "Copied!",
+    "fetchError": "Failed to fetch data. Please try again later."
   },
   "auth": {
     "login": "Sign In",
@@ -943,7 +961,11 @@
     "status": "Status",
     "collectedDate": "Collected Date",
     "markCollected": "Collect",
-    "undo": "Undo"
+    "undo": "Undo",
+    "confirmSend": "Mark this invoice as sent?",
+    "sendInvoice": "Send Invoice",
+    "confirmVoid": "Voiding this invoice is irreversible. Continue?",
+    "voidInvoice": "Void Invoice"
   },
   "forms": {
     "dragDrop": "Drag and drop file here or",
@@ -2612,7 +2634,10 @@
       "endDate": "End Date",
       "filterByCategory": "Filter by Category",
       "refreshed": "Dashboard Refreshed"
-    }
+    },
+    "confirmDeleteAccount": "Are you sure you want to delete this account?",
+    "confirmSeedAccounts": "This will create a default chart of accounts. Continue?",
+    "seedAccounts": "Seed Default Accounts"
   },
   "fieldOps": {
     "title": "Field Operations",
@@ -2847,7 +2872,9 @@
     "stepApproved": "Step approved successfully",
     "stepRejected": "Request rejected",
     "requestCreated": "Approval request created",
-    "active": "Active"
+    "active": "Active",
+    "confirmReject": "Are you sure you want to reject this request?",
+    "rejectApproval": "Reject Approval"
   },
   "documents": {
     "title": "Document Library",
@@ -3001,7 +3028,8 @@
     "barChart": "Bar Chart",
     "pieChart": "Pie Chart",
     "lineChart": "Line Chart",
-    "areaChart": "Area Chart"
+    "areaChart": "Area Chart",
+    "exportFailed": "Failed to export report"
   },
   "reportsPage": {
     "subtitle": "View, create, and manage custom reports",
@@ -3070,7 +3098,11 @@
     "bestCase": "Best Case",
     "worstCase": "Worst Case",
     "loadingForecasts": "Loading forecasts...",
-    "noTeamData": "No team data available"
+    "noTeamData": "No team data available",
+    "loadFailed": "Failed to load forecasts",
+    "selectDateRange": "Please select a date range first",
+    "historicalFailed": "Failed to load historical comparison",
+    "scenarioFailed": "Failed to run scenario"
   },
   "analyticsPage": {
     "title": "Sales Analytics",
@@ -4331,7 +4363,8 @@
     "subtitle": "Unified inbox for all emails, calls, meetings, and notes across your CRM.",
     "logActivity": "Log Activity",
     "allTypes": "All Types",
-    "search": "Search activities..."
+    "search": "Search activities...",
+    "activityLogged": "Activity logged successfully"
   },
   "aiAssistant": {
     "title": "AI Assistant",
@@ -4339,7 +4372,8 @@
     "placeholder": "Ask about your CRM data, generate emails, analyze deals...",
     "clearChat": "Clear Chat",
     "dailyInsights": "Daily Insights",
-    "aiTools": "AI Tools"
+    "aiTools": "AI Tools",
+    "chatCleared": "Chat cleared"
   },
   "cpq": {
     "title": "Configure, Price, Quote",
@@ -4376,14 +4410,16 @@
     "quantity": "Quantity",
     "taxRate": "Tax Rate %",
     "quoteResult": "Quote Summary",
-    "calculate": "Calculate"
+    "calculate": "Calculate",
+    "quoteOpening": "Quote builder opening..."
   },
   "performanceReviews": {
     "title": "Performance Reviews",
     "subtitle": "Track employee performance, set goals, and manage review cycles.",
     "newReview": "New Review",
     "avgRating": "Avg Rating",
-    "goalCompletion": "Goal Completion"
+    "goalCompletion": "Goal Completion",
+    "reviewStarted": "Performance review started"
   },
   "goals": {
     "title": "Goals & OKRs",
@@ -4477,7 +4513,8 @@
     "subtitle": "Auto-assign leads, deals, and tickets based on criteria.",
     "newRule": "New Rule",
     "roundRobin": "Round Robin",
-    "escalation": "Escalation"
+    "escalation": "Escalation",
+    "ruleCreated": "Rule created"
   },
   "resourcePlanner": {
     "title": "Resource Planner",
@@ -4645,7 +4682,10 @@
     "postingClosed": "Posting closed",
     "open": "Open",
     "draft": "Draft",
-    "closed": "Closed"
+    "closed": "Closed",
+    "loadPostingFailed": "Failed to load posting",
+    "loadApplicantsFailed": "Failed to load applicants",
+    "jobPosted": "Job posted!"
   },
   "vendorScorecard": {
     "title": "Vendor Scorecard",
@@ -4748,7 +4788,9 @@
     "winRate": "Win Rate",
     "competitiveIntel": "Competitive Intelligence",
     "pricingTab": "Pricing",
-    "analytics": "Analytics"
+    "analytics": "Analytics",
+    "featureAdded": "Feature added",
+    "featureRemoved": "Feature removed"
   },
   "loyaltyRewards": {
     "title": "Loyalty & Rewards",
@@ -4824,7 +4866,10 @@
     "subtitle": "Import data from CSV and Excel files with field mapping and duplicate handling.",
     "upload": "Upload",
     "mapping": "Field Mapping",
-    "history": "Import History"
+    "history": "Import History",
+    "uploadFileRequired": "Please upload a CSV or Excel file",
+    "mappingReset": "Mapping reset",
+    "mappingSaved": "Field mapping saved"
   },
   "shippingLogistics": {
     "title": "Shipping & Logistics",
@@ -5637,7 +5682,39 @@
       "confirmDelete": "Are you sure you want to delete this product?",
       "productCreated": "Product created successfully",
       "productUpdated": "Product updated successfully",
-      "productDeleted": "Product deleted successfully"
+      "productDeleted": "Product deleted successfully",
+      "price": "Price",
+      "product": "Product",
+      "selectCategory": "Select category",
+      "productNamePlaceholder": "Enter product name",
+      "descriptionPlaceholder": "Enter product description",
+      "pricePositive": "Price must be >= 0",
+      "noDescription": "No description",
+      "productNotFound": "Product Not Found",
+      "productNotFoundDesc": "The product you are looking for does not exist or has been deleted.",
+      "uploadImage": "Upload Image",
+      "imageHint": "Click to upload product image. Recommended: 800x800px",
+      "productDetails": "Product Details",
+      "metadata": "Metadata",
+      "productId": "Product ID",
+      "createdAt": "Created At",
+      "updatedAt": "Updated At",
+      "pricingSummary": "Pricing Summary",
+      "basePrice": "Base Price",
+      "totalReviews": "reviews",
+      "ratingDistribution": "Rating Distribution",
+      "noComment": "No comment",
+      "noReviews": "No reviews yet",
+      "priceRulesDesc": "Special pricing rules for this product",
+      "addPriceRule": "Add Price Rule",
+      "ruleName": "Rule Name",
+      "ruleNamePlaceholder": "e.g., Summer Sale Discount",
+      "discountType": "Discount Type",
+      "discountValue": "Discount Value",
+      "validUntil": "Valid Until",
+      "noPriceRules": "No price rules",
+      "noActivity": "No activity recorded",
+      "deleteProductConfirm": "Are you sure you want to delete this product?"
     },
     "orders": {
       "title": "Orders",
@@ -6459,7 +6536,10 @@
     "basedOnApproved": "Based on approved vs rejected",
     "inReview": "In Review",
     "activeOpportunities": "Active Opportunities",
-    "searchPlaceholder": "Search title, client, ref..."
+    "searchPlaceholder": "Search title, client, ref...",
+    "rejectionReasonRequired": "Please provide a rejection reason",
+    "confirmSubmit": "Submit this proposal for approval?",
+    "confirmApprove": "Approve this proposal?"
   },
   "liveChat": {
     "title": "Live Chat",
@@ -6487,5 +6567,45 @@
     "agentAssigned": "Agent assigned",
     "conversationResolved": "Conversation resolved",
     "startConversation": "Start the conversation"
+  },
+  "commissions": {
+    "commissionAdded": "Commission added",
+    "planCreated": "Commission plan created"
+  },
+  "dataGovernance": {
+    "auditCompleted": "Data audit completed",
+    "policySaved": "Retention policy saved"
+  },
+  "training": {
+    "courseCreated": "Course created successfully!"
+  },
+  "signatures": {
+    "requestSent": "Signature request sent!"
+  },
+  "reminders": {
+    "reminderCreated": "Reminder created!"
+  },
+  "virtualOffice": {
+    "roomCreated": "Room created!"
+  },
+  "dailyTask": {
+    "taskAdding": "Adding task..."
+  },
+  "manufacturing": {
+    "bomCreated": "BOM created",
+    "workOrderCreated": "Work order created"
+  },
+  "abTesting": {
+    "experimentCreated": "Experiment created"
+  },
+  "surveys": {
+    "surveyClosed": "Survey closed",
+    "surveyCreated": "Survey created"
+  },
+  "planner": {
+    "taskPlanned": "Task planned!",
+    "focusStarted": "Focus session started!",
+    "focusCompleted": "Focus session completed!",
+    "habitAdded": "Habit added!"
   }
 }

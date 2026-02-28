@@ -5,16 +5,16 @@ div
 
   template(v-else)
     ModuleHeader(
-      :title="$t('documentTemplates.title') || 'Document Templates'"
-      :subtitle="$t('documentTemplates.subtitle') || 'Design professional PDF templates for invoices and purchase orders.'"
+      :title="$t('documentTemplates.title')"
+      :subtitle="$t('documentTemplates.subtitle')"
     )
       template(#actions)
         el-button(size="large" @click="handleSeedDefaults" :loading="seeding" class="!rounded-2xl")
           Icon(name="ph:download-bold" size="16" class="mr-1")
-          span {{ $t('documentTemplates.seedDefaults') || 'Load Defaults' }}
+          span {{ $t('documentTemplates.seedDefaults') }}
         el-button(size="large" @click="openDialog()" type="primary" class="!rounded-2xl")
           Icon(name="ph:plus-bold" size="16" class="mr-1")
-          span {{ $t('documentTemplates.createTemplate') || 'Create Template' }}
+          span {{ $t('documentTemplates.createTemplate') }}
 
     StatCards(:stats="summaryStats")
 
@@ -22,9 +22,9 @@ div
     .glass-card.py-8.animate-entrance
       .px-6.flex.items-center.flex-wrap.gap-3.mb-6.justify-start
         el-radio-group(v-model="typeFilter" @change="handleFilterChange" size="large")
-          el-radio-button(value="") {{ $t('common.all') || 'All' }}
-          el-radio-button(value="INVOICE") {{ $t('documentTemplates.invoice') || 'Invoice' }}
-          el-radio-button(value="PURCHASE_ORDER") {{ $t('documentTemplates.purchaseOrder') || 'Purchase Order' }}
+          el-radio-button(value="") {{ $t('common.all') }}
+          el-radio-button(value="INVOICE") {{ $t('documentTemplates.invoice') }}
+          el-radio-button(value="PURCHASE_ORDER") {{ $t('documentTemplates.purchaseOrder') }}
           el-radio-button(value="QUOTE") Quote
           el-radio-button(value="CONTRACT") Contract
           el-radio-button(value="PROPOSAL") Proposal
@@ -33,7 +33,7 @@ div
             size="large"
             style="height:50px"
             v-model="searchKey"
-            :placeholder="($t('common.search') || 'Search') + ' ' + ($t('documentTemplates.title') || 'Document Templates')"
+            :placeholder="$t('common.search') + ' ' + $t('documentTemplates.title')"
             clearable
             @input="debouncedSearch"
           )
@@ -51,7 +51,7 @@ div
           :header-cell-style="{ background: 'var(--bg-elevated)', color: 'var(--text-primary)', borderBottom: '1px solid var(--border-default)' }"
           :cell-style="{ borderBottom: '1px solid var(--border-default)' }"
         )
-          el-table-column(:label="$t('common.name') || 'Name'" prop="name" min-width="200")
+          el-table-column(:label="$t('common.name')" prop="name" min-width="200")
             template(#default="{ row }")
               .flex.items-center.gap-3
                 .w-9.h-9.rounded-xl.flex.items-center.justify-center.shrink-0(
@@ -68,7 +68,7 @@ div
                     Icon(name="ph:lock-bold" size="10" style="color: var(--text-muted)")
                     span.text-xs(style="color: var(--text-muted)") System
 
-          el-table-column(:label="$t('documentTemplates.builder.templateType') || 'Type'" prop="type" width="180")
+          el-table-column(:label="$t('documentTemplates.builder.templateType')" prop="type" width="180")
             template(#default="{ row }")
               el-tag(
                 size="small"
@@ -93,20 +93,20 @@ div
                 round
               ) Custom
 
-          el-table-column(:label="$t('documentTemplates.default') || 'Default'" prop="isDefault" width="100" align="center")
+          el-table-column(:label="$t('documentTemplates.default')" prop="isDefault" width="100" align="center")
             template(#default="{ row }")
-              el-tag(v-if="row.isDefault" size="small" type="success" effect="plain" round) {{ $t('documentTemplates.default') || 'Default' }}
+              el-tag(v-if="row.isDefault" size="small" type="success" effect="plain" round) {{ $t('documentTemplates.default') }}
               span.text-xs(v-else style="color: var(--text-muted)") --
 
-          el-table-column(:label="$t('documentTemplates.elements') || 'Elements'" width="100" align="center")
+          el-table-column(:label="$t('documentTemplates.elements')" width="100" align="center")
             template(#default="{ row }")
               span.text-sm(style="color: var(--text-muted)") {{ row.layout?.elements?.length || 0 }}
 
-          el-table-column(:label="$t('common.createdAt') || 'Created'" width="140")
+          el-table-column(:label="$t('common.createdAt')" width="140")
             template(#default="{ row }")
               span.text-sm(style="color: var(--text-muted)") {{ formatDate(row.createdAt) }}
 
-          el-table-column(:label="$t('common.actions') || 'Actions'" width="160" align="center")
+          el-table-column(:label="$t('common.actions')" width="160" align="center")
             template(#default="{ row }")
               .flex.items-center.justify-center.gap-1(@click.stop)
                 el-tooltip(content="Duplicate" placement="top")
@@ -122,19 +122,19 @@ div
         //- Empty state
         .text-center.py-16(v-if="!templates.length && !loading")
           Icon(name="ph:file-doc-bold" size="64" style="color: var(--text-muted)")
-          p.mt-4.text-lg.font-medium(style="color: var(--text-primary)") {{ $t('documentTemplates.noTemplates') || 'No templates yet' }}
-          p.mt-1.text-sm(style="color: var(--text-muted)") {{ $t('documentTemplates.noTemplatesHint') || 'Create a custom template or load the default professional templates.' }}
+          p.mt-4.text-lg.font-medium(style="color: var(--text-primary)") {{ $t('documentTemplates.noTemplates') }}
+          p.mt-1.text-sm(style="color: var(--text-muted)") {{ $t('documentTemplates.noTemplatesHint') }}
           .flex.justify-center.gap-3.mt-6
             el-button(@click="handleSeedDefaults" :loading="seeding" class="!rounded-2xl")
               Icon(name="ph:download-bold" size="16" class="mr-1")
-              span {{ $t('documentTemplates.seedDefaults') || 'Load Defaults' }}
+              span {{ $t('documentTemplates.seedDefaults') }}
             el-button(@click="openDialog()" type="primary" class="!rounded-2xl")
               Icon(name="ph:plus-bold" size="16" class="mr-1")
-              span {{ $t('documentTemplates.createTemplate') || 'Create Template' }}
+              span {{ $t('documentTemplates.createTemplate') }}
 
       //- Pagination
       .pagination.mt-5.flex.items-center.flex-wrap.gap-2.px-6(class="sm:justify-between justify-center" v-if="pagination.totalPages > 1")
-        span.text-xs(style="color: var(--text-muted)") {{ pagination.totalItems }} {{ $t('common.entries') || 'entries' }}
+        span.text-xs(style="color: var(--text-muted)") {{ pagination.totalItems }} {{ $t('common.entries') }}
         el-pagination(
           background
           style="direction:ltr"
@@ -169,7 +169,7 @@ div
               el-option(label="Legal" value="Legal")
 
         el-form-item
-          el-checkbox(v-model="form.isDefault") {{ $t('documentTemplates.default') || 'Set as Default' }}
+          el-checkbox(v-model="form.isDefault") {{ $t('documentTemplates.default') }}
 
         //- Variable Reference Panel
         el-form-item(label="Available Variables")
@@ -187,8 +187,8 @@ div
             p.text-xs.mt-2(style="color: var(--text-muted)") Click a variable to copy it to clipboard.
 
       template(#footer)
-        el-button(@click="dialogVisible = false") {{ $t('common.cancel') || 'Cancel' }}
-        el-button(type="primary" @click="handleSave" :loading="saving") {{ $t('common.save') || 'Save' }}
+        el-button(@click="dialogVisible = false") {{ $t('common.cancel') }}
+        el-button(type="primary" @click="handleSave" :loading="saving") {{ $t('common.save') }}
 
     //- Delete confirmation
     ActionModel(v-model="deletePopup" :loading="deleting" :description="deleteConfirmText" @confirm="confirmDelete")
@@ -213,13 +213,13 @@ const route = useRoute();
 // Pre-computed labels to avoid complex $t() expressions in Pug attributes
 const dialogTitle = computed(() =>
   editingTemplate.value
-    ? (t('documentTemplates.editTemplate') || 'Edit Template')
-    : (t('documentTemplates.createTemplate') || 'Create Template')
+    ? t('documentTemplates.editTemplate')
+    : t('documentTemplates.createTemplate')
 );
-const nameLabel = computed(() => t('common.name') || 'Name');
-const typeLabel = computed(() => t('documentTemplates.builder.templateType') || 'Type');
-const templateNamePlaceholder = computed(() => t('documentTemplates.builder.templateName') || 'Template Name');
-const deleteConfirmText = computed(() => t('common.confirmDelete') || 'Are you sure you want to delete this item?');
+const nameLabel = computed(() => t('common.name'));
+const typeLabel = computed(() => t('documentTemplates.builder.templateType'));
+const templateNamePlaceholder = computed(() => t('documentTemplates.builder.templateName'));
+const deleteConfirmText = computed(() => t('common.confirmDelete'));
 
 // Determine if a child route (builder/pro-builder) is active
 const isChildRoute = computed(() => {
@@ -376,8 +376,8 @@ function getTypeIcon(type: string): string {
 
 function getTypeLabel(type: string): string {
   const labels: Record<string, string> = {
-    INVOICE: t('documentTemplates.invoice') || 'Invoice',
-    PURCHASE_ORDER: t('documentTemplates.purchaseOrder') || 'Purchase Order',
+    INVOICE: t('documentTemplates.invoice'),
+    PURCHASE_ORDER: t('documentTemplates.purchaseOrder'),
     QUOTE: 'Quote',
     CONTRACT: 'Contract',
     SALES_ORDER: 'Sales Order',
@@ -400,25 +400,25 @@ const summaryStats = computed(() => {
   const defaultCount = all.filter(t => t.isDefault).length;
   return [
     {
-      label: t('documentTemplates.allTemplates') || 'Total Templates',
+      label: t('documentTemplates.allTemplates'),
       value: pagination.value.totalItems || all.length,
       icon: 'ph:file-doc-bold',
       color: '#7849ff'
     },
     {
-      label: t('documentTemplates.default') || 'Default',
+      label: t('documentTemplates.default'),
       value: defaultCount,
       icon: 'ph:star-bold',
       color: '#22c55e'
     },
     {
-      label: t('documentTemplates.invoice') || 'Invoice',
+      label: t('documentTemplates.invoice'),
       value: invoiceCount,
       icon: 'ph:receipt-bold',
       color: '#3b82f6'
     },
     {
-      label: t('documentTemplates.purchaseOrder') || 'Purchase Order',
+      label: t('documentTemplates.purchaseOrder'),
       value: poCount,
       icon: 'ph:shopping-cart-bold',
       color: '#f59e0b'
@@ -505,8 +505,8 @@ async function handleSave() {
   if (!form.name.trim()) {
     ElNotification({
       type: 'warning',
-      title: t('common.warning') || 'Warning',
-      message: t('common.fillRequired') || 'Please fill in all required fields'
+      title: t('common.warning'),
+      message: t('common.fillRequired')
     });
     return;
   }
@@ -544,16 +544,16 @@ async function handleSave() {
     if (result.success) {
       ElNotification({
         type: 'success',
-        title: t('common.success') || 'Success',
-        message: t('common.saved') || 'Saved successfully'
+        title: t('common.success'),
+        message: t('common.saved')
       });
       dialogVisible.value = false;
       await loadTemplates();
     } else {
       ElNotification({
         type: 'error',
-        title: t('common.error') || 'Error',
-        message: result.message || t('common.error') || 'Something went wrong'
+        title: t('common.error'),
+        message: result.message || t('common.error')
       });
     }
   } finally {
@@ -569,22 +569,22 @@ async function handleClone(template: DocumentTemplate) {
     if (result.success) {
       ElNotification({
         type: 'success',
-        title: t('common.success') || 'Success',
-        message: t('documentTemplates.cloned') || 'Template duplicated'
+        title: t('common.success'),
+        message: t('documentTemplates.cloned')
       });
       await loadTemplates();
     } else {
       ElNotification({
         type: 'error',
-        title: t('common.error') || 'Error',
-        message: result.message || 'Failed to duplicate template'
+        title: t('common.error'),
+        message: result.message || t('common.error')
       });
     }
   } catch {
     ElNotification({
       type: 'error',
-      title: t('common.error') || 'Error',
-      message: 'Failed to duplicate template'
+      title: t('common.error'),
+      message: t('common.error')
     });
   } finally {
     cloneLoadingId.value = null;
@@ -599,22 +599,22 @@ async function handleSeedDefaults() {
     if (result.success) {
       ElNotification({
         type: 'success',
-        title: t('common.success') || 'Success',
-        message: t('documentTemplates.seeded') || 'Default templates loaded'
+        title: t('common.success'),
+        message: t('documentTemplates.seeded')
       });
       await loadTemplates();
     } else {
       ElNotification({
         type: 'error',
-        title: t('common.error') || 'Error',
-        message: result.message || 'Failed to load default templates'
+        title: t('common.error'),
+        message: result.message || t('common.error')
       });
     }
   } catch {
     ElNotification({
       type: 'error',
-      title: t('common.error') || 'Error',
-      message: 'Failed to load default templates'
+      title: t('common.error'),
+      message: t('common.error')
     });
   } finally {
     seeding.value = false;
@@ -643,8 +643,8 @@ async function confirmDelete() {
     if (success) {
       ElNotification({
         type: 'success',
-        title: t('common.success') || 'Success',
-        message: t('common.deleted') || 'Deleted successfully'
+        title: t('common.success'),
+        message: t('common.deleted')
       });
       await loadTemplates();
     }

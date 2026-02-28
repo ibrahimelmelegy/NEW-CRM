@@ -3,12 +3,12 @@ div.animate-fade-in
   //- Header
   .flex.items-center.justify-between.mb-6
     div
-      h2.text-2xl.font-bold(style="color: var(--text-primary)") {{ $t('salesOrders.title') || 'Orders' }}
-      p.text-sm.mt-1(style="color: var(--text-muted)") {{ $t('salesOrders.subtitle') || 'Manage sales orders, fulfillment, and delivery tracking' }}
+      h2.text-2xl.font-bold(style="color: var(--text-primary)") {{ $t('salesOrders.title') }}
+      p.text-sm.mt-1(style="color: var(--text-muted)") {{ $t('salesOrders.subtitle') }}
     .flex.items-center.gap-3
       el-button(size="large" @click="exportCSV" class="!rounded-xl")
         Icon(name="ph:download-bold" size="16" class="mr-1")
-        | {{ $t('common.export') || 'Export' }}
+        | {{ $t('common.export') }}
       el-button(
         type="primary"
         size="large"
@@ -16,7 +16,7 @@ div.animate-fade-in
         class="!rounded-xl"
       )
         Icon(name="ph:plus-bold" size="16" class="mr-1")
-        | {{ $t('salesOrders.newOrder') || 'New Order' }}
+        | {{ $t('salesOrders.newOrder') }}
 
   //- KPI Cards
   .grid.gap-4.mb-6(class="grid-cols-2 md_grid-cols-4")
@@ -26,35 +26,35 @@ div.animate-fade-in
           Icon(name="ph:shopping-cart-bold" size="20" style="color: #7849ff")
         div
           p.text-2xl.font-bold(style="color: var(--text-primary)") {{ pagination.totalItems }}
-          p.text-xs(style="color: var(--text-muted)") {{ $t('salesOrders.totalOrders') || 'Total Orders' }}
+          p.text-xs(style="color: var(--text-muted)") {{ $t('salesOrders.totalOrders') }}
     .glass-card.p-5.rounded-2xl
       .flex.items-center.gap-3
         .w-10.h-10.rounded-xl.flex.items-center.justify-center(style="background: rgba(245, 158, 11, 0.15)")
           Icon(name="ph:clock-bold" size="20" style="color: #f59e0b")
         div
           p.text-2xl.font-bold(style="color: #f59e0b") {{ pendingCount }}
-          p.text-xs(style="color: var(--text-muted)") {{ $t('salesOrders.statusDraft') || 'Pending' }}
+          p.text-xs(style="color: var(--text-muted)") {{ $t('salesOrders.statusDraft') }}
     .glass-card.p-5.rounded-2xl
       .flex.items-center.gap-3
         .w-10.h-10.rounded-xl.flex.items-center.justify-center(style="background: rgba(59, 130, 246, 0.15)")
           Icon(name="ph:truck-bold" size="20" style="color: #3b82f6")
         div
           p.text-2xl.font-bold(style="color: #3b82f6") {{ shippedCount }}
-          p.text-xs(style="color: var(--text-muted)") {{ $t('salesOrders.shipped') || 'Shipped' }}
+          p.text-xs(style="color: var(--text-muted)") {{ $t('salesOrders.shipped') }}
     .glass-card.p-5.rounded-2xl
       .flex.items-center.gap-3
         .w-10.h-10.rounded-xl.flex.items-center.justify-center(style="background: rgba(34, 197, 94, 0.15)")
           Icon(name="ph:currency-circle-dollar-bold" size="20" style="color: #22c55e")
         div
           p.text-2xl.font-bold(style="color: #22c55e") {{ formatCurrency(totalRevenue) }}
-          p.text-xs(style="color: var(--text-muted)") {{ $t('salesOrders.total') || 'Revenue' }}
+          p.text-xs(style="color: var(--text-muted)") {{ $t('salesOrders.total') }}
 
   //- Filter Bar
   .glass-card.p-4.rounded-2xl.mb-6
     .flex.flex-wrap.items-center.gap-3
       el-input(
         v-model="search"
-        :placeholder="$t('common.search') || 'Search orders...'"
+        :placeholder="$t('common.search')"
         clearable
         size="large"
         style="max-width: 300px"
@@ -66,8 +66,8 @@ div.animate-fade-in
       el-date-picker(
         v-model="dateRange"
         type="daterange"
-        :start-placeholder="$t('common.from') || 'From'"
-        :end-placeholder="$t('common.to') || 'To'"
+        :start-placeholder="$t('common.from')"
+        :end-placeholder="$t('common.to')"
         size="large"
         value-format="YYYY-MM-DD"
         class="!rounded-xl"
@@ -77,25 +77,25 @@ div.animate-fade-in
   //- Status Tabs
   el-tabs(v-model="statusFilter" @tab-change="onStatusChange" class="orders-tabs")
     el-tab-pane(label="All" name="ALL")
-    el-tab-pane(:label="$t('salesOrders.statusDraft') || 'Draft'" name="DRAFT")
-    el-tab-pane(:label="$t('salesOrders.statusConfirmed') || 'Confirmed'" name="CONFIRMED")
-    el-tab-pane(:label="$t('salesOrders.statusProcessing') || 'Processing'" name="PROCESSING")
-    el-tab-pane(:label="$t('salesOrders.statusShipped') || 'Shipped'" name="SHIPPED")
-    el-tab-pane(:label="$t('salesOrders.statusDelivered') || 'Delivered'" name="DELIVERED")
-    el-tab-pane(:label="$t('salesOrders.statusCancelled') || 'Cancelled'" name="CANCELLED")
+    el-tab-pane(:label="$t('salesOrders.statusDraft')" name="DRAFT")
+    el-tab-pane(:label="$t('salesOrders.statusConfirmed')" name="CONFIRMED")
+    el-tab-pane(:label="$t('salesOrders.statusProcessing')" name="PROCESSING")
+    el-tab-pane(:label="$t('salesOrders.statusShipped')" name="SHIPPED")
+    el-tab-pane(:label="$t('salesOrders.statusDelivered')" name="DELIVERED")
+    el-tab-pane(:label="$t('salesOrders.statusCancelled')" name="CANCELLED")
 
   //- Orders Table
   el-table(:data="orders" v-loading="loading" stripe style="width: 100%")
-    el-table-column(:label="$t('salesOrders.orderNumber') || 'Order #'" width="160" sortable)
+    el-table-column(:label="$t('salesOrders.orderNumber')" width="160" sortable)
       template(#default="{ row }")
         span.font-mono.font-bold.cursor-pointer(
           style="color: #7849ff"
           @click="navigateTo(`/e-commerce/orders/${row.id}`)"
         ) {{ row.orderNumber || '--' }}
-    el-table-column(:label="$t('salesOrders.client') || 'Client'" min-width="160")
+    el-table-column(:label="$t('salesOrders.client')" min-width="160")
       template(#default="{ row }")
         span.text-sm(style="color: var(--text-primary)") {{ row.client?.clientName || row.client?.name || row.clientId || '--' }}
-    el-table-column(:label="$t('salesOrders.status') || 'Status'" width="140" align="center")
+    el-table-column(:label="$t('salesOrders.status')" width="140" align="center")
       template(#default="{ row }")
         el-tag(
           :type="getStatusType(row.status)"
@@ -103,7 +103,7 @@ div.animate-fade-in
           effect="dark"
           round
         ) {{ row.status || '--' }}
-    el-table-column(:label="$t('salesOrders.paymentStatus') || 'Payment'" width="130" align="center")
+    el-table-column(:label="$t('salesOrders.paymentStatus')" width="130" align="center")
       template(#default="{ row }")
         el-tag(
           v-if="row.paymentStatus"
@@ -113,22 +113,22 @@ div.animate-fade-in
           round
         ) {{ row.paymentStatus }}
         span.text-sm(v-else style="color: var(--text-muted)") --
-    el-table-column(:label="$t('salesOrders.items') || 'Items'" width="90" align="center")
+    el-table-column(:label="$t('salesOrders.items')" width="90" align="center")
       template(#default="{ row }")
         span.text-sm(style="color: var(--text-primary)") {{ row.items?.length || 0 }}
-    el-table-column(:label="$t('salesOrders.subtotal') || 'Subtotal'" width="130" align="right")
+    el-table-column(:label="$t('salesOrders.subtotal')" width="130" align="right")
       template(#default="{ row }")
         span.text-sm(style="color: var(--text-primary)") {{ formatCurrency(row.subtotal, row.currency) }}
-    el-table-column(:label="$t('salesOrders.taxAmount') || 'Tax'" width="110" align="right")
+    el-table-column(:label="$t('salesOrders.taxAmount')" width="110" align="right")
       template(#default="{ row }")
         span.text-sm(style="color: var(--text-muted)") {{ formatCurrency(row.taxAmount, row.currency) }}
-    el-table-column(:label="$t('salesOrders.total') || 'Total'" width="140" align="right" sortable)
+    el-table-column(:label="$t('salesOrders.total')" width="140" align="right" sortable)
       template(#default="{ row }")
         span.text-sm.font-bold(style="color: var(--text-primary)") {{ formatCurrency(row.total, row.currency) }}
-    el-table-column(:label="$t('common.date') || 'Date'" width="140" sortable)
+    el-table-column(:label="$t('common.date')" width="140" sortable)
       template(#default="{ row }")
         span.text-sm(style="color: var(--text-muted)") {{ formatDate(row.createdAt) }}
-    el-table-column(:label="$t('common.actions') || 'Actions'" width="120" align="center" fixed="right")
+    el-table-column(:label="$t('common.actions')" width="120" align="center" fixed="right")
       template(#default="{ row }")
         el-dropdown(trigger="click")
           el-button(size="small" class="!rounded-lg")
@@ -138,20 +138,20 @@ div.animate-fade-in
               el-dropdown-item(@click="navigateTo(`/e-commerce/orders/${row.id}`)")
                 .flex.items-center.gap-2
                   Icon(name="ph:eye-bold" size="14")
-                  span {{ $t('common.view') || 'View' }}
+                  span {{ $t('common.view') }}
               el-dropdown-item(@click="openStatusDialog(row)")
                 .flex.items-center.gap-2
                   Icon(name="ph:swap-bold" size="14")
-                  span {{ $t('common.update') || 'Edit Status' }}
+                  span {{ $t('common.update') }}
               el-dropdown-item(divided @click="deleteOrder(row)")
                 .flex.items-center.gap-2(style="color: #ef4444")
                   Icon(name="ph:trash-bold" size="14")
-                  span {{ $t('common.delete') || 'Delete' }}
+                  span {{ $t('common.delete') }}
 
   //- Empty state
   .text-center.py-12(v-if="!orders.length && !loading")
     Icon(name="ph:shopping-cart" size="48" style="color: var(--text-muted)")
-    p.text-sm.mt-2(style="color: var(--text-muted)") {{ $t('common.noData') || 'No orders found' }}
+    p.text-sm.mt-2(style="color: var(--text-muted)") {{ $t('common.noData') }}
 
   //- Pagination
   .flex.justify-end.mt-4
@@ -168,12 +168,12 @@ div.animate-fade-in
   //- Status Update Dialog
   el-dialog(
     v-model="statusDialogVisible"
-    :title="$t('salesOrders.status') || 'Update Status'"
+    :title="$t('salesOrders.status')"
     width="420px"
     :close-on-click-modal="false"
   )
     el-form(label-position="top")
-      el-form-item(:label="$t('salesOrders.status') || 'Status'" required)
+      el-form-item(:label="$t('salesOrders.status')" required)
         el-select(v-model="newStatus" style="width: 100%" size="large")
           el-option(
             v-for="opt in salesOrderStatusOptions"
@@ -182,8 +182,8 @@ div.animate-fade-in
             :value="opt.value"
           )
     template(#footer)
-      el-button(@click="statusDialogVisible = false") {{ $t('common.cancel') || 'Cancel' }}
-      el-button(type="primary" :loading="saving" @click="confirmStatusUpdate") {{ $t('common.confirm') || 'Confirm' }}
+      el-button(@click="statusDialogVisible = false") {{ $t('common.cancel') }}
+      el-button(type="primary" :loading="saving" @click="confirmStatusUpdate") {{ $t('common.confirm') }}
 </template>
 
 <script setup lang="ts">
@@ -339,8 +339,8 @@ async function confirmStatusUpdate() {
 async function deleteOrder(order: SalesOrder) {
   try {
     await ElMessageBox.confirm(
-      t('common.deleteConfirm') || 'Are you sure you want to delete this order?',
-      t('common.warning') || 'Warning',
+      t('common.deleteConfirm'),
+      t('common.warning'),
       { type: 'warning' }
     );
     const success = await deleteSalesOrder(order.id!);

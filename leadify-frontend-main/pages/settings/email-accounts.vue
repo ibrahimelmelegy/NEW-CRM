@@ -1,7 +1,7 @@
 <template lang="pug">
 .email-accounts-page.p-8
   .header.mb-8
-    h2.text-3xl.font-bold.mb-2(style="color: var(--text-primary)") {{ $t('navigation.emailAccounts') || 'Email Accounts' }}
+    h2.text-3xl.font-bold.mb-2(style="color: var(--text-primary)") {{ $t('navigation.emailAccounts') }}
     p(style="color: var(--text-muted)") Connect and manage your email accounts
 
   .max-w-3xl

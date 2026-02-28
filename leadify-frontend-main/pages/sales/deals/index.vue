@@ -174,8 +174,8 @@ async function handleBulkDelete() {
   try {
     await ElMessageBox.confirm(
       `Are you sure you want to delete ${selectedRows.value.length} deal(s)?`,
-      t('common.warning') || 'Warning',
-      { type: 'warning', confirmButtonText: t('common.delete') || 'Delete', cancelButtonText: t('common.cancel') || 'Cancel' }
+      t('common.warning'),
+      { type: 'warning', confirmButtonText: t('common.delete'), cancelButtonText: t('common.cancel') }
     );
     loading.value = true;
     const ids = selectedRows.value.map((r: any) => r.id);
@@ -291,10 +291,10 @@ const pipelineStats = computed(() => {
   if (!p) return [];
   const fmtCurrency = (v: number) => Number(v || 0).toLocaleString('en-US', { style: 'currency', currency: 'SAR', maximumFractionDigits: 0 });
   return [
-    { label: t('deals.pipeline.totalValue') || 'Total Pipeline Value', value: fmtCurrency(p.totalPipelineValue || 0), icon: 'ph:funnel-bold', color: '#8b5cf6' },
-    { label: t('deals.pipeline.weightedValue') || 'Weighted Value', value: fmtCurrency(p.weightedPipelineValue || 0), icon: 'ph:scales-bold', color: '#3b82f6' },
-    { label: t('deals.pipeline.dealCount') || 'Deal Count', value: p.dealCount ?? 0, icon: 'ph:stack-bold', color: '#10b981' },
-    { label: t('deals.pipeline.winRate') || 'Win Rate', value: (Number(p.winRate || 0)).toFixed(1) + '%', icon: 'ph:trophy-bold', color: '#f59e0b' }
+    { label: t('deals.pipeline.totalValue'), value: fmtCurrency(p.totalPipelineValue || 0), icon: 'ph:funnel-bold', color: '#8b5cf6' },
+    { label: t('deals.pipeline.weightedValue'), value: fmtCurrency(p.weightedPipelineValue || 0), icon: 'ph:scales-bold', color: '#3b82f6' },
+    { label: t('deals.pipeline.dealCount'), value: p.dealCount ?? 0, icon: 'ph:stack-bold', color: '#10b981' },
+    { label: t('deals.pipeline.winRate'), value: (Number(p.winRate || 0)).toFixed(1) + '%', icon: 'ph:trophy-bold', color: '#f59e0b' }
   ];
 });
 

@@ -135,7 +135,7 @@ const summaryStats = computed(() => {
   const pos = all.filter(t => t.type === 'PURCHASE_ORDER').length;
   return [
     {
-      label: t('documentTemplates.allTemplates') || 'All Templates',
+      label: t('documentTemplates.allTemplates'),
       value: pagination.value.totalItems || all.length,
       icon: 'ph:file-doc-bold',
       color: '#7849ff'
@@ -185,7 +185,7 @@ function editTemplate(id: string) {
 async function handleClone(id: string) {
   const { success } = await cloneDocumentTemplate(id);
   if (success) {
-    ElNotification({ type: 'success', title: t('common.success'), message: t('documentTemplates.cloned') || 'Template cloned' });
+    ElNotification({ type: 'success', title: t('common.success'), message: t('documentTemplates.cloned') });
     await loadTemplates();
   }
 }
@@ -210,7 +210,7 @@ async function handleSeedDefaults() {
   try {
     const { success } = await seedDefaultTemplates();
     if (success) {
-      ElNotification({ type: 'success', title: t('common.success'), message: t('documentTemplates.seeded') || 'Default templates seeded' });
+      ElNotification({ type: 'success', title: t('common.success'), message: t('documentTemplates.seeded') });
       await loadTemplates();
     }
   } finally {

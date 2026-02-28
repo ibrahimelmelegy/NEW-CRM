@@ -280,6 +280,8 @@ import { ElMessage } from 'element-plus';
 
 definePageMeta({ layout: 'default', middleware: 'permissions' });
 
+const { t } = useI18n();
+
 const activeTab = ref('members');
 const memberSearch = ref('');
 const filterTier = ref('');
@@ -561,7 +563,7 @@ const removeReward = (reward: any) => {
 
 const addMember = () => {
   if (!newMember.value.name || !newMember.value.email) {
-    ElMessage.warning('Name and email are required');
+    ElMessage.warning(t('common.fillRequired'));
     return;
   }
   members.value.push({
@@ -580,7 +582,7 @@ const addMember = () => {
 
 const addReward = () => {
   if (!newReward.value.name) {
-    ElMessage.warning('Reward name is required');
+    ElMessage.warning(t('common.fillRequired'));
     return;
   }
   rewards.value.push({

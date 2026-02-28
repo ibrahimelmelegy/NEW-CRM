@@ -250,6 +250,8 @@ import { ElMessage } from 'element-plus';
 
 definePageMeta({ layout: 'default', middleware: 'permissions' });
 
+const { t } = useI18n();
+
 const activeTab = ref('catalog');
 const showCourseDialog = ref(false);
 const courseSearch = ref('');
@@ -504,10 +506,10 @@ function downloadCert(cert: any) {
 
 function createCourse() {
   if (!courseForm.value.title) {
-    ElMessage.warning('Course title is required');
+    ElMessage.warning(t('common.fillRequired'));
     return;
   }
-  ElMessage.success('Course created successfully!');
+  ElMessage.success(t('training.courseCreated'));
   showCourseDialog.value = false;
   courseForm.value = { title: '', description: '', category: 'Sales', duration: '', difficulty: 'Beginner', instructor: '' };
 }

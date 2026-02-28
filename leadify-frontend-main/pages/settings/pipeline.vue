@@ -1,7 +1,7 @@
 <template lang="pug">
 .pipeline-page.p-8
   .header.mb-8
-    h2.text-3xl.font-bold.mb-2(style="color: var(--text-primary)") {{ $t('navigation.pipeline') || 'Pipeline Stages' }}
+    h2.text-3xl.font-bold.mb-2(style="color: var(--text-primary)") {{ $t('navigation.pipeline') }}
     p(style="color: var(--text-muted)") Configure deal and opportunity pipeline stages
 
   .max-w-3xl

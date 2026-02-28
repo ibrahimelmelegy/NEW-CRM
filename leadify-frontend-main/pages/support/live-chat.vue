@@ -276,6 +276,8 @@ import { ElMessage } from 'element-plus';
 
 definePageMeta({ layout: 'default', middleware: 'permissions' });
 
+const { t } = useI18n();
+
 const filterStatus = ref('');
 const chatSearch = ref('');
 const selectedChatId = ref<number | null>(null);
@@ -498,7 +500,7 @@ const useQuickReply = (text: string) => {
 };
 
 const saveNotes = () => {
-  ElMessage.success('Notes saved successfully');
+  ElMessage.success(t('common.saved'));
 };
 
 const resolveChat = () => {
@@ -521,7 +523,7 @@ const toggleAvailability = () => {
 
 const transferChat = () => {
   if (!transferTarget.value) {
-    ElMessage.warning('Please select an agent');
+    ElMessage.warning(t('common.fillRequired'));
     return;
   }
   const agent = agents.value.find(a => a.id === transferTarget.value);

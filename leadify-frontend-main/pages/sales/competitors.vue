@@ -276,6 +276,9 @@
 <script setup lang="ts">
 import { ref, computed } from 'vue';
 import { ElMessage } from 'element-plus';
+import { useI18n } from 'vue-i18n';
+
+const { t } = useI18n();
 
 definePageMeta({ layout: 'default', middleware: 'permissions' });
 
@@ -564,7 +567,7 @@ const selectCompetitor = (id: number) => {
 
 const addCompetitor = () => {
   if (!newCompetitor.value.name) {
-    ElMessage.warning('Competitor name is required');
+    ElMessage.warning(t('common.fillRequired'));
     return;
   }
   const strengths = newCompetitor.value.strengthsInput

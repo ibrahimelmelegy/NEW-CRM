@@ -421,7 +421,7 @@ async function loadContact(id?: string) {
       generateAiSummary(cid);
     }
   } catch {
-    ElNotification({ type: 'error', title: 'Error', message: 'Could not load contact' });
+    ElNotification({ type: 'error', title: t('common.error'), message: t('common.loadFailed') });
   } finally {
     pageLoading.value = false;
   }
@@ -527,12 +527,12 @@ async function addNote() {
         createdAt: activity.createdAt
       });
       newNote.value = '';
-      ElNotification({ type: 'success', title: 'Note Added', message: 'Note saved successfully' });
+      ElNotification({ type: 'success', title: t('common.success'), message: t('common.saved') });
     } else {
-      ElNotification({ type: 'error', title: 'Error', message: 'Failed to save note' });
+      ElNotification({ type: 'error', title: t('common.error'), message: t('common.saveFailed') });
     }
   } catch {
-    ElNotification({ type: 'error', title: 'Error', message: 'Failed to save note' });
+    ElNotification({ type: 'error', title: t('common.error'), message: t('common.saveFailed') });
   } finally {
     savingNote.value = false;
   }

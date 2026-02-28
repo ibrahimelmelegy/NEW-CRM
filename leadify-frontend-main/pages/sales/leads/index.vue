@@ -556,8 +556,8 @@ async function handleBulkDelete() {
   try {
     await ElMessageBox.confirm(
       `Are you sure you want to delete ${selectedRows.value.length} lead(s)?`,
-      t('common.warning') || 'Warning',
-      { type: 'warning', confirmButtonText: t('common.delete') || 'Delete', cancelButtonText: t('common.cancel') || 'Cancel' }
+      t('common.warning'),
+      { type: 'warning', confirmButtonText: t('common.delete'), cancelButtonText: t('common.cancel') }
     );
     loading.value = true;
     const ids = selectedRows.value.map((r: any) => r.id);
@@ -579,10 +579,10 @@ async function handleBulkExport() {
     loading.value = true;
     const ids = selectedRows.value.map((r: any) => r.id);
     await useApiFetch('lead/export', 'POST', { ids });
-    ElNotification({ type: 'success', title: t('common.success'), message: t('leads.exportSuccess') || 'Export sent to your email' });
+    ElNotification({ type: 'success', title: t('common.success'), message: t('leads.exportSuccess') });
     selectedRows.value = [];
   } catch {
-    ElNotification({ type: 'error', title: t('common.error'), message: t('leads.errors.exportFailed') || 'Export failed' });
+    ElNotification({ type: 'error', title: t('common.error'), message: t('leads.errors.exportFailed') });
   } finally {
     loading.value = false;
   }

@@ -169,10 +169,10 @@ const summaryStats = computed(() => {
   const drafts = articles.value.filter(a => a.status === 'DRAFT').length;
   const totalViews = articles.value.reduce((sum, a) => sum + (a.viewCount || 0), 0);
   return [
-    { label: t('knowledgeBase.totalArticles') || 'Total Articles', value: total, icon: 'ph:article-bold', color: '#7849ff' },
+    { label: t('knowledgeBase.totalArticles'), value: total, icon: 'ph:article-bold', color: '#7849ff' },
     { label: t('knowledgeBase.published'), value: published, icon: 'ph:check-circle-bold', color: '#22c55e' },
     { label: t('knowledgeBase.draft'), value: drafts, icon: 'ph:pencil-line-bold', color: '#f59e0b' },
-    { label: t('knowledgeBase.totalViews') || 'Total Views', value: totalViews, icon: 'ph:eye-bold', color: '#3b82f6' }
+    { label: t('knowledgeBase.totalViews'), value: totalViews, icon: 'ph:eye-bold', color: '#3b82f6' }
   ];
 });
 

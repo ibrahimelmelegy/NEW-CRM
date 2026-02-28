@@ -8,13 +8,13 @@ div
       ExportButton(:data="entries" :columns="exportColumns" :filename="'time-tracking-export'" :title="$t('timeTracking.title')")
       el-button(v-if="!activeTimer" type="success" size="large" :loading="starting" @click="startTimer" class="!rounded-2xl")
         Icon(name="ph:play-bold" size="16" class="mr-1")
-        span {{ $t('timeTracking.start') || 'Start Timer' }}
+        span {{ $t('timeTracking.start') }}
       el-button(v-else type="danger" size="large" :loading="stopping" @click="stopTimer" class="!rounded-2xl")
         Icon(name="ph:stop-bold" size="16" class="mr-1")
-        span {{ $t('timeTracking.stop') || 'Stop Timer' }}
+        span {{ $t('timeTracking.stop') }}
       el-button(size="large" @click="showManualEntry = true" class="!rounded-2xl")
         Icon(name="ph:plus-bold" size="16" class="mr-1")
-        span {{ $t('timeTracking.manual') || 'Manual Entry' }}
+        span {{ $t('timeTracking.manual') }}
 
   //- Active Timer Card
   .glass-card.p-6.mb-6.flex.items-center.gap-4.animate-entrance(v-if="activeTimer")
@@ -22,34 +22,34 @@ div
       Icon(name="ph:timer-bold" size="32" style="color: #ef4444")
     div
       .text-3xl.font-bold.font-mono(style="color: var(--text-primary)") {{ elapsedDisplay }}
-      p.text-sm(style="color: var(--text-muted)") {{ activeTimer?.description || $t('timeTracking.currentSession') || 'Current session' }}
+      p.text-sm(style="color: var(--text-muted)") {{ activeTimer?.description || $t('timeTracking.currentSession') }}
     .ml-auto
       el-button(type="danger" size="large" :loading="stopping" @click="stopTimer" class="!rounded-2xl")
         Icon(name="ph:stop-bold" size="16" class="mr-1")
-        span {{ $t('timeTracking.stop') || 'Stop' }}
+        span {{ $t('timeTracking.stop') }}
 
   StatCards(:stats="summaryStats")
 
   .glass-card.py-8.animate-entrance
     .px-6.mb-4
-      .text-lg.font-bold(style="color: var(--text-primary)") {{ $t('timeTracking.entries') || 'Time Entries' }}
+      .text-lg.font-bold(style="color: var(--text-primary)") {{ $t('timeTracking.entries') }}
 
     el-table(:data="entries" v-loading="loading" style="width: 100%")
       el-table-column(type="index" width="50")
-      el-table-column(:label="$t('timeTracking.description') || 'Description'" min-width="200")
+      el-table-column(:label="$t('timeTracking.description')" min-width="200")
         template(#default="{ row }")
           .font-bold(style="color: var(--text-primary)") {{ row.description || '—' }}
           .text-xs(style="color: var(--text-muted)") {{ row.entityType ? `${row.entityType}: ${row.entityName || ''}` : '' }}
-      el-table-column(:label="$t('timeTracking.date') || 'Date'" width="120")
+      el-table-column(:label="$t('timeTracking.date')" width="120")
         template(#default="{ row }")
           span {{ row.date || formatDate(row.startTime) }}
-      el-table-column(:label="$t('timeTracking.startTime') || 'Start'" width="100")
+      el-table-column(:label="$t('timeTracking.startTime')" width="100")
         template(#default="{ row }")
           span {{ formatTime(row.startTime) }}
-      el-table-column(:label="$t('timeTracking.endTime') || 'End'" width="100")
+      el-table-column(:label="$t('timeTracking.endTime')" width="100")
         template(#default="{ row }")
           span {{ row.endTime ? formatTime(row.endTime) : '—' }}
-      el-table-column(:label="$t('timeTracking.duration') || 'Duration'" width="120")
+      el-table-column(:label="$t('timeTracking.duration')" width="120")
         template(#default="{ row }")
           span.font-bold(style="color: #7849ff") {{ row.duration || calculateDuration(row.startTime, row.endTime) }}
       el-table-column(:label="$t('common.action')" width="80" fixed="right")
@@ -65,22 +65,22 @@ div
       el-pagination(background style="direction:ltr" :pager-count="4" v-model:current-page="currentPage" :page-size="20" layout="prev, pager, next" :total="pagination.totalItems" @current-change="loadEntries")
 
   //- Manual Entry Dialog
-  el-dialog(v-model="showManualEntry" :title="$t('timeTracking.manual') || 'Manual Time Entry'" width="600px")
+  el-dialog(v-model="showManualEntry" :title="$t('timeTracking.manual')" width="600px")
     el-form(label-position="top" size="large")
-      el-form-item(:label="$t('timeTracking.description') || 'Description'")
+      el-form-item(:label="$t('timeTracking.description')")
         el-input(v-model="manualForm.description")
       .grid.grid-cols-2.gap-4
-        el-form-item(:label="$t('timeTracking.date') || 'Date'")
+        el-form-item(:label="$t('timeTracking.date')")
           el-date-picker(v-model="manualForm.date" type="date" class="w-full" value-format="YYYY-MM-DD")
-        el-form-item(:label="$t('timeTracking.duration') || 'Duration (hours)'")
+        el-form-item(:label="$t('timeTracking.duration')")
           el-input-number(v-model="manualForm.hours" :min="0.25" :step="0.25" :precision="2" class="w-full")
       .grid.grid-cols-2.gap-4
-        el-form-item(:label="$t('timeTracking.entityType') || 'Type'")
+        el-form-item(:label="$t('timeTracking.entityType')")
           el-select(v-model="manualForm.entityType" clearable class="w-full")
             el-option(value="LEAD" label="Lead")
             el-option(value="DEAL" label="Deal")
             el-option(value="PROJECT" label="Project")
-        el-form-item(:label="$t('timeTracking.entityName') || 'Entity Name'")
+        el-form-item(:label="$t('timeTracking.entityName')")
           el-input(v-model="manualForm.entityName")
     template(#footer)
       el-button(@click="showManualEntry = false") {{ $t('common.cancel') }}
@@ -96,12 +96,12 @@ const t = $i18n.t;
 
 // Export columns
 const exportColumns = [
-  { prop: 'description', label: t('timeTracking.description') || 'Description' },
-  { prop: 'date', label: t('timeTracking.date') || 'Date' },
-  { prop: 'startTime', label: t('timeTracking.startTime') || 'Start' },
-  { prop: 'endTime', label: t('timeTracking.endTime') || 'End' },
-  { prop: 'duration', label: t('timeTracking.duration') || 'Duration' },
-  { prop: 'entityType', label: t('timeTracking.entityType') || 'Type' }
+  { prop: 'description', label: t('timeTracking.description') },
+  { prop: 'date', label: t('timeTracking.date') },
+  { prop: 'startTime', label: t('timeTracking.startTime') },
+  { prop: 'endTime', label: t('timeTracking.endTime') },
+  { prop: 'duration', label: t('timeTracking.duration') },
+  { prop: 'entityType', label: t('timeTracking.entityType') }
 ];
 
 const loading = ref(true);
@@ -134,10 +134,10 @@ const summaryStats = computed(() => {
     return sum;
   }, 0);
   return [
-    { label: t('timeTracking.totalEntries') || 'Total Entries', value: entries.value.length, icon: 'ph:clock-bold', color: '#7849ff' },
-    { label: t('timeTracking.totalHours') || 'Total Hours', value: totalHours.toFixed(1) + 'h', icon: 'ph:timer-bold', color: '#22c55e' },
+    { label: t('timeTracking.totalEntries'), value: entries.value.length, icon: 'ph:clock-bold', color: '#7849ff' },
+    { label: t('timeTracking.totalHours'), value: totalHours.toFixed(1) + 'h', icon: 'ph:timer-bold', color: '#22c55e' },
     {
-      label: t('timeTracking.activeTimer') || 'Active Timer',
+      label: t('timeTracking.activeTimer'),
       value: activeTimer.value ? 'Running' : 'Stopped',
       icon: 'ph:play-circle-bold',
       color: activeTimer.value ? '#ef4444' : '#64748b'
@@ -194,7 +194,7 @@ async function startTimer() {
     if (success && body) {
       activeTimer.value = body;
       startElapsedCounter(body.startTime);
-      ElNotification({ type: 'success', title: t('common.success'), message: t('timeTracking.started') || 'Timer started' });
+      ElNotification({ type: 'success', title: t('common.success'), message: t('timeTracking.started') });
     }
   } finally {
     starting.value = false;
@@ -213,7 +213,7 @@ async function stopTimer() {
       }
       elapsedSeconds.value = 0;
       await loadEntries();
-      ElNotification({ type: 'success', title: t('common.success'), message: t('timeTracking.stopped') || 'Timer stopped' });
+      ElNotification({ type: 'success', title: t('common.success'), message: t('timeTracking.stopped') });
     }
   } finally {
     stopping.value = false;
@@ -228,7 +228,7 @@ async function submitManual() {
       showManualEntry.value = false;
       Object.assign(manualForm, { description: '', date: '', hours: 1, entityType: '', entityName: '' });
       await loadEntries();
-      ElNotification({ type: 'success', title: t('common.success'), message: t('common.saved') || 'Saved' });
+      ElNotification({ type: 'success', title: t('common.success'), message: t('common.saved') });
     }
   } finally {
     savingManual.value = false;

@@ -65,8 +65,10 @@
 
 <script setup lang="ts">
 import { ref, reactive } from 'vue';
+import { ElMessage } from 'element-plus';
 import { useSignature } from '~/composables/useSignature';
 definePageMeta({});
+const { t } = useI18n();
 const { signatures, stats, requestSignature, removeSignature } = useSignature();
 const showDialog = ref(false);
 const form = reactive({ documentRef: '', documentType: '', signerName: '', signerEmail: '' });
@@ -74,6 +76,6 @@ function saveRequest() {
   requestSignature({ ...form, signatureData: '' });
   Object.assign(form, { documentRef: '', documentType: '', signerName: '', signerEmail: '' });
   showDialog.value = false;
-  ElMessage.success('Signature request sent!');
+  ElMessage.success(t('signatures.requestSent'));
 }
 </script>

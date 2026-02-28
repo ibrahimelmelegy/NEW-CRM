@@ -3,8 +3,8 @@ div.animate-fade-in
   //- Header
   .flex.items-center.justify-between.mb-6
     div
-      h2.text-2xl.font-bold(style="color: var(--text-primary)") {{ $t('warehouse.title') || 'Warehouse Management' }}
-      p.text-sm.mt-1(style="color: var(--text-muted)") {{ $t('warehouse.subtitle') || 'Manage warehouses, zones, and stock transfers.' }}
+      h2.text-2xl.font-bold(style="color: var(--text-primary)") {{ $t('warehouse.title') }}
+      p.text-sm.mt-1(style="color: var(--text-muted)") {{ $t('warehouse.subtitle') }}
     .flex.items-center.gap-3
       el-button(
         type="primary"
@@ -23,36 +23,36 @@ div.animate-fade-in
           Icon(name="ph:warehouse-bold" size="20" style="color: #7849ff")
         div
           p.text-2xl.font-bold(style="color: var(--text-primary)") {{ kpiData.totalWarehouses }}
-          p.text-xs(style="color: var(--text-muted)") {{ $t('warehouse.totalWarehouses') || 'Total Warehouses' }}
+          p.text-xs(style="color: var(--text-muted)") {{ $t('warehouse.totalWarehouses') }}
     .glass-card.p-5.rounded-2xl
       .flex.items-center.gap-3
         .w-10.h-10.rounded-xl.flex.items-center.justify-center(style="background: rgba(59, 130, 246, 0.15)")
           Icon(name="ph:package-bold" size="20" style="color: #3b82f6")
         div
           p.text-2xl.font-bold(style="color: var(--text-primary)") {{ kpiData.totalStockItems }}
-          p.text-xs(style="color: var(--text-muted)") {{ $t('warehouse.totalStockItems') || 'Total Stock Items' }}
+          p.text-xs(style="color: var(--text-muted)") {{ $t('warehouse.totalStockItems') }}
     .glass-card.p-5.rounded-2xl
       .flex.items-center.gap-3
         .w-10.h-10.rounded-xl.flex.items-center.justify-center(style="background: rgba(239, 68, 68, 0.15)")
           Icon(name="ph:warning-bold" size="20" style="color: #ef4444")
         div
           p.text-2xl.font-bold(style="color: #ef4444") {{ kpiData.lowStockAlerts }}
-          p.text-xs(style="color: var(--text-muted)") {{ $t('warehouse.lowStockAlerts') || 'Low Stock Alerts' }}
+          p.text-xs(style="color: var(--text-muted)") {{ $t('warehouse.lowStockAlerts') }}
     .glass-card.p-5.rounded-2xl
       .flex.items-center.gap-3
         .w-10.h-10.rounded-xl.flex.items-center.justify-center(style="background: rgba(245, 158, 11, 0.15)")
           Icon(name="ph:arrows-left-right-bold" size="20" style="color: #f59e0b")
         div
           p.text-2xl.font-bold(style="color: #f59e0b") {{ kpiData.pendingTransfers }}
-          p.text-xs(style="color: var(--text-muted)") {{ $t('warehouse.pendingTransfers') || 'Pending Transfers' }}
+          p.text-xs(style="color: var(--text-muted)") {{ $t('warehouse.pendingTransfers') }}
 
   //- Low Stock Alerts Panel
   .glass-card.p-5.rounded-2xl.mb-6(v-if="lowStockItems.length")
     .flex.items-center.justify-between.mb-4
       h3.text-lg.font-bold(style="color: var(--text-primary)")
         Icon(name="ph:warning-octagon-bold" size="20" class="mr-2" style="color: #ef4444")
-        | {{ $t('warehouse.lowStockAlertsPanel') || 'Low Stock Alerts' }}
-      el-tag(type="danger" size="small" effect="dark" round) {{ lowStockItems.length }} {{ $t('warehouse.items') || 'items' }}
+        | {{ $t('warehouse.lowStockAlertsPanel') }}
+      el-tag(type="danger" size="small" effect="dark" round) {{ lowStockItems.length }} {{ $t('warehouse.items') }}
     .space-y-2
       .flex.items-center.justify-between.p-3.rounded-xl(
         v-for="(item, idx) in lowStockItems"
@@ -66,17 +66,17 @@ div.animate-fade-in
             p.text-sm.font-semibold(style="color: var(--text-primary)") {{ item.productName || item.name || '--' }}
             p.text-xs(style="color: var(--text-muted)") {{ item.warehouseName || item.warehouse || '--' }}
         .text-end
-          p.text-sm.font-bold(:style="{ color: (item.currentQuantity || item.quantity || 0) <= 5 ? '#ef4444' : '#f59e0b' }") {{ item.currentQuantity || item.quantity || 0 }} {{ $t('warehouse.units') || 'units' }}
-          p.text-xs(style="color: var(--text-muted)") {{ $t('warehouse.threshold') || 'Threshold' }}: {{ item.threshold || 10 }}
+          p.text-sm.font-bold(:style="{ color: (item.currentQuantity || item.quantity || 0) <= 5 ? '#ef4444' : '#f59e0b' }") {{ item.currentQuantity || item.quantity || 0 }} {{ $t('warehouse.units') }}
+          p.text-xs(style="color: var(--text-muted)") {{ $t('warehouse.threshold') }}: {{ item.threshold || 10 }}
 
   //- Tabs
   el-tabs(v-model="activeTab" type="border-card" class="warehouse-tabs")
     //- ========== WAREHOUSES TAB ==========
-    el-tab-pane(:label="$t('warehouse.warehouses') || 'Warehouses'" name="warehouses")
+    el-tab-pane(:label="$t('warehouse.warehouses')" name="warehouses")
       .flex.items-center.justify-between.mb-4
         el-input(
           v-model="warehouseSearch"
-          :placeholder="$t('warehouse.searchWarehouses') || 'Search warehouses...'"
+          :placeholder="$t('warehouse.searchWarehouses')"
           clearable
           size="large"
           style="max-width: 320px"
@@ -86,21 +86,21 @@ div.animate-fade-in
             Icon(name="ph:magnifying-glass" size="16" style="color: var(--text-muted)")
 
       el-table(:data="filteredWarehouses" v-loading="loadingWarehouses" stripe style="width: 100%")
-        el-table-column(:label="$t('warehouse.name') || 'Name'" prop="name" min-width="180" sortable)
+        el-table-column(:label="$t('warehouse.name')" prop="name" min-width="180" sortable)
           template(#default="{ row }")
             .flex.items-center.gap-2
               Icon(name="ph:warehouse-bold" size="18" style="color: #7849ff")
               span.text-sm.font-semibold(style="color: var(--text-primary)") {{ row.name || '--' }}
-        el-table-column(:label="$t('warehouse.location') || 'Location'" prop="location" width="200")
+        el-table-column(:label="$t('warehouse.location')" prop="location" width="200")
           template(#default="{ row }")
             span.text-sm(style="color: var(--text-primary)") {{ row.location || '--' }}
-        el-table-column(:label="$t('warehouse.manager') || 'Manager'" prop="manager" width="160")
+        el-table-column(:label="$t('warehouse.manager')" prop="manager" width="160")
           template(#default="{ row }")
             span.text-sm(style="color: var(--text-primary)") {{ row.managerName || row.manager || '--' }}
-        el-table-column(:label="$t('warehouse.capacity') || 'Capacity'" width="140" align="center")
+        el-table-column(:label="$t('warehouse.capacity')" width="140" align="center")
           template(#default="{ row }")
             span.text-sm(style="color: var(--text-primary)") {{ row.capacity || 0 }}
-        el-table-column(:label="$t('warehouse.occupancy') || 'Occupancy'" width="180" align="center")
+        el-table-column(:label="$t('warehouse.occupancy')" width="180" align="center")
           template(#default="{ row }")
             .flex.items-center.gap-2
               el-progress(
@@ -110,7 +110,7 @@ div.animate-fade-in
                 style="width: 100px"
               )
               span.text-xs(style="color: var(--text-muted)") {{ row.currentOccupancy || 0 }}/{{ row.capacity || 0 }}
-        el-table-column(:label="$t('warehouse.status') || 'Status'" width="130" align="center")
+        el-table-column(:label="$t('warehouse.status')" width="130" align="center")
           template(#default="{ row }")
             el-tag(
               :type="row.status === 'ACTIVE' ? 'success' : row.status === 'MAINTENANCE' ? 'warning' : 'info'"
@@ -128,7 +128,7 @@ div.animate-fade-in
 
       .text-center.py-12(v-if="!filteredWarehouses.length && !loadingWarehouses")
         Icon(name="ph:warehouse" size="48" style="color: var(--text-muted)")
-        p.text-sm.mt-2(style="color: var(--text-muted)") {{ $t('warehouse.noWarehouses') || 'No warehouses found' }}
+        p.text-sm.mt-2(style="color: var(--text-muted)") {{ $t('warehouse.noWarehouses') }}
 
       .flex.justify-end.mt-4
         el-pagination(
@@ -140,11 +140,11 @@ div.animate-fade-in
         )
 
     //- ========== ZONES TAB ==========
-    el-tab-pane(:label="$t('warehouse.zones') || 'Zones'" name="zones")
+    el-tab-pane(:label="$t('warehouse.zones')" name="zones")
       .flex.items-center.justify-between.mb-4
         el-input(
           v-model="zoneSearch"
-          :placeholder="$t('warehouse.searchZones') || 'Search zones...'"
+          :placeholder="$t('warehouse.searchZones')"
           clearable
           size="large"
           style="max-width: 320px"
@@ -154,18 +154,18 @@ div.animate-fade-in
             Icon(name="ph:magnifying-glass" size="16" style="color: var(--text-muted)")
 
       el-table(:data="filteredZones" v-loading="loadingZones" stripe style="width: 100%")
-        el-table-column(:label="$t('warehouse.warehouseName') || 'Warehouse'" prop="warehouseName" width="200")
+        el-table-column(:label="$t('warehouse.warehouseName')" prop="warehouseName" width="200")
           template(#default="{ row }")
             span.text-sm.font-semibold(style="color: var(--text-primary)") {{ row.warehouseName || row.warehouseId || '--' }}
-        el-table-column(:label="$t('warehouse.zoneName') || 'Zone Name'" prop="name" min-width="180" sortable)
+        el-table-column(:label="$t('warehouse.zoneName')" prop="name" min-width="180" sortable)
           template(#default="{ row }")
             .flex.items-center.gap-2
               Icon(name="ph:squares-four-bold" size="16" style="color: #f59e0b")
               span.text-sm.font-semibold(style="color: var(--text-primary)") {{ row.name || '--' }}
-        el-table-column(:label="$t('warehouse.zoneType') || 'Type'" prop="type" width="150")
+        el-table-column(:label="$t('warehouse.zoneType')" prop="type" width="150")
           template(#default="{ row }")
             el-tag(size="small" effect="plain" round) {{ row.type || '--' }}
-        el-table-column(:label="$t('warehouse.capacity') || 'Capacity'" prop="capacity" width="130" align="center")
+        el-table-column(:label="$t('warehouse.capacity')" prop="capacity" width="130" align="center")
           template(#default="{ row }")
             span.text-sm(style="color: var(--text-primary)") {{ row.capacity || 0 }}
         el-table-column(:label="$t('common.actions')" width="100" align="center" fixed="right")
@@ -175,7 +175,7 @@ div.animate-fade-in
 
       .text-center.py-12(v-if="!filteredZones.length && !loadingZones")
         Icon(name="ph:squares-four" size="48" style="color: var(--text-muted)")
-        p.text-sm.mt-2(style="color: var(--text-muted)") {{ $t('warehouse.noZones') || 'No zones found' }}
+        p.text-sm.mt-2(style="color: var(--text-muted)") {{ $t('warehouse.noZones') }}
 
       .flex.justify-end.mt-4
         el-pagination(
@@ -187,11 +187,11 @@ div.animate-fade-in
         )
 
     //- ========== TRANSFERS TAB ==========
-    el-tab-pane(:label="$t('warehouse.transfers') || 'Transfers'" name="transfers")
+    el-tab-pane(:label="$t('warehouse.transfers')" name="transfers")
       .flex.items-center.justify-between.mb-4
         el-input(
           v-model="transferSearch"
-          :placeholder="$t('warehouse.searchTransfers') || 'Search transfers...'"
+          :placeholder="$t('warehouse.searchTransfers')"
           clearable
           size="large"
           style="max-width: 320px"
@@ -201,19 +201,19 @@ div.animate-fade-in
             Icon(name="ph:magnifying-glass" size="16" style="color: var(--text-muted)")
 
       el-table(:data="filteredTransfers" v-loading="loadingTransfers" stripe style="width: 100%")
-        el-table-column(:label="$t('warehouse.transferNumber') || 'Transfer #'" prop="transferNumber" width="160" sortable)
+        el-table-column(:label="$t('warehouse.transferNumber')" prop="transferNumber" width="160" sortable)
           template(#default="{ row }")
             span.font-mono.font-bold(style="color: #7849ff") {{ row.transferNumber || '--' }}
-        el-table-column(:label="$t('warehouse.fromWarehouse') || 'From'" prop="fromWarehouseName" width="180")
+        el-table-column(:label="$t('warehouse.fromWarehouse')" prop="fromWarehouseName" width="180")
           template(#default="{ row }")
             span.text-sm(style="color: var(--text-primary)") {{ row.fromWarehouseName || row.fromWarehouseId || '--' }}
-        el-table-column(:label="$t('warehouse.toWarehouse') || 'To'" prop="toWarehouseName" width="180")
+        el-table-column(:label="$t('warehouse.toWarehouse')" prop="toWarehouseName" width="180")
           template(#default="{ row }")
             span.text-sm(style="color: var(--text-primary)") {{ row.toWarehouseName || row.toWarehouseId || '--' }}
-        el-table-column(:label="$t('warehouse.items') || 'Items'" width="100" align="center")
+        el-table-column(:label="$t('warehouse.items')" width="100" align="center")
           template(#default="{ row }")
             el-tag(size="small" effect="plain" round) {{ row.items?.length || row.itemCount || 0 }}
-        el-table-column(:label="$t('warehouse.status') || 'Status'" width="140" align="center")
+        el-table-column(:label="$t('warehouse.status')" width="140" align="center")
           template(#default="{ row }")
             el-tag(
               :type="getTransferStatusType(row.status)"
@@ -221,10 +221,10 @@ div.animate-fade-in
               effect="dark"
               round
             ) {{ row.status || '--' }}
-        el-table-column(:label="$t('warehouse.createdAt') || 'Created'" width="140" sortable)
+        el-table-column(:label="$t('warehouse.createdAt')" width="140" sortable)
           template(#default="{ row }")
             span.text-sm(style="color: var(--text-muted)") {{ formatDate(row.createdAt) }}
-        el-table-column(:label="$t('warehouse.completedAt') || 'Completed'" width="140")
+        el-table-column(:label="$t('warehouse.completedAt')" width="140")
           template(#default="{ row }")
             span.text-sm(style="color: var(--text-muted)") {{ row.completedAt ? formatDate(row.completedAt) : '--' }}
         el-table-column(:label="$t('common.actions')" width="100" align="center" fixed="right")
@@ -239,7 +239,7 @@ div.animate-fade-in
 
       .text-center.py-12(v-if="!filteredTransfers.length && !loadingTransfers")
         Icon(name="ph:arrows-left-right" size="48" style="color: var(--text-muted)")
-        p.text-sm.mt-2(style="color: var(--text-muted)") {{ $t('warehouse.noTransfers') || 'No transfers found' }}
+        p.text-sm.mt-2(style="color: var(--text-muted)") {{ $t('warehouse.noTransfers') }}
 
       .flex.justify-end.mt-4
         el-pagination(
@@ -253,24 +253,24 @@ div.animate-fade-in
   //- ========== CREATE / EDIT WAREHOUSE DIALOG ==========
   el-dialog(
     v-model="warehouseDialogVisible"
-    :title="editingWarehouse ? ($t('warehouse.editWarehouse') || 'Edit Warehouse') : ($t('warehouse.newWarehouse') || 'New Warehouse')"
+    :title="editingWarehouse ? $t('warehouse.editWarehouse') : $t('warehouse.newWarehouse')"
     width="550px"
     :close-on-click-modal="false"
   )
     el-form(:model="warehouseForm" label-position="top")
-      el-form-item(:label="$t('warehouse.name') || 'Name'" required)
-        el-input(v-model="warehouseForm.name" :placeholder="$t('warehouse.name') || 'Warehouse Name'")
-      el-form-item(:label="$t('warehouse.location') || 'Location'")
-        el-input(v-model="warehouseForm.location" :placeholder="$t('warehouse.location') || 'Location'")
+      el-form-item(:label="$t('warehouse.name')" required)
+        el-input(v-model="warehouseForm.name" :placeholder="$t('warehouse.name')")
+      el-form-item(:label="$t('warehouse.location')")
+        el-input(v-model="warehouseForm.location" :placeholder="$t('warehouse.location')")
       .grid.gap-4(class="grid-cols-2")
-        el-form-item(:label="$t('warehouse.manager') || 'Manager'")
-          el-input(v-model="warehouseForm.manager" :placeholder="$t('warehouse.manager') || 'Manager'")
-        el-form-item(:label="$t('warehouse.capacity') || 'Capacity'")
+        el-form-item(:label="$t('warehouse.manager')")
+          el-input(v-model="warehouseForm.manager" :placeholder="$t('warehouse.manager')")
+        el-form-item(:label="$t('warehouse.capacity')")
           el-input-number(v-model="warehouseForm.capacity" :min="0" style="width: 100%")
       .grid.gap-4(class="grid-cols-2")
-        el-form-item(:label="$t('warehouse.occupancy') || 'Current Occupancy'")
+        el-form-item(:label="$t('warehouse.occupancy')")
           el-input-number(v-model="warehouseForm.currentOccupancy" :min="0" style="width: 100%")
-        el-form-item(:label="$t('warehouse.status') || 'Status'")
+        el-form-item(:label="$t('warehouse.status')")
           el-select(v-model="warehouseForm.status" style="width: 100%")
             el-option(label="Active" value="ACTIVE")
             el-option(label="Inactive" value="INACTIVE")
@@ -282,30 +282,30 @@ div.animate-fade-in
   //- ========== CREATE ZONE DIALOG ==========
   el-dialog(
     v-model="zoneDialogVisible"
-    :title="$t('warehouse.newZone') || 'New Zone'"
+    :title="$t('warehouse.newZone')"
     width="500px"
     :close-on-click-modal="false"
   )
     el-form(:model="zoneForm" label-position="top")
-      el-form-item(:label="$t('warehouse.warehouseName') || 'Warehouse'" required)
-        el-select(v-model="zoneForm.warehouseId" :placeholder="$t('warehouse.selectWarehouse') || 'Select Warehouse'" style="width: 100%" filterable)
+      el-form-item(:label="$t('warehouse.warehouseName')" required)
+        el-select(v-model="zoneForm.warehouseId" :placeholder="$t('warehouse.selectWarehouse')" style="width: 100%" filterable)
           el-option(
             v-for="wh in warehouses"
             :key="wh.id"
             :label="wh.name"
             :value="wh.id"
           )
-      el-form-item(:label="$t('warehouse.zoneName') || 'Zone Name'" required)
-        el-input(v-model="zoneForm.name" :placeholder="$t('warehouse.zoneName') || 'Zone Name'")
+      el-form-item(:label="$t('warehouse.zoneName')" required)
+        el-input(v-model="zoneForm.name" :placeholder="$t('warehouse.zoneName')")
       .grid.gap-4(class="grid-cols-2")
-        el-form-item(:label="$t('warehouse.zoneType') || 'Type'")
+        el-form-item(:label="$t('warehouse.zoneType')")
           el-select(v-model="zoneForm.type" style="width: 100%")
             el-option(label="Storage" value="STORAGE")
             el-option(label="Picking" value="PICKING")
             el-option(label="Receiving" value="RECEIVING")
             el-option(label="Shipping" value="SHIPPING")
             el-option(label="Quarantine" value="QUARANTINE")
-        el-form-item(:label="$t('warehouse.capacity') || 'Capacity'")
+        el-form-item(:label="$t('warehouse.capacity')")
           el-input-number(v-model="zoneForm.capacity" :min="0" style="width: 100%")
     template(#footer)
       el-button(@click="zoneDialogVisible = false") {{ $t('common.cancel') }}
@@ -314,30 +314,30 @@ div.animate-fade-in
   //- ========== CREATE TRANSFER DIALOG ==========
   el-dialog(
     v-model="transferDialogVisible"
-    :title="$t('warehouse.newTransfer') || 'New Transfer'"
+    :title="$t('warehouse.newTransfer')"
     width="550px"
     :close-on-click-modal="false"
   )
     el-form(:model="transferForm" label-position="top")
       .grid.gap-4(class="grid-cols-2")
-        el-form-item(:label="$t('warehouse.fromWarehouse') || 'From Warehouse'" required)
-          el-select(v-model="transferForm.fromWarehouseId" :placeholder="$t('warehouse.selectWarehouse') || 'Select'" style="width: 100%" filterable)
+        el-form-item(:label="$t('warehouse.fromWarehouse')" required)
+          el-select(v-model="transferForm.fromWarehouseId" :placeholder="$t('warehouse.selectWarehouse')" style="width: 100%" filterable)
             el-option(
               v-for="wh in warehouses"
               :key="wh.id"
               :label="wh.name"
               :value="wh.id"
             )
-        el-form-item(:label="$t('warehouse.toWarehouse') || 'To Warehouse'" required)
-          el-select(v-model="transferForm.toWarehouseId" :placeholder="$t('warehouse.selectWarehouse') || 'Select'" style="width: 100%" filterable)
+        el-form-item(:label="$t('warehouse.toWarehouse')" required)
+          el-select(v-model="transferForm.toWarehouseId" :placeholder="$t('warehouse.selectWarehouse')" style="width: 100%" filterable)
             el-option(
               v-for="wh in warehouses"
               :key="wh.id"
               :label="wh.name"
               :value="wh.id"
             )
-      el-form-item(:label="$t('warehouse.notes') || 'Notes'")
-        el-input(v-model="transferForm.notes" type="textarea" :rows="3" :placeholder="$t('warehouse.transferNotes') || 'Transfer notes...'")
+      el-form-item(:label="$t('warehouse.notes')")
+        el-input(v-model="transferForm.notes" type="textarea" :rows="3" :placeholder="$t('warehouse.transferNotes')")
     template(#footer)
       el-button(@click="transferDialogVisible = false") {{ $t('common.cancel') }}
       el-button(type="primary" :loading="saving" @click="saveTransfer") {{ $t('common.save') }}
@@ -408,9 +408,9 @@ const transferForm = reactive({
 
 // Create button label based on active tab
 const createButtonLabel = computed(() => {
-  if (activeTab.value === 'zones') return t('warehouse.newZone') || 'New Zone';
-  if (activeTab.value === 'transfers') return t('warehouse.newTransfer') || 'New Transfer';
-  return t('warehouse.newWarehouse') || 'New Warehouse';
+  if (activeTab.value === 'zones') return t('warehouse.newZone');
+  if (activeTab.value === 'transfers') return t('warehouse.newTransfer');
+  return t('warehouse.newWarehouse');
 });
 
 function openCreateDialog() {

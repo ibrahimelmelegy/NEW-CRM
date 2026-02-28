@@ -2,17 +2,17 @@
 div
   //- Breadcrumb Header
   ModuleHeader(
-    :title="posting?.title || $t('recruitment.postingDetail') || 'Job Posting'"
+    :title="posting?.title || $t('recruitment.postingDetail')"
     :subtitle="posting ? `${posting.department?.name || '--'} | ${formatType(posting.type)} | ${posting.location || '--'}` : ''"
-    :breadcrumbs="[{ label: $t('navigation.recruitment') || 'Recruitment', to: '/hr/recruitment' }, { label: posting?.title || '...' }]"
+    :breadcrumbs="[{ label: $t('navigation.recruitment'), to: '/hr/recruitment' }, { label: posting?.title || '...' }]"
   )
     template(#actions)
       el-button(v-if="posting?.status === 'OPEN'" size="large" type="danger" plain class="!rounded-2xl" @click="handleClosePosting")
         Icon(name="ph:lock-bold" size="16")
-        span.ml-1 {{ $t('recruitment.closePosting') || 'Close Posting' }}
+        span.ml-1 {{ $t('recruitment.closePosting') }}
       el-button(size="large" type="primary" class="!rounded-2xl" @click="openApplicantDialog()")
         Icon(name="ph:plus-bold" size="16")
-        span.ml-1 {{ $t('recruitment.addApplicant') || 'Add Applicant' }}
+        span.ml-1 {{ $t('recruitment.addApplicant') }}
 
   //- Loading
   .flex.items-center.justify-center.py-20(v-if="loading")
@@ -23,26 +23,26 @@ div
     .glass-card.p-6.rounded-2xl.mb-6
       .grid.gap-6(class="grid-cols-1 md:grid-cols-2 lg:grid-cols-4")
         div
-          p.text-xs.uppercase.tracking-wider.mb-1(style="color: var(--text-muted)") {{ $t('recruitment.status') || 'Status' }}
+          p.text-xs.uppercase.tracking-wider.mb-1(style="color: var(--text-muted)") {{ $t('recruitment.status') }}
           el-tag(:type="getPostingStatusType(posting.status)" effect="dark" size="default") {{ posting.status }}
         div
-          p.text-xs.uppercase.tracking-wider.mb-1(style="color: var(--text-muted)") {{ $t('recruitment.openPositions') || 'Open Positions' }}
+          p.text-xs.uppercase.tracking-wider.mb-1(style="color: var(--text-muted)") {{ $t('recruitment.openPositions') }}
           p.text-lg.font-bold(style="color: var(--text-primary)") {{ posting.openPositions || 1 }}
         div
-          p.text-xs.uppercase.tracking-wider.mb-1(style="color: var(--text-muted)") {{ $t('recruitment.salaryRange') || 'Salary Range' }}
+          p.text-xs.uppercase.tracking-wider.mb-1(style="color: var(--text-muted)") {{ $t('recruitment.salaryRange') }}
           p.text-lg.font-bold(style="color: var(--text-primary)")
             span(v-if="posting.salaryMin || posting.salaryMax") {{ posting.salaryMin?.toLocaleString() || '0' }} - {{ posting.salaryMax?.toLocaleString() || '--' }}
             span(v-else) --
         div
-          p.text-xs.uppercase.tracking-wider.mb-1(style="color: var(--text-muted)") {{ $t('recruitment.closingDate') || 'Closing Date' }}
+          p.text-xs.uppercase.tracking-wider.mb-1(style="color: var(--text-muted)") {{ $t('recruitment.closingDate') }}
           p.text-lg.font-bold(style="color: var(--text-primary)") {{ formatDate(posting.closingDate) }}
       //- Description
       div.mt-5(v-if="posting.description")
-        p.text-xs.uppercase.tracking-wider.mb-2(style="color: var(--text-muted)") {{ $t('recruitment.description') || 'Description' }}
+        p.text-xs.uppercase.tracking-wider.mb-2(style="color: var(--text-muted)") {{ $t('recruitment.description') }}
         p.text-sm(style="color: var(--text-primary); line-height: 1.7; white-space: pre-line") {{ posting.description }}
       //- Requirements
       div.mt-4(v-if="posting.requirements?.length")
-        p.text-xs.uppercase.tracking-wider.mb-2(style="color: var(--text-muted)") {{ $t('recruitment.requirements') || 'Requirements' }}
+        p.text-xs.uppercase.tracking-wider.mb-2(style="color: var(--text-muted)") {{ $t('recruitment.requirements') }}
         ul.space-y-1.pl-4
           li.text-sm(v-for="(req, idx) in posting.requirements" :key="idx" style="color: var(--text-primary); list-style: disc") {{ req }}
 
@@ -50,7 +50,7 @@ div
     .glass-card.p-6.rounded-2xl.mb-6
       .flex.items-center.gap-2.mb-5
         Icon(name="ph:funnel-bold" size="20" style="color: #3b82f6")
-        h3.text-base.font-bold(style="color: var(--text-primary)") {{ $t('recruitment.funnelAnalytics') || 'Recruitment Funnel' }}
+        h3.text-base.font-bold(style="color: var(--text-primary)") {{ $t('recruitment.funnelAnalytics') }}
 
       div(v-if="funnelLoading")
         .flex.items-center.justify-center.py-8
@@ -87,10 +87,10 @@ div
         //- Summary Row
         .flex.items-center.justify-between.mt-4.px-2
           .flex.items-center.gap-2
-            span.text-sm(style="color: var(--text-muted)") {{ $t('recruitment.totalApplicants') || 'Total Applicants' }}:
+            span.text-sm(style="color: var(--text-muted)") {{ $t('recruitment.totalApplicants') }}:
             span.text-sm.font-bold(style="color: var(--text-primary)") {{ funnelData.totalApplicants || 0 }}
           .flex.items-center.gap-2
-            span.text-sm(style="color: var(--text-muted)") {{ $t('recruitment.rejectionRate') || 'Rejection Rate' }}:
+            span.text-sm(style="color: var(--text-muted)") {{ $t('recruitment.rejectionRate') }}:
             span.text-sm.font-bold(style="color: #ef4444") {{ funnelData.rejectionRate || 0 }}%
 
     //- ─── Applicant Pipeline View ────────────────────────
@@ -98,11 +98,11 @@ div
       .flex.items-center.justify-between.mb-4
         .flex.items-center.gap-2
           Icon(name="ph:users-three-bold" size="20" style="color: #7849ff")
-          h3.text-base.font-bold(style="color: var(--text-primary)") {{ $t('recruitment.applicantPipeline') || 'Applicant Pipeline' }}
+          h3.text-base.font-bold(style="color: var(--text-primary)") {{ $t('recruitment.applicantPipeline') }}
         .flex.items-center.gap-2
           el-radio-group(v-model="viewMode" size="small")
-            el-radio-button(value="pipeline") {{ $t('recruitment.pipelineView') || 'Pipeline' }}
-            el-radio-button(value="table") {{ $t('recruitment.tableView') || 'Table' }}
+            el-radio-button(value="pipeline") {{ $t('recruitment.pipelineView') }}
+            el-radio-button(value="table") {{ $t('recruitment.tableView') }}
 
       //- Pipeline (Kanban) View
       template(v-if="viewMode === 'pipeline'")
@@ -133,13 +133,13 @@ div
 
                 //- Empty column state
                 .text-center.py-6(v-if="!getApplicantsForStage(stage.value).length")
-                  p.text-xs(style="color: var(--text-muted); opacity: 0.5") {{ $t('recruitment.noApplicantsInStage') || 'No applicants' }}
+                  p.text-xs(style="color: var(--text-muted); opacity: 0.5") {{ $t('recruitment.noApplicantsInStage') }}
 
       //- Table View
       template(v-else)
         .glass-card.rounded-2xl.overflow-hidden
           el-table(:data="applicants" style="width: 100%" stripe)
-            el-table-column(:label="$t('recruitment.applicantName') || 'Name'" min-width="200")
+            el-table-column(:label="$t('recruitment.applicantName')" min-width="200")
               template(#default="{ row }")
                 .flex.items-center.gap-3.cursor-pointer(@click="openApplicantPanel(row)")
                   .w-8.h-8.rounded-full.flex.items-center.justify-center.shrink-0(style="background: rgba(120, 73, 255, 0.15)")
@@ -147,24 +147,24 @@ div
                   div
                     p.text-sm.font-semibold(style="color: var(--text-primary)") {{ row.name }}
                     p.text-xs(style="color: var(--text-muted)") {{ row.email }}
-            el-table-column(:label="$t('recruitment.stage') || 'Stage'" width="140" align="center")
+            el-table-column(:label="$t('recruitment.stage')" width="140" align="center")
               template(#default="{ row }")
                 el-tag(:type="getStageType(row.stage)" effect="dark" size="small" round) {{ row.stage }}
-            el-table-column(:label="$t('recruitment.appliedDate') || 'Applied'" width="130")
+            el-table-column(:label="$t('recruitment.appliedDate')" width="130")
               template(#default="{ row }")
                 span.text-sm(style="color: var(--text-muted)") {{ formatDate(row.createdAt) }}
-            el-table-column(:label="$t('recruitment.source') || 'Source'" width="120")
+            el-table-column(:label="$t('recruitment.source')" width="120")
               template(#default="{ row }")
                 span.text-sm(style="color: var(--text-muted)") {{ row.source || '--' }}
-            el-table-column(:label="$t('recruitment.rating') || 'Rating'" width="140" align="center")
+            el-table-column(:label="$t('recruitment.rating')" width="140" align="center")
               template(#default="{ row }")
                 el-rate(:model-value="row.rating || 0" disabled :max="5" size="small")
-            el-table-column(:label="$t('common.actions') || 'Actions'" width="180" align="center")
+            el-table-column(:label="$t('common.actions')" width="180" align="center")
               template(#default="{ row }")
                 .flex.items-center.justify-center.gap-1
                   el-button(text type="success" size="small" @click.stop="openStageDialog(row)")
                     Icon(name="ph:arrow-right-bold" size="14")
-                    span.ml-1.text-xs {{ $t('recruitment.moveStage') || 'Move' }}
+                    span.ml-1.text-xs {{ $t('recruitment.moveStage') }}
                   el-button(v-if="row.stage !== 'REJECTED' && row.stage !== 'HIRED'" text type="danger" size="small" @click.stop="handleRejectApplicant(row)")
                     Icon(name="ph:x-circle-bold" size="14")
 
@@ -190,37 +190,37 @@ div
         el-tag(:type="getStageType(panelApplicant.stage)" effect="dark" size="large") {{ panelApplicant.stage }}
         el-button(size="small" type="primary" plain @click="openStageDialog(panelApplicant)")
           Icon(name="ph:arrow-right-bold" size="14")
-          span.ml-1 {{ $t('recruitment.moveStage') || 'Move Stage' }}
+          span.ml-1 {{ $t('recruitment.moveStage') }}
         el-button(v-if="panelApplicant.stage !== 'REJECTED' && panelApplicant.stage !== 'HIRED'" size="small" type="danger" plain @click="handleRejectApplicant(panelApplicant)")
           Icon(name="ph:x-circle-bold" size="14")
-          span.ml-1 {{ $t('recruitment.reject') || 'Reject' }}
+          span.ml-1 {{ $t('recruitment.reject') }}
 
       //- Detail Fields
       .space-y-4
         .glass-card.p-4.rounded-xl
           .grid.gap-4(class="grid-cols-2")
             div
-              p.text-xs.uppercase.tracking-wider.mb-1(style="color: var(--text-muted)") {{ $t('recruitment.appliedDate') || 'Applied Date' }}
+              p.text-xs.uppercase.tracking-wider.mb-1(style="color: var(--text-muted)") {{ $t('recruitment.appliedDate') }}
               p.text-sm.font-semibold(style="color: var(--text-primary)") {{ formatDate(panelApplicant.createdAt) }}
             div
-              p.text-xs.uppercase.tracking-wider.mb-1(style="color: var(--text-muted)") {{ $t('recruitment.source') || 'Source' }}
+              p.text-xs.uppercase.tracking-wider.mb-1(style="color: var(--text-muted)") {{ $t('recruitment.source') }}
               p.text-sm.font-semibold(style="color: var(--text-primary)") {{ panelApplicant.source || '--' }}
             div
-              p.text-xs.uppercase.tracking-wider.mb-1(style="color: var(--text-muted)") {{ $t('recruitment.rating') || 'Rating' }}
+              p.text-xs.uppercase.tracking-wider.mb-1(style="color: var(--text-muted)") {{ $t('recruitment.rating') }}
               el-rate(:model-value="panelApplicant.rating || 0" disabled :max="5" size="small")
             div
-              p.text-xs.uppercase.tracking-wider.mb-1(style="color: var(--text-muted)") {{ $t('recruitment.resumeUrl') || 'Resume' }}
-              a.text-sm.font-semibold(v-if="panelApplicant.resumeUrl" :href="panelApplicant.resumeUrl" target="_blank" style="color: #3b82f6") {{ $t('common.view') || 'View' }}
+              p.text-xs.uppercase.tracking-wider.mb-1(style="color: var(--text-muted)") {{ $t('recruitment.resumeUrl') }}
+              a.text-sm.font-semibold(v-if="panelApplicant.resumeUrl" :href="panelApplicant.resumeUrl" target="_blank" style="color: #3b82f6") {{ $t('common.view') }}
               span.text-sm(v-else style="color: var(--text-muted)") --
 
         //- Notes
         .glass-card.p-4.rounded-xl(v-if="panelApplicant.notes")
-          p.text-xs.uppercase.tracking-wider.mb-2(style="color: var(--text-muted)") {{ $t('recruitment.notes') || 'Notes' }}
+          p.text-xs.uppercase.tracking-wider.mb-2(style="color: var(--text-muted)") {{ $t('recruitment.notes') }}
           p.text-sm(style="color: var(--text-primary); white-space: pre-line") {{ panelApplicant.notes }}
 
         //- Stage History
         .glass-card.p-4.rounded-xl(v-if="panelApplicant.experience?.stageHistory?.length")
-          p.text-xs.uppercase.tracking-wider.mb-3(style="color: var(--text-muted)") {{ $t('recruitment.stageHistory') || 'Stage History' }}
+          p.text-xs.uppercase.tracking-wider.mb-3(style="color: var(--text-muted)") {{ $t('recruitment.stageHistory') }}
           .space-y-2
             .flex.items-center.gap-3(v-for="(h, idx) in panelApplicant.experience.stageHistory" :key="idx")
               .w-2.h-2.rounded-full(style="background: #7849ff")
@@ -234,20 +234,20 @@ div
   //- ─── Add Applicant Dialog ─────────────────────────────
   el-dialog(
     v-model="applicantDialogVisible"
-    :title="$t('recruitment.addApplicant') || 'Add Applicant'"
+    :title="$t('recruitment.addApplicant')"
     width="560px"
     destroy-on-close
   )
     el-form(:model="applicantForm" label-position="top")
       .grid.gap-4(class="grid-cols-1 md:grid-cols-2")
-        el-form-item(:label="$t('recruitment.applicantName') || 'Full Name'" required)
-          el-input(v-model="applicantForm.name" :placeholder="$t('recruitment.namePlaceholder') || 'Enter full name'")
-        el-form-item(:label="$t('recruitment.email') || 'Email'" required)
-          el-input(v-model="applicantForm.email" type="email" :placeholder="$t('recruitment.emailPlaceholder') || 'Enter email'")
+        el-form-item(:label="$t('recruitment.applicantName')" required)
+          el-input(v-model="applicantForm.name" :placeholder="$t('recruitment.namePlaceholder')")
+        el-form-item(:label="$t('recruitment.email')" required)
+          el-input(v-model="applicantForm.email" type="email" :placeholder="$t('recruitment.emailPlaceholder')")
       .grid.gap-4(class="grid-cols-1 md:grid-cols-2")
-        el-form-item(:label="$t('recruitment.phone') || 'Phone'")
-          el-input(v-model="applicantForm.phone" :placeholder="$t('recruitment.phonePlaceholder') || 'Enter phone number'")
-        el-form-item(:label="$t('recruitment.source') || 'Source'")
+        el-form-item(:label="$t('recruitment.phone')")
+          el-input(v-model="applicantForm.phone" :placeholder="$t('recruitment.phonePlaceholder')")
+        el-form-item(:label="$t('recruitment.source')")
           el-select(v-model="applicantForm.source" class="w-full" filterable allow-create)
             el-option(label="LinkedIn" value="LinkedIn")
             el-option(label="Indeed" value="Indeed")
@@ -255,16 +255,16 @@ div
             el-option(label="Website" value="Website")
             el-option(label="Job Board" value="Job Board")
             el-option(label="Other" value="Other")
-      el-form-item(:label="$t('recruitment.notes') || 'Notes'")
+      el-form-item(:label="$t('recruitment.notes')")
         el-input(v-model="applicantForm.notes" type="textarea" :rows="3")
     template(#footer)
-      el-button(@click="applicantDialogVisible = false") {{ $t('common.cancel') || 'Cancel' }}
-      el-button(type="primary" @click="handleAddApplicant" :loading="saving") {{ $t('common.save') || 'Save' }}
+      el-button(@click="applicantDialogVisible = false") {{ $t('common.cancel') }}
+      el-button(type="primary" @click="handleAddApplicant" :loading="saving") {{ $t('common.save') }}
 
   //- ─── Move Stage Dialog ────────────────────────────────
   el-dialog(
     v-model="stageDialogVisible"
-    :title="$t('recruitment.moveStage') || 'Move Applicant Stage'"
+    :title="$t('recruitment.moveStage')"
     width="420px"
     destroy-on-close
   )
@@ -274,9 +274,9 @@ div
           span.text-sm.font-bold(style="color: #7849ff") {{ (stageApplicant.name || '?').charAt(0).toUpperCase() }}
         div
           p.text-sm.font-semibold(style="color: var(--text-primary)") {{ stageApplicant.name }}
-          p.text-xs(style="color: var(--text-muted)") {{ $t('recruitment.currentStage') || 'Current' }}: {{ stageApplicant.stage }}
+          p.text-xs(style="color: var(--text-muted)") {{ $t('recruitment.currentStage') }}: {{ stageApplicant.stage }}
 
-      el-form-item(:label="$t('recruitment.newStage') || 'Move to Stage'")
+      el-form-item(:label="$t('recruitment.newStage')")
         el-select(v-model="newStage" class="w-full" size="large")
           el-option(
             v-for="s in availableStages"
@@ -286,8 +286,8 @@ div
             :disabled="s.disabled"
           )
     template(#footer)
-      el-button(@click="stageDialogVisible = false") {{ $t('common.cancel') || 'Cancel' }}
-      el-button(type="primary" @click="handleMoveStage" :loading="saving" :disabled="!newStage") {{ $t('recruitment.moveStage') || 'Move' }}
+      el-button(@click="stageDialogVisible = false") {{ $t('common.cancel') }}
+      el-button(type="primary" @click="handleMoveStage" :loading="saving" :disabled="!newStage") {{ $t('recruitment.moveStage') }}
 </template>
 
 <script setup lang="ts">
@@ -442,7 +442,7 @@ async function fetchPosting() {
       posting.value = all.find((p: any) => String(p.id) === String(postingId.value)) || null;
     }
   } catch {
-    ElMessage.error('Failed to load posting');
+    ElMessage.error(t('recruitment.loadPostingFailed'));
   }
 }
 
@@ -454,7 +454,7 @@ async function fetchApplicants() {
       applicants.value = data.docs || data.rows || data || [];
     }
   } catch {
-    ElMessage.error('Failed to load applicants');
+    ElMessage.error(t('recruitment.loadApplicantsFailed'));
   }
 }
 
@@ -499,7 +499,7 @@ function openApplicantDialog() {
 
 async function handleAddApplicant() {
   if (!applicantForm.name.trim() || !applicantForm.email.trim()) {
-    ElMessage.warning(t('common.fillRequired') || 'Please fill in required fields');
+    ElMessage.warning(t('common.fillRequired'));
     return;
   }
   saving.value = true;
@@ -511,14 +511,14 @@ async function handleAddApplicant() {
     };
     const res = await useApiFetch('hr/recruitment/applicants', 'POST', payload);
     if (res?.success) {
-      ElMessage.success(t('common.saved') || 'Applicant added');
+      ElMessage.success(t('common.saved'));
       applicantDialogVisible.value = false;
       await Promise.all([fetchApplicants(), fetchFunnel()]);
     } else {
-      ElMessage.error(res?.message || 'Failed to add applicant');
+      ElMessage.error(res?.message || t('common.error'));
     }
   } catch {
-    ElMessage.error(t('common.error') || 'An error occurred');
+    ElMessage.error(t('common.error'));
   } finally {
     saving.value = false;
   }
@@ -542,10 +542,10 @@ async function handleMoveStage() {
       panelVisible.value = false;
       await Promise.all([fetchApplicants(), fetchFunnel()]);
     } else {
-      ElMessage.error(res?.message || 'Failed to move stage');
+      ElMessage.error(res?.message || t('common.error'));
     }
   } catch {
-    ElMessage.error(t('common.error') || 'An error occurred');
+    ElMessage.error(t('common.error'));
   } finally {
     saving.value = false;
   }
@@ -554,12 +554,12 @@ async function handleMoveStage() {
 async function handleRejectApplicant(row: any) {
   try {
     await ElMessageBox.confirm(
-      `${t('recruitment.confirmReject') || 'Are you sure you want to reject'} ${row.name}?`,
-      t('common.warning') || 'Warning',
+      `${t('recruitment.confirmReject')} ${row.name}?`,
+      t('common.warning'),
       { type: 'warning' }
     );
     await useApiFetch(`hr/recruitment/applicants/${row.id}/stage`, 'PUT', { stage: 'REJECTED' });
-    ElMessage.success(t('recruitment.applicantRejected') || 'Applicant rejected');
+    ElMessage.success(t('recruitment.applicantRejected'));
     panelVisible.value = false;
     await Promise.all([fetchApplicants(), fetchFunnel()]);
   } catch {
@@ -570,16 +570,16 @@ async function handleRejectApplicant(row: any) {
 async function handleClosePosting() {
   try {
     await ElMessageBox.confirm(
-      t('recruitment.confirmClosePosting') || 'Close this posting? All remaining applicants will be rejected.',
-      t('common.warning') || 'Warning',
-      { type: 'warning', confirmButtonText: t('recruitment.closePosting') || 'Close Posting' }
+      t('recruitment.confirmClosePosting'),
+      t('common.warning'),
+      { type: 'warning', confirmButtonText: t('recruitment.closePosting') }
     );
     const res = await useApiFetch(`hr/recruitment/postings/${postingId.value}/close`, 'PUT', { rejectRemaining: true });
     if (res?.success) {
-      ElMessage.success(t('recruitment.postingClosed') || 'Posting closed');
+      ElMessage.success(t('recruitment.postingClosed'));
       await loadAll();
     } else {
-      ElMessage.error(res?.message || 'Failed to close posting');
+      ElMessage.error(res?.message || t('common.error'));
     }
   } catch {
     // User cancelled

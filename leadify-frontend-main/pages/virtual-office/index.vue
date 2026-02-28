@@ -141,9 +141,11 @@
 
 <script setup lang="ts">
 import { ref, reactive, computed, onMounted } from 'vue';
+import { ElMessage } from 'element-plus';
 import { useVirtualOffice } from '~/composables/useVirtualOffice';
 
 definePageMeta({});
+const { t } = useI18n();
 
 const {
   rooms,
@@ -177,7 +179,7 @@ async function saveRoom() {
   await addRoom({ ...roomForm } as any);
   Object.assign(roomForm, { name: '', type: 'office', capacity: 10, description: '', icon: '🏢', color: '#7c3aed', isLocked: false });
   showRoomDialog.value = false;
-  ElMessage.success('Room created!');
+  ElMessage.success(t('virtualOffice.roomCreated'));
 }
 
 function statusColor(s: string): string {

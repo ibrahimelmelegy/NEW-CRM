@@ -157,8 +157,8 @@ async function handleBulkDelete() {
   try {
     await ElMessageBox.confirm(
       `Are you sure you want to delete ${selectedRows.value.length} opportunity(ies)?`,
-      t('common.warning') || 'Warning',
-      { type: 'warning', confirmButtonText: t('common.delete') || 'Delete', cancelButtonText: t('common.cancel') || 'Cancel' }
+      t('common.warning'),
+      { type: 'warning', confirmButtonText: t('common.delete'), cancelButtonText: t('common.cancel') }
     );
     loadingAction.value = true;
     const ids = selectedRows.value.map((r: any) => r.id);

@@ -297,6 +297,8 @@ import { ElMessage } from 'element-plus';
 
 definePageMeta({ layout: 'default', middleware: 'permissions' });
 
+const { t } = useI18n();
+
 const activeTab = ref('pipeline');
 const showJobDialog = ref(false);
 const newJob = ref({ title: '', department: 'Engineering', location: 'Riyadh', type: 'Full-time', level: 'MID', salaryRange: '', description: '' });
@@ -474,17 +476,17 @@ const getCandidatesByStage = (stage: string) => candidates.value.filter(c => c.s
 const openCandidate = (c: any) => ElMessage.info(`Opening: ${c.name}`);
 const viewApplicants = (j: any) => ElMessage.info(`${j.applicants} applicants for ${j.title}`);
 const editJob = (j: any) => ElMessage.info(`Editing: ${j.title}`);
-const shareJob = (j: any) => ElMessage.success('Job link copied!');
+const shareJob = (j: any) => ElMessage.success(t('common.copied'));
 const joinInterview = (i: any) => ElMessage.info(`Joining interview with ${i.candidateName}`);
 const rescheduleInterview = (i: any) => ElMessage.info(`Rescheduling ${i.candidateName}'s interview`);
 const contactCandidate = (c: any) => ElMessage.info(`Contacting: ${c.name}`);
 
 const postJob = () => {
   if (!newJob.value.title) {
-    ElMessage.warning('Job title required');
+    ElMessage.warning(t('common.fillRequired'));
     return;
   }
-  ElMessage.success('Job posted!');
+  ElMessage.success(t('recruitment.jobPosted'));
   showJobDialog.value = false;
 };
 </script>

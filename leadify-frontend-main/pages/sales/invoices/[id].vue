@@ -154,7 +154,10 @@ div
 
 <script setup lang="ts">
 import { ElMessageBox, ElNotification } from 'element-plus';
+import { useI18n } from 'vue-i18n';
 import type { InvoiceDetail } from '~/composables/useInvoiceBilling';
+
+const { t } = useI18n();
 import { getInvoiceDetail, markInvoiceSent, voidInvoice, createCreditNote, formatCurrency } from '~/composables/useInvoiceBilling';
 
 definePageMeta({ middleware: 'permissions' });
@@ -215,7 +218,7 @@ async function loadInvoice() {
 
 async function handleSend() {
   try {
-    await ElMessageBox.confirm('Mark this invoice as sent?', 'Send Invoice', {
+    await ElMessageBox.confirm(t('invoices.confirmSend'), t('invoices.sendInvoice'), {
       confirmButtonText: 'Send',
       cancelButtonText: 'Cancel',
       type: 'info'
@@ -232,7 +235,7 @@ async function handleSend() {
 
 async function handleVoid() {
   try {
-    await ElMessageBox.confirm('Voiding this invoice is irreversible. Continue?', 'Void Invoice', {
+    await ElMessageBox.confirm(t('invoices.confirmVoid'), t('invoices.voidInvoice'), {
       confirmButtonText: 'Void',
       cancelButtonText: 'Cancel',
       type: 'warning'

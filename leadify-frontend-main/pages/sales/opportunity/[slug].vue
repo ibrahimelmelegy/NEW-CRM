@@ -8,7 +8,7 @@
     )
       el-button(size="large" type="success" class="!rounded-2xl")
         Icon(name="ph:arrows-clockwise-bold" size="18" class="mr-1")
-        | {{ $t('opportunities.convertDeal') || 'Convert to Deal' }}
+        | {{ $t('opportunities.convertDeal') }}
     el-dropdown(trigger="click")
       span.el-dropdown-link
           button.rounded-btn(class="!px-4"): Icon(  name="IconToggle" size="24")

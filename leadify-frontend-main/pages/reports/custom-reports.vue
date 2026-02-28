@@ -5,12 +5,12 @@
     div
       h1.text-3xl.font-black.tracking-tight.flex.items-center.gap-3(style="color: var(--text-primary);")
         Icon(name="ph:file-magnifying-glass-bold" size="32" style="color: #7849ff")
-        | {{ $t('reportsPage.savedReports') || 'Custom Reports' }}
-      p.text-sm.mt-1(style="color: var(--text-muted);") {{ $t('reportsPage.subtitle') || 'View, create, and manage custom reports' }}
+        | {{ $t('reportsPage.savedReports') }}
+      p.text-sm.mt-1(style="color: var(--text-muted);") {{ $t('reportsPage.subtitle') }}
     .flex.items-center.gap-3
       el-button(type="primary" size="large" class="!rounded-xl" @click="openCreateDialog")
         Icon(name="ph:plus-bold" size="16" class="mr-1")
-        | {{ $t('reportsPage.createReport') || 'Create Report' }}
+        | {{ $t('reportsPage.createReport') }}
 
   //- Stats Cards
   .grid.gap-4.mb-8(class="grid-cols-1 md:grid-cols-3")
@@ -19,7 +19,7 @@
         .w-10.h-10.rounded-xl.flex.items-center.justify-center(style="background: rgba(120,73,255,0.12);")
           Icon(name="ph:files-bold" size="20" style="color: #7849ff")
         div
-          p.text-xs.font-bold.uppercase.tracking-widest(style="color: var(--text-muted);") {{ $t('reportBuilder.savedReports') || 'Total Reports' }}
+          p.text-xs.font-bold.uppercase.tracking-widest(style="color: var(--text-muted);") {{ $t('reportBuilder.savedReports') }}
           p.text-2xl.font-black.mt-1(style="color: var(--text-primary);") {{ reports.length }}
 
     .relative.overflow-hidden.p-5.rounded-2xl.border(style="border-color: var(--border-default); background: var(--bg-elevated);")
@@ -42,7 +42,7 @@
   .flex.items-center.gap-4.mb-6(class="flex-col md:flex-row")
     el-input(
       v-model="searchQuery"
-      :placeholder="$t('reportsPage.searchReports') || 'Search reports...'"
+      :placeholder="$t('reportsPage.searchReports')"
       clearable
       style="max-width: 320px"
       size="large"
@@ -52,7 +52,7 @@
         Icon(name="ph:magnifying-glass" size="18" style="color: var(--text-muted)")
     el-select(
       v-model="entityTypeFilter"
-      :placeholder="$t('reportsPage.allEntities') || 'All Entities'"
+      :placeholder="$t('reportsPage.allEntities')"
       clearable
       size="large"
       style="width: 200px"
@@ -72,7 +72,7 @@
   template(v-else)
     el-card.rounded-2xl(shadow="never" style="border: 1px solid var(--border-default);" v-if="filteredReports.length")
       el-table(:data="filteredReports" stripe style="width: 100%")
-        el-table-column(:label="$t('reportsPage.reportName') || 'Report Name'" min-width="200")
+        el-table-column(:label="$t('reportsPage.reportName')" min-width="200")
           template(#default="scope")
             .flex.items-center.gap-3
               .w-8.h-8.rounded-lg.flex.items-center.justify-center(
@@ -82,16 +82,16 @@
               div
                 p.text-sm.font-bold(style="color: var(--text-primary);") {{ scope.row.name }}
                 p.text-xs(style="color: var(--text-muted);" v-if="scope.row.description") {{ scope.row.description }}
-        el-table-column(:label="$t('reportsPage.entityType') || 'Entity Type'" min-width="130")
+        el-table-column(:label="$t('reportsPage.entityType')" min-width="130")
           template(#default="scope")
             el-tag(size="small" effect="plain" round) {{ entityTypes[scope.row.entityType] || scope.row.entityType }}
-        el-table-column(:label="$t('reportBuilder.fields') || 'Fields'" min-width="100")
+        el-table-column(:label="$t('reportBuilder.fields')" min-width="100")
           template(#default="scope")
             span.text-sm {{ scope.row.fields?.length || 0 }} fields
-        el-table-column(:label="$t('reportsPage.createdBy') || 'Created By'" min-width="140")
+        el-table-column(:label="$t('reportsPage.createdBy')" min-width="140")
           template(#default="scope")
             span.text-sm {{ scope.row.user?.name || '--' }}
-        el-table-column(:label="$t('reportsPage.lastRun') || 'Last Run'" min-width="150")
+        el-table-column(:label="$t('reportsPage.lastRun')" min-width="150")
           template(#default="scope")
             span.text-sm.font-mono(style="color: var(--text-muted);") {{ formatDate(scope.row.updatedAt) }}
         el-table-column(label="Actions" width="280" fixed="right")
@@ -105,21 +105,21 @@
                 :loading="executingId === scope.row.id"
               )
                 Icon(name="ph:play-bold" size="14" class="mr-1")
-                | {{ $t('reportsPage.runReport') || 'Run' }}
+                | {{ $t('reportsPage.runReport') }}
               el-dropdown(trigger="click")
                 el-button(size="small" text)
                   Icon(name="ph:download-simple-bold" size="14" class="mr-1")
-                  | {{ $t('reportBuilder.export') || 'Export' }}
+                  | {{ $t('reportBuilder.export') }}
                 template(#dropdown)
                   el-dropdown-menu
                     el-dropdown-item(@click="handleExport(scope.row.id, 'csv')")
                       .flex.items-center.gap-2
                         Icon(name="ph:file-csv-bold" size="16")
-                        | {{ $t('reportsPage.exportCsv') || 'Export CSV' }}
+                        | {{ $t('reportsPage.exportCsv') }}
                     el-dropdown-item(@click="handleExport(scope.row.id, 'pdf')")
                       .flex.items-center.gap-2
                         Icon(name="ph:file-pdf-bold" size="16")
-                        | {{ $t('reportsPage.exportPdf') || 'Export PDF' }}
+                        | {{ $t('reportsPage.exportPdf') }}
               el-button(size="small" text @click="openEditDialog(scope.row)")
                 Icon(name="ph:pencil-simple-bold" size="14")
               el-popconfirm(
@@ -138,11 +138,11 @@
         style="background: rgba(120,73,255,0.08);"
       )
         Icon(name="ph:file-magnifying-glass" size="40" style="color: #7849ff; opacity: 0.6;")
-      p.text-lg.font-bold.mb-1(style="color: var(--text-primary);") {{ $t('reportsPage.noReports') || 'No saved reports yet' }}
+      p.text-lg.font-bold.mb-1(style="color: var(--text-primary);") {{ $t('reportsPage.noReports') }}
       p.text-sm.mb-4(style="color: var(--text-muted);") Create your first report to start analyzing your data.
       el-button(type="primary" class="!rounded-xl" @click="openCreateDialog")
         Icon(name="ph:plus-bold" size="14" class="mr-1")
-        | {{ $t('reportsPage.createReport') || 'Create Report' }}
+        | {{ $t('reportsPage.createReport') }}
 
   //- Results Dialog
   el-dialog(
@@ -156,7 +156,7 @@
     .mb-4.flex.items-center.justify-between(v-if="executionResults")
       .flex.items-center.gap-3
         el-tag(type="info" effect="plain") {{ executionResults.entityType }}
-        span.text-sm.font-mono(style="color: var(--text-muted);") {{ executionResults.totalCount }} {{ $t('reportBuilder.records') || 'records' }}
+        span.text-sm.font-mono(style="color: var(--text-muted);") {{ executionResults.totalCount }} {{ $t('reportBuilder.records') }}
       .flex.items-center.gap-2
         el-button(size="small" @click="handleExport(resultsReportId, 'csv')")
           Icon(name="ph:file-csv-bold" size="14" class="mr-1")
@@ -168,7 +168,7 @@
     //- Results Loading
     .flex.items-center.justify-center.py-12(v-if="executingId")
       el-icon.is-loading(:size="28" style="color: var(--accent-color, #7849ff)")
-      span.ml-3.text-sm(style="color: var(--text-muted);") {{ $t('reportBuilder.generatingReport') || 'Generating report...' }}
+      span.ml-3.text-sm(style="color: var(--text-muted);") {{ $t('reportBuilder.generatingReport') }}
 
     //- Results Table
     template(v-else-if="executionResults && executionResults.data && executionResults.data.length")
@@ -188,12 +188,12 @@
     //- No Results
     .text-center.py-12(v-else-if="executionResults && executionResults.data && !executionResults.data.length")
       Icon(name="ph:database" size="40" style="color: var(--text-muted); opacity: 0.5;")
-      p.text-sm.mt-3(style="color: var(--text-muted);") {{ $t('reportBuilder.noData') || 'No Data Yet' }}
+      p.text-sm.mt-3(style="color: var(--text-muted);") {{ $t('reportBuilder.noData') }}
 
   //- Create / Edit Report Dialog
   el-dialog(
     v-model="formDialogVisible"
-    :title="editingReport ? 'Edit Report' : ($t('reportsPage.createReport') || 'Create Report')"
+    :title="editingReport ? 'Edit Report' : ($t('reportsPage.createReport'))"
     width="700px"
     :close-on-click-modal="false"
   )
@@ -203,10 +203,10 @@
       :rules="formRules"
       label-position="top"
     )
-      el-form-item(:label="$t('reportsPage.reportName') || 'Report Name'" prop="name")
+      el-form-item(:label="$t('reportsPage.reportName')" prop="name")
         el-input(
           v-model="reportForm.name"
-          :placeholder="$t('reportBuilder.reportName') || 'Report name...'"
+          :placeholder="$t('reportBuilder.reportName')"
           size="large"
         )
 
@@ -219,10 +219,10 @@
         )
 
       .grid.gap-4(class="grid-cols-1 md:grid-cols-2")
-        el-form-item(:label="$t('reportsPage.entityType') || 'Entity Type'" prop="entityType")
+        el-form-item(:label="$t('reportsPage.entityType')" prop="entityType")
           el-select(
             v-model="reportForm.entityType"
-            :placeholder="$t('reportBuilder.entityType') || 'Entity Type'"
+            :placeholder="$t('reportBuilder.entityType')"
             size="large"
             style="width: 100%"
             @change="handleEntityTypeChange"
@@ -239,7 +239,7 @@
             el-option(label="Descending" value="DESC")
             el-option(label="Ascending" value="ASC")
 
-      el-form-item(:label="$t('reportBuilder.fields') || 'Fields'" prop="fields")
+      el-form-item(:label="$t('reportBuilder.fields')" prop="fields")
         .mb-2(v-if="loadingFields")
           el-icon.is-loading(style="color: var(--text-muted);")
           span.text-xs.ml-2(style="color: var(--text-muted);") Loading fields...
@@ -248,7 +248,7 @@
           v-model="reportForm.fields"
           multiple
           filterable
-          :placeholder="$t('reportBuilder.searchFields') || 'Search fields...'"
+          :placeholder="$t('reportBuilder.searchFields')"
           size="large"
           style="width: 100%"
           :disabled="!reportForm.entityType"
@@ -280,11 +280,11 @@
           )
 
       //- Group By
-      el-form-item(:label="$t('reportBuilder.groupBy') || 'Group By'" v-if="reportForm.fields.length")
+      el-form-item(:label="$t('reportBuilder.groupBy')" v-if="reportForm.fields.length")
         el-select(
           v-model="reportForm.groupBy"
           clearable
-          :placeholder="$t('reportBuilder.none') || 'None'"
+          :placeholder="$t('reportBuilder.none')"
           size="large"
           style="width: 100%"
         )
@@ -298,16 +298,16 @@
       //- Filters Section
       .mb-4
         .flex.items-center.justify-between.mb-3
-          span.text-sm.font-bold(style="color: var(--text-primary);") {{ $t('reportBuilder.filters') || 'Filters' }}
+          span.text-sm.font-bold(style="color: var(--text-primary);") {{ $t('reportBuilder.filters') }}
           el-button(size="small" text @click="addFilter")
             Icon(name="ph:plus-bold" size="14" class="mr-1")
-            | {{ $t('reportBuilder.addFilter') || 'Add Filter' }}
+            | {{ $t('reportBuilder.addFilter') }}
 
         .space-y-3
           .flex.items-center.gap-3(v-for="(filter, idx) in reportForm.filters" :key="idx")
             el-select(
               v-model="filter.field"
-              :placeholder="$t('reportBuilder.selectField') || 'Select field'"
+              :placeholder="$t('reportBuilder.selectField')"
               size="default"
               style="width: 30%"
               filterable
@@ -320,7 +320,7 @@
               )
             el-select(
               v-model="filter.operator"
-              :placeholder="$t('reportBuilder.operator') || 'Operator'"
+              :placeholder="$t('reportBuilder.operator')"
               size="default"
               style="width: 25%"
             )
@@ -334,7 +334,7 @@
             el-input(
               v-if="filter.operator !== 'is_null' && filter.operator !== 'is_not_null'"
               v-model="filter.value"
-              :placeholder="$t('reportBuilder.enterValue') || 'Enter value'"
+              :placeholder="$t('reportBuilder.enterValue')"
               size="default"
               style="width: 35%"
             )
@@ -354,14 +354,14 @@
 
     template(#footer)
       .flex.items-center.justify-end.gap-3
-        el-button(size="large" @click="formDialogVisible = false") {{ $t('common.cancel') || 'Cancel' }}
+        el-button(size="large" @click="formDialogVisible = false") {{ $t('common.cancel') }}
         el-button(
           type="primary"
           size="large"
           :loading="saving"
           @click="handleSaveReport"
         )
-          | {{ editingReport ? ($t('common.save') || 'Save') : ($t('reportBuilder.saveReport') || 'Save Report') }}
+          | {{ editingReport ? ($t('common.save')) : ($t('reportBuilder.saveReport')) }}
 </template>
 
 <script setup lang="ts">
@@ -507,11 +507,11 @@ async function handleExecute(report: any) {
     if (success && body) {
       executionResults.value = body;
     } else {
-      ElNotification({ type: 'error', title: t('common.error') || 'Error', message: 'Failed to execute report' });
+      ElNotification({ type: 'error', title: t('common.error'), message: t('common.error') });
     }
   } catch (e) {
     console.error('Failed to execute report', e);
-    ElNotification({ type: 'error', title: t('common.error') || 'Error', message: 'Failed to execute report' });
+    ElNotification({ type: 'error', title: t('common.error'), message: t('common.error') });
   } finally {
     executingId.value = null;
   }
@@ -557,10 +557,10 @@ async function handleExport(reportId: number, format: string) {
       }
     }
 
-    ElNotification({ type: 'success', title: t('common.success') || 'Success', message: 'Report exported' });
+    ElNotification({ type: 'success', title: t('common.success'), message: t('common.success') });
   } catch (e) {
     console.error('Export failed', e);
-    ElNotification({ type: 'error', title: t('common.error') || 'Error', message: 'Export failed' });
+    ElNotification({ type: 'error', title: t('common.error'), message: t('common.error') });
   }
 }
 
@@ -586,23 +586,23 @@ async function handleSaveReport() {
       if (editingReport.value) {
         const { success } = await useApiFetch(`reports/${editingReport.value.id}`, 'PUT', payload);
         if (success) {
-          ElNotification({ type: 'success', title: t('common.success') || 'Success', message: 'Report updated' });
+          ElNotification({ type: 'success', title: t('common.success'), message: t('common.saved') });
         } else {
-          ElNotification({ type: 'error', title: t('common.error') || 'Error', message: 'Failed to update report' });
+          ElNotification({ type: 'error', title: t('common.error'), message: t('common.error') });
         }
       } else {
         const { success } = await useApiFetch('reports', 'POST', payload);
         if (success) {
-          ElNotification({ type: 'success', title: t('common.success') || 'Success', message: 'Report created' });
+          ElNotification({ type: 'success', title: t('common.success'), message: t('common.saved') });
         } else {
-          ElNotification({ type: 'error', title: t('common.error') || 'Error', message: 'Failed to create report' });
+          ElNotification({ type: 'error', title: t('common.error'), message: t('common.error') });
         }
       }
       formDialogVisible.value = false;
       await fetchReports();
     } catch (e) {
       console.error('Save failed', e);
-      ElNotification({ type: 'error', title: t('common.error') || 'Error', message: 'Failed to save report' });
+      ElNotification({ type: 'error', title: t('common.error'), message: t('common.error') });
     } finally {
       saving.value = false;
     }
@@ -613,10 +613,10 @@ async function handleDelete(id: number) {
   try {
     const { success } = await useApiFetch(`reports/${id}`, 'DELETE');
     if (success) {
-      ElNotification({ type: 'success', title: t('common.success') || 'Success', message: 'Report deleted' });
+      ElNotification({ type: 'success', title: t('common.success'), message: t('common.deleted') });
       await fetchReports();
     } else {
-      ElNotification({ type: 'error', title: t('common.error') || 'Error', message: 'Failed to delete report' });
+      ElNotification({ type: 'error', title: t('common.error'), message: t('common.error') });
     }
   } catch (e) {
     console.error('Delete failed', e);

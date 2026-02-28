@@ -175,6 +175,8 @@ definePageMeta({
   middleware: 'permissions'
 });
 
+const { t } = useI18n();
+
 const showCreateDialog = ref(false);
 const newExperiment = ref({ name: '', description: '', testType: 'SUBJECT', trafficSplit: '50-50', campaignId: '', duration: '7d' });
 
@@ -238,10 +240,10 @@ const getExpStatusType = (s: string): 'success' | 'warning' | 'info' | 'danger' 
 
 const createExperiment = () => {
   if (!newExperiment.value.name) {
-    ElMessage.warning('Experiment name is required');
+    ElMessage.warning(t('common.fillRequired'));
     return;
   }
-  ElMessage.success('Experiment created');
+  ElMessage.success(t('abTesting.experimentCreated'));
   showCreateDialog.value = false;
 };
 </script>

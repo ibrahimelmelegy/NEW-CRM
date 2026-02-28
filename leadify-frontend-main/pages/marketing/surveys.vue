@@ -243,6 +243,8 @@ definePageMeta({
   middleware: 'permissions'
 });
 
+const { t } = useI18n();
+
 const showCreateDialog = ref(false);
 const newSurvey = ref({ name: '', type: 'NPS', audience: 'ALL_CLIENTS', channels: ['EMAIL'], startDate: '' });
 
@@ -377,19 +379,19 @@ const viewResults = (s: any) => ElMessage.info(`Viewing results: ${s.name}`);
 const editSurvey = (s: any) => ElMessage.info(`Editing: ${s.name}`);
 const shareSurvey = (s: any) => {
   navigator.clipboard?.writeText(`https://survey.example.com/${s.id}`);
-  ElMessage.success('Survey link copied!');
+  ElMessage.success(t('common.copied'));
 };
 const closeSurvey = (s: any) => {
   s.status = 'COMPLETED';
-  ElMessage.success('Survey closed');
+  ElMessage.success(t('surveys.surveyClosed'));
 };
 
 const createSurvey = () => {
   if (!newSurvey.value.name) {
-    ElMessage.warning('Survey name required');
+    ElMessage.warning(t('common.fillRequired'));
     return;
   }
-  ElMessage.success('Survey created');
+  ElMessage.success(t('surveys.surveyCreated'));
   showCreateDialog.value = false;
 };
 </script>

@@ -28,7 +28,7 @@ div
           Icon(name="ph:magnifying-glass" size="16")
       el-select(
         v-model="filterStatus"
-        :placeholder="$t('campaigns.status') || 'Status'"
+        :placeholder="$t('campaigns.status')"
         clearable
         size="large"
         style="max-width: 180px"
@@ -77,17 +77,17 @@ div
                   el-dropdown-item(v-if="row.status === 'DRAFT'" @click="handleSend(row.id)")
                     .flex.items-center
                       Icon.text-md.mr-2(name="ph:paper-plane-tilt-bold")
-                      p.text-sm {{ $t('campaigns.sent') || 'Send' }}
+                      p.text-sm {{ $t('campaigns.sent') }}
                   el-dropdown-item(@click="[deleteId = row.id, deletePopup = true]")
                     .flex.items-center
                       Icon.text-md.mr-2(name="IconDelete")
                       p.text-sm {{ $t('common.delete') }}
       template(#empty)
-        el-empty(:description="$t('common.noData') || 'No campaigns found'" image="/images/empty.png")
+        el-empty(:description="$t('common.noData')" image="/images/empty.png")
 
     //- Pagination
     .px-6.pt-6.flex.items-center.justify-between(v-if="filteredCampaigns.length > 0")
-      span.text-sm(style="color: var(--text-muted)") {{ $t('common.showing') || 'Showing' }} {{ paginationStart }}-{{ paginationEnd }} {{ $t('common.of') || 'of' }} {{ filteredCampaigns.length }} {{ $t('common.entries') || 'entries' }}
+      span.text-sm(style="color: var(--text-muted)") {{ $t('common.showing') }} {{ paginationStart }}-{{ paginationEnd }} {{ $t('common.of') }} {{ filteredCampaigns.length }} {{ $t('common.entries') }}
       el-pagination(
         v-model:current-page="currentPage"
         :page-size="pageSize"
@@ -203,7 +203,7 @@ const currentPage = ref(1);
 const pageSize = 10;
 
 const summaryStats = computed(() => [
-  { label: t('campaigns.allCampaigns') || 'Total', value: campaigns.value.length, icon: 'ph:envelope-bold', color: '#7849ff' },
+  { label: t('campaigns.allCampaigns'), value: campaigns.value.length, icon: 'ph:envelope-bold', color: '#7849ff' },
   {
     label: t('campaigns.status') + ': Draft',
     value: campaigns.value.filter(c => c.status === 'DRAFT').length,
@@ -211,7 +211,7 @@ const summaryStats = computed(() => [
     color: '#64748b'
   },
   {
-    label: t('campaigns.sent') || 'Sent',
+    label: t('campaigns.sent'),
     value: campaigns.value.filter(c => c.status === 'SENT').length,
     icon: 'ph:check-circle-bold',
     color: '#22c55e'

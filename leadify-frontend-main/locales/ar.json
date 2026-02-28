@@ -187,7 +187,15 @@
     "createNew": "إنشاء رحلة",
     "noAutomations": "لا توجد أتمتة بعد",
     "noAutomationsDesc": "أنشئ أول رحلة مرئية لأتمتة المهام المتكررة وتوسيع عملياتك.",
-    "createFirst": "إنشاء أول رحلة"
+    "createFirst": "إنشاء أول رحلة",
+    "journeyCreated": "تم إنشاء الرحلة",
+    "toggleFailed": "فشل تبديل حالة سير العمل",
+    "logsComingSoon": "ميزة سجلات التنفيذ قريباً",
+    "deleted": "تم حذف الأتمتة",
+    "confirmDelete": "هل أنت متأكد من حذف هذه الأتمتة؟",
+    "journeySaved": "تم حفظ الرحلة بنجاح",
+    "saveFailed": "فشل حفظ الرحلة",
+    "settingsComingSoon": "نافذة الإعدادات لتغيير الكيان/المشغّل قريباً"
   },
   "themeStudio": {
     "title": "استوديو المظهر",
@@ -257,6 +265,7 @@
     "status": "الحالة",
     "analytics": "التحليلات",
     "copiedToClipboard": "تم النسخ إلى الحافظة",
+    "copied": "تم النسخ!",
     "view": "عرض",
     "download": "تحميل",
     "upload": "رفع",
@@ -299,6 +308,12 @@
     "fillRequired": "يرجى ملء جميع الحقول المطلوبة",
     "confirmDelete": "هل أنت متأكد من حذف هذا؟",
     "saved": "تم الحفظ بنجاح",
+    "saveFailed": "فشل في الحفظ",
+    "loadFailed": "فشل في تحميل البيانات",
+    "fetchError": "فشل في جلب البيانات",
+    "downloadFailed": "فشل التنزيل",
+    "copied": "تم النسخ إلى الحافظة",
+    "warning": "تحذير",
     "comingSoon": "قريباً",
     "comments": "التعليقات",
     "attachments": "المرفقات",
@@ -330,7 +345,10 @@
     "name": "الاسم",
     "type": "النوع",
     "size": "الحجم",
-    "uploadedAt": "تاريخ الرفع"
+    "uploadedAt": "تاريخ الرفع",
+    "downloadFailed": "فشل التنزيل",
+    "copied": "تم النسخ!",
+    "fetchError": "فشل في جلب البيانات. يرجى المحاولة مرة أخرى لاحقاً."
   },
   "activities": {
     "types": {
@@ -959,7 +977,11 @@
     "status": "الحالة",
     "collectedDate": "تاريخ التحصيل",
     "markCollected": "تحصيل",
-    "undo": "تراجع"
+    "undo": "تراجع",
+    "confirmSend": "هل تريد تحديد هذه الفاتورة كمرسلة؟",
+    "sendInvoice": "إرسال الفاتورة",
+    "confirmVoid": "إلغاء هذه الفاتورة لا يمكن التراجع عنه. هل تريد المتابعة؟",
+    "voidInvoice": "إلغاء الفاتورة"
   },
   "deals": {
     "title": "الصفقات",
@@ -2628,7 +2650,10 @@
       "endDate": "تاريخ النهاية",
       "filterByCategory": "تصفية حسب الفئة",
       "refreshed": "تم تحديث اللوحة"
-    }
+    },
+    "confirmDeleteAccount": "هل أنت متأكد من حذف هذا الحساب؟",
+    "confirmSeedAccounts": "سيتم إنشاء مخطط حسابات افتراضي. هل تريد المتابعة؟",
+    "seedAccounts": "إنشاء حسابات افتراضية"
   },
   "fieldOps": {
     "title": "العمليات الميدانية",
@@ -2863,7 +2888,9 @@
     "stepApproved": "تمت الموافقة على الخطوة بنجاح",
     "stepRejected": "تم رفض الطلب",
     "requestCreated": "تم إنشاء طلب الموافقة",
-    "active": "نشط"
+    "active": "نشط",
+    "confirmReject": "هل أنت متأكد من رفض هذا الطلب؟",
+    "rejectApproval": "رفض الموافقة"
   },
   "documents": {
     "title": "مكتبة المستندات",
@@ -3017,7 +3044,8 @@
     "barChart": "رسم بياني شريطي",
     "pieChart": "رسم بياني دائري",
     "lineChart": "رسم بياني خطي",
-    "areaChart": "رسم بياني مساحي"
+    "areaChart": "رسم بياني مساحي",
+    "exportFailed": "فشل في تصدير التقرير"
   },
   "reportsPage": {
     "subtitle": "عرض وإنشاء وإدارة التقارير المخصصة",
@@ -3086,7 +3114,11 @@
     "bestCase": "أفضل حالة",
     "worstCase": "أسوأ حالة",
     "loadingForecasts": "جاري تحميل التوقعات...",
-    "noTeamData": "لا توجد بيانات فريق متاحة"
+    "noTeamData": "لا توجد بيانات فريق متاحة",
+    "loadFailed": "فشل في تحميل التوقعات",
+    "selectDateRange": "يرجى تحديد نطاق تاريخ أولاً",
+    "historicalFailed": "فشل في تحميل المقارنة التاريخية",
+    "scenarioFailed": "فشل في تشغيل السيناريو"
   },
   "analyticsPage": {
     "title": "تحليلات المبيعات",
@@ -4347,7 +4379,8 @@
     "subtitle": "صندوق بريد موحد لجميع الرسائل والمكالمات والاجتماعات والملاحظات.",
     "logActivity": "تسجيل نشاط",
     "allTypes": "جميع الأنواع",
-    "search": "البحث في الأنشطة..."
+    "search": "البحث في الأنشطة...",
+    "activityLogged": "تم تسجيل النشاط بنجاح"
   },
   "aiAssistant": {
     "title": "المساعد الذكي",
@@ -4355,7 +4388,8 @@
     "placeholder": "اسأل عن بيانات CRM، أنشئ رسائل بريد إلكتروني، حلل الصفقات...",
     "clearChat": "مسح المحادثة",
     "dailyInsights": "رؤى يومية",
-    "aiTools": "أدوات الذكاء الاصطناعي"
+    "aiTools": "أدوات الذكاء الاصطناعي",
+    "chatCleared": "تم مسح المحادثة"
   },
   "cpq": {
     "title": "تكوين وتسعير وعرض أسعار",
@@ -4392,14 +4426,16 @@
     "quantity": "الكمية",
     "taxRate": "نسبة الضريبة %",
     "quoteResult": "ملخص العرض",
-    "calculate": "حساب"
+    "calculate": "حساب",
+    "quoteOpening": "جاري فتح منشئ العروض..."
   },
   "performanceReviews": {
     "title": "تقييم الأداء",
     "subtitle": "تتبع أداء الموظفين وتحديد الأهداف وإدارة دورات التقييم.",
     "newReview": "تقييم جديد",
     "avgRating": "متوسط التقييم",
-    "goalCompletion": "إنجاز الأهداف"
+    "goalCompletion": "إنجاز الأهداف",
+    "reviewStarted": "تم بدء تقييم الأداء"
   },
   "goals": {
     "title": "الأهداف والنتائج الرئيسية",
@@ -4493,7 +4529,8 @@
     "subtitle": "تعيين تلقائي للعملاء المحتملين والصفقات والتذاكر بناءً على المعايير.",
     "newRule": "قاعدة جديدة",
     "roundRobin": "توزيع دوري",
-    "escalation": "تصعيد"
+    "escalation": "تصعيد",
+    "ruleCreated": "تم إنشاء القاعدة"
   },
   "resourcePlanner": {
     "title": "مخطط الموارد",
@@ -4661,7 +4698,10 @@
     "postingClosed": "تم إغلاق الوظيفة",
     "open": "مفتوحة",
     "draft": "مسودة",
-    "closed": "مغلقة"
+    "closed": "مغلقة",
+    "loadPostingFailed": "فشل في تحميل الوظيفة",
+    "loadApplicantsFailed": "فشل في تحميل المتقدمين",
+    "jobPosted": "تم نشر الوظيفة!"
   },
   "vendorScorecard": {
     "title": "تقييم الموردين",
@@ -4764,7 +4804,9 @@
     "winRate": "معدل الفوز",
     "competitiveIntel": "الاستخبارات التنافسية",
     "pricingTab": "التسعير",
-    "analytics": "التحليلات"
+    "analytics": "التحليلات",
+    "featureAdded": "تمت إضافة الميزة",
+    "featureRemoved": "تمت إزالة الميزة"
   },
   "loyaltyRewards": {
     "title": "الولاء والمكافآت",
@@ -4840,7 +4882,10 @@
     "subtitle": "استيراد البيانات من ملفات CSV وExcel مع تعيين الحقول ومعالجة التكرارات.",
     "upload": "رفع",
     "mapping": "تعيين الحقول",
-    "history": "سجل الاستيراد"
+    "history": "سجل الاستيراد",
+    "uploadFileRequired": "يرجى رفع ملف CSV أو Excel",
+    "mappingReset": "تم إعادة تعيين الحقول",
+    "mappingSaved": "تم حفظ تعيين الحقول"
   },
   "shippingLogistics": {
     "title": "الشحن والخدمات اللوجستية",
@@ -5607,7 +5652,39 @@
       "confirmDelete": "هل أنت متأكد من حذف هذا المنتج؟",
       "productCreated": "تم إنشاء المنتج بنجاح",
       "productUpdated": "تم تحديث المنتج بنجاح",
-      "productDeleted": "تم حذف المنتج بنجاح"
+      "productDeleted": "تم حذف المنتج بنجاح",
+      "price": "السعر",
+      "product": "المنتج",
+      "selectCategory": "اختر التصنيف",
+      "productNamePlaceholder": "أدخل اسم المنتج",
+      "descriptionPlaceholder": "أدخل وصف المنتج",
+      "pricePositive": "يجب أن يكون السعر >= 0",
+      "noDescription": "لا يوجد وصف",
+      "productNotFound": "المنتج غير موجود",
+      "productNotFoundDesc": "المنتج الذي تبحث عنه غير موجود أو تم حذفه.",
+      "uploadImage": "رفع صورة",
+      "imageHint": "انقر لرفع صورة المنتج. الحجم الموصى به: 800x800 بكسل",
+      "productDetails": "تفاصيل المنتج",
+      "metadata": "البيانات الوصفية",
+      "productId": "معرف المنتج",
+      "createdAt": "تاريخ الإنشاء",
+      "updatedAt": "تاريخ التحديث",
+      "pricingSummary": "ملخص التسعير",
+      "basePrice": "السعر الأساسي",
+      "totalReviews": "مراجعات",
+      "ratingDistribution": "توزيع التقييمات",
+      "noComment": "لا يوجد تعليق",
+      "noReviews": "لا توجد مراجعات بعد",
+      "priceRulesDesc": "قواعد تسعير خاصة لهذا المنتج",
+      "addPriceRule": "إضافة قاعدة",
+      "ruleName": "اسم القاعدة",
+      "ruleNamePlaceholder": "مثال: خصم التخفيضات الصيفية",
+      "discountType": "نوع الخصم",
+      "discountValue": "قيمة الخصم",
+      "validUntil": "صالح حتى",
+      "noPriceRules": "لا توجد قواعد تسعير",
+      "noActivity": "لا يوجد نشاط مسجل",
+      "deleteProductConfirm": "هل أنت متأكد من حذف هذا المنتج؟"
     },
     "orders": {
       "title": "الطلبات",
@@ -6429,7 +6506,10 @@
     "basedOnApproved": "بناءً على الموافق عليه مقابل المرفوض",
     "inReview": "قيد المراجعة",
     "activeOpportunities": "الفرص النشطة",
-    "searchPlaceholder": "البحث عن العنوان أو العميل أو الرقم المرجعي..."
+    "searchPlaceholder": "البحث عن العنوان أو العميل أو الرقم المرجعي...",
+    "rejectionReasonRequired": "يرجى تقديم سبب الرفض",
+    "confirmSubmit": "هل تريد تقديم هذا العرض للموافقة؟",
+    "confirmApprove": "هل تريد الموافقة على هذا العرض؟"
   },
   "liveChat": {
     "title": "الدردشة المباشرة",
@@ -6457,5 +6537,45 @@
     "agentAssigned": "تم تعيين الوكيل",
     "conversationResolved": "تم حل المحادثة",
     "startConversation": "ابدأ المحادثة"
+  },
+  "commissions": {
+    "commissionAdded": "تمت إضافة العمولة",
+    "planCreated": "تم إنشاء خطة العمولة"
+  },
+  "dataGovernance": {
+    "auditCompleted": "اكتمل تدقيق البيانات",
+    "policySaved": "تم حفظ سياسة الاحتفاظ"
+  },
+  "training": {
+    "courseCreated": "تم إنشاء الدورة بنجاح!"
+  },
+  "signatures": {
+    "requestSent": "تم إرسال طلب التوقيع!"
+  },
+  "reminders": {
+    "reminderCreated": "تم إنشاء التذكير!"
+  },
+  "virtualOffice": {
+    "roomCreated": "تم إنشاء الغرفة!"
+  },
+  "dailyTask": {
+    "taskAdding": "جاري إضافة المهمة..."
+  },
+  "manufacturing": {
+    "bomCreated": "تم إنشاء قائمة المواد",
+    "workOrderCreated": "تم إنشاء أمر العمل"
+  },
+  "abTesting": {
+    "experimentCreated": "تم إنشاء التجربة"
+  },
+  "surveys": {
+    "surveyClosed": "تم إغلاق الاستطلاع",
+    "surveyCreated": "تم إنشاء الاستطلاع"
+  },
+  "planner": {
+    "taskPlanned": "تمت جدولة المهمة!",
+    "focusStarted": "بدأت جلسة التركيز!",
+    "focusCompleted": "اكتملت جلسة التركيز!",
+    "habitAdded": "تمت إضافة العادة!"
   }
 }

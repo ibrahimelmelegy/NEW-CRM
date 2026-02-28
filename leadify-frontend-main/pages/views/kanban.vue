@@ -170,6 +170,8 @@ definePageMeta({
   middleware: 'permissions'
 });
 
+const { t } = useI18n();
+
 interface BoardCard {
   id: number;
   title: string;
@@ -388,7 +390,7 @@ const addToColumn = (status: string) => {
 
 const addCard = () => {
   if (!newCard.value.title) {
-    ElMessage.warning('Title is required');
+    ElMessage.warning(t('common.fillRequired'));
     return;
   }
   cards.value.push({
@@ -402,7 +404,7 @@ const addCard = () => {
   });
   showAddDialog.value = false;
   newCard.value = { title: '', status: 'NEW', priority: 'MEDIUM', assignee: '', dueDate: '' };
-  ElMessage.success('Item added');
+  ElMessage.success(t('common.saved'));
 };
 
 const openCard = (card: BoardCard) => {

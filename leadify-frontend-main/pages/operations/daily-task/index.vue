@@ -202,6 +202,7 @@ import { ref, reactive } from 'vue';
 import { ElMessage } from 'element-plus';
 import OperationsDailyTasksStatistics from '@/components/operations/daily-tasks/Statistics.vue';
 
+const { t } = useI18n();
 const activeName = ref('info');
 const loading = ref(false);
 const router = useRouter();
@@ -537,7 +538,7 @@ const handleClick = async tab => {
     }
   } catch (error) {
     console.error('Error fetching data:', error);
-    ElMessage.error('Failed to fetch data. Please try again later.');
+    ElMessage.error(t('common.fetchError'));
   } finally {
     loading.value = false;
   }
@@ -592,7 +593,7 @@ const exportToPDF = async () => {
 };
 const addTask = () => {
   // Implement add task logic
-  ElMessage.success('Adding task...');
+  ElMessage.success(t('dailyTask.taskAdding'));
 };
 // Format date
 const formatDate = date => {

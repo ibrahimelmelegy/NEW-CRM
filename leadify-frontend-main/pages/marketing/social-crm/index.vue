@@ -7,7 +7,7 @@ div
     template(#actions)
       el-button(size="large" type="primary" class="!rounded-2xl" @click="openCreateDialog()")
         Icon(name="ph:plus-bold" size="16")
-        span.ml-1 {{ $t('marketing.socialCrm.addProfile') || 'Add Profile' }}
+        span.ml-1 {{ $t('marketing.socialCrm.addProfile') }}
 
   StatCards(:stats="summaryStats")
 
@@ -110,7 +110,7 @@ div
       .flex.items-center.justify-between.mb-4
         el-input(
           v-model="search"
-          :placeholder="$t('common.search') || 'Search'"
+          :placeholder="$t('common.search')"
           clearable
           style="max-width: 280px"
           size="large"
@@ -119,9 +119,9 @@ div
           template(#prefix)
             Icon(name="ph:magnifying-glass" size="18" style="color: var(--text-muted)")
         .flex.items-center.gap-2
-          el-select(v-model="filterPlatform" clearable :placeholder="$t('marketing.socialCrm.platform') || 'Platform'" style="width: 160px")
+          el-select(v-model="filterPlatform" clearable :placeholder="$t('marketing.socialCrm.platform')" style="width: 160px")
             el-option(v-for="p in platformOptions" :key="p.value" :label="p.label" :value="p.value")
-          el-select(v-model="filterSentiment" clearable :placeholder="$t('marketing.socialCrm.sentiment') || 'Sentiment'" style="width: 160px")
+          el-select(v-model="filterSentiment" clearable :placeholder="$t('marketing.socialCrm.sentiment')" style="width: 160px")
             el-option(label="Positive" value="POSITIVE")
             el-option(label="Neutral" value="NEUTRAL")
             el-option(label="Negative" value="NEGATIVE")
@@ -132,7 +132,7 @@ div
         style="width: 100%"
         stripe
       )
-        el-table-column(:label="$t('marketing.socialCrm.client') || 'Client'" prop="clientName" min-width="180" sortable)
+        el-table-column(:label="$t('marketing.socialCrm.client')" prop="clientName" min-width="180" sortable)
           template(#default="{ row }")
             .flex.items-center.gap-3
               .w-9.h-9.rounded-xl.flex.items-center.justify-center.shrink-0(:style="{ background: getPlatformColor(row.platform) + '15' }")
@@ -140,15 +140,15 @@ div
               div
                 p.text-sm.font-semibold(style="color: var(--text-primary)") {{ row.clientName || row.clientId || '--' }}
                 p.text-xs(style="color: var(--text-muted)") @{{ row.handle || '--' }}
-        el-table-column(:label="$t('marketing.socialCrm.platform') || 'Platform'" prop="platform" width="140" sortable)
+        el-table-column(:label="$t('marketing.socialCrm.platform')" prop="platform" width="140" sortable)
           template(#default="{ row }")
             .flex.items-center.gap-2
               Icon(:name="getPlatformIcon(row.platform)" size="16" :style="{ color: getPlatformColor(row.platform) }")
               span.text-sm {{ row.platform }}
-        el-table-column(:label="$t('marketing.socialCrm.followers') || 'Followers'" prop="followers" width="130" align="center" sortable)
+        el-table-column(:label="$t('marketing.socialCrm.followers')" prop="followers" width="130" align="center" sortable)
           template(#default="{ row }")
             span.text-sm.font-bold(style="color: var(--text-primary)") {{ formatNumber(row.followers) }}
-        el-table-column(:label="$t('marketing.socialCrm.engagement') || 'Engagement'" prop="engagementRate" width="160" align="center" sortable)
+        el-table-column(:label="$t('marketing.socialCrm.engagement')" prop="engagementRate" width="160" align="center" sortable)
           template(#default="{ row }")
             .flex.items-center.justify-center.gap-2(v-if="row.engagementRate != null")
               el-progress(
@@ -160,14 +160,14 @@ div
               )
               span.text-sm.font-semibold(:style="{ color: row.engagementRate >= 3 ? '#22c55e' : row.engagementRate >= 1 ? '#f59e0b' : '#ef4444' }") {{ row.engagementRate }}%
             span.text-sm(v-else style="color: var(--text-muted)") --
-        el-table-column(:label="$t('marketing.socialCrm.sentiment') || 'Sentiment'" prop="sentiment" width="130" align="center")
+        el-table-column(:label="$t('marketing.socialCrm.sentiment')" prop="sentiment" width="130" align="center")
           template(#default="{ row }")
             el-tag(v-if="row.sentiment" :type="getSentimentType(row.sentiment)" size="small" effect="dark") {{ row.sentiment }}
             span.text-sm(v-else style="color: var(--text-muted)") --
-        el-table-column(:label="$t('marketing.socialCrm.lastActivity') || 'Last Activity'" prop="lastActivity" width="150" sortable)
+        el-table-column(:label="$t('marketing.socialCrm.lastActivity')" prop="lastActivity" width="150" sortable)
           template(#default="{ row }")
             span.text-sm {{ formatDate(row.lastActivity) }}
-        el-table-column(:label="$t('common.actions') || 'Actions'" width="120" align="center")
+        el-table-column(:label="$t('common.actions')" width="120" align="center")
           template(#default="{ row }")
             .flex.items-center.justify-center.gap-1
               el-button(text size="small" type="primary" @click.stop="openEditDialog(row)")
@@ -177,7 +177,7 @@ div
 
       .text-center.py-8(v-if="!filteredData.length && !loading")
         Icon(name="ph:users-three" size="48" style="color: var(--text-muted)")
-        p.text-sm.mt-2(style="color: var(--text-muted)") {{ $t('common.noData') || 'No social profiles found' }}
+        p.text-sm.mt-2(style="color: var(--text-muted)") {{ $t('common.noData') }}
 
       .flex.justify-end.mt-4
         el-pagination(
@@ -189,31 +189,31 @@ div
         )
 
   //- Create / Edit Dialog
-  el-dialog(v-model="dialogVisible" :title="editingItem ? ($t('common.edit') || 'Edit Profile') : ($t('marketing.socialCrm.addProfile') || 'Add Social Profile')" width="560px" destroy-on-close)
+  el-dialog(v-model="dialogVisible" :title="editingItem ? $t('common.edit') : $t('marketing.socialCrm.addProfile')" width="560px" destroy-on-close)
     el-form(:model="form" label-position="top")
-      el-form-item(:label="$t('marketing.socialCrm.clientId') || 'Client ID'" required)
-        el-input(v-model="form.clientId" :placeholder="$t('marketing.socialCrm.clientIdPlaceholder') || 'Enter client ID or search'")
+      el-form-item(:label="$t('marketing.socialCrm.clientId')" required)
+        el-input(v-model="form.clientId" :placeholder="$t('marketing.socialCrm.clientIdPlaceholder')")
       .grid.gap-4(class="grid-cols-2")
-        el-form-item(:label="$t('marketing.socialCrm.platform') || 'Platform'" required)
+        el-form-item(:label="$t('marketing.socialCrm.platform')" required)
           el-select(v-model="form.platform" class="w-full")
             el-option(v-for="p in platformOptions" :key="p.value" :label="p.label" :value="p.value")
-        el-form-item(:label="$t('marketing.socialCrm.handle') || 'Handle'" required)
-          el-input(v-model="form.handle" :placeholder="$t('marketing.socialCrm.handlePlaceholder') || '@username'")
-      el-form-item(:label="$t('marketing.socialCrm.profileUrl') || 'Profile URL'")
-        el-input(v-model="form.profileUrl" :placeholder="$t('marketing.socialCrm.urlPlaceholder') || 'https://...'")
+        el-form-item(:label="$t('marketing.socialCrm.handle')" required)
+          el-input(v-model="form.handle" :placeholder="$t('marketing.socialCrm.handlePlaceholder')")
+      el-form-item(:label="$t('marketing.socialCrm.profileUrl')")
+        el-input(v-model="form.profileUrl" :placeholder="$t('marketing.socialCrm.urlPlaceholder')")
       .grid.gap-4(class="grid-cols-2")
-        el-form-item(:label="$t('marketing.socialCrm.followers') || 'Followers'")
+        el-form-item(:label="$t('marketing.socialCrm.followers')")
           el-input-number(v-model="form.followers" :min="0" class="!w-full")
-        el-form-item(:label="$t('marketing.socialCrm.sentiment') || 'Sentiment'")
+        el-form-item(:label="$t('marketing.socialCrm.sentiment')")
           el-select(v-model="form.sentiment" class="w-full" clearable)
             el-option(label="Positive" value="POSITIVE")
             el-option(label="Neutral" value="NEUTRAL")
             el-option(label="Negative" value="NEGATIVE")
-      el-form-item(:label="$t('common.notes') || 'Notes'")
-        el-input(v-model="form.notes" type="textarea" :rows="2" :placeholder="$t('marketing.socialCrm.notesPlaceholder') || 'Additional notes'")
+      el-form-item(:label="$t('common.notes')")
+        el-input(v-model="form.notes" type="textarea" :rows="2" :placeholder="$t('marketing.socialCrm.notesPlaceholder')")
     template(#footer)
-      el-button(@click="dialogVisible = false") {{ $t('common.cancel') || 'Cancel' }}
-      el-button(type="primary" @click="handleSave" :loading="saving") {{ $t('common.save') || 'Save' }}
+      el-button(@click="dialogVisible = false") {{ $t('common.cancel') }}
+      el-button(type="primary" @click="handleSave" :loading="saving") {{ $t('common.save') }}
 </template>
 
 <script setup lang="ts">
@@ -270,10 +270,10 @@ const summaryStats = computed(() => {
   const positiveSentiment = data.filter((i: any) => i.sentiment === 'POSITIVE').length;
 
   return [
-    { label: t('marketing.socialCrm.totalProfiles') || 'Total Profiles', value: total, icon: 'ph:users-three-bold', color: '#7849ff' },
-    { label: t('marketing.socialCrm.totalFollowers') || 'Total Followers', value: formatNumber(totalFollowers), icon: 'ph:user-circle-plus-bold', color: '#3b82f6' },
-    { label: t('marketing.socialCrm.platforms') || 'Platforms', value: platformBreakdown.length, icon: 'ph:share-network-bold', color: '#f59e0b' },
-    { label: t('marketing.socialCrm.positiveSentiment') || 'Positive Sentiment', value: positiveSentiment, icon: 'ph:smiley-bold', color: '#22c55e' }
+    { label: t('marketing.socialCrm.totalProfiles'), value: total, icon: 'ph:users-three-bold', color: '#7849ff' },
+    { label: t('marketing.socialCrm.totalFollowers'), value: formatNumber(totalFollowers), icon: 'ph:user-circle-plus-bold', color: '#3b82f6' },
+    { label: t('marketing.socialCrm.platforms'), value: platformBreakdown.length, icon: 'ph:share-network-bold', color: '#f59e0b' },
+    { label: t('marketing.socialCrm.positiveSentiment'), value: positiveSentiment, icon: 'ph:smiley-bold', color: '#22c55e' }
   ];
 });
 
@@ -354,7 +354,7 @@ async function fetchData() {
       pagination.total = data.count ?? data.total ?? items.value.length;
     }
   } catch {
-    ElMessage.error(t('common.error') || 'Failed to load social profiles');
+    ElMessage.error(t('common.error'));
   } finally {
     loading.value = false;
   }
@@ -382,7 +382,7 @@ function openEditDialog(item: any) {
 
 async function handleSave() {
   if (!form.value.clientId.trim() || !form.value.handle.trim()) {
-    ElMessage.warning(t('common.fillRequired') || 'Please fill in required fields');
+    ElMessage.warning(t('common.fillRequired'));
     return;
   }
   saving.value = true;
@@ -392,22 +392,22 @@ async function handleSave() {
     if (editingItem.value) {
       const res = await useApiFetch(`social-crm/${editingItem.value.id}`, 'PUT', payload);
       if (res.success) {
-        ElMessage.success(t('common.saved') || 'Saved successfully');
+        ElMessage.success(t('common.saved'));
       } else {
-        ElMessage.error(res.message || t('common.error') || 'Save failed');
+        ElMessage.error(res.message || t('common.error'));
       }
     } else {
       const res = await useApiFetch('social-crm', 'POST', payload);
       if (res.success) {
-        ElMessage.success(t('common.saved') || 'Created successfully');
+        ElMessage.success(t('common.saved'));
       } else {
-        ElMessage.error(res.message || t('common.error') || 'Create failed');
+        ElMessage.error(res.message || t('common.error'));
       }
     }
     dialogVisible.value = false;
     await fetchData();
   } catch {
-    ElMessage.error(t('common.error') || 'An error occurred');
+    ElMessage.error(t('common.error'));
   } finally {
     saving.value = false;
   }
@@ -416,16 +416,16 @@ async function handleSave() {
 async function handleDelete(item: any) {
   try {
     await ElMessageBox.confirm(
-      t('common.confirmDelete') || 'Are you sure you want to delete this profile?',
-      t('common.warning') || 'Warning',
-      { type: 'warning', confirmButtonText: t('common.delete') || 'Delete', cancelButtonText: t('common.cancel') || 'Cancel' }
+      t('common.confirmDelete'),
+      t('common.warning'),
+      { type: 'warning', confirmButtonText: t('common.delete'), cancelButtonText: t('common.cancel') }
     );
     const res = await useApiFetch(`social-crm/${item.id}`, 'DELETE');
     if (res.success) {
-      ElMessage.success(t('common.deleted') || 'Deleted successfully');
+      ElMessage.success(t('common.deleted'));
       await fetchData();
     } else {
-      ElMessage.error(res.message || t('common.error') || 'Delete failed');
+      ElMessage.error(res.message || t('common.error'));
     }
   } catch {
     // User cancelled

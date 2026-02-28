@@ -93,9 +93,11 @@
 
 <script setup lang="ts">
 import { ref, computed, reactive } from 'vue';
+import { ElMessage } from 'element-plus';
 import { useReminders } from '~/composables/useReminders';
 
 definePageMeta({});
+const { t } = useI18n();
 
 const { upcoming, overdue, completed, stats, addReminder, completeReminder, removeReminder } = useReminders();
 
@@ -130,7 +132,7 @@ function createReminder() {
   });
   Object.assign(form, { title: '', description: '', type: 'follow_up', priority: 'medium', dueDate: '' });
   showCreateDialog.value = false;
-  ElMessage.success('Reminder created!');
+  ElMessage.success(t('reminders.reminderCreated'));
 }
 
 function isOverdue(rem: any): boolean {

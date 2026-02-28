@@ -3,8 +3,8 @@ div.animate-fade-in
   //- Header
   .flex.items-center.justify-between.mb-6
     div
-      h2.text-2xl.font-bold(style="color: var(--text-primary)") {{ $t('shipping.title') || 'Shipping Management' }}
-      p.text-sm.mt-1(style="color: var(--text-muted)") {{ $t('shipping.subtitle') || 'Track shipments, manage carriers, and configure shipping rates.' }}
+      h2.text-2xl.font-bold(style="color: var(--text-primary)") {{ $t('shipping.title') }}
+      p.text-sm.mt-1(style="color: var(--text-muted)") {{ $t('shipping.subtitle') }}
     .flex.items-center.gap-3
       el-button(
         type="primary"
@@ -13,7 +13,7 @@ div.animate-fade-in
         class="!rounded-xl"
       )
         Icon(name="ph:plus-bold" size="16" class="mr-1")
-        | {{ activeTab === 'rates' ? ($t('shipping.newRate') || 'New Rate') : ($t('shipping.newShipment') || 'New Shipment') }}
+        | {{ activeTab === 'rates' ? $t('shipping.newRate') : $t('shipping.newShipment') }}
 
   //- Analytics Cards (from API)
   .grid.gap-4.mb-6(class="grid-cols-2 md:grid-cols-4")
@@ -23,28 +23,28 @@ div.animate-fade-in
           Icon(name="ph:package-bold" size="20" style="color: #7849ff")
         div
           p.text-2xl.font-bold(style="color: var(--text-primary)") {{ analytics.totalShipments }}
-          p.text-xs(style="color: var(--text-muted)") {{ $t('shipping.totalShipments') || 'Total Shipments' }}
+          p.text-xs(style="color: var(--text-muted)") {{ $t('shipping.totalShipments') }}
     .glass-card.p-5.rounded-2xl
       .flex.items-center.gap-3
         .w-10.h-10.rounded-xl.flex.items-center.justify-center(style="background: rgba(34, 197, 94, 0.15)")
           Icon(name="ph:check-circle-bold" size="20" style="color: #22c55e")
         div
           p.text-2xl.font-bold(style="color: #22c55e") {{ analytics.delivered }}
-          p.text-xs(style="color: var(--text-muted)") {{ $t('shipping.delivered') || 'Delivered' }}
+          p.text-xs(style="color: var(--text-muted)") {{ $t('shipping.delivered') }}
     .glass-card.p-5.rounded-2xl
       .flex.items-center.gap-3
         .w-10.h-10.rounded-xl.flex.items-center.justify-center(style="background: rgba(59, 130, 246, 0.15)")
           Icon(name="ph:truck-bold" size="20" style="color: #3b82f6")
         div
           p.text-2xl.font-bold(style="color: #3b82f6") {{ analytics.inTransit }}
-          p.text-xs(style="color: var(--text-muted)") {{ $t('shipping.inTransit') || 'In Transit' }}
+          p.text-xs(style="color: var(--text-muted)") {{ $t('shipping.inTransit') }}
     .glass-card.p-5.rounded-2xl
       .flex.items-center.gap-3
         .w-10.h-10.rounded-xl.flex.items-center.justify-center(style="background: rgba(245, 158, 11, 0.15)")
           Icon(name="ph:timer-bold" size="20" style="color: #f59e0b")
         div
           p.text-2xl.font-bold(style="color: #f59e0b") {{ analytics.onTimeRate }}%
-          p.text-xs(style="color: var(--text-muted)") {{ $t('shipping.onTimeRate') || 'On-Time Rate' }}
+          p.text-xs(style="color: var(--text-muted)") {{ $t('shipping.onTimeRate') }}
 
   //- Track Shipment & Rate Calculator
   el-row(:gutter="16" class="mb-6")
@@ -52,11 +52,11 @@ div.animate-fade-in
       .glass-card.p-5.rounded-2xl.h-full
         h3.text-lg.font-bold.mb-4(style="color: var(--text-primary)")
           Icon(name="ph:magnifying-glass-bold" size="20" class="mr-2" style="color: #7849ff")
-          | {{ $t('shipping.trackShipment') || 'Track Shipment' }}
+          | {{ $t('shipping.trackShipment') }}
         .flex.items-center.gap-3.mb-4
           el-input(
             v-model="trackingInput"
-            :placeholder="$t('shipping.enterTracking') || 'Enter tracking number...'"
+            :placeholder="$t('shipping.enterTracking')"
             size="large"
             clearable
             class="!rounded-xl"
@@ -73,7 +73,7 @@ div.animate-fade-in
             class="!rounded-xl"
           )
             Icon(name="ph:magnifying-glass-bold" size="16" class="mr-1")
-            | {{ $t('shipping.track') || 'Track' }}
+            | {{ $t('shipping.track') }}
         //- Tracked Shipment Result
         .p-4.rounded-xl(
           v-if="trackedShipment"
@@ -91,38 +91,38 @@ div.animate-fade-in
             ) {{ trackedShipment.status || '--' }}
           el-row(:gutter="12")
             el-col(:span="8")
-              p.text-xs(style="color: var(--text-muted)") {{ $t('shipping.carrier') || 'Carrier' }}
+              p.text-xs(style="color: var(--text-muted)") {{ $t('shipping.carrier') }}
               p.text-sm.font-semibold(style="color: var(--text-primary)") {{ trackedShipment.carrier || '--' }}
             el-col(:span="8")
-              p.text-xs(style="color: var(--text-muted)") {{ $t('shipping.origin') || 'Origin' }}
+              p.text-xs(style="color: var(--text-muted)") {{ $t('shipping.origin') }}
               p.text-sm.font-semibold(style="color: var(--text-primary)") {{ trackedShipment.origin || '--' }}
             el-col(:span="8")
-              p.text-xs(style="color: var(--text-muted)") {{ $t('shipping.destination') || 'Destination' }}
+              p.text-xs(style="color: var(--text-muted)") {{ $t('shipping.destination') }}
               p.text-sm.font-semibold(style="color: var(--text-primary)") {{ trackedShipment.destination || '--' }}
           el-row.mt-3(:gutter="12")
             el-col(:span="8")
-              p.text-xs(style="color: var(--text-muted)") {{ $t('shipping.recipient') || 'Recipient' }}
+              p.text-xs(style="color: var(--text-muted)") {{ $t('shipping.recipient') }}
               p.text-sm.font-semibold(style="color: var(--text-primary)") {{ trackedShipment.recipientName || '--' }}
             el-col(:span="8")
-              p.text-xs(style="color: var(--text-muted)") {{ $t('shipping.weight') || 'Weight' }}
+              p.text-xs(style="color: var(--text-muted)") {{ $t('shipping.weight') }}
               p.text-sm.font-semibold(style="color: var(--text-primary)") {{ trackedShipment.weight ? trackedShipment.weight + ' kg' : '--' }}
             el-col(:span="8")
-              p.text-xs(style="color: var(--text-muted)") {{ $t('shipping.estimatedDelivery') || 'Est. Delivery' }}
+              p.text-xs(style="color: var(--text-muted)") {{ $t('shipping.estimatedDelivery') }}
               p.text-sm.font-semibold(style="color: var(--text-primary)") {{ trackedShipment.estimatedDelivery ? formatDate(trackedShipment.estimatedDelivery) : '--' }}
         .text-center.py-4(v-else-if="trackingNotFound")
           Icon(name="ph:x-circle" size="32" style="color: #ef4444")
-          p.text-sm.mt-1(style="color: #ef4444") {{ $t('shipping.trackingNotFound') || 'Shipment not found for this tracking number' }}
+          p.text-sm.mt-1(style="color: #ef4444") {{ $t('shipping.trackingNotFound') }}
 
     el-col(:span="10")
       .glass-card.p-5.rounded-2xl.h-full
         h3.text-lg.font-bold.mb-4(style="color: var(--text-primary)")
           Icon(name="ph:calculator-bold" size="20" class="mr-2" style="color: #f59e0b")
-          | {{ $t('shipping.rateCalculator') || 'Rate Calculator' }}
+          | {{ $t('shipping.rateCalculator') }}
         el-form(label-position="top" size="large")
-          el-form-item(:label="$t('shipping.weight') || 'Weight (kg)'")
+          el-form-item(:label="$t('shipping.weight')")
             el-input-number(v-model="calcWeight" :min="0.1" :precision="2" style="width: 100%")
-          el-form-item(:label="$t('shipping.zone') || 'Zone'")
-            el-select(v-model="calcZone" :placeholder="$t('shipping.selectZone') || 'Select Zone'" style="width: 100%" clearable)
+          el-form-item(:label="$t('shipping.zone')")
+            el-select(v-model="calcZone" :placeholder="$t('shipping.selectZone')" style="width: 100%" clearable)
               el-option(label="Domestic" value="Domestic")
               el-option(label="International" value="International")
               el-option(label="Express" value="Express")
@@ -136,19 +136,19 @@ div.animate-fade-in
             class="!rounded-xl"
           )
             Icon(name="ph:calculator-bold" size="16" class="mr-1")
-            | {{ $t('shipping.calculate') || 'Calculate' }}
+            | {{ $t('shipping.calculate') }}
         .p-4.rounded-xl.mt-4.text-center(
           v-if="calculatedRate !== null"
           style="background: var(--bg-elevated); border: 1px solid var(--border-default)"
         )
-          p.text-xs(style="color: var(--text-muted)") {{ $t('shipping.estimatedCost') || 'Estimated Shipping Cost' }}
+          p.text-xs(style="color: var(--text-muted)") {{ $t('shipping.estimatedCost') }}
           p.text-3xl.font-black.mt-1(style="color: #7849ff") {{ formatCurrency(calculatedRate.rate || calculatedRate.cost || calculatedRate, calculatedRate.currency) }}
-          p.text-xs.mt-1(v-if="calculatedRate.estimatedDays" style="color: var(--text-muted)") {{ $t('shipping.estimatedDays') || 'Est. Days' }}: {{ calculatedRate.estimatedDays }}
+          p.text-xs.mt-1(v-if="calculatedRate.estimatedDays" style="color: var(--text-muted)") {{ $t('shipping.estimatedDays') }}: {{ calculatedRate.estimatedDays }}
 
   //- Tabs
   el-tabs(v-model="activeTab" type="border-card" class="shipping-tabs")
     //- ========== SHIPMENTS TAB ==========
-    el-tab-pane(:label="$t('shipping.shipments') || 'Shipments'" name="shipments")
+    el-tab-pane(:label="$t('shipping.shipments')" name="shipments")
       //- Stats
       .grid.gap-4.mb-6(class="grid-cols-2 md:grid-cols-4")
         .glass-card.p-4.rounded-2xl
@@ -157,34 +157,34 @@ div.animate-fade-in
               Icon(name="ph:package-bold" size="20" style="color: #7849ff")
             div
               p.text-xl.font-bold(style="color: var(--text-primary)") {{ shipmentStats.total }}
-              p.text-xs(style="color: var(--text-muted)") {{ $t('shipping.totalShipments') || 'Total' }}
+              p.text-xs(style="color: var(--text-muted)") {{ $t('shipping.totalShipments') }}
         .glass-card.p-4.rounded-2xl
           .flex.items-center.gap-3
             .w-10.h-10.rounded-xl.flex.items-center.justify-center(style="background: rgba(59, 130, 246, 0.15)")
               Icon(name="ph:truck-bold" size="20" style="color: #3b82f6")
             div
               p.text-xl.font-bold(style="color: var(--text-primary)") {{ shipmentStats.inTransit }}
-              p.text-xs(style="color: var(--text-muted)") {{ $t('shipping.inTransit') || 'In Transit' }}
+              p.text-xs(style="color: var(--text-muted)") {{ $t('shipping.inTransit') }}
         .glass-card.p-4.rounded-2xl
           .flex.items-center.gap-3
             .w-10.h-10.rounded-xl.flex.items-center.justify-center(style="background: rgba(34, 197, 94, 0.15)")
               Icon(name="ph:check-circle-bold" size="20" style="color: #22c55e")
             div
               p.text-xl.font-bold(style="color: var(--text-primary)") {{ shipmentStats.delivered }}
-              p.text-xs(style="color: var(--text-muted)") {{ $t('shipping.delivered') || 'Delivered' }}
+              p.text-xs(style="color: var(--text-muted)") {{ $t('shipping.delivered') }}
         .glass-card.p-4.rounded-2xl
           .flex.items-center.gap-3
             .w-10.h-10.rounded-xl.flex.items-center.justify-center(style="background: rgba(239, 68, 68, 0.15)")
               Icon(name="ph:arrow-u-up-left-bold" size="20" style="color: #ef4444")
             div
               p.text-xl.font-bold(style="color: var(--text-primary)") {{ shipmentStats.returned }}
-              p.text-xs(style="color: var(--text-muted)") {{ $t('shipping.returned') || 'Returned' }}
+              p.text-xs(style="color: var(--text-muted)") {{ $t('shipping.returned') }}
 
       //- Search & Filter
       .flex.items-center.justify-between.mb-4
         el-input(
           v-model="shipmentSearch"
-          :placeholder="$t('shipping.searchShipments') || 'Search shipments...'"
+          :placeholder="$t('shipping.searchShipments')"
           clearable
           size="large"
           style="max-width: 320px"
@@ -192,7 +192,7 @@ div.animate-fade-in
         )
           template(#prefix)
             Icon(name="ph:magnifying-glass" size="16" style="color: var(--text-muted)")
-        el-select(v-model="shipmentStatusFilter" clearable :placeholder="$t('shipping.filterStatus') || 'Filter Status'" size="large" style="width: 180px")
+        el-select(v-model="shipmentStatusFilter" clearable :placeholder="$t('shipping.filterStatus')" size="large" style="width: 180px")
           el-option(label="All" value="")
           el-option(label="Preparing" value="PREPARING")
           el-option(label="Shipped" value="SHIPPED")
@@ -203,18 +203,18 @@ div.animate-fade-in
 
       //- Shipments Table
       el-table(:data="filteredShipments" v-loading="loadingShipments" stripe style="width: 100%")
-        el-table-column(:label="$t('shipping.shipmentNumber') || 'Shipment #'" width="160" sortable)
+        el-table-column(:label="$t('shipping.shipmentNumber')" width="160" sortable)
           template(#default="{ row }")
             span.font-mono.font-bold(style="color: #7849ff") {{ row.shipmentNumber || '--' }}
-        el-table-column(:label="$t('shipping.carrier') || 'Carrier'" prop="carrier" width="140")
+        el-table-column(:label="$t('shipping.carrier')" prop="carrier" width="140")
           template(#default="{ row }")
             .flex.items-center.gap-2
               Icon(name="ph:truck" size="16" style="color: var(--text-muted)")
               span.text-sm(style="color: var(--text-primary)") {{ row.carrier || '--' }}
-        el-table-column(:label="$t('shipping.trackingNumber') || 'Tracking #'" prop="trackingNumber" width="180")
+        el-table-column(:label="$t('shipping.trackingNumber')" prop="trackingNumber" width="180")
           template(#default="{ row }")
             span.text-sm.font-mono(style="color: var(--text-primary)") {{ row.trackingNumber || '--' }}
-        el-table-column(:label="$t('shipping.status') || 'Status'" width="140" align="center")
+        el-table-column(:label="$t('shipping.status')" width="140" align="center")
           template(#default="{ row }")
             el-tag(
               :type="getShipmentStatusType(row.status)"
@@ -222,22 +222,22 @@ div.animate-fade-in
               effect="dark"
               round
             ) {{ row.status || '--' }}
-        el-table-column(:label="$t('shipping.origin') || 'Origin'" prop="origin" width="150")
+        el-table-column(:label="$t('shipping.origin')" prop="origin" width="150")
           template(#default="{ row }")
             span.text-sm(style="color: var(--text-primary)") {{ row.origin || '--' }}
-        el-table-column(:label="$t('shipping.destination') || 'Destination'" prop="destination" width="150")
+        el-table-column(:label="$t('shipping.destination')" prop="destination" width="150")
           template(#default="{ row }")
             span.text-sm(style="color: var(--text-primary)") {{ row.destination || '--' }}
-        el-table-column(:label="$t('shipping.recipient') || 'Recipient'" prop="recipientName" width="150")
+        el-table-column(:label="$t('shipping.recipient')" prop="recipientName" width="150")
           template(#default="{ row }")
             span.text-sm(style="color: var(--text-primary)") {{ row.recipientName || '--' }}
-        el-table-column(:label="$t('shipping.weight') || 'Weight'" width="100" align="center")
+        el-table-column(:label="$t('shipping.weight')" width="100" align="center")
           template(#default="{ row }")
             span.text-sm(style="color: var(--text-primary)") {{ row.weight ? row.weight + ' kg' : '--' }}
-        el-table-column(:label="$t('shipping.cost') || 'Cost'" width="120" align="center" sortable)
+        el-table-column(:label="$t('shipping.cost')" width="120" align="center" sortable)
           template(#default="{ row }")
             span.text-sm.font-semibold(style="color: var(--text-primary)") {{ row.shippingCost ? formatCurrency(row.shippingCost) : '--' }}
-        el-table-column(:label="$t('shipping.estimatedDelivery') || 'Est. Delivery'" width="140")
+        el-table-column(:label="$t('shipping.estimatedDelivery')" width="140")
           template(#default="{ row }")
             span.text-sm(style="color: var(--text-muted)") {{ row.estimatedDelivery ? formatDate(row.estimatedDelivery) : '--' }}
         el-table-column(:label="$t('common.actions')" width="120" align="center" fixed="right")
@@ -250,7 +250,7 @@ div.animate-fade-in
 
       .text-center.py-12(v-if="!filteredShipments.length && !loadingShipments")
         Icon(name="ph:package" size="48" style="color: var(--text-muted)")
-        p.text-sm.mt-2(style="color: var(--text-muted)") {{ $t('shipping.noShipments') || 'No shipments found' }}
+        p.text-sm.mt-2(style="color: var(--text-muted)") {{ $t('shipping.noShipments') }}
 
       .flex.justify-end.mt-4
         el-pagination(
@@ -262,11 +262,11 @@ div.animate-fade-in
         )
 
     //- ========== RATES TAB ==========
-    el-tab-pane(:label="$t('shipping.rates') || 'Rates'" name="rates")
+    el-tab-pane(:label="$t('shipping.rates')" name="rates")
       .flex.items-center.justify-between.mb-4
         el-input(
           v-model="rateSearch"
-          :placeholder="$t('shipping.searchRates') || 'Search rates...'"
+          :placeholder="$t('shipping.searchRates')"
           clearable
           size="large"
           style="max-width: 320px"
@@ -277,30 +277,30 @@ div.animate-fade-in
 
       //- Rates Table
       el-table(:data="filteredRates" v-loading="loadingRates" stripe style="width: 100%")
-        el-table-column(:label="$t('shipping.carrier') || 'Carrier'" prop="carrier" min-width="160" sortable)
+        el-table-column(:label="$t('shipping.carrier')" prop="carrier" min-width="160" sortable)
           template(#default="{ row }")
             .flex.items-center.gap-2
               Icon(name="ph:truck-bold" size="16" style="color: #7849ff")
               span.text-sm.font-semibold(style="color: var(--text-primary)") {{ row.carrier || '--' }}
-        el-table-column(:label="$t('shipping.zone') || 'Zone'" prop="zone" width="140")
+        el-table-column(:label="$t('shipping.zone')" prop="zone" width="140")
           template(#default="{ row }")
             el-tag(size="small" effect="plain" round) {{ row.zone || '--' }}
-        el-table-column(:label="$t('shipping.weightMin') || 'Min Weight'" width="120" align="center")
+        el-table-column(:label="$t('shipping.weightMin')" width="120" align="center")
           template(#default="{ row }")
             span.text-sm(style="color: var(--text-primary)") {{ row.weightMin != null ? row.weightMin + ' kg' : '--' }}
-        el-table-column(:label="$t('shipping.weightMax') || 'Max Weight'" width="120" align="center")
+        el-table-column(:label="$t('shipping.weightMax')" width="120" align="center")
           template(#default="{ row }")
             span.text-sm(style="color: var(--text-primary)") {{ row.weightMax != null ? row.weightMax + ' kg' : '--' }}
-        el-table-column(:label="$t('shipping.rate') || 'Rate'" width="120" align="center" sortable)
+        el-table-column(:label="$t('shipping.rate')" width="120" align="center" sortable)
           template(#default="{ row }")
             span.text-sm.font-bold(style="color: #7849ff") {{ row.rate != null ? formatCurrency(row.rate, row.currency) : '--' }}
-        el-table-column(:label="$t('shipping.currency') || 'Currency'" prop="currency" width="100" align="center")
+        el-table-column(:label="$t('shipping.currency')" prop="currency" width="100" align="center")
           template(#default="{ row }")
             span.text-sm(style="color: var(--text-primary)") {{ row.currency || 'SAR' }}
-        el-table-column(:label="$t('shipping.estimatedDays') || 'Est. Days'" width="120" align="center")
+        el-table-column(:label="$t('shipping.estimatedDays')" width="120" align="center")
           template(#default="{ row }")
             span.text-sm(style="color: var(--text-primary)") {{ row.estimatedDays != null ? row.estimatedDays + 'd' : '--' }}
-        el-table-column(:label="$t('shipping.active') || 'Active'" width="100" align="center")
+        el-table-column(:label="$t('shipping.active')" width="100" align="center")
           template(#default="{ row }")
             el-tag(:type="row.isActive ? 'success' : 'info'" size="small" effect="dark" round) {{ row.isActive ? 'Yes' : 'No' }}
         el-table-column(:label="$t('common.actions')" width="120" align="center" fixed="right")
@@ -313,7 +313,7 @@ div.animate-fade-in
 
       .text-center.py-12(v-if="!filteredRates.length && !loadingRates")
         Icon(name="ph:currency-circle-dollar" size="48" style="color: var(--text-muted)")
-        p.text-sm.mt-2(style="color: var(--text-muted)") {{ $t('shipping.noRates') || 'No shipping rates found' }}
+        p.text-sm.mt-2(style="color: var(--text-muted)") {{ $t('shipping.noRates') }}
 
       .flex.justify-end.mt-4
         el-pagination(
@@ -327,25 +327,25 @@ div.animate-fade-in
   //- ========== CREATE / EDIT SHIPMENT DIALOG ==========
   el-dialog(
     v-model="shipmentDialogVisible"
-    :title="editingShipment ? ($t('shipping.editShipment') || 'Edit Shipment') : ($t('shipping.newShipment') || 'New Shipment')"
+    :title="editingShipment ? $t('shipping.editShipment') : $t('shipping.newShipment')"
     width="650px"
     :close-on-click-modal="false"
   )
     el-form(:model="shipmentForm" label-position="top")
       .grid.gap-4(class="grid-cols-1 md:grid-cols-2")
-        el-form-item(:label="$t('shipping.carrier') || 'Carrier'" required)
-          el-input(v-model="shipmentForm.carrier" :placeholder="$t('shipping.carrier') || 'e.g. DHL, FedEx'")
-        el-form-item(:label="$t('shipping.trackingNumber') || 'Tracking Number'")
-          el-input(v-model="shipmentForm.trackingNumber" :placeholder="$t('shipping.trackingNumber') || 'Tracking Number'")
+        el-form-item(:label="$t('shipping.carrier')" required)
+          el-input(v-model="shipmentForm.carrier" :placeholder="$t('shipping.carrier')")
+        el-form-item(:label="$t('shipping.trackingNumber')")
+          el-input(v-model="shipmentForm.trackingNumber" :placeholder="$t('shipping.trackingNumber')")
       .grid.gap-4(class="grid-cols-1 md:grid-cols-2")
-        el-form-item(:label="$t('shipping.origin') || 'Origin'" required)
-          el-input(v-model="shipmentForm.origin" :placeholder="$t('shipping.origin') || 'Origin City / Address'")
-        el-form-item(:label="$t('shipping.destination') || 'Destination'" required)
-          el-input(v-model="shipmentForm.destination" :placeholder="$t('shipping.destination') || 'Destination City / Address'")
+        el-form-item(:label="$t('shipping.origin')" required)
+          el-input(v-model="shipmentForm.origin" :placeholder="$t('shipping.origin')")
+        el-form-item(:label="$t('shipping.destination')" required)
+          el-input(v-model="shipmentForm.destination" :placeholder="$t('shipping.destination')")
       .grid.gap-4(class="grid-cols-1 md:grid-cols-2")
-        el-form-item(:label="$t('shipping.recipient') || 'Recipient Name'" required)
-          el-input(v-model="shipmentForm.recipientName" :placeholder="$t('shipping.recipient') || 'Recipient Name'")
-        el-form-item(:label="$t('shipping.status') || 'Status'")
+        el-form-item(:label="$t('shipping.recipient')" required)
+          el-input(v-model="shipmentForm.recipientName" :placeholder="$t('shipping.recipient')")
+        el-form-item(:label="$t('shipping.status')")
           el-select(v-model="shipmentForm.status" style="width: 100%")
             el-option(label="Preparing" value="PREPARING")
             el-option(label="Shipped" value="SHIPPED")
@@ -354,15 +354,15 @@ div.animate-fade-in
             el-option(label="Returned" value="RETURNED")
             el-option(label="Cancelled" value="CANCELLED")
       .grid.gap-4(class="grid-cols-1 md:grid-cols-3")
-        el-form-item(:label="$t('shipping.weight') || 'Weight (kg)'")
+        el-form-item(:label="$t('shipping.weight')")
           el-input-number(v-model="shipmentForm.weight" :min="0" :precision="2" style="width: 100%")
-        el-form-item(:label="$t('shipping.cost') || 'Shipping Cost'")
+        el-form-item(:label="$t('shipping.cost')")
           el-input-number(v-model="shipmentForm.shippingCost" :min="0" :precision="2" style="width: 100%")
-        el-form-item(:label="$t('shipping.estimatedDelivery') || 'Est. Delivery'")
+        el-form-item(:label="$t('shipping.estimatedDelivery')")
           el-date-picker(
             v-model="shipmentForm.estimatedDelivery"
             type="date"
-            :placeholder="$t('shipping.selectDate') || 'Select date'"
+            :placeholder="$t('shipping.selectDate')"
             style="width: 100%"
             value-format="YYYY-MM-DD"
           )
@@ -373,34 +373,34 @@ div.animate-fade-in
   //- ========== CREATE / EDIT RATE DIALOG ==========
   el-dialog(
     v-model="rateDialogVisible"
-    :title="editingRate ? ($t('shipping.editRate') || 'Edit Rate') : ($t('shipping.newRate') || 'New Rate')"
+    :title="editingRate ? $t('shipping.editRate') : $t('shipping.newRate')"
     width="550px"
     :close-on-click-modal="false"
   )
     el-form(:model="rateForm" label-position="top")
       .grid.gap-4(class="grid-cols-1 md:grid-cols-2")
-        el-form-item(:label="$t('shipping.carrier') || 'Carrier'" required)
-          el-input(v-model="rateForm.carrier" :placeholder="$t('shipping.carrier') || 'e.g. DHL'")
-        el-form-item(:label="$t('shipping.zone') || 'Zone'" required)
-          el-input(v-model="rateForm.zone" :placeholder="$t('shipping.zone') || 'e.g. Domestic, International'")
+        el-form-item(:label="$t('shipping.carrier')" required)
+          el-input(v-model="rateForm.carrier" :placeholder="$t('shipping.carrier')")
+        el-form-item(:label="$t('shipping.zone')" required)
+          el-input(v-model="rateForm.zone" :placeholder="$t('shipping.zone')")
       .grid.gap-4(class="grid-cols-1 md:grid-cols-2")
-        el-form-item(:label="$t('shipping.weightMin') || 'Min Weight (kg)'")
+        el-form-item(:label="$t('shipping.weightMin')")
           el-input-number(v-model="rateForm.weightMin" :min="0" :precision="2" style="width: 100%")
-        el-form-item(:label="$t('shipping.weightMax') || 'Max Weight (kg)'")
+        el-form-item(:label="$t('shipping.weightMax')")
           el-input-number(v-model="rateForm.weightMax" :min="0" :precision="2" style="width: 100%")
       .grid.gap-4(class="grid-cols-1 md:grid-cols-3")
-        el-form-item(:label="$t('shipping.rate') || 'Rate'" required)
+        el-form-item(:label="$t('shipping.rate')" required)
           el-input-number(v-model="rateForm.rate" :min="0" :precision="2" style="width: 100%")
-        el-form-item(:label="$t('shipping.currency') || 'Currency'")
+        el-form-item(:label="$t('shipping.currency')")
           el-select(v-model="rateForm.currency" style="width: 100%")
             el-option(label="SAR" value="SAR")
             el-option(label="USD" value="USD")
             el-option(label="EUR" value="EUR")
             el-option(label="GBP" value="GBP")
-        el-form-item(:label="$t('shipping.estimatedDays') || 'Est. Days'")
+        el-form-item(:label="$t('shipping.estimatedDays')")
           el-input-number(v-model="rateForm.estimatedDays" :min="0" style="width: 100%")
       el-form-item
-        el-checkbox(v-model="rateForm.isActive") {{ $t('shipping.active') || 'Active' }}
+        el-checkbox(v-model="rateForm.isActive") {{ $t('shipping.active') }}
     template(#footer)
       el-button(@click="rateDialogVisible = false") {{ $t('common.cancel') }}
       el-button(type="primary" :loading="saving" @click="saveRate") {{ $t('common.save') }}

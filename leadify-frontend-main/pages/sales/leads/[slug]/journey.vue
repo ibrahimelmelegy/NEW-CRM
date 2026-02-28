@@ -9,7 +9,7 @@ div(class="space-y-6 pb-8")
       //- Back to lead button
       el-button(size="small" @click="goBack")
         Icon(name="ph:arrow-left-bold" size="16" class="mr-1")
-        | {{ $t('common.back') || 'Back' }}
+        | {{ $t('common.back') }}
       //- Zoom controls
       el-button-group
         el-button(
@@ -36,7 +36,7 @@ div(class="space-y-6 pb-8")
   .flex.flex-col.items-center.justify-center.py-20(v-else-if="error")
     Icon(name="ph:warning-circle-bold" size="48" style="color: var(--text-muted)")
     p(class="text-sm mt-3" style="color: var(--text-muted)") {{ error }}
-    el-button(type="primary" size="small" class="mt-4" @click="fetchJourney(slug)") {{ $t('common.retry') || 'Retry' }}
+    el-button(type="primary" size="small" class="mt-4" @click="fetchJourney(slug)") {{ $t('common.retry') }}
 
   //- Journey content
   template(v-else-if="journey")

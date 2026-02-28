@@ -64,7 +64,10 @@ div
 
 <script setup lang="ts">
 import { ElNotification, ElMessageBox } from 'element-plus';
+import { useI18n } from 'vue-i18n';
 import type { FormInstance, FormRules } from 'element-plus';
+
+const { t } = useI18n();
 import { fetchChartOfAccounts, createAccount, updateAccount, deleteAccount, seedDefaultAccounts, AccountType } from '~/composables/useAccounting';
 import type { ChartOfAccountsItem } from '~/composables/useAccounting';
 
@@ -174,7 +177,7 @@ async function handleSubmit() {
 async function handleDelete() {
   if (!editingAccount.value) return;
   try {
-    await ElMessageBox.confirm('Are you sure you want to delete this account?', 'Confirm Delete', { type: 'warning' });
+    await ElMessageBox.confirm(t('finance.confirmDeleteAccount'), t('common.confirmDelete'), { type: 'warning' });
   } catch {
     return;
   }
@@ -196,7 +199,7 @@ async function handleDelete() {
 
 async function handleSeedDefaults() {
   try {
-    await ElMessageBox.confirm('This will create a default chart of accounts. Continue?', 'Seed Default Accounts', { type: 'info' });
+    await ElMessageBox.confirm(t('finance.confirmSeedAccounts'), t('finance.seedAccounts'), { type: 'info' });
   } catch {
     return;
   }

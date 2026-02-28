@@ -5,21 +5,21 @@
       <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
         <div>
           <h1 class="text-2xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-cyan-400 to-blue-400">
-            {{ $t('resourcePlanner.title') || 'Resource Planner' }}
+            {{ $t('resourcePlanner.title') }}
           </h1>
           <p class="text-sm mt-1" style="color: var(--text-muted)">
-            {{ $t('resourcePlanner.subtitle') || 'Manage team workload, capacity, and resource allocation across projects.' }}
+            {{ $t('resourcePlanner.subtitle') }}
           </p>
         </div>
         <div class="flex gap-2 flex-wrap">
           <el-select v-model="viewMode" size="large" style="width: 150px">
-            <el-option :label="$t('resourcePlanner.heatmap') || 'Heatmap'" value="heatmap" />
-            <el-option :label="$t('resourcePlanner.allocations') || 'Allocations'" value="allocations" />
-            <el-option :label="$t('resourcePlanner.utilization') || 'Utilization'" value="utilization" />
+            <el-option :label="$t('resourcePlanner.heatmap')" value="heatmap" />
+            <el-option :label="$t('resourcePlanner.allocations')" value="allocations" />
+            <el-option :label="$t('resourcePlanner.utilization')" value="utilization" />
           </el-select>
           <el-button type="primary" size="large" class="!rounded-xl" @click="openAllocateDialog">
             <Icon name="ph:plus-bold" class="w-4 h-4 mr-2" />
-            {{ $t('resourcePlanner.allocate') || 'Allocate' }}
+            {{ $t('resourcePlanner.allocate') }}
           </el-button>
         </div>
       </div>
@@ -31,7 +31,7 @@
         <Icon name="ph:warning-bold" size="20" style="color: #ef4444" />
         <div class="flex-1">
           <p class="text-sm font-medium" style="color: #ef4444">
-            {{ $t('resourcePlanner.overAllocatedWarning') || '{count} resource(s) over-allocated'.replace('{count}', String(overAllocatedResources.length)) }}
+            {{ $t('resourcePlanner.overAllocatedWarning').replace('{count}', String(overAllocatedResources.length)) }}
           </p>
           <p class="text-xs mt-0.5" style="color: var(--text-muted)">
             {{ overAllocatedResources.map(r => r.name).join(', ') }}
@@ -52,24 +52,24 @@
     <div v-if="viewMode === 'heatmap'" class="glass-panel p-6 rounded-2xl">
       <div class="flex items-center justify-between mb-4">
         <h3 class="text-sm font-medium" style="color: var(--text-secondary)">
-          {{ $t('resourcePlanner.weeklyHeatmap') || 'Weekly Workload Heatmap' }}
+          {{ $t('resourcePlanner.weeklyHeatmap') }}
         </h3>
         <span class="text-xs" style="color: var(--text-muted)">
-          {{ $t('resourcePlanner.clickToEdit') || 'Click a cell to edit allocation' }}
+          {{ $t('resourcePlanner.clickToEdit') }}
         </span>
       </div>
       <div v-if="loading" class="flex items-center justify-center py-12">
         <el-icon class="is-loading text-2xl mr-2" style="color: var(--primary)"><Loading /></el-icon>
-        <span style="color: var(--text-muted)">{{ $t('common.loading') || 'Loading...' }}</span>
+        <span style="color: var(--text-muted)">{{ $t('common.loading') }}</span>
       </div>
       <div v-else class="overflow-x-auto">
         <table class="w-full">
           <thead>
             <tr>
-              <th class="text-left p-2 text-xs w-48" style="color: var(--text-muted)">{{ $t('resourcePlanner.resource') || 'Resource' }}</th>
+              <th class="text-left p-2 text-xs w-48" style="color: var(--text-muted)">{{ $t('resourcePlanner.resource') }}</th>
               <th v-for="day in weekDays" :key="day" class="text-center p-2 text-xs w-24" style="color: var(--text-muted)">{{ day }}</th>
-              <th class="text-center p-2 text-xs w-24" style="color: var(--text-muted)">{{ $t('resourcePlanner.total') || 'Total' }}</th>
-              <th class="text-center p-2 text-xs w-32" style="color: var(--text-muted)">{{ $t('resourcePlanner.utilization') || 'Utilization' }}</th>
+              <th class="text-center p-2 text-xs w-24" style="color: var(--text-muted)">{{ $t('resourcePlanner.total') }}</th>
+              <th class="text-center p-2 text-xs w-32" style="color: var(--text-muted)">{{ $t('resourcePlanner.utilization') }}</th>
             </tr>
           </thead>
           <tbody>
@@ -113,14 +113,14 @@
         <div v-if="!loading && resources.length === 0" class="text-center py-12">
           <Icon name="ph:users-bold" class="w-12 h-12 mx-auto mb-3" style="color: var(--text-muted)" />
           <p class="text-sm" style="color: var(--text-muted)">
-            {{ $t('resourcePlanner.noResources') || 'No manpower resources found. Add resources in the Manpower module first.' }}
+            {{ $t('resourcePlanner.noResources') }}
           </p>
         </div>
       </div>
 
       <!-- Heatmap Legend -->
       <div class="flex items-center gap-4 mt-4 pt-4" style="border-top: 1px solid var(--border-light)">
-        <span class="text-xs" style="color: var(--text-muted)">{{ $t('resourcePlanner.legend') || 'Legend' }}:</span>
+        <span class="text-xs" style="color: var(--text-muted)">{{ $t('resourcePlanner.legend') }}:</span>
         <div class="flex items-center gap-1">
           <div class="w-4 h-4 rounded bg-slate-800/30"></div>
           <span class="text-xs" style="color: var(--text-muted)">0h</span>
@@ -148,11 +148,11 @@
     <div v-if="viewMode === 'allocations'" class="glass-panel p-6 rounded-2xl">
       <div class="flex items-center justify-between mb-4">
         <h3 class="text-sm font-medium" style="color: var(--text-secondary)">
-          {{ $t('resourcePlanner.allAllocations') || 'All Allocations' }}
+          {{ $t('resourcePlanner.allAllocations') }}
         </h3>
         <el-input
           v-model="allocSearch"
-          :placeholder="$t('common.search') || 'Search...'"
+          :placeholder="$t('common.search')"
           clearable
           size="large"
           style="width: 220px"
@@ -163,7 +163,7 @@
 
       <el-table :data="filteredAllocations" v-loading="loading" style="width: 100%">
         <el-table-column type="index" width="50" />
-        <el-table-column :label="$t('resourcePlanner.resource') || 'Resource'" min-width="160">
+        <el-table-column :label="$t('resourcePlanner.resource')" min-width="160">
           <template #default="{ row }">
             <div class="flex items-center gap-2">
               <el-avatar :size="24" style="background: var(--bg-elevated)">{{ (row.manpower?.name || '?').charAt(0) }}</el-avatar>
@@ -171,32 +171,32 @@
             </div>
           </template>
         </el-table-column>
-        <el-table-column :label="$t('resourcePlanner.project') || 'Project'" min-width="160">
+        <el-table-column :label="$t('resourcePlanner.project')" min-width="160">
           <template #default="{ row }">
             <span>{{ row.project?.name || 'Unknown' }}</span>
           </template>
         </el-table-column>
-        <el-table-column :label="$t('resourcePlanner.estDays') || 'Est. Days'" width="110" align="center">
+        <el-table-column :label="$t('resourcePlanner.estDays')" width="110" align="center">
           <template #default="{ row }">
             <span class="font-mono">{{ row.estimatedWorkDays }}</span>
           </template>
         </el-table-column>
-        <el-table-column :label="$t('resourcePlanner.actualDays') || 'Actual Days'" width="110" align="center">
+        <el-table-column :label="$t('resourcePlanner.actualDays')" width="110" align="center">
           <template #default="{ row }">
             <span class="font-mono">{{ row.actualWorkDays }}</span>
           </template>
         </el-table-column>
-        <el-table-column :label="$t('resourcePlanner.mission') || 'Mission'" width="130">
+        <el-table-column :label="$t('resourcePlanner.mission')" width="130">
           <template #default="{ row }">
             <el-tag v-for="m in (row.mission || [])" :key="m" size="small" class="mr-1">{{ m }}</el-tag>
           </template>
         </el-table-column>
-        <el-table-column :label="$t('resourcePlanner.cost') || 'Cost'" width="120" align="right">
+        <el-table-column :label="$t('resourcePlanner.cost')" width="120" align="right">
           <template #default="{ row }">
             <span class="font-mono text-sm">{{ Number(row.durationCost || 0).toLocaleString() }} SAR</span>
           </template>
         </el-table-column>
-        <el-table-column :label="$t('common.action') || ''" width="120" fixed="right">
+        <el-table-column :label="$t('common.action')" width="120" fixed="right">
           <template #default="{ row }">
             <div class="flex gap-1">
               <el-button text circle size="small" @click="editAllocation(row)">
@@ -209,7 +209,7 @@
           </template>
         </el-table-column>
         <template #empty>
-          <el-empty :description="$t('common.noData') || 'No allocations yet'" />
+          <el-empty :description="$t('common.noData')" />
         </template>
       </el-table>
 
@@ -230,30 +230,30 @@
       <div v-if="utilizationData" class="grid grid-cols-2 md:grid-cols-4 gap-4">
         <div class="glass-card p-4 rounded-xl text-center">
           <div class="text-2xl font-bold" style="color: var(--text-primary)">{{ utilizationData.summary?.totalResources || 0 }}</div>
-          <div class="text-xs mt-1" style="color: var(--text-muted)">{{ $t('resourcePlanner.totalResources') || 'Total Resources' }}</div>
+          <div class="text-xs mt-1" style="color: var(--text-muted)">{{ $t('resourcePlanner.totalResources') }}</div>
         </div>
         <div class="glass-card p-4 rounded-xl text-center">
           <div class="text-2xl font-bold" style="color: #f59e0b">{{ utilizationData.summary?.avgUtilization || 0 }}%</div>
-          <div class="text-xs mt-1" style="color: var(--text-muted)">{{ $t('resourcePlanner.avgUtilization') || 'Avg Utilization' }}</div>
+          <div class="text-xs mt-1" style="color: var(--text-muted)">{{ $t('resourcePlanner.avgUtilization') }}</div>
         </div>
         <div class="glass-card p-4 rounded-xl text-center">
           <div class="text-2xl font-bold" style="color: #ef4444">{{ utilizationData.summary?.overAllocatedCount || 0 }}</div>
-          <div class="text-xs mt-1" style="color: var(--text-muted)">{{ $t('resourcePlanner.overAllocated') || 'Over-Allocated' }}</div>
+          <div class="text-xs mt-1" style="color: var(--text-muted)">{{ $t('resourcePlanner.overAllocated') }}</div>
         </div>
         <div class="glass-card p-4 rounded-xl text-center">
           <div class="text-2xl font-bold" style="color: #3b82f6">{{ utilizationData.summary?.totalAllocatedDays || 0 }}d</div>
-          <div class="text-xs mt-1" style="color: var(--text-muted)">{{ $t('resourcePlanner.totalAllocDays') || 'Total Allocated Days' }}</div>
+          <div class="text-xs mt-1" style="color: var(--text-muted)">{{ $t('resourcePlanner.totalAllocDays') }}</div>
         </div>
       </div>
 
       <!-- Utilization per Resource -->
       <div class="glass-panel p-6 rounded-2xl">
         <h3 class="text-sm font-medium mb-4" style="color: var(--text-secondary)">
-          {{ $t('resourcePlanner.utilizationByResource') || 'Utilization by Resource' }}
+          {{ $t('resourcePlanner.utilizationByResource') }}
         </h3>
         <div v-if="loadingUtil" class="flex items-center justify-center py-12">
           <el-icon class="is-loading text-2xl mr-2" style="color: var(--primary)"><Loading /></el-icon>
-          <span style="color: var(--text-muted)">{{ $t('common.loading') || 'Loading...' }}</span>
+          <span style="color: var(--text-muted)">{{ $t('common.loading') }}</span>
         </div>
         <div v-else-if="utilizationData?.resources?.length" class="space-y-3">
           <div
@@ -272,7 +272,7 @@
                 <el-tag v-if="res.overAllocated" type="danger" size="small" round>Over</el-tag>
               </div>
               <div class="text-xs" style="color: var(--text-muted)">
-                {{ res.projectCount }} {{ $t('resourcePlanner.projects') || 'project(s)' }}
+                {{ res.projectCount }} {{ $t('resourcePlanner.projects') }}
                 &middot; {{ res.totalEstimatedDays }}d allocated
                 &middot; {{ res.availableDays }}d available
               </div>
@@ -295,7 +295,7 @@
           </div>
         </div>
         <div v-else class="text-center py-12">
-          <p class="text-sm" style="color: var(--text-muted)">{{ $t('common.noData') || 'No utilization data available' }}</p>
+          <p class="text-sm" style="color: var(--text-muted)">{{ $t('common.noData') }}</p>
         </div>
       </div>
     </div>
@@ -305,7 +305,7 @@
       <!-- By Project -->
       <div class="glass-panel p-6 rounded-2xl">
         <h3 class="text-sm font-medium mb-4" style="color: var(--text-secondary)">
-          {{ $t('resourcePlanner.byProject') || 'Allocation by Project' }}
+          {{ $t('resourcePlanner.byProject') }}
         </h3>
         <div v-if="projectSummaries.length" class="space-y-3">
           <div v-for="proj in projectSummaries" :key="proj.id" class="flex items-center gap-3">
@@ -320,40 +320,40 @@
           </div>
         </div>
         <div v-else class="text-center py-8">
-          <p class="text-sm" style="color: var(--text-muted)">{{ $t('resourcePlanner.noProjectAllocations') || 'No projects with allocations.' }}</p>
+          <p class="text-sm" style="color: var(--text-muted)">{{ $t('resourcePlanner.noProjectAllocations') }}</p>
         </div>
       </div>
 
       <!-- Skill Matrix -->
       <div class="glass-panel p-6 rounded-2xl">
         <h3 class="text-sm font-medium mb-4" style="color: var(--text-secondary)">
-          {{ $t('resourcePlanner.skillAvailability') || 'Skill Availability' }}
+          {{ $t('resourcePlanner.skillAvailability') }}
         </h3>
         <div v-if="skills.length" class="space-y-3">
           <div v-for="skill in skills" :key="skill.name" class="flex items-center justify-between p-3 rounded-lg" style="background: var(--bg-base)">
             <div>
               <div class="text-sm" style="color: var(--text-primary)">{{ skill.name }}</div>
-              <div class="text-xs" style="color: var(--text-muted)">{{ skill.people }} {{ $t('resourcePlanner.teamMembers') || 'team members' }}</div>
+              <div class="text-xs" style="color: var(--text-muted)">{{ skill.people }} {{ $t('resourcePlanner.teamMembers') }}</div>
             </div>
             <div class="text-right">
               <div class="text-sm font-medium" :style="{ color: skill.available > 0 ? '#10b981' : '#ef4444' }">
-                {{ skill.available }}h {{ $t('resourcePlanner.available') || 'available' }}
+                {{ skill.available }}h {{ $t('resourcePlanner.available') }}
               </div>
-              <div class="text-[10px]" style="color: var(--text-muted)">{{ skill.allocated }}h {{ $t('resourcePlanner.allocated') || 'allocated' }}</div>
+              <div class="text-[10px]" style="color: var(--text-muted)">{{ skill.allocated }}h {{ $t('resourcePlanner.allocated') }}</div>
             </div>
           </div>
         </div>
         <div v-else class="text-center py-8">
-          <p class="text-sm" style="color: var(--text-muted)">{{ $t('common.noData') || 'No skill data available.' }}</p>
+          <p class="text-sm" style="color: var(--text-muted)">{{ $t('common.noData') }}</p>
         </div>
       </div>
     </div>
 
     <!-- ========== ALLOCATE DIALOG ========== -->
-    <el-dialog v-model="showAllocateDialog" :title="editingAlloc ? ($t('resourcePlanner.editAllocation') || 'Edit Allocation') : ($t('resourcePlanner.allocateResource') || 'Allocate Resource')" width="500px" :close-on-click-modal="false">
+    <el-dialog v-model="showAllocateDialog" :title="editingAlloc ? $t('resourcePlanner.editAllocation') : $t('resourcePlanner.allocateResource')" width="500px" :close-on-click-modal="false">
       <el-form label-position="top" size="large">
-        <el-form-item :label="$t('resourcePlanner.resource') || 'Resource'">
-          <el-select v-model="allocForm.manpowerId" class="w-full" filterable :placeholder="$t('resourcePlanner.selectResource') || 'Select resource'" :disabled="!!editingAlloc">
+        <el-form-item :label="$t('resourcePlanner.resource')">
+          <el-select v-model="allocForm.manpowerId" class="w-full" filterable :placeholder="$t('resourcePlanner.selectResource')" :disabled="!!editingAlloc">
             <el-option v-for="mp in manpowerList" :key="mp.id" :label="`${mp.name} (${(mp.role || []).join(', ')})`" :value="mp.id">
               <div class="flex items-center justify-between w-full">
                 <span>{{ mp.name }}</span>
@@ -363,20 +363,20 @@
             </el-option>
           </el-select>
         </el-form-item>
-        <el-form-item :label="$t('resourcePlanner.project') || 'Project'">
-          <el-select v-model="allocForm.projectId" class="w-full" filterable :placeholder="$t('resourcePlanner.selectProject') || 'Select project'" :disabled="!!editingAlloc">
+        <el-form-item :label="$t('resourcePlanner.project')">
+          <el-select v-model="allocForm.projectId" class="w-full" filterable :placeholder="$t('resourcePlanner.selectProject')" :disabled="!!editingAlloc">
             <el-option v-for="p in projectList" :key="p.id" :label="p.name" :value="p.id" />
           </el-select>
         </el-form-item>
         <div class="grid grid-cols-2 gap-4">
-          <el-form-item :label="$t('resourcePlanner.estDays') || 'Estimated Work Days'">
+          <el-form-item :label="$t('resourcePlanner.estDays')">
             <el-input-number v-model="allocForm.estimatedWorkDays" :min="1" :max="365" class="!w-full" />
           </el-form-item>
-          <el-form-item :label="$t('resourcePlanner.actualDays') || 'Actual Work Days'">
+          <el-form-item :label="$t('resourcePlanner.actualDays')">
             <el-input-number v-model="allocForm.actualWorkDays" :min="0" :max="365" class="!w-full" />
           </el-form-item>
         </div>
-        <el-form-item :label="$t('resourcePlanner.mission') || 'Mission'">
+        <el-form-item :label="$t('resourcePlanner.mission')">
           <el-select v-model="allocForm.mission" multiple class="w-full">
             <el-option label="Standard" value="Standard" />
             <el-option label="Helper" value="Helper" />
@@ -386,13 +386,13 @@
         </el-form-item>
       </el-form>
       <template #footer>
-        <el-button @click="showAllocateDialog = false">{{ $t('common.cancel') || 'Cancel' }}</el-button>
-        <el-button type="primary" :loading="saving" @click="saveAllocation">{{ $t('common.save') || 'Save' }}</el-button>
+        <el-button @click="showAllocateDialog = false">{{ $t('common.cancel') }}</el-button>
+        <el-button type="primary" :loading="saving" @click="saveAllocation">{{ $t('common.save') }}</el-button>
       </template>
     </el-dialog>
 
     <!-- ========== EDIT DAY DIALOG ========== -->
-    <el-dialog v-model="showDayEditDialog" :title="$t('resourcePlanner.editDayAllocation') || 'Edit Day Allocation'" width="420px" :close-on-click-modal="false">
+    <el-dialog v-model="showDayEditDialog" :title="$t('resourcePlanner.editDayAllocation')" width="420px" :close-on-click-modal="false">
       <div v-if="editingDay.resource" class="space-y-4">
         <div class="flex items-center gap-3 p-3 rounded-lg" style="background: var(--bg-base)">
           <el-avatar :size="32" style="background: var(--bg-elevated)">{{ editingDay.resource?.name.charAt(0) }}</el-avatar>
@@ -404,7 +404,7 @@
 
         <!-- Show which allocations contribute to this resource's hours -->
         <div v-if="editingDay.allocations.length" class="space-y-2">
-          <p class="text-xs font-medium" style="color: var(--text-muted)">{{ $t('resourcePlanner.allocationsForDay') || 'Allocations contributing to this day:' }}</p>
+          <p class="text-xs font-medium" style="color: var(--text-muted)">{{ $t('resourcePlanner.allocationsForDay') }}</p>
           <div v-for="alloc in editingDay.allocations" :key="alloc.id" class="flex items-center justify-between p-2 rounded" style="background: var(--bg-elevated)">
             <span class="text-sm" style="color: var(--text-primary)">{{ alloc.project?.name || 'Unknown Project' }}</span>
             <div class="flex items-center gap-2">
@@ -414,23 +414,23 @@
           </div>
         </div>
         <div v-else class="text-center py-4">
-          <p class="text-sm" style="color: var(--text-muted)">{{ $t('resourcePlanner.noAllocationsFound') || 'No allocations found for this resource.' }}</p>
+          <p class="text-sm" style="color: var(--text-muted)">{{ $t('resourcePlanner.noAllocationsFound') }}</p>
         </div>
 
         <!-- Capacity indicator -->
         <div class="flex items-center gap-2 text-xs">
-          <span style="color: var(--text-muted)">{{ $t('resourcePlanner.capacity') || 'Capacity' }}:</span>
+          <span style="color: var(--text-muted)">{{ $t('resourcePlanner.capacity') }}:</span>
           <span :style="{ color: editingDay.totalHours > (editingDay.resource?.maxHoursPerDay || 8) ? '#ef4444' : '#10b981' }">
             {{ editingDay.totalHours }}h / {{ editingDay.resource?.maxHoursPerDay || 8 }}h per day
           </span>
           <span v-if="editingDay.totalHours > (editingDay.resource?.maxHoursPerDay || 8)" style="color: #ef4444" class="font-medium">
-            ({{ $t('resourcePlanner.overAllocatedLabel') || 'Over-allocated' }})
+            ({{ $t('resourcePlanner.overAllocatedLabel') }})
           </span>
         </div>
       </div>
       <template #footer>
-        <el-button @click="showDayEditDialog = false">{{ $t('common.cancel') || 'Cancel' }}</el-button>
-        <el-button type="primary" :loading="savingDay" @click="applyDayEdit">{{ $t('resourcePlanner.saveChanges') || 'Save Changes' }}</el-button>
+        <el-button @click="showDayEditDialog = false">{{ $t('common.cancel') }}</el-button>
+        <el-button type="primary" :loading="savingDay" @click="applyDayEdit">{{ $t('resourcePlanner.saveChanges') }}</el-button>
       </template>
     </el-dialog>
   </div>

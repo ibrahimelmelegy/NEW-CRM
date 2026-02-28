@@ -4,7 +4,7 @@
   .flex.items-center.gap-x-3
     el-button(v-if="hasPermission('CREATE_PROPOSALS')" size="large" class="!rounded-2xl" @click="createQuoteFromDeal")
       Icon(name="ph:file-text-bold" size="18" class="mr-1")
-      | {{ $t('deals.createQuote') || 'Create Quote' }}
+      | {{ $t('deals.createQuote') }}
     el-dropdown(trigger="click")
         span.el-dropdown-link
             button.rounded-btn(class="!px-4"): Icon(  name="IconToggle" size="24")
@@ -18,7 +18,7 @@
 //- Pipeline Stage Stepper
 .glass-card.rounded-2xl.p-6.mb-6(v-if="pipelineStages.length")
   .flex.items-center.justify-between.mb-3
-    p.text-sm.font-medium(style="color: var(--text-muted)") {{ $t('deals.pipeline') || 'Pipeline Progress' }}
+    p.text-sm.font-medium(style="color: var(--text-muted)") {{ $t('deals.pipeline') }}
     el-tag(:type="currentStageType" size="small" effect="dark" round) {{ deal?.stage || 'N/A' }}
   .flex.items-center.gap-1
     .flex-1(v-for="(stage, idx) in pipelineStages" :key="stage.id")

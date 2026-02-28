@@ -1,10 +1,10 @@
 <template lang="pug">
 .p-6.animate-entrance
-  ModuleHeader(:title="$t('competitors.title') || 'Competitor Tracking'" :subtitle="$t('competitors.subtitle') || 'Monitor competitors and track win/loss analysis.'")
+  ModuleHeader(:title="$t('competitors.title')" :subtitle="$t('competitors.subtitle')")
     template(#actions)
       el-button(type="primary" size="large" @click="openCreateDialog" class="premium-btn")
         Icon(name="ph:binoculars-bold" size="20")
-        span.mx-1 {{ $t('competitors.add') || 'Add Competitor' }}
+        span.mx-1 {{ $t('competitors.add') }}
 
   StatCards(:stats="summaryStats")
 
@@ -13,7 +13,7 @@
     .flex.items-center.gap-2.mb-4
       .w-8.h-8.rounded-xl.flex.items-center.justify-center(style="background: rgba(120,73,255,0.15)")
         Icon(name="ph:chart-pie-bold" size="16" style="color: #7849ff")
-      h3.text-sm.font-bold(style="color: var(--text-primary)") {{ $t('competitors.marketShare') || 'Market Share Analysis' }}
+      h3.text-sm.font-bold(style="color: var(--text-primary)") {{ $t('competitors.marketShare') }}
     div(ref="marketShareChartRef" style="height: 280px;")
 
   //- Threat Matrix Section
@@ -21,12 +21,12 @@
     .flex.items-center.gap-2.mb-4
       .w-8.h-8.rounded-xl.flex.items-center.justify-center(style="background: rgba(239,68,68,0.15)")
         Icon(name="ph:shield-warning-bold" size="16" style="color: #ef4444")
-      h3.text-sm.font-bold(style="color: var(--text-primary)") {{ $t('competitors.threatMatrix') || 'Threat Matrix' }}
+      h3.text-sm.font-bold(style="color: var(--text-primary)") {{ $t('competitors.threatMatrix') }}
     el-table(:data="threatMatrix" style="width: 100%" size="small")
-      el-table-column(:label="$t('competitors.name') || 'Competitor'" min-width="160")
+      el-table-column(:label="$t('competitors.name')" min-width="160")
         template(#default="{ row }")
           span.font-bold {{ row.name || '—' }}
-      el-table-column(:label="$t('competitors.threatLevel') || 'Threat Level'" width="140" align="center")
+      el-table-column(:label="$t('competitors.threatLevel')" width="140" align="center")
         template(#default="{ row }")
           el-tag(:color="threatColor(row.threatLevel)" effect="dark" size="small" round style="border: none; color: #fff") {{ row.threatLevel }}
       el-table-column(label="Win Rate" width="120" align="center")
@@ -47,23 +47,23 @@
       .flex.items-center.gap-2
         .w-8.h-8.rounded-xl.flex.items-center.justify-center(style="background: rgba(34,197,94,0.15)")
           Icon(name="ph:currency-dollar-bold" size="16" style="color: #22c55e")
-        h3.text-sm.font-bold(style="color: var(--text-primary)") {{ $t('competitors.pricingComparison') || 'Pricing Comparison' }}
+        h3.text-sm.font-bold(style="color: var(--text-primary)") {{ $t('competitors.pricingComparison') }}
       el-button(text size="small" @click="refreshPricing")
         Icon(name="ph:arrows-clockwise" size="14")
     el-table(:data="pricingData" style="width: 100%" size="small" stripe)
-      el-table-column(:label="$t('competitors.name') || 'Competitor'" min-width="140")
+      el-table-column(:label="$t('competitors.name')" min-width="140")
         template(#default="{ row }")
           span.font-bold {{ row.name }}
-      el-table-column(:label="$t('competitors.pricingModel') || 'Pricing Model'" width="140")
+      el-table-column(:label="$t('competitors.pricingModel')" width="140")
         template(#default="{ row }")
           el-tag(size="small" effect="plain") {{ row.pricingModel || 'N/A' }}
-      el-table-column(:label="$t('competitors.basePrice') || 'Base Price'" width="120" align="center")
+      el-table-column(:label="$t('competitors.basePrice')" width="120" align="center")
         template(#default="{ row }")
           span {{ row.basePrice ? '$' + row.basePrice : '—' }}
-      el-table-column(:label="$t('competitors.enterprisePrice') || 'Enterprise'" width="130" align="center")
+      el-table-column(:label="$t('competitors.enterprisePrice')" width="130" align="center")
         template(#default="{ row }")
           span {{ row.enterprisePrice ? '$' + row.enterprisePrice : '—' }}
-      el-table-column(:label="$t('competitors.notes') || 'Notes'" min-width="200" show-overflow-tooltip)
+      el-table-column(:label="$t('competitors.notes')" min-width="200" show-overflow-tooltip)
         template(#default="{ row }")
           span.text-sm {{ row.pricingNotes || '—' }}
       template(#empty)
@@ -75,12 +75,12 @@
       .flex.items-center.gap-2
         .w-8.h-8.rounded-xl.flex.items-center.justify-center(style="background: rgba(59,130,246,0.15)")
           Icon(name="ph:list-checks-bold" size="16" style="color: #3b82f6")
-        h3.text-sm.font-bold(style="color: var(--text-primary)") {{ $t('competitors.featureComparison') || 'Feature Comparison Matrix' }}
+        h3.text-sm.font-bold(style="color: var(--text-primary)") {{ $t('competitors.featureComparison') }}
       el-button(text size="small" @click="showFeatureDialog = true")
         Icon(name="ph:pencil-simple" size="14")
         span.ml-1 {{ $t('common.edit') }}
     el-table(:data="featureComparisonData" style="width: 100%" size="small" stripe)
-      el-table-column(:label="$t('competitors.feature') || 'Feature'" min-width="160" fixed)
+      el-table-column(:label="$t('competitors.feature')" min-width="160" fixed)
         template(#default="{ row }")
           span.font-semibold {{ row.feature }}
       el-table-column(v-for="comp in items.slice(0, 5)" :key="comp.id" :label="comp.name" width="120" align="center")
@@ -95,13 +95,13 @@
     .flex.items-center.gap-2.mb-4
       .w-8.h-8.rounded-xl.flex.items-center.justify-center(style="background: rgba(245,158,11,0.15)")
         Icon(name="ph:chart-bar-bold" size="16" style="color: #f59e0b")
-      h3.text-sm.font-bold(style="color: var(--text-primary)") {{ $t('competitors.winLossReasons') || 'Win/Loss Reason Analysis' }}
+      h3.text-sm.font-bold(style="color: var(--text-primary)") {{ $t('competitors.winLossReasons') }}
     .grid.gap-4(class="grid-cols-1 md:grid-cols-2")
       div
-        p.text-xs.font-bold.mb-3(style="color: var(--text-muted)") {{ $t('competitors.winReasons') || 'Top Win Reasons' }}
+        p.text-xs.font-bold.mb-3(style="color: var(--text-muted)") {{ $t('competitors.winReasons') }}
         div(ref="winReasonsChartRef" style="height: 200px;")
       div
-        p.text-xs.font-bold.mb-3(style="color: var(--text-muted)") {{ $t('competitors.lossReasons') || 'Top Loss Reasons' }}
+        p.text-xs.font-bold.mb-3(style="color: var(--text-muted)") {{ $t('competitors.lossReasons') }}
         div(ref="lossReasonsChartRef" style="height: 200px;")
 
   //- Activity Timeline
@@ -109,7 +109,7 @@
     .flex.items-center.gap-2.mb-4
       .w-8.h-8.rounded-xl.flex.items-center.justify-center(style="background: rgba(139,92,246,0.15)")
         Icon(name="ph:clock-clockwise-bold" size="16" style="color: #8b5cf6")
-      h3.text-sm.font-bold(style="color: var(--text-primary)") {{ $t('competitors.activityTimeline') || 'Recent Competitor Activity' }}
+      h3.text-sm.font-bold(style="color: var(--text-primary)") {{ $t('competitors.activityTimeline') }}
     el-timeline
       el-timeline-item(v-for="activity in activityTimeline" :key="activity.id" :timestamp="formatActivityDate(activity.createdAt)" placement="top" :color="activityColor(activity.type)")
         .flex.items-start.gap-3
@@ -122,41 +122,41 @@
   .glass-card.py-8.animate-entrance
     el-table(:data="items" v-loading="loading" style="width: 100%")
       el-table-column(type="index" width="50")
-      el-table-column(:label="$t('competitors.name') || 'Name'" min-width="160")
+      el-table-column(:label="$t('competitors.name')" min-width="160")
         template(#default="{ row }")
           .flex.items-center.gap-2.cursor-pointer(@click="openDetailsDialog(row)")
             span.font-bold {{ row.name || '—' }}
             Icon(name="ph:arrow-square-out" size="12" style="color: var(--text-muted)")
-      el-table-column(:label="$t('competitors.website') || 'Website'" min-width="160")
+      el-table-column(:label="$t('competitors.website')" min-width="160")
         template(#default="{ row }")
           a.text-blue-400.underline(v-if="row.website" :href="row.website" target="_blank" @click.stop) {{ row.website }}
           span(v-else) —
-      el-table-column(:label="$t('competitors.industry') || 'Industry'" width="140")
+      el-table-column(:label="$t('competitors.industry')" width="140")
         template(#default="{ row }")
           span {{ row.industry || '—' }}
-      el-table-column(:label="$t('competitors.marketShare') || 'Market Share'" width="130" align="center")
+      el-table-column(:label="$t('competitors.marketShare')" width="130" align="center")
         template(#default="{ row }")
           span {{ row.marketShare != null ? row.marketShare + '%' : '—' }}
-      el-table-column(:label="$t('competitors.threatLevel') || 'Threat Level'" width="130")
+      el-table-column(:label="$t('competitors.threatLevel')" width="130")
         template(#default="{ row }")
           el-tag(:type="threatType(row.threatLevel)" size="small" round) {{ row.threatLevel || '—' }}
-      el-table-column(:label="$t('competitors.dealsWon') || 'Deals Won'" width="110" align="center")
+      el-table-column(:label="$t('competitors.dealsWon')" width="110" align="center")
         template(#default="{ row }")
           span.font-bold.text-green-500 {{ row.dealsWon ?? 0 }}
-      el-table-column(:label="$t('competitors.dealsLost') || 'Deals Lost'" width="110" align="center")
+      el-table-column(:label="$t('competitors.dealsLost')" width="110" align="center")
         template(#default="{ row }")
           span.font-bold.text-red-500 {{ row.dealsLost ?? 0 }}
-      el-table-column(:label="$t('competitors.status') || 'Status'" width="120")
+      el-table-column(:label="$t('competitors.status')" width="120")
         template(#default="{ row }")
           el-tag(:type="row.status === 'ACTIVE' ? 'success' : 'info'" size="small" round) {{ row.status || '—' }}
-      el-table-column(:label="$t('common.action') || ''" width="100" fixed="right")
+      el-table-column(:label="$t('common.action')" width="100" fixed="right")
         template(#default="{ row }")
           el-button(text circle size="small" type="primary" @click="openEditDialog(row)")
             Icon(name="ph:pencil-simple" size="14")
           el-button(text circle size="small" type="danger" @click="handleDelete(row.id)")
             Icon(name="ph:trash" size="14")
       template(#empty)
-        el-empty(:description="$t('common.noData') || 'No competitors tracked yet'")
+        el-empty(:description="$t('common.noData')")
 
     .flex.justify-end.mt-4
       el-pagination(
@@ -167,72 +167,72 @@
         @current-change="(p: number) => { pagination.page = p; fetchData() }"
       )
 
-  el-dialog(v-model="showDialog" :title="editingId ? ($t('competitors.edit') || 'Edit Competitor') : ($t('competitors.add') || 'Add Competitor')" width="700px")
+  el-dialog(v-model="showDialog" :title="editingId ? $t('competitors.edit') : $t('competitors.add')" width="700px")
     el-form(label-position="top" size="large")
       .grid.grid-cols-2.gap-4
-        el-form-item(:label="$t('competitors.name') || 'Name'" required)
-          el-input(v-model="form.name" :placeholder="$t('competitors.namePlaceholder') || 'Competitor name'")
-        el-form-item(:label="$t('competitors.website') || 'Website'")
+        el-form-item(:label="$t('competitors.name')" required)
+          el-input(v-model="form.name" :placeholder="$t('competitors.namePlaceholder')")
+        el-form-item(:label="$t('competitors.website')")
           el-input(v-model="form.website" placeholder="https://")
       .grid.grid-cols-3.gap-4
-        el-form-item(:label="$t('competitors.industry') || 'Industry'")
-          el-input(v-model="form.industry" :placeholder="$t('competitors.industryPlaceholder') || 'e.g. SaaS, Finance'")
-        el-form-item(:label="$t('competitors.threatLevel') || 'Threat Level'")
+        el-form-item(:label="$t('competitors.industry')")
+          el-input(v-model="form.industry" :placeholder="$t('competitors.industryPlaceholder')")
+        el-form-item(:label="$t('competitors.threatLevel')")
           el-select(v-model="form.threatLevel" class="w-full")
             el-option(label="Low" value="LOW")
             el-option(label="Medium" value="MEDIUM")
             el-option(label="High" value="HIGH")
             el-option(label="Critical" value="CRITICAL")
-        el-form-item(:label="$t('competitors.marketShare') || 'Market Share %'")
+        el-form-item(:label="$t('competitors.marketShare')")
           el-input-number(v-model="form.marketShare" :min="0" :max="100" :precision="1" class="w-full")
       .grid.grid-cols-2.gap-4
-        el-form-item(:label="$t('competitors.status') || 'Status'")
+        el-form-item(:label="$t('competitors.status')")
           el-select(v-model="form.status" class="w-full")
             el-option(label="Active" value="ACTIVE")
             el-option(label="Inactive" value="INACTIVE")
-        el-form-item(:label="$t('competitors.dealsWon') || 'Deals Won'")
+        el-form-item(:label="$t('competitors.dealsWon')")
           el-input-number(v-model="form.dealsWon" :min="0" class="w-full")
 
-      el-divider {{ $t('competitors.pricingInfo') || 'Pricing Information' }}
+      el-divider {{ $t('competitors.pricingInfo') }}
       .grid.grid-cols-2.gap-4
-        el-form-item(:label="$t('competitors.pricingModel') || 'Pricing Model'")
+        el-form-item(:label="$t('competitors.pricingModel')")
           el-select(v-model="form.pricingModel" class="w-full")
             el-option(label="Subscription" value="SUBSCRIPTION")
             el-option(label="One-time" value="ONE_TIME")
             el-option(label="Freemium" value="FREEMIUM")
             el-option(label="Usage-based" value="USAGE_BASED")
             el-option(label="Enterprise" value="ENTERPRISE")
-        el-form-item(:label="$t('competitors.basePrice') || 'Base Price ($)'")
+        el-form-item(:label="$t('competitors.basePrice')")
           el-input-number(v-model="form.basePrice" :min="0" class="w-full")
       .grid.grid-cols-2.gap-4
-        el-form-item(:label="$t('competitors.enterprisePrice') || 'Enterprise Price ($)'")
+        el-form-item(:label="$t('competitors.enterprisePrice')")
           el-input-number(v-model="form.enterprisePrice" :min="0" class="w-full")
-        el-form-item(:label="$t('competitors.pricingNotes') || 'Pricing Notes'")
-          el-input(v-model="form.pricingNotes" :placeholder="$t('competitors.pricingNotesPlaceholder') || 'Special offers, discounts...'")
+        el-form-item(:label="$t('competitors.pricingNotes')")
+          el-input(v-model="form.pricingNotes" :placeholder="$t('competitors.pricingNotesPlaceholder')")
 
-      el-divider {{ $t('competitors.competitiveIntel') || 'Competitive Intelligence' }}
-      el-form-item(:label="$t('competitors.strengths') || 'Strengths'")
-        el-input(v-model="form.strengths" type="textarea" :rows="2" :placeholder="$t('competitors.strengthsPlaceholder') || 'Key strengths...'")
-      el-form-item(:label="$t('competitors.weaknesses') || 'Weaknesses'")
-        el-input(v-model="form.weaknesses" type="textarea" :rows="2" :placeholder="$t('competitors.weaknessesPlaceholder') || 'Key weaknesses...'")
-      el-form-item(:label="$t('competitors.notes') || 'Notes'")
+      el-divider {{ $t('competitors.competitiveIntel') }}
+      el-form-item(:label="$t('competitors.strengths')")
+        el-input(v-model="form.strengths" type="textarea" :rows="2" :placeholder="$t('competitors.strengthsPlaceholder')")
+      el-form-item(:label="$t('competitors.weaknesses')")
+        el-input(v-model="form.weaknesses" type="textarea" :rows="2" :placeholder="$t('competitors.weaknessesPlaceholder')")
+      el-form-item(:label="$t('competitors.notes')")
         el-input(v-model="form.notes" type="textarea" :rows="2")
     template(#footer)
-      el-button(@click="showDialog = false") {{ $t('common.cancel') || 'Cancel' }}
-      el-button(type="primary" :loading="saving" @click="saveItem") {{ $t('common.save') || 'Save' }}
+      el-button(@click="showDialog = false") {{ $t('common.cancel') }}
+      el-button(type="primary" :loading="saving" @click="saveItem") {{ $t('common.save') }}
 
   //- Feature Comparison Dialog
-  el-dialog(v-model="showFeatureDialog" :title="$t('competitors.editFeatures') || 'Edit Feature Matrix'" width="800px")
-    p.text-sm.mb-4(style="color: var(--text-muted)") {{ $t('competitors.featureMatrixDesc') || 'Manage features to compare across competitors.' }}
+  el-dialog(v-model="showFeatureDialog" :title="$t('competitors.editFeatures')" width="800px")
+    p.text-sm.mb-4(style="color: var(--text-muted)") {{ $t('competitors.featureMatrixDesc') }}
     .mb-4
-      el-input(v-model="newFeature" :placeholder="$t('competitors.addFeaturePlaceholder') || 'Enter feature name'" size="large")
+      el-input(v-model="newFeature" :placeholder="$t('competitors.addFeaturePlaceholder')" size="large")
         template(#append)
           el-button(@click="addFeature") {{ $t('common.add') }}
     el-table(:data="featureComparisonData" style="width: 100%" size="small")
-      el-table-column(:label="$t('competitors.feature') || 'Feature'" min-width="200")
+      el-table-column(:label="$t('competitors.feature')" min-width="200")
         template(#default="{ row }")
           span {{ row.feature }}
-      el-table-column(:label="$t('common.action') || 'Actions'" width="100")
+      el-table-column(:label="$t('common.action')" width="100")
         template(#default="{ row, $index }")
           el-button(text type="danger" size="small" @click="removeFeature($index)")
             Icon(name="ph:trash" size="14")
@@ -243,7 +243,7 @@
   el-dialog(v-model="showDetailsDialog" :title="detailsCompetitor?.name || ''" width="900px")
     template(v-if="detailsCompetitor")
       el-tabs
-        el-tab-pane(:label="$t('common.overview') || 'Overview'")
+        el-tab-pane(:label="$t('common.overview')")
           .grid.gap-4.mb-4(class="grid-cols-2 md:grid-cols-3")
             .p-4.rounded-xl.border(style="border-color: var(--border-default); background: var(--bg-elevated);")
               p.text-xs.font-bold.uppercase.tracking-widest(style="color: var(--text-muted);") {{ $t('competitors.industry') }}
@@ -262,7 +262,7 @@
             div
               p.text-sm.font-bold.mb-2(style="color: var(--text-primary);") {{ $t('competitors.weaknesses') }}
               p.text-sm(style="color: var(--text-muted);") {{ detailsCompetitor.weaknesses || '—' }}
-        el-tab-pane(:label="$t('competitors.pricingTab') || 'Pricing'")
+        el-tab-pane(:label="$t('competitors.pricingTab')")
           .grid.gap-4.mb-4(class="grid-cols-2 md:grid-cols-3")
             .p-4.rounded-xl.border(style="border-color: var(--border-default); background: var(--bg-elevated);")
               p.text-xs.font-bold.uppercase.tracking-widest(style="color: var(--text-muted);") {{ $t('competitors.pricingModel') }}
@@ -276,7 +276,7 @@
           div(v-if="detailsCompetitor.pricingNotes")
             p.text-sm.font-bold.mb-2(style="color: var(--text-primary);") {{ $t('competitors.pricingNotes') }}
             p.text-sm(style="color: var(--text-muted);") {{ detailsCompetitor.pricingNotes }}
-        el-tab-pane(:label="$t('competitors.analytics') || 'Analytics'")
+        el-tab-pane(:label="$t('competitors.analytics')")
           .grid.gap-4.mb-4(class="grid-cols-2 md:grid-cols-4")
             .p-4.rounded-xl.border.text-center(style="border-color: var(--border-default); background: var(--bg-elevated);")
               p.text-2xl.font-bold(style="color: #22c55e;") {{ detailsCompetitor.dealsWon || 0 }}
@@ -286,10 +286,10 @@
               p.text-xs.mt-1(style="color: var(--text-muted);") {{ $t('competitors.dealsLost') }}
             .p-4.rounded-xl.border.text-center(style="border-color: var(--border-default); background: var(--bg-elevated);")
               p.text-2xl.font-bold(style="color: var(--text-primary);") {{ ((detailsCompetitor.dealsWon || 0) + (detailsCompetitor.dealsLost || 0)) }}
-              p.text-xs.mt-1(style="color: var(--text-muted);") {{ $t('competitors.totalEngagements') || 'Total Engagements' }}
+              p.text-xs.mt-1(style="color: var(--text-muted);") {{ $t('competitors.totalEngagements') }}
             .p-4.rounded-xl.border.text-center(style="border-color: var(--border-default); background: var(--bg-elevated);")
               p.text-2xl.font-bold(style="color: #3b82f6;") {{ calculateWinRate(detailsCompetitor) }}%
-              p.text-xs.mt-1(style="color: var(--text-muted);") {{ $t('competitors.winRate') || 'Win Rate' }}
+              p.text-xs.mt-1(style="color: var(--text-muted);") {{ $t('competitors.winRate') }}
 </template>
 
 <script setup lang="ts">
@@ -297,6 +297,8 @@ import * as echarts from 'echarts';
 import { nextTick } from 'vue';
 
 definePageMeta({ middleware: 'permissions' });
+
+const { t } = useI18n();
 
 const loading = ref(false);
 const saving = ref(false);
@@ -523,17 +525,17 @@ function refreshPricing() {
 
 function addFeature() {
   if (!newFeature.value.trim()) {
-    ElMessage.warning('Please enter a feature name');
+    ElMessage.warning(t('common.fillRequired'));
     return;
   }
   featureComparisonData.value.push({ feature: newFeature.value, availability: {} });
   newFeature.value = '';
-  ElMessage.success('Feature added');
+  ElMessage.success(t('competitors.featureAdded'));
 }
 
 function removeFeature(index: number) {
   featureComparisonData.value.splice(index, 1);
-  ElMessage.success('Feature removed');
+  ElMessage.success(t('competitors.featureRemoved'));
 }
 
 function formatActivityDate(date: string): string {
@@ -594,7 +596,7 @@ async function saveItem() {
 
 async function handleDelete(id: number) {
   const { success } = await useApiFetch(`competitors/${id}`, 'DELETE');
-  if (success) { ElMessage.success('Deleted'); await fetchData(); }
+  if (success) { ElMessage.success(t('common.deleted')); await fetchData(); }
 }
 
 async function fetchThreatMatrix() {

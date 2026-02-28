@@ -35,7 +35,7 @@ DetailLayout(
           div
             .font-medium.mb-2.flex.items-center(style="color: var(--text-muted)")
               Icon(name="IconCalendar" size="20" class="mr-2")
-              p {{ $t('hr.leave.period') || 'Period' }}
+              p {{ $t('hr.leave.period') }}
             p(style="color: var(--text-primary)") {{ leaveRequest?.startDate }} → {{ leaveRequest?.endDate }}
           div(v-if="leaveRequest?.reason")
             .font-medium.mb-2.flex.items-center(style="color: var(--text-muted)")
@@ -45,24 +45,24 @@ DetailLayout(
           div(v-if="leaveRequest?.rejectionReason")
             .font-medium.mb-2.flex.items-center(style="color: var(--text-muted)")
               Icon(name="ph:warning-bold" size="20" class="mr-2")
-              p {{ $t('hr.leave.rejectionReason') || 'Rejection Reason' }}
+              p {{ $t('hr.leave.rejectionReason') }}
             p.text-red-500 {{ leaveRequest.rejectionReason }}
 
     el-tab-pane(:label="$t('common.timeline')" name="timeline")
       .mt-4
         RecordTimeline(entityType="leaveRequest" :entityId="route.params.id")
 
-    el-tab-pane(:label="$t('common.comments') || 'Comments'" name="comments")
+    el-tab-pane(:label="$t('common.comments')" name="comments")
       .mt-4
         RecordComments(entityType="leaveRequest" :entityId="route.params.id")
 
-    el-tab-pane(:label="$t('common.attachments') || 'Attachments'" name="attachments")
+    el-tab-pane(:label="$t('common.attachments')" name="attachments")
       .mt-4
         RecordAttachments(entityType="leaveRequest" :entityId="route.params.id")
 
   template(#sidebar)
     .glass-card.p-5.rounded-2xl
-      h4.font-semibold.mb-4(style="color: var(--text-primary)") {{ $t('common.info') || 'Quick Info' }}
+      h4.font-semibold.mb-4(style="color: var(--text-primary)") {{ $t('common.info') }}
       .space-y-3
         .flex.justify-between
           span.text-sm(style="color: var(--text-muted)") {{ $t('hr.leave.status') }}
@@ -84,7 +84,7 @@ DetailLayout(
 
   el-dialog(v-model="rejectPopup" :title="$t('hr.leave.reject')" width="500px")
     el-form(label-position="top")
-      el-form-item(:label="$t('hr.leave.rejectionReason') || 'Reason'")
+      el-form-item(:label="$t('hr.leave.rejectionReason')")
         el-input(v-model="rejectReason" type="textarea" :rows="3")
     template(#footer)
       el-button(@click="rejectPopup = false") {{ $t('common.cancel') }}
@@ -119,7 +119,7 @@ const dayCount = computed(() => {
 async function handleApprove() {
   const res = await approveLeave(Number(route.params.id));
   if (res.success) {
-    ElNotification({ type: 'success', title: t('common.success'), message: t('hr.leave.approved') || 'Approved' });
+    ElNotification({ type: 'success', title: t('common.success'), message: t('hr.leave.approved') });
     leaveRequest.value = await fetchLeaveRequestById(route.params.id as string);
   }
 }
@@ -129,7 +129,7 @@ async function confirmReject() {
   try {
     const res = await rejectLeave(Number(route.params.id), rejectReason.value);
     if (res.success) {
-      ElNotification({ type: 'success', title: t('common.success'), message: t('hr.leave.rejected') || 'Rejected' });
+      ElNotification({ type: 'success', title: t('common.success'), message: t('hr.leave.rejected') });
       rejectPopup.value = false;
       leaveRequest.value = await fetchLeaveRequestById(route.params.id as string);
     }

@@ -78,7 +78,7 @@ async function handleSubmit() {
   try {
     const res = isEdit ? await updateBudget(editId!, form) : await createBudget(form);
     if (res.success) {
-      ElNotification({ type: 'success', title: t('common.success'), message: t('common.saved') || 'Saved' });
+      ElNotification({ type: 'success', title: t('common.success'), message: t('common.saved') });
       router.push('/finance/budgets');
     } else {
       ElNotification({ type: 'error', title: t('common.error'), message: res.message });

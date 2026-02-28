@@ -153,7 +153,7 @@ async function downloadFile(pdfUrl: string, filename: string) {
       ElMessage.success(`Downloaded ${filename}`);
     })
     .catch(() => {
-      ElMessage.error('Download failed');
+      ElMessage.error(t('common.downloadFailed'));
     });
 }
 </script>

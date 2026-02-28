@@ -330,6 +330,9 @@
 <script setup lang="ts">
 import { ref } from 'vue';
 import { ElMessage } from 'element-plus';
+import { useI18n } from 'vue-i18n';
+
+const { t } = useI18n();
 
 definePageMeta({ layout: 'default', middleware: 'permissions' });
 
@@ -402,7 +405,7 @@ function handleLogoUpload(event: Event) {
   const file = (event.target as HTMLInputElement).files?.[0];
   if (file) {
     branding.value.logoPreview = URL.createObjectURL(file);
-    ElMessage.success('Logo uploaded');
+    ElMessage.success(t('common.saved'));
   }
 }
 
@@ -410,7 +413,7 @@ function handleFaviconUpload(event: Event) {
   const file = (event.target as HTMLInputElement).files?.[0];
   if (file) {
     branding.value.faviconPreview = URL.createObjectURL(file);
-    ElMessage.success('Favicon uploaded');
+    ElMessage.success(t('common.saved'));
   }
 }
 
@@ -418,7 +421,7 @@ function handleBgUpload(event: Event) {
   const file = (event.target as HTMLInputElement).files?.[0];
   if (file) {
     loginPage.value.bgPreview = URL.createObjectURL(file);
-    ElMessage.success('Background uploaded');
+    ElMessage.success(t('common.saved'));
   }
 }
 
@@ -426,7 +429,7 @@ function handlePortalLogoUpload(event: Event) {
   const file = (event.target as HTMLInputElement).files?.[0];
   if (file) {
     portal.value.logoPreview = URL.createObjectURL(file);
-    ElMessage.success('Portal logo uploaded');
+    ElMessage.success(t('common.saved'));
   }
 }
 
@@ -435,7 +438,7 @@ async function saveBranding() {
   savingBranding.value = true;
   setTimeout(() => {
     savingBranding.value = false;
-    ElMessage.success('Branding settings saved');
+    ElMessage.success(t('common.saved'));
   }, 800);
 }
 
@@ -445,9 +448,9 @@ async function saveDomain() {
     savingDomain.value = false;
     if (domain.value.hostname) {
       domain.value.sslActive = true;
-      ElMessage.success('Domain settings saved');
+      ElMessage.success(t('common.saved'));
     } else {
-      ElMessage.warning('Please enter a domain');
+      ElMessage.warning(t('common.fillRequired'));
     }
   }, 800);
 }
@@ -456,7 +459,7 @@ async function saveEmail() {
   savingEmail.value = true;
   setTimeout(() => {
     savingEmail.value = false;
-    ElMessage.success('Email branding saved');
+    ElMessage.success(t('common.saved'));
   }, 800);
 }
 
@@ -464,7 +467,7 @@ async function saveLoginPage() {
   savingLoginPage.value = true;
   setTimeout(() => {
     savingLoginPage.value = false;
-    ElMessage.success('Login page settings saved');
+    ElMessage.success(t('common.saved'));
   }, 800);
 }
 
@@ -472,7 +475,7 @@ async function savePortal() {
   savingPortal.value = true;
   setTimeout(() => {
     savingPortal.value = false;
-    ElMessage.success('Portal branding saved');
+    ElMessage.success(t('common.saved'));
   }, 800);
 }
 </script>

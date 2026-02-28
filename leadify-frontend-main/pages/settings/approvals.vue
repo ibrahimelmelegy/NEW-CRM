@@ -163,6 +163,9 @@
 
 <script setup lang="ts">
 import { ElNotification, ElMessageBox } from 'element-plus';
+import { useI18n } from 'vue-i18n';
+
+const { t } = useI18n();
 
 definePageMeta({ middleware: 'permissions' });
 
@@ -295,7 +298,7 @@ function approveItem(approval: any) {
 
 async function rejectApproval(approval: any) {
   try {
-    await ElMessageBox.confirm('Are you sure you want to reject this request?', 'Reject Approval', { type: 'warning' });
+    await ElMessageBox.confirm(t('approvals.confirmReject'), t('approvals.rejectApproval'), { type: 'warning' });
     pendingApprovals.value = pendingApprovals.value.filter(a => a.id !== approval.id);
     approvalHistory.value.unshift({
       id: approval.id,

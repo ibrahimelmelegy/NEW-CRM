@@ -78,7 +78,7 @@ div
                 span.text-xs.font-semibold.truncate(style="color: var(--text-secondary)") {{ budget.budgetAmount }}
               .flex.items-center.gap-2
                 Icon(name="ph:chart-pie" size="14" style="color: var(--text-muted)")
-                span.text-xs.truncate(style="color: var(--text-secondary)") {{ $t('finance.budgets.totalSpent') || 'Spent' }}: {{ budget.spentAmount }}
+                span.text-xs.truncate(style="color: var(--text-secondary)") {{ $t('finance.budgets.totalSpent') }}: {{ budget.spentAmount }}
               .flex.items-center.gap-2(v-if="budget.period")
                 Icon(name="ph:calendar" size="14" style="color: var(--text-muted)")
                 span.text-xs.truncate(style="color: var(--text-secondary)") {{ budget.period }}
@@ -111,10 +111,10 @@ const router = useRouter();
 const exportColumns = [
   { prop: 'budgetDetails', label: t('finance.budgets.name') },
   { prop: 'budgetAmount', label: t('finance.budgets.amount') },
-  { prop: 'spentAmount', label: t('finance.budgets.totalSpent') || 'Spent' },
-  { prop: 'usagePercent', label: t('finance.budgets.usage') || 'Usage' },
+  { prop: 'spentAmount', label: t('finance.budgets.totalSpent') },
+  { prop: 'usagePercent', label: t('finance.budgets.usage') },
   { prop: 'categoryName', label: t('finance.budgets.category') },
-  { prop: 'period', label: t('finance.budgets.period') || 'Period' }
+  { prop: 'period', label: t('finance.budgets.period') }
 ];
 
 const loading = ref(false);
@@ -140,9 +140,9 @@ const summaryStats = computed(() => {
   const totalSpent = budgets.reduce((sum, b) => sum + Number(b.spent), 0);
   const remaining = totalBudget - totalSpent;
   return [
-    { label: t('finance.budgets.totalBudget') || 'Total Budget', value: formatCurrency(totalBudget), icon: 'ph:wallet-bold', color: '#7849ff' },
-    { label: t('finance.budgets.totalSpent') || 'Total Spent', value: formatCurrency(totalSpent), icon: 'ph:money-bold', color: '#ef4444' },
-    { label: t('finance.budgets.remaining') || 'Remaining', value: formatCurrency(remaining), icon: 'ph:piggy-bank-bold', color: '#22c55e' }
+    { label: t('finance.budgets.totalBudget'), value: formatCurrency(totalBudget), icon: 'ph:wallet-bold', color: '#7849ff' },
+    { label: t('finance.budgets.totalSpent'), value: formatCurrency(totalSpent), icon: 'ph:money-bold', color: '#ef4444' },
+    { label: t('finance.budgets.remaining'), value: formatCurrency(remaining), icon: 'ph:piggy-bank-bold', color: '#22c55e' }
   ];
 });
 
@@ -163,10 +163,10 @@ const updateColumns = () => {
   table.value.columns = [
     { prop: 'budgetDetails', label: t('finance.budgets.name'), component: 'AvatarText', sortable: true, type: 'font-bold', width: 200 },
     { prop: 'budgetAmount', label: t('finance.budgets.amount'), component: 'Text', sortable: true, type: 'font-bold', width: 140 },
-    { prop: 'spentAmount', label: t('finance.budgets.totalSpent') || 'Spent', component: 'Text', type: 'font-default', width: 140 },
-    { prop: 'usagePercent', label: t('finance.budgets.usage') || 'Usage', component: 'Text', type: 'font-default', width: 100 },
+    { prop: 'spentAmount', label: t('finance.budgets.totalSpent'), component: 'Text', type: 'font-default', width: 140 },
+    { prop: 'usagePercent', label: t('finance.budgets.usage'), component: 'Text', type: 'font-default', width: 100 },
     { prop: 'categoryName', label: t('finance.budgets.category'), component: 'Text', type: 'font-default', width: 140 },
-    { prop: 'period', label: t('finance.budgets.period') || 'Period', component: 'Text', type: 'font-default', width: 200 }
+    { prop: 'period', label: t('finance.budgets.period'), component: 'Text', type: 'font-default', width: 200 }
   ];
 };
 updateColumns();

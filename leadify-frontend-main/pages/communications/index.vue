@@ -237,6 +237,8 @@ definePageMeta({
   middleware: 'permissions'
 });
 
+const { t } = useI18n();
+
 const activities = ref<any[]>([]);
 const activitiesLoading = ref(true);
 const currentPage = ref(1);
@@ -306,7 +308,7 @@ const fetchStats = async () => {
 
 const logActivity = async () => {
   if (!newActivity.value.subject) {
-    ElMessage.warning('Subject is required');
+    ElMessage.warning(t('common.fillRequired'));
     return;
   }
   saving.value = true;
@@ -314,7 +316,7 @@ const logActivity = async () => {
     ...newActivity.value
   });
   if (res?.success) {
-    ElMessage.success('Activity logged successfully');
+    ElMessage.success(t('communications.activityLogged'));
     showLogDialog.value = false;
     newActivity.value = {
       type: 'NOTE',

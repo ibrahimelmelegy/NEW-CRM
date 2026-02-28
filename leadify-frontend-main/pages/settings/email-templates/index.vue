@@ -188,15 +188,15 @@ const editorMode = ref<'rich' | 'html' | 'preview'>('rich');
 const form = reactive({ name: '', category: 'Sales', subject: '', body: '' });
 
 const availableVariables = [
-  { key: 'name', description: $t('emailTemplates.varName') || 'Recipient name' },
-  { key: 'email', description: $t('emailTemplates.varEmail') || 'Recipient email' },
-  { key: 'company', description: $t('emailTemplates.varCompany') || 'Company name' },
-  { key: 'product', description: $t('emailTemplates.varProduct') || 'Product name' },
-  { key: 'deal', description: $t('emailTemplates.varDeal') || 'Deal title' },
-  { key: 'value', description: $t('emailTemplates.varValue') || 'Deal value' },
-  { key: 'date', description: $t('emailTemplates.varDate') || 'Current date' },
-  { key: 'senderName', description: $t('emailTemplates.varSenderName') || 'Your name' },
-  { key: 'senderEmail', description: $t('emailTemplates.varSenderEmail') || 'Your email' }
+  { key: 'name', description: $t('emailTemplates.varName') },
+  { key: 'email', description: $t('emailTemplates.varEmail') },
+  { key: 'company', description: $t('emailTemplates.varCompany') },
+  { key: 'product', description: $t('emailTemplates.varProduct') },
+  { key: 'deal', description: $t('emailTemplates.varDeal') },
+  { key: 'value', description: $t('emailTemplates.varValue') },
+  { key: 'date', description: $t('emailTemplates.varDate') },
+  { key: 'senderName', description: $t('emailTemplates.varSenderName') },
+  { key: 'senderEmail', description: $t('emailTemplates.varSenderEmail') }
 ];
 
 const categoryList = computed(() => {
@@ -231,15 +231,15 @@ const mostUsedTemplate = computed(() => {
 });
 
 const subjectPlaceholder = computed(() => {
-  return $t('emailTemplates.subjectPlaceholder') || 'Re: Your inquiry';
+  return $t('emailTemplates.subjectPlaceholder');
 });
 
 const bodyPlaceholder = computed(() => {
-  return $t('emailTemplates.bodyPlaceholder') || 'Dear {{name}},\n\nThank you for your interest...';
+  return $t('emailTemplates.bodyPlaceholder');
 });
 
 const bodyEditorLabel = computed(() => {
-  return $t('emailTemplates.body') || 'Email Body';
+  return $t('emailTemplates.body');
 });
 
 const previewTemplateTitle = computed(() => {
@@ -264,8 +264,8 @@ function formatLastUsed(dateStr: string): string {
     const diffMs = now.getTime() - date.getTime();
     const diffDays = Math.floor(diffMs / (1000 * 60 * 60 * 24));
 
-    if (diffDays === 0) return $t('emailTemplates.today') || 'Today';
-    if (diffDays === 1) return $t('emailTemplates.yesterday') || 'Yesterday';
+    if (diffDays === 0) return $t('emailTemplates.today');
+    if (diffDays === 1) return $t('emailTemplates.yesterday');
     if (diffDays < 7) return `${diffDays}d ago`;
     return date.toLocaleDateString();
   } catch {
@@ -288,7 +288,7 @@ function insertVariable(key: string) {
   } else {
     form.body += variable;
   }
-  ElMessage.success($t('emailTemplates.variableInserted') || 'Variable inserted');
+  ElMessage.success($t('emailTemplates.variableInserted'));
 }
 
 function openCreateDialog() {
@@ -323,7 +323,7 @@ function openSendTestDialog(tmpl: EmailTemplate) {
 
 async function sendTestEmail() {
   if (!testEmailRecipient.value || !testEmailRecipient.value.includes('@')) {
-    ElMessage.warning($t('emailTemplates.validEmailRequired') || 'Please enter a valid email address');
+    ElMessage.warning($t('emailTemplates.validEmailRequired'));
     return;
   }
   if (!currentTestTemplate.value) return;
@@ -335,7 +335,7 @@ async function sendTestEmail() {
       recipientEmail: testEmailRecipient.value
     });
     if (success) {
-      ElMessage.success($t('emailTemplates.testEmailSent') || 'Test email sent successfully');
+      ElMessage.success($t('emailTemplates.testEmailSent'));
       showSendTestDialog.value = false;
     } else {
       ElMessage.error($t('common.error'));
@@ -374,7 +374,7 @@ async function fetchTemplates() {
 
 async function saveTemplate() {
   if (!form.name.trim()) {
-    ElMessage.warning($t('common.fillRequired') || 'Please fill required fields');
+    ElMessage.warning($t('common.fillRequired'));
     return;
   }
   saving.value = true;
@@ -393,7 +393,7 @@ async function saveTemplate() {
       const res = await useApiFetch(`document-templates/${editingId.value}`, 'PUT', payload);
       success = res.success;
       if (success) {
-        ElMessage.success($t('emailTemplates.templateUpdated') || 'Template updated successfully');
+        ElMessage.success($t('emailTemplates.templateUpdated'));
       }
     } else {
       const res = await useApiFetch('document-templates', 'POST', payload);

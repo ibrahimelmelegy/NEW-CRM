@@ -178,7 +178,7 @@ div
 
       //- Pagination
       .pagination.mt-5.flex.items-center.flex-wrap.gap-2(class="sm:justify-between justify-center" v-if="pagination.totalPages > 1")
-        span.text-xs(style="color: var(--text-muted)") {{ pagination.totalItems }} {{ $t('common.entries') || 'entries' }}
+        span.text-xs(style="color: var(--text-muted)") {{ pagination.totalItems }} {{ $t('common.entries') }}
         el-pagination(background style="direction:ltr" :pager-count="4" v-model:current-page="currentPage" :page-size="pagination.limit" layout="prev, pager, next" :total="pagination.totalItems" @current-change="loadFiles")
 
   //- Create/Edit Folder Dialog
@@ -239,8 +239,8 @@ div
           el-button(type="primary" :loading="fileSaving" @click="saveFile" class="!rounded-2xl") {{ $t('common.save') }}
 
   //- Delete Confirmation Dialog
-  el-dialog(v-model="deletePopup" :title="$t('common.confirm') || 'Confirm'" width="400px")
-    p(style="color: var(--text-primary)") {{ $t('common.confirmDelete') || 'Are you sure you want to delete this item?' }}
+  el-dialog(v-model="deletePopup" :title="$t('common.confirm')" width="400px")
+    p(style="color: var(--text-primary)") {{ $t('common.confirmDelete') }}
     template(#footer)
       el-button(@click="deletePopup = false") {{ $t('common.cancel') }}
       el-button(type="danger" :loading="deleting" @click="executeDeleteFile" class="!rounded-2xl") {{ $t('common.delete') }}

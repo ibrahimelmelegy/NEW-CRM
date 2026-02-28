@@ -3,7 +3,7 @@
   .header.mb-8
     .flex.items-center.justify-between
       div
-        h2.text-3xl.font-bold.mb-2(style="color: var(--text-primary)") {{ $t('navigation.sequences') || 'Sequences' }}
+        h2.text-3xl.font-bold.mb-2(style="color: var(--text-primary)") {{ $t('navigation.sequences') }}
         p(style="color: var(--text-muted)") {{ $t('sequences.description') }}
       el-button(type="primary" @click="navigateTo('/marketing/sequences/create')" class="!rounded-xl")
         Icon.mr-1(name="ph:plus-bold" size="16")

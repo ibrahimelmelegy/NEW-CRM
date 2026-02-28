@@ -128,6 +128,7 @@ definePageMeta({
   middleware: 'permissions'
 });
 
+const { t } = useI18n();
 const router = useRouter();
 
 const workflows = ref<any[]>([]);
@@ -175,7 +176,7 @@ const createNewJourney = async () => {
       });
 
       if (res?.success) {
-        ElMessage.success('Journey created');
+        ElMessage.success(t('automations.journeyCreated'));
         router.push(`/automations/${res.body?.id}`);
       }
     }
@@ -193,18 +194,18 @@ const handleCommand = async (command: string, workflow: any) => {
       ElMessage.success(`Automation ${!workflow.isActive ? 'activated' : 'paused'} successfully`);
       fetchWorkflows();
     } catch (err) {
-      ElMessage.error('Failed to toggle workflow');
+      ElMessage.error(t('automations.toggleFailed'));
     }
   } else if (command === 'logs') {
-    ElMessage.info('Execution logs feature coming soon');
+    ElMessage.info(t('automations.logsComingSoon'));
   } else if (command === 'delete') {
     try {
-      await ElMessageBox.confirm('Are you sure you want to delete this automation?', 'Warning', {
+      await ElMessageBox.confirm(t('automations.confirmDelete'), t('common.warning'), {
         type: 'warning',
         customClass: 'dark-message-box'
       });
       await useApiFetch(`workflows/rules/${workflow.id}`, 'DELETE');
-      ElMessage.success('Automation deleted');
+      ElMessage.success(t('automations.deleted'));
       fetchWorkflows();
     } catch (e) {
       // Cancelled or error

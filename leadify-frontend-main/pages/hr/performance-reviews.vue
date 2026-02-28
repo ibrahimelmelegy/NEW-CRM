@@ -151,6 +151,8 @@ definePageMeta({
   middleware: 'permissions'
 });
 
+const { t } = useI18n();
+
 const selectedCycle = ref('Q1-2026');
 const showNewReviewDialog = ref(false);
 const ratingChartRef = ref<HTMLElement>();
@@ -299,7 +301,7 @@ const viewReview = async (review: any) => {
 
 const createReview = async () => {
   if (!newReview.value.employeeId) {
-    ElMessage.warning('Please select an employee');
+    ElMessage.warning(t('common.fillRequired'));
     return;
   }
 
@@ -322,7 +324,7 @@ const createReview = async () => {
 
     const res: any = await useApiFetch('hr/performance', 'POST', payload);
     if (res?.success) {
-      ElMessage.success('Performance review started');
+      ElMessage.success(t('performanceReviews.reviewStarted'));
       showNewReviewDialog.value = false;
       newReview.value = { employeeId: '', reviewType: 'QUARTERLY', period: null };
       // Reload reviews to include the new one

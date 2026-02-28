@@ -186,6 +186,7 @@ definePageMeta({
   middleware: 'permissions'
 });
 
+const { t } = useI18n();
 const route = useRoute();
 const workflowId = route.params.id as string;
 
@@ -296,16 +297,16 @@ const saveJourney = async () => {
       graphData
     });
 
-    ElMessage.success('Journey saved successfully');
+    ElMessage.success(t('automations.journeySaved'));
   } catch (err) {
-    ElMessage.error('Failed to save journey');
+    ElMessage.error(t('automations.saveFailed'));
   } finally {
     saving.value = false;
   }
 };
 
 const openSettingsDialog = () => {
-  ElMessage.info('Settings dialouge to change Entity/Trigger coming soon');
+  ElMessage.info(t('automations.settingsComingSoon'));
 };
 
 onMounted(() => {

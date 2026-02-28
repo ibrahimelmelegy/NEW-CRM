@@ -4,25 +4,25 @@ div
   .flex.items-center.justify-between.mb-8.flex-wrap.gap-4
     div
       .flex.items-center.gap-2.mb-2
-        NuxtLink.text-sm.font-medium(to="/marketing/surveys" style="color: var(--accent-color, #7849ff)") {{ $t('marketing.surveys.title') || 'Surveys' }}
+        NuxtLink.text-sm.font-medium(to="/marketing/surveys" style="color: var(--accent-color, #7849ff)") {{ $t('marketing.surveys.title') }}
         Icon(name="ph:caret-right" size="14" style="color: var(--text-muted)")
         span.text-sm(style="color: var(--text-muted)") {{ survey?.title || '...' }}
-      h1.text-2xl.font-bold(style="color: var(--text-primary)") {{ survey?.title || ($t('marketing.surveys.detail') || 'Survey Detail') }}
+      h1.text-2xl.font-bold(style="color: var(--text-primary)") {{ survey?.title || $t('marketing.surveys.detail') }}
       p.text-sm.mt-1(v-if="survey" style="color: var(--text-muted)")
-        | {{ survey.type || 'CUSTOM' }} | {{ survey.responseCount || 0 }} {{ $t('marketing.surveys.responses') || 'responses' }}
+        | {{ survey.type || 'CUSTOM' }} | {{ survey.responseCount || 0 }} {{ $t('marketing.surveys.responses') }}
     .flex.items-center.gap-3.flex-wrap
       el-button(v-if="survey?.status === 'ACTIVE'" size="large" type="warning" plain class="!rounded-2xl" @click="handleCloseSurvey")
         Icon(name="ph:lock-bold" size="16")
-        span.ml-1 {{ $t('marketing.surveys.closeSurvey') || 'Close Survey' }}
+        span.ml-1 {{ $t('marketing.surveys.closeSurvey') }}
       el-button(size="large" plain class="!rounded-2xl" @click="copyShareLink")
         Icon(name="ph:share-bold" size="16")
-        span.ml-1 {{ $t('marketing.surveys.copyLink') || 'Copy Link' }}
+        span.ml-1 {{ $t('marketing.surveys.copyLink') }}
       el-button(size="large" type="success" plain class="!rounded-2xl" @click="handleExport" :disabled="!survey?.responseCount")
         Icon(name="ph:export-bold" size="16")
-        span.ml-1 {{ $t('marketing.surveys.exportCsv') || 'Export CSV' }}
+        span.ml-1 {{ $t('marketing.surveys.exportCsv') }}
       el-button(size="large" plain class="!rounded-2xl" @click="openEditDialog")
         Icon(name="ph:pencil-bold" size="16")
-        span.ml-1 {{ $t('common.edit') || 'Edit' }}
+        span.ml-1 {{ $t('common.edit') }}
 
   //- Loading
   .flex.items-center.justify-center.py-20(v-if="loading")
@@ -33,23 +33,23 @@ div
     .glass-card.p-6.rounded-2xl.mb-6
       .grid.gap-6(class="grid-cols-2 md:grid-cols-5")
         div
-          p.text-xs.uppercase.tracking-wider.mb-1(style="color: var(--text-muted)") {{ $t('common.status') || 'Status' }}
+          p.text-xs.uppercase.tracking-wider.mb-1(style="color: var(--text-muted)") {{ $t('common.status') }}
           el-tag(:type="getStatusType(survey.status)" effect="dark" size="default") {{ survey.status }}
         div
-          p.text-xs.uppercase.tracking-wider.mb-1(style="color: var(--text-muted)") {{ $t('marketing.surveys.type') || 'Type' }}
+          p.text-xs.uppercase.tracking-wider.mb-1(style="color: var(--text-muted)") {{ $t('marketing.surveys.type') }}
           el-tag(effect="plain" size="default") {{ formatType(survey.type) }}
         div
-          p.text-xs.uppercase.tracking-wider.mb-1(style="color: var(--text-muted)") {{ $t('marketing.surveys.questions') || 'Questions' }}
+          p.text-xs.uppercase.tracking-wider.mb-1(style="color: var(--text-muted)") {{ $t('marketing.surveys.questions') }}
           p.text-lg.font-bold(style="color: var(--text-primary)") {{ survey.questions?.length || 0 }}
         div
-          p.text-xs.uppercase.tracking-wider.mb-1(style="color: var(--text-muted)") {{ $t('marketing.surveys.totalResponses') || 'Total Responses' }}
+          p.text-xs.uppercase.tracking-wider.mb-1(style="color: var(--text-muted)") {{ $t('marketing.surveys.totalResponses') }}
           p.text-lg.font-bold(style="color: #3b82f6") {{ survey.responseCount || 0 }}
         div
-          p.text-xs.uppercase.tracking-wider.mb-1(style="color: var(--text-muted)") {{ $t('marketing.surveys.anonymous') || 'Anonymous' }}
-          el-tag(:type="survey.isAnonymous ? 'success' : 'info'" effect="plain" size="small") {{ survey.isAnonymous ? ($t('common.yes') || 'Yes') : ($t('common.no') || 'No') }}
+          p.text-xs.uppercase.tracking-wider.mb-1(style="color: var(--text-muted)") {{ $t('marketing.surveys.anonymous') }}
+          el-tag(:type="survey.isAnonymous ? 'success' : 'info'" effect="plain" size="small") {{ survey.isAnonymous ? $t('common.yes') : $t('common.no') }}
 
       div.mt-4(v-if="survey.description")
-        p.text-xs.uppercase.tracking-wider.mb-2(style="color: var(--text-muted)") {{ $t('common.description') || 'Description' }}
+        p.text-xs.uppercase.tracking-wider.mb-2(style="color: var(--text-muted)") {{ $t('common.description') }}
         p.text-sm(style="color: var(--text-primary); line-height: 1.7") {{ survey.description }}
 
     //- Analytics Row
@@ -59,7 +59,7 @@ div
         .glass-card.p-6.rounded-2xl.h-full
           .flex.items-center.gap-2.mb-4
             Icon(name="ph:gauge-bold" size="20" style="color: #7849ff")
-            h3.text-sm.font-bold.uppercase.tracking-wider(style="color: var(--text-muted)") {{ $t('marketing.surveys.npsScore') || 'NPS Score' }}
+            h3.text-sm.font-bold.uppercase.tracking-wider(style="color: var(--text-muted)") {{ $t('marketing.surveys.npsScore') }}
 
           div(v-if="analyticsLoading")
             .flex.items-center.justify-center.py-8
@@ -75,17 +75,17 @@ div
               .flex.items-center.justify-between
                 .flex.items-center.gap-2
                   .w-3.h-3.rounded-full(style="background: #22c55e")
-                  span.text-sm(style="color: var(--text-primary)") {{ $t('marketing.surveys.promoters') || 'Promoters' }}
+                  span.text-sm(style="color: var(--text-primary)") {{ $t('marketing.surveys.promoters') }}
                 span.text-sm.font-bold(style="color: #22c55e") {{ npsData.promoters?.percentage || 0 }}%
               .flex.items-center.justify-between
                 .flex.items-center.gap-2
                   .w-3.h-3.rounded-full(style="background: #f59e0b")
-                  span.text-sm(style="color: var(--text-primary)") {{ $t('marketing.surveys.passives') || 'Passives' }}
+                  span.text-sm(style="color: var(--text-primary)") {{ $t('marketing.surveys.passives') }}
                 span.text-sm.font-bold(style="color: #f59e0b") {{ npsData.passives?.percentage || 0 }}%
               .flex.items-center.justify-between
                 .flex.items-center.gap-2
                   .w-3.h-3.rounded-full(style="background: #ef4444")
-                  span.text-sm(style="color: var(--text-primary)") {{ $t('marketing.surveys.detractors') || 'Detractors' }}
+                  span.text-sm(style="color: var(--text-primary)") {{ $t('marketing.surveys.detractors') }}
                 span.text-sm.font-bold(style="color: #ef4444") {{ npsData.detractors?.percentage || 0 }}%
               //- NPS bar
               .flex.h-4.rounded-lg.overflow-hidden.mt-2
@@ -95,14 +95,14 @@ div
 
           .text-center.py-6(v-else)
             Icon(name="ph:gauge" size="40" style="color: var(--text-muted)")
-            p.text-sm.mt-2(style="color: var(--text-muted)") {{ $t('marketing.surveys.noNpsData') || 'No NPS data available' }}
+            p.text-sm.mt-2(style="color: var(--text-muted)") {{ $t('marketing.surveys.noNpsData') }}
 
       //- Completion Rate
       el-col(:xs="24" :md="12")
         .glass-card.p-6.rounded-2xl.h-full
           .flex.items-center.gap-2.mb-4
             Icon(name="ph:check-circle-bold" size="20" style="color: #22c55e")
-            h3.text-sm.font-bold.uppercase.tracking-wider(style="color: var(--text-muted)") {{ $t('marketing.surveys.completionRate') || 'Completion Rate' }}
+            h3.text-sm.font-bold.uppercase.tracking-wider(style="color: var(--text-muted)") {{ $t('marketing.surveys.completionRate') }}
 
           div(v-if="analyticsLoading")
             .flex.items-center.justify-center.py-8
@@ -121,41 +121,41 @@ div
                   span.text-2xl.font-bold(:style="{ color: completionData.completionRate >= 70 ? '#22c55e' : completionData.completionRate >= 40 ? '#f59e0b' : '#ef4444' }") {{ percentage }}%
             .space-y-2
               .flex.items-center.justify-between
-                span.text-sm(style="color: var(--text-primary)") {{ $t('marketing.surveys.started') || 'Started' }}
+                span.text-sm(style="color: var(--text-primary)") {{ $t('marketing.surveys.started') }}
                 span.text-sm.font-bold(style="color: #3b82f6") {{ completionData.started || 0 }}
               .flex.items-center.justify-between
-                span.text-sm(style="color: var(--text-primary)") {{ $t('marketing.surveys.completed') || 'Completed' }}
+                span.text-sm(style="color: var(--text-primary)") {{ $t('marketing.surveys.completed') }}
                 span.text-sm.font-bold(style="color: #22c55e") {{ completionData.completed || 0 }}
 
           .text-center.py-6(v-else)
             Icon(name="ph:chart-pie" size="40" style="color: var(--text-muted)")
-            p.text-sm.mt-2(style="color: var(--text-muted)") {{ $t('marketing.surveys.noCompletionData') || 'No completion data yet' }}
+            p.text-sm.mt-2(style="color: var(--text-muted)") {{ $t('marketing.surveys.noCompletionData') }}
 
     //- Question-by-Question Analytics
     .glass-card.p-6.rounded-2xl.mb-6(v-if="questionAnalytics && Object.keys(questionAnalytics).length")
       .flex.items-center.gap-2.mb-5
         Icon(name="ph:chart-bar-bold" size="20" style="color: #8b5cf6")
-        h3.text-base.font-bold(style="color: var(--text-primary)") {{ $t('marketing.surveys.questionBreakdown') || 'Question Breakdown' }}
+        h3.text-base.font-bold(style="color: var(--text-primary)") {{ $t('marketing.surveys.questionBreakdown') }}
 
       .space-y-5
         .glass-card.p-5.rounded-xl(v-for="(qa, qId) in questionAnalytics" :key="qId")
           .flex.items-start.justify-between.mb-3
             div
               p.text-sm.font-semibold(style="color: var(--text-primary)") {{ qa.questionText }}
-              p.text-xs(style="color: var(--text-muted)") {{ qa.type }} | {{ qa.responseCount || 0 }} {{ $t('marketing.surveys.responses') || 'responses' }}
+              p.text-xs(style="color: var(--text-muted)") {{ qa.type }} | {{ qa.responseCount || 0 }} {{ $t('marketing.surveys.responses') }}
 
           //- Rating / NPS / Number analytics
           template(v-if="qa.type === 'rating' || qa.type === 'nps' || qa.type === 'number' || qa.type === 'RATING' || qa.type === 'NPS' || qa.type === 'SCALE'")
             .flex.items-center.gap-6.mb-3
               .text-center
                 p.text-2xl.font-bold(style="color: #7849ff") {{ qa.average ?? '--' }}
-                p.text-xs(style="color: var(--text-muted)") {{ $t('marketing.surveys.average') || 'Average' }}
+                p.text-xs(style="color: var(--text-muted)") {{ $t('marketing.surveys.average') }}
               .text-center
                 p.text-2xl.font-bold(style="color: #22c55e") {{ qa.max ?? '--' }}
-                p.text-xs(style="color: var(--text-muted)") {{ $t('marketing.surveys.max') || 'Max' }}
+                p.text-xs(style="color: var(--text-muted)") {{ $t('marketing.surveys.max') }}
               .text-center
                 p.text-2xl.font-bold(style="color: #ef4444") {{ qa.min ?? '--' }}
-                p.text-xs(style="color: var(--text-muted)") {{ $t('marketing.surveys.min') || 'Min' }}
+                p.text-xs(style="color: var(--text-muted)") {{ $t('marketing.surveys.min') }}
             //- Distribution bars
             .space-y-1(v-if="qa.distribution")
               .flex.items-center.gap-3(v-for="(count, score) in qa.distribution" :key="score")
@@ -175,57 +175,57 @@ div
 
           //- Text questions
           template(v-else)
-            p.text-sm(style="color: var(--text-muted)") {{ qa.responseCount || 0 }} {{ $t('marketing.surveys.textResponses') || 'text responses collected' }}
+            p.text-sm(style="color: var(--text-muted)") {{ qa.responseCount || 0 }} {{ $t('marketing.surveys.textResponses') }}
 
     //- Responses Table
     .glass-card.p-6.rounded-2xl
       .flex.items-center.justify-between.mb-4
         .flex.items-center.gap-2
           Icon(name="ph:list-bold" size="20" style="color: #3b82f6")
-          h3.text-base.font-bold(style="color: var(--text-primary)") {{ $t('marketing.surveys.allResponses') || 'All Responses' }} ({{ responses.length }})
+          h3.text-base.font-bold(style="color: var(--text-primary)") {{ $t('marketing.surveys.allResponses') }} ({{ responses.length }})
 
       el-table(:data="responses" v-loading="responsesLoading" style="width: 100%" stripe max-height="500")
         el-table-column(label="#" type="index" width="60")
-        el-table-column(:label="$t('marketing.surveys.respondent') || 'Respondent'" min-width="160")
+        el-table-column(:label="$t('marketing.surveys.respondent')" min-width="160")
           template(#default="{ row }")
             span.text-sm(style="color: var(--text-primary)") {{ row.respondentName || row.respondentEmail || 'Anonymous' }}
-        el-table-column(:label="$t('marketing.surveys.answers') || 'Answers'" min-width="300")
+        el-table-column(:label="$t('marketing.surveys.answers')" min-width="300")
           template(#default="{ row }")
             .space-y-1
               template(v-if="typeof row.answers === 'object'")
                 .flex.items-start.gap-2(v-for="(value, key) in row.answers" :key="key")
                   span.text-xs.font-semibold.shrink-0(style="color: var(--text-muted)") {{ getQuestionLabel(key) }}:
                   span.text-xs(style="color: var(--text-primary)") {{ formatAnswer(value) }}
-        el-table-column(:label="$t('common.date') || 'Date'" prop="completedAt" width="150")
+        el-table-column(:label="$t('common.date')" prop="completedAt" width="150")
           template(#default="{ row }")
             span.text-sm(style="color: var(--text-muted)") {{ formatDate(row.completedAt || row.createdAt) }}
 
       .text-center.py-8(v-if="!responses.length && !responsesLoading")
         Icon(name="ph:inbox" size="48" style="color: var(--text-muted)")
-        p.text-sm.mt-2(style="color: var(--text-muted)") {{ $t('marketing.surveys.noResponses') || 'No responses yet' }}
+        p.text-sm.mt-2(style="color: var(--text-muted)") {{ $t('marketing.surveys.noResponses') }}
 
   //- 404
   .text-center.py-20(v-else-if="!loading")
     Icon(name="ph:warning-circle" size="48" style="color: var(--text-muted)")
-    p.text-lg.font-semibold.mt-4(style="color: var(--text-primary)") {{ $t('common.notFound') || 'Survey not found' }}
+    p.text-lg.font-semibold.mt-4(style="color: var(--text-primary)") {{ $t('common.notFound') }}
     NuxtLink(to="/marketing/surveys")
-      el-button.mt-4(type="primary") {{ $t('common.goBack') || 'Go Back' }}
+      el-button.mt-4(type="primary") {{ $t('common.goBack') }}
 
   //- Edit Dialog
-  el-dialog(v-model="editDialogVisible" :title="$t('common.edit') || 'Edit Survey'" width="640px" destroy-on-close)
+  el-dialog(v-model="editDialogVisible" :title="$t('common.edit')" width="640px" destroy-on-close)
     el-form(:model="editForm" label-position="top")
-      el-form-item(:label="$t('marketing.surveys.surveyTitle') || 'Title'" required)
+      el-form-item(:label="$t('marketing.surveys.surveyTitle')" required)
         el-input(v-model="editForm.title")
-      el-form-item(:label="$t('common.description') || 'Description'")
+      el-form-item(:label="$t('common.description')")
         el-input(v-model="editForm.description" type="textarea" :rows="2")
       .grid.gap-4(class="grid-cols-2")
-        el-form-item(:label="$t('common.status') || 'Status'")
+        el-form-item(:label="$t('common.status')")
           el-select(v-model="editForm.status" class="w-full")
             el-option(label="Draft" value="DRAFT")
             el-option(label="Active" value="ACTIVE")
             el-option(label="Closed" value="CLOSED")
             el-option(label="Archived" value="ARCHIVED")
-        el-form-item(:label="$t('marketing.surveys.type') || 'Type'")
+        el-form-item(:label="$t('marketing.surveys.type')")
           el-select(v-model="editForm.type" class="w-full")
             el-option(label="Customer Satisfaction" value="CUSTOMER_SATISFACTION")
             el-option(label="Employee" value="EMPLOYEE")
@@ -233,13 +233,13 @@ div
             el-option(label="Product Feedback" value="PRODUCT_FEEDBACK")
             el-option(label="Custom" value="CUSTOM")
       .grid.gap-4(class="grid-cols-2")
-        el-form-item(:label="$t('marketing.surveys.anonymous') || 'Anonymous'")
+        el-form-item(:label="$t('marketing.surveys.anonymous')")
           el-switch(v-model="editForm.isAnonymous")
-        el-form-item(:label="$t('marketing.surveys.multipleResponses') || 'Allow Multiple Responses'")
+        el-form-item(:label="$t('marketing.surveys.multipleResponses')")
           el-switch(v-model="editForm.allowMultipleResponses")
     template(#footer)
-      el-button(@click="editDialogVisible = false") {{ $t('common.cancel') || 'Cancel' }}
-      el-button(type="primary" @click="handleSave" :loading="saving") {{ $t('common.save') || 'Save' }}
+      el-button(@click="editDialogVisible = false") {{ $t('common.cancel') }}
+      el-button(type="primary" @click="handleSave" :loading="saving") {{ $t('common.save') }}
 </template>
 
 <script setup lang="ts">
@@ -306,7 +306,7 @@ function distributionWidth(count: number, total: number): string {
 function copyShareLink() {
   const url = `${window.location.origin}/survey-public/${route.params.id}`;
   navigator.clipboard.writeText(url);
-  ElMessage.success(t('marketing.surveys.linkCopied') || 'Survey link copied to clipboard');
+  ElMessage.success(t('marketing.surveys.linkCopied'));
 }
 
 // Data fetching
@@ -318,7 +318,7 @@ async function loadSurvey() {
       survey.value = res.body;
     }
   } catch {
-    ElMessage.error(t('common.error') || 'Failed to load survey');
+    ElMessage.error(t('common.error'));
   } finally {
     loading.value = false;
   }
@@ -367,12 +367,12 @@ async function loadAnalytics() {
 async function handleCloseSurvey() {
   try {
     await ElMessageBox.confirm(
-      t('marketing.surveys.confirmClose') || 'Are you sure you want to close this survey? No more responses will be accepted.',
-      t('common.warning') || 'Warning',
+      t('marketing.surveys.confirmClose'),
+      t('common.warning'),
       { type: 'warning' }
     );
     await useApiFetch(`surveys/${route.params.id}/close`, 'PUT');
-    ElMessage.success(t('marketing.surveys.surveyClosed') || 'Survey closed successfully');
+    ElMessage.success(t('marketing.surveys.surveyClosed'));
     await loadSurvey();
   } catch { /* cancelled */ }
 }
@@ -390,10 +390,10 @@ async function handleExport() {
       a.download = `survey-${route.params.id}-responses.csv`;
       a.click();
       window.URL.revokeObjectURL(url);
-      ElMessage.success(t('marketing.surveys.exported') || 'Exported successfully');
+      ElMessage.success(t('marketing.surveys.exported'));
     }
   } catch {
-    ElMessage.error(t('common.error') || 'Export failed');
+    ElMessage.error(t('common.error'));
   }
 }
 
@@ -413,14 +413,14 @@ async function handleSave() {
   try {
     const res = await useApiFetch(`surveys/${route.params.id}`, 'PUT', { ...editForm });
     if (res?.success) {
-      ElMessage.success(t('common.saved') || 'Saved successfully');
+      ElMessage.success(t('common.saved'));
       editDialogVisible.value = false;
       await loadSurvey();
     } else {
-      ElMessage.error(res?.message || t('common.error') || 'Save failed');
+      ElMessage.error(res?.message || t('common.error'));
     }
   } catch {
-    ElMessage.error(t('common.error') || 'An error occurred');
+    ElMessage.error(t('common.error'));
   } finally {
     saving.value = false;
   }

@@ -216,6 +216,8 @@ import { ElMessage } from 'element-plus';
 
 definePageMeta({ title: 'Sales Forecasting' });
 
+const { t } = useI18n();
+
 const loading = ref(true);
 const selectedPeriod = ref('monthly');
 const dateRange = ref<[Date, Date] | null>(null);
@@ -353,7 +355,7 @@ async function loadData() {
     }
   } catch (e) {
     console.error('Failed to load forecasts', e);
-    ElMessage.error('Failed to load forecasts');
+    ElMessage.error(t('forecasting.loadFailed'));
   } finally {
     loading.value = false;
   }
@@ -361,7 +363,7 @@ async function loadData() {
 
 async function loadHistorical() {
   if (!dateRange.value) {
-    ElMessage.warning('Please select a date range first');
+    ElMessage.warning(t('forecasting.selectDateRange'));
     return;
   }
 
@@ -375,7 +377,7 @@ async function loadHistorical() {
     }
   } catch (e) {
     console.error('Failed to load historical comparison', e);
-    ElMessage.error('Failed to load historical comparison');
+    ElMessage.error(t('forecasting.historicalFailed'));
   } finally {
     loadingHistorical.value = false;
   }
@@ -393,7 +395,7 @@ async function runScenario() {
     }
   } catch (e) {
     console.error('Failed to run scenario', e);
-    ElMessage.error('Failed to run scenario');
+    ElMessage.error(t('forecasting.scenarioFailed'));
   } finally {
     loadingScenario.value = false;
   }

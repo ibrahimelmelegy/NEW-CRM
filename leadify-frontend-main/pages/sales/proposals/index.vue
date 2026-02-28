@@ -381,6 +381,8 @@ import {
 
 definePageMeta({ middleware: 'permissions' });
 
+const { t } = useI18n();
+
 // ─── State ───────────────────────────────────────────────────────────
 const loading = ref(false);
 const actionLoading = ref(false);
@@ -705,7 +707,7 @@ async function fetchProposals() {
 // ─── Actions ─────────────────────────────────────────────────────────
 async function handleSubmitForApproval(row: any) {
   try {
-    await ElMessageBox.confirm('Submit this proposal for approval?', 'Confirm', { type: 'info' });
+    await ElMessageBox.confirm(t('proposals.confirmSubmit'), t('common.confirm'), { type: 'info' });
     actionLoading.value = true;
     const ok = await submitForApproval(row.id);
     if (ok) fetchProposals();
@@ -718,7 +720,7 @@ async function handleSubmitForApproval(row: any) {
 
 async function handleApprove(row: any) {
   try {
-    await ElMessageBox.confirm('Approve this proposal?', 'Confirm', { type: 'success' });
+    await ElMessageBox.confirm(t('proposals.confirmApprove'), t('common.confirm'), { type: 'success' });
     actionLoading.value = true;
     const ok = await approveProposal(row.id);
     if (ok) fetchProposals();
@@ -737,7 +739,7 @@ function openRejectDialog(row: any) {
 
 async function handleReject() {
   if (!rejectReason.value.trim()) {
-    ElMessage.warning('Please provide a rejection reason');
+    ElMessage.warning(t('proposals.rejectionReasonRequired'));
     return;
   }
   actionLoading.value = true;

@@ -4,7 +4,7 @@
     <div v-if="loading" class="min-h-screen flex items-center justify-center bg-slate-50">
       <div class="text-center">
         <el-icon class="is-loading mb-4" :size="40" color="#7c3aed"><Loading /></el-icon>
-        <p class="text-gray-500">{{ t('proposals.loadingDetails') || 'Loading proposal details...' }}</p>
+        <p class="text-gray-500">{{ t('proposals.loadingDetails') }}</p>
       </div>
     </div>
 
@@ -14,7 +14,7 @@
         <Icon name="ph:warning-circle" size="48" class="text-red-500 mx-auto mb-4" />
         <p class="text-red-500 mb-4">{{ errorMessage }}</p>
         <el-button type="default" class="!rounded-xl" @click="handleCancel">
-          {{ t('common.goBack') || 'Go Back' }}
+          {{ t('common.goBack') }}
         </el-button>
       </div>
     </div>
@@ -73,7 +73,7 @@ const handleSave = async (data: any) => {
     const payload = transformToApiPayload(data)
     const response = await useApiFetch(`proposal/${id.value}`, 'PUT', payload)
     if (response?.success) {
-      ElNotification({ type: 'success', title: t('common.success'), message: t('proposals.updateSuccess') || 'Proposal updated successfully' })
+      ElNotification({ type: 'success', title: t('common.success'), message: t('proposals.updateSuccess') })
       navigateTo('/sales/proposals')
     } else {
       ElNotification({ type: 'error', title: t('common.error'), message: response?.message || 'Failed to update proposal' })

@@ -9,7 +9,7 @@ div
       ExportButton(:data="exportData" :columns="exportColumns" :filename="'expenses-export'" :title="$t('finance.expenses.title')")
       el-button(size="large" @click="showImport = true" class="premium-btn-secondary")
         Icon(name="IconImport" size="20")
-        span.mx-1 {{ $t('common.import') || 'Import' }}
+        span.mx-1 {{ $t('common.import') }}
 
   StatCards(:stats="summaryStats")
 
@@ -53,11 +53,11 @@ div
               el-dropdown-item(v-if="data?.status === 'PENDING'" @click="handleApprove(data?.id)")
                 .flex.items-center
                   Icon.text-md.mr-2(name="ph:check-circle-bold")
-                  p.text-sm {{ $t('finance.expenses.approved') || 'Approve' }}
+                  p.text-sm {{ $t('finance.expenses.approved') }}
               el-dropdown-item(v-if="data?.status === 'PENDING'" @click="handleReject(data?.id)")
                 .flex.items-center
                   Icon.text-md.mr-2(name="ph:x-circle-bold")
-                  p.text-sm {{ $t('finance.expenses.rejected') || 'Reject' }}
+                  p.text-sm {{ $t('finance.expenses.rejected') }}
               el-dropdown-item(@click="[deleteId = data?.id, deletePopup = true]")
                 .flex.items-center
                   Icon.text-md.mr-2(name="IconDelete")
@@ -86,7 +86,7 @@ div
         SwipeCard(
           v-for="exp in mobileFilteredExpenses"
           :key="exp.id"
-          :rightActions="exp.status === 'PENDING' ? [{ name: 'approve', label: $t('finance.expenses.approved') || 'Approve', icon: 'ph:check-circle-bold', color: '#22c55e' }] : []"
+          :rightActions="exp.status === 'PENDING' ? [{ name: 'approve', label: $t('finance.expenses.approved'), icon: 'ph:check-circle-bold', color: '#22c55e' }] : []"
           :leftActions="[{ name: 'view', label: $t('common.view'), icon: 'ph:eye-bold', color: '#7849FF' }]"
           @action="(name) => handleExpSwipe(name, exp)"
         )
@@ -143,7 +143,7 @@ const exportColumns = [
   { prop: 'expenseDetails', label: t('finance.expenses.description') },
   { prop: 'amount', label: t('finance.expenses.amount') },
   { prop: 'categoryName', label: t('finance.expenses.category') },
-  { prop: 'submitterName', label: t('hr.attendance.employee') || 'Submitted By' },
+  { prop: 'submitterName', label: t('hr.attendance.employee') },
   { prop: 'date', label: t('finance.expenses.date') },
   { prop: 'status', label: t('finance.expenses.status') }
 ];
@@ -211,7 +211,7 @@ const updateTableColumns = () => {
     },
     {
       prop: 'submitterName',
-      label: t('hr.attendance.employee') || 'Submitted By',
+      label: t('hr.attendance.employee'),
       component: 'Text',
       type: 'font-default',
       width: 150
@@ -348,7 +348,7 @@ const mobileRefreshing = ref(false);
 const mobileExpFilters = computed(() => {
   const data = table.value.data || [];
   return [
-    { value: 'ALL', label: t('common.all') || 'All', color: '#7849ff', count: data.length },
+    { value: 'ALL', label: t('common.all'), color: '#7849ff', count: data.length },
     { value: 'PENDING', label: t('finance.expenses.pending'), color: '#f59e0b', count: data.filter((e: any) => e.status === 'PENDING').length },
     { value: 'APPROVED', label: t('finance.expenses.approved'), color: '#22c55e', count: data.filter((e: any) => e.status === 'APPROVED').length },
     { value: 'REJECTED', label: t('finance.expenses.rejected'), color: '#ef4444', count: data.filter((e: any) => e.status === 'REJECTED').length }

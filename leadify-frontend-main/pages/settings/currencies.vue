@@ -45,7 +45,7 @@ div
                 el-dropdown-item(:disabled="row.isDefault" @click="handleSetDefault(row)")
                   .flex.items-center
                     Icon.text-md.mr-2(name="ph:star-bold" size="20")
-                    p.text-sm {{ $t('currency.currencies.setDefault') || 'Set Default' }}
+                    p.text-sm {{ $t('currency.currencies.setDefault') }}
                 el-dropdown-item(:disabled="row.isDefault" @click="[deleteId = row.id, deletePopup = true]")
                   .flex.items-center
                     Icon.text-md.mr-2(name="ph:trash-bold" size="20")
@@ -125,14 +125,14 @@ const summaryStats = computed(() => {
   const rateRange = rates.length ? `${minRate.toFixed(2)} - ${maxRate.toFixed(2)}` : '—';
 
   return [
-    { label: t('currency.currencies.totalCurrencies') || 'Total Currencies', value: total, icon: 'ph:coins-bold', color: '#7849ff' },
+    { label: t('currency.currencies.totalCurrencies'), value: total, icon: 'ph:coins-bold', color: '#7849ff' },
     {
-      label: t('currency.currencies.defaultCurrency') || 'Default Currency',
+      label: t('currency.currencies.defaultCurrency'),
       value: defaultCurrency?.code || '—',
       icon: 'ph:star-bold',
       color: '#22c55e'
     },
-    { label: t('currency.currencies.exchangeRateRange') || 'Exchange Rate Range', value: rateRange, icon: 'ph:chart-line-up-bold', color: '#f59e0b' }
+    { label: t('currency.currencies.exchangeRateRange'), value: rateRange, icon: 'ph:chart-line-up-bold', color: '#f59e0b' }
   ];
 });
 

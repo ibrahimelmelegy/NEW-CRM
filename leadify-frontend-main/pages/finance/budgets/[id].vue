@@ -22,12 +22,12 @@ DetailLayout(
         //- Progress bar
         .mb-6
           .flex.justify-between.mb-2
-            span.text-sm.font-medium(style="color: var(--text-muted)") {{ $t('finance.budgets.totalSpent') || 'Spent' }}
+            span.text-sm.font-medium(style="color: var(--text-muted)") {{ $t('finance.budgets.totalSpent') }}
             span.text-sm.font-bold(:style="{ color: progressColor }") {{ usagePercent }}%
           el-progress(:percentage="usagePercent" :color="progressColor" :stroke-width="12")
           .flex.justify-between.mt-2
             span.text-sm(style="color: var(--text-muted)") {{ formatCurrency(budget?.spent || 0) }} / {{ formatCurrency(budget?.amount || 0) }}
-            span.text-sm.font-medium(:style="{ color: progressColor }") {{ formatCurrency(remaining) }} {{ $t('finance.budgets.remaining') || 'remaining' }}
+            span.text-sm.font-medium(:style="{ color: progressColor }") {{ formatCurrency(remaining) }} {{ $t('finance.budgets.remaining') }}
 
         .grid.gap-4.mt-6(class="md:grid-cols-2 grid-cols-1")
           div
@@ -38,7 +38,7 @@ DetailLayout(
           div
             .font-medium.mb-2.flex.items-center(style="color: var(--text-muted)")
               Icon(name="IconCalendar" size="20" class="mr-2")
-              p {{ $t('finance.budgets.period') || 'Period' }}
+              p {{ $t('finance.budgets.period') }}
             p(style="color: var(--text-primary)") {{ budget?.startDate }} → {{ budget?.endDate }}
           div(v-if="budget?.notes")
             .font-medium.mb-2.flex.items-center(style="color: var(--text-muted)")
@@ -50,27 +50,27 @@ DetailLayout(
       .mt-4
         RecordTimeline(entityType="budget" :entityId="route.params.id")
 
-    el-tab-pane(:label="$t('common.comments') || 'Comments'" name="comments")
+    el-tab-pane(:label="$t('common.comments')" name="comments")
       .mt-4
         RecordComments(entityType="budget" :entityId="route.params.id")
 
-    el-tab-pane(:label="$t('common.attachments') || 'Attachments'" name="attachments")
+    el-tab-pane(:label="$t('common.attachments')" name="attachments")
       .mt-4
         RecordAttachments(entityType="budget" :entityId="route.params.id")
 
   //- Sidebar
   template(#sidebar)
     .glass-card.p-5.rounded-2xl
-      h4.font-semibold.mb-4(style="color: var(--text-primary)") {{ $t('common.info') || 'Quick Info' }}
+      h4.font-semibold.mb-4(style="color: var(--text-primary)") {{ $t('common.info') }}
       .space-y-3
         .flex.justify-between
           span.text-sm(style="color: var(--text-muted)") {{ $t('finance.budgets.amount') }}
           span.text-sm.font-bold(style="color: var(--text-primary)") {{ formatCurrency(budget?.amount || 0) }}
         .flex.justify-between
-          span.text-sm(style="color: var(--text-muted)") {{ $t('finance.budgets.totalSpent') || 'Spent' }}
+          span.text-sm(style="color: var(--text-muted)") {{ $t('finance.budgets.totalSpent') }}
           span.text-sm.font-bold.text-red-500 {{ formatCurrency(budget?.spent || 0) }}
         .flex.justify-between
-          span.text-sm(style="color: var(--text-muted)") {{ $t('finance.budgets.remaining') || 'Remaining' }}
+          span.text-sm(style="color: var(--text-muted)") {{ $t('finance.budgets.remaining') }}
           span.text-sm.font-bold.text-green-500 {{ formatCurrency(remaining) }}
 
     .glass-card.p-5.rounded-2xl

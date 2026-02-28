@@ -223,7 +223,7 @@ const mobileRefreshing = ref(false);
 const statusFilters = computed(() => {
   const data = table.value.data || [];
   return [
-    { value: 'ALL', label: t('hr.attendance.allStatuses') || 'All', color: '#22c55e', count: data.length },
+    { value: 'ALL', label: t('hr.attendance.allStatuses'), color: '#22c55e', count: data.length },
     { value: 'PRESENT', label: t('hr.attendance.present'), color: '#22c55e', count: data.filter((r: any) => r.status === 'PRESENT').length },
     { value: 'LATE', label: t('hr.attendance.late'), color: '#f59e0b', count: data.filter((r: any) => r.status === 'LATE').length },
     { value: 'ABSENT', label: t('hr.attendance.absent'), color: '#ef4444', count: data.filter((r: any) => r.status === 'ABSENT').length }

@@ -12,11 +12,11 @@ DetailLayout(
     el-dropdown-item(v-if="expense?.status === 'PENDING'" @click="handleApprove")
       .flex.items-center
         Icon.text-md.mr-2(name="ph:check-circle-bold" size="20")
-        p.text-sm {{ $t('finance.expenses.approved') || 'Approve' }}
+        p.text-sm {{ $t('finance.expenses.approved') }}
     el-dropdown-item(v-if="expense?.status === 'PENDING'" @click="handleReject")
       .flex.items-center
         Icon.text-md.mr-2(name="ph:x-circle-bold" size="20")
-        p.text-sm {{ $t('finance.expenses.rejected') || 'Reject' }}
+        p.text-sm {{ $t('finance.expenses.rejected') }}
     el-dropdown-item(@click="deletePopup = true")
       .flex.items-center
         Icon.text-md.mr-2(name="IconDelete" size="20")
@@ -65,18 +65,18 @@ DetailLayout(
       .mt-4
         RecordTimeline(entityType="expense" :entityId="route.params.id")
 
-    el-tab-pane(:label="$t('common.comments') || 'Comments'" name="comments")
+    el-tab-pane(:label="$t('common.comments')" name="comments")
       .mt-4
         RecordComments(entityType="expense" :entityId="route.params.id")
 
-    el-tab-pane(:label="$t('common.attachments') || 'Attachments'" name="attachments")
+    el-tab-pane(:label="$t('common.attachments')" name="attachments")
       .mt-4
         RecordAttachments(entityType="expense" :entityId="route.params.id")
 
   //- Sidebar
   template(#sidebar)
     .glass-card.p-5.rounded-2xl
-      h4.font-semibold.mb-4(style="color: var(--text-primary)") {{ $t('common.info') || 'Quick Info' }}
+      h4.font-semibold.mb-4(style="color: var(--text-primary)") {{ $t('common.info') }}
       .space-y-3
         .flex.justify-between
           span.text-sm(style="color: var(--text-muted)") {{ $t('finance.expenses.status') }}
@@ -93,8 +93,8 @@ DetailLayout(
       .space-y-2
         NuxtLink(:to="`/finance/expenses/create?edit=${expense?.id}`")
           el-button(class="w-full !rounded-xl" size="large") {{ $t('common.edit') }}
-        el-button(v-if="expense?.status === 'PENDING'" type="success" class="w-full !rounded-xl" size="large" @click="handleApprove") {{ $t('finance.expenses.approved') || 'Approve' }}
-        el-button(v-if="expense?.status === 'PENDING'" type="danger" class="w-full !rounded-xl" size="large" @click="handleReject") {{ $t('finance.expenses.rejected') || 'Reject' }}
+        el-button(v-if="expense?.status === 'PENDING'" type="success" class="w-full !rounded-xl" size="large" @click="handleApprove") {{ $t('finance.expenses.approved') }}
+        el-button(v-if="expense?.status === 'PENDING'" type="danger" class="w-full !rounded-xl" size="large" @click="handleReject") {{ $t('finance.expenses.rejected') }}
 
   ActionModel(v-model="deletePopup" :loading="deleting" :description="$t('common.confirmDelete')" @confirm="confirmDelete")
 </template>

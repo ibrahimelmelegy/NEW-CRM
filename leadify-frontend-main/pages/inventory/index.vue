@@ -101,7 +101,7 @@ div
   //- Movement Dialog
   el-dialog(v-model="showMovementDialog" :title="$t('inventory.addMovement')" width="500px")
     el-form(label-position="top" size="large")
-      el-form-item(:label="$t('inventory.product') || 'Product'" v-if="!selectedProduct")
+      el-form-item(:label="$t('inventory.product')" v-if="!selectedProduct")
         el-select(v-model="movementForm.productId" class="w-full")
           el-option(v-for="p in products" :key="p.id" :label="p.name" :value="p.id")
       .grid.grid-cols-2.gap-4

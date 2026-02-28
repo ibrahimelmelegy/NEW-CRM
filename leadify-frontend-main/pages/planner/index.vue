@@ -194,6 +194,8 @@ import { usePlanner } from '~/composables/usePlanner';
 
 definePageMeta({});
 
+const { t } = useI18n();
+
 const {
   todayTasks,
   focusToday,
@@ -258,20 +260,20 @@ async function saveTask() {
   await addTask({ ...taskForm });
   Object.assign(taskForm, { title: '', date: today.value, timeSlot: '09:00', duration: 30, category: 'work', priority: 'medium' });
   showTaskDialog.value = false;
-  ElMessage.success('Task planned!');
+  ElMessage.success(t('planner.taskPlanned'));
 }
 
 async function beginFocus() {
   await startFocus(focusForm.taskTitle, focusForm.duration);
   Object.assign(focusForm, { taskTitle: '', duration: 25 });
   showFocusDialog.value = false;
-  ElMessage.success('Focus session started! 🎯');
+  ElMessage.success(t('planner.focusStarted'));
 }
 
 async function endCurrentFocus() {
   if (activeFocus.value) {
     await endFocus(activeFocus.value.id);
-    ElMessage.success('Focus session completed! 🏆');
+    ElMessage.success(t('planner.focusCompleted'));
   }
 }
 
@@ -284,7 +286,7 @@ async function saveHabit() {
   await addHabit(habitForm.name, habitForm.icon);
   Object.assign(habitForm, { name: '', icon: '✅' });
   showHabitDialog.value = false;
-  ElMessage.success('Habit added!');
+  ElMessage.success(t('planner.habitAdded'));
 }
 
 function categoryColor(c: string): string {

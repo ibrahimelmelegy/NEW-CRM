@@ -3,15 +3,15 @@ div
   //- Header
   .flex.items-center.justify-between.mb-8
     div
-      .title.font-bold.text-2xl.mb-1(style="color: var(--text-primary)") {{ $t('hr.training.title') || 'Training & LMS' }}
-      p.text-sm(style="color: var(--text-muted)") {{ $t('hr.training.subtitle') || 'Manage training programs, track enrollments, and monitor progress' }}
+      .title.font-bold.text-2xl.mb-1(style="color: var(--text-primary)") {{ $t('hr.training.title') }}
+      p.text-sm(style="color: var(--text-muted)") {{ $t('hr.training.subtitle') }}
     .flex.items-center.gap-x-3
       el-button(v-if="activeTab === 'programs'" size="large" type="primary" @click="openProgramDialog()" class="!rounded-2xl")
         Icon(name="ph:plus-bold" size="16")
-        span.ml-1 {{ $t('hr.training.newProgram') || 'New Program' }}
+        span.ml-1 {{ $t('hr.training.newProgram') }}
       el-button(v-if="activeTab === 'enrollments'" size="large" type="primary" @click="openEnrollmentDialog()" class="!rounded-2xl")
         Icon(name="ph:plus-bold" size="16")
-        span.ml-1 {{ $t('hr.training.newEnrollment') || 'New Enrollment' }}
+        span.ml-1 {{ $t('hr.training.newEnrollment') }}
 
   //- Training Dashboard
   .glass-card.p-6.rounded-2xl.mb-6(v-loading="dashboardLoading")
@@ -65,34 +65,34 @@ div
   .grid.grid-cols-2.gap-4.mb-6(class="lg:grid-cols-4")
     .glass-card.p-5.rounded-2xl.text-center
       .text-2xl.font-bold(style="color: #7849ff") {{ programs.length }}
-      .text-xs.mt-1(style="color: var(--text-muted)") {{ $t('hr.training.totalPrograms') || 'Total Programs' }}
+      .text-xs.mt-1(style="color: var(--text-muted)") {{ $t('hr.training.totalPrograms') }}
     .glass-card.p-5.rounded-2xl.text-center
       .text-2xl.font-bold(style="color: #22c55e") {{ programs.filter(p => p.status === 'ACTIVE').length }}
-      .text-xs.mt-1(style="color: var(--text-muted)") {{ $t('hr.training.activePrograms') || 'Active Programs' }}
+      .text-xs.mt-1(style="color: var(--text-muted)") {{ $t('hr.training.activePrograms') }}
     .glass-card.p-5.rounded-2xl.text-center
       .text-2xl.font-bold(style="color: #3b82f6") {{ enrollments.length }}
-      .text-xs.mt-1(style="color: var(--text-muted)") {{ $t('hr.training.totalEnrollments') || 'Total Enrollments' }}
+      .text-xs.mt-1(style="color: var(--text-muted)") {{ $t('hr.training.totalEnrollments') }}
     .glass-card.p-5.rounded-2xl.text-center
       .text-2xl.font-bold(style="color: #f59e0b") {{ avgProgress }}%
-      .text-xs.mt-1(style="color: var(--text-muted)") {{ $t('hr.training.avgProgress') || 'Avg Progress' }}
+      .text-xs.mt-1(style="color: var(--text-muted)") {{ $t('hr.training.avgProgress') }}
 
   //- Tabs
   el-tabs(v-model="activeTab")
     //- Programs Tab
-    el-tab-pane(:label="$t('hr.training.programs') || 'Programs'" name="programs")
+    el-tab-pane(:label="$t('hr.training.programs')" name="programs")
       //- Filters
       .flex.items-center.gap-3.mb-4
-        el-input(v-model="programSearch" :placeholder="$t('common.search') || 'Search'" clearable style="width: 260px" size="large" class="!rounded-xl")
+        el-input(v-model="programSearch" :placeholder="$t('common.search')" clearable style="width: 260px" size="large" class="!rounded-xl")
           template(#prefix)
             Icon(name="ph:magnifying-glass" size="18" style="color: var(--text-muted)")
-        el-select(v-model="programStatusFilter" :placeholder="$t('hr.training.allStatuses') || 'All Statuses'" clearable size="large" style="width: 180px")
+        el-select(v-model="programStatusFilter" :placeholder="$t('hr.training.allStatuses')" clearable size="large" style="width: 180px")
           el-option(label="All Statuses" value="")
           el-option(v-for="s in PROGRAM_STATUSES" :key="s.value" :label="s.label" :value="s.value")
 
       //- Programs Table
       .glass-card.rounded-2xl.overflow-hidden
         el-table(:data="filteredPrograms" v-loading="loading" style="width: 100%" stripe @row-click="navigateToProgram")
-          el-table-column(:label="$t('hr.training.programTitle') || 'Title'" min-width="220")
+          el-table-column(:label="$t('hr.training.programTitle')" min-width="220")
             template(#default="{ row }")
               .flex.items-center.gap-3
                 .w-9.h-9.rounded-xl.flex.items-center.justify-center.shrink-0(style="background: rgba(120, 73, 255, 0.15)")
@@ -100,25 +100,25 @@ div
                 div
                   p.text-sm.font-semibold(style="color: var(--text-primary)") {{ row.title || '--' }}
                   p.text-xs(style="color: var(--text-muted)") {{ row.category || '' }}
-          el-table-column(:label="$t('hr.training.type') || 'Type'" width="130")
+          el-table-column(:label="$t('hr.training.type')" width="130")
             template(#default="{ row }")
               el-tag(effect="plain" size="small") {{ row.type || '--' }}
-          el-table-column(:label="$t('hr.training.status') || 'Status'" width="130" align="center")
+          el-table-column(:label="$t('hr.training.status')" width="130" align="center")
             template(#default="{ row }")
               el-tag(:type="getProgramStatusType(row.status)" effect="dark" size="small" round) {{ row.status }}
-          el-table-column(:label="$t('hr.training.category') || 'Category'" min-width="140" prop="category")
+          el-table-column(:label="$t('hr.training.category')" min-width="140" prop="category")
             template(#default="{ row }")
               span.text-sm(style="color: var(--text-primary)") {{ row.category || '--' }}
-          el-table-column(:label="$t('hr.training.duration') || 'Duration (hrs)'" width="140" align="center")
+          el-table-column(:label="$t('hr.training.duration')" width="140" align="center")
             template(#default="{ row }")
               span.text-sm.font-bold(style="color: var(--text-primary)") {{ row.durationHours || 0 }}h
-          el-table-column(:label="$t('hr.training.cost') || 'Cost'" width="120" align="center")
+          el-table-column(:label="$t('hr.training.cost')" width="120" align="center")
             template(#default="{ row }")
               span.text-sm(style="color: var(--text-primary)") {{ row.cost ? `${row.cost} SAR` : '--' }}
-          el-table-column(:label="$t('hr.training.instructor') || 'Instructor'" min-width="150" prop="instructor")
+          el-table-column(:label="$t('hr.training.instructor')" min-width="150" prop="instructor")
             template(#default="{ row }")
               span.text-sm(style="color: var(--text-muted)") {{ row.instructor || '--' }}
-          el-table-column(:label="$t('common.actions') || 'Actions'" width="120" align="center")
+          el-table-column(:label="$t('common.actions')" width="120" align="center")
             template(#default="{ row }")
               .flex.items-center.justify-center.gap-1
                 el-button(text type="primary" size="small" @click="openProgramDialog(row)")
@@ -136,41 +136,41 @@ div
           )
 
     //- Enrollments Tab
-    el-tab-pane(:label="$t('hr.training.enrollments') || 'Enrollments'" name="enrollments")
+    el-tab-pane(:label="$t('hr.training.enrollments')" name="enrollments")
       //- Filters
       .flex.items-center.gap-3.mb-4
-        el-input(v-model="enrollmentSearch" :placeholder="$t('common.search') || 'Search'" clearable style="width: 260px" size="large" class="!rounded-xl")
+        el-input(v-model="enrollmentSearch" :placeholder="$t('common.search')" clearable style="width: 260px" size="large" class="!rounded-xl")
           template(#prefix)
             Icon(name="ph:magnifying-glass" size="18" style="color: var(--text-muted)")
-        el-select(v-model="enrollmentStatusFilter" :placeholder="$t('hr.training.allStatuses') || 'All Statuses'" clearable size="large" style="width: 180px")
+        el-select(v-model="enrollmentStatusFilter" :placeholder="$t('hr.training.allStatuses')" clearable size="large" style="width: 180px")
           el-option(label="All Statuses" value="")
           el-option(v-for="s in ENROLLMENT_STATUSES" :key="s.value" :label="s.label" :value="s.value")
 
       //- Enrollments Table
       .glass-card.rounded-2xl.overflow-hidden
         el-table(:data="filteredEnrollments" v-loading="loading" style="width: 100%" stripe)
-          el-table-column(:label="$t('hr.training.employee') || 'Employee'" min-width="200")
+          el-table-column(:label="$t('hr.training.employee')" min-width="200")
             template(#default="{ row }")
               .flex.items-center.gap-3
                 .w-9.h-9.rounded-full.flex.items-center.justify-center.shrink-0(style="background: rgba(120, 73, 255, 0.15)")
                   span.text-sm.font-bold(style="color: #7849ff") {{ (row.employeeName || '?').charAt(0).toUpperCase() }}
                 div
                   p.text-sm.font-semibold(style="color: var(--text-primary)") {{ row.employeeName || '--' }}
-          el-table-column(:label="$t('hr.training.program') || 'Program'" min-width="200" prop="programTitle")
+          el-table-column(:label="$t('hr.training.program')" min-width="200" prop="programTitle")
             template(#default="{ row }")
               span.text-sm(style="color: var(--text-primary)") {{ row.programTitle || '--' }}
-          el-table-column(:label="$t('hr.training.status') || 'Status'" width="140" align="center")
+          el-table-column(:label="$t('hr.training.status')" width="140" align="center")
             template(#default="{ row }")
               el-tag(:type="getEnrollmentStatusType(row.status)" effect="dark" size="small" round) {{ row.status }}
-          el-table-column(:label="$t('hr.training.progress') || 'Progress'" width="180" align="center")
+          el-table-column(:label="$t('hr.training.progress')" width="180" align="center")
             template(#default="{ row }")
               .flex.items-center.gap-2
                 el-progress(:percentage="row.progress || 0" :stroke-width="6" :color="getProgressColor(row.progress)" style="width: 100px")
                 span.text-xs.font-semibold(style="color: var(--text-primary)") {{ row.progress || 0 }}%
-          el-table-column(:label="$t('hr.training.score') || 'Score'" width="100" align="center")
+          el-table-column(:label="$t('hr.training.score')" width="100" align="center")
             template(#default="{ row }")
               span.text-sm.font-bold(:style="{ color: row.score >= 80 ? '#22c55e' : row.score >= 60 ? '#f59e0b' : row.score > 0 ? '#ef4444' : 'var(--text-muted)' }") {{ row.score != null ? row.score : '--' }}
-          el-table-column(:label="$t('common.actions') || 'Actions'" width="120" align="center")
+          el-table-column(:label="$t('common.actions')" width="120" align="center")
             template(#default="{ row }")
               .flex.items-center.justify-center.gap-1
                 el-button(text type="primary" size="small" @click="openEnrollmentDialog(row)")
@@ -188,12 +188,12 @@ div
           )
 
   //- Program Dialog
-  el-dialog(v-model="programDialogVisible" :title="editingProgram ? ($t('hr.training.editProgram') || 'Edit Program') : ($t('hr.training.newProgram') || 'New Program')" width="600px" destroy-on-close)
+  el-dialog(v-model="programDialogVisible" :title="editingProgram ? $t('hr.training.editProgram') : $t('hr.training.newProgram')" width="600px" destroy-on-close)
     el-form(:model="programForm" label-position="top")
-      el-form-item(:label="$t('hr.training.programTitle') || 'Program Title'" required)
-        el-input(v-model="programForm.title" :placeholder="$t('hr.training.titlePlaceholder') || 'e.g., Leadership Development Program'")
+      el-form-item(:label="$t('hr.training.programTitle')" required)
+        el-input(v-model="programForm.title" :placeholder="$t('hr.training.titlePlaceholder')")
       .grid.gap-4(class="grid-cols-2")
-        el-form-item(:label="$t('hr.training.type') || 'Type'" required)
+        el-form-item(:label="$t('hr.training.type')" required)
           el-select(v-model="programForm.type" class="w-full")
             el-option(label="Online" value="ONLINE")
             el-option(label="Classroom" value="CLASSROOM")
@@ -201,47 +201,47 @@ div
             el-option(label="Webinar" value="WEBINAR")
             el-option(label="Self-paced" value="SELF_PACED")
             el-option(label="Blended" value="BLENDED")
-        el-form-item(:label="$t('hr.training.status') || 'Status'")
+        el-form-item(:label="$t('hr.training.status')")
           el-select(v-model="programForm.status" class="w-full")
             el-option(v-for="s in PROGRAM_STATUSES" :key="s.value" :label="s.label" :value="s.value")
       .grid.gap-4(class="grid-cols-2")
-        el-form-item(:label="$t('hr.training.category') || 'Category'")
-          el-select(v-model="programForm.category" class="w-full" filterable allow-create :placeholder="$t('hr.training.selectCategory') || 'Select category'")
+        el-form-item(:label="$t('hr.training.category')")
+          el-select(v-model="programForm.category" class="w-full" filterable allow-create :placeholder="$t('hr.training.selectCategory')")
             el-option(v-for="cat in PROGRAM_CATEGORIES" :key="cat" :label="cat" :value="cat")
-        el-form-item(:label="$t('hr.training.duration') || 'Duration (Hours)'")
+        el-form-item(:label="$t('hr.training.duration')")
           el-input-number(v-model="programForm.durationHours" :min="0" :max="1000" :step="0.5" class="w-full")
       .grid.gap-4(class="grid-cols-2")
-        el-form-item(:label="$t('hr.training.cost') || 'Cost (SAR)'")
+        el-form-item(:label="$t('hr.training.cost')")
           el-input-number(v-model="programForm.cost" :min="0" :step="100" class="w-full" :controls="false")
-        el-form-item(:label="$t('hr.training.instructor') || 'Instructor'")
-          el-input(v-model="programForm.instructor" :placeholder="$t('hr.training.instructorPlaceholder') || 'Enter instructor name'")
-      el-form-item(:label="$t('hr.training.description') || 'Description'")
-        el-input(v-model="programForm.description" type="textarea" :rows="3" :placeholder="$t('hr.training.descriptionPlaceholder') || 'Enter program description...'")
+        el-form-item(:label="$t('hr.training.instructor')")
+          el-input(v-model="programForm.instructor" :placeholder="$t('hr.training.instructorPlaceholder')")
+      el-form-item(:label="$t('hr.training.description')")
+        el-input(v-model="programForm.description" type="textarea" :rows="3" :placeholder="$t('hr.training.descriptionPlaceholder')")
     template(#footer)
-      el-button(@click="programDialogVisible = false") {{ $t('common.cancel') || 'Cancel' }}
-      el-button(type="primary" @click="handleSaveProgram" :loading="saving") {{ $t('common.save') || 'Save' }}
+      el-button(@click="programDialogVisible = false") {{ $t('common.cancel') }}
+      el-button(type="primary" @click="handleSaveProgram" :loading="saving") {{ $t('common.save') }}
 
   //- Enrollment Dialog
-  el-dialog(v-model="enrollmentDialogVisible" :title="editingEnrollment ? ($t('hr.training.editEnrollment') || 'Edit Enrollment') : ($t('hr.training.newEnrollment') || 'New Enrollment')" width="600px" destroy-on-close)
+  el-dialog(v-model="enrollmentDialogVisible" :title="editingEnrollment ? $t('hr.training.editEnrollment') : $t('hr.training.newEnrollment')" width="600px" destroy-on-close)
     el-form(:model="enrollmentForm" label-position="top")
       .grid.gap-4(class="grid-cols-2")
-        el-form-item(:label="$t('hr.training.employee') || 'Employee'" required)
-          el-select(v-model="enrollmentForm.employeeId" filterable :placeholder="$t('hr.training.selectEmployee') || 'Select employee'" class="w-full")
+        el-form-item(:label="$t('hr.training.employee')" required)
+          el-select(v-model="enrollmentForm.employeeId" filterable :placeholder="$t('hr.training.selectEmployee')" class="w-full")
             el-option(v-for="emp in employees" :key="emp.id" :label="emp.name" :value="emp.id")
-        el-form-item(:label="$t('hr.training.program') || 'Program'" required)
-          el-select(v-model="enrollmentForm.programId" filterable :placeholder="$t('hr.training.selectProgram') || 'Select program'" class="w-full")
+        el-form-item(:label="$t('hr.training.program')" required)
+          el-select(v-model="enrollmentForm.programId" filterable :placeholder="$t('hr.training.selectProgram')" class="w-full")
             el-option(v-for="p in programs" :key="p.id" :label="p.title" :value="p.id")
       .grid.gap-4(class="grid-cols-3")
-        el-form-item(:label="$t('hr.training.status') || 'Status'")
+        el-form-item(:label="$t('hr.training.status')")
           el-select(v-model="enrollmentForm.status" class="w-full")
             el-option(v-for="s in ENROLLMENT_STATUSES" :key="s.value" :label="s.label" :value="s.value")
-        el-form-item(:label="$t('hr.training.progress') || 'Progress (%)'")
+        el-form-item(:label="$t('hr.training.progress')")
           el-slider(v-model="enrollmentForm.progress" :min="0" :max="100" :step="5" show-input :show-input-controls="false" input-size="small")
-        el-form-item(:label="$t('hr.training.score') || 'Score'")
+        el-form-item(:label="$t('hr.training.score')")
           el-input-number(v-model="enrollmentForm.score" :min="0" :max="100" class="w-full")
     template(#footer)
-      el-button(@click="enrollmentDialogVisible = false") {{ $t('common.cancel') || 'Cancel' }}
-      el-button(type="primary" @click="handleSaveEnrollment" :loading="saving") {{ $t('common.save') || 'Save' }}
+      el-button(@click="enrollmentDialogVisible = false") {{ $t('common.cancel') }}
+      el-button(type="primary" @click="handleSaveEnrollment" :loading="saving") {{ $t('common.save') }}
 </template>
 
 <script setup lang="ts">
@@ -418,7 +418,7 @@ function openProgramDialog(item?: any) {
 
 async function handleSaveProgram() {
   if (!programForm.title || !programForm.type) {
-    ElNotification({ type: 'warning', title: t('common.warning') || 'Warning', message: t('common.fillRequired') || 'Please fill all required fields' });
+    ElNotification({ type: 'warning', title: t('common.warning'), message: t('common.fillRequired') });
     return;
   }
   saving.value = true;
@@ -431,9 +431,9 @@ async function handleSaveProgram() {
     }
     await loadData();
     programDialogVisible.value = false;
-    ElNotification({ type: 'success', title: t('common.success') || 'Success', message: t('common.saved') || 'Saved successfully' });
+    ElNotification({ type: 'success', title: t('common.success'), message: t('common.saved') });
   } catch {
-    ElNotification({ type: 'error', title: t('common.error') || 'Error', message: t('common.error') || 'An error occurred' });
+    ElNotification({ type: 'error', title: t('common.error'), message: t('common.error') });
   } finally {
     saving.value = false;
   }
@@ -442,14 +442,14 @@ async function handleSaveProgram() {
 async function handleDeleteProgram(row: any) {
   try {
     await ElMessageBox.confirm(
-      t('common.confirmDelete') || 'Are you sure you want to delete this program?',
-      t('common.warning') || 'Warning',
+      t('common.confirmDelete'),
+      t('common.warning'),
       { type: 'warning' }
     );
     loading.value = true;
     await useApiFetch(`hr/training/programs/${row.id}`, 'DELETE');
     await loadData();
-    ElNotification({ type: 'success', title: t('common.success') || 'Success', message: t('common.deleted') || 'Deleted successfully' });
+    ElNotification({ type: 'success', title: t('common.success'), message: t('common.deleted') });
   } catch {
     // User cancelled or error
   } finally {
@@ -483,7 +483,7 @@ function openEnrollmentDialog(item?: any) {
 
 async function handleSaveEnrollment() {
   if (!enrollmentForm.employeeId || !enrollmentForm.programId) {
-    ElNotification({ type: 'warning', title: t('common.warning') || 'Warning', message: t('common.fillRequired') || 'Please fill all required fields' });
+    ElNotification({ type: 'warning', title: t('common.warning'), message: t('common.fillRequired') });
     return;
   }
   saving.value = true;
@@ -496,9 +496,9 @@ async function handleSaveEnrollment() {
     }
     await loadData();
     enrollmentDialogVisible.value = false;
-    ElNotification({ type: 'success', title: t('common.success') || 'Success', message: t('common.saved') || 'Saved successfully' });
+    ElNotification({ type: 'success', title: t('common.success'), message: t('common.saved') });
   } catch {
-    ElNotification({ type: 'error', title: t('common.error') || 'Error', message: t('common.error') || 'An error occurred' });
+    ElNotification({ type: 'error', title: t('common.error'), message: t('common.error') });
   } finally {
     saving.value = false;
   }
@@ -507,14 +507,14 @@ async function handleSaveEnrollment() {
 async function handleDeleteEnrollment(row: any) {
   try {
     await ElMessageBox.confirm(
-      t('common.confirmDelete') || 'Are you sure you want to delete this enrollment?',
-      t('common.warning') || 'Warning',
+      t('common.confirmDelete'),
+      t('common.warning'),
       { type: 'warning' }
     );
     loading.value = true;
     await useApiFetch(`hr/training/enrollments/${row.id}`, 'DELETE');
     await loadData();
-    ElNotification({ type: 'success', title: t('common.success') || 'Success', message: t('common.deleted') || 'Deleted successfully' });
+    ElNotification({ type: 'success', title: t('common.success'), message: t('common.deleted') });
   } catch {
     // User cancelled or error
   } finally {

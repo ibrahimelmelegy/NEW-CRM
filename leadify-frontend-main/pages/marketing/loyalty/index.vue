@@ -2,13 +2,13 @@
 div
   //- Header
   ModuleHeader(
-    :title="$t('loyaltyRewards.title') || 'Loyalty & Rewards'"
-    :subtitle="$t('loyaltyRewards.subtitle') || 'Build customer loyalty with points, tiers, and rewards programs.'"
+    :title="$t('loyaltyRewards.title')"
+    :subtitle="$t('loyaltyRewards.subtitle')"
   )
     template(#actions)
       el-button(size="large" type="primary" class="!rounded-2xl" @click="openProgramDialog()")
         Icon(name="ph:plus-bold" size="16")
-        span.ml-1 {{ $t('loyalty.newProgram') || 'New Program' }}
+        span.ml-1 {{ $t('loyalty.newProgram') }}
 
   //- KPI Stats
   StatCards(:stats="kpiStats")
@@ -18,9 +18,9 @@ div
     .flex.items-center.justify-between.mb-5
       .flex.items-center.gap-2
         Icon(name="ph:chart-pie-slice-bold" size="20" style="color: #7849ff")
-        h3.text-base.font-bold(style="color: var(--text-primary)") {{ $t('loyalty.tierDistribution') || 'Tier Distribution' }}
+        h3.text-base.font-bold(style="color: var(--text-primary)") {{ $t('loyalty.tierDistribution') }}
       .flex.items-center.gap-2
-        span.text-xs(style="color: var(--text-muted)") {{ $t('loyalty.totalMembers') || 'Total Members' }}:
+        span.text-xs(style="color: var(--text-muted)") {{ $t('loyalty.totalMembers') }}:
         span.text-sm.font-bold(style="color: var(--text-primary)") {{ (dashboardData.totalMembers || 0).toLocaleString() }}
 
     //- Tier Cards
@@ -31,7 +31,7 @@ div
           Icon(name="ph:crown-bold" size="20" :style="{ color: tier.color }")
         p.text-xs.font-semibold.uppercase.tracking-wider.mb-1(:style="{ color: tier.color }") {{ tier.name }}
         p.text-2xl.font-bold(style="color: var(--text-primary)") {{ tier.count }}
-        p.text-xs(style="color: var(--text-muted)") {{ $t('loyalty.members') || 'members' }}
+        p.text-xs(style="color: var(--text-muted)") {{ $t('loyalty.members') }}
 
     //- Tier Progress Bar
     .mt-3(v-if="tierTotal > 0")
@@ -52,12 +52,12 @@ div
     el-tabs(v-model="activeTab")
 
       //- ─── Programs Tab ─────────────────────────────────
-      el-tab-pane(:label="$t('loyalty.programs') || 'Programs'" name="programs")
+      el-tab-pane(:label="$t('loyalty.programs')" name="programs")
         .glass-card.p-6.rounded-2xl
           .flex.items-center.justify-between.mb-4.flex-wrap.gap-3
             el-input(
               v-model="programSearch"
-              :placeholder="$t('common.search') || 'Search programs'"
+              :placeholder="$t('common.search')"
               clearable
               style="max-width: 280px"
               size="large"
@@ -65,7 +65,7 @@ div
             )
               template(#prefix)
                 Icon(name="ph:magnifying-glass" size="18" style="color: var(--text-muted)")
-            el-select(v-model="programStatusFilter" :placeholder="$t('common.all') || 'All'" clearable size="large" style="width: 160px")
+            el-select(v-model="programStatusFilter" :placeholder="$t('common.all')" clearable size="large" style="width: 160px")
               el-option(label="All" value="")
               el-option(label="Active" value="ACTIVE")
               el-option(label="Paused" value="PAUSED")
@@ -74,7 +74,7 @@ div
           //- Desktop table
           .hidden(class="md:block")
             el-table(:data="filteredPrograms" style="width: 100%" stripe)
-              el-table-column(:label="$t('common.name') || 'Name'" min-width="220" sortable prop="name")
+              el-table-column(:label="$t('common.name')" min-width="220" sortable prop="name")
                 template(#default="{ row }")
                   .flex.items-center.gap-3
                     .w-9.h-9.rounded-xl.flex.items-center.justify-center.shrink-0(style="background: rgba(245, 158, 11, 0.1)")
@@ -82,18 +82,18 @@ div
                     div
                       p.text-sm.font-semibold(style="color: var(--text-primary)") {{ row.name }}
                       p.text-xs(v-if="row.description" style="color: var(--text-muted)") {{ truncate(row.description, 50) }}
-              el-table-column(:label="$t('common.status') || 'Status'" width="130" sortable prop="status")
+              el-table-column(:label="$t('common.status')" width="130" sortable prop="status")
                 template(#default="{ row }")
                   el-tag(:type="getProgramStatusType(row.status)" effect="dark" size="small" round) {{ row.status }}
-              el-table-column(:label="$t('loyalty.pointsPerCurrency') || 'Pts/Currency'" width="140" align="center")
+              el-table-column(:label="$t('loyalty.pointsPerCurrency')" width="140" align="center")
                 template(#default="{ row }")
                   span.text-sm.font-bold(style="color: #f59e0b") {{ row.pointsPerCurrency || 0 }}
-              el-table-column(:label="$t('loyalty.tiers') || 'Tiers'" width="280")
+              el-table-column(:label="$t('loyalty.tiers')" width="280")
                 template(#default="{ row }")
                   .flex.flex-wrap.gap-1(v-if="row.tiers && row.tiers.length")
                     el-tag(v-for="tier in row.tiers" :key="tier.name" size="small" effect="plain") {{ tier.name }} ({{ tier.minPoints || 0 }}+)
                   span.text-sm(v-else style="color: var(--text-muted)") --
-              el-table-column(:label="$t('common.actions') || 'Actions'" width="120" align="center")
+              el-table-column(:label="$t('common.actions')" width="120" align="center")
                 template(#default="{ row }")
                   .flex.items-center.justify-center.gap-1
                     el-button(text size="small" type="primary" @click.stop="openProgramDialog(row)")
@@ -121,7 +121,7 @@ div
           //- Empty state
           .text-center.py-12(v-if="!filteredPrograms.length")
             Icon(name="ph:crown" size="48" style="color: var(--text-muted); opacity: 0.4")
-            p.text-sm.mt-3(style="color: var(--text-muted)") {{ $t('loyalty.noPrograms') || 'No loyalty programs found. Create your first program.' }}
+            p.text-sm.mt-3(style="color: var(--text-muted)") {{ $t('loyalty.noPrograms') }}
 
           //- Pagination
           .flex.justify-end.mt-4(v-if="programsPagination.total > programsPagination.limit")
@@ -134,12 +134,12 @@ div
             )
 
       //- ─── Members Tab ──────────────────────────────────
-      el-tab-pane(:label="$t('loyalty.membersTab') || 'Members'" name="members")
+      el-tab-pane(:label="$t('loyalty.membersTab')" name="members")
         .glass-card.p-6.rounded-2xl
           .flex.items-center.justify-between.mb-4.flex-wrap.gap-3
             el-input(
               v-model="memberSearch"
-              :placeholder="$t('loyalty.searchMembers') || 'Search by client name'"
+              :placeholder="$t('loyalty.searchMembers')"
               clearable
               style="max-width: 280px"
               size="large"
@@ -148,7 +148,7 @@ div
               template(#prefix)
                 Icon(name="ph:magnifying-glass" size="18" style="color: var(--text-muted)")
             .flex.items-center.gap-3
-              el-select(v-model="memberTierFilter" :placeholder="$t('loyalty.allTiers') || 'All Tiers'" clearable size="large" style="width: 160px")
+              el-select(v-model="memberTierFilter" :placeholder="$t('loyalty.allTiers')" clearable size="large" style="width: 160px")
                 el-option(label="All Tiers" value="")
                 el-option(label="Bronze" value="BRONZE")
                 el-option(label="Silver" value="SILVER")
@@ -156,12 +156,12 @@ div
                 el-option(label="Platinum" value="PLATINUM")
               el-button(size="large" type="primary" plain class="!rounded-2xl" @click="openAdjustDialog()")
                 Icon(name="ph:plus-minus-bold" size="16")
-                span.ml-1 {{ $t('loyalty.adjustPoints') || 'Adjust Points' }}
+                span.ml-1 {{ $t('loyalty.adjustPoints') }}
 
           //- Members Table (desktop)
           .hidden(class="md:block")
             el-table(:data="filteredMembers" style="width: 100%" stripe)
-              el-table-column(:label="$t('loyalty.client') || 'Client'" min-width="200")
+              el-table-column(:label="$t('loyalty.client')" min-width="200")
                 template(#default="{ row }")
                   .flex.items-center.gap-3.cursor-pointer(@click="openMemberDetail(row)")
                     .w-9.h-9.rounded-full.flex.items-center.justify-center.shrink-0(:style="{ background: getTierColor(row.tier) + '20' }")
@@ -169,25 +169,25 @@ div
                     div
                       p.text-sm.font-semibold(style="color: var(--text-primary)") {{ row.clientName || row.clientId }}
                       p.text-xs(v-if="row.email" style="color: var(--text-muted)") {{ row.email }}
-              el-table-column(:label="$t('loyalty.tier') || 'Tier'" width="130" align="center")
+              el-table-column(:label="$t('loyalty.tier')" width="130" align="center")
                 template(#default="{ row }")
                   el-tag(:color="getTierColor(row.tier)" effect="dark" size="small" round style="border: none; color: #fff") {{ row.tier }}
-              el-table-column(:label="$t('loyalty.pointsBalance') || 'Balance'" width="140" align="center" sortable)
+              el-table-column(:label="$t('loyalty.pointsBalance')" width="140" align="center" sortable)
                 template(#default="{ row }")
                   span.text-sm.font-bold(style="color: var(--text-primary)") {{ (row.balance || 0).toLocaleString() }}
-              el-table-column(:label="$t('loyalty.lifetimePoints') || 'Lifetime Pts'" width="140" align="center")
+              el-table-column(:label="$t('loyalty.lifetimePoints')" width="140" align="center")
                 template(#default="{ row }")
                   span.text-sm(style="color: var(--text-muted)") {{ (row.totalEarned || 0).toLocaleString() }}
-              el-table-column(:label="$t('loyalty.expiringPoints') || 'Expiring Soon'" width="140" align="center")
+              el-table-column(:label="$t('loyalty.expiringPoints')" width="140" align="center")
                 template(#default="{ row }")
                   span.text-sm.font-bold(v-if="row.expiringPoints" style="color: #f59e0b") {{ row.expiringPoints }}
                   span.text-sm(v-else style="color: var(--text-muted)") —
-              el-table-column(:label="$t('loyalty.joinDate') || 'Joined'" width="130")
+              el-table-column(:label="$t('loyalty.joinDate')" width="130")
                 template(#default="{ row }")
                   span.text-sm(style="color: var(--text-muted)") {{ formatDate(row.firstTransaction) }}
-              el-table-column(:label="$t('common.actions') || 'Actions'" width="100" align="center")
+              el-table-column(:label="$t('common.actions')" width="100" align="center")
                 template(#default="{ row }")
-                  el-tooltip(:content="$t('loyalty.viewHistory') || 'View History'" placement="top")
+                  el-tooltip(:content="$t('loyalty.viewHistory')" placement="top")
                     el-button(text type="primary" size="small" @click.stop="openMemberDetail(row)")
                       Icon(name="ph:clock-counter-clockwise-bold" size="16")
 
@@ -209,15 +209,15 @@ div
 
           .text-center.py-12(v-if="!filteredMembers.length")
             Icon(name="ph:users" size="48" style="color: var(--text-muted); opacity: 0.4")
-            p.text-sm.mt-3(style="color: var(--text-muted)") {{ $t('loyalty.noMembers') || 'No loyalty members found.' }}
+            p.text-sm.mt-3(style="color: var(--text-muted)") {{ $t('loyalty.noMembers') }}
 
       //- ─── Points History Tab ───────────────────────────
-      el-tab-pane(:label="$t('loyalty.pointsHistory') || 'Points History'" name="points")
+      el-tab-pane(:label="$t('loyalty.pointsHistory')" name="points")
         .glass-card.p-6.rounded-2xl
           .flex.items-center.justify-between.mb-4.flex-wrap.gap-3
             el-input(
               v-model="pointsSearch"
-              :placeholder="$t('common.search') || 'Search transactions'"
+              :placeholder="$t('common.search')"
               clearable
               style="max-width: 280px"
               size="large"
@@ -227,24 +227,24 @@ div
                 Icon(name="ph:magnifying-glass" size="18" style="color: var(--text-muted)")
             el-button(size="large" type="primary" class="!rounded-2xl" @click="openPointsDialog()")
               Icon(name="ph:plus-bold" size="16")
-              span.ml-1 {{ $t('loyalty.addPoints') || 'Add Points' }}
+              span.ml-1 {{ $t('loyalty.addPoints') }}
 
           //- Desktop table
           .hidden(class="md:block")
             el-table(:data="filteredPoints" style="width: 100%" stripe)
-              el-table-column(:label="$t('loyalty.client') || 'Client'" min-width="180" sortable)
+              el-table-column(:label="$t('loyalty.client')" min-width="180" sortable)
                 template(#default="{ row }")
                   span.text-sm.font-semibold(style="color: var(--text-primary)") {{ row.client?.name || row.clientId || '--' }}
-              el-table-column(:label="$t('loyalty.points') || 'Points'" width="120" align="center" sortable)
+              el-table-column(:label="$t('loyalty.points')" width="120" align="center" sortable)
                 template(#default="{ row }")
                   span.text-sm.font-bold(:style="{ color: pointsColor(row.transactionType) }") {{ pointsPrefix(row.transactionType) }}{{ row.points }}
-              el-table-column(:label="$t('common.type') || 'Type'" width="130")
+              el-table-column(:label="$t('common.type')" width="130")
                 template(#default="{ row }")
                   el-tag(:type="getTransactionType(row.transactionType)" effect="dark" size="small") {{ row.transactionType }}
-              el-table-column(:label="$t('common.description') || 'Description'" min-width="200")
+              el-table-column(:label="$t('common.description')" min-width="200")
                 template(#default="{ row }")
                   span.text-sm(style="color: var(--text-muted)") {{ row.description || '--' }}
-              el-table-column(:label="$t('common.date') || 'Date'" width="150" sortable)
+              el-table-column(:label="$t('common.date')" width="150" sortable)
                 template(#default="{ row }")
                   span.text-sm(style="color: var(--text-muted)") {{ formatDate(row.createdAt) }}
 
@@ -261,7 +261,7 @@ div
 
           .text-center.py-12(v-if="!filteredPoints.length")
             Icon(name="ph:coins" size="48" style="color: var(--text-muted); opacity: 0.4")
-            p.text-sm.mt-3(style="color: var(--text-muted)") {{ $t('loyalty.noTransactions') || 'No transactions found.' }}
+            p.text-sm.mt-3(style="color: var(--text-muted)") {{ $t('loyalty.noTransactions') }}
 
           //- Pagination
           .flex.justify-end.mt-4(v-if="pointsPagination.total > pointsPagination.limit")
@@ -274,20 +274,20 @@ div
             )
 
       //- ─── Redemptions Tab ──────────────────────────────
-      el-tab-pane(:label="$t('loyalty.redemptions') || 'Redemptions'" name="redemptions")
+      el-tab-pane(:label="$t('loyalty.redemptions')" name="redemptions")
         .glass-card.p-6.rounded-2xl
           .hidden(class="md:block")
             el-table(:data="redemptions" style="width: 100%" stripe)
-              el-table-column(:label="$t('loyalty.client') || 'Client'" min-width="180")
+              el-table-column(:label="$t('loyalty.client')" min-width="180")
                 template(#default="{ row }")
                   span.text-sm.font-semibold(style="color: var(--text-primary)") {{ row.client?.name || row.clientId || '--' }}
-              el-table-column(:label="$t('loyalty.pointsRedeemed') || 'Points'" width="130" align="center")
+              el-table-column(:label="$t('loyalty.pointsRedeemed')" width="130" align="center")
                 template(#default="{ row }")
                   span.text-sm.font-bold(style="color: #ef4444") -{{ row.points }}
-              el-table-column(:label="$t('common.description') || 'Description'" min-width="220")
+              el-table-column(:label="$t('common.description')" min-width="220")
                 template(#default="{ row }")
                   span.text-sm(style="color: var(--text-muted)") {{ row.description || '--' }}
-              el-table-column(:label="$t('common.date') || 'Date'" width="150")
+              el-table-column(:label="$t('common.date')" width="150")
                 template(#default="{ row }")
                   span.text-sm(style="color: var(--text-muted)") {{ formatDate(row.createdAt) }}
 
@@ -304,117 +304,117 @@ div
 
           .text-center.py-12(v-if="!redemptions.length")
             Icon(name="ph:gift" size="48" style="color: var(--text-muted); opacity: 0.4")
-            p.text-sm.mt-3(style="color: var(--text-muted)") {{ $t('loyalty.noRedemptions') || 'No redemptions recorded yet.' }}
+            p.text-sm.mt-3(style="color: var(--text-muted)") {{ $t('loyalty.noRedemptions') }}
 
   //- ─── Program Dialog ───────────────────────────────────
   el-dialog(
     v-model="programDialogVisible"
-    :title="editingProgram ? ($t('loyalty.editProgram') || 'Edit Program') : ($t('loyalty.newProgram') || 'New Program')"
+    :title="editingProgram ? $t('loyalty.editProgram') : $t('loyalty.newProgram')"
     width="560px"
     destroy-on-close
   )
     el-form(:model="programForm" label-position="top")
-      el-form-item(:label="$t('common.name') || 'Program Name'" required)
-        el-input(v-model="programForm.name" :placeholder="$t('loyalty.programNamePlaceholder') || 'e.g., VIP Rewards'")
-      el-form-item(:label="$t('common.description') || 'Description'")
+      el-form-item(:label="$t('common.name')" required)
+        el-input(v-model="programForm.name" :placeholder="$t('loyalty.programNamePlaceholder')")
+      el-form-item(:label="$t('common.description')")
         el-input(v-model="programForm.description" type="textarea" :rows="2")
       .grid.gap-4(class="grid-cols-1 md:grid-cols-2")
-        el-form-item(:label="$t('common.status') || 'Status'")
+        el-form-item(:label="$t('common.status')")
           el-select(v-model="programForm.status" class="w-full")
             el-option(label="Active" value="ACTIVE")
             el-option(label="Paused" value="PAUSED")
             el-option(label="Ended" value="ENDED")
-        el-form-item(:label="$t('loyalty.pointsPerCurrency') || 'Points per Currency Unit'")
+        el-form-item(:label="$t('loyalty.pointsPerCurrency')")
           el-input-number(v-model="programForm.pointsPerCurrency" :min="0" :step="0.1" class="!w-full")
       //- Tiers
-      el-form-item(:label="$t('loyalty.pointsAccrualRules') || 'Points Accrual Rules'")
+      el-form-item(:label="$t('loyalty.pointsAccrualRules')")
         .space-y-2
           .flex.items-center.gap-2(v-for="(rule, idx) in programForm.accrualRules" :key="idx")
-            el-input(v-model="rule.name" :placeholder="$t('loyalty.ruleName') || 'Rule Name'" style="flex: 2")
+            el-input(v-model="rule.name" :placeholder="$t('loyalty.ruleName')" style="flex: 2")
             el-input-number(v-model="rule.pointsPerUnit" :min="0" :precision="1" :placeholder="'Points'" style="flex: 1")
             el-button(text type="danger" @click="programForm.accrualRules.splice(idx, 1)")
               Icon(name="ph:x-bold" size="14")
           el-button(text type="primary" @click="programForm.accrualRules.push({ name: '', pointsPerUnit: 1 })")
             Icon(name="ph:plus-bold" size="14")
-            span.ml-1 {{ $t('loyalty.addRule') || 'Add Rule' }}
+            span.ml-1 {{ $t('loyalty.addRule') }}
 
-      el-form-item(:label="$t('loyalty.pointsExpiration') || 'Points Expiration'")
+      el-form-item(:label="$t('loyalty.pointsExpiration')")
         .flex.items-center.gap-3
-          el-checkbox(v-model="programForm.enableExpiration") {{ $t('loyalty.enableExpiration') || 'Enable expiration' }}
+          el-checkbox(v-model="programForm.enableExpiration") {{ $t('loyalty.enableExpiration') }}
           el-input-number(v-if="programForm.enableExpiration" v-model="programForm.expirationDays" :min="1" :placeholder="'Days'" style="width: 120px")
-          span.text-xs(v-if="programForm.enableExpiration" style="color: var(--text-muted)") {{ $t('loyalty.daysAfterEarned') || 'days after earned' }}
+          span.text-xs(v-if="programForm.enableExpiration" style="color: var(--text-muted)") {{ $t('loyalty.daysAfterEarned') }}
 
-      el-form-item(:label="$t('loyalty.tiers') || 'Tiers'")
+      el-form-item(:label="$t('loyalty.tiers')")
         .space-y-2
           .flex.items-center.gap-2(v-for="(tier, idx) in programForm.tiers" :key="idx")
-            el-input(v-model="tier.name" :placeholder="$t('common.name') || 'Tier Name'" style="flex: 2")
+            el-input(v-model="tier.name" :placeholder="$t('common.name')" style="flex: 2")
             el-input-number(v-model="tier.minPoints" :min="0" :placeholder="'Min Points'" style="flex: 1")
             el-button(text type="danger" @click="programForm.tiers.splice(idx, 1)")
               Icon(name="ph:x-bold" size="14")
           el-button(text type="primary" @click="programForm.tiers.push({ name: '', minPoints: 0, benefits: [] })")
             Icon(name="ph:plus-bold" size="14")
-            span.ml-1 {{ $t('loyalty.addTier') || 'Add Tier' }}
+            span.ml-1 {{ $t('loyalty.addTier') }}
     template(#footer)
-      el-button(@click="programDialogVisible = false") {{ $t('common.cancel') || 'Cancel' }}
-      el-button(type="primary" @click="handleSaveProgram" :loading="saving") {{ $t('common.save') || 'Save' }}
+      el-button(@click="programDialogVisible = false") {{ $t('common.cancel') }}
+      el-button(type="primary" @click="handleSaveProgram" :loading="saving") {{ $t('common.save') }}
 
   //- ─── Add Points Dialog ────────────────────────────────
   el-dialog(
     v-model="pointsDialogVisible"
-    :title="$t('loyalty.addPoints') || 'Add Points Transaction'"
+    :title="$t('loyalty.addPoints')"
     width="500px"
     destroy-on-close
   )
     el-form(:model="pointsForm" label-position="top")
-      el-form-item(:label="$t('loyalty.clientId') || 'Client ID'" required)
-        el-input(v-model="pointsForm.clientId" :placeholder="$t('loyalty.clientIdPlaceholder') || 'Enter client ID'")
-      el-form-item(:label="$t('loyalty.program') || 'Program'" required)
-        el-select(v-model="pointsForm.programId" class="w-full" :placeholder="$t('loyalty.selectProgram') || 'Select program'")
+      el-form-item(:label="$t('loyalty.clientId')" required)
+        el-input(v-model="pointsForm.clientId" :placeholder="$t('loyalty.clientIdPlaceholder')")
+      el-form-item(:label="$t('loyalty.program')" required)
+        el-select(v-model="pointsForm.programId" class="w-full" :placeholder="$t('loyalty.selectProgram')")
           el-option(v-for="p in programs" :key="p.id" :label="p.name" :value="p.id")
       .grid.gap-4(class="grid-cols-1 md:grid-cols-2")
-        el-form-item(:label="$t('loyalty.points') || 'Points'" required)
+        el-form-item(:label="$t('loyalty.points')" required)
           el-input-number(v-model="pointsForm.points" :min="1" class="!w-full")
-        el-form-item(:label="$t('common.type') || 'Transaction Type'" required)
+        el-form-item(:label="$t('common.type')" required)
           el-select(v-model="pointsForm.transactionType" class="w-full")
             el-option(label="Earn" value="EARN")
             el-option(label="Redeem" value="REDEEM")
             el-option(label="Adjust" value="ADJUST")
-      el-form-item(:label="$t('common.description') || 'Description'")
-        el-input(v-model="pointsForm.description" :placeholder="$t('loyalty.descPlaceholder') || 'e.g., Purchase reward points'")
+      el-form-item(:label="$t('common.description')")
+        el-input(v-model="pointsForm.description" :placeholder="$t('loyalty.descPlaceholder')")
     template(#footer)
-      el-button(@click="pointsDialogVisible = false") {{ $t('common.cancel') || 'Cancel' }}
-      el-button(type="primary" @click="handleSavePoints" :loading="saving") {{ $t('common.save') || 'Save' }}
+      el-button(@click="pointsDialogVisible = false") {{ $t('common.cancel') }}
+      el-button(type="primary" @click="handleSavePoints" :loading="saving") {{ $t('common.save') }}
 
   //- ─── Point Adjustment Dialog ──────────────────────────
   el-dialog(
     v-model="adjustDialogVisible"
-    :title="$t('loyalty.adjustPoints') || 'Manual Point Adjustment'"
+    :title="$t('loyalty.adjustPoints')"
     width="480px"
     destroy-on-close
   )
     el-form(:model="adjustForm" label-position="top")
-      el-form-item(:label="$t('loyalty.clientId') || 'Client ID'" required)
-        el-input(v-model="adjustForm.clientId" :placeholder="$t('loyalty.clientIdPlaceholder') || 'Enter client ID'")
-      el-form-item(:label="$t('loyalty.program') || 'Program'" required)
+      el-form-item(:label="$t('loyalty.clientId')" required)
+        el-input(v-model="adjustForm.clientId" :placeholder="$t('loyalty.clientIdPlaceholder')")
+      el-form-item(:label="$t('loyalty.program')" required)
         el-select(v-model="adjustForm.programId" class="w-full")
           el-option(v-for="p in programs" :key="p.id" :label="p.name" :value="p.id")
       .grid.gap-4(class="grid-cols-1 md:grid-cols-2")
-        el-form-item(:label="$t('loyalty.adjustmentType') || 'Type'" required)
+        el-form-item(:label="$t('loyalty.adjustmentType')" required)
           el-select(v-model="adjustForm.type" class="w-full")
-            el-option(:label="$t('loyalty.addPointsOption') || 'Add Points'" value="EARN")
-            el-option(:label="$t('loyalty.deductPointsOption') || 'Deduct Points'" value="REDEEM")
-        el-form-item(:label="$t('loyalty.points') || 'Points'" required)
+            el-option(:label="$t('loyalty.addPointsOption')" value="EARN")
+            el-option(:label="$t('loyalty.deductPointsOption')" value="REDEEM")
+        el-form-item(:label="$t('loyalty.points')" required)
           el-input-number(v-model="adjustForm.points" :min="1" class="!w-full")
-      el-form-item(:label="$t('loyalty.reason') || 'Reason'" required)
-        el-input(v-model="adjustForm.reason" type="textarea" :rows="2" :placeholder="$t('loyalty.reasonPlaceholder') || 'Reason for adjustment'")
+      el-form-item(:label="$t('loyalty.reason')" required)
+        el-input(v-model="adjustForm.reason" type="textarea" :rows="2" :placeholder="$t('loyalty.reasonPlaceholder')")
     template(#footer)
-      el-button(@click="adjustDialogVisible = false") {{ $t('common.cancel') || 'Cancel' }}
-      el-button(type="primary" @click="handleAdjustPoints" :loading="saving") {{ $t('loyalty.applyAdjustment') || 'Apply' }}
+      el-button(@click="adjustDialogVisible = false") {{ $t('common.cancel') }}
+      el-button(type="primary" @click="handleAdjustPoints" :loading="saving") {{ $t('loyalty.applyAdjustment') }}
 
   //- ─── Member Detail Dialog ─────────────────────────────
   el-dialog(
     v-model="memberDetailVisible"
-    :title="memberDetail?.clientName || $t('loyalty.memberDetail') || 'Member Detail'"
+    :title="memberDetail?.clientName || $t('loyalty.memberDetail')"
     width="640px"
     destroy-on-close
   )
@@ -427,25 +427,25 @@ div
           h3.text-lg.font-bold(style="color: var(--text-primary)") {{ memberDetail.clientName || memberDetail.clientId }}
           .flex.items-center.gap-3.mt-1
             el-tag(:color="getTierColor(memberDetail.tier)" effect="dark" size="default" style="border: none; color: #fff") {{ memberDetail.tier }}
-            span.text-sm(style="color: var(--text-muted)") {{ (memberDetail.balance || 0).toLocaleString() }} {{ $t('loyalty.pointsBalance') || 'points' }}
+            span.text-sm(style="color: var(--text-muted)") {{ (memberDetail.balance || 0).toLocaleString() }} {{ $t('loyalty.pointsBalance') }}
 
       //- Stats row
       .grid.gap-4.mb-6(class="grid-cols-3")
         .glass-card.p-3.rounded-xl.text-center
-          p.text-xs.uppercase.tracking-wider(style="color: var(--text-muted)") {{ $t('loyalty.earned') || 'Earned' }}
+          p.text-xs.uppercase.tracking-wider(style="color: var(--text-muted)") {{ $t('loyalty.earned') }}
           p.text-lg.font-bold(style="color: #22c55e") {{ (memberDetail.totalEarned || 0).toLocaleString() }}
         .glass-card.p-3.rounded-xl.text-center
-          p.text-xs.uppercase.tracking-wider(style="color: var(--text-muted)") {{ $t('loyalty.redeemed') || 'Redeemed' }}
+          p.text-xs.uppercase.tracking-wider(style="color: var(--text-muted)") {{ $t('loyalty.redeemed') }}
           p.text-lg.font-bold(style="color: #ef4444") {{ (memberDetail.totalRedeemed || 0).toLocaleString() }}
         .glass-card.p-3.rounded-xl.text-center
-          p.text-xs.uppercase.tracking-wider(style="color: var(--text-muted)") {{ $t('loyalty.balance') || 'Balance' }}
+          p.text-xs.uppercase.tracking-wider(style="color: var(--text-muted)") {{ $t('loyalty.balance') }}
           p.text-lg.font-bold(style="color: #7849ff") {{ (memberDetail.balance || 0).toLocaleString() }}
 
       //- Next tier progress
       .glass-card.p-4.rounded-xl.mb-6(v-if="memberDetail.nextTier")
         .flex.items-center.justify-between.mb-2
-          span.text-sm(style="color: var(--text-muted)") {{ $t('loyalty.nextTier') || 'Next Tier' }}: {{ memberDetail.nextTier }}
-          span.text-sm.font-semibold(style="color: var(--text-primary)") {{ (memberDetail.pointsToNextTier || 0).toLocaleString() }} {{ $t('loyalty.pointsAway') || 'pts away' }}
+          span.text-sm(style="color: var(--text-muted)") {{ $t('loyalty.nextTier') }}: {{ memberDetail.nextTier }}
+          span.text-sm.font-semibold(style="color: var(--text-primary)") {{ (memberDetail.pointsToNextTier || 0).toLocaleString() }} {{ $t('loyalty.pointsAway') }}
         el-progress(
           :percentage="memberDetail.nextTierThreshold ? Math.min(100, Math.round((memberDetail.totalEarned / memberDetail.nextTierThreshold) * 100)) : 0"
           :stroke-width="8"
@@ -453,7 +453,7 @@ div
         )
 
       //- Transaction History
-      p.text-sm.font-semibold.mb-3(style="color: var(--text-primary)") {{ $t('loyalty.transactionHistory') || 'Transaction History' }}
+      p.text-sm.font-semibold.mb-3(style="color: var(--text-primary)") {{ $t('loyalty.transactionHistory') }}
       .max-h-60.overflow-y-auto(v-if="memberHistory.length")
         .space-y-2
           .flex.items-center.justify-between.p-3.rounded-lg(
@@ -469,7 +469,7 @@ div
                 p.text-xs(style="color: var(--text-muted)") {{ formatDate(tx.createdAt) }}
             span.text-sm.font-bold(:style="{ color: pointsColor(tx.transactionType) }") {{ pointsPrefix(tx.transactionType) }}{{ tx.points }}
       .text-center.py-4(v-else)
-        p.text-sm(style="color: var(--text-muted)") {{ $t('loyalty.noHistory') || 'No transactions yet' }}
+        p.text-sm(style="color: var(--text-muted)") {{ $t('loyalty.noHistory') }}
 </template>
 
 <script setup lang="ts">
@@ -544,10 +544,10 @@ const adjustForm = ref(defaultAdjustForm());
 const kpiStats = computed(() => {
   const db = dashboardData.value || {};
   return [
-    { label: t('loyalty.totalMembers') || 'Total Members', value: (db.totalMembers || 0).toLocaleString(), icon: 'ph:users-bold', color: '#7849ff' },
-    { label: t('loyalty.pointsIssued') || 'Points Issued', value: (db.totalPointsIssued || 0).toLocaleString(), icon: 'ph:trend-up-bold', color: '#3b82f6' },
-    { label: t('loyalty.pointsRedeemed') || 'Points Redeemed', value: (Math.abs(db.totalPointsRedeemed || 0)).toLocaleString(), icon: 'ph:gift-bold', color: '#f59e0b' },
-    { label: t('loyalty.avgBalance') || 'Avg Balance', value: (db.averageBalance || 0).toLocaleString(), icon: 'ph:coins-bold', color: '#22c55e' }
+    { label: t('loyalty.totalMembers'), value: (db.totalMembers || 0).toLocaleString(), icon: 'ph:users-bold', color: '#7849ff' },
+    { label: t('loyalty.pointsIssued'), value: (db.totalPointsIssued || 0).toLocaleString(), icon: 'ph:trend-up-bold', color: '#3b82f6' },
+    { label: t('loyalty.pointsRedeemed'), value: (Math.abs(db.totalPointsRedeemed || 0)).toLocaleString(), icon: 'ph:gift-bold', color: '#f59e0b' },
+    { label: t('loyalty.avgBalance'), value: (db.averageBalance || 0).toLocaleString(), icon: 'ph:coins-bold', color: '#22c55e' }
   ];
 });
 
@@ -664,7 +664,7 @@ async function fetchPrograms() {
       }
     }
   } catch {
-    ElMessage.error(t('common.error') || 'Failed to load programs');
+    ElMessage.error(t('common.error'));
   }
 }
 
@@ -769,7 +769,7 @@ function openProgramDialog(program?: any) {
 
 async function handleSaveProgram() {
   if (!programForm.value.name.trim()) {
-    ElMessage.warning(t('common.fillRequired') || 'Please fill in required fields');
+    ElMessage.warning(t('common.fillRequired'));
     return;
   }
   saving.value = true;
@@ -784,10 +784,10 @@ async function handleSaveProgram() {
       await useApiFetch('loyalty/programs', 'POST', payload);
     }
     programDialogVisible.value = false;
-    ElMessage.success(t('common.saved') || 'Saved successfully');
+    ElMessage.success(t('common.saved'));
     await fetchPrograms();
   } catch {
-    ElMessage.error(t('common.error') || 'An error occurred');
+    ElMessage.error(t('common.error'));
   } finally {
     saving.value = false;
   }
@@ -796,12 +796,12 @@ async function handleSaveProgram() {
 async function handleDeleteProgram(program: any) {
   try {
     await ElMessageBox.confirm(
-      t('common.confirmDelete') || 'Are you sure you want to delete this program?',
-      t('common.warning') || 'Warning',
+      t('common.confirmDelete'),
+      t('common.warning'),
       { type: 'warning' }
     );
     await useApiFetch(`loyalty/programs/${program.id}`, 'DELETE');
-    ElMessage.success(t('common.deleted') || 'Deleted successfully');
+    ElMessage.success(t('common.deleted'));
     await fetchPrograms();
   } catch {
     // User cancelled
@@ -816,22 +816,22 @@ function openPointsDialog() {
 
 async function handleSavePoints() {
   if (!pointsForm.value.clientId.trim() || !pointsForm.value.programId) {
-    ElMessage.warning(t('common.fillRequired') || 'Please fill in required fields');
+    ElMessage.warning(t('common.fillRequired'));
     return;
   }
   saving.value = true;
   try {
     const res = await useApiFetch('loyalty/points', 'POST', { ...pointsForm.value });
     if (res.success) {
-      ElMessage.success(t('loyalty.transactionRecorded') || 'Transaction recorded');
+      ElMessage.success(t('loyalty.transactionRecorded'));
       pointsDialogVisible.value = false;
       await Promise.all([fetchPoints(), fetchDashboard()]);
       await buildMembersList();
     } else {
-      ElMessage.error(res.message || t('common.error') || 'Failed to record transaction');
+      ElMessage.error(res.message || t('common.error'));
     }
   } catch {
-    ElMessage.error(t('common.error') || 'An error occurred');
+    ElMessage.error(t('common.error'));
   } finally {
     saving.value = false;
   }
@@ -845,7 +845,7 @@ function openAdjustDialog() {
 
 async function handleAdjustPoints() {
   if (!adjustForm.value.clientId.trim() || !adjustForm.value.programId || !adjustForm.value.reason.trim()) {
-    ElMessage.warning(t('common.fillRequired') || 'Please fill in required fields');
+    ElMessage.warning(t('common.fillRequired'));
     return;
   }
   saving.value = true;
@@ -859,15 +859,15 @@ async function handleAdjustPoints() {
     };
     const res = await useApiFetch('loyalty/points', 'POST', payload);
     if (res.success) {
-      ElMessage.success(t('loyalty.adjustmentApplied') || 'Adjustment applied');
+      ElMessage.success(t('loyalty.adjustmentApplied'));
       adjustDialogVisible.value = false;
       await Promise.all([fetchPoints(), fetchDashboard()]);
       await buildMembersList();
     } else {
-      ElMessage.error(res.message || t('common.error') || 'Failed to apply adjustment');
+      ElMessage.error(res.message || t('common.error'));
     }
   } catch {
-    ElMessage.error(t('common.error') || 'An error occurred');
+    ElMessage.error(t('common.error'));
   } finally {
     saving.value = false;
   }

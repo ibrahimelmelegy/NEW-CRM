@@ -38,7 +38,7 @@ div.animate-fade-in(v-loading="loading")
         | {{ $t('salesOrders.paymentStatus') }}
       el-button(type="primary" size="large" @click="openStatusDialog" class="!rounded-xl")
         Icon(name="ph:swap-bold" size="16" class="mr-1")
-        | {{ $t('salesOrders.status') || 'Edit Status' }}
+        | {{ $t('salesOrders.status') }}
 
   //- Status Timeline
   .glass-card.p-5.rounded-2xl.mb-6(v-if="order.status")
@@ -58,13 +58,13 @@ div.animate-fade-in(v-loading="loading")
       template(#header)
         .flex.items-center.gap-2
           Icon(name="ph:file-text-bold" size="18" style="color: #7849ff")
-          span.font-bold(style="color: var(--text-primary)") {{ $t('salesOrders.title') || 'Order Details' }}
+          span.font-bold(style="color: var(--text-primary)") {{ $t('salesOrders.title') }}
       .grid.gap-4(class="grid-cols-2")
         div
-          p.text-xs(style="color: var(--text-muted)") {{ $t('salesOrders.orderNumber') || 'Order Number' }}
+          p.text-xs(style="color: var(--text-muted)") {{ $t('salesOrders.orderNumber') }}
           p.text-sm.font-semibold.font-mono(style="color: var(--text-primary)") {{ order.orderNumber || '--' }}
         div
-          p.text-xs(style="color: var(--text-muted)") {{ $t('salesOrders.status') || 'Status' }}
+          p.text-xs(style="color: var(--text-muted)") {{ $t('salesOrders.status') }}
           el-tag(
             v-if="order.status"
             :type="getStatusType(order.status)"
@@ -74,10 +74,10 @@ div.animate-fade-in(v-loading="loading")
           ) {{ order.status }}
           span.text-sm(v-else style="color: var(--text-primary)") --
         div
-          p.text-xs(style="color: var(--text-muted)") {{ $t('common.date') || 'Date' }}
+          p.text-xs(style="color: var(--text-muted)") {{ $t('common.date') }}
           p.text-sm.font-semibold(style="color: var(--text-primary)") {{ formatDate(order.createdAt) }}
         div
-          p.text-xs(style="color: var(--text-muted)") {{ $t('salesOrders.paymentStatus') || 'Payment Status' }}
+          p.text-xs(style="color: var(--text-muted)") {{ $t('salesOrders.paymentStatus') }}
           el-tag(
             v-if="order.paymentStatus"
             :type="getPaymentStatusType(order.paymentStatus)"
@@ -87,13 +87,13 @@ div.animate-fade-in(v-loading="loading")
           ) {{ order.paymentStatus }}
           span.text-sm(v-else style="color: var(--text-primary)") --
         div
-          p.text-xs(style="color: var(--text-muted)") {{ $t('salesOrders.paymentTerms') || 'Payment Terms' }}
+          p.text-xs(style="color: var(--text-muted)") {{ $t('salesOrders.paymentTerms') }}
           p.text-sm.font-semibold(style="color: var(--text-primary)") {{ order.paymentTerms || '--' }}
         div
-          p.text-xs(style="color: var(--text-muted)") {{ $t('salesOrders.currency') || 'Currency' }}
+          p.text-xs(style="color: var(--text-muted)") {{ $t('salesOrders.currency') }}
           p.text-sm.font-semibold(style="color: var(--text-primary)") {{ order.currency || 'SAR' }}
       .mt-4(v-if="order.notes")
-        p.text-xs(style="color: var(--text-muted)") {{ $t('salesOrders.notes') || 'Notes' }}
+        p.text-xs(style="color: var(--text-muted)") {{ $t('salesOrders.notes') }}
         p.text-sm.mt-1(style="color: var(--text-primary)") {{ order.notes }}
 
     //- Right: Client Info
@@ -101,10 +101,10 @@ div.animate-fade-in(v-loading="loading")
       template(#header)
         .flex.items-center.gap-2
           Icon(name="ph:user-bold" size="18" style="color: #7849ff")
-          span.font-bold(style="color: var(--text-primary)") {{ $t('salesOrders.client') || 'Client Info' }}
+          span.font-bold(style="color: var(--text-primary)") {{ $t('salesOrders.client') }}
       .grid.gap-4
         div
-          p.text-xs(style="color: var(--text-muted)") {{ $t('salesOrders.client') || 'Client' }}
+          p.text-xs(style="color: var(--text-muted)") {{ $t('salesOrders.client') }}
           NuxtLink.text-sm.font-semibold.underline(
             v-if="order.client?.id"
             :to="`/sales/clients/${order.client.id}`"
@@ -112,7 +112,7 @@ div.animate-fade-in(v-loading="loading")
           ) {{ order.client.clientName || order.client.name || '--' }}
           p.text-sm.font-semibold(v-else style="color: var(--text-primary)") {{ order.client?.clientName || order.client?.name || order.clientId || '--' }}
         div
-          p.text-xs(style="color: var(--text-muted)") {{ $t('salesOrders.shippingAddress') || 'Shipping Address' }}
+          p.text-xs(style="color: var(--text-muted)") {{ $t('salesOrders.shippingAddress') }}
           p.text-sm.font-semibold(style="color: var(--text-primary)") {{ order.shippingAddress || '--' }}
 
   //- Line Items Section
@@ -120,26 +120,26 @@ div.animate-fade-in(v-loading="loading")
     template(#header)
       .flex.items-center.gap-2
         Icon(name="ph:list-bullets-bold" size="18" style="color: #7849ff")
-        span.font-bold(style="color: var(--text-primary)") {{ $t('salesOrders.items') || 'Order Items' }}
+        span.font-bold(style="color: var(--text-primary)") {{ $t('salesOrders.items') }}
     el-table(:data="order.items || []" stripe style="width: 100%")
       el-table-column(label="#" width="60" align="center")
         template(#default="{ $index }") {{ $index + 1 }}
-      el-table-column(:label="$t('salesOrders.description') || 'Description'" min-width="200")
+      el-table-column(:label="$t('salesOrders.description')" min-width="200")
         template(#default="{ row }")
           span.text-sm(style="color: var(--text-primary)") {{ row.description || '--' }}
-      el-table-column(:label="$t('salesOrders.quantity') || 'Quantity'" width="100" align="center")
+      el-table-column(:label="$t('salesOrders.quantity')" width="100" align="center")
         template(#default="{ row }")
           span.text-sm(style="color: var(--text-primary)") {{ row.quantity || 0 }}
-      el-table-column(:label="$t('salesOrders.unitPrice') || 'Unit Price'" width="130" align="right")
+      el-table-column(:label="$t('salesOrders.unitPrice')" width="130" align="right")
         template(#default="{ row }")
           span.text-sm(style="color: var(--text-primary)") {{ formatCurrency(row.unitPrice) }}
-      el-table-column(:label="$t('salesOrders.taxRate') || 'Tax %'" width="100" align="center")
+      el-table-column(:label="$t('salesOrders.taxRate')" width="100" align="center")
         template(#default="{ row }")
           span.text-sm(style="color: var(--text-muted)") {{ row.taxRate || 0 }}%
-      el-table-column(:label="$t('salesOrders.discountRate') || 'Discount %'" width="110" align="center")
+      el-table-column(:label="$t('salesOrders.discountRate')" width="110" align="center")
         template(#default="{ row }")
           span.text-sm(style="color: var(--text-muted)") {{ row.discountRate || 0 }}%
-      el-table-column(:label="$t('salesOrders.lineTotal') || 'Line Total'" width="140" align="right")
+      el-table-column(:label="$t('salesOrders.lineTotal')" width="140" align="right")
         template(#default="{ row }")
           span.text-sm.font-semibold(style="color: var(--text-primary)") {{ formatCurrency(row.lineTotal) }}
 
@@ -147,16 +147,16 @@ div.animate-fade-in(v-loading="loading")
     .flex.justify-end.mt-4
       .w-72
         .flex.justify-between.py-2(style="border-bottom: 1px solid var(--border-default)")
-          span.text-sm(style="color: var(--text-muted)") {{ $t('salesOrders.subtotal') || 'Subtotal' }}
+          span.text-sm(style="color: var(--text-muted)") {{ $t('salesOrders.subtotal') }}
           span.text-sm.font-semibold(style="color: var(--text-primary)") {{ formatCurrency(order.subtotal) }}
         .flex.justify-between.py-2(style="border-bottom: 1px solid var(--border-default)")
-          span.text-sm(style="color: var(--text-muted)") {{ $t('salesOrders.taxAmount') || 'Tax' }}
+          span.text-sm(style="color: var(--text-muted)") {{ $t('salesOrders.taxAmount') }}
           span.text-sm(style="color: var(--text-primary)") {{ formatCurrency(order.taxAmount) }}
         .flex.justify-between.py-2(style="border-bottom: 1px solid var(--border-default)")
-          span.text-sm(style="color: var(--text-muted)") {{ $t('salesOrders.discountAmount') || 'Discount' }}
+          span.text-sm(style="color: var(--text-muted)") {{ $t('salesOrders.discountAmount') }}
           span.text-sm(style="color: var(--text-primary)") -{{ formatCurrency(order.discountAmount) }}
         .flex.justify-between.py-3
-          span.text-base.font-bold(style="color: var(--text-primary)") {{ $t('salesOrders.total') || 'Total' }}
+          span.text-base.font-bold(style="color: var(--text-primary)") {{ $t('salesOrders.total') }}
           span.text-base.font-bold(style="color: #7849ff") {{ formatCurrency(order.total, order.currency) }}
 
   //- Fulfillment Section
@@ -165,10 +165,10 @@ div.animate-fade-in(v-loading="loading")
       .flex.items-center.justify-between
         .flex.items-center.gap-2
           Icon(name="ph:package-bold" size="18" style="color: #7849ff")
-          span.font-bold(style="color: var(--text-primary)") {{ $t('salesOrders.fulfillment') || 'Fulfillment' }}
+          span.font-bold(style="color: var(--text-primary)") {{ $t('salesOrders.fulfillment') }}
         el-button(type="primary" size="small" @click="openAddFulfillment" class="!rounded-lg")
           Icon(name="ph:plus-bold" size="14" class="mr-1")
-          | {{ $t('salesOrders.addFulfillment') || 'Add Fulfillment' }}
+          | {{ $t('salesOrders.addFulfillment') }}
 
     //- Fulfillment list
     .space-y-4(v-if="order.fulfillments?.length")
@@ -181,7 +181,7 @@ div.animate-fade-in(v-loading="loading")
           .flex.items-center.gap-3
             .w-8.h-8.rounded-lg.flex.items-center.justify-center(style="background: rgba(120, 73, 255, 0.15)")
               Icon(name="ph:truck-bold" size="16" style="color: #7849ff")
-            span.font-semibold.text-sm(style="color: var(--text-primary)") {{ ($t('salesOrders.fulfillment') || 'Fulfillment') + ' #' + (idx + 1) }}
+            span.font-semibold.text-sm(style="color: var(--text-primary)") {{ ($t('salesOrders.fulfillment')) + ' #' + (idx + 1) }}
           .flex.items-center.gap-2
             el-tag(
               :type="getFulfillmentStatusType(ful.status)"
@@ -193,35 +193,35 @@ div.animate-fade-in(v-loading="loading")
               Icon(name="ph:pencil-bold" size="14")
         .grid.gap-3(class="grid-cols-2 md_grid-cols-4")
           div
-            p.text-xs(style="color: var(--text-muted)") {{ $t('salesOrders.carrier') || 'Carrier' }}
+            p.text-xs(style="color: var(--text-muted)") {{ $t('salesOrders.carrier') }}
             p.text-sm.font-semibold(style="color: var(--text-primary)") {{ ful.carrier || '--' }}
           div
-            p.text-xs(style="color: var(--text-muted)") {{ $t('salesOrders.trackingNumber') || 'Tracking #' }}
+            p.text-xs(style="color: var(--text-muted)") {{ $t('salesOrders.trackingNumber') }}
             p.text-sm.font-semibold.font-mono(style="color: var(--text-primary)") {{ ful.trackingNumber || '--' }}
           div
-            p.text-xs(style="color: var(--text-muted)") {{ $t('salesOrders.shippedDate') || 'Shipped Date' }}
+            p.text-xs(style="color: var(--text-muted)") {{ $t('salesOrders.shippedDate') }}
             p.text-sm.font-semibold(style="color: var(--text-primary)") {{ formatDate(ful.shippedDate) }}
           div
-            p.text-xs(style="color: var(--text-muted)") {{ $t('salesOrders.deliveredDate') || 'Delivered Date' }}
+            p.text-xs(style="color: var(--text-muted)") {{ $t('salesOrders.deliveredDate') }}
             p.text-sm.font-semibold(style="color: var(--text-primary)") {{ formatDate(ful.deliveredDate) }}
         .mt-2(v-if="ful.notes")
-          p.text-xs(style="color: var(--text-muted)") {{ $t('salesOrders.notes') || 'Notes' }}
+          p.text-xs(style="color: var(--text-muted)") {{ $t('salesOrders.notes') }}
           p.text-sm(style="color: var(--text-primary)") {{ ful.notes }}
 
     //- Empty fulfillment
     .text-center.py-8(v-else)
       Icon(name="ph:package" size="40" style="color: var(--text-muted)")
-      p.text-sm.mt-2(style="color: var(--text-muted)") {{ $t('common.noData') || 'No fulfillments yet' }}
+      p.text-sm.mt-2(style="color: var(--text-muted)") {{ $t('common.noData') }}
 
   //- Status Update Dialog
   el-dialog(
     v-model="statusDialogVisible"
-    :title="$t('salesOrders.status') || 'Update Status'"
+    :title="$t('salesOrders.status')"
     width="420px"
     :close-on-click-modal="false"
   )
     el-form(label-position="top")
-      el-form-item(:label="$t('salesOrders.status') || 'Status'" required)
+      el-form-item(:label="$t('salesOrders.status')" required)
         el-select(v-model="newStatus" style="width: 100%" size="large")
           el-option(
             v-for="opt in salesOrderStatusOptions"
@@ -230,18 +230,18 @@ div.animate-fade-in(v-loading="loading")
             :value="opt.value"
           )
     template(#footer)
-      el-button(@click="statusDialogVisible = false") {{ $t('common.cancel') || 'Cancel' }}
-      el-button(type="primary" :loading="saving" @click="confirmStatusUpdate") {{ $t('common.confirm') || 'Confirm' }}
+      el-button(@click="statusDialogVisible = false") {{ $t('common.cancel') }}
+      el-button(type="primary" :loading="saving" @click="confirmStatusUpdate") {{ $t('common.confirm') }}
 
   //- Payment Status Update Dialog
   el-dialog(
     v-model="paymentStatusDialogVisible"
-    :title="$t('salesOrders.paymentStatus') || 'Update Payment Status'"
+    :title="$t('salesOrders.paymentStatus')"
     width="420px"
     :close-on-click-modal="false"
   )
     el-form(label-position="top")
-      el-form-item(:label="$t('salesOrders.paymentStatus') || 'Payment Status'" required)
+      el-form-item(:label="$t('salesOrders.paymentStatus')" required)
         el-select(v-model="newPaymentStatus" style="width: 100%" size="large")
           el-option(
             v-for="opt in paymentStatusOptions"
@@ -250,23 +250,23 @@ div.animate-fade-in(v-loading="loading")
             :value="opt.value"
           )
     template(#footer)
-      el-button(@click="paymentStatusDialogVisible = false") {{ $t('common.cancel') || 'Cancel' }}
-      el-button(type="primary" :loading="saving" @click="confirmPaymentStatusUpdate") {{ $t('common.confirm') || 'Confirm' }}
+      el-button(@click="paymentStatusDialogVisible = false") {{ $t('common.cancel') }}
+      el-button(type="primary" :loading="saving" @click="confirmPaymentStatusUpdate") {{ $t('common.confirm') }}
 
   //- Add Fulfillment Dialog
   el-dialog(
     v-model="addFulDialogVisible"
-    :title="$t('salesOrders.addFulfillment') || 'Add Fulfillment'"
+    :title="$t('salesOrders.addFulfillment')"
     width="550px"
     :close-on-click-modal="false"
   )
     el-form(:model="fulfillmentForm" label-position="top")
       .grid.gap-4(class="grid-cols-1 md_grid-cols-2")
-        el-form-item(:label="$t('salesOrders.carrier') || 'Carrier'")
-          el-input(v-model="fulfillmentForm.carrier" :placeholder="$t('salesOrders.carrier') || 'e.g. DHL, FedEx'")
-        el-form-item(:label="$t('salesOrders.trackingNumber') || 'Tracking Number'")
-          el-input(v-model="fulfillmentForm.trackingNumber" :placeholder="$t('salesOrders.trackingNumber') || 'Tracking Number'")
-      el-form-item(:label="$t('salesOrders.status') || 'Status'")
+        el-form-item(:label="$t('salesOrders.carrier')")
+          el-input(v-model="fulfillmentForm.carrier" :placeholder="$t('salesOrders.carrier')")
+        el-form-item(:label="$t('salesOrders.trackingNumber')")
+          el-input(v-model="fulfillmentForm.trackingNumber" :placeholder="$t('salesOrders.trackingNumber')")
+      el-form-item(:label="$t('salesOrders.status')")
         el-select(v-model="fulfillmentForm.status" style="width: 100%")
           el-option(
             v-for="opt in fulfillmentStatusOptions"
@@ -274,26 +274,26 @@ div.animate-fade-in(v-loading="loading")
             :label="opt.label"
             :value="opt.value"
           )
-      el-form-item(:label="$t('salesOrders.notes') || 'Notes'")
-        el-input(v-model="fulfillmentForm.notes" type="textarea" :rows="3" :placeholder="$t('salesOrders.notes') || 'Notes'")
+      el-form-item(:label="$t('salesOrders.notes')")
+        el-input(v-model="fulfillmentForm.notes" type="textarea" :rows="3" :placeholder="$t('salesOrders.notes')")
     template(#footer)
-      el-button(@click="addFulDialogVisible = false") {{ $t('common.cancel') || 'Cancel' }}
-      el-button(type="primary" :loading="saving" @click="confirmAddFulfillment") {{ $t('common.save') || 'Save' }}
+      el-button(@click="addFulDialogVisible = false") {{ $t('common.cancel') }}
+      el-button(type="primary" :loading="saving" @click="confirmAddFulfillment") {{ $t('common.save') }}
 
   //- Edit Fulfillment Dialog
   el-dialog(
     v-model="editFulDialogVisible"
-    :title="$t('salesOrders.fulfillment') || 'Update Fulfillment'"
+    :title="$t('salesOrders.fulfillment')"
     width="550px"
     :close-on-click-modal="false"
   )
     el-form(:model="editFulForm" label-position="top")
       .grid.gap-4(class="grid-cols-1 md_grid-cols-2")
-        el-form-item(:label="$t('salesOrders.carrier') || 'Carrier'")
-          el-input(v-model="editFulForm.carrier" :placeholder="$t('salesOrders.carrier') || 'Carrier'")
-        el-form-item(:label="$t('salesOrders.trackingNumber') || 'Tracking Number'")
-          el-input(v-model="editFulForm.trackingNumber" :placeholder="$t('salesOrders.trackingNumber') || 'Tracking Number'")
-      el-form-item(:label="$t('salesOrders.status') || 'Status'")
+        el-form-item(:label="$t('salesOrders.carrier')")
+          el-input(v-model="editFulForm.carrier" :placeholder="$t('salesOrders.carrier')")
+        el-form-item(:label="$t('salesOrders.trackingNumber')")
+          el-input(v-model="editFulForm.trackingNumber" :placeholder="$t('salesOrders.trackingNumber')")
+      el-form-item(:label="$t('salesOrders.status')")
         el-select(v-model="editFulForm.status" style="width: 100%")
           el-option(
             v-for="opt in fulfillmentStatusOptions"
@@ -302,27 +302,27 @@ div.animate-fade-in(v-loading="loading")
             :value="opt.value"
           )
       .grid.gap-4(class="grid-cols-1 md_grid-cols-2")
-        el-form-item(:label="$t('salesOrders.shippedDate') || 'Shipped Date'")
+        el-form-item(:label="$t('salesOrders.shippedDate')")
           el-date-picker(
             v-model="editFulForm.shippedDate"
             type="date"
-            :placeholder="$t('common.select') || 'Select date'"
+            :placeholder="$t('common.select')"
             style="width: 100%"
             value-format="YYYY-MM-DD"
           )
-        el-form-item(:label="$t('salesOrders.deliveredDate') || 'Delivered Date'")
+        el-form-item(:label="$t('salesOrders.deliveredDate')")
           el-date-picker(
             v-model="editFulForm.deliveredDate"
             type="date"
-            :placeholder="$t('common.select') || 'Select date'"
+            :placeholder="$t('common.select')"
             style="width: 100%"
             value-format="YYYY-MM-DD"
           )
-      el-form-item(:label="$t('salesOrders.notes') || 'Notes'")
-        el-input(v-model="editFulForm.notes" type="textarea" :rows="3" :placeholder="$t('salesOrders.notes') || 'Notes'")
+      el-form-item(:label="$t('salesOrders.notes')")
+        el-input(v-model="editFulForm.notes" type="textarea" :rows="3" :placeholder="$t('salesOrders.notes')")
     template(#footer)
-      el-button(@click="editFulDialogVisible = false") {{ $t('common.cancel') || 'Cancel' }}
-      el-button(type="primary" :loading="saving" @click="confirmEditFulfillment") {{ $t('common.save') || 'Save' }}
+      el-button(@click="editFulDialogVisible = false") {{ $t('common.cancel') }}
+      el-button(type="primary" :loading="saving" @click="confirmEditFulfillment") {{ $t('common.save') }}
 </template>
 
 <script setup lang="ts">
@@ -387,11 +387,11 @@ const editFulForm = reactive({
 
 // Status timeline steps
 const statusSteps = [
-  { label: t('salesOrders.statusDraft') || 'Draft', value: SalesOrderStatusEnum.DRAFT },
-  { label: t('salesOrders.statusConfirmed') || 'Confirmed', value: SalesOrderStatusEnum.CONFIRMED },
-  { label: t('salesOrders.statusProcessing') || 'Processing', value: SalesOrderStatusEnum.PROCESSING },
-  { label: t('salesOrders.statusShipped') || 'Shipped', value: SalesOrderStatusEnum.SHIPPED },
-  { label: t('salesOrders.statusDelivered') || 'Delivered', value: SalesOrderStatusEnum.DELIVERED }
+  { label: t('salesOrders.statusDraft'), value: SalesOrderStatusEnum.DRAFT },
+  { label: t('salesOrders.statusConfirmed'), value: SalesOrderStatusEnum.CONFIRMED },
+  { label: t('salesOrders.statusProcessing'), value: SalesOrderStatusEnum.PROCESSING },
+  { label: t('salesOrders.statusShipped'), value: SalesOrderStatusEnum.SHIPPED },
+  { label: t('salesOrders.statusDelivered'), value: SalesOrderStatusEnum.DELIVERED }
 ];
 
 const currentStepIndex = computed(() => {

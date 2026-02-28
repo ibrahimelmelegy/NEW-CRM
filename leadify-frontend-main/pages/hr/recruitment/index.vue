@@ -2,16 +2,16 @@
 div
   //- Header
   ModuleHeader(
-    :title="$t('recruitment.title') || 'Recruitment & ATS'"
-    :subtitle="$t('recruitment.subtitle') || 'Post jobs, track applicants, and manage your hiring pipeline'"
+    :title="$t('recruitment.title')"
+    :subtitle="$t('recruitment.subtitle')"
   )
     template(#actions)
       el-button(v-if="activeTab === 'postings'" size="large" type="primary" @click="openPostingDialog()" class="!rounded-2xl")
         Icon(name="ph:plus-bold" size="16")
-        span.ml-1 {{ $t('recruitment.newPosting') || 'New Job Posting' }}
+        span.ml-1 {{ $t('recruitment.newPosting') }}
       el-button(v-if="activeTab === 'applicants'" size="large" type="primary" @click="openApplicantDialog()" class="!rounded-2xl")
         Icon(name="ph:plus-bold" size="16")
-        span.ml-1 {{ $t('recruitment.newApplicant') || 'New Applicant' }}
+        span.ml-1 {{ $t('recruitment.newApplicant') }}
 
   //- KPI Stats
   StatCards(:stats="kpiStats")
@@ -25,23 +25,23 @@ div
     el-tabs(v-model="activeTab")
 
       //- ─── Job Postings Tab ───────────────────────────────────
-      el-tab-pane(:label="$t('recruitment.jobPostings') || 'Job Postings'" name="postings")
+      el-tab-pane(:label="$t('recruitment.jobPostings')" name="postings")
         //- Status filter tabs
         .flex.items-center.gap-3.mb-4.flex-wrap
           el-radio-group(v-model="postingStatusFilter" size="default")
-            el-radio-button(value="") {{ $t('common.all') || 'All' }} ({{ postings.length }})
-            el-radio-button(value="OPEN") {{ $t('recruitment.open') || 'Open' }} ({{ postings.filter(p => p.status === 'OPEN').length }})
-            el-radio-button(value="DRAFT") {{ $t('recruitment.draft') || 'Draft' }} ({{ postings.filter(p => p.status === 'DRAFT').length }})
-            el-radio-button(value="CLOSED") {{ $t('recruitment.closed') || 'Closed' }} ({{ postings.filter(p => p.status === 'CLOSED').length }})
+            el-radio-button(value="") {{ $t('common.all') }} ({{ postings.length }})
+            el-radio-button(value="OPEN") {{ $t('recruitment.open') }} ({{ postings.filter(p => p.status === 'OPEN').length }})
+            el-radio-button(value="DRAFT") {{ $t('recruitment.draft') }} ({{ postings.filter(p => p.status === 'DRAFT').length }})
+            el-radio-button(value="CLOSED") {{ $t('recruitment.closed') }} ({{ postings.filter(p => p.status === 'CLOSED').length }})
           .flex-1
-          el-input(v-model="postingSearch" :placeholder="$t('common.search') || 'Search'" clearable style="max-width: 260px" size="large" class="!rounded-xl")
+          el-input(v-model="postingSearch" :placeholder="$t('common.search')" clearable style="max-width: 260px" size="large" class="!rounded-xl")
             template(#prefix)
               Icon(name="ph:magnifying-glass" size="18" style="color: var(--text-muted)")
 
         //- Desktop Table (hidden on mobile)
         .glass-card.rounded-2xl.overflow-hidden.hidden(class="md:block")
           el-table(:data="filteredPostings" style="width: 100%" stripe @row-click="navigateToPosting")
-            el-table-column(:label="$t('recruitment.jobTitle') || 'Title'" min-width="220")
+            el-table-column(:label="$t('recruitment.jobTitle')" min-width="220")
               template(#default="{ row }")
                 .flex.items-center.gap-3.cursor-pointer
                   .w-9.h-9.rounded-xl.flex.items-center.justify-center.shrink-0(style="background: rgba(59, 130, 246, 0.15)")
@@ -49,38 +49,38 @@ div
                   div
                     p.text-sm.font-semibold(style="color: var(--text-primary)") {{ row.title || '--' }}
                     p.text-xs(style="color: var(--text-muted)") {{ row.department?.name || row.department || '--' }}
-            el-table-column(:label="$t('recruitment.location') || 'Location'" min-width="140")
+            el-table-column(:label="$t('recruitment.location')" min-width="140")
               template(#default="{ row }")
                 .flex.items-center.gap-1
                   Icon(name="ph:map-pin" size="14" style="color: var(--text-muted)")
                   span.text-sm(style="color: var(--text-primary)") {{ row.location || '--' }}
-            el-table-column(:label="$t('recruitment.type') || 'Type'" width="130")
+            el-table-column(:label="$t('recruitment.type')" width="130")
               template(#default="{ row }")
                 el-tag(effect="plain" size="small" round) {{ formatType(row.type) }}
-            el-table-column(:label="$t('recruitment.openPositions') || 'Positions'" width="100" align="center")
+            el-table-column(:label="$t('recruitment.openPositions')" width="100" align="center")
               template(#default="{ row }")
                 span.text-sm.font-bold(style="color: var(--text-primary)") {{ row.openPositions || 1 }}
-            el-table-column(:label="$t('recruitment.applicantCount') || 'Applicants'" width="110" align="center")
+            el-table-column(:label="$t('recruitment.applicantCount')" width="110" align="center")
               template(#default="{ row }")
                 .flex.items-center.justify-center.gap-1
                   Icon(name="ph:users" size="14" style="color: #7849ff")
                   span.text-sm.font-semibold(style="color: #7849ff") {{ row.applicantCount || 0 }}
-            el-table-column(:label="$t('recruitment.status') || 'Status'" width="120" align="center")
+            el-table-column(:label="$t('recruitment.status')" width="120" align="center")
               template(#default="{ row }")
                 el-tag(:type="getPostingStatusType(row.status)" effect="dark" size="small" round) {{ row.status }}
-            el-table-column(:label="$t('recruitment.postedDate') || 'Posted'" width="130")
+            el-table-column(:label="$t('recruitment.postedDate')" width="130")
               template(#default="{ row }")
                 span.text-sm(style="color: var(--text-muted)") {{ formatDate(row.createdAt) }}
-            el-table-column(:label="$t('common.actions') || 'Actions'" width="140" align="center")
+            el-table-column(:label="$t('common.actions')" width="140" align="center")
               template(#default="{ row }")
                 .flex.items-center.justify-center.gap-1
-                  el-tooltip(:content="$t('recruitment.viewDetails') || 'View Details'" placement="top")
+                  el-tooltip(:content="$t('recruitment.viewDetails')" placement="top")
                     el-button(text type="primary" size="small" @click.stop="navigateToPosting(row)")
                       Icon(name="ph:eye-bold" size="16")
-                  el-tooltip(:content="$t('common.edit') || 'Edit'" placement="top")
+                  el-tooltip(:content="$t('common.edit')" placement="top")
                     el-button(text type="primary" size="small" @click.stop="openPostingDialog(row)")
                       Icon(name="ph:pencil-bold" size="16")
-                  el-tooltip(:content="$t('common.delete') || 'Delete'" placement="top")
+                  el-tooltip(:content="$t('common.delete')" placement="top")
                     el-button(text type="danger" size="small" @click.stop="handleDeletePosting(row)")
                       Icon(name="ph:trash-bold" size="16")
 
@@ -112,7 +112,7 @@ div
         //- Empty State
         .text-center.py-12(v-if="!filteredPostings.length && !loading")
           Icon(name="ph:briefcase" size="48" style="color: var(--text-muted); opacity: 0.4")
-          p.text-sm.mt-3(style="color: var(--text-muted)") {{ $t('recruitment.noPostings') || 'No job postings found. Create your first posting.' }}
+          p.text-sm.mt-3(style="color: var(--text-muted)") {{ $t('recruitment.noPostings') }}
 
         //- Pagination
         .flex.justify-end.mt-4(v-if="postingsPagination.total > postingsPagination.limit")
@@ -125,24 +125,24 @@ div
           )
 
       //- ─── Applicants Tab ─────────────────────────────────────
-      el-tab-pane(:label="$t('recruitment.applicants') || 'Applicants'" name="applicants")
+      el-tab-pane(:label="$t('recruitment.applicants')" name="applicants")
         //- Filters
         .flex.items-center.gap-3.mb-4.flex-wrap
-          el-select(v-model="applicantStageFilter" :placeholder="$t('recruitment.allStages') || 'All Stages'" clearable size="large" style="width: 180px")
+          el-select(v-model="applicantStageFilter" :placeholder="$t('recruitment.allStages')" clearable size="large" style="width: 180px")
             el-option(label="All Stages" value="")
             el-option(v-for="s in APPLICANT_STAGES" :key="s.value" :label="s.label" :value="s.value")
-          el-select(v-model="applicantJobFilter" :placeholder="$t('recruitment.allJobs') || 'All Jobs'" clearable size="large" style="width: 220px" filterable)
+          el-select(v-model="applicantJobFilter" :placeholder="$t('recruitment.allJobs')" clearable size="large" style="width: 220px" filterable)
             el-option(label="All Jobs" value="")
             el-option(v-for="p in postings" :key="p.id" :label="p.title" :value="p.id")
           .flex-1
-          el-input(v-model="applicantSearch" :placeholder="$t('common.search') || 'Search'" clearable style="max-width: 260px" size="large" class="!rounded-xl")
+          el-input(v-model="applicantSearch" :placeholder="$t('common.search')" clearable style="max-width: 260px" size="large" class="!rounded-xl")
             template(#prefix)
               Icon(name="ph:magnifying-glass" size="18" style="color: var(--text-muted)")
 
         //- Desktop Table
         .glass-card.rounded-2xl.overflow-hidden.hidden(class="md:block")
           el-table(:data="filteredApplicants" style="width: 100%" stripe)
-            el-table-column(:label="$t('recruitment.applicantName') || 'Name'" min-width="200")
+            el-table-column(:label="$t('recruitment.applicantName')" min-width="200")
               template(#default="{ row }")
                 .flex.items-center.gap-3
                   .w-9.h-9.rounded-full.flex.items-center.justify-center.shrink-0(style="background: rgba(120, 73, 255, 0.15)")
@@ -150,31 +150,31 @@ div
                   div
                     p.text-sm.font-semibold(style="color: var(--text-primary)") {{ row.name || '--' }}
                     p.text-xs(style="color: var(--text-muted)") {{ row.email || '' }}
-            el-table-column(:label="$t('recruitment.jobPosting') || 'Job Posting'" min-width="180")
+            el-table-column(:label="$t('recruitment.jobPosting')" min-width="180")
               template(#default="{ row }")
                 span.text-sm(style="color: var(--text-primary)") {{ row.jobPosting?.title || row.jobPostingTitle || '--' }}
-            el-table-column(:label="$t('recruitment.stage') || 'Stage'" width="140" align="center")
+            el-table-column(:label="$t('recruitment.stage')" width="140" align="center")
               template(#default="{ row }")
                 el-tag(:type="getStageType(row.stage)" effect="dark" size="small" round) {{ row.stage }}
-            el-table-column(:label="$t('recruitment.appliedDate') || 'Applied'" width="130")
+            el-table-column(:label="$t('recruitment.appliedDate')" width="130")
               template(#default="{ row }")
                 span.text-sm(style="color: var(--text-muted)") {{ formatDate(row.createdAt) }}
-            el-table-column(:label="$t('recruitment.source') || 'Source'" width="120")
+            el-table-column(:label="$t('recruitment.source')" width="120")
               template(#default="{ row }")
                 span.text-sm(style="color: var(--text-muted)") {{ row.source || '--' }}
-            el-table-column(:label="$t('recruitment.rating') || 'Rating'" width="130" align="center")
+            el-table-column(:label="$t('recruitment.rating')" width="130" align="center")
               template(#default="{ row }")
                 el-rate(:model-value="row.rating || 0" disabled :max="5" size="small")
-            el-table-column(:label="$t('common.actions') || 'Actions'" width="160" align="center")
+            el-table-column(:label="$t('common.actions')" width="160" align="center")
               template(#default="{ row }")
                 .flex.items-center.justify-center.gap-1
-                  el-tooltip(:content="$t('recruitment.moveStage') || 'Move Stage'" placement="top")
+                  el-tooltip(:content="$t('recruitment.moveStage')" placement="top")
                     el-button(text type="success" size="small" @click.stop="openStageDialog(row)")
                       Icon(name="ph:arrow-right-bold" size="16")
-                  el-tooltip(:content="$t('common.edit') || 'Edit'" placement="top")
+                  el-tooltip(:content="$t('common.edit')" placement="top")
                     el-button(text type="primary" size="small" @click.stop="openApplicantDialog(row)")
                       Icon(name="ph:pencil-bold" size="16")
-                  el-tooltip(:content="$t('recruitment.reject') || 'Reject'" placement="top")
+                  el-tooltip(:content="$t('recruitment.reject')" placement="top")
                     el-button(v-if="row.stage !== 'REJECTED' && row.stage !== 'HIRED'" text type="danger" size="small" @click.stop="handleRejectApplicant(row)")
                       Icon(name="ph:x-circle-bold" size="16")
 
@@ -200,7 +200,7 @@ div
         //- Empty State
         .text-center.py-12(v-if="!filteredApplicants.length && !loading")
           Icon(name="ph:user-circle" size="48" style="color: var(--text-muted); opacity: 0.4")
-          p.text-sm.mt-3(style="color: var(--text-muted)") {{ $t('recruitment.noApplicants') || 'No applicants found.' }}
+          p.text-sm.mt-3(style="color: var(--text-muted)") {{ $t('recruitment.noApplicants') }}
 
         //- Pagination
         .flex.justify-end.mt-4(v-if="applicantsPagination.total > applicantsPagination.limit")
@@ -215,93 +215,93 @@ div
   //- ─── Job Posting Dialog ─────────────────────────────────
   el-dialog(
     v-model="postingDialogVisible"
-    :title="editingPosting ? ($t('recruitment.editPosting') || 'Edit Job Posting') : ($t('recruitment.newPosting') || 'New Job Posting')"
+    :title="editingPosting ? $t('recruitment.editPosting') : $t('recruitment.newPosting')"
     width="640px"
     destroy-on-close
   )
     el-form(:model="postingForm" label-position="top")
-      el-form-item(:label="$t('recruitment.jobTitle') || 'Job Title'" required)
-        el-input(v-model="postingForm.title" :placeholder="$t('recruitment.jobTitlePlaceholder') || 'e.g., Senior Frontend Developer'")
+      el-form-item(:label="$t('recruitment.jobTitle')" required)
+        el-input(v-model="postingForm.title" :placeholder="$t('recruitment.jobTitlePlaceholder')")
       .grid.gap-4(class="grid-cols-1 md:grid-cols-2")
-        el-form-item(:label="$t('recruitment.department') || 'Department'")
-          el-select(v-model="postingForm.departmentId" class="w-full" filterable allow-create :placeholder="$t('recruitment.selectDepartment') || 'Select department'")
+        el-form-item(:label="$t('recruitment.department')")
+          el-select(v-model="postingForm.departmentId" class="w-full" filterable allow-create :placeholder="$t('recruitment.selectDepartment')")
             el-option(v-for="dept in departments" :key="dept.id || dept" :label="dept.name || dept" :value="dept.id || dept")
-        el-form-item(:label="$t('recruitment.location') || 'Location'")
-          el-input(v-model="postingForm.location" :placeholder="$t('recruitment.locationPlaceholder') || 'e.g., Riyadh, Remote'")
+        el-form-item(:label="$t('recruitment.location')")
+          el-input(v-model="postingForm.location" :placeholder="$t('recruitment.locationPlaceholder')")
       .grid.gap-4(class="grid-cols-1 md:grid-cols-2")
-        el-form-item(:label="$t('recruitment.type') || 'Employment Type'")
+        el-form-item(:label="$t('recruitment.type')")
           el-select(v-model="postingForm.type" class="w-full")
             el-option(label="Full-time" value="FULL_TIME")
             el-option(label="Part-time" value="PART_TIME")
             el-option(label="Contract" value="CONTRACT")
             el-option(label="Internship" value="INTERNSHIP")
-        el-form-item(:label="$t('recruitment.status') || 'Status'")
+        el-form-item(:label="$t('recruitment.status')")
           el-select(v-model="postingForm.status" class="w-full")
             el-option(v-for="s in POSTING_STATUSES" :key="s.value" :label="s.label" :value="s.value")
       .grid.gap-4(class="grid-cols-1 md:grid-cols-3")
-        el-form-item(:label="$t('recruitment.openPositions') || 'Open Positions'")
+        el-form-item(:label="$t('recruitment.openPositions')")
           el-input-number(v-model="postingForm.openPositions" :min="1" :max="100" class="w-full")
-        el-form-item(:label="$t('recruitment.salaryMin') || 'Salary Min'")
+        el-form-item(:label="$t('recruitment.salaryMin')")
           el-input-number(v-model="postingForm.salaryMin" :min="0" :step="1000" class="w-full" :controls="false")
-        el-form-item(:label="$t('recruitment.salaryMax') || 'Salary Max'")
+        el-form-item(:label="$t('recruitment.salaryMax')")
           el-input-number(v-model="postingForm.salaryMax" :min="0" :step="1000" class="w-full" :controls="false")
-      el-form-item(:label="$t('recruitment.closingDate') || 'Closing Date'")
-        el-date-picker(v-model="postingForm.closingDate" type="date" :placeholder="$t('recruitment.selectDate') || 'Select date'" class="w-full")
-      el-form-item(:label="$t('recruitment.description') || 'Job Description'")
-        el-input(v-model="postingForm.description" type="textarea" :rows="4" :placeholder="$t('recruitment.descriptionPlaceholder') || 'Enter job description...'")
-      el-form-item(:label="$t('recruitment.requirements') || 'Requirements'")
+      el-form-item(:label="$t('recruitment.closingDate')")
+        el-date-picker(v-model="postingForm.closingDate" type="date" :placeholder="$t('recruitment.selectDate')" class="w-full")
+      el-form-item(:label="$t('recruitment.description')")
+        el-input(v-model="postingForm.description" type="textarea" :rows="4" :placeholder="$t('recruitment.descriptionPlaceholder')")
+      el-form-item(:label="$t('recruitment.requirements')")
         .space-y-2
           .flex.items-center.gap-2(v-for="(req, idx) in postingForm.requirements" :key="idx")
-            el-input(v-model="postingForm.requirements[idx]" :placeholder="$t('recruitment.requirementPlaceholder') || 'e.g., 5+ years of experience'")
+            el-input(v-model="postingForm.requirements[idx]" :placeholder="$t('recruitment.requirementPlaceholder')")
             el-button(text type="danger" @click="postingForm.requirements.splice(idx, 1)")
               Icon(name="ph:x-bold" size="14")
           el-button(text type="primary" @click="postingForm.requirements.push('')")
             Icon(name="ph:plus-bold" size="14")
-            span.ml-1 {{ $t('recruitment.addRequirement') || 'Add Requirement' }}
+            span.ml-1 {{ $t('recruitment.addRequirement') }}
     template(#footer)
-      el-button(@click="postingDialogVisible = false") {{ $t('common.cancel') || 'Cancel' }}
-      el-button(type="primary" @click="handleSavePosting" :loading="saving") {{ $t('common.save') || 'Save' }}
+      el-button(@click="postingDialogVisible = false") {{ $t('common.cancel') }}
+      el-button(type="primary" @click="handleSavePosting" :loading="saving") {{ $t('common.save') }}
 
   //- ─── Applicant Dialog ───────────────────────────────────
   el-dialog(
     v-model="applicantDialogVisible"
-    :title="editingApplicant ? ($t('recruitment.editApplicant') || 'Edit Applicant') : ($t('recruitment.newApplicant') || 'New Applicant')"
+    :title="editingApplicant ? $t('recruitment.editApplicant') : $t('recruitment.newApplicant')"
     width="600px"
     destroy-on-close
   )
     el-form(:model="applicantForm" label-position="top")
       .grid.gap-4(class="grid-cols-1 md:grid-cols-2")
-        el-form-item(:label="$t('recruitment.applicantName') || 'Full Name'" required)
-          el-input(v-model="applicantForm.name" :placeholder="$t('recruitment.namePlaceholder') || 'Enter full name'")
-        el-form-item(:label="$t('recruitment.email') || 'Email'" required)
-          el-input(v-model="applicantForm.email" type="email" :placeholder="$t('recruitment.emailPlaceholder') || 'Enter email'")
+        el-form-item(:label="$t('recruitment.applicantName')" required)
+          el-input(v-model="applicantForm.name" :placeholder="$t('recruitment.namePlaceholder')")
+        el-form-item(:label="$t('recruitment.email')" required)
+          el-input(v-model="applicantForm.email" type="email" :placeholder="$t('recruitment.emailPlaceholder')")
       .grid.gap-4(class="grid-cols-1 md:grid-cols-2")
-        el-form-item(:label="$t('recruitment.phone') || 'Phone'")
-          el-input(v-model="applicantForm.phone" :placeholder="$t('recruitment.phonePlaceholder') || 'Enter phone number'")
-        el-form-item(:label="$t('recruitment.jobPosting') || 'Job Posting'" required)
-          el-select(v-model="applicantForm.jobPostingId" class="w-full" filterable :placeholder="$t('recruitment.selectPosting') || 'Select job posting'")
+        el-form-item(:label="$t('recruitment.phone')")
+          el-input(v-model="applicantForm.phone" :placeholder="$t('recruitment.phonePlaceholder')")
+        el-form-item(:label="$t('recruitment.jobPosting')" required)
+          el-select(v-model="applicantForm.jobPostingId" class="w-full" filterable :placeholder="$t('recruitment.selectPosting')")
             el-option(v-for="p in postings" :key="p.id" :label="p.title" :value="p.id")
       .grid.gap-4(class="grid-cols-1 md:grid-cols-2")
-        el-form-item(:label="$t('recruitment.source') || 'Source'")
-          el-select(v-model="applicantForm.source" class="w-full" filterable allow-create :placeholder="$t('recruitment.selectSource') || 'Select source'")
+        el-form-item(:label="$t('recruitment.source')")
+          el-select(v-model="applicantForm.source" class="w-full" filterable allow-create :placeholder="$t('recruitment.selectSource')")
             el-option(label="LinkedIn" value="LinkedIn")
             el-option(label="Indeed" value="Indeed")
             el-option(label="Referral" value="Referral")
             el-option(label="Website" value="Website")
             el-option(label="Job Board" value="Job Board")
             el-option(label="Other" value="Other")
-        el-form-item(:label="$t('recruitment.rating') || 'Rating'")
+        el-form-item(:label="$t('recruitment.rating')")
           el-rate(v-model="applicantForm.rating" :max="5" allow-half)
-      el-form-item(:label="$t('recruitment.notes') || 'Notes'")
-        el-input(v-model="applicantForm.notes" type="textarea" :rows="3" :placeholder="$t('recruitment.notesPlaceholder') || 'Add notes about the applicant...'")
+      el-form-item(:label="$t('recruitment.notes')")
+        el-input(v-model="applicantForm.notes" type="textarea" :rows="3" :placeholder="$t('recruitment.notesPlaceholder')")
     template(#footer)
-      el-button(@click="applicantDialogVisible = false") {{ $t('common.cancel') || 'Cancel' }}
-      el-button(type="primary" @click="handleSaveApplicant" :loading="saving") {{ $t('common.save') || 'Save' }}
+      el-button(@click="applicantDialogVisible = false") {{ $t('common.cancel') }}
+      el-button(type="primary" @click="handleSaveApplicant" :loading="saving") {{ $t('common.save') }}
 
   //- ─── Move Stage Dialog ──────────────────────────────────
   el-dialog(
     v-model="stageDialogVisible"
-    :title="$t('recruitment.moveStage') || 'Move Applicant Stage'"
+    :title="$t('recruitment.moveStage')"
     width="420px"
     destroy-on-close
   )
@@ -311,9 +311,9 @@ div
           span.text-sm.font-bold(style="color: #7849ff") {{ (stageApplicant.name || '?').charAt(0).toUpperCase() }}
         div
           p.text-sm.font-semibold(style="color: var(--text-primary)") {{ stageApplicant.name }}
-          p.text-xs(style="color: var(--text-muted)") {{ $t('recruitment.currentStage') || 'Current stage' }}: {{ stageApplicant.stage }}
+          p.text-xs(style="color: var(--text-muted)") {{ $t('recruitment.currentStage') }}: {{ stageApplicant.stage }}
 
-      el-form-item(:label="$t('recruitment.newStage') || 'Move to Stage'")
+      el-form-item(:label="$t('recruitment.newStage')")
         el-select(v-model="newStage" class="w-full" size="large")
           el-option(
             v-for="s in availableStages"
@@ -323,8 +323,8 @@ div
             :disabled="s.disabled"
           )
     template(#footer)
-      el-button(@click="stageDialogVisible = false") {{ $t('common.cancel') || 'Cancel' }}
-      el-button(type="primary" @click="handleMoveStage" :loading="saving" :disabled="!newStage") {{ $t('recruitment.moveStage') || 'Move' }}
+      el-button(@click="stageDialogVisible = false") {{ $t('common.cancel') }}
+      el-button(type="primary" @click="handleMoveStage" :loading="saving" :disabled="!newStage") {{ $t('recruitment.moveStage') }}
 </template>
 
 <script setup lang="ts">
@@ -426,10 +426,10 @@ const kpiStats = computed(() => {
     return d.getMonth() === now.getMonth() && d.getFullYear() === now.getFullYear();
   }).length;
   return [
-    { label: t('recruitment.openPositions') || 'Open Positions', value: openPositions, icon: 'ph:briefcase-bold', color: '#3b82f6' },
-    { label: t('recruitment.totalApplicants') || 'Total Applicants', value: totalApplicants, icon: 'ph:users-bold', color: '#7849ff' },
-    { label: t('recruitment.interviewsScheduled') || 'Interviews Scheduled', value: inInterview, icon: 'ph:video-camera-bold', color: '#f59e0b' },
-    { label: t('recruitment.hiresThisMonth') || 'Hires This Month', value: hiredThisMonth, icon: 'ph:user-circle-check-bold', color: '#22c55e' }
+    { label: t('recruitment.openPositions'), value: openPositions, icon: 'ph:briefcase-bold', color: '#3b82f6' },
+    { label: t('recruitment.totalApplicants'), value: totalApplicants, icon: 'ph:users-bold', color: '#7849ff' },
+    { label: t('recruitment.interviewsScheduled'), value: inInterview, icon: 'ph:video-camera-bold', color: '#f59e0b' },
+    { label: t('recruitment.hiresThisMonth'), value: hiredThisMonth, icon: 'ph:user-circle-check-bold', color: '#22c55e' }
   ];
 });
 
@@ -533,7 +533,7 @@ async function fetchPostings() {
       }
     }
   } catch {
-    ElMessage.error(t('common.error') || 'Failed to load postings');
+    ElMessage.error(t('common.error'));
   }
 }
 
@@ -551,7 +551,7 @@ async function fetchApplicants() {
       }
     }
   } catch {
-    ElMessage.error(t('common.error') || 'Failed to load applicants');
+    ElMessage.error(t('common.error'));
   }
 }
 
@@ -602,7 +602,7 @@ function openPostingDialog(item?: any) {
 
 async function handleSavePosting() {
   if (!postingForm.title.trim()) {
-    ElMessage.warning(t('common.fillRequired') || 'Please fill in required fields');
+    ElMessage.warning(t('common.fillRequired'));
     return;
   }
   saving.value = true;
@@ -617,10 +617,10 @@ async function handleSavePosting() {
       await useApiFetch('hr/recruitment/postings', 'POST', payload);
     }
     postingDialogVisible.value = false;
-    ElMessage.success(t('common.saved') || 'Saved successfully');
+    ElMessage.success(t('common.saved'));
     await fetchPostings();
   } catch {
-    ElMessage.error(t('common.error') || 'An error occurred');
+    ElMessage.error(t('common.error'));
   } finally {
     saving.value = false;
   }
@@ -629,12 +629,12 @@ async function handleSavePosting() {
 async function handleDeletePosting(row: any) {
   try {
     await ElMessageBox.confirm(
-      t('common.confirmDelete') || 'Are you sure you want to delete this posting?',
-      t('common.warning') || 'Warning',
+      t('common.confirmDelete'),
+      t('common.warning'),
       { type: 'warning' }
     );
     await useApiFetch(`hr/recruitment/postings/${row.id}`, 'DELETE');
-    ElMessage.success(t('common.deleted') || 'Deleted successfully');
+    ElMessage.success(t('common.deleted'));
     await fetchPostings();
   } catch {
     // User cancelled
@@ -663,7 +663,7 @@ function openApplicantDialog(item?: any) {
 
 async function handleSaveApplicant() {
   if (!applicantForm.name.trim() || !applicantForm.email.trim() || !applicantForm.jobPostingId) {
-    ElMessage.warning(t('common.fillRequired') || 'Please fill in required fields');
+    ElMessage.warning(t('common.fillRequired'));
     return;
   }
   saving.value = true;
@@ -675,10 +675,10 @@ async function handleSaveApplicant() {
       await useApiFetch('hr/recruitment/applicants', 'POST', payload);
     }
     applicantDialogVisible.value = false;
-    ElMessage.success(t('common.saved') || 'Saved successfully');
+    ElMessage.success(t('common.saved'));
     await fetchApplicants();
   } catch {
-    ElMessage.error(t('common.error') || 'An error occurred');
+    ElMessage.error(t('common.error'));
   } finally {
     saving.value = false;
   }
@@ -687,12 +687,12 @@ async function handleSaveApplicant() {
 async function handleRejectApplicant(row: any) {
   try {
     await ElMessageBox.confirm(
-      `${t('recruitment.confirmReject') || 'Are you sure you want to reject'} ${row.name}?`,
-      t('common.warning') || 'Warning',
-      { type: 'warning', confirmButtonText: t('recruitment.reject') || 'Reject' }
+      `${t('recruitment.confirmReject')} ${row.name}?`,
+      t('common.warning'),
+      { type: 'warning', confirmButtonText: t('recruitment.reject') }
     );
     await useApiFetch(`hr/recruitment/applicants/${row.id}/stage`, 'PUT', { stage: 'REJECTED' });
-    ElMessage.success(t('recruitment.applicantRejected') || 'Applicant rejected');
+    ElMessage.success(t('recruitment.applicantRejected'));
     await fetchApplicants();
   } catch {
     // User cancelled
@@ -712,14 +712,14 @@ async function handleMoveStage() {
   try {
     const res = await useApiFetch(`hr/recruitment/applicants/${stageApplicant.value.id}/stage`, 'PUT', { stage: newStage.value });
     if (res?.success) {
-      ElMessage.success(`${t('recruitment.stageMoved') || 'Moved to'} ${newStage.value}`);
+      ElMessage.success(`${t('recruitment.stageMoved')} ${newStage.value}`);
       stageDialogVisible.value = false;
       await fetchApplicants();
     } else {
-      ElMessage.error(res?.message || t('common.error') || 'Failed to move stage');
+      ElMessage.error(res?.message || t('common.error'));
     }
   } catch {
-    ElMessage.error(t('common.error') || 'An error occurred');
+    ElMessage.error(t('common.error'));
   } finally {
     saving.value = false;
   }

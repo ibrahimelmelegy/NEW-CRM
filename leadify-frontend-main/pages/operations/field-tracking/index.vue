@@ -21,7 +21,7 @@ div
         el-input(size="large" style="height:50px" v-model="search" :placeholder="$t('common.search') + ' ' + $t('fieldOps.title')" clearable @input="debounceLoad")
           template(#prefix)
             Icon(name="ph:magnifying-glass" size="16")
-      el-select(v-model="filters.type" clearable :placeholder="$t('fieldOps.allTypes') || 'All Types'" @change="loadCheckIns" class="w-44" size="large")
+      el-select(v-model="filters.type" clearable :placeholder="$t('fieldOps.allTypes')" @change="loadCheckIns" class="w-44" size="large")
         el-option(value="CHECK_IN" :label="$t('fieldOps.checkIn')")
         el-option(value="CHECK_OUT" :label="$t('fieldOps.checkOut')")
       el-date-picker(
@@ -177,7 +177,7 @@ const summaryStats = computed(() => {
   const ins = checkIns.value.filter(c => c.type === 'CHECK_IN').length;
   const outs = checkIns.value.filter(c => c.type === 'CHECK_OUT').length;
   return [
-    { label: t('fieldOps.totalCheckIns') || 'Total Entries', value: pagination.value.totalItems || total, icon: 'ph:map-pin-bold', color: '#7849ff' },
+    { label: t('fieldOps.totalCheckIns'), value: pagination.value.totalItems || total, icon: 'ph:map-pin-bold', color: '#7849ff' },
     { label: t('fieldOps.checkIn'), value: ins, icon: 'ph:sign-in-bold', color: '#22c55e' },
     { label: t('fieldOps.checkOut'), value: outs, icon: 'ph:sign-out-bold', color: '#f59e0b' }
   ];
@@ -253,7 +253,7 @@ async function handleCheckIn() {
     checkInData.value = { latitude: position.coords.latitude, longitude: position.coords.longitude, address: '', notes: '' };
     showCheckInDialog.value = true;
   } catch (error: any) {
-    const msg = error.code === 1 ? t('fieldOps.locationDenied') || 'Location access denied' : t('fieldOps.locationError') || 'Failed to get location';
+    const msg = error.code === 1 ? t('fieldOps.locationDenied') : t('fieldOps.locationError');
     ElNotification({ type: 'error', title: t('common.error'), message: msg });
   } finally {
     checkingIn.value = false;
@@ -268,7 +268,7 @@ async function handleCheckOut() {
     checkInData.value = { latitude: position.coords.latitude, longitude: position.coords.longitude, address: '', notes: '' };
     showCheckInDialog.value = true;
   } catch (error: any) {
-    const msg = error.code === 1 ? t('fieldOps.locationDenied') || 'Location access denied' : t('fieldOps.locationError') || 'Failed to get location';
+    const msg = error.code === 1 ? t('fieldOps.locationDenied') : t('fieldOps.locationError');
     ElNotification({ type: 'error', title: t('common.error'), message: msg });
   } finally {
     checkingOut.value = false;
@@ -286,7 +286,7 @@ async function handleSaveCheckIn() {
       notes: checkInData.value.notes || undefined
     });
     if (success) {
-      ElNotification({ type: 'success', title: t('common.success'), message: t('fieldOps.checkInRecorded') || 'Check-in recorded' });
+      ElNotification({ type: 'success', title: t('common.success'), message: t('fieldOps.checkInRecorded') });
       showCheckInDialog.value = false;
       await loadCheckIns();
     }

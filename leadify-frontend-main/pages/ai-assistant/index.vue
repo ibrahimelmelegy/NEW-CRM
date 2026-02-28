@@ -181,6 +181,8 @@ definePageMeta({
   middleware: 'permissions'
 });
 
+const { t } = useI18n();
+
 const messages = ref<Array<{ role: string; content: string }>>([]);
 const inputMessage = ref('');
 const isTyping = ref(false);
@@ -223,7 +225,7 @@ const sendMessage = async (text?: string) => {
 const clearChat = async () => {
   messages.value = [];
   await useApiFetch('ai/chat/clear', 'POST');
-  ElMessage.success('Chat cleared');
+  ElMessage.success(t('aiAssistant.chatCleared'));
 };
 
 const formatMessage = (content: string) => {

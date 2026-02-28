@@ -250,6 +250,9 @@
 <script setup lang="ts">
 import { ref, computed } from 'vue';
 import { ElMessage } from 'element-plus';
+import { useI18n } from 'vue-i18n';
+
+const { t } = useI18n();
 
 definePageMeta({
   layout: 'default',
@@ -312,7 +315,7 @@ const runAudit = () => {
   auditing.value = true;
   setTimeout(() => {
     auditing.value = false;
-    ElMessage.success('Data audit completed');
+    ElMessage.success(t('dataGovernance.auditCompleted'));
   }, 2000);
 };
 
@@ -323,11 +326,11 @@ const processErasure = (req: any) => {
 
 const savePolicy = () => {
   if (!newPolicy.value.entity) {
-    ElMessage.warning('Select a data entity');
+    ElMessage.warning(t('common.fillRequired'));
     return;
   }
   retentionPolicies.value.push({ ...newPolicy.value, affectedRecords: 0, lastRun: null, isActive: true });
   showPolicyDialog.value = false;
-  ElMessage.success('Retention policy saved');
+  ElMessage.success(t('dataGovernance.policySaved'));
 };
 </script>

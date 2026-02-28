@@ -1,10 +1,10 @@
 <template lang="pug">
 .p-6.animate-entrance
-  ModuleHeader(:title="$t('cpq.title') || 'CPQ — Configure, Price, Quote'" :subtitle="$t('cpq.subtitle') || 'Manage price books and product pricing entries.'")
+  ModuleHeader(:title="$t('cpq.title')" :subtitle="$t('cpq.subtitle')")
     template(#actions)
       el-button(type="primary" size="large" @click="openCreateDialog" class="premium-btn")
         Icon(name="ph:plus-bold" size="20")
-        span.mx-1 {{ activeTab === 'books' ? ($t('cpq.addPriceBook') || 'Add Price Book') : ($t('cpq.addEntry') || 'Add Entry') }}
+        span.mx-1 {{ activeTab === 'books' ? $t('cpq.addPriceBook') : $t('cpq.addEntry') }}
 
   StatCards(:stats="summaryStats")
 
@@ -12,27 +12,27 @@
   .mb-4.animate-entrance
     el-button(type="success" size="large" @click="showQuoteDialog = true" class="premium-btn")
       Icon(name="ph:calculator-bold" size="20")
-      span.mx-1 {{ $t('cpq.generateQuote') || 'Generate Quote' }}
+      span.mx-1 {{ $t('cpq.generateQuote') }}
 
   .glass-card.py-8.animate-entrance
     el-tabs(v-model="activeTab" class="px-4")
       //- Price Books Tab
-      el-tab-pane(:label="$t('cpq.priceBooks') || 'Price Books'" name="books")
+      el-tab-pane(:label="$t('cpq.priceBooks')" name="books")
         el-table(:data="books" v-loading="loadingBooks" style="width: 100%")
           el-table-column(type="index" width="50")
-          el-table-column(:label="$t('cpq.bookName') || 'Name'" min-width="180")
+          el-table-column(:label="$t('cpq.bookName')" min-width="180")
             template(#default="{ row }")
               span.font-bold {{ row.name || '—' }}
-          el-table-column(:label="$t('cpq.currency') || 'Currency'" width="100" align="center")
+          el-table-column(:label="$t('cpq.currency')" width="100" align="center")
             template(#default="{ row }")
               span {{ row.currency || 'SAR' }}
-          el-table-column(:label="$t('cpq.isActive') || 'Active'" width="100" align="center")
+          el-table-column(:label="$t('cpq.isActive')" width="100" align="center")
             template(#default="{ row }")
               el-tag(:type="row.isActive ? 'success' : 'info'" size="small" round) {{ row.isActive ? 'Yes' : 'No' }}
-          el-table-column(:label="$t('cpq.effectiveDate') || 'Effective Date'" width="140")
+          el-table-column(:label="$t('cpq.effectiveDate')" width="140")
             template(#default="{ row }")
               span.text-xs.font-mono {{ row.effectiveDate ? new Date(row.effectiveDate).toLocaleDateString('en-GB', { day: '2-digit', month: 'short', year: '2-digit' }) : '—' }}
-          el-table-column(:label="$t('cpq.expiryDate') || 'Expiry Date'" width="140")
+          el-table-column(:label="$t('cpq.expiryDate')" width="140")
             template(#default="{ row }")
               span.text-xs.font-mono {{ row.expiryDate ? new Date(row.expiryDate).toLocaleDateString('en-GB', { day: '2-digit', month: 'short', year: '2-digit' }) : '—' }}
           el-table-column(:label="$t('common.action')" width="100" fixed="right")
@@ -54,12 +54,12 @@
           )
 
       //- Discount Rules Tab
-      el-tab-pane(:label="$t('cpq.discountRules') || 'Discount Rules'" name="discounts")
+      el-tab-pane(:label="$t('cpq.discountRules')" name="discounts")
         .mb-4.flex.justify-between.items-center
-          p.text-sm(style="color: var(--text-muted)") {{ $t('cpq.discountRulesDesc') || 'Configure automatic discount rules based on quantity, customer tier, or promotion periods.' }}
+          p.text-sm(style="color: var(--text-muted)") {{ $t('cpq.discountRulesDesc') }}
           el-button(type="primary" size="default" @click="showDiscountDialog = true")
             Icon(name="ph:plus-bold" size="16")
-            span.mx-1 {{ $t('cpq.addDiscountRule') || 'Add Rule' }}
+            span.mx-1 {{ $t('cpq.addDiscountRule') }}
 
         .space-y-3
           .glass-card.p-4.rounded-xl(v-for="rule in discountRules" :key="rule.id" style="border: 1px solid var(--border-default)")
@@ -80,28 +80,28 @@
 
           .text-center.py-6(v-if="!discountRules.length")
             Icon(name="ph:percent" size="48" style="color: var(--text-muted); opacity: 0.4")
-            p.text-sm.mt-2(style="color: var(--text-muted)") {{ $t('cpq.noDiscountRules') || 'No discount rules configured yet.' }}
+            p.text-sm.mt-2(style="color: var(--text-muted)") {{ $t('cpq.noDiscountRules') }}
 
       //- Entries Tab
-      el-tab-pane(:label="$t('cpq.entries') || 'Entries'" name="entries")
+      el-tab-pane(:label="$t('cpq.entries')" name="entries")
         el-table(:data="entries" v-loading="loadingEntries" style="width: 100%")
           el-table-column(type="index" width="50")
-          el-table-column(:label="$t('cpq.productName') || 'Product'" min-width="170")
+          el-table-column(:label="$t('cpq.productName')" min-width="170")
             template(#default="{ row }")
               span.font-bold {{ row.productName || '—' }}
-          el-table-column(:label="$t('cpq.sku') || 'SKU'" width="120")
+          el-table-column(:label="$t('cpq.sku')" width="120")
             template(#default="{ row }")
               span.font-mono.text-xs {{ row.sku || '—' }}
-          el-table-column(:label="$t('cpq.unitPrice') || 'Unit Price'" width="130" align="right")
+          el-table-column(:label="$t('cpq.unitPrice')" width="130" align="right")
             template(#default="{ row }")
               span.font-bold {{ Number(row.unitPrice || 0).toLocaleString() }} SAR
-          el-table-column(:label="$t('cpq.costPrice') || 'Cost Price'" width="130" align="right")
+          el-table-column(:label="$t('cpq.costPrice')" width="130" align="right")
             template(#default="{ row }")
               span {{ Number(row.costPrice || 0).toLocaleString() }} SAR
-          el-table-column(:label="$t('cpq.minQty') || 'Min Qty'" width="90" align="center")
+          el-table-column(:label="$t('cpq.minQty')" width="90" align="center")
             template(#default="{ row }")
               span {{ row.minQty ?? 1 }}
-          el-table-column(:label="$t('cpq.maxDiscount') || 'Max Discount'" width="120" align="center")
+          el-table-column(:label="$t('cpq.maxDiscount')" width="120" align="center")
             template(#default="{ row }")
               span {{ row.maxDiscount != null ? row.maxDiscount + '%' : '—' }}
           el-table-column(:label="$t('common.action')" width="100" fixed="right")
@@ -111,7 +111,7 @@
               el-button(text circle size="small" type="danger" @click="handleDeleteEntry(row.id)")
                 Icon(name="ph:trash" size="14")
           template(#empty)
-            el-empty(:description="$t('common.noData') || 'No pricing entries yet'")
+            el-empty(:description="$t('common.noData')")
 
         .flex.justify-end.mt-4
           el-pagination(
@@ -123,76 +123,76 @@
           )
 
   //- Price Book Dialog
-  el-dialog(v-model="showBookDialog" :title="editingBookId ? ($t('cpq.editPriceBook') || 'Edit Price Book') : ($t('cpq.addPriceBook') || 'Add Price Book')" width="500px")
+  el-dialog(v-model="showBookDialog" :title="editingBookId ? $t('cpq.editPriceBook') : $t('cpq.addPriceBook')" width="500px")
     el-form(label-position="top" size="large")
-      el-form-item(:label="$t('cpq.bookName') || 'Name'" required)
-        el-input(v-model="bookForm.name" :placeholder="$t('cpq.bookNamePlaceholder') || 'Price book name'")
+      el-form-item(:label="$t('cpq.bookName')" required)
+        el-input(v-model="bookForm.name" :placeholder="$t('cpq.bookNamePlaceholder')")
       .grid.grid-cols-2.gap-4
-        el-form-item(:label="$t('cpq.currency') || 'Currency'")
+        el-form-item(:label="$t('cpq.currency')")
           el-select(v-model="bookForm.currency" class="w-full")
             el-option(label="SAR" value="SAR")
             el-option(label="USD" value="USD")
             el-option(label="EUR" value="EUR")
             el-option(label="GBP" value="GBP")
-        el-form-item(:label="$t('cpq.isActive') || 'Active'")
+        el-form-item(:label="$t('cpq.isActive')")
           el-select(v-model="bookForm.isActive" class="w-full")
-            el-option(:label="$t('common.yes') || 'Yes'" :value="true")
-            el-option(:label="$t('common.no') || 'No'" :value="false")
+            el-option(:label="$t('common.yes')" :value="true")
+            el-option(:label="$t('common.no')" :value="false")
       .grid.grid-cols-2.gap-4
-        el-form-item(:label="$t('cpq.effectiveDate') || 'Effective Date'")
+        el-form-item(:label="$t('cpq.effectiveDate')")
           el-date-picker(v-model="bookForm.effectiveDate" type="date" class="w-full" format="DD/MM/YYYY" value-format="YYYY-MM-DD")
-        el-form-item(:label="$t('cpq.expiryDate') || 'Expiry Date'")
+        el-form-item(:label="$t('cpq.expiryDate')")
           el-date-picker(v-model="bookForm.expiryDate" type="date" class="w-full" format="DD/MM/YYYY" value-format="YYYY-MM-DD")
     template(#footer)
       el-button(@click="showBookDialog = false") {{ $t('common.cancel') }}
       el-button(type="primary" :loading="savingBook" @click="saveBook") {{ $t('common.save') }}
 
   //- Entry Dialog
-  el-dialog(v-model="showEntryDialog" :title="editingEntryId ? ($t('cpq.editEntry') || 'Edit Entry') : ($t('cpq.addEntry') || 'Add Entry')" width="550px")
+  el-dialog(v-model="showEntryDialog" :title="editingEntryId ? $t('cpq.editEntry') : $t('cpq.addEntry')" width="550px")
     el-form(label-position="top" size="large")
       .grid.grid-cols-2.gap-4
-        el-form-item(:label="$t('cpq.productName') || 'Product Name'" required)
-          el-input(v-model="entryForm.productName" :placeholder="$t('cpq.productNamePlaceholder') || 'Product name'")
-        el-form-item(:label="$t('cpq.sku') || 'SKU'")
+        el-form-item(:label="$t('cpq.productName')" required)
+          el-input(v-model="entryForm.productName" :placeholder="$t('cpq.productNamePlaceholder')")
+        el-form-item(:label="$t('cpq.sku')")
           el-input(v-model="entryForm.sku" placeholder="SKU-001")
       .grid.grid-cols-2.gap-4
-        el-form-item(:label="$t('cpq.unitPrice') || 'Unit Price'" required)
+        el-form-item(:label="$t('cpq.unitPrice')" required)
           el-input-number(v-model="entryForm.unitPrice" :min="0" :precision="2" class="w-full")
-        el-form-item(:label="$t('cpq.costPrice') || 'Cost Price'")
+        el-form-item(:label="$t('cpq.costPrice')")
           el-input-number(v-model="entryForm.costPrice" :min="0" :precision="2" class="w-full")
       .grid.grid-cols-2.gap-4
-        el-form-item(:label="$t('cpq.minQty') || 'Min Quantity'")
+        el-form-item(:label="$t('cpq.minQty')")
           el-input-number(v-model="entryForm.minQty" :min="1" class="w-full")
-        el-form-item(:label="$t('cpq.maxDiscount') || 'Max Discount %'")
+        el-form-item(:label="$t('cpq.maxDiscount')")
           el-input-number(v-model="entryForm.maxDiscount" :min="0" :max="100" :precision="2" class="w-full")
-      el-form-item(:label="$t('cpq.priceBook') || 'Price Book'")
-        el-select(v-model="entryForm.priceBookId" class="w-full" :placeholder="$t('cpq.selectPriceBook') || 'Select price book'")
+      el-form-item(:label="$t('cpq.priceBook')")
+        el-select(v-model="entryForm.priceBookId" class="w-full" :placeholder="$t('cpq.selectPriceBook')")
           el-option(v-for="book in books" :key="book.id" :label="book.name" :value="book.id")
     template(#footer)
       el-button(@click="showEntryDialog = false") {{ $t('common.cancel') }}
       el-button(type="primary" :loading="savingEntry" @click="saveEntry") {{ $t('common.save') }}
 
   //- Generate Quote Dialog
-  el-dialog(v-model="showQuoteDialog" :title="$t('cpq.generateQuote') || 'Generate Quote'" width="700px" destroy-on-close)
+  el-dialog(v-model="showQuoteDialog" :title="$t('cpq.generateQuote')" width="700px" destroy-on-close)
     el-form(label-position="top" size="large")
-      el-form-item(:label="$t('cpq.selectPriceBook') || 'Select Price Book'" required)
-        el-select(v-model="quoteForm.priceBookId" class="w-full" :placeholder="$t('cpq.selectPriceBook') || 'Select a price book'")
+      el-form-item(:label="$t('cpq.selectPriceBook')" required)
+        el-select(v-model="quoteForm.priceBookId" class="w-full" :placeholder="$t('cpq.selectPriceBook')")
           el-option(v-for="book in books.filter(b => b.isActive)" :key="book.id" :label="book.name" :value="book.id")
 
       .flex.items-center.justify-between.mb-3
-        h4.text-sm.font-bold(style="color: var(--text-primary)") {{ $t('cpq.lineItems') || 'Line Items' }}
+        h4.text-sm.font-bold(style="color: var(--text-primary)") {{ $t('cpq.lineItems') }}
         el-button(type="primary" text size="small" @click="addQuoteLineItem")
           Icon(name="ph:plus-bold" size="14")
-          span.ml-1 {{ $t('cpq.addItem') || 'Add Item' }}
+          span.ml-1 {{ $t('cpq.addItem') }}
 
       .space-y-3
         .grid.grid-cols-12.gap-3.items-end(v-for="(item, idx) in quoteForm.items" :key="idx")
           .col-span-6
-            el-form-item(:label="idx === 0 ? ($t('cpq.entry') || 'Product Entry') : ''" class="!mb-0")
-              el-select(v-model="item.entryId" class="w-full" :placeholder="$t('cpq.selectEntry') || 'Select entry'" filterable)
+            el-form-item(:label="idx === 0 ? $t('cpq.entry') : ''" class="!mb-0")
+              el-select(v-model="item.entryId" class="w-full" :placeholder="$t('cpq.selectEntry')" filterable)
                 el-option(v-for="entry in entries" :key="entry.id" :label="`${entry.productName} — ${Number(entry.unitPrice || 0).toLocaleString()} SAR`" :value="entry.id")
           .col-span-3
-            el-form-item(:label="idx === 0 ? ($t('cpq.quantity') || 'Quantity') : ''" class="!mb-0")
+            el-form-item(:label="idx === 0 ? $t('cpq.quantity') : ''" class="!mb-0")
               el-input-number(v-model="item.quantity" :min="1" class="w-full" size="large")
           .col-span-3.flex.items-center.gap-2
             el-form-item(:label="idx === 0 ? ' ' : ''" class="!mb-0 flex-1")
@@ -200,12 +200,12 @@
             el-button(v-if="quoteForm.items.length > 1" text circle size="small" type="danger" @click="quoteForm.items.splice(idx, 1)")
               Icon(name="ph:x-bold" size="14")
 
-      el-form-item(:label="$t('cpq.taxRate') || 'Tax Rate %'" class="mt-4")
+      el-form-item(:label="$t('cpq.taxRate')" class="mt-4")
         el-input-number(v-model="quoteForm.taxRate" :min="0" :max="100" :precision="2" class="w-full")
 
     //- Quote Result
     .glass-card.p-5.rounded-2xl.mt-4(v-if="quoteResult")
-      h4.text-sm.font-bold.mb-3(style="color: var(--text-primary)") {{ $t('cpq.quoteResult') || 'Quote Summary' }}
+      h4.text-sm.font-bold.mb-3(style="color: var(--text-primary)") {{ $t('cpq.quoteResult') }}
       el-table(:data="quoteResult.lineItems || []" size="small" style="width: 100%" class="mb-4")
         el-table-column(label="Product" min-width="160")
           template(#default="{ row }")
@@ -238,10 +238,10 @@
       el-button(@click="showQuoteDialog = false") {{ $t('common.cancel') }}
       el-button(type="success" :loading="calculatingQuote" @click="calculateQuote")
         Icon(name="ph:calculator-bold" size="16")
-        span.ml-1 {{ $t('cpq.calculate') || 'Calculate' }}
+        span.ml-1 {{ $t('cpq.calculate') }}
       el-button(v-if="quoteResult" type="primary" :loading="convertingToDeal" @click="convertQuoteToDeal")
         Icon(name="ph:handshake-bold" size="16")
-        span.ml-1 {{ $t('cpq.convertToDeal') || 'Convert to Deal' }}
+        span.ml-1 {{ $t('cpq.convertToDeal') }}
 </template>
 
 <script setup lang="ts">

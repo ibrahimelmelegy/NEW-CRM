@@ -223,6 +223,9 @@
 <script setup lang="ts">
 import { ref, computed } from 'vue';
 import { ElMessage } from 'element-plus';
+import { useI18n } from 'vue-i18n';
+
+const { t } = useI18n();
 
 definePageMeta({ layout: 'default', middleware: 'permissions' });
 
@@ -426,7 +429,7 @@ function handleDrop(event: DragEvent) {
     if (validTypes.includes(ext)) {
       uploadedFile.value = file ?? null;
     } else {
-      ElMessage.warning('Please upload a CSV or Excel file');
+      ElMessage.warning(t('dataImport.uploadFileRequired'));
     }
   }
 }
@@ -444,10 +447,10 @@ function resetMapping() {
   fieldMappings.value.forEach(m => {
     m.target = '';
   });
-  ElMessage.info('Mapping reset');
+  ElMessage.info(t('dataImport.mappingReset'));
 }
 
 function saveMapping() {
-  ElMessage.success('Field mapping saved');
+  ElMessage.success(t('dataImport.mappingSaved'));
 }
 </script>

@@ -320,6 +320,8 @@ definePageMeta({
   middleware: 'permissions'
 });
 
+const { t } = useI18n();
+
 const {
   boms,
   workOrders,
@@ -397,7 +399,7 @@ const viewWorkOrder = (wo: any) => ElMessage.info(`Viewing: ${wo.woNumber}`);
 
 const saveBom = async () => {
   if (!newBom.value.productName) {
-    ElMessage.warning('Product name required');
+    ElMessage.warning(t('common.fillRequired'));
     return;
   }
   await createBOM({
@@ -414,7 +416,7 @@ const saveBom = async () => {
   });
   newBom.value = { productName: '', code: '', version: 1, items: [{ name: '', quantity: 1, unitCost: 0 }] };
   showBomDialog.value = false;
-  ElMessage.success('BOM created');
+  ElMessage.success(t('manufacturing.bomCreated'));
 };
 
 const createWorkOrder = async () => {
@@ -426,6 +428,6 @@ const createWorkOrder = async () => {
   });
   newWO.value = { bomId: 0, quantity: 1, priority: 'NORMAL', dueDate: '' };
   showWorkOrderDialog.value = false;
-  ElMessage.success('Work order created');
+  ElMessage.success(t('manufacturing.workOrderCreated'));
 };
 </script>

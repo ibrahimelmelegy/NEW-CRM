@@ -249,7 +249,10 @@
 <script setup lang="ts">
 import { ref, computed, onMounted } from 'vue';
 import { ElMessage } from 'element-plus';
+import { useI18n } from 'vue-i18n';
 import { useApiFetch } from '~/composables/useApiFetch';
+
+const { t } = useI18n();
 
 definePageMeta({
   layout: 'default',
@@ -324,7 +327,7 @@ const fetchProducts = async () => {
   }
 };
 
-const createQuote = () => ElMessage.info('Quote builder opening...');
+const createQuote = () => ElMessage.info(t('cpq.quoteOpening'));
 const editQuote = (quote: any) => ElMessage.info(`Editing quote: ${quote.name}`);
 const duplicateQuote = (quote: any) => ElMessage.info(`Cloning quote: ${quote.name}`);
 const exportQuote = (quote: any) => ElMessage.info(`Generating PDF for: ${quote.name}`);
@@ -332,7 +335,7 @@ const exportQuote = (quote: any) => ElMessage.info(`Generating PDF for: ${quote.
 const saveProduct = async () => {
   const res: any = await useApiFetch('catalog/products', 'POST', newProduct.value);
   if (res?.success) {
-    ElMessage.success('Product saved');
+    ElMessage.success(t('common.saved'));
     showProductDialog.value = false;
     fetchProducts();
   } else {
@@ -343,7 +346,7 @@ const saveProduct = async () => {
 const savePricingRule = () => {
   pricingRules.value.push({ ...newRule.value, id: Date.now() });
   showPricingDialog.value = false;
-  ElMessage.success('Pricing rule saved');
+  ElMessage.success(t('common.saved'));
 };
 
 onMounted(() => {

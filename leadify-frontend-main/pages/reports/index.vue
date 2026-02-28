@@ -198,6 +198,8 @@ import { ElMessage } from 'element-plus';
 
 definePageMeta({});
 
+const { t } = useI18n();
+
 const { stats: docStats } = useDocumentStore();
 const { stats: remStats } = useReminders();
 const { stats: archiveStats } = useDocumentArchive();
@@ -402,7 +404,7 @@ async function handleExport(format: 'csv' | 'excel') {
     ElMessage.success(`Report exported as ${format.toUpperCase()}`);
   } catch (error) {
     console.error('Export failed:', error);
-    ElMessage.error('Failed to export report');
+    ElMessage.error(t('reports.exportFailed'));
   } finally {
     exporting.value = false;
   }

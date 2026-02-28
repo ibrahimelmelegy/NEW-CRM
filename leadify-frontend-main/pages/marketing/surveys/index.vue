@@ -1,13 +1,13 @@
 <template lang="pug">
 div
   ModuleHeader(
-    :title="$t('marketing.surveys.title') || 'Surveys'"
-    :subtitle="$t('marketing.surveys.subtitle') || 'Create surveys, collect feedback, and analyze customer responses.'"
+    :title="$t('marketing.surveys.title')"
+    :subtitle="$t('marketing.surveys.subtitle')"
   )
     template(#actions)
       el-button(size="large" type="primary" class="!rounded-2xl" @click="openCreateDialog()")
         Icon(name="ph:plus-bold" size="16")
-        span.ml-1 {{ $t('marketing.surveys.newSurvey') || 'New Survey' }}
+        span.ml-1 {{ $t('marketing.surveys.newSurvey') }}
 
   StatCards(:stats="summaryStats")
 
@@ -21,7 +21,7 @@ div
       .flex.items-center.justify-between.mb-4
         el-input(
           v-model="search"
-          :placeholder="$t('common.search') || 'Search'"
+          :placeholder="$t('common.search')"
           clearable
           style="max-width: 280px"
           size="large"
@@ -30,7 +30,7 @@ div
           template(#prefix)
             Icon(name="ph:magnifying-glass" size="18" style="color: var(--text-muted)")
         .flex.items-center.gap-2
-          el-select(v-model="filterStatus" clearable :placeholder="$t('common.status') || 'Status'" style="width: 160px")
+          el-select(v-model="filterStatus" clearable :placeholder="$t('common.status')" style="width: 160px")
             el-option(v-for="s in statusOptions" :key="s.value" :label="s.label" :value="s.value")
 
       el-table(
@@ -40,7 +40,7 @@ div
         stripe
         @row-click="navigateToSurvey"
       )
-        el-table-column(:label="$t('marketing.surveys.surveyTitle') || 'Title'" prop="title" min-width="240" sortable)
+        el-table-column(:label="$t('marketing.surveys.surveyTitle')" prop="title" min-width="240" sortable)
           template(#default="{ row }")
             .flex.items-center.gap-3
               .w-9.h-9.rounded-xl.flex.items-center.justify-center.shrink-0(style="background: rgba(139, 92, 246, 0.1)")
@@ -48,26 +48,26 @@ div
               div
                 p.text-sm.font-semibold(style="color: var(--text-primary)") {{ row.title }}
                 p.text-xs(v-if="row.description" style="color: var(--text-muted)") {{ row.description?.substring(0, 50) }}{{ row.description?.length > 50 ? '...' : '' }}
-        el-table-column(:label="$t('common.status') || 'Status'" prop="status" width="130" sortable)
+        el-table-column(:label="$t('common.status')" prop="status" width="130" sortable)
           template(#default="{ row }")
             el-tag(:type="getStatusType(row.status)" size="small" effect="dark") {{ row.status }}
-        el-table-column(:label="$t('marketing.surveys.questions') || 'Questions'" prop="questionsCount" width="120" align="center" sortable)
+        el-table-column(:label="$t('marketing.surveys.questions')" prop="questionsCount" width="120" align="center" sortable)
           template(#default="{ row }")
             span.text-sm {{ row.questionsCount || (row.questions ? row.questions.length : 0) }}
-        el-table-column(:label="$t('marketing.surveys.responses') || 'Responses'" prop="responseCount" width="130" align="center" sortable)
+        el-table-column(:label="$t('marketing.surveys.responses')" prop="responseCount" width="130" align="center" sortable)
           template(#default="{ row }")
             el-button(v-if="row.responseCount > 0" text type="primary" size="small" @click.stop="openResponsesDialog(row)")
               span.font-bold {{ row.responseCount || 0 }}
               Icon(name="ph:arrow-square-out" size="14" class="ml-1")
             span.text-sm(v-else style="color: var(--text-muted)") 0
-        el-table-column(:label="$t('marketing.surveys.publicLink') || 'Public Link'" width="130" align="center")
+        el-table-column(:label="$t('marketing.surveys.publicLink')" width="130" align="center")
           template(#default="{ row }")
             el-button(text size="small" type="success" @click.stop="copyPublicLink(row)")
               Icon(name="ph:link-bold" size="14")
-        el-table-column(:label="$t('common.createdAt') || 'Created'" prop="createdAt" width="150" sortable)
+        el-table-column(:label="$t('common.createdAt')" prop="createdAt" width="150" sortable)
           template(#default="{ row }")
             span.text-sm {{ formatDate(row.createdAt) }}
-        el-table-column(:label="$t('common.actions') || 'Actions'" width="200" align="center")
+        el-table-column(:label="$t('common.actions')" width="200" align="center")
           template(#default="{ row }")
             .flex.items-center.justify-center.gap-1
               el-button(text size="small" type="success" @click.stop="openAnalyticsDialog(row)" :disabled="!row.responseCount")
@@ -81,7 +81,7 @@ div
 
       .text-center.py-8(v-if="!filteredData.length && !loading")
         Icon(name="ph:clipboard-text" size="48" style="color: var(--text-muted)")
-        p.text-sm.mt-2(style="color: var(--text-muted)") {{ $t('common.noData') || 'No surveys found' }}
+        p.text-sm.mt-2(style="color: var(--text-muted)") {{ $t('common.noData') }}
 
       .flex.justify-end.mt-4
         el-pagination(
@@ -93,26 +93,26 @@ div
         )
 
   //- Create / Edit Dialog
-  el-dialog(v-model="dialogVisible" :title="editingItem ? ($t('common.edit') || 'Edit Survey') : ($t('marketing.surveys.newSurvey') || 'New Survey')" width="640px" destroy-on-close)
+  el-dialog(v-model="dialogVisible" :title="editingItem ? $t('common.edit') : $t('marketing.surveys.newSurvey')" width="640px" destroy-on-close)
     el-form(:model="form" label-position="top")
-      el-form-item(:label="$t('marketing.surveys.surveyTitle') || 'Survey Title'" required)
-        el-input(v-model="form.title" :placeholder="$t('marketing.surveys.titlePlaceholder') || 'e.g., Customer Satisfaction Q1 2026'")
-      el-form-item(:label="$t('common.description') || 'Description'")
-        el-input(v-model="form.description" type="textarea" :rows="2" :placeholder="$t('marketing.surveys.descPlaceholder') || 'Brief description of this survey'")
-      el-form-item(:label="$t('common.status') || 'Status'")
+      el-form-item(:label="$t('marketing.surveys.surveyTitle')" required)
+        el-input(v-model="form.title" :placeholder="$t('marketing.surveys.titlePlaceholder')")
+      el-form-item(:label="$t('common.description')")
+        el-input(v-model="form.description" type="textarea" :rows="2" :placeholder="$t('marketing.surveys.descPlaceholder')")
+      el-form-item(:label="$t('common.status')")
         el-select(v-model="form.status" style="width: 200px")
           el-option(v-for="s in statusOptions" :key="s.value" :label="s.label" :value="s.value")
 
       //- Questions builder
-      el-form-item(:label="$t('marketing.surveys.questions') || 'Questions'")
+      el-form-item(:label="$t('marketing.surveys.questions')")
         .space-y-3
           .glass-card.p-4(v-for="(question, idx) in form.questions" :key="idx")
             .flex.items-start.justify-between.mb-2
-              span.text-sm.font-semibold(style="color: var(--text-primary)") {{ ($t('marketing.surveys.question') || 'Question') + ' #' + (idx + 1) }}
+              span.text-sm.font-semibold(style="color: var(--text-primary)") {{ $t('marketing.surveys.question') + ' #' + (idx + 1) }}
               el-button(text type="danger" size="small" @click="removeQuestion(idx)")
                 Icon(name="ph:x-bold" size="14")
             .grid.gap-3(class="grid-cols-1")
-              el-input(v-model="question.text" :placeholder="$t('marketing.surveys.questionText') || 'Enter question text'")
+              el-input(v-model="question.text" :placeholder="$t('marketing.surveys.questionText')")
               .grid.gap-3(class="grid-cols-2")
                 el-select(v-model="question.type" class="w-full")
                   el-option(label="Text" value="TEXT")
@@ -120,50 +120,50 @@ div
                   el-option(label="Multiple Choice" value="MULTIPLE_CHOICE")
                   el-option(label="Rating" value="RATING")
                   el-option(label="Scale (1-10)" value="SCALE")
-                el-checkbox(v-model="question.required") {{ $t('common.required') || 'Required' }}
+                el-checkbox(v-model="question.required") {{ $t('common.required') }}
               //- Options for choice questions
               template(v-if="question.type === 'SINGLE_CHOICE' || question.type === 'MULTIPLE_CHOICE'")
                 .space-y-2
                   .flex.items-center.gap-2(v-for="(opt, optIdx) in question.options" :key="optIdx")
-                    el-input(v-model="question.options[optIdx]" :placeholder="`${$t('marketing.surveys.option') || 'Option'} ${optIdx + 1}`" size="small")
+                    el-input(v-model="question.options[optIdx]" :placeholder="`${$t('marketing.surveys.option')} ${optIdx + 1}`" size="small")
                     el-button(text type="danger" size="small" @click="question.options.splice(optIdx, 1)" :disabled="question.options.length <= 2")
                       Icon(name="ph:x-bold" size="12")
                   el-button(text type="primary" size="small" @click="question.options.push('')")
                     Icon(name="ph:plus-bold" size="12")
-                    span.ml-1 {{ $t('marketing.surveys.addOption') || 'Add Option' }}
+                    span.ml-1 {{ $t('marketing.surveys.addOption') }}
 
           el-button(type="primary" plain class="!rounded-xl w-full" @click="addQuestion()")
             Icon(name="ph:plus-bold" size="16")
-            span.ml-1 {{ $t('marketing.surveys.addQuestion') || 'Add Question' }}
+            span.ml-1 {{ $t('marketing.surveys.addQuestion') }}
     template(#footer)
-      el-button(@click="dialogVisible = false") {{ $t('common.cancel') || 'Cancel' }}
-      el-button(type="primary" @click="handleSave" :loading="saving") {{ $t('common.save') || 'Save' }}
+      el-button(@click="dialogVisible = false") {{ $t('common.cancel') }}
+      el-button(type="primary" @click="handleSave" :loading="saving") {{ $t('common.save') }}
 
   //- Responses Dialog
-  el-dialog(v-model="responsesDialogVisible" :title="($t('marketing.surveys.responses') || 'Responses') + (selectedSurvey ? ' - ' + selectedSurvey.title : '')" width="750px" destroy-on-close)
+  el-dialog(v-model="responsesDialogVisible" :title="$t('marketing.surveys.responses') + (selectedSurvey ? ' - ' + selectedSurvey.title : '')" width="750px" destroy-on-close)
     .flex.items-center.justify-center.py-8(v-if="loadingResponses")
       el-icon.is-loading(:size="24" style="color: var(--accent-color, #7849ff)")
     template(v-else)
       el-table(:data="responses" style="width: 100%" stripe max-height="400")
         el-table-column(label="#" type="index" width="60")
-        el-table-column(:label="$t('marketing.surveys.respondent') || 'Respondent'" prop="respondent" min-width="160")
+        el-table-column(:label="$t('marketing.surveys.respondent')" prop="respondent" min-width="160")
           template(#default="{ row }")
             span.text-sm(style="color: var(--text-primary)") {{ row.respondentName || row.respondentEmail || row.respondentId || 'Anonymous' }}
-        el-table-column(:label="$t('marketing.surveys.answers') || 'Answers'" min-width="300")
+        el-table-column(:label="$t('marketing.surveys.answers')" min-width="300")
           template(#default="{ row }")
             .space-y-1
               .flex.items-start.gap-2(v-for="(answer, idx) in row.answers || []" :key="idx")
                 span.text-xs.font-semibold.shrink-0(style="color: var(--text-muted)") Q{{ idx + 1 }}:
                 span.text-xs(style="color: var(--text-primary)") {{ typeof answer === 'object' ? answer.value || JSON.stringify(answer) : answer }}
-        el-table-column(:label="$t('common.date') || 'Date'" prop="createdAt" width="150")
+        el-table-column(:label="$t('common.date')" prop="createdAt" width="150")
           template(#default="{ row }")
             span.text-sm {{ formatDate(row.createdAt) }}
       .text-center.py-6(v-if="!responses.length")
         Icon(name="ph:inbox" size="40" style="color: var(--text-muted)")
-        p.text-sm.mt-2(style="color: var(--text-muted)") {{ $t('marketing.surveys.noResponses') || 'No responses yet' }}
+        p.text-sm.mt-2(style="color: var(--text-muted)") {{ $t('marketing.surveys.noResponses') }}
 
   //- Analytics Dialog
-  el-dialog(v-model="analyticsDialogVisible" :title="($t('marketing.surveys.analytics') || 'Survey Analytics') + (analyticsSurvey ? ' - ' + analyticsSurvey.title : '')" width="720px" destroy-on-close)
+  el-dialog(v-model="analyticsDialogVisible" :title="$t('marketing.surveys.analytics') + (analyticsSurvey ? ' - ' + analyticsSurvey.title : '')" width="720px" destroy-on-close)
     .flex.items-center.justify-center.py-8(v-if="loadingAnalytics")
       el-icon.is-loading(:size="24" style="color: var(--accent-color, #7849ff)")
     template(v-else)
@@ -173,27 +173,27 @@ div
           .glass-card.p-5.mb-4
             .flex.items-center.gap-2.mb-4
               Icon(name="ph:gauge-bold" size="20" style="color: #7849ff")
-              h4.text-sm.font-bold.uppercase.tracking-wider(style="color: var(--text-muted)") {{ $t('marketing.surveys.npsScore') || 'NPS Score' }}
+              h4.text-sm.font-bold.uppercase.tracking-wider(style="color: var(--text-muted)") {{ $t('marketing.surveys.npsScore') }}
             .text-center.mb-4
               p.font-bold(
                 :style="{ fontSize: '48px', lineHeight: '1', color: npsData.score < 0 ? '#ef4444' : npsData.score <= 50 ? '#f59e0b' : '#22c55e' }"
               ) {{ npsData.score != null ? npsData.score : '--' }}
-              p.text-xs.mt-1(style="color: var(--text-muted)") {{ npsData.score < 0 ? ($t('marketing.surveys.needsImprovement') || 'Needs Improvement') : npsData.score <= 50 ? ($t('marketing.surveys.good') || 'Good') : ($t('marketing.surveys.excellent') || 'Excellent') }}
+              p.text-xs.mt-1(style="color: var(--text-muted)") {{ npsData.score < 0 ? $t('marketing.surveys.needsImprovement') : npsData.score <= 50 ? $t('marketing.surveys.good') : $t('marketing.surveys.excellent') }}
             .space-y-2
               .flex.items-center.justify-between
                 .flex.items-center.gap-2
                   .w-3.h-3.rounded-full(style="background: #22c55e")
-                  span.text-sm(style="color: var(--text-primary)") {{ $t('marketing.surveys.promoters') || 'Promoters' }}
+                  span.text-sm(style="color: var(--text-primary)") {{ $t('marketing.surveys.promoters') }}
                 span.text-sm.font-bold(style="color: #22c55e") {{ npsData.promoters || 0 }}%
               .flex.items-center.justify-between
                 .flex.items-center.gap-2
                   .w-3.h-3.rounded-full(style="background: #f59e0b")
-                  span.text-sm(style="color: var(--text-primary)") {{ $t('marketing.surveys.passives') || 'Passives' }}
+                  span.text-sm(style="color: var(--text-primary)") {{ $t('marketing.surveys.passives') }}
                 span.text-sm.font-bold(style="color: #f59e0b") {{ npsData.passives || 0 }}%
               .flex.items-center.justify-between
                 .flex.items-center.gap-2
                   .w-3.h-3.rounded-full(style="background: #ef4444")
-                  span.text-sm(style="color: var(--text-primary)") {{ $t('marketing.surveys.detractors') || 'Detractors' }}
+                  span.text-sm(style="color: var(--text-primary)") {{ $t('marketing.surveys.detractors') }}
                 span.text-sm.font-bold(style="color: #ef4444") {{ npsData.detractors || 0 }}%
               //- NPS bar
               .flex.h-4.rounded-lg.overflow-hidden.mt-2
@@ -206,7 +206,7 @@ div
           .glass-card.p-5.mb-4
             .flex.items-center.gap-2.mb-4
               Icon(name="ph:check-circle-bold" size="20" style="color: #22c55e")
-              h4.text-sm.font-bold.uppercase.tracking-wider(style="color: var(--text-muted)") {{ $t('marketing.surveys.completionRate') || 'Completion Rate' }}
+              h4.text-sm.font-bold.uppercase.tracking-wider(style="color: var(--text-muted)") {{ $t('marketing.surveys.completionRate') }}
             .text-center.mb-4
               el-progress(
                 type="dashboard"
@@ -221,23 +221,23 @@ div
               .flex.items-center.justify-between
                 .flex.items-center.gap-2
                   Icon(name="ph:play-circle-bold" size="16" style="color: #3b82f6")
-                  span.text-sm(style="color: var(--text-primary)") {{ $t('marketing.surveys.started') || 'Started' }}
+                  span.text-sm(style="color: var(--text-primary)") {{ $t('marketing.surveys.started') }}
                 span.text-sm.font-bold(style="color: #3b82f6") {{ completionData.started || 0 }}
               .flex.items-center.justify-between
                 .flex.items-center.gap-2
                   Icon(name="ph:check-circle-bold" size="16" style="color: #22c55e")
-                  span.text-sm(style="color: var(--text-primary)") {{ $t('marketing.surveys.completed') || 'Completed' }}
+                  span.text-sm(style="color: var(--text-primary)") {{ $t('marketing.surveys.completed') }}
                 span.text-sm.font-bold(style="color: #22c55e") {{ completionData.completed || 0 }}
               .flex.items-center.justify-between
                 .flex.items-center.gap-2
                   Icon(name="ph:x-circle-bold" size="16" style="color: #ef4444")
-                  span.text-sm(style="color: var(--text-primary)") {{ $t('marketing.surveys.abandoned') || 'Abandoned' }}
+                  span.text-sm(style="color: var(--text-primary)") {{ $t('marketing.surveys.abandoned') }}
                 span.text-sm.font-bold(style="color: #ef4444") {{ (completionData.started || 0) - (completionData.completed || 0) }}
 
       //- No data fallback
       .text-center.py-8(v-if="!npsData.score && !completionData.rate")
         Icon(name="ph:chart-bar" size="48" style="color: var(--text-muted)")
-        p.text-sm.mt-2(style="color: var(--text-muted)") {{ $t('marketing.surveys.noAnalytics') || 'Not enough data for analytics' }}
+        p.text-sm.mt-2(style="color: var(--text-muted)") {{ $t('marketing.surveys.noAnalytics') }}
 </template>
 
 <script setup lang="ts">
@@ -277,10 +277,10 @@ interface QuestionItem {
 }
 
 const statusOptions = [
-  { label: t('marketing.surveys.draft') || 'Draft', value: 'DRAFT' },
-  { label: t('marketing.surveys.active') || 'Active', value: 'ACTIVE' },
-  { label: t('marketing.surveys.closed') || 'Closed', value: 'CLOSED' },
-  { label: t('marketing.surveys.archived') || 'Archived', value: 'ARCHIVED' }
+  { label: t('marketing.surveys.draft'), value: 'DRAFT' },
+  { label: t('marketing.surveys.active'), value: 'ACTIVE' },
+  { label: t('marketing.surveys.closed'), value: 'CLOSED' },
+  { label: t('marketing.surveys.archived'), value: 'ARCHIVED' }
 ];
 
 const defaultForm = () => ({
@@ -299,9 +299,9 @@ const summaryStats = computed(() => {
   const active = data.filter((i: any) => i.status === 'ACTIVE').length;
   const totalResp = data.reduce((sum: number, i: any) => sum + (i.responseCount || 0), 0);
   return [
-    { label: t('marketing.surveys.totalSurveys') || 'Total Surveys', value: total, icon: 'ph:clipboard-text-bold', color: '#8b5cf6' },
-    { label: t('marketing.surveys.activeSurveys') || 'Active', value: active, icon: 'ph:check-circle-bold', color: '#22c55e' },
-    { label: t('marketing.surveys.totalResponses') || 'Total Responses', value: totalResp, icon: 'ph:chat-circle-dots-bold', color: '#3b82f6' }
+    { label: t('marketing.surveys.totalSurveys'), value: total, icon: 'ph:clipboard-text-bold', color: '#8b5cf6' },
+    { label: t('marketing.surveys.activeSurveys'), value: active, icon: 'ph:check-circle-bold', color: '#22c55e' },
+    { label: t('marketing.surveys.totalResponses'), value: totalResp, icon: 'ph:chat-circle-dots-bold', color: '#3b82f6' }
   ];
 });
 
@@ -349,9 +349,9 @@ async function copyPublicLink(survey: any) {
   const url = `${window.location.origin}/public/survey/${survey.id}`;
   try {
     await navigator.clipboard.writeText(url);
-    ElMessage.success(t('marketing.surveys.linkCopied') || 'Public link copied to clipboard');
+    ElMessage.success(t('marketing.surveys.linkCopied'));
   } catch {
-    ElMessage.error(t('common.error') || 'Failed to copy link');
+    ElMessage.error(t('common.error'));
   }
 }
 
@@ -367,16 +367,16 @@ async function exportResponses(survey: any) {
       a.download = `survey-${survey.id}-responses.csv`;
       a.click();
       window.URL.revokeObjectURL(url);
-      ElMessage.success(t('marketing.surveys.exportSuccess') || 'Responses exported successfully');
+      ElMessage.success(t('marketing.surveys.exportSuccess'));
     }
   } catch {
-    ElMessage.error(t('common.error') || 'Failed to export responses');
+    ElMessage.error(t('common.error'));
   }
 }
 
 function removeQuestion(idx: number) {
   if (form.value.questions.length <= 1) {
-    ElMessage.warning(t('marketing.surveys.minOneQuestion') || 'At least one question is required');
+    ElMessage.warning(t('marketing.surveys.minOneQuestion'));
     return;
   }
   form.value.questions.splice(idx, 1);
@@ -393,7 +393,7 @@ async function fetchData() {
       pagination.total = data.count ?? data.total ?? items.value.length;
     }
   } catch {
-    ElMessage.error(t('common.error') || 'Failed to load surveys');
+    ElMessage.error(t('common.error'));
   } finally {
     loading.value = false;
   }
@@ -427,14 +427,14 @@ function openEditDialog(item: any) {
 
 async function handleSave() {
   if (!form.value.title.trim()) {
-    ElMessage.warning(t('common.fillRequired') || 'Please fill in required fields');
+    ElMessage.warning(t('common.fillRequired'));
     return;
   }
 
   // Validate at least one question has text
   const validQuestions = form.value.questions.filter(q => q.text.trim());
   if (!validQuestions.length) {
-    ElMessage.warning(t('marketing.surveys.addAtLeastOneQuestion') || 'Please add at least one question');
+    ElMessage.warning(t('marketing.surveys.addAtLeastOneQuestion'));
     return;
   }
 
@@ -459,22 +459,22 @@ async function handleSave() {
     if (editingItem.value) {
       const res = await useApiFetch(`surveys/${editingItem.value.id}`, 'PUT', payload);
       if (res.success) {
-        ElMessage.success(t('common.saved') || 'Saved successfully');
+        ElMessage.success(t('common.saved'));
       } else {
-        ElMessage.error(res.message || t('common.error') || 'Save failed');
+        ElMessage.error(res.message || t('common.error'));
       }
     } else {
       const res = await useApiFetch('surveys', 'POST', payload);
       if (res.success) {
-        ElMessage.success(t('common.saved') || 'Created successfully');
+        ElMessage.success(t('common.saved'));
       } else {
-        ElMessage.error(res.message || t('common.error') || 'Create failed');
+        ElMessage.error(res.message || t('common.error'));
       }
     }
     dialogVisible.value = false;
     await fetchData();
   } catch {
-    ElMessage.error(t('common.error') || 'An error occurred');
+    ElMessage.error(t('common.error'));
   } finally {
     saving.value = false;
   }
@@ -483,16 +483,16 @@ async function handleSave() {
 async function handleDelete(item: any) {
   try {
     await ElMessageBox.confirm(
-      t('common.confirmDelete') || 'Are you sure you want to delete this survey?',
-      t('common.warning') || 'Warning',
-      { type: 'warning', confirmButtonText: t('common.delete') || 'Delete', cancelButtonText: t('common.cancel') || 'Cancel' }
+      t('common.confirmDelete'),
+      t('common.warning'),
+      { type: 'warning', confirmButtonText: t('common.delete'), cancelButtonText: t('common.cancel') }
     );
     const res = await useApiFetch(`surveys/${item.id}`, 'DELETE');
     if (res.success) {
-      ElMessage.success(t('common.deleted') || 'Deleted successfully');
+      ElMessage.success(t('common.deleted'));
       await fetchData();
     } else {
-      ElMessage.error(res.message || t('common.error') || 'Delete failed');
+      ElMessage.error(res.message || t('common.error'));
     }
   } catch {
     // User cancelled
@@ -512,7 +512,7 @@ async function openResponsesDialog(survey: any) {
     }
   } catch {
     responses.value = [];
-    ElMessage.error(t('common.error') || 'Failed to load responses');
+    ElMessage.error(t('common.error'));
   } finally {
     loadingResponses.value = false;
   }
@@ -537,7 +537,7 @@ async function openAnalyticsDialog(survey: any) {
       completionData.value = completionRes.body;
     }
   } catch {
-    ElMessage.error(t('common.error') || 'Failed to load analytics');
+    ElMessage.error(t('common.error'));
   } finally {
     loadingAnalytics.value = false;
   }

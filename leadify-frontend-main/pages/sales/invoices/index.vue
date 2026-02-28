@@ -24,9 +24,9 @@ div
     .flex.items-center.gap-2.mb-4
       .w-8.h-8.rounded-xl.flex.items-center.justify-center(style="background: rgba(120,73,255,0.15)")
         Icon(name="ph:clock-countdown-bold" size="16" style="color: #7849ff")
-      h3.text-sm.font-bold(style="color: var(--text-primary)") {{ $t('invoices.agingReport') || 'Aging Report' }}
+      h3.text-sm.font-bold(style="color: var(--text-primary)") {{ $t('invoices.agingReport') }}
       .ml-auto
-        span.text-xs(style="color: var(--text-muted)") {{ $t('invoices.totalOutstanding') || 'Total Outstanding' }}:
+        span.text-xs(style="color: var(--text-muted)") {{ $t('invoices.totalOutstanding') }}:
         span.text-sm.font-bold.ml-1(style="color: #ef4444") {{ formatCurrency(agingReport.totalOutstanding || 0) }}
     .grid.gap-3(class="grid-cols-2 md:grid-cols-4")
       .rounded-xl.p-4.text-center(v-for="bucket in agingBuckets" :key="bucket.label" :style="{ background: bucket.bg, border: `1px solid ${bucket.borderColor}` }")
@@ -131,7 +131,7 @@ div
         span.text-xs(style="color: var(--text-muted)") {{ mobileFilteredInvoices.length }} {{ $t('invoices.title').toLowerCase() }}
 
   //- Template Selector
-  el-dialog(v-model="showTemplateSelector" :title="$t('invoices.selectTemplate') || 'Select Invoice Template'" width="500px")
+  el-dialog(v-model="showTemplateSelector" :title="$t('invoices.selectTemplate')" width="500px")
     .space-y-3
       //- Server-side standard PDF option
       .glass-card.p-3.rounded-xl.cursor-pointer.flex.items-center.justify-between(
@@ -204,10 +204,10 @@ const analyticsStats = computed(() => {
     return new Date() > dueDate;
   }).length;
   return [
-    { label: t('invoices.totalRevenue') || 'Total Revenue', value: formatCurrency(s.totalAmount), icon: 'ph:chart-line-up-bold', color: '#7849ff' },
-    { label: t('invoices.collected') || 'Collected', value: formatCurrency(s.collectedAmount), icon: 'ph:check-circle-bold', color: '#22c55e' },
-    { label: t('invoices.outstanding') || 'Outstanding', value: formatCurrency(s.pendingAmount), icon: 'ph:warning-circle-bold', color: '#f59e0b' },
-    { label: t('invoices.overdueCount') || 'Overdue', value: overdueCount, icon: 'ph:alarm-bold', color: '#ef4444' }
+    { label: t('invoices.totalRevenue'), value: formatCurrency(s.totalAmount), icon: 'ph:chart-line-up-bold', color: '#7849ff' },
+    { label: t('invoices.collected'), value: formatCurrency(s.collectedAmount), icon: 'ph:check-circle-bold', color: '#22c55e' },
+    { label: t('invoices.outstanding'), value: formatCurrency(s.pendingAmount), icon: 'ph:warning-circle-bold', color: '#f59e0b' },
+    { label: t('invoices.overdueCount'), value: overdueCount, icon: 'ph:alarm-bold', color: '#ef4444' }
   ];
 });
 
@@ -243,7 +243,7 @@ const updateColumns = () => {
     { prop: 'formattedDate', label: t('invoices.date'), component: 'Text', sortable: true, type: 'font-default', width: 130 },
     {
       prop: 'statusLabel',
-      label: t('invoices.status') || t('finance.expenses.status'),
+      label: t('invoices.status'),
       component: 'Label',
       type: 'outline',
       filters: [
@@ -259,7 +259,7 @@ updateColumns();
 
 const filterOptions = computed(() => [
   {
-    title: t('invoices.status') || 'Status',
+    title: t('invoices.status'),
     value: 'status',
     options: [
       { label: t('invoices.collected'), value: 'collected' },
