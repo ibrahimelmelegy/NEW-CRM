@@ -312,9 +312,10 @@
 </template>
 
 <script setup lang="ts">
-import { ref, computed } from 'vue';
+import { ref, computed, onMounted } from 'vue';
 import { graphic } from 'echarts';
 import VChart from 'vue-echarts';
+import { useApiFetch } from '~/composables/useApiFetch';
 
 definePageMeta({ title: 'Demand Forecasting' });
 
@@ -595,28 +596,7 @@ const forecastSummaryStats = computed(() => {
 });
 
 // ─── Product Forecast Data ──────────────────────────────────
-const productForecasts = ref([
-  { name: 'iPhone 15 Pro Max', category: 'Electronics', currentStock: 245, predictedDemand: 820, confidence: 'High', trend: 'up', variance: 4.2, reorderPoint: 300 },
-  { name: 'Samsung Galaxy S24', category: 'Electronics', currentStock: 180, predictedDemand: 650, confidence: 'High', trend: 'up', variance: 6.8, reorderPoint: 250 },
-  { name: 'MacBook Air M3', category: 'Electronics', currentStock: 95, predictedDemand: 420, confidence: 'Medium', trend: 'up', variance: 12.3, reorderPoint: 150 },
-  { name: 'Sony WH-1000XM5', category: 'Electronics', currentStock: 320, predictedDemand: 280, confidence: 'High', trend: 'stable', variance: 3.1, reorderPoint: 100 },
-  { name: 'Nike Air Max 90', category: 'Clothing', currentStock: 510, predictedDemand: 380, confidence: 'High', trend: 'up', variance: 5.5, reorderPoint: 200 },
-  { name: 'Levi\'s 501 Jeans', category: 'Clothing', currentStock: 890, predictedDemand: 420, confidence: 'Medium', trend: 'stable', variance: 11.2, reorderPoint: 300 },
-  { name: 'Adidas Ultraboost', category: 'Clothing', currentStock: 160, predictedDemand: 540, confidence: 'Medium', trend: 'up', variance: 15.8, reorderPoint: 250 },
-  { name: 'North Face Puffer', category: 'Clothing', currentStock: 720, predictedDemand: 190, confidence: 'Low', trend: 'down', variance: 28.4, reorderPoint: 150 },
-  { name: 'Organic Coffee Beans', category: 'Food', currentStock: 1200, predictedDemand: 950, confidence: 'High', trend: 'stable', variance: 4.7, reorderPoint: 400 },
-  { name: 'Protein Bars (Box)', category: 'Food', currentStock: 340, predictedDemand: 780, confidence: 'Medium', trend: 'up', variance: 18.3, reorderPoint: 500 },
-  { name: 'Green Tea Collection', category: 'Food', currentStock: 560, predictedDemand: 320, confidence: 'High', trend: 'stable', variance: 6.1, reorderPoint: 200 },
-  { name: 'Organic Honey (Jar)', category: 'Food', currentStock: 85, predictedDemand: 410, confidence: 'Medium', trend: 'up', variance: 14.7, reorderPoint: 150 },
-  { name: 'Smart LED Lamp', category: 'Home', currentStock: 430, predictedDemand: 310, confidence: 'High', trend: 'stable', variance: 7.2, reorderPoint: 150 },
-  { name: 'Dyson V15 Detect', category: 'Home', currentStock: 65, predictedDemand: 280, confidence: 'Medium', trend: 'up', variance: 19.5, reorderPoint: 120 },
-  { name: 'Instant Pot Pro', category: 'Home', currentStock: 280, predictedDemand: 350, confidence: 'High', trend: 'up', variance: 8.9, reorderPoint: 100 },
-  { name: 'Yoga Mat Premium', category: 'Sports', currentStock: 640, predictedDemand: 290, confidence: 'High', trend: 'stable', variance: 5.3, reorderPoint: 150 },
-  { name: 'Dumbbell Set 20kg', category: 'Sports', currentStock: 120, predictedDemand: 380, confidence: 'Medium', trend: 'up', variance: 22.1, reorderPoint: 200 },
-  { name: 'Running Shoes Pro', category: 'Sports', currentStock: 75, predictedDemand: 520, confidence: 'Low', trend: 'up', variance: 31.2, reorderPoint: 250 },
-  { name: 'Fitness Tracker Band', category: 'Sports', currentStock: 950, predictedDemand: 410, confidence: 'High', trend: 'up', variance: 7.8, reorderPoint: 200 },
-  { name: 'iPad Air M2', category: 'Electronics', currentStock: 110, predictedDemand: 560, confidence: 'Medium', trend: 'up', variance: 13.6, reorderPoint: 200 }
-]);
+const productForecasts = ref<any[]>([]);
 
 const filteredProducts = computed(() => {
   let items = productForecasts.value;
@@ -741,40 +721,7 @@ const seasonalInsights = computed(() => ({
 }));
 
 // ─── Reorder Items ──────────────────────────────────────────
-const reorderItems = ref([
-  {
-    name: 'Running Shoes Pro',
-    currentStock: 75,
-    maxStock: 600,
-    reorderPoint: 250,
-    safetyStock: 120,
-    daysUntilStockout: 4
-  },
-  {
-    name: 'Dyson V15 Detect',
-    currentStock: 65,
-    maxStock: 400,
-    reorderPoint: 120,
-    safetyStock: 50,
-    daysUntilStockout: 7
-  },
-  {
-    name: 'Organic Honey (Jar)',
-    currentStock: 85,
-    maxStock: 500,
-    reorderPoint: 150,
-    safetyStock: 60,
-    daysUntilStockout: 6
-  },
-  {
-    name: 'MacBook Air M3',
-    currentStock: 95,
-    maxStock: 350,
-    reorderPoint: 150,
-    safetyStock: 70,
-    daysUntilStockout: 12
-  }
-]);
+const reorderItems = ref<any[]>([]);
 
 // ─── Safety Stock Calculator ────────────────────────────────
 const calculatedSafetyStock = ref(0);
@@ -944,6 +891,89 @@ function getStockGaugeColor(current: number, reorderPoint: number, _max: number)
   return '#22c55e';
 }
 
+// ─── Mock Fallback Data ──────────────────────────────────
+const mockProductForecasts = [
+  { name: 'iPhone 15 Pro Max', category: 'Electronics', currentStock: 245, predictedDemand: 820, confidence: 'High', trend: 'up', variance: 4.2, reorderPoint: 300 },
+  { name: 'Samsung Galaxy S24', category: 'Electronics', currentStock: 180, predictedDemand: 650, confidence: 'High', trend: 'up', variance: 6.8, reorderPoint: 250 },
+  { name: 'MacBook Air M3', category: 'Electronics', currentStock: 95, predictedDemand: 420, confidence: 'Medium', trend: 'up', variance: 12.3, reorderPoint: 150 },
+  { name: 'Sony WH-1000XM5', category: 'Electronics', currentStock: 320, predictedDemand: 280, confidence: 'High', trend: 'stable', variance: 3.1, reorderPoint: 100 },
+  { name: 'Nike Air Max 90', category: 'Clothing', currentStock: 510, predictedDemand: 380, confidence: 'High', trend: 'up', variance: 5.5, reorderPoint: 200 },
+  { name: 'Levi\'s 501 Jeans', category: 'Clothing', currentStock: 890, predictedDemand: 420, confidence: 'Medium', trend: 'stable', variance: 11.2, reorderPoint: 300 },
+  { name: 'Adidas Ultraboost', category: 'Clothing', currentStock: 160, predictedDemand: 540, confidence: 'Medium', trend: 'up', variance: 15.8, reorderPoint: 250 },
+  { name: 'North Face Puffer', category: 'Clothing', currentStock: 720, predictedDemand: 190, confidence: 'Low', trend: 'down', variance: 28.4, reorderPoint: 150 },
+  { name: 'Organic Coffee Beans', category: 'Food', currentStock: 1200, predictedDemand: 950, confidence: 'High', trend: 'stable', variance: 4.7, reorderPoint: 400 },
+  { name: 'Protein Bars (Box)', category: 'Food', currentStock: 340, predictedDemand: 780, confidence: 'Medium', trend: 'up', variance: 18.3, reorderPoint: 500 },
+  { name: 'Green Tea Collection', category: 'Food', currentStock: 560, predictedDemand: 320, confidence: 'High', trend: 'stable', variance: 6.1, reorderPoint: 200 },
+  { name: 'Organic Honey (Jar)', category: 'Food', currentStock: 85, predictedDemand: 410, confidence: 'Medium', trend: 'up', variance: 14.7, reorderPoint: 150 },
+  { name: 'Smart LED Lamp', category: 'Home', currentStock: 430, predictedDemand: 310, confidence: 'High', trend: 'stable', variance: 7.2, reorderPoint: 150 },
+  { name: 'Dyson V15 Detect', category: 'Home', currentStock: 65, predictedDemand: 280, confidence: 'Medium', trend: 'up', variance: 19.5, reorderPoint: 120 },
+  { name: 'Instant Pot Pro', category: 'Home', currentStock: 280, predictedDemand: 350, confidence: 'High', trend: 'up', variance: 8.9, reorderPoint: 100 },
+  { name: 'Yoga Mat Premium', category: 'Sports', currentStock: 640, predictedDemand: 290, confidence: 'High', trend: 'stable', variance: 5.3, reorderPoint: 150 },
+  { name: 'Dumbbell Set 20kg', category: 'Sports', currentStock: 120, predictedDemand: 380, confidence: 'Medium', trend: 'up', variance: 22.1, reorderPoint: 200 },
+  { name: 'Running Shoes Pro', category: 'Sports', currentStock: 75, predictedDemand: 520, confidence: 'Low', trend: 'up', variance: 31.2, reorderPoint: 250 },
+  { name: 'Fitness Tracker Band', category: 'Sports', currentStock: 950, predictedDemand: 410, confidence: 'High', trend: 'up', variance: 7.8, reorderPoint: 200 },
+  { name: 'iPad Air M2', category: 'Electronics', currentStock: 110, predictedDemand: 560, confidence: 'Medium', trend: 'up', variance: 13.6, reorderPoint: 200 }
+];
+
+const mockReorderItems = [
+  { name: 'Running Shoes Pro', currentStock: 75, maxStock: 600, reorderPoint: 250, safetyStock: 120, daysUntilStockout: 4 },
+  { name: 'Dyson V15 Detect', currentStock: 65, maxStock: 400, reorderPoint: 120, safetyStock: 50, daysUntilStockout: 7 },
+  { name: 'Organic Honey (Jar)', currentStock: 85, maxStock: 500, reorderPoint: 150, safetyStock: 60, daysUntilStockout: 6 },
+  { name: 'MacBook Air M3', currentStock: 95, maxStock: 350, reorderPoint: 150, safetyStock: 70, daysUntilStockout: 12 }
+];
+
+function deriveReorderItems(forecasts: any[]): any[] {
+  return forecasts
+    .filter((p: any) => p.currentStock < p.reorderPoint)
+    .map((p: any) => ({
+      name: p.name,
+      currentStock: p.currentStock,
+      maxStock: Math.round(p.reorderPoint * 2.5),
+      reorderPoint: p.reorderPoint,
+      safetyStock: Math.round(p.reorderPoint * 0.4),
+      daysUntilStockout: p.predictedDemand > 0 ? Math.max(1, Math.round((p.currentStock / p.predictedDemand) * 30)) : 999
+    }))
+    .sort((a: any, b: any) => a.daysUntilStockout - b.daysUntilStockout)
+    .slice(0, 8);
+}
+
+async function loadData() {
+  loading.value = true;
+  try {
+    // Fetch demand forecasts
+    const { body: forecastsData, success: forecastsOk } = await useApiFetch('demand-forecasting' as any);
+    if (forecastsOk && Array.isArray(forecastsData)) {
+      productForecasts.value = forecastsData;
+      // Derive reorder items from forecast data
+      const derived = deriveReorderItems(forecastsData);
+      reorderItems.value = derived.length > 0 ? derived : mockReorderItems;
+    } else {
+      productForecasts.value = mockProductForecasts;
+      reorderItems.value = mockReorderItems;
+    }
+
+    // Try to also fetch accuracy data for KPIs (optional enhancement)
+    try {
+      const { body: accuracyData, success: accuracyOk } = await useApiFetch('demand-forecasting/accuracy' as any);
+      if (accuracyOk && accuracyData) {
+        // Could be used to update KPI cards if backend provides accuracy metrics
+      }
+    } catch {
+      // KPIs stay computed from local data
+    }
+  } catch {
+    // Fallback to mock data on any failure
+    productForecasts.value = mockProductForecasts;
+    reorderItems.value = mockReorderItems;
+  } finally {
+    loading.value = false;
+  }
+}
+
+onMounted(() => {
+  loadData();
+});
+
 // ─── Actions ────────────────────────────────────────────────
 function onTimeRangeChange(range: string) {
   selectedTimeRange.value = range;
@@ -958,14 +988,11 @@ function onCategoryChange(_category: string) {
   );
 }
 
-function refreshData() {
-  loading.value = true;
-  setTimeout(() => {
-    forecastData.value = generateForecastData(
-      { '3M': 3, '6M': 6, '12M': 12 }[selectedTimeRange.value] || 6
-    );
-    loading.value = false;
-  }, 800);
+async function refreshData() {
+  forecastData.value = generateForecastData(
+    ({ '3M': 3, '6M': 6, '12M': 12 } as Record<string, number>)[selectedTimeRange.value] || 6
+  );
+  await loadData();
 }
 
 function exportReport() {

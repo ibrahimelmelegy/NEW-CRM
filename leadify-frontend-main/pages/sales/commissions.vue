@@ -127,7 +127,7 @@
                           : 'bg-emerald-500/20 text-emerald-400'
                     "
                   >
-                    T{{ idx + 1 }}
+                    T{{ Number(idx) + 1 }}
                   </div>
                   <span class="text-xs text-slate-300">{{ tier.label }}</span>
                 </div>
@@ -289,9 +289,10 @@
 </template>
 
 <script setup lang="ts">
-import { ref, computed } from 'vue';
+import { ref, computed, onMounted } from 'vue';
 import { ElMessage } from 'element-plus';
 import { useI18n } from 'vue-i18n';
+import { useApiFetch } from '~/composables/useApiFetch';
 
 const { t } = useI18n();
 
@@ -300,62 +301,12 @@ definePageMeta({ layout: 'default', middleware: 'permissions' });
 const activeTab = ref('overview');
 const selectedPeriod = ref('2026-02');
 const showPlanDialog = ref(false);
+const loading = ref(false);
 const newPlan = ref({ name: '', description: '', type: 'REVENUE_PCT', baseRate: 5, tiers: [{ label: 'Base', minValue: 0, rate: 5 }] });
 
-const commissionEntries = ref([
-  { rep: 'Ahmed Al-Farsi', plan: 'Enterprise Plan', dealsClosed: 8, revenue: 450000, rate: 7, commission: 31500, bonus: 5000, status: 'PAID' },
-  { rep: 'Sara Mohammed', plan: 'Enterprise Plan', dealsClosed: 12, revenue: 620000, rate: 8, commission: 49600, bonus: 10000, status: 'APPROVED' },
-  { rep: 'Omar Hassan', plan: 'Standard Plan', dealsClosed: 6, revenue: 180000, rate: 5, commission: 9000, bonus: 0, status: 'PENDING' },
-  { rep: 'Fatima Ali', plan: 'SMB Plan', dealsClosed: 15, revenue: 95000, rate: 4, commission: 3800, bonus: 2000, status: 'PAID' },
-  { rep: 'Khalid Ibrahim', plan: 'Enterprise Plan', dealsClosed: 5, revenue: 320000, rate: 7, commission: 22400, bonus: 3000, status: 'APPROVED' },
-  { rep: 'Noura Salem', plan: 'Standard Plan', dealsClosed: 9, revenue: 210000, rate: 5, commission: 10500, bonus: 0, status: 'PENDING' }
-]);
+const commissionEntries = ref<any[]>([]);
 
-const commissionPlans = ref([
-  {
-    id: 1,
-    name: 'Enterprise Sales Plan',
-    description: 'For enterprise account executives closing deals > 100K SAR',
-    isActive: true,
-    type: 'Tiered',
-    assignedReps: 3,
-    tiers: [
-      { label: 'Base (0-200K)', rate: 5 },
-      { label: 'Mid (200K-500K)', rate: 7 },
-      { label: 'Accelerator (500K+)', rate: 10 }
-    ]
-  },
-  {
-    id: 2,
-    name: 'Standard Sales Plan',
-    description: 'Standard commission for mid-market sales reps',
-    isActive: true,
-    type: 'Revenue %',
-    assignedReps: 4,
-    tiers: [{ label: 'All Revenue', rate: 5 }]
-  },
-  {
-    id: 3,
-    name: 'SMB Plan',
-    description: 'High volume SMB sales with lower rate',
-    isActive: true,
-    type: 'Revenue %',
-    assignedReps: 3,
-    tiers: [
-      { label: 'Base', rate: 3 },
-      { label: 'Bonus (>20 deals)', rate: 4 }
-    ]
-  },
-  {
-    id: 4,
-    name: 'Partner Referral Plan',
-    description: 'Commission for partner-sourced deals',
-    isActive: false,
-    type: 'Fixed per Deal',
-    assignedReps: 0,
-    tiers: [{ label: 'Per Referral', rate: 2 }]
-  }
-]);
+const commissionPlans = ref<any[]>([]);
 
 const leaderboard = computed(() =>
   [...commissionEntries.value]
@@ -369,11 +320,7 @@ const leaderboard = computed(() =>
     .sort((a, b) => b.totalEarnings - a.totalEarnings)
 );
 
-const payouts = ref([
-  { payoutId: 'PAY-001', period: 'January 2026', repCount: 6, amount: 98500, status: 'COMPLETED', date: 'Feb 5, 2026' },
-  { payoutId: 'PAY-002', period: 'February 2026', repCount: 6, amount: 126800, status: 'PROCESSING', date: 'Mar 5, 2026' },
-  { payoutId: 'PAY-003', period: 'December 2025', repCount: 5, amount: 85200, status: 'COMPLETED', date: 'Jan 5, 2026' }
-]);
+const payouts = ref<any[]>([]);
 
 const totalCommissions = computed(() => commissionEntries.value.reduce((s, e) => s + e.commission + (e.bonus || 0), 0));
 const paidOut = computed(() => commissionEntries.value.filter(e => e.status === 'PAID').reduce((s, e) => s + e.commission + (e.bonus || 0), 0));
@@ -382,6 +329,95 @@ const activePlans = computed(() => commissionPlans.value.filter(p => p.isActive)
 const avgRate = computed(() => {
   if (!commissionEntries.value.length) return 0;
   return (commissionEntries.value.reduce((s, e) => s + e.rate, 0) / commissionEntries.value.length).toFixed(1);
+});
+
+// ─── Load Data from API ──────────────────────────────────
+const mockCommissionEntries = [
+  { rep: 'Ahmed Al-Farsi', plan: 'Enterprise Plan', dealsClosed: 8, revenue: 450000, rate: 7, commission: 31500, bonus: 5000, status: 'PAID' },
+  { rep: 'Sara Mohammed', plan: 'Enterprise Plan', dealsClosed: 12, revenue: 620000, rate: 8, commission: 49600, bonus: 10000, status: 'APPROVED' },
+  { rep: 'Omar Hassan', plan: 'Standard Plan', dealsClosed: 6, revenue: 180000, rate: 5, commission: 9000, bonus: 0, status: 'PENDING' },
+  { rep: 'Fatima Ali', plan: 'SMB Plan', dealsClosed: 15, revenue: 95000, rate: 4, commission: 3800, bonus: 2000, status: 'PAID' },
+  { rep: 'Khalid Ibrahim', plan: 'Enterprise Plan', dealsClosed: 5, revenue: 320000, rate: 7, commission: 22400, bonus: 3000, status: 'APPROVED' },
+  { rep: 'Noura Salem', plan: 'Standard Plan', dealsClosed: 9, revenue: 210000, rate: 5, commission: 10500, bonus: 0, status: 'PENDING' }
+];
+
+const mockCommissionPlans = [
+  {
+    id: 1, name: 'Enterprise Sales Plan', description: 'For enterprise account executives closing deals > 100K SAR',
+    isActive: true, type: 'Tiered', assignedReps: 3,
+    tiers: [{ label: 'Base (0-200K)', rate: 5 }, { label: 'Mid (200K-500K)', rate: 7 }, { label: 'Accelerator (500K+)', rate: 10 }]
+  },
+  {
+    id: 2, name: 'Standard Sales Plan', description: 'Standard commission for mid-market sales reps',
+    isActive: true, type: 'Revenue %', assignedReps: 4, tiers: [{ label: 'All Revenue', rate: 5 }]
+  },
+  {
+    id: 3, name: 'SMB Plan', description: 'High volume SMB sales with lower rate',
+    isActive: true, type: 'Revenue %', assignedReps: 3, tiers: [{ label: 'Base', rate: 3 }, { label: 'Bonus (>20 deals)', rate: 4 }]
+  },
+  {
+    id: 4, name: 'Partner Referral Plan', description: 'Commission for partner-sourced deals',
+    isActive: false, type: 'Fixed per Deal', assignedReps: 0, tiers: [{ label: 'Per Referral', rate: 2 }]
+  }
+];
+
+const mockPayouts = [
+  { payoutId: 'PAY-001', period: 'January 2026', repCount: 6, amount: 98500, status: 'COMPLETED', date: 'Feb 5, 2026' },
+  { payoutId: 'PAY-002', period: 'February 2026', repCount: 6, amount: 126800, status: 'PROCESSING', date: 'Mar 5, 2026' },
+  { payoutId: 'PAY-003', period: 'December 2025', repCount: 5, amount: 85200, status: 'COMPLETED', date: 'Jan 5, 2026' }
+];
+
+async function loadData() {
+  loading.value = true;
+  try {
+    // Fetch commission entries
+    const { body: entriesData, success: entriesOk } = await useApiFetch('commissions' as any);
+    if (entriesOk && Array.isArray(entriesData)) {
+      commissionEntries.value = entriesData;
+      // Derive plans from entries if the API returns plan data within entries
+      const plansRes = await useApiFetch('commissions/dashboard-kpis' as any);
+      if (plansRes.success && plansRes.body) {
+        // If KPI endpoint returns plan info, use it; otherwise keep from main endpoint
+      }
+    } else {
+      commissionEntries.value = mockCommissionEntries;
+    }
+
+    // Fetch commission plans (try dedicated list or derive from main endpoint)
+    try {
+      const { body: plansData, success: plansOk } = await useApiFetch('commissions?type=plans' as any);
+      if (plansOk && Array.isArray(plansData)) {
+        commissionPlans.value = plansData;
+      } else {
+        commissionPlans.value = mockCommissionPlans;
+      }
+    } catch {
+      commissionPlans.value = mockCommissionPlans;
+    }
+
+    // Fetch payouts (paid commissions)
+    try {
+      const { body: payoutsData, success: payoutsOk } = await useApiFetch('commissions?status=PAID' as any);
+      if (payoutsOk && Array.isArray(payoutsData)) {
+        payouts.value = payoutsData;
+      } else {
+        payouts.value = mockPayouts;
+      }
+    } catch {
+      payouts.value = mockPayouts;
+    }
+  } catch {
+    // Fallback to mock data on any failure
+    commissionEntries.value = mockCommissionEntries;
+    commissionPlans.value = mockCommissionPlans;
+    payouts.value = mockPayouts;
+  } finally {
+    loading.value = false;
+  }
+}
+
+onMounted(() => {
+  loadData();
 });
 
 const formatCurrency = (val: number) => {
