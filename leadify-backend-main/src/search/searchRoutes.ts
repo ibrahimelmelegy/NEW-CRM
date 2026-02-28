@@ -6,7 +6,7 @@ import { authenticateUser } from '../middleware/authMiddleware';
  * @swagger
  * tags:
  *   name: Search
- *   description: Global and advanced search across CRM entities
+ *   description: Global and entity-specific search with search history
  */
 
 const router = express.Router();
@@ -16,7 +16,7 @@ const router = express.Router();
  * /api/search:
  *   get:
  *     summary: Global search
- *     description: Search across multiple entity types with a single query
+ *     description: Search across leads, deals, clients, contacts, opportunities or a single entity
  *     tags: [Search]
  *     security:
  *       - bearerAuth: []
@@ -26,12 +26,17 @@ const router = express.Router();
  *         required: true
  *         schema:
  *           type: string
- *         description: Search term
+ *         description: Search query
+ *       - in: query
+ *         name: entity
+ *         schema:
+ *           type: string
+ *         description: Single entity type to search (e.g. lead, deal, client)
  *       - in: query
  *         name: entityTypes
  *         schema:
  *           type: string
- *         description: Comma-separated entity types to search (e.g. lead,deal,contact)
+ *         description: Comma-separated entity types for global search (e.g. lead,deal)
  *       - in: query
  *         name: page
  *         schema:
@@ -41,96 +46,39 @@ const router = express.Router();
  *         name: limit
  *         schema:
  *           type: integer
- *           default: 10
+ *           default: 20
  *     responses:
  *       200:
- *         description: Search results grouped by entity type
- *       500:
- *         description: Server error
+ *         description: Search results
  */
 router.get('/', authenticateUser, searchController.search);
 
 /**
  * @swagger
- * /api/search/advanced/{entityType}:
- *   post:
- *     summary: Advanced search
- *     description: Perform advanced search with complex filters on a specific entity type
+ * /api/search/recent:
+ *   get:
+ *     summary: Get recent searches
  *     tags: [Search]
  *     security:
  *       - bearerAuth: []
- *     parameters:
- *       - in: path
- *         name: entityType
- *         required: true
- *         schema:
- *           type: string
- *         description: Entity type to search (e.g. lead, deal, contact)
- *     requestBody:
- *       required: true
- *       content:
- *         application/json:
- *           schema:
- *             type: object
- *             properties:
- *               filters:
- *                 type: array
- *                 items:
- *                   type: object
- *                   properties:
- *                     field:
- *                       type: string
- *                     operator:
- *                       type: string
- *                     value:
- *                       type: string
- *                 description: Array of filter conditions
- *               conditionLogic:
- *                 type: string
- *                 enum: [AND, OR]
- *                 default: AND
- *               sortBy:
- *                 type: string
- *               sort:
- *                 type: string
- *                 enum: [ASC, DESC]
- *                 default: DESC
- *               page:
- *                 type: integer
- *                 default: 1
- *               limit:
- *                 type: integer
- *                 default: 20
  *     responses:
  *       200:
- *         description: Advanced search results
- *       500:
- *         description: Server error
+ *         description: Recent search queries for the current user
  */
-router.post('/advanced/:entityType', authenticateUser, searchController.advancedSearch);
+router.get('/recent', authenticateUser, searchController.getRecentSearches);
 
 /**
  * @swagger
- * /api/search/fields/{entityType}:
- *   get:
- *     summary: Get searchable fields
- *     description: Returns the list of searchable fields for a given entity type
+ * /api/search/recent:
+ *   delete:
+ *     summary: Clear recent searches
  *     tags: [Search]
  *     security:
  *       - bearerAuth: []
- *     parameters:
- *       - in: path
- *         name: entityType
- *         required: true
- *         schema:
- *           type: string
- *         description: Entity type (e.g. lead, deal, contact)
  *     responses:
  *       200:
- *         description: List of searchable fields with their types
- *       500:
- *         description: Server error
+ *         description: Search history cleared
  */
-router.get('/fields/:entityType', authenticateUser, searchController.getSearchableFields);
+router.delete('/recent', authenticateUser, searchController.clearRecentSearches);
 
 export default router;
