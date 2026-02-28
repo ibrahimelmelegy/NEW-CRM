@@ -170,7 +170,8 @@ const menu = [
       { link: '/reminders', name: 'navigation.reminders', icon: 'ph:bell-ringing-bold' },
       { link: '/notifications', name: 'navigation.notifications', icon: 'ph:bell-bold' },
       { link: '/crm/onboarding', name: 'navigation.customerOnboarding', icon: 'ph:rocket-launch-bold' },
-      { link: '/crm/journey-builder', name: 'navigation.journeyBuilder', icon: 'ph:path-bold' }
+      { link: '/crm/journey-builder', name: 'navigation.journeyBuilder', icon: 'ph:path-bold' },
+      { link: '/crm/segmentation', name: 'navigation.segmentation', icon: 'ph:users-three-bold' }
     ]
   },
 
@@ -263,7 +264,8 @@ const menu = [
       { link: '/e-commerce/orders', name: 'navigation.ecOrders', icon: 'ph:receipt-bold' },
       { link: '/e-commerce/categories', name: 'navigation.ecCategories', icon: 'ph:folder-notch-bold' },
       { link: '/e-commerce/coupons', name: 'navigation.ecCoupons', icon: 'ph:ticket-bold' },
-      { link: '/e-commerce/reviews', name: 'navigation.ecReviews', icon: 'ph:star-bold' }
+      { link: '/e-commerce/reviews', name: 'navigation.ecReviews', icon: 'ph:star-bold' },
+      { link: '/e-commerce/cart-recovery', name: 'navigation.cartRecovery', icon: 'ph:shopping-cart-simple-bold' }
     ]
   },
 
@@ -277,7 +279,8 @@ const menu = [
       { link: '/warehouse', name: 'navigation.warehouse', icon: 'ph:warehouse-bold' },
       { link: '/manufacturing', name: 'navigation.manufacturing', icon: 'ph:factory-bold' },
       { link: '/shipping', name: 'navigation.shipping', icon: 'ph:truck-bold' },
-      { link: '/catalog', name: 'navigation.catalog', icon: 'ph:storefront-bold' }
+      { link: '/catalog', name: 'navigation.catalog', icon: 'ph:storefront-bold' },
+      { link: '/supply-chain/demand-forecasting', name: 'navigation.demandForecasting', icon: 'ph:chart-line-bold' }
     ]
   },
 
@@ -312,7 +315,8 @@ const menu = [
       { link: '/marketing/loyalty', name: 'navigation.loyalty', icon: 'ph:gift-bold' },
       { link: '/web-forms', name: 'navigation.webForms', icon: 'ph:browser-bold' },
       { link: '/marketing/events', name: 'navigation.eventManagement', icon: 'ph:calendar-star-bold' },
-      { link: '/marketing/abm', name: 'navigation.abm', icon: 'ph:target-bold' }
+      { link: '/marketing/abm', name: 'navigation.abm', icon: 'ph:target-bold' },
+      { link: '/marketing/social-listening', name: 'navigation.socialListening', icon: 'ph:ear-bold' }
     ]
   },
 
@@ -327,7 +331,8 @@ const menu = [
       { link: '/documents/editor', name: 'navigation.documentEditor', icon: 'ph:file-plus-bold' },
       { link: '/archive', name: 'navigation.archive', icon: 'ph:archive-bold' },
       { link: '/automations', name: 'navigation.automations', icon: 'ph:git-merge-bold' },
-      { link: '/automations/templates', name: 'navigation.automationTemplates', icon: 'ph:files-bold' }
+      { link: '/automations/templates', name: 'navigation.automationTemplates', icon: 'ph:files-bold' },
+      { link: '/automations/monitor', name: 'navigation.workflowMonitor', icon: 'ph:activity-bold' }
     ]
   },
 
@@ -451,7 +456,8 @@ const menu = [
       { link: '/settings/white-label', name: 'navigation.whiteLabel', icon: 'ph:paint-brush-bold' },
       { link: '/settings/customer-portal', name: 'navigation.customerPortal', icon: 'ph:monitor-bold' },
       { link: '/settings/compliance', name: 'navigation.complianceCenter', icon: 'ph:shield-warning-bold' },
-      { link: '/settings/roles', name: 'navigation.permissionsHub', icon: 'ph:key-bold', role: 'VIEW_ROLES' }
+      { link: '/settings/roles', name: 'navigation.permissionsHub', icon: 'ph:key-bold', role: 'VIEW_ROLES' },
+      { link: '/settings/api-marketplace', name: 'navigation.apiMarketplace', icon: 'ph:plugs-bold' }
     ]
   }
 ];
