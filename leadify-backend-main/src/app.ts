@@ -70,6 +70,7 @@ import approvalRoutes from './approval/approvalRoutes';
 import commentRoutes from './comments/commentRoutes';
 import attachmentRoutes from './attachments/attachmentRoutes';
 import erpnextRoutes from './integrations/erpnext/erpnextRoutes';
+import thirdPartyIntegrationRoutes from './integrations/integrationRoutes';
 import auditRoutes from './audit/auditRoutes';
 import taskRoutes from './tasks/taskRoutes';
 import plannerRoutes from './tasks/plannerRoutes';
@@ -130,6 +131,18 @@ import ecDashboardRoutes from './ecommerce/dashboard/ecDashboardRoutes';
 import meetingNoteRoutes from './meetingNote/meetingNoteRoutes';
 import eSignatureRoutes from './eSignature/eSignatureRoutes';
 import whatsappRoutes from './whatsapp/whatsappRoutes';
+import filePreviewRoutes from './storage/filePreviewRoutes';
+// ─── Wave 7-8 Enterprise Module Routes ──────────────────────────────────────
+import segmentRoutes from './segmentation/segmentRoutes';
+import socialListeningRoutes from './socialListening/socialListeningRoutes';
+import demandForecastRoutes from './demandForecasting/demandForecastRoutes';
+import cartRecoveryRoutes from './cartRecovery/cartRecoveryRoutes';
+import clvRoutes from './clvAnalytics/clvRoutes';
+import attributionRoutes from './attributionModeling/attributionRoutes';
+import usageBillingRoutes from './usageBilling/usageBillingRoutes';
+import accountPlanRoutes from './accountPlanning/accountPlanRoutes';
+import complianceManagerRoutes from './complianceManager/complianceRoutes';
+import aiLeadScoringRoutes from './aiLeadScoring/aiLeadScoringRoutes';
 
 const fileUpload = require('express-fileupload');
 
@@ -313,6 +326,7 @@ app.use('/api/rfq', rfqRoutes);
 app.use('/api/ai', apiIntensiveLimiter, aiRoutes);
 app.use('/api/integrations', integrationRoutes);
 app.use('/api/integrations/erpnext', erpnextRoutes);
+app.use('/api/integrations/third-party', thirdPartyIntegrationRoutes);
 app.use('/api/messaging', messagingRoutes);
 app.use('/api/custom-fields', customFieldRoutes);
 app.use('/api/webhooks', webhookLimiter, webhookRoutes);
@@ -403,6 +417,19 @@ app.use('/api/meeting-notes', meetingNoteRoutes);
 app.use('/api/e-signatures', eSignatureRoutes);
 // ─── WhatsApp Module ─────────────────────────────────────────────────────────
 app.use('/api/whatsapp', whatsappRoutes);
+// ─── File Preview Routes ────────────────────────────────────────────────────
+app.use('/api/files', filePreviewRoutes);
+// ─── Wave 7-8 Enterprise Modules ───────────────────────────────────────────
+app.use('/api/segments', segmentRoutes);
+app.use('/api/social-listening', socialListeningRoutes);
+app.use('/api/demand-forecasting', demandForecastRoutes);
+app.use('/api/cart-recovery', cartRecoveryRoutes);
+app.use('/api/clv', clvRoutes);
+app.use('/api/attribution', attributionRoutes);
+app.use('/api/usage-billing', usageBillingRoutes);
+app.use('/api/account-plans', accountPlanRoutes);
+app.use('/api/compliance', complianceManagerRoutes);
+app.use('/api/ai-lead-scoring', aiLeadScoringRoutes);
 
 // Public notification unsubscribe (no auth required)
 app.use('/api/notifications', unsubscribeRoutes);
