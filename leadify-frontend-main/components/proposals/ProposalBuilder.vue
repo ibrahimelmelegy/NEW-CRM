@@ -146,7 +146,7 @@ function createDefaultFormData(): ProposalData {
     clientName: '',
     clientCompany: '',
     clientEmail: '',
-    date: new Date().toISOString().split('T')[0],
+    date: new Date().toISOString().split('T')[0] ?? '',
     validUntil: '',
     status: 'Draft',
     themeColor: '#7c3aed',
@@ -276,10 +276,10 @@ function handleMoveStep(index: number, direction: 'up' | 'down') {
   const newOrder = [...formData.stepOrder]
   if (direction === 'up') {
     if (index === 0) return
-    ;[newOrder[index - 1], newOrder[index]] = [newOrder[index], newOrder[index - 1]]
+    ;[newOrder[index - 1], newOrder[index]] = [newOrder[index] ?? '', newOrder[index - 1] ?? '']
   } else {
     if (index === newOrder.length - 1) return
-    ;[newOrder[index], newOrder[index + 1]] = [newOrder[index + 1], newOrder[index]]
+    ;[newOrder[index], newOrder[index + 1]] = [newOrder[index + 1] ?? '', newOrder[index] ?? '']
   }
   handleChange('stepOrder', newOrder)
 }
@@ -1029,7 +1029,7 @@ function onNewSectionKeyDown(e: KeyboardEvent) {
 
                   <!-- CRM Entity Selector -->
                   <div class="col-span-12">
-                    <ProposalsProposalCRMEntitySelector v-model="selectedEntity" />
+                    <ProposalsProposalCRMEntitySelector v-model="(selectedEntity as any)" />
                   </div>
 
                   <div class="col-span-12 pt-6 mt-4 border-t border-gray-100 bg-violet-50/50 p-6 rounded-2xl border border-violet-100">
@@ -1085,7 +1085,7 @@ function onNewSectionKeyDown(e: KeyboardEvent) {
 
                   <!-- File Attachments -->
                   <div class="col-span-12 border-t border-gray-100 pt-6 mt-2">
-                    <ProposalsProposalFileUploader v-model="attachments" />
+                    <ProposalsProposalFileUploader v-model="(attachments as any)" />
                   </div>
                 </div>
               </div>
@@ -1385,7 +1385,7 @@ function onNewSectionKeyDown(e: KeyboardEvent) {
           }"
         >
           <div :style="{ transform: `scale(${zoom})`, transformOrigin: 'top center', paddingBottom: '100px' }" class="transition-transform duration-200">
-            <ProposalsProposalPrintTemplate :data="formData" />
+            <ProposalsProposalPrintTemplate :form-data="(formData as any)" />
           </div>
         </div>
       </div>
@@ -1393,7 +1393,7 @@ function onNewSectionKeyDown(e: KeyboardEvent) {
 
     <!-- Hidden Print Area -->
     <div id="proposal-print-container" class="hidden print:block">
-      <ProposalsProposalPrintTemplate :data="formData" />
+      <ProposalsProposalPrintTemplate :form-data="(formData as any)" />
     </div>
   </div>
 </template>

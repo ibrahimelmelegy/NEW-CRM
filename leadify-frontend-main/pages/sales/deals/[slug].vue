@@ -144,8 +144,8 @@ const currentStageIndex = computed(() => {
 
 const currentStageType = computed(() => {
   const stage = deal?.stage;
-  if (stage === 'CLOSED' || stage === 'Closed Won') return 'success';
-  if (stage === 'CANCELLED' || stage === 'Closed Lost') return 'danger';
+  if (stage === 'COMPLETED' || stage === 'CLOSED' as any || stage === 'Closed Won' as any) return 'success';
+  if (stage === 'CANCELLED' || stage === 'Closed Lost' as any) return 'danger';
   return 'primary';
 });
 
@@ -165,7 +165,7 @@ function createQuoteFromDeal() {
   const query: Record<string, string> = {
     relatedEntityId: deal.id,
     relatedEntityType: 'Deal',
-    proposalFor: deal.companyName || deal.name
+    proposalFor: deal.companyName || deal.name || ''
   };
   router.push({ path: '/sales/proposals/add-proposal', query });
 }

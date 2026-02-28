@@ -132,7 +132,7 @@ describe('SupportService', () => {
         it('should update a ticket', async () => {
             const mockTicket = {
                 id: 'ticket-1',
-                update: jest.fn().mockResolvedValue(true),
+                update: (jest.fn() as jest.Mock<any>).mockResolvedValue(true),
             };
             (Ticket.findByPk as jest.Mock<any>).mockResolvedValue(mockTicket);
 
@@ -301,7 +301,7 @@ describe('SupportService', () => {
         it('should submit CSAT rating', async () => {
             const mockTicket = {
                 id: 'ticket-1',
-                update: jest.fn().mockResolvedValue(true),
+                update: (jest.fn() as jest.Mock<any>).mockResolvedValue(true),
             };
             (Ticket.findByPk as jest.Mock<any>).mockResolvedValue(mockTicket);
 

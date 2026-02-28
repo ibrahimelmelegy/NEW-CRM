@@ -608,7 +608,7 @@ async function bulkExport() {
     }));
 
     const csv = [
-      Object.keys(data[0]).join(','),
+      Object.keys(data[0] as any).join(','),
       ...data.map(row => Object.values(row).join(','))
     ].join('\n');
 

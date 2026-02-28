@@ -311,8 +311,8 @@ async function loadOrders() {
     if (search.value.trim()) params.set('searchKey', search.value.trim());
     if (statusFilter.value && statusFilter.value !== 'ALL') params.set('status', statusFilter.value);
     if (dateRange.value?.length === 2) {
-      params.set('startDate', dateRange.value[0]);
-      params.set('endDate', dateRange.value[1]);
+      params.set('startDate', dateRange.value[0] as any);
+      params.set('endDate', dateRange.value[1] as any);
     }
     const result = await getSalesOrders(params.toString());
     orders.value = result.orders;

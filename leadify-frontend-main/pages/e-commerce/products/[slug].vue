@@ -320,14 +320,14 @@ const ratingDistribution = computed(() => {
   const total = reviews.value.length || 1;
   reviews.value.forEach(r => {
     const star = Math.min(5, Math.max(1, Math.round(r.rating || 0)));
-    dist[star]++;
+    dist[star] = (dist[star] || 0) + 1;
   });
   return {
-    1: Math.round((dist[1] / total) * 100),
-    2: Math.round((dist[2] / total) * 100),
-    3: Math.round((dist[3] / total) * 100),
-    4: Math.round((dist[4] / total) * 100),
-    5: Math.round((dist[5] / total) * 100)
+    1: Math.round(((dist[1] || 0) / total) * 100),
+    2: Math.round(((dist[2] || 0) / total) * 100),
+    3: Math.round(((dist[3] || 0) / total) * 100),
+    4: Math.round(((dist[4] || 0) / total) * 100),
+    5: Math.round(((dist[5] || 0) / total) * 100)
   };
 });
 

@@ -899,8 +899,8 @@ const exportPdf = async () => {
 // ── Archive ────────────────────────────────────────────
 const { archiveDocument } = useDocumentArchive();
 
-const archiveCurrentDoc = () => {
-  const success = archiveDocument({
+const archiveCurrentDoc = async () => {
+  const success = await archiveDocument({
     id: formData.id,
     refNumber: formData.refNumber,
     title: formData.title,

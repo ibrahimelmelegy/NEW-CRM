@@ -834,7 +834,7 @@ function getAvatarColor(name: string): string {
   const colors = ['#7849ff', '#3b82f6', '#22c55e', '#f59e0b', '#ef4444', '#06b6d4', '#f97316'];
   let hash = 0;
   for (let i = 0; i < name.length; i++) hash = name.charCodeAt(i) + ((hash << 5) - hash);
-  return colors[Math.abs(hash) % colors.length];
+  return colors[Math.abs(hash) % colors.length] || '';
 }
 
 function getInitials(name: string): string {

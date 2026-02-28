@@ -746,8 +746,8 @@ const funnelChartOption = computed(() => {
           ...d,
           itemStyle: {
             color: new graphic.LinearGradient(0, 0, 1, 0, [
-              { offset: 0, color: funnelColors[i] },
-              { offset: 1, color: funnelColors[i] + 'cc' }
+              { offset: 0, color: funnelColors[i] || '' },
+              { offset: 1, color: (funnelColors[i] || '') + 'cc' }
             ]),
             borderRadius: 4
           }
@@ -811,12 +811,12 @@ const channelChartOption = computed(() => {
           value: val,
           itemStyle: {
             color: new graphic.LinearGradient(0, 0, 1, 0, [
-              { offset: 0, color: channelColors[i] },
-              { offset: 1, color: channelColors[i] + 'aa' }
+              { offset: 0, color: channelColors[i] || '' },
+              { offset: 1, color: (channelColors[i] || '') + 'aa' }
             ]),
             borderRadius: [0, 8, 8, 0],
             shadowBlur: 8,
-            shadowColor: channelColors[i] + '40'
+            shadowColor: (channelColors[i] || '') + '40'
           }
         })),
         barWidth: 28,
@@ -896,7 +896,7 @@ function toggleJourneyStatus(journey: Journey) {
   const newStatus = journey.status === 'active' ? 'paused' : 'active';
   const idx = journeys.value.findIndex(j => j.id === journey.id);
   if (idx >= 0) {
-    journeys.value[idx] = { ...journeys.value[idx], status: newStatus, lastModified: new Date().toISOString() };
+    journeys.value[idx] = { ...journeys.value[idx], status: newStatus, lastModified: new Date().toISOString() } as any;
     ElNotification({
       type: 'success',
       title: t('journeyBuilder.statusUpdated'),
@@ -927,7 +927,7 @@ function saveJourney() {
         name: journeyForm.value.name,
         status: journeyForm.value.status,
         lastModified: new Date().toISOString()
-      };
+      } as any;
     }
     ElNotification({ type: 'success', title: t('journeyBuilder.updated'), message: t('journeyBuilder.journeyUpdated') });
   } else {
@@ -937,8 +937,8 @@ function saveJourney() {
           id: 'stg-' + Date.now() + '-' + i,
           name,
           description: t('journeyBuilder.stageDefaultDesc', { name }),
-          icon: ['ph:envelope-bold', 'ph:browser-bold', 'ph:presentation-chart-bold', 'ph:test-tube-bold', 'ph:shopping-cart-bold', 'ph:handshake-bold'][i % 6],
-          color: ['#7849ff', '#3b82f6', '#22c55e', '#f59e0b', '#ef4444', '#06b6d4'][i % 6],
+          icon: ['ph:envelope-bold', 'ph:browser-bold', 'ph:presentation-chart-bold', 'ph:test-tube-bold', 'ph:shopping-cart-bold', 'ph:handshake-bold'][i % 6]!,
+          color: ['#7849ff', '#3b82f6', '#22c55e', '#f59e0b', '#ef4444', '#06b6d4'][i % 6]!,
           rulesCount: Math.floor(Math.random() * 5) + 1,
           contactsInStage: 0,
           throughputRate: 0,
@@ -1009,15 +1009,15 @@ function handleStageAction(command: string, stage: DesignerStage) {
       contactsInStage: 0,
       throughputRate: 0
     };
-    const stageIdx = journeys.value[journeyIdx].stages.findIndex(s => s.id === stage.id);
-    journeys.value[journeyIdx].stages.splice(stageIdx + 1, 0, newStage);
+    const stageIdx = journeys.value[journeyIdx]!.stages.findIndex(s => s.id === stage.id);
+    journeys.value[journeyIdx]!.stages.splice(stageIdx + 1, 0, newStage);
     ElNotification({ type: 'success', title: t('journeyBuilder.duplicated'), message: t('journeyBuilder.stageDuplicated') });
   } else if (command === 'delete') {
-    if (journeys.value[journeyIdx].stages.length <= 1) {
+    if (journeys.value[journeyIdx]!.stages.length <= 1) {
       ElNotification({ type: 'warning', title: t('journeyBuilder.cannotDelete'), message: t('journeyBuilder.minimumOneStage') });
       return;
     }
-    journeys.value[journeyIdx].stages = journeys.value[journeyIdx].stages.filter(s => s.id !== stage.id);
+    journeys.value[journeyIdx]!.stages = journeys.value[journeyIdx]!.stages.filter(s => s.id !== stage.id);
     ElNotification({ type: 'success', title: t('journeyBuilder.deleted'), message: t('journeyBuilder.stageDeleted') });
   }
 }
@@ -1038,7 +1038,7 @@ function addDesignerStage() {
     throughputRate: 0,
     isActive: false
   };
-  journeys.value[journeyIdx].stages.push(newStage);
+  journeys.value[journeyIdx]!.stages.push(newStage);
   ElNotification({ type: 'success', title: t('journeyBuilder.stageAdded'), message: t('journeyBuilder.newStageAdded') });
 }
 
@@ -1047,15 +1047,15 @@ function saveStage() {
   const journeyIdx = journeys.value.findIndex(j => j.id === selectedJourneyData.value!.id);
   if (journeyIdx < 0) return;
 
-  const stageIdx = journeys.value[journeyIdx].stages.findIndex(s => s.id === stageForm.value.id);
+  const stageIdx = journeys.value[journeyIdx]!.stages.findIndex(s => s.id === stageForm.value.id);
   if (stageIdx >= 0) {
-    journeys.value[journeyIdx].stages[stageIdx] = {
-      ...journeys.value[journeyIdx].stages[stageIdx],
+    journeys.value[journeyIdx]!.stages[stageIdx] = {
+      ...journeys.value[journeyIdx]!.stages[stageIdx],
       name: stageForm.value.name,
       description: stageForm.value.description,
       icon: stageForm.value.icon,
       color: stageForm.value.color
-    };
+    } as any;
   }
   showStageDialog.value = false;
   ElNotification({ type: 'success', title: t('journeyBuilder.updated'), message: t('journeyBuilder.stageUpdated') });

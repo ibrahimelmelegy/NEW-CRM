@@ -784,9 +784,9 @@ async function handleSaveEvent() {
   saving.value = true;
   try {
     if (editingEvent.value) {
-      const idx = events.value.findIndex(e => e.id === editingEvent.value.id);
+      const idx = events.value.findIndex(e => e.id === editingEvent.value!.id);
       if (idx >= 0) {
-        events.value[idx] = { ...events.value[idx], ...eventForm.value };
+        events.value[idx] = { ...events.value[idx], ...eventForm.value } as any;
       }
     } else {
       const newEvent = {

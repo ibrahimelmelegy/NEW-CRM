@@ -679,7 +679,7 @@ async function saveArticle() {
     if (editingArticle.value) {
       const idx = articles.value.findIndex(a => a.id === editingArticle.value!.id);
       if (idx >= 0) {
-        articles.value[idx] = { ...articles.value[idx], ...articleForm };
+        articles.value[idx] = { ...articles.value[idx], ...articleForm } as any;
       }
     } else {
       articles.value.push({
@@ -775,7 +775,7 @@ async function saveFaq() {
     if (editingFaq.value) {
       const idx = faqs.value.findIndex(f => f.id === editingFaq.value!.id);
       if (idx >= 0) {
-        faqs.value[idx] = { ...faqs.value[idx], ...faqForm };
+        faqs.value[idx] = { ...faqs.value[idx], ...faqForm } as any;
       }
     } else {
       faqs.value.push({

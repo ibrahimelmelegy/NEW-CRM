@@ -618,7 +618,7 @@ const currentMilestoneStep = computed(() => {
   if (!selectedOnboarding.value) return 0;
   const phases = selectedOnboarding.value.phases;
   for (let i = 0; i < phases.length; i++) {
-    if (phases[i].progress < 100) return i;
+    if (phases[i]!.progress < 100) return i;
   }
   return phases.length;
 });
@@ -791,7 +791,7 @@ function getAvatarGradient(name: string): string {
     'linear-gradient(135deg, #8b5cf6, #a78bfa)',
     'linear-gradient(135deg, #ec4899, #f472b6)'
   ];
-  return colors[(name || '').charCodeAt(0) % colors.length];
+  return colors[(name || '').charCodeAt(0) % colors.length] || '';
 }
 
 function getProgressColor(progress: number): string {
@@ -867,8 +867,8 @@ function togglePhase(idx: number) {
 
 function onTaskToggle(phaseIdx: number, taskIdx: number) {
   if (!selectedOnboarding.value) return;
-  const phase = selectedOnboarding.value.phases[phaseIdx];
-  const task = phase.tasks[taskIdx];
+  const phase = selectedOnboarding.value.phases[phaseIdx]!;
+  const task = phase.tasks[taskIdx]!;
   task.status = task.completed ? 'completed' : 'pending';
   phase.completedTasks = phase.tasks.filter(task => task.completed).length;
   phase.progress = phase.totalTasks > 0 ? Math.round((phase.completedTasks / phase.totalTasks) * 100) : 0;
@@ -946,13 +946,13 @@ function removePhase(idx: number) {
 }
 
 function addChecklistItem(phaseIdx: number) {
-  templateForm.value.phases[phaseIdx].checklistItems.push('');
+  templateForm.value.phases[phaseIdx]!.checklistItems.push('');
 }
 
 function saveTemplate() {
   if (!templateForm.value.name) return;
   if (editingTemplate.value) {
-    const idx = templates.value.findIndex(tp => tp.id === editingTemplate.value.id);
+    const idx = templates.value.findIndex(tp => tp.id === editingTemplate.value!.id);
     if (idx >= 0) {
       templates.value[idx] = {
         ...templates.value[idx],
@@ -960,7 +960,7 @@ function saveTemplate() {
         description: templateForm.value.description,
         phasesCount: templateForm.value.phases.length,
         phases: templateForm.value.phases.map(p => ({ ...p, checklistItems: p.checklistItems.filter(Boolean) }))
-      };
+      } as any;
     }
     ElNotification({ type: 'success', title: t('customerOnboarding.updated'), message: t('customerOnboarding.templateUpdated') });
   } else {
@@ -994,7 +994,7 @@ function createOnboarding() {
         totalTasks: p.checklistItems.length,
         tasks: p.checklistItems.map(item => ({
           name: item,
-          assignee: onboardingForm.value.assignedCSM || csmList.value[0],
+          assignee: onboardingForm.value.assignedCSM || csmList.value[0] || '',
           dueDate: new Date(Date.now() + p.duration * 86400000).toISOString(),
           status: 'pending' as const,
           completed: false
@@ -1005,9 +1005,9 @@ function createOnboarding() {
         description: t('customerOnboarding.kickoffDesc'),
         progress: 0, completedTasks: 0, totalTasks: 3,
         tasks: [
-          { name: t('customerOnboarding.welcomeCall'), assignee: onboardingForm.value.assignedCSM || csmList.value[0], dueDate: new Date(Date.now() + 3 * 86400000).toISOString(), status: 'pending' as const, completed: false },
-          { name: t('customerOnboarding.accessSetup'), assignee: onboardingForm.value.assignedCSM || csmList.value[0], dueDate: new Date(Date.now() + 5 * 86400000).toISOString(), status: 'pending' as const, completed: false },
-          { name: t('customerOnboarding.requirementsGathering'), assignee: onboardingForm.value.assignedCSM || csmList.value[0], dueDate: new Date(Date.now() + 7 * 86400000).toISOString(), status: 'pending' as const, completed: false }
+          { name: t('customerOnboarding.welcomeCall'), assignee: onboardingForm.value.assignedCSM || csmList.value[0] || '', dueDate: new Date(Date.now() + 3 * 86400000).toISOString(), status: 'pending' as const, completed: false },
+          { name: t('customerOnboarding.accessSetup'), assignee: onboardingForm.value.assignedCSM || csmList.value[0] || '', dueDate: new Date(Date.now() + 5 * 86400000).toISOString(), status: 'pending' as const, completed: false },
+          { name: t('customerOnboarding.requirementsGathering'), assignee: onboardingForm.value.assignedCSM || csmList.value[0] || '', dueDate: new Date(Date.now() + 7 * 86400000).toISOString(), status: 'pending' as const, completed: false }
         ]
       }];
 
@@ -1016,10 +1016,10 @@ function createOnboarding() {
     id: 'ob-' + Date.now(),
     customerName: onboardingForm.value.customerName,
     company: onboardingForm.value.company || onboardingForm.value.customerName,
-    assignedCSM: onboardingForm.value.assignedCSM || csmList.value[0],
+    assignedCSM: onboardingForm.value.assignedCSM || csmList.value[0] || '',
     startDate: new Date(onboardingForm.value.startDate).toISOString(),
     progress: 0,
-    currentPhase: phases[0].name,
+    currentPhase: phases[0]!.name,
     daysRemaining: totalDays,
     status: 'on-track',
     templateId: onboardingForm.value.templateId || '',
@@ -1032,7 +1032,7 @@ function createOnboarding() {
   onboardings.value.unshift(newOnboarding);
   if (tmpl) {
     const tmplIdx = templates.value.findIndex(tp => tp.id === tmpl.id);
-    if (tmplIdx >= 0) templates.value[tmplIdx].usageCount++;
+    if (tmplIdx >= 0) templates.value[tmplIdx]!.usageCount++;
   }
   showNewOnboardingDialog.value = false;
   resetOnboardingForm();
@@ -1122,7 +1122,7 @@ function seedDemoData() {
         totalTasks: p.checklistItems.length,
         tasks: p.checklistItems.map((item, idx) => ({
           name: item,
-          assignee: csmList.value[idx % csmList.value.length],
+          assignee: csmList.value[idx % csmList.value.length] || '',
           dueDate: new Date(now.getTime() + (idx + 1) * 3 * 86400000).toISOString(),
           status: idx < completedCount ? 'completed' as const : idx === completedCount ? 'in-progress' as const : 'pending' as const,
           completed: idx < completedCount

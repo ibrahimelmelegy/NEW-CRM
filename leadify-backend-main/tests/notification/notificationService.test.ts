@@ -92,7 +92,7 @@ describe('NotificationService', () => {
             const mockNotification = {
                 id: 'notif-1',
                 read: NotificationReadEnums.UN_READ,
-                save: jest.fn().mockResolvedValue(true),
+                save: (jest.fn() as jest.Mock<any>).mockResolvedValue(true),
             };
             (Notification.findOne as jest.Mock<any>).mockResolvedValue(mockNotification);
 

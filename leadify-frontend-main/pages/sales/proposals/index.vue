@@ -497,8 +497,8 @@ const archiveTree = computed(() => {
   const sortedTree: Record<string, Record<string, string[]>> = {};
   Object.keys(tree).sort().reverse().forEach(year => {
     sortedTree[year] = {};
-    Object.keys(tree[year]).sort().reverse().forEach(month => {
-      sortedTree[year][month] = tree[year][month].sort().reverse();
+    Object.keys(tree[year]!).sort().reverse().forEach(month => {
+      sortedTree[year]![month] = tree[year]![month]!.sort().reverse();
     });
   });
 

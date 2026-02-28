@@ -6,7 +6,9 @@
 </template>
 
 <script setup lang="ts">
+// @ts-ignore
 import elEn from 'element-plus/dist/locale/en.mjs';
+// @ts-ignore
 import elAr from 'element-plus/dist/locale/ar.mjs';
 
 // Theme initialization is handled by ColorModeToggle.vue component

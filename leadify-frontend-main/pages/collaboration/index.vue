@@ -494,7 +494,7 @@ const activityChartOption = computed(() => {
     const actDate = new Date(activity.createdAt);
     const hoursAgo = Math.floor((now.getTime() - actDate.getTime()) / (1000 * 60 * 60));
     if (hoursAgo >= 0 && hoursAgo < 24) {
-      hourCounts[23 - hoursAgo]++;
+      hourCounts[23 - hoursAgo] = (hourCounts[23 - hoursAgo] || 0) + 1;
     }
   });
 

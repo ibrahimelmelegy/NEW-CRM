@@ -21,7 +21,7 @@ const mockSocketInstance = {
   id: 'mock-socket-id'
 };
 
-const mockIo = vi.fn(() => mockSocketInstance);
+const mockIo = vi.fn((..._args: any[]) => mockSocketInstance);
 
 vi.mock('socket.io-client', () => ({
   io: (...args: any[]) => mockIo(...args),

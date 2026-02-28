@@ -457,7 +457,7 @@ function generateSteps(status: string) {
       ...tpl,
       status: isFailed ? 'failed' : isRunning ? 'running' : 'success',
       duration: `${Math.floor(Math.random() * 30)}s`,
-      output: isFailed ? 'Error: timeout exceeded' : tpl.output,
+      output: isFailed ? 'Error: timeout exceeded' : tpl!.output,
     });
   }
   return steps;
@@ -646,8 +646,8 @@ function startAutoRefresh() {
         // Parse and increment duration
         const parts = exec.duration.match(/(\d+)m\s*(\d+)s/);
         if (parts) {
-          let mins = parseInt(parts[1]);
-          let secs = parseInt(parts[2]) + 5;
+          let mins = parseInt(parts[1] || '0');
+          let secs = parseInt(parts[2] || '0') + 5;
           if (secs >= 60) { mins++; secs -= 60; }
           exec.duration = `${mins}m ${secs.toString().padStart(2, '0')}s`;
         }

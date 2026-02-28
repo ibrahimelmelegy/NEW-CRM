@@ -380,7 +380,7 @@ const monthlyRevenue = computed(() => {
   return {
     labels: entries.map(([key]) => {
       const [y, m] = key.split('-');
-      return new Date(parseInt(y), parseInt(m) - 1).toLocaleDateString(undefined, { month: 'short', year: '2-digit' });
+      return new Date(parseInt(y || '0'), parseInt(m || '0') - 1).toLocaleDateString(undefined, { month: 'short', year: '2-digit' });
     }),
     current: entries.map(([, v]) => v.current),
     previous: entries.map(([, v]) => v.previous)
@@ -840,7 +840,7 @@ function getAvatarColor(name: string): string {
   for (let i = 0; i < (name || '').length; i++) {
     hash = name.charCodeAt(i) + ((hash << 5) - hash);
   }
-  return colors[Math.abs(hash) % colors.length];
+  return colors[Math.abs(hash) % colors.length] || '';
 }
 
 function getRankColor(index: number): string {

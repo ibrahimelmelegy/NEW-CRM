@@ -86,7 +86,7 @@ describe('WarehouseService', () => {
             const mockWarehouse = {
                 id: 1,
                 name: 'Old Name',
-                update: jest.fn().mockResolvedValue(true),
+                update: (jest.fn() as jest.Mock<any>).mockResolvedValue(true),
             };
             (Warehouse.findByPk as jest.Mock<any>).mockResolvedValue(mockWarehouse);
 
@@ -109,7 +109,7 @@ describe('WarehouseService', () => {
     // --------------------------------------------------------------------------
     describe('deleteWarehouse', () => {
         it('should delete a warehouse and its zones', async () => {
-            const mockWarehouse = { id: 1, destroy: jest.fn().mockResolvedValue(true) };
+            const mockWarehouse = { id: 1, destroy: (jest.fn() as jest.Mock<any>).mockResolvedValue(true) };
             (Warehouse.findByPk as jest.Mock<any>).mockResolvedValue(mockWarehouse);
             (WarehouseZone.destroy as jest.Mock<any>).mockResolvedValue(3);
 
@@ -151,7 +151,7 @@ describe('WarehouseService', () => {
     // --------------------------------------------------------------------------
     describe('deleteZone', () => {
         it('should delete a zone', async () => {
-            const mockZone = { id: 1, destroy: jest.fn().mockResolvedValue(true) };
+            const mockZone = { id: 1, destroy: (jest.fn() as jest.Mock<any>).mockResolvedValue(true) };
             (WarehouseZone.findByPk as jest.Mock<any>).mockResolvedValue(mockZone);
 
             const result = await warehouseService.deleteZone(1);
@@ -224,7 +224,7 @@ describe('WarehouseService', () => {
             const mockTransfer = {
                 id: 1,
                 status: 'PENDING',
-                update: jest.fn().mockResolvedValue(true),
+                update: (jest.fn() as jest.Mock<any>).mockResolvedValue(true),
             };
             (StockTransfer.findByPk as jest.Mock<any>).mockResolvedValue(mockTransfer);
 

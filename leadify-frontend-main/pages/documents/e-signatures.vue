@@ -378,7 +378,7 @@ const sendForSignature = async () => {
     ElMessage.warning(t('common.fillRequired'));
     return;
   }
-  if (!req.recipients.length || !req.recipients[0].email) {
+  if (!req.recipients.length || !req.recipients[0]!.email) {
     ElMessage.warning(t('common.fillRequired'));
     return;
   }

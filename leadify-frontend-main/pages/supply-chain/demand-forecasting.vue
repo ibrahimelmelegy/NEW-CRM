@@ -504,7 +504,7 @@ const forecastChartOption = computed(() => {
       {
         name: 'Lower Bound',
         type: 'line',
-        data: data.lowerBound.map((val, idx) => data.upperBound[idx] - val),
+        data: data.lowerBound.map((val, idx) => (data.upperBound[idx] ?? 0) - val),
         lineStyle: { opacity: 0 },
         symbol: 'none',
         stack: 'confidence',
@@ -557,7 +557,7 @@ const forecastSummaryStats = computed(() => {
   const validForecast = data.forecast.filter(v => !isNaN(v));
   const totalPredicted = validForecast.reduce((s, v) => s + v, 0);
   const validActual = data.actual.filter(v => !isNaN(v));
-  const mapeValues = validActual.map((a, i) => Math.abs((a - data.forecast[i]) / a) * 100);
+  const mapeValues = validActual.map((a, i) => Math.abs((a - (data.forecast[i] ?? 0)) / a) * 100);
   const mape = mapeValues.length > 0 ? (mapeValues.reduce((s, v) => s + v, 0) / mapeValues.length) : 0;
 
   const lastThree = validForecast.slice(-3);
@@ -647,7 +647,7 @@ function generateSeasonalData(isLastYear: boolean) {
   const categories = Object.keys(seasonalPatterns);
   categories.forEach((cat, catIdx) => {
     months.forEach((_, monthIdx) => {
-      let val = seasonalPatterns[cat][monthIdx];
+      let val = seasonalPatterns[cat]?.[monthIdx] ?? 50;
       if (isLastYear) {
         val = Math.max(20, val - Math.round(5 + Math.random() * 10));
       }
@@ -826,7 +826,7 @@ const stockReorderChartOption = computed(() => {
       axisPointer: { type: 'shadow' },
       formatter: (params: any) => {
         const idx = params[0]?.dataIndex ?? 0;
-        const product = top10[idx];
+        const product = top10[idx]!;
         let html = `<strong>${product.name}</strong><br/>`;
         params.forEach((p: any) => {
           html += `<span style="display:inline-block;width:10px;height:10px;border-radius:2px;background:${p.color};margin-right:6px;"></span>`;
@@ -868,7 +868,7 @@ const stockReorderChartOption = computed(() => {
         barGap: '30%',
         itemStyle: {
           color: (params: any) => {
-            const product = top10[params.dataIndex];
+            const product = top10[params.dataIndex]!;
             if (product.currentStock < product.reorderPoint) {
               return new graphic.LinearGradient(0, 0, 0, 1, [
                 { offset: 0, color: '#ef4444' },

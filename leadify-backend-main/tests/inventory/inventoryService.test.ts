@@ -106,7 +106,7 @@ describe('InventoryService', () => {
             const mockProduct = {
                 id: 'prod-1',
                 set: jest.fn(),
-                save: jest.fn().mockResolvedValue(true),
+                save: (jest.fn() as jest.Mock<any>).mockResolvedValue(true),
             };
             (Product.findOne as jest.Mock<any>).mockResolvedValue(mockProduct);
 
@@ -129,7 +129,7 @@ describe('InventoryService', () => {
     // --------------------------------------------------------------------------
     describe('deleteProduct', () => {
         it('should delete a product', async () => {
-            const mockProduct = { id: 'prod-1', destroy: jest.fn().mockResolvedValue(true) };
+            const mockProduct = { id: 'prod-1', destroy: (jest.fn() as jest.Mock<any>).mockResolvedValue(true) };
             (Product.findOne as jest.Mock<any>).mockResolvedValue(mockProduct);
 
             await inventoryService.deleteProduct('prod-1');
@@ -153,7 +153,7 @@ describe('InventoryService', () => {
             const mockProduct = {
                 id: 'prod-1',
                 currentStock: 50,
-                save: jest.fn().mockResolvedValue(true),
+                save: (jest.fn() as jest.Mock<any>).mockResolvedValue(true),
             };
             (Product.findOne as jest.Mock<any>).mockResolvedValue(mockProduct);
 
@@ -175,7 +175,7 @@ describe('InventoryService', () => {
             const mockProduct = {
                 id: 'prod-1',
                 currentStock: 50,
-                save: jest.fn().mockResolvedValue(true),
+                save: (jest.fn() as jest.Mock<any>).mockResolvedValue(true),
             };
             (Product.findOne as jest.Mock<any>).mockResolvedValue(mockProduct);
             (StockMovement.create as jest.Mock<any>).mockResolvedValue({ id: 'mov-2' });
@@ -193,7 +193,7 @@ describe('InventoryService', () => {
             const mockProduct = {
                 id: 'prod-1',
                 currentStock: 50,
-                save: jest.fn().mockResolvedValue(true),
+                save: (jest.fn() as jest.Mock<any>).mockResolvedValue(true),
             };
             (Product.findOne as jest.Mock<any>).mockResolvedValue(mockProduct);
             (StockMovement.create as jest.Mock<any>).mockResolvedValue({ id: 'mov-3' });
@@ -211,7 +211,7 @@ describe('InventoryService', () => {
             const mockProduct = {
                 id: 'prod-1',
                 currentStock: 100,
-                save: jest.fn().mockResolvedValue(true),
+                save: (jest.fn() as jest.Mock<any>).mockResolvedValue(true),
             };
             (Product.findOne as jest.Mock<any>).mockResolvedValue(mockProduct);
             (StockMovement.create as jest.Mock<any>).mockResolvedValue({ id: 'mov-4' });

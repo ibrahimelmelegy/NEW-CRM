@@ -240,7 +240,7 @@ import { ref, reactive, computed, onMounted } from 'vue';
 
 definePageMeta({});
 
-const { $t } = useNuxtApp();
+const { t: $t } = useI18n();
 
 interface Warranty {
   id: string;
@@ -388,7 +388,8 @@ async function bulkChangeStatus() {
       inputErrorMessage: $t('warranty.invalidStatus')
     });
     const ids = selectedWarranties.value.map(w => w.id);
-    const { success } = await useApiFetch('warranty/bulk-status', 'PUT', { ids, status: status.value });
+    const statusValue = typeof status === 'string' ? status : (status as { value: string }).value;
+    const { success } = await useApiFetch('warranty/bulk-status', 'PUT', { ids, status: statusValue });
     if (success) {
       ElMessage.success($t('warranty.statusUpdated'));
       selectedWarranties.value = [];

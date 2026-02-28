@@ -205,6 +205,7 @@ const processFiles = async (fileList: FileList | null) => {
 
   for (let i = 0; i < fileList.length; i++) {
     const file = fileList[i];
+    if (!file) continue;
 
     // Check file size
     if (file.size > props.maxSize) {

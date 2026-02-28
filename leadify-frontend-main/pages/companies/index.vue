@@ -347,7 +347,7 @@ import * as echarts from 'echarts';
 
 definePageMeta({});
 
-const { $t } = useNuxtApp();
+const { $t } = useNuxtApp() as any;
 
 interface Company {
   id: string;

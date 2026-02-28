@@ -266,7 +266,7 @@ function timeAgo(iso: string): string {
 
 // Chart options
 const typeChartOption = computed(() => {
-  const data = Object.entries(docStats.byType).map(([type, count]) => ({
+  const data = Object.entries(docStats.value.byType).map(([type, count]) => ({
     name: typeLabels[type] || type,
     value: count,
     itemStyle: { color: typeColors[type] || '#6b7280' }
@@ -304,7 +304,7 @@ const typeChartOption = computed(() => {
 });
 
 const statusChartOption = computed(() => {
-  const data = Object.entries(docStats.byStatus).map(([status, count]) => ({
+  const data = Object.entries(docStats.value.byStatus).map(([status, count]) => ({
     name: status,
     value: count,
     itemStyle: { color: statusColors[status] || '#6b7280' }
@@ -345,16 +345,16 @@ const drillDownTitle = computed(() => {
 const drillDownData = computed(() => {
   if (!drillDownType.value) return [];
 
-  const source = drillDownType.value === 'type' ? docStats.byType : docStats.byStatus;
+  const source = drillDownType.value === 'type' ? docStats.value.byType : docStats.value.byStatus;
   const colors = drillDownType.value === 'type' ? typeColors : statusColors;
   const labels = drillDownType.value === 'type' ? typeLabels : {};
 
-  const total = Object.values(source).reduce((sum, val) => sum + Number(val), 0);
+  const total = Object.values(source).reduce((sum, val) => sum + Number(val as number), 0);
 
   return Object.entries(source).map(([key, value]) => ({
     label: labels[key] || key,
     value: value,
-    percentage: total > 0 ? ((Number(value) / total) * 100).toFixed(1) : 0,
+    percentage: total > 0 ? ((Number(value as number) / total) * 100).toFixed(1) : 0,
     color: colors[key] || '#6b7280'
   })).sort((a, b) => Number(b.value) - Number(a.value));
 });

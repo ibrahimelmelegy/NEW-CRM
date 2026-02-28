@@ -258,19 +258,19 @@ const FALLBACK_COLORS = ['#EC4899', '#14B8A6', '#3B82F6', '#EF4444', '#A855F7', 
 
 function colorForBooking(type: string | undefined, index: number): string {
   if (type && TYPE_COLORS[type]) return TYPE_COLORS[type];
-  return FALLBACK_COLORS[index % FALLBACK_COLORS.length];
+  return FALLBACK_COLORS[index % FALLBACK_COLORS.length] || '#3B82F6';
 }
 
 function parseHourFromTime(time: string): number {
   if (!time) return 0;
   const [hStr] = time.split(':');
-  return parseInt(hStr, 10);
+  return parseInt(hStr || '0', 10);
 }
 
 function computeDurationMinutes(start: string, end: string): number {
   if (!start || !end) return 30;
-  const [sh, sm] = start.split(':').map(Number);
-  const [eh, em] = end.split(':').map(Number);
+  const [sh = 0, sm = 0] = start.split(':').map(Number);
+  const [eh = 0, em = 0] = end.split(':').map(Number);
   return (eh * 60 + em) - (sh * 60 + sm);
 }
 
@@ -509,14 +509,14 @@ const createBooking = async () => {
     const t = newBooking.value.time;
     if (typeof t === 'string') {
       startTime = t;
-    } else if (t instanceof Date) {
-      startTime = `${String(t.getHours()).padStart(2, '0')}:${String(t.getMinutes()).padStart(2, '0')}`;
+    } else if ((t as any) instanceof Date) {
+      startTime = `${String((t as any).getHours()).padStart(2, '0')}:${String((t as any).getMinutes()).padStart(2, '0')}`;
     }
   }
 
   let endTime = '';
   if (startTime) {
-    const [sh, sm] = startTime.split(':').map(Number);
+    const [sh = 0, sm = 0] = startTime.split(':').map(Number);
     const totalMin = sh * 60 + sm + (newBooking.value.duration || 30);
     const eh = Math.floor(totalMin / 60);
     const em = totalMin % 60;
@@ -528,8 +528,8 @@ const createBooking = async () => {
     const d = newBooking.value.date;
     if (typeof d === 'string') {
       dateStr = d;
-    } else if (d instanceof Date) {
-      dateStr = toDateString(d);
+    } else if ((d as any) instanceof Date) {
+      dateStr = toDateString(d as any);
     }
   }
 
@@ -559,7 +559,11 @@ const createBooking = async () => {
         type: 'MEETING',
         location: '',
         notes: '',
-        timezone: Intl.DateTimeFormat().resolvedOptions().timeZone || 'UTC'
+        timezone: Intl.DateTimeFormat().resolvedOptions().timeZone || 'UTC',
+        isRecurring: false,
+        recurringPattern: 'WEEKLY',
+        sendReminder: false,
+        reminderMinutes: 15
       };
       await fetchBookings();
     } else {

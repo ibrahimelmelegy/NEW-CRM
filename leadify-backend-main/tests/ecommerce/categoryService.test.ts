@@ -135,7 +135,7 @@ describe('CategoryService (ecommerce)', () => {
             const mockCategory = {
                 id: 'cat-1',
                 name: 'Old Name',
-                update: jest.fn().mockResolvedValue(true),
+                update: (jest.fn() as jest.Mock<any>).mockResolvedValue(true),
             };
             (EcCategory.findByPk as jest.Mock<any>).mockResolvedValue(mockCategory);
 
@@ -148,7 +148,7 @@ describe('CategoryService (ecommerce)', () => {
             const mockCategory = {
                 id: 'cat-1',
                 name: 'Old Name',
-                update: jest.fn().mockResolvedValue(true),
+                update: (jest.fn() as jest.Mock<any>).mockResolvedValue(true),
             };
             (EcCategory.findByPk as jest.Mock<any>).mockResolvedValue(mockCategory);
             (EcCategory.findOne as jest.Mock<any>).mockResolvedValue(null); // New slug available
@@ -176,7 +176,7 @@ describe('CategoryService (ecommerce)', () => {
             const mockCategory = {
                 id: 'cat-1',
                 children: [],
-                destroy: jest.fn().mockResolvedValue(true),
+                destroy: (jest.fn() as jest.Mock<any>).mockResolvedValue(true),
             };
             (EcCategory.findByPk as jest.Mock<any>).mockResolvedValue(mockCategory);
 

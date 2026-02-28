@@ -311,7 +311,7 @@ const availableSlots = ref<any[] | null>(null);
 // Stats
 const stats = computed(() => {
   const data = bookings.value;
-  const today = new Date().toISOString().split('T')[0];
+  const today = new Date().toISOString().split('T')[0]!;
   return {
     total: data.length,
     today: data.filter((b: any) => b.date === today).length,

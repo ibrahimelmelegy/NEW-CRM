@@ -54,7 +54,7 @@ describe('WorkflowService', () => {
             const mockRule = {
                 id: 1,
                 name: 'Updated Rule',
-                update: jest.fn().mockResolvedValue(true),
+                update: (jest.fn() as jest.Mock<any>).mockResolvedValue(true),
             };
             (WorkflowRule.findByPk as jest.Mock<any>).mockResolvedValue(mockRule);
 
@@ -77,7 +77,7 @@ describe('WorkflowService', () => {
     // --------------------------------------------------------------------------
     describe('deleteRule', () => {
         it('should delete a rule and its executions', async () => {
-            const mockRule = { id: 1, destroy: jest.fn().mockResolvedValue(true) };
+            const mockRule = { id: 1, destroy: (jest.fn() as jest.Mock<any>).mockResolvedValue(true) };
             (WorkflowRule.findByPk as jest.Mock<any>).mockResolvedValue(mockRule);
             (WorkflowExecution.destroy as jest.Mock<any>).mockResolvedValue(5);
 
@@ -141,7 +141,7 @@ describe('WorkflowService', () => {
             const mockRule = {
                 id: 1,
                 name: 'Rule 1',
-                toJSON: jest.fn().mockReturnValue({ id: 1, name: 'Rule 1' }),
+                toJSON: (jest.fn() as jest.Mock<any>).mockReturnValue({ id: 1, name: 'Rule 1' }),
             };
             (WorkflowRule.findByPk as jest.Mock<any>).mockResolvedValue(mockRule);
             (WorkflowExecution.findAll as jest.Mock<any>).mockResolvedValue([{ id: 100 }]);
@@ -167,7 +167,7 @@ describe('WorkflowService', () => {
             const mockRule = {
                 id: 1,
                 isActive: false,
-                update: jest.fn().mockResolvedValue(true),
+                update: (jest.fn() as jest.Mock<any>).mockResolvedValue(true),
             };
             (WorkflowRule.findByPk as jest.Mock<any>).mockResolvedValue(mockRule);
 

@@ -364,15 +364,16 @@ const allIntegrations = computed(() => {
   hubIntegrations.forEach((hi: MergedIntegration) => {
     const existingIdx = merged.findIndex(m => m.type === hi.type);
     if (existingIdx >= 0) {
-      merged[existingIdx].isConfigured = hi.isConfigured;
-      merged[existingIdx].status = hi.isConfigured ? 'connected' : 'available';
-      merged[existingIdx].statusType = hi.isConfigured ? 'success' : '';
-      merged[existingIdx].enabled = hi.isConfigured;
+      const existing = merged[existingIdx]!;
+      existing.isConfigured = hi.isConfigured;
+      existing.status = hi.isConfigured ? 'connected' : 'available';
+      existing.statusType = hi.isConfigured ? 'success' : '';
+      existing.enabled = hi.isConfigured;
       if (hi.isConfigured) {
-        merged[existingIdx].lastSyncLabel = t('integrationHub.justNow');
-        merged[existingIdx].flowStatus = 'healthy';
+        existing.lastSyncLabel = t('integrationHub.justNow');
+        existing.flowStatus = 'healthy';
       }
-      merged[existingIdx].configFields = hi.configFields.map(f => ({
+      existing.configFields = hi.configFields.map(f => ({
         key: f.key,
         label: f.label,
         type: f.type,

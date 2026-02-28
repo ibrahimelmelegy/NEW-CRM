@@ -198,7 +198,7 @@ import {
 
 definePageMeta({});
 
-const { $t, $i18n } = useNuxtApp();
+const { $t, $i18n } = useNuxtApp() as any;
 const t = $i18n.t;
 
 const products = ref<CatalogProduct[]>([]);
@@ -378,7 +378,7 @@ async function bulkStatusChange() {
       cancelButtonText: $t('common.cancel')
     });
     const ids = selectedProducts.value.map(p => p.id);
-    const newStatus = !selectedProducts.value[0].isActive;
+    const newStatus = !selectedProducts.value[0]?.isActive;
     const { success } = await useApiFetch('catalog/bulk-status', 'PUT', { ids, isActive: newStatus });
     if (success) {
       ElMessage.success($t('catalog.statusUpdated'));

@@ -112,7 +112,7 @@ describe('CampaignService', () => {
             const mockCampaign = {
                 id: 'camp-1',
                 status: CampaignStatus.DRAFT,
-                update: jest.fn().mockResolvedValue(true),
+                update: (jest.fn() as jest.Mock<any>).mockResolvedValue(true),
             };
             (Campaign.findOne as jest.Mock<any>).mockResolvedValue(mockCampaign);
 
@@ -140,7 +140,7 @@ describe('CampaignService', () => {
             const mockCampaign = {
                 id: 'camp-1',
                 status: CampaignStatus.DRAFT,
-                update: jest.fn().mockResolvedValue(true),
+                update: (jest.fn() as jest.Mock<any>).mockResolvedValue(true),
             };
             (Campaign.findOne as jest.Mock<any>).mockResolvedValue(mockCampaign);
             (CampaignRecipient.destroy as jest.Mock<any>).mockResolvedValue(2);
@@ -160,7 +160,7 @@ describe('CampaignService', () => {
     // --------------------------------------------------------------------------
     describe('delete', () => {
         it('should delete a campaign and its recipients', async () => {
-            const mockCampaign = { id: 'camp-1', destroy: jest.fn().mockResolvedValue(true) };
+            const mockCampaign = { id: 'camp-1', destroy: (jest.fn() as jest.Mock<any>).mockResolvedValue(true) };
             (Campaign.findOne as jest.Mock<any>).mockResolvedValue(mockCampaign);
             (CampaignRecipient.destroy as jest.Mock<any>).mockResolvedValue(5);
 

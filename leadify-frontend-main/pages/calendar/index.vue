@@ -615,12 +615,12 @@ const busiestDay = computed(() => {
   if (!events.value.length) return '-';
   const dayCounts: Record<string, number> = {};
   events.value.forEach(e => {
-    const day = e.startDate.split('T')[0];
+    const day = e.startDate.split('T')[0] || '';
     dayCounts[day] = (dayCounts[day] || 0) + 1;
   });
   const sorted = Object.entries(dayCounts).sort((a, b) => b[1] - a[1]);
   if (sorted.length === 0) return '-';
-  const date = new Date(sorted[0][0]);
+  const date = new Date(sorted[0]![0]);
   return date.toLocaleDateString('en-US', { weekday: 'short', month: 'short', day: 'numeric' });
 });
 

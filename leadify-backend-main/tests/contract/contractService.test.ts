@@ -29,7 +29,7 @@ describe('ContractService', () => {
             Object.assign(this, data);
             return Promise.resolve(this);
         }),
-        destroy: jest.fn().mockResolvedValue(true),
+        destroy: (jest.fn() as jest.Mock<any>).mockResolvedValue(true),
     };
 
     beforeEach(() => {
@@ -100,7 +100,7 @@ describe('ContractService', () => {
     // --------------------------------------------------------------------------
     describe('update', () => {
         it('should update a draft contract', async () => {
-            const draftContract = { ...mockContract, status: ContractStatus.DRAFT, update: jest.fn().mockResolvedValue(true) };
+            const draftContract = { ...mockContract, status: ContractStatus.DRAFT, update: (jest.fn() as jest.Mock<any>).mockResolvedValue(true) };
             (Contract.findOne as jest.Mock<any>).mockResolvedValue(draftContract);
 
             await contractService.update('contract-uuid-1', mockUserId, { title: 'Updated' });
@@ -129,7 +129,7 @@ describe('ContractService', () => {
     // --------------------------------------------------------------------------
     describe('delete', () => {
         it('should delete a contract', async () => {
-            const contractToDelete = { ...mockContract, destroy: jest.fn().mockResolvedValue(true) };
+            const contractToDelete = { ...mockContract, destroy: (jest.fn() as jest.Mock<any>).mockResolvedValue(true) };
             (Contract.findOne as jest.Mock<any>).mockResolvedValue(contractToDelete);
 
             await contractService.delete('contract-uuid-1', mockUserId);
@@ -154,7 +154,7 @@ describe('ContractService', () => {
                 ...mockContract,
                 status: ContractStatus.SENT,
                 expiresAt: new Date(Date.now() + 86400000), // tomorrow
-                update: jest.fn().mockResolvedValue(true),
+                update: (jest.fn() as jest.Mock<any>).mockResolvedValue(true),
             };
             (Contract.findOne as jest.Mock<any>).mockResolvedValue(sentContract);
 
@@ -200,7 +200,7 @@ describe('ContractService', () => {
             const viewedContract = {
                 id: 'contract-uuid-1',
                 status: ContractStatus.VIEWED,
-                update: jest.fn().mockResolvedValue(true),
+                update: (jest.fn() as jest.Mock<any>).mockResolvedValue(true),
             };
             (Contract.findOne as jest.Mock<any>).mockResolvedValue(viewedContract);
 

@@ -250,9 +250,9 @@ watch(currentPage, () => {
 async function loadCoupons() {
   loading.value = true
   try {
-    const res = await fetchCoupons({ page: currentPage.value, limit: pageSize.value })
-    coupons.value = res?.body?.docs || res?.docs || []
-    totalItems.value = res?.body?.totalDocs || res?.totalDocs || coupons.value.length
+    const res = await fetchCoupons({ page: String(currentPage.value), limit: String(pageSize.value) })
+    coupons.value = (res as any)?.body?.docs || res?.docs || []
+    totalItems.value = (res as any)?.body?.totalDocs || (res as any)?.totalDocs || coupons.value.length
   } finally {
     loading.value = false
   }
@@ -356,14 +356,14 @@ async function saveCoupon() {
 
   try {
     if (editingId.value) {
-      const res = await updateCoupon(editingId.value, payload)
+      const res = await updateCoupon(editingId.value, payload as any)
       if (res?.success !== false) {
         showDialog.value = false
         await loadCoupons()
         ElMessage.success(t('common.saved'))
       }
     } else {
-      const res = await createCoupon(payload)
+      const res = await createCoupon(payload as any)
       if (res?.success !== false) {
         showDialog.value = false
         resetForm()

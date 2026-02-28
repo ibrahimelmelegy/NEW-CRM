@@ -1128,7 +1128,7 @@ const comparisonChartOption = computed(() => {
     },
   };
 
-  const metric = metricMap[comparisonMetric.value];
+  const metric = metricMap[comparisonMetric.value]!;
   const segmentNames = [
     'Enterprise', 'High-Value', 'Tech Sector', 'New Signups',
     'New Customers', 'Newsletter', 'At-Risk', 'Trial Expiring',
@@ -1282,7 +1282,7 @@ function selectRfmCell(rIdx: number, cIdx: number, _cell: RfmCell) {
 
 // ── Methods ─────────────────────────────────────────────
 function addCondition(groupIdx: number) {
-  conditionGroups.value[groupIdx].conditions.push({
+  conditionGroups.value[groupIdx]!.conditions.push({
     field: '',
     operator: '',
     value: '',
@@ -1290,7 +1290,7 @@ function addCondition(groupIdx: number) {
 }
 
 function removeCondition(groupIdx: number, conditionIdx: number) {
-  conditionGroups.value[groupIdx].conditions.splice(conditionIdx, 1);
+  conditionGroups.value[groupIdx]!.conditions.splice(conditionIdx, 1);
 }
 
 function addGroup() {
@@ -1305,7 +1305,7 @@ function removeGroup(groupIdx: number) {
 }
 
 function toggleGroupOperator(groupIdx: number) {
-  const group = conditionGroups.value[groupIdx];
+  const group = conditionGroups.value[groupIdx]!;
   group.operator = group.operator === 'AND' ? 'OR' : 'AND';
 }
 
@@ -1347,7 +1347,7 @@ function saveSegment() {
     type: segmentForm.value.type,
     createdBy: 'Current User',
     avatarColor: '#7849ff',
-    lastUpdated: new Date().toISOString().split('T')[0],
+    lastUpdated: new Date().toISOString().split('T')[0] || '',
     engagementRate: 0,
     revenue: 0,
     rules: conditionGroups.value.flatMap((g) =>

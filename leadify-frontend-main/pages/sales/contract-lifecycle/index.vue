@@ -469,8 +469,8 @@ const filteredContracts = computed(() => {
   }
 
   if (filterDateRange.value?.length === 2) {
-    const [from, to] = filterDateRange.value;
-    result = result.filter((c: any) => c.endDate >= from && c.endDate <= to);
+    const [from, to] = filterDateRange.value!;
+    result = result.filter((c: any) => c.endDate >= from! && c.endDate <= to!);
   }
 
   return result;
@@ -572,7 +572,7 @@ function getAvatarColor(name: string): string {
   for (let i = 0; i < (name || '').length; i++) {
     hash = name.charCodeAt(i) + ((hash << 5) - hash);
   }
-  return colors[Math.abs(hash) % colors.length];
+  return colors[Math.abs(hash) % colors.length] || '';
 }
 
 function getTypeLabel(type: string): string {

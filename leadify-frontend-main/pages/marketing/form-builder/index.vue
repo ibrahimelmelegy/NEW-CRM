@@ -298,7 +298,7 @@ function openEditDialog(item: any) {
     status: item.status || 'DRAFT',
     thankYouMessage: item.thankYouMessage || '',
     createLead: item.createLead || false,
-    fields: formFieldsPreview.value
+    fields: formFieldsPreview.value as any
   };
   dialogVisible.value = true;
 }

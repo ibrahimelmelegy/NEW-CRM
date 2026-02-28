@@ -365,13 +365,13 @@ function getMonthKey(date: Date): string {
 
 function getMonthLabel(key: string): string {
   const [year, month] = key.split('-');
-  const d = new Date(parseInt(year), parseInt(month) - 1);
+  const d = new Date(parseInt(year || '0'), parseInt(month || '1') - 1);
   return d.toLocaleDateString(undefined, { month: 'short', year: 'numeric' });
 }
 
 function getShortMonthLabel(key: string): string {
   const [year, month] = key.split('-');
-  const d = new Date(parseInt(year), parseInt(month) - 1);
+  const d = new Date(parseInt(year || '0'), parseInt(month || '1') - 1);
   return d.toLocaleDateString(undefined, { month: 'short', year: '2-digit' });
 }
 
@@ -542,8 +542,8 @@ function computeOverview() {
   monthlyMrr.value = mrrArr;
 
   // Summary stats
-  const currentMrr = mrrArr.length > 0 ? mrrArr[mrrArr.length - 1].mrr : 0;
-  const prevMrr = mrrArr.length > 1 ? mrrArr[mrrArr.length - 2].mrr : currentMrr;
+  const currentMrr = mrrArr.length > 0 ? mrrArr[mrrArr.length - 1]!.mrr : 0;
+  const prevMrr = mrrArr.length > 1 ? mrrArr[mrrArr.length - 2]!.mrr : currentMrr;
   const mrrGrowth = prevMrr > 0 ? Math.round(((currentMrr - prevMrr) / prevMrr) * 100) : 0;
 
   const totalNewDeals = Array.from(monthMap.values()).reduce((sum, e) => sum + e.newDeals, 0);
@@ -706,7 +706,7 @@ function computeCohort() {
     const cells = [];
 
     for (let m = 0; m < 12; m++) {
-      const targetDate = new Date(parseInt(key.split('-')[0]), parseInt(key.split('-')[1]) - 1 + m);
+      const targetDate = new Date(parseInt(key.split('-')[0] || '0'), parseInt(key.split('-')[1] || '1') - 1 + m);
       if (targetDate > now) {
         cells.push({ value: null, count: 0, rawValue: 0 });
         continue;
@@ -730,7 +730,7 @@ function computeCohort() {
           const closeDate = d.closedAt || d.closed_at || d.updatedAt || d.updated_at;
           if (closeDate) {
             const cd = new Date(closeDate);
-            const diff = (cd.getFullYear() - parseInt(key.split('-')[0])) * 12 + cd.getMonth() - (parseInt(key.split('-')[1]) - 1);
+            const diff = (cd.getFullYear() - parseInt(key.split('-')[0] || '0')) * 12 + cd.getMonth() - (parseInt(key.split('-')[1] || '1') - 1);
             if (diff <= m) return acc + val;
           }
           return acc;
@@ -805,12 +805,12 @@ function computeChurn() {
   if (lostDeals.length > 0) {
     lostDeals.forEach((d: any) => {
       const reason = (d.lostReason || d.closeReason || '').toLowerCase();
-      if (reason.includes('compet')) reasonMap.competitor++;
-      else if (reason.includes('budget') || reason.includes('price')) reasonMap.budgetCuts++;
-      else if (reason.includes('fit') || reason.includes('need')) reasonMap.poorFit++;
-      else if (reason.includes('down')) reasonMap.downgrade++;
-      else if (reason.includes('payment') || reason.includes('card') || reason.includes('involunt')) reasonMap.involuntary++;
-      else reasonMap.voluntary++;
+      if (reason.includes('compet')) reasonMap.competitor = (reasonMap.competitor || 0) + 1;
+      else if (reason.includes('budget') || reason.includes('price')) reasonMap.budgetCuts = (reasonMap.budgetCuts || 0) + 1;
+      else if (reason.includes('fit') || reason.includes('need')) reasonMap.poorFit = (reasonMap.poorFit || 0) + 1;
+      else if (reason.includes('down')) reasonMap.downgrade = (reasonMap.downgrade || 0) + 1;
+      else if (reason.includes('payment') || reason.includes('card') || reason.includes('involunt')) reasonMap.involuntary = (reasonMap.involuntary || 0) + 1;
+      else reasonMap.voluntary = (reasonMap.voluntary || 0) + 1;
     });
   } else {
     // Mock data
@@ -835,8 +835,8 @@ function computeChurn() {
 
   churnReasons.value = Object.keys(reasonMap).map((key, idx) => ({
     name: reasonLabels[idx],
-    value: reasonMap[key],
-    percentage: Math.round((reasonMap[key] / totalReasons) * 100),
+    value: reasonMap[key] || 0,
+    percentage: Math.round(((reasonMap[key] || 0) / totalReasons) * 100),
     color: reasonColors[idx]
   }));
 

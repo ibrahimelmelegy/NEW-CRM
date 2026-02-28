@@ -525,8 +525,8 @@ const filteredAuditLogs = computed(() => {
   if (auditDateRange.value && auditDateRange.value.length === 2) {
     const [start, end] = auditDateRange.value;
     logs = logs.filter((log) => {
-      const logDate = log.timestamp.split('T')[0];
-      return logDate >= start && logDate <= end;
+      const logDate = log.timestamp.split('T')[0]!;
+      return logDate >= start! && logDate <= end!;
     });
   }
   return logs;
@@ -660,7 +660,7 @@ function getAvatarColor(name: string): string {
   for (let i = 0; i < (name || '').length; i++) {
     hash = name.charCodeAt(i) + ((hash << 5) - hash);
   }
-  return colors[Math.abs(hash) % colors.length];
+  return colors[Math.abs(hash) % colors.length] || '';
 }
 
 function formatDate(dateStr: string): string {
@@ -809,9 +809,9 @@ function submitNewDsrRequest() {
       requester: newDsrForm.requester,
       email: newDsrForm.email,
       requestType: newDsrForm.requestType,
-      submittedDate: new Date().toISOString().split('T')[0],
+      submittedDate: new Date().toISOString().split('T')[0]!,
       daysRemaining: 30,
-      assignedTo: newDsrForm.assignedTo || teamMembers[0],
+      assignedTo: newDsrForm.assignedTo || teamMembers[0]!,
       status: 'pending',
       description: newDsrForm.description
     });

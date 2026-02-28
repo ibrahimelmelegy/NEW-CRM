@@ -110,7 +110,7 @@ import {
 
 definePageMeta({});
 
-const { $t } = useNuxtApp();
+const { $t } = useNuxtApp() as any;
 
 // ─── View mode toggle ───────────────────────────────────────────────────────
 type ViewMode = 'deal' | 'opportunity';

@@ -347,7 +347,7 @@ const renderCharts = () => {
     const buckets = [0, 0, 0, 0, 0]; // 1-star, 2-star, 3-star, 4-star, 5-star
     reviews.value.forEach((r) => {
       const idx = Math.min(Math.max(Math.round(r.overallRating) - 1, 0), 4);
-      buckets[idx]++;
+      buckets[idx]!++;
     });
 
     const chart = echarts.init(ratingChartRef.value);
@@ -404,7 +404,7 @@ const renderCharts = () => {
 
     const values = departments.length > 0
       ? departments.map((dept) => {
-          const entry = deptMap[dept];
+          const entry = deptMap[dept]!;
           return Number((entry.sum / entry.count).toFixed(1));
         })
       : [0, 0, 0, 0, 0];

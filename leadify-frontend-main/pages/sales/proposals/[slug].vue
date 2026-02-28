@@ -128,7 +128,7 @@
               :key="idx"
               class="bg-white rounded-2xl p-6 border border-gray-100"
             >
-              <h3 class="text-lg font-bold text-gray-900 mb-4">{{ section.title || `Section ${idx + 1}` }}</h3>
+              <h3 class="text-lg font-bold text-gray-900 mb-4">{{ section.title || `Section ${Number(idx) + 1}` }}</h3>
               <div class="prose prose-sm max-w-none" v-html="section.content" />
             </div>
 
@@ -385,7 +385,7 @@ const statusConfig = computed(() => {
     SENT: { color: 'bg-blue-100 text-blue-600', icon: Send, label: 'Sent to Client' },
     ARCHIVED: { color: 'bg-slate-100 text-slate-600', icon: AlertCircle, label: 'Archived' },
   }
-  return configs[status] || configs.DRAFT
+  return (configs[status] || configs.DRAFT)!
 })
 
 function formatDate(dateStr: string | undefined) {
@@ -396,7 +396,7 @@ function formatDate(dateStr: string | undefined) {
 function extractFileName(url: string) {
   if (!url) return 'Attachment'
   const parts = url.split('/')
-  return decodeURIComponent(parts[parts.length - 1]) || 'Attachment'
+  return decodeURIComponent(parts[parts.length - 1] || '') || 'Attachment'
 }
 
 async function reloadProposal() {

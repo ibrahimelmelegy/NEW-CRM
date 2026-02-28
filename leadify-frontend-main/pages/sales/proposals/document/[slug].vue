@@ -37,7 +37,7 @@
 
       <!-- Print Template -->
       <div ref="printContainer">
-        <ProposalsProposalPrintTemplate :form-data="formattedData" />
+        <ProposalsProposalPrintTemplate :form-data="formattedData as any" />
       </div>
 
       <!-- Floating Export Button -->
@@ -152,7 +152,7 @@ async function handleExport() {
           html2canvas: { scale: 2, useCORS: true, logging: false },
           jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' },
           pagebreak: { mode: ['avoid-all', 'css', 'legacy'] },
-        })
+        } as any)
         .from(element)
         .save()
       return

@@ -203,7 +203,7 @@ async function loadTree() {
   loading.value = true
   try {
     const res = await fetchEcCategoryTree()
-    treeData.value = res?.body?.docs || res?.body || res?.docs || []
+    treeData.value = (res as any)?.body?.docs || (res as any)?.body || (res as any)?.docs || res || []
   } finally {
     loading.value = false
   }
@@ -277,7 +277,7 @@ async function handleCreate() {
   }
   saving.value = true
   try {
-    const res = await createEcCategory({ ...createForm })
+    const res = await createEcCategory({ ...createForm } as any)
     if (res?.success !== false) {
       showCreateDialog.value = false
       await loadTree()
@@ -295,7 +295,7 @@ async function handleUpdate() {
   }
   saving.value = true
   try {
-    const res = await updateEcCategory(selectedCategory.value.id, { ...editForm })
+    const res = await updateEcCategory(selectedCategory.value.id, { ...editForm } as any)
     if (res?.success !== false) {
       await loadTree()
       // Re-select the updated category

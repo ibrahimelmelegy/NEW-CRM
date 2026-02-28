@@ -964,7 +964,7 @@ function handleCsvUpload(file: any) {
     const lines = text.split('\n').filter(l => l.trim());
     const contacts: { email: string; name: string }[] = [];
     for (let i = 1; i < lines.length; i++) {
-      const parts = lines[i].split(',');
+      const parts = lines[i]!.split(',');
       const email = parts[0]?.trim();
       const name = parts[1]?.trim() || email?.split('@')[0] || '';
       if (email && email.includes('@')) {

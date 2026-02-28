@@ -434,7 +434,7 @@ function getMonthKey(date: Date): string {
 
 function getMonthLabel(key: string): string {
   const [year, month] = key.split('-');
-  const date = new Date(parseInt(year), parseInt(month) - 1);
+  const date = new Date(parseInt(year || '0'), parseInt(month || '1') - 1);
   return date.toLocaleDateString(undefined, { month: 'short', year: 'numeric' });
 }
 
@@ -644,7 +644,7 @@ const revenueForecastOption = computed(() => {
   const sorted = Array.from(monthMap.entries()).sort((a, b) => a[0].localeCompare(b[0]));
   const pastValues = sorted.map(([, v]) => v);
   const avgGrowth = pastValues.length > 1
-    ? pastValues.slice(1).reduce((acc, v, i) => acc + (pastValues[i] > 0 ? (v - pastValues[i]) / pastValues[i] : 0), 0) / (pastValues.length - 1)
+    ? pastValues.slice(1).reduce((acc, v, i) => acc + ((pastValues[i] || 0) > 0 ? (v - pastValues[i]!) / pastValues[i]! : 0), 0) / (pastValues.length - 1)
     : 0.05;
 
   // Build past months
@@ -672,9 +672,9 @@ const revenueForecastOption = computed(() => {
   // Bridge point: connect actual to forecast
   const lastActualIdx = actual.findLastIndex(v => v !== null);
   if (lastActualIdx >= 0 && lastActualIdx < actual.length - 1) {
-    forecast[lastActualIdx] = actual[lastActualIdx];
-    upperBand[lastActualIdx] = actual[lastActualIdx];
-    lowerBand[lastActualIdx] = actual[lastActualIdx];
+    forecast[lastActualIdx] = actual[lastActualIdx] ?? null;
+    upperBand[lastActualIdx] = actual[lastActualIdx] ?? null;
+    lowerBand[lastActualIdx] = actual[lastActualIdx] ?? null;
   }
 
   return {
@@ -898,21 +898,21 @@ const anomalyScatterOption = computed(() => {
         name: t('aiInsights.critical'),
         type: 'scatter',
         data: criticalData,
-        symbolSize: (data: number[]) => Math.max(10, Math.min(30, data[2])),
+        symbolSize: (data: number[]) => Math.max(10, Math.min(30, data[2] || 0)),
         itemStyle: { color: '#ef4444', shadowBlur: 10, shadowColor: 'rgba(239, 68, 68, 0.4)' }
       },
       {
         name: t('aiInsights.warning'),
         type: 'scatter',
         data: warningData,
-        symbolSize: (data: number[]) => Math.max(8, Math.min(25, data[2])),
+        symbolSize: (data: number[]) => Math.max(8, Math.min(25, data[2] || 0)),
         itemStyle: { color: '#f59e0b', shadowBlur: 8, shadowColor: 'rgba(245, 158, 11, 0.3)' }
       },
       {
         name: t('aiInsights.informational'),
         type: 'scatter',
         data: infoData,
-        symbolSize: (data: number[]) => Math.max(6, Math.min(20, data[2])),
+        symbolSize: (data: number[]) => Math.max(6, Math.min(20, data[2] || 0)),
         itemStyle: { color: '#3b82f6', shadowBlur: 6, shadowColor: 'rgba(59, 130, 246, 0.3)' }
       }
     ],

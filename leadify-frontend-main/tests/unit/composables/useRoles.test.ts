@@ -235,7 +235,7 @@ describe('useRoles', () => {
 
       await updateRole(values);
 
-      const calledWithBody = mockApiFetch.mock.calls[0][2];
+      const calledWithBody = mockApiFetch.mock.calls[0]![2];
       expect(calledWithBody).not.toHaveProperty('id');
       expect(calledWithBody).toHaveProperty('name', 'Updated Role');
     });

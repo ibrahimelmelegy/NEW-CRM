@@ -775,7 +775,7 @@ function updateResource() {
         type: resourceForm.type,
         fileSize: resourceForm.fileSize,
         description: resourceForm.description
-      };
+      } as any;
     }
     showResourceEditDialog.value = false;
     saving.value = false;

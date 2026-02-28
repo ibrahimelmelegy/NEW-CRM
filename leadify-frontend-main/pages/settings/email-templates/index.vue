@@ -159,7 +159,7 @@ import { ElMessage } from 'element-plus';
 
 definePageMeta({});
 
-const { $t } = useNuxtApp();
+const { t: $t } = useI18n();
 
 interface EmailTemplate {
   id: string;

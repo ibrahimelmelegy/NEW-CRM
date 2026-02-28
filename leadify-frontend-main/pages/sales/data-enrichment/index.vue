@@ -631,7 +631,7 @@ function getAvatarColor(name: string): string {
   const colors = ['#7849ff', '#3b82f6', '#22c55e', '#f59e0b', '#ef4444', '#8b5cf6', '#06b6d4'];
   let hash = 0;
   for (let i = 0; i < (name || '').length; i++) hash = name.charCodeAt(i) + ((hash << 5) - hash);
-  return colors[Math.abs(hash) % colors.length];
+  return colors[Math.abs(hash) % colors.length] || '';
 }
 
 function getInitials(name: string): string {
@@ -692,7 +692,7 @@ function rebalanceWeights(changed: keyof typeof scoringWeights) {
     // Fix rounding
     const newTotal = keys.reduce((sum, k) => sum + scoringWeights[k], 0);
     if (newTotal !== 100) {
-      scoringWeights[others[0]] += 100 - newTotal;
+      scoringWeights[others[0]!] += 100 - newTotal;
     }
   }
 }
@@ -743,7 +743,7 @@ function loadDemoContacts() {
   const locations = ['Dubai, UAE', 'New York, US', 'London, UK', 'Riyadh, KSA', 'Berlin, DE', '', ''];
   const companies = ['TechCorp', 'FinServe Inc', 'MedPro', 'BuildRight', 'RetailMax', 'EduPlus', '', ''];
 
-  contacts.value = demoNames.map((name, i) => {
+  contacts.value = demoNames.map((name, i): Contact => {
     const score = Math.floor(Math.random() * 100);
     const missing: string[] = [];
     const hasEmail = Math.random() > 0.1;
@@ -760,10 +760,10 @@ function loadDemoContacts() {
       id: `contact-${i + 1}`,
       name,
       email: hasEmail ? `${name.toLowerCase().replace(/[^a-z]/g, '.')}@example.com` : '',
-      company: hasCompany ? companies[i % companies.length] : '',
+      company: hasCompany ? companies[i % companies.length] || '' : '',
       phone: hasPhone ? `+971 5${Math.floor(Math.random() * 10)} ${Math.floor(1000000 + Math.random() * 9000000)}` : '',
-      industry: hasIndustry ? industries[i % industries.length] : '',
-      location: hasLocation ? locations[i % locations.length] : '',
+      industry: hasIndustry ? industries[i % industries.length] || '' : '',
+      location: hasLocation ? locations[i % locations.length] || '' : '',
       score,
       missingFields: missing,
     };

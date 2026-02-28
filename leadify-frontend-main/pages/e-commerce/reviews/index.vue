@@ -257,9 +257,9 @@ watch(currentPage, () => {
 async function loadReviews() {
   loading.value = true
   try {
-    const res = await fetchReviews({ page: currentPage.value, limit: pageSize.value })
-    reviews.value = res?.body?.docs || res?.docs || []
-    totalItems.value = res?.body?.totalDocs || res?.totalDocs || reviews.value.length
+    const res = await fetchReviews({ page: String(currentPage.value), limit: String(pageSize.value) })
+    reviews.value = (res as any)?.body?.docs || res?.docs || []
+    totalItems.value = (res as any)?.body?.totalDocs || (res as any)?.totalDocs || reviews.value.length
   } finally {
     loading.value = false
   }

@@ -616,7 +616,7 @@ function getAvatarGradient(name: string): string {
     'linear-gradient(135deg, #ec4899, #f472b6)'
   ];
   const idx = (name || '').charCodeAt(0) % colors.length;
-  return colors[idx];
+  return colors[idx] || '';
 }
 
 function getScoreColor(score: number): string {

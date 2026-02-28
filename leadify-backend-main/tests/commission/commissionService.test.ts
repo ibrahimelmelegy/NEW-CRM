@@ -92,7 +92,7 @@ describe('CommissionService', () => {
                 id: 1,
                 status: 'PENDING',
                 paidAt: null,
-                update: jest.fn().mockResolvedValue(true),
+                update: (jest.fn() as jest.Mock<any>).mockResolvedValue(true),
             };
             (Commission.findByPk as jest.Mock<any>).mockResolvedValue(mockCommission);
 
@@ -106,7 +106,7 @@ describe('CommissionService', () => {
                 id: 1,
                 status: 'APPROVED',
                 paidAt: null,
-                update: jest.fn().mockResolvedValue(true),
+                update: (jest.fn() as jest.Mock<any>).mockResolvedValue(true),
             };
             (Commission.findByPk as jest.Mock<any>).mockResolvedValue(mockCommission);
 
@@ -130,7 +130,7 @@ describe('CommissionService', () => {
     // --------------------------------------------------------------------------
     describe('delete', () => {
         it('should delete a commission and return true', async () => {
-            const mockCommission = { id: 1, destroy: jest.fn().mockResolvedValue(true) };
+            const mockCommission = { id: 1, destroy: (jest.fn() as jest.Mock<any>).mockResolvedValue(true) };
             (Commission.findByPk as jest.Mock<any>).mockResolvedValue(mockCommission);
 
             const result = await commissionService.delete(1);
@@ -237,7 +237,7 @@ describe('CommissionService', () => {
                 status: 'APPROVED',
                 staffId: 2,
                 amount: 500,
-                update: jest.fn().mockResolvedValue(true),
+                update: (jest.fn() as jest.Mock<any>).mockResolvedValue(true),
             };
             (Commission.findByPk as jest.Mock<any>).mockResolvedValue(mockCommission);
 

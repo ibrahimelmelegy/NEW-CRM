@@ -361,7 +361,7 @@ const kpiCards = computed(() => [
   },
   {
     label: t('apiMarketplace.availableConnectors'),
-    value: connectors.length,
+    value: connectors.value.length,
     icon: 'ph:puzzle-piece-bold',
     color: '#7849ff',
     trend: 6.7
@@ -686,7 +686,7 @@ function deleteKey(key: any) {
   ElMessageBox.confirm(
     t('apiMarketplace.deleteKeyConfirm'),
     t('apiMarketplace.warning'),
-    { type: 'danger' }
+    { type: 'warning' } as any
   ).then(() => {
     const idx = apiKeys.value.findIndex(k => k.id === key.id);
     if (idx > -1) apiKeys.value.splice(idx, 1);

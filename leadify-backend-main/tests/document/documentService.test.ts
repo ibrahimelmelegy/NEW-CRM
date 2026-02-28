@@ -66,7 +66,7 @@ describe('DocumentService', () => {
             const mockFolder = {
                 id: 1,
                 name: 'Old Name',
-                update: jest.fn().mockResolvedValue(true),
+                update: (jest.fn() as jest.Mock<any>).mockResolvedValue(true),
             };
             (DocumentFolder.findByPk as jest.Mock<any>).mockResolvedValue(mockFolder);
 
@@ -93,7 +93,7 @@ describe('DocumentService', () => {
 
     describe('deleteFolder', () => {
         it('should delete a folder and reparent children to root', async () => {
-            const mockFolder = { id: 1, destroy: jest.fn().mockResolvedValue(true) };
+            const mockFolder = { id: 1, destroy: (jest.fn() as jest.Mock<any>).mockResolvedValue(true) };
             (DocumentFolder.findByPk as jest.Mock<any>).mockResolvedValue(mockFolder);
             (DocumentFolder.update as jest.Mock<any>).mockResolvedValue([2]); // 2 children reparented
             (DocumentFile.update as jest.Mock<any>).mockResolvedValue([3]); // 3 files moved to root
@@ -186,7 +186,7 @@ describe('DocumentService', () => {
             const mockFile = {
                 id: 1,
                 name: 'old-name.pdf',
-                update: jest.fn().mockResolvedValue(true),
+                update: (jest.fn() as jest.Mock<any>).mockResolvedValue(true),
             };
             (DocumentFile.findByPk as jest.Mock<any>).mockResolvedValue(mockFile);
 
@@ -205,7 +205,7 @@ describe('DocumentService', () => {
 
     describe('deleteFile', () => {
         it('should delete a file', async () => {
-            const mockFile = { id: 1, destroy: jest.fn().mockResolvedValue(true) };
+            const mockFile = { id: 1, destroy: (jest.fn() as jest.Mock<any>).mockResolvedValue(true) };
             (DocumentFile.findByPk as jest.Mock<any>).mockResolvedValue(mockFile);
 
             const result = await documentService.deleteFile(1);

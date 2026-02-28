@@ -604,8 +604,8 @@ function removeFormStep(idx: number) {
 function moveStep(idx: number, dir: number) {
   const target = idx + dir;
   if (target < 0 || target >= form.steps.length) return;
-  const temp = form.steps[idx];
-  form.steps[idx] = form.steps[target];
+  const temp = form.steps[idx]!;
+  form.steps[idx] = form.steps[target]!;
   form.steps[target] = temp;
 }
 

@@ -163,27 +163,27 @@ export function useDocumentArchive() {
     return true;
   }
 
-  function bulkArchive(docs: Omit<ArchivedDocument, 'archivedAt'>[]): number {
+  async function bulkArchive(docs: Omit<ArchivedDocument, 'archivedAt'>[]): Promise<number> {
     let count = 0;
-    docs.forEach(doc => {
-      if (archiveDocument(doc)) count++;
-    });
+    for (const doc of docs) {
+      if (await archiveDocument(doc)) count++;
+    }
     return count;
   }
 
-  function bulkRestore(ids: Array<{ id: string | number; documentType: string }>): number {
+  async function bulkRestore(ids: Array<{ id: string | number; documentType: string }>): Promise<number> {
     let count = 0;
-    ids.forEach(({ id, documentType }) => {
-      if (restoreDocument(id, documentType)) count++;
-    });
+    for (const { id, documentType } of ids) {
+      if (await restoreDocument(id, documentType)) count++;
+    }
     return count;
   }
 
-  function bulkDelete(ids: Array<{ id: string | number; documentType: string }>): number {
+  async function bulkDelete(ids: Array<{ id: string | number; documentType: string }>): Promise<number> {
     let count = 0;
-    ids.forEach(({ id, documentType }) => {
-      if (permanentlyDelete(id, documentType)) count++;
-    });
+    for (const { id, documentType } of ids) {
+      if (await permanentlyDelete(id, documentType)) count++;
+    }
     return count;
   }
 

@@ -762,9 +762,9 @@ function savePartner() {
   saving.value = true;
   try {
     if (editingPartner.value) {
-      const idx = partners.value.findIndex(p => p.id === editingPartner.value.id);
+      const idx = partners.value.findIndex(p => p.id === editingPartner.value!.id);
       if (idx >= 0) {
-        partners.value[idx] = { ...partners.value[idx], ...partnerForm };
+        partners.value[idx] = { ...partners.value[idx], ...partnerForm } as any;
       }
     } else {
       partners.value.push({
@@ -806,7 +806,7 @@ async function handleDeletePartner(partner: Partner) {
 function handleDealAction(deal: DealRegistration, newStatus: string) {
   const idx = dealRegistrations.value.findIndex(d => d.id === deal.id);
   if (idx >= 0) {
-    dealRegistrations.value[idx].status = newStatus;
+    dealRegistrations.value[idx]!.status = newStatus;
     const action = newStatus === 'approved' ? t('partnerManagement.approved') : t('partnerManagement.rejected');
     ElNotification({
       type: newStatus === 'approved' ? 'success' : 'warning',
@@ -844,13 +844,13 @@ function saveTierConfig() {
   saving.value = true;
   try {
     if (editingTier.value) {
-      const idx = tierConfigurations.value.findIndex(tc => tc.name === editingTier.value.name);
+      const idx = tierConfigurations.value.findIndex(tc => tc.name === editingTier.value!.name);
       if (idx >= 0) {
         tierConfigurations.value[idx] = {
           ...tierConfigurations.value[idx],
           ...tierForm,
           color: getTierColor(tierForm.name)
-        };
+        } as any;
       }
     } else {
       tierConfigurations.value.push({

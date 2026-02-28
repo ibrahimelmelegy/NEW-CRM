@@ -369,7 +369,7 @@ function getMonthKey(date: Date): string {
 
 function getMonthLabel(key: string): string {
   const [year, month] = key.split('-');
-  const date = new Date(parseInt(year), parseInt(month) - 1);
+  const date = new Date(parseInt(year || '0'), parseInt(month || '1') - 1);
   return date.toLocaleDateString(undefined, { month: 'short', year: 'numeric' });
 }
 
@@ -394,7 +394,7 @@ function getCohortColor(value: number): string {
 
 function getAvatarColor(index: number): string {
   const colors = ['#7849ff', '#3b82f6', '#06b6d4', '#22c55e', '#f59e0b', '#f97316', '#ef4444', '#ec4899'];
-  return colors[index % colors.length];
+  return colors[index % colors.length] || '#7849ff';
 }
 
 function getInitials(name: string): string {
@@ -432,7 +432,7 @@ function computeCohort() {
     // Compute cells for months 0..12
     const cells = [];
     for (let m = 0; m <= 12; m++) {
-      const targetDate = new Date(parseInt(key.split('-')[0]), parseInt(key.split('-')[1]) - 1 + m);
+      const targetDate = new Date(parseInt(key.split('-')[0] || '0'), parseInt(key.split('-')[1] || '1') - 1 + m);
       if (targetDate > now) {
         cells.push({ value: null, count: 0, rawValue: 0 });
         continue;
@@ -459,7 +459,7 @@ function computeCohort() {
           const closeDate = d.closedAt || d.closed_at || d.updatedAt || d.updated_at;
           if (closeDate) {
             const cd = new Date(closeDate);
-            const diff = (cd.getFullYear() - parseInt(key.split('-')[0])) * 12 + cd.getMonth() - (parseInt(key.split('-')[1]) - 1);
+            const diff = (cd.getFullYear() - parseInt(key.split('-')[0] || '0')) * 12 + cd.getMonth() - (parseInt(key.split('-')[1] || '1') - 1);
             if (diff <= m) return acc + val;
           }
           return acc;
@@ -505,35 +505,35 @@ function computeFunnel() {
   // Count deals by stage
   deals.forEach((d: any) => {
     const stage = (d.status || d.stage || d.dealStage || '').toLowerCase();
-    if (stage.includes('qualif')) stageCounts.qualified++;
-    else if (stage.includes('propos')) stageCounts.proposal++;
-    else if (stage.includes('negoti')) stageCounts.negotiation++;
-    else if (stage.includes('won') || stage.includes('closed') || stage.includes('win')) stageCounts.won++;
-    else if (stage.includes('opportun')) stageCounts.opportunity++;
-    else stageCounts.qualified++; // default to qualified
+    if (stage.includes('qualif')) stageCounts.qualified = (stageCounts.qualified || 0) + 1;
+    else if (stage.includes('propos')) stageCounts.proposal = (stageCounts.proposal || 0) + 1;
+    else if (stage.includes('negoti')) stageCounts.negotiation = (stageCounts.negotiation || 0) + 1;
+    else if (stage.includes('won') || stage.includes('closed') || stage.includes('win')) stageCounts.won = (stageCounts.won || 0) + 1;
+    else if (stage.includes('opportun')) stageCounts.opportunity = (stageCounts.opportunity || 0) + 1;
+    else stageCounts.qualified = (stageCounts.qualified || 0) + 1; // default to qualified
   });
 
   // If no opportunities from API, derive from deals
-  if (stageCounts.opportunity === 0) {
-    stageCounts.opportunity = Math.round(stageCounts.qualified * 0.7);
+  if ((stageCounts.opportunity || 0) === 0) {
+    stageCounts.opportunity = Math.round((stageCounts.qualified || 0) * 0.7);
   }
 
   // Ensure funnel is descending
   const keys = ['lead', 'qualified', 'opportunity', 'proposal', 'negotiation', 'won'];
-  let prev = stageCounts.lead;
+  let prev = stageCounts.lead || 0;
   keys.forEach(k => {
-    if (stageCounts[k] === 0 || stageCounts[k] > prev) {
+    if ((stageCounts[k] || 0) === 0 || (stageCounts[k] || 0) > prev) {
       stageCounts[k] = Math.round(prev * (0.5 + Math.random() * 0.3));
     }
-    prev = stageCounts[k];
+    prev = stageCounts[k] || 0;
   });
   // Ensure lead stays at top
-  stageCounts.lead = Math.max(stageCounts.lead, stageCounts.qualified + 5);
+  stageCounts.lead = Math.max(stageCounts.lead || 0, (stageCounts.qualified || 0) + 5);
 
   const totalLead = stageCounts.lead;
   funnelStages.value = FUNNEL_STAGES.map((s, idx) => {
-    const count = stageCounts[s.key];
-    const prevCount = idx > 0 ? stageCounts[keys[idx - 1]] : count;
+    const count = stageCounts[s.key] || 0;
+    const prevCount = idx > 0 ? (stageCounts[keys[idx - 1]!] || 0) : count;
     return {
       ...s,
       name: t(s.labelKey),
@@ -906,8 +906,8 @@ function computeInsights() {
   let topSourcePct = 42;
   if (sourceMap.size > 0) {
     const sorted = Array.from(sourceMap.entries()).sort((a, b) => b[1] - a[1]);
-    topSource = sorted[0][0];
-    topSourcePct = leads.length > 0 ? Math.round((sorted[0][1] / leads.length) * 100) : 0;
+    topSource = sorted[0]![0];
+    topSourcePct = leads.length > 0 ? Math.round((sorted[0]![1] / leads.length) * 100) : 0;
   }
 
   // Average deal cycle

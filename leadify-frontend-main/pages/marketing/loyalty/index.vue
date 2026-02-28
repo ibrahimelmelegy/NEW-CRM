@@ -780,7 +780,7 @@ function openProgramDialog(program?: any) {
       tiers: program.tiers?.length
         ? program.tiers.map((t: any) => ({ name: t.name, minPoints: t.minPoints || 0, benefits: t.benefits || [] }))
         : defaultProgramForm().tiers
-    };
+    } as any;
   } else {
     editingProgram.value = null;
     programForm.value = defaultProgramForm();
@@ -926,8 +926,8 @@ async function openMemberDetail(member: any) {
   ];
   let nextTier = null;
   for (let i = 0; i < tiers.length; i++) {
-    if (earned >= tiers[i].min) {
-      memberDetail.value.tier = tiers[i].name;
+    if (earned >= tiers[i]!.min) {
+      memberDetail.value.tier = tiers[i]!.name;
       nextTier = i < tiers.length - 1 ? tiers[i + 1] : null;
     }
   }

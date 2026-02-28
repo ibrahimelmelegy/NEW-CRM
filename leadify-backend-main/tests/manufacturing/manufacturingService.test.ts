@@ -82,7 +82,7 @@ describe('ManufacturingService', () => {
                 id: 1,
                 productName: 'Widget',
                 totalCost: 0,
-                update: jest.fn().mockResolvedValue(true),
+                update: (jest.fn() as jest.Mock<any>).mockResolvedValue(true),
             };
             (BOM.create as jest.Mock<any>).mockResolvedValue(mockBOM);
             (BOMItem.create as jest.Mock<any>).mockResolvedValue({});
@@ -133,7 +133,7 @@ describe('ManufacturingService', () => {
     // --------------------------------------------------------------------------
     describe('deleteBOM', () => {
         it('should delete a BOM and its items', async () => {
-            const mockBOM = { id: 1, destroy: jest.fn().mockResolvedValue(true) };
+            const mockBOM = { id: 1, destroy: (jest.fn() as jest.Mock<any>).mockResolvedValue(true) };
             (BOM.findOne as jest.Mock<any>).mockResolvedValue(mockBOM);
             (BOMItem.destroy as jest.Mock<any>).mockResolvedValue(3);
 
@@ -260,7 +260,7 @@ describe('ManufacturingService', () => {
                 id: 1,
                 planned: 100,
                 produced: 0,
-                update: jest.fn().mockResolvedValue(true),
+                update: (jest.fn() as jest.Mock<any>).mockResolvedValue(true),
             };
             (WorkOrder.findOne as jest.Mock<any>).mockResolvedValue(mockWO);
 
@@ -277,7 +277,7 @@ describe('ManufacturingService', () => {
                 id: 1,
                 planned: 100,
                 produced: 80,
-                update: jest.fn().mockResolvedValue(true),
+                update: (jest.fn() as jest.Mock<any>).mockResolvedValue(true),
             };
             (WorkOrder.findOne as jest.Mock<any>).mockResolvedValue(mockWO);
 
@@ -294,7 +294,7 @@ describe('ManufacturingService', () => {
                 id: 1,
                 planned: 100,
                 produced: 0,
-                update: jest.fn().mockResolvedValue(true),
+                update: (jest.fn() as jest.Mock<any>).mockResolvedValue(true),
             };
             (WorkOrder.findOne as jest.Mock<any>).mockResolvedValue(mockWO);
 

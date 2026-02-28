@@ -213,7 +213,7 @@ const createOption = (name: string, monthly: number, annual: number, recommended
   const features = defaultFeatures();
   if (featureOverrides) {
     featureOverrides.forEach((override, i) => {
-      if (i < features.length) Object.assign(features[i], override);
+      if (i < features.length) Object.assign(features[i]!, override);
     });
   }
   return {
@@ -260,12 +260,12 @@ const optionGridClass = computed(() => {
 
 // --- Value Summary Stats ---
 const valueSummaryStats = computed(() => {
-  const cheapest = options.reduce((prev, curr) => curr.monthlyPrice < prev.monthlyPrice ? curr : prev, options[0]);
+  const cheapest = options.reduce((prev, curr) => curr.monthlyPrice < prev.monthlyPrice ? curr : prev, options[0]!);
   const mostFeatures = options.reduce((prev, curr) => {
     const prevCount = prev.features.filter(f => f.included).length;
     const currCount = curr.features.filter(f => f.included).length;
     return currCount > prevCount ? curr : prev;
-  }, options[0]);
+  }, options[0]!);
   const bestRatio = getBestValueOption();
   const recommended = options.find(o => o.recommended);
 
@@ -332,7 +332,7 @@ const valueAnalysisRows = computed(() => {
   // Cost per user
   const costPerUser = options.map((opt, i) => {
     const users = parseInt(opt.userLimit) || 1;
-    return totalCosts[i] / users;
+    return totalCosts[i]! / users;
   });
 
   // Feature count
@@ -341,7 +341,7 @@ const valueAnalysisRows = computed(() => {
   // Feature-to-price ratio (features per $100)
   const featureRatios = options.map((opt, i) => {
     const monthly = opt.monthlyPrice || 1;
-    return +(featureCounts[i] / monthly * 100).toFixed(1);
+    return +(featureCounts[i]! / monthly * 100).toFixed(1);
   });
 
   // Find best index for each metric
@@ -395,7 +395,7 @@ function getBestValueOption(): QuoteOption | null {
     }
   });
 
-  return best;
+  return best!;
 }
 
 function addOption() {
@@ -415,7 +415,7 @@ function removeOption(idx: number) {
 }
 
 function addFeatureToOption(optIdx: number) {
-  options[optIdx].features.push({ name: '', included: false });
+  options[optIdx]!.features.push({ name: '', included: false });
 }
 
 function setRecommended(idx: number) {

@@ -92,7 +92,7 @@ describe('CalendarService', () => {
             const mockEvent = {
                 id: 1,
                 title: 'Old Title',
-                update: jest.fn().mockResolvedValue(true),
+                update: (jest.fn() as jest.Mock<any>).mockResolvedValue(true),
             };
             (CalendarEvent.findByPk as jest.Mock<any>).mockResolvedValue(mockEvent);
 
@@ -114,7 +114,7 @@ describe('CalendarService', () => {
     // --------------------------------------------------------------------------
     describe('deleteEvent', () => {
         it('should delete an event', async () => {
-            const mockEvent = { id: 1, destroy: jest.fn().mockResolvedValue(true) };
+            const mockEvent = { id: 1, destroy: (jest.fn() as jest.Mock<any>).mockResolvedValue(true) };
             (CalendarEvent.findByPk as jest.Mock<any>).mockResolvedValue(mockEvent);
 
             const result = await calendarService.deleteEvent(1);
@@ -218,7 +218,7 @@ describe('CalendarService', () => {
                     { userId: 1, status: 'PENDING' },
                     { userId: 2, status: 'PENDING' },
                 ],
-                update: jest.fn().mockResolvedValue(true),
+                update: (jest.fn() as jest.Mock<any>).mockResolvedValue(true),
             };
             (CalendarEvent.findByPk as jest.Mock<any>).mockResolvedValue(mockEvent);
 
