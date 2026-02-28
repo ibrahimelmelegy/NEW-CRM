@@ -196,8 +196,10 @@ const menu = [
       { link: '/sales/commissions', name: 'navigation.commissions', icon: 'ph:currency-dollar-bold' },
       { link: '/sales/competitors', name: 'navigation.competitors', icon: 'ph:binoculars-bold' },
       { link: '/sales/proforma-invoices', name: 'navigation.proformaInvoices', icon: 'ph:file-text-bold' },
-      { link: '/sales/goals', name: 'navigation.goalsQuotas', icon: 'ph:target-bold' },
-      { link: '/sales/revenue-intelligence', name: 'navigation.revenueIntelligence', icon: 'ph:chart-line-up-bold' }
+      { link: '/sales/goals', name: 'navigation.goalsOkrs', icon: 'ph:crosshair-bold' },
+      { link: '/sales/revenue-intelligence', name: 'navigation.revenueIntelligence', icon: 'ph:chart-line-up-bold' },
+      { link: '/sales/territories', name: 'navigation.territoryManagement', icon: 'ph:map-pin-area-bold' },
+      { link: '/sales/product-catalog', name: 'navigation.productCatalog', icon: 'ph:storefront-bold' }
     ]
   },
 
@@ -294,6 +296,7 @@ const menu = [
     isOpen: false,
     submenu: [
       { link: '/marketing/campaigns', name: 'navigation.campaigns', icon: 'ph:envelope-simple-bold' },
+      { link: '/marketing/campaigns/builder', name: 'navigation.campaignBuilder', icon: 'ph:pencil-line-bold' },
       { link: '/marketing/sequences', name: 'navigation.sequences', icon: 'ph:flow-arrow-bold' },
       { link: '/marketing/ab-testing', name: 'navigation.abTesting', icon: 'ph:flask-bold' },
       { link: '/marketing/form-builder', name: 'navigation.formBuilder', icon: 'ph:textbox-bold' },
