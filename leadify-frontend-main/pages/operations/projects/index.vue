@@ -105,6 +105,7 @@ div(class="animate-fade-in")
 <script setup lang="ts">
 import { Plus } from '@element-plus/icons-vue';
 import { computed, reactive, ref } from 'vue';
+import { ElMessage } from 'element-plus';
 import PremiumPageHeader from '~/components/UI/PremiumPageHeader.vue';
 import PremiumKPICards from '~/components/UI/PremiumKPICards.vue';
 import type { KPIMetric } from '~/components/UI/PremiumKPICards.vue';
@@ -329,7 +330,9 @@ async function handleAdvancedFilter(filterPayload: any) {
       const data = res.body as any;
       table.data = data.docs || data || [];
     }
-  } catch {}
+  } catch (e: any) {
+    ElMessage.error(t('common.error'));
+  }
 }
 
 async function handleClearAdvancedFilter() {

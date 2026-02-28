@@ -155,7 +155,7 @@
 
 <script setup lang="ts">
 import { ref, reactive } from 'vue';
-import { ElNotification } from 'element-plus';
+import { ElNotification, ElMessage } from 'element-plus';
 import {
   fetchSequences,
   updateSequence,
@@ -332,21 +332,27 @@ async function handlePause(enrollment: SequenceEnrollment) {
   try {
     await pauseEnrollment(enrollment.id);
     enrollment.status = 'paused';
-  } catch {}
+  } catch (e: any) {
+    ElMessage.error(t('common.error'));
+  }
 }
 
 async function handleResume(enrollment: SequenceEnrollment) {
   try {
     await resumeEnrollment(enrollment.id);
     enrollment.status = 'active';
-  } catch {}
+  } catch (e: any) {
+    ElMessage.error(t('common.error'));
+  }
 }
 
 async function handleAdvance(enrollment: SequenceEnrollment) {
   try {
     await advanceStep(enrollment.id);
     enrollment.currentStep += 1;
-  } catch {}
+  } catch (e: any) {
+    ElMessage.error(t('common.error'));
+  }
 }
 </script>
 

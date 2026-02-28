@@ -97,7 +97,7 @@
 
 <script setup lang="ts">
 import { ref, reactive, computed } from 'vue';
-import { ElNotification, ElMessageBox } from 'element-plus';
+import { ElNotification, ElMessageBox, ElMessage } from 'element-plus';
 import { fetchDuplicateSets, confirmDuplicate, dismissDuplicate, mergeDuplicates, scanForDuplicates } from '~/composables/useDuplicateDetection';
 import type { DuplicateSet } from '~/composables/useDuplicateDetection';
 
@@ -166,7 +166,7 @@ async function handleConfirm(set: DuplicateSet) {
     await confirmDuplicate(set.id);
     await handleStatusChange(activeStatus.value);
     ElNotification({ type: 'success', title: t('common.success'), message: t('common.saved') });
-  } catch {}
+  } catch (e: any) { ElMessage.error(t('common.error')); }
 }
 
 async function handleDismiss(set: DuplicateSet) {
@@ -221,7 +221,7 @@ async function handleMerge() {
     mergeDialogVisible.value = false;
     await handleStatusChange(activeStatus.value);
     ElNotification({ type: 'success', title: t('common.success'), message: t('common.saved') });
-  } catch {
+  } catch (e: any) { ElMessage.error(t('common.error'));
   } finally {
     merging.value = false;
   }

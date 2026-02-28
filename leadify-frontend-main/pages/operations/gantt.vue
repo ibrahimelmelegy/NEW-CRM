@@ -285,6 +285,9 @@ definePageMeta({
   middleware: 'permissions'
 });
 
+const { $i18n } = useNuxtApp();
+const t = $i18n.t;
+
 interface GanttTask {
   id: number;
   name: string;
@@ -405,7 +408,7 @@ async function fetchTasks() {
     }
   } catch (e) {
     console.error('Failed to fetch gantt tasks:', e);
-    ElMessage.error('Failed to load tasks');
+    ElMessage.error(t('common.error'));
   } finally {
     loading.value = false;
   }
@@ -653,15 +656,15 @@ async function onResizeEnd() {
       tags: [JSON.stringify(ganttMeta)]
     });
     if (success) {
-      ElMessage.success('Duration updated');
+      ElMessage.success(t('common.saved'));
     } else {
       // Revert
       task.end = resizeOriginalEnd;
-      ElMessage.error('Failed to update duration');
+      ElMessage.error(t('common.error'));
     }
   } catch {
     task.end = resizeOriginalEnd;
-    ElMessage.error('Failed to update duration');
+    ElMessage.error(t('common.error'));
   }
 }
 
@@ -762,7 +765,7 @@ function buildPayload(colorOverride?: string): Record<string, any> {
 
 const saveTask = async () => {
   if (!taskForm.value.name) {
-    ElMessage.warning('Task name required');
+    ElMessage.warning(t('common.fillRequired'));
     return;
   }
 
@@ -789,9 +792,9 @@ const saveTask = async () => {
           };
         }
         showTaskDialog.value = false;
-        ElMessage.success('Task updated');
+        ElMessage.success(t('common.saved'));
       } else {
-        ElMessage.error('Failed to update task');
+        ElMessage.error(t('common.error'));
       }
     } else {
       const payload = buildPayload();
@@ -800,14 +803,14 @@ const saveTask = async () => {
         const created = body as any;
         tasks.value.push(mapApiTaskToGantt(created, tasks.value.length));
         showTaskDialog.value = false;
-        ElMessage.success('Task added');
+        ElMessage.success(t('common.saved'));
       } else {
-        ElMessage.error('Failed to create task');
+        ElMessage.error(t('common.error'));
       }
     }
   } catch (e) {
     console.error('Failed to save gantt task:', e);
-    ElMessage.error('Failed to save task');
+    ElMessage.error(t('common.error'));
   } finally {
     saving.value = false;
   }
@@ -820,9 +823,9 @@ const saveTask = async () => {
 async function confirmDeleteTask(task: GanttTask) {
   try {
     await ElMessageBox.confirm(
-      `Are you sure you want to delete "${task.name}"?`,
-      'Delete Task',
-      { type: 'warning', confirmButtonText: 'Delete', cancelButtonText: 'Cancel' }
+      t('common.confirmAction'),
+      t('common.warning'),
+      { type: 'warning', confirmButtonText: t('common.delete'), cancelButtonText: t('common.cancel') }
     );
     await deleteTask(task);
   } catch {
@@ -837,13 +840,13 @@ async function deleteTask(task: GanttTask) {
     if (success) {
       tasks.value = tasks.value.filter(t => t.id !== task.id);
       showTaskDialog.value = false;
-      ElMessage.success('Task deleted');
+      ElMessage.success(t('common.deleted'));
     } else {
-      ElMessage.error('Failed to delete task');
+      ElMessage.error(t('common.error'));
     }
   } catch (e) {
     console.error('Failed to delete gantt task:', e);
-    ElMessage.error('Failed to delete task');
+    ElMessage.error(t('common.error'));
   } finally {
     deleting.value = false;
   }

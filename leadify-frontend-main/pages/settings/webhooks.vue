@@ -61,7 +61,7 @@
 </template>
 
 <script setup lang="ts">
-import { ElNotification, ElMessageBox } from 'element-plus';
+import { ElNotification, ElMessageBox, ElMessage } from 'element-plus';
 import type { WebhookConfig } from '~/composables/useWebhooks';
 import { fetchWebhooks, createWebhook, updateWebhook, deleteWebhook, testWebhook, WEBHOOK_EVENTS } from '~/composables/useWebhooks';
 
@@ -69,6 +69,9 @@ definePageMeta({
   middleware: 'permissions',
   permission: 'VIEW_SETTINGS'
 });
+
+const { $i18n } = useNuxtApp();
+const t = $i18n.t;
 
 const webhooks = ref<WebhookConfig[]>([]);
 const loading = ref(true);
@@ -110,7 +113,7 @@ function openForm(wh?: WebhookConfig) {
 
 async function saveWebhook() {
   if (!formData.value.name || !formData.value.url || !formData.value.events.length) {
-    ElNotification({ type: 'warning', title: 'Warning', message: 'Name, URL and at least one event are required' });
+    ElNotification({ type: 'warning', title: t('common.warning'), message: t('common.fillRequired') });
     return;
   }
   saving.value = true;
@@ -122,7 +125,7 @@ async function saveWebhook() {
     }
     showForm.value = false;
     await loadWebhooks();
-    ElNotification({ type: 'success', title: 'Success', message: 'Webhook saved' });
+    ElNotification({ type: 'success', title: t('common.success'), message: t('common.saved') });
   } finally {
     saving.value = false;
   }
@@ -130,11 +133,11 @@ async function saveWebhook() {
 
 async function removeWebhook(id: string) {
   try {
-    await ElMessageBox.confirm('Delete this webhook?', 'Confirm', { type: 'warning' });
+    await ElMessageBox.confirm(t('common.confirmAction'), t('common.warning'), { type: 'warning' });
     await deleteWebhook(id);
     await loadWebhooks();
-    ElNotification({ type: 'success', title: 'Deleted', message: 'Webhook removed' });
-  } catch {}
+    ElNotification({ type: 'success', title: t('common.success'), message: t('common.deleted') });
+  } catch (e: any) { ElMessage.error(t('common.error')); }
 }
 
 async function testWebhookHandler(id: string) {
@@ -143,11 +146,11 @@ async function testWebhookHandler(id: string) {
     const { success } = await testWebhook(id);
     ElNotification({
       type: success ? 'success' : 'error',
-      title: success ? 'Success' : 'Failed',
-      message: success ? 'Webhook test successful' : 'Webhook test failed'
+      title: success ? t('common.success') : t('common.error'),
+      message: success ? t('common.saved') : t('common.error')
     });
   } catch {
-    ElNotification({ type: 'error', title: 'Error', message: 'Test failed' });
+    ElNotification({ type: 'error', title: t('common.error'), message: t('common.error') });
   } finally {
     testing.value = null;
   }

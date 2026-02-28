@@ -92,9 +92,9 @@
                 <Icon name="ph:check-circle-bold" class="text-success text-4xl" />
               </div>
 
-              <h1 class="text-3xl font-bold mb-4" :style="{ color: 'var(--text-primary)' }">{{ $t('auth.checkInbox') || 'Check Your Inbox' }}</h1>
+              <h1 class="text-3xl font-bold mb-4" :style="{ color: 'var(--text-primary)' }">{{ $t('auth.checkInbox') }}</h1>
               <p :style="{ color: 'var(--text-muted)' }" class="mb-10 leading-relaxed">
-                {{ $t('auth.resetLinkSent') || "We've sent a password reset link to" }}
+                {{ $t('auth.resetLinkSent') }}
                 <br />
                 <span :style="{ color: 'var(--text-primary)' }" class="font-medium">{{ submittedEmail }}</span>
               </p>
@@ -109,8 +109,8 @@
               </el-button>
 
               <button class="mt-6 text-sm transition-colors" :style="{ color: 'var(--text-muted)' }" @click="isSubmitted = false">
-                {{ $t('auth.didntReceive') || "Didn't receive email?" }}
-                <span class="text-primary font-medium">{{ $t('auth.tryAgain') || 'Try again' }}</span>
+                {{ $t('auth.didntReceive') }}
+                <span class="text-primary font-medium">{{ $t('auth.tryAgain') }}</span>
               </button>
             </div>
           </div>

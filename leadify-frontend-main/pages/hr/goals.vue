@@ -336,6 +336,9 @@ definePageMeta({
   middleware: 'permissions'
 });
 
+const { $i18n } = useNuxtApp();
+const t = $i18n.t;
+
 interface KeyResult {
   id: number;
   title: string;
@@ -438,10 +441,10 @@ const fetchGoals = async () => {
     if (res?.success) {
       allGoals.value = res.body?.docs || res.body || [];
     } else {
-      ElMessage.error(res?.message || 'Failed to load goals');
+      ElMessage.error(t('common.error'));
     }
   } catch (err) {
-    ElMessage.error('Failed to load goals');
+    ElMessage.error(t('common.error'));
   } finally {
     loading.value = false;
   }
@@ -450,7 +453,7 @@ const fetchGoals = async () => {
 // Create a new goal via API
 const createGoal = async () => {
   if (!newGoal.value.title) {
-    ElMessage.warning('Goal title is required');
+    ElMessage.warning(t('common.fillRequired'));
     return;
   }
 
@@ -477,7 +480,7 @@ const createGoal = async () => {
   try {
     const res = await useApiFetch('goals', 'POST', payload);
     if (res?.success) {
-      ElMessage.success('Goal created successfully');
+      ElMessage.success(t('common.saved'));
       showGoalDialog.value = false;
       // Reset the form
       newGoal.value = {
@@ -491,10 +494,10 @@ const createGoal = async () => {
       // Refresh goals list from server
       await fetchGoals();
     } else {
-      ElMessage.error(res?.message || 'Failed to create goal');
+      ElMessage.error(t('common.error'));
     }
   } catch (err) {
-    ElMessage.error('Failed to create goal');
+    ElMessage.error(t('common.error'));
   } finally {
     saving.value = false;
   }
@@ -519,16 +522,16 @@ const updateGoalProgress = async () => {
       status: editStatus.value
     });
     if (res?.success) {
-      ElMessage.success('Goal updated successfully');
+      ElMessage.success(t('common.saved'));
       showProgressDialog.value = false;
       editingGoal.value = null;
       // Refresh goals list from server
       await fetchGoals();
     } else {
-      ElMessage.error(res?.message || 'Failed to update goal');
+      ElMessage.error(t('common.error'));
     }
   } catch (err) {
-    ElMessage.error('Failed to update goal');
+    ElMessage.error(t('common.error'));
   } finally {
     saving.value = false;
   }

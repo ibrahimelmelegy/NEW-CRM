@@ -161,7 +161,7 @@ div
 </template>
 
 <script setup lang="ts">
-import { ElNotification } from 'element-plus';
+import { ElMessage, ElNotification } from 'element-plus';
 import type { InvoiceItem, InvoiceSummary } from '~/composables/useInvoices';
 import { fetchInvoices, fetchInvoiceSummary, markCollected, markUncollected, downloadInvoicePdf } from '~/composables/useInvoices';
 import { getAgingReport } from '~/composables/useInvoiceBilling';
@@ -431,7 +431,9 @@ async function handleApplyView(view: any) {
         const data = res.body as any;
         table.value.data = data.docs || [];
       }
-    } catch {}
+    } catch (e: any) {
+      ElMessage.error(t('common.error'));
+    }
   }
 }
 
@@ -442,7 +444,9 @@ async function handleAdvancedFilter(filterPayload: any) {
       const data = res.body as any;
       table.value.data = data.docs || data || [];
     }
-  } catch {}
+  } catch (e: any) {
+    ElMessage.error(t('common.error'));
+  }
 }
 
 async function handleClearAdvancedFilter() {

@@ -3,18 +3,18 @@ div.p-4.space-y-6.animate-fade-in(class="md_p-6")
   //- Header
   .flex.flex-col.gap-4(class="md_flex-row md_items-center md_justify-between")
     div
-      h1.text-2xl.font-bold(style="color: var(--text-primary);") {{ $t('ecommerce.title') || 'E-Commerce' }}
-      p.text-sm.mt-1(style="color: var(--text-muted);") {{ $t('ecommerce.subtitle') || 'Manage your online store, orders, products, and customers' }}
+      h1.text-2xl.font-bold(style="color: var(--text-primary);") {{ $t('ecommerce.title') }}
+      p.text-sm.mt-1(style="color: var(--text-muted);") {{ $t('ecommerce.subtitle') }}
     .flex.flex-wrap.gap-2
       el-button(type="primary" size="large" @click="navigateTo('/e-commerce/products?action=new')" class="!rounded-xl")
         Icon(name="ph:plus-bold" size="16")
-        span.ms-1 {{ $t('ecommerce.newProduct') || 'New Product' }}
+        span.ms-1 {{ $t('ecommerce.newProduct') }}
       el-button(size="large" @click="navigateTo('/e-commerce/orders/create')" class="!rounded-xl")
         Icon(name="ph:shopping-cart-bold" size="16")
-        span.ms-1 {{ $t('ecommerce.newOrder') || 'New Order' }}
+        span.ms-1 {{ $t('ecommerce.newOrder') }}
       el-button(size="large" @click="showCouponDialog = true" class="!rounded-xl")
         Icon(name="ph:ticket-bold" size="16")
-        span.ms-1 {{ $t('ecommerce.createCoupon') || 'Create Coupon' }}
+        span.ms-1 {{ $t('ecommerce.createCoupon') }}
 
   //- KPI Cards -- all wired to real analytics data
   .grid.grid-cols-1.gap-4(class="sm_grid-cols-2 lg_grid-cols-4")
@@ -23,28 +23,28 @@ div.p-4.space-y-6.animate-fade-in(class="md_p-6")
         .w-10.h-10.rounded-xl.flex.items-center.justify-center(style="background: rgba(34, 197, 94, 0.15)")
           Icon(name="ph:currency-dollar-bold" size="20" style="color: #22c55e")
         div
-          p.text-xs.font-bold.uppercase.tracking-widest(style="color: var(--text-muted);") {{ $t('ecommerce.totalRevenue') || 'Total Revenue' }}
+          p.text-xs.font-bold.uppercase.tracking-widest(style="color: var(--text-muted);") {{ $t('ecommerce.totalRevenue') }}
           p.text-2xl.font-black.mt-1(style="color: #22c55e;") {{ formatCurrency(kpi.totalRevenue) }}
     .p-5.rounded-2xl.border(style="border-color: var(--border-default); background: var(--bg-elevated);")
       .flex.items-center.gap-3
         .w-10.h-10.rounded-xl.flex.items-center.justify-center(style="background: rgba(120, 73, 255, 0.15)")
           Icon(name="ph:shopping-bag-bold" size="20" style="color: #7849ff")
         div
-          p.text-xs.font-bold.uppercase.tracking-widest(style="color: var(--text-muted);") {{ $t('ecommerce.totalOrders') || 'Total Orders' }}
+          p.text-xs.font-bold.uppercase.tracking-widest(style="color: var(--text-muted);") {{ $t('ecommerce.totalOrders') }}
           p.text-2xl.font-black.mt-1(style="color: #7849ff;") {{ kpi.totalOrders }}
     .p-5.rounded-2xl.border(style="border-color: var(--border-default); background: var(--bg-elevated);")
       .flex.items-center.gap-3
         .w-10.h-10.rounded-xl.flex.items-center.justify-center(style="background: rgba(59, 130, 246, 0.15)")
           Icon(name="ph:package-bold" size="20" style="color: #3b82f6")
         div
-          p.text-xs.font-bold.uppercase.tracking-widest(style="color: var(--text-muted);") {{ $t('ecommerce.activeProducts') || 'Active Products' }}
+          p.text-xs.font-bold.uppercase.tracking-widest(style="color: var(--text-muted);") {{ $t('ecommerce.activeProducts') }}
           p.text-2xl.font-black.mt-1(style="color: #3b82f6;") {{ kpi.activeProducts }}
     .p-5.rounded-2xl.border(style="border-color: var(--border-default); background: var(--bg-elevated);")
       .flex.items-center.gap-3
         .w-10.h-10.rounded-xl.flex.items-center.justify-center(style="background: rgba(245, 158, 11, 0.15)")
           Icon(name="ph:chart-line-up-bold" size="20" style="color: #f59e0b")
         div
-          p.text-xs.font-bold.uppercase.tracking-widest(style="color: var(--text-muted);") {{ $t('ecommerce.conversionRate') || 'Conversion Rate' }}
+          p.text-xs.font-bold.uppercase.tracking-widest(style="color: var(--text-muted);") {{ $t('ecommerce.conversionRate') }}
           p.text-2xl.font-black.mt-1(style="color: #f59e0b;") {{ kpi.conversionRate }}%
 
   //- Charts Row
@@ -53,7 +53,7 @@ div.p-4.space-y-6.animate-fade-in(class="md_p-6")
     .rounded-2xl.border.p-5(style="border-color: var(--border-default); background: var(--bg-elevated);")
       h3.text-lg.font-bold.mb-4(style="color: var(--text-primary);")
         Icon(name="ph:chart-bar-bold" size="20" class="mr-2" style="color: #7849ff")
-        | {{ $t('ecommerce.revenueOverview') || 'Revenue Overview' }}
+        | {{ $t('ecommerce.revenueOverview') }}
       .flex.items-end.gap-3.h-48
         .flex.flex-col.items-center.flex-1(v-for="(bar, idx) in revenueChartData" :key="idx")
           .w-full.rounded-t-lg.transition-all.duration-300(
@@ -67,7 +67,7 @@ div.p-4.space-y-6.animate-fade-in(class="md_p-6")
     .rounded-2xl.border.p-5(style="border-color: var(--border-default); background: var(--bg-elevated);")
       h3.text-lg.font-bold.mb-4(style="color: var(--text-primary);")
         Icon(name="ph:chart-donut-bold" size="20" class="mr-2" style="color: #7849ff")
-        | {{ $t('ecommerce.orderStatus') || 'Order Status' }}
+        | {{ $t('ecommerce.orderStatus') }}
       .flex.items-center.justify-center.gap-8
         //- CSS Donut
         .relative.w-40.h-40
@@ -92,7 +92,7 @@ div.p-4.space-y-6.animate-fade-in(class="md_p-6")
             )
           .absolute.inset-0.flex.flex-col.items-center.justify-center
             p.text-2xl.font-black(style="color: var(--text-primary);") {{ kpi.totalOrders }}
-            p.text-xs(style="color: var(--text-muted);") {{ $t('ecommerce.orders') || 'Orders' }}
+            p.text-xs(style="color: var(--text-muted);") {{ $t('ecommerce.orders') }}
         //- Legend
         .space-y-3
           .flex.items-center.gap-2(v-for="(item, idx) in orderStatusData" :key="idx")
@@ -106,8 +106,8 @@ div.p-4.space-y-6.animate-fade-in(class="md_p-6")
     .flex.items-center.justify-between.p-5.border-b(style="border-color: var(--border-default);")
       span.font-bold.text-lg(style="color: var(--text-primary);")
         Icon(name="ph:receipt-bold" size="20" class="mr-2" style="color: #7849ff")
-        | {{ $t('ecommerce.recentOrders') || 'Recent Orders' }}
-      el-button(text type="primary" @click="navigateTo('/e-commerce/orders')") {{ $t('common.viewAll') || 'View All' }}
+        | {{ $t('ecommerce.recentOrders') }}
+      el-button(text type="primary" @click="navigateTo('/e-commerce/orders')") {{ $t('common.viewAll') }}
     el-table(
       :data="recentOrders"
       v-loading="loadingOrders"
@@ -115,13 +115,13 @@ div.p-4.space-y-6.animate-fade-in(class="md_p-6")
       :row-style="{ cursor: 'pointer' }"
       @row-click="(row: any) => navigateTo(`/e-commerce/orders/${row.id}`)"
     )
-      el-table-column(:label="$t('ecommerce.orderNumber') || 'Order #'" width="160")
+      el-table-column(:label="$t('ecommerce.orderNumber')" width="160")
         template(#default="{ row }")
           span.font-mono.font-bold(style="color: #7849ff;") {{ row.orderNumber || row.documentNumber || `#${row.id?.slice(-6) || '--'}` }}
-      el-table-column(:label="$t('ecommerce.client') || 'Client'" min-width="180")
+      el-table-column(:label="$t('ecommerce.client')" min-width="180")
         template(#default="{ row }")
           span.font-medium(style="color: var(--text-primary);") {{ row.clientName || row.client?.clientName || row.client?.name || '--' }}
-      el-table-column(:label="$t('common.status') || 'Status'" width="140" align="center")
+      el-table-column(:label="$t('common.status')" width="140" align="center")
         template(#default="{ row }")
           el-tag(
             :type="getOrderStatusType(row.status)"
@@ -129,16 +129,16 @@ div.p-4.space-y-6.animate-fade-in(class="md_p-6")
             effect="dark"
             round
           ) {{ row.status || 'Draft' }}
-      el-table-column(:label="$t('ecommerce.total') || 'Total'" width="140" align="right")
+      el-table-column(:label="$t('ecommerce.total')" width="140" align="right")
         template(#default="{ row }")
           span.font-bold(style="color: var(--text-primary);") {{ formatCurrency(row.totalAmount || row.total || 0) }}
-      el-table-column(:label="$t('common.date') || 'Date'" width="140")
+      el-table-column(:label="$t('common.date')" width="140")
         template(#default="{ row }")
           span.text-sm(style="color: var(--text-muted);") {{ formatDate(row.createdAt) }}
       template(#empty)
         .text-center.py-8
           Icon(name="ph:receipt" size="40" style="color: var(--text-muted)")
-          p.text-sm.mt-2(style="color: var(--text-muted)") {{ $t('ecommerce.noOrders') || 'No orders found' }}
+          p.text-sm.mt-2(style="color: var(--text-muted)") {{ $t('ecommerce.noOrders') }}
 
   //- Top Products & Low Stock
   .grid.grid-cols-1.gap-6(class="lg_grid-cols-2")
@@ -147,8 +147,8 @@ div.p-4.space-y-6.animate-fade-in(class="md_p-6")
       .flex.items-center.justify-between.mb-4
         h3.font-bold.text-lg(style="color: var(--text-primary);")
           Icon(name="ph:star-bold" size="20" class="mr-2" style="color: #f59e0b")
-          | {{ $t('ecommerce.topProducts') || 'Top Products' }}
-        el-button(text type="primary" @click="navigateTo('/e-commerce/products')") {{ $t('common.viewAll') || 'View All' }}
+          | {{ $t('ecommerce.topProducts') }}
+        el-button(text type="primary" @click="navigateTo('/e-commerce/products')") {{ $t('common.viewAll') }}
       .space-y-3(v-loading="loadingProducts")
         .flex.items-center.gap-3.p-3.rounded-xl.transition-all(
           v-for="prod in topProducts"
@@ -167,15 +167,15 @@ div.p-4.space-y-6.animate-fade-in(class="md_p-6")
           span.font-black.text-sm.flex-shrink-0(style="color: #7c3aed;") {{ formatCurrency(prod.unitPrice || 0) }}
         .text-center.py-6(v-if="!loadingProducts && topProducts.length === 0")
           Icon(name="ph:package" size="36" style="color: var(--text-muted)")
-          p.text-sm.mt-2(style="color: var(--text-muted)") {{ $t('ecommerce.noProducts') || 'No products yet' }}
+          p.text-sm.mt-2(style="color: var(--text-muted)") {{ $t('ecommerce.noProducts') }}
 
     //- Low Stock Alerts
     .rounded-2xl.border.p-5(style="border-color: var(--border-default); background: var(--bg-elevated);")
       .flex.items-center.justify-between.mb-4
         h3.font-bold.text-lg(style="color: var(--text-primary);")
           Icon(name="ph:warning-bold" size="20" class="mr-2" style="color: #ef4444")
-          | {{ $t('ecommerce.lowStockAlerts') || 'Low Stock Alerts' }}
-        el-button(text type="primary" @click="navigateTo('/inventory')") {{ $t('common.viewAll') || 'View All' }}
+          | {{ $t('ecommerce.lowStockAlerts') }}
+        el-button(text type="primary" @click="navigateTo('/inventory')") {{ $t('common.viewAll') }}
       .space-y-3(v-loading="loadingLowStock")
         .flex.items-center.gap-3.p-3.rounded-xl(
           v-for="item in lowStockItems"
@@ -186,13 +186,13 @@ div.p-4.space-y-6.animate-fade-in(class="md_p-6")
             Icon(name="ph:warning-bold" size="20" style="color: #ef4444;")
           .flex-1.min-w-0
             p.font-bold.text-sm.truncate(style="color: var(--text-primary);") {{ item.name }}
-            p.text-xs(style="color: var(--text-muted);") {{ $t('ecommerce.reorderPoint') || 'Reorder Point' }}: {{ item.reorderPoint || 5 }}
+            p.text-xs(style="color: var(--text-muted);") {{ $t('ecommerce.reorderPoint') }}: {{ item.reorderPoint || 5 }}
           .text-right.flex-shrink-0
             p.text-lg.font-black(style="color: #ef4444;") {{ item.quantity ?? item.stock ?? 0 }}
-            p.text-xs(style="color: var(--text-muted);") {{ $t('ecommerce.inStock') || 'in stock' }}
+            p.text-xs(style="color: var(--text-muted);") {{ $t('ecommerce.inStock') }}
         .text-center.py-6(v-if="!loadingLowStock && lowStockItems.length === 0")
           Icon(name="ph:check-circle" size="36" style="color: #22c55e")
-          p.text-sm.mt-2(style="color: var(--text-muted)") {{ $t('ecommerce.noLowStock') || 'All stock levels are healthy' }}
+          p.text-sm.mt-2(style="color: var(--text-muted)") {{ $t('ecommerce.noLowStock') }}
 
   //- Quick Stats Footer
   .grid.grid-cols-1.gap-4(class="sm_grid-cols-3")
@@ -201,49 +201,49 @@ div.p-4.space-y-6.animate-fade-in(class="md_p-6")
         Icon(name="ph:ticket-bold" size="20" style="color: #a855f7")
       div
         p.text-xl.font-black(style="color: var(--text-primary);") {{ kpi.activeCoupons }}
-        p.text-xs(style="color: var(--text-muted);") {{ $t('ecommerce.activeCoupons') || 'Active Coupons' }}
+        p.text-xs(style="color: var(--text-muted);") {{ $t('ecommerce.activeCoupons') }}
     .p-4.rounded-2xl.border.flex.items-center.gap-3(style="border-color: var(--border-default); background: var(--bg-elevated);")
       .w-10.h-10.rounded-xl.flex.items-center.justify-center(style="background: rgba(251, 191, 36, 0.15)")
         Icon(name="ph:star-bold" size="20" style="color: #fbbf24")
       div
         p.text-xl.font-black(style="color: var(--text-primary);") {{ kpi.pendingReviews }}
-        p.text-xs(style="color: var(--text-muted);") {{ $t('ecommerce.pendingReviews') || 'Pending Reviews' }}
+        p.text-xs(style="color: var(--text-muted);") {{ $t('ecommerce.pendingReviews') }}
     .p-4.rounded-2xl.border.flex.items-center.gap-3(style="border-color: var(--border-default); background: var(--bg-elevated);")
       .w-10.h-10.rounded-xl.flex.items-center.justify-center(style="background: rgba(239, 68, 68, 0.15)")
         Icon(name="ph:shopping-cart-simple-bold" size="20" style="color: #ef4444")
       div
         p.text-xl.font-black(style="color: var(--text-primary);") {{ kpi.abandonedCarts }}
-        p.text-xs(style="color: var(--text-muted);") {{ $t('ecommerce.abandonedCarts') || 'Abandoned Carts' }}
+        p.text-xs(style="color: var(--text-muted);") {{ $t('ecommerce.abandonedCarts') }}
 
   //- Create Coupon Dialog
-  el-dialog(v-model="showCouponDialog" :title="$t('ecommerce.createCoupon') || 'Create Coupon'" width="500px" :close-on-click-modal="false")
+  el-dialog(v-model="showCouponDialog" :title="$t('ecommerce.createCoupon')" width="500px" :close-on-click-modal="false")
     el-form(label-position="top" size="large")
-      el-form-item(:label="$t('ecommerce.couponCode') || 'Coupon Code'")
+      el-form-item(:label="$t('ecommerce.couponCode')")
         el-input(v-model="couponForm.code" placeholder="SAVE20")
       .grid.grid-cols-2.gap-4
-        el-form-item(:label="$t('ecommerce.discountType') || 'Discount Type'")
+        el-form-item(:label="$t('ecommerce.discountType')")
           el-select(v-model="couponForm.discountType" class="w-full")
             el-option(label="Percentage" value="percentage")
             el-option(label="Fixed Amount" value="fixed")
-        el-form-item(:label="$t('ecommerce.discountValue') || 'Discount Value'")
+        el-form-item(:label="$t('ecommerce.discountValue')")
           el-input-number(v-model="couponForm.discountValue" :min="0" class="!w-full")
       .grid.grid-cols-2.gap-4
-        el-form-item(:label="$t('ecommerce.startDate') || 'Start Date'")
+        el-form-item(:label="$t('ecommerce.startDate')")
           el-date-picker(v-model="couponForm.startDate" type="date" style="width: 100%" value-format="YYYY-MM-DD")
-        el-form-item(:label="$t('ecommerce.endDate') || 'End Date'")
+        el-form-item(:label="$t('ecommerce.endDate')")
           el-date-picker(v-model="couponForm.endDate" type="date" style="width: 100%" value-format="YYYY-MM-DD")
-      el-form-item(:label="$t('ecommerce.usageLimit') || 'Usage Limit'")
+      el-form-item(:label="$t('ecommerce.usageLimit')")
         el-input-number(v-model="couponForm.usageLimit" :min="0" class="!w-full")
       el-form-item
-        el-checkbox(v-model="couponForm.isActive") {{ $t('ecommerce.active') || 'Active' }}
+        el-checkbox(v-model="couponForm.isActive") {{ $t('ecommerce.active') }}
     template(#footer)
-      el-button(@click="showCouponDialog = false") {{ $t('common.cancel') || 'Cancel' }}
-      el-button(type="primary" :loading="savingCoupon" @click="saveCoupon" class="!rounded-xl") {{ $t('common.save') || 'Save' }}
+      el-button(@click="showCouponDialog = false") {{ $t('common.cancel') }}
+      el-button(type="primary" :loading="savingCoupon" @click="saveCoupon" class="!rounded-xl") {{ $t('common.save') }}
 </template>
 
 <script setup lang="ts">
 import { ref, reactive, computed, onMounted } from 'vue';
-import { ElNotification } from 'element-plus';
+import { ElMessage, ElNotification } from 'element-plus';
 import {
   fetchProducts,
   type CatalogProduct
@@ -323,11 +323,11 @@ const revenueChartData = computed(() => {
 // Order status donut -- driven by real analytics API data
 const orderStatusData = computed(() => {
   const statuses = [
-    { key: 'CONFIRMED', label: t('ecommerce.confirmed') || 'Confirmed', color: '#22c55e' },
-    { key: 'DRAFT', label: t('ecommerce.pending') || 'Draft', color: '#f59e0b' },
-    { key: 'PROCESSING', label: t('ecommerce.processing') || 'Processing', color: '#3b82f6' },
-    { key: 'SHIPPED', label: t('ecommerce.shipped') || 'Shipped', color: '#7849ff' },
-    { key: 'CANCELLED', label: t('ecommerce.cancelled') || 'Cancelled', color: '#ef4444' }
+    { key: 'CONFIRMED', label: t('ecommerce.confirmed'), color: '#22c55e' },
+    { key: 'DRAFT', label: t('ecommerce.pending'), color: '#f59e0b' },
+    { key: 'PROCESSING', label: t('ecommerce.processing'), color: '#3b82f6' },
+    { key: 'SHIPPED', label: t('ecommerce.shipped'), color: '#7849ff' },
+    { key: 'CANCELLED', label: t('ecommerce.cancelled'), color: '#ef4444' }
   ];
   return statuses.map(s => ({
     ...s,
@@ -410,8 +410,8 @@ async function loadAnalytics() {
       // Recent orders from analytics response
       recentOrders.value = (data.recentOrders || []).slice(0, 5);
     }
-  } catch {
-    // silent -- fallback to empty
+  } catch (e: any) {
+    ElMessage.error(t('common.error'));
   } finally {
     loadingOrders.value = false;
   }
@@ -423,8 +423,8 @@ async function loadProducts() {
     const result = await fetchProducts({ limit: '50', isActive: 'true' });
     allProducts.value = result.docs || [];
     kpi.activeProducts = result.pagination?.totalItems ?? allProducts.value.length;
-  } catch {
-    // silent
+  } catch (e: any) {
+    ElMessage.error(t('common.error'));
   } finally {
     loadingProducts.value = false;
   }
@@ -438,8 +438,8 @@ async function loadLowStock() {
       const data = res.body as any;
       lowStockItems.value = (data?.docs || data?.rows || data || []).slice(0, 5);
     }
-  } catch {
-    // silent - endpoint may not exist yet
+  } catch (e: any) {
+    ElMessage.error(t('common.error'));
   } finally {
     loadingLowStock.value = false;
   }
@@ -467,21 +467,21 @@ async function loadQuickStats() {
     }
     kpi.convertedCarts = Math.max(kpi.totalCarts - kpi.abandonedCarts, 0);
     kpi.conversionRate = kpi.totalCarts > 0 ? Math.round((kpi.convertedCarts / kpi.totalCarts) * 100) : 0;
-  } catch {
-    // silent - endpoints may not exist yet
+  } catch (e: any) {
+    ElMessage.error(t('common.error'));
   }
 }
 
 async function saveCoupon() {
   if (!couponForm.code.trim()) {
-    ElNotification({ type: 'warning', title: t('common.warning') || 'Warning', message: t('common.fillRequired') || 'Please fill required fields' });
+    ElNotification({ type: 'warning', title: t('common.warning'), message: t('common.fillRequired') });
     return;
   }
   savingCoupon.value = true;
   try {
     const res = await useApiFetch('ecommerce/coupons', 'POST', { ...couponForm });
     if (res?.success) {
-      ElNotification({ type: 'success', title: t('common.success') || 'Success', message: t('common.saved') || 'Coupon created' });
+      ElNotification({ type: 'success', title: t('common.success'), message: t('common.saved') });
       showCouponDialog.value = false;
       couponForm.code = '';
       couponForm.discountValue = 10;
@@ -489,7 +489,7 @@ async function saveCoupon() {
       kpi.activeCoupons++;
     }
   } catch {
-    ElNotification({ type: 'error', title: t('common.error') || 'Error', message: t('common.error') || 'Failed to create coupon' });
+    ElNotification({ type: 'error', title: t('common.error'), message: t('common.error') });
   } finally {
     savingCoupon.value = false;
   }

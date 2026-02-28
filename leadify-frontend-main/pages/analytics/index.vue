@@ -112,6 +112,7 @@ div
 </template>
 
 <script setup lang="ts">
+import { ElMessage } from 'element-plus';
 import { use } from 'echarts/core';
 import { CanvasRenderer } from 'echarts/renderers';
 import { BarChart, LineChart, PieChart, FunnelChart } from 'echarts/charts';
@@ -206,7 +207,9 @@ async function loadSummary() {
     const qs = dateRange.value ? `?startDate=${dateRange.value[0]}&endDate=${dateRange.value[1]}` : '';
     const { body, success } = await useApiFetch(`dashboards/analytics-summary${qs}`);
     if (success && body) summaryData.value = body;
-  } catch {}
+  } catch (e: any) {
+    ElMessage.error(t('common.error'));
+  }
 }
 
 async function loadPipeline() {

@@ -248,6 +248,8 @@ div(v-loading="loadingClient")
 </template>
 
 <script setup lang="ts">
+import { ElMessage } from 'element-plus';
+
 definePageMeta({ middleware: 'permissions' });
 
 const route = useRoute();
@@ -376,7 +378,9 @@ async function loadCommunications() {
   try {
     const { body, success } = await useApiFetch(`activity/client/${clientId.value}?limit=20`);
     if (success && body) communications.value = body.docs || body || [];
-  } catch {}
+  } catch (e: any) {
+    ElMessage.error(t('common.error'));
+  }
 }
 
 async function loadTickets() {
@@ -403,7 +407,9 @@ async function loadActivities() {
   try {
     const { body, success } = await useApiFetch(`activity/client/${clientId.value}?limit=10`);
     if (success && body) recentActivities.value = body.docs || body || [];
-  } catch {}
+  } catch (e: any) {
+    ElMessage.error(t('common.error'));
+  }
 }
 
 async function refreshAll() {

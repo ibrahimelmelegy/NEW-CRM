@@ -247,8 +247,8 @@ async function fetchAssignees() {
     if (res?.success && res?.body?.docs) {
       assignees.value = res.body.docs.map((u: any) => ({ label: u.name, value: u.name }));
     }
-  } catch {
-    // Silent fail
+  } catch (e: any) {
+    ElMessage.error($t('common.error'));
   }
 }
 

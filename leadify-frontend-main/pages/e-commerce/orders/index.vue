@@ -188,7 +188,7 @@ div.animate-fade-in
 
 <script setup lang="ts">
 import { ref, reactive, computed, onMounted } from 'vue';
-import { ElMessageBox } from 'element-plus';
+import { ElMessage, ElMessageBox } from 'element-plus';
 import {
   getSalesOrders,
   updateSalesOrderStatus,
@@ -297,8 +297,8 @@ async function loadOrders() {
     orders.value = result.orders;
     pagination.totalItems = result.pagination.totalItems;
     pagination.totalPages = result.pagination.totalPages;
-  } catch {
-    // silent
+  } catch (e: any) {
+    ElMessage.error(t('common.error'));
   } finally {
     loading.value = false;
   }

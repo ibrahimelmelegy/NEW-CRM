@@ -2,11 +2,11 @@
 .p-6.animate-entrance
   .flex.items-center.justify-between.mb-8
     div
-      h1.text-3xl.font-black.tracking-tight(style="color: var(--text-primary);") {{ $t('ecommerce.coupons.title') || 'Coupons & Discounts' }}
-      p.text-sm.mt-1(style="color: var(--text-muted);") {{ $t('ecommerce.coupons.subtitle') || 'Create and manage promotional codes' }}
+      h1.text-3xl.font-black.tracking-tight(style="color: var(--text-primary);") {{ $t('ecommerce.coupons.title') }}
+      p.text-sm.mt-1(style="color: var(--text-muted);") {{ $t('ecommerce.coupons.subtitle') }}
     el-button(type="primary" size="default" @click="openCreateDialog" style="background: var(--bg-obsidian); border: none; border-radius: 12px;")
       Icon(name="ph:ticket" size="16" style="margin-right: 4px;")
-      | {{ $t('ecommerce.coupons.createCoupon') || 'Create Coupon' }}
+      | {{ $t('ecommerce.coupons.createCoupon') }}
 
   //- Stats Row
   .grid.grid-cols-2.gap-4.mb-8(class="md_grid-cols-4")
@@ -16,95 +16,95 @@
           Icon(name="ph:ticket-bold" size="20" style="color: #7849ff")
         div
           p.text-2xl.font-black(style="color: var(--text-primary);") {{ coupons.length }}
-          p.text-xs.font-bold.uppercase.tracking-widest(style="color: var(--text-muted);") {{ $t('ecommerce.coupons.totalCoupons') || 'Total Coupons' }}
+          p.text-xs.font-bold.uppercase.tracking-widest(style="color: var(--text-muted);") {{ $t('ecommerce.coupons.totalCoupons') }}
     .p-5.rounded-2xl.border(style="border-color: var(--border-default); background: var(--bg-elevated);")
       .flex.items-center.gap-3
         .w-10.h-10.rounded-xl.flex.items-center.justify-center(style="background: rgba(34, 197, 94, 0.15)")
           Icon(name="ph:check-circle-bold" size="20" style="color: #22c55e")
         div
           p.text-2xl.font-black(style="color: #22c55e;") {{ activeCoupons }}
-          p.text-xs.font-bold.uppercase.tracking-widest(style="color: var(--text-muted);") {{ $t('ecommerce.coupons.activeCoupons') || 'Active Coupons' }}
+          p.text-xs.font-bold.uppercase.tracking-widest(style="color: var(--text-muted);") {{ $t('ecommerce.coupons.activeCoupons') }}
     .p-5.rounded-2xl.border(style="border-color: var(--border-default); background: var(--bg-elevated);")
       .flex.items-center.gap-3
         .w-10.h-10.rounded-xl.flex.items-center.justify-center(style="background: rgba(59, 130, 246, 0.15)")
           Icon(name="ph:chart-line-up-bold" size="20" style="color: #3b82f6")
         div
           p.text-2xl.font-black(style="color: #3b82f6;") {{ totalRedemptions }}
-          p.text-xs.font-bold.uppercase.tracking-widest(style="color: var(--text-muted);") {{ $t('ecommerce.coupons.totalRedemptions') || 'Total Redemptions' }}
+          p.text-xs.font-bold.uppercase.tracking-widest(style="color: var(--text-muted);") {{ $t('ecommerce.coupons.totalRedemptions') }}
     .p-5.rounded-2xl.border(style="border-color: var(--border-default); background: var(--bg-elevated);")
       .flex.items-center.gap-3
         .w-10.h-10.rounded-xl.flex.items-center.justify-center(style="background: rgba(245, 158, 11, 0.15)")
           Icon(name="ph:percent-bold" size="20" style="color: #f59e0b")
         div
           p.text-2xl.font-black(style="color: #f59e0b;") {{ averageDiscount }}
-          p.text-xs.font-bold.uppercase.tracking-widest(style="color: var(--text-muted);") {{ $t('ecommerce.coupons.avgDiscount') || 'Avg Discount' }}
+          p.text-xs.font-bold.uppercase.tracking-widest(style="color: var(--text-muted);") {{ $t('ecommerce.coupons.avgDiscount') }}
 
   //- Filter Bar
   .flex.flex-wrap.items-center.gap-3.mb-6
     el-input(
       v-model="searchQuery"
-      :placeholder="$t('ecommerce.coupons.searchPlaceholder') || 'Search by code or description...'"
+      :placeholder="$t('ecommerce.coupons.searchPlaceholder')"
       clearable
       class="!w-64"
       size="default"
     )
       template(#prefix)
         Icon(name="ph:magnifying-glass" size="16")
-    el-select(v-model="filterType" :placeholder="$t('ecommerce.coupons.filterByType') || 'All Types'" clearable size="default")
-      el-option(:label="$t('ecommerce.coupons.allTypes') || 'All Types'" value="")
-      el-option(:label="$t('ecommerce.coupons.percentage') || 'Percentage'" value="PERCENTAGE")
-      el-option(:label="$t('ecommerce.coupons.fixedAmount') || 'Fixed Amount'" value="FIXED")
-      el-option(:label="$t('ecommerce.coupons.freeShipping') || 'Free Shipping'" value="FREE_SHIPPING")
-    el-select(v-model="filterStatus" :placeholder="$t('ecommerce.coupons.filterByStatus') || 'All Statuses'" clearable size="default")
-      el-option(:label="$t('ecommerce.coupons.allStatuses') || 'All Statuses'" value="")
-      el-option(:label="$t('common.active') || 'Active'" value="ACTIVE")
-      el-option(:label="$t('ecommerce.coupons.expired') || 'Expired'" value="EXPIRED")
-      el-option(:label="$t('ecommerce.coupons.disabled') || 'Disabled'" value="DISABLED")
+    el-select(v-model="filterType" :placeholder="$t('ecommerce.coupons.filterByType')" clearable size="default")
+      el-option(:label="$t('ecommerce.coupons.allTypes')" value="")
+      el-option(:label="$t('ecommerce.coupons.percentage')" value="PERCENTAGE")
+      el-option(:label="$t('ecommerce.coupons.fixedAmount')" value="FIXED")
+      el-option(:label="$t('ecommerce.coupons.freeShipping')" value="FREE_SHIPPING")
+    el-select(v-model="filterStatus" :placeholder="$t('ecommerce.coupons.filterByStatus')" clearable size="default")
+      el-option(:label="$t('ecommerce.coupons.allStatuses')" value="")
+      el-option(:label="$t('common.active')" value="ACTIVE")
+      el-option(:label="$t('ecommerce.coupons.expired')" value="EXPIRED")
+      el-option(:label="$t('ecommerce.coupons.disabled')" value="DISABLED")
 
   //- Coupons Table
   el-card.rounded-2xl(shadow="never" style="border: 1px solid var(--border-default);" v-loading="loading")
     el-table(:data="filteredCoupons" style="width: 100%;" @row-click="openEditDialog" class="cursor-pointer")
-      el-table-column(:label="$t('ecommerce.coupons.code') || 'Code'" prop="code" min-width="140")
+      el-table-column(:label="$t('ecommerce.coupons.code')" prop="code" min-width="140")
         template(#default="{ row }")
           span.font-mono.font-bold.text-sm(style="color: var(--text-primary);") {{ row.code }}
-      el-table-column(:label="$t('ecommerce.coupons.type') || 'Type'" prop="type" min-width="130")
+      el-table-column(:label="$t('ecommerce.coupons.type')" prop="type" min-width="130")
         template(#default="{ row }")
           el-tag(:type="getCouponTypeTag(row.type)" size="small" round effect="plain") {{ formatCouponType(row.type) }}
-      el-table-column(:label="$t('ecommerce.coupons.value') || 'Value'" min-width="120")
+      el-table-column(:label="$t('ecommerce.coupons.value')" min-width="120")
         template(#default="{ row }")
           span.font-semibold {{ formatCouponValue(row) }}
-      el-table-column(:label="$t('ecommerce.coupons.minOrder') || 'Min Order'" min-width="110")
+      el-table-column(:label="$t('ecommerce.coupons.minOrder')" min-width="110")
         template(#default="{ row }")
           span(v-if="row.minOrderAmount") {{ row.minOrderAmount?.toLocaleString() }} {{ row.currency || 'SAR' }}
           span.text-xs(v-else style="color: var(--text-muted);") --
-      el-table-column(:label="$t('ecommerce.coupons.usage') || 'Usage'" min-width="120")
+      el-table-column(:label="$t('ecommerce.coupons.usage')" min-width="120")
         template(#default="{ row }")
-          span {{ row.usedCount || 0 }} / {{ row.maxUses ? row.maxUses : ($t('ecommerce.coupons.unlimited') || 'Unlimited') }}
-      el-table-column(:label="$t('ecommerce.coupons.validPeriod') || 'Valid Period'" min-width="180")
+          span {{ row.usedCount || 0 }} / {{ row.maxUses ? row.maxUses : ($t('ecommerce.coupons.unlimited')) }}
+      el-table-column(:label="$t('ecommerce.coupons.validPeriod')" min-width="180")
         template(#default="{ row }")
           template(v-if="row.validFrom || row.validTo")
             span.text-xs {{ row.validFrom ? new Date(row.validFrom).toLocaleDateString() : '...' }} - {{ row.validTo ? new Date(row.validTo).toLocaleDateString() : '...' }}
-          span.text-xs(v-else style="color: var(--text-muted);") {{ $t('ecommerce.coupons.noExpiry') || 'No expiry' }}
-      el-table-column(:label="$t('common.status') || 'Status'" prop="status" min-width="100")
+          span.text-xs(v-else style="color: var(--text-muted);") {{ $t('ecommerce.coupons.noExpiry') }}
+      el-table-column(:label="$t('common.status')" prop="status" min-width="100")
         template(#default="{ row }")
           el-tag(:type="getCouponStatusTag(row.status)" size="small" round effect="dark") {{ row.status }}
-      el-table-column(:label="$t('common.actions') || 'Actions'" width="140" fixed="right")
+      el-table-column(:label="$t('common.actions')" width="140" fixed="right")
         template(#default="{ row }")
           .flex.items-center.gap-1(@click.stop)
-            el-tooltip(:content="$t('ecommerce.coupons.edit') || 'Edit'" placement="top")
+            el-tooltip(:content="$t('ecommerce.coupons.edit')" placement="top")
               el-button(size="small" text @click="openEditDialog(row)")
                 Icon(name="ph:pencil" size="16")
-            el-tooltip(:content="$t('ecommerce.coupons.copyCode') || 'Copy Code'" placement="top")
+            el-tooltip(:content="$t('ecommerce.coupons.copyCode')" placement="top")
               el-button(size="small" text @click="copyCode(row.code)")
                 Icon(name="ph:copy" size="16")
-            el-tooltip(:content="$t('common.delete') || 'Delete'" placement="top")
+            el-tooltip(:content="$t('common.delete')" placement="top")
               el-button(size="small" text type="danger" @click="handleDelete(row.id)")
                 Icon(name="ph:trash" size="16")
 
     //- Empty State
     .text-center.py-12(v-if="!loading && filteredCoupons.length === 0")
       Icon(name="ph:ticket" size="48" style="color: var(--text-muted);")
-      p.text-sm.mt-3(style="color: var(--text-muted);") {{ $t('ecommerce.coupons.noCoupons') || 'No coupons found. Create your first promotional code.' }}
+      p.text-sm.mt-3(style="color: var(--text-muted);") {{ $t('ecommerce.coupons.noCoupons') }}
 
   //- Pagination
   .flex.justify-center.mt-6(v-if="totalPages > 1")
@@ -117,55 +117,55 @@
     )
 
   //- Create / Edit Coupon Dialog
-  el-dialog(v-model="showDialog" :title="editingId ? ($t('ecommerce.coupons.editCoupon') || 'Edit Coupon') : ($t('ecommerce.coupons.createCoupon') || 'Create Coupon')" width="620px")
+  el-dialog(v-model="showDialog" :title="editingId ? ($t('ecommerce.coupons.editCoupon')) : ($t('ecommerce.coupons.createCoupon'))" width="620px")
     el-form(label-position="top" size="large")
       .grid.grid-cols-1.gap-4(class="md_grid-cols-2")
-        el-form-item(:label="$t('ecommerce.coupons.code') || 'Coupon Code'" required)
+        el-form-item(:label="$t('ecommerce.coupons.code')" required)
           .flex.gap-2
-            el-input(v-model="form.code" :placeholder="$t('ecommerce.coupons.codePlaceholder') || 'SUMMER2025'" style="text-transform: uppercase;")
+            el-input(v-model="form.code" :placeholder="$t('ecommerce.coupons.codePlaceholder')" style="text-transform: uppercase;")
             el-button(@click="form.code = generateCouponCode()" type="primary" plain style="border-radius: 12px;")
               Icon(name="ph:shuffle" size="16")
-              | &nbsp;{{ $t('ecommerce.coupons.generate') || 'Generate' }}
-        el-form-item(:label="$t('common.status') || 'Status'")
+              | &nbsp;{{ $t('ecommerce.coupons.generate') }}
+        el-form-item(:label="$t('common.status')")
           el-select(v-model="form.status" class="w-full")
-            el-option(:label="$t('common.active') || 'Active'" value="ACTIVE")
-            el-option(:label="$t('ecommerce.coupons.disabled') || 'Disabled'" value="DISABLED")
+            el-option(:label="$t('common.active')" value="ACTIVE")
+            el-option(:label="$t('ecommerce.coupons.disabled')" value="DISABLED")
 
-      el-form-item(:label="$t('ecommerce.coupons.description') || 'Description'")
-        el-input(v-model="form.description" type="textarea" :rows="2" :placeholder="$t('ecommerce.coupons.descriptionPlaceholder') || 'Promotional campaign details...'")
+      el-form-item(:label="$t('ecommerce.coupons.description')")
+        el-input(v-model="form.description" type="textarea" :rows="2" :placeholder="$t('ecommerce.coupons.descriptionPlaceholder')")
 
-      el-form-item(:label="$t('ecommerce.coupons.type') || 'Discount Type'" required)
+      el-form-item(:label="$t('ecommerce.coupons.type')" required)
         el-radio-group(v-model="form.type")
-          el-radio-button(value="PERCENTAGE") {{ $t('ecommerce.coupons.percentage') || 'Percentage' }}
-          el-radio-button(value="FIXED") {{ $t('ecommerce.coupons.fixedAmount') || 'Fixed Amount' }}
-          el-radio-button(value="FREE_SHIPPING") {{ $t('ecommerce.coupons.freeShipping') || 'Free Shipping' }}
+          el-radio-button(value="PERCENTAGE") {{ $t('ecommerce.coupons.percentage') }}
+          el-radio-button(value="FIXED") {{ $t('ecommerce.coupons.fixedAmount') }}
+          el-radio-button(value="FREE_SHIPPING") {{ $t('ecommerce.coupons.freeShipping') }}
 
       .grid.grid-cols-1.gap-4(class="md_grid-cols-2" v-if="form.type !== 'FREE_SHIPPING'")
-        el-form-item(:label="form.type === 'PERCENTAGE' ? ($t('ecommerce.coupons.percentageValue') || 'Discount (%)') : ($t('ecommerce.coupons.fixedValue') || 'Discount Amount (SAR)')" required)
+        el-form-item(:label="form.type === 'PERCENTAGE' ? $t('ecommerce.coupons.percentageValue') : $t('ecommerce.coupons.fixedValue')" required)
           el-input-number(v-model="form.value" :min="0" :max="form.type === 'PERCENTAGE' ? 100 : 999999" class="!w-full")
-        el-form-item(v-if="form.type === 'PERCENTAGE'" :label="$t('ecommerce.coupons.maxDiscount') || 'Max Discount Amount (SAR)'")
+        el-form-item(v-if="form.type === 'PERCENTAGE'" :label="$t('ecommerce.coupons.maxDiscount')")
           el-input-number(v-model="form.maxDiscountAmount" :min="0" class="!w-full")
 
       .grid.grid-cols-1.gap-4(class="md_grid-cols-2")
-        el-form-item(:label="$t('ecommerce.coupons.minOrder') || 'Min Order Amount'")
+        el-form-item(:label="$t('ecommerce.coupons.minOrder')")
           el-input-number(v-model="form.minOrderAmount" :min="0" class="!w-full")
-        el-form-item(:label="$t('ecommerce.coupons.maxUses') || 'Max Uses (0 = Unlimited)'")
+        el-form-item(:label="$t('ecommerce.coupons.maxUses')")
           el-input-number(v-model="form.maxUses" :min="0" class="!w-full")
 
       .grid.grid-cols-1.gap-4(class="md_grid-cols-2")
-        el-form-item(:label="$t('ecommerce.coupons.maxUsesPerCustomer') || 'Max Uses Per Customer'")
+        el-form-item(:label="$t('ecommerce.coupons.maxUsesPerCustomer')")
           el-input-number(v-model="form.maxUsesPerCustomer" :min="0" class="!w-full")
         div
 
       .grid.grid-cols-1.gap-4(class="md_grid-cols-2")
-        el-form-item(:label="$t('ecommerce.coupons.validFrom') || 'Valid From'")
-          el-date-picker(v-model="form.validFrom" type="date" class="!w-full" :placeholder="$t('ecommerce.coupons.selectDate') || 'Select date'")
-        el-form-item(:label="$t('ecommerce.coupons.validTo') || 'Valid To'")
-          el-date-picker(v-model="form.validTo" type="date" class="!w-full" :placeholder="$t('ecommerce.coupons.selectDate') || 'Select date'")
+        el-form-item(:label="$t('ecommerce.coupons.validFrom')")
+          el-date-picker(v-model="form.validFrom" type="date" class="!w-full" :placeholder="$t('ecommerce.coupons.selectDate')")
+        el-form-item(:label="$t('ecommerce.coupons.validTo')")
+          el-date-picker(v-model="form.validTo" type="date" class="!w-full" :placeholder="$t('ecommerce.coupons.selectDate')")
 
     template(#footer)
-      el-button(@click="showDialog = false") {{ $t('common.cancel') || 'Cancel' }}
-      el-button(type="primary" :loading="saving" @click="saveCoupon" style="border-radius: 12px;") {{ $t('common.save') || 'Save' }}
+      el-button(@click="showDialog = false") {{ $t('common.cancel') }}
+      el-button(type="primary" :loading="saving" @click="saveCoupon" style="border-radius: 12px;") {{ $t('common.save') }}
 </template>
 
 <script setup lang="ts">
@@ -178,6 +178,9 @@ import {
 } from '~/composables/useEcommerce'
 
 definePageMeta({ middleware: 'permissions' })
+
+const { $i18n } = useNuxtApp()
+const t = $i18n.t
 
 const coupons = ref<any[]>([])
 const loading = ref(false)
@@ -291,7 +294,7 @@ function getCouponStatusTag(status: string): string {
 
 function copyCode(code: string) {
   navigator.clipboard.writeText(code)
-  ElMessage.success('Coupon code copied!')
+  ElMessage.success(t('common.copiedToClipboard'))
 }
 
 function resetForm() {
@@ -336,15 +339,15 @@ function openEditDialog(row: any) {
 
 async function saveCoupon() {
   if (!form.code.trim()) {
-    ElMessage.warning('Coupon code is required')
+    ElMessage.warning(t('common.fillRequired'))
     return
   }
   if (form.type !== 'FREE_SHIPPING' && (!form.value || form.value <= 0)) {
-    ElMessage.warning('Discount value must be greater than 0')
+    ElMessage.warning(t('common.fillRequired'))
     return
   }
   if (form.type === 'PERCENTAGE' && form.value > 100) {
-    ElMessage.warning('Percentage discount cannot exceed 100%')
+    ElMessage.warning(t('common.fillRequired'))
     return
   }
 
@@ -357,7 +360,7 @@ async function saveCoupon() {
       if (res?.success !== false) {
         showDialog.value = false
         await loadCoupons()
-        ElMessage.success('Coupon updated')
+        ElMessage.success(t('common.saved'))
       }
     } else {
       const res = await createCoupon(payload)
@@ -365,7 +368,7 @@ async function saveCoupon() {
         showDialog.value = false
         resetForm()
         await loadCoupons()
-        ElMessage.success('Coupon created')
+        ElMessage.success(t('common.saved'))
       }
     }
   } finally {
@@ -376,14 +379,14 @@ async function saveCoupon() {
 async function handleDelete(id: string) {
   try {
     await ElMessageBox.confirm(
-      'Are you sure you want to delete this coupon?',
-      'Delete Coupon',
-      { confirmButtonText: 'Delete', cancelButtonText: 'Cancel', type: 'warning' }
+      t('common.confirmAction'),
+      t('common.warning'),
+      { confirmButtonText: t('common.delete'), cancelButtonText: t('common.cancel'), type: 'warning' }
     )
     const res = await deleteCoupon(id)
     if (res?.success !== false) {
       await loadCoupons()
-      ElMessage.success('Coupon deleted')
+      ElMessage.success(t('common.deleted'))
     }
   } catch {
     // User cancelled

@@ -3,40 +3,40 @@ div.animate-fade-in
   //- Header
   .flex.items-center.justify-between.mb-6
     div
-      h2.text-2xl.font-bold(style="color: var(--text-primary)") {{ $t('liveChat.title') || 'Live Chat' }}
-      p.text-sm.mt-1(style="color: var(--text-muted)") {{ $t('liveChat.subtitle') || 'Manage real-time conversations with visitors and clients.' }}
+      h2.text-2xl.font-bold(style="color: var(--text-primary)") {{ $t('liveChat.title') }}
+      p.text-sm.mt-1(style="color: var(--text-muted)") {{ $t('liveChat.subtitle') }}
     .flex.items-center.gap-3
       el-button(type="primary" size="large" @click="openCreateDialog" class="!rounded-xl")
         Icon(name="ph:plus-bold" size="16" class="mr-1")
-        | {{ $t('liveChat.newConversation') || 'New Conversation' }}
+        | {{ $t('liveChat.newConversation') }}
 
   //- Metrics Bar
   .grid.gap-4.mb-6(:class="'grid-cols-1 md:grid-cols-2 lg:grid-cols-4'")
     .glass-card.p-4.animate-entrance
       .flex.items-center.justify-between
         div
-          p.text-xs.font-medium.mb-1.uppercase.tracking-wider(style="color: var(--text-muted)") {{ $t('liveChat.activeConversations') || 'Active Conversations' }}
+          p.text-xs.font-medium.mb-1.uppercase.tracking-wider(style="color: var(--text-muted)") {{ $t('liveChat.activeConversations') }}
           p.text-2xl.font-bold(style="color: #22c55e") {{ chatMetrics.activeConversations ?? '--' }}
         .w-12.h-12.rounded-2xl.flex.items-center.justify-center(style="background: rgba(34, 197, 94, 0.15)")
           Icon(name="ph:chat-circle-dots-bold" size="24" style="color: #22c55e")
     .glass-card.p-4.animate-entrance(style="animation-delay: 0.05s")
       .flex.items-center.justify-between
         div
-          p.text-xs.font-medium.mb-1.uppercase.tracking-wider(style="color: var(--text-muted)") {{ $t('liveChat.waitingInQueue') || 'Waiting in Queue' }}
+          p.text-xs.font-medium.mb-1.uppercase.tracking-wider(style="color: var(--text-muted)") {{ $t('liveChat.waitingInQueue') }}
           p.text-2xl.font-bold(:style="{ color: queueColor }") {{ chatMetrics.waitingInQueue ?? '--' }}
         .w-12.h-12.rounded-2xl.flex.items-center.justify-center(:style="{ background: queueColor + '15' }")
           Icon(name="ph:queue-bold" size="24" :style="{ color: queueColor }")
     .glass-card.p-4.animate-entrance(style="animation-delay: 0.1s")
       .flex.items-center.justify-between
         div
-          p.text-xs.font-medium.mb-1.uppercase.tracking-wider(style="color: var(--text-muted)") {{ $t('liveChat.avgResponseTime') || 'Avg Response Time' }}
+          p.text-xs.font-medium.mb-1.uppercase.tracking-wider(style="color: var(--text-muted)") {{ $t('liveChat.avgResponseTime') }}
           p.text-2xl.font-bold(style="color: #3b82f6") {{ chatMetrics.avgResponseTime || '--' }}
         .w-12.h-12.rounded-2xl.flex.items-center.justify-center(style="background: rgba(59, 130, 246, 0.15)")
           Icon(name="ph:clock-bold" size="24" style="color: #3b82f6")
     .glass-card.p-4.animate-entrance(style="animation-delay: 0.15s")
       .flex.items-center.justify-between
         div
-          p.text-xs.font-medium.mb-1.uppercase.tracking-wider(style="color: var(--text-muted)") {{ $t('liveChat.avgResolutionTime') || 'Avg Resolution Time' }}
+          p.text-xs.font-medium.mb-1.uppercase.tracking-wider(style="color: var(--text-muted)") {{ $t('liveChat.avgResolutionTime') }}
           p.text-2xl.font-bold(style="color: #8b5cf6") {{ chatMetrics.avgResolutionTime || '--' }}
         .w-12.h-12.rounded-2xl.flex.items-center.justify-center(style="background: rgba(139, 92, 246, 0.15)")
           Icon(name="ph:timer-bold" size="24" style="color: #8b5cf6")
@@ -49,7 +49,7 @@ div.animate-fade-in
       .p-4.border-b(style="border-color: var(--border-default)")
         el-input(
           v-model="searchQuery"
-          :placeholder="$t('liveChat.searchConversations') || 'Search conversations...'"
+          :placeholder="$t('liveChat.searchConversations')"
           clearable
           size="large"
           class="!rounded-xl"
@@ -95,7 +95,7 @@ div.animate-fade-in
               ) {{ conv.status }}
               el-tag(size="small" effect="plain" round) {{ conv.channel || 'WEB' }}
               el-tag(v-if="conv.priority && conv.priority !== 'NORMAL'" :type="getPriorityType(conv.priority)" size="small" effect="plain" round) {{ conv.priority }}
-            p.text-xs.truncate(style="color: var(--text-muted)") {{ conv.lastMessage || $t('liveChat.noMessages') || 'No messages yet' }}
+            p.text-xs.truncate(style="color: var(--text-muted)") {{ conv.lastMessage || $t('liveChat.noMessages') }}
           .flex.flex-col.items-end.gap-1(v-if="conv.unreadCount && conv.unreadCount > 0")
             .w-5.h-5.rounded-full.flex.items-center.justify-center.text-xs.font-bold(
               style="background: #7849ff; color: #fff"
@@ -104,7 +104,7 @@ div.animate-fade-in
         //- Empty state
         .text-center.py-12(v-if="!loadingConversations && !filteredConversations.length")
           Icon(name="ph:chat-circle-dots" size="48" style="color: var(--text-muted)")
-          p.text-sm.mt-2(style="color: var(--text-muted)") {{ $t('liveChat.noConversations') || 'No conversations found' }}
+          p.text-sm.mt-2(style="color: var(--text-muted)") {{ $t('liveChat.noConversations') }}
 
     //- Chat Area (Right Panel)
     .chat-area.glass-card.flex.flex-col.flex-1
@@ -128,12 +128,12 @@ div.animate-fade-in
             el-dropdown(trigger="click" @command="handleAssignAgent")
               el-button(size="small" plain class="!rounded-lg")
                 Icon(name="ph:user-switch-bold" size="14" class="mr-1")
-                | {{ $t('liveChat.assignAgent') || 'Assign' }}
+                | {{ $t('liveChat.assignAgent') }}
               template(#dropdown)
                 el-dropdown-menu
                   el-dropdown-item(command="auto")
                     Icon(name="ph:magic-wand-bold" size="14" class="mr-1")
-                    | {{ $t('liveChat.autoAssign') || 'Auto-Assign' }}
+                    | {{ $t('liveChat.autoAssign') }}
                   el-dropdown-item(v-for="agent in agents" :key="agent.id" :command="agent.id")
                     | {{ agent.name }}
             //- Status
@@ -158,7 +158,7 @@ div.animate-fade-in
               class="!rounded-lg"
             )
               Icon(name="ph:check-circle-bold" size="14" class="mr-1")
-              | {{ $t('liveChat.resolve') || 'Resolve' }}
+              | {{ $t('liveChat.resolve') }}
             //- Delete button
             el-button(size="small" type="danger" plain @click="deleteConversation" class="!rounded-lg")
               Icon(name="ph:trash-bold" size="14")
@@ -198,7 +198,7 @@ div.animate-fade-in
 
           .text-center.py-8(v-if="!loadingMessages && !messages.length")
             Icon(name="ph:chat-circle" size="40" style="color: var(--text-muted)")
-            p.text-sm.mt-2(style="color: var(--text-muted)") {{ $t('liveChat.startConversation') || 'Start the conversation' }}
+            p.text-sm.mt-2(style="color: var(--text-muted)") {{ $t('liveChat.startConversation') }}
 
         //- Canned Responses Bar
         .flex.gap-2.px-4.py-2.border-t.overflow-x-auto(v-if="cannedResponses.length" style="border-color: var(--border-default)")
@@ -218,7 +218,7 @@ div.animate-fade-in
           .flex.gap-3
             el-input(
               v-model="newMessage"
-              :placeholder="$t('liveChat.typeMessage') || 'Type a message...'"
+              :placeholder="$t('liveChat.typeMessage')"
               size="large"
               class="!rounded-xl"
               @keyup.enter="sendMessage"
@@ -238,44 +238,44 @@ div.animate-fade-in
       .flex-1.flex.items-center.justify-center(v-else)
         .text-center
           Icon(name="ph:chat-circle-dots-bold" size="64" style="color: var(--text-muted)")
-          p.text-lg.font-semibold.mt-4(style="color: var(--text-muted)") {{ $t('liveChat.selectConversation') || 'Select a conversation' }}
-          p.text-sm.mt-1(style="color: var(--text-muted)") {{ $t('liveChat.selectHint') || 'Choose a conversation from the list to start chatting' }}
+          p.text-lg.font-semibold.mt-4(style="color: var(--text-muted)") {{ $t('liveChat.selectConversation') }}
+          p.text-sm.mt-1(style="color: var(--text-muted)") {{ $t('liveChat.selectHint') }}
 
   //- Create Conversation Dialog
   el-dialog(
     v-model="createDialogVisible"
-    :title="$t('liveChat.newConversation') || 'New Conversation'"
+    :title="$t('liveChat.newConversation')"
     width="500px"
     :close-on-click-modal="false"
   )
     el-form(:model="createForm" label-position="top")
-      el-form-item(:label="$t('liveChat.visitorName') || 'Visitor Name'" required)
-        el-input(v-model="createForm.visitorName" :placeholder="$t('liveChat.visitorName') || 'Visitor Name'")
-      el-form-item(:label="$t('liveChat.visitorEmail') || 'Visitor Email'")
-        el-input(v-model="createForm.visitorEmail" :placeholder="$t('liveChat.visitorEmail') || 'Visitor Email'" type="email")
-      el-form-item(:label="$t('liveChat.channel') || 'Channel'")
+      el-form-item(:label="$t('liveChat.visitorName')" required)
+        el-input(v-model="createForm.visitorName" :placeholder="$t('liveChat.visitorName')")
+      el-form-item(:label="$t('liveChat.visitorEmail')")
+        el-input(v-model="createForm.visitorEmail" :placeholder="$t('liveChat.visitorEmail')" type="email")
+      el-form-item(:label="$t('liveChat.channel')")
         el-select(v-model="createForm.channel" style="width: 100%")
           el-option(label="Web" value="WEB")
           el-option(label="WhatsApp" value="WHATSAPP")
           el-option(label="Facebook" value="FACEBOOK")
           el-option(label="Instagram" value="INSTAGRAM")
           el-option(label="SMS" value="SMS")
-      el-form-item(:label="$t('liveChat.priority') || 'Priority'")
+      el-form-item(:label="$t('liveChat.priority')")
         el-select(v-model="createForm.priority" style="width: 100%")
           el-option(label="Low" value="LOW")
           el-option(label="Normal" value="NORMAL")
           el-option(label="High" value="HIGH")
           el-option(label="Urgent" value="URGENT")
-      el-form-item(:label="$t('liveChat.subject') || 'Subject'")
-        el-input(v-model="createForm.subject" :placeholder="$t('liveChat.subject') || 'Subject'")
+      el-form-item(:label="$t('liveChat.subject')")
+        el-input(v-model="createForm.subject" :placeholder="$t('liveChat.subject')")
     template(#footer)
-      el-button(@click="createDialogVisible = false") {{ $t('common.cancel') || 'Cancel' }}
-      el-button(type="primary" :loading="saving" @click="createConversation") {{ $t('common.save') || 'Save' }}
+      el-button(@click="createDialogVisible = false") {{ $t('common.cancel') }}
+      el-button(type="primary" :loading="saving" @click="createConversation") {{ $t('common.save') }}
 </template>
 
 <script setup lang="ts">
 import { ref, reactive, computed, onMounted, onUnmounted, nextTick, watch } from 'vue';
-import { ElNotification, ElMessageBox } from 'element-plus';
+import { ElMessage, ElNotification, ElMessageBox } from 'element-plus';
 import { user } from '~/composables/useUser';
 
 definePageMeta({ middleware: 'permissions' });
@@ -372,7 +372,7 @@ function getMessageAlignment(senderType: string): string {
 const statusFilters = computed(() => {
   const data = conversations.value;
   return [
-    { value: 'ALL', label: t('common.all') || 'All', type: '', count: data.length },
+    { value: 'ALL', label: t('common.all'), type: '', count: data.length },
     { value: 'OPEN', label: 'Open', type: 'warning', count: data.filter((c: any) => c.status === 'OPEN').length },
     { value: 'ACTIVE', label: 'Active', type: 'success', count: data.filter((c: any) => c.status === 'ACTIVE').length },
     { value: 'WAITING', label: 'Waiting', type: 'info', count: data.filter((c: any) => c.status === 'WAITING').length },
@@ -422,8 +422,8 @@ async function loadConversations() {
     if (res?.success) {
       conversations.value = res.body?.docs || res.body || [];
     }
-  } catch {
-    // silent
+  } catch (e: any) {
+    ElMessage.error(t('common.error'));
   } finally {
     loadingConversations.value = false;
   }
@@ -438,8 +438,8 @@ async function loadMessages(conversationId: number) {
       await nextTick();
       scrollToBottom();
     }
-  } catch {
-    // silent
+  } catch (e: any) {
+    ElMessage.error(t('common.error'));
   } finally {
     loadingMessages.value = false;
   }
@@ -454,8 +454,8 @@ async function loadAgents() {
         name: u.name || u.email,
       }));
     }
-  } catch {
-    // silent
+  } catch (e: any) {
+    ElMessage.error(t('common.error'));
   }
 }
 
@@ -465,8 +465,8 @@ async function loadCannedResponses() {
     if (res?.success) {
       cannedResponses.value = Array.isArray(res.body) ? res.body : [];
     }
-  } catch {
-    // silent
+  } catch (e: any) {
+    ElMessage.error(t('common.error'));
   }
 }
 
@@ -476,8 +476,8 @@ async function loadMetrics() {
     if (res?.success && res.body) {
       chatMetrics.value = res.body;
     }
-  } catch {
-    // Silent - metrics are supplementary
+  } catch (e: any) {
+    ElMessage.error(t('common.error'));
   }
 }
 
@@ -524,8 +524,8 @@ async function markAsRead(conversationId: number) {
     // Update local unread count
     const conv = conversations.value.find((c: any) => c.id === conversationId);
     if (conv) conv.unreadCount = 0;
-  } catch {
-    // silent
+  } catch (e: any) {
+    ElMessage.error(t('common.error'));
   }
 }
 
@@ -567,8 +567,8 @@ async function sendMessage() {
   } catch {
     ElNotification({
       type: 'error',
-      title: t('common.error') || 'Error',
-      message: t('liveChat.sendFailed') || 'Failed to send message',
+      title: t('common.error'),
+      message: t('liveChat.sendFailed'),
     });
   } finally {
     sendingMessage.value = false;
@@ -608,8 +608,8 @@ async function handleAssignAgent(command: string | number) {
     }
     ElNotification({
       type: 'success',
-      title: t('common.success') || 'Success',
-      message: t('liveChat.agentAssigned') || 'Agent assigned',
+      title: t('common.success'),
+      message: t('liveChat.agentAssigned'),
     });
     await loadConversations();
     // Refresh selected conversation data
@@ -618,8 +618,8 @@ async function handleAssignAgent(command: string | number) {
   } catch {
     ElNotification({
       type: 'error',
-      title: t('common.error') || 'Error',
-      message: t('common.error') || 'Error',
+      title: t('common.error'),
+      message: t('common.error'),
     });
   }
 }
@@ -634,16 +634,16 @@ async function updateConversationStatus() {
     });
     ElNotification({
       type: 'success',
-      title: t('common.success') || 'Success',
-      message: t('common.saved') || 'Saved',
+      title: t('common.success'),
+      message: t('common.saved'),
     });
     await loadConversations();
     await loadMetrics();
   } catch {
     ElNotification({
       type: 'error',
-      title: t('common.error') || 'Error',
-      message: t('common.error') || 'Error',
+      title: t('common.error'),
+      message: t('common.error'),
     });
   }
 }
@@ -654,8 +654,8 @@ async function resolveConversation() {
     await useApiFetch(`live-chat/conversations/${selectedConversation.value.id}/resolve`, 'PUT', {});
     ElNotification({
       type: 'success',
-      title: t('common.success') || 'Success',
-      message: t('liveChat.conversationResolved') || 'Conversation resolved',
+      title: t('common.success'),
+      message: t('liveChat.conversationResolved'),
     });
     selectedConversation.value.status = 'RESOLVED';
     await loadConversations();
@@ -663,8 +663,8 @@ async function resolveConversation() {
   } catch {
     ElNotification({
       type: 'error',
-      title: t('common.error') || 'Error',
-      message: t('common.error') || 'Error',
+      title: t('common.error'),
+      message: t('common.error'),
     });
   }
 }
@@ -675,15 +675,15 @@ async function deleteConversation() {
   if (!selectedConversation.value) return;
   try {
     await ElMessageBox.confirm(
-      t('common.confirmDelete') || 'Are you sure you want to delete this conversation?',
-      t('common.warning') || 'Warning',
+      t('common.confirmDelete'),
+      t('common.warning'),
       { type: 'warning' }
     );
     await useApiFetch(`live-chat/conversations/${selectedConversation.value.id}`, 'DELETE');
     ElNotification({
       type: 'success',
-      title: t('common.success') || 'Success',
-      message: t('common.deleted') || 'Deleted',
+      title: t('common.success'),
+      message: t('common.deleted'),
     });
     // Leave room
     if (socket.value && selectedConversation.value) {
@@ -717,8 +717,8 @@ async function createConversation() {
   if (!createForm.visitorName.trim()) {
     ElNotification({
       type: 'warning',
-      title: t('common.warning') || 'Warning',
-      message: t('common.fillRequired') || 'Please fill required fields',
+      title: t('common.warning'),
+      message: t('common.fillRequired'),
     });
     return;
   }
@@ -728,8 +728,8 @@ async function createConversation() {
     if (res?.success) {
       ElNotification({
         type: 'success',
-        title: t('common.success') || 'Success',
-        message: t('common.saved') || 'Saved',
+        title: t('common.success'),
+        message: t('common.saved'),
       });
       createDialogVisible.value = false;
       await loadConversations();
@@ -738,8 +738,8 @@ async function createConversation() {
   } catch {
     ElNotification({
       type: 'error',
-      title: t('common.error') || 'Error',
-      message: t('common.error') || 'Error',
+      title: t('common.error'),
+      message: t('common.error'),
     });
   } finally {
     saving.value = false;

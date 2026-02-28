@@ -86,7 +86,7 @@
 </template>
 
 <script setup lang="ts">
-import { ElNotification, ElMessageBox } from 'element-plus';
+import { ElNotification, ElMessageBox, ElMessage } from 'element-plus';
 import type { CustomField } from '~/composables/useCustomFields';
 import { fetchCustomFields, createCustomField, updateCustomField, deleteCustomField } from '~/composables/useCustomFields';
 
@@ -94,6 +94,9 @@ definePageMeta({
   middleware: 'permissions',
   permission: 'EDIT_SETTINGS'
 });
+
+const { $i18n } = useNuxtApp();
+const t = $i18n.t;
 
 const selectedEntity = ref('LEAD');
 const fields = ref<CustomField[]>([]);
@@ -143,7 +146,7 @@ function addOption() {
 
 async function saveField() {
   if (!formData.value.fieldLabel || !formData.value.fieldName) {
-    ElNotification({ type: 'warning', title: 'Warning', message: 'Label and name are required' });
+    ElNotification({ type: 'warning', title: t('common.warning'), message: t('common.fillRequired') });
     return;
   }
 
@@ -165,7 +168,7 @@ async function saveField() {
     editingField.value = null;
     formData.value = { fieldLabel: '', fieldName: '', fieldType: 'TEXT', options: [], required: false };
     await loadFields();
-    ElNotification({ type: 'success', title: 'Success', message: 'Field saved' });
+    ElNotification({ type: 'success', title: t('common.success'), message: t('common.saved') });
   } finally {
     saving.value = false;
   }
@@ -173,11 +176,11 @@ async function saveField() {
 
 async function removeField(id: string) {
   try {
-    await ElMessageBox.confirm('This will permanently delete this field and all its data. Continue?', 'Warning', { type: 'warning' });
+    await ElMessageBox.confirm(t('customFields.confirmDelete'), t('common.warning'), { type: 'warning' });
     await deleteCustomField(id);
     await loadFields();
-    ElNotification({ type: 'success', title: 'Deleted', message: 'Field removed' });
-  } catch {}
+    ElNotification({ type: 'success', title: t('common.success'), message: t('common.deleted') });
+  } catch (e: any) { ElMessage.error(t('common.error')); }
 }
 
 function getFieldTypeTag(type: string) {

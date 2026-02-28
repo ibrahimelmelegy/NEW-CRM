@@ -9,7 +9,7 @@ div
       ExportButton(:data="products" :columns="exportColumns" :filename="'inventory-export'" :title="$t('inventory.title')")
       el-button(size="large" @click="showMovementDialog = true" class="premium-btn-secondary")
         Icon(name="ph:swap-bold" size="20")
-        span.mx-1 {{ $t('inventory.addMovement') || 'Add Movement' }}
+        span.mx-1 {{ $t('inventory.addMovement') }}
 
   StatCards(:stats="summaryStats")
 
@@ -19,12 +19,12 @@ div
         el-input(size="large" style="height:50px" v-model="search" :placeholder="$t('common.search') + ' ' + $t('inventory.title')" clearable @input="debounceLoad")
           template(#prefix)
             Icon(name="ph:magnifying-glass" size="16")
-      el-select(v-model="categoryFilter" clearable :placeholder="$t('inventory.allCategories') || 'All Categories'" @change="loadProducts" class="w-44" size="large")
+      el-select(v-model="categoryFilter" clearable :placeholder="$t('inventory.allCategories')" @change="loadProducts" class="w-44" size="large")
         el-option(v-for="cat in categories" :key="cat" :value="cat" :label="cat")
 
     el-table(:data="products" v-loading="loading" style="width: 100%" :row-style="{cursor:'pointer'}" @current-change="handleRowClick")
       el-table-column(type="index" width="50")
-      el-table-column(:label="$t('inventory.product') || 'Product'" min-width="200")
+      el-table-column(:label="$t('inventory.product')" min-width="200")
         template(#default="{ row }")
           .flex.items-center.gap-3
             .w-10.h-10.rounded-lg.flex.items-center.justify-center(style="background: rgba(120, 73, 255, 0.1)")
@@ -32,17 +32,17 @@ div
             div
               .font-bold(style="color: var(--text-primary)") {{ row.name }}
               .text-xs(style="color: var(--text-muted)") {{ row.sku || '—' }}
-      el-table-column(:label="$t('inventory.category') || 'Category'" width="140")
+      el-table-column(:label="$t('inventory.category')" width="140")
         template(#default="{ row }")
           el-tag(v-if="row.category" size="small" effect="dark" round class="!border-purple-500/30 !text-white !bg-purple-500/20") {{ row.category }}
           span(v-else) —
-      el-table-column(:label="$t('inventory.quantity') || 'Quantity'" width="120" align="center")
+      el-table-column(:label="$t('inventory.quantity')" width="120" align="center")
         template(#default="{ row }")
           span.font-bold(:style="{ color: row.quantity <= (row.reorderPoint || 5) ? '#ef4444' : 'var(--text-primary)' }") {{ row.quantity }}
-      el-table-column(:label="$t('inventory.price') || 'Price'" width="120" align="right")
+      el-table-column(:label="$t('inventory.price')" width="120" align="right")
         template(#default="{ row }")
           span.font-medium {{ formatCurrency(row.price || 0) }}
-      el-table-column(:label="$t('inventory.warehouse') || 'Warehouse'" width="140")
+      el-table-column(:label="$t('inventory.warehouse')" width="140")
         template(#default="{ row }")
           span {{ row.warehouse || '—' }}
       el-table-column(:label="$t('common.action')" width="120" fixed="right")
@@ -60,7 +60,7 @@ div
                   el-dropdown-item(@click="[selectedProduct = row, showMovementDialog = true]")
                     .flex.items-center
                       Icon.text-md.mr-2(name="ph:swap-bold")
-                      p.text-sm {{ $t('inventory.addMovement') || 'Movement' }}
+                      p.text-sm {{ $t('inventory.addMovement') }}
                   el-dropdown-item(@click="[deleteId = row.id, deletePopup = true]")
                     .flex.items-center
                       Icon.text-md.mr-2(name="IconDelete")
@@ -73,47 +73,47 @@ div
       el-pagination(background style="direction:ltr" :pager-count="4" v-model:current-page="currentPage" :page-size="20" layout="prev, pager, next" :total="pagination.totalItems" @current-change="loadProducts")
 
   //- Create/Edit Dialog
-  el-dialog(v-model="showForm" :title="editingId ? $t('inventory.editProduct') || 'Edit Product' : $t('inventory.addProduct') || 'Add Product'" width="600px")
+  el-dialog(v-model="showForm" :title="editingId ? $t('inventory.editProduct') : $t('inventory.addProduct')" width="600px")
     el-form(ref="formRef" :model="form" label-position="top" size="large")
       .grid.grid-cols-2.gap-4
-        el-form-item(:label="$t('inventory.product') || 'Name'" prop="name")
+        el-form-item(:label="$t('inventory.product')" prop="name")
           el-input(v-model="form.name")
-        el-form-item(:label="$t('inventory.sku') || 'SKU'")
+        el-form-item(:label="$t('inventory.sku')")
           el-input(v-model="form.sku")
       .grid.grid-cols-2.gap-4
-        el-form-item(:label="$t('inventory.quantity') || 'Quantity'")
+        el-form-item(:label="$t('inventory.quantity')")
           el-input-number(v-model="form.quantity" :min="0" class="w-full")
-        el-form-item(:label="$t('inventory.price') || 'Price'")
+        el-form-item(:label="$t('inventory.price')")
           el-input-number(v-model="form.price" :min="0" :precision="2" class="w-full")
       .grid.grid-cols-2.gap-4
-        el-form-item(:label="$t('inventory.category') || 'Category'")
+        el-form-item(:label="$t('inventory.category')")
           el-input(v-model="form.category")
-        el-form-item(:label="$t('inventory.warehouse') || 'Warehouse'")
+        el-form-item(:label="$t('inventory.warehouse')")
           el-input(v-model="form.warehouse")
-      el-form-item(:label="$t('inventory.reorderPoint') || 'Reorder Point'")
+      el-form-item(:label="$t('inventory.reorderPoint')")
         el-input-number(v-model="form.reorderPoint" :min="0" class="w-full")
-      el-form-item(:label="$t('inventory.description') || 'Description'")
+      el-form-item(:label="$t('inventory.description')")
         el-input(v-model="form.description" type="textarea" :rows="2")
     template(#footer)
       el-button(@click="showForm = false") {{ $t('common.cancel') }}
       el-button(type="primary" :loading="saving" @click="saveProduct" class="!rounded-2xl") {{ $t('common.save') }}
 
   //- Movement Dialog
-  el-dialog(v-model="showMovementDialog" :title="$t('inventory.addMovement') || 'Stock Movement'" width="500px")
+  el-dialog(v-model="showMovementDialog" :title="$t('inventory.addMovement')" width="500px")
     el-form(label-position="top" size="large")
       el-form-item(:label="$t('inventory.product') || 'Product'" v-if="!selectedProduct")
         el-select(v-model="movementForm.productId" class="w-full")
           el-option(v-for="p in products" :key="p.id" :label="p.name" :value="p.id")
       .grid.grid-cols-2.gap-4
-        el-form-item(:label="$t('inventory.type') || 'Type'")
+        el-form-item(:label="$t('inventory.type')")
           el-select(v-model="movementForm.type" class="w-full")
             el-option(value="IN" label="Stock In")
             el-option(value="OUT" label="Stock Out")
             el-option(value="ADJUSTMENT" label="Adjustment")
             el-option(value="TRANSFER" label="Transfer")
-        el-form-item(:label="$t('inventory.quantity') || 'Quantity'")
+        el-form-item(:label="$t('inventory.quantity')")
           el-input-number(v-model="movementForm.quantity" :min="1" class="w-full")
-      el-form-item(:label="$t('inventory.notes') || 'Notes'")
+      el-form-item(:label="$t('inventory.notes')")
         el-input(v-model="movementForm.notes" type="textarea" :rows="2")
     template(#footer)
       el-button(@click="showMovementDialog = false") {{ $t('common.cancel') }}
@@ -135,12 +135,12 @@ const router = useRouter();
 
 // Export columns
 const exportColumns = [
-  { prop: 'name', label: t('inventory.product') || 'Name' },
-  { prop: 'sku', label: t('inventory.sku') || 'SKU' },
-  { prop: 'category', label: t('inventory.category') || 'Category' },
-  { prop: 'quantity', label: t('inventory.quantity') || 'Quantity' },
-  { prop: 'price', label: t('inventory.price') || 'Price' },
-  { prop: 'warehouse', label: t('inventory.warehouse') || 'Warehouse' }
+  { prop: 'name', label: t('inventory.product') },
+  { prop: 'sku', label: t('inventory.sku') },
+  { prop: 'category', label: t('inventory.category') },
+  { prop: 'quantity', label: t('inventory.quantity') },
+  { prop: 'price', label: t('inventory.price') },
+  { prop: 'warehouse', label: t('inventory.warehouse') }
 ];
 
 const loading = ref(true);
@@ -163,15 +163,15 @@ const selectedProduct = ref<any>(null);
 const form = reactive({ name: '', sku: '', quantity: 0, price: 0, category: '', warehouse: '', reorderPoint: 5, description: '' });
 const movementForm = reactive({ productId: null as number | null, type: 'IN', quantity: 1, notes: '' });
 
-const headerActions = computed(() => [{ label: t('inventory.addProduct') || 'Add Product', onClick: () => openForm(), type: 'primary' }]);
+const headerActions = computed(() => [{ label: t('inventory.addProduct'), onClick: () => openForm(), type: 'primary' }]);
 
 const summaryStats = computed(() => {
   const totalValue = products.value.reduce((sum, p) => sum + (p.quantity || 0) * (p.price || 0), 0);
   const lowStock = products.value.filter(p => p.quantity <= (p.reorderPoint || 5)).length;
   return [
-    { label: t('inventory.totalProducts') || 'Total Products', value: products.value.length, icon: 'ph:package-bold', color: '#7849ff' },
-    { label: t('inventory.lowStock') || 'Low Stock', value: lowStock, icon: 'ph:warning-bold', color: '#ef4444' },
-    { label: t('inventory.totalValue') || 'Total Value', value: formatCurrency(totalValue), icon: 'ph:money-bold', color: '#22c55e' }
+    { label: t('inventory.totalProducts'), value: products.value.length, icon: 'ph:package-bold', color: '#7849ff' },
+    { label: t('inventory.lowStock'), value: lowStock, icon: 'ph:warning-bold', color: '#ef4444' },
+    { label: t('inventory.totalValue'), value: formatCurrency(totalValue), icon: 'ph:money-bold', color: '#22c55e' }
   ];
 });
 
@@ -239,7 +239,7 @@ async function saveProduct() {
   try {
     const res = editingId.value ? await updateProduct(editingId.value, form) : await createProduct(form);
     if (res.success) {
-      ElNotification({ type: 'success', title: t('common.success'), message: t('common.saved') || 'Saved' });
+      ElNotification({ type: 'success', title: t('common.success'), message: t('common.saved') });
       showForm.value = false;
       await loadProducts();
     }
@@ -270,7 +270,7 @@ async function submitMovement() {
     if (!productId) return;
     const res = await addMovement({ productId, type: movementForm.type, quantity: movementForm.quantity, notes: movementForm.notes });
     if (res.success) {
-      ElNotification({ type: 'success', title: t('common.success'), message: t('common.saved') || 'Movement recorded' });
+      ElNotification({ type: 'success', title: t('common.success'), message: t('common.saved') });
       showMovementDialog.value = false;
       selectedProduct.value = null;
       movementForm.quantity = 1;

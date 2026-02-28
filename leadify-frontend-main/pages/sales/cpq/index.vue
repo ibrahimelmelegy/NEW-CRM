@@ -35,14 +35,14 @@
           el-table-column(:label="$t('cpq.expiryDate') || 'Expiry Date'" width="140")
             template(#default="{ row }")
               span.text-xs.font-mono {{ row.expiryDate ? new Date(row.expiryDate).toLocaleDateString('en-GB', { day: '2-digit', month: 'short', year: '2-digit' }) : '—' }}
-          el-table-column(:label="$t('common.action') || ''" width="100" fixed="right")
+          el-table-column(:label="$t('common.action')" width="100" fixed="right")
             template(#default="{ row }")
               el-button(text circle size="small" type="primary" @click="openEditBookDialog(row)")
                 Icon(name="ph:pencil-simple" size="14")
               el-button(text circle size="small" type="danger" @click="handleDeleteBook(row.id)")
                 Icon(name="ph:trash" size="14")
           template(#empty)
-            el-empty(:description="$t('common.noData') || 'No price books yet'")
+            el-empty(:description="$t('common.noData')")
 
         .flex.justify-end.mt-4
           el-pagination(
@@ -104,7 +104,7 @@
           el-table-column(:label="$t('cpq.maxDiscount') || 'Max Discount'" width="120" align="center")
             template(#default="{ row }")
               span {{ row.maxDiscount != null ? row.maxDiscount + '%' : '—' }}
-          el-table-column(:label="$t('common.action') || ''" width="100" fixed="right")
+          el-table-column(:label="$t('common.action')" width="100" fixed="right")
             template(#default="{ row }")
               el-button(text circle size="small" type="primary" @click="openEditEntryDialog(row)")
                 Icon(name="ph:pencil-simple" size="14")
@@ -144,8 +144,8 @@
         el-form-item(:label="$t('cpq.expiryDate') || 'Expiry Date'")
           el-date-picker(v-model="bookForm.expiryDate" type="date" class="w-full" format="DD/MM/YYYY" value-format="YYYY-MM-DD")
     template(#footer)
-      el-button(@click="showBookDialog = false") {{ $t('common.cancel') || 'Cancel' }}
-      el-button(type="primary" :loading="savingBook" @click="saveBook") {{ $t('common.save') || 'Save' }}
+      el-button(@click="showBookDialog = false") {{ $t('common.cancel') }}
+      el-button(type="primary" :loading="savingBook" @click="saveBook") {{ $t('common.save') }}
 
   //- Entry Dialog
   el-dialog(v-model="showEntryDialog" :title="editingEntryId ? ($t('cpq.editEntry') || 'Edit Entry') : ($t('cpq.addEntry') || 'Add Entry')" width="550px")
@@ -169,8 +169,8 @@
         el-select(v-model="entryForm.priceBookId" class="w-full" :placeholder="$t('cpq.selectPriceBook') || 'Select price book'")
           el-option(v-for="book in books" :key="book.id" :label="book.name" :value="book.id")
     template(#footer)
-      el-button(@click="showEntryDialog = false") {{ $t('common.cancel') || 'Cancel' }}
-      el-button(type="primary" :loading="savingEntry" @click="saveEntry") {{ $t('common.save') || 'Save' }}
+      el-button(@click="showEntryDialog = false") {{ $t('common.cancel') }}
+      el-button(type="primary" :loading="savingEntry" @click="saveEntry") {{ $t('common.save') }}
 
   //- Generate Quote Dialog
   el-dialog(v-model="showQuoteDialog" :title="$t('cpq.generateQuote') || 'Generate Quote'" width="700px" destroy-on-close)
@@ -235,7 +235,7 @@
           span(style="color: #22c55e") {{ Number(quoteResult.total || 0).toLocaleString() }} SAR
 
     template(#footer)
-      el-button(@click="showQuoteDialog = false") {{ $t('common.cancel') || 'Cancel' }}
+      el-button(@click="showQuoteDialog = false") {{ $t('common.cancel') }}
       el-button(type="success" :loading="calculatingQuote" @click="calculateQuote")
         Icon(name="ph:calculator-bold" size="16")
         span.ml-1 {{ $t('cpq.calculate') || 'Calculate' }}
@@ -246,6 +246,9 @@
 
 <script setup lang="ts">
 definePageMeta({ middleware: 'permissions' });
+
+const { $i18n } = useNuxtApp();
+const t = $i18n.t;
 
 const activeTab = ref('books');
 
@@ -341,24 +344,24 @@ function openEditBookDialog(row: any) {
 
 async function saveBook() {
   if (!bookForm.name?.trim()) {
-    ElMessage.warning('Name is required');
+    ElMessage.warning(t('common.fillRequired'));
     return;
   }
   savingBook.value = true;
   try {
     if (editingBookId.value) {
       const { success } = await useApiFetch(`cpq/price-books/${editingBookId.value}`, 'PUT', { ...bookForm });
-      if (success) { showBookDialog.value = false; ElMessage.success('Price book updated'); await fetchBooks(); }
+      if (success) { showBookDialog.value = false; ElMessage.success(t('common.saved')); await fetchBooks(); }
     } else {
       const { success } = await useApiFetch('cpq/price-books', 'POST', { ...bookForm });
-      if (success) { showBookDialog.value = false; ElMessage.success('Price book created'); await fetchBooks(); }
+      if (success) { showBookDialog.value = false; ElMessage.success(t('common.saved')); await fetchBooks(); }
     }
   } finally { savingBook.value = false; }
 }
 
 async function handleDeleteBook(id: number) {
   const { success } = await useApiFetch(`cpq/price-books/${id}`, 'DELETE');
-  if (success) { ElMessage.success('Deleted'); await fetchBooks(); }
+  if (success) { ElMessage.success(t('common.deleted')); await fetchBooks(); }
 }
 
 // --- Entry CRUD ---
@@ -390,24 +393,24 @@ function openEditEntryDialog(row: any) {
 
 async function saveEntry() {
   if (!entryForm.productName?.trim()) {
-    ElMessage.warning('Product name is required');
+    ElMessage.warning(t('common.fillRequired'));
     return;
   }
   savingEntry.value = true;
   try {
     if (editingEntryId.value) {
       const { success } = await useApiFetch(`cpq/entries/${editingEntryId.value}`, 'PUT', { ...entryForm });
-      if (success) { showEntryDialog.value = false; ElMessage.success('Entry updated'); await fetchEntries(); }
+      if (success) { showEntryDialog.value = false; ElMessage.success(t('common.saved')); await fetchEntries(); }
     } else {
       const { success } = await useApiFetch('cpq/entries', 'POST', { ...entryForm });
-      if (success) { showEntryDialog.value = false; ElMessage.success('Entry created'); await fetchEntries(); }
+      if (success) { showEntryDialog.value = false; ElMessage.success(t('common.saved')); await fetchEntries(); }
     }
   } finally { savingEntry.value = false; }
 }
 
 async function handleDeleteEntry(id: number) {
   const { success } = await useApiFetch(`cpq/entries/${id}`, 'DELETE');
-  if (success) { ElMessage.success('Deleted'); await fetchEntries(); }
+  if (success) { ElMessage.success(t('common.deleted')); await fetchEntries(); }
 }
 
 // --- Generate Quote ---
@@ -438,12 +441,12 @@ function getLineItemPrice(item: { entryId: number | null; quantity: number }): s
 
 async function calculateQuote() {
   if (!quoteForm.priceBookId) {
-    ElMessage.warning('Please select a price book');
+    ElMessage.warning(t('common.fillRequired'));
     return;
   }
   const validItems = quoteForm.items.filter(i => i.entryId);
   if (!validItems.length) {
-    ElMessage.warning('Please add at least one line item');
+    ElMessage.warning(t('common.fillRequired'));
     return;
   }
   calculatingQuote.value = true;
@@ -457,7 +460,7 @@ async function calculateQuote() {
     if (success && body) {
       quoteResult.value = body;
     } else {
-      ElMessage.error('Failed to generate quote');
+      ElMessage.error(t('common.error'));
     }
   } finally {
     calculatingQuote.value = false;
@@ -473,11 +476,11 @@ async function convertQuoteToDeal() {
       priceBookId: quoteForm.priceBookId
     });
     if (success) {
-      ElMessage.success('Quote converted to deal successfully');
+      ElMessage.success(t('common.saved'));
       showQuoteDialog.value = false;
       quoteResult.value = null;
     } else {
-      ElMessage.error('Failed to convert quote to deal');
+      ElMessage.error(t('common.error'));
     }
   } finally {
     convertingToDeal.value = false;
@@ -491,24 +494,24 @@ async function fetchDiscountRules() {
     if (success && body) {
       discountRules.value = Array.isArray(body) ? body : (body.docs || body.rows || []);
     }
-  } catch {
-    // Silent
+  } catch (e: any) {
+    ElMessage.error(t('common.error'));
   }
 }
 
 function editDiscountRule(rule: any) {
-  ElMessage.info('Edit discount rule: ' + rule.name);
+  ElMessage.info(rule.name);
 }
 
 async function deleteDiscountRule(id: number) {
   try {
     const { success } = await useApiFetch(`cpq/discount-rules/${id}`, 'DELETE');
     if (success) {
-      ElMessage.success('Discount rule deleted');
+      ElMessage.success(t('common.deleted'));
       await fetchDiscountRules();
     }
   } catch {
-    ElMessage.error('Failed to delete discount rule');
+    ElMessage.error(t('common.error'));
   }
 }
 

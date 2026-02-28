@@ -88,7 +88,7 @@ div
 </template>
 
 <script setup lang="ts">
-import { ElNotification } from 'element-plus';
+import { ElNotification, ElMessage } from 'element-plus';
 
 definePageMeta({ middleware: 'permissions' });
 const { $i18n } = useNuxtApp();
@@ -174,7 +174,9 @@ async function checkActiveTimer() {
       activeTimer.value = body;
       startElapsedCounter(body.startTime);
     }
-  } catch {}
+  } catch (e: any) {
+    ElMessage.error(t('common.error'));
+  }
 }
 
 function startElapsedCounter(startTime: string) {

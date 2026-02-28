@@ -118,7 +118,7 @@ div.animate-fade-in
               effect="dark"
               round
             ) {{ row.status || 'ACTIVE' }}
-        el-table-column(:label="$t('common.actions') || 'Actions'" width="120" align="center" fixed="right")
+        el-table-column(:label="$t('common.actions')" width="120" align="center" fixed="right")
           template(#default="{ row }")
             .flex.items-center.justify-center.gap-1
               el-button(size="small" @click="openEditWarehouse(row)" class="!rounded-lg")
@@ -168,7 +168,7 @@ div.animate-fade-in
         el-table-column(:label="$t('warehouse.capacity') || 'Capacity'" prop="capacity" width="130" align="center")
           template(#default="{ row }")
             span.text-sm(style="color: var(--text-primary)") {{ row.capacity || 0 }}
-        el-table-column(:label="$t('common.actions') || 'Actions'" width="100" align="center" fixed="right")
+        el-table-column(:label="$t('common.actions')" width="100" align="center" fixed="right")
           template(#default="{ row }")
             el-button(size="small" type="danger" plain @click="deleteZone(row)" class="!rounded-lg")
               Icon(name="ph:trash-bold" size="14")
@@ -227,7 +227,7 @@ div.animate-fade-in
         el-table-column(:label="$t('warehouse.completedAt') || 'Completed'" width="140")
           template(#default="{ row }")
             span.text-sm(style="color: var(--text-muted)") {{ row.completedAt ? formatDate(row.completedAt) : '--' }}
-        el-table-column(:label="$t('common.actions') || 'Actions'" width="100" align="center" fixed="right")
+        el-table-column(:label="$t('common.actions')" width="100" align="center" fixed="right")
           template(#default="{ row }")
             el-button(
               v-if="row.status === 'PENDING' || row.status === 'IN_TRANSIT'"
@@ -276,8 +276,8 @@ div.animate-fade-in
             el-option(label="Inactive" value="INACTIVE")
             el-option(label="Maintenance" value="MAINTENANCE")
     template(#footer)
-      el-button(@click="warehouseDialogVisible = false") {{ $t('common.cancel') || 'Cancel' }}
-      el-button(type="primary" :loading="saving" @click="saveWarehouse") {{ $t('common.save') || 'Save' }}
+      el-button(@click="warehouseDialogVisible = false") {{ $t('common.cancel') }}
+      el-button(type="primary" :loading="saving" @click="saveWarehouse") {{ $t('common.save') }}
 
   //- ========== CREATE ZONE DIALOG ==========
   el-dialog(
@@ -308,8 +308,8 @@ div.animate-fade-in
         el-form-item(:label="$t('warehouse.capacity') || 'Capacity'")
           el-input-number(v-model="zoneForm.capacity" :min="0" style="width: 100%")
     template(#footer)
-      el-button(@click="zoneDialogVisible = false") {{ $t('common.cancel') || 'Cancel' }}
-      el-button(type="primary" :loading="saving" @click="saveZone") {{ $t('common.save') || 'Save' }}
+      el-button(@click="zoneDialogVisible = false") {{ $t('common.cancel') }}
+      el-button(type="primary" :loading="saving" @click="saveZone") {{ $t('common.save') }}
 
   //- ========== CREATE TRANSFER DIALOG ==========
   el-dialog(
@@ -339,13 +339,13 @@ div.animate-fade-in
       el-form-item(:label="$t('warehouse.notes') || 'Notes'")
         el-input(v-model="transferForm.notes" type="textarea" :rows="3" :placeholder="$t('warehouse.transferNotes') || 'Transfer notes...'")
     template(#footer)
-      el-button(@click="transferDialogVisible = false") {{ $t('common.cancel') || 'Cancel' }}
-      el-button(type="primary" :loading="saving" @click="saveTransfer") {{ $t('common.save') || 'Save' }}
+      el-button(@click="transferDialogVisible = false") {{ $t('common.cancel') }}
+      el-button(type="primary" :loading="saving" @click="saveTransfer") {{ $t('common.save') }}
 </template>
 
 <script setup lang="ts">
 import { ref, reactive, computed, onMounted } from 'vue';
-import { ElNotification, ElMessageBox } from 'element-plus';
+import { ElMessage, ElNotification, ElMessageBox } from 'element-plus';
 
 definePageMeta({ middleware: 'permissions' });
 
@@ -479,8 +479,8 @@ async function loadWarehouses() {
       warehouses.value = data?.rows || data?.docs || data || [];
       warehousesPagination.total = data?.count ?? data?.total ?? warehouses.value.length;
     }
-  } catch {
-    // silent
+  } catch (e: any) {
+    ElMessage.error(t('common.error'));
   } finally {
     loadingWarehouses.value = false;
   }
@@ -510,7 +510,7 @@ function openEditWarehouse(wh: any) {
 
 async function saveWarehouse() {
   if (!warehouseForm.name.trim()) {
-    ElNotification({ type: 'warning', title: t('common.warning') || 'Warning', message: t('common.fillRequired') || 'Please fill required fields' });
+    ElNotification({ type: 'warning', title: t('common.warning'), message: t('common.fillRequired') });
     return;
   }
   saving.value = true;
@@ -521,11 +521,11 @@ async function saveWarehouse() {
     } else {
       await useApiFetch('warehouse', 'POST', payload);
     }
-    ElNotification({ type: 'success', title: t('common.success') || 'Success', message: t('common.saved') || 'Saved' });
+    ElNotification({ type: 'success', title: t('common.success'), message: t('common.saved') });
     warehouseDialogVisible.value = false;
     await loadWarehouses();
   } catch {
-    ElNotification({ type: 'error', title: t('common.error') || 'Error', message: t('common.error') || 'Error' });
+    ElNotification({ type: 'error', title: t('common.error'), message: t('common.error') });
   } finally {
     saving.value = false;
   }
@@ -534,12 +534,12 @@ async function saveWarehouse() {
 async function deleteWarehouse(wh: any) {
   try {
     await ElMessageBox.confirm(
-      t('common.confirmDelete') || 'Are you sure?',
-      t('common.warning') || 'Warning',
+      t('common.confirmDelete'),
+      t('common.warning'),
       { type: 'warning' }
     );
     await useApiFetch(`warehouse/${wh.id}`, 'DELETE');
-    ElNotification({ type: 'success', title: t('common.success') || 'Success', message: t('common.deleted') || 'Deleted' });
+    ElNotification({ type: 'success', title: t('common.success'), message: t('common.deleted') });
     await loadWarehouses();
   } catch {
     // cancelled
@@ -556,8 +556,8 @@ async function loadZones() {
       zones.value = data?.rows || data?.docs || data || [];
       zonesPagination.total = data?.count ?? data?.total ?? zones.value.length;
     }
-  } catch {
-    // silent
+  } catch (e: any) {
+    ElMessage.error(t('common.error'));
   } finally {
     loadingZones.value = false;
   }
@@ -573,17 +573,17 @@ function openCreateZone() {
 
 async function saveZone() {
   if (!zoneForm.name.trim() || !zoneForm.warehouseId) {
-    ElNotification({ type: 'warning', title: t('common.warning') || 'Warning', message: t('common.fillRequired') || 'Please fill required fields' });
+    ElNotification({ type: 'warning', title: t('common.warning'), message: t('common.fillRequired') });
     return;
   }
   saving.value = true;
   try {
     await useApiFetch('warehouse/zones', 'POST', { ...zoneForm });
-    ElNotification({ type: 'success', title: t('common.success') || 'Success', message: t('common.saved') || 'Saved' });
+    ElNotification({ type: 'success', title: t('common.success'), message: t('common.saved') });
     zoneDialogVisible.value = false;
     await loadZones();
   } catch {
-    ElNotification({ type: 'error', title: t('common.error') || 'Error', message: t('common.error') || 'Error' });
+    ElNotification({ type: 'error', title: t('common.error'), message: t('common.error') });
   } finally {
     saving.value = false;
   }
@@ -592,12 +592,12 @@ async function saveZone() {
 async function deleteZone(zone: any) {
   try {
     await ElMessageBox.confirm(
-      t('common.confirmDelete') || 'Are you sure?',
-      t('common.warning') || 'Warning',
+      t('common.confirmDelete'),
+      t('common.warning'),
       { type: 'warning' }
     );
     await useApiFetch(`warehouse/zones/${zone.id}`, 'DELETE');
-    ElNotification({ type: 'success', title: t('common.success') || 'Success', message: t('common.deleted') || 'Deleted' });
+    ElNotification({ type: 'success', title: t('common.success'), message: t('common.deleted') });
     await loadZones();
   } catch {
     // cancelled
@@ -614,8 +614,8 @@ async function loadTransfers() {
       transfers.value = data?.rows || data?.docs || data || [];
       transfersPagination.total = data?.count ?? data?.total ?? transfers.value.length;
     }
-  } catch {
-    // silent
+  } catch (e: any) {
+    ElMessage.error(t('common.error'));
   } finally {
     loadingTransfers.value = false;
   }
@@ -630,21 +630,21 @@ function openCreateTransfer() {
 
 async function saveTransfer() {
   if (!transferForm.fromWarehouseId || !transferForm.toWarehouseId) {
-    ElNotification({ type: 'warning', title: t('common.warning') || 'Warning', message: t('common.fillRequired') || 'Please fill required fields' });
+    ElNotification({ type: 'warning', title: t('common.warning'), message: t('common.fillRequired') });
     return;
   }
   if (transferForm.fromWarehouseId === transferForm.toWarehouseId) {
-    ElNotification({ type: 'warning', title: t('common.warning') || 'Warning', message: t('warehouse.sameWarehouseError') || 'Source and destination cannot be the same' });
+    ElNotification({ type: 'warning', title: t('common.warning'), message: t('warehouse.sameWarehouseError') });
     return;
   }
   saving.value = true;
   try {
     await useApiFetch('warehouse/transfers', 'POST', { ...transferForm });
-    ElNotification({ type: 'success', title: t('common.success') || 'Success', message: t('common.saved') || 'Saved' });
+    ElNotification({ type: 'success', title: t('common.success'), message: t('common.saved') });
     transferDialogVisible.value = false;
     await loadTransfers();
   } catch {
-    ElNotification({ type: 'error', title: t('common.error') || 'Error', message: t('common.error') || 'Error' });
+    ElNotification({ type: 'error', title: t('common.error'), message: t('common.error') });
   } finally {
     saving.value = false;
   }
@@ -654,10 +654,10 @@ async function updateTransferStatus(transfer: any) {
   const nextStatus = transfer.status === 'PENDING' ? 'IN_TRANSIT' : 'COMPLETED';
   try {
     await useApiFetch(`warehouse/transfers/${transfer.id}`, 'PUT', { status: nextStatus });
-    ElNotification({ type: 'success', title: t('common.success') || 'Success', message: t('common.saved') || 'Saved' });
+    ElNotification({ type: 'success', title: t('common.success'), message: t('common.saved') });
     await loadTransfers();
   } catch {
-    ElNotification({ type: 'error', title: t('common.error') || 'Error', message: t('common.error') || 'Error' });
+    ElNotification({ type: 'error', title: t('common.error'), message: t('common.error') });
   }
 }
 
@@ -676,8 +676,8 @@ async function loadLowStock() {
       lowStockItems.value = data?.rows || data?.docs || data || [];
       kpiData.lowStockAlerts = lowStockItems.value.length;
     }
-  } catch {
-    // silent
+  } catch (e: any) {
+    ElMessage.error(t('common.error'));
   }
 }
 
@@ -689,8 +689,8 @@ async function loadStockCount() {
       const data = res.body as any;
       kpiData.totalStockItems = data?.count ?? data?.total ?? 0;
     }
-  } catch {
-    // silent
+  } catch (e: any) {
+    ElMessage.error(t('common.error'));
   }
 }
 

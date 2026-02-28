@@ -51,8 +51,8 @@
     .flex.items-center.justify-between.mb-4
       h3.text-lg.font-bold(style="color: var(--text-primary)")
         Icon(name="ph:warning-bold" size="20" class="mr-2" style="color: #f59e0b")
-        | {{ $t('warranty.expiringSoonPanel') || 'Expiring Soon' }}
-      el-tag(type="warning" size="small" effect="dark" round) {{ expiringWarranties.length }} {{ $t('warranty.warranties') || 'warranties' }}
+        | {{ $t('warranty.expiringSoonPanel') }}
+      el-tag(type="warning" size="small" effect="dark" round) {{ expiringWarranties.length }} {{ $t('warranty.warranties') }}
     .space-y-2
       .flex.items-center.justify-between.p-3.rounded-xl(
         v-for="(ew, idx) in expiringWarranties"
@@ -66,7 +66,7 @@
             p.text-sm.font-semibold(style="color: var(--text-primary)") {{ ew.productName || ew.name || '--' }}
             p.text-xs(style="color: var(--text-muted)") {{ ew.clientName || ew.client || '--' }}
         .text-end
-          p.text-sm.font-bold(:style="{ color: getExpiryColor(ew.daysRemaining) }") {{ ew.daysRemaining }} {{ $t('warranty.daysLeft') || 'days left' }}
+          p.text-sm.font-bold(:style="{ color: getExpiryColor(ew.daysRemaining) }") {{ ew.daysRemaining }} {{ $t('warranty.daysLeft') }}
           p.text-xs(style="color: var(--text-muted)") {{ ew.endDate || '--' }}
 
   //- Original Stats Cards (kept for backward compat)
@@ -527,8 +527,8 @@ async function loadWarrantyAnalytics() {
       warrantyAnalytics.avgResolutionTime = data?.avgResolutionTime ?? data?.avgResolution ?? 0;
       warrantyAnalytics.avgClaimValue = data?.avgClaimValue ?? 0;
     }
-  } catch {
-    // silent
+  } catch (e: any) {
+    ElMessage.error($t('common.error'));
   }
 }
 
@@ -538,8 +538,8 @@ async function loadClaimStatusCounts() {
     if (success && body) {
       Object.assign(claimStatusCounts, body);
     }
-  } catch {
-    // silent
+  } catch (e: any) {
+    ElMessage.error($t('common.error'));
   }
 }
 
@@ -561,8 +561,8 @@ async function loadExpiringWarranties() {
         return { ...w, daysRemaining: daysRemaining ?? 0 };
       });
     }
-  } catch {
-    // silent
+  } catch (e: any) {
+    ElMessage.error($t('common.error'));
   }
 }
 

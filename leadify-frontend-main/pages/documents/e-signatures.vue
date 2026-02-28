@@ -179,6 +179,9 @@ definePageMeta({
   middleware: 'permissions'
 });
 
+const { $i18n } = useNuxtApp();
+const t = $i18n.t;
+
 // ---------- Reactive state ----------
 const filterStatus = ref('');
 const searchQuery = ref('');
@@ -251,10 +254,10 @@ async function fetchDocuments() {
       const list = Array.isArray(raw) ? raw : [];
       documents.value = list.map(mapRecord);
     } else {
-      ElMessage.error(res?.message || 'Failed to load e-signatures');
+      ElMessage.error(t('common.error'));
     }
   } catch (e: any) {
-    ElMessage.error('Failed to load e-signatures');
+    ElMessage.error(t('common.error'));
     console.error(e);
   } finally {
     loading.value = false;
@@ -339,19 +342,19 @@ const formatDate = (d: string) => (d ? new Date(d).toLocaleDateString('en', { mo
 // ---------- Actions ----------
 
 const viewDocument = (doc: DisplayDocument) => {
-  ElMessage.info(`Viewing: ${doc.name}`);
+  ElMessage.info(doc.name);
 };
 
 const sendReminder = async (doc: DisplayDocument) => {
   try {
     const res = await useApiFetch(`e-signatures/${doc.id}/remind`, 'POST', {});
     if (res?.success) {
-      ElMessage.success(`Reminder sent to ${res.body?.pendingRecipients || 0} pending recipient(s)`);
+      ElMessage.success(t('common.saved'));
     } else {
-      ElMessage.error(res?.message || 'Failed to send reminder');
+      ElMessage.error(t('common.error'));
     }
   } catch {
-    ElMessage.error('Failed to send reminder');
+    ElMessage.error(t('common.error'));
   }
 };
 
@@ -360,23 +363,23 @@ const deleteSignature = async (doc: DisplayDocument) => {
     const res = await useApiFetch(`e-signatures/${doc.id}`, 'DELETE');
     if (res?.success) {
       documents.value = documents.value.filter(d => d.id !== doc.id);
-      ElMessage.success('Document deleted');
+      ElMessage.success(t('common.deleted'));
     } else {
-      ElMessage.error(res?.message || 'Failed to delete');
+      ElMessage.error(t('common.error'));
     }
   } catch {
-    ElMessage.error('Failed to delete');
+    ElMessage.error(t('common.error'));
   }
 };
 
 const sendForSignature = async () => {
   const req = newSignRequest.value;
   if (!req.name) {
-    ElMessage.warning('Document name is required');
+    ElMessage.warning(t('common.fillRequired'));
     return;
   }
   if (!req.recipients.length || !req.recipients[0].email) {
-    ElMessage.warning('At least one recipient with an email is required');
+    ElMessage.warning(t('common.fillRequired'));
     return;
   }
 
@@ -392,15 +395,15 @@ const sendForSignature = async () => {
     const res = await useApiFetch('e-signatures', 'POST', payload);
 
     if (res?.success) {
-      ElMessage.success('Document sent for signature');
+      ElMessage.success(t('common.saved'));
       showSendDialog.value = false;
       newSignRequest.value = { name: '', message: '', expiryDate: null, recipients: [{ name: '', email: '' }] };
       await fetchDocuments();
     } else {
-      ElMessage.error(res?.message || 'Failed to send for signature');
+      ElMessage.error(t('common.error'));
     }
   } catch (e: any) {
-    ElMessage.error('Failed to send document for signature');
+    ElMessage.error(t('common.error'));
     console.error(e);
   } finally {
     sending.value = false;

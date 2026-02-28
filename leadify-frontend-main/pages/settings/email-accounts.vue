@@ -62,7 +62,7 @@
 
 <script setup lang="ts">
 import { ref, reactive } from 'vue';
-import { ElNotification, ElMessageBox } from 'element-plus';
+import { ElNotification, ElMessageBox, ElMessage } from 'element-plus';
 import { fetchEmailAccounts, connectEmailAccount, disconnectEmailAccount } from '~/composables/useEmailIntegration';
 import type { EmailAccount } from '~/composables/useEmailIntegration';
 
@@ -135,9 +135,9 @@ async function handleConnect() {
     if (res?.success) {
       accounts.value = await fetchEmailAccounts();
       connectDialogVisible.value = false;
-      ElNotification({ type: 'success', title: t('common.success'), message: 'Account connected' });
+      ElNotification({ type: 'success', title: t('common.success'), message: t('common.saved') });
     } else {
-      ElNotification({ type: 'error', title: t('common.error'), message: res?.message || 'Connection failed' });
+      ElNotification({ type: 'error', title: t('common.error'), message: t('common.error') });
     }
   } catch {
     ElNotification({ type: 'error', title: t('common.error'), message: t('common.error') });
@@ -148,11 +148,11 @@ async function handleConnect() {
 
 async function handleDisconnect(account: EmailAccount) {
   try {
-    await ElMessageBox.confirm('Are you sure you want to disconnect this account?', t('common.warning'), { type: 'warning' });
+    await ElMessageBox.confirm(t('common.confirmAction'), t('common.warning'), { type: 'warning' });
     await disconnectEmailAccount(account.id);
     accounts.value = await fetchEmailAccounts();
-    ElNotification({ type: 'success', title: t('common.success'), message: 'Account disconnected' });
-  } catch {}
+    ElNotification({ type: 'success', title: t('common.success'), message: t('common.deleted') });
+  } catch (e: any) { ElMessage.error(t('common.error')); }
 }
 </script>
 

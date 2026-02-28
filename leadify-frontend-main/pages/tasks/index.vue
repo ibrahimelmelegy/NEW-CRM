@@ -295,7 +295,7 @@ async function handleDelete(data: any) {
     const newStats = await fetchTaskStats();
     stats.value = newStats || {};
     ElNotification({ type: 'success', title: t('common.success'), message: t('common.deleted') });
-  } catch {}
+  } catch (e: any) { ElNotification({ type: 'error', title: t('common.error'), message: t('common.error') }); }
 }
 
 // Mobile

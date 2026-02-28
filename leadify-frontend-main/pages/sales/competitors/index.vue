@@ -577,17 +577,17 @@ function activityIcon(type: string): string {
 
 async function saveItem() {
   if (!form.name?.trim()) {
-    ElMessage.warning('Name is required');
+    ElMessage.warning(t('common.fillRequired'));
     return;
   }
   saving.value = true;
   try {
     if (editingId.value) {
       const { success } = await useApiFetch(`competitors/${editingId.value}`, 'PUT', { ...form });
-      if (success) { showDialog.value = false; ElMessage.success('Competitor updated'); await fetchData(); }
+      if (success) { showDialog.value = false; ElMessage.success(t('common.saved')); await fetchData(); }
     } else {
       const { success } = await useApiFetch('competitors', 'POST', { ...form });
-      if (success) { showDialog.value = false; ElMessage.success('Competitor added'); await fetchData(); }
+      if (success) { showDialog.value = false; ElMessage.success(t('common.saved')); await fetchData(); }
     }
   } finally { saving.value = false; }
 }

@@ -6,8 +6,8 @@ div.animate-fade-in
       el-button(size="large" @click="navigateTo('/e-commerce/orders')" class="!rounded-xl")
         Icon(name="ph:arrow-left-bold" size="16")
       div
-        h2.text-2xl.font-bold(style="color: var(--text-primary)") {{ $t('salesOrders.newOrder') || 'Create New Order' }}
-        p.text-sm.mt-1(style="color: var(--text-muted)") {{ $t('salesOrders.title') || 'Fill in the details to create a sales order' }}
+        h2.text-2xl.font-bold(style="color: var(--text-primary)") {{ $t('salesOrders.newOrder') }}
+        p.text-sm.mt-1(style="color: var(--text-muted)") {{ $t('salesOrders.title') }}
 
   .grid.gap-6(class="grid-cols-1 lg_grid-cols-3")
     //- Main form area (2 columns)
@@ -18,9 +18,9 @@ div.animate-fade-in
           .flex.items-center.gap-2
             .w-7.h-7.rounded-lg.flex.items-center.justify-center(style="background: rgba(120, 73, 255, 0.15)")
               span.text-xs.font-bold(style="color: #7849ff") 1
-            span.font-bold(style="color: var(--text-primary)") {{ $t('salesOrders.selectClient') || 'Select Client' }}
+            span.font-bold(style="color: var(--text-primary)") {{ $t('salesOrders.selectClient') }}
         el-form(label-position="top")
-          el-form-item(:label="$t('salesOrders.client') || 'Client'" required)
+          el-form-item(:label="$t('salesOrders.client')" required)
             el-select(
               v-model="selectedClientId"
               filterable
@@ -28,7 +28,7 @@ div.animate-fade-in
               reserve-keyword
               :remote-method="searchClients"
               :loading="loadingClients"
-              :placeholder="$t('salesOrders.selectClient') || 'Search and select a client...'"
+              :placeholder="$t('salesOrders.selectClient')"
               size="large"
               style="width: 100%"
               @change="onClientSelect"
@@ -58,10 +58,10 @@ div.animate-fade-in
             .flex.items-center.gap-2
               .w-7.h-7.rounded-lg.flex.items-center.justify-center(style="background: rgba(120, 73, 255, 0.15)")
                 span.text-xs.font-bold(style="color: #7849ff") 2
-              span.font-bold(style="color: var(--text-primary)") {{ $t('salesOrders.items') || 'Order Items' }}
+              span.font-bold(style="color: var(--text-primary)") {{ $t('salesOrders.items') }}
             el-button(type="primary" size="small" @click="addBlankItem" class="!rounded-lg")
               Icon(name="ph:plus-bold" size="14" class="mr-1")
-              | {{ $t('salesOrders.addItem') || 'Add Item' }}
+              | {{ $t('salesOrders.addItem') }}
 
         //- Product search
         .mb-4
@@ -72,7 +72,7 @@ div.animate-fade-in
             reserve-keyword
             :remote-method="searchProducts"
             :loading="loadingProducts"
-            :placeholder="$t('common.search') || 'Search products to add...'"
+            :placeholder="$t('common.search')"
             size="large"
             style="width: 100%"
             @change="addProductItem"
@@ -92,7 +92,7 @@ div.animate-fade-in
             style="background: var(--bg-elevated); border: 1px solid var(--border-default)"
           )
             .flex.items-start.justify-between.mb-3
-              span.text-sm.font-semibold(style="color: var(--text-primary)") {{ ($t('salesOrders.items') || 'Item') + ' #' + (idx + 1) }}
+              span.text-sm.font-semibold(style="color: var(--text-primary)") {{ ($t('salesOrders.items')) + ' #' + (idx + 1) }}
               el-button(
                 type="danger"
                 size="small"
@@ -102,24 +102,24 @@ div.animate-fade-in
               )
                 Icon(name="ph:x-bold" size="12")
             .grid.gap-3(class="grid-cols-1 md_grid-cols-2")
-              el-form-item.mb-0(:label="$t('salesOrders.description') || 'Description'")
-                el-input(v-model="item.description" :placeholder="$t('salesOrders.description') || 'Item description'")
-              el-form-item.mb-0(:label="$t('salesOrders.quantity') || 'Quantity'")
+              el-form-item.mb-0(:label="$t('salesOrders.description')")
+                el-input(v-model="item.description" :placeholder="$t('salesOrders.description')")
+              el-form-item.mb-0(:label="$t('salesOrders.quantity')")
                 el-input-number(v-model="item.quantity" :min="1" style="width: 100%")
             .grid.gap-3.mt-3(class="grid-cols-1 md_grid-cols-3")
-              el-form-item.mb-0(:label="$t('salesOrders.unitPrice') || 'Unit Price'")
+              el-form-item.mb-0(:label="$t('salesOrders.unitPrice')")
                 el-input-number(v-model="item.unitPrice" :min="0" :precision="2" style="width: 100%")
-              el-form-item.mb-0(:label="$t('salesOrders.taxRate') || 'Tax Rate %'")
+              el-form-item.mb-0(:label="$t('salesOrders.taxRate')")
                 el-input-number(v-model="item.taxRate" :min="0" :max="100" :precision="2" style="width: 100%")
-              el-form-item.mb-0(:label="$t('salesOrders.discountRate') || 'Discount %'")
+              el-form-item.mb-0(:label="$t('salesOrders.discountRate')")
                 el-input-number(v-model="item.discountRate" :min="0" :max="100" :precision="2" style="width: 100%")
             .flex.justify-end.mt-3
-              span.text-sm.font-bold(style="color: #7849ff") {{ $t('salesOrders.lineTotal') || 'Line Total' }}: {{ formatCurrency(calcLineTotal(item)) }}
+              span.text-sm.font-bold(style="color: #7849ff") {{ $t('salesOrders.lineTotal') }}: {{ formatCurrency(calcLineTotal(item)) }}
 
         //- Empty items
         .text-center.py-8(v-else)
           Icon(name="ph:shopping-cart" size="40" style="color: var(--text-muted)")
-          p.text-sm.mt-2(style="color: var(--text-muted)") {{ $t('common.noData') || 'No items added yet. Search products or add a blank item.' }}
+          p.text-sm.mt-2(style="color: var(--text-muted)") {{ $t('common.noData') }}
 
       //- Step 3: Order Details
       el-card.rounded-2xl.mb-6(shadow="never" style="border: 1px solid var(--border-default)")
@@ -127,37 +127,37 @@ div.animate-fade-in
           .flex.items-center.gap-2
             .w-7.h-7.rounded-lg.flex.items-center.justify-center(style="background: rgba(120, 73, 255, 0.15)")
               span.text-xs.font-bold(style="color: #7849ff") 3
-            span.font-bold(style="color: var(--text-primary)") {{ $t('salesOrders.title') || 'Order Details' }}
+            span.font-bold(style="color: var(--text-primary)") {{ $t('salesOrders.title') }}
         el-form(:model="form" label-position="top")
           .grid.gap-4(class="grid-cols-1 md_grid-cols-2")
-            el-form-item(:label="$t('salesOrders.paymentTerms') || 'Payment Terms'")
-              el-input(v-model="form.paymentTerms" :placeholder="$t('salesOrders.paymentTerms') || 'e.g. Net 30'")
-            el-form-item(:label="$t('salesOrders.currency') || 'Currency'")
+            el-form-item(:label="$t('salesOrders.paymentTerms')")
+              el-input(v-model="form.paymentTerms" :placeholder="$t('salesOrders.paymentTerms')")
+            el-form-item(:label="$t('salesOrders.currency')")
               el-select(v-model="form.currency" style="width: 100%")
                 el-option(label="SAR" value="SAR")
                 el-option(label="USD" value="USD")
                 el-option(label="EUR" value="EUR")
                 el-option(label="GBP" value="GBP")
-          el-form-item(:label="$t('salesOrders.shippingAddress') || 'Shipping Address'")
-            el-input(v-model="form.shippingAddress" type="textarea" :rows="3" :placeholder="$t('salesOrders.shippingAddress') || 'Enter shipping address...'")
-          el-form-item(:label="$t('salesOrders.notes') || 'Notes'")
-            el-input(v-model="form.notes" type="textarea" :rows="3" :placeholder="$t('salesOrders.notes') || 'Any additional notes...'")
+          el-form-item(:label="$t('salesOrders.shippingAddress')")
+            el-input(v-model="form.shippingAddress" type="textarea" :rows="3" :placeholder="$t('salesOrders.shippingAddress')")
+          el-form-item(:label="$t('salesOrders.notes')")
+            el-input(v-model="form.notes" type="textarea" :rows="3" :placeholder="$t('salesOrders.notes')")
 
     //- Summary Sidebar
     .col-span-1
       .glass-card.p-5.rounded-2xl.sticky(style="top: 80px")
         h3.text-lg.font-bold.mb-4(style="color: var(--text-primary)")
           Icon(name="ph:receipt-bold" size="20" class="mr-2" style="color: #7849ff")
-          | {{ $t('common.summary') || 'Summary' }}
+          | {{ $t('common.summary') }}
 
         //- Client
         .mb-4(v-if="selectedClient")
-          p.text-xs(style="color: var(--text-muted)") {{ $t('salesOrders.client') || 'Client' }}
+          p.text-xs(style="color: var(--text-muted)") {{ $t('salesOrders.client') }}
           p.text-sm.font-semibold(style="color: var(--text-primary)") {{ selectedClient.clientName || selectedClient.name }}
 
         //- Items summary
         .mb-4(v-if="orderItems.length")
-          p.text-xs.mb-2(style="color: var(--text-muted)") {{ $t('salesOrders.items') || 'Items' }} ({{ orderItems.length }})
+          p.text-xs.mb-2(style="color: var(--text-muted)") {{ $t('salesOrders.items') }} ({{ orderItems.length }})
           .space-y-1
             .flex.justify-between.text-sm(v-for="(item, idx) in orderItems" :key="idx")
               span.truncate.flex-1.mr-2(style="color: var(--text-primary)") {{ item.description || `Item ${idx + 1}` }}
@@ -168,19 +168,19 @@ div.animate-fade-in
         //- Totals
         .space-y-2
           .flex.justify-between
-            span.text-sm(style="color: var(--text-muted)") {{ $t('salesOrders.subtotal') || 'Subtotal' }}
+            span.text-sm(style="color: var(--text-muted)") {{ $t('salesOrders.subtotal') }}
             span.text-sm.font-semibold(style="color: var(--text-primary)") {{ formatCurrency(summarySubtotal) }}
           .flex.justify-between
-            span.text-sm(style="color: var(--text-muted)") {{ $t('salesOrders.taxAmount') || 'Tax' }}
+            span.text-sm(style="color: var(--text-muted)") {{ $t('salesOrders.taxAmount') }}
             span.text-sm(style="color: var(--text-primary)") {{ formatCurrency(summaryTax) }}
           .flex.justify-between
-            span.text-sm(style="color: var(--text-muted)") {{ $t('salesOrders.discountAmount') || 'Discount' }}
+            span.text-sm(style="color: var(--text-muted)") {{ $t('salesOrders.discountAmount') }}
             span.text-sm(style="color: var(--text-primary)") -{{ formatCurrency(summaryDiscount) }}
 
         el-divider
 
         .flex.justify-between.mb-6
-          span.text-base.font-bold(style="color: var(--text-primary)") {{ $t('salesOrders.total') || 'Total' }}
+          span.text-base.font-bold(style="color: var(--text-primary)") {{ $t('salesOrders.total') }}
           span.text-xl.font-black(style="color: #7849ff") {{ formatCurrency(summaryTotal) }}
 
         //- Validation warnings
@@ -200,11 +200,12 @@ div.animate-fade-in
           class="!rounded-xl"
         )
           Icon(name="ph:check-bold" size="16" class="mr-1")
-          | {{ $t('common.create') || 'Create Order' }}
+          | {{ $t('common.create') }}
 </template>
 
 <script setup lang="ts">
 import { ref, reactive, computed, onMounted } from 'vue';
+import { ElMessage } from 'element-plus';
 import { createSalesOrder } from '~/composables/useSalesOrders';
 import { fetchProducts } from '~/composables/useProductCatalog';
 import type { CatalogProduct } from '~/composables/useProductCatalog';
@@ -258,8 +259,8 @@ async function searchClients(query: string) {
       const data = res.body as any;
       clientOptions.value = data?.docs || data?.rows || data || [];
     }
-  } catch {
-    // silent
+  } catch (e: any) {
+    ElMessage.error(t('common.error'));
   } finally {
     loadingClients.value = false;
   }
@@ -276,8 +277,8 @@ async function searchProducts(query: string) {
   try {
     const result = await fetchProducts({ searchKey: query, limit: '20' });
     productOptions.value = result.docs;
-  } catch {
-    // silent
+  } catch (e: any) {
+    ElMessage.error(t('common.error'));
   } finally {
     loadingProducts.value = false;
   }
@@ -350,10 +351,10 @@ const summaryTotal = computed(() =>
 // Validation
 const validationErrors = computed(() => {
   const errors: string[] = [];
-  if (!selectedClientId.value) errors.push(t('salesOrders.selectClient') || 'Please select a client');
-  if (!orderItems.value.length) errors.push(t('salesOrders.addItem') || 'Add at least one item');
+  if (!selectedClientId.value) errors.push(t('salesOrders.selectClient'));
+  if (!orderItems.value.length) errors.push(t('salesOrders.addItem'));
   orderItems.value.forEach((item, idx) => {
-    if (item.quantity < 1) errors.push(`Item ${idx + 1}: ${t('salesOrders.quantity') || 'Quantity'} must be > 0`);
+    if (item.quantity < 1) errors.push(`Item ${idx + 1}: ${t('salesOrders.quantity')} must be > 0`);
   });
   return errors;
 });
@@ -401,8 +402,8 @@ onMounted(async () => {
       const data = res.body as any;
       clientOptions.value = data?.docs || data?.rows || data || [];
     }
-  } catch {
-    // silent
+  } catch (e: any) {
+    ElMessage.error(t('common.error'));
   }
 });
 </script>

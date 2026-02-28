@@ -152,7 +152,7 @@ async function onStageChange(payload: { cardId: string; fromStage: string; toSta
   if (!ok) {
     await loadKanban();
   } else {
-    ElNotification({ type: 'success', title: 'Success', message: t('kanban.stageUpdated') });
+    ElNotification({ type: 'success', title: t('common.success'), message: t('kanban.stageUpdated') });
   }
 }
 

@@ -538,7 +538,7 @@ function dispositionType(disposition: string): '' | 'success' | 'warning' | 'dan
 }
 
 function handleDial(phone: string) {
-  if (confirm($t('callLog.confirmDial', { phone }) || `Dial ${phone}?`)) {
+  if (confirm($t('callLog.confirmDial', { phone }))) {
     window.location.href = `tel:${phone}`;
   }
 }

@@ -298,7 +298,7 @@
 
 <script setup lang="ts">
 import { ref, reactive, computed } from 'vue';
-import { ElNotification, ElMessageBox } from 'element-plus';
+import { ElMessage, ElNotification, ElMessageBox } from 'element-plus';
 import { useApiFetch } from '~/composables/useApiFetch';
 
 const router = useRouter();
@@ -622,8 +622,8 @@ async function handleReset() {
     if (res.success) {
       ElNotification({ type: 'success', title: t('common.success'), message: t('branding.resetSuccess') });
     }
-  } catch {
-    // Silent fail - local state is already reset
+  } catch (e: any) {
+    ElMessage.error(t('common.error'));
   } finally {
     saving.value = false;
   }

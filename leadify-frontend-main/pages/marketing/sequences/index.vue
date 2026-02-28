@@ -111,7 +111,7 @@ async function handleDelete(seq: Sequence) {
     await deleteSequence(seq.id);
     sequences.value = sequences.value.filter(s => s.id !== seq.id);
     ElNotification({ type: 'success', title: t('common.success'), message: t('common.deletedSuccessfully') });
-  } catch {}
+  } catch (e: any) { ElNotification({ type: 'error', title: t('common.error'), message: t('common.error') }); }
 }
 </script>
 

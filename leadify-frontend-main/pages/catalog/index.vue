@@ -2,11 +2,11 @@
 .p-6.animate-entrance
   .flex.items-center.justify-between.mb-8
     div
-      h1.text-3xl.font-black.tracking-tight(style="color: var(--text-primary);") {{ $t('catalog.title') || 'Product Catalog' }}
-      p.text-sm.mt-1(style="color: var(--text-muted);") {{ $t('catalog.subtitle') || 'Browse, manage, and showcase your products with images and pricing.' }}
+      h1.text-3xl.font-black.tracking-tight(style="color: var(--text-primary);") {{ $t('catalog.title') }}
+      p.text-sm.mt-1(style="color: var(--text-muted);") {{ $t('catalog.subtitle') }}
     el-button(type="primary" size="default" @click="showDialog = true" style="background: var(--bg-obsidian); border: none; border-radius: 12px;")
       Icon(name="ph:plus" size="16" style="margin-right: 4px;")
-      | {{ $t('catalog.addProduct') || 'Add Product' }}
+      | {{ $t('catalog.addProduct') }}
 
   .grid.grid-cols-2.gap-4.mb-6(class="md:grid-cols-5")
     .p-5.rounded-2xl.border(style="border-color: var(--border-default); background: var(--bg-elevated);")
@@ -198,7 +198,8 @@ import {
 
 definePageMeta({});
 
-const { $t } = useNuxtApp();
+const { $t, $i18n } = useNuxtApp();
+const t = $i18n.t;
 
 const products = ref<CatalogProduct[]>([]);
 const loading = ref(false);
@@ -323,7 +324,7 @@ async function saveProduct() {
         showDialog.value = false;
         editingId.value = null;
         await loadProducts();
-        ElMessage.success('Product updated!');
+        ElMessage.success(t('common.saved'));
       }
     } else {
       const res = await createProduct({ ...form });
@@ -339,7 +340,7 @@ async function saveProduct() {
         });
         showDialog.value = false;
         await loadProducts();
-        ElMessage.success('Product added to catalog!');
+        ElMessage.success(t('common.saved'));
       }
     }
   } finally {
@@ -351,7 +352,7 @@ async function handleDelete(id: string) {
   const res = await deleteProduct(id);
   if (res.success) {
     await loadProducts();
-    ElMessage.success('Product removed');
+    ElMessage.success(t('common.deleted'));
   }
 }
 

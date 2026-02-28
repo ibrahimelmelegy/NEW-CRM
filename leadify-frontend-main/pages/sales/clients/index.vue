@@ -138,7 +138,7 @@ div(class="animate-fade-in")
 <script setup lang="ts">
 import { useI18n } from 'vue-i18n';
 import { Plus } from '@element-plus/icons-vue';
-import { ElNotification, ElMessageBox } from 'element-plus';
+import { ElNotification, ElMessageBox, ElMessage } from 'element-plus';
 import { computed, reactive, ref } from 'vue';
 import PremiumPageHeader from '~/components/UI/PremiumPageHeader.vue';
 import PremiumKPICards from '~/components/UI/PremiumKPICards.vue';
@@ -483,7 +483,9 @@ async function handleAdvancedFilter(filterPayload: any) {
       rawClientData.value = data.docs || data || [];
       table.data = enrichedClientData.value as any;
     }
-  } catch {}
+  } catch (e: any) {
+    ElMessage.error(t('common.error'));
+  }
 }
 
 async function handleClearAdvancedFilter() {

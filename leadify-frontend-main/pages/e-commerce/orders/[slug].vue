@@ -2,8 +2,8 @@
 div.animate-fade-in(v-loading="loading")
   //- Breadcrumb
   el-breadcrumb.mb-4(separator="/")
-    el-breadcrumb-item(:to="{ path: '/' }") {{ $t('common.home') || 'Home' }}
-    el-breadcrumb-item(:to="{ path: '/e-commerce/orders' }") {{ $t('salesOrders.title') || 'Orders' }}
+    el-breadcrumb-item(:to="{ path: '/' }") {{ $t('common.home') }}
+    el-breadcrumb-item(:to="{ path: '/e-commerce/orders' }") {{ $t('salesOrders.title') }}
     el-breadcrumb-item {{ order.orderNumber || '...' }}
 
   //- Header Row
@@ -29,13 +29,13 @@ div.animate-fade-in(v-loading="loading")
     .flex.items-center.gap-3
       el-button(size="large" @click="navigateTo('/e-commerce/orders')" class="!rounded-xl")
         Icon(name="ph:arrow-left-bold" size="16" class="mr-1")
-        | {{ $t('common.back') || 'Back' }}
+        | {{ $t('common.back') }}
       el-button(size="large" @click="printOrder" class="!rounded-xl")
         Icon(name="ph:printer-bold" size="16" class="mr-1")
-        | {{ $t('common.print') || 'Print' }}
+        | {{ $t('common.print') }}
       el-button(size="large" @click="openPaymentStatusDialog" class="!rounded-xl")
         Icon(name="ph:credit-card-bold" size="16" class="mr-1")
-        | {{ $t('salesOrders.paymentStatus') || 'Payment' }}
+        | {{ $t('salesOrders.paymentStatus') }}
       el-button(type="primary" size="large" @click="openStatusDialog" class="!rounded-xl")
         Icon(name="ph:swap-bold" size="16" class="mr-1")
         | {{ $t('salesOrders.status') || 'Edit Status' }}
@@ -327,6 +327,7 @@ div.animate-fade-in(v-loading="loading")
 
 <script setup lang="ts">
 import { ref, reactive, computed, onMounted } from 'vue';
+import { ElMessage } from 'element-plus';
 import {
   getSalesOrderById,
   updateSalesOrderStatus,
@@ -466,8 +467,8 @@ async function loadOrder() {
   loading.value = true;
   try {
     order.value = await getSalesOrderById(orderId.value);
-  } catch {
-    // silent
+  } catch (e: any) {
+    ElMessage.error(t('common.error'));
   } finally {
     loading.value = false;
   }

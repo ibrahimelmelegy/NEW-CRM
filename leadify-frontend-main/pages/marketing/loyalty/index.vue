@@ -680,8 +680,8 @@ async function fetchPoints() {
         pointsPagination.total = data.count ?? data.total ?? points.value.length;
       }
     }
-  } catch {
-    // Silent
+  } catch (e: any) {
+    ElMessage.error(t('common.error'));
   }
 }
 

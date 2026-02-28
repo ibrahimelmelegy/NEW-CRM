@@ -240,7 +240,7 @@ div.animate-fade-in
         el-table-column(:label="$t('shipping.estimatedDelivery') || 'Est. Delivery'" width="140")
           template(#default="{ row }")
             span.text-sm(style="color: var(--text-muted)") {{ row.estimatedDelivery ? formatDate(row.estimatedDelivery) : '--' }}
-        el-table-column(:label="$t('common.actions') || 'Actions'" width="120" align="center" fixed="right")
+        el-table-column(:label="$t('common.actions')" width="120" align="center" fixed="right")
           template(#default="{ row }")
             .flex.items-center.justify-center.gap-1
               el-button(size="small" @click="openEditShipment(row)" class="!rounded-lg")
@@ -303,7 +303,7 @@ div.animate-fade-in
         el-table-column(:label="$t('shipping.active') || 'Active'" width="100" align="center")
           template(#default="{ row }")
             el-tag(:type="row.isActive ? 'success' : 'info'" size="small" effect="dark" round) {{ row.isActive ? 'Yes' : 'No' }}
-        el-table-column(:label="$t('common.actions') || 'Actions'" width="120" align="center" fixed="right")
+        el-table-column(:label="$t('common.actions')" width="120" align="center" fixed="right")
           template(#default="{ row }")
             .flex.items-center.justify-center.gap-1
               el-button(size="small" @click="openEditRate(row)" class="!rounded-lg")
@@ -367,8 +367,8 @@ div.animate-fade-in
             value-format="YYYY-MM-DD"
           )
     template(#footer)
-      el-button(@click="shipmentDialogVisible = false") {{ $t('common.cancel') || 'Cancel' }}
-      el-button(type="primary" :loading="saving" @click="saveShipment") {{ $t('common.save') || 'Save' }}
+      el-button(@click="shipmentDialogVisible = false") {{ $t('common.cancel') }}
+      el-button(type="primary" :loading="saving" @click="saveShipment") {{ $t('common.save') }}
 
   //- ========== CREATE / EDIT RATE DIALOG ==========
   el-dialog(
@@ -402,13 +402,13 @@ div.animate-fade-in
       el-form-item
         el-checkbox(v-model="rateForm.isActive") {{ $t('shipping.active') || 'Active' }}
     template(#footer)
-      el-button(@click="rateDialogVisible = false") {{ $t('common.cancel') || 'Cancel' }}
-      el-button(type="primary" :loading="saving" @click="saveRate") {{ $t('common.save') || 'Save' }}
+      el-button(@click="rateDialogVisible = false") {{ $t('common.cancel') }}
+      el-button(type="primary" :loading="saving" @click="saveRate") {{ $t('common.save') }}
 </template>
 
 <script setup lang="ts">
 import { ref, reactive, computed, onMounted } from 'vue';
-import { ElNotification, ElMessageBox } from 'element-plus';
+import { ElMessage, ElNotification, ElMessageBox } from 'element-plus';
 
 definePageMeta({ middleware: 'permissions' });
 
@@ -558,8 +558,8 @@ async function loadShipments() {
       shipments.value = data?.rows || data?.docs || data || [];
       shipmentsPagination.total = data?.count ?? data?.total ?? shipments.value.length;
     }
-  } catch {
-    // silent
+  } catch (e: any) {
+    ElMessage.error(t('common.error'));
   } finally {
     loadingShipments.value = false;
   }
@@ -595,7 +595,7 @@ function openEditShipment(shipment: any) {
 
 async function saveShipment() {
   if (!shipmentForm.carrier.trim() || !shipmentForm.origin.trim() || !shipmentForm.destination.trim() || !shipmentForm.recipientName.trim()) {
-    ElNotification({ type: 'warning', title: t('common.warning') || 'Warning', message: t('common.fillRequired') || 'Please fill required fields' });
+    ElNotification({ type: 'warning', title: t('common.warning'), message: t('common.fillRequired') });
     return;
   }
   saving.value = true;
@@ -606,11 +606,11 @@ async function saveShipment() {
     } else {
       await useApiFetch('shipping', 'POST', payload);
     }
-    ElNotification({ type: 'success', title: t('common.success') || 'Success', message: t('common.saved') || 'Saved' });
+    ElNotification({ type: 'success', title: t('common.success'), message: t('common.saved') });
     shipmentDialogVisible.value = false;
     await loadShipments();
   } catch {
-    ElNotification({ type: 'error', title: t('common.error') || 'Error', message: t('common.error') || 'Error' });
+    ElNotification({ type: 'error', title: t('common.error'), message: t('common.error') });
   } finally {
     saving.value = false;
   }
@@ -619,12 +619,12 @@ async function saveShipment() {
 async function deleteShipment(shipment: any) {
   try {
     await ElMessageBox.confirm(
-      t('common.confirmDelete') || 'Are you sure?',
-      t('common.warning') || 'Warning',
+      t('common.confirmDelete'),
+      t('common.warning'),
       { type: 'warning' }
     );
     await useApiFetch(`shipping/${shipment.id}`, 'DELETE');
-    ElNotification({ type: 'success', title: t('common.success') || 'Success', message: t('common.deleted') || 'Deleted' });
+    ElNotification({ type: 'success', title: t('common.success'), message: t('common.deleted') });
     await loadShipments();
   } catch {
     // cancelled
@@ -641,8 +641,8 @@ async function loadRates() {
       rates.value = data?.rows || data?.docs || data || [];
       ratesPagination.total = data?.count ?? data?.total ?? rates.value.length;
     }
-  } catch {
-    // silent
+  } catch (e: any) {
+    ElMessage.error(t('common.error'));
   } finally {
     loadingRates.value = false;
   }
@@ -676,7 +676,7 @@ function openEditRate(rate: any) {
 
 async function saveRate() {
   if (!rateForm.carrier.trim() || !rateForm.zone.trim() || !rateForm.rate) {
-    ElNotification({ type: 'warning', title: t('common.warning') || 'Warning', message: t('common.fillRequired') || 'Please fill required fields' });
+    ElNotification({ type: 'warning', title: t('common.warning'), message: t('common.fillRequired') });
     return;
   }
   saving.value = true;
@@ -687,11 +687,11 @@ async function saveRate() {
     } else {
       await useApiFetch('shipping/rates', 'POST', payload);
     }
-    ElNotification({ type: 'success', title: t('common.success') || 'Success', message: t('common.saved') || 'Saved' });
+    ElNotification({ type: 'success', title: t('common.success'), message: t('common.saved') });
     rateDialogVisible.value = false;
     await loadRates();
   } catch {
-    ElNotification({ type: 'error', title: t('common.error') || 'Error', message: t('common.error') || 'Error' });
+    ElNotification({ type: 'error', title: t('common.error'), message: t('common.error') });
   } finally {
     saving.value = false;
   }
@@ -700,12 +700,12 @@ async function saveRate() {
 async function deleteRate(rate: any) {
   try {
     await ElMessageBox.confirm(
-      t('common.confirmDelete') || 'Are you sure?',
-      t('common.warning') || 'Warning',
+      t('common.confirmDelete'),
+      t('common.warning'),
       { type: 'warning' }
     );
     await useApiFetch(`shipping/rates/${rate.id}`, 'DELETE');
-    ElNotification({ type: 'success', title: t('common.success') || 'Success', message: t('common.deleted') || 'Deleted' });
+    ElNotification({ type: 'success', title: t('common.success'), message: t('common.deleted') });
     await loadRates();
   } catch {
     // cancelled
@@ -723,8 +723,8 @@ async function loadAnalytics() {
       analytics.inTransit = data?.inTransit ?? 0;
       analytics.onTimeRate = data?.onTimeRate ?? 0;
     }
-  } catch {
-    // silent
+  } catch (e: any) {
+    ElMessage.error(t('common.error'));
   }
 }
 
@@ -758,8 +758,8 @@ async function calculateRate() {
     if (res?.success && res.body) {
       calculatedRate.value = res.body;
     }
-  } catch {
-    // silent
+  } catch (e: any) {
+    ElMessage.error(t('common.error'));
   } finally {
     loadingCalcRate.value = false;
   }

@@ -1,8 +1,8 @@
 <template lang="pug">
 div
   ModuleHeader(
-    :title="$t('marketing.socialCrm.title') || 'Social CRM'"
-    :subtitle="$t('marketing.socialCrm.subtitle') || 'Monitor social media profiles, track engagement, and manage customer sentiment.'"
+    :title="$t('marketing.socialCrm.title')"
+    :subtitle="$t('marketing.socialCrm.subtitle')"
   )
     template(#actions)
       el-button(size="large" type="primary" class="!rounded-2xl" @click="openCreateDialog()")
@@ -439,8 +439,8 @@ async function fetchDashboard() {
     if (res.success && res.body) {
       socialDashboard.value = res.body;
     }
-  } catch {
-    // Silent - dashboard is supplementary
+  } catch (e: any) {
+    ElMessage.error(t('common.error'));
   }
 }
 

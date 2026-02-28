@@ -39,16 +39,16 @@ div
 
   //- Mini Analytics Section
   .glass-card.p-4.rounded-xl.mb-6.animate-entrance
-    h3.text-sm.font-medium.mb-4(style="color: var(--text-primary)") {{ $t('calendar.quickAnalytics') || 'Quick Analytics' }}
+    h3.text-sm.font-medium.mb-4(style="color: var(--text-primary)") {{ $t('calendar.quickAnalytics') }}
     .grid.gap-4(class="grid-cols-3 md:grid-cols-3")
       div
-        p.text-xs.uppercase.tracking-wider.mb-1(style="color: var(--text-muted)") {{ $t('calendar.completionRate') || 'Completion Rate' }}
+        p.text-xs.uppercase.tracking-wider.mb-1(style="color: var(--text-muted)") {{ $t('calendar.completionRate') }}
         p.text-lg.font-bold(style="color: #22c55e") {{ completionRate }}%
       div
-        p.text-xs.uppercase.tracking-wider.mb-1(style="color: var(--text-muted)") {{ $t('calendar.avgDuration') || 'Avg Duration' }}
+        p.text-xs.uppercase.tracking-wider.mb-1(style="color: var(--text-muted)") {{ $t('calendar.avgDuration') }}
         p.text-lg.font-bold(style="color: #3b82f6") {{ avgDuration }}h
       div
-        p.text-xs.uppercase.tracking-wider.mb-1(style="color: var(--text-muted)") {{ $t('calendar.upcomingToday') || 'Today' }}
+        p.text-xs.uppercase.tracking-wider.mb-1(style="color: var(--text-muted)") {{ $t('calendar.upcomingToday') }}
         p.text-lg.font-bold(style="color: #f59e0b") {{ todayEvents.length }}
 
   //- Main Layout: Sidebar + Calendar
@@ -428,7 +428,7 @@ div
       .flex.items-center.gap-6.mb-4
         el-checkbox(v-model="form.allDay") {{ $t('calendar.allDay') }}
         el-checkbox(v-model="form.isPrivate") {{ $t('calendar.private') }}
-        el-checkbox(v-model="form.isRecurring") {{ $t('calendar.recurring') || 'Recurring' }}
+        el-checkbox(v-model="form.isRecurring") {{ $t('calendar.recurring') }}
 
       //- Attendees
       el-form-item(:label="$t('calendar.attendees')")
@@ -954,7 +954,7 @@ async function handleDelete(id: number) {
     detailEvent.value = null;
     await loadEvents();
     await loadTodayAgenda();
-    ElNotification({ type: 'success', title: t('common.success'), message: t('common.deleted') || 'Deleted' });
+    ElNotification({ type: 'success', title: t('common.success'), message: t('common.deleted') });
   }
 }
 

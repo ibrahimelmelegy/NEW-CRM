@@ -142,7 +142,7 @@ div(class="animate-fade-in")
 </template>
 
 <script setup lang="ts">
-import { ElNotification, ElMessageBox } from 'element-plus';
+import { ElMessage, ElNotification, ElMessageBox } from 'element-plus';
 import { Plus } from '@element-plus/icons-vue';
 import { computed, ref, watch, unref, shallowRef, isRef, onMounted, onBeforeMount } from 'vue';
 import { leadStates, leadSources } from '@/composables/useLeads';
@@ -189,7 +189,8 @@ async function changeStatus(id: any, newStatus: any) {
   loadingAction.value = true;
   try {
     await updateLead({ ...lead, leadState: newStatus, id });
-  } catch {
+  } catch (e: any) {
+    ElMessage.error(t('common.error'));
   } finally {
     const response = await useTableFilter('lead');
     table.value.data = response.formattedData;
@@ -204,7 +205,9 @@ async function submitForm(values: any) {
       select.value = values;
     }
     if (values?.status !== 'QUALIFIED') changeStatus(values?.id, values?.status);
-  } catch {}
+  } catch (e: any) {
+    ElMessage.error(t('common.error'));
+  }
 }
 
 async function editPresent() {
@@ -409,7 +412,9 @@ async function handleAdvancedFilter(filterPayload: any) {
       const data = response.body as any;
       table.value.data = data.docs || data || [];
     }
-  } catch {}
+  } catch (e: any) {
+    ElMessage.error(t('common.error'));
+  }
 }
 
 async function handleClearAdvancedFilter() {

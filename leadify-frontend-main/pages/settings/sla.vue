@@ -137,7 +137,7 @@
 
 <script setup lang="ts">
 import { ref, reactive } from 'vue';
-import { ElNotification, ElMessageBox } from 'element-plus';
+import { ElNotification, ElMessageBox, ElMessage } from 'element-plus';
 import { fetchSLAPolicies, createSLAPolicy, updateSLAPolicy, deleteSLAPolicy, getSLAMetrics, checkBreaches } from '~/composables/useSLA';
 import type { SLAPolicy, SLAMetrics, EscalationRule } from '~/composables/useSLA';
 
@@ -259,7 +259,7 @@ async function handleDeletePolicy(policy: SLAPolicy) {
     const response = await fetchSLAPolicies();
     policies.value = response.docs;
     ElNotification({ type: 'success', title: t('common.success'), message: t('sla.deleted') });
-  } catch {}
+  } catch (e: any) { ElMessage.error(t('common.error')); }
 }
 
 async function handleCheckBreaches() {

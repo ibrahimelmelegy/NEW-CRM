@@ -3,12 +3,12 @@ div.animate-fade-in
   //- Header
   .flex.items-center.justify-between.mb-6
     div
-      h2.text-2xl.font-bold(style="color: var(--text-primary)") {{ $t('booking.title') || 'Bookings & Appointments' }}
-      p.text-sm.mt-1(style="color: var(--text-muted)") {{ $t('booking.subtitle') || 'Schedule and manage client appointments and meetings.' }}
+      h2.text-2xl.font-bold(style="color: var(--text-primary)") {{ $t('booking.title') }}
+      p.text-sm.mt-1(style="color: var(--text-muted)") {{ $t('booking.subtitle') }}
     .flex.items-center.gap-3
       el-button(type="primary" size="large" @click="openCreateDialog" class="!rounded-xl")
         Icon(name="ph:plus-bold" size="16" class="mr-1")
-        | {{ $t('booking.newBooking') || 'New Booking' }}
+        | {{ $t('booking.newBooking') }}
 
   //- Stats Cards
   .grid.gap-4.mb-6(class="grid-cols-2 md:grid-cols-4")
@@ -18,35 +18,35 @@ div.animate-fade-in
           Icon(name="ph:calendar-check-bold" size="20" style="color: #7849ff")
         div
           p.text-2xl.font-bold(style="color: var(--text-primary)") {{ stats.total }}
-          p.text-xs(style="color: var(--text-muted)") {{ $t('booking.totalBookings') || 'Total Bookings' }}
+          p.text-xs(style="color: var(--text-muted)") {{ $t('booking.totalBookings') }}
     .glass-card.p-5.rounded-2xl
       .flex.items-center.gap-3
         .w-10.h-10.rounded-xl.flex.items-center.justify-center(style="background: rgba(59, 130, 246, 0.15)")
           Icon(name="ph:clock-bold" size="20" style="color: #3b82f6")
         div
           p.text-2xl.font-bold(style="color: var(--text-primary)") {{ stats.today }}
-          p.text-xs(style="color: var(--text-muted)") {{ $t('booking.today') || 'Today' }}
+          p.text-xs(style="color: var(--text-muted)") {{ $t('booking.today') }}
     .glass-card.p-5.rounded-2xl
       .flex.items-center.gap-3
         .w-10.h-10.rounded-xl.flex.items-center.justify-center(style="background: rgba(245, 158, 11, 0.15)")
           Icon(name="ph:calendar-bold" size="20" style="color: #f59e0b")
         div
           p.text-2xl.font-bold(style="color: var(--text-primary)") {{ stats.upcoming }}
-          p.text-xs(style="color: var(--text-muted)") {{ $t('booking.upcoming') || 'Upcoming' }}
+          p.text-xs(style="color: var(--text-muted)") {{ $t('booking.upcoming') }}
     .glass-card.p-5.rounded-2xl
       .flex.items-center.gap-3
         .w-10.h-10.rounded-xl.flex.items-center.justify-center(style="background: rgba(34, 197, 94, 0.15)")
           Icon(name="ph:check-circle-bold" size="20" style="color: #22c55e")
         div
           p.text-2xl.font-bold(style="color: var(--text-primary)") {{ stats.completed }}
-          p.text-xs(style="color: var(--text-muted)") {{ $t('booking.completed') || 'Completed' }}
+          p.text-xs(style="color: var(--text-muted)") {{ $t('booking.completed') }}
 
   //- Upcoming Bookings
   .glass-card.p-5.rounded-2xl.mb-6
     .flex.items-center.justify-between.mb-4
       h3.text-lg.font-bold(style="color: var(--text-primary)")
         Icon(name="ph:calendar-dots-bold" size="20" class="mr-2" style="color: #7849ff")
-        | {{ $t('booking.upcomingBookings') || 'Upcoming Bookings' }}
+        | {{ $t('booking.upcomingBookings') }}
       el-button(size="small" text @click="loadUpcoming" :loading="loadingUpcoming")
         Icon(name="ph:arrows-clockwise" size="14")
     .flex.items-center.justify-center.py-6(v-if="loadingUpcoming")
@@ -68,19 +68,19 @@ div.animate-fade-in
           p.text-xs(style="color: var(--text-muted)") {{ ub.startTime || '--' }} - {{ ub.endTime || '--' }}
     .text-center.py-6(v-else)
       Icon(name="ph:calendar-blank" size="32" style="color: var(--text-muted)")
-      p.text-xs.mt-1(style="color: var(--text-muted)") {{ $t('booking.noUpcoming') || 'No upcoming bookings' }}
+      p.text-xs.mt-1(style="color: var(--text-muted)") {{ $t('booking.noUpcoming') }}
 
   //- Availability Checker
   .glass-card.p-5.rounded-2xl.mb-6
     h3.text-lg.font-bold.mb-4(style="color: var(--text-primary)")
       Icon(name="ph:clock-countdown-bold" size="20" class="mr-2" style="color: #3b82f6")
-      | {{ $t('booking.availabilityChecker') || 'Availability Checker' }}
+      | {{ $t('booking.availabilityChecker') }}
     el-row(:gutter="16" align="bottom")
       el-col(:span="8")
-        el-form-item(:label="$t('booking.staff') || 'Staff Member'" style="margin-bottom: 0")
+        el-form-item(:label="$t('booking.staff')" style="margin-bottom: 0")
           el-select(
             v-model="availStaffId"
-            :placeholder="$t('booking.selectStaff') || 'Select Staff'"
+            :placeholder="$t('booking.selectStaff')"
             style="width: 100%"
             size="large"
             filterable
@@ -93,11 +93,11 @@ div.animate-fade-in
               :value="user.id"
             )
       el-col(:span="8")
-        el-form-item(:label="$t('booking.date') || 'Date'" style="margin-bottom: 0")
+        el-form-item(:label="$t('booking.date')" style="margin-bottom: 0")
           el-date-picker(
             v-model="availDate"
             type="date"
-            :placeholder="$t('booking.selectDate') || 'Select Date'"
+            :placeholder="$t('booking.selectDate')"
             style="width: 100%"
             size="large"
             value-format="YYYY-MM-DD"
@@ -113,12 +113,12 @@ div.animate-fade-in
           style="width: 100%"
         )
           Icon(name="ph:magnifying-glass-bold" size="16" class="mr-1")
-          | {{ $t('booking.check') || 'Check Availability' }}
+          | {{ $t('booking.check') }}
     //- Available Slots
     .mt-4(v-if="availableSlots !== null")
       .flex.items-center.gap-2.mb-3(v-if="availableSlots.length")
         Icon(name="ph:check-circle-bold" size="16" style="color: #22c55e")
-        span.text-sm.font-semibold(style="color: var(--text-primary)") {{ $t('booking.availableSlots') || 'Available Time Slots' }}
+        span.text-sm.font-semibold(style="color: var(--text-primary)") {{ $t('booking.availableSlots') }}
       .flex.flex-wrap.gap-2(v-if="availableSlots.length")
         el-tag(
           v-for="(slot, idx) in availableSlots"
@@ -133,7 +133,7 @@ div.animate-fade-in
           | {{ slot.startTime || slot.start || slot }} {{ slot.endTime ? '- ' + slot.endTime : '' }}
       .flex.items-center.gap-2(v-else)
         Icon(name="ph:x-circle-bold" size="16" style="color: #ef4444")
-        span.text-sm(style="color: #ef4444") {{ $t('booking.noSlots') || 'No available slots for this date' }}
+        span.text-sm(style="color: #ef4444") {{ $t('booking.noSlots') }}
 
   //- Loading
   .flex.items-center.justify-center.py-20(v-if="loading")
@@ -144,7 +144,7 @@ div.animate-fade-in
     .flex.items-center.justify-between.mb-4
       el-input(
         v-model="searchQuery"
-        :placeholder="$t('booking.search') || 'Search bookings...'"
+        :placeholder="$t('booking.search')"
         clearable
         style="max-width: 320px"
         size="large"
@@ -153,7 +153,7 @@ div.animate-fade-in
         template(#prefix)
           Icon(name="ph:magnifying-glass" size="16" style="color: var(--text-muted)")
       .flex.items-center.gap-2
-        el-select(v-model="statusFilter" clearable :placeholder="$t('booking.filterStatus') || 'Filter Status'" size="large" style="width: 160px")
+        el-select(v-model="statusFilter" clearable :placeholder="$t('booking.filterStatus')" size="large" style="width: 160px")
           el-option(label="All" value="")
           el-option(label="Pending" value="PENDING")
           el-option(label="Confirmed" value="CONFIRMED")
@@ -162,7 +162,7 @@ div.animate-fade-in
           el-option(label="No Show" value="NO_SHOW")
 
     el-table(:data="filteredBookings" v-loading="loading" stripe style="width: 100%" @row-click="handleRowClick" row-class-name="cursor-pointer")
-      el-table-column(:label="$t('booking.clientName') || 'Client / Name'" min-width="180")
+      el-table-column(:label="$t('booking.clientName')" min-width="180")
         template(#default="{ row }")
           .flex.items-center.gap-2
             .w-8.h-8.rounded-full.flex.items-center.justify-center.text-xs.font-bold(
@@ -171,19 +171,19 @@ div.animate-fade-in
             div
               p.text-sm.font-semibold(style="color: var(--text-primary)") {{ row.clientName || '--' }}
               p.text-xs(style="color: var(--text-muted)") {{ row.clientEmail || '' }}
-      el-table-column(:label="$t('booking.staff') || 'Staff'" prop="staffName" width="150")
+      el-table-column(:label="$t('booking.staff')" prop="staffName" width="150")
         template(#default="{ row }")
           span.text-sm(style="color: var(--text-primary)") {{ row.staffName || row.staffId || '--' }}
-      el-table-column(:label="$t('booking.date') || 'Date'" prop="date" width="130" sortable)
+      el-table-column(:label="$t('booking.date')" prop="date" width="130" sortable)
         template(#default="{ row }")
           span.text-sm(style="color: var(--text-primary)") {{ formatDate(row.date) }}
-      el-table-column(:label="$t('booking.time') || 'Time'" width="150")
+      el-table-column(:label="$t('booking.time')" width="150")
         template(#default="{ row }")
           span.text-sm(style="color: var(--text-primary)") {{ row.startTime || '--' }} - {{ row.endTime || '--' }}
-      el-table-column(:label="$t('booking.type') || 'Type'" prop="type" width="130")
+      el-table-column(:label="$t('booking.type')" prop="type" width="130")
         template(#default="{ row }")
           el-tag(size="small" effect="plain" round) {{ row.type || 'MEETING' }}
-      el-table-column(:label="$t('booking.status') || 'Status'" width="140" align="center")
+      el-table-column(:label="$t('booking.status')" width="140" align="center")
         template(#default="{ row }")
           el-tag(
             :type="getStatusType(row.status)"
@@ -191,10 +191,10 @@ div.animate-fade-in
             effect="dark"
             round
           ) {{ row.status }}
-      el-table-column(:label="$t('booking.notes') || 'Notes'" prop="notes" min-width="180" show-overflow-tooltip)
+      el-table-column(:label="$t('booking.notes')" prop="notes" min-width="180" show-overflow-tooltip)
         template(#default="{ row }")
           span.text-sm(style="color: var(--text-muted)") {{ row.notes || '--' }}
-      el-table-column(:label="$t('common.actions') || 'Actions'" width="120" align="center" fixed="right")
+      el-table-column(:label="$t('common.actions')" width="120" align="center" fixed="right")
         template(#default="{ row }")
           .flex.items-center.justify-center.gap-1(@click.stop)
             el-button(size="small" @click="openEditDialog(row)" class="!rounded-lg")
@@ -205,31 +205,31 @@ div.animate-fade-in
     //- Empty state
     .text-center.py-12(v-if="!filteredBookings.length && !loading")
       Icon(name="ph:calendar-blank" size="48" style="color: var(--text-muted)")
-      p.text-sm.mt-2(style="color: var(--text-muted)") {{ $t('booking.noBookings') || 'No bookings found' }}
+      p.text-sm.mt-2(style="color: var(--text-muted)") {{ $t('booking.noBookings') }}
 
   //- Create / Edit Dialog
   el-dialog(
     v-model="dialogVisible"
-    :title="editingBooking ? ($t('booking.editBooking') || 'Edit Booking') : ($t('booking.newBooking') || 'New Booking')"
+    :title="editingBooking ? ($t('booking.editBooking')) : ($t('booking.newBooking'))"
     width="600px"
     :close-on-click-modal="false"
   )
     el-form(:model="form" label-position="top")
       .grid.gap-4(class="grid-cols-1 md:grid-cols-2")
-        el-form-item(:label="$t('booking.clientName') || 'Client Name'" required)
-          el-input(v-model="form.clientName" :placeholder="$t('booking.clientName') || 'Client Name'")
-        el-form-item(:label="$t('booking.clientEmail') || 'Client Email'")
-          el-input(v-model="form.clientEmail" :placeholder="$t('booking.clientEmail') || 'Client Email'" type="email")
+        el-form-item(:label="$t('booking.clientName')" required)
+          el-input(v-model="form.clientName" :placeholder="$t('booking.clientName')")
+        el-form-item(:label="$t('booking.clientEmail')")
+          el-input(v-model="form.clientEmail" :placeholder="$t('booking.clientEmail')" type="email")
       .grid.gap-4(class="grid-cols-1 md:grid-cols-2")
-        el-form-item(:label="$t('booking.staff') || 'Staff Member'" required)
-          el-select(v-model="form.staffId" :placeholder="$t('booking.selectStaff') || 'Select Staff'" style="width: 100%" filterable)
+        el-form-item(:label="$t('booking.staff')" required)
+          el-select(v-model="form.staffId" :placeholder="$t('booking.selectStaff')" style="width: 100%" filterable)
             el-option(
               v-for="user in staffList"
               :key="user.id"
               :label="user.name"
               :value="user.id"
             )
-        el-form-item(:label="$t('booking.type') || 'Type'")
+        el-form-item(:label="$t('booking.type')")
           el-select(v-model="form.type" style="width: 100%")
             el-option(label="Meeting" value="MEETING")
             el-option(label="Call" value="CALL")
@@ -237,40 +237,40 @@ div.animate-fade-in
             el-option(label="Consultation" value="CONSULTATION")
             el-option(label="Follow-up" value="FOLLOW_UP")
       .grid.gap-4(class="grid-cols-1 md:grid-cols-3")
-        el-form-item(:label="$t('booking.date') || 'Date'" required)
+        el-form-item(:label="$t('booking.date')" required)
           el-date-picker(
             v-model="form.date"
             type="date"
-            :placeholder="$t('booking.selectDate') || 'Select Date'"
+            :placeholder="$t('booking.selectDate')"
             style="width: 100%"
             value-format="YYYY-MM-DD"
           )
-        el-form-item(:label="$t('booking.startTime') || 'Start Time'" required)
+        el-form-item(:label="$t('booking.startTime')" required)
           el-time-picker(
             v-model="form.startTime"
-            :placeholder="$t('booking.startTime') || 'Start'"
+            :placeholder="$t('booking.startTime')"
             style="width: 100%"
             format="HH:mm"
             value-format="HH:mm"
           )
-        el-form-item(:label="$t('booking.endTime') || 'End Time'" required)
+        el-form-item(:label="$t('booking.endTime')" required)
           el-time-picker(
             v-model="form.endTime"
-            :placeholder="$t('booking.endTime') || 'End'"
+            :placeholder="$t('booking.endTime')"
             style="width: 100%"
             format="HH:mm"
             value-format="HH:mm"
           )
-      el-form-item(:label="$t('booking.notes') || 'Notes'")
-        el-input(v-model="form.notes" type="textarea" :rows="3" :placeholder="$t('booking.notesPlaceholder') || 'Any additional notes...'")
+      el-form-item(:label="$t('booking.notes')")
+        el-input(v-model="form.notes" type="textarea" :rows="3" :placeholder="$t('booking.notesPlaceholder')")
     template(#footer)
-      el-button(@click="dialogVisible = false") {{ $t('common.cancel') || 'Cancel' }}
-      el-button(type="primary" :loading="saving" @click="handleSave") {{ $t('common.save') || 'Save' }}
+      el-button(@click="dialogVisible = false") {{ $t('common.cancel') }}
+      el-button(type="primary" :loading="saving" @click="handleSave") {{ $t('common.save') }}
 </template>
 
 <script setup lang="ts">
 import { ref, reactive, computed, onMounted } from 'vue';
-import { ElNotification, ElMessageBox } from 'element-plus';
+import { ElMessage, ElNotification, ElMessageBox } from 'element-plus';
 
 definePageMeta({ middleware: 'permissions' });
 
@@ -365,8 +365,8 @@ async function loadBookings() {
     if (res?.success) {
       bookings.value = res.body?.docs || res.body || [];
     }
-  } catch {
-    // silent
+  } catch (e: any) {
+    ElMessage.error(t('common.error'));
   } finally {
     loading.value = false;
   }
@@ -378,8 +378,8 @@ async function loadStaff() {
     if (res?.body?.docs) {
       staffList.value = res.body.docs;
     }
-  } catch {
-    // silent
+  } catch (e: any) {
+    ElMessage.error(t('common.error'));
   }
 }
 
@@ -415,7 +415,7 @@ function handleRowClick(row: any) {
 
 async function handleSave() {
   if (!form.clientName.trim() || !form.staffId || !form.date || !form.startTime || !form.endTime) {
-    ElNotification({ type: 'warning', title: t('common.warning') || 'Warning', message: t('common.fillRequired') || 'Please fill required fields' });
+    ElNotification({ type: 'warning', title: t('common.warning'), message: t('common.fillRequired') });
     return;
   }
   saving.value = true;
@@ -428,12 +428,12 @@ async function handleSave() {
       res = await useApiFetch('bookings', 'POST', payload);
     }
     if (res?.success) {
-      ElNotification({ type: 'success', title: t('common.success') || 'Success', message: t('common.saved') || 'Saved' });
+      ElNotification({ type: 'success', title: t('common.success'), message: t('common.saved') });
       dialogVisible.value = false;
       await loadBookings();
     }
   } catch {
-    ElNotification({ type: 'error', title: t('common.error') || 'Error', message: t('common.error') || 'Error' });
+    ElNotification({ type: 'error', title: t('common.error'), message: t('common.error') });
   } finally {
     saving.value = false;
   }
@@ -442,12 +442,12 @@ async function handleSave() {
 async function handleDelete(booking: any) {
   try {
     await ElMessageBox.confirm(
-      t('common.confirmDelete') || 'Are you sure you want to delete this booking?',
-      t('common.warning') || 'Warning',
+      t('common.confirmDelete'),
+      t('common.warning'),
       { type: 'warning' }
     );
     await useApiFetch(`bookings/${booking.id}`, 'DELETE');
-    ElNotification({ type: 'success', title: t('common.success') || 'Success', message: t('common.deleted') || 'Deleted' });
+    ElNotification({ type: 'success', title: t('common.success'), message: t('common.deleted') });
     await loadBookings();
   } catch {
     // cancelled or error
@@ -462,8 +462,8 @@ async function loadUpcoming() {
     if (res?.success) {
       upcomingBookings.value = res.body?.docs || res.body || [];
     }
-  } catch {
-    // silent
+  } catch (e: any) {
+    ElMessage.error(t('common.error'));
   } finally {
     loadingUpcoming.value = false;
   }

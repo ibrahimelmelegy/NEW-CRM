@@ -53,7 +53,7 @@
 
 <script setup lang="ts">
 import { ref, reactive, computed, defineComponent, h } from 'vue';
-import { ElNotification, ElMessageBox } from 'element-plus';
+import { ElNotification, ElMessageBox, ElMessage } from 'element-plus';
 import { fetchTerritoryTree, createTerritory, updateTerritory, deleteTerritory } from '~/composables/useTerritories';
 import type { Territory } from '~/composables/useTerritories';
 import { useApiFetch } from '~/composables/useApiFetch';
@@ -150,11 +150,11 @@ async function handleSave() {
 
 async function handleDelete(territory: Territory) {
   try {
-    await ElMessageBox.confirm('Are you sure you want to delete this territory?', t('common.warning'), { type: 'warning' });
+    await ElMessageBox.confirm(t('common.confirmAction'), t('common.warning'), { type: 'warning' });
     await deleteTerritory(territory.id);
     territories.value = await fetchTerritoryTree();
     ElNotification({ type: 'success', title: t('common.success'), message: t('common.deleted') });
-  } catch {}
+  } catch (e: any) { ElMessage.error(t('common.error')); }
 }
 
 // Territory tree node component

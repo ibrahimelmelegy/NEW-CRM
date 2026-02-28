@@ -255,7 +255,7 @@ div.p-4.space-y-6.animate-fade-in(class="md_p-6")
 
 <script setup lang="ts">
 import { ref, reactive, computed, onMounted } from 'vue';
-import { ElNotification } from 'element-plus';
+import { ElMessage, ElNotification } from 'element-plus';
 import type { FormRules } from 'element-plus';
 import {
   fetchProducts,
@@ -398,8 +398,8 @@ async function loadProduct() {
         isActive: product.value.isActive !== false
       });
     }
-  } catch {
-    // silent
+  } catch (e: any) {
+    ElMessage.error(t('common.error'));
   } finally {
     loading.value = false;
   }
@@ -413,8 +413,8 @@ async function loadReviews() {
       const data = res.body as any;
       reviews.value = data?.docs || data?.rows || data || [];
     }
-  } catch {
-    // silent - endpoint may not exist yet
+  } catch (e: any) {
+    ElMessage.error(t('common.error'));
   } finally {
     loadingReviews.value = false;
   }
@@ -428,8 +428,8 @@ async function loadPriceRules() {
       const data = res.body as any;
       priceRules.value = data?.docs || data?.rows || data || [];
     }
-  } catch {
-    // silent - endpoint may not exist yet
+  } catch (e: any) {
+    ElMessage.error(t('common.error'));
   } finally {
     loadingPriceRules.value = false;
   }
@@ -443,8 +443,8 @@ async function loadActivity() {
       const data = res.body as any;
       activityLog.value = data?.docs || data?.rows || data || [];
     }
-  } catch {
-    // silent - endpoint may not exist yet
+  } catch (e: any) {
+    ElMessage.error(t('common.error'));
   } finally {
     loadingActivity.value = false;
   }
@@ -460,8 +460,8 @@ async function loadCategories() {
         categories.value = cats.map((c: any) => c.name || c);
       }
     }
-  } catch {
-    // keep defaults
+  } catch (e: any) {
+    ElMessage.error(t('common.error'));
   }
 }
 

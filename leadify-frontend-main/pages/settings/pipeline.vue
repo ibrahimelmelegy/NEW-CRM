@@ -78,7 +78,7 @@
 
 <script setup lang="ts">
 import { ref, reactive } from 'vue';
-import { ElNotification, ElMessageBox } from 'element-plus';
+import { ElNotification, ElMessageBox, ElMessage } from 'element-plus';
 import {
   fetchPipelineStages,
   createPipelineStage,
@@ -172,11 +172,11 @@ async function handleSave() {
 
 async function handleDelete(stage: PipelineStage) {
   try {
-    await ElMessageBox.confirm('Are you sure you want to delete this stage?', t('common.warning'), { type: 'warning' });
+    await ElMessageBox.confirm(t('common.confirmAction'), t('common.warning'), { type: 'warning' });
     await deletePipelineStage(stage.id);
     await loadStages();
     ElNotification({ type: 'success', title: t('common.success'), message: t('common.deleted') });
-  } catch {}
+  } catch (e: any) { ElMessage.error(t('common.error')); }
 }
 
 // Drag and drop reorder

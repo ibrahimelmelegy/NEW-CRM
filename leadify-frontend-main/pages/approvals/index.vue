@@ -2,35 +2,35 @@
 div
   ModuleHeader(
     :title="$t('navigation.approvalCenter')"
-    :subtitle="$t('approvals.subtitle') || 'Manage approval workflows and requests'"
+    :subtitle="$t('approvals.subtitle')"
   )
     template(#actions)
       ExportButton(:data="allRequests" :columns="exportColumns" :filename="'approvals-export'" :title="$t('navigation.approvalCenter')")
       el-button(size="large" type="primary" @click="showCreateRequest = true" class="!rounded-2xl")
         Icon(name="ph:plus-bold" size="16")
-        span.ml-1 {{ $t('approvals.createRequest') || 'New Request' }}
+        span.ml-1 {{ $t('approvals.createRequest') }}
 
   StatCards(:stats="summaryStats")
 
   el-tabs.demo-tabs(v-model="activeTab")
     //- Pending My Approval
-    el-tab-pane(:label="$t('approvals.pendingApproval') || 'Pending My Approval'" name="pending")
+    el-tab-pane(:label="$t('approvals.pendingApproval')" name="pending")
       .glass-card.py-8.animate-entrance
         el-table(:data="pendingApprovals" v-loading="loadingPending" style="width: 100%" :row-style="{cursor:'pointer'}" @current-change="viewRequest")
           el-table-column(type="index" width="50")
-          el-table-column(:label="$t('approvals.requestTitle') || 'Title'" min-width="200")
+          el-table-column(:label="$t('approvals.requestTitle')" min-width="200")
             template(#default="{ row }")
               .font-bold(style="color: var(--text-primary)") {{ row.title || row.entityType }}
-          el-table-column(:label="$t('approvals.entityType') || 'Type'" width="150")
+          el-table-column(:label="$t('approvals.entityType')" width="150")
             template(#default="{ row }")
               el-tag(size="small" effect="dark" round class="!border-purple-500/30 !text-white !bg-purple-500/20") {{ row.entityType }}
-          el-table-column(:label="$t('approvals.requester') || 'Requester'" min-width="150")
+          el-table-column(:label="$t('approvals.requester')" min-width="150")
             template(#default="{ row }")
               span {{ row.requester?.name || '—' }}
-          el-table-column(:label="$t('approvals.currentStep') || 'Step'" width="120")
+          el-table-column(:label="$t('approvals.currentStep')" width="120")
             template(#default="{ row }")
               span {{ row.currentStep || 1 }} / {{ row.totalSteps || row.workflow?.steps?.length || '?' }}
-          el-table-column(:label="$t('approvals.status') || 'Status'" width="130")
+          el-table-column(:label="$t('approvals.status')" width="130")
             template(#default="{ row }")
               span.border.rounded-xl.text-xs.px-2(:class="`label-outline-${getStatusColor(row.status)}`") {{ row.status }}
           el-table-column(:label="$t('common.action')" width="180" fixed="right")
@@ -38,25 +38,25 @@ div
               .flex.gap-2(@click.stop)
                 el-button(type="success" size="small" @click="handleApprove(row)" class="!rounded-lg")
                   Icon(name="ph:check-bold" size="14")
-                  span.ml-1 {{ $t('hr.leave.approve') || 'Approve' }}
+                  span.ml-1 {{ $t('hr.leave.approve') }}
                 el-button(type="danger" size="small" @click="[rejectTarget = row, rejectPopup = true]" class="!rounded-lg")
                   Icon(name="ph:x-bold" size="14")
-                  span.ml-1 {{ $t('hr.leave.reject') || 'Reject' }}
+                  span.ml-1 {{ $t('hr.leave.reject') }}
           template(#empty)
-            el-empty(:description="$t('approvals.noPending') || 'No pending approvals'" image="/images/empty.png")
+            el-empty(:description="$t('approvals.noPending')" image="/images/empty.png")
 
     //- My Requests
-    el-tab-pane(:label="$t('approvals.myRequests') || 'My Requests'" name="requests")
+    el-tab-pane(:label="$t('approvals.myRequests')" name="requests")
       .glass-card.py-8.animate-entrance
         el-table(:data="allRequests" v-loading="loadingRequests" style="width: 100%" :row-style="{cursor:'pointer'}" @current-change="viewRequest")
           el-table-column(type="index" width="50")
-          el-table-column(:label="$t('approvals.requestTitle') || 'Title'" min-width="200")
+          el-table-column(:label="$t('approvals.requestTitle')" min-width="200")
             template(#default="{ row }")
               .font-bold(style="color: var(--text-primary)") {{ row.title || row.entityType }}
-          el-table-column(:label="$t('approvals.entityType') || 'Type'" width="150")
+          el-table-column(:label="$t('approvals.entityType')" width="150")
             template(#default="{ row }")
               el-tag(size="small" effect="dark" round class="!border-purple-500/30 !text-white !bg-purple-500/20") {{ row.entityType }}
-          el-table-column(:label="$t('approvals.status') || 'Status'" width="130")
+          el-table-column(:label="$t('approvals.status')" width="130")
             template(#default="{ row }")
               span.border.rounded-xl.text-xs.px-2(:class="`label-outline-${getStatusColor(row.status)}`") {{ row.status }}
           el-table-column(:label="$t('common.action')" width="120" fixed="right")
@@ -79,14 +79,14 @@ div
             el-empty(:description="$t('common.noData')" image="/images/empty.png")
 
   //- Create Request Dialog
-  el-dialog(v-model="showCreateRequest" :title="$t('approvals.createRequest') || 'New Approval Request'" width="600px")
+  el-dialog(v-model="showCreateRequest" :title="$t('approvals.createRequest')" width="600px")
     el-form(ref="createFormRef" :model="createForm" label-position="top" size="large")
-      el-form-item(:label="$t('approvals.requestTitle') || 'Title'" prop="title")
+      el-form-item(:label="$t('approvals.requestTitle')" prop="title")
         el-input(v-model="createForm.title")
-      el-form-item(:label="$t('approvals.entityType') || 'Type'" prop="entityType")
+      el-form-item(:label="$t('approvals.entityType')" prop="entityType")
         el-select(v-model="createForm.entityType" class="w-full")
           el-option(v-for="et in entityTypes" :key="et" :label="et" :value="et")
-      el-form-item(:label="$t('approvals.notes') || 'Notes'")
+      el-form-item(:label="$t('approvals.notes')")
         el-input(v-model="createForm.notes" type="textarea" :rows="3")
     template(#footer)
       el-button(@click="showCreateRequest = false") {{ $t('common.cancel') }}
@@ -97,28 +97,28 @@ div
     .space-y-4(v-if="viewingRequest")
       .grid.grid-cols-2.gap-4
         div
-          .text-sm.font-medium(style="color: var(--text-muted)") {{ $t('approvals.entityType') || 'Type' }}
+          .text-sm.font-medium(style="color: var(--text-muted)") {{ $t('approvals.entityType') }}
           el-tag.mt-1(size="small" effect="dark") {{ viewingRequest.entityType }}
         div
-          .text-sm.font-medium(style="color: var(--text-muted)") {{ $t('approvals.status') || 'Status' }}
+          .text-sm.font-medium(style="color: var(--text-muted)") {{ $t('approvals.status') }}
           .mt-1: span.border.rounded-xl.text-xs.px-2(:class="`label-outline-${getStatusColor(viewingRequest.status)}`") {{ viewingRequest.status }}
         div(v-if="viewingRequest.requester")
-          .text-sm.font-medium(style="color: var(--text-muted)") {{ $t('approvals.requester') || 'Requester' }}
+          .text-sm.font-medium(style="color: var(--text-muted)") {{ $t('approvals.requester') }}
           p(style="color: var(--text-primary)") {{ viewingRequest.requester?.name }}
         div
-          .text-sm.font-medium(style="color: var(--text-muted)") {{ $t('approvals.currentStep') || 'Current Step' }}
+          .text-sm.font-medium(style="color: var(--text-muted)") {{ $t('approvals.currentStep') }}
           p(style="color: var(--text-primary)") {{ viewingRequest.currentStep || 1 }} / {{ viewingRequest.totalSteps || '?' }}
       .glass-card.p-4(v-if="viewingRequest.notes")
         p.text-sm(style="color: var(--text-secondary)") {{ viewingRequest.notes }}
 
   //- Reject Dialog
-  el-dialog(v-model="rejectPopup" :title="$t('hr.leave.reject') || 'Reject'" width="500px")
+  el-dialog(v-model="rejectPopup" :title="$t('hr.leave.reject')" width="500px")
     el-form(label-position="top")
-      el-form-item(:label="$t('hr.leave.rejectionReason') || 'Reason'")
+      el-form-item(:label="$t('hr.leave.rejectionReason')")
         el-input(v-model="rejectComment" type="textarea" :rows="3")
     template(#footer)
       el-button(@click="rejectPopup = false") {{ $t('common.cancel') }}
-      el-button(type="danger" :loading="rejecting" @click="confirmReject" class="!rounded-2xl") {{ $t('hr.leave.reject') || 'Reject' }}
+      el-button(type="danger" :loading="rejecting" @click="confirmReject" class="!rounded-2xl") {{ $t('hr.leave.reject') }}
 </template>
 
 <script setup lang="ts">
@@ -133,9 +133,9 @@ const t = $i18n.t;
 
 // Export columns
 const exportColumns = [
-  { prop: 'title', label: t('approvals.requestTitle') || 'Title' },
-  { prop: 'entityType', label: t('approvals.entityType') || 'Type' },
-  { prop: 'status', label: t('approvals.status') || 'Status' }
+  { prop: 'title', label: t('approvals.requestTitle') },
+  { prop: 'entityType', label: t('approvals.entityType') },
+  { prop: 'status', label: t('approvals.status') }
 ];
 
 const activeTab = ref('pending');
@@ -163,16 +163,16 @@ const createForm = reactive({
 });
 
 const summaryStats = computed(() => [
-  { label: t('approvals.pendingApproval') || 'Pending', value: pendingApprovals.value.length, icon: 'ph:clock-bold', color: '#f59e0b' },
-  { label: t('approvals.myRequests') || 'My Requests', value: allRequests.value.length, icon: 'ph:file-text-bold', color: '#7849ff' },
+  { label: t('approvals.pendingApproval'), value: pendingApprovals.value.length, icon: 'ph:clock-bold', color: '#f59e0b' },
+  { label: t('approvals.myRequests'), value: allRequests.value.length, icon: 'ph:file-text-bold', color: '#7849ff' },
   {
-    label: t('hr.leave.approved') || 'Approved',
+    label: t('hr.leave.approved'),
     value: allRequests.value.filter((r: any) => r.status === 'APPROVED').length,
     icon: 'ph:check-circle-bold',
     color: '#22c55e'
   },
   {
-    label: t('hr.leave.rejected') || 'Rejected',
+    label: t('hr.leave.rejected'),
     value: allRequests.value.filter((r: any) => r.status === 'REJECTED').length,
     icon: 'ph:x-circle-bold',
     color: '#ef4444'
@@ -211,7 +211,7 @@ function viewRequest(row: any) {
 async function handleApprove(row: any) {
   const res = await approveRequest(row.id, '');
   if (res?.success) {
-    ElNotification({ type: 'success', title: t('common.success'), message: t('hr.leave.approved') || 'Approved' });
+    ElNotification({ type: 'success', title: t('common.success'), message: t('hr.leave.approved') });
     await Promise.all([loadPending(), loadRequests()]);
   }
 }
@@ -222,7 +222,7 @@ async function confirmReject() {
   try {
     const res = await rejectRequest(rejectTarget.value.id, rejectComment.value);
     if (res?.success) {
-      ElNotification({ type: 'success', title: t('common.success'), message: t('hr.leave.rejected') || 'Rejected' });
+      ElNotification({ type: 'success', title: t('common.success'), message: t('hr.leave.rejected') });
       rejectPopup.value = false;
       rejectComment.value = '';
       await Promise.all([loadPending(), loadRequests()]);
@@ -235,7 +235,7 @@ async function confirmReject() {
 async function handleCancel(id: number) {
   const res = await cancelRequest(id);
   if (res?.success) {
-    ElNotification({ type: 'success', title: t('common.success'), message: t('hr.leave.cancelled') || 'Cancelled' });
+    ElNotification({ type: 'success', title: t('common.success'), message: t('hr.leave.cancelled') });
     await loadRequests();
   }
 }

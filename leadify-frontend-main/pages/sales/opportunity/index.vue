@@ -126,7 +126,7 @@ div
 
 <script setup lang="ts">
 import { Plus } from '@element-plus/icons-vue';
-import { ElNotification, ElMessageBox } from 'element-plus';
+import { ElMessage, ElNotification, ElMessageBox } from 'element-plus';
 import { stageOptions, priorityOptions } from '@/composables/useOpportunity';
 import useTableFilter from '@/composables/useTableFilter';
 const router = useRouter();
@@ -221,7 +221,8 @@ async function changeStage(id: any, newStage: any) {
   loadingAction.value = true;
   try {
     await updateOpportunity({ stage: newStage }, id);
-  } catch {
+  } catch (e: any) {
+    ElMessage.error(t('common.error'));
   } finally {
     const response = await useTableFilter('opportunity');
     table.data = response.formattedData;
@@ -234,7 +235,8 @@ async function editWithResone() {
   loadingAction.value = true;
   try {
     await updateOpportunity({ stage: select.value?.status, reasonOfLose: reasons.value }, select.value?.id);
-  } catch {
+  } catch (e: any) {
+    ElMessage.error(t('common.error'));
   } finally {
     const response = await useTableFilter('opportunity');
     table.data = response.formattedData;
@@ -249,7 +251,9 @@ async function submitForm(values: any) {
       select.value = values;
     }
     if (values?.status !== 'WON' && values?.status !== 'LOST') changeStage(values?.id, values?.status);
-  } catch {}
+  } catch (e: any) {
+    ElMessage.error(t('common.error'));
+  }
 }
 
 async function editPresent() {
@@ -430,7 +434,9 @@ async function handleAdvancedFilter(filterPayload: any) {
       const data = res.body as any;
       table.data = data.docs || data || [];
     }
-  } catch {}
+  } catch (e: any) {
+    ElMessage.error(t('common.error'));
+  }
 }
 
 async function handleClearAdvancedFilter() {

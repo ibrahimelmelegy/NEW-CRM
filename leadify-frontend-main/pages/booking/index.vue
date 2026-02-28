@@ -110,10 +110,10 @@
   //- Staff Availability Section
   .p-6.rounded-2xl.border(style="border-color: var(--border-default); background: var(--bg-elevated);")
     .flex.justify-between.items-center.mb-4
-      h3.text-sm.font-medium(style="color: var(--text-primary);") {{ $t('booking.staffAvailability') || 'Staff Availability Rules' }}
+      h3.text-sm.font-medium(style="color: var(--text-primary);") {{ $t('booking.staffAvailability') }}
       el-button(type="primary" size="small" @click="showAvailabilityDialog = true")
         Icon(name="ph:clock-bold" class="w-4 h-4 mr-2")
-        | {{ $t('booking.setAvailability') || 'Set Availability' }}
+        | {{ $t('booking.setAvailability') }}
     .grid.gap-3(class="grid-cols-1 md:grid-cols-2")
       .p-3.rounded-lg.border(
         v-for="staff in staffAvailability"
@@ -197,17 +197,17 @@
       el-form-item(:label="$t('booking.notes')")
         el-input(v-model="newBooking.notes" type="textarea" :rows="2")
       el-form-item
-        el-checkbox(v-model="newBooking.isRecurring") {{ $t('booking.recurringBooking') || 'Recurring Booking' }}
+        el-checkbox(v-model="newBooking.isRecurring") {{ $t('booking.recurringBooking') }}
         el-select(v-if="newBooking.isRecurring" v-model="newBooking.recurringPattern" class="ml-2" style="width: 150px")
           el-option(label="Daily" value="DAILY")
           el-option(label="Weekly" value="WEEKLY")
           el-option(label="Bi-weekly" value="BIWEEKLY")
           el-option(label="Monthly" value="MONTHLY")
-      el-form-item(v-if="newBooking.isRecurring" :label="$t('booking.reminderConfig') || 'Reminder'")
+      el-form-item(v-if="newBooking.isRecurring" :label="$t('booking.reminderConfig')")
         .flex.items-center.gap-2
-          el-checkbox(v-model="newBooking.sendReminder") {{ $t('booking.sendReminder') || 'Send reminder' }}
+          el-checkbox(v-model="newBooking.sendReminder") {{ $t('booking.sendReminder') }}
           el-input-number(v-if="newBooking.sendReminder" v-model="newBooking.reminderMinutes" :min="5" :max="1440" :step="5" class="!w-28")
-          span.text-xs(v-if="newBooking.sendReminder" style="color: var(--text-muted)") {{ $t('booking.minutesBefore') || 'min before' }}
+          span.text-xs(v-if="newBooking.sendReminder" style="color: var(--text-muted)") {{ $t('booking.minutesBefore') }}
     template(#footer)
       el-button(@click="showBookingDialog = false") {{ $t('common.cancel') }}
       el-button(type="primary" :loading="submitting" @click="createBooking") {{ $t('booking.schedule') }}

@@ -140,6 +140,7 @@
 
 <script setup lang="ts">
 import { Plus } from '@element-plus/icons-vue';
+import { ElMessage } from 'element-plus';
 import { use } from 'echarts/core';
 import { CanvasRenderer } from 'echarts/renderers';
 import { BarChart, PieChart } from 'echarts/charts';
@@ -402,7 +403,9 @@ async function handleAdvancedFilter(filterPayload: any) {
       const data = res.body as any;
       table.data = data.docs || data || [];
     }
-  } catch {}
+  } catch (e: any) {
+    ElMessage.error(t('common.error'));
+  }
 }
 
 async function handleClearAdvancedFilter() {

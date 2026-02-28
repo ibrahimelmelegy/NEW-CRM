@@ -447,6 +447,9 @@ definePageMeta({
   middleware: 'permissions'
 });
 
+const { $i18n } = useNuxtApp();
+const t = $i18n.t;
+
 // --------------------------------------------------
 // State
 // --------------------------------------------------
@@ -646,7 +649,7 @@ async function fetchData() {
     });
   } catch (err) {
     console.error('Failed to load resource planner data:', err);
-    ElMessage.error('Failed to load resource planner data');
+    ElMessage.error(t('common.error'));
   } finally {
     loading.value = false;
   }
@@ -743,16 +746,16 @@ async function applyDayEdit() {
       }
     }
     if (anyUpdated) {
-      ElMessage.success('Allocations updated successfully');
+      ElMessage.success(t('common.saved'));
       await fetchData();
       if (viewMode.value === 'utilization') await fetchUtilizationReport();
     } else {
-      ElMessage.info('No changes to save');
+      ElMessage.info(t('common.saved'));
     }
     showDayEditDialog.value = false;
   } catch (err: any) {
     console.error('Failed to update allocation:', err);
-    ElMessage.error(err?.message || 'Failed to update allocation');
+    ElMessage.error(t('common.error'));
   } finally {
     savingDay.value = false;
   }
@@ -783,7 +786,7 @@ function editAllocation(alloc: any) {
 
 async function saveAllocation() {
   if (!allocForm.manpowerId || !allocForm.projectId) {
-    ElMessage.warning('Please select both a resource and a project');
+    ElMessage.warning(t('common.fillRequired'));
     return;
   }
   saving.value = true;
@@ -796,7 +799,7 @@ async function saveAllocation() {
         mission: allocForm.mission
       });
       if (success) {
-        ElMessage.success('Allocation updated');
+        ElMessage.success(t('common.saved'));
         showAllocateDialog.value = false;
         await fetchData();
         if (viewMode.value === 'utilization') await fetchUtilizationReport();
@@ -811,7 +814,7 @@ async function saveAllocation() {
         mission: allocForm.mission
       });
       if (success) {
-        ElMessage.success('Resource allocated successfully');
+        ElMessage.success(t('common.saved'));
         showAllocateDialog.value = false;
         await fetchData();
         if (viewMode.value === 'utilization') await fetchUtilizationReport();
@@ -819,7 +822,7 @@ async function saveAllocation() {
     }
   } catch (err: any) {
     console.error('Allocation error:', err);
-    ElMessage.error(err?.message || 'Failed to save allocation');
+    ElMessage.error(t('common.error'));
   } finally {
     saving.value = false;
   }
@@ -828,13 +831,13 @@ async function saveAllocation() {
 async function deleteAllocation(id: string) {
   try {
     await ElMessageBox.confirm(
-      'Are you sure you want to delete this allocation? This action cannot be undone.',
-      'Delete Allocation',
-      { confirmButtonText: 'Delete', cancelButtonText: 'Cancel', type: 'warning' }
+      t('common.confirmAction'),
+      t('common.warning'),
+      { confirmButtonText: t('common.delete'), cancelButtonText: t('common.cancel'), type: 'warning' }
     );
     const { success } = await useApiFetch(`project-manpower/${id}`, 'DELETE');
     if (success) {
-      ElMessage.success('Allocation deleted');
+      ElMessage.success(t('common.deleted'));
       await fetchData();
       if (viewMode.value === 'utilization') await fetchUtilizationReport();
     }

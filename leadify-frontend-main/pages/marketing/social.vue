@@ -302,6 +302,9 @@ definePageMeta({
   middleware: 'permissions'
 });
 
+const { $i18n } = useNuxtApp();
+const t = $i18n.t;
+
 // ── State ──────────────────────────────────────────────────────────────────────
 const loading = ref(false);
 const activeTab = ref('feed');
@@ -549,14 +552,14 @@ const connectPlatform = async (name: string) => {
     });
 
     if (res?.success) {
-      ElMessage.success(`${name} connected successfully`);
+      ElMessage.success(t('common.saved'));
       showConnectDialog.value = false;
       await fetchProfiles();
     } else {
-      ElMessage.error(res?.message || `Failed to connect ${name}`);
+      ElMessage.error(t('common.error'));
     }
   } catch (e) {
-    ElMessage.error(`Error connecting ${name}`);
+    ElMessage.error(t('common.error'));
   }
 };
 
@@ -565,20 +568,20 @@ const deleteProfile = async (id: number) => {
   try {
     const res = await useApiFetch(`social-crm/${id}`, 'DELETE');
     if (res?.success) {
-      ElMessage.success('Profile deleted');
+      ElMessage.success(t('common.deleted'));
       await fetchProfiles();
     } else {
-      ElMessage.error(res?.message || 'Failed to delete profile');
+      ElMessage.error(t('common.error'));
     }
   } catch (e) {
-    ElMessage.error('Error deleting profile');
+    ElMessage.error(t('common.error'));
   }
 };
 
 // ── Actions: Mentions ──────────────────────────────────────────────────────────
-const replyToMention = (m: any) => ElMessage.info(`Replying to @${m.handle}`);
-const convertToLead = (m: any) => ElMessage.success(`Converting @${m.handle} to lead`);
-const assignMention = (m: any) => ElMessage.info(`Assigning mention from @${m.handle}`);
+const replyToMention = (_m: any) => ElMessage.info(t('common.saved'));
+const convertToLead = (_m: any) => ElMessage.success(t('common.saved'));
+const assignMention = (_m: any) => ElMessage.info(t('common.saved'));
 
 // ── API: Fetch scheduled posts ──────────────────────────────────────────────
 async function fetchPosts() {
@@ -623,19 +626,19 @@ const deletePost = async (p: any) => {
   try {
     const res = await useApiFetch(`social-crm/posts/${p.id}`, 'DELETE');
     if (res?.success) {
-      ElMessage.success('Post deleted');
+      ElMessage.success(t('common.deleted'));
       await fetchPosts();
     } else {
-      ElMessage.error(res?.message || 'Failed to delete post');
+      ElMessage.error(t('common.error'));
     }
   } catch (e) {
-    ElMessage.error('Error deleting post');
+    ElMessage.error(t('common.error'));
   }
 };
 
 const publishNow = async () => {
   if (!newPost.value.content) {
-    ElMessage.warning('Content required');
+    ElMessage.warning(t('common.fillRequired'));
     return;
   }
   postSaving.value = true;
@@ -652,19 +655,19 @@ const publishNow = async () => {
 
     if (editingPostId.value) {
       const res = await useApiFetch(`social-crm/posts/${editingPostId.value}`, 'PUT', payload);
-      if (!res?.success) { ElMessage.error(res?.message || 'Update failed'); return; }
+      if (!res?.success) { ElMessage.error(t('common.error')); return; }
     } else {
       const res = await useApiFetch('social-crm/posts', 'POST', payload);
-      if (!res?.success) { ElMessage.error(res?.message || 'Publish failed'); return; }
+      if (!res?.success) { ElMessage.error(t('common.error')); return; }
     }
 
-    ElMessage.success('Post published!');
+    ElMessage.success(t('common.saved'));
     showComposeDialog.value = false;
     editingPostId.value = null;
     newPost.value = { content: '', platforms: [], date: '', time: '' };
     await fetchPosts();
   } catch (e) {
-    ElMessage.error('Error publishing post');
+    ElMessage.error(t('common.error'));
   } finally {
     postSaving.value = false;
   }
@@ -672,7 +675,7 @@ const publishNow = async () => {
 
 const schedulePost = async () => {
   if (!newPost.value.content) {
-    ElMessage.warning('Content required');
+    ElMessage.warning(t('common.fillRequired'));
     return;
   }
   postSaving.value = true;
@@ -689,19 +692,19 @@ const schedulePost = async () => {
 
     if (editingPostId.value) {
       const res = await useApiFetch(`social-crm/posts/${editingPostId.value}`, 'PUT', payload);
-      if (!res?.success) { ElMessage.error(res?.message || 'Update failed'); return; }
+      if (!res?.success) { ElMessage.error(t('common.error')); return; }
     } else {
       const res = await useApiFetch('social-crm/posts', 'POST', payload);
-      if (!res?.success) { ElMessage.error(res?.message || 'Schedule failed'); return; }
+      if (!res?.success) { ElMessage.error(t('common.error')); return; }
     }
 
-    ElMessage.success('Post scheduled!');
+    ElMessage.success(t('common.saved'));
     showComposeDialog.value = false;
     editingPostId.value = null;
     newPost.value = { content: '', platforms: [], date: '', time: '' };
     await fetchPosts();
   } catch (e) {
-    ElMessage.error('Error scheduling post');
+    ElMessage.error(t('common.error'));
   } finally {
     postSaving.value = false;
   }
