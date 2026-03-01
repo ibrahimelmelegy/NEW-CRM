@@ -181,7 +181,7 @@ const getActivityPage = async (page: number) => {
 };
 
 // Call API to Get the lead
-const lead = await getLead(deal.leadId);
+const lead = deal?.leadId ? await getLead(deal.leadId) : null;
 
 //  invoices table
 const invoicesTable = reactive({

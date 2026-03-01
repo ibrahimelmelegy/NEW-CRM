@@ -1,5 +1,5 @@
 <template>
-  <div class="pro-doc-builder h-screen flex flex-col bg-slate-50 overflow-hidden font-sans">
+  <div class="pro-doc-builder h-full flex flex-col bg-slate-50 overflow-hidden font-sans">
     
     <!-- Top Navigation Bar -->
     <header class="h-16 flex items-center justify-between px-6 shrink-0 z-20 m-4 rounded-[2rem]" style="background: var(--glass-bg); backdrop-filter: var(--glass-blur); border: 1px solid var(--glass-border-color); box-shadow: var(--glass-shadow);">

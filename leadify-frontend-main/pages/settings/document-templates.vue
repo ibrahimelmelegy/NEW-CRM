@@ -444,8 +444,18 @@ async function loadTemplates() {
     if (typeFilter.value) query.type = typeFilter.value;
     if (searchKey.value) query.searchKey = searchKey.value;
     const result = await fetchDocumentTemplates(query);
-    templates.value = result.docs;
-    pagination.value = { ...pagination.value, ...result.pagination };
+    templates.value = result.docs || [];
+    if (result.pagination) {
+      pagination.value = { ...pagination.value, ...result.pagination };
+    }
+  } catch (e) {
+    console.error('Failed to load document templates', e);
+    templates.value = [];
+    ElNotification({
+      type: 'error',
+      title: t('common.error'),
+      message: t('common.fetchError') || 'Failed to load templates'
+    });
   } finally {
     loading.value = false;
   }
@@ -607,14 +617,15 @@ async function handleSeedDefaults() {
       ElNotification({
         type: 'error',
         title: t('common.error'),
-        message: result.message || t('common.error')
+        message: result.message || t('common.fetchError') || 'Failed to seed templates'
       });
     }
-  } catch {
+  } catch (e) {
+    console.error('Failed to seed default templates', e);
     ElNotification({
       type: 'error',
       title: t('common.error'),
-      message: t('common.error')
+      message: t('common.fetchError') || 'Failed to seed templates'
     });
   } finally {
     seeding.value = false;

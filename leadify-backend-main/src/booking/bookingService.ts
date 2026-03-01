@@ -63,7 +63,7 @@ class BookingService {
       where,
       include: [
         { model: User, as: 'staff', attributes: ['id', 'name', 'email'] },
-        { model: Client, as: 'client', attributes: ['id', 'name', 'email'] }
+        { model: Client, as: 'client', attributes: ['id', 'clientName', 'email'] }
       ],
       order: [['date', 'DESC'], ['startTime', 'ASC']], limit, offset, distinct: true
     });
@@ -210,7 +210,7 @@ class BookingService {
       where,
       include: [
         { model: User, as: 'staff', attributes: ['id', 'name', 'email'] },
-        { model: Client, as: 'client', attributes: ['id', 'name', 'email'] }
+        { model: Client, as: 'client', attributes: ['id', 'clientName', 'email'] }
       ],
       order: [['date', 'ASC'], ['startTime', 'ASC']]
     });

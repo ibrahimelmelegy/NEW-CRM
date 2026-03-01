@@ -121,7 +121,8 @@ class DealController {
   public async getStaleDealAlerts(req: AuthenticatedRequest, res: Response, next: NextFunction): Promise<void> {
     try {
       const tenantId = (req.user as User).tenantId || undefined;
-      const staleDays = req.query.staleDays ? Number(req.query.staleDays) : 14;
+      const parsedDays = Number(req.query.staleDays);
+      const staleDays = !isNaN(parsedDays) && parsedDays > 0 ? parsedDays : 14;
       const responseFromService = await dealService.getStaleDealAlerts(tenantId, staleDays);
       wrapResult(res, responseFromService);
     } catch (error) {

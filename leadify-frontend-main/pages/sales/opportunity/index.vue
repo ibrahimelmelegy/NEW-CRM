@@ -370,7 +370,7 @@ function handleRowClick(val: any) {
 const mappedUsers = usersResponse?.body?.docs?.map((e: any) => ({
   label: e.name,
   value: e.id
-}));
+})) || [];
 
 const filterOptions = [
   {

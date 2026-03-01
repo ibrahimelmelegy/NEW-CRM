@@ -170,6 +170,15 @@ const formSchema = computed(() =>
   })
 );
 
+const isLose = ref(false);
+function checkIfCancelled(value: any) {
+  if (value.label === 'Lost') {
+    isLose.value = true;
+  } else {
+    isLose.value = false;
+  }
+}
+
 const { handleSubmit } = useForm({
   validationSchema: formSchema
 });
@@ -266,15 +275,6 @@ function getSelectedLead(e: any) {
 const isLeads = computed(() => {
   return mappedLeads?.length && switchValue.value ? resolveComponent('InputSelect') : resolveComponent('InputText');
 });
-
-const isLose = ref(false);
-function checkIfCancelled(value: any) {
-  if (value.label === 'Lost') {
-    isLose.value = true;
-  } else {
-    isLose.value = false;
-  }
-}
 
 if (props.data?.reasonOfLose) {
   isLose.value = true;

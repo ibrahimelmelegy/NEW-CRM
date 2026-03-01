@@ -291,7 +291,7 @@ interface UIBooking {
 
 function mapBooking(raw: any, index: number): UIBooking {
   const type = raw.type || '';
-  const clientName = raw.clientName || raw.client?.name || '';
+  const clientName = raw.clientName || raw.client?.clientName || '';
   const host = raw.staff?.name || '';
   const startTime = raw.startTime || '';
   const endTime = raw.endTime || '';
@@ -639,9 +639,25 @@ const createBookingPage = async () => {
 
 async function fetchStaffAvailability() {
   try {
-    const res = await useApiFetch('bookings/staff-availability');
+    const res = await useApiFetch('bookings/slots');
     if (res?.success && res?.body) {
-      staffAvailability.value = res.body;
+      // Group slots by staff member for the UI
+      const slotData = Array.isArray(res.body) ? res.body : [];
+      const staffMap = new Map<number, any>();
+      for (const slot of slotData) {
+        const staffId = slot.staffId;
+        if (!staffMap.has(staffId)) {
+          staffMap.set(staffId, {
+            id: staffId,
+            name: slot.staff?.name || `Staff #${staffId}`,
+            availableSlots: `${slot.startTime} - ${slot.endTime}`
+          });
+        } else {
+          const existing = staffMap.get(staffId);
+          existing.availableSlots += `, ${slot.startTime} - ${slot.endTime}`;
+        }
+      }
+      staffAvailability.value = Array.from(staffMap.values());
     }
   } catch (e) {
     console.error('Failed to fetch staff availability:', e);

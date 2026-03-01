@@ -1,7 +1,7 @@
 <template lang="pug">
 .pro-builder-page
   //- Header bar
-  .header-bar.glass-card.rounded-xl.px-4.py-3.mb-3.flex.items-center.justify-between
+  .header-bar.glass-card.rounded-xl.px-4.py-3.mb-3.flex.items-center.justify-between.shrink-0
     .flex.items-center.gap-3
       NuxtLink(to="/settings/document-templates")
         el-button(text size="small")
@@ -47,12 +47,13 @@
         span {{ $t('documentTemplates.builder.save') }}
 
   //- Editor
-  ProDocBuilder(
-    ref="docBuilderRef"
-    :templateId="templateId || undefined"
-    :initialContent="initialContent"
-    @save="handleContentUpdate"
-  )
+  .flex-1.min-h-0
+    ProDocBuilder(
+      ref="docBuilderRef"
+      :templateId="templateId || undefined"
+      :initialContent="initialContent"
+      @save="handleContentUpdate"
+    )
 
   //- Template picker dialog
   ProTemplatePicker(
@@ -176,6 +177,9 @@ function formatTimeSince(date: Date | null): string {
 .pro-builder-page {
   padding: 16px;
   animation: fadeIn 0.3s ease-out;
+  height: calc(100vh - 80px);
+  display: flex;
+  flex-direction: column;
 }
 
 @keyframes fadeIn {

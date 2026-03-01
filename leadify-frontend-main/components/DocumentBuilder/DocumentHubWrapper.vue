@@ -1,7 +1,7 @@
 <template lang="pug">
 .pro-builder-page
   //- Header bar
-  .header-bar.glass-card.rounded-xl.px-4.py-3.mb-3.flex.items-center.justify-between
+  .header-bar.glass-card.rounded-xl.px-4.py-3.mb-3.flex.items-center.justify-between.shrink-0
     .flex.items-center.gap-3
       el-button(text size="small" @click="goBack")
         Icon(name="ph:arrow-left-bold" size="18")
@@ -41,13 +41,14 @@
         span Save {{ displayType }}
 
   //- Editor Engine
-  ProDocBuilder(
-    ref="docBuilderRef"
-    :documentType="documentType"
-    :templateId="templateId || undefined"
-    :initialContent="initialContent"
-    @save="handleContentUpdate"
-  )
+  .flex-1.min-h-0
+    ProDocBuilder(
+      ref="docBuilderRef"
+      :documentType="documentType"
+      :templateId="templateId || undefined"
+      :initialContent="initialContent"
+      @save="handleContentUpdate"
+    )
 </template>
 
 <script setup lang="ts">
@@ -156,7 +157,9 @@ function formatTimeSince(date: Date | null): string {
 <style scoped>
 .pro-builder-page {
   animation: fadeIn 0.3s ease-out;
-  height: 100%;
+  height: calc(100vh - 80px);
+  display: flex;
+  flex-direction: column;
 }
 
 @keyframes fadeIn {

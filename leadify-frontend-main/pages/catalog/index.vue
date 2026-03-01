@@ -198,8 +198,7 @@ import {
 
 definePageMeta({});
 
-const { $t, $i18n } = useNuxtApp() as any;
-const t = $i18n.t;
+const { t } = useI18n();
 
 const products = ref<CatalogProduct[]>([]);
 const loading = ref(false);
@@ -372,16 +371,16 @@ function handleSelectionChange(val: CatalogProduct[]) {
 async function bulkStatusChange() {
   if (!selectedProducts.value.length) return;
   try {
-    await ElMessageBox.confirm($t('catalog.confirmBulkStatusChange'), $t('common.warning'), {
+    await ElMessageBox.confirm(t('catalog.confirmBulkStatusChange'), t('common.warning'), {
       type: 'warning',
-      confirmButtonText: $t('common.confirm'),
-      cancelButtonText: $t('common.cancel')
+      confirmButtonText: t('common.confirm'),
+      cancelButtonText: t('common.cancel')
     });
     const ids = selectedProducts.value.map(p => p.id);
     const newStatus = !selectedProducts.value[0]?.isActive;
     const { success } = await useApiFetch('catalog/bulk-status', 'PUT', { ids, isActive: newStatus });
     if (success) {
-      ElMessage.success($t('catalog.statusUpdated'));
+      ElMessage.success(t('catalog.statusUpdated'));
       selectedProducts.value = [];
       await loadProducts();
     }
@@ -393,15 +392,15 @@ async function bulkStatusChange() {
 async function bulkDeleteProducts() {
   if (!selectedProducts.value.length) return;
   try {
-    await ElMessageBox.confirm($t('catalog.confirmBulkDelete'), $t('common.warning'), {
+    await ElMessageBox.confirm(t('catalog.confirmBulkDelete'), t('common.warning'), {
       type: 'warning',
-      confirmButtonText: $t('common.delete'),
-      cancelButtonText: $t('common.cancel')
+      confirmButtonText: t('common.delete'),
+      cancelButtonText: t('common.cancel')
     });
     const ids = selectedProducts.value.map(p => p.id);
     const { success } = await useApiFetch('catalog/bulk-delete', 'DELETE', { ids });
     if (success) {
-      ElMessage.success($t('catalog.productsDeleted'));
+      ElMessage.success(t('catalog.productsDeleted'));
       selectedProducts.value = [];
       await loadProducts();
     }
@@ -423,13 +422,13 @@ async function processImport() {
     formData.append('file', importFile.value);
     const { success, body } = await useApiFetch('catalog/import', 'POST', formData);
     if (success) {
-      ElMessage.success($t('catalog.importSuccess', { count: (body as any)?.imported || 0 }));
+      ElMessage.success(t('catalog.importSuccess', { count: (body as any)?.imported || 0 }));
       showImportDialog.value = false;
       importFile.value = null;
       await loadProducts();
     }
   } catch (e) {
-    ElMessage.error($t('catalog.importFailed'));
+    ElMessage.error(t('catalog.importFailed'));
   } finally {
     importing.value = false;
   }

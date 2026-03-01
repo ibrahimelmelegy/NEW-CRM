@@ -48,7 +48,7 @@
         .flex.items-center.gap-2
           Icon(name="ph:pencil-simple" size="16")
           span Editor
-      .py-4
+      .py-4(style="height: calc(100vh - 200px); min-height: 500px")
         ProDocBuilder(
           :documentType="documentType"
           :documentId="document.id"
@@ -121,7 +121,8 @@ const props = defineProps<{
   documentId: string;
 }>();
 
-definePageMeta({ middleware: 'permissions' });
+// Note: definePageMeta must be used in the page file, not in components.
+// The parent page [id].vue already defines the page meta.
 
 const route = useRoute();
 const { currentDocument: document, loading, getDocument, getVersions, getVersionById, restoreVersion, changeStatus, convertDocument, generatePdf } = useDocBuilder();
@@ -288,7 +289,10 @@ async function loadVersions() {
 
 onMounted(async () => {
   await loadDocument();
-  await loadVersions();
+  // Only load versions if the document was found
+  if (document.value) {
+    await loadVersions();
+  }
 });
 </script>
 

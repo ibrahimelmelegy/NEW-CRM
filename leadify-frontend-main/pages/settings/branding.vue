@@ -563,6 +563,13 @@ function onDrop(event: DragEvent) {
 
 // --- Save settings ---
 
+// Strip empty strings from an object so the backend @IsOptional() skips them
+function stripEmptyStrings(obj: Record<string, any>): Record<string, any> {
+  return Object.fromEntries(
+    Object.entries(obj).filter(([_, v]) => v !== '' && v !== null && v !== undefined)
+  );
+}
+
 async function handleSave() {
   if (!form.name.trim()) {
     ElNotification({ type: 'warning', title: t('common.warning'), message: t('common.fillRequired') });
@@ -571,7 +578,7 @@ async function handleSave() {
 
   saving.value = true;
   try {
-    const payload = { ...form };
+    const payload = stripEmptyStrings({ ...form });
     let res;
     if (settingsId.value) {
       res = await useApiFetch(`setting/${settingsId.value}`, 'PUT', payload);
@@ -612,7 +619,7 @@ async function handleReset() {
   // Persist the reset to the server
   saving.value = true;
   try {
-    const payload = { ...form };
+    const payload = stripEmptyStrings({ ...form });
     let res;
     if (settingsId.value) {
       res = await useApiFetch(`setting/${settingsId.value}`, 'PUT', payload);

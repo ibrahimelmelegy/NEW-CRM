@@ -343,11 +343,13 @@
 
 <script setup lang="ts">
 import { ref, reactive, onMounted, computed, nextTick } from 'vue';
+import { useI18n } from 'vue-i18n';
+import { ElMessage, ElMessageBox } from 'element-plus';
 import * as echarts from 'echarts';
 
 definePageMeta({});
 
-const { $t } = useNuxtApp() as any;
+const { t: $t } = useI18n();
 
 interface Company {
   id: string;

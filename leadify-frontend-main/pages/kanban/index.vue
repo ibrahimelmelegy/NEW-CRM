@@ -97,6 +97,7 @@
 
 <script setup lang="ts">
 import { ref, reactive, computed, onMounted } from 'vue';
+import { useI18n } from 'vue-i18n';
 import { ElMessage } from 'element-plus';
 import {
   fetchDealKanban,
@@ -110,7 +111,7 @@ import {
 
 definePageMeta({});
 
-const { $t } = useNuxtApp() as any;
+const { t: $t } = useI18n();
 
 // ─── View mode toggle ───────────────────────────────────────────────────────
 type ViewMode = 'deal' | 'opportunity';

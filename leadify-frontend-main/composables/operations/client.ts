@@ -136,14 +136,14 @@ export async function getClients(): Promise<UseClientsResult> {
       return { clients, pagination };
     } else {
       // If the API call is unsuccessful, throw an error with the message
-      throw new Error(message || 'Failed to fetch leads');
+      throw new Error(message || 'Failed to fetch clients');
     }
   } catch (error) {
     // Catch and log any errors, either from the API call or from unexpected issues
-    console.error('Error fetching leads:', error instanceof Error ? error.message : error);
+    console.error('Error fetching clients:', error instanceof Error ? error.message : error);
 
     // Optionally, you could show a notification here if needed
-    handleError('An error occurred while fetching leads. Please try again.');
+    handleError('An error occurred while fetching clients. Please try again.');
 
     // Return an empty array as fallback
     return { clients: [], pagination: { totalItems: 0, page: 1, limit: 10, totalPages: 1 } };

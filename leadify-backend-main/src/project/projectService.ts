@@ -303,13 +303,16 @@ class ProjectService {
       );
 
       await transaction.commit();
-      project.isCompleted && (await createActivityLog('project', 'update', project.id, user.id, null, 'Prject materials got updated Successfully'));
-
-      return this.recalculateProject(project);
     } catch (error) {
       await transaction.rollback();
       throw new BaseError(ERRORS.SOMETHING_WENT_WRONG);
     }
+
+    if (project.isCompleted) {
+      await createActivityLog('project', 'update', project.id, user.id, null, 'Project materials got updated successfully');
+    }
+
+    return this.recalculateProject(project);
   }
 
   public async associateAssetsToProject(id: string, input: AssociatingAssetToProjectInput, user: User): Promise<any> {
@@ -543,12 +546,12 @@ class ProjectService {
   public async recalculateProject(project: Project): Promise<any> {
     const manpowerRecords = await ProjectManpower.findAll({ where: { projectId: project.id } });
     const resourceCount = manpowerRecords.length || 1;
-    const accommodationCostPerManpower = project.accommodationCost / resourceCount;
+    const accommodationCostPerManpower = (project.accommodationCost || 0) / resourceCount;
 
-    const carRentPerManpower = project.totalCarRentPerDuration / resourceCount;
+    const carRentPerManpower = (project.totalCarRentPerDuration || 0) / resourceCount;
     let manpowerTotalCost = 0;
     for (const manpower of manpowerRecords) {
-      const foodAllowanceCost = project.foodCostPerDay * manpower.estimatedWorkDays;
+      const foodAllowanceCost = (project.foodCostPerDay || 0) * manpower.estimatedWorkDays;
       const totalCost =
         manpower.durationCost + foodAllowanceCost + accommodationCostPerManpower + carRentPerManpower + manpower.otherCosts;
       await manpower.update({

@@ -111,7 +111,8 @@ class ClientController {
 
   public async getCompanyTimeline(req: AuthenticatedRequest, res: Response, next: NextFunction): Promise<void> {
     try {
-      const limit = req.query.limit ? parseInt(req.query.limit as string, 10) : 50;
+      const parsedLimit = parseInt(req.query.limit as string, 10);
+      const limit = !isNaN(parsedLimit) && parsedLimit > 0 ? parsedLimit : 50;
       const responseFromService = await ClientService.getCompanyTimeline(req.params.id as string, limit);
       wrapResult(res, responseFromService);
     } catch (error) {
