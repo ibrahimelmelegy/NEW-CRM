@@ -207,6 +207,7 @@ import MeetingNote from '../meetingNote/meetingNoteModel';
 import ESignature from '../eSignature/eSignatureModel';
 // WhatsApp Models
 import { WhatsAppContact, WhatsAppMessage, WhatsAppTemplate } from '../whatsapp/whatsappModel';
+import { registerTenantHooks } from './tenantHooks';
 
 dotenv.config();
 
@@ -447,5 +448,8 @@ const sequelize = new Sequelize({
   ], // Path to your models
   logging: process.env.NODE_ENV !== 'production' ? console.log : false
 });
+
+// Register automatic tenant scoping hooks on all models with a tenantId column
+registerTenantHooks(sequelize);
 
 export { sequelize };

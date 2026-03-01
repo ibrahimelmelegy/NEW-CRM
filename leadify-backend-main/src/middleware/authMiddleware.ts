@@ -7,6 +7,7 @@ import User from '../user/userModel';
 import Role from '../role/roleModel';
 import BaseError from '../utils/error/base-http-exception';
 import { ERRORS } from '../utils/error/errors';
+import { tenantStorage, TenantStore } from './tenantContext';
 
 interface JwtPayload {
   id: string;
@@ -70,7 +71,15 @@ export const authenticateUser = async (req: AuthenticatedRequest, res: Response,
     }
 
     req.user = user;
-    next(); // Proceed to the next middleware or route handler
+
+    // Establish tenant context for the entire request lifecycle.
+    // All downstream Sequelize queries will be automatically scoped.
+    const isSuperAdmin = user.role?.name === 'SUPER_ADMIN' || user.role?.name === 'Super Admin';
+    const store: TenantStore = {
+      tenantId: isSuperAdmin ? null : (user.tenantId ?? null),
+      isSuperAdmin
+    };
+    tenantStorage.run(store, () => next());
   } catch (error) {
     res.status(401).json({ message: 'Authentication failed' });
   }
