@@ -143,6 +143,7 @@ import { computed, reactive, ref } from 'vue';
 import PremiumPageHeader from '~/components/UI/PremiumPageHeader.vue';
 import PremiumKPICards from '~/components/UI/PremiumKPICards.vue';
 import type { KPIMetric } from '~/components/UI/PremiumKPICards.vue';
+import { formatLargeNumber } from '~/composables/format';
 
 const router = useRouter();
 const { hasPermission } = await usePermissions();
