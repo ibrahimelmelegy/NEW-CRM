@@ -263,7 +263,7 @@ class InvoiceBillingService {
         dealName: clientName
       };
 
-      if (daysOld <= 30) {
+      if (daysOld < 1) {
         buckets.current.amount += amount;
         buckets.current.count++;
         buckets.current.invoices.push(invSummary);

@@ -4,7 +4,7 @@
   .flex.items-center.gap-x-2
     el-button(size='large' plain type="primary" class="w-full !rounded-2xl" @click="goBack()") {{ $t('common.cancel') }}
     el-button(size='large' type="primary" native-type="submit" :loading="loading" :disabled="loading" class="w-full !px-5 !rounded-2xl" @click="saveAllForms") {{ $t('common.save') }}
-el-tabs.demo-tabs(v-model="activeName", :lazy="false" @tab-click="handleClick")
+el-tabs.demo-tabs(v-model="activeName", :lazy="false")
   el-tab-pane(:label="$t('deals.tabs.deal')", name="deal")
     DealInformation( :loading="loading" ref="informationRef" @onSubmit="getDealInformation" :editMode="route.query?.leadId || route.query?.opportunityId")
   el-tab-pane(:label="$t('deals.tabs.invoices')", name="invoices")
@@ -13,12 +13,15 @@ el-tabs.demo-tabs(v-model="activeName", :lazy="false" @tab-click="handleClick")
     DealDelivery( :loading="loading" ref="deliveryRef" @onSubmit="getDeliveries" @isValid="(value)=>isDeliveries = value")
 </template>
 <script lang="ts" setup>
+import { ElNotification } from 'element-plus';
+import { useI18n } from 'vue-i18n';
+const { t } = useI18n();
 const activeName = ref('deal');
 const informationRef = ref();
 const invoicesRef = ref();
 const deliveryRef = ref();
 useHead({
-  title: 'App HP Tech | Add Deal'
+  title: t('deals.createTitle')
 });
 definePageMeta({
   middleware: 'permissions',
@@ -70,10 +73,12 @@ async function saveAllForms() {
     if ((combinedValues.value?.deal?.name || combinedValues.value?.name) && isInvoices.value && isDeliveries.value) {
       if (combinedValues.value?.leadId || combinedValues.value?.opportunityId) {
         await convertToDeal(combinedValues.value);
-        // return;
+        return;
       } else {
         await createDeal(combinedValues.value);
       }
+    } else {
+      ElNotification({ type: 'warning', title: 'Validation', message: 'Please fill in all required fields' });
     }
     loading.value = false;
     isDeliveries.value = false;

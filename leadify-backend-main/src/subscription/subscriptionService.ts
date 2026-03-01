@@ -239,10 +239,10 @@ class SubscriptionService {
     const now = new Date();
     const periodEnd = new Date(subscription.currentPeriodEnd);
     const periodStart = new Date(subscription.currentPeriodStart);
-    const totalDays = Math.max(1, Math.ceil((periodEnd.getTime() - periodStart.getTime()) / (1000 * 60 * 60 * 24)));
-    const remainingDays = Math.max(0, Math.ceil((periodEnd.getTime() - now.getTime()) / (1000 * 60 * 60 * 24)));
-    const proratedCredit = Number(oldPlan?.price || 0) * (remainingDays / totalDays);
-    const proratedCharge = Number(newPlan.price) * (remainingDays / totalDays);
+    const totalDays = (periodEnd.getTime() - periodStart.getTime()) / (1000 * 60 * 60 * 24);
+    const remainingDays = (periodEnd.getTime() - now.getTime()) / (1000 * 60 * 60 * 24);
+    const proratedCredit = parseFloat((Number(oldPlan?.price || 0) * Math.max(0, remainingDays / totalDays)).toFixed(2));
+    const proratedCharge = parseFloat((Number(newPlan.price) * Math.max(0, remainingDays / totalDays)).toFixed(2));
     const prorationAmount = parseFloat((proratedCharge - proratedCredit).toFixed(2));
 
     await subscription.update({ planId: newPlanId });

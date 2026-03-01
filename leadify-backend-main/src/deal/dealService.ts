@@ -150,11 +150,12 @@ class DealService {
 
   public async createDeal(input: CreateLeadAndDealInput, admin: User): Promise<Deal> {
     // Parallel validation: check users + duplicate in one round-trip
+    const userIds = input.deal.users && Array.isArray(input.deal.users) ? input.deal.users : [];
     const [users, exitingDeal] = await Promise.all([
-      User.findAll({ where: { id: { [Op.in]: input.deal.users } } }),
+      userIds.length ? User.findAll({ where: { id: { [Op.in]: userIds } } }) : Promise.resolve([]),
       Deal.findOne({ where: { name: input.deal.name, companyName: input.deal.companyName }, attributes: ['name', 'companyName'] })
     ]);
-    if (!users.length) throw new BaseError(ERRORS.USER_NOT_FOUND);
+    if (userIds.length && !users.length) throw new BaseError(ERRORS.USER_NOT_FOUND);
     if (exitingDeal) throw new BaseError(ERRORS.DEAL_ALREADY_EXIST);
     if (input.deal.stage !== DealStageEnums.CANCELLED) delete input.deal.cancelledReason;
 
@@ -223,8 +224,8 @@ class DealService {
       if (input.invoiceDetails?.length) {
         await this.createDealInvoice(deal.id, input.invoiceDetails, t);
       }
-      await t.commit();
       await createActivityLog('deal', 'create', deal.id, admin.id, t, 'Deal created succesfully');
+      await t.commit();
       return deal;
     } catch (error: Error | unknown) {
       await t.rollback();
@@ -350,7 +351,7 @@ class DealService {
 
     const deal = await this.dealOrError({ id: input.dealId });
 
-    if (input.name || input.companyName) {
+    if (input.name && input.companyName) {
       const existingDeal = await Deal.findOne({
         where: {
           id: { [Op.ne]: input.dealId },

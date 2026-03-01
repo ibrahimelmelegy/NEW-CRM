@@ -254,8 +254,8 @@ describe('UsageBillingService', () => {
           meter: {
             id: 2, name: 'Storage', unit: 'GB', pricePerUnit: 0.10, billingModel: 'TIERED',
             tiers: [
-              { from: 0, to: 100, pricePerUnit: 0.05 },
-              { from: 100, to: 500, pricePerUnit: 0.10 }
+              { from: 0, to: 99, pricePerUnit: 0.05 },
+              { from: 100, to: 499, pricePerUnit: 0.10 }
             ]
           }
         }

@@ -233,14 +233,17 @@ class LeadScoringService {
         }
         return 0;
 
-      case 'between':
+      case 'between': {
         if (Array.isArray(value) && value.length === 2 && fieldValue !== undefined && fieldValue !== null) {
           const num = Number(fieldValue);
-          if (num >= Number(value[0]) && num <= Number(value[1])) {
+          let [low, high] = [Number(value[0]), Number(value[1])];
+          if (low > high) [low, high] = [high, low];
+          if (num >= low && num <= high) {
             return points;
           }
         }
         return 0;
+      }
 
       default:
         return 0;

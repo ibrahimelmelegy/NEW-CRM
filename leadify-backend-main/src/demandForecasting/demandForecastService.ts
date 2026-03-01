@@ -73,13 +73,16 @@ class DemandForecastService {
     const sorted = [...historicalData].sort((a, b) => a.period.localeCompare(b.period));
     const demands = sorted.map(d => d.demand);
 
+    const actualWindow = Math.min(windowSize, demands.length);
+    if (actualWindow < 2) throw new Error('Not enough historical data for forecasting');
+
     let predictedDemand: number;
     let confidence: number;
 
     switch (method) {
       case 'MOVING_AVG': {
         // Simple Moving Average over last N periods
-        const window = demands.slice(-windowSize);
+        const window = demands.slice(-actualWindow);
         predictedDemand = window.reduce((sum, v) => sum + v, 0) / window.length;
         // Confidence based on variance in the window
         const mean = predictedDemand;
@@ -90,8 +93,8 @@ class DemandForecastService {
       }
       case 'WEIGHTED_AVG': {
         // Weighted moving average: more recent periods weigh more
-        const window = demands.slice(-windowSize);
-        const totalWeight = (windowSize * (windowSize + 1)) / 2;
+        const window = demands.slice(-actualWindow);
+        const totalWeight = (actualWindow * (actualWindow + 1)) / 2;
         predictedDemand = window.reduce((sum, v, i) => sum + v * (i + 1), 0) / totalWeight;
         confidence = Math.min(1, 0.6 + (demands.length / 20));
         break;
@@ -121,7 +124,7 @@ class DemandForecastService {
       predictedDemand,
       confidence,
       method,
-      windowSize,
+      windowSize: actualWindow,
       historicalData: sorted,
       tenantId,
       createdBy

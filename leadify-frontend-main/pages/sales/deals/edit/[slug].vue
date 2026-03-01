@@ -1,24 +1,26 @@
 <template lang="pug">
 .flex.items-center.justify-between.mb-8
-  .title.font-bold.text-2xl.mb-1.capitalize.mb-5.mt-5 Edit Deal
+  .title.font-bold.text-2xl.mb-1.capitalize.mb-5.mt-5 {{ $t('deals.editTitle') }}
   .flex.items-center.gap-x-2
-    el-button(size='large' plain type="primary" class="w-full !rounded-2xl" @click="router.back()") {{ $t('common.cancel') }}
-    el-button(size='large' type="primary" native-type="submit" :loading="loading" :disabled="loading" class="w-full !px-5 !rounded-2xl" @click="saveAllForms") Save
-el-tabs.demo-tabs(v-model="activeName", :lazy="false" @tab-click="handleClick")
-  el-tab-pane(label="Deal Information", name="deal")
+    el-button(size='large' plain type="primary" class="w-full !rounded-2xl" @click="navigateTo('/sales/deals')") {{ $t('common.cancel') }}
+    el-button(size='large' type="primary" native-type="submit" :loading="loading" :disabled="loading" class="w-full !px-5 !rounded-2xl" @click="saveAllForms") {{ $t('common.save') }}
+el-tabs.demo-tabs(v-model="activeName", :lazy="false")
+  el-tab-pane(:label="$t('deals.tabs.deal')", name="deal")
     DealInformation( :loading="loading" ref="informationRef" @onSubmit="getDealInformation" :deal="deal" editMode)
-  el-tab-pane(label="Invoices Information", name="invoices")
+  el-tab-pane(:label="$t('deals.tabs.invoices')", name="invoices")
     DealInvoices( :loading="loading" ref="invoicesRef" @onSubmit="getInvoices" :invoices="deal.invoice" editMode @isValid="(value)=>isInvoices = value")
-  el-tab-pane(label="Delivery Information", name="delivery")
+  el-tab-pane(:label="$t('deals.tabs.deliveries')", name="delivery")
     DealDelivery( :loading="loading" ref="deliveryRef" @onSubmit="getDeliveries" :deliveries="deal.deliveryDetails" editMode @isValid="(value)=>isDeliveries = value")
 </template>
 <script lang="ts" setup>
+import { useI18n } from 'vue-i18n';
+const { t } = useI18n();
 const activeName = ref('deal');
 const informationRef = ref();
 const invoicesRef = ref();
 const deliveryRef = ref();
 useHead({
-  title: 'App HP Tech | Edit Deal'
+  title: t('deals.editTitle')
 });
 definePageMeta({
   middleware: 'permissions',

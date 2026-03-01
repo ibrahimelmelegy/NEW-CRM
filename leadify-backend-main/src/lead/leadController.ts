@@ -56,7 +56,7 @@ class LeadController {
 
   public async sendLeadsExcelByEmail(req: AuthenticatedRequest, res: Response, next: NextFunction): Promise<void> {
     try {
-      leadService.sendLeadsExcelByEmail(req.query, req.user as User, req.params.email as string);
+      await leadService.sendLeadsExcelByEmail(req.query, req.user as User, req.params.email as string);
       wrapResult(res);
     } catch (error) {
       next(error);

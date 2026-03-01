@@ -17,7 +17,7 @@ function handleSuccess(message: string, route?: boolean) {
     title: 'Success',
     message
   });
-  !route ? navigateTo('/sales/clients') : window.location.reload(); // Navigate to the clients list
+  !route ? navigateTo('/sales/clients') : navigateTo('/sales/clients'); // Navigate to the clients list
 }
 
 export enum ClientTypeEnums {

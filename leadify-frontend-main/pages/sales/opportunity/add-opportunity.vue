@@ -3,7 +3,7 @@ OpportunityForm( :loading="loading" @submit="submitForm" @leadId="(value)=>  lea
   .flex.items-center.justify-between.mb-8
     .title.font-bold.text-2xl.mb-1.capitalize {{ $t('opportunities.createTitle') }}
     .flex.items-center.gap-x-2
-      el-button(   size='large' plain type="primary" class="w-full !rounded-2xl" @click="router.back()") {{ $t('common.cancel') }}
+      el-button(   size='large' plain type="primary" class="w-full !rounded-2xl" @click="navigateTo('/sales/opportunity')") {{ $t('common.cancel') }}
       el-button(   size='large' type="primary" native-type="submit" :loading="loading"  :disabled="loading" class="w-full !px-5 !rounded-2xl") {{ $t('common.save') }}
 
 </template>
@@ -26,18 +26,23 @@ const loading = ref(false);
 const leadId = ref('');
 async function submitForm(values: FormattedValues) {
   loading.value = true;
-  if (values?.clientId) {
-    await createOpportunity(values);
-  } else if (route.query.leadId || leadId.value) {
-    await convertLeadToOpportunity({
-      ...values.opportunity,
-      ...((route.query.leadId || leadId.value) && { leadId: route.query.leadId || leadId.value }),
-      ...(values.clientId && { clientId: values.clientId })
-    });
-  } else {
-    await createOpportunity(values);
+  try {
+    if (values?.clientId) {
+      await createOpportunity(values);
+    } else if (route.query.leadId || leadId.value) {
+      await convertLeadToOpportunity({
+        ...values.opportunity,
+        ...((route.query.leadId || leadId.value) && { leadId: route.query.leadId || leadId.value }),
+        ...(values.clientId && { clientId: values.clientId })
+      });
+    } else {
+      await createOpportunity(values);
+    }
+  } catch (error: any) {
+    (useNuxtApp() as any).$notify?.error?.({ message: error?.message || 'Failed to create opportunity' });
+  } finally {
+    loading.value = false;
   }
-  loading.value = false;
 }
 </script>
 

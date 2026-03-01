@@ -428,7 +428,7 @@ class ProjectService {
           }),
         ...(query.type &&
           query.type.length > 0 && {
-            status: {
+            type: {
               [Op.in]: query.type
             }
           }),
@@ -550,7 +550,7 @@ class ProjectService {
     for (const manpower of manpowerRecords) {
       const foodAllowanceCost = project.foodCostPerDay * manpower.estimatedWorkDays;
       const totalCost =
-        manpower.durationCost + foodAllowanceCost + manpower.accommodationCostPerManpower + manpower.carRentPerManpower + manpower.otherCosts;
+        manpower.durationCost + foodAllowanceCost + accommodationCostPerManpower + carRentPerManpower + manpower.otherCosts;
       await manpower.update({
         totalCost: parseFloat(totalCost.toFixed(2)),
         foodAllowanceCost: parseFloat(foodAllowanceCost.toFixed(2)),

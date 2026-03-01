@@ -14,7 +14,7 @@ class Invoice extends Model {
   @Column({ type: DataType.STRING, allowNull: false })
   public invoiceNumber!: string;
 
-  @Column({ type: DataType.INTEGER, allowNull: false })
+  @Column({ type: DataType.DECIMAL(12, 2), allowNull: false })
   public amount!: number;
 
   @Column({ type: DataType.DATE, allowNull: true })

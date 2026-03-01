@@ -1228,6 +1228,7 @@
     "details": "Deal Details",
     "convertProject": "Convert to Project",
     "createTitle": "Create Deal",
+    "editTitle": "Edit Deal",
     "info": {
       "client": "Client",
       "contractType": "Contract Type",

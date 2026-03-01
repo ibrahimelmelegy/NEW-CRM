@@ -595,7 +595,7 @@ class ClientService {
     // Fetch deals
     const deals = await Deal.findAll({
       where: { clientId: companyId },
-      attributes: ['id', 'dealName', 'stage', 'price', 'createdAt', 'updatedAt'],
+      attributes: ['id', 'name', 'stage', 'price', 'createdAt', 'updatedAt'],
       limit: 20,
       order: [['createdAt', 'DESC']]
     });
@@ -636,7 +636,7 @@ class ClientService {
       ...deals.map((d: any) => ({
         id: d.id,
         type: 'DEAL',
-        title: d.dealName,
+        title: d.name,
         description: `Deal ${d.stage} - $${d.price}`,
         timestamp: d.createdAt,
         data: d.toJSON()

@@ -133,7 +133,7 @@ class LeadService {
     });
 
     if (users && Array.isArray(users)) {
-      await lead.$set('users', users, { transaction: t });
+      await lead.$set('users', users, t ? { transaction: t } : undefined);
     }
 
     if (!t) {
@@ -313,14 +313,17 @@ class LeadService {
           400,
           `Lead ${existingEmailPhone.phone === phone ? 'Phone' : 'email'} in row ${index} already exists in the system `
         );
-      const existingUsers = await User.findAll({
-        where: {
-          email: {
-            [Op.in]: userId.split(',')
-          }
-        },
-        attributes: ['id', 'email']
-      });
+      const emails = userId ? String(userId).split(',') : [];
+      const existingUsers = emails.length
+        ? await User.findAll({
+            where: {
+              email: {
+                [Op.in]: emails
+              }
+            },
+            attributes: ['id', 'email']
+          })
+        : [];
       leadArray.push({
         name: name,
         companyName: companyName,
@@ -330,12 +333,20 @@ class LeadService {
         leadSource: leadSource,
         status: status || LeadStatusEnums.NEW,
         users: existingUsers?.length && existingUsers.map(user => user.id)[0],
+        userIds: existingUsers.map(user => user.id),
         notes: notes,
         lastContactDate: lastContactDate
       });
     }
 
-    await Lead.bulkCreate(leadArray);
+    const createdLeads = await Lead.bulkCreate(leadArray);
+    // Set user associations for each lead
+    for (const lead of createdLeads) {
+      const leadData = leadArray.find((l: any) => l.name === lead.name);
+      if (leadData?.userIds && leadData.userIds.length > 0) {
+        await (lead as any).$set('users', leadData.userIds);
+      }
+    }
 
     return leadArray.length + ' leads created succesfully';
   }

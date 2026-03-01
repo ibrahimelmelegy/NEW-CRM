@@ -104,7 +104,7 @@ describe('LeadService', () => {
                 expect.anything()
             );
             // Verify assignment to admin (since no users were provided)
-            expect(mockLeadData.$set).toHaveBeenCalledWith('users', [mockAdminUser.id], expect.anything());
+            expect(mockLeadData.$set).toHaveBeenCalledWith('users', [mockAdminUser.id], undefined);
             // Verify activity log
             expect(createActivityLog).toHaveBeenCalledWith('lead', 'create', expect.anything(), mockAdminUser.id, undefined, expect.any(String));
         });

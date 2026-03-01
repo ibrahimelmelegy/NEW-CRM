@@ -1151,6 +1151,7 @@
     "details": "تفاصيل الصفقة",
     "convertProject": "تحويل إلى مشروع",
     "createTitle": "إنشاء صفقة",
+    "editTitle": "تعديل صفقة",
     "info": {
       "client": "العميل",
       "contractType": "نوع العقد",

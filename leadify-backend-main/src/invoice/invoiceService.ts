@@ -198,10 +198,10 @@ class InvoiceService {
     const query = `
       SELECT
         CASE
-          WHEN COALESCE("dueDate", "invoiceDate") >= NOW() THEN 'current'
-          WHEN NOW() - COALESCE("dueDate", "invoiceDate") <= INTERVAL '30 days' THEN '1-30'
-          WHEN NOW() - COALESCE("dueDate", "invoiceDate") <= INTERVAL '60 days' THEN '31-60'
-          WHEN NOW() - COALESCE("dueDate", "invoiceDate") <= INTERVAL '90 days' THEN '61-90'
+          WHEN COALESCE("dueDate", "invoiceDate")::date >= NOW()::date THEN 'current'
+          WHEN NOW()::date - COALESCE("dueDate", "invoiceDate")::date <= 30 THEN '1-30'
+          WHEN NOW()::date - COALESCE("dueDate", "invoiceDate")::date <= 60 THEN '31-60'
+          WHEN NOW()::date - COALESCE("dueDate", "invoiceDate")::date <= 90 THEN '61-90'
           ELSE '90+'
         END AS bucket,
         COUNT(*)::int AS count,
@@ -263,6 +263,7 @@ class InvoiceService {
    * @param period    Number of months to look back (default 12)
    */
   async getRevenueSummary(tenantId?: string, period: number = 12): Promise<RevenueSummaryRow[]> {
+    const safePeriod = Math.max(1, Math.min(120, Math.floor(Number(period) || 12)));
     const tenantFilter = tenantId
       ? `AND "tenantId" = :tenantId`
       : '';
@@ -274,7 +275,7 @@ class InvoiceService {
         COALESCE(SUM(CASE WHEN "collected" = true THEN "amount" ELSE 0 END), 0) AS "collectedRevenue",
         COALESCE(SUM(CASE WHEN "collected" IS NOT TRUE THEN "amount" ELSE 0 END), 0) AS "outstandingRevenue"
       FROM "invoices"
-      WHERE "invoiceDate" >= DATE_TRUNC('month', NOW()) - INTERVAL '${Math.max(1, Math.floor(period))} months'
+      WHERE "invoiceDate" >= DATE_TRUNC('month', NOW()) - INTERVAL '${safePeriod} months'
         ${tenantFilter}
       GROUP BY DATE_TRUNC('month', "invoiceDate")
       ORDER BY DATE_TRUNC('month', "invoiceDate") ASC

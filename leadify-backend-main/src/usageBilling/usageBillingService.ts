@@ -114,7 +114,7 @@ class UsageBillingService {
           let remaining = totalQuantity;
           const tiers = meter.tiers || [];
           for (const tier of tiers) {
-            const tierRange = tier.to - tier.from;
+            const tierRange = tier.to - tier.from + 1;
             const tierUsage = Math.min(remaining, tierRange);
             amount += tierUsage * tier.pricePerUnit;
             remaining -= tierUsage;
@@ -128,7 +128,7 @@ class UsageBillingService {
           const tiers = meter.tiers || [];
           let unitPrice = Number(meter.pricePerUnit);
           for (const tier of tiers) {
-            if (totalQuantity >= tier.from && totalQuantity <= tier.to) {
+            if (totalQuantity >= tier.from && (totalQuantity < tier.to || !tier.to || tier.to === Infinity)) {
               unitPrice = tier.pricePerUnit;
               break;
             }
