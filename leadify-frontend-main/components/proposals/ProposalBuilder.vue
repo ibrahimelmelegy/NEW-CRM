@@ -78,7 +78,7 @@ interface SelectedEntity {
   clientCompany?: string
   clientName?: string
   clientEmail?: string
-  [key: string]: any
+  [key: string]: unknown
 }
 
 interface UploadedFile {
@@ -87,7 +87,7 @@ interface UploadedFile {
   size: number
   type: string
   url?: string
-  [key: string]: any
+  [key: string]: unknown
 }
 
 // ── Props & Emits ──────────────────────────────────────────────────
@@ -204,8 +204,8 @@ watch(selectedEntity, (entity) => {
 })
 
 // ── Handlers ───────────────────────────────────────────────────────
-function handleChange(field: keyof ProposalData, value: any) {
-  ;(formData as any)[field] = value
+function handleChange(field: keyof ProposalData, value: ProposalData[keyof ProposalData]) {
+  ;(formData as Record<string, unknown>)[field] = value
   if (errors.value[field as string]) {
     errors.value = { ...errors.value, [field as string]: '' }
   }
@@ -222,7 +222,7 @@ function handleStepLabelChange(key: string, value: string) {
 interface StepDetail {
   id: string
   label: string
-  iconComponent: any
+  iconComponent: Component
   isCustom: boolean
 }
 
@@ -303,10 +303,10 @@ function handleDeleteStep(id: string) {
 }
 
 // ── Item Handlers with Margin Logic ────────────────────────────────
-function handleItemChange(id: number, field: keyof ProposalItem, value: any) {
+function handleItemChange(id: number, field: keyof ProposalItem, value: string | number) {
   formData.items = formData.items.map(item => {
     if (item.id === id) {
-      const updates: any = { [field]: value }
+      const updates: Partial<ProposalItem> = { [field]: value }
 
       if (field === 'cost') {
         const cost = Number(value) || 0
@@ -354,7 +354,7 @@ function removePhase(id: number) {
   formData.phases = formData.phases.filter(p => p.id !== id)
 }
 
-function handlePhaseChange(id: number, field: keyof ProposalPhase, value: any) {
+function handlePhaseChange(id: number, field: keyof ProposalPhase, value: string | number) {
   formData.phases = formData.phases.map(p => p.id === id ? { ...p, [field]: value } : p)
 }
 
@@ -364,11 +364,11 @@ function handlePrint() {
 }
 
 async function handleDownloadPDF() {
-  if (typeof (window as any).html2pdf === 'undefined') {
+  if (typeof (window as unknown as Record<string, unknown>).html2pdf === 'undefined') {
     // Dynamically import html2pdf.js
     try {
       const html2pdfModule = await import('html2pdf.js')
-      ;(window as any).html2pdf = html2pdfModule.default || html2pdfModule
+      ;(window as unknown as Record<string, unknown>).html2pdf = html2pdfModule.default || html2pdfModule
     } catch {
       alert('PDF generation library not loaded. Please try printing to PDF instead.')
       return
@@ -392,7 +392,7 @@ async function handleDownloadPDF() {
     }
 
     try {
-      await (window as any).html2pdf().set(opt).from(element).save()
+      await ((window as unknown as Record<string, unknown>).html2pdf as () => { set: (opt: unknown) => { from: (el: HTMLElement) => { save: () => Promise<void> } } })().set(opt).from(element).save()
     } catch (err) {
       console.error('PDF generation failed:', err)
       alert('Failed to generate PDF. Please use the Print option.')
@@ -1029,7 +1029,7 @@ function onNewSectionKeyDown(e: KeyboardEvent) {
 
                   <!-- CRM Entity Selector -->
                   <div class="col-span-12">
-                    <ProposalsProposalCRMEntitySelector v-model="(selectedEntity as any)" />
+                    <ProposalsProposalCRMEntitySelector v-model="(selectedEntity as SelectedEntity | null)" />
                   </div>
 
                   <div class="col-span-12 pt-6 mt-4 border-t border-gray-100 bg-violet-50/50 p-6 rounded-2xl border border-violet-100">
@@ -1085,7 +1085,7 @@ function onNewSectionKeyDown(e: KeyboardEvent) {
 
                   <!-- File Attachments -->
                   <div class="col-span-12 border-t border-gray-100 pt-6 mt-2">
-                    <ProposalsProposalFileUploader v-model="(attachments as any)" />
+                    <ProposalsProposalFileUploader v-model="(attachments as UploadedFile[])" />
                   </div>
                 </div>
               </div>
@@ -1385,7 +1385,7 @@ function onNewSectionKeyDown(e: KeyboardEvent) {
           }"
         >
           <div :style="{ transform: `scale(${zoom})`, transformOrigin: 'top center', paddingBottom: '100px' }" class="transition-transform duration-200">
-            <ProposalsProposalPrintTemplate :form-data="(formData as any)" />
+            <ProposalsProposalPrintTemplate :form-data="(formData as ProposalData)" />
           </div>
         </div>
       </div>
@@ -1393,7 +1393,7 @@ function onNewSectionKeyDown(e: KeyboardEvent) {
 
     <!-- Hidden Print Area -->
     <div id="proposal-print-container" class="hidden print:block">
-      <ProposalsProposalPrintTemplate :form-data="(formData as any)" />
+      <ProposalsProposalPrintTemplate :form-data="(formData as ProposalData)" />
     </div>
   </div>
 </template>

@@ -258,7 +258,7 @@
                    <div class="grid grid-cols-2 lg:grid-cols-3 gap-4">
                       <button 
                         v-for="style in coverStylesList" :key="style.id"
-                        @click="formData.coverStyle = style.id as any"
+                        @click="formData.coverStyle = style.id"
                         class="relative aspect-[1/1.414] rounded-xl overflow-hidden border-2 transition-all hover:shadow-lg group text-left"
                         :class="formData.coverStyle === style.id ? 'border-violet-500 ring-4 ring-violet-500/20' : 'border-gray-200 hover:border-violet-300'"
                       >
@@ -567,7 +567,7 @@ const props = withDefaults(defineProps<{
   documentType?: 'proposal' | 'invoice' | 'proforma_invoice' | 'purchase_order' | 'credit_note' | 'contract' | 'rfq' | 'sales_order' | 'quote' | 'delivery_note' | 'sla';
   proposalId?: string;
   documentId?: string;
-  initialData?: any;
+  initialData?: Record<string, unknown>;
 }>(), {
   documentType: 'proposal'
 });
@@ -584,7 +584,7 @@ async function handleSave() {
     // Proposals use the dedicated proposal API for backward compatibility
     saving.value = true;
     try {
-      const payload: any = {
+      const payload: Record<string, unknown> = {
         title: formData.title,
         reference: formData.refNumber,
         proposalFor: formData.clientCompany || formData.clientName,
@@ -611,8 +611,8 @@ async function handleSave() {
           ElMessage.error(response?.message || 'Failed to create proposal');
         }
       }
-    } catch (error: any) {
-      ElMessage.error(error?.message || 'An error occurred while saving');
+    } catch (error: unknown) {
+      ElMessage.error(error instanceof Error ? error.message : 'An error occurred while saving');
     } finally {
       saving.value = false;
     }
@@ -620,7 +620,7 @@ async function handleSave() {
     // All other document types use the universal doc-builder API
     saving.value = true;
     try {
-      const payload: any = {
+      const payload: Record<string, unknown> = {
         type: props.documentType,
         title: formData.title,
         reference: formData.refNumber,
@@ -657,8 +657,8 @@ async function handleSave() {
           ElMessage.error(response?.message || `Failed to create ${documentTypeTitle.value.toLowerCase()}`);
         }
       }
-    } catch (error: any) {
-      ElMessage.error(error?.message || 'An error occurred while saving');
+    } catch (error: unknown) {
+      ElMessage.error(error instanceof Error ? error.message : 'An error occurred while saving');
     } finally {
       saving.value = false;
     }
@@ -883,7 +883,7 @@ const exportPdf = async () => {
       html2canvas: { scale: 2, useCORS: true, logging: false },
       jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' },
       pagebreak: { mode: ['css', 'legacy'], before: '.proposal-print-page' }
-    } as any).from(scaleWrapper || printArea).save();
+    } as Record<string, unknown>).from(scaleWrapper || printArea).save();
 
     ElMessage.success('PDF exported successfully');
   } catch (err) {
@@ -932,7 +932,9 @@ const handleConvert = (targetType: string) => {
     // Apply converted data
     Object.assign(formData, converted);
     ElMessage.success(`Converted to ${targetType.replace('_', ' ')} — Ref: ${converted.refNumber}`);
-  }).catch(() => {});
+  }).catch((error: unknown) => {
+    console.error('Operation failed:', error);
+  });
 };
 
 const recalculateItemRate = (index: number) => {
@@ -1024,7 +1026,7 @@ const getContent = () => {
   return formData;
 };
 
-const setContent = (content: any) => {
+const setContent = (content: Record<string, unknown>) => {
   if (content && typeof content === 'object') {
      Object.assign(formData, content);
   }

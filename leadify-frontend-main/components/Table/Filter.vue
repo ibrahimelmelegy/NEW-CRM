@@ -48,13 +48,13 @@ if (globalFilterOptions.value) {
   const processedFilterOptions = Object.entries(globalFilterOptions.value).reduce(
     (acc, [key, value]) => {
       if (key === 'userId') {
-        acc[key] = Array.isArray(value) ? value.map((e: any) => Number(e)) : typeof value === 'string' ? [Number(value)] : [];
+        acc[key] = Array.isArray(value) ? value.map((e: string | number) => Number(e)) : typeof value === 'string' ? [Number(value)] : [];
       } else {
         acc[key] = Array.isArray(value) ? value : typeof value === 'string' ? [value] : value;
       }
       return acc;
     },
-    {} as Record<string, any>
+    {} as Record<string, string | string[] | number[]>
   );
 
   checkList.value = processedFilterOptions;
@@ -76,15 +76,15 @@ interface FilterCategory {
 
 const data = ref<FilterCategory[]>([]);
 data.value = props.filterOptions.length ? props.filterOptions : [];
-activeNames.value = data.value.map((_: any, index: number) => (index + 1).toString());
+activeNames.value = data.value.map((_: FilterCategory, index: number) => (index + 1).toString());
 
 const selectedFiltersCount = computed(() => {
-  return Object.values(checkList.value).reduce((acc: number, val: any) => {
+  return Object.values(checkList.value).reduce((acc: number, val: string | string[] | number[]) => {
     return acc + (Array.isArray(val) ? val.length : val ? 1 : 0);
   }, 0);
 });
 
-const handleInputChange = (value: any, type: string) => {
+const handleInputChange = (value: string | number | null, type: string) => {
   checkList.value[type] = value ? [Number(value)] : [];
 };
 
@@ -97,7 +97,7 @@ const resetFilters = () => {
   emit('reset', checkList.value);
 };
 
-const handleDateChange = (date: any, type: string) => {
+const handleDateChange = (_date: [Date, Date] | Date | null, _type: string) => {
   // Date range or single date logic
 };
 
@@ -109,7 +109,7 @@ onMounted(() => {
   // numberOfFilters.value = filterLength(checkList.value);
 });
 
-const handleCollapseChange = (val: any) => {
+const handleCollapseChange = (val: string[]) => {
   activeNames.value = val;
 };
 </script>

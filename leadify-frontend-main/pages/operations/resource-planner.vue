@@ -460,7 +460,7 @@ const saving = ref(false);
 const savingDay = ref(false);
 const showAllocateDialog = ref(false);
 const showDayEditDialog = ref(false);
-const editingAlloc = ref<any>(null);
+const editingAlloc = ref<Record<string, unknown> | null>(null);
 const allocSearch = ref('');
 
 const weekDays = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri'];
@@ -483,20 +483,20 @@ interface Resource {
   role: string;
   maxHoursPerDay: number;
   weeklyHours: number[];
-  allocations: any[];
+  allocations: Record<string, unknown>[];
 }
 
 const resources = ref<Resource[]>([]);
-const rawAllocations = ref<any[]>([]);
-const manpowerList = ref<any[]>([]);
-const projectList = ref<any[]>([]);
-const utilizationData = ref<any>(null);
+const rawAllocations = ref<Record<string, unknown>[]>([]);
+const manpowerList = ref<Record<string, unknown>[]>([]);
+const projectList = ref<Record<string, unknown>[]>([]);
+const utilizationData = ref<Record<string, unknown> | null>(null);
 
 // Day edit state
 const editingDay = ref<{
   resource: Resource | null;
   dayIndex: number;
-  allocations: any[];
+  allocations: Record<string, unknown>[];
   totalHours: number;
 }>({
   resource: null,
@@ -550,7 +550,7 @@ const projectSummaries = computed(() => {
     if (existing) {
       existing.hours += hours;
     } else {
-      const proj = alloc.project || projectList.value.find((p: any) => p.id === pid);
+      const proj = alloc.project || projectList.value.find((p: Record<string, unknown>) => p.id === pid);
       const budgetHours = ((proj?.resourceCount || 1) * (proj?.duration || 20) * 8) || 160;
       projMap.set(pid, {
         name: proj?.name || 'Unknown Project',
@@ -570,7 +570,7 @@ const projectSummaries = computed(() => {
 const filteredAllocations = computed(() => {
   if (!allocSearch.value) return rawAllocations.value;
   const q = allocSearch.value.toLowerCase();
-  return rawAllocations.value.filter((a: any) =>
+  return rawAllocations.value.filter((a: Record<string, unknown>) =>
     (a.manpower?.name || '').toLowerCase().includes(q) ||
     (a.project?.name || '').toLowerCase().includes(q)
   );
@@ -601,27 +601,27 @@ async function fetchData() {
     ]);
 
     // Process manpower resources
-    const mpList: any[] = manpowerRes?.success
-      ? (manpowerRes.body?.docs || manpowerRes.body || [])
+    const mpList: Record<string, unknown>[] = manpowerRes?.success
+      ? ((manpowerRes.body as Record<string, unknown>)?.docs || manpowerRes.body || []) as Record<string, unknown>[]
       : [];
     manpowerList.value = mpList;
 
     // Process projects
-    const projList: any[] = projectsRes?.success
-      ? (projectsRes.body?.docs || projectsRes.body || [])
+    const projList: Record<string, unknown>[] = projectsRes?.success
+      ? ((projectsRes.body as Record<string, unknown>)?.docs || projectsRes.body || []) as Record<string, unknown>[]
       : [];
     projectList.value = projList;
 
     // Process allocations
-    const allocList: any[] = allocationsRes?.success
-      ? (allocationsRes.body?.docs || allocationsRes.body || [])
+    const allocList: Record<string, unknown>[] = allocationsRes?.success
+      ? ((allocationsRes.body as Record<string, unknown>)?.docs || allocationsRes.body || []) as Record<string, unknown>[]
       : [];
     rawAllocations.value = allocList;
     pagination.total = allocationsRes?.body?.pagination?.totalItems ?? allocList.length;
 
     // Build resource heatmap from manpower + allocations
     const manpowerHoursMap = new Map<string, number[]>();
-    const manpowerAllocMap = new Map<string, any[]>();
+    const manpowerAllocMap = new Map<string, Record<string, unknown>[]>();
 
     for (const alloc of allocList) {
       const mpId = alloc.manpowerId;
@@ -634,7 +634,7 @@ async function fetchData() {
       manpowerAllocMap.get(mpId)!.push(alloc);
     }
 
-    resources.value = mpList.map((mp: any) => {
+    resources.value = mpList.map((mp: Record<string, unknown>) => {
       const id = mp.id;
       const weeklyHours = manpowerHoursMap.get(id) || [0, 0, 0, 0, 0];
       const roles = Array.isArray(mp.role) ? mp.role : [mp.role || 'Unassigned'];
@@ -705,7 +705,7 @@ function getUtilColor(res: Resource) {
 // --------------------------------------------------
 function editDayAllocation(res: Resource, dayIdx: number) {
   // Find all allocations for this resource, let user adjust estimatedWorkDays on each
-  const allocs = (res.allocations || []).map((a: any) => ({
+  const allocs = (res.allocations || []).map((a: Record<string, unknown>) => ({
     ...a,
     _editDays: a.estimatedWorkDays
   }));
@@ -723,7 +723,7 @@ function editDayAllocation(res: Resource, dayIdx: number) {
 
 // Watch allocation edits to update total hours preview
 watch(
-  () => editingDay.value.allocations.map((a: any) => a._editDays),
+  () => editingDay.value.allocations.map((a: Record<string, unknown>) => a._editDays),
   (newVals) => {
     const totalDays = newVals.reduce((s: number, d: number) => s + (d || 0), 0);
     const perDay = Math.min(8, Math.round((totalDays * 8) / 5));
@@ -753,7 +753,7 @@ async function applyDayEdit() {
       ElMessage.info(t('common.saved'));
     }
     showDayEditDialog.value = false;
-  } catch (err: any) {
+  } catch (err: unknown) {
     console.error('Failed to update allocation:', err);
     ElMessage.error(t('common.error'));
   } finally {
@@ -774,7 +774,7 @@ function openAllocateDialog() {
   showAllocateDialog.value = true;
 }
 
-function editAllocation(alloc: any) {
+function editAllocation(alloc: Record<string, unknown>) {
   editingAlloc.value = alloc;
   allocForm.manpowerId = alloc.manpowerId;
   allocForm.projectId = alloc.projectId;
@@ -820,7 +820,7 @@ async function saveAllocation() {
         if (viewMode.value === 'utilization') await fetchUtilizationReport();
       }
     }
-  } catch (err: any) {
+  } catch (err: unknown) {
     console.error('Allocation error:', err);
     ElMessage.error(t('common.error'));
   } finally {

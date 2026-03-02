@@ -120,7 +120,7 @@ const icon = computed(() => {
   }
 });
 
-const handleUploadSuccess: UploadProps['onSuccess'] = (response: any, uploadFile: any) => {
+const handleUploadSuccess: UploadProps['onSuccess'] = (response: string) => {
   if (!response) return;
   inputValue.value = response;
   srcValue.value = inputValue.value;
@@ -130,7 +130,7 @@ const handleRemove = () => {
   inputValue.value = '';
 };
 
-const handleUploadRequest = async (params: any) => {
+const handleUploadRequest = async (params: { file: File; data: Record<string, string> }) => {
   loading.value = true;
   const { result, errorData } = await handleUploadRequestApi(params, 'file', props.model);
   loading.value = false;
@@ -149,10 +149,10 @@ const handlePictureCardPreview = () => {
   dialogView.value = true;
 };
 
-const beforeAvatarUpload: UploadProps['beforeUpload'] = (rawFile: any) => {
+const beforeAvatarUpload: UploadProps['beforeUpload'] = (rawFile: File) => {
   if (!props.formats.includes(rawFile.type)) {
     ElMessage.error({
-      message: `acceptUpload ${props.formats.map((format: any) => format.split('/').pop()).join(' , ')}`
+      message: `acceptUpload ${props.formats.map((format: string) => format.split('/').pop()).join(' , ')}`
     });
     return false;
   } else if (rawFile.size / 1024 / 1024 > props.sizeInMb) {

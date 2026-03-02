@@ -132,10 +132,10 @@ interface ColumnDef {
 }
 
 interface Props {
-  data: any[];
+  data: Record<string, unknown>[];
   columns: ColumnDef[];
   chartType: string;
-  chartOption: Record<string, any>;
+  chartOption: Record<string, unknown>;
   loading: boolean;
   summary?: ReportSummary;
   totalCount?: number;
@@ -179,7 +179,7 @@ function handleExport(format: string) {
   emit('export', format);
 }
 
-function handleSortChange(payload: any) {
+function handleSortChange(payload: { prop: string; order: string }) {
   if (payload.prop && payload.order) {
     sortField.value = payload.prop;
     sortOrder.value = payload.order === 'ascending' ? 'ASC' : 'DESC';
@@ -195,7 +195,7 @@ function getFieldLabel(fieldName: string): string {
   return fieldName;
 }
 
-function formatDate(value: any): string {
+function formatDate(value: string | number | Date): string {
   if (!value) return '-';
   try {
     return new Date(value).toLocaleDateString();
@@ -204,7 +204,7 @@ function formatDate(value: any): string {
   }
 }
 
-function formatNumber(value: any): string {
+function formatNumber(value: string | number | null | undefined): string {
   if (value === null || value === undefined) return '-';
   const num = Number(value);
   if (isNaN(num)) return String(value);

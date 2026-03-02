@@ -963,7 +963,7 @@ async function loadData() {
   try {
     const res = await useApiFetch('documents');
     if (res.success && Array.isArray(res.body)) {
-      assets.value = res.body as any;
+      assets.value = res.body as Asset[];
     } else {
       assets.value = assetsFallback;
     }

@@ -277,9 +277,25 @@ const detailBaseUrl = computed(() => config.value.detailPath);
 
 // Send dialog
 const showSendDialog = ref(false);
-const sendRow = ref<any>(null);
+interface DocumentRow {
+  id: string;
+  title: string;
+  reference: string;
+  clientName?: string;
+  clientCompany?: string;
+  clientEmail?: string;
+  status: string;
+  total?: number;
+  currency?: string;
+  createdAt: string;
+  type: string;
+  content?: unknown;
+  notes?: string;
+}
 
-function openSendDialog(row: any) {
+const sendRow = ref<DocumentRow | null>(null);
+
+function openSendDialog(row: DocumentRow) {
   sendRow.value = row;
   showSendDialog.value = true;
 }
@@ -356,7 +372,7 @@ function formatDate(d: string) {
 
 // Data fetching
 async function loadData() {
-  const params: Record<string, any> = {
+  const params: Record<string, string | number> = {
     type: props.documentType,
     page: currentPage.value,
     limit: pageSize.value,
@@ -395,7 +411,7 @@ function handleSort({ prop, order }: { prop: string; order: string }) {
   loadData();
 }
 
-async function handleStatusChange(row: any, newStatus: string) {
+async function handleStatusChange(row: DocumentRow, newStatus: string) {
   try {
     let reason: string | undefined;
     if (newStatus === 'REJECTED') {
@@ -404,7 +420,7 @@ async function handleStatusChange(row: any, newStatus: string) {
         confirmButtonText: 'Reject',
         cancelButtonText: 'Cancel'
       });
-      reason = (result as any).value;
+      reason = (result as { value: string }).value;
     }
     const response = await changeStatus(row.id, newStatus, reason);
     if (response?.success) {
@@ -416,7 +432,7 @@ async function handleStatusChange(row: any, newStatus: string) {
   } catch { /* cancelled */ }
 }
 
-async function handleDelete(row: any) {
+async function handleDelete(row: DocumentRow) {
   try {
     await ElMessageBox.confirm(`Delete "${row.title}"? This will archive the document.`, 'Delete', { type: 'warning' });
     const response = await deleteDocument(row.id);
@@ -429,7 +445,7 @@ async function handleDelete(row: any) {
   } catch { /* cancelled */ }
 }
 
-async function handleDuplicate(row: any) {
+async function handleDuplicate(row: DocumentRow) {
   try {
     await ElMessageBox.confirm(`Duplicate "${row.title}"?`, 'Duplicate Document', { confirmButtonText: 'Duplicate' });
     const response = await createDocument({
@@ -441,7 +457,7 @@ async function handleDuplicate(row: any) {
       clientEmail: row.clientEmail,
       currency: row.currency,
       notes: row.notes
-    } as any);
+    } as Record<string, unknown>);
     if (response?.success) {
       ElMessage.success('Document duplicated');
       loadData();
@@ -449,7 +465,7 @@ async function handleDuplicate(row: any) {
   } catch { /* cancelled */ }
 }
 
-async function handleExportPdf(row: any) {
+async function handleExportPdf(row: DocumentRow) {
   try {
     ElMessage.info('Generating PDF...');
     const response = await generatePdf(row.id);
@@ -491,11 +507,11 @@ const mobileStatusFilters = [
 const mobileFilteredDocs = computed(() => {
   let data = documents.value || [];
   if (mobileStatusFilter.value !== 'ALL') {
-    data = data.filter((d: any) => d.status === mobileStatusFilter.value);
+    data = data.filter((d: Record<string, unknown>) => d.status === mobileStatusFilter.value);
   }
   if (!mobileSearch.value) return data;
   const q = mobileSearch.value.toLowerCase();
-  return data.filter((d: any) => {
+  return data.filter((d: Record<string, unknown>) => {
     const title = (d.title || '').toLowerCase();
     const ref = (d.reference || '').toLowerCase();
     const client = (d.clientName || '').toLowerCase();
@@ -513,7 +529,7 @@ async function handleMobileRefresh() {
   }
 }
 
-function handleMobileSwipe(name: string, doc: any) {
+function handleMobileSwipe(name: string, doc: DocumentRow) {
   vibrate();
   switch (name) {
     case 'view':

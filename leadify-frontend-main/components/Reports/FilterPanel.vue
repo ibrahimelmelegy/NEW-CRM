@@ -262,7 +262,7 @@ function isNoValueOperator(operator: string): boolean {
 function formatFilterValue(filter: ReportFilter): string {
   if (isNoValueOperator(filter.operator)) return '';
   if (Array.isArray(filter.value)) {
-    return (filter.value as any[]).join(' - ');
+    return (filter.value as (string | number)[]).join(' - ');
   }
   return String(filter.value ?? '');
 }
@@ -303,16 +303,16 @@ function updateFilterField(index: number, fieldName: string) {
   emit('update:modelValue', updated);
 }
 
-function updateFilterProp(index: number, prop: string, value: any) {
+function updateFilterProp(index: number, prop: string, value: string | number | string[] | null) {
   const updated = [...props.modelValue];
   updated[index] = { ...updated[index]!, [prop]: value };
   emit('update:modelValue', updated);
 }
 
-function updateBetweenValue(index: number, pos: number, value: any) {
+function updateBetweenValue(index: number, pos: number, value: string | number | null) {
   const updated = [...props.modelValue];
   const currentVal = updated[index]!.value;
-  const current: any[] = Array.isArray(currentVal) ? [...currentVal] : ['', ''];
+  const current: (string | number | null)[] = Array.isArray(currentVal) ? [...currentVal] : ['', ''];
   current[pos] = value;
   updated[index] = { ...updated[index]!, value: current };
   emit('update:modelValue', updated);

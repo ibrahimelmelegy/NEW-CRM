@@ -147,7 +147,7 @@ const loading = ref(true);
 const saving = ref(false);
 const deleting = ref(false);
 const movementSaving = ref(false);
-const products = ref<any[]>([]);
+const products = ref<Record<string, unknown>[]>([]);
 const categories = ref<string[]>([]);
 const search = ref('');
 const categoryFilter = ref('');
@@ -158,7 +158,7 @@ const showMovementDialog = ref(false);
 const deletePopup = ref(false);
 const deleteId = ref<number | null>(null);
 const editingId = ref<number | null>(null);
-const selectedProduct = ref<any>(null);
+const selectedProduct = ref<Record<string, unknown> | null>(null);
 
 const form = reactive({ name: '', sku: '', quantity: 0, price: 0, category: '', warehouse: '', reorderPoint: 5, description: '' });
 const movementForm = reactive({ productId: null as number | null, type: 'IN', quantity: 1, notes: '' });
@@ -196,8 +196,8 @@ async function loadProducts() {
     if (categoryFilter.value) params.category = categoryFilter.value;
     const { body, success } = await fetchProducts(params);
     if (success && body) {
-      products.value = (body as any).docs || [];
-      pagination.value = (body as any).pagination || pagination.value;
+      products.value = (body as Record<string, unknown>).docs as Record<string, unknown>[] || [];
+      pagination.value = (body as Record<string, unknown>).pagination as typeof pagination.value || pagination.value;
     }
   } finally {
     loading.value = false;
@@ -209,7 +209,7 @@ async function loadCategories() {
   if (success && body) categories.value = body as string[];
 }
 
-function handleRowClick(row: any) {
+function handleRowClick(row: Record<string, unknown>) {
   editProduct(row);
 }
 
@@ -219,7 +219,7 @@ function openForm() {
   showForm.value = true;
 }
 
-function editProduct(row: any) {
+function editProduct(row: Record<string, unknown>) {
   editingId.value = row.id;
   Object.assign(form, {
     name: row.name,

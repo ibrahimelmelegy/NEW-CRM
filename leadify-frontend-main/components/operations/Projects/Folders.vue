@@ -42,15 +42,15 @@ interface Props {
     refs: string[];
   };
   editMode?: boolean;
-  project: Record<string, any>;
+  project: Record<string, unknown>;
 }
 
 const props = defineProps<Props>();
 
 // Reactive state
 const isSubmitting = ref(false);
-const childRefs = ref<Record<string, any>>({});
-const currentFolder = ref<any>({
+const childRefs = ref<Record<string, unknown>>({});
+const currentFolder = ref<{ id: string; name: string; refs: string[] }>({
   id: '',
   name: '',
   refs: []
@@ -104,24 +104,25 @@ function handleCancel() {
   emit('onSubmit');
 }
 
-function formattedBasicInfo(values: any) {
+function formattedBasicInfo(values: Record<string, unknown> | undefined) {
   if (!values) return {};
+  const assignedUsers = values?.assignedUsers as Array<{ id: number }> | undefined;
   return cleanObject({
     name: values?.name,
     type: values?.type,
     category: values?.category,
     clientId: values?.clientId,
-    startDate: typeof values?.startDate === 'string' ? values?.startDate : values?.startDate?.toISOString(),
-    endDate: typeof values?.endDate === 'string' ? values?.endDate : values?.endDate?.toISOString(),
+    startDate: typeof values?.startDate === 'string' ? values?.startDate : (values?.startDate as Date)?.toISOString(),
+    endDate: typeof values?.endDate === 'string' ? values?.endDate : (values?.endDate as Date)?.toISOString(),
     duration: Number(values?.duration),
-    assignedUsersIds: values?.assignedUsers?.map((el: any) => el?.id),
+    assignedUsersIds: assignedUsers?.map((el: { id: number }) => el?.id),
     status: values?.status,
     description: values?.description,
     cancelledReason: values?.cancelReason
   });
 }
 
-function formattedEtimadProjectInfo(values: any) {
+function formattedEtimadProjectInfo(values: Record<string, unknown> | undefined) {
   if (!values) return {};
   return cleanObject({
     abbreviation: values?.abbreviation,
@@ -138,16 +139,18 @@ function formattedEtimadProjectInfo(values: any) {
   });
 }
 
-async function onSubmit(values: any) {
+async function onSubmit(values: Record<string, unknown>) {
   try {
     let data;
+    const files = values?.file as Array<{ response: string }> | undefined;
+    const projectFiles = (props?.project?.files || []) as Array<{ name: string; refs: string[] }>;
     if (props.editMode && props.folder) {
       // Replace existing folder
-      data = props.project.files.map((file: any, index: number) => {
+      data = projectFiles.map((file: { name: string; refs: string[] }) => {
         if (file.name === props.folder?.name) {
           return {
             name: values?.name,
-            refs: values?.file?.map((el: any) => el?.response)
+            refs: files?.map((el: { response: string }) => el?.response)
           };
         }
         return file;
@@ -155,16 +158,16 @@ async function onSubmit(values: any) {
     } else {
       // Add new folder
       data = [
-        ...(props?.project?.files || []),
+        ...projectFiles,
         {
           name: values?.name,
-          refs: values?.file?.map((el: any) => el?.response)
+          refs: files?.map((el: { response: string }) => el?.response)
         }
       ];
     }
 
-    const basicInfo = formattedBasicInfo(props?.project);
-    const etimadInfo = formattedEtimadProjectInfo(props?.project?.etimadProject);
+    const basicInfo = formattedBasicInfo(props?.project as Record<string, unknown>);
+    const etimadInfo = formattedEtimadProjectInfo((props?.project as Record<string, unknown>)?.etimadProject as Record<string, unknown> | undefined);
 
     const projectInfo = {
       basicInfo: {

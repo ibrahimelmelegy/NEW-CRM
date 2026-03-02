@@ -78,7 +78,7 @@ async function exportToPDF() {
   const [{ default: jsPDF }, { default: autoTable }] = await Promise.all([import('jspdf'), import('jspdf-autotable')]);
   try {
     // Helper function to check if we need a new page
-    const checkNewPage = (doc: any, y: number, minSpace: number = 40) => {
+    const checkNewPage = (doc: { internal: { pageSize: { height: number } }; addPage: () => void }, y: number, minSpace: number = 40) => {
       if (y > doc.internal.pageSize.height - minSpace) {
         doc.addPage();
         return 20; // Reset Y to top of new page with margin
@@ -127,12 +127,12 @@ async function exportToPDF() {
     doc.setFontSize(20);
     doc.setFont('helvetica', 'bold'); // Gilroy is not a default font in jsPDF
     doc.setTextColor(50, 31, 107);
-    doc.text('Total Material Cost', 12, (doc as any).lastAutoTable.finalY + 20);
+    doc.text('Total Material Cost', 12, (doc as unknown as Record<string, { finalY: number }>).lastAutoTable.finalY + 20);
 
     autoTable(doc, {
-      startY: (doc as any).lastAutoTable.finalY + 25, // Position under title
+      startY: (doc as unknown as Record<string, { finalY: number }>).lastAutoTable.finalY + 25, // Position under title
       head: [['Description', 'Quantity', 'Unit Price (SAR)', 'Total Cost']],
-      body: props.project?.materials.map((item: any) => [item?.description, item?.quantity, item?.unitPrice, item?.totalMaterialCost]),
+      body: props.project?.materials.map((item: { description?: string; quantity?: number; unitPrice?: number; totalMaterialCost?: number }) => [item?.description, item?.quantity, item?.unitPrice, item?.totalMaterialCost]),
       headStyles: {
         fillColor: [248, 247, 250], // Background color as rgba(231, 230, 233, 1)
         textColor: [101, 101, 101], // Ensuring text is visible
@@ -154,13 +154,13 @@ async function exportToPDF() {
     doc.setFontSize(20);
     doc.setFont('helvetica', 'bold'); // Gilroy is not a default font in jsPDF
     doc.setTextColor(50, 31, 107);
-    doc.text('Total Manpower Cost', 12, (doc as any).lastAutoTable.finalY + 20);
+    doc.text('Total Manpower Cost', 12, (doc as unknown as Record<string, { finalY: number }>).lastAutoTable.finalY + 20);
 
     // Table 2: Manpower Costs
     autoTable(doc, {
-      startY: (doc as any).lastAutoTable.finalY + 25, // Ensure it follows the previous table
+      startY: (doc as unknown as Record<string, { finalY: number }>).lastAutoTable.finalY + 25, // Ensure it follows the previous table
       head: [['Name', 'Estimated Work Days', 'Duration Cost', 'Total Cost']],
-      body: props.project?.projectManpowerResources.map((worker: any) => [
+      body: props.project?.projectManpowerResources.map((worker: { manpower?: { name?: string }; estimatedWorkDays?: number; durationCost?: number; totalCost?: number }) => [
         worker?.manpower?.name,
         worker?.estimatedWorkDays,
         worker?.durationCost,
@@ -187,12 +187,12 @@ async function exportToPDF() {
     doc.setFontSize(20);
     doc.setFont('helvetica', 'bold'); // Gilroy is not a default font in jsPDF
     doc.setTextColor(50, 31, 107);
-    doc.text('Total Assets Cost', 12, (doc as any).lastAutoTable.finalY + 20);
+    doc.text('Total Assets Cost', 12, (doc as unknown as Record<string, { finalY: number }>).lastAutoTable.finalY + 20);
     // Table 3: Assets Costs
     autoTable(doc, {
-      startY: (doc as any).lastAutoTable.finalY + 25, // Ensures spacing between tables
+      startY: (doc as unknown as Record<string, { finalY: number }>).lastAutoTable.finalY + 25, // Ensures spacing between tables
       head: [['Name', 'Buy Price (SAR)', 'Rent Price (SAR)']],
-      body: props.project?.projectAssets.map((asset: any) => [asset?.asset?.name, asset?.buyPrice, asset?.rentPrice]),
+      body: props.project?.projectAssets.map((asset: { asset?: { name?: string }; buyPrice?: number; rentPrice?: number }) => [asset?.asset?.name, asset?.buyPrice, asset?.rentPrice]),
       headStyles: {
         fillColor: [248, 247, 250], // Background color as rgba(231, 230, 233, 1)
         textColor: [101, 101, 101], // Ensuring text is visible
@@ -214,7 +214,7 @@ async function exportToPDF() {
     doc.setFontSize(20);
     doc.setFont('helvetica', 'bold'); // Gilroy is not a default font in jsPDF
     doc.setTextColor(50, 31, 107);
-    doc.text('Total Costs', 12, (doc as any).lastAutoTable.finalY + 20);
+    doc.text('Total Costs', 12, (doc as unknown as Record<string, { finalY: number }>).lastAutoTable.finalY + 20);
     const summaryCards = [
       {
         label: 'Total Materials Cost',
@@ -244,7 +244,7 @@ async function exportToPDF() {
     const cardSpacingY = 8;
     const startX = 12;
     let x = startX;
-    let yCards = (doc as any).lastAutoTable.finalY + 25;
+    let yCards = (doc as unknown as Record<string, { finalY: number }>).lastAutoTable.finalY + 25;
     const cardsPerRow = 2;
 
     summaryCards.forEach((card, idx) => {

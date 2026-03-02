@@ -7,22 +7,29 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { createPinia, setActivePinia } from 'pinia';
 
-// Track event handlers registered on the mock socket
-let socketHandlers: Record<string, (...args: any[]) => void> = {};
-const mockSocket = {
-  connected: false,
-  id: 'mock-socket-id',
-  on: vi.fn((event: string, handler: (...args: any[]) => void) => {
-    socketHandlers[event] = handler;
-  }),
-  off: vi.fn(),
-  emit: vi.fn(),
-  disconnect: vi.fn()
-};
+// Hoist mock variables so vi.mock factory can reference them
+const { mockSocket, mockIo, socketHandlers } = vi.hoisted(() => {
+  const handlers: Record<string, (...args: unknown[]) => void> = {};
+  const socket = {
+    connected: false,
+    id: 'mock-socket-id',
+    on: vi.fn((event: string, handler: (...args: unknown[]) => void) => {
+      handlers[event] = handler;
+    }),
+    off: vi.fn(),
+    emit: vi.fn(),
+    disconnect: vi.fn()
+  };
+  return {
+    mockSocket: socket,
+    mockIo: vi.fn(() => socket),
+    socketHandlers: handlers
+  };
+});
 
 // Mock socket.io-client
 vi.mock('socket.io-client', () => ({
-  io: vi.fn(() => mockSocket)
+  io: mockIo
 }));
 
 // Mock useApiFetch globally
@@ -41,7 +48,10 @@ describe('useSocketStore', () => {
     setActivePinia(createPinia());
     store = useSocketStore();
     vi.clearAllMocks();
-    socketHandlers = {};
+    // Clear handlers
+    for (const key of Object.keys(socketHandlers)) {
+      delete socketHandlers[key];
+    }
     mockSocket.connected = false;
   });
 
@@ -63,8 +73,7 @@ describe('useSocketStore', () => {
       store.connect();
 
       // Verify socket.io-client was called
-      const { io } = require('socket.io-client');
-      expect(io).toHaveBeenCalled();
+      expect(mockIo).toHaveBeenCalled();
 
       // Verify event handlers were registered
       expect(mockSocket.on).toHaveBeenCalledWith('connect', expect.any(Function));

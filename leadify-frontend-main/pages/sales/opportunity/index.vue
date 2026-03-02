@@ -151,7 +151,23 @@ const exportColumns = [
 const exportData = computed(() => table.data);
 
 // Bulk actions
-const selectedRows = ref<any[]>([]);
+interface OppRow {
+  id: string;
+  name?: string;
+  stage?: string;
+  estimatedValue?: string | number;
+  profit?: string | number;
+  expectedCloseDate?: string;
+  priority?: string;
+  assign?: string;
+  createdAt?: string;
+  leadId?: string;
+  status?: string;
+  winProbability?: number;
+  weightedValue?: number;
+}
+
+const selectedRows = ref<OppRow[]>([]);
 async function handleBulkDelete() {
   if (!selectedRows.value.length) return;
   try {
@@ -161,8 +177,8 @@ async function handleBulkDelete() {
       { type: 'warning', confirmButtonText: t('common.delete'), cancelButtonText: t('common.cancel') }
     );
     loadingAction.value = true;
-    const ids = selectedRows.value.map((r: any) => r.id);
-    await Promise.all(ids.map((id: any) => useApiFetch(`opportunity/${id}`, 'DELETE')));
+    const ids = selectedRows.value.map((r) => r.id);
+    await Promise.all(ids.map((id) => useApiFetch(`opportunity/${id}`, 'DELETE')));
     const res = await useTableFilter('opportunity');
     table.data = res.formattedData;
     selectedRows.value = [];
@@ -177,7 +193,7 @@ async function handleBulkExport() {
   if (!selectedRows.value.length) return;
   try {
     loadingAction.value = true;
-    const ids = selectedRows.value.map((r: any) => r.id);
+    const ids = selectedRows.value.map((r) => r.id);
     await useApiFetch('opportunity/export', 'POST', { ids });
     ElNotification({ type: 'success', title: t('common.success'), message: 'Export sent to your email' });
     selectedRows.value = [];
@@ -209,19 +225,19 @@ const opportunityPresent = computed(() => [
   }
 ]);
 
-async function setPresent(pre: any) {
+async function setPresent(pre: { value: string }) {
   present.value = pre.value;
 }
-async function setReasons(pre: any) {
+async function setReasons(pre: { value: string }) {
   reasons.value = pre.value;
 }
 
-async function changeStage(id: any, newStage: any) {
-  const opportunity: any = await getOpportunity(id);
+async function changeStage(id: string, newStage: string) {
+  const opportunity = await getOpportunity(id);
   loadingAction.value = true;
   try {
     await updateOpportunity({ stage: newStage }, id);
-  } catch (e: any) {
+  } catch (e: unknown) {
     ElMessage.error(t('common.error'));
   } finally {
     const response = await useTableFilter('opportunity');
@@ -231,11 +247,11 @@ async function changeStage(id: any, newStage: any) {
 }
 
 async function editWithResone() {
-  const opportunity: any = await getOpportunity(select.value?.id);
+  const opportunity = await getOpportunity(select.value?.id);
   loadingAction.value = true;
   try {
     await updateOpportunity({ stage: select.value?.status, reasonOfLose: reasons.value }, select.value?.id);
-  } catch (e: any) {
+  } catch (e: unknown) {
     ElMessage.error(t('common.error'));
   } finally {
     const response = await useTableFilter('opportunity');
@@ -244,14 +260,14 @@ async function editWithResone() {
   }
 }
 
-async function submitForm(values: any) {
+async function submitForm(values: { id: string; status: string }) {
   try {
     if (values?.status === 'WON' || values?.status === 'LOST') {
       wonPopup.value = true;
       select.value = values;
     }
     if (values?.status !== 'WON' && values?.status !== 'LOST') changeStage(values?.id, values?.status);
-  } catch (e: any) {
+  } catch (e: unknown) {
     ElMessage.error(t('common.error'));
   }
 }
@@ -363,11 +379,11 @@ const table = reactive({
 const [response, usersResponse] = await Promise.all([useTableFilter('opportunity'), useApiFetch('users')]);
 table.data = response.formattedData;
 
-function handleRowClick(val: any) {
+function handleRowClick(val: OppRow) {
   router.push(`/sales/opportunity/${val.id}`);
 }
 
-const mappedUsers = usersResponse?.body?.docs?.map((e: any) => ({
+const mappedUsers = usersResponse?.body?.docs?.map((e: Record<string, unknown>) => ({
   label: e.name,
   value: e.id
 })) || [];
@@ -420,21 +436,21 @@ const advancedSearchFields = [
   { key: 'createdAt', label: t('opportunities.table.created'), type: 'date' }
 ];
 
-async function handleApplyView(view: any) {
+async function handleApplyView(view: { filters?: Record<string, unknown> }) {
   if (view?.filters) {
     const res = await useTableFilter('opportunity', view.filters);
     table.data = res.formattedData;
   }
 }
 
-async function handleAdvancedFilter(filterPayload: any) {
+async function handleAdvancedFilter(filterPayload: Record<string, unknown>) {
   try {
     const res = await useApiFetch('search/advanced/opportunity', 'POST', filterPayload);
     if (res?.success && res?.body) {
-      const data = res.body as any;
-      table.data = data.docs || data || [];
+      const data = res.body as Record<string, unknown>;
+      table.data = (data.docs || data || []) as Opportunities[];
     }
-  } catch (e: any) {
+  } catch (e: unknown) {
     ElMessage.error(t('common.error'));
   }
 }
@@ -455,20 +471,20 @@ const mobileStageFilters = computed(() => {
   const data = table.data || [];
   return [
     { value: 'ALL', label: t('common.all'), color: '#f59e0b', count: data.length },
-    { value: 'DISCOVERY', label: 'Discovery', color: '#3b82f6', count: data.filter((o: any) => o.stage === 'DISCOVERY').length },
-    { value: 'PROPOSAL', label: 'Proposal', color: '#8b5cf6', count: data.filter((o: any) => o.stage === 'PROPOSAL').length },
-    { value: 'NEGOTIATION', label: 'Negotiation', color: '#f59e0b', count: data.filter((o: any) => o.stage === 'NEGOTIATION').length },
-    { value: 'WON', label: 'Won', color: '#10b981', count: data.filter((o: any) => o.stage === 'WON').length },
-    { value: 'LOST', label: 'Lost', color: '#ef4444', count: data.filter((o: any) => o.stage === 'LOST').length }
+    { value: 'DISCOVERY', label: 'Discovery', color: '#3b82f6', count: data.filter((o: OppRow) => o.stage === 'DISCOVERY').length },
+    { value: 'PROPOSAL', label: 'Proposal', color: '#8b5cf6', count: data.filter((o: OppRow) => o.stage === 'PROPOSAL').length },
+    { value: 'NEGOTIATION', label: 'Negotiation', color: '#f59e0b', count: data.filter((o: OppRow) => o.stage === 'NEGOTIATION').length },
+    { value: 'WON', label: 'Won', color: '#10b981', count: data.filter((o: OppRow) => o.stage === 'WON').length },
+    { value: 'LOST', label: 'Lost', color: '#ef4444', count: data.filter((o: OppRow) => o.stage === 'LOST').length }
   ];
 });
 
 const mobileFilteredData = computed(() => {
   let data = table.data || [];
-  if (mobileStageFilter.value !== 'ALL') data = data.filter((o: any) => o.stage === mobileStageFilter.value);
+  if (mobileStageFilter.value !== 'ALL') data = data.filter((o: OppRow) => o.stage === mobileStageFilter.value);
   if (!mobileSearch.value) return data;
   const q = mobileSearch.value.toLowerCase();
-  return data.filter((o: any) => {
+  return data.filter((o: OppRow) => {
     const name = (o.name || '').toLowerCase();
     const assign = (o.assign || '').toLowerCase();
     return name.includes(q) || assign.includes(q);
@@ -484,13 +500,13 @@ async function handleMobileRefresh() {
   } finally { mobileRefreshing.value = false; }
 }
 
-function getMobileLeftActions(_opp: any) {
+function getMobileLeftActions(_opp: OppRow) {
   const actions = [{ name: 'view', label: t('common.view'), icon: 'ph:eye-bold', color: '#f59e0b' }];
   if (hasPermission('EDIT_OPPORTUNITIES')) actions.push({ name: 'edit', label: t('common.edit'), icon: 'ph:pencil-simple-bold', color: '#F59E0B' });
   return actions;
 }
 
-function handleMobileSwipe(name: string, opp: any) {
+function handleMobileSwipe(name: string, opp: OppRow) {
   vibrate();
   switch (name) {
     case 'kanban': navigateTo('/sales/opportunity/kanban'); break;

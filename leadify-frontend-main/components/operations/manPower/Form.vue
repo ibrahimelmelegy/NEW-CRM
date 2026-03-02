@@ -57,8 +57,8 @@ const formSchema = yup.object({
         .nullable()
         .test(
           'is-valid',
-          (message: any) => 'Invalid email',
-          (value: any) => !value || isEmailValidator(value)
+          (_message: string | object | undefined) => 'Invalid email',
+          (value: string | undefined) => !value || isEmailValidator(value)
         )
         .label('Email'),
     otherwise: () =>
@@ -69,8 +69,8 @@ const formSchema = yup.object({
         .required('At least one of email or phone number is required')
         .test(
           'is-valid',
-          (message: any) => 'Invalid email',
-          (value: any) => (value ? isEmailValidator(value) : new yup.ValidationError('Invalid value'))
+          (_message: string | object | undefined) => 'Invalid email',
+          (value: string | undefined) => (value ? isEmailValidator(value) : new yup.ValidationError('Invalid value'))
         )
         .label('Email')
   }),
@@ -80,9 +80,9 @@ const formSchema = yup.object({
       yup
         .number()
         .nullable() // Allows the value to be null
-        .transform((value: any, originalValue: any) => (originalValue === '' ? null : Number.isNaN(value) ? null : value))
+        .transform((value: number | null, originalValue: unknown) => (originalValue === '' ? null : Number.isNaN(value) ? null : value))
         .label('Phone Number')
-        .test('Phone number', 'Invalid Phone', function (value: any) {
+        .test('Phone number', 'Invalid Phone', function (value: number | null | undefined) {
           if (value === null || value === undefined) {
             return true;
           }
@@ -91,11 +91,11 @@ const formSchema = yup.object({
     otherwise: () =>
       yup
         .number()
-        .transform((value: any) => (Number.isNaN(value) ? null : value))
+        .transform((value: number | null) => (Number.isNaN(value) ? null : value))
         .nullable()
         .required('At least one of email or phone number is required')
         .label('Phone Number')
-        .test('Phone number', 'invalid Phone', function (value: any) {
+        .test('Phone number', 'invalid Phone', function (_value: number | null | undefined) {
           return !!validPhone.value;
         })
   }),
@@ -107,7 +107,7 @@ const formSchema = yup.object({
     .test(
       'is-valid-number',
       'Please enter a valid number.', // Custom error message
-      (value: any) => {
+      (value: string | null | undefined) => {
         if (!value) return true; // Allow empty input
         return /^\d*\.?\d*$/.test(value); // Check if value is a valid integer or float
       }
@@ -120,7 +120,7 @@ const formSchema = yup.object({
     .test(
       'is-valid-number',
       'Please enter a valid number.', // Custom error message
-      (value: any) => {
+      (value: string | null | undefined) => {
         if (!value) return true; // Allow empty input
         return /^\d*\.?\d*$/.test(value); // Check if value is a valid integer or float
       }
@@ -133,7 +133,7 @@ const formSchema = yup.object({
     .test(
       'is-valid-number',
       'Please enter a valid number.', // Custom error message
-      (value: any) => {
+      (value: string | null | undefined) => {
         if (!value) return true; // Allow empty input
         return /^\d*\.?\d*$/.test(value); // Check if value is a valid integer or float
       }
@@ -146,7 +146,7 @@ const formSchema = yup.object({
     .test(
       'is-valid-number',
       'Please enter a valid number.', // Custom error message
-      (value: any) => {
+      (value: string | null | undefined) => {
         if (!value) return true; // Allow empty input
         return /^\d*\.?\d*$/.test(value); // Check if value is a valid integer or float
       }
@@ -159,7 +159,7 @@ const formSchema = yup.object({
     .test(
       'is-valid-number',
       'Please enter a valid number.', // Custom error message
-      (value: any) => {
+      (value: string | null | undefined) => {
         if (!value) return true; // Allow empty input
         return /^\d*\.?\d*$/.test(value); // Check if value is a valid integer or float
       }
@@ -172,7 +172,7 @@ const formSchema = yup.object({
     .test(
       'is-valid-number',
       'Please enter a valid number.', // Custom error message
-      (value: any) => {
+      (value: string | null | undefined) => {
         if (!value) return true; // Allow empty input
         return /^\d*\.?\d*$/.test(value); // Check if value is a valid integer or float
       }
@@ -185,7 +185,7 @@ const formSchema = yup.object({
     .test(
       'is-valid-number',
       'Please enter a valid number.', // Custom error message
-      (value: any) => {
+      (value: string | null | undefined) => {
         if (!value) return true; // Allow empty input
         return /^\d*\.?\d*$/.test(value); // Check if value is a valid integer or float
       }
@@ -198,7 +198,7 @@ const formSchema = yup.object({
     .test(
       'is-valid-number',
       'Please enter a valid number.', // Custom error message
-      (value: any) => {
+      (value: string | null | undefined) => {
         if (!value) return true; // Allow empty input
         return /^\d*\.?\d*$/.test(value); // Check if value is a valid integer or float
       }
@@ -211,7 +211,7 @@ const formSchema = yup.object({
     .test(
       'is-valid-number',
       'Please enter a valid number.', // Custom error message
-      (value: any) => {
+      (value: string | null | undefined) => {
         if (!value) return true; // Allow empty input
         return /^\d*\.?\d*$/.test(value); // Check if value is a valid integer or float
       }
@@ -224,7 +224,7 @@ const formSchema = yup.object({
     .test(
       'is-valid-number',
       'Please enter a valid number.', // Custom error message
-      (value: any) => {
+      (value: string | null | undefined) => {
         if (!value) return true; // Allow empty input
         return /^\d*\.?\d*$/.test(value); // Check if value is a valid integer or float
       }
@@ -238,7 +238,7 @@ const { handleSubmit } = useForm({
   validationSchema: formSchema
 });
 
-const onSubmit = handleSubmit((values: any, actions: any) => {
+const onSubmit = handleSubmit((values: Record<string, unknown>) => {
   emit('submit', cleanObject(values));
 });
 

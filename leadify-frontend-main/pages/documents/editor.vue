@@ -531,7 +531,7 @@ const form = ref({
 
 // --- Computed ---
 const currentTypeConfig = computed<DocTypeConfig>(() => {
-  return documentTypes.find(dt => dt.type === selectedType.value) || (documentTypes[0] as any);
+  return documentTypes.find(dt => dt.type === selectedType.value) || documentTypes[0]!;
 });
 
 const computedTotals = computed(() => {
@@ -643,12 +643,12 @@ async function loadTemplates(type: string) {
   try {
     const { body, success } = await useApiFetch(`document-templates?type=${type.toUpperCase()}&limit=50`);
     if (success && body) {
-      const data = body as any;
-      templates.value = (data.docs || data || []).map((t: any) => ({
-        id: t.id,
-        name: t.name,
-        type: t.type,
-        isDefault: t.isDefault || false
+      const data = body as Record<string, unknown>;
+      templates.value = ((data.docs || data || []) as Record<string, unknown>[]).map((t: Record<string, unknown>) => ({
+        id: t.id as string,
+        name: t.name as string,
+        type: t.type as string,
+        isDefault: (t.isDefault as boolean) || false
       }));
     }
   } catch {
@@ -703,8 +703,8 @@ async function onDealChange() {
     try {
       const { body, success } = await useApiFetch(`sales-orders?dealId=${form.value.dealId}&limit=100`);
       if (success && body) {
-        const data = body as any;
-        salesOrders.value = (data.docs || data || []).map((o: any) => ({ id: o.id, orderNumber: o.orderNumber }));
+        const data = body as Record<string, unknown>;
+        salesOrders.value = ((data.docs || data || []) as Record<string, unknown>[]).map((o: Record<string, unknown>) => ({ id: o.id as string, orderNumber: o.orderNumber as string }));
       }
     } catch {
       /* silent */
@@ -765,7 +765,7 @@ async function handleSaveDraft() {
   if (!validate()) return;
   saving.value = true;
   try {
-    let result: any = null;
+    let result: Record<string, unknown> | null = null;
     switch (selectedType.value) {
       case 'INVOICE':
       case 'PROFORMA_INVOICE':
@@ -797,7 +797,7 @@ async function handleSaveDraft() {
             })),
           totalAmount: computedTotals.value.total
         };
-        const poRes = await useApiFetch('procurement', 'POST', poPayload as any);
+        const poRes = await useApiFetch('procurement', 'POST', poPayload);
         if (poRes.success) {
           ElNotification({ type: 'success', title: 'Success', message: 'Purchase order created successfully' });
           router.push('/procurement/purchase-orders');
@@ -835,7 +835,7 @@ async function handleSaveDraft() {
           carrier: form.value.carrier || undefined,
           shippedDate: form.value.shippedDate ? new Date(form.value.shippedDate).toISOString() : undefined,
           notes: form.value.notes || undefined
-        } as any);
+        });
         if (dnRes.success) {
           ElNotification({ type: 'success', title: 'Success', message: 'Delivery note created successfully' });
           router.push(`/sales/sales-orders/${form.value.salesOrderId}`);
@@ -906,19 +906,19 @@ async function loadInitialData() {
   ]);
 
   if (dealRes.success && dealRes.body) {
-    const data = dealRes.body as any;
-    deals.value = (data.docs || data || []).map((d: any) => ({ id: d.id, name: d.name }));
+    const data = dealRes.body as Record<string, unknown>;
+    deals.value = ((data.docs || data || []) as Record<string, unknown>[]).map((d: Record<string, unknown>) => ({ id: d.id as string, name: d.name as string }));
   }
   if (clientRes.success && clientRes.body) {
-    const data = clientRes.body as any;
-    clients.value = (data.docs || data || []).map((c: any) => ({ id: c.id, name: c.name, companyName: c.companyName }));
+    const data = clientRes.body as Record<string, unknown>;
+    clients.value = ((data.docs || data || []) as Record<string, unknown>[]).map((c: Record<string, unknown>) => ({ id: c.id as string, name: c.name as string | undefined, companyName: c.companyName as string | undefined }));
   }
   if (vendorRes.success && vendorRes.body) {
-    vendors.value = ((vendorRes.body as any[]) || []).map((v: any) => ({ id: v.id, name: v.name, companyName: v.companyName }));
+    vendors.value = ((vendorRes.body as Record<string, unknown>[]) || []).map((v: Record<string, unknown>) => ({ id: v.id as string, name: v.name as string | undefined, companyName: v.companyName as string | undefined }));
   }
   if (projectRes.success && projectRes.body) {
-    const data = projectRes.body as any;
-    projects.value = (data.docs || data || []).map((p: any) => ({ id: p.id, name: p.name }));
+    const data = projectRes.body as Record<string, unknown>;
+    projects.value = ((data.docs || data || []) as Record<string, unknown>[]).map((p: Record<string, unknown>) => ({ id: p.id as string, name: p.name as string }));
   }
 }
 
@@ -926,11 +926,11 @@ async function loadInvoices() {
   try {
     const { body, success } = await useApiFetch('invoices?limit=100', 'GET', {}, true);
     if (success && body) {
-      const data = body as any;
-      invoicesList.value = (data.docs || data || []).map((inv: any) => ({
-        id: inv.id,
-        invoiceNumber: inv.invoiceNumber || `INV-${inv.id}`,
-        amount: inv.total || inv.amount || 0
+      const data = body as Record<string, unknown>;
+      invoicesList.value = ((data.docs || data || []) as Record<string, unknown>[]).map((inv: Record<string, unknown>) => ({
+        id: inv.id as number,
+        invoiceNumber: (inv.invoiceNumber as string) || `INV-${inv.id}`,
+        amount: (inv.total as number) || (inv.amount as number) || 0
       }));
     }
   } catch {
@@ -942,34 +942,34 @@ async function loadRecentDocs() {
   recentDocs.value = [];
   try {
     let endpoint = '';
-    let mapFn: (item: any) => { id: string; number: string; date: string; link: string } = () => ({ id: '', number: '', date: '', link: '' });
+    let mapFn: (item: Record<string, unknown>) => { id: string; number: string; date: string; link: string } = () => ({ id: '', number: '', date: '', link: '' });
 
     switch (selectedType.value) {
       case 'INVOICE':
       case 'PROFORMA_INVOICE':
         endpoint = 'invoices?limit=5';
-        mapFn = (inv: any) => ({
-          id: inv.id,
-          number: inv.invoiceNumber || `INV-${inv.id}`,
-          date: inv.invoiceDate ? new Date(inv.invoiceDate).toLocaleDateString() : '',
+        mapFn = (inv: Record<string, unknown>) => ({
+          id: inv.id as string,
+          number: (inv.invoiceNumber as string) || `INV-${inv.id}`,
+          date: inv.invoiceDate ? new Date(inv.invoiceDate as string).toLocaleDateString() : '',
           link: `/sales/invoices/${inv.id}`
         });
         break;
       case 'PURCHASE_ORDER':
         endpoint = 'procurement?limit=5';
-        mapFn = (po: any) => ({
-          id: po.id,
-          number: po.poNumber || `PO-${po.id}`,
-          date: po.createdAt ? new Date(po.createdAt).toLocaleDateString() : '',
+        mapFn = (po: Record<string, unknown>) => ({
+          id: po.id as string,
+          number: (po.poNumber as string) || `PO-${po.id}`,
+          date: po.createdAt ? new Date(po.createdAt as string).toLocaleDateString() : '',
           link: `/procurement/purchase-orders/${po.id}`
         });
         break;
       case 'SALES_ORDER':
         endpoint = 'sales-orders?limit=5';
-        mapFn = (so: any) => ({
-          id: so.id,
-          number: so.orderNumber || `SO-${so.id}`,
-          date: so.createdAt ? new Date(so.createdAt).toLocaleDateString() : '',
+        mapFn = (so: Record<string, unknown>) => ({
+          id: so.id as string,
+          number: (so.orderNumber as string) || `SO-${so.id}`,
+          date: so.createdAt ? new Date(so.createdAt as string).toLocaleDateString() : '',
           link: `/sales/sales-orders/${so.id}`
         });
         break;
@@ -978,8 +978,8 @@ async function loadRecentDocs() {
     if (endpoint) {
       const { body, success } = await useApiFetch(endpoint);
       if (success && body) {
-        const data = body as any;
-        recentDocs.value = (data.docs || data || []).slice(0, 5).map(mapFn);
+        const data = body as Record<string, unknown>;
+        recentDocs.value = ((data.docs || data || []) as Record<string, unknown>[]).slice(0, 5).map(mapFn);
       }
     }
   } catch {

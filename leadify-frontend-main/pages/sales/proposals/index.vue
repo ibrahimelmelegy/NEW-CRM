@@ -386,7 +386,36 @@ const { t } = useI18n();
 // ─── State ───────────────────────────────────────────────────────────
 const loading = ref(false);
 const actionLoading = ref(false);
-const proposals = ref<any[]>([]);
+interface ProposalRow {
+  id: string;
+  title?: string;
+  status?: string;
+  proposalFor?: string;
+  clientName?: string;
+  clientCompany?: string;
+  reference?: string;
+  refNumber?: string;
+  createdAt?: string;
+  date?: string;
+  items?: ProposalItem[];
+  content?: string | Record<string, unknown>;
+  totalPrice?: number;
+  total?: number;
+  discountType?: string;
+  discount?: number;
+  taxRate?: number;
+  currency?: string;
+}
+
+interface ProposalItem {
+  quantity?: number;
+  qty?: number;
+  rate?: number;
+  unitPrice?: number;
+  price?: number;
+}
+
+const proposals = ref<ProposalRow[]>([]);
 const totalItems = ref(0);
 const searchTerm = ref('');
 const statusFilter = ref('All');
@@ -401,7 +430,7 @@ const selectedDay = ref<string | null>(null);
 // Reject dialog
 const rejectDialogVisible = ref(false);
 const rejectReason = ref('');
-const rejectTarget = ref<any>(null);
+const rejectTarget = ref<ProposalRow | null>(null);
 
 // Chart hover
 const hoveredSegment = ref<number | null>(null);
@@ -447,9 +476,9 @@ function getStatusColor(status: string): string {
 }
 
 // ─── Financial Computations ──────────────────────────────────────────
-function computeTotal(p: any): number {
+function computeTotal(p: ProposalRow): number {
   // Try to extract from content JSON (API stores financial data as JSON)
-  let items: any[] = [];
+  let items: ProposalItem[] = [];
   if (p.items && Array.isArray(p.items)) {
     items = p.items;
   } else if (p.content) {
@@ -463,7 +492,7 @@ function computeTotal(p: any): number {
 
   if (items.length === 0) return p.totalPrice || p.total || 0;
 
-  const subtotal = items.reduce((sum: number, item: any) => {
+  const subtotal = items.reduce((sum: number, item: ProposalItem) => {
     return sum + ((item.quantity || item.qty || 0) * (item.rate || item.unitPrice || item.price || 0));
   }, 0);
 
@@ -478,7 +507,7 @@ function computeTotal(p: any): number {
 const archiveTree = computed(() => {
   const tree: Record<string, Record<string, string[]>> = {};
 
-  proposals.value.forEach((p: any) => {
+  proposals.value.forEach((p) => {
     const dateStr = p.createdAt || p.date;
     if (!dateStr) return;
     const date = new Date(dateStr);
@@ -507,7 +536,7 @@ const archiveTree = computed(() => {
 
 // ─── Filtered Proposals ──────────────────────────────────────────────
 const filteredProposals = computed(() => {
-  return proposals.value.filter((p: any) => {
+  return proposals.value.filter((p) => {
     // Search
     const term = searchTerm.value.toLowerCase();
     const title = (p.title || '').toLowerCase();
@@ -553,7 +582,7 @@ const stats = computed(() => {
   const all = proposals.value;
   const total = all.length;
 
-  const pipelineValue = all.reduce((sum: number, p: any) => {
+  const pipelineValue = all.reduce((sum: number, p: ProposalRow) => {
     const s = mapStatus(p.status);
     if (s === 'Sent' || s === 'Draft' || s === 'In Review') {
       return sum + computeTotal(p);
@@ -561,18 +590,18 @@ const stats = computed(() => {
     return sum;
   }, 0);
 
-  const approvedCount = all.filter((p: any) => mapStatus(p.status) === 'Approved').length;
-  const rejectedCount = all.filter((p: any) => mapStatus(p.status) === 'Rejected').length;
+  const approvedCount = all.filter((p) => mapStatus(p.status || '') === 'Approved').length;
+  const rejectedCount = all.filter((p) => mapStatus(p.status || '') === 'Rejected').length;
   const closedCount = approvedCount + rejectedCount;
   const winRate = closedCount > 0 ? (approvedCount / closedCount) * 100 : 0;
 
   const statusDist = [
-    { name: 'Draft', displayName: 'Draft', value: all.filter((p: any) => mapStatus(p.status) === 'Draft').length },
-    { name: 'Pending', displayName: 'Pending', value: all.filter((p: any) => mapStatus(p.status) === 'In Review').length },
-    { name: 'Sent', displayName: 'Sent', value: all.filter((p: any) => mapStatus(p.status) === 'Sent').length },
+    { name: 'Draft', displayName: 'Draft', value: all.filter((p) => mapStatus(p.status || '') === 'Draft').length },
+    { name: 'Pending', displayName: 'Pending', value: all.filter((p) => mapStatus(p.status || '') === 'In Review').length },
+    { name: 'Sent', displayName: 'Sent', value: all.filter((p) => mapStatus(p.status || '') === 'Sent').length },
     { name: 'Approved', displayName: 'Approved', value: approvedCount },
     { name: 'Canceled', displayName: 'Canceled', value: rejectedCount },
-    { name: 'Archived', displayName: 'Archived', value: all.filter((p: any) => mapStatus(p.status) === 'Archived').length }
+    { name: 'Archived', displayName: 'Archived', value: all.filter((p) => mapStatus(p.status || '') === 'Archived').length }
   ].filter(d => d.value > 0);
 
   return {
@@ -581,9 +610,9 @@ const stats = computed(() => {
     winRate,
     statusDist,
     counts: {
-      draft: all.filter((p: any) => mapStatus(p.status) === 'Draft').length,
-      sent: all.filter((p: any) => mapStatus(p.status) === 'Sent').length,
-      pending: all.filter((p: any) => mapStatus(p.status) === 'In Review').length,
+      draft: all.filter((p) => mapStatus(p.status || '') === 'Draft').length,
+      sent: all.filter((p) => mapStatus(p.status || '') === 'Sent').length,
+      pending: all.filter((p) => mapStatus(p.status || '') === 'In Review').length,
       canceled: rejectedCount
     }
   };
@@ -705,7 +734,7 @@ async function fetchProposals() {
 }
 
 // ─── Actions ─────────────────────────────────────────────────────────
-async function handleSubmitForApproval(row: any) {
+async function handleSubmitForApproval(row: ProposalRow) {
   try {
     await ElMessageBox.confirm(t('proposals.confirmSubmit'), t('common.confirm'), { type: 'info' });
     actionLoading.value = true;
@@ -718,7 +747,7 @@ async function handleSubmitForApproval(row: any) {
   }
 }
 
-async function handleApprove(row: any) {
+async function handleApprove(row: ProposalRow) {
   try {
     await ElMessageBox.confirm(t('proposals.confirmApprove'), t('common.confirm'), { type: 'success' });
     actionLoading.value = true;
@@ -731,7 +760,7 @@ async function handleApprove(row: any) {
   }
 }
 
-function openRejectDialog(row: any) {
+function openRejectDialog(row: ProposalRow) {
   rejectTarget.value = row;
   rejectReason.value = '';
   rejectDialogVisible.value = true;
@@ -751,7 +780,7 @@ async function handleReject() {
   actionLoading.value = false;
 }
 
-async function handleArchive(row: any) {
+async function handleArchive(row: ProposalRow) {
   try {
     const action = row.status === 'ARCHIVED' ? 'unarchive' : 'archive';
     await ElMessageBox.confirm(
@@ -769,11 +798,11 @@ async function handleArchive(row: any) {
   }
 }
 
-async function handleDownloadPdf(row: any) {
+async function handleDownloadPdf(row: ProposalRow) {
   await downloadProposalPdf(row.id, row.reference);
 }
 
-async function handleDelete(row: any) {
+async function handleDelete(row: ProposalRow) {
   try {
     await ElMessageBox.confirm(
       `Delete proposal "${row.title}"? This action cannot be undone.`,

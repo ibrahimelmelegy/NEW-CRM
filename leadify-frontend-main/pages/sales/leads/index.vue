@@ -180,16 +180,33 @@ const leadPresent = computed(() => [
   }
 ]);
 
-async function setPresent(pre: any) {
+interface LeadRow {
+  id: string;
+  name?: string;
+  email?: string;
+  phone?: string;
+  status?: string;
+  leadSource?: string;
+  assign?: string;
+  createdAt?: string;
+  companyName?: string;
+  leadDetails?: { title?: string; text?: string };
+  leadState?: string;
+  lastContactDate?: string;
+  score?: number;
+  lastActivity?: string;
+}
+
+async function setPresent(pre: { value: string }) {
   present.value = pre.value;
 }
 
-async function changeStatus(id: any, newStatus: any) {
-  const lead: any = await getLead(id);
+async function changeStatus(id: string, newStatus: string) {
+  const lead = await getLead(id) as LeadRow;
   loadingAction.value = true;
   try {
     await updateLead({ ...lead, leadState: newStatus, id });
-  } catch (e: any) {
+  } catch (e: unknown) {
     ElMessage.error(t('common.error'));
   } finally {
     const response = await useTableFilter('lead');
@@ -198,14 +215,14 @@ async function changeStatus(id: any, newStatus: any) {
   }
 }
 
-async function submitForm(values: any) {
+async function submitForm(values: { id: string; status: string }) {
   try {
     if (values?.status === 'QUALIFIED') {
       qualifiedLeadPopup.value = true;
       select.value = values;
     }
     if (values?.status !== 'QUALIFIED') changeStatus(values?.id, values?.status);
-  } catch (e: any) {
+  } catch (e: unknown) {
     ElMessage.error(t('common.error'));
   }
 }
@@ -223,7 +240,7 @@ async function editPresent() {
 let [response, usersResponse] = await Promise.all([useTableFilter('lead'), useApiFetch('users')]);
 
 const table = ref({
-  columns: [] as any[], // Initialize as empty array
+  columns: [] as Record<string, unknown>[], // Initialize as empty array
   data: response.formattedData || [],
   sort: [
     { prop: 'price', order: 'ascending', value: 'PRICE_ASC' },
@@ -236,9 +253,9 @@ const table = ref({
 const kpiMetrics = computed<KPIMetric[]>(() => {
   const data = table.value.data || [];
   const total = data.length;
-  const newLeads = data.filter((l: any) => l.status === 'NEW').length;
-  const qualified = data.filter((l: any) => l.status === 'QUALIFIED').length;
-  const contacted = data.filter((l: any) => l.status === 'CONTACTED').length;
+  const newLeads = data.filter((l: LeadRow) => l.status === 'NEW').length;
+  const qualified = data.filter((l: LeadRow) => l.status === 'QUALIFIED').length;
+  const contacted = data.filter((l: LeadRow) => l.status === 'CONTACTED').length;
   const rate = total > 0 ? Math.round((qualified / total) * 100) : 0;
 
   return [
@@ -348,11 +365,11 @@ updateTableColumns();
 // const { locale } = useI18n();
 // watch(locale, updateTableColumns);
 
-function handleRowClick(val: any) {
+function handleRowClick(val: LeadRow) {
   router.push(`/sales/leads/${val.id}`);
 }
 
-const mappedUsers = usersResponse?.body?.docs?.map((e: any) => ({
+const mappedUsers = usersResponse?.body?.docs?.map((e: Record<string, unknown>) => ({
   label: e.name,
   value: e.id
 })) || [];
@@ -386,18 +403,18 @@ const filterOptions = computed(() => [
 ]);
 
 // SavedViews & AdvancedSearch
-const currentFilters = ref<Record<string, any>>({});
+const currentFilters = ref<Record<string, unknown>>({});
 
 const advancedSearchFields = [
   { key: 'name', label: t('leads.table.leadName'), type: 'string' },
   { key: 'email', label: t('leads.table.email'), type: 'string' },
   { key: 'phone', label: t('leads.table.phone'), type: 'string' },
-  { key: 'status', label: t('leads.table.status'), type: 'select', options: leadStates.map((s: any) => ({ value: s.value, label: s.label })) },
-  { key: 'leadSource', label: t('leads.table.source'), type: 'select', options: leadSources.map((s: any) => ({ value: s.value, label: s.label })) },
+  { key: 'status', label: t('leads.table.status'), type: 'select', options: leadStates.map((s) => ({ value: s.value, label: s.label })) },
+  { key: 'leadSource', label: t('leads.table.source'), type: 'select', options: leadSources.map((s) => ({ value: s.value, label: s.label })) },
   { key: 'createdAt', label: t('leads.table.created'), type: 'date' }
 ];
 
-async function handleApplyView(view: any) {
+async function handleApplyView(view: { filters?: Record<string, unknown> }) {
   if (view?.filters) {
     currentFilters.value = view.filters;
     const response = await useTableFilter('lead', view.filters);
@@ -405,14 +422,14 @@ async function handleApplyView(view: any) {
   }
 }
 
-async function handleAdvancedFilter(filterPayload: any) {
+async function handleAdvancedFilter(filterPayload: Record<string, unknown>) {
   try {
     const response = await useApiFetch('search/advanced/lead', 'POST', filterPayload);
     if (response?.success && response?.body) {
-      const data = response.body as any;
-      table.value.data = data.docs || data || [];
+      const data = response.body as Record<string, unknown>;
+      table.value.data = (data.docs || data || []) as typeof table.value.data;
     }
-  } catch (e: any) {
+  } catch (e: unknown) {
     ElMessage.error(t('common.error'));
   }
 }
@@ -445,10 +462,10 @@ const statusFilters = computed(() => {
   const data = table.value.data || [];
   return [
     { value: 'ALL', label: t('common.all'), color: '#7849ff', count: data.length },
-    { value: 'NEW', label: t('crm.stages.new'), color: '#7849ff', count: data.filter((l: any) => l.status === 'NEW').length },
-    { value: 'CONTACTED', label: t('crm.stages.contacted'), color: '#3b82f6', count: data.filter((l: any) => l.status === 'CONTACTED').length },
-    { value: 'QUALIFIED', label: t('crm.stages.qualified'), color: '#10b981', count: data.filter((l: any) => l.status === 'QUALIFIED').length },
-    { value: 'DISQUALIFIED', label: t('crm.stages.lost'), color: '#ef4444', count: data.filter((l: any) => l.status === 'DISQUALIFIED').length }
+    { value: 'NEW', label: t('crm.stages.new'), color: '#7849ff', count: data.filter((l: LeadRow) => l.status === 'NEW').length },
+    { value: 'CONTACTED', label: t('crm.stages.contacted'), color: '#3b82f6', count: data.filter((l: LeadRow) => l.status === 'CONTACTED').length },
+    { value: 'QUALIFIED', label: t('crm.stages.qualified'), color: '#10b981', count: data.filter((l: LeadRow) => l.status === 'QUALIFIED').length },
+    { value: 'DISQUALIFIED', label: t('crm.stages.lost'), color: '#ef4444', count: data.filter((l: LeadRow) => l.status === 'DISQUALIFIED').length }
   ];
 });
 
@@ -460,11 +477,11 @@ function setMobileStatusFilter(value: string) {
 const mobileFilteredData = computed(() => {
   let data = table.value.data || [];
   if (mobileStatusFilter.value !== 'ALL') {
-    data = data.filter((lead: any) => lead.status === mobileStatusFilter.value);
+    data = data.filter((lead: LeadRow) => lead.status === mobileStatusFilter.value);
   }
   if (!mobileSearch.value) return data;
   const q = mobileSearch.value.toLowerCase();
-  return data.filter((lead: any) => {
+  return data.filter((lead: LeadRow) => {
     const name = (lead.leadDetails?.title || lead.name || '').toLowerCase();
     const company = (lead.leadDetails?.text || lead.companyName || '').toLowerCase();
     const email = (lead.email || '').toLowerCase();
@@ -484,7 +501,7 @@ async function handleMobileRefresh() {
   }
 }
 
-function getSwipeRightActions(lead: any) {
+function getSwipeRightActions(lead: LeadRow) {
   const actions = [];
   if (lead.phone) {
     actions.push({ name: 'call', label: t('common.call'), icon: 'ph:phone-bold', color: '#10B981' });
@@ -495,7 +512,7 @@ function getSwipeRightActions(lead: any) {
   return actions;
 }
 
-function getSwipeLeftActions(lead: any) {
+function getSwipeLeftActions(lead: LeadRow) {
   const actions = [
     { name: 'view', label: t('leads.view'), icon: 'ph:eye-bold', color: '#7849FF' }
   ];
@@ -505,7 +522,7 @@ function getSwipeLeftActions(lead: any) {
   return actions;
 }
 
-function handleSwipeAction(name: string, lead: any) {
+function handleSwipeAction(name: string, lead: LeadRow) {
   vibrate();
   switch (name) {
     case 'call':
@@ -523,7 +540,7 @@ function handleSwipeAction(name: string, lead: any) {
   }
 }
 
-function getLeadInitial(lead: any): string {
+function getLeadInitial(lead: LeadRow): string {
   const name = lead.leadDetails?.title || lead.name || '?';
   return name.charAt(0).toUpperCase();
 }
@@ -549,7 +566,7 @@ function getStatusType(status: string): string {
 }
 
 // Bulk actions
-const selectedRows = ref<any[]>([]);
+const selectedRows = ref<LeadRow[]>([]);
 
 async function handleBulkDelete() {
   if (!selectedRows.value.length) return;
@@ -560,8 +577,8 @@ async function handleBulkDelete() {
       { type: 'warning', confirmButtonText: t('common.delete'), cancelButtonText: t('common.cancel') }
     );
     loading.value = true;
-    const ids = selectedRows.value.map((r: any) => r.id);
-    await Promise.all(ids.map((id: any) => useApiFetch(`lead/${id}`, 'DELETE')));
+    const ids = selectedRows.value.map((r) => r.id);
+    await Promise.all(ids.map((id) => useApiFetch(`lead/${id}`, 'DELETE')));
     response = await useTableFilter('lead');
     table.value.data = response.formattedData;
     selectedRows.value = [];
@@ -577,7 +594,7 @@ async function handleBulkExport() {
   if (!selectedRows.value.length) return;
   try {
     loading.value = true;
-    const ids = selectedRows.value.map((r: any) => r.id);
+    const ids = selectedRows.value.map((r) => r.id);
     await useApiFetch('lead/export', 'POST', { ids });
     ElNotification({ type: 'success', title: t('common.success'), message: t('leads.exportSuccess') });
     selectedRows.value = [];

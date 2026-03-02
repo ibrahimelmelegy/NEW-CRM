@@ -124,16 +124,16 @@ const result = ref(await fetchAttendance());
 const pagination = ref(result.value.pagination);
 
 const table = ref({
-  columns: [] as any[],
+  columns: [] as Record<string, unknown>[],
   data: result.value.docs.map(formatRow) || [],
   sort: []
 });
 
 const summaryStats = computed(() => {
   const records = result.value.docs || [];
-  const present = records.filter((r: any) => r.status === 'PRESENT').length;
-  const late = records.filter((r: any) => r.status === 'LATE').length;
-  const absent = records.filter((r: any) => r.status === 'ABSENT').length;
+  const present = records.filter((r: Record<string, unknown>) => r.status === 'PRESENT').length;
+  const late = records.filter((r: Record<string, unknown>) => r.status === 'LATE').length;
+  const absent = records.filter((r: Record<string, unknown>) => r.status === 'ABSENT').length;
   return [
     { label: t('hr.attendance.present'), value: present, icon: 'ph:check-circle-bold', color: '#22c55e' },
     { label: t('hr.attendance.late'), value: late, icon: 'ph:clock-bold', color: '#f59e0b' },
@@ -142,7 +142,7 @@ const summaryStats = computed(() => {
   ];
 });
 
-function formatRow(r: any) {
+function formatRow(r: Record<string, unknown>) {
   return {
     ...r,
     employeeDetails: { title: r.user?.name || '—', image: r.user?.profilePicture, withImage: true },
@@ -224,9 +224,9 @@ const statusFilters = computed(() => {
   const data = table.value.data || [];
   return [
     { value: 'ALL', label: t('hr.attendance.allStatuses'), color: '#22c55e', count: data.length },
-    { value: 'PRESENT', label: t('hr.attendance.present'), color: '#22c55e', count: data.filter((r: any) => r.status === 'PRESENT').length },
-    { value: 'LATE', label: t('hr.attendance.late'), color: '#f59e0b', count: data.filter((r: any) => r.status === 'LATE').length },
-    { value: 'ABSENT', label: t('hr.attendance.absent'), color: '#ef4444', count: data.filter((r: any) => r.status === 'ABSENT').length }
+    { value: 'PRESENT', label: t('hr.attendance.present'), color: '#22c55e', count: data.filter((r: Record<string, unknown>) => r.status === 'PRESENT').length },
+    { value: 'LATE', label: t('hr.attendance.late'), color: '#f59e0b', count: data.filter((r: Record<string, unknown>) => r.status === 'LATE').length },
+    { value: 'ABSENT', label: t('hr.attendance.absent'), color: '#ef4444', count: data.filter((r: Record<string, unknown>) => r.status === 'ABSENT').length }
   ];
 });
 
@@ -238,11 +238,11 @@ function setMobileStatusFilter(value: string) {
 const mobileFilteredData = computed(() => {
   let data = table.value.data || [];
   if (mobileStatusFilter.value !== 'ALL') {
-    data = data.filter((r: any) => r.status === mobileStatusFilter.value);
+    data = data.filter((r: Record<string, unknown>) => r.status === mobileStatusFilter.value);
   }
   if (!mobileSearch.value) return data;
   const q = mobileSearch.value.toLowerCase();
-  return data.filter((r: any) => {
+  return data.filter((r: Record<string, unknown>) => {
     const name = (r.employeeDetails?.title || '').toLowerCase();
     const date = (r.date || '').toLowerCase();
     const notes = (r.notes || '').toLowerCase();
@@ -260,7 +260,7 @@ async function handleMobileRefresh() {
   }
 }
 
-function getInitial(record: any): string {
+function getInitial(record: Record<string, unknown>): string {
   const name = record.employeeDetails?.title || '?';
   return name.charAt(0).toUpperCase();
 }

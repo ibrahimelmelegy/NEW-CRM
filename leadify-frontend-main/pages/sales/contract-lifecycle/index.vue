@@ -340,12 +340,27 @@ const filterType = ref('');
 const filterDateRange = ref<string[]>([]);
 const currentPage = ref(1);
 const pageSize = ref(20);
-const selectedRows = ref<any[]>([]);
+interface ContractRow {
+  id: number | string;
+  contractNumber: string;
+  clientName: string;
+  clientEmail?: string;
+  type: string;
+  startDate: string;
+  endDate: string;
+  value: number;
+  status: string;
+  autoRenewal: boolean;
+  owner?: string;
+  notes?: string;
+}
+
+const selectedRows = ref<ContractRow[]>([]);
 const contractDialogVisible = ref(false);
 const detailDrawerVisible = ref(false);
 const showAllAlerts = ref(false);
-const editingContract = ref<any>(null);
-const selectedContract = ref<any>(null);
+const editingContract = ref<ContractRow | null>(null);
+const selectedContract = ref<ContractRow | null>(null);
 
 // Contract Types
 const typeOptions = computed(() => [
@@ -391,7 +406,7 @@ const contractForm = reactive({
 });
 
 // Data
-const contracts = ref<any[]>([]);
+const contracts = ref<ContractRow[]>([]);
 
 // Load data
 async function loadContracts() {
@@ -399,7 +414,7 @@ async function loadContracts() {
   try {
     const { body, success } = await useApiFetch('contracts');
     if (success && body) {
-      const docs = (body as any).docs || body;
+      const docs = (body as Record<string, unknown>).docs || body;
       contracts.value = Array.isArray(docs) ? docs : [];
     }
   } catch (e) {
@@ -453,7 +468,7 @@ const filteredContracts = computed(() => {
 
   if (searchQuery.value) {
     const q = searchQuery.value.toLowerCase();
-    result = result.filter((c: any) =>
+    result = result.filter((c: ContractRow) =>
       c.contractNumber?.toLowerCase().includes(q) ||
       c.clientName?.toLowerCase().includes(q) ||
       c.owner?.toLowerCase().includes(q)
@@ -461,16 +476,16 @@ const filteredContracts = computed(() => {
   }
 
   if (filterStatus.value) {
-    result = result.filter((c: any) => c.status === filterStatus.value);
+    result = result.filter((c: ContractRow) => c.status === filterStatus.value);
   }
 
   if (filterType.value) {
-    result = result.filter((c: any) => c.type === filterType.value);
+    result = result.filter((c: ContractRow) => c.type === filterType.value);
   }
 
   if (filterDateRange.value?.length === 2) {
     const [from, to] = filterDateRange.value!;
-    result = result.filter((c: any) => c.endDate >= from! && c.endDate <= to!);
+    result = result.filter((c: ContractRow) => c.endDate >= from! && c.endDate <= to!);
   }
 
   return result;
@@ -484,33 +499,33 @@ const paginatedContracts = computed(() => {
 const renewalAlerts = computed(() => {
   const now = new Date();
   return contracts.value
-    .filter((c: any) => {
+    .filter((c: ContractRow) => {
       if (c.status === 'expired' || c.status === 'terminated') return false;
       const end = new Date(c.endDate);
       const diff = Math.ceil((end.getTime() - now.getTime()) / 86400000);
       return diff > 0 && diff <= 90;
     })
-    .map((c: any) => {
+    .map((c: ContractRow) => {
       const end = new Date(c.endDate);
       const diff = Math.ceil((end.getTime() - now.getTime()) / 86400000);
       return { ...c, daysLeft: diff };
     })
-    .sort((a: any, b: any) => a.daysLeft - b.daysLeft);
+    .sort((a, b) => a.daysLeft - b.daysLeft);
 });
 
 const kpiMetrics = computed<KPIMetric[]>(() => {
   const data = contracts.value;
-  const active = data.filter((c: any) => c.status === 'active' || c.status === 'expiring').length;
-  const expiringSoon = data.filter((c: any) => {
+  const active = data.filter((c: ContractRow) => c.status === 'active' || c.status === 'expiring').length;
+  const expiringSoon = data.filter((c: ContractRow) => {
     const end = new Date(c.endDate);
     const diff = Math.ceil((end.getTime() - Date.now()) / 86400000);
     return diff > 0 && diff <= 30 && c.status !== 'expired' && c.status !== 'terminated';
   }).length;
   const totalValue = data
-    .filter((c: any) => c.status === 'active' || c.status === 'expiring' || c.status === 'renewed')
-    .reduce((sum: number, c: any) => sum + (Number(c.value) || 0), 0);
-  const renewedCount = data.filter((c: any) => c.status === 'renewed').length;
-  const eligibleForRenewal = data.filter((c: any) => ['renewed', 'expired', 'expiring'].includes(c.status)).length;
+    .filter((c: ContractRow) => c.status === 'active' || c.status === 'expiring' || c.status === 'renewed')
+    .reduce((sum: number, c: ContractRow) => sum + (Number(c.value) || 0), 0);
+  const renewedCount = data.filter((c: ContractRow) => c.status === 'renewed').length;
+  const eligibleForRenewal = data.filter((c: ContractRow) => ['renewed', 'expired', 'expiring'].includes(c.status)).length;
   const renewalRate = eligibleForRenewal > 0 ? Math.round((renewedCount / eligibleForRenewal) * 100) : 0;
 
   return [
@@ -679,7 +694,7 @@ function generateContractNumber(): string {
 }
 
 // Actions
-function openContractDialog(contract?: any) {
+function openContractDialog(contract?: ContractRow) {
   if (contract) {
     editingContract.value = contract;
     contractForm.clientName = contract.clientName;
@@ -708,7 +723,7 @@ function openContractDialog(contract?: any) {
   contractDialogVisible.value = true;
 }
 
-function openContractDetail(contract: any) {
+function openContractDetail(contract: ContractRow) {
   selectedContract.value = contract;
   detailDrawerVisible.value = true;
 }
@@ -724,7 +739,7 @@ async function handleSaveContract() {
     if (editingContract.value) {
       await useApiFetch(`contracts/${editingContract.value.id}`, 'PUT', payload);
     } else {
-      (payload as any).contractNumber = generateContractNumber();
+      (payload as Record<string, unknown>).contractNumber = generateContractNumber();
       await useApiFetch('contracts', 'POST', payload);
     }
     await loadContracts();
@@ -748,7 +763,7 @@ async function handleSaveContract() {
   }
 }
 
-async function handleRenew(contract: any) {
+async function handleRenew(contract: ContractRow) {
   try {
     await ElMessageBox.confirm(
       t('contractLifecycle.confirmRenew'),
@@ -770,7 +785,7 @@ async function handleRenew(contract: any) {
   }
 }
 
-async function handleTerminate(contract: any) {
+async function handleTerminate(contract: ContractRow) {
   try {
     await ElMessageBox.confirm(
       t('contractLifecycle.confirmTerminate'),
@@ -788,7 +803,7 @@ async function handleTerminate(contract: any) {
   }
 }
 
-async function handleToggleAutoRenewal(contract: any) {
+async function handleToggleAutoRenewal(contract: ContractRow) {
   try {
     await useApiFetch(`contracts/${contract.id}`, 'PUT', { autoRenewal: contract.autoRenewal });
   } catch {
@@ -796,17 +811,17 @@ async function handleToggleAutoRenewal(contract: any) {
   }
 }
 
-function handleRowClick(row: any) {
+function handleRowClick(row: ContractRow) {
   openContractDetail(row);
 }
 
-function handleSelectionChange(rows: any[]) {
+function handleSelectionChange(rows: ContractRow[]) {
   selectedRows.value = rows;
 }
 
 async function handleBulkExport() {
   try {
-    const ids = selectedRows.value.map((r: any) => r.id);
+    const ids = selectedRows.value.map((r) => r.id);
     await useApiFetch('contracts/export', 'POST', { ids });
     ElNotification({ type: 'success', title: t('common.success'), message: t('contractLifecycle.exportSuccess') });
     selectedRows.value = [];
@@ -828,7 +843,7 @@ function handleExportCSV() {
     t('contractLifecycle.status'),
     t('contractLifecycle.autoRenewal')
   ];
-  const rows = data.map((c: any) => [
+  const rows = data.map((c: ContractRow) => [
     c.contractNumber,
     c.clientName,
     getTypeLabel(c.type),

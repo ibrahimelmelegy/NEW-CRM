@@ -44,7 +44,7 @@ const deliveries = ref<Delivery[]>([
 ]);
 
 if (props.deliveries?.length) {
-  deliveries.value = props.deliveries.map((delivery: any) => ({
+  deliveries.value = props.deliveries.map((delivery: Delivery) => ({
     deliveryDetails: delivery.deliveryDetails,
     deliveryDate: delivery.deliveryDate,
     id: delivery.id
@@ -52,7 +52,7 @@ if (props.deliveries?.length) {
 }
 
 // Refs for child forms
-const childRefs = ref<Record<string, any>>({});
+const childRefs = ref<Record<string, unknown>>({});
 // Add a new delivery
 async function AddDelivery() {
   if (!(await validateForm())) return;
@@ -106,7 +106,7 @@ function onSubmit(values: Delivery) {
 
 // Collect validation promises from all child forms
 async function validateForm(): Promise<boolean> {
-  const childPromises = childRefs.value.map(async (child: any) => {
+  const childPromises = childRefs.value.map(async (child: { validate: () => Promise<void>; errors: Record<string, string>; onSubmit: () => Promise<void>; values: Record<string, unknown> }) => {
     if (child) {
       // Await validation result
       await child.validate();
@@ -135,7 +135,7 @@ async function onSubmitForm(): Promise<boolean> {
 
   try {
     // Collect child submission promises
-    const childPromises = childRefs.value.map(async (child: any) => {
+    const childPromises = childRefs.value.map(async (child: { validate: () => Promise<void>; errors: Record<string, string>; onSubmit: () => Promise<void>; values: Record<string, unknown> }) => {
       if (child) {
         await child.onSubmit();
       }

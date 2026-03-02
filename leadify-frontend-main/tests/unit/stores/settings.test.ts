@@ -14,25 +14,31 @@ globalThis.useApiFetch = vi.fn();
 // Mock useI18n
 globalThis.useI18n = () => ({ t: (key: string) => key, locale: ref('en') });
 
-// Mock localStorage
-const localStorageMock = (() => {
-  let store: Record<string, string> = {};
-  return {
-    getItem: vi.fn((key: string) => store[key] ?? null),
-    setItem: vi.fn((key: string, value: string) => { store[key] = value; }),
-    removeItem: vi.fn((key: string) => { delete store[key]; }),
-    clear: vi.fn(() => { store = {}; })
-  };
-})();
+// Storage data object - cleared by mutation to avoid closure reference issues
+const storageData: Record<string, string> = {};
 
-Object.defineProperty(globalThis, 'localStorage', { value: localStorageMock, writable: true });
+function clearStorageData() {
+  for (const key of Object.keys(storageData)) {
+    delete storageData[key];
+  }
+}
+
+const localStorageMock = {
+  getItem: vi.fn((key: string) => storageData[key] ?? null),
+  setItem: vi.fn((key: string, value: string) => { storageData[key] = value; }),
+  removeItem: vi.fn((key: string) => { delete storageData[key]; }),
+  clear: vi.fn(() => { clearStorageData(); }),
+  get length() { return Object.keys(storageData).length; },
+  key: vi.fn((index: number) => Object.keys(storageData)[index] ?? null)
+};
 
 describe('useSettingsStore', () => {
   let store: ReturnType<typeof useSettingsStore>;
 
   beforeEach(() => {
-    localStorageMock.clear();
+    clearStorageData();
     vi.clearAllMocks();
+    vi.stubGlobal('localStorage', localStorageMock);
     setActivePinia(createPinia());
     store = useSettingsStore();
   });
@@ -52,9 +58,8 @@ describe('useSettingsStore', () => {
     });
 
     it('should load persisted settings from localStorage', () => {
-      localStorageMock.getItem.mockReturnValue(
-        JSON.stringify({ language: 'ar', currency: 'SAR' })
-      );
+      // Pre-populate storage before creating the store
+      storageData['crm-settings'] = JSON.stringify({ language: 'ar', currency: 'SAR' });
 
       // Re-create pinia and store to pick up localStorage values
       setActivePinia(createPinia());

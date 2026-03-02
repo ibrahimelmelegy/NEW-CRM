@@ -17,7 +17,7 @@ el-form(  autocomplete="off"   @submit.prevent='onSubmit'   ref="myForm" label-p
         InputText(:label="$t('common.companyName')"  name="companyName" :value="deal?.companyName" is-form)
         InputText(:label="$t('deals.info.price')"  type="number" name="dealPrice" :value="deal?.price" is-form)
         InputSelect(:label="$t('deals.info.contractType')" name="contractType" :options="contractTypeOptions" :value="deal?.contractType" )
-        InputSelect(:label="$t('deals.table.assigned')" name="assignUser" isMultiple :options="users" :value="users?.filter((user: any) => deal?.users?.map((user: any) => user.id)?.includes(user.value))?.map((user: any) => user.value)"  )
+        InputSelect(:label="$t('deals.table.assigned')" name="assignUser" isMultiple :options="users" :value="users?.filter((user: {label: string, value: number}) => deal?.users?.map((user: {id: number}) => user.id)?.includes(user.value))?.map((user: {label: string, value: number}) => user.value)"  )
         InputDate(:label="$t('deals.info.signatureDate')" :placeholder="$t('deals.form.enterSignatureDate')" :value="deal?.signatureDate" name="signatureDate" )
         InputSelect(:class="{'col-span-2': switchType}" :label="$t('deals.info.dealStage')" name="dealStage" :options="dealStageOptions" :value="deal?.stage" @change="checkIfCancelled" )
       InputText(type="textarea" :placeholder="$t('deals.form.cancellationReason')"  name="cancellationReason" :value="deal?.cancelledReason" v-if="isCancelled")
@@ -73,8 +73,8 @@ const formSchema = yup.object({
         .nullable()
         .test(
           'is-valid',
-          (message: any) => 'Invalid email',
-          (value: any) => !value || isEmailValidator(value)
+          (_message: string | object | undefined) => 'Invalid email',
+          (value: string | undefined) => !value || isEmailValidator(value)
         )
 
         .label(t('leads.info.email')),
@@ -86,8 +86,8 @@ const formSchema = yup.object({
         .nullable(t('errors.emailOrPhoneRequired'))
         .test(
           'is-valid',
-          (message: any) => 'Invalid email',
-          (value: any) => (value ? isEmailValidator(value) : new yup.ValidationError('Invalid value'))
+          (_message: string | object | undefined) => 'Invalid email',
+          (value: string | undefined) => (value ? isEmailValidator(value) : new yup.ValidationError('Invalid value'))
         )
         .label(t('leads.info.email'))
   }),
@@ -97,9 +97,9 @@ const formSchema = yup.object({
       yup
         .number()
         .nullable() // Allows the value to be null
-        .transform((value: any, originalValue: any) => (originalValue === '' ? null : Number.isNaN(value) ? null : value))
+        .transform((value: number | null, originalValue: unknown) => (originalValue === '' ? null : Number.isNaN(value) ? null : value))
         .label(t('leads.info.phone'))
-        .test('Phone number', 'Invalid Phone', function (value: any) {
+        .test('Phone number', 'Invalid Phone', function (value: number | null | undefined) {
           if (value === null || value === undefined) {
             return true;
           }
@@ -108,11 +108,11 @@ const formSchema = yup.object({
     otherwise: () =>
       yup
         .number()
-        .transform((value: any) => (Number.isNaN(value) ? null : value))
+        .transform((value: number | null) => (Number.isNaN(value) ? null : value))
         .nullable()
         .required(t('errors.emailOrPhoneRequired'))
         .label(t('leads.info.phone'))
-        .test('Phone number', 'invalid Phone', function (value: any) {
+        .test('Phone number', 'invalid Phone', function (_value: number | null | undefined) {
           return !!validPhone.value;
         })
   }),
@@ -124,15 +124,15 @@ const formSchema = yup.object({
   dealPrice: yup
     .number()
     .nullable() // Allows null values
-    .transform((value: any, originalValue: any) => (String(originalValue).trim() === '' ? null : value))
+    .transform((value: number | null, originalValue: unknown) => (String(originalValue).trim() === '' ? null : value))
     .required(t('validation.required', { field: t('deals.info.price') }))
     .max(100000000000)
     .label(t('deals.info.price')),
   signatureDate: yup
     .mixed()
-    .test('is-valid-date', 'Signature Date must be a valid date', (value: any) => {
+    .test('is-valid-date', 'Signature Date must be a valid date', (value: unknown) => {
       // Check if the value is valid
-      return value && !isNaN(new Date(value).getTime());
+      return !!value && !isNaN(new Date(value as string | number).getTime());
     })
     .required(t('validation.required', { field: t('deals.info.signatureDate') }))
     .label(t('deals.info.signatureDate')),
@@ -144,7 +144,7 @@ const formSchema = yup.object({
         .string()
         .trim()
         .nullable()
-        .test('min-length-if-entered', 'Cancellation Reason must be at least 2 characters', (value: any) => !value || value.length >= 2)
+        .test('min-length-if-entered', 'Cancellation Reason must be at least 2 characters', (value: string | null | undefined) => !value || value.length >= 2)
         .trim()
         .max(250)
         .label(t('deals.form.cancellationReason'))
@@ -154,7 +154,7 @@ const formSchema = yup.object({
 /**
  * Checks if the deal stage has been set to 'Cancelled'.
  */
-function checkIfCancelled(value: any) {
+function checkIfCancelled(value: { label: string; value: string }) {
   if (value.label === 'Cancelled') {
     isCancelled.value = true;
   } else {
@@ -167,11 +167,36 @@ if (props.deal?.cancelledReason) {
 }
 
 //  Get Users
-const users = ref<any[]>([]);
-const mappedLeads = ref<any[]>([]);
-const selectedClient = ref<any>([]);
-const mappedClients = ref<{ label: string; value: any }[]>();
-const allClients = ref<any[]>([]);
+interface SelectOption {
+  label: string;
+  value: string | number;
+  id?: string | number;
+}
+
+interface UserRecord {
+  id: number;
+  name: string;
+}
+
+interface ClientRecord {
+  id: string | number;
+  clientName: string;
+  companyName?: string;
+  email?: string;
+  phoneNumber?: string;
+  phone?: string;
+}
+
+interface LeadRecord {
+  id: string;
+  name: string;
+}
+
+const users = ref<SelectOption[]>([]);
+const mappedLeads = ref<SelectOption[]>([]);
+const selectedClient = ref<ClientRecord | null>(null);
+const mappedClients = ref<SelectOption[]>();
+const allClients = ref<ClientRecord[]>([]);
 const selectedLead = ref<string | null>();
 const leadId = route.query?.leadId || props?.deal?.leadId;
 const opportunityId = route.query?.opportunityId;
@@ -179,7 +204,7 @@ const opportunityId = route.query?.opportunityId;
 onMounted(async () => {
   // Fetch users
   const usersRes = await useApiFetch('users');
-  users.value = usersRes?.body?.docs?.map((e: any) => ({
+  users.value = usersRes?.body?.docs?.map((e: UserRecord) => ({
     label: e.name,
     value: e.id
   })) || [];
@@ -187,7 +212,7 @@ onMounted(async () => {
   // Fetch leads
   const leadsResponse = await getLeads();
   const leads = leadsResponse.leads;
-  mappedLeads.value = leads?.map((e: any) => ({
+  mappedLeads.value = leads?.map((e: LeadRecord) => ({
     label: e.name,
     value: e.id
   })) || [];
@@ -195,19 +220,19 @@ onMounted(async () => {
   // Fetch clients
   const { clients } = await getClients();
   allClients.value = clients || [];
-  mappedClients.value = clients?.map((e: any) => ({
+  mappedClients.value = clients?.map((e: ClientRecord) => ({
     label: e.clientName,
     value: e.clientName,
     id: e.id
   }));
 
   if (props.deal?.clientId) {
-    selectedClient.value = clients?.find((client: any) => client.id === props.deal?.clientId);
+    selectedClient.value = clients?.find((client: ClientRecord) => client.id === props.deal?.clientId) || null;
     switchType.value = true;
   }
 
   if (leadId) {
-    let lead: any = leads?.find((l: any) => l.id === leadId);
+    let lead: LeadRecord | undefined = leads?.find((l: LeadRecord) => l.id === leadId);
 
     if (!lead || opportunityId) {
       lead = await getLead(leadId as string);
@@ -230,9 +255,9 @@ onMounted(async () => {
  * Updates the selectedClient variable when a new lead is selected.
  * @param {Object} e - The selected lead object
  */
-function getSelectedClient(e: any) {
+function getSelectedClient(e: { id: string | number; label?: string; value?: string }) {
   // Find the selected lead in the clients array and update the selectedClient variable
-  selectedClient.value = allClients.value?.find((lead: any) => lead.id === e.id);
+  selectedClient.value = allClients.value?.find((lead: ClientRecord) => lead.id === e.id) || null;
 
   if (selectedClient.value?.email) {
     isEmail.value = true;
@@ -260,7 +285,7 @@ watch(
 );
 
 // submit deal form
-const onSubmit = handleSubmit((values: any) => {
+const onSubmit = handleSubmit((values: Record<string, unknown>) => {
   try {
     // Prepare formatted values
     const formattedValues = {
@@ -297,7 +322,7 @@ const onSubmit = handleSubmit((values: any) => {
 });
 
 // Utility functions for formatting data
-function formatLeadData(values: any) {
+function formatLeadData(values: Record<string, unknown>) {
   return cleanObject({
     name: values.leadName,
     companyName: values.leadCompanyName,
@@ -307,7 +332,7 @@ function formatLeadData(values: any) {
   });
 }
 
-function formatDealData(values: any) {
+function formatDealData(values: Record<string, unknown>) {
   return cleanObject({
     name: values.dealName,
     price: Number(values.dealPrice),

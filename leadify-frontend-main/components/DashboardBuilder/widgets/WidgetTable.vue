@@ -41,12 +41,12 @@ interface TableColumn {
   prop: string;
   label: string;
   minWidth?: string;
-  format?: (val: any) => string;
+  format?: (val: number) => string;
 }
 
 const loading = ref(true);
 const columns = ref<TableColumn[]>([]);
-const rows = ref<any[]>([]);
+const rows = ref<Record<string, unknown>[]>([]);
 
 async function loadData() {
   loading.value = true;
@@ -68,15 +68,15 @@ async function loadRecentDeals() {
     { prop: 'name', label: 'Deal', minWidth: '140' },
     { prop: 'clientName', label: 'Client', minWidth: '120' },
     { prop: 'stage', label: 'Stage', minWidth: '100' },
-    { prop: 'revenue', label: 'Value', minWidth: '100', format: (v: any) => v ? `SAR ${formatLargeNumber(v)}` : '--' },
+    { prop: 'revenue', label: 'Value', minWidth: '100', format: (v: number) => v ? `SAR ${formatLargeNumber(v)}` : '--' },
   ];
   const { body, success } = await useApiFetch('deal?limit=8&sort=-updatedAt');
   if (success && body) {
-    const data = body as any;
-    const deals = data.docs || data || [];
-    rows.value = deals.map((d: any) => ({
+    const data = body as Record<string, unknown>;
+    const deals = (data.docs || data || []) as Record<string, unknown>[];
+    rows.value = deals.map((d: Record<string, unknown>) => ({
       name: d.name || d.title || '--',
-      clientName: d.client?.name || d.clientName || '--',
+      clientName: (d.client as Record<string, unknown>)?.name || d.clientName || '--',
       stage: d.stage || d.status || '--',
       revenue: d.price || d.value || d.amount || 0,
     }));
@@ -87,14 +87,14 @@ async function loadTeamPerformance() {
   columns.value = [
     { prop: 'name', label: 'Team Member', minWidth: '140' },
     { prop: 'deals', label: 'Deals', minWidth: '70' },
-    { prop: 'revenue', label: 'Revenue', minWidth: '100', format: (v: any) => v ? `SAR ${formatLargeNumber(v)}` : '--' },
-    { prop: 'conversion', label: 'Conv.', minWidth: '70', format: (v: any) => v ? `${v}%` : '--' },
+    { prop: 'revenue', label: 'Revenue', minWidth: '100', format: (v: number) => v ? `SAR ${formatLargeNumber(v)}` : '--' },
+    { prop: 'conversion', label: 'Conv.', minWidth: '70', format: (v: number) => v ? `${v}%` : '--' },
   ];
   const { body, success } = await useApiFetch('dashboards/team-performance');
   if (success && body) {
-    const data = body as any;
-    const members = Array.isArray(data.members) ? data.members : Array.isArray(data) ? data : [];
-    rows.value = members.map((m: any) => ({
+    const data = body as Record<string, unknown>;
+    const members = (Array.isArray((data as Record<string, unknown>).members) ? (data as Record<string, unknown>).members : Array.isArray(data) ? data : []) as Record<string, unknown>[];
+    rows.value = members.map((m: Record<string, unknown>) => ({
       name: m.name || m.userName || '--',
       deals: m.dealsCount || m.deals || 0,
       revenue: m.revenue || m.totalRevenue || 0,

@@ -53,7 +53,7 @@ const exportColumns = [
 ];
 
 const getStatusType = (status: string) => {
-  const map: any = {
+  const map: Record<string, string> = {
     Draft: 'info',
     Sent: 'warning',
     'Partially Received': 'primary',
@@ -66,7 +66,7 @@ const getStatusType = (status: string) => {
 
 onMounted(async () => {
   try {
-    const res: any = await useApiFetch('rfq'); // Fetch from the new endpoint
+    const res = await useApiFetch('rfq') as Record<string, unknown>; // Fetch from the new endpoint
     rfqs.value = res?.body?.docs || [];
   } catch (e) {
     console.error('Failed to fetch RFQs', e);

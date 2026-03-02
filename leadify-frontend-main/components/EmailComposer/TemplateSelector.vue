@@ -44,13 +44,21 @@
 <script setup lang="ts">
 const { t } = useI18n();
 
+interface EmailTemplate {
+  id: number | string;
+  name: string;
+  subject: string;
+  body: string;
+  category: string;
+}
+
 const props = defineProps<{
-  templates: any[];
-  selected: any;
+  templates: EmailTemplate[];
+  selected: EmailTemplate | null;
 }>();
 
 defineEmits<{
-  (e: 'select', template: any): void;
+  (e: 'select', template: EmailTemplate): void;
 }>();
 
 const search = ref('');
@@ -72,12 +80,12 @@ function toggleCategory(cat: string) {
 const filteredTemplates = computed(() => {
   let result = props.templates;
   if (activeCategory.value) {
-    result = result.filter((t: any) => t.category === activeCategory.value);
+    result = result.filter((t: EmailTemplate) => t.category === activeCategory.value);
   }
   if (search.value) {
     const q = search.value.toLowerCase();
     result = result.filter(
-      (t: any) =>
+      (t: EmailTemplate) =>
         t.name.toLowerCase().includes(q) ||
         t.subject.toLowerCase().includes(q) ||
         t.body.toLowerCase().includes(q)
