@@ -21,7 +21,10 @@ router.get('/unsubscribe', async (req: Request, res: Response) => {
       return res.status(400).send('<h2>Invalid unsubscribe link.</h2>');
     }
 
-    const secret = process.env.SECRET_KEY || 'default-secret';
+    const secret = process.env.SECRET_KEY;
+    if (!secret) {
+      return res.status(500).send('<h2>Server configuration error.</h2>');
+    }
     let payload: UnsubscribePayload;
     try {
       payload = jwt.verify(token, secret) as UnsubscribePayload;

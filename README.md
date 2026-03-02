@@ -55,16 +55,17 @@ npm run seed
 npm run dev:all
 ```
 
-## 🔐 Default Login Credentials / بيانات الدخول
+## 🔐 Login Credentials / بيانات الدخول
 
-After running `npm run seed`, use these credentials:
+After running `npm run seed`, login with the credentials configured in your environment variables:
 
+```bash
+# Set these in your .env before seeding:
+ADMIN_EMAIL=your_admin@example.com
+ADMIN_PASSWORD=YourSecurePassword123!
 ```
-Email: admin@hptech.com
-Password: Heroo@1502
-```
 
-> **⚠️ SECURITY WARNING**: Change the default admin password immediately after first login, especially in production environments!
+> **⚠️ SECURITY WARNING**: Always use strong passwords and never commit credentials to version control!
 
 ## 🌐 الروابط
 

@@ -49,9 +49,8 @@ echo ========================================
 echo Backend will be on: http://localhost:5000
 echo Frontend will be on: http://localhost:3060
 echo.
-echo Login credentials:
-echo Email: admin@hp-tech.com
-echo Password: Heroo@1502
+echo Login with the credentials configured in your .env file
+echo (ADMIN_EMAIL / ADMIN_PASSWORD)
 echo ========================================
 echo.
 echo Press any key to exit this window...

@@ -9,6 +9,12 @@ import middleware from 'i18next-http-middleware';
 import { doubleCsrf } from 'csrf-csrf';
 import { generalLimiter, uploadLimiter, authLimiter, apiIntensiveLimiter, exportLimiter, webhookLimiter } from './middleware/rateLimiter';
 import { sanitizeInput } from './middleware/sanitize';
+
+// Validate required SECRET_KEY at startup — never fall back to a hardcoded value
+const CSRF_SECRET = process.env.SECRET_KEY;
+if (!CSRF_SECRET) {
+  throw new Error('FATAL: SECRET_KEY environment variable is required for CSRF protection. Cannot start without it.');
+}
 import assetRoutes from './asset/assetRoutes';
 import clientRoutes from './client/clientRoutes';
 import { swaggerSpec, swaggerUi } from './config/swagger';
@@ -208,7 +214,7 @@ app.use(middleware.handle(i18next));
 app.use(express.json({ limit: '1mb' }));
 
 // 5.5. Cookie parser (required for CSRF)
-app.use(cookieParser(process.env.SECRET_KEY || 'csrf-secret'));
+app.use(cookieParser(CSRF_SECRET));
 
 // 6. Input sanitization (XSS protection)
 app.use(sanitizeInput);
@@ -228,7 +234,7 @@ app.use(
 
 // 8. CSRF protection setup
 const { doubleCsrfProtection, generateCsrfToken } = doubleCsrf({
-  getSecret: () => process.env.SECRET_KEY || 'csrf-secret',
+  getSecret: () => CSRF_SECRET,
   getSessionIdentifier: (req: Request) => req.headers.authorization || '',
   cookieName: '__csrf',
   cookieOptions: {

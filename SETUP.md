@@ -148,9 +148,9 @@ EMAIL_PASS=your_app_password
 # Or use SendGrid
 SENDGRID_API_KEY=your_sendgrid_api_key
 
-# Admin credentials for seeding
-ADMIN_EMAIL=admin@hptech.com
-ADMIN_PASSWORD=Heroo@1502
+# Admin credentials for seeding (use strong passwords!)
+ADMIN_EMAIL=your_admin@example.com
+ADMIN_PASSWORD=YourStrongPassword123!
 
 # Security
 ALLOW_SUPER_ADMIN_CREATION=false
@@ -242,7 +242,7 @@ npm run seed
 
 This creates:
 
-- Admin user: `admin@hptech.com` / `Heroo@1502`
+- Admin user with the email/password from your `ADMIN_EMAIL`/`ADMIN_PASSWORD` env vars
 - Sample data for testing
 
 ### Manual PostgreSQL Setup (Alternative)
@@ -293,10 +293,7 @@ npm run dev:frontend
 
 ### Default Login
 
-```
-Email: admin@hptech.com
-Password: Heroo@1502
-```
+Use the credentials configured in your `ADMIN_EMAIL` and `ADMIN_PASSWORD` environment variables during seeding.
 
 ## Available Scripts
 

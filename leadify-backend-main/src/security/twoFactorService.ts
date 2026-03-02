@@ -14,7 +14,10 @@ const BACKUP_CODE_LENGTH = 8;
 // --- Encryption helpers for secret storage ---
 
 function getEncryptionKey(): Buffer {
-  const key = process.env.TWO_FACTOR_ENCRYPTION_KEY || process.env.SECRET_KEY || 'default-encryption-key-change-me!';
+  const key = process.env.TWO_FACTOR_ENCRYPTION_KEY || process.env.SECRET_KEY;
+  if (!key) {
+    throw new Error('FATAL: TWO_FACTOR_ENCRYPTION_KEY or SECRET_KEY environment variable is required for 2FA encryption.');
+  }
   // Ensure 32-byte key for AES-256
   return crypto.scryptSync(key, 'hpt-crm-2fa-salt', 32);
 }

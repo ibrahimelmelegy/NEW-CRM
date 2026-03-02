@@ -130,7 +130,8 @@ async function createAdmin() {
 
         if (!superAdmin) {
             console.log(`User "${adminEmail}" not found. Creating it...`);
-            const hashedPassword = await bcrypt.hash('123456', 10);
+            const defaultPassword = process.env.ADMIN_PASSWORD || 'HPTech@Admin2026!';
+            const hashedPassword = await bcrypt.hash(defaultPassword, 12);
 
             superAdmin = await User.create({
                 name: 'Super Admin',
@@ -139,7 +140,8 @@ async function createAdmin() {
                 roleId: role.id,
                 status: 'ACTIVE'
             });
-            console.log(`✅ Created user: ${adminEmail} with password "123456"`);
+            console.log(`✅ Created user: ${adminEmail}`);
+            console.log(`⚠️  Change the default password immediately after first login!`);
         } else {
             console.log(`ℹ️ User "${adminEmail}" already exists.`);
         }

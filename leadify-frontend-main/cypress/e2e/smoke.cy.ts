@@ -11,8 +11,8 @@ describe('Smoke Test - Critical Flows', () => {
 
     // 3. Enter Credentials
     // Using name attributes which are stable selectors
-    cy.get('input[name="email"]').type('admin@hp-tech.com');
-    cy.get('input[name="password"]').type('Heroo@1502');
+    cy.get('input[name="email"]').type(Cypress.env('TEST_EMAIL') || 'admin@hp-tech.com');
+    cy.get('input[name="password"]').type(Cypress.env('TEST_PASSWORD'));
 
     // 4. Submit
     cy.get('button[type="submit"]').click();

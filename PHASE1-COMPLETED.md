@@ -110,8 +110,8 @@ ENABLE_DEBUG_MODE=true
 - ✅ Added `NODE_ENV=development`
 - ✅ Added `JWT_EXPIRATION_TIME=7d`
 - ✅ Added `POSTGRES_USER`, `POSTGRES_PASSWORD`, `POSTGRES_DB`
-- ✅ Added `ADMIN_EMAIL=admin@hptech.com`
-- ✅ Added `ADMIN_PASSWORD=Heroo@1502`
+- ✅ Added `ADMIN_EMAIL` (configured via environment)
+- ✅ Added `ADMIN_PASSWORD` (configured via environment)
 - ✅ Added `LOGIN_LOCK_TIME_MS=900000`
 - ✅ Added `LOGIN_MAX_ATTEMPTS=5`
 - ✅ Updated `CORS_ORIGINS` to include both ports
@@ -293,7 +293,7 @@ scripts\setup.bat
 
 **Solution:**
 
-- ✅ Fixed admin credentials (admin@hptech.com / Heroo@1502)
+- ✅ Fixed admin credentials (now configured via environment variables)
 - ✅ Added automated setup instructions
 - ✅ Added comprehensive scripts documentation
 - ✅ Added troubleshooting section

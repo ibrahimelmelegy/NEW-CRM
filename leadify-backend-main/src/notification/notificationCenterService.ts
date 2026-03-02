@@ -160,16 +160,21 @@ class NotificationCenterService {
       try {
         const user = await User.findByPk(data.userId);
         if (user?.email) {
-          const secret = process.env.SECRET_KEY || 'default-secret';
-          const prefKey = typeToPreferenceKey(data.type);
-          const unsubscribeToken = jwt.sign(
-            { userId: data.userId, notificationType: prefKey },
-            secret,
-            { expiresIn: '30d' }
-          );
+          const secret = process.env.SECRET_KEY;
           const frontendUrl = process.env.FRONTEND_URL || 'http://localhost:3060';
-          const unsubscribeUrl = `${process.env.BACKEND_URL || 'http://localhost:3000'}/api/notifications/unsubscribe?token=${unsubscribeToken}`;
           const actionUrl = data.actionUrl ? `${frontendUrl}${data.actionUrl}` : undefined;
+          let unsubscribeUrl: string | undefined;
+          if (secret) {
+            const prefKey = typeToPreferenceKey(data.type);
+            const unsubscribeToken = jwt.sign(
+              { userId: data.userId, notificationType: prefKey },
+              secret,
+              { expiresIn: '30d' }
+            );
+            unsubscribeUrl = `${process.env.BACKEND_URL || 'http://localhost:3000'}/api/notifications/unsubscribe?token=${unsubscribeToken}`;
+          } else {
+            console.error('[NotificationCenter] SECRET_KEY not set — omitting unsubscribe link');
+          }
 
           const priorityPrefix = isCritical ? '[CRITICAL] ' : priority === NotificationPriorityEnum.HIGH ? '[HIGH] ' : '';
           const html = renderNotificationEmail({
