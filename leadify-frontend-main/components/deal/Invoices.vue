@@ -48,7 +48,7 @@ const invoices = ref<Invoice[]>([
 ]);
 
 if (props.invoices?.length) {
-  invoices.value = props.invoices.map((invoice: Invoice) => ({
+  invoices.value = props.invoices.map((invoice: any) => ({
     amount: invoice.amount || null,
     invoiceNumber: invoice.invoiceNumber || '',
     invoiceDate: new Date(invoice.invoiceDate),
@@ -59,7 +59,7 @@ if (props.invoices?.length) {
 }
 
 // Refs for child forms
-const childRefs = ref<Record<string, unknown>>({});
+const childRefs = ref<Record<string, any>>({});
 // Add a new invoice
 async function AddInvoice() {
   if (!(await validateForm())) return;
@@ -117,7 +117,7 @@ function onSubmit(values: Invoice) {
 
 // Collect validation promises from all child forms
 async function validateForm(): Promise<boolean> {
-  const childPromises = childRefs.value.map(async (child: { validate: () => Promise<void>; errors: Record<string, string>; onSubmit: () => Promise<void>; values: Record<string, unknown> }) => {
+  const childPromises = childRefs.value.map(async (child: any) => {
     if (child) {
       // Await validation result
       await child.validate();
@@ -145,7 +145,7 @@ async function onSubmitForm(): Promise<boolean> {
   if (!isFormValid) return false;
   try {
     // Collect child submission promises
-    const childPromises = childRefs.value.map(async (child: { validate: () => Promise<void>; errors: Record<string, string>; onSubmit: () => Promise<void>; values: Record<string, unknown> }) => {
+    const childPromises = childRefs.value.map(async (child: any) => {
       if (child) {
         await child.onSubmit();
       }

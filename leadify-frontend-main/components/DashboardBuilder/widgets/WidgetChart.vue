@@ -30,7 +30,7 @@ const props = defineProps<{
 }>();
 
 const loading = ref(true);
-const chartOption = ref<Record<string, unknown> | null>(null);
+const chartOption = ref<any>(null);
 
 const chartHeight = computed(() => {
   return props.chartType === 'win-loss' ? '180px' : '220px';
@@ -86,10 +86,10 @@ async function loadData() {
 async function loadPipelineChart() {
   const { body, success } = await useApiFetch('dashboards/pipeline');
   if (success && body) {
-    const data = body as Record<string, unknown>;
+    const data = body as any;
     const stages = data.stages || data || [];
     if (!stages.length) return;
-    const chartData = stages.map((s: Record<string, unknown>) => ({
+    const chartData = stages.map((s: any) => ({
       name: s.name || s.stage || 'Unknown',
       value: s.count || s.value || 0,
     }));
@@ -98,7 +98,7 @@ async function loadPipelineChart() {
       grid: { top: 10, right: 15, bottom: 20, left: 15, containLabel: true },
       xAxis: {
         type: 'category',
-        data: chartData.map((d: { name: string; value: number }) => d.name),
+        data: chartData.map((d: any) => d.name),
         axisLabel: { color: '#94A3B8', fontSize: 10 },
         axisLine: { show: false },
         axisTick: { show: false },
@@ -111,7 +111,7 @@ async function loadPipelineChart() {
       series: [{
         type: 'bar',
         barWidth: '40%',
-        data: chartData.map((d: { name: string; value: number }) => d.value),
+        data: chartData.map((d: any) => d.value),
         itemStyle: {
           borderRadius: [6, 6, 6, 6],
           color: new graphic.LinearGradient(0, 0, 0, 1, [
@@ -127,11 +127,11 @@ async function loadPipelineChart() {
 async function loadLeadSourcesChart() {
   const { body, success } = await useApiFetch('insights/leads-sales');
   if (success && body) {
-    const data = body as Record<string, unknown>;
+    const data = body as any;
     // Try to extract lead sources from the API response
     const sources = data.leadSources || data.sources || [];
     const chartData = sources.length
-      ? sources.map((s: Record<string, unknown>) => ({ name: s.name || s.source, value: s.count || s.value || 0 }))
+      ? sources.map((s: any) => ({ name: s.name || s.source, value: s.count || s.value || 0 }))
       : [
           { name: 'Website', value: 35 },
           { name: 'Referral', value: 25 },
@@ -167,7 +167,7 @@ async function loadLeadSourcesChart() {
 async function loadWinLossChart() {
   const { body, success } = await useApiFetch('dashboards/executive-summary');
   if (success && body) {
-    const data = body as Record<string, unknown>;
+    const data = body as any;
     const won = data.wonDeals ?? data.dealsWon ?? 12;
     const lost = data.lostDeals ?? data.dealsLost ?? 5;
     chartOption.value = {
@@ -198,10 +198,10 @@ async function loadWinLossChart() {
 async function loadFunnelChart() {
   const { body, success } = await useApiFetch('dashboards/pipeline');
   if (success && body) {
-    const data = body as Record<string, unknown>;
+    const data = body as any;
     const stages = data.stages || data || [];
     const funnelData = stages.length
-      ? stages.map((s: Record<string, unknown>) => ({ name: s.name || s.stage, value: s.count || s.value || 0 }))
+      ? stages.map((s: any) => ({ name: s.name || s.stage, value: s.count || s.value || 0 }))
       : [
           { name: 'Leads', value: 100 },
           { name: 'Qualified', value: 65 },
@@ -210,7 +210,7 @@ async function loadFunnelChart() {
           { name: 'Won', value: 12 },
         ];
     // Sort descending for funnel
-    funnelData.sort((a: { name: string; value: number }, b: { name: string; value: number }) => b.value - a.value);
+    funnelData.sort((a: any, b: any) => b.value - a.value);
     chartOption.value = {
       tooltip: { trigger: 'item', formatter: '{b}: {c}', ...TOOLTIP },
       color: ['#8B5CF6', '#3B82F6', '#10B981', '#F59E0B', '#EF4444'],
@@ -236,10 +236,10 @@ async function loadFunnelChart() {
 async function loadRevenueTrendChart() {
   const { body, success } = await useApiFetch('dashboards/revenue?period=monthly');
   if (success && body) {
-    const data = body as Record<string, unknown>;
+    const data = body as any;
     const items = data.data || data || [];
     const chartData = items.length
-      ? items.map((item: Record<string, unknown>) => ({ name: (item.label || item.month || item.period) as string, value: (item.value || item.revenue || 0) as number }))
+      ? items.map((item: any) => ({ name: item.label || item.month || item.period, value: item.value || item.revenue || 0 }))
       : [];
     if (!chartData.length) return;
     chartOption.value = {
@@ -248,7 +248,7 @@ async function loadRevenueTrendChart() {
       xAxis: {
         type: 'category',
         boundaryGap: false,
-        data: chartData.map((d: { name: string; value: number }) => d.name),
+        data: chartData.map((d: any) => d.name),
         axisLabel: { color: '#94A3B8', fontSize: 10 },
         axisLine: { show: false },
         axisTick: { show: false },
@@ -260,7 +260,7 @@ async function loadRevenueTrendChart() {
       },
       series: [{
         type: 'line',
-        data: chartData.map((d: { name: string; value: number }) => d.value),
+        data: chartData.map((d: any) => d.value),
         smooth: true,
         showSymbol: false,
         lineStyle: { width: 3, color: '#EF4444', shadowBlur: 12, shadowColor: 'rgba(239,68,68,0.3)', shadowOffsetY: 6 },

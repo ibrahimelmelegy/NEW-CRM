@@ -17,7 +17,7 @@ el-form(  autocomplete="off"   @submit.prevent='onSubmit'   ref="myForm" label-p
           InputText(:label="$t('opportunities.table.name')"  name="opportunityName" :value="data?.name" )
           InputSelect(:label="$t('opportunities.table.stage')" name="opportunityStage" :options="stageOptions.map(o => ({...o, label: $t(o.label)}))" :value="data?.stage" @change="checkIfCancelled" )
           InputText(:label="$t('opportunities.table.profit') + ' (Optional)'" type="number" :placeholder="$t('opportunities.table.profit')" name="profit" :value="data?.profit" )
-          InputSelect(:class="{'col-span-2': !switchType}" :label="$t('opportunities.table.assigned')" name="assignUser" isMultiple :options="users" :value="users?.filter((user: {label: string, value: number}) => data?.users?.map((user: {id: number}) => user.id)?.includes(user.value))?.map((user: {label: string, value: number}) => user.value)" )
+          InputSelect(:class="{'col-span-2': !switchType}" :label="$t('opportunities.table.assigned')" name="assignUser" isMultiple :options="users" :value="users?.filter((user: any) => data?.users?.map((user: any) => user.id)?.includes(user.value))?.map((user: any) => user.value)" )
         .grid.grid-cols-2.gap-3
           InputText.mt-4(:label="$t('opportunities.info.budget') + ' (Optional)'" type="number" :placeholder="$t('opportunities.info.budget')" name="estimatedValue" :value="data?.estimatedValue" )
           InputDate.mt-4(:label="$t('opportunities.info.closeDate') + ' (Optional)'" disabledDate="past" :placeholder="$t('opportunities.info.closeDate')" :value="data?.expectedCloseDate || new Date()" name="expectedCloseDate" )
@@ -85,8 +85,8 @@ const formSchema = computed(() =>
           .nullable()
           .test(
             'is-valid',
-            (_message: string | object | undefined) => t('errors.invalidEmail'),
-            (value: string | undefined) => !value || isEmailValidator(value)
+            (message: any) => t('errors.invalidEmail'),
+            (value: any) => !value || isEmailValidator(value)
           )
           .label(t('leads.info.email')),
       otherwise: () =>
@@ -97,8 +97,8 @@ const formSchema = computed(() =>
           .nullable(t('errors.emailOrPhoneRequired'))
           .test(
             'is-valid',
-            (_message: string | object | undefined) => t('errors.invalidEmail'),
-            (value: string | undefined) => (value ? isEmailValidator(value) : new yup.ValidationError(t('errors.invalidEmail')))
+            (message: any) => t('errors.invalidEmail'),
+            (value: any) => (value ? isEmailValidator(value) : new yup.ValidationError(t('errors.invalidEmail')))
           )
           .label(t('leads.info.email'))
     }),
@@ -108,9 +108,9 @@ const formSchema = computed(() =>
         yup
           .number()
           .nullable()
-          .transform((value: number | null, originalValue: unknown) => (originalValue === '' ? null : Number.isNaN(value) ? null : value))
+          .transform((value: any, originalValue: any) => (originalValue === '' ? null : Number.isNaN(value) ? null : value))
           .label(t('leads.info.phone'))
-          .test('Phone number', t('errors.invalidPhone'), function (value: number | null | undefined) {
+          .test('Phone number', t('errors.invalidPhone'), function (value: any) {
             if (value === null || value === undefined) {
               return true;
             }
@@ -119,11 +119,11 @@ const formSchema = computed(() =>
       otherwise: () =>
         yup
           .number()
-          .transform((value: number | null) => (Number.isNaN(value) ? null : value))
+          .transform((value: any) => (Number.isNaN(value) ? null : value))
           .nullable()
           .required(t('errors.emailOrPhoneRequired'))
           .label(t('leads.info.phone'))
-          .test('Phone number', t('errors.invalidPhone'), function (_value: number | null | undefined) {
+          .test('Phone number', t('errors.invalidPhone'), function (value: any) {
             return !!validPhone.value;
           })
     }),
@@ -135,13 +135,13 @@ const formSchema = computed(() =>
       .nullable()
       .max(10000000)
       .label(t('opportunities.info.budget'))
-      .transform((value: number | null, originalValue: unknown) => (String(originalValue).trim() === '' ? null : value)),
+      .transform((value: any, originalValue: any) => (String(originalValue).trim() === '' ? null : value)),
     profit: yup
       .number()
       .nullable()
       .max(10000000)
       .label(t('opportunities.table.profit'))
-      .transform((value: number | null, originalValue: unknown) => (String(originalValue).trim() === '' ? null : value)),
+      .transform((value: any, originalValue: any) => (String(originalValue).trim() === '' ? null : value)),
     expectedCloseDate: yup.date().nullable().label(t('opportunities.info.closeDate')),
     priority: yup.string().nullable().trim().max(100).label(t('opportunities.info.priority')),
     interestedIn: yup.string().nullable().trim().max(200).label(t('opportunities.info.products')),
@@ -154,7 +154,7 @@ const formSchema = computed(() =>
           .string()
           .trim()
           .nullable()
-          .test('min-length-if-entered', t('errors.minLength', { min: 2 }), (value: string | null | undefined) => !value || value.length >= 2)
+          .test('min-length-if-entered', t('errors.minLength', { min: 2 }), (value: any) => !value || value.length >= 2)
           .trim()
           .max(250)
           .label(t('opportunities.info.reasonLoss'))
@@ -163,7 +163,7 @@ const formSchema = computed(() =>
       .string()
       .trim()
       .nullable()
-      .test('min-length-if-entered', t('errors.minLength', { min: 2 }), (value: string | null | undefined) => !value || value.length >= 2)
+      .test('min-length-if-entered', t('errors.minLength', { min: 2 }), (value: any) => !value || value.length >= 2)
       .trim()
       .max(2000)
       .label(t('leads.notes'))
@@ -171,7 +171,7 @@ const formSchema = computed(() =>
 );
 
 const isLose = ref(false);
-function checkIfCancelled(value: { label: string; value: string }) {
+function checkIfCancelled(value: any) {
   if (value.label === 'Lost') {
     isLose.value = true;
   } else {
@@ -183,7 +183,7 @@ const { handleSubmit } = useForm({
   validationSchema: formSchema
 });
 
-const onSubmit = handleSubmit((values: Record<string, unknown>) => {
+const onSubmit = handleSubmit((values: any, actions: any) => {
   const formatedValues = {
     ...(switchType.value && {
       lead: {
@@ -214,25 +214,17 @@ const onSubmit = handleSubmit((values: Record<string, unknown>) => {
   emit('submit', formatedValues);
 });
 
-const usersRes = await useApiFetch('users');
-const users = usersRes?.body?.docs?.map((e: { name: string; id: number }) => ({
+let users = await useApiFetch('users');
+users = users?.body?.docs?.map((e: any) => ({
   label: e.name,
   value: e.id
 }));
 
-interface LeadRecord {
-  id: string;
-  name: string;
-  companyName?: string;
-  email?: string;
-  phone?: string;
-}
-
-const selectedLead = ref<LeadRecord | null>(null);
+const selectedLead = ref<any>([]);
 const response = await getLeads();
 const leads = response.leads;
 
-const mappedLeads = leads?.map((e: LeadRecord) => ({
+const mappedLeads = leads?.map((e: any) => ({
   label: e.name,
   value: e.name,
   id: e.id
@@ -253,7 +245,7 @@ if (leadId) {
       selectedLead.value = lead;
     }
   } else {
-    selectedLead.value = leads?.find((lead: LeadRecord) => lead.id === leadId) || null;
+    selectedLead.value = leads?.find((lead: any) => lead.id === leadId);
   }
 
   if (selectedLead.value) {
@@ -262,17 +254,17 @@ if (leadId) {
   }
 }
 
-const mappedClients = ref<{ label: string; value: string | number }[]>();
+const mappedClients = ref<{ label: string; value: any }[]>();
 //  Get clients
 const { clients } = await getClients();
 // Map clients to Select Options
-mappedClients.value = clients?.map((e: { clientName: string; id: string | number }) => ({
+mappedClients.value = clients?.map((e: any) => ({
   label: e.clientName,
   value: e.id
 }));
 
-function getSelectedLead(e: { id: string; label?: string; value?: string }) {
-  selectedLead.value = leads?.find((lead: LeadRecord) => lead.id === e.id) || null;
+function getSelectedLead(e: any) {
+  selectedLead.value = leads?.find((lead: any) => lead.id === e.id);
   if (selectedLead.value?.email) {
     isEmail.value = true;
   } else if (selectedLead.value?.phone) {

@@ -53,16 +53,16 @@ const formSchema = yup.object({
     .required('At least one of email or phone number is required')
     .test(
       'is-valid',
-      (_message: string | object | undefined) => 'Invalid email',
-      (value: string | undefined) => (value ? isEmailValidator(value) : new yup.ValidationError('Invalid value'))
+      (message: any) => 'Invalid email',
+      (value: any) => (value ? isEmailValidator(value) : new yup.ValidationError('Invalid value'))
     )
     .label(t('staff.form.email')),
   phone: yup
     .number()
     .nullable() // Allows the value to be null
-    .transform((value: number | null, originalValue: unknown) => (originalValue === '' ? null : Number.isNaN(value) ? null : value))
+    .transform((value: any, originalValue: any) => (originalValue === '' ? null : Number.isNaN(value) ? null : value))
     .label(t('staff.form.phone'))
-    .test('Phone number', 'Invalid Phone', function (value: number | null | undefined) {
+    .test('Phone number', 'Invalid Phone', function (value: any) {
       if (value === null || value === undefined) {
         return true;
       }
@@ -92,7 +92,7 @@ const { handleSubmit } = useForm({
   validationSchema: formSchema
 });
 
-const onSubmit = handleSubmit((values: Record<string, unknown>) => {
+const onSubmit = handleSubmit((values: any, actions: any) => {
   const formatedValues = cleanObject({
     ...values,
     status: props.editMode ? values.status : ''
@@ -100,11 +100,11 @@ const onSubmit = handleSubmit((values: Record<string, unknown>) => {
   emit('submit', formatedValues);
 });
 
-const mappedRoles = ref<{ label: string; value: string | number }[]>();
+const mappedRoles = ref<{ label: string; value: any }[]>();
 //  Get roles
 const repsonse = await useApiFetch('role');
 // Map clients to Select Options
-mappedRoles.value = repsonse.body?.docs?.map((e: { name: string; id: string | number }) => ({
+mappedRoles.value = repsonse.body?.docs?.map((e: any) => ({
   label: e.name,
   value: e.id
 }));

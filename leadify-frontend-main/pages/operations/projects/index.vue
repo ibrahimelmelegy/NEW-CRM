@@ -132,7 +132,7 @@ const exportColumns = [
 const exportData = computed(() => table.data);
 
 // Bulk actions
-const selectedRows = ref<Record<string, unknown>[]>([]);
+const selectedRows = ref<any[]>([]);
 function handleBulkDelete() {
   selectedRows.value = [];
 }
@@ -237,24 +237,24 @@ table.data = response.formattedData;
 const kpiMetrics = computed<KPIMetric[]>(() => {
   const data = table.data || [];
   const total = data.length;
-  const active = data.filter((p: CombinedProjectValues) => p.status === 'PROJECT_ACTIVE').length;
-  const completed = data.filter((p: CombinedProjectValues) => p.status === 'PROJECT_COMPLETE').length;
+  const active = data.filter((p: any) => p.status === 'PROJECT_ACTIVE').length;
+  const completed = data.filter((p: any) => p.status === 'PROJECT_COMPLETE').length;
 
   // Calculate real average duration from project data
-  const projectsWithDuration = data.filter((p: CombinedProjectValues) => p.duration && !isNaN(parseInt(p.duration as string)));
+  const projectsWithDuration = data.filter((p: any) => p.duration && !isNaN(parseInt(p.duration)));
   const avgDuration = projectsWithDuration.length > 0
-    ? Math.round(projectsWithDuration.reduce((sum: number, p: CombinedProjectValues) => sum + parseInt((p.duration as string) || '0'), 0) / projectsWithDuration.length)
+    ? Math.round(projectsWithDuration.reduce((sum: number, p: any) => sum + parseInt(p.duration || '0'), 0) / projectsWithDuration.length)
     : 0;
 
   // Calculate on-time delivery rate
-  const completedProjects = data.filter((p: CombinedProjectValues) => p.status === 'PROJECT_COMPLETE');
+  const completedProjects = data.filter((p: any) => p.status === 'PROJECT_COMPLETE');
   const onTimeDelivery = completedProjects.length > 0
     ? Math.round((completedProjects.length / total) * 100)
     : 0;
 
   // Calculate budget utilization (placeholder - needs actual cost data)
-  const projectsWithCost = data.filter((p: CombinedProjectValues) => p.totalCost && p.totalCost !== '--');
-  const totalBudget = projectsWithCost.reduce((sum: number, p: CombinedProjectValues) => {
+  const projectsWithCost = data.filter((p: any) => p.totalCost && p.totalCost !== '--');
+  const totalBudget = projectsWithCost.reduce((sum: number, p: any) => {
     const cost = typeof p.totalCost === 'string' ? parseFloat(p.totalCost.replace(/[^0-9.]/g, '')) : p.totalCost;
     return sum + (cost || 0);
   }, 0);
@@ -279,7 +279,7 @@ const kpiMetrics = computed<KPIMetric[]>(() => {
 //   projectClient: project.client?.clientName || '-',
 // }));
 
-function handleRowClick(val: Record<string, unknown>) {
+function handleRowClick(val: any) {
   router.push(`/operations/projects/${val.id}`);
 }
 
@@ -316,21 +316,21 @@ const advancedSearchFields = [
   { key: 'totalCost', label: t('operations.projects.table.totalCost'), type: 'number' }
 ];
 
-async function handleApplyView(view: Record<string, unknown>) {
+async function handleApplyView(view: any) {
   if (view?.filters) {
     const res = await useTableFilter('project', view.filters);
     table.data = res.formattedData;
   }
 }
 
-async function handleAdvancedFilter(filterPayload: Record<string, unknown>) {
+async function handleAdvancedFilter(filterPayload: any) {
   try {
     const res = await useApiFetch('search/advanced/project', 'POST', filterPayload);
     if (res?.success && res?.body) {
-      const data = res.body as Record<string, unknown>;
-      table.data = (data.docs || data || []) as CombinedProjectValues[];
+      const data = res.body as any;
+      table.data = data.docs || data || [];
     }
-  } catch (e: unknown) {
+  } catch (e: any) {
     ElMessage.error(t('common.error'));
   }
 }
@@ -351,19 +351,19 @@ const mobileStatusFilters = computed(() => {
   const data = table.data || [];
   return [
     { value: 'ALL', label: t('common.all'), color: '#8b5cf6', count: data.length },
-    { value: 'PROJECT_ACTIVE', label: 'Active', color: '#10b981', count: data.filter((p: CombinedProjectValues) => p.status === 'PROJECT_ACTIVE').length },
-    { value: 'PROJECT_COMPLETE', label: 'Complete', color: '#3b82f6', count: data.filter((p: CombinedProjectValues) => p.status === 'PROJECT_COMPLETE').length },
-    { value: 'PROJECT_ON_HOLD', label: 'On Hold', color: '#f59e0b', count: data.filter((p: CombinedProjectValues) => p.status === 'PROJECT_ON_HOLD').length },
-    { value: 'PROJECT_CANCELLED', label: 'Cancelled', color: '#ef4444', count: data.filter((p: CombinedProjectValues) => p.status === 'PROJECT_CANCELLED').length }
+    { value: 'PROJECT_ACTIVE', label: 'Active', color: '#10b981', count: data.filter((p: any) => p.status === 'PROJECT_ACTIVE').length },
+    { value: 'PROJECT_COMPLETE', label: 'Complete', color: '#3b82f6', count: data.filter((p: any) => p.status === 'PROJECT_COMPLETE').length },
+    { value: 'PROJECT_ON_HOLD', label: 'On Hold', color: '#f59e0b', count: data.filter((p: any) => p.status === 'PROJECT_ON_HOLD').length },
+    { value: 'PROJECT_CANCELLED', label: 'Cancelled', color: '#ef4444', count: data.filter((p: any) => p.status === 'PROJECT_CANCELLED').length }
   ];
 });
 
 const mobileFilteredData = computed(() => {
   let data = table.data || [];
-  if (mobileProjStatus.value !== 'ALL') data = data.filter((p: CombinedProjectValues) => p.status === mobileProjStatus.value);
+  if (mobileProjStatus.value !== 'ALL') data = data.filter((p: any) => p.status === mobileProjStatus.value);
   if (!mobileSearch.value) return data;
   const q = mobileSearch.value.toLowerCase();
-  return data.filter((p: CombinedProjectValues) => ((p.name as string) || '').toLowerCase().includes(q) || ((p.projectClient as string) || '').toLowerCase().includes(q));
+  return data.filter((p: any) => (p.name || '').toLowerCase().includes(q) || (p.projectClient || '').toLowerCase().includes(q));
 });
 
 async function handleMobileRefresh() {
@@ -375,13 +375,13 @@ async function handleMobileRefresh() {
   } finally { mobileRefreshing.value = false; }
 }
 
-function getProjLeftActions(_p: CombinedProjectValues) {
+function getProjLeftActions(_p: any) {
   const actions = [{ name: 'view', label: t('common.view'), icon: 'ph:eye-bold', color: '#8b5cf6' }];
   if (hasPermission('EDIT_PROJECTS')) actions.push({ name: 'edit', label: t('common.edit'), icon: 'ph:pencil-simple-bold', color: '#F59E0B' });
   return actions;
 }
 
-function handleProjSwipe(name: string, proj: CombinedProjectValues) {
+function handleProjSwipe(name: string, proj: any) {
   vibrate();
   if (name === 'view') navigateTo(`/operations/projects/${proj.id}`);
   if (name === 'edit') navigateTo(`/operations/projects/edit/${proj.id}`);

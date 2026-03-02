@@ -105,21 +105,21 @@ const table = reactive({
 
 const dialog = reactive({
   visible: false,
-  data: null as Record<string, unknown> | null
+  data: null as any
 });
 
 const deletePopup = reactive({
   visible: false,
   loading: false,
-  data: null as Record<string, unknown> | null
+  data: null as any
 });
 
-function openDialog(data: Record<string, unknown> | null = null) {
+function openDialog(data: any = null) {
   dialog.data = data;
   dialog.visible = true;
 }
 
-function handleRowClick(_val: Record<string, unknown>) {
+function handleRowClick(val: any) {
   // Option to go to details if needed
 }
 
@@ -128,7 +128,7 @@ async function fetchData() {
   table.data = newResponse.formattedData;
 }
 
-function confirmDelete(data: Record<string, unknown>) {
+function confirmDelete(data: any) {
   deletePopup.data = data;
   deletePopup.visible = true;
 }

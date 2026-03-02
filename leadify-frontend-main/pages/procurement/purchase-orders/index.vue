@@ -134,7 +134,7 @@ const table = reactive({
 const activeTab = ref('active');
 const router = useRouter();
 
-function handleRowClick(val: Record<string, unknown>) {
+function handleRowClick(val: any) {
   router.push(`/procurement/purchase-orders/${val.id}`);
 }
 
@@ -152,7 +152,7 @@ const mobileRefreshing = ref(false);
 
 const mobileFilters = computed(() => {
   const data = table.data || [];
-  const statuses = [...new Set(data.map((po: Record<string, unknown>) => po.status).filter(Boolean))] as string[];
+  const statuses = [...new Set(data.map((po: any) => po.status).filter(Boolean))] as string[];
   const statusColors: Record<string, string> = {
     PENDING: '#f59e0b',
     APPROVED: '#10b981',
@@ -168,7 +168,7 @@ const mobileFilters = computed(() => {
       value: s,
       label: s.charAt(0) + s.slice(1).toLowerCase(),
       color: statusColors[s] || '#94a3b8',
-      count: data.filter((po: Record<string, unknown>) => po.status === s).length
+      count: data.filter((po: any) => po.status === s).length
     }))
   ];
 });
@@ -176,11 +176,11 @@ const mobileFilters = computed(() => {
 const mobileFilteredData = computed(() => {
   let data = table.data || [];
   if (mobileStatusFilter.value !== 'ALL') {
-    data = data.filter((po: Record<string, unknown>) => po.status === mobileStatusFilter.value);
+    data = data.filter((po: any) => po.status === mobileStatusFilter.value);
   }
   if (!mobileSearch.value) return data;
   const q = mobileSearch.value.toLowerCase();
-  return data.filter((po: Record<string, unknown>) => {
+  return data.filter((po: any) => {
     const poNum = (po.poNumber || '').toLowerCase();
     const vendor = (po.vendor?.name || po['vendor.name'] || '').toLowerCase();
     const project = (po.project?.name || po['project.name'] || '').toLowerCase();
@@ -197,7 +197,7 @@ async function handleMobileRefresh() {
   } finally { mobileRefreshing.value = false; }
 }
 
-function handleSwipeAction(name: string, po: Record<string, unknown>) {
+function handleSwipeAction(name: string, po: any) {
   vibrate();
   if (name === 'view') navigateTo(`/procurement/purchase-orders/${po.id}`);
 }

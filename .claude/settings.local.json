@@ -173,7 +173,17 @@
       "Bash(# Let''s try a practical approach - use WebFetch/curl to check if pages load properly # Simulate what happens when someone visits the login page curl -sk https://crm.hp-tech.com/login -o /dev/null -w \"\"HTTP: %{http_code}, Size: %{size_download}\"\" echo \"\"\"\" # Check response headers - verify no-cache is working curl -sk -I https://crm.hp-tech.com/)",
       "Bash(# Check the raw HTML for the critical elements curl -sk https://crm.hp-tech.com/)",
       "Bash(# Verify site is live and serving new bundles curl -sk https://crm.hp-tech.com -o /dev/null -w \"\"HTTP: %{http_code}\\\\n\"\" # Check the new bundle hash curl -sk https://crm.hp-tech.com)",
-      "Bash(# Verify the new CSS doesn''t have margin-left: 260px curl -sk https://crm.hp-tech.com)"
+      "Bash(# Verify the new CSS doesn''t have margin-left: 260px curl -sk https://crm.hp-tech.com)",
+      "Bash(git checkout:*)",
+      "Bash(gh pr create:*)",
+      "Bash(gh pr merge:*)",
+      "Bash(git branch:*)",
+      "Bash(docker info:*)",
+      "Bash(docker compose:*)",
+      "Bash(docker rm:*)",
+      "Bash(pg_isready:*)",
+      "Bash(npx vitest run:*)",
+      "Bash(git revert:*)"
     ]
   }
 }

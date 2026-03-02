@@ -260,22 +260,22 @@ const activeTab = ref('programs');
 
 // Programs state
 const programDialogVisible = ref(false);
-const editingProgram = ref<Record<string, unknown> | null>(null);
+const editingProgram = ref<any>(null);
 const programSearch = ref('');
 const programStatusFilter = ref('');
-const programs = ref<Record<string, unknown>[]>([]);
+const programs = ref<any[]>([]);
 const programsPagination = reactive({ page: 1, limit: 20, total: 0 });
 
 // Enrollments state
 const enrollmentDialogVisible = ref(false);
-const editingEnrollment = ref<Record<string, unknown> | null>(null);
+const editingEnrollment = ref<any>(null);
 const enrollmentSearch = ref('');
 const enrollmentStatusFilter = ref('');
-const enrollments = ref<Record<string, unknown>[]>([]);
+const enrollments = ref<any[]>([]);
 const enrollmentsPagination = reactive({ page: 1, limit: 20, total: 0 });
 
 // Employees for enrollment select
-const employees = ref<Record<string, unknown>[]>([]);
+const employees = ref<any[]>([]);
 
 // Dashboard state
 const dashboardLoading = ref(false);
@@ -331,7 +331,7 @@ const enrollmentForm = reactive({
 // Computed
 const avgProgress = computed(() => {
   if (!enrollments.value.length) return 0;
-  return Math.round(enrollments.value.reduce((sum: number, e: Record<string, unknown>) => sum + ((e.progress as number) || 0), 0) / enrollments.value.length);
+  return Math.round(enrollments.value.reduce((sum: number, e: any) => sum + (e.progress || 0), 0) / enrollments.value.length);
 });
 
 const filteredPrograms = computed(() => {
@@ -382,7 +382,7 @@ function getProgressColor(progress: number): string {
   return '#3b82f6';
 }
 
-function navigateToProgram(row: Record<string, unknown>) {
+function navigateToProgram(row: any) {
   if (row?.id) router.push(`/hr/training/${row.id}`);
 }
 
@@ -398,7 +398,7 @@ function resetProgramForm() {
   programForm.description = '';
 }
 
-function openProgramDialog(item?: Record<string, unknown>) {
+function openProgramDialog(item?: any) {
   if (item?.id) {
     editingProgram.value = item;
     programForm.title = item.title || '';
@@ -439,7 +439,7 @@ async function handleSaveProgram() {
   }
 }
 
-async function handleDeleteProgram(row: Record<string, unknown>) {
+async function handleDeleteProgram(row: any) {
   try {
     await ElMessageBox.confirm(
       t('common.confirmDelete'),
@@ -466,7 +466,7 @@ function resetEnrollmentForm() {
   enrollmentForm.score = 0;
 }
 
-function openEnrollmentDialog(item?: Record<string, unknown>) {
+function openEnrollmentDialog(item?: any) {
   if (item?.id) {
     editingEnrollment.value = item;
     enrollmentForm.employeeId = item.employeeId || '';
@@ -504,7 +504,7 @@ async function handleSaveEnrollment() {
   }
 }
 
-async function handleDeleteEnrollment(row: Record<string, unknown>) {
+async function handleDeleteEnrollment(row: any) {
   try {
     await ElMessageBox.confirm(
       t('common.confirmDelete'),
@@ -532,19 +532,19 @@ async function loadData() {
       useApiFetch('hr/employees?limit=500')
     ]);
     if (programsRes?.success && programsRes.body) {
-      const data = programsRes.body as Record<string, unknown>;
+      const data = programsRes.body as any;
       programs.value = data.rows || data.docs || data || [];
       programsPagination.total = data.count ?? data.total ?? programs.value.length;
     }
     if (enrollmentsRes?.success && enrollmentsRes.body) {
-      const data = enrollmentsRes.body as Record<string, unknown>;
+      const data = enrollmentsRes.body as any;
       enrollments.value = data.rows || data.docs || data || [];
       enrollmentsPagination.total = data.count ?? data.total ?? enrollments.value.length;
     }
     if (empRes?.success && empRes.body) {
-      const data = empRes.body as Record<string, unknown>;
-      const docs = (data.docs || data || []) as Record<string, unknown>[];
-      employees.value = docs.map((e: Record<string, unknown>) => ({
+      const data = empRes.body as any;
+      const docs = data.docs || data || [];
+      employees.value = docs.map((e: any) => ({
         id: e.id,
         name: e.firstName ? `${e.firstName} ${e.lastName || ''}`.trim() : e.name || `Employee #${e.id}`
       }));
@@ -560,13 +560,13 @@ async function loadDashboard() {
   try {
     const res = await useApiFetch('hr/training/dashboard');
     if (res?.success && res.body) {
-      const d = res.body as Record<string, unknown>;
+      const d = res.body as any;
       dashboardData.totalPrograms = d.totalPrograms ?? 0;
       dashboardData.activeEnrollments = d.activeEnrollments ?? 0;
       dashboardData.completionRate = d.completionRate ?? 0;
       dashboardData.upcoming = d.upcoming ?? d.upcomingPrograms ?? 0;
       dashboardData.overdue = d.overdue ?? 0;
-      dashboardData.topCategories = ((d.topCategories || []) as Record<string, unknown>[]).map((c: Record<string, unknown>) => ({
+      dashboardData.topCategories = (d.topCategories || []).map((c: any) => ({
         name: c.name || c.category || '--',
         count: c.count ?? 0
       }));

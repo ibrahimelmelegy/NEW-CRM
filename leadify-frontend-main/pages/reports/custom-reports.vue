@@ -378,16 +378,16 @@ const t = $i18n.t;
 const loading = ref(true);
 const saving = ref(false);
 const loadingFields = ref(false);
-const reports = ref<Record<string, unknown>[]>([]);
+const reports = ref<any[]>([]);
 const entityTypes = ref<Record<string, string>>({});
-const availableFields = ref<Record<string, unknown>[]>([]);
+const availableFields = ref<any[]>([]);
 const searchQuery = ref('');
 const entityTypeFilter = ref('');
 const formDialogVisible = ref(false);
 const resultsDialogVisible = ref(false);
-const editingReport = ref<Record<string, unknown> | null>(null);
+const editingReport = ref<any>(null);
 const executingId = ref<number | null>(null);
-const executionResults = ref<Record<string, unknown> | null>(null);
+const executionResults = ref<any>(null);
 const resultsReportName = ref('');
 const resultsReportId = ref<number>(0);
 const reportFormRef = ref<FormInstance>();
@@ -423,11 +423,11 @@ const formRules = reactive<FormRules>({
 const filteredReports = computed(() => {
   let result = reports.value;
   if (entityTypeFilter.value) {
-    result = result.filter((r: Record<string, unknown>) => r.entityType === entityTypeFilter.value);
+    result = result.filter((r: any) => r.entityType === entityTypeFilter.value);
   }
   if (searchQuery.value) {
     const q = searchQuery.value.toLowerCase();
-    result = result.filter((r: Record<string, unknown>) =>
+    result = result.filter((r: any) =>
       (r.name || '').toLowerCase().includes(q) ||
       (r.description || '').toLowerCase().includes(q)
     );
@@ -438,11 +438,11 @@ const filteredReports = computed(() => {
 const recentlyExecutedCount = computed(() => {
   const oneWeekAgo = new Date();
   oneWeekAgo.setDate(oneWeekAgo.getDate() - 7);
-  return reports.value.filter((r: Record<string, unknown>) => new Date(r.updatedAt as string) > oneWeekAgo).length;
+  return reports.value.filter((r: any) => new Date(r.updatedAt) > oneWeekAgo).length;
 });
 
 const scheduledCount = computed(() => {
-  return reports.value.filter((r: Record<string, unknown>) => r.schedule && (r.schedule as Record<string, unknown>).frequency).length;
+  return reports.value.filter((r: any) => r.schedule && r.schedule.frequency).length;
 });
 
 const resultColumns = computed(() => {
@@ -456,7 +456,7 @@ async function fetchReports() {
   try {
     const { body, success } = await useApiFetch('reports');
     if (success && body) {
-      reports.value = Array.isArray(body) ? body as Record<string, unknown>[] : ((body as Record<string, unknown>).docs as Record<string, unknown>[]) || [];
+      reports.value = Array.isArray(body) ? body : (body as any).docs || [];
     }
   } catch (e) {
     console.error('Failed to fetch reports', e);
@@ -485,7 +485,7 @@ async function fetchFields(entityType: string) {
   try {
     const { body, success } = await useApiFetch(`reports/fields/${entityType}`);
     if (success && body) {
-      availableFields.value = ((body as Record<string, unknown>).fields as Record<string, unknown>[]) || [];
+      availableFields.value = (body as any).fields || [];
     }
   } catch (e) {
     console.error('Failed to fetch fields', e);
@@ -495,7 +495,7 @@ async function fetchFields(entityType: string) {
   }
 }
 
-async function handleExecute(report: Record<string, unknown>) {
+async function handleExecute(report: any) {
   executingId.value = report.id;
   resultsReportName.value = report.name;
   resultsReportId.value = report.id;
@@ -567,7 +567,7 @@ async function handleSaveReport() {
     if (!valid) return;
     saving.value = true;
 
-    const payload: Record<string, unknown> = {
+    const payload: Record<string, any> = {
       name: reportForm.name,
       description: reportForm.description,
       entityType: reportForm.entityType,
@@ -628,14 +628,14 @@ function openCreateDialog() {
   formDialogVisible.value = true;
 }
 
-async function openEditDialog(report: Record<string, unknown>) {
+async function openEditDialog(report: any) {
   editingReport.value = report;
   Object.assign(reportForm, {
     name: report.name || '',
     description: report.description || '',
     entityType: report.entityType || '',
     fields: Array.isArray(report.fields) ? [...report.fields] : [],
-    filters: Array.isArray(report.filters) ? (report.filters as Record<string, unknown>[]).map((f: Record<string, unknown>) => ({ ...f })) : [],
+    filters: Array.isArray(report.filters) ? report.filters.map((f: any) => ({ ...f })) : [],
     groupBy: report.groupBy || '',
     sortBy: report.sortBy || '',
     sortOrder: report.sortOrder || 'DESC',

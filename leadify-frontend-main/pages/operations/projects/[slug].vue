@@ -77,7 +77,7 @@ el-tabs.demo-tabs(v-model="activeName", @tab-click="handleClick")
           .text-neutral-400.font-medium.mb-2.flex.items-center
             Icon.mr-2(name="IconAssign", size="20")
             p {{ $t('operations.projects.form.assignUsers') }}
-          p.text-neutral-800.mb-2 {{ project?.assignedUsers?.map((user: Record<string, unknown>) => user?.name).join(", ") }}
+          p.text-neutral-800.mb-2 {{ project?.assignedUsers?.map((user: any) => user?.name).join(", ") }}
 
     .flex.align-center.gap-6.mt-3.flex-col(class="xl:flex-row")
       .flex-1.glass-card.p-10.rounded-3xl(v-if="project?.etimadProject")
@@ -460,12 +460,12 @@ const vehicles = reactive({
     },
     { prop: 'totalCost', label: t('operations.projects.vehicles.table.totalCost'), component: 'Text', type: 'font-default', width: 250 }
   ],
-  data: [] as Record<string, unknown>[]
+  data: [] as any[]
 });
 
 if (project?.vehicles?.length) {
   vehicles.data =
-    project?.vehicles?.map((vehicle: Record<string, unknown>) => ({
+    project?.vehicles?.map((vehicle: any) => ({
       ...vehicle,
       totalCost:
         Number(vehicle.rentCost || 0) + Number(vehicle.gasCost || 0) + Number(vehicle.oilCost || 0) + Number(vehicle.regularMaintenanceCost || 0)
@@ -491,7 +491,7 @@ const manpowers = ref({
     { prop: 'otherCosts', label: t('operations.projects.manpower.table.otherCosts'), component: 'Text', type: 'font-default', width: 150 },
     { prop: 'totalCost', label: t('operations.projects.manpower.table.totalCost'), component: 'Text', type: 'font-default', width: 150 }
   ],
-  data: [] as Record<string, unknown>[]
+  data: [] as any[]
 });
 
 const manPowertotal = ref({
@@ -505,7 +505,7 @@ const manPowertotal = ref({
       width: 150
     }
   ],
-  data: [] as Record<string, unknown>[]
+  data: [] as any[]
 });
 
 const table = reactive({
@@ -550,18 +550,18 @@ const table = reactive({
     { prop: 'assign', label: t('operations.projects.proposalTable.assigned'), component: 'Text', type: 'font-default', width: 200 },
     { prop: 'createdAt', label: t('operations.projects.proposalTable.created'), component: 'Text', sortable: true, type: 'font-default', width: 200 }
   ],
-  data: [] as Record<string, unknown>[]
+  data: [] as any[]
 });
 
 // Fetch all lookup data in parallel for faster page load
-const [response, _manpowersRes, _serviceRes, _addMaterialsRes, _assetsRes]: Record<string, unknown>[] = await Promise.all([
+const [response, _manpowersRes, _serviceRes, _addMaterialsRes, _assetsRes]: any[] = await Promise.all([
   useTableFilter(`proposal?relatedEntityId=${route.params.slug}&page=1&limit=100`),
   useTableFilter('manpower'),
   useTableFilter('service'),
   useTableFilter('additional-material'),
   useTableFilter('asset')
 ]);
-table.data = response.formattedData?.map((el: Record<string, unknown>) => {
+table.data = response.formattedData?.map((el: any) => {
   return { ...el, type: el.type == 'Mixed' ? 'Tech & Financial' : el.type };
 });
 
@@ -592,16 +592,16 @@ const manPowerPreview = ref({
       width: 120
     }
   ],
-  data: [] as Record<string, unknown>[]
+  data: [] as any
 });
 
-const manpowersResponse: Record<string, unknown>[] = _manpowersRes.formattedData as Record<string, unknown>[];
+const manpowersResponse: any = _manpowersRes.formattedData;
 
 if (project?.projectManpowerResources?.length) {
   manpowers.value.data =
-    project?.projectManpowerResources?.map((manpower: Record<string, unknown>) => ({
+    project?.projectManpowerResources?.map((manpower: any) => ({
       ...manpower,
-      name: manpowersResponse?.find((item: Record<string, unknown>) => item.id === manpower?.manpowerId)?.name || '-',
+      name: manpowersResponse?.find((item: any) => item.id === manpower?.manpowerId)?.name || '-',
       mission: manpower?.mission?.join(', ')
     })) || [];
   manPowertotal.value.data = [
@@ -651,7 +651,7 @@ const materials = ref({
       width: 200
     }
   ],
-  data: [] as Record<string, unknown>[]
+  data: [] as any[]
 });
 
 const materialsPreview = ref({
@@ -664,28 +664,28 @@ const materialsPreview = ref({
       width: 200
     }
   ],
-  data: [] as Record<string, unknown>[]
+  data: [] as any[]
 });
 
-const serviceResponse: Record<string, unknown>[] = (_serviceRes?.formattedData || []) as Record<string, unknown>[];
+const serviceResponse: any = _serviceRes?.formattedData || [];
 
-const addMaterials: Record<string, unknown>[] = (_addMaterialsRes?.formattedData || []) as Record<string, unknown>[];
+const addMaterials: any = _addMaterialsRes?.formattedData || [];
 
 function materialMappedData() {
   if (!project?.materials?.length) return [];
-  return project?.materials.map((material: Record<string, unknown>) => {
+  return project?.materials.map((material: any) => {
     // const additionalMaterials = project?.additionalMaterialItem[material.additionalMaterialId || 0] || [];
     const additionalMaterials =
-      project?.additionalMaterialItem?.filter((item: Record<string, unknown>) => (item.AdditionalMaterialItem as Record<string, unknown>)?.additionalMateria === material.additionalMaterialId) || [];
+      project?.additionalMaterialItem?.filter((item: any) => item.AdditionalMaterialItem.additionalMateria === material.additionalMaterialId) || [];
 
     console.log('material', material);
-    const totalAdditionalMaterialCost = additionalMaterials.reduce((sum: number, item: Record<string, unknown>) => {
-      return sum + (item.quantity as number) * Number((item.AdditionalMaterialItem as Record<string, unknown>)?.price || 0);
+    const totalAdditionalMaterialCost = additionalMaterials.reduce((sum: number, item: any) => {
+      return sum + item.quantity * Number(item.AdditionalMaterialItem?.price || 0);
     }, 0);
 
     const totalRelatedQuantity = project?.materials
-      .filter((m: Record<string, unknown>) => m.additionalMaterialId === material.additionalMaterialId)
-      .reduce((sum: number, item: Record<string, unknown>) => sum + (item.quantity as number), 0);
+      .filter((m: any) => m.additionalMaterialId === material.additionalMaterialId)
+      .reduce((sum: number, item: any) => sum + item.quantity, 0);
 
     const additionalMaterialCost = totalRelatedQuantity > 0 ? totalAdditionalMaterialCost / totalRelatedQuantity : 0;
     const marginCommission = (material.unitPrice + additionalMaterialCost) * (project?.materialMargin.value || 1);
@@ -696,7 +696,7 @@ function materialMappedData() {
       projectId: project.id,
       materialId: material.id,
       additionalMaterialId: material.additionalMaterialId,
-      additionalMaterial: material.additionalMaterialId ? addMaterials?.find((item: Record<string, unknown>) => item.id === material.additionalMaterialId)?.name : '-',
+      additionalMaterial: material.additionalMaterialId ? addMaterials?.find((item: any) => item.id === material.additionalMaterialId)?.name : '-',
       description: material.description,
       quantity: material.quantity,
       unitPrice: material.unitPrice,
@@ -704,8 +704,8 @@ function materialMappedData() {
       marginCommission: +marginCommission.toFixed(2),
       materialCost: +materialCost.toFixed(2),
       totalMaterialCost: +totalMaterialCost.toFixed(2),
-      service: material.serviceId ? serviceResponse?.find((s: Record<string, unknown>) => s.id === material.serviceId)?.type : '-',
-      servicePrice: material.serviceId ? serviceResponse?.find((s: Record<string, unknown>) => s.id === material.serviceId)?.price : 0,
+      service: material.serviceId ? serviceResponse?.find((s: any) => s.id === material.serviceId)?.type : '-',
+      servicePrice: material.serviceId ? serviceResponse?.find((s: any) => s.id === material.serviceId)?.price : 0,
       id: material.id
     };
   });
@@ -715,8 +715,8 @@ if (project?.materials?.length) {
   materials.value.data = materialMappedData();
   materialsPreview.value.data = [
     {
-      totalMaterialCost: materialMappedData()?.reduce((sum: number, item: Record<string, unknown>) => sum + (item.totalMaterialCost as number), 0),
-      totalAdditionalMaterialCost: materialMappedData()?.reduce((sum: number, item: Record<string, unknown>) => (sum += (item.additionalMaterialCost as number)), 0)
+      totalMaterialCost: materialMappedData()?.reduce((sum: number, item: any) => sum + item.totalMaterialCost, 0),
+      totalAdditionalMaterialCost: materialMappedData()?.reduce((sum: number, item: any) => (sum += item.additionalMaterialCost), 0)
     }
   ];
 }
@@ -728,7 +728,7 @@ const assets = reactive({
     { prop: 'rentPrice', label: t('operations.projects.assets.table.rentPrice'), component: 'Text', type: 'font-bold', width: 150 },
     { prop: 'buyPrice', label: t('operations.projects.assets.table.buyPrice'), component: 'Text', type: 'font-bold', width: 150 }
   ],
-  data: [] as Record<string, unknown>[]
+  data: [] as any[]
 });
 
 const assetsTotal = reactive({
@@ -737,13 +737,13 @@ const assetsTotal = reactive({
     { prop: 'totalBuyPrice', label: t('operations.projects.assets.totalTable.totalBuy'), component: 'Text', type: 'font-default', width: 150 },
     { prop: 'totalAssetsCost', label: t('operations.projects.assets.totalTable.totalCost'), component: 'Text', type: 'font-default', width: 150 }
   ],
-  data: [] as Record<string, unknown>[]
+  data: [] as any[]
 });
 
-const assetsResponse: Record<string, unknown>[] = (_assetsRes?.formattedData || []) as Record<string, unknown>[];
+const assetsResponse: any = _assetsRes?.formattedData || [];
 
 if (project?.projectAssets?.length) {
-  const assetsId = project?.projectAssets?.map((projectAsset: Record<string, unknown>) => projectAsset.assetId);
+  const assetsId = project?.projectAssets?.map((projectAsset: any) => projectAsset.assetId);
 
   assets.data = assetsResponse?.filter(({ id }: Asset) => assetsId?.includes(id)) || [];
   // Calculate the total rent price by summing the rentPrice of each asset, ensuring the value is a number
@@ -769,7 +769,7 @@ const finalCost = ref({
     { prop: 'finalMaterialsTableCost', label: t('operations.projects.materials.title'), component: 'Text', type: 'font-default', width: 250 },
     { prop: 'finalAssetsTableCost', label: t('operations.projects.assets.title'), component: 'Text', type: 'font-default', width: 250 }
   ],
-  data: [] as Record<string, unknown>[]
+  data: [] as any[]
 });
 
 finalCost.value.data = [

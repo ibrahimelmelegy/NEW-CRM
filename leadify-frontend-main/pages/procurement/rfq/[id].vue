@@ -76,7 +76,7 @@ import { ElNotification } from 'element-plus';
 
 const route = useRoute();
 const router = useRouter();
-const rfq = ref<Record<string, unknown> | null>(null);
+const rfq = ref<any>(null);
 const offerDialogVisible = ref(false);
 const selectedVendor = ref(null);
 const offerAmount = ref(0);
@@ -103,10 +103,9 @@ const getVendorStatus = (status: string) => {
   return 'info';
 };
 
-const getItemPrice = (vendor: Record<string, unknown>, itemId: string) => {
+const getItemPrice = (vendor: any, itemId: string) => {
   // Navigate through RFQVendorItems to find price
-  const items = vendor.items as Record<string, unknown>[] | undefined;
-  const item = items?.find((i: Record<string, unknown>) => i.rfqItemId === itemId);
+  const item = vendor.items?.find((i: any) => i.rfqItemId === itemId);
   return item ? item.price : null;
 };
 
@@ -115,16 +114,15 @@ const formatCurrency = (val: number) => {
 };
 
 // Logic to highlight lowest price
-const isLowestPrice = (vendor: Record<string, unknown>) => {
-  const vendors = (rfq.value as Record<string, unknown> | null)?.vendors as Record<string, unknown>[] | undefined;
-  if (!vendors) return false;
-  const respondedVendors = vendors.filter((v: Record<string, unknown>) => (v.totalOfferAmount as number) > 0);
+const isLowestPrice = (vendor: any) => {
+  if (!rfq.value?.vendors) return false;
+  const respondedVendors = rfq.value.vendors.filter((v: any) => v.totalOfferAmount > 0);
   if (respondedVendors.length === 0) return false;
-  const min = Math.min(...respondedVendors.map((v: Record<string, unknown>) => parseFloat(String(v.totalOfferAmount))));
-  return parseFloat(String(vendor.totalOfferAmount)) === min;
+  const min = Math.min(...respondedVendors.map((v: any) => parseFloat(v.totalOfferAmount)));
+  return parseFloat(vendor.totalOfferAmount) === min;
 };
 
-const isWinner = (vendor: Record<string, unknown>) => vendor.status === 'Won';
+const isWinner = (vendor: any) => vendor.status === 'Won';
 
 function openAddOffer() {
   offerDialogVisible.value = true;
@@ -147,7 +145,7 @@ async function submitOffer() {
   }
 }
 
-async function awardVendor(vendor: Record<string, unknown>) {
+async function awardVendor(vendor: any) {
   ElNotification({ title: 'Processing', message: 'Converting to PO...', type: 'info' });
   // Future: Call API to convert
   setTimeout(() => {

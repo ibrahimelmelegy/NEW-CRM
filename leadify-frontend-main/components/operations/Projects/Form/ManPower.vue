@@ -41,7 +41,7 @@ const formSchema = yup.object({
     .test(
       'is-valid-number',
       'Please enter a valid number.', // Custom error message
-      (value: string | null | undefined) => {
+      (value: any) => {
         if (!value) return true; // Allow empty input
         return /^\d*\.?\d*$/.test(value); // Check if value is a valid integer or float
       }
@@ -54,7 +54,7 @@ const formSchema = yup.object({
     .test(
       'is-valid-number',
       t('validation.invalidNumber'), // Custom error message
-      (value: string | null | undefined) => {
+      (value: any) => {
         if (!value) return true; // Allow empty input
         return /^\d*\.?\d*$/.test(value); // Check if value is a valid integer or float
       }
@@ -114,7 +114,7 @@ const formSchema = yup.object({
         .string()
         .trim()
         .nullable()
-        .test('min-length-if-entered', 'Other Cost Reason must be at least 2 characters', (value: string | null | undefined) => !value || value.length >= 2)
+        .test('min-length-if-entered', 'Other Cost Reason must be at least 2 characters', (value: any) => !value || value.length >= 2)
         .trim()
         .max(100)
         .label('Other Cost Reason')
@@ -129,7 +129,7 @@ if (props.data?.id) {
   isOtherCost.value = !!props.data?.otherCosts;
 }
 
-const onSubmit = handleSubmit(async (values: Record<string, unknown>) => {
+const onSubmit = handleSubmit(async (values: any) => {
   const formattedValues = cleanObject({
     ...values,
     estimatedWorkDays: Number(values.estimatedWorkDays),

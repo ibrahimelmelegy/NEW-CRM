@@ -154,18 +154,7 @@ const { vibrate } = useMobile();
 const loadingAction = ref(false);
 const loading = ref(false);
 const deleteLeadPopup = ref(false);
-interface DealRow {
-  id: string;
-  name?: string;
-  stage?: string;
-  price?: number | string;
-  assign?: string;
-  contractType?: string;
-  signatureDate?: string;
-  dealDetails?: { title?: string; text?: string };
-}
-
-const pipelineAnalytics = ref<Record<string, unknown> | null>(null);
+const pipelineAnalytics = ref<any>(null);
 
 // Export columns & data
 const exportColumns = [
@@ -179,7 +168,7 @@ const exportColumns = [
 const exportData = computed(() => table.data);
 
 // Bulk actions
-const selectedRows = ref<DealRow[]>([]);
+const selectedRows = ref<any[]>([]);
 async function handleBulkDelete() {
   if (!selectedRows.value.length) return;
   try {
@@ -189,8 +178,8 @@ async function handleBulkDelete() {
       { type: 'warning', confirmButtonText: t('common.delete'), cancelButtonText: t('common.cancel') }
     );
     loading.value = true;
-    const ids = selectedRows.value.map((r) => r.id);
-    await Promise.all(ids.map((id) => useApiFetch(`deal/${id}`, 'DELETE')));
+    const ids = selectedRows.value.map((r: any) => r.id);
+    await Promise.all(ids.map((id: any) => useApiFetch(`deal/${id}`, 'DELETE')));
     const res = await useTableFilter('deal');
     table.data = res.formattedData;
     selectedRows.value = [];
@@ -205,7 +194,7 @@ async function handleBulkExport() {
   if (!selectedRows.value.length) return;
   try {
     loading.value = true;
-    const ids = selectedRows.value.map((r) => r.id);
+    const ids = selectedRows.value.map((r: any) => r.id);
     await useApiFetch('deal/export', 'POST', { ids });
     ElNotification({ type: 'success', title: t('common.success'), message: 'Export sent to your email' });
     selectedRows.value = [];
@@ -281,13 +270,13 @@ fetchPipelineAnalytics();
 const kpiMetrics = computed<KPIMetric[]>(() => {
   const data = table.data || [];
   const total = data.length;
-  const wonDeals = data.filter((d: DealRow) => d.stage === 'WON').length;
+  const wonDeals = data.filter((d: any) => d.stage === 'WON').length;
   // Calculate total revenue from won deals
   const totalRevenue = data
-    .filter((d: DealRow) => d.stage === 'WON')
-    .reduce((sum: number, d: DealRow) => sum + (Number(d.price) || 0), 0)
+    .filter((d: any) => d.stage === 'WON')
+    .reduce((sum: number, d: any) => sum + (Number(d.price) || 0), 0)
     .toLocaleString('en-US', { style: 'currency', currency: 'SAR', maximumFractionDigits: 0 });
-  const pending = data.filter((d: DealRow) => d.stage !== 'WON' && d.stage !== 'LOST').length;
+  const pending = data.filter((d: any) => d.stage !== 'WON' && d.stage !== 'LOST').length;
 
   return [
     { label: t('deals.kpi.totalDeals'), value: total, icon: 'ph:handshake-bold', color: '#10b981' },
@@ -320,11 +309,11 @@ async function fetchPipelineAnalytics() {
   }
 }
 
-function handleRowClick(val: DealRow) {
+function handleRowClick(val: any) {
   router.push(`/sales/deals/${val.id}`);
 }
 
-const mappedUsers = usersResponse?.body?.docs?.map((e: Record<string, unknown>) => ({
+const mappedUsers = usersResponse?.body?.docs?.map((e: any) => ({
   label: e.name,
   value: e.id
 })) || [];
@@ -360,33 +349,33 @@ const filterOptions = computed(() => [
 // SavedViews & AdvancedSearch
 const advancedSearchFields = [
   { key: 'name', label: t('deals.table.dealName'), type: 'string' },
-  { key: 'stage', label: t('deals.table.stage'), type: 'select', options: dealStageOptions.map((o) => ({ value: o.value, label: o.label })) },
+  { key: 'stage', label: t('deals.table.stage'), type: 'select', options: dealStageOptions.map((o: any) => ({ value: o.value, label: o.label })) },
   { key: 'price', label: t('deals.table.price'), type: 'number' },
   {
     key: 'contractType',
     label: t('deals.table.contractType'),
     type: 'select',
-    options: contractTypeOptions.map((o) => ({ value: o.value, label: o.label }))
+    options: contractTypeOptions.map((o: any) => ({ value: o.value, label: o.label }))
   },
   { key: 'signatureDate', label: t('deals.table.signatureDate'), type: 'date' },
   { key: 'createdAt', label: t('deals.table.created'), type: 'date' }
 ];
 
-async function handleApplyView(view: { filters?: Record<string, unknown> }) {
+async function handleApplyView(view: any) {
   if (view?.filters) {
     const res = await useTableFilter('deal', view.filters);
     table.data = res.formattedData;
   }
 }
 
-async function handleAdvancedFilter(filterPayload: Record<string, unknown>) {
+async function handleAdvancedFilter(filterPayload: any) {
   try {
     const res = await useApiFetch('search/advanced/deal', 'POST', filterPayload);
     if (res?.success && res?.body) {
-      const data = res.body as Record<string, unknown>;
-      table.data = (data.docs || data || []) as Deal[];
+      const data = res.body as any;
+      table.data = data.docs || data || [];
     }
-  } catch (e: unknown) {
+  } catch (e: any) {
     ElMessage.error(t('common.error'));
   }
 }
@@ -405,11 +394,11 @@ const stageFilters = computed(() => {
   const data = table.data || [];
   return [
     { value: 'ALL', label: t('common.all'), color: '#10b981', count: data.length },
-    { value: 'PROGRESS', label: t('kanban.stages.progress'), color: '#3b82f6', count: data.filter((d: DealRow) => d.stage === 'PROGRESS').length },
-    { value: 'WON', label: t('kanban.stages.won'), color: '#10b981', count: data.filter((d: DealRow) => d.stage === 'WON').length },
-    { value: 'LOST', label: t('kanban.stages.lost'), color: '#ef4444', count: data.filter((d: DealRow) => d.stage === 'LOST').length },
-    { value: 'CLOSED', label: t('kanban.stages.closed'), color: '#8b5cf6', count: data.filter((d: DealRow) => d.stage === 'CLOSED').length },
-    { value: 'CANCELLED', label: t('kanban.stages.cancelled'), color: '#94a3b8', count: data.filter((d: DealRow) => d.stage === 'CANCELLED').length }
+    { value: 'PROGRESS', label: t('kanban.stages.progress'), color: '#3b82f6', count: data.filter((d: any) => d.stage === 'PROGRESS').length },
+    { value: 'WON', label: t('kanban.stages.won'), color: '#10b981', count: data.filter((d: any) => d.stage === 'WON').length },
+    { value: 'LOST', label: t('kanban.stages.lost'), color: '#ef4444', count: data.filter((d: any) => d.stage === 'LOST').length },
+    { value: 'CLOSED', label: t('kanban.stages.closed'), color: '#8b5cf6', count: data.filter((d: any) => d.stage === 'CLOSED').length },
+    { value: 'CANCELLED', label: t('kanban.stages.cancelled'), color: '#94a3b8', count: data.filter((d: any) => d.stage === 'CANCELLED').length }
   ];
 });
 
@@ -421,11 +410,11 @@ function setMobileStageFilter(value: string) {
 const mobileFilteredData = computed(() => {
   let data = table.data || [];
   if (mobileStageFilter.value !== 'ALL') {
-    data = data.filter((deal: DealRow) => deal.stage === mobileStageFilter.value);
+    data = data.filter((deal: any) => deal.stage === mobileStageFilter.value);
   }
   if (!mobileSearch.value) return data;
   const q = mobileSearch.value.toLowerCase();
-  return data.filter((deal: DealRow) => {
+  return data.filter((deal: any) => {
     const name = (deal.dealDetails?.title || deal.name || '').toLowerCase();
     const assign = (deal.assign || '').toLowerCase();
     const contractType = (deal.contractType || '').toLowerCase();
@@ -445,13 +434,13 @@ async function handleMobileRefresh() {
   }
 }
 
-function getSwipeRightActions(_deal: DealRow) {
+function getSwipeRightActions(deal: any) {
   return [
     { name: 'kanban', label: t('kanban.kanbanView'), icon: 'ph:columns-bold', color: '#10B981' }
   ];
 }
 
-function getSwipeLeftActions(_deal: DealRow) {
+function getSwipeLeftActions(deal: any) {
   const actions = [
     { name: 'view', label: t('common.view'), icon: 'ph:eye-bold', color: '#10b981' }
   ];
@@ -461,7 +450,7 @@ function getSwipeLeftActions(_deal: DealRow) {
   return actions;
 }
 
-function handleSwipeAction(name: string, deal: DealRow) {
+function handleSwipeAction(name: string, deal: any) {
   vibrate();
   switch (name) {
     case 'kanban':
@@ -476,7 +465,7 @@ function handleSwipeAction(name: string, deal: DealRow) {
   }
 }
 
-function getDealInitial(deal: DealRow): string {
+function getDealInitial(deal: any): string {
   const name = deal.dealDetails?.title || deal.name || '?';
   return name.charAt(0).toUpperCase();
 }
@@ -505,7 +494,7 @@ function getStageType(stage: string): string {
   return map[stage] || 'info';
 }
 
-function formatPrice(price: string | number): string {
+function formatPrice(price: any): string {
   const num = Number(price);
   if (isNaN(num)) return String(price);
   return num.toLocaleString('en-US', { style: 'currency', currency: 'SAR', maximumFractionDigits: 0 });

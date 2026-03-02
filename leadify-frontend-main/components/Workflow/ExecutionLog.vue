@@ -123,7 +123,7 @@ import { ref, onMounted, onBeforeUnmount } from 'vue';
 interface ActionResult {
   actionType: string;
   status: 'SUCCESS' | 'FAILED' | 'SKIPPED';
-  result?: string | Record<string, unknown>;
+  result?: any;
   error?: string;
 }
 
@@ -223,7 +223,7 @@ function formatDate(d: string): string {
   return new Date(d).toLocaleString();
 }
 
-function formatResult(result: string | Record<string, unknown>): string {
+function formatResult(result: any): string {
   if (typeof result === 'string') return result;
   try {
     return JSON.stringify(result, null, 2);
@@ -243,7 +243,7 @@ async function fetchLogs() {
       query += `&startDate=${filterDateRange.value[0]}&endDate=${filterDateRange.value[1]}`;
     }
 
-    const { body, success } = await useApiFetch(query);
+    const { body, success } = await useApiFetch(query as any);
     if (success && body) {
       executions.value = body.docs || [];
       if (body.pagination) {
@@ -259,9 +259,9 @@ async function fetchLogs() {
 
 async function fetchWorkflowOptions() {
   try {
-    const { body, success } = await useApiFetch('workflows/rules?limit=100');
+    const { body, success } = await useApiFetch('workflows/rules?limit=100' as any);
     if (success && body?.docs) {
-      workflowOptions.value = body.docs.map((w: { id: number; name: string }) => ({ id: w.id, name: w.name }));
+      workflowOptions.value = body.docs.map((w: any) => ({ id: w.id, name: w.name }));
     }
   } catch (err) {
     console.error('Failed to fetch workflow options:', err);

@@ -113,15 +113,10 @@ el-dialog(
 <script lang="ts" setup>
 import { ref, onMounted, watch } from 'vue';
 import { ElMessageBox } from 'element-plus';
-interface ProjectFile {
-  name: string;
-  refs: string[];
-}
-
 interface Project {
   id: string;
-  files: ProjectFile[];
-  etimadProject?: Record<string, unknown>;
+  files: any[];
+  etimadProject?: any;
 }
 const props = defineProps<{ project?: Project }>();
 const emit = defineEmits(['onSubmit', 'onCancel']);
@@ -152,35 +147,34 @@ watch(
   { deep: true }
 );
 
-function showfile(value: string[]) {
+function showfile(value: any) {
   fileShow.value = true;
   fileFolder.value = value;
 }
 
-function editfile(value: ProjectFile) {
+function editfile(value: any) {
   folderDetails.value = { ...value };
   fileEdit.value = true;
 }
 
-function formattedBasicInfo(values: Record<string, unknown> | undefined) {
+function formattedBasicInfo(values: any) {
   if (!values) return {};
-  const assignedUsers = values?.assignedUsers as Array<{ id: number }> | undefined;
   return cleanObject({
     name: values?.name,
     type: values?.type,
     category: values?.category,
     clientId: values?.clientId,
-    startDate: typeof values?.startDate === 'string' ? values?.startDate : (values?.startDate as Date)?.toISOString(),
-    endDate: typeof values?.endDate === 'string' ? values?.endDate : (values?.endDate as Date)?.toISOString(),
+    startDate: typeof values?.startDate === 'string' ? values?.startDate : values?.startDate?.toISOString(),
+    endDate: typeof values?.endDate === 'string' ? values?.endDate : values?.endDate?.toISOString(),
     duration: Number(values?.duration),
-    assignedUsersIds: assignedUsers?.map((el: { id: number }) => el?.id),
+    assignedUsersIds: values?.assignedUsers?.map((el: any) => el?.id),
     status: values?.status,
     description: values?.description,
     cancelledReason: values?.cancelReason
   });
 }
 
-function formattedEtimadProjectInfo(values: Record<string, unknown> | undefined) {
+function formattedEtimadProjectInfo(values: any) {
   if (!values) return {};
   return cleanObject({
     abbreviation: values?.abbreviation,

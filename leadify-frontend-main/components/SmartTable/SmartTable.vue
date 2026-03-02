@@ -191,7 +191,7 @@ const props = defineProps({
     required: true,
   },
   data: {
-    type: Array as PropType<Record<string, unknown>[]>,
+    type: Array as PropType<any[]>,
     required: true,
   },
   views: {
@@ -211,7 +211,7 @@ const props = defineProps({
     default: null,
   },
   filterOptions: {
-    type: Array as PropType<Record<string, unknown>[]>,
+    type: Array as PropType<any[]>,
     default: () => [],
   },
   groupByField: {
@@ -237,17 +237,17 @@ const props = defineProps({
 });
 
 const emit = defineEmits<{
-  'row-click': [row: Record<string, unknown>];
-  'cell-edit': [payload: { row: Record<string, unknown>; prop: string; value: unknown; oldValue: unknown }];
-  'card-move': [payload: { item: Record<string, unknown>; fromGroup: string; toGroup: string }];
+  'row-click': [row: any];
+  'cell-edit': [payload: { row: any; prop: string; value: any; oldValue: any }];
+  'card-move': [payload: { item: any; fromGroup: string; toGroup: string }];
   'date-select': [date: string];
-  'bulk-delete': [rows: Record<string, unknown>[]];
-  'bulk-export': [rows: Record<string, unknown>[]];
-  'bulk-status-change': [payload: { rows: Record<string, unknown>[]; status: string }];
+  'bulk-delete': [rows: any[]];
+  'bulk-export': [rows: any[]];
+  'bulk-status-change': [payload: { rows: any[]; status: string }];
   'page-change': [page: number];
   'page-size-change': [size: number];
-  'sort-change': [sort: SmartTableSort];
-  'filter-change': [filters: Record<string, unknown>[]];
+  'sort-change': [sort: any];
+  'filter-change': [filters: any[]];
   'search': [query: string];
 }>();
 
@@ -280,7 +280,7 @@ const {
 // Local state
 const showFilters = ref(false);
 const showColumnManager = ref(false);
-const tableViewRef = ref<InstanceType<typeof HTMLElement> | null>(null);
+const tableViewRef = ref<any>(null);
 const currentPage = ref(1);
 const pageSize = ref(10);
 
@@ -319,7 +319,7 @@ const processedData = computed(() => {
 const columns = computed(() => smartColumns.value);
 
 // Methods
-const setSort = (newSort: SmartTableSort) => {
+const setSort = (newSort: any) => {
   setSmartSort(newSort);
   emit('sort-change', newSort);
 };

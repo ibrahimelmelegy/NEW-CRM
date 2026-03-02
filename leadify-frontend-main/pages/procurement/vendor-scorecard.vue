@@ -262,20 +262,20 @@ const t = $i18n.t;
 const loading = ref(false);
 const saving = ref(false);
 const searchQuery = ref('');
-const scorecards = ref<Record<string, unknown>[]>([]);
-const vendors = ref<Record<string, unknown>[]>([]);
+const scorecards = ref<any[]>([]);
+const vendors = ref<any[]>([]);
 const dialogVisible = ref(false);
-const editingScorecard = ref<Record<string, unknown> | null>(null);
+const editingScorecard = ref<any>(null);
 
 // Rankings & Benchmark
 const loadingRankings = ref(false);
-const vendorRankings = ref<Record<string, unknown>[]>([]);
-const benchmark = ref<Record<string, unknown> | null>(null);
+const vendorRankings = ref<any[]>([]);
+const benchmark = ref<any>(null);
 
 const scoreMarks = { 1: '1', 2: '2', 3: '3', 4: '4', 5: '5' };
 
 const form = reactive({
-  vendorId: '' as string | number,
+  vendorId: '' as any,
   period: '',
   qualityScore: 3 as number,
   deliveryScore: 3 as number,
@@ -300,7 +300,7 @@ function getRankScoreColor(score: number): string {
 }
 
 // Overall score calculator
-function getOverallScore(row: Record<string, unknown>): number {
+function getOverallScore(row: any): number {
   const scores = [row.qualityScore || 0, row.deliveryScore || 0, row.priceScore || 0, row.communicationScore || 0];
   const valid = scores.filter(s => s > 0);
   return valid.length ? valid.reduce((a, b) => a + b, 0) / valid.length : 0;
@@ -315,9 +315,9 @@ const formOverallScore = computed(() => {
 const stats = computed(() => {
   const data = scorecards.value;
   const total = data.length;
-  const avgQuality = total ? data.reduce((sum: number, s: Record<string, unknown>) => sum + ((s.qualityScore as number) || 0), 0) / total : 0;
-  const avgDelivery = total ? data.reduce((sum: number, s: Record<string, unknown>) => sum + ((s.deliveryScore as number) || 0), 0) / total : 0;
-  const avgOverall = total ? data.reduce((sum: number, s: Record<string, unknown>) => sum + getOverallScore(s), 0) / total : 0;
+  const avgQuality = total ? data.reduce((sum: number, s: any) => sum + (s.qualityScore || 0), 0) / total : 0;
+  const avgDelivery = total ? data.reduce((sum: number, s: any) => sum + (s.deliveryScore || 0), 0) / total : 0;
+  const avgOverall = total ? data.reduce((sum: number, s: any) => sum + getOverallScore(s), 0) / total : 0;
   return { total, avgQuality, avgDelivery, avgOverall };
 });
 
@@ -325,7 +325,7 @@ const stats = computed(() => {
 const filteredScorecards = computed(() => {
   if (!searchQuery.value) return scorecards.value;
   const q = searchQuery.value.toLowerCase();
-  return scorecards.value.filter((s: Record<string, unknown>) => {
+  return scorecards.value.filter((s: any) => {
     const vendor = (s.vendorName || s.vendorId || '').toString().toLowerCase();
     const period = (s.period || '').toLowerCase();
     return vendor.includes(q) || period.includes(q);
@@ -340,7 +340,7 @@ async function loadScorecards() {
     if (res?.success) {
       scorecards.value = res.body?.docs || res.body || [];
     }
-  } catch {
+  } catch (e: any) {
     ElMessage.error(t('common.error'));
   } finally {
     loading.value = false;
@@ -353,7 +353,7 @@ async function loadVendors() {
     if (res?.success) {
       vendors.value = res.body?.docs || res.body || [];
     }
-  } catch {
+  } catch (e: any) {
     ElMessage.error(t('common.error'));
   }
 }
@@ -370,7 +370,7 @@ function openCreateDialog() {
   dialogVisible.value = true;
 }
 
-function openEditDialog(scorecard: Record<string, unknown>) {
+function openEditDialog(scorecard: any) {
   editingScorecard.value = scorecard;
   form.vendorId = scorecard.vendorId || '';
   form.period = scorecard.period || '';
@@ -405,7 +405,7 @@ async function handleSave() {
   }
 }
 
-async function handleDelete(scorecard: Record<string, unknown>) {
+async function handleDelete(scorecard: any) {
   try {
     await ElMessageBox.confirm(
       t('common.confirmDelete'),
@@ -428,7 +428,7 @@ async function loadRankings() {
     if (res?.success) {
       vendorRankings.value = res.body?.docs || res.body || [];
     }
-  } catch {
+  } catch (e: any) {
     ElMessage.error(t('common.error'));
   } finally {
     loadingRankings.value = false;
@@ -442,7 +442,7 @@ async function loadBenchmark() {
     if (res?.success && res.body) {
       benchmark.value = res.body;
     }
-  } catch {
+  } catch (e: any) {
     ElMessage.error(t('common.error'));
   }
 }

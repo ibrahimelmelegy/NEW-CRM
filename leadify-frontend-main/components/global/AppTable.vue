@@ -178,17 +178,17 @@ const srcOverlay = ref('');
 
 const limit = ref(10);
 const currentPage = ref<number>(1);
-const sort = ref<{ prop?: string; order?: string }>({});
-const filters = ref<Record<string, unknown>>({});
-const search = ref<string>('');
-search.value = (route.query.searchKey as string) || '';
-const pagintaion = ref<{ totalPages?: number; totalItems?: number }>({});
+const sort = ref<any>({});
+const filters = ref<any>({});
+const search = ref<string | any>('');
+search.value = route.query.searchKey || '';
+const pagintaion = ref<any>({});
 pagintaion.value = props.pageInfo;
 sort.value = {
   prop: route.query.sortBy || '',
   order: route.query.sort === 'ASC' ? 'ascending' : 'descending'
 };
-function showfile(value: string) {
+function showfile(value: any) {
   fileShow.value = true;
   srcOverlay.value = value;
 }
@@ -205,7 +205,7 @@ function handleSortChange({ prop, order }: { prop: string; order: string }) {
 }
 
 // search
-let timer: ReturnType<typeof setTimeout> | undefined;
+let timer: any;
 function searchTimeOut() {
   clearTimeout(timer);
   timer = setTimeout(async () => {
@@ -214,7 +214,7 @@ function searchTimeOut() {
   }, 500);
 }
 
-const finalData = ref<Record<string, unknown>[]>([]);
+const finalData = ref<any>([]);
 finalData.value = props.data || [];
 async function getData() {
   isLoading.value = true;
@@ -223,11 +223,11 @@ async function getData() {
   pagintaion.value = data.pagination;
   isLoading.value = false;
 }
-function handleFilterChange(_value: Record<string, unknown>) {
+function handleFilterChange(value: any) {
   // filters.value = value;
 }
 
-const handleSizeChange = (val: number) => {
+const handleSizeChange = (val: any) => {
   filters.value.limit = val;
   getData();
 };
@@ -240,7 +240,7 @@ watch(
   }
 );
 
-const handleFilter = async (filteration: Record<string, unknown>) => {
+const handleFilter = async (filteration: any) => {
   if (isObjectValid(filteration)) {
     filters.value = { ...filters.value, ...filteration };
   } else {

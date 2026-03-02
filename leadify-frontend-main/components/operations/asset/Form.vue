@@ -33,7 +33,7 @@ const formSchema = yup.object({
     .test(
       'is-valid-number',
       'Please enter a valid number.', // Custom error message
-      (value: string | null | undefined) => {
+      (value: any) => {
         if (!value) return true; // Allow empty input
         return /^\d*\.?\d*$/.test(value); // Check if value is a valid integer or float
       }
@@ -46,7 +46,7 @@ const formSchema = yup.object({
     .test(
       'is-valid-number',
       'Please enter a valid number.', // Custom error message
-      (value: string | null | undefined) => {
+      (value: any) => {
         if (!value) return true; // Allow empty input
         return /^\d*\.?\d*$/.test(value); // Check if value is a valid integer or float
       }
@@ -59,7 +59,7 @@ const { handleSubmit } = useForm({
   validationSchema: formSchema
 });
 
-const onSubmit = handleSubmit((values: Record<string, unknown>) => {
+const onSubmit = handleSubmit((values: any, actions: any) => {
   emit('submit', values);
 });
 </script>

@@ -173,9 +173,9 @@ const pagination = ref(result.value.pagination);
 
 const summaryStats = computed(() => {
   const docs = result.value.docs || [];
-  const pending = docs.filter((r: Record<string, unknown>) => r.status === 'PENDING').length;
-  const approved = docs.filter((r: Record<string, unknown>) => r.status === 'APPROVED').length;
-  const rejected = docs.filter((r: Record<string, unknown>) => r.status === 'REJECTED').length;
+  const pending = docs.filter((r: any) => r.status === 'PENDING').length;
+  const approved = docs.filter((r: any) => r.status === 'APPROVED').length;
+  const rejected = docs.filter((r: any) => r.status === 'REJECTED').length;
   return [
     { label: t('hr.leave.pending'), value: pending, icon: 'ph:clock-bold', color: '#f59e0b' },
     { label: t('hr.leave.approved'), value: approved, icon: 'ph:check-circle-bold', color: '#22c55e' },
@@ -185,12 +185,12 @@ const summaryStats = computed(() => {
 });
 
 const table = ref({
-  columns: [] as Record<string, unknown>[],
+  columns: [] as any[],
   data: result.value.docs.map(formatRow) || [],
   sort: []
 });
 
-function formatRow(r: Record<string, unknown>) {
+function formatRow(r: any) {
   return {
     ...r,
     employeeDetails: { title: r.user?.name || '—', image: r.user?.profilePicture, withImage: true },
@@ -222,7 +222,7 @@ const filterOptions = computed(() => [
   { title: t('hr.leave.type'), value: 'leaveType', options: LEAVE_TYPES.map(s => ({ label: s.label, value: s.value })) }
 ]);
 
-function handleRowClick(row: Record<string, unknown>) {
+function handleRowClick(row: any) {
   router.push(`/hr/leave-requests/${row.id}`);
 }
 
@@ -291,9 +291,9 @@ const statusFilters = computed(() => {
   const data = table.value.data || [];
   return [
     { value: 'ALL', label: t('hr.leave.allStatuses'), color: '#f59e0b', count: data.length },
-    { value: 'PENDING', label: t('hr.leave.pending'), color: '#f59e0b', count: data.filter((r: Record<string, unknown>) => r.status === 'PENDING').length },
-    { value: 'APPROVED', label: t('hr.leave.approved'), color: '#22c55e', count: data.filter((r: Record<string, unknown>) => r.status === 'APPROVED').length },
-    { value: 'REJECTED', label: t('hr.leave.rejected'), color: '#ef4444', count: data.filter((r: Record<string, unknown>) => r.status === 'REJECTED').length }
+    { value: 'PENDING', label: t('hr.leave.pending'), color: '#f59e0b', count: data.filter((r: any) => r.status === 'PENDING').length },
+    { value: 'APPROVED', label: t('hr.leave.approved'), color: '#22c55e', count: data.filter((r: any) => r.status === 'APPROVED').length },
+    { value: 'REJECTED', label: t('hr.leave.rejected'), color: '#ef4444', count: data.filter((r: any) => r.status === 'REJECTED').length }
   ];
 });
 
@@ -305,11 +305,11 @@ function setMobileStatusFilter(value: string) {
 const mobileFilteredData = computed(() => {
   let data = table.value.data || [];
   if (mobileStatusFilter.value !== 'ALL') {
-    data = data.filter((r: Record<string, unknown>) => r.status === mobileStatusFilter.value);
+    data = data.filter((r: any) => r.status === mobileStatusFilter.value);
   }
   if (!mobileSearch.value) return data;
   const q = mobileSearch.value.toLowerCase();
-  return data.filter((r: Record<string, unknown>) => {
+  return data.filter((r: any) => {
     const name = (r.employeeDetails?.title || '').toLowerCase();
     const type = (r.leaveTypeLabel || '').toLowerCase();
     const reason = (r.reason || '').toLowerCase();
@@ -328,21 +328,21 @@ async function handleMobileRefresh() {
   }
 }
 
-function getSwipeRightActions(request: Record<string, unknown>) {
+function getSwipeRightActions(request: any) {
   if (request.status !== 'PENDING') return [];
   return [
     { name: 'approve', label: t('hr.leave.approve'), icon: 'ph:check-circle-bold', color: '#22c55e' }
   ];
 }
 
-function getSwipeLeftActions(request: Record<string, unknown>) {
+function getSwipeLeftActions(request: any) {
   if (request.status !== 'PENDING') return [];
   return [
     { name: 'reject', label: t('hr.leave.reject'), icon: 'ph:x-circle-bold', color: '#ef4444' }
   ];
 }
 
-function handleSwipeAction(name: string, request: Record<string, unknown>) {
+function handleSwipeAction(name: string, request: any) {
   vibrate();
   switch (name) {
     case 'approve':
@@ -355,7 +355,7 @@ function handleSwipeAction(name: string, request: Record<string, unknown>) {
   }
 }
 
-function getInitial(request: Record<string, unknown>): string {
+function getInitial(request: any): string {
   const name = request.employeeDetails?.title || '?';
   return name.charAt(0).toUpperCase();
 }

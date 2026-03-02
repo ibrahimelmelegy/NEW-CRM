@@ -307,14 +307,14 @@ const loading = ref(false);
 const saving = ref(false);
 const viewMode = ref('pipeline');
 
-const posting = ref<Record<string, unknown> | null>(null);
-const applicants = ref<Record<string, unknown>[]>([]);
-const funnelData = ref<Record<string, unknown> | null>(null);
+const posting = ref<any>(null);
+const applicants = ref<any[]>([]);
+const funnelData = ref<any>(null);
 const funnelLoading = ref(false);
 
 // Applicant panel
 const panelVisible = ref(false);
-const panelApplicant = ref<Record<string, unknown> | null>(null);
+const panelApplicant = ref<any>(null);
 
 // Applicant add dialog
 const applicantDialogVisible = ref(false);
@@ -328,7 +328,7 @@ const applicantForm = reactive({
 
 // Stage move dialog
 const stageDialogVisible = ref(false);
-const stageApplicant = ref<Record<string, unknown> | null>(null);
+const stageApplicant = ref<any>(null);
 const newStage = ref('');
 
 const APPLICANT_STAGES = [
@@ -360,8 +360,8 @@ const funnelVisual = computed(() => {
     ASSESSMENT: '#8b5cf6', OFFER: '#22c55e', HIRED: '#10b981'
   };
   return (funnelData.value.funnel || [])
-    .filter((s: Record<string, unknown>) => s.stage !== 'REJECTED')
-    .map((s: Record<string, unknown>) => ({
+    .filter((s: any) => s.stage !== 'REJECTED')
+    .map((s: any) => ({
       name: s.stage,
       count: s.count,
       color: stageColors[s.stage] || '#6b7280'
@@ -417,12 +417,12 @@ function getApplicantsForStage(stage: string) {
 }
 
 function funnelBarWidth(count: number): string {
-  const max = Math.max(...funnelVisual.value.map((s: Record<string, unknown>) => s.count as number), 1);
+  const max = Math.max(...funnelVisual.value.map((s: any) => s.count), 1);
   return Math.max(36, Math.round((count / max) * 100)) + '%';
 }
 
 function funnelBarHeight(count: number): number {
-  const max = Math.max(...funnelVisual.value.map((s: Record<string, unknown>) => s.count as number), 1);
+  const max = Math.max(...funnelVisual.value.map((s: any) => s.count), 1);
   return Math.max(28, Math.round((count / max) * 120));
 }
 
@@ -437,9 +437,9 @@ async function fetchPosting() {
   try {
     const res = await useApiFetch(`hr/recruitment/postings?page=1&limit=100`);
     if (res?.success && res.body) {
-      const data = res.body as Record<string, unknown>;
-      const all = (data.docs || data.rows || data || []) as Record<string, unknown>[];
-      posting.value = all.find((p: Record<string, unknown>) => String(p.id) === String(postingId.value)) || null;
+      const data = res.body as any;
+      const all = data.docs || data.rows || data || [];
+      posting.value = all.find((p: any) => String(p.id) === String(postingId.value)) || null;
     }
   } catch {
     ElMessage.error(t('recruitment.loadPostingFailed'));
@@ -450,8 +450,8 @@ async function fetchApplicants() {
   try {
     const res = await useApiFetch(`hr/recruitment/applicants?jobPostingId=${postingId.value}&limit=200`);
     if (res?.success && res.body) {
-      const data = res.body as Record<string, unknown>;
-      applicants.value = (data.docs || data.rows || data || []) as Record<string, unknown>[];
+      const data = res.body as any;
+      applicants.value = data.docs || data.rows || data || [];
     }
   } catch {
     ElMessage.error(t('recruitment.loadApplicantsFailed'));
@@ -482,7 +482,7 @@ async function loadAll() {
 }
 
 // ─── Applicant Panel ─────────────────────────────────────
-function openApplicantPanel(app: Record<string, unknown>) {
+function openApplicantPanel(app: any) {
   panelApplicant.value = app;
   panelVisible.value = true;
 }
@@ -525,7 +525,7 @@ async function handleAddApplicant() {
 }
 
 // ─── Stage Move ──────────────────────────────────────────
-function openStageDialog(applicant: Record<string, unknown>) {
+function openStageDialog(applicant: any) {
   stageApplicant.value = applicant;
   newStage.value = '';
   stageDialogVisible.value = true;
@@ -551,7 +551,7 @@ async function handleMoveStage() {
   }
 }
 
-async function handleRejectApplicant(row: Record<string, unknown>) {
+async function handleRejectApplicant(row: any) {
   try {
     await ElMessageBox.confirm(
       `${t('recruitment.confirmReject')} ${row.name}?`,

@@ -230,7 +230,7 @@ const FontSize = Extension.create({
         fontSize: {
           default: null,
           parseHTML: (element: HTMLElement) => element.style.fontSize?.replace(/['"]+/g, ''),
-          renderHTML: (attributes: Record<string, string | null>) => {
+          renderHTML: (attributes: Record<string, any>) => {
             if (!attributes.fontSize) return {};
             return { style: `font-size: ${attributes.fontSize}` };
           },
@@ -240,13 +240,13 @@ const FontSize = Extension.create({
   },
   addCommands() {
     return {
-      setFontSize: (fontSize: string) => ({ chain }: { chain: () => Record<string, (...args: unknown[]) => unknown> }) => {
+      setFontSize: (fontSize: string) => ({ chain }: any) => {
         return chain().setMark('textStyle', { fontSize }).run();
       },
-      unsetFontSize: () => ({ chain }: { chain: () => Record<string, (...args: unknown[]) => unknown> }) => {
+      unsetFontSize: () => ({ chain }: any) => {
         return chain().setMark('textStyle', { fontSize: null }).removeEmptyTextStyle().run();
       },
-    } as Record<string, unknown>;
+    } as any;
   },
 });
 
@@ -287,7 +287,7 @@ const fontSizes = ['12px', '14px', '16px', '18px', '20px', '24px', '30px', '36px
 
 // ---- Build extensions list ----
 const buildExtensions = () => {
-  const extensions: unknown[] = [
+  const extensions: any[] = [
     StarterKit,
     Underline,
     ImageExt.configure({ inline: true }),
@@ -338,11 +338,11 @@ const buildExtensions = () => {
           .slice(0, 5);
       },
       render: () => {
-        let component: { element: HTMLElement; updateProps: (props: unknown) => void; ref?: { onKeyDown: (props: unknown) => boolean }; destroy: () => void };
-        let popup: Array<{ setProps: (opts: Record<string, unknown>) => void; hide: () => void; destroy: () => void }>;
+        let component: any;
+        let popup: any[];
 
         return {
-          onStart: (renderProps: Record<string, unknown>) => {
+          onStart: (renderProps: any) => {
             component = new VueRenderer(ProposalMentionList, {
               props: renderProps,
               editor: renderProps.editor,
@@ -360,12 +360,12 @@ const buildExtensions = () => {
               placement: 'bottom-start',
             });
           },
-          onUpdate(renderProps: Record<string, unknown>) {
+          onUpdate(renderProps: any) {
             component.updateProps(renderProps);
             if (!renderProps.clientRect) return;
             popup[0].setProps({ getReferenceClientRect: renderProps.clientRect });
           },
-          onKeyDown(renderProps: { event: KeyboardEvent } & Record<string, unknown>) {
+          onKeyDown(renderProps: any) {
             if (renderProps.event.key === 'Escape') {
               popup[0].hide();
               return true;
@@ -450,7 +450,7 @@ onBeforeUnmount(() => {
 const onFontSizeChange = (event: Event) => {
   const target = event.target as HTMLSelectElement;
   if (editor.value) {
-    (editor.value.chain().focus() as unknown as Record<string, (val: string) => { run: () => void }>).setFontSize(target.value).run();
+    (editor.value.chain().focus() as any).setFontSize(target.value).run();
   }
 };
 
@@ -486,7 +486,7 @@ const handleImageUpload = async (event: Event) => {
     formData.append('file', file);
     formData.append('model', 'PROPOSAL');
 
-    const response = await useApiFetch('upload', 'POST', formData as unknown as Record<string, unknown>, false, true);
+    const response = await useApiFetch('upload', 'POST', formData as any, false, true);
 
     if (response.success && response.body) {
       const fileName = response.body;
@@ -509,7 +509,7 @@ const copyMarkdown = () => {
 
   // If tiptap-markdown is available, use its getMarkdown()
   try {
-    const markdown = (editor.value.storage as Record<string, { getMarkdown?: () => string }>).markdown?.getMarkdown();
+    const markdown = (editor.value.storage as any).markdown?.getMarkdown();
     if (markdown) {
       navigator.clipboard.writeText(markdown);
       ElNotification({ type: 'success', title: 'Copied', message: 'Copied as Markdown!' });
