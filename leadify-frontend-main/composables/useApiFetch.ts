@@ -41,6 +41,16 @@ export const useApiFetch = async <T = unknown>(
 ): Promise<ApiResponse<T>> => {
   const config = useRuntimeConfig();
 
+  // During SSR, forward cookies from the incoming request to the backend
+  // (credentials: 'include' only works in the browser)
+  const ssrHeaders: Record<string, string> = {};
+  if (import.meta.server) {
+    const reqHeaders = useRequestHeaders(['cookie']);
+    if (reqHeaders.cookie) {
+      ssrHeaders.cookie = reqHeaders.cookie;
+    }
+  }
+
   const defaultOptions = {
     method,
     body: method === 'GET' ? null : data,
@@ -49,7 +59,9 @@ export const useApiFetch = async <T = unknown>(
       ...(!isFd && { 'Content-Type': 'application/json' }),
       ...(!isFd && { Accept: 'application/json' }),
       // Multi-tenant header
-      ...(user.value?.tenantId && { 'X-Tenant-ID': user.value.tenantId })
+      ...(user.value?.tenantId && { 'X-Tenant-ID': user.value.tenantId }),
+      // Forward cookies during SSR
+      ...ssrHeaders
     }
   };
 
