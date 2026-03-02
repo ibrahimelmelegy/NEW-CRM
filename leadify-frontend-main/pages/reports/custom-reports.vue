@@ -520,15 +520,12 @@ async function handleExecute(report: any) {
 async function handleExport(reportId: number, format: string) {
   try {
     const config = useRuntimeConfig();
-    const accessToken = useCookie('access_token');
     const url = `${config.public.API_BASE_URL}reports/${reportId}/export/${format}`;
 
     // For CSV, trigger a download via a temporary anchor
     if (format === 'csv' || format === 'excel') {
       const response = await fetch(url, {
-        headers: {
-          Authorization: `Bearer ${accessToken.value}`
-        }
+        credentials: 'include'
       });
       if (!response.ok) throw new Error('Export failed');
       const blob = await response.blob();

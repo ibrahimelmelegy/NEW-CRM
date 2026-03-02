@@ -9,31 +9,9 @@ export const useAuthStore = defineStore('auth', {
     lang: 'en'
   }),
 
-  getters: {
-    /** Read token from cookie (consistent with middleware & useApiFetch) */
-    token(): string {
-      if (import.meta.server) return '';
-      const cookie = useCookie('access_token', {
-        path: '/',
-        maxAge: 60 * 60 * 24 * 7,
-        sameSite: 'lax' as const
-      });
-      return cookie.value || '';
-    }
-  },
-
   actions: {
     setLocale(lang: string) {
       this.lang = lang;
-    },
-
-    setData(token: string) {
-      const cookie = useCookie('access_token', {
-        path: '/',
-        maxAge: 60 * 60 * 24 * 7,
-        sameSite: 'lax' as const
-      });
-      cookie.value = token;
     },
 
     async changePassword(input: { oldPassword: string; password: string; confirmPassword: string }) {
@@ -47,10 +25,6 @@ export const useAuthStore = defineStore('auth', {
         });
 
         this.loadingChangePassword = false;
-
-        if (response.success && response.body?.token) {
-          this.setData(response.body.token);
-        }
 
         if (response.success) {
           ElNotification({
@@ -82,21 +56,12 @@ export const useAuthStore = defineStore('auth', {
     },
 
     async logout() {
-      // Clear the cookie (the source of truth)
-      const cookie = useCookie('access_token', {
-        path: '/',
-        maxAge: 60 * 60 * 24 * 7,
-        sameSite: 'lax' as const
-      });
-      cookie.value = null;
+      await useApiFetch('auth/logout', 'POST', {}, true);
 
       // Clear cached user data
       user.value = null;
 
-      // Also clear any legacy localStorage entry
-      if (import.meta.client) {
-        localStorage.removeItem('access_token');
-      }
+      // HttpOnly auth cookie is cleared by the server on logout
 
       navigateTo('/login');
     }

@@ -58,11 +58,11 @@ export const useMain = defineStore('Main', {
 
         const filereturned = link?.split('?')[0].split(runtimeConfig.public.BUCKET_URL)[1];
         return filereturned;
-      } catch (error: any) {
+      } catch (error: unknown) {
         ElNotification({
           title: 'Error',
           type: 'error',
-          message: error?.message || 'Upload failed'
+          message: error instanceof Error ? error.message : 'Upload failed'
         });
         throw error;
       }

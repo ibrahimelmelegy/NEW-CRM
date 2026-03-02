@@ -19,10 +19,10 @@ export async function fetchAuditTrail(
   entityId: string | number,
   page: number = 1,
   limit: number = 20
-): Promise<{ docs: AuditEntry[]; pagination: any }> {
+): Promise<{ docs: AuditEntry[]; pagination: { page: number; limit: number; totalItems: number; totalPages: number } }> {
   const { body, success } = await useApiFetch(`audit/${entityType}/${entityId}?page=${page}&limit=${limit}`);
   if (success && body) {
-    return body as { docs: AuditEntry[]; pagination: any };
+    return body as { docs: AuditEntry[]; pagination: { page: number; limit: number; totalItems: number; totalPages: number } };
   }
   return {
     docs: [],
@@ -33,8 +33,8 @@ export async function fetchAuditTrail(
 export async function fetchFieldHistory(entityType: string, entityId: string | number, fieldName: string): Promise<AuditEntry[]> {
   const { body, success } = await useApiFetch(`audit/${entityType}/${entityId}/field/${fieldName}`);
   if (success && body) {
-    const data = body as any;
-    return data.docs || data || [];
+    const data = body as { docs?: AuditEntry[] };
+    return data.docs || (Array.isArray(data) ? data : []);
   }
   return [];
 }

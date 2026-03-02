@@ -21,14 +21,12 @@ export default defineConfig({
       reportsDirectory: './coverage',
       include: ['composables/**/*.ts', 'utils/**/*.ts', 'components/**/*.vue'],
       exclude: ['node_modules', '.nuxt', 'tests/**', '**/*.d.ts', '**/*.spec.ts', '**/*.test.ts'],
-      // Coverage thresholds - Phase 2.3 baseline
-      // Target: 20% composables coverage (up from 2.9%)
-      // Critical files (useApiFetch, useApiCache) at 95%+
+      // Coverage thresholds - Phase 3.3 target: 60%+
       thresholds: {
-        statements: 4,
-        branches: 5,
-        functions: 3,
-        lines: 4
+        statements: 60,
+        branches: 60,
+        functions: 60,
+        lines: 60
       }
     },
     // Test timeout

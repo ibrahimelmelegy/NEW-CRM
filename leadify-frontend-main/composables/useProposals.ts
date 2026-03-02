@@ -54,10 +54,10 @@ export const fileAttachmentsFormats = [
 export const proposalRelatedToOptions = ref<RelatedToOptions[]>([]);
 
 export async function fetchRelatedToOptions(type: RelatedTypesValues) {
-  const functionMap: { [key in RelatedTypesValues]: Function } = {
-    Opportunity: getOpportunities,
-    Deal: getDeals,
-    Project: getProjects
+  const functionMap: { [key in RelatedTypesValues]: () => Promise<Record<string, Array<{ id?: string | number; name?: string }>>> } = {
+    Opportunity: getOpportunities as () => Promise<Record<string, Array<{ id?: string | number; name?: string }>>>,
+    Deal: getDeals as () => Promise<Record<string, Array<{ id?: string | number; name?: string }>>>,
+    Project: getProjects as () => Promise<Record<string, Array<{ id?: string | number; name?: string }>>>
   };
 
   const existingType = type === 'Project' ? 'projects' : type === 'Deal' ? 'deals' : 'opportunties';
@@ -65,54 +65,102 @@ export async function fetchRelatedToOptions(type: RelatedTypesValues) {
   const fetchFunction = functionMap[type];
 
   const response = await fetchFunction();
-  proposalRelatedToOptions.value = response[existingType]?.map((item: any) => ({
-    label: item?.name,
-    value: item?.id
-  }));
+  proposalRelatedToOptions.value = response[existingType]?.map((item: { id?: string | number; name?: string }) => ({
+    label: item?.name ?? '',
+    value: String(item?.id ?? '')
+  })) ?? [];
 
   return proposalRelatedToOptions.value;
 }
 
+export interface ProposalData {
+  id?: string;
+  title?: string;
+  version?: string;
+  proposalDate?: string;
+  type?: string;
+  reference?: string;
+  proposalFor?: string;
+  companyLogo?: string;
+  status?: string;
+  content?: string;
+  relatedEntityId?: string;
+  relatedEntityType?: string;
+  notes?: string;
+  fileAttachments?: string[];
+  users?: Array<{ id: number; name: string }>;
+  rejectionReason?: string;
+  createdAt?: string;
+  updatedAt?: string;
+}
+
+export interface FinanceTableData {
+  financeTable?: Array<FinanceTable>;
+  pagination?: { page: number; limit: number; totalItems: number; totalPages: number };
+}
+
+export interface FinanceTable {
+  id: number;
+  proposalId?: string;
+  name?: string;
+  totalPrice?: number;
+  customColumns?: Record<string, unknown>;
+  items?: FinanceTableItem[];
+  subtotal?: number;
+  total?: number;
+}
+
+export interface FinanceTableItem {
+  id: number;
+  financeTableId?: number;
+  description?: string;
+  qty?: number;
+  unitPrice?: number;
+  totalPrice?: number;
+  customColumns?: Record<string, unknown>;
+  proposalId?: string;
+}
+
 /**
- * Fetches a single deal from the API
- * @param id - The ID of the deal to fetch
- * @returns {Promise<Deal>} A promise that resolves to a Deal object
+ * Fetches a single proposal from the API
+ * @param id - The ID of the proposal to fetch
+ * @returns {Promise<ProposalData>} A promise that resolves to a ProposalData object
  * @throws {Error} If the API call is unsuccessful, an error is thrown with a message
  */
-export async function getProposal(id: string | string[]): Promise<Deal> {
+export async function getProposal(id: string | string[]): Promise<ProposalData> {
   try {
-    const { body: deal, success } = await useApiFetch(`proposal/${id}`);
-    return deal;
+    const { body: proposal, success } = await useApiFetch(`proposal/${id}`);
+    return proposal as unknown as ProposalData;
   } catch (error) {
     console.error('Error fetching proposal:', error instanceof Error ? error.message : error);
     handleError('An error occurred while fetching proposal. Please try again.');
-    return {} as any;
+    return {} as ProposalData;
   }
 }
 
-export async function getProposalFinanceTableByPropsalId(proposalId: string | string[]): Promise<Deal> {
+export async function getProposalFinanceTableByPropsalId(proposalId: string | string[]): Promise<FinanceTableData> {
   try {
     const { body: table, success } = await useApiFetch(`proposal-finance-table/?page=1&limit=10&proposalId=${proposalId}`);
-    return table;
+    return table as unknown as FinanceTableData;
   } catch (error) {
     console.error('Error fetching proposal:', error instanceof Error ? error.message : error);
     handleError('An error occurred while fetching proposal. Please try again.');
-    return {} as any;
+    return {} as FinanceTableData;
   }
 }
 
-export async function getProposalFinanceTableItemByTablelId(TablelId: string | string[]): Promise<Deal> {
+export async function getProposalFinanceTableItemByTablelId(TablelId: string | string[]): Promise<{ items?: FinanceTableItem[] }> {
   try {
     const { body: tableItem, success } = await useApiFetch(`proposal-finance-table-item/?page=1&limit=1000&financeTableId=${TablelId}`);
-    return tableItem;
+    return tableItem as unknown as { items?: FinanceTableItem[] };
   } catch (error) {
     console.error('Error fetching tableItem:', error instanceof Error ? error.message : error);
     handleError('An error occurred while fetching table Item. Please try again.');
-    return {} as any;
+    return {};
   }
 }
 
-export async function createProposalFinanceTable(values: any): Promise<void> {
+export async function createProposalFinanceTable(values: Record<string, unknown> & { proposalId?: string }): Promise<void> {
   try {
     // Prepare the client data
     const ProposalFinanceTableData = {
@@ -133,7 +181,7 @@ export async function createProposalFinanceTable(values: any): Promise<void> {
   }
 }
 
-export async function updateProposalFinanceTable(values: any, id: number, proposalId: any): Promise<void> {
+export async function updateProposalFinanceTable(values: Record<string, unknown>, id: number, proposalId: string | undefined): Promise<void> {
   try {
     // Prepare the client data
     const ProposalFinanceTableData = {
@@ -154,10 +202,10 @@ export async function updateProposalFinanceTable(values: any, id: number, propos
   }
 }
 
-export async function updateProposalFinanceTableitem(values: any, id: number, type: string = 'all'): Promise<void> {
+export async function updateProposalFinanceTableitem(values: { customColumns?: Record<string, unknown>; qty?: number; proposalId?: string }, id: number, type: string = 'all'): Promise<void> {
   try {
     // Prepare the client data
-    const ProposalFinanceTableData = {
+    const ProposalFinanceTableData: Record<string, unknown> = {
       customColumns: values?.customColumns,
       qty: values?.qty
     };
@@ -180,7 +228,7 @@ export async function updateProposalFinanceTableitem(values: any, id: number, ty
   }
 }
 
-export async function createProposalFinanceTableitem(values: any, type: string = 'all'): Promise<void> {
+export async function createProposalFinanceTableitem(values: Record<string, unknown> & { proposalId?: string }, type: string = 'all'): Promise<void> {
   try {
     // Prepare the client data
     const ProposalFinanceTableData = {
@@ -248,12 +296,11 @@ export async function deleteCustomColumn(idFinanceTable: number, columnKey: stri
  * @throws {Error} If the API call is unsuccessful, an error is thrown with a message
  * @returns {Promise<void>} A promise that resolves when the proposal is created
  */
-export async function createProposal(values: ProposalInfoPayload): Promise<void> {
+export async function createProposal(values: ProposalInfoPayload & { file?: Array<{ response?: string }> }): Promise<void> {
   try {
-    const valuesAny = values as any;
-    const formattedValues: any = {
+    const formattedValues: Record<string, unknown> = {
       ...values,
-      fileAttachments: valuesAny?.file?.map((el: any) => el?.response),
+      fileAttachments: values?.file?.map((el: { response?: string }) => el?.response),
       relatedEntityId: values?.relatedEntityId == '' ? undefined : values?.relatedEntityId,
       relatedEntityType: values?.relatedEntityType == '' ? undefined : values?.relatedEntityType
     };
@@ -291,22 +338,39 @@ export async function createProposal(values: ProposalInfoPayload): Promise<void>
   }
 }
 
-export async function updateProposal(values: any): Promise<void> {
+interface UpdateProposalValues {
+  id?: string;
+  relatedEntityId?: string;
+  relatedEntityType?: string;
+  title?: string;
+  version?: string;
+  content?: string;
+  notes?: string;
+  type?: string;
+  companyLogo?: string;
+  proposalFor?: string;
+  reference?: string;
+  status?: string;
+  reason?: string;
+  file?: Array<{ response?: string }>;
+}
+
+export async function updateProposal(values: UpdateProposalValues): Promise<void> {
   try {
     // Call API to create the proposal
-    const proposalData = {
+    const proposalData: Record<string, unknown> = {
       relatedEntityId: values?.relatedEntityId == '' ? undefined : values?.relatedEntityId,
       relatedEntityType: values?.relatedEntityType == '' ? undefined : values?.relatedEntityType,
       title: values?.title ?? undefined,
       version: values?.version ?? undefined,
       content: values?.content ?? undefined,
-      // users: values.users?.map((el:any) => el?.id ?? el),
+      // users: values.users?.map((el) => el?.id ?? el),
       notes: values?.notes ?? undefined,
       type: values?.type ?? undefined,
       companyLogo: values?.companyLogo ?? undefined,
       proposalFor: values?.proposalFor ?? undefined,
       reference: values?.reference ?? undefined,
-      fileAttachments: values?.file?.map((el: any) => el?.response) ?? undefined
+      fileAttachments: values?.file?.map((el: { response?: string }) => el?.response) ?? undefined
     };
     if (values.status) {
       const responseChange =
@@ -479,17 +543,10 @@ export async function archiveProposal(id: string | number): Promise<boolean> {
 export async function downloadProposalPdf(id: string | number, reference?: string): Promise<boolean> {
   try {
     const config = useRuntimeConfig();
-    const accessToken = useCookie('access_token', {
-      path: '/',
-      maxAge: 60 * 60 * 24 * 7,
-      sameSite: 'lax' as const
-    });
 
     const response = await $fetch(`${config.public.API_BASE_URL}proposal/${id}/pdf`, {
       method: 'GET',
-      headers: {
-        ...(accessToken.value && { Authorization: `Bearer ${accessToken.value}` })
-      },
+      credentials: 'include',
       responseType: 'blob'
     });
 
@@ -542,20 +599,22 @@ export async function deleteProposal(id: string | number): Promise<boolean> {
  * Get proposal finance tables with items
  * @param proposalId - Proposal ID
  */
-export async function getProposalFinanceTable(proposalId: string | number): Promise<any[]> {
+export async function getProposalFinanceTable(proposalId: string | number): Promise<FinanceTable[]> {
   try {
     const { body: tables } = await useApiFetch(`proposal-finance-table/?page=1&limit=100&proposalId=${proposalId}`);
-    if (!tables?.financeTable?.length) return [];
+    const tablesBody = tables as unknown as FinanceTableData;
+    if (!tablesBody?.financeTable?.length) return [];
 
     // Fetch items for each table
     const tablesWithItems = await Promise.all(
-      tables.financeTable.map(async (table: any) => {
+      tablesBody.financeTable.map(async (table: FinanceTable) => {
         const { body: items } = await useApiFetch(`proposal-finance-table-item/?page=1&limit=1000&financeTableId=${table.id}`);
+        const itemsBody = items as unknown as { items?: FinanceTableItem[] };
         return {
           ...table,
-          items: items?.items || [],
-          subtotal: items?.items?.reduce((sum: number, item: any) => sum + (item.totalPrice || 0), 0) || 0,
-          total: table.totalPrice || items?.items?.reduce((sum: number, item: any) => sum + (item.totalPrice || 0), 0) || 0
+          items: itemsBody?.items || [],
+          subtotal: itemsBody?.items?.reduce((sum: number, item: FinanceTableItem) => sum + (item.totalPrice || 0), 0) || 0,
+          total: table.totalPrice || itemsBody?.items?.reduce((sum: number, item: FinanceTableItem) => sum + (item.totalPrice || 0), 0) || 0
         };
       })
     );

@@ -39,7 +39,9 @@ export async function usePermissions(isUpdated = false) {
  */
 export function usePermissionsSync() {
   if (!isLoaded.value) {
-    usePermissions().catch(() => {});
+    usePermissions().catch((error: unknown) => {
+      console.error('Operation failed:', error);
+    });
   }
   return {
     hasPermission: (permission: string): boolean => permissions.value.includes(permission),

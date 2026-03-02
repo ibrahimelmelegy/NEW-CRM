@@ -159,7 +159,9 @@ function handleRestore(row: ArchivedDocument) {
       restoreDocument(row.id, row.documentType);
       ElMessage.success(`"${row.refNumber}" restored successfully.`);
     })
-    .catch(() => {});
+    .catch((error: unknown) => {
+      console.error('Operation failed:', error);
+    });
 }
 
 function handleDelete(row: ArchivedDocument) {
@@ -172,7 +174,9 @@ function handleDelete(row: ArchivedDocument) {
       permanentlyDelete(row.id, row.documentType);
       ElMessage.success(`"${row.refNumber}" permanently deleted.`);
     })
-    .catch(() => {});
+    .catch((error: unknown) => {
+      console.error('Operation failed:', error);
+    });
 }
 
 function handleBulkRestore() {
@@ -186,7 +190,9 @@ function handleBulkRestore() {
       ElMessage.success(`${count} document(s) restored.`);
       selectedRows.value = [];
     })
-    .catch(() => {});
+    .catch((error: unknown) => {
+      console.error('Operation failed:', error);
+    });
 }
 
 function handleBulkDelete() {
@@ -200,7 +206,9 @@ function handleBulkDelete() {
       ElMessage.success(`${count} document(s) permanently deleted.`);
       selectedRows.value = [];
     })
-    .catch(() => {});
+    .catch((error: unknown) => {
+      console.error('Operation failed:', error);
+    });
 }
 
 function statusTagType(status: string): '' | 'success' | 'warning' | 'danger' | 'info' {

@@ -59,7 +59,8 @@
                               p.text-xs {{ $t('common.logout') }}
           .mt-4
         .slot-content(class="!mt-24 animate-entrance" :class="{'!pl-[32px] !pr-[50px]' : !mobile, '!px-[20px] '  : mobile}")
-            slot
+            ErrorBoundary
+              slot
       //- Notification Center Flyout
       NotificationsNotificationCenter(:visible="notificationCenter.visible.value" @close="notificationCenter.close()")
       //- Onboarding Tour Overlay
@@ -160,8 +161,7 @@ function openNav() {
 }
 async function logout() {
   const response = await useApiFetch('auth/logout', 'POST');
-  const accessToken = useCookie('access_token', { path: '/', maxAge: 60 * 60 * 24 * 7, sameSite: 'lax' as const });
-  accessToken.value = null;
+  user.value = null;
   ElNotification({
     title: response?.success ? t('common.success') : t('common.error'),
     type: response?.success ? 'success' : 'error',

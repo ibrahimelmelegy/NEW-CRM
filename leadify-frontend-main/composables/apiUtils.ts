@@ -44,12 +44,14 @@ export async function downloadFile(file: string) {
       a.click();
       URL.revokeObjectURL(url);
     })
-    .catch(error => {});
+    .catch((error: unknown) => {
+      console.error('File download failed:', error);
+    });
 }
 
-export function uploadFile(params: any) {
-  return new Promise((resolve, reject) => {
-    const file = params.file as File;
+export function uploadFile(params: { file: File; [key: string]: unknown }) {
+  return new Promise<string>((resolve, reject) => {
+    const file = params.file;
 
     const extension = file.name.slice(file.name.lastIndexOf('.'));
 
@@ -57,17 +59,17 @@ export function uploadFile(params: any) {
     const myRenamedFile = new File([file], fileName, { type: file.type });
     const runtimeConfig = useRuntimeConfig();
 
-    // ✅ Fix 2: TypeScript might not see auto-imports, explicitly casting or ignoring logic is safer here
-    // @ts-ignore
-    useAsyncGql('generateUploadLink', {
+    // ✅ Fix 2: useAsyncGql is auto-imported by Nuxt GQL module
+    (useAsyncGql as (operation: string, variables: Record<string, unknown>) => Promise<{ data: Ref<Record<string, unknown>> }>)('generateUploadLink', {
       model: 'BLOG_COVER',
       fileName,
       contentType: file.type,
       sizeInBytes: file.size
     })
       // ✅ Fix 3: Explicitly type the response data
-      .then(async ({ data }: { data: any }) => {
-        const link = data.value?.generateUploadLink.data;
+      .then(async ({ data }: { data: Ref<Record<string, unknown>> }) => {
+        const gqlResult = data.value?.generateUploadLink as { data: string } | undefined;
+        const link = gqlResult?.data;
         try {
           const response = await $fetch(link, {
             method: 'PUT',
@@ -79,11 +81,11 @@ export function uploadFile(params: any) {
           reject(error);
         }
       })
-      .catch((error: any) => {
+      .catch((error: unknown) => {
         ElNotification({
           title: 'Error',
           type: 'error',
-          message: error
+          message: error instanceof Error ? error.message : String(error)
         });
 
         reject(error);
@@ -174,13 +176,13 @@ export function checkStatuesNumber(num: number): string {
   return +num > 0 ? 'Positive' : +num < 0 ? 'Negative' : 'Zero';
 }
 
-export function formatNumber(number: any) {
+export function formatNumber(number: number | string) {
   return Number(number)
     .toString()
     .replace(/\B(?=(\d{3})+(?!\d))/g, ',');
 }
 
-export function unformatNumber(formattedNumber: any) {
+export function unformatNumber(formattedNumber: number | string) {
   if (typeof formattedNumber === 'number') return formattedNumber;
   return +formattedNumber.replace(/,/g, '');
 }

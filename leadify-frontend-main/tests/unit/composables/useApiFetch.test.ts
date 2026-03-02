@@ -148,7 +148,7 @@ describe('useApiFetch.ts', () => {
   });
 
   // ============================================
-  // Headers
+  // Headers & Credentials
   // ============================================
   describe('Request Headers', () => {
     it('should include Content-Type and Accept headers by default', async () => {
@@ -170,13 +170,7 @@ describe('useApiFetch.ts', () => {
       );
     });
 
-    it('should include Authorization header when access_token exists', async () => {
-      // Setup mock cookie
-      const originalUseCookie = globalThis.useCookie;
-      globalThis.useCookie = vi.fn((name: string) => ({
-        value: name === 'access_token' ? 'test-token-123' : null
-      })) as any;
-
+    it('should use credentials include instead of Authorization header', async () => {
       (vi.mocked(globalThis.$fetch) as any).mockResolvedValue({
         success: true,
         body: {}
@@ -184,17 +178,9 @@ describe('useApiFetch.ts', () => {
 
       await useApiFetch('users');
 
-      expect(globalThis.$fetch).toHaveBeenCalledWith(
-        expect.any(String),
-        expect.objectContaining({
-          headers: expect.objectContaining({
-            Authorization: 'Bearer test-token-123'
-          })
-        })
-      );
-
-      // Restore
-      globalThis.useCookie = originalUseCookie;
+      const callArgs = vi.mocked(globalThis.$fetch).mock.calls[0]?.[1] as any;
+      expect(callArgs?.credentials).toBe('include');
+      expect(callArgs?.headers).not.toHaveProperty('Authorization');
     });
 
     it('should include X-Tenant-ID header when user has tenantId', async () => {
@@ -231,25 +217,6 @@ describe('useApiFetch.ts', () => {
           })
         })
       );
-    });
-
-    it('should not include Authorization for reset-password endpoint', async () => {
-      const originalUseCookie = globalThis.useCookie;
-      globalThis.useCookie = vi.fn((name: string) => ({
-        value: name === 'access_token' ? 'test-token-123' : null
-      })) as any;
-
-      (vi.mocked(globalThis.$fetch) as any).mockResolvedValue({
-        success: true,
-        body: {}
-      });
-
-      await useApiFetch('auth/reset-password', 'POST', { password: 'new' });
-
-      const callArgs = vi.mocked(globalThis.$fetch).mock.calls[0]?.[1] as any;
-      expect(callArgs?.headers).not.toHaveProperty('Authorization');
-
-      globalThis.useCookie = originalUseCookie;
     });
   });
 

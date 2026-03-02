@@ -10,7 +10,7 @@ export function fromCamelCase(camelCaseStr: string) {
   return spacedStr.charAt(0).toUpperCase() + spacedStr.slice(1);
 }
 
-export function formatIso(dateText: any) {
+export function formatIso(dateText: string | Date | null | undefined) {
   const date = new Date(dateText);
 
   // Get year, month, and day part from the date
@@ -21,7 +21,7 @@ export function formatIso(dateText: any) {
   const formattedDate = year + '-' + month + '-' + day;
   return dateText ? formattedDate : 'Not Mentioned';
 }
-export function formatSaudiIso(dateText: any = new Date()) {
+export function formatSaudiIso(dateText: string | Date | number = new Date()) {
   const date = new Date(dateText); // Create a Date object from the timestamp
   const formattedDate = date.toLocaleString('af-ZA', {
     timeZone: 'Asia/Riyadh',
@@ -54,7 +54,7 @@ function getDaySuffix(day: number) {
   }
 }
 
-export function formatTime(days: any, hours: any, minutes: any, seconds: any) {
+export function formatTime(days: number | string, hours: number | string, minutes: number | string, seconds: number | string) {
   const timeParts = [];
 
   if (days) {
@@ -78,7 +78,7 @@ export function formatTime(days: any, hours: any, minutes: any, seconds: any) {
     return timeParts.join('');
   }
 }
-export function calculateAge(year: any, month: any, days: any) {
+export function calculateAge(year: number | string, month: number | string, days: number | string) {
   const age = [];
 
   if (year) {
@@ -133,7 +133,7 @@ export function formatName(input: string) {
   return formattedWords.join(' ');
 }
 
-export function timestampToHour(timestamp: any) {
+export function timestampToHour(timestamp: string | Date | number | null | undefined) {
   const time = new Date(timestamp).toLocaleTimeString('en-SA', {
     timeZone: 'Asia/Riyadh',
     hour: 'numeric',
@@ -142,7 +142,7 @@ export function timestampToHour(timestamp: any) {
 
   return timestamp ? time : 'Not mentioned';
 }
-export function getDateandTime(timeStamp: any) {
+export function getDateandTime(timeStamp: string | Date | number | null | undefined) {
   const time = new Date(timeStamp).toLocaleTimeString('en-SA', {
     timeZone: 'Asia/Riyadh',
     hour: 'numeric',
@@ -156,7 +156,7 @@ export function getDateandTime(timeStamp: any) {
   };
 }
 
-export function formatDatetoText(timestamp: any) {
+export function formatDatetoText(timestamp: string | Date | number | null | undefined) {
   const dateObj = new Date(timestamp);
 
   // Format the date object as a string in the desired format
@@ -169,11 +169,11 @@ export function formatDatetoText(timestamp: any) {
   return timestamp ? formattedDate : 'Not mentioned';
 }
 
-export function checkEmpty(text: any) {
+export function checkEmpty(text: string | number | null | undefined) {
   return text || 'Not mentioned';
 }
 
-export function checkDateLength(date: any) {
+export function checkDateLength(date: number | string) {
   return String(date).length > 1 ? String(date) : `0${date}`;
 }
 // Helper function to normalize phone numbers

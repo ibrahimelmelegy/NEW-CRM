@@ -57,10 +57,17 @@ export async function deleteExpenseCategory(id: number) {
   return useApiFetch(`finance/categories/${id}`, 'DELETE');
 }
 
+export interface PaginationMeta {
+  page: number;
+  limit: number;
+  totalItems: number;
+  totalPages: number;
+}
+
 export async function fetchExpenses(params?: Record<string, string>) {
   const query = params ? '?' + new URLSearchParams(params).toString() : '';
   const { body, success } = await useApiFetch(`finance/expenses${query}`);
-  if (success && body) return body as { docs: ExpenseItem[]; pagination: any };
+  if (success && body) return body as { docs: ExpenseItem[]; pagination: PaginationMeta };
   return { docs: [], pagination: { page: 1, limit: 20, totalItems: 0, totalPages: 0 } };
 }
 
@@ -74,11 +81,11 @@ export async function fetchExpenseSummary() {
   return success && body ? (body as { total: number; approved: number; pending: number }) : { total: 0, approved: 0, pending: 0 };
 }
 
-export async function createExpense(data: any) {
+export async function createExpense(data: Record<string, unknown>) {
   return useApiFetch('finance/expenses', 'POST', data);
 }
 
-export async function updateExpense(id: number, data: any) {
+export async function updateExpense(id: number, data: Record<string, unknown>) {
   return useApiFetch(`finance/expenses/${id}`, 'PUT', data);
 }
 
@@ -97,7 +104,7 @@ export async function rejectExpense(id: number) {
 export async function fetchBudgets(params?: Record<string, string>) {
   const query = params ? '?' + new URLSearchParams(params).toString() : '';
   const { body, success } = await useApiFetch(`finance/budgets${query}`);
-  if (success && body) return body as { docs: BudgetItem[]; pagination: any };
+  if (success && body) return body as { docs: BudgetItem[]; pagination: PaginationMeta };
   return { docs: [], pagination: { page: 1, limit: 20, totalItems: 0, totalPages: 0 } };
 }
 
@@ -106,11 +113,11 @@ export async function fetchBudgetById(id: number | string): Promise<BudgetItem |
   return success && body ? (body as BudgetItem) : null;
 }
 
-export async function createBudget(data: any) {
+export async function createBudget(data: Record<string, unknown>) {
   return useApiFetch('finance/budgets', 'POST', data);
 }
 
-export async function updateBudget(id: number, data: any) {
+export async function updateBudget(id: number, data: Record<string, unknown>) {
   return useApiFetch(`finance/budgets/${id}`, 'PUT', data);
 }
 

@@ -11,6 +11,7 @@ import Session from './models/sessionModel';
 import ResetToken from './models/resetTokenModel';
 import PasswordResetLog from './models/passwordResetLogModel';
 import { wrapResult } from '../utils/response/responseWrapper';
+import { setAuthCookie, clearAuthCookie, COOKIE_NAME } from '../utils/auth/cookieHelper';
 import Tenant from '../tenant/tenantModel';
 import Role from '../role/roleModel';
 import { sequelize } from '../config/db';
@@ -99,6 +100,7 @@ export const registerWorkspace = async (req: Request, res: Response, next: NextF
     // Commit all changes
     await transaction.commit();
 
+    setAuthCookie(res, token);
     wrapResult(res, {
       message: 'Workspace created successfully!',
       token,
@@ -175,6 +177,7 @@ export const loginUser = async (req: Request, res: Response, next: NextFunction)
       expiresAt: new Date(Date.now() + (Number(process.env.SESSION_EXPIRATION_TIME) || 7) * 24 * 60 * 60 * 1000)
     });
 
+    setAuthCookie(res, token);
     wrapResult(res, { token });
   } catch (error) {
     res.status(500).json({ error: error instanceof Error ? error.message : 'Server error' });
@@ -183,7 +186,7 @@ export const loginUser = async (req: Request, res: Response, next: NextFunction)
 
 export const getUserProfile = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
   try {
-    const token = req.header('Authorization')?.replace('Bearer ', '');
+    const token = req.header('Authorization')?.replace('Bearer ', '') || req.cookies?.[COOKIE_NAME] || null;
 
     if (!token) {
       res.status(401).json({ message: 'No token provided' });
@@ -218,7 +221,7 @@ export const getUserProfile = async (req: Request, res: Response, next: NextFunc
 
 export const logoutUser = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
   try {
-    const token = req.header('Authorization')?.replace('Bearer ', '');
+    const token = req.header('Authorization')?.replace('Bearer ', '') || req.cookies?.[COOKIE_NAME] || null;
     if (!token) {
       res.status(401).json({ message: 'No token provided' });
       return; // End function execution here
@@ -227,6 +230,7 @@ export const logoutUser = async (req: Request, res: Response, next: NextFunction
     const decoded = jwt.verify(token, SECRET_KEY) as { id: string };
     await Session.destroy({ where: { userId: decoded.id, token } });
 
+    clearAuthCookie(res);
     wrapResult(res, { message: 'Logged out successfully' });
   } catch (error) {
     res.status(500).json({ message: 'Logout failed', error: error instanceof Error ? error.message : 'Server error' });

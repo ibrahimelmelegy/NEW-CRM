@@ -235,7 +235,7 @@ app.use(
 // 8. CSRF protection setup
 const { doubleCsrfProtection, generateCsrfToken } = doubleCsrf({
   getSecret: () => CSRF_SECRET,
-  getSessionIdentifier: (req: Request) => req.headers.authorization || '',
+  getSessionIdentifier: (req: Request) => req.headers.authorization || req.cookies?.['__session'] || '',
   cookieName: '__csrf',
   cookieOptions: {
     httpOnly: true,

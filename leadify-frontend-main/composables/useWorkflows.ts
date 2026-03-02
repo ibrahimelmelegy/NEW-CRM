@@ -1,11 +1,22 @@
 import { ElNotification } from 'element-plus';
 
+export interface WorkflowCondition {
+  field: string;
+  operator: string;
+  value: string | number | boolean;
+}
+
+export interface WorkflowAction {
+  type: string;
+  config: Record<string, unknown>;
+}
+
 export interface Workflow {
   id: string;
   name: string;
   trigger: string;
-  conditions: any[];
-  actions: any[];
+  conditions: WorkflowCondition[];
+  actions: WorkflowAction[];
   isActive: boolean;
   executionCount: number;
   createdAt: string;
@@ -41,17 +52,17 @@ export const ACTION_TYPES = [
 ];
 
 export async function fetchWorkflows(): Promise<Workflow[]> {
-  const { body, success } = await useApiFetch('workflows');
+  const { body, success } = await useApiFetch<Workflow[]>('workflows');
   return success && body ? body : [];
 }
 
 export async function fetchWorkflow(id: string): Promise<Workflow | null> {
-  const { body, success } = await useApiFetch(`workflows/${id}`);
+  const { body, success } = await useApiFetch<Workflow>(`workflows/${id}`);
   return success ? body : null;
 }
 
 export async function createWorkflow(data: Partial<Workflow>) {
-  const response = await useApiFetch('workflows', 'POST', data as any);
+  const response = await useApiFetch('workflows', 'POST', data as Record<string, unknown>);
   if (response.success) {
     ElNotification({ type: 'success', title: 'Success', message: 'Workflow created' });
   } else {
@@ -61,7 +72,7 @@ export async function createWorkflow(data: Partial<Workflow>) {
 }
 
 export async function updateWorkflow(id: string, data: Partial<Workflow>) {
-  const response = await useApiFetch(`workflows/${id}`, 'PUT', data as any);
+  const response = await useApiFetch(`workflows/${id}`, 'PUT', data as Record<string, unknown>);
   if (response.success) {
     ElNotification({ type: 'success', title: 'Success', message: 'Workflow updated' });
   } else {
@@ -79,7 +90,7 @@ export async function deleteWorkflow(id: string) {
 }
 
 export async function toggleWorkflow(id: string, isActive: boolean) {
-  return useApiFetch(`workflows/${id}`, 'PUT', { isActive } as any);
+  return useApiFetch(`workflows/${id}`, 'PUT', { isActive } as Record<string, unknown>);
 }
 
 export async function fetchWorkflowLogs(id: string) {

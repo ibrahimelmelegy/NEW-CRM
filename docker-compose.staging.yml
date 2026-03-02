@@ -1,0 +1,94 @@
+services:
+  db:
+    image: postgres:16-alpine
+    restart: always
+    environment:
+      POSTGRES_USER: ${POSTGRES_USER}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+      POSTGRES_DB: ${POSTGRES_DB:-crm_staging}
+    volumes:
+      - pgdata_staging:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER}"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    deploy:
+      resources:
+        limits:
+          memory: 512M
+          cpus: "0.5"
+
+  redis:
+    image: redis:7-alpine
+    restart: always
+    command: redis-server --appendonly yes
+    volumes:
+      - redisdata_staging:/data
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    deploy:
+      resources:
+        limits:
+          memory: 128M
+          cpus: "0.25"
+
+  backend:
+    build:
+      context: ./leadify-backend-main
+      dockerfile: Dockerfile
+    restart: always
+    env_file: .env.staging
+    environment:
+      NODE_ENV: staging
+      DB_HOST: db
+      DB_PORT: 5432
+    depends_on:
+      db:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:5000/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 40s
+    volumes:
+      - uploads_staging:/usr/src/app/public/uploads
+    deploy:
+      resources:
+        limits:
+          memory: 1G
+          cpus: "0.5"
+
+  frontend:
+    build:
+      context: ./leadify-frontend-main
+      dockerfile: Dockerfile
+      args:
+        API_BASE_URL: /api/
+        BASE_URL: ${STAGING_BASE_URL:-https://staging.crm.hp-tech.com/}
+    restart: always
+    ports:
+      - "8080:80"
+    depends_on:
+      - backend
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:80"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+    deploy:
+      resources:
+        limits:
+          memory: 512M
+          cpus: "0.5"
+
+volumes:
+  pgdata_staging:
+  redisdata_staging:
+  uploads_staging:

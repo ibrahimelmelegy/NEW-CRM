@@ -170,7 +170,7 @@ export async function seedDefaultAccounts() {
 export async function fetchJournalEntries(params?: Record<string, string>) {
   const query = params ? '?' + new URLSearchParams(params).toString() : '';
   const { body, success } = await useApiFetch(`accounting/journal-entries${query}`);
-  if (success && body) return body as { docs: JournalEntryItem[]; pagination: any };
+  if (success && body) return body as { docs: JournalEntryItem[]; pagination: { page: number; limit: number; totalItems: number; totalPages: number } };
   return { docs: [], pagination: { page: 1, limit: 20, totalItems: 0, totalPages: 0 } };
 }
 
@@ -179,8 +179,16 @@ export async function fetchJournalEntryById(id: string): Promise<JournalEntryIte
   return success && body ? (body as JournalEntryItem) : null;
 }
 
-export async function createJournalEntry(data: any) {
-  return useApiFetch('accounting/journal-entries', 'POST', data);
+export interface JournalEntryCreateData {
+  date: string;
+  reference?: string;
+  description?: string;
+  sourceType?: JournalEntrySourceType;
+  lines: { accountId: string; debit: number; credit: number; description?: string }[];
+}
+
+export async function createJournalEntry(data: JournalEntryCreateData) {
+  return useApiFetch('accounting/journal-entries', 'POST', data as unknown as Record<string, unknown>);
 }
 
 export async function postJournalEntry(id: string) {

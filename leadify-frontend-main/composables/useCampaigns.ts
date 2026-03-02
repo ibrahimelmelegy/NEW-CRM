@@ -33,17 +33,17 @@ export interface EmailTemplate {
 }
 
 export async function fetchCampaigns(): Promise<Campaign[]> {
-  const { body, success } = await useApiFetch('campaigns');
+  const { body, success } = await useApiFetch<Campaign[]>('campaigns');
   return success && body ? body : [];
 }
 
 export async function fetchCampaign(id: string): Promise<Campaign | null> {
-  const { body, success } = await useApiFetch(`campaigns/${id}`);
+  const { body, success } = await useApiFetch<Campaign>(`campaigns/${id}`);
   return success ? body : null;
 }
 
 export async function createCampaign(data: Partial<Campaign>) {
-  const response = await useApiFetch('campaigns', 'POST', data as any);
+  const response = await useApiFetch('campaigns', 'POST', data as Record<string, unknown>);
   if (response.success) {
     ElNotification({ type: 'success', title: 'Success', message: 'Campaign created' });
   } else {
@@ -53,7 +53,7 @@ export async function createCampaign(data: Partial<Campaign>) {
 }
 
 export async function updateCampaign(id: string, data: Partial<Campaign>) {
-  const response = await useApiFetch(`campaigns/${id}`, 'PUT', data as any);
+  const response = await useApiFetch(`campaigns/${id}`, 'PUT', data as Record<string, unknown>);
   if (response.success) {
     ElNotification({ type: 'success', title: 'Success', message: 'Campaign updated' });
   } else {
@@ -86,17 +86,17 @@ export async function fetchCampaignAnalytics(id: string) {
 }
 
 export async function addRecipients(id: string, recipients: { email: string; name: string }[]) {
-  return useApiFetch(`campaigns/${id}/recipients`, 'POST', { recipients } as any);
+  return useApiFetch(`campaigns/${id}/recipients`, 'POST', { recipients } as Record<string, unknown>);
 }
 
 // Templates
 export async function fetchTemplates(): Promise<EmailTemplate[]> {
-  const { body, success } = await useApiFetch('campaigns/templates');
+  const { body, success } = await useApiFetch<EmailTemplate[]>('campaigns/templates');
   return success && body ? body : [];
 }
 
 export async function createTemplate(data: Partial<EmailTemplate>) {
-  const response = await useApiFetch('campaigns/templates', 'POST', data as any);
+  const response = await useApiFetch('campaigns/templates', 'POST', data as Record<string, unknown>);
   if (response.success) {
     ElNotification({ type: 'success', title: 'Success', message: 'Template saved' });
   }

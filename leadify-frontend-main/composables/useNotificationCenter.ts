@@ -58,7 +58,7 @@ export function useNotificationCenter() {
     try {
       const res = await useApiFetch('notification?limit=50', 'GET', {}, true);
       if (res?.success && res.body) {
-        const body = res.body as any;
+        const body = res.body as { docs?: NotificationData[]; unreadNotificationsCount?: number };
         notifications.value = body.docs || [];
         unreadCount.value = body.unreadNotificationsCount || 0;
       }
@@ -74,7 +74,7 @@ export function useNotificationCenter() {
     try {
       const res = await useApiFetch('notification/unread-count', 'GET', {}, true);
       if (res?.success && res.body) {
-        const body = res.body as any;
+        const body = res.body as { count?: number };
         unreadCount.value = body.count || 0;
       }
     } catch (e) {
@@ -165,7 +165,7 @@ export function useNotificationCenter() {
   // Mark a single notification as read
   async function markRead(id: string) {
     try {
-      const res = await useApiFetch(`notification/read/${id}` as any, 'PUT');
+      const res = await useApiFetch(`notification/read/${id}`, 'PUT');
       if (res?.success) {
         const idx = notifications.value.findIndex(n => n.id === id);
         const existing = notifications.value[idx];
@@ -184,7 +184,7 @@ export function useNotificationCenter() {
   // Click a notification (marks as clicked) and navigate
   async function clickNotification(notif: NotificationData) {
     try {
-      await useApiFetch(`notification/click/${notif.id}` as any, 'PUT', {}, true);
+      await useApiFetch(`notification/click/${notif.id}`, 'PUT', {}, true);
       // Update local state
       const idx = notifications.value.findIndex(n => n.id === notif.id);
       const existing = notifications.value[idx];

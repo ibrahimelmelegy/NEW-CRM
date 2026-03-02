@@ -34,15 +34,19 @@ export interface Opportunities {
   interestedIn?: string;
   nextSteps?: string | string[];
   reasonOfLose?: string;
-  users?: number | any[];
+  users?: number | Array<{ id: number; name: string }>;
   leadId?: number;
-  [key: string]: any;
+  createdAt?: string;
+  updatedAt?: string;
+  user?: { name: string };
+  assign?: string;
+  [key: string]: string | number | boolean | undefined | string[] | Array<{ id: number; name: string }> | { name: string };
 }
 
 export interface FormattedValues {
   leads?: Leads;
   opportunities?: Opportunities;
-  [key: string]: any;
+  [key: string]: Leads | Opportunities | undefined;
 }
 
 interface UseOpportunitiesResult {
@@ -123,9 +127,9 @@ export async function getOpportunities(all?: false): Promise<UseOpportunitiesRes
 
     if (success) {
       // Return the docs (opportunties) from the response
-      const opportunties = body?.docs?.map((opportunity: any) => ({
+      const opportunties = body?.docs?.map((opportunity: Opportunities) => ({
         ...opportunity,
-        createdAt: formatDate(opportunity.createdAt),
+        createdAt: formatDate(opportunity.createdAt as string),
         // updatedAt: formatDate(opportunity.updatedAt),
         updatedAt: '-',
         assign: opportunity.user?.name
@@ -162,15 +166,20 @@ export async function getOpportunity(id: string | string[]): Promise<Opportuniti
   }
 }
 
-export async function getOpportunityActivity(id: string | string[]): Promise<any> {
+export async function getOpportunityActivity(id: string | string[]): Promise<ActivityResponse> {
   try {
-    const { body: lead, success } = await useApiFetch(`activity/opportunity/${id}`);
-    return lead;
+    const { body: activity, success } = await useApiFetch(`activity/opportunity/${id}`);
+    return activity as unknown as ActivityResponse;
   } catch (error) {
-    console.error('Error fetching lead:', error instanceof Error ? error.message : error);
+    console.error('Error fetching activity:', error instanceof Error ? error.message : error);
     handleError('An error occurred while fetching opportunity. Please try again.');
-    return {} as Lead;
+    return { docs: [], pagination: { page: 1, totalPages: 1, totalItems: 0, limit: 10 } };
   }
+}
+
+interface ActivityResponse {
+  docs: Array<{ id: string; status: string; description: string; createdAt: string }>;
+  pagination: { page: number | string; totalPages: number | string; totalItems: number; limit: number };
 }
 
 /**

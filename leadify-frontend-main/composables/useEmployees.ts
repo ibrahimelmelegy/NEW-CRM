@@ -97,7 +97,7 @@ export const SALARY_FREQUENCIES = [
 export async function fetchEmployees(params?: Record<string, string>) {
   const query = params ? '?' + new URLSearchParams(params).toString() : '';
   const { body, success } = await useApiFetch(`hr/employees${query}`);
-  if (success && body) return body as { docs: Employee[]; pagination: any };
+  if (success && body) return body as { docs: Employee[]; pagination: { page: number; limit: number; totalItems: number; totalPages: number } };
   return { docs: [], pagination: { page: 1, limit: 20, totalItems: 0, totalPages: 0 } };
 }
 
@@ -107,11 +107,11 @@ export async function fetchEmployeeById(id: string): Promise<Employee | null> {
 }
 
 export async function createEmployee(data: Partial<Employee>) {
-  return useApiFetch('hr/employees', 'POST', data as Record<string, any>);
+  return useApiFetch('hr/employees', 'POST', data as Record<string, unknown>);
 }
 
 export async function updateEmployee(id: string, data: Partial<Employee>) {
-  return useApiFetch(`hr/employees/${id}`, 'PUT', data as Record<string, any>);
+  return useApiFetch(`hr/employees/${id}`, 'PUT', data as Record<string, unknown>);
 }
 
 // Org Chart
@@ -143,11 +143,11 @@ export async function fetchDepartmentById(id: string): Promise<DepartmentItem | 
 }
 
 export async function createDepartment(data: Partial<DepartmentItem>) {
-  return useApiFetch('hr/departments', 'POST', data as Record<string, any>);
+  return useApiFetch('hr/departments', 'POST', data as Record<string, unknown>);
 }
 
 export async function updateDepartment(id: string, data: Partial<DepartmentItem>) {
-  return useApiFetch(`hr/departments/${id}`, 'PUT', data as Record<string, any>);
+  return useApiFetch(`hr/departments/${id}`, 'PUT', data as Record<string, unknown>);
 }
 
 export async function deleteDepartment(id: string) {
@@ -161,7 +161,7 @@ export async function fetchEmployeeDocuments(employeeId: string): Promise<Employ
 }
 
 export async function addEmployeeDocument(employeeId: string, data: Partial<EmployeeDocumentItem>) {
-  return useApiFetch(`hr/employees/${employeeId}/documents`, 'POST', data as Record<string, any>);
+  return useApiFetch(`hr/employees/${employeeId}/documents`, 'POST', data as Record<string, unknown>);
 }
 
 export async function fetchExpiringDocuments(days: number = 30): Promise<EmployeeDocumentItem[]> {

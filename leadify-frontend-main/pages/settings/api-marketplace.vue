@@ -659,7 +659,9 @@ function disconnectIntegration(row: any) {
     const idx = installedIntegrations.value.findIndex(i => i.id === row.id);
     if (idx > -1) installedIntegrations.value.splice(idx, 1);
     ElNotification({ type: 'success', title: t('apiMarketplace.success'), message: `${row.name} ${t('apiMarketplace.disconnected')}` });
-  }).catch(() => {});
+  }).catch((error: unknown) => {
+    console.error('Operation failed:', error);
+  });
 }
 
 function toggleKeyVisibility(key: any) {
@@ -679,7 +681,9 @@ function revokeKey(key: any) {
   ).then(() => {
     key.status = 'Revoked';
     ElNotification({ type: 'success', title: t('apiMarketplace.success'), message: `${key.name} ${t('apiMarketplace.revoked')}` });
-  }).catch(() => {});
+  }).catch((error: unknown) => {
+    console.error('Operation failed:', error);
+  });
 }
 
 function deleteKey(key: any) {
@@ -691,7 +695,9 @@ function deleteKey(key: any) {
     const idx = apiKeys.value.findIndex(k => k.id === key.id);
     if (idx > -1) apiKeys.value.splice(idx, 1);
     ElNotification({ type: 'success', title: t('apiMarketplace.success'), message: t('apiMarketplace.keyDeleted') });
-  }).catch(() => {});
+  }).catch((error: unknown) => {
+    console.error('Operation failed:', error);
+  });
 }
 
 function generateKey() {

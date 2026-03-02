@@ -13,7 +13,7 @@ export interface Report {
   description?: string;
   entityType: string;
   fields: string[];
-  filters?: Record<string, any>;
+  filters?: Record<string, unknown>;
   groupBy?: string;
   sortBy?: string;
   sortOrder?: 'asc' | 'desc';
@@ -29,8 +29,9 @@ export async function fetchReports(entityType?: string): Promise<Report[]> {
   const qs = entityType ? `?entityType=${entityType}` : '';
   const { body, success } = await useApiFetch(`reports${qs}`);
   if (success && body) {
-    const data = body as any;
-    return data.docs || data || [];
+    const data = body as { docs?: Report[] } | Report[];
+    if (Array.isArray(data)) return data;
+    return data.docs || [];
   }
   return [];
 }
@@ -41,18 +42,18 @@ export async function fetchReport(id: number): Promise<Report | null> {
 }
 
 export async function createReport(data: Partial<Report>) {
-  return useApiFetch('reports', 'POST', data as Record<string, any>);
+  return useApiFetch('reports', 'POST', data as Record<string, unknown>);
 }
 
 export async function updateReport(id: number, data: Partial<Report>) {
-  return useApiFetch(`reports/${id}`, 'PUT', data as Record<string, any>);
+  return useApiFetch(`reports/${id}`, 'PUT', data as Record<string, unknown>);
 }
 
 export async function deleteReport(id: number) {
   return useApiFetch(`reports/${id}`, 'DELETE');
 }
 
-export async function executeSavedReport(id: number, filters?: Record<string, any>): Promise<any> {
+export async function executeSavedReport(id: number, filters?: Record<string, unknown>): Promise<unknown> {
   const payload = filters ? { filters } : {};
   const { body, success } = await useApiFetch(`reports/${id}/execute`, 'POST', payload);
   return success && body ? body : null;
@@ -76,7 +77,7 @@ export interface ReportConfig {
   filters?: Array<{
     field: string;
     operator: 'equals' | 'contains' | 'greaterThan' | 'lessThan' | 'between' | 'in';
-    value: any;
+    value: string | number | boolean | string[] | number[];
   }>;
   groupBy?: string;
   sortBy?: string;
@@ -97,16 +98,16 @@ export interface ReportAnalytics {
 }
 
 export async function executeReportConfig(config: ReportConfig) {
-  return useApiFetch('report-builder/execute', 'POST', config as any);
+  return useApiFetch('report-builder/execute', 'POST', config as unknown as Record<string, unknown>);
 }
 
 export async function exportReportCSV(config: ReportConfig): Promise<Blob> {
   const response = await fetch(`${useRuntimeConfig().public.apiBaseUrl}/report-builder/export-csv`, {
     method: 'POST',
     headers: {
-      'Content-Type': 'application/json',
-      Authorization: `Bearer ${localStorage.getItem('token')}`
+      'Content-Type': 'application/json'
     },
+    credentials: 'include',
     body: JSON.stringify(config)
   });
 
@@ -118,9 +119,9 @@ export async function exportReportExcel(config: ReportConfig): Promise<Blob> {
   const response = await fetch(`${useRuntimeConfig().public.apiBaseUrl}/report-builder/export-excel`, {
     method: 'POST',
     headers: {
-      'Content-Type': 'application/json',
-      Authorization: `Bearer ${localStorage.getItem('token')}`
+      'Content-Type': 'application/json'
     },
+    credentials: 'include',
     body: JSON.stringify(config)
   });
 

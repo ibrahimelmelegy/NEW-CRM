@@ -1331,11 +1331,15 @@ async function loadData() {
 }
 
 async function refreshData() {
-  await loadData().catch(() => {});
+  await loadData().catch((error: unknown) => {
+    console.error('Operation failed:', error);
+  });
 }
 
 // ── Initialize ───────────────────────────────────────────
-await loadData().catch(() => {});
+await loadData().catch((error: unknown) => {
+  console.error('Operation failed:', error);
+});
 </script>
 
 <style lang="scss" scoped>

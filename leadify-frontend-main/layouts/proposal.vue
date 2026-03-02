@@ -60,13 +60,15 @@ section
               ) Save
 
     .slot-content(:class="{ '!pr-[20px]': mobile }")
-      slot
+      ErrorBoundary
+        slot
 </template>
 <script setup lang="ts">
 import { storeToRefs } from 'pinia';
 import { ElNotification } from 'element-plus';
 import { Plus } from '@element-plus/icons-vue';
 import { useMain } from '~/stores/common';
+import { user as globalUser } from '~/composables/useUser';
 const mainData = useMain();
 const { fullNav, mobile, hideNav } = storeToRefs(mainData);
 const router = useRouter();
@@ -104,8 +106,7 @@ function openNav() {
 }
 async function logout() {
   const response = await useApiFetch('auth/logout', 'POST');
-  const accessToken = useCookie('access_token', { path: '/', maxAge: 60 * 60 * 24 * 7, sameSite: 'lax' as const });
-  accessToken.value = null;
+  globalUser.value = null;
   ElNotification({
     title: response?.success ? 'Success' : 'Error',
     type: response?.success ? 'success' : 'error',

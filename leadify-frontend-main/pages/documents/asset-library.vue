@@ -604,7 +604,9 @@ function deleteAsset(asset: Asset) {
   }).then(() => {
     assets.value = assets.value.filter((a) => a.id !== asset.id);
     ElMessage.success(`Deleted: ${asset.name}`);
-  }).catch(() => {});
+  }).catch((error: unknown) => {
+    console.error('Operation failed:', error);
+  });
 }
 
 function triggerUpload() {
@@ -729,7 +731,9 @@ function deleteCollection(collection: Collection) {
   }).then(() => {
     collections.value = collections.value.filter((c) => c.id !== collection.id);
     ElMessage.success('Collection deleted');
-  }).catch(() => {});
+  }).catch((error: unknown) => {
+    console.error('Operation failed:', error);
+  });
 }
 
 function createCollection() {
@@ -948,7 +952,9 @@ function restoreVersion(entry: VersionEntry) {
     },
   ).then(() => {
     ElMessage.success(`Restored ${entry.assetName} to ${entry.version}`);
-  }).catch(() => {});
+  }).catch((error: unknown) => {
+    console.error('Operation failed:', error);
+  });
 }
 
 // ─── Data Loading ───────────────────────────────────────────

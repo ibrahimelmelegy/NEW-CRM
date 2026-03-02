@@ -78,18 +78,30 @@ interface UseDailyTaskResult {
  */
 export async function getDailyTasks(all?: boolean): Promise<UseDailyTaskResult> {
   try {
-    const { body, success, message } = all ? await useApiFetch('daily-task?limit=1000') : await useApiFetch('daily-task');
+    interface DailyTaskDoc extends DailyTask {
+      createdAt?: string;
+      client?: { clientName: string };
+      salesRepresentative?: { name: string };
+      user?: { name: string };
+    }
+    interface DailyTaskApiResponse {
+      docs: DailyTaskDoc[];
+      pagination: UseDailyTaskResult['pagination'];
+    }
+    const { body, success, message } = all
+      ? await useApiFetch<DailyTaskApiResponse>('daily-task?limit=1000')
+      : await useApiFetch<DailyTaskApiResponse>('daily-task');
 
-    if (success) {
-      const tasks = body?.docs?.map((task: any) => ({
+    if (success && body) {
+      const tasks = body.docs?.map((task) => ({
         ...task,
-        createdAt: formatDate(task.createdAt),
+        createdAt: formatDate(task.createdAt ?? ''),
         updatedAt: '-',
         clientName: task.client?.clientName,
         salesRepresentativeName: task.salesRepresentative?.name,
         assignedToName: task.user?.name
-      }));
-      const pagination = body?.pagination;
+      })) ?? [];
+      const pagination = body.pagination;
       return { tasks, pagination };
     } else {
       throw new Error(message || 'Failed to fetch Daily Tasks');
@@ -111,8 +123,8 @@ export async function getDailyTasks(all?: boolean): Promise<UseDailyTaskResult> 
  */
 export async function getDailyTask(id: string | string[]): Promise<DailyTask> {
   try {
-    const { body: task, success } = await useApiFetch(`daily-task/${id}`);
-    return task;
+    const { body: task, success } = await useApiFetch<DailyTask>(`daily-task/${id}`);
+    return task as DailyTask;
   } catch (error) {
     console.error('Error fetching daily task:', error instanceof Error ? error.message : error);
     handleError('An error occurred while fetching daily task. Please try again.');
@@ -184,11 +196,33 @@ export async function deleteDailyTask(id: string) {
 
 export const dailyTaskStatisticsLoading = ref(false);
 
-export async function getDailyTaskStatistics(): Promise<any> {
+interface DailyTaskStatistics {
+  activeTasks: number;
+  completedTasks: number;
+  grantedTasks: number;
+  totalRevenue: number;
+  taskStatusPercentage: { name: string; value: number }[];
+  monthlyRevenue: { name: string; value: number }[];
+  taskDistributionByClient: { name: string; value: number }[];
+  salesPerformance: { name: string; value: number; value2: number }[];
+}
+
+interface RawDailyTaskStatistics {
+  activeTasks: number;
+  completedTasks: number;
+  grantedTasks: number;
+  totalRevenue: number;
+  taskStatusPercentage: Record<string, number>;
+  monthlyRevenue: { month: string; totalPaid: number }[];
+  taskDistributionByClient: { clientName: string; taskCount: number }[];
+  salesPerformance: { name: string; tasksCount: number; totalPaid: number }[];
+}
+
+export async function getDailyTaskStatistics(): Promise<DailyTaskStatistics> {
   dailyTaskStatisticsLoading.value = true;
-  const { body, success, message } = await useApiFetch('daily-task/statistics');
+  const { body, success, message } = await useApiFetch<RawDailyTaskStatistics>('daily-task/statistics');
   dailyTaskStatisticsLoading.value = false;
-  if (!success) {
+  if (!success || !body) {
     throw new Error(message || 'Failed to fetch daily task statistics');
   }
 
@@ -203,23 +237,26 @@ export async function getDailyTaskStatistics(): Promise<any> {
     monthlyRevenue = [],
     taskDistributionByClient = [],
     salesPerformance = []
-  } = body || {};
+  } = body;
 
   return {
-    ...body,
+    activeTasks,
+    completedTasks,
+    grantedTasks,
+    totalRevenue,
     taskStatusPercentage: toNameValueArray(taskStatusPercentage),
-    taskDistributionByClient: taskDistributionByClient.map(({ clientName, taskCount }: any) => ({
-      name: clientName,
-      value: taskCount
+    taskDistributionByClient: taskDistributionByClient.map((item) => ({
+      name: item.clientName,
+      value: item.taskCount
     })),
-    salesPerformance: salesPerformance.map(({ name, tasksCount, totalPaid }: any) => ({
-      name,
-      value: tasksCount,
-      value2: totalPaid
+    salesPerformance: salesPerformance.map((item) => ({
+      name: item.name,
+      value: item.tasksCount,
+      value2: item.totalPaid
     })),
-    monthlyRevenue: monthlyRevenue.map(({ month, totalPaid }: any) => ({
-      name: month,
-      value: totalPaid
+    monthlyRevenue: monthlyRevenue.map((item) => ({
+      name: item.month,
+      value: item.totalPaid
     }))
   };
 }

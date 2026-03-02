@@ -26,7 +26,13 @@ export interface Staff {
   status: string;
   updatedAt: string;
   profilePicture?: string;
-  [key: string]: any;
+  createdAt?: string;
+  role?: { id: string; name: string };
+  staffDetails?: { image?: string; title: string };
+  roleDetails?: string;
+  user?: { name: string };
+  assign?: string;
+  [key: string]: string | number | boolean | undefined | null | { id: string; name: string } | { image?: string; title: string } | { name: string };
 }
 
 export enum StaffStatusEnums {
@@ -55,9 +61,9 @@ export async function getStaffs(): Promise<UseStaffResult> {
 
     if (success) {
       // Return the docs (staffs) from the response
-      const staffs = body?.docs?.map((staff: any) => ({
+      const staffs = body?.docs?.map((staff: Staff) => ({
         ...staff,
-        createdAt: formatDate(staff.createdAt),
+        createdAt: formatDate(staff.createdAt as string),
         staffDetails: { image: staff?.profilePicture, title: staff?.name },
         roleDetails: staff?.role?.name,
         // updatedAt: formatDate(staff.updatedAt),

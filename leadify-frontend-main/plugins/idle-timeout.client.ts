@@ -17,9 +17,7 @@ export default defineNuxtPlugin(nuxtApp => {
 
   nuxtApp.hook('app:mounted', () => {
     watch(isWarningIdle, isIdleValue => {
-      // Check cookie directly (consistent with auth middleware)
-      const accessToken = useCookie('access_token');
-      if (isIdleValue && accessToken.value) {
+      if (isIdleValue && user.value?.id) {
         if (!warningShown) {
           warningShown = true;
           ElNotification({
@@ -34,11 +32,10 @@ export default defineNuxtPlugin(nuxtApp => {
       }
     });
 
-    watch(isFullyIdle, isIdleValue => {
-      const accessToken = useCookie('access_token');
-      if (isIdleValue && accessToken.value) {
-        // Clear the cookie and user state
-        accessToken.value = null;
+    watch(isFullyIdle, async isIdleValue => {
+      if (isIdleValue && user.value?.id) {
+        // Call logout to clear server session and cookie
+        await useApiFetch('auth/logout', 'POST', {}, true);
         user.value = null;
 
         ElNotification({

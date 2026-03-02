@@ -26,7 +26,7 @@ export async function fetchInvoices(query: { page?: number; limit?: number; stat
   if (query.search) params.set('search', query.search);
 
   const { body, success } = await useApiFetch(`invoices?${params.toString()}`);
-  if (success && body) return body as { docs: InvoiceItem[]; pagination: any };
+  if (success && body) return body as { docs: InvoiceItem[]; pagination: { page: number; limit: number; totalItems: number; totalPages: number } };
   return { docs: [], pagination: { page: 1, limit: 20, totalItems: 0, totalPages: 0 } };
 }
 
@@ -37,7 +37,7 @@ export async function fetchInvoiceById(id: number): Promise<InvoiceItem | null> 
 }
 
 export async function markCollected(id: number, collectedDate?: string) {
-  return useApiFetch(`invoices/${id}/collect`, 'PUT', { collectedDate } as any);
+  return useApiFetch(`invoices/${id}/collect`, 'PUT', { collectedDate } as Record<string, unknown>);
 }
 
 export async function markUncollected(id: number) {
@@ -59,17 +59,10 @@ export async function fetchInvoiceSummary(): Promise<InvoiceSummary> {
 export async function downloadInvoicePdf(id: number, invoiceNumber?: string): Promise<boolean> {
   try {
     const config = useRuntimeConfig();
-    const accessToken = useCookie('access_token', {
-      path: '/',
-      maxAge: 60 * 60 * 24 * 7,
-      sameSite: 'lax' as const
-    });
 
     const response = await $fetch(`${config.public.API_BASE_URL}invoices/${id}/pdf`, {
       method: 'GET',
-      headers: {
-        ...(accessToken.value && { Authorization: `Bearer ${accessToken.value}` })
-      },
+      credentials: 'include',
       responseType: 'blob'
     });
 

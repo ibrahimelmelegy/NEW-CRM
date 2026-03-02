@@ -383,9 +383,9 @@ async function handleExport(format: 'csv' | 'excel') {
     const response = await fetch(`${useRuntimeConfig().public.apiBaseUrl}/${endpoint}`, {
       method: 'POST',
       headers: {
-        'Content-Type': 'application/json',
-        Authorization: `Bearer ${localStorage.getItem('token')}`
+        'Content-Type': 'application/json'
       },
+      credentials: 'include',
       body: JSON.stringify(config)
     });
 

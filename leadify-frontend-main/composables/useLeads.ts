@@ -33,7 +33,14 @@ export interface Lead {
   createdAt: string;
   updatedAt: string;
   assign?: string;
-  [key: string]: any;
+  [key: string]: string | number | undefined | UserSummary[];
+}
+
+interface UserSummary {
+  id: number;
+  name: string;
+  email: string;
+  profilePicture?: string;
 }
 
 export interface Activity {
@@ -102,13 +109,13 @@ export async function getLeads(): Promise<UseLeadsResult> {
 
     if (success) {
       // Return the docs (leads) from the response
-      const leads = body?.docs?.map((lead: any) => ({
+      const leads = body?.docs?.map((lead: Lead) => ({
         ...lead,
         createdAt: formatDate(lead.createdAt),
         // updatedAt: formatDate(lead.updatedAt),
         leadDetails: { title: lead?.name, text: lead?.companyName },
         updatedAt: '-',
-        assign: lead.users?.map((el: any) => el.name).join(', ')
+        assign: (lead.users as UserSummary[] | undefined)?.map((el: UserSummary) => el.name).join(', ')
       }));
       const pagination = body?.pagination;
       return { leads, pagination };

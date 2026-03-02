@@ -10,33 +10,38 @@ export function copyText(slug: string) {
   });
 }
 
-export function checkRouteDispatch(to: any, from: any) {
+interface RouteLocation {
+  fullPath: string;
+}
+
+export function checkRouteDispatch(to: RouteLocation, from: RouteLocation) {
   const toRoue = to.fullPath.split('/');
   const fromRoute = from.fullPath.split('/');
 
   return toRoue[toRoue.length - 2] == fromRoute[fromRoute.length - 1];
 }
-export function checkSecParent(to: any, from: any) {
+export function checkSecParent(to: RouteLocation, from: RouteLocation) {
   const toRoue = to.fullPath.split('/');
   const fromRoute = from.fullPath.includes('?') ? from.fullPath.split('?')[0].split('/') : from.fullPath.split('/');
 
   return toRoue[2] == fromRoute[2];
 }
-export function checkparent(to: any, from: any) {
+export function checkparent(to: RouteLocation, from: RouteLocation) {
   const toRoue = to.fullPath.split('/');
   const fromRoute = from.fullPath.split('/');
 
   return toRoue[1] == fromRoute[1];
 }
-export function isObjectValid(obj: any) {
+export function isObjectValid(obj: unknown): boolean {
   // Check if the input is an object and not null
   if (typeof obj !== 'object' || obj === null) {
     return false;
   }
 
   // Iterate through object properties
-  for (const key in obj) {
-    if (!obj[key]) {
+  const record = obj as Record<string, unknown>;
+  for (const key in record) {
+    if (!record[key]) {
       return false; // Return false if any value is null or undefined
     }
   }
@@ -44,7 +49,7 @@ export function isObjectValid(obj: any) {
   return true; // All properties are valid
 }
 
-export const filterLength = (obj: Record<string, any>): number => {
+export const filterLength = (obj: Record<string, unknown>): number => {
   if (!Object.entries(obj).length) return 0;
   return Object.entries(obj)?.reduce((total, [key, value]) => {
     if (Array.isArray(value) || typeof value === 'string') {
@@ -55,35 +60,41 @@ export const filterLength = (obj: Record<string, any>): number => {
   }, 0);
 };
 
-export const cleanObject = (obj: any) => {
+export const cleanObject = (obj: Record<string, unknown>): Record<string, unknown> => {
   return Object.fromEntries(
     Object.entries(obj).filter(([_, value]) => {
       // Remove falsy values, empty arrays, and empty objects
-      if (value === null || value === undefined || value === '' || Number.isNaN(value)) return false; // Falsy values
+      if (value === null || value === undefined || value === '' || (typeof value === 'number' && Number.isNaN(value))) return false; // Falsy values
       if (Array.isArray(value) && value.length === 0) return false; // Empty array
-      if (typeof value === 'object' && !Array.isArray(value) && Object.keys(value).length === 0) return false; // Empty object
+      if (typeof value === 'object' && !Array.isArray(value) && Object.keys(value as object).length === 0) return false; // Empty object
       return true; // Keep other values
     })
   );
 };
 
-export function isNullish(value: any) {
+export function isNullish(value: unknown): boolean {
   return (
     value === null ||
     value === undefined ||
     (typeof value === 'string' && value.trim() === '') || // Empty string
     (Array.isArray(value) && value.length === 0) || // Empty array
-    (typeof value === 'object' && value !== null && Object.keys(value).length === 0) // Empty object
+    (typeof value === 'object' && value !== null && Object.keys(value as object).length === 0) // Empty object
   );
 }
 
-export const handleUploadRequestApi = async (params: any, payloadName?: string, model?: string) => {
-  const result = ref();
-  const errorData = ref();
+interface UploadRequestParams {
+  file: File;
+  filename: string;
+  data: Record<string, string>;
+}
+
+export const handleUploadRequestApi = async (params: UploadRequestParams, payloadName?: string, model?: string) => {
+  const result = ref<unknown>();
+  const errorData = ref<unknown>();
 
   let { file, filename, data } = params;
   try {
-    data.model = model;
+    data.model = model || '';
     payloadName && (filename = payloadName);
 
     const formData = new FormData();
@@ -91,7 +102,7 @@ export const handleUploadRequestApi = async (params: any, payloadName?: string, 
 
     formData.append(filename, fileToUpload);
 
-    Object.entries(data).forEach(([key, value]: any) => {
+    Object.entries(data).forEach(([key, value]: [string, string]) => {
       formData.append(key, value);
     });
 

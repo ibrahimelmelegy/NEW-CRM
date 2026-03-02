@@ -794,7 +794,9 @@ function processDsrRequest(dsr: any) {
     dsr.daysRemaining = 0;
     ElNotification({ type: 'success', title: t('complianceCenter.success'), message: `${t('complianceCenter.dsrProcessed')}: ${dsr.requester}` });
     updateKpis();
-  }).catch(() => {});
+  }).catch((error: unknown) => {
+    console.error('Operation failed:', error);
+  });
 }
 
 function submitNewDsrRequest() {

@@ -1,16 +1,16 @@
 import { useApiFetch } from './useApiFetch';
 
 export function useInventory() {
-  const fetchProducts = (params?: Record<string, any>) => {
-    const query = params ? '?' + new URLSearchParams(params as any).toString() : '';
+  const fetchProducts = (params?: Record<string, string>) => {
+    const query = params ? '?' + new URLSearchParams(params).toString() : '';
     return useApiFetch(`inventory/products${query}`);
   };
 
   const fetchProduct = (id: number) => useApiFetch(`inventory/products/${id}`);
 
-  const createProduct = (data: any) => useApiFetch('inventory/products', 'POST', data);
+  const createProduct = (data: Record<string, unknown>) => useApiFetch('inventory/products', 'POST', data);
 
-  const updateProduct = (id: number, data: any) => useApiFetch(`inventory/products/${id}`, 'PUT', data);
+  const updateProduct = (id: number, data: Record<string, unknown>) => useApiFetch(`inventory/products/${id}`, 'PUT', data);
 
   const deleteProduct = (id: number) => useApiFetch(`inventory/products/${id}`, 'DELETE');
 
@@ -22,7 +22,7 @@ export function useInventory() {
 
   const fetchMovements = (productId: number) => useApiFetch(`inventory/products/${productId}/movements`);
 
-  const addMovement = (data: any) => useApiFetch('inventory/movements', 'POST', data);
+  const addMovement = (data: Record<string, unknown>) => useApiFetch('inventory/movements', 'POST', data);
 
   return {
     fetchProducts,

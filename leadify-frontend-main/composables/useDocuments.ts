@@ -43,8 +43,8 @@ export function useDocuments() {
 
   const deleteFolder = (id: number) => useApiFetch(`documents/folders/${id}`, 'DELETE');
 
-  const fetchFiles = (params?: Record<string, any>) => {
-    const query = params ? '?' + new URLSearchParams(params as any).toString() : '';
+  const fetchFiles = (params?: Record<string, string>) => {
+    const query = params ? '?' + new URLSearchParams(params).toString() : '';
     return useApiFetch(`documents/files${query}`);
   };
 

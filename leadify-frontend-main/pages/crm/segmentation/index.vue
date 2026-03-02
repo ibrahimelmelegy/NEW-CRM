@@ -1409,7 +1409,9 @@ function deleteSegment(segment: Segment) {
       type: 'success',
       duration: 2000,
     });
-  }).catch(() => {});
+  }).catch((error: unknown) => {
+    console.error('Operation failed:', error);
+  });
 }
 
 function exportSegments() {

@@ -45,7 +45,8 @@
                   div.notification-badge(v-if="notificationCenter.unreadCount.value > 0")
           .mt-4
         .slot-content(class="!mt-24")
-            slot
+            ErrorBoundary
+              slot
       //- Notification Center Flyout
       NotificationsNotificationCenter(:visible="notificationCenter.visible.value" @close="notificationCenter.close()")
   </template>
@@ -114,8 +115,7 @@ function openNav() {
 }
 async function logout() {
   const response = await useApiFetch('auth/logout', 'POST');
-  const accessToken = useCookie('access_token', { path: '/', maxAge: 60 * 60 * 24 * 7, sameSite: 'lax' as const });
-  accessToken.value = null;
+  user.value = null;
   ElNotification({
     title: response?.success ? 'Success' : 'Error',
     type: response?.success ? 'success' : 'error',

@@ -16,7 +16,7 @@ interface JwtPayload {
 
 export const authenticateUser = async (req: AuthenticatedRequest, res: Response, next: NextFunction): Promise<void> => {
   const authHeader = req.header('Authorization');
-  const token = authHeader ? authHeader.replace('Bearer ', '') : null;
+  const token = authHeader ? authHeader.replace('Bearer ', '') : (req.cookies?.['__session'] || null);
   if (!token) {
     res.status(401).json({ message: 'Unauthorized, no token provided' });
     return;

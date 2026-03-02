@@ -99,7 +99,7 @@ export interface EOSResult {
 export async function fetchPayrollRuns(params?: Record<string, string>) {
   const query = params ? '?' + new URLSearchParams(params).toString() : '';
   const { body, success } = await useApiFetch(`payroll/runs${query}`);
-  if (success && body) return body as { docs: PayrollRun[]; pagination: any };
+  if (success && body) return body as { docs: PayrollRun[]; pagination: { page: number; limit: number; totalItems: number; totalPages: number } };
   return { docs: [], pagination: { page: 1, limit: 20, totalItems: 0, totalPages: 0 } };
 }
 
@@ -129,7 +129,7 @@ export async function processPayrollRun(runId: string) {
 export async function fetchEmployeePayslips(employeeId: string, params?: Record<string, string>) {
   const query = params ? '?' + new URLSearchParams(params).toString() : '';
   const { body, success } = await useApiFetch(`payroll/payslips/${employeeId}${query}`);
-  if (success && body) return body as { docs: PayslipItem[]; pagination: any };
+  if (success && body) return body as { docs: PayslipItem[]; pagination: { page: number; limit: number; totalItems: number; totalPages: number } };
   return { docs: [], pagination: { page: 1, limit: 20, totalItems: 0, totalPages: 0 } };
 }
 
@@ -138,7 +138,7 @@ export async function fetchEmployeePayslips(employeeId: string, params?: Record<
 export async function fetchSalaryStructures(params?: Record<string, string>) {
   const query = params ? '?' + new URLSearchParams(params).toString() : '';
   const { body, success } = await useApiFetch(`payroll/salary-structures${query}`);
-  if (success && body) return body as { docs: SalaryStructureItem[]; pagination: any };
+  if (success && body) return body as { docs: SalaryStructureItem[]; pagination: { page: number; limit: number; totalItems: number; totalPages: number } };
   return { docs: [], pagination: { page: 1, limit: 20, totalItems: 0, totalPages: 0 } };
 }
 

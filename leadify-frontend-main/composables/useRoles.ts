@@ -1,5 +1,13 @@
 import { ElNotification } from 'element-plus';
 
+export interface RoleData {
+  id?: string;
+  name: string;
+  permissions: string[];
+  createdAt?: string;
+  updatedAt?: string;
+}
+
 // Handle error during staff creation
 function handleError(message: string) {
   ElNotification({
@@ -21,17 +29,17 @@ function handleSuccess(message: string) {
 /**
  * Fetches a single role from the API
  * @param id - The ID of the role to fetch
- * @returns {Promise<role>} A promise that resolves to a role object
+ * @returns {Promise<RoleData>} A promise that resolves to a role object
  * @throws {Error} If the API call is unsuccessful, an error is thrown with a message
  */
-export async function getRole(id: string | string[]): Promise<any> {
+export async function getRole(id: string | string[]): Promise<RoleData> {
   try {
     const { body: role, success } = await useApiFetch(`role/${id}`);
-    return role;
+    return role as unknown as RoleData;
   } catch (error) {
     console.error('Error fetching role:', error instanceof Error ? error.message : error);
     handleError('An error occurred while fetching role. Please try again.');
-    return {} as any;
+    return {} as RoleData;
   }
 }
 
@@ -41,10 +49,10 @@ export async function getRole(id: string | string[]): Promise<any> {
  * @returns {Promise<void>}
  */
 
-export async function createRole(values: any): Promise<void> {
+export async function createRole(values: Omit<RoleData, 'id' | 'createdAt' | 'updatedAt'>): Promise<void> {
   try {
     // Call API to create the role
-    const response = await useApiFetch('role', 'POST', values);
+    const response = await useApiFetch('role', 'POST', values as Record<string, unknown>);
 
     // Handle the API response
     if (response?.success) {
@@ -62,7 +70,7 @@ export async function createRole(values: any): Promise<void> {
  * Update an existing role
  * @param values - The values to update the role with
  */
-export async function updateRole(values: any) {
+export async function updateRole(values: RoleData) {
   try {
     // Call API to create the role
     const formattedValues = cleanObject({ ...values });

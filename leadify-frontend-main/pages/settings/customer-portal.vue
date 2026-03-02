@@ -704,7 +704,9 @@ function deleteArticle(idx: number) {
       articles.value.splice(idx, 1);
       ElNotification({ type: 'success', title: t('common.success'), message: t('common.deleted') });
     })
-    .catch(() => {});
+    .catch((error: unknown) => {
+      console.error('Operation failed:', error);
+    });
 }
 
 function articleDragStart(idx: number) {
@@ -799,7 +801,9 @@ function deleteFaq(idx: number) {
       faqs.value.splice(idx, 1);
       ElNotification({ type: 'success', title: t('common.success'), message: t('common.deleted') });
     })
-    .catch(() => {});
+    .catch((error: unknown) => {
+      console.error('Operation failed:', error);
+    });
 }
 
 // ── Analytics ──

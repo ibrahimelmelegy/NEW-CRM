@@ -199,13 +199,6 @@ const onSubmit = handleSubmit(async (values: any) => {
     }
 
     if (response.success && response.body?.token) {
-      const accessToken = useCookie('access_token', {
-        path: '/',
-        maxAge: 60 * 60 * 24 * 7, // 7 days
-        sameSite: 'lax' as const
-      });
-      accessToken.value = response.body.token;
-
       ElNotification({
         title: 'Success',
         type: 'success',
@@ -214,7 +207,7 @@ const onSubmit = handleSubmit(async (values: any) => {
 
       await router.push('/');
     } else {
-      throw new Error(response.message || 'Token not found in response');
+      throw new Error(response.message || 'Login failed');
     }
   } catch (error: any) {
     ElNotification({
@@ -227,14 +220,7 @@ const onSubmit = handleSubmit(async (values: any) => {
   }
 });
 
-function onTwoFactorVerified(token: string) {
-  const accessToken = useCookie('access_token', {
-    path: '/',
-    maxAge: 60 * 60 * 24 * 7,
-    sameSite: 'lax' as const
-  });
-  accessToken.value = token;
-
+function onTwoFactorVerified(_token: string) {
   ElNotification({
     title: 'Success',
     type: 'success',

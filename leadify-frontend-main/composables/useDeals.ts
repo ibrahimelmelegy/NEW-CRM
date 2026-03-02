@@ -47,7 +47,11 @@ export interface Deal {
   stage?: 'PROGRESS' | 'COMPLETED' | 'CANCELLED';
   cancelledReason?: string;
   signatureDate?: string;
-  [key: string]: any;
+  createdAt?: string;
+  updatedAt?: string;
+  user?: { name: string };
+  assign?: string;
+  [key: string]: string | number | boolean | undefined | { name: string } | Invoice[] | Delivery[];
 }
 
 // Delivery interface
@@ -72,7 +76,7 @@ export interface DealValues {
   deal?: Deal;
   invoiceDetail?: Invoice[];
   deliveryDetails?: Delivery[];
-  [key: string]: Deal | any;
+  [key: string]: Deal | Leads | Invoice[] | Delivery[] | undefined;
 }
 
 interface UseDealResult {
@@ -92,9 +96,9 @@ export async function getDeals(all?: false): Promise<UseDealResult> {
 
     if (success) {
       // Return the docs (c) from the response
-      const deals = body?.docs?.map((deal: any) => ({
+      const deals = body?.docs?.map((deal: Deal) => ({
         ...deal,
-        createdAt: formatDate(deal.createdAt),
+        createdAt: formatDate(deal.createdAt as string),
         // updatedAt: formatDate(deal.updatedAt),
         updatedAt: '-',
         assign: deal.user?.name

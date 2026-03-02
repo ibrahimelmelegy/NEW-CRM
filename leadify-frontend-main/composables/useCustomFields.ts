@@ -14,7 +14,7 @@ export interface CustomFieldValue {
   customFieldId: string;
   entityId: string;
   entityType: string;
-  value: any;
+  value: string | number | boolean | null;
   customField?: CustomField;
 }
 
@@ -25,11 +25,11 @@ export async function fetchCustomFields(entityType: string): Promise<CustomField
 }
 
 export async function createCustomField(data: Partial<CustomField>) {
-  return useApiFetch('custom-fields/fields', 'POST', data as any);
+  return useApiFetch('custom-fields/fields', 'POST', data as Record<string, unknown>);
 }
 
 export async function updateCustomField(id: string, data: Partial<CustomField>) {
-  return useApiFetch(`custom-fields/fields/${id}`, 'PUT', data as any);
+  return useApiFetch(`custom-fields/fields/${id}`, 'PUT', data as Record<string, unknown>);
 }
 
 export async function deleteCustomField(id: string) {
@@ -42,6 +42,6 @@ export async function fetchFieldValues(entityType: string, entityId: string): Pr
   return [];
 }
 
-export async function saveFieldValues(entityType: string, entityId: string, values: { customFieldId: string; value: any }[]) {
-  return useApiFetch(`custom-fields/values/${entityType}/${entityId}`, 'PUT', { values } as any);
+export async function saveFieldValues(entityType: string, entityId: string, values: { customFieldId: string; value: string | number | boolean | null }[]) {
+  return useApiFetch(`custom-fields/values/${entityType}/${entityId}`, 'PUT', { values } as Record<string, unknown>);
 }
