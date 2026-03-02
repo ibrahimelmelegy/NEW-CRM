@@ -4,10 +4,33 @@
  */
 import { test as setup, expect } from '@playwright/test';
 import { TEST_EMAIL, TEST_PASSWORD } from './helpers';
+import * as fs from 'fs';
+import * as path from 'path';
 
 const authFile = 'tests/e2e/.auth/user.json';
 
 setup('authenticate', async ({ page }) => {
+    // If a valid auth state file exists with an unexpired token, skip re-login
+    const absPath = path.resolve(authFile);
+    if (fs.existsSync(absPath)) {
+        try {
+            const state = JSON.parse(fs.readFileSync(absPath, 'utf-8'));
+            const tokenCookie = state.cookies?.find((c: any) => c.name === 'access_token' && c.value);
+            if (tokenCookie && tokenCookie.expires > Date.now() / 1000) {
+                // Token still valid - verify it works by loading a protected page
+                await page.context().addCookies(state.cookies);
+                await page.goto('/', { waitUntil: 'domcontentloaded', timeout: 30000 });
+                await page.waitForTimeout(3000);
+                if (!page.url().includes('/login')) {
+                    // Auth state is still valid, no need to re-login
+                    return;
+                }
+            }
+        } catch {
+            // Corrupted state file, proceed with fresh login
+        }
+    }
+
     await page.goto('/login', { waitUntil: 'networkidle', timeout: 30000 });
 
     // Fill login form - allow extra time on cold start for Nuxt hydration

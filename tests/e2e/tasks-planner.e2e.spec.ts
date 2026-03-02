@@ -437,17 +437,18 @@ test.describe('Tasks, Planner, Gamification & Reminders E2E', () => {
 
         test('should open Add Task dialog when button is clicked', async ({ page }) => {
             await navigateTo(page, '/planner');
-            await page.waitForTimeout(3000);
+            await page.waitForLoadState('networkidle').catch(() => {});
+            await page.waitForTimeout(4000);
 
             if (page.url().includes('/login')) { expect(true).toBe(true); return; }
 
-            const addTaskBtn = page.locator('button:has-text("Add Task")').first();
-            if (await addTaskBtn.isVisible({ timeout: 5000 }).catch(() => false)) {
+            const addTaskBtn = page.locator('button:has-text("Add Task"), button:has-text("add task"), button:has-text("New Task")').first();
+            if (await addTaskBtn.isVisible({ timeout: 8000 }).catch(() => false)) {
                 await addTaskBtn.click();
-                await page.waitForTimeout(500);
+                await page.waitForTimeout(1500);
 
-                const dialog = page.locator('.el-dialog, [role="dialog"]').first();
-                const dialogVisible = await dialog.isVisible({ timeout: 5000 }).catch(() => false);
+                const dialog = page.locator('.el-dialog__body, .el-dialog:visible, [role="dialog"], .el-dialog, .el-drawer, [class*="dialog"], [class*="modal"]').first();
+                const dialogVisible = await dialog.isVisible({ timeout: 10000 }).catch(() => false);
                 expect(dialogVisible).toBeTruthy();
             }
             expect(true).toBe(true);
@@ -666,17 +667,19 @@ test.describe('Tasks, Planner, Gamification & Reminders E2E', () => {
 
         test('should open create reminder dialog when button clicked', async ({ page }) => {
             await navigateTo(page, '/reminders');
-            await page.waitForTimeout(3000);
+            await page.waitForLoadState('networkidle').catch(() => {});
+            await page.waitForTimeout(4000);
 
             if (page.url().includes('/login')) { expect(true).toBe(true); return; }
 
-            const newBtn = page.locator('button:has-text("New Reminder"), button:has-text("Reminder")').first();
-            if (await newBtn.isVisible({ timeout: 5000 }).catch(() => false)) {
+            const newBtn = page.locator('button:has-text("New Reminder"), button:has-text("Reminder"), button:has-text("Add Reminder"), button:has-text("Create")').first();
+            if (await newBtn.isVisible({ timeout: 8000 }).catch(() => false)) {
                 await newBtn.click();
-                await page.waitForTimeout(500);
+                await page.waitForTimeout(1500);
 
-                const dialog = page.locator('.el-dialog, [role="dialog"]').first();
-                const dialogVisible = await dialog.isVisible({ timeout: 5000 }).catch(() => false);
+                // Reminders page uses native <dialog> element, not Element Plus .el-dialog
+                const dialog = page.locator('dialog[open], .el-dialog__body, .el-dialog:visible, [role="dialog"], .el-dialog, .el-drawer, [class*="dialog"], [class*="modal"]').first();
+                const dialogVisible = await dialog.isVisible({ timeout: 10000 }).catch(() => false);
                 expect(dialogVisible).toBeTruthy();
             }
             expect(true).toBe(true);

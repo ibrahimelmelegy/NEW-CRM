@@ -21,7 +21,8 @@ test.describe('Sales - Deals E2E', () => {
 
             const heading = page.locator('h1, h2, [class*="title"], .breadcrumb').filter({ hasText: /Deals/i }).first();
             await expect(heading).toBeVisible({ timeout: 15000 });
-            const table = page.locator('table, .el-table, [class*="table"], [class*="kanban"]').first();
+            // Scope to main content area to avoid matching sidebar icons
+            const table = page.locator('table, .el-table, .el-table__body-wrapper, [role="tabpanel"] [class*="table"]').first();
             await expect(table).toBeVisible({ timeout: 15000 });
         });
 

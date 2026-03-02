@@ -1012,6 +1012,8 @@ test.describe('Settings Module E2E', () => {
     test.describe('Settings Smoke Test', () => {
 
         test('should load all settings pages without critical errors', async ({ page }) => {
+            test.setTimeout(180000); // 3 minutes for 30+ pages
+
             const settingsPages = [
                 { path: '/settings', name: 'Settings Hub' },
                 { path: '/settings/custom-fields', name: 'Custom Fields' },
@@ -1054,7 +1056,8 @@ test.describe('Settings Module E2E', () => {
 
             for (const p of settingsPages) {
                 await page.goto(p.path);
-                await page.waitForTimeout(2000);
+                await page.waitForLoadState('domcontentloaded').catch(() => {});
+                await page.waitForTimeout(5000);
 
                 const url = page.url();
                 if (url.includes('/login')) {

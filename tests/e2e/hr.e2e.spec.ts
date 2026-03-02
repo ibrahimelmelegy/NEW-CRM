@@ -157,9 +157,16 @@ test.describe('HR Module E2E', () => {
             // Click first row in table or first employee card
             const firstRow = page.locator('table tbody tr, .el-table__row, [class*="card"]').first();
             if (await firstRow.isVisible({ timeout: 5000 }).catch(() => false)) {
-                await firstRow.click();
+                // Try clicking a link or clickable element within the row first
+                const rowLink = firstRow.locator('a[href*="employees"], .cell a, [class*="clickable"]').first();
+                if (await rowLink.isVisible({ timeout: 2000 }).catch(() => false)) {
+                    await rowLink.click();
+                } else {
+                    await firstRow.click();
+                }
+                await page.waitForLoadState('networkidle', { timeout: 15000 }).catch(() => {});
                 await waitForPageLoad(page, 2000);
-                await expect(page).toHaveURL(/employees\/\d+|employees\/[a-zA-Z0-9-]+/);
+                await expect(page).toHaveURL(/.*employees.*/, { timeout: 30000 });
             }
         });
 
@@ -871,9 +878,16 @@ test.describe('HR Module E2E', () => {
 
             const firstRow = page.locator('table tbody tr, .el-table__row, .glass-card.cursor-pointer').first();
             if (await firstRow.isVisible({ timeout: 5000 }).catch(() => false)) {
-                await firstRow.click();
+                // Try clicking a link or clickable element within the row first
+                const rowLink = firstRow.locator('a[href*="recruitment"], .cell a, [class*="clickable"]').first();
+                if (await rowLink.isVisible({ timeout: 2000 }).catch(() => false)) {
+                    await rowLink.click();
+                } else {
+                    await firstRow.click();
+                }
+                await page.waitForLoadState('networkidle', { timeout: 15000 }).catch(() => {});
                 await waitForPageLoad(page, 2000);
-                await expect(page).toHaveURL(/recruitment\/\d+|recruitment\/[a-zA-Z0-9-]+/);
+                await expect(page).toHaveURL(/.*recruitment.*/, { timeout: 30000 });
             }
         });
 

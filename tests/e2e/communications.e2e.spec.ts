@@ -208,8 +208,9 @@ test.describe('Communications & Messaging Module E2E', () => {
 
             if (page.url().includes('/login')) { expect(true).toBe(true); return; }
 
-            const heading = page.locator('h1, h2, [class*="title"]').filter({ hasText: /Booking/i }).first();
-            await expect(heading).toBeVisible({ timeout: 15000 });
+            await page.waitForLoadState('networkidle');
+            const heading = page.locator('h1, h2, h3, [class*="title"], [class*="heading"]').filter({ hasText: /Booking/i }).first();
+            await expect(heading).toBeVisible({ timeout: 20000 });
         });
 
         test('should display booking stats cards', async ({ page }) => {
@@ -500,8 +501,9 @@ test.describe('Communications & Messaging Module E2E', () => {
 
             if (page.url().includes('/login')) { expect(true).toBe(true); return; }
 
-            const heading = page.locator('h1, h2, [class*="title"]').filter({ hasText: /Booking/i }).first();
-            await expect(heading).toBeVisible({ timeout: 15000 });
+            await page.waitForLoadState('networkidle');
+            const heading = page.locator('h1, h2, h3, [class*="title"], [class*="heading"]').filter({ hasText: /Booking/i }).first();
+            await expect(heading).toBeVisible({ timeout: 20000 });
         });
 
         test('should display booking stats', async ({ page }) => {

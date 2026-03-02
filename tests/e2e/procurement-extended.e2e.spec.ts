@@ -584,11 +584,11 @@ test.describe('Procurement Extended E2E', () => {
             const addBtn = page.locator('button:has-text("New Vendor")').first();
             if (await addBtn.isVisible({ timeout: 5000 }).catch(() => false)) {
                 await addBtn.click();
-                await page.waitForTimeout(1500);
+                await page.waitForTimeout(500);
 
                 // ProcurementVendorDialog should open
-                const dialog = page.locator('.el-dialog, .el-overlay').first();
-                const hasDialog = await dialog.isVisible({ timeout: 5000 }).catch(() => false);
+                const dialog = page.locator('.el-dialog__body, .el-dialog[role="dialog"], .el-dialog:not([style*="display: none"])').first();
+                const hasDialog = await dialog.isVisible({ timeout: 10000 }).catch(() => false);
                 expect(hasDialog).toBeTruthy();
             }
         });
@@ -717,10 +717,10 @@ test.describe('Procurement Extended E2E', () => {
             const addBtn = page.locator('button:has-text("New Distributor")').first();
             if (await addBtn.isVisible({ timeout: 5000 }).catch(() => false)) {
                 await addBtn.click();
-                await page.waitForTimeout(1500);
+                await page.waitForTimeout(500);
 
-                const dialog = page.locator('.el-dialog, .el-overlay').first();
-                const hasDialog = await dialog.isVisible({ timeout: 5000 }).catch(() => false);
+                const dialog = page.locator('.el-dialog__body, .el-dialog[role="dialog"], .el-dialog:not([style*="display: none"])').first();
+                const hasDialog = await dialog.isVisible({ timeout: 10000 }).catch(() => false);
                 expect(hasDialog).toBeTruthy();
             }
         });
@@ -787,10 +787,10 @@ test.describe('Procurement Extended E2E', () => {
             const addBtn = page.locator('button:has-text("New Local Supplier")').first();
             if (await addBtn.isVisible({ timeout: 5000 }).catch(() => false)) {
                 await addBtn.click();
-                await page.waitForTimeout(1500);
+                await page.waitForTimeout(500);
 
-                const dialog = page.locator('.el-dialog, .el-overlay').first();
-                const hasDialog = await dialog.isVisible({ timeout: 5000 }).catch(() => false);
+                const dialog = page.locator('.el-dialog__body, .el-dialog[role="dialog"], .el-dialog:not([style*="display: none"])').first();
+                const hasDialog = await dialog.isVisible({ timeout: 10000 }).catch(() => false);
                 expect(hasDialog).toBeTruthy();
             }
         });
@@ -857,10 +857,10 @@ test.describe('Procurement Extended E2E', () => {
             const addBtn = page.locator('button:has-text("New Showroom")').first();
             if (await addBtn.isVisible({ timeout: 5000 }).catch(() => false)) {
                 await addBtn.click();
-                await page.waitForTimeout(1500);
+                await page.waitForTimeout(500);
 
-                const dialog = page.locator('.el-dialog, .el-overlay').first();
-                const hasDialog = await dialog.isVisible({ timeout: 5000 }).catch(() => false);
+                const dialog = page.locator('.el-dialog__body, .el-dialog[role="dialog"], .el-dialog:not([style*="display: none"])').first();
+                const hasDialog = await dialog.isVisible({ timeout: 10000 }).catch(() => false);
                 expect(hasDialog).toBeTruthy();
             }
         });
@@ -1165,10 +1165,10 @@ test.describe('Procurement Extended E2E', () => {
             const addBtn = page.locator('button:has-text("New Scorecard"), button:has-text("Scorecard")').first();
             if (await addBtn.isVisible({ timeout: 5000 }).catch(() => false)) {
                 await addBtn.click();
-                await page.waitForTimeout(1500);
+                await page.waitForTimeout(500);
 
-                const dialog = page.locator('.el-dialog, .el-overlay').first();
-                const hasDialog = await dialog.isVisible({ timeout: 5000 }).catch(() => false);
+                const dialog = page.locator('.el-dialog__body, .el-dialog[role="dialog"], .el-dialog:not([style*="display: none"])').first();
+                const hasDialog = await dialog.isVisible({ timeout: 10000 }).catch(() => false);
                 expect(hasDialog).toBeTruthy();
             }
         });
