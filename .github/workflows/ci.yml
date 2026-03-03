@@ -78,6 +78,7 @@ jobs:
         run: npm test -- --ci --forceExit
         working-directory: leadify-backend-main
         env:
+          NODE_OPTIONS: --max-old-space-size=4096
           NODE_ENV: test
           SECRET_KEY: ci-test-secret-key-not-for-production
           DB_HOST: localhost
@@ -129,6 +130,8 @@ jobs:
       - name: Build backend
         run: npm run build
         working-directory: leadify-backend-main
+        env:
+          NODE_OPTIONS: --max-old-space-size=4096
 
       - name: Install frontend dependencies
         run: npm ci --legacy-peer-deps
@@ -138,6 +141,7 @@ jobs:
         run: npm run build
         working-directory: leadify-frontend-main
         env:
+          NODE_OPTIONS: --max-old-space-size=4096
           NUXT_PUBLIC_API_BASE_URL: /api/
 
   deploy:
