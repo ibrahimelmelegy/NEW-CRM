@@ -8,8 +8,8 @@ export default class PerformanceReview extends Model {
   public id!: number;
 
   @ForeignKey(() => Employee)
-  @Column({ type: DataType.INTEGER, allowNull: false })
-  public employeeId!: number;
+  @Column({ type: DataType.UUID, allowNull: false })
+  public employeeId!: string;
 
   @BelongsTo(() => Employee, { foreignKey: 'employeeId', as: 'employee' })
   public employee?: Employee;

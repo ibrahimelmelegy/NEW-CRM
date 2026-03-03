@@ -6,7 +6,8 @@ class PlannerController {
   // Tasks
   async getTasksByDate(req: Request, res: Response, next: NextFunction) {
     try {
-      const result = await plannerService.getTasksByDate((req as any).user.id, req.query.date as string);
+      const date = (req.query.date as string) || new Date().toISOString().split('T')[0];
+      const result = await plannerService.getTasksByDate((req as any).user.id, date);
       return wrapResult(res, result);
     } catch (error) {
       next(error);
@@ -79,7 +80,8 @@ class PlannerController {
 
   async getFocusByDate(req: Request, res: Response, next: NextFunction) {
     try {
-      const result = await plannerService.getFocusByDate((req as any).user.id, req.query.date as string);
+      const date = (req.query.date as string) || new Date().toISOString().split('T')[0];
+      const result = await plannerService.getFocusByDate((req as any).user.id, date);
       return wrapResult(res, result);
     } catch (error) {
       next(error);

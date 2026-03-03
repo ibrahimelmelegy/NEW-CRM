@@ -10,8 +10,8 @@ export class JobPosting extends Model {
   public title!: string;
 
   @ForeignKey(() => Department)
-  @Column({ type: DataType.INTEGER, allowNull: true })
-  public departmentId?: number;
+  @Column({ type: DataType.UUID, allowNull: true })
+  public departmentId?: string;
 
   @BelongsTo(() => Department, { foreignKey: 'departmentId', as: 'department' })
   public department?: Department;

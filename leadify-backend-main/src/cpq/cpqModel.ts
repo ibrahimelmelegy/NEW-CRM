@@ -84,8 +84,8 @@ export class CpqQuote extends Model {
   public title!: string;
 
   @ForeignKey(() => Client)
-  @Column({ type: DataType.INTEGER, allowNull: true })
-  public clientId?: number;
+  @Column({ type: DataType.UUID, allowNull: true })
+  public clientId?: string;
 
   @BelongsTo(() => Client, { foreignKey: 'clientId', as: 'client' })
   public client?: Client;

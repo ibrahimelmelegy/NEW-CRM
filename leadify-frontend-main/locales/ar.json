@@ -1483,6 +1483,8 @@
       "status": "الحالة",
       "source": "المصدر",
       "lastContact": "آخر تواصل",
+      "score": "التقييم",
+      "lastActivity": "آخر نشاط",
       "assigned": "المعين",
       "created": "تاريخ الإنشاء"
     },

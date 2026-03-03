@@ -68,8 +68,8 @@ export class TrainingEnrollment extends Model {
   public program?: TrainingProgram;
 
   @ForeignKey(() => Employee)
-  @Column({ type: DataType.INTEGER, allowNull: false })
-  public employeeId!: number;
+  @Column({ type: DataType.UUID, allowNull: false })
+  public employeeId!: string;
 
   @BelongsTo(() => Employee, { foreignKey: 'employeeId', as: 'employee' })
   public employee?: Employee;

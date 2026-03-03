@@ -178,7 +178,7 @@ router.get('/', authenticateUser, HasPermission([ProcurementPermissionsEnum.VIEW
  *       500:
  *         description: Server error
  */
-router.get('/:id', authenticateUser, HasPermission([ProcurementPermissionsEnum.VIEW_PROCUREMENT]), ProcurementController.getPOById);
+router.get('/:id(\\d+)', authenticateUser, HasPermission([ProcurementPermissionsEnum.VIEW_PROCUREMENT]), ProcurementController.getPOById);
 
 /**
  * @swagger

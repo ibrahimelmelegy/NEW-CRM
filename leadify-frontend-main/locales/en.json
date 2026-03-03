@@ -1324,6 +1324,8 @@
       "status": "Status",
       "source": "Source",
       "lastContact": "Last Contact",
+      "score": "Score",
+      "lastActivity": "Last Activity",
       "assigned": "Assigned",
       "created": "Created"
     },
