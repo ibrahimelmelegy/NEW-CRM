@@ -555,5 +555,6 @@ router.get(
 );
 
 //** --------------------- DELETE --------------------- */
+router.delete('/:id', authenticateUser, HasPermission([LeadPermissionsEnum.DELETE_LEADS]), leadController.deleteLead);
 
 export default router;

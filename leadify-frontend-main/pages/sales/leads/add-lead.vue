@@ -24,14 +24,11 @@ const { goBack } = useSafeBack('/sales/leads');
 const loading = ref(false);
 async function submitForm(values: LeadValues) {
   loading.value = true;
-  try {
-    await createLead(values);
+  const response = await createLead(values);
+  if (response?.success) {
     await router.push('/sales/leads');
-  } catch (error: any) {
-    ElNotification.error(error?.message || t('errors.generic'));
-  } finally {
-    loading.value = false;
   }
+  loading.value = false;
 }
 </script>
 

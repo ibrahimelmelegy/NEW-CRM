@@ -37,7 +37,10 @@ onMounted(async () => {
 // Call API to update the lead
 async function submitForm(values: LeadValues) {
   loading.value = true;
-  await updateLead({ ...values, id: route.params.slug });
+  const response = await updateLead({ ...values, id: route.params.slug });
+  if (response?.success) {
+    navigateTo('/sales/leads');
+  }
   loading.value = false;
 }
 </script>

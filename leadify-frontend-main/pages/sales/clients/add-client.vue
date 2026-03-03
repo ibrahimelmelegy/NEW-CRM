@@ -24,7 +24,10 @@ const loading = ref(false);
 async function submitForm(values: FormattedValues) {
   loading.value = true;
   try {
-    await createClient(values);
+    const response = await createClient(values);
+    if (response?.success) {
+      navigateTo('/sales/clients');
+    }
   } catch (error: any) {
     (useNuxtApp() as any).$notify?.error?.({ message: error?.message || 'Failed to create client' });
   } finally {

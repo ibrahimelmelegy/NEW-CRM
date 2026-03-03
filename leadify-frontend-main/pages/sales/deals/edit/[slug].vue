@@ -68,21 +68,22 @@ async function saveAllForms() {
     await invoicesRef.value?.onSubmitInvoices();
     await deliveryRef.value?.onSubmitDeliveries();
     if ((combinedValues.value?.deal?.name || combinedValues.value?.name) && isInvoices.value && isDeliveries.value) {
+      let response;
       if (combinedValues.value?.clientId) {
-        await updateDeal({
+        response = await updateDeal({
           ...combinedValues.value.deal,
           clientId: combinedValues.value.clientId,
           dealId: route.params.slug as string
         });
       } else {
-        await updateDeal({ ...combinedValues.value, dealId: route.params.slug as string });
+        response = await updateDeal({ ...combinedValues.value, dealId: route.params.slug as string });
       }
-      // console.log("combinedValues.value", combinedValues.value);
+      if (response?.success) {
+        navigateTo('/sales/deals');
+      }
     }
-    loading.value = false;
   } catch (error) {
     console.error('Error saving forms:', error);
-    loading.value = false;
   } finally {
     loading.value = false;
   }

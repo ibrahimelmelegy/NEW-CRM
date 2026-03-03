@@ -25,7 +25,10 @@ const loading = ref(false);
 const client = await getClient(route.params.slug as string);
 async function submitForm(values: FormattedValues) {
   loading.value = true;
-  await updateClient({ ...values, id: route.params.slug as string });
+  const response = await updateClient({ ...values, id: route.params.slug as string });
+  if (response?.success) {
+    navigateTo('/sales/clients');
+  }
   loading.value = false;
 }
 </script>

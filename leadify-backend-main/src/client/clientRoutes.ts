@@ -648,5 +648,6 @@ router.get(
 );
 
 //** --------------------- DELETE --------------------- */
+router.delete('/:id', authenticateUser, HasPermission([ClientPermissionsEnum.DELETE_CLIENTS]), clientController.deleteClient);
 
 export default router;

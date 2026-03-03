@@ -69,6 +69,10 @@ div(class="animate-fade-in")
                         NuxtLink.flex.items-center(:to="`/sales/clients/edit/${data?.id}`")
                           Icon.text-md.mr-2(name="IconEdit" )
                           p.text-sm {{ $t('common.edit') }}
+                      el-dropdown-item(v-if="hasPermission('DELETE_CLIENTS')" @click="[deleteClientPopup=true, deleteId = data?.id]")
+                        .flex.items-center
+                          Icon.text-md.mr-2(name="IconDelete" )
+                          p.text-sm {{ $t('common.delete') }}
 
   //- Mobile Card View
   .clients-mobile-view(v-if="!loadingAction")
@@ -132,7 +136,7 @@ div(class="animate-fade-in")
     .mobile-fab(v-if="hasPermission('CREATE_CLIENTS')" @click="navigateTo('/sales/clients/add-client')")
       Icon(name="ph:plus-bold" size="24")
 
-  ActionModel(v-model="deleteClientPopup" :loading="loadingAction" btn-text="Move to Archive" description-one="Are you sure you want to delete this Client?" icon="/images/delete-image.png" description-two="It will be archived and can be restored later within 30 days." )
+  ActionModel(v-model="deleteClientPopup" :loading="deleting" :description="$t('common.confirmDelete')" @confirm="confirmDelete")
 </template>
 
 <script setup lang="ts">
@@ -149,6 +153,8 @@ const router = useRouter();
 const { hasPermission } = await usePermissions();
 const loadingAction = ref(false);
 const deleteClientPopup = ref(false);
+const deleteId = ref<string | null>(null);
+const deleting = ref(false);
 const { t } = useI18n();
 
 // Export columns & data
@@ -165,6 +171,22 @@ const exportData = computed(() => table.data);
 
 // Bulk actions
 const selectedRows = ref<any[]>([]);
+async function confirmDelete() {
+  if (!deleteId.value) return;
+  deleting.value = true;
+  try {
+    const response = await deleteClient(deleteId.value);
+    if (response?.success) {
+      const res = await useTableFilter('client');
+      rawClientData.value = res.formattedData;
+      table.data = enrichedClientData.value as any;
+    }
+  } finally {
+    deleting.value = false;
+    deleteClientPopup.value = false;
+  }
+}
+
 async function handleBulkDelete() {
   if (!selectedRows.value.length) return;
   try {
@@ -174,13 +196,14 @@ async function handleBulkDelete() {
       { type: 'warning', confirmButtonText: t('common.delete'), cancelButtonText: t('common.cancel') }
     );
     loading.value = true;
-    const ids = selectedRows.value.map((r: any) => r.id);
-    await Promise.all(ids.map((id: any) => useApiFetch(`client/${id}`, 'DELETE')));
+    for (const row of selectedRows.value) {
+      await deleteClient(row.id);
+    }
     const res = await useTableFilter('client');
     rawClientData.value = res.formattedData;
     table.data = enrichedClientData.value as any;
     selectedRows.value = [];
-    ElNotification({ type: 'success', title: t('common.success'), message: `${ids.length} client(s) deleted` });
+    ElNotification({ type: 'success', title: t('common.success'), message: `${selectedRows.value.length} client(s) deleted` });
   } catch {
     // User cancelled or error
   } finally {

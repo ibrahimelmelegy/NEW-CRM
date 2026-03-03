@@ -800,5 +800,6 @@ router.get(
   dealController.getDealById
 );
 //** --------------------- DELETE --------------------- */
+router.delete('/:id', authenticateUser, HasPermission([DealPermissionsEnum.DELETE_DEALS]), dealController.deleteDeal);
 
 export default router;

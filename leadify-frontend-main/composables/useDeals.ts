@@ -13,7 +13,6 @@ function handleSuccess(message: string) {
     title: 'Success',
     message
   });
-  navigateTo('/sales/deals'); // Navigate to the deals list
 }
 
 export enum DealStageEnums {
@@ -165,9 +164,11 @@ export async function createDeal(values: DealValues) {
     } else {
       handleError(response?.message || 'Something went wrong');
     }
+    return response;
   } catch (error) {
     // Catch any unexpected errors and handle them
     handleError(error instanceof Error ? error.message : 'Unknown error');
+    return { success: false, body: null, message: error instanceof Error ? error.message : 'Unknown error', code: 500 };
   }
 }
 
@@ -187,9 +188,11 @@ export async function updateDeal(values: DealValues) {
     } else {
       handleError(response?.message || 'Something went wrong');
     }
+    return response;
   } catch (error) {
     // Catch any unexpected errors and handle them
     handleError(error instanceof Error ? error.message : 'Unknown error');
+    return { success: false, body: null, message: error instanceof Error ? error.message : 'Unknown error', code: 500 };
   }
 }
 
@@ -209,8 +212,25 @@ export async function convertToDeal(values: DealValues) {
     } else {
       handleError(response?.message || 'Something went wrong');
     }
+    return response;
   } catch (error) {
     // Catch any unexpected errors and handle them
     handleError(error instanceof Error ? error.message : 'Unknown error');
+    return { success: false, body: null, message: error instanceof Error ? error.message : 'Unknown error', code: 500 };
+  }
+}
+
+export async function deleteDeal(id: string) {
+  try {
+    const response = await useApiFetch(`deal/${id}`, 'DELETE');
+    if (response?.success) {
+      handleSuccess('Deal deleted successfully');
+    } else {
+      handleError(response?.message || 'Failed to delete deal');
+    }
+    return response;
+  } catch (error) {
+    handleError(error instanceof Error ? error.message : 'Unknown error');
+    return { success: false, body: null, message: error instanceof Error ? error.message : 'Unknown error', code: 500 };
   }
 }

@@ -134,6 +134,9 @@ const slug = (Array.isArray(rawSlug) ? rawSlug[0] : rawSlug || '') as string;
 
 // Standard Nuxt 3 Data Fetching for SSR/Hydration
 const { data: lead } = await useAsyncData(`lead-${slug}`, () => getLead(slug));
+if (!lead.value || !lead.value.id) {
+  await navigateTo('/sales/leads');
+}
 const { data: activity } = await useAsyncData(`activity-${slug}`, () => getActivity(slug + `?limit=10&page=1`));
 
 const getActivityPage = async (page: number) => {

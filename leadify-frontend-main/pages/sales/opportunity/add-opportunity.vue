@@ -27,16 +27,20 @@ const leadId = ref('');
 async function submitForm(values: FormattedValues) {
   loading.value = true;
   try {
+    let response;
     if (values?.clientId) {
-      await createOpportunity(values);
+      response = await createOpportunity(values);
     } else if (route.query.leadId || leadId.value) {
-      await convertLeadToOpportunity({
+      response = await convertLeadToOpportunity({
         ...values.opportunity,
         ...((route.query.leadId || leadId.value) && { leadId: route.query.leadId || leadId.value }),
         ...(values.clientId && { clientId: values.clientId })
       });
     } else {
-      await createOpportunity(values);
+      response = await createOpportunity(values);
+    }
+    if (response?.success) {
+      navigateTo('/sales/opportunity');
     }
   } catch (error: any) {
     (useNuxtApp() as any).$notify?.error?.({ message: error?.message || 'Failed to create opportunity' });

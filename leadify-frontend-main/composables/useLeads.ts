@@ -17,7 +17,6 @@ function handleSuccess(message: string) {
     title: 'Success',
     message
   });
-  navigateTo('/sales/leads'); // Navigate to the leads list
 }
 
 export interface Lead {
@@ -210,9 +209,11 @@ export async function createLead(values: LeadValues) {
     } else {
       handleError(response?.message || 'Something went wrong');
     }
+    return response;
   } catch (error) {
     // Catch any unexpected errors and handle them
     handleError(error instanceof Error ? error.message : 'Unknown error');
+    return { success: false, body: null, message: error instanceof Error ? error.message : 'Unknown error', code: 500 };
   }
 }
 
@@ -248,8 +249,25 @@ export async function updateLead(values: LeadValues) {
     } else {
       handleError(response?.message || 'Something went wrong');
     }
+    return response;
   } catch (error) {
     // Catch any unexpected errors and handle them
     handleError(error instanceof Error ? error.message : 'Unknown error');
+    return { success: false, body: null, message: error instanceof Error ? error.message : 'Unknown error', code: 500 };
+  }
+}
+
+export async function deleteLead(id: string) {
+  try {
+    const response = await useApiFetch(`lead/${id}`, 'DELETE');
+    if (response?.success) {
+      handleSuccess('Lead deleted successfully');
+    } else {
+      handleError(response?.message || 'Failed to delete lead');
+    }
+    return response;
+  } catch (error) {
+    handleError(error instanceof Error ? error.message : 'Unknown error');
+    return { success: false, body: null, message: error instanceof Error ? error.message : 'Unknown error', code: 500 };
   }
 }

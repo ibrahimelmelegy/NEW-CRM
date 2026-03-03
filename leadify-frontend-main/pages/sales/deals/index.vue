@@ -55,6 +55,10 @@ div(class="animate-fade-in")
                         NuxtLink.flex.items-center(:to="`/sales/deals/edit/${data?.id}`")
                           Icon.text-md.mr-2(name="IconEdit" )
                           p.text-sm {{ $t('common.edit') }}
+                      el-dropdown-item(v-if="hasPermission('DELETE_DEALS')" @click="[deleteLeadPopup=true, deleteId = data?.id]")
+                        .flex.items-center
+                          Icon.text-md.mr-2(name="IconDelete" )
+                          p.text-sm {{ $t('common.delete') }}
 
   //- Mobile App View
   .deals-mobile-view(v-if="!loadingAction")
@@ -135,7 +139,7 @@ div(class="animate-fade-in")
     .mobile-fab(v-if="hasPermission('CREATE_DEALS')" @click="navigateTo('/sales/deals/add-deal')")
       Icon(name="ph:plus-bold" size="24")
 
-  ActionModel(v-model="deleteLeadPopup" :loading="loadingAction" btn-text="Move to Archive" description-one="Are you sure you want to delete this Deal?" icon="/images/delete-image.png" description-two="It will be archived and can be restored later within 30 days." )
+  ActionModel(v-model="deleteLeadPopup" :loading="deleting" :description="$t('common.confirmDelete')" @confirm="confirmDelete")
 </template>
 
 <script setup lang="ts">
@@ -154,6 +158,8 @@ const { vibrate } = useMobile();
 const loadingAction = ref(false);
 const loading = ref(false);
 const deleteLeadPopup = ref(false);
+const deleteId = ref<string | null>(null);
+const deleting = ref(false);
 const pipelineAnalytics = ref<any>(null);
 
 // Export columns & data
@@ -169,6 +175,20 @@ const exportData = computed(() => table.data);
 
 // Bulk actions
 const selectedRows = ref<any[]>([]);
+async function confirmDelete() {
+  if (!deleteId.value) return;
+  deleting.value = true;
+  try {
+    const response = await deleteDeal(deleteId.value);
+    if (response?.success) {
+      table.data = table.data.filter((r: any) => r.id !== deleteId.value);
+    }
+  } finally {
+    deleting.value = false;
+    deleteLeadPopup.value = false;
+  }
+}
+
 async function handleBulkDelete() {
   if (!selectedRows.value.length) return;
   try {
@@ -178,12 +198,13 @@ async function handleBulkDelete() {
       { type: 'warning', confirmButtonText: t('common.delete'), cancelButtonText: t('common.cancel') }
     );
     loading.value = true;
-    const ids = selectedRows.value.map((r: any) => r.id);
-    await Promise.all(ids.map((id: any) => useApiFetch(`deal/${id}`, 'DELETE')));
+    for (const row of selectedRows.value) {
+      await deleteDeal(row.id);
+    }
     const res = await useTableFilter('deal');
     table.data = res.formattedData;
     selectedRows.value = [];
-    ElNotification({ type: 'success', title: t('common.success'), message: `${ids.length} deal(s) deleted` });
+    ElNotification({ type: 'success', title: t('common.success'), message: `${selectedRows.value.length} deal(s) deleted` });
   } catch {
     // User cancelled or error
   } finally {

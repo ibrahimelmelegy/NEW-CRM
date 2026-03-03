@@ -71,21 +71,22 @@ async function saveAllForms() {
     await invoicesRef.value?.onSubmitInvoices();
     await deliveryRef.value?.onSubmitDeliveries();
     if ((combinedValues.value?.deal?.name || combinedValues.value?.name) && isInvoices.value && isDeliveries.value) {
+      let response;
       if (combinedValues.value?.leadId || combinedValues.value?.opportunityId) {
-        await convertToDeal(combinedValues.value);
-        return;
+        response = await convertToDeal(combinedValues.value);
       } else {
-        await createDeal(combinedValues.value);
+        response = await createDeal(combinedValues.value);
+      }
+      if (response?.success) {
+        navigateTo('/sales/deals');
       }
     } else {
       ElNotification({ type: 'warning', title: 'Validation', message: 'Please fill in all required fields' });
     }
-    loading.value = false;
     isDeliveries.value = false;
     isInvoices.value = false;
   } catch (error) {
     console.error('Error saving forms:', error);
-    loading.value = false;
   } finally {
     loading.value = false;
   }

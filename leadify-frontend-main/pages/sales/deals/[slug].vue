@@ -128,6 +128,9 @@ const pipelineStages = ref<PipelineStage[]>([]);
 
 // Call API to Get the deal
 const deal = await getDeal(route.params.slug as string);
+if (!deal || !deal.id) {
+  await navigateTo('/sales/deals');
+}
 const activityResponse = await getOpportunityActivity((route.params.slug as string) + `?limit=10` + '&&page=1');
 activity.value = activityResponse;
 

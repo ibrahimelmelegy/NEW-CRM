@@ -13,7 +13,6 @@ function handleSuccess(message: string) {
     title: 'Success',
     message
   });
-  navigateTo('/sales/opportunity'); // Navigate to the opportunties list
 }
 
 export interface Leads {
@@ -199,9 +198,11 @@ export async function createOpportunity(values: FormattedValues) {
     } else {
       handleError(response?.message || 'Something went wrong');
     }
+    return response;
   } catch (error) {
     // Catch any unexpected errors and handle them
     handleError(error instanceof Error ? error.message : 'Unknown error');
+    return { success: false, body: null, message: error instanceof Error ? error.message : 'Unknown error', code: 500 };
   }
 }
 
@@ -220,9 +221,11 @@ export async function updateOpportunity(values: FormattedValues, id: string | st
     } else {
       handleError(response?.message || 'Something went wrong');
     }
+    return response;
   } catch (error) {
     // Catch any unexpected errors and handle them
     handleError(error instanceof Error ? error.message : 'Unknown error');
+    return { success: false, body: null, message: error instanceof Error ? error.message : 'Unknown error', code: 500 };
   }
 }
 
@@ -241,8 +244,25 @@ export async function convertLeadToOpportunity(values: Opportunities) {
     } else {
       handleError(response?.message || 'Something went wrong');
     }
+    return response;
   } catch (error) {
     // Catch any unexpected errors and handle them
     handleError(error instanceof Error ? error.message : 'Unknown error');
+    return { success: false, body: null, message: error instanceof Error ? error.message : 'Unknown error', code: 500 };
+  }
+}
+
+export async function deleteOpportunity(id: string) {
+  try {
+    const response = await useApiFetch(`opportunity/${id}`, 'DELETE');
+    if (response?.success) {
+      handleSuccess('Opportunity deleted successfully');
+    } else {
+      handleError(response?.message || 'Failed to delete opportunity');
+    }
+    return response;
+  } catch (error) {
+    handleError(error instanceof Error ? error.message : 'Unknown error');
+    return { success: false, body: null, message: error instanceof Error ? error.message : 'Unknown error', code: 500 };
   }
 }

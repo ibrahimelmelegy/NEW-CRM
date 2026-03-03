@@ -52,6 +52,10 @@ div(class="animate-fade-in")
                         NuxtLink.flex.items-center(:to="`/sales/leads/edit/${data?.id}`")
                           Icon.text-md.mr-2(name="IconEdit" )
                           p.text-sm {{ $t('leads.edit') }}
+                      el-dropdown-item(v-if="hasPermission('DELETE_LEADS')" @click="[deleteLeadPopup=true, deleteId = data?.id]")
+                        .flex.items-center
+                          Icon.text-md.mr-2(name="IconDelete" )
+                          p.text-sm {{ $t('leads.delete') }}
 
   //- Mobile App View
   .leads-mobile-view(v-if="!loadingAction")
@@ -136,6 +140,7 @@ div(class="animate-fade-in")
     .mobile-fab(v-if="canCreateLeads" @click="navigateTo('/sales/leads/add-lead')")
       Icon(name="ph:plus-bold" size="24")
 
+  ActionModel(v-model="deleteLeadPopup" :loading="deleting" :description="$t('common.confirmDelete')" @confirm="confirmDelete")
   ActionModel(v-model="qualifiedLeadPopup" :loading="loadingAction" :btn-text="$t('common.save')" :description="$t('leads.confirmConversion')" @confirm = "editPresent" )
    template(#input)
     InputSelect(:label="$t('leads.present')" @change ="setPresent" :options="leadPresent"  )
@@ -160,6 +165,9 @@ const loading = ref(false);
 const present = ref('');
 const select = ref();
 const qualifiedLeadPopup = ref(false);
+const deleteLeadPopup = ref(false);
+const deleteId = ref<string | null>(null);
+const deleting = ref(false);
 
 // Create computed property for CREATE_LEADS permission
 // This ensures the v-if updates reactively when permissions change
@@ -551,6 +559,20 @@ function getStatusType(status: string): string {
 // Bulk actions
 const selectedRows = ref<any[]>([]);
 
+async function confirmDelete() {
+  if (!deleteId.value) return;
+  deleting.value = true;
+  try {
+    const response = await deleteLead(deleteId.value);
+    if (response?.success) {
+      table.value.data = table.value.data.filter((r: any) => r.id !== deleteId.value);
+    }
+  } finally {
+    deleting.value = false;
+    deleteLeadPopup.value = false;
+  }
+}
+
 async function handleBulkDelete() {
   if (!selectedRows.value.length) return;
   try {
@@ -560,12 +582,13 @@ async function handleBulkDelete() {
       { type: 'warning', confirmButtonText: t('common.delete'), cancelButtonText: t('common.cancel') }
     );
     loading.value = true;
-    const ids = selectedRows.value.map((r: any) => r.id);
-    await Promise.all(ids.map((id: any) => useApiFetch(`lead/${id}`, 'DELETE')));
+    for (const row of selectedRows.value) {
+      await deleteLead(row.id);
+    }
     response = await useTableFilter('lead');
     table.value.data = response.formattedData;
     selectedRows.value = [];
-    ElNotification({ type: 'success', title: t('common.success'), message: `${ids.length} lead(s) deleted` });
+    ElNotification({ type: 'success', title: t('common.success'), message: `${selectedRows.value.length} lead(s) deleted` });
   } catch {
     // User cancelled or error
   } finally {

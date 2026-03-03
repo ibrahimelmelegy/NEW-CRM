@@ -11,13 +11,12 @@ function handleError(message: string) {
     message
   });
 }
-function handleSuccess(message: string, route?: boolean) {
+function handleSuccess(message: string) {
   ElNotification({
     type: 'success',
     title: 'Success',
     message
   });
-  !route ? navigateTo('/sales/clients') : navigateTo('/sales/clients'); // Navigate to the clients list
 }
 
 export enum ClientTypeEnums {
@@ -184,7 +183,7 @@ export async function getClientActivity(id: string | string[]): Promise<Lead> {
  * @returns {Promise<void>} A promise that resolves when the client is successfully created.
  * @throws {Error} If the API call is unsuccessful, an error is handled and logged.
  */
-export async function createClient(values: any, route?: boolean): Promise<void> {
+export async function createClient(values: any) {
   try {
     // Normalize the phone number before sending
     const normalizedPhone = normalizePhoneNumber(values.phone);
@@ -201,23 +200,25 @@ export async function createClient(values: any, route?: boolean): Promise<void> 
 
     // Handle the API response
     if (response?.success) {
-      handleSuccess('Client created successfully', route);
+      handleSuccess('Client created successfully');
     } else {
       handleError(response?.message || 'Something went wrong');
     }
+    return response;
   } catch (error) {
     // Catch any unexpected errors and handle them
     handleError(error instanceof Error ? error.message : 'Unknown error');
+    return { success: false, body: null, message: error instanceof Error ? error.message : 'Unknown error', code: 500 };
   }
 }
 
 /**
  * Updates an existing client by sending the provided values to the API.
  * @param values - An object containing the client details to be updated.
- * @returns {Promise<void>} A promise that resolves when the client is successfully updated.
+ * @returns A response object with success status.
  * @throws {Error} If the API call is unsuccessful, an error is handled and logged.
  */
-export async function updateClient(values: any): Promise<void> {
+export async function updateClient(values: any) {
   try {
     // Normalize the phone number before sending
     const normalizedPhone = normalizePhoneNumber(values.phone);
@@ -239,8 +240,25 @@ export async function updateClient(values: any): Promise<void> {
     } else {
       handleError(response?.message || 'Something went wrong');
     }
+    return response;
   } catch (error) {
     // Catch any unexpected errors and handle them
     handleError(error instanceof Error ? error.message : 'Unknown error');
+    return { success: false, body: null, message: error instanceof Error ? error.message : 'Unknown error', code: 500 };
+  }
+}
+
+export async function deleteClient(id: string) {
+  try {
+    const response = await useApiFetch(`client/${id}`, 'DELETE');
+    if (response?.success) {
+      handleSuccess('Client deleted successfully');
+    } else {
+      handleError(response?.message || 'Failed to delete client');
+    }
+    return response;
+  } catch (error) {
+    handleError(error instanceof Error ? error.message : 'Unknown error');
+    return { success: false, body: null, message: error instanceof Error ? error.message : 'Unknown error', code: 500 };
   }
 }

@@ -673,5 +673,6 @@ router.get(
 );
 
 //** --------------------- DELETE --------------------- */
+router.delete('/:id', authenticateUser, HasPermission([OpportunityPermissionsEnum.DELETE_OPPORTUNITIES]), opportunityController.deleteOpportunity);
 
 export default router;

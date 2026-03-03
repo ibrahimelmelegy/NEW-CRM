@@ -121,6 +121,9 @@ const activity = ref();
 
 // Call API to Get the client
 const client = await getClient(route.params.slug as string);
+if (!client || !client.id) {
+  await navigateTo('/sales/clients');
+}
 
 const response = await getClientActivity((route.params.slug as string) + `?limit=10` + '&&page=1');
 activity.value = response;

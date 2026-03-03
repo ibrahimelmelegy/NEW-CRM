@@ -54,6 +54,10 @@ div
                         NuxtLink.flex.items-center(:to="`/sales/opportunity/edit/${data?.id}`")
                           Icon.text-md.mr-2(name="IconEdit" )
                           p.text-sm {{ $t('common.edit') }}
+                      el-dropdown-item(v-if="hasPermission('DELETE_OPPORTUNITIES')" @click="[deleteLeadPopup=true, deleteId = data?.id]")
+                        .flex.items-center
+                          Icon.text-md.mr-2(name="IconDelete" )
+                          p.text-sm {{ $t('common.delete') }}
 
   //- Mobile Card View
   .opp-mobile-view(v-if="!loadingAction")
@@ -117,7 +121,7 @@ div
     .mobile-fab(v-if="hasPermission('CREATE_OPPORTUNITIES')" @click="navigateTo('/sales/opportunity/add-opportunity')")
       Icon(name="ph:plus-bold" size="24")
 
-  ActionModel(v-model="deleteLeadPopup" :loading="loadingAction" :btn-text="$t('opportunities.archiveTitle')" :description-one="$t('opportunities.deleteDesc1')" icon="/images/delete-image.png" :description-two="$t('opportunities.deleteDesc2')" )
+  ActionModel(v-model="deleteLeadPopup" :loading="deleting" :description="$t('common.confirmDelete')" @confirm="confirmDelete")
   ActionModel(v-model="wonPopup" :loading="loadingAction" :btn-text="$t('common.save')" :description="$t('opportunities.wonDesc')" @confirm = " editPresent" )
    template(#input)
     InputSelect(v-if="select?.status === 'WON' " :label="$t('opportunities.present')" @change ="setPresent" :options="opportunityPresent"  )
@@ -136,6 +140,8 @@ const t = $i18n.t;
 const { hasPermission } = await usePermissions();
 const loadingAction = ref(false);
 const deleteLeadPopup = ref(false);
+const deleteId = ref<string | null>(null);
+const deleting = ref(false);
 
 // Export columns & data
 const exportColumns = [
@@ -152,6 +158,20 @@ const exportData = computed(() => table.data);
 
 // Bulk actions
 const selectedRows = ref<any[]>([]);
+async function confirmDelete() {
+  if (!deleteId.value) return;
+  deleting.value = true;
+  try {
+    const response = await deleteOpportunity(deleteId.value);
+    if (response?.success) {
+      table.data = table.data.filter((r: any) => r.id !== deleteId.value);
+    }
+  } finally {
+    deleting.value = false;
+    deleteLeadPopup.value = false;
+  }
+}
+
 async function handleBulkDelete() {
   if (!selectedRows.value.length) return;
   try {
@@ -161,12 +181,13 @@ async function handleBulkDelete() {
       { type: 'warning', confirmButtonText: t('common.delete'), cancelButtonText: t('common.cancel') }
     );
     loadingAction.value = true;
-    const ids = selectedRows.value.map((r: any) => r.id);
-    await Promise.all(ids.map((id: any) => useApiFetch(`opportunity/${id}`, 'DELETE')));
+    for (const row of selectedRows.value) {
+      await deleteOpportunity(row.id);
+    }
     const res = await useTableFilter('opportunity');
     table.data = res.formattedData;
     selectedRows.value = [];
-    ElNotification({ type: 'success', title: t('common.success'), message: `${ids.length} opportunity(ies) deleted` });
+    ElNotification({ type: 'success', title: t('common.success'), message: `${selectedRows.value.length} opportunity(ies) deleted` });
   } catch {
     // User cancelled or error
   } finally {

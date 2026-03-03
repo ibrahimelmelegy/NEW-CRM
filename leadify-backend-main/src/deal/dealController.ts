@@ -143,6 +143,16 @@ class DealController {
       next(error);
     }
   }
+
+  public async deleteDeal(req: AuthenticatedRequest, res: Response, next: NextFunction): Promise<void> {
+    try {
+      await dealService.deleteDeal(req.params.id as string, req.user as User);
+      io.emit('deal:deleted', { id: req.params.id });
+      wrapResult(res);
+    } catch (error) {
+      next(error);
+    }
+  }
 }
 
 export default new DealController();

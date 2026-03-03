@@ -419,6 +419,9 @@ const activity = ref();
 
 // mock data for integrate till api is ready
 let project = await getProject(route.params.slug?.toString() || '');
+if (!project || !project.id) {
+  await navigateTo('/operations/projects');
+}
 
 const respons = await getProjectActivity(route.params.slug + `?limit=10` + '&&page=1');
 activity.value = respons;

@@ -171,6 +171,15 @@ class ClientController {
     }
   }
 
+  public async deleteClient(req: AuthenticatedRequest, res: Response, next: NextFunction): Promise<void> {
+    try {
+      await ClientService.deleteClient(req.params.id as string, req.user as User);
+      wrapResult(res);
+    } catch (error) {
+      next(error);
+    }
+  }
+
   public async bulkUpdateCompanies(req: AuthenticatedRequest, res: Response, next: NextFunction): Promise<void> {
     try {
       const { companyIds, updates } = req.body;

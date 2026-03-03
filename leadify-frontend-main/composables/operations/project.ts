@@ -8,17 +8,12 @@ function handleError(message: string) {
     message
   });
 }
-function handleSuccess(message: string, id?: string) {
+function handleSuccess(message: string) {
   ElNotification({
     type: 'success',
     title: 'Success',
     message
   });
-  if (id) {
-    navigateTo(`/operations/projects/${id}`); // Navigate to the service details
-  } else {
-    navigateTo('/operations/projects'); // Navigate to the project list
-  }
 }
 
 enum projectCategory {
@@ -596,7 +591,7 @@ export async function deleteProjectManPower(id: string) {
  * @returns {Promise<void>} A promise that resolves when the project is completed successfully.
  * @throws {Error} If the API call is unsuccessful, an error is handled and logged.
  */
-export async function completeProject(values: { discount?: number }): Promise<void> {
+export async function completeProject(values: { discount?: number }) {
   try {
     const response = await useApiFetch(`project/complete-project-creation/${projectId.value}`, 'PUT', values);
 
@@ -608,9 +603,26 @@ export async function completeProject(values: { discount?: number }): Promise<vo
     } else {
       handleError(response?.message || 'Something went wrong');
     }
+    return response;
   } catch (error) {
     // Catch any unexpected errors and handle them
     handleError(error instanceof Error ? error.message : 'Unknown error');
+    return { success: false, body: null, message: error instanceof Error ? error.message : 'Unknown error', code: 500 };
+  }
+}
+
+export async function deleteProjectById(id: string) {
+  try {
+    const response = await useApiFetch(`project/${id}`, 'DELETE');
+    if (response?.success) {
+      handleSuccess('Project deleted successfully');
+    } else {
+      handleError(response?.message || 'Failed to delete project');
+    }
+    return response;
+  } catch (error) {
+    handleError(error instanceof Error ? error.message : 'Unknown error');
+    return { success: false, body: null, message: error instanceof Error ? error.message : 'Unknown error', code: 500 };
   }
 }
 

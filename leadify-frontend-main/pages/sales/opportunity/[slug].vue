@@ -162,6 +162,9 @@ const activity = ref();
 
 // Call API to Get the opportunity
 const opportunity = await getOpportunity(route.params.slug as string);
+if (!opportunity || !opportunity.id) {
+  await navigateTo('/sales/opportunity');
+}
 const response = await getOpportunityActivity((route.params.slug as string) + `?limit=10` + '&&page=1');
 activity.value = response;
 

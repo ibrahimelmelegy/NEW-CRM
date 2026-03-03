@@ -360,6 +360,13 @@ class OpportunityService {
     return opportunity;
   }
 
+  public async deleteOpportunity(id: string, user: User): Promise<void> {
+    await this.validateOpportunityAccess(id, user);
+    const opportunity = await this.opportunityOrError({ id });
+    await createActivityLog('opportunity', 'delete', opportunity.id, user.id, undefined, 'Opportunity deleted');
+    await opportunity.destroy();
+  }
+
   public async validateOpportunityAccess(opportunityId: string, user: User): Promise<void> {
     if (user.role.permissions.includes(OpportunityPermissionsEnum.VIEW_GLOBAL_OPPORTUNITIES)) return;
 

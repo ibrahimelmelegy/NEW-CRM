@@ -76,6 +76,15 @@ class OpportunityController {
       next(error);
     }
   }
+
+  public async deleteOpportunity(req: AuthenticatedRequest, res: Response, next: NextFunction): Promise<void> {
+    try {
+      await opportunityService.deleteOpportunity(req.params.id as string, req.user as User);
+      wrapResult(res);
+    } catch (error) {
+      next(error);
+    }
+  }
 }
 
 export default new OpportunityController();

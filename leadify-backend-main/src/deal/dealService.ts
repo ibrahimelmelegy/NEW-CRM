@@ -567,6 +567,13 @@ class DealService {
     return deal;
   }
 
+  public async deleteDeal(id: string, user: User): Promise<void> {
+    await this.validateDealAccess(id, user);
+    const deal = await this.dealOrError({ id });
+    await createActivityLog('deal', 'delete', deal.id, user.id, null, 'Deal deleted');
+    await deal.destroy();
+  }
+
   public async validateDealAccess(dealId: string, user: User): Promise<void> {
     if (user.role.permissions.includes(DealPermissionsEnum.VIEW_GLOBAL_DEALS)) return;
 

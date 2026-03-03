@@ -37,6 +37,10 @@ div(class="animate-fade-in")
                         NuxtLink.flex.items-center(:to="`/operations/projects/edit/${data?.id}`")
                           Icon.text-md.mr-2(name="IconEdit" )
                           p.text-sm {{ $t('common.edit') }}
+                      el-dropdown-item(v-if="hasPermission('DELETE_PROJECTS')" @click="[deleteLeadPopup=true, deleteId = data?.id]")
+                        .flex.items-center
+                          Icon.text-md.mr-2(name="IconDelete" )
+                          p.text-sm {{ $t('common.delete') }}
 
   .proj-mobile-view(v-if="!loadingAction")
     PullToRefresh(:loading="mobileRefreshing" @refresh="handleMobileRefresh")
@@ -99,7 +103,7 @@ div(class="animate-fade-in")
     .mobile-fab(v-if="hasPermission('CREATE_PROJECTS')" @click="navigateTo('/operations/projects/add-project')")
       Icon(name="ph:plus-bold" size="24")
 
-  ActionModel(v-model="deleteLeadPopup" :loading="loadingAction" :btn-text="$t('common.moveToArchive')" :description-one="$t('common.archiveConfirmation')" icon="/images/delete-image.png" :description-two="$t('common.archiveDescription')" )
+  ActionModel(v-model="deleteLeadPopup" :loading="deleting" :description="$t('common.confirmDelete')" @confirm="confirmDelete")
 </template>
 
 <script setup lang="ts">
@@ -115,6 +119,8 @@ const { t } = useI18n();
 const { hasPermission } = await usePermissions();
 const loadingAction = ref(false);
 const deleteLeadPopup = ref(false);
+const deleteId = ref<string | null>(null);
+const deleting = ref(false);
 
 // Export columns & data
 const exportColumns = [
@@ -133,8 +139,32 @@ const exportData = computed(() => table.data);
 
 // Bulk actions
 const selectedRows = ref<any[]>([]);
-function handleBulkDelete() {
-  selectedRows.value = [];
+async function confirmDelete() {
+  if (!deleteId.value) return;
+  deleting.value = true;
+  try {
+    const response = await deleteProjectById(deleteId.value);
+    if (response?.success) {
+      table.data = table.data.filter((r: any) => r.id !== deleteId.value);
+    }
+  } finally {
+    deleting.value = false;
+    deleteLeadPopup.value = false;
+  }
+}
+
+async function handleBulkDelete() {
+  deleting.value = true;
+  try {
+    for (const row of selectedRows.value) {
+      await deleteProjectById(row.id);
+    }
+    const ids = selectedRows.value.map((r: any) => r.id);
+    table.data = table.data.filter((r: any) => !ids.includes(r.id));
+  } finally {
+    deleting.value = false;
+    selectedRows.value = [];
+  }
 }
 function handleBulkExport() {
   selectedRows.value = [];

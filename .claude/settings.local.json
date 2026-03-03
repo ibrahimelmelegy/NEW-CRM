@@ -183,7 +183,14 @@
       "Bash(docker rm:*)",
       "Bash(pg_isready:*)",
       "Bash(npx vitest run:*)",
-      "Bash(git revert:*)"
+      "Bash(git revert:*)",
+      "Bash(GIT_EDITOR=true git rebase:*)",
+      "Bash(set GIT_EDITOR=true)",
+      "Bash(git rebase:*)",
+      "Bash(git -c core.editor=true rebase:*)",
+      "Bash(git version:*)",
+      "Bash(GIT_EDITOR=\":\" git rebase --continue)",
+      "Bash(git -c core.editor=cat rebase --continue)"
     ]
   }
 }

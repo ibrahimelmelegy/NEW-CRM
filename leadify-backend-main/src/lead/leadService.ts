@@ -359,6 +359,14 @@ class LeadService {
     });
   }
 
+  public async deleteLead(id: string, user: User): Promise<void> {
+    await this.validateLeadAccess(id, user);
+    const lead = await Lead.findByPk(id);
+    if (!lead) throw new BaseError(ERRORS.LEAD_NOT_FOUND);
+    await createActivityLog('lead', 'delete', lead.id, user.id, null, 'Lead deleted');
+    await lead.destroy();
+  }
+
   public async validateLeadAccess(leadId: string, user: User): Promise<void> {
     if (user.role.permissions.includes(LeadPermissionsEnum.VIEW_GLOBAL_LEADS)) return;
 

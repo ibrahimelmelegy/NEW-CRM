@@ -31,7 +31,10 @@ const opportunity = await getOpportunity(route.params.slug as string);
 // Call API to update the opportunity
 async function submitForm(values: FormattedValues) {
   loading.value = true;
-  await updateOpportunity(values.opportunity, route.params.slug as string);
+  const response = await updateOpportunity(values.opportunity, route.params.slug as string);
+  if (response?.success) {
+    navigateTo('/sales/opportunity');
+  }
   loading.value = false;
 }
 </script>

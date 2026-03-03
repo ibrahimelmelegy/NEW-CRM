@@ -198,6 +198,13 @@ class ClientService {
     return clients;
   }
 
+  public async deleteClient(id: string, user: User): Promise<void> {
+    await this.validateClientAccess(id, user);
+    const client = await this.clientOrError({ id });
+    await createActivityLog('client', 'delete', client.id, user.id, null, 'Client deleted');
+    await client.destroy();
+  }
+
   public async validateClientAccess(clientId: string, user: User): Promise<void> {
     if (user.role.permissions.includes(ClientPermissionsEnum.VIEW_GLOBAL_CLIENTS)) return;
 

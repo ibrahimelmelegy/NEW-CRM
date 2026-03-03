@@ -62,6 +62,16 @@ class LeadController {
       next(error);
     }
   }
+
+  public async deleteLead(req: AuthenticatedRequest, res: Response, next: NextFunction): Promise<void> {
+    try {
+      await leadService.deleteLead(req.params.id as string, req.user as User);
+      io.emit('lead:deleted', { id: req.params.id });
+      wrapResult(res);
+    } catch (error) {
+      next(error);
+    }
+  }
 }
 
 export default new LeadController();
