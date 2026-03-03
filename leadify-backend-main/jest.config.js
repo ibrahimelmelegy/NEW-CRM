@@ -6,7 +6,7 @@ module.exports = {
     // Match test files
     testMatch: ['**/*.test.ts'],
     transform: {
-        '^.+\\.tsx?$': ['ts-jest', {
+        '^.+\\.[jt]sx?$': ['ts-jest', {
             diagnostics: false     // Disable diagnostics to prevent compilation errors from stopping tests
         }],
     },

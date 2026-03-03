@@ -43,6 +43,7 @@ jobs:
         working-directory: leadify-frontend-main
 
       - name: Lint backend
+        if: always()
         run: npm run lint
         working-directory: leadify-backend-main
 

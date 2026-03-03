@@ -5,6 +5,9 @@ import Invoice from '../../src/deal/model/invoiceMode';
 import Deal from '../../src/deal/model/dealModel';
 
 // Mocks
+jest.mock('../../src/config/db', () => ({
+    sequelize: { transaction: jest.fn(), define: jest.fn() }
+}));
 jest.mock('../../src/deal/model/invoiceMode');
 jest.mock('../../src/deal/model/dealModel');
 jest.mock('../../src/server', () => ({

@@ -36,7 +36,8 @@ describe('AuthController - loginUser', () => {
         res = {
             status: jest.fn().mockReturnThis(),
             json: jest.fn(),
-            send: jest.fn()
+            send: jest.fn(),
+            cookie: jest.fn()
         } as unknown as Response;
         next = jest.fn();
 

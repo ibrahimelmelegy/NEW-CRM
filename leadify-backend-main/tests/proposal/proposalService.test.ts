@@ -12,6 +12,12 @@ import { ERRORS } from '../../src/utils/error/errors';
 import BaseError from '../../src/utils/error/base-http-exception';
 
 // Mocks
+jest.mock('../../src/config/db', () => ({
+    sequelize: { transaction: jest.fn(), define: jest.fn() }
+}));
+jest.mock('../../src/server', () => ({
+    io: { emit: jest.fn() }
+}));
 jest.mock('../../src/proposal/models/proposalModel');
 jest.mock('../../src/user/userModel');
 jest.mock('../../src/proposalLog/proposalLogService');
