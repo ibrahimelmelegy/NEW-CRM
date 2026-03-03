@@ -481,7 +481,8 @@
     "name": "Name",
     "type": "Type",
     "size": "Size",
-    "uploadedAt": "Uploaded At"
+    "uploadedAt": "Uploaded At",
+    "total": "Total"
   },
   "auth": {
     "login": "Sign In",
@@ -1127,7 +1128,13 @@
     "confirmSend": "Mark this invoice as sent?",
     "sendInvoice": "Send Invoice",
     "confirmVoid": "Voiding this invoice is irreversible. Continue?",
-    "voidInvoice": "Void Invoice"
+    "voidInvoice": "Void Invoice",
+    "totalRevenue": "Total Revenue",
+    "outstanding": "Outstanding",
+    "overdueCount": "Overdue",
+    "agingReport": "Invoice Aging Report",
+    "totalOutstanding": "Total Outstanding: {amount}",
+    "selectTemplate": "Select PDF Template"
   },
   "forms": {
     "dragDrop": "Drag and drop file here or",
@@ -10649,5 +10656,16 @@
     "auditComplete": "Audit Complete",
     "auditCompleteMsg": "Compliance audit completed successfully. Score updated.",
     "exportSuccess": "Report exported successfully"
+  },
+  "warehouse": {
+    "title": "Warehouse Management",
+    "subtitle": "Manage warehouses, zones, inventory and stock transfers.",
+    "name": "Warehouse Name",
+    "location": "Location",
+    "manager": "Manager",
+    "capacity": "Capacity",
+    "occupancy": "Occupancy",
+    "status": "Status",
+    "items": "Items"
   }
 }

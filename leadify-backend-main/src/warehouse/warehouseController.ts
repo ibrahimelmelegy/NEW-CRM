@@ -16,11 +16,17 @@ class WarehouseController {
   async deleteWarehouse(req: AuthenticatedRequest, res: Response, next: NextFunction) {
     try { await service.deleteWarehouse(Number(req.params.id)); wrapResult(res, { deleted: true }); } catch (e) { next(e); }
   }
+  async getZones(req: AuthenticatedRequest, res: Response, next: NextFunction) {
+    try { wrapResult(res, await service.getZones(req.query, (req.user as any)?.tenantId)); } catch (e) { next(e); }
+  }
   async createZone(req: AuthenticatedRequest, res: Response, next: NextFunction) {
     try { wrapResult(res, await service.createZone(req.body, (req.user as any)?.tenantId), 201); } catch (e) { next(e); }
   }
   async deleteZone(req: AuthenticatedRequest, res: Response, next: NextFunction) {
     try { await service.deleteZone(Number(req.params.id)); wrapResult(res, { deleted: true }); } catch (e) { next(e); }
+  }
+  async getStockCount(req: AuthenticatedRequest, res: Response, next: NextFunction) {
+    try { wrapResult(res, await service.getStockCount((req.user as any)?.tenantId)); } catch (e) { next(e); }
   }
   async createTransfer(req: AuthenticatedRequest, res: Response, next: NextFunction) {
     try { wrapResult(res, await service.createTransfer(req.body, (req.user as any)?.tenantId), 201); } catch (e) { next(e); }

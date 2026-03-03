@@ -14,8 +14,10 @@ router.get('/:id/stock-summary', authenticateUser, HasPermission([WarehousePermi
 router.put('/:id/stock', authenticateUser, HasPermission([WarehousePermissionsEnum.MANAGE_TRANSFERS]), c.updateStockLevels);
 router.get('/:id/movement', authenticateUser, HasPermission([WarehousePermissionsEnum.VIEW_WAREHOUSES]), c.getInventoryMovement);
 router.post('/:id/pick-pack', authenticateUser, HasPermission([WarehousePermissionsEnum.MANAGE_TRANSFERS]), c.pickAndPack);
+router.get('/zones', authenticateUser, HasPermission([WarehousePermissionsEnum.VIEW_WAREHOUSES]), c.getZones);
 router.post('/zones', authenticateUser, HasPermission([WarehousePermissionsEnum.MANAGE_ZONES]), c.createZone);
 router.delete('/zones/:id', authenticateUser, HasPermission([WarehousePermissionsEnum.MANAGE_ZONES]), c.deleteZone);
+router.get('/stock', authenticateUser, HasPermission([WarehousePermissionsEnum.VIEW_WAREHOUSES]), c.getStockCount);
 router.get('/transfers', authenticateUser, HasPermission([WarehousePermissionsEnum.MANAGE_TRANSFERS]), c.getTransfers);
 router.post('/transfers', authenticateUser, HasPermission([WarehousePermissionsEnum.MANAGE_TRANSFERS]), c.createTransfer);
 router.put('/transfers/:id', authenticateUser, HasPermission([WarehousePermissionsEnum.MANAGE_TRANSFERS]), c.updateTransfer);

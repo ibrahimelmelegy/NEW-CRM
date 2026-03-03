@@ -794,12 +794,12 @@ router.get(
 );
 
 router.get(
-  '/:id',
+  '/:id([0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12})',
   authenticateUser,
   HasPermission([DealPermissionsEnum.VIEW_GLOBAL_DEALS, DealPermissionsEnum.VIEW_OWN_DEALS]),
   dealController.getDealById
 );
 //** --------------------- DELETE --------------------- */
-router.delete('/:id', authenticateUser, HasPermission([DealPermissionsEnum.DELETE_DEALS]), dealController.deleteDeal);
+router.delete('/:id([0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12})', authenticateUser, HasPermission([DealPermissionsEnum.DELETE_DEALS]), dealController.deleteDeal);
 
 export default router;

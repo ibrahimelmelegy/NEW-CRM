@@ -36,7 +36,22 @@ class WarehouseService {
     return true;
   }
 
+  async getZones(query: any, tenantId?: string) {
+    const { page, limit, offset } = clampPagination(query);
+    const where: any = {};
+    if (tenantId) where.tenantId = tenantId;
+    const { rows, count } = await WarehouseZone.findAndCountAll({ where, limit, offset, order: [['createdAt', 'DESC']] });
+    return { docs: rows, pagination: { page, limit, totalItems: count, totalPages: Math.ceil(count / limit) } };
+  }
+
   async createZone(data: any, tenantId?: string) { return WarehouseZone.create({ ...data, tenantId }); }
+
+  async getStockCount(tenantId?: string) {
+    const where: any = {};
+    if (tenantId) where.tenantId = tenantId;
+    const count = await StockTransfer.count({ where });
+    return { count, total: count };
+  }
 
   async deleteZone(id: number) {
     const zone = await WarehouseZone.findByPk(id);

@@ -481,7 +481,8 @@
     "name": "الاسم",
     "type": "النوع",
     "size": "الحجم",
-    "uploadedAt": "تاريخ الرفع"
+    "uploadedAt": "تاريخ الرفع",
+    "total": "الإجمالي"
   },
   "activities": {
     "types": {
@@ -1143,7 +1144,13 @@
     "confirmSend": "هل تريد تحديد هذه الفاتورة كمرسلة؟",
     "sendInvoice": "إرسال الفاتورة",
     "confirmVoid": "إلغاء هذه الفاتورة لا يمكن التراجع عنه. هل تريد المتابعة؟",
-    "voidInvoice": "إلغاء الفاتورة"
+    "voidInvoice": "إلغاء الفاتورة",
+    "totalRevenue": "إجمالي الإيرادات",
+    "outstanding": "المتأخر",
+    "overdueCount": "متأخرة",
+    "agingReport": "تقرير تقادم الفواتير",
+    "totalOutstanding": "إجمالي المتأخر: {amount}",
+    "selectTemplate": "اختر قالب PDF"
   },
   "deals": {
     "title": "الصفقات",
@@ -10653,5 +10660,16 @@
     "auditComplete": "اكتمل التدقيق",
     "auditCompleteMsg": "اكتمل تدقيق الامتثال بنجاح. تم تحديث الدرجة.",
     "exportSuccess": "تم تصدير التقرير بنجاح"
+  },
+  "warehouse": {
+    "title": "إدارة المستودع",
+    "subtitle": "إدارة المستودعات والمناطق والمخزون وعمليات النقل.",
+    "name": "اسم المستودع",
+    "location": "الموقع",
+    "manager": "المدير",
+    "capacity": "السعة",
+    "occupancy": "الإشغال",
+    "status": "الحالة",
+    "items": "العناصر"
   }
 }
