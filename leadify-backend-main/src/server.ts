@@ -70,23 +70,21 @@ sequelize
     // Automated migration for 'descripion' typo
     await runTypoMigration(sequelize);
 
-    // Database sync — development only. Production uses migrations.
-    if (process.env.NODE_ENV === 'production') {
-      // In production, verify connection only — schema managed by migrations
-      console.log('Database connection established (production mode — migrations manage schema)');
-    } else {
-      // Development: auto-sync for convenience
-      try {
-        await sequelize.sync({ alter: true });
-        console.log('Database synced (development mode)');
-      } catch (syncErr) {
-        console.warn('sync({ alter: true }) failed, attempting basic sync:', (syncErr as Error).message);
-        try {
-          await sequelize.sync();
-        } catch (basicErr) {
-          console.warn('sync() also failed (tables likely already exist):', (basicErr as Error).message);
-        }
+    // Database schema sync — safe for both development and production.
+    // Only adds missing columns/tables, never drops or modifies existing ones.
+    try {
+      const { safeSchemaSync } = require('./infrastructure/safeSchemaSync');
+      const syncResult = await safeSchemaSync(sequelize);
+      console.log(
+        `[SchemaSync] Complete: ${syncResult.tablesChecked} tables checked, ` +
+        `${syncResult.columnsAdded} columns added, ${syncResult.tablesCreated} tables created` +
+        (syncResult.errors.length > 0 ? `, ${syncResult.errors.length} errors` : '')
+      );
+      if (syncResult.errors.length > 0) {
+        console.warn('[SchemaSync] Errors:', syncResult.errors);
       }
+    } catch (syncErr) {
+      console.warn('[SchemaSync] Failed:', (syncErr as Error).message);
     }
 
     // Add performance indexes (non-blocking - failures are logged and skipped)
