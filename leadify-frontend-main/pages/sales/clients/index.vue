@@ -155,7 +155,12 @@ const loadingAction = ref(false);
 const deleteClientPopup = ref(false);
 const deleteId = ref<string | null>(null);
 const deleting = ref(false);
+const loading = ref(false);
 const { t } = useI18n();
+
+// Data state for deals (used to calculate LTV and revenue) — must be declared BEFORE enrichedClientData
+const clientDeals = ref<any[]>([]);
+const loadingDeals = ref(true);
 
 // Export columns & data
 const exportColumns = [
@@ -365,10 +370,6 @@ const enrichedClientData = computed(() => {
 
 table.data = enrichedClientData.value as any;
 
-// Data state for deals (used to calculate LTV and revenue)
-const clientDeals = ref<any[]>([]);
-const loadingDeals = ref(true);
-
 // Load deals data for LTV and revenue calculations
 async function loadClientDeals() {
   loadingDeals.value = true;
@@ -533,7 +534,6 @@ const { vibrate } = useMobile();
 const mobileSearch = ref('');
 const mobileStatusFilter = ref('ALL');
 const mobileRefreshing = ref(false);
-const loading = ref(false);
 
 const mobileFilters = computed(() => {
   const data = table.data || [];
