@@ -6,6 +6,12 @@ div
       h1.text-2xl.font-bold(style="color: var(--text-primary)") Employees
       p.text-sm.mt-1(style="color: var(--text-muted)") Manage your organization's employees
     .flex.items-center.gap-3
+      ExportButton(
+        :data="exportData"
+        :columns="exportColumns"
+        filename="employees-export"
+        title="Employees Report"
+      )
       el-button(type="primary" size="large" class="!rounded-2xl" @click="navigateTo('/hr/employees/create')")
         Icon(name="ph:plus-bold" size="16" class="mr-1")
         span Add Employee
@@ -181,6 +187,28 @@ const pagination = ref({ page: 1, limit: 20, totalItems: 0, totalPages: 0 });
 const activeCount = computed(() => employees.value.filter(e => e.status === 'ACTIVE').length);
 const onLeaveCount = computed(() => employees.value.filter(e => e.status === 'ON_LEAVE').length);
 const probationCount = computed(() => employees.value.filter(e => e.status === 'PROBATION').length);
+
+const exportColumns = [
+  { prop: 'fullName', label: 'Name' },
+  { prop: 'employeeNumber', label: 'Employee #' },
+  { prop: 'jobTitle', label: 'Job Title' },
+  { prop: 'departmentName', label: 'Department' },
+  { prop: 'status', label: 'Status' },
+  { prop: 'email', label: 'Email' },
+  { prop: 'phone', label: 'Phone' }
+];
+
+const exportData = computed(() =>
+  employees.value.map(e => ({
+    fullName: `${e.firstName || ''} ${e.lastName || ''}`.trim(),
+    employeeNumber: e.employeeNumber || '',
+    jobTitle: e.jobTitle || '',
+    departmentName: e.department?.name || '',
+    status: getEmployeeStatusLabel(e.status),
+    email: e.email || '',
+    phone: e.phone || ''
+  }))
+);
 
 let searchTimeout: ReturnType<typeof setTimeout> | null = null;
 

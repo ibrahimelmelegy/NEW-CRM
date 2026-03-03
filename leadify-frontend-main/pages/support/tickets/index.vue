@@ -4,6 +4,12 @@ div
   .flex.items-center.justify-between.mb-8
     .title.font-bold.text-2xl.mb-1.capitalize Support Tickets
     .flex.items-center.gap-x-3
+      ExportButton(
+        :data="exportData"
+        :columns="exportColumns"
+        filename="support-tickets-export"
+        title="Support Tickets Report"
+      )
       NuxtLink(to="/support/tickets/create")
         el-button(size="large" type="primary" :icon="Plus" class="!rounded-2xl") New Ticket
 
@@ -166,6 +172,28 @@ function formatDate(dateStr: string): string {
     year: 'numeric'
   });
 }
+
+const exportColumns = [
+  { prop: 'ticketNumber', label: 'Ticket #' },
+  { prop: 'subject', label: 'Subject' },
+  { prop: 'status', label: 'Status' },
+  { prop: 'priority', label: 'Priority' },
+  { prop: 'assigneeName', label: 'Assignee' },
+  { prop: 'clientName', label: 'Client' },
+  { prop: 'createdAtFormatted', label: 'Created Date' }
+];
+
+const exportData = computed(() =>
+  tickets.value.map(t => ({
+    ticketNumber: t.ticketNumber || '',
+    subject: t.subject || '',
+    status: getStatusLabel(t.status),
+    priority: t.priority || '',
+    assigneeName: t.assignee?.name || 'Unassigned',
+    clientName: t.client?.clientName || '',
+    createdAtFormatted: formatDate(t.createdAt)
+  }))
+);
 
 onMounted(() => {
   loadTickets();

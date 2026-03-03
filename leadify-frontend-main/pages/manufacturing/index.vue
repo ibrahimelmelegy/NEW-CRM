@@ -8,6 +8,12 @@
           <p class="text-slate-400 text-sm mt-1">Bill of Materials, work orders, production planning, and quality control.</p>
         </div>
         <div class="flex gap-2">
+          <ExportButton
+            :data="exportData"
+            :columns="exportColumns"
+            filename="manufacturing-export"
+            title="Manufacturing Report"
+          />
           <el-button class="!rounded-xl" @click="showBomDialog = true">
             <Icon name="ph:tree-structure-bold" class="w-4 h-4 mr-2" />
             New BOM
@@ -396,6 +402,30 @@ const createWOFromBom = (bom: any) => {
   showWorkOrderDialog.value = true;
 };
 const viewWorkOrder = (wo: any) => ElMessage.info(`Viewing: ${wo.woNumber}`);
+
+const exportColumns = [
+  { prop: 'woNumber', label: 'WO #' },
+  { prop: 'productName', label: 'Product' },
+  { prop: 'bomCode', label: 'BOM Code' },
+  { prop: 'planned', label: 'Planned Qty' },
+  { prop: 'produced', label: 'Produced Qty' },
+  { prop: 'priority', label: 'Priority' },
+  { prop: 'status', label: 'Status' },
+  { prop: 'dueDateFormatted', label: 'Due Date' }
+];
+
+const exportData = computed(() =>
+  workOrders.value.map(w => ({
+    woNumber: w.woNumber || '',
+    productName: w.productName || '',
+    bomCode: w.bomCode || '',
+    planned: w.planned ?? '',
+    produced: w.produced ?? '',
+    priority: w.priority || '',
+    status: w.status || '',
+    dueDateFormatted: formatDate(w.dueDate)
+  }))
+);
 
 const saveBom = async () => {
   if (!newBom.value.productName) {

@@ -114,45 +114,86 @@ async function exportExcel(headers: string[], rows: string[][], baseName: string
   downloadFile(csvContent, `${baseName}.xls`, 'application/vnd.ms-excel');
 }
 
+async function loadLogoBase64(): Promise<string | null> {
+  try {
+    const response = await fetch('/assets/header-logo.png');
+    if (!response.ok) return null;
+    const blob = await response.blob();
+    return new Promise((resolve) => {
+      const reader = new FileReader();
+      reader.onloadend = () => resolve(reader.result as string);
+      reader.onerror = () => resolve(null);
+      reader.readAsDataURL(blob);
+    });
+  } catch {
+    return null;
+  }
+}
+
 async function exportPDF(headers: string[], rows: string[][], baseName: string) {
   try {
     const { default: jsPDF } = await import('jspdf');
     const autoTable = (await import('jspdf-autotable')).default;
 
+    const isLandscape = rows[0] && rows[0].length > 5;
     const doc = new jsPDF({
-      orientation: rows[0] && rows[0].length > 5 ? 'landscape' : 'portrait',
+      orientation: isLandscape ? 'landscape' : 'portrait',
       unit: 'mm',
       format: 'a4'
     });
 
-    let startY = 15;
+    const pageW = doc.internal.pageSize.getWidth();
+    const logoBase64 = await loadLogoBase64();
 
-    // Optional company header
-    if (props.companyName) {
-      doc.setFontSize(16);
+    // ─── Header band ──────────────────────────────────────────────────────
+    doc.setFillColor(120, 73, 255); // #7849ff
+    doc.rect(0, 0, pageW, 28, 'F');
+
+    // Logo (left side)
+    let logoEndX = 14;
+    if (logoBase64) {
+      try {
+        doc.addImage(logoBase64, 'PNG', 10, 4, 40, 18);
+        logoEndX = 56;
+      } catch {
+        // logo failed to load — fall back to text
+        doc.setFontSize(11);
+        doc.setFont('helvetica', 'bold');
+        doc.setTextColor(255, 255, 255);
+        doc.text('High Point Technology', 12, 17);
+        logoEndX = 70;
+      }
+    } else {
+      doc.setFontSize(11);
       doc.setFont('helvetica', 'bold');
-      doc.text(props.companyName, doc.internal.pageSize.getWidth() / 2, startY, { align: 'center' });
-      startY += 10;
+      doc.setTextColor(255, 255, 255);
+      doc.text('High Point Technology', 12, 17);
+      logoEndX = 70;
     }
 
-    // Title
+    // Report title (right side of logo)
     const title = props.title || baseName;
-    doc.setFontSize(12);
+    doc.setFontSize(14);
     doc.setFont('helvetica', 'bold');
-    doc.text(title, doc.internal.pageSize.getWidth() / 2, startY, { align: 'center' });
-    startY += 4;
+    doc.setTextColor(255, 255, 255);
+    doc.text(title, logoEndX + 4, 13);
 
-    // Date
+    // Generated date below title
     doc.setFontSize(8);
     doc.setFont('helvetica', 'normal');
-    doc.setTextColor(120, 120, 120);
+    doc.setTextColor(220, 210, 255);
     doc.text(
       `Generated: ${new Date().toLocaleDateString()} ${new Date().toLocaleTimeString()}`,
-      doc.internal.pageSize.getWidth() / 2,
-      startY,
-      { align: 'center' }
+      logoEndX + 4,
+      20
     );
-    startY += 8;
+
+    // Thin accent line below header
+    doc.setDrawColor(255, 255, 255);
+    doc.setLineWidth(0.3);
+    doc.line(0, 28, pageW, 28);
+
+    const startY = 34;
     doc.setTextColor(0, 0, 0);
 
     // Table
@@ -182,15 +223,21 @@ async function exportPDF(headers: string[], rows: string[][], baseName: string) 
       },
       margin: { left: 10, right: 10 },
       didDrawPage: (data: any) => {
-        // Footer with page number
         const pageCount = (doc as any).internal.getNumberOfPages();
+        const ph = doc.internal.pageSize.getHeight();
+        // Footer line
+        doc.setDrawColor(220, 220, 230);
+        doc.setLineWidth(0.2);
+        doc.line(10, ph - 12, pageW - 10, ph - 12);
+        // Company name left, page number right
         doc.setFontSize(7);
         doc.setTextColor(150);
+        doc.text('High Point Technology', 10, ph - 6);
         doc.text(
           `Page ${data.pageNumber} of ${pageCount}`,
-          doc.internal.pageSize.getWidth() / 2,
-          doc.internal.pageSize.getHeight() - 8,
-          { align: 'center' }
+          pageW - 10,
+          ph - 6,
+          { align: 'right' }
         );
       }
     });
