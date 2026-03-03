@@ -30,6 +30,10 @@ jobs:
         run: npm ci --legacy-peer-deps
         working-directory: leadify-frontend-main
 
+      - name: Prepare Nuxt (generates .nuxt/tsconfig.json)
+        run: npx nuxi prepare
+        working-directory: leadify-frontend-main
+
       - name: Install backend dependencies
         run: npm ci
         working-directory: leadify-backend-main
@@ -51,7 +55,7 @@ jobs:
         image: postgres:16
         env:
           POSTGRES_USER: test
-          POSTGRES_PASSWORD: test
+          POSTGRES_PASSWORD: testpass123
           POSTGRES_DB: crm_test
         ports:
           - 5432:5432
@@ -80,11 +84,12 @@ jobs:
         env:
           NODE_OPTIONS: --max-old-space-size=4096
           NODE_ENV: test
-          SECRET_KEY: ci-test-secret-key-not-for-production
+          SECRET_KEY: ci-test-secret-key-not-for-production-use-only-must-be-sixty-four-characters-long
+          ENCRYPTION_KEY: 0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef
           DB_HOST: localhost
           DB_PORT: 5432
           DB_USER: test
-          DB_PASS: test
+          DB_PASSWORD: testpass123
           DB_NAME: crm_test
 
   test-frontend:
@@ -102,6 +107,10 @@ jobs:
 
       - name: Install dependencies
         run: npm ci --legacy-peer-deps
+        working-directory: leadify-frontend-main
+
+      - name: Prepare Nuxt (generates .nuxt/tsconfig.json)
+        run: npx nuxi prepare
         working-directory: leadify-frontend-main
 
       - name: Run tests
