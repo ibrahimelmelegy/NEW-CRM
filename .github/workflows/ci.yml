@@ -128,7 +128,7 @@ jobs:
         working-directory: leadify-backend-main
 
       - name: Build backend
-        run: npm run build
+        run: npx tsc -p tsconfig.build.json
         working-directory: leadify-backend-main
         env:
           NODE_OPTIONS: --max-old-space-size=4096
