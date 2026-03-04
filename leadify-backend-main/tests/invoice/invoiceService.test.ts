@@ -191,12 +191,16 @@ describe('InvoiceService', () => {
     // --------------------------------------------------------------------------
     describe('getSummary', () => {
         it('should compute correct summary from invoices', async () => {
-            const mockInvoices = [
-                { id: 1, amount: 1000, collected: true },
-                { id: 2, amount: 2000, collected: false },
-                { id: 3, amount: 500, collected: true },
-            ];
-            (Invoice.findAll as jest.Mock<any>).mockResolvedValue(mockInvoices);
+            // getSummary uses Invoice.findOne with SQL aggregate attributes (raw: true)
+            // Sequelize returns aggregate values as strings
+            (Invoice.findOne as jest.Mock<any>).mockResolvedValue({
+                totalInvoices: '3',
+                totalAmount: '3500',
+                collectedAmount: '1500',
+                pendingAmount: '2000',
+                collectedCount: '2',
+                pendingCount: '1',
+            });
 
             const result = await invoiceService.getSummary();
 
@@ -211,7 +215,15 @@ describe('InvoiceService', () => {
         });
 
         it('should handle empty invoice list', async () => {
-            (Invoice.findAll as jest.Mock<any>).mockResolvedValue([]);
+            // When no invoices exist, Sequelize aggregate returns zeros
+            (Invoice.findOne as jest.Mock<any>).mockResolvedValue({
+                totalInvoices: '0',
+                totalAmount: '0',
+                collectedAmount: '0',
+                pendingAmount: '0',
+                collectedCount: '0',
+                pendingCount: '0',
+            });
 
             const result = await invoiceService.getSummary();
 

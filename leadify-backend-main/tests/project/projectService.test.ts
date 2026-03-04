@@ -11,6 +11,9 @@ import { ERRORS } from '../../src/utils/error/errors';
 import BaseError from '../../src/utils/error/base-http-exception';
 
 // Mocks
+jest.mock('../../src/server', () => ({
+    io: { emit: jest.fn() }
+}));
 // Mocks
 jest.mock('../../src/project/models/projectModel', () => ({
     __esModule: true,

@@ -12,7 +12,7 @@ module.exports = {
     },
     // Transform ESM modules that Jest can't parse natively
     transformIgnorePatterns: [
-        'node_modules/(?!(@scure|otplib|@otplib)/)'
+        'node_modules/(?!(@scure|otplib|@otplib|@noble)/)'
     ],
     // Module aliases (if you use them in tsconfig, add them here too)
     moduleNameMapper: {

@@ -421,16 +421,126 @@ const tooltipStyle = {
 
 // ─── Mock Data: Live Executions ─────────────────────────────
 const liveExecutions = ref([
-  { id: 'ex-001', workflowName: 'Lead Qualification Pipeline', triggerType: 'Event', status: 'running', entityType: 'Lead', entityName: 'John Smith', completedSteps: 3, totalSteps: 5, duration: '2m 34s', timestamp: '2026-02-28 14:32:01' },
-  { id: 'ex-002', workflowName: 'Deal Stage Progression', triggerType: 'Webhook', status: 'running', entityType: 'Deal', entityName: 'Enterprise SaaS License', completedSteps: 2, totalSteps: 7, duration: '1m 12s', timestamp: '2026-02-28 14:33:45' },
-  { id: 'ex-003', workflowName: 'Welcome Email Sequence', triggerType: 'Event', status: 'success', entityType: 'Contact', entityName: 'Sarah Johnson', completedSteps: 4, totalSteps: 4, duration: '45s', timestamp: '2026-02-28 14:28:10' },
-  { id: 'ex-004', workflowName: 'Invoice Generation', triggerType: 'Scheduled', status: 'success', entityType: 'Deal', entityName: 'Cloud Migration Project', completedSteps: 6, totalSteps: 6, duration: '1m 58s', timestamp: '2026-02-28 14:25:00' },
-  { id: 'ex-005', workflowName: 'Lead Score Update', triggerType: 'Event', status: 'failed', entityType: 'Lead', entityName: 'Michael Brown', completedSteps: 2, totalSteps: 4, duration: '32s', timestamp: '2026-02-28 14:20:15' },
-  { id: 'ex-006', workflowName: 'Slack Notification', triggerType: 'Webhook', status: 'success', entityType: 'Task', entityName: 'Follow-up Call', completedSteps: 3, totalSteps: 3, duration: '8s', timestamp: '2026-02-28 14:18:33' },
-  { id: 'ex-007', workflowName: 'Contract Approval Flow', triggerType: 'Manual', status: 'running', entityType: 'Deal', entityName: 'Annual Support Package', completedSteps: 4, totalSteps: 8, duration: '5m 02s', timestamp: '2026-02-28 14:15:00' },
-  { id: 'ex-008', workflowName: 'Data Enrichment', triggerType: 'Scheduled', status: 'success', entityType: 'Lead', entityName: 'Emily Davis', completedSteps: 5, totalSteps: 5, duration: '2m 11s', timestamp: '2026-02-28 14:10:22' },
-  { id: 'ex-009', workflowName: 'Task Assignment Rule', triggerType: 'Event', status: 'failed', entityType: 'Task', entityName: 'Quarterly Review Prep', completedSteps: 1, totalSteps: 3, duration: '15s', timestamp: '2026-02-28 14:08:45' },
-  { id: 'ex-010', workflowName: 'Customer Onboarding', triggerType: 'Manual', status: 'success', entityType: 'Contact', entityName: 'Robert Wilson', completedSteps: 7, totalSteps: 7, duration: '4m 30s', timestamp: '2026-02-28 14:00:00' },
+  {
+    id: 'ex-001',
+    workflowName: 'Lead Qualification Pipeline',
+    triggerType: 'Event',
+    status: 'running',
+    entityType: 'Lead',
+    entityName: 'John Smith',
+    completedSteps: 3,
+    totalSteps: 5,
+    duration: '2m 34s',
+    timestamp: '2026-02-28 14:32:01'
+  },
+  {
+    id: 'ex-002',
+    workflowName: 'Deal Stage Progression',
+    triggerType: 'Webhook',
+    status: 'running',
+    entityType: 'Deal',
+    entityName: 'Enterprise SaaS License',
+    completedSteps: 2,
+    totalSteps: 7,
+    duration: '1m 12s',
+    timestamp: '2026-02-28 14:33:45'
+  },
+  {
+    id: 'ex-003',
+    workflowName: 'Welcome Email Sequence',
+    triggerType: 'Event',
+    status: 'success',
+    entityType: 'Contact',
+    entityName: 'Sarah Johnson',
+    completedSteps: 4,
+    totalSteps: 4,
+    duration: '45s',
+    timestamp: '2026-02-28 14:28:10'
+  },
+  {
+    id: 'ex-004',
+    workflowName: 'Invoice Generation',
+    triggerType: 'Scheduled',
+    status: 'success',
+    entityType: 'Deal',
+    entityName: 'Cloud Migration Project',
+    completedSteps: 6,
+    totalSteps: 6,
+    duration: '1m 58s',
+    timestamp: '2026-02-28 14:25:00'
+  },
+  {
+    id: 'ex-005',
+    workflowName: 'Lead Score Update',
+    triggerType: 'Event',
+    status: 'failed',
+    entityType: 'Lead',
+    entityName: 'Michael Brown',
+    completedSteps: 2,
+    totalSteps: 4,
+    duration: '32s',
+    timestamp: '2026-02-28 14:20:15'
+  },
+  {
+    id: 'ex-006',
+    workflowName: 'Slack Notification',
+    triggerType: 'Webhook',
+    status: 'success',
+    entityType: 'Task',
+    entityName: 'Follow-up Call',
+    completedSteps: 3,
+    totalSteps: 3,
+    duration: '8s',
+    timestamp: '2026-02-28 14:18:33'
+  },
+  {
+    id: 'ex-007',
+    workflowName: 'Contract Approval Flow',
+    triggerType: 'Manual',
+    status: 'running',
+    entityType: 'Deal',
+    entityName: 'Annual Support Package',
+    completedSteps: 4,
+    totalSteps: 8,
+    duration: '5m 02s',
+    timestamp: '2026-02-28 14:15:00'
+  },
+  {
+    id: 'ex-008',
+    workflowName: 'Data Enrichment',
+    triggerType: 'Scheduled',
+    status: 'success',
+    entityType: 'Lead',
+    entityName: 'Emily Davis',
+    completedSteps: 5,
+    totalSteps: 5,
+    duration: '2m 11s',
+    timestamp: '2026-02-28 14:10:22'
+  },
+  {
+    id: 'ex-009',
+    workflowName: 'Task Assignment Rule',
+    triggerType: 'Event',
+    status: 'failed',
+    entityType: 'Task',
+    entityName: 'Quarterly Review Prep',
+    completedSteps: 1,
+    totalSteps: 3,
+    duration: '15s',
+    timestamp: '2026-02-28 14:08:45'
+  },
+  {
+    id: 'ex-010',
+    workflowName: 'Customer Onboarding',
+    triggerType: 'Manual',
+    status: 'success',
+    entityType: 'Contact',
+    entityName: 'Robert Wilson',
+    completedSteps: 7,
+    totalSteps: 7,
+    duration: '4m 30s',
+    timestamp: '2026-02-28 14:00:00'
+  }
 ]);
 
 const runningCount = computed(() => liveExecutions.value.filter(e => e.status === 'running').length);
@@ -445,7 +555,7 @@ function generateSteps(status: string) {
     { name: 'Email Send', input: 'template=welcome_v2', output: 'delivered' },
     { name: 'Webhook Call', input: 'POST /api/notify', output: '200 OK' },
     { name: 'Delay Wait', input: '30 minutes', output: 'completed' },
-    { name: 'Record Create', input: 'type=activity', output: 'id=act_291' },
+    { name: 'Record Create', input: 'type=activity', output: 'id=act_291' }
   ];
   const count = 3 + Math.floor(Math.random() * 5);
   const steps = [];
@@ -457,33 +567,253 @@ function generateSteps(status: string) {
       ...tpl,
       status: isFailed ? 'failed' : isRunning ? 'running' : 'success',
       duration: `${Math.floor(Math.random() * 30)}s`,
-      output: isFailed ? 'Error: timeout exceeded' : tpl!.output,
+      output: isFailed ? 'Error: timeout exceeded' : tpl!.output
     });
   }
   return steps;
 }
 
 const historyData = ref([
-  { id: 'run-a3f2b1', shortId: 'a3f2b1', workflowName: 'Lead Qualification Pipeline', triggerType: 'Event', status: 'success', duration: '1m 42s', entityType: 'Lead', entityName: 'John Smith', timestamp: '2026-02-28 14:32:01', steps: generateSteps('success') },
-  { id: 'run-b7c4d2', shortId: 'b7c4d2', workflowName: 'Deal Stage Progression', triggerType: 'Webhook', status: 'success', duration: '2m 08s', entityType: 'Deal', entityName: 'Enterprise License', timestamp: '2026-02-28 14:00:12', steps: generateSteps('success') },
-  { id: 'run-c9e5f3', shortId: 'c9e5f3', workflowName: 'Welcome Email Sequence', triggerType: 'Event', status: 'failed', duration: '45s', entityType: 'Contact', entityName: 'Sarah Johnson', timestamp: '2026-02-28 13:55:30', steps: generateSteps('failed') },
-  { id: 'run-d1g6h4', shortId: 'd1g6h4', workflowName: 'Invoice Generation', triggerType: 'Scheduled', status: 'success', duration: '1m 58s', entityType: 'Deal', entityName: 'Cloud Migration', timestamp: '2026-02-28 13:30:00', steps: generateSteps('success') },
-  { id: 'run-e2i7j5', shortId: 'e2i7j5', workflowName: 'Lead Score Update', triggerType: 'Event', status: 'failed', duration: '32s', entityType: 'Lead', entityName: 'Michael Brown', timestamp: '2026-02-28 13:20:15', steps: generateSteps('failed') },
-  { id: 'run-f3k8l6', shortId: 'f3k8l6', workflowName: 'Slack Notification', triggerType: 'Webhook', status: 'success', duration: '8s', entityType: 'Task', entityName: 'Follow-up Call', timestamp: '2026-02-28 13:15:33', steps: generateSteps('success') },
-  { id: 'run-g4m9n7', shortId: 'g4m9n7', workflowName: 'Contract Approval Flow', triggerType: 'Manual', status: 'running', duration: '5m 02s', entityType: 'Deal', entityName: 'Support Package', timestamp: '2026-02-28 13:10:00', steps: generateSteps('running') },
-  { id: 'run-h5o0p8', shortId: 'h5o0p8', workflowName: 'Data Enrichment', triggerType: 'Scheduled', status: 'success', duration: '2m 11s', entityType: 'Lead', entityName: 'Emily Davis', timestamp: '2026-02-28 12:50:22', steps: generateSteps('success') },
-  { id: 'run-i6q1r9', shortId: 'i6q1r9', workflowName: 'Task Assignment Rule', triggerType: 'Event', status: 'cancelled', duration: '15s', entityType: 'Task', entityName: 'Quarterly Review', timestamp: '2026-02-28 12:40:45', steps: generateSteps('cancelled') },
-  { id: 'run-j7s2t0', shortId: 'j7s2t0', workflowName: 'Customer Onboarding', triggerType: 'Manual', status: 'success', duration: '4m 30s', entityType: 'Contact', entityName: 'Robert Wilson', timestamp: '2026-02-28 12:30:00', steps: generateSteps('success') },
-  { id: 'run-k8u3v1', shortId: 'k8u3v1', workflowName: 'Lead Nurture Campaign', triggerType: 'Scheduled', status: 'success', duration: '3m 15s', entityType: 'Lead', entityName: 'Lisa Anderson', timestamp: '2026-02-28 11:45:00', steps: generateSteps('success') },
-  { id: 'run-l9w4x2', shortId: 'l9w4x2', workflowName: 'Deal Won Notification', triggerType: 'Event', status: 'success', duration: '12s', entityType: 'Deal', entityName: 'Premium Tier Upgrade', timestamp: '2026-02-28 11:20:33', steps: generateSteps('success') },
-  { id: 'run-m0y5z3', shortId: 'm0y5z3', workflowName: 'SLA Escalation', triggerType: 'Scheduled', status: 'failed', duration: '1m 03s', entityType: 'Ticket', entityName: 'Critical Bug #4521', timestamp: '2026-02-28 10:55:12', steps: generateSteps('failed') },
-  { id: 'run-n1a6b4', shortId: 'n1a6b4', workflowName: 'Lead Qualification Pipeline', triggerType: 'Event', status: 'success', duration: '1m 28s', entityType: 'Lead', entityName: 'James Taylor', timestamp: '2026-02-28 10:30:00', steps: generateSteps('success') },
-  { id: 'run-o2c7d5', shortId: 'o2c7d5', workflowName: 'Invoice Generation', triggerType: 'Scheduled', status: 'success', duration: '2m 22s', entityType: 'Deal', entityName: 'Data Analytics Suite', timestamp: '2026-02-28 10:00:00', steps: generateSteps('success') },
-  { id: 'run-p3e8f6', shortId: 'p3e8f6', workflowName: 'Contract Approval Flow', triggerType: 'Manual', status: 'cancelled', duration: '8m 14s', entityType: 'Deal', entityName: 'Consulting Retainer', timestamp: '2026-02-27 16:30:00', steps: generateSteps('cancelled') },
-  { id: 'run-q4g9h7', shortId: 'q4g9h7', workflowName: 'Welcome Email Sequence', triggerType: 'Event', status: 'success', duration: '38s', entityType: 'Contact', entityName: 'Maria Garcia', timestamp: '2026-02-27 15:15:00', steps: generateSteps('success') },
-  { id: 'run-r5i0j8', shortId: 'r5i0j8', workflowName: 'Data Enrichment', triggerType: 'Scheduled', status: 'failed', duration: '3m 45s', entityType: 'Lead', entityName: 'Batch Import #82', timestamp: '2026-02-27 14:00:00', steps: generateSteps('failed') },
-  { id: 'run-s6k1l9', shortId: 's6k1l9', workflowName: 'Deal Stage Progression', triggerType: 'Event', status: 'success', duration: '1m 55s', entityType: 'Deal', entityName: 'API Integration', timestamp: '2026-02-27 11:20:00', steps: generateSteps('success') },
-  { id: 'run-t7m2n0', shortId: 't7m2n0', workflowName: 'Lead Score Update', triggerType: 'Webhook', status: 'success', duration: '22s', entityType: 'Lead', entityName: 'Daniel Lee', timestamp: '2026-02-27 09:45:00', steps: generateSteps('success') },
+  {
+    id: 'run-a3f2b1',
+    shortId: 'a3f2b1',
+    workflowName: 'Lead Qualification Pipeline',
+    triggerType: 'Event',
+    status: 'success',
+    duration: '1m 42s',
+    entityType: 'Lead',
+    entityName: 'John Smith',
+    timestamp: '2026-02-28 14:32:01',
+    steps: generateSteps('success')
+  },
+  {
+    id: 'run-b7c4d2',
+    shortId: 'b7c4d2',
+    workflowName: 'Deal Stage Progression',
+    triggerType: 'Webhook',
+    status: 'success',
+    duration: '2m 08s',
+    entityType: 'Deal',
+    entityName: 'Enterprise License',
+    timestamp: '2026-02-28 14:00:12',
+    steps: generateSteps('success')
+  },
+  {
+    id: 'run-c9e5f3',
+    shortId: 'c9e5f3',
+    workflowName: 'Welcome Email Sequence',
+    triggerType: 'Event',
+    status: 'failed',
+    duration: '45s',
+    entityType: 'Contact',
+    entityName: 'Sarah Johnson',
+    timestamp: '2026-02-28 13:55:30',
+    steps: generateSteps('failed')
+  },
+  {
+    id: 'run-d1g6h4',
+    shortId: 'd1g6h4',
+    workflowName: 'Invoice Generation',
+    triggerType: 'Scheduled',
+    status: 'success',
+    duration: '1m 58s',
+    entityType: 'Deal',
+    entityName: 'Cloud Migration',
+    timestamp: '2026-02-28 13:30:00',
+    steps: generateSteps('success')
+  },
+  {
+    id: 'run-e2i7j5',
+    shortId: 'e2i7j5',
+    workflowName: 'Lead Score Update',
+    triggerType: 'Event',
+    status: 'failed',
+    duration: '32s',
+    entityType: 'Lead',
+    entityName: 'Michael Brown',
+    timestamp: '2026-02-28 13:20:15',
+    steps: generateSteps('failed')
+  },
+  {
+    id: 'run-f3k8l6',
+    shortId: 'f3k8l6',
+    workflowName: 'Slack Notification',
+    triggerType: 'Webhook',
+    status: 'success',
+    duration: '8s',
+    entityType: 'Task',
+    entityName: 'Follow-up Call',
+    timestamp: '2026-02-28 13:15:33',
+    steps: generateSteps('success')
+  },
+  {
+    id: 'run-g4m9n7',
+    shortId: 'g4m9n7',
+    workflowName: 'Contract Approval Flow',
+    triggerType: 'Manual',
+    status: 'running',
+    duration: '5m 02s',
+    entityType: 'Deal',
+    entityName: 'Support Package',
+    timestamp: '2026-02-28 13:10:00',
+    steps: generateSteps('running')
+  },
+  {
+    id: 'run-h5o0p8',
+    shortId: 'h5o0p8',
+    workflowName: 'Data Enrichment',
+    triggerType: 'Scheduled',
+    status: 'success',
+    duration: '2m 11s',
+    entityType: 'Lead',
+    entityName: 'Emily Davis',
+    timestamp: '2026-02-28 12:50:22',
+    steps: generateSteps('success')
+  },
+  {
+    id: 'run-i6q1r9',
+    shortId: 'i6q1r9',
+    workflowName: 'Task Assignment Rule',
+    triggerType: 'Event',
+    status: 'cancelled',
+    duration: '15s',
+    entityType: 'Task',
+    entityName: 'Quarterly Review',
+    timestamp: '2026-02-28 12:40:45',
+    steps: generateSteps('cancelled')
+  },
+  {
+    id: 'run-j7s2t0',
+    shortId: 'j7s2t0',
+    workflowName: 'Customer Onboarding',
+    triggerType: 'Manual',
+    status: 'success',
+    duration: '4m 30s',
+    entityType: 'Contact',
+    entityName: 'Robert Wilson',
+    timestamp: '2026-02-28 12:30:00',
+    steps: generateSteps('success')
+  },
+  {
+    id: 'run-k8u3v1',
+    shortId: 'k8u3v1',
+    workflowName: 'Lead Nurture Campaign',
+    triggerType: 'Scheduled',
+    status: 'success',
+    duration: '3m 15s',
+    entityType: 'Lead',
+    entityName: 'Lisa Anderson',
+    timestamp: '2026-02-28 11:45:00',
+    steps: generateSteps('success')
+  },
+  {
+    id: 'run-l9w4x2',
+    shortId: 'l9w4x2',
+    workflowName: 'Deal Won Notification',
+    triggerType: 'Event',
+    status: 'success',
+    duration: '12s',
+    entityType: 'Deal',
+    entityName: 'Premium Tier Upgrade',
+    timestamp: '2026-02-28 11:20:33',
+    steps: generateSteps('success')
+  },
+  {
+    id: 'run-m0y5z3',
+    shortId: 'm0y5z3',
+    workflowName: 'SLA Escalation',
+    triggerType: 'Scheduled',
+    status: 'failed',
+    duration: '1m 03s',
+    entityType: 'Ticket',
+    entityName: 'Critical Bug #4521',
+    timestamp: '2026-02-28 10:55:12',
+    steps: generateSteps('failed')
+  },
+  {
+    id: 'run-n1a6b4',
+    shortId: 'n1a6b4',
+    workflowName: 'Lead Qualification Pipeline',
+    triggerType: 'Event',
+    status: 'success',
+    duration: '1m 28s',
+    entityType: 'Lead',
+    entityName: 'James Taylor',
+    timestamp: '2026-02-28 10:30:00',
+    steps: generateSteps('success')
+  },
+  {
+    id: 'run-o2c7d5',
+    shortId: 'o2c7d5',
+    workflowName: 'Invoice Generation',
+    triggerType: 'Scheduled',
+    status: 'success',
+    duration: '2m 22s',
+    entityType: 'Deal',
+    entityName: 'Data Analytics Suite',
+    timestamp: '2026-02-28 10:00:00',
+    steps: generateSteps('success')
+  },
+  {
+    id: 'run-p3e8f6',
+    shortId: 'p3e8f6',
+    workflowName: 'Contract Approval Flow',
+    triggerType: 'Manual',
+    status: 'cancelled',
+    duration: '8m 14s',
+    entityType: 'Deal',
+    entityName: 'Consulting Retainer',
+    timestamp: '2026-02-27 16:30:00',
+    steps: generateSteps('cancelled')
+  },
+  {
+    id: 'run-q4g9h7',
+    shortId: 'q4g9h7',
+    workflowName: 'Welcome Email Sequence',
+    triggerType: 'Event',
+    status: 'success',
+    duration: '38s',
+    entityType: 'Contact',
+    entityName: 'Maria Garcia',
+    timestamp: '2026-02-27 15:15:00',
+    steps: generateSteps('success')
+  },
+  {
+    id: 'run-r5i0j8',
+    shortId: 'r5i0j8',
+    workflowName: 'Data Enrichment',
+    triggerType: 'Scheduled',
+    status: 'failed',
+    duration: '3m 45s',
+    entityType: 'Lead',
+    entityName: 'Batch Import #82',
+    timestamp: '2026-02-27 14:00:00',
+    steps: generateSteps('failed')
+  },
+  {
+    id: 'run-s6k1l9',
+    shortId: 's6k1l9',
+    workflowName: 'Deal Stage Progression',
+    triggerType: 'Event',
+    status: 'success',
+    duration: '1m 55s',
+    entityType: 'Deal',
+    entityName: 'API Integration',
+    timestamp: '2026-02-27 11:20:00',
+    steps: generateSteps('success')
+  },
+  {
+    id: 'run-t7m2n0',
+    shortId: 't7m2n0',
+    workflowName: 'Lead Score Update',
+    triggerType: 'Webhook',
+    status: 'success',
+    duration: '22s',
+    entityType: 'Lead',
+    entityName: 'Daniel Lee',
+    timestamp: '2026-02-27 09:45:00',
+    steps: generateSteps('success')
+  }
 ]);
 
 const filteredHistory = computed(() => {
@@ -501,16 +831,87 @@ function onExpandChange(row: any, expandedList: any[]) {
 
 // ─── Mock Data: Error Logs ──────────────────────────────────
 const errorLogs = ref([
-  { id: 'err-001', timestamp: '2026-02-28 14:20:15', workflowName: 'Lead Score Update', failedStep: 'API Call: Scoring Service', errorMessage: 'ECONNREFUSED: Connection refused to scoring-api.internal:8443. The upstream service appears to be down or unreachable from the workflow engine.', retryCount: 2 },
-  { id: 'err-002', timestamp: '2026-02-28 13:55:30', workflowName: 'Welcome Email Sequence', failedStep: 'Email Send', errorMessage: 'ValidationError: Email template "welcome_v3" not found. Template may have been deleted or renamed.', retryCount: 0 },
-  { id: 'err-003', timestamp: '2026-02-28 10:55:12', workflowName: 'SLA Escalation', failedStep: 'Permission Check', errorMessage: 'PermissionDenied: Service account lacks "tickets.escalate" permission on resource "ticket:4521".', retryCount: 1 },
-  { id: 'err-004', timestamp: '2026-02-27 14:00:00', workflowName: 'Data Enrichment', failedStep: 'Batch Process', errorMessage: 'TimeoutError: Batch enrichment exceeded 180s timeout limit. 342 of 500 records processed before timeout.', retryCount: 3 },
-  { id: 'err-005', timestamp: '2026-02-27 09:12:00', workflowName: 'Invoice Generation', failedStep: 'PDF Render', errorMessage: 'TypeError: Cannot read property "lineItems" of undefined. Deal object missing required pricing data.', retryCount: 1 },
-  { id: 'err-006', timestamp: '2026-02-26 18:30:00', workflowName: 'Slack Notification', failedStep: 'Webhook Delivery', errorMessage: 'HTTPError: Slack API returned 429 Too Many Requests. Rate limit exceeded, retry after 30 seconds.', retryCount: 2 },
-  { id: 'err-007', timestamp: '2026-02-26 15:22:00', workflowName: 'Contract Approval Flow', failedStep: 'Condition Evaluation', errorMessage: 'ReferenceError: Variable "deal.customField.approvalThreshold" is not defined in workflow context.', retryCount: 0 },
-  { id: 'err-008', timestamp: '2026-02-26 11:05:00', workflowName: 'Lead Qualification Pipeline', failedStep: 'Data Fetch', errorMessage: 'DatabaseError: Connection pool exhausted. Max connections (20) reached. Consider increasing pool size.', retryCount: 2 },
-  { id: 'err-009', timestamp: '2026-02-25 16:40:00', workflowName: 'Task Assignment Rule', failedStep: 'User Lookup', errorMessage: 'NotFoundError: Assignee user_id "usr_deleted_291" no longer exists in the system.', retryCount: 0 },
-  { id: 'err-010', timestamp: '2026-02-25 10:15:00', workflowName: 'Customer Onboarding', failedStep: 'CRM Sync', errorMessage: 'ConflictError: Duplicate record detected. Contact with email "robert@example.com" already exists (id: con_1847).', retryCount: 1 },
+  {
+    id: 'err-001',
+    timestamp: '2026-02-28 14:20:15',
+    workflowName: 'Lead Score Update',
+    failedStep: 'API Call: Scoring Service',
+    errorMessage:
+      'ECONNREFUSED: Connection refused to scoring-api.internal:8443. The upstream service appears to be down or unreachable from the workflow engine.',
+    retryCount: 2
+  },
+  {
+    id: 'err-002',
+    timestamp: '2026-02-28 13:55:30',
+    workflowName: 'Welcome Email Sequence',
+    failedStep: 'Email Send',
+    errorMessage: 'ValidationError: Email template "welcome_v3" not found. Template may have been deleted or renamed.',
+    retryCount: 0
+  },
+  {
+    id: 'err-003',
+    timestamp: '2026-02-28 10:55:12',
+    workflowName: 'SLA Escalation',
+    failedStep: 'Permission Check',
+    errorMessage: 'PermissionDenied: Service account lacks "tickets.escalate" permission on resource "ticket:4521".',
+    retryCount: 1
+  },
+  {
+    id: 'err-004',
+    timestamp: '2026-02-27 14:00:00',
+    workflowName: 'Data Enrichment',
+    failedStep: 'Batch Process',
+    errorMessage: 'TimeoutError: Batch enrichment exceeded 180s timeout limit. 342 of 500 records processed before timeout.',
+    retryCount: 3
+  },
+  {
+    id: 'err-005',
+    timestamp: '2026-02-27 09:12:00',
+    workflowName: 'Invoice Generation',
+    failedStep: 'PDF Render',
+    errorMessage: 'TypeError: Cannot read property "lineItems" of undefined. Deal object missing required pricing data.',
+    retryCount: 1
+  },
+  {
+    id: 'err-006',
+    timestamp: '2026-02-26 18:30:00',
+    workflowName: 'Slack Notification',
+    failedStep: 'Webhook Delivery',
+    errorMessage: 'HTTPError: Slack API returned 429 Too Many Requests. Rate limit exceeded, retry after 30 seconds.',
+    retryCount: 2
+  },
+  {
+    id: 'err-007',
+    timestamp: '2026-02-26 15:22:00',
+    workflowName: 'Contract Approval Flow',
+    failedStep: 'Condition Evaluation',
+    errorMessage: 'ReferenceError: Variable "deal.customField.approvalThreshold" is not defined in workflow context.',
+    retryCount: 0
+  },
+  {
+    id: 'err-008',
+    timestamp: '2026-02-26 11:05:00',
+    workflowName: 'Lead Qualification Pipeline',
+    failedStep: 'Data Fetch',
+    errorMessage: 'DatabaseError: Connection pool exhausted. Max connections (20) reached. Consider increasing pool size.',
+    retryCount: 2
+  },
+  {
+    id: 'err-009',
+    timestamp: '2026-02-25 16:40:00',
+    workflowName: 'Task Assignment Rule',
+    failedStep: 'User Lookup',
+    errorMessage: 'NotFoundError: Assignee user_id "usr_deleted_291" no longer exists in the system.',
+    retryCount: 0
+  },
+  {
+    id: 'err-010',
+    timestamp: '2026-02-25 10:15:00',
+    workflowName: 'Customer Onboarding',
+    failedStep: 'CRM Sync',
+    errorMessage: 'ConflictError: Duplicate record detected. Contact with email "robert@example.com" already exists (id: con_1847).',
+    retryCount: 1
+  }
 ]);
 
 // ─── Mock Data: Performance ─────────────────────────────────
@@ -521,7 +922,7 @@ const slowWorkflows = ref([
     p95Time: '12m 18s',
     executionCount: 234,
     suggestion: 'Consider parallelizing approval steps or adding auto-approve rules for low-value contracts.',
-    rankColor: '#ef4444',
+    rankColor: '#ef4444'
   },
   {
     name: 'Data Enrichment',
@@ -529,7 +930,7 @@ const slowWorkflows = ref([
     p95Time: '8m 05s',
     executionCount: 512,
     suggestion: 'Batch API calls instead of sequential requests. Use caching for frequently queried domains.',
-    rankColor: '#f59e0b',
+    rankColor: '#f59e0b'
   },
   {
     name: 'Customer Onboarding',
@@ -537,8 +938,8 @@ const slowWorkflows = ref([
     p95Time: '5m 30s',
     executionCount: 178,
     suggestion: 'Pre-compute welcome templates and reduce external API dependencies in the onboarding flow.',
-    rankColor: '#3b82f6',
-  },
+    rankColor: '#3b82f6'
+  }
 ]);
 
 // ─── KPI Cards ──────────────────────────────────────────────
@@ -548,29 +949,29 @@ const kpiCards = computed(() => [
     value: '24',
     icon: 'ph:git-merge-bold',
     color: '#7849ff',
-    trend: 12,
+    trend: 12
   },
   {
     label: t('workflowMonitor.executions24h', 'Executions 24h'),
     value: '1,847',
     icon: 'ph:lightning-bold',
     color: '#3b82f6',
-    trend: 8.3,
+    trend: 8.3
   },
   {
     label: t('workflowMonitor.successRate', 'Success Rate'),
     value: '96.2%',
     icon: 'ph:check-circle-bold',
     color: '#22c55e',
-    trend: 1.4,
+    trend: 1.4
   },
   {
     label: t('workflowMonitor.avgExecutionTime', 'Avg Execution Time'),
     value: '1m 24s',
     icon: 'ph:timer-bold',
     color: '#f59e0b',
-    trend: -5.2,
-  },
+    trend: -5.2
+  }
 ]);
 
 // ─── Helpers ────────────────────────────────────────────────
@@ -586,31 +987,46 @@ function truncateText(text: string, maxLen: number): string {
 
 function getStatusColor(status: string): string {
   switch (status) {
-    case 'running': return '#3b82f6';
-    case 'success': return '#22c55e';
-    case 'failed': return '#ef4444';
-    case 'cancelled': return '#6b7280';
-    default: return '#94a3b8';
+    case 'running':
+      return '#3b82f6';
+    case 'success':
+      return '#22c55e';
+    case 'failed':
+      return '#ef4444';
+    case 'cancelled':
+      return '#6b7280';
+    default:
+      return '#94a3b8';
   }
 }
 
 function getStatusTagType(status: string): string {
   switch (status) {
-    case 'running': return '';
-    case 'success': return 'success';
-    case 'failed': return 'danger';
-    case 'cancelled': return 'info';
-    default: return 'info';
+    case 'running':
+      return '';
+    case 'success':
+      return 'success';
+    case 'failed':
+      return 'danger';
+    case 'cancelled':
+      return 'info';
+    default:
+      return 'info';
   }
 }
 
 function getTriggerTagType(trigger: string): string {
   switch (trigger) {
-    case 'Manual': return 'warning';
-    case 'Scheduled': return 'info';
-    case 'Event': return '';
-    case 'Webhook': return 'success';
-    default: return 'info';
+    case 'Manual':
+      return 'warning';
+    case 'Scheduled':
+      return 'info';
+    case 'Event':
+      return '';
+    case 'Webhook':
+      return 'success';
+    default:
+      return 'info';
   }
 }
 
@@ -648,7 +1064,10 @@ function startAutoRefresh() {
         if (parts) {
           let mins = parseInt(parts[1] || '0');
           let secs = parseInt(parts[2] || '0') + 5;
-          if (secs >= 60) { mins++; secs -= 60; }
+          if (secs >= 60) {
+            mins++;
+            secs -= 60;
+          }
           exec.duration = `${mins}m ${secs.toString().padStart(2, '0')}s`;
         }
       }
@@ -678,14 +1097,14 @@ const errorCategoryChartOption = computed(() => {
     { name: t('workflowMonitor.validationError', 'Validation Error'), value: 25, color: '#f59e0b' },
     { name: t('workflowMonitor.apiError', 'API Error'), value: 32, color: '#3b82f6' },
     { name: t('workflowMonitor.permissionDenied', 'Permission Denied'), value: 12, color: '#8b5cf6' },
-    { name: t('workflowMonitor.other', 'Other'), value: 13, color: '#6b7280' },
+    { name: t('workflowMonitor.other', 'Other'), value: 13, color: '#6b7280' }
   ];
 
   return {
     tooltip: {
       trigger: 'item',
       ...tooltipStyle,
-      formatter: (params: any) => `${params.marker} ${params.name}: ${params.value} (${params.percent}%)`,
+      formatter: (params: any) => `${params.marker} ${params.name}: ${params.value} (${params.percent}%)`
     },
     legend: {
       orient: 'vertical',
@@ -694,7 +1113,7 @@ const errorCategoryChartOption = computed(() => {
       textStyle: { color: '#94A3B8', fontSize: 12 },
       icon: 'circle',
       itemWidth: 10,
-      itemHeight: 10,
+      itemHeight: 10
     },
     series: [
       {
@@ -710,26 +1129,26 @@ const errorCategoryChartOption = computed(() => {
           formatter: () => `${categories.reduce((s, c) => s + c.value, 0)}`,
           fontSize: 28,
           fontWeight: 'bold',
-          color: '#94A3B8',
+          color: '#94A3B8'
         },
         emphasis: {
           label: {
             show: true,
             fontSize: 14,
             fontWeight: 'bold',
-            formatter: '{b}\n{c} errors',
-          },
+            formatter: '{b}\n{c} errors'
+          }
         },
         labelLine: { show: false },
         data: categories.map(c => ({
           name: c.name,
           value: c.value,
-          itemStyle: { color: c.color },
-        })),
-      },
+          itemStyle: { color: c.color }
+        }))
+      }
     ],
     animationDuration: 800,
-    animationEasing: 'cubicOut',
+    animationEasing: 'cubicOut'
   };
 });
 
@@ -761,19 +1180,15 @@ const executionTimeTrendOption = computed(() => {
           result += `${p.marker} ${p.seriesName}: ${p.value}s<br/>`;
         });
         return result;
-      },
+      }
     },
     legend: {
-      data: [
-        t('workflowMonitor.average', 'Average'),
-        t('workflowMonitor.p95', 'P95'),
-        t('workflowMonitor.p99', 'P99'),
-      ],
+      data: [t('workflowMonitor.average', 'Average'), t('workflowMonitor.p95', 'P95'), t('workflowMonitor.p99', 'P99')],
       textStyle: { color: '#94A3B8' },
       bottom: 0,
       icon: 'roundRect',
       itemWidth: 14,
-      itemHeight: 8,
+      itemHeight: 8
     },
     grid: { top: 30, right: 30, bottom: 50, left: 20, containLabel: true },
     xAxis: {
@@ -781,14 +1196,14 @@ const executionTimeTrendOption = computed(() => {
       data: days,
       axisLabel: { color: '#94A3B8', fontSize: 11, interval: 4 },
       axisLine: { lineStyle: { color: 'rgba(255,255,255,0.08)' } },
-      axisTick: { show: false },
+      axisTick: { show: false }
     },
     yAxis: {
       type: 'value',
       name: 'Seconds',
       nameTextStyle: { color: '#64748B' },
       splitLine: { lineStyle: { type: 'dashed', color: 'rgba(255,255,255,0.05)' } },
-      axisLabel: { color: '#64748B', formatter: '{value}s' },
+      axisLabel: { color: '#64748B', formatter: '{value}s' }
     },
     series: [
       {
@@ -803,9 +1218,9 @@ const executionTimeTrendOption = computed(() => {
         areaStyle: {
           color: new graphic.LinearGradient(0, 0, 0, 1, [
             { offset: 0, color: 'rgba(59, 130, 246, 0.2)' },
-            { offset: 1, color: 'rgba(59, 130, 246, 0)' },
-          ]),
-        },
+            { offset: 1, color: 'rgba(59, 130, 246, 0)' }
+          ])
+        }
       },
       {
         name: t('workflowMonitor.p95', 'P95'),
@@ -815,7 +1230,7 @@ const executionTimeTrendOption = computed(() => {
         symbol: 'circle',
         symbolSize: 4,
         lineStyle: { width: 2, color: '#f59e0b', type: 'dashed' },
-        itemStyle: { color: '#f59e0b' },
+        itemStyle: { color: '#f59e0b' }
       },
       {
         name: t('workflowMonitor.p99', 'P99'),
@@ -825,11 +1240,11 @@ const executionTimeTrendOption = computed(() => {
         symbol: 'circle',
         symbolSize: 4,
         lineStyle: { width: 2, color: '#ef4444', type: 'dotted' },
-        itemStyle: { color: '#ef4444' },
-      },
+        itemStyle: { color: '#ef4444' }
+      }
     ],
     animationDuration: 1200,
-    animationEasing: 'cubicOut',
+    animationEasing: 'cubicOut'
   };
 });
 
@@ -856,7 +1271,7 @@ const throughputChartOption = computed(() => {
     tooltip: {
       trigger: 'axis',
       ...tooltipStyle,
-      formatter: (params: any) => `<strong>${params[0]?.axisValue}</strong><br/>Executions: ${params[0]?.value}`,
+      formatter: (params: any) => `<strong>${params[0]?.axisValue}</strong><br/>Executions: ${params[0]?.value}`
     },
     grid: { top: 20, right: 20, bottom: 30, left: 20, containLabel: true },
     xAxis: {
@@ -864,12 +1279,12 @@ const throughputChartOption = computed(() => {
       data: hours,
       axisLabel: { color: '#94A3B8', fontSize: 10, interval: 3 },
       axisLine: { lineStyle: { color: 'rgba(255,255,255,0.08)' } },
-      axisTick: { show: false },
+      axisTick: { show: false }
     },
     yAxis: {
       type: 'value',
       splitLine: { lineStyle: { type: 'dashed', color: 'rgba(255,255,255,0.05)' } },
-      axisLabel: { color: '#64748B' },
+      axisLabel: { color: '#64748B' }
     },
     series: [
       {
@@ -879,16 +1294,16 @@ const throughputChartOption = computed(() => {
           itemStyle: {
             color: new graphic.LinearGradient(0, 0, 0, 1, [
               { offset: 0, color: '#7849ff' },
-              { offset: 1, color: 'rgba(120, 73, 255, 0.3)' },
+              { offset: 1, color: 'rgba(120, 73, 255, 0.3)' }
             ]),
-            borderRadius: [4, 4, 0, 0],
-          },
+            borderRadius: [4, 4, 0, 0]
+          }
         })),
         barWidth: '60%',
         animationDuration: 800,
-        animationEasing: 'cubicOut',
-      },
-    ],
+        animationEasing: 'cubicOut'
+      }
+    ]
   };
 });
 
@@ -897,14 +1312,14 @@ const statusDistributionOption = computed(() => {
   const statuses = [
     { name: t('workflowMonitor.success', 'Success'), value: 1776, color: '#22c55e' },
     { name: t('workflowMonitor.failed', 'Failed'), value: 52, color: '#ef4444' },
-    { name: t('workflowMonitor.cancelled', 'Cancelled'), value: 19, color: '#6b7280' },
+    { name: t('workflowMonitor.cancelled', 'Cancelled'), value: 19, color: '#6b7280' }
   ];
 
   return {
     tooltip: {
       trigger: 'item',
       ...tooltipStyle,
-      formatter: (params: any) => `${params.marker} ${params.name}: ${params.value} (${params.percent}%)`,
+      formatter: (params: any) => `${params.marker} ${params.name}: ${params.value} (${params.percent}%)`
     },
     legend: {
       orient: 'horizontal',
@@ -912,7 +1327,7 @@ const statusDistributionOption = computed(() => {
       textStyle: { color: '#94A3B8', fontSize: 12 },
       icon: 'circle',
       itemWidth: 10,
-      itemHeight: 10,
+      itemHeight: 10
     },
     series: [
       {
@@ -928,26 +1343,26 @@ const statusDistributionOption = computed(() => {
           formatter: () => `${statuses.reduce((s, c) => s + c.value, 0)}`,
           fontSize: 28,
           fontWeight: 'bold',
-          color: '#94A3B8',
+          color: '#94A3B8'
         },
         emphasis: {
           label: {
             show: true,
             fontSize: 14,
             fontWeight: 'bold',
-            formatter: '{b}\n{c} runs',
-          },
+            formatter: '{b}\n{c} runs'
+          }
         },
         labelLine: { show: false },
         data: statuses.map(s => ({
           name: s.name,
           value: s.value,
-          itemStyle: { color: s.color },
-        })),
-      },
+          itemStyle: { color: s.color }
+        }))
+      }
     ],
     animationDuration: 800,
-    animationEasing: 'cubicOut',
+    animationEasing: 'cubicOut'
   };
 });
 
@@ -1110,7 +1525,8 @@ onUnmounted(() => {
 }
 
 @keyframes pulse-blue {
-  0%, 100% {
+  0%,
+  100% {
     box-shadow: 0 0 0 0 rgba(59, 130, 246, 0.5);
   }
   50% {
@@ -1119,7 +1535,8 @@ onUnmounted(() => {
 }
 
 @keyframes pulse-white {
-  0%, 100% {
+  0%,
+  100% {
     opacity: 1;
   }
   50% {
