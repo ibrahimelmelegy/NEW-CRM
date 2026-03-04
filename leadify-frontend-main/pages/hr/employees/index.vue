@@ -115,12 +115,29 @@ div
   //- Grid View
   template(v-else-if="viewMode === 'grid'")
     .grid.gap-4(class="grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4" v-if="employees.length")
-      HREmployeeCard(
-        v-for="emp in employees"
-        :key="emp.id"
-        :employee="emp"
-        @click="navigateTo(`/hr/employees/${emp.id}`)"
-      )
+      .relative(v-for="emp in employees" :key="emp.id")
+        HREmployeeCard(
+          :employee="emp"
+          @click="navigateTo(`/hr/employees/${emp.id}`)"
+        )
+        .absolute.top-2.right-2(@click.stop)
+          el-dropdown(trigger="click")
+            el-button(text circle size="small")
+              Icon(name="ph:dots-three-vertical-bold" size="16")
+            template(#dropdown)
+              el-dropdown-menu
+                el-dropdown-item(@click="navigateTo(`/hr/employees/${emp.id}`)")
+                  .flex.items-center.gap-2
+                    Icon(name="ph:eye-bold" size="16")
+                    span {{ $t('common.view') }}
+                el-dropdown-item(@click="navigateTo(`/hr/employees/${emp.id}`)")
+                  .flex.items-center.gap-2
+                    Icon(name="ph:pencil-bold" size="16")
+                    span {{ $t('common.edit') }}
+                el-dropdown-item(@click="handleDeleteClick(emp.id)")
+                  .flex.items-center.gap-2
+                    Icon(name="ph:trash-bold" size="16" style="color: #ef4444")
+                    span(style="color: #ef4444") {{ $t('common.delete') }}
     .text-center.py-12(v-else)
       Icon(name="ph:users-bold" size="48" style="color: var(--text-muted)")
       p.mt-2(style="color: var(--text-muted)") {{ $t('hr.employees.noEmployeesFound') }}
@@ -152,6 +169,25 @@ div
         el-table-column(prop="phone" :label="$t('hr.employees.phone')" width="140")
           template(#default="{ row }")
             span.text-sm(style="color: var(--text-muted)") {{ row.phone || '---' }}
+        el-table-column(label="" width="80" align="center")
+          template(#default="{ row }")
+            el-dropdown(trigger="click" @click.stop)
+              el-button(text circle)
+                Icon(name="ph:dots-three-vertical-bold" size="18")
+              template(#dropdown)
+                el-dropdown-menu
+                  el-dropdown-item(@click.stop="navigateTo(`/hr/employees/${row.id}`)")
+                    .flex.items-center.gap-2
+                      Icon(name="ph:eye-bold" size="16")
+                      span {{ $t('common.view') }}
+                  el-dropdown-item(@click.stop="navigateTo(`/hr/employees/${row.id}`)")
+                    .flex.items-center.gap-2
+                      Icon(name="ph:pencil-bold" size="16")
+                      span {{ $t('common.edit') }}
+                  el-dropdown-item(@click.stop="handleDeleteClick(row.id)")
+                    .flex.items-center.gap-2
+                      Icon(name="ph:trash-bold" size="16" style="color: #ef4444")
+                      span(style="color: #ef4444") {{ $t('common.delete') }}
     .text-center.py-12(v-else)
       Icon(name="ph:users-bold" size="48" style="color: var(--text-muted)")
       p.mt-2(style="color: var(--text-muted)") {{ $t('hr.employees.noEmployeesFound') }}
@@ -165,10 +201,13 @@ div
       layout="prev, pager, next"
       @current-change="handlePageChange"
     )
+
+  ActionModel(v-model="deletePopup" :loading="deleting" :description="$t('common.confirmDelete')" @confirm="confirmDelete")
 </template>
 
 <script setup lang="ts">
-import { fetchEmployees, fetchDepartments, EMPLOYEE_STATUSES, getEmployeeStatusType, getEmployeeStatusLabel } from '~/composables/useEmployees';
+import { ElMessage } from 'element-plus';
+import { fetchEmployees, fetchDepartments, deleteEmployee, EMPLOYEE_STATUSES, getEmployeeStatusType, getEmployeeStatusLabel } from '~/composables/useEmployees';
 import type { Employee, DepartmentItem } from '~/composables/useEmployees';
 
 definePageMeta({ middleware: 'permissions' });
@@ -184,6 +223,10 @@ const currentPage = ref(1);
 const employees = ref<Employee[]>([]);
 const departments = ref<DepartmentItem[]>([]);
 const pagination = ref({ page: 1, limit: 20, totalItems: 0, totalPages: 0 });
+
+const deletePopup = ref(false);
+const deleting = ref(false);
+const deleteTargetId = ref<string | null>(null);
 
 const activeCount = computed(() => employees.value.filter(e => e.status === 'ACTIVE').length);
 const onLeaveCount = computed(() => employees.value.filter(e => e.status === 'ON_LEAVE').length);
@@ -243,6 +286,29 @@ async function loadEmployees() {
 function handlePageChange(page: number) {
   currentPage.value = page;
   loadEmployees();
+}
+
+function handleDeleteClick(id: string) {
+  deleteTargetId.value = id;
+  deletePopup.value = true;
+}
+
+async function confirmDelete() {
+  if (!deleteTargetId.value) return;
+  deleting.value = true;
+  try {
+    const res = await deleteEmployee(deleteTargetId.value);
+    if (res.success) {
+      employees.value = employees.value.filter(e => e.id !== deleteTargetId.value);
+      ElMessage.success(t('common.deleted'));
+    } else {
+      ElMessage.error(t('common.error'));
+    }
+  } finally {
+    deleting.value = false;
+    deletePopup.value = false;
+    deleteTargetId.value = null;
+  }
 }
 
 // Initial load

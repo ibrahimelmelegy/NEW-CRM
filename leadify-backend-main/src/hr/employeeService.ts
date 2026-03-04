@@ -107,6 +107,13 @@ class EmployeeService {
     return employee;
   }
 
+  async deleteEmployee(id: string) {
+    const employee = await Employee.findByPk(id);
+    if (!employee) throw new BaseError(ERRORS.NOT_FOUND, 404, 'Employee not found');
+    await employee.destroy();
+    return { deleted: true };
+  }
+
   async getOrgChart() {
     const employees = await Employee.findAll({
       attributes: ['id', 'firstName', 'lastName', 'jobTitle', 'managerId', 'departmentId', 'status'],

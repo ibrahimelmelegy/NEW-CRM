@@ -128,7 +128,7 @@ import {
 
 definePageMeta({ middleware: 'permissions' });
 const router = useRouter();
-const { t } = useI18n();
+const { t, locale } = useI18n();
 
 const loading = ref(false);
 const payments = ref<PaymentItem[]>([]);
@@ -224,12 +224,12 @@ function methodLabel(method: string): string {
 }
 
 function formatCurrency(amount: number): string {
-  return new Intl.NumberFormat('en-US', { style: 'currency', currency: 'SAR', minimumFractionDigits: 2 }).format(amount || 0);
+  return new Intl.NumberFormat(locale.value, { style: 'currency', currency: 'SAR', minimumFractionDigits: 2 }).format(amount || 0);
 }
 
 function formatDate(dateStr: string): string {
   if (!dateStr) return '-';
-  return new Date(dateStr).toLocaleDateString('en-US', { year: 'numeric', month: 'short', day: 'numeric' });
+  return new Date(dateStr).toLocaleDateString(locale.value, { year: 'numeric', month: 'short', day: 'numeric' });
 }
 
 // Initial load

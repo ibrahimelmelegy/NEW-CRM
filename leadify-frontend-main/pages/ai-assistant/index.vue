@@ -139,28 +139,28 @@
         <div class="space-y-2">
           <button
             class="w-full p-3 rounded-lg bg-slate-800/50 hover:bg-slate-700/50 transition text-left flex items-center gap-3"
-            @click="sendMessage('Generate a follow-up email for my latest deals')"
+            @click="sendMessage(t('aiAssistant.emailGeneratorPrompt'))"
           >
             <Icon name="ph:envelope-simple-bold" class="w-4 h-4 text-blue-400" />
             <span class="text-sm text-slate-400">{{ $t('aiAssistant.emailGenerator') }}</span>
           </button>
           <button
             class="w-full p-3 rounded-lg bg-slate-800/50 hover:bg-slate-700/50 transition text-left flex items-center gap-3"
-            @click="sendMessage('Analyze my sales pipeline health')"
+            @click="sendMessage(t('aiAssistant.pipelineAnalysisPrompt'))"
           >
             <Icon name="ph:chart-line-bold" class="w-4 h-4 text-emerald-400" />
             <span class="text-sm text-slate-400">{{ $t('aiAssistant.pipelineAnalysis') }}</span>
           </button>
           <button
             class="w-full p-3 rounded-lg bg-slate-800/50 hover:bg-slate-700/50 transition text-left flex items-center gap-3"
-            @click="sendMessage('Show me leads at risk of churning')"
+            @click="sendMessage(t('aiAssistant.churnPredictionPrompt'))"
           >
             <Icon name="ph:warning-bold" class="w-4 h-4 text-amber-400" />
             <span class="text-sm text-slate-400">{{ $t('aiAssistant.churnPrediction') }}</span>
           </button>
           <button
             class="w-full p-3 rounded-lg bg-slate-800/50 hover:bg-slate-700/50 transition text-left flex items-center gap-3"
-            @click="sendMessage('Give me coaching tips for my current deals')"
+            @click="sendMessage(t('aiAssistant.salesCoachPrompt'))"
           >
             <Icon name="ph:graduation-cap-bold" class="w-4 h-4 text-purple-400" />
             <span class="text-sm text-slate-400">{{ $t('aiAssistant.salesCoach') }}</span>

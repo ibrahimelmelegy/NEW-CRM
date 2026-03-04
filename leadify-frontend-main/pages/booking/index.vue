@@ -246,7 +246,7 @@ definePageMeta({
   middleware: 'permissions'
 });
 
-const { t } = useI18n();
+const { t, locale } = useI18n();
 const config = useRuntimeConfig();
 
 const TYPE_COLORS: Record<string, string> = {
@@ -405,11 +405,11 @@ const noShowRate = computed(() => {
 });
 
 const currentDateLabel = computed(() => {
-  return currentDate.value.toLocaleDateString('en', { weekday: 'long', month: 'long', day: 'numeric', year: 'numeric' });
+  return currentDate.value.toLocaleDateString(locale.value, { weekday: 'long', month: 'long', day: 'numeric', year: 'numeric' });
 });
 
-const formatHour = (h: number) => `${h > 12 ? h - 12 : h}:00 ${h >= 12 ? 'PM' : 'AM'}`;
-const formatDate = (d: string) => (d ? new Date(d).toLocaleDateString('en', { weekday: 'short', month: 'short', day: 'numeric' }) : '-');
+const formatHour = (h: number) => `${h > 12 ? h - 12 : h}:00 ${h >= 12 ? t('common.pm') : t('common.am')}`;
+const formatDate = (d: string) => (d ? new Date(d).toLocaleDateString(locale.value, { weekday: 'short', month: 'short', day: 'numeric' }) : '-');
 
 const getBookingsForHour = (hour: number) => {
   const dateStr = toDateString(currentDate.value);
@@ -502,6 +502,14 @@ function renderCharts() {
 const createBooking = async () => {
   if (!newBooking.value.clientName) {
     ElMessage.warning(t('booking.clientRequired'));
+    return;
+  }
+  if (!newBooking.value.date) {
+    ElMessage.warning(t('booking.dateRequired'));
+    return;
+  }
+  if (!newBooking.value.time) {
+    ElMessage.warning(t('booking.timeRequired'));
     return;
   }
 

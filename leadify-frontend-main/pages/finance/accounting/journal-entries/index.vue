@@ -92,7 +92,7 @@ import type { JournalEntryItem } from '~/composables/useAccounting';
 
 definePageMeta({ middleware: 'permissions' });
 const router = useRouter();
-const { t } = useI18n();
+const { t, locale } = useI18n();
 
 const loading = ref(false);
 const entries = ref<JournalEntryItem[]>([]);
@@ -144,11 +144,11 @@ function sourceTypeLabel(sourceType: string): string {
 
 function formatDate(dateStr: string): string {
   if (!dateStr) return '-';
-  return new Date(dateStr).toLocaleDateString('en-US', { year: 'numeric', month: 'short', day: 'numeric' });
+  return new Date(dateStr).toLocaleDateString(locale.value, { year: 'numeric', month: 'short', day: 'numeric' });
 }
 
 function formatCurrency(amount: number): string {
-  return new Intl.NumberFormat('en-US', { style: 'decimal', minimumFractionDigits: 2, maximumFractionDigits: 2 }).format(amount || 0);
+  return new Intl.NumberFormat(locale.value, { style: 'decimal', minimumFractionDigits: 2, maximumFractionDigits: 2 }).format(amount || 0);
 }
 
 async function loadEntries() {

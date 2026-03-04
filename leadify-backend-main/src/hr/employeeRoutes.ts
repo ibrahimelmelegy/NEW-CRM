@@ -302,6 +302,31 @@ router.get('/employees/:id', authenticateUser, HasPermission([EmployeePermission
  */
 router.put('/employees/:id', authenticateUser, HasPermission([EmployeePermissionsEnum.EDIT_EMPLOYEES]), employeeController.updateEmployee);
 
+/**
+ * @swagger
+ * /api/hr/employees/{id}:
+ *   delete:
+ *     summary: Delete an employee
+ *     tags: [Employee]
+ *     security:
+ *       - bearerAuth: []
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         schema:
+ *           type: string
+ *           format: uuid
+ *     responses:
+ *       200:
+ *         description: Employee deleted
+ *       404:
+ *         description: Employee not found
+ *       500:
+ *         description: Server error
+ */
+router.delete('/employees/:id', authenticateUser, HasPermission([EmployeePermissionsEnum.EDIT_EMPLOYEES]), employeeController.deleteEmployee);
+
 // ─── Direct Reports ───────────────────────────────────────────────────────────
 
 /**

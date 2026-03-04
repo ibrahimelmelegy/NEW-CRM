@@ -85,6 +85,15 @@ class EmployeeController {
       next(error);
     }
   }
+
+  async deleteEmployee(req: AuthenticatedRequest, res: Response, next: NextFunction) {
+    try {
+      const result = await employeeService.deleteEmployee(req.params.id as string);
+      wrapResult(res, result);
+    } catch (error) {
+      next(error);
+    }
+  }
 }
 
 export default new EmployeeController();

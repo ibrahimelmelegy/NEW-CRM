@@ -116,6 +116,10 @@ export async function updateEmployee(id: string, data: Partial<Employee>) {
   return useApiFetch(`hr/employees/${id}`, 'PUT', data as Record<string, unknown>);
 }
 
+export async function deleteEmployee(id: string) {
+  return useApiFetch(`hr/employees/${id}`, 'DELETE');
+}
+
 // Org Chart
 export async function fetchOrgChart(): Promise<OrgChartNode[]> {
   const { body, success } = await useApiFetch('hr/org-chart');

@@ -318,6 +318,16 @@ const logActivity = async () => {
     ElMessage.warning(t('common.fillRequired'));
     return;
   }
+  if (newActivity.value.type === 'CALL') {
+    if (!newActivity.value.phoneNumber) {
+      ElMessage.warning(t('communications.phoneNumberRequired'));
+      return;
+    }
+    if (!newActivity.value.outcome) {
+      ElMessage.warning(t('communications.outcomeRequired'));
+      return;
+    }
+  }
   saving.value = true;
   const res: any = await useApiFetch('communications/activities', 'POST', {
     ...newActivity.value
