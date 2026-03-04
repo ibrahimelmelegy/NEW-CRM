@@ -66,10 +66,10 @@ div
 import { ElNotification, ElMessageBox } from 'element-plus';
 import { useI18n } from 'vue-i18n';
 import type { FormInstance, FormRules } from 'element-plus';
-
-const { t } = useI18n();
 import { fetchChartOfAccounts, createAccount, updateAccount, deleteAccount, seedDefaultAccounts, AccountType } from '~/composables/useAccounting';
 import type { ChartOfAccountsItem } from '~/composables/useAccounting';
+
+const { t } = useI18n();
 
 definePageMeta({ middleware: 'permissions' });
 

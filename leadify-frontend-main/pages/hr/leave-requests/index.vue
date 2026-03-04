@@ -330,16 +330,12 @@ async function handleMobileRefresh() {
 
 function getSwipeRightActions(request: any) {
   if (request.status !== 'PENDING') return [];
-  return [
-    { name: 'approve', label: t('hr.leave.approve'), icon: 'ph:check-circle-bold', color: '#22c55e' }
-  ];
+  return [{ name: 'approve', label: t('hr.leave.approve'), icon: 'ph:check-circle-bold', color: '#22c55e' }];
 }
 
 function getSwipeLeftActions(request: any) {
   if (request.status !== 'PENDING') return [];
-  return [
-    { name: 'reject', label: t('hr.leave.reject'), icon: 'ph:x-circle-bold', color: '#ef4444' }
-  ];
+  return [{ name: 'reject', label: t('hr.leave.reject'), icon: 'ph:x-circle-bold', color: '#ef4444' }];
 }
 
 function handleSwipeAction(name: string, request: any) {

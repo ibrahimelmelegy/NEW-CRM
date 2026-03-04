@@ -438,9 +438,10 @@
 </template>
 
 <script setup lang="ts">
+/* eslint-disable no-use-before-define */
 import { ElNotification, ElMessageBox } from 'element-plus';
 import VChart from 'vue-echarts';
-import { graphic } from 'echarts';
+import { graphic } from 'echarts/core';
 
 definePageMeta({ title: 'Customer Journey Builder' });
 
@@ -586,9 +587,7 @@ const stageColorOptions = [
 ];
 
 // ── Computed: KPIs ───────────────────────────────────────
-const activeJourneysCount = computed(() =>
-  journeys.value.filter(j => j.status === 'active').length
-);
+const activeJourneysCount = computed(() => journeys.value.filter(j => j.status === 'active').length);
 
 const avgCompletionRate = computed(() => {
   const active = journeys.value.filter(j => j.status === 'active');
@@ -623,13 +622,9 @@ const paginatedJourneys = computed(() => {
 });
 
 // ── Computed: Designer Stages ────────────────────────────
-const selectedJourneyData = computed(() =>
-  journeys.value.find(j => j.id === selectedDesignerJourney.value) || null
-);
+const selectedJourneyData = computed(() => journeys.value.find(j => j.id === selectedDesignerJourney.value) || null);
 
-const designerStages = computed(() =>
-  selectedJourneyData.value?.stages || []
-);
+const designerStages = computed(() => selectedJourneyData.value?.stages || []);
 
 // ── Computed: Touchpoint Stats ───────────────────────────
 const touchpointStats = computed<TouchpointStat[]>(() => {
@@ -783,9 +778,7 @@ const channelChartOption = computed(() => {
       extraCssText: 'backdrop-filter: blur(12px); border-radius: 12px;',
       formatter: (params: any) => {
         const p = params[0];
-        const label = channelMetric.value === 'engagement'
-          ? t('journeyBuilder.engagementRate')
-          : t('journeyBuilder.conversionRate');
+        const label = channelMetric.value === 'engagement' ? t('journeyBuilder.engagementRate') : t('journeyBuilder.conversionRate');
         return `<strong>${p.name}</strong><br/>${label}: <strong>${p.value}%</strong>`;
       }
     },
@@ -906,14 +899,18 @@ function toggleJourneyStatus(journey: Journey) {
 }
 
 function deleteJourney(journey: Journey) {
-  ElMessageBox.confirm(
-    t('journeyBuilder.deleteJourneyConfirm', { name: journey.name }),
-    t('journeyBuilder.delete'),
-    { type: 'warning', confirmButtonText: t('journeyBuilder.delete'), cancelButtonText: t('journeyBuilder.cancel') }
-  ).then(() => {
-    journeys.value = journeys.value.filter(j => j.id !== journey.id);
-    ElNotification({ type: 'success', title: t('journeyBuilder.deleted'), message: t('journeyBuilder.journeyDeleted') });
-  }).catch(() => { /* cancelled */ });
+  ElMessageBox.confirm(t('journeyBuilder.deleteJourneyConfirm', { name: journey.name }), t('journeyBuilder.delete'), {
+    type: 'warning',
+    confirmButtonText: t('journeyBuilder.delete'),
+    cancelButtonText: t('journeyBuilder.cancel')
+  })
+    .then(() => {
+      journeys.value = journeys.value.filter(j => j.id !== journey.id);
+      ElNotification({ type: 'success', title: t('journeyBuilder.deleted'), message: t('journeyBuilder.journeyDeleted') });
+    })
+    .catch(() => {
+      /* cancelled */
+    });
 }
 
 function saveJourney() {
@@ -937,24 +934,33 @@ function saveJourney() {
           id: 'stg-' + Date.now() + '-' + i,
           name,
           description: t('journeyBuilder.stageDefaultDesc', { name }),
-          icon: ['ph:envelope-bold', 'ph:browser-bold', 'ph:presentation-chart-bold', 'ph:test-tube-bold', 'ph:shopping-cart-bold', 'ph:handshake-bold'][i % 6]!,
+          icon: [
+            'ph:envelope-bold',
+            'ph:browser-bold',
+            'ph:presentation-chart-bold',
+            'ph:test-tube-bold',
+            'ph:shopping-cart-bold',
+            'ph:handshake-bold'
+          ][i % 6]!,
           color: ['#7849ff', '#3b82f6', '#22c55e', '#f59e0b', '#ef4444', '#06b6d4'][i % 6]!,
           rulesCount: Math.floor(Math.random() * 5) + 1,
           contactsInStage: 0,
           throughputRate: 0,
           isActive: false
         }))
-      : [{
-          id: 'stg-' + Date.now(),
-          name: t('journeyBuilder.initialContact'),
-          description: t('journeyBuilder.initialContactDesc'),
-          icon: 'ph:envelope-bold',
-          color: '#7849ff',
-          rulesCount: 2,
-          contactsInStage: 0,
-          throughputRate: 0,
-          isActive: false
-        }];
+      : [
+          {
+            id: 'stg-' + Date.now(),
+            name: t('journeyBuilder.initialContact'),
+            description: t('journeyBuilder.initialContactDesc'),
+            icon: 'ph:envelope-bold',
+            color: '#7849ff',
+            rulesCount: 2,
+            contactsInStage: 0,
+            throughputRate: 0,
+            isActive: false
+          }
+        ];
 
     const newJourney: Journey = {
       id: 'j-' + Date.now(),
@@ -1185,11 +1191,61 @@ function seedJourneys() {
       conversionRate: 34,
       lastModified: new Date(now.getTime() - 2 * 86400000).toISOString(),
       stages: [
-        { id: 'stg-1-1', name: t('journeyBuilder.welcomeEmail'), description: t('journeyBuilder.welcomeEmailDesc'), icon: 'ph:envelope-bold', color: '#7849ff', rulesCount: 3, contactsInStage: 180, throughputRate: 92, isActive: true },
-        { id: 'stg-1-2', name: t('journeyBuilder.productIntro'), description: t('journeyBuilder.productIntroDesc'), icon: 'ph:package-bold', color: '#3b82f6', rulesCount: 2, contactsInStage: 320, throughputRate: 78, isActive: true },
-        { id: 'stg-1-3', name: t('journeyBuilder.featureHighlight'), description: t('journeyBuilder.featureHighlightDesc'), icon: 'ph:star-bold', color: '#22c55e', rulesCount: 4, contactsInStage: 260, throughputRate: 65, isActive: true },
-        { id: 'stg-1-4', name: t('journeyBuilder.socialProof'), description: t('journeyBuilder.socialProofDesc'), icon: 'ph:users-three-bold', color: '#f59e0b', rulesCount: 2, contactsInStage: 185, throughputRate: 52, isActive: false },
-        { id: 'stg-1-5', name: t('journeyBuilder.activationCTA'), description: t('journeyBuilder.activationCTADesc'), icon: 'ph:cursor-click-bold', color: '#ef4444', rulesCount: 5, contactsInStage: 300, throughputRate: 34, isActive: false }
+        {
+          id: 'stg-1-1',
+          name: t('journeyBuilder.welcomeEmail'),
+          description: t('journeyBuilder.welcomeEmailDesc'),
+          icon: 'ph:envelope-bold',
+          color: '#7849ff',
+          rulesCount: 3,
+          contactsInStage: 180,
+          throughputRate: 92,
+          isActive: true
+        },
+        {
+          id: 'stg-1-2',
+          name: t('journeyBuilder.productIntro'),
+          description: t('journeyBuilder.productIntroDesc'),
+          icon: 'ph:package-bold',
+          color: '#3b82f6',
+          rulesCount: 2,
+          contactsInStage: 320,
+          throughputRate: 78,
+          isActive: true
+        },
+        {
+          id: 'stg-1-3',
+          name: t('journeyBuilder.featureHighlight'),
+          description: t('journeyBuilder.featureHighlightDesc'),
+          icon: 'ph:star-bold',
+          color: '#22c55e',
+          rulesCount: 4,
+          contactsInStage: 260,
+          throughputRate: 65,
+          isActive: true
+        },
+        {
+          id: 'stg-1-4',
+          name: t('journeyBuilder.socialProof'),
+          description: t('journeyBuilder.socialProofDesc'),
+          icon: 'ph:users-three-bold',
+          color: '#f59e0b',
+          rulesCount: 2,
+          contactsInStage: 185,
+          throughputRate: 52,
+          isActive: false
+        },
+        {
+          id: 'stg-1-5',
+          name: t('journeyBuilder.activationCTA'),
+          description: t('journeyBuilder.activationCTADesc'),
+          icon: 'ph:cursor-click-bold',
+          color: '#ef4444',
+          rulesCount: 5,
+          contactsInStage: 300,
+          throughputRate: 34,
+          isActive: false
+        }
       ]
     },
     {
@@ -1205,12 +1261,72 @@ function seedJourneys() {
       conversionRate: 28,
       lastModified: new Date(now.getTime() - 5 * 86400000).toISOString(),
       stages: [
-        { id: 'stg-2-1', name: t('journeyBuilder.accountSetup'), description: t('journeyBuilder.accountSetupDesc'), icon: 'ph:gear-six-bold', color: '#7849ff', rulesCount: 4, contactsInStage: 45, throughputRate: 95, isActive: true },
-        { id: 'stg-2-2', name: t('journeyBuilder.profileComplete'), description: t('journeyBuilder.profileCompleteDesc'), icon: 'ph:user-circle-bold', color: '#3b82f6', rulesCount: 3, contactsInStage: 82, throughputRate: 80, isActive: true },
-        { id: 'stg-2-3', name: t('journeyBuilder.firstAction'), description: t('journeyBuilder.firstActionDesc'), icon: 'ph:cursor-click-bold', color: '#22c55e', rulesCount: 5, contactsInStage: 120, throughputRate: 62, isActive: true },
-        { id: 'stg-2-4', name: t('journeyBuilder.guidedTour'), description: t('journeyBuilder.guidedTourDesc'), icon: 'ph:compass-bold', color: '#f59e0b', rulesCount: 2, contactsInStage: 95, throughputRate: 48, isActive: false },
-        { id: 'stg-2-5', name: t('journeyBuilder.teamInvite'), description: t('journeyBuilder.teamInviteDesc'), icon: 'ph:users-bold', color: '#06b6d4', rulesCount: 3, contactsInStage: 68, throughputRate: 35, isActive: false },
-        { id: 'stg-2-6', name: t('journeyBuilder.successMilestone'), description: t('journeyBuilder.successMilestoneDesc'), icon: 'ph:trophy-bold', color: '#ef4444', rulesCount: 2, contactsInStage: 46, throughputRate: 28, isActive: false }
+        {
+          id: 'stg-2-1',
+          name: t('journeyBuilder.accountSetup'),
+          description: t('journeyBuilder.accountSetupDesc'),
+          icon: 'ph:gear-six-bold',
+          color: '#7849ff',
+          rulesCount: 4,
+          contactsInStage: 45,
+          throughputRate: 95,
+          isActive: true
+        },
+        {
+          id: 'stg-2-2',
+          name: t('journeyBuilder.profileComplete'),
+          description: t('journeyBuilder.profileCompleteDesc'),
+          icon: 'ph:user-circle-bold',
+          color: '#3b82f6',
+          rulesCount: 3,
+          contactsInStage: 82,
+          throughputRate: 80,
+          isActive: true
+        },
+        {
+          id: 'stg-2-3',
+          name: t('journeyBuilder.firstAction'),
+          description: t('journeyBuilder.firstActionDesc'),
+          icon: 'ph:cursor-click-bold',
+          color: '#22c55e',
+          rulesCount: 5,
+          contactsInStage: 120,
+          throughputRate: 62,
+          isActive: true
+        },
+        {
+          id: 'stg-2-4',
+          name: t('journeyBuilder.guidedTour'),
+          description: t('journeyBuilder.guidedTourDesc'),
+          icon: 'ph:compass-bold',
+          color: '#f59e0b',
+          rulesCount: 2,
+          contactsInStage: 95,
+          throughputRate: 48,
+          isActive: false
+        },
+        {
+          id: 'stg-2-5',
+          name: t('journeyBuilder.teamInvite'),
+          description: t('journeyBuilder.teamInviteDesc'),
+          icon: 'ph:users-bold',
+          color: '#06b6d4',
+          rulesCount: 3,
+          contactsInStage: 68,
+          throughputRate: 35,
+          isActive: false
+        },
+        {
+          id: 'stg-2-6',
+          name: t('journeyBuilder.successMilestone'),
+          description: t('journeyBuilder.successMilestoneDesc'),
+          icon: 'ph:trophy-bold',
+          color: '#ef4444',
+          rulesCount: 2,
+          contactsInStage: 46,
+          throughputRate: 28,
+          isActive: false
+        }
       ]
     },
     {
@@ -1226,10 +1342,50 @@ function seedJourneys() {
       conversionRate: 18,
       lastModified: new Date(now.getTime() - 8 * 86400000).toISOString(),
       stages: [
-        { id: 'stg-3-1', name: t('journeyBuilder.missYouEmail'), description: t('journeyBuilder.missYouEmailDesc'), icon: 'ph:envelope-bold', color: '#3b82f6', rulesCount: 2, contactsInStage: 350, throughputRate: 88, isActive: true },
-        { id: 'stg-3-2', name: t('journeyBuilder.specialOffer'), description: t('journeyBuilder.specialOfferDesc'), icon: 'ph:gift-bold', color: '#f59e0b', rulesCount: 3, contactsInStage: 280, throughputRate: 55, isActive: true },
-        { id: 'stg-3-3', name: t('journeyBuilder.personalOutreach'), description: t('journeyBuilder.personalOutreachDesc'), icon: 'ph:phone-bold', color: '#22c55e', rulesCount: 4, contactsInStage: 162, throughputRate: 32, isActive: false },
-        { id: 'stg-3-4', name: t('journeyBuilder.reactivationCTA'), description: t('journeyBuilder.reactivationCTADesc'), icon: 'ph:cursor-click-bold', color: '#ef4444', rulesCount: 2, contactsInStage: 100, throughputRate: 18, isActive: false }
+        {
+          id: 'stg-3-1',
+          name: t('journeyBuilder.missYouEmail'),
+          description: t('journeyBuilder.missYouEmailDesc'),
+          icon: 'ph:envelope-bold',
+          color: '#3b82f6',
+          rulesCount: 2,
+          contactsInStage: 350,
+          throughputRate: 88,
+          isActive: true
+        },
+        {
+          id: 'stg-3-2',
+          name: t('journeyBuilder.specialOffer'),
+          description: t('journeyBuilder.specialOfferDesc'),
+          icon: 'ph:gift-bold',
+          color: '#f59e0b',
+          rulesCount: 3,
+          contactsInStage: 280,
+          throughputRate: 55,
+          isActive: true
+        },
+        {
+          id: 'stg-3-3',
+          name: t('journeyBuilder.personalOutreach'),
+          description: t('journeyBuilder.personalOutreachDesc'),
+          icon: 'ph:phone-bold',
+          color: '#22c55e',
+          rulesCount: 4,
+          contactsInStage: 162,
+          throughputRate: 32,
+          isActive: false
+        },
+        {
+          id: 'stg-3-4',
+          name: t('journeyBuilder.reactivationCTA'),
+          description: t('journeyBuilder.reactivationCTADesc'),
+          icon: 'ph:cursor-click-bold',
+          color: '#ef4444',
+          rulesCount: 2,
+          contactsInStage: 100,
+          throughputRate: 18,
+          isActive: false
+        }
       ]
     },
     {
@@ -1245,11 +1401,61 @@ function seedJourneys() {
       conversionRate: 22,
       lastModified: new Date(now.getTime() - 12 * 86400000).toISOString(),
       stages: [
-        { id: 'stg-4-1', name: t('journeyBuilder.usageAnalysis'), description: t('journeyBuilder.usageAnalysisDesc'), icon: 'ph:chart-line-bold', color: '#7849ff', rulesCount: 5, contactsInStage: 120, throughputRate: 75, isActive: false },
-        { id: 'stg-4-2', name: t('journeyBuilder.featureTeaser'), description: t('journeyBuilder.featureTeaserDesc'), icon: 'ph:sparkle-bold', color: '#3b82f6', rulesCount: 3, contactsInStage: 88, throughputRate: 58, isActive: false },
-        { id: 'stg-4-3', name: t('journeyBuilder.caseStudy'), description: t('journeyBuilder.caseStudyDesc'), icon: 'ph:book-open-bold', color: '#22c55e', rulesCount: 2, contactsInStage: 65, throughputRate: 42, isActive: false },
-        { id: 'stg-4-4', name: t('journeyBuilder.upgradeOffer'), description: t('journeyBuilder.upgradeOfferDesc'), icon: 'ph:crown-bold', color: '#f59e0b', rulesCount: 4, contactsInStage: 30, throughputRate: 28, isActive: false },
-        { id: 'stg-4-5', name: t('journeyBuilder.consultationBook'), description: t('journeyBuilder.consultationBookDesc'), icon: 'ph:calendar-check-bold', color: '#06b6d4', rulesCount: 2, contactsInStage: 21, throughputRate: 22, isActive: false }
+        {
+          id: 'stg-4-1',
+          name: t('journeyBuilder.usageAnalysis'),
+          description: t('journeyBuilder.usageAnalysisDesc'),
+          icon: 'ph:chart-line-bold',
+          color: '#7849ff',
+          rulesCount: 5,
+          contactsInStage: 120,
+          throughputRate: 75,
+          isActive: false
+        },
+        {
+          id: 'stg-4-2',
+          name: t('journeyBuilder.featureTeaser'),
+          description: t('journeyBuilder.featureTeaserDesc'),
+          icon: 'ph:sparkle-bold',
+          color: '#3b82f6',
+          rulesCount: 3,
+          contactsInStage: 88,
+          throughputRate: 58,
+          isActive: false
+        },
+        {
+          id: 'stg-4-3',
+          name: t('journeyBuilder.caseStudy'),
+          description: t('journeyBuilder.caseStudyDesc'),
+          icon: 'ph:book-open-bold',
+          color: '#22c55e',
+          rulesCount: 2,
+          contactsInStage: 65,
+          throughputRate: 42,
+          isActive: false
+        },
+        {
+          id: 'stg-4-4',
+          name: t('journeyBuilder.upgradeOffer'),
+          description: t('journeyBuilder.upgradeOfferDesc'),
+          icon: 'ph:crown-bold',
+          color: '#f59e0b',
+          rulesCount: 4,
+          contactsInStage: 30,
+          throughputRate: 28,
+          isActive: false
+        },
+        {
+          id: 'stg-4-5',
+          name: t('journeyBuilder.consultationBook'),
+          description: t('journeyBuilder.consultationBookDesc'),
+          icon: 'ph:calendar-check-bold',
+          color: '#06b6d4',
+          rulesCount: 2,
+          contactsInStage: 21,
+          throughputRate: 22,
+          isActive: false
+        }
       ]
     },
     {
@@ -1265,10 +1471,50 @@ function seedJourneys() {
       conversionRate: 65,
       lastModified: new Date(now.getTime() - 1 * 86400000).toISOString(),
       stages: [
-        { id: 'stg-5-1', name: t('journeyBuilder.renewalReminder'), description: t('journeyBuilder.renewalReminderDesc'), icon: 'ph:bell-bold', color: '#06b6d4', rulesCount: 2, contactsInStage: 110, throughputRate: 96, isActive: true },
-        { id: 'stg-5-2', name: t('journeyBuilder.valueSummary'), description: t('journeyBuilder.valueSummaryDesc'), icon: 'ph:chart-pie-bold', color: '#7849ff', rulesCount: 3, contactsInStage: 165, throughputRate: 88, isActive: true },
-        { id: 'stg-5-3', name: t('journeyBuilder.renewalOffer'), description: t('journeyBuilder.renewalOfferDesc'), icon: 'ph:tag-bold', color: '#22c55e', rulesCount: 4, contactsInStage: 180, throughputRate: 75, isActive: true },
-        { id: 'stg-5-4', name: t('journeyBuilder.renewalConfirm'), description: t('journeyBuilder.renewalConfirmDesc'), icon: 'ph:check-circle-bold', color: '#f59e0b', rulesCount: 2, contactsInStage: 112, throughputRate: 65, isActive: false }
+        {
+          id: 'stg-5-1',
+          name: t('journeyBuilder.renewalReminder'),
+          description: t('journeyBuilder.renewalReminderDesc'),
+          icon: 'ph:bell-bold',
+          color: '#06b6d4',
+          rulesCount: 2,
+          contactsInStage: 110,
+          throughputRate: 96,
+          isActive: true
+        },
+        {
+          id: 'stg-5-2',
+          name: t('journeyBuilder.valueSummary'),
+          description: t('journeyBuilder.valueSummaryDesc'),
+          icon: 'ph:chart-pie-bold',
+          color: '#7849ff',
+          rulesCount: 3,
+          contactsInStage: 165,
+          throughputRate: 88,
+          isActive: true
+        },
+        {
+          id: 'stg-5-3',
+          name: t('journeyBuilder.renewalOffer'),
+          description: t('journeyBuilder.renewalOfferDesc'),
+          icon: 'ph:tag-bold',
+          color: '#22c55e',
+          rulesCount: 4,
+          contactsInStage: 180,
+          throughputRate: 75,
+          isActive: true
+        },
+        {
+          id: 'stg-5-4',
+          name: t('journeyBuilder.renewalConfirm'),
+          description: t('journeyBuilder.renewalConfirmDesc'),
+          icon: 'ph:check-circle-bold',
+          color: '#f59e0b',
+          rulesCount: 2,
+          contactsInStage: 112,
+          throughputRate: 65,
+          isActive: false
+        }
       ]
     },
     {
@@ -1284,11 +1530,61 @@ function seedJourneys() {
       conversionRate: 0,
       lastModified: new Date(now.getTime() - 0.5 * 86400000).toISOString(),
       stages: [
-        { id: 'stg-6-1', name: t('journeyBuilder.exitSurvey'), description: t('journeyBuilder.exitSurveyDesc'), icon: 'ph:clipboard-text-bold', color: '#ef4444', rulesCount: 3, contactsInStage: 0, throughputRate: 0, isActive: false },
-        { id: 'stg-6-2', name: t('journeyBuilder.feedbackReview'), description: t('journeyBuilder.feedbackReviewDesc'), icon: 'ph:magnifying-glass-bold', color: '#3b82f6', rulesCount: 2, contactsInStage: 0, throughputRate: 0, isActive: false },
-        { id: 'stg-6-3', name: t('journeyBuilder.specialIncentive'), description: t('journeyBuilder.specialIncentiveDesc'), icon: 'ph:gift-bold', color: '#f59e0b', rulesCount: 4, contactsInStage: 0, throughputRate: 0, isActive: false },
-        { id: 'stg-6-4', name: t('journeyBuilder.personalCall'), description: t('journeyBuilder.personalCallDesc'), icon: 'ph:phone-bold', color: '#22c55e', rulesCount: 2, contactsInStage: 0, throughputRate: 0, isActive: false },
-        { id: 'stg-6-5', name: t('journeyBuilder.returnOffer'), description: t('journeyBuilder.returnOfferDesc'), icon: 'ph:arrow-u-up-left-bold', color: '#7849ff', rulesCount: 3, contactsInStage: 0, throughputRate: 0, isActive: false }
+        {
+          id: 'stg-6-1',
+          name: t('journeyBuilder.exitSurvey'),
+          description: t('journeyBuilder.exitSurveyDesc'),
+          icon: 'ph:clipboard-text-bold',
+          color: '#ef4444',
+          rulesCount: 3,
+          contactsInStage: 0,
+          throughputRate: 0,
+          isActive: false
+        },
+        {
+          id: 'stg-6-2',
+          name: t('journeyBuilder.feedbackReview'),
+          description: t('journeyBuilder.feedbackReviewDesc'),
+          icon: 'ph:magnifying-glass-bold',
+          color: '#3b82f6',
+          rulesCount: 2,
+          contactsInStage: 0,
+          throughputRate: 0,
+          isActive: false
+        },
+        {
+          id: 'stg-6-3',
+          name: t('journeyBuilder.specialIncentive'),
+          description: t('journeyBuilder.specialIncentiveDesc'),
+          icon: 'ph:gift-bold',
+          color: '#f59e0b',
+          rulesCount: 4,
+          contactsInStage: 0,
+          throughputRate: 0,
+          isActive: false
+        },
+        {
+          id: 'stg-6-4',
+          name: t('journeyBuilder.personalCall'),
+          description: t('journeyBuilder.personalCallDesc'),
+          icon: 'ph:phone-bold',
+          color: '#22c55e',
+          rulesCount: 2,
+          contactsInStage: 0,
+          throughputRate: 0,
+          isActive: false
+        },
+        {
+          id: 'stg-6-5',
+          name: t('journeyBuilder.returnOffer'),
+          description: t('journeyBuilder.returnOfferDesc'),
+          icon: 'ph:arrow-u-up-left-bold',
+          color: '#7849ff',
+          rulesCount: 3,
+          contactsInStage: 0,
+          throughputRate: 0,
+          isActive: false
+        }
       ]
     }
   ];
@@ -1304,7 +1600,9 @@ async function loadDeals() {
       const data = body as any;
       allDeals.value = data.docs || data || [];
     }
-  } catch { /* silent */ }
+  } catch {
+    /* silent */
+  }
 }
 
 async function loadLeads() {
@@ -1314,7 +1612,9 @@ async function loadLeads() {
       const data = body as any;
       allLeads.value = data.docs || data || [];
     }
-  } catch { /* silent */ }
+  } catch {
+    /* silent */
+  }
 }
 
 async function loadData() {
@@ -1354,7 +1654,9 @@ await loadData().catch((error: unknown) => {
   position: relative;
   border-radius: 16px;
   overflow: hidden;
-  transition: transform 0.3s ease, box-shadow 0.3s ease;
+  transition:
+    transform 0.3s ease,
+    box-shadow 0.3s ease;
 
   &:hover {
     transform: translateY(-4px);
@@ -1370,25 +1672,33 @@ await loadData().catch((error: unknown) => {
 .journeys-card {
   background: linear-gradient(135deg, rgba(120, 73, 255, 0.12), rgba(139, 92, 246, 0.06));
   border: 1px solid rgba(120, 73, 255, 0.2);
-  &:hover { box-shadow: 0 8px 32px rgba(120, 73, 255, 0.15); }
+  &:hover {
+    box-shadow: 0 8px 32px rgba(120, 73, 255, 0.15);
+  }
 }
 
 .completion-card {
   background: linear-gradient(135deg, rgba(34, 197, 94, 0.12), rgba(22, 163, 74, 0.06));
   border: 1px solid rgba(34, 197, 94, 0.2);
-  &:hover { box-shadow: 0 8px 32px rgba(34, 197, 94, 0.15); }
+  &:hover {
+    box-shadow: 0 8px 32px rgba(34, 197, 94, 0.15);
+  }
 }
 
 .time-card {
   background: linear-gradient(135deg, rgba(59, 130, 246, 0.12), rgba(37, 99, 235, 0.06));
   border: 1px solid rgba(59, 130, 246, 0.2);
-  &:hover { box-shadow: 0 8px 32px rgba(59, 130, 246, 0.15); }
+  &:hover {
+    box-shadow: 0 8px 32px rgba(59, 130, 246, 0.15);
+  }
 }
 
 .conversion-card {
   background: linear-gradient(135deg, rgba(245, 158, 11, 0.12), rgba(217, 119, 6, 0.06));
   border: 1px solid rgba(245, 158, 11, 0.2);
-  &:hover { box-shadow: 0 8px 32px rgba(245, 158, 11, 0.15); }
+  &:hover {
+    box-shadow: 0 8px 32px rgba(245, 158, 11, 0.15);
+  }
 }
 
 .kpi-label {
@@ -1423,10 +1733,21 @@ await loadData().catch((error: unknown) => {
   flex-shrink: 0;
 }
 
-.journeys-icon { background: rgba(120, 73, 255, 0.15); color: #7849ff; }
-.completion-icon { background: transparent; }
-.time-icon { background: rgba(59, 130, 246, 0.15); color: #3b82f6; }
-.conversion-icon { background: rgba(245, 158, 11, 0.15); color: #f59e0b; }
+.journeys-icon {
+  background: rgba(120, 73, 255, 0.15);
+  color: #7849ff;
+}
+.completion-icon {
+  background: transparent;
+}
+.time-icon {
+  background: rgba(59, 130, 246, 0.15);
+  color: #3b82f6;
+}
+.conversion-icon {
+  background: rgba(245, 158, 11, 0.15);
+  color: #f59e0b;
+}
 
 /* ══════════════════════════════════
    Glass Card
@@ -1469,7 +1790,9 @@ await loadData().catch((error: unknown) => {
    Template Cards
    ══════════════════════════════════ */
 .template-card {
-  transition: transform 0.3s ease, box-shadow 0.3s ease;
+  transition:
+    transform 0.3s ease,
+    box-shadow 0.3s ease;
 
   &:hover {
     transform: translateY(-4px);
@@ -1521,8 +1844,7 @@ await loadData().catch((error: unknown) => {
    ══════════════════════════════════ */
 .designer-canvas {
   min-height: 400px;
-  background:
-    radial-gradient(circle at 1px 1px, var(--border-default) 1px, transparent 1px);
+  background: radial-gradient(circle at 1px 1px, var(--border-default) 1px, transparent 1px);
   background-size: 24px 24px;
 }
 
@@ -1539,7 +1861,9 @@ await loadData().catch((error: unknown) => {
   width: 220px;
   flex-shrink: 0;
   cursor: pointer;
-  transition: transform 0.3s ease, box-shadow 0.3s ease;
+  transition:
+    transform 0.3s ease,
+    box-shadow 0.3s ease;
 
   &:hover {
     transform: translateY(-6px);

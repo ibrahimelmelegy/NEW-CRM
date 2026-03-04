@@ -267,8 +267,18 @@ const mobileStatusFilters = computed(() => {
   const data = table.data || [];
   return [
     { value: 'ALL', label: useI18n().t('common.all'), color: '#10b981', count: data.length },
-    { value: 'AVAILABLE', label: useI18n().t('operations.manpower.status.available'), color: '#10b981', count: data.filter((m: any) => m.availabilityStatus === 'AVAILABLE').length },
-    { value: 'NOT_AVAILABLE', label: useI18n().t('operations.manpower.status.notAvailable'), color: '#ef4444', count: data.filter((m: any) => m.availabilityStatus === 'NOT_AVAILABLE').length }
+    {
+      value: 'AVAILABLE',
+      label: useI18n().t('operations.manpower.status.available'),
+      color: '#10b981',
+      count: data.filter((m: any) => m.availabilityStatus === 'AVAILABLE').length
+    },
+    {
+      value: 'NOT_AVAILABLE',
+      label: useI18n().t('operations.manpower.status.notAvailable'),
+      color: '#ef4444',
+      count: data.filter((m: any) => m.availabilityStatus === 'NOT_AVAILABLE').length
+    }
   ];
 });
 
@@ -292,13 +302,17 @@ async function handleMobileRefresh() {
     const res = await useTableFilter('manpower');
     table.data = res.formattedData;
     vibrate([10, 30, 10]);
-  } finally { mobileRefreshing.value = false; }
+  } finally {
+    mobileRefreshing.value = false;
+  }
 }
 
 function getSwipeLeftActions(_mp: any) {
   const actions = [{ name: 'view', label: useI18n().t('common.view'), icon: 'ph:eye-bold', color: '#10b981' }];
-  if (hasPermission('EDIT_MANPOWER')) actions.push({ name: 'edit', label: useI18n().t('common.edit'), icon: 'ph:pencil-simple-bold', color: '#F59E0B' });
-  if (hasPermission('DELETE_MANPOWER')) actions.push({ name: 'delete', label: useI18n().t('common.delete'), icon: 'ph:trash-bold', color: '#ef4444' });
+  if (hasPermission('EDIT_MANPOWER'))
+    actions.push({ name: 'edit', label: useI18n().t('common.edit'), icon: 'ph:pencil-simple-bold', color: '#F59E0B' });
+  if (hasPermission('DELETE_MANPOWER'))
+    actions.push({ name: 'delete', label: useI18n().t('common.delete'), icon: 'ph:trash-bold', color: '#ef4444' });
   return actions;
 }
 
@@ -306,7 +320,10 @@ function handleSwipeAction(name: string, mp: any) {
   vibrate();
   if (name === 'view') navigateTo(`/operations/manpower/${mp.id}`);
   if (name === 'edit') navigateTo(`/operations/manpower/edit/${mp.id}`);
-  if (name === 'delete') { deleteId.value = mp.id; deleteLeadPopup.value = true; }
+  if (name === 'delete') {
+    deleteId.value = mp.id;
+    deleteLeadPopup.value = true;
+  }
 }
 </script>
 

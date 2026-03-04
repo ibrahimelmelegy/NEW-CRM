@@ -6,15 +6,10 @@
 
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 
+import { fetchConversations, fetchMessages, sendMessage, markConversationRead } from '~/composables/useMessaging';
+
 const mockApiFetch = vi.fn();
 (globalThis as any).useApiFetch = mockApiFetch;
-
-import {
-  fetchConversations,
-  fetchMessages,
-  sendMessage,
-  markConversationRead
-} from '~/composables/useMessaging';
 
 describe('useMessaging', () => {
   beforeEach(() => {
@@ -26,9 +21,7 @@ describe('useMessaging', () => {
   // ============================================
   describe('fetchConversations', () => {
     it('should fetch and return conversations array', async () => {
-      const conversations = [
-        { contactPhone: '+1234', contactName: 'John', lastMessage: 'Hi', lastMessageTime: '2024-01-01', unreadCount: 2 }
-      ];
+      const conversations = [{ contactPhone: '+1234', contactName: 'John', lastMessage: 'Hi', lastMessageTime: '2024-01-01', unreadCount: 2 }];
       mockApiFetch.mockResolvedValue({ body: conversations, success: true });
 
       const result = await fetchConversations();
@@ -108,9 +101,13 @@ describe('useMessaging', () => {
 
       await sendMessage('+1234', 'Hi', 'John');
 
-      expect(mockApiFetch).toHaveBeenCalledWith('messaging/send', 'POST', expect.objectContaining({
-        contactName: 'John'
-      }));
+      expect(mockApiFetch).toHaveBeenCalledWith(
+        'messaging/send',
+        'POST',
+        expect.objectContaining({
+          contactName: 'John'
+        })
+      );
     });
 
     it('should use custom provider when specified', async () => {
@@ -118,9 +115,13 @@ describe('useMessaging', () => {
 
       await sendMessage('+1234', 'Hi', undefined, 'SMS');
 
-      expect(mockApiFetch).toHaveBeenCalledWith('messaging/send', 'POST', expect.objectContaining({
-        provider: 'SMS'
-      }));
+      expect(mockApiFetch).toHaveBeenCalledWith(
+        'messaging/send',
+        'POST',
+        expect.objectContaining({
+          provider: 'SMS'
+        })
+      );
     });
 
     it('should return failure info on error', async () => {

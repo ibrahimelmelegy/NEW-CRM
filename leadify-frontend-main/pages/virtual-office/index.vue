@@ -191,7 +191,7 @@ function statusLabel(s: string): string {
     busy: `🔴 ${t('virtualOffice.statusBusy')}`,
     away: `🟡 ${t('virtualOffice.statusAway')}`,
     dnd: `⛔ ${t('virtualOffice.statusDndShort')}`,
-    offline: `⚫ ${t('virtualOffice.statusOffline')}`,
+    offline: `⚫ ${t('virtualOffice.statusOffline')}`
   };
   return labels[s] || s;
 }

@@ -605,6 +605,7 @@
 </template>
 
 <script setup lang="ts">
+/* eslint-disable no-use-before-define */
 import { ElNotification, ElMessageBox } from 'element-plus';
 import VChart from 'vue-echarts';
 
@@ -695,13 +696,10 @@ const segmentForm = ref<SegmentForm>({
   description: '',
   type: 'dynamic',
   category: 'behavioral',
-  tags: [],
+  tags: []
 });
 
-const commonTags = [
-  'High Value', 'Enterprise', 'SMB', 'New Customer', 'At Risk',
-  'Churned', 'VIP', 'Trial', 'Engaged', 'Inactive',
-];
+const commonTags = ['High Value', 'Enterprise', 'SMB', 'New Customer', 'At Risk', 'Churned', 'VIP', 'Trial', 'Engaged', 'Inactive'];
 
 // ── Condition Groups ────────────────────────────────────
 const conditionGroups = ref<ConditionGroup[]>([
@@ -709,16 +707,16 @@ const conditionGroups = ref<ConditionGroup[]>([
     operator: 'AND',
     conditions: [
       { field: 'revenue', operator: 'greater_than', value: '10000' },
-      { field: 'last_activity', operator: 'less_than', value: '30' },
-    ],
+      { field: 'last_activity', operator: 'less_than', value: '30' }
+    ]
   },
   {
     operator: 'OR',
     conditions: [
       { field: 'industry', operator: 'equals', value: 'Technology' },
-      { field: 'lead_score', operator: 'greater_than', value: '75' },
-    ],
-  },
+      { field: 'lead_score', operator: 'greater_than', value: '75' }
+    ]
+  }
 ]);
 
 // ── Available Fields ────────────────────────────────────
@@ -734,7 +732,7 @@ const availableFields = [
   { value: 'company_size', label: t('segmentation.fieldCompanySize'), icon: 'ph:users-three-bold', color: '#06b6d4' },
   { value: 'country', label: t('segmentation.fieldCountry'), icon: 'ph:globe-bold', color: '#14b8a6' },
   { value: 'deal_stage', label: t('segmentation.fieldDealStage'), icon: 'ph:funnel-bold', color: '#a855f7' },
-  { value: 'signup_date', label: t('segmentation.fieldSignupDate'), icon: 'ph:calendar-bold', color: '#6366f1' },
+  { value: 'signup_date', label: t('segmentation.fieldSignupDate'), icon: 'ph:calendar-bold', color: '#6366f1' }
 ];
 
 // ── Operators ───────────────────────────────────────────
@@ -745,7 +743,7 @@ const textOperators = [
   { value: 'not_equals', label: t('segmentation.opNotEquals') },
   { value: 'starts_with', label: t('segmentation.opStartsWith') },
   { value: 'ends_with', label: t('segmentation.opEndsWith') },
-  { value: 'is_empty', label: t('segmentation.opIsEmpty') },
+  { value: 'is_empty', label: t('segmentation.opIsEmpty') }
 ];
 
 const numberOperators = [
@@ -753,13 +751,13 @@ const numberOperators = [
   { value: 'not_equals', label: t('segmentation.opNotEquals') },
   { value: 'greater_than', label: t('segmentation.opGreaterThan') },
   { value: 'less_than', label: t('segmentation.opLessThan') },
-  { value: 'between', label: t('segmentation.opBetween') },
+  { value: 'between', label: t('segmentation.opBetween') }
 ];
 
 const listOperators = [
   { value: 'in_list', label: t('segmentation.opInList') },
   { value: 'not_in_list', label: t('segmentation.opNotInList') },
-  { value: 'contains', label: t('segmentation.opContains') },
+  { value: 'contains', label: t('segmentation.opContains') }
 ];
 
 const numericFields = ['revenue', 'last_activity', 'lead_score', 'company_size'];
@@ -781,7 +779,7 @@ function getValuesForField(field: string): string[] {
     tags: ['VIP', 'Enterprise', 'SMB', 'New', 'At Risk', 'Trial', 'Partner', 'Referral'],
     deal_stage: ['Prospecting', 'Qualification', 'Proposal', 'Negotiation', 'Closed Won', 'Closed Lost'],
     country: ['United States', 'United Kingdom', 'Germany', 'France', 'Canada', 'Australia', 'Japan', 'Brazil'],
-    city: ['New York', 'London', 'Berlin', 'San Francisco', 'Toronto', 'Sydney', 'Tokyo', 'Dubai'],
+    city: ['New York', 'London', 'Berlin', 'San Francisco', 'Toronto', 'Sydney', 'Tokyo', 'Dubai']
   };
   return valuesMap[field] || [];
 }
@@ -806,7 +804,7 @@ const kpiCards = computed(() => [
     color: '#7849ff',
     trend: '+3 this month',
     trendIcon: 'ph:trend-up-bold',
-    trendColor: '#22c55e',
+    trendColor: '#22c55e'
   },
   {
     label: t('segmentation.avgSegmentSize'),
@@ -815,7 +813,7 @@ const kpiCards = computed(() => [
     color: '#3b82f6',
     trend: '+12.4% vs last month',
     trendIcon: 'ph:trend-up-bold',
-    trendColor: '#22c55e',
+    trendColor: '#22c55e'
   },
   {
     label: t('segmentation.activeCampaigns'),
@@ -824,7 +822,7 @@ const kpiCards = computed(() => [
     color: '#22c55e',
     trend: '3 launching this week',
     trendIcon: 'ph:rocket-bold',
-    trendColor: '#3b82f6',
+    trendColor: '#3b82f6'
   },
   {
     label: t('segmentation.segmentOverlapRate'),
@@ -833,120 +831,190 @@ const kpiCards = computed(() => [
     color: '#f59e0b',
     trend: '-2.1% from last month',
     trendIcon: 'ph:trend-down-bold',
-    trendColor: '#22c55e',
-  },
+    trendColor: '#22c55e'
+  }
 ]);
 
 // ── Segment List Data ───────────────────────────────────
 const segments = ref<Segment[]>([
   {
-    id: 's1', name: 'Enterprise Accounts', description: 'Companies with 500+ employees and $100K+ revenue',
-    icon: 'ph:buildings-bold', color: '#7849ff', size: 342, growth: 8.2, type: 'dynamic',
-    createdBy: 'Sarah Chen', avatarColor: '#7849ff', lastUpdated: '2026-02-27',
-    engagementRate: 72, revenue: 4850000,
+    id: 's1',
+    name: 'Enterprise Accounts',
+    description: 'Companies with 500+ employees and $100K+ revenue',
+    icon: 'ph:buildings-bold',
+    color: '#7849ff',
+    size: 342,
+    growth: 8.2,
+    type: 'dynamic',
+    createdBy: 'Sarah Chen',
+    avatarColor: '#7849ff',
+    lastUpdated: '2026-02-27',
+    engagementRate: 72,
+    revenue: 4850000,
     rules: ['Company Size > 500', 'Annual Revenue > $100,000', 'Industry in (Technology, Finance, Healthcare)'],
     topContacts: [
       { name: 'John Mitchell', email: 'john@acmecorp.com', avatarColor: '#3b82f6', revenue: 125000 },
       { name: 'Lisa Wang', email: 'lisa@techstar.io', avatarColor: '#ec4899', revenue: 98000 },
-      { name: 'Robert Taylor', email: 'robert@globalinc.com', avatarColor: '#22c55e', revenue: 87500 },
-    ],
+      { name: 'Robert Taylor', email: 'robert@globalinc.com', avatarColor: '#22c55e', revenue: 87500 }
+    ]
   },
   {
-    id: 's2', name: 'High-Value Customers', description: 'Top 10% by lifetime value',
-    icon: 'ph:crown-bold', color: '#f59e0b', size: 189, growth: 5.7, type: 'dynamic',
-    createdBy: 'Alex Kim', avatarColor: '#f59e0b', lastUpdated: '2026-02-26',
-    engagementRate: 89, revenue: 7320000,
+    id: 's2',
+    name: 'High-Value Customers',
+    description: 'Top 10% by lifetime value',
+    icon: 'ph:crown-bold',
+    color: '#f59e0b',
+    size: 189,
+    growth: 5.7,
+    type: 'dynamic',
+    createdBy: 'Alex Kim',
+    avatarColor: '#f59e0b',
+    lastUpdated: '2026-02-26',
+    engagementRate: 89,
+    revenue: 7320000,
     rules: ['Lifetime Value > $50,000', 'Active in last 30 days', 'Purchase Frequency >= 5'],
     topContacts: [
       { name: 'Emma Davis', email: 'emma@premiumco.com', avatarColor: '#f59e0b', revenue: 245000 },
       { name: 'Michael Chen', email: 'michael@elitesys.com', avatarColor: '#7849ff', revenue: 198000 },
-      { name: 'Sarah Johnson', email: 'sarah@luxbrand.com', avatarColor: '#ec4899', revenue: 176000 },
-    ],
+      { name: 'Sarah Johnson', email: 'sarah@luxbrand.com', avatarColor: '#ec4899', revenue: 176000 }
+    ]
   },
   {
-    id: 's3', name: 'At-Risk Customers', description: 'Declining engagement in last 60 days',
-    icon: 'ph:warning-bold', color: '#ef4444', size: 156, growth: -3.4, type: 'dynamic',
-    createdBy: 'Mike Torres', avatarColor: '#ef4444', lastUpdated: '2026-02-28',
-    engagementRate: 23, revenue: 1240000,
+    id: 's3',
+    name: 'At-Risk Customers',
+    description: 'Declining engagement in last 60 days',
+    icon: 'ph:warning-bold',
+    color: '#ef4444',
+    size: 156,
+    growth: -3.4,
+    type: 'dynamic',
+    createdBy: 'Mike Torres',
+    avatarColor: '#ef4444',
+    lastUpdated: '2026-02-28',
+    engagementRate: 23,
+    revenue: 1240000,
     rules: ['Last Activity > 45 days ago', 'Engagement Score < 30', 'No purchases in 90 days'],
     topContacts: [
       { name: 'David Brown', email: 'david@oldclient.com', avatarColor: '#ef4444', revenue: 67000 },
       { name: 'Jennifer Lee', email: 'jen@dormant.co', avatarColor: '#f59e0b', revenue: 54000 },
-      { name: 'Chris Martin', email: 'chris@fading.io', avatarColor: '#3b82f6', revenue: 48000 },
-    ],
+      { name: 'Chris Martin', email: 'chris@fading.io', avatarColor: '#3b82f6', revenue: 48000 }
+    ]
   },
   {
-    id: 's4', name: 'New Signups - Q1 2026', description: 'All contacts registered in Q1 2026',
-    icon: 'ph:user-plus-bold', color: '#22c55e', size: 478, growth: 24.1, type: 'static',
-    createdBy: 'Emily Park', avatarColor: '#22c55e', lastUpdated: '2026-02-25',
-    engagementRate: 61, revenue: 890000,
+    id: 's4',
+    name: 'New Signups - Q1 2026',
+    description: 'All contacts registered in Q1 2026',
+    icon: 'ph:user-plus-bold',
+    color: '#22c55e',
+    size: 478,
+    growth: 24.1,
+    type: 'static',
+    createdBy: 'Emily Park',
+    avatarColor: '#22c55e',
+    lastUpdated: '2026-02-25',
+    engagementRate: 61,
+    revenue: 890000,
     rules: ['Signup Date between Jan 1, 2026 and Mar 31, 2026'],
     topContacts: [
       { name: 'Anna Schmidt', email: 'anna@newbiz.de', avatarColor: '#22c55e', revenue: 32000 },
       { name: 'James Wilson', email: 'james@freshstart.com', avatarColor: '#3b82f6', revenue: 28000 },
-      { name: 'Maria Garcia', email: 'maria@inicio.mx', avatarColor: '#ec4899', revenue: 24000 },
-    ],
+      { name: 'Maria Garcia', email: 'maria@inicio.mx', avatarColor: '#ec4899', revenue: 24000 }
+    ]
   },
   {
-    id: 's5', name: 'Technology Sector', description: 'All contacts in the technology industry',
-    icon: 'ph:cpu-bold', color: '#6366f1', size: 567, growth: 11.3, type: 'dynamic',
-    createdBy: 'Sarah Chen', avatarColor: '#7849ff', lastUpdated: '2026-02-24',
-    engagementRate: 68, revenue: 3670000,
+    id: 's5',
+    name: 'Technology Sector',
+    description: 'All contacts in the technology industry',
+    icon: 'ph:cpu-bold',
+    color: '#6366f1',
+    size: 567,
+    growth: 11.3,
+    type: 'dynamic',
+    createdBy: 'Sarah Chen',
+    avatarColor: '#7849ff',
+    lastUpdated: '2026-02-24',
+    engagementRate: 68,
+    revenue: 3670000,
     rules: ['Industry = Technology', 'Company Size >= 50'],
     topContacts: [
       { name: 'Kevin Lee', email: 'kevin@codeforge.io', avatarColor: '#6366f1', revenue: 112000 },
       { name: 'Rachel Green', email: 'rachel@devhub.com', avatarColor: '#22c55e', revenue: 94000 },
-      { name: 'Tom Harris', email: 'tom@appworks.tech', avatarColor: '#f59e0b', revenue: 78000 },
-    ],
+      { name: 'Tom Harris', email: 'tom@appworks.tech', avatarColor: '#f59e0b', revenue: 78000 }
+    ]
   },
   {
-    id: 's6', name: 'Newsletter Subscribers', description: 'Contacts opted in to marketing emails',
-    icon: 'ph:envelope-open-bold', color: '#3b82f6', size: 3241, growth: 2.8, type: 'static',
-    createdBy: 'Alex Kim', avatarColor: '#f59e0b', lastUpdated: '2026-02-23',
-    engagementRate: 34, revenue: 1560000,
+    id: 's6',
+    name: 'Newsletter Subscribers',
+    description: 'Contacts opted in to marketing emails',
+    icon: 'ph:envelope-open-bold',
+    color: '#3b82f6',
+    size: 3241,
+    growth: 2.8,
+    type: 'static',
+    createdBy: 'Alex Kim',
+    avatarColor: '#f59e0b',
+    lastUpdated: '2026-02-23',
+    engagementRate: 34,
+    revenue: 1560000,
     rules: ['Email Opt-In = True', 'Email Bounced = False'],
     topContacts: [
       { name: 'Patricia Moore', email: 'patricia@loyal.com', avatarColor: '#3b82f6', revenue: 42000 },
       { name: 'Steven Clark', email: 'steven@reader.io', avatarColor: '#7849ff', revenue: 38000 },
-      { name: 'Diana Prince', email: 'diana@engaged.co', avatarColor: '#ec4899', revenue: 35000 },
-    ],
+      { name: 'Diana Prince', email: 'diana@engaged.co', avatarColor: '#ec4899', revenue: 35000 }
+    ]
   },
   {
-    id: 's7', name: 'EMEA Region', description: 'Contacts in Europe, Middle East and Africa',
-    icon: 'ph:globe-bold', color: '#14b8a6', size: 892, growth: 6.9, type: 'dynamic',
-    createdBy: 'Mike Torres', avatarColor: '#ef4444', lastUpdated: '2026-02-22',
-    engagementRate: 55, revenue: 2340000,
+    id: 's7',
+    name: 'EMEA Region',
+    description: 'Contacts in Europe, Middle East and Africa',
+    icon: 'ph:globe-bold',
+    color: '#14b8a6',
+    size: 892,
+    growth: 6.9,
+    type: 'dynamic',
+    createdBy: 'Mike Torres',
+    avatarColor: '#ef4444',
+    lastUpdated: '2026-02-22',
+    engagementRate: 55,
+    revenue: 2340000,
     rules: ['Region = EMEA', 'Language in (English, German, French, Arabic)'],
     topContacts: [
       { name: 'Hans Mueller', email: 'hans@deutech.de', avatarColor: '#14b8a6', revenue: 89000 },
       { name: 'Sophie Dubois', email: 'sophie@parisgroup.fr', avatarColor: '#ec4899', revenue: 76000 },
-      { name: 'Ahmed Hassan', email: 'ahmed@gulfent.ae', avatarColor: '#f59e0b', revenue: 71000 },
-    ],
+      { name: 'Ahmed Hassan', email: 'ahmed@gulfent.ae', avatarColor: '#f59e0b', revenue: 71000 }
+    ]
   },
   {
-    id: 's8', name: 'Trial Expiring Soon', description: 'Trial users expiring in next 7 days',
-    icon: 'ph:hourglass-medium-bold', color: '#f97316', size: 67, growth: -12.5, type: 'dynamic',
-    createdBy: 'Emily Park', avatarColor: '#22c55e', lastUpdated: '2026-02-28',
-    engagementRate: 45, revenue: 0,
+    id: 's8',
+    name: 'Trial Expiring Soon',
+    description: 'Trial users expiring in next 7 days',
+    icon: 'ph:hourglass-medium-bold',
+    color: '#f97316',
+    size: 67,
+    growth: -12.5,
+    type: 'dynamic',
+    createdBy: 'Emily Park',
+    avatarColor: '#22c55e',
+    lastUpdated: '2026-02-28',
+    engagementRate: 45,
+    revenue: 0,
     rules: ['Account Type = Trial', 'Trial End Date < 7 days from now', 'Not Converted'],
     topContacts: [
       { name: 'Ryan Foster', email: 'ryan@tryout.com', avatarColor: '#f97316', revenue: 0 },
       { name: 'Laura Kim', email: 'laura@testing.io', avatarColor: '#3b82f6', revenue: 0 },
-      { name: 'Mark Johnson', email: 'mark@evaluate.co', avatarColor: '#22c55e', revenue: 0 },
-    ],
-  },
+      { name: 'Mark Johnson', email: 'mark@evaluate.co', avatarColor: '#22c55e', revenue: 0 }
+    ]
+  }
 ]);
 
 const filteredSegments = computed(() => {
   let result = segments.value;
   if (segmentSearchQuery.value) {
     const q = segmentSearchQuery.value.toLowerCase();
-    result = result.filter(
-      (s) => s.name.toLowerCase().includes(q) || s.description.toLowerCase().includes(q),
-    );
+    result = result.filter(s => s.name.toLowerCase().includes(q) || s.description.toLowerCase().includes(q));
   }
   if (segmentTypeFilter.value) {
-    result = result.filter((s) => s.type === segmentTypeFilter.value);
+    result = result.filter(s => s.type === segmentTypeFilter.value);
   }
   return result;
 });
@@ -959,8 +1027,8 @@ const rfmGrid = ref([
     cells: [
       { name: t('segmentation.rfmChampions'), count: 487, monetary: 2450000, percentage: 92, intensity: 1.0 },
       { name: t('segmentation.rfmLoyalCustomers'), count: 312, monetary: 1280000, percentage: 74, intensity: 0.7 },
-      { name: t('segmentation.rfmCantLoseThem'), count: 89, monetary: 890000, percentage: 45, intensity: 0.5 },
-    ],
+      { name: t('segmentation.rfmCantLoseThem'), count: 89, monetary: 890000, percentage: 45, intensity: 0.5 }
+    ]
   },
   {
     label: t('segmentation.freqMedium'),
@@ -968,8 +1036,8 @@ const rfmGrid = ref([
     cells: [
       { name: t('segmentation.rfmPotentialLoyalists'), count: 634, monetary: 1560000, percentage: 68, intensity: 0.65 },
       { name: t('segmentation.rfmNeedAttention'), count: 421, monetary: 780000, percentage: 52, intensity: 0.4 },
-      { name: t('segmentation.rfmAboutToSleep'), count: 267, monetary: 340000, percentage: 28, intensity: 0.25 },
-    ],
+      { name: t('segmentation.rfmAboutToSleep'), count: 267, monetary: 340000, percentage: 28, intensity: 0.25 }
+    ]
   },
   {
     label: t('segmentation.freqLow'),
@@ -977,57 +1045,102 @@ const rfmGrid = ref([
     cells: [
       { name: t('segmentation.rfmNewCustomers'), count: 892, monetary: 670000, percentage: 56, intensity: 0.45 },
       { name: t('segmentation.rfmHibernating'), count: 345, monetary: 120000, percentage: 18, intensity: 0.15 },
-      { name: t('segmentation.rfmLost'), count: 198, monetary: 45000, percentage: 8, intensity: 0.08 },
-    ],
-  },
+      { name: t('segmentation.rfmLost'), count: 198, monetary: 45000, percentage: 8, intensity: 0.08 }
+    ]
+  }
 ]);
 
 const rfmDetailMap: Record<string, RfmDetail> = {
   '0-0': {
-    name: t('segmentation.rfmChampions'), description: 'Best customers who bought recently, buy often, and spend the most',
-    color: '#7849ff', count: 487, monetary: 2450000, avgFrequency: 14.2, avgRecency: 8,
-    actions: ['Exclusive offers', 'Early access programs', 'Loyalty rewards', 'Referral program', 'VIP events'],
+    name: t('segmentation.rfmChampions'),
+    description: 'Best customers who bought recently, buy often, and spend the most',
+    color: '#7849ff',
+    count: 487,
+    monetary: 2450000,
+    avgFrequency: 14.2,
+    avgRecency: 8,
+    actions: ['Exclusive offers', 'Early access programs', 'Loyalty rewards', 'Referral program', 'VIP events']
   },
   '0-1': {
-    name: t('segmentation.rfmLoyalCustomers'), description: 'Customers who buy on a regular basis with good spending',
-    color: '#6366f1', count: 312, monetary: 1280000, avgFrequency: 11.5, avgRecency: 45,
-    actions: ['Upsell premium products', 'Loyalty program enrollment', 'Personalized recommendations', 'Birthday rewards'],
+    name: t('segmentation.rfmLoyalCustomers'),
+    description: 'Customers who buy on a regular basis with good spending',
+    color: '#6366f1',
+    count: 312,
+    monetary: 1280000,
+    avgFrequency: 11.5,
+    avgRecency: 45,
+    actions: ['Upsell premium products', 'Loyalty program enrollment', 'Personalized recommendations', 'Birthday rewards']
   },
   '0-2': {
-    name: t('segmentation.rfmCantLoseThem'), description: 'Used to be very active but declining - high value at risk',
-    color: '#ef4444', count: 89, monetary: 890000, avgFrequency: 12.8, avgRecency: 120,
-    actions: ['Win-back campaign', 'Personal outreach', 'Special discount', 'Feedback survey', 'Account review'],
+    name: t('segmentation.rfmCantLoseThem'),
+    description: 'Used to be very active but declining - high value at risk',
+    color: '#ef4444',
+    count: 89,
+    monetary: 890000,
+    avgFrequency: 12.8,
+    avgRecency: 120,
+    actions: ['Win-back campaign', 'Personal outreach', 'Special discount', 'Feedback survey', 'Account review']
   },
   '1-0': {
-    name: t('segmentation.rfmPotentialLoyalists'), description: 'Recent customers with moderate frequency - potential for growth',
-    color: '#3b82f6', count: 634, monetary: 1560000, avgFrequency: 6.3, avgRecency: 15,
-    actions: ['Membership offer', 'Cross-sell products', 'Engagement campaigns', 'Product education'],
+    name: t('segmentation.rfmPotentialLoyalists'),
+    description: 'Recent customers with moderate frequency - potential for growth',
+    color: '#3b82f6',
+    count: 634,
+    monetary: 1560000,
+    avgFrequency: 6.3,
+    avgRecency: 15,
+    actions: ['Membership offer', 'Cross-sell products', 'Engagement campaigns', 'Product education']
   },
   '1-1': {
-    name: t('segmentation.rfmNeedAttention'), description: 'Above average but not recently active - keep them engaged',
-    color: '#f59e0b', count: 421, monetary: 780000, avgFrequency: 5.8, avgRecency: 62,
-    actions: ['Re-engagement email', 'Limited-time offer', 'New feature announcement', 'Check-in call'],
+    name: t('segmentation.rfmNeedAttention'),
+    description: 'Above average but not recently active - keep them engaged',
+    color: '#f59e0b',
+    count: 421,
+    monetary: 780000,
+    avgFrequency: 5.8,
+    avgRecency: 62,
+    actions: ['Re-engagement email', 'Limited-time offer', 'New feature announcement', 'Check-in call']
   },
   '1-2': {
-    name: t('segmentation.rfmAboutToSleep'), description: 'Below average frequency and recency - act before they churn',
-    color: '#f97316', count: 267, monetary: 340000, avgFrequency: 4.2, avgRecency: 95,
-    actions: ['Urgency campaign', 'Reactivation discount', 'Product update email', 'Exit survey'],
+    name: t('segmentation.rfmAboutToSleep'),
+    description: 'Below average frequency and recency - act before they churn',
+    color: '#f97316',
+    count: 267,
+    monetary: 340000,
+    avgFrequency: 4.2,
+    avgRecency: 95,
+    actions: ['Urgency campaign', 'Reactivation discount', 'Product update email', 'Exit survey']
   },
   '2-0': {
-    name: t('segmentation.rfmNewCustomers'), description: 'Recent first-time buyers with high potential',
-    color: '#22c55e', count: 892, monetary: 670000, avgFrequency: 1.8, avgRecency: 12,
-    actions: ['Welcome series', 'Onboarding guide', 'First purchase follow-up', 'Product tutorials', 'Community invite'],
+    name: t('segmentation.rfmNewCustomers'),
+    description: 'Recent first-time buyers with high potential',
+    color: '#22c55e',
+    count: 892,
+    monetary: 670000,
+    avgFrequency: 1.8,
+    avgRecency: 12,
+    actions: ['Welcome series', 'Onboarding guide', 'First purchase follow-up', 'Product tutorials', 'Community invite']
   },
   '2-1': {
-    name: t('segmentation.rfmHibernating'), description: 'Low engagement customers who last purchased a while ago',
-    color: '#94a3b8', count: 345, monetary: 120000, avgFrequency: 2.1, avgRecency: 78,
-    actions: ['Win-back offer', 'New product launch', 'Social proof campaign', 'Feedback request'],
+    name: t('segmentation.rfmHibernating'),
+    description: 'Low engagement customers who last purchased a while ago',
+    color: '#94a3b8',
+    count: 345,
+    monetary: 120000,
+    avgFrequency: 2.1,
+    avgRecency: 78,
+    actions: ['Win-back offer', 'New product launch', 'Social proof campaign', 'Feedback request']
   },
   '2-2': {
-    name: t('segmentation.rfmLost'), description: 'Lowest activity and oldest purchase - last resort retention',
-    color: '#64748b', count: 198, monetary: 45000, avgFrequency: 1.2, avgRecency: 180,
-    actions: ['Final win-back email', 'Significant discount', 'Product change notification', 'Clean from list'],
-  },
+    name: t('segmentation.rfmLost'),
+    description: 'Lowest activity and oldest purchase - last resort retention',
+    color: '#64748b',
+    count: 198,
+    monetary: 45000,
+    avgFrequency: 1.2,
+    avgRecency: 180,
+    actions: ['Final win-back email', 'Significant discount', 'Product change notification', 'Clean from list']
+  }
 };
 
 const rfmSummary = computed(() => [
@@ -1035,20 +1148,20 @@ const rfmSummary = computed(() => [
     label: t('segmentation.totalCustomersAnalyzed'),
     value: '3,645',
     icon: 'ph:users-three-bold',
-    color: '#7849ff',
+    color: '#7849ff'
   },
   {
     label: t('segmentation.avgCustomerLifetimeValue'),
     value: '$2,247',
     icon: 'ph:currency-dollar-bold',
-    color: '#22c55e',
+    color: '#22c55e'
   },
   {
     label: t('segmentation.retentionRate'),
     value: '78.4%',
     icon: 'ph:arrow-u-up-left-bold',
-    color: '#3b82f6',
-  },
+    color: '#3b82f6'
+  }
 ]);
 
 // ── Overlap Data ────────────────────────────────────────
@@ -1056,13 +1169,13 @@ const overlapData = ref({
   segmentA: { name: 'Enterprise', count: 342, color: '#7849ff' },
   segmentB: { name: 'High-Value', count: 189, color: '#f59e0b' },
   segmentC: { name: 'Tech Sector', count: 567, color: '#22c55e' },
-  overlapCount: 87,
+  overlapCount: 87
 });
 
 const overlapLegend = computed(() => [
   { name: overlapData.value.segmentA.name, color: overlapData.value.segmentA.color },
   { name: overlapData.value.segmentB.name, color: overlapData.value.segmentB.color },
-  { name: overlapData.value.segmentC.name, color: overlapData.value.segmentC.color },
+  { name: overlapData.value.segmentC.name, color: overlapData.value.segmentC.color }
 ]);
 
 // ── Behavioral Insights ─────────────────────────────────
@@ -1078,8 +1191,8 @@ const behavioralInsights = computed(() => [
       { label: 'Enterprise Add-on', value: '22%' },
       { label: 'API Access', value: '18%' },
       { label: 'Support Package', value: '15%' },
-      { label: 'Training Bundle', value: '11%' },
-    ],
+      { label: 'Training Bundle', value: '11%' }
+    ]
   },
   {
     title: t('segmentation.engagementMetrics'),
@@ -1092,8 +1205,8 @@ const behavioralInsights = computed(() => [
       { label: 'Click-Through Rate', value: '12.8%' },
       { label: 'Page Views / Session', value: '5.4' },
       { label: 'Avg Session Duration', value: '4m 32s' },
-      { label: 'Feature Adoption', value: '67%' },
-    ],
+      { label: 'Feature Adoption', value: '67%' }
+    ]
   },
   {
     title: t('segmentation.churnIndicators'),
@@ -1106,9 +1219,9 @@ const behavioralInsights = computed(() => [
       { label: 'Support Tickets Up', value: '89' },
       { label: 'Payment Issues', value: '23' },
       { label: 'No Login 30+ Days', value: '267' },
-      { label: 'Downgrade Requests', value: '12' },
-    ],
-  },
+      { label: 'Downgrade Requests', value: '12' }
+    ]
+  }
 ]);
 
 // ── Chart Options ───────────────────────────────────────
@@ -1116,23 +1229,20 @@ const comparisonChartOption = computed(() => {
   const metricMap: Record<string, { data: number[]; label: string }> = {
     size: {
       data: [342, 189, 567, 478, 892, 3241, 156, 67],
-      label: t('segmentation.contactCount'),
+      label: t('segmentation.contactCount')
     },
     revenue: {
       data: [4850, 7320, 3670, 890, 670, 1560, 1240, 0],
-      label: t('segmentation.revenueK'),
+      label: t('segmentation.revenueK')
     },
     engagement: {
       data: [72, 89, 68, 61, 56, 34, 23, 45],
-      label: t('segmentation.engagementPct'),
-    },
+      label: t('segmentation.engagementPct')
+    }
   };
 
   const metric = metricMap[comparisonMetric.value]!;
-  const segmentNames = [
-    'Enterprise', 'High-Value', 'Tech Sector', 'New Signups',
-    'New Customers', 'Newsletter', 'At-Risk', 'Trial Expiring',
-  ];
+  const segmentNames = ['Enterprise', 'High-Value', 'Tech Sector', 'New Signups', 'New Customers', 'Newsletter', 'At-Risk', 'Trial Expiring'];
   const colors = ['#7849ff', '#f59e0b', '#6366f1', '#22c55e', '#3b82f6', '#14b8a6', '#ef4444', '#f97316'];
 
   return {
@@ -1140,21 +1250,21 @@ const comparisonChartOption = computed(() => {
       trigger: 'axis',
       backgroundColor: 'rgba(20, 20, 40, 0.95)',
       borderColor: 'rgba(120, 73, 255, 0.2)',
-      textStyle: { color: '#e2e8f0', fontSize: 12 },
+      textStyle: { color: '#e2e8f0', fontSize: 12 }
     },
     grid: { left: '3%', right: '4%', bottom: '8%', top: '8%', containLabel: true },
     xAxis: {
       type: 'category',
       data: segmentNames,
       axisLabel: { color: '#94a3b8', fontSize: 11, rotate: 30 },
-      axisLine: { lineStyle: { color: 'rgba(120, 73, 255, 0.1)' } },
+      axisLine: { lineStyle: { color: 'rgba(120, 73, 255, 0.1)' } }
     },
     yAxis: {
       type: 'value',
       name: metric.label,
       nameTextStyle: { color: '#94a3b8', fontSize: 11 },
       axisLabel: { color: '#94a3b8', fontSize: 11 },
-      splitLine: { lineStyle: { color: 'rgba(120, 73, 255, 0.06)' } },
+      splitLine: { lineStyle: { color: 'rgba(120, 73, 255, 0.06)' } }
     },
     series: [
       {
@@ -1164,15 +1274,15 @@ const comparisonChartOption = computed(() => {
           value: val,
           itemStyle: {
             color: colors[idx],
-            borderRadius: [6, 6, 0, 0],
-          },
+            borderRadius: [6, 6, 0, 0]
+          }
         })),
         barWidth: '50%',
         emphasis: {
-          itemStyle: { shadowBlur: 10, shadowColor: 'rgba(120, 73, 255, 0.3)' },
-        },
-      },
-    ],
+          itemStyle: { shadowBlur: 10, shadowColor: 'rgba(120, 73, 255, 0.3)' }
+        }
+      }
+    ]
   };
 });
 
@@ -1183,24 +1293,24 @@ const growthTrendChartOption = computed(() => {
       trigger: 'axis',
       backgroundColor: 'rgba(20, 20, 40, 0.95)',
       borderColor: 'rgba(120, 73, 255, 0.2)',
-      textStyle: { color: '#e2e8f0', fontSize: 12 },
+      textStyle: { color: '#e2e8f0', fontSize: 12 }
     },
     legend: {
       data: ['Enterprise', 'High-Value', 'At-Risk', 'New Signups'],
       textStyle: { color: '#94a3b8', fontSize: 11 },
-      bottom: 0,
+      bottom: 0
     },
     grid: { left: '3%', right: '4%', bottom: '14%', top: '8%', containLabel: true },
     xAxis: {
       type: 'category',
       data: months,
       axisLabel: { color: '#94a3b8', fontSize: 11 },
-      axisLine: { lineStyle: { color: 'rgba(120, 73, 255, 0.1)' } },
+      axisLine: { lineStyle: { color: 'rgba(120, 73, 255, 0.1)' } }
     },
     yAxis: {
       type: 'value',
       axisLabel: { color: '#94a3b8', fontSize: 11 },
-      splitLine: { lineStyle: { color: 'rgba(120, 73, 255, 0.06)' } },
+      splitLine: { lineStyle: { color: 'rgba(120, 73, 255, 0.06)' } }
     },
     series: [
       {
@@ -1212,7 +1322,7 @@ const growthTrendChartOption = computed(() => {
         symbolSize: 6,
         lineStyle: { color: '#7849ff', width: 2 },
         itemStyle: { color: '#7849ff' },
-        areaStyle: { color: 'rgba(120, 73, 255, 0.08)' },
+        areaStyle: { color: 'rgba(120, 73, 255, 0.08)' }
       },
       {
         name: 'High-Value',
@@ -1223,7 +1333,7 @@ const growthTrendChartOption = computed(() => {
         symbolSize: 6,
         lineStyle: { color: '#f59e0b', width: 2 },
         itemStyle: { color: '#f59e0b' },
-        areaStyle: { color: 'rgba(245, 158, 11, 0.08)' },
+        areaStyle: { color: 'rgba(245, 158, 11, 0.08)' }
       },
       {
         name: 'At-Risk',
@@ -1234,7 +1344,7 @@ const growthTrendChartOption = computed(() => {
         symbolSize: 6,
         lineStyle: { color: '#ef4444', width: 2 },
         itemStyle: { color: '#ef4444' },
-        areaStyle: { color: 'rgba(239, 68, 68, 0.08)' },
+        areaStyle: { color: 'rgba(239, 68, 68, 0.08)' }
       },
       {
         name: 'New Signups',
@@ -1245,9 +1355,9 @@ const growthTrendChartOption = computed(() => {
         symbolSize: 6,
         lineStyle: { color: '#22c55e', width: 2 },
         itemStyle: { color: '#22c55e' },
-        areaStyle: { color: 'rgba(34, 197, 94, 0.08)' },
-      },
-    ],
+        areaStyle: { color: 'rgba(34, 197, 94, 0.08)' }
+      }
+    ]
   };
 });
 
@@ -1285,7 +1395,7 @@ function addCondition(groupIdx: number) {
   conditionGroups.value[groupIdx]!.conditions.push({
     field: '',
     operator: '',
-    value: '',
+    value: ''
   });
 }
 
@@ -1296,7 +1406,7 @@ function removeCondition(groupIdx: number, conditionIdx: number) {
 function addGroup() {
   conditionGroups.value.push({
     operator: 'AND',
-    conditions: [{ field: '', operator: '', value: '' }],
+    conditions: [{ field: '', operator: '', value: '' }]
   });
 }
 
@@ -1313,8 +1423,8 @@ function resetConditions() {
   conditionGroups.value = [
     {
       operator: 'AND',
-      conditions: [{ field: '', operator: '', value: '' }],
-    },
+      conditions: [{ field: '', operator: '', value: '' }]
+    }
   ];
   previewCount.value = 0;
 }
@@ -1328,7 +1438,7 @@ function previewSegment() {
       title: t('segmentation.previewReady'),
       message: t('segmentation.matchingPreview', { count: previewCount.value.toLocaleString() }),
       type: 'success',
-      duration: 3000,
+      duration: 3000
     });
   }, 800);
 }
@@ -1350,12 +1460,10 @@ function saveSegment() {
     lastUpdated: new Date().toISOString().split('T')[0] || '',
     engagementRate: 0,
     revenue: 0,
-    rules: conditionGroups.value.flatMap((g) =>
-      g.conditions
-        .filter((c) => c.field && c.operator)
-        .map((c) => `${c.field} ${c.operator} ${Array.isArray(c.value) ? c.value.join(', ') : c.value}`),
+    rules: conditionGroups.value.flatMap(g =>
+      g.conditions.filter(c => c.field && c.operator).map(c => `${c.field} ${c.operator} ${Array.isArray(c.value) ? c.value.join(', ') : c.value}`)
     ),
-    topContacts: [],
+    topContacts: []
   };
 
   segments.value.unshift(newSegment);
@@ -1366,7 +1474,7 @@ function saveSegment() {
     title: t('segmentation.segmentSaved'),
     message: t('segmentation.segmentSavedMsg', { name: newSegment.name }),
     type: 'success',
-    duration: 3000,
+    duration: 3000
   });
 }
 
@@ -1386,32 +1494,30 @@ function editSegment(segment: Segment | null) {
     title: t('segmentation.editingSegment'),
     message: segment.name,
     type: 'info',
-    duration: 2000,
+    duration: 2000
   });
   activeTab.value = 'builder';
 }
 
 function deleteSegment(segment: Segment) {
-  ElMessageBox.confirm(
-    t('segmentation.deleteConfirmMsg', { name: segment.name }),
-    t('segmentation.deleteConfirm'),
-    {
-      confirmButtonText: t('segmentation.delete'),
-      cancelButtonText: t('segmentation.cancel'),
-      type: 'warning',
-    },
-  ).then(() => {
-    const idx = segments.value.findIndex((s) => s.id === segment.id);
-    if (idx !== -1) segments.value.splice(idx, 1);
-    ElNotification({
-      title: t('segmentation.segmentDeleted'),
-      message: segment.name,
-      type: 'success',
-      duration: 2000,
+  ElMessageBox.confirm(t('segmentation.deleteConfirmMsg', { name: segment.name }), t('segmentation.deleteConfirm'), {
+    confirmButtonText: t('segmentation.delete'),
+    cancelButtonText: t('segmentation.cancel'),
+    type: 'warning'
+  })
+    .then(() => {
+      const idx = segments.value.findIndex(s => s.id === segment.id);
+      if (idx !== -1) segments.value.splice(idx, 1);
+      ElNotification({
+        title: t('segmentation.segmentDeleted'),
+        message: segment.name,
+        type: 'success',
+        duration: 2000
+      });
+    })
+    .catch((error: unknown) => {
+      console.error('Operation failed:', error);
     });
-  }).catch((error: unknown) => {
-    console.error('Operation failed:', error);
-  });
 }
 
 function exportSegments() {
@@ -1419,7 +1525,7 @@ function exportSegments() {
     title: t('segmentation.exportStarted'),
     message: t('segmentation.exportMsg'),
     type: 'info',
-    duration: 2000,
+    duration: 2000
   });
 }
 
@@ -1431,7 +1537,7 @@ function refreshData() {
       title: t('segmentation.dataRefreshed'),
       message: t('segmentation.dataRefreshedMsg'),
       type: 'success',
-      duration: 2000,
+      duration: 2000
     });
   }, 1000);
 }
@@ -1648,7 +1754,9 @@ function formatCompact(value: number): string {
 // ── Animations ──────────────────────────────────────────
 .fade-enter-active,
 .fade-leave-active {
-  transition: opacity 0.3s ease, transform 0.3s ease;
+  transition:
+    opacity 0.3s ease,
+    transform 0.3s ease;
 }
 
 .fade-enter-from,

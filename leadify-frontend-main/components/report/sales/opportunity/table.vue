@@ -24,6 +24,7 @@
 </template>
 
 <script setup lang="ts">
+/* eslint-disable require-await */
 import { useI18n } from 'vue-i18n';
 import { stageOptions, priorityOptions } from '@/composables/useOpportunity';
 

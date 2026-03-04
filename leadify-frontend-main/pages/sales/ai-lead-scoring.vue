@@ -465,7 +465,7 @@ const modelConfig = ref({
   epochs: 100,
   batchSize: 64,
   validationSplit: 0.2,
-  autoFeatureSelection: true,
+  autoFeatureSelection: true
 });
 
 // ─── KPI Cards ──────────────────────────────────────────────
@@ -476,7 +476,7 @@ const kpiCards = computed(() => [
     value: '94.2%',
     icon: 'ph:target-bold',
     color: '#7849ff',
-    trend: 2.1,
+    trend: 2.1
   },
   {
     key: 'scored',
@@ -484,7 +484,7 @@ const kpiCards = computed(() => [
     value: '1,247',
     icon: 'ph:users-bold',
     color: '#3b82f6',
-    trend: 8.4,
+    trend: 8.4
   },
   {
     key: 'avg',
@@ -492,7 +492,7 @@ const kpiCards = computed(() => [
     value: '62.8',
     icon: 'ph:chart-bar-bold',
     color: '#22c55e',
-    trend: 3.7,
+    trend: 3.7
   },
   {
     key: 'conversion',
@@ -500,7 +500,7 @@ const kpiCards = computed(() => [
     value: '38.5%',
     icon: 'ph:arrow-circle-up-bold',
     color: '#f59e0b',
-    trend: 5.2,
+    trend: 5.2
   },
   {
     key: 'distribution',
@@ -508,8 +508,8 @@ const kpiCards = computed(() => [
     value: '72/18/10',
     icon: 'ph:chart-pie-slice-bold',
     color: '#06b6d4',
-    trend: 0,
-  },
+    trend: 0
+  }
 ]);
 
 // ─── Leads Data ─────────────────────────────────────────────
@@ -522,11 +522,7 @@ const filteredLeads = computed(() => {
   }
   if (leadSearch.value) {
     const q = leadSearch.value.toLowerCase();
-    result = result.filter(l =>
-      l.name.toLowerCase().includes(q) ||
-      l.company.toLowerCase().includes(q) ||
-      l.email.toLowerCase().includes(q)
-    );
+    result = result.filter(l => l.name.toLowerCase().includes(q) || l.company.toLowerCase().includes(q) || l.email.toLowerCase().includes(q));
   }
   return result;
 });
@@ -546,8 +542,8 @@ const abTests = ref([
     winner: 'Gradient Boost v3.2',
     variants: [
       { name: 'Gradient Boost v3.2', conversionRate: 38.5, sampleSize: 4200, leadsScored: 12600, avgScore: 64.2, color: '#7849ff' },
-      { name: 'Neural Net v2.1', conversionRate: 35.8, sampleSize: 4150, leadsScored: 12450, avgScore: 61.7, color: '#3b82f6' },
-    ],
+      { name: 'Neural Net v2.1', conversionRate: 35.8, sampleSize: 4150, leadsScored: 12450, avgScore: 61.7, color: '#3b82f6' }
+    ]
   },
   {
     name: 'Bayesian v4.0 vs Random Forest v2.5',
@@ -556,8 +552,8 @@ const abTests = ref([
     winner: null,
     variants: [
       { name: 'Bayesian v4.0', conversionRate: 32.1, sampleSize: 2800, leadsScored: 8400, avgScore: 58.9, color: '#22c55e' },
-      { name: 'Random Forest v2.5', conversionRate: 33.4, sampleSize: 2750, leadsScored: 8250, avgScore: 60.1, color: '#f59e0b' },
-    ],
+      { name: 'Random Forest v2.5', conversionRate: 33.4, sampleSize: 2750, leadsScored: 8250, avgScore: 60.1, color: '#f59e0b' }
+    ]
   },
   {
     name: 'Enhanced Features vs Base Features',
@@ -566,9 +562,9 @@ const abTests = ref([
     winner: 'Enhanced Features',
     variants: [
       { name: 'Enhanced Features', conversionRate: 41.2, sampleSize: 5100, leadsScored: 15300, avgScore: 67.8, color: '#ec4899' },
-      { name: 'Base Features', conversionRate: 34.6, sampleSize: 5050, leadsScored: 15150, avgScore: 59.3, color: '#94a3b8' },
-    ],
-  },
+      { name: 'Base Features', conversionRate: 34.6, sampleSize: 5050, leadsScored: 15150, avgScore: 59.3, color: '#94a3b8' }
+    ]
+  }
 ]);
 
 // ─── Scoring Rules ──────────────────────────────────────────
@@ -580,7 +576,7 @@ const scoringRules = ref([
   { name: 'Content Download', condition: 'Downloaded whitepaper or case study', points: 8, priority: 4, enabled: true },
   { name: 'Social Engagement', condition: 'Interacted with social media posts', points: 5, priority: 6, enabled: false },
   { name: 'Competitor Mention', condition: 'Mentioned competitor in communications', points: -5, priority: 5, enabled: true },
-  { name: 'Unsubscribe Signal', condition: 'Unsubscribed from newsletter', points: -15, priority: 2, enabled: true },
+  { name: 'Unsubscribe Signal', condition: 'Unsubscribed from newsletter', points: -15, priority: 2, enabled: true }
 ]);
 
 // ─── Helpers ────────────────────────────────────────────────
@@ -591,7 +587,12 @@ function getAvatarColor(index: number): string {
 
 function getInitials(name: string): string {
   if (!name) return '?';
-  return name.split(' ').map(n => n[0]).join('').substring(0, 2).toUpperCase();
+  return name
+    .split(' ')
+    .map(n => n[0])
+    .join('')
+    .substring(0, 2)
+    .toUpperCase();
 }
 
 function getScoreColor(score: number): string {
@@ -611,7 +612,7 @@ function getActionIcon(action: string): string {
     call: 'ph:phone-bold',
     demo: 'ph:presentation-chart-bold',
     email: 'ph:envelope-bold',
-    nurture: 'ph:plant-bold',
+    nurture: 'ph:plant-bold'
   };
   return map[action] || 'ph:circle-bold';
 }
@@ -635,20 +636,25 @@ function openLeadDetail(row: any) {
       { name: 'Industry Alignment', points: 10 },
       { name: 'Social Signals', points: 8 },
       { name: 'Content Consumption', points: 6 },
-      { name: 'Recency Decay', points: -3 },
+      { name: 'Recency Decay', points: -3 }
     ],
     timeline: [
       { action: 'Visited pricing page', detail: 'Spent 4m 32s on Enterprise plan', date: '2h ago', color: '#7849ff' },
       { action: 'Opened email campaign', detail: '"Q1 Product Update" - Read for 2m 15s', date: '1d ago', color: '#3b82f6' },
       { action: 'Downloaded whitepaper', detail: '"AI in Enterprise CRM" (PDF, 24 pages)', date: '3d ago', color: '#22c55e' },
       { action: 'Attended webinar', detail: '"Predictive Analytics Demo" - Full session', date: '5d ago', color: '#f59e0b' },
-      { action: 'LinkedIn interaction', detail: 'Liked and commented on product post', date: '1w ago', color: '#ec4899' },
+      { action: 'LinkedIn interaction', detail: 'Liked and commented on product post', date: '1w ago', color: '#ec4899' }
     ],
     suggestedActions: [
       { title: t('aiLeadScoring.actions.call'), icon: 'ph:phone-bold', color: '#22c55e', description: t('aiLeadScoring.callSuggestion') },
-      { title: t('aiLeadScoring.actions.demo'), icon: 'ph:presentation-chart-bold', color: '#7849ff', description: t('aiLeadScoring.demoSuggestion') },
-      { title: t('aiLeadScoring.actions.email'), icon: 'ph:envelope-bold', color: '#3b82f6', description: t('aiLeadScoring.emailSuggestion') },
-    ],
+      {
+        title: t('aiLeadScoring.actions.demo'),
+        icon: 'ph:presentation-chart-bold',
+        color: '#7849ff',
+        description: t('aiLeadScoring.demoSuggestion')
+      },
+      { title: t('aiLeadScoring.actions.email'), icon: 'ph:envelope-bold', color: '#3b82f6', description: t('aiLeadScoring.emailSuggestion') }
+    ]
   };
   showLeadDialog.value = true;
 }
@@ -670,32 +676,252 @@ function addNewRule() {
     condition: 'Define condition...',
     points: 5,
     priority: 5,
-    enabled: false,
+    enabled: false
   });
 }
 
 // ─── API Data Loading ───────────────────────────────────────
 const fallbackLeads = [
-  { name: 'Sarah Mitchell', email: 'sarah.m@techcorp.io', company: 'TechCorp Inc.', score: 94, percentile: 98, conversionProb: 87, action: 'call', priority: 'hot', priorityOrder: 1, assignedTo: 'James Parker' },
-  { name: 'Ahmed Al-Rashid', email: 'ahmed@gulfenterprises.sa', company: 'Gulf Enterprises', score: 91, percentile: 96, conversionProb: 82, action: 'demo', priority: 'hot', priorityOrder: 1, assignedTo: 'Lisa Chen' },
-  { name: 'Maria Garcia', email: 'mgarcia@innovatech.mx', company: 'InnovaTech', score: 88, percentile: 94, conversionProb: 79, action: 'call', priority: 'hot', priorityOrder: 1, assignedTo: 'James Parker' },
-  { name: 'David Chen', email: 'dchen@meridian.com', company: 'Meridian Solutions', score: 85, percentile: 91, conversionProb: 74, action: 'demo', priority: 'hot', priorityOrder: 1, assignedTo: 'Sarah Kim' },
-  { name: 'Fatima Zahra', email: 'fatima@cloudpeak.ae', company: 'CloudPeak UAE', score: 82, percentile: 88, conversionProb: 68, action: 'email', priority: 'hot', priorityOrder: 1, assignedTo: 'Lisa Chen' },
-  { name: 'Robert Thompson', email: 'rthompson@nexgen.us', company: 'NexGen Solutions', score: 76, percentile: 82, conversionProb: 61, action: 'demo', priority: 'warm', priorityOrder: 2, assignedTo: 'James Parker' },
-  { name: 'Yuki Tanaka', email: 'yuki@tokyodigital.jp', company: 'Tokyo Digital', score: 73, percentile: 78, conversionProb: 56, action: 'email', priority: 'warm', priorityOrder: 2, assignedTo: 'Sarah Kim' },
-  { name: 'Carlos Rivera', email: 'crivera@latamhub.co', company: 'LatAm Hub', score: 70, percentile: 74, conversionProb: 52, action: 'nurture', priority: 'warm', priorityOrder: 2, assignedTo: 'Lisa Chen' },
-  { name: 'Priya Patel', email: 'priya@infospark.in', company: 'InfoSpark India', score: 67, percentile: 70, conversionProb: 48, action: 'email', priority: 'warm', priorityOrder: 2, assignedTo: 'James Parker' },
-  { name: 'Hans Mueller', email: 'hmueller@berlintech.de', company: 'BerlinTech GmbH', score: 64, percentile: 66, conversionProb: 44, action: 'nurture', priority: 'warm', priorityOrder: 2, assignedTo: 'Sarah Kim' },
-  { name: 'Elena Volkov', email: 'elena@moscowcloud.ru', company: 'MoscowCloud', score: 58, percentile: 58, conversionProb: 38, action: 'nurture', priority: 'warm', priorityOrder: 2, assignedTo: 'Lisa Chen' },
-  { name: 'John Baker', email: 'jbaker@smallbiz.com', company: 'SmallBiz Co.', score: 52, percentile: 50, conversionProb: 32, action: 'nurture', priority: 'cold', priorityOrder: 3, assignedTo: 'James Parker' },
-  { name: 'Sophie Laurent', email: 'slaurent@parisgroup.fr', company: 'Paris Group', score: 47, percentile: 44, conversionProb: 28, action: 'email', priority: 'cold', priorityOrder: 3, assignedTo: 'Sarah Kim' },
-  { name: 'Kwame Asante', email: 'kasante@accrasys.gh', company: 'Accra Systems', score: 43, percentile: 38, conversionProb: 24, action: 'nurture', priority: 'cold', priorityOrder: 3, assignedTo: 'Lisa Chen' },
-  { name: 'Anna Kowalski', email: 'akowalski@warsawit.pl', company: 'Warsaw IT', score: 38, percentile: 32, conversionProb: 20, action: 'nurture', priority: 'cold', priorityOrder: 3, assignedTo: 'James Parker' },
-  { name: 'Lucas Oliveira', email: 'loliveira@saopaulotech.br', company: 'SP Tech', score: 34, percentile: 26, conversionProb: 17, action: 'nurture', priority: 'cold', priorityOrder: 3, assignedTo: 'Sarah Kim' },
-  { name: 'Nina Johansson', email: 'nina@stockholmdata.se', company: 'Stockholm Data', score: 29, percentile: 20, conversionProb: 14, action: 'nurture', priority: 'cold', priorityOrder: 3, assignedTo: 'Lisa Chen' },
-  { name: 'Omar Hassan', email: 'ohassan@cairobiz.eg', company: 'Cairo Business', score: 24, percentile: 14, conversionProb: 11, action: 'nurture', priority: 'cold', priorityOrder: 3, assignedTo: 'James Parker' },
-  { name: 'Mei Wong', email: 'mwong@hkdigital.hk', company: 'HK Digital', score: 19, percentile: 8, conversionProb: 8, action: 'nurture', priority: 'cold', priorityOrder: 3, assignedTo: 'Sarah Kim' },
-  { name: 'Liam OBrien', email: 'lobrien@dublinsoft.ie', company: 'Dublin Software', score: 14, percentile: 4, conversionProb: 5, action: 'nurture', priority: 'cold', priorityOrder: 3, assignedTo: 'Lisa Chen' },
+  {
+    name: 'Sarah Mitchell',
+    email: 'sarah.m@techcorp.io',
+    company: 'TechCorp Inc.',
+    score: 94,
+    percentile: 98,
+    conversionProb: 87,
+    action: 'call',
+    priority: 'hot',
+    priorityOrder: 1,
+    assignedTo: 'James Parker'
+  },
+  {
+    name: 'Ahmed Al-Rashid',
+    email: 'ahmed@gulfenterprises.sa',
+    company: 'Gulf Enterprises',
+    score: 91,
+    percentile: 96,
+    conversionProb: 82,
+    action: 'demo',
+    priority: 'hot',
+    priorityOrder: 1,
+    assignedTo: 'Lisa Chen'
+  },
+  {
+    name: 'Maria Garcia',
+    email: 'mgarcia@innovatech.mx',
+    company: 'InnovaTech',
+    score: 88,
+    percentile: 94,
+    conversionProb: 79,
+    action: 'call',
+    priority: 'hot',
+    priorityOrder: 1,
+    assignedTo: 'James Parker'
+  },
+  {
+    name: 'David Chen',
+    email: 'dchen@meridian.com',
+    company: 'Meridian Solutions',
+    score: 85,
+    percentile: 91,
+    conversionProb: 74,
+    action: 'demo',
+    priority: 'hot',
+    priorityOrder: 1,
+    assignedTo: 'Sarah Kim'
+  },
+  {
+    name: 'Fatima Zahra',
+    email: 'fatima@cloudpeak.ae',
+    company: 'CloudPeak UAE',
+    score: 82,
+    percentile: 88,
+    conversionProb: 68,
+    action: 'email',
+    priority: 'hot',
+    priorityOrder: 1,
+    assignedTo: 'Lisa Chen'
+  },
+  {
+    name: 'Robert Thompson',
+    email: 'rthompson@nexgen.us',
+    company: 'NexGen Solutions',
+    score: 76,
+    percentile: 82,
+    conversionProb: 61,
+    action: 'demo',
+    priority: 'warm',
+    priorityOrder: 2,
+    assignedTo: 'James Parker'
+  },
+  {
+    name: 'Yuki Tanaka',
+    email: 'yuki@tokyodigital.jp',
+    company: 'Tokyo Digital',
+    score: 73,
+    percentile: 78,
+    conversionProb: 56,
+    action: 'email',
+    priority: 'warm',
+    priorityOrder: 2,
+    assignedTo: 'Sarah Kim'
+  },
+  {
+    name: 'Carlos Rivera',
+    email: 'crivera@latamhub.co',
+    company: 'LatAm Hub',
+    score: 70,
+    percentile: 74,
+    conversionProb: 52,
+    action: 'nurture',
+    priority: 'warm',
+    priorityOrder: 2,
+    assignedTo: 'Lisa Chen'
+  },
+  {
+    name: 'Priya Patel',
+    email: 'priya@infospark.in',
+    company: 'InfoSpark India',
+    score: 67,
+    percentile: 70,
+    conversionProb: 48,
+    action: 'email',
+    priority: 'warm',
+    priorityOrder: 2,
+    assignedTo: 'James Parker'
+  },
+  {
+    name: 'Hans Mueller',
+    email: 'hmueller@berlintech.de',
+    company: 'BerlinTech GmbH',
+    score: 64,
+    percentile: 66,
+    conversionProb: 44,
+    action: 'nurture',
+    priority: 'warm',
+    priorityOrder: 2,
+    assignedTo: 'Sarah Kim'
+  },
+  {
+    name: 'Elena Volkov',
+    email: 'elena@moscowcloud.ru',
+    company: 'MoscowCloud',
+    score: 58,
+    percentile: 58,
+    conversionProb: 38,
+    action: 'nurture',
+    priority: 'warm',
+    priorityOrder: 2,
+    assignedTo: 'Lisa Chen'
+  },
+  {
+    name: 'John Baker',
+    email: 'jbaker@smallbiz.com',
+    company: 'SmallBiz Co.',
+    score: 52,
+    percentile: 50,
+    conversionProb: 32,
+    action: 'nurture',
+    priority: 'cold',
+    priorityOrder: 3,
+    assignedTo: 'James Parker'
+  },
+  {
+    name: 'Sophie Laurent',
+    email: 'slaurent@parisgroup.fr',
+    company: 'Paris Group',
+    score: 47,
+    percentile: 44,
+    conversionProb: 28,
+    action: 'email',
+    priority: 'cold',
+    priorityOrder: 3,
+    assignedTo: 'Sarah Kim'
+  },
+  {
+    name: 'Kwame Asante',
+    email: 'kasante@accrasys.gh',
+    company: 'Accra Systems',
+    score: 43,
+    percentile: 38,
+    conversionProb: 24,
+    action: 'nurture',
+    priority: 'cold',
+    priorityOrder: 3,
+    assignedTo: 'Lisa Chen'
+  },
+  {
+    name: 'Anna Kowalski',
+    email: 'akowalski@warsawit.pl',
+    company: 'Warsaw IT',
+    score: 38,
+    percentile: 32,
+    conversionProb: 20,
+    action: 'nurture',
+    priority: 'cold',
+    priorityOrder: 3,
+    assignedTo: 'James Parker'
+  },
+  {
+    name: 'Lucas Oliveira',
+    email: 'loliveira@saopaulotech.br',
+    company: 'SP Tech',
+    score: 34,
+    percentile: 26,
+    conversionProb: 17,
+    action: 'nurture',
+    priority: 'cold',
+    priorityOrder: 3,
+    assignedTo: 'Sarah Kim'
+  },
+  {
+    name: 'Nina Johansson',
+    email: 'nina@stockholmdata.se',
+    company: 'Stockholm Data',
+    score: 29,
+    percentile: 20,
+    conversionProb: 14,
+    action: 'nurture',
+    priority: 'cold',
+    priorityOrder: 3,
+    assignedTo: 'Lisa Chen'
+  },
+  {
+    name: 'Omar Hassan',
+    email: 'ohassan@cairobiz.eg',
+    company: 'Cairo Business',
+    score: 24,
+    percentile: 14,
+    conversionProb: 11,
+    action: 'nurture',
+    priority: 'cold',
+    priorityOrder: 3,
+    assignedTo: 'James Parker'
+  },
+  {
+    name: 'Mei Wong',
+    email: 'mwong@hkdigital.hk',
+    company: 'HK Digital',
+    score: 19,
+    percentile: 8,
+    conversionProb: 8,
+    action: 'nurture',
+    priority: 'cold',
+    priorityOrder: 3,
+    assignedTo: 'Sarah Kim'
+  },
+  {
+    name: 'Liam OBrien',
+    email: 'lobrien@dublinsoft.ie',
+    company: 'Dublin Software',
+    score: 14,
+    percentile: 4,
+    conversionProb: 5,
+    action: 'nurture',
+    priority: 'cold',
+    priorityOrder: 3,
+    assignedTo: 'Lisa Chen'
+  }
 ];
 
 const fallbackFeatureImportance = [
@@ -707,16 +933,42 @@ const fallbackFeatureImportance = [
   { name: 'Content Downloads', weight: 65, trend: 'down', trendValue: '-0.8%', contribution: 8.7, icon: 'ph:download-bold', color: '#06b6d4' },
   { name: 'Social Media Activity', weight: 58, trend: 'up', trendValue: '+1.9%', contribution: 7.3, icon: 'ph:share-network-bold', color: '#ec4899' },
   { name: 'Demo Requests', weight: 51, trend: 'up', trendValue: '+6.2%', contribution: 5.4, icon: 'ph:presentation-chart-bold', color: '#8b5cf6' },
-  { name: 'Job Title Seniority', weight: 44, trend: 'down', trendValue: '-2.1%', contribution: 3.8, icon: 'ph:identification-badge-bold', color: '#14b8a6' },
-  { name: 'Geographic Region', weight: 36, trend: 'up', trendValue: '+0.5%', contribution: 1.8, icon: 'ph:map-pin-bold', color: '#f97316' },
+  {
+    name: 'Job Title Seniority',
+    weight: 44,
+    trend: 'down',
+    trendValue: '-2.1%',
+    contribution: 3.8,
+    icon: 'ph:identification-badge-bold',
+    color: '#14b8a6'
+  },
+  { name: 'Geographic Region', weight: 36, trend: 'up', trendValue: '+0.5%', contribution: 1.8, icon: 'ph:map-pin-bold', color: '#f97316' }
 ];
 
 const fallbackModels = [
   { name: 'Gradient Boost v3.2', accuracy: 94.2, precision: 92.8, recall: 91.5, f1: 0.921, aucRoc: 0.967, status: 'active', statusColor: '#22c55e' },
   { name: 'Neural Network v2.1', accuracy: 93.1, precision: 91.4, recall: 93.8, f1: 0.926, aucRoc: 0.958, status: 'testing', statusColor: '#f59e0b' },
-  { name: 'Bayesian Classifier v4.0', accuracy: 89.7, precision: 88.2, recall: 87.6, f1: 0.879, aucRoc: 0.934, status: 'active', statusColor: '#22c55e' },
-  { name: 'Logistic Regression v1.8', accuracy: 86.4, precision: 85.1, recall: 84.3, f1: 0.847, aucRoc: 0.912, status: 'archived', statusColor: '#94a3b8' },
-  { name: 'Random Forest v2.5', accuracy: 91.8, precision: 90.6, recall: 89.2, f1: 0.899, aucRoc: 0.948, status: 'testing', statusColor: '#f59e0b' },
+  {
+    name: 'Bayesian Classifier v4.0',
+    accuracy: 89.7,
+    precision: 88.2,
+    recall: 87.6,
+    f1: 0.879,
+    aucRoc: 0.934,
+    status: 'active',
+    statusColor: '#22c55e'
+  },
+  {
+    name: 'Logistic Regression v1.8',
+    accuracy: 86.4,
+    precision: 85.1,
+    recall: 84.3,
+    f1: 0.847,
+    aucRoc: 0.912,
+    status: 'archived',
+    statusColor: '#94a3b8'
+  },
+  { name: 'Random Forest v2.5', accuracy: 91.8, precision: 90.6, recall: 89.2, f1: 0.899, aucRoc: 0.948, status: 'testing', statusColor: '#f59e0b' }
 ];
 
 async function loadModels() {
@@ -871,8 +1123,13 @@ onMounted(() => {
 }
 
 @keyframes pulse {
-  0%, 100% { opacity: 1; }
-  50% { opacity: 0.4; }
+  0%,
+  100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.4;
+  }
 }
 
 // ─── Lead Avatar ────────────────────────────────────────────

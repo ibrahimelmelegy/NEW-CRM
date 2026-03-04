@@ -281,6 +281,7 @@ div
 <script setup lang="ts">
 import { ref, computed, onMounted } from 'vue';
 import VChart from 'vue-echarts';
+import { ElMessage, ElMessageBox } from 'element-plus';
 import {
   fetchSupportDashboard,
   fetchTickets,
@@ -294,7 +295,6 @@ import {
   ticketPriorityOptions
 } from '@/composables/useSupport';
 import type { TicketMetrics, AgentWorkload } from '@/composables/useSupport';
-import { ElMessage, ElMessageBox } from 'element-plus';
 
 const router = useRouter();
 const { t } = useI18n();
@@ -311,7 +311,9 @@ const assigning = ref(false);
 
 // Bulk Selection
 const selectedRows = ref<any[]>([]);
-const handleSelectionChange = (rows: any[]) => { selectedRows.value = rows; };
+const handleSelectionChange = (rows: any[]) => {
+  selectedRows.value = rows;
+};
 
 const filters = ref({
   status: [] as string[],
@@ -375,7 +377,12 @@ function buildDonutOption(data: Record<string, number>, colorMap: Record<string,
       }
     ],
     graphic: [
-      { type: 'text', left: 'center', top: '38%', style: { text: String(total), fontSize: 28, fontWeight: 'bold', fill: '#fff', textAlign: 'center' } },
+      {
+        type: 'text',
+        left: 'center',
+        top: '38%',
+        style: { text: String(total), fontSize: 28, fontWeight: 'bold', fill: '#fff', textAlign: 'center' }
+      },
       { type: 'text', left: 'center', top: '48%', style: { text: title, fontSize: 12, fill: '#94A3B8', textAlign: 'center' } }
     ]
   };
@@ -417,7 +424,7 @@ const priorityLabel = computed(() => t('support.priority'));
 const slaLabel = computed(() => t('support.sla'));
 const assigneeLabel = computed(() => t('support.assignedTo'));
 const createdLabel = computed(() => t('common.createdAt'));
-const drawerTitle = computed(() => selectedTicket.value ? `#${selectedTicket.value.ticketNumber}` : '');
+const drawerTitle = computed(() => (selectedTicket.value ? `#${selectedTicket.value.ticketNumber}` : ''));
 
 // Computed placeholders for filters
 const statusPlaceholder = computed(() => t('support.filterByStatus'));
@@ -599,11 +606,7 @@ function getSLATagType(ticket: any): string {
 async function bulkResolveTickets() {
   if (!selectedRows.value.length) return;
   try {
-    await ElMessageBox.confirm(
-      t('support.confirmBulkResolve', { count: selectedRows.value.length }),
-      t('common.warning'),
-      { type: 'warning' }
-    );
+    await ElMessageBox.confirm(t('support.confirmBulkResolve', { count: selectedRows.value.length }), t('common.warning'), { type: 'warning' });
     for (const row of selectedRows.value) {
       await resolveTicket(row.id);
     }
@@ -618,11 +621,7 @@ async function bulkResolveTickets() {
 async function bulkAutoAssignTickets() {
   if (!selectedRows.value.length) return;
   try {
-    await ElMessageBox.confirm(
-      t('support.confirmBulkAutoAssign', { count: selectedRows.value.length }),
-      t('common.warning'),
-      { type: 'warning' }
-    );
+    await ElMessageBox.confirm(t('support.confirmBulkAutoAssign', { count: selectedRows.value.length }), t('common.warning'), { type: 'warning' });
     for (const row of selectedRows.value) {
       await autoAssignTicket(row.id);
     }
@@ -637,17 +636,27 @@ async function bulkAutoAssignTickets() {
 function exportTicketsCSV() {
   const data = selectedRows.value.length ? selectedRows.value : recentTickets.value;
   if (!data.length) return;
-  const headers = [t('support.csvTicketNumber'), t('support.csvSubject'), t('support.csvStatus'), t('support.csvPriority'), t('support.csvAssignee'), t('support.csvCreated')];
-  const csv = [headers.join(','), ...data.map((row: any) =>
-    [
-      `"${row.ticketNumber || ''}"`,
-      `"${(row.subject || '').replace(/"/g, '""')}"`,
-      `"${row.status || ''}"`,
-      `"${row.priority || ''}"`,
-      `"${row.assignee?.name || ''}"`,
-      `"${formatDate(row.createdAt)}"`
-    ].join(',')
-  )].join('\n');
+  const headers = [
+    t('support.csvTicketNumber'),
+    t('support.csvSubject'),
+    t('support.csvStatus'),
+    t('support.csvPriority'),
+    t('support.csvAssignee'),
+    t('support.csvCreated')
+  ];
+  const csv = [
+    headers.join(','),
+    ...data.map((row: any) =>
+      [
+        `"${row.ticketNumber || ''}"`,
+        `"${(row.subject || '').replace(/"/g, '""')}"`,
+        `"${row.status || ''}"`,
+        `"${row.priority || ''}"`,
+        `"${row.assignee?.name || ''}"`,
+        `"${formatDate(row.createdAt)}"`
+      ].join(',')
+    )
+  ].join('\n');
   const blob = new Blob([csv], { type: 'text/csv' });
   const url = URL.createObjectURL(blob);
   const a = document.createElement('a');

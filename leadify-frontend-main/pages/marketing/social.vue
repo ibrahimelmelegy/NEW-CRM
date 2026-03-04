@@ -263,7 +263,14 @@
         </div>
       </el-form>
       <template #footer>
-        <el-button @click="showComposeDialog = false; editingPostId = null">Cancel</el-button>
+        <el-button
+          @click="
+            showComposeDialog = false;
+            editingPostId = null;
+          "
+        >
+          Cancel
+        </el-button>
         <el-button :loading="postSaving" @click="publishNow">Publish Now</el-button>
         <el-button type="primary" :loading="postSaving" @click="schedulePost">Schedule</el-button>
       </template>
@@ -316,12 +323,12 @@ const newPost = ref({ content: '', platforms: [] as string[], date: '', time: ''
 
 // ── Platform display helpers (static mapping) ──────────────────────────────────
 const platformMeta: Record<string, { icon: string; iconColor: string }> = {
-  TWITTER:    { icon: 'ph:twitter-logo-bold',    iconColor: 'text-blue-400' },
-  LINKEDIN:   { icon: 'ph:linkedin-logo-bold',   iconColor: 'text-blue-600' },
-  FACEBOOK:   { icon: 'ph:facebook-logo-bold',   iconColor: 'text-blue-500' },
-  INSTAGRAM:  { icon: 'ph:instagram-logo-bold',  iconColor: 'text-pink-400' },
-  TIKTOK:     { icon: 'ph:tiktok-logo-bold',     iconColor: 'text-slate-200' },
-  YOUTUBE:    { icon: 'ph:youtube-logo-bold',     iconColor: 'text-red-500' }
+  TWITTER: { icon: 'ph:twitter-logo-bold', iconColor: 'text-blue-400' },
+  LINKEDIN: { icon: 'ph:linkedin-logo-bold', iconColor: 'text-blue-600' },
+  FACEBOOK: { icon: 'ph:facebook-logo-bold', iconColor: 'text-blue-500' },
+  INSTAGRAM: { icon: 'ph:instagram-logo-bold', iconColor: 'text-pink-400' },
+  TIKTOK: { icon: 'ph:tiktok-logo-bold', iconColor: 'text-slate-200' },
+  YOUTUBE: { icon: 'ph:youtube-logo-bold', iconColor: 'text-red-500' }
 };
 
 function formatFollowers(n: number): string {
@@ -332,8 +339,12 @@ function formatFollowers(n: number): string {
 
 function platformDisplayName(key: string): string {
   const names: Record<string, string> = {
-    TWITTER: 'Twitter', LINKEDIN: 'LinkedIn', FACEBOOK: 'Facebook',
-    INSTAGRAM: 'Instagram', TIKTOK: 'TikTok', YOUTUBE: 'YouTube'
+    TWITTER: 'Twitter',
+    LINKEDIN: 'LinkedIn',
+    FACEBOOK: 'Facebook',
+    INSTAGRAM: 'Instagram',
+    TIKTOK: 'TikTok',
+    YOUTUBE: 'YouTube'
   };
   return names[key] || key;
 }
@@ -376,25 +387,29 @@ const socialAccounts = computed(() => {
 
 // ── Derived: mentions (built from profiles since no separate endpoint) ─────────
 const mentions = computed(() => {
-  return profiles.value.map((p, idx) => ({
-    id: p.id,
-    author: p.handle || 'Unknown',
-    handle: p.handle || '',
-    platform: platformDisplayName(p.platform.toUpperCase()),
-    content: p.notes || '',
-    likes: p.engagement || 0,
-    comments: 0,
-    shares: 0,
-    sentiment: (p.sentiment || 'neutral').toLowerCase(),
-    isLead: !!p.clientId,
-    timeAgo: p.lastActivity ? getTimeAgo(p.lastActivity) : ''
-  })).filter(m => m.content); // only show profiles that have notes as "mentions"
+  return profiles.value
+    .map((p, idx) => ({
+      id: p.id,
+      author: p.handle || 'Unknown',
+      handle: p.handle || '',
+      platform: platformDisplayName(p.platform.toUpperCase()),
+      content: p.notes || '',
+      likes: p.engagement || 0,
+      comments: 0,
+      shares: 0,
+      sentiment: (p.sentiment || 'neutral').toLowerCase(),
+      isLead: !!p.clientId,
+      timeAgo: p.lastActivity ? getTimeAgo(p.lastActivity) : ''
+    }))
+    .filter(m => m.content); // only show profiles that have notes as "mentions"
 });
 
 // ── Sentiment computed from profiles ───────────────────────────────────────────
 const sentimentData = computed(() => {
   const total = profiles.value.length || 1;
-  let pos = 0, neu = 0, neg = 0;
+  let pos = 0;
+  let neu = 0;
+  let neg = 0;
   for (const p of profiles.value) {
     const s = (p.sentiment || '').toUpperCase();
     if (s === 'POSITIVE') pos++;
@@ -413,9 +428,7 @@ const engagementData = computed(() => {
   // Group by lastActivity date and sum engagement values
   const byDate: Record<string, { likes: number; comments: number; shares: number }> = {};
   for (const p of profiles.value) {
-    const dateKey = p.lastActivity
-      ? new Date(p.lastActivity).toLocaleDateString('en-US', { month: 'short', day: 'numeric' })
-      : 'Unknown';
+    const dateKey = p.lastActivity ? new Date(p.lastActivity).toLocaleDateString('en-US', { month: 'short', day: 'numeric' }) : 'Unknown';
     if (!byDate[dateKey]) byDate[dateKey] = { likes: 0, comments: 0, shares: 0 };
     byDate[dateKey].likes += p.engagement || 0;
   }
@@ -459,23 +472,49 @@ const influencers = computed(() => {
 });
 
 // ── Scheduled posts (from API) ──────────────────────────────────────────────
-const scheduledPosts = ref<{
-  id: number;
-  content: string;
-  platforms: string[];
-  scheduledDate: string;
-  scheduledTime: string;
-  status: string;
-}[]>([]);
+const scheduledPosts = ref<
+  {
+    id: number;
+    content: string;
+    platforms: string[];
+    scheduledDate: string;
+    scheduledTime: string;
+    status: string;
+  }[]
+>([]);
 const postsLoading = ref(false);
 const postSaving = ref(false);
 
 // ── Available platforms for the connect dialog ─────────────────────────────────
 const availablePlatforms = ref([
-  { name: 'Twitter/X', icon: 'ph:twitter-logo-bold', color: 'text-blue-400', description: 'Connect your Twitter account for mentions and posting', apiPlatform: 'TWITTER' },
-  { name: 'LinkedIn', icon: 'ph:linkedin-logo-bold', color: 'text-blue-600', description: 'Monitor LinkedIn company page and personal profiles', apiPlatform: 'LINKEDIN' },
-  { name: 'Facebook', icon: 'ph:facebook-logo-bold', color: 'text-blue-500', description: 'Manage Facebook pages and groups', apiPlatform: 'FACEBOOK' },
-  { name: 'Instagram', icon: 'ph:instagram-logo-bold', color: 'text-pink-400', description: 'Track mentions and manage Instagram business profile', apiPlatform: 'INSTAGRAM' }
+  {
+    name: 'Twitter/X',
+    icon: 'ph:twitter-logo-bold',
+    color: 'text-blue-400',
+    description: 'Connect your Twitter account for mentions and posting',
+    apiPlatform: 'TWITTER'
+  },
+  {
+    name: 'LinkedIn',
+    icon: 'ph:linkedin-logo-bold',
+    color: 'text-blue-600',
+    description: 'Monitor LinkedIn company page and personal profiles',
+    apiPlatform: 'LINKEDIN'
+  },
+  {
+    name: 'Facebook',
+    icon: 'ph:facebook-logo-bold',
+    color: 'text-blue-500',
+    description: 'Manage Facebook pages and groups',
+    apiPlatform: 'FACEBOOK'
+  },
+  {
+    name: 'Instagram',
+    icon: 'ph:instagram-logo-bold',
+    color: 'text-pink-400',
+    description: 'Track mentions and manage Instagram business profile',
+    apiPlatform: 'INSTAGRAM'
+  }
 ]);
 
 // ── Helpers ─────────────────────────────────────────────────────────────────────
@@ -594,9 +633,7 @@ async function fetchPosts() {
         id: p.id,
         content: p.content || '',
         platforms: p.platforms || [],
-        scheduledDate: p.scheduledDate
-          ? new Date(p.scheduledDate).toLocaleDateString('en-US', { month: 'short', day: 'numeric' })
-          : 'TBD',
+        scheduledDate: p.scheduledDate ? new Date(p.scheduledDate).toLocaleDateString('en-US', { month: 'short', day: 'numeric' }) : 'TBD',
         scheduledTime: p.scheduledTime || 'TBD',
         status: p.status || 'SCHEDULED'
       }));
@@ -655,10 +692,16 @@ const publishNow = async () => {
 
     if (editingPostId.value) {
       const res = await useApiFetch(`social-crm/posts/${editingPostId.value}`, 'PUT', payload);
-      if (!res?.success) { ElMessage.error(t('common.error')); return; }
+      if (!res?.success) {
+        ElMessage.error(t('common.error'));
+        return;
+      }
     } else {
       const res = await useApiFetch('social-crm/posts', 'POST', payload);
-      if (!res?.success) { ElMessage.error(t('common.error')); return; }
+      if (!res?.success) {
+        ElMessage.error(t('common.error'));
+        return;
+      }
     }
 
     ElMessage.success(t('common.saved'));
@@ -692,10 +735,16 @@ const schedulePost = async () => {
 
     if (editingPostId.value) {
       const res = await useApiFetch(`social-crm/posts/${editingPostId.value}`, 'PUT', payload);
-      if (!res?.success) { ElMessage.error(t('common.error')); return; }
+      if (!res?.success) {
+        ElMessage.error(t('common.error'));
+        return;
+      }
     } else {
       const res = await useApiFetch('social-crm/posts', 'POST', payload);
-      if (!res?.success) { ElMessage.error(t('common.error')); return; }
+      if (!res?.success) {
+        ElMessage.error(t('common.error'));
+        return;
+      }
     }
 
     ElMessage.success(t('common.saved'));

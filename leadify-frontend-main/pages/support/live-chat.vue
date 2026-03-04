@@ -245,7 +245,13 @@
             <!-- Assignment -->
             <div class="pt-4 border-t border-slate-800/60">
               <h5 class="text-xs font-medium text-slate-400 mb-2">{{ $t('liveChat.assignedTo') }}</h5>
-              <el-select v-model="activeChat.assignedAgent" :placeholder="$t('liveChat.selectAgent')" class="w-full" size="small" @change="handleAgentAssign">
+              <el-select
+                v-model="activeChat.assignedAgent"
+                :placeholder="$t('liveChat.selectAgent')"
+                class="w-full"
+                size="small"
+                @change="handleAgentAssign"
+              >
                 <el-option v-for="agent in agents" :key="agent.id" :label="agent.name" :value="agent.id" />
               </el-select>
             </div>
@@ -364,9 +370,10 @@ const normalizeConversation = (raw: any): Chat => ({
   visitorEmail: raw.visitorEmail || raw.visitorInfo?.email || '',
   status: raw.status || 'waiting',
   lastMessage: raw.lastMessage || raw.lastMessagePreview || '',
-  lastMessageTime: raw.lastMessageTime || raw.updatedAt
-    ? new Date(raw.lastMessageTime || raw.updatedAt).toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit' })
-    : '',
+  lastMessageTime:
+    raw.lastMessageTime || raw.updatedAt
+      ? new Date(raw.lastMessageTime || raw.updatedAt).toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit' })
+      : '',
   unreadCount: raw.unreadCount ?? 0,
   isTyping: false,
   assignedAgent: raw.assignedAgent || raw.agentId || null,
@@ -382,9 +389,7 @@ const normalizeMessage = (raw: any): ChatMessage => ({
   id: raw.id,
   sender: raw.senderType === 'STAFF' || raw.sender === 'agent' ? 'agent' : 'visitor',
   text: raw.content || raw.text || '',
-  time: raw.createdAt
-    ? new Date(raw.createdAt).toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit' })
-    : raw.time || '',
+  time: raw.createdAt ? new Date(raw.createdAt).toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit' }) : raw.time || '',
   read: raw.readAt != null || raw.read === true
 });
 
@@ -480,7 +485,7 @@ const loadMetrics = async () => {
 // ─── Socket ───────────────────────────────────────────────────────────────────
 const { socket } = useSocket();
 
-watch(socket, (sock) => {
+watch(socket, sock => {
   if (!sock) return;
 
   sock.on('chat:message', (data: any) => {
@@ -519,7 +524,9 @@ watch(socket, (sock) => {
     if (chat) {
       chat.isTyping = data.isTyping ?? true;
       if (chat.isTyping) {
-        setTimeout(() => { chat.isTyping = false; }, 3000);
+        setTimeout(() => {
+          chat.isTyping = false;
+        }, 3000);
       }
     }
   });
@@ -703,10 +710,5 @@ const transferChat = async () => {
 watch(filterStatus, loadConversations);
 
 // ─── Init ─────────────────────────────────────────────────────────────────────
-await Promise.allSettled([
-  loadConversations(),
-  loadAgents(),
-  loadCannedResponses(),
-  loadMetrics()
-]);
+await Promise.allSettled([loadConversations(), loadAgents(), loadCannedResponses(), loadMetrics()]);
 </script>

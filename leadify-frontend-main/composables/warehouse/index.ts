@@ -14,5 +14,19 @@ export const useWarehouse = () => {
   const createTransfer = (data: any) => useApiFetch('warehouse/transfers', 'POST', data);
   const updateTransfer = (id: string | number, data: any) => useApiFetch(`warehouse/transfers/${id}`, 'PUT', data);
   const getLowStock = () => useApiFetch('warehouse/low-stock', 'GET');
-  return { getWarehouses, getWarehouseById, createWarehouse, updateWarehouse, deleteWarehouse, getZones, createZone, deleteZone, getStock, getTransfers, createTransfer, updateTransfer, getLowStock };
+  return {
+    getWarehouses,
+    getWarehouseById,
+    createWarehouse,
+    updateWarehouse,
+    deleteWarehouse,
+    getZones,
+    createZone,
+    deleteZone,
+    getStock,
+    getTransfers,
+    createTransfer,
+    updateTransfer,
+    getLowStock
+  };
 };

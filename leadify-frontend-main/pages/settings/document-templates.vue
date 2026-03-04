@@ -211,11 +211,7 @@ const t = $i18n.t;
 const route = useRoute();
 
 // Pre-computed labels to avoid complex $t() expressions in Pug attributes
-const dialogTitle = computed(() =>
-  editingTemplate.value
-    ? t('documentTemplates.editTemplate')
-    : t('documentTemplates.createTemplate')
-);
+const dialogTitle = computed(() => (editingTemplate.value ? t('documentTemplates.editTemplate') : t('documentTemplates.createTemplate')));
 const nameLabel = computed(() => t('common.name'));
 const typeLabel = computed(() => t('documentTemplates.builder.templateType'));
 const templateNamePlaceholder = computed(() => t('documentTemplates.builder.templateName'));
@@ -261,33 +257,98 @@ let searchTimeout: ReturnType<typeof setTimeout>;
 
 // Variable definitions by template type
 const INVOICE_VARS = [
-  'companyName', 'companyAddress', 'companyPhone', 'companyEmail', 'companyLogo',
-  'invoiceNumber', 'date', 'dueDate', 'clientName', 'clientAddress', 'clientPhone',
-  'clientEmail', 'items', 'subtotal', 'tax', 'total', 'notes'
+  'companyName',
+  'companyAddress',
+  'companyPhone',
+  'companyEmail',
+  'companyLogo',
+  'invoiceNumber',
+  'date',
+  'dueDate',
+  'clientName',
+  'clientAddress',
+  'clientPhone',
+  'clientEmail',
+  'items',
+  'subtotal',
+  'tax',
+  'total',
+  'notes'
 ];
 
 const PO_VARS = [
-  'companyName', 'companyAddress', 'companyPhone', 'companyEmail', 'companyLogo',
-  'poNumber', 'date', 'deliveryDate', 'vendorName', 'vendorAddress', 'vendorPhone',
-  'vendorEmail', 'projectName', 'items', 'subtotal', 'tax', 'total', 'notes'
+  'companyName',
+  'companyAddress',
+  'companyPhone',
+  'companyEmail',
+  'companyLogo',
+  'poNumber',
+  'date',
+  'deliveryDate',
+  'vendorName',
+  'vendorAddress',
+  'vendorPhone',
+  'vendorEmail',
+  'projectName',
+  'items',
+  'subtotal',
+  'tax',
+  'total',
+  'notes'
 ];
 
 const QUOTE_VARS = [
-  'companyName', 'companyAddress', 'companyPhone', 'companyEmail', 'companyLogo',
-  'quoteNumber', 'date', 'validUntil', 'clientName', 'clientAddress',
-  'items', 'subtotal', 'tax', 'total', 'notes', 'termsAndConditions'
+  'companyName',
+  'companyAddress',
+  'companyPhone',
+  'companyEmail',
+  'companyLogo',
+  'quoteNumber',
+  'date',
+  'validUntil',
+  'clientName',
+  'clientAddress',
+  'items',
+  'subtotal',
+  'tax',
+  'total',
+  'notes',
+  'termsAndConditions'
 ];
 
 const CONTRACT_VARS = [
-  'companyName', 'companyAddress', 'companyLogo', 'contractNumber', 'date',
-  'startDate', 'endDate', 'clientName', 'clientAddress', 'description',
-  'scope', 'termsAndConditions', 'totalValue', 'notes', 'signatureDate'
+  'companyName',
+  'companyAddress',
+  'companyLogo',
+  'contractNumber',
+  'date',
+  'startDate',
+  'endDate',
+  'clientName',
+  'clientAddress',
+  'description',
+  'scope',
+  'termsAndConditions',
+  'totalValue',
+  'notes',
+  'signatureDate'
 ];
 
 const GENERIC_VARS = [
-  'companyName', 'companyAddress', 'companyPhone', 'companyEmail', 'companyLogo',
-  'documentNumber', 'date', 'recipientName', 'recipientAddress',
-  'items', 'subtotal', 'tax', 'total', 'notes'
+  'companyName',
+  'companyAddress',
+  'companyPhone',
+  'companyEmail',
+  'companyLogo',
+  'documentNumber',
+  'date',
+  'recipientName',
+  'recipientAddress',
+  'items',
+  'subtotal',
+  'tax',
+  'total',
+  'notes'
 ];
 
 const form = reactive({
@@ -329,12 +390,15 @@ function formatVar(v: string): string {
 
 function copyVariable(v: string) {
   const text = `{{${v}}}`;
-  navigator.clipboard.writeText(text).then(() => {
-    ElNotification({ type: 'success', title: 'Copied', message: `${text} copied to clipboard`, duration: 1500 });
-  }).catch(() => {
-    // Clipboard not available, show info
-    ElNotification({ type: 'info', title: 'Variable', message: text, duration: 2000 });
-  });
+  navigator.clipboard
+    .writeText(text)
+    .then(() => {
+      ElNotification({ type: 'success', title: 'Copied', message: `${text} copied to clipboard`, duration: 1500 });
+    })
+    .catch(() => {
+      // Clipboard not available, show info
+      ElNotification({ type: 'info', title: 'Variable', message: text, duration: 2000 });
+    });
 }
 
 // Type display helpers

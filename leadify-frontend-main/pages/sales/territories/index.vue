@@ -492,15 +492,16 @@ div.animate-fade-in
 </template>
 
 <script setup lang="ts">
+/* eslint-disable require-await */
 import { ref, reactive, computed, onMounted, watch, nextTick } from 'vue';
 import { ElNotification, ElMessageBox, ElMessage } from 'element-plus';
+import * as echarts from 'echarts/core';
 import { fetchTerritories, createTerritory, updateTerritory } from '~/composables/useTerritories';
 import type { Territory } from '~/composables/useTerritories';
 import { useApiFetch } from '~/composables/useApiFetch';
 import PremiumPageHeader from '~/components/UI/PremiumPageHeader.vue';
 import PremiumKPICards from '~/components/UI/PremiumKPICards.vue';
 import type { KPIMetric } from '~/components/UI/PremiumKPICards.vue';
-import * as echarts from 'echarts';
 
 definePageMeta({ middleware: 'permissions', title: 'Territory Management' });
 
@@ -560,15 +561,19 @@ const enrichedTerritories = computed(() => {
     return {
       ...ter,
       region: ter.type || 'region',
-      _reps: reps.length ? reps : (staffList.value.length ? staffList.value.filter((_s: any, i: number) => (i + seed) % 5 === 0).slice(0, Math.max(1, seed % 3)) : []),
-      _leadsCount: (ter as any)._leadsCount ?? ((seed * 17 + 23) % 120),
-      _dealsCount: (ter as any)._dealsCount ?? ((seed * 7 + 11) % 45),
-      _pipelineValue: (ter as any)._pipelineValue ?? ((seed * 12347 + 50000) % 500000),
-      _revenue: (ter as any)._revenue ?? ((seed * 9823 + 30000) % 350000),
-      _coverage: (ter as any)._coverage ?? (30 + ((seed * 13) % 70)),
+      _reps: reps.length
+        ? reps
+        : staffList.value.length
+          ? staffList.value.filter((_s: any, i: number) => (i + seed) % 5 === 0).slice(0, Math.max(1, seed % 3))
+          : [],
+      _leadsCount: (ter as any)._leadsCount ?? (seed * 17 + 23) % 120,
+      _dealsCount: (ter as any)._dealsCount ?? (seed * 7 + 11) % 45,
+      _pipelineValue: (ter as any)._pipelineValue ?? (seed * 12347 + 50000) % 500000,
+      _revenue: (ter as any)._revenue ?? (seed * 9823 + 30000) % 350000,
+      _coverage: (ter as any)._coverage ?? 30 + ((seed * 13) % 70),
       _revenueTarget: (ter as any)._revenueTarget ?? ter.boundaries?.revenueTarget ?? 200000,
-      _winRate: (ter as any)._winRate ?? (15 + ((seed * 11) % 60)),
-      _avgDealSize: (ter as any)._avgDealSize ?? (5000 + ((seed * 3571) % 40000))
+      _winRate: (ter as any)._winRate ?? 15 + ((seed * 11) % 60),
+      _avgDealSize: (ter as any)._avgDealSize ?? 5000 + ((seed * 3571) % 40000)
     };
   });
 });
@@ -581,9 +586,7 @@ const filteredTerritories = computed(() => {
   if (searchQuery.value) {
     const q = searchQuery.value.toLowerCase();
     data = data.filter(t => {
-      return t.name.toLowerCase().includes(q) ||
-        (t.description || '').toLowerCase().includes(q) ||
-        (t.type || '').toLowerCase().includes(q);
+      return t.name.toLowerCase().includes(q) || (t.description || '').toLowerCase().includes(q) || (t.type || '').toLowerCase().includes(q);
     });
   }
   return data;
@@ -609,7 +612,7 @@ const kpiMetrics = computed<KPIMetric[]>(() => {
   const data = enrichedTerritories.value;
   const total = data.length;
   const assignedReps = new Set(data.flatMap(t => (t._reps || []).map((r: any) => r.id || r.name)));
-  const unassignedLeads = data.reduce((sum, t) => sum + Math.max(0, (t._leadsCount || 0) - ((t._reps?.length || 0) * 10)), 0);
+  const unassignedLeads = data.reduce((sum, t) => sum + Math.max(0, (t._leadsCount || 0) - (t._reps?.length || 0) * 10), 0);
   const totalRevenue = data.reduce((sum, t) => sum + (t._revenue || 0), 0);
 
   return [
@@ -664,14 +667,62 @@ const comparisonData = computed(() => {
   if (!t1 || !t2) return null;
 
   return [
-    { metric: t('territoryManagement.leadsCount'), val1: t1._leadsCount, val2: t2._leadsCount, display1: String(t1._leadsCount), display2: String(t2._leadsCount) },
-    { metric: t('territoryManagement.dealsCount'), val1: t1._dealsCount, val2: t2._dealsCount, display1: String(t1._dealsCount), display2: String(t2._dealsCount) },
-    { metric: t('territoryManagement.pipelineValue'), val1: t1._pipelineValue, val2: t2._pipelineValue, display1: formatCurrency(t1._pipelineValue), display2: formatCurrency(t2._pipelineValue) },
-    { metric: t('territoryManagement.yTDRevenue'), val1: t1._revenue, val2: t2._revenue, display1: formatCurrency(t1._revenue), display2: formatCurrency(t2._revenue) },
-    { metric: t('territoryManagement.coverage'), val1: t1._coverage, val2: t2._coverage, display1: t1._coverage.toFixed(0) + '%', display2: t2._coverage.toFixed(0) + '%' },
-    { metric: t('territoryManagement.winRate'), val1: t1._winRate, val2: t2._winRate, display1: t1._winRate.toFixed(1) + '%', display2: t2._winRate.toFixed(1) + '%' },
-    { metric: t('territoryManagement.avgDealSize'), val1: t1._avgDealSize, val2: t2._avgDealSize, display1: formatCurrency(t1._avgDealSize), display2: formatCurrency(t2._avgDealSize) },
-    { metric: t('territoryManagement.assignedReps'), val1: t1._reps?.length ?? 0, val2: t2._reps?.length ?? 0, display1: String(t1._reps?.length ?? 0), display2: String(t2._reps?.length ?? 0) }
+    {
+      metric: t('territoryManagement.leadsCount'),
+      val1: t1._leadsCount,
+      val2: t2._leadsCount,
+      display1: String(t1._leadsCount),
+      display2: String(t2._leadsCount)
+    },
+    {
+      metric: t('territoryManagement.dealsCount'),
+      val1: t1._dealsCount,
+      val2: t2._dealsCount,
+      display1: String(t1._dealsCount),
+      display2: String(t2._dealsCount)
+    },
+    {
+      metric: t('territoryManagement.pipelineValue'),
+      val1: t1._pipelineValue,
+      val2: t2._pipelineValue,
+      display1: formatCurrency(t1._pipelineValue),
+      display2: formatCurrency(t2._pipelineValue)
+    },
+    {
+      metric: t('territoryManagement.yTDRevenue'),
+      val1: t1._revenue,
+      val2: t2._revenue,
+      display1: formatCurrency(t1._revenue),
+      display2: formatCurrency(t2._revenue)
+    },
+    {
+      metric: t('territoryManagement.coverage'),
+      val1: t1._coverage,
+      val2: t2._coverage,
+      display1: t1._coverage.toFixed(0) + '%',
+      display2: t2._coverage.toFixed(0) + '%'
+    },
+    {
+      metric: t('territoryManagement.winRate'),
+      val1: t1._winRate,
+      val2: t2._winRate,
+      display1: t1._winRate.toFixed(1) + '%',
+      display2: t2._winRate.toFixed(1) + '%'
+    },
+    {
+      metric: t('territoryManagement.avgDealSize'),
+      val1: t1._avgDealSize,
+      val2: t2._avgDealSize,
+      display1: formatCurrency(t1._avgDealSize),
+      display2: formatCurrency(t2._avgDealSize)
+    },
+    {
+      metric: t('territoryManagement.assignedReps'),
+      val1: t1._reps?.length ?? 0,
+      val2: t2._reps?.length ?? 0,
+      display1: String(t1._reps?.length ?? 0),
+      display2: String(t2._reps?.length ?? 0)
+    }
   ];
 });
 
@@ -745,10 +796,7 @@ function getLoadColor(count: number): string {
 async function loadData() {
   loading.value = true;
   try {
-    const [territoryData, usersRes]: any[] = await Promise.all([
-      fetchTerritories(),
-      useApiFetch('users')
-    ]);
+    const [territoryData, usersRes]: any[] = await Promise.all([fetchTerritories(), useApiFetch('users')]);
     territories.value = territoryData;
     if (usersRes?.body?.docs) {
       staffList.value = usersRes.body.docs.map((u: any, idx: number) => ({
@@ -903,7 +951,9 @@ async function handleBulkExport() {
     const csvRows = [
       ['Name', 'Region', 'Leads', 'Deals', 'Pipeline Value', 'Revenue', 'Coverage %'].join(','),
       ...data.map((t: any) =>
-        [t.name, t.type || '', t._leadsCount || 0, t._dealsCount || 0, t._pipelineValue || 0, t._revenue || 0, (t._coverage || 0).toFixed(0)].join(',')
+        [t.name, t.type || '', t._leadsCount || 0, t._dealsCount || 0, t._pipelineValue || 0, t._revenue || 0, (t._coverage || 0).toFixed(0)].join(
+          ','
+        )
       )
     ];
     const blob = new Blob([csvRows.join('\n')], { type: 'text/csv' });
@@ -968,12 +1018,14 @@ function renderComparisonChart() {
       name: label,
       axisLabel: { color: 'var(--text-muted)' }
     },
-    series: [{
-      name: label,
-      type: 'bar',
-      data: values.map((v, i) => ({ value: v, itemStyle: { color: colors[i], borderRadius: [6, 6, 0, 0] } })),
-      barMaxWidth: 40
-    }]
+    series: [
+      {
+        name: label,
+        type: 'bar',
+        data: values.map((v, i) => ({ value: v, itemStyle: { color: colors[i], borderRadius: [6, 6, 0, 0] } })),
+        barMaxWidth: 40
+      }
+    ]
   });
 }
 
@@ -984,7 +1036,7 @@ watch([activeView, compareMetric, () => enrichedTerritories.value.length], () =>
   }
 });
 
-watch(activeView, (val) => {
+watch(activeView, val => {
   if (val === 'compare') {
     nextTick(() => renderComparisonChart());
   }
@@ -1002,8 +1054,14 @@ onMounted(async () => {
 }
 
 @keyframes fadeIn {
-  from { opacity: 0; transform: translateY(8px); }
-  to { opacity: 1; transform: translateY(0); }
+  from {
+    opacity: 0;
+    transform: translateY(8px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
 }
 
 // Territory map cards
@@ -1018,15 +1076,21 @@ onMounted(async () => {
 
   &.performance-exceeding {
     border-color: rgba(16, 185, 129, 0.3);
-    &:hover { border-color: rgba(16, 185, 129, 0.6); }
+    &:hover {
+      border-color: rgba(16, 185, 129, 0.6);
+    }
   }
   &.performance-on-target {
     border-color: rgba(245, 158, 11, 0.3);
-    &:hover { border-color: rgba(245, 158, 11, 0.6); }
+    &:hover {
+      border-color: rgba(245, 158, 11, 0.6);
+    }
   }
   &.performance-below {
     border-color: rgba(239, 68, 68, 0.3);
-    &:hover { border-color: rgba(239, 68, 68, 0.6); }
+    &:hover {
+      border-color: rgba(239, 68, 68, 0.6);
+    }
   }
 }
 

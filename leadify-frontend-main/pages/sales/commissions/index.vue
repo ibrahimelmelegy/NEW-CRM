@@ -191,7 +191,12 @@ const dashboardStats = computed(() => {
   return [
     { label: t('commissions.totalEarned'), value: Number(s.totalEarned || 0).toLocaleString() + ' SAR', icon: 'ph:wallet-bold', color: '#7849ff' },
     { label: t('commissions.totalPaid'), value: Number(s.totalPaid || 0).toLocaleString() + ' SAR', icon: 'ph:check-circle-bold', color: '#22c55e' },
-    { label: t('commissions.totalPending'), value: Number(s.totalPending || 0).toLocaleString() + ' SAR', icon: 'ph:hourglass-bold', color: '#f59e0b' },
+    {
+      label: t('commissions.totalPending'),
+      value: Number(s.totalPending || 0).toLocaleString() + ' SAR',
+      icon: 'ph:hourglass-bold',
+      color: '#f59e0b'
+    },
     { label: t('commissions.avgRate'), value: Number(s.avgRate || 0).toFixed(1) + '%', icon: 'ph:percent-bold', color: '#3b82f6' }
   ];
 });
@@ -201,11 +206,14 @@ const periodChartData = computed(() => {
   const periods = analyticsData.value?.byPeriod || [];
   if (!periods.length) return [];
   const maxVal = Math.max(...periods.map((p: any) => Number(p.earned || 0)), 1);
-  return periods.slice(0, 12).reverse().map((p: any) => ({
-    label: p.period,
-    value: Number(p.earned || 0),
-    height: Math.max((Number(p.earned || 0) / maxVal) * 100, 5)
-  }));
+  return periods
+    .slice(0, 12)
+    .reverse()
+    .map((p: any) => ({
+      label: p.period,
+      value: Number(p.earned || 0),
+      height: Math.max((Number(p.earned || 0) / maxVal) * 100, 5)
+    }));
 });
 
 function formatCompact(amount: number): string {
@@ -233,7 +241,9 @@ async function fetchData() {
       items.value = data.rows || data.docs || [];
       pagination.total = data.pagination?.totalItems ?? data.count ?? items.value.length;
     }
-  } finally { loading.value = false; }
+  } finally {
+    loading.value = false;
+  }
 }
 
 async function fetchDashboardKPIs() {
@@ -279,7 +289,9 @@ async function saveItem() {
       await fetchData();
       await fetchDashboardKPIs();
     }
-  } finally { saving.value = false; }
+  } finally {
+    saving.value = false;
+  }
 }
 
 async function updateStatus(id: number, status: string) {
@@ -302,9 +314,7 @@ async function handleDelete(id: number) {
 }
 
 function handleSelectionChange(selection: any[]) {
-  selectedIds.value = selection
-    .filter((r: any) => r.status !== 'PAID')
-    .map((r: any) => r.id);
+  selectedIds.value = selection.filter((r: any) => r.status !== 'PAID').map((r: any) => r.id);
 }
 
 async function doBulkPayout() {
@@ -319,7 +329,9 @@ async function doBulkPayout() {
       await fetchData();
       await fetchDashboardKPIs();
     }
-  } finally { payingOut.value = false; }
+  } finally {
+    payingOut.value = false;
+  }
 }
 
 function statusType(s: string) {

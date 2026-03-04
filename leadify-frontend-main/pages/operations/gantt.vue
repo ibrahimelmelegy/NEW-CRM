@@ -10,8 +10,12 @@
         <div class="flex gap-2">
           <el-button-group>
             <el-button :type="viewMode === 'week' ? 'primary' : 'default'" size="small" @click="viewMode = 'week'">{{ $t('gantt.week') }}</el-button>
-            <el-button :type="viewMode === 'month' ? 'primary' : 'default'" size="small" @click="viewMode = 'month'">{{ $t('gantt.month') }}</el-button>
-            <el-button :type="viewMode === 'quarter' ? 'primary' : 'default'" size="small" @click="viewMode = 'quarter'">{{ $t('gantt.quarter') }}</el-button>
+            <el-button :type="viewMode === 'month' ? 'primary' : 'default'" size="small" @click="viewMode = 'month'">
+              {{ $t('gantt.month') }}
+            </el-button>
+            <el-button :type="viewMode === 'quarter' ? 'primary' : 'default'" size="small" @click="viewMode = 'quarter'">
+              {{ $t('gantt.quarter') }}
+            </el-button>
           </el-button-group>
           <el-button :type="showCriticalPath ? 'warning' : 'default'" size="small" @click="showCriticalPath = !showCriticalPath">
             <Icon name="ph:lightning-bold" class="w-4 h-4 mr-1" />
@@ -79,7 +83,7 @@
       <!-- Timeline Header -->
       <div class="flex border-b border-slate-800/60">
         <div class="w-72 flex-shrink-0 p-3 border-r border-slate-800/60 flex items-center gap-2">
-          <el-checkbox v-model="selectAll" @change="toggleSelectAll" size="small" />
+          <el-checkbox v-model="selectAll" size="small" @change="toggleSelectAll" />
           <span class="text-sm font-medium text-slate-300">{{ $t('gantt.taskName') }}</span>
         </div>
         <div ref="timelineHeaderRef" class="flex-1 flex overflow-x-auto relative" @scroll="syncScroll('header', $event)">
@@ -99,7 +103,9 @@
             class="absolute top-0 bottom-0 w-0.5 bg-red-500 z-10 pointer-events-none"
             :style="{ left: todayOffset + 'px' }"
           >
-            <div class="absolute -top-0 left-1/2 -translate-x-1/2 bg-red-500 text-white text-[8px] px-1 rounded-b font-bold whitespace-nowrap">{{ $t('gantt.today') }}</div>
+            <div class="absolute -top-0 left-1/2 -translate-x-1/2 bg-red-500 text-white text-[8px] px-1 rounded-b font-bold whitespace-nowrap">
+              {{ $t('gantt.today') }}
+            </div>
           </div>
         </div>
       </div>
@@ -109,22 +115,23 @@
         <!-- Task Info -->
         <div class="w-72 flex-shrink-0 p-3 border-r border-slate-800/60">
           <div class="flex items-center gap-2">
-            <el-checkbox :model-value="selectedTaskIds.has(task.id)" @change="toggleTaskSelection(task.id)" size="small" @click.stop />
+            <el-checkbox :model-value="selectedTaskIds.has(task.id)" size="small" @change="toggleTaskSelection(task.id)" @click.stop />
             <div
               class="w-2 h-2 rounded-full flex-shrink-0"
               :style="{ backgroundColor: task.color }"
               :class="showCriticalPath && isCriticalTask(task) ? 'ring-2 ring-red-500 ring-offset-1 ring-offset-slate-900' : ''"
             ></div>
             <div class="flex-1 min-w-0">
-              <div
-                class="text-sm font-medium truncate"
-                :class="showCriticalPath && isCriticalTask(task) ? 'text-red-400' : 'text-slate-200'"
-              >{{ task.name }}</div>
+              <div class="text-sm font-medium truncate" :class="showCriticalPath && isCriticalTask(task) ? 'text-red-400' : 'text-slate-200'">
+                {{ task.name }}
+              </div>
               <div class="flex items-center gap-2 mt-1">
                 <el-avatar :size="18" class="bg-slate-700 text-[10px]">{{ task.assignee?.charAt(0) }}</el-avatar>
                 <span class="text-[10px] text-slate-500">{{ task.assignee }}</span>
                 <el-tag v-if="task.isMilestone" type="warning" effect="dark" size="small" class="!text-[10px]">{{ $t('gantt.milestone') }}</el-tag>
-                <el-tag v-if="showCriticalPath && isCriticalTask(task)" type="danger" effect="dark" size="small" class="!text-[10px]">{{ $t('gantt.critical') }}</el-tag>
+                <el-tag v-if="showCriticalPath && isCriticalTask(task)" type="danger" effect="dark" size="small" class="!text-[10px]">
+                  {{ $t('gantt.critical') }}
+                </el-tag>
               </div>
             </div>
             <!-- Delete button visible on hover -->
@@ -241,7 +248,12 @@
     </div>
 
     <!-- Add/Edit Task Dialog -->
-    <el-dialog v-model="showTaskDialog" :title="isEditing ? $t('gantt.editTask') : $t('gantt.addGanttTask')" width="520px" :close-on-click-modal="false">
+    <el-dialog
+      v-model="showTaskDialog"
+      :title="isEditing ? $t('gantt.editTask') : $t('gantt.addGanttTask')"
+      width="520px"
+      :close-on-click-modal="false"
+    >
       <el-form label-position="top">
         <el-form-item :label="$t('gantt.taskName')">
           <el-input v-model="taskForm.name" :placeholder="$t('gantt.taskNamePlaceholder')" />
@@ -270,12 +282,7 @@
         <div class="grid grid-cols-2 gap-4">
           <el-form-item :label="$t('gantt.dependency')">
             <el-select v-model="taskForm.parentTaskId" class="w-full" clearable :placeholder="$t('gantt.none')">
-              <el-option
-                v-for="t in availableDependencies"
-                :key="t.id"
-                :label="t.name"
-                :value="t.id"
-              />
+              <el-option v-for="t in availableDependencies" :key="t.id" :label="t.name" :value="t.id" />
             </el-select>
           </el-form-item>
           <el-form-item :label="$t('gantt.milestone')">
@@ -285,7 +292,9 @@
       </el-form>
       <template #footer>
         <el-button @click="showTaskDialog = false">{{ $t('common.cancel') }}</el-button>
-        <el-button v-if="isEditing" type="danger" plain :loading="deleting" @click="confirmDeleteTask(editingTask!)">{{ $t('common.delete') }}</el-button>
+        <el-button v-if="isEditing" type="danger" plain :loading="deleting" @click="confirmDeleteTask(editingTask!)">
+          {{ $t('common.delete') }}
+        </el-button>
         <el-button type="primary" :loading="saving" @click="saveTask">{{ isEditing ? $t('gantt.update') : $t('gantt.addTask') }}</el-button>
       </template>
     </el-dialog>
@@ -416,11 +425,15 @@ function parseGanttMeta(tags: any[]): GanttMeta {
 function statusToProgress(status: string, duration?: number | null): number {
   if (typeof duration === 'number' && duration >= 0 && duration <= 100) return duration;
   switch (status) {
-    case 'COMPLETED': return 100;
-    case 'IN_PROGRESS': return 50;
-    case 'CANCELLED': return 0;
+    case 'COMPLETED':
+      return 100;
+    case 'IN_PROGRESS':
+      return 50;
+    case 'CANCELLED':
+      return 0;
     case 'PENDING':
-    default: return 0;
+    default:
+      return 0;
   }
 }
 
@@ -506,7 +519,7 @@ const criticalTaskIds = computed(() => {
     const dep = task.dependency ? taskMap.get(task.dependency) : null;
     if (dep && !processed.has(dep.id)) forwardPass(dep);
 
-    const depFinish = dep ? (earlyFinish.get(dep.id) || toMs(dep.end)) : 0;
+    const depFinish = dep ? earlyFinish.get(dep.id) || toMs(dep.end) : 0;
     const es = Math.max(toMs(task.start), depFinish);
     const duration = Math.max(DAY, toMs(task.end) - toMs(task.start));
     const ef = es + duration;
@@ -543,9 +556,7 @@ const criticalTaskIds = computed(() => {
       if (depTask && !backProcessed.has(depId)) backwardPass(depTask);
     }
 
-    const lf = deps.length > 0
-      ? Math.min(...deps.map(d => lateStart.get(d) || projectEnd))
-      : projectEnd;
+    const lf = deps.length > 0 ? Math.min(...deps.map(d => lateStart.get(d) || projectEnd)) : projectEnd;
     const duration = Math.max(DAY, toMs(task.end) - toMs(task.start));
     const ls = lf - duration;
 
@@ -878,11 +889,7 @@ const saveTask = async () => {
 async function bulkUpdateStatus(newStatus: string) {
   if (!selectedTaskIds.value.size) return;
   try {
-    await ElMessageBox.confirm(
-      `Update ${selectedTaskIds.value.size} task(s) to ${newStatus}?`,
-      t('common.warning'),
-      { type: 'warning' }
-    );
+    await ElMessageBox.confirm(`Update ${selectedTaskIds.value.size} task(s) to ${newStatus}?`, t('common.warning'), { type: 'warning' });
     const progress = newStatus === 'COMPLETED' ? 100 : newStatus === 'IN_PROGRESS' ? 50 : 0;
     for (const id of selectedTaskIds.value) {
       const task = tasks.value.find(t => t.id === id);
@@ -908,11 +915,7 @@ async function bulkUpdateStatus(newStatus: string) {
 async function bulkDeleteTasks() {
   if (!selectedTaskIds.value.size) return;
   try {
-    await ElMessageBox.confirm(
-      t('common.confirmBulkDelete', { count: selectedTaskIds.value.size }),
-      t('common.warning'),
-      { type: 'warning' }
-    );
+    await ElMessageBox.confirm(t('common.confirmBulkDelete', { count: selectedTaskIds.value.size }), t('common.warning'), { type: 'warning' });
     for (const id of selectedTaskIds.value) {
       await useApiFetch(`tasks/${id}`, 'DELETE');
     }
@@ -926,21 +929,22 @@ async function bulkDeleteTasks() {
 }
 
 function exportTasksCSV() {
-  const data = selectedTaskIds.value.size
-    ? tasks.value.filter(t => selectedTaskIds.value.has(t.id))
-    : tasks.value;
+  const data = selectedTaskIds.value.size ? tasks.value.filter(t => selectedTaskIds.value.has(t.id)) : tasks.value;
   if (!data.length) return;
   const headers = ['Task Name', 'Assignee', 'Start Date', 'End Date', 'Progress', 'Milestone'];
-  const csv = [headers.join(','), ...data.map((task: GanttTask) =>
-    [
-      `"${task.name || ''}"`,
-      `"${task.assignee || ''}"`,
-      `"${task.start || ''}"`,
-      `"${task.end || ''}"`,
-      `${task.progress || 0}%`,
-      task.isMilestone ? 'Yes' : 'No'
-    ].join(',')
-  )].join('\n');
+  const csv = [
+    headers.join(','),
+    ...data.map((task: GanttTask) =>
+      [
+        `"${task.name || ''}"`,
+        `"${task.assignee || ''}"`,
+        `"${task.start || ''}"`,
+        `"${task.end || ''}"`,
+        `${task.progress || 0}%`,
+        task.isMilestone ? 'Yes' : 'No'
+      ].join(',')
+    )
+  ].join('\n');
   const blob = new Blob([csv], { type: 'text/csv' });
   const url = URL.createObjectURL(blob);
   const a = document.createElement('a');
@@ -953,11 +957,11 @@ function exportTasksCSV() {
 
 async function confirmDeleteTask(task: GanttTask) {
   try {
-    await ElMessageBox.confirm(
-      t('common.confirmAction'),
-      t('common.warning'),
-      { type: 'warning', confirmButtonText: t('common.delete'), cancelButtonText: t('common.cancel') }
-    );
+    await ElMessageBox.confirm(t('common.confirmAction'), t('common.warning'), {
+      type: 'warning',
+      confirmButtonText: t('common.delete'),
+      cancelButtonText: t('common.cancel')
+    });
     await deleteTask(task);
   } catch {
     // cancelled

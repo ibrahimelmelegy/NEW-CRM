@@ -6,14 +6,14 @@
 
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 
+import { fetchAuditTrail, fetchFieldHistory } from '~/composables/useAudit';
+
 const mockApiFetch = vi.fn();
 (globalThis as any).useApiFetch = mockApiFetch;
 
 vi.mock('@/composables/useApiFetch', () => ({
   useApiFetch: (...args: any[]) => mockApiFetch(...args)
 }));
-
-import { fetchAuditTrail, fetchFieldHistory } from '~/composables/useAudit';
 
 describe('useAudit', () => {
   beforeEach(() => {
@@ -70,7 +70,17 @@ describe('useAudit', () => {
   describe('fetchFieldHistory', () => {
     it('should fetch history for a specific field', async () => {
       const entries = [
-        { id: 1, action: 'UPDATE', entityType: 'LEAD', entityId: '10', fieldName: 'status', oldValue: 'NEW', newValue: 'CONTACTED', userId: 1, createdAt: '2024-01-01' }
+        {
+          id: 1,
+          action: 'UPDATE',
+          entityType: 'LEAD',
+          entityId: '10',
+          fieldName: 'status',
+          oldValue: 'NEW',
+          newValue: 'CONTACTED',
+          userId: 1,
+          createdAt: '2024-01-01'
+        }
       ];
       mockApiFetch.mockResolvedValue({ body: { docs: entries }, success: true });
 

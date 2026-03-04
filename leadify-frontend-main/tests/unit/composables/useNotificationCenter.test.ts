@@ -1,3 +1,4 @@
+/* eslint-disable require-await */
 /**
  * useNotificationCenter - Unit Tests
  * ====================================
@@ -7,14 +8,14 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { ref } from 'vue';
 
+import { useNotificationCenter } from '~/composables/useNotificationCenter';
+
 const mockApiFetch = vi.fn();
 (globalThis as any).useApiFetch = mockApiFetch;
 (globalThis as any).useI18n = () => ({
   t: (key: string) => key,
   locale: ref('en')
 });
-
-import { useNotificationCenter } from '~/composables/useNotificationCenter';
 
 describe('useNotificationCenter', () => {
   beforeEach(() => {
@@ -74,9 +75,7 @@ describe('useNotificationCenter', () => {
   // ============================================
   describe('fetchNotifications', () => {
     it('should populate notifications on success', async () => {
-      const docs = [
-        { id: '1', type: 'LEAD_CREATED', body_en: 'New lead', read: 'UN_READ', createdAt: new Date().toISOString() }
-      ];
+      const docs = [{ id: '1', type: 'LEAD_CREATED', body_en: 'New lead', read: 'UN_READ', createdAt: new Date().toISOString() }];
       mockApiFetch.mockResolvedValue({ success: true, body: { docs, unreadNotificationsCount: 1 } });
 
       const nc = useNotificationCenter();
@@ -166,9 +165,7 @@ describe('useNotificationCenter', () => {
     it('should mark all notifications as read on success', async () => {
       mockApiFetch.mockResolvedValue({ success: true });
       const nc = useNotificationCenter();
-      nc.notifications.value = [
-        { id: '1', type: 'LEAD_CREATED', read: 'UN_READ', createdAt: new Date().toISOString() }
-      ] as any;
+      nc.notifications.value = [{ id: '1', type: 'LEAD_CREATED', read: 'UN_READ', createdAt: new Date().toISOString() }] as any;
       nc.unreadCount.value = 1;
 
       await nc.markAllRead();
@@ -185,9 +182,7 @@ describe('useNotificationCenter', () => {
     it('should mark a single notification as read', async () => {
       mockApiFetch.mockResolvedValue({ success: true });
       const nc = useNotificationCenter();
-      nc.notifications.value = [
-        { id: '1', type: 'LEAD_CREATED', read: 'UN_READ', createdAt: new Date().toISOString() }
-      ] as any;
+      nc.notifications.value = [{ id: '1', type: 'LEAD_CREATED', read: 'UN_READ', createdAt: new Date().toISOString() }] as any;
       nc.unreadCount.value = 1;
 
       await nc.markRead('1');

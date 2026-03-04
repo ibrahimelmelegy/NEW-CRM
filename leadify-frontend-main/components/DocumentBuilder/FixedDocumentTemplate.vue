@@ -37,9 +37,9 @@
             <img src="/images/Logo.png" class="h-14 w-auto object-contain" alt="Company Logo" />
             <div>
               <h2 class="text-lg font-bold text-gray-900 tracking-tight">{{ data.companyName || 'Your Company' }}</h2>
-              <p class="text-xs text-gray-500 mt-0.5" v-if="data.companyAddress">{{ data.companyAddress }}</p>
-              <p class="text-xs text-gray-500" v-if="data.companyPhone">{{ data.companyPhone }}</p>
-              <p class="text-xs text-gray-500" v-if="data.companyTaxId">Tax ID: {{ data.companyTaxId }}</p>
+              <p v-if="data.companyAddress" class="text-xs text-gray-500 mt-0.5">{{ data.companyAddress }}</p>
+              <p v-if="data.companyPhone" class="text-xs text-gray-500">{{ data.companyPhone }}</p>
+              <p v-if="data.companyTaxId" class="text-xs text-gray-500">Tax ID: {{ data.companyTaxId }}</p>
             </div>
           </div>
 
@@ -60,11 +60,11 @@
                 DATE:
                 <span class="font-bold text-gray-900">{{ data.date }}</span>
               </p>
-              <p class="text-xs text-gray-500 font-mono" v-if="data.dueDate">
+              <p v-if="data.dueDate" class="text-xs text-gray-500 font-mono">
                 DUE:
                 <span class="font-bold text-red-600">{{ data.dueDate }}</span>
               </p>
-              <p class="text-xs text-gray-500 font-mono" v-else-if="data.validUntil">
+              <p v-else-if="data.validUntil" class="text-xs text-gray-500 font-mono">
                 VALID:
                 <span class="font-bold text-gray-900">{{ data.validUntil }}</span>
               </p>
@@ -82,11 +82,11 @@
           <div>
             <p class="text-[10px] font-bold text-gray-400 uppercase tracking-widest mb-2">{{ billToLabel }}</p>
             <p class="text-base font-bold text-gray-900">{{ data.clientCompany || data.clientName }}</p>
-            <p class="text-sm text-gray-600" v-if="data.clientCompany && data.clientName">{{ data.clientName }}</p>
-            <p class="text-xs text-gray-500 mt-1" v-if="data.clientAddress">{{ data.clientAddress }}</p>
-            <p class="text-xs text-gray-500" v-if="data.clientEmail">{{ data.clientEmail }}</p>
-            <p class="text-xs text-gray-500" v-if="data.clientPhone">{{ data.clientPhone }}</p>
-            <p class="text-xs text-gray-500" v-if="data.clientTaxId">Tax ID: {{ data.clientTaxId }}</p>
+            <p v-if="data.clientCompany && data.clientName" class="text-sm text-gray-600">{{ data.clientName }}</p>
+            <p v-if="data.clientAddress" class="text-xs text-gray-500 mt-1">{{ data.clientAddress }}</p>
+            <p v-if="data.clientEmail" class="text-xs text-gray-500">{{ data.clientEmail }}</p>
+            <p v-if="data.clientPhone" class="text-xs text-gray-500">{{ data.clientPhone }}</p>
+            <p v-if="data.clientTaxId" class="text-xs text-gray-500">Tax ID: {{ data.clientTaxId }}</p>
           </div>
           <!-- Document Title -->
           <div class="text-right flex flex-col justify-center">
@@ -115,7 +115,7 @@
               <td class="py-3 px-4 text-xs text-gray-400 font-mono">{{ String(idx + 1).padStart(2, '0') }}</td>
               <td class="py-3 px-4">
                 <p class="text-sm font-semibold text-gray-800">{{ item.description }}</p>
-                <p class="text-[10px] text-gray-400 mt-0.5" v-if="item.unit">{{ item.unit }}</p>
+                <p v-if="item.unit" class="text-[10px] text-gray-400 mt-0.5">{{ item.unit }}</p>
               </td>
               <td class="py-3 px-4 text-right text-sm text-gray-700">{{ item.quantity }}</td>
               <td class="py-3 px-4 text-right text-sm text-gray-700">{{ formatNumber(item.rate) }}</td>

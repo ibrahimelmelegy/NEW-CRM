@@ -277,8 +277,7 @@ const calculatedSampleSize = computed(() => {
   const z_beta = sampleCalc.power === 80 ? 0.84 : sampleCalc.power === 90 ? 1.28 : 1.645;
   const pooled = (p1 + p2) / 2;
   const n = Math.ceil(
-    (Math.pow(z_alpha, 2) * 2 * pooled * (1 - pooled) + Math.pow(z_beta, 2) * (p1 * (1 - p1) + p2 * (1 - p2))) /
-    Math.pow(p2 - p1, 2)
+    (Math.pow(z_alpha, 2) * 2 * pooled * (1 - pooled) + Math.pow(z_beta, 2) * (p1 * (1 - p1) + p2 * (1 - p2))) / Math.pow(p2 - p1, 2)
   );
   return n > 0 ? n : 0;
 });
@@ -333,10 +332,8 @@ const filteredData = computed(() => {
   }
   if (!search.value) return data;
   const q = search.value.toLowerCase();
-  return data.filter((i: any) =>
-    (i.name || '').toLowerCase().includes(q) ||
-    (i.type || '').toLowerCase().includes(q) ||
-    (i.winner || '').toLowerCase().includes(q)
+  return data.filter(
+    (i: any) => (i.name || '').toLowerCase().includes(q) || (i.type || '').toLowerCase().includes(q) || (i.winner || '').toLowerCase().includes(q)
   );
 });
 
@@ -393,7 +390,9 @@ function openCreateDialog() {
 function openEditDialog(item: any) {
   editingItem.value = item;
   const variantsData = item.variants
-    ? (typeof item.variants === 'string' ? JSON.parse(item.variants) : item.variants)
+    ? typeof item.variants === 'string'
+      ? JSON.parse(item.variants)
+      : item.variants
     : [{ name: 'Variant A' }, { name: 'Variant B' }];
   formVariants.value = Array.isArray(variantsData) ? variantsData : [{ name: 'Variant A' }, { name: 'Variant B' }];
   form.value = {
@@ -450,11 +449,11 @@ async function handleSave() {
 
 async function handleDelete(item: any) {
   try {
-    await ElMessageBox.confirm(
-      t('common.confirmDelete'),
-      t('common.warning'),
-      { type: 'warning', confirmButtonText: t('common.delete'), cancelButtonText: t('common.cancel') }
-    );
+    await ElMessageBox.confirm(t('common.confirmDelete'), t('common.warning'), {
+      type: 'warning',
+      confirmButtonText: t('common.delete'),
+      cancelButtonText: t('common.cancel')
+    });
     const res = await useApiFetch(`ab-tests/${item.id}`, 'DELETE');
     if (res.success) {
       ElMessage.success(t('common.deleted'));
@@ -479,9 +478,13 @@ async function openResultsDialog(test: any) {
       const data = res.body as any;
       // Derive overall significance and confidence from variant significance data
       const variantsWithSig = (data.variants || []).filter((v: any) => v.significance);
-      const bestSignificance = variantsWithSig.length > 0
-        ? variantsWithSig.reduce((best: any, v: any) => (v.significance.confidenceLevel > (best?.confidenceLevel || 0)) ? v.significance : best, null)
-        : null;
+      const bestSignificance =
+        variantsWithSig.length > 0
+          ? variantsWithSig.reduce(
+              (best: any, v: any) => (v.significance.confidenceLevel > (best?.confidenceLevel || 0) ? v.significance : best),
+              null
+            )
+          : null;
       testResults.value = {
         ...data,
         winner: test.winner || test.winnerVariant || null,
@@ -499,11 +502,11 @@ async function openResultsDialog(test: any) {
 async function declareWinner() {
   if (!selectedTest.value) return;
   try {
-    await ElMessageBox.confirm(
-      t('marketing.abTesting.confirmDeclareWinner'),
-      t('common.warning'),
-      { type: 'warning', confirmButtonText: t('marketing.abTesting.declareWinner'), cancelButtonText: t('common.cancel') }
-    );
+    await ElMessageBox.confirm(t('marketing.abTesting.confirmDeclareWinner'), t('common.warning'), {
+      type: 'warning',
+      confirmButtonText: t('marketing.abTesting.declareWinner'),
+      cancelButtonText: t('common.cancel')
+    });
     declaringWinner.value = true;
     const res = await useApiFetch(`ab-tests/${selectedTest.value.id}/declare-winner`, 'PUT');
     if (res.success) {

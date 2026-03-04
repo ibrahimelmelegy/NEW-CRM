@@ -28,7 +28,7 @@ const props = defineProps({
   },
   filters: {
     type: Array,
-    default: []
+    default: () => []
   }
 });
 const route = useRoute();

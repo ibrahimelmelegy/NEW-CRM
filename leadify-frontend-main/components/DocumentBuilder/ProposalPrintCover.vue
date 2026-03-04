@@ -2,7 +2,7 @@
   <div class="cover-wrapper w-full h-full force-light-mode">
     <!-- Style: corporate -->
 
-    <ProposalPrintPage :isCover="true" :data="data" v-if="data.coverStyle === 'corporate'">
+    <ProposalPrintPage v-if="data.coverStyle === 'corporate'" :is-cover="true" :data="data">
       <div class="flex-1 flex flex-row h-full">
         <div class="w-1/3 bg-slate-800 text-white p-12 flex flex-col justify-between border-r-8" :style="{ borderColor: color }">
           <div class="space-y-12">
@@ -61,7 +61,7 @@
 
     <!-- Style: business -->
 
-    <ProposalPrintPage :isCover="true" :data="data" v-if="data.coverStyle === 'business'">
+    <ProposalPrintPage v-if="data.coverStyle === 'business'" :is-cover="true" :data="data">
       <div class="flex-1 flex flex-row h-full">
         <div class="w-1/3 bg-gray-900 text-white p-12 flex flex-col justify-between">
           <div class="space-y-12">
@@ -107,7 +107,7 @@
 
     <!-- Style: creative -->
 
-    <ProposalPrintPage :isCover="true" :data="data" v-if="data.coverStyle === 'creative'">
+    <ProposalPrintPage v-if="data.coverStyle === 'creative'" :is-cover="true" :data="data">
       <div class="flex-1 flex flex-col justify-between p-20 relative overflow-hidden h-full">
         <!-- Geometric Background Shapes -->
         <div
@@ -154,7 +154,7 @@
 
     <!-- Style: enterprise -->
 
-    <ProposalPrintPage :isCover="true" :data="data" v-if="data.coverStyle === 'enterprise'">
+    <ProposalPrintPage v-if="data.coverStyle === 'enterprise'" :is-cover="true" :data="data">
       <div class="flex-1 flex flex-col p-16">
         <!-- Top Bar -->
         <div class="w-full h-2 mb-16" :style="{ backgroundColor: color }"></div>
@@ -221,7 +221,7 @@
 
     <!-- Style: tech -->
 
-    <ProposalPrintPage :isCover="true" :data="data" v-if="data.coverStyle === 'tech'" class="bg-slate-900 text-white font-mono">
+    <ProposalPrintPage v-if="data.coverStyle === 'tech'" :is-cover="true" :data="data" class="bg-slate-900 text-white font-mono">
       <div class="flex-1 flex flex-col p-16 relative overflow-hidden">
         <!-- Grid Background -->
         <div
@@ -267,7 +267,7 @@
 
     <!-- Style: minimal -->
 
-    <ProposalPrintPage :isCover="true" :data="data" v-if="data.coverStyle === 'minimal'">
+    <ProposalPrintPage v-if="data.coverStyle === 'minimal'" :is-cover="true" :data="data">
       <div class="flex-1 flex flex-col items-center justify-center p-24 text-center relative">
         <div v-if="data.clientLogo" class="absolute top-12 right-12 opacity-20 grayscale">
           <img :src="data.clientLogo" class="h-10 w-auto" alt="Client Logo" />
@@ -302,7 +302,7 @@
 
     <!-- Style: modern-art -->
 
-    <ProposalPrintPage :isCover="true" :data="data" v-if="data.coverStyle === 'modern-art'">
+    <ProposalPrintPage v-if="data.coverStyle === 'modern-art'" :is-cover="true" :data="data">
       <div class="flex-1 relative overflow-hidden flex flex-col justify-center p-24 h-full">
         <!-- Background blobs -->
         <div class="absolute top-[-10%] right-[-10%] w-[600px] h-[600px] rounded-full opacity-20" :style="{ backgroundColor: color }"></div>
@@ -347,7 +347,7 @@
 
     <!-- Style: geometric -->
 
-    <ProposalPrintPage :isCover="true" :data="data" v-if="data.coverStyle === 'geometric'">
+    <ProposalPrintPage v-if="data.coverStyle === 'geometric'" :is-cover="true" :data="data">
       <div class="flex-1 flex flex-row h-full">
         <div class="w-2/5 bg-gray-900 text-white p-16 flex flex-col justify-between relative overflow-hidden">
           <div class="absolute top-0 right-0 w-32 h-32 bg-white/5 transform rotate-45 translate-x-16 -translate-y-16"></div>
@@ -407,7 +407,7 @@
 
     <!-- Style: bold-typography -->
 
-    <ProposalPrintPage :isCover="true" :data="data" v-if="data.coverStyle === 'bold-typography'">
+    <ProposalPrintPage v-if="data.coverStyle === 'bold-typography'" :is-cover="true" :data="data">
       <div class="flex-1 flex flex-col relative bg-white">
         <!-- Left color bar -->
         <div class="absolute left-0 top-0 bottom-0 w-6" :style="{ backgroundColor: color }"></div>
@@ -460,7 +460,7 @@
 
     <!-- Style: gradient-splash -->
 
-    <ProposalPrintPage :isCover="true" :data="data" v-if="data.coverStyle === 'gradient-splash'">
+    <ProposalPrintPage v-if="data.coverStyle === 'gradient-splash'" :is-cover="true" :data="data">
       <div class="flex-1 flex flex-col relative bg-white overflow-hidden">
         <!-- Top Gradient Curve -->
         <div
@@ -516,7 +516,7 @@
 
     <!-- Style: swiss -->
 
-    <ProposalPrintPage :isCover="true" :data="data" v-if="data.coverStyle === 'swiss'">
+    <ProposalPrintPage v-if="data.coverStyle === 'swiss'" :is-cover="true" :data="data">
       <div class="flex-1 flex flex-col p-12 relative bg-[#f4f4f4]">
         <div class="flex-1 grid grid-cols-12 grid-rows-6 gap-4 h-full border-t-4 border-black pt-8">
           <!-- Title Block -->
@@ -567,7 +567,7 @@
 
     <!-- Style: dark-mode -->
 
-    <ProposalPrintPage :isCover="true" :data="data" v-if="data.coverStyle === 'dark-mode'">
+    <ProposalPrintPage v-if="data.coverStyle === 'dark-mode'" :is-cover="true" :data="data">
       <div class="flex-1 flex flex-col p-20 bg-slate-950 text-white relative overflow-hidden">
         <!-- Glow effects -->
         <div class="absolute top-0 right-0 w-[500px] h-[500px] rounded-full blur-[120px] opacity-20" :style="{ backgroundColor: color }"></div>
@@ -615,7 +615,7 @@
 
     <!-- Style: architectural -->
 
-    <ProposalPrintPage :isCover="true" :data="data" v-if="data.coverStyle === 'architectural'">
+    <ProposalPrintPage v-if="data.coverStyle === 'architectural'" :is-cover="true" :data="data">
       <div class="flex-1 flex flex-col p-12 bg-[#fffdf5] text-slate-800 relative h-full">
         <!-- Graph paper background -->
         <div
@@ -671,7 +671,7 @@
 
     <!-- Style: abstract -->
 
-    <ProposalPrintPage :isCover="true" :data="data" v-if="data.coverStyle === 'abstract'">
+    <ProposalPrintPage v-if="data.coverStyle === 'abstract'" :is-cover="true" :data="data">
       <div class="flex-1 relative overflow-hidden bg-white p-20 flex flex-col justify-center h-full">
         <!-- Abstract Blobs -->
         <div
@@ -733,7 +733,7 @@
 
     <!-- Style: neon-night -->
 
-    <ProposalPrintPage :isCover="true" :data="data" v-if="data.coverStyle === 'neon-night'">
+    <ProposalPrintPage v-if="data.coverStyle === 'neon-night'" :is-cover="true" :data="data">
       <div class="flex-1 flex flex-col p-16 bg-black text-white relative overflow-hidden h-full">
         <!-- Neon Elements -->
         <div class="absolute top-0 left-0 w-full h-2 bg-gradient-to-r from-cyan-400 via-pink-500 to-yellow-500"></div>
@@ -811,7 +811,7 @@
 
     <!-- Style: brutalist -->
 
-    <ProposalPrintPage :isCover="true" :data="data" v-if="data.coverStyle === 'brutalist'">
+    <ProposalPrintPage v-if="data.coverStyle === 'brutalist'" :is-cover="true" :data="data">
       <div class="flex-1 flex flex-col bg-[#e5e5e5] p-8 border-[16px] border-black h-full">
         <div class="flex-1 border-4 border-black p-8 flex flex-col justify-between relative bg-white h-full relative overflow-hidden">
           <div class="absolute top-8 right-8 bg-black text-white px-4 py-2 text-2xl font-bold transform rotate-2 z-20">
@@ -863,7 +863,7 @@
 
     <!-- Style: nature -->
 
-    <ProposalPrintPage :isCover="true" :data="data" v-if="data.coverStyle === 'nature'">
+    <ProposalPrintPage v-if="data.coverStyle === 'nature'" :is-cover="true" :data="data">
       <div class="flex-1 flex flex-col bg-[#fdfcf0] p-16 relative overflow-hidden h-full">
         <!-- Organic shapes -->
         <div class="absolute top-0 right-0 w-[600px] h-[600px] bg-[#e8eed9] rounded-bl-[300px] z-0"></div>
@@ -911,7 +911,7 @@
 
     <!-- Style: japanese-minimal -->
 
-    <ProposalPrintPage :isCover="true" :data="data" v-if="data.coverStyle === 'japanese-minimal'">
+    <ProposalPrintPage v-if="data.coverStyle === 'japanese-minimal'" :is-cover="true" :data="data">
       <div class="flex-1 flex bg-[#f9f7f2] relative p-16 h-full">
         <!-- Vertical text layout simulation -->
         <div
@@ -963,7 +963,7 @@
 
     <!-- Style: retro-pop -->
 
-    <ProposalPrintPage :isCover="true" :data="data" v-if="data.coverStyle === 'retro-pop'">
+    <ProposalPrintPage v-if="data.coverStyle === 'retro-pop'" :is-cover="true" :data="data">
       <div class="flex-1 flex flex-col bg-yellow-300 p-12 relative overflow-hidden h-full">
         <!-- Background Pattern -->
         <div
@@ -1046,7 +1046,7 @@
 
     <!-- Style: futuristic-grid -->
 
-    <ProposalPrintPage :isCover="true" :data="data" v-if="data.coverStyle === 'futuristic-grid'">
+    <ProposalPrintPage v-if="data.coverStyle === 'futuristic-grid'" :is-cover="true" :data="data">
       <div class="flex-1 flex flex-col bg-slate-900 text-cyan-400 p-12 relative font-mono h-full">
         <!-- Grid -->
         <div
@@ -1118,7 +1118,7 @@
 
     <!-- Style: ethereal -->
 
-    <ProposalPrintPage :isCover="true" :data="data" v-if="data.coverStyle === 'ethereal'">
+    <ProposalPrintPage v-if="data.coverStyle === 'ethereal'" :is-cover="true" :data="data">
       <div class="flex-1 flex flex-col bg-[#fdfaff] p-16 relative overflow-hidden h-full">
         <!-- Organic shapes with Purple/Violet Gradients -->
         <div
@@ -1178,7 +1178,7 @@
 
     <!-- Style: aurora -->
 
-    <ProposalPrintPage :isCover="true" :data="data" v-if="data.coverStyle === 'aurora'">
+    <ProposalPrintPage v-if="data.coverStyle === 'aurora'" :is-cover="true" :data="data">
       <div class="flex-1 flex flex-col p-16 relative overflow-hidden text-white bg-slate-900 h-full">
         <!-- Deep Gradient Background -->
         <div class="absolute inset-0 z-0 bg-gradient-to-br from-violet-900 via-purple-900 to-slate-900"></div>
@@ -1236,7 +1236,7 @@
 
     <!-- Style: midnight-gradient -->
 
-    <ProposalPrintPage :isCover="true" :data="data" v-if="data.coverStyle === 'midnight-gradient'">
+    <ProposalPrintPage v-if="data.coverStyle === 'midnight-gradient'" :is-cover="true" :data="data">
       <div class="flex-1 flex flex-col p-16 relative text-white bg-black h-full overflow-hidden">
         <!-- Deep Gradient Background -->
         <div class="absolute inset-0 bg-gradient-to-b from-[#0f172a] via-[#1e1b4b] to-black z-0"></div>
@@ -1268,7 +1268,7 @@
 
     <!-- Style: art-deco -->
 
-    <ProposalPrintPage :isCover="true" :data="data" v-if="data.coverStyle === 'art-deco'">
+    <ProposalPrintPage v-if="data.coverStyle === 'art-deco'" :is-cover="true" :data="data">
       <div class="flex-1 bg-[#1a1a1a] p-8 border-8 border-[#1a1a1a] h-full">
         <div class="h-full border-4 border-[#D4AF37] relative flex flex-col items-center justify-center p-12 text-[#D4AF37]">
           <!-- Corner patterns -->
@@ -1324,7 +1324,7 @@
 
     <!-- Style: newspaper -->
 
-    <ProposalPrintPage :isCover="true" :data="data" v-if="data.coverStyle === 'newspaper'">
+    <ProposalPrintPage v-if="data.coverStyle === 'newspaper'" :is-cover="true" :data="data">
       <div class="flex-1 bg-[#fdfdfd] p-12 flex flex-col text-black font-serif h-full relative overflow-hidden">
         <!-- Aging effect -->
         <div class="absolute inset-0 bg-[#f4ece0] opacity-30 pointer-events-none"></div>
@@ -1404,7 +1404,7 @@
 
     <!-- Style: terminal -->
 
-    <ProposalPrintPage :isCover="true" :data="data" v-if="data.coverStyle === 'terminal'">
+    <ProposalPrintPage v-if="data.coverStyle === 'terminal'" :is-cover="true" :data="data">
       <div class="flex-1 bg-black p-16 font-mono text-green-500 flex flex-col relative h-full overflow-hidden">
         <div
           class="absolute top-0 left-0 w-full h-full pointer-events-none opacity-20 bg-[linear-gradient(rgba(18,255,0,0)_50%,rgba(0,0,0,0.25)_50%),linear-gradient(90deg,rgba(255,0,0,0.06),rgba(0,255,0,0.02),rgba(0,0,255,0.06))] bg-[length:100%_4px,6px_100%] z-20"
@@ -1467,7 +1467,7 @@
 
     <!-- Style: brush-stroke -->
 
-    <ProposalPrintPage :isCover="true" :data="data" v-if="data.coverStyle === 'brush-stroke'">
+    <ProposalPrintPage v-if="data.coverStyle === 'brush-stroke'" :is-cover="true" :data="data">
       <div class="flex-1 bg-white p-16 flex flex-col justify-center relative overflow-hidden h-full">
         <!-- Simulated brush strokes -->
         <div class="absolute top-[-10%] left-[-10%] w-[120%] h-[40%] bg-blue-500/10 -rotate-6 transform origin-bottom-left"></div>
@@ -1522,7 +1522,7 @@
 
     <!-- Style: mondrian -->
 
-    <ProposalPrintPage :isCover="true" :data="data" v-if="data.coverStyle === 'mondrian'">
+    <ProposalPrintPage v-if="data.coverStyle === 'mondrian'" :is-cover="true" :data="data">
       <div class="flex-1 bg-white border-[12px] border-black grid grid-cols-12 grid-rows-6 h-full overflow-hidden">
         <!-- Header Block -->
         <div class="col-span-8 row-span-2 border-r-[12px] border-b-[12px] border-black p-10 flex flex-col justify-center bg-white">
@@ -1573,7 +1573,7 @@
 
     <!-- Style: blueprint-dark -->
 
-    <ProposalPrintPage :isCover="true" :data="data" v-if="data.coverStyle === 'blueprint-dark'">
+    <ProposalPrintPage v-if="data.coverStyle === 'blueprint-dark'" :is-cover="true" :data="data">
       <div class="flex-1 bg-[#00509d] p-12 text-white relative font-mono h-full overflow-hidden">
         <!-- Grid -->
         <div
@@ -1638,7 +1638,7 @@
 
     <!-- Style: warm-boho -->
 
-    <ProposalPrintPage :isCover="true" :data="data" v-if="data.coverStyle === 'warm-boho'">
+    <ProposalPrintPage v-if="data.coverStyle === 'warm-boho'" :is-cover="true" :data="data">
       <div class="flex-1 bg-[#f5ebe0] p-16 flex flex-col relative overflow-hidden text-[#5e503f] h-full">
         <!-- Organic shapes -->
         <div class="absolute top-[-100px] left-[-100px] w-[500px] h-[500px] bg-[#e3d5ca] rounded-full opacity-60"></div>
@@ -1698,7 +1698,7 @@
 
     <!-- Style: glassmorphism -->
 
-    <ProposalPrintPage :isCover="true" :data="data" v-if="data.coverStyle === 'glassmorphism'">
+    <ProposalPrintPage v-if="data.coverStyle === 'glassmorphism'" :is-cover="true" :data="data">
       <div
         class="flex-1 relative flex items-center justify-center p-20 bg-gradient-to-br from-pink-200 via-purple-200 to-indigo-200 h-full overflow-hidden"
       >
@@ -1772,7 +1772,7 @@
 
     <!-- Style: magazine-editorial -->
 
-    <ProposalPrintPage :isCover="true" :data="data" v-if="data.coverStyle === 'magazine-editorial'">
+    <ProposalPrintPage v-if="data.coverStyle === 'magazine-editorial'" :is-cover="true" :data="data">
       <div class="flex-1 bg-white flex flex-col relative h-full overflow-hidden">
         <div class="flex-1 flex flex-row">
           <div class="w-2/3 relative h-full bg-slate-100 flex items-center justify-center overflow-hidden border-r-[12px] border-black">

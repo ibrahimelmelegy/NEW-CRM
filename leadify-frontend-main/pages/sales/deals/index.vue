@@ -192,11 +192,11 @@ async function confirmDelete() {
 async function handleBulkDelete() {
   if (!selectedRows.value.length) return;
   try {
-    await ElMessageBox.confirm(
-      t('deals.confirmBulkDelete', { count: selectedRows.value.length }),
-      t('common.warning'),
-      { type: 'warning', confirmButtonText: t('common.delete'), cancelButtonText: t('common.cancel') }
-    );
+    await ElMessageBox.confirm(t('deals.confirmBulkDelete', { count: selectedRows.value.length }), t('common.warning'), {
+      type: 'warning',
+      confirmButtonText: t('common.delete'),
+      cancelButtonText: t('common.cancel')
+    });
     loading.value = true;
     for (const row of selectedRows.value) {
       await deleteDeal(row.id);
@@ -315,7 +315,7 @@ const pipelineStats = computed(() => {
     { label: t('deals.pipeline.totalValue'), value: fmtCurrency(p.totalPipelineValue || 0), icon: 'ph:funnel-bold', color: '#8b5cf6' },
     { label: t('deals.pipeline.weightedValue'), value: fmtCurrency(p.weightedPipelineValue || 0), icon: 'ph:scales-bold', color: '#3b82f6' },
     { label: t('deals.pipeline.dealCount'), value: p.dealCount ?? 0, icon: 'ph:stack-bold', color: '#10b981' },
-    { label: t('deals.pipeline.winRate'), value: (Number(p.winRate || 0)).toFixed(1) + '%', icon: 'ph:trophy-bold', color: '#f59e0b' }
+    { label: t('deals.pipeline.winRate'), value: Number(p.winRate || 0).toFixed(1) + '%', icon: 'ph:trophy-bold', color: '#f59e0b' }
   ];
 });
 
@@ -334,10 +334,11 @@ function handleRowClick(val: any) {
   router.push(`/sales/deals/${val.id}`);
 }
 
-const mappedUsers = usersResponse?.body?.docs?.map((e: any) => ({
-  label: e.name,
-  value: e.id
-})) || [];
+const mappedUsers =
+  usersResponse?.body?.docs?.map((e: any) => ({
+    label: e.name,
+    value: e.id
+  })) || [];
 
 const filterOptions = computed(() => [
   {
@@ -456,15 +457,11 @@ async function handleMobileRefresh() {
 }
 
 function getSwipeRightActions(deal: any) {
-  return [
-    { name: 'kanban', label: t('kanban.kanbanView'), icon: 'ph:columns-bold', color: '#10B981' }
-  ];
+  return [{ name: 'kanban', label: t('kanban.kanbanView'), icon: 'ph:columns-bold', color: '#10B981' }];
 }
 
 function getSwipeLeftActions(deal: any) {
-  const actions = [
-    { name: 'view', label: t('common.view'), icon: 'ph:eye-bold', color: '#10b981' }
-  ];
+  const actions = [{ name: 'view', label: t('common.view'), icon: 'ph:eye-bold', color: '#10b981' }];
   if (hasPermission('EDIT_DEALS')) {
     actions.push({ name: 'edit', label: t('common.edit'), icon: 'ph:pencil-simple-bold', color: '#F59E0B' });
   }

@@ -1,0 +1,351 @@
+[   11280ms] [ERROR] Failed to load resource: the server responded with a status of 401 () @ https://crm.hp-tech.com/api/auth/me:0
+[   11679ms] [ERROR] Failed to load resource: the server responded with a status of 401 () @ https://crm.hp-tech.com/api/auth/me:0
+[   34318ms] [ERROR] Failed to load resource: the server responded with a status of 401 () @ https://crm.hp-tech.com/api/auth/login:0
+[   34320ms] [ERROR] API Error (401): Invalid credentials @ https://crm.hp-tech.com/_nuxt/DXw3SQo0.js:4
+[   59572ms] [ERROR] Failed to load resource: the server responded with a status of 401 () @ https://crm.hp-tech.com/api/auth/login:0
+[   59574ms] [ERROR] API Error (401): Invalid credentials @ https://crm.hp-tech.com/_nuxt/DXw3SQo0.js:4
+[  138779ms] [ERROR] Failed to load resource: the server responded with a status of 401 () @ https://crm.hp-tech.com/api/auth/login:0
+[  138781ms] [ERROR] API Error (401): Invalid credentials @ https://crm.hp-tech.com/_nuxt/DXw3SQo0.js:4
+[  229313ms] [ERROR] Failed to load resource: the server responded with a status of 500 () @ https://crm.hp-tech.com/api/calendar:0
+[  229367ms] [ERROR] Failed to load resource: the server responded with a status of 500 () @ https://crm.hp-tech.com/api/deal?limit=5&sort=DESC&sortBy=createdAt:0
+[  229734ms] [ERROR] Failed to load resource: the server responded with a status of 500 () @ https://crm.hp-tech.com/api/calendar:0
+[  230466ms] [ERROR] Failed to load resource: the server responded with a status of 500 () @ https://crm.hp-tech.com/api/deal?limit=5&sort=DESC&sortBy=createdAt:0
+[  252538ms] [ERROR] Failed to load resource: the server responded with a status of 500 () @ https://crm.hp-tech.com/api/deal?limit=500:0
+[  252539ms] [ERROR] Failed to load resource: the server responded with a status of 500 () @ https://crm.hp-tech.com/api/client?limit=1:0
+[  253592ms] [ERROR] Failed to load resource: the server responded with a status of 500 () @ https://crm.hp-tech.com/api/deal?limit=500:0
+[  253594ms] [ERROR] API Error (500): SOMETHING_WENT_WRONG @ https://crm.hp-tech.com/_nuxt/DXw3SQo0.js:4
+[  253612ms] [ERROR] Failed to load resource: the server responded with a status of 500 () @ https://crm.hp-tech.com/api/client?limit=1:0
+[  253614ms] [ERROR] API Error (500): SOMETHING_WENT_WRONG @ https://crm.hp-tech.com/_nuxt/DXw3SQo0.js:4
+[  271086ms] [ERROR] Failed to load resource: the server responded with a status of 500 () @ https://crm.hp-tech.com/api/deal?limit=20&sort=DESC&sortBy=createdAt:0
+[  272097ms] [ERROR] Failed to load resource: the server responded with a status of 500 () @ https://crm.hp-tech.com/api/deal?limit=20&sort=DESC&sortBy=createdAt:0
+[  299912ms] [ERROR] Failed to load resource: the server responded with a status of 500 () @ https://crm.hp-tech.com/api/client:0
+[  300739ms] [ERROR] Failed to load resource: the server responded with a status of 500 () @ https://crm.hp-tech.com/api/client:0
+[  300740ms] [ERROR] API Error (500): SOMETHING_WENT_WRONG @ https://crm.hp-tech.com/_nuxt/DXw3SQo0.js:4
+[  300741ms] [ERROR] SOMETHING_WENT_WRONG @ https://crm.hp-tech.com/_nuxt/BQAy3QF6.js:0
+[  300743ms] [ERROR] [ErrorBoundary] Caught error: ReferenceError: Cannot access 'L' before initialization
+    at f3.fn (https://crm.hp-tech.com/_nuxt/C-KkItUu.js:1:7912)
+    at U0 (https://crm.hp-tech.com/_nuxt/DXw3SQo0.js:3:14014)
+    at get value (https://crm.hp-tech.com/_nuxt/DXw3SQo0.js:3:26308)
+    at setup (https://crm.hp-tech.com/_nuxt/C-KkItUu.js:1:8408) @ https://crm.hp-tech.com/_nuxt/VR4fFd-T.js:3
+[  309010ms] [ERROR] Failed to load resource: the server responded with a status of 500 () @ https://crm.hp-tech.com/api/opportunity:0
+[  309564ms] [ERROR] Failed to load resource: the server responded with a status of 500 () @ https://crm.hp-tech.com/api/opportunity:0
+[  309566ms] [ERROR] API Error (500): SOMETHING_WENT_WRONG @ https://crm.hp-tech.com/_nuxt/DXw3SQo0.js:4
+[  309566ms] [ERROR] SOMETHING_WENT_WRONG @ https://crm.hp-tech.com/_nuxt/BQAy3QF6.js:0
+[  321348ms] [ERROR] Failed to load resource: the server responded with a status of 500 () @ https://crm.hp-tech.com/api/deal:0
+[  322285ms] [ERROR] Failed to load resource: the server responded with a status of 500 () @ https://crm.hp-tech.com/api/deal:0
+[  322287ms] [ERROR] API Error (500): SOMETHING_WENT_WRONG @ https://crm.hp-tech.com/_nuxt/DXw3SQo0.js:4
+[  322287ms] [ERROR] SOMETHING_WENT_WRONG @ https://crm.hp-tech.com/_nuxt/BQAy3QF6.js:0
+[  323796ms] [ERROR] Failed to load resource: the server responded with a status of 500 () @ https://crm.hp-tech.com/api/deal/analytics/weighted-pipeline:0
+[  324202ms] [ERROR] Failed to load resource: the server responded with a status of 500 () @ https://crm.hp-tech.com/api/deal/analytics/weighted-pipeline:0
+[  324204ms] [ERROR] API Error (500): SOMETHING_WENT_WRONG @ https://crm.hp-tech.com/_nuxt/DXw3SQo0.js:4
+[  359909ms] [ERROR] Failed to load resource: the server responded with a status of 500 () @ https://crm.hp-tech.com/api/invoices?page=1&limit=20:0
+[  359928ms] [ERROR] Failed to load resource: the server responded with a status of 500 () @ https://crm.hp-tech.com/api/invoices/billing/aging-report:0
+[  360855ms] [ERROR] Failed to load resource: the server responded with a status of 500 () @ https://crm.hp-tech.com/api/invoices/billing/aging-report:0
+[  360883ms] [ERROR] Failed to load resource: the server responded with a status of 500 () @ https://crm.hp-tech.com/api/invoices?page=1&limit=20:0
+[  361239ms] [ERROR] Failed to load resource: the server responded with a status of 500 () @ https://crm.hp-tech.com/api/invoices/billing/aging-report:0
+[  361241ms] [ERROR] API Error (500): SOMETHING_WENT_WRONG @ https://crm.hp-tech.com/_nuxt/DXw3SQo0.js:4
+[  361289ms] [ERROR] Failed to load resource: the server responded with a status of 500 () @ https://crm.hp-tech.com/api/invoices?page=1&limit=20:0
+[  361290ms] [ERROR] API Error (500): SOMETHING_WENT_WRONG @ https://crm.hp-tech.com/_nuxt/DXw3SQo0.js:4
+[  361636ms] [ERROR] Failed to load resource: the server responded with a status of 500 () @ https://crm.hp-tech.com/api/invoices/billing/aging-report:0
+[  361638ms] [ERROR] API Error (500): SOMETHING_WENT_WRONG @ https://crm.hp-tech.com/_nuxt/DXw3SQo0.js:4
+[  361695ms] [ERROR] Failed to load resource: the server responded with a status of 500 () @ https://crm.hp-tech.com/api/invoices?page=1&limit=20:0
+[  361696ms] [ERROR] API Error (500): SOMETHING_WENT_WRONG @ https://crm.hp-tech.com/_nuxt/DXw3SQo0.js:4
+[  368426ms] [ERROR] Failed to load resource: the server responded with a status of 500 () @ https://crm.hp-tech.com/api/client:0
+[  368828ms] [ERROR] Failed to load resource: the server responded with a status of 500 () @ https://crm.hp-tech.com/api/client:0
+[  368829ms] [ERROR] API Error (500): SOMETHING_WENT_WRONG @ https://crm.hp-tech.com/_nuxt/DXw3SQo0.js:4
+[  403182ms] [ERROR] Failed to load resource: the server responded with a status of 500 () @ https://crm.hp-tech.com/api/catalog/products:0
+[  404293ms] [ERROR] Failed to load resource: the server responded with a status of 500 () @ https://crm.hp-tech.com/api/catalog/products:0
+[  404295ms] [ERROR] API Error (500): SOMETHING_WENT_WRONG @ https://crm.hp-tech.com/_nuxt/DXw3SQo0.js:4
+[  412670ms] [ERROR] Failed to load resource: the server responded with a status of 500 () @ https://crm.hp-tech.com/api/commissions:0
+[  413914ms] [ERROR] Failed to load resource: the server responded with a status of 500 () @ https://crm.hp-tech.com/api/commissions:0
+[  413915ms] [ERROR] API Error (500): SOMETHING_WENT_WRONG @ https://crm.hp-tech.com/_nuxt/DXw3SQo0.js:4
+[  416476ms] [ERROR] Failed to load resource: the server responded with a status of 500 () @ https://crm.hp-tech.com/api/commissions?type=plans:0
+[  417409ms] [ERROR] Failed to load resource: the server responded with a status of 500 () @ https://crm.hp-tech.com/api/commissions?type=plans:0
+[  417411ms] [ERROR] API Error (500): SOMETHING_WENT_WRONG @ https://crm.hp-tech.com/_nuxt/DXw3SQo0.js:4
+[  417874ms] [ERROR] Failed to load resource: the server responded with a status of 500 () @ https://crm.hp-tech.com/api/commissions?status=PAID:0
+[  418512ms] [ERROR] Failed to load resource: the server responded with a status of 500 () @ https://crm.hp-tech.com/api/commissions?status=PAID:0
+[  418515ms] [ERROR] API Error (500): SOMETHING_WENT_WRONG @ https://crm.hp-tech.com/_nuxt/DXw3SQo0.js:4
+[  426158ms] [ERROR] Failed to load resource: the server responded with a status of 500 () @ https://crm.hp-tech.com/api/competitors:0
+[  426649ms] [ERROR] Failed to load resource: the server responded with a status of 500 () @ https://crm.hp-tech.com/api/competitors:0
+[  426652ms] [ERROR] API Error (500): SOMETHING_WENT_WRONG @ https://crm.hp-tech.com/_nuxt/DXw3SQo0.js:4
+[  427106ms] [ERROR] Failed to load resource: the server responded with a status of 500 () @ https://crm.hp-tech.com/api/competitors/activity:0
+[  428999ms] [ERROR] Failed to load resource: the server responded with a status of 500 () @ https://crm.hp-tech.com/api/competitors/activity:0
+[  429003ms] [ERROR] API Error (500): SOMETHING_WENT_WRONG @ https://crm.hp-tech.com/_nuxt/DXw3SQo0.js:4
+[  429398ms] [ERROR] Failed to load resource: the server responded with a status of 500 () @ https://crm.hp-tech.com/api/competitors/threat-matrix:0
+[  430445ms] [ERROR] Failed to load resource: the server responded with a status of 500 () @ https://crm.hp-tech.com/api/competitors/threat-matrix:0
+[  430445ms] [ERROR] API Error (500): SOMETHING_WENT_WRONG @ https://crm.hp-tech.com/_nuxt/DXw3SQo0.js:4
+[  442508ms] [ERROR] Failed to load resource: the server responded with a status of 500 () @ https://crm.hp-tech.com/api/deal?status=WON&limit=500:0
+[  443964ms] [ERROR] Failed to load resource: the server responded with a status of 500 () @ https://crm.hp-tech.com/api/deal?status=WON&limit=500:0
+[  443967ms] [ERROR] API Error (500): SOMETHING_WENT_WRONG @ https://crm.hp-tech.com/_nuxt/DXw3SQo0.js:4
+[  525318ms] [ERROR] Failed to load resource: the server responded with a status of 500 () @ https://crm.hp-tech.com/api/calendar/today:0
+[  525335ms] [ERROR] Failed to load resource: the server responded with a status of 500 () @ https://crm.hp-tech.com/api/calendar?start=2026-01-31T21%3A00%3A00.000Z&end=2026-04-29T21%3A00%3A00.000Z:0
+[  525764ms] [ERROR] Failed to load resource: the server responded with a status of 500 () @ https://crm.hp-tech.com/api/calendar/today:0
+[  525765ms] [ERROR] Failed to load resource: the server responded with a status of 500 () @ https://crm.hp-tech.com/api/calendar?start=2026-01-31T21%3A00%3A00.000Z&end=2026-04-29T21%3A00%3A00.000Z:0
+[  525769ms] [ERROR] API Error (500): SOMETHING_WENT_WRONG @ https://crm.hp-tech.com/_nuxt/DXw3SQo0.js:4
+[  525772ms] [ERROR] API Error (500): SOMETHING_WENT_WRONG @ https://crm.hp-tech.com/_nuxt/DXw3SQo0.js:4
+[  538713ms] [ERROR] Failed to load resource: the server responded with a status of 500 () @ https://crm.hp-tech.com/api/bookings?limit=500:0
+[  538714ms] [ERROR] Failed to load resource: the server responded with a status of 500 () @ https://crm.hp-tech.com/api/bookings/pages:0
+[  539060ms] [ERROR] Failed to load resource: the server responded with a status of 500 () @ https://crm.hp-tech.com/api/bookings/slots:0
+[  539061ms] [ERROR] Failed to load resource: the server responded with a status of 500 () @ https://crm.hp-tech.com/api/bookings/analytics:0
+[  539930ms] [ERROR] Failed to load resource: the server responded with a status of 500 () @ https://crm.hp-tech.com/api/bookings/slots:0
+[  539932ms] [ERROR] Failed to load resource: the server responded with a status of 500 () @ https://crm.hp-tech.com/api/bookings/analytics:0
+[  539933ms] [ERROR] Failed to load resource: the server responded with a status of 500 () @ https://crm.hp-tech.com/api/bookings?limit=500:0
+[  539934ms] [ERROR] Failed to load resource: the server responded with a status of 500 () @ https://crm.hp-tech.com/api/bookings/pages:0
+[  539939ms] [ERROR] API Error (500): SOMETHING_WENT_WRONG @ https://crm.hp-tech.com/_nuxt/DXw3SQo0.js:4
+[  539939ms] [ERROR] API Error (500): SOMETHING_WENT_WRONG @ https://crm.hp-tech.com/_nuxt/DXw3SQo0.js:4
+[  539940ms] [ERROR] API Error (500): SOMETHING_WENT_WRONG @ https://crm.hp-tech.com/_nuxt/DXw3SQo0.js:4
+[  539949ms] [ERROR] API Error (500): SOMETHING_WENT_WRONG @ https://crm.hp-tech.com/_nuxt/DXw3SQo0.js:4
+[  719832ms] [ERROR] Failed to load resource: the server responded with a status of 500 () @ https://crm.hp-tech.com/api/vendor-scorecard:0
+[  719854ms] [ERROR] Failed to load resource: the server responded with a status of 500 () @ https://crm.hp-tech.com/api/vendor-scorecard/benchmark:0
+[  719854ms] [ERROR] Failed to load resource: the server responded with a status of 500 () @ https://crm.hp-tech.com/api/vendor-scorecard/ranking:0
+[  720236ms] [ERROR] Failed to load resource: the server responded with a status of 500 () @ https://crm.hp-tech.com/api/vendor-scorecard:0
+[  720237ms] [ERROR] API Error (500): SOMETHING_WENT_WRONG @ https://crm.hp-tech.com/_nuxt/DXw3SQo0.js:4
+[  720262ms] [ERROR] Failed to load resource: the server responded with a status of 500 () @ https://crm.hp-tech.com/api/vendor-scorecard/ranking:0
+[  720263ms] [ERROR] API Error (500): SOMETHING_WENT_WRONG @ https://crm.hp-tech.com/_nuxt/DXw3SQo0.js:4
+[  720270ms] [ERROR] Failed to load resource: the server responded with a status of 500 () @ https://crm.hp-tech.com/api/vendor-scorecard/benchmark:0
+[  720271ms] [ERROR] API Error (500): SOMETHING_WENT_WRONG @ https://crm.hp-tech.com/_nuxt/DXw3SQo0.js:4
+[  737371ms] [ERROR] Failed to load resource: the server responded with a status of 404 () @ https://crm.hp-tech.com/api/warehouse/zones?page=1&limit=20:0
+[  737373ms] [ERROR] API Error (404): [GET] "/api/warehouse/zones?page=1&limit=20": 404  @ https://crm.hp-tech.com/_nuxt/DXw3SQo0.js:4
+[  737397ms] [ERROR] Failed to load resource: the server responded with a status of 500 () @ https://crm.hp-tech.com/api/warehouse?page=1&limit=20:0
+[  737400ms] [ERROR] Failed to load resource: the server responded with a status of 500 () @ https://crm.hp-tech.com/api/warehouse/transfers?page=1&limit=20:0
+[  738940ms] [ERROR] Failed to load resource: the server responded with a status of 500 () @ https://crm.hp-tech.com/api/warehouse?page=1&limit=20:0
+[  738941ms] [ERROR] Failed to load resource: the server responded with a status of 500 () @ https://crm.hp-tech.com/api/warehouse/transfers?page=1&limit=20:0
+[  738943ms] [ERROR] API Error (500): SOMETHING_WENT_WRONG @ https://crm.hp-tech.com/_nuxt/DXw3SQo0.js:4
+[  738954ms] [ERROR] API Error (500): SOMETHING_WENT_WRONG @ https://crm.hp-tech.com/_nuxt/DXw3SQo0.js:4
+[  739547ms] [ERROR] Failed to load resource: the server responded with a status of 404 () @ https://crm.hp-tech.com/api/warehouse/stock?limit=1:0
+[  739549ms] [ERROR] API Error (404): [GET] "/api/warehouse/stock?limit=1": 404  @ https://crm.hp-tech.com/_nuxt/DXw3SQo0.js:4
+[  739564ms] [ERROR] Failed to load resource: the server responded with a status of 500 () @ https://crm.hp-tech.com/api/warehouse/low-stock?threshold=10:0
+[  740587ms] [ERROR] Failed to load resource: the server responded with a status of 500 () @ https://crm.hp-tech.com/api/warehouse/low-stock?threshold=10:0
+[  740589ms] [ERROR] API Error (500): SOMETHING_WENT_WRONG @ https://crm.hp-tech.com/_nuxt/DXw3SQo0.js:4
+[  756026ms] [ERROR] Failed to load resource: the server responded with a status of 500 () @ https://crm.hp-tech.com/api/shipping?page=1&limit=20:0
+[  756027ms] [ERROR] Failed to load resource: the server responded with a status of 500 () @ https://crm.hp-tech.com/api/shipping/rates?page=1&limit=20:0
+[  756027ms] [ERROR] Failed to load resource: the server responded with a status of 500 () @ https://crm.hp-tech.com/api/shipping/analytics:0
+[  757482ms] [ERROR] Failed to load resource: the server responded with a status of 500 () @ https://crm.hp-tech.com/api/shipping?page=1&limit=20:0
+[  757484ms] [ERROR] API Error (500): SOMETHING_WENT_WRONG @ https://crm.hp-tech.com/_nuxt/DXw3SQo0.js:4
+[  757503ms] [ERROR] Failed to load resource: the server responded with a status of 500 () @ https://crm.hp-tech.com/api/shipping/analytics:0
+[  757515ms] [ERROR] Failed to load resource: the server responded with a status of 500 () @ https://crm.hp-tech.com/api/shipping/rates?page=1&limit=20:0
+[  757518ms] [ERROR] API Error (500): SOMETHING_WENT_WRONG @ https://crm.hp-tech.com/_nuxt/DXw3SQo0.js:4
+[  757519ms] [ERROR] API Error (500): SOMETHING_WENT_WRONG @ https://crm.hp-tech.com/_nuxt/DXw3SQo0.js:4
+[  851541ms] [ERROR] Failed to load resource: the server responded with a status of 500 () @ https://crm.hp-tech.com/api/social-crm/posts:0
+[  851543ms] [ERROR] Failed to load resource: the server responded with a status of 500 () @ https://crm.hp-tech.com/api/social-crm:0
+[  851964ms] [ERROR] Failed to load resource: the server responded with a status of 500 () @ https://crm.hp-tech.com/api/social-crm:0
+[  851966ms] [ERROR] API Error (500): SOMETHING_WENT_WRONG @ https://crm.hp-tech.com/_nuxt/DXw3SQo0.js:4
+[  851967ms] [ERROR] Failed to load social profiles: SOMETHING_WENT_WRONG @ https://crm.hp-tech.com/_nuxt/Cut48rTc.js:0
+[  851979ms] [ERROR] Failed to load resource: the server responded with a status of 500 () @ https://crm.hp-tech.com/api/social-crm/posts:0
+[  851982ms] [ERROR] API Error (500): SOMETHING_WENT_WRONG @ https://crm.hp-tech.com/_nuxt/DXw3SQo0.js:4
+[  879513ms] [ERROR] Failed to load resource: the server responded with a status of 500 () @ https://crm.hp-tech.com/api/e-signatures?limit=100:0
+[  879918ms] [ERROR] Failed to load resource: the server responded with a status of 500 () @ https://crm.hp-tech.com/api/e-signatures?limit=100:0
+[  879919ms] [ERROR] API Error (500): SOMETHING_WENT_WRONG @ https://crm.hp-tech.com/_nuxt/DXw3SQo0.js:4
+[  886754ms] [ERROR] Failed to load resource: the server responded with a status of 500 () @ https://crm.hp-tech.com/api/deal?limit=200:0
+[  886766ms] [ERROR] Failed to load resource: the server responded with a status of 500 () @ https://crm.hp-tech.com/api/client?limit=500:0
+[  886788ms] [ERROR] Failed to load resource: the server responded with a status of 500 () @ https://crm.hp-tech.com/api/invoices?limit=100:0
+[  887877ms] [ERROR] Failed to load resource: the server responded with a status of 500 () @ https://crm.hp-tech.com/api/client?limit=500:0
+[  887888ms] [ERROR] Failed to load resource: the server responded with a status of 500 () @ https://crm.hp-tech.com/api/invoices?limit=100:0
+[  887905ms] [ERROR] Failed to load resource: the server responded with a status of 500 () @ https://crm.hp-tech.com/api/deal?limit=200:0
+[  966041ms] [WARNING] You have set a custom wheel sensitivity.  This will make your app zoom unnaturally when using mainstream mice.  You should change this value from the default only if you can guarantee that all your users will use the same hardware and OS configuration as your current machine. @ https://crm.hp-tech.com/_nuxt/BJ4qIETX.js:3
+[ 1195333ms] [ERROR] Failed to load resource: the server responded with a status of 500 () @ https://crm.hp-tech.com/api/hr/performance?period=Q1-2026:0
+[ 1195750ms] [ERROR] Failed to load resource: the server responded with a status of 500 () @ https://crm.hp-tech.com/api/hr/performance?period=Q1-2026:0
+[ 1195753ms] [ERROR] API Error (500): SOMETHING_WENT_WRONG @ https://crm.hp-tech.com/_nuxt/DXw3SQo0.js:4
+[ 1203235ms] [ERROR] Failed to load resource: the server responded with a status of 500 () @ https://crm.hp-tech.com/api/goals?limit=100:0
+[ 1203247ms] [ERROR] Failed to load resource: the server responded with a status of 500 () @ https://crm.hp-tech.com/api/goals/stats:0
+[ 1203255ms] [ERROR] Failed to load resource: the server responded with a status of 500 () @ https://crm.hp-tech.com/api/goals/overdue:0
+[ 1203726ms] [ERROR] Failed to load resource: the server responded with a status of 500 () @ https://crm.hp-tech.com/api/goals?limit=100:0
+[ 1203727ms] [ERROR] API Error (500): SOMETHING_WENT_WRONG @ https://crm.hp-tech.com/_nuxt/DXw3SQo0.js:4
+[ 1203759ms] [ERROR] Failed to load resource: the server responded with a status of 500 () @ https://crm.hp-tech.com/api/goals/overdue:0
+[ 1203760ms] [ERROR] Failed to load resource: the server responded with a status of 500 () @ https://crm.hp-tech.com/api/goals/stats:0
+[ 1203775ms] [ERROR] API Error (500): SOMETHING_WENT_WRONG @ https://crm.hp-tech.com/_nuxt/DXw3SQo0.js:4
+[ 1203776ms] [ERROR] API Error (500): SOMETHING_WENT_WRONG @ https://crm.hp-tech.com/_nuxt/DXw3SQo0.js:4
+[ 1350793ms] [ERROR] Failed to load resource: the server responded with a status of 500 () @ https://crm.hp-tech.com/api/catalog/products:0
+[ 1351631ms] [ERROR] Failed to load resource: the server responded with a status of 500 () @ https://crm.hp-tech.com/api/catalog/products:0
+[ 1351634ms] [ERROR] API Error (500): SOMETHING_WENT_WRONG @ https://crm.hp-tech.com/_nuxt/DXw3SQo0.js:4
+[ 1388825ms] [ERROR] Failed to load resource: the server responded with a status of 404 () @ https://crm.hp-tech.com/api/staff:0
+[ 1388827ms] [ERROR] API Error (404): [GET] "/api/staff": 404  @ https://crm.hp-tech.com/_nuxt/DXw3SQo0.js:4
+[ 1388896ms] [ERROR] Failed to load resource: the server responded with a status of 500 () @ https://crm.hp-tech.com/api/deal?limit=1000:0
+[ 1390155ms] [ERROR] Failed to load resource: the server responded with a status of 500 () @ https://crm.hp-tech.com/api/deal?limit=1000:0
+[ 1390160ms] [ERROR] API Error (500): SOMETHING_WENT_WRONG @ https://crm.hp-tech.com/_nuxt/DXw3SQo0.js:4
+[ 1421311ms] [ERROR] Failed to load resource: the server responded with a status of 500 () @ https://crm.hp-tech.com/api/deal?limit=1000:0
+[ 1422388ms] [ERROR] Failed to load resource: the server responded with a status of 500 () @ https://crm.hp-tech.com/api/deal?limit=1000:0
+[ 1422389ms] [ERROR] API Error (500): SOMETHING_WENT_WRONG @ https://crm.hp-tech.com/_nuxt/DXw3SQo0.js:4
+[ 1450703ms] [ERROR] Failed to load resource: the server responded with a status of 500 () @ https://crm.hp-tech.com/api/deal?limit=1000:0
+[ 1451174ms] [ERROR] Failed to load resource: the server responded with a status of 500 () @ https://crm.hp-tech.com/api/deal?limit=1000:0
+[ 1451176ms] [ERROR] API Error (500): SOMETHING_WENT_WRONG @ https://crm.hp-tech.com/_nuxt/DXw3SQo0.js:4
+[ 1480638ms] [ERROR] Failed to load resource: the server responded with a status of 500 () @ https://crm.hp-tech.com/api/deal?limit=1000:0
+[ 1481041ms] [ERROR] Failed to load resource: the server responded with a status of 500 () @ https://crm.hp-tech.com/api/deal?limit=1000:0
+[ 1481043ms] [ERROR] API Error (500): SOMETHING_WENT_WRONG @ https://crm.hp-tech.com/_nuxt/DXw3SQo0.js:4
+[ 1512037ms] [ERROR] Failed to load resource: the server responded with a status of 500 () @ https://crm.hp-tech.com/api/deal?limit=1000:0
+[ 1513061ms] [ERROR] Failed to load resource: the server responded with a status of 500 () @ https://crm.hp-tech.com/api/deal?limit=1000:0
+[ 1513062ms] [ERROR] API Error (500): SOMETHING_WENT_WRONG @ https://crm.hp-tech.com/_nuxt/DXw3SQo0.js:4
+[ 1540625ms] [ERROR] Failed to load resource: the server responded with a status of 500 () @ https://crm.hp-tech.com/api/deal?limit=1000:0
+[ 1541045ms] [ERROR] Failed to load resource: the server responded with a status of 500 () @ https://crm.hp-tech.com/api/deal?limit=1000:0
+[ 1541048ms] [ERROR] API Error (500): SOMETHING_WENT_WRONG @ https://crm.hp-tech.com/_nuxt/DXw3SQo0.js:4
+[ 1571392ms] [ERROR] Failed to load resource: the server responded with a status of 500 () @ https://crm.hp-tech.com/api/deal?limit=1000:0
+[ 1571798ms] [ERROR] Failed to load resource: the server responded with a status of 500 () @ https://crm.hp-tech.com/api/deal?limit=1000:0
+[ 1571800ms] [ERROR] API Error (500): SOMETHING_WENT_WRONG @ https://crm.hp-tech.com/_nuxt/DXw3SQo0.js:4
+[ 1600651ms] [ERROR] Failed to load resource: the server responded with a status of 500 () @ https://crm.hp-tech.com/api/deal?limit=1000:0
+[ 1601785ms] [ERROR] Failed to load resource: the server responded with a status of 500 () @ https://crm.hp-tech.com/api/deal?limit=1000:0
+[ 1601787ms] [ERROR] API Error (500): SOMETHING_WENT_WRONG @ https://crm.hp-tech.com/_nuxt/DXw3SQo0.js:4
+[ 1633194ms] [ERROR] Failed to load resource: the server responded with a status of 500 () @ https://crm.hp-tech.com/api/deal?limit=1000:0
+[ 1635788ms] [ERROR] Failed to load resource: the server responded with a status of 500 () @ https://crm.hp-tech.com/api/deal?limit=1000:0
+[ 1635789ms] [ERROR] API Error (500): SOMETHING_WENT_WRONG @ https://crm.hp-tech.com/_nuxt/DXw3SQo0.js:4
+[ 1660632ms] [ERROR] Failed to load resource: the server responded with a status of 500 () @ https://crm.hp-tech.com/api/deal?limit=1000:0
+[ 1661037ms] [ERROR] Failed to load resource: the server responded with a status of 500 () @ https://crm.hp-tech.com/api/deal?limit=1000:0
+[ 1661039ms] [ERROR] API Error (500): SOMETHING_WENT_WRONG @ https://crm.hp-tech.com/_nuxt/DXw3SQo0.js:4
+[ 1690643ms] [ERROR] Failed to load resource: the server responded with a status of 500 () @ https://crm.hp-tech.com/api/deal?limit=1000:0
+[ 1691051ms] [ERROR] Failed to load resource: the server responded with a status of 500 () @ https://crm.hp-tech.com/api/deal?limit=1000:0
+[ 1691053ms] [ERROR] API Error (500): SOMETHING_WENT_WRONG @ https://crm.hp-tech.com/_nuxt/DXw3SQo0.js:4
+[ 1721289ms] [ERROR] Failed to load resource: the server responded with a status of 500 () @ https://crm.hp-tech.com/api/deal?limit=1000:0
+[ 1722471ms] [ERROR] Failed to load resource: the server responded with a status of 500 () @ https://crm.hp-tech.com/api/deal?limit=1000:0
+[ 1722472ms] [ERROR] API Error (500): SOMETHING_WENT_WRONG @ https://crm.hp-tech.com/_nuxt/DXw3SQo0.js:4
+[ 1750629ms] [ERROR] Failed to load resource: the server responded with a status of 500 () @ https://crm.hp-tech.com/api/deal?limit=1000:0
+[ 1751042ms] [ERROR] Failed to load resource: the server responded with a status of 500 () @ https://crm.hp-tech.com/api/deal?limit=1000:0
+[ 1751043ms] [ERROR] API Error (500): SOMETHING_WENT_WRONG @ https://crm.hp-tech.com/_nuxt/DXw3SQo0.js:4
+[ 1780653ms] [ERROR] Failed to load resource: the server responded with a status of 500 () @ https://crm.hp-tech.com/api/deal?limit=1000:0
+[ 1781452ms] [ERROR] Failed to load resource: the server responded with a status of 500 () @ https://crm.hp-tech.com/api/deal?limit=1000:0
+[ 1781455ms] [ERROR] API Error (500): SOMETHING_WENT_WRONG @ https://crm.hp-tech.com/_nuxt/DXw3SQo0.js:4
+[ 1811438ms] [ERROR] Failed to load resource: the server responded with a status of 500 () @ https://crm.hp-tech.com/api/deal?limit=1000:0
+[ 1811842ms] [ERROR] Failed to load resource: the server responded with a status of 500 () @ https://crm.hp-tech.com/api/deal?limit=1000:0
+[ 1811844ms] [ERROR] API Error (500): SOMETHING_WENT_WRONG @ https://crm.hp-tech.com/_nuxt/DXw3SQo0.js:4
+[ 1840615ms] [ERROR] Failed to load resource: the server responded with a status of 500 () @ https://crm.hp-tech.com/api/deal?limit=1000:0
+[ 1842073ms] [ERROR] Failed to load resource: the server responded with a status of 500 () @ https://crm.hp-tech.com/api/deal?limit=1000:0
+[ 1842074ms] [ERROR] API Error (500): SOMETHING_WENT_WRONG @ https://crm.hp-tech.com/_nuxt/DXw3SQo0.js:4
+[ 1870772ms] [ERROR] Failed to load resource: the server responded with a status of 500 () @ https://crm.hp-tech.com/api/deal?limit=1000:0
+[ 1871203ms] [ERROR] Failed to load resource: the server responded with a status of 500 () @ https://crm.hp-tech.com/api/deal?limit=1000:0
+[ 1871205ms] [ERROR] API Error (500): SOMETHING_WENT_WRONG @ https://crm.hp-tech.com/_nuxt/DXw3SQo0.js:4
+[ 1900624ms] [ERROR] Failed to load resource: the server responded with a status of 500 () @ https://crm.hp-tech.com/api/deal?limit=1000:0
+[ 1901636ms] [ERROR] Failed to load resource: the server responded with a status of 500 () @ https://crm.hp-tech.com/api/deal?limit=1000:0
+[ 1901638ms] [ERROR] API Error (500): SOMETHING_WENT_WRONG @ https://crm.hp-tech.com/_nuxt/DXw3SQo0.js:4
+[ 1930617ms] [ERROR] Failed to load resource: the server responded with a status of 500 () @ https://crm.hp-tech.com/api/deal?limit=1000:0
+[ 1931042ms] [ERROR] Failed to load resource: the server responded with a status of 500 () @ https://crm.hp-tech.com/api/deal?limit=1000:0
+[ 1931044ms] [ERROR] API Error (500): SOMETHING_WENT_WRONG @ https://crm.hp-tech.com/_nuxt/DXw3SQo0.js:4
+[ 1960627ms] [ERROR] Failed to load resource: the server responded with a status of 500 () @ https://crm.hp-tech.com/api/deal?limit=1000:0
+[ 1961041ms] [ERROR] Failed to load resource: the server responded with a status of 500 () @ https://crm.hp-tech.com/api/deal?limit=1000:0
+[ 1961044ms] [ERROR] API Error (500): SOMETHING_WENT_WRONG @ https://crm.hp-tech.com/_nuxt/DXw3SQo0.js:4
+[ 1990625ms] [ERROR] Failed to load resource: the server responded with a status of 500 () @ https://crm.hp-tech.com/api/deal?limit=1000:0
+[ 1991025ms] [ERROR] Failed to load resource: the server responded with a status of 500 () @ https://crm.hp-tech.com/api/deal?limit=1000:0
+[ 1991027ms] [ERROR] API Error (500): SOMETHING_WENT_WRONG @ https://crm.hp-tech.com/_nuxt/DXw3SQo0.js:4
+[ 2020633ms] [ERROR] Failed to load resource: the server responded with a status of 500 () @ https://crm.hp-tech.com/api/deal?limit=1000:0
+[ 2021042ms] [ERROR] Failed to load resource: the server responded with a status of 500 () @ https://crm.hp-tech.com/api/deal?limit=1000:0
+[ 2021045ms] [ERROR] API Error (500): SOMETHING_WENT_WRONG @ https://crm.hp-tech.com/_nuxt/DXw3SQo0.js:4
+[ 2050659ms] [ERROR] Failed to load resource: the server responded with a status of 500 () @ https://crm.hp-tech.com/api/deal?limit=1000:0
+[ 2052067ms] [ERROR] Failed to load resource: the server responded with a status of 500 () @ https://crm.hp-tech.com/api/deal?limit=1000:0
+[ 2052070ms] [ERROR] API Error (500): SOMETHING_WENT_WRONG @ https://crm.hp-tech.com/_nuxt/DXw3SQo0.js:4
+[ 2080638ms] [ERROR] Failed to load resource: the server responded with a status of 500 () @ https://crm.hp-tech.com/api/deal?limit=1000:0
+[ 2081059ms] [ERROR] Failed to load resource: the server responded with a status of 500 () @ https://crm.hp-tech.com/api/deal?limit=1000:0
+[ 2081061ms] [ERROR] API Error (500): SOMETHING_WENT_WRONG @ https://crm.hp-tech.com/_nuxt/DXw3SQo0.js:4
+[ 2111252ms] [ERROR] Failed to load resource: the server responded with a status of 500 () @ https://crm.hp-tech.com/api/deal?limit=1000:0
+[ 2112185ms] [ERROR] Failed to load resource: the server responded with a status of 500 () @ https://crm.hp-tech.com/api/deal?limit=1000:0
+[ 2112186ms] [ERROR] API Error (500): SOMETHING_WENT_WRONG @ https://crm.hp-tech.com/_nuxt/DXw3SQo0.js:4
+[ 2140630ms] [ERROR] Failed to load resource: the server responded with a status of 500 () @ https://crm.hp-tech.com/api/deal?limit=1000:0
+[ 2141640ms] [ERROR] Failed to load resource: the server responded with a status of 500 () @ https://crm.hp-tech.com/api/deal?limit=1000:0
+[ 2141644ms] [ERROR] API Error (500): SOMETHING_WENT_WRONG @ https://crm.hp-tech.com/_nuxt/DXw3SQo0.js:4
+[ 2170895ms] [ERROR] Failed to load resource: the server responded with a status of 500 () @ https://crm.hp-tech.com/api/deal?limit=1000:0
+[ 2171305ms] [ERROR] Failed to load resource: the server responded with a status of 500 () @ https://crm.hp-tech.com/api/deal?limit=1000:0
+[ 2171307ms] [ERROR] API Error (500): SOMETHING_WENT_WRONG @ https://crm.hp-tech.com/_nuxt/DXw3SQo0.js:4
+[ 2201258ms] [ERROR] Failed to load resource: the server responded with a status of 500 () @ https://crm.hp-tech.com/api/deal?limit=1000:0
+[ 2201777ms] [ERROR] Failed to load resource: the server responded with a status of 500 () @ https://crm.hp-tech.com/api/deal?limit=1000:0
+[ 2201779ms] [ERROR] API Error (500): SOMETHING_WENT_WRONG @ https://crm.hp-tech.com/_nuxt/DXw3SQo0.js:4
+[ 2230780ms] [ERROR] Failed to load resource: the server responded with a status of 500 () @ https://crm.hp-tech.com/api/deal?limit=1000:0
+[ 2231198ms] [ERROR] Failed to load resource: the server responded with a status of 500 () @ https://crm.hp-tech.com/api/deal?limit=1000:0
+[ 2231201ms] [ERROR] API Error (500): SOMETHING_WENT_WRONG @ https://crm.hp-tech.com/_nuxt/DXw3SQo0.js:4
+[ 2260639ms] [ERROR] Failed to load resource: the server responded with a status of 500 () @ https://crm.hp-tech.com/api/deal?limit=1000:0
+[ 2262163ms] [ERROR] Failed to load resource: the server responded with a status of 500 () @ https://crm.hp-tech.com/api/deal?limit=1000:0
+[ 2262165ms] [ERROR] API Error (500): SOMETHING_WENT_WRONG @ https://crm.hp-tech.com/_nuxt/DXw3SQo0.js:4
+[ 2290632ms] [ERROR] Failed to load resource: the server responded with a status of 500 () @ https://crm.hp-tech.com/api/deal?limit=1000:0
+[ 2291050ms] [ERROR] Failed to load resource: the server responded with a status of 500 () @ https://crm.hp-tech.com/api/deal?limit=1000:0
+[ 2291052ms] [ERROR] API Error (500): SOMETHING_WENT_WRONG @ https://crm.hp-tech.com/_nuxt/DXw3SQo0.js:4
+[ 2320769ms] [ERROR] Failed to load resource: the server responded with a status of 500 () @ https://crm.hp-tech.com/api/deal?limit=1000:0
+[ 2321229ms] [ERROR] Failed to load resource: the server responded with a status of 500 () @ https://crm.hp-tech.com/api/deal?limit=1000:0
+[ 2321232ms] [ERROR] API Error (500): SOMETHING_WENT_WRONG @ https://crm.hp-tech.com/_nuxt/DXw3SQo0.js:4
+[ 2350631ms] [ERROR] Failed to load resource: the server responded with a status of 500 () @ https://crm.hp-tech.com/api/deal?limit=1000:0
+[ 2351767ms] [ERROR] Failed to load resource: the server responded with a status of 500 () @ https://crm.hp-tech.com/api/deal?limit=1000:0
+[ 2351770ms] [ERROR] API Error (500): SOMETHING_WENT_WRONG @ https://crm.hp-tech.com/_nuxt/DXw3SQo0.js:4
+[ 2380626ms] [ERROR] Failed to load resource: the server responded with a status of 500 () @ https://crm.hp-tech.com/api/deal?limit=1000:0
+[ 2381044ms] [ERROR] Failed to load resource: the server responded with a status of 500 () @ https://crm.hp-tech.com/api/deal?limit=1000:0
+[ 2381045ms] [ERROR] API Error (500): SOMETHING_WENT_WRONG @ https://crm.hp-tech.com/_nuxt/DXw3SQo0.js:4
+[ 2410644ms] [ERROR] Failed to load resource: the server responded with a status of 500 () @ https://crm.hp-tech.com/api/deal?limit=1000:0
+[ 2411072ms] [ERROR] Failed to load resource: the server responded with a status of 500 () @ https://crm.hp-tech.com/api/deal?limit=1000:0
+[ 2411074ms] [ERROR] API Error (500): SOMETHING_WENT_WRONG @ https://crm.hp-tech.com/_nuxt/DXw3SQo0.js:4
+[ 2441146ms] [ERROR] Failed to load resource: the server responded with a status of 500 () @ https://crm.hp-tech.com/api/deal?limit=1000:0
+[ 2442187ms] [ERROR] Failed to load resource: the server responded with a status of 500 () @ https://crm.hp-tech.com/api/deal?limit=1000:0
+[ 2442189ms] [ERROR] API Error (500): SOMETHING_WENT_WRONG @ https://crm.hp-tech.com/_nuxt/DXw3SQo0.js:4
+[ 2470660ms] [ERROR] Failed to load resource: the server responded with a status of 500 () @ https://crm.hp-tech.com/api/deal?limit=1000:0
+[ 2471858ms] [ERROR] Failed to load resource: the server responded with a status of 500 () @ https://crm.hp-tech.com/api/deal?limit=1000:0
+[ 2471859ms] [ERROR] API Error (500): SOMETHING_WENT_WRONG @ https://crm.hp-tech.com/_nuxt/DXw3SQo0.js:4
+[ 2500667ms] [ERROR] Failed to load resource: the server responded with a status of 500 () @ https://crm.hp-tech.com/api/deal?limit=1000:0
+[ 2501675ms] [ERROR] Failed to load resource: the server responded with a status of 500 () @ https://crm.hp-tech.com/api/deal?limit=1000:0
+[ 2501678ms] [ERROR] API Error (500): SOMETHING_WENT_WRONG @ https://crm.hp-tech.com/_nuxt/DXw3SQo0.js:4
+[ 2531075ms] [ERROR] Failed to load resource: the server responded with a status of 500 () @ https://crm.hp-tech.com/api/deal?limit=1000:0
+[ 2531496ms] [ERROR] Failed to load resource: the server responded with a status of 500 () @ https://crm.hp-tech.com/api/deal?limit=1000:0
+[ 2531499ms] [ERROR] API Error (500): SOMETHING_WENT_WRONG @ https://crm.hp-tech.com/_nuxt/DXw3SQo0.js:4
+[ 2560634ms] [ERROR] Failed to load resource: the server responded with a status of 500 () @ https://crm.hp-tech.com/api/deal?limit=1000:0
+[ 2561705ms] [ERROR] Failed to load resource: the server responded with a status of 500 () @ https://crm.hp-tech.com/api/deal?limit=1000:0
+[ 2561707ms] [ERROR] API Error (500): SOMETHING_WENT_WRONG @ https://crm.hp-tech.com/_nuxt/DXw3SQo0.js:4
+[ 2590651ms] [ERROR] Failed to load resource: the server responded with a status of 500 () @ https://crm.hp-tech.com/api/deal?limit=1000:0
+[ 2591071ms] [ERROR] Failed to load resource: the server responded with a status of 500 () @ https://crm.hp-tech.com/api/deal?limit=1000:0
+[ 2591073ms] [ERROR] API Error (500): SOMETHING_WENT_WRONG @ https://crm.hp-tech.com/_nuxt/DXw3SQo0.js:4
+[ 2620640ms] [ERROR] Failed to load resource: the server responded with a status of 500 () @ https://crm.hp-tech.com/api/deal?limit=1000:0
+[ 2621053ms] [ERROR] Failed to load resource: the server responded with a status of 500 () @ https://crm.hp-tech.com/api/deal?limit=1000:0
+[ 2621056ms] [ERROR] API Error (500): SOMETHING_WENT_WRONG @ https://crm.hp-tech.com/_nuxt/DXw3SQo0.js:4
+[ 2650637ms] [ERROR] Failed to load resource: the server responded with a status of 500 () @ https://crm.hp-tech.com/api/deal?limit=1000:0
+[ 2651040ms] [ERROR] Failed to load resource: the server responded with a status of 500 () @ https://crm.hp-tech.com/api/deal?limit=1000:0
+[ 2651043ms] [ERROR] API Error (500): SOMETHING_WENT_WRONG @ https://crm.hp-tech.com/_nuxt/DXw3SQo0.js:4
+[ 2680656ms] [ERROR] Failed to load resource: the server responded with a status of 500 () @ https://crm.hp-tech.com/api/deal?limit=1000:0
+[ 2681070ms] [ERROR] Failed to load resource: the server responded with a status of 500 () @ https://crm.hp-tech.com/api/deal?limit=1000:0
+[ 2681072ms] [ERROR] API Error (500): SOMETHING_WENT_WRONG @ https://crm.hp-tech.com/_nuxt/DXw3SQo0.js:4
+[ 2710633ms] [ERROR] Failed to load resource: the server responded with a status of 500 () @ https://crm.hp-tech.com/api/deal?limit=1000:0
+[ 2711672ms] [ERROR] Failed to load resource: the server responded with a status of 500 () @ https://crm.hp-tech.com/api/deal?limit=1000:0
+[ 2711673ms] [ERROR] API Error (500): SOMETHING_WENT_WRONG @ https://crm.hp-tech.com/_nuxt/DXw3SQo0.js:4
+[ 2740794ms] [ERROR] Failed to load resource: the server responded with a status of 500 () @ https://crm.hp-tech.com/api/deal?limit=1000:0
+[ 2741221ms] [ERROR] Failed to load resource: the server responded with a status of 500 () @ https://crm.hp-tech.com/api/deal?limit=1000:0
+[ 2741224ms] [ERROR] API Error (500): SOMETHING_WENT_WRONG @ https://crm.hp-tech.com/_nuxt/DXw3SQo0.js:4
+[ 2770643ms] [ERROR] Failed to load resource: the server responded with a status of 500 () @ https://crm.hp-tech.com/api/deal?limit=1000:0
+[ 2771052ms] [ERROR] Failed to load resource: the server responded with a status of 500 () @ https://crm.hp-tech.com/api/deal?limit=1000:0
+[ 2771054ms] [ERROR] API Error (500): SOMETHING_WENT_WRONG @ https://crm.hp-tech.com/_nuxt/DXw3SQo0.js:4
+[ 2800690ms] [ERROR] Failed to load resource: the server responded with a status of 500 () @ https://crm.hp-tech.com/api/deal?limit=1000:0
+[ 2801114ms] [ERROR] Failed to load resource: the server responded with a status of 500 () @ https://crm.hp-tech.com/api/deal?limit=1000:0
+[ 2801117ms] [ERROR] API Error (500): SOMETHING_WENT_WRONG @ https://crm.hp-tech.com/_nuxt/DXw3SQo0.js:4
+[ 2830664ms] [ERROR] Failed to load resource: the server responded with a status of 500 () @ https://crm.hp-tech.com/api/deal?limit=1000:0
+[ 2831080ms] [ERROR] Failed to load resource: the server responded with a status of 500 () @ https://crm.hp-tech.com/api/deal?limit=1000:0
+[ 2831083ms] [ERROR] API Error (500): SOMETHING_WENT_WRONG @ https://crm.hp-tech.com/_nuxt/DXw3SQo0.js:4
+[ 2860661ms] [ERROR] Failed to load resource: the server responded with a status of 500 () @ https://crm.hp-tech.com/api/deal?limit=1000:0
+[ 2862111ms] [ERROR] Failed to load resource: the server responded with a status of 500 () @ https://crm.hp-tech.com/api/deal?limit=1000:0
+[ 2862113ms] [ERROR] API Error (500): SOMETHING_WENT_WRONG @ https://crm.hp-tech.com/_nuxt/DXw3SQo0.js:4
+[ 2890656ms] [ERROR] Failed to load resource: the server responded with a status of 500 () @ https://crm.hp-tech.com/api/deal?limit=1000:0
+[ 2891079ms] [ERROR] Failed to load resource: the server responded with a status of 500 () @ https://crm.hp-tech.com/api/deal?limit=1000:0
+[ 2891080ms] [ERROR] API Error (500): SOMETHING_WENT_WRONG @ https://crm.hp-tech.com/_nuxt/DXw3SQo0.js:4
+[ 2920637ms] [ERROR] Failed to load resource: the server responded with a status of 500 () @ https://crm.hp-tech.com/api/deal?limit=1000:0
+[ 2921050ms] [ERROR] Failed to load resource: the server responded with a status of 500 () @ https://crm.hp-tech.com/api/deal?limit=1000:0
+[ 2921053ms] [ERROR] API Error (500): SOMETHING_WENT_WRONG @ https://crm.hp-tech.com/_nuxt/DXw3SQo0.js:4
+[ 2950641ms] [ERROR] Failed to load resource: the server responded with a status of 500 () @ https://crm.hp-tech.com/api/deal?limit=1000:0
+[ 2951741ms] [ERROR] Failed to load resource: the server responded with a status of 500 () @ https://crm.hp-tech.com/api/deal?limit=1000:0
+[ 2951743ms] [ERROR] API Error (500): SOMETHING_WENT_WRONG @ https://crm.hp-tech.com/_nuxt/DXw3SQo0.js:4
+[ 2981066ms] [ERROR] Failed to load resource: the server responded with a status of 500 () @ https://crm.hp-tech.com/api/deal?limit=1000:0
+[ 2981470ms] [ERROR] Failed to load resource: the server responded with a status of 500 () @ https://crm.hp-tech.com/api/deal?limit=1000:0
+[ 2981473ms] [ERROR] API Error (500): SOMETHING_WENT_WRONG @ https://crm.hp-tech.com/_nuxt/DXw3SQo0.js:4
+[ 3010629ms] [ERROR] Failed to load resource: the server responded with a status of 500 () @ https://crm.hp-tech.com/api/deal?limit=1000:0
+[ 3011637ms] [ERROR] Failed to load resource: the server responded with a status of 500 () @ https://crm.hp-tech.com/api/deal?limit=1000:0
+[ 3011639ms] [ERROR] API Error (500): SOMETHING_WENT_WRONG @ https://crm.hp-tech.com/_nuxt/DXw3SQo0.js:4
+[ 3040721ms] [ERROR] Failed to load resource: the server responded with a status of 500 () @ https://crm.hp-tech.com/api/deal?limit=1000:0
+[ 3041759ms] [ERROR] Failed to load resource: the server responded with a status of 500 () @ https://crm.hp-tech.com/api/deal?limit=1000:0
+[ 3041760ms] [ERROR] API Error (500): SOMETHING_WENT_WRONG @ https://crm.hp-tech.com/_nuxt/DXw3SQo0.js:4
+[ 3070675ms] [ERROR] Failed to load resource: the server responded with a status of 500 () @ https://crm.hp-tech.com/api/deal?limit=1000:0
+[ 3071701ms] [ERROR] Failed to load resource: the server responded with a status of 500 () @ https://crm.hp-tech.com/api/deal?limit=1000:0
+[ 3071704ms] [ERROR] API Error (500): SOMETHING_WENT_WRONG @ https://crm.hp-tech.com/_nuxt/DXw3SQo0.js:4
+[ 3100640ms] [ERROR] Failed to load resource: the server responded with a status of 500 () @ https://crm.hp-tech.com/api/deal?limit=1000:0
+[ 3101051ms] [ERROR] Failed to load resource: the server responded with a status of 500 () @ https://crm.hp-tech.com/api/deal?limit=1000:0
+[ 3101053ms] [ERROR] API Error (500): SOMETHING_WENT_WRONG @ https://crm.hp-tech.com/_nuxt/DXw3SQo0.js:4
+[ 3130635ms] [ERROR] Failed to load resource: the server responded with a status of 500 () @ https://crm.hp-tech.com/api/deal?limit=1000:0
+[ 3131149ms] [ERROR] Failed to load resource: the server responded with a status of 500 () @ https://crm.hp-tech.com/api/deal?limit=1000:0
+[ 3131151ms] [ERROR] API Error (500): SOMETHING_WENT_WRONG @ https://crm.hp-tech.com/_nuxt/DXw3SQo0.js:4
+[ 3160631ms] [ERROR] Failed to load resource: the server responded with a status of 500 () @ https://crm.hp-tech.com/api/deal?limit=1000:0
+[ 3161045ms] [ERROR] Failed to load resource: the server responded with a status of 500 () @ https://crm.hp-tech.com/api/deal?limit=1000:0
+[ 3161047ms] [ERROR] API Error (500): SOMETHING_WENT_WRONG @ https://crm.hp-tech.com/_nuxt/DXw3SQo0.js:4
+[ 3187394ms] [ERROR] Failed to load resource: the server responded with a status of 401 () @ https://crm.hp-tech.com/api/auth/me:0
+[14200514ms] [WARNING] WebSocket connection to 'wss://crm.hp-tech.com/socket.io/?EIO=4&transport=websocket' failed: WebSocket is closed before the connection is established. @ https://crm.hp-tech.com/_nuxt/Crsm9Fe1.js:0
+[28065386ms] [ERROR] WebSocket connection to 'wss://crm.hp-tech.com/socket.io/?EIO=4&transport=websocket' failed: Error during WebSocket handshake: Unexpected response code: 502 @ https://crm.hp-tech.com/_nuxt/Crsm9Fe1.js:0
+[28068735ms] [ERROR] WebSocket connection to 'wss://crm.hp-tech.com/socket.io/?EIO=4&transport=websocket' failed: Error during WebSocket handshake: Unexpected response code: 502 @ https://crm.hp-tech.com/_nuxt/Crsm9Fe1.js:0
+[28881537ms] [ERROR] WebSocket connection to 'wss://crm.hp-tech.com/socket.io/?EIO=4&transport=websocket' failed: Connection closed before receiving a handshake response @ https://crm.hp-tech.com/_nuxt/Crsm9Fe1.js:0
+[28884795ms] [ERROR] WebSocket connection to 'wss://crm.hp-tech.com/socket.io/?EIO=4&transport=websocket' failed: Error during WebSocket handshake: Unexpected response code: 502 @ https://crm.hp-tech.com/_nuxt/Crsm9Fe1.js:0
+[28889428ms] [ERROR] WebSocket connection to 'wss://crm.hp-tech.com/socket.io/?EIO=4&transport=websocket' failed: Error during WebSocket handshake: Unexpected response code: 502 @ https://crm.hp-tech.com/_nuxt/Crsm9Fe1.js:0
+[48208575ms] [WARNING] WebSocket connection to 'wss://crm.hp-tech.com/socket.io/?EIO=4&transport=websocket' failed: WebSocket is closed before the connection is established. @ https://crm.hp-tech.com/_nuxt/Crsm9Fe1.js:0
+[51198512ms] [WARNING] WebSocket connection to 'wss://crm.hp-tech.com/socket.io/?EIO=4&transport=websocket' failed: WebSocket is closed before the connection is established. @ https://crm.hp-tech.com/_nuxt/Crsm9Fe1.js:0

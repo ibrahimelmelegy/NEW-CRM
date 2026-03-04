@@ -460,7 +460,7 @@ import {
   PRIORITY_OPTIONS,
   STATUS_OPTIONS,
   getEventTypeColor,
-  getEventTypeIcon,
+  getEventTypeIcon
 } from '~/composables/useCalendar';
 
 const { $i18n } = useNuxtApp();
@@ -519,8 +519,13 @@ function toDateStr(d: Date): string {
 const todayStr = toDateStr(new Date());
 
 const weekDayLabels = computed(() => [
-  t('calendar.sun'), t('calendar.mon'), t('calendar.tue'), t('calendar.wed'),
-  t('calendar.thu'), t('calendar.fri'), t('calendar.sat')
+  t('calendar.sun'),
+  t('calendar.mon'),
+  t('calendar.tue'),
+  t('calendar.wed'),
+  t('calendar.thu'),
+  t('calendar.fri'),
+  t('calendar.sat')
 ]);
 
 const timeSlots = Array.from({ length: 13 }, (_, i) => i + 7); // 7 AM to 7 PM
@@ -549,14 +554,19 @@ function getHourFromDate(dateStr: string): number {
 
 function priorityTagType(p: string): 'success' | 'warning' | 'info' | 'danger' | '' {
   const map: Record<string, 'success' | 'warning' | 'info' | 'danger' | ''> = {
-    LOW: 'info', MEDIUM: '', HIGH: 'warning', URGENT: 'danger'
+    LOW: 'info',
+    MEDIUM: '',
+    HIGH: 'warning',
+    URGENT: 'danger'
   };
   return map[p] || 'info';
 }
 
 function statusTagType(s: string): 'success' | 'warning' | 'info' | 'danger' | '' {
   const map: Record<string, 'success' | 'warning' | 'info' | 'danger' | ''> = {
-    SCHEDULED: '', COMPLETED: 'success', CANCELLED: 'danger'
+    SCHEDULED: '',
+    COMPLETED: 'success',
+    CANCELLED: 'danger'
   };
   return map[s] || 'info';
 }
@@ -641,7 +651,14 @@ const miniCells = computed(() => {
   for (let i = startOffset - 1; i >= 0; i--) {
     const d = new Date(year, month, -i);
     const dateStr = toDateStr(d);
-    cells.push({ key: `mp-${i}`, day: d.getDate(), dateStr, isCurrentMonth: false, isToday: dateStr === todayStr, hasEvents: hasEventsOnDate(dateStr) });
+    cells.push({
+      key: `mp-${i}`,
+      day: d.getDate(),
+      dateStr,
+      isCurrentMonth: false,
+      isToday: dateStr === todayStr,
+      hasEvents: hasEventsOnDate(dateStr)
+    });
   }
   // Current month
   for (let d = 1; d <= lastDay.getDate(); d++) {
@@ -712,7 +729,14 @@ const monthCells = computed(() => {
   for (let i = startOffset - 1; i >= 0; i--) {
     const d = new Date(year, month, -i);
     const dateStr = toDateStr(d);
-    cells.push({ key: `prev-${i}`, day: d.getDate(), dateStr, isCurrentMonth: false, isToday: dateStr === todayStr, events: getEventsForDate(dateStr) });
+    cells.push({
+      key: `prev-${i}`,
+      day: d.getDate(),
+      dateStr,
+      isCurrentMonth: false,
+      isToday: dateStr === todayStr,
+      events: getEventsForDate(dateStr)
+    });
   }
   for (let d = 1; d <= lastDay.getDate(); d++) {
     const dt = new Date(year, month, d);
@@ -931,9 +955,7 @@ async function saveEvent() {
       isPrivate: form.isPrivate,
       attendees: form.attendees.filter(a => a.name.trim())
     };
-    const res = editingId.value
-      ? await updateCalendarEvent(editingId.value, payload)
-      : await createCalendarEvent(payload);
+    const res = editingId.value ? await updateCalendarEvent(editingId.value, payload) : await createCalendarEvent(payload);
     if (res.success) {
       ElNotification({ type: 'success', title: t('common.success'), message: t('common.saved') });
       showEditor.value = false;

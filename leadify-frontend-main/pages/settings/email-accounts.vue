@@ -152,7 +152,9 @@ async function handleDisconnect(account: EmailAccount) {
     await disconnectEmailAccount(account.id);
     accounts.value = await fetchEmailAccounts();
     ElNotification({ type: 'success', title: t('common.success'), message: t('common.deleted') });
-  } catch (e: any) { ElMessage.error(t('common.error')); }
+  } catch (e: any) {
+    ElMessage.error(t('common.error'));
+  }
 }
 </script>
 

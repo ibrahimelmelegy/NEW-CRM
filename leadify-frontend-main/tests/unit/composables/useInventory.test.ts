@@ -6,14 +6,14 @@
 
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 
+import { useInventory } from '~/composables/useInventory';
+
 const mockApiFetch = vi.fn();
 (globalThis as any).useApiFetch = mockApiFetch;
 
 vi.mock('@/composables/useApiFetch', () => ({
   useApiFetch: (...args: any[]) => mockApiFetch(...args)
 }));
-
-import { useInventory } from '~/composables/useInventory';
 
 describe('useInventory', () => {
   beforeEach(() => {

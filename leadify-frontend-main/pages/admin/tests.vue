@@ -22,7 +22,7 @@
       </div>
 
       <button
-class="group relative overflow-hidden bg-slate-700 hover:bg-cyan-600 px-8 py-3 rounded-2xl font-bold transition-all duration-300 border border-slate-600 hover:border-cyan-400 flex items-center gap-3 shadow-xl active:scale-95" 
+        class="group relative overflow-hidden bg-slate-700 hover:bg-cyan-600 px-8 py-3 rounded-2xl font-bold transition-all duration-300 border border-slate-600 hover:border-cyan-400 flex items-center gap-3 shadow-xl active:scale-95"
         @click="loadTestData"
       >
         <span class="material-icons group-hover:rotate-180 transition-transform duration-500">sync</span>
@@ -135,7 +135,10 @@ class="group relative overflow-hidden bg-slate-700 hover:bg-cyan-600 px-8 py-3 r
               </td>
               <td class="px-8 py-6">
                 <span
-:class="test.status === 'passed' ? 'bg-emerald-500/10 text-emerald-400 border-emerald-500/30' : 'bg-rose-500/10 text-rose-400 border-rose-500/30'" 
+                  :class="
+                    test.status === 'passed'
+                      ? 'bg-emerald-500/10 text-emerald-400 border-emerald-500/30'
+                      : 'bg-rose-500/10 text-rose-400 border-rose-500/30'
                   "
                   class="px-4 py-1.5 rounded-full text-[10px] font-black uppercase border tracking-widest"
                 >

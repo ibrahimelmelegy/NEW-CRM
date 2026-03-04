@@ -66,8 +66,8 @@ describe('useDealStore', () => {
       ] as any;
 
       const grouped = store.dealsByStage;
-      expect(grouped['PROGRESS']).toHaveLength(2);
-      expect(grouped['CLOSED']).toHaveLength(1);
+      expect(grouped.PROGRESS).toHaveLength(2);
+      expect(grouped.CLOSED).toHaveLength(1);
     });
 
     it('totalDeals should return pagination total', () => {
@@ -208,10 +208,7 @@ describe('useDealStore', () => {
 
   describe('deleteDeal', () => {
     it('should remove deal from list on success', async () => {
-      store.deals = [
-        mockDeal({ id: 'deal-1' }),
-        mockDeal({ id: 'deal-2' })
-      ] as any;
+      store.deals = [mockDeal({ id: 'deal-1' }), mockDeal({ id: 'deal-2' })] as any;
 
       (globalThis.useApiFetch as any).mockResolvedValue({ success: true });
 

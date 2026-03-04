@@ -407,11 +407,7 @@ async function handleSave() {
 
 async function handleDelete(scorecard: any) {
   try {
-    await ElMessageBox.confirm(
-      t('common.confirmDelete'),
-      t('common.warning'),
-      { type: 'warning' }
-    );
+    await ElMessageBox.confirm(t('common.confirmDelete'), t('common.warning'), { type: 'warning' });
     await useApiFetch(`vendor-scorecard/${scorecard.id}`, 'DELETE');
     ElNotification({ type: 'success', title: t('common.success'), message: t('common.deleted') });
     await loadScorecards();

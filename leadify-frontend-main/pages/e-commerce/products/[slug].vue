@@ -257,12 +257,7 @@ div.p-4.space-y-6.animate-fade-in(class="md_p-6")
 import { ref, reactive, computed, onMounted } from 'vue';
 import { ElMessage, ElNotification } from 'element-plus';
 import type { FormRules } from 'element-plus';
-import {
-  fetchProducts,
-  updateProduct,
-  deleteProduct,
-  type CatalogProduct
-} from '~/composables/useProductCatalog';
+import { fetchProducts, updateProduct, deleteProduct, type CatalogProduct } from '~/composables/useProductCatalog';
 
 definePageMeta({ middleware: 'permissions' });
 
@@ -355,7 +350,12 @@ function formatDate(dateStr?: string): string {
 }
 
 function formatCurrency(amount: number): string {
-  return new Intl.NumberFormat('en-US', { style: 'currency', currency: product.value?.currency || 'SAR', minimumFractionDigits: 0, maximumFractionDigits: 2 }).format(amount || 0);
+  return new Intl.NumberFormat('en-US', {
+    style: 'currency',
+    currency: product.value?.currency || 'SAR',
+    minimumFractionDigits: 0,
+    maximumFractionDigits: 2
+  }).format(amount || 0);
 }
 
 function getActivityIcon(type: string): string {

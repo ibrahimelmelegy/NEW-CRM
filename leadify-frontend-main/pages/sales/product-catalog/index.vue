@@ -506,6 +506,7 @@
 
 <script setup lang="ts">
 import { ref, reactive, computed, onMounted, nextTick } from 'vue';
+import * as echarts from 'echarts/core';
 import {
   fetchProducts as apiFetchProducts,
   createProduct as apiCreateProduct,
@@ -513,7 +514,6 @@ import {
   deleteProduct as apiDeleteProduct,
   type CatalogProduct
 } from '~/composables/useProductCatalog';
-import * as echarts from 'echarts';
 
 definePageMeta({ middleware: 'permissions' });
 
@@ -631,7 +631,9 @@ const allCategoryNames = computed(() => {
   };
   walk(categoryTree.value);
   // Also include from products
-  products.value.forEach(p => { if (p.category) names.add(p.category); });
+  products.value.forEach(p => {
+    if (p.category) names.add(p.category);
+  });
   return Array.from(names).sort();
 });
 
@@ -639,13 +641,16 @@ const kpiStats = computed(() => {
   const total = products.value.length;
   const active = products.value.filter(p => p.status === 'active' || p.isActive).length;
   const cats = uniqueCategories.value.length;
-  const avgMargin = total > 0
-    ? Math.round(products.value.reduce((s, p) => {
-        const unit = Number(p.unitPrice || 0);
-        const cost = Number(p.costPrice || 0);
-        return s + (unit > 0 ? ((unit - cost) / unit) * 100 : 0);
-      }, 0) / total)
-    : 0;
+  const avgMargin =
+    total > 0
+      ? Math.round(
+          products.value.reduce((s, p) => {
+            const unit = Number(p.unitPrice || 0);
+            const cost = Number(p.costPrice || 0);
+            return s + (unit > 0 ? ((unit - cost) / unit) * 100 : 0);
+          }, 0) / total
+        )
+      : 0;
   return [
     { label: t('productCatalog.totalProducts'), value: total, icon: 'ph:package-bold', color: '#7849ff' },
     { label: t('productCatalog.activeProducts'), value: active, icon: 'ph:check-circle-bold', color: '#22c55e' },
@@ -660,10 +665,8 @@ const filteredProducts = computed(() => {
   // Search
   if (searchQuery.value) {
     const q = searchQuery.value.toLowerCase();
-    result = result.filter(p =>
-      (p.name || '').toLowerCase().includes(q) ||
-      (p.sku || '').toLowerCase().includes(q) ||
-      (p.description || '').toLowerCase().includes(q)
+    result = result.filter(
+      p => (p.name || '').toLowerCase().includes(q) || (p.sku || '').toLowerCase().includes(q) || (p.description || '').toLowerCase().includes(q)
     );
   }
 
@@ -929,7 +932,9 @@ function openPriceListDialog(pl?: any) {
       validFrom: pl.validFrom || '',
       validTo: pl.validTo || '',
       isActive: pl.isActive ?? true,
-      items: pl.items?.length ? pl.items.map((i: any) => ({ ...i })) : [{ productId: '', productName: '', standardPrice: 0, listPrice: 0, discountPercent: 0 }]
+      items: pl.items?.length
+        ? pl.items.map((i: any) => ({ ...i }))
+        : [{ productId: '', productName: '', standardPrice: 0, listPrice: 0, discountPercent: 0 }]
     });
   } else {
     editingPriceListId.value = null;
@@ -966,10 +971,12 @@ async function savePriceList() {
   try {
     const payload = {
       ...priceListForm,
-      items: priceListForm.items.filter(i => i.productId).map(i => ({
-        ...i,
-        effectivePrice: calcEffectivePrice(i)
-      }))
+      items: priceListForm.items
+        .filter(i => i.productId)
+        .map(i => ({
+          ...i,
+          effectivePrice: calcEffectivePrice(i)
+        }))
     };
     if (editingPriceListId.value) {
       const { success } = await useApiFetch(`catalog/price-lists/${editingPriceListId.value}`, 'PUT', payload);
@@ -1298,14 +1305,16 @@ function initMarginChart() {
   chart.setOption({
     tooltip: { trigger: 'item', formatter: '{b}: {c}%' },
     color: ['#7849ff', '#3b82f6', '#22c55e', '#f59e0b', '#ef4444', '#8b5cf6', '#06b6d4'],
-    series: [{
-      type: 'pie',
-      radius: ['40%', '70%'],
-      avoidLabelOverlap: true,
-      itemStyle: { borderRadius: 8, borderColor: 'var(--bg-elevated)', borderWidth: 2 },
-      label: { show: true, formatter: '{b}\n{c}%', fontSize: 11 },
-      data
-    }]
+    series: [
+      {
+        type: 'pie',
+        radius: ['40%', '70%'],
+        avoidLabelOverlap: true,
+        itemStyle: { borderRadius: 8, borderColor: 'var(--bg-elevated)', borderWidth: 2 },
+        label: { show: true, formatter: '{b}\n{c}%', fontSize: 11 },
+        data
+      }
+    ]
   });
 
   // Resize handling

@@ -186,88 +186,80 @@
 </template>
 
 <script setup lang="ts">
-import { ref, computed, onMounted, watch } from 'vue'
-import {
-  fetchReviews,
-  approveReview,
-  rejectReview,
-  respondToReview,
-  deleteReview
-} from '~/composables/useEcommerce'
+import { ref, computed, onMounted, watch } from 'vue';
+import { fetchReviews, approveReview, rejectReview, respondToReview, deleteReview } from '~/composables/useEcommerce';
 
-definePageMeta({ middleware: 'permissions' })
+definePageMeta({ middleware: 'permissions' });
 
-const { $i18n } = useNuxtApp()
-const t = $i18n.t
+const { $i18n } = useNuxtApp();
+const t = $i18n.t;
 
-const reviews = ref<any[]>([])
-const loading = ref(false)
-const actionLoading = ref<string | null>(null)
-const respondLoading = ref(false)
-const searchQuery = ref('')
-const filterStatus = ref('')
-const filterRating = ref<number | string>('')
-const currentPage = ref(1)
-const pageSize = ref(20)
-const totalItems = ref(0)
+const reviews = ref<any[]>([]);
+const loading = ref(false);
+const actionLoading = ref<string | null>(null);
+const respondLoading = ref(false);
+const searchQuery = ref('');
+const filterStatus = ref('');
+const filterRating = ref<number | string>('');
+const currentPage = ref(1);
+const pageSize = ref(20);
+const totalItems = ref(0);
 
-const showRespondDialog = ref(false)
-const respondTarget = ref<any>(null)
-const respondText = ref('')
+const showRespondDialog = ref(false);
+const respondTarget = ref<any>(null);
+const respondText = ref('');
 
 // Computed stats
-const pendingCount = computed(() => reviews.value.filter(r => r.status === 'PENDING').length)
-const approvedCount = computed(() => reviews.value.filter(r => r.status === 'APPROVED').length)
+const pendingCount = computed(() => reviews.value.filter(r => r.status === 'PENDING').length);
+const approvedCount = computed(() => reviews.value.filter(r => r.status === 'APPROVED').length);
 const averageRating = computed(() => {
-  if (!reviews.value.length) return '0.0'
-  const avg = reviews.value.reduce((sum, r) => sum + (r.rating || 0), 0) / reviews.value.length
-  return avg.toFixed(1)
-})
+  if (!reviews.value.length) return '0.0';
+  const avg = reviews.value.reduce((sum, r) => sum + (r.rating || 0), 0) / reviews.value.length;
+  return avg.toFixed(1);
+});
 
-const totalPages = computed(() => Math.ceil(totalItems.value / pageSize.value))
+const totalPages = computed(() => Math.ceil(totalItems.value / pageSize.value));
 
 // Filtered reviews
 const filteredReviews = computed(() => {
-  let result = [...reviews.value]
+  let result = [...reviews.value];
   if (searchQuery.value) {
-    const q = searchQuery.value.toLowerCase()
-    result = result.filter(r =>
-      (r.title || '').toLowerCase().includes(q) ||
-      (r.comment || '').toLowerCase().includes(q) ||
-      (r.content || '').toLowerCase().includes(q)
-    )
+    const q = searchQuery.value.toLowerCase();
+    result = result.filter(
+      r => (r.title || '').toLowerCase().includes(q) || (r.comment || '').toLowerCase().includes(q) || (r.content || '').toLowerCase().includes(q)
+    );
   }
   if (filterStatus.value) {
-    result = result.filter(r => r.status === filterStatus.value)
+    result = result.filter(r => r.status === filterStatus.value);
   }
   if (filterRating.value) {
-    result = result.filter(r => r.rating === Number(filterRating.value))
+    result = result.filter(r => r.rating === Number(filterRating.value));
   }
-  return result
-})
+  return result;
+});
 
 onMounted(() => {
-  loadReviews()
-})
+  loadReviews();
+});
 
 watch(currentPage, () => {
-  loadReviews()
-})
+  loadReviews();
+});
 
 async function loadReviews() {
-  loading.value = true
+  loading.value = true;
   try {
-    const res = await fetchReviews({ page: String(currentPage.value), limit: String(pageSize.value) })
-    reviews.value = (res as any)?.body?.docs || res?.docs || []
-    totalItems.value = (res as any)?.body?.totalDocs || (res as any)?.totalDocs || reviews.value.length
+    const res = await fetchReviews({ page: String(currentPage.value), limit: String(pageSize.value) });
+    reviews.value = (res as any)?.body?.docs || res?.docs || [];
+    totalItems.value = (res as any)?.body?.totalDocs || (res as any)?.totalDocs || reviews.value.length;
   } finally {
-    loading.value = false
+    loading.value = false;
   }
 }
 
 function renderStars(rating: number): string {
-  const safeRating = Math.max(0, Math.min(5, Math.round(rating)))
-  return '\u2605'.repeat(safeRating) + '\u2606'.repeat(5 - safeRating)
+  const safeRating = Math.max(0, Math.min(5, Math.round(rating)));
+  return '\u2605'.repeat(safeRating) + '\u2606'.repeat(5 - safeRating);
 }
 
 function getInitials(name: string): string {
@@ -276,83 +268,83 @@ function getInitials(name: string): string {
     .map(w => w[0])
     .join('')
     .toUpperCase()
-    .slice(0, 2)
+    .slice(0, 2);
 }
 
 function getReviewStatusTag(status: string): string {
-  if (status === 'APPROVED') return 'success'
-  if (status === 'PENDING') return 'warning'
-  if (status === 'REJECTED') return 'danger'
-  return 'info'
+  if (status === 'APPROVED') return 'success';
+  if (status === 'PENDING') return 'warning';
+  if (status === 'REJECTED') return 'danger';
+  return 'info';
 }
 
 async function handleApprove(id: string) {
-  actionLoading.value = id + '-approve'
+  actionLoading.value = id + '-approve';
   try {
-    const res = await approveReview(id)
+    const res = await approveReview(id);
     if (res?.success !== false) {
-      const review = reviews.value.find(r => r.id === id)
-      if (review) review.status = 'APPROVED'
-      ElMessage.success(t('common.saved'))
+      const review = reviews.value.find(r => r.id === id);
+      if (review) review.status = 'APPROVED';
+      ElMessage.success(t('common.saved'));
     }
   } finally {
-    actionLoading.value = null
+    actionLoading.value = null;
   }
 }
 
 async function handleReject(id: string) {
-  actionLoading.value = id + '-reject'
+  actionLoading.value = id + '-reject';
   try {
-    const res = await rejectReview(id)
+    const res = await rejectReview(id);
     if (res?.success !== false) {
-      const review = reviews.value.find(r => r.id === id)
-      if (review) review.status = 'REJECTED'
-      ElMessage.success(t('common.saved'))
+      const review = reviews.value.find(r => r.id === id);
+      if (review) review.status = 'REJECTED';
+      ElMessage.success(t('common.saved'));
     }
   } finally {
-    actionLoading.value = null
+    actionLoading.value = null;
   }
 }
 
 function openRespondDialog(review: any) {
-  respondTarget.value = review
-  respondText.value = review.merchantResponse || review.response || ''
-  showRespondDialog.value = true
+  respondTarget.value = review;
+  respondText.value = review.merchantResponse || review.response || '';
+  showRespondDialog.value = true;
 }
 
 async function submitResponse() {
   if (!respondText.value.trim()) {
-    ElMessage.warning(t('common.fillRequired'))
-    return
+    ElMessage.warning(t('common.fillRequired'));
+    return;
   }
-  respondLoading.value = true
+  respondLoading.value = true;
   try {
-    const res = await respondToReview(respondTarget.value.id, respondText.value)
+    const res = await respondToReview(respondTarget.value.id, respondText.value);
     if (res?.success !== false) {
-      const review = reviews.value.find(r => r.id === respondTarget.value.id)
+      const review = reviews.value.find(r => r.id === respondTarget.value.id);
       if (review) {
-        review.merchantResponse = respondText.value
-        review.response = respondText.value
+        review.merchantResponse = respondText.value;
+        review.response = respondText.value;
       }
-      showRespondDialog.value = false
-      ElMessage.success(t('common.saved'))
+      showRespondDialog.value = false;
+      ElMessage.success(t('common.saved'));
     }
   } finally {
-    respondLoading.value = false
+    respondLoading.value = false;
   }
 }
 
 async function handleDeleteReview(id: string) {
   try {
-    await ElMessageBox.confirm(
-      t('common.confirmAction'),
-      t('common.warning'),
-      { confirmButtonText: t('common.delete'), cancelButtonText: t('common.cancel'), type: 'warning' }
-    )
-    const res = await deleteReview(id)
+    await ElMessageBox.confirm(t('common.confirmAction'), t('common.warning'), {
+      confirmButtonText: t('common.delete'),
+      cancelButtonText: t('common.cancel'),
+      type: 'warning'
+    });
+    const res = await deleteReview(id);
     if (res?.success !== false) {
-      reviews.value = reviews.value.filter(r => r.id !== id)
-      ElMessage.success(t('common.deleted'))
+      reviews.value = reviews.value.filter(r => r.id !== id);
+      ElMessage.success(t('common.deleted'));
     }
   } catch {
     // User cancelled

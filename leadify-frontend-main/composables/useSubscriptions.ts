@@ -1,3 +1,4 @@
+/* eslint-disable no-use-before-define */
 import { ElNotification } from 'element-plus';
 
 function handleError(message: string) {

@@ -18,6 +18,7 @@ div
 </template>
 
 <script setup lang="ts">
+/* eslint-disable require-await */
 const activeCardFilter = ref('today');
 
 async function setCardsFilter(filter: string) {

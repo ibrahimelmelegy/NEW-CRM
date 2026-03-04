@@ -247,10 +247,7 @@ const summaryStats = computed(() => {
 const filteredData = computed(() => {
   if (!search.value) return items.value;
   const q = search.value.toLowerCase();
-  return items.value.filter((i: any) =>
-    (i.name || '').toLowerCase().includes(q) ||
-    (i.description || '').toLowerCase().includes(q)
-  );
+  return items.value.filter((i: any) => (i.name || '').toLowerCase().includes(q) || (i.description || '').toLowerCase().includes(q));
 });
 
 function formatDate(d: string): string {
@@ -342,11 +339,11 @@ async function handleSave() {
 
 async function handleDelete(item: any) {
   try {
-    await ElMessageBox.confirm(
-      t('common.confirmDelete'),
-      t('common.warning'),
-      { type: 'warning', confirmButtonText: t('common.delete'), cancelButtonText: t('common.cancel') }
-    );
+    await ElMessageBox.confirm(t('common.confirmDelete'), t('common.warning'), {
+      type: 'warning',
+      confirmButtonText: t('common.delete'),
+      cancelButtonText: t('common.cancel')
+    });
     const res = await useApiFetch(`form-builder/templates/${item.id}`, 'DELETE');
     if (res.success) {
       ElMessage.success(t('common.deleted'));

@@ -203,9 +203,7 @@ const expandedSequences = ref<string[]>([]);
 // ── Analytics Computed ──
 const activeCount = computed(() => sequences.value.filter(s => s.isActive).length);
 
-const totalContacts = computed(() =>
-  sequences.value.reduce((sum, s) => sum + ((s as any).enrolledCount || 0), 0)
-);
+const totalContacts = computed(() => sequences.value.reduce((sum, s) => sum + ((s as any).enrolledCount || 0), 0));
 
 const avgOpenRate = computed(() => {
   const withRate = sequences.value.filter(s => (s as any).openRate != null);
@@ -251,7 +249,7 @@ function stepIcon(type: string) {
 function cumulativeDay(steps: any[], idx: number): number {
   let day = 1;
   for (let i = 0; i <= idx; i++) {
-    if (i > 0) day += (steps[i].delayDays || 0);
+    if (i > 0) day += steps[i].delayDays || 0;
   }
   return day;
 }
@@ -428,11 +426,26 @@ async function handleDelete(seq: Sequence) {
   margin-bottom: 6px;
   transition: transform 0.2s ease;
 
-  .type-email & { background: rgba(120, 73, 255, 0.15); color: #7849ff; }
-  .type-wait & { background: rgba(245, 158, 11, 0.15); color: #f59e0b; }
-  .type-task & { background: rgba(34, 197, 94, 0.15); color: #22c55e; }
-  .type-call & { background: rgba(59, 130, 246, 0.15); color: #3b82f6; }
-  .type-meeting & { background: rgba(236, 72, 153, 0.15); color: #ec4899; }
+  .type-email & {
+    background: rgba(120, 73, 255, 0.15);
+    color: #7849ff;
+  }
+  .type-wait & {
+    background: rgba(245, 158, 11, 0.15);
+    color: #f59e0b;
+  }
+  .type-task & {
+    background: rgba(34, 197, 94, 0.15);
+    color: #22c55e;
+  }
+  .type-call & {
+    background: rgba(59, 130, 246, 0.15);
+    color: #3b82f6;
+  }
+  .type-meeting & {
+    background: rgba(236, 72, 153, 0.15);
+    color: #ec4899;
+  }
 }
 
 .node-label {
@@ -440,7 +453,8 @@ async function handleDelete(seq: Sequence) {
   max-width: 120px;
 }
 
-.branch-badge, .ab-badge {
+.branch-badge,
+.ab-badge {
   display: flex;
   align-items: center;
   gap: 3px;
@@ -513,21 +527,30 @@ async function handleDelete(seq: Sequence) {
   background: var(--card-bg, rgba(255, 255, 255, 0.01));
 }
 
-.expand-enter-active, .expand-leave-active {
+.expand-enter-active,
+.expand-leave-active {
   transition: all 0.3s ease;
   overflow: hidden;
 }
-.expand-enter-from, .expand-leave-to {
+.expand-enter-from,
+.expand-leave-to {
   opacity: 0;
   max-height: 0;
 }
-.expand-enter-to, .expand-leave-from {
+.expand-enter-to,
+.expand-leave-from {
   opacity: 1;
   max-height: 800px;
 }
 
 @keyframes fadeIn {
-  from { opacity: 0; transform: translateY(10px); }
-  to { opacity: 1; transform: translateY(0); }
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
 }
 </style>

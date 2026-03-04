@@ -16,9 +16,7 @@ export const useSocketStore = defineStore('socket', {
       if (socket?.connected) return;
 
       const config = useRuntimeConfig();
-      const baseUrl = config.public.API_BASE_URL
-        ? String(config.public.API_BASE_URL).replace(/\/api\/?$/, '')
-        : '';
+      const baseUrl = config.public.API_BASE_URL ? String(config.public.API_BASE_URL).replace(/\/api\/?$/, '') : '';
 
       socket = socketIo(baseUrl, {
         withCredentials: true,

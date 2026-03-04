@@ -213,11 +213,12 @@ const filteredTemplates = computed(() => {
 
   if (searchQuery.value) {
     const q = searchQuery.value.toLowerCase();
-    result = result.filter(t =>
-      (t.name || '').toLowerCase().includes(q) ||
-      (t.subject || '').toLowerCase().includes(q) ||
-      (t.body || '').toLowerCase().includes(q) ||
-      (t.category || '').toLowerCase().includes(q)
+    result = result.filter(
+      t =>
+        (t.name || '').toLowerCase().includes(q) ||
+        (t.subject || '').toLowerCase().includes(q) ||
+        (t.body || '').toLowerCase().includes(q) ||
+        (t.category || '').toLowerCase().includes(q)
     );
   }
 

@@ -366,8 +366,12 @@ import { useApiFetch } from '~/composables/useApiFetch';
 // ─── Bulk Selection & Export ─────────────────────────────
 const selectedPostings = ref<any[]>([]);
 const selectedApplicants = ref<any[]>([]);
-const handlePostingSelectionChange = (rows: any[]) => { selectedPostings.value = rows; };
-const handleApplicantSelectionChange = (rows: any[]) => { selectedApplicants.value = rows; };
+const handlePostingSelectionChange = (rows: any[]) => {
+  selectedPostings.value = rows;
+};
+const handleApplicantSelectionChange = (rows: any[]) => {
+  selectedApplicants.value = rows;
+};
 
 definePageMeta({ middleware: 'permissions' });
 
@@ -478,10 +482,11 @@ const filteredPostings = computed(() => {
   }
   if (postingSearch.value) {
     const q = postingSearch.value.toLowerCase();
-    data = data.filter(p =>
-      (p.title || '').toLowerCase().includes(q) ||
-      (p.department?.name || '').toLowerCase().includes(q) ||
-      (p.location || '').toLowerCase().includes(q)
+    data = data.filter(
+      p =>
+        (p.title || '').toLowerCase().includes(q) ||
+        (p.department?.name || '').toLowerCase().includes(q) ||
+        (p.location || '').toLowerCase().includes(q)
     );
   }
   return data;
@@ -497,10 +502,9 @@ const filteredApplicants = computed(() => {
   }
   if (applicantSearch.value) {
     const q = applicantSearch.value.toLowerCase();
-    data = data.filter(a =>
-      (a.name || '').toLowerCase().includes(q) ||
-      (a.email || '').toLowerCase().includes(q) ||
-      (a.jobPosting?.title || '').toLowerCase().includes(q)
+    data = data.filter(
+      a =>
+        (a.name || '').toLowerCase().includes(q) || (a.email || '').toLowerCase().includes(q) || (a.jobPosting?.title || '').toLowerCase().includes(q)
     );
   }
   return data;
@@ -530,8 +534,13 @@ function getPostingStatusType(status: string): string {
 
 function getStageType(stage: string): string {
   const map: Record<string, string> = {
-    APPLIED: 'info', SCREENING: '', INTERVIEW: 'warning',
-    ASSESSMENT: '', OFFER: 'success', HIRED: 'success', REJECTED: 'danger'
+    APPLIED: 'info',
+    SCREENING: '',
+    INTERVIEW: 'warning',
+    ASSESSMENT: '',
+    OFFER: 'success',
+    HIRED: 'success',
+    REJECTED: 'danger'
   };
   return map[stage] || 'info';
 }
@@ -543,7 +552,10 @@ function formatDate(d: string) {
 
 function formatType(type: string) {
   const map: Record<string, string> = {
-    FULL_TIME: 'Full-time', PART_TIME: 'Part-time', CONTRACT: 'Contract', INTERNSHIP: 'Internship'
+    FULL_TIME: 'Full-time',
+    PART_TIME: 'Part-time',
+    CONTRACT: 'Contract',
+    INTERNSHIP: 'Internship'
   };
   return map[type] || type || '--';
 }
@@ -665,11 +677,7 @@ async function handleSavePosting() {
 
 async function handleDeletePosting(row: any) {
   try {
-    await ElMessageBox.confirm(
-      t('common.confirmDelete'),
-      t('common.warning'),
-      { type: 'warning' }
-    );
+    await ElMessageBox.confirm(t('common.confirmDelete'), t('common.warning'), { type: 'warning' });
     await useApiFetch(`hr/recruitment/postings/${row.id}`, 'DELETE');
     ElMessage.success(t('common.deleted'));
     await fetchPostings();
@@ -723,11 +731,10 @@ async function handleSaveApplicant() {
 
 async function handleRejectApplicant(row: any) {
   try {
-    await ElMessageBox.confirm(
-      `${t('recruitment.confirmReject')} ${row.name}?`,
-      t('common.warning'),
-      { type: 'warning', confirmButtonText: t('recruitment.reject') }
-    );
+    await ElMessageBox.confirm(`${t('recruitment.confirmReject')} ${row.name}?`, t('common.warning'), {
+      type: 'warning',
+      confirmButtonText: t('recruitment.reject')
+    });
     await useApiFetch(`hr/recruitment/applicants/${row.id}/stage`, 'PUT', { stage: 'REJECTED' });
     ElMessage.success(t('recruitment.applicantRejected'));
     await fetchApplicants();
@@ -766,11 +773,7 @@ async function handleMoveStage() {
 async function bulkDeletePostings() {
   if (!selectedPostings.value.length) return;
   try {
-    await ElMessageBox.confirm(
-      t('common.confirmBulkDelete', { count: selectedPostings.value.length }),
-      t('common.warning'),
-      { type: 'warning' }
-    );
+    await ElMessageBox.confirm(t('common.confirmBulkDelete', { count: selectedPostings.value.length }), t('common.warning'), { type: 'warning' });
     for (const row of selectedPostings.value) {
       await useApiFetch(`hr/recruitment/postings/${row.id}`, 'DELETE');
     }
@@ -785,11 +788,7 @@ async function bulkDeletePostings() {
 async function bulkClosePostings() {
   if (!selectedPostings.value.length) return;
   try {
-    await ElMessageBox.confirm(
-      `Close ${selectedPostings.value.length} selected posting(s)?`,
-      t('common.warning'),
-      { type: 'warning' }
-    );
+    await ElMessageBox.confirm(`Close ${selectedPostings.value.length} selected posting(s)?`, t('common.warning'), { type: 'warning' });
     for (const row of selectedPostings.value) {
       await useApiFetch(`hr/recruitment/postings/${row.id}`, 'PUT', { status: 'CLOSED' });
     }
@@ -805,17 +804,20 @@ function exportPostingsCSV() {
   const data = filteredPostings.value;
   if (!data.length) return;
   const headers = ['Title', 'Department', 'Location', 'Type', 'Open Positions', 'Status', 'Posted Date'];
-  const csv = [headers.join(','), ...data.map((row: any) =>
-    [
-      `"${row.title || ''}"`,
-      `"${row.department?.name || row.department || ''}"`,
-      `"${row.location || ''}"`,
-      `"${formatType(row.type)}"`,
-      row.openPositions || 1,
-      `"${row.status || ''}"`,
-      `"${formatDate(row.createdAt)}"`
-    ].join(',')
-  )].join('\n');
+  const csv = [
+    headers.join(','),
+    ...data.map((row: any) =>
+      [
+        `"${row.title || ''}"`,
+        `"${row.department?.name || row.department || ''}"`,
+        `"${row.location || ''}"`,
+        `"${formatType(row.type)}"`,
+        row.openPositions || 1,
+        `"${row.status || ''}"`,
+        `"${formatDate(row.createdAt)}"`
+      ].join(',')
+    )
+  ].join('\n');
   const blob = new Blob([csv], { type: 'text/csv' });
   const url = URL.createObjectURL(blob);
   const a = document.createElement('a');
@@ -829,11 +831,7 @@ function exportPostingsCSV() {
 async function bulkDeleteApplicants() {
   if (!selectedApplicants.value.length) return;
   try {
-    await ElMessageBox.confirm(
-      t('common.confirmBulkDelete', { count: selectedApplicants.value.length }),
-      t('common.warning'),
-      { type: 'warning' }
-    );
+    await ElMessageBox.confirm(t('common.confirmBulkDelete', { count: selectedApplicants.value.length }), t('common.warning'), { type: 'warning' });
     for (const row of selectedApplicants.value) {
       await useApiFetch(`hr/recruitment/applicants/${row.id}`, 'DELETE');
     }
@@ -849,17 +847,20 @@ function exportApplicantsCSV() {
   const data = filteredApplicants.value;
   if (!data.length) return;
   const headers = ['Name', 'Email', 'Job Posting', 'Stage', 'Source', 'Rating', 'Applied Date'];
-  const csv = [headers.join(','), ...data.map((row: any) =>
-    [
-      `"${row.name || ''}"`,
-      `"${row.email || ''}"`,
-      `"${row.jobPosting?.title || row.jobPostingTitle || ''}"`,
-      `"${row.stage || ''}"`,
-      `"${row.source || ''}"`,
-      row.rating || 0,
-      `"${formatDate(row.createdAt)}"`
-    ].join(',')
-  )].join('\n');
+  const csv = [
+    headers.join(','),
+    ...data.map((row: any) =>
+      [
+        `"${row.name || ''}"`,
+        `"${row.email || ''}"`,
+        `"${row.jobPosting?.title || row.jobPostingTitle || ''}"`,
+        `"${row.stage || ''}"`,
+        `"${row.source || ''}"`,
+        row.rating || 0,
+        `"${formatDate(row.createdAt)}"`
+      ].join(',')
+    )
+  ].join('\n');
   const blob = new Blob([csv], { type: 'text/csv' });
   const url = URL.createObjectURL(blob);
   const a = document.createElement('a');

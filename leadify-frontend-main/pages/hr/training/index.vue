@@ -371,10 +371,8 @@ const filteredPrograms = computed(() => {
   }
   if (programSearch.value) {
     const q = programSearch.value.toLowerCase();
-    data = data.filter(p =>
-      (p.title || '').toLowerCase().includes(q) ||
-      (p.category || '').toLowerCase().includes(q) ||
-      (p.instructor || '').toLowerCase().includes(q)
+    data = data.filter(
+      p => (p.title || '').toLowerCase().includes(q) || (p.category || '').toLowerCase().includes(q) || (p.instructor || '').toLowerCase().includes(q)
     );
   }
   return data;
@@ -387,10 +385,7 @@ const filteredEnrollments = computed(() => {
   }
   if (enrollmentSearch.value) {
     const q = enrollmentSearch.value.toLowerCase();
-    data = data.filter(e =>
-      (e.employeeName || '').toLowerCase().includes(q) ||
-      (e.programTitle || '').toLowerCase().includes(q)
-    );
+    data = data.filter(e => (e.employeeName || '').toLowerCase().includes(q) || (e.programTitle || '').toLowerCase().includes(q));
   }
   return data;
 });
@@ -471,11 +466,7 @@ async function handleSaveProgram() {
 
 async function handleDeleteProgram(row: any) {
   try {
-    await ElMessageBox.confirm(
-      t('common.confirmDelete'),
-      t('common.warning'),
-      { type: 'warning' }
-    );
+    await ElMessageBox.confirm(t('common.confirmDelete'), t('common.warning'), { type: 'warning' });
     loading.value = true;
     await useApiFetch(`hr/training/programs/${row.id}`, 'DELETE');
     await loadData();
@@ -536,11 +527,7 @@ async function handleSaveEnrollment() {
 
 async function handleDeleteEnrollment(row: any) {
   try {
-    await ElMessageBox.confirm(
-      t('common.confirmDelete'),
-      t('common.warning'),
-      { type: 'warning' }
-    );
+    await ElMessageBox.confirm(t('common.confirmDelete'), t('common.warning'), { type: 'warning' });
     loading.value = true;
     await useApiFetch(`hr/training/enrollments/${row.id}`, 'DELETE');
     await loadData();

@@ -88,8 +88,8 @@
 </template>
 
 <script setup lang="ts">
-import type { PortalInvoice } from '~/composables/usePortal';
 import { ElMessage } from 'element-plus';
+import type { PortalInvoice } from '~/composables/usePortal';
 
 const props = defineProps<{
   invoice: PortalInvoice;

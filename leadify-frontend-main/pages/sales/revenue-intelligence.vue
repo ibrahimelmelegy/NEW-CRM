@@ -189,9 +189,9 @@
 
 <script setup lang="ts">
 import { ref, computed, onMounted, onBeforeUnmount, nextTick } from 'vue';
-import * as echarts from 'echarts';
-import { useApiFetch } from '~/composables/useApiFetch';
+import * as echarts from 'echarts/core';
 import { ElMessage } from 'element-plus';
+import { useApiFetch } from '~/composables/useApiFetch';
 
 definePageMeta({ title: 'Revenue Intelligence' });
 
@@ -393,8 +393,7 @@ const topPerformers = computed(() => {
 
   deals.value.forEach(deal => {
     const repId = deal.assignedTo || deal.staffId || deal.userId || 'unknown';
-    const repName = deal.assignedToName || deal.staff?.name || deal.user?.name ||
-      staff.value.find(s => s.id === repId)?.name || `Rep ${repId}`;
+    const repName = deal.assignedToName || deal.staff?.name || deal.user?.name || staff.value.find(s => s.id === repId)?.name || `Rep ${repId}`;
 
     if (!repMap[repId]) {
       repMap[repId] = { name: repName, won: 0, lost: 0, revenue: 0 };
@@ -434,7 +433,7 @@ const staleDeals = computed(() => {
   return activeDeals.value
     .filter(d => {
       const lastActivity = new Date(d.lastActivityAt || d.updatedAt || d.createdAt).getTime();
-      return (now - lastActivity) > threshold;
+      return now - lastActivity > threshold;
     })
     .map(d => ({
       id: d.id,
@@ -489,9 +488,7 @@ const riskDeals = computed(() => [...staleDeals.value, ...pastDueDeals.value, ..
 async function loadAllData() {
   loading.value = true;
   try {
-    const qs = dateRange.value
-      ? `?startDate=${dateRange.value[0]}&endDate=${dateRange.value[1]}`
-      : '';
+    const qs = dateRange.value ? `?startDate=${dateRange.value[0]}&endDate=${dateRange.value[1]}` : '';
 
     const [dealsRes, leadsRes, staffRes, oppsRes] = await Promise.all([
       useApiFetch(`deal${qs}`),
@@ -869,11 +866,15 @@ function getRankColor(index: number): string {
   background: var(--bg-elevated);
   border: 1px solid var(--border-default);
   border-radius: 16px;
-  transition: box-shadow 0.3s ease, transform 0.2s ease;
+  transition:
+    box-shadow 0.3s ease,
+    transform 0.2s ease;
 }
 
 .velocity-card {
-  transition: transform 0.2s ease, box-shadow 0.3s ease;
+  transition:
+    transform 0.2s ease,
+    box-shadow 0.3s ease;
 
   &:hover {
     transform: translateY(-2px);
@@ -882,7 +883,9 @@ function getRankColor(index: number): string {
 }
 
 .risk-deal-card {
-  transition: background 0.2s ease, transform 0.15s ease;
+  transition:
+    background 0.2s ease,
+    transform 0.15s ease;
 
   &:hover {
     transform: translateX(4px);

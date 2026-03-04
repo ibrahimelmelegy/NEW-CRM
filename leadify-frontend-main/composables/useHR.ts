@@ -1,3 +1,4 @@
+/* eslint-disable require-await */
 export interface AttendanceRecord {
   id: number;
   userId: number;
@@ -50,7 +51,8 @@ export const LEAVE_STATUSES = [
 export async function fetchAttendance(params?: Record<string, string>) {
   const query = params ? '?' + new URLSearchParams(params).toString() : '';
   const { body, success } = await useApiFetch(`hr/attendance${query}`);
-  if (success && body) return body as { docs: AttendanceRecord[]; pagination: { page: number; limit: number; totalItems: number; totalPages: number } };
+  if (success && body)
+    return body as { docs: AttendanceRecord[]; pagination: { page: number; limit: number; totalItems: number; totalPages: number } };
   return { docs: [], pagination: { page: 1, limit: 30, totalItems: 0, totalPages: 0 } };
 }
 
@@ -82,7 +84,8 @@ export async function fetchLeaveRequestById(id: number | string): Promise<LeaveR
 export async function fetchLeaveRequests(params?: Record<string, string>) {
   const query = params ? '?' + new URLSearchParams(params).toString() : '';
   const { body, success } = await useApiFetch(`hr/leave-requests${query}`);
-  if (success && body) return body as { docs: LeaveRequestItem[]; pagination: { page: number; limit: number; totalItems: number; totalPages: number } };
+  if (success && body)
+    return body as { docs: LeaveRequestItem[]; pagination: { page: number; limit: number; totalItems: number; totalPages: number } };
   return { docs: [], pagination: { page: 1, limit: 20, totalItems: 0, totalPages: 0 } };
 }
 

@@ -6,9 +6,6 @@
 
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 
-const mockApiFetch = vi.fn();
-(globalThis as any).useApiFetch = mockApiFetch;
-
 import {
   fetchCustomFields,
   createCustomField,
@@ -17,6 +14,9 @@ import {
   fetchFieldValues,
   saveFieldValues
 } from '~/composables/useCustomFields';
+
+const mockApiFetch = vi.fn();
+(globalThis as any).useApiFetch = mockApiFetch;
 
 describe('useCustomFields', () => {
   beforeEach(() => {
@@ -28,7 +28,9 @@ describe('useCustomFields', () => {
   // ============================================
   describe('fetchCustomFields', () => {
     it('should fetch fields for entity type', async () => {
-      const fields = [{ id: '1', fieldName: 'industry', fieldLabel: 'Industry', fieldType: 'SELECT', entityType: 'LEAD', required: false, sortOrder: 0 }];
+      const fields = [
+        { id: '1', fieldName: 'industry', fieldLabel: 'Industry', fieldType: 'SELECT', entityType: 'LEAD', required: false, sortOrder: 0 }
+      ];
       mockApiFetch.mockResolvedValue({ body: fields, success: true });
 
       const result = await fetchCustomFields('LEAD');

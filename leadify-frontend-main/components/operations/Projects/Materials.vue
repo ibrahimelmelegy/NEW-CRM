@@ -23,6 +23,7 @@ OperationsProjectsModalMaterial(v-model="addMaterial" :data="material" :allAddMa
 </template>
 
 <script lang="ts" setup>
+/* eslint-disable no-use-before-define */
 import { useForm } from 'vee-validate';
 import * as yup from 'yup';
 import { ref, computed, onMounted } from 'vue';
@@ -228,7 +229,7 @@ function handleAdditionalMaterialItem(newItem: any) {
   for (const key in newItem) {
     const numKey = Number(key);
     // Check if the key already exists in the existing data
-    if (addMaterialItems.value?.hasOwnProperty(key)) {
+    if (Object.hasOwn(addMaterialItems.value ?? {}, key)) {
       // If the key exists, override the existing array with the new array (no addition, only replacement)
       addMaterialItems.value[numKey] = newItem[key];
     } else {

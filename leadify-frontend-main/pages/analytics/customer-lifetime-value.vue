@@ -278,7 +278,7 @@ function formatCurrency(amount: number): string {
     style: 'currency',
     currency: 'USD',
     minimumFractionDigits: 0,
-    maximumFractionDigits: 0,
+    maximumFractionDigits: 0
   }).format(amount);
 }
 
@@ -296,7 +296,12 @@ function getAvatarColor(index: number): string {
 
 function getInitials(name: string): string {
   if (!name) return '?';
-  return name.split(' ').map(n => n[0]).join('').substring(0, 2).toUpperCase();
+  return name
+    .split(' ')
+    .map(n => n[0])
+    .join('')
+    .substring(0, 2)
+    .toUpperCase();
 }
 
 function getRiskColor(level: string): string {
@@ -328,7 +333,7 @@ const kpiCards = computed(() => {
       icon: 'ph:user-circle-bold',
       iconBg: 'rgba(120, 73, 255, 0.12)',
       iconColor: '#7849ff',
-      valueColor: '#7849ff',
+      valueColor: '#7849ff'
     },
     {
       label: t('clvAnalytics.churnRate'),
@@ -338,7 +343,7 @@ const kpiCards = computed(() => {
       icon: 'ph:user-minus-bold',
       iconBg: 'rgba(239, 68, 68, 0.12)',
       iconColor: '#ef4444',
-      valueColor: '#ef4444',
+      valueColor: '#ef4444'
     },
     {
       label: t('clvAnalytics.retentionRate'),
@@ -348,7 +353,7 @@ const kpiCards = computed(() => {
       icon: 'ph:user-check-bold',
       iconBg: 'rgba(34, 197, 94, 0.12)',
       iconColor: '#22c55e',
-      valueColor: '#22c55e',
+      valueColor: '#22c55e'
     },
     {
       label: t('clvAnalytics.netRevenueRetention'),
@@ -358,7 +363,7 @@ const kpiCards = computed(() => {
       icon: 'ph:currency-circle-dollar-bold',
       iconBg: 'rgba(59, 130, 246, 0.12)',
       iconColor: '#3b82f6',
-      valueColor: '#3b82f6',
+      valueColor: '#3b82f6'
     },
     {
       label: t('clvAnalytics.customerCount'),
@@ -367,8 +372,8 @@ const kpiCards = computed(() => {
       changeColor: '#22c55e',
       icon: 'ph:users-three-bold',
       iconBg: 'rgba(6, 182, 212, 0.12)',
-      iconColor: '#06b6d4',
-    },
+      iconColor: '#06b6d4'
+    }
   ];
 });
 
@@ -377,7 +382,7 @@ const mockClvSegments = [
   { segment: t('clvAnalytics.enterprise'), customerCount: 87, avgClv: 48500, totalRevenue: 4219500, growth: 12.4, ltvCac: 5.2, color: '#7849ff' },
   { segment: t('clvAnalytics.midMarket'), customerCount: 234, avgClv: 18200, totalRevenue: 4258800, growth: 8.7, ltvCac: 3.8, color: '#3b82f6' },
   { segment: t('clvAnalytics.smb'), customerCount: 512, avgClv: 6800, totalRevenue: 3481600, growth: 5.2, ltvCac: 2.9, color: '#22c55e' },
-  { segment: t('clvAnalytics.startup'), customerCount: 414, avgClv: 2400, totalRevenue: 993600, growth: -2.1, ltvCac: 1.6, color: '#f59e0b' },
+  { segment: t('clvAnalytics.startup'), customerCount: 414, avgClv: 2400, totalRevenue: 993600, growth: -2.1, ltvCac: 1.6, color: '#f59e0b' }
 ];
 
 // ─── CLV Segments ───────────────────────────────────────────
@@ -394,8 +399,8 @@ const mockCohortData = [
       { value: 85, retained: 157 },
       { value: 78, retained: 144 },
       { value: 72, retained: 133 },
-      { value: 68, retained: 126 },
-    ],
+      { value: 68, retained: 126 }
+    ]
   },
   {
     label: 'Oct 2025',
@@ -406,8 +411,8 @@ const mockCohortData = [
       { value: 87, retained: 183 },
       { value: 81, retained: 170 },
       { value: 74, retained: 155 },
-      { value: 70, retained: 147 },
-    ],
+      { value: 70, retained: 147 }
+    ]
   },
   {
     label: 'Nov 2025',
@@ -418,8 +423,8 @@ const mockCohortData = [
       { value: 83, retained: 164 },
       { value: 76, retained: 151 },
       { value: 71, retained: 141 },
-      { value: 66, retained: 131 },
-    ],
+      { value: 66, retained: 131 }
+    ]
   },
   {
     label: 'Dec 2025',
@@ -430,8 +435,8 @@ const mockCohortData = [
       { value: 86, retained: 151 },
       { value: 79, retained: 138 },
       { value: 73, retained: 128 },
-      { value: 69, retained: 121 },
-    ],
+      { value: 69, retained: 121 }
+    ]
   },
   {
     label: 'Jan 2026',
@@ -442,8 +447,8 @@ const mockCohortData = [
       { value: 89, retained: 200 },
       { value: 82, retained: 185 },
       { value: 76, retained: 171 },
-      { value: 72, retained: 162 },
-    ],
+      { value: 72, retained: 162 }
+    ]
   },
   {
     label: 'Feb 2026',
@@ -454,9 +459,9 @@ const mockCohortData = [
       { value: 90, retained: 216 },
       { value: 84, retained: 202 },
       { value: 78, retained: 187 },
-      { value: 74, retained: 178 },
-    ],
-  },
+      { value: 74, retained: 178 }
+    ]
+  }
 ];
 
 const cohortData = ref<any[]>([]);
@@ -464,186 +469,336 @@ const cohortData = ref<any[]>([]);
 // ─── Churn Prediction Data ──────────────────────────────────
 const mockChurnCustomers = [
   {
-    id: 1, name: 'Sarah Mitchell', email: 's.mitchell@techcorp.com', company: 'TechCorp Industries',
-    riskScore: 89, riskLevel: 'high', lastActivity: 45, recommendedAction: t('clvAnalytics.scheduleCall'),
-    segment: 'Enterprise', historicalRevenue: 125000, predictedRevenue: 48000, avgOrderValue: 8500,
-    purchaseFrequency: 14, customerSince: 'Mar 2022',
+    id: 1,
+    name: 'Sarah Mitchell',
+    email: 's.mitchell@techcorp.com',
+    company: 'TechCorp Industries',
+    riskScore: 89,
+    riskLevel: 'high',
+    lastActivity: 45,
+    recommendedAction: t('clvAnalytics.scheduleCall'),
+    segment: 'Enterprise',
+    historicalRevenue: 125000,
+    predictedRevenue: 48000,
+    avgOrderValue: 8500,
+    purchaseFrequency: 14,
+    customerSince: 'Mar 2022',
     engagement: { emailOpenRate: 12, supportTickets: 8, npsScore: 4, loginFrequency: 6 },
     purchases: [
       { date: '2026-01-15', amount: 12500, product: 'Enterprise Suite - Annual', status: 'Completed' },
       { date: '2025-09-08', amount: 8500, product: 'Advanced Analytics Add-on', status: 'Completed' },
       { date: '2025-06-22', amount: 15000, product: 'Enterprise Suite - Renewal', status: 'Completed' },
-      { date: '2025-03-10', amount: 3200, product: 'API Integration Package', status: 'Completed' },
-    ],
+      { date: '2025-03-10', amount: 3200, product: 'API Integration Package', status: 'Completed' }
+    ]
   },
   {
-    id: 2, name: 'James Rodriguez', email: 'j.rodriguez@innovate.io', company: 'Innovate Solutions',
-    riskScore: 82, riskLevel: 'high', lastActivity: 38, recommendedAction: t('clvAnalytics.sendOffer'),
-    segment: 'Mid-Market', historicalRevenue: 67000, predictedRevenue: 22000, avgOrderValue: 5500,
-    purchaseFrequency: 12, customerSince: 'Jul 2022',
+    id: 2,
+    name: 'James Rodriguez',
+    email: 'j.rodriguez@innovate.io',
+    company: 'Innovate Solutions',
+    riskScore: 82,
+    riskLevel: 'high',
+    lastActivity: 38,
+    recommendedAction: t('clvAnalytics.sendOffer'),
+    segment: 'Mid-Market',
+    historicalRevenue: 67000,
+    predictedRevenue: 22000,
+    avgOrderValue: 5500,
+    purchaseFrequency: 12,
+    customerSince: 'Jul 2022',
     engagement: { emailOpenRate: 18, supportTickets: 5, npsScore: 5, loginFrequency: 10 },
     purchases: [
       { date: '2026-02-01', amount: 5500, product: 'Professional Plan - Monthly', status: 'Completed' },
       { date: '2025-11-15', amount: 5500, product: 'Professional Plan - Monthly', status: 'Completed' },
-      { date: '2025-08-20', amount: 7800, product: 'Data Export Module', status: 'Completed' },
-    ],
+      { date: '2025-08-20', amount: 7800, product: 'Data Export Module', status: 'Completed' }
+    ]
   },
   {
-    id: 3, name: 'Emily Chen', email: 'e.chen@globalfin.com', company: 'Global Finance Corp',
-    riskScore: 76, riskLevel: 'high', lastActivity: 32, recommendedAction: t('clvAnalytics.accountReview'),
-    segment: 'Enterprise', historicalRevenue: 198000, predictedRevenue: 85000, avgOrderValue: 12000,
-    purchaseFrequency: 16, customerSince: 'Jan 2021',
+    id: 3,
+    name: 'Emily Chen',
+    email: 'e.chen@globalfin.com',
+    company: 'Global Finance Corp',
+    riskScore: 76,
+    riskLevel: 'high',
+    lastActivity: 32,
+    recommendedAction: t('clvAnalytics.accountReview'),
+    segment: 'Enterprise',
+    historicalRevenue: 198000,
+    predictedRevenue: 85000,
+    avgOrderValue: 12000,
+    purchaseFrequency: 16,
+    customerSince: 'Jan 2021',
     engagement: { emailOpenRate: 22, supportTickets: 12, npsScore: 5, loginFrequency: 15 },
     purchases: [
       { date: '2026-01-28', amount: 18000, product: 'Enterprise Suite - Quarterly', status: 'Completed' },
       { date: '2025-10-15', amount: 18000, product: 'Enterprise Suite - Quarterly', status: 'Completed' },
       { date: '2025-07-12', amount: 4500, product: 'Custom Reports Module', status: 'Completed' },
-      { date: '2025-04-03', amount: 18000, product: 'Enterprise Suite - Quarterly', status: 'Completed' },
-    ],
+      { date: '2025-04-03', amount: 18000, product: 'Enterprise Suite - Quarterly', status: 'Completed' }
+    ]
   },
   {
-    id: 4, name: 'Michael Thompson', email: 'm.thompson@retailpro.com', company: 'RetailPro Inc',
-    riskScore: 64, riskLevel: 'medium', lastActivity: 21, recommendedAction: t('clvAnalytics.sendSurvey'),
-    segment: 'Mid-Market', historicalRevenue: 42000, predictedRevenue: 28000, avgOrderValue: 3800,
-    purchaseFrequency: 11, customerSince: 'Sep 2023',
+    id: 4,
+    name: 'Michael Thompson',
+    email: 'm.thompson@retailpro.com',
+    company: 'RetailPro Inc',
+    riskScore: 64,
+    riskLevel: 'medium',
+    lastActivity: 21,
+    recommendedAction: t('clvAnalytics.sendSurvey'),
+    segment: 'Mid-Market',
+    historicalRevenue: 42000,
+    predictedRevenue: 28000,
+    avgOrderValue: 3800,
+    purchaseFrequency: 11,
+    customerSince: 'Sep 2023',
     engagement: { emailOpenRate: 35, supportTickets: 3, npsScore: 6, loginFrequency: 22 },
     purchases: [
       { date: '2026-02-10', amount: 3800, product: 'Business Plan - Monthly', status: 'Completed' },
       { date: '2025-12-18', amount: 3800, product: 'Business Plan - Monthly', status: 'Completed' },
-      { date: '2025-10-05', amount: 2200, product: 'Workflow Automation Add-on', status: 'Completed' },
-    ],
+      { date: '2025-10-05', amount: 2200, product: 'Workflow Automation Add-on', status: 'Completed' }
+    ]
   },
   {
-    id: 5, name: 'Aisha Patel', email: 'a.patel@cloudserv.net', company: 'CloudServ Networks',
-    riskScore: 58, riskLevel: 'medium', lastActivity: 18, recommendedAction: t('clvAnalytics.personalDemo'),
-    segment: 'SMB', historicalRevenue: 28000, predictedRevenue: 18500, avgOrderValue: 2400,
-    purchaseFrequency: 10, customerSince: 'Feb 2023',
+    id: 5,
+    name: 'Aisha Patel',
+    email: 'a.patel@cloudserv.net',
+    company: 'CloudServ Networks',
+    riskScore: 58,
+    riskLevel: 'medium',
+    lastActivity: 18,
+    recommendedAction: t('clvAnalytics.personalDemo'),
+    segment: 'SMB',
+    historicalRevenue: 28000,
+    predictedRevenue: 18500,
+    avgOrderValue: 2400,
+    purchaseFrequency: 10,
+    customerSince: 'Feb 2023',
     engagement: { emailOpenRate: 42, supportTickets: 2, npsScore: 7, loginFrequency: 28 },
     purchases: [
       { date: '2026-02-14', amount: 2400, product: 'Growth Plan - Monthly', status: 'Completed' },
-      { date: '2025-12-20', amount: 2400, product: 'Growth Plan - Monthly', status: 'Completed' },
-    ],
+      { date: '2025-12-20', amount: 2400, product: 'Growth Plan - Monthly', status: 'Completed' }
+    ]
   },
   {
-    id: 6, name: 'David Kim', email: 'd.kim@nexgen.co', company: 'NexGen Dynamics',
-    riskScore: 55, riskLevel: 'medium', lastActivity: 15, recommendedAction: t('clvAnalytics.reengageEmail'),
-    segment: 'SMB', historicalRevenue: 19500, predictedRevenue: 14000, avgOrderValue: 1800,
-    purchaseFrequency: 9, customerSince: 'May 2023',
+    id: 6,
+    name: 'David Kim',
+    email: 'd.kim@nexgen.co',
+    company: 'NexGen Dynamics',
+    riskScore: 55,
+    riskLevel: 'medium',
+    lastActivity: 15,
+    recommendedAction: t('clvAnalytics.reengageEmail'),
+    segment: 'SMB',
+    historicalRevenue: 19500,
+    predictedRevenue: 14000,
+    avgOrderValue: 1800,
+    purchaseFrequency: 9,
+    customerSince: 'May 2023',
     engagement: { emailOpenRate: 38, supportTickets: 1, npsScore: 7, loginFrequency: 25 },
     purchases: [
       { date: '2026-01-22', amount: 1800, product: 'Starter Plan - Monthly', status: 'Completed' },
-      { date: '2025-11-10', amount: 3500, product: 'CRM Integration Pack', status: 'Completed' },
-    ],
+      { date: '2025-11-10', amount: 3500, product: 'CRM Integration Pack', status: 'Completed' }
+    ]
   },
   {
-    id: 7, name: 'Lisa Andersson', email: 'l.andersson@nordictech.se', company: 'Nordic Tech AB',
-    riskScore: 51, riskLevel: 'medium', lastActivity: 12, recommendedAction: t('clvAnalytics.upgradeOffer'),
-    segment: 'Mid-Market', historicalRevenue: 56000, predictedRevenue: 38000, avgOrderValue: 4200,
-    purchaseFrequency: 13, customerSince: 'Aug 2022',
+    id: 7,
+    name: 'Lisa Andersson',
+    email: 'l.andersson@nordictech.se',
+    company: 'Nordic Tech AB',
+    riskScore: 51,
+    riskLevel: 'medium',
+    lastActivity: 12,
+    recommendedAction: t('clvAnalytics.upgradeOffer'),
+    segment: 'Mid-Market',
+    historicalRevenue: 56000,
+    predictedRevenue: 38000,
+    avgOrderValue: 4200,
+    purchaseFrequency: 13,
+    customerSince: 'Aug 2022',
     engagement: { emailOpenRate: 45, supportTickets: 4, npsScore: 6, loginFrequency: 30 },
     purchases: [
       { date: '2026-02-05', amount: 4200, product: 'Professional Plan - Monthly', status: 'Completed' },
       { date: '2025-12-12', amount: 4200, product: 'Professional Plan - Monthly', status: 'Completed' },
-      { date: '2025-09-28', amount: 6000, product: 'Team Collaboration Suite', status: 'Completed' },
-    ],
+      { date: '2025-09-28', amount: 6000, product: 'Team Collaboration Suite', status: 'Completed' }
+    ]
   },
   {
-    id: 8, name: 'Omar Hassan', email: 'o.hassan@mediagrowth.ae', company: 'Media Growth LLC',
-    riskScore: 45, riskLevel: 'medium', lastActivity: 10, recommendedAction: t('clvAnalytics.featureTraining'),
-    segment: 'SMB', historicalRevenue: 22000, predictedRevenue: 16000, avgOrderValue: 2000,
-    purchaseFrequency: 11, customerSince: 'Nov 2023',
+    id: 8,
+    name: 'Omar Hassan',
+    email: 'o.hassan@mediagrowth.ae',
+    company: 'Media Growth LLC',
+    riskScore: 45,
+    riskLevel: 'medium',
+    lastActivity: 10,
+    recommendedAction: t('clvAnalytics.featureTraining'),
+    segment: 'SMB',
+    historicalRevenue: 22000,
+    predictedRevenue: 16000,
+    avgOrderValue: 2000,
+    purchaseFrequency: 11,
+    customerSince: 'Nov 2023',
     engagement: { emailOpenRate: 50, supportTickets: 6, npsScore: 7, loginFrequency: 32 },
     purchases: [
       { date: '2026-02-18', amount: 2000, product: 'Growth Plan - Monthly', status: 'Completed' },
       { date: '2025-12-30', amount: 2000, product: 'Growth Plan - Monthly', status: 'Completed' },
-      { date: '2025-10-15', amount: 1500, product: 'Email Marketing Add-on', status: 'Completed' },
-    ],
+      { date: '2025-10-15', amount: 1500, product: 'Email Marketing Add-on', status: 'Completed' }
+    ]
   },
   {
-    id: 9, name: 'Rachel Foster', email: 'r.foster@buildright.com', company: 'BuildRight Construction',
-    riskScore: 35, riskLevel: 'low', lastActivity: 5, recommendedAction: t('clvAnalytics.executiveOutreach'),
-    segment: 'Enterprise', historicalRevenue: 165000, predictedRevenue: 120000, avgOrderValue: 15000,
-    purchaseFrequency: 11, customerSince: 'Apr 2021',
+    id: 9,
+    name: 'Rachel Foster',
+    email: 'r.foster@buildright.com',
+    company: 'BuildRight Construction',
+    riskScore: 35,
+    riskLevel: 'low',
+    lastActivity: 5,
+    recommendedAction: t('clvAnalytics.executiveOutreach'),
+    segment: 'Enterprise',
+    historicalRevenue: 165000,
+    predictedRevenue: 120000,
+    avgOrderValue: 15000,
+    purchaseFrequency: 11,
+    customerSince: 'Apr 2021',
     engagement: { emailOpenRate: 68, supportTickets: 2, npsScore: 8, loginFrequency: 45 },
     purchases: [
       { date: '2026-02-25', amount: 15000, product: 'Enterprise Suite - Monthly', status: 'Completed' },
       { date: '2026-01-25', amount: 15000, product: 'Enterprise Suite - Monthly', status: 'Completed' },
       { date: '2025-12-25', amount: 15000, product: 'Enterprise Suite - Monthly', status: 'Completed' },
-      { date: '2025-11-10', amount: 8000, product: 'Project Management Module', status: 'Completed' },
-    ],
+      { date: '2025-11-10', amount: 8000, product: 'Project Management Module', status: 'Completed' }
+    ]
   },
   {
-    id: 10, name: 'Thomas Weber', email: 't.weber@logistikhaus.de', company: 'LogistikHaus GmbH',
-    riskScore: 28, riskLevel: 'low', lastActivity: 3, recommendedAction: t('clvAnalytics.loyaltyReward'),
-    segment: 'Mid-Market', historicalRevenue: 78000, predictedRevenue: 55000, avgOrderValue: 6500,
-    purchaseFrequency: 12, customerSince: 'Jun 2022',
+    id: 10,
+    name: 'Thomas Weber',
+    email: 't.weber@logistikhaus.de',
+    company: 'LogistikHaus GmbH',
+    riskScore: 28,
+    riskLevel: 'low',
+    lastActivity: 3,
+    recommendedAction: t('clvAnalytics.loyaltyReward'),
+    segment: 'Mid-Market',
+    historicalRevenue: 78000,
+    predictedRevenue: 55000,
+    avgOrderValue: 6500,
+    purchaseFrequency: 12,
+    customerSince: 'Jun 2022',
     engagement: { emailOpenRate: 72, supportTickets: 1, npsScore: 9, loginFrequency: 50 },
     purchases: [
       { date: '2026-02-20', amount: 6500, product: 'Professional Plan - Monthly', status: 'Completed' },
       { date: '2026-01-20', amount: 6500, product: 'Professional Plan - Monthly', status: 'Completed' },
-      { date: '2025-12-20', amount: 6500, product: 'Professional Plan - Monthly', status: 'Completed' },
-    ],
+      { date: '2025-12-20', amount: 6500, product: 'Professional Plan - Monthly', status: 'Completed' }
+    ]
   },
   {
-    id: 11, name: 'Priya Sharma', email: 'p.sharma@digimart.in', company: 'DigiMart India',
-    riskScore: 22, riskLevel: 'low', lastActivity: 2, recommendedAction: t('clvAnalytics.usageCheckin'),
-    segment: 'SMB', historicalRevenue: 32000, predictedRevenue: 24000, avgOrderValue: 2800,
-    purchaseFrequency: 11, customerSince: 'Jan 2023',
+    id: 11,
+    name: 'Priya Sharma',
+    email: 'p.sharma@digimart.in',
+    company: 'DigiMart India',
+    riskScore: 22,
+    riskLevel: 'low',
+    lastActivity: 2,
+    recommendedAction: t('clvAnalytics.usageCheckin'),
+    segment: 'SMB',
+    historicalRevenue: 32000,
+    predictedRevenue: 24000,
+    avgOrderValue: 2800,
+    purchaseFrequency: 11,
+    customerSince: 'Jan 2023',
     engagement: { emailOpenRate: 78, supportTickets: 0, npsScore: 9, loginFrequency: 55 },
     purchases: [
       { date: '2026-02-22', amount: 2800, product: 'Growth Plan - Monthly', status: 'Completed' },
-      { date: '2026-01-22', amount: 2800, product: 'Growth Plan - Monthly', status: 'Completed' },
-    ],
+      { date: '2026-01-22', amount: 2800, product: 'Growth Plan - Monthly', status: 'Completed' }
+    ]
   },
   {
-    id: 12, name: 'Alex Novak', email: 'a.novak@startupforge.io', company: 'StartupForge',
-    riskScore: 71, riskLevel: 'high', lastActivity: 28, recommendedAction: t('clvAnalytics.onboardingHelp'),
-    segment: 'Startup', historicalRevenue: 4800, predictedRevenue: 1200, avgOrderValue: 800,
-    purchaseFrequency: 6, customerSince: 'Oct 2024',
+    id: 12,
+    name: 'Alex Novak',
+    email: 'a.novak@startupforge.io',
+    company: 'StartupForge',
+    riskScore: 71,
+    riskLevel: 'high',
+    lastActivity: 28,
+    recommendedAction: t('clvAnalytics.onboardingHelp'),
+    segment: 'Startup',
+    historicalRevenue: 4800,
+    predictedRevenue: 1200,
+    avgOrderValue: 800,
+    purchaseFrequency: 6,
+    customerSince: 'Oct 2024',
     engagement: { emailOpenRate: 15, supportTickets: 7, npsScore: 4, loginFrequency: 8 },
     purchases: [
       { date: '2025-12-01', amount: 800, product: 'Starter Plan - Monthly', status: 'Completed' },
-      { date: '2025-10-01', amount: 800, product: 'Starter Plan - Monthly', status: 'Completed' },
-    ],
+      { date: '2025-10-01', amount: 800, product: 'Starter Plan - Monthly', status: 'Completed' }
+    ]
   },
   {
-    id: 13, name: 'Maria Gonzalez', email: 'm.gonzalez@latamretail.mx', company: 'LatAm Retail Group',
-    riskScore: 18, riskLevel: 'low', lastActivity: 1, recommendedAction: t('clvAnalytics.winbackCampaign'),
-    segment: 'Enterprise', historicalRevenue: 210000, predictedRevenue: 150000, avgOrderValue: 18000,
-    purchaseFrequency: 12, customerSince: 'Nov 2020',
+    id: 13,
+    name: 'Maria Gonzalez',
+    email: 'm.gonzalez@latamretail.mx',
+    company: 'LatAm Retail Group',
+    riskScore: 18,
+    riskLevel: 'low',
+    lastActivity: 1,
+    recommendedAction: t('clvAnalytics.winbackCampaign'),
+    segment: 'Enterprise',
+    historicalRevenue: 210000,
+    predictedRevenue: 150000,
+    avgOrderValue: 18000,
+    purchaseFrequency: 12,
+    customerSince: 'Nov 2020',
     engagement: { emailOpenRate: 82, supportTickets: 1, npsScore: 10, loginFrequency: 60 },
     purchases: [
       { date: '2026-02-28', amount: 18000, product: 'Enterprise Suite - Monthly', status: 'Completed' },
       { date: '2026-01-28', amount: 18000, product: 'Enterprise Suite - Monthly', status: 'Completed' },
       { date: '2025-12-28', amount: 18000, product: 'Enterprise Suite - Monthly', status: 'Completed' },
-      { date: '2025-11-15', amount: 12000, product: 'Advanced Security Package', status: 'Completed' },
-    ],
+      { date: '2025-11-15', amount: 12000, product: 'Advanced Security Package', status: 'Completed' }
+    ]
   },
   {
-    id: 14, name: 'Kevin O\'Brien', email: 'k.obrien@fastlaunch.co', company: 'FastLaunch Inc',
-    riskScore: 68, riskLevel: 'medium', lastActivity: 22, recommendedAction: t('clvAnalytics.customPricing'),
-    segment: 'Startup', historicalRevenue: 7200, predictedRevenue: 3600, avgOrderValue: 1200,
-    purchaseFrequency: 6, customerSince: 'Jun 2024',
+    id: 14,
+    name: "Kevin O'Brien",
+    email: 'k.obrien@fastlaunch.co',
+    company: 'FastLaunch Inc',
+    riskScore: 68,
+    riskLevel: 'medium',
+    lastActivity: 22,
+    recommendedAction: t('clvAnalytics.customPricing'),
+    segment: 'Startup',
+    historicalRevenue: 7200,
+    predictedRevenue: 3600,
+    avgOrderValue: 1200,
+    purchaseFrequency: 6,
+    customerSince: 'Jun 2024',
     engagement: { emailOpenRate: 25, supportTickets: 4, npsScore: 5, loginFrequency: 12 },
     purchases: [
       { date: '2026-01-05', amount: 1200, product: 'Starter Plan - Monthly', status: 'Completed' },
-      { date: '2025-11-05', amount: 1200, product: 'Starter Plan - Monthly', status: 'Completed' },
-    ],
+      { date: '2025-11-05', amount: 1200, product: 'Starter Plan - Monthly', status: 'Completed' }
+    ]
   },
   {
-    id: 15, name: 'Sophie Laurent', email: 's.laurent@euromedical.fr', company: 'EuroMedical SA',
-    riskScore: 15, riskLevel: 'low', lastActivity: 1, recommendedAction: t('clvAnalytics.successPlan'),
-    segment: 'Enterprise', historicalRevenue: 280000, predictedRevenue: 200000, avgOrderValue: 22000,
-    purchaseFrequency: 12, customerSince: 'Mar 2020',
+    id: 15,
+    name: 'Sophie Laurent',
+    email: 's.laurent@euromedical.fr',
+    company: 'EuroMedical SA',
+    riskScore: 15,
+    riskLevel: 'low',
+    lastActivity: 1,
+    recommendedAction: t('clvAnalytics.successPlan'),
+    segment: 'Enterprise',
+    historicalRevenue: 280000,
+    predictedRevenue: 200000,
+    avgOrderValue: 22000,
+    purchaseFrequency: 12,
+    customerSince: 'Mar 2020',
     engagement: { emailOpenRate: 85, supportTickets: 0, npsScore: 10, loginFrequency: 65 },
     purchases: [
       { date: '2026-02-27', amount: 22000, product: 'Enterprise Suite - Monthly', status: 'Completed' },
       { date: '2026-01-27', amount: 22000, product: 'Enterprise Suite - Monthly', status: 'Completed' },
       { date: '2025-12-27', amount: 22000, product: 'Enterprise Suite - Monthly', status: 'Completed' },
       { date: '2025-11-20', amount: 15000, product: 'Compliance & Audit Module', status: 'Completed' },
-      { date: '2025-09-14', amount: 8000, product: 'Multi-Region Deployment', status: 'Completed' },
-    ],
-  },
+      { date: '2025-09-14', amount: 8000, product: 'Multi-Region Deployment', status: 'Completed' }
+    ]
+  }
 ];
 
 const churnCustomers = ref<any[]>([]);
@@ -658,7 +813,7 @@ const mockRevenueBySegment = [
   { segment: t('clvAnalytics.enterprise'), currentRevenue: 4219500, projectedRevenue: 5150000, share: 42, color: '#7849ff' },
   { segment: t('clvAnalytics.midMarket'), currentRevenue: 4258800, projectedRevenue: 4980000, share: 31, color: '#3b82f6' },
   { segment: t('clvAnalytics.smb'), currentRevenue: 3481600, projectedRevenue: 3920000, share: 20, color: '#22c55e' },
-  { segment: t('clvAnalytics.startup'), currentRevenue: 993600, projectedRevenue: 1150000, share: 7, color: '#f59e0b' },
+  { segment: t('clvAnalytics.startup'), currentRevenue: 993600, projectedRevenue: 1150000, share: 7, color: '#f59e0b' }
 ];
 
 const mockProjectedVsActual = [
@@ -667,7 +822,7 @@ const mockProjectedVsActual = [
   { period: 'Nov 2025', actual: 1120000, projected: 1150000, variance: -2.6 },
   { period: 'Dec 2025', actual: 1280000, projected: 1200000, variance: 6.7 },
   { period: 'Jan 2026', actual: 1150000, projected: 1180000, variance: -2.5 },
-  { period: 'Feb 2026', actual: 1320000, projected: 1250000, variance: 5.6 },
+  { period: 'Feb 2026', actual: 1320000, projected: 1250000, variance: 5.6 }
 ];
 
 const revenueBySegment = ref<any[]>([]);
@@ -678,7 +833,7 @@ const segmentColors: Record<string, string> = {
   Enterprise: '#7849ff',
   'Mid-Market': '#3b82f6',
   SMB: '#22c55e',
-  Startup: '#f59e0b',
+  Startup: '#f59e0b'
 };
 
 // ─── Data Loading ───────────────────────────────────────────
@@ -689,13 +844,12 @@ async function loadData() {
     const [clvRes, cohortRes, churnRes] = await Promise.all([
       useApiFetch('clv' as any).catch(() => null),
       useApiFetch('clv/cohorts' as any).catch(() => null),
-      useApiFetch('clv/churn-predictions' as any).catch(() => null),
+      useApiFetch('clv/churn-predictions' as any).catch(() => null)
     ]);
 
     // ── CLV segments: derive from GET /clv response ──
     if (clvRes?.success && clvRes.body) {
-      const docs = Array.isArray(clvRes.body) ? clvRes.body
-        : Array.isArray((clvRes.body as any)?.docs) ? (clvRes.body as any).docs : null;
+      const docs = Array.isArray(clvRes.body) ? clvRes.body : Array.isArray((clvRes.body as any)?.docs) ? (clvRes.body as any).docs : null;
 
       if (docs && docs.length > 0) {
         // Group CLV records by segment
@@ -721,7 +875,7 @@ async function loadData() {
             totalRevenue: Math.round(val.totalRevenue),
             growth: val.count > 0 ? Math.round((val.growthSum / val.count) * 10) / 10 : 0,
             ltvCac: Math.round((val.totalClv / val.count / 5000) * 10) / 10, // Estimate LTV/CAC
-            color: segmentColors[key] || '#7849ff',
+            color: segmentColors[key] || '#7849ff'
           });
         });
 
@@ -738,17 +892,15 @@ async function loadData() {
           currentRevenue: s.totalRevenue,
           projectedRevenue: Math.round(s.totalRevenue * 1.15), // 15% growth projection
           share: totalRev > 0 ? Math.round((s.totalRevenue / totalRev) * 100) : 0,
-          color: s.color,
+          color: s.color
         }));
 
         // ── Derive projected vs actual from CLV data ──
         const months = ['Sep 2025', 'Oct 2025', 'Nov 2025', 'Dec 2025', 'Jan 2026', 'Feb 2026'];
         projectedVsActual.value = months.map((period, idx) => {
-          const baseActual = Math.round(totalRev / 12 * (0.9 + Math.random() * 0.2));
-          const baseProjected = Math.round(totalRev / 12 * (0.92 + idx * 0.02));
-          const variance = baseProjected > 0
-            ? Math.round(((baseActual - baseProjected) / baseProjected) * 1000) / 10
-            : 0;
+          const baseActual = Math.round((totalRev / 12) * (0.9 + Math.random() * 0.2));
+          const baseProjected = Math.round((totalRev / 12) * (0.92 + idx * 0.02));
+          const variance = baseProjected > 0 ? Math.round(((baseActual - baseProjected) / baseProjected) * 1000) / 10 : 0;
           return { period, actual: baseActual, projected: baseProjected, variance };
         });
       } else {
@@ -947,7 +1099,9 @@ function openCustomerDetail(row: any) {
 .cohort-data-cell {
   cursor: default;
   font-weight: 600;
-  transition: transform 0.15s ease, box-shadow 0.15s ease;
+  transition:
+    transform 0.15s ease,
+    box-shadow 0.15s ease;
 
   &:hover {
     transform: scale(1.08);

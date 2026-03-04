@@ -147,8 +147,8 @@ const currentStageIndex = computed(() => {
 
 const currentStageType = computed(() => {
   const stage = deal?.stage;
-  if (stage === 'COMPLETED' || stage === 'CLOSED' as any || stage === 'Closed Won' as any) return 'success';
-  if (stage === 'CANCELLED' || stage === 'Closed Lost' as any) return 'danger';
+  if (stage === 'COMPLETED' || stage === ('CLOSED' as any) || stage === ('Closed Won' as any)) return 'success';
+  if (stage === 'CANCELLED' || stage === ('Closed Lost' as any)) return 'danger';
   return 'primary';
 });
 
@@ -235,14 +235,13 @@ const invoicesTable = reactive({
   data: [] as Invoice[]
 });
 
-invoicesTable.data =
-  ((deal?.invoice as any)?.map((item: Invoice) => ({
-    ...item,
-    invoiceDate: getYear(item.invoiceDate),
-    dueDate: getYear(item.dueDate),
-    collectedDate: getYear(item.collectedDate),
-    collected: item.collected ? t('common.yes') : t('common.no')
-  })) || []) as any[];
+invoicesTable.data = ((deal?.invoice as any)?.map((item: Invoice) => ({
+  ...item,
+  invoiceDate: getYear(item.invoiceDate),
+  dueDate: getYear(item.dueDate),
+  collectedDate: getYear(item.collectedDate),
+  collected: item.collected ? t('common.yes') : t('common.no')
+})) || []) as any[];
 
 //  invoices table
 const deliveriesTable = reactive({
@@ -264,7 +263,8 @@ const deliveriesTable = reactive({
   ],
   data: [] as Delivery[]
 });
-deliveriesTable.data = ((deal?.deliveryDetails as any)?.map((item: Delivery) => ({ ...item, deliveryDate: getYear(item.deliveryDate) })) || []) as any[];
+deliveriesTable.data = ((deal?.deliveryDetails as any)?.map((item: Delivery) => ({ ...item, deliveryDate: getYear(item.deliveryDate) })) ||
+  []) as any[];
 
 const table = reactive({
   columns: [

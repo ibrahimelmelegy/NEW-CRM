@@ -9,3 +9,5 @@ dist
 coverage
 .DS_Store
 compare_locales.js
+
+components/DocumentBuilder/ProposalPrintTemplateVue.Raw.vue

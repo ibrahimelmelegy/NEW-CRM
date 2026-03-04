@@ -81,6 +81,7 @@
 </template>
 
 <script setup lang="ts">
+/* eslint-disable require-await */
 import { Delete } from '@element-plus/icons-vue';
 
 const props = defineProps<{

@@ -66,9 +66,9 @@ describe('useOpportunityStore', () => {
       ] as any;
 
       const grouped = store.opportunitiesByStage;
-      expect(grouped['DISCOVERY']).toHaveLength(2);
-      expect(grouped['PROPOSAL']).toHaveLength(1);
-      expect(grouped['WON']).toHaveLength(1);
+      expect(grouped.DISCOVERY).toHaveLength(2);
+      expect(grouped.PROPOSAL).toHaveLength(1);
+      expect(grouped.WON).toHaveLength(1);
     });
 
     it('totalEstimatedValue should sum all estimated values', () => {

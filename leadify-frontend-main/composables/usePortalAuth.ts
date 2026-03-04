@@ -52,7 +52,11 @@ export function usePortalAuth() {
     return !!portalToken.value;
   }
 
-  async function portalFetch<T = unknown>(path: string, method: string = 'GET', body?: Record<string, unknown>): Promise<{ success: boolean; body?: T; message?: string }> {
+  async function portalFetch<T = unknown>(
+    path: string,
+    method: string = 'GET',
+    body?: Record<string, unknown>
+  ): Promise<{ success: boolean; body?: T; message?: string }> {
     if (!portalToken.value) return { success: false, message: 'Not authenticated' };
     try {
       const config = useRuntimeConfig();

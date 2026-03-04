@@ -400,7 +400,7 @@
 <script setup lang="ts">
 import { ElNotification, ElMessageBox } from 'element-plus';
 import VChart from 'vue-echarts';
-import { graphic } from 'echarts';
+import { graphic } from 'echarts/core';
 
 definePageMeta({ middleware: 'permissions' });
 
@@ -517,9 +517,7 @@ const summaryStats = computed(() => {
 const filteredKeyResults = computed(() => {
   if (!krSearch.value) return keyResults.value;
   const search = krSearch.value.toLowerCase();
-  return keyResults.value.filter(
-    kr => kr.title.toLowerCase().includes(search) || kr.owner.toLowerCase().includes(search)
-  );
+  return keyResults.value.filter(kr => kr.title.toLowerCase().includes(search) || kr.owner.toLowerCase().includes(search));
 });
 
 const hierarchyTree = computed(() => {
@@ -529,9 +527,7 @@ const hierarchyTree = computed(() => {
     label: t('okr.companyObjectives'),
     level: 'company',
     ownerName: '',
-    progress: objectives.value.length
-      ? Math.round(objectives.value.reduce((s, o) => s + o.progress, 0) / objectives.value.length)
-      : 0,
+    progress: objectives.value.length ? Math.round(objectives.value.reduce((s, o) => s + o.progress, 0) / objectives.value.length) : 0,
     children: objectives.value.map(obj => ({
       id: obj.id,
       label: obj.title,
@@ -560,9 +556,7 @@ const teamMembersWithGoals = computed(() => {
       ...memberKRs.map(kr => ({ id: kr.id, title: kr.title, progress: kr.progress }))
     ];
     const completedGoals = allGoals.filter(g => g.progress >= 100).length;
-    const overallProgress = allGoals.length
-      ? Math.round(allGoals.reduce((s, g) => s + g.progress, 0) / allGoals.length)
-      : 0;
+    const overallProgress = allGoals.length ? Math.round(allGoals.reduce((s, g) => s + g.progress, 0) / allGoals.length) : 0;
 
     return {
       ...member,
@@ -967,11 +961,11 @@ function saveGoal() {
 
 async function deleteObjective(obj: Objective) {
   try {
-    await ElMessageBox.confirm(
-      `${t('okr.deleteConfirm')} "${obj.title}"?`,
-      t('okr.delete'),
-      { type: 'warning', confirmButtonText: t('okr.delete'), cancelButtonText: t('okr.cancel') }
-    );
+    await ElMessageBox.confirm(`${t('okr.deleteConfirm')} "${obj.title}"?`, t('okr.delete'), {
+      type: 'warning',
+      confirmButtonText: t('okr.delete'),
+      cancelButtonText: t('okr.cancel')
+    });
     // Remove KRs belonging to this objective
     keyResults.value = keyResults.value.filter(kr => kr.objectiveId !== obj.id);
     objectives.value = objectives.value.filter(o => o.id !== obj.id);
@@ -983,11 +977,11 @@ async function deleteObjective(obj: Objective) {
 
 async function deleteKeyResult(kr: KeyResult) {
   try {
-    await ElMessageBox.confirm(
-      `${t('okr.deleteConfirm')} "${kr.title}"?`,
-      t('okr.delete'),
-      { type: 'warning', confirmButtonText: t('okr.delete'), cancelButtonText: t('okr.cancel') }
-    );
+    await ElMessageBox.confirm(`${t('okr.deleteConfirm')} "${kr.title}"?`, t('okr.delete'), {
+      type: 'warning',
+      confirmButtonText: t('okr.delete'),
+      cancelButtonText: t('okr.cancel')
+    });
     keyResults.value = keyResults.value.filter(k => k.id !== kr.id);
     recalcObjective(kr.objectiveId);
     ElNotification({ type: 'success', title: t('okr.deleted'), message: t('okr.keyResultDeleted') });
@@ -1161,18 +1155,117 @@ function seedDemoData() {
 
   keyResults.value = [
     // Obj 1 KRs
-    { id: 'kr-1', objectiveId: 'obj-1', title: t('okr.demoKR1'), metricType: 'currency', targetValue: 100000, currentValue: 72000, progress: 72, owner: ownerNames[0] || 'Sarah Johnson', dueDate: q1End, startDate: yearStart },
-    { id: 'kr-2', objectiveId: 'obj-1', title: t('okr.demoKR2'), metricType: 'number', targetValue: 50, currentValue: 34, progress: 68, owner: ownerNames[0] || 'Sarah Johnson', dueDate: q1End, startDate: yearStart },
-    { id: 'kr-3', objectiveId: 'obj-1', title: t('okr.demoKR3'), metricType: 'percentage', targetValue: 30, currentValue: 19, progress: 63, owner: ownerNames[1] || 'Ahmed Al-Rashid', dueDate: q1End, startDate: yearStart },
+    {
+      id: 'kr-1',
+      objectiveId: 'obj-1',
+      title: t('okr.demoKR1'),
+      metricType: 'currency',
+      targetValue: 100000,
+      currentValue: 72000,
+      progress: 72,
+      owner: ownerNames[0] || 'Sarah Johnson',
+      dueDate: q1End,
+      startDate: yearStart
+    },
+    {
+      id: 'kr-2',
+      objectiveId: 'obj-1',
+      title: t('okr.demoKR2'),
+      metricType: 'number',
+      targetValue: 50,
+      currentValue: 34,
+      progress: 68,
+      owner: ownerNames[0] || 'Sarah Johnson',
+      dueDate: q1End,
+      startDate: yearStart
+    },
+    {
+      id: 'kr-3',
+      objectiveId: 'obj-1',
+      title: t('okr.demoKR3'),
+      metricType: 'percentage',
+      targetValue: 30,
+      currentValue: 19,
+      progress: 63,
+      owner: ownerNames[1] || 'Ahmed Al-Rashid',
+      dueDate: q1End,
+      startDate: yearStart
+    },
     // Obj 2 KRs
-    { id: 'kr-4', objectiveId: 'obj-2', title: t('okr.demoKR4'), metricType: 'number', targetValue: 200, currentValue: 85, progress: 43, owner: ownerNames[1] || 'Ahmed Al-Rashid', dueDate: q2End, startDate: yearStart },
-    { id: 'kr-5', objectiveId: 'obj-2', title: t('okr.demoKR5'), metricType: 'percentage', targetValue: 90, currentValue: 72, progress: 80, owner: ownerNames[2] || 'David Chen', dueDate: q2End, startDate: yearStart },
+    {
+      id: 'kr-4',
+      objectiveId: 'obj-2',
+      title: t('okr.demoKR4'),
+      metricType: 'number',
+      targetValue: 200,
+      currentValue: 85,
+      progress: 43,
+      owner: ownerNames[1] || 'Ahmed Al-Rashid',
+      dueDate: q2End,
+      startDate: yearStart
+    },
+    {
+      id: 'kr-5',
+      objectiveId: 'obj-2',
+      title: t('okr.demoKR5'),
+      metricType: 'percentage',
+      targetValue: 90,
+      currentValue: 72,
+      progress: 80,
+      owner: ownerNames[2] || 'David Chen',
+      dueDate: q2End,
+      startDate: yearStart
+    },
     // Obj 3 KRs
-    { id: 'kr-6', objectiveId: 'obj-3', title: t('okr.demoKR6'), metricType: 'currency', targetValue: 50000, currentValue: 12000, progress: 24, owner: ownerNames[2] || 'David Chen', dueDate: q1End, startDate: yearStart },
-    { id: 'kr-7', objectiveId: 'obj-3', title: t('okr.demoKR7'), metricType: 'boolean', targetValue: 1, currentValue: 0, progress: 0, owner: ownerNames[3] || 'Maria Garcia', dueDate: q1End, startDate: yearStart },
+    {
+      id: 'kr-6',
+      objectiveId: 'obj-3',
+      title: t('okr.demoKR6'),
+      metricType: 'currency',
+      targetValue: 50000,
+      currentValue: 12000,
+      progress: 24,
+      owner: ownerNames[2] || 'David Chen',
+      dueDate: q1End,
+      startDate: yearStart
+    },
+    {
+      id: 'kr-7',
+      objectiveId: 'obj-3',
+      title: t('okr.demoKR7'),
+      metricType: 'boolean',
+      targetValue: 1,
+      currentValue: 0,
+      progress: 0,
+      owner: ownerNames[3] || 'Maria Garcia',
+      dueDate: q1End,
+      startDate: yearStart
+    },
     // Obj 4 KRs
-    { id: 'kr-8', objectiveId: 'obj-4', title: t('okr.demoKR8'), metricType: 'number', targetValue: 10, currentValue: 10, progress: 100, owner: ownerNames[3] || 'Maria Garcia', dueDate: q1End, startDate: yearStart },
-    { id: 'kr-9', objectiveId: 'obj-4', title: t('okr.demoKR9'), metricType: 'percentage', targetValue: 95, currentValue: 97, progress: 100, owner: ownerNames[0] || 'Sarah Johnson', dueDate: q1End, startDate: yearStart }
+    {
+      id: 'kr-8',
+      objectiveId: 'obj-4',
+      title: t('okr.demoKR8'),
+      metricType: 'number',
+      targetValue: 10,
+      currentValue: 10,
+      progress: 100,
+      owner: ownerNames[3] || 'Maria Garcia',
+      dueDate: q1End,
+      startDate: yearStart
+    },
+    {
+      id: 'kr-9',
+      objectiveId: 'obj-4',
+      title: t('okr.demoKR9'),
+      metricType: 'percentage',
+      targetValue: 95,
+      currentValue: 97,
+      progress: 100,
+      owner: ownerNames[0] || 'Sarah Johnson',
+      dueDate: q1End,
+      startDate: yearStart
+    }
   ];
 
   // Seed progress history

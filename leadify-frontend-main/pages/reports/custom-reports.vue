@@ -427,10 +427,7 @@ const filteredReports = computed(() => {
   }
   if (searchQuery.value) {
     const q = searchQuery.value.toLowerCase();
-    result = result.filter((r: any) =>
-      (r.name || '').toLowerCase().includes(q) ||
-      (r.description || '').toLowerCase().includes(q)
-    );
+    result = result.filter((r: any) => (r.name || '').toLowerCase().includes(q) || (r.description || '').toLowerCase().includes(q));
   }
   return result;
 });
@@ -563,7 +560,7 @@ async function handleExport(reportId: number, format: string) {
 
 async function handleSaveReport() {
   if (!reportFormRef.value) return;
-  await reportFormRef.value.validate(async (valid) => {
+  await reportFormRef.value.validate(async valid => {
     if (!valid) return;
     saving.value = true;
 
@@ -572,7 +569,7 @@ async function handleSaveReport() {
       description: reportForm.description,
       entityType: reportForm.entityType,
       fields: reportForm.fields,
-      filters: reportForm.filters.filter((f) => f.field && f.operator),
+      filters: reportForm.filters.filter(f => f.field && f.operator),
       sortOrder: reportForm.sortOrder,
       isShared: reportForm.isShared
     };
@@ -672,7 +669,7 @@ function formatColumnLabel(col: string): string {
   return col
     .replace(/([A-Z])/g, ' $1')
     .replace(/_/g, ' ')
-    .replace(/^\w/, (c) => c.toUpperCase())
+    .replace(/^\w/, c => c.toUpperCase())
     .trim();
 }
 

@@ -431,7 +431,7 @@
 <script setup lang="ts">
 import { ElNotification } from 'element-plus';
 import VChart from 'vue-echarts';
-import { graphic } from 'echarts';
+import { graphic } from 'echarts/core';
 
 definePageMeta({ title: 'Feedback & NPS Hub' });
 
@@ -516,10 +516,7 @@ const actionForm = ref({
   description: ''
 });
 
-const teamMembers = ref([
-  'Sarah Johnson', 'Ahmed Al-Rashid', 'David Chen',
-  'Maria Garcia', 'James Wilson', 'Fatima Hassan'
-]);
+const teamMembers = ref(['Sarah Johnson', 'Ahmed Al-Rashid', 'David Chen', 'Maria Garcia', 'James Wilson', 'Fatima Hassan']);
 
 // ── Computed: KPI Cards ──────────────────────────────
 const npsScore = computed(() => {
@@ -564,11 +561,11 @@ const totalResponses = computed(() => csatCategories.value.reduce((s, c) => s + 
 const avgCsatScore = computed(() => csatScore.value);
 const highestCategory = computed(() => {
   if (!csatCategories.value.length) return '--';
-  return csatCategories.value.reduce((a, b) => a.score > b.score ? a : b).name;
+  return csatCategories.value.reduce((a, b) => (a.score > b.score ? a : b)).name;
 });
 const lowestCategory = computed(() => {
   if (!csatCategories.value.length) return '--';
-  return csatCategories.value.reduce((a, b) => a.score < b.score ? a : b).name;
+  return csatCategories.value.reduce((a, b) => (a.score < b.score ? a : b)).name;
 });
 
 // ── Computed: Filtered Feedback ────────────────────
@@ -576,10 +573,8 @@ const filteredFeedback = computed(() => {
   let result = [...feedbackItems.value];
   if (feedbackSearch.value) {
     const q = feedbackSearch.value.toLowerCase();
-    result = result.filter(fb =>
-      fb.customerName.toLowerCase().includes(q) ||
-      fb.feedbackText.toLowerCase().includes(q) ||
-      fb.company.toLowerCase().includes(q)
+    result = result.filter(
+      fb => fb.customerName.toLowerCase().includes(q) || fb.feedbackText.toLowerCase().includes(q) || fb.company.toLowerCase().includes(q)
     );
   }
   if (sentimentFilter.value) {
@@ -954,9 +949,11 @@ function generateNpsResponses() {
   for (let i = 0; i < 280; i++) {
     const rand = Math.random();
     let score: number;
-    if (rand < 0.55) score = Math.floor(Math.random() * 2) + 9;       // Promoters (9-10)
-    else if (rand < 0.80) score = Math.floor(Math.random() * 2) + 7;   // Passives (7-8)
-    else score = Math.floor(Math.random() * 7);                         // Detractors (0-6)
+    if (rand < 0.55)
+      score = Math.floor(Math.random() * 2) + 9; // Promoters (9-10)
+    else if (rand < 0.8)
+      score = Math.floor(Math.random() * 2) + 7; // Passives (7-8)
+    else score = Math.floor(Math.random() * 7); // Detractors (0-6)
     responses.push({ score, customerId: `cust-${i}` });
   }
   npsResponses.value = responses;
@@ -1022,11 +1019,7 @@ function generateFeedbackItems(leads: any[], deals: any[]) {
     t('feedbackNps.samplePositive5')
   ];
 
-  const neutralFeedback = [
-    t('feedbackNps.sampleNeutral1'),
-    t('feedbackNps.sampleNeutral2'),
-    t('feedbackNps.sampleNeutral3')
-  ];
+  const neutralFeedback = [t('feedbackNps.sampleNeutral1'), t('feedbackNps.sampleNeutral2'), t('feedbackNps.sampleNeutral3')];
 
   const negativeFeedback = [
     t('feedbackNps.sampleNegative1'),
@@ -1059,9 +1052,14 @@ function generateFeedbackItems(leads: any[], deals: any[]) {
   for (let i = 0; i < Math.max(names.length, 15); i++) {
     const nm = names[i % names.length]!;
     const rand = Math.random();
-    const sentiment: FeedbackItem['sentiment'] = rand < 0.50 ? 'positive' : rand < 0.75 ? 'neutral' : 'negative';
+    const sentiment: FeedbackItem['sentiment'] = rand < 0.5 ? 'positive' : rand < 0.75 ? 'neutral' : 'negative';
     const feedbackPool = sentiment === 'positive' ? positiveFeedback : sentiment === 'neutral' ? neutralFeedback : negativeFeedback;
-    const npsScore = sentiment === 'positive' ? 9 + Math.floor(Math.random() * 2) : sentiment === 'neutral' ? 7 + Math.floor(Math.random() * 2) : Math.floor(Math.random() * 7);
+    const npsScore =
+      sentiment === 'positive'
+        ? 9 + Math.floor(Math.random() * 2)
+        : sentiment === 'neutral'
+          ? 7 + Math.floor(Math.random() * 2)
+          : Math.floor(Math.random() * 7);
 
     items.push({
       id: `fb-${i}`,
@@ -1230,13 +1228,10 @@ function resetActionForm() {
 async function loadData() {
   loading.value = true;
   try {
-    const [leadsRes, dealsRes] = await Promise.all([
-      useApiFetch('lead'),
-      useApiFetch('deal')
-    ]);
+    const [leadsRes, dealsRes] = await Promise.all([useApiFetch('lead'), useApiFetch('deal')]);
 
-    const leads = (leadsRes.success && Array.isArray(leadsRes.body)) ? leadsRes.body : [];
-    const deals = (dealsRes.success && Array.isArray(dealsRes.body)) ? dealsRes.body : [];
+    const leads = leadsRes.success && Array.isArray(leadsRes.body) ? leadsRes.body : [];
+    const deals = dealsRes.success && Array.isArray(dealsRes.body) ? dealsRes.body : [];
 
     // Generate derived data
     generateNpsResponses();
@@ -1283,7 +1278,9 @@ await loadData().catch(() => {
   position: relative;
   border-radius: 16px;
   overflow: hidden;
-  transition: transform 0.3s ease, box-shadow 0.3s ease;
+  transition:
+    transform 0.3s ease,
+    box-shadow 0.3s ease;
 
   &:hover {
     transform: translateY(-4px);
@@ -1299,25 +1296,33 @@ await loadData().catch(() => {
 .nps-card {
   background: linear-gradient(135deg, rgba(34, 197, 94, 0.12), rgba(22, 163, 74, 0.06));
   border: 1px solid rgba(34, 197, 94, 0.2);
-  &:hover { box-shadow: 0 8px 32px rgba(34, 197, 94, 0.15); }
+  &:hover {
+    box-shadow: 0 8px 32px rgba(34, 197, 94, 0.15);
+  }
 }
 
 .csat-card {
   background: linear-gradient(135deg, rgba(245, 158, 11, 0.12), rgba(217, 119, 6, 0.06));
   border: 1px solid rgba(245, 158, 11, 0.2);
-  &:hover { box-shadow: 0 8px 32px rgba(245, 158, 11, 0.15); }
+  &:hover {
+    box-shadow: 0 8px 32px rgba(245, 158, 11, 0.15);
+  }
 }
 
 .response-card {
   background: linear-gradient(135deg, rgba(59, 130, 246, 0.12), rgba(37, 99, 235, 0.06));
   border: 1px solid rgba(59, 130, 246, 0.2);
-  &:hover { box-shadow: 0 8px 32px rgba(59, 130, 246, 0.15); }
+  &:hover {
+    box-shadow: 0 8px 32px rgba(59, 130, 246, 0.15);
+  }
 }
 
 .action-card {
   background: linear-gradient(135deg, rgba(239, 68, 68, 0.12), rgba(220, 38, 38, 0.06));
   border: 1px solid rgba(239, 68, 68, 0.2);
-  &:hover { box-shadow: 0 8px 32px rgba(239, 68, 68, 0.15); }
+  &:hover {
+    box-shadow: 0 8px 32px rgba(239, 68, 68, 0.15);
+  }
 }
 
 .kpi-label {
@@ -1352,10 +1357,22 @@ await loadData().catch(() => {
   flex-shrink: 0;
 }
 
-.nps-icon { background: rgba(34, 197, 94, 0.15); color: #22c55e; }
-.csat-icon { background: rgba(245, 158, 11, 0.15); color: #f59e0b; }
-.response-icon { background: rgba(59, 130, 246, 0.15); color: #3b82f6; }
-.action-icon { background: rgba(239, 68, 68, 0.15); color: #ef4444; }
+.nps-icon {
+  background: rgba(34, 197, 94, 0.15);
+  color: #22c55e;
+}
+.csat-icon {
+  background: rgba(245, 158, 11, 0.15);
+  color: #f59e0b;
+}
+.response-icon {
+  background: rgba(59, 130, 246, 0.15);
+  color: #3b82f6;
+}
+.action-icon {
+  background: rgba(239, 68, 68, 0.15);
+  color: #ef4444;
+}
 
 /* ── Glass Card ── */
 .glass-card {
@@ -1395,7 +1412,9 @@ await loadData().catch(() => {
   padding: 20px;
   border-radius: 14px;
   border: 1px solid var(--border-default);
-  transition: transform 0.2s ease, box-shadow 0.2s ease;
+  transition:
+    transform 0.2s ease,
+    box-shadow 0.2s ease;
 
   &:hover {
     transform: translateY(-2px);
@@ -1436,9 +1455,15 @@ await loadData().catch(() => {
   min-width: 0;
 }
 
-.promoter-seg { background: linear-gradient(135deg, #22c55e, #16a34a); }
-.passive-seg { background: linear-gradient(135deg, #f59e0b, #d97706); }
-.detractor-seg { background: linear-gradient(135deg, #ef4444, #dc2626); }
+.promoter-seg {
+  background: linear-gradient(135deg, #22c55e, #16a34a);
+}
+.passive-seg {
+  background: linear-gradient(135deg, #f59e0b, #d97706);
+}
+.detractor-seg {
+  background: linear-gradient(135deg, #ef4444, #dc2626);
+}
 
 /* ── Avatar ── */
 .avatar-circle {

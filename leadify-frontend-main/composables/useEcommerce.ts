@@ -1,3 +1,4 @@
+/* eslint-disable require-await */
 // E-Commerce Module Composable
 // Provides API functions for categories, coupons, reviews, and carts
 
@@ -6,19 +7,19 @@ import { useApiFetch } from './useApiFetch';
 // ─── Types ──────────────────────────────────────────────────────────────────
 
 export interface EcCategory {
-  id: string
-  name: string
-  slug: string
-  description?: string
-  image?: string
-  parentId?: string
-  parent?: EcCategory
-  children?: EcCategory[]
-  sortOrder: number
-  isActive: boolean
-  productCount: number
-  createdAt: string
-  updatedAt: string
+  id: string;
+  name: string;
+  slug: string;
+  description?: string;
+  image?: string;
+  parentId?: string;
+  parent?: EcCategory;
+  children?: EcCategory[];
+  sortOrder: number;
+  isActive: boolean;
+  productCount: number;
+  createdAt: string;
+  updatedAt: string;
 }
 
 export enum CouponTypeEnum {
@@ -34,23 +35,23 @@ export enum CouponStatusEnum {
 }
 
 export interface EcCoupon {
-  id: string
-  code: string
-  description?: string
-  type: CouponTypeEnum
-  value: number
-  minOrderAmount: number
-  maxDiscountAmount?: number
-  maxUses: number
-  usedCount: number
-  maxUsesPerCustomer: number
-  validFrom?: string
-  validTo?: string
-  status: CouponStatusEnum
-  applicableProducts?: string[]
-  applicableCategories?: string[]
-  createdAt: string
-  updatedAt: string
+  id: string;
+  code: string;
+  description?: string;
+  type: CouponTypeEnum;
+  value: number;
+  minOrderAmount: number;
+  maxDiscountAmount?: number;
+  maxUses: number;
+  usedCount: number;
+  maxUsesPerCustomer: number;
+  validFrom?: string;
+  validTo?: string;
+  status: CouponStatusEnum;
+  applicableProducts?: string[];
+  applicableCategories?: string[];
+  createdAt: string;
+  updatedAt: string;
 }
 
 export enum ReviewStatusEnum {
@@ -60,30 +61,30 @@ export enum ReviewStatusEnum {
 }
 
 export interface EcReview {
-  id: string
-  productId: string
-  product?: any
-  clientId: string
-  client?: any
-  rating: number
-  title?: string
-  comment?: string
-  isVerifiedPurchase: boolean
-  status: ReviewStatusEnum
-  merchantResponse?: string
-  respondedAt?: string
-  createdAt: string
-  updatedAt: string
+  id: string;
+  productId: string;
+  product?: any;
+  clientId: string;
+  client?: any;
+  rating: number;
+  title?: string;
+  comment?: string;
+  isVerifiedPurchase: boolean;
+  status: ReviewStatusEnum;
+  merchantResponse?: string;
+  respondedAt?: string;
+  createdAt: string;
+  updatedAt: string;
 }
 
 export interface EcCartItem {
-  id: string
-  cartId: string
-  productId: string
-  product?: any
-  quantity: number
-  unitPrice: number
-  notes?: string
+  id: string;
+  cartId: string;
+  productId: string;
+  product?: any;
+  quantity: number;
+  unitPrice: number;
+  notes?: string;
 }
 
 export enum CartStatusEnum {
@@ -94,17 +95,17 @@ export enum CartStatusEnum {
 }
 
 export interface EcCart {
-  id: string
-  clientId: string
-  client?: any
-  status: CartStatusEnum
-  currency: string
-  couponCode?: string
-  discountAmount: number
-  notes?: string
-  items: EcCartItem[]
-  createdAt: string
-  updatedAt: string
+  id: string;
+  clientId: string;
+  client?: any;
+  status: CartStatusEnum;
+  currency: string;
+  couponCode?: string;
+  discountAmount: number;
+  notes?: string;
+  items: EcCartItem[];
+  createdAt: string;
+  updatedAt: string;
 }
 
 // Coupon type options for UI
@@ -112,26 +113,26 @@ export const couponTypeOptions = [
   { value: CouponTypeEnum.PERCENTAGE, label: 'Percentage' },
   { value: CouponTypeEnum.FIXED, label: 'Fixed Amount' },
   { value: CouponTypeEnum.FREE_SHIPPING, label: 'Free Shipping' }
-]
+];
 
 export const couponStatusOptions = [
   { value: CouponStatusEnum.ACTIVE, label: 'Active' },
   { value: CouponStatusEnum.EXPIRED, label: 'Expired' },
   { value: CouponStatusEnum.DISABLED, label: 'Disabled' }
-]
+];
 
 export const reviewStatusOptions = [
   { value: ReviewStatusEnum.PENDING, label: 'Pending' },
   { value: ReviewStatusEnum.APPROVED, label: 'Approved' },
   { value: ReviewStatusEnum.REJECTED, label: 'Rejected' }
-]
+];
 
 export const cartStatusOptions = [
   { value: CartStatusEnum.ACTIVE, label: 'Active' },
   { value: CartStatusEnum.ABANDONED, label: 'Abandoned' },
   { value: CartStatusEnum.CONVERTED, label: 'Converted' },
   { value: CartStatusEnum.EXPIRED, label: 'Expired' }
-]
+];
 
 // ─── Category API ───────────────────────────────────────────────────────────
 
@@ -321,16 +322,16 @@ export async function convertCartToOrder(cartId: string) {
 // ─── Dashboard Stats API ───────────────────────────────────────────────────
 
 export interface EcDashboardStats {
-  totalOrders: number
-  totalRevenue: number
-  activeProducts: number
-  activeCoupons: number
-  pendingReviews: number
-  abandonedCarts: number
-  totalCarts: number
-  convertedCarts: number
-  ordersByStatus: Record<string, number>
-  recentOrders: any[]
+  totalOrders: number;
+  totalRevenue: number;
+  activeProducts: number;
+  activeCoupons: number;
+  pendingReviews: number;
+  abandonedCarts: number;
+  totalCarts: number;
+  convertedCarts: number;
+  ordersByStatus: Record<string, number>;
+  recentOrders: any[];
 }
 
 /**

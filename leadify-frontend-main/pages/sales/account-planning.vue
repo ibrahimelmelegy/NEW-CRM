@@ -453,7 +453,7 @@ const newPlanForm = ref({
   annualValue: '',
   keyContact: '',
   objective: '',
-  renewalDate: null as Date | null,
+  renewalDate: null as Date | null
 });
 
 // ---- Constants ----
@@ -461,7 +461,7 @@ const tiers = [
   { value: 'strategic', labelKey: 'accountPlanning.tier.strategic' },
   { value: 'key', labelKey: 'accountPlanning.tier.key' },
   { value: 'growth', labelKey: 'accountPlanning.tier.growth' },
-  { value: 'standard', labelKey: 'accountPlanning.tier.standard' },
+  { value: 'standard', labelKey: 'accountPlanning.tier.standard' }
 ];
 
 const products = [
@@ -470,7 +470,7 @@ const products = [
   { key: 'marketing', name: 'Marketing Hub' },
   { key: 'support', name: 'Support Desk' },
   { key: 'commerce', name: 'Commerce' },
-  { key: 'integration', name: 'Integrations' },
+  { key: 'integration', name: 'Integrations' }
 ];
 
 // ---- Data: Account Plans ----
@@ -494,28 +494,28 @@ const fallbackAccountPlans = [
     goals: [
       { title: 'Expand to 5 business units', description: 'Roll out platform across all major divisions by Q3 2026.', progress: 68 },
       { title: 'Achieve 95% user adoption', description: 'Drive daily active usage above target through training programs.', progress: 82 },
-      { title: 'Integrate SAP ERP', description: 'Complete bi-directional data sync with SAP S/4HANA.', progress: 45 },
+      { title: 'Integrate SAP ERP', description: 'Complete bi-directional data sync with SAP S/4HANA.', progress: 45 }
     ],
     milestones: [
       { title: 'Contract Signed', date: '2025-03-15', status: 'completed', description: 'Master services agreement executed.' },
       { title: 'Phase 1 Go-Live', date: '2025-06-01', status: 'completed', description: 'CRM and analytics deployed to 3 BUs.' },
       { title: 'SAP Integration Kickoff', date: '2025-10-01', status: 'completed', description: 'Integration project team assembled.' },
       { title: 'Executive QBR', date: '2026-03-20', status: 'in-progress', description: 'Quarterly business review with C-suite.' },
-      { title: 'Phase 2 Expansion', date: '2026-06-15', status: 'pending', description: 'Deploy marketing hub to remaining BUs.' },
+      { title: 'Phase 2 Expansion', date: '2026-06-15', status: 'pending', description: 'Deploy marketing hub to remaining BUs.' }
     ],
     risks: [
       { title: 'Budget freeze in Q2', severity: 'high', mitigation: 'Secure multi-year commitment before fiscal year end.' },
-      { title: 'Key champion leaving role', severity: 'medium', mitigation: 'Build relationships with 3+ stakeholders at VP level.' },
+      { title: 'Key champion leaving role', severity: 'medium', mitigation: 'Build relationships with 3+ stakeholders at VP level.' }
     ],
     competitors: [
       { name: 'Salesforce', strength: 'Strong brand presence in region', threatLevel: 4 },
-      { name: 'Microsoft Dynamics', strength: 'Bundled with existing MS licenses', threatLevel: 3 },
+      { name: 'Microsoft Dynamics', strength: 'Bundled with existing MS licenses', threatLevel: 3 }
     ],
     actionItems: [
       { action: 'Schedule QBR presentation with CEO', owner: 'Ahmad Nasser', dueDate: '2026-03-15', status: 'in-progress', priority: 'high' },
       { action: 'Prepare SAP integration demo', owner: 'Layla Mansour', dueDate: '2026-03-10', status: 'completed', priority: 'high' },
-      { action: 'Conduct user satisfaction survey', owner: 'Omar Farid', dueDate: '2026-04-01', status: 'pending', priority: 'medium' },
-    ],
+      { action: 'Conduct user satisfaction survey', owner: 'Omar Farid', dueDate: '2026-04-01', status: 'pending', priority: 'medium' }
+    ]
   },
   {
     id: 2,
@@ -531,27 +531,31 @@ const fallbackAccountPlans = [
     crossSellScore: 72,
     recommendedProduct: 'Marketing Hub',
     goals: [
-      { title: 'Digital transformation of wealth management', description: 'Automate client relationship workflows for private banking division.', progress: 55 },
-      { title: 'Regulatory compliance automation', description: 'Implement KYC/AML monitoring dashboards.', progress: 78 },
+      {
+        title: 'Digital transformation of wealth management',
+        description: 'Automate client relationship workflows for private banking division.',
+        progress: 55
+      },
+      { title: 'Regulatory compliance automation', description: 'Implement KYC/AML monitoring dashboards.', progress: 78 }
     ],
     milestones: [
       { title: 'Discovery & Planning', date: '2025-02-01', status: 'completed', description: 'Requirements gathering complete.' },
       { title: 'CRM Deployment', date: '2025-05-20', status: 'completed', description: 'Core CRM live across 4 branches.' },
       { title: 'Compliance Audit', date: '2026-04-10', status: 'in-progress', description: 'Annual regulatory compliance review.' },
-      { title: 'Marketing Hub Pilot', date: '2026-07-01', status: 'pending', description: 'Test marketing automation with retail banking.' },
+      { title: 'Marketing Hub Pilot', date: '2026-07-01', status: 'pending', description: 'Test marketing automation with retail banking.' }
     ],
     risks: [
       { title: 'Regulatory changes in H2', severity: 'high', mitigation: 'Proactive compliance feature roadmap alignment.' },
-      { title: 'Competitor proof-of-concept', severity: 'medium', mitigation: 'Accelerate value demonstration and case study.' },
+      { title: 'Competitor proof-of-concept', severity: 'medium', mitigation: 'Accelerate value demonstration and case study.' }
     ],
     competitors: [
       { name: 'Oracle CX', strength: 'Deep financial services expertise', threatLevel: 3 },
-      { name: 'Temenos', strength: 'Banking-specific solution', threatLevel: 2 },
+      { name: 'Temenos', strength: 'Banking-specific solution', threatLevel: 2 }
     ],
     actionItems: [
       { action: 'Deliver compliance readiness report', owner: 'Fatima Al-Mazrouei', dueDate: '2026-03-25', status: 'in-progress', priority: 'high' },
-      { action: 'Present marketing hub ROI analysis', owner: 'Khalid Saeed', dueDate: '2026-04-15', status: 'pending', priority: 'medium' },
-    ],
+      { action: 'Present marketing hub ROI analysis', owner: 'Khalid Saeed', dueDate: '2026-04-15', status: 'pending', priority: 'medium' }
+    ]
   },
   {
     id: 3,
@@ -568,25 +572,23 @@ const fallbackAccountPlans = [
     recommendedProduct: 'Support Desk',
     goals: [
       { title: 'Unify B2B and B2C customer views', description: 'Single platform for enterprise and consumer segments.', progress: 42 },
-      { title: 'Reduce churn by 15%', description: 'Implement predictive churn models and proactive outreach.', progress: 61 },
+      { title: 'Reduce churn by 15%', description: 'Implement predictive churn models and proactive outreach.', progress: 61 }
     ],
     milestones: [
       { title: 'Platform Migration', date: '2025-04-10', status: 'completed', description: 'Migrated from legacy system.' },
       { title: 'B2B Module Live', date: '2025-09-01', status: 'completed', description: 'Enterprise segment fully operational.' },
       { title: 'Product Roadmap Review', date: '2026-03-28', status: 'in-progress', description: 'Joint product roadmap session.' },
-      { title: 'Support Desk Integration', date: '2026-08-01', status: 'pending', description: 'Unified support experience rollout.' },
+      { title: 'Support Desk Integration', date: '2026-08-01', status: 'pending', description: 'Unified support experience rollout.' }
     ],
-    risks: [
-      { title: '5G platform investment shift', severity: 'medium', mitigation: 'Position as complementary to 5G customer experience.' },
-    ],
+    risks: [{ title: '5G platform investment shift', severity: 'medium', mitigation: 'Position as complementary to 5G customer experience.' }],
     competitors: [
       { name: 'Amdocs', strength: 'Telecom-native BSS/OSS', threatLevel: 4 },
-      { name: 'Salesforce', strength: 'Communications Cloud offering', threatLevel: 3 },
+      { name: 'Salesforce', strength: 'Communications Cloud offering', threatLevel: 3 }
     ],
     actionItems: [
       { action: 'Prepare joint roadmap presentation', owner: 'Nadia Hamdan', dueDate: '2026-03-22', status: 'in-progress', priority: 'high' },
-      { action: 'Schedule support desk pilot planning', owner: 'Rashid Kamal', dueDate: '2026-05-01', status: 'pending', priority: 'low' },
-    ],
+      { action: 'Schedule support desk pilot planning', owner: 'Rashid Kamal', dueDate: '2026-05-01', status: 'pending', priority: 'low' }
+    ]
   },
   {
     id: 4,
@@ -603,23 +605,19 @@ const fallbackAccountPlans = [
     recommendedProduct: 'Marketing Hub',
     goals: [
       { title: 'Shariah-compliant CRM workflows', description: 'Customize deal management for Islamic finance products.', progress: 89 },
-      { title: 'Customer 360 implementation', description: 'Unified view across retail, corporate, and treasury.', progress: 52 },
+      { title: 'Customer 360 implementation', description: 'Unified view across retail, corporate, and treasury.', progress: 52 }
     ],
     milestones: [
       { title: 'Initial Deployment', date: '2025-06-15', status: 'completed', description: 'Core CRM deployed to corporate banking.' },
       { title: 'Phase 2 Kickoff', date: '2026-04-01', status: 'in-progress', description: 'Expand to retail banking division.' },
-      { title: 'Analytics Dashboard Live', date: '2026-07-01', status: 'pending', description: 'Executive dashboard for all segments.' },
+      { title: 'Analytics Dashboard Live', date: '2026-07-01', status: 'pending', description: 'Executive dashboard for all segments.' }
     ],
-    risks: [
-      { title: 'Integration complexity with core banking', severity: 'medium', mitigation: 'Engage dedicated integration partner early.' },
-    ],
-    competitors: [
-      { name: 'Path Solutions', strength: 'Islamic finance specialization', threatLevel: 3 },
-    ],
+    risks: [{ title: 'Integration complexity with core banking', severity: 'medium', mitigation: 'Engage dedicated integration partner early.' }],
+    competitors: [{ name: 'Path Solutions', strength: 'Islamic finance specialization', threatLevel: 3 }],
     actionItems: [
       { action: 'Finalize phase 2 scope document', owner: 'Ahmad Nasser', dueDate: '2026-03-30', status: 'in-progress', priority: 'high' },
-      { action: 'Train retail banking super-users', owner: 'Sara Khalil', dueDate: '2026-04-20', status: 'pending', priority: 'medium' },
-    ],
+      { action: 'Train retail banking super-users', owner: 'Sara Khalil', dueDate: '2026-04-20', status: 'pending', priority: 'medium' }
+    ]
   },
   {
     id: 5,
@@ -636,24 +634,22 @@ const fallbackAccountPlans = [
     recommendedProduct: 'Analytics',
     goals: [
       { title: 'Global distributor portal', description: 'Centralized portal for 200+ distributors across 50 countries.', progress: 38 },
-      { title: 'Supply chain visibility', description: 'Real-time order tracking and inventory dashboards.', progress: 55 },
+      { title: 'Supply chain visibility', description: 'Real-time order tracking and inventory dashboards.', progress: 55 }
     ],
     milestones: [
       { title: 'Core CRM Go-Live', date: '2025-08-01', status: 'completed', description: 'Deployed to headquarters.' },
       { title: 'Integration Testing', date: '2026-03-15', status: 'in-progress', description: 'Testing with SAP and Oracle ERP.' },
-      { title: 'Distributor Portal Beta', date: '2026-06-01', status: 'pending', description: 'Beta launch for top 20 distributors.' },
+      { title: 'Distributor Portal Beta', date: '2026-06-01', status: 'pending', description: 'Beta launch for top 20 distributors.' }
     ],
     risks: [
       { title: 'Renewal at risk due to slow integration', severity: 'high', mitigation: 'Assign senior engineer and weekly status calls.' },
-      { title: 'Scope creep from distributor requirements', severity: 'medium', mitigation: 'Strict change control process.' },
+      { title: 'Scope creep from distributor requirements', severity: 'medium', mitigation: 'Strict change control process.' }
     ],
-    competitors: [
-      { name: 'SAP CX', strength: 'Already embedded in SAP ecosystem', threatLevel: 5 },
-    ],
+    competitors: [{ name: 'SAP CX', strength: 'Already embedded in SAP ecosystem', threatLevel: 5 }],
     actionItems: [
       { action: 'Resolve 3 critical integration bugs', owner: 'Layla Mansour', dueDate: '2026-03-12', status: 'in-progress', priority: 'high' },
-      { action: 'Prepare renewal proposal with discount', owner: 'Omar Farid', dueDate: '2026-03-18', status: 'pending', priority: 'high' },
-    ],
+      { action: 'Prepare renewal proposal with discount', owner: 'Omar Farid', dueDate: '2026-03-18', status: 'pending', priority: 'high' }
+    ]
   },
   {
     id: 6,
@@ -670,22 +666,18 @@ const fallbackAccountPlans = [
     recommendedProduct: 'Integrations',
     goals: [
       { title: 'Omnichannel customer engagement', description: 'Unified experience across malls, retail, and entertainment.', progress: 75 },
-      { title: 'Loyalty program integration', description: 'Connect Share rewards with CRM insights.', progress: 60 },
+      { title: 'Loyalty program integration', description: 'Connect Share rewards with CRM insights.', progress: 60 }
     ],
     milestones: [
       { title: 'Full Platform Adoption', date: '2025-04-01', status: 'completed', description: 'All 5 modules deployed.' },
       { title: 'Loyalty Integration', date: '2025-11-15', status: 'completed', description: 'Share rewards connected.' },
-      { title: 'Commerce Module Launch', date: '2026-04-15', status: 'in-progress', description: 'Online marketplace integration.' },
+      { title: 'Commerce Module Launch', date: '2026-04-15', status: 'in-progress', description: 'Online marketplace integration.' }
     ],
-    risks: [
-      { title: 'Data privacy regulations (PDPL)', severity: 'low', mitigation: 'Already compliant; monitor updates.' },
-    ],
-    competitors: [
-      { name: 'Adobe Experience Cloud', strength: 'Strong marketing capabilities', threatLevel: 3 },
-    ],
+    risks: [{ title: 'Data privacy regulations (PDPL)', severity: 'low', mitigation: 'Already compliant; monitor updates.' }],
+    competitors: [{ name: 'Adobe Experience Cloud', strength: 'Strong marketing capabilities', threatLevel: 3 }],
     actionItems: [
-      { action: 'Demo commerce module to marketing team', owner: 'Khalid Saeed', dueDate: '2026-03-28', status: 'pending', priority: 'medium' },
-    ],
+      { action: 'Demo commerce module to marketing team', owner: 'Khalid Saeed', dueDate: '2026-03-28', status: 'pending', priority: 'medium' }
+    ]
   },
   {
     id: 7,
@@ -700,22 +692,16 @@ const fallbackAccountPlans = [
     adoptedProducts: ['crm', 'analytics'],
     crossSellScore: 80,
     recommendedProduct: 'Support Desk',
-    goals: [
-      { title: 'Scale CRM for merchant onboarding', description: 'Support 10,000+ merchant accounts with automated workflows.', progress: 48 },
-    ],
+    goals: [{ title: 'Scale CRM for merchant onboarding', description: 'Support 10,000+ merchant accounts with automated workflows.', progress: 48 }],
     milestones: [
       { title: 'Pilot Deployment', date: '2025-09-01', status: 'completed', description: 'CRM deployed for top 500 merchants.' },
-      { title: 'Scaling Assessment', date: '2026-04-01', status: 'in-progress', description: 'Performance review for mass rollout.' },
+      { title: 'Scaling Assessment', date: '2026-04-01', status: 'in-progress', description: 'Performance review for mass rollout.' }
     ],
-    risks: [
-      { title: 'Rapid growth straining current tier', severity: 'medium', mitigation: 'Propose enterprise tier upgrade with volume pricing.' },
-    ],
-    competitors: [
-      { name: 'HubSpot', strength: 'Lower cost entry point', threatLevel: 3 },
-    ],
+    risks: [{ title: 'Rapid growth straining current tier', severity: 'medium', mitigation: 'Propose enterprise tier upgrade with volume pricing.' }],
+    competitors: [{ name: 'HubSpot', strength: 'Lower cost entry point', threatLevel: 3 }],
     actionItems: [
-      { action: 'Prepare enterprise upgrade proposal', owner: 'Nadia Hamdan', dueDate: '2026-03-30', status: 'pending', priority: 'high' },
-    ],
+      { action: 'Prepare enterprise upgrade proposal', owner: 'Nadia Hamdan', dueDate: '2026-03-30', status: 'pending', priority: 'high' }
+    ]
   },
   {
     id: 8,
@@ -731,23 +717,25 @@ const fallbackAccountPlans = [
     crossSellScore: 75,
     recommendedProduct: 'Analytics',
     goals: [
-      { title: 'Automate restaurant partner management', description: 'Streamline onboarding and relationship management for 15,000+ partners.', progress: 35 },
+      {
+        title: 'Automate restaurant partner management',
+        description: 'Streamline onboarding and relationship management for 15,000+ partners.',
+        progress: 35
+      }
     ],
     milestones: [
       { title: 'CRM Go-Live', date: '2025-07-01', status: 'completed', description: 'Core CRM for partner management.' },
-      { title: 'Feature Roadmap Alignment', date: '2026-03-25', status: 'in-progress', description: 'Align product roadmap with partner needs.' },
+      { title: 'Feature Roadmap Alignment', date: '2026-03-25', status: 'in-progress', description: 'Align product roadmap with partner needs.' }
     ],
     risks: [
       { title: 'Low engagement from ops team', severity: 'high', mitigation: 'Executive sponsor involvement and custom training.' },
-      { title: 'Competitor offering free tier', severity: 'medium', mitigation: 'Demonstrate ROI with usage analytics.' },
+      { title: 'Competitor offering free tier', severity: 'medium', mitigation: 'Demonstrate ROI with usage analytics.' }
     ],
-    competitors: [
-      { name: 'Freshworks', strength: 'Aggressive pricing for growth stage', threatLevel: 4 },
-    ],
+    competitors: [{ name: 'Freshworks', strength: 'Aggressive pricing for growth stage', threatLevel: 4 }],
     actionItems: [
       { action: 'Conduct ops team engagement workshop', owner: 'Rashid Kamal', dueDate: '2026-03-20', status: 'in-progress', priority: 'high' },
-      { action: 'Build ROI dashboard for account', owner: 'Sara Khalil', dueDate: '2026-04-05', status: 'pending', priority: 'medium' },
-    ],
+      { action: 'Build ROI dashboard for account', owner: 'Sara Khalil', dueDate: '2026-04-05', status: 'pending', priority: 'medium' }
+    ]
   },
   {
     id: 9,
@@ -764,22 +752,18 @@ const fallbackAccountPlans = [
     recommendedProduct: 'Marketing Hub',
     goals: [
       { title: 'Driver relationship management', description: 'CRM workflows for captain onboarding, engagement, and retention.', progress: 58 },
-      { title: 'Cross-vertical analytics', description: 'Unified reporting across ride-hailing, delivery, and payments.', progress: 40 },
+      { title: 'Cross-vertical analytics', description: 'Unified reporting across ride-hailing, delivery, and payments.', progress: 40 }
     ],
     milestones: [
       { title: 'Platform Onboarding', date: '2025-05-01', status: 'completed', description: 'Initial deployment for captain management.' },
       { title: 'API Integration Review', date: '2026-04-10', status: 'in-progress', description: 'Review API performance and scalability.' },
-      { title: 'Marketing Hub Evaluation', date: '2026-07-01', status: 'pending', description: 'Assess marketing automation needs.' },
+      { title: 'Marketing Hub Evaluation', date: '2026-07-01', status: 'pending', description: 'Assess marketing automation needs.' }
     ],
-    risks: [
-      { title: 'API rate limiting concerns', severity: 'medium', mitigation: 'Optimize API calls and implement caching layer.' },
-    ],
-    competitors: [
-      { name: 'Zoho', strength: 'Cost-effective all-in-one suite', threatLevel: 2 },
-    ],
+    risks: [{ title: 'API rate limiting concerns', severity: 'medium', mitigation: 'Optimize API calls and implement caching layer.' }],
+    competitors: [{ name: 'Zoho', strength: 'Cost-effective all-in-one suite', threatLevel: 2 }],
     actionItems: [
-      { action: 'Deliver API performance optimization report', owner: 'Layla Mansour', dueDate: '2026-04-05', status: 'pending', priority: 'high' },
-    ],
+      { action: 'Deliver API performance optimization report', owner: 'Layla Mansour', dueDate: '2026-04-05', status: 'pending', priority: 'high' }
+    ]
   },
   {
     id: 10,
@@ -794,62 +778,276 @@ const fallbackAccountPlans = [
     adoptedProducts: ['crm'],
     crossSellScore: 90,
     recommendedProduct: 'Analytics',
-    goals: [
-      { title: 'Digitize policy holder management', description: 'Move from spreadsheets to CRM for all policy tracking.', progress: 30 },
-    ],
+    goals: [{ title: 'Digitize policy holder management', description: 'Move from spreadsheets to CRM for all policy tracking.', progress: 30 }],
     milestones: [
       { title: 'CRM Pilot', date: '2025-10-01', status: 'completed', description: 'Pilot with motor insurance division.' },
-      { title: 'Usage Review', date: '2026-04-01', status: 'in-progress', description: 'Assess adoption and plan expansion.' },
+      { title: 'Usage Review', date: '2026-04-01', status: 'in-progress', description: 'Assess adoption and plan expansion.' }
     ],
     risks: [
       { title: 'Very low adoption outside pilot team', severity: 'high', mitigation: 'Assign customer success manager for hands-on training.' },
-      { title: 'IT team prefers in-house solution', severity: 'medium', mitigation: 'Demonstrate integration capabilities and time-to-value.' },
+      { title: 'IT team prefers in-house solution', severity: 'medium', mitigation: 'Demonstrate integration capabilities and time-to-value.' }
     ],
     competitors: [
       { name: 'Guidewire', strength: 'Insurance-specific platform', threatLevel: 3 },
-      { name: 'In-house development', strength: 'Full control over customization', threatLevel: 4 },
+      { name: 'In-house development', strength: 'Full control over customization', threatLevel: 4 }
     ],
     actionItems: [
       { action: 'Assign dedicated CSM', owner: 'Ahmad Nasser', dueDate: '2026-03-08', status: 'completed', priority: 'high' },
-      { action: 'Prepare adoption benchmarking report', owner: 'Omar Farid', dueDate: '2026-03-28', status: 'in-progress', priority: 'medium' },
-    ],
-  },
+      { action: 'Prepare adoption benchmarking report', owner: 'Omar Farid', dueDate: '2026-03-28', status: 'in-progress', priority: 'medium' }
+    ]
+  }
 ];
 
 // ---- Data: Stakeholders ----
 const stakeholders = ref<any[]>([]);
 
 const fallbackStakeholders = [
-  { name: 'Sultan Al-Harbi', title: 'Chief Digital Officer', company: 'Aramco Digital', accountId: 1, role: 'Executive Sponsor', influence: 'champion', engagementScore: 95, lastContact: '2026-02-28' },
-  { name: 'Laila Al-Ghanim', title: 'VP Engineering', company: 'Aramco Digital', accountId: 1, role: 'Technical Decision Maker', influence: 'champion', engagementScore: 88, lastContact: '2026-02-25' },
-  { name: 'Faisal Barakat', title: 'CFO', company: 'Aramco Digital', accountId: 1, role: 'Budget Holder', influence: 'sponsor', engagementScore: 62, lastContact: '2026-01-15' },
-  { name: 'Fatima Al-Mazrouei', title: 'Head of Digital Banking', company: 'Emirates NBD', accountId: 2, role: 'Project Owner', influence: 'champion', engagementScore: 91, lastContact: '2026-02-26' },
-  { name: 'Hassan Darwish', title: 'CTO', company: 'Emirates NBD', accountId: 2, role: 'Technical Evaluator', influence: 'evaluator', engagementScore: 73, lastContact: '2026-02-10' },
-  { name: 'Mohammed Al-Suwaidi', title: 'VP Customer Experience', company: 'Etisalat (e&)', accountId: 3, role: 'Executive Sponsor', influence: 'sponsor', engagementScore: 80, lastContact: '2026-02-20' },
-  { name: 'Aisha Khalid', title: 'IT Director', company: 'Etisalat (e&)', accountId: 3, role: 'Technical Gatekeeper', influence: 'blocker', engagementScore: 45, lastContact: '2026-01-30' },
-  { name: 'Abdullah Al-Rajhi', title: 'Head of Innovation', company: 'Al Rajhi Bank', accountId: 4, role: 'Innovation Lead', influence: 'champion', engagementScore: 85, lastContact: '2026-02-22' },
-  { name: 'Tariq Al-Dosari', title: 'Director of Operations', company: 'SABIC', accountId: 5, role: 'Operations Lead', influence: 'evaluator', engagementScore: 58, lastContact: '2026-02-18' },
-  { name: 'Mansour Hakeem', title: 'CIO', company: 'SABIC', accountId: 5, role: 'IT Decision Maker', influence: 'blocker', engagementScore: 40, lastContact: '2026-01-05' },
-  { name: 'Hessa Al-Futtaim', title: 'Chief Marketing Officer', company: 'Majid Al Futtaim', accountId: 6, role: 'Executive Sponsor', influence: 'champion', engagementScore: 93, lastContact: '2026-02-27' },
-  { name: 'Reem Al-Awadhi', title: 'VP Product', company: 'Noon Payments', accountId: 7, role: 'Product Owner', influence: 'champion', engagementScore: 78, lastContact: '2026-02-24' },
-  { name: 'Yusuf Bahwan', title: 'Head of Partnerships', company: 'Talabat', accountId: 8, role: 'Partnership Lead', influence: 'evaluator', engagementScore: 55, lastContact: '2026-02-05' },
-  { name: 'Dina Sharif', title: 'Director of Engineering', company: 'Careem', accountId: 9, role: 'Technical Lead', influence: 'sponsor', engagementScore: 82, lastContact: '2026-02-21' },
-  { name: 'Karim Nabil', title: 'VP Growth', company: 'Careem', accountId: 9, role: 'Business Sponsor', influence: 'champion', engagementScore: 70, lastContact: '2026-02-14' },
-  { name: 'Nora Al-Sabah', title: 'Digital Transformation Manager', company: 'Gulf Insurance Group', accountId: 10, role: 'Project Lead', influence: 'evaluator', engagementScore: 50, lastContact: '2026-02-08' },
-  { name: 'Waleed Jassim', title: 'CTO', company: 'Gulf Insurance Group', accountId: 10, role: 'IT Decision Maker', influence: 'blocker', engagementScore: 32, lastContact: '2025-12-20' },
-  { name: 'Salma Osman', title: 'VP Sales', company: 'Noon Payments', accountId: 7, role: 'Revenue Owner', influence: 'sponsor', engagementScore: 68, lastContact: '2026-02-12' },
-  { name: 'Basem Farouq', title: 'Procurement Manager', company: 'Al Rajhi Bank', accountId: 4, role: 'Procurement Lead', influence: 'evaluator', engagementScore: 60, lastContact: '2026-02-16' },
-  { name: 'Mariam Haddad', title: 'COO', company: 'Talabat', accountId: 8, role: 'Operations Sponsor', influence: 'sponsor', engagementScore: 48, lastContact: '2026-01-22' },
+  {
+    name: 'Sultan Al-Harbi',
+    title: 'Chief Digital Officer',
+    company: 'Aramco Digital',
+    accountId: 1,
+    role: 'Executive Sponsor',
+    influence: 'champion',
+    engagementScore: 95,
+    lastContact: '2026-02-28'
+  },
+  {
+    name: 'Laila Al-Ghanim',
+    title: 'VP Engineering',
+    company: 'Aramco Digital',
+    accountId: 1,
+    role: 'Technical Decision Maker',
+    influence: 'champion',
+    engagementScore: 88,
+    lastContact: '2026-02-25'
+  },
+  {
+    name: 'Faisal Barakat',
+    title: 'CFO',
+    company: 'Aramco Digital',
+    accountId: 1,
+    role: 'Budget Holder',
+    influence: 'sponsor',
+    engagementScore: 62,
+    lastContact: '2026-01-15'
+  },
+  {
+    name: 'Fatima Al-Mazrouei',
+    title: 'Head of Digital Banking',
+    company: 'Emirates NBD',
+    accountId: 2,
+    role: 'Project Owner',
+    influence: 'champion',
+    engagementScore: 91,
+    lastContact: '2026-02-26'
+  },
+  {
+    name: 'Hassan Darwish',
+    title: 'CTO',
+    company: 'Emirates NBD',
+    accountId: 2,
+    role: 'Technical Evaluator',
+    influence: 'evaluator',
+    engagementScore: 73,
+    lastContact: '2026-02-10'
+  },
+  {
+    name: 'Mohammed Al-Suwaidi',
+    title: 'VP Customer Experience',
+    company: 'Etisalat (e&)',
+    accountId: 3,
+    role: 'Executive Sponsor',
+    influence: 'sponsor',
+    engagementScore: 80,
+    lastContact: '2026-02-20'
+  },
+  {
+    name: 'Aisha Khalid',
+    title: 'IT Director',
+    company: 'Etisalat (e&)',
+    accountId: 3,
+    role: 'Technical Gatekeeper',
+    influence: 'blocker',
+    engagementScore: 45,
+    lastContact: '2026-01-30'
+  },
+  {
+    name: 'Abdullah Al-Rajhi',
+    title: 'Head of Innovation',
+    company: 'Al Rajhi Bank',
+    accountId: 4,
+    role: 'Innovation Lead',
+    influence: 'champion',
+    engagementScore: 85,
+    lastContact: '2026-02-22'
+  },
+  {
+    name: 'Tariq Al-Dosari',
+    title: 'Director of Operations',
+    company: 'SABIC',
+    accountId: 5,
+    role: 'Operations Lead',
+    influence: 'evaluator',
+    engagementScore: 58,
+    lastContact: '2026-02-18'
+  },
+  {
+    name: 'Mansour Hakeem',
+    title: 'CIO',
+    company: 'SABIC',
+    accountId: 5,
+    role: 'IT Decision Maker',
+    influence: 'blocker',
+    engagementScore: 40,
+    lastContact: '2026-01-05'
+  },
+  {
+    name: 'Hessa Al-Futtaim',
+    title: 'Chief Marketing Officer',
+    company: 'Majid Al Futtaim',
+    accountId: 6,
+    role: 'Executive Sponsor',
+    influence: 'champion',
+    engagementScore: 93,
+    lastContact: '2026-02-27'
+  },
+  {
+    name: 'Reem Al-Awadhi',
+    title: 'VP Product',
+    company: 'Noon Payments',
+    accountId: 7,
+    role: 'Product Owner',
+    influence: 'champion',
+    engagementScore: 78,
+    lastContact: '2026-02-24'
+  },
+  {
+    name: 'Yusuf Bahwan',
+    title: 'Head of Partnerships',
+    company: 'Talabat',
+    accountId: 8,
+    role: 'Partnership Lead',
+    influence: 'evaluator',
+    engagementScore: 55,
+    lastContact: '2026-02-05'
+  },
+  {
+    name: 'Dina Sharif',
+    title: 'Director of Engineering',
+    company: 'Careem',
+    accountId: 9,
+    role: 'Technical Lead',
+    influence: 'sponsor',
+    engagementScore: 82,
+    lastContact: '2026-02-21'
+  },
+  {
+    name: 'Karim Nabil',
+    title: 'VP Growth',
+    company: 'Careem',
+    accountId: 9,
+    role: 'Business Sponsor',
+    influence: 'champion',
+    engagementScore: 70,
+    lastContact: '2026-02-14'
+  },
+  {
+    name: 'Nora Al-Sabah',
+    title: 'Digital Transformation Manager',
+    company: 'Gulf Insurance Group',
+    accountId: 10,
+    role: 'Project Lead',
+    influence: 'evaluator',
+    engagementScore: 50,
+    lastContact: '2026-02-08'
+  },
+  {
+    name: 'Waleed Jassim',
+    title: 'CTO',
+    company: 'Gulf Insurance Group',
+    accountId: 10,
+    role: 'IT Decision Maker',
+    influence: 'blocker',
+    engagementScore: 32,
+    lastContact: '2025-12-20'
+  },
+  {
+    name: 'Salma Osman',
+    title: 'VP Sales',
+    company: 'Noon Payments',
+    accountId: 7,
+    role: 'Revenue Owner',
+    influence: 'sponsor',
+    engagementScore: 68,
+    lastContact: '2026-02-12'
+  },
+  {
+    name: 'Basem Farouq',
+    title: 'Procurement Manager',
+    company: 'Al Rajhi Bank',
+    accountId: 4,
+    role: 'Procurement Lead',
+    influence: 'evaluator',
+    engagementScore: 60,
+    lastContact: '2026-02-16'
+  },
+  {
+    name: 'Mariam Haddad',
+    title: 'COO',
+    company: 'Talabat',
+    accountId: 8,
+    role: 'Operations Sponsor',
+    influence: 'sponsor',
+    engagementScore: 48,
+    lastContact: '2026-01-22'
+  }
 ];
 
 // ---- Data: Forecast ----
 const forecastData = ref<any[]>([]);
 
 const fallbackForecastData = [
-  { quarter: 'Q1 2026', pipelineValue: 4850000, weightedForecast: 3280000, bestCase: 4120000, committed: 2750000, target: 3500000, gapToTarget: -530000, probability: 76 },
-  { quarter: 'Q2 2026', pipelineValue: 5320000, weightedForecast: 3150000, bestCase: 4580000, committed: 2100000, target: 3800000, gapToTarget: 650000, probability: 58 },
-  { quarter: 'Q3 2026', pipelineValue: 4180000, weightedForecast: 2290000, bestCase: 3650000, committed: 1450000, target: 3600000, gapToTarget: 1310000, probability: 42 },
-  { quarter: 'Q4 2026', pipelineValue: 6100000, weightedForecast: 2800000, bestCase: 5200000, committed: 980000, target: 4200000, gapToTarget: 1400000, probability: 35 },
+  {
+    quarter: 'Q1 2026',
+    pipelineValue: 4850000,
+    weightedForecast: 3280000,
+    bestCase: 4120000,
+    committed: 2750000,
+    target: 3500000,
+    gapToTarget: -530000,
+    probability: 76
+  },
+  {
+    quarter: 'Q2 2026',
+    pipelineValue: 5320000,
+    weightedForecast: 3150000,
+    bestCase: 4580000,
+    committed: 2100000,
+    target: 3800000,
+    gapToTarget: 650000,
+    probability: 58
+  },
+  {
+    quarter: 'Q3 2026',
+    pipelineValue: 4180000,
+    weightedForecast: 2290000,
+    bestCase: 3650000,
+    committed: 1450000,
+    target: 3600000,
+    gapToTarget: 1310000,
+    probability: 42
+  },
+  {
+    quarter: 'Q4 2026',
+    pipelineValue: 6100000,
+    weightedForecast: 2800000,
+    bestCase: 5200000,
+    committed: 980000,
+    target: 4200000,
+    gapToTarget: 1400000,
+    probability: 35
+  }
 ];
 
 // ---- API Data Loading ----
@@ -931,11 +1129,7 @@ const filteredPlans = computed(() => {
   }
   if (searchQuery.value) {
     const q = searchQuery.value.toLowerCase();
-    plans = plans.filter(p =>
-      p.company.toLowerCase().includes(q) ||
-      p.industry.toLowerCase().includes(q) ||
-      p.keyContact.toLowerCase().includes(q)
-    );
+    plans = plans.filter(p => p.company.toLowerCase().includes(q) || p.industry.toLowerCase().includes(q) || p.keyContact.toLowerCase().includes(q));
   }
   return plans;
 });
@@ -946,7 +1140,7 @@ const whitespaceData = computed(() => {
     tier: plan.tier,
     adoptedProducts: plan.adoptedProducts,
     crossSellScore: plan.crossSellScore,
-    recommendedProduct: plan.recommendedProduct,
+    recommendedProduct: plan.recommendedProduct
   }));
 });
 
@@ -963,16 +1157,49 @@ const kpiCards = computed(() => {
   const activePlans = plans.length;
   const crossSellOps = plans.filter(p => p.crossSellScore >= 60).length;
   const avgHealth = plans.length > 0 ? Math.round(plans.reduce((sum, p) => sum + p.healthScore, 0) / plans.length) : 0;
-  const renewalPipeline = plans
-    .filter(p => p.daysUntilRenewal <= 120)
-    .reduce((sum, p) => sum + p.annualValue, 0);
+  const renewalPipeline = plans.filter(p => p.daysUntilRenewal <= 120).reduce((sum, p) => sum + p.annualValue, 0);
 
   return [
-    { key: 'totalValue', label: t('accountPlanning.totalAccountValue'), value: formatCurrency(totalValue), icon: 'ph:currency-dollar-bold', color: '#7849ff', trend: 12.4 },
-    { key: 'activePlans', label: t('accountPlanning.activePlans'), value: activePlans.toString(), icon: 'ph:file-text-bold', color: '#3b82f6', trend: 8.3 },
-    { key: 'crossSell', label: t('accountPlanning.crossSellOpportunities'), value: crossSellOps.toString(), icon: 'ph:arrows-out-bold', color: '#22c55e', trend: 15.2 },
-    { key: 'avgHealth', label: t('accountPlanning.avgHealthScore'), value: avgHealth + '%', icon: 'ph:heartbeat-bold', color: '#f59e0b', trend: -2.1 },
-    { key: 'renewalPipeline', label: t('accountPlanning.renewalPipeline'), value: formatCurrency(renewalPipeline), icon: 'ph:arrows-clockwise-bold', color: '#06b6d4', trend: 5.7 },
+    {
+      key: 'totalValue',
+      label: t('accountPlanning.totalAccountValue'),
+      value: formatCurrency(totalValue),
+      icon: 'ph:currency-dollar-bold',
+      color: '#7849ff',
+      trend: 12.4
+    },
+    {
+      key: 'activePlans',
+      label: t('accountPlanning.activePlans'),
+      value: activePlans.toString(),
+      icon: 'ph:file-text-bold',
+      color: '#3b82f6',
+      trend: 8.3
+    },
+    {
+      key: 'crossSell',
+      label: t('accountPlanning.crossSellOpportunities'),
+      value: crossSellOps.toString(),
+      icon: 'ph:arrows-out-bold',
+      color: '#22c55e',
+      trend: 15.2
+    },
+    {
+      key: 'avgHealth',
+      label: t('accountPlanning.avgHealthScore'),
+      value: avgHealth + '%',
+      icon: 'ph:heartbeat-bold',
+      color: '#f59e0b',
+      trend: -2.1
+    },
+    {
+      key: 'renewalPipeline',
+      label: t('accountPlanning.renewalPipeline'),
+      value: formatCurrency(renewalPipeline),
+      icon: 'ph:arrows-clockwise-bold',
+      color: '#06b6d4',
+      trend: 5.7
+    }
   ];
 });
 
@@ -983,7 +1210,7 @@ function formatCurrency(amount: number): string {
     style: 'currency',
     currency: 'USD',
     minimumFractionDigits: 0,
-    maximumFractionDigits: 0,
+    maximumFractionDigits: 0
   }).format(amount);
 }
 
@@ -992,7 +1219,7 @@ function getTierType(tier: string): string {
     strategic: 'danger',
     key: 'warning',
     growth: 'success',
-    standard: 'info',
+    standard: 'info'
   };
   return map[tier] || 'info';
 }
@@ -1008,7 +1235,7 @@ function getInfluenceType(influence: string): string {
     champion: 'success',
     sponsor: 'primary',
     evaluator: 'warning',
-    blocker: 'danger',
+    blocker: 'danger'
   };
   return map[influence] || 'info';
 }
@@ -1020,7 +1247,12 @@ function getAvatarColor(index: number): string {
 
 function getInitials(name: string): string {
   if (!name) return '?';
-  return name.split(' ').map(n => n[0]).join('').substring(0, 2).toUpperCase();
+  return name
+    .split(' ')
+    .map(n => n[0])
+    .join('')
+    .substring(0, 2)
+    .toUpperCase();
 }
 
 function openPlanDetail(plan: any) {
@@ -1037,7 +1269,7 @@ async function createNewPlan() {
       annualValue: Number(newPlanForm.value.annualValue) || 0,
       keyContact: newPlanForm.value.keyContact,
       objective: newPlanForm.value.objective,
-      renewalDate: newPlanForm.value.renewalDate,
+      renewalDate: newPlanForm.value.renewalDate
     });
     if (res.success && res.body) {
       // Reload plans to include the new one
@@ -1054,7 +1286,7 @@ async function createNewPlan() {
     annualValue: '',
     keyContact: '',
     objective: '',
-    renewalDate: null,
+    renewalDate: null
   };
 }
 

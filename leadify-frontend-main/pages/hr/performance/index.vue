@@ -230,10 +230,11 @@ const filteredReviews = computed(() => {
   }
   if (search.value) {
     const q = search.value.toLowerCase();
-    data = data.filter(r =>
-      (r.employeeName || '').toLowerCase().includes(q) ||
-      (r.reviewerName || '').toLowerCase().includes(q) ||
-      (r.period || '').toLowerCase().includes(q)
+    data = data.filter(
+      r =>
+        (r.employeeName || '').toLowerCase().includes(q) ||
+        (r.reviewerName || '').toLowerCase().includes(q) ||
+        (r.period || '').toLowerCase().includes(q)
     );
   }
   return data;
@@ -310,11 +311,7 @@ async function handleSave() {
 
 async function handleDelete(row: any) {
   try {
-    await ElMessageBox.confirm(
-      t('common.confirmDelete'),
-      t('common.warning'),
-      { type: 'warning' }
-    );
+    await ElMessageBox.confirm(t('common.confirmDelete'), t('common.warning'), { type: 'warning' });
     loading.value = true;
     await useApiFetch(`hr/performance/${row.id}`, 'DELETE');
     await loadData();

@@ -295,7 +295,9 @@ async function handleDelete(data: any) {
     const newStats = await fetchTaskStats();
     stats.value = newStats || {};
     ElNotification({ type: 'success', title: t('common.success'), message: t('common.deleted') });
-  } catch (e: any) { ElNotification({ type: 'error', title: t('common.error'), message: t('common.error') }); }
+  } catch (e: any) {
+    ElNotification({ type: 'error', title: t('common.error'), message: t('common.error') });
+  }
 }
 
 // Mobile
@@ -309,7 +311,12 @@ const mobileTaskFilters = computed(() => {
   return [
     { value: 'ALL', label: t('common.all'), color: '#7849ff', count: data.length },
     { value: 'TODO', label: t('tasks.status.TODO'), color: '#94a3b8', count: data.filter((t: any) => t.status === 'TODO').length },
-    { value: 'IN_PROGRESS', label: t('tasks.status.IN_PROGRESS'), color: '#3b82f6', count: data.filter((t: any) => t.status === 'IN_PROGRESS').length },
+    {
+      value: 'IN_PROGRESS',
+      label: t('tasks.status.IN_PROGRESS'),
+      color: '#3b82f6',
+      count: data.filter((t: any) => t.status === 'IN_PROGRESS').length
+    },
     { value: 'DONE', label: t('tasks.status.DONE'), color: '#10b981', count: data.filter((t: any) => t.status === 'DONE').length }
   ];
 });
@@ -331,7 +338,9 @@ async function handleMobileRefresh() {
   try {
     await handleTabChange(activeTab.value);
     vibrate([10, 30, 10]);
-  } finally { mobileRefreshing.value = false; }
+  } finally {
+    mobileRefreshing.value = false;
+  }
 }
 
 function handleTaskSwipe(name: string, task: any) {

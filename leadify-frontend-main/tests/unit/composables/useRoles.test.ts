@@ -15,6 +15,8 @@
 
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 
+import { getRole, createRole, updateRole } from '~/composables/useRoles';
+
 // ============================================
 // Mock useApiFetch globally
 // ============================================
@@ -62,8 +64,6 @@ const mockUsePermissions = vi.fn().mockResolvedValue({
 vi.mock('element-plus', () => ({
   ElNotification: (...args: any[]) => mockNotification(...args)
 }));
-
-import { getRole, createRole, updateRole } from '~/composables/useRoles';
 
 describe('useRoles', () => {
   beforeEach(() => {
@@ -222,11 +222,7 @@ describe('useRoles', () => {
 
       await updateRole(values);
 
-      expect(mockApiFetch).toHaveBeenCalledWith(
-        'role/5',
-        'PUT',
-        expect.not.objectContaining({ id: '5' })
-      );
+      expect(mockApiFetch).toHaveBeenCalledWith('role/5', 'PUT', expect.not.objectContaining({ id: '5' }));
     });
 
     it('should remove id from the request body', async () => {

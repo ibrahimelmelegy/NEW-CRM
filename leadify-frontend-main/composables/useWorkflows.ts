@@ -1,3 +1,4 @@
+/* eslint-disable require-await */
 import { ElNotification } from 'element-plus';
 
 export interface WorkflowCondition {

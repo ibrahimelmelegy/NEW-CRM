@@ -97,19 +97,16 @@ describe('useProjectStore', () => {
       ] as any;
 
       const grouped = store.projectsByStatus;
-      expect(grouped['ACTIVE']).toHaveLength(2);
-      expect(grouped['COMPLETE']).toHaveLength(1);
-      expect(grouped['ON_HOLD']).toHaveLength(1);
+      expect(grouped.ACTIVE).toHaveLength(2);
+      expect(grouped.COMPLETE).toHaveLength(1);
+      expect(grouped.ON_HOLD).toHaveLength(1);
     });
 
     it('projectsByStatus should skip projects without status', () => {
-      store.projects = [
-        mockProject({ id: 'proj-1', status: 'ACTIVE' }),
-        mockProject({ id: 'proj-2', status: undefined })
-      ] as any;
+      store.projects = [mockProject({ id: 'proj-1', status: 'ACTIVE' }), mockProject({ id: 'proj-2', status: undefined })] as any;
 
       const grouped = store.projectsByStatus;
-      expect(grouped['ACTIVE']).toHaveLength(1);
+      expect(grouped.ACTIVE).toHaveLength(1);
       expect(Object.keys(grouped)).toHaveLength(1);
     });
   });

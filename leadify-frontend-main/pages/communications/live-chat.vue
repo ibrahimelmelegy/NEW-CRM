@@ -309,7 +309,7 @@ const chatMetrics = ref<any>({
   activeConversations: null,
   waitingInQueue: null,
   avgResponseTime: null,
-  avgResolutionTime: null,
+  avgResolutionTime: null
 });
 
 const queueColor = computed(() => {
@@ -325,7 +325,7 @@ const createForm = reactive({
   visitorEmail: '',
   channel: 'WEB',
   priority: 'NORMAL',
-  subject: '',
+  subject: ''
 });
 
 // ───────── Status / Priority Helpers ───────────────────────────────────────
@@ -336,7 +336,7 @@ function getStatusColor(status: string): string {
     ACTIVE: '#22c55e',
     WAITING: '#3b82f6',
     RESOLVED: '#6b7280',
-    CLOSED: '#3b82f6',
+    CLOSED: '#3b82f6'
   };
   return map[status] || '#94a3b8';
 }
@@ -347,7 +347,7 @@ function getStatusTagType(status: string): string {
     ACTIVE: 'success',
     WAITING: 'info',
     RESOLVED: '',
-    CLOSED: 'info',
+    CLOSED: 'info'
   };
   return map[status] || 'info';
 }
@@ -357,7 +357,7 @@ function getPriorityType(priority: string): string {
     LOW: 'info',
     NORMAL: '',
     HIGH: 'warning',
-    URGENT: 'danger',
+    URGENT: 'danger'
   };
   return map[priority] || '';
 }
@@ -377,7 +377,7 @@ const statusFilters = computed(() => {
     { value: 'ACTIVE', label: 'Active', type: 'success', count: data.filter((c: any) => c.status === 'ACTIVE').length },
     { value: 'WAITING', label: 'Waiting', type: 'info', count: data.filter((c: any) => c.status === 'WAITING').length },
     { value: 'RESOLVED', label: 'Resolved', type: '', count: data.filter((c: any) => c.status === 'RESOLVED').length },
-    { value: 'CLOSED', label: 'Closed', type: 'info', count: data.filter((c: any) => c.status === 'CLOSED').length },
+    { value: 'CLOSED', label: 'Closed', type: 'info', count: data.filter((c: any) => c.status === 'CLOSED').length }
   ];
 });
 
@@ -451,7 +451,7 @@ async function loadAgents() {
     if (res?.success) {
       agents.value = (res.body?.docs || res.body || []).map((u: any) => ({
         id: u.id,
-        name: u.name || u.email,
+        name: u.name || u.email
       }));
     }
   } catch (e: any) {
@@ -488,7 +488,7 @@ function selectConversation(conv: any) {
   if (previousConversationId && socket.value) {
     socket.value.emit('chat:leave', {
       conversationId: previousConversationId,
-      userId: user.value?.id,
+      userId: user.value?.id
     });
   }
 
@@ -502,7 +502,7 @@ function selectConversation(conv: any) {
     socket.value.emit('chat:join', {
       conversationId: conv.id,
       userId: user.value?.id,
-      name: user.value?.name,
+      name: user.value?.name
     });
   }
 
@@ -541,7 +541,7 @@ async function sendMessage() {
       conversationId: selectedConversation.value.id,
       userId: user.value?.id,
       name: user.value?.name,
-      isTyping: false,
+      isTyping: false
     });
   }
 
@@ -549,7 +549,7 @@ async function sendMessage() {
     const payload = {
       conversationId: selectedConversation.value.id,
       content: newMessage.value.trim(),
-      senderType: 'STAFF',
+      senderType: 'STAFF'
     };
     const res = await useApiFetch('live-chat/messages', 'POST', payload);
     if (res?.success) {
@@ -568,7 +568,7 @@ async function sendMessage() {
     ElNotification({
       type: 'error',
       title: t('common.error'),
-      message: t('liveChat.sendFailed'),
+      message: t('liveChat.sendFailed')
     });
   } finally {
     sendingMessage.value = false;
@@ -584,7 +584,7 @@ function handleTyping() {
     conversationId: selectedConversation.value.id,
     userId: user.value?.id,
     name: user.value?.name,
-    isTyping: true,
+    isTyping: true
   });
 }
 
@@ -609,7 +609,7 @@ async function handleAssignAgent(command: string | number) {
     ElNotification({
       type: 'success',
       title: t('common.success'),
-      message: t('liveChat.agentAssigned'),
+      message: t('liveChat.agentAssigned')
     });
     await loadConversations();
     // Refresh selected conversation data
@@ -619,7 +619,7 @@ async function handleAssignAgent(command: string | number) {
     ElNotification({
       type: 'error',
       title: t('common.error'),
-      message: t('common.error'),
+      message: t('common.error')
     });
   }
 }
@@ -630,12 +630,12 @@ async function updateConversationStatus() {
   if (!selectedConversation.value) return;
   try {
     await useApiFetch(`live-chat/conversations/${selectedConversation.value.id}`, 'PUT', {
-      status: selectedConversation.value.status,
+      status: selectedConversation.value.status
     });
     ElNotification({
       type: 'success',
       title: t('common.success'),
-      message: t('common.saved'),
+      message: t('common.saved')
     });
     await loadConversations();
     await loadMetrics();
@@ -643,7 +643,7 @@ async function updateConversationStatus() {
     ElNotification({
       type: 'error',
       title: t('common.error'),
-      message: t('common.error'),
+      message: t('common.error')
     });
   }
 }
@@ -655,7 +655,7 @@ async function resolveConversation() {
     ElNotification({
       type: 'success',
       title: t('common.success'),
-      message: t('liveChat.conversationResolved'),
+      message: t('liveChat.conversationResolved')
     });
     selectedConversation.value.status = 'RESOLVED';
     await loadConversations();
@@ -664,7 +664,7 @@ async function resolveConversation() {
     ElNotification({
       type: 'error',
       title: t('common.error'),
-      message: t('common.error'),
+      message: t('common.error')
     });
   }
 }
@@ -674,22 +674,18 @@ async function resolveConversation() {
 async function deleteConversation() {
   if (!selectedConversation.value) return;
   try {
-    await ElMessageBox.confirm(
-      t('common.confirmDelete'),
-      t('common.warning'),
-      { type: 'warning' }
-    );
+    await ElMessageBox.confirm(t('common.confirmDelete'), t('common.warning'), { type: 'warning' });
     await useApiFetch(`live-chat/conversations/${selectedConversation.value.id}`, 'DELETE');
     ElNotification({
       type: 'success',
       title: t('common.success'),
-      message: t('common.deleted'),
+      message: t('common.deleted')
     });
     // Leave room
     if (socket.value && selectedConversation.value) {
       socket.value.emit('chat:leave', {
         conversationId: selectedConversation.value.id,
-        userId: user.value?.id,
+        userId: user.value?.id
       });
     }
     previousConversationId = null;
@@ -718,7 +714,7 @@ async function createConversation() {
     ElNotification({
       type: 'warning',
       title: t('common.warning'),
-      message: t('common.fillRequired'),
+      message: t('common.fillRequired')
     });
     return;
   }
@@ -729,7 +725,7 @@ async function createConversation() {
       ElNotification({
         type: 'success',
         title: t('common.success'),
-        message: t('common.saved'),
+        message: t('common.saved')
       });
       createDialogVisible.value = false;
       await loadConversations();
@@ -739,7 +735,7 @@ async function createConversation() {
     ElNotification({
       type: 'error',
       title: t('common.error'),
-      message: t('common.error'),
+      message: t('common.error')
     });
   } finally {
     saving.value = false;
@@ -846,7 +842,7 @@ function setupSocketListeners() {
   // Register as online agent
   socket.value.emit('chat:agent_online', {
     userId: user.value?.id,
-    name: user.value?.name,
+    name: user.value?.name
   });
 }
 
@@ -865,7 +861,7 @@ function cleanupSocketListeners() {
   if (previousConversationId) {
     socket.value.emit('chat:leave', {
       conversationId: previousConversationId,
-      userId: user.value?.id,
+      userId: user.value?.id
     });
   }
 
@@ -878,7 +874,7 @@ function cleanupSocketListeners() {
 // Watch for socket connection (it connects asynchronously)
 watch(
   () => socket.value,
-  (sock) => {
+  sock => {
     if (sock) {
       setupSocketListeners();
     }
@@ -954,15 +950,23 @@ onUnmounted(() => {
       background: var(--text-muted);
       animation: typing-bounce 1.4s infinite ease-in-out both;
 
-      &:nth-child(1) { animation-delay: 0s; }
-      &:nth-child(2) { animation-delay: 0.2s; }
-      &:nth-child(3) { animation-delay: 0.4s; }
+      &:nth-child(1) {
+        animation-delay: 0s;
+      }
+      &:nth-child(2) {
+        animation-delay: 0.2s;
+      }
+      &:nth-child(3) {
+        animation-delay: 0.4s;
+      }
     }
   }
 }
 
 @keyframes typing-bounce {
-  0%, 80%, 100% {
+  0%,
+  80%,
+  100% {
     transform: scale(0.6);
     opacity: 0.4;
   }

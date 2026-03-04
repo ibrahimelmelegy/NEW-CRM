@@ -1,3 +1,4 @@
+/* eslint-disable require-await */
 import { useApiFetch } from './useApiFetch';
 
 // ZATCA Invoice Types

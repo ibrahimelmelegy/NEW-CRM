@@ -147,6 +147,7 @@ div(class="animate-fade-in")
 </template>
 
 <script setup lang="ts">
+/* eslint-disable require-await */
 import { ElMessage, ElNotification, ElMessageBox } from 'element-plus';
 import { Plus } from '@element-plus/icons-vue';
 import { computed, ref, watch, unref, shallowRef, isRef, onMounted, onBeforeMount } from 'vue';
@@ -360,10 +361,11 @@ function handleRowClick(val: any) {
   router.push(`/sales/leads/${val.id}`);
 }
 
-const mappedUsers = usersResponse?.body?.docs?.map((e: any) => ({
-  label: e.name,
-  value: e.id
-})) || [];
+const mappedUsers =
+  usersResponse?.body?.docs?.map((e: any) => ({
+    label: e.name,
+    value: e.id
+  })) || [];
 
 const filterOptions = computed(() => [
   {
@@ -504,9 +506,7 @@ function getSwipeRightActions(lead: any) {
 }
 
 function getSwipeLeftActions(lead: any) {
-  const actions = [
-    { name: 'view', label: t('leads.view'), icon: 'ph:eye-bold', color: '#7849FF' }
-  ];
+  const actions = [{ name: 'view', label: t('leads.view'), icon: 'ph:eye-bold', color: '#7849FF' }];
   if (hasPermission('EDIT_LEADS')) {
     actions.push({ name: 'edit', label: t('leads.edit'), icon: 'ph:pencil-simple-bold', color: '#F59E0B' });
   }
@@ -576,11 +576,11 @@ async function confirmDelete() {
 async function handleBulkDelete() {
   if (!selectedRows.value.length) return;
   try {
-    await ElMessageBox.confirm(
-      t('leads.confirmBulkDelete', { count: selectedRows.value.length }),
-      t('common.warning'),
-      { type: 'warning', confirmButtonText: t('common.delete'), cancelButtonText: t('common.cancel') }
-    );
+    await ElMessageBox.confirm(t('leads.confirmBulkDelete', { count: selectedRows.value.length }), t('common.warning'), {
+      type: 'warning',
+      confirmButtonText: t('common.delete'),
+      cancelButtonText: t('common.cancel')
+    });
     loading.value = true;
     for (const row of selectedRows.value) {
       await deleteLead(row.id);

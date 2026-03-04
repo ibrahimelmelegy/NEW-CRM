@@ -75,7 +75,7 @@ const props = defineProps({
 });
 
 async function exportToPDF() {
-  const [{ default: jsPDF }, { default: autoTable }] = await Promise.all([import('jspdf'), import('jspdf-autotable')]);
+  const [{ default: JsPDF }, { default: autoTable }] = await Promise.all([import('jspdf'), import('jspdf-autotable')]);
   try {
     // Helper function to check if we need a new page
     const checkNewPage = (doc: any, y: number, minSpace: number = 40) => {
@@ -85,7 +85,7 @@ async function exportToPDF() {
       }
       return y;
     };
-    const doc = new jsPDF();
+    const doc = new JsPDF();
 
     // Title (centered)
     doc.setFontSize(20);

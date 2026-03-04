@@ -81,7 +81,7 @@
   Transition(name="expand")
     .smart-table-filters(v-if="showFilters")
       SmartTableFilterBuilder(
-        :columns="columns"
+        :columns="displayColumns"
         :filters="filters"
         @apply-filters="applyFilter"
         @clear-filters="clearFilters"
@@ -97,7 +97,7 @@
     SmartTableViewsTableView(
       v-if="currentView === 'table'"
       :data="processedData"
-      :columns="columns"
+      :columns="displayColumns"
       :sort="sort"
       @sort-change="setSort"
       @selection-change="setSelectedRows"
@@ -110,7 +110,7 @@
     SmartTableViewsKanbanView(
       v-if="currentView === 'kanban'"
       :data="processedData"
-      :columns="columns"
+      :columns="displayColumns"
       :groupByField="groupByField"
       :aggregateField="aggregateField"
       @card-move="(payload) => $emit('card-move', payload)"
@@ -121,7 +121,7 @@
     SmartTableViewsCalendarView(
       v-if="currentView === 'calendar'"
       :data="processedData"
-      :columns="columns"
+      :columns="displayColumns"
       :dateField="dateField"
       @row-click="(row) => $emit('row-click', row)"
       @date-select="(date) => $emit('date-select', date)"
@@ -131,7 +131,7 @@
     SmartTableViewsGalleryView(
       v-if="currentView === 'gallery'"
       :data="processedData"
-      :columns="columns"
+      :columns="displayColumns"
       @row-click="(row) => $emit('row-click', row)"
     )
 
@@ -161,7 +161,7 @@
   //- Column manager drawer
   SmartTableColumnManager(
     v-model="showColumnManager"
-    :columns="columns"
+    :columns="displayColumns"
     @update:columns="updateColumns"
     @reset="resetColumns"
   )
@@ -313,7 +313,7 @@ const processedData = computed(() => {
 });
 
 // Columns pass-through: use managed columns
-const columns = computed(() => smartColumns.value);
+const displayColumns = computed(() => smartColumns.value);
 
 // Methods
 const setSort = (newSort: any) => {

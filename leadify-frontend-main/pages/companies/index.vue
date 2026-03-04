@@ -345,7 +345,7 @@
 import { ref, reactive, onMounted, computed, nextTick } from 'vue';
 import { useI18n } from 'vue-i18n';
 import { ElMessage, ElMessageBox } from 'element-plus';
-import * as echarts from 'echarts';
+import * as echarts from 'echarts/core';
 
 definePageMeta({});
 
@@ -410,7 +410,7 @@ const revenueChartRef = ref<HTMLElement | null>(null);
 let revenueChart: echarts.ECharts | null = null;
 
 // Computed properties for i18n
-const dialogTitle = computed(() => editMode.value ? $t('common.edit') : $t('companies.addCompany'));
+const dialogTitle = computed(() => (editMode.value ? $t('common.edit') : $t('companies.addCompany')));
 const emptyText = computed(() => $t('companies.noCompanies'));
 const labelCompany = computed(() => $t('companies.company'));
 const labelWebsite = computed(() => $t('companies.website'));
@@ -754,11 +754,7 @@ async function saveNote() {
 
   savingNote.value = true;
   try {
-    const { body, success } = await useApiFetch(
-      `client/${selectedCompany.value.id}/notes`,
-      'POST',
-      { content: noteForm.content }
-    );
+    const { body, success } = await useApiFetch(`client/${selectedCompany.value.id}/notes`, 'POST', { content: noteForm.content });
     if (success && body) {
       companyNotes.value.unshift(body);
       noteForm.content = '';

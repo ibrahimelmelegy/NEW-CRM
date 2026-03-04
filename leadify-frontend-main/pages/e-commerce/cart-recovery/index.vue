@@ -425,7 +425,7 @@
 
 <script setup lang="ts">
 import { ref, computed } from 'vue';
-import { graphic } from 'echarts';
+import { graphic } from 'echarts/core';
 import VChart from 'vue-echarts';
 import { ElMessage, ElMessageBox } from 'element-plus';
 
@@ -466,10 +466,10 @@ const abandonedCarts = ref([
     customerName: 'James Rodriguez',
     customerEmail: 'j.rodriguez@techcorp.io',
     items: [
-      { name: 'Ergonomic Office Chair Deluxe', quantity: 1, price: 459.00 },
-      { name: 'Standing Desk Converter', quantity: 1, price: 289.00 }
+      { name: 'Ergonomic Office Chair Deluxe', quantity: 1, price: 459.0 },
+      { name: 'Standing Desk Converter', quantity: 1, price: 289.0 }
     ],
-    cartValue: 748.00,
+    cartValue: 748.0,
     abandonedAt: new Date(Date.now() - 5 * 60 * 60 * 1000).toISOString(),
     status: 'Email Sent'
   },
@@ -825,9 +825,7 @@ const kpiCards = computed(() => {
   const totalCarts = abandonedCarts.value.length;
   const recoveryRate = totalCarts > 0 ? Math.round((recoveredCarts / totalCarts) * 100) : 0;
   const totalRecovered = weeklyRevenueData.value.reduce((s, w) => s + w.recovered, 0);
-  const avgCartVal = totalCarts > 0
-    ? Math.round(abandonedCarts.value.reduce((s, c) => s + c.cartValue, 0) / totalCarts)
-    : 0;
+  const avgCartVal = totalCarts > 0 ? Math.round(abandonedCarts.value.reduce((s, c) => s + c.cartValue, 0) / totalCarts) : 0;
 
   return [
     {
@@ -866,10 +864,7 @@ const filteredAbandonedCarts = computed(() => {
   let carts = abandonedCarts.value;
   if (cartSearch.value.trim()) {
     const q = cartSearch.value.toLowerCase();
-    carts = carts.filter(c =>
-      c.customerName.toLowerCase().includes(q) ||
-      c.customerEmail.toLowerCase().includes(q)
-    );
+    carts = carts.filter(c => c.customerName.toLowerCase().includes(q) || c.customerEmail.toLowerCase().includes(q));
   }
   if (cartStatusFilter.value) {
     carts = carts.filter(c => c.status === cartStatusFilter.value);
@@ -1079,7 +1074,7 @@ const revenueBarChartOption = computed(() => {
       splitLine: { lineStyle: { type: 'dashed', color: 'rgba(255,255,255,0.05)' } },
       axisLabel: {
         color: '#64748B',
-        formatter: (v: number) => v >= 1000 ? `$${(v / 1000).toFixed(0)}K` : `$${v}`
+        formatter: (v: number) => (v >= 1000 ? `$${(v / 1000).toFixed(0)}K` : `$${v}`)
       }
     },
     series: [
@@ -1180,9 +1175,7 @@ const recoveryRateChartOption = computed(() => {
 function getInitials(name: string): string {
   if (!name) return '??';
   const parts = name.split(' ');
-  return parts.length >= 2
-    ? (parts[0]![0]! + parts[parts.length - 1]![0]!).toUpperCase()
-    : name.substring(0, 2).toUpperCase();
+  return parts.length >= 2 ? (parts[0]![0]! + parts[parts.length - 1]![0]!).toUpperCase() : name.substring(0, 2).toUpperCase();
 }
 
 function truncateText(text: string, maxLen: number): string {
@@ -1207,10 +1200,10 @@ function getRelativeTime(dateStr: string): string {
 
 function getCartStatusType(status: string): string {
   const map: Record<string, string> = {
-    'Pending': 'warning',
+    Pending: 'warning',
     'Email Sent': '',
-    'Recovered': 'success',
-    'Lost': 'danger'
+    Recovered: 'success',
+    Lost: 'danger'
   };
   return map[status] || 'info';
 }
@@ -1244,21 +1237,25 @@ function bulkRecover() {
     ElMessage.warning(t('cartRecovery.noEligibleCarts'));
     return;
   }
-  eligible.forEach(c => { c.status = 'Email Sent'; });
+  eligible.forEach(c => {
+    c.status = 'Email Sent';
+  });
   ElMessage.success(t('cartRecovery.bulkEmailSent', { count: eligible.length }));
   selectedCarts.value = [];
 }
 
 function bulkMarkLost() {
-  ElMessageBox.confirm(
-    t('cartRecovery.confirmMarkLost', { count: selectedCarts.value.length }),
-    t('cartRecovery.warning'),
-    { type: 'warning' }
-  ).then(() => {
-    selectedCarts.value.forEach(c => { c.status = 'Lost'; });
-    ElMessage.success(t('cartRecovery.markedAsLost'));
-    selectedCarts.value = [];
-  }).catch(() => { /* cancelled */ });
+  ElMessageBox.confirm(t('cartRecovery.confirmMarkLost', { count: selectedCarts.value.length }), t('cartRecovery.warning'), { type: 'warning' })
+    .then(() => {
+      selectedCarts.value.forEach(c => {
+        c.status = 'Lost';
+      });
+      ElMessage.success(t('cartRecovery.markedAsLost'));
+      selectedCarts.value = [];
+    })
+    .catch(() => {
+      /* cancelled */
+    });
 }
 
 function viewCartDetail(cart: any) {
@@ -1409,7 +1406,9 @@ function refreshData() {
   justify-content: center;
   flex-shrink: 0;
   z-index: 2;
-  transition: transform 0.2s ease, box-shadow 0.2s ease;
+  transition:
+    transform 0.2s ease,
+    box-shadow 0.2s ease;
 
   &:hover {
     transform: scale(1.1);

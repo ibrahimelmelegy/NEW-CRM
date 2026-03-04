@@ -196,7 +196,11 @@ async function handleSave() {
     }
 
     if (res.success) {
-      ElNotification({ type: 'success', title: t('common.success'), message: editingId.value ? t('hr.payroll.structureUpdated') : t('hr.payroll.structureCreated') });
+      ElNotification({
+        type: 'success',
+        title: t('common.success'),
+        message: editingId.value ? t('hr.payroll.structureUpdated') : t('hr.payroll.structureCreated')
+      });
       dialogVisible.value = false;
       result.value = await fetchSalaryStructures();
     } else {

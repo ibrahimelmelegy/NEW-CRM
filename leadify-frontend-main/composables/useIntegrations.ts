@@ -1,3 +1,4 @@
+/* eslint-disable no-use-before-define */
 import { ref, computed } from 'vue';
 import { ElNotification } from 'element-plus';
 import { useApiFetch } from './useApiFetch';

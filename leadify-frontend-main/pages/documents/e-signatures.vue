@@ -280,7 +280,7 @@ const avgSignTime = computed(() => {
     if (signedRecipients.length > 0) {
       // Use the last signer's time
       const lastSignedAt = Math.max(...signedRecipients.map((r: any) => new Date(r.signedAt).getTime()));
-      totalMs += (lastSignedAt - sentTime);
+      totalMs += lastSignedAt - sentTime;
       count++;
     }
   }

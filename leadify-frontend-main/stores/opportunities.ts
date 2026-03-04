@@ -48,16 +48,15 @@ export const useOpportunityStore = defineStore('opportunities', {
 
       try {
         const query = params
-          ? '?' + new URLSearchParams(
+          ? '?' +
+            new URLSearchParams(
               Object.entries(params)
                 .filter(([, v]) => v !== undefined && v !== '')
                 .map(([k, v]) => [k, String(v)])
             ).toString()
           : '';
 
-        const response: any = await useApiFetch(
-          `opportunity${query}`
-        );
+        const response: any = await useApiFetch(`opportunity${query}`);
 
         if (response.success && response.body) {
           this.opportunities = response.body.docs || [];
@@ -102,11 +101,7 @@ export const useOpportunityStore = defineStore('opportunities', {
       this.error = null;
 
       try {
-        const response: any = await useApiFetch(
-          'opportunity',
-          'POST',
-          data as Record<string, unknown>
-        );
+        const response: any = await useApiFetch('opportunity', 'POST', data as Record<string, unknown>);
 
         if (response.success && response.body) {
           this.opportunities.unshift(response.body);
@@ -130,14 +125,10 @@ export const useOpportunityStore = defineStore('opportunities', {
       this.error = null;
 
       try {
-        const response: any = await useApiFetch(
-          `opportunity/${id}`,
-          'PUT',
-          data as Record<string, unknown>
-        );
+        const response: any = await useApiFetch(`opportunity/${id}`, 'PUT', data as Record<string, unknown>);
 
         if (response.success && response.body) {
-          const index = this.opportunities.findIndex((o) => o.id === id);
+          const index = this.opportunities.findIndex(o => o.id === id);
           if (index !== -1) {
             this.opportunities[index] = response.body;
           }

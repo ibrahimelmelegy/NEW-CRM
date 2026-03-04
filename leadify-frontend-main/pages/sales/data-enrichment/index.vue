@@ -510,7 +510,7 @@ const kpi = reactive({
   enrichedPercent: 0,
   completenessScore: 0,
   missingFieldsCount: 0,
-  lastRunFormatted: '--',
+  lastRunFormatted: '--'
 });
 
 // ─── Contacts ────────────────────────────────────────
@@ -521,12 +521,12 @@ const scoringWeights = reactive({
   behavioral: 20,
   demographic: 30,
   engagement: 30,
-  firmographic: 20,
+  firmographic: 20
 });
 
 const thresholds = reactive({
   hot: 80,
-  warm: 50,
+  warm: 50
 });
 
 // ─── Auto Rules ──────────────────────────────────────
@@ -534,40 +534,33 @@ const autoRules = reactive({
   enrichNewLeads: true,
   enrichOnImport: true,
   weeklyRefresh: false,
-  enrichFromSignatures: false,
+  enrichFromSignatures: false
 });
 
 // ─── Enrichment Log ──────────────────────────────────
 const enrichmentLog = ref<LogEntry[]>([]);
 
 // ─── Computed ────────────────────────────────────────
-const totalWeight = computed(() =>
-  scoringWeights.behavioral + scoringWeights.demographic + scoringWeights.engagement + scoringWeights.firmographic
-);
+const totalWeight = computed(() => scoringWeights.behavioral + scoringWeights.demographic + scoringWeights.engagement + scoringWeights.firmographic);
 
 const filteredContacts = computed(() => {
   let result = contacts.value;
   if (searchQuery.value) {
     const q = searchQuery.value.toLowerCase();
-    result = result.filter(
-      (c) =>
-        c.name.toLowerCase().includes(q) ||
-        c.email?.toLowerCase().includes(q) ||
-        c.company?.toLowerCase().includes(q)
-    );
+    result = result.filter(c => c.name.toLowerCase().includes(q) || c.email?.toLowerCase().includes(q) || c.company?.toLowerCase().includes(q));
   }
-  if (qualityFilter.value === 'high') result = result.filter((c) => c.score >= 80);
-  else if (qualityFilter.value === 'medium') result = result.filter((c) => c.score >= 50 && c.score < 80);
-  else if (qualityFilter.value === 'low') result = result.filter((c) => c.score < 50);
+  if (qualityFilter.value === 'high') result = result.filter(c => c.score >= 80);
+  else if (qualityFilter.value === 'medium') result = result.filter(c => c.score >= 50 && c.score < 80);
+  else if (qualityFilter.value === 'low') result = result.filter(c => c.score < 50);
   return result;
 });
 
 const scoreDistributionSummary = computed(() => {
   const all = contacts.value;
   return {
-    hot: all.filter((c) => c.score >= thresholds.hot).length,
-    warm: all.filter((c) => c.score >= thresholds.warm && c.score < thresholds.hot).length,
-    cold: all.filter((c) => c.score < thresholds.warm).length,
+    hot: all.filter(c => c.score >= thresholds.hot).length,
+    warm: all.filter(c => c.score >= thresholds.warm && c.score < thresholds.hot).length,
+    cold: all.filter(c => c.score < thresholds.warm).length
   };
 });
 
@@ -582,12 +575,12 @@ const distributionChartOption = computed(() => {
     { label: '60-69', min: 60, max: 70 },
     { label: '70-79', min: 70, max: 80 },
     { label: '80-89', min: 80, max: 90 },
-    { label: '90-100', min: 90, max: 101 },
+    { label: '90-100', min: 90, max: 101 }
   ];
 
-  const data = buckets.map((b) => contacts.value.filter((c) => c.score >= b.min && c.score < b.max).length);
+  const data = buckets.map(b => contacts.value.filter(c => c.score >= b.min && c.score < b.max).length);
 
-  const colors = buckets.map((b) => {
+  const colors = buckets.map(b => {
     if (b.min >= thresholds.hot) return '#ef4444';
     if (b.min >= thresholds.warm) return '#f59e0b';
     return '#3b82f6';
@@ -598,25 +591,25 @@ const distributionChartOption = computed(() => {
     grid: { left: '3%', right: '4%', bottom: '3%', containLabel: true },
     xAxis: {
       type: 'category',
-      data: buckets.map((b) => b.label),
+      data: buckets.map(b => b.label),
       axisLabel: { color: '#94A3B8' },
-      axisLine: { lineStyle: { color: 'rgba(148,163,184,0.2)' } },
+      axisLine: { lineStyle: { color: 'rgba(148,163,184,0.2)' } }
     },
     yAxis: {
       type: 'value',
       axisLabel: { color: '#94A3B8' },
-      splitLine: { lineStyle: { color: 'rgba(148,163,184,0.15)', type: 'dashed' } },
+      splitLine: { lineStyle: { color: 'rgba(148,163,184,0.15)', type: 'dashed' } }
     },
     series: [
       {
         type: 'bar',
         data: data.map((val, i) => ({
           value: val,
-          itemStyle: { color: colors[i], borderRadius: [6, 6, 0, 0] },
+          itemStyle: { color: colors[i], borderRadius: [6, 6, 0, 0] }
         })),
-        barWidth: '60%',
-      },
-    ],
+        barWidth: '60%'
+      }
+    ]
   };
 });
 
@@ -638,7 +631,7 @@ function getInitials(name: string): string {
   if (!name) return '?';
   return name
     .split(' ')
-    .map((w) => w[0])
+    .map(w => w[0])
     .join('')
     .toUpperCase()
     .slice(0, 2);
@@ -659,7 +652,7 @@ function getLogEntryColor(type: string): string {
     auto: '#7849ff',
     manual: '#3b82f6',
     bulk: '#22c55e',
-    import: '#f59e0b',
+    import: '#f59e0b'
   };
   return map[type] || '#7849ff';
 }
@@ -669,14 +662,14 @@ function getLogEntryIcon(type: string): string {
     auto: 'ph:lightning-bold',
     manual: 'ph:user-bold',
     bulk: 'ph:users-bold',
-    import: 'ph:upload-bold',
+    import: 'ph:upload-bold'
   };
   return map[type] || 'ph:info-bold';
 }
 
 function rebalanceWeights(changed: keyof typeof scoringWeights) {
   const keys = ['behavioral', 'demographic', 'engagement', 'firmographic'] as const;
-  const others = keys.filter((k) => k !== changed);
+  const others = keys.filter(k => k !== changed);
   const remaining = 100 - scoringWeights[changed];
   const othersTotal = others.reduce((sum, k) => sum + scoringWeights[k], 0);
 
@@ -686,7 +679,7 @@ function rebalanceWeights(changed: keyof typeof scoringWeights) {
       scoringWeights[k] = i === others.length - 1 ? remaining - each * (others.length - 1) : each;
     });
   } else {
-    others.forEach((k) => {
+    others.forEach(k => {
       scoringWeights[k] = Math.round((scoringWeights[k] / othersTotal) * remaining);
     });
     // Fix rounding
@@ -701,10 +694,7 @@ function rebalanceWeights(changed: keyof typeof scoringWeights) {
 async function loadDashboard() {
   loading.value = true;
   try {
-    const [kpiRes, contactsRes] = await Promise.all([
-      useApiFetch('data-enrichment/kpi'),
-      useApiFetch('data-enrichment/contacts?page=1&limit=20'),
-    ]);
+    const [kpiRes, contactsRes] = await Promise.all([useApiFetch('data-enrichment/kpi'), useApiFetch('data-enrichment/contacts?page=1&limit=20')]);
 
     if (kpiRes?.body) {
       Object.assign(kpi, kpiRes.body);
@@ -715,7 +705,7 @@ async function loadDashboard() {
         enrichedPercent: 78,
         completenessScore: 72,
         missingFieldsCount: 384,
-        lastRunFormatted: '2 hours ago',
+        lastRunFormatted: '2 hours ago'
       });
     }
 
@@ -734,10 +724,26 @@ async function loadDashboard() {
 
 function loadDemoContacts() {
   const demoNames = [
-    'Ahmed Al-Rashid', 'Sarah Johnson', 'Mohammed Ali', 'Emily Chen', 'Khalid Ibrahim',
-    'Lisa Martinez', 'Omar Farouk', 'Jessica Williams', 'Youssef Hassan', 'Anna Schmidt',
-    'Fatima Al-Sayed', 'David Brown', 'Nour Abdallah', 'Michael O\'Brien', 'Layla Mahmoud',
-    'Robert Taylor', 'Hana Yuki', 'James Wilson', 'Maryam Hosseini', 'Thomas Anderson',
+    'Ahmed Al-Rashid',
+    'Sarah Johnson',
+    'Mohammed Ali',
+    'Emily Chen',
+    'Khalid Ibrahim',
+    'Lisa Martinez',
+    'Omar Farouk',
+    'Jessica Williams',
+    'Youssef Hassan',
+    'Anna Schmidt',
+    'Fatima Al-Sayed',
+    'David Brown',
+    'Nour Abdallah',
+    "Michael O'Brien",
+    'Layla Mahmoud',
+    'Robert Taylor',
+    'Hana Yuki',
+    'James Wilson',
+    'Maryam Hosseini',
+    'Thomas Anderson'
   ];
   const industries = ['Technology', 'Finance', 'Healthcare', 'Manufacturing', 'Retail', 'Education', '', ''];
   const locations = ['Dubai, UAE', 'New York, US', 'London, UK', 'Riyadh, KSA', 'Berlin, DE', '', ''];
@@ -765,7 +771,7 @@ function loadDemoContacts() {
       industry: hasIndustry ? industries[i % industries.length] || '' : '',
       location: hasLocation ? locations[i % locations.length] || '' : '',
       score,
-      missingFields: missing,
+      missingFields: missing
     };
   });
   totalContacts.value = contacts.value.length;
@@ -779,7 +785,7 @@ async function enrichContact(contact: Contact) {
       Object.assign(contact, res.body);
     } else {
       // Demo enrichment
-      await new Promise((r) => setTimeout(r, 1200));
+      await new Promise(resolve => setTimeout(resolve, 1200));
       contact.score = Math.min(100, contact.score + Math.floor(Math.random() * 25 + 10));
       contact.missingFields = contact.missingFields.slice(1);
       if (!contact.industry) contact.industry = 'Technology';
@@ -790,7 +796,7 @@ async function enrichContact(contact: Contact) {
     ElNotification({
       title: t('dataEnrichment.enrichSuccess'),
       message: `${contact.name} ${t('dataEnrichment.enrichedSuccessfully')}`,
-      type: 'success',
+      type: 'success'
     });
   } catch {
     ElNotification({ title: t('common.error'), message: t('dataEnrichment.enrichError'), type: 'error' });
@@ -802,19 +808,19 @@ async function enrichContact(contact: Contact) {
 async function handleBulkEnrich() {
   enrichingAll.value = true;
   try {
-    const ids = selectedContacts.value.map((c) => c.id);
+    const ids = selectedContacts.value.map(c => c.id);
     await useApiFetch('data-enrichment/bulk-enrich', 'POST', { ids });
     ElNotification({
       title: t('dataEnrichment.bulkEnrichSuccess'),
       message: `${ids.length} ${t('dataEnrichment.contactsEnriched')}`,
-      type: 'success',
+      type: 'success'
     });
     await loadDashboard();
   } catch {
     // Demo fallback
-    await new Promise((r) => setTimeout(r, 2000));
-    selectedContacts.value.forEach((c) => {
-      const contact = contacts.value.find((x) => x.id === c.id);
+    await new Promise(resolve => setTimeout(resolve, 2000));
+    selectedContacts.value.forEach(c => {
+      const contact = contacts.value.find(x => x.id === c.id);
       if (contact) {
         contact.score = Math.min(100, contact.score + 15);
         contact.missingFields = contact.missingFields.slice(1);
@@ -823,7 +829,7 @@ async function handleBulkEnrich() {
     ElNotification({
       title: t('dataEnrichment.bulkEnrichSuccess'),
       message: `${selectedContacts.value.length} ${t('dataEnrichment.contactsEnriched')}`,
-      type: 'success',
+      type: 'success'
     });
   } finally {
     enrichingAll.value = false;
@@ -837,7 +843,7 @@ async function runFullEnrichment() {
     ElNotification({ title: t('dataEnrichment.enrichmentStarted'), type: 'success' });
     await loadDashboard();
   } catch {
-    await new Promise((r) => setTimeout(r, 2000));
+    await new Promise(resolve => setTimeout(resolve, 2000));
     kpi.enrichedCount += Math.floor(Math.random() * 20 + 5);
     kpi.completenessScore = Math.min(100, kpi.completenessScore + 3);
     kpi.missingFieldsCount = Math.max(0, kpi.missingFieldsCount - 20);
@@ -871,50 +877,50 @@ function loadDemoLog() {
       message: t('dataEnrichment.log.autoEnriched'),
       timestamp: t('dataEnrichment.log.twoHoursAgo'),
       source: t('dataEnrichment.log.domainLookupApi'),
-      fieldsUpdated: [t('dataEnrichment.company'), t('dataEnrichment.industry'), t('dataEnrichment.log.size'), t('dataEnrichment.location')],
+      fieldsUpdated: [t('dataEnrichment.company'), t('dataEnrichment.industry'), t('dataEnrichment.log.size'), t('dataEnrichment.location')]
     },
     {
       type: 'manual',
       message: t('dataEnrichment.log.manualEnrichment'),
       timestamp: t('dataEnrichment.log.fiveHoursAgo'),
       source: t('dataEnrichment.log.manualEntry'),
-      fieldsUpdated: [t('dataEnrichment.industry'), t('dataEnrichment.log.companySize')],
+      fieldsUpdated: [t('dataEnrichment.industry'), t('dataEnrichment.log.companySize')]
     },
     {
       type: 'bulk',
       message: t('dataEnrichment.log.bulkEnriched'),
       timestamp: t('dataEnrichment.log.oneDayAgo'),
       source: t('dataEnrichment.log.csvImportEnrichment'),
-      fieldsUpdated: [t('dataEnrichment.email'), t('dataEnrichment.phone'), t('dataEnrichment.log.linkedin'), t('dataEnrichment.jobTitle')],
+      fieldsUpdated: [t('dataEnrichment.email'), t('dataEnrichment.phone'), t('dataEnrichment.log.linkedin'), t('dataEnrichment.jobTitle')]
     },
     {
       type: 'auto',
       message: t('dataEnrichment.log.weeklyRefreshCompleted'),
       timestamp: t('dataEnrichment.log.threeDaysAgo'),
       source: t('dataEnrichment.log.scheduledRefresh'),
-      fieldsUpdated: [t('dataEnrichment.log.revenue'), t('dataEnrichment.log.employeeCount'), t('dataEnrichment.techStack')],
+      fieldsUpdated: [t('dataEnrichment.log.revenue'), t('dataEnrichment.log.employeeCount'), t('dataEnrichment.techStack')]
     },
     {
       type: 'import',
       message: t('dataEnrichment.log.importedEnriched'),
       timestamp: t('dataEnrichment.log.fiveDaysAgo'),
       source: t('dataEnrichment.log.webFormIntegration'),
-      fieldsUpdated: [t('dataEnrichment.company'), t('dataEnrichment.industry'), t('dataEnrichment.phone'), t('dataEnrichment.location')],
+      fieldsUpdated: [t('dataEnrichment.company'), t('dataEnrichment.industry'), t('dataEnrichment.phone'), t('dataEnrichment.location')]
     },
     {
       type: 'manual',
       message: t('dataEnrichment.log.manualVerification'),
       timestamp: t('dataEnrichment.log.oneWeekAgo'),
       source: t('dataEnrichment.log.manualVerificationSource'),
-      fieldsUpdated: [t('dataEnrichment.log.emailVerified'), t('dataEnrichment.log.linkedin'), t('dataEnrichment.log.twitter')],
+      fieldsUpdated: [t('dataEnrichment.log.emailVerified'), t('dataEnrichment.log.linkedin'), t('dataEnrichment.log.twitter')]
     },
     {
       type: 'auto',
       message: t('dataEnrichment.log.emailSignatureExtraction'),
       timestamp: t('dataEnrichment.log.oneWeekAgo'),
       source: t('dataEnrichment.log.emailSignatureParser'),
-      fieldsUpdated: [t('dataEnrichment.phone'), t('dataEnrichment.jobTitle'), t('dataEnrichment.company')],
-    },
+      fieldsUpdated: [t('dataEnrichment.phone'), t('dataEnrichment.jobTitle'), t('dataEnrichment.company')]
+    }
   ];
 }
 
@@ -924,7 +930,7 @@ async function saveAutoRules() {
     await useApiFetch('data-enrichment/rules', 'PUT', { ...autoRules });
     ElNotification({ title: t('dataEnrichment.rulesSaved'), type: 'success' });
   } catch {
-    await new Promise((r) => setTimeout(r, 800));
+    await new Promise(resolve => setTimeout(resolve, 800));
     ElNotification({ title: t('dataEnrichment.rulesSaved'), type: 'success' });
   } finally {
     savingRules.value = false;

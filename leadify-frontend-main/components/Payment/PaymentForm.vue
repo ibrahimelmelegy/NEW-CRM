@@ -95,6 +95,7 @@ el-form(ref="formRef" :model="form" :rules="rules" label-position="top" size="la
 </template>
 
 <script setup lang="ts">
+/* eslint-disable require-await */
 import { paymentMethodOptions } from '~/composables/usePayments';
 import { fetchInvoices, type InvoiceItem } from '~/composables/useInvoices';
 

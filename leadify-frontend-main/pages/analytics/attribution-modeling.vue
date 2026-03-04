@@ -335,32 +335,57 @@ const attributionModels = computed(() => [
   { value: 'last_touch', label: t('attributionModeling.lastTouch') },
   { value: 'linear', label: t('attributionModeling.linear') },
   { value: 'time_decay', label: t('attributionModeling.timeDecay') },
-  { value: 'u_shaped', label: t('attributionModeling.uShaped') },
+  { value: 'u_shaped', label: t('attributionModeling.uShaped') }
 ]);
 
 // ─── Model Weight Multipliers ───────────────────────────────
 // Each model emphasizes different channels differently
 const modelWeights: Record<string, Record<string, number>> = {
   first_touch: {
-    'Paid Search': 1.4, 'Social Media': 1.3, 'Organic Search': 1.2,
-    'Email': 0.7, 'Referral': 0.9, 'Direct': 0.8, 'Events': 1.1,
+    'Paid Search': 1.4,
+    'Social Media': 1.3,
+    'Organic Search': 1.2,
+    Email: 0.7,
+    Referral: 0.9,
+    Direct: 0.8,
+    Events: 1.1
   },
   last_touch: {
-    'Paid Search': 0.9, 'Social Media': 0.7, 'Organic Search': 0.8,
-    'Email': 1.4, 'Referral': 1.3, 'Direct': 1.5, 'Events': 0.8,
+    'Paid Search': 0.9,
+    'Social Media': 0.7,
+    'Organic Search': 0.8,
+    Email: 1.4,
+    Referral: 1.3,
+    Direct: 1.5,
+    Events: 0.8
   },
   linear: {
-    'Paid Search': 1.0, 'Social Media': 1.0, 'Organic Search': 1.0,
-    'Email': 1.0, 'Referral': 1.0, 'Direct': 1.0, 'Events': 1.0,
+    'Paid Search': 1.0,
+    'Social Media': 1.0,
+    'Organic Search': 1.0,
+    Email: 1.0,
+    Referral: 1.0,
+    Direct: 1.0,
+    Events: 1.0
   },
   time_decay: {
-    'Paid Search': 0.85, 'Social Media': 0.75, 'Organic Search': 0.8,
-    'Email': 1.3, 'Referral': 1.2, 'Direct': 1.35, 'Events': 0.9,
+    'Paid Search': 0.85,
+    'Social Media': 0.75,
+    'Organic Search': 0.8,
+    Email: 1.3,
+    Referral: 1.2,
+    Direct: 1.35,
+    Events: 0.9
   },
   u_shaped: {
-    'Paid Search': 1.3, 'Social Media': 1.2, 'Organic Search': 0.8,
-    'Email': 1.25, 'Referral': 0.85, 'Direct': 1.3, 'Events': 0.7,
-  },
+    'Paid Search': 1.3,
+    'Social Media': 1.2,
+    'Organic Search': 0.8,
+    Email: 1.25,
+    Referral: 0.85,
+    Direct: 1.3,
+    Events: 0.7
+  }
 };
 
 // ─── Base Channel Data ──────────────────────────────────────
@@ -371,7 +396,7 @@ const mockBaseChannels = [
   { channel: 'Social Media', baseRevenue: 275000, deals: 41, conversionRate: 5.6, roi: 3.4, color: '#06b6d4' },
   { channel: 'Referral', baseRevenue: 246000, deals: 35, conversionRate: 14.8, roi: 9.2, color: '#f59e0b' },
   { channel: 'Direct', baseRevenue: 198000, deals: 29, conversionRate: 11.3, roi: 7.8, color: '#ec4899' },
-  { channel: 'Events', baseRevenue: 164000, deals: 22, conversionRate: 8.9, roi: 2.8, color: '#f97316' },
+  { channel: 'Events', baseRevenue: 164000, deals: 22, conversionRate: 8.9, roi: 2.8, color: '#f97316' }
 ];
 
 const baseChannels = ref<any[]>(mockBaseChannels);
@@ -386,29 +411,109 @@ const channelData = computed(() => {
       ...ch,
       revenue,
       conversionRate: Math.round(ch.conversionRate * weight * 10) / 10,
-      roi: Math.round(ch.roi * weight * 10) / 10,
+      roi: Math.round(ch.roi * weight * 10) / 10
     };
   });
 
   const totalRevenue = channels.reduce((sum, ch) => sum + ch.revenue, 0);
   return channels.map(ch => ({
     ...ch,
-    sharePercent: totalRevenue > 0 ? Math.round((ch.revenue / totalRevenue) * 100) : 0,
+    sharePercent: totalRevenue > 0 ? Math.round((ch.revenue / totalRevenue) * 100) : 0
   }));
 });
 
 // ─── Base Campaign Data ─────────────────────────────────────
 const baseCampaigns = [
-  { name: 'Spring Product Launch 2026', status: 'Active', baseMultiTouch: 245000, baseFirstTouch: 180000, baseLastTouch: 210000, pipelineInfluence: 520000, touchpoints: 847 },
-  { name: 'Enterprise Outreach Q1', status: 'Active', baseMultiTouch: 198000, baseFirstTouch: 145000, baseLastTouch: 175000, pipelineInfluence: 430000, touchpoints: 623 },
-  { name: 'Webinar Series: AI in CRM', status: 'Active', baseMultiTouch: 172000, baseFirstTouch: 132000, baseLastTouch: 148000, pipelineInfluence: 380000, touchpoints: 512 },
-  { name: 'Partner Co-Marketing Drive', status: 'Active', baseMultiTouch: 156000, baseFirstTouch: 118000, baseLastTouch: 134000, pipelineInfluence: 340000, touchpoints: 445 },
-  { name: 'LinkedIn ABM Campaign', status: 'Active', baseMultiTouch: 134000, baseFirstTouch: 95000, baseLastTouch: 120000, pipelineInfluence: 295000, touchpoints: 378 },
-  { name: 'Email Nurture: Decision Makers', status: 'Completed', baseMultiTouch: 128000, baseFirstTouch: 82000, baseLastTouch: 145000, pipelineInfluence: 268000, touchpoints: 934 },
-  { name: 'Trade Show: TechSummit 2026', status: 'Completed', baseMultiTouch: 115000, baseFirstTouch: 142000, baseLastTouch: 78000, pipelineInfluence: 245000, touchpoints: 289 },
-  { name: 'Content Syndication Program', status: 'Active', baseMultiTouch: 98000, baseFirstTouch: 115000, baseLastTouch: 72000, pipelineInfluence: 210000, touchpoints: 567 },
-  { name: 'Retargeting: Website Visitors', status: 'Paused', baseMultiTouch: 87000, baseFirstTouch: 45000, baseLastTouch: 95000, pipelineInfluence: 185000, touchpoints: 1240 },
-  { name: 'Customer Referral Program', status: 'Active', baseMultiTouch: 76000, baseFirstTouch: 68000, baseLastTouch: 82000, pipelineInfluence: 160000, touchpoints: 198 },
+  {
+    name: 'Spring Product Launch 2026',
+    status: 'Active',
+    baseMultiTouch: 245000,
+    baseFirstTouch: 180000,
+    baseLastTouch: 210000,
+    pipelineInfluence: 520000,
+    touchpoints: 847
+  },
+  {
+    name: 'Enterprise Outreach Q1',
+    status: 'Active',
+    baseMultiTouch: 198000,
+    baseFirstTouch: 145000,
+    baseLastTouch: 175000,
+    pipelineInfluence: 430000,
+    touchpoints: 623
+  },
+  {
+    name: 'Webinar Series: AI in CRM',
+    status: 'Active',
+    baseMultiTouch: 172000,
+    baseFirstTouch: 132000,
+    baseLastTouch: 148000,
+    pipelineInfluence: 380000,
+    touchpoints: 512
+  },
+  {
+    name: 'Partner Co-Marketing Drive',
+    status: 'Active',
+    baseMultiTouch: 156000,
+    baseFirstTouch: 118000,
+    baseLastTouch: 134000,
+    pipelineInfluence: 340000,
+    touchpoints: 445
+  },
+  {
+    name: 'LinkedIn ABM Campaign',
+    status: 'Active',
+    baseMultiTouch: 134000,
+    baseFirstTouch: 95000,
+    baseLastTouch: 120000,
+    pipelineInfluence: 295000,
+    touchpoints: 378
+  },
+  {
+    name: 'Email Nurture: Decision Makers',
+    status: 'Completed',
+    baseMultiTouch: 128000,
+    baseFirstTouch: 82000,
+    baseLastTouch: 145000,
+    pipelineInfluence: 268000,
+    touchpoints: 934
+  },
+  {
+    name: 'Trade Show: TechSummit 2026',
+    status: 'Completed',
+    baseMultiTouch: 115000,
+    baseFirstTouch: 142000,
+    baseLastTouch: 78000,
+    pipelineInfluence: 245000,
+    touchpoints: 289
+  },
+  {
+    name: 'Content Syndication Program',
+    status: 'Active',
+    baseMultiTouch: 98000,
+    baseFirstTouch: 115000,
+    baseLastTouch: 72000,
+    pipelineInfluence: 210000,
+    touchpoints: 567
+  },
+  {
+    name: 'Retargeting: Website Visitors',
+    status: 'Paused',
+    baseMultiTouch: 87000,
+    baseFirstTouch: 45000,
+    baseLastTouch: 95000,
+    pipelineInfluence: 185000,
+    touchpoints: 1240
+  },
+  {
+    name: 'Customer Referral Program',
+    status: 'Active',
+    baseMultiTouch: 76000,
+    baseFirstTouch: 68000,
+    baseLastTouch: 82000,
+    pipelineInfluence: 160000,
+    touchpoints: 198
+  }
 ];
 
 // ─── Campaign model-adjusted multipliers ────────────────────
@@ -417,7 +522,7 @@ const campaignModelMultipliers: Record<string, { multi: number; first: number; l
   last_touch: { multi: 0.85, first: 0.7, last: 1.4 },
   linear: { multi: 1.0, first: 1.0, last: 1.0 },
   time_decay: { multi: 1.05, first: 0.8, last: 1.25 },
-  u_shaped: { multi: 1.1, first: 1.2, last: 1.2 },
+  u_shaped: { multi: 1.1, first: 1.2, last: 1.2 }
 };
 
 const campaignData = computed(() => {
@@ -426,7 +531,7 @@ const campaignData = computed(() => {
     ...c,
     multiTouchCredit: Math.round(c.baseMultiTouch * mult!.multi),
     firstTouchCredit: Math.round(c.baseFirstTouch * mult!.first),
-    lastTouchCredit: Math.round(c.baseLastTouch * mult!.last),
+    lastTouchCredit: Math.round(c.baseLastTouch * mult!.last)
   }));
 });
 
@@ -434,9 +539,8 @@ const campaignData = computed(() => {
 const kpiCards = computed(() => {
   const totalRevenue = channelData.value.reduce((sum, ch) => sum + ch.revenue, 0);
   const totalDeals = channelData.value.reduce((sum, ch) => sum + ch.deals, 0);
-  const avgConversion = channelData.value.length > 0
-    ? (channelData.value.reduce((sum, ch) => sum + ch.conversionRate, 0) / channelData.value.length)
-    : 0;
+  const avgConversion =
+    channelData.value.length > 0 ? channelData.value.reduce((sum, ch) => sum + ch.conversionRate, 0) / channelData.value.length : 0;
   const avgTouchpoints = 4.7;
 
   return [
@@ -448,7 +552,7 @@ const kpiCards = computed(() => {
       icon: 'ph:currency-dollar-bold',
       iconColor: '#22c55e',
       bgColor: 'rgba(34, 197, 94, 0.12)',
-      valueColor: '#22c55e',
+      valueColor: '#22c55e'
     },
     {
       label: t('attributionModeling.campaignsTracked'),
@@ -457,7 +561,7 @@ const kpiCards = computed(() => {
       changeColor: '#3b82f6',
       icon: 'ph:megaphone-bold',
       iconColor: '#3b82f6',
-      bgColor: 'rgba(59, 130, 246, 0.12)',
+      bgColor: 'rgba(59, 130, 246, 0.12)'
     },
     {
       label: t('attributionModeling.overallConversionRate'),
@@ -466,7 +570,7 @@ const kpiCards = computed(() => {
       changeColor: '#22c55e',
       icon: 'ph:chart-line-up-bold',
       iconColor: '#f59e0b',
-      bgColor: 'rgba(245, 158, 11, 0.12)',
+      bgColor: 'rgba(245, 158, 11, 0.12)'
     },
     {
       label: t('attributionModeling.avgTouchpointsPerDeal'),
@@ -475,8 +579,8 @@ const kpiCards = computed(() => {
       changeColor: '#22c55e',
       icon: 'ph:hand-tap-bold',
       iconColor: '#7849ff',
-      bgColor: 'rgba(120, 73, 255, 0.12)',
-    },
+      bgColor: 'rgba(120, 73, 255, 0.12)'
+    }
   ];
 });
 
@@ -489,7 +593,7 @@ const journeyStages = computed(() => {
     { key: 'interest', label: t('attributionModeling.interest'), count: 2156, color: '#3b82f6', avgDays: 8 },
     { key: 'consideration', label: t('attributionModeling.consideration'), count: 1284, color: '#06b6d4', avgDays: 14 },
     { key: 'decision', label: t('attributionModeling.decision'), count: 524, color: '#f59e0b', avgDays: 21 },
-    { key: 'purchase', label: t('attributionModeling.purchase'), count: 296, color: '#22c55e', avgDays: 32 },
+    { key: 'purchase', label: t('attributionModeling.purchase'), count: 296, color: '#22c55e', avgDays: 32 }
   ];
 
   const total = stages[0]!.count;
@@ -502,7 +606,7 @@ const journeyStages = computed(() => {
       percent,
       widthPercent: Math.max(percent, 12),
       dropOff,
-      gradient: `linear-gradient(135deg, ${stage.color}, ${stage.color}dd)`,
+      gradient: `linear-gradient(135deg, ${stage.color}, ${stage.color}dd)`
     };
   });
 });
@@ -513,7 +617,7 @@ const mockTopPaths = [
   { steps: ['Paid Search', 'Referral', 'Email', 'Direct'], revenue: 156000, conversions: 22 },
   { steps: ['Social Media', 'Email', 'Email', 'Direct'], revenue: 134000, conversions: 19 },
   { steps: ['Events', 'Email', 'Paid Search', 'Direct'], revenue: 112000, conversions: 15 },
-  { steps: ['Referral', 'Direct'], revenue: 98000, conversions: 14 },
+  { steps: ['Referral', 'Direct'], revenue: 98000, conversions: 14 }
 ];
 
 const topPaths = ref<any[]>([]);
@@ -526,7 +630,7 @@ const comparisonData = computed(() => [
   { channel: 'Social Media', color: '#06b6d4', firstTouch: 18, lastTouch: 8, linear: 13, timeDecay: 10, uShaped: 15 },
   { channel: 'Referral', color: '#f59e0b', firstTouch: 8, lastTouch: 16, linear: 12, timeDecay: 14, uShaped: 10 },
   { channel: 'Direct', color: '#ec4899', firstTouch: 5, lastTouch: 14, linear: 10, timeDecay: 12, uShaped: 11 },
-  { channel: 'Events', color: '#f97316', firstTouch: 7, lastTouch: 4, linear: 8, timeDecay: 6, uShaped: 6 },
+  { channel: 'Events', color: '#f97316', firstTouch: 7, lastTouch: 4, linear: 8, timeDecay: 6, uShaped: 6 }
 ]);
 
 // ─── Model Legend ───────────────────────────────────────────
@@ -535,7 +639,7 @@ const modelLegend = computed(() => [
   { key: 'last', name: t('attributionModeling.lastTouch'), color: '#3b82f6', description: t('attributionModeling.lastTouchDesc') },
   { key: 'linear', name: t('attributionModeling.linear'), color: '#06b6d4', description: t('attributionModeling.linearDesc') },
   { key: 'decay', name: t('attributionModeling.timeDecay'), color: '#f59e0b', description: t('attributionModeling.timeDecayDesc') },
-  { key: 'u', name: t('attributionModeling.uShaped'), color: '#22c55e', description: t('attributionModeling.uShapedDesc') },
+  { key: 'u', name: t('attributionModeling.uShaped'), color: '#22c55e', description: t('attributionModeling.uShapedDesc') }
 ]);
 
 // ─── Campaign Detail ────────────────────────────────────────
@@ -546,26 +650,33 @@ const campaignDetailKpis = computed(() => {
     { label: t('attributionModeling.multiTouchCredit'), value: formatCurrency(c.multiTouchCredit), color: '#7849ff' },
     { label: t('attributionModeling.firstTouchCredit'), value: formatCurrency(c.firstTouchCredit), color: '#3b82f6' },
     { label: t('attributionModeling.lastTouchCredit'), value: formatCurrency(c.lastTouchCredit), color: '#f59e0b' },
-    { label: t('attributionModeling.pipelineInfluence'), value: formatCurrency(c.pipelineInfluence), color: '#22c55e' },
+    { label: t('attributionModeling.pipelineInfluence'), value: formatCurrency(c.pipelineInfluence), color: '#22c55e' }
   ];
 });
 
 // ─── Campaign detail timelines and deals ────────────────────
 const campaignTimelines: Record<string, any[]> = {
   'Spring Product Launch 2026': [
-    { channel: 'Paid Search', date: 'Jan 15, 2026', action: 'Ad click: "New CRM Features 2026"', creditPercent: 25, revenue: 61250, color: '#7849ff' },
+    {
+      channel: 'Paid Search',
+      date: 'Jan 15, 2026',
+      action: 'Ad click: "New CRM Features 2026"',
+      creditPercent: 25,
+      revenue: 61250,
+      color: '#7849ff'
+    },
     { channel: 'Email', date: 'Jan 22, 2026', action: 'Opened launch announcement email', creditPercent: 15, revenue: 36750, color: '#3b82f6' },
     { channel: 'Organic Search', date: 'Feb 3, 2026', action: 'Blog visit: "Top CRM Trends"', creditPercent: 10, revenue: 24500, color: '#22c55e' },
     { channel: 'Email', date: 'Feb 10, 2026', action: 'Clicked demo CTA in nurture sequence', creditPercent: 20, revenue: 49000, color: '#3b82f6' },
-    { channel: 'Direct', date: 'Feb 18, 2026', action: 'Scheduled and attended demo', creditPercent: 30, revenue: 73500, color: '#ec4899' },
+    { channel: 'Direct', date: 'Feb 18, 2026', action: 'Scheduled and attended demo', creditPercent: 30, revenue: 73500, color: '#ec4899' }
   ],
   'Enterprise Outreach Q1': [
     { channel: 'Events', date: 'Jan 8, 2026', action: 'Attended virtual roundtable', creditPercent: 20, revenue: 39600, color: '#f97316' },
     { channel: 'Email', date: 'Jan 18, 2026', action: 'Follow-up email with case study', creditPercent: 15, revenue: 29700, color: '#3b82f6' },
     { channel: 'Social Media', date: 'Feb 1, 2026', action: 'LinkedIn ad engagement', creditPercent: 10, revenue: 19800, color: '#06b6d4' },
     { channel: 'Referral', date: 'Feb 12, 2026', action: 'Partner referral introduction', creditPercent: 25, revenue: 49500, color: '#f59e0b' },
-    { channel: 'Direct', date: 'Feb 25, 2026', action: 'Contract negotiation and close', creditPercent: 30, revenue: 59400, color: '#ec4899' },
-  ],
+    { channel: 'Direct', date: 'Feb 25, 2026', action: 'Contract negotiation and close', creditPercent: 30, revenue: 59400, color: '#ec4899' }
+  ]
 };
 
 const campaignDeals: Record<string, any[]> = {
@@ -574,14 +685,14 @@ const campaignDeals: Record<string, any[]> = {
     { dealName: 'TechFlow Solutions', dealValue: 62000, stage: 'Won', touchCount: 5, attributedValue: 31000 },
     { dealName: 'Global Industries Upgrade', dealValue: 48000, stage: 'Negotiation', touchCount: 4, attributedValue: 24000 },
     { dealName: 'DataBridge Inc.', dealValue: 35000, stage: 'Proposal', touchCount: 3, attributedValue: 17500 },
-    { dealName: 'CloudFirst Technologies', dealValue: 28000, stage: 'Won', touchCount: 6, attributedValue: 14000 },
+    { dealName: 'CloudFirst Technologies', dealValue: 28000, stage: 'Won', touchCount: 6, attributedValue: 14000 }
   ],
   'Enterprise Outreach Q1': [
     { dealName: 'MegaCorp Strategic Deal', dealValue: 120000, stage: 'Won', touchCount: 9, attributedValue: 60000 },
     { dealName: 'Pinnacle Group', dealValue: 78000, stage: 'Won', touchCount: 6, attributedValue: 39000 },
     { dealName: 'Apex Dynamics', dealValue: 55000, stage: 'Negotiation', touchCount: 5, attributedValue: 27500 },
-    { dealName: 'Summit Partners', dealValue: 42000, stage: 'Proposal', touchCount: 4, attributedValue: 21000 },
-  ],
+    { dealName: 'Summit Partners', dealValue: 42000, stage: 'Proposal', touchCount: 4, attributedValue: 21000 }
+  ]
 };
 
 // Default timeline/deals for campaigns that don't have specific data
@@ -589,24 +700,24 @@ const defaultTimeline = [
   { channel: 'Paid Search', date: 'Jan 20, 2026', action: 'Initial ad click', creditPercent: 20, revenue: 18000, color: '#7849ff' },
   { channel: 'Email', date: 'Feb 5, 2026', action: 'Newsletter engagement', creditPercent: 25, revenue: 22500, color: '#3b82f6' },
   { channel: 'Organic Search', date: 'Feb 15, 2026', action: 'Content discovery', creditPercent: 15, revenue: 13500, color: '#22c55e' },
-  { channel: 'Direct', date: 'Feb 28, 2026', action: 'Sales meeting', creditPercent: 40, revenue: 36000, color: '#ec4899' },
+  { channel: 'Direct', date: 'Feb 28, 2026', action: 'Sales meeting', creditPercent: 40, revenue: 36000, color: '#ec4899' }
 ];
 
 const defaultDeals = [
   { dealName: 'Standard Deal A', dealValue: 45000, stage: 'Won', touchCount: 4, attributedValue: 22500 },
   { dealName: 'Standard Deal B', dealValue: 32000, stage: 'Negotiation', touchCount: 3, attributedValue: 16000 },
-  { dealName: 'Standard Deal C', dealValue: 28000, stage: 'Proposal', touchCount: 5, attributedValue: 14000 },
+  { dealName: 'Standard Deal C', dealValue: 28000, stage: 'Proposal', touchCount: 5, attributedValue: 14000 }
 ];
 
 // ─── Channel Color Map ──────────────────────────────────────
 const channelColors: Record<string, string> = {
   'Paid Search': '#7849ff',
-  'Email': '#3b82f6',
+  Email: '#3b82f6',
   'Organic Search': '#22c55e',
   'Social Media': '#06b6d4',
-  'Referral': '#f59e0b',
-  'Direct': '#ec4899',
-  'Events': '#f97316',
+  Referral: '#f59e0b',
+  Direct: '#ec4899',
+  Events: '#f97316'
 };
 
 // ─── Data Loading ───────────────────────────────────────────
@@ -616,14 +727,18 @@ async function loadData() {
     // Fetch attribution and channels in parallel
     const [touchpointsRes, channelsRes] = await Promise.all([
       useApiFetch('attribution' as any).catch(() => null),
-      useApiFetch('attribution/channels' as any).catch(() => null),
+      useApiFetch('attribution/channels' as any).catch(() => null)
     ]);
 
     // ── Channel performance from GET /attribution/channels ──
     if (channelsRes?.success && channelsRes.body) {
-      const channelList = Array.isArray(channelsRes.body) ? channelsRes.body
-        : Array.isArray((channelsRes.body as any)?.channels) ? (channelsRes.body as any).channels
-        : Array.isArray((channelsRes.body as any)?.docs) ? (channelsRes.body as any).docs : null;
+      const channelList = Array.isArray(channelsRes.body)
+        ? channelsRes.body
+        : Array.isArray((channelsRes.body as any)?.channels)
+          ? (channelsRes.body as any).channels
+          : Array.isArray((channelsRes.body as any)?.docs)
+            ? (channelsRes.body as any).docs
+            : null;
 
       if (channelList && channelList.length > 0) {
         baseChannels.value = channelList.map((ch: any) => ({
@@ -632,7 +747,7 @@ async function loadData() {
           deals: parseInt(ch.deals || ch.dealsInfluenced || 0),
           conversionRate: parseFloat(ch.conversionRate || 0),
           roi: parseFloat(ch.roi || 0),
-          color: ch.color || channelColors[ch.channel || ch.name] || '#7849ff',
+          color: ch.color || channelColors[ch.channel || ch.name] || '#7849ff'
         }));
       } else {
         baseChannels.value = mockBaseChannels;
@@ -643,9 +758,13 @@ async function loadData() {
 
     // ── Top paths from GET /attribution touchpoints ──
     if (touchpointsRes?.success && touchpointsRes.body) {
-      const docs = Array.isArray(touchpointsRes.body) ? touchpointsRes.body
-        : Array.isArray((touchpointsRes.body as any)?.docs) ? (touchpointsRes.body as any).docs
-        : Array.isArray((touchpointsRes.body as any)?.paths) ? (touchpointsRes.body as any).paths : null;
+      const docs = Array.isArray(touchpointsRes.body)
+        ? touchpointsRes.body
+        : Array.isArray((touchpointsRes.body as any)?.docs)
+          ? (touchpointsRes.body as any).docs
+          : Array.isArray((touchpointsRes.body as any)?.paths)
+            ? (touchpointsRes.body as any).paths
+            : null;
 
       if (docs && docs.length > 0) {
         // Try to extract path data from touchpoints
@@ -654,7 +773,7 @@ async function loadData() {
           .map((d: any) => ({
             steps: d.steps || d.path || d.touchpoints || [],
             revenue: parseFloat(d.revenue || d.attributedRevenue || 0),
-            conversions: parseInt(d.conversions || d.conversionCount || 0),
+            conversions: parseInt(d.conversions || d.conversionCount || 0)
           }));
 
         if (pathsFromApi.length > 0) {
@@ -700,7 +819,7 @@ function openCampaignDetail(row: any) {
   selectedCampaign.value = {
     ...row,
     timeline,
-    deals,
+    deals
   };
   showCampaignDetail.value = true;
 }
@@ -712,7 +831,7 @@ function formatCurrency(amount: number): string {
     style: 'currency',
     currency: 'USD',
     minimumFractionDigits: 0,
-    maximumFractionDigits: 0,
+    maximumFractionDigits: 0
   }).format(amount);
 }
 
@@ -721,7 +840,7 @@ function getStatusType(status: string): string {
     Active: 'success',
     Completed: 'info',
     Paused: 'warning',
-    Draft: '',
+    Draft: ''
   };
   return map[status] || '';
 }
@@ -732,7 +851,7 @@ function getStageType(stage: string): string {
     Negotiation: 'warning',
     Proposal: '',
     Qualified: 'info',
-    Lost: 'danger',
+    Lost: 'danger'
   };
   return map[stage] || '';
 }
@@ -740,12 +859,12 @@ function getStageType(stage: string): string {
 function getChannelTagType(channel: string): string {
   const map: Record<string, string> = {
     'Paid Search': '',
-    'Email': 'success',
+    Email: 'success',
     'Organic Search': 'info',
     'Social Media': 'warning',
-    'Referral': 'danger',
-    'Direct': '',
-    'Events': 'warning',
+    Referral: 'danger',
+    Direct: '',
+    Events: 'warning'
   };
   return map[channel] || '';
 }

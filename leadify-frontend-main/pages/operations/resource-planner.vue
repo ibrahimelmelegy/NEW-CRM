@@ -26,7 +26,11 @@
     </div>
 
     <!-- Over-allocation Warning Banner -->
-    <div v-if="overAllocatedResources.length > 0" class="p-4 rounded-xl border" style="background: rgba(239,68,68,0.08); border-color: rgba(239,68,68,0.3)">
+    <div
+      v-if="overAllocatedResources.length > 0"
+      class="p-4 rounded-xl border"
+      style="background: rgba(239, 68, 68, 0.08); border-color: rgba(239, 68, 68, 0.3)"
+    >
       <div class="flex items-center gap-3">
         <Icon name="ph:warning-bold" size="20" style="color: #ef4444" />
         <div class="flex-1">
@@ -93,9 +97,7 @@
                 </div>
               </td>
               <td class="text-center p-2">
-                <span class="text-sm font-medium" :class="getTotalClass(res)">
-                  {{ res.weeklyHours.reduce((a: number, b: number) => a + b, 0) }}h
-                </span>
+                <span class="text-sm font-medium" :class="getTotalClass(res)">{{ res.weeklyHours.reduce((a: number, b: number) => a + b, 0) }}h</span>
               </td>
               <td class="text-center p-2">
                 <el-progress
@@ -150,18 +152,12 @@
         <h3 class="text-sm font-medium" style="color: var(--text-secondary)">
           {{ $t('resourcePlanner.allAllocations') }}
         </h3>
-        <el-input
-          v-model="allocSearch"
-          :placeholder="$t('common.search')"
-          clearable
-          size="large"
-          style="width: 220px"
-        >
+        <el-input v-model="allocSearch" :placeholder="$t('common.search')" clearable size="large" style="width: 220px">
           <template #prefix><Icon name="ph:magnifying-glass" size="16" /></template>
         </el-input>
       </div>
 
-      <el-table :data="filteredAllocations" v-loading="loading" style="width: 100%">
+      <el-table v-loading="loading" :data="filteredAllocations" style="width: 100%">
         <el-table-column type="index" width="50" />
         <el-table-column :label="$t('resourcePlanner.resource')" min-width="160">
           <template #default="{ row }">
@@ -188,7 +184,7 @@
         </el-table-column>
         <el-table-column :label="$t('resourcePlanner.mission')" width="130">
           <template #default="{ row }">
-            <el-tag v-for="m in (row.mission || [])" :key="m" size="small" class="mr-1">{{ m }}</el-tag>
+            <el-tag v-for="m in row.mission || []" :key="m" size="small" class="mr-1">{{ m }}</el-tag>
           </template>
         </el-table-column>
         <el-table-column :label="$t('resourcePlanner.cost')" width="120" align="right">
@@ -219,7 +215,12 @@
           :page-size="pagination.limit"
           :total="pagination.total"
           layout="total, prev, pager, next"
-          @current-change="(p: number) => { pagination.page = p; fetchData() }"
+          @current-change="
+            (p: number) => {
+              pagination.page = p;
+              fetchData();
+            }
+          "
         />
       </div>
     </div>
@@ -272,9 +273,8 @@
                 <el-tag v-if="res.overAllocated" type="danger" size="small" round>Over</el-tag>
               </div>
               <div class="text-xs" style="color: var(--text-muted)">
-                {{ res.projectCount }} {{ $t('resourcePlanner.projects') }}
-                &middot; {{ res.totalEstimatedDays }}d allocated
-                &middot; {{ res.availableDays }}d available
+                {{ res.projectCount }} {{ $t('resourcePlanner.projects') }} &middot; {{ res.totalEstimatedDays }}d allocated &middot;
+                {{ res.availableDays }}d available
               </div>
               <el-progress
                 :percentage="Math.min(res.utilization, 200)"
@@ -288,9 +288,7 @@
               <div class="text-lg font-bold" :style="{ color: res.utilization > 100 ? '#ef4444' : res.utilization >= 80 ? '#f59e0b' : '#10b981' }">
                 {{ res.utilization }}%
               </div>
-              <div class="text-xs font-mono" style="color: var(--text-muted)">
-                {{ Number(res.totalCost || 0).toLocaleString() }} SAR
-              </div>
+              <div class="text-xs font-mono" style="color: var(--text-muted)">{{ Number(res.totalCost || 0).toLocaleString() }} SAR</div>
             </div>
           </div>
         </div>
@@ -315,7 +313,12 @@
                 <span class="text-sm" style="color: var(--text-primary)">{{ proj.name }}</span>
                 <span class="text-xs" style="color: var(--text-muted)">{{ proj.hours }}h / {{ proj.budget }}h</span>
               </div>
-              <el-progress :percentage="Math.min(Math.round((proj.hours / proj.budget) * 100), 100)" :stroke-width="4" :color="proj.color" :show-text="false" />
+              <el-progress
+                :percentage="Math.min(Math.round((proj.hours / proj.budget) * 100), 100)"
+                :stroke-width="4"
+                :color="proj.color"
+                :show-text="false"
+              />
             </div>
           </div>
         </div>
@@ -350,10 +353,21 @@
     </div>
 
     <!-- ========== ALLOCATE DIALOG ========== -->
-    <el-dialog v-model="showAllocateDialog" :title="editingAlloc ? $t('resourcePlanner.editAllocation') : $t('resourcePlanner.allocateResource')" width="500px" :close-on-click-modal="false">
+    <el-dialog
+      v-model="showAllocateDialog"
+      :title="editingAlloc ? $t('resourcePlanner.editAllocation') : $t('resourcePlanner.allocateResource')"
+      width="500px"
+      :close-on-click-modal="false"
+    >
       <el-form label-position="top" size="large">
         <el-form-item :label="$t('resourcePlanner.resource')">
-          <el-select v-model="allocForm.manpowerId" class="w-full" filterable :placeholder="$t('resourcePlanner.selectResource')" :disabled="!!editingAlloc">
+          <el-select
+            v-model="allocForm.manpowerId"
+            class="w-full"
+            filterable
+            :placeholder="$t('resourcePlanner.selectResource')"
+            :disabled="!!editingAlloc"
+          >
             <el-option v-for="mp in manpowerList" :key="mp.id" :label="`${mp.name} (${(mp.role || []).join(', ')})`" :value="mp.id">
               <div class="flex items-center justify-between w-full">
                 <span>{{ mp.name }}</span>
@@ -364,7 +378,13 @@
           </el-select>
         </el-form-item>
         <el-form-item :label="$t('resourcePlanner.project')">
-          <el-select v-model="allocForm.projectId" class="w-full" filterable :placeholder="$t('resourcePlanner.selectProject')" :disabled="!!editingAlloc">
+          <el-select
+            v-model="allocForm.projectId"
+            class="w-full"
+            filterable
+            :placeholder="$t('resourcePlanner.selectProject')"
+            :disabled="!!editingAlloc"
+          >
             <el-option v-for="p in projectList" :key="p.id" :label="p.name" :value="p.id" />
           </el-select>
         </el-form-item>
@@ -405,7 +425,12 @@
         <!-- Show which allocations contribute to this resource's hours -->
         <div v-if="editingDay.allocations.length" class="space-y-2">
           <p class="text-xs font-medium" style="color: var(--text-muted)">{{ $t('resourcePlanner.allocationsForDay') }}</p>
-          <div v-for="alloc in editingDay.allocations" :key="alloc.id" class="flex items-center justify-between p-2 rounded" style="background: var(--bg-elevated)">
+          <div
+            v-for="alloc in editingDay.allocations"
+            :key="alloc.id"
+            class="flex items-center justify-between p-2 rounded"
+            style="background: var(--bg-elevated)"
+          >
             <span class="text-sm" style="color: var(--text-primary)">{{ alloc.project?.name || 'Unknown Project' }}</span>
             <div class="flex items-center gap-2">
               <el-input-number v-model="alloc._editDays" :min="0" :max="365" size="small" style="width: 100px" />
@@ -510,7 +535,7 @@ const editingDay = ref<{
 // --------------------------------------------------
 const availableCapacity = computed(() => resources.value.length * 40);
 const allocatedHours = computed(() => resources.value.reduce((s, r) => s + r.weeklyHours.reduce((a: number, b: number) => a + b, 0), 0));
-const utilizationRate = computed(() => availableCapacity.value > 0 ? Math.round((allocatedHours.value / availableCapacity.value) * 100) : 0);
+const utilizationRate = computed(() => (availableCapacity.value > 0 ? Math.round((allocatedHours.value / availableCapacity.value) * 100) : 0));
 const overAllocatedResources = computed(() => resources.value.filter(r => r.weeklyHours.some((h: number) => h > r.maxHoursPerDay)));
 
 const kpiCards = computed(() => [
@@ -551,7 +576,7 @@ const projectSummaries = computed(() => {
       existing.hours += hours;
     } else {
       const proj = alloc.project || projectList.value.find((p: any) => p.id === pid);
-      const budgetHours = ((proj?.resourceCount || 1) * (proj?.duration || 20) * 8) || 160;
+      const budgetHours = (proj?.resourceCount || 1) * (proj?.duration || 20) * 8 || 160;
       projMap.set(pid, {
         name: proj?.name || 'Unknown Project',
         hours,
@@ -570,9 +595,8 @@ const projectSummaries = computed(() => {
 const filteredAllocations = computed(() => {
   if (!allocSearch.value) return rawAllocations.value;
   const q = allocSearch.value.toLowerCase();
-  return rawAllocations.value.filter((a: any) =>
-    (a.manpower?.name || '').toLowerCase().includes(q) ||
-    (a.project?.name || '').toLowerCase().includes(q)
+  return rawAllocations.value.filter(
+    (a: any) => (a.manpower?.name || '').toLowerCase().includes(q) || (a.project?.name || '').toLowerCase().includes(q)
   );
 });
 
@@ -601,21 +625,15 @@ async function fetchData() {
     ]);
 
     // Process manpower resources
-    const mpList: any[] = manpowerRes?.success
-      ? (manpowerRes.body?.docs || manpowerRes.body || [])
-      : [];
+    const mpList: any[] = manpowerRes?.success ? manpowerRes.body?.docs || manpowerRes.body || [] : [];
     manpowerList.value = mpList;
 
     // Process projects
-    const projList: any[] = projectsRes?.success
-      ? (projectsRes.body?.docs || projectsRes.body || [])
-      : [];
+    const projList: any[] = projectsRes?.success ? projectsRes.body?.docs || projectsRes.body || [] : [];
     projectList.value = projList;
 
     // Process allocations
-    const allocList: any[] = allocationsRes?.success
-      ? (allocationsRes.body?.docs || allocationsRes.body || [])
-      : [];
+    const allocList: any[] = allocationsRes?.success ? allocationsRes.body?.docs || allocationsRes.body || [] : [];
     rawAllocations.value = allocList;
     pagination.total = allocationsRes?.body?.pagination?.totalItems ?? allocList.length;
 
@@ -724,7 +742,7 @@ function editDayAllocation(res: Resource, dayIdx: number) {
 // Watch allocation edits to update total hours preview
 watch(
   () => editingDay.value.allocations.map((a: any) => a._editDays),
-  (newVals) => {
+  newVals => {
     const totalDays = newVals.reduce((s: number, d: number) => s + (d || 0), 0);
     const perDay = Math.min(8, Math.round((totalDays * 8) / 5));
     editingDay.value.totalHours = perDay;
@@ -830,11 +848,11 @@ async function saveAllocation() {
 
 async function deleteAllocation(id: string) {
   try {
-    await ElMessageBox.confirm(
-      t('common.confirmAction'),
-      t('common.warning'),
-      { confirmButtonText: t('common.delete'), cancelButtonText: t('common.cancel'), type: 'warning' }
-    );
+    await ElMessageBox.confirm(t('common.confirmAction'), t('common.warning'), {
+      confirmButtonText: t('common.delete'),
+      cancelButtonText: t('common.cancel'),
+      type: 'warning'
+    });
     const { success } = await useApiFetch(`project-manpower/${id}`, 'DELETE');
     if (success) {
       ElMessage.success(t('common.deleted'));
@@ -854,7 +872,7 @@ onMounted(() => {
 });
 
 // Fetch utilization when view changes to utilization
-watch(viewMode, (newMode) => {
+watch(viewMode, newMode => {
   if (newMode === 'utilization' && !utilizationData.value) {
     fetchUtilizationReport();
   }

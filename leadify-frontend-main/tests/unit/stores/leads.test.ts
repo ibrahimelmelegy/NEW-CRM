@@ -67,8 +67,8 @@ describe('useLeadStore', () => {
       ] as any;
 
       const grouped = store.leadsByStatus;
-      expect(grouped['NEW']).toHaveLength(2);
-      expect(grouped['QUALIFIED']).toHaveLength(1);
+      expect(grouped.NEW).toHaveLength(2);
+      expect(grouped.QUALIFIED).toHaveLength(1);
     });
 
     it('totalLeads should return pagination total', () => {
@@ -203,10 +203,7 @@ describe('useLeadStore', () => {
 
   describe('deleteLead', () => {
     it('should remove lead from list on success', async () => {
-      store.leads = [
-        mockLead({ id: 'lead-1' }),
-        mockLead({ id: 'lead-2' })
-      ] as any;
+      store.leads = [mockLead({ id: 'lead-1' }), mockLead({ id: 'lead-2' })] as any;
 
       (globalThis.useApiFetch as any).mockResolvedValue({ success: true });
 

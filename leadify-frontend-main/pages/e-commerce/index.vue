@@ -244,18 +244,8 @@ div.p-4.space-y-6.animate-fade-in(class="md_p-6")
 <script setup lang="ts">
 import { ref, reactive, computed, onMounted } from 'vue';
 import { ElMessage, ElNotification } from 'element-plus';
-import {
-  fetchProducts,
-  type CatalogProduct
-} from '~/composables/useProductCatalog';
-import {
-  fetchCoupons,
-  fetchReviews,
-  fetchCarts,
-  fetchAbandonedCarts,
-  CouponStatusEnum,
-  ReviewStatusEnum
-} from '~/composables/useEcommerce';
+import { fetchProducts, type CatalogProduct } from '~/composables/useProductCatalog';
+import { fetchCoupons, fetchReviews, fetchCarts, fetchAbandonedCarts, CouponStatusEnum, ReviewStatusEnum } from '~/composables/useEcommerce';
 
 definePageMeta({ middleware: 'permissions' });
 
@@ -373,7 +363,9 @@ function formatDate(dateStr: string): string {
 }
 
 function formatCurrency(amount: number): string {
-  return new Intl.NumberFormat('en-US', { style: 'currency', currency: 'SAR', minimumFractionDigits: 0, maximumFractionDigits: 2 }).format(amount || 0);
+  return new Intl.NumberFormat('en-US', { style: 'currency', currency: 'SAR', minimumFractionDigits: 0, maximumFractionDigits: 2 }).format(
+    amount || 0
+  );
 }
 
 function formatCompact(amount: number): string {
@@ -384,12 +376,7 @@ function formatCompact(amount: number): string {
 
 // Data fetching
 async function loadDashboardData() {
-  await Promise.all([
-    loadAnalytics(),
-    loadProducts(),
-    loadLowStock(),
-    loadQuickStats()
-  ]);
+  await Promise.all([loadAnalytics(), loadProducts(), loadLowStock(), loadQuickStats()]);
 }
 
 /**

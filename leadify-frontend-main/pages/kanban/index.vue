@@ -138,7 +138,7 @@ const opportunityStages = [
   { id: 'LOST', title: 'Lost', color: '#EF4444' }
 ];
 
-const columns = computed(() => viewMode.value === 'deal' ? dealStages : opportunityStages);
+const columns = computed(() => (viewMode.value === 'deal' ? dealStages : opportunityStages));
 
 // ─── Internal card type ─────────────────────────────────────────────────────
 interface KanbanCard {
@@ -339,7 +339,11 @@ function dropCard(colId: string) {
 
 function priorityTag(p: string): '' | 'success' | 'warning' | 'danger' {
   const lower = (p || '').toLowerCase();
-  return { low: 'success' as const, medium: 'warning' as const, high: 'danger' as const, very_high: 'danger' as const, very_low: 'success' as const }[lower] || '';
+  return (
+    { low: 'success' as const, medium: 'warning' as const, high: 'danger' as const, very_high: 'danger' as const, very_low: 'success' as const }[
+      lower
+    ] || ''
+  );
 }
 
 onMounted(() => {

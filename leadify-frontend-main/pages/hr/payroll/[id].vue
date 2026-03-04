@@ -92,7 +92,7 @@ const months = computed(() => [
   t('hr.payroll.months.september'),
   t('hr.payroll.months.october'),
   t('hr.payroll.months.november'),
-  t('hr.payroll.months.december'),
+  t('hr.payroll.months.december')
 ]);
 
 const periodLabel = computed(() => {

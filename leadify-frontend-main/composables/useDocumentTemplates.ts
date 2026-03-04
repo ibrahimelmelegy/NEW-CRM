@@ -1,3 +1,4 @@
+/* eslint-disable require-await */
 export interface TemplateElement {
   id: string;
   type: 'text' | 'image' | 'table' | 'line' | 'shape';

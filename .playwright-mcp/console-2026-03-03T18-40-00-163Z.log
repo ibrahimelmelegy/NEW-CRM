@@ -1,0 +1,94 @@
+[   20254ms] [ERROR] Failed to load resource: the server responded with a status of 500 () @ https://crm.hp-tech.com/api/deal/analytics/weighted-pipeline:0
+[   20454ms] [ERROR] Failed to load resource: the server responded with a status of 404 () @ https://crm.hp-tech.com/api/warehouse/zones:0
+[   20700ms] [ERROR] Failed to load resource: the server responded with a status of 404 () @ https://crm.hp-tech.com/api/warehouse/stock:0
+[   20893ms] [ERROR] Failed to load resource: the server responded with a status of 404 () @ https://crm.hp-tech.com/api/staff:0
+[   21096ms] [ERROR] Failed to load resource: the server responded with a status of 500 () @ https://crm.hp-tech.com/api/deal/analytics:0
+[ 1319630ms] [ERROR] WebSocket connection to 'wss://crm.hp-tech.com/socket.io/?EIO=4&transport=websocket' failed: Error during WebSocket handshake: Unexpected response code: 502 @ https://crm.hp-tech.com/_nuxt/Crsm9Fe1.js:0
+[ 1319745ms] [ERROR] Failed to load resource: the server responded with a status of 502 () @ https://crm.hp-tech.com/socket.io/?EIO=4&transport=polling&t=z5bhyb8w:0
+[ 1322297ms] [ERROR] Failed to load resource: the server responded with a status of 502 () @ https://crm.hp-tech.com/api/notification/unread-count:0
+[ 1322485ms] [ERROR] Failed to load resource: the server responded with a status of 502 () @ https://crm.hp-tech.com/api/notification/unread-count:0
+[ 1322615ms] [ERROR] WebSocket connection to 'wss://crm.hp-tech.com/socket.io/?EIO=4&transport=websocket' failed: Error during WebSocket handshake: Unexpected response code: 502 @ https://crm.hp-tech.com/_nuxt/Crsm9Fe1.js:0
+[ 1322669ms] [ERROR] Failed to load resource: the server responded with a status of 502 () @ https://crm.hp-tech.com/socket.io/?EIO=4&transport=polling&t=z5f2tu48:0
+[ 1327879ms] [ERROR] Failed to load resource: the server responded with a status of 502 () @ https://crm.hp-tech.com/socket.io/?EIO=4&transport=polling&t=z5j3ameo:0
+[ 1328212ms] [ERROR] WebSocket connection to 'wss://crm.hp-tech.com/socket.io/?EIO=4&transport=websocket' failed: Error during WebSocket handshake: Unexpected response code: 502 @ https://crm.hp-tech.com/_nuxt/Crsm9Fe1.js:0
+[ 1335810ms] [ERROR] WebSocket connection to 'wss://crm.hp-tech.com/socket.io/?EIO=4&transport=websocket' failed: Error during WebSocket handshake: Unexpected response code: 502 @ https://crm.hp-tech.com/_nuxt/Crsm9Fe1.js:0
+[ 1335838ms] [ERROR] Failed to load resource: the server responded with a status of 502 () @ https://crm.hp-tech.com/socket.io/?EIO=4&transport=polling&t=z5n3q2f6:0
+[ 1341045ms] [ERROR] Failed to load resource: the server responded with a status of 502 () @ https://crm.hp-tech.com/socket.io/?EIO=4&transport=polling&t=z5t91cod:0
+[ 1341410ms] [ERROR] WebSocket connection to 'wss://crm.hp-tech.com/socket.io/?EIO=4&transport=websocket' failed: Error during WebSocket handshake: Unexpected response code: 502 @ https://crm.hp-tech.com/_nuxt/Crsm9Fe1.js:0
+[ 1346313ms] [ERROR] Failed to load resource: the server responded with a status of 502 () @ https://crm.hp-tech.com/socket.io/?EIO=4&transport=polling&t=z5x9jq5y:0
+[ 2493711ms] [ERROR] [ErrorBoundary] Caught error: ReferenceError: Cannot access 'R' before initialization
+    at f3.fn (https://crm.hp-tech.com/_nuxt/D60jFF1y.js:1:8130)
+    at U0 (https://crm.hp-tech.com/_nuxt/ChWBE3Q6.js:3:14014)
+    at get value (https://crm.hp-tech.com/_nuxt/ChWBE3Q6.js:3:26308)
+    at setup (https://crm.hp-tech.com/_nuxt/D60jFF1y.js:1:8626) @ https://crm.hp-tech.com/_nuxt/DvzdcpWX.js:3
+[ 2493719ms] ReferenceError: Cannot access 'R' before initialization
+    at f3.fn (https://crm.hp-tech.com/_nuxt/D60jFF1y.js:1:8130)
+    at U0 (https://crm.hp-tech.com/_nuxt/ChWBE3Q6.js:3:14014)
+    at get value (https://crm.hp-tech.com/_nuxt/ChWBE3Q6.js:3:26308)
+    at setup (https://crm.hp-tech.com/_nuxt/D60jFF1y.js:1:8626)
+[ 2496889ms] [ERROR] [ErrorBoundary] Caught error: ReferenceError: Cannot access 'R' before initialization
+    at f3.fn (https://crm.hp-tech.com/_nuxt/D60jFF1y.js:1:8130)
+    at U0 (https://crm.hp-tech.com/_nuxt/ChWBE3Q6.js:3:14014)
+    at get value (https://crm.hp-tech.com/_nuxt/ChWBE3Q6.js:3:26308)
+    at setup (https://crm.hp-tech.com/_nuxt/D60jFF1y.js:1:8626) @ https://crm.hp-tech.com/_nuxt/DvzdcpWX.js:3
+[ 2499699ms] [ERROR] Failed to load resource: the server responded with a status of 404 () @ https://crm.hp-tech.com/_nuxt/C4LNVcrL.js:0
+[ 2499699ms] [ERROR] Failed to load resource: the server responded with a status of 404 () @ https://crm.hp-tech.com/_nuxt/Bx9jsTqa.js:0
+[ 2513944ms] [ERROR] [ErrorBoundary] Caught error: ReferenceError: Cannot access 'R' before initialization
+    at f3.fn (https://crm.hp-tech.com/_nuxt/DXkQsTsL.js:1:8130)
+    at U0 (https://crm.hp-tech.com/_nuxt/DujorTrY.js:3:14014)
+    at get value (https://crm.hp-tech.com/_nuxt/DujorTrY.js:3:26308)
+    at setup (https://crm.hp-tech.com/_nuxt/DXkQsTsL.js:1:8626) @ https://crm.hp-tech.com/_nuxt/CZxWZqqm.js:3
+[ 2619167ms] [ERROR] [ErrorBoundary] Caught error: ReferenceError: Cannot access 'R' before initialization
+    at f3.fn (https://crm.hp-tech.com/_nuxt/DXkQsTsL.js:1:8130)
+    at U0 (https://crm.hp-tech.com/_nuxt/DujorTrY.js:3:14014)
+    at get value (https://crm.hp-tech.com/_nuxt/DujorTrY.js:3:26308)
+    at setup (https://crm.hp-tech.com/_nuxt/DXkQsTsL.js:1:8626) @ https://crm.hp-tech.com/_nuxt/CZxWZqqm.js:3
+[ 2619184ms] ReferenceError: Cannot access 'R' before initialization
+    at f3.fn (https://crm.hp-tech.com/_nuxt/DXkQsTsL.js:1:8130)
+    at U0 (https://crm.hp-tech.com/_nuxt/DujorTrY.js:3:14014)
+    at get value (https://crm.hp-tech.com/_nuxt/DujorTrY.js:3:26308)
+    at setup (https://crm.hp-tech.com/_nuxt/DXkQsTsL.js:1:8626)
+[ 2622506ms] [ERROR] [ErrorBoundary] Caught error: ReferenceError: Cannot access 'R' before initialization
+    at f3.fn (https://crm.hp-tech.com/_nuxt/DXkQsTsL.js:1:8130)
+    at U0 (https://crm.hp-tech.com/_nuxt/DujorTrY.js:3:14014)
+    at get value (https://crm.hp-tech.com/_nuxt/DujorTrY.js:3:26308)
+    at setup (https://crm.hp-tech.com/_nuxt/DXkQsTsL.js:1:8626) @ https://crm.hp-tech.com/_nuxt/CZxWZqqm.js:3
+[ 2625933ms] [ERROR] [ErrorBoundary] Caught error: ReferenceError: Cannot access 'R' before initialization
+    at f3.fn (https://crm.hp-tech.com/_nuxt/DXkQsTsL.js:1:8130)
+    at U0 (https://crm.hp-tech.com/_nuxt/DujorTrY.js:3:14014)
+    at get value (https://crm.hp-tech.com/_nuxt/DujorTrY.js:3:26308)
+    at setup (https://crm.hp-tech.com/_nuxt/DXkQsTsL.js:1:8626) @ https://crm.hp-tech.com/_nuxt/CZxWZqqm.js:3
+[ 2625938ms] ReferenceError: Cannot access 'R' before initialization
+    at f3.fn (https://crm.hp-tech.com/_nuxt/DXkQsTsL.js:1:8130)
+    at U0 (https://crm.hp-tech.com/_nuxt/DujorTrY.js:3:14014)
+    at get value (https://crm.hp-tech.com/_nuxt/DujorTrY.js:3:26308)
+    at setup (https://crm.hp-tech.com/_nuxt/DXkQsTsL.js:1:8626)
+[ 2668107ms] [ERROR] Failed to load resource: the server responded with a status of 500 () @ https://crm.hp-tech.com/api/deal/analytics/weighted-pipeline:0
+[ 2668474ms] [ERROR] Failed to load resource: the server responded with a status of 500 () @ https://crm.hp-tech.com/api/deal/analytics/weighted-pipeline:0
+[ 2668499ms] [ERROR] API Error (500): SOMETHING_WENT_WRONG @ https://crm.hp-tech.com/_nuxt/DujorTrY.js:4
+[ 2679173ms] [ERROR] Failed to load resource: the server responded with a status of 500 () @ https://crm.hp-tech.com/api/deal/analytics/weighted-pipeline:0
+[ 2679375ms] [ERROR] Failed to load resource: the server responded with a status of 500 () @ https://crm.hp-tech.com/api/deal/analytics/weighted-pipeline:0
+[ 2679377ms] [ERROR] API Error (500): SOMETHING_WENT_WRONG @ https://crm.hp-tech.com/_nuxt/DujorTrY.js:4
+[ 2683797ms] [ERROR] Failed to load resource: the server responded with a status of 500 () @ https://crm.hp-tech.com/api/deal/analytics/weighted-pipeline:0
+[ 2683994ms] [ERROR] Failed to load resource: the server responded with a status of 500 () @ https://crm.hp-tech.com/api/deal/analytics/weighted-pipeline:0
+[ 2683997ms] [ERROR] API Error (500): SOMETHING_WENT_WRONG @ https://crm.hp-tech.com/_nuxt/DujorTrY.js:4
+[ 2700960ms] [ERROR] [ErrorBoundary] Caught error: ReferenceError: Cannot access 'R' before initialization
+    at f3.fn (https://crm.hp-tech.com/_nuxt/DXkQsTsL.js:1:8130)
+    at U0 (https://crm.hp-tech.com/_nuxt/DujorTrY.js:3:14014)
+    at get value (https://crm.hp-tech.com/_nuxt/DujorTrY.js:3:26308)
+    at setup (https://crm.hp-tech.com/_nuxt/DXkQsTsL.js:1:8626) @ https://crm.hp-tech.com/_nuxt/CZxWZqqm.js:3
+[ 2700964ms] ReferenceError: Cannot access 'R' before initialization
+    at f3.fn (https://crm.hp-tech.com/_nuxt/DXkQsTsL.js:1:8130)
+    at U0 (https://crm.hp-tech.com/_nuxt/DujorTrY.js:3:14014)
+    at get value (https://crm.hp-tech.com/_nuxt/DujorTrY.js:3:26308)
+    at setup (https://crm.hp-tech.com/_nuxt/DXkQsTsL.js:1:8626)
+[ 2707173ms] [ERROR] [ErrorBoundary] Caught error: ReferenceError: Cannot access 'R' before initialization
+    at f3.fn (https://crm.hp-tech.com/_nuxt/DXkQsTsL.js:1:8130)
+    at U0 (https://crm.hp-tech.com/_nuxt/DujorTrY.js:3:14014)
+    at get value (https://crm.hp-tech.com/_nuxt/DujorTrY.js:3:26308)
+    at setup (https://crm.hp-tech.com/_nuxt/DXkQsTsL.js:1:8626) @ https://crm.hp-tech.com/_nuxt/CZxWZqqm.js:3
+[ 2763618ms] [ERROR] [ErrorBoundary] Caught error: ReferenceError: Cannot access 'R' before initialization
+    at f3.fn (https://crm.hp-tech.com/_nuxt/DXkQsTsL.js:1:8130)
+    at U0 (https://crm.hp-tech.com/_nuxt/DujorTrY.js:3:14014)
+    at get value (https://crm.hp-tech.com/_nuxt/DujorTrY.js:3:26308)
+    at setup (https://crm.hp-tech.com/_nuxt/DXkQsTsL.js:1:8626) @ https://crm.hp-tech.com/_nuxt/CZxWZqqm.js:3

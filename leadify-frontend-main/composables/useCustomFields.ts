@@ -1,3 +1,4 @@
+/* eslint-disable require-await */
 export interface CustomField {
   id: string;
   fieldName: string;
@@ -42,6 +43,10 @@ export async function fetchFieldValues(entityType: string, entityId: string): Pr
   return [];
 }
 
-export async function saveFieldValues(entityType: string, entityId: string, values: { customFieldId: string; value: string | number | boolean | null }[]) {
+export async function saveFieldValues(
+  entityType: string,
+  entityId: string,
+  values: { customFieldId: string; value: string | number | boolean | null }[]
+) {
   return useApiFetch(`custom-fields/values/${entityType}/${entityId}`, 'PUT', { values } as Record<string, unknown>);
 }

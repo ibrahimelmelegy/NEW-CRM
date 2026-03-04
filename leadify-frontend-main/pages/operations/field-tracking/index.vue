@@ -130,6 +130,7 @@ div
 </template>
 
 <script setup lang="ts">
+/* eslint-disable require-await */
 import { ElNotification } from 'element-plus';
 import type { FieldCheckIn } from '~/composables/useFieldOps';
 import { fetchCheckIns, createCheckIn } from '~/composables/useFieldOps';

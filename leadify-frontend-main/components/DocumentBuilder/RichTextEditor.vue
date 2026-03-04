@@ -7,32 +7,32 @@
     <div v-if="editor" class="flex items-center gap-1 p-2 border-b border-gray-100 bg-gray-50/50 flex-wrap sticky top-0 z-10">
       <!-- Headings -->
       <button
-        @click="editor.chain().focus().toggleHeading({ level: 1 }).run()"
         :class="[
           'p-1.5 hover:bg-gray-200 rounded text-gray-600 transition-colors',
           { 'bg-gray-200 text-black font-bold border-gray-400': editor.isActive('heading', { level: 1 }) }
         ]"
         title="Heading 1"
+        @click="editor.chain().focus().toggleHeading({ level: 1 }).run()"
       >
         H1
       </button>
       <button
-        @click="editor.chain().focus().toggleHeading({ level: 2 }).run()"
         :class="[
           'p-1.5 hover:bg-gray-200 rounded text-gray-600 transition-colors',
           { 'bg-gray-200 text-black font-bold border-gray-400': editor.isActive('heading', { level: 2 }) }
         ]"
         title="Heading 2"
+        @click="editor.chain().focus().toggleHeading({ level: 2 }).run()"
       >
         H2
       </button>
       <button
-        @click="editor.chain().focus().toggleHeading({ level: 3 }).run()"
         :class="[
           'p-1.5 hover:bg-gray-200 rounded text-gray-600 transition-colors',
           { 'bg-gray-200 text-black font-bold border-gray-400': editor.isActive('heading', { level: 3 }) }
         ]"
         title="Heading 3"
+        @click="editor.chain().focus().toggleHeading({ level: 3 }).run()"
       >
         H3
       </button>
@@ -41,39 +41,39 @@
 
       <!-- Text Formatting -->
       <button
-        @click="editor.chain().focus().toggleBold().run()"
         :class="['p-1.5 hover:bg-gray-200 rounded text-gray-600 transition-colors', { 'bg-gray-200 text-black': editor.isActive('bold') }]"
         title="Bold"
+        @click="editor.chain().focus().toggleBold().run()"
       >
         <Bold :size="16" />
       </button>
       <button
-        @click="editor.chain().focus().toggleItalic().run()"
         :class="['p-1.5 hover:bg-gray-200 rounded text-gray-600 transition-colors', { 'bg-gray-200 text-black': editor.isActive('italic') }]"
         title="Italic"
+        @click="editor.chain().focus().toggleItalic().run()"
       >
         <Italic :size="16" />
       </button>
       <button
-        @click="editor.chain().focus().toggleUnderline().run()"
         :class="['p-1.5 hover:bg-gray-200 rounded text-gray-600 transition-colors', { 'bg-gray-200 text-black': editor.isActive('underline') }]"
         title="Underline"
+        @click="editor.chain().focus().toggleUnderline().run()"
       >
         <UnderlineIcon :size="16" />
       </button>
       <button
-        @click="editor.chain().focus().toggleStrike().run()"
         :class="['p-1.5 hover:bg-gray-200 rounded text-gray-600 transition-colors', { 'bg-gray-200 text-black': editor.isActive('strike') }]"
         title="Strikethrough"
+        @click="editor.chain().focus().toggleStrike().run()"
       >
         <Strikethrough :size="16" />
       </button>
 
       <!-- Advanced Formatting -->
       <button
-        @click="editor.chain().focus().toggleHighlight().run()"
         :class="['p-1.5 hover:bg-gray-200 rounded text-gray-600 transition-colors', { 'bg-yellow-200 text-black': editor.isActive('highlight') }]"
         title="Highlight"
+        @click="editor.chain().focus().toggleHighlight().run()"
       >
         <Highlighter :size="16" />
       </button>
@@ -82,42 +82,42 @@
 
       <!-- Alignment & Direction -->
       <button
-        @click="editor.chain().focus().setTextAlign('left').run()"
         :class="[
           'p-1.5 hover:bg-gray-200 rounded text-gray-600 transition-colors',
           { 'bg-gray-200 text-black': editor.isActive({ textAlign: 'left' }) }
         ]"
         title="Align Left"
+        @click="editor.chain().focus().setTextAlign('left').run()"
       >
         <AlignLeft :size="16" />
       </button>
       <button
-        @click="editor.chain().focus().setTextAlign('center').run()"
         :class="[
           'p-1.5 hover:bg-gray-200 rounded text-gray-600 transition-colors',
           { 'bg-gray-200 text-black': editor.isActive({ textAlign: 'center' }) }
         ]"
         title="Align Center"
+        @click="editor.chain().focus().setTextAlign('center').run()"
       >
         <AlignCenter :size="16" />
       </button>
       <button
-        @click="editor.chain().focus().setTextAlign('right').run()"
         :class="[
           'p-1.5 hover:bg-gray-200 rounded text-gray-600 transition-colors',
           { 'bg-gray-200 text-black': editor.isActive({ textAlign: 'right' }) }
         ]"
         title="Align Right"
+        @click="editor.chain().focus().setTextAlign('right').run()"
       >
         <AlignRight :size="16" />
       </button>
       <button
-        @click="editor.chain().focus().setTextAlign('justify').run()"
         :class="[
           'p-1.5 hover:bg-gray-200 rounded text-gray-600 transition-colors',
           { 'bg-gray-200 text-black': editor.isActive({ textAlign: 'justify' }) }
         ]"
         title="Justify"
+        @click="editor.chain().focus().setTextAlign('justify').run()"
       >
         <AlignJustify :size="16" />
       </button>
@@ -126,23 +126,23 @@
 
       <!-- Lists -->
       <button
-        @click="editor.chain().focus().toggleBulletList().run()"
         :class="['p-1.5 hover:bg-gray-200 rounded text-gray-600 transition-colors', { 'bg-gray-200 text-black': editor.isActive('bulletList') }]"
         title="Bullet List"
+        @click="editor.chain().focus().toggleBulletList().run()"
       >
         <List :size="16" />
       </button>
       <button
-        @click="editor.chain().focus().toggleOrderedList().run()"
         :class="['p-1.5 hover:bg-gray-200 rounded text-gray-600 transition-colors', { 'bg-gray-200 text-black': editor.isActive('orderedList') }]"
         title="Ordered List"
+        @click="editor.chain().focus().toggleOrderedList().run()"
       >
         <ListOrdered :size="16" />
       </button>
       <button
-        @click="editor.chain().focus().toggleTaskList().run()"
         :class="['p-1.5 hover:bg-gray-200 rounded text-gray-600 transition-colors', { 'bg-gray-200 text-black': editor.isActive('taskList') }]"
         title="Task List"
+        @click="editor.chain().focus().toggleTaskList().run()"
       >
         <CheckSquare :size="16" />
       </button>
@@ -151,23 +151,23 @@
 
       <!-- Tables -->
       <button
-        @click="editor.chain().focus().insertTable({ rows: 3, cols: 3, withHeaderRow: true }).run()"
         class="p-1.5 hover:bg-gray-200 rounded text-gray-600 transition-colors"
         title="Insert Table"
+        @click="editor.chain().focus().insertTable({ rows: 3, cols: 3, withHeaderRow: true }).run()"
       >
         <TableIcon :size="16" />
       </button>
       <template v-if="editor.isActive('table')">
-        <button @click="editor.chain().focus().addColumnAfter().run()" class="p-1.5 hover:bg-gray-200 rounded text-gray-600" title="Add Column">
+        <button class="p-1.5 hover:bg-gray-200 rounded text-gray-600" title="Add Column" @click="editor.chain().focus().addColumnAfter().run()">
           <Plus :size="14" class="rotate-90" />
         </button>
-        <button @click="editor.chain().focus().deleteColumn().run()" class="p-1.5 hover:bg-gray-200 rounded text-gray-600" title="Delete Column">
+        <button class="p-1.5 hover:bg-gray-200 rounded text-gray-600" title="Delete Column" @click="editor.chain().focus().deleteColumn().run()">
           <Trash2 :size="14" class="rotate-90" />
         </button>
-        <button @click="editor.chain().focus().addRowAfter().run()" class="p-1.5 hover:bg-gray-200 rounded text-gray-600" title="Add Row">
+        <button class="p-1.5 hover:bg-gray-200 rounded text-gray-600" title="Add Row" @click="editor.chain().focus().addRowAfter().run()">
           <Plus :size="14" />
         </button>
-        <button @click="editor.chain().focus().deleteRow().run()" class="p-1.5 hover:bg-gray-200 rounded text-gray-600" title="Delete Row">
+        <button class="p-1.5 hover:bg-gray-200 rounded text-gray-600" title="Delete Row" @click="editor.chain().focus().deleteRow().run()">
           <Trash2 :size="14" />
         </button>
       </template>
@@ -176,9 +176,9 @@
 
       <!-- Media & Links -->
       <button
-        @click="setLink"
         :class="['p-1.5 hover:bg-gray-200 rounded text-gray-600 transition-colors', { 'bg-gray-200 text-black': editor.isActive('link') }]"
         title="Link"
+        @click="setLink"
       >
         <LinkIcon :size="16" />
       </button>
@@ -186,10 +186,10 @@
       <div class="w-px h-4 bg-gray-300 mx-1"></div>
 
       <!-- Utils -->
-      <button @click="editor.chain().focus().undo().run()" class="p-1.5 hover:bg-gray-200 rounded text-gray-600 transition-colors" title="Undo">
+      <button class="p-1.5 hover:bg-gray-200 rounded text-gray-600 transition-colors" title="Undo" @click="editor.chain().focus().undo().run()">
         <Undo :size="16" />
       </button>
-      <button @click="editor.chain().focus().redo().run()" class="p-1.5 hover:bg-gray-200 rounded text-gray-600 transition-colors" title="Redo">
+      <button class="p-1.5 hover:bg-gray-200 rounded text-gray-600 transition-colors" title="Redo" @click="editor.chain().focus().redo().run()">
         <Redo :size="16" />
       </button>
     </div>

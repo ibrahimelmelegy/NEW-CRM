@@ -13,6 +13,7 @@ el-form(@submit.prevent='onSubmit' )
 </template>
 
 <script setup lang="ts">
+/* eslint-disable require-await */
 import { useForm } from 'vee-validate';
 const { handleSubmit, errors, values, resetForm } = useForm();
 const emit = defineEmits(['showFilter']);

@@ -32,7 +32,7 @@
       </div>
 
       <div class="flex items-center gap-3">
-        <el-button @click="showPreview = !showPreview" :type="showPreview ? 'primary' : 'default'" size="default" class="!rounded-xl">
+        <el-button :type="showPreview ? 'primary' : 'default'" size="default" class="!rounded-xl" @click="showPreview = !showPreview">
           <component :is="showPreview ? EyeOff : Eye" size="16" class="mr-1.5" />
           {{ showPreview ? 'Hide Preview' : 'Show Preview' }}
         </el-button>
@@ -65,8 +65,8 @@
           size="default"
           class="!rounded-xl"
           style="background: var(--bg-obsidian); border: none"
-          @click="handleSave"
           :loading="saving"
+          @click="handleSave"
         >
           <Save size="16" class="mr-1.5" />
           Save {{ documentTypeTitle }}
@@ -82,11 +82,11 @@
           <button
             v-for="step in defaultSteps"
             :key="step.id"
-            @click="activeStep = step.id"
             class="w-full flex items-center gap-3 px-4 py-3 rounded-xl text-left transition-all"
             :class="
               activeStep === step.id ? 'bg-violet-50 text-violet-700 font-bold' : 'text-gray-600 hover:bg-gray-50 hover:text-gray-900 font-medium'
             "
+            @click="activeStep = step.id"
           >
             <component :is="step.icon" size="18" :class="activeStep === step.id ? 'text-violet-600' : 'text-gray-400'" />
             <span class="text-sm">{{ formData.stepLabels?.[step.id] || step.label }}</span>
@@ -101,13 +101,13 @@
             <draggable v-model="formData.customSections" animation="200" item-key="id" ghost-class="opacity-50" @change="onCustomSectionReorder">
               <template #item="{ element: section }">
                 <button
-                  @click="activeStep = section.id"
                   class="w-full flex items-center gap-3 px-4 py-3 rounded-xl text-left transition-all cursor-grab active:cursor-grabbing group"
                   :class="
                     activeStep === section.id
                       ? 'bg-violet-50 text-violet-700 font-bold'
                       : 'text-gray-600 hover:bg-gray-50 hover:text-gray-900 font-medium'
                   "
+                  @click="activeStep = section.id"
                 >
                   <GripVertical size="14" class="text-gray-300 opacity-0 group-hover:opacity-100 transition-opacity" />
                   <Layers size="16" :class="activeStep === section.id ? 'text-violet-600' : 'text-gray-400'" />
@@ -119,8 +119,8 @@
         </nav>
 
         <button
-          @click="addCustomSection"
           class="mt-auto flex items-center justify-center gap-2 w-full py-3 border-2 border-dashed border-gray-200 text-gray-500 rounded-xl hover:border-violet-300 hover:text-violet-600 hover:bg-violet-50 transition-all text-sm font-bold"
+          @click="addCustomSection"
         >
           <Plus size="16" />
           Add Section
@@ -157,8 +157,8 @@
                 <div v-if="!isFullDoc">
                   <label class="block text-xs font-bold text-gray-500 uppercase tracking-widest mb-2">Due Date</label>
                   <input
-                    type="date"
                     v-model="formData.dueDate"
+                    type="date"
                     class="w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-xl focus:border-violet-500 focus:ring-2 focus:ring-violet-200 outline-none transition-all text-sm font-bold text-gray-800"
                   />
                 </div>
@@ -177,8 +177,8 @@
                   placeholder="Select existing client..."
                   size="large"
                   class="w-64 !rounded-xl"
-                  @change="handleClientSelect"
                   clearable
+                  @change="handleClientSelect"
                 >
                   <el-option v-for="client in mockClients" :key="client.id" :label="client.company" :value="client.id" />
                 </el-select>
@@ -349,16 +349,16 @@
                   <button
                     v-for="(color, name) in themeColors"
                     :key="name"
-                    @click="formData.themeColor = color"
                     class="w-10 h-10 rounded-full flex items-center justify-center transition-transform hover:scale-110 shadow-sm border-2"
                     :class="formData.themeColor === color ? 'border-gray-900 scale-110' : 'border-transparent'"
                     :style="{ backgroundColor: color }"
                     :title="name"
+                    @click="formData.themeColor = color"
                   >
                     <CheckCircle v-if="formData.themeColor === color" size="16" class="text-white drop-shadow-md" />
                   </button>
                   <div class="flex items-center gap-2 px-3 py-1 bg-gray-50 rounded-full border border-gray-200">
-                    <input type="color" v-model="formData.themeColor" class="w-6 h-6 rounded cursor-pointer border-0 bg-transparent p-0" />
+                    <input v-model="formData.themeColor" type="color" class="w-6 h-6 rounded cursor-pointer border-0 bg-transparent p-0" />
                     <span class="text-xs font-mono text-gray-500">{{ formData.themeColor }}</span>
                   </div>
                 </div>
@@ -371,11 +371,11 @@
                   <button
                     v-for="style in coverStylesList"
                     :key="style.id"
-                    @click="formData.coverStyle = style.id as any"
                     class="relative aspect-[1/1.414] rounded-xl overflow-hidden border-2 transition-all hover:shadow-lg group text-left"
                     :class="
                       formData.coverStyle === style.id ? 'border-violet-500 ring-4 ring-violet-500/20' : 'border-gray-200 hover:border-violet-300'
                     "
+                    @click="formData.coverStyle = style.id as any"
                   >
                     <div class="absolute inset-0 bg-gray-50 flex flex-col justify-end p-3">
                       <span class="text-xs font-bold text-gray-900 group-hover:text-violet-600 transition-colors">{{ style.label }}</span>
@@ -399,22 +399,22 @@
           <div v-else-if="activeStep === 'executive'" class="space-y-8 animate-in fade-in slide-in-from-bottom-4 duration-500">
             <div class="bg-white p-8 rounded-[2rem] shadow-sm border border-gray-100">
               <h3 class="text-xl font-bold text-gray-900 mb-6">Introduction</h3>
-              <RichTextEditor v-model="formData.introduction" placeholder="Write a compelling introduction..." minHeight="300px" />
+              <RichTextEditor v-model="formData.introduction" placeholder="Write a compelling introduction..." min-height="300px" />
             </div>
             <div class="bg-white p-8 rounded-[2rem] shadow-sm border border-gray-100">
               <h3 class="text-xl font-bold text-gray-900 mb-6">Objectives</h3>
-              <RichTextEditor v-model="formData.objectives" placeholder="What are the key goals and objectives?" minHeight="200px" />
+              <RichTextEditor v-model="formData.objectives" placeholder="What are the key goals and objectives?" min-height="200px" />
             </div>
           </div>
 
           <div v-else-if="activeStep === 'solution'" class="space-y-8 animate-in fade-in slide-in-from-bottom-4 duration-500">
             <div class="bg-white p-8 rounded-[2rem] shadow-sm border border-gray-100">
               <h3 class="text-xl font-bold text-gray-900 mb-6">Scope of Work</h3>
-              <RichTextEditor v-model="formData.scopeOfWork" placeholder="Detail the scope of work..." minHeight="300px" />
+              <RichTextEditor v-model="formData.scopeOfWork" placeholder="Detail the scope of work..." min-height="300px" />
             </div>
             <div class="bg-white p-8 rounded-[2rem] shadow-sm border border-gray-100">
               <h3 class="text-xl font-bold text-gray-900 mb-6">Methodology</h3>
-              <RichTextEditor v-model="formData.methodology" placeholder="Explain your methodology..." minHeight="200px" />
+              <RichTextEditor v-model="formData.methodology" placeholder="Explain your methodology..." min-height="200px" />
             </div>
           </div>
 
@@ -428,7 +428,7 @@
                 <div class="flex items-center gap-4 bg-gray-50 px-4 py-2 rounded-xl border border-gray-200">
                   <span class="text-xs font-bold text-gray-500 uppercase tracking-widest">Global Margin</span>
                   <div class="flex items-center gap-2">
-                    <input type="range" v-model.number="globalMargin" min="0" max="100" class="w-24 accent-violet-600" @input="applyGlobalMargin" />
+                    <input v-model.number="globalMargin" type="range" min="0" max="100" class="w-24 accent-violet-600" @input="applyGlobalMargin" />
                     <span class="text-sm font-bold text-violet-600 w-8">{{ globalMargin }}%</span>
                   </div>
                 </div>
@@ -461,8 +461,8 @@
                       <td class="py-4 pr-4">
                         <div class="flex gap-2">
                           <input
-                            type="number"
                             v-model.number="item.quantity"
+                            type="number"
                             class="w-16 px-2 py-2 text-center bg-gray-50 border border-gray-200 rounded-lg focus:border-violet-500 outline-none transition-all text-sm font-bold text-gray-800"
                             min="1"
                           />
@@ -475,37 +475,37 @@
                       </td>
                       <td class="py-4 pr-4">
                         <input
-                          type="number"
                           v-model.number="item.cost"
-                          @input="recalculateItemRate(index)"
+                          type="number"
                           class="w-full px-3 py-2 bg-gray-50 border border-gray-200 rounded-lg focus:border-violet-500 outline-none transition-all text-sm font-bold text-gray-800"
                           min="0"
+                          @input="recalculateItemRate(index)"
                         />
                       </td>
                       <td class="py-4 pr-4 relative">
                         <input
-                          type="number"
                           v-model.number="item.margin"
-                          @input="recalculateItemRate(index)"
+                          type="number"
                           class="w-full pl-3 pr-6 py-2 bg-gray-50 border border-gray-200 rounded-lg focus:border-violet-500 outline-none transition-all text-sm font-bold text-violet-600"
                           min="0"
                           max="100"
+                          @input="recalculateItemRate(index)"
                         />
                         <span class="absolute right-6 top-1/2 -translate-y-1/2 text-xs font-bold text-gray-400">%</span>
                       </td>
                       <td class="py-4 text-right">
                         <input
-                          type="number"
                           v-model.number="item.rate"
-                          @input="recalculateItemMargin(index)"
+                          type="number"
                           class="w-full text-right px-3 py-2 bg-transparent border border-transparent rounded-lg focus:border-violet-300 focus:bg-white focus:ring-2 focus:ring-violet-100 outline-none transition-all text-sm font-bold text-gray-900"
                           min="0"
+                          @input="recalculateItemMargin(index)"
                         />
                       </td>
                       <td class="py-4 text-right pl-2">
                         <button
-                          @click="removeItem(index)"
                           class="p-2 text-gray-400 hover:text-red-500 hover:bg-red-50 rounded-lg transition-colors opacity-0 group-hover:opacity-100"
+                          @click="removeItem(index)"
                         >
                           <Trash2 size="16" />
                         </button>
@@ -516,8 +516,8 @@
               </div>
 
               <button
-                @click="addItem"
                 class="mt-4 flex items-center justify-center gap-2 w-full py-3 border-2 border-dashed border-gray-200 text-gray-500 rounded-xl hover:border-violet-300 hover:text-violet-600 hover:bg-violet-50 transition-all text-sm font-bold"
+                @click="addItem"
               >
                 <Plus size="16" />
                 Add Item
@@ -534,8 +534,8 @@
                     <label class="block text-xs font-bold text-gray-500 uppercase tracking-widest mb-2">Discount</label>
                     <div class="flex gap-2">
                       <input
-                        type="number"
                         v-model.number="formData.discount"
+                        type="number"
                         class="flex-1 px-4 py-2 bg-gray-50 border border-gray-200 rounded-xl outline-none"
                         min="0"
                       />
@@ -551,8 +551,8 @@
                   <div>
                     <label class="block text-xs font-bold text-gray-500 uppercase tracking-widest mb-2">Tax Rate (%)</label>
                     <input
-                      type="number"
                       v-model.number="formData.taxRate"
+                      type="number"
                       class="w-full px-4 py-2 bg-gray-50 border border-gray-200 rounded-xl outline-none"
                       min="0"
                       max="100"
@@ -624,11 +624,11 @@
           <div v-else-if="activeStep === 'legal'" class="space-y-8 animate-in fade-in slide-in-from-bottom-4 duration-500">
             <div class="bg-white p-8 rounded-[2rem] shadow-sm border border-gray-100">
               <h3 class="text-xl font-bold text-gray-900 mb-6">Terms & Conditions</h3>
-              <RichTextEditor v-model="formData.termsAndConditions" placeholder="Enter legal terms..." minHeight="300px" />
+              <RichTextEditor v-model="formData.termsAndConditions" placeholder="Enter legal terms..." min-height="300px" />
             </div>
             <div class="bg-white p-8 rounded-[2rem] shadow-sm border border-gray-100">
               <h3 class="text-xl font-bold text-gray-900 mb-6">Payment Terms</h3>
-              <RichTextEditor v-model="formData.paymentTerms" placeholder="Payment schedule..." minHeight="200px" />
+              <RichTextEditor v-model="formData.paymentTerms" placeholder="Payment schedule..." min-height="200px" />
             </div>
             <!-- Notes -->
             <div class="bg-white p-8 rounded-[2rem] shadow-sm border border-gray-100">
@@ -657,8 +657,8 @@
                     />
                   </div>
                   <button
-                    @click="removeCustomSection(index, section.id)"
                     class="flex items-center gap-2 px-4 py-2 text-red-600 bg-red-50 hover:bg-red-100 rounded-xl text-sm font-bold transition-colors mt-6"
+                    @click="removeCustomSection(index, section.id)"
                   >
                     <Trash2 size="16" />
                     Delete Section
@@ -669,7 +669,7 @@
                 <RichTextEditor
                   v-model="section.content"
                   :placeholder="`Write content for ${section.title || 'this section'}...`"
-                  minHeight="400px"
+                  min-height="400px"
                 />
               </div>
             </div>
@@ -686,9 +686,9 @@
       >
         <!-- Scaling Wrapper -->
         <div class="sticky top-4 z-50 flex items-center gap-2 bg-black/80 backdrop-blur text-white px-4 py-2 rounded-full mb-8 shadow-xl">
-          <button @click="zoom -= 0.1" class="p-1 hover:text-violet-300"><ZoomOut size="16" /></button>
+          <button class="p-1 hover:text-violet-300" @click="zoom -= 0.1"><ZoomOut size="16" /></button>
           <span class="text-xs font-mono font-bold w-12 text-center">{{ Math.round(zoom * 100) }}%</span>
-          <button @click="zoom += 0.1" class="p-1 hover:text-violet-300"><ZoomIn size="16" /></button>
+          <button class="p-1 hover:text-violet-300" @click="zoom += 0.1"><ZoomIn size="16" /></button>
         </div>
 
         <div :style="{ transform: `scale(${zoom})`, transformOrigin: 'top center' }" class="transition-transform duration-200 pb-[100px]">
@@ -703,11 +703,18 @@
 </template>
 
 <script setup lang="ts">
-import { ref, reactive, computed, watch, nextTick } from 'vue';
+import { ref, reactive, computed, watch, nextTick, h, type FunctionalComponent } from 'vue';
 import draggable from 'vuedraggable';
-// Lightweight icon shims using Nuxt Icon (replaces lucide-vue-next)
-import { h, type FunctionalComponent } from 'vue';
+import { ArrowDown } from '@element-plus/icons-vue';
+import ProposalPrintTemplate from './ProposalPrintTemplate.vue';
+import FixedDocumentTemplate from './FixedDocumentTemplate.vue';
+import RichTextEditor from './RichTextEditor.vue';
+import type { ProposalData, CustomSection } from './types';
+import { useDocumentArchive } from '~/composables/useDocumentArchive';
+import { getAvailableConversions, convertDocument } from '~/composables/useDocumentConversion';
+import { useDocBuilder } from '~/composables/useDocBuilder';
 
+// Lightweight icon shims using Nuxt Icon (replaces lucide-vue-next)
 const iconShim =
   (name: string): FunctionalComponent<{ size?: number | string; class?: string }> =>
   (props, { attrs }) =>
@@ -729,18 +736,6 @@ const ZoomIn = iconShim('ph:plus-circle');
 const CheckCircle = iconShim('ph:check-circle');
 const Trash2 = iconShim('ph:trash');
 const GripVertical = iconShim('ph:dots-six-vertical');
-
-// Components
-import ProposalPrintTemplate from './ProposalPrintTemplate.vue';
-import FixedDocumentTemplate from './FixedDocumentTemplate.vue';
-import RichTextEditor from './RichTextEditor.vue';
-
-// Types
-import type { ProposalData, CustomSection } from './types';
-import { useDocumentArchive } from '~/composables/useDocumentArchive';
-import { getAvailableConversions, convertDocument } from '~/composables/useDocumentConversion';
-import { useDocBuilder } from '~/composables/useDocBuilder';
-import { ArrowDown } from '@element-plus/icons-vue';
 
 const props = withDefaults(
   defineProps<{

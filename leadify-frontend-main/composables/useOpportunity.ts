@@ -1,3 +1,4 @@
+/* eslint-disable no-use-before-define */
 import { ElNotification } from 'element-plus';
 // Handle error during Opportunity creation
 function handleError(message: string) {

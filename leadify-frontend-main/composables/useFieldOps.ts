@@ -1,3 +1,4 @@
+/* eslint-disable require-await */
 export interface FieldCheckIn {
   id: number;
   userId: number;

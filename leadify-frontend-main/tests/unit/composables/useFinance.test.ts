@@ -6,9 +6,6 @@
 
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 
-const mockApiFetch = vi.fn();
-(globalThis as any).useApiFetch = mockApiFetch;
-
 import {
   expenseStatuses,
   fetchExpenseCategories,
@@ -29,6 +26,9 @@ import {
   updateBudget,
   deleteBudget
 } from '~/composables/useFinance';
+
+const mockApiFetch = vi.fn();
+(globalThis as any).useApiFetch = mockApiFetch;
 
 describe('useFinance', () => {
   beforeEach(() => {

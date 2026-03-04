@@ -1,3 +1,4 @@
+/* eslint-disable require-await */
 export interface KBArticle {
   id: string;
   title: string;

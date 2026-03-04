@@ -399,7 +399,7 @@ const dashboardKpis = computed<KPIMetric[]>(() => [
     icon: 'ph:shield-check-bold',
     color: performanceData.complianceRate >= 90 ? '#22c55e' : performanceData.complianceRate >= 70 ? '#f59e0b' : '#ef4444',
     trend: performanceData.complianceRate >= 90 ? '+2.3%' : '-1.5%',
-    trendType: performanceData.complianceRate >= 90 ? 'up' as const : 'down' as const
+    trendType: performanceData.complianceRate >= 90 ? ('up' as const) : ('down' as const)
   },
   {
     label: t('slaManagement.avgResponseTime'),
@@ -419,7 +419,7 @@ const dashboardKpis = computed<KPIMetric[]>(() => [
     icon: 'ph:warning-circle-bold',
     color: performanceData.breachCountThisMonth > 5 ? '#ef4444' : '#f59e0b',
     trend: performanceData.breachCountThisMonth > 5 ? 'High' : 'Low',
-    trendType: performanceData.breachCountThisMonth > 5 ? 'down' as const : 'up' as const
+    trendType: performanceData.breachCountThisMonth > 5 ? ('down' as const) : ('up' as const)
   }
 ]);
 
@@ -594,7 +594,10 @@ async function initComplianceChart() {
           areaStyle: {
             color: {
               type: 'linear',
-              x: 0, y: 0, x2: 0, y2: 1,
+              x: 0,
+              y: 0,
+              x2: 0,
+              y2: 1,
               colorStops: [
                 { offset: 0, color: 'rgba(139, 92, 252, 0.3)' },
                 { offset: 1, color: 'rgba(139, 92, 252, 0.02)' }
@@ -611,7 +614,10 @@ async function initComplianceChart() {
           itemStyle: {
             color: {
               type: 'linear',
-              x: 0, y: 0, x2: 0, y2: 1,
+              x: 0,
+              y: 0,
+              x2: 0,
+              y2: 1,
               colorStops: [
                 { offset: 0, color: '#ef4444' },
                 { offset: 1, color: 'rgba(239, 68, 68, 0.3)' }
@@ -639,7 +645,12 @@ function formatTime(minutes: number): string {
 
 function getInitials(name: string): string {
   if (!name) return '?';
-  return name.split(' ').map(w => w[0]).join('').substring(0, 2).toUpperCase();
+  return name
+    .split(' ')
+    .map(w => w[0])
+    .join('')
+    .substring(0, 2)
+    .toUpperCase();
 }
 
 function getAvatarColor(name: string): string {
@@ -726,7 +737,9 @@ async function handleDeletePolicy(policy: SLAPolicy) {
     const response = await fetchSLAPolicies();
     policies.value = response.docs;
     ElNotification({ type: 'success', title: t('common.success'), message: t('sla.deleted') });
-  } catch (e: any) { ElMessage.error(t('common.error')); }
+  } catch (e: any) {
+    ElMessage.error(t('common.error'));
+  }
 }
 
 async function handleCheckBreaches() {
@@ -767,8 +780,14 @@ async function saveEscalationConfig() {
 }
 
 @keyframes fadeIn {
-  from { opacity: 0; transform: translateY(10px); }
-  to { opacity: 1; transform: translateY(0); }
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
 }
 
 .icon-box {

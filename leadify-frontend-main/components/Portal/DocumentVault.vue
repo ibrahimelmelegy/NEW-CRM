@@ -96,8 +96,8 @@
 </template>
 
 <script setup lang="ts">
-import type { PortalDocument } from '~/composables/usePortal';
 import { ElMessage } from 'element-plus';
+import type { PortalDocument } from '~/composables/usePortal';
 
 const props = defineProps<{
   documents: PortalDocument[];

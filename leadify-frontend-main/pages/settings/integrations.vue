@@ -311,48 +311,487 @@ interface IntegrationItem {
 
 const marketplaceIntegrations = ref<IntegrationItem[]>([
   // Communication
-  { id: 'slack', name: 'Slack', description: 'Real-time team messaging and notifications channel', category: 'communication', color: '#4A154B', status: 'available', statusType: '', isConfigured: false, enabled: false, lastSyncLabel: '', flowStatus: '', type: 'SLACK', configFields: [{ key: 'webhookUrl', label: 'Webhook URL', type: 'url', placeholder: 'https://hooks.slack.com/...', required: true }, { key: 'channel', label: 'Default Channel', type: 'text', placeholder: '#general', required: false }] },
-  { id: 'ms-teams', name: 'Microsoft Teams', description: 'Enterprise collaboration and video conferencing', category: 'communication', color: '#5B5FC7', status: 'available', statusType: '', isConfigured: false, enabled: false, lastSyncLabel: '', flowStatus: '', type: 'MS_TEAMS', configFields: [{ key: 'tenantId', label: 'Tenant ID', type: 'text', placeholder: 'Enter Azure Tenant ID', required: true }, { key: 'clientId', label: 'App Client ID', type: 'text', placeholder: 'Enter App ID', required: true }, { key: 'clientSecret', label: 'Client Secret', type: 'password', placeholder: 'Enter Client Secret', required: true }] },
-  { id: 'zoom', name: 'Zoom', description: 'Video meetings and webinar integration', category: 'communication', color: '#2D8CFF', status: 'available', statusType: '', isConfigured: false, enabled: false, lastSyncLabel: '', flowStatus: '', type: 'ZOOM', configFields: [{ key: 'accountId', label: 'Account ID', type: 'text', placeholder: 'Enter Zoom Account ID', required: true }, { key: 'clientId', label: 'Client ID', type: 'text', placeholder: 'Enter OAuth Client ID', required: true }, { key: 'clientSecret', label: 'Client Secret', type: 'password', placeholder: 'Enter Client Secret', required: true }] },
-  { id: 'google-meet', name: 'Google Meet', description: 'Video meetings via Google Workspace', category: 'communication', color: '#00897B', status: 'comingSoon', statusType: 'info', isConfigured: false, enabled: false, lastSyncLabel: '', flowStatus: '', type: 'GOOGLE_MEET', configFields: [] },
+  {
+    id: 'slack',
+    name: 'Slack',
+    description: 'Real-time team messaging and notifications channel',
+    category: 'communication',
+    color: '#4A154B',
+    status: 'available',
+    statusType: '',
+    isConfigured: false,
+    enabled: false,
+    lastSyncLabel: '',
+    flowStatus: '',
+    type: 'SLACK',
+    configFields: [
+      { key: 'webhookUrl', label: 'Webhook URL', type: 'url', placeholder: 'https://hooks.slack.com/...', required: true },
+      { key: 'channel', label: 'Default Channel', type: 'text', placeholder: '#general', required: false }
+    ]
+  },
+  {
+    id: 'ms-teams',
+    name: 'Microsoft Teams',
+    description: 'Enterprise collaboration and video conferencing',
+    category: 'communication',
+    color: '#5B5FC7',
+    status: 'available',
+    statusType: '',
+    isConfigured: false,
+    enabled: false,
+    lastSyncLabel: '',
+    flowStatus: '',
+    type: 'MS_TEAMS',
+    configFields: [
+      { key: 'tenantId', label: 'Tenant ID', type: 'text', placeholder: 'Enter Azure Tenant ID', required: true },
+      { key: 'clientId', label: 'App Client ID', type: 'text', placeholder: 'Enter App ID', required: true },
+      { key: 'clientSecret', label: 'Client Secret', type: 'password', placeholder: 'Enter Client Secret', required: true }
+    ]
+  },
+  {
+    id: 'zoom',
+    name: 'Zoom',
+    description: 'Video meetings and webinar integration',
+    category: 'communication',
+    color: '#2D8CFF',
+    status: 'available',
+    statusType: '',
+    isConfigured: false,
+    enabled: false,
+    lastSyncLabel: '',
+    flowStatus: '',
+    type: 'ZOOM',
+    configFields: [
+      { key: 'accountId', label: 'Account ID', type: 'text', placeholder: 'Enter Zoom Account ID', required: true },
+      { key: 'clientId', label: 'Client ID', type: 'text', placeholder: 'Enter OAuth Client ID', required: true },
+      { key: 'clientSecret', label: 'Client Secret', type: 'password', placeholder: 'Enter Client Secret', required: true }
+    ]
+  },
+  {
+    id: 'google-meet',
+    name: 'Google Meet',
+    description: 'Video meetings via Google Workspace',
+    category: 'communication',
+    color: '#00897B',
+    status: 'comingSoon',
+    statusType: 'info',
+    isConfigured: false,
+    enabled: false,
+    lastSyncLabel: '',
+    flowStatus: '',
+    type: 'GOOGLE_MEET',
+    configFields: []
+  },
 
   // Email
-  { id: 'gmail', name: 'Gmail', description: 'Google email integration for sending and tracking', category: 'email', color: '#EA4335', status: 'available', statusType: '', isConfigured: false, enabled: false, lastSyncLabel: '', flowStatus: '', type: 'GMAIL', configFields: [{ key: 'clientId', label: 'OAuth Client ID', type: 'text', placeholder: 'Enter Google Client ID', required: true }, { key: 'clientSecret', label: 'OAuth Client Secret', type: 'password', placeholder: 'Enter Client Secret', required: true }] },
-  { id: 'outlook-mail', name: 'Outlook', description: 'Microsoft email and calendar sync', category: 'email', color: '#0078D4', status: 'available', statusType: '', isConfigured: false, enabled: false, lastSyncLabel: '', flowStatus: '', type: 'OUTLOOK_MAIL', configFields: [{ key: 'clientId', label: 'App ID', type: 'text', placeholder: 'Enter Azure App ID', required: true }, { key: 'tenantId', label: 'Tenant ID', type: 'text', placeholder: 'Enter Tenant ID', required: true }] },
-  { id: 'brevo', name: 'Brevo / SendGrid', description: 'Transactional email and campaign delivery', category: 'email', color: '#009664', status: 'available', statusType: '', isConfigured: false, enabled: false, lastSyncLabel: '', flowStatus: '', type: 'BREVO', configFields: [{ key: 'apiKey', label: 'API Key', type: 'password', placeholder: 'xkeysib-...', required: true }] },
+  {
+    id: 'gmail',
+    name: 'Gmail',
+    description: 'Google email integration for sending and tracking',
+    category: 'email',
+    color: '#EA4335',
+    status: 'available',
+    statusType: '',
+    isConfigured: false,
+    enabled: false,
+    lastSyncLabel: '',
+    flowStatus: '',
+    type: 'GMAIL',
+    configFields: [
+      { key: 'clientId', label: 'OAuth Client ID', type: 'text', placeholder: 'Enter Google Client ID', required: true },
+      { key: 'clientSecret', label: 'OAuth Client Secret', type: 'password', placeholder: 'Enter Client Secret', required: true }
+    ]
+  },
+  {
+    id: 'outlook-mail',
+    name: 'Outlook',
+    description: 'Microsoft email and calendar sync',
+    category: 'email',
+    color: '#0078D4',
+    status: 'available',
+    statusType: '',
+    isConfigured: false,
+    enabled: false,
+    lastSyncLabel: '',
+    flowStatus: '',
+    type: 'OUTLOOK_MAIL',
+    configFields: [
+      { key: 'clientId', label: 'App ID', type: 'text', placeholder: 'Enter Azure App ID', required: true },
+      { key: 'tenantId', label: 'Tenant ID', type: 'text', placeholder: 'Enter Tenant ID', required: true }
+    ]
+  },
+  {
+    id: 'brevo',
+    name: 'Brevo / SendGrid',
+    description: 'Transactional email and campaign delivery',
+    category: 'email',
+    color: '#009664',
+    status: 'available',
+    statusType: '',
+    isConfigured: false,
+    enabled: false,
+    lastSyncLabel: '',
+    flowStatus: '',
+    type: 'BREVO',
+    configFields: [{ key: 'apiKey', label: 'API Key', type: 'password', placeholder: 'xkeysib-...', required: true }]
+  },
 
   // Storage
-  { id: 'google-drive', name: 'Google Drive', description: 'Cloud file storage and document sharing', category: 'storage', color: '#4285F4', status: 'available', statusType: '', isConfigured: false, enabled: false, lastSyncLabel: '', flowStatus: '', type: 'GOOGLE_DRIVE', configFields: [{ key: 'clientId', label: 'OAuth Client ID', type: 'text', placeholder: 'Enter Client ID', required: true }, { key: 'clientSecret', label: 'Client Secret', type: 'password', placeholder: 'Enter Client Secret', required: true }] },
-  { id: 'dropbox', name: 'Dropbox', description: 'File sync and cloud storage for documents', category: 'storage', color: '#0061FF', status: 'available', statusType: '', isConfigured: false, enabled: false, lastSyncLabel: '', flowStatus: '', type: 'DROPBOX', configFields: [{ key: 'accessToken', label: 'Access Token', type: 'password', placeholder: 'Enter Dropbox Access Token', required: true }] },
-  { id: 'onedrive', name: 'OneDrive', description: 'Microsoft cloud storage integration', category: 'storage', color: '#0078D4', status: 'comingSoon', statusType: 'info', isConfigured: false, enabled: false, lastSyncLabel: '', flowStatus: '', type: 'ONEDRIVE', configFields: [] },
-  { id: 'sharepoint', name: 'SharePoint', description: 'Enterprise content management and collaboration', category: 'storage', color: '#036C70', status: 'comingSoon', statusType: 'info', isConfigured: false, enabled: false, lastSyncLabel: '', flowStatus: '', type: 'SHAREPOINT', configFields: [] },
+  {
+    id: 'google-drive',
+    name: 'Google Drive',
+    description: 'Cloud file storage and document sharing',
+    category: 'storage',
+    color: '#4285F4',
+    status: 'available',
+    statusType: '',
+    isConfigured: false,
+    enabled: false,
+    lastSyncLabel: '',
+    flowStatus: '',
+    type: 'GOOGLE_DRIVE',
+    configFields: [
+      { key: 'clientId', label: 'OAuth Client ID', type: 'text', placeholder: 'Enter Client ID', required: true },
+      { key: 'clientSecret', label: 'Client Secret', type: 'password', placeholder: 'Enter Client Secret', required: true }
+    ]
+  },
+  {
+    id: 'dropbox',
+    name: 'Dropbox',
+    description: 'File sync and cloud storage for documents',
+    category: 'storage',
+    color: '#0061FF',
+    status: 'available',
+    statusType: '',
+    isConfigured: false,
+    enabled: false,
+    lastSyncLabel: '',
+    flowStatus: '',
+    type: 'DROPBOX',
+    configFields: [{ key: 'accessToken', label: 'Access Token', type: 'password', placeholder: 'Enter Dropbox Access Token', required: true }]
+  },
+  {
+    id: 'onedrive',
+    name: 'OneDrive',
+    description: 'Microsoft cloud storage integration',
+    category: 'storage',
+    color: '#0078D4',
+    status: 'comingSoon',
+    statusType: 'info',
+    isConfigured: false,
+    enabled: false,
+    lastSyncLabel: '',
+    flowStatus: '',
+    type: 'ONEDRIVE',
+    configFields: []
+  },
+  {
+    id: 'sharepoint',
+    name: 'SharePoint',
+    description: 'Enterprise content management and collaboration',
+    category: 'storage',
+    color: '#036C70',
+    status: 'comingSoon',
+    statusType: 'info',
+    isConfigured: false,
+    enabled: false,
+    lastSyncLabel: '',
+    flowStatus: '',
+    type: 'SHAREPOINT',
+    configFields: []
+  },
 
   // Accounting
-  { id: 'quickbooks', name: 'QuickBooks', description: 'Accounting and invoicing synchronization', category: 'accounting', color: '#2CA01C', status: 'available', statusType: '', isConfigured: false, enabled: false, lastSyncLabel: '', flowStatus: '', type: 'QUICKBOOKS', configFields: [{ key: 'clientId', label: 'Client ID', type: 'text', placeholder: 'Enter QB Client ID', required: true }, { key: 'clientSecret', label: 'Client Secret', type: 'password', placeholder: 'Enter Client Secret', required: true }, { key: 'realmId', label: 'Realm ID', type: 'text', placeholder: 'Enter Company Realm ID', required: true }] },
-  { id: 'xero', name: 'Xero', description: 'Cloud accounting and financial management', category: 'accounting', color: '#13B5EA', status: 'available', statusType: '', isConfigured: false, enabled: false, lastSyncLabel: '', flowStatus: '', type: 'XERO', configFields: [{ key: 'clientId', label: 'Client ID', type: 'text', placeholder: 'Enter Xero Client ID', required: true }, { key: 'clientSecret', label: 'Client Secret', type: 'password', placeholder: 'Enter Client Secret', required: true }] },
-  { id: 'freshbooks', name: 'FreshBooks', description: 'Invoice and expense tracking platform', category: 'accounting', color: '#0075DD', status: 'comingSoon', statusType: 'info', isConfigured: false, enabled: false, lastSyncLabel: '', flowStatus: '', type: 'FRESHBOOKS', configFields: [] },
+  {
+    id: 'quickbooks',
+    name: 'QuickBooks',
+    description: 'Accounting and invoicing synchronization',
+    category: 'accounting',
+    color: '#2CA01C',
+    status: 'available',
+    statusType: '',
+    isConfigured: false,
+    enabled: false,
+    lastSyncLabel: '',
+    flowStatus: '',
+    type: 'QUICKBOOKS',
+    configFields: [
+      { key: 'clientId', label: 'Client ID', type: 'text', placeholder: 'Enter QB Client ID', required: true },
+      { key: 'clientSecret', label: 'Client Secret', type: 'password', placeholder: 'Enter Client Secret', required: true },
+      { key: 'realmId', label: 'Realm ID', type: 'text', placeholder: 'Enter Company Realm ID', required: true }
+    ]
+  },
+  {
+    id: 'xero',
+    name: 'Xero',
+    description: 'Cloud accounting and financial management',
+    category: 'accounting',
+    color: '#13B5EA',
+    status: 'available',
+    statusType: '',
+    isConfigured: false,
+    enabled: false,
+    lastSyncLabel: '',
+    flowStatus: '',
+    type: 'XERO',
+    configFields: [
+      { key: 'clientId', label: 'Client ID', type: 'text', placeholder: 'Enter Xero Client ID', required: true },
+      { key: 'clientSecret', label: 'Client Secret', type: 'password', placeholder: 'Enter Client Secret', required: true }
+    ]
+  },
+  {
+    id: 'freshbooks',
+    name: 'FreshBooks',
+    description: 'Invoice and expense tracking platform',
+    category: 'accounting',
+    color: '#0075DD',
+    status: 'comingSoon',
+    statusType: 'info',
+    isConfigured: false,
+    enabled: false,
+    lastSyncLabel: '',
+    flowStatus: '',
+    type: 'FRESHBOOKS',
+    configFields: []
+  },
 
   // Marketing
-  { id: 'mailchimp', name: 'Mailchimp', description: 'Email marketing and audience management', category: 'marketing', color: '#FFE01B', status: 'available', statusType: '', isConfigured: false, enabled: false, lastSyncLabel: '', flowStatus: '', type: 'MAILCHIMP', configFields: [{ key: 'apiKey', label: 'API Key', type: 'password', placeholder: 'Enter Mailchimp API Key', required: true }, { key: 'server', label: 'Server Prefix', type: 'text', placeholder: 'us1', required: true }] },
-  { id: 'hubspot', name: 'HubSpot', description: 'Marketing automation and CRM sync', category: 'marketing', color: '#FF7A59', status: 'available', statusType: '', isConfigured: false, enabled: false, lastSyncLabel: '', flowStatus: '', type: 'HUBSPOT', configFields: [{ key: 'accessToken', label: 'Private App Token', type: 'password', placeholder: 'pat-...', required: true }] },
-  { id: 'google-ads', name: 'Google Ads', description: 'Ad campaign performance and lead attribution', category: 'marketing', color: '#4285F4', status: 'comingSoon', statusType: 'info', isConfigured: false, enabled: false, lastSyncLabel: '', flowStatus: '', type: 'GOOGLE_ADS', configFields: [] },
-  { id: 'facebook-ads', name: 'Facebook Ads', description: 'Social advertising and audience targeting', category: 'marketing', color: '#1877F2', status: 'comingSoon', statusType: 'info', isConfigured: false, enabled: false, lastSyncLabel: '', flowStatus: '', type: 'FACEBOOK_ADS', configFields: [] },
+  {
+    id: 'mailchimp',
+    name: 'Mailchimp',
+    description: 'Email marketing and audience management',
+    category: 'marketing',
+    color: '#FFE01B',
+    status: 'available',
+    statusType: '',
+    isConfigured: false,
+    enabled: false,
+    lastSyncLabel: '',
+    flowStatus: '',
+    type: 'MAILCHIMP',
+    configFields: [
+      { key: 'apiKey', label: 'API Key', type: 'password', placeholder: 'Enter Mailchimp API Key', required: true },
+      { key: 'server', label: 'Server Prefix', type: 'text', placeholder: 'us1', required: true }
+    ]
+  },
+  {
+    id: 'hubspot',
+    name: 'HubSpot',
+    description: 'Marketing automation and CRM sync',
+    category: 'marketing',
+    color: '#FF7A59',
+    status: 'available',
+    statusType: '',
+    isConfigured: false,
+    enabled: false,
+    lastSyncLabel: '',
+    flowStatus: '',
+    type: 'HUBSPOT',
+    configFields: [{ key: 'accessToken', label: 'Private App Token', type: 'password', placeholder: 'pat-...', required: true }]
+  },
+  {
+    id: 'google-ads',
+    name: 'Google Ads',
+    description: 'Ad campaign performance and lead attribution',
+    category: 'marketing',
+    color: '#4285F4',
+    status: 'comingSoon',
+    statusType: 'info',
+    isConfigured: false,
+    enabled: false,
+    lastSyncLabel: '',
+    flowStatus: '',
+    type: 'GOOGLE_ADS',
+    configFields: []
+  },
+  {
+    id: 'facebook-ads',
+    name: 'Facebook Ads',
+    description: 'Social advertising and audience targeting',
+    category: 'marketing',
+    color: '#1877F2',
+    status: 'comingSoon',
+    statusType: 'info',
+    isConfigured: false,
+    enabled: false,
+    lastSyncLabel: '',
+    flowStatus: '',
+    type: 'FACEBOOK_ADS',
+    configFields: []
+  },
 
   // Support
-  { id: 'zendesk', name: 'Zendesk', description: 'Customer support ticketing and helpdesk', category: 'support', color: '#03363D', status: 'available', statusType: '', isConfigured: false, enabled: false, lastSyncLabel: '', flowStatus: '', type: 'ZENDESK', configFields: [{ key: 'subdomain', label: 'Subdomain', type: 'text', placeholder: 'your-company', required: true }, { key: 'apiToken', label: 'API Token', type: 'password', placeholder: 'Enter API Token', required: true }, { key: 'email', label: 'Admin Email', type: 'text', placeholder: 'admin@company.com', required: true }] },
-  { id: 'intercom', name: 'Intercom', description: 'Customer messaging and engagement platform', category: 'support', color: '#1F8DED', status: 'available', statusType: '', isConfigured: false, enabled: false, lastSyncLabel: '', flowStatus: '', type: 'INTERCOM', configFields: [{ key: 'accessToken', label: 'Access Token', type: 'password', placeholder: 'Enter Access Token', required: true }] },
-  { id: 'freshdesk', name: 'Freshdesk', description: 'Cloud-based customer support software', category: 'support', color: '#2CA5E0', status: 'comingSoon', statusType: 'info', isConfigured: false, enabled: false, lastSyncLabel: '', flowStatus: '', type: 'FRESHDESK', configFields: [] },
+  {
+    id: 'zendesk',
+    name: 'Zendesk',
+    description: 'Customer support ticketing and helpdesk',
+    category: 'support',
+    color: '#03363D',
+    status: 'available',
+    statusType: '',
+    isConfigured: false,
+    enabled: false,
+    lastSyncLabel: '',
+    flowStatus: '',
+    type: 'ZENDESK',
+    configFields: [
+      { key: 'subdomain', label: 'Subdomain', type: 'text', placeholder: 'your-company', required: true },
+      { key: 'apiToken', label: 'API Token', type: 'password', placeholder: 'Enter API Token', required: true },
+      { key: 'email', label: 'Admin Email', type: 'text', placeholder: 'admin@company.com', required: true }
+    ]
+  },
+  {
+    id: 'intercom',
+    name: 'Intercom',
+    description: 'Customer messaging and engagement platform',
+    category: 'support',
+    color: '#1F8DED',
+    status: 'available',
+    statusType: '',
+    isConfigured: false,
+    enabled: false,
+    lastSyncLabel: '',
+    flowStatus: '',
+    type: 'INTERCOM',
+    configFields: [{ key: 'accessToken', label: 'Access Token', type: 'password', placeholder: 'Enter Access Token', required: true }]
+  },
+  {
+    id: 'freshdesk',
+    name: 'Freshdesk',
+    description: 'Cloud-based customer support software',
+    category: 'support',
+    color: '#2CA5E0',
+    status: 'comingSoon',
+    statusType: 'info',
+    isConfigured: false,
+    enabled: false,
+    lastSyncLabel: '',
+    flowStatus: '',
+    type: 'FRESHDESK',
+    configFields: []
+  },
 
   // Payments
-  { id: 'stripe', name: 'Stripe', description: 'Online payment processing and billing', category: 'payments', color: '#635BFF', status: 'available', statusType: '', isConfigured: false, enabled: false, lastSyncLabel: '', flowStatus: '', type: 'STRIPE', configFields: [{ key: 'publishableKey', label: 'Publishable Key', type: 'text', placeholder: 'pk_...', required: true }, { key: 'secretKey', label: 'Secret Key', type: 'password', placeholder: 'sk_...', required: true }] },
-  { id: 'paypal', name: 'PayPal', description: 'Global payment gateway and invoicing', category: 'payments', color: '#003087', status: 'available', statusType: '', isConfigured: false, enabled: false, lastSyncLabel: '', flowStatus: '', type: 'PAYPAL', configFields: [{ key: 'clientId', label: 'Client ID', type: 'text', placeholder: 'Enter PayPal Client ID', required: true }, { key: 'clientSecret', label: 'Secret', type: 'password', placeholder: 'Enter PayPal Secret', required: true }] },
-  { id: 'square', name: 'Square', description: 'POS and payment processing integration', category: 'payments', color: '#006AFF', status: 'comingSoon', statusType: 'info', isConfigured: false, enabled: false, lastSyncLabel: '', flowStatus: '', type: 'SQUARE', configFields: [] },
+  {
+    id: 'stripe',
+    name: 'Stripe',
+    description: 'Online payment processing and billing',
+    category: 'payments',
+    color: '#635BFF',
+    status: 'available',
+    statusType: '',
+    isConfigured: false,
+    enabled: false,
+    lastSyncLabel: '',
+    flowStatus: '',
+    type: 'STRIPE',
+    configFields: [
+      { key: 'publishableKey', label: 'Publishable Key', type: 'text', placeholder: 'pk_...', required: true },
+      { key: 'secretKey', label: 'Secret Key', type: 'password', placeholder: 'sk_...', required: true }
+    ]
+  },
+  {
+    id: 'paypal',
+    name: 'PayPal',
+    description: 'Global payment gateway and invoicing',
+    category: 'payments',
+    color: '#003087',
+    status: 'available',
+    statusType: '',
+    isConfigured: false,
+    enabled: false,
+    lastSyncLabel: '',
+    flowStatus: '',
+    type: 'PAYPAL',
+    configFields: [
+      { key: 'clientId', label: 'Client ID', type: 'text', placeholder: 'Enter PayPal Client ID', required: true },
+      { key: 'clientSecret', label: 'Secret', type: 'password', placeholder: 'Enter PayPal Secret', required: true }
+    ]
+  },
+  {
+    id: 'square',
+    name: 'Square',
+    description: 'POS and payment processing integration',
+    category: 'payments',
+    color: '#006AFF',
+    status: 'comingSoon',
+    statusType: 'info',
+    isConfigured: false,
+    enabled: false,
+    lastSyncLabel: '',
+    flowStatus: '',
+    type: 'SQUARE',
+    configFields: []
+  },
 
   // Social
-  { id: 'linkedin', name: 'LinkedIn', description: 'Professional networking and lead generation', category: 'social', color: '#0A66C2', status: 'available', statusType: '', isConfigured: false, enabled: false, lastSyncLabel: '', flowStatus: '', type: 'LINKEDIN', configFields: [{ key: 'clientId', label: 'Client ID', type: 'text', placeholder: 'Enter LinkedIn App ID', required: true }, { key: 'clientSecret', label: 'Client Secret', type: 'password', placeholder: 'Enter Client Secret', required: true }] },
-  { id: 'twitter', name: 'Twitter / X', description: 'Social media engagement and monitoring', category: 'social', color: '#000000', status: 'available', statusType: '', isConfigured: false, enabled: false, lastSyncLabel: '', flowStatus: '', type: 'TWITTER', configFields: [{ key: 'apiKey', label: 'API Key', type: 'text', placeholder: 'Enter API Key', required: true }, { key: 'apiSecret', label: 'API Secret', type: 'password', placeholder: 'Enter API Secret', required: true }, { key: 'bearerToken', label: 'Bearer Token', type: 'password', placeholder: 'Enter Bearer Token', required: true }] },
-  { id: 'facebook', name: 'Facebook', description: 'Page management and social engagement', category: 'social', color: '#1877F2', status: 'comingSoon', statusType: 'info', isConfigured: false, enabled: false, lastSyncLabel: '', flowStatus: '', type: 'FACEBOOK', configFields: [] },
-  { id: 'instagram', name: 'Instagram', description: 'Visual content and social commerce', category: 'social', color: '#E4405F', status: 'comingSoon', statusType: 'info', isConfigured: false, enabled: false, lastSyncLabel: '', flowStatus: '', type: 'INSTAGRAM', configFields: [] }
+  {
+    id: 'linkedin',
+    name: 'LinkedIn',
+    description: 'Professional networking and lead generation',
+    category: 'social',
+    color: '#0A66C2',
+    status: 'available',
+    statusType: '',
+    isConfigured: false,
+    enabled: false,
+    lastSyncLabel: '',
+    flowStatus: '',
+    type: 'LINKEDIN',
+    configFields: [
+      { key: 'clientId', label: 'Client ID', type: 'text', placeholder: 'Enter LinkedIn App ID', required: true },
+      { key: 'clientSecret', label: 'Client Secret', type: 'password', placeholder: 'Enter Client Secret', required: true }
+    ]
+  },
+  {
+    id: 'twitter',
+    name: 'Twitter / X',
+    description: 'Social media engagement and monitoring',
+    category: 'social',
+    color: '#000000',
+    status: 'available',
+    statusType: '',
+    isConfigured: false,
+    enabled: false,
+    lastSyncLabel: '',
+    flowStatus: '',
+    type: 'TWITTER',
+    configFields: [
+      { key: 'apiKey', label: 'API Key', type: 'text', placeholder: 'Enter API Key', required: true },
+      { key: 'apiSecret', label: 'API Secret', type: 'password', placeholder: 'Enter API Secret', required: true },
+      { key: 'bearerToken', label: 'Bearer Token', type: 'password', placeholder: 'Enter Bearer Token', required: true }
+    ]
+  },
+  {
+    id: 'facebook',
+    name: 'Facebook',
+    description: 'Page management and social engagement',
+    category: 'social',
+    color: '#1877F2',
+    status: 'comingSoon',
+    statusType: 'info',
+    isConfigured: false,
+    enabled: false,
+    lastSyncLabel: '',
+    flowStatus: '',
+    type: 'FACEBOOK',
+    configFields: []
+  },
+  {
+    id: 'instagram',
+    name: 'Instagram',
+    description: 'Visual content and social commerce',
+    category: 'social',
+    color: '#E4405F',
+    status: 'comingSoon',
+    statusType: 'info',
+    isConfigured: false,
+    enabled: false,
+    lastSyncLabel: '',
+    flowStatus: '',
+    type: 'INSTAGRAM',
+    configFields: []
+  }
 ]);
 
 // ─── Computed ────────────────────────────────────────────────────────────────
@@ -419,11 +858,7 @@ const filteredIntegrations = computed(() => {
   }
   if (searchQuery.value.trim()) {
     const q = searchQuery.value.toLowerCase();
-    list = list.filter(i =>
-      i.name.toLowerCase().includes(q) ||
-      i.description.toLowerCase().includes(q) ||
-      i.category.toLowerCase().includes(q)
-    );
+    list = list.filter(i => i.name.toLowerCase().includes(q) || i.description.toLowerCase().includes(q) || i.category.toLowerCase().includes(q));
   }
   return list;
 });
@@ -538,7 +973,9 @@ async function handleConfigDisconnect(type: string) {
 }
 
 .integration-card {
-  transition: transform 0.2s ease, box-shadow 0.2s ease;
+  transition:
+    transform 0.2s ease,
+    box-shadow 0.2s ease;
   &:hover {
     transform: translateY(-3px);
     box-shadow: 0 12px 32px rgba(0, 0, 0, 0.15);
@@ -546,7 +983,9 @@ async function handleConfigDisconnect(type: string) {
 }
 
 .connected-card {
-  transition: transform 0.2s ease, box-shadow 0.2s ease;
+  transition:
+    transform 0.2s ease,
+    box-shadow 0.2s ease;
   &:hover {
     transform: translateY(-2px);
     box-shadow: 0 8px 24px rgba(0, 0, 0, 0.1);
@@ -557,10 +996,21 @@ async function handleConfigDisconnect(type: string) {
   width: 8px;
   height: 8px;
   border-radius: 50%;
-  &.status-healthy { background: #22c55e; box-shadow: 0 0 6px rgba(34, 197, 94, 0.4); }
-  &.status-warning { background: #f59e0b; box-shadow: 0 0 6px rgba(245, 158, 11, 0.4); }
-  &.status-error { background: #ef4444; box-shadow: 0 0 6px rgba(239, 68, 68, 0.4); }
-  &.status-disconnected { background: #71717a; }
+  &.status-healthy {
+    background: #22c55e;
+    box-shadow: 0 0 6px rgba(34, 197, 94, 0.4);
+  }
+  &.status-warning {
+    background: #f59e0b;
+    box-shadow: 0 0 6px rgba(245, 158, 11, 0.4);
+  }
+  &.status-error {
+    background: #ef4444;
+    box-shadow: 0 0 6px rgba(239, 68, 68, 0.4);
+  }
+  &.status-disconnected {
+    background: #71717a;
+  }
 }
 
 .active-cat {

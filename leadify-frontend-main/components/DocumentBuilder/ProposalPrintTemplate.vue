@@ -1,12 +1,12 @@
 <template>
   <div class="proposal-print-template print:block force-light-mode">
     <!-- Cover Page (Proposals Only) -->
-    <ProposalPrintCover v-if="data.coverStyle && isFullDoc" :data="data" :color="color" :typeInfo="typeInfo" />
+    <ProposalPrintCover v-if="data.coverStyle && isFullDoc" :data="data" :color="color" :type-info="typeInfo" />
 
     <!-- Iterate over stepOrder to render sections in the correct order -->
     <template v-for="(sectionId, index) in data.stepOrder" :key="sectionId">
       <!-- Executive Summary -->
-      <ProposalPrintPage v-if="sectionId === 'executive'" :pageNum="index + 1" :data="data">
+      <ProposalPrintPage v-if="sectionId === 'executive'" :page-num="index + 1" :data="data">
         <div class="flex-1">
           <div class="mb-10">
             <h2 class="text-3xl font-bold text-gray-900 mb-8 flex items-center gap-3">
@@ -27,7 +27,7 @@
       </ProposalPrintPage>
 
       <!-- Solution & Scope -->
-      <ProposalPrintPage v-else-if="sectionId === 'solution'" :pageNum="index + 1" :data="data">
+      <ProposalPrintPage v-else-if="sectionId === 'solution'" :page-num="index + 1" :data="data">
         <div class="flex-1">
           <div class="mb-10">
             <h2 class="text-3xl font-bold text-gray-900 mb-8 flex items-center gap-3">
@@ -68,7 +68,7 @@
       </ProposalPrintPage>
 
       <!-- Financial / Pricing / Invoice -->
-      <ProposalPrintPage v-else-if="sectionId === 'financial'" :pageNum="index + 1" :data="data">
+      <ProposalPrintPage v-else-if="sectionId === 'financial'" :page-num="index + 1" :data="data">
         <div class="flex-1">
           <!-- Standard Proposal Header -->
           <h2 v-if="isFullDoc" class="text-3xl font-bold text-gray-900 mb-10 flex items-center gap-3">
@@ -95,7 +95,7 @@
               <div class="text-right">
                 <p class="text-xs font-bold text-gray-400 uppercase tracking-widest mb-2">Billed To</p>
                 <p class="text-lg font-bold text-gray-900">{{ data.clientCompany || data.clientName }}</p>
-                <p class="text-sm text-gray-500" v-if="data.clientCompany">{{ data.clientName }}</p>
+                <p v-if="data.clientCompany" class="text-sm text-gray-500">{{ data.clientName }}</p>
                 <p class="text-sm text-gray-500">{{ data.clientEmail }}</p>
               </div>
             </div>
@@ -152,7 +152,7 @@
       </ProposalPrintPage>
 
       <!-- Legal / Terms -->
-      <ProposalPrintPage v-else-if="sectionId === 'legal'" :pageNum="index + 1" :data="data">
+      <ProposalPrintPage v-else-if="sectionId === 'legal'" :page-num="index + 1" :data="data">
         <div class="flex-1 flex flex-col">
           <h2 class="text-3xl font-bold text-gray-900 mb-10 flex items-center gap-3">
             <span class="text-gray-200 font-mono">0{{ index + 1 }}</span>
@@ -179,7 +179,7 @@
       </ProposalPrintPage>
 
       <!-- Custom Sections -->
-      <ProposalPrintPage v-else :pageNum="index + 1" :data="data">
+      <ProposalPrintPage v-else :page-num="index + 1" :data="data">
         <div class="flex-1">
           <h2 class="text-3xl font-bold text-gray-900 mb-8 flex items-center gap-3">
             <span class="text-gray-200 font-mono">0{{ index + 1 }}</span>

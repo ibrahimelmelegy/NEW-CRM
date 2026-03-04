@@ -28,6 +28,7 @@ export function useHeatmap() {
 
     const maxCount = Math.max(...data.map(d => d.count), 1);
 
+    // eslint-disable-next-line no-unmodified-loop-condition
     for (let d = new Date(start); d <= end; d.setDate(d.getDate() + 1)) {
       const dateStr = d.toISOString().split('T')[0] || '';
       const count = map.get(dateStr!) || 0;

@@ -1,3 +1,4 @@
+/* eslint-disable require-await */
 export interface ReportBuilderConfig {
   entityType: string;
   columns: string[];

@@ -1,3 +1,4 @@
+/* eslint-disable no-use-before-define */
 import { ElNotification } from 'element-plus';
 // Helper function to normalize phone numbers
 function normalizePhoneNumber(phone: string): string {

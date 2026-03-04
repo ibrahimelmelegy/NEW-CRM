@@ -13,5 +13,18 @@ export const useBooking = () => {
   const updatePage = (id: string | number, data: any) => useApiFetch(`bookings/pages/${id}`, 'PUT', data);
   const deletePage = (id: string | number) => useApiFetch(`bookings/pages/${id}`, 'DELETE');
   const getAnalytics = () => useApiFetch('bookings/analytics', 'GET');
-  return { getBookings, getBookingById, createBooking, updateBooking, deleteBooking, cancelBooking, getSlots, getPages, createPage, updatePage, deletePage, getAnalytics };
+  return {
+    getBookings,
+    getBookingById,
+    createBooking,
+    updateBooking,
+    deleteBooking,
+    cancelBooking,
+    getSlots,
+    getPages,
+    createPage,
+    updatePage,
+    deletePage,
+    getAnalytics
+  };
 };

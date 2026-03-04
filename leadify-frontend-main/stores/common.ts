@@ -1,3 +1,4 @@
+/* eslint-disable require-await */
 import { defineStore } from 'pinia';
 // ImageUploader import moved to action to prevent SSR crash
 import { ElNotification } from 'element-plus';
@@ -96,18 +97,16 @@ export const useMain = defineStore('Main', {
         module: ImageUploaderModule.default || ImageUploaderModule,
         options: {
           upload: async (file: File) => {
-            return new Promise(async (resolve, reject) => {
-              try {
-                const fileAdded = await this.uploadFile('BLOG_COVER', file);
-                if (fileAdded) {
-                  this.contentImagesUrls.push(fileAdded);
-                  resolve(runtimeConfig.public.BUCKET_URL + fileAdded);
-                }
-              } catch (error) {
-                reject('Upload failed');
-                console.error('Error:', error);
+            try {
+              const fileAdded = await this.uploadFile('BLOG_COVER', file);
+              if (fileAdded) {
+                this.contentImagesUrls.push(fileAdded);
+                return runtimeConfig.public.BUCKET_URL + fileAdded;
               }
-            });
+            } catch (error) {
+              console.error('Error:', error);
+              throw new Error('Upload failed');
+            }
           }
         }
       };
@@ -119,7 +118,7 @@ export const useMain = defineStore('Main', {
 function fileToDataUrl(file: File): Promise<string | ArrayBuffer | null> {
   return new Promise((resolve, reject) => {
     if (!file) {
-      reject('No file provided.');
+      reject(new Error('No file provided.'));
       return;
     }
 
@@ -129,7 +128,7 @@ function fileToDataUrl(file: File): Promise<string | ArrayBuffer | null> {
     };
 
     reader.onerror = function () {
-      reject('Error reading the file.');
+      reject(new Error('Error reading the file.'));
     };
 
     reader.readAsDataURL(file);

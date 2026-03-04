@@ -11,6 +11,8 @@
 
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 
+import { useSafeBack } from '~/composables/useSafeBack';
+
 // Capture the mock router so we can assert on it
 const mockRouter = {
   push: vi.fn(),
@@ -21,8 +23,6 @@ const mockRouter = {
 
 // Override the global useRouter mock from setup.ts
 (globalThis as any).useRouter = () => mockRouter;
-
-import { useSafeBack } from '~/composables/useSafeBack';
 
 describe('useSafeBack', () => {
   beforeEach(() => {

@@ -324,9 +324,7 @@ function calcLineTotal(item: OrderItem): number {
   return taxable + tax;
 }
 
-const summarySubtotal = computed(() =>
-  orderItems.value.reduce((sum, item) => sum + item.quantity * item.unitPrice, 0)
-);
+const summarySubtotal = computed(() => orderItems.value.reduce((sum, item) => sum + item.quantity * item.unitPrice, 0));
 
 const summaryDiscount = computed(() =>
   orderItems.value.reduce((sum, item) => {
@@ -344,9 +342,7 @@ const summaryTax = computed(() =>
   }, 0)
 );
 
-const summaryTotal = computed(() =>
-  summarySubtotal.value - summaryDiscount.value + summaryTax.value
-);
+const summaryTotal = computed(() => summarySubtotal.value - summaryDiscount.value + summaryTax.value);
 
 // Validation
 const validationErrors = computed(() => {

@@ -388,8 +388,12 @@ const saving = ref(false);
 // Bulk Selection
 const selectedWarehouses = ref<any[]>([]);
 const selectedTransfers = ref<any[]>([]);
-const handleWarehouseSelectionChange = (rows: any[]) => { selectedWarehouses.value = rows; };
-const handleTransferSelectionChange = (rows: any[]) => { selectedTransfers.value = rows; };
+const handleWarehouseSelectionChange = (rows: any[]) => {
+  selectedWarehouses.value = rows;
+};
+const handleTransferSelectionChange = (rows: any[]) => {
+  selectedTransfers.value = rows;
+};
 
 // KPI Dashboard
 const kpiData = reactive({
@@ -498,9 +502,11 @@ const filteredTransfers = computed(() => {
   if (!transferSearch.value) return transfers.value;
   const q = transferSearch.value.toLowerCase();
   return transfers.value.filter((tr: any) => {
-    return (tr.transferNumber || '').toLowerCase().includes(q) ||
+    return (
+      (tr.transferNumber || '').toLowerCase().includes(q) ||
       (tr.fromWarehouseName || '').toLowerCase().includes(q) ||
-      (tr.toWarehouseName || '').toLowerCase().includes(q);
+      (tr.toWarehouseName || '').toLowerCase().includes(q)
+    );
   });
 });
 
@@ -568,11 +574,7 @@ async function saveWarehouse() {
 
 async function deleteWarehouse(wh: any) {
   try {
-    await ElMessageBox.confirm(
-      t('common.confirmDelete'),
-      t('common.warning'),
-      { type: 'warning' }
-    );
+    await ElMessageBox.confirm(t('common.confirmDelete'), t('common.warning'), { type: 'warning' });
     await useApiFetch(`warehouse/${wh.id}`, 'DELETE');
     ElNotification({ type: 'success', title: t('common.success'), message: t('common.deleted') });
     await loadWarehouses();
@@ -626,11 +628,7 @@ async function saveZone() {
 
 async function deleteZone(zone: any) {
   try {
-    await ElMessageBox.confirm(
-      t('common.confirmDelete'),
-      t('common.warning'),
-      { type: 'warning' }
-    );
+    await ElMessageBox.confirm(t('common.confirmDelete'), t('common.warning'), { type: 'warning' });
     await useApiFetch(`warehouse/zones/${zone.id}`, 'DELETE');
     ElNotification({ type: 'success', title: t('common.success'), message: t('common.deleted') });
     await loadZones();
@@ -733,11 +731,7 @@ async function loadStockCount() {
 async function bulkDeleteWarehouses() {
   if (!selectedWarehouses.value.length) return;
   try {
-    await ElMessageBox.confirm(
-      t('common.confirmBulkDelete', { count: selectedWarehouses.value.length }),
-      t('common.warning'),
-      { type: 'warning' }
-    );
+    await ElMessageBox.confirm(t('common.confirmBulkDelete', { count: selectedWarehouses.value.length }), t('common.warning'), { type: 'warning' });
     for (const row of selectedWarehouses.value) {
       await useApiFetch(`warehouse/${row.id}`, 'DELETE');
     }
@@ -753,11 +747,7 @@ async function bulkDeleteWarehouses() {
 async function bulkChangeWarehouseStatus(newStatus: string) {
   if (!selectedWarehouses.value.length) return;
   try {
-    await ElMessageBox.confirm(
-      `Change ${selectedWarehouses.value.length} warehouse(s) to ${newStatus}?`,
-      t('common.warning'),
-      { type: 'warning' }
-    );
+    await ElMessageBox.confirm(`Change ${selectedWarehouses.value.length} warehouse(s) to ${newStatus}?`, t('common.warning'), { type: 'warning' });
     for (const row of selectedWarehouses.value) {
       await useApiFetch(`warehouse/${row.id}`, 'PUT', { status: newStatus });
     }
@@ -773,16 +763,19 @@ function exportWarehousesCSV() {
   const data = selectedWarehouses.value.length ? selectedWarehouses.value : filteredWarehouses.value;
   if (!data.length) return;
   const headers = ['Name', 'Location', 'Manager', 'Capacity', 'Occupancy', 'Status'];
-  const csv = [headers.join(','), ...data.map((row: any) =>
-    [
-      `"${row.name || ''}"`,
-      `"${row.location || ''}"`,
-      `"${row.managerName || row.manager || ''}"`,
-      row.capacity || 0,
-      row.currentOccupancy || 0,
-      `"${row.status || 'ACTIVE'}"`
-    ].join(',')
-  )].join('\n');
+  const csv = [
+    headers.join(','),
+    ...data.map((row: any) =>
+      [
+        `"${row.name || ''}"`,
+        `"${row.location || ''}"`,
+        `"${row.managerName || row.manager || ''}"`,
+        row.capacity || 0,
+        row.currentOccupancy || 0,
+        `"${row.status || 'ACTIVE'}"`
+      ].join(',')
+    )
+  ].join('\n');
   const blob = new Blob([csv], { type: 'text/csv' });
   const url = URL.createObjectURL(blob);
   const a = document.createElement('a');
@@ -797,17 +790,20 @@ function exportTransfersCSV() {
   const data = selectedTransfers.value.length ? selectedTransfers.value : filteredTransfers.value;
   if (!data.length) return;
   const headers = ['Transfer #', 'From Warehouse', 'To Warehouse', 'Items', 'Status', 'Created', 'Completed'];
-  const csv = [headers.join(','), ...data.map((row: any) =>
-    [
-      `"${row.transferNumber || ''}"`,
-      `"${row.fromWarehouseName || row.fromWarehouseId || ''}"`,
-      `"${row.toWarehouseName || row.toWarehouseId || ''}"`,
-      row.items?.length || row.itemCount || 0,
-      `"${row.status || ''}"`,
-      `"${formatDate(row.createdAt)}"`,
-      `"${row.completedAt ? formatDate(row.completedAt) : ''}"`
-    ].join(',')
-  )].join('\n');
+  const csv = [
+    headers.join(','),
+    ...data.map((row: any) =>
+      [
+        `"${row.transferNumber || ''}"`,
+        `"${row.fromWarehouseName || row.fromWarehouseId || ''}"`,
+        `"${row.toWarehouseName || row.toWarehouseId || ''}"`,
+        row.items?.length || row.itemCount || 0,
+        `"${row.status || ''}"`,
+        `"${formatDate(row.createdAt)}"`,
+        `"${row.completedAt ? formatDate(row.completedAt) : ''}"`
+      ].join(',')
+    )
+  ].join('\n');
   const blob = new Blob([csv], { type: 'text/csv' });
   const url = URL.createObjectURL(blob);
   const a = document.createElement('a');

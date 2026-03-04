@@ -118,16 +118,12 @@ export function usePlanner() {
   // ── Derived task lists ──────────────────────────────────────────────────────
 
   const todayTasks = computed(() =>
-    tasks.value
-      .filter(t => t.date === today.value)
-      .sort((a, b) => (a.timeSlot || '23:59').localeCompare(b.timeSlot || '23:59'))
+    tasks.value.filter(t => t.date === today.value).sort((a, b) => (a.timeSlot || '23:59').localeCompare(b.timeSlot || '23:59'))
   );
 
   const todayCompleted = computed(() => todayTasks.value.filter(t => t.completed).length);
   const todayTotal = computed(() => todayTasks.value.length);
-  const todayProgress = computed(() =>
-    todayTotal.value > 0 ? Math.round((todayCompleted.value / todayTotal.value) * 100) : 0
-  );
+  const todayProgress = computed(() => (todayTotal.value > 0 ? Math.round((todayCompleted.value / todayTotal.value) * 100) : 0));
 
   const weekTasks = computed(() => {
     const start = new Date();
@@ -146,9 +142,7 @@ export function usePlanner() {
     return focusSessions.value.filter(f => f.startedAt?.startsWith(t));
   });
 
-  const focusTotalMinutes = computed(() =>
-    focusToday.value.reduce((sum, f) => sum + (f.actualMinutes || 0), 0)
-  );
+  const focusTotalMinutes = computed(() => focusToday.value.reduce((sum, f) => sum + (f.actualMinutes || 0), 0));
 
   // ── Stats ───────────────────────────────────────────────────────────────────
 
@@ -201,11 +195,7 @@ export function usePlanner() {
   async function init() {
     loading.value = true;
     try {
-      await Promise.all([
-        loadTasks(today.value),
-        loadHabits(),
-        loadFocus(today.value)
-      ]);
+      await Promise.all([loadTasks(today.value), loadHabits(), loadFocus(today.value)]);
     } finally {
       loading.value = false;
     }
@@ -253,9 +243,7 @@ export function usePlanner() {
 
   /** Return tasks for a given date (sorted by time slot), used by the view-date calendar. */
   function getTasksByDate(date: string): PlannerTask[] {
-    return tasks.value
-      .filter(t => t.date === date)
-      .sort((a, b) => (a.timeSlot || '').localeCompare(b.timeSlot || ''));
+    return tasks.value.filter(t => t.date === date).sort((a, b) => (a.timeSlot || '').localeCompare(b.timeSlot || ''));
   }
 
   // ── Focus Sessions ──────────────────────────────────────────────────────────

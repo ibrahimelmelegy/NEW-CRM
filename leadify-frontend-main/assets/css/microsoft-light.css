@@ -4,58 +4,58 @@
 */
 
 html.light-mode body {
-    /* ========================================
+  /* ========================================
        BACKGROUNDS (Gradient & Glass)
        ======================================== */
-    /* THE GLOBAL PURPLE-PINK GRADIENT BACKGROUND */
-    /* Soft, premium gradient that fills the viewport */
-    --bg-primary: linear-gradient(135deg, #fdf4ff 0%, #fae8ff 100%) !important;
-    --bg-body: linear-gradient(135deg, #fdf4ff 0%, #fae8ff 100%) !important;
+  /* THE GLOBAL PURPLE-PINK GRADIENT BACKGROUND */
+  /* Soft, premium gradient that fills the viewport */
+  --bg-primary: linear-gradient(135deg, #fdf4ff 0%, #fae8ff 100%) !important;
+  --bg-body: linear-gradient(135deg, #fdf4ff 0%, #fae8ff 100%) !important;
 
-    /* GLASS SURFACES - UNIFIED HIGH TRANSPARENCY (0.4) */
-    /* We use low opacity white to let the gradient shine through */
-    --bg-secondary: rgba(255, 255, 255, 0.4) !important;
-    --bg-card: rgba(255, 255, 255, 0.4) !important;
-    --bg-sidebar: rgba(255, 255, 255, 0.4) !important;
-    --bg-elevated: rgba(255, 255, 255, 0.6) !important;
-    --bg-hover: rgba(255, 255, 255, 0.2) !important;
+  /* GLASS SURFACES - UNIFIED HIGH TRANSPARENCY (0.4) */
+  /* We use low opacity white to let the gradient shine through */
+  --bg-secondary: rgba(255, 255, 255, 0.4) !important;
+  --bg-card: rgba(255, 255, 255, 0.4) !important;
+  --bg-sidebar: rgba(255, 255, 255, 0.4) !important;
+  --bg-elevated: rgba(255, 255, 255, 0.6) !important;
+  --bg-hover: rgba(255, 255, 255, 0.2) !important;
 
-    /* REMOVE OPAQUE GRADIENTS FROM COMPONENTS */
-    --gradient-glass: none !important;
+  /* REMOVE OPAQUE GRADIENTS FROM COMPONENTS */
+  --gradient-glass: none !important;
 
-    --bg-tertiary: rgba(255, 255, 255, 0.3) !important;
-    --bg-input: rgba(255, 255, 255, 0.6) !important;
+  --bg-tertiary: rgba(255, 255, 255, 0.3) !important;
+  --bg-input: rgba(255, 255, 255, 0.6) !important;
 
-    /* ========================================
+  /* ========================================
        TEXT COLORS
        ======================================== */
-    --text-primary: #1f1f1f !important;
-    --text-secondary: #5f5f5f !important;
-    --text-muted: #8b8b8b !important;
-    --text-disabled: #c8c8c8 !important;
+  --text-primary: #1f1f1f !important;
+  --text-secondary: #5f5f5f !important;
+  --text-muted: #8b8b8b !important;
+  --text-disabled: #c8c8c8 !important;
 
-    /* ========================================
+  /* ========================================
        BORDERS (Subtle & Glassy)
        ======================================== */
-    --border-primary: rgba(255, 255, 255, 0.5) !important;
-    --border-secondary: rgba(255, 255, 255, 0.3) !important;
-    --border-default: rgba(0, 0, 0, 0.05) !important;
-    --border-light: rgba(255, 255, 255, 0.4) !important;
+  --border-primary: rgba(255, 255, 255, 0.5) !important;
+  --border-secondary: rgba(255, 255, 255, 0.3) !important;
+  --border-default: rgba(0, 0, 0, 0.05) !important;
+  --border-light: rgba(255, 255, 255, 0.4) !important;
 
-    /* ========================================
+  /* ========================================
        GLASS VARIABLES
        ======================================== */
-    --glass-bg: rgba(255, 255, 255, 0.4) !important;
-    --glass-border: rgba(255, 255, 255, 0.5) !important;
+  --glass-bg: rgba(255, 255, 255, 0.4) !important;
+  --glass-border: rgba(255, 255, 255, 0.5) !important;
 
-    /* ========================================
+  /* ========================================
        GLOBAL FORCE
        ======================================== */
-    background: var(--bg-primary) !important;
-    background-attachment: fixed !important;
-    background-size: cover !important;
-    color: var(--text-primary) !important;
-    color-scheme: light !important;
+  background: var(--bg-primary) !important;
+  background-attachment: fixed !important;
+  background-size: cover !important;
+  color: var(--text-primary) !important;
+  color-scheme: light !important;
 }
 
 /* ========================================
@@ -69,15 +69,15 @@ html.light-mode .navbar,
 html.light-mode .surface,
 html.light-mode .glass-container,
 html.light-mode .box {
-    background: rgba(255, 255, 255, 0.4) !important;
-    background-image: none !important;
-    /* Kill opaque images */
-    backdrop-filter: blur(25px) !important;
-    /* STRONG BLUR */
-    -webkit-backdrop-filter: blur(25px) !important;
-    border: 1px solid rgba(255, 255, 255, 0.6) !important;
-    box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.05) !important;
-    border-radius: 16px !important;
+  background: rgba(255, 255, 255, 0.4) !important;
+  background-image: none !important;
+  /* Kill opaque images */
+  backdrop-filter: blur(25px) !important;
+  /* STRONG BLUR */
+  -webkit-backdrop-filter: blur(25px) !important;
+  border: 1px solid rgba(255, 255, 255, 0.6) !important;
+  box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.05) !important;
+  border-radius: 16px !important;
 }
 
 /* 2. SIDEBAR - SEAMLESS INTEGRATION */
@@ -85,78 +85,82 @@ html.light-mode .box {
 html.light-mode .sidebar-glass,
 html.light-mode .nav,
 html.light-mode aside {
-    background: rgba(255, 255, 255, 0.4) !important;
-    backdrop-filter: blur(25px) !important;
-    -webkit-backdrop-filter: blur(25px) !important;
-    border-right: 1px solid rgba(255, 255, 255, 0.3) !important;
-    /* Very subtle border */
-    box-shadow: none !important;
-    /* Remove separation shadow */
+  background: rgba(255, 255, 255, 0.4) !important;
+  backdrop-filter: blur(25px) !important;
+  -webkit-backdrop-filter: blur(25px) !important;
+  border-right: 1px solid rgba(255, 255, 255, 0.3) !important;
+  /* Very subtle border */
+  box-shadow: none !important;
+  /* Remove separation shadow */
 }
 
 /* 3. MENU ITEMS */
 html.light-mode .el-menu-item:hover,
 html.light-mode .el-sub-menu__title:hover {
-    background: rgba(255, 255, 255, 0.3) !important;
+  background: rgba(255, 255, 255, 0.3) !important;
 }
 
 html.light-mode .el-menu-item.is-active {
-    background: linear-gradient(90deg, rgba(243, 232, 255, 0.8) 0%, rgba(252, 231, 243, 0.8) 100%) !important;
-    color: #1f1f1f !important;
-    border-radius: 8px !important;
-    border: 1px solid rgba(255, 255, 255, 0.6) !important;
+  background: linear-gradient(90deg, rgba(243, 232, 255, 0.8) 0%, rgba(252, 231, 243, 0.8) 100%) !important;
+  color: #1f1f1f !important;
+  border-radius: 8px !important;
+  border: 1px solid rgba(255, 255, 255, 0.6) !important;
 }
 
 /* 4. STATISTICS CARDS (Colored Borders + Glass) */
 html.light-mode .stats-card-container {
-    background: rgba(255, 255, 255, 0.4) !important;
-    border-radius: 20px !important;
-    border: none !important;
-    /* Let pseudo-element handle border */
-    background-image: none !important;
-    box-shadow: 0 8px 30px rgba(0, 0, 0, 0.05) !important;
-    position: relative !important;
+  background: rgba(255, 255, 255, 0.4) !important;
+  border-radius: 20px !important;
+  border: none !important;
+  /* Let pseudo-element handle border */
+  background-image: none !important;
+  box-shadow: 0 8px 30px rgba(0, 0, 0, 0.05) !important;
+  position: relative !important;
 }
 
 /* Restore the gradient border */
 html.light-mode .stats-card-container::before {
-    content: '' !important;
-    position: absolute !important;
-    inset: 0 !important;
-    border-radius: 20px !important;
-    padding: 2px !important;
-    background: linear-gradient(135deg, #ccc, #eee) !important;
-    /* Fallback */
-    -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0) !important;
-    mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0) !important;
-    -webkit-mask-composite: xor !important;
-    mask-composite: exclude !important;
-    pointer-events: none !important;
+  content: '' !important;
+  position: absolute !important;
+  inset: 0 !important;
+  border-radius: 20px !important;
+  padding: 2px !important;
+  background: linear-gradient(135deg, #ccc, #eee) !important;
+  /* Fallback */
+  -webkit-mask:
+    linear-gradient(#fff 0 0) content-box,
+    linear-gradient(#fff 0 0) !important;
+  mask:
+    linear-gradient(#fff 0 0) content-box,
+    linear-gradient(#fff 0 0) !important;
+  -webkit-mask-composite: xor !important;
+  mask-composite: exclude !important;
+  pointer-events: none !important;
 }
 
 /* Matches component colors */
 html.light-mode .stats-card-container.border-indigo::before {
-    background: linear-gradient(135deg, #6366F1, #A855F7, #EC4899) !important;
+  background: linear-gradient(135deg, #6366f1, #a855f7, #ec4899) !important;
 }
 
 html.light-mode .stats-card-container.border-cyan::before {
-    background: linear-gradient(135deg, #06B6D4, #22D3EE, #06B6D4) !important;
+  background: linear-gradient(135deg, #06b6d4, #22d3ee, #06b6d4) !important;
 }
 
 html.light-mode .stats-card-container.border-amber::before {
-    background: linear-gradient(135deg, #F97316, #FBBF24, #F97316) !important;
+  background: linear-gradient(135deg, #f97316, #fbbf24, #f97316) !important;
 }
 
 html.light-mode .stats-card-container.border-purple::before {
-    background: linear-gradient(135deg, #7C3AED, #EC4899, #F97316) !important;
+  background: linear-gradient(135deg, #7c3aed, #ec4899, #f97316) !important;
 }
 
 html.light-mode .stats-card-container.border-rose::before {
-    background: linear-gradient(135deg, #F43F5E, #F97316, #F43F5E) !important;
+  background: linear-gradient(135deg, #f43f5e, #f97316, #f43f5e) !important;
 }
 
 html.light-mode .stats-card-container.border-emerald::before {
-    background: linear-gradient(135deg, #10B981, #34D399, #10B981) !important;
+  background: linear-gradient(135deg, #10b981, #34d399, #10b981) !important;
 }
 
 /* 5. TRANSPARENT WRAPPERS (Fix for "White Connected Lines") */
@@ -170,21 +174,21 @@ html.light-mode .page-wrapper,
 html.light-mode .el-container,
 html.light-mode .el-main,
 html.light-mode .common-layout {
-    background: transparent !important;
-    background-color: transparent !important;
+  background: transparent !important;
+  background-color: transparent !important;
 }
 
 /* Fix Chart Backgrounds */
 html.light-mode .echarts {
-    background: transparent !important;
+  background: transparent !important;
 }
 
 /* 6. CLEAN UP */
 html.light-mode .professional-background,
 html.light-mode .mesh-gradient,
 html.light-mode .noise-overlay {
-    opacity: 0 !important;
-    pointer-events: none !important;
+  opacity: 0 !important;
+  pointer-events: none !important;
 }
 
 /* ========================================
@@ -193,308 +197,305 @@ html.light-mode .noise-overlay {
 
 /* VUE-TEL-INPUT (Phone Number) */
 html.light-mode .vue-tel-input {
-    background: rgba(255, 255, 255, 0.9) !important;
-    border: 1px solid rgba(0, 0, 0, 0.1) !important;
+  background: rgba(255, 255, 255, 0.9) !important;
+  border: 1px solid rgba(0, 0, 0, 0.1) !important;
 }
 
 html.light-mode .vue-tel-input:focus-within {
-    border-color: #7c3aed !important;
+  border-color: #7c3aed !important;
 }
 
 html.light-mode .vti__input {
-    background: transparent !important;
-    color: #1f1f1f !important;
+  background: transparent !important;
+  color: #1f1f1f !important;
 }
 
 html.light-mode .vti__input::placeholder {
-    color: #8b8b8b !important;
+  color: #8b8b8b !important;
 }
 
 html.light-mode .vti__dropdown {
-    background: transparent !important;
+  background: transparent !important;
 }
 
 html.light-mode .vti__dropdown-list {
-    background: #ffffff !important;
-    border: 1px solid rgba(0, 0, 0, 0.1) !important;
-    box-shadow: 0 10px 40px rgba(0, 0, 0, 0.15) !important;
-    z-index: 9999 !important;
-    position: absolute !important;
+  background: #ffffff !important;
+  border: 1px solid rgba(0, 0, 0, 0.1) !important;
+  box-shadow: 0 10px 40px rgba(0, 0, 0, 0.15) !important;
+  z-index: 9999 !important;
+  position: absolute !important;
 }
 
 html.light-mode .vti__dropdown-item {
-    color: #1f1f1f !important;
+  color: #1f1f1f !important;
 }
 
 html.light-mode .vti__dropdown-item:hover {
-    background: rgba(124, 58, 237, 0.1) !important;
+  background: rgba(124, 58, 237, 0.1) !important;
 }
 
 html.light-mode .vti__search_box {
-    background: #ffffff !important;
-    color: #1f1f1f !important;
-    border-color: rgba(0, 0, 0, 0.1) !important;
+  background: #ffffff !important;
+  color: #1f1f1f !important;
+  border-color: rgba(0, 0, 0, 0.1) !important;
 }
 
 /* EL-UPLOAD (File Upload) */
 html.light-mode .el-upload {
-    background: rgba(255, 255, 255, 0.8) !important;
-    border: 2px dashed rgba(0, 0, 0, 0.15) !important;
-    border-radius: 12px !important;
+  background: rgba(255, 255, 255, 0.8) !important;
+  border: 2px dashed rgba(0, 0, 0, 0.15) !important;
+  border-radius: 12px !important;
 }
 
 html.light-mode .el-upload:hover {
-    border-color: #7c3aed !important;
-    background: rgba(124, 58, 237, 0.05) !important;
+  border-color: #7c3aed !important;
+  background: rgba(124, 58, 237, 0.05) !important;
 }
 
 html.light-mode .el-upload .el-icon {
-    color: #7c3aed !important;
+  color: #7c3aed !important;
 }
 
 html.light-mode .el-upload-dragger {
-    background: rgba(255, 255, 255, 0.8) !important;
-    border: 2px dashed rgba(0, 0, 0, 0.15) !important;
+  background: rgba(255, 255, 255, 0.8) !important;
+  border: 2px dashed rgba(0, 0, 0, 0.15) !important;
 }
 
 html.light-mode .el-upload-dragger:hover {
-    border-color: #7c3aed !important;
+  border-color: #7c3aed !important;
 }
 
 html.light-mode .el-upload-list__item {
-    background: rgba(255, 255, 255, 0.9) !important;
-    border: 1px solid rgba(0, 0, 0, 0.1) !important;
+  background: rgba(255, 255, 255, 0.9) !important;
+  border: 1px solid rgba(0, 0, 0, 0.1) !important;
 }
 
 html.light-mode .el-upload__tip {
-    color: #8b8b8b !important;
+  color: #8b8b8b !important;
 }
 
 /* EL-SELECT DROPDOWNS */
 html.light-mode .el-select-dropdown {
-    background: #ffffff !important;
-    border: 1px solid rgba(0, 0, 0, 0.1) !important;
-    box-shadow: 0 10px 40px rgba(0, 0, 0, 0.1) !important;
+  background: #ffffff !important;
+  border: 1px solid rgba(0, 0, 0, 0.1) !important;
+  box-shadow: 0 10px 40px rgba(0, 0, 0, 0.1) !important;
 }
 
 html.light-mode .el-select-dropdown__item {
-    color: #1f1f1f !important;
+  color: #1f1f1f !important;
 }
 
 html.light-mode .el-select-dropdown__item:hover,
 html.light-mode .el-select-dropdown__item.hover {
-    background: rgba(124, 58, 237, 0.1) !important;
+  background: rgba(124, 58, 237, 0.1) !important;
 }
 
 html.light-mode .el-select-dropdown__item.selected {
-    color: #7c3aed !important;
-    font-weight: 600 !important;
+  color: #7c3aed !important;
+  font-weight: 600 !important;
 }
 
 /* EL-POPPER (All Popups/Dropdowns) */
 html.light-mode .el-popper {
-    background: #ffffff !important;
-    border: 1px solid rgba(0, 0, 0, 0.1) !important;
+  background: #ffffff !important;
+  border: 1px solid rgba(0, 0, 0, 0.1) !important;
 }
 
 html.light-mode .el-popper__arrow::before {
-    background: #ffffff !important;
-    border-color: rgba(0, 0, 0, 0.1) !important;
+  background: #ffffff !important;
+  border-color: rgba(0, 0, 0, 0.1) !important;
 }
 
 /* GENERAL FORM INPUTS */
 html.light-mode input,
 html.light-mode textarea,
 html.light-mode select {
-    background: rgba(255, 255, 255, 0.9) !important;
-    color: #1f1f1f !important;
-    border-color: rgba(0, 0, 0, 0.1) !important;
+  background: rgba(255, 255, 255, 0.9) !important;
+  color: #1f1f1f !important;
+  border-color: rgba(0, 0, 0, 0.1) !important;
 }
 
 html.light-mode input::placeholder,
 html.light-mode textarea::placeholder {
-    color: #8b8b8b !important;
+  color: #8b8b8b !important;
 }
 
 /* EL-FORM LABELS */
 html.light-mode .el-form-item__label {
-    color: #1f1f1f !important;
+  color: #1f1f1f !important;
 }
 
 /* EL-DIALOG (Modals) */
 html.light-mode .el-dialog {
-    background: rgba(255, 255, 255, 0.95) !important;
-    backdrop-filter: blur(20px) !important;
+  background: rgba(255, 255, 255, 0.95) !important;
+  backdrop-filter: blur(20px) !important;
 }
 
 html.light-mode .el-dialog__header {
-    border-bottom: 1px solid rgba(0, 0, 0, 0.1) !important;
+  border-bottom: 1px solid rgba(0, 0, 0, 0.1) !important;
 }
 
 html.light-mode .el-dialog__title {
-    color: #1f1f1f !important;
+  color: #1f1f1f !important;
 }
 
 html.light-mode .el-dialog__body {
-    color: #1f1f1f !important;
+  color: #1f1f1f !important;
 }
 
 /* EL-TABLE */
 html.light-mode .el-table {
-    background: transparent !important;
+  background: transparent !important;
 }
 
 html.light-mode .el-table th,
 html.light-mode .el-table tr {
-    background: rgba(255, 255, 255, 0.7) !important;
-    color: #1f1f1f !important;
+  background: rgba(255, 255, 255, 0.7) !important;
+  color: #1f1f1f !important;
 }
 
 html.light-mode .el-table--striped .el-table__body tr.el-table__row--striped td {
-    background: rgba(255, 255, 255, 0.5) !important;
+  background: rgba(255, 255, 255, 0.5) !important;
 }
 
 html.light-mode .el-table td,
 html.light-mode .el-table th {
-    border-color: rgba(0, 0, 0, 0.05) !important;
+  border-color: rgba(0, 0, 0, 0.05) !important;
 }
 
 /* EL-BUTTON */
 html.light-mode .el-button--default {
-    background: rgba(255, 255, 255, 0.8) !important;
-    border-color: rgba(0, 0, 0, 0.1) !important;
-    color: #1f1f1f !important;
+  background: rgba(255, 255, 255, 0.8) !important;
+  border-color: rgba(0, 0, 0, 0.1) !important;
+  color: #1f1f1f !important;
 }
 
 html.light-mode .el-button--primary {
-    background: linear-gradient(135deg, #7c3aed, #a855f7) !important;
-    border: none !important;
-    color: #ffffff !important;
+  background: linear-gradient(135deg, #7c3aed, #a855f7) !important;
+  border: none !important;
+  color: #ffffff !important;
 }
 
 /* TEXT COLORS */
 html.light-mode .text-neutral-900 {
-    color: #1f1f1f !important;
+  color: #1f1f1f !important;
 }
 
 html.light-mode .text-neutral-400 {
-    color: #8b8b8b !important;
+  color: #8b8b8b !important;
 }
 
 /* ========================================
    8. SCROLLBAR (Purple Glassy)
    ======================================== */
 ::-webkit-scrollbar {
-    width: 8px !important;
-    height: 8px !important;
-    background: transparent !important;
+  width: 8px !important;
+  height: 8px !important;
+  background: transparent !important;
 }
 
 ::-webkit-scrollbar-track {
-    background: rgba(0, 0, 0, 0.05) !important;
-    border-radius: 4px !important;
+  background: rgba(0, 0, 0, 0.05) !important;
+  border-radius: 4px !important;
 }
 
 ::-webkit-scrollbar-thumb {
-    background: linear-gradient(180deg, #d8b4fe 0%, #a855f7 100%) !important;
-    border-radius: 4px !important;
-    border: 2px solid transparent !important;
-    background-clip: content-box !important;
+  background: linear-gradient(180deg, #d8b4fe 0%, #a855f7 100%) !important;
+  border-radius: 4px !important;
+  border: 2px solid transparent !important;
+  background-clip: content-box !important;
 }
 
 ::-webkit-scrollbar-thumb:hover {
-    background: #9333ea !important;
+  background: #9333ea !important;
 }
 
 /* GLOBAL INPUT FIX - FORCE LIGHT BACKGROUNDS */
 /* This ensures NO input is black in Light Mode */
-html.light-mode input:not([type="checkbox"]):not([type="radio"]),
+html.light-mode input:not([type='checkbox']):not([type='radio']),
 html.light-mode textarea,
 html.light-mode select,
 html.light-mode .el-input__wrapper,
 html.light-mode .el-textarea__inner,
 html.light-mode .el-select__wrapper,
 html.light-mode .el-select .select-trigger {
-    background-color: rgba(255, 255, 255, 0.9) !important;
-    color: #1f1f1f !important;
-    border-color: rgba(0, 0, 0, 0.1) !important;
+  background-color: rgba(255, 255, 255, 0.9) !important;
+  color: #1f1f1f !important;
+  border-color: rgba(0, 0, 0, 0.1) !important;
 }
 
 /* Fix Focus State */
 html.light-mode .el-select .el-input__wrapper.is-focus,
 html.light-mode .el-input__wrapper.is-focus {
-    box-shadow: 0 0 0 1px #7c3aed inset !important;
+  box-shadow: 0 0 0 1px #7c3aed inset !important;
 }
 
 /* Fix Dropdown Text */
 html.light-mode .el-select-dropdown__item {
-    color: #1f1f1f !important;
+  color: #1f1f1f !important;
 }
 
 /* Fix Upload File Area - Target EL-UPLOAD directly since 'drag' prop is missing */
 html.light-mode .el-upload {
-    background-color: rgba(255, 255, 255, 0.6) !important;
-    border: 2px dashed #d8b4fe !important;
-    width: 100% !important;
-    min-height: 120px !important;
-    display: flex !important;
-    flex-direction: column !important;
-    align-items: center !important;
-    justify-content: center !important;
-    padding: 20px !important;
-    border-radius: 16px !important;
-    transition: all 0.3s ease !important;
-    text-align: center !important;
+  background-color: rgba(255, 255, 255, 0.6) !important;
+  border: 2px dashed #d8b4fe !important;
+  width: 100% !important;
+  min-height: 120px !important;
+  display: flex !important;
+  flex-direction: column !important;
+  align-items: center !important;
+  justify-content: center !important;
+  padding: 20px !important;
+  border-radius: 16px !important;
+  transition: all 0.3s ease !important;
+  text-align: center !important;
 }
 
 html.light-mode .el-upload:hover {
-    background-color: rgba(243, 232, 255, 0.5) !important;
-    border-color: #a855f7 !important;
-    transform: translateY(-2px);
+  background-color: rgba(243, 232, 255, 0.5) !important;
+  border-color: #a855f7 !important;
+  transform: translateY(-2px);
 }
 
 html.light-mode .el-upload .el-icon {
-    font-size: 48px !important;
-    color: #a855f7 !important;
-    margin-bottom: 10px !important;
+  font-size: 48px !important;
+  color: #a855f7 !important;
+  margin-bottom: 10px !important;
 }
 
 html.light-mode .el-upload__text {
-    color: #1f1f1f !important;
-    font-size: 14px !important;
-    width: 100% !important;
-    text-align: center !important;
+  color: #1f1f1f !important;
+  font-size: 14px !important;
+  width: 100% !important;
+  text-align: center !important;
 }
-
 
 /* Target element by class inside el-upload */
 html.light-mode .el-upload .text-neutral-900 {
-    width: 100% !important;
-    text-align: center !important;
-    display: flex !important;
-    flex-direction: column !important;
-    align-items: center !important;
-    justify-content: center !important;
+  width: 100% !important;
+  text-align: center !important;
+  display: flex !important;
+  flex-direction: column !important;
+  align-items: center !important;
+  justify-content: center !important;
 }
 
 html.light-mode .el-upload .text-neutral-400 {
-    text-align: center !important;
-    margin-top: 5px !important;
-    display: block !important;
-    width: 100% !important;
+  text-align: center !important;
+  margin-top: 5px !important;
+  display: block !important;
+  width: 100% !important;
 }
-
 
 html.light-mode .el-upload__text em {
-    color: #7c3aed !important;
-    font-weight: 600 !important;
+  color: #7c3aed !important;
+  font-weight: 600 !important;
 }
-
 
 /* Fix Phone Input Container specifically */
 html.light-mode .vue-tel-input {
-    background-color: rgba(255, 255, 255, 0.9) !important;
-    position: relative !important;
-    z-index: 10 !important;
-    /* Ensure input itself is not covered */
+  background-color: rgba(255, 255, 255, 0.9) !important;
+  position: relative !important;
+  z-index: 10 !important;
+  /* Ensure input itself is not covered */
 }

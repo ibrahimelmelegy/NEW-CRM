@@ -7,6 +7,9 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { createPinia, setActivePinia } from 'pinia';
 
+// We need to import the store after the mock is set up
+import { useSocketStore } from '@/stores/socket';
+
 // Hoist mock variables so vi.mock factory can reference them
 const { mockSocket, mockIo, socketHandlers } = vi.hoisted(() => {
   const handlers: Record<string, (...args: unknown[]) => void> = {};
@@ -37,9 +40,6 @@ globalThis.useApiFetch = vi.fn();
 
 // Mock useI18n
 globalThis.useI18n = () => ({ t: (key: string) => key, locale: ref('en') });
-
-// We need to import the store after the mock is set up
-import { useSocketStore } from '@/stores/socket';
 
 describe('useSocketStore', () => {
   let store: ReturnType<typeof useSocketStore>;
@@ -86,8 +86,8 @@ describe('useSocketStore', () => {
 
       // Simulate the socket connect event
       mockSocket.connected = true;
-      if (socketHandlers['connect']) {
-        socketHandlers['connect']();
+      if (socketHandlers.connect) {
+        socketHandlers.connect();
       }
 
       expect(store.connected).toBe(true);
@@ -99,14 +99,14 @@ describe('useSocketStore', () => {
 
       // First connect
       mockSocket.connected = true;
-      if (socketHandlers['connect']) {
-        socketHandlers['connect']();
+      if (socketHandlers.connect) {
+        socketHandlers.connect();
       }
 
       // Then disconnect
       mockSocket.connected = false;
-      if (socketHandlers['disconnect']) {
-        socketHandlers['disconnect']();
+      if (socketHandlers.disconnect) {
+        socketHandlers.disconnect();
       }
 
       expect(store.connected).toBe(false);
@@ -118,8 +118,8 @@ describe('useSocketStore', () => {
 
       store.connect();
 
-      if (socketHandlers['connect_error']) {
-        socketHandlers['connect_error'](new Error('Auth failed'));
+      if (socketHandlers.connect_error) {
+        socketHandlers.connect_error(new Error('Auth failed'));
       }
 
       expect(store.connected).toBe(false);
@@ -134,8 +134,8 @@ describe('useSocketStore', () => {
 
       // Simulate connected state
       mockSocket.connected = true;
-      if (socketHandlers['connect']) {
-        socketHandlers['connect']();
+      if (socketHandlers.connect) {
+        socketHandlers.connect();
       }
 
       store.disconnect();

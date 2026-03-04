@@ -262,7 +262,7 @@ export default {
           const InvoiceTemplate = defineAsyncComponent(() => import('./InvoiceTemplate.ce.vue'));
           const componentElement = defineCustomElement(InvoiceTemplate);
           customElements.define('invoice-template-' + page.uuid, componentElement);
-          page.elt.appendChild(new componentElement({ modelValue: page.props }));
+          page.elt.appendChild(new componentElement({ modelValue: page.props })); // eslint-disable-line new-cap
         } else {
           // Initialize content pages
           page.elt.innerHTML = page.content ? '<div>' + page.content + '</div>' : '<div><br></div>';
@@ -537,7 +537,7 @@ export default {
 
                 // Add empty values for any custom columns that don't exist in this row
                 customColumnKeys.forEach(key => {
-                  if (!customCols.hasOwnProperty(key)) {
+                  if (!Object.hasOwn(customCols, key)) {
                     customCols[key] = '';
                   }
                 });

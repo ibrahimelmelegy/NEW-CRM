@@ -32,7 +32,7 @@ $height-input: 56px;
 $height-button: 44px;
 
 // 💎 Glass Styles (Mixins & Variables) - Using absolute path for global injection
-@forward "@/assets/styles/glass";
+@forward '@/assets/styles/glass';
 
 // 📱 Mobile Card View Mixin - Shared across all list pages
-@import "@/assets/styles/mobile-cards";
+@import '@/assets/styles/mobile-cards';

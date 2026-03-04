@@ -71,6 +71,7 @@
 </template>
 
 <script setup lang="ts">
+/* eslint-disable require-await */
 import { ArrowLeft } from '@element-plus/icons-vue';
 import { ElNotification } from 'element-plus';
 

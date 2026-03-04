@@ -48,16 +48,15 @@ export const useLeadStore = defineStore('leads', {
 
       try {
         const query = params
-          ? '?' + new URLSearchParams(
+          ? '?' +
+            new URLSearchParams(
               Object.entries(params)
                 .filter(([, v]) => v !== undefined && v !== '')
                 .map(([k, v]) => [k, String(v)])
             ).toString()
           : '';
 
-        const response: any = await useApiFetch(
-          `lead${query}`
-        );
+        const response: any = await useApiFetch(`lead${query}`);
 
         if (response.success && response.body) {
           this.leads = response.body.docs || [];
@@ -129,7 +128,7 @@ export const useLeadStore = defineStore('leads', {
         const response: any = await useApiFetch(`lead/${id}`, 'PUT', data as Record<string, unknown>);
 
         if (response.success && response.body) {
-          const index = this.leads.findIndex((l) => l.id === id);
+          const index = this.leads.findIndex(l => l.id === id);
           if (index !== -1) {
             this.leads[index] = response.body;
           }
@@ -159,7 +158,7 @@ export const useLeadStore = defineStore('leads', {
         const response = await useApiFetch(`lead/${id}`, 'DELETE');
 
         if (response.success) {
-          this.leads = this.leads.filter((l) => l.id !== id);
+          this.leads = this.leads.filter(l => l.id !== id);
           if (this.currentLead?.id === id) {
             this.currentLead = null;
           }

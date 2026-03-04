@@ -303,7 +303,7 @@
 
 <script setup lang="ts">
 import { ref, computed } from 'vue';
-import { graphic } from 'echarts';
+import { graphic } from 'echarts/core';
 import VChart from 'vue-echarts';
 import { useApiFetch } from '~/composables/useApiFetch';
 
@@ -347,9 +347,7 @@ const severitySummary = ref<any[]>([]);
 
 // Recommendations
 const recommendations = ref<any[]>([]);
-const pendingRecommendations = computed(() =>
-  recommendations.value.filter(r => !r.dismissed && !r.applied).length
-);
+const pendingRecommendations = computed(() => recommendations.value.filter(r => !r.dismissed && !r.applied).length);
 
 // Model performance
 const modelComparisonData = ref<any[]>([]);
@@ -413,7 +411,12 @@ function formatCurrency(amount: number): string {
 
 function getInitials(name: string): string {
   if (!name) return '?';
-  return name.split(' ').map(n => n[0]).join('').substring(0, 2).toUpperCase();
+  return name
+    .split(' ')
+    .map(n => n[0])
+    .join('')
+    .substring(0, 2)
+    .toUpperCase();
 }
 
 function getRiskColor(score: number): string {
@@ -456,10 +459,8 @@ async function loadData() {
       useApiFetch('lead').catch(() => ({ body: [] }))
     ]);
 
-    rawDeals.value = Array.isArray(dealsRes?.body) ? dealsRes.body
-      : Array.isArray((dealsRes?.body as any)?.docs) ? (dealsRes.body as any).docs : [];
-    rawLeads.value = Array.isArray(leadsRes?.body) ? leadsRes.body
-      : Array.isArray((leadsRes?.body as any)?.docs) ? (leadsRes.body as any).docs : [];
+    rawDeals.value = Array.isArray(dealsRes?.body) ? dealsRes.body : Array.isArray((dealsRes?.body as any)?.docs) ? (dealsRes.body as any).docs : [];
+    rawLeads.value = Array.isArray(leadsRes?.body) ? leadsRes.body : Array.isArray((leadsRes?.body as any)?.docs) ? (leadsRes.body as any).docs : [];
 
     computeAll();
   } catch (e) {
@@ -497,7 +498,7 @@ function computeKPIs() {
 
   // Derive prediction accuracy from win rate consistency
   const winRate = totalDeals > 0 ? (wonDeals.length / totalDeals) * 100 : 50;
-  predictionAccuracy.value = parseFloat(Math.min(95, Math.max(72, 80 + (winRate * 0.2))).toFixed(1));
+  predictionAccuracy.value = parseFloat(Math.min(95, Math.max(72, 80 + winRate * 0.2)).toFixed(1));
 
   // Derive anomalies from data variance
   const values = deals.map((d: any) => parseFloat(d.value || d.amount || d.dealValue || 0)).filter(v => v > 0);
@@ -591,21 +592,24 @@ function computeChurnRisk() {
     t('aiInsights.actionUrgentEscalation')
   ];
 
-  churnData.value = Array.from(customers.values()).map((c) => {
-    const daysSinceActivity = Math.floor((now.getTime() - c.lastDate.getTime()) / (1000 * 60 * 60 * 24));
-    const riskScore = Math.min(98, Math.max(5, Math.floor(daysSinceActivity * 1.5 + Math.random() * 30)));
-    const monthlyRevenue = Math.round(c.value / 12);
-    const predictedChurnDate = new Date(now.getTime() + (100 - riskScore) * 24 * 60 * 60 * 1000);
+  churnData.value = Array.from(customers.values())
+    .map(c => {
+      const daysSinceActivity = Math.floor((now.getTime() - c.lastDate.getTime()) / (1000 * 60 * 60 * 24));
+      const riskScore = Math.min(98, Math.max(5, Math.floor(daysSinceActivity * 1.5 + Math.random() * 30)));
+      const monthlyRevenue = Math.round(c.value / 12);
+      const predictedChurnDate = new Date(now.getTime() + (100 - riskScore) * 24 * 60 * 60 * 1000);
 
-    return {
-      customerName: c.customerName,
-      riskScore,
-      monthlyRevenue: Math.max(monthlyRevenue, 500),
-      lastActivity: `${daysSinceActivity}d ago`,
-      predictedChurnDate: predictedChurnDate.toLocaleDateString(undefined, { month: 'short', day: 'numeric', year: 'numeric' }),
-      action: actions[Math.floor(Math.random() * actions.length)]
-    };
-  }).sort((a, b) => b.riskScore - a.riskScore).slice(0, 15);
+      return {
+        customerName: c.customerName,
+        riskScore,
+        monthlyRevenue: Math.max(monthlyRevenue, 500),
+        lastActivity: `${daysSinceActivity}d ago`,
+        predictedChurnDate: predictedChurnDate.toLocaleDateString(undefined, { month: 'short', day: 'numeric', year: 'numeric' }),
+        action: actions[Math.floor(Math.random() * actions.length)]
+      };
+    })
+    .sort((a, b) => b.riskScore - a.riskScore)
+    .slice(0, 15);
 }
 
 const filteredChurnData = computed(() => {
@@ -643,9 +647,11 @@ const revenueForecastOption = computed(() => {
 
   const sorted = Array.from(monthMap.entries()).sort((a, b) => a[0].localeCompare(b[0]));
   const pastValues = sorted.map(([, v]) => v);
-  const avgGrowth = pastValues.length > 1
-    ? pastValues.slice(1).reduce((acc, v, i) => acc + ((pastValues[i] || 0) > 0 ? (v - pastValues[i]!) / pastValues[i]! : 0), 0) / (pastValues.length - 1)
-    : 0.05;
+  const avgGrowth =
+    pastValues.length > 1
+      ? pastValues.slice(1).reduce((acc, v, i) => acc + ((pastValues[i] || 0) > 0 ? (v - pastValues[i]!) / pastValues[i]! : 0), 0) /
+        (pastValues.length - 1)
+      : 0.05;
 
   // Build past months
   sorted.forEach(([key, val]) => {
@@ -712,7 +718,7 @@ const revenueForecastOption = computed(() => {
       splitLine: { lineStyle: { type: 'dashed', color: 'rgba(255,255,255,0.05)' } },
       axisLabel: {
         color: '#64748B',
-        formatter: (v: number) => v >= 1000000 ? `$${(v / 1000000).toFixed(1)}M` : v >= 1000 ? `$${(v / 1000).toFixed(0)}K` : `$${v}`
+        formatter: (v: number) => (v >= 1000000 ? `$${(v / 1000000).toFixed(1)}M` : v >= 1000 ? `$${(v / 1000).toFixed(0)}K` : `$${v}`)
       }
     },
     series: [
@@ -777,9 +783,18 @@ function computeAnomalies() {
   const deals = getFilteredDeals();
   const now = new Date();
   const metricNames = [
-    'Deal Close Rate', 'Lead Conversion', 'Avg Deal Size', 'Response Time',
-    'Pipeline Velocity', 'Email Open Rate', 'Meeting No-shows', 'Revenue per Rep',
-    'Customer Satisfaction', 'Lead Quality Score', 'Proposal Win Rate', 'Call Duration'
+    'Deal Close Rate',
+    'Lead Conversion',
+    'Avg Deal Size',
+    'Response Time',
+    'Pipeline Velocity',
+    'Email Open Rate',
+    'Meeting No-shows',
+    'Revenue per Rep',
+    'Customer Satisfaction',
+    'Lead Quality Score',
+    'Proposal Win Rate',
+    'Call Duration'
   ];
   const severities: ('critical' | 'warning' | 'info')[] = ['critical', 'warning', 'info'];
   const statuses: ('new' | 'investigating' | 'resolved')[] = ['new', 'investigating', 'resolved'];
@@ -793,8 +808,8 @@ function computeAnomalies() {
     const detectedDate = new Date(now.getTime() - daysAgo * 24 * 60 * 60 * 1000);
     const expected = Math.round(50 + Math.random() * 200);
     const deviation = (Math.random() - 0.3) * 80;
-    const actualVal = Math.round(expected + (expected * deviation / 100));
-    const deviationPct = parseFloat(((actualVal - expected) / expected * 100).toFixed(1));
+    const actualVal = Math.round(expected + (expected * deviation) / 100);
+    const deviationPct = parseFloat((((actualVal - expected) / expected) * 100).toFixed(1));
     const severity = Math.abs(deviationPct) > 40 ? 'critical' : Math.abs(deviationPct) > 20 ? 'warning' : 'info';
 
     anomalyEntries.push({
@@ -1063,7 +1078,7 @@ function computeModelPerformance() {
       modelName: t('aiInsights.winRateModel'),
       accuracy: 87.8,
       precision: 0.85,
-      recall: 0.90,
+      recall: 0.9,
       f1: 0.87,
       lastTrained: '2026-02-24',
       status: 'active'
@@ -1089,7 +1104,7 @@ function computeModelPerformance() {
     {
       modelName: t('aiInsights.anomalyModel'),
       accuracy: 82.1,
-      precision: 0.80,
+      precision: 0.8,
       recall: 0.84,
       f1: 0.82,
       lastTrained: '2026-02-15',

@@ -252,7 +252,7 @@
 
 <script setup lang="ts">
 import { ref, computed } from 'vue';
-import { graphic } from 'echarts';
+import { graphic } from 'echarts/core';
 import VChart from 'vue-echarts';
 import { useApiFetch } from '~/composables/useApiFetch';
 
@@ -298,7 +298,7 @@ const kpiCards = computed(() => {
 
   const totalMrr = wonDeals.reduce((acc: number, d: any) => {
     const val = parseFloat(d.value || d.amount || d.dealValue || 0);
-    return acc + (val / 12);
+    return acc + val / 12;
   }, 0);
 
   const mrr = Math.round(totalMrr) || 24500;
@@ -445,10 +445,8 @@ async function loadData() {
       useApiFetch('lead').catch(() => ({ body: [] }))
     ]);
 
-    rawDeals.value = Array.isArray(dealsRes?.body) ? dealsRes.body
-      : Array.isArray((dealsRes?.body as any)?.docs) ? (dealsRes.body as any).docs : [];
-    rawLeads.value = Array.isArray(leadsRes?.body) ? leadsRes.body
-      : Array.isArray((leadsRes?.body as any)?.docs) ? (leadsRes.body as any).docs : [];
+    rawDeals.value = Array.isArray(dealsRes?.body) ? dealsRes.body : Array.isArray((dealsRes?.body as any)?.docs) ? (dealsRes.body as any).docs : [];
+    rawLeads.value = Array.isArray(leadsRes?.body) ? leadsRes.body : Array.isArray((leadsRes?.body as any)?.docs) ? (leadsRes.body as any).docs : [];
 
     computeAll();
   } catch (e) {
@@ -625,7 +623,7 @@ const mrrArrChartOption = computed(() => {
         splitLine: { lineStyle: { type: 'dashed', color: 'rgba(255,255,255,0.05)' } },
         axisLabel: {
           color: '#64748B',
-          formatter: (v: number) => v >= 1000000 ? `$${(v / 1000000).toFixed(1)}M` : v >= 1000 ? `$${(v / 1000).toFixed(0)}K` : `$${v}`
+          formatter: (v: number) => (v >= 1000000 ? `$${(v / 1000000).toFixed(1)}M` : v >= 1000 ? `$${(v / 1000).toFixed(0)}K` : `$${v}`)
         }
       },
       {
@@ -635,7 +633,7 @@ const mrrArrChartOption = computed(() => {
         splitLine: { show: false },
         axisLabel: {
           color: '#64748B',
-          formatter: (v: number) => v >= 1000000 ? `$${(v / 1000000).toFixed(1)}M` : v >= 1000 ? `$${(v / 1000).toFixed(0)}K` : `$${v}`
+          formatter: (v: number) => (v >= 1000000 ? `$${(v / 1000000).toFixed(1)}M` : v >= 1000 ? `$${(v / 1000).toFixed(0)}K` : `$${v}`)
         }
       }
     ],
@@ -809,7 +807,8 @@ function computeChurn() {
       else if (reason.includes('budget') || reason.includes('price')) reasonMap.budgetCuts = (reasonMap.budgetCuts || 0) + 1;
       else if (reason.includes('fit') || reason.includes('need')) reasonMap.poorFit = (reasonMap.poorFit || 0) + 1;
       else if (reason.includes('down')) reasonMap.downgrade = (reasonMap.downgrade || 0) + 1;
-      else if (reason.includes('payment') || reason.includes('card') || reason.includes('involunt')) reasonMap.involuntary = (reasonMap.involuntary || 0) + 1;
+      else if (reason.includes('payment') || reason.includes('card') || reason.includes('involunt'))
+        reasonMap.involuntary = (reasonMap.involuntary || 0) + 1;
       else reasonMap.voluntary = (reasonMap.voluntary || 0) + 1;
     });
   } else {
@@ -850,11 +849,11 @@ function computeChurn() {
     atRiskCustomers.value = activeDeals
       .map((d: any) => {
         const name = d.company?.name || d.companyName || d.client || d.name || d.title || 'Unknown Account';
-        const mrr = Math.round((parseFloat(d.value || d.amount || d.dealValue || 0)) / 12);
+        const mrr = Math.round(parseFloat(d.value || d.amount || d.dealValue || 0) / 12);
         const created = new Date(d.createdAt || d.created_at || Date.now());
         const daysSince = Math.round((Date.now() - created.getTime()) / (1000 * 60 * 60 * 24));
         const riskScore = Math.min(95, Math.max(25, Math.round(40 + Math.random() * 50)));
-        const daysUntilRenewal = Math.max(1, Math.round(365 - daysSince % 365));
+        const daysUntilRenewal = Math.max(1, Math.round(365 - (daysSince % 365)));
         return { name, mrr, riskScore, daysUntilRenewal };
       })
       .sort((a: any, b: any) => b.riskScore - a.riskScore)
@@ -862,8 +861,14 @@ function computeChurn() {
   } else {
     // Mock at-risk customers
     const mockNames = [
-      'Acme Corp', 'TechVibe Solutions', 'NovaStar Inc', 'CloudFirst Ltd',
-      'DataPulse Systems', 'Vertex Digital', 'Bloom Enterprises', 'Apex Industries'
+      'Acme Corp',
+      'TechVibe Solutions',
+      'NovaStar Inc',
+      'CloudFirst Ltd',
+      'DataPulse Systems',
+      'Vertex Digital',
+      'Bloom Enterprises',
+      'Apex Industries'
     ];
     atRiskCustomers.value = mockNames.map((name, idx) => ({
       name,
@@ -1027,10 +1032,12 @@ function computeExpansion() {
   ];
 
   // Expansion pipeline
-  const pipelineAccounts = deals.filter((d: any) => {
-    const s = (d.status || d.stage || '').toLowerCase();
-    return !s.includes('lost') && !s.includes('won') && !s.includes('closed');
-  }).slice(0, 8);
+  const pipelineAccounts = deals
+    .filter((d: any) => {
+      const s = (d.status || d.stage || '').toLowerCase();
+      return !s.includes('lost') && !s.includes('won') && !s.includes('closed');
+    })
+    .slice(0, 8);
 
   if (pipelineAccounts.length > 0) {
     expansionPipeline.value = pipelineAccounts.map((d: any) => {
@@ -1046,8 +1053,14 @@ function computeExpansion() {
   } else {
     // Mock pipeline
     const mockAccounts = [
-      'Meridian Group', 'Apex Holdings', 'SynergyTech', 'Atlas Solutions',
-      'PrimeLine Corp', 'Quantum Digital', 'EverGreen Systems', 'CoreBridge Inc'
+      'Meridian Group',
+      'Apex Holdings',
+      'SynergyTech',
+      'Atlas Solutions',
+      'PrimeLine Corp',
+      'Quantum Digital',
+      'EverGreen Systems',
+      'CoreBridge Inc'
     ];
     expansionPipeline.value = mockAccounts.map((name, idx) => ({
       account: name,
@@ -1109,7 +1122,7 @@ const expansionChartOption = computed(() => {
       splitLine: { lineStyle: { type: 'dashed', color: 'rgba(255,255,255,0.05)' } },
       axisLabel: {
         color: '#64748B',
-        formatter: (v: number) => v >= 1000 ? `$${(v / 1000).toFixed(0)}K` : `$${v}`
+        formatter: (v: number) => (v >= 1000 ? `$${(v / 1000).toFixed(0)}K` : `$${v}`)
       }
     },
     series: [
@@ -1293,7 +1306,9 @@ await loadData().catch(() => {
 .cohort-data-cell {
   cursor: default;
   font-weight: 600;
-  transition: transform 0.15s ease, box-shadow 0.15s ease;
+  transition:
+    transform 0.15s ease,
+    box-shadow 0.15s ease;
 
   &:hover {
     transform: scale(1.08);

@@ -1,4 +1,4 @@
-import { graphic } from 'echarts';
+import { graphic } from 'echarts/core';
 
 const THEME = {
   purple: '#7849FF',

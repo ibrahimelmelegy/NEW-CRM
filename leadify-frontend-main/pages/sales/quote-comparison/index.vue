@@ -209,7 +209,13 @@ interface QuoteOption {
   features: FeatureItem[];
 }
 
-const createOption = (name: string, monthly: number, annual: number, recommended: boolean, featureOverrides?: Partial<FeatureItem>[]): QuoteOption => {
+const createOption = (
+  name: string,
+  monthly: number,
+  annual: number,
+  recommended: boolean,
+  featureOverrides?: Partial<FeatureItem>[]
+): QuoteOption => {
   const features = defaultFeatures();
   if (featureOverrides) {
     featureOverrides.forEach((override, i) => {
@@ -230,19 +236,34 @@ const createOption = (name: string, monthly: number, annual: number, recommended
 
 const options = reactive<QuoteOption[]>([
   createOption('Starter', 29, 290, false, [
-    { included: true }, { included: true }, { included: true },
-    { included: false }, { included: false }, { included: false },
-    { included: false }, { included: false }
+    { included: true },
+    { included: true },
+    { included: true },
+    { included: false },
+    { included: false },
+    { included: false },
+    { included: false },
+    { included: false }
   ]),
   createOption('Professional', 79, 790, true, [
-    { included: true }, { included: true }, { included: true },
-    { included: true }, { included: true }, { included: false },
-    { included: false }, { included: false }
+    { included: true },
+    { included: true },
+    { included: true },
+    { included: true },
+    { included: true },
+    { included: false },
+    { included: false },
+    { included: false }
   ]),
   createOption('Enterprise', 149, 1490, false, [
-    { included: true }, { included: true }, { included: true },
-    { included: true }, { included: true }, { included: true },
-    { included: true }, { included: true }
+    { included: true },
+    { included: true },
+    { included: true },
+    { included: true },
+    { included: true },
+    { included: true },
+    { included: true },
+    { included: true }
   ])
 ]);
 
@@ -260,7 +281,7 @@ const optionGridClass = computed(() => {
 
 // --- Value Summary Stats ---
 const valueSummaryStats = computed(() => {
-  const cheapest = options.reduce((prev, curr) => curr.monthlyPrice < prev.monthlyPrice ? curr : prev, options[0]!);
+  const cheapest = options.reduce((prev, curr) => (curr.monthlyPrice < prev.monthlyPrice ? curr : prev), options[0]!);
   const mostFeatures = options.reduce((prev, curr) => {
     const prevCount = prev.features.filter(f => f.included).length;
     const currCount = curr.features.filter(f => f.included).length;
@@ -324,10 +345,7 @@ const valueAnalysisRows = computed(() => {
   const months = analysisPeriod.value;
 
   // Total cost per option
-  const totalCosts = options.map(opt => opt.annualPrice > 0
-    ? opt.annualPrice * (months / 12)
-    : opt.monthlyPrice * months
-  );
+  const totalCosts = options.map(opt => (opt.annualPrice > 0 ? opt.annualPrice * (months / 12) : opt.monthlyPrice * months));
 
   // Cost per user
   const costPerUser = options.map((opt, i) => {
@@ -341,7 +359,7 @@ const valueAnalysisRows = computed(() => {
   // Feature-to-price ratio (features per $100)
   const featureRatios = options.map((opt, i) => {
     const monthly = opt.monthlyPrice || 1;
-    return +(featureCounts[i]! / monthly * 100).toFixed(1);
+    return +((featureCounts[i]! / monthly) * 100).toFixed(1);
   });
 
   // Find best index for each metric
@@ -352,12 +370,18 @@ const valueAnalysisRows = computed(() => {
   return [
     {
       metric: t('quoteComparison.totalCost') + ` (${months} ${t('quoteComparison.months')})`,
-      values: totalCosts.map(v => new Intl.NumberFormat(locale.value, { style: 'currency', currency: 'USD', minimumFractionDigits: 0, maximumFractionDigits: 0 }).format(v)),
+      values: totalCosts.map(v =>
+        new Intl.NumberFormat(locale.value, { style: 'currency', currency: 'USD', minimumFractionDigits: 0, maximumFractionDigits: 0 }).format(v)
+      ),
       bestIndex: bestTotalCost
     },
     {
       metric: t('quoteComparison.costPerUser'),
-      values: costPerUser.map(v => new Intl.NumberFormat(locale.value, { style: 'currency', currency: 'USD', minimumFractionDigits: 0, maximumFractionDigits: 0 }).format(Math.round(v))),
+      values: costPerUser.map(v =>
+        new Intl.NumberFormat(locale.value, { style: 'currency', currency: 'USD', minimumFractionDigits: 0, maximumFractionDigits: 0 }).format(
+          Math.round(v)
+        )
+      ),
       bestIndex: bestCostPerUser
     },
     {
@@ -448,14 +472,24 @@ function handleShareWithClient() {
   }
 }
 .glass-card {
-  transition: transform 0.2s ease, box-shadow 0.2s ease;
-  &:hover { transform: translateY(-1px); }
+  transition:
+    transform 0.2s ease,
+    box-shadow 0.2s ease;
+  &:hover {
+    transform: translateY(-1px);
+  }
 }
 .animate-entrance {
   animation: slideUp 0.4s ease-out;
 }
 @keyframes slideUp {
-  from { opacity: 0; transform: translateY(16px); }
-  to { opacity: 1; transform: translateY(0); }
+  from {
+    opacity: 0;
+    transform: translateY(16px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
 }
 </style>

@@ -30,6 +30,7 @@
   </template>
 
 <script setup lang="ts">
+/* eslint-disable require-await */
 const props = defineProps({
   filters: {
     type: Object,

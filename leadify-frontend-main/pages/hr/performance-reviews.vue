@@ -4,7 +4,9 @@
     <div class="glass-panel p-6 rounded-2xl">
       <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
         <div>
-          <h1 class="text-2xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-violet-400 to-purple-400">{{ $t('hr.performance.title') }}</h1>
+          <h1 class="text-2xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-violet-400 to-purple-400">
+            {{ $t('hr.performance.title') }}
+          </h1>
           <p class="text-slate-400 text-sm mt-1">{{ $t('hr.performance.subtitle') }}</p>
         </div>
         <div class="flex gap-2">
@@ -48,7 +50,7 @@
 
     <!-- Reviews Table -->
     <div class="glass-panel p-6 rounded-2xl">
-      <el-table :data="reviews" class="glass-table" stripe style="width: 100%" v-loading="loading">
+      <el-table v-loading="loading" :data="reviews" class="glass-table" stripe style="width: 100%">
         <el-table-column :label="$t('hr.performance.employee')" min-width="200">
           <template #default="{ row }">
             <div class="flex items-center gap-3">
@@ -143,7 +145,7 @@
 <script setup lang="ts">
 import { ref, computed, onMounted, nextTick } from 'vue';
 import { ElMessage } from 'element-plus';
-import * as echarts from 'echarts';
+import * as echarts from 'echarts/core';
 import { useApiFetch } from '~/composables/useApiFetch';
 
 definePageMeta({
@@ -175,21 +177,19 @@ const newReview = ref({ employeeId: '', reviewType: 'QUARTERLY', period: null as
 function calcGoalCompletion(goals: any[] | null | undefined): number {
   if (!goals || !Array.isArray(goals) || goals.length === 0) return 0;
 
-  const hasWeights = goals.some((g) => g.weight != null && g.weight > 0);
+  const hasWeights = goals.some(g => g.weight != null && g.weight > 0);
 
   if (hasWeights) {
     const totalWeight = goals.reduce((sum, g) => sum + (Number(g.weight) || 0), 0);
     if (totalWeight === 0) return 0;
     const completedWeight = goals
-      .filter((g) => ['COMPLETED', 'DONE', 'MET'].includes(String(g.status).toUpperCase()))
+      .filter(g => ['COMPLETED', 'DONE', 'MET'].includes(String(g.status).toUpperCase()))
       .reduce((sum, g) => sum + (Number(g.weight) || 0), 0);
     return Math.round((completedWeight / totalWeight) * 100);
   }
 
   // Fallback: simple count
-  const completed = goals.filter((g) =>
-    ['COMPLETED', 'DONE', 'MET'].includes(String(g.status).toUpperCase())
-  ).length;
+  const completed = goals.filter(g => ['COMPLETED', 'DONE', 'MET'].includes(String(g.status).toUpperCase())).length;
   return Math.round((completed / goals.length) * 100);
 }
 
@@ -210,9 +210,7 @@ function deriveReviewType(period: string | undefined): string {
 function mapReview(raw: any): any {
   return {
     id: raw.id,
-    employeeName: raw.employee
-      ? `${raw.employee.firstName || ''} ${raw.employee.lastName || ''}`.trim()
-      : `Employee #${raw.employeeId}`,
+    employeeName: raw.employee ? `${raw.employee.firstName || ''} ${raw.employee.lastName || ''}`.trim() : `Employee #${raw.employeeId}`,
     department: raw.employee?.department || '-',
     reviewType: deriveReviewType(raw.period),
     overallRating: Number(raw.overallRating) || 0,
@@ -345,7 +343,7 @@ const renderCharts = () => {
   // ---- Rating Distribution (bar chart) ----
   if (ratingChartRef.value) {
     const buckets = [0, 0, 0, 0, 0]; // 1-star, 2-star, 3-star, 4-star, 5-star
-    reviews.value.forEach((r) => {
+    reviews.value.forEach(r => {
       const idx = Math.min(Math.max(Math.round(r.overallRating) - 1, 0), 4);
       buckets[idx]!++;
     });
@@ -382,7 +380,7 @@ const renderCharts = () => {
   if (deptChartRef.value) {
     // Aggregate average ratings per department from real data
     const deptMap: Record<string, { sum: number; count: number }> = {};
-    reviews.value.forEach((r) => {
+    reviews.value.forEach(r => {
       const dept = r.department || 'Other';
       if (!deptMap[dept]) deptMap[dept] = { sum: 0, count: 0 };
       deptMap[dept].sum += r.overallRating;
@@ -392,22 +390,24 @@ const renderCharts = () => {
     // Build indicator and value arrays from the data
     const departments = Object.keys(deptMap);
     // If we have data, use real departments; otherwise show placeholders
-    const indicators = departments.length > 0
-      ? departments.map((name) => ({ name, max: 5 }))
-      : [
-          { name: 'Sales', max: 5 },
-          { name: 'Marketing', max: 5 },
-          { name: 'Engineering', max: 5 },
-          { name: 'HR', max: 5 },
-          { name: 'Operations', max: 5 }
-        ];
+    const indicators =
+      departments.length > 0
+        ? departments.map(name => ({ name, max: 5 }))
+        : [
+            { name: 'Sales', max: 5 },
+            { name: 'Marketing', max: 5 },
+            { name: 'Engineering', max: 5 },
+            { name: 'HR', max: 5 },
+            { name: 'Operations', max: 5 }
+          ];
 
-    const values = departments.length > 0
-      ? departments.map((dept) => {
-          const entry = deptMap[dept]!;
-          return Number((entry.sum / entry.count).toFixed(1));
-        })
-      : [0, 0, 0, 0, 0];
+    const values =
+      departments.length > 0
+        ? departments.map(dept => {
+            const entry = deptMap[dept]!;
+            return Number((entry.sum / entry.count).toFixed(1));
+          })
+        : [0, 0, 0, 0, 0];
 
     const chart = echarts.init(deptChartRef.value);
     chart.setOption({

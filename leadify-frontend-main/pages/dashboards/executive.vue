@@ -246,11 +246,41 @@ function processKPIs(allDeals: any[], clientCount: number) {
       color: '#10b981',
       trend: wonDeals.length > 0 ? 12 : 0
     },
-    { label: t('executiveDashboard.pipelineValue'), value: '$' + pipelineVal.toLocaleString(), icon: 'ph:funnel-bold', color: '#7849ff', trend: pipelineVal > 0 ? 8 : 0 },
-    { label: t('executiveDashboard.dealsWon'), value: String(wonDeals.length), icon: 'ph:trophy-bold', color: '#f59e0b', trend: wonDeals.length > 0 ? 5 : 0 },
-    { label: t('executiveDashboard.winRate'), value: winRate + '%', icon: 'ph:target-bold', color: '#3b82f6', trend: winRate > 50 ? 3 : winRate > 0 ? -2 : 0 },
-    { label: t('executiveDashboard.avgDealSize'), value: '$' + avgDeal.toLocaleString(), icon: 'ph:chart-bar-bold', color: '#a855f7', trend: avgDeal > 0 ? 4 : 0 },
-    { label: t('executiveDashboard.activeClients'), value: String(clientCount), icon: 'ph:users-bold', color: '#06b6d4', trend: clientCount > 0 ? 15 : 0 }
+    {
+      label: t('executiveDashboard.pipelineValue'),
+      value: '$' + pipelineVal.toLocaleString(),
+      icon: 'ph:funnel-bold',
+      color: '#7849ff',
+      trend: pipelineVal > 0 ? 8 : 0
+    },
+    {
+      label: t('executiveDashboard.dealsWon'),
+      value: String(wonDeals.length),
+      icon: 'ph:trophy-bold',
+      color: '#f59e0b',
+      trend: wonDeals.length > 0 ? 5 : 0
+    },
+    {
+      label: t('executiveDashboard.winRate'),
+      value: winRate + '%',
+      icon: 'ph:target-bold',
+      color: '#3b82f6',
+      trend: winRate > 50 ? 3 : winRate > 0 ? -2 : 0
+    },
+    {
+      label: t('executiveDashboard.avgDealSize'),
+      value: '$' + avgDeal.toLocaleString(),
+      icon: 'ph:chart-bar-bold',
+      color: '#a855f7',
+      trend: avgDeal > 0 ? 4 : 0
+    },
+    {
+      label: t('executiveDashboard.activeClients'),
+      value: String(clientCount),
+      icon: 'ph:users-bold',
+      color: '#06b6d4',
+      trend: clientCount > 0 ? 15 : 0
+    }
   ];
 }
 
@@ -360,8 +390,18 @@ function processGoals(allDeals: any[], clientCount: number) {
       target: '$100,000',
       percentage: Math.min(Math.round((totalValue / 100000) * 100), 150)
     },
-    { label: t('executiveDashboard.newClients'), current: String(clientCount), target: '20', percentage: Math.min(Math.round((clientCount / 20) * 100), 150) },
-    { label: t('executiveDashboard.dealsClosed'), current: String(wonDeals.length), target: '15', percentage: Math.min(Math.round((wonDeals.length / 15) * 100), 150) },
+    {
+      label: t('executiveDashboard.newClients'),
+      current: String(clientCount),
+      target: '20',
+      percentage: Math.min(Math.round((clientCount / 20) * 100), 150)
+    },
+    {
+      label: t('executiveDashboard.dealsClosed'),
+      current: String(wonDeals.length),
+      target: '15',
+      percentage: Math.min(Math.round((wonDeals.length / 15) * 100), 150)
+    },
     { label: t('executiveDashboard.avgResponseTime'), current: '3.2h', target: '< 4h', percentage: 80 }
   ];
 }

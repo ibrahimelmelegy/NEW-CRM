@@ -37,7 +37,7 @@ const props = defineProps({
 
   options: {
     type: Array,
-    default: [],
+    default: () => [],
     required: true
   },
   label: {

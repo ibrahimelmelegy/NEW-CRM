@@ -460,10 +460,8 @@ function handleZoomOut() {
 function handleFullScreen() {
   if (!document.fullscreenElement) {
     document.documentElement.requestFullscreen().catch(e => console.error('Error entering fullscreen:', e));
-  } else {
-    if (document.exitFullscreen) {
-      document.exitFullscreen().catch(e => console.error('Error exiting fullscreen:', e));
-    }
+  } else if (document.exitFullscreen) {
+    document.exitFullscreen().catch(e => console.error('Error exiting fullscreen:', e));
   }
 }
 
@@ -562,7 +560,7 @@ function onNewSectionKeyDown(e: KeyboardEvent) {
 <template>
   <div class="flex flex-col h-screen bg-slate-50 font-sans text-gray-800">
     <!-- Global Print Styles -->
-    <component is="style">
+    <component :is="'style'">
       @media print { @page { margin: 0; size: auto; } nav, aside, header, .print\:hidden, .no-print { display: none !important; } html, body, #root,
       #__nuxt { height: auto !important; min-height: auto !important; overflow: visible !important; position: static !important; width: 100%
       !important; margin: 0 !important; padding: 0 !important; display: block !important; } .flex, .h-screen, .min-h-screen, .overflow-hidden,
@@ -589,7 +587,7 @@ function onNewSectionKeyDown(e: KeyboardEvent) {
             Proposal Title is required
           </p>
         </div>
-        <button @click="showErrorToast = false" class="text-red-400 hover:text-red-600 p-1 hover:bg-red-100 rounded-lg transition-colors">
+        <button class="text-red-400 hover:text-red-600 p-1 hover:bg-red-100 rounded-lg transition-colors" @click="showErrorToast = false">
           <X :size="16" />
         </button>
       </div>
@@ -602,7 +600,7 @@ function onNewSectionKeyDown(e: KeyboardEvent) {
         class="bg-white/80 backdrop-blur-md border-b border-gray-200/60 px-6 py-4 flex justify-between items-center z-20 shadow-sm h-18 flex-shrink-0"
       >
         <div class="flex items-center gap-4">
-          <button @click="emit('cancel')" class="p-2.5 hover:bg-gray-100 rounded-full text-gray-500 transition-colors">
+          <button class="p-2.5 hover:bg-gray-100 rounded-full text-gray-500 transition-colors" @click="emit('cancel')">
             <ChevronLeft :size="20" />
           </button>
           <div>
@@ -623,24 +621,24 @@ function onNewSectionKeyDown(e: KeyboardEvent) {
         <div class="flex items-center gap-4">
           <div class="hidden lg:flex items-center gap-2 bg-gray-100/50 rounded-lg p-1">
             <button
-              @click="handleFullScreen"
               class="p-1.5 rounded-md hover:bg-white hover:shadow-sm transition-all text-gray-500 hover:text-gray-900"
               title="Full Screen"
+              @click="handleFullScreen"
             >
               <Maximize2 :size="16" />
             </button>
             <button
-              @click="handleZoomOut"
               class="p-1.5 rounded-md hover:bg-white hover:shadow-sm transition-all text-gray-500 hover:text-gray-900"
               title="Zoom Out"
+              @click="handleZoomOut"
             >
               <ZoomOut :size="16" />
             </button>
             <span class="text-xs font-bold text-gray-400 w-8 text-center">{{ Math.round(zoom * 100) }}%</span>
             <button
-              @click="handleZoomIn"
               class="p-1.5 rounded-md hover:bg-white hover:shadow-sm transition-all text-gray-500 hover:text-gray-900"
               title="Zoom In"
+              @click="handleZoomIn"
             >
               <ZoomIn :size="16" />
             </button>
@@ -650,13 +648,13 @@ function onNewSectionKeyDown(e: KeyboardEvent) {
 
           <!-- Preview Toggle -->
           <button
-            @click="showPreview = !showPreview"
             :class="[
               'flex items-center gap-2 px-4 py-2 rounded-xl text-xs font-bold transition-all shadow-sm',
               showPreview
                 ? 'bg-violet-50 text-violet-700 border border-violet-100 shadow-violet-100'
                 : 'bg-white text-gray-600 border border-gray-200 hover:bg-gray-50'
             ]"
+            @click="showPreview = !showPreview"
           >
             <Eye v-if="showPreview" :size="16" />
             <EyeOff v-else :size="16" />
@@ -664,26 +662,26 @@ function onNewSectionKeyDown(e: KeyboardEvent) {
           </button>
 
           <button
-            @click="handlePrint"
             class="p-2.5 text-gray-500 hover:text-gray-900 hover:bg-gray-100 rounded-xl transition-colors"
             title="Print/PDF"
+            @click="handlePrint"
           >
             <Printer :size="20" />
           </button>
 
           <button
-            @click="handleDownloadPDF"
             :disabled="isGeneratingPdf"
             class="p-2.5 text-gray-500 hover:text-gray-900 hover:bg-gray-100 rounded-xl transition-colors flex items-center gap-2 disabled:opacity-50"
             title="Download PDF"
+            @click="handleDownloadPDF"
           >
             <Loader2 v-if="isGeneratingPdf" :size="20" class="animate-spin" />
             <Download v-else :size="20" />
           </button>
 
           <button
-            @click="handleSave"
             class="bg-gray-900 text-white px-6 py-2.5 rounded-xl text-sm font-bold hover:bg-black flex items-center gap-2 shadow-lg shadow-gray-200/50 transition-all active:scale-95 hover:-translate-y-0.5"
+            @click="handleSave"
           >
             <Save :size="18" />
             Save
@@ -738,23 +736,23 @@ function onNewSectionKeyDown(e: KeyboardEvent) {
                 </div>
                 <div class="flex flex-col gap-0.5 opacity-0 group-hover:opacity-100 transition-opacity" @click.stop>
                   <button
-                    @click="handleMoveStep(idx, 'up')"
                     :disabled="idx === 0"
                     class="p-1 rounded hover:bg-gray-100 text-gray-400 hover:text-violet-600 disabled:opacity-30 disabled:cursor-not-allowed"
+                    @click="handleMoveStep(idx, 'up')"
                   >
                     <ArrowUp :size="12" />
                   </button>
                   <button
-                    @click="handleMoveStep(idx, 'down')"
                     :disabled="idx === orderedSteps.length - 1"
                     class="p-1 rounded hover:bg-gray-100 text-gray-400 hover:text-violet-600 disabled:opacity-30 disabled:cursor-not-allowed"
+                    @click="handleMoveStep(idx, 'down')"
                   >
                     <ArrowDown :size="12" />
                   </button>
                   <button
                     v-if="step.id !== 'branding'"
-                    @click.stop="handleDeleteStep(step.id)"
                     class="p-1 rounded hover:bg-red-50 text-gray-400 hover:text-red-500"
+                    @click.stop="handleDeleteStep(step.id)"
                   >
                     <Trash2 :size="12" />
                   </button>
@@ -770,8 +768,8 @@ function onNewSectionKeyDown(e: KeyboardEvent) {
             <!-- Add Custom Section -->
             <button
               v-if="!isAddingSection"
-              @click="isAddingSection = true"
               class="w-full py-2.5 border-2 border-dashed border-gray-200 rounded-xl text-gray-400 font-bold text-xs hover:border-violet-300 hover:text-violet-600 hover:bg-violet-50 transition-all flex items-center justify-center gap-2"
+              @click="isAddingSection = true"
             >
               <Plus :size="14" />
               Add Custom Section
@@ -779,19 +777,19 @@ function onNewSectionKeyDown(e: KeyboardEvent) {
             <div v-else class="bg-gray-50 p-3 rounded-xl border border-gray-200 animate-in fade-in zoom-in-95">
               <label class="block text-xs font-bold text-gray-500 mb-2">New Section Name</label>
               <input
-                autofocus
                 v-model="newSectionTitle"
+                autofocus
                 placeholder="e.g. Portfolio"
                 class="w-full px-3 py-2 bg-white border border-gray-200 rounded-lg text-sm mb-3 focus:ring-2 focus:ring-violet-500 outline-none"
                 @keydown="onNewSectionKeyDown"
               />
               <div class="flex gap-2">
-                <button @click="handleAddSection" class="flex-1 bg-violet-600 text-white py-1.5 rounded-lg text-xs font-bold hover:bg-violet-700">
+                <button class="flex-1 bg-violet-600 text-white py-1.5 rounded-lg text-xs font-bold hover:bg-violet-700" @click="handleAddSection">
                   Add
                 </button>
                 <button
-                  @click="isAddingSection = false"
                   class="flex-1 bg-gray-200 text-gray-600 py-1.5 rounded-lg text-xs font-bold hover:bg-gray-300"
+                  @click="isAddingSection = false"
                 >
                   Cancel
                 </button>
@@ -816,15 +814,15 @@ function onNewSectionKeyDown(e: KeyboardEvent) {
                     <label class="block text-xs font-bold text-gray-400 uppercase tracking-wider mb-1">Section Title</label>
                     <input
                       :value="activeCustomSection.title"
-                      @input="handleUpdateCustomSectionTitle(activeCustomSection!.id, ($event.target as HTMLInputElement).value)"
                       class="text-xl font-bold text-gray-900 border-none focus:ring-0 p-0 w-full bg-transparent outline-none placeholder-gray-300"
                       placeholder="Section Name"
+                      @input="handleUpdateCustomSectionTitle(activeCustomSection!.id, ($event.target as HTMLInputElement).value)"
                     />
                   </div>
                   <button
                     type="button"
-                    @click="handleDeleteStep(activeCustomSection!.id)"
                     class="text-red-400 hover:bg-red-50 hover:text-red-600 p-2 rounded-lg transition-colors flex items-center gap-2 text-xs font-bold"
+                    @click="handleDeleteStep(activeCustomSection!.id)"
                   >
                     <Trash2 :size="16" />
                     Delete
@@ -833,10 +831,10 @@ function onNewSectionKeyDown(e: KeyboardEvent) {
                 <p class="text-sm text-gray-500 mb-6">Add your custom content for this section.</p>
                 <ProposalsProposalRichTextEditor
                   :model-value="activeCustomSection.content"
-                  @update:model-value="handleUpdateCustomSection(activeCustomSection!.id, $event)"
                   :placeholder="`Enter details for ${activeCustomSection.title}...`"
                   class="bg-gray-50"
                   min-height="400px"
+                  @update:model-value="handleUpdateCustomSection(activeCustomSection!.id, $event)"
                 />
               </div>
             </div>
@@ -848,8 +846,8 @@ function onNewSectionKeyDown(e: KeyboardEvent) {
                   <div class="w-10 h-10 rounded-2xl bg-violet-100 flex items-center justify-center text-violet-600"><Palette :size="20" /></div>
                   <input
                     :value="formData.stepLabels?.branding || 'Branding & Details'"
-                    @input="handleStepLabelChange('branding', ($event.target as HTMLInputElement).value)"
                     class="text-xl font-bold text-gray-900 border-none focus:ring-0 bg-transparent outline-none flex-1"
+                    @input="handleStepLabelChange('branding', ($event.target as HTMLInputElement).value)"
                   />
                 </h3>
 
@@ -884,13 +882,13 @@ function onNewSectionKeyDown(e: KeyboardEvent) {
                       <button
                         v-for="pType in proposalTypes"
                         :key="pType.id"
-                        @click="handleChange('type', pType.id)"
                         :class="[
                           'flex flex-col items-center justify-center p-4 rounded-xl border-2 transition-all',
                           (formData.type || 'MIXED') === pType.id
                             ? 'border-violet-600 bg-violet-50 text-violet-700 shadow-md ring-1 ring-violet-200'
                             : 'border-gray-200 bg-white text-gray-500 hover:border-gray-300 hover:bg-gray-50'
                         ]"
+                        @click="handleChange('type', pType.id)"
                       >
                         <div
                           :class="[
@@ -914,12 +912,12 @@ function onNewSectionKeyDown(e: KeyboardEvent) {
                         <button
                           v-for="c in colors"
                           :key="c"
-                          @click="handleChange('themeColor', c)"
                           :class="[
                             'w-10 h-10 rounded-full transition-all flex items-center justify-center',
                             formData.themeColor === c ? 'ring-2 ring-offset-2 ring-gray-300 scale-110 shadow-md' : 'hover:scale-105'
                           ]"
                           :style="{ backgroundColor: c }"
+                          @click="handleChange('themeColor', c)"
                         >
                           <CheckCircle v-if="formData.themeColor === c" :size="16" class="text-white/80" />
                         </button>
@@ -932,11 +930,11 @@ function onNewSectionKeyDown(e: KeyboardEvent) {
                         <button
                           v-for="f in ['sans', 'serif', 'mono']"
                           :key="f"
-                          @click="handleChange('font', f)"
                           :class="[
                             'flex-1 py-2 text-xs font-bold rounded-lg capitalize transition-all',
                             formData.font === f ? 'bg-white shadow-sm text-gray-900' : 'text-gray-500 hover:text-gray-700'
                           ]"
+                          @click="handleChange('font', f)"
                         >
                           {{ f }}
                         </button>
@@ -951,13 +949,13 @@ function onNewSectionKeyDown(e: KeyboardEvent) {
                       <button
                         v-for="style in coverStyles"
                         :key="style"
-                        @click="handleChange('coverStyle', style)"
                         :class="[
                           'border-2 rounded-2xl p-3 text-left transition-all group',
                           formData.coverStyle === style
                             ? 'border-violet-500 bg-violet-50/50 ring-0 shadow-lg shadow-violet-100'
                             : 'border-transparent bg-gray-100 hover:bg-gray-100 hover:border-gray-200'
                         ]"
+                        @click="handleChange('coverStyle', style)"
                       >
                         <div
                           :class="[
@@ -1159,12 +1157,12 @@ function onNewSectionKeyDown(e: KeyboardEvent) {
                     </label>
                     <input
                       :value="formData.title"
-                      @input="handleChange('title', ($event.target as HTMLInputElement).value)"
                       :class="[
                         'w-full px-5 py-4 bg-gray-50 border-2 rounded-2xl focus:bg-white focus:border-violet-500 focus:ring-4 focus:ring-violet-500/10 outline-none font-bold text-lg transition-all',
                         errors.title ? 'border-red-500' : 'border-transparent'
                       ]"
                       placeholder="e.g. Digital Transformation Roadmap"
+                      @input="handleChange('title', ($event.target as HTMLInputElement).value)"
                     />
                     <p v-if="errors.title" class="text-xs text-red-500 mt-1 flex items-center gap-1">
                       <AlertCircle :size="10" />
@@ -1175,8 +1173,8 @@ function onNewSectionKeyDown(e: KeyboardEvent) {
                     <label class="block text-xs font-bold text-gray-500 uppercase mb-2">Reference ID</label>
                     <input
                       :value="formData.refNumber"
-                      @input="handleChange('refNumber', ($event.target as HTMLInputElement).value)"
                       class="w-full px-4 py-3 bg-gray-50 border-2 border-transparent rounded-xl focus:bg-white focus:border-violet-500 outline-none font-mono text-sm transition-all"
+                      @input="handleChange('refNumber', ($event.target as HTMLInputElement).value)"
                     />
                   </div>
                   <div class="col-span-6 md:col-span-4">
@@ -1186,8 +1184,8 @@ function onNewSectionKeyDown(e: KeyboardEvent) {
                       <input
                         type="number"
                         :value="formData.version"
-                        @input="handleChange('version', parseFloat(($event.target as HTMLInputElement).value))"
                         class="w-full px-4 py-3 bg-gray-50 border-2 border-transparent rounded-r-xl focus:bg-white focus:border-violet-500 outline-none font-bold transition-all"
+                        @input="handleChange('version', parseFloat(($event.target as HTMLInputElement).value))"
                       />
                     </div>
                   </div>
@@ -1196,8 +1194,8 @@ function onNewSectionKeyDown(e: KeyboardEvent) {
                     <input
                       type="date"
                       :value="formData.date"
-                      @input="handleChange('date', ($event.target as HTMLInputElement).value)"
                       class="w-full px-4 py-3 bg-gray-50 border-2 border-transparent rounded-xl focus:bg-white focus:border-violet-500 outline-none text-sm font-medium transition-all"
+                      @input="handleChange('date', ($event.target as HTMLInputElement).value)"
                     />
                   </div>
 
@@ -1219,12 +1217,12 @@ function onNewSectionKeyDown(e: KeyboardEvent) {
                         </label>
                         <input
                           :value="formData.clientCompany"
-                          @input="handleChange('clientCompany', ($event.target as HTMLInputElement).value)"
                           placeholder="Company Name"
                           :class="[
                             'w-full px-4 py-3 bg-white border-2 rounded-xl focus:border-violet-500 outline-none text-sm font-bold text-gray-800 transition-all shadow-sm',
                             errors.clientCompany ? 'border-red-500' : 'border-transparent'
                           ]"
+                          @input="handleChange('clientCompany', ($event.target as HTMLInputElement).value)"
                         />
                         <p v-if="errors.clientCompany" class="text-xs text-red-500 mt-1 flex items-center gap-1">
                           <AlertCircle :size="10" />
@@ -1235,18 +1233,18 @@ function onNewSectionKeyDown(e: KeyboardEvent) {
                         <label class="block text-xs font-bold text-gray-500 uppercase mb-2">Contact Name</label>
                         <input
                           :value="formData.clientName"
-                          @input="handleChange('clientName', ($event.target as HTMLInputElement).value)"
                           placeholder="Contact Person"
                           class="w-full px-4 py-3 bg-white border-2 border-transparent rounded-xl focus:border-violet-500 outline-none text-sm font-bold text-gray-800 transition-all shadow-sm"
+                          @input="handleChange('clientName', ($event.target as HTMLInputElement).value)"
                         />
                       </div>
                       <div class="md:col-span-2">
                         <label class="block text-xs font-bold text-gray-500 uppercase mb-2">Contact Email</label>
                         <input
                           :value="formData.clientEmail"
-                          @input="handleChange('clientEmail', ($event.target as HTMLInputElement).value)"
                           placeholder="email@company.com"
                           class="w-full px-4 py-3 bg-white border-2 border-transparent rounded-xl focus:border-violet-500 outline-none text-sm font-medium transition-all shadow-sm"
+                          @input="handleChange('clientEmail', ($event.target as HTMLInputElement).value)"
                         />
                       </div>
                     </div>
@@ -1286,15 +1284,15 @@ function onNewSectionKeyDown(e: KeyboardEvent) {
                   <h3 class="text-xl font-bold text-gray-900 flex-1">
                     <input
                       :value="formData.stepLabels?.executive || 'Executive Summary'"
-                      @input="handleStepLabelChange('executive', ($event.target as HTMLInputElement).value)"
                       class="font-bold text-gray-900 border-none focus:ring-0 bg-transparent outline-none w-full"
+                      @input="handleStepLabelChange('executive', ($event.target as HTMLInputElement).value)"
                     />
                   </h3>
                   <button
                     type="button"
-                    @click="handleDeleteStep('executive')"
                     class="text-red-300 hover:bg-red-50 hover:text-red-500 p-2 rounded-lg transition-colors"
                     title="Delete Section"
+                    @click="handleDeleteStep('executive')"
                   >
                     <Trash2 :size="18" />
                   </button>
@@ -1302,10 +1300,10 @@ function onNewSectionKeyDown(e: KeyboardEvent) {
                 <p class="text-sm text-gray-500 mb-6">A high-level overview of the proposal.</p>
                 <ProposalsProposalRichTextEditor
                   :model-value="formData.introduction"
-                  @update:model-value="handleChange('introduction', $event)"
                   placeholder="We are pleased to submit this proposal..."
                   class="bg-gray-50"
                   min-height="250px"
+                  @update:model-value="handleChange('introduction', $event)"
                 />
               </div>
               <div class="bg-white p-8 rounded-[2rem] shadow-xl shadow-slate-200/60 border border-white">
@@ -1313,10 +1311,10 @@ function onNewSectionKeyDown(e: KeyboardEvent) {
                 <p class="text-sm text-gray-500 mb-6">What will this project achieve?</p>
                 <ProposalsProposalRichTextEditor
                   :model-value="formData.objectives"
-                  @update:model-value="handleChange('objectives', $event)"
                   placeholder="1. Increase operational efficiency..."
                   class="bg-gray-50"
                   min-height="200px"
+                  @update:model-value="handleChange('objectives', $event)"
                 />
               </div>
             </div>
@@ -1328,41 +1326,41 @@ function onNewSectionKeyDown(e: KeyboardEvent) {
                   <h3 class="text-xl font-bold text-gray-900 flex-1">
                     <input
                       :value="formData.stepLabels?.solution || 'Solution & Scope'"
-                      @input="handleStepLabelChange('solution', ($event.target as HTMLInputElement).value)"
                       class="font-bold text-gray-900 border-none focus:ring-0 bg-transparent outline-none w-full"
+                      @input="handleStepLabelChange('solution', ($event.target as HTMLInputElement).value)"
                     />
                   </h3>
                   <button
                     type="button"
-                    @click="handleDeleteStep('solution')"
                     class="text-red-300 hover:bg-red-50 hover:text-red-500 p-2 rounded-lg transition-colors"
                     title="Delete Section"
+                    @click="handleDeleteStep('solution')"
                   >
                     <Trash2 :size="18" />
                   </button>
                 </div>
                 <ProposalsProposalRichTextEditor
                   :model-value="formData.scopeOfWork"
-                  @update:model-value="handleChange('scopeOfWork', $event)"
                   class="bg-gray-50"
                   min-height="400px"
+                  @update:model-value="handleChange('scopeOfWork', $event)"
                 />
               </div>
               <div class="bg-white p-8 rounded-[2rem] shadow-xl shadow-slate-200/60 border border-white">
                 <h3 class="text-xl font-bold text-gray-900 mb-6">Methodology</h3>
                 <ProposalsProposalRichTextEditor
                   :model-value="formData.methodology"
-                  @update:model-value="handleChange('methodology', $event)"
                   class="bg-gray-50"
                   min-height="250px"
+                  @update:model-value="handleChange('methodology', $event)"
                 />
               </div>
               <div class="bg-white p-8 rounded-[2rem] shadow-xl shadow-slate-200/60 border border-white">
                 <div class="flex justify-between items-center mb-6">
                   <h3 class="text-xl font-bold text-gray-900">Project Phases</h3>
                   <button
-                    @click="addPhase"
                     class="text-violet-600 hover:bg-violet-50 px-4 py-2 rounded-xl text-xs font-bold transition-colors flex items-center gap-2"
+                    @click="addPhase"
                   >
                     <Plus :size="16" />
                     Add Phase
@@ -1375,29 +1373,29 @@ function onNewSectionKeyDown(e: KeyboardEvent) {
                     class="p-6 border border-gray-100 rounded-2xl bg-gray-50/30 relative group hover:border-violet-200 transition-all"
                   >
                     <button
-                      @click="removePhase(phase.id)"
                       class="absolute top-4 right-4 text-gray-300 hover:text-red-500 opacity-0 group-hover:opacity-100 transition-all p-2 bg-white rounded-lg shadow-sm"
+                      @click="removePhase(phase.id)"
                     >
                       <X :size="16" />
                     </button>
                     <div class="grid grid-cols-2 gap-4">
                       <input
                         :value="phase.name"
-                        @input="handlePhaseChange(phase.id, 'name', ($event.target as HTMLInputElement).value)"
                         placeholder="Phase Name"
                         class="bg-white border-2 border-transparent p-3 rounded-xl text-sm font-bold focus:border-violet-500 outline-none transition-all"
+                        @input="handlePhaseChange(phase.id, 'name', ($event.target as HTMLInputElement).value)"
                       />
                       <input
                         :value="phase.duration"
-                        @input="handlePhaseChange(phase.id, 'duration', ($event.target as HTMLInputElement).value)"
                         placeholder="Duration"
                         class="bg-white border-2 border-transparent p-3 rounded-xl text-sm font-medium focus:border-violet-500 outline-none transition-all"
+                        @input="handlePhaseChange(phase.id, 'duration', ($event.target as HTMLInputElement).value)"
                       />
                       <input
                         :value="phase.deliverables"
-                        @input="handlePhaseChange(phase.id, 'deliverables', ($event.target as HTMLInputElement).value)"
                         placeholder="Deliverables"
                         class="col-span-2 bg-white border-2 border-transparent p-3 rounded-xl text-sm text-gray-600 focus:border-violet-500 outline-none transition-all"
+                        @input="handlePhaseChange(phase.id, 'deliverables', ($event.target as HTMLInputElement).value)"
                       />
                     </div>
                   </div>
@@ -1412,15 +1410,15 @@ function onNewSectionKeyDown(e: KeyboardEvent) {
                   <h3 class="text-xl font-bold text-gray-900 flex-1">
                     <input
                       :value="formData.stepLabels?.financial || 'Investment'"
-                      @input="handleStepLabelChange('financial', ($event.target as HTMLInputElement).value)"
                       class="font-bold text-gray-900 border-none focus:ring-0 bg-transparent outline-none w-full"
+                      @input="handleStepLabelChange('financial', ($event.target as HTMLInputElement).value)"
                     />
                   </h3>
                   <button
                     type="button"
-                    @click="handleDeleteStep('financial')"
                     class="text-red-300 hover:bg-red-50 hover:text-red-500 p-2 rounded-lg transition-colors"
                     title="Delete Section"
+                    @click="handleDeleteStep('financial')"
                   >
                     <Trash2 :size="18" />
                   </button>
@@ -1442,15 +1440,15 @@ function onNewSectionKeyDown(e: KeyboardEvent) {
                       <input
                         type="number"
                         :value="globalMargin"
-                        @input="globalMargin = parseFloat(($event.target as HTMLInputElement).value)"
                         class="w-20 p-3 text-lg font-bold text-center outline-none bg-transparent text-white placeholder-white/50"
                         placeholder="0"
+                        @input="globalMargin = parseFloat(($event.target as HTMLInputElement).value)"
                       />
                       <span class="pr-4 text-sm font-bold text-white/70">%</span>
                     </div>
                     <button
-                      @click="applyGlobalMargin"
                       class="bg-white text-violet-700 px-5 py-3 rounded-xl text-xs font-bold hover:bg-violet-50 transition-colors shadow-sm"
+                      @click="applyGlobalMargin"
                     >
                       Apply
                     </button>
@@ -1461,8 +1459,8 @@ function onNewSectionKeyDown(e: KeyboardEvent) {
                 <div class="flex justify-between items-center mb-6 px-2">
                   <h3 class="text-xl font-bold text-gray-900">Pricing Table</h3>
                   <button
-                    @click="addItem"
                     class="bg-gray-900 text-white px-4 py-2 rounded-xl text-xs font-bold hover:bg-black transition-all flex items-center gap-2"
+                    @click="addItem"
                   >
                     <Plus :size="16" />
                     Add Item
@@ -1487,24 +1485,24 @@ function onNewSectionKeyDown(e: KeyboardEvent) {
                         <td class="py-3 pl-4">
                           <input
                             :value="item.description"
-                            @input="handleItemChange(item.id, 'description', ($event.target as HTMLInputElement).value)"
                             class="w-full bg-transparent outline-none text-sm p-2 rounded-lg focus:bg-white focus:ring-2 focus:ring-violet-100 font-medium"
                             placeholder="Item name"
+                            @input="handleItemChange(item.id, 'description', ($event.target as HTMLInputElement).value)"
                           />
                         </td>
                         <td class="py-3">
                           <input
                             :value="item.unit"
-                            @input="handleItemChange(item.id, 'unit', ($event.target as HTMLInputElement).value)"
                             class="w-full bg-transparent outline-none text-sm p-2 text-center text-gray-500"
+                            @input="handleItemChange(item.id, 'unit', ($event.target as HTMLInputElement).value)"
                           />
                         </td>
                         <td class="py-3">
                           <input
                             type="number"
                             :value="item.quantity"
-                            @input="handleItemChange(item.id, 'quantity', parseFloat(($event.target as HTMLInputElement).value))"
                             class="w-full bg-transparent outline-none text-sm p-2 text-center font-bold"
+                            @input="handleItemChange(item.id, 'quantity', parseFloat(($event.target as HTMLInputElement).value))"
                           />
                         </td>
                         <td class="py-3">
@@ -1512,8 +1510,8 @@ function onNewSectionKeyDown(e: KeyboardEvent) {
                             <input
                               type="number"
                               :value="item.cost || 0"
-                              @input="handleItemChange(item.id, 'cost', parseFloat(($event.target as HTMLInputElement).value))"
                               class="w-full bg-gray-100/50 rounded-lg border-none outline-none text-xs p-2 text-right text-gray-500 font-mono focus:ring-2 focus:ring-gray-200 transition-all"
+                              @input="handleItemChange(item.id, 'cost', parseFloat(($event.target as HTMLInputElement).value))"
                             />
                           </div>
                         </td>
@@ -1522,8 +1520,8 @@ function onNewSectionKeyDown(e: KeyboardEvent) {
                             <input
                               type="number"
                               :value="item.margin !== undefined ? Number(item.margin).toFixed(1) : 0"
-                              @input="handleItemChange(item.id, 'margin', parseFloat(($event.target as HTMLInputElement).value))"
                               class="w-full bg-blue-50/50 rounded-lg border-none outline-none text-xs p-2 text-right text-blue-600 font-bold focus:ring-2 focus:ring-blue-100 transition-all"
+                              @input="handleItemChange(item.id, 'margin', parseFloat(($event.target as HTMLInputElement).value))"
                             />
                           </div>
                         </td>
@@ -1531,8 +1529,8 @@ function onNewSectionKeyDown(e: KeyboardEvent) {
                           <input
                             type="number"
                             :value="item.rate !== undefined ? Number(item.rate).toFixed(2) : 0"
-                            @input="handleItemChange(item.id, 'rate', parseFloat(($event.target as HTMLInputElement).value))"
                             class="w-full bg-transparent outline-none text-sm p-2 text-right font-bold text-gray-900"
+                            @input="handleItemChange(item.id, 'rate', parseFloat(($event.target as HTMLInputElement).value))"
                           />
                         </td>
                         <td class="py-3 text-right text-sm font-extrabold text-gray-800 pr-4">
@@ -1540,8 +1538,8 @@ function onNewSectionKeyDown(e: KeyboardEvent) {
                         </td>
                         <td class="py-3 text-center">
                           <button
-                            @click="removeItem(item.id)"
                             class="text-gray-300 hover:text-red-500 p-1.5 rounded-md hover:bg-red-50 transition-all"
+                            @click="removeItem(item.id)"
                           >
                             <X :size="14" />
                           </button>
@@ -1559,8 +1557,8 @@ function onNewSectionKeyDown(e: KeyboardEvent) {
                       <input
                         type="number"
                         :value="formData.taxRate"
-                        @input="handleChange('taxRate', parseFloat(($event.target as HTMLInputElement).value))"
                         class="w-20 text-right bg-white border border-gray-200 rounded-lg p-1.5 text-sm font-bold focus:border-violet-500 outline-none"
+                        @input="handleChange('taxRate', parseFloat(($event.target as HTMLInputElement).value))"
                       />
                     </div>
                     <div class="flex justify-between items-center text-sm">
@@ -1568,8 +1566,8 @@ function onNewSectionKeyDown(e: KeyboardEvent) {
                       <div class="flex gap-2">
                         <select
                           :value="formData.discountType"
-                          @change="handleChange('discountType', ($event.target as HTMLSelectElement).value)"
                           class="text-xs border border-gray-200 rounded-lg bg-white px-1 outline-none"
+                          @change="handleChange('discountType', ($event.target as HTMLSelectElement).value)"
                         >
                           <option value="percent">%</option>
                           <option value="fixed">$</option>
@@ -1577,8 +1575,8 @@ function onNewSectionKeyDown(e: KeyboardEvent) {
                         <input
                           type="number"
                           :value="formData.discount"
-                          @input="handleChange('discount', parseFloat(($event.target as HTMLInputElement).value))"
                           class="w-20 text-right bg-white border border-gray-200 rounded-lg p-1.5 text-sm font-bold focus:border-violet-500 outline-none"
+                          @input="handleChange('discount', parseFloat(($event.target as HTMLInputElement).value))"
                         />
                       </div>
                     </div>
@@ -1594,15 +1592,15 @@ function onNewSectionKeyDown(e: KeyboardEvent) {
                   <h3 class="text-xl font-bold text-gray-900 flex-1">
                     <input
                       :value="formData.stepLabels?.legal || 'Terms & Legal'"
-                      @input="handleStepLabelChange('legal', ($event.target as HTMLInputElement).value)"
                       class="font-bold text-gray-900 border-none focus:ring-0 bg-transparent outline-none w-full"
+                      @input="handleStepLabelChange('legal', ($event.target as HTMLInputElement).value)"
                     />
                   </h3>
                   <button
                     type="button"
-                    @click="handleDeleteStep('legal')"
                     class="text-red-300 hover:bg-red-50 hover:text-red-500 p-2 rounded-lg transition-colors"
                     title="Delete Section"
+                    @click="handleDeleteStep('legal')"
                   >
                     <Trash2 :size="18" />
                   </button>
@@ -1610,16 +1608,16 @@ function onNewSectionKeyDown(e: KeyboardEvent) {
                 <h3 class="text-lg font-bold text-gray-700 mb-4">Payment Terms</h3>
                 <ProposalsProposalRichTextEditor
                   :model-value="formData.paymentTerms"
-                  @update:model-value="handleChange('paymentTerms', $event)"
                   min-height="150px"
+                  @update:model-value="handleChange('paymentTerms', $event)"
                 />
               </div>
               <div class="bg-white p-8 rounded-[2rem] shadow-xl shadow-slate-200/60 border border-white">
                 <h3 class="text-lg font-bold text-gray-700 mb-4">Terms &amp; Conditions</h3>
                 <ProposalsProposalRichTextEditor
                   :model-value="formData.termsAndConditions"
-                  @update:model-value="handleChange('termsAndConditions', $event)"
                   min-height="250px"
+                  @update:model-value="handleChange('termsAndConditions', $event)"
                 />
               </div>
             </div>

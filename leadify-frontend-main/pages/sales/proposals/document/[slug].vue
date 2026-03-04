@@ -13,12 +13,7 @@
       <div class="text-center">
         <Icon name="ph:warning-circle" size="48" class="text-red-500 mx-auto mb-4" />
         <p class="text-gray-700 font-medium mb-2">Proposal not found or access denied</p>
-        <button
-          class="text-violet-600 hover:text-violet-700 font-medium mt-2"
-          @click="navigateTo('/sales/proposals')"
-        >
-          Back to Proposals
-        </button>
+        <button class="text-violet-600 hover:text-violet-700 font-medium mt-2" @click="navigateTo('/sales/proposals')">Back to Proposals</button>
       </div>
     </div>
 
@@ -53,33 +48,31 @@
 </template>
 
 <script setup lang="ts">
-import { ref, computed, onMounted } from 'vue'
-import { Loading } from '@element-plus/icons-vue'
-import { ArrowLeft, Download } from 'lucide-vue-next'
-import { getProposal } from '~/composables/useProposals'
+import { ref, computed, onMounted } from 'vue';
+import { Loading } from '@element-plus/icons-vue';
+import { ArrowLeft, Download } from 'lucide-vue-next';
+import { getProposal } from '~/composables/useProposals';
 // ProposalPrintTemplate is auto-imported by Nuxt from components/proposals/
 
 definePageMeta({
   layout: 'full-width',
   middleware: 'permissions'
-})
+});
 
-const route = useRoute()
-const proposalId = computed(() => route.params.slug as string)
+const route = useRoute();
+const proposalId = computed(() => route.params.slug as string);
 
-const loading = ref(true)
-const proposal = ref<any>(null)
-const printContainer = ref<HTMLElement | null>(null)
+const loading = ref(true);
+const proposal = ref<any>(null);
+const printContainer = ref<HTMLElement | null>(null);
 
 const formattedData = computed(() => {
-  if (!proposal.value) return null
-  return transformApiToFormData(proposal.value)
-})
+  if (!proposal.value) return null;
+  return transformApiToFormData(proposal.value);
+});
 
 function transformApiToFormData(apiData: any) {
-  const content = apiData.content
-    ? (typeof apiData.content === 'string' ? JSON.parse(apiData.content) : apiData.content)
-    : {}
+  const content = apiData.content ? (typeof apiData.content === 'string' ? JSON.parse(apiData.content) : apiData.content) : {};
 
   return {
     id: apiData.id,
@@ -117,32 +110,32 @@ function transformApiToFormData(apiData: any) {
     status: apiData.status || 'DRAFT',
     type: apiData.type || 'MIXED',
     version: parseInt(apiData.version) || 1,
-    documentType: 'proposal',
-  }
+    documentType: 'proposal'
+  };
 }
 
 async function fetchProposal() {
-  loading.value = true
+  loading.value = true;
   try {
-    const data = await getProposal(proposalId.value)
-    proposal.value = data && Object.keys(data).length > 0 ? data : null
+    const data = await getProposal(proposalId.value);
+    proposal.value = data && Object.keys(data).length > 0 ? data : null;
   } catch (error) {
-    console.error('Failed to load proposal:', error)
-    proposal.value = null
+    console.error('Failed to load proposal:', error);
+    proposal.value = null;
   } finally {
-    loading.value = false
+    loading.value = false;
   }
 }
 
 async function handleExport() {
   // Try html2pdf if available, otherwise fall back to window.print()
   try {
-    const html2pdf = (await import('html2pdf.js')).default
+    const html2pdf = (await import('html2pdf.js')).default;
     if (html2pdf && printContainer.value) {
-      const element = printContainer.value
-      const title = proposal.value?.title || 'Proposal'
-      const reference = proposal.value?.reference || ''
-      const filename = `${title}${reference ? ` - ${reference}` : ''}.pdf`
+      const element = printContainer.value;
+      const title = proposal.value?.title || 'Proposal';
+      const reference = proposal.value?.reference || '';
+      const filename = `${title}${reference ? ` - ${reference}` : ''}.pdf`;
 
       html2pdf()
         .set({
@@ -151,20 +144,20 @@ async function handleExport() {
           image: { type: 'jpeg', quality: 0.98 },
           html2canvas: { scale: 2, useCORS: true, logging: false },
           jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' },
-          pagebreak: { mode: ['avoid-all', 'css', 'legacy'] },
+          pagebreak: { mode: ['avoid-all', 'css', 'legacy'] }
         } as any)
         .from(element)
-        .save()
-      return
+        .save();
+      return;
     }
   } catch {
     // html2pdf not available, fall back to print
   }
 
-  window.print()
+  window.print();
 }
 
 onMounted(() => {
-  fetchProposal()
-})
+  fetchProposal();
+});
 </script>

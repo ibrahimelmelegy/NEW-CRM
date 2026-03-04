@@ -4,7 +4,7 @@
     span
     el-button(size='medium' plain type="primary" :icon="Plus" native-type="button" @click="AddInvoice" class="!rounded-2xl !py-2.5 !px-4") {{ $t('deals.form.addInvoice') }}
   DealFormInovice(
-    v-for="(invoice, index) in invoices"
+    v-for="(invoice, index) in invoicesList"
     :key="invoice.id"
     :invoice="invoice"
     :index="index"
@@ -35,7 +35,7 @@ const props = defineProps({
 });
 
 // Reactive invoice array
-const invoices = ref<Invoice[]>([
+const invoicesList = ref<Invoice[]>([
   {
     id: uuidv4(),
     invoiceNumber: '',
@@ -48,7 +48,7 @@ const invoices = ref<Invoice[]>([
 ]);
 
 if (props.invoices?.length) {
-  invoices.value = props.invoices.map((invoice: any) => ({
+  invoicesList.value = props.invoices.map((invoice: any) => ({
     amount: invoice.amount || null,
     invoiceNumber: invoice.invoiceNumber || '',
     invoiceDate: new Date(invoice.invoiceDate),
@@ -64,7 +64,7 @@ const childRefs = ref<Record<string, any>>({});
 async function AddInvoice() {
   if (!(await validateForm())) return;
 
-  invoices.value.push({
+  invoicesList.value.push({
     id: uuidv4(),
     invoiceNumber: '',
     amount: null,
@@ -87,7 +87,7 @@ async function onDelete(id: string) {
       cancelButtonText: t('common.cancel'),
       type: 'warning'
     });
-    invoices.value = invoices.value.filter((invoice: Invoice) => invoice.id !== id);
+    invoicesList.value = invoicesList.value.filter((invoice: Invoice) => invoice.id !== id);
   } catch {
     // User cancelled
   }
@@ -99,14 +99,14 @@ async function onDelete(id: string) {
  * @returns {void}
  */
 function onSubmit(values: Invoice) {
-  const index = invoices.value.findIndex((invoice: Invoice) => invoice.id === values.id);
+  const index = invoicesList.value.findIndex((invoice: Invoice) => invoice.id === values.id);
 
   if (index !== -1) {
     // Update an existing invoice
-    invoices.value[index] = { ...values };
+    invoicesList.value[index] = { ...values };
   } else {
     // Add a new invoice
-    invoices.value.push(values);
+    invoicesList.value.push(values);
   }
 }
 
@@ -160,7 +160,7 @@ async function onSubmitForm(): Promise<boolean> {
 }
 
 function checkNoInvoices() {
-  const invoiceCount = invoices.value.length;
+  const invoiceCount = invoicesList.value.length;
 
   if (invoiceCount === 0) return true;
   if (invoiceCount > 1) return false;
@@ -190,7 +190,7 @@ async function onSubmitInvoices() {
   }
 
   // Prepare and log final data for API
-  const cleanedInvoices = invoices.value.map(({ id, ...data }: Invoice) => ({
+  const cleanedInvoices = invoicesList.value.map(({ id, ...data }: Invoice) => ({
     ...data,
     invoiceDate: getYear(data.invoiceDate),
     collectedDate: getYear(data.collectedDate),
@@ -198,7 +198,7 @@ async function onSubmitInvoices() {
   }));
   emit('isValid', true);
   if (route.path.includes('edit')) {
-    emit('onSubmit', invoices.value);
+    emit('onSubmit', invoicesList.value);
   } else {
     emit('onSubmit', cleanedInvoices);
   }

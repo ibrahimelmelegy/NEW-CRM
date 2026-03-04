@@ -207,12 +207,12 @@
 
 <script setup lang="ts">
 import { ref, computed } from 'vue';
-import { graphic } from 'echarts';
+import { graphic } from 'echarts/core';
 import VChart from 'vue-echarts';
+import { ElMessage } from 'element-plus';
 import { fetchForecasts, fetchForecastByPeriod } from '~/composables/useForecasting';
 import { useApiFetch } from '~/composables/useApiFetch';
 import type { ForecastPeriod } from '~/composables/useForecasting';
-import { ElMessage } from 'element-plus';
 
 definePageMeta({ title: 'Sales Forecasting' });
 
@@ -288,7 +288,7 @@ const chartOption = computed(() => {
     yAxis: {
       type: 'value',
       splitLine: { lineStyle: { type: 'dashed', color: 'rgba(255,255,255,0.05)' } },
-      axisLabel: { color: '#64748B', formatter: (v: number) => v >= 1000 ? `${(v/1000).toFixed(0)}K` : v }
+      axisLabel: { color: '#64748B', formatter: (v: number) => (v >= 1000 ? `${(v / 1000).toFixed(0)}K` : v) }
     },
     series: [
       {

@@ -155,7 +155,7 @@ import { CanvasRenderer } from 'echarts/renderers';
 import { BarChart, PieChart } from 'echarts/charts';
 import { TitleComponent, TooltipComponent, LegendComponent, GridComponent } from 'echarts/components';
 import VChart from 'vue-echarts';
-import { graphic } from 'echarts';
+import { graphic } from 'echarts/core';
 import { getPieChartsData } from '~/composables/charts';
 import {
   fetchExpenses,
@@ -238,7 +238,7 @@ const expenseDistributionOption = computed(() => {
 
   // Aggregate expenses by category
   const categoryMap = new Map<string, number>();
-  recentExpenses.value.forEach((exp) => {
+  recentExpenses.value.forEach(exp => {
     const catName = exp.category?.name || 'Uncategorized';
     categoryMap.set(catName, (categoryMap.get(catName) || 0) + Number(exp.amount));
   });
@@ -256,7 +256,7 @@ const cashFlowOption = computed(() => {
 
   // Group expenses by month
   const monthlyExpenses = new Map<string, number>();
-  recentExpenses.value.forEach((exp) => {
+  recentExpenses.value.forEach(exp => {
     if (!exp.date) return;
     const d = new Date(exp.date);
     const key = `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}`;
@@ -277,9 +277,7 @@ const cashFlowOption = computed(() => {
 
   // Simulate revenue as receivable distributed evenly (fallback data)
   const monthCount = sortedMonths.length || 1;
-  const revenuePerMonth = collectionData.value.totalReceivable
-    ? Math.round(collectionData.value.collectedMTD / monthCount)
-    : 0;
+  const revenuePerMonth = collectionData.value.totalReceivable ? Math.round(collectionData.value.collectedMTD / monthCount) : 0;
 
   return {
     tooltip: {
@@ -356,11 +354,7 @@ async function loadExpenses() {
       filters.categoryId = categoryFilter.value;
     }
 
-    const [summaryRes, expensesRes, cats] = await Promise.all([
-      fetchExpenseSummary(),
-      fetchExpenses(filters),
-      fetchExpenseCategories()
-    ]);
+    const [summaryRes, expensesRes, cats] = await Promise.all([fetchExpenseSummary(), fetchExpenses(filters), fetchExpenseCategories()]);
     expenseSummary.value = summaryRes;
     recentExpenses.value = expensesRes.docs;
     categories.value = cats;

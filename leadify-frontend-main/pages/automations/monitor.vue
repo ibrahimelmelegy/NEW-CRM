@@ -386,7 +386,7 @@
 
 <script setup lang="ts">
 import { ref, computed, onMounted, onUnmounted } from 'vue';
-import { graphic } from 'echarts';
+import { graphic } from 'echarts/core';
 import VChart from 'vue-echarts';
 import { ElMessage } from 'element-plus';
 

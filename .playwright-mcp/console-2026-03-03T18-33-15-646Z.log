@@ -1,0 +1,21 @@
+[   53108ms] [ERROR] Failed to load resource: the server responded with a status of 500 () @ https://crm.hp-tech.com/api/deal/analytics/weighted-pipeline:0
+[   53341ms] [ERROR] Failed to load resource: the server responded with a status of 500 () @ https://crm.hp-tech.com/api/deal/analytics/weighted-pipeline:0
+[   53343ms] [ERROR] API Error (500): SOMETHING_WENT_WRONG @ https://crm.hp-tech.com/_nuxt/ChWBE3Q6.js:4
+[   54070ms] [ERROR] [nuxt] Error fetching app manifest. TypeError: Failed to fetch @ https://crm.hp-tech.com/_nuxt/ChWBE3Q6.js:4
+[   54071ms] [WARNING] [nuxt] Error preloading payload for /sales/deals/add-deal @ https://crm.hp-tech.com/_nuxt/ChWBE3Q6.js:4
+[   54071ms] [WARNING] [nuxt] Error preloading payload for / @ https://crm.hp-tech.com/_nuxt/ChWBE3Q6.js:4
+[   54071ms] [WARNING] [nuxt] Error preloading payload for /collaboration @ https://crm.hp-tech.com/_nuxt/ChWBE3Q6.js:4
+[   56155ms] [ERROR] [ErrorBoundary] Caught error: ReferenceError: Cannot access 'R' before initialization
+    at f3.fn (https://crm.hp-tech.com/_nuxt/D60jFF1y.js:1:8130)
+    at U0 (https://crm.hp-tech.com/_nuxt/ChWBE3Q6.js:3:14014)
+    at get value (https://crm.hp-tech.com/_nuxt/ChWBE3Q6.js:3:26308)
+    at setup (https://crm.hp-tech.com/_nuxt/D60jFF1y.js:1:8626) @ https://crm.hp-tech.com/_nuxt/DvzdcpWX.js:3
+[  134070ms] [ERROR] Failed to load resource: the server responded with a status of 404 () @ https://crm.hp-tech.com/api/warehouse/zones?page=1&limit=20:0
+[  134076ms] [ERROR] API Error (404): [GET] "/api/warehouse/zones?page=1&limit=20": 404  @ https://crm.hp-tech.com/_nuxt/ChWBE3Q6.js:4
+[  134292ms] [ERROR] Failed to load resource: the server responded with a status of 404 () @ https://crm.hp-tech.com/api/warehouse/stock?limit=1:0
+[  134294ms] [ERROR] API Error (404): [GET] "/api/warehouse/stock?limit=1": 404  @ https://crm.hp-tech.com/_nuxt/ChWBE3Q6.js:4
+[  147727ms] [ERROR] Failed to load resource: the server responded with a status of 500 () @ https://crm.hp-tech.com/api/deal/analytics/weighted-pipeline:0
+[  148016ms] [ERROR] Failed to load resource: the server responded with a status of 500 () @ https://crm.hp-tech.com/api/deal/analytics/weighted-pipeline:0
+[  148017ms] [ERROR] API Error (500): SOMETHING_WENT_WRONG @ https://crm.hp-tech.com/_nuxt/ChWBE3Q6.js:4
+[  150771ms] [ERROR] Failed to load resource: the server responded with a status of 404 () @ https://crm.hp-tech.com/api/staff:0
+[  150791ms] [ERROR] API Error (404): [GET] "/api/staff": 404  @ https://crm.hp-tech.com/_nuxt/ChWBE3Q6.js:4

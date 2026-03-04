@@ -6,16 +6,6 @@
 
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 
-const mockApiFetch = vi.fn();
-(globalThis as any).useApiFetch = mockApiFetch;
-
-const mockNotification = vi.fn();
-(globalThis as any).ElNotification = mockNotification;
-
-vi.mock('element-plus', () => ({
-  ElNotification: (...args: any[]) => mockNotification(...args)
-}));
-
 import {
   WORKFLOW_TRIGGERS,
   CONDITION_OPERATORS,
@@ -28,6 +18,16 @@ import {
   toggleWorkflow,
   fetchWorkflowLogs
 } from '~/composables/useWorkflows';
+
+const mockApiFetch = vi.fn();
+(globalThis as any).useApiFetch = mockApiFetch;
+
+const mockNotification = vi.fn();
+(globalThis as any).ElNotification = mockNotification;
+
+vi.mock('element-plus', () => ({
+  ElNotification: (...args: any[]) => mockNotification(...args)
+}));
 
 describe('useWorkflows', () => {
   beforeEach(() => {

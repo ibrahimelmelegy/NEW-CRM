@@ -130,7 +130,7 @@ body {
 }
 
 /* Arabic RTL Font */
-[dir="rtl"] {
+[dir='rtl'] {
   font-family: 'IBM Plex Sans Arabic', 'Inter', sans-serif;
 }
 
@@ -153,7 +153,6 @@ body {
 }
 
 @keyframes bg-pulse {
-
   0%,
   100% {
     opacity: 1;
@@ -373,7 +372,7 @@ html.light-mode .navbar {
   border-right: 3px solid var(--purple-500);
 }
 
-[dir="ltr"] .menu-item-active {
+[dir='ltr'] .menu-item-active {
   border-right: none;
   border-left: 3px solid var(--purple-500);
   background: linear-gradient(270deg, rgba(168, 85, 247, 0.15), transparent);
@@ -410,7 +409,6 @@ html.light-mode .navbar {
 }
 
 @keyframes pulse-glow {
-
   0%,
   100% {
     box-shadow: 0 0 0 0 rgba(168, 85, 247, 0.4);
@@ -423,7 +421,6 @@ html.light-mode .navbar {
 
 /* Floating Animation */
 @keyframes float {
-
   0%,
   100% {
     transform: translateY(0px);
@@ -530,23 +527,27 @@ html.light-mode .navbar {
 }
 
 /* RTL Support */
-[dir="rtl"],
-[dir="rtl"] * {
-  font-family: 'IBM Plex Sans Arabic', 'Inter', -apple-system, sans-serif !important;
+[dir='rtl'],
+[dir='rtl'] * {
+  font-family:
+    'IBM Plex Sans Arabic',
+    'Inter',
+    -apple-system,
+    sans-serif !important;
   text-align: right;
 }
 
-[dir="rtl"] .price-display,
-[dir="rtl"] h1,
-[dir="rtl"] h2,
-[dir="rtl"] h3,
-[dir="rtl"] h4,
-[dir="rtl"] h5,
-[dir="rtl"] h6 {
+[dir='rtl'] .price-display,
+[dir='rtl'] h1,
+[dir='rtl'] h2,
+[dir='rtl'] h3,
+[dir='rtl'] h4,
+[dir='rtl'] h5,
+[dir='rtl'] h6 {
   font-family: 'IBM Plex Sans Arabic', 'Space Grotesk', sans-serif !important;
 }
 
-[dir="ltr"] {
+[dir='ltr'] {
   text-align: left;
 }
 
@@ -567,7 +568,7 @@ select.input {
   padding-left: 36px;
 }
 
-[dir="ltr"] select.input {
+[dir='ltr'] select.input {
   background-position: right 12px center;
   padding-left: 16px;
   padding-right: 36px;
@@ -778,7 +779,6 @@ html:not(.light-mode) .vti__dropdown-item span {
 html:not(.light-mode) .vti__dropdown-item.highlighted {
   background-color: rgba(168, 85, 247, 0.2) !important;
 }
-
 
 /* LIGHT MODE PHONE INPUT */
 html.light-mode .vue-tel-input {

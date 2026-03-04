@@ -20,6 +20,7 @@ el-dropdown(trigger="click" @command="handleExport")
 </template>
 
 <script setup lang="ts">
+/* eslint-disable require-await */
 const props = defineProps<{
   data?: any[];
   columns?: { prop: string; label: string }[];
@@ -125,11 +126,11 @@ async function loadLogoBase64(): Promise<string | null> {
 
 async function exportPDF(headers: string[], rows: string[][], baseName: string) {
   try {
-    const { default: jsPDF } = await import('jspdf');
+    const { default: JsPDF } = await import('jspdf');
     const autoTable = (await import('jspdf-autotable')).default;
 
     const isLandscape = rows[0] && rows[0].length > 5;
-    const doc = new jsPDF({
+    const doc = new JsPDF({
       orientation: isLandscape ? 'landscape' : 'portrait',
       unit: 'mm',
       format: 'a4'
@@ -233,7 +234,7 @@ async function exportPDF(headers: string[], rows: string[][], baseName: string) 
 }
 
 function downloadFile(content: string, filename: string, mimeType: string) {
-  const blob = new Blob(['\ufeff' + content], { type: `${mimeType};charset=utf-8;` });
+  const blob = new Blob(['\uFEFF' + content], { type: `${mimeType};charset=utf-8;` });
   const url = URL.createObjectURL(blob);
   const link = document.createElement('a');
   link.href = url;

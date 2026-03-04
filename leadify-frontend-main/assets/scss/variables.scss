@@ -2,107 +2,107 @@
 // 🏛️ Element Plus Sync & Professional Overrides
 // ============================================
 
-$primary: #7C3AED;
+$primary: #7c3aed;
 
 // Override Element Plus globals using our Masterpiece Variables
 :root {
-    --el-color-primary: var(--accent-purple);
-    --el-bg-color: var(--bg-obsidian);
-    --el-bg-color-overlay: var(--bg-card);
-    --el-text-color-primary: var(--text-primary);
-    --el-text-color-regular: var(--text-secondary);
-    --el-border-color: var(--border-stroke);
+  --el-color-primary: var(--accent-purple);
+  --el-bg-color: var(--bg-obsidian);
+  --el-bg-color-overlay: var(--bg-card);
+  --el-text-color-primary: var(--text-primary);
+  --el-text-color-regular: var(--text-secondary);
+  --el-border-color: var(--border-stroke);
 }
 
 // 📂 Premium Collapse (Filter Sections) Restoration
 .el-collapse {
-    border: none !important;
+  border: none !important;
+  background-color: transparent !important;
+  --el-collapse-header-bg-color: transparent !important;
+  --el-collapse-content-bg-color: transparent !important;
+  --el-collapse-border-color: var(--border-stroke) !important;
+
+  .el-collapse-item__header {
     background-color: transparent !important;
-    --el-collapse-header-bg-color: transparent !important;
-    --el-collapse-content-bg-color: transparent !important;
-    --el-collapse-border-color: var(--border-stroke) !important;
+    color: var(--text-primary) !important;
+    padding: 20px 30px !important;
+    font-size: 14px;
+    font-weight: 600;
+    border-bottom: 1px solid var(--border-stroke) !important;
+    height: auto !important;
 
-    .el-collapse-item__header {
-        background-color: transparent !important;
-        color: var(--text-primary) !important;
-        padding: 20px 30px !important;
-        font-size: 14px;
-        font-weight: 600;
-        border-bottom: 1px solid var(--border-stroke) !important;
-        height: auto !important;
-
-        &.is-active {
-            color: var(--accent-purple) !important;
-        }
+    &.is-active {
+      color: var(--accent-purple) !important;
     }
+  }
 
-    .el-collapse-item__wrap {
-        background-color: transparent !important;
-        border-none: none !important;
+  .el-collapse-item__wrap {
+    background-color: transparent !important;
+    border-none: none !important;
 
-        .el-collapse-item__content {
-            background-color: transparent !important;
-            color: var(--text-secondary) !important;
-            padding: 20px 30px 25px 30px !important;
-        }
+    .el-collapse-item__content {
+      background-color: transparent !important;
+      color: var(--text-secondary) !important;
+      padding: 20px 30px 25px 30px !important;
     }
+  }
 }
 
 // ✅ Checkboxes & Radios (Clean Profile)
 .el-checkbox {
-    color: var(--text-secondary) !important;
-    --el-checkbox-text-color: var(--text-secondary) !important;
-    --el-checkbox-checked-text-color: var(--accent-purple) !important;
-    --el-checkbox-custom-bg-color: transparent !important;
+  color: var(--text-secondary) !important;
+  --el-checkbox-text-color: var(--text-secondary) !important;
+  --el-checkbox-checked-text-color: var(--accent-purple) !important;
+  --el-checkbox-custom-bg-color: transparent !important;
 
-    .el-checkbox__inner {
-        background-color: rgba(0, 0, 0, 0.2) !important;
-        border-color: var(--text-secondary) !important;
-        border-radius: 4px !important;
-    }
+  .el-checkbox__inner {
+    background-color: rgba(0, 0, 0, 0.2) !important;
+    border-color: var(--text-secondary) !important;
+    border-radius: 4px !important;
+  }
 
-    &.is-checked .el-checkbox__inner {
-        background-color: var(--accent-purple) !important;
-        border-color: var(--accent-purple) !important;
-    }
+  &.is-checked .el-checkbox__inner {
+    background-color: var(--accent-purple) !important;
+    border-color: var(--accent-purple) !important;
+  }
 }
 
 // 🖱️ Premium Dropdowns & Selects Popovers
 .el-select__popper,
 .el-dropdown__popper,
 .el-popper {
-    background: var(--bg-surface-elevated) !important;
-    border: 1px solid var(--border-glass) !important;
-    box-shadow: var(--shadow-premium) !important;
-    backdrop-filter: blur(20px);
-    border-radius: 12px !important;
+  background: var(--bg-surface-elevated) !important;
+  border: 1px solid var(--border-glass) !important;
+  box-shadow: var(--shadow-premium) !important;
+  backdrop-filter: blur(20px);
+  border-radius: 12px !important;
 
-    .el-select-dropdown__item,
-    .el-dropdown-menu__item {
-        color: var(--text-secondary) !important;
-        padding: 10px 16px !important;
-        margin: 4px 8px !important;
-        border-radius: 8px !important;
+  .el-select-dropdown__item,
+  .el-dropdown-menu__item {
+    color: var(--text-secondary) !important;
+    padding: 10px 16px !important;
+    margin: 4px 8px !important;
+    border-radius: 8px !important;
 
-        &.is-hovering,
-        &:hover {
-            background-color: rgba(124, 58, 237, 0.1) !important;
-            color: var(--accent-purple) !important;
-        }
+    &.is-hovering,
+    &:hover {
+      background-color: rgba(124, 58, 237, 0.1) !important;
+      color: var(--accent-purple) !important;
     }
+  }
 }
 
 // ⚡ Global Button Base
 .el-button {
-    border-radius: var(--radius-btn) !important;
-    font-family: inherit;
-    transition: var(--transition-smooth) !important;
+  border-radius: var(--radius-btn) !important;
+  font-family: inherit;
+  transition: var(--transition-smooth) !important;
 
-    &--primary {
-        box-shadow: var(--glow-purple) !important;
+  &--primary {
+    box-shadow: var(--glow-purple) !important;
 
-        &:hover {
-            box-shadow: 0 0 30px rgba(124, 58, 237, 0.5) !important;
-        }
+    &:hover {
+      box-shadow: 0 0 30px rgba(124, 58, 237, 0.5) !important;
     }
+  }
 }

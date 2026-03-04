@@ -421,57 +421,328 @@ const editingResourceId = ref<number | null>(null);
 // Demo Data — Battle Cards
 // ──────────────────────────────────────────
 const battleCards = ref([
-  { id: 1, competitorName: 'Salesforce', lastUpdated: '2026-02-15', strengths: ['Brand Recognition', 'Ecosystem', 'AppExchange'], weaknesses: ['Complex Pricing', 'Steep Learning Curve', 'Over-Engineered'], winRate: 62, talkingPoints: '', pricingNotes: '' },
-  { id: 2, competitorName: 'HubSpot', lastUpdated: '2026-02-10', strengths: ['Free Tier', 'Ease of Use', 'Inbound Marketing'], weaknesses: ['Limited Customization', 'Expensive at Scale', 'Reporting Gaps'], winRate: 71, talkingPoints: '', pricingNotes: '' },
-  { id: 3, competitorName: 'Pipedrive', lastUpdated: '2026-01-28', strengths: ['Pipeline UI', 'Simplicity', 'Affordable'], weaknesses: ['Limited Automation', 'No Marketing Suite', 'Basic Reporting'], winRate: 78, talkingPoints: '', pricingNotes: '' },
-  { id: 4, competitorName: 'Zoho CRM', lastUpdated: '2026-02-01', strengths: ['Low Cost', 'Suite Integration', 'Customization'], weaknesses: ['Clunky UI', 'Slow Support', 'Complex Setup'], winRate: 68, talkingPoints: '', pricingNotes: '' },
-  { id: 5, competitorName: 'Microsoft Dynamics', lastUpdated: '2026-01-20', strengths: ['MS Ecosystem', 'Enterprise Features', 'Power BI'], weaknesses: ['High Cost', 'Complex Deployment', 'Requires Consultants'], winRate: 55, talkingPoints: '', pricingNotes: '' },
-  { id: 6, competitorName: 'Freshsales', lastUpdated: '2026-02-18', strengths: ['AI Scoring', 'Built-in Phone', 'Simple Pricing'], weaknesses: ['Limited Integrations', 'Small Ecosystem', 'Basic CPQ'], winRate: 74, talkingPoints: '', pricingNotes: '' }
+  {
+    id: 1,
+    competitorName: 'Salesforce',
+    lastUpdated: '2026-02-15',
+    strengths: ['Brand Recognition', 'Ecosystem', 'AppExchange'],
+    weaknesses: ['Complex Pricing', 'Steep Learning Curve', 'Over-Engineered'],
+    winRate: 62,
+    talkingPoints: '',
+    pricingNotes: ''
+  },
+  {
+    id: 2,
+    competitorName: 'HubSpot',
+    lastUpdated: '2026-02-10',
+    strengths: ['Free Tier', 'Ease of Use', 'Inbound Marketing'],
+    weaknesses: ['Limited Customization', 'Expensive at Scale', 'Reporting Gaps'],
+    winRate: 71,
+    talkingPoints: '',
+    pricingNotes: ''
+  },
+  {
+    id: 3,
+    competitorName: 'Pipedrive',
+    lastUpdated: '2026-01-28',
+    strengths: ['Pipeline UI', 'Simplicity', 'Affordable'],
+    weaknesses: ['Limited Automation', 'No Marketing Suite', 'Basic Reporting'],
+    winRate: 78,
+    talkingPoints: '',
+    pricingNotes: ''
+  },
+  {
+    id: 4,
+    competitorName: 'Zoho CRM',
+    lastUpdated: '2026-02-01',
+    strengths: ['Low Cost', 'Suite Integration', 'Customization'],
+    weaknesses: ['Clunky UI', 'Slow Support', 'Complex Setup'],
+    winRate: 68,
+    talkingPoints: '',
+    pricingNotes: ''
+  },
+  {
+    id: 5,
+    competitorName: 'Microsoft Dynamics',
+    lastUpdated: '2026-01-20',
+    strengths: ['MS Ecosystem', 'Enterprise Features', 'Power BI'],
+    weaknesses: ['High Cost', 'Complex Deployment', 'Requires Consultants'],
+    winRate: 55,
+    talkingPoints: '',
+    pricingNotes: ''
+  },
+  {
+    id: 6,
+    competitorName: 'Freshsales',
+    lastUpdated: '2026-02-18',
+    strengths: ['AI Scoring', 'Built-in Phone', 'Simple Pricing'],
+    weaknesses: ['Limited Integrations', 'Small Ecosystem', 'Basic CPQ'],
+    winRate: 74,
+    talkingPoints: '',
+    pricingNotes: ''
+  }
 ]);
 
 // ──────────────────────────────────────────
 // Demo Data — Objections
 // ──────────────────────────────────────────
 const objections = ref([
-  { id: 1, category: 'pricing', objectionText: 'Your solution is too expensive compared to competitors.', response: 'Our pricing reflects the total value delivered. When you factor in the time saved on manual tasks, the built-in automation, and the reduced need for third-party tools, our TCO is actually 30% lower than alternatives over a 3-year period.', successRate: 82 },
-  { id: 2, category: 'pricing', objectionText: 'We don\'t have the budget for this right now.', response: 'I understand budget constraints. Let me show you our ROI calculator — most customers see payback within 4 months. We also offer flexible payment plans and a phased rollout approach to spread costs.', successRate: 68 },
-  { id: 3, category: 'product', objectionText: 'We need feature X which you don\'t have.', response: 'Great question. While that specific feature is on our Q2 roadmap, let me show you how our current workflow builder can achieve the same outcome with a slightly different approach. Many customers find this even more flexible.', successRate: 73 },
-  { id: 4, category: 'product', objectionText: 'Your platform seems complex for our small team.', response: 'We actually offer a streamlined onboarding path for teams under 20. Our guided setup wizard gets you operational in under 2 hours, and you can gradually enable advanced features as your team grows.', successRate: 85 },
-  { id: 5, category: 'competitor', objectionText: 'We\'re already using Salesforce and switching would be too disruptive.', response: 'Migration doesn\'t have to be disruptive. We offer a white-glove migration service that transfers all your data, workflows, and customizations. Our average migration takes 2 weeks with zero downtime, and we provide parallel-run support.', successRate: 58 },
-  { id: 6, category: 'competitor', objectionText: 'Competitor X offers a similar product at a lower price.', response: 'Let\'s do a feature-by-feature comparison. Our battle card shows that while their base price is lower, they charge extra for features we include standard — like automation, API access, and priority support. The true cost difference favors us.', successRate: 76 },
-  { id: 7, category: 'timing', objectionText: 'This isn\'t a priority for us right now.', response: 'I completely understand. May I share a quick case study from a similar company? They said the same thing, but after seeing the revenue impact — a 40% increase in sales velocity — they moved it up their priority list. When would be a good time to revisit?', successRate: 61 },
-  { id: 8, category: 'timing', objectionText: 'We need to evaluate more options before deciding.', response: 'That\'s a smart approach. To help with your evaluation, I can provide a detailed comparison matrix, customer references in your industry, and a fully configured trial environment. What specific criteria are most important to your decision?', successRate: 71 }
+  {
+    id: 1,
+    category: 'pricing',
+    objectionText: 'Your solution is too expensive compared to competitors.',
+    response:
+      'Our pricing reflects the total value delivered. When you factor in the time saved on manual tasks, the built-in automation, and the reduced need for third-party tools, our TCO is actually 30% lower than alternatives over a 3-year period.',
+    successRate: 82
+  },
+  {
+    id: 2,
+    category: 'pricing',
+    objectionText: "We don't have the budget for this right now.",
+    response:
+      'I understand budget constraints. Let me show you our ROI calculator — most customers see payback within 4 months. We also offer flexible payment plans and a phased rollout approach to spread costs.',
+    successRate: 68
+  },
+  {
+    id: 3,
+    category: 'product',
+    objectionText: "We need feature X which you don't have.",
+    response:
+      'Great question. While that specific feature is on our Q2 roadmap, let me show you how our current workflow builder can achieve the same outcome with a slightly different approach. Many customers find this even more flexible.',
+    successRate: 73
+  },
+  {
+    id: 4,
+    category: 'product',
+    objectionText: 'Your platform seems complex for our small team.',
+    response:
+      'We actually offer a streamlined onboarding path for teams under 20. Our guided setup wizard gets you operational in under 2 hours, and you can gradually enable advanced features as your team grows.',
+    successRate: 85
+  },
+  {
+    id: 5,
+    category: 'competitor',
+    objectionText: "We're already using Salesforce and switching would be too disruptive.",
+    response:
+      "Migration doesn't have to be disruptive. We offer a white-glove migration service that transfers all your data, workflows, and customizations. Our average migration takes 2 weeks with zero downtime, and we provide parallel-run support.",
+    successRate: 58
+  },
+  {
+    id: 6,
+    category: 'competitor',
+    objectionText: 'Competitor X offers a similar product at a lower price.',
+    response:
+      "Let's do a feature-by-feature comparison. Our battle card shows that while their base price is lower, they charge extra for features we include standard — like automation, API access, and priority support. The true cost difference favors us.",
+    successRate: 76
+  },
+  {
+    id: 7,
+    category: 'timing',
+    objectionText: "This isn't a priority for us right now.",
+    response:
+      'I completely understand. May I share a quick case study from a similar company? They said the same thing, but after seeing the revenue impact — a 40% increase in sales velocity — they moved it up their priority list. When would be a good time to revisit?',
+    successRate: 61
+  },
+  {
+    id: 8,
+    category: 'timing',
+    objectionText: 'We need to evaluate more options before deciding.',
+    response:
+      "That's a smart approach. To help with your evaluation, I can provide a detailed comparison matrix, customer references in your industry, and a fully configured trial environment. What specific criteria are most important to your decision?",
+    successRate: 71
+  }
 ]);
 
 // ──────────────────────────────────────────
 // Demo Data — Resources
 // ──────────────────────────────────────────
 const resources = ref([
-  { id: 1, title: 'Enterprise Sales Pitch Deck 2026', type: 'pitch_deck', fileSize: '8.2 MB', lastUpdated: '2026-02-20', downloadCount: 142, viewCount: 389, description: 'Comprehensive enterprise pitch deck covering platform capabilities, ROI metrics, and customer success stories.' },
-  { id: 2, title: 'Product One-Pager — CRM Suite', type: 'one_pager', fileSize: '1.4 MB', lastUpdated: '2026-02-18', downloadCount: 98, viewCount: 256, description: 'Quick-reference one-pager highlighting key CRM features, pricing tiers, and competitive advantages.' },
-  { id: 3, title: 'Case Study: Acme Corp 300% ROI', type: 'case_study', fileSize: '3.6 MB', lastUpdated: '2026-01-30', downloadCount: 67, viewCount: 198, description: 'Detailed case study showing how Acme Corp achieved 300% ROI within 6 months of deployment.' },
-  { id: 4, title: 'ROI Calculator & Business Case', type: 'roi_report', fileSize: '2.1 MB', lastUpdated: '2026-02-12', downloadCount: 84, viewCount: 312, description: 'Interactive ROI calculator with industry benchmarks and customizable assumptions for prospect presentations.' },
-  { id: 5, title: 'SMB Quick-Start Pitch Deck', type: 'pitch_deck', fileSize: '5.8 MB', lastUpdated: '2026-02-05', downloadCount: 56, viewCount: 178, description: 'Tailored pitch deck for small and medium business prospects focusing on ease of use and quick time-to-value.' },
-  { id: 6, title: 'Healthcare Industry One-Pager', type: 'one_pager', fileSize: '1.2 MB', lastUpdated: '2026-01-25', downloadCount: 34, viewCount: 112, description: 'Industry-specific one-pager for healthcare prospects with compliance and HIPAA considerations.' },
-  { id: 7, title: 'Case Study: TechStart 5x Pipeline', type: 'case_study', fileSize: '4.1 MB', lastUpdated: '2026-02-08', downloadCount: 45, viewCount: 156, description: 'How TechStart grew their pipeline 5x in 90 days using our automation and lead scoring features.' },
-  { id: 8, title: 'Total Cost of Ownership Analysis', type: 'roi_report', fileSize: '1.8 MB', lastUpdated: '2026-02-14', downloadCount: 72, viewCount: 243, description: 'Comprehensive TCO comparison across major CRM platforms with 3-year projection models.' },
-  { id: 9, title: 'Partner Channel Deck', type: 'pitch_deck', fileSize: '6.5 MB', lastUpdated: '2026-01-18', downloadCount: 28, viewCount: 94, description: 'Pitch deck designed for channel partners and resellers to present to their own customers.' }
+  {
+    id: 1,
+    title: 'Enterprise Sales Pitch Deck 2026',
+    type: 'pitch_deck',
+    fileSize: '8.2 MB',
+    lastUpdated: '2026-02-20',
+    downloadCount: 142,
+    viewCount: 389,
+    description: 'Comprehensive enterprise pitch deck covering platform capabilities, ROI metrics, and customer success stories.'
+  },
+  {
+    id: 2,
+    title: 'Product One-Pager — CRM Suite',
+    type: 'one_pager',
+    fileSize: '1.4 MB',
+    lastUpdated: '2026-02-18',
+    downloadCount: 98,
+    viewCount: 256,
+    description: 'Quick-reference one-pager highlighting key CRM features, pricing tiers, and competitive advantages.'
+  },
+  {
+    id: 3,
+    title: 'Case Study: Acme Corp 300% ROI',
+    type: 'case_study',
+    fileSize: '3.6 MB',
+    lastUpdated: '2026-01-30',
+    downloadCount: 67,
+    viewCount: 198,
+    description: 'Detailed case study showing how Acme Corp achieved 300% ROI within 6 months of deployment.'
+  },
+  {
+    id: 4,
+    title: 'ROI Calculator & Business Case',
+    type: 'roi_report',
+    fileSize: '2.1 MB',
+    lastUpdated: '2026-02-12',
+    downloadCount: 84,
+    viewCount: 312,
+    description: 'Interactive ROI calculator with industry benchmarks and customizable assumptions for prospect presentations.'
+  },
+  {
+    id: 5,
+    title: 'SMB Quick-Start Pitch Deck',
+    type: 'pitch_deck',
+    fileSize: '5.8 MB',
+    lastUpdated: '2026-02-05',
+    downloadCount: 56,
+    viewCount: 178,
+    description: 'Tailored pitch deck for small and medium business prospects focusing on ease of use and quick time-to-value.'
+  },
+  {
+    id: 6,
+    title: 'Healthcare Industry One-Pager',
+    type: 'one_pager',
+    fileSize: '1.2 MB',
+    lastUpdated: '2026-01-25',
+    downloadCount: 34,
+    viewCount: 112,
+    description: 'Industry-specific one-pager for healthcare prospects with compliance and HIPAA considerations.'
+  },
+  {
+    id: 7,
+    title: 'Case Study: TechStart 5x Pipeline',
+    type: 'case_study',
+    fileSize: '4.1 MB',
+    lastUpdated: '2026-02-08',
+    downloadCount: 45,
+    viewCount: 156,
+    description: 'How TechStart grew their pipeline 5x in 90 days using our automation and lead scoring features.'
+  },
+  {
+    id: 8,
+    title: 'Total Cost of Ownership Analysis',
+    type: 'roi_report',
+    fileSize: '1.8 MB',
+    lastUpdated: '2026-02-14',
+    downloadCount: 72,
+    viewCount: 243,
+    description: 'Comprehensive TCO comparison across major CRM platforms with 3-year projection models.'
+  },
+  {
+    id: 9,
+    title: 'Partner Channel Deck',
+    type: 'pitch_deck',
+    fileSize: '6.5 MB',
+    lastUpdated: '2026-01-18',
+    downloadCount: 28,
+    viewCount: 94,
+    description: 'Pitch deck designed for channel partners and resellers to present to their own customers.'
+  }
 ]);
 
 // ──────────────────────────────────────────
 // Demo Data — Win/Loss
 // ──────────────────────────────────────────
 const recentDeals = ref([
-  { id: 1, dealName: 'Acme Corp — Enterprise Suite', status: 'won', amount: 125000, reason: 'Superior automation and faster implementation timeline', competitor: 'Salesforce', closedDate: '2026-02-22' },
-  { id: 2, dealName: 'GlobalTech — CRM Migration', status: 'won', amount: 89000, reason: 'Better pricing and included migration support', competitor: 'HubSpot', closedDate: '2026-02-18' },
-  { id: 3, dealName: 'StartupXYZ — Growth Plan', status: 'lost', amount: 34000, reason: 'Chose free tier competitor for budget reasons', competitor: 'HubSpot', closedDate: '2026-02-15' },
-  { id: 4, dealName: 'MegaRetail — Omnichannel', status: 'won', amount: 210000, reason: 'Seamless integration with existing ERP system', competitor: 'Microsoft Dynamics', closedDate: '2026-02-10' },
-  { id: 5, dealName: 'FinanceFirst — Compliance Suite', status: 'lost', amount: 156000, reason: 'Missing specific regulatory compliance feature', competitor: 'Salesforce', closedDate: '2026-02-08' },
-  { id: 6, dealName: 'HealthPlus — Patient CRM', status: 'won', amount: 67000, reason: 'HIPAA-ready out of the box with healthcare workflows', competitor: '', closedDate: '2026-02-05' },
-  { id: 7, dealName: 'EduLearn — Campus Suite', status: 'lost', amount: 42000, reason: 'Timing — decided to delay purchase to next fiscal year', competitor: 'Zoho CRM', closedDate: '2026-01-28' },
-  { id: 8, dealName: 'AutoDeal — Dealer Network', status: 'won', amount: 98000, reason: 'Territory management and multi-location support', competitor: 'Pipedrive', closedDate: '2026-01-25' },
-  { id: 9, dealName: 'CloudServ — SaaS Operations', status: 'won', amount: 115000, reason: 'API-first architecture and developer-friendly platform', competitor: 'Freshsales', closedDate: '2026-01-20' },
-  { id: 10, dealName: 'LegalEase — Practice Mgmt', status: 'lost', amount: 78000, reason: 'Competitor offered industry-specific vertical solution', competitor: 'Microsoft Dynamics', closedDate: '2026-01-15' }
+  {
+    id: 1,
+    dealName: 'Acme Corp — Enterprise Suite',
+    status: 'won',
+    amount: 125000,
+    reason: 'Superior automation and faster implementation timeline',
+    competitor: 'Salesforce',
+    closedDate: '2026-02-22'
+  },
+  {
+    id: 2,
+    dealName: 'GlobalTech — CRM Migration',
+    status: 'won',
+    amount: 89000,
+    reason: 'Better pricing and included migration support',
+    competitor: 'HubSpot',
+    closedDate: '2026-02-18'
+  },
+  {
+    id: 3,
+    dealName: 'StartupXYZ — Growth Plan',
+    status: 'lost',
+    amount: 34000,
+    reason: 'Chose free tier competitor for budget reasons',
+    competitor: 'HubSpot',
+    closedDate: '2026-02-15'
+  },
+  {
+    id: 4,
+    dealName: 'MegaRetail — Omnichannel',
+    status: 'won',
+    amount: 210000,
+    reason: 'Seamless integration with existing ERP system',
+    competitor: 'Microsoft Dynamics',
+    closedDate: '2026-02-10'
+  },
+  {
+    id: 5,
+    dealName: 'FinanceFirst — Compliance Suite',
+    status: 'lost',
+    amount: 156000,
+    reason: 'Missing specific regulatory compliance feature',
+    competitor: 'Salesforce',
+    closedDate: '2026-02-08'
+  },
+  {
+    id: 6,
+    dealName: 'HealthPlus — Patient CRM',
+    status: 'won',
+    amount: 67000,
+    reason: 'HIPAA-ready out of the box with healthcare workflows',
+    competitor: '',
+    closedDate: '2026-02-05'
+  },
+  {
+    id: 7,
+    dealName: 'EduLearn — Campus Suite',
+    status: 'lost',
+    amount: 42000,
+    reason: 'Timing — decided to delay purchase to next fiscal year',
+    competitor: 'Zoho CRM',
+    closedDate: '2026-01-28'
+  },
+  {
+    id: 8,
+    dealName: 'AutoDeal — Dealer Network',
+    status: 'won',
+    amount: 98000,
+    reason: 'Territory management and multi-location support',
+    competitor: 'Pipedrive',
+    closedDate: '2026-01-25'
+  },
+  {
+    id: 9,
+    dealName: 'CloudServ — SaaS Operations',
+    status: 'won',
+    amount: 115000,
+    reason: 'API-first architecture and developer-friendly platform',
+    competitor: 'Freshsales',
+    closedDate: '2026-01-20'
+  },
+  {
+    id: 10,
+    dealName: 'LegalEase — Practice Mgmt',
+    status: 'lost',
+    amount: 78000,
+    reason: 'Competitor offered industry-specific vertical solution',
+    competitor: 'Microsoft Dynamics',
+    closedDate: '2026-01-15'
+  }
 ]);
 
 const winLossSummary = computed(() => {
@@ -484,7 +755,9 @@ const winLossSummary = computed(() => {
   const avgDealSizeLost = lost.length > 0 ? Math.round(lost.reduce((s, d) => s + d.amount, 0) / lost.length) : 0;
 
   const winReasonCounts: Record<string, number> = {};
-  won.forEach(d => { winReasonCounts[d.reason] = (winReasonCounts[d.reason] || 0) + 1; });
+  won.forEach(d => {
+    winReasonCounts[d.reason] = (winReasonCounts[d.reason] || 0) + 1;
+  });
   const maxWin = Math.max(...Object.values(winReasonCounts), 1);
   const topWinReasons = Object.entries(winReasonCounts)
     .sort((a, b) => b[1] - a[1])
@@ -492,7 +765,9 @@ const winLossSummary = computed(() => {
     .map(([label, count]) => ({ label: label.slice(0, 50), count, pct: Math.round((count / maxWin) * 100) }));
 
   const lossReasonCounts: Record<string, number> = {};
-  lost.forEach(d => { lossReasonCounts[d.reason] = (lossReasonCounts[d.reason] || 0) + 1; });
+  lost.forEach(d => {
+    lossReasonCounts[d.reason] = (lossReasonCounts[d.reason] || 0) + 1;
+  });
   const maxLoss = Math.max(...Object.values(lossReasonCounts), 1);
   const topLossReasons = Object.entries(lossReasonCounts)
     .sort((a, b) => b[1] - a[1])
@@ -538,13 +813,9 @@ const resourceForm = reactive(defaultResourceForm());
 const kpiStats = computed(() => {
   const totalResources = resources.value.length;
   const totalBattleCards = battleCards.value.length;
-  const avgWin = battleCards.value.length > 0
-    ? Math.round(battleCards.value.reduce((s, b) => s + b.winRate, 0) / battleCards.value.length)
-    : 0;
+  const avgWin = battleCards.value.length > 0 ? Math.round(battleCards.value.reduce((s, b) => s + b.winRate, 0) / battleCards.value.length) : 0;
   const wonDeals = recentDeals.value.filter(d => d.status === 'won');
-  const avgDealSize = wonDeals.length > 0
-    ? Math.round(wonDeals.reduce((s, d) => s + d.amount, 0) / wonDeals.length)
-    : 0;
+  const avgDealSize = wonDeals.length > 0 ? Math.round(wonDeals.reduce((s, d) => s + d.amount, 0) / wonDeals.length) : 0;
 
   return [
     { label: t('salesEnablement.totalResources'), value: totalResources, icon: 'ph:files-bold', color: '#7849ff' },
@@ -560,10 +831,11 @@ const kpiStats = computed(() => {
 const filteredBattleCards = computed(() => {
   if (!battleCardSearch.value) return battleCards.value;
   const q = battleCardSearch.value.toLowerCase();
-  return battleCards.value.filter(bc =>
-    bc.competitorName.toLowerCase().includes(q) ||
-    bc.strengths.some(s => s.toLowerCase().includes(q)) ||
-    bc.weaknesses.some(w => w.toLowerCase().includes(q))
+  return battleCards.value.filter(
+    bc =>
+      bc.competitorName.toLowerCase().includes(q) ||
+      bc.strengths.some(s => s.toLowerCase().includes(q)) ||
+      bc.weaknesses.some(w => w.toLowerCase().includes(q))
   );
 });
 
@@ -574,10 +846,7 @@ const filteredObjections = computed(() => {
   }
   if (objectionSearch.value) {
     const q = objectionSearch.value.toLowerCase();
-    result = result.filter(o =>
-      o.objectionText.toLowerCase().includes(q) ||
-      o.response.toLowerCase().includes(q)
-    );
+    result = result.filter(o => o.objectionText.toLowerCase().includes(q) || o.response.toLowerCase().includes(q));
   }
   return result;
 });
@@ -589,10 +858,7 @@ const filteredResources = computed(() => {
   }
   if (resourceSearch.value) {
     const q = resourceSearch.value.toLowerCase();
-    result = result.filter(r =>
-      r.title.toLowerCase().includes(q) ||
-      (r.description || '').toLowerCase().includes(q)
-    );
+    result = result.filter(r => r.title.toLowerCase().includes(q) || (r.description || '').toLowerCase().includes(q));
   }
   return result;
 });
@@ -612,10 +878,18 @@ const primaryActionLabel = computed(() => {
 
 function handlePrimaryAction() {
   switch (activeTab.value) {
-    case 'battleCards': openBattleCardDialog(); break;
-    case 'objections': openObjectionDialog(); break;
-    case 'resources': showUploadDialog.value = true; break;
-    case 'winLoss': exportWinLossReport(); break;
+    case 'battleCards':
+      openBattleCardDialog();
+      break;
+    case 'objections':
+      openObjectionDialog();
+      break;
+    case 'resources':
+      showUploadDialog.value = true;
+      break;
+    case 'winLoss':
+      exportWinLossReport();
+      break;
   }
 }
 
@@ -651,7 +925,12 @@ function saveBattleCard() {
     if (editingBattleCardId.value) {
       const idx = battleCards.value.findIndex(b => b.id === editingBattleCardId.value);
       if (idx >= 0) {
-        battleCards.value[idx] = { id: editingBattleCardId.value, ...battleCardForm, strengths: [...battleCardForm.strengths], weaknesses: [...battleCardForm.weaknesses] };
+        battleCards.value[idx] = {
+          id: editingBattleCardId.value,
+          ...battleCardForm,
+          strengths: [...battleCardForm.strengths],
+          weaknesses: [...battleCardForm.weaknesses]
+        };
       }
     } else {
       const newId = Math.max(0, ...battleCards.value.map(b => b.id)) + 1;
@@ -669,7 +948,9 @@ function deleteBattleCard(id: number) {
       battleCards.value = battleCards.value.filter(b => b.id !== id);
       ElMessage.success(t('common.deleted'));
     })
-    .catch(() => { /* cancelled */ });
+    .catch(() => {
+      /* cancelled */
+    });
 }
 
 // ──────────────────────────────────────────
@@ -719,7 +1000,9 @@ function deleteObjection(id: number) {
       objections.value = objections.value.filter(o => o.id !== id);
       ElMessage.success(t('common.deleted'));
     })
-    .catch(() => { /* cancelled */ });
+    .catch(() => {
+      /* cancelled */
+    });
 }
 
 // ──────────────────────────────────────────
@@ -789,7 +1072,9 @@ function deleteResource(id: number) {
       resources.value = resources.value.filter(r => r.id !== id);
       ElMessage.success(t('common.deleted'));
     })
-    .catch(() => { /* cancelled */ });
+    .catch(() => {
+      /* cancelled */
+    });
 }
 
 function downloadResource(res: Resource) {
@@ -801,10 +1086,15 @@ function downloadResource(res: Resource) {
 // Win/Loss Export
 // ──────────────────────────────────────────
 function exportWinLossReport() {
-  const headers = [t('salesEnablement.dealName'), t('salesEnablement.status'), t('salesEnablement.amount'), t('salesEnablement.reason'), t('salesEnablement.competitorInvolved'), t('salesEnablement.closedDate')];
-  const rows = recentDeals.value.map(d => [
-    d.dealName, d.status, d.amount, d.reason, d.competitor || 'N/A', d.closedDate
-  ]);
+  const headers = [
+    t('salesEnablement.dealName'),
+    t('salesEnablement.status'),
+    t('salesEnablement.amount'),
+    t('salesEnablement.reason'),
+    t('salesEnablement.competitorInvolved'),
+    t('salesEnablement.closedDate')
+  ];
+  const rows = recentDeals.value.map(d => [d.dealName, d.status, d.amount, d.reason, d.competitor || 'N/A', d.closedDate]);
   const csv = [headers, ...rows].map(r => r.map((c: string | number) => `"${String(c).replace(/"/g, '""')}"`).join(',')).join('\n');
   const blob = new Blob(['\uFEFF' + csv], { type: 'text/csv;charset=utf-8;' });
   const url = URL.createObjectURL(blob);
@@ -829,7 +1119,9 @@ function formatNumber(num: number): string {
 }
 
 function formatCurrency(value: number): string {
-  return new Intl.NumberFormat(locale.value, { style: 'currency', currency: 'USD', minimumFractionDigits: 0, maximumFractionDigits: 0 }).format(value);
+  return new Intl.NumberFormat(locale.value, { style: 'currency', currency: 'USD', minimumFractionDigits: 0, maximumFractionDigits: 0 }).format(
+    value
+  );
 }
 
 function capitalize(str: string): string {
@@ -941,7 +1233,9 @@ function resourceTypeLabel(type: string): string {
 }
 
 .glass-card {
-  transition: transform 0.2s ease, box-shadow 0.2s ease;
+  transition:
+    transform 0.2s ease,
+    box-shadow 0.2s ease;
   &:hover {
     transform: translateY(-1px);
   }
@@ -975,8 +1269,14 @@ function resourceTypeLabel(type: string): string {
 }
 
 @keyframes slideUp {
-  from { opacity: 0; transform: translateY(16px); }
-  to { opacity: 1; transform: translateY(0); }
+  from {
+    opacity: 0;
+    transform: translateY(16px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
 }
 
 :deep(.el-tabs__nav-wrap::after) {

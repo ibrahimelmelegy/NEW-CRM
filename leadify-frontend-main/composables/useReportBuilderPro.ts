@@ -402,10 +402,10 @@ export function useReportBuilderPro() {
   async function exportToPDF(data: any[], columns: string[], filename: string): Promise<void> {
     if (!data.length) return;
 
-    const { default: jsPDF } = await import('jspdf');
+    const { default: JsPDF } = await import('jspdf');
     const { default: autoTable } = await import('jspdf-autotable');
 
-    const doc = new jsPDF({ orientation: columns.length > 5 ? 'landscape' : 'portrait' });
+    const doc = new JsPDF({ orientation: columns.length > 5 ? 'landscape' : 'portrait' });
 
     const headers = columns.length ? columns : Object.keys(data[0]);
     const tableData = data.map(row =>

@@ -4,16 +4,13 @@
     <div class="glass-panel p-6 rounded-2xl">
       <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
         <div>
-          <h1 class="text-2xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-rose-400 to-pink-400">{{ $t('manufacturing.manufacturingAndBom') }}</h1>
+          <h1 class="text-2xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-rose-400 to-pink-400">
+            {{ $t('manufacturing.manufacturingAndBom') }}
+          </h1>
           <p class="text-slate-400 text-sm mt-1">{{ $t('manufacturing.subtitle') }}</p>
         </div>
         <div class="flex gap-2">
-          <ExportButton
-            :data="exportData"
-            :columns="exportColumns"
-            filename="manufacturing-export"
-            :title="$t('manufacturing.reportTitle')"
-          />
+          <ExportButton :data="exportData" :columns="exportColumns" filename="manufacturing-export" :title="$t('manufacturing.reportTitle')" />
           <el-button class="!rounded-xl" @click="showBomDialog = true">
             <Icon name="ph:tree-structure-bold" class="w-4 h-4 mr-2" />
             {{ $t('manufacturing.newBom') }}
@@ -67,7 +64,9 @@
                 </div>
               </div>
               <div class="flex items-center gap-2">
-                <el-tag :type="bom.isActive ? 'success' : 'info'" effect="dark" size="small">{{ bom.isActive ? $t('manufacturing.statusActive') : $t('manufacturing.statusDraft') }}</el-tag>
+                <el-tag :type="bom.isActive ? 'success' : 'info'" effect="dark" size="small">
+                  {{ bom.isActive ? $t('manufacturing.statusActive') : $t('manufacturing.statusDraft') }}
+                </el-tag>
                 <span class="text-xs text-slate-500">Cost: {{ formatCurrency(bom.totalCost) }}</span>
               </div>
             </div>

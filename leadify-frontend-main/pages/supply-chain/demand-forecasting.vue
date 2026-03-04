@@ -313,7 +313,7 @@
 
 <script setup lang="ts">
 import { ref, computed, onMounted } from 'vue';
-import { graphic } from 'echarts';
+import { graphic } from 'echarts/core';
 import VChart from 'vue-echarts';
 import { useApiFetch } from '~/composables/useApiFetch';
 
@@ -404,7 +404,7 @@ function generateForecastData(numMonths: number) {
 
     // Seasonal pattern: higher in Q4 (Oct-Dec) and summer (Jun-Aug)
     const monthIdx = d.getMonth();
-    const seasonalFactor = 1 + 0.3 * Math.sin((monthIdx - 3) * Math.PI / 6) + (monthIdx >= 9 ? 0.25 : 0);
+    const seasonalFactor = 1 + 0.3 * Math.sin(((monthIdx - 3) * Math.PI) / 6) + (monthIdx >= 9 ? 0.25 : 0);
     const baseValue = 8500 + Math.random() * 1500;
     const actualVal = Math.round(baseValue * seasonalFactor);
     const forecastVal = Math.round(actualVal * (0.92 + Math.random() * 0.16));
@@ -423,9 +423,9 @@ function generateForecastData(numMonths: number) {
     labels.push(monthLabel);
 
     const monthIdx = d.getMonth();
-    const seasonalFactor = 1 + 0.3 * Math.sin((monthIdx - 3) * Math.PI / 6) + (monthIdx >= 9 ? 0.25 : 0);
+    const seasonalFactor = 1 + 0.3 * Math.sin(((monthIdx - 3) * Math.PI) / 6) + (monthIdx >= 9 ? 0.25 : 0);
     const forecastVal = Math.round((9200 + Math.random() * 1800) * seasonalFactor);
-    const margin = Math.round(forecastVal * (0.10 + Math.random() * 0.08));
+    const margin = Math.round(forecastVal * (0.1 + Math.random() * 0.08));
 
     actual.push(NaN); // no actual data for future
     forecast.push(forecastVal);
@@ -487,7 +487,7 @@ const forecastChartOption = computed(() => {
       splitLine: { lineStyle: { type: 'dashed', color: 'rgba(255,255,255,0.05)' } },
       axisLabel: {
         color: '#64748B',
-        formatter: (v: number) => v >= 1000 ? `${(v / 1000).toFixed(1)}K` : `${v}`
+        formatter: (v: number) => (v >= 1000 ? `${(v / 1000).toFixed(1)}K` : `${v}`)
       }
     },
     series: [
@@ -559,7 +559,7 @@ const forecastSummaryStats = computed(() => {
   const totalPredicted = validForecast.reduce((s, v) => s + v, 0);
   const validActual = data.actual.filter(v => !isNaN(v));
   const mapeValues = validActual.map((a, i) => Math.abs((a - (data.forecast[i] ?? 0)) / a) * 100);
-  const mape = mapeValues.length > 0 ? (mapeValues.reduce((s, v) => s + v, 0) / mapeValues.length) : 0;
+  const mape = mapeValues.length > 0 ? mapeValues.reduce((s, v) => s + v, 0) / mapeValues.length : 0;
 
   const lastThree = validForecast.slice(-3);
   const firstThree = validForecast.slice(0, 3);
@@ -618,10 +618,10 @@ function generateSeasonalData(isLastYear: boolean) {
   const data: [number, number, number][] = [];
   const seasonalPatterns: Record<string, number[]> = {
     Electronics: [60, 55, 65, 70, 75, 80, 85, 82, 90, 95, 100, 100],
-    Clothing:    [50, 45, 55, 65, 70, 80, 85, 90, 75, 70, 85, 95],
-    Food:        [70, 65, 70, 75, 80, 85, 80, 78, 82, 85, 90, 95],
-    Home:        [55, 50, 60, 70, 75, 80, 75, 70, 65, 70, 80, 90],
-    Sports:      [45, 40, 55, 70, 85, 95, 100, 90, 75, 60, 50, 45]
+    Clothing: [50, 45, 55, 65, 70, 80, 85, 90, 75, 70, 85, 95],
+    Food: [70, 65, 70, 75, 80, 85, 80, 78, 82, 85, 90, 95],
+    Home: [55, 50, 60, 70, 75, 80, 75, 70, 65, 70, 80, 90],
+    Sports: [45, 40, 55, 70, 85, 95, 100, 90, 75, 60, 50, 45]
   };
 
   const categories = Object.keys(seasonalPatterns);
@@ -730,8 +730,17 @@ const calculatedReorderPoint = ref(0);
 function calculateSafetyStock() {
   // Z-score lookup for common service levels
   const zScoreMap: Record<number, number> = {
-    80: 0.84, 85: 1.04, 90: 1.28, 92: 1.41, 93: 1.48,
-    94: 1.55, 95: 1.65, 96: 1.75, 97: 1.88, 98: 2.05, 99: 2.33
+    80: 0.84,
+    85: 1.04,
+    90: 1.28,
+    92: 1.41,
+    93: 1.48,
+    94: 1.55,
+    95: 1.65,
+    96: 1.75,
+    97: 1.88,
+    98: 2.05,
+    99: 2.33
   };
 
   const slFloor = Math.floor(calcServiceLevel.value);
@@ -743,10 +752,7 @@ function calculateSafetyStock() {
 
   // Safety stock = Z * sqrt(LT * sigma_d^2 + d^2 * sigma_LT^2)
   const ss = Math.round(
-    zScore * Math.sqrt(
-      calcLeadTime.value * Math.pow(demandStdDev, 2) +
-      Math.pow(calcAvgDailyDemand.value, 2) * Math.pow(leadTimeStdDev, 2)
-    )
+    zScore * Math.sqrt(calcLeadTime.value * Math.pow(demandStdDev, 2) + Math.pow(calcAvgDailyDemand.value, 2) * Math.pow(leadTimeStdDev, 2))
   );
 
   calculatedSafetyStock.value = ss;
@@ -758,11 +764,9 @@ calculateSafetyStock();
 
 // ─── Stock vs Reorder Point Chart ───────────────────────────
 const stockReorderChartOption = computed(() => {
-  const top10 = [...productForecasts.value]
-    .sort((a, b) => (a.currentStock / a.reorderPoint) - (b.currentStock / b.reorderPoint))
-    .slice(0, 10);
+  const top10 = [...productForecasts.value].sort((a, b) => a.currentStock / a.reorderPoint - b.currentStock / b.reorderPoint).slice(0, 10);
 
-  const names = top10.map(p => p.name.length > 18 ? p.name.slice(0, 18) + '...' : p.name);
+  const names = top10.map(p => (p.name.length > 18 ? p.name.slice(0, 18) + '...' : p.name));
   const stockValues = top10.map(p => p.currentStock);
   const reorderValues = top10.map(p => p.reorderPoint);
 
@@ -779,7 +783,7 @@ const stockReorderChartOption = computed(() => {
           html += `<span style="display:inline-block;width:10px;height:10px;border-radius:2px;background:${p.color};margin-right:6px;"></span>`;
           html += `${p.seriesName}: <strong>${p.value.toLocaleString()}</strong><br/>`;
         });
-        const ratio = (product.currentStock / product.reorderPoint * 100).toFixed(0);
+        const ratio = ((product.currentStock / product.reorderPoint) * 100).toFixed(0);
         html += `<br/><span style="color:${Number(ratio) < 100 ? '#ef4444' : '#22c55e'}">Stock/Reorder: <strong>${ratio}%</strong></span>`;
         return html;
       }
@@ -893,26 +897,206 @@ function getStockGaugeColor(current: number, reorderPoint: number, _max: number)
 
 // ─── Mock Fallback Data ──────────────────────────────────
 const mockProductForecasts = [
-  { name: 'iPhone 15 Pro Max', category: 'Electronics', currentStock: 245, predictedDemand: 820, confidence: 'High', trend: 'up', variance: 4.2, reorderPoint: 300 },
-  { name: 'Samsung Galaxy S24', category: 'Electronics', currentStock: 180, predictedDemand: 650, confidence: 'High', trend: 'up', variance: 6.8, reorderPoint: 250 },
-  { name: 'MacBook Air M3', category: 'Electronics', currentStock: 95, predictedDemand: 420, confidence: 'Medium', trend: 'up', variance: 12.3, reorderPoint: 150 },
-  { name: 'Sony WH-1000XM5', category: 'Electronics', currentStock: 320, predictedDemand: 280, confidence: 'High', trend: 'stable', variance: 3.1, reorderPoint: 100 },
-  { name: 'Nike Air Max 90', category: 'Clothing', currentStock: 510, predictedDemand: 380, confidence: 'High', trend: 'up', variance: 5.5, reorderPoint: 200 },
-  { name: 'Levi\'s 501 Jeans', category: 'Clothing', currentStock: 890, predictedDemand: 420, confidence: 'Medium', trend: 'stable', variance: 11.2, reorderPoint: 300 },
-  { name: 'Adidas Ultraboost', category: 'Clothing', currentStock: 160, predictedDemand: 540, confidence: 'Medium', trend: 'up', variance: 15.8, reorderPoint: 250 },
-  { name: 'North Face Puffer', category: 'Clothing', currentStock: 720, predictedDemand: 190, confidence: 'Low', trend: 'down', variance: 28.4, reorderPoint: 150 },
-  { name: 'Organic Coffee Beans', category: 'Food', currentStock: 1200, predictedDemand: 950, confidence: 'High', trend: 'stable', variance: 4.7, reorderPoint: 400 },
-  { name: 'Protein Bars (Box)', category: 'Food', currentStock: 340, predictedDemand: 780, confidence: 'Medium', trend: 'up', variance: 18.3, reorderPoint: 500 },
-  { name: 'Green Tea Collection', category: 'Food', currentStock: 560, predictedDemand: 320, confidence: 'High', trend: 'stable', variance: 6.1, reorderPoint: 200 },
-  { name: 'Organic Honey (Jar)', category: 'Food', currentStock: 85, predictedDemand: 410, confidence: 'Medium', trend: 'up', variance: 14.7, reorderPoint: 150 },
-  { name: 'Smart LED Lamp', category: 'Home', currentStock: 430, predictedDemand: 310, confidence: 'High', trend: 'stable', variance: 7.2, reorderPoint: 150 },
-  { name: 'Dyson V15 Detect', category: 'Home', currentStock: 65, predictedDemand: 280, confidence: 'Medium', trend: 'up', variance: 19.5, reorderPoint: 120 },
-  { name: 'Instant Pot Pro', category: 'Home', currentStock: 280, predictedDemand: 350, confidence: 'High', trend: 'up', variance: 8.9, reorderPoint: 100 },
-  { name: 'Yoga Mat Premium', category: 'Sports', currentStock: 640, predictedDemand: 290, confidence: 'High', trend: 'stable', variance: 5.3, reorderPoint: 150 },
-  { name: 'Dumbbell Set 20kg', category: 'Sports', currentStock: 120, predictedDemand: 380, confidence: 'Medium', trend: 'up', variance: 22.1, reorderPoint: 200 },
-  { name: 'Running Shoes Pro', category: 'Sports', currentStock: 75, predictedDemand: 520, confidence: 'Low', trend: 'up', variance: 31.2, reorderPoint: 250 },
-  { name: 'Fitness Tracker Band', category: 'Sports', currentStock: 950, predictedDemand: 410, confidence: 'High', trend: 'up', variance: 7.8, reorderPoint: 200 },
-  { name: 'iPad Air M2', category: 'Electronics', currentStock: 110, predictedDemand: 560, confidence: 'Medium', trend: 'up', variance: 13.6, reorderPoint: 200 }
+  {
+    name: 'iPhone 15 Pro Max',
+    category: 'Electronics',
+    currentStock: 245,
+    predictedDemand: 820,
+    confidence: 'High',
+    trend: 'up',
+    variance: 4.2,
+    reorderPoint: 300
+  },
+  {
+    name: 'Samsung Galaxy S24',
+    category: 'Electronics',
+    currentStock: 180,
+    predictedDemand: 650,
+    confidence: 'High',
+    trend: 'up',
+    variance: 6.8,
+    reorderPoint: 250
+  },
+  {
+    name: 'MacBook Air M3',
+    category: 'Electronics',
+    currentStock: 95,
+    predictedDemand: 420,
+    confidence: 'Medium',
+    trend: 'up',
+    variance: 12.3,
+    reorderPoint: 150
+  },
+  {
+    name: 'Sony WH-1000XM5',
+    category: 'Electronics',
+    currentStock: 320,
+    predictedDemand: 280,
+    confidence: 'High',
+    trend: 'stable',
+    variance: 3.1,
+    reorderPoint: 100
+  },
+  {
+    name: 'Nike Air Max 90',
+    category: 'Clothing',
+    currentStock: 510,
+    predictedDemand: 380,
+    confidence: 'High',
+    trend: 'up',
+    variance: 5.5,
+    reorderPoint: 200
+  },
+  {
+    name: "Levi's 501 Jeans",
+    category: 'Clothing',
+    currentStock: 890,
+    predictedDemand: 420,
+    confidence: 'Medium',
+    trend: 'stable',
+    variance: 11.2,
+    reorderPoint: 300
+  },
+  {
+    name: 'Adidas Ultraboost',
+    category: 'Clothing',
+    currentStock: 160,
+    predictedDemand: 540,
+    confidence: 'Medium',
+    trend: 'up',
+    variance: 15.8,
+    reorderPoint: 250
+  },
+  {
+    name: 'North Face Puffer',
+    category: 'Clothing',
+    currentStock: 720,
+    predictedDemand: 190,
+    confidence: 'Low',
+    trend: 'down',
+    variance: 28.4,
+    reorderPoint: 150
+  },
+  {
+    name: 'Organic Coffee Beans',
+    category: 'Food',
+    currentStock: 1200,
+    predictedDemand: 950,
+    confidence: 'High',
+    trend: 'stable',
+    variance: 4.7,
+    reorderPoint: 400
+  },
+  {
+    name: 'Protein Bars (Box)',
+    category: 'Food',
+    currentStock: 340,
+    predictedDemand: 780,
+    confidence: 'Medium',
+    trend: 'up',
+    variance: 18.3,
+    reorderPoint: 500
+  },
+  {
+    name: 'Green Tea Collection',
+    category: 'Food',
+    currentStock: 560,
+    predictedDemand: 320,
+    confidence: 'High',
+    trend: 'stable',
+    variance: 6.1,
+    reorderPoint: 200
+  },
+  {
+    name: 'Organic Honey (Jar)',
+    category: 'Food',
+    currentStock: 85,
+    predictedDemand: 410,
+    confidence: 'Medium',
+    trend: 'up',
+    variance: 14.7,
+    reorderPoint: 150
+  },
+  {
+    name: 'Smart LED Lamp',
+    category: 'Home',
+    currentStock: 430,
+    predictedDemand: 310,
+    confidence: 'High',
+    trend: 'stable',
+    variance: 7.2,
+    reorderPoint: 150
+  },
+  {
+    name: 'Dyson V15 Detect',
+    category: 'Home',
+    currentStock: 65,
+    predictedDemand: 280,
+    confidence: 'Medium',
+    trend: 'up',
+    variance: 19.5,
+    reorderPoint: 120
+  },
+  {
+    name: 'Instant Pot Pro',
+    category: 'Home',
+    currentStock: 280,
+    predictedDemand: 350,
+    confidence: 'High',
+    trend: 'up',
+    variance: 8.9,
+    reorderPoint: 100
+  },
+  {
+    name: 'Yoga Mat Premium',
+    category: 'Sports',
+    currentStock: 640,
+    predictedDemand: 290,
+    confidence: 'High',
+    trend: 'stable',
+    variance: 5.3,
+    reorderPoint: 150
+  },
+  {
+    name: 'Dumbbell Set 20kg',
+    category: 'Sports',
+    currentStock: 120,
+    predictedDemand: 380,
+    confidence: 'Medium',
+    trend: 'up',
+    variance: 22.1,
+    reorderPoint: 200
+  },
+  {
+    name: 'Running Shoes Pro',
+    category: 'Sports',
+    currentStock: 75,
+    predictedDemand: 520,
+    confidence: 'Low',
+    trend: 'up',
+    variance: 31.2,
+    reorderPoint: 250
+  },
+  {
+    name: 'Fitness Tracker Band',
+    category: 'Sports',
+    currentStock: 950,
+    predictedDemand: 410,
+    confidence: 'High',
+    trend: 'up',
+    variance: 7.8,
+    reorderPoint: 200
+  },
+  {
+    name: 'iPad Air M2',
+    category: 'Electronics',
+    currentStock: 110,
+    predictedDemand: 560,
+    confidence: 'Medium',
+    trend: 'up',
+    variance: 13.6,
+    reorderPoint: 200
+  }
 ];
 
 const mockReorderItems = [
@@ -983,15 +1167,11 @@ function onTimeRangeChange(range: string) {
 
 function onCategoryChange(_category: string) {
   // Re-filter data based on selected category
-  forecastData.value = generateForecastData(
-    { '3M': 3, '6M': 6, '12M': 12 }[selectedTimeRange.value] || 6
-  );
+  forecastData.value = generateForecastData({ '3M': 3, '6M': 6, '12M': 12 }[selectedTimeRange.value] || 6);
 }
 
 async function refreshData() {
-  forecastData.value = generateForecastData(
-    ({ '3M': 3, '6M': 6, '12M': 12 } as Record<string, number>)[selectedTimeRange.value] || 6
-  );
+  forecastData.value = generateForecastData(({ '3M': 3, '6M': 6, '12M': 12 } as Record<string, number>)[selectedTimeRange.value] || 6);
   await loadData();
 }
 
@@ -1178,7 +1358,8 @@ function handleReorder(item: any) {
 }
 
 @keyframes criticalPulse {
-  0%, 100% {
+  0%,
+  100% {
     box-shadow: 0 0 0 0 rgba(239, 68, 68, 0);
   }
   50% {

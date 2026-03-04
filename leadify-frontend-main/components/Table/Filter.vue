@@ -23,6 +23,7 @@ el-drawer(v-model="drawer", direction="rtl", :show-close="true" destroy-on-close
 </template>
 
 <script lang="ts" setup>
+/* eslint-disable no-use-before-define */
 import { ref, computed } from 'vue';
 const route = useRoute();
 const query = { ...route.query };
@@ -30,7 +31,7 @@ const router = useRouter();
 const props = defineProps({
   filterOptions: {
     type: Array as PropType<FilterCategory[]>,
-    default: [],
+    default: () => [],
     required: true
   }
 });

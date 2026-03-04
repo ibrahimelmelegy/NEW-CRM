@@ -19,6 +19,20 @@
 
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 
+import {
+  type Contract,
+  CONTRACT_STATUSES,
+  getContractStatusType,
+  fetchContracts,
+  fetchContract,
+  createContract,
+  updateContract,
+  deleteContract,
+  sendForSignature,
+  fetchContractByToken,
+  signContract
+} from '~/composables/useContracts';
+
 // ============================================
 // Mock useApiFetch globally
 // ============================================
@@ -35,20 +49,6 @@ const mockNotification = vi.fn();
 vi.mock('element-plus', () => ({
   ElNotification: (...args: any[]) => mockNotification(...args)
 }));
-
-import {
-  type Contract,
-  CONTRACT_STATUSES,
-  getContractStatusType,
-  fetchContracts,
-  fetchContract,
-  createContract,
-  updateContract,
-  deleteContract,
-  sendForSignature,
-  fetchContractByToken,
-  signContract
-} from '~/composables/useContracts';
 
 // ============================================
 // Test Data Factories
@@ -484,14 +484,10 @@ describe('useContracts', () => {
 
       await signContract('token-123', 'data:image/png;base64,...', 'John Doe');
 
-      expect(mockApiFetch).toHaveBeenCalledWith(
-        'contracts/sign/token-123',
-        'POST',
-        {
-          signatureData: 'data:image/png;base64,...',
-          signerName: 'John Doe'
-        }
-      );
+      expect(mockApiFetch).toHaveBeenCalledWith('contracts/sign/token-123', 'POST', {
+        signatureData: 'data:image/png;base64,...',
+        signerName: 'John Doe'
+      });
     });
 
     it('should show success notification on success', async () => {

@@ -327,11 +327,12 @@
 </template>
 
 <script setup lang="ts">
+/* eslint-disable require-await */
 import { ref, reactive, onMounted, computed, nextTick, watch } from 'vue';
-import { useCallLog } from '~/composables/useCallLog';
 import { useI18n } from 'vue-i18n';
-import * as echarts from 'echarts';
+import * as echarts from 'echarts/core';
 import { ElMessage, ElMessageBox } from 'element-plus';
+import { useCallLog } from '~/composables/useCallLog';
 
 definePageMeta({});
 
@@ -433,19 +434,17 @@ const filteredCalls = computed(() => {
   }
 
   if (filters.durationMin !== null) {
-    result = result.filter((c: any) => c.duration >= (filters.durationMin! * 60));
+    result = result.filter((c: any) => c.duration >= filters.durationMin! * 60);
   }
 
   if (filters.durationMax !== null) {
-    result = result.filter((c: any) => c.duration <= (filters.durationMax! * 60));
+    result = result.filter((c: any) => c.duration <= filters.durationMax! * 60);
   }
 
   if (filters.search) {
     const query = filters.search.toLowerCase();
-    result = result.filter((c: any) =>
-      c.contactName?.toLowerCase().includes(query) ||
-      c.phone?.toLowerCase().includes(query) ||
-      c.notes?.toLowerCase().includes(query)
+    result = result.filter(
+      (c: any) => c.contactName?.toLowerCase().includes(query) || c.phone?.toLowerCase().includes(query) || c.notes?.toLowerCase().includes(query)
     );
   }
 
@@ -457,15 +456,23 @@ const filteredCalls = computed(() => {
 });
 
 const hasActiveFilters = computed(() => {
-  return filters.outcome || filters.disposition || filters.agent || filters.dateRange ||
-         filters.durationMin !== null || filters.durationMax !== null || filters.search || filters.tagId;
+  return (
+    filters.outcome ||
+    filters.disposition ||
+    filters.agent ||
+    filters.dateRange ||
+    filters.durationMin !== null ||
+    filters.durationMax !== null ||
+    filters.search ||
+    filters.tagId
+  );
 });
 
 onMounted(() => {
   fetchCalls();
 });
 
-watch(showAnalytics, async (show) => {
+watch(showAnalytics, async show => {
   if (show) {
     await fetchAnalytics();
     await nextTick();
@@ -577,11 +584,7 @@ function clearFilters() {
 
 async function bulkDelete() {
   try {
-    await ElMessageBox.confirm(
-      $t('callLog.confirmBulkDelete', { count: selectedCalls.value.length }),
-      $t('common.warning'),
-      { type: 'warning' }
-    );
+    await ElMessageBox.confirm($t('callLog.confirmBulkDelete', { count: selectedCalls.value.length }), $t('common.warning'), { type: 'warning' });
 
     for (const call of selectedCalls.value) {
       await removeCall(call.id);
@@ -607,10 +610,7 @@ async function bulkExport() {
       Notes: call.notes || ''
     }));
 
-    const csv = [
-      Object.keys(data[0] as any).join(','),
-      ...data.map(row => Object.values(row).join(','))
-    ].join('\n');
+    const csv = [Object.keys(data[0] as any).join(','), ...data.map(row => Object.values(row).join(','))].join('\n');
 
     const blob = new Blob([csv], { type: 'text/csv' });
     const url = window.URL.createObjectURL(blob);
@@ -702,20 +702,12 @@ async function saveQualityRating() {
 
 function drillDownDuration() {
   // Filter calls by clicking on duration chart - show modal with breakdown
-  ElMessageBox.alert(
-    $t('callLog.drillDownDurationMsg'),
-    $t('callLog.durationBreakdown'),
-    { confirmButtonText: $t('common.ok') }
-  );
+  ElMessageBox.alert($t('callLog.drillDownDurationMsg'), $t('callLog.durationBreakdown'), { confirmButtonText: $t('common.ok') });
 }
 
 function drillDownOutcome() {
   // Filter calls by outcome - could show detailed breakdown
-  ElMessageBox.alert(
-    $t('callLog.drillDownOutcomeMsg'),
-    $t('callLog.outcomeBreakdown'),
-    { confirmButtonText: $t('common.ok') }
-  );
+  ElMessageBox.alert($t('callLog.drillDownOutcomeMsg'), $t('callLog.outcomeBreakdown'), { confirmButtonText: $t('common.ok') });
 }
 
 function renderCharts() {
@@ -732,11 +724,13 @@ function renderCharts() {
         data: Object.keys(durationData).map(k => `${k} min`)
       },
       yAxis: { type: 'value' },
-      series: [{
-        data: Object.values(durationData),
-        type: 'bar',
-        itemStyle: { color: '#7c3aed' }
-      }]
+      series: [
+        {
+          data: Object.values(durationData),
+          type: 'bar',
+          itemStyle: { color: '#7c3aed' }
+        }
+      ]
     });
   }
 
@@ -746,18 +740,20 @@ function renderCharts() {
     const outcomeData = analytics.value.byOutcome || {};
     outcomeChart.setOption({
       tooltip: { trigger: 'item' },
-      series: [{
-        type: 'pie',
-        radius: '60%',
-        data: Object.entries(outcomeData).map(([name, value]) => ({ name, value })),
-        emphasis: {
-          itemStyle: {
-            shadowBlur: 10,
-            shadowOffsetX: 0,
-            shadowColor: 'rgba(0, 0, 0, 0.5)'
+      series: [
+        {
+          type: 'pie',
+          radius: '60%',
+          data: Object.entries(outcomeData).map(([name, value]) => ({ name, value })),
+          emphasis: {
+            itemStyle: {
+              shadowBlur: 10,
+              shadowOffsetX: 0,
+              shadowColor: 'rgba(0, 0, 0, 0.5)'
+            }
           }
         }
-      }]
+      ]
     });
   }
 
@@ -772,11 +768,13 @@ function renderCharts() {
         data: Object.keys(hourData).map(h => `${h}:00`)
       },
       yAxis: { type: 'value' },
-      series: [{
-        data: Object.values(hourData),
-        type: 'bar',
-        itemStyle: { color: '#22c55e' }
-      }]
+      series: [
+        {
+          data: Object.values(hourData),
+          type: 'bar',
+          itemStyle: { color: '#22c55e' }
+        }
+      ]
     });
   }
 
@@ -791,12 +789,14 @@ function renderCharts() {
         data: Object.keys(trendData)
       },
       yAxis: { type: 'value' },
-      series: [{
-        data: Object.values(trendData),
-        type: 'line',
-        smooth: true,
-        itemStyle: { color: '#3b82f6' }
-      }]
+      series: [
+        {
+          data: Object.values(trendData),
+          type: 'line',
+          smooth: true,
+          itemStyle: { color: '#3b82f6' }
+        }
+      ]
     });
   }
 }

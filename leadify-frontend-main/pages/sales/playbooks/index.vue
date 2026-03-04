@@ -411,7 +411,8 @@ const playbooks = ref<any[]>([]);
 // ── Computed ──
 const filteredPlaybooks = computed(() => {
   return playbooks.value.filter(pb => {
-    const matchesSearch = !searchQuery.value ||
+    const matchesSearch =
+      !searchQuery.value ||
       pb.name?.toLowerCase().includes(searchQuery.value.toLowerCase()) ||
       pb.description?.toLowerCase().includes(searchQuery.value.toLowerCase());
     const matchesCategory = !filterCategory.value || pb.category === filterCategory.value;
@@ -447,10 +448,14 @@ async function loadPlaybooks() {
   try {
     const saved = localStorage.getItem('playbooks_execution_progress');
     if (saved) executionProgress.value = JSON.parse(saved);
-  } catch { /* ignore */ }
+  } catch {
+    /* ignore */
+  }
 }
 
-await loadPlaybooks().catch(() => { loading.value = false; });
+await loadPlaybooks().catch(() => {
+  loading.value = false;
+});
 
 // ── Helpers ──
 function categoryIcon(cat: string) {
@@ -487,7 +492,9 @@ function estimatedDuration(pb: any) {
 function formatDate(dateStr: string) {
   try {
     return new Date(dateStr).toLocaleDateString('en-GB', { day: '2-digit', month: 'short', year: '2-digit' });
-  } catch { return '—'; }
+  } catch {
+    return '—';
+  }
 }
 
 // ── Execution Progress ──
@@ -535,7 +542,9 @@ function progressPercent(pb: any): number {
 function saveProgressToStorage() {
   try {
     localStorage.setItem('playbooks_execution_progress', JSON.stringify(executionProgress.value));
-  } catch { /* ignore */ }
+  } catch {
+    /* ignore */
+  }
 }
 
 function toggleStepExpand(idx: number) {
@@ -650,7 +659,9 @@ async function handleDelete(pb: any) {
     await useApiFetch(`playbooks/${pb.id}`, 'DELETE');
     playbooks.value = playbooks.value.filter(p => p.id !== pb.id);
     ElNotification({ type: 'success', title: t('common.success'), message: t('common.deletedSuccessfully') });
-  } catch { /* cancelled or error */ }
+  } catch {
+    /* cancelled or error */
+  }
 }
 </script>
 
@@ -664,7 +675,9 @@ async function handleDelete(pb: any) {
 }
 
 .stat-card {
-  transition: transform 0.2s ease, box-shadow 0.2s ease;
+  transition:
+    transform 0.2s ease,
+    box-shadow 0.2s ease;
   &:hover {
     transform: translateY(-2px);
   }
@@ -681,7 +694,9 @@ async function handleDelete(pb: any) {
 }
 
 .playbook-card {
-  transition: transform 0.2s ease, box-shadow 0.2s ease;
+  transition:
+    transform 0.2s ease,
+    box-shadow 0.2s ease;
   &:hover {
     transform: translateY(-3px);
     box-shadow: 0 8px 24px rgba(0, 0, 0, 0.15);
@@ -697,10 +712,22 @@ async function handleDelete(pb: any) {
   justify-content: center;
   border-radius: 12px;
 
-  &.category-prospecting { background: rgba(120, 73, 255, 0.12); color: #7849ff; }
-  &.category-discovery { background: rgba(59, 130, 246, 0.12); color: #3b82f6; }
-  &.category-closing { background: rgba(34, 197, 94, 0.12); color: #22c55e; }
-  &.category-renewal { background: rgba(245, 158, 11, 0.12); color: #f59e0b; }
+  &.category-prospecting {
+    background: rgba(120, 73, 255, 0.12);
+    color: #7849ff;
+  }
+  &.category-discovery {
+    background: rgba(59, 130, 246, 0.12);
+    color: #3b82f6;
+  }
+  &.category-closing {
+    background: rgba(34, 197, 94, 0.12);
+    color: #22c55e;
+  }
+  &.category-renewal {
+    background: rgba(245, 158, 11, 0.12);
+    color: #f59e0b;
+  }
 }
 
 .premium-btn {
@@ -836,26 +863,41 @@ async function handleDelete(pb: any) {
 }
 
 // ── Transitions ──
-.slide-enter-active, .slide-leave-active {
+.slide-enter-active,
+.slide-leave-active {
   transition: all 0.3s ease;
 }
-.slide-enter-from, .slide-leave-to {
+.slide-enter-from,
+.slide-leave-to {
   opacity: 0;
   max-height: 0;
   overflow: hidden;
 }
-.slide-enter-to, .slide-leave-from {
+.slide-enter-to,
+.slide-leave-from {
   opacity: 1;
   max-height: 500px;
 }
 
 @keyframes fadeIn {
-  from { opacity: 0; transform: translateY(10px); }
-  to { opacity: 1; transform: translateY(0); }
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
 }
 
 @keyframes slideUp {
-  from { opacity: 0; transform: translateY(16px); }
-  to { opacity: 1; transform: translateY(0); }
+  from {
+    opacity: 0;
+    transform: translateY(16px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
 }
 </style>

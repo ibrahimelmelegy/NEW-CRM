@@ -195,11 +195,11 @@ async function confirmDelete() {
 async function handleBulkDelete() {
   if (!selectedRows.value.length) return;
   try {
-    await ElMessageBox.confirm(
-      t('clients.confirmBulkDelete', { count: selectedRows.value.length }),
-      t('common.warning'),
-      { type: 'warning', confirmButtonText: t('common.delete'), cancelButtonText: t('common.cancel') }
-    );
+    await ElMessageBox.confirm(t('clients.confirmBulkDelete', { count: selectedRows.value.length }), t('common.warning'), {
+      type: 'warning',
+      confirmButtonText: t('common.delete'),
+      cancelButtonText: t('common.cancel')
+    });
     loading.value = true;
     for (const row of selectedRows.value) {
       await deleteClient(row.id);
@@ -331,16 +331,18 @@ const enrichedClientData = computed(() => {
   const clientLTVMap = new Map<string, number>();
   const clientDealCountMap = new Map<string, number>();
 
-  deals.filter((d: any) => d.status === 'WON').forEach((deal: any) => {
-    const clientId = deal.clientId;
-    if (clientId) {
-      const currentLTV = clientLTVMap.get(clientId) || 0;
-      clientLTVMap.set(clientId, currentLTV + Number(deal.value || 0));
+  deals
+    .filter((d: any) => d.status === 'WON')
+    .forEach((deal: any) => {
+      const clientId = deal.clientId;
+      if (clientId) {
+        const currentLTV = clientLTVMap.get(clientId) || 0;
+        clientLTVMap.set(clientId, currentLTV + Number(deal.value || 0));
 
-      const currentCount = clientDealCountMap.get(clientId) || 0;
-      clientDealCountMap.set(clientId, currentCount + 1);
-    }
-  });
+        const currentCount = clientDealCountMap.get(clientId) || 0;
+        clientDealCountMap.set(clientId, currentCount + 1);
+      }
+    });
 
   return clients.map((client: any) => {
     const ltv = clientLTVMap.get(client.id) || 0;
@@ -393,13 +395,15 @@ const clientSegments = computed(() => {
 
   // Calculate LTV for each client
   const clientLTVMap = new Map<string, number>();
-  deals.filter((d: any) => d.status === 'WON').forEach((deal: any) => {
-    const clientId = deal.clientId;
-    if (clientId) {
-      const current = clientLTVMap.get(clientId) || 0;
-      clientLTVMap.set(clientId, current + Number(deal.value || 0));
-    }
-  });
+  deals
+    .filter((d: any) => d.status === 'WON')
+    .forEach((deal: any) => {
+      const clientId = deal.clientId;
+      if (clientId) {
+        const current = clientLTVMap.get(clientId) || 0;
+        clientLTVMap.set(clientId, current + Number(deal.value || 0));
+      }
+    });
 
   // Categorize clients by LTV
   let enterprise = 0;
@@ -450,8 +454,18 @@ const kpiMetrics = computed<KPIMetric[]>(() => {
     { label: t('clients.kpi.totalClients'), value: total, icon: 'ph:buildings-bold', color: '#3b82f6' },
     { label: t('clients.kpi.activeClients'), value: active, icon: 'ph:check-circle-bold', color: '#10b981' },
     { label: t('clients.kpi.inactiveClients'), value: inactive, icon: 'ph:pause-circle-bold', color: '#f59e0b' },
-    { label: t('clients.kpi.totalRevenue'), value: `SAR ${formatLargeNumber(revenueAnalytics.value.totalRevenue)}`, icon: 'ph:currency-dollar-bold', color: '#8b5cf6' },
-    { label: t('clients.kpi.avgDealSize'), value: `SAR ${formatLargeNumber(revenueAnalytics.value.avgDealSize)}`, icon: 'ph:chart-line-bold', color: '#06b6d4' }
+    {
+      label: t('clients.kpi.totalRevenue'),
+      value: `SAR ${formatLargeNumber(revenueAnalytics.value.totalRevenue)}`,
+      icon: 'ph:currency-dollar-bold',
+      color: '#8b5cf6'
+    },
+    {
+      label: t('clients.kpi.avgDealSize'),
+      value: `SAR ${formatLargeNumber(revenueAnalytics.value.avgDealSize)}`,
+      icon: 'ph:chart-line-bold',
+      color: '#06b6d4'
+    }
   ];
 });
 
@@ -459,10 +473,11 @@ function handleRowClick(val: any) {
   router.push(`/sales/clients/${val.id}`);
 }
 
-const mappedUsers = usersResponse?.body?.docs?.map((e: any) => ({
-  label: e.name,
-  value: e.id
-})) || [];
+const mappedUsers =
+  usersResponse?.body?.docs?.map((e: any) => ({
+    label: e.name,
+    value: e.id
+  })) || [];
 
 const filterOptions = [
   {
@@ -520,7 +535,7 @@ async function handleClearAdvancedFilter() {
 }
 
 // Watch for changes in enriched data
-watch(enrichedClientData, (newData) => {
+watch(enrichedClientData, newData => {
   table.data = newData as any;
 });
 
@@ -539,8 +554,18 @@ const mobileFilters = computed(() => {
   const data = table.data || [];
   return [
     { value: 'ALL', label: t('common.all'), color: '#3b82f6', count: data.length },
-    { value: 'ACTIVE', label: t('common.active'), color: '#10b981', count: data.filter((c: any) => c.clientStatus === 'ACTIVE' || c.status === 'ACTIVE').length },
-    { value: 'INACTIVE', label: t('common.inactive'), color: '#94a3b8', count: data.filter((c: any) => c.clientStatus === 'INACTIVE' || c.status === 'INACTIVE').length }
+    {
+      value: 'ACTIVE',
+      label: t('common.active'),
+      color: '#10b981',
+      count: data.filter((c: any) => c.clientStatus === 'ACTIVE' || c.status === 'ACTIVE').length
+    },
+    {
+      value: 'INACTIVE',
+      label: t('common.inactive'),
+      color: '#94a3b8',
+      count: data.filter((c: any) => c.clientStatus === 'INACTIVE' || c.status === 'INACTIVE').length
+    }
   ];
 });
 
@@ -565,7 +590,9 @@ async function handleMobileRefresh() {
     const res = await useTableFilter('client');
     table.data = res.formattedData;
     vibrate([10, 30, 10]);
-  } finally { mobileRefreshing.value = false; }
+  } finally {
+    mobileRefreshing.value = false;
+  }
 }
 
 function getSwipeRightActions(client: any) {
@@ -584,10 +611,18 @@ function getSwipeLeftActions(_client: any) {
 function handleSwipeAction(name: string, client: any) {
   vibrate();
   switch (name) {
-    case 'call': window.location.href = `tel:${client.phoneNumber}`; break;
-    case 'email': window.location.href = `mailto:${client.email}`; break;
-    case 'view': navigateTo(`/sales/clients/${client.id}`); break;
-    case 'edit': navigateTo(`/sales/clients/edit/${client.id}`); break;
+    case 'call':
+      window.location.href = `tel:${client.phoneNumber}`;
+      break;
+    case 'email':
+      window.location.href = `mailto:${client.email}`;
+      break;
+    case 'view':
+      navigateTo(`/sales/clients/${client.id}`);
+      break;
+    case 'edit':
+      navigateTo(`/sales/clients/edit/${client.id}`);
+      break;
   }
 }
 </script>

@@ -93,7 +93,6 @@ const runtimeConfig = useRuntimeConfig();
 
 const dialogImageUrl = ref('');
 const dialogVisible = ref(false);
-const disabled = ref(false);
 
 const handlePictureCardPreview = (file: UploadFile) => {
   dialogImageUrl.value = file.url!;

@@ -24,9 +24,9 @@
       <!-- Draft - Can submit for approval -->
       <button
         v-if="status === 'DRAFT'"
-        @click="handleAction('submit', () => emit('statusChange', 'WAITING_APPROVAL'))"
         :disabled="loading || isLoading"
         class="flex items-center gap-2 px-4 py-2.5 bg-amber-500 text-white rounded-xl font-medium hover:bg-amber-600 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+        @click="handleAction('submit', () => emit('statusChange', 'WAITING_APPROVAL'))"
       >
         <Loader2 v-if="loadingAction === 'submit'" :size="18" class="animate-spin" />
         <Clock v-else :size="18" />
@@ -36,18 +36,18 @@
       <!-- Waiting Approval - Can approve or reject -->
       <template v-if="status === 'WAITING_APPROVAL'">
         <button
-          @click="handleAction('approve', () => emit('statusChange', 'APPROVED'))"
           :disabled="loading || isLoading"
           class="flex items-center gap-2 px-4 py-2.5 bg-green-500 text-white rounded-xl font-medium hover:bg-green-600 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+          @click="handleAction('approve', () => emit('statusChange', 'APPROVED'))"
         >
           <Loader2 v-if="loadingAction === 'approve'" :size="18" class="animate-spin" />
           <CheckCircle v-else :size="18" />
           Approve
         </button>
         <button
-          @click="showRejectModal = true"
           :disabled="loading || isLoading"
           class="flex items-center gap-2 px-4 py-2.5 bg-red-500 text-white rounded-xl font-medium hover:bg-red-600 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+          @click="showRejectModal = true"
         >
           <XCircle :size="18" />
           Reject
@@ -57,9 +57,9 @@
       <!-- Approved - Can send to client -->
       <button
         v-if="status === 'APPROVED'"
-        @click="handleAction('send', () => emit('statusChange', 'SENT'))"
         :disabled="loading || isLoading"
         class="flex items-center gap-2 px-4 py-2.5 bg-blue-500 text-white rounded-xl font-medium hover:bg-blue-600 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+        @click="handleAction('send', () => emit('statusChange', 'SENT'))"
       >
         <Loader2 v-if="loadingAction === 'send'" :size="18" class="animate-spin" />
         <Send v-else :size="18" />
@@ -69,9 +69,9 @@
       <!-- Rejected - Can resubmit -->
       <button
         v-if="status === 'REJECTED'"
-        @click="handleAction('submit', () => emit('statusChange', 'WAITING_APPROVAL'))"
         :disabled="loading || isLoading"
         class="flex items-center gap-2 px-4 py-2.5 bg-violet-500 text-white rounded-xl font-medium hover:bg-violet-600 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+        @click="handleAction('submit', () => emit('statusChange', 'WAITING_APPROVAL'))"
       >
         <Loader2 v-if="loadingAction === 'submit'" :size="18" class="animate-spin" />
         <Clock v-else :size="18" />
@@ -104,13 +104,13 @@
             autofocus
           ></textarea>
           <div class="flex gap-3">
-            <button @click="cancelReject" class="flex-1 px-4 py-2.5 border border-gray-200 rounded-xl font-medium text-gray-600 hover:bg-gray-50">
+            <button class="flex-1 px-4 py-2.5 border border-gray-200 rounded-xl font-medium text-gray-600 hover:bg-gray-50" @click="cancelReject">
               Cancel
             </button>
             <button
-              @click="handleReject"
               :disabled="!rejectReason.trim() || isLoading"
               class="flex-1 px-4 py-2.5 bg-red-500 text-white rounded-xl font-medium hover:bg-red-600 disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2"
+              @click="handleReject"
             >
               <Loader2 v-if="loadingAction === 'reject'" :size="18" class="animate-spin" />
               Reject Proposal
@@ -123,6 +123,7 @@
 </template>
 
 <script setup lang="ts">
+/* eslint-disable require-await */
 import { ref, computed } from 'vue';
 import { CheckCircle, XCircle, Clock, Send, AlertCircle, Loader2, MessageSquare } from 'lucide-vue-next';
 

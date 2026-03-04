@@ -2,18 +2,35 @@
 // Usage: @import '~/assets/styles/mobile-cards';
 
 @mixin mobile-list-page($prefix, $fab-color: #7849ff) {
-  .#{$prefix}-mobile-view { display: none; }
-  .#{$prefix}-kpi-grid { /* default block */ }
+  .#{$prefix}-mobile-view {
+    display: none;
+  }
+  .#{$prefix}-kpi-grid {
+    /* default block */
+  }
 
   @media (max-width: 767px) {
-    .#{$prefix}-mobile-view { display: block; }
-    .#{$prefix}-desktop-view { display: none; }
+    .#{$prefix}-mobile-view {
+      display: block;
+    }
+    .#{$prefix}-desktop-view {
+      display: none;
+    }
 
     :deep(.premium-page-header) {
       margin-bottom: 12px !important;
-      .actions { flex-wrap: wrap; gap: 8px !important; width: 100%; }
-      .actions .el-button { font-size: 13px !important; padding: 8px 12px !important; }
-      .content h1 { font-size: 1.3rem !important; }
+      .actions {
+        flex-wrap: wrap;
+        gap: 8px !important;
+        width: 100%;
+      }
+      .actions .el-button {
+        font-size: 13px !important;
+        padding: 8px 12px !important;
+      }
+      .content h1 {
+        font-size: 1.3rem !important;
+      }
     }
 
     .#{$prefix}-kpi-grid :deep(.premium-kpi-cards) {
@@ -23,9 +40,16 @@
     }
     .#{$prefix}-kpi-grid :deep(.kpi-card) {
       padding: 14px !important;
-      .text-3xl { font-size: 1.4rem !important; }
-      .text-sm { font-size: 0.65rem !important; }
-      .w-10 { width: 32px !important; height: 32px !important; }
+      .text-3xl {
+        font-size: 1.4rem !important;
+      }
+      .text-sm {
+        font-size: 0.65rem !important;
+      }
+      .w-10 {
+        width: 32px !important;
+        height: 32px !important;
+      }
     }
 
     .entity-card {
@@ -34,14 +58,18 @@
       background: var(--glass-bg, rgba(255, 255, 255, 0.06));
       border: 1px solid var(--glass-border, rgba(255, 255, 255, 0.08));
       border-radius: 16px;
-      &:active { opacity: 0.85; }
+      &:active {
+        opacity: 0.85;
+      }
     }
   }
 
   .status-pills {
     scrollbar-width: none;
     -ms-overflow-style: none;
-    &::-webkit-scrollbar { display: none; }
+    &::-webkit-scrollbar {
+      display: none;
+    }
   }
 
   .status-pill {
@@ -60,7 +88,9 @@
     transition: all 0.2s ease;
     -webkit-tap-highlight-color: transparent;
     min-height: 36px;
-    &:active { transform: scale(0.95); }
+    &:active {
+      transform: scale(0.95);
+    }
     &--active {
       color: #fff;
       border-color: transparent;
@@ -80,7 +110,9 @@
     }
   }
 
-  .mobile-fab { display: none; }
+  .mobile-fab {
+    display: none;
+  }
 
   @media (max-width: 767px) {
     .mobile-fab {

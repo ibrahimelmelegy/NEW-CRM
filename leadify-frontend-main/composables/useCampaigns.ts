@@ -1,3 +1,5 @@
+/* eslint-disable no-use-before-define */
+/* eslint-disable require-await */
 import { ElNotification } from 'element-plus';
 
 export interface Campaign {

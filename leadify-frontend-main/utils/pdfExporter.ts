@@ -1,4 +1,4 @@
-import jsPDF from 'jspdf';
+import JsPDF from 'jspdf';
 import 'jspdf-autotable';
 import type { TemplateLayout, TemplateElement } from '~/composables/useDocumentTemplates';
 
@@ -15,7 +15,7 @@ function resolveVariable(content: string, data: PDFData): string {
 
 export function generatePDF(layout: TemplateLayout, data: PDFData, filename?: string) {
   const isLandscape = layout.orientation === 'landscape';
-  const doc = new jsPDF({
+  const doc = new JsPDF({
     orientation: isLandscape ? 'landscape' : 'portrait',
     unit: 'mm',
     format: 'a4'
@@ -34,7 +34,7 @@ export function generatePDF(layout: TemplateLayout, data: PDFData, filename?: st
   doc.save(name);
 }
 
-function renderElement(doc: jsPDF, el: TemplateElement, data: PDFData) {
+function renderElement(doc: JsPDF, el: TemplateElement, data: PDFData) {
   switch (el.type) {
     case 'shape':
       renderShape(doc, el);
@@ -54,7 +54,7 @@ function renderElement(doc: jsPDF, el: TemplateElement, data: PDFData) {
   }
 }
 
-function renderShape(doc: jsPDF, el: TemplateElement) {
+function renderShape(doc: JsPDF, el: TemplateElement) {
   const fill = el.props?.fill;
   if (fill) {
     const rgb = hexToRgb(fill);
@@ -81,14 +81,14 @@ function renderShape(doc: jsPDF, el: TemplateElement) {
   }
 }
 
-function renderLine(doc: jsPDF, el: TemplateElement) {
+function renderLine(doc: JsPDF, el: TemplateElement) {
   const color = hexToRgb(el.props?.color || '#000000');
   doc.setDrawColor(color.r, color.g, color.b);
   doc.setLineWidth(el.props?.thickness || 0.5);
   doc.line(el.x, el.y, el.x + el.width, el.y);
 }
 
-function renderText(doc: jsPDF, el: TemplateElement, data: PDFData) {
+function renderText(doc: JsPDF, el: TemplateElement, data: PDFData) {
   const content = resolveVariable(el.props?.content || '', data);
   if (!content) return;
 
@@ -112,7 +112,7 @@ function renderText(doc: jsPDF, el: TemplateElement, data: PDFData) {
   });
 }
 
-function renderTable(doc: jsPDF, el: TemplateElement, data: PDFData) {
+function renderTable(doc: JsPDF, el: TemplateElement, data: PDFData) {
   const columns = el.props?.columns || [];
   const items = data.items || [];
   const columnWidths = el.props?.columnWidths;

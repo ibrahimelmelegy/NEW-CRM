@@ -1,3 +1,4 @@
+/* eslint-disable require-await */
 /**
  * Form Builder composable — wraps the /api/form-builder routes.
  *
@@ -81,7 +82,8 @@ export function useFormBuilder() {
           isActive: f.status === 'ACTIVE' || f.isActive === true,
           submissions: f.submissionCount ?? f.submissions ?? 0,
           views: f.viewCount ?? f.views ?? 0,
-          conversionRate: f.conversionRate ?? (f.viewCount && f.submissionCount ? parseFloat(((f.submissionCount / f.viewCount) * 100).toFixed(1)) : 0),
+          conversionRate:
+            f.conversionRate ?? (f.viewCount && f.submissionCount ? parseFloat(((f.submissionCount / f.viewCount) * 100).toFixed(1)) : 0),
           fieldCount: Array.isArray(f.fields) ? f.fields.length : (f.fieldCount ?? 0),
           fields: f.fields || [],
           submitText: f.submitText || 'Submit',

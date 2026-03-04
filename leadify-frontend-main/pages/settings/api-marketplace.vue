@@ -328,7 +328,7 @@
 import { ref, reactive, computed } from 'vue';
 import { ElMessage, ElNotification, ElMessageBox } from 'element-plus';
 import VChart from 'vue-echarts';
-import { graphic } from 'echarts';
+import { graphic } from 'echarts/core';
 
 definePageMeta({ title: 'API Marketplace' });
 
@@ -377,26 +377,147 @@ const kpiCards = computed(() => [
 
 // --- Connector Catalog ---
 const connectors = ref([
-  { id: 'slack', name: 'Slack', category: 'Communication', icon: 'ph:slack-logo-bold', color: '#E01E5A', description: 'Send notifications, create channels, and sync conversations with your CRM workflows.', rating: 4.8 },
-  { id: 'twilio', name: 'Twilio', category: 'Communication', icon: 'ph:phone-bold', color: '#F22F46', description: 'SMS, voice, and WhatsApp messaging for lead engagement and customer support.', rating: 4.6 },
-  { id: 'stripe', name: 'Stripe', category: 'Payment', icon: 'ph:credit-card-bold', color: '#635BFF', description: 'Payment processing, subscription management, and invoice automation.', rating: 4.9 },
-  { id: 'zapier', name: 'Zapier', category: 'Automation', icon: 'ph:lightning-bold', color: '#FF4F00', description: 'Connect thousands of apps with automated workflows and triggers.', rating: 4.7 },
-  { id: 'hubspot', name: 'HubSpot', category: 'CRM', icon: 'ph:circles-three-bold', color: '#FF7A59', description: 'Bi-directional contact sync, deal pipeline integration, and marketing automation.', rating: 4.5 },
-  { id: 'mailchimp', name: 'Mailchimp', category: 'Communication', icon: 'ph:envelope-simple-bold', color: '#FFE01B', description: 'Email campaign management, audience sync, and marketing analytics.', rating: 4.4 },
-  { id: 'salesforce', name: 'Salesforce', category: 'CRM', icon: 'ph:cloud-bold', color: '#00A1E0', description: 'Enterprise CRM sync with lead routing, opportunity tracking, and custom field mapping.', rating: 4.7 },
-  { id: 'quickbooks', name: 'QuickBooks', category: 'Payment', icon: 'ph:calculator-bold', color: '#2CA01C', description: 'Accounting integration for invoices, expenses, and financial reporting.', rating: 4.3 },
-  { id: 'jira', name: 'Jira', category: 'Automation', icon: 'ph:kanban-bold', color: '#0052CC', description: 'Project management and issue tracking with CRM ticket escalation.', rating: 4.5 },
-  { id: 'google-workspace', name: 'Google Workspace', category: 'Communication', icon: 'ph:google-logo-bold', color: '#4285F4', description: 'Gmail, Calendar, Drive, and Contacts integration for seamless productivity.', rating: 4.8 },
-  { id: 'ms-teams', name: 'Microsoft Teams', category: 'Communication', icon: 'ph:microsoft-teams-logo-bold', color: '#6264A7', description: 'Team chat notifications, meeting scheduling, and collaboration.', rating: 4.4 },
-  { id: 'shopify', name: 'Shopify', category: 'Payment', icon: 'ph:storefront-bold', color: '#96BF48', description: 'E-commerce sync for orders, customers, and product catalog management.', rating: 4.6 },
-  { id: 'sendgrid', name: 'SendGrid', category: 'Communication', icon: 'ph:paper-plane-tilt-bold', color: '#1A82E2', description: 'Transactional email delivery, templates, and email analytics.', rating: 4.5 },
-  { id: 'zendesk', name: 'Zendesk', category: 'CRM', icon: 'ph:headset-bold', color: '#03363D', description: 'Support ticket sync, customer satisfaction tracking, and agent assignment.', rating: 4.4 },
-  { id: 'intercom', name: 'Intercom', category: 'Analytics', icon: 'ph:chat-dots-bold', color: '#286EFA', description: 'Live chat, user engagement analytics, and product tours integration.', rating: 4.6 }
+  {
+    id: 'slack',
+    name: 'Slack',
+    category: 'Communication',
+    icon: 'ph:slack-logo-bold',
+    color: '#E01E5A',
+    description: 'Send notifications, create channels, and sync conversations with your CRM workflows.',
+    rating: 4.8
+  },
+  {
+    id: 'twilio',
+    name: 'Twilio',
+    category: 'Communication',
+    icon: 'ph:phone-bold',
+    color: '#F22F46',
+    description: 'SMS, voice, and WhatsApp messaging for lead engagement and customer support.',
+    rating: 4.6
+  },
+  {
+    id: 'stripe',
+    name: 'Stripe',
+    category: 'Payment',
+    icon: 'ph:credit-card-bold',
+    color: '#635BFF',
+    description: 'Payment processing, subscription management, and invoice automation.',
+    rating: 4.9
+  },
+  {
+    id: 'zapier',
+    name: 'Zapier',
+    category: 'Automation',
+    icon: 'ph:lightning-bold',
+    color: '#FF4F00',
+    description: 'Connect thousands of apps with automated workflows and triggers.',
+    rating: 4.7
+  },
+  {
+    id: 'hubspot',
+    name: 'HubSpot',
+    category: 'CRM',
+    icon: 'ph:circles-three-bold',
+    color: '#FF7A59',
+    description: 'Bi-directional contact sync, deal pipeline integration, and marketing automation.',
+    rating: 4.5
+  },
+  {
+    id: 'mailchimp',
+    name: 'Mailchimp',
+    category: 'Communication',
+    icon: 'ph:envelope-simple-bold',
+    color: '#FFE01B',
+    description: 'Email campaign management, audience sync, and marketing analytics.',
+    rating: 4.4
+  },
+  {
+    id: 'salesforce',
+    name: 'Salesforce',
+    category: 'CRM',
+    icon: 'ph:cloud-bold',
+    color: '#00A1E0',
+    description: 'Enterprise CRM sync with lead routing, opportunity tracking, and custom field mapping.',
+    rating: 4.7
+  },
+  {
+    id: 'quickbooks',
+    name: 'QuickBooks',
+    category: 'Payment',
+    icon: 'ph:calculator-bold',
+    color: '#2CA01C',
+    description: 'Accounting integration for invoices, expenses, and financial reporting.',
+    rating: 4.3
+  },
+  {
+    id: 'jira',
+    name: 'Jira',
+    category: 'Automation',
+    icon: 'ph:kanban-bold',
+    color: '#0052CC',
+    description: 'Project management and issue tracking with CRM ticket escalation.',
+    rating: 4.5
+  },
+  {
+    id: 'google-workspace',
+    name: 'Google Workspace',
+    category: 'Communication',
+    icon: 'ph:google-logo-bold',
+    color: '#4285F4',
+    description: 'Gmail, Calendar, Drive, and Contacts integration for seamless productivity.',
+    rating: 4.8
+  },
+  {
+    id: 'ms-teams',
+    name: 'Microsoft Teams',
+    category: 'Communication',
+    icon: 'ph:microsoft-teams-logo-bold',
+    color: '#6264A7',
+    description: 'Team chat notifications, meeting scheduling, and collaboration.',
+    rating: 4.4
+  },
+  {
+    id: 'shopify',
+    name: 'Shopify',
+    category: 'Payment',
+    icon: 'ph:storefront-bold',
+    color: '#96BF48',
+    description: 'E-commerce sync for orders, customers, and product catalog management.',
+    rating: 4.6
+  },
+  {
+    id: 'sendgrid',
+    name: 'SendGrid',
+    category: 'Communication',
+    icon: 'ph:paper-plane-tilt-bold',
+    color: '#1A82E2',
+    description: 'Transactional email delivery, templates, and email analytics.',
+    rating: 4.5
+  },
+  {
+    id: 'zendesk',
+    name: 'Zendesk',
+    category: 'CRM',
+    icon: 'ph:headset-bold',
+    color: '#03363D',
+    description: 'Support ticket sync, customer satisfaction tracking, and agent assignment.',
+    rating: 4.4
+  },
+  {
+    id: 'intercom',
+    name: 'Intercom',
+    category: 'Analytics',
+    icon: 'ph:chat-dots-bold',
+    color: '#286EFA',
+    description: 'Live chat, user engagement analytics, and product tours integration.',
+    rating: 4.6
+  }
 ]);
 
 const filteredConnectors = computed(() => {
   return connectors.value.filter(c => {
-    const matchSearch = !marketplaceSearch.value ||
+    const matchSearch =
+      !marketplaceSearch.value ||
       c.name.toLowerCase().includes(marketplaceSearch.value.toLowerCase()) ||
       c.description.toLowerCase().includes(marketplaceSearch.value.toLowerCase());
     const matchCategory = !categoryFilter.value || c.category === categoryFilter.value;
@@ -406,22 +527,135 @@ const filteredConnectors = computed(() => {
 
 // --- Installed Integrations ---
 const installedIntegrations = ref([
-  { id: 'slack', name: 'Slack', icon: 'ph:slack-logo-bold', color: '#E01E5A', status: 'Connected', healthStatus: 'green', lastSynced: '2 minutes ago', apiCalls: 34520 },
-  { id: 'stripe', name: 'Stripe', icon: 'ph:credit-card-bold', color: '#635BFF', status: 'Connected', healthStatus: 'green', lastSynced: '5 minutes ago', apiCalls: 78430 },
-  { id: 'hubspot', name: 'HubSpot', icon: 'ph:circles-three-bold', color: '#FF7A59', status: 'Error', healthStatus: 'red', lastSynced: '3 hours ago', apiCalls: 12650 },
-  { id: 'google-workspace', name: 'Google Workspace', icon: 'ph:google-logo-bold', color: '#4285F4', status: 'Connected', healthStatus: 'green', lastSynced: '1 minute ago', apiCalls: 95200 },
-  { id: 'zapier', name: 'Zapier', icon: 'ph:lightning-bold', color: '#FF4F00', status: 'Paused', healthStatus: 'yellow', lastSynced: '2 days ago', apiCalls: 8340 },
-  { id: 'sendgrid', name: 'SendGrid', icon: 'ph:paper-plane-tilt-bold', color: '#1A82E2', status: 'Connected', healthStatus: 'green', lastSynced: '15 minutes ago', apiCalls: 55510 },
-  { id: 'jira', name: 'Jira', icon: 'ph:kanban-bold', color: '#0052CC', status: 'Connected', healthStatus: 'green', lastSynced: '30 minutes ago', apiCalls: 4200 }
+  {
+    id: 'slack',
+    name: 'Slack',
+    icon: 'ph:slack-logo-bold',
+    color: '#E01E5A',
+    status: 'Connected',
+    healthStatus: 'green',
+    lastSynced: '2 minutes ago',
+    apiCalls: 34520
+  },
+  {
+    id: 'stripe',
+    name: 'Stripe',
+    icon: 'ph:credit-card-bold',
+    color: '#635BFF',
+    status: 'Connected',
+    healthStatus: 'green',
+    lastSynced: '5 minutes ago',
+    apiCalls: 78430
+  },
+  {
+    id: 'hubspot',
+    name: 'HubSpot',
+    icon: 'ph:circles-three-bold',
+    color: '#FF7A59',
+    status: 'Error',
+    healthStatus: 'red',
+    lastSynced: '3 hours ago',
+    apiCalls: 12650
+  },
+  {
+    id: 'google-workspace',
+    name: 'Google Workspace',
+    icon: 'ph:google-logo-bold',
+    color: '#4285F4',
+    status: 'Connected',
+    healthStatus: 'green',
+    lastSynced: '1 minute ago',
+    apiCalls: 95200
+  },
+  {
+    id: 'zapier',
+    name: 'Zapier',
+    icon: 'ph:lightning-bold',
+    color: '#FF4F00',
+    status: 'Paused',
+    healthStatus: 'yellow',
+    lastSynced: '2 days ago',
+    apiCalls: 8340
+  },
+  {
+    id: 'sendgrid',
+    name: 'SendGrid',
+    icon: 'ph:paper-plane-tilt-bold',
+    color: '#1A82E2',
+    status: 'Connected',
+    healthStatus: 'green',
+    lastSynced: '15 minutes ago',
+    apiCalls: 55510
+  },
+  {
+    id: 'jira',
+    name: 'Jira',
+    icon: 'ph:kanban-bold',
+    color: '#0052CC',
+    status: 'Connected',
+    healthStatus: 'green',
+    lastSynced: '30 minutes ago',
+    apiCalls: 4200
+  }
 ]);
 
 // --- API Keys ---
 const apiKeys = ref([
-  { id: 1, name: 'Production API Key', maskedKey: 'ldy_prod_••••••••••••••••3f8a', fullKey: 'ldy_prod_sk_4b7e9c2d1a8f6e3b5c7d9e1f3a8b3f8a', visible: false, created: 'Jan 15, 2026', lastUsed: 'Feb 28, 2026', requests30d: 145200, status: 'Active' },
-  { id: 2, name: 'Staging API Key', maskedKey: 'ldy_stg_••••••••••••••••7d2c', fullKey: 'ldy_stg_sk_9f3a7b2e4c8d1f6a5b3e7c9d2a4f7d2c', visible: false, created: 'Feb 01, 2026', lastUsed: 'Feb 27, 2026', requests30d: 32450, status: 'Active' },
-  { id: 3, name: 'Webhook Signing Key', maskedKey: 'ldy_whk_••••••••••••••••8e5b', fullKey: 'ldy_whk_sk_2d5f8a3c7e1b4d6f9a2c5e8b3d7f8e5b', visible: false, created: 'Dec 10, 2025', lastUsed: 'Feb 28, 2026', requests30d: 42180, status: 'Active' },
-  { id: 4, name: 'Legacy v1 Key', maskedKey: 'ldy_v1_••••••••••••••••1a9f', fullKey: 'ldy_v1_sk_7c2e5b8d3f1a4c6e9b2d5f8a3c7e1a9f', visible: false, created: 'Aug 22, 2025', lastUsed: 'Jan 05, 2026', requests30d: 0, status: 'Revoked' },
-  { id: 5, name: 'Mobile App Key', maskedKey: 'ldy_mob_••••••••••••••••4c6e', fullKey: 'ldy_mob_sk_5a8d2f6b9c3e7a1d4f8b2e5c9a3d4c6e', visible: false, created: 'Nov 18, 2025', lastUsed: 'Feb 28, 2026', requests30d: 64820, status: 'Active' }
+  {
+    id: 1,
+    name: 'Production API Key',
+    maskedKey: 'ldy_prod_••••••••••••••••3f8a',
+    fullKey: 'ldy_prod_sk_4b7e9c2d1a8f6e3b5c7d9e1f3a8b3f8a',
+    visible: false,
+    created: 'Jan 15, 2026',
+    lastUsed: 'Feb 28, 2026',
+    requests30d: 145200,
+    status: 'Active'
+  },
+  {
+    id: 2,
+    name: 'Staging API Key',
+    maskedKey: 'ldy_stg_••••••••••••••••7d2c',
+    fullKey: 'ldy_stg_sk_9f3a7b2e4c8d1f6a5b3e7c9d2a4f7d2c',
+    visible: false,
+    created: 'Feb 01, 2026',
+    lastUsed: 'Feb 27, 2026',
+    requests30d: 32450,
+    status: 'Active'
+  },
+  {
+    id: 3,
+    name: 'Webhook Signing Key',
+    maskedKey: 'ldy_whk_••••••••••••••••8e5b',
+    fullKey: 'ldy_whk_sk_2d5f8a3c7e1b4d6f9a2c5e8b3d7f8e5b',
+    visible: false,
+    created: 'Dec 10, 2025',
+    lastUsed: 'Feb 28, 2026',
+    requests30d: 42180,
+    status: 'Active'
+  },
+  {
+    id: 4,
+    name: 'Legacy v1 Key',
+    maskedKey: 'ldy_v1_••••••••••••••••1a9f',
+    fullKey: 'ldy_v1_sk_7c2e5b8d3f1a4c6e9b2d5f8a3c7e1a9f',
+    visible: false,
+    created: 'Aug 22, 2025',
+    lastUsed: 'Jan 05, 2026',
+    requests30d: 0,
+    status: 'Revoked'
+  },
+  {
+    id: 5,
+    name: 'Mobile App Key',
+    maskedKey: 'ldy_mob_••••••••••••••••4c6e',
+    fullKey: 'ldy_mob_sk_5a8d2f6b9c3e7a1d4f8b2e5c9a3d4c6e',
+    visible: false,
+    created: 'Nov 18, 2025',
+    lastUsed: 'Feb 28, 2026',
+    requests30d: 64820,
+    status: 'Active'
+  }
 ]);
 
 // --- New Key Form ---
@@ -464,8 +698,14 @@ const apiCallVolumeOption = computed(() => {
     d.setDate(d.getDate() - 29 + i);
     return `${d.getMonth() + 1}/${d.getDate()}`;
   });
-  const successData = [8200, 7800, 9100, 8500, 9400, 10200, 11300, 10800, 9600, 8900, 9800, 10500, 11200, 10100, 9700, 10300, 11500, 12100, 11800, 10600, 9500, 10200, 11000, 11600, 10900, 11400, 12300, 11700, 10800, 11200];
-  const failedData = [120, 95, 180, 110, 145, 200, 160, 130, 170, 140, 155, 210, 190, 125, 135, 175, 220, 195, 150, 165, 140, 180, 205, 170, 145, 190, 230, 185, 160, 175];
+  const successData = [
+    8200, 7800, 9100, 8500, 9400, 10200, 11300, 10800, 9600, 8900, 9800, 10500, 11200, 10100, 9700, 10300, 11500, 12100, 11800, 10600, 9500, 10200,
+    11000, 11600, 10900, 11400, 12300, 11700, 10800, 11200
+  ];
+  const failedData = [
+    120, 95, 180, 110, 145, 200, 160, 130, 170, 140, 155, 210, 190, 125, 135, 175, 220, 195, 150, 165, 140, 180, 205, 170, 145, 190, 230, 185, 160,
+    175
+  ];
 
   return {
     tooltip: {
@@ -600,11 +840,16 @@ function isInstalled(connectorId: string): boolean {
 
 function getMethodTagType(method: string): 'success' | 'warning' | 'info' | 'danger' | '' {
   switch (method) {
-    case 'GET': return 'success';
-    case 'POST': return '';
-    case 'PUT': return 'warning';
-    case 'DELETE': return 'danger';
-    default: return 'info';
+    case 'GET':
+      return 'success';
+    case 'POST':
+      return '';
+    case 'PUT':
+      return 'warning';
+    case 'DELETE':
+      return 'danger';
+    default:
+      return 'info';
   }
 }
 
@@ -651,17 +896,19 @@ function togglePause(row: any) {
 }
 
 function disconnectIntegration(row: any) {
-  ElMessageBox.confirm(
-    `${t('apiMarketplace.disconnectConfirm')} ${row.name}?`,
-    t('apiMarketplace.warning'),
-    { type: 'warning', confirmButtonText: t('apiMarketplace.disconnect'), cancelButtonText: t('apiMarketplace.cancel') }
-  ).then(() => {
-    const idx = installedIntegrations.value.findIndex(i => i.id === row.id);
-    if (idx > -1) installedIntegrations.value.splice(idx, 1);
-    ElNotification({ type: 'success', title: t('apiMarketplace.success'), message: `${row.name} ${t('apiMarketplace.disconnected')}` });
-  }).catch((error: unknown) => {
-    console.error('Operation failed:', error);
-  });
+  ElMessageBox.confirm(`${t('apiMarketplace.disconnectConfirm')} ${row.name}?`, t('apiMarketplace.warning'), {
+    type: 'warning',
+    confirmButtonText: t('apiMarketplace.disconnect'),
+    cancelButtonText: t('apiMarketplace.cancel')
+  })
+    .then(() => {
+      const idx = installedIntegrations.value.findIndex(i => i.id === row.id);
+      if (idx > -1) installedIntegrations.value.splice(idx, 1);
+      ElNotification({ type: 'success', title: t('apiMarketplace.success'), message: `${row.name} ${t('apiMarketplace.disconnected')}` });
+    })
+    .catch((error: unknown) => {
+      console.error('Operation failed:', error);
+    });
 }
 
 function toggleKeyVisibility(key: any) {
@@ -674,30 +921,26 @@ function copyKey(key: any) {
 }
 
 function revokeKey(key: any) {
-  ElMessageBox.confirm(
-    t('apiMarketplace.revokeConfirm'),
-    t('apiMarketplace.warning'),
-    { type: 'warning' }
-  ).then(() => {
-    key.status = 'Revoked';
-    ElNotification({ type: 'success', title: t('apiMarketplace.success'), message: `${key.name} ${t('apiMarketplace.revoked')}` });
-  }).catch((error: unknown) => {
-    console.error('Operation failed:', error);
-  });
+  ElMessageBox.confirm(t('apiMarketplace.revokeConfirm'), t('apiMarketplace.warning'), { type: 'warning' })
+    .then(() => {
+      key.status = 'Revoked';
+      ElNotification({ type: 'success', title: t('apiMarketplace.success'), message: `${key.name} ${t('apiMarketplace.revoked')}` });
+    })
+    .catch((error: unknown) => {
+      console.error('Operation failed:', error);
+    });
 }
 
 function deleteKey(key: any) {
-  ElMessageBox.confirm(
-    t('apiMarketplace.deleteKeyConfirm'),
-    t('apiMarketplace.warning'),
-    { type: 'warning' } as any
-  ).then(() => {
-    const idx = apiKeys.value.findIndex(k => k.id === key.id);
-    if (idx > -1) apiKeys.value.splice(idx, 1);
-    ElNotification({ type: 'success', title: t('apiMarketplace.success'), message: t('apiMarketplace.keyDeleted') });
-  }).catch((error: unknown) => {
-    console.error('Operation failed:', error);
-  });
+  ElMessageBox.confirm(t('apiMarketplace.deleteKeyConfirm'), t('apiMarketplace.warning'), { type: 'warning' } as any)
+    .then(() => {
+      const idx = apiKeys.value.findIndex(k => k.id === key.id);
+      if (idx > -1) apiKeys.value.splice(idx, 1);
+      ElNotification({ type: 'success', title: t('apiMarketplace.success'), message: t('apiMarketplace.keyDeleted') });
+    })
+    .catch((error: unknown) => {
+      console.error('Operation failed:', error);
+    });
 }
 
 function generateKey() {

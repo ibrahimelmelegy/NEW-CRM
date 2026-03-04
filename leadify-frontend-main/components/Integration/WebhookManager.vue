@@ -126,6 +126,7 @@
 </template>
 
 <script setup lang="ts">
+/* eslint-disable require-await */
 import { ElNotification, ElMessageBox } from 'element-plus';
 import type { FormInstance, FormRules } from 'element-plus';
 

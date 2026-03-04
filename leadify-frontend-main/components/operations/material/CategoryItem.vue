@@ -49,7 +49,7 @@ const props = defineProps({
   items: {
     type: Array,
     required: true,
-    default: []
+    default: () => []
   },
   editMode: {
     type: Boolean,

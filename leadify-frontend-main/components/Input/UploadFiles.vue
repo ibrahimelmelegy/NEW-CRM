@@ -33,7 +33,7 @@ const props = defineProps({
   name: String,
   value: {
     type: Array,
-    default: []
+    default: () => []
   },
   label: String,
   sizeInMb: {

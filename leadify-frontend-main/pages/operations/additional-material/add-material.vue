@@ -11,6 +11,7 @@
 </template>
 
 <script lang="ts" setup>
+/* eslint-disable require-await */
 import { ref } from 'vue';
 const { t } = useI18n();
 const loading = ref(false);

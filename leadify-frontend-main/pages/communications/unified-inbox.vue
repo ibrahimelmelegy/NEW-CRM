@@ -290,61 +290,62 @@
 </template>
 
 <script lang="ts" setup>
-import { ref, computed, onMounted, nextTick } from 'vue'
-import { useApiFetch } from '~/composables/useApiFetch'
+/* eslint-disable no-use-before-define */
+import { ref, computed, onMounted, nextTick } from 'vue';
+import { useApiFetch } from '~/composables/useApiFetch';
 
-definePageMeta({ title: 'Unified Inbox' })
+definePageMeta({ title: 'Unified Inbox' });
 
-const { t } = useI18n()
+const { t } = useI18n();
 
 // --- State ---
-const loading = ref(true)
-const searchQuery = ref('')
-const activeChannel = ref('all')
-const activeStatus = ref('all')
-const selectedConversation = ref<Conversation | null>(null)
-const showContactInfo = ref(false)
-const showAssignDialog = ref(false)
-const replyText = ref('')
-const replyChannel = ref('email')
-const messageThreadRef = ref<HTMLElement | null>(null)
+const loading = ref(true);
+const searchQuery = ref('');
+const activeChannel = ref('all');
+const activeStatus = ref('all');
+const selectedConversation = ref<Conversation | null>(null);
+const showContactInfo = ref(false);
+const showAssignDialog = ref(false);
+const replyText = ref('');
+const replyChannel = ref('email');
+const messageThreadRef = ref<HTMLElement | null>(null);
 
 // --- Types ---
 interface Conversation {
-  id: number
-  contactName: string
-  initials: string
-  email: string
-  phone: string
-  company: string
-  avatarColor: string
-  channel: string
-  lastMessage: string
-  timeAgo: string
-  group: 'today' | 'yesterday' | 'older'
-  unread: boolean
-  unreadCount: number
-  starred: boolean
-  archived: boolean
+  id: number;
+  contactName: string;
+  initials: string;
+  email: string;
+  phone: string;
+  company: string;
+  avatarColor: string;
+  channel: string;
+  lastMessage: string;
+  timeAgo: string;
+  group: 'today' | 'yesterday' | 'older';
+  unread: boolean;
+  unreadCount: number;
+  starred: boolean;
+  archived: boolean;
 }
 
 interface Message {
-  direction: 'inbound' | 'outbound'
-  text: string
-  timestamp: string
-  channel: string
-  attachments?: string[]
+  direction: 'inbound' | 'outbound';
+  text: string;
+  timestamp: string;
+  channel: string;
+  attachments?: string[];
 }
 
 interface KpiCard {
-  label: string
-  value: string
-  icon: string
-  color: string
-  trend: number
-  trendIcon: string
-  trendColor: string
-  trendText: string
+  label: string;
+  value: string;
+  icon: string;
+  color: string;
+  trend: number;
+  trendIcon: string;
+  trendColor: string;
+  trendText: string;
 }
 
 // --- KPI Cards ---
@@ -389,7 +390,7 @@ const kpiCards = computed<KpiCard[]>(() => [
     trendColor: '#22c55e',
     trendText: '+3.1%'
   }
-])
+]);
 
 // --- Channel Filters ---
 const channelFilters = computed(() => [
@@ -399,7 +400,7 @@ const channelFilters = computed(() => [
   { label: t('unifiedInbox.sms'), value: 'sms', icon: 'ph:device-mobile' },
   { label: t('unifiedInbox.whatsapp'), value: 'whatsapp', icon: 'ph:whatsapp-logo' },
   { label: t('unifiedInbox.social'), value: 'social', icon: 'ph:share-network' }
-])
+]);
 
 // --- Status Filters ---
 const statusFilters = computed(() => [
@@ -407,7 +408,7 @@ const statusFilters = computed(() => [
   { label: t('unifiedInbox.unread'), value: 'unread' },
   { label: t('unifiedInbox.starred'), value: 'starred' },
   { label: t('unifiedInbox.archived'), value: 'archived' }
-])
+]);
 
 // --- Reply Channel Options ---
 const replyChannelOptions = computed(() => [
@@ -416,7 +417,7 @@ const replyChannelOptions = computed(() => [
   { label: t('unifiedInbox.sms'), value: 'sms' },
   { label: t('unifiedInbox.whatsapp'), value: 'whatsapp' },
   { label: t('unifiedInbox.social'), value: 'social' }
-])
+]);
 
 // --- Mock Conversations (fallback) ---
 const conversationsFallback: Conversation[] = [
@@ -692,9 +693,9 @@ const conversationsFallback: Conversation[] = [
     starred: false,
     archived: true
   }
-]
+];
 
-const conversations = ref<Conversation[]>([])
+const conversations = ref<Conversation[]>([]);
 
 // --- Message Threads ---
 const messageThreads = ref<Record<number, Message[]>>({
@@ -872,7 +873,7 @@ const messageThreads = ref<Record<number, Message[]>>({
       channel: 'social'
     }
   ]
-})
+});
 
 // --- Contact Activities ---
 const contactActivities = computed(() => [
@@ -880,58 +881,50 @@ const contactActivities = computed(() => [
   { icon: 'ph:phone-bold', text: 'Call logged: 15 min discussion', time: 'Yesterday' },
   { icon: 'ph:note-bold', text: 'Note added: Budget confirmed', time: '2 days ago' },
   { icon: 'ph:calendar-bold', text: 'Meeting scheduled: Product Demo', time: '3 days ago' }
-])
+]);
 
 // --- Linked Deals ---
 const linkedDeals = computed(() => [
   { name: 'Enterprise CRM License', stage: 'Negotiation', stageColor: '#f59e0b', value: 'SAR 245,000' },
   { name: 'Support & Training Package', stage: 'Proposal', stageColor: '#3b82f6', value: 'SAR 48,000' }
-])
+]);
 
 // --- Computed Filters ---
 const filteredConversations = computed(() => {
-  let result = conversations.value
+  let result = conversations.value;
 
   if (activeChannel.value !== 'all') {
-    result = result.filter(c => c.channel === activeChannel.value)
+    result = result.filter(c => c.channel === activeChannel.value);
   }
 
   if (activeStatus.value === 'unread') {
-    result = result.filter(c => c.unread)
+    result = result.filter(c => c.unread);
   } else if (activeStatus.value === 'starred') {
-    result = result.filter(c => c.starred)
+    result = result.filter(c => c.starred);
   } else if (activeStatus.value === 'archived') {
-    result = result.filter(c => c.archived)
+    result = result.filter(c => c.archived);
   }
 
   if (searchQuery.value.trim()) {
-    const query = searchQuery.value.toLowerCase()
-    result = result.filter(c =>
-      c.contactName.toLowerCase().includes(query) ||
-      c.lastMessage.toLowerCase().includes(query) ||
-      c.company.toLowerCase().includes(query)
-    )
+    const query = searchQuery.value.toLowerCase();
+    result = result.filter(
+      c => c.contactName.toLowerCase().includes(query) || c.lastMessage.toLowerCase().includes(query) || c.company.toLowerCase().includes(query)
+    );
   }
 
-  return result
-})
+  return result;
+});
 
-const todayConversations = computed(() =>
-  filteredConversations.value.filter(c => c.group === 'today')
-)
+const todayConversations = computed(() => filteredConversations.value.filter(c => c.group === 'today'));
 
-const yesterdayConversations = computed(() =>
-  filteredConversations.value.filter(c => c.group === 'yesterday')
-)
+const yesterdayConversations = computed(() => filteredConversations.value.filter(c => c.group === 'yesterday'));
 
-const olderConversations = computed(() =>
-  filteredConversations.value.filter(c => c.group === 'older')
-)
+const olderConversations = computed(() => filteredConversations.value.filter(c => c.group === 'older'));
 
 const selectedMessages = computed(() => {
-  if (!selectedConversation.value) return []
-  return messageThreads.value[selectedConversation.value.id] || []
-})
+  if (!selectedConversation.value) return [];
+  return messageThreads.value[selectedConversation.value.id] || [];
+});
 
 // --- Helper Functions ---
 function getChannelIcon(channel: string): string {
@@ -941,34 +934,34 @@ function getChannelIcon(channel: string): string {
     sms: 'ph:device-mobile',
     whatsapp: 'ph:whatsapp-logo',
     social: 'ph:share-network'
-  }
-  return iconMap[channel] || 'ph:chat-circle-dots'
+  };
+  return iconMap[channel] || 'ph:chat-circle-dots';
 }
 
 function selectConversation(conv: Conversation) {
-  selectedConversation.value = conv
-  replyChannel.value = conv.channel
-  showContactInfo.value = false
+  selectedConversation.value = conv;
+  replyChannel.value = conv.channel;
+  showContactInfo.value = false;
   nextTick(() => {
-    scrollToBottom()
-  })
+    scrollToBottom();
+  });
 }
 
 function scrollToBottom() {
   if (messageThreadRef.value) {
-    messageThreadRef.value.scrollTop = messageThreadRef.value.scrollHeight
+    messageThreadRef.value.scrollTop = messageThreadRef.value.scrollHeight;
   }
 }
 
 function toggleStar() {
   if (selectedConversation.value) {
-    selectedConversation.value.starred = !selectedConversation.value.starred
+    selectedConversation.value.starred = !selectedConversation.value.starred;
   }
 }
 
 function archiveConversation() {
   if (selectedConversation.value) {
-    selectedConversation.value.archived = !selectedConversation.value.archived
+    selectedConversation.value.archived = !selectedConversation.value.archived;
   }
 }
 
@@ -978,8 +971,8 @@ function snoozeConversation() {
 
 function markResolved() {
   if (selectedConversation.value) {
-    selectedConversation.value.unread = false
-    selectedConversation.value.unreadCount = 0
+    selectedConversation.value.unread = false;
+    selectedConversation.value.unreadCount = 0;
   }
 }
 
@@ -988,11 +981,11 @@ function attachFile() {
 }
 
 function sendReply() {
-  if (!replyText.value.trim() || !selectedConversation.value) return
+  if (!replyText.value.trim() || !selectedConversation.value) return;
 
-  const convId = selectedConversation.value.id
+  const convId = selectedConversation.value.id;
   if (!messageThreads.value[convId]) {
-    messageThreads.value[convId] = []
+    messageThreads.value[convId] = [];
   }
 
   messageThreads.value[convId].push({
@@ -1000,35 +993,37 @@ function sendReply() {
     text: replyText.value,
     timestamp: 'Just now',
     channel: replyChannel.value
-  })
+  });
 
-  selectedConversation.value.lastMessage = replyText.value
-  selectedConversation.value.timeAgo = 'Just now'
-  replyText.value = ''
+  selectedConversation.value.lastMessage = replyText.value;
+  selectedConversation.value.timeAgo = 'Just now';
+  replyText.value = '';
 
   nextTick(() => {
-    scrollToBottom()
-  })
+    scrollToBottom();
+  });
 }
 
 // --- Data Loading ---
 async function loadData() {
-  loading.value = true
+  loading.value = true;
   try {
-    const res = await useApiFetch('communications/recent')
+    const res = await useApiFetch('communications/recent');
     if (res.success && Array.isArray(res.body)) {
-      conversations.value = res.body as any
+      conversations.value = res.body as any;
     } else {
-      conversations.value = conversationsFallback
+      conversations.value = conversationsFallback;
     }
   } catch {
-    conversations.value = conversationsFallback
+    conversations.value = conversationsFallback;
   }
-  loading.value = false
+  loading.value = false;
 }
 
 // --- Lifecycle ---
-onMounted(() => { loadData() })
+onMounted(() => {
+  loadData();
+});
 </script>
 
 <style lang="scss" scoped>
@@ -1038,8 +1033,14 @@ onMounted(() => { loadData() })
 }
 
 @keyframes fadeInUp {
-  from { opacity: 0; transform: translateY(15px); }
-  to { opacity: 1; transform: translateY(0); }
+  from {
+    opacity: 0;
+    transform: translateY(15px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
 }
 
 .glass-card {
@@ -1047,7 +1048,9 @@ onMounted(() => { loadData() })
   border: 1px solid var(--border-default);
   border-radius: 16px;
   transition: box-shadow 0.3s ease;
-  &:hover { box-shadow: 0 8px 32px rgba(120, 73, 255, 0.08); }
+  &:hover {
+    box-shadow: 0 8px 32px rgba(120, 73, 255, 0.08);
+  }
 }
 
 .kpi-card {
@@ -1166,9 +1169,11 @@ onMounted(() => { loadData() })
   border-bottom: 1px solid var(--border-default);
   cursor: pointer;
   transition: all 0.2s ease;
-  &:hover { background: rgba(120, 73, 255, 0.05); }
+  &:hover {
+    background: rgba(120, 73, 255, 0.05);
+  }
   &.active {
-    background: rgba(120, 73, 255, 0.10);
+    background: rgba(120, 73, 255, 0.1);
     border-left: 3px solid #7849ff;
   }
 }

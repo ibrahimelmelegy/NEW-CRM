@@ -186,15 +186,16 @@
 </template>
 
 <script setup lang="ts">
+/* eslint-disable require-await */
 import { ref, computed, watch } from 'vue';
 import VChart from 'vue-echarts';
-import { graphic } from 'echarts';
+import { graphic } from 'echarts/core';
+import { ElMessage } from 'element-plus';
 import { useDocumentStore } from '~/composables/useDocumentStore';
 import { useReminders } from '~/composables/useReminders';
 import { useDocumentArchive } from '~/composables/useDocumentArchive';
 import { useActivityLog } from '~/composables/useActivityLog';
 import { useApiFetch } from '~/composables/useApiFetch';
-import { ElMessage } from 'element-plus';
 
 definePageMeta({});
 
@@ -210,7 +211,7 @@ const exporting = ref(false);
 const showDrillDown = ref(false);
 const drillDownType = ref<'type' | 'status' | null>(null);
 
-watch(drillDownType, (newVal) => {
+watch(drillDownType, newVal => {
   if (newVal) showDrillDown.value = true;
 });
 
@@ -302,12 +303,14 @@ const typeChartOption = computed(() => {
       splitLine: { lineStyle: { type: 'dashed', color: 'rgba(255,255,255,0.05)' } },
       axisLabel: { color: '#64748B' }
     },
-    series: [{
-      type: 'bar',
-      data: data,
-      barWidth: '50%',
-      itemStyle: { borderRadius: [6, 6, 0, 0] }
-    }]
+    series: [
+      {
+        type: 'bar',
+        data,
+        barWidth: '50%',
+        itemStyle: { borderRadius: [6, 6, 0, 0] }
+      }
+    ]
   };
 });
 
@@ -331,16 +334,18 @@ const statusChartOption = computed(() => {
       bottom: 0,
       textStyle: { color: '#94A3B8' }
     },
-    series: [{
-      type: 'pie',
-      radius: ['40%', '70%'],
-      avoidLabelOverlap: true,
-      label: { show: false },
-      emphasis: {
-        label: { show: true, fontSize: 16, fontWeight: 'bold' }
-      },
-      data: data
-    }]
+    series: [
+      {
+        type: 'pie',
+        radius: ['40%', '70%'],
+        avoidLabelOverlap: true,
+        label: { show: false },
+        emphasis: {
+          label: { show: true, fontSize: 16, fontWeight: 'bold' }
+        },
+        data
+      }
+    ]
   };
 });
 
@@ -359,12 +364,14 @@ const drillDownData = computed(() => {
 
   const total = Object.values(source).reduce((sum, val) => sum + Number(val as number), 0);
 
-  return Object.entries(source).map(([key, value]) => ({
-    label: labels[key] || key,
-    value: value,
-    percentage: total > 0 ? ((Number(value as number) / total) * 100).toFixed(1) : 0,
-    color: colors[key] || '#6b7280'
-  })).sort((a, b) => Number(b.value) - Number(a.value));
+  return Object.entries(source)
+    .map(([key, value]) => ({
+      label: labels[key] || key,
+      value,
+      percentage: total > 0 ? ((Number(value as number) / total) * 100).toFixed(1) : 0,
+      color: colors[key] || '#6b7280'
+    }))
+    .sort((a, b) => Number(b.value) - Number(a.value));
 });
 
 async function loadData() {

@@ -476,9 +476,10 @@
 </template>
 
 <script setup lang="ts">
+/* eslint-disable no-use-before-define */
 import { ElNotification, ElMessageBox } from 'element-plus';
 import VChart from 'vue-echarts';
-import { graphic } from 'echarts';
+import { graphic } from 'echarts/core';
 
 definePageMeta({ middleware: 'permissions' });
 
@@ -573,7 +574,12 @@ const onboardingForm = ref({
 const templateForm = ref({
   name: '',
   description: '',
-  phases: [{ name: '', description: '', duration: 7, checklistItems: [''] }] as { name: string; description: string; duration: number; checklistItems: string[] }[]
+  phases: [{ name: '', description: '', duration: 7, checklistItems: [''] }] as {
+    name: string;
+    description: string;
+    duration: number;
+    checklistItems: string[];
+  }[]
 });
 
 // ── Computed ───────────────────────────────────────────
@@ -593,10 +599,8 @@ const filteredOnboardings = computed(() => {
   let result = onboardings.value;
   if (searchQuery.value) {
     const q = searchQuery.value.toLowerCase();
-    result = result.filter(o =>
-      o.customerName.toLowerCase().includes(q) ||
-      o.company.toLowerCase().includes(q) ||
-      o.assignedCSM.toLowerCase().includes(q)
+    result = result.filter(
+      o => o.customerName.toLowerCase().includes(q) || o.company.toLowerCase().includes(q) || o.assignedCSM.toLowerCase().includes(q)
     );
   }
   if (statusFilter.value) {
@@ -656,17 +660,10 @@ const ttvMetrics = computed(() => [
 
 // ── ECharts: Duration Trend ────────────────────────────
 const durationTrendOption = computed(() => {
-  const getMonthName = (monthIndex: number) =>
-    new Date(2026, monthIndex, 1).toLocaleDateString(locale.value, { month: 'short' });
-  const months = trendPeriod.value === '12m'
-    ? [2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 0, 1].map(getMonthName)
-    : [8, 9, 10, 11, 0, 1].map(getMonthName);
-  const durations = trendPeriod.value === '12m'
-    ? [42, 39, 38, 36, 35, 33, 32, 30, 29, 28, 27, 26]
-    : [33, 32, 30, 29, 27, 26];
-  const firstValues = trendPeriod.value === '12m'
-    ? [14, 13, 12, 11, 10, 10, 9, 9, 8, 8, 8, 8]
-    : [10, 9, 9, 8, 8, 8];
+  const getMonthName = (monthIndex: number) => new Date(2026, monthIndex, 1).toLocaleDateString(locale.value, { month: 'short' });
+  const months = trendPeriod.value === '12m' ? [2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 0, 1].map(getMonthName) : [8, 9, 10, 11, 0, 1].map(getMonthName);
+  const durations = trendPeriod.value === '12m' ? [42, 39, 38, 36, 35, 33, 32, 30, 29, 28, 27, 26] : [33, 32, 30, 29, 27, 26];
+  const firstValues = trendPeriod.value === '12m' ? [14, 13, 12, 11, 10, 10, 9, 9, 8, 8, 8, 8] : [10, 9, 9, 8, 8, 8];
 
   return {
     tooltip: {
@@ -921,14 +918,18 @@ function handleTemplateAction(command: string, tmpl: OnboardingTemplate) {
     templates.value.push(dup);
     ElNotification({ type: 'success', title: t('customerOnboarding.duplicated'), message: t('customerOnboarding.templateDuplicated') });
   } else if (command === 'delete') {
-    ElMessageBox.confirm(
-      t('customerOnboarding.deleteTemplateConfirm', { name: tmpl.name }),
-      t('customerOnboarding.delete'),
-      { type: 'warning', confirmButtonText: t('customerOnboarding.delete'), cancelButtonText: t('customerOnboarding.cancel') }
-    ).then(() => {
-      templates.value = templates.value.filter(tp => tp.id !== tmpl.id);
-      ElNotification({ type: 'success', title: t('customerOnboarding.deleted'), message: t('customerOnboarding.templateDeleted') });
-    }).catch(() => { /* cancelled */ });
+    ElMessageBox.confirm(t('customerOnboarding.deleteTemplateConfirm', { name: tmpl.name }), t('customerOnboarding.delete'), {
+      type: 'warning',
+      confirmButtonText: t('customerOnboarding.delete'),
+      cancelButtonText: t('customerOnboarding.cancel')
+    })
+      .then(() => {
+        templates.value = templates.value.filter(tp => tp.id !== tmpl.id);
+        ElNotification({ type: 'success', title: t('customerOnboarding.deleted'), message: t('customerOnboarding.templateDeleted') });
+      })
+      .catch(() => {
+        /* cancelled */
+      });
   }
 }
 
@@ -1000,16 +1001,38 @@ function createOnboarding() {
           completed: false
         }))
       }))
-    : [{
-        name: t('customerOnboarding.kickoff'),
-        description: t('customerOnboarding.kickoffDesc'),
-        progress: 0, completedTasks: 0, totalTasks: 3,
-        tasks: [
-          { name: t('customerOnboarding.welcomeCall'), assignee: onboardingForm.value.assignedCSM || csmList.value[0] || '', dueDate: new Date(Date.now() + 3 * 86400000).toISOString(), status: 'pending' as const, completed: false },
-          { name: t('customerOnboarding.accessSetup'), assignee: onboardingForm.value.assignedCSM || csmList.value[0] || '', dueDate: new Date(Date.now() + 5 * 86400000).toISOString(), status: 'pending' as const, completed: false },
-          { name: t('customerOnboarding.requirementsGathering'), assignee: onboardingForm.value.assignedCSM || csmList.value[0] || '', dueDate: new Date(Date.now() + 7 * 86400000).toISOString(), status: 'pending' as const, completed: false }
-        ]
-      }];
+    : [
+        {
+          name: t('customerOnboarding.kickoff'),
+          description: t('customerOnboarding.kickoffDesc'),
+          progress: 0,
+          completedTasks: 0,
+          totalTasks: 3,
+          tasks: [
+            {
+              name: t('customerOnboarding.welcomeCall'),
+              assignee: onboardingForm.value.assignedCSM || csmList.value[0] || '',
+              dueDate: new Date(Date.now() + 3 * 86400000).toISOString(),
+              status: 'pending' as const,
+              completed: false
+            },
+            {
+              name: t('customerOnboarding.accessSetup'),
+              assignee: onboardingForm.value.assignedCSM || csmList.value[0] || '',
+              dueDate: new Date(Date.now() + 5 * 86400000).toISOString(),
+              status: 'pending' as const,
+              completed: false
+            },
+            {
+              name: t('customerOnboarding.requirementsGathering'),
+              assignee: onboardingForm.value.assignedCSM || csmList.value[0] || '',
+              dueDate: new Date(Date.now() + 7 * 86400000).toISOString(),
+              status: 'pending' as const,
+              completed: false
+            }
+          ]
+        }
+      ];
 
   const totalDays = tmpl ? tmpl.avgCompletionDays : 30;
   const newOnboarding: OnboardingRecord = {
@@ -1024,9 +1047,7 @@ function createOnboarding() {
     status: 'on-track',
     templateId: onboardingForm.value.templateId || '',
     phases,
-    timeline: [
-      { date: new Date().toISOString(), description: t('customerOnboarding.onboardingStarted'), type: 'started' }
-    ]
+    timeline: [{ date: new Date().toISOString(), description: t('customerOnboarding.onboardingStarted'), type: 'started' }]
   };
 
   onboardings.value.unshift(newOnboarding);
@@ -1064,11 +1085,45 @@ function seedDemoData() {
       usageCount: 23,
       lastUsed: new Date(now.getTime() - 3 * 86400000).toISOString(),
       phases: [
-        { name: t('customerOnboarding.discovery'), description: t('customerOnboarding.discoveryDesc'), duration: 7, checklistItems: [t('customerOnboarding.kickoffMeeting'), t('customerOnboarding.stakeholderMapping'), t('customerOnboarding.requirementsDoc')] },
-        { name: t('customerOnboarding.setup'), description: t('customerOnboarding.setupDesc'), duration: 10, checklistItems: [t('customerOnboarding.accountProvisioning'), t('customerOnboarding.ssoConfig'), t('customerOnboarding.dataImport'), t('customerOnboarding.integrationSetup')] },
-        { name: t('customerOnboarding.training'), description: t('customerOnboarding.trainingDesc'), duration: 10, checklistItems: [t('customerOnboarding.adminTraining'), t('customerOnboarding.userTraining'), t('customerOnboarding.trainTheTrainer')] },
-        { name: t('customerOnboarding.goLive'), description: t('customerOnboarding.goLiveDesc'), duration: 7, checklistItems: [t('customerOnboarding.pilotLaunch'), t('customerOnboarding.fullRollout'), t('customerOnboarding.performanceReview')] },
-        { name: t('customerOnboarding.optimization'), description: t('customerOnboarding.optimizationDesc'), duration: 11, checklistItems: [t('customerOnboarding.usageReview'), t('customerOnboarding.successPlan'), t('customerOnboarding.handoffToCSM')] }
+        {
+          name: t('customerOnboarding.discovery'),
+          description: t('customerOnboarding.discoveryDesc'),
+          duration: 7,
+          checklistItems: [
+            t('customerOnboarding.kickoffMeeting'),
+            t('customerOnboarding.stakeholderMapping'),
+            t('customerOnboarding.requirementsDoc')
+          ]
+        },
+        {
+          name: t('customerOnboarding.setup'),
+          description: t('customerOnboarding.setupDesc'),
+          duration: 10,
+          checklistItems: [
+            t('customerOnboarding.accountProvisioning'),
+            t('customerOnboarding.ssoConfig'),
+            t('customerOnboarding.dataImport'),
+            t('customerOnboarding.integrationSetup')
+          ]
+        },
+        {
+          name: t('customerOnboarding.training'),
+          description: t('customerOnboarding.trainingDesc'),
+          duration: 10,
+          checklistItems: [t('customerOnboarding.adminTraining'), t('customerOnboarding.userTraining'), t('customerOnboarding.trainTheTrainer')]
+        },
+        {
+          name: t('customerOnboarding.goLive'),
+          description: t('customerOnboarding.goLiveDesc'),
+          duration: 7,
+          checklistItems: [t('customerOnboarding.pilotLaunch'), t('customerOnboarding.fullRollout'), t('customerOnboarding.performanceReview')]
+        },
+        {
+          name: t('customerOnboarding.optimization'),
+          description: t('customerOnboarding.optimizationDesc'),
+          duration: 11,
+          checklistItems: [t('customerOnboarding.usageReview'), t('customerOnboarding.successPlan'), t('customerOnboarding.handoffToCSM')]
+        }
       ]
     },
     {
@@ -1082,9 +1137,24 @@ function seedDemoData() {
       usageCount: 47,
       lastUsed: new Date(now.getTime() - 1 * 86400000).toISOString(),
       phases: [
-        { name: t('customerOnboarding.welcomeSetup'), description: t('customerOnboarding.welcomeSetupDesc'), duration: 3, checklistItems: [t('customerOnboarding.welcomeEmail'), t('customerOnboarding.accountSetup'), t('customerOnboarding.quickStartGuide')] },
-        { name: t('customerOnboarding.configTraining'), description: t('customerOnboarding.configTrainingDesc'), duration: 5, checklistItems: [t('customerOnboarding.basicConfig'), t('customerOnboarding.liveDemo'), t('customerOnboarding.dataImport')] },
-        { name: t('customerOnboarding.activationReview'), description: t('customerOnboarding.activationReviewDesc'), duration: 6, checklistItems: [t('customerOnboarding.firstValueCheck'), t('customerOnboarding.feedbackCall'), t('customerOnboarding.successHandoff')] }
+        {
+          name: t('customerOnboarding.welcomeSetup'),
+          description: t('customerOnboarding.welcomeSetupDesc'),
+          duration: 3,
+          checklistItems: [t('customerOnboarding.welcomeEmail'), t('customerOnboarding.accountSetup'), t('customerOnboarding.quickStartGuide')]
+        },
+        {
+          name: t('customerOnboarding.configTraining'),
+          description: t('customerOnboarding.configTrainingDesc'),
+          duration: 5,
+          checklistItems: [t('customerOnboarding.basicConfig'), t('customerOnboarding.liveDemo'), t('customerOnboarding.dataImport')]
+        },
+        {
+          name: t('customerOnboarding.activationReview'),
+          description: t('customerOnboarding.activationReviewDesc'),
+          duration: 6,
+          checklistItems: [t('customerOnboarding.firstValueCheck'), t('customerOnboarding.feedbackCall'), t('customerOnboarding.successHandoff')]
+        }
       ]
     },
     {
@@ -1098,9 +1168,24 @@ function seedDemoData() {
       usageCount: 89,
       lastUsed: new Date(now.getTime() - 0.5 * 86400000).toISOString(),
       phases: [
-        { name: t('customerOnboarding.autoSetup'), description: t('customerOnboarding.autoSetupDesc'), duration: 1, checklistItems: [t('customerOnboarding.accountCreated'), t('customerOnboarding.welcomeEmailSent')] },
-        { name: t('customerOnboarding.guidedTour'), description: t('customerOnboarding.guidedTourDesc'), duration: 3, checklistItems: [t('customerOnboarding.productTour'), t('customerOnboarding.firstAction'), t('customerOnboarding.profileComplete')] },
-        { name: t('customerOnboarding.valueRealization'), description: t('customerOnboarding.valueRealizationDesc'), duration: 3, checklistItems: [t('customerOnboarding.firstMilestone'), t('customerOnboarding.inviteTeam')] }
+        {
+          name: t('customerOnboarding.autoSetup'),
+          description: t('customerOnboarding.autoSetupDesc'),
+          duration: 1,
+          checklistItems: [t('customerOnboarding.accountCreated'), t('customerOnboarding.welcomeEmailSent')]
+        },
+        {
+          name: t('customerOnboarding.guidedTour'),
+          description: t('customerOnboarding.guidedTourDesc'),
+          duration: 3,
+          checklistItems: [t('customerOnboarding.productTour'), t('customerOnboarding.firstAction'), t('customerOnboarding.profileComplete')]
+        },
+        {
+          name: t('customerOnboarding.valueRealization'),
+          description: t('customerOnboarding.valueRealizationDesc'),
+          duration: 3,
+          checklistItems: [t('customerOnboarding.firstMilestone'), t('customerOnboarding.inviteTeam')]
+        }
       ]
     }
   ];
@@ -1124,7 +1209,7 @@ function seedDemoData() {
           name: item,
           assignee: csmList.value[idx % csmList.value.length] || '',
           dueDate: new Date(now.getTime() + (idx + 1) * 3 * 86400000).toISOString(),
-          status: idx < completedCount ? 'completed' as const : idx === completedCount ? 'in-progress' as const : 'pending' as const,
+          status: idx < completedCount ? ('completed' as const) : idx === completedCount ? ('in-progress' as const) : ('pending' as const),
           completed: idx < completedCount
         }))
       };
@@ -1239,12 +1324,54 @@ function seedDemoData() {
   ];
 
   recentCompletions.value = [
-    { customerName: 'TechVista Corp', template: t('customerOnboarding.enterpriseOnboarding'), completedDate: new Date(now.getTime() - 2 * 86400000).toISOString(), timeToFirstValue: 6, totalDuration: 38, npsScore: 85 },
-    { customerName: 'QuickShip Logistics', template: t('customerOnboarding.smbQuickStart'), completedDate: new Date(now.getTime() - 5 * 86400000).toISOString(), timeToFirstValue: 3, totalDuration: 12, npsScore: 92 },
-    { customerName: 'FinServe Partners', template: t('customerOnboarding.enterpriseOnboarding'), completedDate: new Date(now.getTime() - 8 * 86400000).toISOString(), timeToFirstValue: 10, totalDuration: 42, npsScore: 68 },
-    { customerName: 'NovaBrand Agency', template: t('customerOnboarding.selfServiceSetup'), completedDate: new Date(now.getTime() - 10 * 86400000).toISOString(), timeToFirstValue: 2, totalDuration: 5, npsScore: 78 },
-    { customerName: 'HealthPlus Medical', template: t('customerOnboarding.enterpriseOnboarding'), completedDate: new Date(now.getTime() - 14 * 86400000).toISOString(), timeToFirstValue: 12, totalDuration: 48, npsScore: 61 },
-    { customerName: 'EduLearn Platform', template: t('customerOnboarding.smbQuickStart'), completedDate: new Date(now.getTime() - 18 * 86400000).toISOString(), timeToFirstValue: 4, totalDuration: 11, npsScore: 88 }
+    {
+      customerName: 'TechVista Corp',
+      template: t('customerOnboarding.enterpriseOnboarding'),
+      completedDate: new Date(now.getTime() - 2 * 86400000).toISOString(),
+      timeToFirstValue: 6,
+      totalDuration: 38,
+      npsScore: 85
+    },
+    {
+      customerName: 'QuickShip Logistics',
+      template: t('customerOnboarding.smbQuickStart'),
+      completedDate: new Date(now.getTime() - 5 * 86400000).toISOString(),
+      timeToFirstValue: 3,
+      totalDuration: 12,
+      npsScore: 92
+    },
+    {
+      customerName: 'FinServe Partners',
+      template: t('customerOnboarding.enterpriseOnboarding'),
+      completedDate: new Date(now.getTime() - 8 * 86400000).toISOString(),
+      timeToFirstValue: 10,
+      totalDuration: 42,
+      npsScore: 68
+    },
+    {
+      customerName: 'NovaBrand Agency',
+      template: t('customerOnboarding.selfServiceSetup'),
+      completedDate: new Date(now.getTime() - 10 * 86400000).toISOString(),
+      timeToFirstValue: 2,
+      totalDuration: 5,
+      npsScore: 78
+    },
+    {
+      customerName: 'HealthPlus Medical',
+      template: t('customerOnboarding.enterpriseOnboarding'),
+      completedDate: new Date(now.getTime() - 14 * 86400000).toISOString(),
+      timeToFirstValue: 12,
+      totalDuration: 48,
+      npsScore: 61
+    },
+    {
+      customerName: 'EduLearn Platform',
+      template: t('customerOnboarding.smbQuickStart'),
+      completedDate: new Date(now.getTime() - 18 * 86400000).toISOString(),
+      timeToFirstValue: 4,
+      totalDuration: 11,
+      npsScore: 88
+    }
   ];
 
   selectedOnboardingId.value = 'ob-1';
@@ -1265,7 +1392,9 @@ onMounted(() => {
   position: relative;
   border-radius: 16px;
   overflow: hidden;
-  transition: transform 0.3s ease, box-shadow 0.3s ease;
+  transition:
+    transform 0.3s ease,
+    box-shadow 0.3s ease;
 
   &:hover {
     transform: translateY(-4px);
@@ -1281,25 +1410,33 @@ onMounted(() => {
 .active-card {
   background: linear-gradient(135deg, rgba(120, 73, 255, 0.12), rgba(139, 92, 246, 0.06));
   border: 1px solid rgba(120, 73, 255, 0.2);
-  &:hover { box-shadow: 0 8px 32px rgba(120, 73, 255, 0.15); }
+  &:hover {
+    box-shadow: 0 8px 32px rgba(120, 73, 255, 0.15);
+  }
 }
 
 .completion-card {
   background: linear-gradient(135deg, rgba(34, 197, 94, 0.12), rgba(22, 163, 74, 0.06));
   border: 1px solid rgba(34, 197, 94, 0.2);
-  &:hover { box-shadow: 0 8px 32px rgba(34, 197, 94, 0.15); }
+  &:hover {
+    box-shadow: 0 8px 32px rgba(34, 197, 94, 0.15);
+  }
 }
 
 .duration-card {
   background: linear-gradient(135deg, rgba(59, 130, 246, 0.12), rgba(37, 99, 235, 0.06));
   border: 1px solid rgba(59, 130, 246, 0.2);
-  &:hover { box-shadow: 0 8px 32px rgba(59, 130, 246, 0.15); }
+  &:hover {
+    box-shadow: 0 8px 32px rgba(59, 130, 246, 0.15);
+  }
 }
 
 .risk-card {
   background: linear-gradient(135deg, rgba(245, 158, 11, 0.12), rgba(217, 119, 6, 0.06));
   border: 1px solid rgba(245, 158, 11, 0.2);
-  &:hover { box-shadow: 0 8px 32px rgba(245, 158, 11, 0.15); }
+  &:hover {
+    box-shadow: 0 8px 32px rgba(245, 158, 11, 0.15);
+  }
 }
 
 .kpi-label {
@@ -1334,10 +1471,22 @@ onMounted(() => {
   flex-shrink: 0;
 }
 
-.active-icon { background: rgba(120, 73, 255, 0.15); color: #7849ff; }
-.completion-icon { background: rgba(34, 197, 94, 0.15); color: #22c55e; }
-.duration-icon { background: rgba(59, 130, 246, 0.15); color: #3b82f6; }
-.risk-icon { background: rgba(245, 158, 11, 0.15); color: #f59e0b; }
+.active-icon {
+  background: rgba(120, 73, 255, 0.15);
+  color: #7849ff;
+}
+.completion-icon {
+  background: rgba(34, 197, 94, 0.15);
+  color: #22c55e;
+}
+.duration-icon {
+  background: rgba(59, 130, 246, 0.15);
+  color: #3b82f6;
+}
+.risk-icon {
+  background: rgba(245, 158, 11, 0.15);
+  color: #f59e0b;
+}
 
 /* ── Glass Card ── */
 .glass-card {
@@ -1396,7 +1545,9 @@ onMounted(() => {
 
 /* ── Template Cards ── */
 .template-card {
-  transition: transform 0.3s ease, box-shadow 0.3s ease;
+  transition:
+    transform 0.3s ease,
+    box-shadow 0.3s ease;
 
   &:hover {
     transform: translateY(-4px);

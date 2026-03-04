@@ -529,12 +529,14 @@ const filteredShipments = computed(() => {
   if (shipmentSearch.value) {
     const q = shipmentSearch.value.toLowerCase();
     data = data.filter((s: any) => {
-      return (s.shipmentNumber || '').toLowerCase().includes(q) ||
+      return (
+        (s.shipmentNumber || '').toLowerCase().includes(q) ||
         (s.carrier || '').toLowerCase().includes(q) ||
         (s.trackingNumber || '').toLowerCase().includes(q) ||
         (s.recipientName || '').toLowerCase().includes(q) ||
         (s.origin || '').toLowerCase().includes(q) ||
-        (s.destination || '').toLowerCase().includes(q);
+        (s.destination || '').toLowerCase().includes(q)
+      );
     });
   }
   return data;
@@ -618,11 +620,7 @@ async function saveShipment() {
 
 async function deleteShipment(shipment: any) {
   try {
-    await ElMessageBox.confirm(
-      t('common.confirmDelete'),
-      t('common.warning'),
-      { type: 'warning' }
-    );
+    await ElMessageBox.confirm(t('common.confirmDelete'), t('common.warning'), { type: 'warning' });
     await useApiFetch(`shipping/${shipment.id}`, 'DELETE');
     ElNotification({ type: 'success', title: t('common.success'), message: t('common.deleted') });
     await loadShipments();
@@ -699,11 +697,7 @@ async function saveRate() {
 
 async function deleteRate(rate: any) {
   try {
-    await ElMessageBox.confirm(
-      t('common.confirmDelete'),
-      t('common.warning'),
-      { type: 'warning' }
-    );
+    await ElMessageBox.confirm(t('common.confirmDelete'), t('common.warning'), { type: 'warning' });
     await useApiFetch(`shipping/rates/${rate.id}`, 'DELETE');
     ElNotification({ type: 'success', title: t('common.success'), message: t('common.deleted') });
     await loadRates();

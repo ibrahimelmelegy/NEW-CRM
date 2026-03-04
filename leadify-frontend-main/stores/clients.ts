@@ -26,7 +26,7 @@ export const useClientStore = defineStore('clients', {
 
   getters: {
     activeClients(): Client[] {
-      return this.clients.filter((c) => c.clientStatus === 'ACTIVE');
+      return this.clients.filter(c => c.clientStatus === 'ACTIVE');
     },
 
     clientsByIndustry(): Record<ClientIndustry, Client[]> {
@@ -50,16 +50,15 @@ export const useClientStore = defineStore('clients', {
 
       try {
         const query = params
-          ? '?' + new URLSearchParams(
+          ? '?' +
+            new URLSearchParams(
               Object.entries(params)
                 .filter(([, v]) => v !== undefined && v !== '')
                 .map(([k, v]) => [k, String(v)])
             ).toString()
           : '';
 
-        const response: any = await useApiFetch(
-          `client${query}`
-        );
+        const response: any = await useApiFetch(`client${query}`);
 
         if (response.success && response.body) {
           this.clients = response.body.docs || [];
@@ -131,7 +130,7 @@ export const useClientStore = defineStore('clients', {
         const response: any = await useApiFetch(`client/${id}`, 'PUT', data as Record<string, unknown>);
 
         if (response.success && response.body) {
-          const index = this.clients.findIndex((c) => c.id === id);
+          const index = this.clients.findIndex(c => c.id === id);
           if (index !== -1) {
             this.clients[index] = response.body;
           }
@@ -161,7 +160,7 @@ export const useClientStore = defineStore('clients', {
         const response = await useApiFetch(`client/${id}`, 'DELETE');
 
         if (response.success) {
-          this.clients = this.clients.filter((c) => c.id !== id);
+          this.clients = this.clients.filter(c => c.id !== id);
           if (this.currentClient?.id === id) {
             this.currentClient = null;
           }

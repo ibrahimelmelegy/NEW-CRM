@@ -10,7 +10,7 @@ export const useNotificationStore = defineStore('notifications', {
 
   getters: {
     unreadNotifications(): AppNotification[] {
-      return this.notifications.filter((n) => !n.read);
+      return this.notifications.filter(n => !n.read);
     }
   },
 
@@ -23,7 +23,7 @@ export const useNotificationStore = defineStore('notifications', {
 
         if (response.success && response.body) {
           this.notifications = response.body.docs || [];
-          this.unreadCount = this.notifications.filter((n) => !n.read).length;
+          this.unreadCount = this.notifications.filter(n => !n.read).length;
         }
       } catch (error: unknown) {
         console.error('Error fetching notifications:', error);
@@ -37,7 +37,7 @@ export const useNotificationStore = defineStore('notifications', {
         const response = await useApiFetch(`notification/${id}/read`, 'PUT');
 
         if (response.success) {
-          const notification = this.notifications.find((n) => n.id === id);
+          const notification = this.notifications.find(n => n.id === id);
           if (notification && !notification.read) {
             notification.read = true;
             this.unreadCount = Math.max(0, this.unreadCount - 1);

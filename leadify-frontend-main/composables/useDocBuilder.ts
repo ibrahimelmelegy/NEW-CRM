@@ -1,3 +1,4 @@
+/* eslint-disable no-use-before-define */
 import { ref } from 'vue';
 import { useApiFetch } from './useApiFetch';
 

@@ -1,3 +1,4 @@
+/* eslint-disable require-await */
 import { ref } from 'vue';
 import { useApiFetch } from './useApiFetch';
 

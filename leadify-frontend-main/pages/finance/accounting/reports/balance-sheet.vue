@@ -105,9 +105,7 @@ const equityWithNetIncome = computed(() => {
   if (report.value.netIncome !== 0) {
     items.push({
       code: '-',
-      name: report.value.netIncome >= 0
-        ? t('accounting.balanceSheet.netIncomePeriod')
-        : t('accounting.balanceSheet.netLossPeriod'),
+      name: report.value.netIncome >= 0 ? t('accounting.balanceSheet.netIncomePeriod') : t('accounting.balanceSheet.netLossPeriod'),
       type: 'EQUITY',
       amount: report.value.netIncome,
       isNetIncome: true

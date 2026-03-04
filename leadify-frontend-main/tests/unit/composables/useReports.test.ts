@@ -6,16 +6,6 @@
 
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 
-const mockApiFetch = vi.fn();
-(globalThis as any).useApiFetch = mockApiFetch;
-(globalThis as any).useRuntimeConfig = () => ({
-  public: { apiBaseUrl: 'http://localhost:3001/api/v1/' }
-});
-
-vi.mock('@/composables/useApiFetch', () => ({
-  useApiFetch: (...args: any[]) => mockApiFetch(...args)
-}));
-
 import {
   fetchReports,
   fetchReport,
@@ -29,6 +19,16 @@ import {
   fetchReportAnalytics,
   downloadBlob
 } from '~/composables/useReports';
+
+const mockApiFetch = vi.fn();
+(globalThis as any).useApiFetch = mockApiFetch;
+(globalThis as any).useRuntimeConfig = () => ({
+  public: { apiBaseUrl: 'http://localhost:3001/api/v1/' }
+});
+
+vi.mock('@/composables/useApiFetch', () => ({
+  useApiFetch: (...args: any[]) => mockApiFetch(...args)
+}));
 
 describe('useReports', () => {
   beforeEach(() => {
@@ -65,7 +65,10 @@ describe('useReports', () => {
     });
 
     it('should handle body as direct array (no docs wrapper)', async () => {
-      const reports = [{ id: 1, name: 'R1' }, { id: 2, name: 'R2' }];
+      const reports = [
+        { id: 1, name: 'R1' },
+        { id: 2, name: 'R2' }
+      ];
       mockApiFetch.mockResolvedValue({ body: reports, success: true });
 
       const result = await fetchReports();

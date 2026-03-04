@@ -272,7 +272,7 @@ import { CanvasRenderer } from 'echarts/renderers';
 import { BarChart } from 'echarts/charts';
 import { TitleComponent, TooltipComponent, LegendComponent, GridComponent } from 'echarts/components';
 import VChart from 'vue-echarts';
-import { graphic } from 'echarts';
+import { graphic } from 'echarts/core';
 
 use([CanvasRenderer, BarChart, TitleComponent, TooltipComponent, LegendComponent, GridComponent]);
 
@@ -300,15 +300,9 @@ const allTickets = ref<any[]>([]);
 // ── Computed: Health-scored customers ──
 const customers = computed(() => {
   return allClients.value.map(client => {
-    const clientDeals = allDeals.value.filter(d =>
-      d.clientId === client.id || d.client === client.id
-    );
-    const clientInvoices = allInvoices.value.filter(inv =>
-      inv.clientId === client.id || inv.client === client.id
-    );
-    const clientTickets = allTickets.value.filter(tk =>
-      tk.clientId === client.id || tk.client === client.id
-    );
+    const clientDeals = allDeals.value.filter(d => d.clientId === client.id || d.client === client.id);
+    const clientInvoices = allInvoices.value.filter(inv => inv.clientId === client.id || inv.client === client.id);
+    const clientTickets = allTickets.value.filter(tk => tk.clientId === client.id || tk.client === client.id);
 
     const openDeals = clientDeals.filter(d => d.status !== 'WON' && d.status !== 'LOST');
     const wonDeals = clientDeals.filter(d => d.status === 'WON');
@@ -321,9 +315,7 @@ const customers = computed(() => {
     let engagementRaw = 0;
     engagementRaw += Math.min(clientDeals.length * 12, 40);
     engagementRaw += Math.min(wonDeals.length * 15, 30);
-    const lastDealDate = clientDeals.length
-      ? Math.max(...clientDeals.map(d => new Date(d.updatedAt || d.createdAt).getTime()))
-      : 0;
+    const lastDealDate = clientDeals.length ? Math.max(...clientDeals.map(d => new Date(d.updatedAt || d.createdAt).getTime())) : 0;
     const daysSinceLastDeal = lastDealDate ? Math.floor((Date.now() - lastDealDate) / 86400000) : 999;
     if (daysSinceLastDeal < 7) engagementRaw += 30;
     else if (daysSinceLastDeal < 30) engagementRaw += 20;
@@ -354,12 +346,7 @@ const customers = computed(() => {
     const relationshipScore = Math.min(relationshipRaw, 100);
 
     // Weighted final score
-    const healthScore = Math.round(
-      engagementScore * 0.3 +
-      supportScore * 0.25 +
-      financialScore * 0.25 +
-      relationshipScore * 0.2
-    );
+    const healthScore = Math.round(engagementScore * 0.3 + supportScore * 0.25 + financialScore * 0.25 + relationshipScore * 0.2);
 
     // Determine trend
     let trend: 'up' | 'down' | 'stable' = 'stable';
@@ -367,9 +354,12 @@ const customers = computed(() => {
     else if (daysSinceLastDeal > 60 || urgentTickets.length > 0 || overdueInvoices.length > 1) trend = 'down';
 
     // NPS mock (derived from overall health pattern)
-    const npsScore = healthScore >= 70 ? Math.floor(healthScore * 0.9 + Math.random() * 10) :
-      healthScore >= 40 ? Math.floor(healthScore * 0.6 + Math.random() * 20) :
-      Math.floor(healthScore * 0.3 + Math.random() * 15);
+    const npsScore =
+      healthScore >= 70
+        ? Math.floor(healthScore * 0.9 + Math.random() * 10)
+        : healthScore >= 40
+          ? Math.floor(healthScore * 0.6 + Math.random() * 20)
+          : Math.floor(healthScore * 0.3 + Math.random() * 15);
 
     // Risk level
     let riskLevel: 'healthy' | 'at-risk' | 'critical' = 'healthy';
@@ -401,10 +391,8 @@ const filteredCustomers = computed(() => {
   let result = customers.value;
   if (searchQuery.value) {
     const q = searchQuery.value.toLowerCase();
-    result = result.filter(c =>
-      c.name.toLowerCase().includes(q) ||
-      (c.email && c.email.toLowerCase().includes(q)) ||
-      (c.company && c.company.toLowerCase().includes(q))
+    result = result.filter(
+      c => c.name.toLowerCase().includes(q) || (c.email && c.email.toLowerCase().includes(q)) || (c.company && c.company.toLowerCase().includes(q))
     );
   }
   if (riskFilter.value) {
@@ -412,7 +400,7 @@ const filteredCustomers = computed(() => {
   }
 
   // Sort
-  const prop = sortProp.value as keyof typeof result[0];
+  const prop = sortProp.value as keyof (typeof result)[0];
   const order = sortOrder.value === 'ascending' ? 1 : -1;
   result = [...result].sort((a, b) => {
     const aVal = a[prop] ?? '';
@@ -506,7 +494,7 @@ const distributionChartOption = computed(() => {
     series: [
       {
         type: 'bar',
-        data: data,
+        data,
         barWidth: 28,
         showBackground: true,
         backgroundStyle: {
@@ -703,7 +691,9 @@ async function loadClients() {
       const data = body as any;
       allClients.value = data.docs || data || [];
     }
-  } catch { /* silent */ }
+  } catch {
+    /* silent */
+  }
 }
 
 async function loadDeals() {
@@ -713,7 +703,9 @@ async function loadDeals() {
       const data = body as any;
       allDeals.value = data.docs || data || [];
     }
-  } catch { /* silent */ }
+  } catch {
+    /* silent */
+  }
 }
 
 async function loadInvoices() {
@@ -723,7 +715,9 @@ async function loadInvoices() {
       const data = body as any;
       allInvoices.value = data.docs || data || [];
     }
-  } catch { /* silent */ }
+  } catch {
+    /* silent */
+  }
 }
 
 async function loadTickets() {
@@ -733,7 +727,9 @@ async function loadTickets() {
       const data = body as any;
       allTickets.value = data.docs || data || [];
     }
-  } catch { /* silent */ }
+  } catch {
+    /* silent */
+  }
 }
 
 async function refreshData() {
@@ -762,7 +758,9 @@ onMounted(() => {
   position: relative;
   border-radius: 16px;
   overflow: hidden;
-  transition: transform 0.3s ease, box-shadow 0.3s ease;
+  transition:
+    transform 0.3s ease,
+    box-shadow 0.3s ease;
 }
 
 .kpi-card:hover {
@@ -779,25 +777,33 @@ onMounted(() => {
   background: linear-gradient(135deg, rgba(16, 185, 129, 0.12), rgba(5, 150, 105, 0.06));
   border: 1px solid rgba(16, 185, 129, 0.2);
 }
-.healthy-card:hover { box-shadow: 0 8px 32px rgba(16, 185, 129, 0.15); }
+.healthy-card:hover {
+  box-shadow: 0 8px 32px rgba(16, 185, 129, 0.15);
+}
 
 .risk-card {
   background: linear-gradient(135deg, rgba(245, 158, 11, 0.12), rgba(217, 119, 6, 0.06));
   border: 1px solid rgba(245, 158, 11, 0.2);
 }
-.risk-card:hover { box-shadow: 0 8px 32px rgba(245, 158, 11, 0.15); }
+.risk-card:hover {
+  box-shadow: 0 8px 32px rgba(245, 158, 11, 0.15);
+}
 
 .critical-card {
   background: linear-gradient(135deg, rgba(239, 68, 68, 0.12), rgba(220, 38, 38, 0.06));
   border: 1px solid rgba(239, 68, 68, 0.2);
 }
-.critical-card:hover { box-shadow: 0 8px 32px rgba(239, 68, 68, 0.15); }
+.critical-card:hover {
+  box-shadow: 0 8px 32px rgba(239, 68, 68, 0.15);
+}
 
 .avg-card {
   background: linear-gradient(135deg, rgba(120, 73, 255, 0.12), rgba(139, 92, 246, 0.06));
   border: 1px solid rgba(120, 73, 255, 0.2);
 }
-.avg-card:hover { box-shadow: 0 8px 32px rgba(120, 73, 255, 0.15); }
+.avg-card:hover {
+  box-shadow: 0 8px 32px rgba(120, 73, 255, 0.15);
+}
 
 .kpi-label {
   font-size: 12px;
@@ -831,10 +837,22 @@ onMounted(() => {
   flex-shrink: 0;
 }
 
-.healthy-icon { background: rgba(16, 185, 129, 0.15); color: #10b981; }
-.risk-icon { background: rgba(245, 158, 11, 0.15); color: #f59e0b; }
-.critical-icon { background: rgba(239, 68, 68, 0.15); color: #ef4444; }
-.avg-icon { background: rgba(120, 73, 255, 0.15); color: #7849ff; }
+.healthy-icon {
+  background: rgba(16, 185, 129, 0.15);
+  color: #10b981;
+}
+.risk-icon {
+  background: rgba(245, 158, 11, 0.15);
+  color: #f59e0b;
+}
+.critical-icon {
+  background: rgba(239, 68, 68, 0.15);
+  color: #ef4444;
+}
+.avg-icon {
+  background: rgba(120, 73, 255, 0.15);
+  color: #7849ff;
+}
 
 /* ── Glass Card ── */
 .glass-card {
@@ -867,17 +885,30 @@ onMounted(() => {
   border-radius: 10px;
   transition: transform 0.2s ease;
 }
-.trend-badge:hover { transform: scale(1.15); }
-.trend-badge.up { background: rgba(16, 185, 129, 0.15); color: #10b981; }
-.trend-badge.down { background: rgba(239, 68, 68, 0.15); color: #ef4444; }
-.trend-badge.stable { background: rgba(148, 163, 184, 0.15); color: #94a3b8; }
+.trend-badge:hover {
+  transform: scale(1.15);
+}
+.trend-badge.up {
+  background: rgba(16, 185, 129, 0.15);
+  color: #10b981;
+}
+.trend-badge.down {
+  background: rgba(239, 68, 68, 0.15);
+  color: #ef4444;
+}
+.trend-badge.stable {
+  background: rgba(148, 163, 184, 0.15);
+  color: #94a3b8;
+}
 
 /* ── Alert Cards ── */
 .alert-card {
   padding: 16px;
   border-radius: 12px;
   border: 1px solid;
-  transition: transform 0.2s ease, box-shadow 0.2s ease;
+  transition:
+    transform 0.2s ease,
+    box-shadow 0.2s ease;
 }
 .alert-card:hover {
   transform: translateX(4px);
@@ -908,10 +939,22 @@ onMounted(() => {
   align-items: center;
   justify-content: center;
 }
-.alert-icon-wrap.warning { background: rgba(245, 158, 11, 0.15); color: #f59e0b; }
-.alert-icon-wrap.danger { background: rgba(239, 68, 68, 0.15); color: #ef4444; }
-.alert-icon-wrap.critical { background: rgba(220, 38, 38, 0.2); color: #dc2626; }
-.alert-icon-wrap.success { background: rgba(16, 185, 129, 0.15); color: #10b981; }
+.alert-icon-wrap.warning {
+  background: rgba(245, 158, 11, 0.15);
+  color: #f59e0b;
+}
+.alert-icon-wrap.danger {
+  background: rgba(239, 68, 68, 0.15);
+  color: #ef4444;
+}
+.alert-icon-wrap.critical {
+  background: rgba(220, 38, 38, 0.2);
+  color: #dc2626;
+}
+.alert-icon-wrap.success {
+  background: rgba(16, 185, 129, 0.15);
+  color: #10b981;
+}
 
 /* ── Calculation Factor Cards ── */
 .calc-factor-card {
@@ -919,7 +962,9 @@ onMounted(() => {
   border-radius: 16px;
   background: var(--glass-bg, rgba(255, 255, 255, 0.04));
   border: 1px solid var(--glass-border, rgba(255, 255, 255, 0.08));
-  transition: transform 0.2s ease, box-shadow 0.2s ease;
+  transition:
+    transform 0.2s ease,
+    box-shadow 0.2s ease;
 }
 .calc-factor-card:hover {
   transform: translateY(-2px);

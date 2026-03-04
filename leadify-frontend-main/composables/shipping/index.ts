@@ -11,5 +11,16 @@ export const useShipping = () => {
   const updateShippingRate = (id: string | number, data: any) => useApiFetch(`shipping/rates/${id}`, 'PUT', data);
   const deleteShippingRate = (id: string | number) => useApiFetch(`shipping/rates/${id}`, 'DELETE');
   const trackShipment = (trackingNumber: string) => useApiFetch(`shipping/track/${trackingNumber}`, 'GET');
-  return { getShipments, getShipmentById, createShipment, updateShipment, deleteShipment, getShippingRates, createShippingRate, updateShippingRate, deleteShippingRate, trackShipment };
+  return {
+    getShipments,
+    getShipmentById,
+    createShipment,
+    updateShipment,
+    deleteShipment,
+    getShippingRates,
+    createShippingRate,
+    updateShippingRate,
+    deleteShippingRate,
+    trackShipment
+  };
 };

@@ -642,18 +642,12 @@ const contactForm = reactive({
   tags: [] as string[]
 });
 
-const contactDialogTitle = computed(() =>
-  editingContact.value
-    ? _t('whatsappPage.contacts.editContact')
-    : _t('whatsappPage.contacts.addContact')
-);
+const contactDialogTitle = computed(() => (editingContact.value ? _t('whatsappPage.contacts.editContact') : _t('whatsappPage.contacts.addContact')));
 
 const showTemplateDialog = ref(false);
 const editingTemplate = ref<WATemplate | null>(null);
 const templateDialogTitle = computed(() =>
-  editingTemplate.value
-    ? _t('whatsappPage.templates.editTemplate')
-    : _t('whatsappPage.templates.addTemplate')
+  editingTemplate.value ? _t('whatsappPage.templates.editTemplate') : _t('whatsappPage.templates.addTemplate')
 );
 const savingTemplate = ref(false);
 const templateForm = reactive({
@@ -676,11 +670,16 @@ const mediaForm = reactive({
 
 const mediaAcceptTypes = computed(() => {
   switch (mediaForm.type) {
-    case 'IMAGE': return 'image/*';
-    case 'DOCUMENT': return '.pdf,.doc,.docx,.xls,.xlsx,.csv,.txt';
-    case 'AUDIO': return 'audio/*';
-    case 'VIDEO': return 'video/*';
-    default: return '*';
+    case 'IMAGE':
+      return 'image/*';
+    case 'DOCUMENT':
+      return '.pdf,.doc,.docx,.xls,.xlsx,.csv,.txt';
+    case 'AUDIO':
+      return 'audio/*';
+    case 'VIDEO':
+      return 'video/*';
+    default:
+      return '*';
   }
 });
 
@@ -915,11 +914,7 @@ async function deleteContact(id: string) {
 async function bulkDeleteContacts() {
   if (!selectedContacts.value.length) return;
   try {
-    await ElMessageBox.confirm(
-      _t('whatsappPage.contacts.bulkDeleteConfirm'),
-      _t('common.warning'),
-      { type: 'warning' }
-    );
+    await ElMessageBox.confirm(_t('whatsappPage.contacts.bulkDeleteConfirm'), _t('common.warning'), { type: 'warning' });
     for (const c of selectedContacts.value) {
       await useApiFetch(`whatsapp/contacts/${c.id}`, 'DELETE');
     }
@@ -1141,7 +1136,11 @@ async function executeBulkSend() {
     });
     if (success && body) {
       const data = body as any;
-      ElMessage.success(`${_t('whatsappPage.messages.bulkResult').replace('{sent}', data.sent || 0).replace('{failed}', data.failed || 0)}`);
+      ElMessage.success(
+        `${_t('whatsappPage.messages.bulkResult')
+          .replace('{sent}', data.sent || 0)
+          .replace('{failed}', data.failed || 0)}`
+      );
       showBulkSendDialog.value = false;
     } else {
       ElMessage.error(_t('whatsappPage.errors.bulkSendFailed'));
@@ -1319,12 +1318,18 @@ function formatTime(dateStr: string | undefined): string {
 
 function getMediaIcon(type: string): string {
   switch (type) {
-    case 'IMAGE': return 'ph:image';
-    case 'DOCUMENT': return 'ph:file-text';
-    case 'AUDIO': return 'ph:microphone';
-    case 'VIDEO': return 'ph:video-camera';
-    case 'LOCATION': return 'ph:map-pin';
-    default: return 'ph:file';
+    case 'IMAGE':
+      return 'ph:image';
+    case 'DOCUMENT':
+      return 'ph:file-text';
+    case 'AUDIO':
+      return 'ph:microphone';
+    case 'VIDEO':
+      return 'ph:video-camera';
+    case 'LOCATION':
+      return 'ph:map-pin';
+    default:
+      return 'ph:file';
   }
 }
 
@@ -1339,20 +1344,26 @@ function onTabChange() {
 
 // ─── Watchers ───────────────────────────────────────────────────────────────
 
-watch(showContactDialog, (val) => {
+watch(showContactDialog, val => {
   if (!val) {
     editingContact.value = null;
     Object.assign(contactForm, { phoneNumber: '', name: '', status: 'ACTIVE', tags: [] });
   }
 });
 
-watch(() => sendTemplateForm.templateId, () => {
-  sendTemplateForm.variables = {};
-});
+watch(
+  () => sendTemplateForm.templateId,
+  () => {
+    sendTemplateForm.variables = {};
+  }
+);
 
-watch(() => bulkSendForm.templateId, () => {
-  bulkSendForm.variables = {};
-});
+watch(
+  () => bulkSendForm.templateId,
+  () => {
+    bulkSendForm.variables = {};
+  }
+);
 
 // ─── Init ───────────────────────────────────────────────────────────────────
 

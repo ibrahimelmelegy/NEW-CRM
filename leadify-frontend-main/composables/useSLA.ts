@@ -1,3 +1,5 @@
+/* eslint-disable no-use-before-define */
+/* eslint-disable require-await */
 import { useApiFetch } from './useApiFetch';
 
 export interface SLAPolicy {

@@ -256,13 +256,7 @@ div.p-4.space-y-6.animate-fade-in(class="md_p-6")
 import { ref, reactive, computed, onMounted, watch } from 'vue';
 import { ElNotification } from 'element-plus';
 import type { FormRules } from 'element-plus';
-import {
-  fetchProducts,
-  createProduct,
-  updateProduct,
-  deleteProduct,
-  type CatalogProduct
-} from '~/composables/useProductCatalog';
+import { fetchProducts, createProduct, updateProduct, deleteProduct, type CatalogProduct } from '~/composables/useProductCatalog';
 
 definePageMeta({ middleware: 'permissions' });
 
@@ -456,13 +450,19 @@ async function handleDelete() {
 
 // Helpers
 function formatCurrency(amount: number): string {
-  return new Intl.NumberFormat('en-US', { style: 'currency', currency: 'SAR', minimumFractionDigits: 0, maximumFractionDigits: 2 }).format(amount || 0);
+  return new Intl.NumberFormat('en-US', { style: 'currency', currency: 'SAR', minimumFractionDigits: 0, maximumFractionDigits: 2 }).format(
+    amount || 0
+  );
 }
 
 // Check for ?action=new in query
-watch(() => route.query.action, (action) => {
-  if (action === 'new') openCreateDialog();
-}, { immediate: true });
+watch(
+  () => route.query.action,
+  action => {
+    if (action === 'new') openCreateDialog();
+  },
+  { immediate: true }
+);
 
 onMounted(async () => {
   await Promise.all([loadProducts(), loadCategories()]);

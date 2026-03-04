@@ -139,6 +139,7 @@
 </template>
 
 <script setup lang="ts">
+/* eslint-disable require-await */
 import { ElNotification } from 'element-plus';
 
 definePageMeta({ middleware: 'permissions' });

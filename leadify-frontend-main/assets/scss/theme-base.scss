@@ -8,79 +8,83 @@
 // 📄 HTML & BODY
 // ========================================
 html {
-    font-size: 16px;
-    scroll-behavior: smooth;
-    overflow-x: hidden;
-    // Chrome applies translateX(-viewport) to <html> in RTL + overflow-x:hidden,
-    // which creates a new containing block and breaks all position:fixed elements.
-    // Explicitly setting transform:none prevents this Chrome behavior.
-    transform: none;
+  font-size: 16px;
+  scroll-behavior: smooth;
+  overflow-x: hidden;
+  // Chrome applies translateX(-viewport) to <html> in RTL + overflow-x:hidden,
+  // which creates a new containing block and breaks all position:fixed elements.
+  // Explicitly setting transform:none prevents this Chrome behavior.
+  transform: none;
 }
 
 body {
-    margin: 0;
-    padding: 0;
-    background-color: var(--bg-primary) !important;
-    color: var(--text-primary);
-    font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Display', 'SF Pro Text', system-ui, 'Segoe UI', Roboto, sans-serif;
-    font-size: 14px;
-    line-height: 1.6;
-    -webkit-font-smoothing: antialiased;
-    -moz-osx-font-smoothing: grayscale;
-    overflow-x: hidden;
-    min-height: 100vh;
+  margin: 0;
+  padding: 0;
+  background-color: var(--bg-primary) !important;
+  color: var(--text-primary);
+  font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Display', 'SF Pro Text', system-ui, 'Segoe UI', Roboto, sans-serif;
+  font-size: 14px;
+  line-height: 1.6;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  overflow-x: hidden;
+  min-height: 100vh;
 }
 
 // Global Glassmorphism Utility
 // Global Glassmorphism Utility
 .glass-effect {
-    background: var(--glass-bg);
-    backdrop-filter: blur(20px);
-    -webkit-backdrop-filter: blur(20px);
-    border: 1px solid var(--glass-border);
-    box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.37);
-    transition: all 0.3s ease;
+  background: var(--glass-bg);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border: 1px solid var(--glass-border);
+  box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.37);
+  transition: all 0.3s ease;
 
-    html.light-mode & {
-        background: var(--glass-bg);
-        border-color: var(--glass-border);
-        box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.07);
-    }
+  html.light-mode & {
+    background: var(--glass-bg);
+    border-color: var(--glass-border);
+    box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.07);
+  }
 }
 
 .glass-card-premium {
-    background: rgba(255, 255, 255, 0.03);
-    backdrop-filter: blur(40px);
-    -webkit-backdrop-filter: blur(40px);
-    border: 1px solid rgba(255, 255, 255, 0.15);
-    box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
-    border-radius: 24px;
-    transition: all 0.4s cubic-bezier(0.165, 0.84, 0.44, 1);
+  background: rgba(255, 255, 255, 0.03);
+  backdrop-filter: blur(40px);
+  -webkit-backdrop-filter: blur(40px);
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
+  border-radius: 24px;
+  transition: all 0.4s cubic-bezier(0.165, 0.84, 0.44, 1);
+
+  &:hover {
+    background: rgba(255, 255, 255, 0.05);
+    border-color: rgba(255, 255, 255, 0.25);
+    transform: translateY(-4px);
+    box-shadow: 0 40px 80px -10px rgba(0, 0, 0, 0.6);
+  }
+
+  html.light-mode & {
+    background: rgba(255, 255, 255, 0.6);
+    border-color: rgba(255, 255, 255, 0.8);
+    backdrop-filter: blur(20px) !important;
+    box-shadow: 0 20px 40px -12px rgba(0, 0, 0, 0.08);
 
     &:hover {
-        background: rgba(255, 255, 255, 0.05);
-        border-color: rgba(255, 255, 255, 0.25);
-        transform: translateY(-4px);
-        box-shadow: 0 40px 80px -10px rgba(0, 0, 0, 0.6);
+      background: rgba(255, 255, 255, 0.75);
+      border-color: rgba(255, 255, 255, 0.8);
+      box-shadow: 0 30px 60px -12px rgba(0, 0, 0, 0.12);
     }
-
-    html.light-mode & {
-        background: rgba(255, 255, 255, 0.6);
-        border-color: rgba(255, 255, 255, 0.8);
-        backdrop-filter: blur(20px) !important;
-        box-shadow: 0 20px 40px -12px rgba(0, 0, 0, 0.08);
-
-        &:hover {
-            background: rgba(255, 255, 255, 0.75);
-            border-color: rgba(255, 255, 255, 0.8);
-            box-shadow: 0 30px 60px -12px rgba(0, 0, 0, 0.12);
-        }
-    }
+  }
 }
 
 // Arabic RTL Font
-[dir="rtl"] body {
-    font-family: 'IBM Plex Sans Arabic', 'Inter', -apple-system, sans-serif;
+[dir='rtl'] body {
+  font-family:
+    'IBM Plex Sans Arabic',
+    'Inter',
+    -apple-system,
+    sans-serif;
 }
 
 // ========================================
@@ -92,30 +96,30 @@ h3,
 h4,
 h5,
 h6 {
-    font-family: 'Space Grotesk', 'Poppins', sans-serif;
-    font-weight: 700;
-    letter-spacing: -0.02em;
-    color: var(--text-primary);
-    margin: 0;
+  font-family: 'Space Grotesk', 'Poppins', sans-serif;
+  font-weight: 700;
+  letter-spacing: -0.02em;
+  color: var(--text-primary);
+  margin: 0;
 }
 
-[dir="rtl"] h1,
-[dir="rtl"] h2,
-[dir="rtl"] h3,
-[dir="rtl"] h4,
-[dir="rtl"] h5,
-[dir="rtl"] h6 {
-    font-family: 'IBM Plex Sans Arabic', 'Space Grotesk', sans-serif;
+[dir='rtl'] h1,
+[dir='rtl'] h2,
+[dir='rtl'] h3,
+[dir='rtl'] h4,
+[dir='rtl'] h5,
+[dir='rtl'] h6 {
+  font-family: 'IBM Plex Sans Arabic', 'Space Grotesk', sans-serif;
 }
 
 a {
-    color: var(--purple-400);
-    text-decoration: none;
-    transition: color var(--transition-fast);
+  color: var(--purple-400);
+  text-decoration: none;
+  transition: color var(--transition-fast);
 
-    &:hover {
-        color: var(--purple-300);
-    }
+  &:hover {
+    color: var(--purple-300);
+  }
 }
 
 // ============================================
@@ -123,42 +127,44 @@ a {
 // ============================================
 
 body {
-    background-color: var(--bg-body);
-    color: var(--text-primary);
-    transition: background-color var(--transition-normal), color var(--transition-normal);
+  background-color: var(--bg-body);
+  color: var(--text-primary);
+  transition:
+    background-color var(--transition-normal),
+    color var(--transition-normal);
 }
 
 html.light-mode body {
-    background-color: var(--bg-body); // Will use the light value
+  background-color: var(--bg-body); // Will use the light value
 }
 
 // ========================================
 // 📜 SCROLLBAR - Gradient Style
 // ========================================
 ::-webkit-scrollbar {
-    width: 8px;
-    height: 8px;
+  width: 8px;
+  height: 8px;
 }
 
 ::-webkit-scrollbar-track {
-    background: var(--bg-secondary);
+  background: var(--bg-secondary);
 }
 
 ::-webkit-scrollbar-thumb {
-    background: var(--gradient-primary);
-    border-radius: 10px;
+  background: var(--gradient-primary);
+  border-radius: 10px;
 
-    &:hover {
-        background: var(--gradient-accent);
-    }
+  &:hover {
+    background: var(--gradient-accent);
+  }
 }
 
 // ========================================
 // 🎭 SELECTION
 // ========================================
 ::selection {
-    background-color: var(--purple-500);
-    color: white;
+  background-color: var(--purple-500);
+  color: white;
 }
 
 // ========================================
@@ -166,34 +172,33 @@ html.light-mode body {
 // ========================================
 .page-enter-active,
 .page-leave-active {
-    transition: all 0.3s ease-out;
+  transition: all 0.3s ease-out;
 }
 
 .page-enter-from,
 .page-leave-to {
-    opacity: 0;
-    transform: translateY(10px);
+  opacity: 0;
+  transform: translateY(10px);
 }
 
 // ========================================
 // 📐 LAYOUT HELPERS
 // ========================================
 .marginedStart {
-    margin-inline-start: 260px;
-    width: calc(100% - 260px);
-    transition: all 0.3s ease;
+  margin-inline-start: 260px;
+  width: calc(100% - 260px);
+  transition: all 0.3s ease;
 }
 
 .collapseMargin {
-    margin-inline-start: 80px;
-    width: calc(100% - 80px);
+  margin-inline-start: 80px;
+  width: calc(100% - 80px);
 }
 
 @media screen and (max-width: 992px) {
-
-    .marginedStart,
-    .collapseMargin {
-        margin-inline-start: 0 !important;
-        width: 100% !important;
-    }
+  .marginedStart,
+  .collapseMargin {
+    margin-inline-start: 0 !important;
+    width: 100% !important;
+  }
 }

@@ -13,12 +13,7 @@
       <div class="text-center">
         <Icon name="ph:warning-circle" size="48" class="text-red-500 mx-auto mb-4" />
         <p class="text-gray-700 font-medium mb-2">Proposal not found</p>
-        <button
-          class="text-violet-600 hover:text-violet-700 font-medium"
-          @click="navigateTo('/sales/proposals')"
-        >
-          Back to Proposals
-        </button>
+        <button class="text-violet-600 hover:text-violet-700 font-medium" @click="navigateTo('/sales/proposals')">Back to Proposals</button>
       </div>
     </div>
 
@@ -28,10 +23,7 @@
       <header class="bg-white border-b border-gray-100 sticky top-0 z-10">
         <div class="max-w-7xl mx-auto px-6 py-4 flex items-center justify-between">
           <div class="flex items-center gap-4">
-            <button
-              class="p-2 hover:bg-gray-100 rounded-xl transition-colors"
-              @click="navigateTo('/sales/proposals')"
-            >
+            <button class="p-2 hover:bg-gray-100 rounded-xl transition-colors" @click="navigateTo('/sales/proposals')">
               <ArrowLeft :size="20" class="text-gray-600" />
             </button>
             <div>
@@ -40,11 +32,7 @@
             </div>
           </div>
           <div class="flex items-center gap-3">
-            <button
-              class="p-2 hover:bg-gray-100 rounded-xl transition-colors"
-              title="Refresh"
-              @click="reloadProposal"
-            >
+            <button class="p-2 hover:bg-gray-100 rounded-xl transition-colors" title="Refresh" @click="reloadProposal">
               <RefreshCw :size="18" class="text-gray-500" />
             </button>
             <button
@@ -88,46 +76,32 @@
               </div>
 
               <!-- Approval Actions -->
-              <ProposalApprovalActions
-                :proposal-id="proposal.id"
-                :status="proposal.status || 'DRAFT'"
-                @updated="reloadProposal"
-              />
+              <ProposalApprovalActions :proposal-id="proposal.id" :status="proposal.status || 'DRAFT'" @updated="reloadProposal" />
             </div>
 
             <!-- Executive Summary / Introduction -->
-            <div v-if="content?.sections?.introduction || content?.sections?.executiveSummary" class="bg-white rounded-2xl p-6 border border-gray-100">
+            <div
+              v-if="content?.sections?.introduction || content?.sections?.executiveSummary"
+              class="bg-white rounded-2xl p-6 border border-gray-100"
+            >
               <h3 class="text-lg font-bold text-gray-900 mb-4">Executive Summary</h3>
-              <div
-                class="prose prose-sm max-w-none"
-                v-html="content.sections.introduction || content.sections.executiveSummary"
-              />
+              <div class="prose prose-sm max-w-none" v-html="content.sections.introduction || content.sections.executiveSummary" />
             </div>
 
             <!-- Solution & Scope -->
             <div v-if="content?.sections?.scopeOfWork || content?.sections?.solutionScope" class="bg-white rounded-2xl p-6 border border-gray-100">
               <h3 class="text-lg font-bold text-gray-900 mb-4">Solution & Scope</h3>
-              <div
-                class="prose prose-sm max-w-none"
-                v-html="content.sections.scopeOfWork || content.sections.solutionScope"
-              />
+              <div class="prose prose-sm max-w-none" v-html="content.sections.scopeOfWork || content.sections.solutionScope" />
             </div>
 
             <!-- Methodology -->
             <div v-if="content?.sections?.methodology" class="bg-white rounded-2xl p-6 border border-gray-100">
               <h3 class="text-lg font-bold text-gray-900 mb-4">Methodology</h3>
-              <div
-                class="prose prose-sm max-w-none"
-                v-html="content.sections.methodology"
-              />
+              <div class="prose prose-sm max-w-none" v-html="content.sections.methodology" />
             </div>
 
             <!-- Custom Sections -->
-            <div
-              v-for="(section, idx) in (content?.sections?.customSections || [])"
-              :key="idx"
-              class="bg-white rounded-2xl p-6 border border-gray-100"
-            >
+            <div v-for="(section, idx) in content?.sections?.customSections || []" :key="idx" class="bg-white rounded-2xl p-6 border border-gray-100">
               <h3 class="text-lg font-bold text-gray-900 mb-4">{{ section.title || `Section ${Number(idx) + 1}` }}</h3>
               <div class="prose prose-sm max-w-none" v-html="section.content" />
             </div>
@@ -314,131 +288,137 @@
 </template>
 
 <script setup lang="ts">
-import { ref, computed, onMounted } from 'vue'
-import { Loading } from '@element-plus/icons-vue'
+import { ref, computed, onMounted } from 'vue';
+import { Loading } from '@element-plus/icons-vue';
 import {
-  ArrowLeft, Edit, Trash2, Download, Clock, CheckCircle,
-  XCircle, Send, Building2, User, DollarSign,
-  ExternalLink, AlertCircle, RefreshCw, FileText
-} from 'lucide-vue-next'
-import { getProposal, deleteProposal as deleteProposalApi } from '~/composables/useProposals'
-import ProposalApprovalActions from '~/components/DocumentBuilder/ProposalApprovalActions.vue'
+  ArrowLeft,
+  Edit,
+  Trash2,
+  Download,
+  Clock,
+  CheckCircle,
+  XCircle,
+  Send,
+  Building2,
+  User,
+  DollarSign,
+  ExternalLink,
+  AlertCircle,
+  RefreshCw,
+  FileText
+} from 'lucide-vue-next';
+import { getProposal, deleteProposal as deleteProposalApi } from '~/composables/useProposals';
+import ProposalApprovalActions from '~/components/DocumentBuilder/ProposalApprovalActions.vue';
 
 definePageMeta({
   layout: 'default',
   middleware: 'permissions'
-})
+});
 
-const route = useRoute()
-const proposalId = computed(() => route.params.slug as string)
+const route = useRoute();
+const proposalId = computed(() => route.params.slug as string);
 
-const loading = ref(true)
-const proposal = ref<any>(null)
-const deleting = ref(false)
+const loading = ref(true);
+const proposal = ref<any>(null);
+const deleting = ref(false);
 
 // Parse content JSON
 const content = computed(() => {
-  if (!proposal.value?.content) return null
+  if (!proposal.value?.content) return null;
   try {
-    return typeof proposal.value.content === 'string'
-      ? JSON.parse(proposal.value.content)
-      : proposal.value.content
+    return typeof proposal.value.content === 'string' ? JSON.parse(proposal.value.content) : proposal.value.content;
   } catch {
-    return null
+    return null;
   }
-})
+});
 
 // Financial calculations
 const subtotal = computed(() => {
-  const items = content.value?.finance?.items || []
-  return items.reduce((sum: number, item: any) => sum + ((item.quantity || 0) * (item.rate || 0)), 0)
-})
+  const items = content.value?.finance?.items || [];
+  return items.reduce((sum: number, item: any) => sum + (item.quantity || 0) * (item.rate || 0), 0);
+});
 
 const discountAmount = computed(() => {
-  const finance = content.value?.finance
-  if (!finance?.discount) return 0
+  const finance = content.value?.finance;
+  if (!finance?.discount) return 0;
   if (finance.discountType === 'percent') {
-    return subtotal.value * (finance.discount / 100)
+    return subtotal.value * (finance.discount / 100);
   }
-  return finance.discount
-})
+  return finance.discount;
+});
 
 const taxAmount = computed(() => {
-  const finance = content.value?.finance
-  if (!finance?.taxRate) return 0
-  const afterDiscount = subtotal.value - discountAmount.value
-  return afterDiscount * (finance.taxRate / 100)
-})
+  const finance = content.value?.finance;
+  if (!finance?.taxRate) return 0;
+  const afterDiscount = subtotal.value - discountAmount.value;
+  return afterDiscount * (finance.taxRate / 100);
+});
 
 const grandTotal = computed(() => {
-  return subtotal.value - discountAmount.value + taxAmount.value
-})
+  return subtotal.value - discountAmount.value + taxAmount.value;
+});
 
 // Status configuration
 const statusConfig = computed(() => {
-  const status = proposal.value?.status || 'DRAFT'
+  const status = proposal.value?.status || 'DRAFT';
   const configs: Record<string, { color: string; icon: any; label: string }> = {
     DRAFT: { color: 'bg-gray-100 text-gray-600', icon: Clock, label: 'Draft' },
     WAITING_APPROVAL: { color: 'bg-amber-100 text-amber-600', icon: Clock, label: 'Waiting Approval' },
     APPROVED: { color: 'bg-green-100 text-green-600', icon: CheckCircle, label: 'Approved' },
     REJECTED: { color: 'bg-red-100 text-red-600', icon: XCircle, label: 'Rejected' },
     SENT: { color: 'bg-blue-100 text-blue-600', icon: Send, label: 'Sent to Client' },
-    ARCHIVED: { color: 'bg-slate-100 text-slate-600', icon: AlertCircle, label: 'Archived' },
-  }
-  return (configs[status] || configs.DRAFT)!
-})
+    ARCHIVED: { color: 'bg-slate-100 text-slate-600', icon: AlertCircle, label: 'Archived' }
+  };
+  return (configs[status] || configs.DRAFT)!;
+});
 
 function formatDate(dateStr: string | undefined) {
-  if (!dateStr) return '-'
-  return new Date(dateStr).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })
+  if (!dateStr) return '-';
+  return new Date(dateStr).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
 }
 
 function extractFileName(url: string) {
-  if (!url) return 'Attachment'
-  const parts = url.split('/')
-  return decodeURIComponent(parts[parts.length - 1] || '') || 'Attachment'
+  if (!url) return 'Attachment';
+  const parts = url.split('/');
+  return decodeURIComponent(parts[parts.length - 1] || '') || 'Attachment';
 }
 
 async function reloadProposal() {
-  loading.value = true
+  loading.value = true;
   try {
-    const data = await getProposal(proposalId.value)
-    proposal.value = data && Object.keys(data).length > 0 ? data : null
+    const data = await getProposal(proposalId.value);
+    proposal.value = data && Object.keys(data).length > 0 ? data : null;
   } catch (error) {
-    console.error('Failed to load proposal:', error)
-    proposal.value = null
+    console.error('Failed to load proposal:', error);
+    proposal.value = null;
   } finally {
-    loading.value = false
+    loading.value = false;
   }
 }
 
 async function handleDeleteClick() {
   try {
-    await ElMessageBox.confirm(
-      'Are you sure you want to delete this proposal? This action cannot be undone.',
-      'Delete Proposal',
-      {
-        confirmButtonText: 'Delete',
-        cancelButtonText: 'Cancel',
-        type: 'warning',
-        confirmButtonClass: '!bg-red-500 !border-red-500 hover:!bg-red-600',
-      }
-    )
-    deleting.value = true
-    const ok = await deleteProposalApi(proposalId.value)
+    await ElMessageBox.confirm('Are you sure you want to delete this proposal? This action cannot be undone.', 'Delete Proposal', {
+      confirmButtonText: 'Delete',
+      cancelButtonText: 'Cancel',
+      type: 'warning',
+      confirmButtonClass: '!bg-red-500 !border-red-500 hover:!bg-red-600'
+    });
+    deleting.value = true;
+    const ok = await deleteProposalApi(proposalId.value);
     if (ok) {
-      navigateTo('/sales/proposals')
+      navigateTo('/sales/proposals');
     }
   } catch {
     // User cancelled
   } finally {
-    deleting.value = false
+    deleting.value = false;
   }
 }
 
 function handleDownloadPdf() {
   // Open document view for printing/PDF
-  window.open(`/sales/proposals/document/${proposalId.value}`, '_blank')
+  window.open(`/sales/proposals/document/${proposalId.value}`, '_blank');
 }
 
 function handleSendToClient() {
@@ -446,10 +426,10 @@ function handleSendToClient() {
     type: 'info',
     title: 'Coming Soon',
     message: 'Send to client functionality will be available soon.'
-  })
+  });
 }
 
 onMounted(() => {
-  reloadProposal()
-})
+  reloadProposal();
+});
 </script>

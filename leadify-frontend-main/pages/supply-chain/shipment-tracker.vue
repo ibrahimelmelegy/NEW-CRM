@@ -335,8 +335,9 @@
 </template>
 
 <script lang="ts" setup>
+/* eslint-disable no-use-before-define */
 import { ref, computed, onMounted } from 'vue';
-import { graphic } from 'echarts';
+import { graphic } from 'echarts/core';
 import VChart from 'vue-echarts';
 import { useApiFetch } from '~/composables/useApiFetch';
 
@@ -357,13 +358,7 @@ const expandedRows = ref<string[]>([]);
 // ─── Lifecycle ──────────────────────────────────────────────
 
 // ─── Constants ──────────────────────────────────────────────
-const progressSteps = [
-  'Order Placed',
-  'Picked Up',
-  'In Transit',
-  'Out for Delivery',
-  'Delivered'
-];
+const progressSteps = ['Order Placed', 'Picked Up', 'In Transit', 'Out for Delivery', 'Delivered'];
 
 const statusFilters = computed(() => [
   { label: t('shipmentTracker.all'), value: 'all' },
@@ -802,12 +797,13 @@ const filteredTableShipments = computed(() => {
 
   if (tableSearch.value) {
     const q = tableSearch.value.toLowerCase();
-    items = items.filter(s =>
-      s.trackingNumber.toLowerCase().includes(q) ||
-      s.customer.toLowerCase().includes(q) ||
-      s.origin.toLowerCase().includes(q) ||
-      s.destination.toLowerCase().includes(q) ||
-      s.carrier.toLowerCase().includes(q)
+    items = items.filter(
+      s =>
+        s.trackingNumber.toLowerCase().includes(q) ||
+        s.customer.toLowerCase().includes(q) ||
+        s.origin.toLowerCase().includes(q) ||
+        s.destination.toLowerCase().includes(q) ||
+        s.carrier.toLowerCase().includes(q)
     );
   }
 
@@ -874,11 +870,11 @@ function isStepLineCompleted(status: string, stepIdx: number): boolean {
 
 // ─── Carrier Performance Data ───────────────────────────────
 const carrierDataFallback = [
-  { name: 'FedEx', color: '#4D148C', totalShipments: 2845, onTimePercent: 96.4, avgTransitDays: 3.2, costPerShipment: 45.80, rating: 4.5 },
-  { name: 'DHL', color: '#FFCC00', totalShipments: 3120, onTimePercent: 95.1, avgTransitDays: 3.8, costPerShipment: 42.50, rating: 4.3 },
-  { name: 'UPS', color: '#351C15', totalShipments: 1960, onTimePercent: 93.7, avgTransitDays: 4.1, costPerShipment: 48.20, rating: 4.2 },
-  { name: 'Aramex', color: '#E95E2E', totalShipments: 4250, onTimePercent: 91.8, avgTransitDays: 4.5, costPerShipment: 28.90, rating: 4.0 },
-  { name: 'SMSA', color: '#0066B3', totalShipments: 5680, onTimePercent: 94.2, avgTransitDays: 2.1, costPerShipment: 18.50, rating: 4.4 }
+  { name: 'FedEx', color: '#4D148C', totalShipments: 2845, onTimePercent: 96.4, avgTransitDays: 3.2, costPerShipment: 45.8, rating: 4.5 },
+  { name: 'DHL', color: '#FFCC00', totalShipments: 3120, onTimePercent: 95.1, avgTransitDays: 3.8, costPerShipment: 42.5, rating: 4.3 },
+  { name: 'UPS', color: '#351C15', totalShipments: 1960, onTimePercent: 93.7, avgTransitDays: 4.1, costPerShipment: 48.2, rating: 4.2 },
+  { name: 'Aramex', color: '#E95E2E', totalShipments: 4250, onTimePercent: 91.8, avgTransitDays: 4.5, costPerShipment: 28.9, rating: 4.0 },
+  { name: 'SMSA', color: '#0066B3', totalShipments: 5680, onTimePercent: 94.2, avgTransitDays: 2.1, costPerShipment: 18.5, rating: 4.4 }
 ];
 
 const carrierData = ref<any[]>([]);
@@ -1004,7 +1000,7 @@ const costComparisonChartOption = computed(() => {
       {
         name: t('shipmentTracker.domestic'),
         type: 'bar',
-        data: [32.50, 35.00, 38.20, 18.50, 12.80],
+        data: [32.5, 35.0, 38.2, 18.5, 12.8],
         barWidth: 24,
         barGap: '30%',
         itemStyle: {
@@ -1018,7 +1014,7 @@ const costComparisonChartOption = computed(() => {
       {
         name: t('shipmentTracker.international'),
         type: 'bar',
-        data: [58.90, 52.30, 62.40, 38.90, 45.20],
+        data: [58.9, 52.3, 62.4, 38.9, 45.2],
         barWidth: 24,
         itemStyle: {
           color: new graphic.LinearGradient(0, 0, 0, 1, [
@@ -1161,12 +1157,7 @@ const exceptionTrendChartOption = computed(() => {
       axisPointer: { type: 'shadow' }
     },
     legend: {
-      data: [
-        t('shipmentTracker.delayed'),
-        t('shipmentTracker.damaged'),
-        t('shipmentTracker.lost'),
-        t('shipmentTracker.addressIssue')
-      ],
+      data: [t('shipmentTracker.delayed'), t('shipmentTracker.damaged'), t('shipmentTracker.lost'), t('shipmentTracker.addressIssue')],
       textStyle: { color: '#94A3B8' },
       bottom: 0,
       icon: 'roundRect',
@@ -1235,7 +1226,15 @@ async function loadData() {
       const carrierMap = new Map<string, any>();
       (res.body as any[]).forEach((s: any) => {
         if (s.carrier && !carrierMap.has(s.carrier)) {
-          carrierMap.set(s.carrier, { name: s.carrier, color: '#64748b', totalShipments: 0, onTimePercent: 0, avgTransitDays: 0, costPerShipment: 0, rating: 0 });
+          carrierMap.set(s.carrier, {
+            name: s.carrier,
+            color: '#64748b',
+            totalShipments: 0,
+            onTimePercent: 0,
+            avgTransitDays: 0,
+            costPerShipment: 0,
+            rating: 0
+          });
         }
         if (s.carrier) {
           carrierMap.get(s.carrier).totalShipments++;
@@ -1259,7 +1258,9 @@ async function loadData() {
   loading.value = false;
 }
 
-onMounted(() => { loadData(); });
+onMounted(() => {
+  loadData();
+});
 
 // ─── Actions ────────────────────────────────────────────────
 function handleNewShipment() {
@@ -1478,7 +1479,8 @@ function handleResolve(exc: ShipmentException) {
 }
 
 @keyframes pulse {
-  0%, 100% {
+  0%,
+  100% {
     box-shadow: 0 0 0 0 rgba(59, 130, 246, 0.4);
   }
   50% {

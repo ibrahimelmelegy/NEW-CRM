@@ -366,18 +366,29 @@
 <script setup lang="ts">
 import { ref, computed, onMounted } from 'vue';
 import {
-  submitForApproval,
-  approveProposal,
-  rejectProposal,
-  deleteProposal,
-  archiveProposal,
-  downloadProposalPdf
-} from '~/composables/useProposals';
-import {
-  FileText, Plus, Search, TrendingUp, Edit, Trash2, Eye, Percent, DollarSign,
-  Folder, FolderOpen, FolderSearch, Archive, CheckCircle, XCircle, Clock,
-  AlertCircle, MoreHorizontal, SlidersHorizontal, Send, Download
+  FileText,
+  Plus,
+  Search,
+  TrendingUp,
+  Edit,
+  Trash2,
+  Eye,
+  Percent,
+  DollarSign,
+  Folder,
+  FolderOpen,
+  FolderSearch,
+  Archive,
+  CheckCircle,
+  XCircle,
+  Clock,
+  AlertCircle,
+  MoreHorizontal,
+  SlidersHorizontal,
+  Send,
+  Download
 } from 'lucide-vue-next';
+import { submitForApproval, approveProposal, rejectProposal, deleteProposal, archiveProposal, downloadProposalPdf } from '~/composables/useProposals';
 
 definePageMeta({ middleware: 'permissions' });
 
@@ -419,10 +430,18 @@ const statusTabs = computed(() => [
 ]);
 const statusTabValues = ['All', 'Sent', 'Pending', 'Draft', 'Approved', 'Canceled', 'Archived'];
 const monthNames = computed(() => [
-  t('common.months.january'), t('common.months.february'), t('common.months.march'),
-  t('common.months.april'), t('common.months.may'), t('common.months.june'),
-  t('common.months.july'), t('common.months.august'), t('common.months.september'),
-  t('common.months.october'), t('common.months.november'), t('common.months.december')
+  t('common.months.january'),
+  t('common.months.february'),
+  t('common.months.march'),
+  t('common.months.april'),
+  t('common.months.may'),
+  t('common.months.june'),
+  t('common.months.july'),
+  t('common.months.august'),
+  t('common.months.september'),
+  t('common.months.october'),
+  t('common.months.november'),
+  t('common.months.december')
 ]);
 
 // ─── Status Mapping ──────────────────────────────────────────────────
@@ -475,12 +494,10 @@ function computeTotal(p: any): number {
   if (items.length === 0) return p.totalPrice || p.total || 0;
 
   const subtotal = items.reduce((sum: number, item: any) => {
-    return sum + ((item.quantity || item.qty || 0) * (item.rate || item.unitPrice || item.price || 0));
+    return sum + (item.quantity || item.qty || 0) * (item.rate || item.unitPrice || item.price || 0);
   }, 0);
 
-  const discount = p.discountType === 'percent'
-    ? subtotal * ((p.discount || 0) / 100)
-    : (p.discount || 0);
+  const discount = p.discountType === 'percent' ? subtotal * ((p.discount || 0) / 100) : p.discount || 0;
   const taxRate = p.taxRate || 0;
   return (subtotal - discount) * (1 + taxRate / 100);
 }
@@ -506,12 +523,18 @@ const archiveTree = computed(() => {
 
   // Sort descending
   const sortedTree: Record<string, Record<string, string[]>> = {};
-  Object.keys(tree).sort().reverse().forEach(year => {
-    sortedTree[year] = {};
-    Object.keys(tree[year]!).sort().reverse().forEach(month => {
-      sortedTree[year]![month] = tree[year]![month]!.sort().reverse();
+  Object.keys(tree)
+    .sort()
+    .reverse()
+    .forEach(year => {
+      sortedTree[year] = {};
+      Object.keys(tree[year]!)
+        .sort()
+        .reverse()
+        .forEach(month => {
+          sortedTree[year]![month] = tree[year]![month]!.sort().reverse();
+        });
     });
-  });
 
   return sortedTree;
 });
@@ -786,11 +809,7 @@ async function handleDownloadPdf(row: any) {
 
 async function handleDelete(row: any) {
   try {
-    await ElMessageBox.confirm(
-      t('proposals.confirmDelete', { title: row.title }),
-      t('common.delete'),
-      { type: 'warning' }
-    );
+    await ElMessageBox.confirm(t('proposals.confirmDelete', { title: row.title }), t('common.delete'), { type: 'warning' });
     actionLoading.value = true;
     const ok = await deleteProposal(row.id);
     if (ok) fetchProposals();

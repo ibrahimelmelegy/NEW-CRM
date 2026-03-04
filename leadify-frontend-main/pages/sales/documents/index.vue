@@ -183,14 +183,70 @@ const searchKey = ref('');
 const currentPage = ref(1);
 
 const documentTypes = computed(() => [
-  { type: 'quote', label: t('documents.typeQuote'), icon: 'ph:quotes-bold', color: '#3b82f6', createPath: '/sales/quotes/create', detailBase: '/sales/quotes' },
-  { type: 'invoice', label: t('documents.typeInvoice'), icon: 'ph:receipt-bold', color: '#10b981', createPath: '/sales/invoices/create', detailBase: '/sales/invoices' },
-  { type: 'proforma_invoice', label: t('documents.typeProforma'), icon: 'ph:file-text-bold', color: '#8b5cf6', createPath: '/sales/proforma-invoices/create', detailBase: '/sales/proforma-invoices' },
-  { type: 'purchase_order', label: t('documents.typePurchaseOrder'), icon: 'ph:shopping-cart-bold', color: '#f59e0b', createPath: '/sales/purchase-orders/create', detailBase: '/sales/purchase-orders' },
-  { type: 'contract', label: t('documents.typeContract'), icon: 'ph:handshake-bold', color: '#6366f1', createPath: '/sales/contracts/create', detailBase: '/sales/contracts' },
-  { type: 'sales_order', label: t('documents.typeSalesOrder'), icon: 'ph:package-bold', color: '#0ea5e9', createPath: '/sales/sales-orders/create', detailBase: '/sales/sales-orders' },
-  { type: 'delivery_note', label: t('documents.typeDeliveryNote'), icon: 'ph:truck-bold', color: '#84cc16', createPath: '/sales/delivery-notes/create', detailBase: '/sales/delivery-notes' },
-  { type: 'credit_note', label: t('documents.typeCreditNote'), icon: 'ph:note-bold', color: '#ef4444', createPath: '/sales/credit-notes/create', detailBase: '/sales/credit-notes' },
+  {
+    type: 'quote',
+    label: t('documents.typeQuote'),
+    icon: 'ph:quotes-bold',
+    color: '#3b82f6',
+    createPath: '/sales/quotes/create',
+    detailBase: '/sales/quotes'
+  },
+  {
+    type: 'invoice',
+    label: t('documents.typeInvoice'),
+    icon: 'ph:receipt-bold',
+    color: '#10b981',
+    createPath: '/sales/invoices/create',
+    detailBase: '/sales/invoices'
+  },
+  {
+    type: 'proforma_invoice',
+    label: t('documents.typeProforma'),
+    icon: 'ph:file-text-bold',
+    color: '#8b5cf6',
+    createPath: '/sales/proforma-invoices/create',
+    detailBase: '/sales/proforma-invoices'
+  },
+  {
+    type: 'purchase_order',
+    label: t('documents.typePurchaseOrder'),
+    icon: 'ph:shopping-cart-bold',
+    color: '#f59e0b',
+    createPath: '/sales/purchase-orders/create',
+    detailBase: '/sales/purchase-orders'
+  },
+  {
+    type: 'contract',
+    label: t('documents.typeContract'),
+    icon: 'ph:handshake-bold',
+    color: '#6366f1',
+    createPath: '/sales/contracts/create',
+    detailBase: '/sales/contracts'
+  },
+  {
+    type: 'sales_order',
+    label: t('documents.typeSalesOrder'),
+    icon: 'ph:package-bold',
+    color: '#0ea5e9',
+    createPath: '/sales/sales-orders/create',
+    detailBase: '/sales/sales-orders'
+  },
+  {
+    type: 'delivery_note',
+    label: t('documents.typeDeliveryNote'),
+    icon: 'ph:truck-bold',
+    color: '#84cc16',
+    createPath: '/sales/delivery-notes/create',
+    detailBase: '/sales/delivery-notes'
+  },
+  {
+    type: 'credit_note',
+    label: t('documents.typeCreditNote'),
+    icon: 'ph:note-bold',
+    color: '#ef4444',
+    createPath: '/sales/credit-notes/create',
+    detailBase: '/sales/credit-notes'
+  },
   { type: 'rfq', label: 'RFQ', icon: 'ph:clipboard-text-bold', color: '#14b8a6', createPath: '/sales/rfqs/create', detailBase: '/sales/rfqs' },
   { type: 'sla', label: 'SLA', icon: 'ph:shield-check-bold', color: '#a855f7', createPath: '/sales/slas/create', detailBase: '/sales/slas' }
 ]);
@@ -202,7 +258,13 @@ const kpiMetrics = computed<KPIMetric[]>(() => {
     { label: t('documents.totalDocuments'), value: s?.total || 0, icon: 'ph:files-bold', color: '#7c3aed' },
     { label: t('documents.drafts'), value: s?.byStatus?.DRAFT || 0, icon: 'ph:pencil-simple-bold', color: '#6b7280' },
     { label: t('documents.pendingApproval'), value: s?.byStatus?.PENDING_APPROVAL || 0, icon: 'ph:clock-bold', color: '#f59e0b' },
-    { label: t('documents.totalValue'), value: formatCurrency(s?.totalValue || 0), icon: 'ph:currency-dollar-bold', color: '#10b981', isCurrency: true }
+    {
+      label: t('documents.totalValue'),
+      value: formatCurrency(s?.totalValue || 0),
+      icon: 'ph:currency-dollar-bold',
+      color: '#10b981',
+      isCurrency: true
+    }
   ];
 });
 

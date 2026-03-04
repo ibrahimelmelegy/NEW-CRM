@@ -188,13 +188,7 @@
 
 <script setup lang="ts">
 import { ref, reactive, computed, onMounted } from 'vue';
-import {
-  fetchProducts,
-  createProduct,
-  updateProduct,
-  deleteProduct,
-  type CatalogProduct
-} from '~/composables/useProductCatalog';
+import { fetchProducts, createProduct, updateProduct, deleteProduct, type CatalogProduct } from '~/composables/useProductCatalog';
 
 definePageMeta({});
 
@@ -251,10 +245,8 @@ const filteredProducts = computed(() => {
   // Search
   if (searchQuery.value) {
     const q = searchQuery.value.toLowerCase();
-    result = result.filter(p =>
-      (p.name || '').toLowerCase().includes(q) ||
-      (p.sku || '').toLowerCase().includes(q) ||
-      (p.description || '').toLowerCase().includes(q)
+    result = result.filter(
+      p => (p.name || '').toLowerCase().includes(q) || (p.sku || '').toLowerCase().includes(q) || (p.description || '').toLowerCase().includes(q)
     );
   }
 

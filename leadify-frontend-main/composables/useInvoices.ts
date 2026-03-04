@@ -1,3 +1,4 @@
+/* eslint-disable require-await */
 export interface InvoiceItem {
   id: number;
   invoiceNumber: string;

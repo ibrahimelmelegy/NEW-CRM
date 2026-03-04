@@ -119,15 +119,14 @@ function onTouchMove(e: TouchEvent) {
         newX = max + (newX - max) * 0.2;
       }
     }
+  } else if (props.leftActions.length === 0) {
+    // Swiping left - rubber band effect (no left actions)
+    newX = newX * 0.2;
   } else {
     // Swiping left - reveal left actions (delete, archive)
-    if (props.leftActions.length === 0) {
-      newX = newX * 0.2; // rubber band
-    } else {
-      const max = -maxLeftSwipe.value;
-      if (newX < max) {
-        newX = max + (newX - max) * 0.2;
-      }
+    const max = -maxLeftSwipe.value;
+    if (newX < max) {
+      newX = max + (newX - max) * 0.2;
     }
   }
 
@@ -177,14 +176,12 @@ function onMouseDown(e: MouseEvent) {
           newX = max + (newX - max) * 0.2;
         }
       }
+    } else if (props.leftActions.length === 0) {
+      newX = newX * 0.2;
     } else {
-      if (props.leftActions.length === 0) {
-        newX = newX * 0.2;
-      } else {
-        const max = -maxLeftSwipe.value;
-        if (newX < max) {
-          newX = max + (newX - max) * 0.2;
-        }
+      const max = -maxLeftSwipe.value;
+      if (newX < max) {
+        newX = max + (newX - max) * 0.2;
       }
     }
 

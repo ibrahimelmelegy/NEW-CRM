@@ -320,7 +320,7 @@
 
 <script setup lang="ts">
 import { ref, computed, onMounted } from 'vue';
-import { graphic } from 'echarts';
+import { graphic } from 'echarts/core';
 import VChart from 'vue-echarts';
 import { useApiFetch } from '~/composables/useApiFetch';
 
@@ -371,37 +371,53 @@ function getScoreColor(score: number): string {
 
 function getPerformanceTagType(level: string): string {
   switch (level) {
-    case 'excellent': return 'success';
-    case 'good': return '';
-    case 'average': return 'warning';
-    default: return 'danger';
+    case 'excellent':
+      return 'success';
+    case 'good':
+      return '';
+    case 'average':
+      return 'warning';
+    default:
+      return 'danger';
   }
 }
 
 function getPerformanceLabel(level: string): string {
   switch (level) {
-    case 'excellent': return t('teamPerformance.excellent');
-    case 'good': return t('teamPerformance.good');
-    case 'average': return t('teamPerformance.average');
-    default: return t('teamPerformance.needsImprovement');
+    case 'excellent':
+      return t('teamPerformance.excellent');
+    case 'good':
+      return t('teamPerformance.good');
+    case 'average':
+      return t('teamPerformance.average');
+    default:
+      return t('teamPerformance.needsImprovement');
   }
 }
 
 function getGoalStatusColor(status: string): string {
   switch (status) {
-    case 'on-track': return '#22c55e';
-    case 'at-risk': return '#f59e0b';
-    case 'behind': return '#ef4444';
-    default: return '#7849ff';
+    case 'on-track':
+      return '#22c55e';
+    case 'at-risk':
+      return '#f59e0b';
+    case 'behind':
+      return '#ef4444';
+    default:
+      return '#7849ff';
   }
 }
 
 function getGoalStatusLabel(status: string): string {
   switch (status) {
-    case 'on-track': return t('teamPerformance.onTrack');
-    case 'at-risk': return t('teamPerformance.atRisk');
-    case 'behind': return t('teamPerformance.behind');
-    default: return status;
+    case 'on-track':
+      return t('teamPerformance.onTrack');
+    case 'at-risk':
+      return t('teamPerformance.atRisk');
+    case 'behind':
+      return t('teamPerformance.behind');
+    default:
+      return status;
   }
 }
 
@@ -460,16 +476,116 @@ const kpiCards = computed(() => [
 
 // ─── Team Members Data ──────────────────────────────────────
 const teamMembersFallback = [
-  { name: 'Sarah Mitchell', initials: 'SM', role: 'Senior Sales Rep', tasksCompleted: 32, dealsClosed: 8, revenue: '$142K', activityScore: 94, performanceLevel: 'excellent', avatarColor: '#7849ff' },
-  { name: 'James Rodriguez', initials: 'JR', role: 'Account Executive', tasksCompleted: 28, dealsClosed: 6, revenue: '$118K', activityScore: 87, performanceLevel: 'excellent', avatarColor: '#3b82f6' },
-  { name: 'Emily Chen', initials: 'EC', role: 'Business Dev Manager', tasksCompleted: 25, dealsClosed: 5, revenue: '$96K', activityScore: 82, performanceLevel: 'good', avatarColor: '#22c55e' },
-  { name: 'Michael Thompson', initials: 'MT', role: 'Sales Rep', tasksCompleted: 22, dealsClosed: 4, revenue: '$78K', activityScore: 75, performanceLevel: 'good', avatarColor: '#f59e0b' },
-  { name: 'Olivia Parker', initials: 'OP', role: 'Account Manager', tasksCompleted: 20, dealsClosed: 5, revenue: '$89K', activityScore: 78, performanceLevel: 'good', avatarColor: '#a855f7' },
-  { name: 'Daniel Kim', initials: 'DK', role: 'Sales Rep', tasksCompleted: 18, dealsClosed: 3, revenue: '$52K', activityScore: 65, performanceLevel: 'average', avatarColor: '#06b6d4' },
-  { name: 'Rachel Foster', initials: 'RF', role: 'Junior Sales Rep', tasksCompleted: 15, dealsClosed: 2, revenue: '$34K', activityScore: 58, performanceLevel: 'average', avatarColor: '#ec4899' },
-  { name: 'Alex Martinez', initials: 'AM', role: 'Sales Rep', tasksCompleted: 19, dealsClosed: 3, revenue: '$61K', activityScore: 70, performanceLevel: 'good', avatarColor: '#ef4444' },
-  { name: 'Sophie Turner', initials: 'ST', role: 'Account Executive', tasksCompleted: 14, dealsClosed: 2, revenue: '$45K', activityScore: 52, performanceLevel: 'average', avatarColor: '#10b981' },
-  { name: 'Chris Baker', initials: 'CB', role: 'Junior Sales Rep', tasksCompleted: 10, dealsClosed: 1, revenue: '$18K', activityScore: 38, performanceLevel: 'needs-improvement', avatarColor: '#f97316' }
+  {
+    name: 'Sarah Mitchell',
+    initials: 'SM',
+    role: 'Senior Sales Rep',
+    tasksCompleted: 32,
+    dealsClosed: 8,
+    revenue: '$142K',
+    activityScore: 94,
+    performanceLevel: 'excellent',
+    avatarColor: '#7849ff'
+  },
+  {
+    name: 'James Rodriguez',
+    initials: 'JR',
+    role: 'Account Executive',
+    tasksCompleted: 28,
+    dealsClosed: 6,
+    revenue: '$118K',
+    activityScore: 87,
+    performanceLevel: 'excellent',
+    avatarColor: '#3b82f6'
+  },
+  {
+    name: 'Emily Chen',
+    initials: 'EC',
+    role: 'Business Dev Manager',
+    tasksCompleted: 25,
+    dealsClosed: 5,
+    revenue: '$96K',
+    activityScore: 82,
+    performanceLevel: 'good',
+    avatarColor: '#22c55e'
+  },
+  {
+    name: 'Michael Thompson',
+    initials: 'MT',
+    role: 'Sales Rep',
+    tasksCompleted: 22,
+    dealsClosed: 4,
+    revenue: '$78K',
+    activityScore: 75,
+    performanceLevel: 'good',
+    avatarColor: '#f59e0b'
+  },
+  {
+    name: 'Olivia Parker',
+    initials: 'OP',
+    role: 'Account Manager',
+    tasksCompleted: 20,
+    dealsClosed: 5,
+    revenue: '$89K',
+    activityScore: 78,
+    performanceLevel: 'good',
+    avatarColor: '#a855f7'
+  },
+  {
+    name: 'Daniel Kim',
+    initials: 'DK',
+    role: 'Sales Rep',
+    tasksCompleted: 18,
+    dealsClosed: 3,
+    revenue: '$52K',
+    activityScore: 65,
+    performanceLevel: 'average',
+    avatarColor: '#06b6d4'
+  },
+  {
+    name: 'Rachel Foster',
+    initials: 'RF',
+    role: 'Junior Sales Rep',
+    tasksCompleted: 15,
+    dealsClosed: 2,
+    revenue: '$34K',
+    activityScore: 58,
+    performanceLevel: 'average',
+    avatarColor: '#ec4899'
+  },
+  {
+    name: 'Alex Martinez',
+    initials: 'AM',
+    role: 'Sales Rep',
+    tasksCompleted: 19,
+    dealsClosed: 3,
+    revenue: '$61K',
+    activityScore: 70,
+    performanceLevel: 'good',
+    avatarColor: '#ef4444'
+  },
+  {
+    name: 'Sophie Turner',
+    initials: 'ST',
+    role: 'Account Executive',
+    tasksCompleted: 14,
+    dealsClosed: 2,
+    revenue: '$45K',
+    activityScore: 52,
+    performanceLevel: 'average',
+    avatarColor: '#10b981'
+  },
+  {
+    name: 'Chris Baker',
+    initials: 'CB',
+    role: 'Junior Sales Rep',
+    tasksCompleted: 10,
+    dealsClosed: 1,
+    revenue: '$18K',
+    activityScore: 38,
+    performanceLevel: 'needs-improvement',
+    avatarColor: '#f97316'
+  }
 ];
 
 const teamMembers = ref<any[]>([]);
@@ -486,23 +602,149 @@ const topPerformer = computed(() => ({
 
 // ─── Goals Data ─────────────────────────────────────────────
 const departmentGoalsFallback = [
-  { name: 'Q1 Revenue Target', owner: 'Sales Department', target: 500000, current: 420000, percentage: 84, dueDate: 'Mar 31, 2026', status: 'on-track', type: 'department' },
-  { name: 'New Client Acquisition', owner: 'Business Development', target: 30, current: 22, percentage: 73, dueDate: 'Mar 31, 2026', status: 'on-track', type: 'department' },
-  { name: 'Customer Retention Rate', owner: 'Account Management', target: 95, current: 91, percentage: 96, dueDate: 'Mar 31, 2026', status: 'on-track', type: 'department' },
-  { name: 'Pipeline Growth', owner: 'Sales Department', target: 200, current: 145, percentage: 73, dueDate: 'Mar 31, 2026', status: 'at-risk', type: 'department' },
-  { name: 'Lead Response Time', owner: 'Sales Operations', target: 100, current: 68, percentage: 68, dueDate: 'Feb 28, 2026', status: 'at-risk', type: 'department' },
-  { name: 'Training Completion', owner: 'HR Department', target: 24, current: 18, percentage: 75, dueDate: 'Apr 15, 2026', status: 'on-track', type: 'department' }
+  {
+    name: 'Q1 Revenue Target',
+    owner: 'Sales Department',
+    target: 500000,
+    current: 420000,
+    percentage: 84,
+    dueDate: 'Mar 31, 2026',
+    status: 'on-track',
+    type: 'department'
+  },
+  {
+    name: 'New Client Acquisition',
+    owner: 'Business Development',
+    target: 30,
+    current: 22,
+    percentage: 73,
+    dueDate: 'Mar 31, 2026',
+    status: 'on-track',
+    type: 'department'
+  },
+  {
+    name: 'Customer Retention Rate',
+    owner: 'Account Management',
+    target: 95,
+    current: 91,
+    percentage: 96,
+    dueDate: 'Mar 31, 2026',
+    status: 'on-track',
+    type: 'department'
+  },
+  {
+    name: 'Pipeline Growth',
+    owner: 'Sales Department',
+    target: 200,
+    current: 145,
+    percentage: 73,
+    dueDate: 'Mar 31, 2026',
+    status: 'at-risk',
+    type: 'department'
+  },
+  {
+    name: 'Lead Response Time',
+    owner: 'Sales Operations',
+    target: 100,
+    current: 68,
+    percentage: 68,
+    dueDate: 'Feb 28, 2026',
+    status: 'at-risk',
+    type: 'department'
+  },
+  {
+    name: 'Training Completion',
+    owner: 'HR Department',
+    target: 24,
+    current: 18,
+    percentage: 75,
+    dueDate: 'Apr 15, 2026',
+    status: 'on-track',
+    type: 'department'
+  }
 ];
 
 const individualGoalsFallback = [
-  { name: 'Close 10 Enterprise Deals', owner: 'Sarah Mitchell', target: 10, current: 8, percentage: 80, dueDate: 'Mar 31, 2026', status: 'on-track', type: 'individual' },
-  { name: 'Generate $200K Revenue', owner: 'James Rodriguez', target: 200000, current: 118000, percentage: 59, dueDate: 'Mar 31, 2026', status: 'at-risk', type: 'individual' },
-  { name: 'Onboard 5 New Accounts', owner: 'Emily Chen', target: 5, current: 3, percentage: 60, dueDate: 'Mar 15, 2026', status: 'at-risk', type: 'individual' },
-  { name: 'Achieve 90% Activity Score', owner: 'Michael Thompson', target: 90, current: 75, percentage: 83, dueDate: 'Mar 31, 2026', status: 'on-track', type: 'individual' },
-  { name: 'Upsell Existing Accounts', owner: 'Olivia Parker', target: 8, current: 5, percentage: 63, dueDate: 'Mar 31, 2026', status: 'at-risk', type: 'individual' },
-  { name: 'Complete Certification', owner: 'Daniel Kim', target: 1, current: 0, percentage: 0, dueDate: 'Feb 28, 2026', status: 'behind', type: 'individual' },
-  { name: '50 Cold Calls per Week', owner: 'Rachel Foster', target: 50, current: 32, percentage: 64, dueDate: 'Ongoing', status: 'at-risk', type: 'individual' },
-  { name: 'Reduce Churn by 5%', owner: 'Alex Martinez', target: 5, current: 2, percentage: 40, dueDate: 'Mar 31, 2026', status: 'behind', type: 'individual' }
+  {
+    name: 'Close 10 Enterprise Deals',
+    owner: 'Sarah Mitchell',
+    target: 10,
+    current: 8,
+    percentage: 80,
+    dueDate: 'Mar 31, 2026',
+    status: 'on-track',
+    type: 'individual'
+  },
+  {
+    name: 'Generate $200K Revenue',
+    owner: 'James Rodriguez',
+    target: 200000,
+    current: 118000,
+    percentage: 59,
+    dueDate: 'Mar 31, 2026',
+    status: 'at-risk',
+    type: 'individual'
+  },
+  {
+    name: 'Onboard 5 New Accounts',
+    owner: 'Emily Chen',
+    target: 5,
+    current: 3,
+    percentage: 60,
+    dueDate: 'Mar 15, 2026',
+    status: 'at-risk',
+    type: 'individual'
+  },
+  {
+    name: 'Achieve 90% Activity Score',
+    owner: 'Michael Thompson',
+    target: 90,
+    current: 75,
+    percentage: 83,
+    dueDate: 'Mar 31, 2026',
+    status: 'on-track',
+    type: 'individual'
+  },
+  {
+    name: 'Upsell Existing Accounts',
+    owner: 'Olivia Parker',
+    target: 8,
+    current: 5,
+    percentage: 63,
+    dueDate: 'Mar 31, 2026',
+    status: 'at-risk',
+    type: 'individual'
+  },
+  {
+    name: 'Complete Certification',
+    owner: 'Daniel Kim',
+    target: 1,
+    current: 0,
+    percentage: 0,
+    dueDate: 'Feb 28, 2026',
+    status: 'behind',
+    type: 'individual'
+  },
+  {
+    name: '50 Cold Calls per Week',
+    owner: 'Rachel Foster',
+    target: 50,
+    current: 32,
+    percentage: 64,
+    dueDate: 'Ongoing',
+    status: 'at-risk',
+    type: 'individual'
+  },
+  {
+    name: 'Reduce Churn by 5%',
+    owner: 'Alex Martinez',
+    target: 5,
+    current: 2,
+    percentage: 40,
+    dueDate: 'Mar 31, 2026',
+    status: 'behind',
+    type: 'individual'
+  }
 ];
 
 const departmentGoals = ref<any[]>([]);
@@ -561,26 +803,146 @@ const goalCompletionChartOption = computed(() => ({
 
 // ─── Recent Activities ──────────────────────────────────────
 const recentActivitiesFallback = [
-  { memberName: 'Sarah Mitchell', action: t('teamPerformance.callsMade') + ' - Contacted Acme Corp about renewal', icon: 'ph:phone-bold', color: '#7849ff', timestamp: '2 min ago' },
-  { memberName: 'James Rodriguez', action: t('teamPerformance.emailsSent') + ' - Follow-up proposal to TechStart Inc', icon: 'ph:envelope-bold', color: '#3b82f6', timestamp: '8 min ago' },
-  { memberName: 'Emily Chen', action: t('teamPerformance.meetingsHeld') + ' - Demo with GlobalTech Solutions', icon: 'ph:video-camera-bold', color: '#22c55e', timestamp: '15 min ago' },
-  { memberName: 'Michael Thompson', action: t('teamPerformance.dealsProgressed') + ' - Moved CloudFirst to negotiation', icon: 'ph:arrow-fat-right-bold', color: '#f59e0b', timestamp: '22 min ago' },
-  { memberName: 'Olivia Parker', action: t('teamPerformance.callsMade') + ' - Check-in with DataFlow Systems', icon: 'ph:phone-bold', color: '#7849ff', timestamp: '30 min ago' },
-  { memberName: 'Daniel Kim', action: t('teamPerformance.emailsSent') + ' - Sent pricing sheet to NexGen', icon: 'ph:envelope-bold', color: '#3b82f6', timestamp: '45 min ago' },
-  { memberName: 'Rachel Foster', action: t('teamPerformance.callsMade') + ' - Cold call batch completed', icon: 'ph:phone-bold', color: '#7849ff', timestamp: '1h ago' },
-  { memberName: 'Alex Martinez', action: t('teamPerformance.meetingsHeld') + ' - Quarterly review with StellarTech', icon: 'ph:video-camera-bold', color: '#22c55e', timestamp: '1h 15min ago' },
-  { memberName: 'Sophie Turner', action: t('teamPerformance.dealsProgressed') + ' - Updated proposal for BrightPath', icon: 'ph:arrow-fat-right-bold', color: '#f59e0b', timestamp: '1h 30min ago' },
-  { memberName: 'Chris Baker', action: t('teamPerformance.emailsSent') + ' - Introduction email to InnovateCo', icon: 'ph:envelope-bold', color: '#3b82f6', timestamp: '1h 45min ago' },
-  { memberName: 'Sarah Mitchell', action: t('teamPerformance.dealsProgressed') + ' - Closed deal with Quantum Labs', icon: 'ph:arrow-fat-right-bold', color: '#f59e0b', timestamp: '2h ago' },
-  { memberName: 'James Rodriguez', action: t('teamPerformance.meetingsHeld') + ' - Strategy session for Q2 pipeline', icon: 'ph:video-camera-bold', color: '#22c55e', timestamp: '2h 15min ago' },
-  { memberName: 'Emily Chen', action: t('teamPerformance.callsMade') + ' - Follow-up with Apex Industries', icon: 'ph:phone-bold', color: '#7849ff', timestamp: '2h 30min ago' },
-  { memberName: 'Michael Thompson', action: t('teamPerformance.emailsSent') + ' - Sent case study to Vertex Corp', icon: 'ph:envelope-bold', color: '#3b82f6', timestamp: '2h 45min ago' },
-  { memberName: 'Olivia Parker', action: t('teamPerformance.meetingsHeld') + ' - Onboarding session with PeakTech', icon: 'ph:video-camera-bold', color: '#22c55e', timestamp: '3h ago' },
-  { memberName: 'Daniel Kim', action: t('teamPerformance.callsMade') + ' - Prospecting calls to SMB segment', icon: 'ph:phone-bold', color: '#7849ff', timestamp: '3h 20min ago' },
-  { memberName: 'Rachel Foster', action: t('teamPerformance.dealsProgressed') + ' - Moved Horizon Inc to discovery', icon: 'ph:arrow-fat-right-bold', color: '#f59e0b', timestamp: '3h 45min ago' },
-  { memberName: 'Alex Martinez', action: t('teamPerformance.emailsSent') + ' - Monthly newsletter to accounts', icon: 'ph:envelope-bold', color: '#3b82f6', timestamp: '4h ago' },
-  { memberName: 'Sophie Turner', action: t('teamPerformance.callsMade') + ' - Reconnect with former client', icon: 'ph:phone-bold', color: '#7849ff', timestamp: '4h 15min ago' },
-  { memberName: 'Chris Baker', action: t('teamPerformance.meetingsHeld') + ' - Training session attendance', icon: 'ph:video-camera-bold', color: '#22c55e', timestamp: '4h 30min ago' }
+  {
+    memberName: 'Sarah Mitchell',
+    action: t('teamPerformance.callsMade') + ' - Contacted Acme Corp about renewal',
+    icon: 'ph:phone-bold',
+    color: '#7849ff',
+    timestamp: '2 min ago'
+  },
+  {
+    memberName: 'James Rodriguez',
+    action: t('teamPerformance.emailsSent') + ' - Follow-up proposal to TechStart Inc',
+    icon: 'ph:envelope-bold',
+    color: '#3b82f6',
+    timestamp: '8 min ago'
+  },
+  {
+    memberName: 'Emily Chen',
+    action: t('teamPerformance.meetingsHeld') + ' - Demo with GlobalTech Solutions',
+    icon: 'ph:video-camera-bold',
+    color: '#22c55e',
+    timestamp: '15 min ago'
+  },
+  {
+    memberName: 'Michael Thompson',
+    action: t('teamPerformance.dealsProgressed') + ' - Moved CloudFirst to negotiation',
+    icon: 'ph:arrow-fat-right-bold',
+    color: '#f59e0b',
+    timestamp: '22 min ago'
+  },
+  {
+    memberName: 'Olivia Parker',
+    action: t('teamPerformance.callsMade') + ' - Check-in with DataFlow Systems',
+    icon: 'ph:phone-bold',
+    color: '#7849ff',
+    timestamp: '30 min ago'
+  },
+  {
+    memberName: 'Daniel Kim',
+    action: t('teamPerformance.emailsSent') + ' - Sent pricing sheet to NexGen',
+    icon: 'ph:envelope-bold',
+    color: '#3b82f6',
+    timestamp: '45 min ago'
+  },
+  {
+    memberName: 'Rachel Foster',
+    action: t('teamPerformance.callsMade') + ' - Cold call batch completed',
+    icon: 'ph:phone-bold',
+    color: '#7849ff',
+    timestamp: '1h ago'
+  },
+  {
+    memberName: 'Alex Martinez',
+    action: t('teamPerformance.meetingsHeld') + ' - Quarterly review with StellarTech',
+    icon: 'ph:video-camera-bold',
+    color: '#22c55e',
+    timestamp: '1h 15min ago'
+  },
+  {
+    memberName: 'Sophie Turner',
+    action: t('teamPerformance.dealsProgressed') + ' - Updated proposal for BrightPath',
+    icon: 'ph:arrow-fat-right-bold',
+    color: '#f59e0b',
+    timestamp: '1h 30min ago'
+  },
+  {
+    memberName: 'Chris Baker',
+    action: t('teamPerformance.emailsSent') + ' - Introduction email to InnovateCo',
+    icon: 'ph:envelope-bold',
+    color: '#3b82f6',
+    timestamp: '1h 45min ago'
+  },
+  {
+    memberName: 'Sarah Mitchell',
+    action: t('teamPerformance.dealsProgressed') + ' - Closed deal with Quantum Labs',
+    icon: 'ph:arrow-fat-right-bold',
+    color: '#f59e0b',
+    timestamp: '2h ago'
+  },
+  {
+    memberName: 'James Rodriguez',
+    action: t('teamPerformance.meetingsHeld') + ' - Strategy session for Q2 pipeline',
+    icon: 'ph:video-camera-bold',
+    color: '#22c55e',
+    timestamp: '2h 15min ago'
+  },
+  {
+    memberName: 'Emily Chen',
+    action: t('teamPerformance.callsMade') + ' - Follow-up with Apex Industries',
+    icon: 'ph:phone-bold',
+    color: '#7849ff',
+    timestamp: '2h 30min ago'
+  },
+  {
+    memberName: 'Michael Thompson',
+    action: t('teamPerformance.emailsSent') + ' - Sent case study to Vertex Corp',
+    icon: 'ph:envelope-bold',
+    color: '#3b82f6',
+    timestamp: '2h 45min ago'
+  },
+  {
+    memberName: 'Olivia Parker',
+    action: t('teamPerformance.meetingsHeld') + ' - Onboarding session with PeakTech',
+    icon: 'ph:video-camera-bold',
+    color: '#22c55e',
+    timestamp: '3h ago'
+  },
+  {
+    memberName: 'Daniel Kim',
+    action: t('teamPerformance.callsMade') + ' - Prospecting calls to SMB segment',
+    icon: 'ph:phone-bold',
+    color: '#7849ff',
+    timestamp: '3h 20min ago'
+  },
+  {
+    memberName: 'Rachel Foster',
+    action: t('teamPerformance.dealsProgressed') + ' - Moved Horizon Inc to discovery',
+    icon: 'ph:arrow-fat-right-bold',
+    color: '#f59e0b',
+    timestamp: '3h 45min ago'
+  },
+  {
+    memberName: 'Alex Martinez',
+    action: t('teamPerformance.emailsSent') + ' - Monthly newsletter to accounts',
+    icon: 'ph:envelope-bold',
+    color: '#3b82f6',
+    timestamp: '4h ago'
+  },
+  {
+    memberName: 'Sophie Turner',
+    action: t('teamPerformance.callsMade') + ' - Reconnect with former client',
+    icon: 'ph:phone-bold',
+    color: '#7849ff',
+    timestamp: '4h 15min ago'
+  },
+  {
+    memberName: 'Chris Baker',
+    action: t('teamPerformance.meetingsHeld') + ' - Training session attendance',
+    icon: 'ph:video-camera-bold',
+    color: '#22c55e',
+    timestamp: '4h 30min ago'
+  }
 ];
 
 const recentActivities = ref<any[]>([]);
@@ -593,11 +955,51 @@ const activityHeatmapOption = computed(() => {
 
   // Generate realistic heatmap data [dayIndex, hourIndex, value]
   const heatValues = [
-    [0,0,5],[0,1,8],[0,2,12],[0,3,6],[0,4,9],[0,5,14],[0,6,11],[0,7,7],[0,8,3],
-    [1,0,7],[1,1,11],[1,2,15],[1,3,8],[1,4,10],[1,5,16],[1,6,13],[1,7,9],[1,8,4],
-    [2,0,6],[2,1,9],[2,2,18],[2,3,7],[2,4,11],[2,5,19],[2,6,14],[2,7,8],[2,8,5],
-    [3,0,8],[3,1,12],[3,2,14],[3,3,9],[3,4,13],[3,5,17],[3,6,12],[3,7,6],[3,8,2],
-    [4,0,4],[4,1,7],[4,2,10],[4,3,5],[4,4,8],[4,5,11],[4,6,9],[4,7,5],[4,8,1]
+    [0, 0, 5],
+    [0, 1, 8],
+    [0, 2, 12],
+    [0, 3, 6],
+    [0, 4, 9],
+    [0, 5, 14],
+    [0, 6, 11],
+    [0, 7, 7],
+    [0, 8, 3],
+    [1, 0, 7],
+    [1, 1, 11],
+    [1, 2, 15],
+    [1, 3, 8],
+    [1, 4, 10],
+    [1, 5, 16],
+    [1, 6, 13],
+    [1, 7, 9],
+    [1, 8, 4],
+    [2, 0, 6],
+    [2, 1, 9],
+    [2, 2, 18],
+    [2, 3, 7],
+    [2, 4, 11],
+    [2, 5, 19],
+    [2, 6, 14],
+    [2, 7, 8],
+    [2, 8, 5],
+    [3, 0, 8],
+    [3, 1, 12],
+    [3, 2, 14],
+    [3, 3, 9],
+    [3, 4, 13],
+    [3, 5, 17],
+    [3, 6, 12],
+    [3, 7, 6],
+    [3, 8, 2],
+    [4, 0, 4],
+    [4, 1, 7],
+    [4, 2, 10],
+    [4, 3, 5],
+    [4, 4, 8],
+    [4, 5, 11],
+    [4, 6, 9],
+    [4, 7, 5],
+    [4, 8, 1]
   ];
 
   return {
@@ -632,14 +1034,16 @@ const activityHeatmapOption = computed(() => {
       },
       textStyle: { color: '#999', fontSize: 10 }
     },
-    series: [{
-      type: 'heatmap',
-      data: heatValues,
-      label: { show: true, color: '#fff', fontSize: 10 },
-      emphasis: {
-        itemStyle: { shadowBlur: 10, shadowColor: 'rgba(120, 73, 255, 0.5)' }
+    series: [
+      {
+        type: 'heatmap',
+        data: heatValues,
+        label: { show: true, color: '#fff', fontSize: 10 },
+        emphasis: {
+          itemStyle: { shadowBlur: 10, shadowColor: 'rgba(120, 73, 255, 0.5)' }
+        }
       }
-    }]
+    ]
   };
 });
 
@@ -702,24 +1106,28 @@ const workloadChartOption = computed(() => {
       axisTick: { show: false },
       axisLabel: { color: '#999', fontSize: 11 }
     },
-    series: [{
-      type: 'bar',
-      data: members.map(m => ({
-        value: m.hours,
-        itemStyle: {
-          color: getBarColor(m.hours),
-          borderRadius: [0, 6, 6, 0]
+    series: [
+      {
+        type: 'bar',
+        data: members
+          .map(m => ({
+            value: m.hours,
+            itemStyle: {
+              color: getBarColor(m.hours),
+              borderRadius: [0, 6, 6, 0]
+            }
+          }))
+          .reverse(),
+        barWidth: '60%',
+        label: {
+          show: true,
+          position: 'right',
+          formatter: '{c}h',
+          color: '#999',
+          fontSize: 11
         }
-      })).reverse(),
-      barWidth: '60%',
-      label: {
-        show: true,
-        position: 'right',
-        formatter: '{c}h',
-        color: '#999',
-        fontSize: 11
       }
-    }]
+    ]
   };
 });
 
@@ -786,11 +1194,15 @@ async function loadData() {
 
 function refreshData() {
   refreshing.value = true;
-  loadData().finally(() => { refreshing.value = false; });
+  loadData().finally(() => {
+    refreshing.value = false;
+  });
 }
 
 // ─── Init ───────────────────────────────────────────────────
-onMounted(() => { loadData(); });
+onMounted(() => {
+  loadData();
+});
 </script>
 
 <style lang="scss" scoped>
@@ -894,11 +1306,7 @@ onMounted(() => { loadData(); });
 }
 
 .top-performer-banner {
-  background: linear-gradient(
-    135deg,
-    rgba(120, 73, 255, 0.1),
-    rgba(59, 130, 246, 0.1)
-  );
+  background: linear-gradient(135deg, rgba(120, 73, 255, 0.1), rgba(59, 130, 246, 0.1));
   border: 1px solid rgba(120, 73, 255, 0.3);
   border-radius: 16px;
   padding: 1.5rem;

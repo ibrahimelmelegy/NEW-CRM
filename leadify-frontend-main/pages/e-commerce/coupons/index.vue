@@ -169,30 +169,25 @@
 </template>
 
 <script setup lang="ts">
-import { ref, reactive, computed, onMounted, watch } from 'vue'
-import {
-  fetchCoupons,
-  createCoupon,
-  updateCoupon,
-  deleteCoupon
-} from '~/composables/useEcommerce'
+import { ref, reactive, computed, onMounted, watch } from 'vue';
+import { fetchCoupons, createCoupon, updateCoupon, deleteCoupon } from '~/composables/useEcommerce';
 
-definePageMeta({ middleware: 'permissions' })
+definePageMeta({ middleware: 'permissions' });
 
-const { $i18n } = useNuxtApp()
-const t = $i18n.t
+const { $i18n } = useNuxtApp();
+const t = $i18n.t;
 
-const coupons = ref<any[]>([])
-const loading = ref(false)
-const saving = ref(false)
-const showDialog = ref(false)
-const editingId = ref<string | null>(null)
-const searchQuery = ref('')
-const filterType = ref('')
-const filterStatus = ref('')
-const currentPage = ref(1)
-const pageSize = ref(20)
-const totalItems = ref(0)
+const coupons = ref<any[]>([]);
+const loading = ref(false);
+const saving = ref(false);
+const showDialog = ref(false);
+const editingId = ref<string | null>(null);
+const searchQuery = ref('');
+const filterType = ref('');
+const filterStatus = ref('');
+const currentPage = ref(1);
+const pageSize = ref(20);
+const totalItems = ref(0);
 
 const form = reactive({
   code: '',
@@ -206,95 +201,92 @@ const form = reactive({
   validFrom: null as string | null,
   validTo: null as string | null,
   status: 'ACTIVE'
-})
+});
 
 // Computed stats
-const activeCoupons = computed(() => coupons.value.filter(c => c.status === 'ACTIVE').length)
-const totalRedemptions = computed(() => coupons.value.reduce((sum, c) => sum + (c.usedCount || 0), 0))
+const activeCoupons = computed(() => coupons.value.filter(c => c.status === 'ACTIVE').length);
+const totalRedemptions = computed(() => coupons.value.reduce((sum, c) => sum + (c.usedCount || 0), 0));
 const averageDiscount = computed(() => {
-  const discountCoupons = coupons.value.filter(c => c.value && c.type !== 'FREE_SHIPPING')
-  if (!discountCoupons.length) return '0'
-  const avg = discountCoupons.reduce((sum, c) => sum + (c.value || 0), 0) / discountCoupons.length
-  return avg.toFixed(1)
-})
+  const discountCoupons = coupons.value.filter(c => c.value && c.type !== 'FREE_SHIPPING');
+  if (!discountCoupons.length) return '0';
+  const avg = discountCoupons.reduce((sum, c) => sum + (c.value || 0), 0) / discountCoupons.length;
+  return avg.toFixed(1);
+});
 
-const totalPages = computed(() => Math.ceil(totalItems.value / pageSize.value))
+const totalPages = computed(() => Math.ceil(totalItems.value / pageSize.value));
 
 // Filtered coupons
 const filteredCoupons = computed(() => {
-  let result = [...coupons.value]
+  let result = [...coupons.value];
   if (searchQuery.value) {
-    const q = searchQuery.value.toLowerCase()
-    result = result.filter(c =>
-      (c.code || '').toLowerCase().includes(q) ||
-      (c.description || '').toLowerCase().includes(q)
-    )
+    const q = searchQuery.value.toLowerCase();
+    result = result.filter(c => (c.code || '').toLowerCase().includes(q) || (c.description || '').toLowerCase().includes(q));
   }
   if (filterType.value) {
-    result = result.filter(c => c.type === filterType.value)
+    result = result.filter(c => c.type === filterType.value);
   }
   if (filterStatus.value) {
-    result = result.filter(c => c.status === filterStatus.value)
+    result = result.filter(c => c.status === filterStatus.value);
   }
-  return result
-})
+  return result;
+});
 
 onMounted(() => {
-  loadCoupons()
-})
+  loadCoupons();
+});
 
 watch(currentPage, () => {
-  loadCoupons()
-})
+  loadCoupons();
+});
 
 async function loadCoupons() {
-  loading.value = true
+  loading.value = true;
   try {
-    const res = await fetchCoupons({ page: String(currentPage.value), limit: String(pageSize.value) })
-    coupons.value = (res as any)?.body?.docs || res?.docs || []
-    totalItems.value = (res as any)?.body?.totalDocs || (res as any)?.totalDocs || coupons.value.length
+    const res = await fetchCoupons({ page: String(currentPage.value), limit: String(pageSize.value) });
+    coupons.value = (res as any)?.body?.docs || res?.docs || [];
+    totalItems.value = (res as any)?.body?.totalDocs || (res as any)?.totalDocs || coupons.value.length;
   } finally {
-    loading.value = false
+    loading.value = false;
   }
 }
 
 function generateCouponCode(): string {
-  const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789'
-  let code = ''
-  for (let i = 0; i < 8; i++) code += chars.charAt(Math.floor(Math.random() * chars.length))
-  return code
+  const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789';
+  let code = '';
+  for (let i = 0; i < 8; i++) code += chars.charAt(Math.floor(Math.random() * chars.length));
+  return code;
 }
 
 function formatCouponValue(coupon: any): string {
-  if (coupon.type === 'PERCENTAGE') return `${coupon.value}%`
-  if (coupon.type === 'FREE_SHIPPING') return 'Free Shipping'
-  return `${coupon.value} ${coupon.currency || 'SAR'}`
+  if (coupon.type === 'PERCENTAGE') return `${coupon.value}%`;
+  if (coupon.type === 'FREE_SHIPPING') return 'Free Shipping';
+  return `${coupon.value} ${coupon.currency || 'SAR'}`;
 }
 
 function formatCouponType(type: string): string {
-  if (type === 'PERCENTAGE') return 'Percentage'
-  if (type === 'FIXED') return 'Fixed'
-  if (type === 'FREE_SHIPPING') return 'Free Shipping'
-  return type
+  if (type === 'PERCENTAGE') return 'Percentage';
+  if (type === 'FIXED') return 'Fixed';
+  if (type === 'FREE_SHIPPING') return 'Free Shipping';
+  return type;
 }
 
 function getCouponTypeTag(type: string): string {
-  if (type === 'PERCENTAGE') return 'primary'
-  if (type === 'FIXED') return 'success'
-  if (type === 'FREE_SHIPPING') return 'info'
-  return ''
+  if (type === 'PERCENTAGE') return 'primary';
+  if (type === 'FIXED') return 'success';
+  if (type === 'FREE_SHIPPING') return 'info';
+  return '';
 }
 
 function getCouponStatusTag(status: string): string {
-  if (status === 'ACTIVE') return 'success'
-  if (status === 'EXPIRED') return 'warning'
-  if (status === 'DISABLED') return 'info'
-  return ''
+  if (status === 'ACTIVE') return 'success';
+  if (status === 'EXPIRED') return 'warning';
+  if (status === 'DISABLED') return 'info';
+  return '';
 }
 
 function copyCode(code: string) {
-  navigator.clipboard.writeText(code)
-  ElMessage.success(t('common.copiedToClipboard'))
+  navigator.clipboard.writeText(code);
+  ElMessage.success(t('common.copiedToClipboard'));
 }
 
 function resetForm() {
@@ -310,17 +302,17 @@ function resetForm() {
     validFrom: null,
     validTo: null,
     status: 'ACTIVE'
-  })
+  });
 }
 
 function openCreateDialog() {
-  editingId.value = null
-  resetForm()
-  showDialog.value = true
+  editingId.value = null;
+  resetForm();
+  showDialog.value = true;
 }
 
 function openEditDialog(row: any) {
-  editingId.value = row.id
+  editingId.value = row.id;
   Object.assign(form, {
     code: row.code || '',
     description: row.description || '',
@@ -333,60 +325,60 @@ function openEditDialog(row: any) {
     validFrom: row.validFrom || null,
     validTo: row.validTo || null,
     status: row.status || 'ACTIVE'
-  })
-  showDialog.value = true
+  });
+  showDialog.value = true;
 }
 
 async function saveCoupon() {
   if (!form.code.trim()) {
-    ElMessage.warning(t('common.fillRequired'))
-    return
+    ElMessage.warning(t('common.fillRequired'));
+    return;
   }
   if (form.type !== 'FREE_SHIPPING' && (!form.value || form.value <= 0)) {
-    ElMessage.warning(t('common.fillRequired'))
-    return
+    ElMessage.warning(t('common.fillRequired'));
+    return;
   }
   if (form.type === 'PERCENTAGE' && form.value > 100) {
-    ElMessage.warning(t('common.fillRequired'))
-    return
+    ElMessage.warning(t('common.fillRequired'));
+    return;
   }
 
-  saving.value = true
-  const payload = { ...form, code: form.code.toUpperCase() }
+  saving.value = true;
+  const payload = { ...form, code: form.code.toUpperCase() };
 
   try {
     if (editingId.value) {
-      const res = await updateCoupon(editingId.value, payload as any)
+      const res = await updateCoupon(editingId.value, payload as any);
       if (res?.success !== false) {
-        showDialog.value = false
-        await loadCoupons()
-        ElMessage.success(t('common.saved'))
+        showDialog.value = false;
+        await loadCoupons();
+        ElMessage.success(t('common.saved'));
       }
     } else {
-      const res = await createCoupon(payload as any)
+      const res = await createCoupon(payload as any);
       if (res?.success !== false) {
-        showDialog.value = false
-        resetForm()
-        await loadCoupons()
-        ElMessage.success(t('common.saved'))
+        showDialog.value = false;
+        resetForm();
+        await loadCoupons();
+        ElMessage.success(t('common.saved'));
       }
     }
   } finally {
-    saving.value = false
+    saving.value = false;
   }
 }
 
 async function handleDelete(id: string) {
   try {
-    await ElMessageBox.confirm(
-      t('common.confirmAction'),
-      t('common.warning'),
-      { confirmButtonText: t('common.delete'), cancelButtonText: t('common.cancel'), type: 'warning' }
-    )
-    const res = await deleteCoupon(id)
+    await ElMessageBox.confirm(t('common.confirmAction'), t('common.warning'), {
+      confirmButtonText: t('common.delete'),
+      cancelButtonText: t('common.cancel'),
+      type: 'warning'
+    });
+    const res = await deleteCoupon(id);
     if (res?.success !== false) {
-      await loadCoupons()
-      ElMessage.success(t('common.deleted'))
+      await loadCoupons();
+      ElMessage.success(t('common.deleted'));
     }
   } catch {
     // User cancelled

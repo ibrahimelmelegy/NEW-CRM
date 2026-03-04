@@ -425,6 +425,7 @@
 </template>
 
 <script setup lang="ts">
+/* eslint-disable require-await */
 import { ref, reactive, computed, onMounted, nextTick, watch, onBeforeUnmount } from 'vue';
 import { ElNotification, ElMessageBox, ElMessage } from 'element-plus';
 import { useApiFetch } from '~/composables/useApiFetch';
@@ -464,7 +465,7 @@ const config = reactive({
   requireUppercase: true,
   requireNumbers: true,
   requireSpecialChars: false,
-  enforce2FA: false,
+  enforce2FA: false
 });
 
 const fontOptions = [
@@ -475,7 +476,7 @@ const fontOptions = [
   { label: 'Lato', value: 'Lato, sans-serif' },
   { label: 'Montserrat', value: 'Montserrat, sans-serif' },
   { label: 'Cairo (Arabic)', value: 'Cairo, sans-serif' },
-  { label: 'System Default', value: 'system-ui, -apple-system, sans-serif' },
+  { label: 'System Default', value: 'system-ui, -apple-system, sans-serif' }
 ];
 
 // ── Portal Features ──
@@ -488,7 +489,7 @@ const featureEnabledState = reactive<Record<string, boolean>>({
   signContracts: false,
   documentLibrary: false,
   submitForms: false,
-  liveChat: false,
+  liveChat: false
 });
 
 const portalFeatures = computed(() => [
@@ -500,7 +501,7 @@ const portalFeatures = computed(() => [
     color: '#7849ff',
     bgColor: 'rgba(120, 73, 255, 0.1)',
     enabled: featureEnabledState.viewDeals,
-    previewItems: [t('customerPortal.dealPipeline'), t('customerPortal.dealAmount'), t('customerPortal.dealStage')],
+    previewItems: [t('customerPortal.dealPipeline'), t('customerPortal.dealAmount'), t('customerPortal.dealStage')]
   },
   {
     key: 'viewInvoices',
@@ -510,7 +511,7 @@ const portalFeatures = computed(() => [
     color: '#3b82f6',
     bgColor: 'rgba(59, 130, 246, 0.1)',
     enabled: featureEnabledState.viewInvoices,
-    previewItems: [t('customerPortal.invoiceList'), t('customerPortal.downloadPdf'), t('customerPortal.paymentStatus')],
+    previewItems: [t('customerPortal.invoiceList'), t('customerPortal.downloadPdf'), t('customerPortal.paymentStatus')]
   },
   {
     key: 'submitTickets',
@@ -520,7 +521,7 @@ const portalFeatures = computed(() => [
     color: '#f59e0b',
     bgColor: 'rgba(245, 158, 11, 0.1)',
     enabled: featureEnabledState.submitTickets,
-    previewItems: [t('customerPortal.createTicket'), t('customerPortal.trackStatus'), t('customerPortal.addComments')],
+    previewItems: [t('customerPortal.createTicket'), t('customerPortal.trackStatus'), t('customerPortal.addComments')]
   },
   {
     key: 'knowledgeBase',
@@ -530,7 +531,7 @@ const portalFeatures = computed(() => [
     color: '#22c55e',
     bgColor: 'rgba(34, 197, 94, 0.1)',
     enabled: featureEnabledState.knowledgeBase,
-    previewItems: [t('customerPortal.browseArticles'), t('customerPortal.searchKb'), t('customerPortal.helpfulVotes')],
+    previewItems: [t('customerPortal.browseArticles'), t('customerPortal.searchKb'), t('customerPortal.helpfulVotes')]
   },
   {
     key: 'updateProfile',
@@ -540,7 +541,7 @@ const portalFeatures = computed(() => [
     color: '#8b5cf6',
     bgColor: 'rgba(139, 92, 246, 0.1)',
     enabled: featureEnabledState.updateProfile,
-    previewItems: [t('customerPortal.editDetails'), t('customerPortal.changePassword'), t('customerPortal.managePrefs')],
+    previewItems: [t('customerPortal.editDetails'), t('customerPortal.changePassword'), t('customerPortal.managePrefs')]
   },
   {
     key: 'signContracts',
@@ -550,7 +551,7 @@ const portalFeatures = computed(() => [
     color: '#ec4899',
     bgColor: 'rgba(236, 72, 153, 0.1)',
     enabled: featureEnabledState.signContracts,
-    previewItems: [t('customerPortal.viewContracts'), t('customerPortal.eSign'), t('customerPortal.downloadSigned')],
+    previewItems: [t('customerPortal.viewContracts'), t('customerPortal.eSign'), t('customerPortal.downloadSigned')]
   },
   {
     key: 'documentLibrary',
@@ -560,7 +561,7 @@ const portalFeatures = computed(() => [
     color: '#06b6d4',
     bgColor: 'rgba(6, 182, 212, 0.1)',
     enabled: featureEnabledState.documentLibrary,
-    previewItems: [t('customerPortal.sharedDocs'), t('customerPortal.uploadFiles'), t('customerPortal.versionHistory')],
+    previewItems: [t('customerPortal.sharedDocs'), t('customerPortal.uploadFiles'), t('customerPortal.versionHistory')]
   },
   {
     key: 'submitForms',
@@ -570,7 +571,7 @@ const portalFeatures = computed(() => [
     color: '#10b981',
     bgColor: 'rgba(16, 185, 129, 0.1)',
     enabled: featureEnabledState.submitForms,
-    previewItems: [t('customerPortal.availableForms'), t('customerPortal.formSubmissions'), t('customerPortal.formHistory')],
+    previewItems: [t('customerPortal.availableForms'), t('customerPortal.formSubmissions'), t('customerPortal.formHistory')]
   },
   {
     key: 'liveChat',
@@ -580,8 +581,8 @@ const portalFeatures = computed(() => [
     color: '#ef4444',
     bgColor: 'rgba(239, 68, 68, 0.1)',
     enabled: featureEnabledState.liveChat,
-    previewItems: [t('customerPortal.startChat'), t('customerPortal.chatHistory'), t('customerPortal.fileSharing')],
-  },
+    previewItems: [t('customerPortal.startChat'), t('customerPortal.chatHistory'), t('customerPortal.fileSharing')]
+  }
 ]);
 
 // ── Customer Roles ──
@@ -594,7 +595,7 @@ const customerRoles = computed(() => [
     color: '#7849ff',
     bgColor: 'rgba(120, 73, 255, 0.1)',
     tagType: 'danger' as const,
-    badge: t('customerPortal.fullAccess'),
+    badge: t('customerPortal.fullAccess')
   },
   {
     key: 'member',
@@ -604,7 +605,7 @@ const customerRoles = computed(() => [
     color: '#3b82f6',
     bgColor: 'rgba(59, 130, 246, 0.1)',
     tagType: '' as const,
-    badge: t('customerPortal.standardAccess'),
+    badge: t('customerPortal.standardAccess')
   },
   {
     key: 'readOnly',
@@ -614,8 +615,8 @@ const customerRoles = computed(() => [
     color: '#6b7280',
     bgColor: 'rgba(107, 114, 128, 0.1)',
     tagType: 'info' as const,
-    badge: t('customerPortal.viewOnly'),
-  },
+    badge: t('customerPortal.viewOnly')
+  }
 ]);
 
 // ── Articles ──
@@ -638,7 +639,7 @@ const articleForm = reactive({
   title: '',
   category: '',
   status: 'draft' as 'published' | 'draft',
-  content: '',
+  content: ''
 });
 
 const articleCategories = computed(() => {
@@ -646,7 +647,7 @@ const articleCategories = computed(() => {
     t('customerPortal.categories.gettingStarted'),
     t('customerPortal.categories.account'),
     t('customerPortal.categories.billing'),
-    t('customerPortal.categories.technical'),
+    t('customerPortal.categories.technical')
   ];
   const cats = new Set(articles.value.map(a => a.category).filter(Boolean));
   return [...defaults, ...Array.from(cats).filter(c => !defaults.includes(c))];
@@ -688,7 +689,7 @@ async function saveArticle() {
         category: articleForm.category,
         status: articleForm.status,
         content: articleForm.content,
-        order: articles.value.length + 1,
+        order: articles.value.length + 1
       });
     }
     articleDialogVisible.value = false;
@@ -717,7 +718,9 @@ function articleDrop(idx: number) {
   if (articleDragIdx === idx || articleDragIdx < 0) return;
   const item = articles.value.splice(articleDragIdx, 1)[0]!;
   articles.value.splice(idx, 0, item);
-  articles.value.forEach((a, i) => { a.order = i + 1; });
+  articles.value.forEach((a, i) => {
+    a.order = i + 1;
+  });
   articleDragIdx = -1;
 }
 
@@ -738,7 +741,7 @@ const savingFaq = ref(false);
 const faqForm = reactive({
   question: '',
   answer: '',
-  category: '',
+  category: ''
 });
 
 const faqCategories = computed(() => {
@@ -746,7 +749,7 @@ const faqCategories = computed(() => {
     t('customerPortal.categories.general'),
     t('customerPortal.categories.billing'),
     t('customerPortal.categories.technical'),
-    t('customerPortal.categories.account'),
+    t('customerPortal.categories.account')
   ];
   const cats = new Set(faqs.value.map(f => f.category).filter(Boolean));
   return [...defaults, ...Array.from(cats).filter(c => !defaults.includes(c))];
@@ -785,7 +788,7 @@ async function saveFaq() {
         question: faqForm.question,
         answer: faqForm.answer,
         category: faqForm.category,
-        visible: true,
+        visible: true
       });
     }
     faqDialogVisible.value = false;
@@ -811,7 +814,7 @@ const analyticsData = reactive({
   activeUsers: 247,
   ticketSubmissions: 83,
   kbViews: 1542,
-  loginCount: 1893,
+  loginCount: 1893
 });
 
 const analyticsStats = computed(() => [
@@ -823,7 +826,7 @@ const analyticsStats = computed(() => [
     bgColor: 'rgba(120, 73, 255, 0.1)',
     trend: '+12.5%',
     trendColor: '#22c55e',
-    trendIcon: 'ph:trend-up-bold',
+    trendIcon: 'ph:trend-up-bold'
   },
   {
     label: t('customerPortal.ticketSubmissions'),
@@ -833,7 +836,7 @@ const analyticsStats = computed(() => [
     bgColor: 'rgba(59, 130, 246, 0.1)',
     trend: '+8.3%',
     trendColor: '#22c55e',
-    trendIcon: 'ph:trend-up-bold',
+    trendIcon: 'ph:trend-up-bold'
   },
   {
     label: t('customerPortal.kbViews'),
@@ -843,7 +846,7 @@ const analyticsStats = computed(() => [
     bgColor: 'rgba(34, 197, 94, 0.1)',
     trend: '+23.1%',
     trendColor: '#22c55e',
-    trendIcon: 'ph:trend-up-bold',
+    trendIcon: 'ph:trend-up-bold'
   },
   {
     label: t('customerPortal.loginCount'),
@@ -853,8 +856,8 @@ const analyticsStats = computed(() => [
     bgColor: 'rgba(245, 158, 11, 0.1)',
     trend: '+5.7%',
     trendColor: '#22c55e',
-    trendIcon: 'ph:trend-up-bold',
-  },
+    trendIcon: 'ph:trend-up-bold'
+  }
 ]);
 
 // ── ECharts ──
@@ -885,12 +888,12 @@ async function initChart() {
         trigger: 'axis',
         backgroundColor: 'rgba(30, 30, 40, 0.95)',
         borderColor: 'rgba(120, 73, 255, 0.3)',
-        textStyle: { color: '#e4e4e7', fontSize: 12 },
+        textStyle: { color: '#e4e4e7', fontSize: 12 }
       },
       legend: {
         data: [t('customerPortal.logins'), t('customerPortal.ticketsLabel'), t('customerPortal.kbViewsLabel')],
         textStyle: { color: '#a1a1aa', fontSize: 12 },
-        bottom: 0,
+        bottom: 0
       },
       grid: { top: 20, right: 20, bottom: 50, left: 50 },
       xAxis: {
@@ -899,14 +902,14 @@ async function initChart() {
         axisLabel: {
           color: '#a1a1aa',
           fontSize: 11,
-          rotate: days > 30 ? 45 : 0,
+          rotate: days > 30 ? 45 : 0
         },
-        axisLine: { lineStyle: { color: 'rgba(255,255,255,0.1)' } },
+        axisLine: { lineStyle: { color: 'rgba(255,255,255,0.1)' } }
       },
       yAxis: {
         type: 'value',
         axisLabel: { color: '#a1a1aa', fontSize: 11 },
-        splitLine: { lineStyle: { color: 'rgba(255,255,255,0.06)' } },
+        splitLine: { lineStyle: { color: 'rgba(255,255,255,0.06)' } }
       },
       series: [
         {
@@ -919,20 +922,23 @@ async function initChart() {
           areaStyle: {
             color: {
               type: 'linear',
-              x: 0, y: 0, x2: 0, y2: 1,
+              x: 0,
+              y: 0,
+              x2: 0,
+              y2: 1,
               colorStops: [
                 { offset: 0, color: 'rgba(120, 73, 255, 0.25)' },
-                { offset: 1, color: 'rgba(120, 73, 255, 0)' },
-              ],
-            },
-          },
+                { offset: 1, color: 'rgba(120, 73, 255, 0)' }
+              ]
+            }
+          }
         },
         {
           name: t('customerPortal.ticketsLabel'),
           type: 'bar',
           data: ticketsData,
           itemStyle: { color: '#3b82f6', borderRadius: [4, 4, 0, 0] },
-          barMaxWidth: 12,
+          barMaxWidth: 12
         },
         {
           name: t('customerPortal.kbViewsLabel'),
@@ -940,9 +946,9 @@ async function initChart() {
           smooth: true,
           data: kbData,
           lineStyle: { color: '#22c55e', width: 2 },
-          itemStyle: { color: '#22c55e' },
-        },
-      ],
+          itemStyle: { color: '#22c55e' }
+        }
+      ]
     });
   } catch (err) {
     console.error('Failed to init portal analytics chart', err);
@@ -980,7 +986,7 @@ function processLogo(file: File) {
     return;
   }
   const reader = new FileReader();
-  reader.onload = (e) => {
+  reader.onload = e => {
     const result = e.target?.result as string;
     logoPreview.value = result;
     config.companyLogo = result;
@@ -995,7 +1001,7 @@ async function loadPortalConfig() {
     const res: any = await useApiFetch('customer-portal/config', 'GET');
     if (res.success && res.body) {
       const data = res.body;
-      Object.keys(config).forEach((key) => {
+      Object.keys(config).forEach(key => {
         if (data[key] !== undefined) {
           (config as any)[key] = data[key];
         }
@@ -1028,7 +1034,7 @@ async function handleSave() {
       ...config,
       features: portalFeatures.value.map(f => ({ key: f.key, enabled: f.enabled })),
       articles: articles.value,
-      faqs: faqs.value,
+      faqs: faqs.value
     };
     const res = await useApiFetch('customer-portal/config', 'PUT', payload);
     if (res.success) {
@@ -1048,7 +1054,7 @@ async function handleReset() {
     await ElMessageBox.confirm(t('common.confirmAction'), t('common.warning'), {
       confirmButtonText: t('common.confirm'),
       cancelButtonText: t('common.cancel'),
-      type: 'warning',
+      type: 'warning'
     });
   } catch {
     return;
@@ -1081,7 +1087,7 @@ await loadPortalConfig().catch(() => {
   loading.value = false;
 });
 
-watch(activeTab, (tab) => {
+watch(activeTab, tab => {
   if (tab === 'analytics') {
     nextTick(() => initChart());
   }
@@ -1153,7 +1159,9 @@ onBeforeUnmount(() => {
 
 .logo-upload-area {
   border: 2px dashed var(--glass-border, rgba(255, 255, 255, 0.12));
-  transition: border-color 0.2s ease, background 0.2s ease;
+  transition:
+    border-color 0.2s ease,
+    background 0.2s ease;
 
   &:hover {
     border-color: var(--accent-color, #7849ff);

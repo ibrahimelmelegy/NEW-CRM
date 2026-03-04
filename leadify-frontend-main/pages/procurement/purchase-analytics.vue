@@ -339,7 +339,7 @@
 
 <script lang="ts" setup>
 import { ref, computed, onMounted } from 'vue';
-import { graphic } from 'echarts';
+import { graphic } from 'echarts/core';
 import VChart from 'vue-echarts';
 import { useApiFetch } from '~/composables/useApiFetch';
 
@@ -380,29 +380,29 @@ const kpiCards = computed(() => [
     value: '$1.24M',
     icon: 'ph:currency-dollar-bold',
     color: '#3b82f6',
-    trend: 8.3,
+    trend: 8.3
   },
   {
     label: t('purchaseAnalytics.costSavings'),
     value: '$186K',
     icon: 'ph:trend-down-bold',
     color: '#22c55e',
-    trend: 22.1,
+    trend: 22.1
   },
   {
     label: t('purchaseAnalytics.activeSuppliers'),
     value: '47',
     icon: 'ph:storefront-bold',
     color: '#7849ff',
-    trend: 4.5,
+    trend: 4.5
   },
   {
     label: t('purchaseAnalytics.pendingOrders'),
     value: '23',
     icon: 'ph:clock-bold',
     color: '#f59e0b',
-    trend: -12.3,
-  },
+    trend: -12.3
+  }
 ]);
 
 // ═══════════════════════════════════════════════════════════════
@@ -418,7 +418,7 @@ const treemapCategories = [
   { name: 'Services', value: 98000, color: '#ec4899' },
   { name: 'Office Supplies', value: 52000, color: '#06b6d4' },
   { name: 'Software', value: 78000, color: '#8b5cf6' },
-  { name: 'Maintenance', value: 65000, color: '#ef4444' },
+  { name: 'Maintenance', value: 65000, color: '#ef4444' }
 ];
 
 const spendTreemapOption = computed(() => ({
@@ -427,7 +427,7 @@ const spendTreemapOption = computed(() => ({
     formatter: (params: any) => {
       const val = (params.value / 1000).toFixed(0);
       return `<strong>${params.name}</strong><br/>Spend: $${val}K`;
-    },
+    }
   },
   series: [
     {
@@ -437,24 +437,25 @@ const spendTreemapOption = computed(() => ({
       breadcrumb: { show: false },
       label: {
         show: true,
+        // eslint-disable-next-line no-template-curly-in-string
         formatter: '{b}\n${c}',
         color: '#fff',
         fontSize: 13,
-        fontWeight: 600,
+        fontWeight: 600
       },
       itemStyle: {
         borderColor: 'rgba(30,30,45,0.6)',
         borderWidth: 3,
         gapWidth: 3,
-        borderRadius: 6,
+        borderRadius: 6
       },
       data: treemapCategories.map(c => ({
         name: c.name,
         value: c.value,
-        itemStyle: { color: c.color },
-      })),
-    },
-  ],
+        itemStyle: { color: c.color }
+      }))
+    }
+  ]
 }));
 
 // ─── Spend Trend (Area) ─────────────────────────────────────
@@ -467,12 +468,13 @@ const spendTrendOption = computed(() => ({
     type: 'category',
     data: months,
     axisLabel: axisLabelStyle,
-    axisLine: { lineStyle: { color: 'rgba(255,255,255,0.1)' } },
+    axisLine: { lineStyle: { color: 'rgba(255,255,255,0.1)' } }
   },
   yAxis: {
     type: 'value',
+    // eslint-disable-next-line no-template-curly-in-string
     axisLabel: { ...axisLabelStyle, formatter: '${value}K' },
-    splitLine: splitLineStyle,
+    splitLine: splitLineStyle
   },
   series: [
     {
@@ -485,13 +487,13 @@ const spendTrendOption = computed(() => ({
       areaStyle: {
         color: new graphic.LinearGradient(0, 0, 0, 1, [
           { offset: 0, color: 'rgba(59, 130, 246, 0.35)' },
-          { offset: 1, color: 'rgba(59, 130, 246, 0.02)' },
-        ]),
+          { offset: 1, color: 'rgba(59, 130, 246, 0.02)' }
+        ])
       },
       symbol: 'circle',
-      symbolSize: 6,
-    },
-  ],
+      symbolSize: 6
+    }
+  ]
 }));
 
 // ─── Top 10 Suppliers ───────────────────────────────────────
@@ -505,7 +507,7 @@ const topSuppliersFallback = [
   { rank: 7, name: 'MaintainPro Group', category: 'Maintenance', totalSpend: '$65,100', percentOfTotal: 5.3, trendDir: 'down' },
   { rank: 8, name: 'OfficeHub Supplies', category: 'Office Supplies', totalSpend: '$52,800', percentOfTotal: 4.3, trendDir: 'down' },
   { rank: 9, name: 'ChemWorks Ltd', category: 'Raw Materials', totalSpend: '$41,200', percentOfTotal: 3.3, trendDir: 'up' },
-  { rank: 10, name: 'SecureIT Partners', category: 'Software', totalSpend: '$35,700', percentOfTotal: 2.9, trendDir: 'down' },
+  { rank: 10, name: 'SecureIT Partners', category: 'Software', totalSpend: '$35,700', percentOfTotal: 2.9, trendDir: 'down' }
 ];
 
 const topSuppliers = ref<any[]>([]);
@@ -516,19 +518,20 @@ const budgetVsActualOption = computed(() => ({
   legend: {
     data: ['Budget', 'Actual'],
     textStyle: { color: '#94a3b8' },
-    top: 0,
+    top: 0
   },
   grid: { top: 40, right: 20, bottom: 40, left: 60 },
   xAxis: {
     type: 'category',
     data: ['Raw Mat.', 'Electronics', 'Packaging', 'Logistics', 'Services', 'Software'],
     axisLabel: axisLabelStyle,
-    axisLine: { lineStyle: { color: 'rgba(255,255,255,0.1)' } },
+    axisLine: { lineStyle: { color: 'rgba(255,255,255,0.1)' } }
   },
   yAxis: {
     type: 'value',
+    // eslint-disable-next-line no-template-curly-in-string
     axisLabel: { ...axisLabelStyle, formatter: '${value}K' },
-    splitLine: splitLineStyle,
+    splitLine: splitLineStyle
   },
   series: [
     {
@@ -536,15 +539,15 @@ const budgetVsActualOption = computed(() => ({
       type: 'bar',
       data: [450, 320, 200, 150, 110, 90],
       barGap: '10%',
-      itemStyle: { color: '#3b82f6', borderRadius: [6, 6, 0, 0] },
+      itemStyle: { color: '#3b82f6', borderRadius: [6, 6, 0, 0] }
     },
     {
       name: 'Actual',
       type: 'bar',
       data: [420, 310, 185, 142, 98, 78],
-      itemStyle: { color: '#22c55e', borderRadius: [6, 6, 0, 0] },
-    },
-  ],
+      itemStyle: { color: '#22c55e', borderRadius: [6, 6, 0, 0] }
+    }
+  ]
 }));
 
 // ─── Spend Donut ────────────────────────────────────────────
@@ -554,7 +557,7 @@ const spendDonutOption = computed(() => ({
     orient: 'vertical',
     right: 10,
     top: 'center',
-    textStyle: { color: '#94a3b8', fontSize: 12 },
+    textStyle: { color: '#94a3b8', fontSize: 12 }
   },
   series: [
     {
@@ -564,15 +567,15 @@ const spendDonutOption = computed(() => ({
       avoidLabelOverlap: true,
       label: { show: false },
       emphasis: {
-        label: { show: true, fontSize: 14, fontWeight: 'bold', color: '#fff' },
+        label: { show: true, fontSize: 14, fontWeight: 'bold', color: '#fff' }
       },
       data: treemapCategories.map(c => ({
         name: c.name,
         value: c.value,
-        itemStyle: { color: c.color },
-      })),
-    },
-  ],
+        itemStyle: { color: c.color }
+      }))
+    }
+  ]
 }));
 
 // ─── Helpers ────────────────────────────────────────────────
@@ -585,7 +588,7 @@ function getCategoryColor(category: string): string {
     Services: '#ec4899',
     'Office Supplies': '#06b6d4',
     Software: '#8b5cf6',
-    Maintenance: '#ef4444',
+    Maintenance: '#ef4444'
   };
   return map[category] || '#94a3b8';
 }
@@ -611,7 +614,7 @@ const supplierScorecardFallback = [
   { name: 'MaintainPro Group', onTimeDelivery: 85, qualityScore: 82, responsiveness: 3, overallRating: 3.6, trend: 'down' },
   { name: 'OfficeHub Supplies', onTimeDelivery: 94, qualityScore: 86, responsiveness: 4, overallRating: 4.1, trend: 'stable' },
   { name: 'ChemWorks Ltd', onTimeDelivery: 88, qualityScore: 90, responsiveness: 4, overallRating: 4.0, trend: 'up' },
-  { name: 'SecureIT Partners', onTimeDelivery: 90, qualityScore: 87, responsiveness: 3, overallRating: 3.8, trend: 'stable' },
+  { name: 'SecureIT Partners', onTimeDelivery: 90, qualityScore: 87, responsiveness: 3, overallRating: 3.8, trend: 'stable' }
 ];
 
 const supplierScorecard = ref<any[]>([]);
@@ -640,7 +643,7 @@ const supplierRadarOption = computed(() => ({
   legend: {
     data: ['GlobalTech', 'SwiftLogistics', 'TechSoft'],
     textStyle: { color: '#94a3b8' },
-    bottom: 0,
+    bottom: 0
   },
   radar: {
     indicator: [
@@ -648,11 +651,11 @@ const supplierRadarOption = computed(() => ({
       { name: 'Quality', max: 100 },
       { name: 'Response', max: 100 },
       { name: 'Pricing', max: 100 },
-      { name: 'Flexibility', max: 100 },
+      { name: 'Flexibility', max: 100 }
     ],
     axisName: { color: '#94a3b8', fontSize: 12 },
     splitLine: splitLineStyle,
-    splitArea: { areaStyle: { color: ['rgba(59,130,246,0.02)', 'rgba(59,130,246,0.04)'] } },
+    splitArea: { areaStyle: { color: ['rgba(59,130,246,0.02)', 'rgba(59,130,246,0.04)'] } }
   },
   series: [
     {
@@ -663,25 +666,25 @@ const supplierRadarOption = computed(() => ({
           name: 'GlobalTech',
           lineStyle: { color: '#3b82f6', width: 2 },
           itemStyle: { color: '#3b82f6' },
-          areaStyle: { color: 'rgba(59, 130, 246, 0.15)' },
+          areaStyle: { color: 'rgba(59, 130, 246, 0.15)' }
         },
         {
           value: [97, 91, 93, 80, 90],
           name: 'SwiftLogistics',
           lineStyle: { color: '#22c55e', width: 2 },
           itemStyle: { color: '#22c55e' },
-          areaStyle: { color: 'rgba(34, 197, 94, 0.15)' },
+          areaStyle: { color: 'rgba(34, 197, 94, 0.15)' }
         },
         {
           value: [91, 94, 88, 92, 82],
           name: 'TechSoft',
           lineStyle: { color: '#f59e0b', width: 2 },
           itemStyle: { color: '#f59e0b' },
-          areaStyle: { color: 'rgba(245, 158, 11, 0.15)' },
-        },
-      ],
-    },
-  ],
+          areaStyle: { color: 'rgba(245, 158, 11, 0.15)' }
+        }
+      ]
+    }
+  ]
 }));
 
 // ─── Performance Trend (multi-line) ─────────────────────────
@@ -692,21 +695,21 @@ const performanceTrendOption = computed(() => ({
   legend: {
     data: ['GlobalTech', 'SwiftLogistics', 'TechSoft'],
     textStyle: { color: '#94a3b8' },
-    top: 0,
+    top: 0
   },
   grid: { top: 40, right: 20, bottom: 40, left: 50 },
   xAxis: {
     type: 'category',
     data: perfMonths,
     axisLabel: axisLabelStyle,
-    axisLine: { lineStyle: { color: 'rgba(255,255,255,0.1)' } },
+    axisLine: { lineStyle: { color: 'rgba(255,255,255,0.1)' } }
   },
   yAxis: {
     type: 'value',
     min: 60,
     max: 100,
     axisLabel: axisLabelStyle,
-    splitLine: splitLineStyle,
+    splitLine: splitLineStyle
   },
   series: [
     {
@@ -717,7 +720,7 @@ const performanceTrendOption = computed(() => ({
       lineStyle: { color: '#3b82f6', width: 2.5 },
       itemStyle: { color: '#3b82f6' },
       symbol: 'circle',
-      symbolSize: 6,
+      symbolSize: 6
     },
     {
       name: 'SwiftLogistics',
@@ -727,7 +730,7 @@ const performanceTrendOption = computed(() => ({
       lineStyle: { color: '#22c55e', width: 2.5 },
       itemStyle: { color: '#22c55e' },
       symbol: 'circle',
-      symbolSize: 6,
+      symbolSize: 6
     },
     {
       name: 'TechSoft',
@@ -737,9 +740,9 @@ const performanceTrendOption = computed(() => ({
       lineStyle: { color: '#f59e0b', width: 2.5 },
       itemStyle: { color: '#f59e0b' },
       symbol: 'circle',
-      symbolSize: 6,
-    },
-  ],
+      symbolSize: 6
+    }
+  ]
 }));
 
 // ═══════════════════════════════════════════════════════════════
@@ -753,7 +756,7 @@ const savingsOpportunitiesFallback = [
     effort: 'Medium',
     status: 'Identified',
     statusKey: 'identified',
-    icon: 'ph:package-bold',
+    icon: 'ph:package-bold'
   },
   {
     description: 'Negotiate volume discounts on raw materials with RawMat Solutions',
@@ -761,7 +764,7 @@ const savingsOpportunitiesFallback = [
     effort: 'Low',
     status: 'In Progress',
     statusKey: 'inProgress',
-    icon: 'ph:handshake-bold',
+    icon: 'ph:handshake-bold'
   },
   {
     description: 'Switch to regional logistics provider for local deliveries',
@@ -769,7 +772,7 @@ const savingsOpportunitiesFallback = [
     effort: 'High',
     status: 'Identified',
     statusKey: 'identified',
-    icon: 'ph:truck-bold',
+    icon: 'ph:truck-bold'
   },
   {
     description: 'Implement automated PO processing to reduce admin costs',
@@ -777,7 +780,7 @@ const savingsOpportunitiesFallback = [
     effort: 'Medium',
     status: 'In Progress',
     statusKey: 'inProgress',
-    icon: 'ph:robot-bold',
+    icon: 'ph:robot-bold'
   },
   {
     description: 'Renegotiate software license agreements for bulk pricing',
@@ -785,7 +788,7 @@ const savingsOpportunitiesFallback = [
     effort: 'Low',
     status: 'Implemented',
     statusKey: 'implemented',
-    icon: 'ph:code-bold',
+    icon: 'ph:code-bold'
   },
   {
     description: 'Implement just-in-time inventory for office supplies',
@@ -793,8 +796,8 @@ const savingsOpportunitiesFallback = [
     effort: 'High',
     status: 'Identified',
     statusKey: 'identified',
-    icon: 'ph:warehouse-bold',
-  },
+    icon: 'ph:warehouse-bold'
+  }
 ];
 
 const savingsOpportunities = ref<any[]>([]);
@@ -832,7 +835,7 @@ const priceVarianceDataFallback = [
   { item: 'Shipping Pallets (each)', contracted: '$18.00', actual: '$17.80', variancePct: -1.1 },
   { item: 'Adhesive Tape (per roll)', contracted: '$3.20', actual: '$3.25', variancePct: 1.6 },
   { item: 'Plastic Pellets (per kg)', contracted: '$2.10', actual: '$2.35', variancePct: 11.9 },
-  { item: 'Safety Gloves (per box)', contracted: '$12.00', actual: '$11.40', variancePct: -5.0 },
+  { item: 'Safety Gloves (per box)', contracted: '$12.00', actual: '$11.40', variancePct: -5.0 }
 ];
 
 const priceVarianceData = ref<any[]>([]);
@@ -859,12 +862,13 @@ const costReductionOption = computed(() => ({
     type: 'category',
     data: months,
     axisLabel: axisLabelStyle,
-    axisLine: { lineStyle: { color: 'rgba(255,255,255,0.1)' } },
+    axisLine: { lineStyle: { color: 'rgba(255,255,255,0.1)' } }
   },
   yAxis: {
     type: 'value',
+    // eslint-disable-next-line no-template-curly-in-string
     axisLabel: { ...axisLabelStyle, formatter: '${value}K' },
-    splitLine: splitLineStyle,
+    splitLine: splitLineStyle
   },
   series: [
     {
@@ -875,11 +879,11 @@ const costReductionOption = computed(() => ({
         borderRadius: [6, 6, 0, 0],
         color: new graphic.LinearGradient(0, 0, 0, 1, [
           { offset: 0, color: '#22c55e' },
-          { offset: 1, color: 'rgba(34, 197, 94, 0.3)' },
-        ]),
-      },
-    },
-  ],
+          { offset: 1, color: 'rgba(34, 197, 94, 0.3)' }
+        ])
+      }
+    }
+  ]
 }));
 
 // ═══════════════════════════════════════════════════════════════
@@ -897,12 +901,12 @@ const orderFrequencyOption = computed(() => ({
     type: 'category',
     data: daysOfWeek,
     axisLabel: axisLabelStyle,
-    axisLine: { lineStyle: { color: 'rgba(255,255,255,0.1)' } },
+    axisLine: { lineStyle: { color: 'rgba(255,255,255,0.1)' } }
   },
   yAxis: {
     type: 'value',
     axisLabel: axisLabelStyle,
-    splitLine: splitLineStyle,
+    splitLine: splitLineStyle
   },
   series: [
     {
@@ -914,13 +918,13 @@ const orderFrequencyOption = computed(() => ({
           borderRadius: [8, 8, 0, 0],
           color: new graphic.LinearGradient(0, 0, 0, 1, [
             { offset: 0, color: i === 3 ? '#3b82f6' : 'rgba(59,130,246,0.6)' },
-            { offset: 1, color: i === 3 ? 'rgba(59,130,246,0.4)' : 'rgba(59,130,246,0.1)' },
-          ]),
-        },
+            { offset: 1, color: i === 3 ? 'rgba(59,130,246,0.4)' : 'rgba(59,130,246,0.1)' }
+          ])
+        }
       })),
-      barWidth: '50%',
-    },
-  ],
+      barWidth: '50%'
+    }
+  ]
 }));
 
 // ─── Seasonal Heatmap ───────────────────────────────────────
@@ -934,7 +938,7 @@ const heatmapRawData: number[][] = [
   [40, 45, 50, 55, 60, 70, 65, 55, 50, 45, 40, 38],
   [50, 48, 52, 45, 42, 38, 40, 42, 55, 60, 65, 70],
   [30, 35, 45, 50, 55, 60, 58, 52, 48, 40, 65, 80],
-  [45, 42, 50, 55, 48, 52, 60, 65, 58, 50, 45, 42],
+  [45, 42, 50, 55, 48, 52, 60, 65, 58, 50, 45, 42]
 ];
 
 const seasonalHeatmapOption = computed(() => {
@@ -952,20 +956,20 @@ const seasonalHeatmapOption = computed(() => {
         const month = months[params.value[0]];
         const cat = heatmapCategories[params.value[1]];
         return `<strong>${cat}</strong><br/>${month}: $${params.value[2]}K`;
-      },
+      }
     },
     grid: { top: 10, right: 80, bottom: 50, left: 130 },
     xAxis: {
       type: 'category',
       data: months,
       axisLabel: axisLabelStyle,
-      splitArea: { show: true, areaStyle: { color: ['rgba(255,255,255,0.02)', 'transparent'] } },
+      splitArea: { show: true, areaStyle: { color: ['rgba(255,255,255,0.02)', 'transparent'] } }
     },
     yAxis: {
       type: 'category',
       data: heatmapCategories,
       axisLabel: { ...axisLabelStyle, fontSize: 11 },
-      splitArea: { show: true, areaStyle: { color: ['rgba(255,255,255,0.02)', 'transparent'] } },
+      splitArea: { show: true, areaStyle: { color: ['rgba(255,255,255,0.02)', 'transparent'] } }
     },
     visualMap: {
       min: 30,
@@ -975,9 +979,9 @@ const seasonalHeatmapOption = computed(() => {
       right: 0,
       top: 'center',
       inRange: {
-        color: ['#1e3a5f', '#2563eb', '#3b82f6', '#60a5fa', '#f59e0b', '#ef4444'],
+        color: ['#1e3a5f', '#2563eb', '#3b82f6', '#60a5fa', '#f59e0b', '#ef4444']
       },
-      textStyle: { color: '#94a3b8' },
+      textStyle: { color: '#94a3b8' }
     },
     series: [
       {
@@ -985,10 +989,10 @@ const seasonalHeatmapOption = computed(() => {
         data,
         label: { show: true, color: '#fff', fontSize: 10 },
         emphasis: {
-          itemStyle: { shadowBlur: 10, shadowColor: 'rgba(0,0,0,0.5)' },
-        },
-      },
-    ],
+          itemStyle: { shadowBlur: 10, shadowColor: 'rgba(0,0,0,0.5)' }
+        }
+      }
+    ]
   };
 });
 
@@ -1001,7 +1005,7 @@ const leadTimeSuppliers = [
   { name: 'ProServ Solutions', avg: 10, max: 22 },
   { name: 'TechSoft Inc', avg: 6, max: 10 },
   { name: 'MaintainPro Group', avg: 7, max: 15 },
-  { name: 'OfficeHub Supplies', avg: 4, max: 7 },
+  { name: 'OfficeHub Supplies', avg: 4, max: 7 }
 ];
 
 const leadTimeOption = computed(() => ({
@@ -1009,18 +1013,18 @@ const leadTimeOption = computed(() => ({
   legend: {
     data: ['Avg Lead Time', 'Max Lead Time'],
     textStyle: { color: '#94a3b8' },
-    top: 0,
+    top: 0
   },
   grid: { top: 40, right: 30, bottom: 20, left: 160 },
   xAxis: {
     type: 'value',
     axisLabel: { ...axisLabelStyle, formatter: '{value}d' },
-    splitLine: splitLineStyle,
+    splitLine: splitLineStyle
   },
   yAxis: {
     type: 'category',
     data: leadTimeSuppliers.map(s => s.name),
-    axisLabel: { ...axisLabelStyle, fontSize: 11 },
+    axisLabel: { ...axisLabelStyle, fontSize: 11 }
   },
   series: [
     {
@@ -1028,15 +1032,15 @@ const leadTimeOption = computed(() => ({
       type: 'bar',
       data: leadTimeSuppliers.map(s => s.avg),
       itemStyle: { color: '#3b82f6', borderRadius: [0, 4, 4, 0] },
-      barGap: '10%',
+      barGap: '10%'
     },
     {
       name: 'Max Lead Time',
       type: 'bar',
       data: leadTimeSuppliers.map(s => s.max),
-      itemStyle: { color: 'rgba(239, 68, 68, 0.6)', borderRadius: [0, 4, 4, 0] },
-    },
-  ],
+      itemStyle: { color: 'rgba(239, 68, 68, 0.6)', borderRadius: [0, 4, 4, 0] }
+    }
+  ]
 }));
 
 // ─── Reorder Suggestions ────────────────────────────────────
@@ -1049,7 +1053,7 @@ const reorderSuggestionsFallback = [
     estimatedCost: '$600,000',
     stockStatus: 'low' as const,
     stockLabel: 'Low Stock',
-    autoReorder: false,
+    autoReorder: false
   },
   {
     name: 'Circuit Boards',
@@ -1059,7 +1063,7 @@ const reorderSuggestionsFallback = [
     estimatedCost: '$14,400',
     stockStatus: 'medium' as const,
     stockLabel: 'Adequate',
-    autoReorder: true,
+    autoReorder: true
   },
   {
     name: 'Cardboard Boxes',
@@ -1069,7 +1073,7 @@ const reorderSuggestionsFallback = [
     estimatedCost: '$640',
     stockStatus: 'low' as const,
     stockLabel: 'Low Stock',
-    autoReorder: false,
+    autoReorder: false
   },
   {
     name: 'Copper Wire',
@@ -1079,7 +1083,7 @@ const reorderSuggestionsFallback = [
     estimatedCost: '$5,100',
     stockStatus: 'high' as const,
     stockLabel: 'In Stock',
-    autoReorder: true,
+    autoReorder: true
   },
   {
     name: 'Adhesive Tape',
@@ -1089,7 +1093,7 @@ const reorderSuggestionsFallback = [
     estimatedCost: '$2,560',
     stockStatus: 'low' as const,
     stockLabel: 'Low Stock',
-    autoReorder: false,
+    autoReorder: false
   },
   {
     name: 'Plastic Pellets',
@@ -1099,7 +1103,7 @@ const reorderSuggestionsFallback = [
     estimatedCost: '$4,200',
     stockStatus: 'high' as const,
     stockLabel: 'In Stock',
-    autoReorder: true,
+    autoReorder: true
   },
   {
     name: 'Safety Gloves',
@@ -1109,7 +1113,7 @@ const reorderSuggestionsFallback = [
     estimatedCost: '$4,800',
     stockStatus: 'low' as const,
     stockLabel: 'Critical',
-    autoReorder: false,
+    autoReorder: false
   },
   {
     name: 'Shipping Pallets',
@@ -1119,8 +1123,8 @@ const reorderSuggestionsFallback = [
     estimatedCost: '$9,000',
     stockStatus: 'high' as const,
     stockLabel: 'In Stock',
-    autoReorder: true,
-  },
+    autoReorder: true
+  }
 ];
 
 const reorderSuggestions = ref<any[]>([]);
@@ -1175,7 +1179,9 @@ function refreshData() {
   loadData();
 }
 
-onMounted(() => { loadData(); });
+onMounted(() => {
+  loadData();
+});
 </script>
 
 <style lang="scss" scoped>
@@ -1185,8 +1191,14 @@ onMounted(() => { loadData(); });
 }
 
 @keyframes fadeInUp {
-  from { opacity: 0; transform: translateY(15px); }
-  to { opacity: 1; transform: translateY(0); }
+  from {
+    opacity: 0;
+    transform: translateY(15px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
 }
 
 .glass-card {
@@ -1194,7 +1206,9 @@ onMounted(() => { loadData(); });
   border: 1px solid var(--border-default);
   border-radius: 16px;
   transition: box-shadow 0.3s ease;
-  &:hover { box-shadow: 0 8px 32px rgba(59, 130, 246, 0.08); }
+  &:hover {
+    box-shadow: 0 8px 32px rgba(59, 130, 246, 0.08);
+  }
 }
 
 .kpi-card {
@@ -1232,14 +1246,23 @@ onMounted(() => { loadData(); });
 }
 
 .analytics-tabs {
-  :deep(.el-tabs__nav-wrap::after) { background: var(--border-default); }
+  :deep(.el-tabs__nav-wrap::after) {
+    background: var(--border-default);
+  }
   :deep(.el-tabs__item) {
     color: var(--text-muted);
     font-weight: 500;
-    &.is-active { color: #3b82f6; font-weight: 600; }
-    &:hover { color: #3b82f6; }
+    &.is-active {
+      color: #3b82f6;
+      font-weight: 600;
+    }
+    &:hover {
+      color: #3b82f6;
+    }
   }
-  :deep(.el-tabs__active-bar) { background-color: #3b82f6; }
+  :deep(.el-tabs__active-bar) {
+    background-color: #3b82f6;
+  }
 }
 
 .opportunity-card {

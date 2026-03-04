@@ -135,32 +135,27 @@
 </template>
 
 <script setup lang="ts">
-import { ref, reactive, computed, onMounted } from 'vue'
-import {
-  fetchEcCategoryTree,
-  createEcCategory,
-  updateEcCategory,
-  deleteEcCategory
-} from '~/composables/useEcommerce'
+import { ref, reactive, computed, onMounted } from 'vue';
+import { fetchEcCategoryTree, createEcCategory, updateEcCategory, deleteEcCategory } from '~/composables/useEcommerce';
 
-definePageMeta({ middleware: 'permissions' })
+definePageMeta({ middleware: 'permissions' });
 
-const { $i18n } = useNuxtApp()
-const t = $i18n.t
+const { $i18n } = useNuxtApp();
+const t = $i18n.t;
 
-const loading = ref(false)
-const saving = ref(false)
-const deleting = ref(false)
-const treeData = ref<any[]>([])
-const selectedCategory = ref<any>(null)
-const showCreateDialog = ref(false)
-const showDeleteDialog = ref(false)
-const deleteTarget = ref<any>(null)
+const loading = ref(false);
+const saving = ref(false);
+const deleting = ref(false);
+const treeData = ref<any[]>([]);
+const selectedCategory = ref<any>(null);
+const showCreateDialog = ref(false);
+const showDeleteDialog = ref(false);
+const deleteTarget = ref<any>(null);
 
 const treeProps = {
   label: 'name',
   children: 'children'
-}
+};
 
 const editForm = reactive({
   name: '',
@@ -169,7 +164,7 @@ const editForm = reactive({
   parentId: null as string | null,
   sortOrder: 0,
   isActive: true
-})
+});
 
 const createForm = reactive({
   name: '',
@@ -178,34 +173,34 @@ const createForm = reactive({
   parentId: null as string | null,
   sortOrder: 0,
   isActive: true
-})
+});
 
 // Flatten tree for parent select options
 const flatCategories = computed(() => {
-  const result: any[] = []
+  const result: any[] = [];
   function flatten(nodes: any[]) {
     for (const node of nodes) {
-      result.push(node)
-      if (node.children?.length) flatten(node.children)
+      result.push(node);
+      if (node.children?.length) flatten(node.children);
     }
   }
-  flatten(treeData.value)
-  return result
-})
+  flatten(treeData.value);
+  return result;
+});
 
-const flatCount = computed(() => flatCategories.value.length)
+const flatCount = computed(() => flatCategories.value.length);
 
 onMounted(() => {
-  loadTree()
-})
+  loadTree();
+});
 
 async function loadTree() {
-  loading.value = true
+  loading.value = true;
   try {
-    const res = await fetchEcCategoryTree()
-    treeData.value = (res as any)?.body?.docs || (res as any)?.body || (res as any)?.docs || res || []
+    const res = await fetchEcCategoryTree();
+    treeData.value = (res as any)?.body?.docs || (res as any)?.body || (res as any)?.docs || res || [];
   } finally {
-    loading.value = false
+    loading.value = false;
   }
 }
 
@@ -215,19 +210,19 @@ function slugify(text: string): string {
     .trim()
     .replace(/[^\w\s-]/g, '')
     .replace(/[\s_]+/g, '-')
-    .replace(/-+/g, '-')
+    .replace(/-+/g, '-');
 }
 
 function autoGenerateSlug() {
-  editForm.slug = slugify(editForm.name)
+  editForm.slug = slugify(editForm.name);
 }
 
 function autoGenerateCreateSlug() {
-  createForm.slug = slugify(createForm.name)
+  createForm.slug = slugify(createForm.name);
 }
 
 function onNodeClick(data: any) {
-  selectedCategory.value = data
+  selectedCategory.value = data;
   Object.assign(editForm, {
     name: data.name || '',
     slug: data.slug || '',
@@ -235,26 +230,26 @@ function onNodeClick(data: any) {
     parentId: data.parentId || null,
     sortOrder: data.sortOrder || 0,
     isActive: data.isActive !== false
-  })
+  });
 }
 
 function allowDrop(draggingNode: any, dropNode: any, type: string) {
-  return type !== 'inner' || true
+  return type !== 'inner' || true;
 }
 
 async function onNodeDrop(draggingNode: any, dropNode: any, type: string) {
   try {
-    const data: any = { sortOrder: dropNode.data.sortOrder || 0 }
+    const data: any = { sortOrder: dropNode.data.sortOrder || 0 };
     if (type === 'inner') {
-      data.parentId = dropNode.data.id
+      data.parentId = dropNode.data.id;
     } else if (type === 'before' || type === 'after') {
-      data.parentId = dropNode.data.parentId || null
+      data.parentId = dropNode.data.parentId || null;
     }
-    await updateEcCategory(draggingNode.data.id, data)
-    await loadTree()
+    await updateEcCategory(draggingNode.data.id, data);
+    await loadTree();
   } catch {
-    ElMessage.error(t('common.error'))
-    await loadTree()
+    ElMessage.error(t('common.error'));
+    await loadTree();
   }
 }
 
@@ -266,67 +261,67 @@ function openCreateDialog() {
     parentId: null,
     sortOrder: 0,
     isActive: true
-  })
-  showCreateDialog.value = true
+  });
+  showCreateDialog.value = true;
 }
 
 async function handleCreate() {
   if (!createForm.name.trim()) {
-    ElMessage.warning(t('common.fillRequired'))
-    return
+    ElMessage.warning(t('common.fillRequired'));
+    return;
   }
-  saving.value = true
+  saving.value = true;
   try {
-    const res = await createEcCategory({ ...createForm } as any)
+    const res = await createEcCategory({ ...createForm } as any);
     if (res?.success !== false) {
-      showCreateDialog.value = false
-      await loadTree()
-      ElMessage.success(t('common.saved'))
+      showCreateDialog.value = false;
+      await loadTree();
+      ElMessage.success(t('common.saved'));
     }
   } finally {
-    saving.value = false
+    saving.value = false;
   }
 }
 
 async function handleUpdate() {
   if (!editForm.name.trim()) {
-    ElMessage.warning(t('common.fillRequired'))
-    return
+    ElMessage.warning(t('common.fillRequired'));
+    return;
   }
-  saving.value = true
+  saving.value = true;
   try {
-    const res = await updateEcCategory(selectedCategory.value.id, { ...editForm } as any)
+    const res = await updateEcCategory(selectedCategory.value.id, { ...editForm } as any);
     if (res?.success !== false) {
-      await loadTree()
+      await loadTree();
       // Re-select the updated category
-      const updated = flatCategories.value.find((c: any) => c.id === selectedCategory.value.id)
-      if (updated) onNodeClick(updated)
-      ElMessage.success(t('common.saved'))
+      const updated = flatCategories.value.find((c: any) => c.id === selectedCategory.value.id);
+      if (updated) onNodeClick(updated);
+      ElMessage.success(t('common.saved'));
     }
   } finally {
-    saving.value = false
+    saving.value = false;
   }
 }
 
 function handleDelete(category: any) {
-  deleteTarget.value = category
-  showDeleteDialog.value = true
+  deleteTarget.value = category;
+  showDeleteDialog.value = true;
 }
 
 async function confirmDelete() {
-  if (!deleteTarget.value) return
-  deleting.value = true
+  if (!deleteTarget.value) return;
+  deleting.value = true;
   try {
-    const res = await deleteEcCategory(deleteTarget.value.id)
+    const res = await deleteEcCategory(deleteTarget.value.id);
     if (res?.success !== false) {
-      showDeleteDialog.value = false
-      selectedCategory.value = null
-      deleteTarget.value = null
-      await loadTree()
-      ElMessage.success(t('common.deleted'))
+      showDeleteDialog.value = false;
+      selectedCategory.value = null;
+      deleteTarget.value = null;
+      await loadTree();
+      ElMessage.success(t('common.deleted'));
     }
   } finally {
-    deleting.value = false
+    deleting.value = false;
   }
 }
 </script>

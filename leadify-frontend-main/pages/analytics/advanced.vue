@@ -246,7 +246,7 @@
 
 <script setup lang="ts">
 import { ref, computed, onMounted } from 'vue';
-import { graphic } from 'echarts';
+import { graphic } from 'echarts/core';
 import VChart from 'vue-echarts';
 import { useApiFetch } from '~/composables/useApiFetch';
 
@@ -311,14 +311,14 @@ async function loadAllData() {
       useApiFetch('opportunity').catch(() => ({ body: [] }))
     ]);
 
-    rawDeals.value = Array.isArray(dealsRes?.body) ? dealsRes.body
-      : Array.isArray((dealsRes?.body as any)?.docs) ? (dealsRes.body as any).docs : [];
-    rawLeads.value = Array.isArray(leadsRes?.body) ? leadsRes.body
-      : Array.isArray((leadsRes?.body as any)?.docs) ? (leadsRes.body as any).docs : [];
-    rawStaff.value = Array.isArray(staffRes?.body) ? staffRes.body
-      : Array.isArray((staffRes?.body as any)?.docs) ? (staffRes.body as any).docs : [];
-    rawOpportunities.value = Array.isArray(oppsRes?.body) ? oppsRes.body
-      : Array.isArray((oppsRes?.body as any)?.docs) ? (oppsRes.body as any).docs : [];
+    rawDeals.value = Array.isArray(dealsRes?.body) ? dealsRes.body : Array.isArray((dealsRes?.body as any)?.docs) ? (dealsRes.body as any).docs : [];
+    rawLeads.value = Array.isArray(leadsRes?.body) ? leadsRes.body : Array.isArray((leadsRes?.body as any)?.docs) ? (leadsRes.body as any).docs : [];
+    rawStaff.value = Array.isArray(staffRes?.body) ? staffRes.body : Array.isArray((staffRes?.body as any)?.docs) ? (staffRes.body as any).docs : [];
+    rawOpportunities.value = Array.isArray(oppsRes?.body)
+      ? oppsRes.body
+      : Array.isArray((oppsRes?.body as any)?.docs)
+        ? (oppsRes.body as any).docs
+        : [];
 
     computeAll();
   } catch (e) {
@@ -399,7 +399,12 @@ function getAvatarColor(index: number): string {
 
 function getInitials(name: string): string {
   if (!name) return '?';
-  return name.split(' ').map(n => n[0]).join('').substring(0, 2).toUpperCase();
+  return name
+    .split(' ')
+    .map(n => n[0])
+    .join('')
+    .substring(0, 2)
+    .toUpperCase();
 }
 
 // ─── Cohort Analysis ────────────────────────────────────────
@@ -533,12 +538,12 @@ function computeFunnel() {
   const totalLead = stageCounts.lead;
   funnelStages.value = FUNNEL_STAGES.map((s, idx) => {
     const count = stageCounts[s.key] || 0;
-    const prevCount = idx > 0 ? (stageCounts[keys[idx - 1]!] || 0) : count;
+    const prevCount = idx > 0 ? stageCounts[keys[idx - 1]!] || 0 : count;
     return {
       ...s,
       name: t(s.labelKey),
       count,
-      conversionRate: idx === 0 ? 100 : (prevCount > 0 ? Math.round((count / prevCount) * 100) : 0),
+      conversionRate: idx === 0 ? 100 : prevCount > 0 ? Math.round((count / prevCount) * 100) : 0,
       dropOff: idx === 0 ? 0 : prevCount - count
     };
   });
@@ -565,16 +570,18 @@ function drillDownStage(stage: any) {
 
   // Filter deals for this stage
   const deals = getFilteredDeals();
-  const stageDeals = deals.filter((d: any) => {
-    const s = (d.status || d.stage || d.dealStage || '').toLowerCase();
-    if (stage.key === 'lead') return true;
-    if (stage.key === 'qualified') return s.includes('qualif') || (!s.includes('propos') && !s.includes('negoti') && !s.includes('won'));
-    if (stage.key === 'opportunity') return s.includes('opportun');
-    if (stage.key === 'proposal') return s.includes('propos');
-    if (stage.key === 'negotiation') return s.includes('negoti');
-    if (stage.key === 'won') return s.includes('won') || s.includes('closed');
-    return false;
-  }).slice(0, 20);
+  const stageDeals = deals
+    .filter((d: any) => {
+      const s = (d.status || d.stage || d.dealStage || '').toLowerCase();
+      if (stage.key === 'lead') return true;
+      if (stage.key === 'qualified') return s.includes('qualif') || (!s.includes('propos') && !s.includes('negoti') && !s.includes('won'));
+      if (stage.key === 'opportunity') return s.includes('opportun');
+      if (stage.key === 'proposal') return s.includes('propos');
+      if (stage.key === 'negotiation') return s.includes('negoti');
+      if (stage.key === 'won') return s.includes('won') || s.includes('closed');
+      return false;
+    })
+    .slice(0, 20);
 
   drillDownDeals.value = stageDeals.map((d: any) => ({
     name: d.name || d.title || d.dealName || 'Untitled Deal',
@@ -627,7 +634,9 @@ function computeTrends() {
   const revenue = sorted.map(([, v]) => v.revenue);
   const leadsArr = sorted.map(([, v]) => v.leads);
   const dealsWon = sorted.map(([, v]) => v.dealsWon);
-  const avgDealSize = sorted.map(([, v]) => v.dealValues.length > 0 ? Math.round(v.dealValues.reduce((a, b) => a + b, 0) / v.dealValues.length) : 0);
+  const avgDealSize = sorted.map(([, v]) =>
+    v.dealValues.length > 0 ? Math.round(v.dealValues.reduce((a, b) => a + b, 0) / v.dealValues.length) : 0
+  );
 
   trendData.value = { labels, revenue, leads: leadsArr, dealsWon, avgDealSize };
 
@@ -726,7 +735,10 @@ const trendChartOption = computed(() => {
         type: 'value',
         position: 'left',
         splitLine: { lineStyle: { type: 'dashed', color: 'rgba(255,255,255,0.05)' } },
-        axisLabel: { color: '#64748B', formatter: (v: number) => v >= 1000000 ? `${(v / 1000000).toFixed(1)}M` : v >= 1000 ? `${(v / 1000).toFixed(0)}K` : `${v}` }
+        axisLabel: {
+          color: '#64748B',
+          formatter: (v: number) => (v >= 1000000 ? `${(v / 1000000).toFixed(1)}M` : v >= 1000 ? `${(v / 1000).toFixed(0)}K` : `${v}`)
+        }
       },
       {
         type: 'value',
@@ -1081,7 +1093,9 @@ await loadAllData().catch(() => {
 .cohort-data-cell {
   cursor: default;
   font-weight: 600;
-  transition: transform 0.15s ease, box-shadow 0.15s ease;
+  transition:
+    transform 0.15s ease,
+    box-shadow 0.15s ease;
 
   &:hover {
     transform: scale(1.08);

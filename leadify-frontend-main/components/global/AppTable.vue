@@ -129,7 +129,7 @@ const props = defineProps({
   pageInfo: {
     type: Object,
     required: false,
-    default: { totalCount: 20, totalPages: 2 }
+    default: () => ({ totalCount: 20, totalPages: 2 })
   },
   sortOptions: {
     type: Object,

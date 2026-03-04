@@ -326,7 +326,8 @@ const sentimentIndicator = computed(() => {
 
   if (urgentTickets.length > 0) return { label: t('customer360.sentimentLabels.needsAttention'), color: '#ef4444', icon: 'ph:warning-circle-bold' };
   if (openTickets.length > 2) return { label: t('customer360.sentimentLabels.atRisk'), color: '#f59e0b', icon: 'ph:warning-bold' };
-  if (contactDeals.value.filter(d => d.status === 'WON').length > 0) return { label: t('customer360.sentimentLabels.positive'), color: '#10b981', icon: 'ph:smiley-bold' };
+  if (contactDeals.value.filter(d => d.status === 'WON').length > 0)
+    return { label: t('customer360.sentimentLabels.positive'), color: '#10b981', icon: 'ph:smiley-bold' };
   return { label: t('customer360.sentimentLabels.neutral'), color: '#64748b', icon: 'ph:minus-circle-bold' };
 });
 
@@ -352,7 +353,12 @@ const contactStats = computed(() => [
   },
   { label: t('customer360.stats.invoices'), value: contactInvoices.value.length, icon: 'ph:receipt-bold', color: '#3b82f6' },
   { label: t('customer360.stats.engagement'), value: `${engagementScore.value}%`, icon: 'ph:trend-up-bold', color: '#8b5cf6' },
-  { label: t('customer360.stats.sentiment'), value: sentimentIndicator.value.label, icon: sentimentIndicator.value.icon, color: sentimentIndicator.value.color }
+  {
+    label: t('customer360.stats.sentiment'),
+    value: sentimentIndicator.value.label,
+    icon: sentimentIndicator.value.icon,
+    color: sentimentIndicator.value.color
+  }
 ]);
 
 const contactDetails = computed(() => {
@@ -627,13 +633,23 @@ async function generateAiSummary(clientId: string) {
       const deals = contactDeals.value;
       const revenue = deals.filter(d => d.status === 'WON').reduce((s, d) => s + Number(d.value || 0), 0);
       const openTickets = contactTickets.value.filter(tk => tk.status !== 'CLOSED' && tk.status !== 'RESOLVED').length;
-      aiSummary.value = t('customer360.aiSummaryFallback', { deals: deals.length, revenue: revenue.toLocaleString(), tickets: openTickets, invoices: contactInvoices.value.length });
+      aiSummary.value = t('customer360.aiSummaryFallback', {
+        deals: deals.length,
+        revenue: revenue.toLocaleString(),
+        tickets: openTickets,
+        invoices: contactInvoices.value.length
+      });
     }
   } catch {
     const deals = contactDeals.value;
     const revenue = deals.filter(d => d.status === 'WON').reduce((s, d) => s + Number(d.value || 0), 0);
     const openTickets = contactTickets.value.filter(tk => tk.status !== 'CLOSED' && tk.status !== 'RESOLVED').length;
-    aiSummary.value = t('customer360.aiSummaryFallback', { deals: deals.length, revenue: revenue.toLocaleString(), tickets: openTickets, invoices: contactInvoices.value.length });
+    aiSummary.value = t('customer360.aiSummaryFallback', {
+      deals: deals.length,
+      revenue: revenue.toLocaleString(),
+      tickets: openTickets,
+      invoices: contactInvoices.value.length
+    });
   } finally {
     aiLoading.value = false;
   }

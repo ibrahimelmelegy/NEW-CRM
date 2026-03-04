@@ -6,9 +6,6 @@
 
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 
-const mockApiFetch = vi.fn();
-(globalThis as any).useApiFetch = mockApiFetch;
-
 import {
   ATTENDANCE_STATUSES,
   LEAVE_TYPES,
@@ -27,6 +24,9 @@ import {
   cancelLeave,
   deleteLeaveRequest
 } from '~/composables/useHR';
+
+const mockApiFetch = vi.fn();
+(globalThis as any).useApiFetch = mockApiFetch;
 
 describe('useHR', () => {
   beforeEach(() => {

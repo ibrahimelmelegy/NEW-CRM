@@ -38,6 +38,7 @@
 </template>
 
 <script setup lang="ts">
+/* eslint-disable require-await */
 import { useForm } from 'vee-validate';
 const { hasPermission } = await usePermissions();
 const props = defineProps({

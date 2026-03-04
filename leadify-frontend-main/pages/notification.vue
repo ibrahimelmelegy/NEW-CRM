@@ -94,11 +94,14 @@ const readNotifications = async () => {
 const readNotification = async (data: any) => {
   try {
     let typeAssign = data.type.split('_')[0]?.split(' ')?.[0].toLowerCase();
-    typeAssign !== 'opportunity' ? (typeAssign = `${typeAssign}s`) : typeAssign;
+    if (typeAssign !== 'opportunity') {
+      typeAssign = `${typeAssign}s`;
+    }
     const path = `${typeAssign !== 'projects' ? 'sales' : 'operations'}/${typeAssign}/${data.target}`;
 
     await read(data.id, path);
-  } finally {
+  } catch (error) {
+    console.error('Error reading notification:', error);
   }
 };
 

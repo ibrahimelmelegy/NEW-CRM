@@ -402,31 +402,130 @@ const overallScoreClass = computed(() => {
 const consentRecords = ref<any[]>([]);
 
 const fallbackConsentRecords = [
-  { id: 1, name: 'Emily Watson', email: 'emily.watson@techcorp.com', consentTypes: ['marketing', 'analytics'], consentDate: '2025-09-15', status: 'Active' },
-  { id: 2, name: 'Michael Chen', email: 'michael.chen@globex.com', consentTypes: ['analytics', 'thirdParty'], consentDate: '2025-11-01', status: 'Active' },
-  { id: 3, name: 'Sarah Al-Rashid', email: 'sarah.r@nexgen.io', consentTypes: ['marketing', 'analytics', 'thirdParty'], consentDate: '2025-06-20', status: 'Active' },
+  {
+    id: 1,
+    name: 'Emily Watson',
+    email: 'emily.watson@techcorp.com',
+    consentTypes: ['marketing', 'analytics'],
+    consentDate: '2025-09-15',
+    status: 'Active'
+  },
+  {
+    id: 2,
+    name: 'Michael Chen',
+    email: 'michael.chen@globex.com',
+    consentTypes: ['analytics', 'thirdParty'],
+    consentDate: '2025-11-01',
+    status: 'Active'
+  },
+  {
+    id: 3,
+    name: 'Sarah Al-Rashid',
+    email: 'sarah.r@nexgen.io',
+    consentTypes: ['marketing', 'analytics', 'thirdParty'],
+    consentDate: '2025-06-20',
+    status: 'Active'
+  },
   { id: 4, name: 'James Okonkwo', email: 'james.o@dataflow.co', consentTypes: ['marketing'], consentDate: '2025-08-10', status: 'Withdrawn' },
   { id: 5, name: 'Anna Petrova', email: 'anna.p@cloudnine.eu', consentTypes: ['analytics'], consentDate: '2025-10-05', status: 'Active' },
-  { id: 6, name: 'Carlos Mendoza', email: 'carlos.m@latamhub.com', consentTypes: ['marketing', 'thirdParty'], consentDate: '2025-12-12', status: 'Active' },
-  { id: 7, name: 'Fatima Al-Zahra', email: 'fatima.z@gulfdata.sa', consentTypes: ['marketing', 'analytics'], consentDate: '2025-07-01', status: 'Expired' },
-  { id: 8, name: 'Thomas Mueller', email: 'thomas.m@eurobiz.de', consentTypes: ['analytics', 'thirdParty'], consentDate: '2025-05-18', status: 'Withdrawn' },
+  {
+    id: 6,
+    name: 'Carlos Mendoza',
+    email: 'carlos.m@latamhub.com',
+    consentTypes: ['marketing', 'thirdParty'],
+    consentDate: '2025-12-12',
+    status: 'Active'
+  },
+  {
+    id: 7,
+    name: 'Fatima Al-Zahra',
+    email: 'fatima.z@gulfdata.sa',
+    consentTypes: ['marketing', 'analytics'],
+    consentDate: '2025-07-01',
+    status: 'Expired'
+  },
+  {
+    id: 8,
+    name: 'Thomas Mueller',
+    email: 'thomas.m@eurobiz.de',
+    consentTypes: ['analytics', 'thirdParty'],
+    consentDate: '2025-05-18',
+    status: 'Withdrawn'
+  },
   { id: 9, name: 'Yuki Tanaka', email: 'yuki.t@nihontech.jp', consentTypes: ['marketing'], consentDate: '2025-11-25', status: 'Active' },
-  { id: 10, name: 'Rachel Kim', email: 'rachel.k@seoulsoft.kr', consentTypes: ['analytics', 'thirdParty'], consentDate: '2025-09-30', status: 'Active' },
-  { id: 11, name: 'Oliver Schmidt', email: 'oliver.s@berlinsys.de', consentTypes: ['marketing', 'analytics'], consentDate: '2025-04-15', status: 'Expired' },
-  { id: 12, name: 'Amara Diallo', email: 'amara.d@westafrica.io', consentTypes: ['marketing', 'analytics', 'thirdParty'], consentDate: '2026-01-08', status: 'Active' },
+  {
+    id: 10,
+    name: 'Rachel Kim',
+    email: 'rachel.k@seoulsoft.kr',
+    consentTypes: ['analytics', 'thirdParty'],
+    consentDate: '2025-09-30',
+    status: 'Active'
+  },
+  {
+    id: 11,
+    name: 'Oliver Schmidt',
+    email: 'oliver.s@berlinsys.de',
+    consentTypes: ['marketing', 'analytics'],
+    consentDate: '2025-04-15',
+    status: 'Expired'
+  },
+  {
+    id: 12,
+    name: 'Amara Diallo',
+    email: 'amara.d@westafrica.io',
+    consentTypes: ['marketing', 'analytics', 'thirdParty'],
+    consentDate: '2026-01-08',
+    status: 'Active'
+  },
   { id: 13, name: 'Liam OBrien', email: 'liam.ob@dublintech.ie', consentTypes: ['thirdParty'], consentDate: '2025-10-22', status: 'Active' },
-  { id: 14, name: 'Priya Sharma', email: 'priya.s@bangalore.in', consentTypes: ['marketing', 'analytics'], consentDate: '2025-08-30', status: 'Active' },
-  { id: 15, name: 'Hassan Ibrahim', email: 'hassan.i@cairosolutions.eg', consentTypes: ['analytics'], consentDate: '2025-06-15', status: 'Withdrawn' },
-  { id: 16, name: 'Sofia Rossi', email: 'sofia.r@milandesign.it', consentTypes: ['marketing', 'thirdParty'], consentDate: '2025-12-01', status: 'Active' },
-  { id: 17, name: 'David Park', email: 'david.p@innotech.kr', consentTypes: ['marketing', 'analytics', 'thirdParty'], consentDate: '2026-01-20', status: 'Active' },
+  {
+    id: 14,
+    name: 'Priya Sharma',
+    email: 'priya.s@bangalore.in',
+    consentTypes: ['marketing', 'analytics'],
+    consentDate: '2025-08-30',
+    status: 'Active'
+  },
+  {
+    id: 15,
+    name: 'Hassan Ibrahim',
+    email: 'hassan.i@cairosolutions.eg',
+    consentTypes: ['analytics'],
+    consentDate: '2025-06-15',
+    status: 'Withdrawn'
+  },
+  {
+    id: 16,
+    name: 'Sofia Rossi',
+    email: 'sofia.r@milandesign.it',
+    consentTypes: ['marketing', 'thirdParty'],
+    consentDate: '2025-12-01',
+    status: 'Active'
+  },
+  {
+    id: 17,
+    name: 'David Park',
+    email: 'david.p@innotech.kr',
+    consentTypes: ['marketing', 'analytics', 'thirdParty'],
+    consentDate: '2026-01-20',
+    status: 'Active'
+  },
   { id: 18, name: 'Mei Lin Zhang', email: 'meilin.z@shenzhenai.cn', consentTypes: ['analytics'], consentDate: '2025-07-10', status: 'Expired' },
   { id: 19, name: 'Erik Johansson', email: 'erik.j@stockholmhq.se', consentTypes: ['marketing'], consentDate: '2025-11-05', status: 'Active' },
-  { id: 20, name: 'Natasha Volkov', email: 'natasha.v@moscowcorp.ru', consentTypes: ['marketing', 'analytics'], consentDate: '2025-09-18', status: 'Withdrawn' }
+  {
+    id: 20,
+    name: 'Natasha Volkov',
+    email: 'natasha.v@moscowcorp.ru',
+    consentTypes: ['marketing', 'analytics'],
+    consentDate: '2025-09-18',
+    status: 'Withdrawn'
+  }
 ];
 
 const filteredConsentRecords = computed(() => {
-  return consentRecords.value.filter((rec) => {
-    const matchSearch = !consentSearch.value ||
+  return consentRecords.value.filter(rec => {
+    const matchSearch =
+      !consentSearch.value ||
       rec.name.toLowerCase().includes(consentSearch.value.toLowerCase()) ||
       rec.email.toLowerCase().includes(consentSearch.value.toLowerCase());
     const matchStatus = !consentStatusFilter.value || rec.status === consentStatusFilter.value;
@@ -438,20 +537,151 @@ const filteredConsentRecords = computed(() => {
 const dataRequests = ref<any[]>([]);
 
 const fallbackDataRequests = [
-  { id: 1, requester: 'Emma Thompson', email: 'emma.t@techcorp.com', type: 'Access', status: 'In Progress', deadline: '2026-03-20', assignedTo: 'Sarah Johnson', notes: 'Full data export requested for personal records held across CRM, billing, and support systems.', timeline: [{ date: '2026-02-15', text: 'Request submitted via privacy portal', color: '#3b82f6' }, { date: '2026-02-17', text: 'Assigned to Sarah Johnson', color: '#f59e0b' }, { date: '2026-02-20', text: 'Data collection in progress', color: '#7849ff' }] },
-  { id: 2, requester: 'David Park', email: 'david.p@innotech.kr', type: 'Deletion', status: 'Pending', deadline: '2026-03-25', assignedTo: 'Ahmed Hassan', notes: 'Right to erasure for all marketing and analytics data. Retain only legally required records.', timeline: [{ date: '2026-02-22', text: 'Request submitted', color: '#3b82f6' }, { date: '2026-02-23', text: 'Under initial review', color: '#f59e0b' }] },
-  { id: 3, requester: 'Lisa Muller', email: 'lisa.m@eurobiz.de', type: 'Portability', status: 'In Progress', deadline: '2026-03-12', assignedTo: 'Maria Garcia', notes: 'Export all personal data in machine-readable JSON format for transfer to competitor CRM.', timeline: [{ date: '2026-02-10', text: 'Request received', color: '#3b82f6' }, { date: '2026-02-12', text: 'Data mapping initiated', color: '#f59e0b' }, { date: '2026-02-18', text: 'Export file generation started', color: '#7849ff' }] },
-  { id: 4, requester: 'Omar Al-Fayed', email: 'omar.f@gulfdata.sa', type: 'Rectification', status: 'Pending', deadline: '2026-03-05', assignedTo: 'James Chen', notes: 'Correction of inaccurate company name and phone number in contact records.', timeline: [{ date: '2026-01-28', text: 'Request submitted with evidence', color: '#3b82f6' }] },
-  { id: 5, requester: 'Maria Santos', email: 'maria.s@latamhub.com', type: 'Access', status: 'Completed', deadline: '2026-02-28', assignedTo: 'Sarah Johnson', notes: 'Standard data access request fulfilled with full PDF export delivered securely.', timeline: [{ date: '2026-02-01', text: 'Request submitted', color: '#3b82f6' }, { date: '2026-02-03', text: 'Assigned to Sarah Johnson', color: '#f59e0b' }, { date: '2026-02-10', text: 'Data compiled', color: '#7849ff' }, { date: '2026-02-15', text: 'Delivered to requester', color: '#22c55e' }] },
-  { id: 6, requester: 'Kenji Nakamura', email: 'kenji.n@nihontech.jp', type: 'Deletion', status: 'Pending', deadline: '2026-03-22', assignedTo: 'Ahmed Hassan', notes: 'Complete data removal including backups, archives, and third-party system records.', timeline: [{ date: '2026-02-22', text: 'Request submitted', color: '#3b82f6' }] },
-  { id: 7, requester: 'Sophie Laurent', email: 'sophie.l@francais.fr', type: 'Portability', status: 'In Progress', deadline: '2026-03-18', assignedTo: 'Maria Garcia', notes: 'Data export for migration to Salesforce. Requires CSV and JSON formats.', timeline: [{ date: '2026-02-25', text: 'Request submitted', color: '#3b82f6' }, { date: '2026-02-27', text: 'Format requirements confirmed', color: '#f59e0b' }] },
-  { id: 8, requester: 'Aisha Patel', email: 'aisha.p@mumbaitech.in', type: 'Access', status: 'Denied', deadline: '2026-02-20', assignedTo: 'James Chen', notes: 'Request denied: insufficient identity verification provided. Requester notified with resubmission instructions.', timeline: [{ date: '2026-02-05', text: 'Request submitted', color: '#3b82f6' }, { date: '2026-02-07', text: 'Identity verification requested', color: '#f59e0b' }, { date: '2026-02-14', text: 'Verification not received, request denied', color: '#ef4444' }] },
-  { id: 9, requester: 'Robert Andersson', email: 'robert.a@stockholmhq.se', type: 'Rectification', status: 'Completed', deadline: '2026-02-25', assignedTo: 'Sarah Johnson', notes: 'Email address and job title corrected across all systems.', timeline: [{ date: '2026-02-10', text: 'Request submitted', color: '#3b82f6' }, { date: '2026-02-12', text: 'Changes applied to CRM', color: '#7849ff' }, { date: '2026-02-13', text: 'Propagated to marketing automation', color: '#22c55e' }] },
-  { id: 10, requester: 'Chen Wei', email: 'chen.w@shanghaidata.cn', type: 'Deletion', status: 'In Progress', deadline: '2026-03-15', assignedTo: 'Ahmed Hassan', notes: 'Cross-border data deletion request. Legal review required for data residency compliance.', timeline: [{ date: '2026-02-18', text: 'Request submitted', color: '#3b82f6' }, { date: '2026-02-20', text: 'Legal review initiated', color: '#f59e0b' }, { date: '2026-02-25', text: 'Legal clearance received', color: '#22c55e' }] }
+  {
+    id: 1,
+    requester: 'Emma Thompson',
+    email: 'emma.t@techcorp.com',
+    type: 'Access',
+    status: 'In Progress',
+    deadline: '2026-03-20',
+    assignedTo: 'Sarah Johnson',
+    notes: 'Full data export requested for personal records held across CRM, billing, and support systems.',
+    timeline: [
+      { date: '2026-02-15', text: 'Request submitted via privacy portal', color: '#3b82f6' },
+      { date: '2026-02-17', text: 'Assigned to Sarah Johnson', color: '#f59e0b' },
+      { date: '2026-02-20', text: 'Data collection in progress', color: '#7849ff' }
+    ]
+  },
+  {
+    id: 2,
+    requester: 'David Park',
+    email: 'david.p@innotech.kr',
+    type: 'Deletion',
+    status: 'Pending',
+    deadline: '2026-03-25',
+    assignedTo: 'Ahmed Hassan',
+    notes: 'Right to erasure for all marketing and analytics data. Retain only legally required records.',
+    timeline: [
+      { date: '2026-02-22', text: 'Request submitted', color: '#3b82f6' },
+      { date: '2026-02-23', text: 'Under initial review', color: '#f59e0b' }
+    ]
+  },
+  {
+    id: 3,
+    requester: 'Lisa Muller',
+    email: 'lisa.m@eurobiz.de',
+    type: 'Portability',
+    status: 'In Progress',
+    deadline: '2026-03-12',
+    assignedTo: 'Maria Garcia',
+    notes: 'Export all personal data in machine-readable JSON format for transfer to competitor CRM.',
+    timeline: [
+      { date: '2026-02-10', text: 'Request received', color: '#3b82f6' },
+      { date: '2026-02-12', text: 'Data mapping initiated', color: '#f59e0b' },
+      { date: '2026-02-18', text: 'Export file generation started', color: '#7849ff' }
+    ]
+  },
+  {
+    id: 4,
+    requester: 'Omar Al-Fayed',
+    email: 'omar.f@gulfdata.sa',
+    type: 'Rectification',
+    status: 'Pending',
+    deadline: '2026-03-05',
+    assignedTo: 'James Chen',
+    notes: 'Correction of inaccurate company name and phone number in contact records.',
+    timeline: [{ date: '2026-01-28', text: 'Request submitted with evidence', color: '#3b82f6' }]
+  },
+  {
+    id: 5,
+    requester: 'Maria Santos',
+    email: 'maria.s@latamhub.com',
+    type: 'Access',
+    status: 'Completed',
+    deadline: '2026-02-28',
+    assignedTo: 'Sarah Johnson',
+    notes: 'Standard data access request fulfilled with full PDF export delivered securely.',
+    timeline: [
+      { date: '2026-02-01', text: 'Request submitted', color: '#3b82f6' },
+      { date: '2026-02-03', text: 'Assigned to Sarah Johnson', color: '#f59e0b' },
+      { date: '2026-02-10', text: 'Data compiled', color: '#7849ff' },
+      { date: '2026-02-15', text: 'Delivered to requester', color: '#22c55e' }
+    ]
+  },
+  {
+    id: 6,
+    requester: 'Kenji Nakamura',
+    email: 'kenji.n@nihontech.jp',
+    type: 'Deletion',
+    status: 'Pending',
+    deadline: '2026-03-22',
+    assignedTo: 'Ahmed Hassan',
+    notes: 'Complete data removal including backups, archives, and third-party system records.',
+    timeline: [{ date: '2026-02-22', text: 'Request submitted', color: '#3b82f6' }]
+  },
+  {
+    id: 7,
+    requester: 'Sophie Laurent',
+    email: 'sophie.l@francais.fr',
+    type: 'Portability',
+    status: 'In Progress',
+    deadline: '2026-03-18',
+    assignedTo: 'Maria Garcia',
+    notes: 'Data export for migration to Salesforce. Requires CSV and JSON formats.',
+    timeline: [
+      { date: '2026-02-25', text: 'Request submitted', color: '#3b82f6' },
+      { date: '2026-02-27', text: 'Format requirements confirmed', color: '#f59e0b' }
+    ]
+  },
+  {
+    id: 8,
+    requester: 'Aisha Patel',
+    email: 'aisha.p@mumbaitech.in',
+    type: 'Access',
+    status: 'Denied',
+    deadline: '2026-02-20',
+    assignedTo: 'James Chen',
+    notes: 'Request denied: insufficient identity verification provided. Requester notified with resubmission instructions.',
+    timeline: [
+      { date: '2026-02-05', text: 'Request submitted', color: '#3b82f6' },
+      { date: '2026-02-07', text: 'Identity verification requested', color: '#f59e0b' },
+      { date: '2026-02-14', text: 'Verification not received, request denied', color: '#ef4444' }
+    ]
+  },
+  {
+    id: 9,
+    requester: 'Robert Andersson',
+    email: 'robert.a@stockholmhq.se',
+    type: 'Rectification',
+    status: 'Completed',
+    deadline: '2026-02-25',
+    assignedTo: 'Sarah Johnson',
+    notes: 'Email address and job title corrected across all systems.',
+    timeline: [
+      { date: '2026-02-10', text: 'Request submitted', color: '#3b82f6' },
+      { date: '2026-02-12', text: 'Changes applied to CRM', color: '#7849ff' },
+      { date: '2026-02-13', text: 'Propagated to marketing automation', color: '#22c55e' }
+    ]
+  },
+  {
+    id: 10,
+    requester: 'Chen Wei',
+    email: 'chen.w@shanghaidata.cn',
+    type: 'Deletion',
+    status: 'In Progress',
+    deadline: '2026-03-15',
+    assignedTo: 'Ahmed Hassan',
+    notes: 'Cross-border data deletion request. Legal review required for data residency compliance.',
+    timeline: [
+      { date: '2026-02-18', text: 'Request submitted', color: '#3b82f6' },
+      { date: '2026-02-20', text: 'Legal review initiated', color: '#f59e0b' },
+      { date: '2026-02-25', text: 'Legal clearance received', color: '#22c55e' }
+    ]
+  }
 ];
 
 const filteredDataRequests = computed(() => {
-  return dataRequests.value.filter((req) => {
+  return dataRequests.value.filter(req => {
     return !requestStatusFilter.value || req.status === requestStatusFilter.value;
   });
 });
@@ -468,7 +698,14 @@ const requestChecklist = ref([
 
 // --- Privacy Impact Assessments (8 records) ---
 const piaList = ref([
-  { id: 1, name: 'Customer Data Migration to Cloud', department: 'Engineering', riskLevel: 'High', status: 'UnderReview', lastReviewed: '2026-02-15' },
+  {
+    id: 1,
+    name: 'Customer Data Migration to Cloud',
+    department: 'Engineering',
+    riskLevel: 'High',
+    status: 'UnderReview',
+    lastReviewed: '2026-02-15'
+  },
   { id: 2, name: 'Marketing Analytics Platform', department: 'Marketing', riskLevel: 'Medium', status: 'Approved', lastReviewed: '2026-01-20' },
   { id: 3, name: 'Employee Biometric Access System', department: 'HR', riskLevel: 'High', status: 'Draft', lastReviewed: '2026-02-28' },
   { id: 4, name: 'Third-Party CRM Integration', department: 'Sales', riskLevel: 'Medium', status: 'Approved', lastReviewed: '2025-12-10' },
@@ -482,25 +719,130 @@ const piaList = ref([
 const auditEntries = ref<any[]>([]);
 
 const fallbackAuditEntries = [
-  { id: 1, timestamp: '2026-02-28T14:32:00', action: 'Consent record updated for Emily Watson', user: 'Sarah Johnson', affectedRecords: 1, category: 'Consent' },
-  { id: 2, timestamp: '2026-02-28T13:15:00', action: 'DSAR access request completed (REQ-2026-042)', user: 'Ahmed Hassan', affectedRecords: 1, category: 'Data Request' },
-  { id: 3, timestamp: '2026-02-28T12:45:00', action: 'Automated purge of expired session data', user: 'System', affectedRecords: 1240, category: 'Policy' },
-  { id: 4, timestamp: '2026-02-28T11:20:00', action: 'Data retention policy updated for communications', user: 'Maria Garcia', affectedRecords: 89500, category: 'Policy' },
-  { id: 5, timestamp: '2026-02-27T16:42:00', action: 'Marketing consent revoked for Thomas Mueller', user: 'Sarah Johnson', affectedRecords: 1, category: 'Consent' },
-  { id: 6, timestamp: '2026-02-27T15:30:00', action: 'New deletion request created (REQ-2026-045)', user: 'Ahmed Hassan', affectedRecords: 1, category: 'Data Request' },
-  { id: 7, timestamp: '2026-02-27T14:10:00', action: 'Field-level encryption enabled for PII fields', user: 'James Chen', affectedRecords: 12450, category: 'Security' },
-  { id: 8, timestamp: '2026-02-27T11:55:00', action: 'Contact data rectified for Omar Al-Fayed', user: 'Maria Garcia', affectedRecords: 3, category: 'Data Request' },
-  { id: 9, timestamp: '2026-02-26T17:30:00', action: 'New 90-day retention policy for session data', user: 'Sarah Johnson', affectedRecords: 245000, category: 'Policy' },
-  { id: 10, timestamp: '2026-02-26T14:15:00', action: 'Batch anonymization of expired marketing leads', user: 'System', affectedRecords: 340, category: 'Policy' },
-  { id: 11, timestamp: '2026-02-26T10:45:00', action: 'Unauthorized access attempt blocked on financial records', user: 'System', affectedRecords: 0, category: 'Security' },
-  { id: 12, timestamp: '2026-02-25T16:20:00', action: 'PIA approved for Marketing Analytics Platform', user: 'Compliance Officer', affectedRecords: 1, category: 'Access' },
-  { id: 13, timestamp: '2026-02-25T11:00:00', action: 'Weekly compliance scan completed (Score: 87/100)', user: 'System', affectedRecords: 0, category: 'Security' },
-  { id: 14, timestamp: '2026-02-24T15:45:00', action: 'Bulk consent renewal for 128 marketing records', user: 'Ahmed Hassan', affectedRecords: 128, category: 'Consent' },
-  { id: 15, timestamp: '2026-02-24T09:10:00', action: 'Export of quarterly compliance report generated', user: 'James Chen', affectedRecords: 0, category: 'Access' }
+  {
+    id: 1,
+    timestamp: '2026-02-28T14:32:00',
+    action: 'Consent record updated for Emily Watson',
+    user: 'Sarah Johnson',
+    affectedRecords: 1,
+    category: 'Consent'
+  },
+  {
+    id: 2,
+    timestamp: '2026-02-28T13:15:00',
+    action: 'DSAR access request completed (REQ-2026-042)',
+    user: 'Ahmed Hassan',
+    affectedRecords: 1,
+    category: 'Data Request'
+  },
+  {
+    id: 3,
+    timestamp: '2026-02-28T12:45:00',
+    action: 'Automated purge of expired session data',
+    user: 'System',
+    affectedRecords: 1240,
+    category: 'Policy'
+  },
+  {
+    id: 4,
+    timestamp: '2026-02-28T11:20:00',
+    action: 'Data retention policy updated for communications',
+    user: 'Maria Garcia',
+    affectedRecords: 89500,
+    category: 'Policy'
+  },
+  {
+    id: 5,
+    timestamp: '2026-02-27T16:42:00',
+    action: 'Marketing consent revoked for Thomas Mueller',
+    user: 'Sarah Johnson',
+    affectedRecords: 1,
+    category: 'Consent'
+  },
+  {
+    id: 6,
+    timestamp: '2026-02-27T15:30:00',
+    action: 'New deletion request created (REQ-2026-045)',
+    user: 'Ahmed Hassan',
+    affectedRecords: 1,
+    category: 'Data Request'
+  },
+  {
+    id: 7,
+    timestamp: '2026-02-27T14:10:00',
+    action: 'Field-level encryption enabled for PII fields',
+    user: 'James Chen',
+    affectedRecords: 12450,
+    category: 'Security'
+  },
+  {
+    id: 8,
+    timestamp: '2026-02-27T11:55:00',
+    action: 'Contact data rectified for Omar Al-Fayed',
+    user: 'Maria Garcia',
+    affectedRecords: 3,
+    category: 'Data Request'
+  },
+  {
+    id: 9,
+    timestamp: '2026-02-26T17:30:00',
+    action: 'New 90-day retention policy for session data',
+    user: 'Sarah Johnson',
+    affectedRecords: 245000,
+    category: 'Policy'
+  },
+  {
+    id: 10,
+    timestamp: '2026-02-26T14:15:00',
+    action: 'Batch anonymization of expired marketing leads',
+    user: 'System',
+    affectedRecords: 340,
+    category: 'Policy'
+  },
+  {
+    id: 11,
+    timestamp: '2026-02-26T10:45:00',
+    action: 'Unauthorized access attempt blocked on financial records',
+    user: 'System',
+    affectedRecords: 0,
+    category: 'Security'
+  },
+  {
+    id: 12,
+    timestamp: '2026-02-25T16:20:00',
+    action: 'PIA approved for Marketing Analytics Platform',
+    user: 'Compliance Officer',
+    affectedRecords: 1,
+    category: 'Access'
+  },
+  {
+    id: 13,
+    timestamp: '2026-02-25T11:00:00',
+    action: 'Weekly compliance scan completed (Score: 87/100)',
+    user: 'System',
+    affectedRecords: 0,
+    category: 'Security'
+  },
+  {
+    id: 14,
+    timestamp: '2026-02-24T15:45:00',
+    action: 'Bulk consent renewal for 128 marketing records',
+    user: 'Ahmed Hassan',
+    affectedRecords: 128,
+    category: 'Consent'
+  },
+  {
+    id: 15,
+    timestamp: '2026-02-24T09:10:00',
+    action: 'Export of quarterly compliance report generated',
+    user: 'James Chen',
+    affectedRecords: 0,
+    category: 'Access'
+  }
 ];
 
 const filteredAuditEntries = computed(() => {
-  return auditEntries.value.filter((entry) => {
+  return auditEntries.value.filter(entry => {
     return !auditCategoryFilter.value || entry.category === auditCategoryFilter.value;
   });
 });
@@ -541,7 +883,12 @@ const newPiaForm = reactive({
 // --- Helpers ---
 function getInitials(name: string): string {
   if (!name) return '?';
-  return name.split(' ').map((w) => w[0]).join('').substring(0, 2).toUpperCase();
+  return name
+    .split(' ')
+    .map(w => w[0])
+    .join('')
+    .substring(0, 2)
+    .toUpperCase();
 }
 
 function getAvatarColor(name: string): string {
@@ -562,8 +909,11 @@ function formatDate(dateStr: string): string {
 function formatDateTime(dateStr: string): string {
   if (!dateStr) return '--';
   const d = new Date(dateStr);
-  return d.toLocaleDateString(undefined, { year: 'numeric', month: 'short', day: 'numeric' }) +
-    ' ' + d.toLocaleTimeString(undefined, { hour: '2-digit', minute: '2-digit' });
+  return (
+    d.toLocaleDateString(undefined, { year: 'numeric', month: 'short', day: 'numeric' }) +
+    ' ' +
+    d.toLocaleTimeString(undefined, { hour: '2-digit', minute: '2-digit' })
+  );
 }
 
 function isOverdue(dateStr: string): boolean {
@@ -579,120 +929,179 @@ function getScoreColor(score: number): string {
 
 function getConsentTagType(type: string): 'success' | 'warning' | 'info' | '' {
   switch (type) {
-    case 'marketing': return 'warning';
-    case 'analytics': return 'info';
-    case 'thirdParty': return '';
-    default: return '';
+    case 'marketing':
+      return 'warning';
+    case 'analytics':
+      return 'info';
+    case 'thirdParty':
+      return '';
+    default:
+      return '';
   }
 }
 
 function getStatusTagType(status: string): 'success' | 'danger' | 'warning' | 'info' | '' {
   switch (status) {
-    case 'Active': return 'success';
-    case 'Withdrawn': return 'danger';
-    case 'Expired': return 'warning';
-    default: return 'info';
+    case 'Active':
+      return 'success';
+    case 'Withdrawn':
+      return 'danger';
+    case 'Expired':
+      return 'warning';
+    default:
+      return 'info';
   }
 }
 
 function getRequestTypeTag(type: string): 'success' | 'danger' | 'warning' | 'info' | '' {
   switch (type) {
-    case 'Access': return 'info';
-    case 'Deletion': return 'danger';
-    case 'Portability': return 'warning';
-    case 'Rectification': return 'success';
-    default: return '';
+    case 'Access':
+      return 'info';
+    case 'Deletion':
+      return 'danger';
+    case 'Portability':
+      return 'warning';
+    case 'Rectification':
+      return 'success';
+    default:
+      return '';
   }
 }
 
 function getRequestTypeIcon(type: string): string {
   switch (type) {
-    case 'Access': return 'ph:eye-bold';
-    case 'Deletion': return 'ph:trash-bold';
-    case 'Portability': return 'ph:export-bold';
-    case 'Rectification': return 'ph:pencil-bold';
-    default: return 'ph:question-bold';
+    case 'Access':
+      return 'ph:eye-bold';
+    case 'Deletion':
+      return 'ph:trash-bold';
+    case 'Portability':
+      return 'ph:export-bold';
+    case 'Rectification':
+      return 'ph:pencil-bold';
+    default:
+      return 'ph:question-bold';
   }
 }
 
 function getRequestStatusTag(status: string): 'success' | 'danger' | 'warning' | 'info' | '' {
   switch (status) {
-    case 'Pending': return 'info';
-    case 'In Progress': return 'warning';
-    case 'Completed': return 'success';
-    case 'Denied': return 'danger';
-    default: return '';
+    case 'Pending':
+      return 'info';
+    case 'In Progress':
+      return 'warning';
+    case 'Completed':
+      return 'success';
+    case 'Denied':
+      return 'danger';
+    default:
+      return '';
   }
 }
 
 function getRiskTagType(level: string): 'success' | 'danger' | 'warning' | '' {
   switch (level) {
-    case 'High': return 'danger';
-    case 'Medium': return 'warning';
-    case 'Low': return 'success';
-    default: return '';
+    case 'High':
+      return 'danger';
+    case 'Medium':
+      return 'warning';
+    case 'Low':
+      return 'success';
+    default:
+      return '';
   }
 }
 
 function getPiaStatusTag(status: string): 'success' | 'warning' | 'info' | '' {
   switch (status) {
-    case 'Approved': return 'success';
-    case 'UnderReview': return 'warning';
-    case 'Draft': return 'info';
-    default: return '';
+    case 'Approved':
+      return 'success';
+    case 'UnderReview':
+      return 'warning';
+    case 'Draft':
+      return 'info';
+    default:
+      return '';
   }
 }
 
 function getAuditIcon(category: string): string {
   switch (category) {
-    case 'Consent': return 'ph:check-square-bold';
-    case 'Data Request': return 'ph:user-circle-bold';
-    case 'Policy': return 'ph:file-text-bold';
-    case 'Access': return 'ph:key-bold';
-    case 'Security': return 'ph:lock-bold';
-    default: return 'ph:info-bold';
+    case 'Consent':
+      return 'ph:check-square-bold';
+    case 'Data Request':
+      return 'ph:user-circle-bold';
+    case 'Policy':
+      return 'ph:file-text-bold';
+    case 'Access':
+      return 'ph:key-bold';
+    case 'Security':
+      return 'ph:lock-bold';
+    default:
+      return 'ph:info-bold';
   }
 }
 
 function getAuditColor(category: string): string {
   switch (category) {
-    case 'Consent': return '#22c55e';
-    case 'Data Request': return '#f59e0b';
-    case 'Policy': return '#3b82f6';
-    case 'Access': return '#7849ff';
-    case 'Security': return '#ef4444';
-    default: return '#7849ff';
+    case 'Consent':
+      return '#22c55e';
+    case 'Data Request':
+      return '#f59e0b';
+    case 'Policy':
+      return '#3b82f6';
+    case 'Access':
+      return '#7849ff';
+    case 'Security':
+      return '#ef4444';
+    default:
+      return '#7849ff';
   }
 }
 
 function getCategoryTag(category: string): 'success' | 'danger' | 'warning' | 'info' | '' {
   switch (category) {
-    case 'Consent': return 'success';
-    case 'Data Request': return 'warning';
-    case 'Policy': return 'info';
-    case 'Access': return '';
-    case 'Security': return 'danger';
-    default: return '';
+    case 'Consent':
+      return 'success';
+    case 'Data Request':
+      return 'warning';
+    case 'Policy':
+      return 'info';
+    case 'Access':
+      return '';
+    case 'Security':
+      return 'danger';
+    default:
+      return '';
   }
 }
 
 function getClassificationTag(level: string): 'success' | 'danger' | 'warning' | 'info' | '' {
   switch (level) {
-    case 'Public': return 'success';
-    case 'Internal': return 'info';
-    case 'Confidential': return 'warning';
-    case 'Restricted': return 'danger';
-    default: return '';
+    case 'Public':
+      return 'success';
+    case 'Internal':
+      return 'info';
+    case 'Confidential':
+      return 'warning';
+    case 'Restricted':
+      return 'danger';
+    default:
+      return '';
   }
 }
 
 function getClassificationIcon(level: string): string {
   switch (level) {
-    case 'Public': return 'ph:globe-bold';
-    case 'Internal': return 'ph:buildings-bold';
-    case 'Confidential': return 'ph:lock-simple-bold';
-    case 'Restricted': return 'ph:shield-warning-bold';
-    default: return 'ph:info-bold';
+    case 'Public':
+      return 'ph:globe-bold';
+    case 'Internal':
+      return 'ph:buildings-bold';
+    case 'Confidential':
+      return 'ph:lock-simple-bold';
+    case 'Restricted':
+      return 'ph:shield-warning-bold';
+    default:
+      return 'ph:info-bold';
   }
 }
 
@@ -758,12 +1167,7 @@ async function loadComplianceScore() {
 async function loadAllComplianceData() {
   loading.value = true;
   try {
-    await Promise.all([
-      loadConsentRecords(),
-      loadDataRequests(),
-      loadAuditEntries(),
-      loadComplianceScore(),
-    ]);
+    await Promise.all([loadConsentRecords(), loadDataRequests(), loadAuditEntries(), loadComplianceScore()]);
   } finally {
     loading.value = false;
   }
@@ -809,9 +1213,9 @@ async function runAudit() {
 
 function exportReport() {
   const headers = ['Framework', 'Score'];
-  const rows = frameworks.value.map((fw) => [fw.name, `${fw.score}%`]);
+  const rows = frameworks.value.map(fw => [fw.name, `${fw.score}%`]);
   rows.unshift(['Overall', `${overallScore.value}%`]);
-  const csv = [headers.join(','), ...rows.map((r) => r.join(','))].join('\n');
+  const csv = [headers.join(','), ...rows.map(r => r.join(','))].join('\n');
   const blob = new Blob([csv], { type: 'text/csv' });
   const url = URL.createObjectURL(blob);
   const link = document.createElement('a');

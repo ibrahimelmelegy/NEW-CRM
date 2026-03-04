@@ -441,11 +441,7 @@ async function handleSave() {
 
 async function handleDelete(booking: any) {
   try {
-    await ElMessageBox.confirm(
-      t('common.confirmDelete'),
-      t('common.warning'),
-      { type: 'warning' }
-    );
+    await ElMessageBox.confirm(t('common.confirmDelete'), t('common.warning'), { type: 'warning' });
     await useApiFetch(`bookings/${booking.id}`, 'DELETE');
     ElNotification({ type: 'success', title: t('common.success'), message: t('common.deleted') });
     await loadBookings();

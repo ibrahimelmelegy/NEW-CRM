@@ -4,7 +4,9 @@
     <div class="glass-panel p-6 rounded-2xl">
       <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
         <div>
-          <h1 class="text-2xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-teal-400 to-emerald-400">{{ $t('formBuilder.title') }}</h1>
+          <h1 class="text-2xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-teal-400 to-emerald-400">
+            {{ $t('formBuilder.title') }}
+          </h1>
           <p class="text-slate-400 text-sm mt-1">{{ $t('formBuilder.subtitle') }}</p>
         </div>
         <el-button type="primary" class="!rounded-xl" :loading="loading" @click="createNewForm">
@@ -435,8 +437,7 @@ const copyFormLink = (form: any) => {
   ElMessage.success(t('common.copied'));
 };
 
-const viewSubmissions = (form: any) =>
-  ElMessage.info(`${form.submissions} ${t('formBuilder.submissionsFor')} ${form.name}`);
+const viewSubmissions = (form: any) => ElMessage.info(`${form.submissions} ${t('formBuilder.submissionsFor')} ${form.name}`);
 
 const useTemplate = (tmpl: any) => {
   ElMessage.info(`${t('formBuilder.editingForm')}: ${tmpl.name}`);

@@ -1,3 +1,5 @@
+/* eslint-disable no-use-before-define */
+/* eslint-disable require-await */
 export interface Employee {
   id: string;
   employeeNumber: string;

@@ -88,19 +88,18 @@ export async function getDailyTasks(all?: boolean): Promise<UseDailyTaskResult> 
       docs: DailyTaskDoc[];
       pagination: UseDailyTaskResult['pagination'];
     }
-    const { body, success, message } = all
-      ? await useApiFetch('daily-task?limit=1000')
-      : await useApiFetch('daily-task');
+    const { body, success, message } = all ? await useApiFetch('daily-task?limit=1000') : await useApiFetch('daily-task');
 
     if (success && body) {
-      const tasks = (body as any).docs?.map((task: any) => ({
-        ...task,
-        createdAt: formatDate(task.createdAt ?? ''),
-        updatedAt: '-',
-        clientName: task.client?.clientName,
-        salesRepresentativeName: task.salesRepresentative?.name,
-        assignedToName: task.user?.name
-      })) ?? [];
+      const tasks =
+        (body as any).docs?.map((task: any) => ({
+          ...task,
+          createdAt: formatDate(task.createdAt ?? ''),
+          updatedAt: '-',
+          clientName: task.client?.clientName,
+          salesRepresentativeName: task.salesRepresentative?.name,
+          assignedToName: task.user?.name
+        })) ?? [];
       const pagination = (body as any).pagination;
       return { tasks, pagination };
     } else {

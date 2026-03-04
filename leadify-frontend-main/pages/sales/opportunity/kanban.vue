@@ -138,10 +138,7 @@ function onToggleAll() {
 
 async function loadKanban() {
   loading.value = true;
-  const [stages, cards] = await Promise.all([
-    fetchPipelineStages('opportunity'),
-    fetchOpportunityKanban()
-  ]);
+  const [stages, cards] = await Promise.all([fetchPipelineStages('opportunity'), fetchOpportunityKanban()]);
   pipelineStages.value = stages;
   kanbanCards.value = cards;
   loading.value = false;

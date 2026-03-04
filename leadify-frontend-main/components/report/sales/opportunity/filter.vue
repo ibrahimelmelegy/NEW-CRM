@@ -13,6 +13,7 @@ el-form(@submit.prevent='onSubmit')
 </template>
 
 <script setup lang="ts">
+/* eslint-disable require-await */
 import { useForm } from 'vee-validate';
 import { useI18n } from 'vue-i18n';
 import { stageOptions, priorityOptions } from '@/composables/useOpportunity';

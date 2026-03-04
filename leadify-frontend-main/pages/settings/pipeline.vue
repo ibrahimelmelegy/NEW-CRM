@@ -176,7 +176,9 @@ async function handleDelete(stage: PipelineStage) {
     await deletePipelineStage(stage.id);
     await loadStages();
     ElNotification({ type: 'success', title: t('common.success'), message: t('common.deleted') });
-  } catch (e: any) { ElMessage.error(t('common.error')); }
+  } catch (e: any) {
+    ElMessage.error(t('common.error'));
+  }
 }
 
 // Drag and drop reorder
@@ -199,7 +201,9 @@ async function drop(index: number) {
     const { success } = await reorderPipelineStages(entityType.value, stageIds);
     if (success) {
       // Update local order values to reflect new positions
-      stages.value.forEach((s, i) => { s.order = i + 1; });
+      stages.value.forEach((s, i) => {
+        s.order = i + 1;
+      });
       ElNotification({ type: 'success', title: t('common.success'), message: t('common.saved') });
     } else {
       // Revert on API failure

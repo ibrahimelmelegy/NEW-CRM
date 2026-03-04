@@ -6,11 +6,11 @@
       <button
         v-for="(item, index) in items"
         :key="index"
-        @click="selectItem(index)"
         :class="[
           'w-full text-left px-3 py-2 text-sm font-medium rounded-lg transition-colors flex items-center gap-2',
           index === selectedIndex ? 'bg-violet-600 text-white shadow-sm' : 'text-slate-700 hover:bg-slate-100'
         ]"
+        @click="selectItem(index)"
       >
         <div :class="['w-1.5 h-1.5 rounded-full', index === selectedIndex ? 'bg-white' : 'bg-violet-400 opacity-50']"></div>
         {{ item }}

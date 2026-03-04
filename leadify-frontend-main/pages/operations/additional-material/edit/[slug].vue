@@ -12,6 +12,7 @@
 </template>
 
 <script lang="ts" setup>
+/* eslint-disable require-await */
 const { t } = useI18n();
 useHead({
   title: computed(() => `App HP Tech | ${t('operations.additionalMaterials.edit')}`)

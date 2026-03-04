@@ -61,9 +61,7 @@ export function useActivityLog() {
   }
 
   async function fetchByEntity(entityType: string, entityId?: string | number) {
-    const url = entityId
-      ? `audit/${entityType}/${entityId}`
-      : `audit?entityType=${entityType}&limit=100`;
+    const url = entityId ? `audit/${entityType}/${entityId}` : `audit?entityType=${entityType}&limit=100`;
     const { body, success } = await useApiFetch(url);
     if (success && body) {
       const data = body as any;

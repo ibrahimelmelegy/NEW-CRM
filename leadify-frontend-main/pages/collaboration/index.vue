@@ -380,9 +380,9 @@ div
 <script setup lang="ts">
 import { ref, computed, onMounted, onUnmounted, reactive } from 'vue';
 import VChart from 'vue-echarts';
+import { ElMessage, ElMessageBox } from 'element-plus';
 import { useApiFetch } from '~/composables/useApiFetch';
 import { useSocket } from '~/composables/useSocket';
-import { ElMessage, ElMessageBox } from 'element-plus';
 
 const { t } = useI18n();
 const router = useRouter();
@@ -452,13 +452,9 @@ const priorityOptions = [
 ];
 
 // ─── Computed ───────────────────────────────────────────────
-const onlineMembers = computed(() =>
-  teamMembers.value.filter(m => m.isOnline)
-);
+const onlineMembers = computed(() => teamMembers.value.filter(m => m.isOnline));
 
-const offlineMembers = computed(() =>
-  teamMembers.value.filter(m => !m.isOnline)
-);
+const offlineMembers = computed(() => teamMembers.value.filter(m => !m.isOnline));
 
 const filteredActivities = computed(() => {
   let result = activities.value;
@@ -520,23 +516,28 @@ const activityChartOption = computed(() => {
       axisLabel: { color: '#94A3B8', fontSize: 10 },
       splitLine: { lineStyle: { color: 'rgba(148, 163, 184, 0.1)' } }
     },
-    series: [{
-      type: 'line',
-      data: hourCounts,
-      smooth: true,
-      symbol: 'none',
-      lineStyle: { color: '#7849ff', width: 2 },
-      areaStyle: {
-        color: {
-          type: 'linear',
-          x: 0, y: 0, x2: 0, y2: 1,
-          colorStops: [
-            { offset: 0, color: 'rgba(120, 73, 255, 0.3)' },
-            { offset: 1, color: 'rgba(120, 73, 255, 0.02)' }
-          ]
+    series: [
+      {
+        type: 'line',
+        data: hourCounts,
+        smooth: true,
+        symbol: 'none',
+        lineStyle: { color: '#7849ff', width: 2 },
+        areaStyle: {
+          color: {
+            type: 'linear',
+            x: 0,
+            y: 0,
+            x2: 0,
+            y2: 1,
+            colorStops: [
+              { offset: 0, color: 'rgba(120, 73, 255, 0.3)' },
+              { offset: 1, color: 'rgba(120, 73, 255, 0.02)' }
+            ]
+          }
         }
       }
-    }]
+    ]
   };
 });
 
@@ -551,9 +552,7 @@ async function loadActivities(isLoadMore = false) {
 
   try {
     const dateParam = getDateFilterParam();
-    const { body, success } = await useApiFetch(
-      `activity?limit=${limit}&offset=${offset.value}${dateParam}` as any
-    );
+    const { body, success } = await useApiFetch(`activity?limit=${limit}&offset=${offset.value}${dateParam}` as any);
     if (success && body) {
       const items = Array.isArray(body) ? body : (body as any)?.docs || (body as any)?.rows || [];
       if (isLoadMore) {
@@ -598,27 +597,18 @@ async function loadStats() {
     const today = new Date().toISOString().slice(0, 10);
     const weekStart = getWeekStart();
 
-    const [dealsRes, leadsRes] = await Promise.all([
-      useApiFetch(`deal?limit=1000` as any),
-      useApiFetch(`lead?limit=1000` as any)
-    ]);
+    const [dealsRes, leadsRes] = await Promise.all([useApiFetch(`deal?limit=1000` as any), useApiFetch(`lead?limit=1000` as any)]);
 
     if (dealsRes.success && dealsRes.body) {
       const deals = Array.isArray(dealsRes.body) ? dealsRes.body : (dealsRes.body as any)?.docs || (dealsRes.body as any)?.rows || [];
       const closedDeals = deals.filter((d: any) => d.status === 'Won' || d.stage === 'Closed Won');
-      stats.dealsClosedToday = closedDeals.filter((d: any) =>
-        d.closedAt?.slice(0, 10) === today || d.updatedAt?.slice(0, 10) === today
-      ).length;
-      stats.dealsClosedWeek = closedDeals.filter((d: any) =>
-        (d.closedAt || d.updatedAt) >= weekStart
-      ).length;
+      stats.dealsClosedToday = closedDeals.filter((d: any) => d.closedAt?.slice(0, 10) === today || d.updatedAt?.slice(0, 10) === today).length;
+      stats.dealsClosedWeek = closedDeals.filter((d: any) => (d.closedAt || d.updatedAt) >= weekStart).length;
     }
 
     if (leadsRes.success && leadsRes.body) {
       const leads = Array.isArray(leadsRes.body) ? leadsRes.body : (leadsRes.body as any)?.docs || (leadsRes.body as any)?.rows || [];
-      stats.leadsCreated = leads.filter((l: any) =>
-        l.createdAt?.slice(0, 10) === today
-      ).length;
+      stats.leadsCreated = leads.filter((l: any) => l.createdAt?.slice(0, 10) === today).length;
       stats.openTasks = Math.floor(Math.random() * 20) + 5; // Placeholder until task endpoint
       stats.avgResponseTime = parseFloat((Math.random() * 3 + 0.5).toFixed(1));
     }
@@ -632,10 +622,14 @@ function setupSocketListeners() {
   if (!socket.value) return;
 
   const activityEvents = [
-    'lead:created', 'lead:updated',
-    'deal:created', 'deal:updated',
-    'task:created', 'task:updated',
-    'ticket:created', 'ticket:updated'
+    'lead:created',
+    'lead:updated',
+    'deal:created',
+    'deal:updated',
+    'task:created',
+    'task:updated',
+    'ticket:created',
+    'ticket:updated'
   ];
 
   activityEvents.forEach(event => {
@@ -645,7 +639,7 @@ function setupSocketListeners() {
         id: Date.now().toString(),
         type: entityType === 'ticket' ? 'support' : entityType,
         actionText: `${action} a ${entityType}`,
-        entityType: entityType,
+        entityType,
         entityName: data?.name || data?.title || data?.subject || '',
         amount: data?.amount || data?.value || null,
         user: data?.user || { name: 'System' },
@@ -786,7 +780,12 @@ function formatCurrency(amount: number): string {
 
 function getInitials(name?: string): string {
   if (!name) return '?';
-  return name.split(' ').map(w => w[0]).join('').toUpperCase().slice(0, 2);
+  return name
+    .split(' ')
+    .map(w => w[0])
+    .join('')
+    .toUpperCase()
+    .slice(0, 2);
 }
 
 function getActivityColor(type: string): string {
@@ -861,11 +860,7 @@ function navigateToEntity(activity: any) {
 
 // ─── Lifecycle ──────────────────────────────────────────────
 onMounted(async () => {
-  await Promise.all([
-    loadActivities(),
-    loadTeamMembers(),
-    loadStats()
-  ]);
+  await Promise.all([loadActivities(), loadTeamMembers(), loadStats()]);
   setupSocketListeners();
 
   // Poll for new activities every 30 seconds
@@ -936,8 +931,13 @@ watch(dateFilter, () => {
 }
 
 @keyframes pulse-border {
-  0%, 100% { border-color: rgba(239, 68, 68, 0.3); }
-  50% { border-color: rgba(239, 68, 68, 0.6); }
+  0%,
+  100% {
+    border-color: rgba(239, 68, 68, 0.3);
+  }
+  50% {
+    border-color: rgba(239, 68, 68, 0.6);
+  }
 }
 
 .announcement-icon-wrap {

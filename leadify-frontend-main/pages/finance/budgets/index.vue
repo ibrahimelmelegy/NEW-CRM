@@ -215,7 +215,7 @@ const mobileSearch = ref('');
 const mobileRefreshing = ref(false);
 
 const mobileFilteredBudgets = computed(() => {
-  let data = table.value.data || [];
+  const data = table.value.data || [];
   if (!mobileSearch.value) return data;
   const q = mobileSearch.value.toLowerCase();
   return data.filter((b: any) => {
@@ -230,15 +230,24 @@ async function handleMobileRefresh() {
   try {
     await refreshData();
     vibrate([10, 30, 10]);
-  } finally { mobileRefreshing.value = false; }
+  } finally {
+    mobileRefreshing.value = false;
+  }
 }
 
 function handleBudgetSwipe(name: string, budget: any) {
   vibrate();
   switch (name) {
-    case 'view': navigateTo(`/finance/budgets/${budget.id}`); break;
-    case 'edit': navigateTo(`/finance/budgets/create?edit=${budget.id}`); break;
-    case 'delete': deleteId.value = budget.id; deletePopup.value = true; break;
+    case 'view':
+      navigateTo(`/finance/budgets/${budget.id}`);
+      break;
+    case 'edit':
+      navigateTo(`/finance/budgets/create?edit=${budget.id}`);
+      break;
+    case 'delete':
+      deleteId.value = budget.id;
+      deletePopup.value = true;
+      break;
   }
 }
 

@@ -1,3 +1,4 @@
+/* eslint-disable require-await */
 /**
  * usePermissions - Unit Tests
  * =============================

@@ -129,6 +129,7 @@ div
 </template>
 
 <script setup lang="ts">
+/* eslint-disable require-await */
 import { Plus } from '@element-plus/icons-vue';
 import { ElMessage, ElNotification, ElMessageBox } from 'element-plus';
 import { stageOptions, priorityOptions } from '@/composables/useOpportunity';
@@ -175,11 +176,11 @@ async function confirmDelete() {
 async function handleBulkDelete() {
   if (!selectedRows.value.length) return;
   try {
-    await ElMessageBox.confirm(
-      t('opportunities.confirmBulkDelete', { count: selectedRows.value.length }),
-      t('common.warning'),
-      { type: 'warning', confirmButtonText: t('common.delete'), cancelButtonText: t('common.cancel') }
-    );
+    await ElMessageBox.confirm(t('opportunities.confirmBulkDelete', { count: selectedRows.value.length }), t('common.warning'), {
+      type: 'warning',
+      confirmButtonText: t('common.delete'),
+      cancelButtonText: t('common.cancel')
+    });
     loadingAction.value = true;
     const countToDelete = selectedRows.value.length;
     for (const row of selectedRows.value) {
@@ -389,10 +390,11 @@ function handleRowClick(val: any) {
   router.push(`/sales/opportunity/${val.id}`);
 }
 
-const mappedUsers = usersResponse?.body?.docs?.map((e: any) => ({
-  label: e.name,
-  value: e.id
-})) || [];
+const mappedUsers =
+  usersResponse?.body?.docs?.map((e: any) => ({
+    label: e.name,
+    value: e.id
+  })) || [];
 
 const filterOptions = [
   {
@@ -477,9 +479,19 @@ const mobileStageFilters = computed(() => {
   const data = table.data || [];
   return [
     { value: 'ALL', label: t('common.all'), color: '#f59e0b', count: data.length },
-    { value: 'DISCOVERY', label: t('opportunities.stages.discovery'), color: '#3b82f6', count: data.filter((o: any) => o.stage === 'DISCOVERY').length },
+    {
+      value: 'DISCOVERY',
+      label: t('opportunities.stages.discovery'),
+      color: '#3b82f6',
+      count: data.filter((o: any) => o.stage === 'DISCOVERY').length
+    },
     { value: 'PROPOSAL', label: t('opportunities.stages.proposal'), color: '#8b5cf6', count: data.filter((o: any) => o.stage === 'PROPOSAL').length },
-    { value: 'NEGOTIATION', label: t('opportunities.stages.negotiation'), color: '#f59e0b', count: data.filter((o: any) => o.stage === 'NEGOTIATION').length },
+    {
+      value: 'NEGOTIATION',
+      label: t('opportunities.stages.negotiation'),
+      color: '#f59e0b',
+      count: data.filter((o: any) => o.stage === 'NEGOTIATION').length
+    },
     { value: 'WON', label: t('opportunities.stages.won'), color: '#10b981', count: data.filter((o: any) => o.stage === 'WON').length },
     { value: 'LOST', label: t('opportunities.stages.lost'), color: '#ef4444', count: data.filter((o: any) => o.stage === 'LOST').length }
   ];
@@ -503,7 +515,9 @@ async function handleMobileRefresh() {
     const res = await useTableFilter('opportunity');
     table.data = res.formattedData;
     vibrate([10, 30, 10]);
-  } finally { mobileRefreshing.value = false; }
+  } finally {
+    mobileRefreshing.value = false;
+  }
 }
 
 function getMobileLeftActions(_opp: any) {
@@ -515,9 +529,15 @@ function getMobileLeftActions(_opp: any) {
 function handleMobileSwipe(name: string, opp: any) {
   vibrate();
   switch (name) {
-    case 'kanban': navigateTo('/sales/opportunity/kanban'); break;
-    case 'view': navigateTo(`/sales/opportunity/${opp.id}`); break;
-    case 'edit': navigateTo(`/sales/opportunity/edit/${opp.id}`); break;
+    case 'kanban':
+      navigateTo('/sales/opportunity/kanban');
+      break;
+    case 'view':
+      navigateTo(`/sales/opportunity/${opp.id}`);
+      break;
+    case 'edit':
+      navigateTo(`/sales/opportunity/edit/${opp.id}`);
+      break;
   }
 }
 

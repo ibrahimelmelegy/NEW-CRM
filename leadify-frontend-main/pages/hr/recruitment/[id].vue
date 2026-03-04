@@ -356,8 +356,12 @@ const pipelineStages = [
 const funnelVisual = computed(() => {
   if (!funnelData.value?.funnel) return [];
   const stageColors: Record<string, string> = {
-    APPLIED: '#6366f1', SCREENING: '#3b82f6', INTERVIEW: '#f59e0b',
-    ASSESSMENT: '#8b5cf6', OFFER: '#22c55e', HIRED: '#10b981'
+    APPLIED: '#6366f1',
+    SCREENING: '#3b82f6',
+    INTERVIEW: '#f59e0b',
+    ASSESSMENT: '#8b5cf6',
+    OFFER: '#22c55e',
+    HIRED: '#10b981'
   };
   return (funnelData.value.funnel || [])
     .filter((s: any) => s.stage !== 'REJECTED')
@@ -391,8 +395,13 @@ function getPostingStatusType(status: string): string {
 
 function getStageType(stage: string): string {
   const map: Record<string, string> = {
-    APPLIED: 'info', SCREENING: '', INTERVIEW: 'warning',
-    ASSESSMENT: '', OFFER: 'success', HIRED: 'success', REJECTED: 'danger'
+    APPLIED: 'info',
+    SCREENING: '',
+    INTERVIEW: 'warning',
+    ASSESSMENT: '',
+    OFFER: 'success',
+    HIRED: 'success',
+    REJECTED: 'danger'
   };
   return map[stage] || 'info';
 }
@@ -553,11 +562,7 @@ async function handleMoveStage() {
 
 async function handleRejectApplicant(row: any) {
   try {
-    await ElMessageBox.confirm(
-      `${t('recruitment.confirmReject')} ${row.name}?`,
-      t('common.warning'),
-      { type: 'warning' }
-    );
+    await ElMessageBox.confirm(`${t('recruitment.confirmReject')} ${row.name}?`, t('common.warning'), { type: 'warning' });
     await useApiFetch(`hr/recruitment/applicants/${row.id}/stage`, 'PUT', { stage: 'REJECTED' });
     ElMessage.success(t('recruitment.applicantRejected'));
     panelVisible.value = false;
@@ -569,11 +574,10 @@ async function handleRejectApplicant(row: any) {
 
 async function handleClosePosting() {
   try {
-    await ElMessageBox.confirm(
-      t('recruitment.confirmClosePosting'),
-      t('common.warning'),
-      { type: 'warning', confirmButtonText: t('recruitment.closePosting') }
-    );
+    await ElMessageBox.confirm(t('recruitment.confirmClosePosting'), t('common.warning'), {
+      type: 'warning',
+      confirmButtonText: t('recruitment.closePosting')
+    });
     const res = await useApiFetch(`hr/recruitment/postings/${postingId.value}/close`, 'PUT', { rejectRemaining: true });
     if (res?.success) {
       ElMessage.success(t('recruitment.postingClosed'));

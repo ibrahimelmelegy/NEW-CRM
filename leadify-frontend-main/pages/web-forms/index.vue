@@ -186,9 +186,9 @@
 
 <script setup lang="ts">
 import { ref, reactive, onMounted, computed, nextTick } from 'vue';
-import { useWebForms } from '~/composables/useWebForms';
 import { useI18n } from 'vue-i18n';
-import * as echarts from 'echarts';
+import * as echarts from 'echarts/core';
+import { useWebForms } from '~/composables/useWebForms';
 
 definePageMeta({});
 
@@ -237,7 +237,7 @@ const analytics = reactive<any>({
   fieldCompletionRates: {}
 });
 
-const analyticsTitle = computed(() => editingForm.value ? `${t('common.analytics')} - ${editingForm.value.name}` : t('common.analytics'));
+const analyticsTitle = computed(() => (editingForm.value ? `${t('common.analytics')} - ${editingForm.value.name}` : t('common.analytics')));
 
 onMounted(() => {
   fetchForms();
@@ -361,12 +361,14 @@ function renderCharts() {
     const chart = echarts.init(sourceChartRef.value);
     chart.setOption({
       tooltip: { trigger: 'item' },
-      series: [{
-        type: 'pie',
-        radius: '60%',
-        data: analytics.sourceBreakdown.map((s: any) => ({ name: s.source, value: s.count })),
-        itemStyle: { borderRadius: 8 }
-      }]
+      series: [
+        {
+          type: 'pie',
+          radius: '60%',
+          data: analytics.sourceBreakdown.map((s: any) => ({ name: s.source, value: s.count })),
+          itemStyle: { borderRadius: 8 }
+        }
+      ]
     });
   }
 }

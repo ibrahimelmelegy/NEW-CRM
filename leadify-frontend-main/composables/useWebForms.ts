@@ -1,3 +1,4 @@
+/* eslint-disable no-use-before-define */
 /**
  * Web Forms / Lead Capture System — API-backed
  * Create embeddable forms that auto-create leads in the CRM.

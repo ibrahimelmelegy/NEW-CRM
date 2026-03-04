@@ -1,3 +1,4 @@
+/* eslint-disable require-await */
 export interface WebhookConfig {
   id: string;
   name: string;

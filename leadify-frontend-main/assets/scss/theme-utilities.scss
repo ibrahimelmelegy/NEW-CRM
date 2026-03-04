@@ -6,194 +6,197 @@
 // 🪟 GLASS CARDS
 // ========================================
 .glass-card {
-    background: var(--glass-bg);
-    backdrop-filter: var(--glass-blur);
-    -webkit-backdrop-filter: var(--glass-blur);
-    border: 1px solid var(--glass-border);
-    border-radius: var(--radius-lg);
-    box-shadow: var(--shadow-md);
+  background: var(--glass-bg);
+  backdrop-filter: var(--glass-blur);
+  -webkit-backdrop-filter: var(--glass-blur);
+  border: 1px solid var(--glass-border);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-md);
 }
 
 .glass-container {
-    background: var(--bg-card) !important;
-    backdrop-filter: blur(10px);
-    border: 1px solid var(--glass-border);
-    border-radius: var(--radius-card);
+  background: var(--bg-card) !important;
+  backdrop-filter: blur(10px);
+  border: 1px solid var(--glass-border);
+  border-radius: var(--radius-card);
 }
 
 .glass-panel {
-    background: rgba(18, 18, 26, 0.6);
-    backdrop-filter: blur(12px);
-    -webkit-backdrop-filter: blur(12px);
-    border: 1px solid var(--glass-border);
-    border-radius: var(--radius-md);
+  background: rgba(18, 18, 26, 0.6);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border: 1px solid var(--glass-border);
+  border-radius: var(--radius-md);
 }
 
 // ========================================
 // 🌈 GRADIENT UTILITIES
 // ========================================
 .gradient-aurora {
-    background: var(--gradient-aurora);
+  background: var(--gradient-aurora);
 }
 
 .gradient-purple-pink {
-    background: var(--gradient-purple-pink);
+  background: var(--gradient-purple-pink);
 }
 
 .gradient-sunset {
-    background: var(--gradient-sunset);
+  background: var(--gradient-sunset);
 }
 
 .gradient-fire {
-    background: var(--gradient-fire);
+  background: var(--gradient-fire);
 }
 
 .gradient-text {
-    background: var(--gradient-aurora);
-    -webkit-background-clip: text;
-    -webkit-text-fill-color: transparent;
-    background-clip: text;
+  background: var(--gradient-aurora);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
 }
 
 // ========================================
 // 🔲 GRADIENT BORDERS
 // ========================================
 .gradient-border {
-    position: relative;
-    background: var(--bg-card);
-    border-radius: var(--radius-lg);
+  position: relative;
+  background: var(--bg-card);
+  border-radius: var(--radius-lg);
 
-    &::before {
-        content: '';
-        position: absolute;
-        inset: 0;
-        padding: 1px;
-        border-radius: inherit;
-        background: var(--gradient-aurora);
-        -webkit-mask:
-            linear-gradient(#fff 0 0) content-box,
-            linear-gradient(#fff 0 0);
-        mask-composite: exclude;
-        -webkit-mask-composite: xor;
-        mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
-        pointer-events: none;
-    }
+  &::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    padding: 1px;
+    border-radius: inherit;
+    background: var(--gradient-aurora);
+    -webkit-mask:
+      linear-gradient(#fff 0 0) content-box,
+      linear-gradient(#fff 0 0);
+    mask-composite: exclude;
+    -webkit-mask-composite: xor;
+    mask:
+      linear-gradient(#fff 0 0) content-box,
+      linear-gradient(#fff 0 0);
+    pointer-events: none;
+  }
 }
 
 // ========================================
 // ✨ GLOW EFFECTS
 // ========================================
 .glow-purple {
-    box-shadow: var(--glow-purple);
+  box-shadow: var(--glow-purple);
 }
 
 .glow-pink {
-    box-shadow: var(--glow-pink);
+  box-shadow: var(--glow-pink);
 }
 
 .glow-orange {
-    box-shadow: var(--glow-orange);
+  box-shadow: var(--glow-orange);
 }
 
 // ========================================
 // 🎯 HOVER EFFECTS
 // ========================================
 .hover-lift {
-    transition: transform var(--transition-fast), box-shadow var(--transition-fast);
+  transition:
+    transform var(--transition-fast),
+    box-shadow var(--transition-fast);
 
-    &:hover {
-        transform: translateY(-2px);
-        box-shadow: var(--shadow-lg);
-    }
+  &:hover {
+    transform: translateY(-2px);
+    box-shadow: var(--shadow-lg);
+  }
 }
 
 .hover-glow {
-    transition: box-shadow var(--transition-fast);
+  transition: box-shadow var(--transition-fast);
 
-    &:hover {
-        box-shadow: var(--glow-purple);
-    }
+  &:hover {
+    box-shadow: var(--glow-purple);
+  }
 }
 
 .hover-scale {
-    transition: transform var(--transition-fast);
+  transition: transform var(--transition-fast);
 
-    &:hover {
-        transform: scale(1.02);
-    }
+  &:hover {
+    transform: scale(1.02);
+  }
 }
 
 // ========================================
 // 🎨 COLOR UTILITIES
 // ========================================
 .text-purple {
-    color: var(--purple) !important;
+  color: var(--purple) !important;
 }
 
 .text-orange {
-    color: var(--orange) !important;
+  color: var(--orange) !important;
 }
 
 .text-pink {
-    color: var(--pink) !important;
+  color: var(--pink) !important;
 }
 
 .text-yellow {
-    color: var(--yellow) !important;
+  color: var(--yellow) !important;
 }
 
 .bg-purple {
-    background-color: var(--purple) !important;
+  background-color: var(--purple) !important;
 }
 
 .bg-orange {
-    background-color: var(--orange) !important;
+  background-color: var(--orange) !important;
 }
 
 .bg-pink {
-    background-color: var(--pink) !important;
+  background-color: var(--pink) !important;
 }
 
 .bg-yellow {
-    background-color: var(--yellow) !important;
+  background-color: var(--yellow) !important;
 }
 
 // ========================================
 // 🌀 ANIMATIONS
 // ========================================
 @keyframes pulse-glow {
+  0%,
+  100% {
+    box-shadow: 0 0 20px rgba(124, 58, 237, 0.4);
+  }
 
-    0%,
-    100% {
-        box-shadow: 0 0 20px rgba(124, 58, 237, 0.4);
-    }
-
-    50% {
-        box-shadow: 0 0 40px rgba(124, 58, 237, 0.6);
-    }
+  50% {
+    box-shadow: 0 0 40px rgba(124, 58, 237, 0.6);
+  }
 }
 
 @keyframes gradient-shift {
-    0% {
-        background-position: 0% 50%;
-    }
+  0% {
+    background-position: 0% 50%;
+  }
 
-    50% {
-        background-position: 100% 50%;
-    }
+  50% {
+    background-position: 100% 50%;
+  }
 
-    100% {
-        background-position: 0% 50%;
-    }
+  100% {
+    background-position: 0% 50%;
+  }
 }
 
 .animate-pulse-glow {
-    animation: pulse-glow 2s ease-in-out infinite;
+  animation: pulse-glow 2s ease-in-out infinite;
 }
 
 .animate-gradient {
-    background-size: 200% 200%;
-    animation: gradient-shift 3s ease infinite;
+  background-size: 200% 200%;
+  animation: gradient-shift 3s ease infinite;
 }
 
 // (Sidebar and Navbar glass effects are handled in theme-components.scss)
@@ -202,53 +205,53 @@
 // 🎴 STAT CARDS
 // ========================================
 .stat-card {
-    background: var(--bg-card);
-    border: 1px solid var(--border-default);
-    border-radius: var(--radius-lg);
-    padding: 20px;
-    transition: all var(--transition-fast);
+  background: var(--bg-card);
+  border: 1px solid var(--border-default);
+  border-radius: var(--radius-lg);
+  padding: 20px;
+  transition: all var(--transition-fast);
 
-    &:hover {
-        border-color: var(--purple);
-        box-shadow: var(--shadow-md);
-    }
+  &:hover {
+    border-color: var(--purple);
+    box-shadow: var(--shadow-md);
+  }
 
-    &--purple {
-        border-left: 3px solid var(--purple);
-    }
+  &--purple {
+    border-left: 3px solid var(--purple);
+  }
 
-    &--orange {
-        border-left: 3px solid var(--orange);
-    }
+  &--orange {
+    border-left: 3px solid var(--orange);
+  }
 
-    &--pink {
-        border-left: 3px solid var(--pink);
-    }
+  &--pink {
+    border-left: 3px solid var(--pink);
+  }
 
-    &--yellow {
-        border-left: 3px solid var(--yellow);
-    }
+  &--yellow {
+    border-left: 3px solid var(--yellow);
+  }
 }
 
 // ========================================
 // 🔲 END BAR
 // ========================================
 .endBar {
-    position: fixed;
-    bottom: 0;
-    left: 0;
-    right: 0;
-    background: var(--glass-bg);
-    backdrop-filter: var(--glass-blur);
-    border-top: 1px solid var(--glass-border);
-    z-index: 1000;
-    padding: 1rem 2rem;
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  background: var(--glass-bg);
+  backdrop-filter: var(--glass-blur);
+  border-top: 1px solid var(--glass-border);
+  z-index: 1000;
+  padding: 1rem 2rem;
 }
 
 // ========================================
 // ❌ ERROR MESSAGE
 // ========================================
 .error-msg {
-    color: #EF4444 !important;
-    font-size: 0.85rem;
+  color: #ef4444 !important;
+  font-size: 0.85rem;
 }

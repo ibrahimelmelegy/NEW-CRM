@@ -412,10 +412,21 @@ async function loadContracts() {
 
 function generateDemoContracts() {
   const clients = [
-    'Aramco Digital', 'STC Solutions', 'Neom Technologies', 'SABIC Corp',
-    'Al Rajhi Capital', 'Saudi Telecom', 'Mobily Enterprise', 'Zain KSA',
-    'Elm Company', 'Tahakom', 'Red Sea Global', 'ACWA Power',
-    'Lucid Motors Saudi', 'King Salman Energy Park', 'Diriyah Gate'
+    'Aramco Digital',
+    'STC Solutions',
+    'Neom Technologies',
+    'SABIC Corp',
+    'Al Rajhi Capital',
+    'Saudi Telecom',
+    'Mobily Enterprise',
+    'Zain KSA',
+    'Elm Company',
+    'Tahakom',
+    'Red Sea Global',
+    'ACWA Power',
+    'Lucid Motors Saudi',
+    'King Salman Energy Park',
+    'Diriyah Gate'
   ];
   const types = ['service_agreement', 'license', 'nda', 'sla', 'partnership'];
   const statuses = ['draft', 'under_review', 'active', 'active', 'active', 'expiring', 'expired', 'renewed'];
@@ -425,7 +436,12 @@ function generateDemoContracts() {
   return clients.map((client, i) => {
     const status = statuses[i % statuses.length];
     const startDate = new Date(year - 1, Math.floor(Math.random() * 12), Math.floor(Math.random() * 28) + 1);
-    const endOffset = status === 'expiring' ? Math.floor(Math.random() * 30) : (status === 'expired' ? -Math.floor(Math.random() * 60) : Math.floor(Math.random() * 365) + 60);
+    const endOffset =
+      status === 'expiring'
+        ? Math.floor(Math.random() * 30)
+        : status === 'expired'
+          ? -Math.floor(Math.random() * 60)
+          : Math.floor(Math.random() * 365) + 60;
     const endDate = new Date(now.getTime() + endOffset * 86400000);
 
     return {
@@ -453,10 +469,8 @@ const filteredContracts = computed(() => {
 
   if (searchQuery.value) {
     const q = searchQuery.value.toLowerCase();
-    result = result.filter((c: any) =>
-      c.contractNumber?.toLowerCase().includes(q) ||
-      c.clientName?.toLowerCase().includes(q) ||
-      c.owner?.toLowerCase().includes(q)
+    result = result.filter(
+      (c: any) => c.contractNumber?.toLowerCase().includes(q) || c.clientName?.toLowerCase().includes(q) || c.owner?.toLowerCase().includes(q)
     );
   }
 
@@ -526,7 +540,7 @@ const kpiMetrics = computed<KPIMetric[]>(() => {
       icon: 'ph:warning-circle-bold',
       color: expiringSoon > 0 ? '#ef4444' : '#22c55e',
       trend: expiringSoon > 3 ? 'Urgent' : undefined,
-      trendType: expiringSoon > 3 ? 'down' as const : undefined
+      trendType: expiringSoon > 3 ? ('down' as const) : undefined
     },
     {
       label: t('contractLifecycle.totalValue'),
@@ -563,7 +577,12 @@ function formatDate(date: string): string {
 
 function getInitials(name: string): string {
   if (!name) return '?';
-  return name.split(' ').map(w => w[0]).join('').substring(0, 2).toUpperCase();
+  return name
+    .split(' ')
+    .map(w => w[0])
+    .join('')
+    .substring(0, 2)
+    .toUpperCase();
 }
 
 function getAvatarColor(name: string): string {
@@ -658,7 +677,11 @@ function getTimelineStepStyle(stepKey: string, currentStatus: string): Record<st
   if (passed) {
     return { background: 'rgba(139, 92, 252, 0.2)', color: '#8b5cf6' };
   }
-  return { background: 'var(--glass-bg, rgba(255,255,255,0.06))', color: 'var(--text-muted)', border: '1px solid var(--border-glass, rgba(255,255,255,0.1))' };
+  return {
+    background: 'var(--glass-bg, rgba(255,255,255,0.06))',
+    color: 'var(--text-muted)',
+    border: '1px solid var(--border-glass, rgba(255,255,255,0.1))'
+  };
 }
 
 function isStepActive(stepKey: string, currentStatus: string): boolean {
@@ -750,11 +773,11 @@ async function handleSaveContract() {
 
 async function handleRenew(contract: any) {
   try {
-    await ElMessageBox.confirm(
-      t('contractLifecycle.confirmRenew'),
-      t('contractLifecycle.renewContract'),
-      { type: 'info', confirmButtonText: t('contractLifecycle.renewContract'), cancelButtonText: t('common.cancel') }
-    );
+    await ElMessageBox.confirm(t('contractLifecycle.confirmRenew'), t('contractLifecycle.renewContract'), {
+      type: 'info',
+      confirmButtonText: t('contractLifecycle.renewContract'),
+      cancelButtonText: t('common.cancel')
+    });
     try {
       await useApiFetch(`contracts/${contract.id}/renew`, 'POST');
     } catch {
@@ -772,11 +795,11 @@ async function handleRenew(contract: any) {
 
 async function handleTerminate(contract: any) {
   try {
-    await ElMessageBox.confirm(
-      t('contractLifecycle.confirmTerminate'),
-      t('contractLifecycle.terminateContract'),
-      { type: 'warning', confirmButtonText: t('contractLifecycle.terminateContract'), cancelButtonText: t('common.cancel') }
-    );
+    await ElMessageBox.confirm(t('contractLifecycle.confirmTerminate'), t('contractLifecycle.terminateContract'), {
+      type: 'warning',
+      confirmButtonText: t('contractLifecycle.terminateContract'),
+      cancelButtonText: t('common.cancel')
+    });
     try {
       await useApiFetch(`contracts/${contract.id}/terminate`, 'POST');
     } catch {
@@ -856,8 +879,14 @@ function handleExportCSV() {
 }
 
 @keyframes fadeIn {
-  from { opacity: 0; transform: translateY(10px); }
-  to { opacity: 1; transform: translateY(0); }
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
 }
 
 .renewal-alerts-banner {

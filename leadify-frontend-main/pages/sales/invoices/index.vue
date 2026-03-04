@@ -215,10 +215,38 @@ const agingBuckets = computed(() => {
   if (!agingReport.value?.buckets) return [];
   const b = agingReport.value.buckets;
   return [
-    { label: t('invoices.agingCurrent'), amount: b.current?.amount || 0, count: b.current?.count || 0, color: '#22c55e', bg: 'rgba(34,197,94,0.08)', borderColor: 'rgba(34,197,94,0.2)' },
-    { label: t('invoices.aging30Days'), amount: b.thirtyDays?.amount || 0, count: b.thirtyDays?.count || 0, color: '#f59e0b', bg: 'rgba(245,158,11,0.08)', borderColor: 'rgba(245,158,11,0.2)' },
-    { label: t('invoices.aging60Days'), amount: b.sixtyDays?.amount || 0, count: b.sixtyDays?.count || 0, color: '#f97316', bg: 'rgba(249,115,22,0.08)', borderColor: 'rgba(249,115,22,0.2)' },
-    { label: t('invoices.aging90Plus'), amount: b.ninetyPlus?.amount || 0, count: b.ninetyPlus?.count || 0, color: '#ef4444', bg: 'rgba(239,68,68,0.08)', borderColor: 'rgba(239,68,68,0.2)' }
+    {
+      label: t('invoices.agingCurrent'),
+      amount: b.current?.amount || 0,
+      count: b.current?.count || 0,
+      color: '#22c55e',
+      bg: 'rgba(34,197,94,0.08)',
+      borderColor: 'rgba(34,197,94,0.2)'
+    },
+    {
+      label: t('invoices.aging30Days'),
+      amount: b.thirtyDays?.amount || 0,
+      count: b.thirtyDays?.count || 0,
+      color: '#f59e0b',
+      bg: 'rgba(245,158,11,0.08)',
+      borderColor: 'rgba(245,158,11,0.2)'
+    },
+    {
+      label: t('invoices.aging60Days'),
+      amount: b.sixtyDays?.amount || 0,
+      count: b.sixtyDays?.count || 0,
+      color: '#f97316',
+      bg: 'rgba(249,115,22,0.08)',
+      borderColor: 'rgba(249,115,22,0.2)'
+    },
+    {
+      label: t('invoices.aging90Plus'),
+      amount: b.ninetyPlus?.amount || 0,
+      count: b.ninetyPlus?.count || 0,
+      color: '#ef4444',
+      bg: 'rgba(239,68,68,0.08)',
+      borderColor: 'rgba(239,68,68,0.2)'
+    }
   ];
 });
 
@@ -485,15 +513,23 @@ async function handleMobileRefresh() {
   try {
     await Promise.all([loadInvoices(), loadSummary()]);
     vibrate([10, 30, 10]);
-  } finally { mobileRefreshing.value = false; }
+  } finally {
+    mobileRefreshing.value = false;
+  }
 }
 
 function handleInvSwipe(name: string, inv: any) {
   vibrate();
   switch (name) {
-    case 'collect': handleCollect(inv.id); break;
-    case 'uncollect': handleUncollect(inv.id); break;
-    case 'pdf': exportInvoicePDF(inv); break;
+    case 'collect':
+      handleCollect(inv.id);
+      break;
+    case 'uncollect':
+      handleUncollect(inv.id);
+      break;
+    case 'pdf':
+      exportInvoicePDF(inv);
+      break;
   }
 }
 </script>

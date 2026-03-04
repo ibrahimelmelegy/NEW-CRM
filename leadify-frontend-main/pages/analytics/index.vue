@@ -118,7 +118,7 @@ import { CanvasRenderer } from 'echarts/renderers';
 import { BarChart, LineChart, PieChart, FunnelChart } from 'echarts/charts';
 import { TitleComponent, TooltipComponent, LegendComponent, GridComponent } from 'echarts/components';
 import VChart from 'vue-echarts';
-import { graphic } from 'echarts';
+import { graphic } from 'echarts/core';
 import { getBarChartData, getPieChartsData, getIncreaseLineChart } from '~/composables/charts';
 import { fetchPipelineData, fetchRevenueChart, fetchTeamPerformance } from '~/composables/useDashboard';
 import { formatLargeNumber } from '~/composables/format';

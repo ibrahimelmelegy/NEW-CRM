@@ -6,6 +6,21 @@
 
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 
+import {
+  TaskStatus,
+  TaskPriority,
+  taskStatusOptions,
+  taskPriorityOptions,
+  getDailyTasks,
+  getDailyTask,
+  createDailyTask,
+  updateDailyTask,
+  deleteDailyTask,
+  getDailyTaskStatistics,
+  dailyTaskStatisticsLoading,
+  type DailyTask
+} from '~/composables/useDailyTask';
+
 const mockApiFetch = vi.fn();
 (globalThis as any).useApiFetch = mockApiFetch;
 
@@ -21,21 +36,6 @@ const mockNavigateTo = vi.fn();
 vi.mock('element-plus', () => ({
   ElNotification: (...args: any[]) => mockNotification(...args)
 }));
-
-import {
-  TaskStatus,
-  TaskPriority,
-  taskStatusOptions,
-  taskPriorityOptions,
-  getDailyTasks,
-  getDailyTask,
-  createDailyTask,
-  updateDailyTask,
-  deleteDailyTask,
-  getDailyTaskStatistics,
-  dailyTaskStatisticsLoading,
-  type DailyTask
-} from '~/composables/useDailyTask';
 
 describe('useDailyTask', () => {
   beforeEach(() => {
@@ -75,7 +75,16 @@ describe('useDailyTask', () => {
       mockApiFetch.mockResolvedValue({
         success: true,
         body: {
-          docs: [{ id: '1', name: 'Task 1', createdAt: '2024-01-01', client: { clientName: 'C1' }, salesRepresentative: { name: 'SR1' }, user: { name: 'U1' } }],
+          docs: [
+            {
+              id: '1',
+              name: 'Task 1',
+              createdAt: '2024-01-01',
+              client: { clientName: 'C1' },
+              salesRepresentative: { name: 'SR1' },
+              user: { name: 'U1' }
+            }
+          ],
           pagination: { totalItems: 1, page: 1, limit: 10, totalPages: 1 }
         }
       });
@@ -241,7 +250,10 @@ describe('useDailyTask', () => {
     });
 
     it('should toggle loading state', async () => {
-      mockApiFetch.mockResolvedValue({ success: true, body: { taskStatusPercentage: {}, monthlyRevenue: [], taskDistributionByClient: [], salesPerformance: [] } });
+      mockApiFetch.mockResolvedValue({
+        success: true,
+        body: { taskStatusPercentage: {}, monthlyRevenue: [], taskDistributionByClient: [], salesPerformance: [] }
+      });
 
       await getDailyTaskStatistics();
 

@@ -1,37 +1,34 @@
 <template>
   <div class="min-h-screen bg-slate-50">
-    <ProposalsProposalBuilder
-      @save="handleSave"
-      @cancel="handleCancel"
-    />
+    <ProposalsProposalBuilder @save="handleSave" @cancel="handleCancel" />
   </div>
 </template>
 
 <script setup lang="ts">
-const { t } = useI18n()
+const { t } = useI18n();
 
 definePageMeta({
   layout: 'default',
   middleware: ['permissions'],
   permission: 'CREATE_PROPOSALS'
-})
+});
 
 const handleSave = async (data: any) => {
   try {
-    const payload = transformToApiPayload(data)
-    const response = await useApiFetch('proposal', 'POST', payload)
+    const payload = transformToApiPayload(data);
+    const response = await useApiFetch('proposal', 'POST', payload);
     if (response?.success) {
-      ElNotification({ type: 'success', title: t('common.success'), message: t('proposals.createSuccess') })
-      navigateTo('/sales/proposals')
+      ElNotification({ type: 'success', title: t('common.success'), message: t('proposals.createSuccess') });
+      navigateTo('/sales/proposals');
     } else {
-      ElNotification({ type: 'error', title: t('common.error'), message: response?.message || 'Failed to create' })
+      ElNotification({ type: 'error', title: t('common.error'), message: response?.message || 'Failed to create' });
     }
   } catch (error: any) {
-    ElNotification({ type: 'error', title: t('common.error'), message: error?.message || 'Failed to create' })
+    ElNotification({ type: 'error', title: t('common.error'), message: error?.message || 'Failed to create' });
   }
-}
+};
 
-const handleCancel = () => navigateTo('/sales/proposals')
+const handleCancel = () => navigateTo('/sales/proposals');
 
 // Transform form data to API payload (matches React's transformToApiPayload)
 function transformToApiPayload(data: any) {
@@ -51,12 +48,12 @@ function transformToApiPayload(data: any) {
         clientLogo: data.clientLogo,
         themeColor: data.themeColor,
         coverStyle: data.coverStyle,
-        font: data.font,
+        font: data.font
       },
       client: {
         name: data.clientName,
         company: data.clientCompany,
-        email: data.clientEmail,
+        email: data.clientEmail
       },
       sections: {
         introduction: data.introduction,
@@ -65,7 +62,7 @@ function transformToApiPayload(data: any) {
         methodology: data.methodology,
         customSections: data.customSections,
         stepLabels: data.stepLabels,
-        stepOrder: data.stepOrder,
+        stepOrder: data.stepOrder
       },
       finance: {
         items: data.items,
@@ -73,14 +70,14 @@ function transformToApiPayload(data: any) {
         discountType: data.discountType,
         taxRate: data.taxRate,
         currency: data.currency,
-        paymentTerms: data.paymentTerms,
+        paymentTerms: data.paymentTerms
       },
       timeline: data.phases,
-      terms: data.termsAndConditions,
+      terms: data.termsAndConditions
     }),
     relatedEntityType: data.selectedEntity?.type,
     relatedEntityId: data.selectedEntity?.id,
-    fileAttachments: data.attachments?.map((f: any) => f.url) || [],
-  }
+    fileAttachments: data.attachments?.map((f: any) => f.url) || []
+  };
 }
 </script>

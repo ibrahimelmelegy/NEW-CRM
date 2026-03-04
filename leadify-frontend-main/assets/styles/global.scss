@@ -22,32 +22,32 @@
 // 5. Vue Tel Input - Now theme-aware via CSS variables (handled in theme-components.scss)
 // Keeping only the dropdown z-index fix here
 .vue-tel-input .vti__dropdown .vti__dropdown-list {
-    z-index: 99999 !important;
+  z-index: 99999 !important;
 }
 
 .vue-tel-input .vti__input {
-    &::placeholder {
-        color: var(--text-disabled) !important;
-    }
+  &::placeholder {
+    color: var(--text-disabled) !important;
+  }
 }
 
 .vue-tel-input .vti__dropdown-item {
-    color: var(--text-secondary) !important;
-    padding: 10px;
+  color: var(--text-secondary) !important;
+  padding: 10px;
 
-    strong {
-        color: var(--text-primary) !important;
-    }
+  strong {
+    color: var(--text-primary) !important;
+  }
 }
 
 // 6. Global premium button style
 .premium-btn {
-    background: linear-gradient(135deg, #7849ff 0%, #5a2fd4 100%);
-    border: none;
-    color: #fff;
-    font-weight: 600;
+  background: linear-gradient(135deg, #7849ff 0%, #5a2fd4 100%);
+  border: none;
+  color: #fff;
+  font-weight: 600;
 
-    &:hover {
-        background: linear-gradient(135deg, #8b5cf6 0%, #7849ff 100%);
-    }
+  &:hover {
+    background: linear-gradient(135deg, #8b5cf6 0%, #7849ff 100%);
+  }
 }

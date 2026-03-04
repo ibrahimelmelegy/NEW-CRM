@@ -190,7 +190,14 @@
       "Bash(git -c core.editor=true rebase:*)",
       "Bash(git version:*)",
       "Bash(GIT_EDITOR=\":\" git rebase --continue)",
-      "Bash(git -c core.editor=cat rebase --continue)"
+      "Bash(git -c core.editor=cat rebase --continue)",
+      "Bash(for:*)",
+      "Bash(do wc -l \"$f\")",
+      "Bash(/e/NEW-CRM/leadify-frontend-main/composables/operations/service.ts:*)",
+      "Bash(/e/NEW-CRM/leadify-frontend-main/composables/operations/assets.ts:*)"
+    ],
+    "additionalDirectories": [
+      "\\tmp"
     ]
   }
 }

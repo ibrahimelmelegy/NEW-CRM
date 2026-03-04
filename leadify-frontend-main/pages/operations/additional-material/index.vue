@@ -96,7 +96,13 @@
                       <p class="text-sm">{{ $t('common.edit') }}</p>
                     </nuxt-link>
                   </el-dropdown-item>
-                  <el-dropdown-item v-if="hasPermission('DELETE_ADDITIONAL_MATERIAL')" @click="deleteLeadPopup = true; deleteId = scope.row?.id">
+                  <el-dropdown-item
+                    v-if="hasPermission('DELETE_ADDITIONAL_MATERIAL')"
+                    @click="
+                      deleteLeadPopup = true;
+                      deleteId = scope.row?.id;
+                    "
+                  >
                     <div class="flex items-center">
                       <icon class="text-md mr-2" name="ph:trash-bold"></icon>
                       <p class="text-sm">{{ $t('common.delete') }}</p>

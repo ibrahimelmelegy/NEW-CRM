@@ -1,3 +1,4 @@
+/* eslint-disable no-use-before-define */
 import { getOpportunities } from './useOpportunity';
 import type { RelatedTypesValues, RelatedTypeOptions, RelatedToOptions, ProposalTypeOptions, ProposalInfoPayload } from '~/types/Proposal';
 
@@ -65,10 +66,11 @@ export async function fetchRelatedToOptions(type: RelatedTypesValues) {
   const fetchFunction = functionMap[type];
 
   const response = await fetchFunction();
-  proposalRelatedToOptions.value = response[existingType]?.map((item: { id?: string | number; name?: string }) => ({
-    label: item?.name ?? '',
-    value: String(item?.id ?? '')
-  })) ?? [];
+  proposalRelatedToOptions.value =
+    response[existingType]?.map((item: { id?: string | number; name?: string }) => ({
+      label: item?.name ?? '',
+      value: String(item?.id ?? '')
+    })) ?? [];
 
   return proposalRelatedToOptions.value;
 }
@@ -202,7 +204,11 @@ export async function updateProposalFinanceTable(values: Record<string, unknown>
   }
 }
 
-export async function updateProposalFinanceTableitem(values: { customColumns?: Record<string, unknown>; qty?: number; proposalId?: string }, id: number, type: string = 'all'): Promise<void> {
+export async function updateProposalFinanceTableitem(
+  values: { customColumns?: Record<string, unknown>; qty?: number; proposalId?: string },
+  id: number,
+  type: string = 'all'
+): Promise<void> {
   try {
     // Prepare the client data
     const ProposalFinanceTableData: Record<string, unknown> = {

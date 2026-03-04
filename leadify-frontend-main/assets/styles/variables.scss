@@ -35,87 +35,68 @@ $padding-primary: 24px;
 /* -------------------------------------------------------------------------- */
 /* Element Plus Theme Override                                                */
 /* -------------------------------------------------------------------------- */
-@forward 'element-plus/theme-chalk/src/common/var.scss' with ( // Color palette
-  $colors: ('primary': ('base': $brand-primary),
-    'success': ('base': $success),
-    'warning': ('base': $warning),
-    'danger': ('base': $danger),
-    'error': ('base': $error),
-    'info': ('base': $info),
-  ),
+@forward 'element-plus/theme-chalk/src/common/var.scss' with (
+  // Color palette
+  $colors: (
+      'primary': (
+        'base': $brand-primary
+      ),
+      'success': (
+        'base': $success
+      ),
+      'warning': (
+        'base': $warning
+      ),
+      'danger': (
+        'base': $danger
+      ),
+      'error': (
+        'base': $error
+      ),
+      'info': (
+        'base': $info
+      )
+    ),
 
   // Fill colors - transparent for glass effect
-  $fill-color: ('dark': $brand-primary,
-    'light': rgba(124, 58, 237, 0.1),
-    'lighter': rgba(124, 58, 237, 0.05),
-    'blank': transparent,
-  ),
+  $fill-color: ('dark': $brand-primary, 'light': rgba(124, 58, 237, 0.1), 'lighter': rgba(124, 58, 237, 0.05), 'blank': transparent),
 
   // Background colors
-  $bg-color: ('page': $background-body,
-    'overlay': $background-dark,
-    '': $background-dark,
-  ),
+  $bg-color: ('page': $background-body, 'overlay': $background-dark, '': $background-dark),
 
   // Text colors
-  $text-color: ('primary': $text-primary,
-    'regular': $text-secondary,
-    'secondary': $text-muted,
-    'placeholder': #52525b,
-    'disabled': #3f3f46,
-  ),
+  $text-color: ('primary': $text-primary, 'regular': $text-secondary, 'secondary': $text-muted, 'placeholder': #52525b, 'disabled': #3f3f46),
 
   // Border colors
-  $border-color: ('base': $border,
-    'light': rgba(255, 255, 255, 0.05),
-    'lighter': rgba(255, 255, 255, 0.03),
-    'extra-light': rgba(255, 255, 255, 0.02),
-    'dark': rgba(255, 255, 255, 0.12),
-    'darker': rgba(255, 255, 255, 0.16),
-  ),
+  $border-color: (
+      'base': $border,
+      'light': rgba(255, 255, 255, 0.05),
+      'lighter': rgba(255, 255, 255, 0.03),
+      'extra-light': rgba(255, 255, 255, 0.02),
+      'dark': rgba(255, 255, 255, 0.12),
+      'darker': rgba(255, 255, 255, 0.16)
+    ),
 
   // Border radius
-  $border-radius: ('base': $radius-md,
-    'small': $radius-sm,
-    'large': $radius-lg,
-    'round': 20px,
-    'circle': 100%,
-  ),
+  $border-radius: ('base': $radius-md, 'small': $radius-sm, 'large': $radius-lg, 'round': 20px, 'circle': 100%),
 
   // Component sizing
-  $common-component-size: ('large': 48px,
-    'default': 40px,
-    'small': 32px,
-  ),
+  $common-component-size: ('large': 48px, 'default': 40px, 'small': 32px),
 
   // Other overrides
   $border-color-hover: $brand-primary-hover,
 
-  $select-dropdown: ('padding': 8px,
-  ),
+  $select-dropdown: ('padding': 8px),
 
-  $dropdown: ('padding': 8px,
-  ),
+  $dropdown: ('padding': 8px),
 
-  $popper: ('border-radius': $radius-md,
-    'padding': 12px,
-    'border': 1px solid $border,
-  ),
+  $popper: ('border-radius': $radius-md, 'padding': 12px, 'border': 1px solid $border),
 
-  $dialog: ('title-font-size': 20px,
-    'border-radius': $radius-lg,
-    'padding-primary': $padding-primary,
-  ),
+  $dialog: ('title-font-size': 20px, 'border-radius': $radius-lg, 'padding-primary': $padding-primary),
 
-  $pagination: ('item-gap': 8px,
-  ),
+  $pagination: ('item-gap': 8px),
 
-  $card: ('border-radius': $radius-lg,
-    'padding': $padding-primary,
-  ),
+  $card: ('border-radius': $radius-lg, 'padding': $padding-primary),
 
-  $table: ('border-color': $border,
-    'header-bg-color': rgba(30, 30, 38, 0.5),
-    'row-hover-bg-color': rgba(124, 58, 237, 0.05),
-  ),
+  $table: ('border-color': $border, 'header-bg-color': rgba(30, 30, 38, 0.5), 'row-hover-bg-color': rgba(124, 58, 237, 0.05))
 );

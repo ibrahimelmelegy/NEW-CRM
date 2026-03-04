@@ -4,6 +4,7 @@
 </template>
 
 <script lang="ts" setup>
+/* eslint-disable require-await */
 import { storeToRefs } from 'pinia';
 import { useMain } from '~/stores/common';
 import { useAuthStore } from '~/stores/auth';

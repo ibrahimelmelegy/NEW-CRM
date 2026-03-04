@@ -1,3 +1,4 @@
+/* eslint-disable require-await */
 export interface TimeEntry {
   id: string;
   userId: number;

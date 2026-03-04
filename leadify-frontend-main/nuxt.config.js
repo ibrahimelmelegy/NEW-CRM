@@ -23,7 +23,8 @@ export default defineNuxtConfig({
       ],
       script: [
         {
-          innerHTML: "if('serviceWorker' in navigator){navigator.serviceWorker.getRegistrations().then(function(r){r.forEach(function(reg){reg.unregister()})});caches.keys().then(function(n){n.forEach(function(k){caches.delete(k)})})}",
+          innerHTML:
+            "if('serviceWorker' in navigator){navigator.serviceWorker.getRegistrations().then(function(r){r.forEach(function(reg){reg.unregister()})});caches.keys().then(function(n){n.forEach(function(k){caches.delete(k)})})}",
           type: 'text/javascript'
         }
       ],

@@ -25,11 +25,7 @@ const loading = ref(false);
 export function useNotifications() {
   const unreadCount = computed(() => notifications.value.filter(n => !n.read).length);
 
-  const sorted = computed(() =>
-    [...notifications.value].sort(
-      (a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()
-    )
-  );
+  const sorted = computed(() => [...notifications.value].sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()));
 
   const unread = computed(() => sorted.value.filter(n => !n.read));
 

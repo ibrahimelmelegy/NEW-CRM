@@ -410,8 +410,7 @@ export default {
       prevent_next_content_update_from_parent: false, // workaround to avoid infinite update loop
       current_text_style: false, // contains the style at caret position
       printing_mode: false, // flag set when page is rendering in printing mode
-      sections: { type: 'description' },
-      alignment: ref('left')
+      sections: { type: 'description' }
     };
   },
 
@@ -657,7 +656,7 @@ export default {
 
                     // Add empty values for any custom columns that don't exist in this row
                     customColumnKeys.forEach(key => {
-                      if (!customCols.hasOwnProperty(key)) {
+                      if (!Object.hasOwn(customCols, key)) {
                         customCols[key] = '';
                       }
                     });
@@ -943,7 +942,7 @@ export default {
 
                     // Add empty values for any custom columns that don't exist in this row
                     customColumnKeys.forEach(key => {
-                      if (!customCols.hasOwnProperty(key)) {
+                      if (!Object.hasOwn(customCols, key)) {
                         customCols[key] = '';
                       }
                     });
@@ -1149,7 +1148,7 @@ involved.  </div>
           const InvoiceTemplate = defineAsyncComponent(() => import('./InvoiceTemplate.ce.vue'));
           const componentElement = defineCustomElement(InvoiceTemplate);
           customElements.define('invoice-template-' + page.uuid, componentElement);
-          page.elt.appendChild(new componentElement({ modelValue: page.props }));
+          page.elt.appendChild(new componentElement({ modelValue: page.props })); // eslint-disable-line new-cap
         } else {
           // Initialize content pages
           page.elt.innerHTML = page.content ? '<div>' + page.content + '</div>' : '<div><br></div>';
@@ -1456,7 +1455,7 @@ involved.  </div>
 
                 // Add empty values for any custom columns that don't exist in this row
                 customColumnKeys.forEach(key => {
-                  if (!customCols.hasOwnProperty(key)) {
+                  if (!Object.hasOwn(customCols, key)) {
                     customCols[key] = '';
                   }
                 });

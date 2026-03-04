@@ -253,12 +253,15 @@ const staffAnalytics = computed(() => {
 
   // Average tenure (in months)
   const staffWithDates = data.filter((s: any) => s.createdAt);
-  const avgTenureMonths = staffWithDates.length > 0
-    ? Math.round(staffWithDates.reduce((sum: number, s: any) => {
-        const months = Math.max(0, Math.floor((new Date().getTime() - new Date(s.createdAt).getTime()) / (1000 * 60 * 60 * 24 * 30)));
-        return sum + months;
-      }, 0) / staffWithDates.length)
-    : 0;
+  const avgTenureMonths =
+    staffWithDates.length > 0
+      ? Math.round(
+          staffWithDates.reduce((sum: number, s: any) => {
+            const months = Math.max(0, Math.floor((new Date().getTime() - new Date(s.createdAt).getTime()) / (1000 * 60 * 60 * 24 * 30)));
+            return sum + months;
+          }, 0) / staffWithDates.length
+        )
+      : 0;
 
   return {
     totalActive: activeStaff.length,
@@ -450,7 +453,9 @@ async function handleMobileRefresh() {
     const res = await useTableFilter('users');
     table.data = res.formattedData;
     vibrate([10, 30, 10]);
-  } finally { mobileRefreshing.value = false; }
+  } finally {
+    mobileRefreshing.value = false;
+  }
 }
 
 function getSwipeRightActions(staff: any) {
@@ -462,17 +467,26 @@ function getSwipeRightActions(staff: any) {
 
 function getSwipeLeftActions(staff: any) {
   const actions = [{ name: 'view', label: t('common.view'), icon: 'ph:eye-bold', color: '#7849ff' }];
-  if (hasPermission('EDIT_STAFF') && staff.id !== 1) actions.push({ name: 'edit', label: t('common.edit'), icon: 'ph:pencil-simple-bold', color: '#F59E0B' });
+  if (hasPermission('EDIT_STAFF') && staff.id !== 1)
+    actions.push({ name: 'edit', label: t('common.edit'), icon: 'ph:pencil-simple-bold', color: '#F59E0B' });
   return actions;
 }
 
 function handleSwipeAction(name: string, staff: any) {
   vibrate();
   switch (name) {
-    case 'call': window.location.href = `tel:${staff.phone}`; break;
-    case 'email': window.location.href = `mailto:${staff.email}`; break;
-    case 'view': navigateTo(`/staff/${staff.id}`); break;
-    case 'edit': navigateTo(`/staff/edit/${staff.id}`); break;
+    case 'call':
+      window.location.href = `tel:${staff.phone}`;
+      break;
+    case 'email':
+      window.location.href = `mailto:${staff.email}`;
+      break;
+    case 'view':
+      navigateTo(`/staff/${staff.id}`);
+      break;
+    case 'edit':
+      navigateTo(`/staff/edit/${staff.id}`);
+      break;
   }
 }
 </script>

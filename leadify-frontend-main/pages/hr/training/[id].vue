@@ -293,8 +293,17 @@ const ENROLLMENT_STATUSES = [
 const enrollForm = reactive({ employeeId: '' as string | number });
 const editEnrollForm = reactive({ status: 'ENROLLED', progress: 0, score: 0, feedback: '', rating: 0 });
 const programForm = reactive({
-  title: '', type: 'ONLINE', status: 'ACTIVE', category: '', instructor: '',
-  durationHours: 0, maxParticipants: 0, cost: 0, startDate: '', endDate: '', description: ''
+  title: '',
+  type: 'ONLINE',
+  status: 'ACTIVE',
+  category: '',
+  instructor: '',
+  durationHours: 0,
+  maxParticipants: 0,
+  cost: 0,
+  startDate: '',
+  endDate: '',
+  description: ''
 });
 const materialForm = reactive({ name: '', url: '', type: 'PDF' });
 
@@ -323,8 +332,11 @@ const filteredParticipants = computed(() => {
 // Helpers
 function formatDate(d: string): string {
   if (!d) return '--';
-  try { return new Date(d).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' }); }
-  catch { return d; }
+  try {
+    return new Date(d).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
+  } catch {
+    return d;
+  }
 }
 
 function getStatusType(status: string): string {
@@ -362,22 +374,31 @@ function getEmployeeName(row: any): string {
 
 function getMaterialIcon(type: string): string {
   const map: Record<string, string> = {
-    PDF: 'ph:file-pdf-bold', VIDEO: 'ph:video-bold', SLIDES: 'ph:presentation-bold',
-    DOCUMENT: 'ph:file-doc-bold', LINK: 'ph:link-bold'
+    PDF: 'ph:file-pdf-bold',
+    VIDEO: 'ph:video-bold',
+    SLIDES: 'ph:presentation-bold',
+    DOCUMENT: 'ph:file-doc-bold',
+    LINK: 'ph:link-bold'
   };
   return map[type] || 'ph:file-bold';
 }
 
 function getMaterialColor(type: string): string {
   const map: Record<string, string> = {
-    PDF: '#ef4444', VIDEO: '#8b5cf6', SLIDES: '#f59e0b', DOCUMENT: '#3b82f6', LINK: '#22c55e'
+    PDF: '#ef4444',
+    VIDEO: '#8b5cf6',
+    SLIDES: '#f59e0b',
+    DOCUMENT: '#3b82f6',
+    LINK: '#22c55e'
   };
   return map[type] || '#7849ff';
 }
 
 function getMaterialBg(type: string): string {
   const color = getMaterialColor(type);
-  return color.replace('#', 'rgba(') ? `rgba(${parseInt(getMaterialColor(type).slice(1, 3), 16)}, ${parseInt(getMaterialColor(type).slice(3, 5), 16)}, ${parseInt(getMaterialColor(type).slice(5, 7), 16)}, 0.12)` : 'rgba(120, 73, 255, 0.12)';
+  return color.replace('#', 'rgba(')
+    ? `rgba(${parseInt(getMaterialColor(type).slice(1, 3), 16)}, ${parseInt(getMaterialColor(type).slice(3, 5), 16)}, ${parseInt(getMaterialColor(type).slice(5, 7), 16)}, 0.12)`
+    : 'rgba(120, 73, 255, 0.12)';
 }
 
 // Data fetching
@@ -408,7 +429,9 @@ async function loadEmployees() {
         name: e.firstName ? `${e.firstName} ${e.lastName || ''}`.trim() : e.name || `Employee #${e.id}`
       }));
     }
-  } catch { /* silently ignore */ }
+  } catch {
+    /* silently ignore */
+  }
 }
 
 // Enrollment CRUD
@@ -465,28 +488,24 @@ async function handleUpdateEnrollment() {
 
 async function handleComplete(row: any) {
   try {
-    await ElMessageBox.confirm(
-      t('hr.training.confirmComplete'),
-      t('common.confirm'),
-      { type: 'info' }
-    );
+    await ElMessageBox.confirm(t('hr.training.confirmComplete'), t('common.confirm'), { type: 'info' });
     await useApiFetch(`hr/training/enrollments/${row.id}/complete`, 'PUT');
     ElNotification({ type: 'success', title: t('common.success'), message: t('hr.training.completedSuccess') });
     await loadProgram();
-  } catch { /* cancelled */ }
+  } catch {
+    /* cancelled */
+  }
 }
 
 async function handleDeleteEnrollment(row: any) {
   try {
-    await ElMessageBox.confirm(
-      t('common.confirmDelete'),
-      t('common.warning'),
-      { type: 'warning' }
-    );
+    await ElMessageBox.confirm(t('common.confirmDelete'), t('common.warning'), { type: 'warning' });
     await useApiFetch(`hr/training/enrollments/${row.id}`, 'DELETE');
     ElNotification({ type: 'success', title: t('common.success'), message: t('common.deleted') });
     await loadProgram();
-  } catch { /* cancelled */ }
+  } catch {
+    /* cancelled */
+  }
 }
 
 // Program edit

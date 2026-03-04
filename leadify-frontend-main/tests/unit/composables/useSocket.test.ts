@@ -12,6 +12,8 @@
 
 import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
 
+import { useSocket } from '~/composables/useSocket';
+
 // ============================================
 // Mock socket.io-client
 // ============================================
@@ -40,8 +42,6 @@ let unmountedCallback: (() => void) | null = null;
 (globalThis as any).onUnmounted = (cb: () => void) => {
   unmountedCallback = cb;
 };
-
-import { useSocket } from '~/composables/useSocket';
 
 describe('useSocket', () => {
   beforeEach(() => {

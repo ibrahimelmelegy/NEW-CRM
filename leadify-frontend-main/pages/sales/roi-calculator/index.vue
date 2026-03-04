@@ -229,12 +229,7 @@ const breakdownChartOption = computed(() => {
     t('roiCalculator.costReductionLabel'),
     t('roiCalculator.efficiencyGainsLabel')
   ];
-  const values = [
-    results.value.timeSavingsValue,
-    results.value.revenueIncrease,
-    results.value.costReduction,
-    results.value.efficiencyGains
-  ];
+  const values = [results.value.timeSavingsValue, results.value.revenueIncrease, results.value.costReduction, results.value.efficiencyGains];
   const colors = ['#7849ff', '#22c55e', '#3b82f6', '#f59e0b'];
 
   return {
@@ -272,17 +267,19 @@ const breakdownChartOption = computed(() => {
       },
       splitLine: { lineStyle: { color: 'rgba(148,163,184,0.1)' } }
     },
-    series: [{
-      type: 'bar',
-      data: values.map((v, i) => ({
-        value: v,
-        itemStyle: {
-          color: colors[i],
-          borderRadius: [8, 8, 0, 0]
-        }
-      })),
-      barWidth: '45%'
-    }]
+    series: [
+      {
+        type: 'bar',
+        data: values.map((v, i) => ({
+          value: v,
+          itemStyle: {
+            color: colors[i],
+            borderRadius: [8, 8, 0, 0]
+          }
+        })),
+        barWidth: '45%'
+      }
+    ]
   };
 });
 
@@ -320,9 +317,12 @@ const comparisonRows = computed(() => [
     metric: t('roiCalculator.annualRevenueLabel'),
     before: formatCurrency(results.value.currentAnnualRevenue),
     after: formatCurrency(results.value.projectedAnnualRevenue),
-    change: '+' + (results.value.currentAnnualRevenue > 0
-      ? Math.round(((results.value.projectedAnnualRevenue - results.value.currentAnnualRevenue) / results.value.currentAnnualRevenue) * 100)
-      : 0) + '%',
+    change:
+      '+' +
+      (results.value.currentAnnualRevenue > 0
+        ? Math.round(((results.value.projectedAnnualRevenue - results.value.currentAnnualRevenue) / results.value.currentAnnualRevenue) * 100)
+        : 0) +
+      '%',
     changeType: 'positive'
   }
 ]);
@@ -332,7 +332,9 @@ function formatCurrency(value: number): string {
   if (Math.abs(value) >= 1000000) {
     return new Intl.NumberFormat(locale.value, { style: 'currency', currency: 'USD', notation: 'compact', maximumFractionDigits: 1 }).format(value);
   }
-  return new Intl.NumberFormat(locale.value, { style: 'currency', currency: 'USD', minimumFractionDigits: 0, maximumFractionDigits: 0 }).format(value);
+  return new Intl.NumberFormat(locale.value, { style: 'currency', currency: 'USD', minimumFractionDigits: 0, maximumFractionDigits: 0 }).format(
+    value
+  );
 }
 
 function resetForm() {

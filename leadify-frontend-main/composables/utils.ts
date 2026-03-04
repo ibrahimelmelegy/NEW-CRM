@@ -95,7 +95,9 @@ export const handleUploadRequestApi = async (params: UploadRequestParams, payloa
   let { file, filename, data } = params;
   try {
     data.model = model || '';
-    payloadName && (filename = payloadName);
+    if (payloadName) {
+      filename = payloadName;
+    }
 
     const formData = new FormData();
     const fileToUpload = new File([file], file.name);

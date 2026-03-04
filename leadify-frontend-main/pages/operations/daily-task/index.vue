@@ -493,7 +493,7 @@ const handleClick = async tab => {
     // Fetch data based on selected tab
     loading.value = true;
     switch (tab.props.name) {
-      case 'active':
+      case 'active': {
         const response = await useTableFilter('daily-task', { status: 'ACTIVE,ON_HOLD' });
         activeProjects.value = await response.formattedData?.map(task => ({
           ...task,
@@ -506,7 +506,8 @@ const handleClick = async tab => {
         activeProjectsPagination.value = await response.pagination;
 
         break;
-      case 'completed':
+      }
+      case 'completed': {
         const responseCompleted = await useTableFilter('daily-task', {
           status: 'COMPLETED'
         });
@@ -520,7 +521,8 @@ const handleClick = async tab => {
         }));
         completedProjectsPagination.value = responseCompleted.pagination;
         break;
-      case 'granted':
+      }
+      case 'granted': {
         const responseGranted = await useTableFilter('daily-task', {
           status: 'WAITING_FOR_CONTRACT,CONTRACT_SIGNED'
         });
@@ -535,6 +537,7 @@ const handleClick = async tab => {
 
         grantedProjectsPagination.value = responseGranted.pagination;
         break;
+      }
     }
   } catch (error) {
     console.error('Error fetching data:', error);
@@ -546,16 +549,21 @@ const handleClick = async tab => {
 
 // Export to PDF
 const exportToPDF = async () => {
-  const [{ default: jsPDF }, { default: autoTable }] = await Promise.all([import('jspdf'), import('jspdf-autotable')]);
+  const [{ default: JsPDF }, { default: autoTable }] = await Promise.all([import('jspdf'), import('jspdf-autotable')]);
   const CairoFont = (await import('../assets/fonts/Cairo-SemiBold.ttf')).default;
 
   const data =
     activeName.value === 'active' ? activeProjects.value : activeName.value === 'completed' ? completedProjects.value : grantedProjects.value;
-  const name = activeName.value === 'active' ? t('operations.dailyTasks.tabs.active') : activeName.value === 'completed' ? t('operations.dailyTasks.tabs.completed') : t('operations.dailyTasks.tabs.granted');
+  const name =
+    activeName.value === 'active'
+      ? t('operations.dailyTasks.tabs.active')
+      : activeName.value === 'completed'
+        ? t('operations.dailyTasks.tabs.completed')
+        : t('operations.dailyTasks.tabs.granted');
   const columns = activeName.value === 'active' ? activeColumns : activeName.value === 'completed' ? completedColumns : grantedColumns;
 
   // Initialize jsPDF
-  const doc = new jsPDF({
+  const doc = new JsPDF({
     orientation: 'l', // Portrait mode
     unit: 'mm',
     format: [500, 210] // Wider page (500mm width, 210mm height)

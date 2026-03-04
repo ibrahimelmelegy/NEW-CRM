@@ -227,7 +227,9 @@ const orders = ref<SalesOrder[]>([]);
 
 // Bulk Selection
 const selectedRows = ref<any[]>([]);
-const handleSelectionChange = (rows: any[]) => { selectedRows.value = rows; };
+const handleSelectionChange = (rows: any[]) => {
+  selectedRows.value = rows;
+};
 const search = ref('');
 const statusFilter = ref('ALL');
 const dateRange = ref<string[]>([]);
@@ -254,15 +256,11 @@ function debouncedLoad() {
 }
 
 // KPI computed
-const pendingCount = computed(() =>
-  orders.value.filter(o => o.status === SalesOrderStatusEnum.DRAFT || o.status === SalesOrderStatusEnum.CONFIRMED).length
+const pendingCount = computed(
+  () => orders.value.filter(o => o.status === SalesOrderStatusEnum.DRAFT || o.status === SalesOrderStatusEnum.CONFIRMED).length
 );
-const shippedCount = computed(() =>
-  orders.value.filter(o => o.status === SalesOrderStatusEnum.SHIPPED).length
-);
-const totalRevenue = computed(() =>
-  orders.value.reduce((sum, o) => sum + (o.total || 0), 0)
-);
+const shippedCount = computed(() => orders.value.filter(o => o.status === SalesOrderStatusEnum.SHIPPED).length);
+const totalRevenue = computed(() => orders.value.reduce((sum, o) => sum + (o.total || 0), 0));
 
 // Helpers
 function getStatusType(status?: string): string {
@@ -359,11 +357,7 @@ async function confirmStatusUpdate() {
 // Delete
 async function deleteOrder(order: SalesOrder) {
   try {
-    await ElMessageBox.confirm(
-      t('common.deleteConfirm'),
-      t('common.warning'),
-      { type: 'warning' }
-    );
+    await ElMessageBox.confirm(t('common.deleteConfirm'), t('common.warning'), { type: 'warning' });
     const success = await deleteSalesOrder(order.id!);
     if (success) await loadOrders();
   } catch {
@@ -375,11 +369,7 @@ async function deleteOrder(order: SalesOrder) {
 async function bulkDelete() {
   if (!selectedRows.value.length) return;
   try {
-    await ElMessageBox.confirm(
-      t('common.confirmBulkDelete', { count: selectedRows.value.length }),
-      t('common.warning'),
-      { type: 'warning' }
-    );
+    await ElMessageBox.confirm(t('common.confirmBulkDelete', { count: selectedRows.value.length }), t('common.warning'), { type: 'warning' });
     for (const row of selectedRows.value) {
       await deleteSalesOrder(row.id);
     }
@@ -394,11 +384,7 @@ async function bulkDelete() {
 async function bulkMarkShipped() {
   if (!selectedRows.value.length) return;
   try {
-    await ElMessageBox.confirm(
-      `Mark ${selectedRows.value.length} order(s) as shipped?`,
-      t('common.warning'),
-      { type: 'warning' }
-    );
+    await ElMessageBox.confirm(`Mark ${selectedRows.value.length} order(s) as shipped?`, t('common.warning'), { type: 'warning' });
     for (const row of selectedRows.value) {
       await updateSalesOrderStatus(row.id, SalesOrderStatusEnum.SHIPPED);
     }
@@ -413,11 +399,7 @@ async function bulkMarkShipped() {
 async function bulkMarkDelivered() {
   if (!selectedRows.value.length) return;
   try {
-    await ElMessageBox.confirm(
-      `Mark ${selectedRows.value.length} order(s) as delivered?`,
-      t('common.warning'),
-      { type: 'warning' }
-    );
+    await ElMessageBox.confirm(`Mark ${selectedRows.value.length} order(s) as delivered?`, t('common.warning'), { type: 'warning' });
     for (const row of selectedRows.value) {
       await updateSalesOrderStatus(row.id, SalesOrderStatusEnum.DELIVERED);
     }

@@ -1,3 +1,5 @@
+/* eslint-disable no-use-before-define */
+/* eslint-disable require-await */
 import { useApiFetch } from './useApiFetch';
 
 // ─── Types ─────────────────────────────────────────────────────────────
@@ -138,7 +140,8 @@ export async function fetchEmployeePayslips(employeeId: string, params?: Record<
 export async function fetchSalaryStructures(params?: Record<string, string>) {
   const query = params ? '?' + new URLSearchParams(params).toString() : '';
   const { body, success } = await useApiFetch(`payroll/salary-structures${query}`);
-  if (success && body) return body as { docs: SalaryStructureItem[]; pagination: { page: number; limit: number; totalItems: number; totalPages: number } };
+  if (success && body)
+    return body as { docs: SalaryStructureItem[]; pagination: { page: number; limit: number; totalItems: number; totalPages: number } };
   return { docs: [], pagination: { page: 1, limit: 20, totalItems: 0, totalPages: 0 } };
 }
 

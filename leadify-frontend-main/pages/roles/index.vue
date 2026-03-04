@@ -153,7 +153,7 @@ const mobileSearch = ref('');
 const mobileRefreshing = ref(false);
 
 const mobileFilteredData = computed(() => {
-  let data = table.data || [];
+  const data = table.data || [];
   if (!mobileSearch.value) return data;
   const q = mobileSearch.value.toLowerCase();
   return data.filter((r: any) => {
@@ -169,7 +169,9 @@ async function handleMobileRefresh() {
     const res = await useTableFilter('role');
     table.data = res.formattedData;
     vibrate([10, 30, 10]);
-  } finally { mobileRefreshing.value = false; }
+  } finally {
+    mobileRefreshing.value = false;
+  }
 }
 
 function getSwipeLeftActions(_role: any) {
@@ -181,8 +183,12 @@ function getSwipeLeftActions(_role: any) {
 function handleSwipeAction(name: string, role: any) {
   vibrate();
   switch (name) {
-    case 'view': navigateTo(`/roles/${role.id}`); break;
-    case 'edit': navigateTo(`/roles/edit/${role.id}`); break;
+    case 'view':
+      navigateTo(`/roles/${role.id}`);
+      break;
+    case 'edit':
+      navigateTo(`/roles/edit/${role.id}`);
+      break;
   }
 }
 </script>

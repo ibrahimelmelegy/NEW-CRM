@@ -318,6 +318,7 @@
 </template>
 
 <script setup lang="ts">
+/* eslint-disable require-await */
 import { ref, reactive, onMounted, computed } from 'vue';
 import { useI18n } from 'vue-i18n';
 
@@ -421,18 +422,17 @@ const templates = [
   }
 ];
 
-const dialogTitle = computed(() =>
-  editingNoteId.value ? $t('meetingNotes.edit') : $t('meetingNotes.new')
-);
+const dialogTitle = computed(() => (editingNoteId.value ? $t('meetingNotes.edit') : $t('meetingNotes.new')));
 
 const filteredNotes = computed(() => {
   if (!searchQuery.value) return notes.value;
 
   const query = searchQuery.value.toLowerCase();
-  return notes.value.filter(note =>
-    note.title?.toLowerCase().includes(query) ||
-    note.minutes?.toLowerCase().includes(query) ||
-    note.actionItems?.some(item => item.task?.toLowerCase().includes(query))
+  return notes.value.filter(
+    note =>
+      note.title?.toLowerCase().includes(query) ||
+      note.minutes?.toLowerCase().includes(query) ||
+      note.actionItems?.some(item => item.task?.toLowerCase().includes(query))
   );
 });
 
@@ -481,9 +481,7 @@ async function searchParticipants(query: string) {
   if (!query || query.length < 2) return;
   searchingParticipants.value = true;
   try {
-    const { body, success } = await useApiFetch(
-      `communications/participants/search?search=${encodeURIComponent(query)}&limit=10`
-    );
+    const { body, success } = await useApiFetch(`communications/participants/search?search=${encodeURIComponent(query)}&limit=10`);
     if (success && body) {
       participantOptions.value = body as any[];
     }
@@ -569,11 +567,7 @@ async function saveNote() {
 
     let success;
     if (editingNoteId.value) {
-      const result = await useApiFetch(
-        `communications/meeting-notes/${editingNoteId.value}`,
-        'PUT',
-        payload
-      );
+      const result = await useApiFetch(`communications/meeting-notes/${editingNoteId.value}`, 'PUT', payload);
       success = result.success;
     } else {
       const result = await useApiFetch('communications/meeting-notes', 'POST', payload);
@@ -594,7 +588,7 @@ async function removeNote(id: string) {
   if (!confirm($t('meetingNotes.confirmDelete'))) return;
   const { success } = await useApiFetch(`communications/meeting-notes/${id}`, 'DELETE');
   if (success) {
-    notes.value = notes.value.filter((n) => n.id !== id);
+    notes.value = notes.value.filter(n => n.id !== id);
     ElMessage.success($t('meetingNotes.deleted'));
   }
 }
@@ -709,13 +703,14 @@ async function exportAsWord() {
 async function exportAsMarkdown() {
   if (!viewingNote.value) return;
 
-  const markdown = `# ${viewingNote.value.title}\n\n` +
+  const markdown =
+    `# ${viewingNote.value.title}\n\n` +
     `**Date:** ${formatDate(viewingNote.value.date || viewingNote.value.meetingDate || viewingNote.value.createdAt)}\n\n` +
     `## Meeting Minutes\n\n${viewingNote.value.minutes}\n\n` +
     `## Action Items\n\n` +
-    (viewingNote.value.actionItems || []).map((item: any) =>
-      `- [${item.completed ? 'x' : ' '}] ${item.task}${item.assigneeName ? ` (@${item.assigneeName})` : ''}`
-    ).join('\n');
+    (viewingNote.value.actionItems || [])
+      .map((item: any) => `- [${item.completed ? 'x' : ' '}] ${item.task}${item.assigneeName ? ` (@${item.assigneeName})` : ''}`)
+      .join('\n');
 
   const blob = new Blob([markdown], { type: 'text/markdown' });
   const url = window.URL.createObjectURL(blob);

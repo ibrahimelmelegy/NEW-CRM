@@ -26,7 +26,7 @@ export const useProjectStore = defineStore('projects', {
 
   getters: {
     activeProjects(): Project[] {
-      return this.projects.filter((p) => p.status === 'ACTIVE');
+      return this.projects.filter(p => p.status === 'ACTIVE');
     },
 
     projectsByStatus(): Record<ProjectStatus, Project[]> {
@@ -50,16 +50,15 @@ export const useProjectStore = defineStore('projects', {
 
       try {
         const query = params
-          ? '?' + new URLSearchParams(
+          ? '?' +
+            new URLSearchParams(
               Object.entries(params)
                 .filter(([, v]) => v !== undefined && v !== '')
                 .map(([k, v]) => [k, String(v)])
             ).toString()
           : '';
 
-        const response: any = await useApiFetch(
-          `project${query}`
-        );
+        const response: any = await useApiFetch(`project${query}`);
 
         if (response.success && response.body) {
           this.projects = response.body.docs || [];
@@ -104,11 +103,7 @@ export const useProjectStore = defineStore('projects', {
       this.error = null;
 
       try {
-        const response: any = await useApiFetch(
-          'project',
-          'POST',
-          data as Record<string, unknown>
-        );
+        const response: any = await useApiFetch('project', 'POST', data as Record<string, unknown>);
 
         if (response.success && response.body) {
           this.projects.unshift(response.body);
@@ -132,14 +127,10 @@ export const useProjectStore = defineStore('projects', {
       this.error = null;
 
       try {
-        const response: any = await useApiFetch(
-          `project/${id}`,
-          'PUT',
-          data as Record<string, unknown>
-        );
+        const response: any = await useApiFetch(`project/${id}`, 'PUT', data as Record<string, unknown>);
 
         if (response.success && response.body) {
-          const index = this.projects.findIndex((p) => p.id === id);
+          const index = this.projects.findIndex(p => p.id === id);
           if (index !== -1) {
             this.projects[index] = response.body;
           }

@@ -52,16 +52,15 @@ export const useDealStore = defineStore('deals', {
 
       try {
         const query = params
-          ? '?' + new URLSearchParams(
+          ? '?' +
+            new URLSearchParams(
               Object.entries(params)
                 .filter(([, v]) => v !== undefined && v !== '')
                 .map(([k, v]) => [k, String(v)])
             ).toString()
           : '';
 
-        const response: any = await useApiFetch(
-          `deal${query}`
-        );
+        const response: any = await useApiFetch(`deal${query}`);
 
         if (response.success && response.body) {
           this.deals = response.body.docs || [];
@@ -133,7 +132,7 @@ export const useDealStore = defineStore('deals', {
         const response: any = await useApiFetch(`deal/${id}`, 'PUT', data as Record<string, unknown>);
 
         if (response.success && response.body) {
-          const index = this.deals.findIndex((d) => d.id === id);
+          const index = this.deals.findIndex(d => d.id === id);
           if (index !== -1) {
             this.deals[index] = response.body;
           }
@@ -163,7 +162,7 @@ export const useDealStore = defineStore('deals', {
         const response = await useApiFetch(`deal/${id}`, 'DELETE');
 
         if (response.success) {
-          this.deals = this.deals.filter((d) => d.id !== id);
+          this.deals = this.deals.filter(d => d.id !== id);
           if (this.currentDeal?.id === id) {
             this.currentDeal = null;
           }

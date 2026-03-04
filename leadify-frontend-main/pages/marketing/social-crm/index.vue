@@ -261,10 +261,12 @@ const form = ref(defaultForm());
 const summaryStats = computed(() => {
   const data = items.value;
   const total = data.length;
-  const platformBreakdown = platformOptions.map(p => ({
-    platform: p.label,
-    count: data.filter((i: any) => i.platform === p.value).length
-  })).filter(p => p.count > 0);
+  const platformBreakdown = platformOptions
+    .map(p => ({
+      platform: p.label,
+      count: data.filter((i: any) => i.platform === p.value).length
+    }))
+    .filter(p => p.count > 0);
   const breakdownText = platformBreakdown.map(p => `${p.platform}: ${p.count}`).join(', ') || '--';
   const totalFollowers = data.reduce((sum: number, i: any) => sum + (i.followers || 0), 0);
   const positiveSentiment = data.filter((i: any) => i.sentiment === 'POSITIVE').length;
@@ -287,10 +289,11 @@ const filteredData = computed(() => {
   }
   if (!search.value) return data;
   const q = search.value.toLowerCase();
-  return data.filter((i: any) =>
-    (i.clientName || i.clientId || '').toLowerCase().includes(q) ||
-    (i.handle || '').toLowerCase().includes(q) ||
-    (i.platform || '').toLowerCase().includes(q)
+  return data.filter(
+    (i: any) =>
+      (i.clientName || i.clientId || '').toLowerCase().includes(q) ||
+      (i.handle || '').toLowerCase().includes(q) ||
+      (i.platform || '').toLowerCase().includes(q)
   );
 });
 
@@ -415,11 +418,11 @@ async function handleSave() {
 
 async function handleDelete(item: any) {
   try {
-    await ElMessageBox.confirm(
-      t('common.confirmDelete'),
-      t('common.warning'),
-      { type: 'warning', confirmButtonText: t('common.delete'), cancelButtonText: t('common.cancel') }
-    );
+    await ElMessageBox.confirm(t('common.confirmDelete'), t('common.warning'), {
+      type: 'warning',
+      confirmButtonText: t('common.delete'),
+      cancelButtonText: t('common.cancel')
+    });
     const res = await useApiFetch(`social-crm/${item.id}`, 'DELETE');
     if (res.success) {
       ElMessage.success(t('common.deleted'));

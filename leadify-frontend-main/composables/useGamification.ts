@@ -1,3 +1,4 @@
+/* eslint-disable require-await */
 export interface LeaderboardEntry {
   rank: number;
   userId: number;

@@ -200,7 +200,7 @@
 
 <script setup lang="ts">
 import { ref, onMounted, nextTick } from 'vue';
-import * as echarts from 'echarts';
+import * as echarts from 'echarts/core';
 import { useApiFetch } from '~/composables/useApiFetch';
 
 definePageMeta({

@@ -394,7 +394,7 @@
 <script setup lang="ts">
 import { ref, reactive, computed, onMounted, onBeforeUnmount, watch, nextTick } from 'vue';
 import { ElMessage, ElMessageBox, ElNotification } from 'element-plus';
-import * as echarts from 'echarts';
+import * as echarts from 'echarts/core';
 
 interface Partner {
   id: string;
@@ -535,36 +535,305 @@ const coMarketingForm = reactive(defaultCoMarketingForm());
 // ──────────────────────────────────────────
 function loadDemoData() {
   partners.value = [
-    { id: '1', companyName: 'TechNova Solutions', contactPerson: 'Ahmed Al-Rashid', email: 'ahmed@technova.com', phone: '+966 50 123 4567', tier: 'Platinum', region: 'Middle East', activeDeals: 12, totalRevenue: 2450000, status: 'active', address: 'Riyadh, KSA', notes: 'Strategic partner since 2021' },
-    { id: '2', companyName: 'CloudPeak Systems', contactPerson: 'Sarah Johnson', email: 'sarah@cloudpeak.io', phone: '+1 555 234 5678', tier: 'Gold', region: 'North America', activeDeals: 8, totalRevenue: 1820000, status: 'active', address: 'San Francisco, CA', notes: '' },
-    { id: '3', companyName: 'DataBridge GmbH', contactPerson: 'Marcus Weber', email: 'marcus@databridge.de', phone: '+49 30 555 1234', tier: 'Gold', region: 'Europe', activeDeals: 6, totalRevenue: 1340000, status: 'active', address: 'Berlin, Germany', notes: 'Expanding to new markets' },
-    { id: '4', companyName: 'NexGen Consulting', contactPerson: 'Fatima Al-Saud', email: 'fatima@nexgen.sa', phone: '+966 55 987 6543', tier: 'Silver', region: 'Middle East', activeDeals: 4, totalRevenue: 680000, status: 'active', address: 'Jeddah, KSA', notes: '' },
-    { id: '5', companyName: 'Pacific Digital', contactPerson: 'Wei Chen', email: 'wei@pacificdigital.cn', phone: '+86 21 555 8765', tier: 'Silver', region: 'Asia Pacific', activeDeals: 5, totalRevenue: 920000, status: 'active', address: 'Shanghai, China', notes: '' },
-    { id: '6', companyName: 'Sahara IT Services', contactPerson: 'Omar Khalil', email: 'omar@saharait.com', phone: '+20 10 555 3456', tier: 'Bronze', region: 'Africa', activeDeals: 2, totalRevenue: 310000, status: 'active', address: 'Cairo, Egypt', notes: '' },
-    { id: '7', companyName: 'Andean Software', contactPerson: 'Carlos Mendez', email: 'carlos@andeansw.com', phone: '+57 1 555 7890', tier: 'Bronze', region: 'Latin America', activeDeals: 1, totalRevenue: 185000, status: 'pending', address: 'Bogota, Colombia', notes: 'New partner onboarding' },
-    { id: '8', companyName: 'AlphaNet Corp', contactPerson: 'Liam O\'Brien', email: 'liam@alphanet.co.uk', phone: '+44 20 555 4321', tier: 'Gold', region: 'Europe', activeDeals: 7, totalRevenue: 1560000, status: 'active', address: 'London, UK', notes: '' },
-    { id: '9', companyName: 'Gulf Integration', contactPerson: 'Hassan Nouri', email: 'hassan@gulfint.ae', phone: '+971 50 555 8888', tier: 'Silver', region: 'Middle East', activeDeals: 3, totalRevenue: 540000, status: 'inactive', address: 'Dubai, UAE', notes: 'Contract under review' },
-    { id: '10', companyName: 'Zenith Partners', contactPerson: 'Maya Patel', email: 'maya@zenithp.in', phone: '+91 98 555 6789', tier: 'Platinum', region: 'Asia Pacific', activeDeals: 10, totalRevenue: 2100000, status: 'active', address: 'Mumbai, India', notes: 'Top performer Q4' }
+    {
+      id: '1',
+      companyName: 'TechNova Solutions',
+      contactPerson: 'Ahmed Al-Rashid',
+      email: 'ahmed@technova.com',
+      phone: '+966 50 123 4567',
+      tier: 'Platinum',
+      region: 'Middle East',
+      activeDeals: 12,
+      totalRevenue: 2450000,
+      status: 'active',
+      address: 'Riyadh, KSA',
+      notes: 'Strategic partner since 2021'
+    },
+    {
+      id: '2',
+      companyName: 'CloudPeak Systems',
+      contactPerson: 'Sarah Johnson',
+      email: 'sarah@cloudpeak.io',
+      phone: '+1 555 234 5678',
+      tier: 'Gold',
+      region: 'North America',
+      activeDeals: 8,
+      totalRevenue: 1820000,
+      status: 'active',
+      address: 'San Francisco, CA',
+      notes: ''
+    },
+    {
+      id: '3',
+      companyName: 'DataBridge GmbH',
+      contactPerson: 'Marcus Weber',
+      email: 'marcus@databridge.de',
+      phone: '+49 30 555 1234',
+      tier: 'Gold',
+      region: 'Europe',
+      activeDeals: 6,
+      totalRevenue: 1340000,
+      status: 'active',
+      address: 'Berlin, Germany',
+      notes: 'Expanding to new markets'
+    },
+    {
+      id: '4',
+      companyName: 'NexGen Consulting',
+      contactPerson: 'Fatima Al-Saud',
+      email: 'fatima@nexgen.sa',
+      phone: '+966 55 987 6543',
+      tier: 'Silver',
+      region: 'Middle East',
+      activeDeals: 4,
+      totalRevenue: 680000,
+      status: 'active',
+      address: 'Jeddah, KSA',
+      notes: ''
+    },
+    {
+      id: '5',
+      companyName: 'Pacific Digital',
+      contactPerson: 'Wei Chen',
+      email: 'wei@pacificdigital.cn',
+      phone: '+86 21 555 8765',
+      tier: 'Silver',
+      region: 'Asia Pacific',
+      activeDeals: 5,
+      totalRevenue: 920000,
+      status: 'active',
+      address: 'Shanghai, China',
+      notes: ''
+    },
+    {
+      id: '6',
+      companyName: 'Sahara IT Services',
+      contactPerson: 'Omar Khalil',
+      email: 'omar@saharait.com',
+      phone: '+20 10 555 3456',
+      tier: 'Bronze',
+      region: 'Africa',
+      activeDeals: 2,
+      totalRevenue: 310000,
+      status: 'active',
+      address: 'Cairo, Egypt',
+      notes: ''
+    },
+    {
+      id: '7',
+      companyName: 'Andean Software',
+      contactPerson: 'Carlos Mendez',
+      email: 'carlos@andeansw.com',
+      phone: '+57 1 555 7890',
+      tier: 'Bronze',
+      region: 'Latin America',
+      activeDeals: 1,
+      totalRevenue: 185000,
+      status: 'pending',
+      address: 'Bogota, Colombia',
+      notes: 'New partner onboarding'
+    },
+    {
+      id: '8',
+      companyName: 'AlphaNet Corp',
+      contactPerson: "Liam O'Brien",
+      email: 'liam@alphanet.co.uk',
+      phone: '+44 20 555 4321',
+      tier: 'Gold',
+      region: 'Europe',
+      activeDeals: 7,
+      totalRevenue: 1560000,
+      status: 'active',
+      address: 'London, UK',
+      notes: ''
+    },
+    {
+      id: '9',
+      companyName: 'Gulf Integration',
+      contactPerson: 'Hassan Nouri',
+      email: 'hassan@gulfint.ae',
+      phone: '+971 50 555 8888',
+      tier: 'Silver',
+      region: 'Middle East',
+      activeDeals: 3,
+      totalRevenue: 540000,
+      status: 'inactive',
+      address: 'Dubai, UAE',
+      notes: 'Contract under review'
+    },
+    {
+      id: '10',
+      companyName: 'Zenith Partners',
+      contactPerson: 'Maya Patel',
+      email: 'maya@zenithp.in',
+      phone: '+91 98 555 6789',
+      tier: 'Platinum',
+      region: 'Asia Pacific',
+      activeDeals: 10,
+      totalRevenue: 2100000,
+      status: 'active',
+      address: 'Mumbai, India',
+      notes: 'Top performer Q4'
+    }
   ];
 
   dealRegistrations.value = [
-    { id: '1', dealName: 'Enterprise ERP Migration', partnerName: 'TechNova Solutions', customerName: 'Al Rajhi Holdings', amount: 450000, stage: 'Negotiation', registrationDate: '2025-12-01', expiryDate: '2026-06-01', status: 'approved' },
-    { id: '2', dealName: 'Cloud Infrastructure Setup', partnerName: 'CloudPeak Systems', customerName: 'Global Corp LLC', amount: 280000, stage: 'Proposal', registrationDate: '2026-01-15', expiryDate: '2026-07-15', status: 'pending' },
-    { id: '3', dealName: 'CRM Implementation', partnerName: 'DataBridge GmbH', customerName: 'EuroTech AG', amount: 195000, stage: 'Discovery', registrationDate: '2026-02-01', expiryDate: '2026-08-01', status: 'pending' },
-    { id: '4', dealName: 'Security Audit & Compliance', partnerName: 'AlphaNet Corp', customerName: 'FinSec Bank', amount: 120000, stage: 'Closed Won', registrationDate: '2025-10-15', expiryDate: '2026-04-15', status: 'approved' },
-    { id: '5', dealName: 'Data Analytics Platform', partnerName: 'Zenith Partners', customerName: 'Tata Industries', amount: 380000, stage: 'Negotiation', registrationDate: '2026-01-20', expiryDate: '2026-07-20', status: 'approved' },
-    { id: '6', dealName: 'Legacy System Upgrade', partnerName: 'NexGen Consulting', customerName: 'Saudi Telecom', amount: 175000, stage: 'Proposal', registrationDate: '2026-02-10', expiryDate: '2026-08-10', status: 'pending' },
-    { id: '7', dealName: 'Mobile App Development', partnerName: 'Pacific Digital', customerName: 'ShopEase Inc', amount: 95000, stage: 'Discovery', registrationDate: '2025-09-01', expiryDate: '2026-03-01', status: 'expired' },
-    { id: '8', dealName: 'IT Infrastructure Refresh', partnerName: 'Sahara IT Services', customerName: 'Nile Corp', amount: 65000, stage: 'Qualification', registrationDate: '2026-02-05', expiryDate: '2026-08-05', status: 'rejected' },
-    { id: '9', dealName: 'AI Automation Suite', partnerName: 'TechNova Solutions', customerName: 'ACME Industries', amount: 520000, stage: 'Negotiation', registrationDate: '2026-02-15', expiryDate: '2026-08-15', status: 'pending' },
-    { id: '10', dealName: 'Cybersecurity Framework', partnerName: 'AlphaNet Corp', customerName: 'BritishGas PLC', amount: 210000, stage: 'Proposal', registrationDate: '2026-01-28', expiryDate: '2026-07-28', status: 'approved' }
+    {
+      id: '1',
+      dealName: 'Enterprise ERP Migration',
+      partnerName: 'TechNova Solutions',
+      customerName: 'Al Rajhi Holdings',
+      amount: 450000,
+      stage: 'Negotiation',
+      registrationDate: '2025-12-01',
+      expiryDate: '2026-06-01',
+      status: 'approved'
+    },
+    {
+      id: '2',
+      dealName: 'Cloud Infrastructure Setup',
+      partnerName: 'CloudPeak Systems',
+      customerName: 'Global Corp LLC',
+      amount: 280000,
+      stage: 'Proposal',
+      registrationDate: '2026-01-15',
+      expiryDate: '2026-07-15',
+      status: 'pending'
+    },
+    {
+      id: '3',
+      dealName: 'CRM Implementation',
+      partnerName: 'DataBridge GmbH',
+      customerName: 'EuroTech AG',
+      amount: 195000,
+      stage: 'Discovery',
+      registrationDate: '2026-02-01',
+      expiryDate: '2026-08-01',
+      status: 'pending'
+    },
+    {
+      id: '4',
+      dealName: 'Security Audit & Compliance',
+      partnerName: 'AlphaNet Corp',
+      customerName: 'FinSec Bank',
+      amount: 120000,
+      stage: 'Closed Won',
+      registrationDate: '2025-10-15',
+      expiryDate: '2026-04-15',
+      status: 'approved'
+    },
+    {
+      id: '5',
+      dealName: 'Data Analytics Platform',
+      partnerName: 'Zenith Partners',
+      customerName: 'Tata Industries',
+      amount: 380000,
+      stage: 'Negotiation',
+      registrationDate: '2026-01-20',
+      expiryDate: '2026-07-20',
+      status: 'approved'
+    },
+    {
+      id: '6',
+      dealName: 'Legacy System Upgrade',
+      partnerName: 'NexGen Consulting',
+      customerName: 'Saudi Telecom',
+      amount: 175000,
+      stage: 'Proposal',
+      registrationDate: '2026-02-10',
+      expiryDate: '2026-08-10',
+      status: 'pending'
+    },
+    {
+      id: '7',
+      dealName: 'Mobile App Development',
+      partnerName: 'Pacific Digital',
+      customerName: 'ShopEase Inc',
+      amount: 95000,
+      stage: 'Discovery',
+      registrationDate: '2025-09-01',
+      expiryDate: '2026-03-01',
+      status: 'expired'
+    },
+    {
+      id: '8',
+      dealName: 'IT Infrastructure Refresh',
+      partnerName: 'Sahara IT Services',
+      customerName: 'Nile Corp',
+      amount: 65000,
+      stage: 'Qualification',
+      registrationDate: '2026-02-05',
+      expiryDate: '2026-08-05',
+      status: 'rejected'
+    },
+    {
+      id: '9',
+      dealName: 'AI Automation Suite',
+      partnerName: 'TechNova Solutions',
+      customerName: 'ACME Industries',
+      amount: 520000,
+      stage: 'Negotiation',
+      registrationDate: '2026-02-15',
+      expiryDate: '2026-08-15',
+      status: 'pending'
+    },
+    {
+      id: '10',
+      dealName: 'Cybersecurity Framework',
+      partnerName: 'AlphaNet Corp',
+      customerName: 'BritishGas PLC',
+      amount: 210000,
+      stage: 'Proposal',
+      registrationDate: '2026-01-28',
+      expiryDate: '2026-07-28',
+      status: 'approved'
+    }
   ];
 
   tierConfigurations.value = [
-    { name: 'Platinum', revenueThreshold: 2000000, discountPercent: 25, commissionPercent: 20, partnerCount: 2, color: '#7849ff', benefits: ['Priority Support', 'Dedicated Account Manager', 'Co-branded Materials', 'Joint Marketing', 'Early Product Access', 'Revenue Sharing'] },
-    { name: 'Gold', revenueThreshold: 1000000, discountPercent: 18, commissionPercent: 15, partnerCount: 3, color: '#f59e0b', benefits: ['Priority Support', 'Co-branded Materials', 'Lead Sharing', 'Training Access'] },
-    { name: 'Silver', revenueThreshold: 500000, discountPercent: 12, commissionPercent: 10, partnerCount: 3, color: '#94a3b8', benefits: ['Lead Sharing', 'Training Access', 'API Access'] },
-    { name: 'Bronze', revenueThreshold: 100000, discountPercent: 5, commissionPercent: 5, partnerCount: 2, color: '#b45309', benefits: ['Training Access', 'API Access'] }
+    {
+      name: 'Platinum',
+      revenueThreshold: 2000000,
+      discountPercent: 25,
+      commissionPercent: 20,
+      partnerCount: 2,
+      color: '#7849ff',
+      benefits: [
+        'Priority Support',
+        'Dedicated Account Manager',
+        'Co-branded Materials',
+        'Joint Marketing',
+        'Early Product Access',
+        'Revenue Sharing'
+      ]
+    },
+    {
+      name: 'Gold',
+      revenueThreshold: 1000000,
+      discountPercent: 18,
+      commissionPercent: 15,
+      partnerCount: 3,
+      color: '#f59e0b',
+      benefits: ['Priority Support', 'Co-branded Materials', 'Lead Sharing', 'Training Access']
+    },
+    {
+      name: 'Silver',
+      revenueThreshold: 500000,
+      discountPercent: 12,
+      commissionPercent: 10,
+      partnerCount: 3,
+      color: '#94a3b8',
+      benefits: ['Lead Sharing', 'Training Access', 'API Access']
+    },
+    {
+      name: 'Bronze',
+      revenueThreshold: 100000,
+      discountPercent: 5,
+      commissionPercent: 5,
+      partnerCount: 2,
+      color: '#b45309',
+      benefits: ['Training Access', 'API Access']
+    }
   ];
 
   coMarketingFunds.value = [
@@ -590,8 +859,20 @@ const kpiStats = computed(() => {
   return [
     { label: t('partnerManagement.totalPartners'), value: totalPartners, icon: 'ph:buildings-bold', color: '#7849ff', trend: 12 },
     { label: t('partnerManagement.activeDeals'), value: activeDeals, icon: 'ph:handshake-bold', color: '#3b82f6', trend: 8 },
-    { label: t('partnerManagement.channelRevenue'), value: formatCurrency(channelRevenue), icon: 'ph:currency-dollar-bold', color: '#22c55e', trend: 15 },
-    { label: t('partnerManagement.avgPartnerRevenue'), value: formatCurrency(avgPartnerRevenue), icon: 'ph:chart-line-up-bold', color: '#f59e0b', trend: 5 }
+    {
+      label: t('partnerManagement.channelRevenue'),
+      value: formatCurrency(channelRevenue),
+      icon: 'ph:currency-dollar-bold',
+      color: '#22c55e',
+      trend: 15
+    },
+    {
+      label: t('partnerManagement.avgPartnerRevenue'),
+      value: formatCurrency(avgPartnerRevenue),
+      icon: 'ph:chart-line-up-bold',
+      color: '#f59e0b',
+      trend: 5
+    }
   ];
 });
 
@@ -599,10 +880,11 @@ const filteredPartners = computed(() => {
   let data = [...partners.value];
   if (partnerSearch.value) {
     const q = partnerSearch.value.toLowerCase();
-    data = data.filter(p =>
-      (p.companyName || '').toLowerCase().includes(q) ||
-      (p.contactPerson || '').toLowerCase().includes(q) ||
-      (p.email || '').toLowerCase().includes(q)
+    data = data.filter(
+      p =>
+        (p.companyName || '').toLowerCase().includes(q) ||
+        (p.contactPerson || '').toLowerCase().includes(q) ||
+        (p.email || '').toLowerCase().includes(q)
     );
   }
   if (filterTier.value) data = data.filter(p => p.tier === filterTier.value);
@@ -615,10 +897,11 @@ const filteredDealRegistrations = computed(() => {
   let data = [...dealRegistrations.value];
   if (dealSearch.value) {
     const q = dealSearch.value.toLowerCase();
-    data = data.filter(d =>
-      (d.dealName || '').toLowerCase().includes(q) ||
-      (d.partnerName || '').toLowerCase().includes(q) ||
-      (d.customerName || '').toLowerCase().includes(q)
+    data = data.filter(
+      d =>
+        (d.dealName || '').toLowerCase().includes(q) ||
+        (d.partnerName || '').toLowerCase().includes(q) ||
+        (d.customerName || '').toLowerCase().includes(q)
     );
   }
   if (filterDealStatus.value) data = data.filter(d => d.status === filterDealStatus.value);
@@ -788,11 +1071,11 @@ function openPartnerDetail(partner: Partner) {
 
 async function handleDeletePartner(partner: Partner) {
   try {
-    await ElMessageBox.confirm(
-      t('partnerManagement.confirmDelete'),
-      t('common.warning'),
-      { type: 'warning', confirmButtonText: t('common.delete'), cancelButtonText: t('common.cancel') }
-    );
+    await ElMessageBox.confirm(t('partnerManagement.confirmDelete'), t('common.warning'), {
+      type: 'warning',
+      confirmButtonText: t('common.delete'),
+      cancelButtonText: t('common.cancel')
+    });
     partners.value = partners.value.filter(p => p.id !== partner.id);
     ElMessage.success(t('common.deleted'));
   } catch {
@@ -905,15 +1188,7 @@ function exportPartners() {
     t('partnerManagement.totalRevenue'),
     t('partnerManagement.status')
   ];
-  const rows = filteredPartners.value.map(p => [
-    p.companyName,
-    p.tier,
-    p.region,
-    p.contactPerson,
-    p.activeDeals,
-    p.totalRevenue,
-    p.status
-  ]);
+  const rows = filteredPartners.value.map(p => [p.companyName, p.tier, p.region, p.contactPerson, p.activeDeals, p.totalRevenue, p.status]);
   const csv = [headers, ...rows].map(r => r.map((c: string | number) => `"${String(c).replace(/"/g, '""')}"`).join(',')).join('\n');
   const blob = new Blob(['\uFEFF' + csv], { type: 'text/csv;charset=utf-8;' });
   const url = URL.createObjectURL(blob);
@@ -943,10 +1218,14 @@ function initRevenueByPartnerChart() {
   const colors = activePartners.map(p => getTierColor(p.tier));
 
   partnerChart.setOption({
-    tooltip: { trigger: 'axis', axisPointer: { type: 'shadow' }, formatter: (params: any) => {
-      const d = params[0];
-      return `${d.name}<br/>${d.seriesName}: <b>${Number(d.value).toLocaleString()} SAR</b>`;
-    }},
+    tooltip: {
+      trigger: 'axis',
+      axisPointer: { type: 'shadow' },
+      formatter: (params: any) => {
+        const d = params[0];
+        return `${d.name}<br/>${d.seriesName}: <b>${Number(d.value).toLocaleString()} SAR</b>`;
+      }
+    },
     grid: { left: '3%', right: '4%', bottom: '12%', containLabel: true },
     xAxis: {
       type: 'category',
@@ -958,12 +1237,14 @@ function initRevenueByPartnerChart() {
       name: t('partnerManagement.revenue'),
       axisLabel: { color: '#94a3b8', formatter: (v: number) => (v / 1000000).toFixed(1) + 'M' }
     },
-    series: [{
-      name: t('partnerManagement.revenue'),
-      type: 'bar',
-      data: values.map((v, i) => ({ value: v, itemStyle: { color: colors[i], borderRadius: [6, 6, 0, 0] } })),
-      barMaxWidth: 40
-    }]
+    series: [
+      {
+        name: t('partnerManagement.revenue'),
+        type: 'bar',
+        data: values.map((v, i) => ({ value: v, itemStyle: { color: colors[i], borderRadius: [6, 6, 0, 0] } })),
+        barMaxWidth: 40
+      }
+    ]
   });
 }
 
@@ -984,17 +1265,23 @@ function initRevenueByTierChart() {
   }));
 
   tierChart.setOption({
-    tooltip: { trigger: 'item', formatter: (params: any) => `${params.name}<br/>${t('partnerManagement.revenue')}: <b>${Number(params.value).toLocaleString()} SAR</b> (${params.percent}%)` },
+    tooltip: {
+      trigger: 'item',
+      formatter: (params: any) =>
+        `${params.name}<br/>${t('partnerManagement.revenue')}: <b>${Number(params.value).toLocaleString()} SAR</b> (${params.percent}%)`
+    },
     legend: { bottom: '0%', textStyle: { color: '#94a3b8' } },
-    series: [{
-      type: 'pie',
-      radius: ['40%', '70%'],
-      center: ['50%', '45%'],
-      avoidLabelOverlap: true,
-      itemStyle: { borderRadius: 8, borderColor: '#1e1e2e', borderWidth: 2 },
-      label: { show: true, formatter: '{b}\n{d}%', fontSize: 11 },
-      data
-    }]
+    series: [
+      {
+        type: 'pie',
+        radius: ['40%', '70%'],
+        center: ['50%', '45%'],
+        avoidLabelOverlap: true,
+        itemStyle: { borderRadius: 8, borderColor: '#1e1e2e', borderWidth: 2 },
+        label: { show: true, formatter: '{b}\n{d}%', fontSize: 11 },
+        data
+      }
+    ]
   });
 }
 
@@ -1014,7 +1301,7 @@ function initCharts() {
 // ──────────────────────────────────────────
 // Watchers
 // ──────────────────────────────────────────
-watch(activeTab, (val) => {
+watch(activeTab, val => {
   if (val === 'performance') {
     nextTick(() => initCharts());
   }

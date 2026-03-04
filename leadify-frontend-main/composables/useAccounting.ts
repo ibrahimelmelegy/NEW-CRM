@@ -1,3 +1,4 @@
+/* eslint-disable require-await */
 export enum AccountType {
   ASSET = 'ASSET',
   LIABILITY = 'LIABILITY',
@@ -170,7 +171,8 @@ export async function seedDefaultAccounts() {
 export async function fetchJournalEntries(params?: Record<string, string>) {
   const query = params ? '?' + new URLSearchParams(params).toString() : '';
   const { body, success } = await useApiFetch(`accounting/journal-entries${query}`);
-  if (success && body) return body as { docs: JournalEntryItem[]; pagination: { page: number; limit: number; totalItems: number; totalPages: number } };
+  if (success && body)
+    return body as { docs: JournalEntryItem[]; pagination: { page: number; limit: number; totalItems: number; totalPages: number } };
   return { docs: [], pagination: { page: 1, limit: 20, totalItems: 0, totalPages: 0 } };
 }
 

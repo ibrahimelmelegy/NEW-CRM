@@ -1,3 +1,4 @@
+/* eslint-disable no-use-before-define */
 /**
  * Universal Document Store — API-backed via /api/documents
  * Central store for all saved documents across types.

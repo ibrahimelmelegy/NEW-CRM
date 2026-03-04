@@ -1,3 +1,4 @@
+/* eslint-disable require-await */
 /**
  * E-Signature System — API-backed via Portal Signatures
  * Digital signing for documents with canvas-based signature capture.

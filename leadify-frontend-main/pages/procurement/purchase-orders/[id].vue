@@ -236,12 +236,17 @@ async function handleApprove() {
 }
 
 async function handleReject() {
-  if (!rejectionReason.value) return (ElNotification as any)({ title: t('common.required'), message: t('procurement.purchaseOrders.rejectionRequired'), type: 'warning' });
+  if (!rejectionReason.value)
+    return (ElNotification as any)({ title: t('common.required'), message: t('procurement.purchaseOrders.rejectionRequired'), type: 'warning' });
 
   loadingAction.value = true;
   try {
     await useApiFetch(`procurement/${po.value.id}/reject`, 'PATCH', { rejectionReason: rejectionReason.value });
-    (ElNotification as any)({ title: t('procurement.purchaseOrders.rejected'), type: 'danger', message: t('procurement.purchaseOrders.rejectedMsg') });
+    (ElNotification as any)({
+      title: t('procurement.purchaseOrders.rejected'),
+      type: 'danger',
+      message: t('procurement.purchaseOrders.rejectedMsg')
+    });
     rejectDialogVisible.value = false;
     fetchPO();
   } catch (error) {
@@ -306,10 +311,10 @@ async function downloadPDFWithTemplate(template: any) {
 }
 
 async function downloadPDFClassic() {
-  const { jsPDF } = await import('jspdf');
+  const { jsPDF: JsPDF } = await import('jspdf');
   const { default: autoTable } = (await import('jspdf-autotable')) as any;
 
-  const doc = new jsPDF();
+  const doc = new JsPDF();
 
   doc.setFontSize(20);
   doc.text('PURCHASE ORDER', 105, 20, { align: 'center' });

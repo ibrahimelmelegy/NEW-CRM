@@ -10,6 +10,7 @@ el-dialog(v-model='dialog' width='750' title="Add New Additional Material Catego
 </template>
 
 <script setup lang="ts">
+/* eslint-disable require-await */
 const loading = ref(false);
 const categoryRef = ref();
 const categoryItemRef = ref();

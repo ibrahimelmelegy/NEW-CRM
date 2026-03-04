@@ -18,6 +18,7 @@
     </template>
 
 <script lang="ts" setup>
+/* eslint-disable require-await */
 useHead({
   title: 'App HP Tech | Add Daily Task'
 });

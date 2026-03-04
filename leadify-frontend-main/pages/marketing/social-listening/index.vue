@@ -338,7 +338,7 @@
 <script setup lang="ts">
 import { ElMessage } from 'element-plus';
 import VChart from 'vue-echarts';
-import { graphic } from 'echarts';
+import { graphic } from 'echarts/core';
 
 definePageMeta({ title: 'Social Listening' });
 
@@ -441,7 +441,7 @@ const kpiCards = computed(() => {
   const sentScore = totalMentions > 0 ? Math.round(((posCount - negCount) / totalMentions) * 100 + 50) : 50;
   const ourBrand = competitors.value.find(c => c.isOurs);
   const totalEng = mentions.value.reduce((s, m) => s + m.likes + m.shares + m.comments, 0);
-  const engRate = totalMentions > 0 ? ((totalEng / totalMentions) / 100 * 4.2).toFixed(1) : '0.0';
+  const engRate = totalMentions > 0 ? ((totalEng / totalMentions / 100) * 4.2).toFixed(1) : '0.0';
 
   return [
     {
@@ -540,11 +540,7 @@ const filteredMentions = computed(() => {
   }
   if (feedSearch.value) {
     const q = feedSearch.value.toLowerCase();
-    result = result.filter(m =>
-      m.text.toLowerCase().includes(q) ||
-      m.authorName.toLowerCase().includes(q) ||
-      m.handle.toLowerCase().includes(q)
-    );
+    result = result.filter(m => m.text.toLowerCase().includes(q) || m.authorName.toLowerCase().includes(q) || m.handle.toLowerCase().includes(q));
   }
   return result;
 });
@@ -1043,7 +1039,13 @@ function generateSovTrend() {
     const values: Record<string, number> = {};
 
     // Generate values that roughly sum to 100
-    const baseValues = [33 + Math.floor(Math.random() * 6), 24 + Math.floor(Math.random() * 5), 19 + Math.floor(Math.random() * 4), 12 + Math.floor(Math.random() * 3), 5 + Math.floor(Math.random() * 3)];
+    const baseValues = [
+      33 + Math.floor(Math.random() * 6),
+      24 + Math.floor(Math.random() * 5),
+      19 + Math.floor(Math.random() * 4),
+      12 + Math.floor(Math.random() * 3),
+      5 + Math.floor(Math.random() * 3)
+    ];
     brands.forEach((brand, idx) => {
       values[brand] = baseValues[idx] || 5;
     });
@@ -1057,64 +1059,148 @@ function generateSovTrend() {
 function generateInfluencers() {
   influencers.value = [
     {
-      id: 'inf-1', name: 'Alex Rivera', handle: '@alexrivera_saas', platform: 'twitter',
-      followers: 284000, engagementRate: 4.8, relevanceScore: 95, avgLikes: 2400,
-      sentiment: 'positive', topics: ['SaaS', 'CRM', 'Sales Tech']
+      id: 'inf-1',
+      name: 'Alex Rivera',
+      handle: '@alexrivera_saas',
+      platform: 'twitter',
+      followers: 284000,
+      engagementRate: 4.8,
+      relevanceScore: 95,
+      avgLikes: 2400,
+      sentiment: 'positive',
+      topics: ['SaaS', 'CRM', 'Sales Tech']
     },
     {
-      id: 'inf-2', name: 'Diana Chen', handle: '@dianachen_growth', platform: 'linkedin',
-      followers: 156000, engagementRate: 6.2, relevanceScore: 92, avgLikes: 3800,
-      sentiment: 'positive', topics: ['Growth', 'Marketing', 'B2B']
+      id: 'inf-2',
+      name: 'Diana Chen',
+      handle: '@dianachen_growth',
+      platform: 'linkedin',
+      followers: 156000,
+      engagementRate: 6.2,
+      relevanceScore: 92,
+      avgLikes: 3800,
+      sentiment: 'positive',
+      topics: ['Growth', 'Marketing', 'B2B']
     },
     {
-      id: 'inf-3', name: 'Marcus Johnson', handle: '@marcusj_tech', platform: 'twitter',
-      followers: 198000, engagementRate: 3.5, relevanceScore: 88, avgLikes: 1900,
-      sentiment: 'neutral', topics: ['Tech Reviews', 'Enterprise', 'Cloud']
+      id: 'inf-3',
+      name: 'Marcus Johnson',
+      handle: '@marcusj_tech',
+      platform: 'twitter',
+      followers: 198000,
+      engagementRate: 3.5,
+      relevanceScore: 88,
+      avgLikes: 1900,
+      sentiment: 'neutral',
+      topics: ['Tech Reviews', 'Enterprise', 'Cloud']
     },
     {
-      id: 'inf-4', name: 'Sofia Petrov', handle: '@sofiapetrov_biz', platform: 'instagram',
-      followers: 342000, engagementRate: 5.1, relevanceScore: 78, avgLikes: 8200,
-      sentiment: 'positive', topics: ['Startup Life', 'Productivity', 'Tools']
+      id: 'inf-4',
+      name: 'Sofia Petrov',
+      handle: '@sofiapetrov_biz',
+      platform: 'instagram',
+      followers: 342000,
+      engagementRate: 5.1,
+      relevanceScore: 78,
+      avgLikes: 8200,
+      sentiment: 'positive',
+      topics: ['Startup Life', 'Productivity', 'Tools']
     },
     {
-      id: 'inf-5', name: 'Ryan Nakamura', handle: '@ryannaka_sales', platform: 'linkedin',
-      followers: 89000, engagementRate: 7.3, relevanceScore: 96, avgLikes: 1200,
-      sentiment: 'positive', topics: ['Sales Strategy', 'CRM', 'Pipeline']
+      id: 'inf-5',
+      name: 'Ryan Nakamura',
+      handle: '@ryannaka_sales',
+      platform: 'linkedin',
+      followers: 89000,
+      engagementRate: 7.3,
+      relevanceScore: 96,
+      avgLikes: 1200,
+      sentiment: 'positive',
+      topics: ['Sales Strategy', 'CRM', 'Pipeline']
     },
     {
-      id: 'inf-6', name: 'Leila Amari', handle: '@leila_digital', platform: 'twitter',
-      followers: 420000, engagementRate: 3.9, relevanceScore: 82, avgLikes: 5600,
-      sentiment: 'neutral', topics: ['Digital Marketing', 'Analytics', 'Data']
+      id: 'inf-6',
+      name: 'Leila Amari',
+      handle: '@leila_digital',
+      platform: 'twitter',
+      followers: 420000,
+      engagementRate: 3.9,
+      relevanceScore: 82,
+      avgLikes: 5600,
+      sentiment: 'neutral',
+      topics: ['Digital Marketing', 'Analytics', 'Data']
     },
     {
-      id: 'inf-7', name: 'Thomas Mueller', handle: '@tmueller_ent', platform: 'linkedin',
-      followers: 67000, engagementRate: 8.1, relevanceScore: 91, avgLikes: 980,
-      sentiment: 'positive', topics: ['Enterprise Tech', 'CRM', 'Innovation']
+      id: 'inf-7',
+      name: 'Thomas Mueller',
+      handle: '@tmueller_ent',
+      platform: 'linkedin',
+      followers: 67000,
+      engagementRate: 8.1,
+      relevanceScore: 91,
+      avgLikes: 980,
+      sentiment: 'positive',
+      topics: ['Enterprise Tech', 'CRM', 'Innovation']
     },
     {
-      id: 'inf-8', name: 'Camila Santos', handle: '@camilasantos_mkt', platform: 'instagram',
-      followers: 510000, engagementRate: 4.4, relevanceScore: 74, avgLikes: 12000,
-      sentiment: 'positive', topics: ['Marketing', 'Brand', 'Content']
+      id: 'inf-8',
+      name: 'Camila Santos',
+      handle: '@camilasantos_mkt',
+      platform: 'instagram',
+      followers: 510000,
+      engagementRate: 4.4,
+      relevanceScore: 74,
+      avgLikes: 12000,
+      sentiment: 'positive',
+      topics: ['Marketing', 'Brand', 'Content']
     },
     {
-      id: 'inf-9', name: 'Jamal Williams', handle: '@jamalw_startups', platform: 'twitter',
-      followers: 132000, engagementRate: 5.6, relevanceScore: 87, avgLikes: 2800,
-      sentiment: 'neutral', topics: ['Startups', 'SaaS', 'Funding']
+      id: 'inf-9',
+      name: 'Jamal Williams',
+      handle: '@jamalw_startups',
+      platform: 'twitter',
+      followers: 132000,
+      engagementRate: 5.6,
+      relevanceScore: 87,
+      avgLikes: 2800,
+      sentiment: 'neutral',
+      topics: ['Startups', 'SaaS', 'Funding']
     },
     {
-      id: 'inf-10', name: 'Nina Kowalski', handle: '@ninak_revenue', platform: 'linkedin',
-      followers: 78000, engagementRate: 6.8, relevanceScore: 93, avgLikes: 1500,
-      sentiment: 'positive', topics: ['Revenue Ops', 'CRM', 'Sales']
+      id: 'inf-10',
+      name: 'Nina Kowalski',
+      handle: '@ninak_revenue',
+      platform: 'linkedin',
+      followers: 78000,
+      engagementRate: 6.8,
+      relevanceScore: 93,
+      avgLikes: 1500,
+      sentiment: 'positive',
+      topics: ['Revenue Ops', 'CRM', 'Sales']
     },
     {
-      id: 'inf-11', name: 'Oliver Chang', handle: '@oliverchang_ai', platform: 'twitter',
-      followers: 245000, engagementRate: 4.2, relevanceScore: 85, avgLikes: 3200,
-      sentiment: 'positive', topics: ['AI', 'Automation', 'SaaS']
+      id: 'inf-11',
+      name: 'Oliver Chang',
+      handle: '@oliverchang_ai',
+      platform: 'twitter',
+      followers: 245000,
+      engagementRate: 4.2,
+      relevanceScore: 85,
+      avgLikes: 3200,
+      sentiment: 'positive',
+      topics: ['AI', 'Automation', 'SaaS']
     },
     {
-      id: 'inf-12', name: 'Fatima Al-Zahra', handle: '@fatimaalzahra_biz', platform: 'facebook',
-      followers: 95000, engagementRate: 5.9, relevanceScore: 80, avgLikes: 1800,
-      sentiment: 'neutral', topics: ['Business', 'MENA Tech', 'CRM']
+      id: 'inf-12',
+      name: 'Fatima Al-Zahra',
+      handle: '@fatimaalzahra_biz',
+      platform: 'facebook',
+      followers: 95000,
+      engagementRate: 5.9,
+      relevanceScore: 80,
+      avgLikes: 1800,
+      sentiment: 'neutral',
+      topics: ['Business', 'MENA Tech', 'CRM']
     }
   ];
 }
@@ -1164,7 +1250,9 @@ onMounted(() => {
   border-radius: 16px;
   background: var(--bg-elevated, rgba(255, 255, 255, 0.03));
   border: 1px solid var(--border-default, rgba(255, 255, 255, 0.08));
-  transition: transform 0.3s ease, box-shadow 0.3s ease;
+  transition:
+    transform 0.3s ease,
+    box-shadow 0.3s ease;
 
   &:hover {
     transform: translateY(-4px);
@@ -1216,7 +1304,9 @@ onMounted(() => {
   border-radius: 16px;
   background: var(--bg-elevated, rgba(255, 255, 255, 0.03));
   border: 1px solid var(--border-default, rgba(255, 255, 255, 0.08));
-  transition: transform 0.2s ease, box-shadow 0.2s ease;
+  transition:
+    transform 0.2s ease,
+    box-shadow 0.2s ease;
 
   &:hover {
     transform: translateY(-2px);
@@ -1253,7 +1343,9 @@ onMounted(() => {
   border-radius: 16px;
   background: var(--bg-elevated, rgba(255, 255, 255, 0.03));
   border: 1px solid var(--border-default, rgba(255, 255, 255, 0.08));
-  transition: transform 0.3s ease, box-shadow 0.3s ease;
+  transition:
+    transform 0.3s ease,
+    box-shadow 0.3s ease;
 
   &:hover {
     transform: translateY(-4px);
@@ -1310,7 +1402,9 @@ onMounted(() => {
 .word-tag {
   font-weight: 700;
   cursor: default;
-  transition: transform 0.2s ease, opacity 0.2s ease;
+  transition:
+    transform 0.2s ease,
+    opacity 0.2s ease;
   animation: wordFadeIn 0.5s ease-out forwards;
   opacity: 0;
 

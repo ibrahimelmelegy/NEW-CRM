@@ -1,3 +1,4 @@
+/* eslint-disable require-await */
 export interface CalendarAttendee {
   userId?: number;
   name: string;

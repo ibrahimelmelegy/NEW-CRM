@@ -1,3 +1,4 @@
+/* eslint-disable require-await */
 export default function useQuery(currentPage: Ref<number>, sort: Ref<string>, filters: Ref<any>, search: Ref<string>) {
   const {
     currentPage: currentPageRef,

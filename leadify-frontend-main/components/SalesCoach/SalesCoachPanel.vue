@@ -74,9 +74,9 @@ div
 </template>
 
 <script setup lang="ts">
-import { useSalesCoach } from '~/composables/useSalesCoach';
 import DealHealthScore from './DealHealthScore.vue';
 import NextBestAction from './NextBestAction.vue';
+import { useSalesCoach } from '~/composables/useSalesCoach';
 
 const props = defineProps<{
   dealId?: string;

@@ -237,9 +237,9 @@
 <script setup lang="ts">
 import { ref, computed, onMounted, nextTick } from 'vue';
 import { ElMessage } from 'element-plus';
-import { useApiFetch } from '~/composables/useApiFetch';
 import { useI18n } from 'vue-i18n';
-import * as echarts from 'echarts';
+import * as echarts from 'echarts/core';
+import { useApiFetch } from '~/composables/useApiFetch';
 
 definePageMeta({
   layout: 'default',
@@ -272,7 +272,7 @@ function computeDurationMinutes(start: string, end: string): number {
   if (!start || !end) return 30;
   const [sh = 0, sm = 0] = start.split(':').map(Number);
   const [eh = 0, em = 0] = end.split(':').map(Number);
-  return (eh * 60 + em) - (sh * 60 + sm);
+  return eh * 60 + em - (sh * 60 + sm);
 }
 
 interface UIBooking {

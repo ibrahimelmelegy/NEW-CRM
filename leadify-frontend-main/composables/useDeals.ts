@@ -1,3 +1,4 @@
+/* eslint-disable no-use-before-define */
 import { ElNotification } from 'element-plus';
 // Handle error during deal creation
 function handleError(message: string) {

@@ -14,6 +14,7 @@
 </template>
 
 <script setup lang="ts">
+/* eslint-disable require-await */
 import { useForm } from 'vee-validate';
 const { t } = useI18n();
 const { handleSubmit, errors, values, resetForm } = useForm();

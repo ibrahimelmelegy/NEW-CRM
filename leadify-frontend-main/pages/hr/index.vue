@@ -139,9 +139,7 @@ const kpiCards = computed(() => {
   const deptCount = departments.value.length;
 
   const salaries = employees.value.filter(e => e.salary && e.salary > 0).map(e => e.salary!);
-  const avgSalary = salaries.length > 0
-    ? Math.round(salaries.reduce((sum, s) => sum + s, 0) / salaries.length)
-    : 0;
+  const avgSalary = salaries.length > 0 ? Math.round(salaries.reduce((sum, s) => sum + s, 0) / salaries.length) : 0;
 
   return [
     {
@@ -217,19 +215,14 @@ const quickNavItems = computed(() => [
 
 // Recent Employees — latest 10 sorted by hire date descending
 const recentEmployees = computed(() => {
-  return [...employees.value]
-    .sort((a, b) => new Date(b.hireDate).getTime() - new Date(a.hireDate).getTime())
-    .slice(0, 10);
+  return [...employees.value].sort((a, b) => new Date(b.hireDate).getTime() - new Date(a.hireDate).getTime()).slice(0, 10);
 });
 
 // Load Data
 async function loadData() {
   loading.value = true;
   try {
-    const [empResult, deptResult] = await Promise.all([
-      fetchEmployees({ limit: '500' }),
-      fetchDepartments()
-    ]);
+    const [empResult, deptResult] = await Promise.all([fetchEmployees({ limit: '500' }), fetchDepartments()]);
     employees.value = empResult.docs;
     departments.value = deptResult;
   } finally {

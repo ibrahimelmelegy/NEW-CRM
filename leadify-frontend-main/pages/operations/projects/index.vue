@@ -272,15 +272,14 @@ const kpiMetrics = computed<KPIMetric[]>(() => {
 
   // Calculate real average duration from project data
   const projectsWithDuration = data.filter((p: any) => p.duration && !isNaN(parseInt(p.duration)));
-  const avgDuration = projectsWithDuration.length > 0
-    ? Math.round(projectsWithDuration.reduce((sum: number, p: any) => sum + parseInt(p.duration || '0'), 0) / projectsWithDuration.length)
-    : 0;
+  const avgDuration =
+    projectsWithDuration.length > 0
+      ? Math.round(projectsWithDuration.reduce((sum: number, p: any) => sum + parseInt(p.duration || '0'), 0) / projectsWithDuration.length)
+      : 0;
 
   // Calculate on-time delivery rate
   const completedProjects = data.filter((p: any) => p.status === 'PROJECT_COMPLETE');
-  const onTimeDelivery = completedProjects.length > 0
-    ? Math.round((completedProjects.length / total) * 100)
-    : 0;
+  const onTimeDelivery = completedProjects.length > 0 ? Math.round((completedProjects.length / total) * 100) : 0;
 
   // Calculate budget utilization (placeholder - needs actual cost data)
   const projectsWithCost = data.filter((p: any) => p.totalCost && p.totalCost !== '--');
@@ -293,9 +292,19 @@ const kpiMetrics = computed<KPIMetric[]>(() => {
     { label: t('operations.projects.kpi.totalProjects'), value: total, icon: 'ph:kanban-bold', color: '#8b5cf6', trend: '+2%', trendType: 'up' },
     { label: t('operations.projects.kpi.activeProjects'), value: active, icon: 'ph:spinner-gap-bold', color: '#10b981' },
     { label: t('operations.projects.kpi.completed'), value: completed, icon: 'ph:check-square-offset-bold', color: '#3b82f6' },
-    { label: t('operations.projects.kpi.avgDuration'), value: avgDuration > 0 ? `${avgDuration} ${t('operations.projects.days')}` : '--', icon: 'ph:clock-bold', color: '#f59e0b' },
+    {
+      label: t('operations.projects.kpi.avgDuration'),
+      value: avgDuration > 0 ? `${avgDuration} ${t('operations.projects.days')}` : '--',
+      icon: 'ph:clock-bold',
+      color: '#f59e0b'
+    },
     { label: t('operations.projects.kpi.onTimeDelivery'), value: `${onTimeDelivery}%`, icon: 'ph:check-circle-bold', color: '#22c55e' },
-    { label: t('operations.projects.kpi.totalBudget'), value: totalBudget > 0 ? `SAR ${formatLargeNumber(totalBudget)}` : '--', icon: 'ph:currency-dollar-bold', color: '#7849ff' }
+    {
+      label: t('operations.projects.kpi.totalBudget'),
+      value: totalBudget > 0 ? `SAR ${formatLargeNumber(totalBudget)}` : '--',
+      icon: 'ph:currency-dollar-bold',
+      color: '#7849ff'
+    }
   ];
 });
 
@@ -402,7 +411,9 @@ async function handleMobileRefresh() {
     const res = await useTableFilter('project');
     table.data = res.formattedData;
     vibrate([10, 30, 10]);
-  } finally { mobileRefreshing.value = false; }
+  } finally {
+    mobileRefreshing.value = false;
+  }
 }
 
 function getProjLeftActions(_p: any) {
@@ -418,7 +429,12 @@ function handleProjSwipe(name: string, proj: any) {
 }
 
 function getProjColor(status: string): string {
-  const map: Record<string, string> = { PROJECT_ACTIVE: '#10b981', PROJECT_COMPLETE: '#3b82f6', PROJECT_ON_HOLD: '#f59e0b', PROJECT_CANCELLED: '#ef4444' };
+  const map: Record<string, string> = {
+    PROJECT_ACTIVE: '#10b981',
+    PROJECT_COMPLETE: '#3b82f6',
+    PROJECT_ON_HOLD: '#f59e0b',
+    PROJECT_CANCELLED: '#ef4444'
+  };
   return map[status] || '#94a3b8';
 }
 function getProjTagType(status: string): string {

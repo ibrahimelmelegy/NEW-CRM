@@ -6,6 +6,8 @@
 
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 
+import { useIntegrations } from '~/composables/useIntegrations';
+
 const mockApiFetch = vi.fn();
 (globalThis as any).useApiFetch = mockApiFetch;
 
@@ -31,8 +33,6 @@ vi.mock('@/composables/useApiFetch', () => ({
   useApiFetch: (...args: any[]) => mockApiFetch(...args)
 }));
 
-import { useIntegrations } from '~/composables/useIntegrations';
-
 describe('useIntegrations', () => {
   beforeEach(() => {
     vi.clearAllMocks();
@@ -43,7 +43,9 @@ describe('useIntegrations', () => {
   // ============================================
   describe('fetchCatalog', () => {
     it('should fetch integration catalog and set loading states', async () => {
-      const catalogData = [{ type: 'SLACK', name: 'Slack', description: 'Messaging', icon: 'logos:slack', category: 'Communication', configFields: [] }];
+      const catalogData = [
+        { type: 'SLACK', name: 'Slack', description: 'Messaging', icon: 'logos:slack', category: 'Communication', configFields: [] }
+      ];
       mockApiFetch.mockResolvedValue({ body: catalogData, success: true });
 
       const { fetchCatalog, catalog, loading } = useIntegrations();
@@ -182,12 +184,8 @@ describe('useIntegrations', () => {
 
     it('should mark configured integrations as connected', () => {
       const int = useIntegrations();
-      int.catalog.value = [
-        { type: 'SLACK', name: 'Slack', description: 'Test', icon: 'slack', category: 'Communication', configFields: [] }
-      ];
-      int.configured.value = [
-        { id: '1', type: 'SLACK', name: 'Slack', status: 'ACTIVE' } as any
-      ];
+      int.catalog.value = [{ type: 'SLACK', name: 'Slack', description: 'Test', icon: 'slack', category: 'Communication', configFields: [] }];
+      int.configured.value = [{ id: '1', type: 'SLACK', name: 'Slack', status: 'ACTIVE' } as any];
 
       const slack = int.allIntegrations.value.find(i => i.type === 'SLACK');
       expect(slack?.status).toBe('connected');

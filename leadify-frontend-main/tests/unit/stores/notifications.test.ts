@@ -60,10 +60,7 @@ describe('useNotificationStore', () => {
     });
 
     it('unreadNotifications should return empty array when all are read', () => {
-      store.notifications = [
-        mockNotification({ id: 'notif-1', read: true }),
-        mockNotification({ id: 'notif-2', read: true })
-      ] as any;
+      store.notifications = [mockNotification({ id: 'notif-1', read: true }), mockNotification({ id: 'notif-2', read: true })] as any;
 
       expect(store.unreadNotifications).toHaveLength(0);
     });
@@ -117,10 +114,7 @@ describe('useNotificationStore', () => {
 
   describe('markAsRead', () => {
     it('should mark a specific notification as read and decrement unread count', async () => {
-      store.notifications = [
-        mockNotification({ id: 'notif-1', read: false }),
-        mockNotification({ id: 'notif-2', read: false })
-      ] as any;
+      store.notifications = [mockNotification({ id: 'notif-1', read: false }), mockNotification({ id: 'notif-2', read: false })] as any;
       store.unreadCount = 2;
 
       (globalThis.useApiFetch as any).mockResolvedValue({ success: true });
@@ -134,9 +128,7 @@ describe('useNotificationStore', () => {
     });
 
     it('should not decrement below 0', async () => {
-      store.notifications = [
-        mockNotification({ id: 'notif-1', read: false })
-      ] as any;
+      store.notifications = [mockNotification({ id: 'notif-1', read: false })] as any;
       store.unreadCount = 0;
 
       (globalThis.useApiFetch as any).mockResolvedValue({ success: true });
@@ -147,9 +139,7 @@ describe('useNotificationStore', () => {
     });
 
     it('should not change state if API call fails', async () => {
-      store.notifications = [
-        mockNotification({ id: 'notif-1', read: false })
-      ] as any;
+      store.notifications = [mockNotification({ id: 'notif-1', read: false })] as any;
       store.unreadCount = 1;
 
       (globalThis.useApiFetch as any).mockResolvedValue({ success: false });
@@ -180,9 +170,7 @@ describe('useNotificationStore', () => {
     });
 
     it('should not change state if API call fails', async () => {
-      store.notifications = [
-        mockNotification({ id: 'notif-1', read: false })
-      ] as any;
+      store.notifications = [mockNotification({ id: 'notif-1', read: false })] as any;
       store.unreadCount = 1;
 
       (globalThis.useApiFetch as any).mockRejectedValue(new Error('Network error'));

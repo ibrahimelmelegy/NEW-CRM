@@ -9,6 +9,8 @@
 
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 
+import { useErrorHandler } from '~/composables/useErrorHandler';
+
 // Mock ElNotification
 const mockNotification = vi.fn();
 (globalThis as any).ElNotification = mockNotification;
@@ -23,8 +25,6 @@ const mockNotification = vi.fn();
 vi.mock('element-plus', () => ({
   ElNotification: (...args: any[]) => mockNotification(...args)
 }));
-
-import { useErrorHandler } from '~/composables/useErrorHandler';
 
 describe('useErrorHandler', () => {
   beforeEach(() => {

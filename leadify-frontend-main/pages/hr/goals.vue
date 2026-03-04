@@ -461,9 +461,8 @@ const createGoal = async () => {
   const keyResults = newGoal.value.keyResults.filter(kr => kr.title.trim());
 
   // Format dueDate to YYYY-MM-DD string if it's a Date object
-  const dueDate = (newGoal.value.dueDate as any) instanceof Date
-    ? (newGoal.value.dueDate as unknown as Date).toISOString().slice(0, 10)
-    : newGoal.value.dueDate;
+  const dueDate =
+    (newGoal.value.dueDate as any) instanceof Date ? (newGoal.value.dueDate as unknown as Date).toISOString().slice(0, 10) : newGoal.value.dueDate;
 
   const payload = {
     title: newGoal.value.title,

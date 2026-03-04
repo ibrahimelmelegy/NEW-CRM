@@ -70,7 +70,14 @@
             <el-option :label="$t('communications.outbound')" value="OUTBOUND" />
           </el-select>
           <div class="flex-1"></div>
-          <el-input v-model="searchQuery" :placeholder="$t('communications.search')" prefix-icon="Search" clearable class="!w-56" @input="debouncedSearch" />
+          <el-input
+            v-model="searchQuery"
+            :placeholder="$t('communications.search')"
+            prefix-icon="Search"
+            clearable
+            class="!w-56"
+            @input="debouncedSearch"
+          />
         </div>
 
         <!-- Timeline -->

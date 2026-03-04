@@ -63,15 +63,17 @@ export function useReminders() {
           id: e.id,
           title: e.title || '',
           description: e.description || '',
-          type: e.color === '#ef4444' ? 'payment'
-            : e.color === '#f59e0b' ? 'deadline'
-            : e.color === '#7c3aed' ? 'meeting'
-            : e.color === '#3b82f6' ? 'follow_up'
-            : 'custom',
-          priority: e.recurrence === 'urgent' ? 'urgent'
-            : e.recurrence === 'high' ? 'high'
-            : e.recurrence === 'low' ? 'low'
-            : 'medium',
+          type:
+            e.color === '#ef4444'
+              ? 'payment'
+              : e.color === '#f59e0b'
+                ? 'deadline'
+                : e.color === '#7c3aed'
+                  ? 'meeting'
+                  : e.color === '#3b82f6'
+                    ? 'follow_up'
+                    : 'custom',
+          priority: e.recurrence === 'urgent' ? 'urgent' : e.recurrence === 'high' ? 'high' : e.recurrence === 'low' ? 'low' : 'medium',
           dueDate: e.startDate || e.createdAt,
           completed: e.endDate && new Date(e.endDate) < new Date(e.startDate),
           completedAt: e.endDate && new Date(e.endDate) < new Date(e.startDate) ? e.endDate : undefined,

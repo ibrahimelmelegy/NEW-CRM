@@ -295,13 +295,16 @@ const summaryStats = computed(() => {
   const activeBooks = books.value.filter(b => b.isActive).length;
   const totalEntries = entries.value.length;
   const avgPrice = totalEntries > 0 ? Math.round(entries.value.reduce((s, e) => s + Number(e.unitPrice || 0), 0) / totalEntries) : 0;
-  const avgMargin = totalEntries > 0
-    ? Math.round(entries.value.reduce((s, e) => {
-        const unit = Number(e.unitPrice || 0);
-        const cost = Number(e.costPrice || 0);
-        return s + (unit > 0 ? ((unit - cost) / unit) * 100 : 0);
-      }, 0) / totalEntries)
-    : 0;
+  const avgMargin =
+    totalEntries > 0
+      ? Math.round(
+          entries.value.reduce((s, e) => {
+            const unit = Number(e.unitPrice || 0);
+            const cost = Number(e.costPrice || 0);
+            return s + (unit > 0 ? ((unit - cost) / unit) * 100 : 0);
+          }, 0) / totalEntries
+        )
+      : 0;
   return [
     { label: t('cpq.priceBooks'), value: books.value.length, icon: 'ph:book-open-bold', color: '#7849ff' },
     { label: t('cpq.activeBooks'), value: activeBooks, icon: 'ph:check-circle-bold', color: '#22c55e' },
@@ -327,7 +330,9 @@ async function fetchBooks() {
       books.value = data.docs || data.rows || [];
       booksPagination.total = data.pagination?.totalItems ?? data.count ?? data.total ?? books.value.length;
     }
-  } finally { loadingBooks.value = false; }
+  } finally {
+    loadingBooks.value = false;
+  }
 }
 
 function openEditBookDialog(row: any) {
@@ -351,17 +356,30 @@ async function saveBook() {
   try {
     if (editingBookId.value) {
       const { success } = await useApiFetch(`cpq/price-books/${editingBookId.value}`, 'PUT', { ...bookForm });
-      if (success) { showBookDialog.value = false; ElMessage.success(t('common.saved')); await fetchBooks(); }
+      if (success) {
+        showBookDialog.value = false;
+        ElMessage.success(t('common.saved'));
+        await fetchBooks();
+      }
     } else {
       const { success } = await useApiFetch('cpq/price-books', 'POST', { ...bookForm });
-      if (success) { showBookDialog.value = false; ElMessage.success(t('common.saved')); await fetchBooks(); }
+      if (success) {
+        showBookDialog.value = false;
+        ElMessage.success(t('common.saved'));
+        await fetchBooks();
+      }
     }
-  } finally { savingBook.value = false; }
+  } finally {
+    savingBook.value = false;
+  }
 }
 
 async function handleDeleteBook(id: number) {
   const { success } = await useApiFetch(`cpq/price-books/${id}`, 'DELETE');
-  if (success) { ElMessage.success(t('common.deleted')); await fetchBooks(); }
+  if (success) {
+    ElMessage.success(t('common.deleted'));
+    await fetchBooks();
+  }
 }
 
 // --- Entry CRUD ---
@@ -374,7 +392,9 @@ async function fetchEntries() {
       entries.value = data.docs || data.rows || [];
       entriesPagination.total = data.pagination?.totalItems ?? data.count ?? data.total ?? entries.value.length;
     }
-  } finally { loadingEntries.value = false; }
+  } finally {
+    loadingEntries.value = false;
+  }
 }
 
 function openEditEntryDialog(row: any) {
@@ -400,17 +420,30 @@ async function saveEntry() {
   try {
     if (editingEntryId.value) {
       const { success } = await useApiFetch(`cpq/entries/${editingEntryId.value}`, 'PUT', { ...entryForm });
-      if (success) { showEntryDialog.value = false; ElMessage.success(t('common.saved')); await fetchEntries(); }
+      if (success) {
+        showEntryDialog.value = false;
+        ElMessage.success(t('common.saved'));
+        await fetchEntries();
+      }
     } else {
       const { success } = await useApiFetch('cpq/entries', 'POST', { ...entryForm });
-      if (success) { showEntryDialog.value = false; ElMessage.success(t('common.saved')); await fetchEntries(); }
+      if (success) {
+        showEntryDialog.value = false;
+        ElMessage.success(t('common.saved'));
+        await fetchEntries();
+      }
     }
-  } finally { savingEntry.value = false; }
+  } finally {
+    savingEntry.value = false;
+  }
 }
 
 async function handleDeleteEntry(id: number) {
   const { success } = await useApiFetch(`cpq/entries/${id}`, 'DELETE');
-  if (success) { ElMessage.success(t('common.deleted')); await fetchEntries(); }
+  if (success) {
+    ElMessage.success(t('common.deleted'));
+    await fetchEntries();
+  }
 }
 
 // --- Generate Quote ---
@@ -492,7 +525,7 @@ async function fetchDiscountRules() {
   try {
     const { body, success } = await useApiFetch('cpq/discount-rules');
     if (success && body) {
-      discountRules.value = Array.isArray(body) ? body : (body.docs || body.rows || []);
+      discountRules.value = Array.isArray(body) ? body : body.docs || body.rows || [];
     }
   } catch (e: any) {
     ElMessage.error(t('common.error'));

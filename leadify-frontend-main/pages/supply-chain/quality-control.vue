@@ -370,7 +370,7 @@
 
 <script lang="ts" setup>
 import { ref, computed, onMounted } from 'vue';
-import { graphic } from 'echarts';
+import { graphic } from 'echarts/core';
 import VChart from 'vue-echarts';
 import { useApiFetch } from '~/composables/useApiFetch';
 
@@ -430,29 +430,130 @@ const kpiCards = computed(() => [
 ]);
 
 // ─── Inspector List ─────────────────────────────────────────
-const inspectorList = [
-  'Ahmed Al-Rashid',
-  'Sarah Johnson',
-  'Omar Khalil',
-  'Maria Santos',
-  'James Chen',
-  'Fatima Al-Sayed'
-];
+const inspectorList = ['Ahmed Al-Rashid', 'Sarah Johnson', 'Omar Khalil', 'Maria Santos', 'James Chen', 'Fatima Al-Sayed'];
 
 // ─── Inspection Records (fallback mock data) ────────────────
 const inspectionRecordsFallback = [
-  { id: 'INS-2026-001', product: 'Steel Beam Grade A', batch: 'BTH-4521', inspector: 'Ahmed Al-Rashid', type: 'Incoming', status: 'Passed', date: '2026-02-28', score: 98 },
-  { id: 'INS-2026-002', product: 'Copper Wire 12mm', batch: 'BTH-4522', inspector: 'Sarah Johnson', type: 'In-Process', status: 'Passed', date: '2026-02-28', score: 95 },
-  { id: 'INS-2026-003', product: 'Hydraulic Pump Unit', batch: 'BTH-4523', inspector: 'Omar Khalil', type: 'Final', status: 'Failed', date: '2026-02-27', score: 62 },
-  { id: 'INS-2026-004', product: 'LED Panel 60W', batch: 'BTH-4524', inspector: 'Maria Santos', type: 'Incoming', status: 'Passed', date: '2026-02-27', score: 97 },
-  { id: 'INS-2026-005', product: 'Carbon Fiber Sheet', batch: 'BTH-4525', inspector: 'James Chen', type: 'Random', status: 'Pending', date: '2026-02-27', score: 0 },
-  { id: 'INS-2026-006', product: 'Aluminum Extrusion', batch: 'BTH-4526', inspector: 'Fatima Al-Sayed', type: 'In-Process', status: 'Passed', date: '2026-02-26', score: 91 },
-  { id: 'INS-2026-007', product: 'Titanium Bolts M10', batch: 'BTH-4527', inspector: 'Ahmed Al-Rashid', type: 'Final', status: 'Passed', date: '2026-02-26', score: 99 },
-  { id: 'INS-2026-008', product: 'PVC Insulation Roll', batch: 'BTH-4528', inspector: 'Sarah Johnson', type: 'Incoming', status: 'Failed', date: '2026-02-25', score: 54 },
-  { id: 'INS-2026-009', product: 'Stainless Steel Pipe', batch: 'BTH-4529', inspector: 'Omar Khalil', type: 'Random', status: 'Passed', date: '2026-02-25', score: 88 },
-  { id: 'INS-2026-010', product: 'Ceramic Bearings Kit', batch: 'BTH-4530', inspector: 'Maria Santos', type: 'In-Process', status: 'Passed', date: '2026-02-24', score: 94 },
-  { id: 'INS-2026-011', product: 'Glass Fiber Composite', batch: 'BTH-4531', inspector: 'James Chen', type: 'Final', status: 'Pending', date: '2026-02-24', score: 0 },
-  { id: 'INS-2026-012', product: 'Rubber Gasket Set', batch: 'BTH-4532', inspector: 'Fatima Al-Sayed', type: 'Incoming', status: 'Passed', date: '2026-02-23', score: 96 }
+  {
+    id: 'INS-2026-001',
+    product: 'Steel Beam Grade A',
+    batch: 'BTH-4521',
+    inspector: 'Ahmed Al-Rashid',
+    type: 'Incoming',
+    status: 'Passed',
+    date: '2026-02-28',
+    score: 98
+  },
+  {
+    id: 'INS-2026-002',
+    product: 'Copper Wire 12mm',
+    batch: 'BTH-4522',
+    inspector: 'Sarah Johnson',
+    type: 'In-Process',
+    status: 'Passed',
+    date: '2026-02-28',
+    score: 95
+  },
+  {
+    id: 'INS-2026-003',
+    product: 'Hydraulic Pump Unit',
+    batch: 'BTH-4523',
+    inspector: 'Omar Khalil',
+    type: 'Final',
+    status: 'Failed',
+    date: '2026-02-27',
+    score: 62
+  },
+  {
+    id: 'INS-2026-004',
+    product: 'LED Panel 60W',
+    batch: 'BTH-4524',
+    inspector: 'Maria Santos',
+    type: 'Incoming',
+    status: 'Passed',
+    date: '2026-02-27',
+    score: 97
+  },
+  {
+    id: 'INS-2026-005',
+    product: 'Carbon Fiber Sheet',
+    batch: 'BTH-4525',
+    inspector: 'James Chen',
+    type: 'Random',
+    status: 'Pending',
+    date: '2026-02-27',
+    score: 0
+  },
+  {
+    id: 'INS-2026-006',
+    product: 'Aluminum Extrusion',
+    batch: 'BTH-4526',
+    inspector: 'Fatima Al-Sayed',
+    type: 'In-Process',
+    status: 'Passed',
+    date: '2026-02-26',
+    score: 91
+  },
+  {
+    id: 'INS-2026-007',
+    product: 'Titanium Bolts M10',
+    batch: 'BTH-4527',
+    inspector: 'Ahmed Al-Rashid',
+    type: 'Final',
+    status: 'Passed',
+    date: '2026-02-26',
+    score: 99
+  },
+  {
+    id: 'INS-2026-008',
+    product: 'PVC Insulation Roll',
+    batch: 'BTH-4528',
+    inspector: 'Sarah Johnson',
+    type: 'Incoming',
+    status: 'Failed',
+    date: '2026-02-25',
+    score: 54
+  },
+  {
+    id: 'INS-2026-009',
+    product: 'Stainless Steel Pipe',
+    batch: 'BTH-4529',
+    inspector: 'Omar Khalil',
+    type: 'Random',
+    status: 'Passed',
+    date: '2026-02-25',
+    score: 88
+  },
+  {
+    id: 'INS-2026-010',
+    product: 'Ceramic Bearings Kit',
+    batch: 'BTH-4530',
+    inspector: 'Maria Santos',
+    type: 'In-Process',
+    status: 'Passed',
+    date: '2026-02-24',
+    score: 94
+  },
+  {
+    id: 'INS-2026-011',
+    product: 'Glass Fiber Composite',
+    batch: 'BTH-4531',
+    inspector: 'James Chen',
+    type: 'Final',
+    status: 'Pending',
+    date: '2026-02-24',
+    score: 0
+  },
+  {
+    id: 'INS-2026-012',
+    product: 'Rubber Gasket Set',
+    batch: 'BTH-4532',
+    inspector: 'Fatima Al-Sayed',
+    type: 'Incoming',
+    status: 'Passed',
+    date: '2026-02-23',
+    score: 96
+  }
 ];
 
 const inspectionRecords = ref<any[]>([]);
@@ -470,11 +571,12 @@ const filteredInspections = computed(() => {
 
   if (inspectionSearch.value) {
     const q = inspectionSearch.value.toLowerCase();
-    items = items.filter(i =>
-      i.id.toLowerCase().includes(q) ||
-      i.product.toLowerCase().includes(q) ||
-      i.batch.toLowerCase().includes(q) ||
-      i.inspector.toLowerCase().includes(q)
+    items = items.filter(
+      i =>
+        i.id.toLowerCase().includes(q) ||
+        i.product.toLowerCase().includes(q) ||
+        i.batch.toLowerCase().includes(q) ||
+        i.inspector.toLowerCase().includes(q)
     );
   }
 
@@ -483,15 +585,105 @@ const filteredInspections = computed(() => {
 
 // ─── Defect Records (mock with API fallback) ────────────────
 const defectRecordsFallback = [
-  { id: 'DEF-001', product: 'Hydraulic Pump Unit', defectType: 'Seal Leakage', severity: 'Critical', reportedBy: 'Omar Khalil', assignedTo: 'Ahmed Al-Rashid', status: 'Open', date: '2026-02-27', images: 3 },
-  { id: 'DEF-002', product: 'PVC Insulation Roll', defectType: 'Surface Contamination', severity: 'Major', reportedBy: 'Sarah Johnson', assignedTo: 'James Chen', status: 'In Progress', date: '2026-02-25', images: 2 },
-  { id: 'DEF-003', product: 'Steel Beam Grade A', defectType: 'Dimensional Deviation', severity: 'Minor', reportedBy: 'Ahmed Al-Rashid', assignedTo: 'Omar Khalil', status: 'Resolved', date: '2026-02-22', images: 1 },
-  { id: 'DEF-004', product: 'Copper Wire 12mm', defectType: 'Tensile Strength Failure', severity: 'Critical', reportedBy: 'Maria Santos', assignedTo: 'Sarah Johnson', status: 'In Progress', date: '2026-02-26', images: 4 },
-  { id: 'DEF-005', product: 'LED Panel 60W', defectType: 'Color Temperature Drift', severity: 'Minor', reportedBy: 'James Chen', assignedTo: 'Fatima Al-Sayed', status: 'Open', date: '2026-02-28', images: 0 },
-  { id: 'DEF-006', product: 'Carbon Fiber Sheet', defectType: 'Delamination', severity: 'Major', reportedBy: 'Fatima Al-Sayed', assignedTo: 'Maria Santos', status: 'Open', date: '2026-02-27', images: 5 },
-  { id: 'DEF-007', product: 'Aluminum Extrusion', defectType: 'Surface Scratch', severity: 'Minor', reportedBy: 'Omar Khalil', assignedTo: 'James Chen', status: 'Resolved', date: '2026-02-20', images: 2 },
-  { id: 'DEF-008', product: 'Rubber Gasket Set', defectType: 'Hardness Out of Spec', severity: 'Major', reportedBy: 'Ahmed Al-Rashid', assignedTo: 'Omar Khalil', status: 'In Progress', date: '2026-02-24', images: 1 },
-  { id: 'DEF-009', product: 'Stainless Steel Pipe', defectType: 'Weld Porosity', severity: 'Critical', reportedBy: 'Sarah Johnson', assignedTo: 'Ahmed Al-Rashid', status: 'Open', date: '2026-02-28', images: 3 }
+  {
+    id: 'DEF-001',
+    product: 'Hydraulic Pump Unit',
+    defectType: 'Seal Leakage',
+    severity: 'Critical',
+    reportedBy: 'Omar Khalil',
+    assignedTo: 'Ahmed Al-Rashid',
+    status: 'Open',
+    date: '2026-02-27',
+    images: 3
+  },
+  {
+    id: 'DEF-002',
+    product: 'PVC Insulation Roll',
+    defectType: 'Surface Contamination',
+    severity: 'Major',
+    reportedBy: 'Sarah Johnson',
+    assignedTo: 'James Chen',
+    status: 'In Progress',
+    date: '2026-02-25',
+    images: 2
+  },
+  {
+    id: 'DEF-003',
+    product: 'Steel Beam Grade A',
+    defectType: 'Dimensional Deviation',
+    severity: 'Minor',
+    reportedBy: 'Ahmed Al-Rashid',
+    assignedTo: 'Omar Khalil',
+    status: 'Resolved',
+    date: '2026-02-22',
+    images: 1
+  },
+  {
+    id: 'DEF-004',
+    product: 'Copper Wire 12mm',
+    defectType: 'Tensile Strength Failure',
+    severity: 'Critical',
+    reportedBy: 'Maria Santos',
+    assignedTo: 'Sarah Johnson',
+    status: 'In Progress',
+    date: '2026-02-26',
+    images: 4
+  },
+  {
+    id: 'DEF-005',
+    product: 'LED Panel 60W',
+    defectType: 'Color Temperature Drift',
+    severity: 'Minor',
+    reportedBy: 'James Chen',
+    assignedTo: 'Fatima Al-Sayed',
+    status: 'Open',
+    date: '2026-02-28',
+    images: 0
+  },
+  {
+    id: 'DEF-006',
+    product: 'Carbon Fiber Sheet',
+    defectType: 'Delamination',
+    severity: 'Major',
+    reportedBy: 'Fatima Al-Sayed',
+    assignedTo: 'Maria Santos',
+    status: 'Open',
+    date: '2026-02-27',
+    images: 5
+  },
+  {
+    id: 'DEF-007',
+    product: 'Aluminum Extrusion',
+    defectType: 'Surface Scratch',
+    severity: 'Minor',
+    reportedBy: 'Omar Khalil',
+    assignedTo: 'James Chen',
+    status: 'Resolved',
+    date: '2026-02-20',
+    images: 2
+  },
+  {
+    id: 'DEF-008',
+    product: 'Rubber Gasket Set',
+    defectType: 'Hardness Out of Spec',
+    severity: 'Major',
+    reportedBy: 'Ahmed Al-Rashid',
+    assignedTo: 'Omar Khalil',
+    status: 'In Progress',
+    date: '2026-02-24',
+    images: 1
+  },
+  {
+    id: 'DEF-009',
+    product: 'Stainless Steel Pipe',
+    defectType: 'Weld Porosity',
+    severity: 'Critical',
+    reportedBy: 'Sarah Johnson',
+    assignedTo: 'Ahmed Al-Rashid',
+    status: 'Open',
+    date: '2026-02-28',
+    images: 3
+  }
 ];
 
 const defectRecords = ref<any[]>([]);
@@ -522,9 +714,7 @@ const newInspectionForm = ref({
 const newChecklistForm = ref({
   name: '',
   category: '',
-  items: [
-    { criteria: '', resultType: 'pass-fail', weight: 1 }
-  ]
+  items: [{ criteria: '', resultType: 'pass-fail', weight: 1 }]
 });
 
 function addChecklistItem() {
@@ -715,15 +905,7 @@ const passRateTrendChartOption = computed(() => {
 
 // ─── Chart: Defect Pareto (bar + cumulative line, dual y-axis) ──
 const defectParetoChartOption = computed(() => {
-  const categories = [
-    'Surface Defects',
-    'Dimensional',
-    'Material Flaws',
-    'Mechanical',
-    'Electrical',
-    'Contamination',
-    'Packaging'
-  ];
+  const categories = ['Surface Defects', 'Dimensional', 'Material Flaws', 'Mechanical', 'Electrical', 'Contamination', 'Packaging'];
   const counts = [34, 28, 19, 14, 9, 6, 3];
   const total = counts.reduce((s, v) => s + v, 0);
   const cumulative: number[] = [];
@@ -813,14 +995,7 @@ const defectParetoChartOption = computed(() => {
 
 // ─── Chart: Inspector Performance (horizontal bar) ──────────
 const inspectorPerformanceChartOption = computed(() => {
-  const inspectors = [
-    'Fatima Al-Sayed',
-    'Ahmed Al-Rashid',
-    'Maria Santos',
-    'James Chen',
-    'Sarah Johnson',
-    'Omar Khalil'
-  ];
+  const inspectors = ['Fatima Al-Sayed', 'Ahmed Al-Rashid', 'Maria Santos', 'James Chen', 'Sarah Johnson', 'Omar Khalil'];
   const passRates = [98.2, 97.5, 96.8, 95.4, 94.1, 92.7];
   const inspectionsConducted = [145, 198, 167, 132, 178, 156];
 
@@ -942,37 +1117,37 @@ const qualityCostChartOption = computed(() => {
 // ─── Helpers ────────────────────────────────────────────────
 function getInspectionTypeTag(type: string): string {
   const map: Record<string, string> = {
-    'Incoming': 'primary',
+    Incoming: 'primary',
     'In-Process': 'warning',
-    'Final': 'success',
-    'Random': 'info'
+    Final: 'success',
+    Random: 'info'
   };
   return map[type] || 'info';
 }
 
 function getStatusTagType(status: string): string {
   const map: Record<string, string> = {
-    'Passed': 'success',
-    'Failed': 'danger',
-    'Pending': 'warning'
+    Passed: 'success',
+    Failed: 'danger',
+    Pending: 'warning'
   };
   return map[status] || 'info';
 }
 
 function getSeverityTagType(severity: string): string {
   const map: Record<string, string> = {
-    'Critical': 'danger',
-    'Major': 'warning',
-    'Minor': 'info'
+    Critical: 'danger',
+    Major: 'warning',
+    Minor: 'info'
   };
   return map[severity] || 'info';
 }
 
 function getDefectStatusType(status: string): string {
   const map: Record<string, string> = {
-    'Open': 'danger',
+    Open: 'danger',
     'In Progress': 'warning',
-    'Resolved': 'success'
+    Resolved: 'success'
   };
   return map[status] || 'info';
 }
@@ -1008,7 +1183,9 @@ async function loadData() {
   loading.value = false;
 }
 
-onMounted(() => { loadData(); });
+onMounted(() => {
+  loadData();
+});
 
 // ─── Actions ────────────────────────────────────────────────
 function refreshData() {

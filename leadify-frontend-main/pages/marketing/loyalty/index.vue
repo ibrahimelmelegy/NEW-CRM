@@ -490,6 +490,7 @@ div
 </template>
 
 <script setup lang="ts">
+/* eslint-disable require-await */
 import { ref, reactive, computed, onMounted } from 'vue';
 import { ElMessage, ElMessageBox } from 'element-plus';
 import { useApiFetch } from '~/composables/useApiFetch';
@@ -505,7 +506,9 @@ const activeTab = ref('programs');
 
 // ─── Bulk Selection ──────────────────────────────────────
 const selectedMembers = ref<any[]>([]);
-const handleMemberSelectionChange = (rows: any[]) => { selectedMembers.value = rows; };
+const handleMemberSelectionChange = (rows: any[]) => {
+  selectedMembers.value = rows;
+};
 
 // ─── State ───────────────────────────────────────────────
 const programDialogVisible = ref(false);
@@ -538,7 +541,12 @@ const defaultProgramForm = () => ({
   enableExpiration: false,
   expirationDays: 365,
   accrualRules: [{ name: 'Purchase', pointsPerUnit: 1 }] as any[],
-  tiers: [{ name: 'Bronze', minPoints: 0, benefits: [] }, { name: 'Silver', minPoints: 1000, benefits: [] }, { name: 'Gold', minPoints: 5000, benefits: [] }, { name: 'Platinum', minPoints: 20000, benefits: [] }] as any[]
+  tiers: [
+    { name: 'Bronze', minPoints: 0, benefits: [] },
+    { name: 'Silver', minPoints: 1000, benefits: [] },
+    { name: 'Gold', minPoints: 5000, benefits: [] },
+    { name: 'Platinum', minPoints: 20000, benefits: [] }
+  ] as any[]
 });
 
 const defaultPointsForm = () => ({
@@ -567,7 +575,7 @@ const kpiStats = computed(() => {
   return [
     { label: t('loyalty.totalMembers'), value: (db.totalMembers || 0).toLocaleString(), icon: 'ph:users-bold', color: '#7849ff' },
     { label: t('loyalty.pointsIssued'), value: (db.totalPointsIssued || 0).toLocaleString(), icon: 'ph:trend-up-bold', color: '#3b82f6' },
-    { label: t('loyalty.pointsRedeemed'), value: (Math.abs(db.totalPointsRedeemed || 0)).toLocaleString(), icon: 'ph:gift-bold', color: '#f59e0b' },
+    { label: t('loyalty.pointsRedeemed'), value: Math.abs(db.totalPointsRedeemed || 0).toLocaleString(), icon: 'ph:gift-bold', color: '#f59e0b' },
     { label: t('loyalty.avgBalance'), value: (db.averageBalance || 0).toLocaleString(), icon: 'ph:coins-bold', color: '#22c55e' }
   ];
 });
@@ -607,9 +615,8 @@ const filteredPrograms = computed(() => {
 const filteredPoints = computed(() => {
   if (!pointsSearch.value) return points.value;
   const q = pointsSearch.value.toLowerCase();
-  return points.value.filter((p: any) =>
-    (p.client?.name || p.clientId || '').toLowerCase().includes(q) ||
-    (p.description || '').toLowerCase().includes(q)
+  return points.value.filter(
+    (p: any) => (p.client?.name || p.clientId || '').toLowerCase().includes(q) || (p.description || '').toLowerCase().includes(q)
   );
 });
 
@@ -736,7 +743,7 @@ async function buildMembersList() {
       });
     }
     const m = memberMap.get(cId)!;
-    if (tx.transactionType === 'EARN') m.totalEarned += (tx.points || 0);
+    if (tx.transactionType === 'EARN') m.totalEarned += tx.points || 0;
     if (tx.transactionType === 'REDEEM') m.totalRedeemed += Math.abs(tx.points || 0);
     if (tx.transactionType === 'EXPIRE') m.totalRedeemed += Math.abs(tx.points || 0);
 
@@ -816,11 +823,7 @@ async function handleSaveProgram() {
 
 async function handleDeleteProgram(program: any) {
   try {
-    await ElMessageBox.confirm(
-      t('common.confirmDelete'),
-      t('common.warning'),
-      { type: 'warning' }
-    );
+    await ElMessageBox.confirm(t('common.confirmDelete'), t('common.warning'), { type: 'warning' });
     await useApiFetch(`loyalty/programs/${program.id}`, 'DELETE');
     ElMessage.success(t('common.deleted'));
     await fetchPrograms();
@@ -955,11 +958,11 @@ async function bulkChangeTier() {
   if (!selectedMembers.value.length) return;
   try {
     const tiers = ['BRONZE', 'SILVER', 'GOLD', 'PLATINUM'];
-    const { value: newTier } = await ElMessageBox.prompt(
+    const { value: newTier } = (await ElMessageBox.prompt(
       `Change tier for ${selectedMembers.value.length} member(s). Enter: BRONZE, SILVER, GOLD, or PLATINUM`,
       t('common.changeStatus'),
       { inputPattern: /^(BRONZE|SILVER|GOLD|PLATINUM)$/i, inputErrorMessage: 'Must be BRONZE, SILVER, GOLD, or PLATINUM' }
-    ) as any;
+    )) as any;
     if (!newTier) return;
     // Tier changes are reflected through points adjustments - recalculate
     ElMessage.success(t('common.saved'));
@@ -973,16 +976,19 @@ function exportMembersCSV() {
   const data = filteredMembers.value;
   if (!data.length) return;
   const headers = ['Client Name', 'Client ID', 'Tier', 'Points Balance', 'Lifetime Points', 'Join Date'];
-  const csv = [headers.join(','), ...data.map((row: any) =>
-    [
-      `"${row.clientName || row.clientId || ''}"`,
-      `"${row.clientId || ''}"`,
-      `"${row.tier || ''}"`,
-      row.balance || 0,
-      row.totalEarned || 0,
-      `"${formatDate(row.firstTransaction)}"`
-    ].join(',')
-  )].join('\n');
+  const csv = [
+    headers.join(','),
+    ...data.map((row: any) =>
+      [
+        `"${row.clientName || row.clientId || ''}"`,
+        `"${row.clientId || ''}"`,
+        `"${row.tier || ''}"`,
+        row.balance || 0,
+        row.totalEarned || 0,
+        `"${formatDate(row.firstTransaction)}"`
+      ].join(',')
+    )
+  ].join('\n');
   const blob = new Blob([csv], { type: 'text/csv' });
   const url = URL.createObjectURL(blob);
   const a = document.createElement('a');

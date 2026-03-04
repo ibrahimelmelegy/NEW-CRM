@@ -137,7 +137,9 @@ async function removeWebhook(id: string) {
     await deleteWebhook(id);
     await loadWebhooks();
     ElNotification({ type: 'success', title: t('common.success'), message: t('common.deleted') });
-  } catch (e: any) { ElMessage.error(t('common.error')); }
+  } catch (e: any) {
+    ElMessage.error(t('common.error'));
+  }
 }
 
 async function testWebhookHandler(id: string) {

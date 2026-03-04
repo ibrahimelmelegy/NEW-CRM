@@ -77,27 +77,21 @@ function mapDispositionToBackend(disposition: string): string {
 }
 
 export function useCallLog() {
-  const sorted = computed(() =>
-    [...calls.value].sort(
-      (a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()
-    )
-  );
+  const sorted = computed(() => [...calls.value].sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()));
 
   const stats = computed(() => ({
     total: calls.value.length,
     totalDuration: calls.value.reduce((s, c) => s + c.duration, 0),
-    answered: calls.value.filter((c) => c.outcome === 'answered').length,
-    missed: calls.value.filter((c) => c.outcome === 'no_answer').length,
-    inbound: calls.value.filter((c) => c.direction === 'inbound').length,
-    outbound: calls.value.filter((c) => c.direction === 'outbound').length
+    answered: calls.value.filter(c => c.outcome === 'answered').length,
+    missed: calls.value.filter(c => c.outcome === 'no_answer').length,
+    inbound: calls.value.filter(c => c.direction === 'inbound').length,
+    outbound: calls.value.filter(c => c.direction === 'outbound').length
   }));
 
   async function fetchCalls(page = 1) {
     loading.value = true;
     try {
-      const { body, success } = await useApiFetch(
-        `communications/call-logs?page=${page}&limit=100`
-      );
+      const { body, success } = await useApiFetch(`communications/call-logs?page=${page}&limit=100`);
       if (success && body) {
         const data = body as any;
         calls.value = (data.docs || []).map((a: any) => ({
@@ -121,12 +115,8 @@ export function useCallLog() {
 
   async function fetchAnalytics(dateRange?: { start: string; end: string }) {
     try {
-      const queryParams = dateRange
-        ? `?start=${dateRange.start}&end=${dateRange.end}`
-        : '';
-      const { body, success } = await useApiFetch(
-        `communications/call-analytics${queryParams}`
-      );
+      const queryParams = dateRange ? `?start=${dateRange.start}&end=${dateRange.end}` : '';
+      const { body, success } = await useApiFetch(`communications/call-analytics${queryParams}`);
       if (success && body) {
         analytics.value = body as CallAnalytics;
       }
@@ -135,9 +125,7 @@ export function useCallLog() {
     }
   }
 
-  async function logCall(
-    data: Omit<CallEntry, 'id' | 'createdAt'>
-  ): Promise<boolean> {
+  async function logCall(data: Omit<CallEntry, 'id' | 'createdAt'>): Promise<boolean> {
     const payload = {
       contactId: data.contactName,
       contactType: 'CLIENT',
@@ -160,12 +148,9 @@ export function useCallLog() {
   }
 
   async function removeCall(id: number) {
-    const { success } = await useApiFetch(
-      `communications/activities/${id}`,
-      'DELETE'
-    );
+    const { success } = await useApiFetch(`communications/activities/${id}`, 'DELETE');
     if (success) {
-      calls.value = calls.value.filter((c) => c.id !== id);
+      calls.value = calls.value.filter(c => c.id !== id);
     }
   }
 

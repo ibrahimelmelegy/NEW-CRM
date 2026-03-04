@@ -661,6 +661,7 @@
 <script setup lang="ts">
 import { ref, reactive, computed, onMounted, onUnmounted, watch, nextTick, markRaw, h, shallowRef } from 'vue';
 import { ElMessage, ElMessageBox } from 'element-plus';
+import * as echarts from 'echarts/core';
 import { useSafeBack } from '~/composables/useSafeBack';
 import {
   fetchCampaigns,
@@ -674,7 +675,6 @@ import {
   type Campaign,
   type EmailTemplate
 } from '~/composables/useCampaigns';
-import * as echarts from 'echarts';
 
 definePageMeta({ middleware: 'permissions' });
 
@@ -685,16 +685,24 @@ const router = useRouter();
 
 // ── Step Icons (rendered as raw functional components) ──
 const StepAudienceIcon = markRaw({
-  render() { return h('span', { class: 'flex items-center justify-center' }, [h(resolveComponent('Icon'), { name: 'ph:users-three-bold', size: '18' })]); }
+  render() {
+    return h('span', { class: 'flex items-center justify-center' }, [h(resolveComponent('Icon'), { name: 'ph:users-three-bold', size: '18' })]);
+  }
 });
 const StepContentIcon = markRaw({
-  render() { return h('span', { class: 'flex items-center justify-center' }, [h(resolveComponent('Icon'), { name: 'ph:article-bold', size: '18' })]); }
+  render() {
+    return h('span', { class: 'flex items-center justify-center' }, [h(resolveComponent('Icon'), { name: 'ph:article-bold', size: '18' })]);
+  }
 });
 const StepSettingsIcon = markRaw({
-  render() { return h('span', { class: 'flex items-center justify-center' }, [h(resolveComponent('Icon'), { name: 'ph:gear-bold', size: '18' })]); }
+  render() {
+    return h('span', { class: 'flex items-center justify-center' }, [h(resolveComponent('Icon'), { name: 'ph:gear-bold', size: '18' })]);
+  }
 });
 const StepReviewIcon = markRaw({
-  render() { return h('span', { class: 'flex items-center justify-center' }, [h(resolveComponent('Icon'), { name: 'ph:check-circle-bold', size: '18' })]); }
+  render() {
+    return h('span', { class: 'flex items-center justify-center' }, [h(resolveComponent('Icon'), { name: 'ph:check-circle-bold', size: '18' })]);
+  }
 });
 
 // ── State ──
@@ -745,9 +753,19 @@ const segments = ref([
 ]);
 
 const availableTags = ref([
-  'VIP', 'Prospect', 'Warm Lead', 'Hot Lead', 'Decision Maker',
-  'Influencer', 'Enterprise', 'SMB', 'Startup', 'Partner',
-  'Churned', 'Re-engaged', 'Demo Requested'
+  'VIP',
+  'Prospect',
+  'Warm Lead',
+  'Hot Lead',
+  'Decision Maker',
+  'Influencer',
+  'Enterprise',
+  'SMB',
+  'Startup',
+  'Partner',
+  'Churned',
+  'Re-engaged',
+  'Demo Requested'
 ]);
 
 const estimatedReach = computed(() => {
@@ -797,7 +815,7 @@ const ctaButton = reactive({
 
 const ctaButtonPreviewStyle = computed(() => {
   const base: Record<string, string> = {
-    color: ctaButton.style === 'outlined' ? (ctaButton.color || '#7849ff') : '#ffffff',
+    color: ctaButton.style === 'outlined' ? ctaButton.color || '#7849ff' : '#ffffff',
     'text-decoration': 'none',
     'letter-spacing': '0.5px',
     transition: 'all 0.2s ease'
@@ -856,10 +874,23 @@ const sendSettings = reactive({
 });
 
 const timezones = [
-  'UTC', 'America/New_York', 'America/Chicago', 'America/Denver', 'America/Los_Angeles',
-  'Europe/London', 'Europe/Paris', 'Europe/Berlin', 'Asia/Tokyo', 'Asia/Shanghai',
-  'Asia/Kolkata', 'Asia/Dubai', 'Asia/Riyadh', 'Australia/Sydney', 'Pacific/Auckland',
-  'Africa/Cairo', 'America/Sao_Paulo'
+  'UTC',
+  'America/New_York',
+  'America/Chicago',
+  'America/Denver',
+  'America/Los_Angeles',
+  'Europe/London',
+  'Europe/Paris',
+  'Europe/Berlin',
+  'Asia/Tokyo',
+  'Asia/Shanghai',
+  'Asia/Kolkata',
+  'Asia/Dubai',
+  'Asia/Riyadh',
+  'Australia/Sydney',
+  'Pacific/Auckland',
+  'Africa/Cairo',
+  'America/Sao_Paulo'
 ];
 
 // ── Sample Contact for Preview ──
@@ -878,12 +909,48 @@ const analyticStats = computed(() => {
   if (!analyticsData.value) return [];
   const d = analyticsData.value;
   return [
-    { label: t('campaignBuilder.sent'), value: d.totalSent?.toLocaleString() || '0', icon: 'ph:paper-plane-tilt-bold', color: '#3b82f6', bgColor: 'rgba(59,130,246,0.12)' },
-    { label: t('campaignBuilder.delivered'), value: d.delivered?.toLocaleString() || '0', icon: 'ph:check-circle-bold', color: '#22c55e', bgColor: 'rgba(34,197,94,0.12)' },
-    { label: t('campaignBuilder.opened'), value: d.opened?.toLocaleString() || '0', icon: 'ph:envelope-open-bold', color: '#8b5cf6', bgColor: 'rgba(139,92,246,0.12)' },
-    { label: t('campaignBuilder.clicked'), value: d.clicked?.toLocaleString() || '0', icon: 'ph:cursor-click-bold', color: '#f59e0b', bgColor: 'rgba(245,158,11,0.12)' },
-    { label: t('campaignBuilder.bounced'), value: d.bounced?.toLocaleString() || '0', icon: 'ph:arrow-u-up-left-bold', color: '#ef4444', bgColor: 'rgba(239,68,68,0.12)' },
-    { label: t('campaignBuilder.unsubscribed'), value: d.unsubscribed?.toLocaleString() || '0', icon: 'ph:user-minus-bold', color: '#64748b', bgColor: 'rgba(100,116,139,0.12)' }
+    {
+      label: t('campaignBuilder.sent'),
+      value: d.totalSent?.toLocaleString() || '0',
+      icon: 'ph:paper-plane-tilt-bold',
+      color: '#3b82f6',
+      bgColor: 'rgba(59,130,246,0.12)'
+    },
+    {
+      label: t('campaignBuilder.delivered'),
+      value: d.delivered?.toLocaleString() || '0',
+      icon: 'ph:check-circle-bold',
+      color: '#22c55e',
+      bgColor: 'rgba(34,197,94,0.12)'
+    },
+    {
+      label: t('campaignBuilder.opened'),
+      value: d.opened?.toLocaleString() || '0',
+      icon: 'ph:envelope-open-bold',
+      color: '#8b5cf6',
+      bgColor: 'rgba(139,92,246,0.12)'
+    },
+    {
+      label: t('campaignBuilder.clicked'),
+      value: d.clicked?.toLocaleString() || '0',
+      icon: 'ph:cursor-click-bold',
+      color: '#f59e0b',
+      bgColor: 'rgba(245,158,11,0.12)'
+    },
+    {
+      label: t('campaignBuilder.bounced'),
+      value: d.bounced?.toLocaleString() || '0',
+      icon: 'ph:arrow-u-up-left-bold',
+      color: '#ef4444',
+      bgColor: 'rgba(239,68,68,0.12)'
+    },
+    {
+      label: t('campaignBuilder.unsubscribed'),
+      value: d.unsubscribed?.toLocaleString() || '0',
+      icon: 'ph:user-minus-bold',
+      color: '#64748b',
+      bgColor: 'rgba(100,116,139,0.12)'
+    }
   ];
 });
 
@@ -928,18 +995,20 @@ function insertLink() {
 }
 
 function insertImagePlaceholder() {
-  document.execCommand('insertHTML', false, '<div style="padding: 20px; margin: 10px 0; border: 2px dashed #ccc; text-align: center; color: #999; border-radius: 8px;">[Image Placeholder]</div>');
+  document.execCommand(
+    'insertHTML',
+    false,
+    '<div style="padding: 20px; margin: 10px 0; border: 2px dashed #ccc; text-align: center; color: #999; border-radius: 8px;">[Image Placeholder]</div>'
+  );
   editorRef.value?.focus();
 }
 
 function insertToken(target: 'subject' | 'body', token: string) {
   if (target === 'subject') {
     campaign.subject += ` ${token}`;
-  } else {
-    if (editorRef.value) {
-      editorRef.value.focus();
-      document.execCommand('insertText', false, token);
-    }
+  } else if (editorRef.value) {
+    editorRef.value.focus();
+    document.execCommand('insertText', false, token);
   }
 }
 
@@ -958,7 +1027,7 @@ function onEditorPaste(event: ClipboardEvent) {
 // ── CSV Upload ──
 function handleCsvUpload(file: any) {
   const reader = new FileReader();
-  reader.onload = (e) => {
+  reader.onload = e => {
     const text = e.target?.result as string;
     if (!text) return;
     const lines = text.split('\n').filter(l => l.trim());
@@ -1033,11 +1102,11 @@ async function saveDraft() {
 
 async function confirmSendNow() {
   try {
-    await ElMessageBox.confirm(
-      t('campaignBuilder.confirmSend'),
-      t('common.warning'),
-      { type: 'warning', confirmButtonText: t('campaignBuilder.sendCampaign'), cancelButtonText: t('common.cancel') }
-    );
+    await ElMessageBox.confirm(t('campaignBuilder.confirmSend'), t('common.warning'), {
+      type: 'warning',
+      confirmButtonText: t('campaignBuilder.sendCampaign'),
+      cancelButtonText: t('common.cancel')
+    });
     sending.value = true;
     await saveDraft();
     if (campaignId.value) {
@@ -1140,21 +1209,23 @@ function initAudienceChart() {
   audienceChart = echarts.init(audienceChartRef.value);
   const option: echarts.EChartsOption = {
     tooltip: { trigger: 'item', formatter: '{b}: {c} ({d}%)' },
-    series: [{
-      type: 'pie',
-      radius: ['40%', '70%'],
-      avoidLabelOverlap: false,
-      itemStyle: { borderRadius: 8, borderColor: 'transparent', borderWidth: 2 },
-      label: { show: false },
-      emphasis: {
-        label: { show: true, fontSize: 14, fontWeight: 'bold' }
-      },
-      data: audienceBreakdownData.value.map((item, idx) => ({
-        name: item.name,
-        value: item.value,
-        itemStyle: { color: breakdownColors[idx % breakdownColors.length] }
-      }))
-    }]
+    series: [
+      {
+        type: 'pie',
+        radius: ['40%', '70%'],
+        avoidLabelOverlap: false,
+        itemStyle: { borderRadius: 8, borderColor: 'transparent', borderWidth: 2 },
+        label: { show: false },
+        emphasis: {
+          label: { show: true, fontSize: 14, fontWeight: 'bold' }
+        },
+        data: audienceBreakdownData.value.map((item, idx) => ({
+          name: item.name,
+          value: item.value,
+          itemStyle: { color: breakdownColors[idx % breakdownColors.length] }
+        }))
+      }
+    ]
   };
   audienceChart.setOption(option);
 }
@@ -1195,10 +1266,12 @@ function initTimelineChart() {
         data: openData,
         lineStyle: { color: '#8b5cf6', width: 2 },
         itemStyle: { color: '#8b5cf6' },
-        areaStyle: { color: new echarts.graphic.LinearGradient(0, 0, 0, 1, [
-          { offset: 0, color: 'rgba(139, 92, 246, 0.3)' },
-          { offset: 1, color: 'rgba(139, 92, 246, 0.02)' }
-        ])}
+        areaStyle: {
+          color: new echarts.graphic.LinearGradient(0, 0, 0, 1, [
+            { offset: 0, color: 'rgba(139, 92, 246, 0.3)' },
+            { offset: 1, color: 'rgba(139, 92, 246, 0.02)' }
+          ])
+        }
       },
       {
         name: t('campaignBuilder.clicked'),
@@ -1207,10 +1280,12 @@ function initTimelineChart() {
         data: clickData,
         lineStyle: { color: '#22c55e', width: 2 },
         itemStyle: { color: '#22c55e' },
-        areaStyle: { color: new echarts.graphic.LinearGradient(0, 0, 0, 1, [
-          { offset: 0, color: 'rgba(34, 197, 94, 0.3)' },
-          { offset: 1, color: 'rgba(34, 197, 94, 0.02)' }
-        ])}
+        areaStyle: {
+          color: new echarts.graphic.LinearGradient(0, 0, 0, 1, [
+            { offset: 0, color: 'rgba(34, 197, 94, 0.3)' },
+            { offset: 1, color: 'rgba(34, 197, 94, 0.02)' }
+          ])
+        }
       }
     ]
   };
@@ -1271,26 +1346,32 @@ onUnmounted(() => {
 });
 
 // Watch step changes to init charts
-watch(currentStep, async (step) => {
+watch(currentStep, async step => {
   await nextTick();
   if (step === 0) initAudienceChart();
   if (step === 3 && analyticsData.value) initTimelineChart();
 });
 
 // Update audience chart when breakdown data changes
-watch(audienceBreakdownData, () => {
-  if (currentStep.value === 0 && audienceChart) {
-    audienceChart.setOption({
-      series: [{
-        data: audienceBreakdownData.value.map((item, idx) => ({
-          name: item.name,
-          value: item.value,
-          itemStyle: { color: breakdownColors[idx % breakdownColors.length] }
-        }))
-      }]
-    });
-  }
-}, { deep: true });
+watch(
+  audienceBreakdownData,
+  () => {
+    if (currentStep.value === 0 && audienceChart) {
+      audienceChart.setOption({
+        series: [
+          {
+            data: audienceBreakdownData.value.map((item, idx) => ({
+              name: item.name,
+              value: item.value,
+              itemStyle: { color: breakdownColors[idx % breakdownColors.length] }
+            }))
+          }
+        ]
+      });
+    }
+  },
+  { deep: true }
+);
 </script>
 
 <style lang="scss" scoped>
@@ -1350,7 +1431,9 @@ watch(audienceBreakdownData, () => {
   }
 
   // Rich text styles
-  :deep(h1), :deep(h2), :deep(h3) {
+  :deep(h1),
+  :deep(h2),
+  :deep(h3) {
     color: var(--text-primary);
     margin-bottom: 8px;
   }
@@ -1360,7 +1443,8 @@ watch(audienceBreakdownData, () => {
     text-decoration: underline;
   }
 
-  :deep(ul), :deep(ol) {
+  :deep(ul),
+  :deep(ol) {
     padding-inline-start: 24px;
     margin-bottom: 12px;
   }

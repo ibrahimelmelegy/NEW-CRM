@@ -144,7 +144,7 @@ const mobileSearch = ref('');
 const mobileRefreshing = ref(false);
 
 const mobileFilteredData = computed(() => {
-  let data = table.data || [];
+  const data = table.data || [];
   if (!mobileSearch.value) return data;
   const q = mobileSearch.value.toLowerCase();
   return data.filter((s: any) => {
@@ -159,13 +159,17 @@ async function handleMobileRefresh() {
     const res = await useTableFilter('service');
     table.data = res.formattedData;
     vibrate([10, 30, 10]);
-  } finally { mobileRefreshing.value = false; }
+  } finally {
+    mobileRefreshing.value = false;
+  }
 }
 
 function getSwipeLeftActions(_svc: any) {
   const actions = [{ name: 'view', label: useI18n().t('common.view'), icon: 'ph:eye-bold', color: '#f59e0b' }];
-  if (hasPermission('EDIT_SERVICES')) actions.push({ name: 'edit', label: useI18n().t('common.edit'), icon: 'ph:pencil-simple-bold', color: '#F59E0B' });
-  if (hasPermission('DELETE_SERVICES')) actions.push({ name: 'delete', label: useI18n().t('common.delete'), icon: 'ph:trash-bold', color: '#ef4444' });
+  if (hasPermission('EDIT_SERVICES'))
+    actions.push({ name: 'edit', label: useI18n().t('common.edit'), icon: 'ph:pencil-simple-bold', color: '#F59E0B' });
+  if (hasPermission('DELETE_SERVICES'))
+    actions.push({ name: 'delete', label: useI18n().t('common.delete'), icon: 'ph:trash-bold', color: '#ef4444' });
   return actions;
 }
 
@@ -173,7 +177,10 @@ function handleSwipeAction(name: string, svc: any) {
   vibrate();
   if (name === 'view') navigateTo(`/operations/services/${svc.id}`);
   if (name === 'edit') navigateTo(`/operations/services/edit/${svc.id}`);
-  if (name === 'delete') { deleteId.value = svc.id; deleteLeadPopup.value = true; }
+  if (name === 'delete') {
+    deleteId.value = svc.id;
+    deleteLeadPopup.value = true;
+  }
 }
 </script>
 

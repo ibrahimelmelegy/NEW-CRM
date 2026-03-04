@@ -38,7 +38,7 @@ const props = defineProps({
   },
   labelStyle: {
     type: Object,
-    default: {}
+    default: () => ({})
   },
   disabled: {
     type: Boolean,

@@ -38,7 +38,7 @@ const props = defineProps({
   },
   disabledDate: {
     type: String,
-    default: false,
+    default: '',
     required: false
   },
   innerClass: {

@@ -20,75 +20,70 @@
     </div>
 
     <!-- Editor -->
-    <ProposalsProposalBuilder
-      v-else-if="initialData"
-      :initial-data="initialData"
-      @save="handleSave"
-      @cancel="handleCancel"
-    />
+    <ProposalsProposalBuilder v-else-if="initialData" :initial-data="initialData" @save="handleSave" @cancel="handleCancel" />
   </div>
 </template>
 
 <script setup lang="ts">
-import { ref, onMounted } from 'vue'
-import { Loading } from '@element-plus/icons-vue'
+import { ref, onMounted } from 'vue';
+import { Loading } from '@element-plus/icons-vue';
 
-const { t } = useI18n()
-const route = useRoute()
+const { t } = useI18n();
+const route = useRoute();
 
 definePageMeta({
   layout: 'default',
   middleware: ['permissions'],
   permission: 'CREATE_PROPOSALS'
-})
+});
 
-const id = computed(() => route.params.slug as string)
-const loading = ref(true)
-const errorMessage = ref('')
-const initialData = ref<any>(null)
+const id = computed(() => route.params.slug as string);
+const loading = ref(true);
+const errorMessage = ref('');
+const initialData = ref<any>(null);
 
 async function fetchProposal() {
-  loading.value = true
-  errorMessage.value = ''
+  loading.value = true;
+  errorMessage.value = '';
   try {
-    const response = await useApiFetch(`proposal/${id.value}`)
+    const response = await useApiFetch(`proposal/${id.value}`);
     if (response?.success && response.body) {
-      initialData.value = transformApiToFormData(response.body)
+      initialData.value = transformApiToFormData(response.body);
     } else if (response?.body) {
       // Some API patterns return body directly
-      initialData.value = transformApiToFormData(response.body)
+      initialData.value = transformApiToFormData(response.body);
     } else {
-      errorMessage.value = response?.message || 'Proposal not found'
+      errorMessage.value = response?.message || 'Proposal not found';
     }
   } catch (error: any) {
-    console.error('Failed to load proposal:', error)
-    errorMessage.value = error?.message || 'Error loading proposal'
+    console.error('Failed to load proposal:', error);
+    errorMessage.value = error?.message || 'Error loading proposal';
   } finally {
-    loading.value = false
+    loading.value = false;
   }
 }
 
 const handleSave = async (data: any) => {
   try {
-    const payload = transformToApiPayload(data)
-    const response = await useApiFetch(`proposal/${id.value}`, 'PUT', payload)
+    const payload = transformToApiPayload(data);
+    const response = await useApiFetch(`proposal/${id.value}`, 'PUT', payload);
     if (response?.success) {
-      ElNotification({ type: 'success', title: t('common.success'), message: t('proposals.updateSuccess') })
-      navigateTo('/sales/proposals')
+      ElNotification({ type: 'success', title: t('common.success'), message: t('proposals.updateSuccess') });
+      navigateTo('/sales/proposals');
     } else {
-      ElNotification({ type: 'error', title: t('common.error'), message: response?.message || 'Failed to update proposal' })
+      ElNotification({ type: 'error', title: t('common.error'), message: response?.message || 'Failed to update proposal' });
     }
   } catch (error: any) {
-    console.error('Failed to update proposal:', error)
-    ElNotification({ type: 'error', title: t('common.error'), message: error?.message || 'Failed to update proposal' })
+    console.error('Failed to update proposal:', error);
+    ElNotification({ type: 'error', title: t('common.error'), message: error?.message || 'Failed to update proposal' });
   }
-}
+};
 
-const handleCancel = () => navigateTo('/sales/proposals')
+const handleCancel = () => navigateTo('/sales/proposals');
 
 // Transform API data to form data for ProposalBuilder
 function transformApiToFormData(apiData: any) {
-  const content = apiData.content ? (typeof apiData.content === 'string' ? JSON.parse(apiData.content) : apiData.content) : {}
+  const content = apiData.content ? (typeof apiData.content === 'string' ? JSON.parse(apiData.content) : apiData.content) : {};
 
   return {
     id: apiData.id,
@@ -122,12 +117,10 @@ function transformApiToFormData(apiData: any) {
     status: apiData.status || 'DRAFT',
     version: apiData.version || 1,
     type: apiData.type || 'MIXED',
-    selectedEntity: apiData.relatedEntityType
-      ? { type: apiData.relatedEntityType, id: apiData.relatedEntityId }
-      : undefined,
+    selectedEntity: apiData.relatedEntityType ? { type: apiData.relatedEntityType, id: apiData.relatedEntityId } : undefined,
     attachments: apiData.fileAttachments?.map((url: string) => ({ url })) || [],
-    validUntil: '',
-  }
+    validUntil: ''
+  };
 }
 
 // Transform form data to API payload
@@ -148,12 +141,12 @@ function transformToApiPayload(data: any) {
         clientLogo: data.clientLogo,
         themeColor: data.themeColor,
         coverStyle: data.coverStyle,
-        font: data.font,
+        font: data.font
       },
       client: {
         name: data.clientName,
         company: data.clientCompany,
-        email: data.clientEmail,
+        email: data.clientEmail
       },
       sections: {
         introduction: data.introduction,
@@ -162,7 +155,7 @@ function transformToApiPayload(data: any) {
         methodology: data.methodology,
         customSections: data.customSections,
         stepLabels: data.stepLabels,
-        stepOrder: data.stepOrder,
+        stepOrder: data.stepOrder
       },
       finance: {
         items: data.items,
@@ -170,18 +163,18 @@ function transformToApiPayload(data: any) {
         discountType: data.discountType,
         taxRate: data.taxRate,
         currency: data.currency,
-        paymentTerms: data.paymentTerms,
+        paymentTerms: data.paymentTerms
       },
       timeline: data.phases,
-      terms: data.termsAndConditions,
+      terms: data.termsAndConditions
     }),
     relatedEntityType: data.selectedEntity?.type,
     relatedEntityId: data.selectedEntity?.id,
-    fileAttachments: data.attachments?.map((f: any) => f.url) || [],
-  }
+    fileAttachments: data.attachments?.map((f: any) => f.url) || []
+  };
 }
 
 onMounted(() => {
-  fetchProposal()
-})
+  fetchProposal();
+});
 </script>

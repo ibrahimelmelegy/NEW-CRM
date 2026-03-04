@@ -108,6 +108,7 @@ el-tabs.demo-tabs(v-model="activeName", @tab-click="handleClick")
     RecordAttachments(:entityType="'client'" :entityId="route.params.slug as string")
 </template>
 <script lang="ts" setup>
+/* eslint-disable require-await */
 import { useI18n } from 'vue-i18n';
 import { ElMessage } from 'element-plus';
 const { hasPermission } = await usePermissions();
@@ -141,7 +142,7 @@ const getActivityPage = async (page: number) => {
 async function downloadFile(pdfUrl: string, filename: string) {
   fetch(pdfUrl)
     // check to make sure you didn't have an unexpected failure (may need to check other things here depending on use case / backend)
-    .then(resp => (resp.status === 200 ? resp.blob() : Promise.reject('something went wrong')))
+    .then(resp => (resp.status === 200 ? resp.blob() : Promise.reject(new Error('something went wrong'))))
     .then(blob => {
       const url = window.URL.createObjectURL(blob);
       const a = document.createElement('a');

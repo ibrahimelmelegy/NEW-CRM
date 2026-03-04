@@ -166,7 +166,9 @@ async function handleConfirm(set: DuplicateSet) {
     await confirmDuplicate(set.id);
     await handleStatusChange(activeStatus.value);
     ElNotification({ type: 'success', title: t('common.success'), message: t('common.saved') });
-  } catch (e: any) { ElMessage.error(t('common.error')); }
+  } catch (e: any) {
+    ElMessage.error(t('common.error'));
+  }
 }
 
 async function handleDismiss(set: DuplicateSet) {
@@ -221,7 +223,8 @@ async function handleMerge() {
     mergeDialogVisible.value = false;
     await handleStatusChange(activeStatus.value);
     ElNotification({ type: 'success', title: t('common.success'), message: t('common.saved') });
-  } catch (e: any) { ElMessage.error(t('common.error'));
+  } catch (e: any) {
+    ElMessage.error(t('common.error'));
   } finally {
     merging.value = false;
   }

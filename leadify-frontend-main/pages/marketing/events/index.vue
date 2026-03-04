@@ -364,6 +364,7 @@ div
 </template>
 
 <script setup lang="ts">
+/* eslint-disable require-await */
 import { ref, reactive, computed, onMounted } from 'vue';
 import { ElMessage, ElMessageBox } from 'element-plus';
 import VChart from 'vue-echarts';
@@ -441,40 +442,312 @@ const availableTags = computed(() => [
 
 // ─── Demo Data ────────────────────────────────────────────
 const events = ref<EventItem[]>([
-  { id: 1, name: 'Q1 Product Webinar', type: 'webinar', date: '2026-03-15T10:00:00', endDate: '2026-03-15T11:30:00', location: 'virtual', venue: '', meetingLink: 'https://meet.example.com/q1-webinar', capacity: 500, registered: 387, status: 'upcoming', description: 'Quarterly product updates and roadmap review', tags: ['Product', 'Marketing'], leadsGenerated: 142, opportunities: 28, revenue: 85000, cost: 2500 },
-  { id: 2, name: 'Annual Sales Conference 2026', type: 'conference', date: '2026-04-20T09:00:00', endDate: '2026-04-22T17:00:00', location: 'physical', venue: 'Grand Hyatt, Dubai', meetingLink: '', capacity: 300, registered: 256, status: 'upcoming', description: 'Three-day sales conference with keynotes and workshops', tags: ['Sales', 'Leadership'], leadsGenerated: 0, opportunities: 0, revenue: 0, cost: 45000 },
-  { id: 3, name: 'CRM Mastery Workshop', type: 'workshop', date: '2026-02-10T14:00:00', endDate: '2026-02-10T17:00:00', location: 'virtual', venue: '', meetingLink: 'https://meet.example.com/crm-workshop', capacity: 80, registered: 73, status: 'completed', description: 'Hands-on workshop for advanced CRM techniques', tags: ['Training', 'Sales'], leadsGenerated: 56, opportunities: 12, revenue: 34000, cost: 1200 },
-  { id: 4, name: 'Tech Meetup: AI in Sales', type: 'meetup', date: '2026-02-25T18:00:00', endDate: '2026-02-25T20:00:00', location: 'physical', venue: 'Innovation Hub, Riyadh', meetingLink: '', capacity: 60, registered: 58, status: 'completed', description: 'Community meetup exploring AI applications in sales', tags: ['Engineering', 'Sales'], leadsGenerated: 34, opportunities: 8, revenue: 22000, cost: 3000 },
-  { id: 5, name: 'Customer Success Webinar', type: 'webinar', date: '2026-02-28T11:00:00', endDate: '2026-02-28T12:00:00', location: 'virtual', venue: '', meetingLink: 'https://meet.example.com/cs-webinar', capacity: 200, registered: 163, status: 'live', description: 'Best practices for customer success and retention', tags: ['Marketing'], leadsGenerated: 89, opportunities: 15, revenue: 41000, cost: 800 },
-  { id: 6, name: 'Product Launch: CRM 3.0', type: 'webinar', date: '2026-01-18T10:00:00', endDate: '2026-01-18T11:00:00', location: 'virtual', venue: '', meetingLink: '', capacity: 1000, registered: 842, status: 'completed', description: 'Major product launch event for CRM version 3.0', tags: ['Product', 'Marketing'], leadsGenerated: 310, opportunities: 67, revenue: 195000, cost: 8000 },
-  { id: 7, name: 'Leadership Summit', type: 'conference', date: '2026-05-10T09:00:00', endDate: '2026-05-11T17:00:00', location: 'physical', venue: 'Ritz-Carlton, Jeddah', meetingLink: '', capacity: 150, registered: 42, status: 'upcoming', description: 'Executive leadership summit on digital transformation', tags: ['Leadership'], leadsGenerated: 0, opportunities: 0, revenue: 0, cost: 35000 },
-  { id: 8, name: 'Pipeline Management Workshop', type: 'workshop', date: '2025-12-05T14:00:00', endDate: '2025-12-05T16:00:00', location: 'virtual', venue: '', meetingLink: '', capacity: 100, registered: 91, status: 'completed', description: 'Training workshop for effective pipeline management', tags: ['Sales', 'Training'], leadsGenerated: 45, opportunities: 10, revenue: 28000, cost: 900 }
+  {
+    id: 1,
+    name: 'Q1 Product Webinar',
+    type: 'webinar',
+    date: '2026-03-15T10:00:00',
+    endDate: '2026-03-15T11:30:00',
+    location: 'virtual',
+    venue: '',
+    meetingLink: 'https://meet.example.com/q1-webinar',
+    capacity: 500,
+    registered: 387,
+    status: 'upcoming',
+    description: 'Quarterly product updates and roadmap review',
+    tags: ['Product', 'Marketing'],
+    leadsGenerated: 142,
+    opportunities: 28,
+    revenue: 85000,
+    cost: 2500
+  },
+  {
+    id: 2,
+    name: 'Annual Sales Conference 2026',
+    type: 'conference',
+    date: '2026-04-20T09:00:00',
+    endDate: '2026-04-22T17:00:00',
+    location: 'physical',
+    venue: 'Grand Hyatt, Dubai',
+    meetingLink: '',
+    capacity: 300,
+    registered: 256,
+    status: 'upcoming',
+    description: 'Three-day sales conference with keynotes and workshops',
+    tags: ['Sales', 'Leadership'],
+    leadsGenerated: 0,
+    opportunities: 0,
+    revenue: 0,
+    cost: 45000
+  },
+  {
+    id: 3,
+    name: 'CRM Mastery Workshop',
+    type: 'workshop',
+    date: '2026-02-10T14:00:00',
+    endDate: '2026-02-10T17:00:00',
+    location: 'virtual',
+    venue: '',
+    meetingLink: 'https://meet.example.com/crm-workshop',
+    capacity: 80,
+    registered: 73,
+    status: 'completed',
+    description: 'Hands-on workshop for advanced CRM techniques',
+    tags: ['Training', 'Sales'],
+    leadsGenerated: 56,
+    opportunities: 12,
+    revenue: 34000,
+    cost: 1200
+  },
+  {
+    id: 4,
+    name: 'Tech Meetup: AI in Sales',
+    type: 'meetup',
+    date: '2026-02-25T18:00:00',
+    endDate: '2026-02-25T20:00:00',
+    location: 'physical',
+    venue: 'Innovation Hub, Riyadh',
+    meetingLink: '',
+    capacity: 60,
+    registered: 58,
+    status: 'completed',
+    description: 'Community meetup exploring AI applications in sales',
+    tags: ['Engineering', 'Sales'],
+    leadsGenerated: 34,
+    opportunities: 8,
+    revenue: 22000,
+    cost: 3000
+  },
+  {
+    id: 5,
+    name: 'Customer Success Webinar',
+    type: 'webinar',
+    date: '2026-02-28T11:00:00',
+    endDate: '2026-02-28T12:00:00',
+    location: 'virtual',
+    venue: '',
+    meetingLink: 'https://meet.example.com/cs-webinar',
+    capacity: 200,
+    registered: 163,
+    status: 'live',
+    description: 'Best practices for customer success and retention',
+    tags: ['Marketing'],
+    leadsGenerated: 89,
+    opportunities: 15,
+    revenue: 41000,
+    cost: 800
+  },
+  {
+    id: 6,
+    name: 'Product Launch: CRM 3.0',
+    type: 'webinar',
+    date: '2026-01-18T10:00:00',
+    endDate: '2026-01-18T11:00:00',
+    location: 'virtual',
+    venue: '',
+    meetingLink: '',
+    capacity: 1000,
+    registered: 842,
+    status: 'completed',
+    description: 'Major product launch event for CRM version 3.0',
+    tags: ['Product', 'Marketing'],
+    leadsGenerated: 310,
+    opportunities: 67,
+    revenue: 195000,
+    cost: 8000
+  },
+  {
+    id: 7,
+    name: 'Leadership Summit',
+    type: 'conference',
+    date: '2026-05-10T09:00:00',
+    endDate: '2026-05-11T17:00:00',
+    location: 'physical',
+    venue: 'Ritz-Carlton, Jeddah',
+    meetingLink: '',
+    capacity: 150,
+    registered: 42,
+    status: 'upcoming',
+    description: 'Executive leadership summit on digital transformation',
+    tags: ['Leadership'],
+    leadsGenerated: 0,
+    opportunities: 0,
+    revenue: 0,
+    cost: 35000
+  },
+  {
+    id: 8,
+    name: 'Pipeline Management Workshop',
+    type: 'workshop',
+    date: '2025-12-05T14:00:00',
+    endDate: '2025-12-05T16:00:00',
+    location: 'virtual',
+    venue: '',
+    meetingLink: '',
+    capacity: 100,
+    registered: 91,
+    status: 'completed',
+    description: 'Training workshop for effective pipeline management',
+    tags: ['Sales', 'Training'],
+    leadsGenerated: 45,
+    opportunities: 10,
+    revenue: 28000,
+    cost: 900
+  }
 ]);
 
 const attendeesData = ref<Record<number, Attendee[]>>({
   1: [
-    { id: 1, name: 'Ahmed Al-Rashid', email: 'ahmed@company.com', company: 'Tech Solutions', registrationDate: '2026-02-20', attendance: 'registered', leadScore: 85 },
-    { id: 2, name: 'Sarah Johnson', email: 'sarah@enterprise.io', company: 'Enterprise Inc', registrationDate: '2026-02-18', attendance: 'registered', leadScore: 72 },
-    { id: 3, name: 'Mohammed Khalid', email: 'mkhalid@startup.sa', company: 'StartupSA', registrationDate: '2026-02-22', attendance: 'registered', leadScore: 56 },
-    { id: 4, name: 'Lisa Chen', email: 'lisa.chen@global.com', company: 'Global Corp', registrationDate: '2026-02-15', attendance: 'registered', leadScore: 91 },
-    { id: 5, name: 'Omar Farouk', email: 'omar@digital.ae', company: 'Digital AE', registrationDate: '2026-02-24', attendance: 'registered', leadScore: 63 }
+    {
+      id: 1,
+      name: 'Ahmed Al-Rashid',
+      email: 'ahmed@company.com',
+      company: 'Tech Solutions',
+      registrationDate: '2026-02-20',
+      attendance: 'registered',
+      leadScore: 85
+    },
+    {
+      id: 2,
+      name: 'Sarah Johnson',
+      email: 'sarah@enterprise.io',
+      company: 'Enterprise Inc',
+      registrationDate: '2026-02-18',
+      attendance: 'registered',
+      leadScore: 72
+    },
+    {
+      id: 3,
+      name: 'Mohammed Khalid',
+      email: 'mkhalid@startup.sa',
+      company: 'StartupSA',
+      registrationDate: '2026-02-22',
+      attendance: 'registered',
+      leadScore: 56
+    },
+    {
+      id: 4,
+      name: 'Lisa Chen',
+      email: 'lisa.chen@global.com',
+      company: 'Global Corp',
+      registrationDate: '2026-02-15',
+      attendance: 'registered',
+      leadScore: 91
+    },
+    {
+      id: 5,
+      name: 'Omar Farouk',
+      email: 'omar@digital.ae',
+      company: 'Digital AE',
+      registrationDate: '2026-02-24',
+      attendance: 'registered',
+      leadScore: 63
+    }
   ],
   3: [
-    { id: 6, name: 'Fatima Al-Saud', email: 'fatima@corp.sa', company: 'Corp SA', registrationDate: '2026-01-28', attendance: 'attended', leadScore: 88 },
-    { id: 7, name: 'David Miller', email: 'david@analytics.com', company: 'Analytics Co', registrationDate: '2026-01-30', attendance: 'attended', leadScore: 76 },
-    { id: 8, name: 'Noura Bakr', email: 'noura@venture.io', company: 'Venture IO', registrationDate: '2026-02-01', attendance: 'no-show', leadScore: 45 },
-    { id: 9, name: 'James Park', email: 'james@solutions.kr', company: 'Solutions KR', registrationDate: '2026-02-03', attendance: 'attended', leadScore: 82 },
-    { id: 10, name: 'Layla Hassan', email: 'layla@tech.eg', company: 'Tech EG', registrationDate: '2026-02-05', attendance: 'attended', leadScore: 69 }
+    {
+      id: 6,
+      name: 'Fatima Al-Saud',
+      email: 'fatima@corp.sa',
+      company: 'Corp SA',
+      registrationDate: '2026-01-28',
+      attendance: 'attended',
+      leadScore: 88
+    },
+    {
+      id: 7,
+      name: 'David Miller',
+      email: 'david@analytics.com',
+      company: 'Analytics Co',
+      registrationDate: '2026-01-30',
+      attendance: 'attended',
+      leadScore: 76
+    },
+    {
+      id: 8,
+      name: 'Noura Bakr',
+      email: 'noura@venture.io',
+      company: 'Venture IO',
+      registrationDate: '2026-02-01',
+      attendance: 'no-show',
+      leadScore: 45
+    },
+    {
+      id: 9,
+      name: 'James Park',
+      email: 'james@solutions.kr',
+      company: 'Solutions KR',
+      registrationDate: '2026-02-03',
+      attendance: 'attended',
+      leadScore: 82
+    },
+    {
+      id: 10,
+      name: 'Layla Hassan',
+      email: 'layla@tech.eg',
+      company: 'Tech EG',
+      registrationDate: '2026-02-05',
+      attendance: 'attended',
+      leadScore: 69
+    }
   ],
   5: [
-    { id: 11, name: 'Khalid Omar', email: 'khalid@success.sa', company: 'Success SA', registrationDate: '2026-02-20', attendance: 'attended', leadScore: 78 },
-    { id: 12, name: 'Emma Wilson', email: 'emma@growth.co', company: 'Growth Co', registrationDate: '2026-02-22', attendance: 'attended', leadScore: 65 },
-    { id: 13, name: 'Youssef Nabil', email: 'youssef@digital.sa', company: 'Digital SA', registrationDate: '2026-02-24', attendance: 'no-show', leadScore: 42 }
+    {
+      id: 11,
+      name: 'Khalid Omar',
+      email: 'khalid@success.sa',
+      company: 'Success SA',
+      registrationDate: '2026-02-20',
+      attendance: 'attended',
+      leadScore: 78
+    },
+    {
+      id: 12,
+      name: 'Emma Wilson',
+      email: 'emma@growth.co',
+      company: 'Growth Co',
+      registrationDate: '2026-02-22',
+      attendance: 'attended',
+      leadScore: 65
+    },
+    {
+      id: 13,
+      name: 'Youssef Nabil',
+      email: 'youssef@digital.sa',
+      company: 'Digital SA',
+      registrationDate: '2026-02-24',
+      attendance: 'no-show',
+      leadScore: 42
+    }
   ],
   6: [
-    { id: 14, name: 'Abdullah Faisal', email: 'abdullah@mega.sa', company: 'Mega Corp', registrationDate: '2026-01-05', attendance: 'attended', leadScore: 94 },
-    { id: 15, name: 'Rachel Green', email: 'rachel@west.com', company: 'Westfield Inc', registrationDate: '2026-01-08', attendance: 'attended', leadScore: 87 },
-    { id: 16, name: 'Tariq Mansour', email: 'tariq@innovate.ae', company: 'Innovate AE', registrationDate: '2026-01-10', attendance: 'attended', leadScore: 73 },
+    {
+      id: 14,
+      name: 'Abdullah Faisal',
+      email: 'abdullah@mega.sa',
+      company: 'Mega Corp',
+      registrationDate: '2026-01-05',
+      attendance: 'attended',
+      leadScore: 94
+    },
+    {
+      id: 15,
+      name: 'Rachel Green',
+      email: 'rachel@west.com',
+      company: 'Westfield Inc',
+      registrationDate: '2026-01-08',
+      attendance: 'attended',
+      leadScore: 87
+    },
+    {
+      id: 16,
+      name: 'Tariq Mansour',
+      email: 'tariq@innovate.ae',
+      company: 'Innovate AE',
+      registrationDate: '2026-01-10',
+      attendance: 'attended',
+      leadScore: 73
+    },
     { id: 17, name: 'Mia Anderson', email: 'mia@scale.io', company: 'Scale IO', registrationDate: '2026-01-12', attendance: 'no-show', leadScore: 51 }
   ]
 });
@@ -535,7 +808,7 @@ const kpiStats = computed(() => {
   const totalReg = events.value.reduce((sum, e) => sum + (e.registered || 0), 0);
   const completedEvents = events.value.filter(e => e.status === 'completed');
   const avgAttendance = completedEvents.length
-    ? Math.round(completedEvents.reduce((sum, e) => sum + ((e.registered / e.capacity) * 100), 0) / completedEvents.length)
+    ? Math.round(completedEvents.reduce((sum, e) => sum + (e.registered / e.capacity) * 100, 0) / completedEvents.length)
     : 0;
 
   return [
@@ -558,7 +831,13 @@ const roiMetrics = computed(() => {
     { label: t('eventManagement.completedEvents'), value: completed.length, icon: 'ph:check-circle-bold', color: '#7849ff', trend: 12 },
     { label: t('eventManagement.totalAttendees'), value: totalAttendees.toLocaleString(), icon: 'ph:users-bold', color: '#3b82f6', trend: 8 },
     { label: t('eventManagement.conversionRate'), value: convRate + '%', icon: 'ph:funnel-bold', color: '#f59e0b', trend: 5.2 },
-    { label: t('eventManagement.revenueAttributed'), value: formatCurrency(totalRevenue), icon: 'ph:currency-circle-dollar-bold', color: '#22c55e', trend: 18 }
+    {
+      label: t('eventManagement.revenueAttributed'),
+      value: formatCurrency(totalRevenue),
+      icon: 'ph:currency-circle-dollar-bold',
+      color: '#22c55e',
+      trend: 18
+    }
   ];
 });
 
@@ -584,10 +863,8 @@ const filteredEvents = computed(() => {
   }
   if (eventSearch.value) {
     const q = eventSearch.value.toLowerCase();
-    data = data.filter(e =>
-      (e.name || '').toLowerCase().includes(q) ||
-      (e.description || '').toLowerCase().includes(q) ||
-      (e.venue || '').toLowerCase().includes(q)
+    data = data.filter(
+      e => (e.name || '').toLowerCase().includes(q) || (e.description || '').toLowerCase().includes(q) || (e.venue || '').toLowerCase().includes(q)
     );
   }
   return data;
@@ -604,21 +881,19 @@ const filteredAttendees = computed(() => {
 
 // ─── Chart ────────────────────────────────────────────────
 const performanceChartOption = computed(() => {
-  const months = chartPeriod.value === '6m'
-    ? ['Sep', 'Oct', 'Nov', 'Dec', 'Jan', 'Feb']
-    : ['Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec', 'Jan', 'Feb'];
+  const months =
+    chartPeriod.value === '6m'
+      ? ['Sep', 'Oct', 'Nov', 'Dec', 'Jan', 'Feb']
+      : ['Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec', 'Jan', 'Feb'];
 
-  const attendeesLine = chartPeriod.value === '6m'
-    ? [120, 185, 210, 91, 842, 550]
-    : [80, 95, 110, 145, 130, 165, 120, 185, 210, 91, 842, 550];
+  const attendeesLine = chartPeriod.value === '6m' ? [120, 185, 210, 91, 842, 550] : [80, 95, 110, 145, 130, 165, 120, 185, 210, 91, 842, 550];
 
-  const leadsLine = chartPeriod.value === '6m'
-    ? [42, 68, 75, 45, 310, 231]
-    : [28, 35, 40, 52, 48, 60, 42, 68, 75, 45, 310, 231];
+  const leadsLine = chartPeriod.value === '6m' ? [42, 68, 75, 45, 310, 231] : [28, 35, 40, 52, 48, 60, 42, 68, 75, 45, 310, 231];
 
-  const revenueBars = chartPeriod.value === '6m'
-    ? [18000, 32000, 41000, 28000, 195000, 126000]
-    : [12000, 15000, 18000, 25000, 22000, 30000, 18000, 32000, 41000, 28000, 195000, 126000];
+  const revenueBars =
+    chartPeriod.value === '6m'
+      ? [18000, 32000, 41000, 28000, 195000, 126000]
+      : [12000, 15000, 18000, 25000, 22000, 30000, 18000, 32000, 41000, 28000, 195000, 126000];
 
   return {
     tooltip: {
@@ -626,11 +901,7 @@ const performanceChartOption = computed(() => {
       axisPointer: { type: 'cross' }
     },
     legend: {
-      data: [
-        t('eventManagement.attendees'),
-        t('eventManagement.leadsGenerated'),
-        t('eventManagement.revenue')
-      ],
+      data: [t('eventManagement.attendees'), t('eventManagement.leadsGenerated'), t('eventManagement.revenue')],
       bottom: 0,
       textStyle: { color: '#94a3b8' }
     },
@@ -657,7 +928,11 @@ const performanceChartOption = computed(() => {
       {
         type: 'value',
         name: t('eventManagement.revenue'),
-        axisLabel: { color: '#94a3b8', formatter: (v: number) => new Intl.NumberFormat(locale.value, { style: 'currency', currency: 'USD', notation: 'compact', maximumFractionDigits: 1 }).format(v) },
+        axisLabel: {
+          color: '#94a3b8',
+          formatter: (v: number) =>
+            new Intl.NumberFormat(locale.value, { style: 'currency', currency: 'USD', notation: 'compact', maximumFractionDigits: 1 }).format(v)
+        },
         splitLine: { show: false }
       }
     ],
@@ -669,7 +944,19 @@ const performanceChartOption = computed(() => {
         data: attendeesLine,
         lineStyle: { color: '#7849ff', width: 3 },
         itemStyle: { color: '#7849ff' },
-        areaStyle: { color: { type: 'linear', x: 0, y: 0, x2: 0, y2: 1, colorStops: [{ offset: 0, color: 'rgba(120, 73, 255, 0.25)' }, { offset: 1, color: 'rgba(120, 73, 255, 0.02)' }] } }
+        areaStyle: {
+          color: {
+            type: 'linear',
+            x: 0,
+            y: 0,
+            x2: 0,
+            y2: 1,
+            colorStops: [
+              { offset: 0, color: 'rgba(120, 73, 255, 0.25)' },
+              { offset: 1, color: 'rgba(120, 73, 255, 0.02)' }
+            ]
+          }
+        }
       },
       {
         name: t('eventManagement.leadsGenerated'),
@@ -688,8 +975,14 @@ const performanceChartOption = computed(() => {
         itemStyle: {
           color: {
             type: 'linear',
-            x: 0, y: 0, x2: 0, y2: 1,
-            colorStops: [{ offset: 0, color: 'rgba(34, 197, 94, 0.6)' }, { offset: 1, color: 'rgba(34, 197, 94, 0.1)' }]
+            x: 0,
+            y: 0,
+            x2: 0,
+            y2: 1,
+            colorStops: [
+              { offset: 0, color: 'rgba(34, 197, 94, 0.6)' },
+              { offset: 1, color: 'rgba(34, 197, 94, 0.1)' }
+            ]
           },
           borderRadius: [4, 4, 0, 0]
         }
@@ -748,7 +1041,8 @@ function formatDate(d: string): string {
 }
 
 function formatCurrency(val: number): string {
-  if (!val) return new Intl.NumberFormat(locale.value, { style: 'currency', currency: 'USD', minimumFractionDigits: 0, maximumFractionDigits: 0 }).format(0);
+  if (!val)
+    return new Intl.NumberFormat(locale.value, { style: 'currency', currency: 'USD', minimumFractionDigits: 0, maximumFractionDigits: 0 }).format(0);
   return new Intl.NumberFormat(locale.value, { style: 'currency', currency: 'USD', notation: 'compact', maximumFractionDigits: 1 }).format(val);
 }
 
@@ -811,11 +1105,11 @@ async function handleSaveEvent() {
 
 async function handleDeleteEvent(event: EventItem) {
   try {
-    await ElMessageBox.confirm(
-      t('common.confirmDelete'),
-      t('common.warning'),
-      { type: 'warning', confirmButtonText: t('common.delete'), cancelButtonText: t('common.cancel') }
-    );
+    await ElMessageBox.confirm(t('common.confirmDelete'), t('common.warning'), {
+      type: 'warning',
+      confirmButtonText: t('common.delete'),
+      cancelButtonText: t('common.cancel')
+    });
     events.value = events.value.filter(e => e.id !== event.id);
     ElMessage.success(t('common.deleted'));
   } catch {
@@ -850,17 +1144,27 @@ function sendBulkReminder() {
 function exportAttendees() {
   const data = selectedAttendees.value.length ? selectedAttendees.value : selectedEventAttendees.value;
   if (!data.length) return;
-  const headers = [t('eventManagement.attendeeName'), t('eventManagement.email'), t('eventManagement.company'), t('eventManagement.registrationDate'), t('eventManagement.attendanceStatus'), t('eventManagement.leadScore')];
-  const csv = [headers.join(','), ...data.map((row: Attendee) =>
-    [
-      `"${row.name || ''}"`,
-      `"${row.email || ''}"`,
-      `"${row.company || ''}"`,
-      `"${row.registrationDate || ''}"`,
-      `"${row.attendance || ''}"`,
-      row.leadScore || 0
-    ].join(',')
-  )].join('\n');
+  const headers = [
+    t('eventManagement.attendeeName'),
+    t('eventManagement.email'),
+    t('eventManagement.company'),
+    t('eventManagement.registrationDate'),
+    t('eventManagement.attendanceStatus'),
+    t('eventManagement.leadScore')
+  ];
+  const csv = [
+    headers.join(','),
+    ...data.map((row: Attendee) =>
+      [
+        `"${row.name || ''}"`,
+        `"${row.email || ''}"`,
+        `"${row.company || ''}"`,
+        `"${row.registrationDate || ''}"`,
+        `"${row.attendance || ''}"`,
+        row.leadScore || 0
+      ].join(',')
+    )
+  ].join('\n');
   const blob = new Blob([csv], { type: 'text/csv' });
   const url = URL.createObjectURL(blob);
   const a = document.createElement('a');
@@ -874,18 +1178,29 @@ function exportAttendees() {
 function exportEvents() {
   const data = filteredEvents.value;
   if (!data.length) return;
-  const headers = [t('eventManagement.eventName'), t('eventManagement.type'), t('eventManagement.date'), t('eventManagement.location'), t('eventManagement.capacity'), t('eventManagement.registered'), t('common.status')];
-  const csv = [headers.join(','), ...data.map((row: EventItem) =>
-    [
-      `"${row.name || ''}"`,
-      `"${row.type || ''}"`,
-      `"${formatDate(row.date)}"`,
-      `"${row.location || ''}"`,
-      row.capacity || 0,
-      row.registered || 0,
-      `"${row.status || ''}"`
-    ].join(',')
-  )].join('\n');
+  const headers = [
+    t('eventManagement.eventName'),
+    t('eventManagement.type'),
+    t('eventManagement.date'),
+    t('eventManagement.location'),
+    t('eventManagement.capacity'),
+    t('eventManagement.registered'),
+    t('common.status')
+  ];
+  const csv = [
+    headers.join(','),
+    ...data.map((row: EventItem) =>
+      [
+        `"${row.name || ''}"`,
+        `"${row.type || ''}"`,
+        `"${formatDate(row.date)}"`,
+        `"${row.location || ''}"`,
+        row.capacity || 0,
+        row.registered || 0,
+        `"${row.status || ''}"`
+      ].join(',')
+    )
+  ].join('\n');
   const blob = new Blob([csv], { type: 'text/csv' });
   const url = URL.createObjectURL(blob);
   const a = document.createElement('a');

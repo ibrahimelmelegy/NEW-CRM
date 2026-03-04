@@ -312,10 +312,7 @@ const filteredData = computed(() => {
   }
   if (!search.value) return data;
   const q = search.value.toLowerCase();
-  return data.filter((i: any) =>
-    (i.title || '').toLowerCase().includes(q) ||
-    (i.description || '').toLowerCase().includes(q)
-  );
+  return data.filter((i: any) => (i.title || '').toLowerCase().includes(q) || (i.description || '').toLowerCase().includes(q));
 });
 
 function navigateToSurvey(row: any) {
@@ -407,14 +404,15 @@ function openCreateDialog() {
 
 function openEditDialog(item: any) {
   editingItem.value = item;
-  const questions = item.questions && Array.isArray(item.questions)
-    ? item.questions.map((q: any) => ({
-        text: q.text || '',
-        type: q.type || 'TEXT',
-        required: q.required || false,
-        options: q.options && Array.isArray(q.options) ? [...q.options] : ['', '']
-      }))
-    : [{ text: '', type: 'TEXT', required: false, options: ['', ''] }];
+  const questions =
+    item.questions && Array.isArray(item.questions)
+      ? item.questions.map((q: any) => ({
+          text: q.text || '',
+          type: q.type || 'TEXT',
+          required: q.required || false,
+          options: q.options && Array.isArray(q.options) ? [...q.options] : ['', '']
+        }))
+      : [{ text: '', type: 'TEXT', required: false, options: ['', ''] }];
 
   form.value = {
     title: item.title || '',
@@ -482,11 +480,11 @@ async function handleSave() {
 
 async function handleDelete(item: any) {
   try {
-    await ElMessageBox.confirm(
-      t('common.confirmDelete'),
-      t('common.warning'),
-      { type: 'warning', confirmButtonText: t('common.delete'), cancelButtonText: t('common.cancel') }
-    );
+    await ElMessageBox.confirm(t('common.confirmDelete'), t('common.warning'), {
+      type: 'warning',
+      confirmButtonText: t('common.delete'),
+      cancelButtonText: t('common.cancel')
+    });
     const res = await useApiFetch(`surveys/${item.id}`, 'DELETE');
     if (res.success) {
       ElMessage.success(t('common.deleted'));
@@ -526,10 +524,7 @@ async function openAnalyticsDialog(survey: any) {
   analyticsDialogVisible.value = true;
   loadingAnalytics.value = true;
   try {
-    const [npsRes, completionRes] = await Promise.all([
-      useApiFetch(`surveys/${survey.id}/nps`),
-      useApiFetch(`surveys/${survey.id}/completion-rate`)
-    ]);
+    const [npsRes, completionRes] = await Promise.all([useApiFetch(`surveys/${survey.id}/nps`), useApiFetch(`surveys/${survey.id}/completion-rate`)]);
     if (npsRes.success && npsRes.body) {
       npsData.value = npsRes.body;
     }

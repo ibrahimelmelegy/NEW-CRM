@@ -265,15 +265,22 @@ const questionAnalytics = ref<any>(null);
 // Edit dialog
 const editDialogVisible = ref(false);
 const editForm = reactive({
-  title: '', description: '', status: 'DRAFT', type: 'CUSTOM',
-  isAnonymous: false, allowMultipleResponses: false
+  title: '',
+  description: '',
+  status: 'DRAFT',
+  type: 'CUSTOM',
+  isAnonymous: false,
+  allowMultipleResponses: false
 });
 
 // Helpers
 function formatDate(d: string): string {
   if (!d) return '--';
-  try { return new Date(d).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' }); }
-  catch { return d; }
+  try {
+    return new Date(d).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
+  } catch {
+    return d;
+  }
 }
 
 function getStatusType(status: string): string {
@@ -366,15 +373,13 @@ async function loadAnalytics() {
 // Actions
 async function handleCloseSurvey() {
   try {
-    await ElMessageBox.confirm(
-      t('marketing.surveys.confirmClose'),
-      t('common.warning'),
-      { type: 'warning' }
-    );
+    await ElMessageBox.confirm(t('marketing.surveys.confirmClose'), t('common.warning'), { type: 'warning' });
     await useApiFetch(`surveys/${route.params.id}/close`, 'PUT');
     ElMessage.success(t('marketing.surveys.surveyClosed'));
     await loadSurvey();
-  } catch { /* cancelled */ }
+  } catch {
+    /* cancelled */
+  }
 }
 
 async function handleExport() {

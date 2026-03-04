@@ -373,14 +373,20 @@ async function handleMobileRefresh() {
   try {
     await refreshData();
     vibrate([10, 30, 10]);
-  } finally { mobileRefreshing.value = false; }
+  } finally {
+    mobileRefreshing.value = false;
+  }
 }
 
 function handleExpSwipe(name: string, exp: any) {
   vibrate();
   switch (name) {
-    case 'approve': handleApprove(exp.id); break;
-    case 'view': navigateTo(`/finance/expenses/${exp.id}`); break;
+    case 'approve':
+      handleApprove(exp.id);
+      break;
+    case 'view':
+      navigateTo(`/finance/expenses/${exp.id}`);
+      break;
   }
 }
 

@@ -154,7 +154,9 @@ async function handleDelete(territory: Territory) {
     await deleteTerritory(territory.id);
     territories.value = await fetchTerritoryTree();
     ElNotification({ type: 'success', title: t('common.success'), message: t('common.deleted') });
-  } catch (e: any) { ElMessage.error(t('common.error')); }
+  } catch (e: any) {
+    ElMessage.error(t('common.error'));
+  }
 }
 
 // Territory tree node component

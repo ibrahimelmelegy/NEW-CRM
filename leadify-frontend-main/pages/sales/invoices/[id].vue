@@ -156,9 +156,9 @@ div
 import { ElMessageBox, ElNotification } from 'element-plus';
 import { useI18n } from 'vue-i18n';
 import type { InvoiceDetail } from '~/composables/useInvoiceBilling';
+import { getInvoiceDetail, markInvoiceSent, voidInvoice, createCreditNote, formatCurrency } from '~/composables/useInvoiceBilling';
 
 const { t } = useI18n();
-import { getInvoiceDetail, markInvoiceSent, voidInvoice, createCreditNote, formatCurrency } from '~/composables/useInvoiceBilling';
 
 definePageMeta({ middleware: 'permissions' });
 

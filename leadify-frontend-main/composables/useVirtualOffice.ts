@@ -1,3 +1,4 @@
+/* eslint-disable no-use-before-define */
 /**
  * Virtual Office System
  * Team presence, rooms, status, and virtual workspace management.

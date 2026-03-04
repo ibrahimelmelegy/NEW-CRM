@@ -1,3 +1,4 @@
+/* eslint-disable no-use-before-define */
 // Model type definitions matching backend Sequelize models
 import type {
   LeadStatus,

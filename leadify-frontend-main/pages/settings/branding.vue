@@ -326,7 +326,7 @@ const fontOptions = [
   { label: 'Playfair Display', value: "'Playfair Display', serif" },
   { label: 'IBM Plex Sans', value: "'IBM Plex Sans', sans-serif" },
   { label: 'Cairo (Arabic)', value: 'Cairo, sans-serif' },
-  { label: 'System Default', value: 'system-ui, -apple-system, sans-serif' },
+  { label: 'System Default', value: 'system-ui, -apple-system, sans-serif' }
 ];
 
 const currencyOptions = [
@@ -349,7 +349,7 @@ const currencyOptions = [
   { label: 'CHF - Swiss Franc', value: 'CHF' },
   { label: 'TRY - Turkish Lira', value: 'TRY' },
   { label: 'BRL - Brazilian Real', value: 'BRL' },
-  { label: 'ZAR - South African Rand', value: 'ZAR' },
+  { label: 'ZAR - South African Rand', value: 'ZAR' }
 ];
 
 const dateFormatOptions = [
@@ -357,12 +357,12 @@ const dateFormatOptions = [
   { label: 'MM/DD/YYYY (02/27/2026)', value: 'MM/DD/YYYY' },
   { label: 'YYYY-MM-DD (2026-02-27)', value: 'YYYY-MM-DD' },
   { label: 'DD-MM-YYYY (27-02-2026)', value: 'DD-MM-YYYY' },
-  { label: 'DD.MM.YYYY (27.02.2026)', value: 'DD.MM.YYYY' },
+  { label: 'DD.MM.YYYY (27.02.2026)', value: 'DD.MM.YYYY' }
 ];
 
 const languageOptions = [
   { label: 'English', value: 'en' },
-  { label: 'Arabic', value: 'ar' },
+  { label: 'Arabic', value: 'ar' }
 ];
 
 const timezoneOptions = [
@@ -393,7 +393,7 @@ const timezoneOptions = [
   { label: '(UTC+09:00) Tokyo / Seoul', value: 'Asia/Tokyo' },
   { label: '(UTC+10:00) Sydney', value: 'Australia/Sydney' },
   { label: '(UTC+11:00) Solomon Islands', value: 'Pacific/Guadalcanal' },
-  { label: '(UTC+12:00) Auckland', value: 'Pacific/Auckland' },
+  { label: '(UTC+12:00) Auckland', value: 'Pacific/Auckland' }
 ];
 
 // --- Default values ---
@@ -416,7 +416,7 @@ const DEFAULTS = {
   defaultCurrency: 'USD',
   defaultLanguage: 'en',
   dateFormat: 'DD/MM/YYYY',
-  timezone: 'Asia/Riyadh',
+  timezone: 'Asia/Riyadh'
 };
 
 const form = reactive({ ...DEFAULTS });
@@ -438,7 +438,7 @@ const previewFooterStyle = computed(() => {
   const primary = form.primaryColor || '#7849ff';
   return {
     borderTop: '2px solid ' + accent + '40',
-    background: primary + '08',
+    background: primary + '08'
   };
 });
 
@@ -452,20 +452,41 @@ const previewDateFormatted = computed(() => {
   const mm = String(now.getMonth() + 1).padStart(2, '0');
   const yyyy = now.getFullYear();
   switch (form.dateFormat) {
-    case 'MM/DD/YYYY': return mm + '/' + dd + '/' + yyyy;
-    case 'YYYY-MM-DD': return yyyy + '-' + mm + '-' + dd;
-    case 'DD-MM-YYYY': return dd + '-' + mm + '-' + yyyy;
-    case 'DD.MM.YYYY': return dd + '.' + mm + '.' + yyyy;
-    default: return dd + '/' + mm + '/' + yyyy;
+    case 'MM/DD/YYYY':
+      return mm + '/' + dd + '/' + yyyy;
+    case 'YYYY-MM-DD':
+      return yyyy + '-' + mm + '-' + dd;
+    case 'DD-MM-YYYY':
+      return dd + '-' + mm + '-' + yyyy;
+    case 'DD.MM.YYYY':
+      return dd + '.' + mm + '.' + yyyy;
+    default:
+      return dd + '/' + mm + '/' + yyyy;
   }
 });
 
 function formatPreviewCurrency(amount: number): string {
   const symbols: Record<string, string> = {
-    USD: '$', EUR: '\u20AC', GBP: '\u00A3', SAR: 'SAR ', AED: 'AED ',
-    QAR: 'QAR ', KWD: 'KD ', BHD: 'BD ', OMR: 'OMR ', EGP: 'EGP ',
-    JOD: 'JOD ', INR: '\u20B9', CNY: '\u00A5', JPY: '\u00A5', CAD: 'C$',
-    AUD: 'A$', CHF: 'CHF ', TRY: '\u20BA', BRL: 'R$', ZAR: 'R',
+    USD: '$',
+    EUR: '\u20AC',
+    GBP: '\u00A3',
+    SAR: 'SAR ',
+    AED: 'AED ',
+    QAR: 'QAR ',
+    KWD: 'KD ',
+    BHD: 'BD ',
+    OMR: 'OMR ',
+    EGP: 'EGP ',
+    JOD: 'JOD ',
+    INR: '\u20B9',
+    CNY: '\u00A5',
+    JPY: '\u00A5',
+    CAD: 'C$',
+    AUD: 'A$',
+    CHF: 'CHF ',
+    TRY: '\u20BA',
+    BRL: 'R$',
+    ZAR: 'R'
   };
   const sym = symbols[form.defaultCurrency] || form.defaultCurrency + ' ';
   return sym + amount.toLocaleString('en-US', { minimumFractionDigits: 2 });
@@ -533,7 +554,7 @@ function processLogoFile(file: File) {
     return;
   }
   const reader = new FileReader();
-  reader.onload = (e) => {
+  reader.onload = e => {
     const result = e.target?.result as string;
     logoPreview.value = result;
     form.logo = result;
@@ -565,9 +586,7 @@ function onDrop(event: DragEvent) {
 
 // Strip empty strings from an object so the backend @IsOptional() skips them
 function stripEmptyStrings(obj: Record<string, any>): Record<string, any> {
-  return Object.fromEntries(
-    Object.entries(obj).filter(([_, v]) => v !== '' && v !== null && v !== undefined)
-  );
+  return Object.fromEntries(Object.entries(obj).filter(([_, v]) => v !== '' && v !== null && v !== undefined));
 }
 
 async function handleSave() {
@@ -604,11 +623,11 @@ async function handleSave() {
 
 async function handleReset() {
   try {
-    await ElMessageBox.confirm(
-      t('branding.resetConfirm'),
-      t('branding.resetDefaults'),
-      { confirmButtonText: t('common.confirm'), cancelButtonText: t('common.cancel'), type: 'warning' }
-    );
+    await ElMessageBox.confirm(t('branding.resetConfirm'), t('branding.resetDefaults'), {
+      confirmButtonText: t('common.confirm'),
+      cancelButtonText: t('common.cancel'),
+      type: 'warning'
+    });
   } catch {
     return; // User cancelled
   }
@@ -661,7 +680,9 @@ async function handleReset() {
 
 .logo-upload-area {
   border: 2px dashed var(--glass-border, rgba(255, 255, 255, 0.12));
-  transition: border-color 0.2s ease, background 0.2s ease;
+  transition:
+    border-color 0.2s ease,
+    background 0.2s ease;
 }
 
 .logo-upload-area:hover,

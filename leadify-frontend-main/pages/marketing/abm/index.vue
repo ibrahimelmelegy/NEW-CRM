@@ -368,7 +368,7 @@ import { CanvasRenderer } from 'echarts/renderers';
 import { BarChart } from 'echarts/charts';
 import { TitleComponent, TooltipComponent, LegendComponent, GridComponent } from 'echarts/components';
 import VChart from 'vue-echarts';
-import { graphic } from 'echarts';
+import { graphic } from 'echarts/core';
 
 use([CanvasRenderer, BarChart, TitleComponent, TooltipComponent, LegendComponent, GridComponent]);
 
@@ -428,12 +428,26 @@ const generateTargetAccounts = () => {
   const industries = ['Technology', 'Healthcare', 'Finance', 'Manufacturing', 'Retail', 'Energy', 'Media', 'Logistics'];
   const statuses = ['active', 'nurturing', 'new'];
   const names = [
-    'Acme Corporation', 'Global Tech Solutions', 'Pinnacle Health Group', 'Meridian Financial',
-    'Atlas Manufacturing', 'Nexus Retail Co', 'Vertex Energy', 'Horizon Media',
-    'Summit Logistics', 'Quantum Dynamics', 'Apex Digital', 'CoreNet Systems',
-    'Brightline Industries', 'Stellar Innovations', 'Vantage Partners',
-    'Eclipse Technologies', 'Frontier Analytics', 'Catalyst Group',
-    'Prism Software', 'Zenith Enterprises'
+    'Acme Corporation',
+    'Global Tech Solutions',
+    'Pinnacle Health Group',
+    'Meridian Financial',
+    'Atlas Manufacturing',
+    'Nexus Retail Co',
+    'Vertex Energy',
+    'Horizon Media',
+    'Summit Logistics',
+    'Quantum Dynamics',
+    'Apex Digital',
+    'CoreNet Systems',
+    'Brightline Industries',
+    'Stellar Innovations',
+    'Vantage Partners',
+    'Eclipse Technologies',
+    'Frontier Analytics',
+    'Catalyst Group',
+    'Prism Software',
+    'Zenith Enterprises'
   ];
   const owners = ownerOptions.value;
 
@@ -614,9 +628,7 @@ const heatmapLegendColors = ['#1a1a2e', '#2d1b69', '#5a2fd4', '#7849ff', '#a78bf
 // ── KPI Cards ──
 const kpiCards = computed(() => {
   const totalAccounts = targetAccounts.value.length;
-  const avgEngagement = totalAccounts > 0
-    ? Math.round(targetAccounts.value.reduce((sum, a) => sum + a.engagementScore, 0) / totalAccounts)
-    : 0;
+  const avgEngagement = totalAccounts > 0 ? Math.round(targetAccounts.value.reduce((sum, a) => sum + a.engagementScore, 0) / totalAccounts) : 0;
   const totalPipeline = targetAccounts.value.reduce((sum, a) => sum + a.pipelineValue, 0);
   const totalInfluenced = abmCampaigns.value.reduce((sum, c) => sum + c.pipelineInfluenced, 0);
   const abmROI = totalInfluenced > 0 ? Math.round((totalInfluenced / Math.max(totalPipeline * 0.1, 1)) * 100) : 0;
@@ -658,11 +670,7 @@ const filteredAccounts = computed(() => {
   let result = targetAccounts.value;
   if (accountSearch.value) {
     const q = accountSearch.value.toLowerCase();
-    result = result.filter(a =>
-      a.name.toLowerCase().includes(q) ||
-      a.industry.toLowerCase().includes(q) ||
-      a.owner.toLowerCase().includes(q)
-    );
+    result = result.filter(a => a.name.toLowerCase().includes(q) || a.industry.toLowerCase().includes(q) || a.owner.toLowerCase().includes(q));
   }
   if (tierFilter.value) {
     result = result.filter(a => String(a.tier) === tierFilter.value);
@@ -690,13 +698,7 @@ watch([accountSearch, tierFilter], () => {
 
 // ── Waterfall Chart Option ──
 const waterfallChartOption = computed(() => {
-  const stages = [
-    t('abm.stage_new'),
-    t('abm.stage_engaged'),
-    t('abm.stage_opportunity'),
-    t('abm.stage_proposal'),
-    t('abm.stage_won')
-  ];
+  const stages = [t('abm.stage_new'), t('abm.stage_engaged'), t('abm.stage_opportunity'), t('abm.stage_proposal'), t('abm.stage_won')];
 
   // Derive values from deal data or use computed defaults
   const totalAccounts = targetAccounts.value.length;
@@ -708,10 +710,7 @@ const waterfallChartOption = computed(() => {
     Math.round(totalAccounts * 0.18)
   ];
 
-  const pipelineValues = [
-    targetAccounts.value.reduce((s, a) => s + a.pipelineValue, 0),
-    0, 0, 0, 0
-  ];
+  const pipelineValues = [targetAccounts.value.reduce((s, a) => s + a.pipelineValue, 0), 0, 0, 0, 0];
   pipelineValues[1] = Math.round(pipelineValues[0] * 0.82);
   pipelineValues[2] = Math.round(pipelineValues[0] * 0.55);
   pipelineValues[3] = Math.round(pipelineValues[0] * 0.35);
@@ -838,7 +837,12 @@ function getAvatarColor(name: string): string {
 }
 
 function getInitials(name: string): string {
-  return name.split(' ').map(w => w[0]).join('').substring(0, 2).toUpperCase();
+  return name
+    .split(' ')
+    .map(w => w[0])
+    .join('')
+    .substring(0, 2)
+    .toUpperCase();
 }
 
 function getAccountStatusType(status: string): string {

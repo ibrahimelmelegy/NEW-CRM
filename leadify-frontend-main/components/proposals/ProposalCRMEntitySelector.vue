@@ -6,13 +6,13 @@
     <!-- Selected Value / Trigger -->
     <button
       type="button"
-      @click="toggleDropdown"
       :disabled="disabled"
       :class="[
         'w-full px-4 py-3 rounded-xl border text-left flex items-center justify-between transition-all duration-200',
         disabled ? 'bg-gray-100 cursor-not-allowed' : 'bg-white hover:border-violet-400 cursor-pointer',
         isOpen ? 'border-violet-500 ring-2 ring-violet-100' : 'border-gray-200'
       ]"
+      @click="toggleDropdown"
     >
       <div v-if="modelValue" class="flex items-center gap-3">
         <div :class="['p-1.5 rounded-lg', getEntityTypeConfig(modelValue.type)?.color]">
@@ -26,7 +26,7 @@
       <span v-else class="text-gray-400">Select Opportunity, Deal, or Project...</span>
 
       <div class="flex items-center gap-2">
-        <button v-if="modelValue && !disabled" @click.stop="handleClear" class="p-1 hover:bg-gray-100 rounded-full transition-colors">
+        <button v-if="modelValue && !disabled" class="p-1 hover:bg-gray-100 rounded-full transition-colors" @click.stop="handleClear">
           <X :size="16" class="text-gray-400" />
         </button>
         <ChevronDown :size="20" :class="['text-gray-400 transition-transform', { 'rotate-180': isOpen }]" />
@@ -43,11 +43,11 @@
         <button
           v-for="et in entityTypes"
           :key="et.type"
-          @click="entityType = et.type"
           :class="[
             'flex-1 flex items-center justify-center gap-2 px-3 py-2 rounded-xl text-sm font-medium transition-all duration-200',
             entityType === et.type ? 'bg-violet-100 text-violet-700' : 'text-gray-500 hover:bg-gray-50'
           ]"
+          @click="entityType = et.type"
         >
           <component :is="et.icon" :size="16" />
           {{ et.label }}
@@ -59,9 +59,9 @@
         <div class="relative">
           <Search :size="18" class="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" />
           <input
+            v-model="searchTerm"
             type="text"
             :placeholder="`Search ${entityType.toLowerCase()}s...`"
-            v-model="searchTerm"
             class="w-full pl-10 pr-4 py-2.5 border border-gray-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-violet-500 focus:border-transparent"
             autofocus
           />
@@ -78,8 +78,8 @@
           <button
             v-for="entity in filteredEntities"
             :key="entity.id"
-            @click="handleSelect(entity)"
             class="w-full px-4 py-3 text-left hover:bg-violet-50 flex items-center gap-3 transition-colors border-b border-gray-50 last:border-0"
+            @click="handleSelect(entity)"
           >
             <div :class="['p-2 rounded-lg', getEntityTypeConfig(entityType)?.color]">
               <component :is="getEntityTypeConfig(entityType)?.icon" :size="16" :class="getEntityTypeConfig(entityType)?.color.split(' ')[0]" />

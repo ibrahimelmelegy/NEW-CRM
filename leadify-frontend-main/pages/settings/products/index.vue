@@ -249,7 +249,9 @@ async function handleDelete(product: CatalogProduct) {
     await deleteProduct(product.id);
     products.value = products.value.filter(p => p.id !== product.id);
     ElNotification({ type: 'success', title: t('common.success'), message: t('common.deletedSuccessfully') });
-  } catch (e: any) { ElMessage.error(t('common.error')); }
+  } catch (e: any) {
+    ElMessage.error(t('common.error'));
+  }
 }
 </script>
 

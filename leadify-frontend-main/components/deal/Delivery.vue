@@ -4,7 +4,7 @@
     span
     el-button(size='medium' plain type="primary" :icon="Plus" native-type="button" @click="AddDelivery" class="!rounded-2xl !py-2.5 !px-4") {{ $t('deals.form.addDelivery') }}
   DealFormDelivery(
-    v-for="(delivery, index) in deliveries"
+    v-for="(delivery, index) in deliveriesList"
     :key="delivery.id"
     :delivery="delivery"
     :index="index"
@@ -35,7 +35,7 @@ const props = defineProps({
 });
 
 // Reactive delivery array
-const deliveries = ref<Delivery[]>([
+const deliveriesList = ref<Delivery[]>([
   {
     id: uuidv4(),
     deliveryDetails: '',
@@ -44,7 +44,7 @@ const deliveries = ref<Delivery[]>([
 ]);
 
 if (props.deliveries?.length) {
-  deliveries.value = props.deliveries.map((delivery: any) => ({
+  deliveriesList.value = props.deliveries.map((delivery: any) => ({
     deliveryDetails: delivery.deliveryDetails,
     deliveryDate: delivery.deliveryDate,
     id: delivery.id
@@ -57,7 +57,7 @@ const childRefs = ref<Record<string, any>>({});
 async function AddDelivery() {
   if (!(await validateForm())) return;
 
-  deliveries.value.push({
+  deliveriesList.value.push({
     id: uuidv4(),
     deliveryDetails: '',
     deliveryDate: null
@@ -76,7 +76,7 @@ async function onDelete(id: string) {
       cancelButtonText: t('common.cancel'),
       type: 'warning'
     });
-    deliveries.value = deliveries.value.filter((delivery: Delivery) => delivery.id !== id);
+    deliveriesList.value = deliveriesList.value.filter((delivery: Delivery) => delivery.id !== id);
   } catch {
     // User cancelled
   }
@@ -88,14 +88,14 @@ async function onDelete(id: string) {
  * @returns {void}
  */
 function onSubmit(values: Delivery) {
-  const index = deliveries.value.findIndex((delivery: Delivery) => delivery.id === values.id);
+  const index = deliveriesList.value.findIndex((delivery: Delivery) => delivery.id === values.id);
 
   if (index !== -1) {
     // Update an existing delivery
-    deliveries.value[index] = { ...values };
+    deliveriesList.value[index] = { ...values };
   } else {
     // Add a new delivery
-    deliveries.value.push(values);
+    deliveriesList.value.push(values);
   }
 }
 
@@ -151,7 +151,7 @@ async function onSubmitForm(): Promise<boolean> {
 }
 
 function checkNoDeliveries() {
-  const deliveryCount = deliveries.value.length;
+  const deliveryCount = deliveriesList.value.length;
 
   if (deliveryCount === 0) return true;
   if (deliveryCount > 1) return false;
@@ -181,13 +181,13 @@ async function onSubmitDeliveries() {
   }
 
   // Prepare and log final data for API
-  const cleanedDeliveries = deliveries.value.map(({ id, ...data }: Delivery) => ({
+  const cleanedDeliveries = deliveriesList.value.map(({ id, ...data }: Delivery) => ({
     ...data,
     deliveryDate: getYear(data.deliveryDate)
   }));
   emit('isValid', true);
   if (route.path.includes('edit')) {
-    emit('onSubmit', deliveries.value);
+    emit('onSubmit', deliveriesList.value);
   } else {
     emit('onSubmit', cleanedDeliveries);
   }

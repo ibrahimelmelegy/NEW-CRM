@@ -194,7 +194,9 @@ async function handleMobileRefresh() {
     const res = await useTableFilter('procurement');
     table.data = res.formattedData;
     vibrate([10, 30, 10]);
-  } finally { mobileRefreshing.value = false; }
+  } finally {
+    mobileRefreshing.value = false;
+  }
 }
 
 function handleSwipeAction(name: string, po: any) {

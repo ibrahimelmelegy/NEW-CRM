@@ -1,3 +1,4 @@
+/* eslint-disable require-await */
 import { useApiFetch } from './useApiFetch';
 
 export interface ReportField {
@@ -129,11 +130,7 @@ export async function exportReportExcel(config: ReportConfig): Promise<Blob> {
   return response.blob();
 }
 
-export async function fetchReportAnalytics(
-  entityType: string,
-  startDate?: string,
-  endDate?: string
-): Promise<ReportAnalytics | null> {
+export async function fetchReportAnalytics(entityType: string, startDate?: string, endDate?: string): Promise<ReportAnalytics | null> {
   const params = new URLSearchParams({ entityType });
   if (startDate) params.append('startDate', startDate);
   if (endDate) params.append('endDate', endDate);

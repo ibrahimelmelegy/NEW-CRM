@@ -42,6 +42,7 @@ el-form-item( :label="label" :error='errorMessage' class="!mb-0")
 </template>
 
 <script lang="ts" setup>
+/* eslint-disable require-await */
 import { computed, ref, watch } from 'vue';
 import { Delete, Download, Plus, ZoomIn, Crop } from '@element-plus/icons-vue';
 import type { UploadProps, UploadFile } from 'element-plus';
@@ -78,7 +79,7 @@ const props = defineProps({
   },
   formats: {
     type: Array,
-    default: [
+    default: () => [
       'image/jpg',
       'image/jpeg',
       'image/png',
@@ -165,7 +166,9 @@ const beforeAvatarUpload: UploadProps['beforeUpload'] = (rawFile: any) => {
 const cropper = ref();
 const dialogCrop = ref(false);
 function handlePictureCardCrop() {
-  !srcValue.value && (srcValue.value = inputValue.value);
+  if (!srcValue.value) {
+    srcValue.value = inputValue.value;
+  }
   dialogCrop.value = true;
 }
 

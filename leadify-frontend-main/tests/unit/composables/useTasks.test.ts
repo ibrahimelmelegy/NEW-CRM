@@ -6,13 +6,6 @@
 
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 
-const mockApiFetch = vi.fn();
-(globalThis as any).useApiFetch = mockApiFetch;
-
-vi.mock('@/composables/useApiFetch', () => ({
-  useApiFetch: (...args: any[]) => mockApiFetch(...args)
-}));
-
 import {
   fetchTasks,
   fetchMyTasks,
@@ -23,6 +16,13 @@ import {
   deleteTask,
   fetchTaskStats
 } from '~/composables/useTasks';
+
+const mockApiFetch = vi.fn();
+(globalThis as any).useApiFetch = mockApiFetch;
+
+vi.mock('@/composables/useApiFetch', () => ({
+  useApiFetch: (...args: any[]) => mockApiFetch(...args)
+}));
 
 describe('useTasks', () => {
   beforeEach(() => {

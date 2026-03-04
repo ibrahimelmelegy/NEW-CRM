@@ -293,7 +293,7 @@
 </template>
 
 <script setup lang="ts">
-import * as echarts from 'echarts';
+import * as echarts from 'echarts/core';
 import { nextTick } from 'vue';
 
 definePageMeta({ middleware: 'permissions' });
@@ -338,14 +338,16 @@ const form = reactive(defaultForm());
 const threatMatrix = ref<any[]>([]);
 
 const pricingData = computed(() => {
-  return items.value.filter(i => i.pricingModel || i.basePrice || i.enterprisePrice).map(i => ({
-    id: i.id,
-    name: i.name,
-    pricingModel: i.pricingModel,
-    basePrice: i.basePrice,
-    enterprisePrice: i.enterprisePrice,
-    pricingNotes: i.pricingNotes
-  }));
+  return items.value
+    .filter(i => i.pricingModel || i.basePrice || i.enterprisePrice)
+    .map(i => ({
+      id: i.id,
+      name: i.name,
+      pricingModel: i.pricingModel,
+      basePrice: i.basePrice,
+      enterprisePrice: i.enterprisePrice,
+      pricingNotes: i.pricingNotes
+    }));
 });
 
 const featureComparisonData = ref([
@@ -379,7 +381,7 @@ const summaryStats = computed(() => {
   const active = items.value.filter(i => i.status === 'ACTIVE').length;
   const totalWon = items.value.reduce((s, i) => s + Number(i.dealsWon || 0), 0);
   const totalLost = items.value.reduce((s, i) => s + Number(i.dealsLost || 0), 0);
-  const winRate = (totalWon + totalLost) > 0 ? Math.round((totalWon / (totalWon + totalLost)) * 100) : 0;
+  const winRate = totalWon + totalLost > 0 ? Math.round((totalWon / (totalWon + totalLost)) * 100) : 0;
   return [
     { label: t('competitors.totalCompetitors'), value: total, icon: 'ph:binoculars-bold', color: '#7849ff' },
     { label: t('competitors.activeThreats'), value: active, icon: 'ph:warning-bold', color: '#ef4444' },
@@ -407,7 +409,9 @@ async function fetchData() {
       await nextTick();
       renderCharts();
     }
-  } finally { loading.value = false; }
+  } finally {
+    loading.value = false;
+  }
 }
 
 async function fetchActivityTimeline() {
@@ -430,22 +434,22 @@ function renderMarketShareChart() {
   if (!marketShareChartRef.value || items.value.length === 0) return;
 
   const chart = echarts.init(marketShareChartRef.value);
-  const data = items.value
-    .filter(i => i.marketShare > 0)
-    .map(i => ({ name: i.name, value: i.marketShare }));
+  const data = items.value.filter(i => i.marketShare > 0).map(i => ({ name: i.name, value: i.marketShare }));
 
   chart.setOption({
     tooltip: { trigger: 'item', formatter: '{b}: {c}%' },
     legend: { bottom: 10, left: 'center' },
-    series: [{
-      type: 'pie',
-      radius: ['40%', '70%'],
-      avoidLabelOverlap: true,
-      itemStyle: { borderRadius: 10, borderColor: '#fff', borderWidth: 2 },
-      label: { show: true, formatter: '{b}: {c}%' },
-      emphasis: { label: { show: true, fontSize: '14', fontWeight: 'bold' } },
-      data
-    }]
+    series: [
+      {
+        type: 'pie',
+        radius: ['40%', '70%'],
+        avoidLabelOverlap: true,
+        itemStyle: { borderRadius: 10, borderColor: '#fff', borderWidth: 2 },
+        label: { show: true, formatter: '{b}: {c}%' },
+        emphasis: { label: { show: true, fontSize: '14', fontWeight: 'bold' } },
+        data
+      }
+    ]
   });
 }
 
@@ -456,11 +460,13 @@ function renderWinLossCharts() {
       tooltip: { trigger: 'axis' },
       xAxis: { type: 'value' },
       yAxis: { type: 'category', data: winLossReasons.value.win.map(r => r.reason) },
-      series: [{
-        type: 'bar',
-        data: winLossReasons.value.win.map(r => r.count),
-        itemStyle: { color: '#22c55e', borderRadius: [0, 4, 4, 0] }
-      }]
+      series: [
+        {
+          type: 'bar',
+          data: winLossReasons.value.win.map(r => r.count),
+          itemStyle: { color: '#22c55e', borderRadius: [0, 4, 4, 0] }
+        }
+      ]
     });
   }
 
@@ -470,11 +476,13 @@ function renderWinLossCharts() {
       tooltip: { trigger: 'axis' },
       xAxis: { type: 'value' },
       yAxis: { type: 'category', data: winLossReasons.value.loss.map(r => r.reason) },
-      series: [{
-        type: 'bar',
-        data: winLossReasons.value.loss.map(r => r.count),
-        itemStyle: { color: '#ef4444', borderRadius: [0, 4, 4, 0] }
-      }]
+      series: [
+        {
+          type: 'bar',
+          data: winLossReasons.value.loss.map(r => r.count),
+          itemStyle: { color: '#ef4444', borderRadius: [0, 4, 4, 0] }
+        }
+      ]
     });
   }
 }
@@ -586,17 +594,30 @@ async function saveItem() {
   try {
     if (editingId.value) {
       const { success } = await useApiFetch(`competitors/${editingId.value}`, 'PUT', { ...form });
-      if (success) { showDialog.value = false; ElMessage.success(t('common.saved')); await fetchData(); }
+      if (success) {
+        showDialog.value = false;
+        ElMessage.success(t('common.saved'));
+        await fetchData();
+      }
     } else {
       const { success } = await useApiFetch('competitors', 'POST', { ...form });
-      if (success) { showDialog.value = false; ElMessage.success(t('common.saved')); await fetchData(); }
+      if (success) {
+        showDialog.value = false;
+        ElMessage.success(t('common.saved'));
+        await fetchData();
+      }
     }
-  } finally { saving.value = false; }
+  } finally {
+    saving.value = false;
+  }
 }
 
 async function handleDelete(id: number) {
   const { success } = await useApiFetch(`competitors/${id}`, 'DELETE');
-  if (success) { ElMessage.success(t('common.deleted')); await fetchData(); }
+  if (success) {
+    ElMessage.success(t('common.deleted'));
+    await fetchData();
+  }
 }
 
 async function fetchThreatMatrix() {

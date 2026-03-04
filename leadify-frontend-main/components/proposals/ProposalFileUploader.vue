@@ -5,24 +5,24 @@
 
     <!-- Drop Zone -->
     <div
-      @dragover.prevent="onDragOver"
-      @dragleave.prevent="onDragLeave"
-      @drop.prevent="onDrop"
-      @click="triggerFileInput"
       :class="[
         'relative border-2 border-dashed rounded-2xl p-8 text-center cursor-pointer transition-all duration-200',
         isDragging ? 'border-violet-500 bg-violet-50' : 'border-gray-200 hover:border-violet-300 hover:bg-violet-50/50',
         disabled ? 'opacity-50 cursor-not-allowed' : ''
       ]"
+      @dragover.prevent="onDragOver"
+      @dragleave.prevent="onDragLeave"
+      @drop.prevent="onDrop"
+      @click="triggerFileInput"
     >
       <input
         ref="fileInputRef"
         type="file"
         :accept="acceptedTypes.join(',')"
         :multiple="multiple"
-        @change="handleFileSelect"
         :disabled="disabled"
         class="hidden"
+        @change="handleFileSelect"
       />
 
       <div class="flex flex-col items-center gap-3">
@@ -53,7 +53,7 @@
         <!-- Icon -->
         <div class="p-2 rounded-lg bg-gray-100">
           <Loader2 v-if="file.status === 'uploading'" :size="20" class="animate-spin text-violet-500" />
-          <component v-else :is="getFileIcon(file.type).component" :size="20" :class="getFileIcon(file.type).class" />
+          <component :is="getFileIcon(file.type).component" v-else :size="20" :class="getFileIcon(file.type).class" />
         </div>
 
         <!-- Info -->
@@ -72,17 +72,17 @@
         <div class="flex items-center gap-2">
           <button
             v-if="file.status === 'complete' && file.url"
-            @click="handleDownload(file)"
             class="p-2 text-gray-400 hover:text-violet-600 hover:bg-violet-50 rounded-lg transition-colors"
             title="Download"
+            @click="handleDownload(file)"
           >
             <Download :size="18" />
           </button>
           <button
             v-if="!disabled"
-            @click="handleRemove(file.id)"
             class="p-2 text-gray-400 hover:text-red-600 hover:bg-red-50 rounded-lg transition-colors"
             title="Remove"
+            @click="handleRemove(file.id)"
           >
             <X :size="18" />
           </button>

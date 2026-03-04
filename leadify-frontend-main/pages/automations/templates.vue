@@ -355,10 +355,30 @@ const templates = ref([
     popularity: 2840,
     createdAt: '2025-11-01',
     steps: [
-      { type: 'trigger', labelKey: 'automationTemplates.stepNewLeadCreated', descKey: 'automationTemplates.stepNewLeadCreatedDesc', icon: 'ph:lightning-bold' },
-      { type: 'condition', labelKey: 'automationTemplates.stepCheckTerritory', descKey: 'automationTemplates.stepCheckTerritoryDesc', icon: 'ph:map-trifold-bold' },
-      { type: 'action', labelKey: 'automationTemplates.stepAssignOwner', descKey: 'automationTemplates.stepAssignOwnerDesc', icon: 'ph:user-switch-bold' },
-      { type: 'notification', labelKey: 'automationTemplates.stepNotifyOwner', descKey: 'automationTemplates.stepNotifyOwnerDesc', icon: 'ph:bell-bold' }
+      {
+        type: 'trigger',
+        labelKey: 'automationTemplates.stepNewLeadCreated',
+        descKey: 'automationTemplates.stepNewLeadCreatedDesc',
+        icon: 'ph:lightning-bold'
+      },
+      {
+        type: 'condition',
+        labelKey: 'automationTemplates.stepCheckTerritory',
+        descKey: 'automationTemplates.stepCheckTerritoryDesc',
+        icon: 'ph:map-trifold-bold'
+      },
+      {
+        type: 'action',
+        labelKey: 'automationTemplates.stepAssignOwner',
+        descKey: 'automationTemplates.stepAssignOwnerDesc',
+        icon: 'ph:user-switch-bold'
+      },
+      {
+        type: 'notification',
+        labelKey: 'automationTemplates.stepNotifyOwner',
+        descKey: 'automationTemplates.stepNotifyOwnerDesc',
+        icon: 'ph:bell-bold'
+      }
     ],
     triggerOptions: [
       { value: 'default', labelKey: 'automationTemplates.onLeadCreated' },
@@ -378,13 +398,33 @@ const templates = ref([
     popularity: 3120,
     createdAt: '2025-10-15',
     steps: [
-      { type: 'trigger', labelKey: 'automationTemplates.stepLeadEntersPipeline', descKey: 'automationTemplates.stepLeadEntersPipelineDesc', icon: 'ph:funnel-bold' },
+      {
+        type: 'trigger',
+        labelKey: 'automationTemplates.stepLeadEntersPipeline',
+        descKey: 'automationTemplates.stepLeadEntersPipelineDesc',
+        icon: 'ph:funnel-bold'
+      },
       { type: 'delay', labelKey: 'automationTemplates.stepWait1Day', descKey: 'automationTemplates.stepWait1DayDesc', icon: 'ph:clock-bold' },
-      { type: 'action', labelKey: 'automationTemplates.stepSendWelcomeEmail', descKey: 'automationTemplates.stepSendWelcomeEmailDesc', icon: 'ph:envelope-bold' },
+      {
+        type: 'action',
+        labelKey: 'automationTemplates.stepSendWelcomeEmail',
+        descKey: 'automationTemplates.stepSendWelcomeEmailDesc',
+        icon: 'ph:envelope-bold'
+      },
       { type: 'delay', labelKey: 'automationTemplates.stepWait3Days', descKey: 'automationTemplates.stepWait3DaysDesc', icon: 'ph:clock-bold' },
-      { type: 'action', labelKey: 'automationTemplates.stepSendFollowUp', descKey: 'automationTemplates.stepSendFollowUpDesc', icon: 'ph:envelope-bold' },
+      {
+        type: 'action',
+        labelKey: 'automationTemplates.stepSendFollowUp',
+        descKey: 'automationTemplates.stepSendFollowUpDesc',
+        icon: 'ph:envelope-bold'
+      },
       { type: 'delay', labelKey: 'automationTemplates.stepWait7Days', descKey: 'automationTemplates.stepWait7DaysDesc', icon: 'ph:clock-bold' },
-      { type: 'condition', labelKey: 'automationTemplates.stepCheckEngagement', descKey: 'automationTemplates.stepCheckEngagementDesc', icon: 'ph:chart-line-bold' }
+      {
+        type: 'condition',
+        labelKey: 'automationTemplates.stepCheckEngagement',
+        descKey: 'automationTemplates.stepCheckEngagementDesc',
+        icon: 'ph:chart-line-bold'
+      }
     ]
   },
   {
@@ -399,10 +439,30 @@ const templates = ref([
     popularity: 1950,
     createdAt: '2025-12-01',
     steps: [
-      { type: 'trigger', labelKey: 'automationTemplates.stepLeadActivity', descKey: 'automationTemplates.stepLeadActivityDesc', icon: 'ph:lightning-bold' },
-      { type: 'action', labelKey: 'automationTemplates.stepRecalculateScore', descKey: 'automationTemplates.stepRecalculateScoreDesc', icon: 'ph:calculator-bold' },
-      { type: 'condition', labelKey: 'automationTemplates.stepCheckThreshold', descKey: 'automationTemplates.stepCheckThresholdDesc', icon: 'ph:funnel-bold' },
-      { type: 'action', labelKey: 'automationTemplates.stepPromoteToMql', descKey: 'automationTemplates.stepPromoteToMqlDesc', icon: 'ph:arrow-up-bold' }
+      {
+        type: 'trigger',
+        labelKey: 'automationTemplates.stepLeadActivity',
+        descKey: 'automationTemplates.stepLeadActivityDesc',
+        icon: 'ph:lightning-bold'
+      },
+      {
+        type: 'action',
+        labelKey: 'automationTemplates.stepRecalculateScore',
+        descKey: 'automationTemplates.stepRecalculateScoreDesc',
+        icon: 'ph:calculator-bold'
+      },
+      {
+        type: 'condition',
+        labelKey: 'automationTemplates.stepCheckThreshold',
+        descKey: 'automationTemplates.stepCheckThresholdDesc',
+        icon: 'ph:funnel-bold'
+      },
+      {
+        type: 'action',
+        labelKey: 'automationTemplates.stepPromoteToMql',
+        descKey: 'automationTemplates.stepPromoteToMqlDesc',
+        icon: 'ph:arrow-up-bold'
+      }
     ]
   },
   {
@@ -417,9 +477,24 @@ const templates = ref([
     popularity: 4200,
     createdAt: '2025-09-20',
     steps: [
-      { type: 'trigger', labelKey: 'automationTemplates.stepNewLeadCreated', descKey: 'automationTemplates.stepNewLeadCreatedDesc', icon: 'ph:lightning-bold' },
-      { type: 'action', labelKey: 'automationTemplates.stepSendSlackNotif', descKey: 'automationTemplates.stepSendSlackNotifDesc', icon: 'ph:chat-circle-bold' },
-      { type: 'action', labelKey: 'automationTemplates.stepSendEmailNotif', descKey: 'automationTemplates.stepSendEmailNotifDesc', icon: 'ph:envelope-bold' }
+      {
+        type: 'trigger',
+        labelKey: 'automationTemplates.stepNewLeadCreated',
+        descKey: 'automationTemplates.stepNewLeadCreatedDesc',
+        icon: 'ph:lightning-bold'
+      },
+      {
+        type: 'action',
+        labelKey: 'automationTemplates.stepSendSlackNotif',
+        descKey: 'automationTemplates.stepSendSlackNotifDesc',
+        icon: 'ph:chat-circle-bold'
+      },
+      {
+        type: 'action',
+        labelKey: 'automationTemplates.stepSendEmailNotif',
+        descKey: 'automationTemplates.stepSendEmailNotifDesc',
+        icon: 'ph:envelope-bold'
+      }
     ]
   },
 
@@ -436,9 +511,24 @@ const templates = ref([
     popularity: 3650,
     createdAt: '2025-10-01',
     steps: [
-      { type: 'trigger', labelKey: 'automationTemplates.stepDealStageChanged', descKey: 'automationTemplates.stepDealStageChangedDesc', icon: 'ph:lightning-bold' },
-      { type: 'condition', labelKey: 'automationTemplates.stepCheckStageType', descKey: 'automationTemplates.stepCheckStageTypeDesc', icon: 'ph:git-branch-bold' },
-      { type: 'notification', labelKey: 'automationTemplates.stepNotifyStakeholders', descKey: 'automationTemplates.stepNotifyStakeholdersDesc', icon: 'ph:bell-bold' }
+      {
+        type: 'trigger',
+        labelKey: 'automationTemplates.stepDealStageChanged',
+        descKey: 'automationTemplates.stepDealStageChangedDesc',
+        icon: 'ph:lightning-bold'
+      },
+      {
+        type: 'condition',
+        labelKey: 'automationTemplates.stepCheckStageType',
+        descKey: 'automationTemplates.stepCheckStageTypeDesc',
+        icon: 'ph:git-branch-bold'
+      },
+      {
+        type: 'notification',
+        labelKey: 'automationTemplates.stepNotifyStakeholders',
+        descKey: 'automationTemplates.stepNotifyStakeholdersDesc',
+        icon: 'ph:bell-bold'
+      }
     ]
   },
   {
@@ -453,10 +543,30 @@ const templates = ref([
     popularity: 2780,
     createdAt: '2025-11-10',
     steps: [
-      { type: 'trigger', labelKey: 'automationTemplates.stepDailyScheduleCheck', descKey: 'automationTemplates.stepDailyScheduleCheckDesc', icon: 'ph:clock-bold' },
-      { type: 'condition', labelKey: 'automationTemplates.stepCheckLastActivity', descKey: 'automationTemplates.stepCheckLastActivityDesc', icon: 'ph:calendar-x-bold' },
-      { type: 'notification', labelKey: 'automationTemplates.stepAlertDealOwner', descKey: 'automationTemplates.stepAlertDealOwnerDesc', icon: 'ph:warning-bold' },
-      { type: 'action', labelKey: 'automationTemplates.stepCreateTask', descKey: 'automationTemplates.stepCreateTaskDesc', icon: 'ph:check-square-bold' }
+      {
+        type: 'trigger',
+        labelKey: 'automationTemplates.stepDailyScheduleCheck',
+        descKey: 'automationTemplates.stepDailyScheduleCheckDesc',
+        icon: 'ph:clock-bold'
+      },
+      {
+        type: 'condition',
+        labelKey: 'automationTemplates.stepCheckLastActivity',
+        descKey: 'automationTemplates.stepCheckLastActivityDesc',
+        icon: 'ph:calendar-x-bold'
+      },
+      {
+        type: 'notification',
+        labelKey: 'automationTemplates.stepAlertDealOwner',
+        descKey: 'automationTemplates.stepAlertDealOwnerDesc',
+        icon: 'ph:warning-bold'
+      },
+      {
+        type: 'action',
+        labelKey: 'automationTemplates.stepCreateTask',
+        descKey: 'automationTemplates.stepCreateTaskDesc',
+        icon: 'ph:check-square-bold'
+      }
     ]
   },
   {
@@ -471,10 +581,25 @@ const templates = ref([
     popularity: 2100,
     createdAt: '2025-12-05',
     steps: [
-      { type: 'trigger', labelKey: 'automationTemplates.stepDealMarkedWon', descKey: 'automationTemplates.stepDealMarkedWonDesc', icon: 'ph:trophy-bold' },
-      { type: 'notification', labelKey: 'automationTemplates.stepCelebrateTeam', descKey: 'automationTemplates.stepCelebrateTeamDesc', icon: 'ph:confetti-bold' },
+      {
+        type: 'trigger',
+        labelKey: 'automationTemplates.stepDealMarkedWon',
+        descKey: 'automationTemplates.stepDealMarkedWonDesc',
+        icon: 'ph:trophy-bold'
+      },
+      {
+        type: 'notification',
+        labelKey: 'automationTemplates.stepCelebrateTeam',
+        descKey: 'automationTemplates.stepCelebrateTeamDesc',
+        icon: 'ph:confetti-bold'
+      },
       { type: 'action', labelKey: 'automationTemplates.stepUpdateCrm', descKey: 'automationTemplates.stepUpdateCrmDesc', icon: 'ph:database-bold' },
-      { type: 'action', labelKey: 'automationTemplates.stepCreateOnboarding', descKey: 'automationTemplates.stepCreateOnboardingDesc', icon: 'ph:list-checks-bold' }
+      {
+        type: 'action',
+        labelKey: 'automationTemplates.stepCreateOnboarding',
+        descKey: 'automationTemplates.stepCreateOnboardingDesc',
+        icon: 'ph:list-checks-bold'
+      }
     ]
   },
   {
@@ -489,10 +614,25 @@ const templates = ref([
     popularity: 3400,
     createdAt: '2025-10-20',
     steps: [
-      { type: 'trigger', labelKey: 'automationTemplates.stepDealStageChanged', descKey: 'automationTemplates.stepDealStageChangedDesc', icon: 'ph:lightning-bold' },
-      { type: 'action', labelKey: 'automationTemplates.stepCreateFollowupTask', descKey: 'automationTemplates.stepCreateFollowupTaskDesc', icon: 'ph:check-square-bold' },
+      {
+        type: 'trigger',
+        labelKey: 'automationTemplates.stepDealStageChanged',
+        descKey: 'automationTemplates.stepDealStageChangedDesc',
+        icon: 'ph:lightning-bold'
+      },
+      {
+        type: 'action',
+        labelKey: 'automationTemplates.stepCreateFollowupTask',
+        descKey: 'automationTemplates.stepCreateFollowupTaskDesc',
+        icon: 'ph:check-square-bold'
+      },
       { type: 'delay', labelKey: 'automationTemplates.stepWait2Days', descKey: 'automationTemplates.stepWait2DaysDesc', icon: 'ph:clock-bold' },
-      { type: 'notification', labelKey: 'automationTemplates.stepRemindOwner', descKey: 'automationTemplates.stepRemindOwnerDesc', icon: 'ph:bell-ringing-bold' }
+      {
+        type: 'notification',
+        labelKey: 'automationTemplates.stepRemindOwner',
+        descKey: 'automationTemplates.stepRemindOwnerDesc',
+        icon: 'ph:bell-ringing-bold'
+      }
     ]
   },
 
@@ -509,10 +649,30 @@ const templates = ref([
     popularity: 1850,
     createdAt: '2025-11-15',
     steps: [
-      { type: 'trigger', labelKey: 'automationTemplates.stepDealMarkedWon', descKey: 'automationTemplates.stepDealMarkedWonDesc', icon: 'ph:trophy-bold' },
-      { type: 'action', labelKey: 'automationTemplates.stepGenerateChecklist', descKey: 'automationTemplates.stepGenerateChecklistDesc', icon: 'ph:list-checks-bold' },
-      { type: 'action', labelKey: 'automationTemplates.stepAssignCsm', descKey: 'automationTemplates.stepAssignCsmDesc', icon: 'ph:user-switch-bold' },
-      { type: 'notification', labelKey: 'automationTemplates.stepWelcomeCustomer', descKey: 'automationTemplates.stepWelcomeCustomerDesc', icon: 'ph:envelope-bold' }
+      {
+        type: 'trigger',
+        labelKey: 'automationTemplates.stepDealMarkedWon',
+        descKey: 'automationTemplates.stepDealMarkedWonDesc',
+        icon: 'ph:trophy-bold'
+      },
+      {
+        type: 'action',
+        labelKey: 'automationTemplates.stepGenerateChecklist',
+        descKey: 'automationTemplates.stepGenerateChecklistDesc',
+        icon: 'ph:list-checks-bold'
+      },
+      {
+        type: 'action',
+        labelKey: 'automationTemplates.stepAssignCsm',
+        descKey: 'automationTemplates.stepAssignCsmDesc',
+        icon: 'ph:user-switch-bold'
+      },
+      {
+        type: 'notification',
+        labelKey: 'automationTemplates.stepWelcomeCustomer',
+        descKey: 'automationTemplates.stepWelcomeCustomerDesc',
+        icon: 'ph:envelope-bold'
+      }
     ]
   },
   {
@@ -527,10 +687,25 @@ const templates = ref([
     popularity: 2300,
     createdAt: '2025-10-25',
     steps: [
-      { type: 'trigger', labelKey: 'automationTemplates.stepDealClosedTrigger', descKey: 'automationTemplates.stepDealClosedTriggerDesc', icon: 'ph:clock-bold' },
+      {
+        type: 'trigger',
+        labelKey: 'automationTemplates.stepDealClosedTrigger',
+        descKey: 'automationTemplates.stepDealClosedTriggerDesc',
+        icon: 'ph:clock-bold'
+      },
       { type: 'delay', labelKey: 'automationTemplates.stepWait30Days', descKey: 'automationTemplates.stepWait30DaysDesc', icon: 'ph:clock-bold' },
-      { type: 'action', labelKey: 'automationTemplates.stepSendNpsSurvey', descKey: 'automationTemplates.stepSendNpsSurveyDesc', icon: 'ph:chart-bar-bold' },
-      { type: 'condition', labelKey: 'automationTemplates.stepCheckNpsScore', descKey: 'automationTemplates.stepCheckNpsScoreDesc', icon: 'ph:funnel-bold' }
+      {
+        type: 'action',
+        labelKey: 'automationTemplates.stepSendNpsSurvey',
+        descKey: 'automationTemplates.stepSendNpsSurveyDesc',
+        icon: 'ph:chart-bar-bold'
+      },
+      {
+        type: 'condition',
+        labelKey: 'automationTemplates.stepCheckNpsScore',
+        descKey: 'automationTemplates.stepCheckNpsScoreDesc',
+        icon: 'ph:funnel-bold'
+      }
     ]
   },
   {
@@ -545,10 +720,30 @@ const templates = ref([
     popularity: 2650,
     createdAt: '2025-09-30',
     steps: [
-      { type: 'trigger', labelKey: 'automationTemplates.stepDailyScheduleCheck', descKey: 'automationTemplates.stepDailyScheduleCheckDesc', icon: 'ph:clock-bold' },
-      { type: 'condition', labelKey: 'automationTemplates.stepCheck60DaysBefore', descKey: 'automationTemplates.stepCheck60DaysBeforeDesc', icon: 'ph:calendar-bold' },
-      { type: 'notification', labelKey: 'automationTemplates.stepNotifyAccountManager', descKey: 'automationTemplates.stepNotifyAccountManagerDesc', icon: 'ph:bell-bold' },
-      { type: 'action', labelKey: 'automationTemplates.stepCreateRenewalTask', descKey: 'automationTemplates.stepCreateRenewalTaskDesc', icon: 'ph:check-square-bold' }
+      {
+        type: 'trigger',
+        labelKey: 'automationTemplates.stepDailyScheduleCheck',
+        descKey: 'automationTemplates.stepDailyScheduleCheckDesc',
+        icon: 'ph:clock-bold'
+      },
+      {
+        type: 'condition',
+        labelKey: 'automationTemplates.stepCheck60DaysBefore',
+        descKey: 'automationTemplates.stepCheck60DaysBeforeDesc',
+        icon: 'ph:calendar-bold'
+      },
+      {
+        type: 'notification',
+        labelKey: 'automationTemplates.stepNotifyAccountManager',
+        descKey: 'automationTemplates.stepNotifyAccountManagerDesc',
+        icon: 'ph:bell-bold'
+      },
+      {
+        type: 'action',
+        labelKey: 'automationTemplates.stepCreateRenewalTask',
+        descKey: 'automationTemplates.stepCreateRenewalTaskDesc',
+        icon: 'ph:check-square-bold'
+      }
     ]
   },
   {
@@ -563,10 +758,30 @@ const templates = ref([
     popularity: 1720,
     createdAt: '2025-12-10',
     steps: [
-      { type: 'trigger', labelKey: 'automationTemplates.stepHealthScoreDrop', descKey: 'automationTemplates.stepHealthScoreDropDesc', icon: 'ph:trend-down-bold' },
-      { type: 'condition', labelKey: 'automationTemplates.stepCheckChurnIndicators', descKey: 'automationTemplates.stepCheckChurnIndicatorsDesc', icon: 'ph:warning-bold' },
-      { type: 'notification', labelKey: 'automationTemplates.stepEscalateToCsm', descKey: 'automationTemplates.stepEscalateToCsmDesc', icon: 'ph:siren-bold' },
-      { type: 'action', labelKey: 'automationTemplates.stepCreateRetentionPlan', descKey: 'automationTemplates.stepCreateRetentionPlanDesc', icon: 'ph:strategy-bold' }
+      {
+        type: 'trigger',
+        labelKey: 'automationTemplates.stepHealthScoreDrop',
+        descKey: 'automationTemplates.stepHealthScoreDropDesc',
+        icon: 'ph:trend-down-bold'
+      },
+      {
+        type: 'condition',
+        labelKey: 'automationTemplates.stepCheckChurnIndicators',
+        descKey: 'automationTemplates.stepCheckChurnIndicatorsDesc',
+        icon: 'ph:warning-bold'
+      },
+      {
+        type: 'notification',
+        labelKey: 'automationTemplates.stepEscalateToCsm',
+        descKey: 'automationTemplates.stepEscalateToCsmDesc',
+        icon: 'ph:siren-bold'
+      },
+      {
+        type: 'action',
+        labelKey: 'automationTemplates.stepCreateRetentionPlan',
+        descKey: 'automationTemplates.stepCreateRetentionPlanDesc',
+        icon: 'ph:strategy-bold'
+      }
     ]
   },
 
@@ -583,10 +798,30 @@ const templates = ref([
     popularity: 3900,
     createdAt: '2025-09-15',
     steps: [
-      { type: 'trigger', labelKey: 'automationTemplates.stepNewTicketCreated', descKey: 'automationTemplates.stepNewTicketCreatedDesc', icon: 'ph:lightning-bold' },
-      { type: 'condition', labelKey: 'automationTemplates.stepCheckTicketCategory', descKey: 'automationTemplates.stepCheckTicketCategoryDesc', icon: 'ph:tag-bold' },
-      { type: 'action', labelKey: 'automationTemplates.stepAssignToAgent', descKey: 'automationTemplates.stepAssignToAgentDesc', icon: 'ph:user-switch-bold' },
-      { type: 'notification', labelKey: 'automationTemplates.stepNotifyAgent', descKey: 'automationTemplates.stepNotifyAgentDesc', icon: 'ph:bell-bold' }
+      {
+        type: 'trigger',
+        labelKey: 'automationTemplates.stepNewTicketCreated',
+        descKey: 'automationTemplates.stepNewTicketCreatedDesc',
+        icon: 'ph:lightning-bold'
+      },
+      {
+        type: 'condition',
+        labelKey: 'automationTemplates.stepCheckTicketCategory',
+        descKey: 'automationTemplates.stepCheckTicketCategoryDesc',
+        icon: 'ph:tag-bold'
+      },
+      {
+        type: 'action',
+        labelKey: 'automationTemplates.stepAssignToAgent',
+        descKey: 'automationTemplates.stepAssignToAgentDesc',
+        icon: 'ph:user-switch-bold'
+      },
+      {
+        type: 'notification',
+        labelKey: 'automationTemplates.stepNotifyAgent',
+        descKey: 'automationTemplates.stepNotifyAgentDesc',
+        icon: 'ph:bell-bold'
+      }
     ]
   },
   {
@@ -601,10 +836,30 @@ const templates = ref([
     popularity: 2500,
     createdAt: '2025-11-05',
     steps: [
-      { type: 'trigger', labelKey: 'automationTemplates.stepSlaTimerCheck', descKey: 'automationTemplates.stepSlaTimerCheckDesc', icon: 'ph:clock-countdown-bold' },
-      { type: 'condition', labelKey: 'automationTemplates.stepCheckSlaBreach', descKey: 'automationTemplates.stepCheckSlaBreachDesc', icon: 'ph:warning-bold' },
-      { type: 'action', labelKey: 'automationTemplates.stepEscalateTicket', descKey: 'automationTemplates.stepEscalateTicketDesc', icon: 'ph:arrow-up-bold' },
-      { type: 'notification', labelKey: 'automationTemplates.stepNotifyManager', descKey: 'automationTemplates.stepNotifyManagerDesc', icon: 'ph:bell-ringing-bold' }
+      {
+        type: 'trigger',
+        labelKey: 'automationTemplates.stepSlaTimerCheck',
+        descKey: 'automationTemplates.stepSlaTimerCheckDesc',
+        icon: 'ph:clock-countdown-bold'
+      },
+      {
+        type: 'condition',
+        labelKey: 'automationTemplates.stepCheckSlaBreach',
+        descKey: 'automationTemplates.stepCheckSlaBreachDesc',
+        icon: 'ph:warning-bold'
+      },
+      {
+        type: 'action',
+        labelKey: 'automationTemplates.stepEscalateTicket',
+        descKey: 'automationTemplates.stepEscalateTicketDesc',
+        icon: 'ph:arrow-up-bold'
+      },
+      {
+        type: 'notification',
+        labelKey: 'automationTemplates.stepNotifyManager',
+        descKey: 'automationTemplates.stepNotifyManagerDesc',
+        icon: 'ph:bell-ringing-bold'
+      }
     ]
   },
   {
@@ -619,10 +874,25 @@ const templates = ref([
     popularity: 2900,
     createdAt: '2025-10-10',
     steps: [
-      { type: 'trigger', labelKey: 'automationTemplates.stepTicketResolved', descKey: 'automationTemplates.stepTicketResolvedDesc', icon: 'ph:check-circle-bold' },
+      {
+        type: 'trigger',
+        labelKey: 'automationTemplates.stepTicketResolved',
+        descKey: 'automationTemplates.stepTicketResolvedDesc',
+        icon: 'ph:check-circle-bold'
+      },
       { type: 'delay', labelKey: 'automationTemplates.stepWait1Hour', descKey: 'automationTemplates.stepWait1HourDesc', icon: 'ph:clock-bold' },
-      { type: 'action', labelKey: 'automationTemplates.stepSendCsatSurvey', descKey: 'automationTemplates.stepSendCsatSurveyDesc', icon: 'ph:smiley-bold' },
-      { type: 'condition', labelKey: 'automationTemplates.stepCheckCsatScore', descKey: 'automationTemplates.stepCheckCsatScoreDesc', icon: 'ph:funnel-bold' }
+      {
+        type: 'action',
+        labelKey: 'automationTemplates.stepSendCsatSurvey',
+        descKey: 'automationTemplates.stepSendCsatSurveyDesc',
+        icon: 'ph:smiley-bold'
+      },
+      {
+        type: 'condition',
+        labelKey: 'automationTemplates.stepCheckCsatScore',
+        descKey: 'automationTemplates.stepCheckCsatScoreDesc',
+        icon: 'ph:funnel-bold'
+      }
     ]
   },
   {
@@ -637,10 +907,30 @@ const templates = ref([
     popularity: 1650,
     createdAt: '2025-12-15',
     steps: [
-      { type: 'trigger', labelKey: 'automationTemplates.stepNewTicketCreated', descKey: 'automationTemplates.stepNewTicketCreatedDesc', icon: 'ph:lightning-bold' },
-      { type: 'condition', labelKey: 'automationTemplates.stepCheckVipStatus', descKey: 'automationTemplates.stepCheckVipStatusDesc', icon: 'ph:crown-bold' },
-      { type: 'action', labelKey: 'automationTemplates.stepPriorityRouting', descKey: 'automationTemplates.stepPriorityRoutingDesc', icon: 'ph:arrow-fat-up-bold' },
-      { type: 'notification', labelKey: 'automationTemplates.stepNotifySeniorAgent', descKey: 'automationTemplates.stepNotifySeniorAgentDesc', icon: 'ph:star-bold' }
+      {
+        type: 'trigger',
+        labelKey: 'automationTemplates.stepNewTicketCreated',
+        descKey: 'automationTemplates.stepNewTicketCreatedDesc',
+        icon: 'ph:lightning-bold'
+      },
+      {
+        type: 'condition',
+        labelKey: 'automationTemplates.stepCheckVipStatus',
+        descKey: 'automationTemplates.stepCheckVipStatusDesc',
+        icon: 'ph:crown-bold'
+      },
+      {
+        type: 'action',
+        labelKey: 'automationTemplates.stepPriorityRouting',
+        descKey: 'automationTemplates.stepPriorityRoutingDesc',
+        icon: 'ph:arrow-fat-up-bold'
+      },
+      {
+        type: 'notification',
+        labelKey: 'automationTemplates.stepNotifySeniorAgent',
+        descKey: 'automationTemplates.stepNotifySeniorAgentDesc',
+        icon: 'ph:star-bold'
+      }
     ]
   }
 ]);
@@ -648,9 +938,24 @@ const templates = ref([
 // ─── Stats ────────────────────────────────────────────────────────
 const summaryStats = computed(() => [
   { label: t('automationTemplates.totalTemplates'), value: templates.value.length, icon: 'ph:files-bold', color: '#7849ff' },
-  { label: t('automationTemplates.leadManagement'), value: templates.value.filter(t => t.category === 'leadManagement').length, icon: 'ph:users-three-bold', color: '#3b82f6' },
-  { label: t('automationTemplates.dealManagement'), value: templates.value.filter(t => t.category === 'dealManagement').length, icon: 'ph:handshake-bold', color: '#22c55e' },
-  { label: t('automationTemplates.support'), value: templates.value.filter(t => t.category === 'support').length, icon: 'ph:lifebuoy-bold', color: '#f59e0b' }
+  {
+    label: t('automationTemplates.leadManagement'),
+    value: templates.value.filter(t => t.category === 'leadManagement').length,
+    icon: 'ph:users-three-bold',
+    color: '#3b82f6'
+  },
+  {
+    label: t('automationTemplates.dealManagement'),
+    value: templates.value.filter(t => t.category === 'dealManagement').length,
+    icon: 'ph:handshake-bold',
+    color: '#22c55e'
+  },
+  {
+    label: t('automationTemplates.support'),
+    value: templates.value.filter(t => t.category === 'support').length,
+    icon: 'ph:lifebuoy-bold',
+    color: '#f59e0b'
+  }
 ]);
 
 // ─── Filtered & Sorted Templates ──────────────────────────────────
@@ -1035,8 +1340,13 @@ function resetFilters() {
 }
 
 @keyframes successPulse {
-  0%, 100% { transform: scale(1); }
-  50% { transform: scale(1.05); }
+  0%,
+  100% {
+    transform: scale(1);
+  }
+  50% {
+    transform: scale(1.05);
+  }
 }
 
 // ─── Animation ────────────────────────────────────────────────────

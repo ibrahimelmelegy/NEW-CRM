@@ -25,10 +25,18 @@ function clearStorageData() {
 
 const localStorageMock = {
   getItem: vi.fn((key: string) => storageData[key] ?? null),
-  setItem: vi.fn((key: string, value: string) => { storageData[key] = value; }),
-  removeItem: vi.fn((key: string) => { delete storageData[key]; }),
-  clear: vi.fn(() => { clearStorageData(); }),
-  get length() { return Object.keys(storageData).length; },
+  setItem: vi.fn((key: string, value: string) => {
+    storageData[key] = value;
+  }),
+  removeItem: vi.fn((key: string) => {
+    delete storageData[key];
+  }),
+  clear: vi.fn(() => {
+    clearStorageData();
+  }),
+  get length() {
+    return Object.keys(storageData).length;
+  },
   key: vi.fn((index: number) => Object.keys(storageData)[index] ?? null)
 };
 
@@ -145,9 +153,7 @@ describe('useSettingsStore', () => {
 
       expect(localStorageMock.setItem).toHaveBeenCalled();
 
-      const persistedCall = localStorageMock.setItem.mock.calls[
-        localStorageMock.setItem.mock.calls.length - 1
-      ];
+      const persistedCall = localStorageMock.setItem.mock.calls[localStorageMock.setItem.mock.calls.length - 1];
       const persisted = JSON.parse(persistedCall![1]);
       expect(persisted.timezone).toBe('Asia/Riyadh');
     });
