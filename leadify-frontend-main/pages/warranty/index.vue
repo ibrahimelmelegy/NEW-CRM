@@ -183,11 +183,11 @@
         el-input(v-model="claimForm.reason" type="textarea" :rows="3" :placeholder="$t('warranty.claimReasonPlaceholder')")
       el-form-item(:label="$t('warranty.claimStatus')")
         el-select(v-model="claimForm.claimStatus" class="w-full")
-          el-option(label="Filed" value="FILED")
-          el-option(label="Under Review" value="UNDER_REVIEW")
-          el-option(label="Approved" value="APPROVED")
-          el-option(label="Denied" value="DENIED")
-          el-option(label="Fulfilled" value="FULFILLED")
+          el-option(:label="$t('warranty.filed')" value="FILED")
+          el-option(:label="$t('warranty.underReview')" value="UNDER_REVIEW")
+          el-option(:label="$t('common.approved')" value="APPROVED")
+          el-option(:label="$t('common.denied')" value="DENIED")
+          el-option(:label="$t('warranty.fulfilled')" value="FULFILLED")
     template(#footer)
       el-button(@click="showClaimDialog = false") {{ $t('common.cancel') }}
       el-button(type="primary" @click="saveClaim" :loading="savingClaim") {{ $t('common.submit') }}
@@ -219,10 +219,10 @@
       .grid.grid-cols-2.gap-4
         el-form-item(:label="$t('warranty.type')")
           el-select(v-model="form.warrantyType" class="w-full")
-            el-option(label="Warranty" value="Warranty")
-            el-option(label="Maintenance" value="Maintenance")
-            el-option(label="Support Plan" value="Support")
-            el-option(label="AMC" value="AMC")
+            el-option(:label="$t('warranty.typeWarranty')" value="Warranty")
+            el-option(:label="$t('warranty.typeMaintenance')" value="Maintenance")
+            el-option(:label="$t('warranty.typeSupportPlan')" value="Support")
+            el-option(:label="$t('warranty.typeAMC')" value="AMC")
         el-form-item(:label="$t('warranty.coverage')")
           el-input(v-model="form.coverage" :placeholder="$t('warranty.coveragePlaceholder')")
       .grid.grid-cols-2.gap-4

@@ -223,8 +223,8 @@ div.p-4.space-y-6.animate-fade-in(class="md_p-6")
       .grid.grid-cols-2.gap-4
         el-form-item(:label="$t('ecommerce.discountType')")
           el-select(v-model="couponForm.discountType" class="w-full")
-            el-option(label="Percentage" value="percentage")
-            el-option(label="Fixed Amount" value="fixed")
+            el-option(:label="$t('common.percentage')" value="percentage")
+            el-option(:label="$t('common.fixedAmount')" value="fixed")
         el-form-item(:label="$t('ecommerce.discountValue')")
           el-input-number(v-model="couponForm.discountValue" :min="0" class="!w-full")
       .grid.grid-cols-2.gap-4

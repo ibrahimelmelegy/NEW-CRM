@@ -276,9 +276,9 @@
             template(#prepend) $
         el-form-item(:label="$t('usageBilling.billingModel')")
           el-select(v-model="meterForm.billingModel" style="width: 100%")
-            el-option(label="Per-Unit" value="Per-Unit")
-            el-option(label="Tiered" value="Tiered")
-            el-option(label="Volume" value="Volume")
+            el-option(:label="$t('billing.perUnit')" value="Per-Unit")
+            el-option(:label="$t('billing.tiered')" value="Tiered")
+            el-option(:label="$t('billing.volume')" value="Volume")
 
       //- Tiers configuration for tiered/volume billing
       template(v-if="meterForm.billingModel === 'Tiered' || meterForm.billingModel === 'Volume'")

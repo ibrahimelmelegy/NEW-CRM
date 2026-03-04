@@ -50,9 +50,9 @@
           </el-select>
           <el-select v-model="difficultyFilter" :placeholder="$t('training.allLevels')" clearable class="w-40">
             <el-option :label="$t('training.allLevels')" value="" />
-            <el-option label="Beginner" value="Beginner" />
-            <el-option label="Intermediate" value="Intermediate" />
-            <el-option label="Advanced" value="Advanced" />
+            <el-option :label="$t('training.beginner')" value="Beginner" />
+            <el-option :label="$t('training.intermediate')" value="Intermediate" />
+            <el-option :label="$t('training.advanced')" value="Advanced" />
           </el-select>
         </div>
 
@@ -226,9 +226,9 @@
         <div class="grid grid-cols-2 gap-4">
           <el-form-item :label="$t('training.difficultyLevel')">
             <el-select v-model="courseForm.difficulty" class="w-full">
-              <el-option label="Beginner" value="Beginner" />
-              <el-option label="Intermediate" value="Intermediate" />
-              <el-option label="Advanced" value="Advanced" />
+              <el-option :label="$t('training.beginner')" value="Beginner" />
+              <el-option :label="$t('training.intermediate')" value="Intermediate" />
+              <el-option :label="$t('training.advanced')" value="Advanced" />
             </el-select>
           </el-form-item>
           <el-form-item :label="$t('training.instructor')">

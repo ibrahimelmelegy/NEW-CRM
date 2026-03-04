@@ -398,10 +398,10 @@
         </div>
         <el-form-item :label="$t('resourcePlanner.mission')">
           <el-select v-model="allocForm.mission" multiple class="w-full">
-            <el-option label="Standard" value="Standard" />
-            <el-option label="Helper" value="Helper" />
-            <el-option label="SiteEngineer" value="SiteEngineer" />
-            <el-option label="Engineer" value="Engineer" />
+            <el-option :label="$t('resourcePlanner.standard')" value="Standard" />
+            <el-option :label="$t('resourcePlanner.helper')" value="Helper" />
+            <el-option :label="$t('resourcePlanner.siteEngineer')" value="SiteEngineer" />
+            <el-option :label="$t('resourcePlanner.engineer')" value="Engineer" />
           </el-select>
         </el-form-item>
       </el-form>

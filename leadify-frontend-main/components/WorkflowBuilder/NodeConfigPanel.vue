@@ -75,9 +75,9 @@ el-drawer(
       .form-group
         label.form-label Unit
         el-select(v-model="config.unit" @change="emitConfig")
-          el-option(label="Minutes" value="minutes")
-          el-option(label="Hours" value="hours")
-          el-option(label="Days" value="days")
+          el-option(:label="$t('workflows.minutes')" value="minutes")
+          el-option(:label="$t('workflows.hours')" value="hours")
+          el-option(:label="$t('workflows.days')" value="days")
 
     //- HTTP Request Config
     template(v-if="nodeType === 'http'")

@@ -141,9 +141,9 @@
         </div>
         <el-form-item :label="$t('cpq.campaign')">
           <el-select v-model="newExperiment.campaignId" :placeholder="$t('abTesting.selectCampaign')" class="w-full">
-            <el-option label="Q1 Newsletter" value="1" />
-            <el-option label="Product Launch" value="2" />
-            <el-option label="Re-engagement Series" value="3" />
+            <el-option :label="$t('abTesting.q1Newsletter')" value="1" />
+            <el-option :label="$t('abTesting.productLaunch')" value="2" />
+            <el-option :label="$t('abTesting.reEngagement')" value="3" />
           </el-select>
         </el-form-item>
         <el-form-item :label="$t('abTesting.durationLabel')">

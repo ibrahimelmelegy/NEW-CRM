@@ -40,7 +40,7 @@
         clearable
         @change="handleSearch"
       )
-        el-option(label="All" value="")
+        el-option(:label="$t('common.all')" value="")
         el-option(v-for="s in statusOptions" :key="s.value" :label="s.label" :value="s.value")
       el-date-picker(
         v-model="dateRange"

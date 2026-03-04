@@ -51,7 +51,7 @@
             :placeholder="$t('reportBuilder.selectField')"
             clearable
           )
-            el-option(value="count" label="Count")
+            el-option(value="count" :label="$t('chartPicker.count')")
             el-option(
               v-for="f in numericFields"
               :key="f.name"

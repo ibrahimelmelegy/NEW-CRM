@@ -380,11 +380,11 @@
     el-form(:model="modelConfig" label-position="top")
       el-form-item(:label="$t('aiLeadScoring.modelType')")
         el-select(v-model="modelConfig.modelType" style="width: 100%")
-          el-option(label="Gradient Boost" value="gradient_boost")
-          el-option(label="Neural Network" value="neural_net")
-          el-option(label="Bayesian" value="bayesian")
-          el-option(label="Logistic Regression" value="logistic_regression")
-          el-option(label="Random Forest" value="random_forest")
+          el-option(:label="$t('aiLeadScoring.gradientBoost')" value="gradient_boost")
+          el-option(:label="$t('aiLeadScoring.neuralNetwork')" value="neural_net")
+          el-option(:label="$t('aiLeadScoring.bayesian')" value="bayesian")
+          el-option(:label="$t('aiLeadScoring.logisticRegression')" value="logistic_regression")
+          el-option(:label="$t('aiLeadScoring.randomForest')" value="random_forest")
 
       el-form-item(:label="$t('aiLeadScoring.trainingDataRange')")
         el-date-picker(

@@ -38,16 +38,16 @@
         | Export PDF
       el-button(size="large" class="!rounded-xl" @click="showSendDialog = true")
         Icon(name="ph:paper-plane-tilt" size="16" class="mr-1")
-        | Send
+        | {{ $t('docBuilder.send') }}
 
   //- Tabs
   el-tabs(v-model="activeTab" type="border-card" class="doc-detail-tabs" v-if="document")
     //- Editor Tab
-    el-tab-pane(label="Editor" name="editor")
+    el-tab-pane(:label="$t('docBuilder.editor')" name="editor")
       template(#label)
         .flex.items-center.gap-2
           Icon(name="ph:pencil-simple" size="16")
-          span Editor
+          span {{ $t('docBuilder.editor') }}
       .py-4(style="height: calc(100vh - 200px); min-height: 500px")
         ProDocBuilder(
           :documentType="documentType"
@@ -57,11 +57,11 @@
         )
 
     //- Versions Tab
-    el-tab-pane(label="Versions" name="versions")
+    el-tab-pane(:label="$t('docBuilder.versions')" name="versions")
       template(#label)
         .flex.items-center.gap-2
           Icon(name="ph:clock-counter-clockwise" size="16")
-          span Versions
+          span {{ $t('docBuilder.versions') }}
       .py-6.max-w-3xl.mx-auto
         DocumentVersionHistory(
           :versions="versions"
@@ -71,11 +71,11 @@
         )
 
     //- Linked Documents Tab
-    el-tab-pane(label="Linked" name="linked")
+    el-tab-pane(:label="$t('docBuilder.linked')" name="linked")
       template(#label)
         .flex.items-center.gap-2
           Icon(name="ph:link" size="16")
-          span Linked
+          span {{ $t('docBuilder.linked') }}
       .py-6.max-w-2xl.mx-auto
         LinkedDocuments(
           :parentDocument="document.parentDocument"

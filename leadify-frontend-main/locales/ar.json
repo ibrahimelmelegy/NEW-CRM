@@ -340,7 +340,12 @@
     "failedToLoad": "فشل في تحميل الأتمتة",
     "retry": "إعادة المحاولة",
     "noAutomationsYet": "لا توجد أتمتة بعد",
-    "createFirstJourney": "إنشاء أول رحلة"
+    "createFirstJourney": "إنشاء أول رحلة",
+    "owner": "المالك",
+    "teamLead": "قائد الفريق",
+    "salesManager": "مدير المبيعات",
+    "allTeam": "كل الفريق",
+    "admin": "مدير"
   },
   "themeStudio": {
     "title": "استوديو المظهر",
@@ -554,7 +559,42 @@
     "max": "الأقصى",
     "enterDescription": "أدخل الوصف",
     "value": "القيمة",
-    "time": "الوقت"
+    "time": "الوقت",
+    "open": "مفتوح",
+    "closed": "مغلق",
+    "pending": "قيد الانتظار",
+    "confirmed": "مؤكد",
+    "cancelled": "ملغى",
+    "completed": "مكتمل",
+    "draft": "مسودة",
+    "archived": "مؤرشف",
+    "approved": "موافق عليه",
+    "denied": "مرفوض",
+    "paused": "موقوف",
+    "shipped": "تم الشحن",
+    "delivered": "تم التسليم",
+    "returned": "مرتجع",
+    "normal": "عادي",
+    "urgent": "عاجل",
+    "lead": "عميل محتمل",
+    "deal": "صفقة",
+    "opportunity": "فرصة",
+    "ticket": "تذكرة",
+    "currencySAR": "SAR",
+    "currencyUSD": "USD",
+    "currencyEUR": "EUR",
+    "currencyGBP": "GBP",
+    "equals": "يساوي",
+    "contains": "يحتوي",
+    "greaterThan": "أكبر من",
+    "lessThan": "أصغر من",
+    "notEmpty": "غير فارغ",
+    "isNull": "فارغ",
+    "isNotNull": "غير فارغ",
+    "percentage": "نسبة مئوية",
+    "fixedAmount": "مبلغ ثابت",
+    "ascending": "تصاعدي",
+    "descending": "تنازلي"
   },
   "activities": {
     "types": {
@@ -948,7 +988,15 @@
     "column": "العمود",
     "notEquals": "لا يساوي",
     "greaterThan": "أكبر من",
-    "lessThan": "أصغر من"
+    "lessThan": "أصغر من",
+    "payments": "المدفوعات",
+    "tickets": "التذاكر",
+    "employees": "الموظفين",
+    "count": "عدد",
+    "sum": "مجموع",
+    "average": "متوسط",
+    "min": "أدنى",
+    "max": "أقصى"
   },
   "integrations": {
     "title": "الربط والتكامل",
@@ -1086,7 +1134,12 @@
       "deleteTitle": "حذف ويب هوك",
       "deleteConfirm": "هل أنت متأكد من حذف الويب هوك \"{name}\"؟ لا يمكن التراجع عن هذا الإجراء.",
       "confirmDelete": "حذف"
-    }
+    },
+    "contacts": "جهات الاتصال",
+    "deals": "الصفقات",
+    "tasks": "المهام",
+    "notes": "الملاحظات",
+    "emails": "البريد الإلكتروني"
   },
   "security": {
     "title": "إعدادات الأمان",
@@ -1211,7 +1264,13 @@
     "fieldType": "نوع الحقل",
     "options": "الخيارات",
     "addOption": "إضافة خيار...",
-    "required": "مطلوب"
+    "required": "مطلوب",
+    "text": "نص",
+    "number": "رقم",
+    "date": "تاريخ",
+    "selectDropdown": "اختيار/قائمة منسدلة",
+    "checkbox": "مربع اختيار",
+    "textarea": "منطقة نص"
   },
   "webhooks": {
     "title": "الويب هوك",
@@ -1245,7 +1304,8 @@
     "running": "قيد التشغيل",
     "whatWorking": "ما الذي تعمل عليه؟",
     "entityType": "نوع الكيان",
-    "entityName": "اسم الكيان"
+    "entityName": "اسم الكيان",
+    "project": "مشروع"
   },
   "reportBuilder": {
     "title": "بناء التقارير",
@@ -2891,7 +2951,10 @@
     "documentTemplateId": "معرف قالب المستند",
     "templateDisplayName": "اسم القالب المعروض",
     "specificUserId": "معرف مستخدم محدد (اختياري)",
-    "describeApproval": "وصف ما يحتاج موافقة"
+    "describeApproval": "وصف ما يحتاج موافقة",
+    "minutes": "دقائق",
+    "hours": "ساعات",
+    "days": "أيام"
   },
   "campaigns": {
     "title": "حملات البريد الإلكتروني",
@@ -2915,7 +2978,14 @@
     "failed": "فشل",
     "analytics": "تحليلات الحملة",
     "templates": "القوالب",
-    "noTemplates": "لا يوجد قوالب محفوظة بعد"
+    "noTemplates": "لا يوجد قوالب محفوظة بعد",
+    "scheduled": "مجدول",
+    "sending": "جاري الإرسال",
+    "filled": "مملوء",
+    "outlined": "محيط",
+    "rounded": "مستدير",
+    "pill": "كبسولة",
+    "recipientTimezone": "المنطقة الزمنية للمستلم"
   },
   "contracts": {
     "title": "إدارة العقود",
@@ -3244,7 +3314,10 @@
     "custom": "مخصص",
     "pageSize": "حجم الصفحة",
     "availableVariables": "المتغيرات المتاحة",
-    "clickToCopy": "انقر على متغير لنسخه إلى الحافظة."
+    "clickToCopy": "انقر على متغير لنسخه إلى الحافظة.",
+    "a4": "A4",
+    "letter": "خطاب",
+    "legal": "قانوني"
   },
   "knowledgeBase": {
     "title": "قاعدة المعرفة",
@@ -4016,7 +4089,11 @@
     "lowStock": "مخزون منخفض",
     "inStock": "متوفر",
     "noProducts": "لا توجد منتجات",
-    "search": "البحث عن منتجات..."
+    "search": "البحث عن منتجات...",
+    "stockIn": "إدخال مخزون",
+    "stockOut": "إخراج مخزون",
+    "adjustment": "تعديل",
+    "transfer": "نقل"
   },
   "approvals": {
     "title": "مركز الموافقات",
@@ -4168,7 +4245,10 @@
     "backToProformaInvoices": "العودة إلى الفواتير المبدئية",
     "backToSalesOrders": "العودة إلى أوامر البيع",
     "backToPurchaseOrders": "العودة إلى أوامر الشراء",
-    "backToCreditNotes": "العودة إلى إشعارات الدائن"
+    "backToCreditNotes": "العودة إلى إشعارات الدائن",
+    "cash": "نقدي",
+    "credit": "ائتمان",
+    "bankTransfer": "تحويل بنكي"
   },
   "executiveDashboard": {
     "title": "لوحة التحكم التنفيذية",
@@ -4675,7 +4755,10 @@
     },
     "confirmDelete": "هل أنت متأكد من حذف هذه المهمة؟",
     "noTasks": "لم يتم العثور على مهام",
-    "createdBy": "أنشأه"
+    "createdBy": "أنشأه",
+    "toDo": "للتنفيذ",
+    "inProgress": "قيد التنفيذ",
+    "done": "منجز"
   },
   "leadScoring": {
     "title": "تقييم العملاء المحتملين",
@@ -4705,7 +4788,11 @@
     "topScored": "الأعلى تقييماً",
     "confirmDelete": "هل أنت متأكد من حذف هذه القاعدة؟",
     "saved": "تم حفظ القاعدة بنجاح",
-    "deleted": "تم حذف القاعدة بنجاح"
+    "deleted": "تم حذف القاعدة بنجاح",
+    "lead": "عميل محتمل",
+    "deal": "صفقة",
+    "client": "عميل",
+    "opportunity": "فرصة"
   },
   "duplicates": {
     "title": "كشف التكرارات",
@@ -4733,7 +4820,10 @@
     "scanning": "جاري الفحص...",
     "scanComplete": "اكتمل الفحص",
     "confirmDuplicate": "هل أنت متأكد أن هذه سجلات مكررة؟",
-    "confirmMerge": "هل أنت متأكد من دمج هذه السجلات؟ لا يمكن التراجع عن هذا الإجراء."
+    "confirmMerge": "هل أنت متأكد من دمج هذه السجلات؟ لا يمكن التراجع عن هذا الإجراء.",
+    "lead": "عميل محتمل",
+    "client": "عميل",
+    "deal": "صفقة"
   },
   "sla": {
     "title": "إدارة اتفاقيات مستوى الخدمة",
@@ -4772,7 +4862,12 @@
     "confirmDelete": "هل أنت متأكد من حذف هذه السياسة؟",
     "saved": "تم حفظ السياسة بنجاح",
     "deleted": "تم حذف السياسة بنجاح",
-    "afterMinutes": "بعد دقائق"
+    "afterMinutes": "بعد دقائق",
+    "lead": "عميل محتمل",
+    "deal": "صفقة",
+    "client": "عميل",
+    "ticket": "تذكرة",
+    "opportunity": "فرصة"
   },
   "sequences": {
     "description": "أتمتة التواصل مع تسلسلات بريد إلكتروني متعددة الخطوات",
@@ -4830,7 +4925,10 @@
     "stepTypeEmail": "بريد إلكتروني",
     "stepTypeWait": "انتظار",
     "stepTypeTask": "مهمة",
-    "entityUuid": "معرف الكيان"
+    "entityUuid": "معرف الكيان",
+    "email": "بريد إلكتروني",
+    "wait": "انتظار",
+    "task": "مهمة"
   },
   "products": {
     "description": "إدارة كتالوج المنتجات والأسعار وعروض الأسعار",
@@ -5298,7 +5396,8 @@
     "totalOwed": "إجمالي المستحق",
     "daysOverdue": "أيام التأخير",
     "lastPayment": "آخر دفعة",
-    "client": "العميل"
+    "client": "العميل",
+    "invoice": "فاتورة"
   },
   "employees": {
     "title": "الموظفين",
@@ -6283,7 +6382,8 @@
     "messageOptional": "رسالة (اختياري)",
     "messagePlaceholder": "أضف رسالة للمستلمين...",
     "expiry": "تاريخ الانتهاء",
-    "setExpiryDate": "تحديد تاريخ الانتهاء"
+    "setExpiryDate": "تحديد تاريخ الانتهاء",
+    "declined": "مرفوض"
   },
   "kanbanBoard": {
     "title": "لوحة كانبان",
@@ -6320,7 +6420,11 @@
     "highPriority": "عالي",
     "mediumPriority": "متوسط",
     "lowPriority": "منخفض",
-    "dueDate": "تاريخ الاستحقاق"
+    "dueDate": "تاريخ الاستحقاق",
+    "noGrouping": "بدون تجميع",
+    "byAssignee": "حسب المعين",
+    "byPriority": "حسب الأولوية",
+    "byValueRange": "حسب نطاق القيمة"
   },
   "gantt": {
     "title": "مخطط جانت",
@@ -6445,7 +6549,8 @@
     "deleteError": "فشل حذف النموذج",
     "editingForm": "جارٍ التعديل",
     "previewForm": "معاينة",
-    "submissionsFor": "تقديمات لـ"
+    "submissionsFor": "تقديمات لـ",
+    "inactive": "غير نشط"
   },
   "assignmentRules": {
     "title": "قواعد التعيين والتصعيد",
@@ -6551,7 +6656,11 @@
     "overAllocated": "تخصيص زائد",
     "totalAllocDays": "إجمالي الأيام المخصصة",
     "utilizationByResource": "الاستخدام حسب المورد",
-    "projects": "مشروع(مشاريع)"
+    "projects": "مشروع(مشاريع)",
+    "standard": "قياسي",
+    "helper": "مساعد",
+    "siteEngineer": "مهندس موقع",
+    "engineer": "مهندس"
   },
   "warehouseMgmt": {
     "title": "إدارة المستودعات",
@@ -6606,7 +6715,10 @@
     "scheduleDate": "تاريخ الجدولة",
     "content": "المحتوى",
     "platforms": "المنصات",
-    "schedulePost": "جدولة منشور"
+    "schedulePost": "جدولة منشور",
+    "positive": "إيجابي",
+    "neutral": "محايد",
+    "negative": "سلبي"
   },
   "salesCommissions": {
     "title": "عمولات المبيعات",
@@ -6733,7 +6845,13 @@
     "seniorYrs": "أقدم (5+ سنوات)",
     "leadYrs": "قائد (8+ سنوات)",
     "jobDescription": "وصف الوظيفة",
-    "conversionRate": "معدل التحويل"
+    "conversionRate": "معدل التحويل",
+    "linkedin": "LinkedIn",
+    "indeed": "Indeed",
+    "referral": "إحالة",
+    "website": "موقع إلكتروني",
+    "jobBoard": "لوحة الوظائف",
+    "other": "أخرى"
   },
   "vendorScorecard": {
     "title": "تقييم الموردين",
@@ -6826,7 +6944,17 @@
     "reason": "السبب",
     "reasonPlaceholder": "سبب التحويل...",
     "visitorDetailsHint": "ستظهر تفاصيل الزائر هنا عند اختيار محادثة",
-    "attachFile": "إرفاق ملف"
+    "attachFile": "إرفاق ملف",
+    "statusOpen": "مفتوح",
+    "statusActive": "نشط",
+    "statusWaiting": "بانتظار",
+    "statusResolved": "تم الحل",
+    "statusClosed": "مغلق",
+    "channelWeb": "ويب",
+    "channelWhatsApp": "WhatsApp",
+    "channelFacebook": "Facebook",
+    "channelInstagram": "Instagram",
+    "channelSMS": "SMS"
   },
   "competitors": {
     "title": "استخبارات المنافسين",
@@ -6984,7 +7112,11 @@
     "productCat": "منتج",
     "serviceCat": "خدمة",
     "experienceCat": "تجربة",
-    "giftCard": "بطاقة هدية"
+    "giftCard": "بطاقة هدية",
+    "ended": "منتهي",
+    "earn": "كسب",
+    "redeem": "استبدال",
+    "adjust": "تعديل"
   },
   "trainingLms": {
     "title": "التدريب ونظام إدارة التعلم",
@@ -7031,7 +7163,12 @@
     "selectEntity": "اختر الكيان",
     "selectCrmField": "اختر حقل CRM",
     "required": "مطلوب",
-    "saveMapping": "حفظ التعيين"
+    "saveMapping": "حفظ التعيين",
+    "skipDuplicates": "تخطي المكررات",
+    "updateExisting": "تحديث السجلات الموجودة",
+    "createNew": "إنشاء سجلات جديدة",
+    "strict": "صارم - تخطي الصفوف غير الصالحة",
+    "lenient": "متساهل - استيراد جميع الصفوف"
   },
   "shippingLogistics": {
     "title": "الشحن والخدمات اللوجستية",
@@ -7403,7 +7540,14 @@
     "confirmBulkDelete": "هل أنت متأكد من حذف الضمانات المحددة؟",
     "expiringSoonPanel": "ينتهي قريباً",
     "warranties": "ضمانات",
-    "daysLeft": "أيام متبقية"
+    "daysLeft": "أيام متبقية",
+    "filed": "مقدم",
+    "underReview": "قيد المراجعة",
+    "fulfilled": "منفذ",
+    "typeWarranty": "ضمان",
+    "typeMaintenance": "صيانة",
+    "typeSupportPlan": "خطة دعم",
+    "typeAMC": "AMC"
   },
   "catalog": {
     "title": "كتالوج المنتجات",
@@ -7443,7 +7587,12 @@
     "price": "السعر",
     "stock": "المخزون",
     "lowStockThreshold": "حد المخزون المنخفض",
-    "namePlaceholder": "منتج مميز"
+    "namePlaceholder": "منتج مميز",
+    "electronics": "إلكترونيات",
+    "software": "برمجيات",
+    "services": "خدمات",
+    "hardware": "أجهزة",
+    "accessories": "إكسسوارات"
   },
   "companies": {
     "title": "دليل الشركات",
@@ -7581,7 +7730,14 @@
     "yesterday": "أمس",
     "subjectPlaceholder": "بخصوص: استفسارك",
     "bodyPlaceholder": "عزيزي {name}،\n\nشكرًا لاهتمامك...",
-    "namePlaceholder": "بريد الترحيب"
+    "namePlaceholder": "بريد الترحيب",
+    "sales": "مبيعات",
+    "followUp": "متابعة",
+    "onboarding": "تهيئة",
+    "invoice": "فاتورة",
+    "support": "دعم",
+    "marketing": "تسويق",
+    "general": "عام"
   },
   "analytics": {
     "totalEarned": "إجمالي المكتسب",
@@ -8393,7 +8549,13 @@
       "oneOnOne": "فردي",
       "group": "مجموعة",
       "roundRobin": "دوار"
-    }
+    },
+    "noShow": "لم يحضر",
+    "meeting": "اجتماع",
+    "call": "مكالمة",
+    "demo": "عرض توضيحي",
+    "consultation": "استشارة",
+    "followUp": "متابعة"
   },
   "callLog": {
     "title": "سجل المكالمات",
@@ -8664,7 +8826,20 @@
     "duration": "المدة",
     "difficultyLevel": "مستوى الصعوبة",
     "instructor": "المدرب",
-    "instructorPlaceholder": "اسم المدرب"
+    "instructorPlaceholder": "اسم المدرب",
+    "beginner": "مبتدئ",
+    "intermediate": "متوسط",
+    "advanced": "متقدم",
+    "online": "عبر الإنترنت",
+    "classroom": "في الفصل",
+    "workshop": "ورشة عمل",
+    "certification": "شهادة",
+    "onTheJob": "أثناء العمل",
+    "pdf": "PDF",
+    "video": "فيديو",
+    "slides": "شرائح",
+    "document": "مستند",
+    "link": "رابط"
   },
   "signatures": {
     "requestSent": "تم إرسال طلب التوقيع!",
@@ -8831,7 +9006,10 @@
     "sendTime": "وقت الإرسال",
     "ctaButton": "زر CTA",
     "landingPage": "صفحة الهبوط",
-    "trafficSplit": "تقسيم حركة المرور"
+    "trafficSplit": "تقسيم حركة المرور",
+    "q1Newsletter": "نشرة الربع الأول",
+    "productLaunch": "إطلاق منتج",
+    "reEngagement": "سلسلة إعادة التفاعل"
   },
   "surveys": {
     "surveyClosed": "تم إغلاق الاستطلاع",
@@ -8865,7 +9043,23 @@
     "distribution": "التوزيع",
     "schedule": "الجدولة",
     "startDate": "تاريخ البدء",
-    "createSurveyBtn": "إنشاء استطلاع"
+    "createSurveyBtn": "إنشاء استطلاع",
+    "npsSurvey": "استبيان NPS",
+    "csatSurvey": "استبيان CSAT",
+    "productFeedback": "ملاحظات المنتج",
+    "customSurvey": "استبيان مخصص",
+    "allClients": "جميع العملاء",
+    "activeClients": "عملاء نشطون",
+    "churned": "متخلفون",
+    "customSegment": "شريحة مخصصة",
+    "customerSatisfaction": "رضا العملاء",
+    "employee": "الموظف",
+    "custom": "مخصص",
+    "text": "نص",
+    "singleChoice": "اختيار واحد",
+    "multipleChoice": "اختيار متعدد",
+    "rating": "تقييم",
+    "scale": "مقياس (1-10)"
   },
   "planner": {
     "taskPlanned": "تمت جدولة المهمة!",
@@ -10638,7 +10832,11 @@
     "thu": "الخميس",
     "fri": "الجمعة",
     "sat": "السبت",
-    "sun": "الأحد"
+    "sun": "الأحد",
+    "channelEmail": "بريد إلكتروني",
+    "channelAds": "إعلانات",
+    "channelSocial": "اجتماعي",
+    "channelEvents": "فعاليات"
   },
   "feedbackNps": {
     "title": "مركز التغذية الراجعة و NPS",
@@ -11855,7 +12053,15 @@
     "electricalDefects": "عيوب كهربائية",
     "defectCount": "عدد العيوب",
     "cumulativePercent": "النسبة التراكمية %",
-    "count": "العدد"
+    "count": "العدد",
+    "manufacturing": "تصنيع",
+    "packaging": "تغليف",
+    "safety": "سلامة",
+    "compliance": "امتثال",
+    "environmental": "بيئي",
+    "passFail": "نجاح/رسوب",
+    "passFailNa": "نجاح/رسوب/غير مطبق",
+    "numeric": "رقمي"
   },
   "unifiedInbox": {
     "title": "البريد الموحد",
@@ -12604,7 +12810,12 @@
     "auto": "تلقائي",
     "manual": "يدوي",
     "trainWarning": "قد يستغرق تدريب نموذج جديد عدة دقائق. سيستمر النموذج النشط الحالي في تسجيل العملاء المحتملين أثناء التدريب.",
-    "startTraining": "بدء التدريب"
+    "startTraining": "بدء التدريب",
+    "gradientBoost": "Gradient Boost",
+    "neuralNetwork": "Neural Network",
+    "bayesian": "Bayesian",
+    "logisticRegression": "Logistic Regression",
+    "randomForest": "Random Forest"
   },
   "complianceManager": {
     "title": "مدير الامتثال والخصوصية",
@@ -12722,7 +12933,8 @@
     "noDataFields": "لا توجد حقول بيانات",
     "auditComplete": "اكتمل التدقيق",
     "auditCompleteMsg": "اكتمل تدقيق الامتثال بنجاح. تم تحديث الدرجة.",
-    "exportSuccess": "تم تصدير التقرير بنجاح"
+    "exportSuccess": "تم تصدير التقرير بنجاح",
+    "pii": "PII"
   },
   "warehouse": {
     "title": "إدارة المستودع",
@@ -12765,7 +12977,13 @@
     "selectWarehouse": "اختر مستودعاً",
     "transferNotes": "أضف ملاحظات...",
     "notes": "ملاحظات",
-    "address": "العنوان"
+    "address": "العنوان",
+    "maintenance": "صيانة",
+    "storage": "تخزين",
+    "picking": "التقاط",
+    "receiving": "استلام",
+    "shippingZone": "شحن",
+    "quarantine": "حجر صحي"
   },
   "archive": {
     "title": "أرشيف المستندات",
@@ -12840,7 +13058,11 @@
     "appPassword": "كلمة مرور التطبيق",
     "connect": "ربط",
     "emailPlaceholder": "بريدك{'@'}مثال.com",
-    "hostPlaceholder": "imap.example.com"
+    "hostPlaceholder": "imap.example.com",
+    "gmail": "Gmail",
+    "outlook": "Outlook",
+    "imap": "IMAP",
+    "smtp": "SMTP"
   },
   "dashboardBuilder": {
     "title": "لوحة التحكم المخصصة",
@@ -12936,7 +13158,22 @@
     "recipient": "المستلم",
     "createdDate": "تم الإنشاء",
     "document": "المستند",
-    "links": "الروابط"
+    "links": "الروابط",
+    "editor": "المحرر",
+    "versions": "الإصدارات",
+    "linked": "مرتبط",
+    "send": "إرسال",
+    "bold": "عريض",
+    "light": "خفيف",
+    "solid": "صلب",
+    "dashed": "متقطع",
+    "dotted": "منقط",
+    "contain": "احتواء",
+    "cover": "تغطية",
+    "fill": "ملء",
+    "showDateLine": "إظهار سطر التاريخ",
+    "signatureBlock": "كتلة التوقيع",
+    "insert": "إدراج"
   },
   "tickets": {
     "all": "الكل",
@@ -12945,5 +13182,46 @@
     "waitingCustomer": "بانتظار العميل",
     "resolved": "تم الحل",
     "closed": "مغلق"
+  },
+  "billing": {
+    "perUnit": "لكل وحدة",
+    "tiered": "متدرج",
+    "volume": "حسب الحجم"
+  },
+  "performance": {
+    "quarterly": "ربع سنوي",
+    "annual": "سنوي",
+    "probation": "فترة تجريبية",
+    "projectBased": "قائم على المشروع",
+    "allStatuses": "جميع الحالات",
+    "q1_2026": "الربع الأول 2026",
+    "q2_2026": "الربع الثاني 2026",
+    "q3_2026": "الربع الثالث 2026",
+    "q4_2026": "الربع الرابع 2026",
+    "q4_2025": "الربع الرابع 2025",
+    "q3_2025": "الربع الثالث 2025",
+    "annual_2025": "سنوي 2025",
+    "annual_2026": "سنوي 2026"
+  },
+  "shipping": {
+    "domestic": "محلي",
+    "international": "دولي",
+    "express": "سريع",
+    "economy": "اقتصادي",
+    "preparing": "جاري التجهيز",
+    "inTransit": "في الطريق"
+  },
+  "whatsapp": {
+    "english": "الإنجليزية",
+    "arabic": "العربية",
+    "none": "لا شيء",
+    "text": "نص",
+    "image": "صورة",
+    "document": "مستند",
+    "audio": "صوت",
+    "video": "فيديو"
+  },
+  "chartPicker": {
+    "count": "عدد"
   }
 }

@@ -84,16 +84,16 @@
               <div>
                 <label class="block text-xs text-slate-500 mb-2">{{ $t("dataImport.duplicateHandling") }}</label>
                 <el-select v-model="importSettings.duplicateHandling" class="w-full">
-                  <el-option label="Skip duplicates" value="skip" />
-                  <el-option label="Update existing records" value="update" />
-                  <el-option label="Create new records" value="create" />
+                  <el-option :label="$t('dataImport.skipDuplicates')" value="skip" />
+                  <el-option :label="$t('dataImport.updateExisting')" value="update" />
+                  <el-option :label="$t('dataImport.createNew')" value="create" />
                 </el-select>
               </div>
               <div>
                 <label class="block text-xs text-slate-500 mb-2">{{ $t("dataImport.requiredFieldValidation") }}</label>
                 <el-select v-model="importSettings.validation" class="w-full">
-                  <el-option label="Strict - Skip invalid rows" value="strict" />
-                  <el-option label="Lenient - Import all rows" value="lenient" />
+                  <el-option :label="$t('dataImport.strict')" value="strict" />
+                  <el-option :label="$t('dataImport.lenient')" value="lenient" />
                 </el-select>
               </div>
             </div>

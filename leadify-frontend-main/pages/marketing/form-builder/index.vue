@@ -92,9 +92,9 @@ div
       .grid.gap-4(class="grid-cols-2")
         el-form-item(:label="$t('common.status')")
           el-select(v-model="form.status" class="w-full")
-            el-option(label="Draft" value="DRAFT")
-            el-option(label="Active" value="ACTIVE")
-            el-option(label="Inactive" value="INACTIVE")
+            el-option(:label="$t('common.draft')" value="DRAFT")
+            el-option(:label="$t('common.active')" value="ACTIVE")
+            el-option(:label="$t('common.inactive')" value="INACTIVE")
         el-form-item(:label="$t('marketing.formBuilder.createLead')")
           .pt-2
             el-checkbox(v-model="form.createLead") {{ $t('marketing.formBuilder.autoCreateLead') }}

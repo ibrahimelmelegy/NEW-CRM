@@ -315,11 +315,11 @@
             el-input(v-model="newChecklistForm.name" :placeholder="t('qualityControl.enterTemplateName')")
           el-form-item(:label="t('qualityControl.category')")
             el-select(v-model="newChecklistForm.category" style="width: 100%" :placeholder="t('qualityControl.selectCategory')")
-              el-option(label="Manufacturing" value="Manufacturing")
-              el-option(label="Packaging" value="Packaging")
-              el-option(label="Safety" value="Safety")
-              el-option(label="Compliance" value="Compliance")
-              el-option(label="Environmental" value="Environmental")
+              el-option(:label="$t('qualityControl.manufacturing')" value="Manufacturing")
+              el-option(:label="$t('qualityControl.packaging')" value="Packaging")
+              el-option(:label="$t('qualityControl.safety')" value="Safety")
+              el-option(:label="$t('qualityControl.compliance')" value="Compliance")
+              el-option(:label="$t('qualityControl.environmental')" value="Environmental")
 
         //- Checklist Items
         .mb-4
@@ -339,9 +339,9 @@
                 )
               .col-span-3
                 el-select(v-model="item.resultType" size="default" style="width: 100%")
-                  el-option(label="Pass/Fail" value="pass-fail")
-                  el-option(label="Pass/Fail/NA" value="pass-fail-na")
-                  el-option(label="Numeric" value="numeric")
+                  el-option(:label="$t('qualityControl.passFail')" value="pass-fail")
+                  el-option(:label="$t('qualityControl.passFailNa')" value="pass-fail-na")
+                  el-option(:label="$t('qualityControl.numeric')" value="numeric")
               .col-span-2
                 el-input-number(
                   v-model="item.weight"

@@ -115,11 +115,11 @@ div
               el-input(v-model="question.text" :placeholder="$t('marketing.surveys.questionText')")
               .grid.gap-3(class="grid-cols-2")
                 el-select(v-model="question.type" class="w-full")
-                  el-option(label="Text" value="TEXT")
-                  el-option(label="Single Choice" value="SINGLE_CHOICE")
-                  el-option(label="Multiple Choice" value="MULTIPLE_CHOICE")
-                  el-option(label="Rating" value="RATING")
-                  el-option(label="Scale (1-10)" value="SCALE")
+                  el-option(:label="$t('surveys.text')" value="TEXT")
+                  el-option(:label="$t('surveys.singleChoice')" value="SINGLE_CHOICE")
+                  el-option(:label="$t('surveys.multipleChoice')" value="MULTIPLE_CHOICE")
+                  el-option(:label="$t('surveys.rating')" value="RATING")
+                  el-option(:label="$t('surveys.scale')" value="SCALE")
                 el-checkbox(v-model="question.required") {{ $t('common.required') }}
               //- Options for choice questions
               template(v-if="question.type === 'SINGLE_CHOICE' || question.type === 'MULTIPLE_CHOICE'")

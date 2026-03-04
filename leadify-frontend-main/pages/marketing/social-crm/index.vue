@@ -122,9 +122,9 @@ div
           el-select(v-model="filterPlatform" clearable :placeholder="$t('marketing.socialCrm.platform')" style="width: 160px")
             el-option(v-for="p in platformOptions" :key="p.value" :label="p.label" :value="p.value")
           el-select(v-model="filterSentiment" clearable :placeholder="$t('marketing.socialCrm.sentiment')" style="width: 160px")
-            el-option(label="Positive" value="POSITIVE")
-            el-option(label="Neutral" value="NEUTRAL")
-            el-option(label="Negative" value="NEGATIVE")
+            el-option(:label="$t('socialCrm.positive')" value="POSITIVE")
+            el-option(:label="$t('socialCrm.neutral')" value="NEUTRAL")
+            el-option(:label="$t('socialCrm.negative')" value="NEGATIVE")
 
       el-table(
         :data="filteredData"
@@ -206,9 +206,9 @@ div
           el-input-number(v-model="form.followers" :min="0" class="!w-full")
         el-form-item(:label="$t('marketing.socialCrm.sentiment')")
           el-select(v-model="form.sentiment" class="w-full" clearable)
-            el-option(label="Positive" value="POSITIVE")
-            el-option(label="Neutral" value="NEUTRAL")
-            el-option(label="Negative" value="NEGATIVE")
+            el-option(:label="$t('socialCrm.positive')" value="POSITIVE")
+            el-option(:label="$t('socialCrm.neutral')" value="NEUTRAL")
+            el-option(:label="$t('socialCrm.negative')" value="NEGATIVE")
       el-form-item(:label="$t('common.notes')")
         el-input(v-model="form.notes" type="textarea" :rows="2" :placeholder="$t('marketing.socialCrm.notesPlaceholder')")
     template(#footer)

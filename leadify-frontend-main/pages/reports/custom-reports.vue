@@ -236,8 +236,8 @@
 
         el-form-item(:label="$t('reports.sortOrder')")
           el-select(v-model="reportForm.sortOrder" size="large" style="width: 100%")
-            el-option(label="Descending" value="DESC")
-            el-option(label="Ascending" value="ASC")
+            el-option(:label="$t('common.descending')" value="DESC")
+            el-option(:label="$t('common.ascending')" value="ASC")
 
       el-form-item(:label="$t('reportBuilder.fields')" prop="fields")
         .mb-2(v-if="loadingFields")
@@ -324,13 +324,13 @@
               size="default"
               style="width: 25%"
             )
-              el-option(label="Equals" value="equals")
+              el-option(:label="$t('common.equals')" value="equals")
               el-option(:label="$t('reports.notEquals')" value="not_equals")
-              el-option(label="Contains" value="contains")
+              el-option(:label="$t('common.contains')" value="contains")
               el-option(:label="$t('reports.greaterThan')" value="greater_than")
               el-option(:label="$t('reports.lessThan')" value="less_than")
-              el-option(label="Is Null" value="is_null")
-              el-option(label="Is Not Null" value="is_not_null")
+              el-option(:label="$t('common.isNull')" value="is_null")
+              el-option(:label="$t('common.isNotNull')" value="is_not_null")
             el-input(
               v-if="filter.operator !== 'is_null' && filter.operator !== 'is_not_null'"
               v-model="filter.value"

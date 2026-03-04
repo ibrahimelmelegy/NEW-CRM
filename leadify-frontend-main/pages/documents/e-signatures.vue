@@ -43,11 +43,11 @@
       <div class="flex justify-between items-center mb-4">
         <div class="flex gap-2">
           <el-select v-model="filterStatus" :placeholder="$t('common.status')" clearable class="w-36">
-            <el-option label="All" value="" />
-            <el-option label="Pending" value="PENDING" />
-            <el-option label="Signed" value="SIGNED" />
-            <el-option label="Declined" value="DECLINED" />
-            <el-option label="Expired" value="EXPIRED" />
+            <el-option :label="$t('common.all')" value="" />
+            <el-option :label="$t('common.pending')" value="PENDING" />
+            <el-option :label="$t('eSignatures.signed')" value="SIGNED" />
+            <el-option :label="$t('eSignatures.declined')" value="DECLINED" />
+            <el-option :label="$t('eSignatures.expired')" value="EXPIRED" />
           </el-select>
           <el-input v-model="searchQuery" :placeholder="$t('eSignatures.searchDocuments')" prefix-icon="Search" clearable class="!w-56" />
         </div>

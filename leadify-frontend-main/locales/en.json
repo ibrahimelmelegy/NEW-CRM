@@ -340,7 +340,12 @@
     "failedToLoad": "Failed to load automations",
     "retry": "Retry",
     "noAutomationsYet": "No Automations Yet",
-    "createFirstJourney": "Create First Journey"
+    "createFirstJourney": "Create First Journey",
+    "owner": "Owner",
+    "teamLead": "Team Lead",
+    "salesManager": "Sales Manager",
+    "allTeam": "All Team",
+    "admin": "Admin"
   },
   "themeStudio": {
     "title": "Theme Studio",
@@ -554,7 +559,42 @@
     "max": "Max",
     "enterDescription": "Enter Description",
     "value": "Value",
-    "time": "Time"
+    "time": "Time",
+    "open": "Open",
+    "closed": "Closed",
+    "pending": "Pending",
+    "confirmed": "Confirmed",
+    "cancelled": "Cancelled",
+    "completed": "Completed",
+    "draft": "Draft",
+    "archived": "Archived",
+    "approved": "Approved",
+    "denied": "Denied",
+    "paused": "Paused",
+    "shipped": "Shipped",
+    "delivered": "Delivered",
+    "returned": "Returned",
+    "normal": "Normal",
+    "urgent": "Urgent",
+    "lead": "Lead",
+    "deal": "Deal",
+    "opportunity": "Opportunity",
+    "ticket": "Ticket",
+    "currencySAR": "SAR",
+    "currencyUSD": "USD",
+    "currencyEUR": "EUR",
+    "currencyGBP": "GBP",
+    "equals": "Equals",
+    "contains": "Contains",
+    "greaterThan": "Greater than",
+    "lessThan": "Less than",
+    "notEmpty": "Not empty",
+    "isNull": "Is Null",
+    "isNotNull": "Is Not Null",
+    "percentage": "Percentage",
+    "fixedAmount": "Fixed Amount",
+    "ascending": "Ascending",
+    "descending": "Descending"
   },
   "auth": {
     "login": "Sign In",
@@ -916,7 +956,15 @@
     "column": "Column",
     "notEquals": "Not Equals",
     "greaterThan": "Greater Than",
-    "lessThan": "Less Than"
+    "lessThan": "Less Than",
+    "payments": "Payments",
+    "tickets": "Tickets",
+    "employees": "Employees",
+    "count": "Count",
+    "sum": "Sum",
+    "average": "Average",
+    "min": "Min",
+    "max": "Max"
   },
   "integrations": {
     "title": "System Integrations",
@@ -1054,7 +1102,12 @@
       "deleteTitle": "Delete Webhook",
       "deleteConfirm": "Are you sure you want to delete the webhook \"{name}\"? This action cannot be undone.",
       "confirmDelete": "Delete"
-    }
+    },
+    "contacts": "Contacts",
+    "deals": "Deals",
+    "tasks": "Tasks",
+    "notes": "Notes",
+    "emails": "Emails"
   },
   "security": {
     "title": "Security Settings",
@@ -1179,7 +1232,13 @@
     "fieldType": "Field Type",
     "options": "Options",
     "addOption": "Add option...",
-    "required": "Required"
+    "required": "Required",
+    "text": "Text",
+    "number": "Number",
+    "date": "Date",
+    "selectDropdown": "Select/Dropdown",
+    "checkbox": "Checkbox",
+    "textarea": "Textarea"
   },
   "webhooks": {
     "title": "API Webhooks",
@@ -1213,7 +1272,8 @@
     "running": "Running",
     "whatWorking": "What are you working on?",
     "entityType": "Entity Type",
-    "entityName": "Entity Name"
+    "entityName": "Entity Name",
+    "project": "Project"
   },
   "reportBuilder": {
     "title": "Report Builder",
@@ -2859,7 +2919,10 @@
     "documentTemplateId": "Document template ID",
     "templateDisplayName": "Template display name",
     "specificUserId": "Specific user ID (optional)",
-    "describeApproval": "Describe what needs approval"
+    "describeApproval": "Describe what needs approval",
+    "minutes": "Minutes",
+    "hours": "Hours",
+    "days": "Days"
   },
   "campaigns": {
     "title": "Email Campaigns",
@@ -2883,7 +2946,14 @@
     "failed": "Failed",
     "analytics": "Campaign Analytics",
     "templates": "Templates",
-    "noTemplates": "No templates saved yet"
+    "noTemplates": "No templates saved yet",
+    "scheduled": "Scheduled",
+    "sending": "Sending",
+    "filled": "Filled",
+    "outlined": "Outlined",
+    "rounded": "Rounded",
+    "pill": "Pill",
+    "recipientTimezone": "Recipient's Local Timezone"
   },
   "contracts": {
     "title": "Contract Management",
@@ -3212,7 +3282,10 @@
     "custom": "Custom",
     "pageSize": "Page Size",
     "availableVariables": "Available Variables",
-    "clickToCopy": "Click a variable to copy it to clipboard."
+    "clickToCopy": "Click a variable to copy it to clipboard.",
+    "a4": "A4",
+    "letter": "Letter",
+    "legal": "Legal"
   },
   "knowledgeBase": {
     "title": "Knowledge Base",
@@ -3984,7 +4057,11 @@
     "lowStock": "Low Stock",
     "inStock": "In Stock",
     "noProducts": "No products found",
-    "search": "Search products..."
+    "search": "Search products...",
+    "stockIn": "Stock In",
+    "stockOut": "Stock Out",
+    "adjustment": "Adjustment",
+    "transfer": "Transfer"
   },
   "approvals": {
     "title": "Approval Center",
@@ -4136,7 +4213,10 @@
     "backToProformaInvoices": "Back to Proforma Invoices",
     "backToSalesOrders": "Back to Sales Orders",
     "backToPurchaseOrders": "Back to Purchase Orders",
-    "backToCreditNotes": "Back to Credit Notes"
+    "backToCreditNotes": "Back to Credit Notes",
+    "cash": "Cash",
+    "credit": "Credit",
+    "bankTransfer": "Bank Transfer"
   },
   "executiveDashboard": {
     "title": "Executive Dashboard",
@@ -4643,7 +4723,10 @@
     },
     "confirmDelete": "Are you sure you want to delete this task?",
     "noTasks": "No tasks found",
-    "createdBy": "Created By"
+    "createdBy": "Created By",
+    "toDo": "To Do",
+    "inProgress": "In Progress",
+    "done": "Done"
   },
   "leadScoring": {
     "title": "Lead Scoring",
@@ -4673,7 +4756,11 @@
     "topScored": "Top Scored",
     "confirmDelete": "Are you sure you want to delete this rule?",
     "saved": "Rule saved successfully",
-    "deleted": "Rule deleted successfully"
+    "deleted": "Rule deleted successfully",
+    "lead": "Lead",
+    "deal": "Deal",
+    "client": "Client",
+    "opportunity": "Opportunity"
   },
   "duplicates": {
     "title": "Duplicate Detection",
@@ -4701,7 +4788,10 @@
     "scanning": "Scanning...",
     "scanComplete": "Scan complete",
     "confirmDuplicate": "Are you sure these are duplicates?",
-    "confirmMerge": "Are you sure you want to merge these records? This action cannot be undone."
+    "confirmMerge": "Are you sure you want to merge these records? This action cannot be undone.",
+    "lead": "Lead",
+    "client": "Client",
+    "deal": "Deal"
   },
   "sla": {
     "title": "SLA Management",
@@ -4740,7 +4830,12 @@
     "confirmDelete": "Are you sure you want to delete this policy?",
     "saved": "Policy saved successfully",
     "deleted": "Policy deleted successfully",
-    "afterMinutes": "After minutes"
+    "afterMinutes": "After minutes",
+    "lead": "Lead",
+    "deal": "Deal",
+    "client": "Client",
+    "ticket": "Ticket",
+    "opportunity": "Opportunity"
   },
   "sequences": {
     "description": "Automate outreach with multi-step email sequences",
@@ -4798,7 +4893,10 @@
     "stepTypeEmail": "Email",
     "stepTypeWait": "Wait",
     "stepTypeTask": "Task",
-    "entityUuid": "Entity UUID"
+    "entityUuid": "Entity UUID",
+    "email": "Email",
+    "wait": "Wait",
+    "task": "Task"
   },
   "products": {
     "description": "Manage your product catalog, pricing and quotes",
@@ -5266,7 +5364,8 @@
     "totalOwed": "Total Owed",
     "daysOverdue": "Days Overdue",
     "lastPayment": "Last Payment",
-    "client": "Client"
+    "client": "Client",
+    "invoice": "Invoice"
   },
   "employees": {
     "title": "Employees",
@@ -6251,7 +6350,8 @@
     "messageOptional": "Message (Optional)",
     "messagePlaceholder": "Add a message for recipients...",
     "expiry": "Expiry",
-    "setExpiryDate": "Set expiry date"
+    "setExpiryDate": "Set expiry date",
+    "declined": "Declined"
   },
   "kanbanBoard": {
     "title": "Kanban Board",
@@ -6288,7 +6388,11 @@
     "highPriority": "High",
     "mediumPriority": "Medium",
     "lowPriority": "Low",
-    "dueDate": "Due Date"
+    "dueDate": "Due Date",
+    "noGrouping": "No Grouping",
+    "byAssignee": "By Assignee",
+    "byPriority": "By Priority",
+    "byValueRange": "By Value Range"
   },
   "gantt": {
     "title": "Gantt Timeline",
@@ -6413,7 +6517,8 @@
     "deleteError": "Failed to delete form",
     "editingForm": "Editing",
     "previewForm": "Preview",
-    "submissionsFor": "submissions for"
+    "submissionsFor": "submissions for",
+    "inactive": "Inactive"
   },
   "assignmentRules": {
     "title": "Assignment & Escalation Rules",
@@ -6519,7 +6624,11 @@
     "overAllocated": "Over-Allocated",
     "totalAllocDays": "Total Allocated Days",
     "utilizationByResource": "Utilization by Resource",
-    "projects": "project(s)"
+    "projects": "project(s)",
+    "standard": "Standard",
+    "helper": "Helper",
+    "siteEngineer": "SiteEngineer",
+    "engineer": "Engineer"
   },
   "warehouseMgmt": {
     "title": "Warehouse Management",
@@ -6574,7 +6683,10 @@
     "scheduleDate": "Schedule Date",
     "content": "Content",
     "platforms": "Platforms",
-    "schedulePost": "Schedule Post"
+    "schedulePost": "Schedule Post",
+    "positive": "Positive",
+    "neutral": "Neutral",
+    "negative": "Negative"
   },
   "salesCommissions": {
     "title": "Sales Commissions",
@@ -6701,7 +6813,13 @@
     "seniorYrs": "Senior (5+ yrs)",
     "leadYrs": "Lead (8+ yrs)",
     "jobDescription": "Job Description",
-    "conversionRate": "Conversion Rate"
+    "conversionRate": "Conversion Rate",
+    "linkedin": "LinkedIn",
+    "indeed": "Indeed",
+    "referral": "Referral",
+    "website": "Website",
+    "jobBoard": "Job Board",
+    "other": "Other"
   },
   "vendorScorecard": {
     "title": "Vendor Scorecard",
@@ -6794,7 +6912,17 @@
     "reason": "Reason",
     "reasonPlaceholder": "Reason for transfer...",
     "visitorDetailsHint": "Visitor details will appear here when a chat is selected",
-    "attachFile": "Attach file"
+    "attachFile": "Attach file",
+    "statusOpen": "OPEN",
+    "statusActive": "ACTIVE",
+    "statusWaiting": "WAITING",
+    "statusResolved": "RESOLVED",
+    "statusClosed": "CLOSED",
+    "channelWeb": "Web",
+    "channelWhatsApp": "WhatsApp",
+    "channelFacebook": "Facebook",
+    "channelInstagram": "Instagram",
+    "channelSMS": "SMS"
   },
   "competitors": {
     "title": "Competitor Intelligence",
@@ -6952,7 +7080,11 @@
     "productCat": "Product",
     "serviceCat": "Service",
     "experienceCat": "Experience",
-    "giftCard": "Gift Card"
+    "giftCard": "Gift Card",
+    "ended": "Ended",
+    "earn": "Earn",
+    "redeem": "Redeem",
+    "adjust": "Adjust"
   },
   "trainingLms": {
     "title": "Training & LMS",
@@ -6999,7 +7131,12 @@
     "selectEntity": "Select Entity",
     "selectCrmField": "Select CRM field",
     "required": "Required",
-    "saveMapping": "Save Mapping"
+    "saveMapping": "Save Mapping",
+    "skipDuplicates": "Skip duplicates",
+    "updateExisting": "Update existing records",
+    "createNew": "Create new records",
+    "strict": "Strict - Skip invalid rows",
+    "lenient": "Lenient - Import all rows"
   },
   "shippingLogistics": {
     "title": "Shipping & Logistics",
@@ -7399,7 +7536,14 @@
     "confirmBulkDelete": "Are you sure you want to delete the selected warranties?",
     "expiringSoonPanel": "Expiring Soon",
     "warranties": "warranties",
-    "daysLeft": "days left"
+    "daysLeft": "days left",
+    "filed": "Filed",
+    "underReview": "Under Review",
+    "fulfilled": "Fulfilled",
+    "typeWarranty": "Warranty",
+    "typeMaintenance": "Maintenance",
+    "typeSupportPlan": "Support Plan",
+    "typeAMC": "AMC"
   },
   "catalog": {
     "title": "Product Catalog",
@@ -7439,7 +7583,12 @@
     "price": "Price",
     "stock": "Stock",
     "lowStockThreshold": "Low Stock Threshold",
-    "namePlaceholder": "Premium Widget"
+    "namePlaceholder": "Premium Widget",
+    "electronics": "Electronics",
+    "software": "Software",
+    "services": "Services",
+    "hardware": "Hardware",
+    "accessories": "Accessories"
   },
   "companies": {
     "title": "Company Directory",
@@ -7577,7 +7726,14 @@
     "yesterday": "Yesterday",
     "subjectPlaceholder": "Re: Your inquiry",
     "bodyPlaceholder": "Dear {name},\n\nThank you for your interest...",
-    "namePlaceholder": "Welcome Email"
+    "namePlaceholder": "Welcome Email",
+    "sales": "Sales",
+    "followUp": "Follow-up",
+    "onboarding": "Onboarding",
+    "invoice": "Invoice",
+    "support": "Support",
+    "marketing": "Marketing",
+    "general": "General"
   },
   "analytics": {
     "totalEarned": "Total Earned",
@@ -8389,7 +8545,13 @@
       "oneOnOne": "One-on-One",
       "group": "Group",
       "roundRobin": "Round Robin"
-    }
+    },
+    "noShow": "No Show",
+    "meeting": "Meeting",
+    "call": "Call",
+    "demo": "Demo",
+    "consultation": "Consultation",
+    "followUp": "Follow-up"
   },
   "callLog": {
     "title": "Call Log",
@@ -8660,7 +8822,20 @@
     "duration": "Duration",
     "difficultyLevel": "Difficulty Level",
     "instructor": "Instructor",
-    "instructorPlaceholder": "Instructor name"
+    "instructorPlaceholder": "Instructor name",
+    "beginner": "Beginner",
+    "intermediate": "Intermediate",
+    "advanced": "Advanced",
+    "online": "Online",
+    "classroom": "Classroom",
+    "workshop": "Workshop",
+    "certification": "Certification",
+    "onTheJob": "On the Job",
+    "pdf": "PDF",
+    "video": "Video",
+    "slides": "Slides",
+    "document": "Document",
+    "link": "Link"
   },
   "signatures": {
     "requestSent": "Signature request sent!",
@@ -8827,7 +9002,10 @@
     "sendTime": "Send Time",
     "ctaButton": "CTA Button",
     "landingPage": "Landing Page",
-    "trafficSplit": "Traffic Split"
+    "trafficSplit": "Traffic Split",
+    "q1Newsletter": "Q1 Newsletter",
+    "productLaunch": "Product Launch",
+    "reEngagement": "Re-engagement Series"
   },
   "surveys": {
     "surveyClosed": "Survey closed",
@@ -8861,7 +9039,23 @@
     "distribution": "Distribution",
     "schedule": "Schedule",
     "startDate": "Start date",
-    "createSurveyBtn": "Create Survey"
+    "createSurveyBtn": "Create Survey",
+    "npsSurvey": "NPS Survey",
+    "csatSurvey": "CSAT Survey",
+    "productFeedback": "Product Feedback",
+    "customSurvey": "Custom Survey",
+    "allClients": "All Clients",
+    "activeClients": "Active Clients",
+    "churned": "Churned",
+    "customSegment": "Custom Segment",
+    "customerSatisfaction": "Customer Satisfaction",
+    "employee": "Employee",
+    "custom": "Custom",
+    "text": "Text",
+    "singleChoice": "Single Choice",
+    "multipleChoice": "Multiple Choice",
+    "rating": "Rating",
+    "scale": "Scale (1-10)"
   },
   "planner": {
     "taskPlanned": "Task planned!",
@@ -10634,7 +10828,11 @@
     "thu": "Thu",
     "fri": "Fri",
     "sat": "Sat",
-    "sun": "Sun"
+    "sun": "Sun",
+    "channelEmail": "Email",
+    "channelAds": "Ads",
+    "channelSocial": "Social",
+    "channelEvents": "Events"
   },
   "aiInsights": {
     "title": "AI Insights Dashboard",
@@ -11851,7 +12049,15 @@
     "electricalDefects": "Electrical Defects",
     "defectCount": "Defect Count",
     "cumulativePercent": "Cumulative %",
-    "count": "Count"
+    "count": "Count",
+    "manufacturing": "Manufacturing",
+    "packaging": "Packaging",
+    "safety": "Safety",
+    "compliance": "Compliance",
+    "environmental": "Environmental",
+    "passFail": "Pass/Fail",
+    "passFailNa": "Pass/Fail/NA",
+    "numeric": "Numeric"
   },
   "unifiedInbox": {
     "title": "Unified Inbox",
@@ -12600,7 +12806,12 @@
     "auto": "Auto",
     "manual": "Manual",
     "trainWarning": "Training a new model may take several minutes. The current active model will continue scoring leads during training.",
-    "startTraining": "Start Training"
+    "startTraining": "Start Training",
+    "gradientBoost": "Gradient Boost",
+    "neuralNetwork": "Neural Network",
+    "bayesian": "Bayesian",
+    "logisticRegression": "Logistic Regression",
+    "randomForest": "Random Forest"
   },
   "complianceManager": {
     "title": "Compliance & Privacy Manager",
@@ -12718,7 +12929,8 @@
     "noDataFields": "No data fields found",
     "auditComplete": "Audit Complete",
     "auditCompleteMsg": "Compliance audit completed successfully. Score updated.",
-    "exportSuccess": "Report exported successfully"
+    "exportSuccess": "Report exported successfully",
+    "pii": "PII"
   },
   "warehouse": {
     "title": "Warehouse Management",
@@ -12761,7 +12973,13 @@
     "selectWarehouse": "Select warehouse",
     "transferNotes": "Add notes...",
     "notes": "Notes",
-    "address": "Address"
+    "address": "Address",
+    "maintenance": "Maintenance",
+    "storage": "Storage",
+    "picking": "Picking",
+    "receiving": "Receiving",
+    "shippingZone": "Shipping",
+    "quarantine": "Quarantine"
   },
   "archive": {
     "title": "Document Archive",
@@ -12836,7 +13054,11 @@
     "appPassword": "App password",
     "connect": "Connect",
     "emailPlaceholder": "your{'@'}email.com",
-    "hostPlaceholder": "imap.example.com"
+    "hostPlaceholder": "imap.example.com",
+    "gmail": "Gmail",
+    "outlook": "Outlook",
+    "imap": "IMAP",
+    "smtp": "SMTP"
   },
   "dashboardBuilder": {
     "title": "Custom Dashboard",
@@ -12932,7 +13154,22 @@
     "recipient": "Recipient",
     "createdDate": "Created",
     "document": "Document",
-    "links": "Links"
+    "links": "Links",
+    "editor": "Editor",
+    "versions": "Versions",
+    "linked": "Linked",
+    "send": "Send",
+    "bold": "Bold",
+    "light": "Light",
+    "solid": "Solid",
+    "dashed": "Dashed",
+    "dotted": "Dotted",
+    "contain": "Contain",
+    "cover": "Cover",
+    "fill": "Fill",
+    "showDateLine": "Show date line",
+    "signatureBlock": "Signature Block",
+    "insert": "Insert"
   },
   "tickets": {
     "all": "All",
@@ -12941,5 +13178,46 @@
     "waitingCustomer": "Waiting Customer",
     "resolved": "Resolved",
     "closed": "Closed"
+  },
+  "billing": {
+    "perUnit": "Per-Unit",
+    "tiered": "Tiered",
+    "volume": "Volume"
+  },
+  "performance": {
+    "quarterly": "Quarterly",
+    "annual": "Annual",
+    "probation": "Probation",
+    "projectBased": "Project-Based",
+    "allStatuses": "All Statuses",
+    "q1_2026": "Q1 2026",
+    "q2_2026": "Q2 2026",
+    "q3_2026": "Q3 2026",
+    "q4_2026": "Q4 2026",
+    "q4_2025": "Q4 2025",
+    "q3_2025": "Q3 2025",
+    "annual_2025": "Annual 2025",
+    "annual_2026": "Annual 2026"
+  },
+  "shipping": {
+    "domestic": "Domestic",
+    "international": "International",
+    "express": "Express",
+    "economy": "Economy",
+    "preparing": "Preparing",
+    "inTransit": "In Transit"
+  },
+  "whatsapp": {
+    "english": "English",
+    "arabic": "Arabic",
+    "none": "None",
+    "text": "Text",
+    "image": "Image",
+    "document": "Document",
+    "audio": "Audio",
+    "video": "Video"
+  },
+  "chartPicker": {
+    "count": "Count"
   }
 }

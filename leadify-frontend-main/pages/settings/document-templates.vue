@@ -164,9 +164,9 @@ div
 
           el-form-item(:label="$t('documentTemplates.pageSize')")
             el-select(v-model="form.pageSize" style="width: 100%")
-              el-option(label="A4" value="A4")
-              el-option(label="Letter" value="Letter")
-              el-option(label="Legal" value="Legal")
+              el-option(:label="$t('documentTemplates.a4')" value="A4")
+              el-option(:label="$t('documentTemplates.letter')" value="Letter")
+              el-option(:label="$t('documentTemplates.legal')" value="Legal")
 
         el-form-item
           el-checkbox(v-model="form.isDefault") {{ $t('documentTemplates.default') }}

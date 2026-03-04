@@ -308,10 +308,10 @@
               el-color-picker(v-model="ctaButton.color" size="large" show-alpha)
             el-form-item(:label="$t('campaignBuilder.buttonStyle')")
               el-select(v-model="ctaButton.style" size="large" style="width: 100%")
-                el-option(label="Filled" value="filled")
-                el-option(label="Outlined" value="outlined")
-                el-option(label="Rounded" value="rounded")
-                el-option(label="Pill" value="pill")
+                el-option(:label="$t('campaigns.filled')" value="filled")
+                el-option(:label="$t('campaigns.outlined')" value="outlined")
+                el-option(:label="$t('campaigns.rounded')" value="rounded")
+                el-option(:label="$t('campaigns.pill')" value="pill")
 
           //- CTA Preview
           .mt-4.p-4.rounded-xl.text-center(style="background: var(--bg-input, rgba(255,255,255,0.03)); border: 1px dashed var(--border-default)")
@@ -404,7 +404,7 @@
             filterable
             :placeholder="$t('campaignBuilder.selectTimezone')"
           )
-            el-option(label="Recipient's Local Timezone" value="recipient_local")
+            el-option(:label="$t('campaigns.recipientTimezone')" value="recipient_local")
             el-option(v-for="tz in timezones" :key="tz" :label="tz" :value="tz")
 
       //- Throttling & Tracking
@@ -600,7 +600,7 @@
         )
       el-form-item(:label="$t('campaignBuilder.timezone')")
         el-select(v-model="sendSettings.timezone" size="large" style="width: 100%" filterable)
-          el-option(label="Recipient's Local Timezone" value="recipient_local")
+          el-option(:label="$t('campaigns.recipientTimezone')" value="recipient_local")
           el-option(v-for="tz in timezones" :key="tz" :label="tz" :value="tz")
     template(#footer)
       el-button(@click="showScheduleDialog = false") {{ $t('common.cancel') }}

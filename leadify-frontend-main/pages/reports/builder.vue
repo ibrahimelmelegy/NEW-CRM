@@ -41,9 +41,9 @@
           el-option(value="clients" :label="$t('navigation.clients')")
           el-option(value="salesOrders" :label="$t('reports.salesOrders')")
           el-option(value="invoices" :label="$t('navigation.invoices')")
-          el-option(value="payments" label="Payments")
-          el-option(value="tickets" label="Tickets")
-          el-option(value="employees" label="Employees")
+          el-option(value="payments" :label="$t('reports.payments')")
+          el-option(value="tickets" :label="$t('reports.tickets')")
+          el-option(value="employees" :label="$t('reports.employees')")
 
       ReportsFieldPicker(
         v-model="pro.config.value.fields"
@@ -139,11 +139,11 @@
                   .space-y-2
                     .flex.items-center.gap-2(v-for="(agg, i) in pro.config.value.aggregations" :key="i")
                       el-select(v-model="agg.function" size="default" class="w-32")
-                        el-option(value="COUNT" label="Count")
-                        el-option(value="SUM" label="Sum")
-                        el-option(value="AVG" label="Average")
-                        el-option(value="MIN" label="Min")
-                        el-option(value="MAX" label="Max")
+                        el-option(value="COUNT" :label="$t('reports.count')")
+                        el-option(value="SUM" :label="$t('reports.sum')")
+                        el-option(value="AVG" :label="$t('reports.average')")
+                        el-option(value="MIN" :label="$t('reports.min')")
+                        el-option(value="MAX" :label="$t('reports.max')")
                       el-select(v-model="agg.field" size="default" class="flex-1")
                         el-option(
                           v-for="f in numericFields"
@@ -177,8 +177,8 @@
                         :label="f.label"
                       )
                     el-select(v-model="pro.config.value.sortOrder" class="w-28")
-                      el-option(value="ASC" label="Ascending")
-                      el-option(value="DESC" label="Descending")
+                      el-option(value="ASC" :label="$t('common.ascending')")
+                      el-option(value="DESC" :label="$t('common.descending')")
 
           //- Chart Tab
           el-tab-pane(:label="$t('reportBuilder.chartType')" name="chart")

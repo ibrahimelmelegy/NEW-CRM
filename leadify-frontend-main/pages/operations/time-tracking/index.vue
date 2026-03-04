@@ -77,9 +77,9 @@ div
       .grid.grid-cols-2.gap-4
         el-form-item(:label="$t('timeTracking.entityType')")
           el-select(v-model="manualForm.entityType" clearable class="w-full")
-            el-option(value="LEAD" label="Lead")
-            el-option(value="DEAL" label="Deal")
-            el-option(value="PROJECT" label="Project")
+            el-option(value="LEAD" :label="$t('common.lead')")
+            el-option(value="DEAL" :label="$t('common.deal')")
+            el-option(value="PROJECT" :label="$t('timeTracking.project')")
         el-form-item(:label="$t('timeTracking.entityName')")
           el-input(v-model="manualForm.entityName")
     template(#footer)

@@ -8,10 +8,10 @@
       size="small"
       @change="$emit('update:swimlaneMode', $event)"
     )
-      el-option(label="No Grouping" value="none")
-      el-option(label="By Assignee" value="assignee")
-      el-option(label="By Priority" value="priority")
-      el-option(label="By Value Range" value="value")
+      el-option(:label="$t('kanbanBoard.noGrouping')" value="none")
+      el-option(:label="$t('kanbanBoard.byAssignee')" value="assignee")
+      el-option(:label="$t('kanbanBoard.byPriority')" value="priority")
+      el-option(:label="$t('kanbanBoard.byValueRange')" value="value")
 
     //- Quick filters
     .flex.items-center.gap-2

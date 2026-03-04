@@ -34,11 +34,11 @@ div
         style="max-width: 180px"
       )
         el-option(:label="$t('campaigns.allCampaigns')" value="")
-        el-option(label="Draft" value="DRAFT")
-        el-option(label="Scheduled" value="SCHEDULED")
-        el-option(label="Sending" value="SENDING")
-        el-option(label="Sent" value="SENT")
-        el-option(label="Cancelled" value="CANCELLED")
+        el-option(:label="$t('common.draft')" value="DRAFT")
+        el-option(:label="$t('campaigns.scheduled')" value="SCHEDULED")
+        el-option(:label="$t('campaigns.sending')" value="SENDING")
+        el-option(:label="$t('campaigns.sent')" value="SENT")
+        el-option(:label="$t('common.cancelled')" value="CANCELLED")
 
     el-table(:data="paginatedCampaigns" v-loading="loading" style="width: 100%")
       el-table-column(type="index" width="50")

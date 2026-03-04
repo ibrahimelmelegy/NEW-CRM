@@ -58,12 +58,12 @@
       .form-group
         label.block.text-sm.font-medium.mb-2 {{ $t('customFields.fieldType') }}
         el-select(v-model="formData.fieldType" class="w-full")
-          el-option(value="TEXT" label="Text")
-          el-option(value="NUMBER" label="Number")
-          el-option(value="DATE" label="Date")
-          el-option(value="SELECT" label="Select/Dropdown")
-          el-option(value="CHECKBOX" label="Checkbox")
-          el-option(value="TEXTAREA" label="Textarea")
+          el-option(value="TEXT" :label="$t('customFields.text')")
+          el-option(value="NUMBER" :label="$t('customFields.number')")
+          el-option(value="DATE" :label="$t('customFields.date')")
+          el-option(value="SELECT" :label="$t('customFields.selectDropdown')")
+          el-option(value="CHECKBOX" :label="$t('customFields.checkbox')")
+          el-option(value="TEXTAREA" :label="$t('customFields.textarea')")
 
       .form-group(v-if="formData.fieldType === 'SELECT'")
         label.block.text-sm.font-medium.mb-2 {{ $t('customFields.options') }}

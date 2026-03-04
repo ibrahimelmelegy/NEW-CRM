@@ -163,11 +163,11 @@
             .form-group
               label.block.text-sm.font-medium.mb-2(style="color: var(--text-primary)") {{ $t('integrationHub.dataToSync') }}
               el-checkbox-group(v-model="syncSettings.entities")
-                el-checkbox(value="contacts" label="Contacts")
-                el-checkbox(value="deals" label="Deals")
-                el-checkbox(value="tasks" label="Tasks")
-                el-checkbox(value="notes" label="Notes")
-                el-checkbox(value="emails" label="Emails")
+                el-checkbox(value="contacts" :label="$t('integrationHub.contacts')")
+                el-checkbox(value="deals" :label="$t('integrationHub.deals')")
+                el-checkbox(value="tasks" :label="$t('integrationHub.tasks')")
+                el-checkbox(value="notes" :label="$t('integrationHub.notes')")
+                el-checkbox(value="emails" :label="$t('integrationHub.emails')")
 
         el-tab-pane(:label="$t('integrationHub.configTabs.fieldMapping')" name="mapping")
           .pt-4

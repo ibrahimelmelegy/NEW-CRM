@@ -351,11 +351,11 @@
         el-input(v-model="newPiaForm.description" type="textarea" :rows="3" :placeholder="$t('complianceManager.describePia')")
       el-form-item(:label="$t('complianceManager.dataTypes')")
         el-checkbox-group(v-model="newPiaForm.dataTypes")
-          el-checkbox(label="PII" value="PII") PII
-          el-checkbox(label="Financial" value="Financial") {{ $t('complianceManager.financial') }}
-          el-checkbox(label="Health" value="Health") {{ $t('complianceManager.health') }}
-          el-checkbox(label="Biometric" value="Biometric") {{ $t('complianceManager.biometric') }}
-          el-checkbox(label="Behavioral" value="Behavioral") {{ $t('complianceManager.behavioral') }}
+          el-checkbox(:label="$t('complianceManager.pii')" value="PII") PII
+          el-checkbox(:label="$t('complianceManager.financial')" value="Financial") {{ $t('complianceManager.financial') }}
+          el-checkbox(:label="$t('complianceManager.health')" value="Health") {{ $t('complianceManager.health') }}
+          el-checkbox(:label="$t('complianceManager.biometric')" value="Biometric") {{ $t('complianceManager.biometric') }}
+          el-checkbox(:label="$t('complianceManager.behavioral')" value="Behavioral") {{ $t('complianceManager.behavioral') }}
     template(#footer)
       el-button(@click="showNewPiaDialog = false") {{ $t('complianceManager.cancel') }}
       el-button(type="primary" @click="submitNewPia" class="!bg-[#7849ff] !border-none") {{ $t('complianceManager.createPia') }}

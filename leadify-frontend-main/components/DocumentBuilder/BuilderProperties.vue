@@ -48,9 +48,9 @@
           div
             label.text-xs(style="color: var(--text-muted)") {{ $t('documentTemplates.builder.fontWeight') }}
             el-select(v-model="localElement.props.fontWeight" size="small" @change="emitUpdate")
-              el-option(label="Normal" value="normal")
-              el-option(label="Bold" value="bold")
-              el-option(label="Light" value="300")
+              el-option(:label="$t('common.normal')" value="normal")
+              el-option(:label="$t('docBuilder.bold')" value="bold")
+              el-option(:label="$t('docBuilder.light')" value="300")
           div.col-span-2
             label.text-xs(style="color: var(--text-muted)") {{ $t('documentTemplates.builder.fontFamily') }}
             el-select(v-model="localElement.props.fontFamily" size="small" @change="emitUpdate" class="w-full")
@@ -143,9 +143,9 @@
           div
             label.text-xs(style="color: var(--text-muted)") Style
             el-select(v-model="localElement.props.lineStyle" size="small" @change="emitUpdate")
-              el-option(label="Solid" value="solid")
-              el-option(label="Dashed" value="dashed")
-              el-option(label="Dotted" value="dotted")
+              el-option(:label="$t('docBuilder.solid')" value="solid")
+              el-option(:label="$t('docBuilder.dashed')" value="dashed")
+              el-option(:label="$t('docBuilder.dotted')" value="dotted")
 
     //- Shape props
     template(v-if="element.type === 'shape'")
@@ -178,9 +178,9 @@
         .mt-2
           label.text-xs(style="color: var(--text-muted)") {{ $t('documentTemplates.builder.objectFit') }}
           el-select(v-model="localElement.props.objectFit" size="small" @change="emitUpdate")
-            el-option(label="Contain" value="contain")
-            el-option(label="Cover" value="cover")
-            el-option(label="Fill" value="fill")
+            el-option(:label="$t('docBuilder.contain')" value="contain")
+            el-option(:label="$t('docBuilder.cover')" value="cover")
+            el-option(:label="$t('docBuilder.fill')" value="fill")
         .mt-2
           label.text-xs(style="color: var(--text-muted)") {{ $t('documentTemplates.builder.borderRadius') }}
           el-input-number(v-model="localElement.props.borderRadius" :min="0" :max="50" size="small" controls-position="right" @change="emitUpdate")

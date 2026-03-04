@@ -11,10 +11,10 @@
         </div>
         <div class="flex gap-2">
           <el-select v-model="selectedCycle" :placeholder="$t('hr.performance.period')" class="w-48" @change="fetchReviews">
-            <el-option label="Q1 2026" value="Q1-2026" />
-            <el-option label="Q4 2025" value="Q4-2025" />
-            <el-option label="Q3 2025" value="Q3-2025" />
-            <el-option label="Annual 2025" value="ANNUAL-2025" />
+            <el-option :label="$t('performance.q1_2026')" value="Q1-2026" />
+            <el-option :label="$t('performance.q4_2025')" value="Q4-2025" />
+            <el-option :label="$t('performance.q3_2025')" value="Q3-2025" />
+            <el-option :label="$t('performance.annual_2025')" value="ANNUAL-2025" />
           </el-select>
           <el-button type="primary" class="!rounded-xl" @click="showNewReviewDialog = true">
             <Icon name="ph:plus-bold" class="w-4 h-4 mr-2" />
@@ -124,10 +124,10 @@
         </el-form-item>
         <el-form-item :label="$t('common.type')">
           <el-select v-model="newReview.reviewType" class="w-full">
-            <el-option label="Quarterly" value="QUARTERLY" />
-            <el-option label="Annual" value="ANNUAL" />
-            <el-option label="Probation" value="PROBATION" />
-            <el-option label="Project-Based" value="PROJECT" />
+            <el-option :label="$t('performance.quarterly')" value="QUARTERLY" />
+            <el-option :label="$t('performance.annual')" value="ANNUAL" />
+            <el-option :label="$t('performance.probation')" value="PROBATION" />
+            <el-option :label="$t('performance.projectBased')" value="PROJECT" />
           </el-select>
         </el-form-item>
         <el-form-item :label="$t('hr.performance.period')">

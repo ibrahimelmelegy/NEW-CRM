@@ -199,18 +199,18 @@
         <div class="grid grid-cols-2 gap-4">
           <el-form-item :label="$t('surveys.type')">
             <el-select v-model="newSurvey.type" class="w-full">
-              <el-option label="NPS Survey" value="NPS" />
-              <el-option label="CSAT Survey" value="CSAT" />
-              <el-option label="Product Feedback" value="PRODUCT" />
-              <el-option label="Custom Survey" value="CUSTOM" />
+              <el-option :label="$t('surveys.npsSurvey')" value="NPS" />
+              <el-option :label="$t('surveys.csatSurvey')" value="CSAT" />
+              <el-option :label="$t('surveys.productFeedback')" value="PRODUCT" />
+              <el-option :label="$t('surveys.customSurvey')" value="CUSTOM" />
             </el-select>
           </el-form-item>
           <el-form-item :label="$t('surveys.audience')">
             <el-select v-model="newSurvey.audience" class="w-full">
-              <el-option label="All Clients" value="ALL_CLIENTS" />
-              <el-option label="Active Clients" value="ACTIVE" />
-              <el-option label="Churned" value="CHURNED" />
-              <el-option label="Custom Segment" value="CUSTOM" />
+              <el-option :label="$t('surveys.allClients')" value="ALL_CLIENTS" />
+              <el-option :label="$t('surveys.activeClients')" value="ACTIVE" />
+              <el-option :label="$t('surveys.churned')" value="CHURNED" />
+              <el-option :label="$t('surveys.customSegment')" value="CUSTOM" />
             </el-select>
           </el-form-item>
         </div>

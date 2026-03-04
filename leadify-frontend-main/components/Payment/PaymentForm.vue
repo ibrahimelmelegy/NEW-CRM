@@ -2,7 +2,7 @@
 el-form(ref="formRef" :model="form" :rules="rules" label-position="top" size="large")
   .grid.gap-6(class="md:grid-cols-2 grid-cols-1")
     //- Invoice selector
-    el-form-item(label="Invoice" prop="invoiceId")
+    el-form-item(:label="$t('payments.invoice')" prop="invoiceId")
       el-select(
         v-model="form.invoiceId"
         filterable
@@ -25,7 +25,7 @@ el-form(ref="formRef" :model="form" :rules="rules" label-position="top" size="la
             span.text-sm(style="color: var(--text-muted)") {{ formatCurrency(inv.amount) }}
 
     //- Client selector
-    el-form-item(label="Client" prop="clientId")
+    el-form-item(:label="$t('common.client')" prop="clientId")
       el-select(
         v-model="form.clientId"
         filterable
@@ -44,7 +44,7 @@ el-form(ref="formRef" :model="form" :rules="rules" label-position="top" size="la
         )
 
     //- Amount
-    el-form-item(label="Amount" prop="amount")
+    el-form-item(:label="$t('common.amount')" prop="amount")
       el-input-number(
         v-model="form.amount"
         :min="0"
@@ -73,11 +73,11 @@ el-form(ref="formRef" :model="form" :rules="rules" label-position="top" size="la
             span {{ opt.label }}
 
     //- Reference
-    el-form-item(label="Reference / Transaction ID" prop="reference")
+    el-form-item(:label="$t('payments.reference')" prop="reference")
       el-input(v-model="form.reference" placeholder="e.g. TXN-12345, Check #456")
 
   //- Notes (full width)
-  el-form-item(label="Notes")
+  el-form-item(:label="$t('common.notes')")
     el-input(
       v-model="form.notes"
       type="textarea"

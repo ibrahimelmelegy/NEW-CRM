@@ -245,11 +245,11 @@ div
               size="large"
               class="w-full"
             )
-              el-option(label="Owner" value="owner")
-              el-option(label="Team Lead" value="team_lead")
-              el-option(label="Sales Manager" value="sales_manager")
-              el-option(label="All Team" value="all_team")
-              el-option(label="Admin" value="admin")
+              el-option(:label="$t('automations.owner')" value="owner")
+              el-option(:label="$t('automations.teamLead')" value="team_lead")
+              el-option(:label="$t('automations.salesManager')" value="sales_manager")
+              el-option(:label="$t('automations.allTeam')" value="all_team")
+              el-option(:label="$t('automations.admin')" value="admin")
 
           //- Additional Notes
           el-form-item(:label="$t('automationTemplates.notes')")

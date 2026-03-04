@@ -7,9 +7,9 @@
         p(style="color: var(--text-muted)") {{ $t('duplicates.subtitle') }}
       .flex.items-center.gap-3
         el-select(v-model="scanEntityType" style="width: 140px")
-          el-option(label="Lead" value="lead")
-          el-option(label="Client" value="client")
-          el-option(label="Deal" value="deal")
+          el-option(:label="$t('duplicates.lead')" value="lead")
+          el-option(:label="$t('duplicates.client')" value="client")
+          el-option(:label="$t('duplicates.deal')" value="deal")
         el-button(type="primary" @click="handleScan" :loading="scanning" class="!rounded-xl")
           Icon.mr-1(name="ph:magnifying-glass-bold" size="16")
           | {{ scanning ? $t('duplicates.scanning') : $t('duplicates.scan') }}

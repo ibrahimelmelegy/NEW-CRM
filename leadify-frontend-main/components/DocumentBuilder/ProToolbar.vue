@@ -160,10 +160,10 @@
           button.toolbar-btn
             Icon(name="ph:pen-nib-bold" size="16")
       .p-3
-        p.text-xs.font-bold.mb-2(style="color: var(--text-primary)") Signature Block
+        p.text-xs.font-bold.mb-2(style="color: var(--text-primary)") {{ $t('docBuilder.signatureBlock') }}
         el-input.mb-2(v-model="signatureLabel" :placeholder="$t('docBuilder.signatureLabelPlaceholder')" size="small")
-        el-checkbox.mb-3(v-model="signatureShowDate" label="Show date line" size="small")
-        el-button(type="primary" size="small" @click="insertSignature" class="!rounded-lg w-full") Insert
+        el-checkbox.mb-3(v-model="signatureShowDate" :label="$t('docBuilder.showDateLine')" size="small")
+        el-button(type="primary" size="small" @click="insertSignature" class="!rounded-lg w-full") {{ $t('docBuilder.insert') }}
 </template>
 
 <script setup lang="ts">

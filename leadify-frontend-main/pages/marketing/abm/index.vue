@@ -344,10 +344,10 @@
             el-option(:label="$t('abm.campaignStatus_paused')" value="paused")
         el-form-item(:label="$t('abm.channels')")
           el-select(v-model="campaignForm.channels" multiple style="width: 100%")
-            el-option(label="Email" value="email")
-            el-option(label="Ads" value="ads")
-            el-option(label="Social" value="social")
-            el-option(label="Events" value="events")
+            el-option(:label="$t('abm.channelEmail')" value="email")
+            el-option(:label="$t('abm.channelAds')" value="ads")
+            el-option(:label="$t('abm.channelSocial')" value="social")
+            el-option(:label="$t('abm.channelEvents')" value="events")
       el-form-item(:label="$t('abm.dateRange')")
         el-date-picker(
           v-model="campaignForm.dateRange"
