@@ -6598,7 +6598,7 @@
     "domainPlaceholder": "crm.yourcompany.com",
     "fromNamePlaceholder": "Your Company",
     "fromEmailPlaceholder": "noreply{'@'}yourcompany.com",
-    "signaturePlaceholder": "<p>Best regards,<br/>Your Company Team</p>",
+    "signaturePlaceholder": "Best regards, Your Company Team",
     "footerPlaceholder": "Company Address | Unsubscribe Link",
     "welcomeTextPlaceholder": "Welcome to your CRM",
     "termsUrlPlaceholder": "https://yourcompany.com/terms",

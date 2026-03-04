@@ -6630,7 +6630,7 @@
     "domainPlaceholder": "crm.yourcompany.com",
     "fromNamePlaceholder": "شركتك",
     "fromEmailPlaceholder": "noreply{'@'}yourcompany.com",
-    "signaturePlaceholder": "<p>مع التحية،<br/>فريق شركتك</p>",
+    "signaturePlaceholder": "مع التحية، فريق شركتك",
     "footerPlaceholder": "عنوان الشركة | رابط إلغاء الاشتراك",
     "welcomeTextPlaceholder": "مرحباً بك في نظام CRM",
     "termsUrlPlaceholder": "https://yourcompany.com/terms",
