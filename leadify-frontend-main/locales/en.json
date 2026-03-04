@@ -2719,7 +2719,7 @@
     "templatesSubtitle": "Start with a pre-built workflow and customize it",
     "nodes": "nodes",
     "useTemplate": "Use Template",
-    "recipientEmailPlaceholder": "Recipient email or {{email}}",
+    "recipientEmailPlaceholder": "Recipient email or [email] variable",
     "emailSubjectPlaceholder": "Email subject",
     "notificationMessagePlaceholder": "Notification message",
     "fieldNamePlaceholder": "Field name",
@@ -5297,7 +5297,7 @@
     "listView": "List View",
     "noColumnTickets": "No {status} tickets",
     "responseTitlePlaceholder": "e.g. Greeting, Closing, Follow-up",
-    "responseBodyPlaceholder": "Write the canned response body here. You can use placeholders like {{clientName}}, {{ticketNumber}}..."
+    "responseBodyPlaceholder": "Write the canned response body here. Use variables like [clientName], [ticketNumber]..."
   },
   "accounting": {
     "title": "Accounting",

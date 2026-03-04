@@ -2751,7 +2751,7 @@
     "templatesSubtitle": "ابدأ بسير عمل مُعد مسبقاً وخصصه",
     "nodes": "عقد",
     "useTemplate": "استخدم القالب",
-    "recipientEmailPlaceholder": "بريد المستلم أو {{email}}",
+    "recipientEmailPlaceholder": "بريد المستلم أو متغير [email]",
     "emailSubjectPlaceholder": "موضوع البريد الإلكتروني",
     "notificationMessagePlaceholder": "نص الإشعار",
     "fieldNamePlaceholder": "اسم الحقل",
@@ -5329,7 +5329,7 @@
     "listView": "عرض القائمة",
     "noColumnTickets": "لا توجد تذاكر {status}",
     "responseTitlePlaceholder": "مثل: تحية، اختتام، متابعة",
-    "responseBodyPlaceholder": "اكتب نص الرد الجاهز هنا. يمكنك استخدام متغيرات مثل {{clientName}}, {{ticketNumber}}..."
+    "responseBodyPlaceholder": "اكتب نص الرد الجاهز هنا. استخدم متغيرات مثل [clientName], [ticketNumber]..."
   },
   "accounting": {
     "title": "المحاسبة",

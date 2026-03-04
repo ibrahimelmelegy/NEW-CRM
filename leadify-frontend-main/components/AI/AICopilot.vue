@@ -99,26 +99,29 @@ async function handleSend() {
 }
 
 function formatMarkdown(text: string): string {
-    if (!text) return '';
-    // Bold
-    let html = text.replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>');
-    // Italic
-    html = html.replace(/\*(.*?)\*/g, '<em>$1</em>');
-    // Line breaks
-    html = html.replace(/\n/g, '<br>');
-    // Bullet points
-    html = html.replace(/^- (.*?)(<br>|$)/gm, '<span class="bullet-item font-medium">$1</span><br>');
-    return html;
+  if (!text) return '';
+  // Bold
+  let html = text.replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>');
+  // Italic
+  html = html.replace(/\*(.*?)\*/g, '<em>$1</em>');
+  // Line breaks
+  html = html.replace(/\n/g, '<br>');
+  // Bullet points
+  html = html.replace(/^- (.*?)(<br>|$)/gm, '<span class="bullet-item font-medium">$1</span><br>');
+  return html;
 }
 
 // Auto-scroll to bottom when messages update
-watch(() => chatHistory.value.length, () => {
-  nextTick(() => {
-    if (chatContainer.value) {
-      chatContainer.value.scrollTop = chatContainer.value.scrollHeight;
-    }
-  });
-});
+watch(
+  () => chatHistory.value.length,
+  () => {
+    nextTick(() => {
+      if (chatContainer.value) {
+        chatContainer.value.scrollTop = chatContainer.value.scrollHeight;
+      }
+    });
+  }
+);
 </script>
 
 <style scoped>
@@ -155,11 +158,20 @@ watch(() => chatHistory.value.length, () => {
   opacity: 0.6;
   animation: typing 1s infinite;
 }
-.typing-dot:nth-child(2) { animation-delay: 0.2s; }
-.typing-dot:nth-child(3) { animation-delay: 0.4s; }
+.typing-dot:nth-child(2) {
+  animation-delay: 0.2s;
+}
+.typing-dot:nth-child(3) {
+  animation-delay: 0.4s;
+}
 
 @keyframes typing {
-  0%, 100% { transform: translateY(0); }
-  50% { transform: translateY(-3px); }
+  0%,
+  100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-3px);
+  }
 }
 </style>

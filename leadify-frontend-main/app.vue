@@ -22,7 +22,7 @@ const elLocale = computed(() => elLocaleMap[locale.value] || elEn);
 
 watch(
   locale,
-  (val) => {
+  val => {
     if (import.meta.client) {
       document.documentElement.dir = val === 'ar' ? 'rtl' : 'ltr';
       document.documentElement.lang = val;
