@@ -189,7 +189,7 @@ import SocialProfile, { SocialPost } from '../socialCrm/socialCrmModel';
 import { Survey, SurveyResponse } from '../survey/surveyModel';
 // Communications Extensions
 import { ChatConversation, ChatMessage } from '../liveChat/liveChatModel';
-import { BookingSlot, Booking } from '../booking/bookingModel';
+import { BookingSlot, Booking, BookingPage } from '../booking/bookingModel';
 // Warehouse
 import { Warehouse, WarehouseZone, StockTransfer } from '../warehouse/warehouseModel';
 // Vendor Scorecard
@@ -436,6 +436,7 @@ const sequelize = new Sequelize({
     ChatMessage,
     BookingSlot,
     Booking,
+    BookingPage,
     Warehouse,
     WarehouseZone,
     StockTransfer,
