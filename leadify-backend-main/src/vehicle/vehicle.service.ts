@@ -230,6 +230,12 @@ class VehicleService {
       }
     });
   }
+  public async deleteVehicle(id: string): Promise<void> {
+    const vehicle = await Vehicle.findByPk(id);
+    if (!vehicle) throw new BaseError(ERRORS.VEHICLE_NOT_FOUND);
+    await vehicle.destroy();
+  }
+
 }
 
 export default new VehicleService();

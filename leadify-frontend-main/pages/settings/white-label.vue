@@ -4,8 +4,8 @@
     <div class="glass-panel p-6 rounded-2xl">
       <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
         <div>
-          <h1 class="text-2xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-purple-400 to-pink-400">White-Label Settings</h1>
-          <p class="text-slate-400 text-sm mt-1">Customize branding, domain, emails, and portal appearance for your organization.</p>
+          <h1 class="text-2xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-purple-400 to-pink-400">{{ $t('whiteLabel.title') }}</h1>
+          <p class="text-slate-400 text-sm mt-1">{{ $t('whiteLabel.subtitle') }}</p>
         </div>
       </div>
     </div>
@@ -18,60 +18,60 @@
             <Icon name="ph:paint-brush-bold" class="w-5 h-5 text-purple-400" />
           </div>
           <div>
-            <h3 class="text-sm font-medium text-slate-200">Branding</h3>
-            <p class="text-xs text-slate-500">Company identity and visual assets</p>
+            <h3 class="text-sm font-medium text-slate-200">{{ $t('whiteLabel.branding') }}</h3>
+            <p class="text-xs text-slate-500">{{ $t('whiteLabel.brandingDesc') }}</p>
           </div>
         </div>
         <el-button type="primary" class="!rounded-xl" :loading="savingBranding" @click="saveBranding">
           <Icon name="ph:floppy-disk-bold" class="w-4 h-4 mr-2" />
-          Save
+          {{ $t('common.save') }}
         </el-button>
       </div>
 
       <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
         <div>
-          <label class="block text-xs text-slate-500 mb-2">Company Name</label>
-          <el-input v-model="branding.companyName" placeholder="Your Company Name" size="large" />
+          <label class="block text-xs text-slate-500 mb-2">{{ $t('whiteLabel.companyName') }}</label>
+          <el-input v-model="branding.companyName" :placeholder="$t('whiteLabel.companyNamePlaceholder')" size="large" />
         </div>
         <div>
-          <label class="block text-xs text-slate-500 mb-2">Tagline</label>
-          <el-input v-model="branding.tagline" placeholder="Optional tagline" size="large" />
+          <label class="block text-xs text-slate-500 mb-2">{{ $t('whiteLabel.tagline') }}</label>
+          <el-input v-model="branding.tagline" :placeholder="$t('whiteLabel.taglinePlaceholder')" size="large" />
         </div>
       </div>
 
       <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mt-6">
         <!-- Logo Upload -->
         <div>
-          <label class="block text-xs text-slate-500 mb-2">Logo</label>
+          <label class="block text-xs text-slate-500 mb-2">{{ $t('whiteLabel.logo') }}</label>
           <div
             class="border-2 border-dashed border-slate-700 rounded-xl p-6 text-center hover:border-slate-600 transition-all cursor-pointer"
             @click="triggerLogoUpload"
           >
             <div v-if="branding.logoPreview" class="mb-2">
-              <img :src="branding.logoPreview" alt="Logo preview" class="h-12 mx-auto object-contain" />
+              <img :src="branding.logoPreview" :alt="$t('whiteLabel.logoPreviewAlt')" class="h-12 mx-auto object-contain" />
             </div>
             <div v-else>
               <Icon name="ph:image-bold" class="w-10 h-10 text-slate-500 mx-auto mb-2" />
             </div>
-            <p class="text-xs text-slate-500">Click to upload logo (PNG, SVG, max 2MB)</p>
+            <p class="text-xs text-slate-500">{{ $t('whiteLabel.logoHint') }}</p>
           </div>
           <input ref="logoInputRef" type="file" accept="image/png,image/svg+xml" class="hidden" @change="handleLogoUpload" />
         </div>
 
         <!-- Favicon Upload -->
         <div>
-          <label class="block text-xs text-slate-500 mb-2">Favicon</label>
+          <label class="block text-xs text-slate-500 mb-2">{{ $t('whiteLabel.favicon') }}</label>
           <div
             class="border-2 border-dashed border-slate-700 rounded-xl p-6 text-center hover:border-slate-600 transition-all cursor-pointer"
             @click="triggerFaviconUpload"
           >
             <div v-if="branding.faviconPreview" class="mb-2">
-              <img :src="branding.faviconPreview" alt="Favicon preview" class="h-8 mx-auto object-contain" />
+              <img :src="branding.faviconPreview" :alt="$t('whiteLabel.faviconPreviewAlt')" class="h-8 mx-auto object-contain" />
             </div>
             <div v-else>
               <Icon name="ph:app-window-bold" class="w-10 h-10 text-slate-500 mx-auto mb-2" />
             </div>
-            <p class="text-xs text-slate-500">Click to upload favicon (ICO, PNG, 32x32)</p>
+            <p class="text-xs text-slate-500">{{ $t('whiteLabel.faviconHint') }}</p>
           </div>
           <input ref="faviconInputRef" type="file" accept="image/x-icon,image/png" class="hidden" @change="handleFaviconUpload" />
         </div>
@@ -80,14 +80,14 @@
       <!-- Color Pickers -->
       <div class="grid grid-cols-2 md:grid-cols-4 gap-6 mt-6">
         <div>
-          <label class="block text-xs text-slate-500 mb-2">Primary Color</label>
+          <label class="block text-xs text-slate-500 mb-2">{{ $t('whiteLabel.primaryColor') }}</label>
           <div class="flex items-center gap-2">
             <el-color-picker v-model="branding.primaryColor" />
             <span class="text-xs font-mono text-slate-400">{{ branding.primaryColor }}</span>
           </div>
         </div>
         <div>
-          <label class="block text-xs text-slate-500 mb-2">Secondary Color</label>
+          <label class="block text-xs text-slate-500 mb-2">{{ $t('whiteLabel.secondaryColor') }}</label>
           <div class="flex items-center gap-2">
             <el-color-picker v-model="branding.secondaryColor" />
             <span class="text-xs font-mono text-slate-400">{{ branding.secondaryColor }}</span>
@@ -104,31 +104,31 @@
             <Icon name="ph:globe-bold" class="w-5 h-5 text-blue-400" />
           </div>
           <div>
-            <h3 class="text-sm font-medium text-slate-200">Custom Domain</h3>
-            <p class="text-xs text-slate-500">Use your own domain for the CRM</p>
+            <h3 class="text-sm font-medium text-slate-200">{{ $t('whiteLabel.domain') }}</h3>
+            <p class="text-xs text-slate-500">{{ $t('whiteLabel.domainDesc') }}</p>
           </div>
         </div>
         <el-button type="primary" class="!rounded-xl" :loading="savingDomain" @click="saveDomain">
           <Icon name="ph:floppy-disk-bold" class="w-4 h-4 mr-2" />
-          Save
+          {{ $t('common.save') }}
         </el-button>
       </div>
 
       <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
         <div>
-          <label class="block text-xs text-slate-500 mb-2">Domain</label>
-          <el-input v-model="domain.hostname" placeholder="crm.yourcompany.com" size="large">
+          <label class="block text-xs text-slate-500 mb-2">{{ $t('whiteLabel.domain') }}</label>
+          <el-input v-model="domain.hostname" :placeholder="$t('whiteLabel.domainPlaceholder')" size="large">
             <template #prefix>
               <Icon name="ph:link-bold" class="w-4 h-4" />
             </template>
           </el-input>
         </div>
         <div>
-          <label class="block text-xs text-slate-500 mb-2">SSL Status</label>
+          <label class="block text-xs text-slate-500 mb-2">{{ $t('whiteLabel.sslStatus') }}</label>
           <div class="flex items-center gap-2 h-10">
             <div class="w-3 h-3 rounded-full" :class="domain.sslActive ? 'bg-emerald-400' : 'bg-red-400'"></div>
             <span class="text-sm" :class="domain.sslActive ? 'text-emerald-400' : 'text-red-400'">
-              {{ domain.sslActive ? 'SSL Active' : 'SSL Not Configured' }}
+              {{ domain.sslActive ? $t('whiteLabel.sslActive') : $t('whiteLabel.sslNotConfigured') }}
             </span>
           </div>
         </div>
@@ -138,15 +138,15 @@
       <div class="mt-4 p-4 rounded-xl" style="background: rgba(255, 255, 255, 0.02); border: 1px solid rgba(255, 255, 255, 0.05)">
         <h4 class="text-xs font-medium text-slate-400 mb-3 flex items-center gap-2">
           <Icon name="ph:info-bold" class="w-4 h-4" />
-          DNS Configuration Instructions
+          {{ $t('whiteLabel.dnsInstructions') }}
         </h4>
         <div class="space-y-2 text-xs text-slate-500">
           <p>
-            1. Add a CNAME record pointing your domain to
+            {{ $t('whiteLabel.dnsStep1') }}
             <span class="font-mono text-slate-400">app.hp-tech.com</span>
           </p>
-          <p>2. Wait for DNS propagation (up to 48 hours)</p>
-          <p>3. SSL certificate will be automatically provisioned once DNS is verified</p>
+          <p>{{ $t('whiteLabel.dnsStep2') }}</p>
+          <p>{{ $t('whiteLabel.dnsStep3') }}</p>
         </div>
         <div class="mt-3 p-3 rounded-lg font-mono text-xs text-slate-400" style="background: rgba(0, 0, 0, 0.2)">
           Type: CNAME | Host: crm | Value: app.hp-tech.com | TTL: 3600
@@ -162,24 +162,24 @@
             <Icon name="ph:envelope-bold" class="w-5 h-5 text-emerald-400" />
           </div>
           <div>
-            <h3 class="text-sm font-medium text-slate-200">Email Branding</h3>
-            <p class="text-xs text-slate-500">Customize outgoing email appearance</p>
+            <h3 class="text-sm font-medium text-slate-200">{{ $t('whiteLabel.emailBranding') }}</h3>
+            <p class="text-xs text-slate-500">{{ $t('whiteLabel.emailBrandingDesc') }}</p>
           </div>
         </div>
         <el-button type="primary" class="!rounded-xl" :loading="savingEmail" @click="saveEmail">
           <Icon name="ph:floppy-disk-bold" class="w-4 h-4 mr-2" />
-          Save
+          {{ $t('common.save') }}
         </el-button>
       </div>
 
       <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
         <div>
-          <label class="block text-xs text-slate-500 mb-2">From Name</label>
-          <el-input v-model="email.fromName" placeholder="Your Company" size="large" />
+          <label class="block text-xs text-slate-500 mb-2">{{ $t('whiteLabel.fromName') }}</label>
+          <el-input v-model="email.fromName" :placeholder="$t('whiteLabel.fromNamePlaceholder')" size="large" />
         </div>
         <div>
-          <label class="block text-xs text-slate-500 mb-2">From Email</label>
-          <el-input v-model="email.fromEmail" placeholder="noreply@yourcompany.com" size="large">
+          <label class="block text-xs text-slate-500 mb-2">{{ $t('whiteLabel.fromEmail') }}</label>
+          <el-input v-model="email.fromEmail" :placeholder="$t('whiteLabel.fromEmailPlaceholder')" size="large">
             <template #prefix>
               <Icon name="ph:at-bold" class="w-4 h-4" />
             </template>
@@ -187,12 +187,12 @@
         </div>
       </div>
       <div class="mt-6">
-        <label class="block text-xs text-slate-500 mb-2">Email Signature (HTML)</label>
-        <el-input v-model="email.signature" type="textarea" :rows="4" placeholder="<p>Best regards,<br/>Your Company Team</p>" />
+        <label class="block text-xs text-slate-500 mb-2">{{ $t('whiteLabel.emailSignature') }}</label>
+        <el-input v-model="email.signature" type="textarea" :rows="4" :placeholder="$t('whiteLabel.signaturePlaceholder')" />
       </div>
       <div class="mt-4">
-        <label class="block text-xs text-slate-500 mb-2">Email Footer</label>
-        <el-input v-model="email.footer" type="textarea" :rows="2" placeholder="Company Address | Unsubscribe Link" />
+        <label class="block text-xs text-slate-500 mb-2">{{ $t('whiteLabel.emailFooter') }}</label>
+        <el-input v-model="email.footer" type="textarea" :rows="2" :placeholder="$t('whiteLabel.footerPlaceholder')" />
       </div>
     </div>
 
@@ -204,24 +204,24 @@
             <Icon name="ph:sign-in-bold" class="w-5 h-5 text-amber-400" />
           </div>
           <div>
-            <h3 class="text-sm font-medium text-slate-200">Login Page</h3>
-            <p class="text-xs text-slate-500">Customize the login page appearance</p>
+            <h3 class="text-sm font-medium text-slate-200">{{ $t('whiteLabel.loginPage') }}</h3>
+            <p class="text-xs text-slate-500">{{ $t('whiteLabel.loginPageDesc') }}</p>
           </div>
         </div>
         <el-button type="primary" class="!rounded-xl" :loading="savingLoginPage" @click="saveLoginPage">
           <Icon name="ph:floppy-disk-bold" class="w-4 h-4 mr-2" />
-          Save
+          {{ $t('common.save') }}
         </el-button>
       </div>
 
       <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
         <div>
-          <label class="block text-xs text-slate-500 mb-2">Welcome Text</label>
-          <el-input v-model="loginPage.welcomeText" placeholder="Welcome to your CRM" size="large" />
+          <label class="block text-xs text-slate-500 mb-2">{{ $t('whiteLabel.welcomeText') }}</label>
+          <el-input v-model="loginPage.welcomeText" :placeholder="$t('whiteLabel.welcomeTextPlaceholder')" size="large" />
         </div>
         <div>
-          <label class="block text-xs text-slate-500 mb-2">Terms & Conditions URL</label>
-          <el-input v-model="loginPage.termsUrl" placeholder="https://yourcompany.com/terms" size="large">
+          <label class="block text-xs text-slate-500 mb-2">{{ $t('whiteLabel.termsUrl') }}</label>
+          <el-input v-model="loginPage.termsUrl" :placeholder="$t('whiteLabel.termsUrlPlaceholder')" size="large">
             <template #prefix>
               <Icon name="ph:link-bold" class="w-4 h-4" />
             </template>
@@ -230,18 +230,18 @@
       </div>
 
       <div class="mt-6">
-        <label class="block text-xs text-slate-500 mb-2">Custom Background</label>
+        <label class="block text-xs text-slate-500 mb-2">{{ $t('whiteLabel.customBackground') }}</label>
         <div
           class="border-2 border-dashed border-slate-700 rounded-xl p-6 text-center hover:border-slate-600 transition-all cursor-pointer"
           @click="triggerBgUpload"
         >
           <div v-if="loginPage.bgPreview" class="mb-2">
-            <img :src="loginPage.bgPreview" alt="Background preview" class="h-20 mx-auto object-cover rounded-lg" />
+            <img :src="loginPage.bgPreview" :alt="$t('whiteLabel.bgPreviewAlt')" class="h-20 mx-auto object-cover rounded-lg" />
           </div>
           <div v-else>
             <Icon name="ph:image-bold" class="w-10 h-10 text-slate-500 mx-auto mb-2" />
           </div>
-          <p class="text-xs text-slate-500">Click to upload background image (JPG, PNG, max 5MB)</p>
+          <p class="text-xs text-slate-500">{{ $t('whiteLabel.bgHint') }}</p>
         </div>
         <input ref="bgInputRef" type="file" accept="image/jpeg,image/png" class="hidden" @change="handleBgUpload" />
       </div>
@@ -255,36 +255,36 @@
             <Icon name="ph:browsers-bold" class="w-5 h-5 text-pink-400" />
           </div>
           <div>
-            <h3 class="text-sm font-medium text-slate-200">Portal Branding</h3>
-            <p class="text-xs text-slate-500">Customize the client-facing portal</p>
+            <h3 class="text-sm font-medium text-slate-200">{{ $t('whiteLabel.portalBranding') }}</h3>
+            <p class="text-xs text-slate-500">{{ $t('whiteLabel.portalBrandingDesc') }}</p>
           </div>
         </div>
         <el-button type="primary" class="!rounded-xl" :loading="savingPortal" @click="savePortal">
           <Icon name="ph:floppy-disk-bold" class="w-4 h-4 mr-2" />
-          Save
+          {{ $t('common.save') }}
         </el-button>
       </div>
 
       <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
         <div>
-          <label class="block text-xs text-slate-500 mb-2">Portal Name</label>
-          <el-input v-model="portal.name" placeholder="Client Portal" size="large" />
+          <label class="block text-xs text-slate-500 mb-2">{{ $t('whiteLabel.portalName') }}</label>
+          <el-input v-model="portal.name" :placeholder="$t('whiteLabel.portalNamePlaceholder')" size="large" />
         </div>
         <div>
-          <label class="block text-xs text-slate-500 mb-2">Portal Logo</label>
+          <label class="block text-xs text-slate-500 mb-2">{{ $t('whiteLabel.portalLogo') }}</label>
           <div
             class="border-2 border-dashed border-slate-700 rounded-xl p-4 text-center hover:border-slate-600 transition-all cursor-pointer"
             @click="triggerPortalLogoUpload"
           >
             <div v-if="portal.logoPreview" class="flex items-center justify-center gap-2">
-              <img :src="portal.logoPreview" alt="Portal logo" class="h-8 object-contain" />
+              <img :src="portal.logoPreview" :alt="$t('whiteLabel.portalLogoAlt')" class="h-8 object-contain" />
               <el-button text type="danger" size="small" @click.stop="portal.logoPreview = ''">
                 <Icon name="ph:x-bold" class="w-3 h-3" />
               </el-button>
             </div>
             <div v-else class="flex items-center justify-center gap-2">
               <Icon name="ph:upload-bold" class="w-4 h-4 text-slate-500" />
-              <span class="text-xs text-slate-500">Upload portal logo</span>
+              <span class="text-xs text-slate-500">{{ $t('whiteLabel.uploadPortalLogo') }}</span>
             </div>
           </div>
           <input ref="portalLogoInputRef" type="file" accept="image/png,image/svg+xml" class="hidden" @change="handlePortalLogoUpload" />
@@ -293,14 +293,14 @@
 
       <div class="grid grid-cols-2 md:grid-cols-4 gap-6 mt-6">
         <div>
-          <label class="block text-xs text-slate-500 mb-2">Portal Primary Color</label>
+          <label class="block text-xs text-slate-500 mb-2">{{ $t('whiteLabel.portalPrimaryColor') }}</label>
           <div class="flex items-center gap-2">
             <el-color-picker v-model="portal.primaryColor" />
             <span class="text-xs font-mono text-slate-400">{{ portal.primaryColor }}</span>
           </div>
         </div>
         <div>
-          <label class="block text-xs text-slate-500 mb-2">Portal Accent Color</label>
+          <label class="block text-xs text-slate-500 mb-2">{{ $t('whiteLabel.portalAccentColor') }}</label>
           <div class="flex items-center gap-2">
             <el-color-picker v-model="portal.accentColor" />
             <span class="text-xs font-mono text-slate-400">{{ portal.accentColor }}</span>
@@ -309,7 +309,7 @@
       </div>
 
       <div class="mt-6">
-        <label class="block text-xs text-slate-500 mb-2">Custom CSS</label>
+        <label class="block text-xs text-slate-500 mb-2">{{ $t('whiteLabel.customCss') }}</label>
         <el-input
           v-model="portal.customCss"
           type="textarea"

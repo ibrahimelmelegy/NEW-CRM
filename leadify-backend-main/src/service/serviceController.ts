@@ -1,9 +1,10 @@
-import { Request, Response, NextFunction } from 'express';
+import { Response, NextFunction } from 'express';
+import { AuthenticatedRequest } from '../types';
 import { wrapResult } from '../utils/response/responseWrapper';
 import serviceService from './serviceService';
 
 class ServiceController {
-  public async createService(req: Request, res: Response, next: NextFunction): Promise<void> {
+  public async createService(req: AuthenticatedRequest, res: Response, next: NextFunction): Promise<void> {
     try {
       const responseFromService = await serviceService.createService(req.body);
       wrapResult(res, responseFromService, 201);
@@ -12,7 +13,7 @@ class ServiceController {
     }
   }
 
-  public async updateService(req: Request, res: Response, next: NextFunction): Promise<void> {
+  public async updateService(req: AuthenticatedRequest, res: Response, next: NextFunction): Promise<void> {
     try {
       const responseFromService = await serviceService.updateService(req.params.id as string, req.body);
       wrapResult(res, responseFromService);
@@ -21,7 +22,7 @@ class ServiceController {
     }
   }
 
-  public async getServices(req: Request, res: Response, next: NextFunction): Promise<void> {
+  public async getServices(req: AuthenticatedRequest, res: Response, next: NextFunction): Promise<void> {
     try {
       const responseFromService = await serviceService.getServices(req.query);
       wrapResult(res, responseFromService);
@@ -30,7 +31,7 @@ class ServiceController {
     }
   }
 
-  public async serviceById(req: Request, res: Response, next: NextFunction): Promise<void> {
+  public async serviceById(req: AuthenticatedRequest, res: Response, next: NextFunction): Promise<void> {
     try {
       const responseFromService = await serviceService.serviceById(req.params.id as string);
       wrapResult(res, responseFromService);
@@ -39,9 +40,18 @@ class ServiceController {
     }
   }
 
-  public async sendServicesExcelByEmail(req: Request, res: Response, next: NextFunction): Promise<void> {
+  public async sendServicesExcelByEmail(req: AuthenticatedRequest, res: Response, next: NextFunction): Promise<void> {
     try {
       await serviceService.sendServicesExcelByEmail(req.query, req.params.email as string);
+      wrapResult(res);
+    } catch (error) {
+      next(error);
+    }
+  }
+
+  public async deleteService(req: AuthenticatedRequest, res: Response, next: NextFunction): Promise<void> {
+    try {
+      await serviceService.deleteService(req.params.id as string);
       wrapResult(res);
     } catch (error) {
       next(error);

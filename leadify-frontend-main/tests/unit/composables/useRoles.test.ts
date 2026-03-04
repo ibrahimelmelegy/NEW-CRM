@@ -138,7 +138,7 @@ describe('useRoles', () => {
     it('should show success notification on success', async () => {
       mockApiFetch.mockResolvedValue({ success: true });
 
-      await createRole({ name: 'Manager' });
+      await createRole({ name: 'Manager', permissions: [] });
 
       expect(mockNotification).toHaveBeenCalledWith(
         expect.objectContaining({
@@ -152,7 +152,7 @@ describe('useRoles', () => {
     it('should navigate to /roles on success', async () => {
       mockApiFetch.mockResolvedValue({ success: true });
 
-      await createRole({ name: 'Manager' });
+      await createRole({ name: 'Manager', permissions: [] });
 
       expect(mockNavigateTo).toHaveBeenCalledWith('/roles');
     });
@@ -160,7 +160,7 @@ describe('useRoles', () => {
     it('should show error notification on API failure response', async () => {
       mockApiFetch.mockResolvedValue({ success: false, message: 'Role name already exists' });
 
-      await createRole({ name: 'Admin' });
+      await createRole({ name: 'Admin', permissions: [] });
 
       expect(mockNotification).toHaveBeenCalledWith(
         expect.objectContaining({
@@ -174,7 +174,7 @@ describe('useRoles', () => {
     it('should show default error message when no message in response', async () => {
       mockApiFetch.mockResolvedValue({ success: false });
 
-      await createRole({ name: 'Test' });
+      await createRole({ name: 'Test', permissions: [] });
 
       expect(mockNotification).toHaveBeenCalledWith(
         expect.objectContaining({
@@ -187,7 +187,7 @@ describe('useRoles', () => {
     it('should handle thrown errors gracefully', async () => {
       mockApiFetch.mockRejectedValue(new Error('Network failure'));
 
-      await createRole({ name: 'Test' });
+      await createRole({ name: 'Test', permissions: [] });
 
       expect(mockNotification).toHaveBeenCalledWith(
         expect.objectContaining({
@@ -201,7 +201,7 @@ describe('useRoles', () => {
     it('should handle non-Error thrown values', async () => {
       mockApiFetch.mockRejectedValue('string error');
 
-      await createRole({ name: 'Test' });
+      await createRole({ name: 'Test', permissions: [] });
 
       expect(mockNotification).toHaveBeenCalledWith(
         expect.objectContaining({
@@ -231,7 +231,7 @@ describe('useRoles', () => {
 
     it('should remove id from the request body', async () => {
       mockApiFetch.mockResolvedValue({ success: true });
-      const values = { id: '5', name: 'Updated Role' };
+      const values = { id: '5', name: 'Updated Role', permissions: [] };
 
       await updateRole(values);
 
@@ -242,7 +242,7 @@ describe('useRoles', () => {
 
     it('should use cleanObject to sanitize values', async () => {
       mockApiFetch.mockResolvedValue({ success: true });
-      const values = { id: '5', name: 'Role', emptyField: '', nullField: null };
+      const values = { id: '5', name: 'Role', permissions: [], emptyField: '', nullField: null };
 
       await updateRole(values);
 
@@ -252,7 +252,7 @@ describe('useRoles', () => {
     it('should show success notification on successful update', async () => {
       mockApiFetch.mockResolvedValue({ success: true });
 
-      await updateRole({ id: '5', name: 'Updated' });
+      await updateRole({ id: '5', name: 'Updated', permissions: [] });
 
       expect(mockNotification).toHaveBeenCalledWith(
         expect.objectContaining({
@@ -266,7 +266,7 @@ describe('useRoles', () => {
     it('should navigate to /roles on success', async () => {
       mockApiFetch.mockResolvedValue({ success: true });
 
-      await updateRole({ id: '5', name: 'Updated' });
+      await updateRole({ id: '5', name: 'Updated', permissions: [] });
 
       expect(mockNavigateTo).toHaveBeenCalledWith('/roles');
     });
@@ -274,7 +274,7 @@ describe('useRoles', () => {
     it('should refresh permissions after successful update', async () => {
       mockApiFetch.mockResolvedValue({ success: true });
 
-      await updateRole({ id: '5', name: 'Updated' });
+      await updateRole({ id: '5', name: 'Updated', permissions: [] });
 
       expect(mockUsePermissions).toHaveBeenCalledWith(true);
     });
@@ -282,7 +282,7 @@ describe('useRoles', () => {
     it('should show error notification on API failure response', async () => {
       mockApiFetch.mockResolvedValue({ success: false, message: 'Permission denied' });
 
-      await updateRole({ id: '5', name: 'Updated' });
+      await updateRole({ id: '5', name: 'Updated', permissions: [] });
 
       expect(mockNotification).toHaveBeenCalledWith(
         expect.objectContaining({
@@ -295,7 +295,7 @@ describe('useRoles', () => {
     it('should handle thrown errors gracefully', async () => {
       mockApiFetch.mockRejectedValue(new Error('Server error'));
 
-      await updateRole({ id: '5', name: 'Updated' });
+      await updateRole({ id: '5', name: 'Updated', permissions: [] });
 
       expect(mockNotification).toHaveBeenCalledWith(
         expect.objectContaining({

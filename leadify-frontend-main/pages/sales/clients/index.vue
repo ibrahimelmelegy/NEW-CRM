@@ -3,7 +3,7 @@ div(class="animate-fade-in")
   //- Premium Header
   PremiumPageHeader(
     :title="$t('clients.title')"
-    description="Manage your enterprise client portfolio and maximize customer lifetime value."
+    :description="$t('clients.description')"
     icon="ph:buildings-duotone"
     primaryColor="#3b82f6"
   )
@@ -196,7 +196,7 @@ async function handleBulkDelete() {
   if (!selectedRows.value.length) return;
   try {
     await ElMessageBox.confirm(
-      `Are you sure you want to delete ${selectedRows.value.length} client(s)?`,
+      t('clients.confirmBulkDelete', { count: selectedRows.value.length }),
       t('common.warning'),
       { type: 'warning', confirmButtonText: t('common.delete'), cancelButtonText: t('common.cancel') }
     );
@@ -208,7 +208,7 @@ async function handleBulkDelete() {
     rawClientData.value = res.formattedData;
     table.data = enrichedClientData.value as any;
     selectedRows.value = [];
-    ElNotification({ type: 'success', title: t('common.success'), message: `${selectedRows.value.length} client(s) deleted` });
+    ElNotification({ type: 'success', title: t('common.success'), message: t('clients.bulkDeleted') });
   } catch {
     // User cancelled or error
   } finally {
@@ -221,10 +221,10 @@ async function handleBulkExport() {
     loading.value = true;
     const ids = selectedRows.value.map((r: any) => r.id);
     await useApiFetch('client/export', 'POST', { ids });
-    ElNotification({ type: 'success', title: t('common.success'), message: 'Export sent to your email' });
+    ElNotification({ type: 'success', title: t('common.success'), message: t('common.exportSentToEmail') });
     selectedRows.value = [];
   } catch {
-    ElNotification({ type: 'error', title: t('common.error'), message: 'Export failed' });
+    ElNotification({ type: 'error', title: t('common.error'), message: t('common.exportFailed') });
   } finally {
     loading.value = false;
   }
@@ -355,10 +355,10 @@ const enrichedClientData = computed(() => {
     else if (ltv >= 10000) healthScore += 20;
     else if (ltv > 0) healthScore += 10;
 
-    let healthLabel = 'Poor';
-    if (healthScore >= 90) healthLabel = 'Excellent';
-    else if (healthScore >= 70) healthLabel = 'Good';
-    else if (healthScore >= 50) healthLabel = 'Fair';
+    let healthLabel = t('clients.health.poor');
+    if (healthScore >= 90) healthLabel = t('clients.health.excellent');
+    else if (healthScore >= 70) healthLabel = t('clients.health.good');
+    else if (healthScore >= 50) healthLabel = t('clients.health.fair');
 
     return {
       ...client,
@@ -539,8 +539,8 @@ const mobileFilters = computed(() => {
   const data = table.data || [];
   return [
     { value: 'ALL', label: t('common.all'), color: '#3b82f6', count: data.length },
-    { value: 'ACTIVE', label: 'Active', color: '#10b981', count: data.filter((c: any) => c.clientStatus === 'ACTIVE' || c.status === 'ACTIVE').length },
-    { value: 'INACTIVE', label: 'Inactive', color: '#94a3b8', count: data.filter((c: any) => c.clientStatus === 'INACTIVE' || c.status === 'INACTIVE').length }
+    { value: 'ACTIVE', label: t('common.active'), color: '#10b981', count: data.filter((c: any) => c.clientStatus === 'ACTIVE' || c.status === 'ACTIVE').length },
+    { value: 'INACTIVE', label: t('common.inactive'), color: '#94a3b8', count: data.filter((c: any) => c.clientStatus === 'INACTIVE' || c.status === 'INACTIVE').length }
   ];
 });
 

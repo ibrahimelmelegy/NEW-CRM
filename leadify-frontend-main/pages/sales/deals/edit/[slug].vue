@@ -74,9 +74,9 @@ async function saveAllForms() {
           ...combinedValues.value.deal,
           clientId: combinedValues.value.clientId,
           dealId: route.params.slug as string
-        });
+        } as any);
       } else {
-        response = await updateDeal({ ...combinedValues.value, dealId: route.params.slug as string });
+        response = await updateDeal({ ...combinedValues.value, dealId: route.params.slug as string } as any);
       }
       if (response?.success) {
         navigateTo('/sales/deals');

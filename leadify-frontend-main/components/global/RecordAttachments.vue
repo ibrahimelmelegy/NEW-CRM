@@ -48,7 +48,7 @@ const uploadProgress = ref(0);
 async function fetchAttachments() {
   loading.value = true;
   try {
-    const { body, success } = await useApiFetch(`attachments?entityType=${props.entityType}&entityId=${props.entityId}`);
+    const { body, success } = await useApiFetch(`attachments?entityType=${props.entityType}&entityId=${props.entityId}`) as any;
     if (success && body) {
       attachments.value = body.docs || body || [];
     }

@@ -16,8 +16,8 @@ div
 
   .glass-card.p-4(class="!rounded-3xl shadow-glow")
     el-tabs.mb-4(v-model="activeTab" @tab-change="handleTabChange" class="premium-tabs")
-        el-tab-pane(label="Active Orders" name="active")
-        el-tab-pane(label="Archived" name="archived")
+        el-tab-pane(:label="$t('procurement.purchaseOrders.activeOrders')" name="active")
+        el-tab-pane(:label="$t('procurement.purchaseOrders.archived')" name="archived")
 
     //- Desktop Table
     .po-desktop-view
@@ -41,7 +41,7 @@ div
                 el-dropdown-item
                   NuxtLink.flex.items-center.gap-2(:to="`/procurement/purchase-orders/${data?.id}`")
                     Icon.text-md(name="IconEye")
-                    p.text-sm View Details
+                    p.text-sm {{ $t('common.viewDetails') }}
 
   //- Mobile Card View
   .po-mobile-view
@@ -111,9 +111,9 @@ const { t } = useI18n();
 
 // Export columns
 const exportColumns = [
-  { prop: 'poNumber', label: 'PO Number' },
+  { prop: 'poNumber', label: t('procurement.purchaseOrders.poNumber') },
   { prop: 'vendor.name', label: t('procurement.purchaseOrders.vendor') },
-  { prop: 'project.name', label: 'Project' },
+  { prop: 'project.name', label: t('procurement.purchaseOrders.project') },
   { prop: 'status', label: t('procurement.purchaseOrders.status') },
   { prop: 'totalAmount', label: t('procurement.purchaseOrders.amount') },
   { prop: 'createdAt', label: t('procurement.purchaseOrders.date') }
@@ -121,9 +121,9 @@ const exportColumns = [
 
 const table = reactive({
   columns: [
-    { prop: 'poNumber', label: 'PO Number', component: 'Text', sortable: true, type: 'font-bold', width: 180 },
+    { prop: 'poNumber', label: t('procurement.purchaseOrders.poNumber'), component: 'Text', sortable: true, type: 'font-bold', width: 180 },
     { prop: 'vendor.name', label: t('procurement.purchaseOrders.vendor'), component: 'Text', sortable: false, type: 'font-default', width: 200 },
-    { prop: 'project.name', label: 'Project', component: 'Text', sortable: false, type: 'font-default', width: 200 },
+    { prop: 'project.name', label: t('procurement.purchaseOrders.project'), component: 'Text', sortable: false, type: 'font-default', width: 200 },
     { prop: 'status', label: t('procurement.purchaseOrders.status'), component: 'Label', sortable: true, type: 'outline', width: 140 },
     { prop: 'totalAmount', label: t('procurement.purchaseOrders.amount'), component: 'Text', sortable: true, type: 'font-bold', width: 150 },
     { prop: 'createdAt', label: t('procurement.purchaseOrders.date'), component: 'Text', sortable: true, type: 'font-default', width: 180 }

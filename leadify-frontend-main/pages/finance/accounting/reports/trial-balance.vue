@@ -2,18 +2,18 @@
 div
   .flex.items-center.justify-between.mb-6
     div
-      h1.text-2xl.font-bold Trial Balance
-      p.text-gray-500.mt-1 View account balances as of a specific date
+      h1.text-2xl.font-bold {{ $t('accounting.trialBalance.title') }}
+      p.text-gray-500.mt-1 {{ $t('accounting.trialBalance.subtitle') }}
     .flex.gap-3
       el-date-picker(
         v-model="asOfDate"
         type="date"
-        placeholder="As of date"
+        :placeholder="$t('accounting.trialBalance.asOfDate')"
         value-format="YYYY-MM-DD"
         @change="loadReport"
       )
       el-button(type="primary" @click="exportCSV")
-        span Export
+        span {{ $t('accounting.trialBalance.export') }}
 
   el-card(shadow="never")
     el-table(
@@ -24,13 +24,13 @@ div
       :summary-method="summaryMethod"
       class="w-full"
     )
-      el-table-column(prop="code" label="Account Code" width="140")
-      el-table-column(prop="name" label="Account Name" min-width="250")
-      el-table-column(prop="debit" label="Debit" width="160" align="right")
+      el-table-column(prop="code" :label="$t('accounting.trialBalance.accountCode')" width="140")
+      el-table-column(prop="name" :label="$t('accounting.trialBalance.accountName')" min-width="250")
+      el-table-column(prop="debit" :label="$t('accounting.trialBalance.debit')" width="160" align="right")
         template(#default="{ row }")
           span(v-if="row.debit > 0") {{ formatCurrency(row.debit) }}
           span(v-else) -
-      el-table-column(prop="credit" label="Credit" width="160" align="right")
+      el-table-column(prop="credit" :label="$t('accounting.trialBalance.credit')" width="160" align="right")
         template(#default="{ row }")
           span(v-if="row.credit > 0") {{ formatCurrency(row.credit) }}
           span(v-else) -
@@ -42,8 +42,8 @@ div
         size="large"
         effect="dark"
       )
-        span(v-if="trialBalance.isBalanced") Trial Balance is Balanced
-        span(v-else) Trial Balance is NOT Balanced (Difference: {{ formatCurrency(Math.abs(trialBalance.totalDebits - trialBalance.totalCredits)) }})
+        span(v-if="trialBalance.isBalanced") {{ $t('accounting.trialBalance.isBalanced') }}
+        span(v-else) {{ $t('accounting.trialBalance.notBalanced', { diff: formatCurrency(Math.abs(trialBalance.totalDebits - trialBalance.totalCredits)) }) }}
 </template>
 
 <script setup lang="ts">
@@ -52,6 +52,7 @@ import type { TrialBalanceResult } from '~/composables/useAccounting';
 
 definePageMeta({ middleware: 'permissions' });
 
+const { t } = useI18n();
 const loading = ref(false);
 const asOfDate = ref(new Date().toISOString().substring(0, 10));
 const trialBalance = ref<TrialBalanceResult>({
@@ -69,7 +70,7 @@ function summaryMethod({ columns, data }: any) {
   const sums: string[] = [];
   columns.forEach((column: any, index: number) => {
     if (index === 0) {
-      sums[index] = 'Totals';
+      sums[index] = t('accounting.trialBalance.totals');
       return;
     }
     if (index === 1) {
@@ -97,9 +98,14 @@ async function loadReport() {
 }
 
 function exportCSV() {
-  const headers = ['Account Code', 'Account Name', 'Debit', 'Credit'];
+  const headers = [
+    t('accounting.trialBalance.accountCode'),
+    t('accounting.trialBalance.accountName'),
+    t('accounting.trialBalance.debit'),
+    t('accounting.trialBalance.credit')
+  ];
   const rows = trialBalance.value.accounts.map(a => [a.code, a.name, a.debit > 0 ? a.debit.toFixed(2) : '', a.credit > 0 ? a.credit.toFixed(2) : '']);
-  rows.push(['', 'TOTALS', trialBalance.value.totalDebits.toFixed(2), trialBalance.value.totalCredits.toFixed(2)]);
+  rows.push(['', t('accounting.trialBalance.totals'), trialBalance.value.totalDebits.toFixed(2), trialBalance.value.totalCredits.toFixed(2)]);
 
   const csv = [headers, ...rows].map(r => r.map(v => `"${String(v).replace(/"/g, '""')}"`).join(',')).join('\n');
   const blob = new Blob(['\uFEFF' + csv], { type: 'text/csv;charset=utf-8;' });

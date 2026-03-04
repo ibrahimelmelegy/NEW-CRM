@@ -16,9 +16,9 @@
         el-date-picker(
           v-model="dateRange"
           type="daterange"
-          range-separator="to"
+          :range-separator="t('common.to')"
           :start-placeholder="t('purchaseAnalytics.dateRange')"
-          end-placeholder="End"
+          :end-placeholder="t('purchaseAnalytics.endDate')"
           style="width: 280px"
         )
         el-button(type="primary" @click="refreshData" :loading="loading")
@@ -244,7 +244,7 @@
               Icon.mr-2(name="ph:arrows-split-bold" size="22" style="color: #ef4444")
               | {{ t('purchaseAnalytics.priceVariance') }}
           el-table(:data="priceVarianceData" stripe style="width: 100%")
-            el-table-column(prop="item" label="Item" min-width="180")
+            el-table-column(prop="item" :label="t('purchaseAnalytics.item')" min-width="180")
               template(#default="scope")
                 span.font-medium {{ scope.row.item }}
             el-table-column(:label="t('purchaseAnalytics.contracted')" min-width="130" align="right")
@@ -256,7 +256,7 @@
             el-table-column(:label="t('purchaseAnalytics.variance')" min-width="110" align="center" sortable)
               template(#default="scope")
                 span.font-bold(:style="{ color: getVarianceTextColor(scope.row.variancePct) }") {{ `${scope.row.variancePct > 0 ? '+' : ''}${scope.row.variancePct}%` }}
-            el-table-column(label="Status" min-width="120" align="center")
+            el-table-column(:label="t('purchaseAnalytics.status')" min-width="120" align="center")
               template(#default="scope")
                 el-tag(
                   :type="scope.row.variancePct > 2 ? 'danger' : scope.row.variancePct < -2 ? 'success' : 'info'"

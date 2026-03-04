@@ -128,7 +128,7 @@ async function loadTickets() {
       query.priority = priorityFilter.value;
     }
 
-    const { body, success } = await fetchTickets(query);
+    const { body, success }: any = await fetchTickets(query);
     if (success && body) {
       tickets.value = body.docs || [];
       pagination.value = body.pagination || pagination.value;

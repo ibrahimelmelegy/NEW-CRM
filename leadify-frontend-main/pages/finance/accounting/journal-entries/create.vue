@@ -2,44 +2,44 @@
 div
   .flex.items-center.justify-between.mb-6
     div
-      h1.text-2xl.font-bold New Journal Entry
-      p.text-gray-500.mt-1 Create a manual journal entry
+      h1.text-2xl.font-bold {{ $t('accounting.journalCreate.title') }}
+      p.text-gray-500.mt-1 {{ $t('accounting.journalCreate.subtitle') }}
     .flex.gap-3
-      el-button(size="large" @click="router.back()") Cancel
+      el-button(size="large" @click="router.back()") {{ $t('accounting.journalCreate.cancel') }}
       el-button(
         type="primary"
         size="large"
         @click="handleSave"
         :loading="saving"
         :disabled="!isBalanced || lines.length === 0"
-      ) Save as Draft
+      ) {{ $t('accounting.journalCreate.saveAsDraft') }}
 
   el-card(shadow="never" class="mb-4")
     .grid.grid-cols-1(class="md:grid-cols-3 gap-4")
-      el-form-item(label="Date")
+      el-form-item(:label="$t('accounting.journalCreate.date')")
         el-date-picker(
           v-model="entryData.date"
           type="date"
-          placeholder="Select date"
+          :placeholder="$t('accounting.journalCreate.selectDate')"
           value-format="YYYY-MM-DD"
           class="w-full"
         )
-      el-form-item(label="Reference")
-        el-input(v-model="entryData.reference" placeholder="e.g. INV-001")
-      el-form-item(label="Description")
-        el-input(v-model="entryData.description" placeholder="Entry description")
+      el-form-item(:label="$t('accounting.journalCreate.reference')")
+        el-input(v-model="entryData.reference" :placeholder="$t('accounting.journalCreate.referencePlaceholder')")
+      el-form-item(:label="$t('accounting.journalCreate.description')")
+        el-input(v-model="entryData.description" :placeholder="$t('accounting.journalCreate.descriptionPlaceholder')")
 
   el-card(shadow="never")
     .flex.items-center.justify-between.mb-4
-      h3.text-lg.font-semibold Entry Lines
-      el-button(type="primary" plain size="small" @click="addLine") Add Line
+      h3.text-lg.font-semibold {{ $t('accounting.journalCreate.entryLines') }}
+      el-button(type="primary" plain size="small" @click="addLine") {{ $t('accounting.journalCreate.addLine') }}
 
     el-table(:data="lines" border class="w-full")
-      el-table-column(label="Account" min-width="250")
+      el-table-column(:label="$t('accounting.journalCreate.account')" min-width="250")
         template(#default="{ row, $index }")
           el-select(
             v-model="row.accountId"
-            placeholder="Select account"
+            :placeholder="$t('accounting.journalCreate.selectAccount')"
             filterable
             class="w-full"
           )
@@ -49,7 +49,7 @@ div
               :label="`${acc.code} - ${acc.name}`"
               :value="acc.id"
             )
-      el-table-column(label="Debit" width="160")
+      el-table-column(:label="$t('accounting.journalCreate.debit')" width="160")
         template(#default="{ row, $index }")
           el-input-number(
             v-model="row.debit"
@@ -59,7 +59,7 @@ div
             class="w-full"
             @change="onDebitChange(row)"
           )
-      el-table-column(label="Credit" width="160")
+      el-table-column(:label="$t('accounting.journalCreate.credit')" width="160")
         template(#default="{ row, $index }")
           el-input-number(
             v-model="row.credit"
@@ -69,9 +69,9 @@ div
             class="w-full"
             @change="onCreditChange(row)"
           )
-      el-table-column(label="Description" min-width="200")
+      el-table-column(:label="$t('accounting.journalCreate.description')" min-width="200")
         template(#default="{ row }")
-          el-input(v-model="row.description" placeholder="Line description")
+          el-input(v-model="row.description" :placeholder="$t('accounting.journalCreate.lineDescription')")
       el-table-column(label="" width="60" align="center")
         template(#default="{ $index }")
           el-button(
@@ -85,16 +85,16 @@ div
     //- Totals row
     .flex.justify-end.mt-4.gap-8
       .text-right
-        .text-sm.text-gray-500 Total Debits
+        .text-sm.text-gray-500 {{ $t('accounting.journalCreate.totalDebits') }}
         .text-lg.font-bold {{ formatCurrency(totalDebits) }}
       .text-right
-        .text-sm.text-gray-500 Total Credits
+        .text-sm.text-gray-500 {{ $t('accounting.journalCreate.totalCredits') }}
         .text-lg.font-bold {{ formatCurrency(totalCredits) }}
       .text-right
-        .text-sm.text-gray-500 Difference
+        .text-sm.text-gray-500 {{ $t('accounting.journalCreate.difference') }}
         .text-lg.font-bold(:class="isBalanced ? 'text-green-600' : 'text-red-600'")
-          span(v-if="isBalanced") Balanced
-          span(v-else) Unbalanced: {{ formatCurrency(difference) }}
+          span(v-if="isBalanced") {{ $t('accounting.journalCreate.balanced') }}
+          span(v-else) {{ $t('accounting.journalCreate.unbalanced', { diff: formatCurrency(difference) }) }}
 </template>
 
 <script setup lang="ts">
@@ -104,6 +104,7 @@ import type { ChartOfAccountsItem } from '~/composables/useAccounting';
 
 definePageMeta({ middleware: 'permissions' });
 const router = useRouter();
+const { t } = useI18n();
 
 const saving = ref(false);
 const flatAccounts = ref<ChartOfAccountsItem[]>([]);
@@ -174,12 +175,12 @@ async function handleSave() {
   // Validate
   const invalidLines = lines.value.filter(l => !l.accountId || (l.debit === 0 && l.credit === 0));
   if (invalidLines.length > 0) {
-    ElNotification({ type: 'warning', title: 'Validation', message: 'Each line must have an account and either a debit or credit amount' });
+    ElNotification({ type: 'warning', title: t('accounting.journalCreate.validationTitle'), message: t('accounting.journalCreate.lineValidation') });
     return;
   }
 
   if (!entryData.value.date) {
-    ElNotification({ type: 'warning', title: 'Validation', message: 'Date is required' });
+    ElNotification({ type: 'warning', title: t('accounting.journalCreate.validationTitle'), message: t('accounting.journalCreate.dateRequired') });
     return;
   }
 
@@ -198,12 +199,12 @@ async function handleSave() {
       }))
     };
 
-    const res = await createJournalEntry(payload);
+    const res = await createJournalEntry(payload as any);
     if (res.success) {
-      ElNotification({ type: 'success', title: 'Success', message: 'Journal entry created' });
+      ElNotification({ type: 'success', title: t('accounting.journalCreate.successTitle'), message: t('accounting.journalCreate.successMessage') });
       router.push('/finance/accounting/journal-entries');
     } else {
-      ElNotification({ type: 'error', title: 'Error', message: res.message });
+      ElNotification({ type: 'error', title: t('accounting.journalCreate.errorTitle'), message: res.message });
     }
   } finally {
     saving.value = false;

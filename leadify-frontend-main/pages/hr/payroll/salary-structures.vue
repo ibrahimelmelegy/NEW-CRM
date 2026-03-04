@@ -7,55 +7,55 @@ div
         NuxtLink.text-sm(to="/hr/payroll" style="color: var(--text-muted)")
           .flex.items-center.gap-1
             Icon(name="ph:arrow-left-bold" size="14")
-            span Payroll
+            span {{ $t('hr.payroll.payroll') }}
         span.text-sm(style="color: var(--text-muted)") /
-        span.text-sm(style="color: var(--text-primary)") Salary Structures
-      h1.text-2xl.font-bold(style="color: var(--text-primary)") Salary Structures
-      p.text-sm.mt-1(style="color: var(--text-muted)") Define and manage salary structures for employees
+        span.text-sm(style="color: var(--text-primary)") {{ $t('hr.payroll.salaryStructures') }}
+      h1.text-2xl.font-bold(style="color: var(--text-primary)") {{ $t('hr.payroll.salaryStructures') }}
+      p.text-sm.mt-1(style="color: var(--text-muted)") {{ $t('hr.payroll.salaryStructuresSubtitle') }}
     el-button(type="primary" size="large" class="!rounded-2xl" @click="openCreateDialog")
       Icon(name="ph:plus-bold" size="16" class="mr-1")
-      span New Structure
+      span {{ $t('hr.payroll.newStructure') }}
 
   //- Structures Table
   .glass-card.rounded-2xl.overflow-hidden
     el-table(:data="structures" style="width: 100%" v-loading="loading")
-      el-table-column(label="Employee" min-width="200")
+      el-table-column(:label="$t('hr.employees.employee')" min-width="200")
         template(#default="{ row }")
           .font-semibold(style="color: var(--text-primary)") {{ row.employee?.firstName }} {{ row.employee?.lastName }}
           .text-xs(style="color: var(--text-muted)") {{ row.employee?.employeeNumber }}
-      el-table-column(label="Basic Salary" width="140" align="right")
+      el-table-column(:label="$t('hr.payroll.basicSalary')" width="140" align="right")
         template(#default="{ row }")
           span(style="color: var(--text-primary)") {{ formatCurrency(row.basicSalary) }}
-      el-table-column(label="Housing" width="130" align="right")
+      el-table-column(:label="$t('hr.payroll.housing')" width="130" align="right")
         template(#default="{ row }")
           span(style="color: var(--text-primary)") {{ formatCurrency(row.housingAllowance) }}
-      el-table-column(label="Transport" width="130" align="right")
+      el-table-column(:label="$t('hr.payroll.transport')" width="130" align="right")
         template(#default="{ row }")
           span(style="color: var(--text-primary)") {{ formatCurrency(row.transportAllowance) }}
-      el-table-column(label="Other" width="130" align="right")
+      el-table-column(:label="$t('hr.payroll.other')" width="130" align="right")
         template(#default="{ row }")
           span(style="color: var(--text-primary)") {{ formatCurrency(row.otherAllowances) }}
-      el-table-column(label="GOSI Rate" width="110" align="center")
+      el-table-column(:label="$t('hr.payroll.gosiRate')" width="110" align="center")
         template(#default="{ row }")
           span(style="color: var(--text-primary)") {{ (Number(row.gosiEmployeeRate) * 100).toFixed(2) }}%
-      el-table-column(label="Effective Date" width="140")
+      el-table-column(:label="$t('hr.payroll.effectiveDate')" width="140")
         template(#default="{ row }")
           span(style="color: var(--text-primary)") {{ row.effectiveDate }}
-      el-table-column(label="Actions" width="100" align="center")
+      el-table-column(:label="$t('common.actions')" width="100" align="center")
         template(#default="{ row }")
           el-button(link type="primary" @click="openEditDialog(row)")
             Icon(name="ph:pencil-bold" size="16")
 
   //- Create/Edit Dialog
-  el-dialog(v-model="dialogVisible" :title="editingId ? 'Edit Salary Structure' : 'New Salary Structure'" width="600px")
+  el-dialog(v-model="dialogVisible" :title="editingId ? $t('hr.payroll.editSalaryStructure') : $t('hr.payroll.newSalaryStructure')" width="600px")
     el-form(label-position="top" :model="form")
-      el-form-item(label="Employee" required)
+      el-form-item(:label="$t('hr.payroll.employee')" required)
         el-select(
           v-model="form.employeeId"
           filterable
           remote
           :remote-method="searchEmployees"
-          placeholder="Search employee..."
+          :placeholder="$t('hr.payroll.searchEmployee2')"
           class="w-full"
           size="large"
           :disabled="!!editingId"
@@ -68,28 +68,28 @@ div
             :value="emp.id"
           )
       .grid.gap-4(class="grid-cols-2")
-        el-form-item(label="Basic Salary" required)
+        el-form-item(:label="$t('hr.payroll.basicSalary')" required)
           el-input-number(v-model="form.basicSalary" :min="0" :precision="2" controls-position="right" class="w-full" size="large")
-        el-form-item(label="Housing Allowance")
+        el-form-item(:label="$t('hr.payroll.housingAllowance')")
           el-input-number(v-model="form.housingAllowance" :min="0" :precision="2" controls-position="right" class="w-full" size="large")
       .grid.gap-4(class="grid-cols-2")
-        el-form-item(label="Transport Allowance")
+        el-form-item(:label="$t('hr.payroll.transportAllowance')")
           el-input-number(v-model="form.transportAllowance" :min="0" :precision="2" controls-position="right" class="w-full" size="large")
-        el-form-item(label="Other Allowances")
+        el-form-item(:label="$t('hr.payroll.otherAllowances')")
           el-input-number(v-model="form.otherAllowances" :min="0" :precision="2" controls-position="right" class="w-full" size="large")
       .grid.gap-4(class="grid-cols-2")
-        el-form-item(label="GOSI Employee Rate")
+        el-form-item(:label="$t('hr.payroll.gosiRate')")
           el-input-number(v-model="form.gosiEmployeeRate" :min="0" :max="1" :step="0.0025" :precision="4" controls-position="right" class="w-full" size="large")
-        el-form-item(label="Effective Date" required)
-          el-date-picker(v-model="form.effectiveDate" type="date" value-format="YYYY-MM-DD" placeholder="Select date" class="w-full" size="large")
+        el-form-item(:label="$t('hr.payroll.effectiveDate')" required)
+          el-date-picker(v-model="form.effectiveDate" type="date" value-format="YYYY-MM-DD" :placeholder="$t('hr.payroll.selectDate')" class="w-full" size="large")
       .glass-card.p-4.rounded-xl.mt-2
-        .text-sm.font-semibold.mb-2(style="color: var(--text-primary)") Summary
+        .text-sm.font-semibold.mb-2(style="color: var(--text-primary)") {{ $t('hr.payroll.summary') }}
         .flex.justify-between.text-sm
-          span(style="color: var(--text-muted)") Total Monthly Salary
+          span(style="color: var(--text-muted)") {{ $t('hr.payroll.totalMonthlySalary') }}
           span.font-bold(style="color: #22c55e") {{ formatCurrency(totalMonthlySalary) }}
     template(#footer)
-      el-button(@click="dialogVisible = false" size="large") Cancel
-      el-button(type="primary" :loading="saving" @click="handleSave" size="large" class="!rounded-2xl") {{ editingId ? 'Update' : 'Create' }}
+      el-button(@click="dialogVisible = false" size="large") {{ $t('common.cancel') }}
+      el-button(type="primary" :loading="saving" @click="handleSave" size="large" class="!rounded-2xl") {{ editingId ? $t('common.update') : $t('common.create') }}
 </template>
 
 <script setup lang="ts">
@@ -98,6 +98,7 @@ import { fetchSalaryStructures, createSalaryStructure, updateSalaryStructure, ty
 
 definePageMeta({ middleware: 'permissions' });
 
+const { t } = useI18n();
 const loading = ref(false);
 const saving = ref(false);
 const dialogVisible = ref(false);
@@ -181,7 +182,7 @@ function openEditDialog(row: SalaryStructureItem) {
 
 async function handleSave() {
   if (!form.value.employeeId || !form.value.basicSalary || !form.value.effectiveDate) {
-    ElNotification({ type: 'warning', title: 'Validation', message: 'Please fill in all required fields' });
+    ElNotification({ type: 'warning', title: t('common.warning'), message: t('hr.payroll.fillRequired') });
     return;
   }
 
@@ -195,11 +196,11 @@ async function handleSave() {
     }
 
     if (res.success) {
-      ElNotification({ type: 'success', title: 'Success', message: editingId.value ? 'Salary structure updated' : 'Salary structure created' });
+      ElNotification({ type: 'success', title: t('common.success'), message: editingId.value ? t('hr.payroll.structureUpdated') : t('hr.payroll.structureCreated') });
       dialogVisible.value = false;
       result.value = await fetchSalaryStructures();
     } else {
-      ElNotification({ type: 'error', title: 'Error', message: res.message });
+      ElNotification({ type: 'error', title: t('common.error'), message: res.message });
     }
   } finally {
     saving.value = false;

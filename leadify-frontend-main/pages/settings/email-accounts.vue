@@ -2,14 +2,14 @@
 .email-accounts-page.p-8
   .header.mb-8
     h2.text-3xl.font-bold.mb-2(style="color: var(--text-primary)") {{ $t('navigation.emailAccounts') }}
-    p(style="color: var(--text-muted)") Connect and manage your email accounts
+    p(style="color: var(--text-muted)") {{ $t('emailAccounts.subtitle') }}
 
   .max-w-3xl
     //- Connect Button
     .flex.justify-end.mb-6
       el-button(type="primary" @click="connectDialogVisible = true" class="!rounded-xl")
         Icon.mr-1(name="ph:plus-bold" size="16")
-        | Connect Account
+        | {{ $t('emailAccounts.connectAccount') }}
 
     //- Loading
     .flex.items-center.justify-center.py-20(v-if="loading")
@@ -26,38 +26,38 @@
               div
                 p.text-sm.font-semibold(style="color: var(--text-primary)") {{ account.email }}
                 .flex.items-center.gap-2.mt-1
-                  el-tag(size="small" :type="account.isActive ? 'success' : 'info'") {{ account.isActive ? 'Connected' : 'Disconnected' }}
-                  span.text-xs(style="color: var(--text-muted)" v-if="account.lastSyncAt") Last sync: {{ formatDate(account.lastSyncAt) }}
+                  el-tag(size="small" :type="account.isActive ? 'success' : 'info'") {{ account.isActive ? $t('emailAccounts.connected') : $t('emailAccounts.disconnected') }}
+                  span.text-xs(style="color: var(--text-muted)" v-if="account.lastSyncAt") {{ $t('emailAccounts.lastSync') }}: {{ formatDate(account.lastSyncAt) }}
             el-button(type="danger" plain size="small" @click="handleDisconnect(account)" class="!rounded-lg")
               Icon.mr-1(name="ph:x-bold" size="14")
-              | Disconnect
+              | {{ $t('emailAccounts.disconnect') }}
 
       .text-center.py-12(v-else)
         Icon(name="ph:envelope-bold" size="48" style="color: var(--text-muted)")
-        p.text-sm.mt-3(style="color: var(--text-muted)") No email accounts connected
+        p.text-sm.mt-3(style="color: var(--text-muted)") {{ $t('emailAccounts.noAccounts') }}
 
   //- Connect Dialog
-  el-dialog(v-model="connectDialogVisible" title="Connect Email Account" width="500px")
+  el-dialog(v-model="connectDialogVisible" :title="$t('emailAccounts.connectAccount')" width="500px")
     el-form(:model="connectForm" label-position="top")
-      el-form-item(label="Provider" required)
+      el-form-item(:label="$t('emailAccounts.provider')" required)
         el-select(v-model="connectForm.provider" style="width: 100%")
           el-option(label="Gmail" value="gmail")
           el-option(label="Outlook" value="outlook")
           el-option(label="IMAP" value="imap")
           el-option(label="SMTP" value="smtp")
-      el-form-item(label="Email" required)
-        el-input(v-model="connectForm.email" placeholder="your@email.com")
+      el-form-item(:label="$t('emailAccounts.email')" required)
+        el-input(v-model="connectForm.email" :placeholder="$t('emailAccounts.emailPlaceholder')")
       template(v-if="connectForm.provider === 'imap' || connectForm.provider === 'smtp'")
-        el-form-item(label="Host")
-          el-input(v-model="connectForm.host" placeholder="imap.example.com")
+        el-form-item(:label="$t('emailAccounts.host')")
+          el-input(v-model="connectForm.host" :placeholder="$t('emailAccounts.hostPlaceholder')")
         .grid.gap-4(class="grid-cols-2")
-          el-form-item(label="Port")
+          el-form-item(:label="$t('emailAccounts.port')")
             el-input-number(v-model="connectForm.port" :min="1" style="width: 100%")
-          el-form-item(label="Password")
-            el-input(v-model="connectForm.password" type="password" placeholder="App password")
+          el-form-item(:label="$t('emailAccounts.password')")
+            el-input(v-model="connectForm.password" type="password" :placeholder="$t('emailAccounts.appPassword')")
     template(#footer)
       el-button(@click="connectDialogVisible = false") {{ $t('common.cancel') }}
-      el-button(type="primary" @click="handleConnect" :loading="connecting") Connect
+      el-button(type="primary" @click="handleConnect" :loading="connecting") {{ $t('emailAccounts.connect') }}
 </template>
 
 <script setup lang="ts">

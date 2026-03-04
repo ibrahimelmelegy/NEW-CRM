@@ -252,4 +252,8 @@ router.get(
   AdditionalMaterialController.getMaterialById
 );
 
+//** --------------------- DELETE --------------------- */
+
+router.delete('/:id', authenticateUser, HasPermission([AdditionalMaterialPermissionsEnum.DELETE_ADDITIONAL_MATERIAL]), AdditionalMaterialController.deleteMaterial);
+
 export default router;

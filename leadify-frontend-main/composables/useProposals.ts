@@ -55,8 +55,8 @@ export const proposalRelatedToOptions = ref<RelatedToOptions[]>([]);
 
 export async function fetchRelatedToOptions(type: RelatedTypesValues) {
   const functionMap: { [key in RelatedTypesValues]: () => Promise<Record<string, Array<{ id?: string | number; name?: string }>>> } = {
-    Opportunity: getOpportunities as () => Promise<Record<string, Array<{ id?: string | number; name?: string }>>>,
-    Deal: getDeals as () => Promise<Record<string, Array<{ id?: string | number; name?: string }>>>,
+    Opportunity: getOpportunities as unknown as () => Promise<Record<string, Array<{ id?: string | number; name?: string }>>>,
+    Deal: getDeals as unknown as () => Promise<Record<string, Array<{ id?: string | number; name?: string }>>>,
     Project: getProjects as () => Promise<Record<string, Array<{ id?: string | number; name?: string }>>>
   };
 

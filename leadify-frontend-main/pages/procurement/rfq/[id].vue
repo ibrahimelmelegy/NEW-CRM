@@ -3,49 +3,49 @@
   .flex.items-center.gap-6.mb-8
     el-button(@click="router.back()", circle, :icon="ArrowLeft", class="premium-btn-outline !w-12 !h-12 !text-lg")
     .header-content
-      .title.font-bold.text-3xl.text-gradient Quote Comparison
+      .title.font-bold.text-3xl.text-gradient {{ $t('procurement.rfq.quoteComparison') }}
       .subtitle.text-muted.text-sm {{ rfq?.rfqNumber }} - {{ rfq?.title }}
-  
+
   .grid.grid-cols-1.gap-8(v-if="rfq")
     //- Status Card
     .glass-card.p-6
         .flex.items-center.justify-between
             div
-                .text-xs.uppercase.tracking-widest.text-muted.mb-1 Deadline
+                .text-xs.uppercase.tracking-widest.text-muted.mb-1 {{ $t('procurement.rfq.deadline') }}
                 .font-bold.text-white {{ new Date(rfq.deadLine).toLocaleDateString() }}
             div
-                .text-xs.uppercase.tracking-widest.text-muted.mb-1 Status
+                .text-xs.uppercase.tracking-widest.text-muted.mb-1 {{ $t('procurement.rfq.status') }}
                 el-tag(:type="getStatusType(rfq.status)" effect="dark") {{ rfq.status }}
-            
-            el-button(type="primary" @click="openAddOffer" class="premium-btn") + Add Vendor Offer
+
+            el-button(type="primary" @click="openAddOffer" class="premium-btn") {{ $t('procurement.rfq.addVendorOffer') }}
 
     //- Comparison Table
     .glass-card.p-0.overflow-hidden
         table.w-full.text-left.border-collapse
             thead
                 tr.bg-white_5
-                     th.p-4.text-xs.uppercase.tracking-widest.text-muted Item
-                     th.p-4.text-xs.uppercase.tracking-widest.text-muted.text-center Qty
-                     th.p-4.text-xs.uppercase.tracking-widest.text-white.text-center(v-for="vendor in rfq.vendors" :key="vendor.id" :class="{'bg-purple-500_20': isWinner(vendor)}") 
+                     th.p-4.text-xs.uppercase.tracking-widest.text-muted {{ $t('procurement.rfq.item') }}
+                     th.p-4.text-xs.uppercase.tracking-widest.text-muted.text-center {{ $t('procurement.rfq.qty') }}
+                     th.p-4.text-xs.uppercase.tracking-widest.text-white.text-center(v-for="vendor in rfq.vendors" :key="vendor.id" :class="{'bg-purple-500_20': isWinner(vendor)}")
                         .flex.flex-col.items-center
                             span {{ vendor.vendor?.name }}
                             el-tag(size="small" class="mt-1" :type="getVendorStatus(vendor.status)") {{ vendor.status }}
             tbody
                 tr(v-for="item in rfq.items" :key="item.id" class="border-t border-white_10 hover:bg-white_5 transition-colors")
-                    td.p-4 
+                    td.p-4
                         .font-bold.text-white {{ item.name }}
                         .text-xs.text-muted {{ item.description }}
                     td.p-4.text-center.font-mono {{ item.quantity }} {{ item.uom }}
                     td.p-4.text-center(v-for="vendor in rfq.vendors" :key="vendor.id" :class="{'bg-purple-500_10': isWinner(vendor)}")
                         .font-mono.text-white(v-if="getItemPrice(vendor, item.id)") {{ formatCurrency(getItemPrice(vendor, item.id)) }}
                         .text-xs.text-muted(v-else) -
-                
+
                 //- Totals Row
                 tr.bg-white_5.font-bold
-                    td.p-4.text-right(colspan="2") TOTAL OFFER
-                    td.p-4.text-center.text-lg(v-for="vendor in rfq.vendors" :key="vendor.id") 
+                    td.p-4.text-right(colspan="2") {{ $t('procurement.rfq.totalOffer') }}
+                    td.p-4.text-center.text-lg(v-for="vendor in rfq.vendors" :key="vendor.id")
                         div(:class="{'text-green-400': isLowestPrice(vendor)}") {{ formatCurrency(vendor.totalOfferAmount) }}
-                        el-button(v-if="vendor.status === 'Responded'" size="small" type="success" class="mt-2" @click="awardVendor(vendor)") Award PO
+                        el-button(v-if="vendor.status === 'Responded'" size="small" type="success" class="mt-2" @click="awardVendor(vendor)") {{ $t('procurement.rfq.awardPo') }}
 
   //- Record Tabs
   el-tabs.mt-6(v-model="activeRecordTab")
@@ -57,16 +57,16 @@
       RecordAttachments(:entityType="'rfq'" :entityId="route.params.id as string")
 
   //- Add Offer Dialog (Mocked for now)
-  el-dialog(v-model="offerDialogVisible" title="Record Vendor Response" width="600px" class="glass-dialog")
+  el-dialog(v-model="offerDialogVisible" :title="$t('procurement.rfq.recordVendorResponse')" width="600px" class="glass-dialog")
      .p-4
         el-form
-            el-form-item(label="Select Vendor")
+            el-form-item(:label="$t('procurement.rfq.selectVendor')")
                 el-select(v-model="selectedVendor" class="w-full premium-select")
                    el-option(v-for="v in rfq?.vendors" :key="v.id" :label="v.vendor?.name" :value="v.id")
-            el-form-item(label="Total Offer Amount")
+            el-form-item(:label="$t('procurement.rfq.totalOfferAmount')")
                 el-input-number(v-model="offerAmount" class="w-full premium-input")
         .flex.justify-end.mt-4
-            el-button(@click="submitOffer" type="primary") Save Offer
+            el-button(@click="submitOffer" type="primary") {{ $t('procurement.rfq.saveOffer') }}
 
 </template>
 
@@ -76,6 +76,7 @@ import { ElNotification } from 'element-plus';
 
 const route = useRoute();
 const router = useRouter();
+const { t } = useI18n();
 const rfq = ref<any>(null);
 const offerDialogVisible = ref(false);
 const selectedVendor = ref(null);
@@ -89,7 +90,7 @@ onMounted(async () => {
       rfq.value = res;
     }
   } catch (e) {
-    ElNotification({ title: 'Error', message: 'Failed to load RFQ', type: 'error' });
+    ElNotification({ title: t('common.error'), message: t('procurement.rfq.loadError'), type: 'error' });
   }
 });
 
@@ -135,7 +136,7 @@ async function submitOffer() {
       items: [], // Simplification: just updating total for demo
       notes: 'Manual Entry'
     });
-    ElNotification({ title: 'Success', message: 'Offer Recorded', type: 'success' });
+    ElNotification({ title: t('common.success'), message: t('procurement.rfq.offerRecorded'), type: 'success' });
     offerDialogVisible.value = false;
     // Reload
     const res = await useApiFetch(`rfq/${route.params.id}`);
@@ -146,11 +147,11 @@ async function submitOffer() {
 }
 
 async function awardVendor(vendor: any) {
-  ElNotification({ title: 'Processing', message: 'Converting to PO...', type: 'info' });
+  ElNotification({ title: t('procurement.rfq.processing'), message: t('procurement.rfq.convertingToPo'), type: 'info' });
   // Future: Call API to convert
   setTimeout(() => {
     router.push('/procurement/purchase-orders');
-    ElNotification({ title: 'Success', message: `PO Created for ${vendor.vendor.name}`, type: 'success' });
+    ElNotification({ title: t('common.success'), message: `${t('procurement.rfq.poCreatedFor')} ${vendor.vendor.name}`, type: 'success' });
   }, 1000);
 }
 </script>

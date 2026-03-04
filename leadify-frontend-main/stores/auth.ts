@@ -59,7 +59,7 @@ export const useAuthStore = defineStore('auth', {
       await useApiFetch('auth/logout', 'POST', {}, true);
 
       // Clear cached user data
-      user.value = null;
+      user.value = null as any;
 
       // HttpOnly auth cookie is cleared by the server on logout
 

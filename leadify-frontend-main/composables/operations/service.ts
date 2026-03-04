@@ -163,3 +163,18 @@ function mapToNumbers(data: Service): Service {
 
   return mappedData;
 }
+
+export async function deleteServiceById(id: string) {
+  try {
+    const response = await useApiFetch(`service/${id}`, 'DELETE');
+    if (response?.success) {
+      ElNotification({ type: 'success', title: 'Success', message: 'Service deleted successfully' });
+    } else {
+      ElNotification({ type: 'error', title: 'Error', message: response?.message || 'Failed to delete service' });
+    }
+    return response;
+  } catch (error) {
+    ElNotification({ type: 'error', title: 'Error', message: error instanceof Error ? error.message : 'Unknown error' });
+    return { success: false, body: null, message: 'Unknown error', code: 500 };
+  }
+}

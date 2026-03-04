@@ -21,7 +21,7 @@ const hasMore = computed(() => activities.value.length > 0 && page.value < total
 async function fetchActivities(pageNum: number) {
   loading.value = true;
   try {
-    const { body, success } = await useApiFetch(`activity/${props.entityType}/${props.entityId}?limit=10&page=${pageNum}`);
+    const { body, success } = await useApiFetch(`activity/${props.entityType}/${props.entityId}?limit=10&page=${pageNum}`) as any;
     if (success && body) {
       if (pageNum === 1) {
         activities.value = body.docs || [];

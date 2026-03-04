@@ -133,7 +133,7 @@ const onSubmit = handleSubmit((values: any, actions: any) => {
   emit('submit', values);
 });
 
-let users = await useApiFetch('users');
+let users: any = await useApiFetch('users');
 users = users?.body?.docs?.map((e: any) => ({
   label: e.name,
   value: e.id

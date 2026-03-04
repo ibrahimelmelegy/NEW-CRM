@@ -73,7 +73,7 @@ describe('useSecurity', () => {
       expect(mockApiFetch).toHaveBeenCalledWith('security/session/sessions/2', 'DELETE');
       expect(result).toBe(true);
       expect(sec.sessions.value).toHaveLength(1);
-      expect(sec.sessions.value[0].id).toBe(1);
+      expect(sec.sessions.value[0]!.id).toBe(1);
     });
 
     it('should return false on failure', async () => {
@@ -106,7 +106,7 @@ describe('useSecurity', () => {
       expect(mockApiFetch).toHaveBeenCalledWith('security/session/sessions', 'DELETE');
       expect(result).toBe(true);
       expect(sec.sessions.value).toHaveLength(1);
-      expect(sec.sessions.value[0].isCurrent).toBe(true);
+      expect(sec.sessions.value[0]!.isCurrent).toBe(true);
     });
   });
 
@@ -131,7 +131,7 @@ describe('useSecurity', () => {
       const sec = useSecurity();
       await sec.fetchLoginHistory({ status: 'FAILED', page: 2 });
 
-      const calledUrl = mockApiFetch.mock.calls[0][0] as string;
+      const calledUrl = mockApiFetch.mock.calls[0]![0] as string;
       expect(calledUrl).toContain('status=FAILED');
       expect(calledUrl).toContain('page=2');
     });

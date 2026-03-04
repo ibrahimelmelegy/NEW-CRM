@@ -6,7 +6,7 @@ div(v-loading="loading")
       el-button(text @click="router.back()")
         el-icon
           ArrowLeft
-        span Back
+        span {{ $t('common.back') }}
       .flex.flex-col
         .flex.items-center.gap-3
           span.font-mono.text-lg.font-bold(style="color: var(--el-color-primary)") {{ ticket?.ticketNumber }}
@@ -14,14 +14,14 @@ div(v-loading="loading")
           el-tag(:color="priorityOption.color" effect="dark" round size="small") {{ priorityOption.label }}
         h1.text-xl.font-bold.mt-1 {{ ticket?.subject }}
     .flex.items-center.gap-2
-      el-button(v-if="ticket?.status !== 'RESOLVED' && ticket?.status !== 'CLOSED'" type="success" @click="handleResolve") Resolve
-      el-button(v-if="ticket?.status !== 'CLOSED'" type="info" @click="handleClose") Close
+      el-button(v-if="ticket?.status !== 'RESOLVED' && ticket?.status !== 'CLOSED'" type="success" @click="handleResolve") {{ $t('support.resolve') }}
+      el-button(v-if="ticket?.status !== 'CLOSED'" type="info" @click="handleClose") {{ $t('support.close') }}
 
   //- Two-column layout
   .grid.gap-6(class="grid-cols-1 lg:grid-cols-10")
     //- Left column: Conversation (70%)
     .glass-card.p-6(class="lg:col-span-7")
-      h3.text-lg.font-bold.mb-4 Conversation
+      h3.text-lg.font-bold.mb-4 {{ $t('support.conversation') }}
 
       //- Message Thread
       SupportTicketConversation(:messages="messages")
@@ -30,7 +30,7 @@ div(v-loading="loading")
       .mt-4.flex.items-center.gap-2
         el-select(
           v-model="selectedCannedResponse"
-          placeholder="Insert canned response..."
+          :placeholder="$t('support.insertCannedPlaceholder')"
           clearable
           filterable
           class="flex-1"
@@ -50,83 +50,83 @@ div(v-loading="loading")
       //- Message Input
       .mt-4
         .flex.items-center.gap-3.mb-2
-          el-switch(v-model="isInternalNote" active-text="Internal Note" inactive-text="Public Reply")
-          .text-xs(v-if="isInternalNote" style="color: #e6a23c") This note is only visible to agents
+          el-switch(v-model="isInternalNote" :active-text="$t('support.internalNote')" :inactive-text="$t('support.publicReply')")
+          .text-xs(v-if="isInternalNote" style="color: #e6a23c") {{ $t('support.internalNoteWarning') }}
         el-input(
           v-model="newMessage"
           type="textarea"
           :rows="4"
-          :placeholder="isInternalNote ? 'Write an internal note...' : 'Type your reply...'"
+          :placeholder="isInternalNote ? $t('support.writeInternalNote') : $t('support.typeReply')"
           size="large"
         )
         .flex.justify-end.mt-3
           el-button(type="primary" @click="handleSendMessage" :loading="sending" :disabled="!newMessage.trim()")
-            span {{ isInternalNote ? 'Add Note' : 'Send Reply' }}
+            span {{ isInternalNote ? $t('support.addNote') : $t('support.sendReply') }}
 
     //- Right column: Sidebar (30%)
     .flex.flex-col.gap-4(class="lg:col-span-3")
       //- Ticket Info
       .glass-card.p-6
-        h3.text-lg.font-bold.mb-4 Ticket Info
+        h3.text-lg.font-bold.mb-4 {{ $t('support.ticketInfo') }}
 
         .space-y-4
           .flex.flex-col
-            span.text-xs.font-semibold.uppercase(style="color: var(--text-muted)") Assignee
+            span.text-xs.font-semibold.uppercase(style="color: var(--text-muted)") {{ $t('support.assignedTo') }}
             .flex.items-center.gap-2.mt-1
               span(v-if="ticket?.assignee") {{ ticket.assignee.name }}
-              span.text-gray-400(v-else) Unassigned
-            el-button.mt-2(size="small" text type="primary" @click="showAssignDialog = true") Change Assignee
+              span.text-gray-400(v-else) {{ $t('support.unassigned') }}
+            el-button.mt-2(size="small" text type="primary" @click="showAssignDialog = true") {{ $t('support.changeAssignee') }}
 
           .flex.flex-col
-            span.text-xs.font-semibold.uppercase(style="color: var(--text-muted)") Client
+            span.text-xs.font-semibold.uppercase(style="color: var(--text-muted)") {{ $t('support.assignedTo') }}
             span.mt-1(v-if="ticket?.client") {{ ticket.client.clientName }}
             span.mt-1.text-gray-400(v-else) --
 
           .flex.flex-col
-            span.text-xs.font-semibold.uppercase(style="color: var(--text-muted)") Category
+            span.text-xs.font-semibold.uppercase(style="color: var(--text-muted)") {{ $t('support.category') }}
             span.mt-1(v-if="ticket?.category") {{ ticket.category.name }}
             span.mt-1.text-gray-400(v-else) --
 
           .flex.flex-col
-            span.text-xs.font-semibold.uppercase(style="color: var(--text-muted)") Source
+            span.text-xs.font-semibold.uppercase(style="color: var(--text-muted)") {{ $t('support.source') }}
             span.mt-1 {{ ticket?.source || '--' }}
 
           .flex.flex-col
-            span.text-xs.font-semibold.uppercase(style="color: var(--text-muted)") SLA Deadline
+            span.text-xs.font-semibold.uppercase(style="color: var(--text-muted)") {{ $t('support.slaDeadline') }}
             template(v-if="ticket?.slaDeadline")
               SupportSLAIndicator(:deadline="ticket.slaDeadline" :resolvedAt="ticket.resolvedAt")
-            span.mt-1.text-gray-400(v-else) No SLA
+            span.mt-1.text-gray-400(v-else) {{ $t('support.noSla') }}
 
           .flex.flex-col
-            span.text-xs.font-semibold.uppercase(style="color: var(--text-muted)") Created
+            span.text-xs.font-semibold.uppercase(style="color: var(--text-muted)") {{ $t('support.ticketCreated') }}
             span.mt-1 {{ formatDate(ticket?.createdAt) }}
 
           .flex.flex-col
-            span.text-xs.font-semibold.uppercase(style="color: var(--text-muted)") First Response
+            span.text-xs.font-semibold.uppercase(style="color: var(--text-muted)") {{ $t('support.firstResponse') }}
             span.mt-1 {{ ticket?.firstResponseAt ? formatDate(ticket.firstResponseAt) : '--' }}
 
           .flex.flex-col
-            span.text-xs.font-semibold.uppercase(style="color: var(--text-muted)") Resolved At
+            span.text-xs.font-semibold.uppercase(style="color: var(--text-muted)") {{ $t('support.resolvedAt') }}
             span.mt-1 {{ ticket?.resolvedAt ? formatDate(ticket.resolvedAt) : '--' }}
 
           .flex.flex-col(v-if="ticket?.tags && ticket.tags.length")
-            span.text-xs.font-semibold.uppercase(style="color: var(--text-muted)") Tags
+            span.text-xs.font-semibold.uppercase(style="color: var(--text-muted)") {{ $t('support.tags') }}
             .flex.flex-wrap.gap-1.mt-1
               el-tag(v-for="tag in ticket.tags" :key="tag" size="small" round) {{ tag }}
 
       //- CSAT Rating
       .glass-card.p-6(v-if="ticket?.status === 'RESOLVED' || ticket?.status === 'CLOSED'")
-        h3.text-lg.font-bold.mb-4 Customer Satisfaction
+        h3.text-lg.font-bold.mb-4 {{ $t('support.customerSatisfactionTitle') }}
         SupportCSATWidget(:rating="ticket?.csatRating" @rate="handleCSATSubmit")
         p.text-sm.mt-2(v-if="ticket?.csatComment" style="color: var(--text-muted)") "{{ ticket.csatComment }}"
 
   //- Assign Dialog
-  el-dialog(v-model="showAssignDialog" title="Assign Ticket" width="400px")
-    el-select(v-model="assignUserId" filterable placeholder="Select agent" class="w-full" size="large")
+  el-dialog(v-model="showAssignDialog" :title="$t('support.assignTicket')" width="400px")
+    el-select(v-model="assignUserId" filterable :placeholder="$t('support.selectAgent')" class="w-full" size="large")
       el-option(v-for="u in agents" :key="u.id" :value="u.id" :label="u.name")
     template(#footer)
-      el-button(@click="showAssignDialog = false") Cancel
-      el-button(type="primary" @click="handleAssign" :loading="assigning") Assign
+      el-button(@click="showAssignDialog = false") {{ $t('common.cancel') }}
+      el-button(type="primary" @click="handleAssign" :loading="assigning") {{ $t('support.assign') }}
 </template>
 
 <script setup lang="ts">
@@ -149,6 +149,7 @@ import { useApiFetch } from '@/composables/useApiFetch';
 
 const router = useRouter();
 const route = useRoute();
+const { t } = useI18n();
 const ticketId = computed(() => route.params.id as string);
 
 const loading = ref(false);
@@ -170,7 +171,7 @@ const priorityOption = computed(() => getPriorityOption(ticket.value?.priority |
 async function loadTicket() {
   loading.value = true;
   try {
-    const { body, success } = await fetchTicketById(ticketId.value);
+    const { body, success }: any = await fetchTicketById(ticketId.value);
     if (success && body) {
       ticket.value = body;
       messages.value = body.messages || [];
@@ -215,7 +216,7 @@ async function handleSendMessage() {
     if (success) {
       newMessage.value = '';
       isInternalNote.value = false;
-      ElNotification({ type: 'success', title: 'Sent', message: 'Message added successfully' });
+      ElNotification({ type: 'success', title: t('common.success'), message: t('support.msgSent') });
       await loadTicket();
     }
   } finally {
@@ -230,7 +231,7 @@ async function handleAssign() {
     const { success } = await assignTicket(ticketId.value, assignUserId.value);
     if (success) {
       showAssignDialog.value = false;
-      ElNotification({ type: 'success', title: 'Assigned', message: 'Ticket assigned successfully' });
+      ElNotification({ type: 'success', title: t('common.success'), message: t('support.ticketAssignedMsg') });
       await loadTicket();
     }
   } finally {
@@ -241,7 +242,7 @@ async function handleAssign() {
 async function handleResolve() {
   const { success } = await resolveTicket(ticketId.value);
   if (success) {
-    ElNotification({ type: 'success', title: 'Resolved', message: 'Ticket marked as resolved' });
+    ElNotification({ type: 'success', title: t('common.success'), message: t('support.ticketResolvedMsg') });
     await loadTicket();
   }
 }
@@ -249,7 +250,7 @@ async function handleResolve() {
 async function handleClose() {
   const { success } = await closeTicket(ticketId.value);
   if (success) {
-    ElNotification({ type: 'info', title: 'Closed', message: 'Ticket has been closed' });
+    ElNotification({ type: 'info', title: t('common.info'), message: t('support.ticketClosedMsg') });
     await loadTicket();
   }
 }
@@ -257,7 +258,7 @@ async function handleClose() {
 async function handleCSATSubmit(rating: number) {
   const { success } = await submitCSAT(ticketId.value, rating);
   if (success) {
-    ElNotification({ type: 'success', title: 'Thank you', message: 'Rating submitted' });
+    ElNotification({ type: 'success', title: t('support.csatThankYou'), message: t('support.csatRatingSubmitted') });
     await loadTicket();
   }
 }

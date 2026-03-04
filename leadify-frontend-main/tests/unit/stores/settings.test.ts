@@ -80,7 +80,7 @@ describe('useSettingsStore', () => {
       expect(store.language).toBe('ar');
       expect(localStorageMock.setItem).toHaveBeenCalled();
 
-      const persisted = JSON.parse(localStorageMock.setItem.mock.calls[0][1]);
+      const persisted = JSON.parse(localStorageMock.setItem.mock.calls[0]![1]);
       expect(persisted.language).toBe('ar');
     });
 
@@ -148,7 +148,7 @@ describe('useSettingsStore', () => {
       const persistedCall = localStorageMock.setItem.mock.calls[
         localStorageMock.setItem.mock.calls.length - 1
       ];
-      const persisted = JSON.parse(persistedCall[1]);
+      const persisted = JSON.parse(persistedCall![1]);
       expect(persisted.timezone).toBe('Asia/Riyadh');
     });
   });

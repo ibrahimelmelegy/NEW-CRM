@@ -40,11 +40,11 @@
                       el-dropdown-item
                         NuxtLink.flex.items-center(:to="`/operations/daily-task/${data?.id}`")
                           Icon.text-md.mr-2(name="IconEye" )
-                          p.text-sm View
+                          p.text-sm {{ $t('common.view') }}
                       el-dropdown-item
                         NuxtLink.flex.items-center(:to="`/operations/daily-task/edits/${data?.id}`")
                           Icon.text-md.mr-2(name="IconEdit" )
-                          p.text-sm Edit
+                          p.text-sm {{ $t('common.edit') }}
         //- Mobile card view for active tab
         .dtask-mobile-view(v-if="!loading")
           .space-y-3(v-if="activeProjects.length")
@@ -105,11 +105,11 @@
                       el-dropdown-item
                         NuxtLink.flex.items-center(:to="`/operations/daily-task/${data?.id}`")
                           Icon.text-md.mr-2(name="IconEye" )
-                          p.text-sm View
+                          p.text-sm {{ $t('common.view') }}
                       el-dropdown-item
                         NuxtLink.flex.items-center(:to="`/operations/daily-task/edits/${data?.id}`")
                           Icon.text-md.mr-2(name="IconEdit" )
-                          p.text-sm Edit
+                          p.text-sm {{ $t('common.edit') }}
         //- Mobile card view for completed tab
         .dtask-mobile-view(v-if="!loading")
           .space-y-3(v-if="completedProjects.length")
@@ -169,11 +169,11 @@
                       el-dropdown-item
                         NuxtLink.flex.items-center(:to="`/operations/daily-task/${data?.id}`")
                           Icon.text-md.mr-2(name="IconEye" )
-                          p.text-sm View
+                          p.text-sm {{ $t('common.view') }}
                       el-dropdown-item
                         NuxtLink.flex.items-center(:to="`/operations/daily-task/edits/${data?.id}`")
                           Icon.text-md.mr-2(name="IconEdit" )
-                          p.text-sm Edit
+                          p.text-sm {{ $t('common.edit') }}
         //- Mobile card view for granted tab
         .dtask-mobile-view(v-if="!loading")
           .space-y-3(v-if="grantedProjects.length")
@@ -551,7 +551,7 @@ const exportToPDF = async () => {
 
   const data =
     activeName.value === 'active' ? activeProjects.value : activeName.value === 'completed' ? completedProjects.value : grantedProjects.value;
-  const name = activeName.value === 'active' ? 'Active Projects' : activeName.value === 'completed' ? 'Completed Projects' : 'Granted Projects';
+  const name = activeName.value === 'active' ? t('operations.dailyTasks.tabs.active') : activeName.value === 'completed' ? t('operations.dailyTasks.tabs.completed') : t('operations.dailyTasks.tabs.granted');
   const columns = activeName.value === 'active' ? activeColumns : activeName.value === 'completed' ? completedColumns : grantedColumns;
 
   // Initialize jsPDF

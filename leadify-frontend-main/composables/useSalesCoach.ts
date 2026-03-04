@@ -31,7 +31,7 @@ export function useSalesCoach() {
     loading.value = true;
     const res = await useApiFetch(`ai/sales-coach/deal/${dealId}`);
     if (res.success && res.body) {
-      dealAnalysis.value = res.body;
+      dealAnalysis.value = res.body as any;
     }
     loading.value = false;
   }
@@ -40,7 +40,7 @@ export function useSalesCoach() {
     loading.value = true;
     const res = await useApiFetch('ai/sales-coach/pipeline');
     if (res.success && res.body) {
-      pipelineHealth.value = res.body;
+      pipelineHealth.value = res.body as any;
     }
     loading.value = false;
   }

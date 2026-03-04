@@ -166,9 +166,9 @@ function handleClick() {}
 // Create quote from deal
 function createQuoteFromDeal() {
   const query: Record<string, string> = {
-    relatedEntityId: deal.id,
+    relatedEntityId: String(deal.id),
     relatedEntityType: 'Deal',
-    proposalFor: deal.companyName || deal.name || ''
+    proposalFor: String(deal.companyName || deal.name || '')
   };
   router.push({ path: '/sales/proposals/add-proposal', query });
 }
@@ -184,7 +184,7 @@ const getActivityPage = async (page: number) => {
 };
 
 // Call API to Get the lead
-const lead = deal?.leadId ? await getLead(deal.leadId) : null;
+const lead = deal?.leadId ? await getLead(deal.leadId as string) : null;
 
 //  invoices table
 const invoicesTable = reactive({
@@ -236,13 +236,13 @@ const invoicesTable = reactive({
 });
 
 invoicesTable.data =
-  deal?.invoice?.map((item: Invoice) => ({
+  ((deal?.invoice as any)?.map((item: Invoice) => ({
     ...item,
     invoiceDate: getYear(item.invoiceDate),
     dueDate: getYear(item.dueDate),
     collectedDate: getYear(item.collectedDate),
     collected: item.collected ? t('common.yes') : t('common.no')
-  })) || [];
+  })) || []) as any[];
 
 //  invoices table
 const deliveriesTable = reactive({
@@ -264,7 +264,7 @@ const deliveriesTable = reactive({
   ],
   data: [] as Delivery[]
 });
-deliveriesTable.data = deal?.deliveryDetails?.map((item: Delivery) => ({ ...item, deliveryDate: getYear(item.deliveryDate) })) || [];
+deliveriesTable.data = ((deal?.deliveryDetails as any)?.map((item: Delivery) => ({ ...item, deliveryDate: getYear(item.deliveryDate) })) || []) as any[];
 
 const table = reactive({
   columns: [

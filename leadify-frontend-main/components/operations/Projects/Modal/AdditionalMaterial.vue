@@ -48,8 +48,8 @@ async function onSubmitMaterials() {
     } else {
       response = await createAdditionalMaterial(finalValues.value, false);
     }
-    emit('confirm', response?.id);
-    if (Object.keys(response).length) dialog.value = false;
+    emit('confirm', (response as any)?.id);
+    if (Object.keys(response as any).length) dialog.value = false;
     loading.value = false;
   } catch (error) {
     console.error('Error saving forms:', error);

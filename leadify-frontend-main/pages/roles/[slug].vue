@@ -1,6 +1,6 @@
 <template lang="pug">
   .flex.items-center.justify-between.mb-5.mt-5
-    .title.font-bold.text-2xl.mb-1.capitalize View Role
+    .title.font-bold.text-2xl.mb-1.capitalize {{ $t('roles.viewRole') }}
     el-dropdown(trigger="click")
         span.el-dropdown-link
             button.rounded-btn(class="!px-4"): Icon(name="IconToggle" size="24")
@@ -9,32 +9,32 @@
               el-dropdown-item(v-if="hasPermission('EDIT_ROLES')")
                 NuxtLink.flex.items-center(:to="`/roles/edit/${role?.id}`")
                   Icon.text-md.mr-2(size="20" name="IconEdit" )
-                  p.text-sm Edit
+                  p.text-sm {{ $t('common.edit') }}
               //- el-dropdown-item
               //-   .flex.items-center
               //-     Icon.text-md.mr-2(size="20" name="IconDelete" )
-              //-     p.text-sm Delete
+              //-     p.text-sm {{ $t('common.delete') }}
 
   .flex-1.glass-card.p-10.rounded-3xl
-      p.text-neutral-900.font-semibold.mb-6.text-lg Information
+      p.text-neutral-900.font-semibold.mb-6.text-lg {{ $t('roles.information') }}
       .grid.gap-4(class="lg:grid-cols-4 grid-cols-1")
         div(v-if="role?.name")
           .text-neutral-400.font-medium.mb-2.flex.items-center
             Icon(name="tabler:category-2" size="20" class="mr-2")
-            p Role
+            p {{ $t('roles.columns.name') }}
           p.text-neutral-800.mb-2 {{role?.name}}
         div
           .text-neutral-400.font-medium.mb-2.flex.items-center
             Icon(name="solar:hashtag-outline" size="20" class="mr-2")
-            p Total Staff
+            p {{ $t('roles.columns.totalStaff') }}
           p.text-neutral-800.mb-2 {{role.totalAssignedUsers}}
         div(v-if="role.description")
           .text-neutral-400.font-medium.mb-2.flex.items-center
             Icon(name="solar:hashtag-outline" size="20" class="mr-2")
-            p Description
+            p {{ $t('common.description') }}
           p.text-neutral-800.mb-2 {{role.description}}
   .card.m-auto.glass-card.rounded-3xl.p-10
-    h3.text-2xl.font-bold.mb-5 Permissions
+    h3.text-2xl.font-bold.mb-5 {{ $t('roles.permissions') }}
 
     .flex.flex-col.gap-y-6
       template(v-for="(permissions, key) in permissionsData" :key="key")
@@ -54,6 +54,7 @@
 
 <script lang="ts" setup>
 const route = useRoute();
+const { t } = useI18n();
 const { hasPermission } = await usePermissions();
 const activeTab = ref('timeline');
 
@@ -101,18 +102,19 @@ function formatKeyLabel(key: string) {
 
 // Format permission label
 function formatPermissionLabel(permission: string) {
-  if (permission.includes('VIEW_OWN')) return 'View (Own)';
-  if (permission.includes('VIEW_GLOBAL')) return 'View (Global)';
-  if (permission.includes('CREATE')) return 'Create';
-  if (permission.includes('EDIT')) return 'Edit';
-  if (permission.includes('EXPORT_OWN')) return 'Export (Own)';
-  if (permission.includes('EXPORT_GLOBAL')) return 'Export (Global)';
-  if (permission.includes('EXPORT_SALES')) return 'Export Sales Reports';
-  if (permission.includes('EXPORT_PROJECT')) return 'Export Project Reports';
-  if (permission.includes('EXPORT_PERFORMANCE')) return 'Export Performance Reports';
-  if (permission.includes('APPROVE')) return 'Approve';
-  if (permission.includes('REJECT')) return 'Reject';
-  if (permission.includes('WAITING_APPROVAL')) return 'Waiting Approval';
+  if (permission.includes('VIEW_OWN')) return t('roles.permLabels.viewOwn');
+  if (permission.includes('VIEW_GLOBAL')) return t('roles.permLabels.viewGlobal');
+  if (permission.includes('VIEW')) return t('roles.permLabels.view');
+  if (permission.includes('CREATE')) return t('roles.permLabels.create');
+  if (permission.includes('EDIT')) return t('roles.permLabels.edit');
+  if (permission.includes('EXPORT_OWN')) return t('roles.permLabels.exportOwn');
+  if (permission.includes('EXPORT_GLOBAL')) return t('roles.permLabels.exportGlobal');
+  if (permission.includes('EXPORT_SALES')) return t('roles.permLabels.exportSales');
+  if (permission.includes('EXPORT_PROJECT')) return t('roles.permLabels.exportProject');
+  if (permission.includes('EXPORT_PERFORMANCE')) return t('roles.permLabels.exportPerformance');
+  if (permission.includes('APPROVE')) return t('roles.permLabels.approve');
+  if (permission.includes('REJECT')) return t('roles.permLabels.reject');
+  if (permission.includes('WAITING_APPROVAL')) return t('roles.permLabels.waitingApproval');
   return permission.replace(/_/g, ' ').toLowerCase();
 }
 

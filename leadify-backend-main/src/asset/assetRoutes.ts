@@ -268,4 +268,8 @@ router.get(
  */
 router.get('/:id', authenticateUser, HasPermission([AssetPermissionsEnum.VIEW_ASSETS]), assetController.assetById);
 
+// ** --------------------- DELETE --------------------- **/
+
+router.delete('/:id', authenticateUser, HasPermission([AssetPermissionsEnum.DELETE_ASSETS]), assetController.deleteAsset);
+
 export default router;

@@ -14,7 +14,7 @@
       .flex.items-center.justify-center(v-if="loading" style="height: 600px")
         el-icon.is-loading(size="32" style="color: var(--accent-color, #7849ff)")
           i.el-icon-loading
-        span.ml-3.text-sm(style="color: var(--text-secondary)") Loading graph...
+        span.ml-3.text-sm(style="color: var(--text-secondary)") {{ $t('relationshipGraph.loading') }}
       template(v-else)
         GraphCanvas(:elements="cytoscapeElements" @nodeClick="onNodeClick")
       NodeDetailPanel(:node="selectedNode" @close="selectedNode = null")

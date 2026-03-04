@@ -106,7 +106,7 @@ describe('useStaff.ts', () => {
         phone: '123456',
         status: StaffStatusEnums.ACTIVE,
         updatedAt: '',
-        role: 'Admin',
+        role: 'Admin' as any,
         department: 'Sales'
       };
 

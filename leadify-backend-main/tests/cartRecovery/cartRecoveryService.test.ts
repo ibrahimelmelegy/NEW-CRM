@@ -208,7 +208,7 @@ describe('CartRecoveryService', () => {
   // ---------------------------------------------------------------------------
   describe('update', () => {
     it('should update and return the cart', async () => {
-      const mockItem = { id: 1, update: jest.fn().mockResolvedValue(true) };
+      const mockItem: any = { id: 1, update: jest.fn().mockImplementation(() => Promise.resolve(true)) };
       (AbandonedCart.findByPk as jest.Mock<any>).mockResolvedValue(mockItem);
 
       const result = await cartRecoveryService.update(1, { recoveryStatus: 'REMINDED' });

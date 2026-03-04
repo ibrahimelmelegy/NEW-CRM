@@ -3,13 +3,11 @@
   DocumentHubWrapper(
     documentType="rfq"
     backUrl="/procurement/rfq"
-    backLabel="Back to RFQs"
+    :backLabel="$t('procurement.rfq.backLabel')"
   )
 </template>
 
 <script setup lang="ts">
-import DocumentHubWrapper from '~/components/DocumentBuilder/DocumentHubWrapper.vue';
-
 definePageMeta({
   layout: 'default',
   middleware: ['permissions'],

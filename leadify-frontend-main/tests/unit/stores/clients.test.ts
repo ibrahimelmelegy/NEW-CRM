@@ -184,7 +184,7 @@ describe('useClientStore', () => {
       const result = await store.updateClient('client-1', { clientName: 'Updated' });
 
       expect(result).toEqual(updated);
-      expect(store.clients[0].clientName).toBe('Updated');
+      expect(store.clients[0]!.clientName).toBe('Updated');
       expect(store.currentClient!.clientName).toBe('Updated');
     });
   });
@@ -201,7 +201,7 @@ describe('useClientStore', () => {
 
       expect(result).toBe(true);
       expect(store.clients).toHaveLength(1);
-      expect(store.clients[0].id).toBe('client-2');
+      expect(store.clients[0]!.id).toBe('client-2');
       expect(store.currentClient).toBeNull();
     });
 

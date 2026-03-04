@@ -1,6 +1,11 @@
 import express from 'express';
-import { authenticateUser } from '../middleware/authMiddleware';
+import { authenticateUser, HasPermission } from '../middleware/authMiddleware';
+import { validateBody } from '../middleware/validation';
+import { SettingsPermissionsEnum } from '../role/roleEnum';
 import pipelineConfigController from './pipelineConfigController';
+import { CreateStageInput } from './inputs/createStageInput';
+import { UpdateStageInput } from './inputs/updateStageInput';
+import { ReorderStagesInput } from './inputs/reorderStagesInput';
 
 /**
  * @swagger
@@ -32,7 +37,7 @@ const router = express.Router();
  *       500:
  *         description: Server error
  */
-router.get('/', authenticateUser, pipelineConfigController.getStages);
+router.get('/', authenticateUser, HasPermission([SettingsPermissionsEnum.VIEW_SETTINGS]), pipelineConfigController.getStages);
 
 /**
  * @swagger
@@ -81,7 +86,7 @@ router.get('/', authenticateUser, pipelineConfigController.getStages);
  *       500:
  *         description: Server error
  */
-router.post('/', authenticateUser, pipelineConfigController.createStage);
+router.post('/', authenticateUser, HasPermission([SettingsPermissionsEnum.EDIT_SETTINGS]), validateBody(CreateStageInput), pipelineConfigController.createStage);
 
 /**
  * @swagger
@@ -126,7 +131,7 @@ router.post('/', authenticateUser, pipelineConfigController.createStage);
  *       500:
  *         description: Server error
  */
-router.put('/:id', authenticateUser, pipelineConfigController.updateStage);
+router.put('/:id', authenticateUser, HasPermission([SettingsPermissionsEnum.EDIT_SETTINGS]), validateBody(UpdateStageInput), pipelineConfigController.updateStage);
 
 /**
  * @swagger
@@ -151,7 +156,7 @@ router.put('/:id', authenticateUser, pipelineConfigController.updateStage);
  *       500:
  *         description: Server error
  */
-router.delete('/:id', authenticateUser, pipelineConfigController.deleteStage);
+router.delete('/:id', authenticateUser, HasPermission([SettingsPermissionsEnum.EDIT_SETTINGS]), pipelineConfigController.deleteStage);
 
 /**
  * @swagger
@@ -187,6 +192,6 @@ router.delete('/:id', authenticateUser, pipelineConfigController.deleteStage);
  *       500:
  *         description: Server error
  */
-router.post('/reorder', authenticateUser, pipelineConfigController.reorderStages);
+router.post('/reorder', authenticateUser, HasPermission([SettingsPermissionsEnum.EDIT_SETTINGS]), validateBody(ReorderStagesInput), pipelineConfigController.reorderStages);
 
 export default router;

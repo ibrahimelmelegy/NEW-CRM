@@ -30,7 +30,7 @@
 </template>
 
 <script setup lang="ts">
-import { ref, onMounted } from 'vue';
+import { ref, onMounted, computed } from 'vue';
 import { useHeatmap } from '~/composables/useHeatmap';
 import { useThemeStore } from '~/stores/theme';
 import ActivityHeatmap from '~/components/Heatmap/ActivityHeatmap.vue';
@@ -38,14 +38,15 @@ import LiveTicker from '~/components/Heatmap/LiveTicker.vue';
 
 const themeStore = useThemeStore();
 const accentColor = computed(() => themeStore.accentColor);
+const { t } = useI18n();
 
 const { heatmapData, recentActivity, loading, year, fetchHeatmap, fetchRecentActivity } = useHeatmap();
 
 const viewMode = ref('team');
-const viewOptions = [
-  { label: 'Team', value: 'team' },
-  { label: 'Individual', value: 'individual' }
-];
+const viewOptions = computed(() => [
+  { label: t('heatmap.viewTeam'), value: 'team' },
+  { label: t('heatmap.viewIndividual'), value: 'individual' }
+]);
 
 const currentYear = new Date().getFullYear();
 const selectedYear = ref(currentYear);

@@ -37,7 +37,7 @@ export function useAchievements() {
     loading.value = true;
     const res = await useApiFetch('gamification/achievements/me');
     if (res.success && res.body) {
-      state.value = res.body;
+      state.value = res.body as any;
     }
     loading.value = false;
   }
@@ -45,7 +45,7 @@ export function useAchievements() {
   async function fetchChallenges() {
     const res = await useApiFetch('gamification/challenges');
     if (res.success && res.body) {
-      challenges.value = res.body;
+      challenges.value = res.body as any;
     }
   }
 

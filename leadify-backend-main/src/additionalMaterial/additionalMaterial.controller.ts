@@ -48,6 +48,15 @@ class AdditionalMaterialController {
       next(error);
     }
   }
+  public async deleteMaterial(req: AuthenticatedRequest, res: Response, next: NextFunction): Promise<void> {
+    try {
+      await materialService.deleteAdditionalMaterial(+req.params.id);
+      wrapResult(res);
+    } catch (error) {
+      next(error);
+    }
+  }
+
 }
 
 export default new AdditionalMaterialController();

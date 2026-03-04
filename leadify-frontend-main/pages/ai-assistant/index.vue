@@ -9,14 +9,14 @@
             <Icon name="ph:brain-bold" class="w-5 h-5 text-white" />
           </div>
           <div>
-            <h2 class="text-lg font-semibold text-slate-200">AI Assistant</h2>
-            <p class="text-xs text-slate-500">Ask anything about your CRM data</p>
+            <h2 class="text-lg font-semibold text-slate-200">{{ $t('aiAssistant.title') }}</h2>
+            <p class="text-xs text-slate-500">{{ $t('aiAssistant.subtitle') }}</p>
           </div>
         </div>
         <div class="flex gap-2">
           <el-button size="small" text @click="clearChat">
             <Icon name="ph:trash-bold" class="w-4 h-4 mr-1" />
-            Clear
+            {{ $t('aiAssistant.clearChat') }}
           </el-button>
         </div>
       </div>
@@ -28,9 +28,9 @@
           <div class="w-20 h-20 rounded-2xl bg-gradient-to-br from-indigo-500/20 to-purple-600/20 flex items-center justify-center mb-6">
             <Icon name="ph:sparkle-bold" class="w-10 h-10 text-indigo-400" />
           </div>
-          <h3 class="text-xl font-semibold text-slate-200 mb-2">How can I help you today?</h3>
+          <h3 class="text-xl font-semibold text-slate-200 mb-2">{{ $t('aiAssistant.howCanIHelp') }}</h3>
           <p class="text-slate-500 max-w-md mb-8">
-            Ask me about your leads, deals, clients, analytics, or let me help you write emails and analyze performance.
+            {{ $t('aiAssistant.welcomeDescription') }}
           </p>
 
           <!-- Quick Actions -->
@@ -90,7 +90,7 @@
         <div class="flex gap-3">
           <el-input
             v-model="inputMessage"
-            placeholder="Ask about your CRM data, generate emails, analyze deals..."
+            :placeholder="$t('aiAssistant.placeholder')"
             class="flex-1"
             size="large"
             :disabled="isTyping"
@@ -107,7 +107,7 @@
             <Icon name="ph:paper-plane-tilt-bold" class="w-5 h-5" />
           </el-button>
         </div>
-        <p class="text-xs text-slate-600 mt-2 text-center">AI responses are generated from your CRM data. Always verify important information.</p>
+        <p class="text-xs text-slate-600 mt-2 text-center">{{ $t('aiAssistant.disclaimer') }}</p>
       </div>
     </div>
 
@@ -117,7 +117,7 @@
       <div class="glass-panel p-5 rounded-xl">
         <h3 class="text-sm font-medium text-slate-300 mb-4 flex items-center gap-2">
           <Icon name="ph:lightbulb-bold" class="w-4 h-4 text-amber-400" />
-          Daily Insights
+          {{ $t('aiAssistant.dailyInsights') }}
         </h3>
         <div v-if="insightsLoading" class="space-y-3">
           <div v-for="i in 3" :key="i" class="h-16 bg-slate-700/30 rounded-lg animate-pulse"></div>
@@ -126,7 +126,7 @@
           <div v-for="(insight, idx) in dailyInsights" :key="idx" class="p-3 rounded-lg bg-slate-800/50 border border-slate-700/50">
             <p class="text-sm text-slate-300">{{ insight.text || insight }}</p>
           </div>
-          <div v-if="dailyInsights.length === 0" class="text-sm text-slate-500 text-center py-4">No insights available yet</div>
+          <div v-if="dailyInsights.length === 0" class="text-sm text-slate-500 text-center py-4">{{ $t('aiAssistant.noInsights') }}</div>
         </div>
       </div>
 
@@ -134,7 +134,7 @@
       <div class="glass-panel p-5 rounded-xl">
         <h3 class="text-sm font-medium text-slate-300 mb-4 flex items-center gap-2">
           <Icon name="ph:wrench-bold" class="w-4 h-4 text-teal-400" />
-          AI Tools
+          {{ $t('aiAssistant.aiTools') }}
         </h3>
         <div class="space-y-2">
           <button
@@ -142,28 +142,28 @@
             @click="sendMessage('Generate a follow-up email for my latest deals')"
           >
             <Icon name="ph:envelope-simple-bold" class="w-4 h-4 text-blue-400" />
-            <span class="text-sm text-slate-400">Email Generator</span>
+            <span class="text-sm text-slate-400">{{ $t('aiAssistant.emailGenerator') }}</span>
           </button>
           <button
             class="w-full p-3 rounded-lg bg-slate-800/50 hover:bg-slate-700/50 transition text-left flex items-center gap-3"
             @click="sendMessage('Analyze my sales pipeline health')"
           >
             <Icon name="ph:chart-line-bold" class="w-4 h-4 text-emerald-400" />
-            <span class="text-sm text-slate-400">Pipeline Analysis</span>
+            <span class="text-sm text-slate-400">{{ $t('aiAssistant.pipelineAnalysis') }}</span>
           </button>
           <button
             class="w-full p-3 rounded-lg bg-slate-800/50 hover:bg-slate-700/50 transition text-left flex items-center gap-3"
             @click="sendMessage('Show me leads at risk of churning')"
           >
             <Icon name="ph:warning-bold" class="w-4 h-4 text-amber-400" />
-            <span class="text-sm text-slate-400">Churn Prediction</span>
+            <span class="text-sm text-slate-400">{{ $t('aiAssistant.churnPrediction') }}</span>
           </button>
           <button
             class="w-full p-3 rounded-lg bg-slate-800/50 hover:bg-slate-700/50 transition text-left flex items-center gap-3"
             @click="sendMessage('Give me coaching tips for my current deals')"
           >
             <Icon name="ph:graduation-cap-bold" class="w-4 h-4 text-purple-400" />
-            <span class="text-sm text-slate-400">Sales Coach</span>
+            <span class="text-sm text-slate-400">{{ $t('aiAssistant.salesCoach') }}</span>
           </button>
         </div>
       </div>
@@ -172,7 +172,7 @@
 </template>
 
 <script setup lang="ts">
-import { ref, onMounted, nextTick } from 'vue';
+import { ref, computed, onMounted, nextTick } from 'vue';
 import { ElMessage } from 'element-plus';
 import { useApiFetch } from '~/composables/useApiFetch';
 
@@ -190,12 +190,12 @@ const messagesContainer = ref<HTMLElement>();
 const dailyInsights = ref<any[]>([]);
 const insightsLoading = ref(true);
 
-const quickSuggestions = [
-  { text: 'Summarize my sales pipeline status', icon: 'ph:funnel-bold' },
-  { text: 'Which deals need attention this week?', icon: 'ph:warning-circle-bold' },
-  { text: 'Write a follow-up email for a prospect', icon: 'ph:envelope-simple-bold' },
-  { text: "Show me this month's key metrics", icon: 'ph:chart-bar-bold' }
-];
+const quickSuggestions = computed(() => [
+  { text: t('aiAssistant.suggestion1'), icon: 'ph:funnel-bold' },
+  { text: t('aiAssistant.suggestion2'), icon: 'ph:warning-circle-bold' },
+  { text: t('aiAssistant.suggestion3'), icon: 'ph:envelope-simple-bold' },
+  { text: t('aiAssistant.suggestion4'), icon: 'ph:chart-bar-bold' }
+]);
 
 const sendMessage = async (text?: string) => {
   const message = text || inputMessage.value.trim();
@@ -216,7 +216,7 @@ const sendMessage = async (text?: string) => {
   } else {
     messages.value.push({
       role: 'assistant',
-      content: res?.message || "Sorry, I couldn't process that request. Please try again."
+      content: res?.message || t('aiAssistant.errorMessage')
     });
   }
   await scrollToBottom();
@@ -228,9 +228,19 @@ const clearChat = async () => {
   ElMessage.success(t('aiAssistant.chatCleared'));
 };
 
+const escapeHtml = (text: string): string => {
+  return text
+    .replace(/&/g, '&amp;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;')
+    .replace(/"/g, '&quot;')
+    .replace(/'/g, '&#039;');
+};
+
 const formatMessage = (content: string) => {
-  // Basic markdown-like formatting
-  return content
+  // Escape HTML entities first to prevent XSS, then apply safe markdown-like formatting
+  const safe = escapeHtml(content);
+  return safe
     .replace(/\*\*(.*?)\*\*/g, '<strong class="text-slate-100">$1</strong>')
     .replace(/\*(.*?)\*/g, '<em>$1</em>')
     .replace(/`(.*?)`/g, '<code class="px-1 py-0.5 bg-slate-700 rounded text-indigo-300 text-xs">$1</code>')

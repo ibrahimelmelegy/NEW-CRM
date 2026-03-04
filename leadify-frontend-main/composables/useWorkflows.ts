@@ -52,13 +52,13 @@ export const ACTION_TYPES = [
 ];
 
 export async function fetchWorkflows(): Promise<Workflow[]> {
-  const { body, success } = await useApiFetch<Workflow[]>('workflows');
-  return success && body ? body : [];
+  const { body, success } = await useApiFetch('workflows');
+  return success && body ? (body as Workflow[]) : [];
 }
 
 export async function fetchWorkflow(id: string): Promise<Workflow | null> {
-  const { body, success } = await useApiFetch<Workflow>(`workflows/${id}`);
-  return success ? body : null;
+  const { body, success } = await useApiFetch(`workflows/${id}`);
+  return success ? (body as Workflow) : null;
 }
 
 export async function createWorkflow(data: Partial<Workflow>) {

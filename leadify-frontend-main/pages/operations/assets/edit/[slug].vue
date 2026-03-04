@@ -1,16 +1,17 @@
 <template lang="pug">
 OperationsAssetForm( :loading="loading" @submit="submitForm" :data="asset")
   .flex.items-center.justify-between.mb-8
-    .title.font-bold.text-2xl.mb-1.capitalize Edit Asset
+    .title.font-bold.text-2xl.mb-1.capitalize {{ $t('operations.assets.edit') }}
     .flex.items-center.gap-x-2
       el-button(   size='large' plain type="primary" class="w-full !rounded-2xl" @click="router.back()") {{ $t('common.cancel') }}
-      el-button(   size='large' type="primary" native-type="submit" :loading="loading"  :disabled="loading" class="w-full !px-5 !rounded-2xl") Save
+      el-button(   size='large' type="primary" native-type="submit" :loading="loading"  :disabled="loading" class="w-full !px-5 !rounded-2xl") {{ $t('common.save') }}
 
 </template>
 
 <script lang="ts" setup>
+const { t } = useI18n();
 useHead({
-  title: 'App HP Tech | Edit Asset'
+  title: computed(() => `App HP Tech | ${t('operations.assets.edit')}`)
 });
 definePageMeta({
   middleware: 'permissions',

@@ -1,6 +1,7 @@
 import PipelineStage from './pipelineConfigModel';
 import BaseError from '../utils/error/base-http-exception';
 import { ERRORS } from '../utils/error/errors';
+import { sequelize } from '../config/db';
 
 /**
  * Transition rule derived from pipeline stage configuration.
@@ -36,9 +37,18 @@ class PipelineConfigService {
   }
 
   async updateStage(id: string, data: any): Promise<PipelineStage> {
-    const stage = await this.getStageById(id);
-    stage.set(data);
-    return stage.save();
+    return sequelize.transaction(async (t) => {
+      const stage = await PipelineStage.findByPk(id, { transaction: t, lock: true });
+      if (!stage) throw new BaseError(ERRORS.NOT_FOUND);
+      if (data.isDefault) {
+        await PipelineStage.update(
+          { isDefault: false },
+          { where: { entityType: stage.entityType }, transaction: t }
+        );
+      }
+      stage.set(data);
+      return stage.save({ transaction: t });
+    });
   }
 
   async deleteStage(id: string): Promise<void> {

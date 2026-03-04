@@ -130,7 +130,7 @@ async function handleSave() {
   if (!content) return;
 
   const mappedType = props.documentType.toUpperCase() as any;
-  const result = await builder.save(templateId.value, documentName.value, mappedType, content);
+  const result: any = await builder.save(templateId.value, documentName.value, mappedType, content);
 
   if (result.success) {
     ElNotification({ type: 'success', title: 'Success', message: `${displayType.value} saved successfully.` });

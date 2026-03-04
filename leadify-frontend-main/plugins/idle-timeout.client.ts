@@ -36,7 +36,7 @@ export default defineNuxtPlugin(nuxtApp => {
       if (isIdleValue && user.value?.id) {
         // Call logout to clear server session and cookie
         await useApiFetch('auth/logout', 'POST', {}, true);
-        user.value = null;
+        (user as any).value = null;
 
         ElNotification({
           title: 'Session Expired',

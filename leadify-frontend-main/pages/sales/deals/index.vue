@@ -3,7 +3,7 @@ div(class="animate-fade-in")
   //- Premium Header
   PremiumPageHeader(
     :title="$t('deals.title')"
-    description="Track your entire sales pipeline and convert opportunities into revenue."
+    :description="$t('deals.description')"
     icon="ph:handshake-duotone"
     primaryColor="#10b981"
   )
@@ -193,7 +193,7 @@ async function handleBulkDelete() {
   if (!selectedRows.value.length) return;
   try {
     await ElMessageBox.confirm(
-      `Are you sure you want to delete ${selectedRows.value.length} deal(s)?`,
+      t('deals.confirmBulkDelete', { count: selectedRows.value.length }),
       t('common.warning'),
       { type: 'warning', confirmButtonText: t('common.delete'), cancelButtonText: t('common.cancel') }
     );
@@ -204,7 +204,7 @@ async function handleBulkDelete() {
     const res = await useTableFilter('deal');
     table.data = res.formattedData;
     selectedRows.value = [];
-    ElNotification({ type: 'success', title: t('common.success'), message: `${selectedRows.value.length} deal(s) deleted` });
+    ElNotification({ type: 'success', title: t('common.success'), message: t('deals.bulkDeleted') });
   } catch {
     // User cancelled or error
   } finally {
@@ -217,10 +217,10 @@ async function handleBulkExport() {
     loading.value = true;
     const ids = selectedRows.value.map((r: any) => r.id);
     await useApiFetch('deal/export', 'POST', { ids });
-    ElNotification({ type: 'success', title: t('common.success'), message: 'Export sent to your email' });
+    ElNotification({ type: 'success', title: t('common.success'), message: t('common.exportSentToEmail') });
     selectedRows.value = [];
   } catch {
-    ElNotification({ type: 'error', title: t('common.error'), message: 'Export failed' });
+    ElNotification({ type: 'error', title: t('common.error'), message: t('common.exportFailed') });
   } finally {
     loading.value = false;
   }

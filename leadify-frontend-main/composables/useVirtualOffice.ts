@@ -74,7 +74,7 @@ export function useVirtualOffice() {
     const u = user.value;
     if (u?.id) {
       currentUser.value.userId = u.id;
-      currentUser.value.name = u.firstName ? `${u.firstName} ${u.lastName || ''}`.trim() : u.email || 'You';
+      currentUser.value.name = (u as any).firstName ? `${(u as any).firstName} ${(u as any).lastName || ''}`.trim() : u.email || 'You';
       currentUser.value.avatar = u.profilePicture;
     }
 
@@ -174,7 +174,7 @@ export function useVirtualOffice() {
   async function addRoom(data: Omit<VirtualRoom, 'id' | 'occupants'>) {
     const { body, success } = await useApiFetch('virtual-office/rooms', 'POST', data as any);
     if (success && body) {
-      rooms.value.push({ ...body, occupants: [] });
+      rooms.value.push({ ...(body as any), occupants: [] });
     }
   }
 

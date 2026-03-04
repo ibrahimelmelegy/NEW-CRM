@@ -393,4 +393,8 @@ router.get(
  */
 router.get('/:id', authenticateUser, HasPermission([VehiclePermissionsEnum.VIEW_VEHICLES]), vehicleController.getVehicleById);
 
+// ** --------------------- DELETE --------------------- **/
+
+router.delete('/:id', authenticateUser, HasPermission([VehiclePermissionsEnum.DELETE_VEHICLES]), vehicleController.deleteVehicle);
+
 export default router;

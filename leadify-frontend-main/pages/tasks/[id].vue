@@ -90,7 +90,7 @@
             .flex.items-center.gap-3(v-if="task.creator")
               Icon(name="ph:user-bold" size="16" style="color: var(--text-muted)")
               div
-                p.text-xs(style="color: var(--text-muted)") Created By
+                p.text-xs(style="color: var(--text-muted)") {{ $t('tasks.createdBy') }}
                 p.text-sm(style="color: var(--text-primary)") {{ task.creator?.name }}
 
   //- Edit Dialog
@@ -159,7 +159,7 @@ const editForm = reactive({
 
 // Load task and users
 try {
-  const [taskRes, usersRes] = await Promise.all([useApiFetch(`tasks/${id}`), useApiFetch('users')]);
+  const [taskRes, usersRes]: any[] = await Promise.all([useApiFetch(`tasks/${id}`), useApiFetch('users')]);
   if (taskRes?.success && taskRes?.body) {
     task.value = taskRes.body as Task;
     editForm.title = task.value.title;

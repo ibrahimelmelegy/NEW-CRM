@@ -594,7 +594,7 @@ function mergeWeeklyHours(existing: number[], additional: number[]): number[] {
 async function fetchData() {
   loading.value = true;
   try {
-    const [manpowerRes, projectsRes, allocationsRes] = await Promise.all([
+    const [manpowerRes, projectsRes, allocationsRes]: any[] = await Promise.all([
       useApiFetch('manpower?limit=500'),
       useApiFetch('project?limit=1000'),
       useApiFetch(`project-manpower?limit=${pagination.limit}&page=${pagination.page}`)

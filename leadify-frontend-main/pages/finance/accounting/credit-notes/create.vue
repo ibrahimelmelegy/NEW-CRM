@@ -3,7 +3,7 @@
   DocumentHubWrapper(
     documentType="credit_note"
     backUrl="/finance/accounting/credit-notes"
-    backLabel="Back to Credit Notes"
+    :backLabel="$t('accounting.creditNotes.backTo')"
   )
 </template>
 

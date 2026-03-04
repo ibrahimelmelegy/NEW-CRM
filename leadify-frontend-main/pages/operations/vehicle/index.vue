@@ -26,6 +26,10 @@ div
                         NuxtLink.flex.items-center(:to="`/operations/vehicle/edit/${data?.id}`")
                           Icon.text-md.mr-2(name="IconEdit" )
                           p.text-sm {{ $t('common.edit') }}
+                      el-dropdown-item(v-if="hasPermission('DELETE_VEHICLES')" @click="[deleteLeadPopup=true, deleteId = data?.id]")
+                        .flex.items-center
+                          Icon.text-md.mr-2(name="IconDelete" )
+                          p.text-sm {{ $t('common.delete') }}
 
   //- Mobile Card View
   .vehicle-mobile-view
@@ -56,16 +60,16 @@ div
             .grid.grid-cols-2.gap-2
               .flex.items-center.gap-2(v-if="v.rentCost")
                 Icon(name="ph:hand-coins" size="14" style="color: var(--text-muted)")
-                span.text-xs.truncate(style="color: var(--text-secondary)") Rent: {{ v.rentCost }}
+                span.text-xs.truncate(style="color: var(--text-secondary)") {{ $t('operations.vehicles.table.rentCost') }}: {{ v.rentCost }}
               .flex.items-center.gap-2(v-if="v.gasCost")
                 Icon(name="ph:gas-pump" size="14" style="color: var(--text-muted)")
-                span.text-xs.truncate(style="color: var(--text-secondary)") Gas: {{ v.gasCost }}
+                span.text-xs.truncate(style="color: var(--text-secondary)") {{ $t('operations.vehicles.table.gasCost') }}: {{ v.gasCost }}
               .flex.items-center.gap-2(v-if="v.oilCost")
                 Icon(name="ph:drop" size="14" style="color: var(--text-muted)")
-                span.text-xs.truncate(style="color: var(--text-secondary)") Oil: {{ v.oilCost }}
+                span.text-xs.truncate(style="color: var(--text-secondary)") {{ $t('operations.vehicles.table.oilCost') }}: {{ v.oilCost }}
               .flex.items-center.gap-2(v-if="v.regularMaintenanceCost")
                 Icon(name="ph:wrench" size="14" style="color: var(--text-muted)")
-                span.text-xs.truncate(style="color: var(--text-secondary)") Maint: {{ v.regularMaintenanceCost }}
+                span.text-xs.truncate(style="color: var(--text-secondary)") {{ $t('operations.vehicles.table.maintenanceCost') }}: {{ v.regularMaintenanceCost }}
 
       .text-center.py-12(v-if="!mobileFilteredData.length")
         Icon(name="ph:car" size="48" style="color: var(--text-muted)")
@@ -77,16 +81,33 @@ div
     .mobile-fab(v-if="hasPermission('CREATE_VEHICLES')" @click="navigateTo('/operations/vehicle/add-vehicle')")
       Icon(name="ph:plus-bold" size="24")
 
-  ActionModel(v-model="deleteLeadPopup" :loading="loadingAction" :btn-text="$t('common.moveToArchive')" :description-one="$t('common.archiveConfirmation')" icon="/images/delete-image.png" :description-two="$t('common.archiveDescription')" )
+  ActionModel(v-model="deleteLeadPopup" :loading="deleting" :description="$t('common.confirmDelete')" @confirm="confirmDelete")
 </template>
 
 <script setup lang="ts">
 import { Plus } from '@element-plus/icons-vue';
 const router = useRouter();
+const { t } = useI18n();
 const { hasPermission } = await usePermissions();
 const loadingAction = ref(false);
 const deleteLeadPopup = ref(false);
+const deleteId = ref<string | null>(null);
+const deleting = ref(false);
 const loading = ref(false);
+
+async function confirmDelete() {
+  if (!deleteId.value) return;
+  deleting.value = true;
+  try {
+    const response = await deleteVehicleById(deleteId.value);
+    if (response?.success) {
+      table.data = table.data.filter((r: any) => r.id !== deleteId.value);
+    }
+  } finally {
+    deleting.value = false;
+    deleteLeadPopup.value = false;
+  }
+}
 
 // Export columns
 const exportColumns = [
@@ -220,6 +241,7 @@ async function handleMobileRefresh() {
 function getSwipeLeftActions(_v: any) {
   const actions = [{ name: 'view', label: useI18n().t('common.view'), icon: 'ph:eye-bold', color: '#3b82f6' }];
   if (hasPermission('EDIT_VEHICLES')) actions.push({ name: 'edit', label: useI18n().t('common.edit'), icon: 'ph:pencil-simple-bold', color: '#F59E0B' });
+  if (hasPermission('DELETE_VEHICLES')) actions.push({ name: 'delete', label: useI18n().t('common.delete'), icon: 'ph:trash-bold', color: '#ef4444' });
   return actions;
 }
 
@@ -227,6 +249,7 @@ function handleSwipeAction(name: string, v: any) {
   vibrate();
   if (name === 'view') navigateTo(`/operations/vehicle/${v.id}`);
   if (name === 'edit') navigateTo(`/operations/vehicle/edit/${v.id}`);
+  if (name === 'delete') { deleteId.value = v.id; deleteLeadPopup.value = true; }
 }
 </script>
 

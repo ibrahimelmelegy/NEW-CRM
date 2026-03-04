@@ -3,32 +3,32 @@
   //- Header
   .flex.items-center.justify-between.mb-8
     div
-      h1.text-3xl.font-black.tracking-tight(style="color: var(--text-primary);") 📅 Personal Planner
-      p.text-sm.mt-1(style="color: var(--text-muted);") Plan your day, track focus sessions, build habits — own your time.
+      h1.text-3xl.font-black.tracking-tight(style="color: var(--text-primary);") 📅 {{ $t('planner.title') }}
+      p.text-sm.mt-1(style="color: var(--text-muted);") {{ $t('planner.subtitle') }}
     .flex.items-center.gap-3
       el-button(size="default" @click="showFocusDialog = true" style="border-radius: 12px;")
         Icon(name="ph:timer" size="16" style="margin-right: 4px;")
-        | Start Focus
+        | {{ $t('planner.startFocus') }}
       el-button(type="primary" size="default" @click="showTaskDialog = true" style="background: var(--bg-obsidian); border: none; border-radius: 12px;")
         Icon(name="ph:plus" size="16" style="margin-right: 4px;")
-        | Add Task
+        | {{ $t('planner.addTask') }}
 
   //- Stats Row
   .grid.grid-cols-5.gap-4.mb-8
     .p-4.rounded-2xl.border(style="border-color: var(--border-default); background: var(--bg-elevated);")
-      p.text-xs.font-bold.uppercase.tracking-widest(style="color: var(--text-muted);") Today's Tasks
+      p.text-xs.font-bold.uppercase.tracking-widest(style="color: var(--text-muted);") {{ $t('planner.todaysTasks') }}
       p.text-2xl.font-black.mt-1(style="color: var(--text-primary);") {{ stats.todayTasks }}
     .p-4.rounded-2xl.border(style="border-color: var(--border-default); background: var(--bg-elevated);")
-      p.text-xs.font-bold.uppercase.tracking-widest(style="color: var(--text-muted);") Completed
+      p.text-xs.font-bold.uppercase.tracking-widest(style="color: var(--text-muted);") {{ $t('planner.completed') }}
       p.text-2xl.font-black.mt-1(style="color: #22c55e;") {{ stats.todayCompleted }}
     .p-4.rounded-2xl.border(style="border-color: var(--border-default); background: var(--bg-elevated);")
-      p.text-xs.font-bold.uppercase.tracking-widest(style="color: var(--text-muted);") Progress
+      p.text-xs.font-bold.uppercase.tracking-widest(style="color: var(--text-muted);") {{ $t('planner.progress') }}
       p.text-2xl.font-black.mt-1(style="color: #7c3aed;") {{ stats.todayProgress }}%
     .p-4.rounded-2xl.border(style="border-color: var(--border-default); background: var(--bg-elevated);")
-      p.text-xs.font-bold.uppercase.tracking-widest(style="color: var(--text-muted);") Focus Today
+      p.text-xs.font-bold.uppercase.tracking-widest(style="color: var(--text-muted);") {{ $t('planner.focusToday') }}
       p.text-2xl.font-black.mt-1(style="color: #f59e0b;") {{ stats.focusMinutes }}m
     .p-4.rounded-2xl.border(style="border-color: var(--border-default); background: var(--bg-elevated);")
-      p.text-xs.font-bold.uppercase.tracking-widest(style="color: var(--text-muted);") Best Streak
+      p.text-xs.font-bold.uppercase.tracking-widest(style="color: var(--text-muted);") {{ $t('planner.bestStreak') }}
       p.text-2xl.font-black.mt-1(style="color: #ef4444;") 🔥 {{ stats.currentStreak }}
 
   //- Active Focus Session Banner
@@ -45,7 +45,7 @@
       .text-3xl.font-black.font-mono(style="color: #f59e0b;") {{ focusTimerDisplay }}
       el-button(type="success" @click="endCurrentFocus" style="border-radius: 12px;")
         Icon(name="ph:check" size="16" style="margin-right: 4px;")
-        | Complete
+        | {{ $t('planner.complete') }}
 
   .grid.grid-cols-3.gap-6
     //- Today's Schedule (Time Blocks)
@@ -53,7 +53,7 @@
       el-card.rounded-2xl(shadow="never" style="border: 1px solid var(--border-default);")
         template(#header)
           .flex.items-center.justify-between
-            span.font-bold 📋 Today — {{ new Date().toLocaleDateString('en-US', { weekday: 'long', month: 'long', day: 'numeric' }) }}
+            span.font-bold 📋 {{ $t('planner.todayHeading') }} — {{ new Date().toLocaleDateString('en-US', { weekday: 'long', month: 'long', day: 'numeric' }) }}
             .flex.items-center.gap-2
               el-button(text size="small" @click="viewDate = prevDay(viewDate)") ←
               span.text-xs.font-mono {{ viewDate }}
@@ -89,7 +89,7 @@
 
           .text-center.py-10(v-if="viewDateTasks.length === 0")
             Icon(name="ph:sun" size="40" style="color: var(--text-muted);")
-            p.text-sm.mt-2(style="color: var(--text-muted);") No tasks for this day. Plan something!
+            p.text-sm.mt-2(style="color: var(--text-muted);") {{ $t('planner.noTasksForDay') }}
 
     //- Right Column: Habits + Focus History
     .col-span-1.space-y-6
@@ -97,7 +97,7 @@
       el-card.rounded-2xl(shadow="never" style="border: 1px solid var(--border-default);")
         template(#header)
           .flex.items-center.justify-between
-            span.font-bold 🔥 Daily Habits
+            span.font-bold 🔥 {{ $t('planner.dailyHabits') }}
             el-button(text size="small" @click="showHabitDialog = true")
               Icon(name="ph:plus" size="14")
         .space-y-2
@@ -120,7 +120,7 @@
       //- Focus History
       el-card.rounded-2xl(shadow="never" style="border: 1px solid var(--border-default);")
         template(#header)
-          span.font-bold ⏱️ Focus Sessions Today
+          span.font-bold ⏱️ {{ $t('planner.focusSessions') }}
         .space-y-2
           .flex.items-center.gap-3.px-3.py-2(v-for="session in focusToday" :key="session.id")
             .w-8.h-8.rounded-lg.flex.items-center.justify-center(style="background: #f59e0b15;")
@@ -128,69 +128,69 @@
             .flex-1.min-w-0
               p.text-xs.font-semibold.truncate(style="color: var(--text-primary);") {{ session.taskTitle }}
               p.text-xs.font-mono(style="color: var(--text-muted);") {{ session.actualMinutes || session.duration }}min
-            el-tag(:type="session.completed ? 'success' : 'warning'" size="small" round) {{ session.completed ? 'Done' : 'Active' }}
+            el-tag(:type="session.completed ? 'success' : 'warning'" size="small" round) {{ session.completed ? $t('planner.done') : $t('planner.active') }}
           .text-center.py-4(v-if="focusToday.length === 0")
-            p.text-xs(style="color: var(--text-muted);") No focus sessions today
+            p.text-xs(style="color: var(--text-muted);") {{ $t('planner.noFocusToday') }}
 
   //- Add Task Dialog
-  el-dialog(v-model="showTaskDialog" title="Plan a Task" width="500px")
+  el-dialog(v-model="showTaskDialog" :title="$t('planner.planATask')" width="500px")
     el-form(label-position="top" size="large")
-      el-form-item(label="Title")
-        el-input(v-model="taskForm.title" placeholder="What needs to be done?")
+      el-form-item(:label="$t('planner.taskTitle')")
+        el-input(v-model="taskForm.title" :placeholder="$t('planner.taskTitlePlaceholder')")
       .grid.grid-cols-3.gap-4
-        el-form-item(label="Date")
+        el-form-item(:label="$t('planner.date')")
           el-date-picker(v-model="taskForm.date" type="date" class="!w-full" value-format="YYYY-MM-DD")
-        el-form-item(label="Time")
+        el-form-item(:label="$t('planner.time')")
           el-time-picker(v-model="taskForm.timeSlot" class="!w-full" format="HH:mm" value-format="HH:mm")
-        el-form-item(label="Duration (min)")
+        el-form-item(:label="$t('planner.durationMin')")
           el-input-number(v-model="taskForm.duration" :min="5" :step="15" class="!w-full")
       .grid.grid-cols-2.gap-4
-        el-form-item(label="Category")
+        el-form-item(:label="$t('planner.category')")
           el-select(v-model="taskForm.category" class="w-full")
-            el-option(label="💼 Work" value="work")
-            el-option(label="🤝 Meeting" value="meeting")
-            el-option(label="🏃 Personal" value="personal")
-            el-option(label="💪 Health" value="health")
-            el-option(label="📚 Learning" value="learning")
-            el-option(label="📋 Admin" value="admin")
-        el-form-item(label="Priority")
+            el-option(:label="$t('planner.catWork')" value="work")
+            el-option(:label="$t('planner.catMeeting')" value="meeting")
+            el-option(:label="$t('planner.catPersonal')" value="personal")
+            el-option(:label="$t('planner.catHealth')" value="health")
+            el-option(:label="$t('planner.catLearning')" value="learning")
+            el-option(:label="$t('planner.catAdmin')" value="admin")
+        el-form-item(:label="$t('planner.priority')")
           el-select(v-model="taskForm.priority" class="w-full")
-            el-option(label="🔴 High" value="high")
-            el-option(label="🟡 Medium" value="medium")
-            el-option(label="🟢 Low" value="low")
+            el-option(:label="$t('planner.priorityHigh')" value="high")
+            el-option(:label="$t('planner.priorityMedium')" value="medium")
+            el-option(:label="$t('planner.priorityLow')" value="low")
     template(#footer)
-      el-button(@click="showTaskDialog = false") Cancel
-      el-button(type="primary" @click="saveTask" style="border-radius: 12px;") Add to Plan
+      el-button(@click="showTaskDialog = false") {{ $t('common.cancel') }}
+      el-button(type="primary" @click="saveTask" style="border-radius: 12px;") {{ $t('planner.addToPlan') }}
 
   //- Focus Dialog
-  el-dialog(v-model="showFocusDialog" title="Start Focus Session" width="420px")
+  el-dialog(v-model="showFocusDialog" :title="$t('planner.startFocusSession')" width="420px")
     el-form(label-position="top" size="large")
-      el-form-item(label="What are you focusing on?")
-        el-input(v-model="focusForm.taskTitle" placeholder="Deep work on proposal...")
-      el-form-item(label="Duration (minutes)")
+      el-form-item(:label="$t('planner.focusingOn')")
+        el-input(v-model="focusForm.taskTitle" :placeholder="$t('planner.focusingOnPlaceholder')")
+      el-form-item(:label="$t('planner.durationMinutes')")
         .flex.gap-3
           el-button(v-for="d in [25, 45, 60, 90]" :key="d" :type="focusForm.duration === d ? 'primary' : 'default'" @click="focusForm.duration = d" style="border-radius: 12px;") {{ d }}m
     template(#footer)
-      el-button(@click="showFocusDialog = false") Cancel
+      el-button(@click="showFocusDialog = false") {{ $t('common.cancel') }}
       el-button(type="warning" @click="beginFocus" style="border-radius: 12px;")
         Icon(name="ph:play" size="16" style="margin-right: 4px;")
-        | Start {{ focusForm.duration }}m Focus
+        | {{ $t('planner.startFocusBtn', { duration: focusForm.duration }) }}
 
   //- Add Habit Dialog
-  el-dialog(v-model="showHabitDialog" title="Add Habit" width="380px")
+  el-dialog(v-model="showHabitDialog" :title="$t('planner.addHabit')" width="380px")
     el-form(label-position="top" size="large")
-      el-form-item(label="Habit Name")
-        el-input(v-model="habitForm.name" placeholder="Walk 10,000 steps")
-      el-form-item(label="Icon")
+      el-form-item(:label="$t('planner.habitName')")
+        el-input(v-model="habitForm.name" :placeholder="$t('planner.habitNamePlaceholder')")
+      el-form-item(:label="$t('planner.icon')")
         el-input(v-model="habitForm.icon" placeholder="🏃")
     template(#footer)
-      el-button(@click="showHabitDialog = false") Cancel
-      el-button(type="primary" @click="saveHabit" style="border-radius: 12px;") Add Habit
+      el-button(@click="showHabitDialog = false") {{ $t('common.cancel') }}
+      el-button(type="primary" @click="saveHabit" style="border-radius: 12px;") {{ $t('planner.addHabit') }}
 </template>
 
 <script setup lang="ts">
 import { ref, reactive, computed, watch, onMounted, onUnmounted } from 'vue';
-import { usePlanner } from '~/composables/usePlanner';
+import { usePlanner } from '~/composables/planner';
 
 definePageMeta({});
 

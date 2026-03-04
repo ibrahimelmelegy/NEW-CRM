@@ -22,7 +22,7 @@ export function checkRouteDispatch(to: RouteLocation, from: RouteLocation) {
 }
 export function checkSecParent(to: RouteLocation, from: RouteLocation) {
   const toRoue = to.fullPath.split('/');
-  const fromRoute = from.fullPath.includes('?') ? from.fullPath.split('?')[0].split('/') : from.fullPath.split('/');
+  const fromRoute = from.fullPath.includes('?') ? from.fullPath.split('?')[0]!.split('/') : from.fullPath.split('/');
 
   return toRoue[2] == fromRoute[2];
 }

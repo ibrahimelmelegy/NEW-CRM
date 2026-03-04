@@ -249,4 +249,8 @@ router.get(
  */
 router.get('/:id', authenticateUser, HasPermission([ServicePermissionsEnum.VIEW_SERVICES]), serviceController.serviceById);
 
+// ** --------------------- DELETE --------------------- **/
+
+router.delete('/:id', authenticateUser, HasPermission([ServicePermissionsEnum.DELETE_SERVICES]), serviceController.deleteService);
+
 export default router;

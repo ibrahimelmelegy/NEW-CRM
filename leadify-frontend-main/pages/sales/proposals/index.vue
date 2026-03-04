@@ -78,7 +78,7 @@
             class="bg-gray-100/80"
           )
             button(
-              v-for="status in statusTabs"
+              v-for="(status, idx) in statusTabValues"
               :key="status"
               @click="statusFilter = status"
               :class="[\
@@ -87,7 +87,7 @@
                   ? 'bg-white text-gray-900 shadow-sm'\
                   : 'text-gray-500 hover:text-gray-700 hover:bg-gray-200/50'\
               ]"
-            ) {{ status }}
+            ) {{ statusTabs[idx] }}
 
           //- Search
           .flex.gap-3.items-center.w-full(class="md:w-auto")
@@ -294,7 +294,7 @@
           :style="{ top: '60px', left: '50%', transform: 'translateX(-50%)' }"
         )
           p.font-bold.text-gray-900 {{ stats.statusDist[hoveredSegment].name }}
-          p.text-gray-500 {{ stats.statusDist[hoveredSegment].value }} Proposals
+          p.text-gray-500 {{ stats.statusDist[hoveredSegment].value }} {{ $t('proposals.proposals') }}
 
         //- Legend
         .space-y-3.mt-4
@@ -339,7 +339,7 @@
                   button.flex.items-center.gap-2.w-full.text-left.px-3.py-1_5.rounded-lg.text-xs.font-medium.transition-colors(
                     :class="selectedMonth === month ? 'text-violet-700 bg-violet-50' : 'text-gray-500 hover:text-gray-900 hover:bg-gray-50'"
                     @click="toggleMonth(month)"
-                  ) {{ monthNames[parseInt(month) - 1] }}
+                  ) {{ monthNames[parseInt(month) - 1] || month }}
 
                   //- Days
                   .ml-3.pl-3.border-l-2.border-gray-100.space-y-1.mt-1.mb-1(v-if="selectedMonth === month")
@@ -408,11 +408,22 @@ const hoveredSegment = ref<number | null>(null);
 
 // ─── Constants ───────────────────────────────────────────────────────
 const CHART_COLORS = ['#94a3b8', '#f59e0b', '#3b82f6', '#10b981', '#ef4444', '#64748b'];
-const statusTabs = ['All', 'Sent', 'Pending', 'Draft', 'Approved', 'Canceled', 'Archived'];
-const monthNames = [
-  'January', 'February', 'March', 'April', 'May', 'June',
-  'July', 'August', 'September', 'October', 'November', 'December'
-];
+const statusTabs = computed(() => [
+  t('common.all'),
+  t('proposals.statusSent'),
+  t('proposals.statusPending'),
+  t('proposals.statusDraft'),
+  t('proposals.statusApproved'),
+  t('proposals.statusCanceled'),
+  t('proposals.statusArchived')
+]);
+const statusTabValues = ['All', 'Sent', 'Pending', 'Draft', 'Approved', 'Canceled', 'Archived'];
+const monthNames = computed(() => [
+  t('common.months.january'), t('common.months.february'), t('common.months.march'),
+  t('common.months.april'), t('common.months.may'), t('common.months.june'),
+  t('common.months.july'), t('common.months.august'), t('common.months.september'),
+  t('common.months.october'), t('common.months.november'), t('common.months.december')
+]);
 
 // ─── Status Mapping ──────────────────────────────────────────────────
 // API statuses → display statuses
@@ -755,8 +766,8 @@ async function handleArchive(row: any) {
   try {
     const action = row.status === 'ARCHIVED' ? 'unarchive' : 'archive';
     await ElMessageBox.confirm(
-      `${action === 'archive' ? 'Archive' : 'Unarchive'} proposal "${row.title}"?`,
-      'Confirm',
+      action === 'archive' ? t('proposals.confirmArchive', { title: row.title }) : t('proposals.confirmUnarchive', { title: row.title }),
+      t('common.confirm'),
       { type: 'warning' }
     );
     actionLoading.value = true;
@@ -776,8 +787,8 @@ async function handleDownloadPdf(row: any) {
 async function handleDelete(row: any) {
   try {
     await ElMessageBox.confirm(
-      `Delete proposal "${row.title}"? This action cannot be undone.`,
-      'Delete',
+      t('proposals.confirmDelete', { title: row.title }),
+      t('common.delete'),
       { type: 'warning' }
     );
     actionLoading.value = true;

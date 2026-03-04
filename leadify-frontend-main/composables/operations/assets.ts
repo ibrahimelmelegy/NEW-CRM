@@ -168,3 +168,18 @@ function mapToNumbers(data: Asset): Asset {
 
   return mappedData;
 }
+
+export async function deleteAssetById(id: string) {
+  try {
+    const response = await useApiFetch(`asset/${id}`, 'DELETE');
+    if (response?.success) {
+      ElNotification({ type: 'success', title: 'Success', message: 'Asset deleted successfully' });
+    } else {
+      ElNotification({ type: 'error', title: 'Error', message: response?.message || 'Failed to delete asset' });
+    }
+    return response;
+  } catch (error) {
+    ElNotification({ type: 'error', title: 'Error', message: error instanceof Error ? error.message : 'Unknown error' });
+    return { success: false, body: null, message: 'Unknown error', code: 500 };
+  }
+}

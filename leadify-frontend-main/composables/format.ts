@@ -11,7 +11,7 @@ export function fromCamelCase(camelCaseStr: string) {
 }
 
 export function formatIso(dateText: string | Date | null | undefined) {
-  const date = new Date(dateText);
+  const date = new Date(dateText as string | Date);
 
   // Get year, month, and day part from the date
   const year = date.toLocaleString('default', { year: 'numeric' });
@@ -134,7 +134,7 @@ export function formatName(input: string) {
 }
 
 export function timestampToHour(timestamp: string | Date | number | null | undefined) {
-  const time = new Date(timestamp).toLocaleTimeString('en-SA', {
+  const time = new Date(timestamp as string | Date | number).toLocaleTimeString('en-SA', {
     timeZone: 'Asia/Riyadh',
     hour: 'numeric',
     minute: 'numeric'
@@ -143,12 +143,12 @@ export function timestampToHour(timestamp: string | Date | number | null | undef
   return timestamp ? time : 'Not mentioned';
 }
 export function getDateandTime(timeStamp: string | Date | number | null | undefined) {
-  const time = new Date(timeStamp).toLocaleTimeString('en-SA', {
+  const time = new Date(timeStamp as string | Date | number).toLocaleTimeString('en-SA', {
     timeZone: 'Asia/Riyadh',
     hour: 'numeric',
     minute: 'numeric'
   });
-  const date = formatDate(timeStamp);
+  const date = formatDate(timeStamp as string | Date);
 
   return {
     time: timeStamp ? time : 'NOt mentioned',
@@ -157,7 +157,7 @@ export function getDateandTime(timeStamp: string | Date | number | null | undefi
 }
 
 export function formatDatetoText(timestamp: string | Date | number | null | undefined) {
-  const dateObj = new Date(timestamp);
+  const dateObj = new Date(timestamp as string | Date | number);
 
   // Format the date object as a string in the desired format
   const formattedDate = dateObj.toLocaleDateString('en-US', {

@@ -3,7 +3,7 @@
   DocumentHubWrapper(
     documentType="quote"
     backUrl="/sales/quotes"
-    backLabel="Back to Quotes"
+    :backLabel="$t('documents.backToQuotes')"
   )
 </template>
 

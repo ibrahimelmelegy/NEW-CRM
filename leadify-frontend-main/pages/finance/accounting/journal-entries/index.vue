@@ -2,17 +2,17 @@
 div
   .flex.items-center.justify-between.mb-6
     div
-      h1.text-2xl.font-bold Journal Entries
-      p.text-gray-500.mt-1 View and manage accounting journal entries
+      h1.text-2xl.font-bold {{ $t('accounting.journalEntries') }}
+      p.text-gray-500.mt-1 {{ $t('accounting.journalEntriesSubtitle') }}
     el-button(type="primary" size="large" @click="router.push('/finance/accounting/journal-entries/create')")
-      span New Entry
+      span {{ $t('accounting.newEntry') }}
 
   //- Filters
   el-card(shadow="never" class="mb-4")
     .flex.flex-wrap.items-end.gap-4
       div
-        label.block.text-sm.font-medium.mb-1 Status
-        el-select(v-model="filters.status" placeholder="All Statuses" clearable class="w-40")
+        label.block.text-sm.font-medium.mb-1 {{ $t('common.status') }}
+        el-select(v-model="filters.status" :placeholder="$t('accounting.allStatuses')" clearable class="w-40")
           el-option(
             v-for="s in journalStatusOptions"
             :key="s.value"
@@ -20,8 +20,8 @@ div
             :value="s.value"
           )
       div
-        label.block.text-sm.font-medium.mb-1 Source Type
-        el-select(v-model="filters.sourceType" placeholder="All Types" clearable class="w-40")
+        label.block.text-sm.font-medium.mb-1 {{ $t('accounting.sourceType') }}
+        el-select(v-model="filters.sourceType" :placeholder="$t('accounting.allTypes')" clearable class="w-40")
           el-option(
             v-for="s in sourceTypeOptions"
             :key="s.value"
@@ -29,18 +29,18 @@ div
             :value="s.value"
           )
       div
-        label.block.text-sm.font-medium.mb-1 Date Range
+        label.block.text-sm.font-medium.mb-1 {{ $t('common.dateRange') }}
         el-date-picker(
           v-model="filters.dateRange"
           type="daterange"
-          range-separator="to"
-          start-placeholder="Start"
-          end-placeholder="End"
+          :range-separator="$t('common.to')"
+          :start-placeholder="$t('common.startDate')"
+          :end-placeholder="$t('common.endDate')"
           value-format="YYYY-MM-DD"
           class="w-64"
         )
-      el-button(type="primary" @click="loadEntries") Filter
-      el-button(@click="resetFilters") Reset
+      el-button(type="primary" @click="loadEntries") {{ $t('common.filter') }}
+      el-button(@click="resetFilters") {{ $t('common.reset') }}
 
   //- Table
   el-card(shadow="never")
@@ -51,29 +51,29 @@ div
       class="w-full cursor-pointer"
       stripe
     )
-      el-table-column(prop="entryNumber" label="Entry #" width="120")
-      el-table-column(prop="date" label="Date" width="120")
+      el-table-column(prop="entryNumber" :label="$t('accounting.entryNumber')" width="120")
+      el-table-column(prop="date" :label="$t('accounting.date')" width="120")
         template(#default="{ row }")
           span {{ formatDate(row.date) }}
-      el-table-column(prop="description" label="Description" min-width="200")
+      el-table-column(prop="description" :label="$t('common.description')" min-width="200")
         template(#default="{ row }")
           span {{ row.description || '-' }}
-      el-table-column(prop="sourceType" label="Source" width="120")
+      el-table-column(prop="sourceType" :label="$t('accounting.sourceType')" width="120")
         template(#default="{ row }")
-          el-tag(size="small" type="info") {{ row.sourceType }}
-      el-table-column(prop="totalDebit" label="Total Debit" width="140" align="right")
+          el-tag(size="small" type="info") {{ sourceTypeLabel(row.sourceType) }}
+      el-table-column(prop="totalDebit" :label="$t('accounting.totalDebit')" width="140" align="right")
         template(#default="{ row }")
           span {{ formatCurrency(row.totalDebit) }}
-      el-table-column(prop="totalCredit" label="Total Credit" width="140" align="right")
+      el-table-column(prop="totalCredit" :label="$t('accounting.totalCredit')" width="140" align="right")
         template(#default="{ row }")
           span {{ formatCurrency(row.totalCredit) }}
-      el-table-column(prop="status" label="Status" width="120" align="center")
+      el-table-column(prop="status" :label="$t('common.status')" width="120" align="center")
         template(#default="{ row }")
           el-tag(
             :type="statusTagType(row.status)"
             size="small"
             effect="light"
-          ) {{ row.status }}
+          ) {{ journalStatusLabel(row.status) }}
 
     //- Pagination
     .flex.justify-end.mt-4(v-if="pagination.totalPages > 1")
@@ -92,6 +92,7 @@ import type { JournalEntryItem } from '~/composables/useAccounting';
 
 definePageMeta({ middleware: 'permissions' });
 const router = useRouter();
+const { t } = useI18n();
 
 const loading = ref(false);
 const entries = ref<JournalEntryItem[]>([]);
@@ -115,6 +116,30 @@ function statusTagType(status: string): string {
     default:
       return 'info';
   }
+}
+
+const journalStatusI18nKeys: Record<string, string> = {
+  DRAFT: 'accounting.statusDraft',
+  POSTED: 'accounting.statusPosted',
+  VOIDED: 'accounting.statusVoided'
+};
+
+function journalStatusLabel(status: string): string {
+  const key = journalStatusI18nKeys[status];
+  return key ? t(key) : status;
+}
+
+const sourceTypeI18nKeys: Record<string, string> = {
+  MANUAL: 'accounting.sourceTypeManual',
+  INVOICE: 'accounting.sourceTypeInvoice',
+  PAYMENT: 'accounting.sourceTypePayment',
+  EXPENSE: 'accounting.sourceTypeExpense',
+  PAYROLL: 'accounting.sourceTypePayroll'
+};
+
+function sourceTypeLabel(sourceType: string): string {
+  const key = sourceTypeI18nKeys[sourceType];
+  return key ? t(key) : sourceType;
 }
 
 function formatDate(dateStr: string): string {

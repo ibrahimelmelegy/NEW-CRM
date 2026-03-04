@@ -116,8 +116,8 @@ export function useWorkflowBuilder() {
       await useApiFetch(`workflows/${workflowId.value}`, 'PUT', data);
     } else {
       const res = await useApiFetch('workflows', 'POST', data);
-      if (res.success && res.body?.id) {
-        workflowId.value = res.body.id;
+      if (res.success && (res.body as any)?.id) {
+        workflowId.value = (res.body as any).id;
       }
     }
     saving.value = false;
@@ -127,7 +127,7 @@ export function useWorkflowBuilder() {
     loading.value = true;
     const res = await useApiFetch(`workflows/${id}`);
     if (res.success && res.body) {
-      const wf = res.body;
+      const wf = res.body as any;
       workflowId.value = wf.id;
       workflowName.value = wf.name;
       isActive.value = wf.isActive;

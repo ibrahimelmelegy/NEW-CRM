@@ -3,7 +3,7 @@
   DocumentHubWrapper(
     documentType="contract"
     backUrl="/sales/contracts"
-    backLabel="Back to Contracts"
+    :backLabel="$t('documents.backToContracts')"
   )
 </template>
 

@@ -160,7 +160,7 @@ div(v-loading="loading")
             span.text-sm(style="color: var(--text-muted)") {{ $t('zatca.currency') }}
             span.text-sm {{ invoice.currency || 'SAR' }}
           div
-            p.text-sm.mb-1(style="color: var(--text-muted)") UUID
+            p.text-sm.mb-1(style="color: var(--text-muted)") {{ $t('zatca.uuid') }}
             p.font-mono.text-xs.break-all(style="color: var(--text-primary)") {{ invoice.uuid }}
 
       //- QR Code Card

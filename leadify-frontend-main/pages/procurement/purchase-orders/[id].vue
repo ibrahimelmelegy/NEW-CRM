@@ -5,33 +5,33 @@
     .flex.items-center.gap-6
       el-button(@click="router.back()", circle, :icon="ArrowLeft", class="premium-btn-outline !w-12 !h-12 !text-lg")
       .header-content
-        .title.font-bold.text-3xl.text-gradient Purchase Order Review
-        .subtitle.text-muted.text-sm Official Document # {{ po?.poNumber }}
-    
+        .title.font-bold.text-3xl.text-gradient {{ $t('procurement.purchaseOrders.reviewTitle') }}
+        .subtitle.text-muted.text-sm {{ $t('procurement.purchaseOrders.officialDoc') }} {{ po?.poNumber }}
+
     .flex.items-center.gap-x-4
       template(v-if="po?.status === 'Pending' && hasPermission('APPROVE_PROCUREMENT')")
         el-button(
-            type="success", 
-            :loading="loadingAction", 
-            @click="handleApprove", 
+            type="success",
+            :loading="loadingAction",
+            @click="handleApprove",
             class="premium-btn !rounded-2xl px-8 glow-green"
             style="--gradient-primary: linear-gradient(135deg, #059669, #10b981)"
-        ) Approve Order
-      
+        ) {{ $t('procurement.purchaseOrders.approveOrder') }}
+
       template(v-if="po?.status === 'Pending' && hasPermission('REJECT_PROCUREMENT')")
         el-button(
-            type="danger", 
-            :loading="loadingAction", 
-            @click="rejectDialogVisible = true", 
+            type="danger",
+            :loading="loadingAction",
+            @click="rejectDialogVisible = true",
             class="premium-btn-outline !rounded-2xl px-8"
-        ) Reject
-      
+        ) {{ $t('common.reject') }}
+
       el-button(
-        type="primary", 
-        :icon="Download", 
-        @click="downloadPDF", 
+        type="primary",
+        :icon="Download",
+        @click="downloadPDF",
         class="premium-btn !rounded-2xl px-6 glow-purple"
-      ) Export PDF
+      ) {{ $t('common.exportPdf') }}
 
   .grid.grid-cols-1.lg.grid-cols-4.gap-8
     //- Main Document
@@ -44,58 +44,58 @@
         .flex.justify-between.mb-16
             .company-info
                 img(src="/images/Logo.png" class="h-10 mb-2 opacity-80")
-                p.text-xs.text-muted HIGH POINT TECHNOLOGY - GLOBAL PROCUREMENT
-            
+                p.text-xs.text-muted {{ $t('procurement.purchaseOrders.companyTagline') }}
+
             .po-header-details.text-right
-                .text-xs.uppercase.tracking-widest.text-muted.mb-1 Order Date
+                .text-xs.uppercase.tracking-widest.text-muted.mb-1 {{ $t('procurement.purchaseOrders.orderDate') }}
                 .text-lg.font-bold.text-purple-200 {{ formatDate(po?.createdAt) }}
 
         .grid.grid-cols-2.gap-12.mb-16
             .vendor-box.p-6.rounded-2xl.bg-white_03.border.border-white_05
-                .text-xs.uppercase.font-black.text-purple-400.tracking-widest.mb-4 Supplier
+                .text-xs.uppercase.font-black.text-purple-400.tracking-widest.mb-4 {{ $t('procurement.purchaseOrders.supplier') }}
                 .text-2xl.font-bold.text-white {{ po?.vendor?.name }}
                 .text-sm.text-muted.mt-2 C.R: {{ po?.vendor?.commercialRegistration || 'N/A' }}
-            
+
             .project-box.p-6.rounded-2xl.bg-white_03.border.border-white_05
-                .text-xs.uppercase.font-black.text-orange-400.tracking-widest.mb-4 Assigned Project
+                .text-xs.uppercase.font-black.text-orange-400.tracking-widest.mb-4 {{ $t('procurement.purchaseOrders.assignedProject') }}
                 .text-2xl.font-bold.text-white {{ po?.project?.name }}
-                .text-sm.text-muted.mt-2 Manager: {{ po?.project?.manager || 'TBD' }}
+                .text-sm.text-muted.mt-2 {{ $t('procurement.purchaseOrders.manager') }}: {{ po?.project?.manager || 'TBD' }}
 
         .document-items
             .flex.items-center.gap-3.mb-6
                 Icon(name="ph:notebook-bold" class="text-purple-400")
-                span.text-xs.uppercase.font-bold.tracking-widest.text-muted Line Items
-            
+                span.text-xs.uppercase.font-bold.tracking-widest.text-muted {{ $t('procurement.purchaseOrders.lineItems') }}
+
             el-table(:data="po?.items", style="width: 100%", class="premium-table mb-10")
-              el-table-column(prop="description", label="Item Description")
-              el-table-column(prop="quantity", label="Qty", width="100", align="center")
-              el-table-column(prop="unitPrice", label="Unit Price", width="150", align="right")
+              el-table-column(prop="description", :label="$t('procurement.purchaseOrders.itemDescription')")
+              el-table-column(prop="quantity", :label="$t('procurement.purchaseOrders.qty')", width="100", align="center")
+              el-table-column(prop="unitPrice", :label="$t('procurement.purchaseOrders.unitPrice')", width="150", align="right")
                 template(#default="{row}")
                     span {{ row.unitPrice.toFixed(2) }}
-              el-table-column(prop="tax", label="Tax", width="100", align="center")
+              el-table-column(prop="tax", :label="$t('procurement.purchaseOrders.taxPct')", width="100", align="center")
                 template(#default="{row}")
                     span {{ row.tax }}%
-              el-table-column(label="Total", width="150", align="right")
+              el-table-column(:label="$t('procurement.purchaseOrders.total')", width="150", align="right")
                 template(#default="{row}")
                   span.font-bold.text-purple-300 {{ ((row.quantity * row.unitPrice) * (1 + row.tax / 100)).toFixed(2) }}
-            
+
             .flex.justify-end
               .w-64.space-y-4
                 .flex.justify-between.text-sm
-                    span.text-muted Subtotal
+                    span.text-muted {{ $t('procurement.subtotal') }}
                     span.text-white {{ subtotal.toFixed(2) }}
                 .flex.justify-between.text-sm
-                    span.text-muted Estimated Tax
+                    span.text-muted {{ $t('procurement.purchaseOrders.estimatedTax') }}
                     span.text-white {{ (po?.totalAmount - subtotal).toFixed(2) }}
                 .pt-4.border-t.border-white_10.flex.justify-between.items-end
-                    span.text-xs.font-black.uppercase.tracking-tighter Total Amount
+                    span.text-xs.font-black.uppercase.tracking-tighter {{ $t('procurement.grandTotal') }}
                     span.text-3xl.font-black.text-gradient {{ po?.totalAmount }}
 
       //- Rejection Warning
       .glass-card.p-6.mt-8.bg-red-900_20.border-red-900_30(v-if="po?.rejectionReason")
         .flex.items-center.gap-4.mb-4
             Icon(name="ph:warning-circle-bold" class="text-red-400 text-2xl")
-            span.font-bold.text-red-400 Rejection Feedback
+            span.font-bold.text-red-400 {{ $t('procurement.purchaseOrders.rejectionFeedback') }}
         p.text-sm.text-red-300/80.leading-relaxed {{ po?.rejectionReason }}
 
     //- Metadata Sidebar
@@ -103,28 +103,28 @@
       .glass-card.p-6
         .flex.items-center.gap-3.mb-6
             Icon(name="ph:fingerprint-bold" class="text-purple-400")
-            span.text-xs.uppercase.font-bold.tracking-widest.text-muted Metadata
-        
+            span.text-xs.uppercase.font-bold.tracking-widest.text-muted {{ $t('procurement.purchaseOrders.metadata') }}
+
         .space-y-6
           .meta-item
-            .text-xs.text-muted.mb-1 Payment Terms
+            .text-xs.text-muted.mb-1 {{ $t('procurement.paymentTerms') }}
             .flex.items-center.gap-2
                 Icon(name="ph:credit-card-bold" class="text-purple-400")
                 span.font-bold {{ po?.paymentMethod }}
-          
+
           .meta-item
-            .text-xs.text-muted.mb-1 Target Delivery
+            .text-xs.text-muted.mb-1 {{ $t('procurement.purchaseOrders.targetDelivery') }}
             .flex.items-center.gap-2
                 Icon(name="ph:calendar-blank-bold" class="text-orange-400")
                 span.font-bold {{ formatDate(po?.dueDate) }}
-          
+
           .meta-item
-            .text-xs.text-muted.mb-2 Created By
+            .text-xs.text-muted.mb-2 {{ $t('procurement.purchaseOrders.createdBy') }}
             .flex.items-center.gap-3
                 el-avatar(:size="32", :src="`https://api.dicebear.com/7.x/avataaars/svg?seed=${po?.creator?.name}`")
                 .text-sm
                     .font-bold {{ po?.creator?.name }}
-                    .text-xs.text-muted Staff Member
+                    .text-xs.text-muted {{ $t('procurement.purchaseOrders.staffMember') }}
 
   //- Record Tabs
   el-tabs.mt-6(v-model="activeRecordTab")
@@ -136,23 +136,23 @@
       RecordAttachments(:entityType="'purchaseOrder'" :entityId="route.params.id as string")
 
   //- Rejection Dialog
-  el-dialog(v-model="rejectDialogVisible", title="Review Rejection", width="450px", class="glass-dialog !rounded-3xl", append-to-body)
+  el-dialog(v-model="rejectDialogVisible", :title="$t('procurement.purchaseOrders.reviewRejection')", width="450px", class="glass-dialog !rounded-3xl", append-to-body)
     .p-2
-      .text-sm.text-muted.mb-4 Please specify the reason for rejecting this procurement request. This will be visible to the requester.
+      .text-sm.text-muted.mb-4 {{ $t('procurement.purchaseOrders.rejectionHint') }}
       el-input(
-        v-model="rejectionReason", 
-        type="textarea", 
-        :rows="4", 
-        placeholder="e.g. Price exceeds budget, missing documents...",
+        v-model="rejectionReason",
+        type="textarea",
+        :rows="4",
+        :placeholder="$t('procurement.purchaseOrders.rejectionPlaceholder')",
         class="premium-input-textarea"
       )
     template(#footer)
       .flex.justify-end.gap-4.pb-4.px-4
         el-button(@click="rejectDialogVisible = false", class="premium-btn-outline !rounded-xl px-8") {{ $t('common.cancel') }}
-        el-button(type="danger", @click="handleReject", :loading="loadingAction", class="premium-btn !rounded-xl px-12 glow-red") Confirm Rejection
+        el-button(type="danger", @click="handleReject", :loading="loadingAction", class="premium-btn !rounded-xl px-12 glow-red") {{ $t('procurement.purchaseOrders.confirmRejection') }}
 
   //- Template Selector Dialog
-  el-dialog(v-model="showTemplateSelector" title="Select PDF Template" width="500px")
+  el-dialog(v-model="showTemplateSelector" :title="$t('procurement.purchaseOrders.selectPdfTemplate')" width="500px")
     .space-y-3
       .template-item.p-3.rounded-xl.cursor-pointer.flex.items-center.justify-between(
         v-for="tpl in poTemplates"
@@ -164,11 +164,11 @@
           Icon(name="ph:file-pdf-bold" size="24" class="text-purple-400")
           div
             .font-bold(style="color: var(--text-primary)") {{ tpl.name }}
-            .text-xs(style="color: var(--text-muted)") {{ tpl.layout?.elements?.length || 0 }} elements
+            .text-xs(style="color: var(--text-muted)") {{ tpl.layout?.elements?.length || 0 }} {{ $t('procurement.purchaseOrders.elements') }}
         Icon(name="ph:arrow-right" size="18" style="color: var(--text-muted)")
     template(#footer)
       el-button(@click="showTemplateSelector = false") {{ $t('common.cancel') }}
-      el-button(@click="downloadPDFClassic(); showTemplateSelector = false" type="primary" class="!bg-[#7849ff] hover:!bg-[#6a3ae0] !border-none") Use Classic Export
+      el-button(@click="downloadPDFClassic(); showTemplateSelector = false" type="primary" class="!bg-[#7849ff] hover:!bg-[#6a3ae0] !border-none") {{ $t('procurement.purchaseOrders.useClassicExport') }}
 
 </template>
 
@@ -180,6 +180,7 @@ import { useApiFetch } from '~/composables/useApiFetch';
 const route = useRoute();
 const router = useRouter();
 const { hasPermission } = await usePermissions();
+const { t } = useI18n();
 
 function formatDate(date: any) {
   if (!date) return 'N/A';
@@ -210,7 +211,7 @@ async function fetchPO() {
   try {
     po.value = await useApiFetch(`procurement/${route.params.id}`);
   } catch (error) {
-    ElNotification({ title: 'Error', message: 'Failed to load PO details', type: 'error' });
+    ElNotification({ title: t('common.error'), message: t('procurement.purchaseOrders.loadError'), type: 'error' });
   }
 }
 
@@ -225,26 +226,26 @@ async function handleApprove() {
   loadingAction.value = true;
   try {
     await useApiFetch(`procurement/${po.value.id}/approve`, 'PATCH');
-    ElNotification({ title: 'Approved', type: 'success', message: 'Purchase Order has been approved' });
+    ElNotification({ title: t('procurement.purchaseOrders.approved'), type: 'success', message: t('procurement.purchaseOrders.approvedMsg') });
     fetchPO();
   } catch (error) {
-    ElNotification({ title: 'Error', type: 'error', message: 'Failed to approve PO' });
+    ElNotification({ title: t('common.error'), type: 'error', message: t('procurement.purchaseOrders.approveError') });
   } finally {
     loadingAction.value = false;
   }
 }
 
 async function handleReject() {
-  if (!rejectionReason.value) return (ElNotification as any)({ title: 'Required', message: 'Please provide a rejection reason', type: 'warning' });
+  if (!rejectionReason.value) return (ElNotification as any)({ title: t('common.required'), message: t('procurement.purchaseOrders.rejectionRequired'), type: 'warning' });
 
   loadingAction.value = true;
   try {
     await useApiFetch(`procurement/${po.value.id}/reject`, 'PATCH', { rejectionReason: rejectionReason.value });
-    (ElNotification as any)({ title: 'Rejected', type: 'danger', message: 'Purchase Order has been rejected' });
+    (ElNotification as any)({ title: t('procurement.purchaseOrders.rejected'), type: 'danger', message: t('procurement.purchaseOrders.rejectedMsg') });
     rejectDialogVisible.value = false;
     fetchPO();
   } catch (error) {
-    ElNotification({ title: 'Error', type: 'error', message: 'Failed to reject PO' });
+    ElNotification({ title: t('common.error'), type: 'error', message: t('procurement.purchaseOrders.rejectError') });
   } finally {
     loadingAction.value = false;
   }
@@ -301,7 +302,7 @@ async function downloadPDFWithTemplate(template: any) {
   };
 
   generatePDF(template.layout, data, `${po.value.poNumber}.pdf`);
-  ElNotification({ title: 'Success', message: 'PDF downloaded successfully', type: 'success' });
+  ElNotification({ title: t('common.success'), message: t('common.pdfDownloaded'), type: 'success' });
 }
 
 async function downloadPDFClassic() {
@@ -349,7 +350,7 @@ async function downloadPDFClassic() {
   doc.text(`Grand Total: SR ${po.value.totalAmount}`, 196, finalY, { align: 'right' });
 
   doc.save(`${po.value.poNumber}.pdf`);
-  ElNotification({ title: 'Success', message: 'PDF downloaded successfully', type: 'success' });
+  ElNotification({ title: t('common.success'), message: t('common.pdfDownloaded'), type: 'success' });
 }
 </script>
 

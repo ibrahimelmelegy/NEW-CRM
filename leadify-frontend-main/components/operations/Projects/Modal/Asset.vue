@@ -27,12 +27,12 @@ async function submitForm(values: Asset) {
   loading.value = true;
   if (props.asset?.id) {
     response = await updateAsset({ ...values, id: props.asset.id }, false);
-    emit('confirm', response?.id, true);
+    emit('confirm', (response as any)?.id, true);
   } else {
     response = await createAsset(values, false);
-    emit('confirm', response?.id);
+    emit('confirm', (response as any)?.id);
   }
   loading.value = false;
-  if (Object.keys(response).length) dialog.value = false;
+  if (Object.keys(response as any).length) dialog.value = false;
 }
 </script>

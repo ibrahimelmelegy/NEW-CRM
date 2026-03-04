@@ -111,14 +111,14 @@
           el-input(v-model="form.clientName" :placeholder="placeholderCompanyName")
         el-form-item(:label="labelIndustry")
           el-select(v-model="form.industry" class="w-full")
-            el-option(label="Technology" value="Information Technology (IT) & Software")
-            el-option(label="Finance" value="Banking & Financial Services")
-            el-option(label="Healthcare" value="Healthcare & Medical Services")
-            el-option(label="Manufacturing" value="Manufacturing")
-            el-option(label="Real Estate" value="Construction & Real Estate")
-            el-option(label="Retail" value="Consumer Goods & Retail")
-            el-option(label="Education" value="Education & E-Learning")
-            el-option(label="Other" value="Other")
+            el-option(:label="$t('companies.industryTechnology')" value="Information Technology (IT) & Software")
+            el-option(:label="$t('companies.industryFinance')" value="Banking & Financial Services")
+            el-option(:label="$t('companies.industryHealthcare')" value="Healthcare & Medical Services")
+            el-option(:label="$t('companies.industryManufacturing')" value="Manufacturing")
+            el-option(:label="$t('companies.industryRealEstate')" value="Construction & Real Estate")
+            el-option(:label="$t('companies.industryRetail')" value="Consumer Goods & Retail")
+            el-option(:label="$t('companies.industryEducation')" value="Education & E-Learning")
+            el-option(:label="$t('companies.industryOther')" value="Other")
       .grid.grid-cols-2.gap-4
         el-form-item(:label="labelWebsite")
           el-input(v-model="form.website" placeholder="https://...")
@@ -127,8 +127,8 @@
       .grid.grid-cols-2.gap-4
         el-form-item(:label="labelStatus")
           el-select(v-model="form.clientStatus" class="w-full")
-            el-option(label="Active" value="ACTIVE")
-            el-option(label="Inactive" value="INACTIVE")
+            el-option(:label="$t('common.active')" value="ACTIVE")
+            el-option(:label="$t('common.inactive')" value="INACTIVE")
         el-form-item(:label="labelParentCompany")
           el-select(v-model="form.parentCompanyId" class="w-full" clearable filterable :placeholder="placeholderSelectParent")
             el-option(
@@ -283,7 +283,7 @@
                 p.text-xs.text-gray-400 {{ contact.email }}
         .text-center.py-8(v-else)
           Icon(name="ph:users" size="48" style="color: var(--text-muted); margin: 0 auto 16px;")
-          p.text-gray-400 No contacts assigned
+          p.text-gray-400 {{ $t('companies.noContactsAssigned') }}
 
   //- Note Dialog
   el-dialog(v-model="showNoteDialog" :title="labelAddNote" width="500px")
@@ -304,13 +304,13 @@
     el-form(label-position="top")
       el-form-item(:label="labelIndustry")
         el-select(v-model="bulkForm.industry" class="w-full" clearable)
-          el-option(label="Technology" value="Information Technology (IT) & Software")
-          el-option(label="Finance" value="Banking & Financial Services")
-          el-option(label="Healthcare" value="Healthcare & Medical Services")
+          el-option(:label="$t('companies.industryTechnology')" value="Information Technology (IT) & Software")
+          el-option(:label="$t('companies.industryFinance')" value="Banking & Financial Services")
+          el-option(:label="$t('companies.industryHealthcare')" value="Healthcare & Medical Services")
       el-form-item(:label="labelStatus")
         el-select(v-model="bulkForm.clientStatus" class="w-full" clearable)
-          el-option(label="Active" value="ACTIVE")
-          el-option(label="Inactive" value="INACTIVE")
+          el-option(:label="$t('common.active')" value="ACTIVE")
+          el-option(:label="$t('common.inactive')" value="INACTIVE")
     template(#footer)
       el-button(@click="showBulkDialog = false") {{ $t('common.cancel') }}
       el-button(type="primary" @click="bulkUpdate" :loading="bulkUpdating") {{ $t('common.save') }}

@@ -35,9 +35,9 @@
         el-select(v-model="filterCategory" clearable :placeholder="$t('catalog.category')" style="width: 160px" size="default")
           el-option(v-for="cat in uniqueCategories" :key="cat" :label="cat" :value="cat")
         el-select(v-model="filterStockStatus" clearable :placeholder="$t('catalog.stockStatus')" style="width: 160px" size="default")
-          el-option(label="In Stock" value="in_stock")
-          el-option(label="Low Stock" value="low_stock")
-          el-option(label="Out of Stock" value="out_of_stock")
+          el-option(:label="$t('catalog.inStock')" value="in_stock")
+          el-option(:label="$t('catalog.lowStock')" value="low_stock")
+          el-option(:label="$t('catalog.outOfStock')" value="out_of_stock")
         el-input-number(v-model="priceMin" :placeholder="$t('catalog.minPrice')" :min="0" :controls="false" style="width: 120px" size="default")
         span.text-sm(style="color: var(--text-muted)") -
         el-input-number(v-model="priceMax" :placeholder="$t('catalog.maxPrice')" :min="0" :controls="false" style="width: 120px" size="default")

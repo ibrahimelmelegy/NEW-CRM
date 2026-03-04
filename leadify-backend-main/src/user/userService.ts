@@ -25,8 +25,11 @@ class UserService {
 
     let superAdmin = await User.findOne({ where: { roleId: role.id } });
     if (!superAdmin) {
-      const seedEmail = process.env.ADMIN_EMAIL || 'admin@hp-tech.com';
-      const seedPassword = process.env.ADMIN_PASSWORD || 'HPTech@Admin2026!';
+      const seedEmail = process.env.ADMIN_EMAIL;
+      const seedPassword = process.env.ADMIN_PASSWORD;
+      if (!seedEmail || !seedPassword) {
+        throw new Error('FATAL: ADMIN_EMAIL and ADMIN_PASSWORD environment variables are required. No defaults allowed.');
+      }
       if (seedPassword.length < 8) {
         throw new Error('ADMIN_PASSWORD must be at least 8 characters for super admin creation.');
       }
@@ -130,6 +133,8 @@ class UserService {
 
   public async deleteUser(id: string): Promise<void> {
     const user = await this.userOrError({ id });
+    // Prevent deletion of the primary super admin (ID 1) at the backend level
+    if (user.id === 1) throw new BaseError(ERRORS.INVALID_PERMISSION);
     await user.destroy();
   }
 

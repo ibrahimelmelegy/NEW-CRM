@@ -39,7 +39,7 @@ export function usePresence() {
     s.emit('presence:join', {
       page: route.path,
       userId: currentUser?.id,
-      name: currentUser?.firstName ? `${currentUser.firstName} ${currentUser.lastName || ''}`.trim() : currentUser?.email || 'Anonymous',
+      name: (currentUser as any)?.firstName ? `${(currentUser as any).firstName} ${(currentUser as any).lastName || ''}`.trim() : currentUser?.email || 'Anonymous',
       profilePicture: currentUser?.profilePicture || undefined
     });
   });

@@ -5,14 +5,14 @@
         .flex.items-center.gap-6
             el-button(@click="goBack()" circle :icon="ArrowLeft" class="premium-btn-outline !w-12 !h-12 !text-lg")
             .header-content
-                .title.font-bold.text-3xl.text-gradient Sales Order Details
-                .subtitle.text-muted.text-sm Order # {{ order?.orderNumber }}
+                .title.font-bold.text-3xl.text-gradient {{ $t('salesOrders.orderDetails') }}
+                .subtitle.text-muted.text-sm {{ $t('salesOrders.orderNo') }} {{ order?.orderNumber }}
 
         .flex.items-center.gap-x-4
             el-dropdown(trigger="click" v-if="order?.status !== 'CANCELLED' && order?.status !== 'DELIVERED'")
                 el-button(type="primary" class="premium-btn !rounded-2xl px-6")
                     Icon(name="ph:arrows-clockwise-bold" class="mr-2")
-                    | Update Status
+                    | {{ $t('salesOrders.updateStatus') }}
                 template(#dropdown)
                     el-dropdown-menu
                         el-dropdown-item(
@@ -30,7 +30,7 @@
                 v-if="order?.status !== 'CANCELLED' && order?.status !== 'DRAFT'"
             )
                 Icon(name="ph:package-bold" class="mr-2")
-                | Add Fulfillment
+                | {{ $t('salesOrders.addFulfillment') }}
 
     //- Loading
     template(v-if="loading")
@@ -50,22 +50,22 @@
 
                     .grid.grid-cols-2.gap-8.mb-8
                         div
-                            .text-xs.uppercase.font-black.text-purple-400.tracking-widest.mb-3 Client
+                            .text-xs.uppercase.font-black.text-purple-400.tracking-widest.mb-3 {{ $t('salesOrders.client') }}
                             .text-xl.font-bold.text-white {{ order.client?.clientName || 'N/A' }}
                             .text-sm.text-muted.mt-1 {{ order.client?.companyName || '' }}
                             .text-sm.text-muted {{ order.client?.email || '' }}
 
                         .text-right
-                            .text-xs.uppercase.tracking-widest.text-muted.mb-1 Order Date
+                            .text-xs.uppercase.tracking-widest.text-muted.mb-1 {{ $t('salesOrders.orderDate') }}
                             .text-lg.font-bold.text-purple-200 {{ formatDate(order.createdAt) }}
-                            .text-xs.text-muted.mt-2(v-if="order.dealId") Linked Deal ID: {{ order.dealId }}
+                            .text-xs.text-muted.mt-2(v-if="order.dealId") {{ $t('salesOrders.linkedDeal') }}: {{ order.dealId }}
 
                 //- Line Items
                 .glass-card.p-8
                     .flex.items-center.gap-4.mb-6
                         .p-3.rounded-xl.bg-pink-500_10.border.border-pink-500_20
                             Icon(name="ph:list-bullets-bold" class="text-pink-400 text-2xl")
-                        span.text-xl.font-bold.text-white Line Items
+                        span.text-xl.font-bold.text-white {{ $t('salesOrders.lineItems') }}
 
                     SalesOrderOrderItemsTable(:items="order.items || []" :editable="false")
 
@@ -73,16 +73,16 @@
                     .flex.justify-end.mt-8
                         .w-80.space-y-3
                             .flex.justify-between.text-sm
-                                span.text-muted Subtotal
+                                span.text-muted {{ $t('cpq.subtotal') }}
                                 span.text-white {{ Number(order.subtotal).toFixed(2) }} {{ order.currency }}
                             .flex.justify-between.text-sm
-                                span.text-muted Tax
+                                span.text-muted {{ $t('cpq.tax') }}
                                 span.text-white {{ Number(order.taxAmount).toFixed(2) }} {{ order.currency }}
                             .flex.justify-between.text-sm
-                                span.text-muted Discount
+                                span.text-muted {{ $t('cpq.discount') }}
                                 span.text-red-400 -{{ Number(order.discountAmount).toFixed(2) }} {{ order.currency }}
                             .pt-4.border-t.border-white_10.flex.justify-between.items-end
-                                span.text-lg.font-black.text-gradient Total
+                                span.text-lg.font-black.text-gradient {{ $t('cpq.total') }}
                                 span.text-3xl.font-black.text-white {{ Number(order.total).toFixed(2) }}
                                     span.text-sm.font-normal.text-muted.ml-1 {{ order.currency }}
 
@@ -91,7 +91,7 @@
                     .flex.items-center.gap-4.mb-6
                         .p-3.rounded-xl.bg-green-500_10.border.border-green-500_20
                             Icon(name="ph:truck-bold" class="text-green-400 text-2xl")
-                        span.text-xl.font-bold.text-white Fulfillment History
+                        span.text-xl.font-bold.text-white {{ $t('salesOrders.fulfillmentHistory') }}
 
                     SalesOrderFulfillmentTimeline(:fulfillments="order.fulfillments || []")
 
@@ -101,58 +101,58 @@
                 .glass-card.p-6
                     .flex.items-center.gap-3.mb-6
                         Icon(name="ph:fingerprint-bold" class="text-purple-400")
-                        span.text-xs.uppercase.font-bold.tracking-widest.text-muted Order Info
+                        span.text-xs.uppercase.font-bold.tracking-widest.text-muted {{ $t('salesOrders.orderInfo') }}
 
                     .space-y-5
                         .meta-item
-                            .text-xs.text-muted.mb-1 Status
+                            .text-xs.text-muted.mb-1 {{ $t('common.status') }}
                             SalesOrderOrderStatusBadge(:status="order.status")
 
                         .meta-item
-                            .text-xs.text-muted.mb-1 Currency
+                            .text-xs.text-muted.mb-1 {{ $t('salesOrders.currency') }}
                             .flex.items-center.gap-2
                                 Icon(name="ph:currency-circle-dollar-bold" class="text-green-400")
                                 span.font-bold {{ order.currency }}
 
                         .meta-item
-                            .text-xs.text-muted.mb-1 Payment Terms
+                            .text-xs.text-muted.mb-1 {{ $t('salesOrders.paymentTerms') }}
                             .flex.items-center.gap-2
                                 Icon(name="ph:credit-card-bold" class="text-purple-400")
                                 span.font-bold {{ order.paymentTerms || 'N/A' }}
 
                         .meta-item(v-if="order.shippingAddress")
-                            .text-xs.text-muted.mb-1 Shipping Address
+                            .text-xs.text-muted.mb-1 {{ $t('salesOrders.shippingAddress') }}
                             .flex.items-start.gap-2
                                 Icon(name="ph:map-pin-bold" class="text-orange-400 mt-1")
                                 span.text-sm.text-white {{ order.shippingAddress }}
 
                         .meta-item
-                            .text-xs.text-muted.mb-1 Created
+                            .text-xs.text-muted.mb-1 {{ $t('salesOrders.createdDate') }}
                             .text-sm.font-medium {{ formatDate(order.createdAt) }}
 
                         .meta-item
-                            .text-xs.text-muted.mb-1 Last Updated
+                            .text-xs.text-muted.mb-1 {{ $t('salesOrders.lastUpdated') }}
                             .text-sm.font-medium {{ formatDate(order.updatedAt) }}
 
                 //- Notes
                 .glass-card.p-6(v-if="order.notes")
                     .flex.items-center.gap-3.mb-4
                         Icon(name="ph:note-bold" class="text-yellow-400")
-                        span.text-xs.uppercase.font-bold.tracking-widest.text-muted Notes
+                        span.text-xs.uppercase.font-bold.tracking-widest.text-muted {{ $t('salesOrders.notes') }}
 
                     p.text-sm.text-muted.leading-relaxed {{ order.notes }}
 
     //- Fulfillment Dialog
     el-dialog(
         v-model="showFulfillmentDialog"
-        title="Add Fulfillment"
+        :title="$t('salesOrders.addFulfillment')"
         width="500px"
         class="glass-dialog"
         append-to-body
     )
         .p-2.space-y-4
             el-form(:model="fulfillmentForm" label-position="top")
-                el-form-item(label="Status")
+                el-form-item(:label="$t('common.status')")
                     el-select(v-model="fulfillmentForm.status" class="w-full")
                         el-option(
                             v-for="opt in fulfillmentStatusOptions"
@@ -161,29 +161,29 @@
                             :value="opt.value"
                         )
 
-                el-form-item(label="Tracking Number")
+                el-form-item(:label="$t('salesOrders.trackingNumber')")
                     el-input(v-model="fulfillmentForm.trackingNumber" placeholder="e.g. 1Z999AA10123456784")
 
-                el-form-item(label="Carrier")
+                el-form-item(:label="$t('salesOrders.carrier')")
                     el-input(v-model="fulfillmentForm.carrier" placeholder="e.g. DHL, Aramex, SMSA")
 
-                el-form-item(label="Notes")
+                el-form-item(:label="$t('common.notes')")
                     el-input(
                         v-model="fulfillmentForm.notes"
                         type="textarea"
                         :rows="3"
-                        placeholder="Optional notes..."
+                        :placeholder="$t('common.optional')"
                     )
 
         template(#footer)
             .flex.justify-end.gap-4.pb-2.px-2
-                el-button(@click="showFulfillmentDialog = false") Cancel
+                el-button(@click="showFulfillmentDialog = false") {{ $t('common.cancel') }}
                 el-button(
                     type="primary"
                     :loading="fulfillmentLoading"
                     @click="handleAddFulfillment"
                     class="premium-btn !rounded-xl px-8"
-                ) Add Fulfillment
+                ) {{ $t('salesOrders.addFulfillment') }}
 </template>
 
 <script setup lang="ts">
@@ -197,6 +197,7 @@ import {
 } from '~/composables/useSalesOrders';
 
 const route = useRoute();
+const { t } = useI18n();
 const { goBack } = useSafeBack('/sales/sales-orders');
 const { hasPermission } = await usePermissions();
 

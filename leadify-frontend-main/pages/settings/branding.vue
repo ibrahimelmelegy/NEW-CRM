@@ -579,7 +579,7 @@ async function handleSave() {
   saving.value = true;
   try {
     const payload = stripEmptyStrings({ ...form });
-    let res;
+    let res: any;
     if (settingsId.value) {
       res = await useApiFetch(`setting/${settingsId.value}`, 'PUT', payload);
     } else {

@@ -57,7 +57,7 @@ export const useProjectStore = defineStore('projects', {
             ).toString()
           : '';
 
-        const response = await useApiFetch<{ docs: Project[]; pagination: Pagination }>(
+        const response: any = await useApiFetch(
           `project${query}`
         );
 
@@ -83,7 +83,7 @@ export const useProjectStore = defineStore('projects', {
       this.error = null;
 
       try {
-        const response = await useApiFetch<Project>(`project/${id}`);
+        const response: any = await useApiFetch(`project/${id}`);
 
         if (response.success && response.body) {
           this.currentProject = response.body;
@@ -104,7 +104,7 @@ export const useProjectStore = defineStore('projects', {
       this.error = null;
 
       try {
-        const response = await useApiFetch<Project>(
+        const response: any = await useApiFetch(
           'project',
           'POST',
           data as Record<string, unknown>
@@ -132,7 +132,7 @@ export const useProjectStore = defineStore('projects', {
       this.error = null;
 
       try {
-        const response = await useApiFetch<Project>(
+        const response: any = await useApiFetch(
           `project/${id}`,
           'PUT',
           data as Record<string, unknown>

@@ -1,16 +1,16 @@
 <template lang="pug">
 div
   ModuleHeader(
-    :title="'Collection Dashboard'"
-    :subtitle="'Overview of receivables, collections, and debtor analysis'"
+    :title="$t('payments.collectionDashboard')"
+    :subtitle="$t('payments.collectionDashboardSubtitle')"
   )
     template(#actions)
       el-button(size="large" @click="$router.push('/finance/payments')")
         Icon(name="ph:arrow-left-bold" size="18")
-        span.mx-1 Back to Payments
+        span.mx-1 {{ $t('payments.backToPayments') }}
       el-button(type="primary" size="large" @click="refreshDashboard")
         Icon(name="ph:arrows-clockwise-bold" size="18")
-        span.mx-1 Refresh
+        span.mx-1 {{ $t('payments.refresh') }}
 
   //- KPI Cards
   PaymentCollectionCards(:data="dashboardData" :loading="loading")
@@ -21,8 +21,8 @@ div
       .p-5.border-b(style="border-color: var(--border-color)")
         .flex.items-center.justify-between
           div
-            h3.text-lg.font-bold(style="color: var(--text-primary)") Top Debtors
-            p.text-sm.mt-1(style="color: var(--text-muted)") Clients with highest outstanding balances
+            h3.text-lg.font-bold(style="color: var(--text-primary)") {{ $t('payments.topDebtors') }}
+            p.text-sm.mt-1(style="color: var(--text-muted)") {{ $t('payments.topDebtorsSubtitle') }}
           .w-10.h-10.rounded-2xl.flex.items-center.justify-center(style="background: #ef444415")
             Icon(name="ph:warning-circle-bold" size="22" style="color: #ef4444")
       PaymentDebtorTable(:debtors="dashboardData.topDebtors" :loading="loading")
@@ -32,8 +32,8 @@ div
       .p-5.border-b(style="border-color: var(--border-color)")
         .flex.items-center.justify-between
           div
-            h3.text-lg.font-bold(style="color: var(--text-primary)") Aging Breakdown
-            p.text-sm.mt-1(style="color: var(--text-muted)") Receivables aging analysis
+            h3.text-lg.font-bold(style="color: var(--text-primary)") {{ $t('payments.agingBreakdown') }}
+            p.text-sm.mt-1(style="color: var(--text-muted)") {{ $t('payments.agingBreakdownSubtitle') }}
           .w-10.h-10.rounded-2xl.flex.items-center.justify-center(style="background: #7849ff15")
             Icon(name="ph:chart-bar-bold" size="22" style="color: #7849ff")
       .p-5
@@ -58,28 +58,28 @@ div
     .p-5.border-b(style="border-color: var(--border-color)")
       .flex.items-center.justify-between
         div
-          h3.text-lg.font-bold(style="color: var(--text-primary)") Recent Collections
-          p.text-sm.mt-1(style="color: var(--text-muted)") Latest payment transactions
+          h3.text-lg.font-bold(style="color: var(--text-primary)") {{ $t('payments.recentCollections') }}
+          p.text-sm.mt-1(style="color: var(--text-muted)") {{ $t('payments.recentCollectionsSubtitle') }}
         el-button(text @click="$router.push('/finance/payments')")
-          span View All
+          span {{ $t('payments.viewAll') }}
           Icon(name="ph:arrow-right-bold" size="16" class="ml-1")
     el-table(:data="recentPayments" v-loading="loadingRecent" style="width: 100%")
-      el-table-column(prop="paymentNumber" label="Payment #" width="140")
+      el-table-column(prop="paymentNumber" :label="$t('payments.tablePaymentNumber')" width="140")
         template(#default="{ row }")
           span.font-semibold {{ row.paymentNumber }}
-      el-table-column(prop="client" label="Client" min-width="180")
+      el-table-column(prop="client" :label="$t('payments.tableClient')" min-width="180")
         template(#default="{ row }")
           span {{ row.client?.clientName || '-' }}
-      el-table-column(prop="amount" label="Amount" width="140")
+      el-table-column(prop="amount" :label="$t('payments.tableAmount')" width="140")
         template(#default="{ row }")
           span.font-bold(style="color: #22c55e") {{ formatCurrency(row.amount) }}
-      el-table-column(prop="date" label="Date" width="130")
+      el-table-column(prop="date" :label="$t('payments.tableDate')" width="130")
         template(#default="{ row }")
           span {{ formatDate(row.date) }}
-      el-table-column(prop="method" label="Method" width="150")
+      el-table-column(prop="method" :label="$t('payments.tableMethod')" width="150")
         template(#default="{ row }")
           el-tag(size="small" effect="plain") {{ methodLabel(row.method) }}
-      el-table-column(prop="status" label="Status" width="120")
+      el-table-column(prop="status" :label="$t('payments.tableStatus')" width="120")
         template(#default="{ row }")
           el-tag(size="small" :type="statusColor(row.status)" effect="light") {{ row.status }}
 </template>
@@ -96,6 +96,7 @@ import {
 
 definePageMeta({ middleware: 'permissions' });
 
+const { t } = useI18n();
 const loading = ref(true);
 const loadingRecent = ref(true);
 
@@ -122,25 +123,25 @@ const agingBuckets = computed(() => {
 
   return [
     {
-      label: 'Current (0-30 days)',
+      label: t('payments.agingCurrent'),
       amount: current,
       percentage: Math.round((current / total) * 100),
       color: '#22c55e'
     },
     {
-      label: '31-60 days',
+      label: t('payments.aging3160'),
       amount: days30,
       percentage: Math.round((days30 / total) * 100),
       color: '#f59e0b'
     },
     {
-      label: '61-90 days',
+      label: t('payments.aging6190'),
       amount: days60,
       percentage: Math.round((days60 / total) * 100),
       color: '#f97316'
     },
     {
-      label: '90+ days',
+      label: t('payments.aging90plus'),
       amount: days90,
       percentage: Math.round((days90 / total) * 100),
       color: '#ef4444'

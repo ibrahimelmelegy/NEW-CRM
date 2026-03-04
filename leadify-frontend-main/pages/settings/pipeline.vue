@@ -2,17 +2,17 @@
 .pipeline-page.p-8
   .header.mb-8
     h2.text-3xl.font-bold.mb-2(style="color: var(--text-primary)") {{ $t('navigation.pipeline') }}
-    p(style="color: var(--text-muted)") Configure deal and opportunity pipeline stages
+    p(style="color: var(--text-muted)") {{ $t('pipeline.subtitle') }}
 
   .max-w-3xl
     //- Entity Type Selector
     .flex.items-center.gap-3.mb-6
       el-select(v-model="entityType" @change="loadStages" style="width: 160px")
-        el-option(label="Deal" value="deal")
-        el-option(label="Opportunity" value="opportunity")
+        el-option(:label="$t('pipeline.entityDeal')" value="deal")
+        el-option(:label="$t('pipeline.entityOpportunity')" value="opportunity")
       el-button(type="primary" @click="openDialog()" class="!rounded-xl")
         Icon.mr-1(name="ph:plus-bold" size="16")
-        | Add Stage
+        | {{ $t('pipeline.addStage') }}
 
     //- Loading
     .flex.items-center.justify-center.py-20(v-if="loading")
@@ -36,11 +36,11 @@
             .flex.items-center.gap-3
               .w-4.h-4.rounded-full(:style="{ background: stage.color }")
               span.text-sm.font-semibold(style="color: var(--text-primary)") {{ stage.name }}
-              el-tag(v-if="stage.isDefault" size="small" type="info") Default
-              el-tag(v-if="stage.isWon" size="small" type="success") Won
-              el-tag(v-if="stage.isLost" size="small" type="danger") Lost
+              el-tag(v-if="stage.isDefault" size="small" type="info") {{ $t('pipeline.tagDefault') }}
+              el-tag(v-if="stage.isWon" size="small" type="success") {{ $t('pipeline.tagWon') }}
+              el-tag(v-if="stage.isLost" size="small" type="danger") {{ $t('pipeline.tagLost') }}
             .flex.items-center.gap-2.mt-1
-              span.text-xs(style="color: var(--text-muted)") {{ stage.probability }}% probability
+              span.text-xs(style="color: var(--text-muted)") {{ stage.probability }}% {{ $t('pipeline.probability') }}
           .flex.items-center.gap-2
             el-button(size="small" @click="openDialog(stage)" class="!rounded-lg")
               Icon(name="ph:pencil-bold" size="14")
@@ -49,15 +49,15 @@
 
       .text-center.py-12(v-else)
         Icon(name="ph:flow-arrow-bold" size="48" style="color: var(--text-muted)")
-        p.text-sm.mt-3(style="color: var(--text-muted)") No pipeline stages configured
+        p.text-sm.mt-3(style="color: var(--text-muted)") {{ $t('pipeline.noStages') }}
 
   //- Edit Dialog
-  el-dialog(v-model="dialogVisible" :title="editingStage ? 'Edit Stage' : 'Add Stage'" width="500px")
+  el-dialog(v-model="dialogVisible" :title="editingStage ? $t('pipeline.editStage') : $t('pipeline.addStage')" width="500px")
     el-form(:model="form" label-position="top")
-      el-form-item(label="Stage Name" required)
-        el-input(v-model="form.name" placeholder="e.g. Qualification")
+      el-form-item(:label="$t('pipeline.stageName')" required)
+        el-input(v-model="form.name" :placeholder="$t('pipeline.stageNamePlaceholder')")
       .grid.gap-4(class="grid-cols-2")
-        el-form-item(label="Color")
+        el-form-item(:label="$t('pipeline.color')")
           .flex.flex-wrap.gap-2
             .w-8.h-8.rounded-lg.cursor-pointer(
               v-for="color in presetColors"
@@ -65,12 +65,12 @@
               :style="{ background: color, border: form.color === color ? '2px solid white' : '2px solid transparent' }"
               @click="form.color = color"
             )
-        el-form-item(label="Probability %")
+        el-form-item(:label="$t('pipeline.probabilityPercent')")
           el-slider(v-model="form.probability" :min="0" :max="100" :step="5" show-input :show-input-controls="false" input-size="small")
       .flex.items-center.gap-6
-        el-checkbox(v-model="form.isDefault") Default Stage
-        el-checkbox(v-model="form.isWon") Won Stage
-        el-checkbox(v-model="form.isLost") Lost Stage
+        el-checkbox(v-model="form.isDefault") {{ $t('pipeline.defaultStage') }}
+        el-checkbox(v-model="form.isWon") {{ $t('pipeline.wonStage') }}
+        el-checkbox(v-model="form.isLost") {{ $t('pipeline.lostStage') }}
     template(#footer)
       el-button(@click="dialogVisible = false") {{ $t('common.cancel') }}
       el-button(type="primary" @click="handleSave" :loading="saving") {{ $t('common.save') }}

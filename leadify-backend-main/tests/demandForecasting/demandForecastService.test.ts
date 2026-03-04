@@ -146,7 +146,7 @@ describe('DemandForecastService', () => {
   // ---------------------------------------------------------------------------
   describe('update', () => {
     it('should update and return the forecast', async () => {
-      const mockItem = { id: 1, update: jest.fn().mockResolvedValue(true) };
+      const mockItem: any = { id: 1, update: jest.fn().mockImplementation(() => Promise.resolve(true)) };
       (DemandForecast.findByPk as jest.Mock<any>).mockResolvedValue(mockItem);
 
       const result = await demandForecastService.update(1, { status: 'CONFIRMED' });

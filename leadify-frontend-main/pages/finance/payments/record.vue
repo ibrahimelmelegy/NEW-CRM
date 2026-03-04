@@ -1,8 +1,8 @@
 <template lang="pug">
 FormPage(
-  :title="'Record Payment'"
-  :subtitle="'Record a new payment against a client or invoice'"
-  :breadcrumbs="[{ label: 'Finance', to: '/finance/payments' }, { label: 'Payments', to: '/finance/payments' }, { label: 'Record' }]"
+  :title="$t('payments.recordPayment')"
+  :subtitle="$t('payments.recordPaymentSubtitle')"
+  :breadcrumbs="[{ label: $t('navigation.finance'), to: '/finance/payments' }, { label: $t('payments.title'), to: '/finance/payments' }, { label: $t('payments.record') }]"
   :loading="saving"
   @submit="handleSubmit"
 )
@@ -20,6 +20,7 @@ import { recordPayment } from '~/composables/usePayments';
 definePageMeta({ middleware: 'permissions' });
 const route = useRoute();
 const router = useRouter();
+const { t } = useI18n();
 const saving = ref(false);
 const paymentFormRef = ref();
 

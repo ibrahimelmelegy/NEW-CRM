@@ -1,37 +1,37 @@
 <template lang="pug">
 div
   ModuleHeader(
-    :title="'Payments'"
-    :subtitle="'Manage payments and collections'"
+    :title="$t('payments.title')"
+    :subtitle="$t('payments.subtitle')"
   )
     template(#actions)
       el-button(type="primary" size="large" @click="$router.push('/finance/payments/record')")
         Icon(name="ph:plus-bold" size="18")
-        span.mx-1 Record Payment
+        span.mx-1 {{ $t('payments.recordPayment') }}
       el-button(size="large" @click="$router.push('/finance/payments/collection-dashboard')" class="premium-btn-secondary")
         Icon(name="ph:chart-pie-bold" size="18")
-        span.mx-1 Dashboard
+        span.mx-1 {{ $t('payments.collectionDashboard') }}
 
   //- Status filter tabs
   .glass-card.mb-6.p-4
     el-radio-group(v-model="activeStatus" size="large" @change="handleStatusChange")
-      el-radio-button(value="ALL") All
+      el-radio-button(value="ALL") {{ $t('common.all') }}
       el-radio-button(value="COMPLETED")
         el-badge(:value="statusCounts.completed" :max="999" type="success" class="ml-1")
-          span Completed
+          span {{ $t('payments.statusCompleted') }}
       el-radio-button(value="PENDING")
         el-badge(:value="statusCounts.pending" :max="999" type="warning" class="ml-1")
-          span Pending
+          span {{ $t('payments.statusPending') }}
       el-radio-button(value="VOIDED")
         el-badge(:value="statusCounts.voided" :max="999" type="info" class="ml-1")
-          span Voided
+          span {{ $t('payments.statusVoided') }}
 
   //- Payments table
   .glass-card
     .p-4.border-b.flex.items-center.justify-between(style="border-color: var(--border-color)")
       el-input(
         v-model="searchKey"
-        :placeholder="'Search payments...'"
+        :placeholder="$t('payments.searchPayments')"
         clearable
         size="large"
         style="max-width: 320px"
@@ -40,14 +40,14 @@ div
         template(#prefix)
           Icon(name="ph:magnifying-glass" size="18")
       .flex.items-center.gap-3
-        el-select(v-model="filterMethod" clearable placeholder="Payment Method" size="large" style="width: 180px" @change="fetchData")
+        el-select(v-model="filterMethod" clearable :placeholder="$t('payments.paymentMethod')" size="large" style="width: 180px" @change="fetchData")
           el-option(v-for="opt in paymentMethodOptions" :key="opt.value" :label="opt.label" :value="opt.value")
         el-date-picker(
           v-model="dateRange"
           type="daterange"
-          range-separator="to"
-          start-placeholder="Start"
-          end-placeholder="End"
+          :range-separator="$t('common.to')"
+          :start-placeholder="$t('common.startDate')"
+          :end-placeholder="$t('common.endDate')"
           value-format="YYYY-MM-DD"
           size="large"
           @change="fetchData"
@@ -61,25 +61,25 @@ div
       row-class-name="cursor-pointer"
       stripe
     )
-      el-table-column(prop="paymentNumber" label="Payment #" width="150" sortable)
+      el-table-column(prop="paymentNumber" :label="$t('payments.paymentNumber')" width="150" sortable)
         template(#default="{ row }")
           span.font-semibold {{ row.paymentNumber }}
-      el-table-column(prop="client" label="Client" min-width="180")
+      el-table-column(prop="client" :label="$t('common.client')" min-width="180")
         template(#default="{ row }")
           span {{ row.client?.clientName || '-' }}
-      el-table-column(prop="amount" label="Amount" width="140" sortable)
+      el-table-column(prop="amount" :label="$t('payments.amount')" width="140" sortable)
         template(#default="{ row }")
           span.font-bold {{ formatCurrency(row.amount) }}
-      el-table-column(prop="date" label="Date" width="130" sortable)
+      el-table-column(prop="date" :label="$t('payments.date')" width="130" sortable)
         template(#default="{ row }")
           span {{ formatDate(row.date) }}
-      el-table-column(prop="method" label="Method" width="150")
+      el-table-column(prop="method" :label="$t('payments.method')" width="150")
         template(#default="{ row }")
           el-tag(size="small" :type="''" effect="plain") {{ methodLabel(row.method) }}
-      el-table-column(prop="status" label="Status" width="130")
+      el-table-column(prop="status" :label="$t('common.status')" width="130")
         template(#default="{ row }")
-          el-tag(size="small" :type="statusType(row.status)" effect="light") {{ row.status }}
-      el-table-column(prop="reference" label="Reference" width="160")
+          el-tag(size="small" :type="statusType(row.status)" effect="light") {{ statusLabel(row.status) }}
+      el-table-column(prop="reference" :label="$t('payments.reference')" width="160")
         template(#default="{ row }")
           span {{ row.reference || '-' }}
       el-table-column(label="" width="60" align="center")
@@ -92,18 +92,18 @@ div
                 el-dropdown-item(@click="$router.push(`/finance/payments/${row.id}`)")
                   .flex.items-center.gap-2
                     Icon(name="ph:eye-bold" size="16")
-                    span View Details
+                    span {{ $t('common.viewDetails') }}
                 el-dropdown-item(
                   v-if="row.status === 'COMPLETED'"
                   @click="handleVoid(row.id)"
                 )
                   .flex.items-center.gap-2
                     Icon(name="ph:prohibit-bold" size="16")
-                    span Void Payment
+                    span {{ $t('payments.voidPayment') }}
 
     //- Pagination
     .flex.items-center.justify-between.p-4(v-if="pagination.totalPages > 1")
-      span.text-sm(style="color: var(--text-muted)") Showing {{ payments.length }} of {{ pagination.totalItems }} payments
+      span.text-sm(style="color: var(--text-muted)") {{ $t('payments.showingOf', { count: payments.length, total: pagination.totalItems }) }}
       el-pagination(
         v-model:current-page="currentPage"
         :page-size="pagination.limit"
@@ -112,7 +112,7 @@ div
         @current-change="handlePageChange"
       )
 
-  ActionModel(v-model="voidPopup" :loading="voiding" description="Are you sure you want to void this payment? This action will reverse the payment." @confirm="confirmVoid")
+  ActionModel(v-model="voidPopup" :loading="voiding" :description="$t('payments.confirmVoidMessage')" @confirm="confirmVoid")
 </template>
 
 <script setup lang="ts">
@@ -128,6 +128,7 @@ import {
 
 definePageMeta({ middleware: 'permissions' });
 const router = useRouter();
+const { t } = useI18n();
 
 const loading = ref(false);
 const payments = ref<PaymentItem[]>([]);
@@ -204,6 +205,18 @@ async function confirmVoid() {
 
 function statusType(status: string): string {
   return paymentStatusColors[status] || '';
+}
+
+const paymentStatusI18nKeys: Record<string, string> = {
+  COMPLETED: 'payments.statusCompleted',
+  PENDING: 'payments.statusPending',
+  FAILED: 'payments.statusFailed',
+  VOIDED: 'payments.statusVoided'
+};
+
+function statusLabel(status: string): string {
+  const key = paymentStatusI18nKeys[status];
+  return key ? t(key) : status;
 }
 
 function methodLabel(method: string): string {

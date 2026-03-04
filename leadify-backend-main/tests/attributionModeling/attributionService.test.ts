@@ -235,8 +235,8 @@ describe('AttributionService', () => {
       await attributionService.calculateAttribution('deal-100', 'TIME_DECAY', 1000);
 
       // tp2 (latest) should get more credit than tp1
-      const tp2Credit = (tp2.update as jest.Mock<any>).mock.calls[0][0].creditPercent;
-      const tp1Credit = (tp1.update as jest.Mock<any>).mock.calls[0][0].creditPercent;
+      const tp2Credit = ((tp2.update as jest.Mock<any>).mock.calls[0][0] as any).creditPercent;
+      const tp1Credit = ((tp1.update as jest.Mock<any>).mock.calls[0][0] as any).creditPercent;
       expect(tp2Credit).toBeGreaterThan(tp1Credit);
     });
 

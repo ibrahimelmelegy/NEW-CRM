@@ -159,7 +159,7 @@ export function useDailyBriefing() {
 
       // 1. Overdue tasks
       if (tasksRes.success && tasksRes.body) {
-        const tasks = tasksRes.body?.docs || (Array.isArray(tasksRes.body) ? tasksRes.body : []);
+        const tasks = (tasksRes.body as any)?.docs || (Array.isArray(tasksRes.body) ? tasksRes.body : []);
         const overdueTasks = tasks.filter((t: any) => {
           const dueDate = t.endDate || t.dueDate;
           return dueDate && isOverdue(dueDate) && t.status !== 'COMPLETED';
@@ -205,7 +205,7 @@ export function useDailyBriefing() {
 
       // 2. Deals at risk (no recent activity in 7+ days)
       if (dealsRes.success && dealsRes.body) {
-        const deals = dealsRes.body?.rows || dealsRes.body?.docs || (Array.isArray(dealsRes.body) ? dealsRes.body : []);
+        const deals = (dealsRes.body as any)?.rows || (dealsRes.body as any)?.docs || (Array.isArray(dealsRes.body) ? dealsRes.body : []);
         const atRiskDeals = deals.filter((d: any) => daysSinceUpdate(d.updatedAt) >= 7);
         if (atRiskDeals.length > 0) {
           generatedPriorities.push({
@@ -240,7 +240,7 @@ export function useDailyBriefing() {
 
       // 3. Calendar events today (meetings)
       if (calendarRes.success && calendarRes.body) {
-        const events = Array.isArray(calendarRes.body) ? calendarRes.body : calendarRes.body?.rows || calendarRes.body?.docs || [];
+        const events = Array.isArray(calendarRes.body) ? calendarRes.body : (calendarRes.body as any)?.rows || (calendarRes.body as any)?.docs || [];
         const todayEvents = events.filter((e: any) => {
           const eventDate = e.startDate || e.start || e.date;
           return eventDate && isToday(eventDate);
@@ -271,7 +271,7 @@ export function useDailyBriefing() {
 
       // 4. Activity highlights
       if (activityRes.success && activityRes.body) {
-        const activities = Array.isArray(activityRes.body) ? activityRes.body : activityRes.body?.rows || [];
+        const activities = Array.isArray(activityRes.body) ? activityRes.body : (activityRes.body as any)?.rows || [];
         if (activities.length > 0) {
           yesterdayHighlights.value.push({
             icon: 'ph:lightning-bold',
@@ -284,7 +284,7 @@ export function useDailyBriefing() {
 
       // 5. New leads highlight
       if (leadsRes.success && leadsRes.body) {
-        const leads = leadsRes.body?.rows || leadsRes.body?.docs || (Array.isArray(leadsRes.body) ? leadsRes.body : []);
+        const leads = (leadsRes.body as any)?.rows || (leadsRes.body as any)?.docs || (Array.isArray(leadsRes.body) ? leadsRes.body : []);
         const recentLeads = leads.filter((l: any) => {
           const created = new Date(l.createdAt);
           const yesterday = new Date();
@@ -305,12 +305,12 @@ export function useDailyBriefing() {
       priorities.value = generatedPriorities;
 
       // --- Generate KPIs ---
-      const insightsData = insightsRes.success ? insightsRes.body : null;
+      const insightsData: any = insightsRes.success ? insightsRes.body : null;
       const revenue = insightsData?.revenueFromDeals || insightsData?.totalRevenue || 0;
       const pipelineValue = insightsData?.pipelineValue || insightsData?.dealsCount * 5000 || 0;
       const conversionRate = insightsData?.leadConversionRate || insightsData?.conversionRate || 0;
 
-      const tasksData = tasksRes.success ? tasksRes.body : null;
+      const tasksData: any = tasksRes.success ? tasksRes.body : null;
       const allTasks = tasksData?.docs || (Array.isArray(tasksData) ? tasksData : []);
       const completedCount = allTasks.filter((t: any) => t.status === 'COMPLETED').length;
 

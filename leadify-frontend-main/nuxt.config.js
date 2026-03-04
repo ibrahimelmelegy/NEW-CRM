@@ -136,7 +136,8 @@ export default defineNuxtConfig({
     public: {
       API_BASE_URL: process.env.API_BASE_URL || 'http://localhost:5000/api/',
       BASE_URL: process.env.BASE_URL || 'http://localhost:3060/',
-      BUCKET_URL: process.env.BUCKET_URL || 'http://localhost:3000/'
+      BUCKET_URL: process.env.BUCKET_URL || 'http://localhost:3000/',
+      BOOKING_BASE_URL: process.env.BOOKING_BASE_URL || ''
     }
   },
 
@@ -148,8 +149,6 @@ export default defineNuxtConfig({
   imports: {
     dirs: ['composables/**']
   },
-
-  ssr: false,
 
   devtools: {
     enabled: true,

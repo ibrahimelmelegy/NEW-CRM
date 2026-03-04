@@ -1,12 +1,12 @@
 <template lang="pug">
 RoleForm( :loading="loading" @submit="submitForm" :data="role")
   .flex.items-center.justify-between.mb-8
-    .title.font-bold.text-2xl.mb-1.capitalize Edit Role
+    .title.font-bold.text-2xl.mb-1.capitalize {{ $t('roles.editRole') }}
     .flex.items-center.gap-x-2
       el-button(   size='large' plain type="primary" class="w-full !rounded-2xl" @click="router.back()") {{ $t('common.cancel') }}
-      el-button(   size='large' type="primary" native-type="submit" :loading="loading"  :disabled="loading" class="w-full !px-5 !rounded-2xl") update
+      el-button(   size='large' type="primary" native-type="submit" :loading="loading"  :disabled="loading" class="w-full !px-5 !rounded-2xl") {{ $t('common.update') }}
 .card.m-auto.glass-card.rounded-3xl(class="mt-4 p-10")
-  h3.text-2xl.font-bold.mb-5 Permissions
+  h3.text-2xl.font-bold.mb-5 {{ $t('roles.permissions') }}
   .flex.flex-col.gap-y-4
     div.flex.gap-x-4.rounded-2xl.items-center.border.border-neutral-100.divide-x.mb-4.bg-neutral-100(v-for="(permissions, key) in permissionsData" :key="key")
       p.ps-4.h-full.text-sm.text-neutral-600.font-medium.py-3(class="w-[190px] min-w-[190px]") {{ formatKeyLabel(key) }}
@@ -19,6 +19,7 @@ RoleForm( :loading="loading" @submit="submitForm" :data="role")
 <script lang="ts" setup>
 const loading = ref(false);
 const route = useRoute();
+const { t } = useI18n();
 useHead({
   title: 'App HP Tech | Edit Role'
 });
@@ -76,19 +77,19 @@ function formatKeyLabel(key: string) {
 }
 
 function formatPermissionLabel(permission: string) {
-  if (permission.includes('VIEW_OWN')) return 'View (Own)';
-  if (permission.includes('VIEW_GLOBAL')) return 'View (Global)';
-  if (permission.includes('VIEW')) return 'View';
-  if (permission.includes('CREATE')) return 'Create';
-  if (permission.includes('EDIT')) return 'Edit';
-  if (permission.includes('EXPORT_OWN')) return 'Export (Own)';
-  if (permission.includes('EXPORT_GLOBAL')) return 'Export (Global)';
-  if (permission.includes('EXPORT_SALES')) return 'Export Sales Reports';
-  if (permission.includes('EXPORT_PROJECT')) return 'Export Project Reports';
-  if (permission.includes('EXPORT_PERFORMANCE')) return 'Export Performance Reports';
-  if (permission.includes('APPROVE')) return 'Approve';
-  if (permission.includes('REJECT')) return 'Reject';
-  if (permission.includes('WAITING_APPROVAL')) return 'Waiting Approval';
+  if (permission.includes('VIEW_OWN')) return t('roles.permLabels.viewOwn');
+  if (permission.includes('VIEW_GLOBAL')) return t('roles.permLabels.viewGlobal');
+  if (permission.includes('VIEW')) return t('roles.permLabels.view');
+  if (permission.includes('CREATE')) return t('roles.permLabels.create');
+  if (permission.includes('EDIT')) return t('roles.permLabels.edit');
+  if (permission.includes('EXPORT_OWN')) return t('roles.permLabels.exportOwn');
+  if (permission.includes('EXPORT_GLOBAL')) return t('roles.permLabels.exportGlobal');
+  if (permission.includes('EXPORT_SALES')) return t('roles.permLabels.exportSales');
+  if (permission.includes('EXPORT_PROJECT')) return t('roles.permLabels.exportProject');
+  if (permission.includes('EXPORT_PERFORMANCE')) return t('roles.permLabels.exportPerformance');
+  if (permission.includes('APPROVE')) return t('roles.permLabels.approve');
+  if (permission.includes('REJECT')) return t('roles.permLabels.reject');
+  if (permission.includes('WAITING_APPROVAL')) return t('roles.permLabels.waitingApproval');
   return permission.replace(/_/g, ' ').toLowerCase();
 }
 

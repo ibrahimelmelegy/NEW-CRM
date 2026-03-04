@@ -29,7 +29,7 @@ async function submitForm(values: FormattedValues) {
       navigateTo('/sales/clients');
     }
   } catch (error: any) {
-    (useNuxtApp() as any).$notify?.error?.({ message: error?.message || 'Failed to create client' });
+    (useNuxtApp() as any).$notify?.error?.({ message: error?.message || t('clients.errors.createFailed') });
   } finally {
     loading.value = false;
   }

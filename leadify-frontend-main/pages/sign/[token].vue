@@ -13,8 +13,8 @@
     //- Already Signed
     .glass-card.p-8.text-center(v-else-if="signed")
       Icon(name="ph:check-circle" size="64" class="text-green-400" aria-hidden="true")
-      h2.text-xl.font-bold.mt-4(style="color: var(--text-primary)") Contract Signed Successfully
-      p.mt-2(style="color: var(--text-muted)") Thank you for signing. You may close this page.
+      h2.text-xl.font-bold.mt-4(style="color: var(--text-primary)") {{ $t('sign.contractSigned') }}
+      p.mt-2(style="color: var(--text-muted)") {{ $t('sign.contractSignedHint') }}
 
     //- Contract View + Sign
     template(v-else-if="contract")
@@ -22,28 +22,28 @@
         .flex.justify-between.items-start.mb-6
           div
             h2.text-2xl.font-bold(style="color: var(--text-primary)") {{ contract.title }}
-            p.text-sm.mt-1(style="color: var(--text-muted)") Please review the contract below and sign at the bottom
+            p.text-sm.mt-1(style="color: var(--text-muted)") {{ $t('sign.reviewContract') }}
           el-tag(:type="contract.status === 'VIEWED' ? '' : 'warning'" size="small" effect="dark") {{ contract.status }}
 
         .p-6.rounded-xl.mb-6(style="background: var(--bg-input); border: 1px solid var(--border-default)")
           .whitespace-pre-wrap(style="color: var(--text-primary)") {{ contract.content }}
 
       .glass-card.p-8
-        h3.text-lg.font-bold.mb-4(style="color: var(--text-primary)") Sign Below
+        h3.text-lg.font-bold.mb-4(style="color: var(--text-primary)") {{ $t('sign.signBelow') }}
 
         .form-group.mb-4
-          label.block.text-sm.font-medium.mb-2 Your Name
-          el-input(v-model="signerName" placeholder="Enter your full name")
+          label.block.text-sm.font-medium.mb-2 {{ $t('sign.yourName') }}
+          el-input(v-model="signerName" :placeholder="$t('sign.yourNamePlaceholder')")
 
         .form-group.mb-4
-          label.block.text-sm.font-medium.mb-2 Signature
+          label.block.text-sm.font-medium.mb-2 {{ $t('sign.signature') }}
           .signature-area.rounded-xl.relative(
             style="background: white; border: 2px solid var(--border-default); height: 200px; cursor: crosshair"
             ref="canvasContainer"
           )
             canvas(ref="signatureCanvas" @mousedown="startDraw" @mousemove="draw" @mouseup="endDraw" @mouseleave="endDraw" @touchstart.prevent="startDrawTouch" @touchmove.prevent="drawTouch" @touchend="endDraw")
           .flex.justify-end.mt-2
-            el-button(link size="small" @click="clearSignature") Clear Signature
+            el-button(link size="small" @click="clearSignature") {{ $t('sign.clearSignature') }}
 
         el-button.w-full(
           type="primary"
@@ -52,7 +52,7 @@
           @click="submitSignature"
           :disabled="!signerName || !hasSignature"
           class="!bg-[#7849ff] hover:!bg-[#6a3ae0] !border-none !rounded-xl"
-        ) Sign Contract
+        ) {{ $t('sign.signContract') }}
 </template>
 
 <script setup lang="ts">
@@ -61,6 +61,7 @@ import { fetchContractByToken, signContract, type Contract } from '~/composables
 
 definePageMeta({ layout: false });
 
+const { t } = useI18n();
 const route = useRoute();
 const loading = ref(true);
 const submitting = ref(false);
@@ -80,10 +81,10 @@ onMounted(async () => {
     const token = route.params.token as string;
     contract.value = await fetchContractByToken(token);
     if (!contract.value) {
-      error.value = 'Contract not found or link is invalid';
+      error.value = t('sign.contractNotFound');
     }
   } catch (e: any) {
-    error.value = e.message || 'Failed to load contract';
+    error.value = e.message || t('sign.failedToLoad');
   }
   loading.value = false;
 

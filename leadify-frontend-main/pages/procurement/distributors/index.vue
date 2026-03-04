@@ -1,10 +1,10 @@
 <template lang="pug">
 ProcurementEntityList(
-  title="Distributors Management"
-  subtitle="Track and manage your distribution partners"
-  btn-text="New Distributor"
+  :title="$t('procurement.distributors.title')"
+  :subtitle="$t('procurement.distributors.subtitle')"
+  :btn-text="$t('procurement.distributors.btnText')"
   entity-type="Distributor"
-  entity-label="Distributor"
-  dialog-title="New Distributor Form"
+  :entity-label="$t('procurement.distributors.entityLabel')"
+  :dialog-title="$t('procurement.distributors.dialogTitle')"
 )
 </template>

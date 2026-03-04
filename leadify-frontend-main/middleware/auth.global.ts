@@ -37,7 +37,7 @@ export default defineNuxtRouteMiddleware(async (to, _from) => {
         lastVerifiedAt = now;
       } else {
         // No valid session — clear user state
-        user.value = null;
+        (user as any).value = null;
         lastVerifiedAt = 0;
         if (!isPublicRoute && to.path !== '/login') return navigateTo('/login');
         return;
@@ -71,7 +71,7 @@ export default defineNuxtRouteMiddleware(async (to, _from) => {
     const userRole: string = user.value?.role?.name || '';
     if (userRole === 'SUPER_ADMIN') return;
 
-    const userPermissions: string[] = user.value?.role?.permissions || user.value?.permissions || [];
+    const userPermissions: string[] = user.value?.role?.permissions || (user.value as any)?.permissions || [];
     const hasPermission = requiredPermissions.some(perm => userPermissions.includes(perm));
 
     if (!hasPermission) {

@@ -5,42 +5,42 @@
     .flex.items-center.gap-3
       Icon.text-purple-400(name="ph:squares-four-bold" size="24")
       .builder-title
-        h2.text-lg.font-bold(style="color: var(--text-primary)") Custom Dashboard
-        p.text-xs(style="color: var(--text-muted)") Drag widgets to build your perfect view
+        h2.text-lg.font-bold(style="color: var(--text-primary)") {{ $t('dashboardBuilder.title') }}
+        p.text-xs(style="color: var(--text-muted)") {{ $t('dashboardBuilder.subtitle') }}
     .flex.items-center.gap-3
       //- Layout presets
       el-dropdown(@command="handlePreset")
         el-button(size="small")
           Icon.mr-1(name="ph:layout-bold" size="14")
-          span Presets
+          span {{ $t('dashboardBuilder.presets') }}
         template(#dropdown)
           el-dropdown-menu
             el-dropdown-item(command="executive")
               Icon.mr-2(name="ph:briefcase-bold" size="14")
-              span Executive Overview
+              span {{ $t('dashboardBuilder.executiveOverview') }}
             el-dropdown-item(command="sales")
               Icon.mr-2(name="ph:chart-line-up-bold" size="14")
-              span Sales Focus
+              span {{ $t('dashboardBuilder.salesFocus') }}
             el-dropdown-item(command="activity")
               Icon.mr-2(name="ph:lightning-bold" size="14")
-              span Activity Monitor
+              span {{ $t('dashboardBuilder.activityMonitor') }}
       el-button(size="small" type="primary" @click="saveDashboard" class="!bg-[#7849ff] hover:!bg-[#6a3ae0] !border-none")
         Icon.mr-1(name="ph:floppy-disk-bold" size="14")
-        span Save Layout
+        span {{ $t('dashboardBuilder.saveLayout') }}
       el-button(size="small" @click="toggleEditMode")
         Icon.mr-1(:name="editMode ? 'ph:eye-bold' : 'ph:pencil-bold'" size="14")
-        span {{ editMode ? 'Preview' : 'Edit' }}
+        span {{ editMode ? $t('dashboardBuilder.preview') : $t('dashboardBuilder.edit') }}
 
   .builder-content.flex.gap-6
     //- Widget Palette (left sidebar, only in edit mode)
     Transition(name="slide-right")
       .widget-palette.glass-card.rounded-2xl.p-4(v-if="editMode")
-        h3.text-sm.font-bold.mb-4(style="color: var(--text-primary)") Widgets
+        h3.text-sm.font-bold.mb-4(style="color: var(--text-primary)") {{ $t('dashboardBuilder.widgetsPalette') }}
         .widget-search.mb-3
           el-input(
             v-model="searchQuery"
             size="small"
-            placeholder="Search widgets..."
+            :placeholder="$t('dashboardBuilder.searchWidgets')"
             clearable
             :prefix-icon="SearchIcon"
           )
@@ -68,11 +68,11 @@
       //- Empty state
       .empty-grid.glass-card.rounded-2xl.p-16.text-center(v-if="!dashboardWidgets.length")
         Icon(name="ph:layout-bold" size="64" style="color: var(--text-muted)")
-        h3.text-xl.font-bold.mt-4(style="color: var(--text-primary)") Start Building
-        p.text-sm.mt-2(style="color: var(--text-muted)") Drag widgets from the palette or click to add them
+        h3.text-xl.font-bold.mt-4(style="color: var(--text-primary)") {{ $t('dashboardBuilder.startBuilding') }}
+        p.text-sm.mt-2(style="color: var(--text-muted)") {{ $t('dashboardBuilder.dragWidgetsHint') }}
         el-button.mt-6(size="default" type="primary" @click="loadPreset('executive')" class="!bg-[#7849ff] hover:!bg-[#6a3ae0] !border-none")
           Icon.mr-1(name="ph:magic-wand-bold" size="14")
-          span Load Executive Preset
+          span {{ $t('dashboardBuilder.loadExecutivePreset') }}
 
       //- Grid with widgets
       .grid-container(

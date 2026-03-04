@@ -150,6 +150,12 @@ class AssetService {
       }
     });
   }
+  public async deleteAsset(id: string): Promise<void> {
+    const asset = await Asset.findByPk(id);
+    if (!asset) throw new BaseError(ERRORS.ASSET_NOT_FOUND);
+    await asset.destroy();
+  }
+
 }
 
 export default new AssetService();

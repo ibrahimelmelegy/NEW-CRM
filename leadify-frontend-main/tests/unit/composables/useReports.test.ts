@@ -236,7 +236,7 @@ describe('useReports', () => {
 
       await fetchReportAnalytics('DEAL', '2024-01-01', '2024-12-31');
 
-      const calledUrl = mockApiFetch.mock.calls[0][0];
+      const calledUrl = mockApiFetch.mock.calls[0]![0];
       expect(calledUrl).toContain('startDate=2024-01-01');
       expect(calledUrl).toContain('endDate=2024-12-31');
     });

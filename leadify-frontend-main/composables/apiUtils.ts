@@ -8,9 +8,9 @@ export async function downloadFile(file: string) {
   const authStore = useAuthStore();
   const runtimeConfig = useRuntimeConfig();
 
-  await fetch(`${runtimeConfig.public.BASE_URL + file}`, {
+  await fetch(`${(runtimeConfig.public as any).BASE_URL + file}`, {
     headers: {
-      Authorization: `Bearer ${authStore.token}`
+      Authorization: `Bearer ${(authStore as any).token}`
     }
   })
     .then(async response => {
@@ -60,7 +60,8 @@ export function uploadFile(params: { file: File; [key: string]: unknown }) {
     const runtimeConfig = useRuntimeConfig();
 
     // ✅ Fix 2: useAsyncGql is auto-imported by Nuxt GQL module
-    (useAsyncGql as (operation: string, variables: Record<string, unknown>) => Promise<{ data: Ref<Record<string, unknown>> }>)('generateUploadLink', {
+    const _useAsyncGql: any = (globalThis as any).useAsyncGql;
+    _useAsyncGql('generateUploadLink', {
       model: 'BLOG_COVER',
       fileName,
       contentType: file.type,
@@ -71,12 +72,12 @@ export function uploadFile(params: { file: File; [key: string]: unknown }) {
         const gqlResult = data.value?.generateUploadLink as { data: string } | undefined;
         const link = gqlResult?.data;
         try {
-          const response = await $fetch(link, {
+          const response = await $fetch(link as string, {
             method: 'PUT',
             body: myRenamedFile
           });
-          const fileTurned = link?.split('?')[0].split(runtimeConfig.public.BUCKET_URL)[1];
-          resolve(fileTurned);
+          const fileTurned = (link?.split('?')[0] as string).split((runtimeConfig.public as any).BUCKET_URL)[1];
+          resolve(fileTurned as string);
         } catch (error) {
           reject(error);
         }

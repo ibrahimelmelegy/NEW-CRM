@@ -4,10 +4,10 @@
     .flex.items-center.justify-between
       div
         h2.text-3xl.font-bold.mb-2(style="color: var(--text-primary)") {{ $t('navigation.territories') }}
-        p(style="color: var(--text-muted)") Manage sales territories and assignments
+        p(style="color: var(--text-muted)") {{ $t('territories.subtitle') }}
       el-button(type="primary" @click="openDialog()" class="!rounded-xl")
         Icon.mr-1(name="ph:plus-bold" size="16")
-        | Add Territory
+        | {{ $t('territories.addTerritory') }}
 
   .max-w-4xl
     //- Loading
@@ -22,30 +22,30 @@
 
       .text-center.py-12(v-else)
         Icon(name="ph:map-pin-bold" size="48" style="color: var(--text-muted)")
-        p.text-sm.mt-3(style="color: var(--text-muted)") No territories configured
+        p.text-sm.mt-3(style="color: var(--text-muted)") {{ $t('territories.noTerritories') }}
 
   //- Edit Dialog
-  el-dialog(v-model="dialogVisible" :title="editingTerritory ? 'Edit Territory' : 'Add Territory'" width="600px")
+  el-dialog(v-model="dialogVisible" :title="editingTerritory ? $t('territories.editTerritory') : $t('territories.addTerritory')" width="600px")
     el-form(:model="form" label-position="top")
-      el-form-item(label="Name" required)
-        el-input(v-model="form.name" placeholder="e.g. North Region")
-      el-form-item(label="Description")
+      el-form-item(:label="$t('common.name')" required)
+        el-input(v-model="form.name" :placeholder="$t('territories.namePlaceholder')")
+      el-form-item(:label="$t('common.description')")
         el-input(v-model="form.description" type="textarea" :rows="3")
       .grid.gap-4(class="grid-cols-2")
-        el-form-item(label="Type")
+        el-form-item(:label="$t('territories.type')")
           el-select(v-model="form.type" style="width: 100%")
-            el-option(label="Region" value="region")
-            el-option(label="City" value="city")
-            el-option(label="Area" value="area")
-            el-option(label="Custom" value="custom")
-        el-form-item(label="Parent Territory")
-          el-select(v-model="form.parentId" clearable style="width: 100%" placeholder="None (Top Level)")
+            el-option(:label="$t('territories.types.region')" value="region")
+            el-option(:label="$t('territories.types.city')" value="city")
+            el-option(:label="$t('territories.types.area')" value="area")
+            el-option(:label="$t('territories.types.custom')" value="custom")
+        el-form-item(:label="$t('territories.parentTerritory')")
+          el-select(v-model="form.parentId" clearable style="width: 100%" :placeholder="$t('territories.topLevel')")
             el-option(v-for="t in flatTerritories" :key="t.id" :label="t.name" :value="t.id" :disabled="t.id === editingTerritory?.id")
-      el-form-item(label="Assigned User")
-        el-select(v-model="form.assignedUserId" clearable filterable style="width: 100%" placeholder="Select user")
+      el-form-item(:label="$t('territories.assignedUser')")
+        el-select(v-model="form.assignedUserId" clearable filterable style="width: 100%" :placeholder="$t('territories.selectUser')")
           el-option(v-for="u in users" :key="u.value" :label="u.label" :value="u.value")
       el-form-item
-        el-checkbox(v-model="form.isActive") Active
+        el-checkbox(v-model="form.isActive") {{ $t('common.active') }}
     template(#footer)
       el-button(@click="dialogVisible = false") {{ $t('common.cancel') }}
       el-button(type="primary" @click="handleSave" :loading="saving") {{ $t('common.save') }}
@@ -94,7 +94,7 @@ const flatTerritories = computed(() => {
 
 // Load data
 try {
-  const [treeData, usersRes] = await Promise.all([fetchTerritoryTree(), useApiFetch('users')]);
+  const [treeData, usersRes]: any[] = await Promise.all([fetchTerritoryTree(), useApiFetch('users')]);
   territories.value = treeData;
   if (usersRes?.body?.docs) {
     users.value = usersRes.body.docs.map((u: any) => ({ label: u.name, value: u.id }));
@@ -203,7 +203,7 @@ const TerritoryNode: ReturnType<typeof defineComponent> = defineComponent({
                   props.territory.assignedUser
                     ? h('span', { class: 'text-xs', style: 'color: var(--text-muted)' }, props.territory.assignedUser.name)
                     : null,
-                  !props.territory.isActive ? h(resolveComponent('el-tag'), { size: 'small', type: 'danger' }, () => 'Inactive') : null
+                  !props.territory.isActive ? h(resolveComponent('el-tag'), { size: 'small', type: 'danger' }, () => t('territories.inactive')) : null
                 ])
               ])
             ]),

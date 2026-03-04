@@ -3,8 +3,8 @@
   //- Header
   .flex.items-center.justify-between.mb-8
     div
-      h1.text-3xl.font-black.tracking-tight(style="color: var(--text-primary);") 📁 Document Archive
-      p.text-sm.mt-1(style="color: var(--text-muted);") All archived documents across the CRM — search, filter, restore or permanently delete.
+      h1.text-3xl.font-black.tracking-tight(style="color: var(--text-primary);") {{ $t('archive.title') }}
+      p.text-sm.mt-1(style="color: var(--text-muted);") {{ $t('archive.subtitle') }}
     .flex.items-center.gap-3
       el-button(
         type="danger"
@@ -15,7 +15,7 @@
         style="border-radius: 12px;"
       )
         Icon(name="ph:trash" size="16" style="margin-right: 4px;")
-        | Delete ({{ selectedIds.length }})
+        | {{ $t('archive.deleteSelected', { count: selectedIds.length }) }}
       el-button(
         type="primary"
         size="default"
@@ -24,28 +24,28 @@
         style="background: var(--bg-obsidian); border: none; border-radius: 12px;"
       )
         Icon(name="ph:arrow-counter-clockwise" size="16" style="margin-right: 4px;")
-        | Restore ({{ selectedIds.length }})
+        | {{ $t('archive.restoreSelected', { count: selectedIds.length }) }}
 
   //- Stats Row
   .grid.grid-cols-4.gap-4.mb-8
     .p-5.rounded-2xl.border(style="border-color: var(--border-default); background: var(--bg-elevated);")
-      p.text-xs.font-bold.uppercase.tracking-widest(style="color: var(--text-muted);") Total Archived
+      p.text-xs.font-bold.uppercase.tracking-widest(style="color: var(--text-muted);") {{ $t('archive.totalArchived') }}
       p.text-3xl.font-black.mt-1(style="color: var(--text-primary);") {{ stats.total }}
     .p-5.rounded-2xl.border(style="border-color: var(--border-default); background: var(--bg-elevated);")
-      p.text-xs.font-bold.uppercase.tracking-widest(style="color: var(--text-muted);") Document Types
+      p.text-xs.font-bold.uppercase.tracking-widest(style="color: var(--text-muted);") {{ $t('archive.documentTypes') }}
       p.text-3xl.font-black.mt-1(style="color: var(--text-primary);") {{ Object.keys(stats.byType).length }}
     .p-5.rounded-2xl.border(style="border-color: var(--border-default); background: var(--bg-elevated);")
-      p.text-xs.font-bold.uppercase.tracking-widest(style="color: var(--text-muted);") Total Value
+      p.text-xs.font-bold.uppercase.tracking-widest(style="color: var(--text-muted);") {{ $t('archive.totalValue') }}
       p.text-3xl.font-black.mt-1(style="color: var(--text-primary);") {{ stats.totalValue.toLocaleString() }}
     .p-5.rounded-2xl.border(style="border-color: var(--border-default); background: var(--bg-elevated);")
-      p.text-xs.font-bold.uppercase.tracking-widest(style="color: var(--text-muted);") This Month
+      p.text-xs.font-bold.uppercase.tracking-widest(style="color: var(--text-muted);") {{ $t('archive.thisMonth') }}
       p.text-3xl.font-black.mt-1(style="color: var(--text-primary);") {{ thisMonthCount }}
 
   //- Filters
   .flex.items-center.gap-4.mb-6
     el-input(
       v-model="searchQuery"
-      placeholder="Search by title, ref, or client..."
+      :placeholder="$t('archive.searchPlaceholder')"
       prefix-icon="Search"
       size="large"
       clearable
@@ -54,12 +54,12 @@
     )
     el-select(
       v-model="typeFilter"
-      placeholder="All Document Types"
+      :placeholder="$t('archive.allDocumentTypes')"
       size="large"
       clearable
       class="w-56 !rounded-xl"
     )
-      el-option(label="All Types" value="all")
+      el-option(:label="$t('archive.allTypes')" value="all")
       el-option(
         v-for="(info, key) in documentTypeLabels"
         :key="key"
@@ -73,26 +73,26 @@
       :data="filteredDocuments"
       style="width: 100%"
       @selection-change="handleSelectionChange"
-      empty-text="No archived documents found."
+      :empty-text="$t('archive.noDocumentsFound')"
       row-class-name="hover:bg-gray-50/50 transition-colors"
     )
       el-table-column(type="selection" width="50")
-      el-table-column(label="Ref #" prop="refNumber" width="160")
+      el-table-column(:label="$t('archive.refNumber')" prop="refNumber" width="160")
         template(#default="{ row }")
           span.font-mono.font-bold.text-sm {{ row.refNumber }}
-      el-table-column(label="Type" width="180")
+      el-table-column(:label="$t('common.type')" width="180")
         template(#default="{ row }")
           .flex.items-center.gap-2
             .w-2.h-2.rounded-full(:style="{ backgroundColor: documentTypeLabels[row.documentType]?.color || '#6b7280' }")
             span.text-sm.font-semibold {{ documentTypeLabels[row.documentType]?.label || row.documentType }}
-      el-table-column(label="Title" prop="title" min-width="220")
+      el-table-column(:label="$t('common.title')" prop="title" min-width="220")
         template(#default="{ row }")
           p.text-sm.font-bold.text-gray-900.truncate {{ row.title }}
           p.text-xs.text-gray-500 {{ row.clientName }}
-      el-table-column(label="Total" width="140" align="right")
+      el-table-column(:label="$t('archive.total')" width="140" align="right")
         template(#default="{ row }")
           span.font-mono.font-bold.text-sm {{ row.total?.toLocaleString() }} {{ row.currency }}
-      el-table-column(label="Status" width="120")
+      el-table-column(:label="$t('common.status')" width="120")
         template(#default="{ row }")
           el-tag(
             :type="statusTagType(row.status)"
@@ -100,13 +100,13 @@
             round
             effect="plain"
           ) {{ row.status }}
-      el-table-column(label="Archived" width="160")
+      el-table-column(:label="$t('archive.archived')" width="160")
         template(#default="{ row }")
           span.text-xs.text-gray-500 {{ formatDate(row.archivedAt) }}
-      el-table-column(label="Actions" width="130" fixed="right")
+      el-table-column(:label="$t('common.action')" width="130" fixed="right")
         template(#default="{ row }")
           .flex.items-center.gap-1
-            el-tooltip(content="Restore" placement="top")
+            el-tooltip(:content="$t('archive.restore')" placement="top")
               el-button(
                 type="primary"
                 size="small"
@@ -115,7 +115,7 @@
                 @click="handleRestore(row)"
               )
                 Icon(name="ph:arrow-counter-clockwise" size="14")
-            el-tooltip(content="Delete Permanently" placement="top")
+            el-tooltip(:content="$t('archive.deletePermanently')" placement="top")
               el-button(
                 type="danger"
                 size="small"
@@ -128,10 +128,13 @@
 
 <script setup lang="ts">
 import { ref, computed } from 'vue';
+import { useI18n } from 'vue-i18n';
 import { useDocumentArchive, documentTypeLabels } from '~/composables/useDocumentArchive';
 import type { ArchivedDocument } from '~/composables/useDocumentArchive';
 
 definePageMeta({});
+
+const { t } = useI18n();
 
 const { filteredDocuments, stats, typeFilter, searchQuery, restoreDocument, permanentlyDelete, bulkRestore, bulkDelete, archivedDocuments } =
   useDocumentArchive();
@@ -150,9 +153,9 @@ function handleSelectionChange(rows: ArchivedDocument[]) {
 }
 
 function handleRestore(row: ArchivedDocument) {
-  ElMessageBox.confirm(`Restore "${row.title}" (${row.refNumber})?`, 'Restore Document', {
-    confirmButtonText: 'Restore',
-    cancelButtonText: 'Cancel',
+  ElMessageBox.confirm(`Restore "${row.title}" (${row.refNumber})?`, t('archive.restore'), {
+    confirmButtonText: t('archive.restore'),
+    cancelButtonText: t('common.cancel'),
     type: 'info'
   })
     .then(() => {
@@ -165,9 +168,9 @@ function handleRestore(row: ArchivedDocument) {
 }
 
 function handleDelete(row: ArchivedDocument) {
-  ElMessageBox.confirm(`Permanently delete "${row.title}" (${row.refNumber})? This action cannot be undone.`, 'Delete Permanently', {
-    confirmButtonText: 'Delete',
-    cancelButtonText: 'Cancel',
+  ElMessageBox.confirm(`Permanently delete "${row.title}" (${row.refNumber})? This action cannot be undone.`, t('archive.deletePermanently'), {
+    confirmButtonText: t('common.delete'),
+    cancelButtonText: t('common.cancel'),
     type: 'warning'
   })
     .then(() => {
@@ -182,7 +185,7 @@ function handleDelete(row: ArchivedDocument) {
 function handleBulkRestore() {
   ElMessageBox.confirm(`Restore ${selectedIds.value.length} document(s)?`, 'Bulk Restore', {
     confirmButtonText: 'Restore All',
-    cancelButtonText: 'Cancel',
+    cancelButtonText: t('common.cancel'),
     type: 'info'
   })
     .then(() => {
@@ -198,7 +201,7 @@ function handleBulkRestore() {
 function handleBulkDelete() {
   ElMessageBox.confirm(`Permanently delete ${selectedIds.value.length} document(s)? This cannot be undone.`, 'Bulk Delete', {
     confirmButtonText: 'Delete All',
-    cancelButtonText: 'Cancel',
+    cancelButtonText: t('common.cancel'),
     type: 'warning'
   })
     .then(() => {

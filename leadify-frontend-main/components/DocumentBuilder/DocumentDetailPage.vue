@@ -218,7 +218,7 @@ async function handleConvert(targetType: string) {
       'Convert Document',
       { confirmButtonText: 'Convert', type: 'info' }
     );
-    const response = await convertDocument(props.documentId, targetType);
+    const response: any = await convertDocument(props.documentId, targetType);
     if (response?.success && response.body) {
       ElMessage.success('Document converted successfully');
       const typeSlug = targetType.replace(/_/g, '-') + 's';
@@ -230,7 +230,7 @@ async function handleConvert(targetType: string) {
 async function handleGeneratePdf() {
   generatingPdf.value = true;
   try {
-    const response = await generatePdf(props.documentId);
+    const response: any = await generatePdf(props.documentId);
     if (response?.success && response.body?.pdfUrl) {
       const baseUrl = useRuntimeConfig().public.apiBase || '';
       window.open(`${baseUrl}${response.body.pdfUrl}`, '_blank');
@@ -255,7 +255,7 @@ function handleSaved(data: any) {
 }
 
 async function handleViewVersion(version: DocBuilderVersion) {
-  const response = await getVersionById(props.documentId, version.id);
+  const response: any = await getVersionById(props.documentId, version.id);
   if (response?.success && response.body?.content) {
     try {
       previewVersionContent.value = JSON.parse(response.body.content);
@@ -281,7 +281,7 @@ async function loadDocument() {
 }
 
 async function loadVersions() {
-  const response = await getVersions(props.documentId);
+  const response: any = await getVersions(props.documentId);
   if (response?.success && response.body) {
     versions.value = response.body;
   }

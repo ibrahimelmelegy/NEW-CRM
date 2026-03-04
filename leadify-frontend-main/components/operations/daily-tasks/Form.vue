@@ -98,7 +98,7 @@ function onFetchClient(id: string) {
   emit('fetchClient', id);
 }
 //  Get Users
-const usersRes = await useApiFetch('users?limit=10000');
+const usersRes: any = await useApiFetch('users?limit=10000');
 // Map Users to Select Options
 const users = usersRes?.body?.docs?.map((e: any) => ({
   label: e.name,
@@ -106,7 +106,7 @@ const users = usersRes?.body?.docs?.map((e: any) => ({
 }));
 
 //  Get Clients
-const clientsRes = await useApiFetch('client?limit=10000');
+const clientsRes: any = await useApiFetch('client?limit=10000');
 // Map Clients to Select Options
 const clients = computed(() => [
   { label: t('common.add') + ' ' + t('operations.dailyTasks.form.client'), value: 0 },

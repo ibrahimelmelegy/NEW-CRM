@@ -140,7 +140,7 @@ const handleUploadRequest = async (params: any) => {
     return;
   }
 
-  inputValue.value = result.value;
+  inputValue.value = result.value as string;
 };
 
 const dialogImageUrl = ref('');

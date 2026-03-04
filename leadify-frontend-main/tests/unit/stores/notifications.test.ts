@@ -128,8 +128,8 @@ describe('useNotificationStore', () => {
       await store.markAsRead('notif-1');
 
       expect(globalThis.useApiFetch).toHaveBeenCalledWith('notification/notif-1/read', 'PUT');
-      expect(store.notifications[0].read).toBe(true);
-      expect(store.notifications[1].read).toBe(false);
+      expect(store.notifications[0]!.read).toBe(true);
+      expect(store.notifications[1]!.read).toBe(false);
       expect(store.unreadCount).toBe(1);
     });
 
@@ -156,7 +156,7 @@ describe('useNotificationStore', () => {
 
       await store.markAsRead('notif-1');
 
-      expect(store.notifications[0].read).toBe(false);
+      expect(store.notifications[0]!.read).toBe(false);
       expect(store.unreadCount).toBe(1);
     });
   });
@@ -189,7 +189,7 @@ describe('useNotificationStore', () => {
 
       await store.markAllRead();
 
-      expect(store.notifications[0].read).toBe(false);
+      expect(store.notifications[0]!.read).toBe(false);
       expect(store.unreadCount).toBe(1);
     });
   });

@@ -7,7 +7,7 @@ div(v-loading="loading")
         NuxtLink.text-sm(to="/hr/payroll" style="color: var(--text-muted)")
           .flex.items-center.gap-1
             Icon(name="ph:arrow-left-bold" size="14")
-            span Payroll
+            span {{ $t('hr.payroll.payroll') }}
         span.text-sm(style="color: var(--text-muted)") /
         span.text-sm(style="color: var(--text-primary)") {{ periodLabel }}
       h1.text-2xl.font-bold(style="color: var(--text-primary)") {{ periodLabel }}
@@ -23,7 +23,7 @@ div(v-loading="loading")
         class="!rounded-2xl"
       )
         Icon(name="ph:calculator-bold" size="16" class="mr-1")
-        span Calculate Payslips
+        span {{ $t('hr.payroll.calculatePayslips') }}
       el-button(
         v-if="payrollRun?.status === 'CALCULATED'"
         type="success"
@@ -33,7 +33,7 @@ div(v-loading="loading")
         class="!rounded-2xl"
       )
         Icon(name="ph:check-circle-bold" size="16" class="mr-1")
-        span Approve
+        span {{ $t('hr.payroll.approve') }}
       el-button(
         v-if="payrollRun?.status === 'APPROVED'"
         type="primary"
@@ -43,7 +43,7 @@ div(v-loading="loading")
         class="!rounded-2xl"
       )
         Icon(name="ph:paper-plane-tilt-bold" size="16" class="mr-1")
-        span Process Payment
+        span {{ $t('hr.payroll.processPayment') }}
 
   //- Summary Cards
   PayrollSummary(:data="summaryData")
@@ -51,8 +51,8 @@ div(v-loading="loading")
   //- Payslips Table
   .glass-card.rounded-2xl.overflow-hidden.mt-6
     .p-4.flex.items-center.justify-between
-      h3.text-lg.font-semibold(style="color: var(--text-primary)") Payslips
-      .text-sm(style="color: var(--text-muted)") {{ payslips.length }} employee(s)
+      h3.text-lg.font-semibold(style="color: var(--text-primary)") {{ $t('hr.payroll.payslips') }}
+      .text-sm(style="color: var(--text-muted)") {{ payslips.length }} {{ $t('hr.payroll.employees') }}
     PayslipTable(:payslips="payslips")
 </template>
 
@@ -70,6 +70,7 @@ import {
 
 definePageMeta({ middleware: 'permissions' });
 const route = useRoute();
+const { t } = useI18n();
 
 const loading = ref(false);
 const calculating = ref(false);
@@ -78,11 +79,25 @@ const processing = ref(false);
 
 const payrollRun = ref<PayrollRun | null>(await fetchPayrollRunById(route.params.id as string));
 
-const months = ['', 'January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'];
+const months = computed(() => [
+  '',
+  t('hr.payroll.months.january'),
+  t('hr.payroll.months.february'),
+  t('hr.payroll.months.march'),
+  t('hr.payroll.months.april'),
+  t('hr.payroll.months.may'),
+  t('hr.payroll.months.june'),
+  t('hr.payroll.months.july'),
+  t('hr.payroll.months.august'),
+  t('hr.payroll.months.september'),
+  t('hr.payroll.months.october'),
+  t('hr.payroll.months.november'),
+  t('hr.payroll.months.december'),
+]);
 
 const periodLabel = computed(() => {
   if (!payrollRun.value) return '';
-  return `${months[payrollRun.value.month]} ${payrollRun.value.year}`;
+  return `${months.value[payrollRun.value.month]} ${payrollRun.value.year}`;
 });
 
 const statusType = computed(() => {
@@ -113,10 +128,10 @@ async function handleCalculate() {
   try {
     const res = await calculatePayslips(route.params.id as string);
     if (res.success) {
-      ElNotification({ type: 'success', title: 'Success', message: 'Payslips calculated successfully' });
+      ElNotification({ type: 'success', title: t('common.success'), message: t('hr.payroll.payslipsCalculated') });
       await refreshData();
     } else {
-      ElNotification({ type: 'error', title: 'Error', message: res.message });
+      ElNotification({ type: 'error', title: t('common.error'), message: res.message });
     }
   } finally {
     calculating.value = false;
@@ -128,10 +143,10 @@ async function handleApprove() {
   try {
     const res = await approvePayrollRun(route.params.id as string);
     if (res.success) {
-      ElNotification({ type: 'success', title: 'Success', message: 'Payroll run approved' });
+      ElNotification({ type: 'success', title: t('common.success'), message: t('hr.payroll.payrollApproved') });
       await refreshData();
     } else {
-      ElNotification({ type: 'error', title: 'Error', message: res.message });
+      ElNotification({ type: 'error', title: t('common.error'), message: res.message });
     }
   } finally {
     approving.value = false;
@@ -143,10 +158,10 @@ async function handleProcess() {
   try {
     const res = await processPayrollRun(route.params.id as string);
     if (res.success) {
-      ElNotification({ type: 'success', title: 'Success', message: 'Payroll run processed for payment' });
+      ElNotification({ type: 'success', title: t('common.success'), message: t('hr.payroll.payrollProcessed') });
       await refreshData();
     } else {
-      ElNotification({ type: 'error', title: 'Error', message: res.message });
+      ElNotification({ type: 'error', title: t('common.error'), message: res.message });
     }
   } finally {
     processing.value = false;

@@ -124,6 +124,12 @@ class ServiceService {
       }
     });
   }
+  public async deleteService(id: string): Promise<void> {
+    const service = await Service.findByPk(id);
+    if (!service) throw new BaseError(ERRORS.SERVICE_NOT_FOUND);
+    await service.destroy();
+  }
+
 }
 
 export default new ServiceService();

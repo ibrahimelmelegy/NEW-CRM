@@ -97,12 +97,12 @@
       Icon.mr-2(name="ph:eye-bold" size="20")
       | {{ $t('themeStudio.preview') }}
     .preview-row.flex.flex-wrap.gap-4
-      el-button(type="primary" :style="{ backgroundColor: themeStore.accentColor, borderColor: themeStore.accentColor }") Primary Button
-      el-button(type="default") Default Button
-      el-tag(:color="themeStore.accentColor" effect="dark") Sample Tag
+      el-button(type="primary" :style="{ backgroundColor: themeStore.accentColor, borderColor: themeStore.accentColor }") {{ $t('themeStudio.previewPrimaryButton') }}
+      el-button(type="default") {{ $t('themeStudio.previewDefaultButton') }}
+      el-tag(:color="themeStore.accentColor" effect="dark") {{ $t('themeStudio.previewSampleTag') }}
       .preview-glass-card.glass-card.p-4.rounded-lg
-        p.text-primary.text-sm Preview Glass Card
-        p.text-secondary.text-xs This shows the current glass effect
+        p.text-primary.text-sm {{ $t('themeStudio.previewGlassCard') }}
+        p.text-secondary.text-xs {{ $t('themeStudio.previewGlassEffect') }}
 </template>
 
 <script setup lang="ts">

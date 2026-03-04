@@ -128,6 +128,8 @@ import { ElNotification } from 'element-plus';
 import type { Conversation, ChatMessage } from '~/composables/useMessaging';
 import { fetchConversations, fetchMessages, sendMessage, markConversationRead } from '~/composables/useMessaging';
 
+const { t } = useI18n();
+
 definePageMeta({
   title: 'Messaging'
 });
@@ -203,7 +205,7 @@ async function handleSend() {
       }
     }
   } catch {
-    ElNotification({ type: 'error', title: 'Error', message: 'Failed to send message' });
+    ElNotification({ type: 'error', title: t('common.error'), message: t('messaging.sendFailed') });
   } finally {
     sending.value = false;
   }
@@ -265,7 +267,7 @@ function formatTime(dateStr: string): string {
   if (days === 0) {
     return date.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
   } else if (days === 1) {
-    return 'Yesterday';
+    return t('messaging.yesterday');
   } else if (days < 7) {
     return date.toLocaleDateString([], { weekday: 'short' });
   }

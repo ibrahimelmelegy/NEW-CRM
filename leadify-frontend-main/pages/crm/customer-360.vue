@@ -129,24 +129,24 @@
               el-badge(:value="contactDeals.length" :hidden="!contactDeals.length" type="primary")
           .p-6
             el-table(:data="contactDeals" v-loading="loadingDeals" stripe)
-              el-table-column(label="Deal Name" min-width="200")
+              el-table-column(:label="$t('customer360.col.dealName')" min-width="200")
                 template(#default="{ row }")
                   NuxtLink.font-semibold(:to="`/sales/deals/${row.id}`" style="color: #7849ff") {{ row.name }}
-              el-table-column(label="Stage" width="150")
+              el-table-column(:label="$t('customer360.col.stage')" width="150")
                 template(#default="{ row }")
                   el-tag(effect="dark" round size="small") {{ row.stage }}
-              el-table-column(label="Value" width="140" align="right")
+              el-table-column(:label="$t('customer360.col.value')" width="140" align="right")
                 template(#default="{ row }")
                   span.font-semibold ${{ Number(row.value || 0).toLocaleString() }}
-              el-table-column(label="Close Date" width="130")
+              el-table-column(:label="$t('customer360.col.closeDate')" width="130")
                 template(#default="{ row }")
                   span {{ row.closeDate ? new Date(row.closeDate).toLocaleDateString() : '--' }}
-              el-table-column(label="Status" width="120" align="center")
+              el-table-column(:label="$t('common.status')" width="120" align="center")
                 template(#default="{ row }")
                   el-tag(:type="row.status === 'WON' ? 'success' : row.status === 'LOST' ? 'danger' : 'info'" size="small" round) {{ row.status }}
             .text-center.py-8(v-if="!contactDeals.length && !loadingDeals")
               Icon(name="ph:handshake" size="32" style="color: var(--text-muted)")
-              p.mt-2(style="color: var(--text-muted)") No deals found
+              p.mt-2(style="color: var(--text-muted)") {{ $t('customer360.noDeals') }}
 
         //- Invoices Tab
         el-tab-pane(name="invoices")
@@ -157,24 +157,24 @@
               el-badge(:value="contactInvoices.length" :hidden="!contactInvoices.length" type="primary")
           .p-6
             el-table(:data="contactInvoices" v-loading="loadingInvoices" stripe)
-              el-table-column(label="Invoice #" width="150")
+              el-table-column(:label="$t('customer360.col.invoiceNumber')" width="150")
                 template(#default="{ row }")
                   NuxtLink.font-mono.font-semibold(:to="`/sales/invoices/${row.id}`" style="color: #7849ff") {{ row.invoiceNumber }}
-              el-table-column(label="Date" width="130")
+              el-table-column(:label="$t('common.date')" width="130")
                 template(#default="{ row }")
                   span {{ row.invoiceDate ? new Date(row.invoiceDate).toLocaleDateString() : '--' }}
-              el-table-column(label="Amount" width="140" align="right")
+              el-table-column(:label="$t('common.amount')" width="140" align="right")
                 template(#default="{ row }")
                   span.font-semibold ${{ Number(row.total || 0).toLocaleString() }}
-              el-table-column(label="Status" width="130" align="center")
+              el-table-column(:label="$t('common.status')" width="130" align="center")
                 template(#default="{ row }")
                   el-tag(:type="row.status === 'PAID' ? 'success' : row.status === 'OVERDUE' ? 'danger' : 'warning'" size="small" round effect="dark") {{ row.status }}
-              el-table-column(label="Due Date" width="130")
+              el-table-column(:label="$t('customer360.col.dueDate')" width="130")
                 template(#default="{ row }")
                   span {{ row.dueDate ? new Date(row.dueDate).toLocaleDateString() : '--' }}
             .text-center.py-8(v-if="!contactInvoices.length && !loadingInvoices")
               Icon(name="ph:receipt" size="32" style="color: var(--text-muted)")
-              p.mt-2(style="color: var(--text-muted)") No invoices found
+              p.mt-2(style="color: var(--text-muted)") {{ $t('customer360.noInvoices') }}
 
         //- Tickets Tab
         el-tab-pane(name="tickets")
@@ -185,24 +185,24 @@
               el-badge(:value="contactTickets.length" :hidden="!contactTickets.length" type="primary")
           .p-6
             el-table(:data="contactTickets" v-loading="loadingTickets" stripe)
-              el-table-column(label="Ticket #" width="130")
+              el-table-column(:label="$t('customer360.col.ticketNumber')" width="130")
                 template(#default="{ row }")
                   NuxtLink.font-mono.font-semibold(:to="`/support/tickets/${row.id}`" style="color: #7849ff") {{ row.ticketNumber }}
-              el-table-column(label="Subject" min-width="250")
+              el-table-column(:label="$t('common.subject')" min-width="250")
                 template(#default="{ row }")
                   span {{ row.subject }}
-              el-table-column(label="Status" width="140" align="center")
+              el-table-column(:label="$t('common.status')" width="140" align="center")
                 template(#default="{ row }")
                   el-tag(:type="row.status === 'RESOLVED' || row.status === 'CLOSED' ? 'success' : row.status === 'OPEN' ? 'danger' : 'warning'" size="small" round effect="dark") {{ row.status }}
-              el-table-column(label="Priority" width="110" align="center")
+              el-table-column(:label="$t('common.priority')" width="110" align="center")
                 template(#default="{ row }")
                   el-tag(:type="row.priority === 'URGENT' ? 'danger' : row.priority === 'HIGH' ? 'warning' : 'info'" size="small" round) {{ row.priority }}
-              el-table-column(label="Created" width="130")
+              el-table-column(:label="$t('customer360.col.created')" width="130")
                 template(#default="{ row }")
                   span {{ row.createdAt ? new Date(row.createdAt).toLocaleDateString() : '--' }}
             .text-center.py-8(v-if="!contactTickets.length && !loadingTickets")
               Icon(name="ph:ticket" size="32" style="color: var(--text-muted)")
-              p.mt-2(style="color: var(--text-muted)") No support tickets
+              p.mt-2(style="color: var(--text-muted)") {{ $t('customer360.noTickets') }}
 
         //- Documents Tab
         el-tab-pane(name="documents")
@@ -264,9 +264,9 @@
                   div
                     p.text-sm(style="color: var(--text-primary)") {{ note.content }}
                     .flex.items-center.gap-2.mt-2
-                      span.text-xs(style="color: var(--text-muted)") {{ note.createdBy || 'You' }}
+                      span.text-xs(style="color: var(--text-muted)") {{ note.createdBy || $t('common.you') }}
                       span.text-xs(style="color: var(--text-muted)") •
-                      span.text-xs(style="color: var(--text-muted)") {{ note.createdAt ? new Date(note.createdAt).toLocaleDateString() : 'Just now' }}
+                      span.text-xs(style="color: var(--text-muted)") {{ note.createdAt ? new Date(note.createdAt).toLocaleDateString() : $t('common.justNow') }}
             .text-center.py-8(v-if="!contactNotes.length")
               Icon(name="ph:note" size="32" style="color: var(--text-muted)")
               p.mt-2(style="color: var(--text-muted)") {{ $t('customer360.noNotes') }}
@@ -324,10 +324,10 @@ const sentimentIndicator = computed(() => {
   const openTickets = contactTickets.value.filter(t => t.status !== 'CLOSED' && t.status !== 'RESOLVED');
   const urgentTickets = openTickets.filter(t => t.priority === 'URGENT' || t.priority === 'HIGH');
 
-  if (urgentTickets.length > 0) return { label: 'Needs Attention', color: '#ef4444', icon: 'ph:warning-circle-bold' };
-  if (openTickets.length > 2) return { label: 'At Risk', color: '#f59e0b', icon: 'ph:warning-bold' };
-  if (contactDeals.value.filter(d => d.status === 'WON').length > 0) return { label: 'Positive', color: '#10b981', icon: 'ph:smiley-bold' };
-  return { label: 'Neutral', color: '#64748b', icon: 'ph:minus-circle-bold' };
+  if (urgentTickets.length > 0) return { label: t('customer360.sentimentLabels.needsAttention'), color: '#ef4444', icon: 'ph:warning-circle-bold' };
+  if (openTickets.length > 2) return { label: t('customer360.sentimentLabels.atRisk'), color: '#f59e0b', icon: 'ph:warning-bold' };
+  if (contactDeals.value.filter(d => d.status === 'WON').length > 0) return { label: t('customer360.sentimentLabels.positive'), color: '#10b981', icon: 'ph:smiley-bold' };
+  return { label: t('customer360.sentimentLabels.neutral'), color: '#64748b', icon: 'ph:minus-circle-bold' };
 });
 
 // Stats
@@ -478,7 +478,7 @@ function buildActivities() {
 
   contactDeals.value.slice(0, 5).forEach(d => {
     activities.push({
-      title: `Deal "${d.name}" - ${d.stage}`,
+      title: t('customer360.activityDeal', { name: d.name, stage: d.stage }),
       time: d.updatedAt ? new Date(d.updatedAt).toLocaleDateString() : '',
       icon: 'ph:handshake',
       color: '#7849ff'
@@ -487,17 +487,17 @@ function buildActivities() {
 
   contactInvoices.value.slice(0, 3).forEach(inv => {
     activities.push({
-      title: `Invoice ${inv.invoiceNumber} - $${Number(inv.total || 0).toLocaleString()}`,
+      title: t('customer360.activityInvoice', { number: inv.invoiceNumber, amount: Number(inv.total || 0).toLocaleString() }),
       time: inv.createdAt ? new Date(inv.createdAt).toLocaleDateString() : '',
       icon: 'ph:receipt',
       color: '#10b981'
     });
   });
 
-  contactTickets.value.slice(0, 3).forEach(t => {
+  contactTickets.value.slice(0, 3).forEach(tk => {
     activities.push({
-      title: `Ticket: ${t.subject}`,
-      time: t.createdAt ? new Date(t.createdAt).toLocaleDateString() : '',
+      title: t('customer360.activityTicket', { subject: tk.subject }),
+      time: tk.createdAt ? new Date(tk.createdAt).toLocaleDateString() : '',
       icon: 'ph:ticket',
       color: '#f59e0b'
     });
@@ -626,14 +626,14 @@ async function generateAiSummary(clientId: string) {
       // Build a local summary from loaded data
       const deals = contactDeals.value;
       const revenue = deals.filter(d => d.status === 'WON').reduce((s, d) => s + Number(d.value || 0), 0);
-      const openTickets = contactTickets.value.filter(t => t.status !== 'CLOSED' && t.status !== 'RESOLVED').length;
-      aiSummary.value = `This customer has ${deals.length} deal(s) totaling $${revenue.toLocaleString()} in won revenue. There are ${openTickets} open support ticket(s) and ${contactInvoices.value.length} invoice(s) on record.`;
+      const openTickets = contactTickets.value.filter(tk => tk.status !== 'CLOSED' && tk.status !== 'RESOLVED').length;
+      aiSummary.value = t('customer360.aiSummaryFallback', { deals: deals.length, revenue: revenue.toLocaleString(), tickets: openTickets, invoices: contactInvoices.value.length });
     }
   } catch {
     const deals = contactDeals.value;
     const revenue = deals.filter(d => d.status === 'WON').reduce((s, d) => s + Number(d.value || 0), 0);
-    const openTickets = contactTickets.value.filter(t => t.status !== 'CLOSED' && t.status !== 'RESOLVED').length;
-    aiSummary.value = `This customer has ${deals.length} deal(s) totaling $${revenue.toLocaleString()} in won revenue. There are ${openTickets} open support ticket(s) and ${contactInvoices.value.length} invoice(s) on record.`;
+    const openTickets = contactTickets.value.filter(tk => tk.status !== 'CLOSED' && tk.status !== 'RESOLVED').length;
+    aiSummary.value = t('customer360.aiSummaryFallback', { deals: deals.length, revenue: revenue.toLocaleString(), tickets: openTickets, invoices: contactInvoices.value.length });
   } finally {
     aiLoading.value = false;
   }

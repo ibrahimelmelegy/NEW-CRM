@@ -207,6 +207,19 @@ import MeetingNote from '../meetingNote/meetingNoteModel';
 import ESignature from '../eSignature/eSignatureModel';
 // WhatsApp Models
 import { WhatsAppContact, WhatsAppMessage, WhatsAppTemplate } from '../whatsapp/whatsappModel';
+// Attribution / Cart Recovery / CLV / Compliance / Segmentation / Social Listening / Usage Billing
+import Touchpoint from '../attributionModeling/touchpointModel';
+import AbandonedCart from '../cartRecovery/abandonedCartModel';
+import ClvRecord from '../clvAnalytics/clvModel';
+import ConsentRecord from '../complianceManager/consentRecordModel';
+import DataRequest from '../complianceManager/dataRequestModel';
+import Segment from '../segmentation/segmentModel';
+import SocialMention from '../socialListening/socialMentionModel';
+import UsageMeter from '../usageBilling/usageMeterModel';
+import UsageRecord from '../usageBilling/usageRecordModel';
+import AccountPlan from '../accountPlanning/accountPlanModel';
+import Stakeholder from '../accountPlanning/stakeholderModel';
+import DemandForecast from '../demandForecasting/forecastModel';
 import { registerTenantHooks } from './tenantHooks';
 
 dotenv.config();
@@ -444,7 +457,21 @@ const sequelize = new Sequelize({
     // WhatsApp
     WhatsAppContact,
     WhatsAppMessage,
-    WhatsAppTemplate
+    WhatsAppTemplate,
+    // Attribution Modeling / Cart Recovery / CLV / Compliance / Segmentation / Social Listening / Usage Billing
+    Touchpoint,
+    AbandonedCart,
+    ClvRecord,
+    ConsentRecord,
+    DataRequest,
+    Segment,
+    SocialMention,
+    UsageMeter,
+    UsageRecord,
+    // Account Planning & Demand Forecasting
+    AccountPlan,
+    Stakeholder,
+    DemandForecast
   ], // Path to your models
   logging: process.env.NODE_ENV !== 'production' ? console.log : false
 });

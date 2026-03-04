@@ -602,7 +602,7 @@ async function handleSave() {
           ElMessage.error(response?.message || 'Failed to update proposal');
         }
       } else {
-        const response = await useApiFetch('proposal', 'POST', payload);
+        const response: any = await useApiFetch('proposal', 'POST', payload);
         if (response?.success) {
           ElMessage.success('Proposal created successfully');
           emit('saved', response.body);
@@ -646,7 +646,7 @@ async function handleSave() {
           ElMessage.error(response?.message || `Failed to update ${documentTypeTitle.value.toLowerCase()}`);
         }
       } else {
-        const response = await createDocument(payload);
+        const response: any = await createDocument(payload);
         if (response?.success) {
           ElMessage.success(`${documentTypeTitle.value} created successfully`);
           emit('saved', response.body);

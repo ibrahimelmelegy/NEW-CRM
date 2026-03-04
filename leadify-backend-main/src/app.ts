@@ -9,6 +9,7 @@ import middleware from 'i18next-http-middleware';
 import { doubleCsrf } from 'csrf-csrf';
 import { generalLimiter, uploadLimiter, authLimiter, apiIntensiveLimiter, exportLimiter, webhookLimiter } from './middleware/rateLimiter';
 import { sanitizeInput } from './middleware/sanitize';
+import { authenticateUser, HasPermission } from './middleware/authMiddleware';
 
 // Validate required SECRET_KEY at startup — never fall back to a hardcoded value
 const CSRF_SECRET = process.env.SECRET_KEY;
@@ -447,8 +448,8 @@ app.use('/api/auth/forgot-password', authLimiter);
 app.use('/api/auth/reset-password', authLimiter);
 app.use('/api/auth', authRoutes);
 
-// BullMQ Queue Dashboard (Optional: Secure this middleware in production)
-app.use('/api/admin/queues', serverAdapter.getRouter());
+// BullMQ Queue Dashboard — protected with authentication and ADMIN permission
+app.use('/api/admin/queues', authenticateUser, HasPermission(['MANAGE_SETTINGS']), serverAdapter.getRouter());
 
 // Serve static files — redirect to CDN when using cloud storage
 if (process.env.STORAGE_PROVIDER === 'spaces' && process.env.DO_SPACES_CDN_URL) {

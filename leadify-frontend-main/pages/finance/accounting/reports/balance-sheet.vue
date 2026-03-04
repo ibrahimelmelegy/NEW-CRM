@@ -2,24 +2,24 @@
 div
   .flex.items-center.justify-between.mb-6
     div
-      h1.text-2xl.font-bold Balance Sheet
-      p.text-gray-500.mt-1 Assets, liabilities, and equity as of a specific date
+      h1.text-2xl.font-bold {{ $t('accounting.balanceSheet.title') }}
+      p.text-gray-500.mt-1 {{ $t('accounting.balanceSheet.subtitle') }}
     .flex.items-end.gap-3
       div
-        label.block.text-sm.font-medium.mb-1 As of Date
+        label.block.text-sm.font-medium.mb-1 {{ $t('accounting.balanceSheet.asOfDate') }}
         el-date-picker(
           v-model="asOfDate"
           type="date"
-          placeholder="Select date"
+          :placeholder="$t('accounting.balanceSheet.selectDate')"
           value-format="YYYY-MM-DD"
         )
-      el-button(type="primary" @click="loadReport") Generate
+      el-button(type="primary" @click="loadReport") {{ $t('accounting.balanceSheet.generate') }}
 
   //- Balance validation indicator
   .mb-4(v-if="report.assets.length || report.liabilities.length || report.equity.length")
     el-alert(
       :type="report.isBalanced ? 'success' : 'error'"
-      :title="report.isBalanced ? 'Balance Sheet is balanced: Total Assets = Total Liabilities + Equity' : 'Balance Sheet is NOT balanced'"
+      :title="report.isBalanced ? $t('accounting.balanceSheet.balanced') : $t('accounting.balanceSheet.notBalanced')"
       :closable="false"
       show-icon
     )
@@ -28,12 +28,12 @@ div
   el-card(shadow="never" class="mb-4")
     template(#header)
       .flex.items-center.justify-between
-        h3.text-lg.font-semibold(style="color: #409EFF") Assets
+        h3.text-lg.font-semibold(style="color: #409EFF") {{ $t('accounting.balanceSheet.assets') }}
         span.text-lg.font-bold {{ formatCurrency(report.totalAssets) }}
     el-table(:data="report.assets" v-loading="loading" class="w-full" :show-header="true")
-      el-table-column(prop="code" label="Code" width="120")
-      el-table-column(prop="name" label="Account" min-width="250")
-      el-table-column(label="Amount" width="160" align="right")
+      el-table-column(prop="code" :label="$t('accounting.balanceSheet.code')" width="120")
+      el-table-column(prop="name" :label="$t('accounting.balanceSheet.account')" min-width="250")
+      el-table-column(:label="$t('accounting.balanceSheet.amount')" width="160" align="right")
         template(#default="{ row }")
           span {{ formatCurrency(row.amount) }}
 
@@ -41,12 +41,12 @@ div
   el-card(shadow="never" class="mb-4")
     template(#header)
       .flex.items-center.justify-between
-        h3.text-lg.font-semibold(style="color: #F56C6C") Liabilities
+        h3.text-lg.font-semibold(style="color: #F56C6C") {{ $t('accounting.balanceSheet.liabilities') }}
         span.text-lg.font-bold {{ formatCurrency(report.totalLiabilities) }}
     el-table(:data="report.liabilities" v-loading="loading" class="w-full" :show-header="true")
-      el-table-column(prop="code" label="Code" width="120")
-      el-table-column(prop="name" label="Account" min-width="250")
-      el-table-column(label="Amount" width="160" align="right")
+      el-table-column(prop="code" :label="$t('accounting.balanceSheet.code')" width="120")
+      el-table-column(prop="name" :label="$t('accounting.balanceSheet.account')" min-width="250")
+      el-table-column(:label="$t('accounting.balanceSheet.amount')" width="160" align="right")
         template(#default="{ row }")
           span {{ formatCurrency(row.amount) }}
 
@@ -54,12 +54,12 @@ div
   el-card(shadow="never" class="mb-4")
     template(#header)
       .flex.items-center.justify-between
-        h3.text-lg.font-semibold(style="color: #9B59B6") Equity
+        h3.text-lg.font-semibold(style="color: #9B59B6") {{ $t('accounting.balanceSheet.equity') }}
         span.text-lg.font-bold {{ formatCurrency(report.totalEquity) }}
     el-table(:data="equityWithNetIncome" v-loading="loading" class="w-full" :show-header="true")
-      el-table-column(prop="code" label="Code" width="120")
-      el-table-column(prop="name" label="Account" min-width="250")
-      el-table-column(label="Amount" width="160" align="right")
+      el-table-column(prop="code" :label="$t('accounting.balanceSheet.code')" width="120")
+      el-table-column(prop="name" :label="$t('accounting.balanceSheet.account')" min-width="250")
+      el-table-column(:label="$t('accounting.balanceSheet.amount')" width="160" align="right")
         template(#default="{ row }")
           span(:class="{ 'font-bold text-green-600': row.isNetIncome && row.amount >= 0, 'font-bold text-red-600': row.isNetIncome && row.amount < 0 }") {{ formatCurrency(row.amount) }}
 
@@ -67,13 +67,13 @@ div
   el-card(shadow="never")
     .grid.grid-cols-3.gap-4.text-center
       div
-        .text-sm.text-gray-500 Total Assets
+        .text-sm.text-gray-500 {{ $t('accounting.totalAssets') }}
         .text-xl.font-bold(style="color: #409EFF") {{ formatCurrency(report.totalAssets) }}
       div
-        .text-sm.text-gray-500 Total Liabilities
+        .text-sm.text-gray-500 {{ $t('accounting.totalLiabilities') }}
         .text-xl.font-bold(style="color: #F56C6C") {{ formatCurrency(report.totalLiabilities) }}
       div
-        .text-sm.text-gray-500 Total Equity
+        .text-sm.text-gray-500 {{ $t('accounting.totalEquity') }}
         .text-xl.font-bold(style="color: #9B59B6") {{ formatCurrency(report.totalEquity) }}
 </template>
 
@@ -83,6 +83,7 @@ import type { BalanceSheetResult } from '~/composables/useAccounting';
 
 definePageMeta({ middleware: 'permissions' });
 
+const { t } = useI18n();
 const loading = ref(false);
 const asOfDate = ref(new Date().toISOString().substring(0, 10));
 
@@ -104,7 +105,9 @@ const equityWithNetIncome = computed(() => {
   if (report.value.netIncome !== 0) {
     items.push({
       code: '-',
-      name: report.value.netIncome >= 0 ? 'Net Income (Current Period)' : 'Net Loss (Current Period)',
+      name: report.value.netIncome >= 0
+        ? t('accounting.balanceSheet.netIncomePeriod')
+        : t('accounting.balanceSheet.netLossPeriod'),
       type: 'EQUITY',
       amount: report.value.netIncome,
       isNetIncome: true

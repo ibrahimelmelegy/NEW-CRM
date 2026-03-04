@@ -992,7 +992,7 @@ function processLogo(file: File) {
 async function loadPortalConfig() {
   loading.value = true;
   try {
-    const res = await useApiFetch('customer-portal/config', 'GET');
+    const res: any = await useApiFetch('customer-portal/config', 'GET');
     if (res.success && res.body) {
       const data = res.body;
       Object.keys(config).forEach((key) => {

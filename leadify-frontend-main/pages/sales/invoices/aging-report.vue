@@ -5,36 +5,36 @@ div
     el-button(circle plain @click="goBack")
       Icon(name="ph:arrow-left-bold" size="18")
     div
-      h2.text-2xl.font-bold(style="color: var(--text-primary)") Aging Report
-      p.text-sm(style="color: var(--text-muted)") Track outstanding invoice aging across clients
+      h2.text-2xl.font-bold(style="color: var(--text-primary)") {{ $t('invoices.agingReportTitle') }}
+      p.text-sm(style="color: var(--text-muted)") {{ $t('invoices.agingReportSubtitle') }}
 
   //- Loading
   .text-center.py-20(v-if="loading")
     el-icon.is-loading(size="40")
-    p.mt-2(style="color: var(--text-muted)") Loading aging report...
+    p.mt-2(style="color: var(--text-muted)") {{ $t('invoices.loadingAgingReport') }}
 
   template(v-else-if="report")
     //- Summary cards
     .grid.gap-4.mb-6(class="grid-cols-2 md:grid-cols-5")
       .glass-card.p-5.rounded-2xl.text-center
-        .text-xs.mb-1(style="color: var(--text-muted)") Total Outstanding
+        .text-xs.mb-1(style="color: var(--text-muted)") {{ $t('invoices.totalOutstandingLabel') }}
         .text-xl.font-bold(style="color: #7849ff") {{ fmtCurrency(report.totalOutstanding) }}
       .glass-card.p-5.rounded-2xl.text-center
-        .text-xs.mb-1(style="color: var(--text-muted)") Current (0-30)
+        .text-xs.mb-1(style="color: var(--text-muted)") {{ $t('invoices.current030') }}
         .text-xl.font-bold(style="color: #22c55e") {{ fmtCurrency(report.buckets.current.amount) }}
-        .text-xs(style="color: var(--text-muted)") {{ report.buckets.current.count }} invoices
+        .text-xs(style="color: var(--text-muted)") {{ report.buckets.current.count }} {{ $t('invoices.invoicesLabel') }}
       .glass-card.p-5.rounded-2xl.text-center
-        .text-xs.mb-1(style="color: var(--text-muted)") 30-60 Days
+        .text-xs.mb-1(style="color: var(--text-muted)") {{ $t('invoices.days3060') }}
         .text-xl.font-bold(style="color: #f59e0b") {{ fmtCurrency(report.buckets.thirtyDays.amount) }}
-        .text-xs(style="color: var(--text-muted)") {{ report.buckets.thirtyDays.count }} invoices
+        .text-xs(style="color: var(--text-muted)") {{ report.buckets.thirtyDays.count }} {{ $t('invoices.invoicesLabel') }}
       .glass-card.p-5.rounded-2xl.text-center
-        .text-xs.mb-1(style="color: var(--text-muted)") 60-90 Days
+        .text-xs.mb-1(style="color: var(--text-muted)") {{ $t('invoices.days6090') }}
         .text-xl.font-bold(style="color: #f97316") {{ fmtCurrency(report.buckets.sixtyDays.amount) }}
-        .text-xs(style="color: var(--text-muted)") {{ report.buckets.sixtyDays.count }} invoices
+        .text-xs(style="color: var(--text-muted)") {{ report.buckets.sixtyDays.count }} {{ $t('invoices.invoicesLabel') }}
       .glass-card.p-5.rounded-2xl.text-center
-        .text-xs.mb-1(style="color: var(--text-muted)") 90+ Days
+        .text-xs.mb-1(style="color: var(--text-muted)") {{ $t('invoices.days90plus') }}
         .text-xl.font-bold(style="color: #ef4444") {{ fmtCurrency(report.buckets.ninetyPlus.amount) }}
-        .text-xs(style="color: var(--text-muted)") {{ report.buckets.ninetyPlus.count }} invoices
+        .text-xs(style="color: var(--text-muted)") {{ report.buckets.ninetyPlus.count }} {{ $t('invoices.invoicesLabel') }}
 
     //- Chart
     .glass-card.p-8.rounded-3xl.mb-6
@@ -42,34 +42,34 @@ div
 
     //- Client breakdown table
     .glass-card.p-8.rounded-3xl
-      h3.text-lg.font-bold.mb-4(style="color: var(--text-primary)") Client Breakdown
+      h3.text-lg.font-bold.mb-4(style="color: var(--text-primary)") {{ $t('invoices.clientBreakdown') }}
       el-table(
         :data="report.clientBreakdown"
         border
         style="width: 100%"
         :default-sort="{ prop: 'total', order: 'descending' }"
       )
-        el-table-column(prop="clientName" label="Client / Deal" min-width="200" sortable)
-        el-table-column(label="Current (0-30)" width="150" align="right" sortable prop="current")
+        el-table-column(prop="clientName" :label="$t('invoices.clientDeal')" min-width="200" sortable)
+        el-table-column(:label="$t('invoices.current030')" width="150" align="right" sortable prop="current")
           template(#default="{ row }")
             span(style="color: #22c55e") {{ fmtCurrency(row.current) }}
-        el-table-column(label="30-60 Days" width="150" align="right" sortable prop="thirtyDays")
+        el-table-column(:label="$t('invoices.days3060')" width="150" align="right" sortable prop="thirtyDays")
           template(#default="{ row }")
             span(style="color: #f59e0b") {{ fmtCurrency(row.thirtyDays) }}
-        el-table-column(label="60-90 Days" width="150" align="right" sortable prop="sixtyDays")
+        el-table-column(:label="$t('invoices.days6090')" width="150" align="right" sortable prop="sixtyDays")
           template(#default="{ row }")
             span(style="color: #f97316") {{ fmtCurrency(row.sixtyDays) }}
-        el-table-column(label="90+ Days" width="150" align="right" sortable prop="ninetyPlus")
+        el-table-column(:label="$t('invoices.days90plus')" width="150" align="right" sortable prop="ninetyPlus")
           template(#default="{ row }")
             span(style="color: #ef4444") {{ fmtCurrency(row.ninetyPlus) }}
-        el-table-column(label="Total" width="160" align="right" sortable prop="total")
+        el-table-column(:label="$t('invoices.totalLabel')" width="160" align="right" sortable prop="total")
           template(#default="{ row }")
             span.font-bold(style="color: var(--text-primary)") {{ fmtCurrency(row.total) }}
 
   //- Empty state
   .text-center.py-20(v-else)
     Icon(name="ph:chart-bar-bold" size="48" style="color: var(--text-muted)")
-    p.mt-3(style="color: var(--text-muted)") No aging data available
+    p.mt-3(style="color: var(--text-muted)") {{ $t('invoices.noAgingData') }}
 </template>
 
 <script setup lang="ts">

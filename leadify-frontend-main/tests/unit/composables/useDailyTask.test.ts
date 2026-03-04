@@ -84,8 +84,8 @@ describe('useDailyTask', () => {
 
       expect(mockApiFetch).toHaveBeenCalledWith('daily-task');
       expect(result.tasks).toHaveLength(1);
-      expect(result.tasks[0].clientName).toBe('C1');
-      expect(result.tasks[0].salesRepresentativeName).toBe('SR1');
+      expect((result.tasks[0] as any)!.clientName).toBe('C1');
+      expect((result.tasks[0] as any)!.salesRepresentativeName).toBe('SR1');
     });
 
     it('should use limit=1000 when all=true', async () => {

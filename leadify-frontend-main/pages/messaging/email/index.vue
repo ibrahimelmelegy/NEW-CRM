@@ -3,12 +3,12 @@
   .header.mb-8
     .flex.items-center.justify-between
       div
-        h2.text-3xl.font-bold.mb-2(style="color: var(--text-primary)") Email
-        p(style="color: var(--text-muted)") View and manage your email messages
+        h2.text-3xl.font-bold.mb-2(style="color: var(--text-primary)") {{ $t('emailPage.title') }}
+        p(style="color: var(--text-muted)") {{ $t('emailPage.subtitle') }}
       .flex.items-center.gap-3
         el-button(type="primary" @click="composeVisible = true" class="!rounded-xl")
           Icon.mr-1(name="ph:pencil-bold" size="16")
-          | Compose
+          | {{ $t('emailPage.compose') }}
 
   //- Layout: Folders + Messages
   .flex.gap-6(class="flex-col lg:flex-row")
@@ -28,7 +28,7 @@
     //- Messages List
     .flex-1
       .flex.items-center.justify-between.mb-4
-        el-input(v-model="searchQuery" placeholder="Search emails..." style="max-width: 300px" clearable)
+        el-input(v-model="searchQuery" :placeholder="$t('emailPage.searchEmails')" style="max-width: 300px" clearable)
           template(#prefix)
             Icon(name="ph:magnifying-glass" size="16")
 
@@ -48,16 +48,16 @@
                 .w-8.h-8.rounded-full.flex.items-center.justify-center(style="background: rgba(120, 73, 255, 0.1)")
                   span.text-xs.font-bold(style="color: #7849ff") {{ (msg.from || '?')[0].toUpperCase() }}
                 div
-                  p.text-sm.font-semibold(:style="{ color: 'var(--text-primary)', fontWeight: msg.isRead ? '400' : '600' }") {{ msg.subject || '(No Subject)' }}
+                  p.text-sm.font-semibold(:style="{ color: 'var(--text-primary)', fontWeight: msg.isRead ? '400' : '600' }") {{ msg.subject || $t('emailPage.noSubject') }}
                   p.text-xs(style="color: var(--text-muted)") {{ msg.from }}
               span.text-xs(style="color: var(--text-muted)") {{ formatDate(msg.sentAt) }}
 
         .text-center.py-12(v-else)
           Icon(name="ph:envelope-bold" size="48" style="color: var(--text-muted)")
-          p.text-sm.mt-3(style="color: var(--text-muted)") No messages in {{ activeFolder }}
+          p.text-sm.mt-3(style="color: var(--text-muted)") {{ $t('emailPage.noMessages', { folder: activeFolder }) }}
 
   //- Message Detail Dialog
-  el-dialog(v-model="messageDialogVisible" :title="selectedMessage?.subject || 'Email'" width="700px")
+  el-dialog(v-model="messageDialogVisible" :title="selectedMessage?.subject || $t('emailPage.title')" width="700px")
     template(v-if="selectedMessage")
       .space-y-4
         .flex.items-center.justify-between
@@ -71,17 +71,17 @@
         .p-4.rounded-xl(style="background: var(--card-bg, rgba(255,255,255,0.03)); border: 1px solid var(--border-glass, rgba(255,255,255,0.08))" v-html="selectedMessage.body")
 
   //- Compose Dialog
-  el-dialog(v-model="composeVisible" title="Compose Email" width="600px")
+  el-dialog(v-model="composeVisible" :title="$t('emailPage.composeTitle')" width="600px")
     el-form(:model="composeForm" label-position="top")
-      el-form-item(label="To" required)
-        el-input(v-model="composeForm.to" placeholder="recipient@email.com")
-      el-form-item(label="Subject")
-        el-input(v-model="composeForm.subject" placeholder="Email subject")
-      el-form-item(label="Body")
-        el-input(v-model="composeForm.body" type="textarea" :rows="8" placeholder="Write your message...")
+      el-form-item(:label="$t('emailPage.composeTo')" required)
+        el-input(v-model="composeForm.to" :placeholder="$t('emailPage.recipientPlaceholder')")
+      el-form-item(:label="$t('emailPage.composeSubject')")
+        el-input(v-model="composeForm.subject" :placeholder="$t('emailPage.subjectPlaceholder')")
+      el-form-item(:label="$t('emailPage.composeBody')")
+        el-input(v-model="composeForm.body" type="textarea" :rows="8" :placeholder="$t('emailPage.bodyPlaceholder')")
     template(#footer)
-      el-button(@click="composeVisible = false") Cancel
-      el-button(type="primary" @click="handleSend" :loading="sending") Send
+      el-button(@click="composeVisible = false") {{ $t('common.cancel') }}
+      el-button(type="primary" @click="handleSend" :loading="sending") {{ $t('emailPage.send') }}
 </template>
 
 <script setup lang="ts">
@@ -92,6 +92,7 @@ import type { EmailMessage, EmailAccount } from '~/composables/useEmailIntegrati
 
 definePageMeta({ title: 'Email' });
 
+const { t } = useI18n();
 const loading = ref(true);
 const sending = ref(false);
 const activeFolder = ref('inbox');
@@ -103,12 +104,12 @@ const selectedMessage = ref<EmailMessage | null>(null);
 const messages = ref<EmailMessage[]>([]);
 const accounts = ref<EmailAccount[]>([]);
 
-const folders = [
-  { label: 'Inbox', value: 'inbox', icon: 'ph:tray-bold' },
-  { label: 'Sent', value: 'sent', icon: 'ph:paper-plane-tilt-bold' },
-  { label: 'Drafts', value: 'drafts', icon: 'ph:file-dashed-bold' },
-  { label: 'Trash', value: 'trash', icon: 'ph:trash-bold' }
-];
+const folders = computed(() => [
+  { label: t('emailPage.folders.inbox'), value: 'inbox', icon: 'ph:tray-bold' },
+  { label: t('emailPage.folders.sent'), value: 'sent', icon: 'ph:paper-plane-tilt-bold' },
+  { label: t('emailPage.folders.drafts'), value: 'drafts', icon: 'ph:file-dashed-bold' },
+  { label: t('emailPage.folders.trash'), value: 'trash', icon: 'ph:trash-bold' }
+]);
 
 const composeForm = reactive({
   to: '',
@@ -156,14 +157,14 @@ function formatDate(date: string) {
 
 async function handleSend() {
   if (!composeForm.to || !composeForm.subject) {
-    ElNotification({ type: 'warning', title: 'Warning', message: 'Please fill in To and Subject fields' });
+    ElNotification({ type: 'warning', title: t('common.warning'), message: t('emailPage.fillToAndSubject') });
     return;
   }
   sending.value = true;
   try {
     const accountId = accounts.value[0]?.id;
     if (!accountId) {
-      ElNotification({ type: 'warning', title: 'Warning', message: 'No email account connected. Go to Settings > Email Accounts.' });
+      ElNotification({ type: 'warning', title: t('common.warning'), message: t('emailPage.noAccountConnected') });
       return;
     }
     await sendEmail(accountId, {
@@ -175,9 +176,9 @@ async function handleSend() {
     composeForm.to = '';
     composeForm.subject = '';
     composeForm.body = '';
-    ElNotification({ type: 'success', title: 'Success', message: 'Email sent' });
+    ElNotification({ type: 'success', title: t('common.success'), message: t('emailPage.sent2') });
   } catch {
-    ElNotification({ type: 'error', title: 'Error', message: 'Failed to send email' });
+    ElNotification({ type: 'error', title: t('common.error'), message: t('emailPage.sendFailed') });
   } finally {
     sending.value = false;
   }

@@ -3,7 +3,7 @@
   DocumentHubWrapper(
     documentType="delivery_note"
     backUrl="/sales/delivery-notes"
-    backLabel="Back to Delivery Notes"
+    :backLabel="$t('documents.backToDeliveryNotes')"
   )
 </template>
 

@@ -32,11 +32,11 @@
 
           el-form-item(:label="$t('tasks.form.entityType')")
             el-select(v-model="form.entityType" clearable style="width: 100%" size="large" @change="form.entityId = null")
-              el-option(label="Lead" value="lead")
-              el-option(label="Deal" value="deal")
-              el-option(label="Client" value="client")
-              el-option(label="Opportunity" value="opportunity")
-              el-option(label="Project" value="project")
+              el-option(:label="$t('tasks.form.entityTypeLead')" value="lead")
+              el-option(:label="$t('tasks.form.entityTypeDeal')" value="deal")
+              el-option(:label="$t('tasks.form.entityTypeClient')" value="client")
+              el-option(:label="$t('tasks.form.entityTypeOpportunity')" value="opportunity")
+              el-option(:label="$t('tasks.form.entityTypeProject')" value="project")
 
         el-form-item(:label="$t('tasks.form.entityId')" v-if="form.entityType")
           el-input-number(v-model="form.entityId" :min="1" style="width: 100%" size="large")
@@ -78,7 +78,7 @@ const priorityOptions = [
 ];
 
 // Fetch users
-const usersResponse = await useApiFetch('users');
+const usersResponse: any = await useApiFetch('users');
 const users = ref(usersResponse?.body?.docs?.map((u: any) => ({ label: u.name, value: u.id })) || []);
 
 function goBack() {

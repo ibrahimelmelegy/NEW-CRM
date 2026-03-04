@@ -100,7 +100,7 @@ async function submitCode() {
   error.value = '';
 
   try {
-    const response = await useApiFetch('auth/login', 'POST', {
+    const response: any = await useApiFetch('auth/login', 'POST', {
       email: props.email,
       password: props.password,
       twoFactorCode: code.value

@@ -437,7 +437,7 @@ const formatDate = (d: string) => (d ? new Date(d).toLocaleDateString('en', { mo
 const fetchGoals = async () => {
   loading.value = true;
   try {
-    const res = await useApiFetch('goals?limit=100');
+    const res: any = await useApiFetch('goals?limit=100');
     if (res?.success) {
       allGoals.value = res.body?.docs || res.body || [];
     } else {

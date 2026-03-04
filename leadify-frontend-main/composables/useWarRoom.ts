@@ -34,13 +34,13 @@ export function useWarRoom() {
       const [insightsRes, leadsRes] = await Promise.all([useApiFetch('insights/leads-sales'), useApiFetch('lead?page=1&limit=1')]);
 
       if (insightsRes.success && insightsRes.body) {
-        const data = insightsRes.body;
+        const data = insightsRes.body as any;
         metrics.value = {
           totalDeals: data.totalDeals || 0,
           totalRevenue: data.totalRevenue || 0,
           wonDeals: data.closedDeals || data.wonDeals || 0,
           lostDeals: data.cancelledDeals || data.lostDeals || 0,
-          openLeads: data.totalLeads || leadsRes?.body?.count || 0,
+          openLeads: data.totalLeads || (leadsRes?.body as any)?.count || 0,
           conversionRate: data.conversionRate || 0,
           avgDealSize: data.avgDealSize || 0,
           activeProjects: data.activeProjects || 0
@@ -63,7 +63,8 @@ export function useWarRoom() {
   async function fetchTeam() {
     const res = await useApiFetch('users?page=1&limit=20');
     if (res.success && res.body) {
-      const users = Array.isArray(res.body) ? res.body : res.body.rows || [];
+      const body = res.body as any;
+      const users = Array.isArray(body) ? body : body.rows || [];
       teamMembers.value = users.map((u: any) => ({
         id: u.id,
         name: u.name,
@@ -76,7 +77,8 @@ export function useWarRoom() {
   async function fetchDealAlerts() {
     const res = await useApiFetch('activity?page=1&limit=15');
     if (res.success && res.body) {
-      const activities = Array.isArray(res.body) ? res.body : res.body.rows || [];
+      const body = res.body as any;
+      const activities = Array.isArray(body) ? body : body.rows || [];
       dealAlerts.value = activities;
     }
   }

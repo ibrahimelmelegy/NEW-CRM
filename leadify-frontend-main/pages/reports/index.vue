@@ -30,22 +30,22 @@
   //- Quick Stats Row
   .grid.grid-cols-6.gap-4.mb-8
     .relative.overflow-hidden.p-4.rounded-2xl.border(style="border-color: var(--border-default); background: var(--bg-elevated);")
-      p.text-xs.font-bold.uppercase.tracking-widest(style="color: var(--text-muted);") Documents
+      p.text-xs.font-bold.uppercase.tracking-widest(style="color: var(--text-muted);") {{ $t('reports.documents') }}
       p.text-2xl.font-black.mt-1(style="color: var(--text-primary);") {{ docStats.totalDocs }}
     .relative.overflow-hidden.p-4.rounded-2xl.border(style="border-color: var(--border-default); background: var(--bg-elevated);")
-      p.text-xs.font-bold.uppercase.tracking-widest(style="color: var(--text-muted);") Revenue
+      p.text-xs.font-bold.uppercase.tracking-widest(style="color: var(--text-muted);") {{ $t('reports.revenue') }}
       p.text-2xl.font-black.mt-1(style="color: #22c55e;") {{ docStats.totalValue.toLocaleString() }}
     .relative.overflow-hidden.p-4.rounded-2xl.border(style="border-color: var(--border-default); background: var(--bg-elevated);")
-      p.text-xs.font-bold.uppercase.tracking-widest(style="color: var(--text-muted);") Pending
+      p.text-xs.font-bold.uppercase.tracking-widest(style="color: var(--text-muted);") {{ $t('reports.pending') }}
       p.text-2xl.font-black.mt-1(style="color: #f59e0b;") {{ docStats.pendingValue.toLocaleString() }}
     .relative.overflow-hidden.p-4.rounded-2xl.border(style="border-color: var(--border-default); background: var(--bg-elevated);")
-      p.text-xs.font-bold.uppercase.tracking-widest(style="color: var(--text-muted);") Reminders
+      p.text-xs.font-bold.uppercase.tracking-widest(style="color: var(--text-muted);") {{ $t('reports.reminders') }}
       p.text-2xl.font-black.mt-1(style="color: #7c3aed;") {{ remStats.pending }}
     .relative.overflow-hidden.p-4.rounded-2xl.border(style="border-color: var(--border-default); background: var(--bg-elevated);")
-      p.text-xs.font-bold.uppercase.tracking-widest(style="color: var(--text-muted);") Overdue
+      p.text-xs.font-bold.uppercase.tracking-widest(style="color: var(--text-muted);") {{ $t('reports.overdue') }}
       p.text-2xl.font-black.mt-1(style="color: #ef4444;") {{ remStats.overdue }}
     .relative.overflow-hidden.p-4.rounded-2xl.border(style="border-color: var(--border-default); background: var(--bg-elevated);")
-      p.text-xs.font-bold.uppercase.tracking-widest(style="color: var(--text-muted);") Archived
+      p.text-xs.font-bold.uppercase.tracking-widest(style="color: var(--text-muted);") {{ $t('reports.archived') }}
       p.text-2xl.font-black.mt-1(style="color: var(--text-muted);") {{ archiveStats.total }}
 
   //- Two Column: Document Breakdown + Status Breakdown
@@ -67,7 +67,7 @@
             span.text-sm.font-mono.font-bold {{ count }}
             .h-2.w-20.rounded-full.bg-gray-100
               .h-2.rounded-full(:style="{ width: `${Math.min(100, (Number(count) / docStats.totalDocs) * 100)}%`, backgroundColor: typeColors[String(type)] || '#6b7280' }")
-        .text-center.py-6.text-sm(v-if="Object.keys(docStats.byType).length === 0" style="color: var(--text-muted);") No data
+        .text-center.py-6.text-sm(v-if="Object.keys(docStats.byType).length === 0" style="color: var(--text-muted);") {{ $t('reports.noData') }}
 
     el-card.rounded-2xl(shadow="never" style="border: 1px solid var(--border-default);")
       template(#header)
@@ -81,9 +81,9 @@
         )
           .flex.items-center.gap-3
             .w-3.h-3.rounded-full(:style="{ backgroundColor: statusColors[String(status)] || '#6b7280' }")
-            span.text-sm.font-semibold {{ status }}
+            span.text-sm.font-semibold {{ statusLabels[String(status)] || status }}
           span.text-sm.font-mono.font-bold {{ count }}
-        .text-center.py-6.text-sm(v-if="Object.keys(docStats.byStatus).length === 0" style="color: var(--text-muted);") No data
+        .text-center.py-6.text-sm(v-if="Object.keys(docStats.byStatus).length === 0" style="color: var(--text-muted);") {{ $t('reports.noData') }}
 
   //- Monthly Revenue + Activity
   .grid.grid-cols-2.gap-6.mb-8
@@ -99,7 +99,7 @@
         )
           span.text-sm.font-semibold.font-mono {{ month }}
           span.text-sm.font-bold(style="color: #22c55e;") {{ Number(revenue).toLocaleString() }} SAR
-        .text-center.py-6.text-sm(v-if="Object.keys(docStats.monthlyRevenue).length === 0" style="color: var(--text-muted);") No revenue data
+        .text-center.py-6.text-sm(v-if="Object.keys(docStats.monthlyRevenue).length === 0" style="color: var(--text-muted);") {{ $t('reports.noRevenueData') }}
 
     el-card.rounded-2xl(shadow="never" style="border: 1px solid var(--border-default);")
       template(#header)
@@ -113,7 +113,7 @@
           .flex-1.min-w-0
             p.text-xs.font-semibold.truncate(style="color: var(--text-primary);") {{ act.description }}
             p.text-xs.font-mono(style="color: var(--text-muted); opacity: 0.6;") {{ timeAgo(act.timestamp) }}
-        .text-center.py-6.text-sm(v-if="recentActivities.length === 0" style="color: var(--text-muted);") No activity logged
+        .text-center.py-6.text-sm(v-if="recentActivities.length === 0" style="color: var(--text-muted);") {{ $t('reports.noActivityLogged') }}
 
   //- Analytics Charts Section
   .grid.gap-6.mb-8(class="grid-cols-1 lg:grid-cols-2")
@@ -214,19 +214,27 @@ watch(drillDownType, (newVal) => {
   if (newVal) showDrillDown.value = true;
 });
 
-const typeLabels: Record<string, string> = {
-  invoice: 'Invoice',
-  proforma_invoice: 'Proforma Invoice',
-  purchase_order: 'Purchase Order',
-  credit_note: 'Credit Note',
-  quote: 'Quotation',
-  rfq: 'RFQ',
-  sales_order: 'Sales Order',
-  delivery_note: 'Delivery Note',
-  contract: 'Contract',
-  proposal: 'Proposal',
-  sla: 'SLA'
-};
+const typeLabels = computed<Record<string, string>>(() => ({
+  invoice: t('reports.docTypes.invoice'),
+  proforma_invoice: t('reports.docTypes.proformaInvoice'),
+  purchase_order: t('reports.docTypes.purchaseOrder'),
+  credit_note: t('reports.docTypes.creditNote'),
+  quote: t('reports.docTypes.quote'),
+  rfq: t('reports.docTypes.rfq'),
+  sales_order: t('reports.docTypes.salesOrder'),
+  delivery_note: t('reports.docTypes.deliveryNote'),
+  contract: t('reports.docTypes.contract'),
+  proposal: t('reports.docTypes.proposal'),
+  sla: t('reports.docTypes.sla')
+}));
+
+const statusLabels = computed<Record<string, string>>(() => ({
+  Draft: t('reports.statusLabels.draft'),
+  Sent: t('reports.statusLabels.sent'),
+  Approved: t('reports.statusLabels.approved'),
+  Rejected: t('reports.statusLabels.rejected'),
+  Archived: t('reports.statusLabels.archived')
+}));
 const typeColors: Record<string, string> = {
   invoice: '#7c3aed',
   proforma_invoice: '#6d28d9',
@@ -247,17 +255,17 @@ const statusColors: Record<string, string> = {
   Rejected: '#ef4444',
   Archived: '#f59e0b'
 };
-const quickLinks = [
-  { icon: 'ph:chart-bar-bold', title: 'Document Center', desc: 'All documents', url: '/documents/dashboard' },
-  { icon: 'ph:archive-bold', title: 'Archive', desc: 'Archived items', url: '/archive' },
-  { icon: 'ph:alarm-bold', title: 'Reminders', desc: 'Follow-ups', url: '/reminders' },
-  { icon: 'ph:bell-bold', title: 'Notifications', desc: 'All alerts', url: '/notifications' }
-];
+const quickLinks = computed(() => [
+  { icon: 'ph:chart-bar-bold', title: t('reports.docCenterTitle'), desc: t('reports.docCenterDesc'), url: '/documents/dashboard' },
+  { icon: 'ph:archive-bold', title: t('reports.archived'), desc: t('reports.archiveDesc'), url: '/archive' },
+  { icon: 'ph:alarm-bold', title: t('reports.reminders'), desc: t('reports.remindersDesc'), url: '/reminders' },
+  { icon: 'ph:bell-bold', title: t('navigation.notificationPrefs'), desc: t('reports.notificationsDesc'), url: '/notifications' }
+]);
 
 function timeAgo(iso: string): string {
   const diff = Date.now() - new Date(iso).getTime();
   const min = Math.floor(diff / 60000);
-  if (min < 1) return 'Just now';
+  if (min < 1) return t('reports.justNow');
   if (min < 60) return `${min}m`;
   const hr = Math.floor(min / 60);
   if (hr < 24) return `${hr}h`;
@@ -267,7 +275,7 @@ function timeAgo(iso: string): string {
 // Chart options
 const typeChartOption = computed(() => {
   const data = Object.entries(docStats.value.byType).map(([type, count]) => ({
-    name: typeLabels[type] || type,
+    name: typeLabels.value[type] || type,
     value: count,
     itemStyle: { color: typeColors[type] || '#6b7280' }
   }));
@@ -337,9 +345,9 @@ const statusChartOption = computed(() => {
 });
 
 const drillDownTitle = computed(() => {
-  if (drillDownType.value === 'type') return 'Document Type Details';
-  if (drillDownType.value === 'status') return 'Document Status Details';
-  return 'Details';
+  if (drillDownType.value === 'type') return t('reports.drillDownTypeTitle');
+  if (drillDownType.value === 'status') return t('reports.drillDownStatusTitle');
+  return t('reports.drillDownDefault');
 });
 
 const drillDownData = computed(() => {
@@ -347,7 +355,7 @@ const drillDownData = computed(() => {
 
   const source = drillDownType.value === 'type' ? docStats.value.byType : docStats.value.byStatus;
   const colors = drillDownType.value === 'type' ? typeColors : statusColors;
-  const labels = drillDownType.value === 'type' ? typeLabels : {};
+  const labels = drillDownType.value === 'type' ? typeLabels.value : statusLabels.value;
 
   const total = Object.values(source).reduce((sum, val) => sum + Number(val as number), 0);
 
@@ -380,7 +388,7 @@ async function handleExport(format: 'csv' | 'excel') {
 
     const endpoint = format === 'csv' ? 'report-builder/export-csv' : 'report-builder/export-excel';
 
-    const response = await fetch(`${useRuntimeConfig().public.apiBaseUrl}/${endpoint}`, {
+    const response = await fetch(`${useRuntimeConfig().public.API_BASE_URL}${endpoint}`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json'
@@ -401,7 +409,7 @@ async function handleExport(format: 'csv' | 'excel') {
     document.body.removeChild(a);
     window.URL.revokeObjectURL(url);
 
-    ElMessage.success(`Report exported as ${format.toUpperCase()}`);
+    ElMessage.success(t('reports.exportSuccess', { format: format.toUpperCase() }));
   } catch (error) {
     console.error('Export failed:', error);
     ElMessage.error(t('reports.exportFailed'));

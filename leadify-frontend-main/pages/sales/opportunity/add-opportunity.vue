@@ -32,10 +32,10 @@ async function submitForm(values: FormattedValues) {
       response = await createOpportunity(values);
     } else if (route.query.leadId || leadId.value) {
       response = await convertLeadToOpportunity({
-        ...values.opportunity,
+        ...(values.opportunity as any),
         ...((route.query.leadId || leadId.value) && { leadId: route.query.leadId || leadId.value }),
         ...(values.clientId && { clientId: values.clientId })
-      });
+      } as any);
     } else {
       response = await createOpportunity(values);
     }

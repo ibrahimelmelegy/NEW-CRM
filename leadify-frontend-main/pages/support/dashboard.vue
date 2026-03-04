@@ -19,7 +19,7 @@ div
       NuxtLink(to="/support/tickets/kanban")
         el-button(size="large" class="!rounded-2xl")
           Icon(name="ph:columns-bold" size="16")
-          span.ml-1 Kanban
+          span.ml-1 {{ $t('support.kanban') }}
 
   //- Advanced Filters Panel
   .glass-card.p-6.mb-6.animate-entrance(v-if="showFilters")
@@ -61,7 +61,7 @@ div
         div
           p.text-sm(style="color: var(--text-muted)") {{ $t('support.avgResolution') }}
           p.text-3xl.font-bold.mt-2(style="color: var(--text-primary)") {{ metrics?.avgResolutionTime || 0 }}
-          p.text-xs.mt-1(style="color: var(--text-muted)") hours
+          p.text-xs.mt-1(style="color: var(--text-muted)") {{ $t('support.hours') }}
         Icon(name="ph:clock-bold" size="40" style="color: #3b82f6; opacity: 0.2")
     .glass-card.p-6.animate-entrance
       .flex.items-center.justify-between
@@ -74,7 +74,7 @@ div
         div
           p.text-sm(style="color: var(--text-muted)") {{ $t('support.avgCSAT') }}
           p.text-3xl.font-bold.mt-2(style="color: var(--text-primary)") {{ metrics?.avgCSAT || 0 }}
-          p.text-xs.mt-1(style="color: var(--text-muted)") / 5
+          p.text-xs.mt-1(style="color: var(--text-muted)") {{ $t('support.outOfFive') }}
         Icon(name="ph:star-bold" size="40" style="color: #f59e0b; opacity: 0.2")
 
   //- SLA Tracking Row
@@ -127,7 +127,7 @@ div
             p.text-xs(style="color: var(--text-muted)") {{ $t('support.resolvedToday') }}
           div
             p.text-lg.font-bold(style="color: #f59e0b") {{ item.avgCSAT }}
-            p.text-xs(style="color: var(--text-muted)") CSAT
+            p.text-xs(style="color: var(--text-muted)") {{ $t('support.csatAbbrev') }}
 
   //- Charts Row
   .grid.gap-6.mt-6(class="grid-cols-1 lg:grid-cols-2")
@@ -256,7 +256,7 @@ div
 
       //- Description
       .glass-card.p-4.mb-4(v-if="selectedTicket.description")
-        p.text-sm.font-semibold.mb-2(style="color: var(--text-primary)") Description
+        p.text-sm.font-semibold.mb-2(style="color: var(--text-primary)") {{ $t('common.description') }}
         p.text-sm(style="color: var(--text-muted)") {{ selectedTicket.description }}
 
       //- Messages/Timeline
@@ -383,12 +383,12 @@ function buildDonutOption(data: Record<string, number>, colorMap: Record<string,
 
 const statusChartOption = computed(() => {
   if (!metrics.value?.ticketsByStatus) return null;
-  return buildDonutOption(metrics.value.ticketsByStatus, STATUS_COLORS, 'Tickets');
+  return buildDonutOption(metrics.value.ticketsByStatus, STATUS_COLORS, t('support.ticketsTotal'));
 });
 
 const priorityChartOption = computed(() => {
   if (!metrics.value?.ticketsByPriority) return null;
-  return buildDonutOption(metrics.value.ticketsByPriority, PRIORITY_COLORS, 'By Priority');
+  return buildDonutOption(metrics.value.ticketsByPriority, PRIORITY_COLORS, t('support.byPriority'));
 });
 
 const csatChartOption = computed(() => {
@@ -414,7 +414,7 @@ const csatChartOption = computed(() => {
 const subjectLabel = computed(() => t('support.subject'));
 const statusLabel = computed(() => t('common.status'));
 const priorityLabel = computed(() => t('support.priority'));
-const slaLabel = computed(() => 'SLA');
+const slaLabel = computed(() => t('support.sla'));
 const assigneeLabel = computed(() => t('support.assignedTo'));
 const createdLabel = computed(() => t('common.createdAt'));
 const drawerTitle = computed(() => selectedTicket.value ? `#${selectedTicket.value.ticketNumber}` : '');
@@ -432,7 +432,7 @@ const breachedLabel = computed(() => t('support.breached'));
 async function loadDashboard() {
   loading.value = true;
   try {
-    const { body, success } = await fetchSupportDashboard();
+    const { body, success }: any = await fetchSupportDashboard();
     if (success && body) {
       metrics.value = body;
     }
@@ -460,7 +460,7 @@ async function loadRecentTickets() {
       query.slaStatus = filters.value.slaStatus;
     }
 
-    const { body, success } = await fetchTickets(query);
+    const { body, success }: any = await fetchTickets(query);
     if (success && body) {
       recentTickets.value = body.docs || [];
     }
@@ -471,7 +471,7 @@ async function loadRecentTickets() {
 
 async function loadAgentWorkload() {
   try {
-    const { body, success } = await fetchAgentWorkload();
+    const { body, success }: any = await fetchAgentWorkload();
     if (success && body) {
       agentWorkload.value = body || [];
     }
@@ -600,7 +600,7 @@ async function bulkResolveTickets() {
   if (!selectedRows.value.length) return;
   try {
     await ElMessageBox.confirm(
-      `Resolve ${selectedRows.value.length} selected ticket(s)?`,
+      t('support.confirmBulkResolve', { count: selectedRows.value.length }),
       t('common.warning'),
       { type: 'warning' }
     );
@@ -619,7 +619,7 @@ async function bulkAutoAssignTickets() {
   if (!selectedRows.value.length) return;
   try {
     await ElMessageBox.confirm(
-      `Auto-assign ${selectedRows.value.length} selected ticket(s)?`,
+      t('support.confirmBulkAutoAssign', { count: selectedRows.value.length }),
       t('common.warning'),
       { type: 'warning' }
     );
@@ -637,7 +637,7 @@ async function bulkAutoAssignTickets() {
 function exportTicketsCSV() {
   const data = selectedRows.value.length ? selectedRows.value : recentTickets.value;
   if (!data.length) return;
-  const headers = ['Ticket #', 'Subject', 'Status', 'Priority', 'Assignee', 'Created'];
+  const headers = [t('support.csvTicketNumber'), t('support.csvSubject'), t('support.csvStatus'), t('support.csvPriority'), t('support.csvAssignee'), t('support.csvCreated')];
   const csv = [headers.join(','), ...data.map((row: any) =>
     [
       `"${row.ticketNumber || ''}"`,

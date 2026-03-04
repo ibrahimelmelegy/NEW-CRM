@@ -2,41 +2,41 @@
 div
   .flex.items-center.justify-between.mb-6
     div
-      h1.text-2xl.font-bold Profit & Loss Statement
-      p.text-gray-500.mt-1 Revenue and expenses for a given period
+      h1.text-2xl.font-bold {{ $t('accounting.profitLoss.title') }}
+      p.text-gray-500.mt-1 {{ $t('accounting.profitLoss.subtitle') }}
     .flex.items-end.gap-3
       div
-        label.block.text-sm.font-medium.mb-1 Period
+        label.block.text-sm.font-medium.mb-1 {{ $t('accounting.profitLoss.period') }}
         el-date-picker(
           v-model="dateRange"
           type="daterange"
-          range-separator="to"
-          start-placeholder="From"
-          end-placeholder="To"
+          :range-separator="$t('common.to')"
+          :start-placeholder="$t('common.from')"
+          :end-placeholder="$t('common.to')"
           value-format="YYYY-MM-DD"
         )
-      el-button(type="primary" @click="loadReport") Generate
+      el-button(type="primary" @click="loadReport") {{ $t('accounting.profitLoss.generate') }}
 
   //- Revenue vs Expenses Chart
   el-card(shadow="never" class="mb-4" v-if="report.totalRevenue > 0 || report.totalExpenses > 0")
-    h3.text-lg.font-semibold.mb-4 Revenue vs Expenses
+    h3.text-lg.font-semibold.mb-4 {{ $t('accounting.profitLoss.revenueVsExpenses') }}
     .flex.items-end.gap-8.justify-center(style="height: 200px")
       .flex.flex-col.items-center
         .bg-green-500.rounded-t(
           :style="{ width: '80px', height: revenueBarHeight + 'px' }"
         )
-        .mt-2.text-sm.font-medium Revenue
+        .mt-2.text-sm.font-medium {{ $t('accounting.profitLoss.revenue') }}
         .text-lg.font-bold.text-green-600 {{ formatCurrency(report.totalRevenue) }}
       .flex.flex-col.items-center
         .bg-red-400.rounded-t(
           :style="{ width: '80px', height: expenseBarHeight + 'px' }"
         )
-        .mt-2.text-sm.font-medium Expenses
+        .mt-2.text-sm.font-medium {{ $t('accounting.profitLoss.expenses') }}
         .text-lg.font-bold.text-red-500 {{ formatCurrency(report.totalExpenses) }}
 
   //- Report sections
   AccountingFinancialReport(
-    title="Profit & Loss"
+    :title="$t('accounting.profitAndLoss')"
     :sections="reportSections"
     :total="reportTotal"
   )
@@ -48,6 +48,7 @@ import type { ProfitLossResult } from '~/composables/useAccounting';
 
 definePageMeta({ middleware: 'permissions' });
 
+const { t } = useI18n();
 const loading = ref(false);
 const now = new Date();
 const firstDay = new Date(now.getFullYear(), now.getMonth(), 1).toISOString().substring(0, 10);
@@ -75,13 +76,13 @@ const expenseBarHeight = computed(() => {
 
 const reportSections = computed(() => [
   {
-    title: 'Revenue',
+    title: t('accounting.profitLoss.revenue'),
     items: report.value.revenue.map(r => ({ label: `${r.code} - ${r.name}`, amount: r.amount })),
     subtotal: report.value.totalRevenue,
     color: '#67C23A'
   },
   {
-    title: 'Expenses',
+    title: t('accounting.profitLoss.expenses'),
     items: report.value.expenses.map(e => ({ label: `${e.code} - ${e.name}`, amount: e.amount })),
     subtotal: report.value.totalExpenses,
     color: '#E6A23C'
@@ -89,7 +90,7 @@ const reportSections = computed(() => [
 ]);
 
 const reportTotal = computed(() => ({
-  label: report.value.netIncome >= 0 ? 'Net Income' : 'Net Loss',
+  label: report.value.netIncome >= 0 ? t('accounting.profitLoss.netIncome') : t('accounting.profitLoss.netLoss'),
   amount: report.value.netIncome,
   highlight: true,
   color: report.value.netIncome >= 0 ? '#67C23A' : '#F56C6C'

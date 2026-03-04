@@ -26,6 +26,10 @@ div
                         NuxtLink.flex.items-center(:to="`/operations/assets/edit/${data?.id}`")
                           Icon.text-md.mr-2(name="IconEdit" )
                           p.text-sm {{ $t('common.edit') }}
+                      el-dropdown-item(v-if="hasPermission('DELETE_ASSETS')" @click="[deleteLeadPopup=true, deleteId = data?.id]")
+                        .flex.items-center
+                          Icon.text-md.mr-2(name="ph:trash-bold" )
+                          p.text-sm {{ $t('common.delete') }}
 
   //- Mobile Card View
   .assets-mobile-view
@@ -55,10 +59,10 @@ div
             .grid.grid-cols-2.gap-2
               .flex.items-center.gap-2(v-if="asset.rentPrice")
                 Icon(name="ph:hand-coins" size="14" style="color: var(--text-muted)")
-                span.text-xs.truncate(style="color: var(--text-secondary)") Rent: {{ asset.rentPrice }}
+                span.text-xs.truncate(style="color: var(--text-secondary)") {{ $t('operations.assets.table.rentPrice') }}: {{ asset.rentPrice }}
               .flex.items-center.gap-2(v-if="asset.buyPrice")
                 Icon(name="ph:tag" size="14" style="color: var(--text-muted)")
-                span.text-xs.truncate(style="color: var(--text-secondary)") Buy: {{ asset.buyPrice }}
+                span.text-xs.truncate(style="color: var(--text-secondary)") {{ $t('operations.assets.table.buyPrice') }}: {{ asset.buyPrice }}
 
       .text-center.py-12(v-if="!mobileFilteredData.length")
         Icon(name="ph:package" size="48" style="color: var(--text-muted)")
@@ -70,7 +74,7 @@ div
     .mobile-fab(v-if="hasPermission('CREATE_ASSETS')" @click="navigateTo('/operations/assets/add-asset')")
       Icon(name="ph:plus-bold" size="24")
 
-  ActionModel(v-model="deleteLeadPopup" :loading="loadingAction" :btn-text="$t('common.moveToArchive')" :description-one="$t('common.archiveConfirmation')" icon="/images/delete-image.png" :description-two="$t('common.archiveDescription')" )
+  ActionModel(v-model="deleteLeadPopup" :loading="deleting" :description="$t('common.confirmDelete')" @confirm="confirmDelete")
 </template>
 
 <script setup lang="ts">
@@ -79,6 +83,8 @@ const router = useRouter();
 const { hasPermission } = await usePermissions();
 const loadingAction = ref(false);
 const deleteLeadPopup = ref(false);
+const deleteId = ref<string | null>(null);
+const deleting = ref(false);
 const loading = ref(false);
 
 // Export columns
@@ -143,6 +149,20 @@ const filterOptions = [
   }
 ];
 
+async function confirmDelete() {
+  if (!deleteId.value) return;
+  deleting.value = true;
+  try {
+    const response = await deleteAssetById(deleteId.value);
+    if (response?.success) {
+      table.data = table.data.filter((r: any) => r.id !== deleteId.value);
+    }
+  } finally {
+    deleting.value = false;
+    deleteLeadPopup.value = false;
+  }
+}
+
 // Mobile
 const { vibrate } = useMobile();
 const mobileSearch = ref('');
@@ -170,6 +190,7 @@ async function handleMobileRefresh() {
 function getSwipeLeftActions(_asset: any) {
   const actions = [{ name: 'view', label: useI18n().t('common.view'), icon: 'ph:eye-bold', color: '#8b5cf6' }];
   if (hasPermission('EDIT_ASSETS')) actions.push({ name: 'edit', label: useI18n().t('common.edit'), icon: 'ph:pencil-simple-bold', color: '#F59E0B' });
+  if (hasPermission('DELETE_ASSETS')) actions.push({ name: 'delete', label: useI18n().t('common.delete'), icon: 'ph:trash-bold', color: '#ef4444' });
   return actions;
 }
 
@@ -177,6 +198,7 @@ function handleSwipeAction(name: string, asset: any) {
   vibrate();
   if (name === 'view') navigateTo(`/operations/assets/${asset.id}`);
   if (name === 'edit') navigateTo(`/operations/assets/edit/${asset.id}`);
+  if (name === 'delete') { deleteId.value = asset.id; deleteLeadPopup.value = true; }
 }
 </script>
 

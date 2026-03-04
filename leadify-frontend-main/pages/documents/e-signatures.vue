@@ -248,7 +248,7 @@ function mapRecord(record: any): DisplayDocument {
 async function fetchDocuments() {
   loading.value = true;
   try {
-    const res = await useApiFetch('e-signatures?limit=100');
+    const res: any = await useApiFetch('e-signatures?limit=100');
     if (res?.success) {
       const raw = res.body?.docs || res.body || [];
       const list = Array.isArray(raw) ? raw : [];

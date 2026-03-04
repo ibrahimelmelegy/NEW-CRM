@@ -3,6 +3,7 @@ import { generateSecret, generateURI, verifySync } from 'otplib';
 import QRCode from 'qrcode';
 import User from './userModel';
 import { AuthenticatedRequest } from '../types';
+import { encrypt, decrypt } from '../utils/encryption';
 
 const APP_NAME = 'High Point Technology CRM';
 
@@ -21,8 +22,9 @@ export const setup2FA = async (req: AuthenticatedRequest, res: Response): Promis
 
     const secret = generateSecret();
 
-    // Store the secret temporarily (not yet enabled until verified)
-    await User.update({ twoFactorSecret: secret }, { where: { id: user.id } });
+    // Encrypt the secret before storing in DB
+    const encryptedSecret = encrypt(secret);
+    await User.update({ twoFactorSecret: encryptedSecret }, { where: { id: user.id } });
 
     const otpauthUrl = generateURI({
       issuer: APP_NAME,
@@ -61,7 +63,9 @@ export const verify2FA = async (req: AuthenticatedRequest, res: Response): Promi
       return;
     }
 
-    const result = verifySync({ token: code, secret: dbUser.twoFactorSecret });
+    // Decrypt the stored secret before verifying
+    const plainSecret = decrypt(dbUser.twoFactorSecret);
+    const result = verifySync({ token: code, secret: plainSecret });
 
     if (!result.valid) {
       res.status(400).json({ message: 'Invalid verification code. Please try again.' });
@@ -96,7 +100,9 @@ export const disable2FA = async (req: AuthenticatedRequest, res: Response): Prom
       return;
     }
 
-    const result = verifySync({ token: code, secret: dbUser.twoFactorSecret });
+    // Decrypt the stored secret before verifying
+    const plainSecret = decrypt(dbUser.twoFactorSecret);
+    const result = verifySync({ token: code, secret: plainSecret });
     if (!result.valid) {
       res.status(400).json({ message: 'Invalid verification code' });
       return;
@@ -125,7 +131,9 @@ export const validateLoginCode = async (req: Request, res: Response): Promise<vo
       return;
     }
 
-    const result = verifySync({ token: code, secret: user.twoFactorSecret });
+    // Decrypt the stored secret before verifying
+    const plainSecret = decrypt(user.twoFactorSecret);
+    const result = verifySync({ token: code, secret: plainSecret });
 
     if (!result.valid) {
       res.status(400).json({ message: 'Invalid 2FA code' });

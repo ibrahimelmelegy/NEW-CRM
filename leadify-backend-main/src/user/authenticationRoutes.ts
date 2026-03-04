@@ -3,6 +3,12 @@ import { loginUser, logoutUser, forgotPassword, resetPassword, checkResetToken, 
 import { authenticateUser } from '../middleware/authMiddleware';
 import { setup2FA, verify2FA, disable2FA, validateLoginCode } from './twoFactorController';
 import { authLimiter } from '../middleware/rateLimiter';
+import { validateBody } from '../middleware/validation';
+import { LoginInput } from './inputs/loginInput';
+import { ForgotPasswordInput } from './inputs/forgotPasswordInput';
+import { ResetPasswordInput } from './inputs/resetPasswordInput';
+import { RegisterInput } from './inputs/registerInput';
+import { TwoFactorCodeInput, ValidateLoginCodeInput } from './inputs/twoFactorInput';
 
 const router = express.Router();
 
@@ -37,7 +43,7 @@ const router = express.Router();
  *         description: Server error
  */
 // Authentication route for login (rate-limited to prevent brute force)
-router.post('/login', authLimiter, loginUser);
+router.post('/login', authLimiter, validateBody(LoginInput), loginUser);
 
 /**
  * @swagger
@@ -47,7 +53,7 @@ router.post('/login', authLimiter, loginUser);
  *     description: Creates a new Workspace (Tenant), an Admin Role, and the founding User. returns a token.
  *     tags: [Authentication]
  */
-router.post('/register', authLimiter, registerWorkspace);
+router.post('/register', authLimiter, validateBody(RegisterInput), registerWorkspace);
 
 /**
  * @swagger
@@ -132,7 +138,7 @@ router.post('/logout', authenticateUser, logoutUser);
  *         description: Server error
  */
 // Forgot password route (rate-limited)
-router.post('/forgot-password', authLimiter, forgotPassword);
+router.post('/forgot-password', authLimiter, validateBody(ForgotPasswordInput), forgotPassword);
 
 /**
  * @swagger
@@ -163,7 +169,7 @@ router.post('/forgot-password', authLimiter, forgotPassword);
  *         description: Server error
  */
 // Reset password route (rate-limited)
-router.post('/reset-password', authLimiter, resetPassword);
+router.post('/reset-password', authLimiter, validateBody(ResetPasswordInput), resetPassword);
 
 /**
  * @swagger
@@ -189,7 +195,7 @@ router.post('/reset-password', authLimiter, resetPassword);
  *         description: Invalid or expired token
  */
 // Route to verify the reset token (optional for frontend validation)
-router.post('/check-reset-token', checkResetToken);
+router.post('/check-reset-token', authLimiter, checkResetToken);
 
 /**
  * @swagger
@@ -235,7 +241,7 @@ router.post('/2fa/setup', authenticateUser, setup2FA);
  *       400:
  *         description: Invalid code or 2FA not set up
  */
-router.post('/2fa/verify', authenticateUser, verify2FA);
+router.post('/2fa/verify', authenticateUser, validateBody(TwoFactorCodeInput), verify2FA);
 
 /**
  * @swagger
@@ -262,7 +268,7 @@ router.post('/2fa/verify', authenticateUser, verify2FA);
  *       400:
  *         description: Invalid code or 2FA not enabled
  */
-router.post('/2fa/disable', authenticateUser, disable2FA);
+router.post('/2fa/disable', authenticateUser, validateBody(TwoFactorCodeInput), disable2FA);
 
 /**
  * @swagger
@@ -288,6 +294,6 @@ router.post('/2fa/disable', authenticateUser, disable2FA);
  *       400:
  *         description: Invalid code
  */
-router.post('/2fa/validate', authLimiter, validateLoginCode);
+router.post('/2fa/validate', authLimiter, validateBody(ValidateLoginCodeInput), validateLoginCode);
 
 export default router;

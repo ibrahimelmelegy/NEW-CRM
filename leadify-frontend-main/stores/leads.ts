@@ -55,7 +55,7 @@ export const useLeadStore = defineStore('leads', {
             ).toString()
           : '';
 
-        const response = await useApiFetch<{ docs: Lead[]; pagination: Pagination }>(
+        const response: any = await useApiFetch(
           `lead${query}`
         );
 
@@ -81,7 +81,7 @@ export const useLeadStore = defineStore('leads', {
       this.error = null;
 
       try {
-        const response = await useApiFetch<Lead>(`lead/${id}`);
+        const response: any = await useApiFetch(`lead/${id}`);
 
         if (response.success && response.body) {
           this.currentLead = response.body;
@@ -102,7 +102,7 @@ export const useLeadStore = defineStore('leads', {
       this.error = null;
 
       try {
-        const response = await useApiFetch<Lead>('lead', 'POST', data as Record<string, unknown>);
+        const response: any = await useApiFetch('lead', 'POST', data as Record<string, unknown>);
 
         if (response.success && response.body) {
           this.leads.unshift(response.body);
@@ -126,7 +126,7 @@ export const useLeadStore = defineStore('leads', {
       this.error = null;
 
       try {
-        const response = await useApiFetch<Lead>(`lead/${id}`, 'PUT', data as Record<string, unknown>);
+        const response: any = await useApiFetch(`lead/${id}`, 'PUT', data as Record<string, unknown>);
 
         if (response.success && response.body) {
           const index = this.leads.findIndex((l) => l.id === id);

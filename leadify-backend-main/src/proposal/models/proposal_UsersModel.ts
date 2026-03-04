@@ -23,10 +23,10 @@ class ProposalUsers extends Model {
 
   @ForeignKey(() => User)
   @Column({
-    type: DataType.UUID,
+    type: DataType.INTEGER,
     allowNull: false
   })
-  public userId!: string;
+  public userId!: number;
 }
 
 export default ProposalUsers;

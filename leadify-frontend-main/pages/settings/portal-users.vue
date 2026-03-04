@@ -107,9 +107,9 @@
         el-input(v-model="responseText" type="textarea" :rows="3" :placeholder="$t('portal.responsePlaceholder')")
         .flex.gap-2.mt-3
           el-select(v-model="responseStatus" class="w-40")
-            el-option(label="Resolved" value="RESOLVED")
-            el-option(label="In Progress" value="IN_PROGRESS")
-            el-option(label="Closed" value="CLOSED")
+            el-option(:label="$t('portal.statusResolved')" value="RESOLVED")
+            el-option(:label="$t('portal.statusInProgress')" value="IN_PROGRESS")
+            el-option(:label="$t('portal.statusClosed')" value="CLOSED")
           el-button(type="primary" :loading="responding" @click="submitResponse" class="!bg-[#7849ff] hover:!bg-[#6a3ae0] !border-none") {{ $t('portal.sendResponse') }}
 </template>
 

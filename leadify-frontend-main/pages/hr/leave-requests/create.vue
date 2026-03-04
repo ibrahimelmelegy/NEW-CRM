@@ -49,9 +49,9 @@ const form = reactive({
 });
 
 const rules = {
-  leaveType: [{ required: true, message: 'Leave type is required', trigger: 'change' }],
-  startDate: [{ required: true, message: 'Start date is required', trigger: 'change' }],
-  endDate: [{ required: true, message: 'End date is required', trigger: 'change' }]
+  leaveType: [{ required: true, message: () => t('hr.leave.leaveTypeRequired'), trigger: 'change' }],
+  startDate: [{ required: true, message: () => t('hr.leave.startDateRequired'), trigger: 'change' }],
+  endDate: [{ required: true, message: () => t('hr.leave.endDateRequired'), trigger: 'change' }]
 };
 
 const dayCount = computed(() => {

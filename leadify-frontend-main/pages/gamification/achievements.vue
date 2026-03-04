@@ -7,7 +7,7 @@
         Icon.text-2xl(name="ph:trophy-bold" style="color: #fbbf24")
         div
           h1.text-2xl.font-bold.text-primary {{ $t('achievements.title') }}
-          p.text-secondary.text-sm {{ unlockedCount }}/{{ totalCount }} unlocked
+          p.text-secondary.text-sm {{ $t('achievements.unlockedCount', { unlocked: unlockedCount, total: totalCount }) }}
 
   //- Level + Streak Row
   .grid.gap-6.mb-6(class="grid-cols-1 md:grid-cols-2")
@@ -28,7 +28,7 @@
   .glass-card.p-6.mb-6
     h2.text-lg.font-semibold.text-primary.mb-4
       Icon.mr-2(name="ph:medal-bold" size="20")
-      | Trophy Showcase
+      | {{ $t('achievements.trophyShowcase') }}
     .achievement-grid
       .achievement-flip-card(v-for="a in state.achievements" :key="a.id")
         .flip-inner(:class="{ unlocked: a.unlocked }")
@@ -40,13 +40,13 @@
           .flip-back
             .trophy-desc {{ a.description }}
             .trophy-date(v-if="a.unlockedAt") {{ new Date(a.unlockedAt).toLocaleDateString() }}
-            .trophy-locked(v-else) Locked
+            .trophy-locked(v-else) {{ $t('achievements.locked') }}
 
   //- Challenges
   .glass-card.p-6(v-if="challenges.length")
     h2.text-lg.font-semibold.text-primary.mb-4
       Icon.mr-2(name="ph:target-bold" size="20")
-      | Active Challenges
+      | {{ $t('achievements.activeChallenges') }}
     .grid.gap-4(class="grid-cols-1 md:grid-cols-2 lg:grid-cols-3")
       ChallengeCard(v-for="c in challenges" :key="c.id" :challenge="c")
 

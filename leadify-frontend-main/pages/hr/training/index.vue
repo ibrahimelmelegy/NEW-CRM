@@ -17,41 +17,41 @@ div
   .glass-card.p-6.rounded-2xl.mb-6(v-loading="dashboardLoading")
     .flex.items-center.gap-2.mb-4
       Icon(name="ph:chart-pie-slice-bold" size="20" style="color: #7849ff")
-      span.text-sm.font-semibold(style="color: var(--text-primary)") Training Dashboard
+      span.text-sm.font-semibold(style="color: var(--text-primary)") {{ $t('hr.training.trainingDashboard') }}
     el-row(:gutter="16")
       el-col(:xs="12" :sm="8" :md="4")
         .glass-card.p-4.rounded-xl.text-center
           .flex.items-center.justify-center.mb-2
             Icon(name="ph:graduation-cap-bold" size="20" style="color: #7849ff")
           .text-2xl.font-bold(style="color: #7849ff") {{ dashboardData.totalPrograms }}
-          .text-xs.mt-1(style="color: var(--text-muted)") Total Programs
+          .text-xs.mt-1(style="color: var(--text-muted)") {{ $t('hr.training.totalPrograms') }}
       el-col(:xs="12" :sm="8" :md="4")
         .glass-card.p-4.rounded-xl.text-center
           .flex.items-center.justify-center.mb-2
             Icon(name="ph:users-bold" size="20" style="color: #3b82f6")
           .text-2xl.font-bold(style="color: #3b82f6") {{ dashboardData.activeEnrollments }}
-          .text-xs.mt-1(style="color: var(--text-muted)") Active Enrollments
+          .text-xs.mt-1(style="color: var(--text-muted)") {{ $t('hr.training.activeEnrollments') }}
       el-col(:xs="12" :sm="8" :md="4")
         .glass-card.p-4.rounded-xl.text-center
           .flex.items-center.justify-center.mb-2
             Icon(name="ph:check-circle-bold" size="20" style="color: #22c55e")
           .text-2xl.font-bold(style="color: #22c55e") {{ dashboardData.completionRate }}%
-          .text-xs.mt-1(style="color: var(--text-muted)") Completion Rate
+          .text-xs.mt-1(style="color: var(--text-muted)") {{ $t('hr.training.completionRate') }}
       el-col(:xs="12" :sm="8" :md="4")
         .glass-card.p-4.rounded-xl.text-center
           .flex.items-center.justify-center.mb-2
             Icon(name="ph:calendar-bold" size="20" style="color: #f59e0b")
           .text-2xl.font-bold(style="color: #f59e0b") {{ dashboardData.upcoming }}
-          .text-xs.mt-1(style="color: var(--text-muted)") Upcoming Programs
+          .text-xs.mt-1(style="color: var(--text-muted)") {{ $t('hr.training.upcomingPrograms') }}
       el-col(:xs="24" :sm="8" :md="4")
         .glass-card.p-4.rounded-xl.text-center
           .flex.items-center.justify-center.mb-2
             Icon(name="ph:warning-bold" size="20" style="color: #ef4444")
           .text-2xl.font-bold(style="color: #ef4444") {{ dashboardData.overdue }}
-          .text-xs.mt-1(style="color: var(--text-muted)") Overdue
+          .text-xs.mt-1(style="color: var(--text-muted)") {{ $t('hr.training.overdue') }}
     //- Top Categories
     div(v-if="dashboardData.topCategories.length" class="mt-4")
-      .text-xs.font-semibold.mb-2(style="color: var(--text-muted)") Top Categories
+      .text-xs.font-semibold.mb-2(style="color: var(--text-muted)") {{ $t('hr.training.topCategories') }}
       .flex.flex-wrap.gap-2
         .inline-flex.items-center.gap-1.px-3.py-1.rounded-full(
           v-for="cat in dashboardData.topCategories"
@@ -86,7 +86,7 @@ div
           template(#prefix)
             Icon(name="ph:magnifying-glass" size="18" style="color: var(--text-muted)")
         el-select(v-model="programStatusFilter" :placeholder="$t('hr.training.allStatuses')" clearable size="large" style="width: 180px")
-          el-option(label="All Statuses" value="")
+          el-option(:label="$t('hr.training.allStatuses')" value="")
           el-option(v-for="s in PROGRAM_STATUSES" :key="s.value" :label="s.label" :value="s.value")
 
       //- Programs Table
@@ -102,10 +102,10 @@ div
                   p.text-xs(style="color: var(--text-muted)") {{ row.category || '' }}
           el-table-column(:label="$t('hr.training.type')" width="130")
             template(#default="{ row }")
-              el-tag(effect="plain" size="small") {{ row.type || '--' }}
+              el-tag(effect="plain" size="small") {{ row.type ? getProgramTypeLabel(row.type) : '--' }}
           el-table-column(:label="$t('hr.training.status')" width="130" align="center")
             template(#default="{ row }")
-              el-tag(:type="getProgramStatusType(row.status)" effect="dark" size="small" round) {{ row.status }}
+              el-tag(:type="getProgramStatusType(row.status)" effect="dark" size="small" round) {{ getProgramStatusLabel(row.status) }}
           el-table-column(:label="$t('hr.training.category')" min-width="140" prop="category")
             template(#default="{ row }")
               span.text-sm(style="color: var(--text-primary)") {{ row.category || '--' }}
@@ -143,7 +143,7 @@ div
           template(#prefix)
             Icon(name="ph:magnifying-glass" size="18" style="color: var(--text-muted)")
         el-select(v-model="enrollmentStatusFilter" :placeholder="$t('hr.training.allStatuses')" clearable size="large" style="width: 180px")
-          el-option(label="All Statuses" value="")
+          el-option(:label="$t('hr.training.allStatuses')" value="")
           el-option(v-for="s in ENROLLMENT_STATUSES" :key="s.value" :label="s.label" :value="s.value")
 
       //- Enrollments Table
@@ -161,7 +161,7 @@ div
               span.text-sm(style="color: var(--text-primary)") {{ row.programTitle || '--' }}
           el-table-column(:label="$t('hr.training.status')" width="140" align="center")
             template(#default="{ row }")
-              el-tag(:type="getEnrollmentStatusType(row.status)" effect="dark" size="small" round) {{ row.status }}
+              el-tag(:type="getEnrollmentStatusType(row.status)" effect="dark" size="small" round) {{ getEnrollmentStatusLabel(row.status) }}
           el-table-column(:label="$t('hr.training.progress')" width="180" align="center")
             template(#default="{ row }")
               .flex.items-center.gap-2
@@ -195,19 +195,19 @@ div
       .grid.gap-4(class="grid-cols-2")
         el-form-item(:label="$t('hr.training.type')" required)
           el-select(v-model="programForm.type" class="w-full")
-            el-option(label="Online" value="ONLINE")
-            el-option(label="Classroom" value="CLASSROOM")
-            el-option(label="Workshop" value="WORKSHOP")
-            el-option(label="Webinar" value="WEBINAR")
-            el-option(label="Self-paced" value="SELF_PACED")
-            el-option(label="Blended" value="BLENDED")
+            el-option(:label="$t('hr.training.typeOnline')" value="ONLINE")
+            el-option(:label="$t('hr.training.typeClassroom')" value="CLASSROOM")
+            el-option(:label="$t('hr.training.typeWorkshop')" value="WORKSHOP")
+            el-option(:label="$t('hr.training.typeWebinar')" value="WEBINAR")
+            el-option(:label="$t('hr.training.typeSelfPaced')" value="SELF_PACED")
+            el-option(:label="$t('hr.training.typeBlended')" value="BLENDED")
         el-form-item(:label="$t('hr.training.status')")
           el-select(v-model="programForm.status" class="w-full")
             el-option(v-for="s in PROGRAM_STATUSES" :key="s.value" :label="s.label" :value="s.value")
       .grid.gap-4(class="grid-cols-2")
         el-form-item(:label="$t('hr.training.category')")
           el-select(v-model="programForm.category" class="w-full" filterable allow-create :placeholder="$t('hr.training.selectCategory')")
-            el-option(v-for="cat in PROGRAM_CATEGORIES" :key="cat" :label="cat" :value="cat")
+            el-option(v-for="cat in PROGRAM_CATEGORIES" :key="cat.value" :label="cat.label" :value="cat.value")
         el-form-item(:label="$t('hr.training.duration')")
           el-input-number(v-model="programForm.durationHours" :min="0" :max="1000" :step="0.5" class="w-full")
       .grid.gap-4(class="grid-cols-2")
@@ -288,25 +288,55 @@ const dashboardData = reactive({
   topCategories: [] as Array<{ name: string; count: number }>
 });
 
-const PROGRAM_STATUSES = [
-  { value: 'ACTIVE', label: 'Active', type: 'success' },
-  { value: 'DRAFT', label: 'Draft', type: 'info' },
-  { value: 'ARCHIVED', label: 'Archived', type: '' },
-  { value: 'CANCELLED', label: 'Cancelled', type: 'danger' }
-];
+const PROGRAM_STATUSES = computed(() => [
+  { value: 'ACTIVE', label: t('hr.training.statusActive'), type: 'success' },
+  { value: 'DRAFT', label: t('hr.training.statusDraft'), type: 'info' },
+  { value: 'ARCHIVED', label: t('hr.training.statusArchived'), type: '' },
+  { value: 'CANCELLED', label: t('hr.training.statusCancelled'), type: 'danger' }
+]);
 
-const ENROLLMENT_STATUSES = [
-  { value: 'ENROLLED', label: 'Enrolled', type: '' },
-  { value: 'IN_PROGRESS', label: 'In Progress', type: 'warning' },
-  { value: 'COMPLETED', label: 'Completed', type: 'success' },
-  { value: 'DROPPED', label: 'Dropped', type: 'danger' },
-  { value: 'FAILED', label: 'Failed', type: 'danger' }
-];
+const ENROLLMENT_STATUSES = computed(() => [
+  { value: 'ENROLLED', label: t('hr.training.enrollmentStatusEnrolled'), type: '' },
+  { value: 'IN_PROGRESS', label: t('hr.training.enrollmentStatusInProgress'), type: 'warning' },
+  { value: 'COMPLETED', label: t('hr.training.enrollmentStatusCompleted'), type: 'success' },
+  { value: 'DROPPED', label: t('hr.training.enrollmentStatusDropped'), type: 'danger' },
+  { value: 'FAILED', label: t('hr.training.enrollmentStatusFailed'), type: 'danger' }
+]);
 
-const PROGRAM_CATEGORIES = [
-  'Sales', 'Marketing', 'Technical', 'Leadership', 'Compliance',
-  'Onboarding', 'Soft Skills', 'Safety', 'Product', 'Management'
-];
+const PROGRAM_CATEGORIES = computed(() => [
+  { value: 'Sales', label: t('hr.training.categorySales') },
+  { value: 'Marketing', label: t('hr.training.categoryMarketing') },
+  { value: 'Technical', label: t('hr.training.categoryTechnical') },
+  { value: 'Leadership', label: t('hr.training.categoryLeadership') },
+  { value: 'Compliance', label: t('hr.training.categoryCompliance') },
+  { value: 'Onboarding', label: t('hr.training.categoryOnboarding') },
+  { value: 'Soft Skills', label: t('hr.training.categorySoftSkills') },
+  { value: 'Safety', label: t('hr.training.categorySafety') },
+  { value: 'Product', label: t('hr.training.categoryProduct') },
+  { value: 'Management', label: t('hr.training.categoryManagement') }
+]);
+
+function getProgramStatusLabel(status: string): string {
+  const found = PROGRAM_STATUSES.value.find(s => s.value === status);
+  return found ? found.label : status;
+}
+
+function getProgramTypeLabel(type: string): string {
+  const map: Record<string, string> = {
+    ONLINE: t('hr.training.typeOnline'),
+    CLASSROOM: t('hr.training.typeClassroom'),
+    WORKSHOP: t('hr.training.typeWorkshop'),
+    WEBINAR: t('hr.training.typeWebinar'),
+    SELF_PACED: t('hr.training.typeSelfPaced'),
+    BLENDED: t('hr.training.typeBlended')
+  };
+  return map[type] || type;
+}
+
+function getEnrollmentStatusLabel(status: string): string {
+  const found = ENROLLMENT_STATUSES.value.find(s => s.value === status);
+  return found ? found.label : status;
+}
 
 // Forms
 const programForm = reactive({

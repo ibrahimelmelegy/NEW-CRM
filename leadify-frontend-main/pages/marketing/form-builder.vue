@@ -4,12 +4,12 @@
     <div class="glass-panel p-6 rounded-2xl">
       <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
         <div>
-          <h1 class="text-2xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-teal-400 to-emerald-400">Form Builder</h1>
-          <p class="text-slate-400 text-sm mt-1">Create public lead capture forms, surveys, and registration pages.</p>
+          <h1 class="text-2xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-teal-400 to-emerald-400">{{ $t('formBuilder.title') }}</h1>
+          <p class="text-slate-400 text-sm mt-1">{{ $t('formBuilder.subtitle') }}</p>
         </div>
-        <el-button type="primary" class="!rounded-xl" @click="createNewForm">
+        <el-button type="primary" class="!rounded-xl" :loading="loading" @click="createNewForm">
           <Icon name="ph:plus-bold" class="w-4 h-4 mr-2" />
-          New Form
+          {{ $t('formBuilder.newForm') }}
         </el-button>
       </div>
     </div>
@@ -18,27 +18,27 @@
     <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
       <div class="glass-panel p-4 rounded-xl text-center">
         <div class="text-2xl font-bold text-slate-200">{{ forms.length }}</div>
-        <div class="text-xs text-slate-500 mt-1">Total Forms</div>
+        <div class="text-xs text-slate-500 mt-1">{{ $t('formBuilder.totalForms') }}</div>
       </div>
       <div class="glass-panel p-4 rounded-xl text-center">
         <div class="text-2xl font-bold text-emerald-400">{{ totalSubmissions }}</div>
-        <div class="text-xs text-slate-500 mt-1">Total Submissions</div>
+        <div class="text-xs text-slate-500 mt-1">{{ $t('formBuilder.totalSubmissions') }}</div>
       </div>
       <div class="glass-panel p-4 rounded-xl text-center">
-        <div class="text-2xl font-bold text-blue-400">{{ activeForms }}</div>
-        <div class="text-xs text-slate-500 mt-1">Active Forms</div>
+        <div class="text-2xl font-bold text-blue-400">{{ activeForms.length }}</div>
+        <div class="text-xs text-slate-500 mt-1">{{ $t('formBuilder.activeForms') }}</div>
       </div>
       <div class="glass-panel p-4 rounded-xl text-center">
         <div class="text-2xl font-bold text-amber-400">{{ avgConversion }}%</div>
-        <div class="text-xs text-slate-500 mt-1">Avg Conversion</div>
+        <div class="text-xs text-slate-500 mt-1">{{ $t('formBuilder.avgConversion') }}</div>
       </div>
     </div>
 
     <!-- Tabs: My Forms / Templates -->
     <el-tabs v-model="activeTab" class="glass-tabs">
       <!-- My Forms -->
-      <el-tab-pane label="My Forms" name="forms">
-        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+      <el-tab-pane :label="$t('formBuilder.myForms')" name="forms">
+        <div v-loading="loading" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
           <div v-for="form in forms" :key="form.id" class="glass-panel p-5 rounded-xl hover:border-primary-500/30 transition-all group">
             <div class="flex justify-between items-start mb-3">
               <div class="flex items-center gap-3">
@@ -51,7 +51,7 @@
                 </div>
               </div>
               <el-tag :type="form.isActive ? 'success' : 'info'" effect="dark" size="small">
-                {{ form.isActive ? 'Active' : 'Draft' }}
+                {{ form.isActive ? $t('formBuilder.active') : $t('formBuilder.draft') }}
               </el-tag>
             </div>
 
@@ -59,43 +59,43 @@
             <div class="grid grid-cols-3 gap-2 my-3 py-3 border-t border-b border-slate-800/60">
               <div class="text-center">
                 <div class="text-sm font-bold text-slate-200">{{ form.submissions }}</div>
-                <div class="text-[10px] text-slate-500">Submissions</div>
+                <div class="text-[10px] text-slate-500">{{ $t('formBuilder.submissions') }}</div>
               </div>
               <div class="text-center">
                 <div class="text-sm font-bold text-slate-200">{{ form.views }}</div>
-                <div class="text-[10px] text-slate-500">Views</div>
+                <div class="text-[10px] text-slate-500">{{ $t('formBuilder.views') }}</div>
               </div>
               <div class="text-center">
                 <div class="text-sm font-bold" :class="form.conversionRate > 20 ? 'text-emerald-400' : 'text-amber-400'">
                   {{ form.conversionRate }}%
                 </div>
-                <div class="text-[10px] text-slate-500">Conversion</div>
+                <div class="text-[10px] text-slate-500">{{ $t('formBuilder.conversion') }}</div>
               </div>
             </div>
 
             <!-- Field Count & Date -->
             <div class="flex items-center justify-between text-xs text-slate-500 mb-3">
-              <span>{{ form.fieldCount }} fields</span>
-              <span>Updated {{ formatDate(form.updatedAt) }}</span>
+              <span>{{ form.fieldCount }} {{ $t('formBuilder.fields') }}</span>
+              <span>{{ $t('formBuilder.updated') }} {{ formatDate(form.updatedAt) }}</span>
             </div>
 
             <!-- Actions -->
             <div class="flex gap-2">
               <el-button size="small" text type="primary" @click="editForm(form)">
                 <Icon name="ph:pencil-simple" class="w-4 h-4 mr-1" />
-                Edit
+                {{ $t('formBuilder.edit') }}
               </el-button>
               <el-button size="small" text @click="previewForm(form)">
                 <Icon name="ph:eye" class="w-4 h-4 mr-1" />
-                Preview
+                {{ $t('formBuilder.preview') }}
               </el-button>
               <el-button size="small" text @click="copyFormLink(form)">
                 <Icon name="ph:link" class="w-4 h-4 mr-1" />
-                Link
+                {{ $t('formBuilder.link') }}
               </el-button>
               <el-button size="small" text @click="viewSubmissions(form)">
                 <Icon name="ph:list-bullets" class="w-4 h-4 mr-1" />
-                Data
+                {{ $t('formBuilder.data') }}
               </el-button>
             </div>
           </div>
@@ -103,7 +103,7 @@
       </el-tab-pane>
 
       <!-- Form Templates -->
-      <el-tab-pane label="Templates" name="templates">
+      <el-tab-pane :label="$t('formBuilder.templates')" name="templates">
         <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
           <div
             v-for="tmpl in templates"
@@ -117,7 +117,7 @@
               </div>
               <div>
                 <h4 class="text-sm font-medium text-slate-200">{{ tmpl.name }}</h4>
-                <p class="text-xs text-slate-500">{{ tmpl.fieldCount }} fields</p>
+                <p class="text-xs text-slate-500">{{ tmpl.fieldCount }} {{ $t('formBuilder.fields') }}</p>
               </div>
             </div>
             <p class="text-xs text-slate-500 mb-3">{{ tmpl.description }}</p>
@@ -129,11 +129,11 @@
       </el-tab-pane>
 
       <!-- Form Builder (inline) -->
-      <el-tab-pane label="Builder" name="builder">
+      <el-tab-pane :label="$t('formBuilder.builder')" name="builder">
         <div class="grid grid-cols-12 gap-4">
           <!-- Field Palette -->
           <div class="col-span-3 glass-panel p-4 rounded-xl">
-            <h3 class="text-sm font-medium text-slate-300 mb-3">Field Types</h3>
+            <h3 class="text-sm font-medium text-slate-300 mb-3">{{ $t('formBuilder.fieldTypes') }}</h3>
             <div class="space-y-2">
               <div
                 v-for="field in fieldTypes"
@@ -144,7 +144,7 @@
                 @click="addFieldToForm(field.type)"
               >
                 <Icon :name="field.icon" class="w-4 h-4 text-slate-400" />
-                <span class="text-xs text-slate-300">{{ field.label }}</span>
+                <span class="text-xs text-slate-300">{{ $t(field.labelKey) }}</span>
               </div>
             </div>
           </div>
@@ -152,13 +152,13 @@
           <!-- Form Canvas -->
           <div class="col-span-6 glass-panel p-6 rounded-xl min-h-[400px]" @dragover.prevent @drop="onDropField">
             <div class="text-center mb-6">
-              <h2 class="text-lg font-bold text-slate-200">{{ currentForm.title || 'Untitled Form' }}</h2>
-              <p class="text-sm text-slate-500">{{ currentForm.description || 'Add a description' }}</p>
+              <h2 class="text-lg font-bold text-slate-200">{{ currentForm.title || $t('formBuilder.untitledForm') }}</h2>
+              <p class="text-sm text-slate-500">{{ currentForm.description || $t('formBuilder.addDescription') }}</p>
             </div>
 
             <div v-if="currentForm.fields.length === 0" class="text-center py-12 border-2 border-dashed border-slate-700/50 rounded-xl">
               <Icon name="ph:cursor-click-bold" class="w-12 h-12 text-slate-600 mx-auto mb-3" />
-              <p class="text-sm text-slate-500">Click or drag fields from the palette to start building</p>
+              <p class="text-sm text-slate-500">{{ $t('formBuilder.dragDropHint') }}</p>
             </div>
 
             <div
@@ -181,41 +181,41 @@
               <el-checkbox v-else-if="field.type === 'checkbox'" disabled>{{ field.placeholder }}</el-checkbox>
               <el-rate v-else-if="field.type === 'rating'" disabled />
               <el-upload v-else-if="field.type === 'file'" drag :auto-upload="false" disabled class="w-full">
-                <p class="text-xs text-slate-500">Upload file</p>
+                <p class="text-xs text-slate-500">{{ $t('formBuilder.uploadFile') }}</p>
               </el-upload>
             </div>
           </div>
 
           <!-- Properties Panel -->
           <div class="col-span-3 glass-panel p-4 rounded-xl">
-            <h3 class="text-sm font-medium text-slate-300 mb-3">Form Settings</h3>
+            <h3 class="text-sm font-medium text-slate-300 mb-3">{{ $t('formBuilder.formSettings') }}</h3>
             <el-form label-position="top" size="small">
-              <el-form-item label="Form Title">
-                <el-input v-model="currentForm.title" placeholder="Form title" />
+              <el-form-item :label="$t('formBuilder.formTitle')">
+                <el-input v-model="currentForm.title" :placeholder="$t('formBuilder.formTitlePlaceholder')" />
               </el-form-item>
-              <el-form-item label="Description">
+              <el-form-item :label="$t('formBuilder.description')">
                 <el-input v-model="currentForm.description" type="textarea" :rows="2" />
               </el-form-item>
-              <el-form-item label="Submit Button Text">
-                <el-input v-model="currentForm.submitText" placeholder="Submit" />
+              <el-form-item :label="$t('formBuilder.submitButtonText')">
+                <el-input v-model="currentForm.submitText" :placeholder="$t('formBuilder.submitPlaceholder')" />
               </el-form-item>
-              <el-form-item label="Redirect URL">
-                <el-input v-model="currentForm.redirectUrl" placeholder="https://..." />
+              <el-form-item :label="$t('formBuilder.redirectUrl')">
+                <el-input v-model="currentForm.redirectUrl" :placeholder="$t('formBuilder.redirectPlaceholder')" />
               </el-form-item>
-              <el-form-item label="Notify on Submit">
+              <el-form-item :label="$t('formBuilder.notifyOnSubmit')">
                 <el-switch v-model="currentForm.notifyOnSubmit" />
               </el-form-item>
-              <el-form-item label="Map to Entity">
+              <el-form-item :label="$t('formBuilder.mapToEntity')">
                 <el-select v-model="currentForm.mapToEntity" class="w-full">
-                  <el-option label="Lead" value="lead" />
-                  <el-option label="Contact" value="contact" />
-                  <el-option label="Support Ticket" value="ticket" />
+                  <el-option :label="$t('formBuilder.entityLead')" value="lead" />
+                  <el-option :label="$t('formBuilder.entityContact')" value="contact" />
+                  <el-option :label="$t('formBuilder.entityTicket')" value="ticket" />
                 </el-select>
               </el-form-item>
             </el-form>
-            <el-button type="primary" class="w-full mt-4" @click="saveForm">
+            <el-button type="primary" class="w-full mt-4" :loading="saving" @click="saveForm">
               <Icon name="ph:floppy-disk-bold" class="w-4 h-4 mr-2" />
-              Save Form
+              {{ $t('formBuilder.saveForm') }}
             </el-button>
           </div>
         </div>
@@ -225,8 +225,9 @@
 </template>
 
 <script setup lang="ts">
-import { ref, computed } from 'vue';
+import { ref, onMounted } from 'vue';
 import { ElMessage } from 'element-plus';
+import { useFormBuilder, type FormBuilderField, type FormBuilderDef } from '~/composables/formBuilder';
 
 definePageMeta({
   layout: 'default',
@@ -235,15 +236,15 @@ definePageMeta({
 
 const { t } = useI18n();
 
+const { forms, loading, totalSubmissions, activeForms, avgConversion, fetchForms, createForm, updateForm } = useFormBuilder();
+
 const activeTab = ref('forms');
 let dragField = '';
+const saving = ref(false);
 
-interface FormField {
-  type: string;
-  label: string;
-  placeholder: string;
-  required: boolean;
-}
+// ID of the form currently being edited (null = create mode)
+const editingFormId = ref<number | null>(null);
+
 interface FormDef {
   title: string;
   description: string;
@@ -251,211 +252,135 @@ interface FormDef {
   redirectUrl: string;
   notifyOnSubmit: boolean;
   mapToEntity: string;
-  fields: FormField[];
+  fields: FormBuilderField[];
 }
 
 const currentForm = ref<FormDef>({
-  title: 'Contact Us',
-  description: 'Get in touch with our team',
-  submitText: 'Submit',
+  title: t('formBuilder.untitledForm'),
+  description: '',
+  submitText: t('formBuilder.submitPlaceholder'),
   redirectUrl: '',
   notifyOnSubmit: true,
   mapToEntity: 'lead',
   fields: []
 });
 
-const forms = ref([
-  {
-    id: 1,
-    name: 'Website Contact Form',
-    type: 'Lead Capture',
-    isActive: true,
-    submissions: 342,
-    views: 1820,
-    conversionRate: 18.8,
-    fieldCount: 5,
-    updatedAt: '2026-02-18'
-  },
-  {
-    id: 2,
-    name: 'Event Registration',
-    type: 'Registration',
-    isActive: true,
-    submissions: 128,
-    views: 450,
-    conversionRate: 28.4,
-    fieldCount: 8,
-    updatedAt: '2026-02-15'
-  },
-  {
-    id: 3,
-    name: 'Product Feedback Survey',
-    type: 'Survey',
-    isActive: false,
-    submissions: 89,
-    views: 210,
-    conversionRate: 42.4,
-    fieldCount: 12,
-    updatedAt: '2026-02-10'
-  },
-  {
-    id: 4,
-    name: 'Newsletter Signup',
-    type: 'Lead Capture',
-    isActive: true,
-    submissions: 567,
-    views: 3200,
-    conversionRate: 17.7,
-    fieldCount: 3,
-    updatedAt: '2026-02-19'
-  },
-  {
-    id: 5,
-    name: 'Demo Request',
-    type: 'Lead Capture',
-    isActive: true,
-    submissions: 45,
-    views: 320,
-    conversionRate: 14.1,
-    fieldCount: 7,
-    updatedAt: '2026-02-17'
-  },
-  {
-    id: 6,
-    name: 'Partner Application',
-    type: 'Application',
-    isActive: false,
-    submissions: 23,
-    views: 150,
-    conversionRate: 15.3,
-    fieldCount: 15,
-    updatedAt: '2026-01-20'
-  }
-]);
-
 const templates = ref([
   {
     id: 1,
-    name: 'Contact Us',
+    name: t('formBuilder.templateContactUs'),
     icon: 'ph:envelope-simple-bold',
     gradient: 'from-blue-500 to-blue-600',
     fieldCount: 5,
-    description: 'Standard contact form with name, email, phone, subject, message.',
-    tags: ['Lead Capture', 'Basic']
+    description: t('formBuilder.templateContactUsDesc'),
+    tags: [t('formBuilder.tagLeadCapture'), t('formBuilder.tagBasic')]
   },
   {
     id: 2,
-    name: 'Event Registration',
+    name: t('formBuilder.templateEventReg'),
     icon: 'ph:ticket-bold',
     gradient: 'from-purple-500 to-purple-600',
     fieldCount: 8,
-    description: 'Event signup with attendee details, dietary preferences, session selection.',
-    tags: ['Events', 'Registration']
+    description: t('formBuilder.templateEventRegDesc'),
+    tags: [t('formBuilder.tagEvents'), t('formBuilder.tagRegistration')]
   },
   {
     id: 3,
-    name: 'Customer Feedback',
+    name: t('formBuilder.templateFeedback'),
     icon: 'ph:star-bold',
     gradient: 'from-amber-500 to-amber-600',
     fieldCount: 10,
-    description: 'NPS-style feedback form with rating scales and open-ended questions.',
-    tags: ['Survey', 'Feedback']
+    description: t('formBuilder.templateFeedbackDesc'),
+    tags: [t('formBuilder.tagSurvey'), t('formBuilder.tagFeedback')]
   },
   {
     id: 4,
-    name: 'Job Application',
+    name: t('formBuilder.templateJobApp'),
     icon: 'ph:briefcase-bold',
     gradient: 'from-emerald-500 to-emerald-600',
     fieldCount: 12,
-    description: 'Job application form with resume upload, experience, education.',
-    tags: ['HR', 'Application']
+    description: t('formBuilder.templateJobAppDesc'),
+    tags: [t('formBuilder.tagHR'), t('formBuilder.tagApplication')]
   },
   {
     id: 5,
-    name: 'Product Demo Request',
+    name: t('formBuilder.templateDemoReq'),
     icon: 'ph:presentation-chart-bold',
     gradient: 'from-rose-500 to-rose-600',
     fieldCount: 7,
-    description: 'Demo request with company info, use case, and preferred time.',
-    tags: ['Sales', 'Demo']
+    description: t('formBuilder.templateDemoReqDesc'),
+    tags: [t('formBuilder.tagSales'), t('formBuilder.tagDemo')]
   },
   {
     id: 6,
-    name: 'Newsletter Signup',
+    name: t('formBuilder.templateNewsletter'),
     icon: 'ph:newspaper-bold',
     gradient: 'from-teal-500 to-teal-600',
     fieldCount: 3,
-    description: 'Simple email capture with optional name and interests.',
-    tags: ['Marketing', 'Simple']
+    description: t('formBuilder.templateNewsletterDesc'),
+    tags: [t('formBuilder.tagMarketing'), t('formBuilder.tagSimple')]
   }
 ]);
 
 const fieldTypes = [
-  { type: 'text', label: 'Text Input', icon: 'ph:textbox-bold' },
-  { type: 'email', label: 'Email', icon: 'ph:envelope-simple-bold' },
-  { type: 'phone', label: 'Phone', icon: 'ph:phone-bold' },
-  { type: 'textarea', label: 'Text Area', icon: 'ph:align-left-bold' },
-  { type: 'dropdown', label: 'Dropdown', icon: 'ph:caret-down-bold' },
-  { type: 'checkbox', label: 'Checkbox', icon: 'ph:check-square-bold' },
-  { type: 'date', label: 'Date Picker', icon: 'ph:calendar-bold' },
-  { type: 'rating', label: 'Star Rating', icon: 'ph:star-bold' },
-  { type: 'file', label: 'File Upload', icon: 'ph:upload-bold' }
+  { type: 'text', labelKey: 'formBuilder.fieldText', icon: 'ph:textbox-bold' },
+  { type: 'email', labelKey: 'formBuilder.fieldEmail', icon: 'ph:envelope-simple-bold' },
+  { type: 'phone', labelKey: 'formBuilder.fieldPhone', icon: 'ph:phone-bold' },
+  { type: 'textarea', labelKey: 'formBuilder.fieldTextarea', icon: 'ph:align-left-bold' },
+  { type: 'dropdown', labelKey: 'formBuilder.fieldDropdown', icon: 'ph:caret-down-bold' },
+  { type: 'checkbox', labelKey: 'formBuilder.fieldCheckbox', icon: 'ph:check-square-bold' },
+  { type: 'date', labelKey: 'formBuilder.fieldDate', icon: 'ph:calendar-bold' },
+  { type: 'rating', labelKey: 'formBuilder.fieldRating', icon: 'ph:star-bold' },
+  { type: 'file', labelKey: 'formBuilder.fieldFile', icon: 'ph:upload-bold' }
 ];
 
-const totalSubmissions = computed(() => forms.value.reduce((s, f) => s + f.submissions, 0));
-const activeForms = computed(() => forms.value.filter(f => f.isActive).length);
-const avgConversion = computed(() => {
-  const active = forms.value.filter(f => f.isActive);
-  if (!active.length) return 0;
-  return (active.reduce((s, f) => s + f.conversionRate, 0) / active.length).toFixed(1);
-});
+const formatDate = (d?: string) => (d ? new Date(d).toLocaleDateString('en', { month: 'short', day: 'numeric' }) : '-');
 
-const formatDate = (d: string) => (d ? new Date(d).toLocaleDateString('en', { month: 'short', day: 'numeric' }) : '-');
-
-const getFormTypeBg = (type: string) => {
+const getFormTypeBg = (type?: string) => {
   const m: Record<string, string> = {
     'Lead Capture': 'bg-blue-500/10',
     Registration: 'bg-purple-500/10',
     Survey: 'bg-amber-500/10',
     Application: 'bg-emerald-500/10'
   };
-  return m[type] || 'bg-slate-500/10';
+  return m[type || ''] || 'bg-slate-500/10';
 };
-const getFormTypeIcon = (type: string) => {
+const getFormTypeIcon = (type?: string) => {
   const m: Record<string, string> = {
     'Lead Capture': 'ph:magnet-bold',
     Registration: 'ph:ticket-bold',
     Survey: 'ph:chart-bar-bold',
     Application: 'ph:clipboard-text-bold'
   };
-  return m[type] || 'ph:file-bold';
+  return m[type || ''] || 'ph:file-bold';
 };
-const getFormTypeColor = (type: string) => {
+const getFormTypeColor = (type?: string) => {
   const m: Record<string, string> = {
     'Lead Capture': 'text-blue-400',
     Registration: 'text-purple-400',
     Survey: 'text-amber-400',
     Application: 'text-emerald-400'
   };
-  return m[type] || 'text-slate-400';
+  return m[type || ''] || 'text-slate-400';
 };
 
 const addFieldToForm = (type: string) => {
-  const labels: Record<string, string> = {
-    text: 'Text Field',
-    email: 'Email Address',
-    phone: 'Phone Number',
-    textarea: 'Message',
-    dropdown: 'Select Option',
-    checkbox: 'Agreement',
-    date: 'Date',
-    rating: 'Rating',
-    file: 'File Upload'
+  const labelKeys: Record<string, string> = {
+    text: 'formBuilder.fieldText',
+    email: 'formBuilder.fieldEmail',
+    phone: 'formBuilder.fieldPhone',
+    textarea: 'formBuilder.fieldTextarea',
+    dropdown: 'formBuilder.fieldDropdown',
+    checkbox: 'formBuilder.fieldCheckbox',
+    date: 'formBuilder.fieldDate',
+    rating: 'formBuilder.fieldRating',
+    file: 'formBuilder.fieldFile'
   };
+  const label = t(labelKeys[type] || 'formBuilder.fieldText');
   currentForm.value.fields.push({
     type,
-    label: labels[type] || 'New Field',
-    placeholder: `Enter ${labels[type]?.toLowerCase() || 'value'}`,
+    label,
+    placeholder: label,
     required: false
   });
   if (activeTab.value !== 'builder') activeTab.value = 'builder';
@@ -470,27 +395,84 @@ const onDropField = () => {
 
 const removeField = (idx: number) => currentForm.value.fields.splice(idx, 1);
 
+const resetCurrentForm = () => {
+  editingFormId.value = null;
+  currentForm.value = {
+    title: '',
+    description: '',
+    submitText: t('formBuilder.submitPlaceholder'),
+    redirectUrl: '',
+    notifyOnSubmit: true,
+    mapToEntity: 'lead',
+    fields: []
+  };
+};
+
 const createNewForm = () => {
-  currentForm.value = { title: '', description: '', submitText: 'Submit', redirectUrl: '', notifyOnSubmit: true, mapToEntity: 'lead', fields: [] };
+  resetCurrentForm();
   activeTab.value = 'builder';
 };
 
 const editForm = (form: any) => {
+  editingFormId.value = form.id;
+  currentForm.value = {
+    title: form.title || form.name || '',
+    description: form.description || '',
+    submitText: form.submitText || t('formBuilder.submitPlaceholder'),
+    redirectUrl: form.redirectUrl || '',
+    notifyOnSubmit: form.notifyOnSubmit ?? true,
+    mapToEntity: form.mapToEntity || 'lead',
+    fields: form.fields ? [...form.fields] : []
+  };
   activeTab.value = 'builder';
-  ElMessage.info(`Editing: ${form.name}`);
+  ElMessage.info(`${t('formBuilder.editingForm')}: ${form.name}`);
 };
-const previewForm = (form: any) => ElMessage.info(`Preview: ${form.name}`);
+
+const previewForm = (form: any) => ElMessage.info(`${t('formBuilder.previewForm')}: ${form.name}`);
+
 const copyFormLink = (form: any) => {
   navigator.clipboard?.writeText(`https://forms.example.com/${form.id}`);
   ElMessage.success(t('common.copied'));
 };
-const viewSubmissions = (form: any) => ElMessage.info(`${form.submissions} submissions for ${form.name}`);
+
+const viewSubmissions = (form: any) =>
+  ElMessage.info(`${form.submissions} ${t('formBuilder.submissionsFor')} ${form.name}`);
+
 const useTemplate = (tmpl: any) => {
-  ElMessage.info(`Using template: ${tmpl.name}`);
+  ElMessage.info(`${t('formBuilder.editingForm')}: ${tmpl.name}`);
+  resetCurrentForm();
+  currentForm.value.title = tmpl.name;
+  currentForm.value.description = tmpl.description;
   activeTab.value = 'builder';
 };
-const saveForm = () => {
-  ElMessage.success(t('common.saved'));
-  activeTab.value = 'forms';
+
+const saveForm = async () => {
+  saving.value = true;
+  try {
+    const payload: FormBuilderDef = { ...currentForm.value };
+    let ok: boolean;
+    if (editingFormId.value !== null) {
+      ok = await updateForm(editingFormId.value, payload as unknown as Record<string, unknown>);
+    } else {
+      ok = await createForm(payload);
+    }
+    if (ok) {
+      ElMessage.success(t('formBuilder.saveSuccess'));
+      resetCurrentForm();
+      activeTab.value = 'forms';
+    } else {
+      ElMessage.error(t('formBuilder.saveError'));
+    }
+  } finally {
+    saving.value = false;
+  }
 };
+
+onMounted(async () => {
+  try {
+    await fetchForms();
+  } catch {
+    ElMessage.error(t('formBuilder.loadError'));
+  }
+});
 </script>

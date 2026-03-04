@@ -38,7 +38,7 @@ div
 
   //- Desktop Table
   .opp-desktop-view
-    AppTable(v-slot="{data}" v-if="!loadingAction" :filterOptions="filterOptions" :columns="table.columns" position="opportunity" :pageInfo="response.pagination" :data="table.data" :sortOptions="table.sort" @handleRowClick="handleRowClick" :searchPlaceholder="$t('opportunities.title')" emptyIcon="ph:target-bold" emptyMessage="No opportunities yet" emptyDescription="Create an opportunity to track your sales pipeline" emptyActionHref="/sales/opportunity/create" emptyActionLabel="Create Opportunity" )
+    AppTable(v-slot="{data}" v-if="!loadingAction" :filterOptions="filterOptions" :columns="table.columns" position="opportunity" :pageInfo="response.pagination" :data="table.data" :sortOptions="table.sort" @handleRowClick="handleRowClick" :searchPlaceholder="$t('opportunities.title')" emptyIcon="ph:target-bold" :emptyMessage="$t('opportunities.emptyMessage')" :emptyDescription="$t('opportunities.emptyDescription')" emptyActionHref="/sales/opportunity/create" :emptyActionLabel="$t('opportunities.newOpp')" )
       .flex.items-center.py-2(@click.stop)
           el-dropdown(class="outline-0" trigger="click")
               span(class="el-dropdown-link")
@@ -176,18 +176,19 @@ async function handleBulkDelete() {
   if (!selectedRows.value.length) return;
   try {
     await ElMessageBox.confirm(
-      `Are you sure you want to delete ${selectedRows.value.length} opportunity(ies)?`,
+      t('opportunities.confirmBulkDelete', { count: selectedRows.value.length }),
       t('common.warning'),
       { type: 'warning', confirmButtonText: t('common.delete'), cancelButtonText: t('common.cancel') }
     );
     loadingAction.value = true;
+    const countToDelete = selectedRows.value.length;
     for (const row of selectedRows.value) {
       await deleteOpportunity(row.id);
     }
     const res = await useTableFilter('opportunity');
     table.data = res.formattedData;
     selectedRows.value = [];
-    ElNotification({ type: 'success', title: t('common.success'), message: `${selectedRows.value.length} opportunity(ies) deleted` });
+    ElNotification({ type: 'success', title: t('common.success'), message: t('opportunities.bulkDeleted', { count: countToDelete }) });
   } catch {
     // User cancelled or error
   } finally {
@@ -200,10 +201,10 @@ async function handleBulkExport() {
     loadingAction.value = true;
     const ids = selectedRows.value.map((r: any) => r.id);
     await useApiFetch('opportunity/export', 'POST', { ids });
-    ElNotification({ type: 'success', title: t('common.success'), message: 'Export sent to your email' });
+    ElNotification({ type: 'success', title: t('common.success'), message: t('common.exportSentToEmail') });
     selectedRows.value = [];
   } catch {
-    ElNotification({ type: 'error', title: t('common.error'), message: 'Export failed' });
+    ElNotification({ type: 'error', title: t('common.error'), message: t('common.exportFailed') });
   } finally {
     loadingAction.value = false;
   }
@@ -241,7 +242,7 @@ async function changeStage(id: any, newStage: any) {
   const opportunity: any = await getOpportunity(id);
   loadingAction.value = true;
   try {
-    await updateOpportunity({ stage: newStage }, id);
+    await updateOpportunity({ stage: newStage } as any, id);
   } catch (e: any) {
     ElMessage.error(t('common.error'));
   } finally {
@@ -255,7 +256,7 @@ async function editWithResone() {
   const opportunity: any = await getOpportunity(select.value?.id);
   loadingAction.value = true;
   try {
-    await updateOpportunity({ stage: select.value?.status, reasonOfLose: reasons.value }, select.value?.id);
+    await updateOpportunity({ stage: select.value?.status, reasonOfLose: reasons.value } as any, select.value?.id);
   } catch (e: any) {
     ElMessage.error(t('common.error'));
   } finally {
@@ -428,7 +429,7 @@ const filterOptions = [
 
 // SavedViews & AdvancedSearch
 const advancedSearchFields = [
-  { key: 'name', label: t('opportunities.table.oppName'), type: 'string' },
+  { key: 'name', label: t('opportunities.table.name'), type: 'string' },
   { key: 'stage', label: t('opportunities.table.stage'), type: 'select', options: stageOptions.map(o => ({ value: o.value, label: t(o.label) })) },
   { key: 'estimatedValue', label: t('opportunities.table.budget'), type: 'number' },
   {
@@ -476,11 +477,11 @@ const mobileStageFilters = computed(() => {
   const data = table.data || [];
   return [
     { value: 'ALL', label: t('common.all'), color: '#f59e0b', count: data.length },
-    { value: 'DISCOVERY', label: 'Discovery', color: '#3b82f6', count: data.filter((o: any) => o.stage === 'DISCOVERY').length },
-    { value: 'PROPOSAL', label: 'Proposal', color: '#8b5cf6', count: data.filter((o: any) => o.stage === 'PROPOSAL').length },
-    { value: 'NEGOTIATION', label: 'Negotiation', color: '#f59e0b', count: data.filter((o: any) => o.stage === 'NEGOTIATION').length },
-    { value: 'WON', label: 'Won', color: '#10b981', count: data.filter((o: any) => o.stage === 'WON').length },
-    { value: 'LOST', label: 'Lost', color: '#ef4444', count: data.filter((o: any) => o.stage === 'LOST').length }
+    { value: 'DISCOVERY', label: t('opportunities.stages.discovery'), color: '#3b82f6', count: data.filter((o: any) => o.stage === 'DISCOVERY').length },
+    { value: 'PROPOSAL', label: t('opportunities.stages.proposal'), color: '#8b5cf6', count: data.filter((o: any) => o.stage === 'PROPOSAL').length },
+    { value: 'NEGOTIATION', label: t('opportunities.stages.negotiation'), color: '#f59e0b', count: data.filter((o: any) => o.stage === 'NEGOTIATION').length },
+    { value: 'WON', label: t('opportunities.stages.won'), color: '#10b981', count: data.filter((o: any) => o.stage === 'WON').length },
+    { value: 'LOST', label: t('opportunities.stages.lost'), color: '#ef4444', count: data.filter((o: any) => o.stage === 'LOST').length }
   ];
 });
 

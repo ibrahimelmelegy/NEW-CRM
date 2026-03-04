@@ -2,60 +2,60 @@
 div
   //- Header
   .flex.items-center.justify-between.mb-8
-    .title.font-bold.text-2xl.mb-1.capitalize Canned Responses
+    .title.font-bold.text-2xl.mb-1.capitalize {{ $t('support.cannedTitle') }}
     el-button(size="large" type="primary" @click="openDialog()" class="!rounded-2xl")
       el-icon
         Plus
-      span New Response
+      span {{ $t('support.newResponse') }}
 
   .glass-card.py-8.animate-entrance
     //- Filters
     .px-6.flex.items-center.flex-wrap.gap-3.mb-6
       .input.table-search(class="w-full md:w-[250px]")
-        el-input(size="large" style="height:50px" v-model="search" placeholder="Search responses..." clearable @input="debounceLoad")
+        el-input(size="large" style="height:50px" v-model="search" :placeholder="$t('support.searchResponses')" clearable @input="debounceLoad")
           template(#prefix)
             el-icon
               Search
-      el-select(v-model="categoryFilter" clearable placeholder="All Categories" @change="loadResponses" class="w-44" size="large")
+      el-select(v-model="categoryFilter" clearable :placeholder="$t('support.allCategories')" @change="loadResponses" class="w-44" size="large")
         el-option(v-for="cat in uniqueCategories" :key="cat" :value="cat" :label="cat")
 
     //- Table
     .px-6
       el-table(:data="filteredResponses" v-loading="loading" style="width: 100%" stripe)
-        el-table-column(label="Title" min-width="200")
+        el-table-column(:label="$t('support.colTitle')" min-width="200")
           template(#default="{ row }")
             span.font-bold {{ row.title }}
-        el-table-column(label="Category" width="160")
+        el-table-column(:label="$t('support.colCategory')" width="160")
           template(#default="{ row }")
             el-tag(v-if="row.category" size="small" round) {{ row.category }}
             span.text-gray-400(v-else) --
-        el-table-column(label="Preview" min-width="300")
+        el-table-column(:label="$t('support.colPreview')" min-width="300")
           template(#default="{ row }")
             span.text-sm(style="color: var(--text-muted)") {{ row.body.substring(0, 120) }}{{ row.body.length > 120 ? '...' : '' }}
-        el-table-column(label="Actions" width="140" align="center")
+        el-table-column(:label="$t('support.colActions')" width="140" align="center")
           template(#default="{ row }")
             .flex.items-center.justify-center.gap-2
-              el-button(size="small" text type="primary" @click.stop="openDialog(row)") Edit
-              el-popconfirm(title="Delete this response?" @confirm="handleDelete(row.id)")
+              el-button(size="small" text type="primary" @click.stop="openDialog(row)") {{ $t('support.editResponse') }}
+              el-popconfirm(:title="$t('support.deleteResponseConfirm')" @confirm="handleDelete(row.id)")
                 template(#reference)
-                  el-button(size="small" text type="danger" @click.stop) Delete
+                  el-button(size="small" text type="danger" @click.stop) {{ $t('support.deleteResponse') }}
 
   //- Add/Edit Dialog
-  el-dialog(v-model="dialogVisible" :title="isEditing ? 'Edit Canned Response' : 'New Canned Response'" width="600px")
+  el-dialog(v-model="dialogVisible" :title="isEditing ? $t('support.editCannedResponse') : $t('support.newCannedResponse')" width="600px")
     el-form(ref="formRef" :model="form" label-position="top" size="large")
-      el-form-item(label="Title" prop="title" :rules="[{ required: true, message: 'Title is required' }]")
-        el-input(v-model="form.title" placeholder="e.g. Greeting, Closing, Follow-up")
+      el-form-item(:label="$t('support.responseTitle')" prop="title" :rules="[{ required: true, message: $t('support.responseTitleRequired') }]")
+        el-input(v-model="form.title" :placeholder="$t('support.responseTitlePlaceholder')")
 
-      el-form-item(label="Category" prop="category")
-        el-select(v-model="form.category" clearable filterable allow-create placeholder="Select or create category" class="w-full")
+      el-form-item(:label="$t('support.colCategory')" prop="category")
+        el-select(v-model="form.category" clearable filterable allow-create :placeholder="$t('support.allCategories')" class="w-full")
           el-option(v-for="cat in uniqueCategories" :key="cat" :value="cat" :label="cat")
 
-      el-form-item(label="Body" prop="body" :rules="[{ required: true, message: 'Body is required' }]")
-        el-input(v-model="form.body" type="textarea" :rows="8" placeholder="Write the canned response body here. You can use placeholders like {{clientName}}, {{ticketNumber}}...")
+      el-form-item(:label="$t('support.responseBody')" prop="body" :rules="[{ required: true, message: $t('support.responseBodyRequired') }]")
+        el-input(v-model="form.body" type="textarea" :rows="8" :placeholder="$t('support.responseBodyPlaceholder')")
 
     template(#footer)
-      el-button(@click="dialogVisible = false") Cancel
-      el-button(type="primary" @click="handleSave" :loading="saving") {{ isEditing ? 'Update' : 'Create' }}
+      el-button(@click="dialogVisible = false") {{ $t('common.cancel') }}
+      el-button(type="primary" @click="handleSave" :loading="saving") {{ isEditing ? $t('common.update') : $t('common.create') }}
 </template>
 
 <script setup lang="ts">
@@ -65,6 +65,8 @@ import { ElNotification } from 'element-plus';
 import type { FormInstance } from 'element-plus';
 import { fetchCannedResponses, createCannedResponse, updateCannedResponse, deleteCannedResponse } from '@/composables/useSupport';
 import type { CannedResponse } from '@/composables/useSupport';
+
+const { t } = useI18n();
 
 const loading = ref(false);
 const saving = ref(false);
@@ -154,12 +156,12 @@ async function handleSave() {
     if (isEditing.value) {
       const { success } = await updateCannedResponse(editingId.value, payload);
       if (success) {
-        ElNotification({ type: 'success', title: 'Updated', message: 'Canned response updated' });
+        ElNotification({ type: 'success', title: t('common.success'), message: t('support.responseUpdated') });
       }
     } else {
       const { success } = await createCannedResponse(payload);
       if (success) {
-        ElNotification({ type: 'success', title: 'Created', message: 'Canned response created' });
+        ElNotification({ type: 'success', title: t('common.success'), message: t('support.responseCreated') });
       }
     }
 
@@ -173,7 +175,7 @@ async function handleSave() {
 async function handleDelete(id: string) {
   const { success } = await deleteCannedResponse(id);
   if (success) {
-    ElNotification({ type: 'success', title: 'Deleted', message: 'Canned response deleted' });
+    ElNotification({ type: 'success', title: t('common.success'), message: t('support.responseDeleted') });
     await loadResponses();
   }
 }

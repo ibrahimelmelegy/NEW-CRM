@@ -4,11 +4,11 @@ div
     .flex.items-center.gap-3
       el-button(circle size="small" @click="$router.back()")
         Icon(name="ph:arrow-left-bold" size="18")
-      .title.font-bold.text-2xl.mb-1.capitalize Subscription Plans
+      .title.font-bold.text-2xl.mb-1.capitalize {{ $t('subscriptions.plansTitle') }}
     .flex.gap-3
       el-switch(
         v-model="showInactive"
-        active-text="Show Inactive"
+        :active-text="$t('subscriptions.showInactive')"
         @change="loadPlans"
         class="mr-4"
       )
@@ -19,7 +19,7 @@ div
         @click="openPlanDialog()"
       )
         Icon.mr-1(name="ph:plus-bold" size="18")
-        | Add Plan
+        | {{ $t('subscriptions.addPlan') }}
 
   //- Plan cards grid
   .grid.gap-6(v-loading="loading" class="grid-cols-1 md:grid-cols-2 lg:grid-cols-3")
@@ -34,13 +34,13 @@ div
   //- Empty state
   .glass-card.p-12.text-center(v-if="!loading && plans.length === 0")
     Icon(name="ph:package-bold" size="64" style="color: var(--text-muted)")
-    h3.text-xl.font-semibold.mt-4(style="color: var(--text-primary)") No Plans Found
-    p.mt-2(style="color: var(--text-muted)") Create your first subscription plan to get started.
+    h3.text-xl.font-semibold.mt-4(style="color: var(--text-primary)") {{ $t('subscriptions.noPlansFound') }}
+    p.mt-2(style="color: var(--text-muted)") {{ $t('subscriptions.noPlansDesc') }}
 
   //- Plan Dialog
   el-dialog(
     v-model="showPlanDialog"
-    :title="editingPlan ? 'Edit Plan' : 'Create Plan'"
+    :title="editingPlan ? $t('subscriptions.editPlan') : $t('subscriptions.createPlan')"
     width="600px"
     :close-on-click-modal="false"
   )
@@ -49,17 +49,17 @@ div
       label-position="top"
     )
       .grid.gap-4(class="grid-cols-1 md:grid-cols-2")
-        el-form-item(label="Plan Name" required)
-          el-input(v-model="planForm.name" placeholder="e.g. Basic, Pro, Enterprise")
-        el-form-item(label="Billing Cycle" required)
-          el-select(v-model="planForm.billingCycle" placeholder="Select cycle" style="width: 100%")
+        el-form-item(:label="$t('subscriptions.planName')" required)
+          el-input(v-model="planForm.name" :placeholder="$t('subscriptions.planNamePlaceholder')")
+        el-form-item(:label="$t('subscriptions.billingCycle')" required)
+          el-select(v-model="planForm.billingCycle" :placeholder="$t('subscriptions.billingCycle')" style="width: 100%")
             el-option(
               v-for="opt in billingCycleOptions"
               :key="opt.value"
               :label="opt.label"
               :value="opt.value"
             )
-        el-form-item(label="Price" required)
+        el-form-item(:label="$t('subscriptions.price')" required)
           el-input-number(
             v-model="planForm.price"
             :min="0"
@@ -67,9 +67,9 @@ div
             :step="10"
             style="width: 100%"
           )
-        el-form-item(label="Currency")
+        el-form-item(:label="$t('subscriptions.currency')")
           el-input(v-model="planForm.currency" placeholder="SAR")
-        el-form-item(label="Trial Days")
+        el-form-item(:label="$t('subscriptions.trialDays')")
           el-input-number(
             v-model="planForm.trialDays"
             :min="0"
@@ -77,16 +77,16 @@ div
             style="width: 100%"
           )
 
-      el-form-item(label="Description")
+      el-form-item(:label="$t('subscriptions.description')")
         el-input(
           v-model="planForm.description"
           type="textarea"
           :rows="3"
-          placeholder="Describe what this plan includes..."
+          :placeholder="$t('subscriptions.descriptionPlaceholder')"
         )
 
       //- Features editable list
-      el-form-item(label="Features")
+      el-form-item(:label="$t('subscriptions.features')")
         .flex.flex-col.gap-2.w-full
           .flex.items-center.gap-2(
             v-for="(feature, idx) in planForm.features"
@@ -94,7 +94,7 @@ div
           )
             el-input(
               v-model="planForm.features[idx]"
-              placeholder="Feature description"
+              :placeholder="$t('subscriptions.featureDescription')"
               size="default"
             )
             el-button(
@@ -112,11 +112,11 @@ div
             class="!w-fit"
           )
             Icon.mr-1(name="ph:plus-bold" size="14")
-            | Add Feature
+            | {{ $t('subscriptions.addFeature') }}
 
     template(#footer)
-      el-button(@click="showPlanDialog = false") Cancel
-      el-button(type="primary" @click="handleSavePlan" :loading="saving") {{ editingPlan ? 'Update' : 'Create' }}
+      el-button(@click="showPlanDialog = false") {{ $t('common.cancel') }}
+      el-button(type="primary" @click="handleSavePlan" :loading="saving") {{ editingPlan ? $t('subscriptions.update') : $t('subscriptions.create') }}
 </template>
 
 <script setup lang="ts">

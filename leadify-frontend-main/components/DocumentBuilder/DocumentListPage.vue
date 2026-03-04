@@ -452,7 +452,7 @@ async function handleDuplicate(row: any) {
 async function handleExportPdf(row: any) {
   try {
     ElMessage.info('Generating PDF...');
-    const response = await generatePdf(row.id);
+    const response: any = await generatePdf(row.id);
     if (response?.success && response.body?.pdfUrl) {
       const baseUrl = useRuntimeConfig().public.apiBase || '';
       window.open(`${baseUrl}${response.body.pdfUrl}`, '_blank');

@@ -3,7 +3,7 @@
   DocumentHubWrapper(
     documentType="proforma_invoice"
     backUrl="/sales/proforma-invoices"
-    backLabel="Back to Proforma Invoices"
+    :backLabel="$t('documents.backToProformaInvoices')"
   )
 </template>
 

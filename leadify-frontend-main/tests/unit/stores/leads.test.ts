@@ -180,7 +180,7 @@ describe('useLeadStore', () => {
       const result = await store.updateLead('lead-1', { name: 'Updated Lead' });
 
       expect(result).toEqual(updated);
-      expect(store.leads[0].name).toBe('Updated Lead');
+      expect(store.leads[0]!.name).toBe('Updated Lead');
     });
 
     it('should also update currentLead if it matches', async () => {
@@ -214,7 +214,7 @@ describe('useLeadStore', () => {
 
       expect(result).toBe(true);
       expect(store.leads).toHaveLength(1);
-      expect(store.leads[0].id).toBe('lead-2');
+      expect(store.leads[0]!.id).toBe('lead-2');
     });
 
     it('should clear currentLead if deleted lead matches', async () => {

@@ -207,31 +207,31 @@
     .glass-card.p-5.rounded-2xl.mt-4(v-if="quoteResult")
       h4.text-sm.font-bold.mb-3(style="color: var(--text-primary)") {{ $t('cpq.quoteResult') }}
       el-table(:data="quoteResult.lineItems || []" size="small" style="width: 100%" class="mb-4")
-        el-table-column(label="Product" min-width="160")
+        el-table-column(:label="$t('cpq.product')" min-width="160")
           template(#default="{ row }")
             span.font-bold {{ row.productName || row.entryId }}
-        el-table-column(label="Qty" width="80" align="center")
+        el-table-column(:label="$t('cpq.qty')" width="80" align="center")
           template(#default="{ row }")
             span {{ row.quantity }}
-        el-table-column(label="Unit Price" width="120" align="right")
+        el-table-column(:label="$t('cpq.unitPrice')" width="120" align="right")
           template(#default="{ row }")
             span {{ Number(row.unitPrice || 0).toLocaleString() }} SAR
-        el-table-column(label="Amount" width="130" align="right")
+        el-table-column(:label="$t('cpq.amount')" width="130" align="right")
           template(#default="{ row }")
             span.font-bold {{ Number(row.amount || 0).toLocaleString() }} SAR
 
       .space-y-2(style="border-top: 1px solid var(--glass-border, rgba(255,255,255,0.1))" class="pt-3")
         .flex.justify-between.text-sm
-          span(style="color: var(--text-muted)") Subtotal
+          span(style="color: var(--text-muted)") {{ $t('cpq.subtotal') }}
           span.font-bold(style="color: var(--text-primary)") {{ Number(quoteResult.subtotal || 0).toLocaleString() }} SAR
         .flex.justify-between.text-sm(v-if="quoteResult.discount")
-          span(style="color: var(--text-muted)") Discount
+          span(style="color: var(--text-muted)") {{ $t('cpq.discount') }}
           span.font-bold.text-green-500 -{{ Number(quoteResult.discount || 0).toLocaleString() }} SAR
         .flex.justify-between.text-sm
-          span(style="color: var(--text-muted)") Tax ({{ quoteForm.taxRate }}%)
+          span(style="color: var(--text-muted)") {{ $t('cpq.tax') }} ({{ quoteForm.taxRate }}%)
           span.font-bold(style="color: var(--text-primary)") {{ Number(quoteResult.tax || 0).toLocaleString() }} SAR
         .flex.justify-between.text-lg.font-bold.pt-2(style="border-top: 1px solid var(--glass-border, rgba(255,255,255,0.1))")
-          span(style="color: var(--text-primary)") Total
+          span(style="color: var(--text-primary)") {{ $t('cpq.total') }}
           span(style="color: #22c55e") {{ Number(quoteResult.total || 0).toLocaleString() }} SAR
 
     template(#footer)
@@ -303,10 +303,10 @@ const summaryStats = computed(() => {
       }, 0) / totalEntries)
     : 0;
   return [
-    { label: 'Price Books', value: books.value.length, icon: 'ph:book-open-bold', color: '#7849ff' },
-    { label: 'Active Books', value: activeBooks, icon: 'ph:check-circle-bold', color: '#22c55e' },
-    { label: 'Total Entries', value: totalEntries, icon: 'ph:list-bullets-bold', color: '#3b82f6' },
-    { label: 'Avg Margin', value: avgMargin + '%', icon: 'ph:chart-line-up-bold', color: '#f59e0b' }
+    { label: t('cpq.priceBooks'), value: books.value.length, icon: 'ph:book-open-bold', color: '#7849ff' },
+    { label: t('cpq.activeBooks'), value: activeBooks, icon: 'ph:check-circle-bold', color: '#22c55e' },
+    { label: t('cpq.totalEntries'), value: totalEntries, icon: 'ph:list-bullets-bold', color: '#3b82f6' },
+    { label: t('cpq.avgMargin'), value: avgMargin + '%', icon: 'ph:chart-line-up-bold', color: '#f59e0b' }
   ];
 });
 

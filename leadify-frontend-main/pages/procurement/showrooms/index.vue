@@ -1,10 +1,10 @@
 <template lang="pug">
 ProcurementEntityList(
-  title="Showrooms Management"
-  subtitle="Coordinate with showrooms and display partners"
-  btn-text="New Showroom"
+  :title="$t('procurement.showrooms.title')"
+  :subtitle="$t('procurement.showrooms.subtitle')"
+  :btn-text="$t('procurement.showrooms.btnText')"
   entity-type="Showroom"
-  entity-label="Showroom"
-  dialog-title="New Showroom Form"
+  :entity-label="$t('procurement.showrooms.entityLabel')"
+  :dialog-title="$t('procurement.showrooms.dialogTitle')"
 )
 </template>

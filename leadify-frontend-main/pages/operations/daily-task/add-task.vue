@@ -85,7 +85,7 @@ async function submitFormClient() {
       companyName: ClientNew.value?.companyName,
       clientType: ClientNew.value?.clientType
     });
-    await createClient(formattedValues, true);
+    await createClient(formattedValues);
   } catch (err) {
     console.error('Error saving forms:', err);
     loadingClient.value = false;

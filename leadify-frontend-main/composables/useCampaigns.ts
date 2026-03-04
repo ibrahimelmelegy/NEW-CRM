@@ -33,12 +33,12 @@ export interface EmailTemplate {
 }
 
 export async function fetchCampaigns(): Promise<Campaign[]> {
-  const { body, success } = await useApiFetch<Campaign[]>('campaigns');
+  const { body, success } = await useApiFetch('campaigns');
   return success && body ? body : [];
 }
 
 export async function fetchCampaign(id: string): Promise<Campaign | null> {
-  const { body, success } = await useApiFetch<Campaign>(`campaigns/${id}`);
+  const { body, success } = await useApiFetch(`campaigns/${id}`);
   return success ? body : null;
 }
 
@@ -91,7 +91,7 @@ export async function addRecipients(id: string, recipients: { email: string; nam
 
 // Templates
 export async function fetchTemplates(): Promise<EmailTemplate[]> {
-  const { body, success } = await useApiFetch<EmailTemplate[]>('campaigns/templates');
+  const { body, success } = await useApiFetch('campaigns/templates');
   return success && body ? body : [];
 }
 

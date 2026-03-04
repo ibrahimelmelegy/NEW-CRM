@@ -68,7 +68,7 @@ const loading = ref(false);
 async function fetchComments() {
   loading.value = true;
   try {
-    const { body, success } = await useApiFetch(`comments?entityType=${props.entityType}&entityId=${props.entityId}`);
+    const { body, success } = await useApiFetch(`comments?entityType=${props.entityType}&entityId=${props.entityId}`) as any;
     if (success && body) {
       comments.value = body.docs || body || [];
     }

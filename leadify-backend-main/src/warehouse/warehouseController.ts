@@ -10,6 +10,9 @@ class WarehouseController {
   async getWarehouses(req: AuthenticatedRequest, res: Response, next: NextFunction) {
     try { wrapResult(res, await service.getWarehouses(req.query, (req.user as any)?.tenantId)); } catch (e) { next(e); }
   }
+  async getWarehouseById(req: AuthenticatedRequest, res: Response, next: NextFunction) {
+    try { wrapResult(res, await service.getWarehouseById(Number(req.params.id))); } catch (e) { next(e); }
+  }
   async updateWarehouse(req: AuthenticatedRequest, res: Response, next: NextFunction) {
     try { wrapResult(res, await service.updateWarehouse(Number(req.params.id), req.body)); } catch (e) { next(e); }
   }

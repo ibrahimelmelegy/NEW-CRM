@@ -178,7 +178,7 @@ const opportunityId = route.query?.opportunityId;
 
 onMounted(async () => {
   // Fetch users
-  const usersRes = await useApiFetch('users');
+  const usersRes: any = await useApiFetch('users');
   users.value = usersRes?.body?.docs?.map((e: any) => ({
     label: e.name,
     value: e.id

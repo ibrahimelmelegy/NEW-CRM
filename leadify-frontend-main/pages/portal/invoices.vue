@@ -57,6 +57,8 @@ import { useEnhancedPortal, type PortalInvoice } from '~/composables/usePortal';
 
 definePageMeta({ layout: 'portal' });
 
+const { t } = useI18n();
+
 const { init, isAuthenticated } = usePortalAuth();
 const { invoices, invoicePagination: pagination, loading, fetchInvoices } = useEnhancedPortal();
 
@@ -91,10 +93,10 @@ function invoiceStatusType(row: any): string {
 }
 
 function invoiceStatusLabel(row: any): string {
-  if (row.status === 'PAID' || row.collected) return 'Paid';
-  if (row.status === 'OVERDUE') return 'Overdue';
-  if (row.status === 'PARTIAL') return 'Partial';
-  return 'Unpaid';
+  if (row.status === 'PAID' || row.collected) return t('portal.invoices.paid');
+  if (row.status === 'OVERDUE') return t('portal.invoices.overdue');
+  if (row.status === 'PARTIAL') return t('portal.invoices.partial');
+  return t('portal.invoices.unpaid');
 }
 
 function formatCurrency(amount: number): string {

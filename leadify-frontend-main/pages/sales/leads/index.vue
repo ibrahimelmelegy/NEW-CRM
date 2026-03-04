@@ -3,7 +3,7 @@ div(class="animate-fade-in")
   //- Premium Header
   PremiumPageHeader(
     :title="$t('leads.title')"
-    description="Manage and track all prospective clients to accelerate your sales pipeline."
+    :description="$t('leads.description')"
     icon="ph:users-three-duotone"
     primaryColor="#7849ff"
   )
@@ -250,10 +250,10 @@ const kpiMetrics = computed<KPIMetric[]>(() => {
   const rate = total > 0 ? Math.round((qualified / total) * 100) : 0;
 
   return [
-    { label: 'Total Leads', value: total, icon: 'ph:users-three-bold', color: '#7849ff' },
-    { label: 'New Pipeline', value: newLeads, icon: 'ph:sparkle-bold', color: '#10b981' },
-    { label: 'Qualified', value: qualified, icon: 'ph:check-circle-bold', color: '#f59e0b' },
-    { label: 'Conversion', value: rate + '%', icon: 'ph:chart-line-up-bold', color: '#3b82f6' }
+    { label: t('leads.kpi.totalLeads'), value: total, icon: 'ph:users-three-bold', color: '#7849ff' },
+    { label: t('leads.kpi.newPipeline'), value: newLeads, icon: 'ph:sparkle-bold', color: '#10b981' },
+    { label: t('leads.kpi.qualified'), value: qualified, icon: 'ph:check-circle-bold', color: '#f59e0b' },
+    { label: t('leads.kpi.conversion'), value: rate + '%', icon: 'ph:chart-line-up-bold', color: '#3b82f6' }
   ];
 });
 
@@ -577,7 +577,7 @@ async function handleBulkDelete() {
   if (!selectedRows.value.length) return;
   try {
     await ElMessageBox.confirm(
-      `Are you sure you want to delete ${selectedRows.value.length} lead(s)?`,
+      t('leads.confirmBulkDelete', { count: selectedRows.value.length }),
       t('common.warning'),
       { type: 'warning', confirmButtonText: t('common.delete'), cancelButtonText: t('common.cancel') }
     );
@@ -588,7 +588,7 @@ async function handleBulkDelete() {
     response = await useTableFilter('lead');
     table.value.data = response.formattedData;
     selectedRows.value = [];
-    ElNotification({ type: 'success', title: t('common.success'), message: `${selectedRows.value.length} lead(s) deleted` });
+    ElNotification({ type: 'success', title: t('common.success'), message: t('leads.bulkDeleted') });
   } catch {
     // User cancelled or error
   } finally {

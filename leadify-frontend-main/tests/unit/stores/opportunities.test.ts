@@ -210,7 +210,7 @@ describe('useOpportunityStore', () => {
       const result = await store.updateOpportunity('opp-1', { name: 'Updated', stage: 'WON' } as any);
 
       expect(result).toEqual(updated);
-      expect(store.opportunities[0].name).toBe('Updated');
+      expect(store.opportunities[0]!.name).toBe('Updated');
       expect(store.currentOpportunity!.name).toBe('Updated');
     });
 

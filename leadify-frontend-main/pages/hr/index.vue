@@ -70,7 +70,7 @@ div
         NuxtLink.text-sm(to="/hr/employees" style="color: var(--accent-color, #7849ff)") {{ $t('common.viewAll') }}
 
       el-table(:data="recentEmployees" style="width: 100%")
-        el-table-column(label="Employee" min-width="220")
+        el-table-column(:label="$t('hr.employees.employee')" min-width="220")
           template(#default="{ row }")
             .flex.items-center.gap-3
               .w-9.h-9.rounded-full.flex.items-center.justify-center.shrink-0(style="background: rgba(120, 73, 255, 0.15)")
@@ -79,17 +79,17 @@ div
                 p.text-sm.font-semibold(style="color: var(--text-primary)") {{ getFullName(row) }}
                 p.text-xs(style="color: var(--text-muted)") {{ row.employeeNumber }}
 
-        el-table-column(label="Department" min-width="160")
+        el-table-column(:label="$t('hr.employees.department')" min-width="160")
           template(#default="{ row }")
             .flex.items-center.gap-2
               Icon(name="ph:buildings-bold" size="14" style="color: #7849ff")
               span.text-sm(style="color: var(--text-primary)") {{ row.department?.name || '---' }}
 
-        el-table-column(prop="jobTitle" label="Job Title" min-width="160")
+        el-table-column(prop="jobTitle" :label="$t('hr.employees.jobTitle')" min-width="160")
           template(#default="{ row }")
             span.text-sm(style="color: var(--text-primary)") {{ row.jobTitle || '---' }}
 
-        el-table-column(label="Status" width="130" align="center")
+        el-table-column(:label="$t('hr.employees.status')" width="130" align="center")
           template(#default="{ row }")
             el-tag(
               size="small"
@@ -98,7 +98,7 @@ div
               effect="light"
             ) {{ getEmployeeStatusLabel(row.status) }}
 
-        el-table-column(label="Hire Date" width="140")
+        el-table-column(:label="$t('hr.employees.hireDate')" width="140")
           template(#default="{ row }")
             span.text-sm(style="color: var(--text-muted)") {{ formatDate(row.hireDate) }}
 </template>
@@ -181,7 +181,7 @@ const kpiCards = computed(() => {
 const departmentChartOption = computed(() => {
   const deptMap = new Map<string, number>();
   for (const emp of employees.value) {
-    const deptName = emp.department?.name || 'Unassigned';
+    const deptName = emp.department?.name || t('hr.employees.unassigned');
     deptMap.set(deptName, (deptMap.get(deptName) || 0) + 1);
   }
   if (deptMap.size === 0) return null;
@@ -206,14 +206,14 @@ const statusChartOption = computed(() => {
 });
 
 // Quick Navigation Items
-const quickNavItems = [
-  { label: 'Employees', to: '/hr/employees', icon: 'ph:users-bold', color: '#7849FF' },
-  { label: 'Departments', to: '/hr/departments', icon: 'ph:buildings-bold', color: '#3B82F6' },
-  { label: 'Org Chart', to: '/hr/org-chart', icon: 'ph:tree-structure-bold', color: '#10B981' },
-  { label: 'Payroll', to: '/hr/payroll', icon: 'ph:money-bold', color: '#F97316' },
-  { label: 'Leave Requests', to: '/hr/leave-requests', icon: 'ph:calendar-check-bold', color: '#8B5CF6' },
-  { label: 'Attendance', to: '/hr/attendance', icon: 'ph:clock-bold', color: '#EC4899' }
-];
+const quickNavItems = computed(() => [
+  { label: t('hr.employees.employees'), to: '/hr/employees', icon: 'ph:users-bold', color: '#7849FF' },
+  { label: t('hr.departments.departments'), to: '/hr/departments', icon: 'ph:buildings-bold', color: '#3B82F6' },
+  { label: t('hr.orgChart.orgChart'), to: '/hr/org-chart', icon: 'ph:tree-structure-bold', color: '#10B981' },
+  { label: t('hr.payroll.payroll'), to: '/hr/payroll', icon: 'ph:money-bold', color: '#F97316' },
+  { label: t('hr.leave.title'), to: '/hr/leave-requests', icon: 'ph:calendar-check-bold', color: '#8B5CF6' },
+  { label: t('hr.attendance.title'), to: '/hr/attendance', icon: 'ph:clock-bold', color: '#EC4899' }
+]);
 
 // Recent Employees — latest 10 sorted by hire date descending
 const recentEmployees = computed(() => {

@@ -62,7 +62,7 @@
 
     //- Desktop Table
     .staff-desktop-view
-      AppTable(v-slot="{data}" :filterOptions="filterOptions" :columns="table.columns" position="users" :pageInfo="response.pagination" :data="table.data" :sortOptions="table.sort" @handleRowClick="handleRowClick" searchPlaceholder="staff" :loading="loadingAction" emptyIcon="ph:users-bold" emptyMessage="No staff members yet" emptyDescription="Add your first team member to get started" emptyActionHref="/staff/add-staff" emptyActionLabel="Add Staff" )
+      AppTable(v-slot="{data}" :filterOptions="filterOptions" :columns="table.columns" position="users" :pageInfo="response.pagination" :data="table.data" :sortOptions="table.sort" @handleRowClick="handleRowClick" searchPlaceholder="staff" :loading="loadingAction" emptyIcon="ph:users-bold" :emptyMessage="$t('staff.emptyMessage')" :emptyDescription="$t('staff.emptyDescription')" emptyActionHref="/staff/add-staff" :emptyActionLabel="$t('staff.emptyActionLabel')" )
         .flex.items-center.py-2(@click.stop)
             el-dropdown(class="outline-0" trigger="click")
                 span(class="el-dropdown-link")
@@ -210,8 +210,8 @@ const table = reactive({
       sortable: true,
       type: 'outline',
       filters: [
-        { text: 'Active', value: 'ACTIVE' },
-        { text: 'Inactive', value: 'INACTIVE' }
+        { text: t('common.active'), value: 'ACTIVE' },
+        { text: t('common.inactive'), value: 'INACTIVE' }
       ],
       width: 150
     },
@@ -381,7 +381,7 @@ const filterOptions = [
 
 // SavedViews & AdvancedSearch
 const advancedSearchFields = [
-  { key: 'name', label: t('staff.table.name'), type: 'string' },
+  { key: 'name', label: t('staff.table.staffName'), type: 'string' },
   { key: 'email', label: t('staff.table.email'), type: 'string' },
   { key: 'phone', label: t('staff.table.phone'), type: 'string' },
   { key: 'status', label: t('staff.table.status'), type: 'select', options: staffStatuses.map((s: any) => ({ value: s.value, label: s.label })) },
@@ -423,8 +423,8 @@ const mobileFilters = computed(() => {
   const data = table.data || [];
   return [
     { value: 'ALL', label: t('common.all'), color: '#7849ff', count: data.length },
-    { value: 'ACTIVE', label: 'Active', color: '#10b981', count: data.filter((s: any) => s.status === 'ACTIVE').length },
-    { value: 'INACTIVE', label: 'Inactive', color: '#94a3b8', count: data.filter((s: any) => s.status === 'INACTIVE').length }
+    { value: 'ACTIVE', label: t('common.active'), color: '#10b981', count: data.filter((s: any) => s.status === 'ACTIVE').length },
+    { value: 'INACTIVE', label: t('common.inactive'), color: '#94a3b8', count: data.filter((s: any) => s.status === 'INACTIVE').length }
   ];
 });
 

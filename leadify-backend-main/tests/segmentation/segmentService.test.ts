@@ -149,10 +149,10 @@ describe('SegmentService', () => {
   // ---------------------------------------------------------------------------
   describe('update', () => {
     it('should update and return the segment', async () => {
-      const mockItem = {
+      const mockItem: any = {
         id: 1,
         name: 'Old Name',
-        update: jest.fn().mockResolvedValue(true)
+        update: jest.fn().mockImplementation(() => Promise.resolve(true))
       };
       (Segment.findByPk as jest.Mock<any>).mockResolvedValue(mockItem);
 

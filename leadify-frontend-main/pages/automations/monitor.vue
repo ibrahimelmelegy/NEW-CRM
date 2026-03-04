@@ -126,11 +126,11 @@
               size="default"
               style="width: 160px"
             )
-              el-option(label="All Statuses" value="")
-              el-option(label="Success" value="success")
-              el-option(label="Failed" value="failed")
-              el-option(label="Running" value="running")
-              el-option(label="Cancelled" value="cancelled")
+              el-option(:label="$t('workflowMonitor.allStatuses')" value="")
+              el-option(:label="$t('workflowMonitor.success')" value="success")
+              el-option(:label="$t('workflowMonitor.failed')" value="failed")
+              el-option(:label="$t('workflowMonitor.running')" value="running")
+              el-option(:label="$t('workflowMonitor.cancelled')" value="cancelled")
           span.text-xs(style="color: var(--text-muted)") {{ filteredHistory.length }} {{ $t('workflowMonitor.runs', 'runs') }}
 
         //- Table

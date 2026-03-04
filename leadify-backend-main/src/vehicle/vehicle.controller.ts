@@ -48,6 +48,15 @@ class VehicleController {
       next(error);
     }
   }
+  public async deleteVehicle(req: AuthenticatedRequest, res: Response, next: NextFunction): Promise<void> {
+    try {
+      await vehicleService.deleteVehicle(req.params.id as string);
+      wrapResult(res);
+    } catch (error) {
+      next(error);
+    }
+  }
+
 }
 
 export default new VehicleController();

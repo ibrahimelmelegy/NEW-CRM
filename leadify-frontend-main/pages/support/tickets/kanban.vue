@@ -3,17 +3,17 @@
   //- Header
   .flex.items-center.justify-between.mb-6
     div
-      h2.text-2xl.font-bold(style="color: var(--text-primary)") Tickets Board
-      p.text-sm(style="color: var(--text-muted)") Drag and drop tickets between statuses
+      h2.text-2xl.font-bold(style="color: var(--text-primary)") {{ $t('support.ticketsBoard') }}
+      p.text-sm(style="color: var(--text-muted)") {{ $t('support.kanbanSubtitle') }}
     .flex.items-center.gap-3
       NuxtLink(to="/support/tickets")
         el-button
           Icon(name="ph:list" size="16")
-          span.ml-1 List View
+          span.ml-1 {{ $t('support.listView') }}
       NuxtLink(to="/support/tickets/create")
         el-button(type="primary" class="!bg-[#7849ff] !border-none")
           Icon(name="ph:plus" size="16")
-          span.ml-1 New Ticket
+          span.ml-1 {{ $t('support.newTicket') }}
 
   //- Kanban Board
   .kanban-board.flex.gap-4.overflow-x-auto.pb-4(v-loading="loading")
@@ -56,13 +56,13 @@
                 style="background: rgba(120,73,255,0.15); color: #7849ff; font-size: 10px"
               ) {{ ticket.assignee?.name?.charAt(0) || '?' }}
               span.text-xs(v-if="ticket.assignee" style="color: var(--text-muted)") {{ ticket.assignee?.name }}
-              span.text-xs(v-else style="color: var(--text-muted); font-style: italic") Unassigned
+              span.text-xs(v-else style="color: var(--text-muted); font-style: italic") {{ $t('support.unassigned') }}
             span.text-xs(style="color: var(--text-muted)") {{ formatDate(ticket.createdAt) }}
 
         //- Empty column placeholder
         .text-center.py-8(v-if="!getColumnTickets(column.status).length && !loading")
           Icon(name="ph:ticket" size="24" :style="{ color: column.color, opacity: 0.4 }")
-          p.text-xs.mt-2(style="color: var(--text-muted)") No {{ column.label.toLowerCase() }} tickets
+          p.text-xs.mt-2(style="color: var(--text-muted)") {{ $t('support.noColumnTickets', { status: column.label.toLowerCase() }) }}
 </template>
 
 <script setup lang="ts">
@@ -72,6 +72,7 @@ import { fetchTickets } from '@/composables/useSupport';
 definePageMeta({ middleware: 'permissions' });
 
 const router = useRouter();
+const { t } = useI18n();
 const loading = ref(false);
 const tickets = ref<any[]>([]);
 let draggedTicket: any = null;
@@ -116,10 +117,10 @@ async function onDrop(event: DragEvent, newStatus: string) {
 
   try {
     await useApiFetch(`support/tickets/${draggedTicket.id}`, 'PUT', { status: newStatus });
-    ElNotification({ type: 'success', title: 'Updated', message: `Ticket moved to ${newStatus.replace(/_/g, ' ')}` });
+    ElNotification({ type: 'success', title: t('common.success'), message: `Ticket moved to ${newStatus.replace(/_/g, ' ')}` });
   } catch {
     draggedTicket.status = oldStatus;
-    ElNotification({ type: 'error', title: 'Error', message: 'Could not update ticket status' });
+    ElNotification({ type: 'error', title: t('common.error'), message: t('common.error') });
   }
 
   draggedTicket = null;

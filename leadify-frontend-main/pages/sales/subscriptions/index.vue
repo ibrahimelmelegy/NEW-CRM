@@ -1,16 +1,16 @@
 <template lang="pug">
 div
   .flex.items-center.justify-between.mb-5.mt-5
-    .title.font-bold.text-2xl.mb-1.capitalize Subscriptions
+    .title.font-bold.text-2xl.mb-1.capitalize {{ $t('subscriptions.title') }}
     .flex.gap-3
       NuxtLink(to="/sales/subscriptions/metrics")
         el-button(size="large" class="!rounded-2xl")
           Icon.mr-1(name="ph:chart-line-up-bold" size="18")
-          | Metrics
+          | {{ $t('subscriptions.metricsBtn') }}
       NuxtLink(to="/sales/subscriptions/plans")
         el-button(size="large" class="!rounded-2xl")
           Icon.mr-1(name="ph:package-bold" size="18")
-          | Manage Plans
+          | {{ $t('subscriptions.managePlans') }}
       el-button(
         size="large"
         type="primary"
@@ -18,24 +18,24 @@ div
         @click="showCreateDialog = true"
       )
         Icon.mr-1(name="ph:plus-bold" size="18")
-        | New Subscription
+        | {{ $t('subscriptions.newSubscription') }}
 
   //- Status filter tabs
   .glass-card.py-2.px-4.mb-6
     el-tabs(v-model="activeTab" @tab-change="onTabChange")
-      el-tab-pane(label="All" name="ALL")
-      el-tab-pane(label="Trial" name="TRIAL")
-      el-tab-pane(label="Active" name="ACTIVE")
-      el-tab-pane(label="Past Due" name="PAST_DUE")
-      el-tab-pane(label="Cancelled" name="CANCELLED")
-      el-tab-pane(label="Expired" name="EXPIRED")
+      el-tab-pane(:label="$t('common.all')" name="ALL")
+      el-tab-pane(:label="$t('subscriptions.statusTrial')" name="TRIAL")
+      el-tab-pane(:label="$t('subscriptions.statusActive')" name="ACTIVE")
+      el-tab-pane(:label="$t('subscriptions.statusPastDue')" name="PAST_DUE")
+      el-tab-pane(:label="$t('subscriptions.statusCancelled')" name="CANCELLED")
+      el-tab-pane(:label="$t('subscriptions.statusExpired')" name="EXPIRED")
 
   //- Subscriptions table
   .glass-card.py-8.animate-entrance
     .px-6.mb-4.flex.items-center.justify-between
       el-input(
         v-model="searchKey"
-        placeholder="Search by client name..."
+        :placeholder="$t('subscriptions.searchByClient')"
         class="!w-72"
         clearable
         @clear="loadSubscriptions"
@@ -51,36 +51,53 @@ div
       @row-click="goToDetail"
       class="cursor-pointer"
     )
-      el-table-column(prop="client.clientName" label="Client" min-width="180")
+      el-table-column(prop="client.clientName" :label="$t('subscriptions.client')" min-width="180")
         template(#default="{ row }")
           .flex.items-center.gap-2
             Icon(name="ph:user-bold" size="18" style="color: var(--text-muted)")
             span {{ row.client?.clientName || 'N/A' }}
-      el-table-column(prop="plan.name" label="Plan" min-width="140")
+      el-table-column(prop="plan.name" :label="$t('subscriptions.plan')" min-width="140")
         template(#default="{ row }")
           span.font-medium {{ row.plan?.name || 'N/A' }}
-      el-table-column(prop="status" label="Status" width="130")
+      el-table-column(prop="status" :label="$t('common.status')" width="130")
         template(#default="{ row }")
           el-tag(
             :type="getSubscriptionStatusType(row.status)"
             size="small"
             effect="light"
           ) {{ getSubscriptionStatusLabel(row.status) }}
-      el-table-column(label="Amount" width="140")
+      el-table-column(:label="$t('common.amount')" width="140")
         template(#default="{ row }")
           span {{ formatSubscriptionCurrency(row.plan?.price, row.plan?.currency) }}
-      el-table-column(label="Billing" width="120")
+      el-table-column(:label="$t('subscriptions.billingCycle')" width="120")
         template(#default="{ row }")
           span {{ getBillingCycleLabel(row.plan?.billingCycle) }}
-      el-table-column(prop="startDate" label="Start Date" width="130")
+      el-table-column(prop="startDate" :label="$t('subscriptions.startDate')" width="130")
         template(#default="{ row }")
           span {{ formatDate(row.startDate) }}
-      el-table-column(prop="currentPeriodEnd" label="Period End" width="130")
+      el-table-column(prop="currentPeriodEnd" :label="$t('subscriptions.periodEnd')" width="130")
         template(#default="{ row }")
           span {{ formatDate(row.currentPeriodEnd) }}
-      el-table-column(prop="nextBillingDate" label="Next Billing" width="130")
+      el-table-column(prop="nextBillingDate" :label="$t('subscriptions.nextBilling')" width="130")
         template(#default="{ row }")
           span {{ row.nextBillingDate ? formatDate(row.nextBillingDate) : '-' }}
+      el-table-column(:label="$t('common.action')" width="100" fixed="right")
+        template(#default="{ row }")
+          .flex.items-center(@click.stop)
+            el-dropdown(trigger="click" class="outline-0")
+              .toggle-icon.text-md
+                Icon(name="IconToggle" size="22")
+              template(#dropdown)
+                el-dropdown-menu
+                  el-dropdown-item(@click="goToDetail(row)")
+                    Icon.mr-2(name="ph:eye-bold" size="16")
+                    span {{ $t('common.view') }}
+                  el-dropdown-item(
+                    v-if="row.status !== 'CANCELLED' && row.status !== 'EXPIRED'"
+                    @click="handleCancelSubscription(row)"
+                  )
+                    Icon.mr-2(name="ph:x-circle-bold" size="16" style="color: #ef4444")
+                    span(style="color: #ef4444") {{ $t('subscriptions.cancel') }}
 
     //- Pagination
     .flex.justify-center.mt-6(v-if="pagination.totalPages > 1")
@@ -95,7 +112,7 @@ div
   //- Create Subscription Dialog
   el-dialog(
     v-model="showCreateDialog"
-    title="New Subscription"
+    :title="$t('subscriptions.newSubscription')"
     width="500px"
     :close-on-click-modal="false"
   )
@@ -104,11 +121,11 @@ div
       label-position="top"
       @submit.prevent="handleCreateSubscription"
     )
-      el-form-item(label="Client" required)
+      el-form-item(:label="$t('subscriptions.client')" required)
         el-select(
           v-model="newSubscription.clientId"
           filterable
-          placeholder="Select client"
+          :placeholder="$t('subscriptions.selectClient')"
           style="width: 100%"
         )
           el-option(
@@ -117,10 +134,10 @@ div
             :label="client.clientName"
             :value="client.id"
           )
-      el-form-item(label="Plan" required)
+      el-form-item(:label="$t('subscriptions.plan')" required)
         el-select(
           v-model="newSubscription.planId"
-          placeholder="Select plan"
+          :placeholder="$t('subscriptions.selectPlan')"
           style="width: 100%"
         )
           el-option(
@@ -130,14 +147,16 @@ div
             :value="plan.id"
           )
     template(#footer)
-      el-button(@click="showCreateDialog = false") Cancel
-      el-button(type="primary" @click="handleCreateSubscription" :loading="creating") Create
+      el-button(@click="showCreateDialog = false") {{ $t('common.cancel') }}
+      el-button(type="primary" @click="handleCreateSubscription" :loading="creating") {{ $t('common.create') }}
 </template>
 
 <script setup lang="ts">
+import { ElMessage, ElMessageBox } from 'element-plus';
 import {
   fetchSubscriptions,
   createSubscription,
+  cancelSubscription,
   fetchPlans,
   getSubscriptionStatusType,
   getSubscriptionStatusLabel,
@@ -148,6 +167,7 @@ import {
 } from '~/composables/useSubscriptions';
 
 const router = useRouter();
+const { t } = useI18n();
 
 const loading = ref(false);
 const creating = ref(false);
@@ -238,6 +258,24 @@ async function handleCreateSubscription() {
     }
   } finally {
     creating.value = false;
+  }
+}
+
+async function handleCancelSubscription(row: CustomerSubscription) {
+  try {
+    await ElMessageBox.confirm(t('subscriptions.cancelConfirm'), t('subscriptions.cancelTitle'), {
+      type: 'warning',
+      confirmButtonText: t('subscriptions.cancelYes'),
+      cancelButtonText: t('common.no')
+    });
+    const result = await cancelSubscription(String(row.id));
+    if (result) {
+      const sub = subscriptions.value.find((s: any) => s.id === row.id);
+      if (sub) sub.status = 'CANCELLED';
+      ElMessage.success(t('subscriptions.cancelSuccess'));
+    }
+  } catch {
+    // User cancelled dialog
   }
 }
 

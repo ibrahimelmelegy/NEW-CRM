@@ -523,7 +523,7 @@ const getSentimentType = (s: string): 'success' | 'warning' | 'danger' | undefin
 async function fetchProfiles() {
   loading.value = true;
   try {
-    const res = await useApiFetch('social-crm');
+    const res: any = await useApiFetch('social-crm');
     if (res?.success) {
       profiles.value = res.body?.docs || res.body || [];
     } else {
@@ -587,7 +587,7 @@ const assignMention = (_m: any) => ElMessage.info(t('common.saved'));
 async function fetchPosts() {
   postsLoading.value = true;
   try {
-    const res = await useApiFetch('social-crm/posts');
+    const res: any = await useApiFetch('social-crm/posts');
     if (res?.success) {
       const docs = res.body?.docs || res.body || [];
       scheduledPosts.value = docs.map((p: any) => ({

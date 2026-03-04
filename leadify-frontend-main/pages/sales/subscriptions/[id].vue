@@ -4,7 +4,7 @@ div(v-loading="loading")
     .flex.items-center.gap-3
       el-button(circle size="small" @click="$router.back()")
         Icon(name="ph:arrow-left-bold" size="18")
-      .title.font-bold.text-2xl.mb-1 {{ subscription?.client?.clientName || 'Subscription Detail' }}
+      .title.font-bold.text-2xl.mb-1 {{ subscription?.client?.clientName || $t('subscriptions.title') }}
       el-tag(
         v-if="subscription?.status"
         :type="getSubscriptionStatusType(subscription.status)"
@@ -18,7 +18,7 @@ div(v-loading="loading")
         @click="showChangePlanDialog = true"
       )
         Icon.mr-1(name="ph:swap-bold" size="18")
-        | Change Plan
+        | {{ $t('subscriptions.changePlan') }}
       el-button(
         size="large"
         type="danger"
@@ -26,7 +26,7 @@ div(v-loading="loading")
         @click="showCancelDialog = true"
       )
         Icon.mr-1(name="ph:x-circle-bold" size="18")
-        | Cancel Subscription
+        | {{ $t('subscriptions.cancel') }}
 
   template(v-if="subscription")
     .grid.gap-6.mb-6(class="grid-cols-1 lg:grid-cols-2")
@@ -34,23 +34,23 @@ div(v-loading="loading")
       .glass-card.p-6.animate-entrance
         h3.text-lg.font-semibold.mb-4(style="color: var(--text-primary)")
           Icon.mr-2(name="ph:package-bold" size="20" style="color: #7849ff")
-          | Plan Information
+          | {{ $t('subscriptions.planInfo') }}
         .grid.gap-4(class="grid-cols-2")
           div
-            p.text-sm.mb-1(style="color: var(--text-muted)") Plan Name
+            p.text-sm.mb-1(style="color: var(--text-muted)") {{ $t('subscriptions.planName') }}
             p.font-medium(style="color: var(--text-primary)") {{ subscription.plan?.name }}
           div
-            p.text-sm.mb-1(style="color: var(--text-muted)") Price
+            p.text-sm.mb-1(style="color: var(--text-muted)") {{ $t('subscriptions.price') }}
             p.font-medium(style="color: var(--text-primary)") {{ formatSubscriptionCurrency(subscription.plan?.price || 0, subscription.plan?.currency) }}
           div
-            p.text-sm.mb-1(style="color: var(--text-muted)") Billing Cycle
+            p.text-sm.mb-1(style="color: var(--text-muted)") {{ $t('subscriptions.billingCycle') }}
             p.font-medium(style="color: var(--text-primary)") {{ getBillingCycleLabel(subscription.plan?.billingCycle || '') }}
           div
-            p.text-sm.mb-1(style="color: var(--text-muted)") Currency
+            p.text-sm.mb-1(style="color: var(--text-muted)") {{ $t('subscriptions.currency') }}
             p.font-medium(style="color: var(--text-primary)") {{ subscription.plan?.currency || 'SAR' }}
         //- Features
         div(v-if="subscription.plan?.features?.length" class="mt-4")
-          p.text-sm.mb-2(style="color: var(--text-muted)") Features
+          p.text-sm.mb-2(style="color: var(--text-muted)") {{ $t('subscriptions.features') }}
           .flex.flex-wrap.gap-2
             el-tag(
               v-for="(feature, idx) in subscription.plan.features"
@@ -64,83 +64,83 @@ div(v-loading="loading")
       .glass-card.p-6.animate-entrance(style="animation-delay: 0.05s")
         h3.text-lg.font-semibold.mb-4(style="color: var(--text-primary)")
           Icon.mr-2(name="ph:calendar-bold" size="20" style="color: #7849ff")
-          | Period Information
+          | {{ $t('subscriptions.periodInfo') }}
         .grid.gap-4(class="grid-cols-2")
           div
-            p.text-sm.mb-1(style="color: var(--text-muted)") Start Date
+            p.text-sm.mb-1(style="color: var(--text-muted)") {{ $t('subscriptions.startDate') }}
             p.font-medium(style="color: var(--text-primary)") {{ formatDate(subscription.startDate) }}
           div
-            p.text-sm.mb-1(style="color: var(--text-muted)") Current Period Start
+            p.text-sm.mb-1(style="color: var(--text-muted)") {{ $t('subscriptions.currentPeriodStart') }}
             p.font-medium(style="color: var(--text-primary)") {{ formatDate(subscription.currentPeriodStart) }}
           div
-            p.text-sm.mb-1(style="color: var(--text-muted)") Current Period End
+            p.text-sm.mb-1(style="color: var(--text-muted)") {{ $t('subscriptions.currentPeriodEnd') }}
             p.font-medium(style="color: var(--text-primary)") {{ formatDate(subscription.currentPeriodEnd) }}
           div
-            p.text-sm.mb-1(style="color: var(--text-muted)") Next Billing Date
+            p.text-sm.mb-1(style="color: var(--text-muted)") {{ $t('subscriptions.nextBillingDate') }}
             p.font-medium(style="color: var(--text-primary)") {{ subscription.nextBillingDate ? formatDate(subscription.nextBillingDate) : 'N/A' }}
         div(v-if="subscription.cancelledAt" class="mt-4")
           .grid.gap-4(class="grid-cols-2")
             div
-              p.text-sm.mb-1(style="color: var(--text-muted)") Cancelled At
+              p.text-sm.mb-1(style="color: var(--text-muted)") {{ $t('subscriptions.cancelledAt') }}
               p.font-medium.text-red-500 {{ formatDate(subscription.cancelledAt) }}
             div(v-if="subscription.cancelReason")
-              p.text-sm.mb-1(style="color: var(--text-muted)") Cancel Reason
+              p.text-sm.mb-1(style="color: var(--text-muted)") {{ $t('subscriptions.cancelReason') }}
               p.font-medium(style="color: var(--text-primary)") {{ subscription.cancelReason }}
 
       //- Client Info Card
       .glass-card.p-6.animate-entrance(style="animation-delay: 0.1s")
         h3.text-lg.font-semibold.mb-4(style="color: var(--text-primary)")
           Icon.mr-2(name="ph:user-bold" size="20" style="color: #7849ff")
-          | Client Information
+          | {{ $t('subscriptions.clientInfo') }}
         .grid.gap-4(class="grid-cols-2")
           div
-            p.text-sm.mb-1(style="color: var(--text-muted)") Client Name
+            p.text-sm.mb-1(style="color: var(--text-muted)") {{ $t('subscriptions.clientName') }}
             p.font-medium(style="color: var(--text-primary)") {{ subscription.client?.clientName || 'N/A' }}
           div
-            p.text-sm.mb-1(style="color: var(--text-muted)") Email
+            p.text-sm.mb-1(style="color: var(--text-muted)") {{ $t('subscriptions.email') }}
             p.font-medium(style="color: var(--text-primary)") {{ subscription.client?.email || 'N/A' }}
           div
-            p.text-sm.mb-1(style="color: var(--text-muted)") Company
+            p.text-sm.mb-1(style="color: var(--text-muted)") {{ $t('subscriptions.company') }}
             p.font-medium(style="color: var(--text-primary)") {{ subscription.client?.companyName || 'N/A' }}
 
       //- Event Timeline
       .glass-card.p-6.animate-entrance(style="animation-delay: 0.15s")
         h3.text-lg.font-semibold.mb-4(style="color: var(--text-primary)")
           Icon.mr-2(name="ph:clock-clockwise-bold" size="20" style="color: #7849ff")
-          | Event Timeline
+          | {{ $t('subscriptions.eventTimeline') }}
         SubscriptionTimeline(:events="subscription.events || []")
 
   //- Cancel Dialog
   el-dialog(
     v-model="showCancelDialog"
-    title="Cancel Subscription"
+    :title="$t('subscriptions.cancelTitle')"
     width="450px"
     :close-on-click-modal="false"
   )
-    p.mb-4(style="color: var(--text-secondary)") Are you sure you want to cancel this subscription? This action cannot be undone.
-    el-form-item(label="Reason (optional)")
+    p.mb-4(style="color: var(--text-secondary)") {{ $t('subscriptions.cancelConfirm') }} {{ $t('subscriptions.cancelActionNote') }}
+    el-form-item(:label="$t('subscriptions.cancelReasonOptional')")
       el-input(
         v-model="cancelReason"
         type="textarea"
         :rows="3"
-        placeholder="Enter cancellation reason..."
+        :placeholder="$t('subscriptions.cancelReasonPlaceholder')"
       )
     template(#footer)
-      el-button(@click="showCancelDialog = false") Keep Subscription
-      el-button(type="danger" @click="handleCancel" :loading="cancelling") Cancel Subscription
+      el-button(@click="showCancelDialog = false") {{ $t('subscriptions.keepSubscription') }}
+      el-button(type="danger" @click="handleCancel" :loading="cancelling") {{ $t('subscriptions.cancel') }}
 
   //- Change Plan Dialog
   el-dialog(
     v-model="showChangePlanDialog"
-    title="Change Subscription Plan"
+    :title="$t('subscriptions.changePlanTitle')"
     width="500px"
     :close-on-click-modal="false"
   )
-    p.mb-4(style="color: var(--text-secondary)") Select a new plan for this subscription. Proration will be calculated automatically.
-    el-form-item(label="New Plan")
+    p.mb-4(style="color: var(--text-secondary)") {{ $t('subscriptions.changePlanDesc') }}
+    el-form-item(:label="$t('subscriptions.newPlan')")
       el-select(
         v-model="selectedNewPlanId"
-        placeholder="Select plan"
+        :placeholder="$t('subscriptions.selectPlan')"
         style="width: 100%"
       )
         el-option(
@@ -151,8 +151,8 @@ div(v-loading="loading")
           :disabled="plan.id === subscription?.planId"
         )
     template(#footer)
-      el-button(@click="showChangePlanDialog = false") Cancel
-      el-button(type="primary" @click="handleChangePlan" :loading="changingPlan" :disabled="!selectedNewPlanId") Change Plan
+      el-button(@click="showChangePlanDialog = false") {{ $t('common.cancel') }}
+      el-button(type="primary" @click="handleChangePlan" :loading="changingPlan" :disabled="!selectedNewPlanId") {{ $t('subscriptions.changePlan') }}
 </template>
 
 <script setup lang="ts">

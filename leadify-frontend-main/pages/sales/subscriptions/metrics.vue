@@ -4,7 +4,7 @@ div
     .flex.items-center.gap-3
       el-button(circle size="small" @click="$router.back()")
         Icon(name="ph:arrow-left-bold" size="18")
-      .title.font-bold.text-2xl.mb-1.capitalize Subscription Metrics
+      .title.font-bold.text-2xl.mb-1.capitalize {{ $t('subscriptions.metricsTitle') }}
     el-button(
       size="large"
       class="!rounded-2xl"
@@ -12,27 +12,27 @@ div
       :loading="loading"
     )
       Icon.mr-1(name="ph:arrows-clockwise-bold" size="18")
-      | Refresh
+      | {{ $t('subscriptions.refresh') }}
 
   div(v-loading="loading")
     //- KPI Cards
     .grid.gap-6.mb-8(class="grid-cols-1 sm:grid-cols-2 lg:grid-cols-5")
       .glass-card.p-6.text-center.animate-entrance
-        .text-sm.mb-2(style="color: var(--text-muted)") Monthly Recurring Revenue
+        .text-sm.mb-2(style="color: var(--text-muted)") {{ $t('subscriptions.mrrFull') }}
         .text-2xl.font-bold(style="color: #7849ff") {{ formatSubscriptionCurrency(metrics?.mrr || 0) }}
         .flex.items-center.justify-center.mt-2
           Icon(name="ph:trend-up-bold" size="16" style="color: #67c23a")
           span.text-sm.ml-1(style="color: #67c23a") MRR
 
       .glass-card.p-6.text-center.animate-entrance(style="animation-delay: 0.05s")
-        .text-sm.mb-2(style="color: var(--text-muted)") Annual Recurring Revenue
+        .text-sm.mb-2(style="color: var(--text-muted)") {{ $t('subscriptions.arrFull') }}
         .text-2xl.font-bold(style="color: #409eff") {{ formatSubscriptionCurrency(metrics?.arr || 0) }}
         .flex.items-center.justify-center.mt-2
           Icon(name="ph:calendar-bold" size="16" style="color: #409eff")
           span.text-sm.ml-1(style="color: #409eff") ARR
 
       .glass-card.p-6.text-center.animate-entrance(style="animation-delay: 0.1s")
-        .text-sm.mb-2(style="color: var(--text-muted)") Churn Rate
+        .text-sm.mb-2(style="color: var(--text-muted)") {{ $t('subscriptions.churnRate') }}
         .text-2xl.font-bold(:style="{ color: (metrics?.churnRate || 0) > 5 ? '#f56c6c' : '#67c23a' }") {{ metrics?.churnRate || 0 }}%
         .flex.items-center.justify-center.mt-2
           Icon(
@@ -40,21 +40,21 @@ div
             size="16"
             :style="{ color: (metrics?.churnRate || 0) > 5 ? '#f56c6c' : '#67c23a' }"
           )
-          span.text-sm.ml-1(style="color: var(--text-muted)") This month
+          span.text-sm.ml-1(style="color: var(--text-muted)") {{ $t('subscriptions.thisMonth') }}
 
       .glass-card.p-6.text-center.animate-entrance(style="animation-delay: 0.15s")
-        .text-sm.mb-2(style="color: var(--text-muted)") Active Subscriptions
+        .text-sm.mb-2(style="color: var(--text-muted)") {{ $t('subscriptions.activeSubscriptions') }}
         .text-2xl.font-bold(style="color: #67c23a") {{ metrics?.activeCount || 0 }}
         .flex.items-center.justify-center.mt-2
           Icon(name="ph:check-circle-bold" size="16" style="color: #67c23a")
-          span.text-sm.ml-1(style="color: var(--text-muted)") Active
+          span.text-sm.ml-1(style="color: var(--text-muted)") {{ $t('subscriptions.active') }}
 
       .glass-card.p-6.text-center.animate-entrance(style="animation-delay: 0.2s")
-        .text-sm.mb-2(style="color: var(--text-muted)") Trial Subscriptions
+        .text-sm.mb-2(style="color: var(--text-muted)") {{ $t('subscriptions.trialSubscriptions') }}
         .text-2xl.font-bold(style="color: #e6a23c") {{ metrics?.trialCount || 0 }}
         .flex.items-center.justify-center.mt-2
           Icon(name="ph:hourglass-bold" size="16" style="color: #e6a23c")
-          span.text-sm.ml-1(style="color: var(--text-muted)") In trial
+          span.text-sm.ml-1(style="color: var(--text-muted)") {{ $t('subscriptions.inTrial') }}
 
     //- Charts Row
     .grid.gap-6.mb-8(class="grid-cols-1 lg:grid-cols-2")
@@ -62,14 +62,14 @@ div
       .glass-card.p-6.animate-entrance(style="animation-delay: 0.25s")
         h3.text-lg.font-semibold.mb-6(style="color: var(--text-primary)")
           Icon.mr-2(name="ph:chart-bar-bold" size="20" style="color: #7849ff")
-          | MRR Trend (Last 6 Months)
+          | {{ $t('subscriptions.mrrTrend') }}
         MRRChart(:data="metrics?.mrrTrend || []")
 
       //- Churn Rate Display
       .glass-card.p-6.animate-entrance(style="animation-delay: 0.3s")
         h3.text-lg.font-semibold.mb-6(style="color: var(--text-primary)")
           Icon.mr-2(name="ph:chart-line-down-bold" size="20" style="color: #7849ff")
-          | Churn Analysis
+          | {{ $t('subscriptions.churnAnalysis') }}
         ChurnChart(:data="{ rate: metrics?.churnRate || 0, trend: churnTrend }")
 
     //- Revenue Summary Row
@@ -78,13 +78,13 @@ div
       .glass-card.p-6.animate-entrance(style="animation-delay: 0.35s")
         h3.text-lg.font-semibold.mb-4(style="color: var(--text-primary)")
           Icon.mr-2(name="ph:money-bold" size="20" style="color: #7849ff")
-          | Revenue Summary
+          | {{ $t('subscriptions.revenueSummary') }}
         .grid.gap-4(class="grid-cols-2")
           div
-            p.text-sm.mb-1(style="color: var(--text-muted)") Total Active Revenue
+            p.text-sm.mb-1(style="color: var(--text-muted)") {{ $t('subscriptions.totalActiveRevenue') }}
             p.text-xl.font-bold(style="color: var(--text-primary)") {{ formatSubscriptionCurrency(metrics?.totalRevenue || 0) }}
           div
-            p.text-sm.mb-1(style="color: var(--text-muted)") Net Revenue Retention
+            p.text-sm.mb-1(style="color: var(--text-muted)") {{ $t('subscriptions.netRevenueRetention') }}
             .flex.items-center
               p.text-xl.font-bold(:style="{ color: (metrics?.netRevenueGrowth || 0) >= 100 ? '#67c23a' : '#f56c6c' }") {{ metrics?.netRevenueGrowth || 0 }}%
               Icon.ml-2(
@@ -97,7 +97,7 @@ div
       .glass-card.p-6.animate-entrance(style="animation-delay: 0.4s")
         h3.text-lg.font-semibold.mb-4(style="color: var(--text-primary)")
           Icon.mr-2(name="ph:lightning-bold" size="20" style="color: #7849ff")
-          | Quick Actions
+          | {{ $t('subscriptions.quickActions') }}
         .flex.flex-col.gap-3
           el-button(
             size="large"
@@ -105,14 +105,14 @@ div
             @click="$router.push('/sales/subscriptions')"
           )
             Icon.mr-2(name="ph:list-bold" size="18")
-            | View All Subscriptions
+            | {{ $t('subscriptions.viewAll') }}
           el-button(
             size="large"
             class="!rounded-xl !w-full !justify-start"
             @click="$router.push('/sales/subscriptions/plans')"
           )
             Icon.mr-2(name="ph:package-bold" size="18")
-            | Manage Plans
+            | {{ $t('subscriptions.managePlans') }}
           el-button(
             size="large"
             type="warning"
@@ -121,7 +121,7 @@ div
             :loading="processingRenewals"
           )
             Icon.mr-2(name="ph:arrows-clockwise-bold" size="18")
-            | Process Auto-Renewals
+            | {{ $t('subscriptions.processRenewals') }}
 </template>
 
 <script setup lang="ts">

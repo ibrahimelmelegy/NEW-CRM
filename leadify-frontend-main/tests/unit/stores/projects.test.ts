@@ -204,7 +204,7 @@ describe('useProjectStore', () => {
       const result = await store.updateProject('proj-1', { name: 'Updated', status: 'COMPLETE' } as any);
 
       expect(result).toEqual(updated);
-      expect(store.projects[0].name).toBe('Updated');
+      expect(store.projects[0]!.name).toBe('Updated');
       expect(store.currentProject!.name).toBe('Updated');
     });
 

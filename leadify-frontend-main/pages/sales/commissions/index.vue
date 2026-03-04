@@ -22,11 +22,11 @@
 
   //- Filters
   .flex.flex-wrap.gap-3.mb-4
-    el-select(v-model="filters.status" placeholder="All Statuses" clearable size="large" @change="fetchData" style="width: 160px")
-      el-option(label="Pending" value="PENDING")
-      el-option(label="Approved" value="APPROVED")
-      el-option(label="Paid" value="PAID")
-      el-option(label="Rejected" value="REJECTED")
+    el-select(v-model="filters.status" :placeholder="$t('commissions.allStatuses')" clearable size="large" @change="fetchData" style="width: 160px")
+      el-option(:label="$t('commissions.statusPending')" value="PENDING")
+      el-option(:label="$t('commissions.statusApproved')" value="APPROVED")
+      el-option(:label="$t('commissions.statusPaid')" value="PAID")
+      el-option(:label="$t('commissions.statusRejected')" value="REJECTED")
     el-input(v-model="filters.search" :placeholder="$t('common.search')" clearable size="large" @clear="fetchData" @keyup.enter="fetchData" style="width: 220px")
       template(#prefix)
         Icon(name="ph:magnifying-glass" size="16")
@@ -57,10 +57,10 @@
             el-tag(:type="statusType(row.status)" size="small" round style="cursor:pointer") {{ row.status }}
             template(#dropdown)
               el-dropdown-menu
-                el-dropdown-item(command="PENDING") Pending
-                el-dropdown-item(command="APPROVED") Approved
-                el-dropdown-item(command="PAID") Paid
-                el-dropdown-item(command="REJECTED") Rejected
+                el-dropdown-item(command="PENDING") {{ $t('commissions.statusPending') }}
+                el-dropdown-item(command="APPROVED") {{ $t('commissions.statusApproved') }}
+                el-dropdown-item(command="PAID") {{ $t('commissions.statusPaid') }}
+                el-dropdown-item(command="REJECTED") {{ $t('commissions.statusRejected') }}
       el-table-column(:label="$t('commissions.paidAt')" width="120")
         template(#default="{ row }")
           span.text-xs.font-mono(v-if="row.paidAt") {{ new Date(row.paidAt).toLocaleDateString('en-GB', { day: '2-digit', month: 'short', year: '2-digit' }) }}
@@ -124,7 +124,7 @@
           el-avatar(:size="28" style="background: var(--bg-elevated)") {{ rep.staff?.name?.charAt(0) || '?' }}
           .flex-1
             p.text-sm.font-medium(style="color: var(--text-primary)") {{ rep.staff?.name || 'Unknown' }}
-            p.text-xs(style="color: var(--text-muted)") {{ rep.dataValues?.dealCount || rep.dealCount || 0 }} deals
+            p.text-xs(style="color: var(--text-muted)") {{ rep.dataValues?.dealCount || rep.dealCount || 0 }} {{ $t('commissions.dealsCount') }}
           span.font-bold.text-sm(style="color: #7849ff") {{ Number(rep.dataValues?.totalEarned || rep.totalEarned || 0).toLocaleString() }} SAR
       .text-center.py-6(v-else)
         p.text-sm(style="color: var(--text-muted)") {{ $t('common.noData') }}
@@ -182,17 +182,17 @@ const dashboardStats = computed(() => {
   const s = kpiData.value;
   if (!s) {
     return [
-      { label: 'Total Earned', value: '0 SAR', icon: 'ph:wallet-bold', color: '#7849ff' },
-      { label: 'Total Paid', value: '0 SAR', icon: 'ph:check-circle-bold', color: '#22c55e' },
-      { label: 'Total Pending', value: '0 SAR', icon: 'ph:hourglass-bold', color: '#f59e0b' },
-      { label: 'Avg Rate', value: '0%', icon: 'ph:percent-bold', color: '#3b82f6' }
+      { label: t('commissions.totalEarned'), value: '0 SAR', icon: 'ph:wallet-bold', color: '#7849ff' },
+      { label: t('commissions.totalPaid'), value: '0 SAR', icon: 'ph:check-circle-bold', color: '#22c55e' },
+      { label: t('commissions.totalPending'), value: '0 SAR', icon: 'ph:hourglass-bold', color: '#f59e0b' },
+      { label: t('commissions.avgRate'), value: '0%', icon: 'ph:percent-bold', color: '#3b82f6' }
     ];
   }
   return [
-    { label: 'Total Earned', value: Number(s.totalEarned || 0).toLocaleString() + ' SAR', icon: 'ph:wallet-bold', color: '#7849ff' },
-    { label: 'Total Paid', value: Number(s.totalPaid || 0).toLocaleString() + ' SAR', icon: 'ph:check-circle-bold', color: '#22c55e' },
-    { label: 'Total Pending', value: Number(s.totalPending || 0).toLocaleString() + ' SAR', icon: 'ph:hourglass-bold', color: '#f59e0b' },
-    { label: 'Avg Rate', value: Number(s.avgRate || 0).toFixed(1) + '%', icon: 'ph:percent-bold', color: '#3b82f6' }
+    { label: t('commissions.totalEarned'), value: Number(s.totalEarned || 0).toLocaleString() + ' SAR', icon: 'ph:wallet-bold', color: '#7849ff' },
+    { label: t('commissions.totalPaid'), value: Number(s.totalPaid || 0).toLocaleString() + ' SAR', icon: 'ph:check-circle-bold', color: '#22c55e' },
+    { label: t('commissions.totalPending'), value: Number(s.totalPending || 0).toLocaleString() + ' SAR', icon: 'ph:hourglass-bold', color: '#f59e0b' },
+    { label: t('commissions.avgRate'), value: Number(s.avgRate || 0).toFixed(1) + '%', icon: 'ph:percent-bold', color: '#3b82f6' }
   ];
 });
 
@@ -313,7 +313,7 @@ async function doBulkPayout() {
     const { body, success } = await useApiFetch('commissions/bulk-payout', 'POST', { ids: selectedIds.value });
     if (success) {
       const count = (body as any)?.paidCount || selectedIds.value.length;
-      ElMessage.success(`${count} commission(s) marked as paid`);
+      ElMessage.success(t('commissions.markedAsPaid', { count }));
       showBulkPayoutDialog.value = false;
       selectedIds.value = [];
       await fetchData();

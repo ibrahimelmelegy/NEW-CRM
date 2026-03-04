@@ -490,4 +490,6 @@ router.get('/:id', authenticateUser, HasPermission([ManpowerPermissionsEnum.VIEW
 
 // ** --------------------- DELETE --------------------- **/
 
+router.delete('/:id', authenticateUser, HasPermission([ManpowerPermissionsEnum.DELETE_MANPOWER]), manpowerController.deleteManpower);
+
 export default router;

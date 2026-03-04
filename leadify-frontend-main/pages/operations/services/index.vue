@@ -26,6 +26,10 @@ div
                         NuxtLink.flex.items-center(:to="`/operations/services/edit/${data?.id}`")
                           Icon.text-md.mr-2(name="IconEdit" )
                           p.text-sm {{ $t('common.edit') }}
+                      el-dropdown-item(v-if="hasPermission('DELETE_SERVICES')" @click="[deleteLeadPopup=true, deleteId = data?.id]")
+                        .flex.items-center
+                          Icon.text-md.mr-2(name="ph:trash-bold" )
+                          p.text-sm {{ $t('common.delete') }}
 
   //- Mobile Card View
   .services-mobile-view
@@ -67,7 +71,7 @@ div
     .mobile-fab(v-if="hasPermission('CREATE_SERVICES')" @click="navigateTo('/operations/services/add-service')")
       Icon(name="ph:plus-bold" size="24")
 
-  ActionModel(v-model="deleteLeadPopup" :loading="loadingAction" :btn-text="$t('common.moveToArchive')" :description-one="$t('common.archiveConfirmation')" icon="/images/delete-image.png" :description-two="$t('common.archiveDescription')" )
+  ActionModel(v-model="deleteLeadPopup" :loading="deleting" :description="$t('common.confirmDelete')" @confirm="confirmDelete")
 </template>
 
 <script setup lang="ts">
@@ -76,6 +80,8 @@ const router = useRouter();
 const { hasPermission } = await usePermissions();
 const loadingAction = ref(false);
 const deleteLeadPopup = ref(false);
+const deleteId = ref<string | null>(null);
+const deleting = ref(false);
 const loading = ref(false);
 
 // Export columns
@@ -118,6 +124,20 @@ function handleRowClick(val: any) {
   router.push(`/operations/services/${val.id}`);
 }
 
+async function confirmDelete() {
+  if (!deleteId.value) return;
+  deleting.value = true;
+  try {
+    const response = await deleteServiceById(deleteId.value);
+    if (response?.success) {
+      table.data = table.data.filter((r: any) => r.id !== deleteId.value);
+    }
+  } finally {
+    deleting.value = false;
+    deleteLeadPopup.value = false;
+  }
+}
+
 // Mobile
 const { vibrate } = useMobile();
 const mobileSearch = ref('');
@@ -145,6 +165,7 @@ async function handleMobileRefresh() {
 function getSwipeLeftActions(_svc: any) {
   const actions = [{ name: 'view', label: useI18n().t('common.view'), icon: 'ph:eye-bold', color: '#f59e0b' }];
   if (hasPermission('EDIT_SERVICES')) actions.push({ name: 'edit', label: useI18n().t('common.edit'), icon: 'ph:pencil-simple-bold', color: '#F59E0B' });
+  if (hasPermission('DELETE_SERVICES')) actions.push({ name: 'delete', label: useI18n().t('common.delete'), icon: 'ph:trash-bold', color: '#ef4444' });
   return actions;
 }
 
@@ -152,6 +173,7 @@ function handleSwipeAction(name: string, svc: any) {
   vibrate();
   if (name === 'view') navigateTo(`/operations/services/${svc.id}`);
   if (name === 'edit') navigateTo(`/operations/services/edit/${svc.id}`);
+  if (name === 'delete') { deleteId.value = svc.id; deleteLeadPopup.value = true; }
 }
 </script>
 

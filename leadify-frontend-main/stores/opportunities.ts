@@ -55,7 +55,7 @@ export const useOpportunityStore = defineStore('opportunities', {
             ).toString()
           : '';
 
-        const response = await useApiFetch<{ docs: Opportunity[]; pagination: Pagination }>(
+        const response: any = await useApiFetch(
           `opportunity${query}`
         );
 
@@ -81,7 +81,7 @@ export const useOpportunityStore = defineStore('opportunities', {
       this.error = null;
 
       try {
-        const response = await useApiFetch<Opportunity>(`opportunity/${id}`);
+        const response: any = await useApiFetch(`opportunity/${id}`);
 
         if (response.success && response.body) {
           this.currentOpportunity = response.body;
@@ -102,7 +102,7 @@ export const useOpportunityStore = defineStore('opportunities', {
       this.error = null;
 
       try {
-        const response = await useApiFetch<Opportunity>(
+        const response: any = await useApiFetch(
           'opportunity',
           'POST',
           data as Record<string, unknown>
@@ -130,7 +130,7 @@ export const useOpportunityStore = defineStore('opportunities', {
       this.error = null;
 
       try {
-        const response = await useApiFetch<Opportunity>(
+        const response: any = await useApiFetch(
           `opportunity/${id}`,
           'PUT',
           data as Record<string, unknown>

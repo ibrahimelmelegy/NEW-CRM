@@ -19,7 +19,7 @@ export const useNotificationStore = defineStore('notifications', {
       this.loading = true;
 
       try {
-        const response = await useApiFetch<{ docs: AppNotification[] }>('notification');
+        const response: any = await useApiFetch('notification');
 
         if (response.success && response.body) {
           this.notifications = response.body.docs || [];
@@ -65,7 +65,7 @@ export const useNotificationStore = defineStore('notifications', {
 
     async fetchUnreadCount() {
       try {
-        const response = await useApiFetch<{ count: number }>('notification/unread-count');
+        const response: any = await useApiFetch('notification/unread-count');
 
         if (response.success && response.body) {
           this.unreadCount = response.body.count;

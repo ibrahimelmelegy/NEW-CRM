@@ -3,36 +3,36 @@
   //- Header
   .flex.items-center.justify-between.mb-6
     div
-      h2.text-2xl.font-bold(style="color: var(--text-primary)") Activity Timeline
-      p.text-sm(style="color: var(--text-muted)") Track all interactions and activities across your CRM
+      h2.text-2xl.font-bold(style="color: var(--text-primary)") {{ $t('activities.timeline') }}
+      p.text-sm(style="color: var(--text-muted)") {{ $t('activities.subtitle') }}
     .flex.items-center.gap-3
       el-button(type="primary" @click="showCreateDialog = true" class="!bg-[#7849ff] !border-none")
         Icon(name="ph:plus" size="16")
-        span.ml-1 Log Activity
+        span.ml-1 {{ $t('activities.logActivity') }}
 
   //- Filters
   .glass-card.p-4.rounded-2xl.mb-6
     .flex.items-center.flex-wrap.gap-3
-      el-select(v-model="filterType" clearable placeholder="Activity Type" @change="loadActivities" class="w-40")
-        el-option(value="" label="All Types")
+      el-select(v-model="filterType" clearable :placeholder="$t('activities.activityType')" @change="loadActivities" class="w-40")
+        el-option(value="" :label="$t('activities.allTypes')")
         el-option(v-for="t in activityTypes" :key="t.value" :value="t.value" :label="t.label")
-      el-select(v-model="filterEntity" clearable placeholder="Entity" @change="loadActivities" class="w-40")
-        el-option(value="" label="All Entities")
-        el-option(value="deal" label="Deals")
-        el-option(value="lead" label="Leads")
-        el-option(value="client" label="Clients")
-        el-option(value="ticket" label="Tickets")
+      el-select(v-model="filterEntity" clearable :placeholder="$t('activities.entity')" @change="loadActivities" class="w-40")
+        el-option(value="" :label="$t('activities.allEntities')")
+        el-option(value="deal" :label="$t('navigation.deals')")
+        el-option(value="lead" :label="$t('navigation.leads')")
+        el-option(value="client" :label="$t('navigation.clients')")
+        el-option(value="ticket" :label="$t('navigation.tickets')")
       el-date-picker(
         v-model="dateRange"
         type="daterange"
-        range-separator="to"
-        start-placeholder="From"
-        end-placeholder="To"
+        :range-separator="$t('common.to')"
+        :start-placeholder="$t('common.from')"
+        :end-placeholder="$t('common.to')"
         @change="loadActivities"
       )
       el-input(
         v-model="searchQuery"
-        placeholder="Search activities..."
+        :placeholder="$t('activities.searchPlaceholder')"
         clearable
         class="w-60"
         @input="debounceLoad"
@@ -84,12 +84,12 @@
           //- Empty
           .text-center.py-12(v-if="!loading && !activities.length")
             Icon(name="ph:clock-counter-clockwise" size="48" style="color: var(--text-muted)")
-            p.mt-3.font-medium(style="color: var(--text-primary)") No activities yet
-            p.mt-1(style="color: var(--text-muted)") Start logging calls, emails, and meetings
+            p.mt-3.font-medium(style="color: var(--text-primary)") {{ $t('activities.noActivitiesYet') }}
+            p.mt-1(style="color: var(--text-muted)") {{ $t('activities.startLoggingMessage') }}
 
           //- Load more
           .text-center.py-4(v-if="hasMore && activities.length")
-            el-button(@click="loadMore") Load More
+            el-button(@click="loadMore") {{ $t('common.loadMore') }}
 
     //- Sidebar
     .space-y-6
@@ -97,7 +97,7 @@
       .glass-card.p-5.rounded-2xl
         h3.text-sm.font-bold.mb-4(style="color: var(--text-primary)")
           Icon(name="ph:chart-pie" size="16" class="mr-2" style="color: #7849ff")
-          | Summary
+          | {{ $t('common.summary') }}
         .space-y-3
           .flex.items-center.justify-between(v-for="stat in activityStats" :key="stat.label")
             .flex.items-center.gap-2
@@ -109,7 +109,7 @@
       .glass-card.p-5.rounded-2xl
         h3.text-sm.font-bold.mb-4(style="color: var(--text-primary)")
           Icon(name="ph:users" size="16" class="mr-2" style="color: #7849ff")
-          | Active Contacts
+          | {{ $t('activities.activeContacts') }}
         .space-y-2
           .flex.items-center.gap-3(v-for="person in recentPeople" :key="person.name")
             .w-8.h-8.rounded-full.flex.items-center.justify-center.text-xs.font-bold(style="background: rgba(120,73,255,0.15); color: #7849ff") {{ person.name?.charAt(0) }}
@@ -118,30 +118,32 @@
               p.text-xs(style="color: var(--text-muted)") {{ person.lastActivity }}
 
   //- Create Activity Dialog
-  el-dialog(v-model="showCreateDialog" title="Log Activity" width="500px")
+  el-dialog(v-model="showCreateDialog" :title="$t('activities.logActivity')" width="500px")
     el-form(label-position="top")
-      el-form-item(label="Activity Type")
+      el-form-item(:label="$t('activities.activityType')")
         el-select(v-model="newActivity.type" style="width: 100%")
           el-option(v-for="t in activityTypes" :key="t.value" :value="t.value" :label="t.label")
-      el-form-item(label="Title")
-        el-input(v-model="newActivity.title" placeholder="Activity title")
-      el-form-item(label="Description")
-        el-input(v-model="newActivity.description" type="textarea" :rows="3" placeholder="Add details...")
+      el-form-item(:label="$t('common.title')")
+        el-input(v-model="newActivity.title" :placeholder="$t('activities.titlePlaceholder')")
+      el-form-item(:label="$t('common.description')")
+        el-input(v-model="newActivity.description" type="textarea" :rows="3" :placeholder="$t('activities.descriptionPlaceholder')")
       .grid.gap-4(class="grid-cols-2")
-        el-form-item(label="Date")
+        el-form-item(:label="$t('common.date')")
           el-date-picker(v-model="newActivity.date" type="datetime" style="width: 100%")
-        el-form-item(label="Duration")
-          el-input(v-model="newActivity.duration" placeholder="e.g., 30 min")
+        el-form-item(:label="$t('activities.duration')")
+          el-input(v-model="newActivity.duration" :placeholder="$t('activities.durationPlaceholder')")
     template(#footer)
       .flex.justify-end.gap-2
-        el-button(@click="showCreateDialog = false") Cancel
-        el-button(type="primary" @click="createActivity" :loading="saving" class="!bg-[#7849ff] !border-none") Save Activity
+        el-button(@click="showCreateDialog = false") {{ $t('common.cancel') }}
+        el-button(type="primary" @click="createActivity" :loading="saving" class="!bg-[#7849ff] !border-none") {{ $t('activities.saveActivity') }}
 </template>
 
 <script setup lang="ts">
 import { ElNotification } from 'element-plus';
 
 definePageMeta({ middleware: 'permissions' });
+
+const { t } = useI18n();
 
 interface Activity {
   id: string;

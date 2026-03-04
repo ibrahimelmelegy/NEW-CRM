@@ -383,6 +383,26 @@ export async function updateManpower(values: ManpowerValues, redirect: boolean =
 }
 
 /**
+ * Deletes a manpower record by its ID.
+ * @param id - The ID of the manpower to delete.
+ * @returns The API response object.
+ */
+export async function deleteManpowerById(id: string) {
+  try {
+    const response = await useApiFetch(`manpower/${id}`, 'DELETE');
+    if (response?.success) {
+      handleSuccess('Manpower deleted successfully', '', false);
+    } else {
+      handleError(response?.message || 'Failed to delete manpower');
+    }
+    return response;
+  } catch (error) {
+    handleError(error instanceof Error ? error.message : 'Unknown error');
+    return { success: false, body: null, message: error instanceof Error ? error.message : 'Unknown error', code: 500 };
+  }
+}
+
+/**
  * Maps numeric fields of ManpowerValues to numbers if they are strings
  *
  * @param {ManpowerValues} data - The data to map

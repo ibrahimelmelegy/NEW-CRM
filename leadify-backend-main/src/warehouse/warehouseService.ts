@@ -21,6 +21,10 @@ class WarehouseService {
     return { docs: rows, pagination: { page, limit, totalItems: count, totalPages: Math.ceil(count / limit) } };
   }
 
+  async getWarehouseById(id: number) {
+    return Warehouse.findByPk(id, { include: [{ model: WarehouseZone, as: 'zones' }] });
+  }
+
   async updateWarehouse(id: number, data: any) {
     const item = await Warehouse.findByPk(id);
     if (!item) return null;

@@ -277,10 +277,10 @@ div.animate-fade-in
           el-input(v-model="territoryForm.name" :placeholder="$t('territoryManagement.territoryNamePlaceholder')")
         el-form-item(:label="$t('territoryManagement.region')" required)
           el-select(v-model="territoryForm.type" style="width: 100%")
-            el-option(label="Region" value="region")
-            el-option(label="City" value="city")
-            el-option(label="Area" value="area")
-            el-option(label="Custom" value="custom")
+            el-option(:label="$t('territoryManagement.typeRegion')" value="region")
+            el-option(:label="$t('territoryManagement.typeCity')" value="city")
+            el-option(:label="$t('territoryManagement.typeArea')" value="area")
+            el-option(:label="$t('territoryManagement.typeCustom')" value="custom")
       el-form-item(:label="$t('common.description')")
         el-input(v-model="territoryForm.description" type="textarea" :rows="3")
 
@@ -298,10 +298,10 @@ div.animate-fade-in
             el-input(v-model="territoryForm.ruleIndustry" :placeholder="'e.g. Technology, Healthcare'")
           el-form-item(:label="$t('territoryManagement.byAccountSize')")
             el-select(v-model="territoryForm.ruleAccountSize" style="width: 100%" clearable multiple)
-              el-option(label="Small (1-50)" value="small")
-              el-option(label="Medium (51-200)" value="medium")
-              el-option(label="Large (201-1000)" value="large")
-              el-option(label="Enterprise (1000+)" value="enterprise")
+              el-option(:label="$t('territoryManagement.accountSizeSmall')" value="small")
+              el-option(:label="$t('territoryManagement.accountSizeMedium')" value="medium")
+              el-option(:label="$t('territoryManagement.accountSizeLarge')" value="large")
+              el-option(:label="$t('territoryManagement.accountSizeEnterprise')" value="enterprise")
 
       el-form-item(:label="$t('territoryManagement.revenueTarget')")
         el-input-number(v-model="territoryForm.revenueTarget" :min="0" :step="10000" style="width: 100%" :placeholder="'0'")
@@ -745,7 +745,7 @@ function getLoadColor(count: number): string {
 async function loadData() {
   loading.value = true;
   try {
-    const [territoryData, usersRes] = await Promise.all([
+    const [territoryData, usersRes]: any[] = await Promise.all([
       fetchTerritories(),
       useApiFetch('users')
     ]);
@@ -913,9 +913,9 @@ async function handleBulkExport() {
     link.download = 'territories-export.csv';
     link.click();
     URL.revokeObjectURL(url);
-    ElNotification({ type: 'success', title: t('common.success'), message: 'Exported successfully' });
+    ElNotification({ type: 'success', title: t('common.success'), message: t('common.exportSuccess') });
   } catch {
-    ElNotification({ type: 'error', title: t('common.error'), message: 'Export failed' });
+    ElNotification({ type: 'error', title: t('common.error'), message: t('common.exportFailed') });
   }
 }
 

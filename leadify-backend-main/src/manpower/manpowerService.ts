@@ -321,6 +321,12 @@ class ManpowerService {
       }
     });
   }
+  public async deleteManpower(id: string): Promise<void> {
+    const manpower = await Manpower.findByPk(id);
+    if (!manpower) throw new BaseError(ERRORS.MANPOWER_NOT_FOUND);
+    await manpower.destroy();
+  }
+
 }
 
 export default new ManpowerService();

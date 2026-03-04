@@ -26,6 +26,10 @@ div
                         NuxtLink.flex.items-center(:to="`/operations/manpower/edit/${data?.id}`")
                           Icon.text-md.mr-2(name="IconEdit" )
                           p.text-sm {{ $t('common.edit') }}
+                      el-dropdown-item(v-if="hasPermission('DELETE_MANPOWER')" @click="[deleteLeadPopup=true, deleteId = data?.id]")
+                        .flex.items-center
+                          Icon.text-md.mr-2(name="IconDelete" )
+                          p.text-sm {{ $t('common.delete') }}
 
   //- Mobile Card View
   .manpower-mobile-view
@@ -88,16 +92,33 @@ div
     .mobile-fab(v-if="hasPermission('CREATE_MANPOWER')" @click="navigateTo('/operations/manpower/add-manpower')")
       Icon(name="ph:plus-bold" size="24")
 
-  ActionModel(v-model="deleteLeadPopup" :loading="loadingAction" :btn-text="$t('common.moveToArchive')" :description-one="$t('common.archiveConfirmation')" icon="/images/delete-image.png" :description-two="$t('common.archiveDescription')" )
+  ActionModel(v-model="deleteLeadPopup" :loading="deleting" :description="$t('common.confirmDelete')" @confirm="confirmDelete")
 </template>
 
 <script setup lang="ts">
 import { Plus } from '@element-plus/icons-vue';
 const router = useRouter();
+const { t } = useI18n();
 const { hasPermission } = await usePermissions();
 const loadingAction = ref(false);
 const deleteLeadPopup = ref(false);
+const deleteId = ref<string | null>(null);
+const deleting = ref(false);
 const loading = ref(false);
+
+async function confirmDelete() {
+  if (!deleteId.value) return;
+  deleting.value = true;
+  try {
+    const response = await deleteManpowerById(deleteId.value);
+    if (response?.success) {
+      table.data = table.data.filter((r: any) => r.id !== deleteId.value);
+    }
+  } finally {
+    deleting.value = false;
+    deleteLeadPopup.value = false;
+  }
+}
 
 // Export columns
 const exportColumns = [
@@ -277,6 +298,7 @@ async function handleMobileRefresh() {
 function getSwipeLeftActions(_mp: any) {
   const actions = [{ name: 'view', label: useI18n().t('common.view'), icon: 'ph:eye-bold', color: '#10b981' }];
   if (hasPermission('EDIT_MANPOWER')) actions.push({ name: 'edit', label: useI18n().t('common.edit'), icon: 'ph:pencil-simple-bold', color: '#F59E0B' });
+  if (hasPermission('DELETE_MANPOWER')) actions.push({ name: 'delete', label: useI18n().t('common.delete'), icon: 'ph:trash-bold', color: '#ef4444' });
   return actions;
 }
 
@@ -284,6 +306,7 @@ function handleSwipeAction(name: string, mp: any) {
   vibrate();
   if (name === 'view') navigateTo(`/operations/manpower/${mp.id}`);
   if (name === 'edit') navigateTo(`/operations/manpower/edit/${mp.id}`);
+  if (name === 'delete') { deleteId.value = mp.id; deleteLeadPopup.value = true; }
 }
 </script>
 

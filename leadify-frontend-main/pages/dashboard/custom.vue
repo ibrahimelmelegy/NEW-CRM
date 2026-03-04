@@ -135,7 +135,7 @@ div
 
       .form-group
         label.block.text-sm.font-medium.mb-2 {{ $t('customDashboard.widgetWidth') }}
-        el-slider(v-model="widgetForm.width" :min="4" :max="12" :step="4" :marks="{ 4: 'Small', 8: 'Medium', 12: 'Full' }")
+        el-slider(v-model="widgetForm.width" :min="4" :max="12" :step="4" :marks="widthMarks")
 
     template(#footer)
       .flex.justify-end.gap-3
@@ -166,6 +166,12 @@ definePageMeta({ middleware: 'permissions' });
 
 const { $i18n } = useNuxtApp();
 const t = $i18n.t;
+
+const widthMarks = computed(() => ({
+  4: t('customDashboard.widthSmall'),
+  8: t('customDashboard.widthMedium'),
+  12: t('customDashboard.widthFull')
+}));
 
 interface WidgetView extends DashboardWidget {
   data?: any;

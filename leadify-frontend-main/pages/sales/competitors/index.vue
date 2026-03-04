@@ -29,17 +29,17 @@
       el-table-column(:label="$t('competitors.threatLevel')" width="140" align="center")
         template(#default="{ row }")
           el-tag(:color="threatColor(row.threatLevel)" effect="dark" size="small" round style="border: none; color: #fff") {{ row.threatLevel }}
-      el-table-column(label="Win Rate" width="120" align="center")
+      el-table-column(:label="$t('competitors.winRate')" width="120" align="center")
         template(#default="{ row }")
           span.font-bold.text-green-500 {{ row.winRate != null ? row.winRate + '%' : '—' }}
-      el-table-column(label="Loss Rate" width="120" align="center")
+      el-table-column(:label="$t('competitors.lossRate')" width="120" align="center")
         template(#default="{ row }")
           span.font-bold.text-red-500 {{ row.lossRate != null ? row.lossRate + '%' : '—' }}
-      el-table-column(label="Engagements" width="130" align="center")
+      el-table-column(:label="$t('competitors.totalEngagements')" width="130" align="center")
         template(#default="{ row }")
           span.font-bold {{ row.totalEngagements ?? 0 }}
       template(#empty)
-        el-empty(description="No threat data available" :image-size="60")
+        el-empty(:description="$t('competitors.noThreatData')" :image-size="60")
 
   //- Pricing Comparison
   .glass-card.p-6.rounded-2xl.mb-6.animate-entrance(v-if="items.length > 0")
@@ -179,17 +179,17 @@
           el-input(v-model="form.industry" :placeholder="$t('competitors.industryPlaceholder')")
         el-form-item(:label="$t('competitors.threatLevel')")
           el-select(v-model="form.threatLevel" class="w-full")
-            el-option(label="Low" value="LOW")
-            el-option(label="Medium" value="MEDIUM")
-            el-option(label="High" value="HIGH")
-            el-option(label="Critical" value="CRITICAL")
+            el-option(:label="$t('common.low')" value="LOW")
+            el-option(:label="$t('common.medium')" value="MEDIUM")
+            el-option(:label="$t('common.high')" value="HIGH")
+            el-option(:label="$t('competitors.critical')" value="CRITICAL")
         el-form-item(:label="$t('competitors.marketShare')")
           el-input-number(v-model="form.marketShare" :min="0" :max="100" :precision="1" class="w-full")
       .grid.grid-cols-2.gap-4
         el-form-item(:label="$t('competitors.status')")
           el-select(v-model="form.status" class="w-full")
-            el-option(label="Active" value="ACTIVE")
-            el-option(label="Inactive" value="INACTIVE")
+            el-option(:label="$t('common.active')" value="ACTIVE")
+            el-option(:label="$t('common.inactive')" value="INACTIVE")
         el-form-item(:label="$t('competitors.dealsWon')")
           el-input-number(v-model="form.dealsWon" :min="0" class="w-full")
 
@@ -197,11 +197,11 @@
       .grid.grid-cols-2.gap-4
         el-form-item(:label="$t('competitors.pricingModel')")
           el-select(v-model="form.pricingModel" class="w-full")
-            el-option(label="Subscription" value="SUBSCRIPTION")
-            el-option(label="One-time" value="ONE_TIME")
-            el-option(label="Freemium" value="FREEMIUM")
-            el-option(label="Usage-based" value="USAGE_BASED")
-            el-option(label="Enterprise" value="ENTERPRISE")
+            el-option(:label="$t('competitors.pricingModels.subscription')" value="SUBSCRIPTION")
+            el-option(:label="$t('competitors.pricingModels.oneTime')" value="ONE_TIME")
+            el-option(:label="$t('competitors.pricingModels.freemium')" value="FREEMIUM")
+            el-option(:label="$t('competitors.pricingModels.usageBased')" value="USAGE_BASED")
+            el-option(:label="$t('competitors.pricingModels.enterprise')" value="ENTERPRISE")
         el-form-item(:label="$t('competitors.basePrice')")
           el-input-number(v-model="form.basePrice" :min="0" class="w-full")
       .grid.grid-cols-2.gap-4
@@ -381,10 +381,10 @@ const summaryStats = computed(() => {
   const totalLost = items.value.reduce((s, i) => s + Number(i.dealsLost || 0), 0);
   const winRate = (totalWon + totalLost) > 0 ? Math.round((totalWon / (totalWon + totalLost)) * 100) : 0;
   return [
-    { label: 'Total Competitors', value: total, icon: 'ph:binoculars-bold', color: '#7849ff' },
-    { label: 'Active Threats', value: active, icon: 'ph:warning-bold', color: '#ef4444' },
-    { label: 'Deals Won (Us)', value: totalWon, icon: 'ph:trophy-bold', color: '#22c55e' },
-    { label: 'Win Rate', value: winRate + '%', icon: 'ph:chart-line-up-bold', color: '#3b82f6' }
+    { label: t('competitors.totalCompetitors'), value: total, icon: 'ph:binoculars-bold', color: '#7849ff' },
+    { label: t('competitors.activeThreats'), value: active, icon: 'ph:warning-bold', color: '#ef4444' },
+    { label: t('competitors.dealsWonUs'), value: totalWon, icon: 'ph:trophy-bold', color: '#22c55e' },
+    { label: t('competitors.winRate'), value: winRate + '%', icon: 'ph:chart-line-up-bold', color: '#3b82f6' }
   ];
 });
 

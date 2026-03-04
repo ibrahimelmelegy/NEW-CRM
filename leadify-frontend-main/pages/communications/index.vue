@@ -14,7 +14,7 @@
         <div class="flex gap-2">
           <el-button type="primary" class="!rounded-xl" @click="showLogDialog = true">
             <Icon name="ph:plus-bold" class="w-4 h-4 mr-2" />
-            Log Activity
+            {{ $t('communications.logActivity') }}
           </el-button>
         </div>
       </div>
@@ -24,29 +24,29 @@
     <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4">
       <div class="glass-panel p-4 rounded-xl text-center">
         <div class="text-xl font-bold text-slate-200">{{ stats.totalActivities }}</div>
-        <div class="text-xs text-slate-500 mt-1">Total Activities</div>
+        <div class="text-xs text-slate-500 mt-1">{{ $t('communications.totalActivities') }}</div>
       </div>
       <div class="glass-panel p-4 rounded-xl text-center">
         <div class="text-xl font-bold text-blue-400">{{ stats.callsToday }}</div>
-        <div class="text-xs text-slate-500 mt-1">Calls Today</div>
+        <div class="text-xs text-slate-500 mt-1">{{ $t('communications.callsToday') }}</div>
       </div>
       <div class="glass-panel p-4 rounded-xl text-center">
         <div class="text-xl font-bold text-indigo-400">{{ stats.emailsThisWeek }}</div>
-        <div class="text-xs text-slate-500 mt-1">Emails This Week</div>
+        <div class="text-xs text-slate-500 mt-1">{{ $t('communications.emailsThisWeek') }}</div>
       </div>
       <div class="glass-panel p-4 rounded-xl text-center">
         <div class="text-xl font-bold text-purple-400">{{ stats.meetingsScheduled }}</div>
-        <div class="text-xs text-slate-500 mt-1">Meetings</div>
+        <div class="text-xs text-slate-500 mt-1">{{ $t('communications.meetings') }}</div>
       </div>
       <div class="glass-panel p-4 rounded-xl text-center">
         <div class="text-xl font-bold text-teal-400">{{ stats.notesCreated }}</div>
-        <div class="text-xs text-slate-500 mt-1">Notes This Week</div>
+        <div class="text-xs text-slate-500 mt-1">{{ $t('communications.notesThisWeek') }}</div>
       </div>
       <div class="glass-panel p-4 rounded-xl text-center">
         <div class="text-xl font-bold" :class="stats.trend >= 0 ? 'text-emerald-400' : 'text-red-400'">
           {{ stats.trend >= 0 ? '+' : '' }}{{ stats.trend }}%
         </div>
-        <div class="text-xs text-slate-500 mt-1">Week Trend</div>
+        <div class="text-xs text-slate-500 mt-1">{{ $t('communications.weekTrend') }}</div>
       </div>
     </div>
 
@@ -56,21 +56,21 @@
       <div class="lg:col-span-3 space-y-4">
         <!-- Filters -->
         <div class="glass-panel p-4 rounded-xl flex flex-wrap gap-3 items-center">
-          <el-select v-model="filterType" placeholder="Activity Type" clearable class="w-40" @change="fetchActivities">
-            <el-option label="All Types" value="" />
-            <el-option label="Email" value="EMAIL" />
-            <el-option label="Call" value="CALL" />
-            <el-option label="Meeting" value="MEETING" />
-            <el-option label="Note" value="NOTE" />
-            <el-option label="Task" value="TASK" />
+          <el-select v-model="filterType" :placeholder="$t('communications.activityType')" clearable class="w-40" @change="fetchActivities">
+            <el-option :label="$t('communications.allTypes')" value="" />
+            <el-option :label="$t('communications.email')" value="EMAIL" />
+            <el-option :label="$t('communications.call')" value="CALL" />
+            <el-option :label="$t('communications.meeting')" value="MEETING" />
+            <el-option :label="$t('communications.note')" value="NOTE" />
+            <el-option :label="$t('communications.task')" value="TASK" />
           </el-select>
-          <el-select v-model="filterDirection" placeholder="Direction" clearable class="w-36" @change="fetchActivities">
-            <el-option label="All" value="" />
-            <el-option label="Inbound" value="INBOUND" />
-            <el-option label="Outbound" value="OUTBOUND" />
+          <el-select v-model="filterDirection" :placeholder="$t('communications.direction')" clearable class="w-36" @change="fetchActivities">
+            <el-option :label="$t('communications.all')" value="" />
+            <el-option :label="$t('communications.inbound')" value="INBOUND" />
+            <el-option :label="$t('communications.outbound')" value="OUTBOUND" />
           </el-select>
           <div class="flex-1"></div>
-          <el-input v-model="searchQuery" placeholder="Search activities..." prefix-icon="Search" clearable class="!w-56" @input="debouncedSearch" />
+          <el-input v-model="searchQuery" :placeholder="$t('communications.search')" prefix-icon="Search" clearable class="!w-56" @input="debouncedSearch" />
         </div>
 
         <!-- Timeline -->
@@ -88,8 +88,8 @@
 
         <div v-else-if="activities.length === 0" class="glass-panel p-12 rounded-2xl text-center">
           <Icon name="ph:chat-circle-dots-bold" class="w-16 h-16 text-slate-600 mx-auto mb-4" />
-          <h3 class="text-lg font-medium text-slate-300 mb-2">No Activities Yet</h3>
-          <p class="text-slate-500 text-sm">Start logging emails, calls, and meetings to build your communication history.</p>
+          <h3 class="text-lg font-medium text-slate-300 mb-2">{{ $t('communications.noActivities') }}</h3>
+          <p class="text-slate-500 text-sm">{{ $t('communications.noActivitiesDesc') }}</p>
         </div>
 
         <div v-else class="space-y-3">
@@ -112,7 +112,7 @@
                     <div class="flex items-center gap-2 mt-1">
                       <el-tag :type="getActivityTagType(activity.type)" effect="dark" size="small">{{ activity.type }}</el-tag>
                       <el-tag v-if="activity.direction" type="info" effect="plain" size="small">{{ activity.direction }}</el-tag>
-                      <span class="text-xs text-slate-500">{{ activity.user?.name || 'System' }}</span>
+                      <span class="text-xs text-slate-500">{{ activity.user?.name || $t('communications.system') }}</span>
                     </div>
                   </div>
                   <span class="text-xs text-slate-500 shrink-0">{{ formatTimeAgo(activity.createdAt) }}</span>
@@ -153,7 +153,7 @@
       <div class="space-y-4">
         <!-- Activity Type Breakdown -->
         <div class="glass-panel p-5 rounded-xl">
-          <h3 class="text-sm font-medium text-slate-300 mb-4">Activity Breakdown</h3>
+          <h3 class="text-sm font-medium text-slate-300 mb-4">{{ $t('communications.activityBreakdown') }}</h3>
           <div class="space-y-3">
             <div v-for="(count, type) in stats.byType" :key="type" class="flex items-center justify-between">
               <div class="flex items-center gap-2">
@@ -167,14 +167,14 @@
 
         <!-- Quick Stats -->
         <div class="glass-panel p-5 rounded-xl">
-          <h3 class="text-sm font-medium text-slate-300 mb-4">Call Performance</h3>
+          <h3 class="text-sm font-medium text-slate-300 mb-4">{{ $t('communications.callPerformance') }}</h3>
           <div class="space-y-3">
             <div class="flex justify-between">
-              <span class="text-sm text-slate-400">Avg Call Duration</span>
+              <span class="text-sm text-slate-400">{{ $t('communications.avgCallDuration') }}</span>
               <span class="text-sm font-medium text-slate-300">{{ formatDuration(stats.avgCallDuration) }}</span>
             </div>
             <div class="flex justify-between">
-              <span class="text-sm text-slate-400">Tasks This Week</span>
+              <span class="text-sm text-slate-400">{{ $t('communications.tasksThisWeek') }}</span>
               <span class="text-sm font-medium text-slate-300">{{ stats.tasksThisWeek }}</span>
             </div>
           </div>
@@ -183,45 +183,45 @@
     </div>
 
     <!-- Log Activity Dialog -->
-    <el-dialog v-model="showLogDialog" title="Log Activity" width="560px" class="glass-dialog">
+    <el-dialog v-model="showLogDialog" :title="$t('communications.logActivity')" width="560px" class="glass-dialog">
       <el-form :model="newActivity" label-position="top">
-        <el-form-item label="Activity Type">
-          <el-select v-model="newActivity.type" placeholder="Select type" class="w-full">
-            <el-option label="Email" value="EMAIL" />
-            <el-option label="Call" value="CALL" />
-            <el-option label="Meeting" value="MEETING" />
-            <el-option label="Note" value="NOTE" />
-            <el-option label="Task" value="TASK" />
+        <el-form-item :label="$t('communications.activityType')">
+          <el-select v-model="newActivity.type" :placeholder="$t('communications.selectType')" class="w-full">
+            <el-option :label="$t('communications.email')" value="EMAIL" />
+            <el-option :label="$t('communications.call')" value="CALL" />
+            <el-option :label="$t('communications.meeting')" value="MEETING" />
+            <el-option :label="$t('communications.note')" value="NOTE" />
+            <el-option :label="$t('communications.task')" value="TASK" />
           </el-select>
         </el-form-item>
-        <el-form-item label="Subject">
-          <el-input v-model="newActivity.subject" placeholder="Activity subject" />
+        <el-form-item :label="$t('communications.subject')">
+          <el-input v-model="newActivity.subject" :placeholder="$t('communications.activitySubject')" />
         </el-form-item>
-        <el-form-item v-if="['EMAIL', 'CALL'].includes(newActivity.type)" label="Direction">
+        <el-form-item v-if="['EMAIL', 'CALL'].includes(newActivity.type)" :label="$t('communications.direction')">
           <el-radio-group v-model="newActivity.direction">
-            <el-radio value="INBOUND">Inbound</el-radio>
-            <el-radio value="OUTBOUND">Outbound</el-radio>
+            <el-radio value="INBOUND">{{ $t('communications.inbound') }}</el-radio>
+            <el-radio value="OUTBOUND">{{ $t('communications.outbound') }}</el-radio>
           </el-radio-group>
         </el-form-item>
-        <el-form-item label="Details">
-          <el-input v-model="newActivity.body" type="textarea" :rows="3" placeholder="Activity details..." />
+        <el-form-item :label="$t('communications.details')">
+          <el-input v-model="newActivity.body" type="textarea" :rows="3" :placeholder="$t('communications.activityDetails')" />
         </el-form-item>
-        <el-form-item v-if="newActivity.type === 'CALL'" label="Phone Number">
-          <el-input v-model="newActivity.phoneNumber" placeholder="+966 5xx xxx xxxx" />
+        <el-form-item v-if="newActivity.type === 'CALL'" :label="$t('communications.phoneNumber')">
+          <el-input v-model="newActivity.phoneNumber" :placeholder="$t('communications.phoneNumberPlaceholder')" />
         </el-form-item>
-        <el-form-item v-if="newActivity.type === 'CALL'" label="Call Outcome">
-          <el-select v-model="newActivity.outcome" placeholder="Select outcome" class="w-full">
-            <el-option label="Connected" value="CONNECTED" />
-            <el-option label="No Answer" value="NO_ANSWER" />
-            <el-option label="Voicemail" value="VOICEMAIL" />
-            <el-option label="Busy" value="BUSY" />
-            <el-option label="Left Message" value="LEFT_MESSAGE" />
+        <el-form-item v-if="newActivity.type === 'CALL'" :label="$t('communications.callOutcome')">
+          <el-select v-model="newActivity.outcome" :placeholder="$t('communications.selectOutcome')" class="w-full">
+            <el-option :label="$t('communications.connected')" value="CONNECTED" />
+            <el-option :label="$t('communications.noAnswer')" value="NO_ANSWER" />
+            <el-option :label="$t('communications.voicemail')" value="VOICEMAIL" />
+            <el-option :label="$t('communications.busy')" value="BUSY" />
+            <el-option :label="$t('communications.leftMessage')" value="LEFT_MESSAGE" />
           </el-select>
         </el-form-item>
       </el-form>
       <template #footer>
-        <el-button @click="showLogDialog = false">Cancel</el-button>
-        <el-button type="primary" :loading="saving" @click="logActivity">Log Activity</el-button>
+        <el-button @click="showLogDialog = false">{{ $t('common.cancel') }}</el-button>
+        <el-button type="primary" :loading="saving" @click="logActivity">{{ $t('communications.logActivity') }}</el-button>
       </template>
     </el-dialog>
   </div>
@@ -331,7 +331,7 @@ const logActivity = async () => {
     fetchActivities();
     fetchStats();
   } else {
-    ElMessage.error(res?.message || 'Failed to log activity');
+    ElMessage.error(res?.message || t('communications.logActivityFailed'));
   }
   saving.value = false;
 };
@@ -384,17 +384,17 @@ const formatTimeAgo = (date: string) => {
   if (!date) return '';
   const diff = Date.now() - new Date(date).getTime();
   const mins = Math.floor(diff / 60000);
-  if (mins < 1) return 'Just now';
-  if (mins < 60) return `${mins}m ago`;
+  if (mins < 1) return t('communications.justNow');
+  if (mins < 60) return `${mins}m ${t('communications.ago')}`;
   const hours = Math.floor(mins / 60);
-  if (hours < 24) return `${hours}h ago`;
+  if (hours < 24) return `${hours}h ${t('communications.ago')}`;
   const days = Math.floor(hours / 24);
-  if (days < 7) return `${days}d ago`;
+  if (days < 7) return `${days}d ${t('communications.ago')}`;
   return new Date(date).toLocaleDateString();
 };
 
 const formatDuration = (seconds: number) => {
-  if (!seconds) return '0s';
+  if (!seconds) return t('communications.zeroDuration');
   const m = Math.floor(seconds / 60);
   const s = seconds % 60;
   if (m > 0) return `${m}m ${s}s`;

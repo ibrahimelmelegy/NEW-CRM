@@ -63,8 +63,8 @@
         )
           .w-8.h-8.rounded-full.flex.items-center.justify-center.text-white.text-sm.font-bold(style="background: #7849ff") {{ idx + 1 }}
           .flex-1.grid.grid-cols-3.gap-3
-            el-input(v-model="step.approverName" placeholder="Approver Name" size="small")
-            el-input-number(v-model="step.approverUserId" placeholder="User ID" size="small" :min="1" class="w-full")
+            el-input(v-model="step.approverName" :placeholder="$t('approvals.approverNamePlaceholder')" size="small")
+            el-input-number(v-model="step.approverUserId" :placeholder="$t('approvals.userIdPlaceholder')" size="small" :min="1" class="w-full")
             .flex.items-center.gap-2
               el-checkbox(v-model="step.required") {{ $t('approvals.required') }}
           el-button(size="small" type="danger" text @click="removeStep(idx)" :disabled="form.steps.length <= 1")
@@ -116,15 +116,15 @@ const form = reactive({
 });
 
 const formRules = {
-  name: [{ required: true, message: 'Name is required', trigger: 'blur' }],
-  entityType: [{ required: true, message: 'Entity type is required', trigger: 'change' }]
+  name: [{ required: true, message: t('approvals.nameRequired'), trigger: 'blur' }],
+  entityType: [{ required: true, message: t('approvals.entityTypeRequired'), trigger: 'change' }]
 };
 
 onMounted(() => loadWorkflows());
 
 async function loadWorkflows() {
   loading.value = true;
-  const res = await fetchWorkflows();
+  const res: any = await fetchWorkflows();
   if (res.success && res.body) {
     workflows.value = res.body;
   }

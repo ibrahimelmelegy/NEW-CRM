@@ -229,7 +229,7 @@ describe('SocialListeningService', () => {
   // ---------------------------------------------------------------------------
   describe('update', () => {
     it('should update and return the mention', async () => {
-      const mockItem = { id: 1, update: jest.fn().mockResolvedValue(true) };
+      const mockItem: any = { id: 1, update: jest.fn().mockImplementation(() => Promise.resolve(true)) };
       (SocialMention.findByPk as jest.Mock<any>).mockResolvedValue(mockItem);
 
       const result = await socialListeningService.update(1, { status: 'REVIEWED' });

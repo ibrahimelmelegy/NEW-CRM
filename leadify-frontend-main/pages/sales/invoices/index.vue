@@ -51,10 +51,10 @@ div
       :searchPlaceholder="$t('invoices.title')"
       :key="table.data"
       emptyIcon="ph:file-text-bold"
-      emptyMessage="No invoices yet"
-      emptyDescription="Create your first invoice to start billing"
+      :emptyMessage="$t('invoices.emptyMessage')"
+      :emptyDescription="$t('invoices.emptyDescription')"
       emptyActionHref="/sales/invoices/create"
-      emptyActionLabel="Create Invoice"
+      :emptyActionLabel="$t('invoices.createInvoice')"
     )
       .flex.items-center.py-2(@click.stop)
         el-dropdown(class="outline-0" trigger="click")
@@ -141,8 +141,8 @@ div
         .flex.items-center.gap-3
           Icon(name="ph:file-pdf-bold" size="24" style="color: #7849ff")
           div
-            .font-bold(style="color: var(--text-primary)") Standard PDF
-            .text-xs(style="color: var(--text-muted)") Server-generated professional layout
+            .font-bold(style="color: var(--text-primary)") {{ $t('invoices.standardPdf') }}
+            .text-xs(style="color: var(--text-muted)") {{ $t('invoices.standardPdfDesc') }}
         Icon(name="ph:arrow-right" size="18" style="color: var(--text-muted)")
       //- Custom templates
       .glass-card.p-3.rounded-xl.cursor-pointer.flex.items-center.justify-between(
@@ -215,10 +215,10 @@ const agingBuckets = computed(() => {
   if (!agingReport.value?.buckets) return [];
   const b = agingReport.value.buckets;
   return [
-    { label: 'Current', amount: b.current?.amount || 0, count: b.current?.count || 0, color: '#22c55e', bg: 'rgba(34,197,94,0.08)', borderColor: 'rgba(34,197,94,0.2)' },
-    { label: '1-30 Days', amount: b.thirtyDays?.amount || 0, count: b.thirtyDays?.count || 0, color: '#f59e0b', bg: 'rgba(245,158,11,0.08)', borderColor: 'rgba(245,158,11,0.2)' },
-    { label: '31-60 Days', amount: b.sixtyDays?.amount || 0, count: b.sixtyDays?.count || 0, color: '#f97316', bg: 'rgba(249,115,22,0.08)', borderColor: 'rgba(249,115,22,0.2)' },
-    { label: '90+ Days', amount: b.ninetyPlus?.amount || 0, count: b.ninetyPlus?.count || 0, color: '#ef4444', bg: 'rgba(239,68,68,0.08)', borderColor: 'rgba(239,68,68,0.2)' }
+    { label: t('invoices.agingCurrent'), amount: b.current?.amount || 0, count: b.current?.count || 0, color: '#22c55e', bg: 'rgba(34,197,94,0.08)', borderColor: 'rgba(34,197,94,0.2)' },
+    { label: t('invoices.aging30Days'), amount: b.thirtyDays?.amount || 0, count: b.thirtyDays?.count || 0, color: '#f59e0b', bg: 'rgba(245,158,11,0.08)', borderColor: 'rgba(245,158,11,0.2)' },
+    { label: t('invoices.aging60Days'), amount: b.sixtyDays?.amount || 0, count: b.sixtyDays?.count || 0, color: '#f97316', bg: 'rgba(249,115,22,0.08)', borderColor: 'rgba(249,115,22,0.2)' },
+    { label: t('invoices.aging90Plus'), amount: b.ninetyPlus?.amount || 0, count: b.ninetyPlus?.count || 0, color: '#ef4444', bg: 'rgba(239,68,68,0.08)', borderColor: 'rgba(239,68,68,0.2)' }
   ];
 });
 
@@ -372,9 +372,9 @@ async function downloadServerPdf(inv: any) {
   showTemplateSelector.value = false;
   const success = await downloadInvoicePdf(inv.id, inv.invoiceNumber);
   if (success) {
-    ElNotification({ type: 'success', title: t('common.success'), message: 'PDF downloaded' });
+    ElNotification({ type: 'success', title: t('common.success'), message: t('common.pdfDownloaded') });
   } else {
-    ElNotification({ type: 'error', title: 'Error', message: 'Failed to generate PDF' });
+    ElNotification({ type: 'error', title: t('common.error'), message: t('invoices.pdfFailed') });
   }
 }
 
@@ -399,7 +399,7 @@ async function downloadInvoiceWithTemplate(template: any) {
     items: [{ description: inv.deal?.name || 'Invoice', qty: 1, rate: inv.amount, unitprice: inv.amount, amount: inv.amount, total: inv.amount }]
   };
   generatePDF(template.layout, data, `Invoice-${inv.invoiceNumber}.pdf`);
-  ElNotification({ type: 'success', title: t('common.success'), message: 'PDF downloaded' });
+  ElNotification({ type: 'success', title: t('common.success'), message: t('common.pdfDownloaded') });
 }
 
 function formatCurrency(amount: number): string {
@@ -415,8 +415,8 @@ const advancedSearchFields = [
     label: t('invoices.table.status'),
     type: 'select',
     options: [
-      { value: 'collected', label: 'Collected' },
-      { value: 'pending', label: 'Pending' }
+      { value: 'collected', label: t('invoices.collected') },
+      { value: 'pending', label: t('invoices.pending') }
     ]
   },
   { key: 'invoiceDate', label: t('invoices.table.date'), type: 'date' }

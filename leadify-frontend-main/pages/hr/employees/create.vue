@@ -5,48 +5,48 @@ div
     el-button(circle size="large" @click="navigateTo('/hr/employees')")
       Icon(name="ph:arrow-left-bold" size="18")
     div
-      h1.text-2xl.font-bold(style="color: var(--text-primary)") Add Employee
-      p.text-sm.mt-1(style="color: var(--text-muted)") Create a new employee record
+      h1.text-2xl.font-bold(style="color: var(--text-primary)") {{ $t('hr.employees.addEmployee') }}
+      p.text-sm.mt-1(style="color: var(--text-muted)") {{ $t('hr.employees.createNewRecord') }}
 
   el-form(ref="formRef" :model="form" :rules="rules" label-position="top" size="large")
     //- Personal Info Section
     .glass-card.p-6.rounded-2xl.mb-6
       h3.font-semibold.mb-4(style="color: var(--text-primary)")
         Icon(name="ph:user-bold" size="20" class="mr-2")
-        | Personal Information
+        | {{ $t('hr.employees.personalInformation') }}
       .grid.gap-4(class="md:grid-cols-2 grid-cols-1")
-        el-form-item(label="First Name" prop="firstName")
-          el-input(v-model="form.firstName" placeholder="Enter first name")
+        el-form-item(:label="$t('hr.employees.firstName')" prop="firstName")
+          el-input(v-model="form.firstName" :placeholder="$t('hr.employees.enterFirstName')")
 
-        el-form-item(label="Last Name" prop="lastName")
-          el-input(v-model="form.lastName" placeholder="Enter last name")
+        el-form-item(:label="$t('hr.employees.lastName')" prop="lastName")
+          el-input(v-model="form.lastName" :placeholder="$t('hr.employees.enterLastName')")
 
-        el-form-item(label="Email" prop="email")
-          el-input(v-model="form.email" placeholder="Enter email address" type="email")
+        el-form-item(:label="$t('hr.employees.email')" prop="email")
+          el-input(v-model="form.email" :placeholder="$t('hr.employees.enterEmail')" type="email")
 
-        el-form-item(label="Phone")
-          el-input(v-model="form.phone" placeholder="Enter phone number")
+        el-form-item(:label="$t('hr.employees.phone')")
+          el-input(v-model="form.phone" :placeholder="$t('hr.employees.enterPhone')")
 
-        el-form-item(label="National ID")
-          el-input(v-model="form.nationalId" placeholder="Enter national ID")
+        el-form-item(:label="$t('hr.employees.nationalId')")
+          el-input(v-model="form.nationalId" :placeholder="$t('hr.employees.enterNationalId')")
 
-        el-form-item(label="Passport Number")
-          el-input(v-model="form.passportNumber" placeholder="Enter passport number")
+        el-form-item(:label="$t('hr.employees.passportNumber')")
+          el-input(v-model="form.passportNumber" :placeholder="$t('hr.employees.enterPassportNumber')")
 
-        el-form-item(label="Iqama Number")
-          el-input(v-model="form.iqamaNumber" placeholder="Enter iqama number")
+        el-form-item(:label="$t('hr.employees.iqamaNumber')")
+          el-input(v-model="form.iqamaNumber" :placeholder="$t('hr.employees.enterIqamaNumber')")
 
     //- Job Info Section
     .glass-card.p-6.rounded-2xl.mb-6
       h3.font-semibold.mb-4(style="color: var(--text-primary)")
         Icon(name="ph:briefcase-bold" size="20" class="mr-2")
-        | Job Information
+        | {{ $t('hr.employees.jobInformation') }}
       .grid.gap-4(class="md:grid-cols-2 grid-cols-1")
-        el-form-item(label="Job Title")
-          el-input(v-model="form.jobTitle" placeholder="Enter job title")
+        el-form-item(:label="$t('hr.employees.jobTitle')")
+          el-input(v-model="form.jobTitle" :placeholder="$t('hr.employees.enterJobTitle')")
 
-        el-form-item(label="Department")
-          el-select(v-model="form.departmentId" class="w-full" placeholder="Select department" clearable)
+        el-form-item(:label="$t('hr.employees.department')")
+          el-select(v-model="form.departmentId" class="w-full" :placeholder="$t('hr.employees.selectDepartment')" clearable)
             el-option(
               v-for="dept in departments"
               :key="dept.id"
@@ -54,8 +54,8 @@ div
               :value="dept.id"
             )
 
-        el-form-item(label="Manager")
-          el-select(v-model="form.managerId" class="w-full" placeholder="Select manager" clearable filterable)
+        el-form-item(:label="$t('hr.employees.manager')")
+          el-select(v-model="form.managerId" class="w-full" :placeholder="$t('hr.employees.selectManager')" clearable filterable)
             el-option(
               v-for="mgr in managers"
               :key="mgr.id"
@@ -63,8 +63,8 @@ div
               :value="mgr.id"
             )
 
-        el-form-item(label="Employment Type" prop="employmentType")
-          el-select(v-model="form.employmentType" class="w-full" placeholder="Select type")
+        el-form-item(:label="$t('hr.employees.employmentType')" prop="employmentType")
+          el-select(v-model="form.employmentType" class="w-full" :placeholder="$t('hr.employees.selectType')")
             el-option(
               v-for="et in EMPLOYMENT_TYPES"
               :key="et.value"
@@ -72,11 +72,11 @@ div
               :value="et.value"
             )
 
-        el-form-item(label="Hire Date" prop="hireDate")
-          el-date-picker(v-model="form.hireDate" type="date" class="w-full" value-format="YYYY-MM-DD" placeholder="Select hire date")
+        el-form-item(:label="$t('hr.employees.hireDate')" prop="hireDate")
+          el-date-picker(v-model="form.hireDate" type="date" class="w-full" value-format="YYYY-MM-DD" :placeholder="$t('hr.employees.selectHireDate')")
 
-        el-form-item(label="Status")
-          el-select(v-model="form.status" class="w-full" placeholder="Select status")
+        el-form-item(:label="$t('hr.employees.status')")
+          el-select(v-model="form.status" class="w-full" :placeholder="$t('hr.employees.selectStatus')")
             el-option(
               v-for="st in EMPLOYEE_STATUSES"
               :key="st.value"
@@ -84,11 +84,11 @@ div
               :value="st.value"
             )
 
-        el-form-item(label="Salary")
-          el-input-number(v-model="form.salary" :min="0" :precision="2" class="w-full" placeholder="Enter salary" controls-position="right")
+        el-form-item(:label="$t('hr.employees.salary')")
+          el-input-number(v-model="form.salary" :min="0" :precision="2" class="w-full" :placeholder="$t('hr.employees.enterSalary')" controls-position="right")
 
-        el-form-item(label="Salary Frequency")
-          el-select(v-model="form.salaryFrequency" class="w-full" placeholder="Select frequency")
+        el-form-item(:label="$t('hr.employees.salaryFrequency')")
+          el-select(v-model="form.salaryFrequency" class="w-full" :placeholder="$t('hr.employees.selectFrequency')")
             el-option(
               v-for="sf in SALARY_FREQUENCIES"
               :key="sf.value"
@@ -100,20 +100,20 @@ div
     .glass-card.p-6.rounded-2xl.mb-6
       h3.font-semibold.mb-4(style="color: var(--text-primary)")
         Icon(name="ph:bank-bold" size="20" class="mr-2")
-        | Bank Details
+        | {{ $t('hr.employees.bankDetails') }}
       .grid.gap-4(class="md:grid-cols-2 grid-cols-1")
-        el-form-item(label="Bank Name")
-          el-input(v-model="form.bankName" placeholder="Enter bank name")
+        el-form-item(:label="$t('hr.employees.bankName')")
+          el-input(v-model="form.bankName" :placeholder="$t('hr.employees.enterBankName')")
 
-        el-form-item(label="Bank Account Number")
-          el-input(v-model="form.bankAccount" placeholder="Enter account number")
+        el-form-item(:label="$t('hr.employees.bankAccountNumber')")
+          el-input(v-model="form.bankAccount" :placeholder="$t('hr.employees.enterAccountNumber')")
 
     //- Actions
     .flex.justify-end.gap-3
-      el-button(size="large" @click="navigateTo('/hr/employees')" class="!rounded-2xl") Cancel
+      el-button(size="large" @click="navigateTo('/hr/employees')" class="!rounded-2xl") {{ $t('common.cancel') }}
       el-button(type="primary" size="large" :loading="saving" @click="handleSubmit" class="!rounded-2xl")
         Icon(name="ph:check-bold" size="16" class="mr-1")
-        span Save Employee
+        span {{ $t('hr.employees.saveEmployee') }}
 </template>
 
 <script setup lang="ts">
@@ -130,6 +130,7 @@ import type { DepartmentItem, Employee } from '~/composables/useEmployees';
 
 definePageMeta({ middleware: 'permissions' });
 const router = useRouter();
+const { t } = useI18n();
 
 const saving = ref(false);
 const formRef = ref();
@@ -156,16 +157,16 @@ const form = reactive({
   bankAccount: ''
 });
 
-const rules = {
-  firstName: [{ required: true, message: 'First name is required', trigger: 'blur' }],
-  lastName: [{ required: true, message: 'Last name is required', trigger: 'blur' }],
+const rules = computed(() => ({
+  firstName: [{ required: true, message: t('hr.employees.firstNameRequired'), trigger: 'blur' }],
+  lastName: [{ required: true, message: t('hr.employees.lastNameRequired'), trigger: 'blur' }],
   email: [
-    { required: true, message: 'Email is required', trigger: 'blur' },
-    { type: 'email' as const, message: 'Please enter a valid email', trigger: 'blur' }
+    { required: true, message: t('hr.employees.emailRequired'), trigger: 'blur' },
+    { type: 'email' as const, message: t('hr.employees.emailInvalid'), trigger: 'blur' }
   ],
-  employmentType: [{ required: true, message: 'Employment type is required', trigger: 'change' }],
-  hireDate: [{ required: true, message: 'Hire date is required', trigger: 'change' }]
-};
+  employmentType: [{ required: true, message: t('hr.employees.employmentTypeRequired'), trigger: 'change' }],
+  hireDate: [{ required: true, message: t('hr.employees.hireDateRequired'), trigger: 'change' }]
+}));
 
 async function handleSubmit() {
   const valid = await formRef.value?.validate().catch(() => false);
@@ -187,10 +188,10 @@ async function handleSubmit() {
 
     const res = await createEmployee(payload);
     if (res.success) {
-      ElNotification({ type: 'success', title: 'Success', message: 'Employee created successfully' });
+      ElNotification({ type: 'success', title: t('common.success'), message: t('hr.employees.employeeCreated') });
       router.push('/hr/employees');
     } else {
-      ElNotification({ type: 'error', title: 'Error', message: res.message });
+      ElNotification({ type: 'error', title: t('common.error'), message: res.message });
     }
   } finally {
     saving.value = false;

@@ -130,7 +130,7 @@ const [tasksResponse, statsResponse, usersResponse] = await Promise.all([fetchTa
 
 const tasks = ref<Task[]>(tasksResponse.docs || []);
 const pagination = ref(tasksResponse.pagination);
-const stats = ref(statsResponse || {});
+const stats = ref<any>(statsResponse || {});
 
 // Stat cards
 const statCards = computed(() => [

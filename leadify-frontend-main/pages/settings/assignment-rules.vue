@@ -4,12 +4,12 @@
     <div class="glass-panel p-6 rounded-2xl">
       <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
         <div>
-          <h1 class="text-2xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-orange-400 to-red-400">Assignment & Escalation Rules</h1>
-          <p class="text-slate-400 text-sm mt-1">Auto-assign leads, deals, and tickets based on criteria. Set escalation paths for SLA breaches.</p>
+          <h1 class="text-2xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-orange-400 to-red-400">{{ $t('assignmentRules.title') }}</h1>
+          <p class="text-slate-400 text-sm mt-1">{{ $t('assignmentRules.subtitle') }}</p>
         </div>
         <el-button type="primary" class="!rounded-xl" @click="showRuleDialog = true">
           <Icon name="ph:plus-bold" class="w-4 h-4 mr-2" />
-          New Rule
+          {{ $t('assignmentRules.newRule') }}
         </el-button>
       </div>
     </div>
@@ -18,26 +18,26 @@
     <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
       <div class="glass-panel p-4 rounded-xl text-center">
         <div class="text-2xl font-bold text-slate-200">{{ rules.length }}</div>
-        <div class="text-xs text-slate-500 mt-1">Total Rules</div>
+        <div class="text-xs text-slate-500 mt-1">{{ $t('assignmentRules.totalRules') }}</div>
       </div>
       <div class="glass-panel p-4 rounded-xl text-center">
         <div class="text-2xl font-bold text-emerald-400">{{ rules.filter(r => r.isActive).length }}</div>
-        <div class="text-xs text-slate-500 mt-1">Active</div>
+        <div class="text-xs text-slate-500 mt-1">{{ $t('common.active') }}</div>
       </div>
       <div class="glass-panel p-4 rounded-xl text-center">
         <div class="text-2xl font-bold text-blue-400">{{ totalAssignments }}</div>
-        <div class="text-xs text-slate-500 mt-1">Auto-Assigned (30d)</div>
+        <div class="text-xs text-slate-500 mt-1">{{ $t('assignmentRules.autoAssigned') }}</div>
       </div>
       <div class="glass-panel p-4 rounded-xl text-center">
         <div class="text-2xl font-bold text-amber-400">{{ escalationsTriggered }}</div>
-        <div class="text-xs text-slate-500 mt-1">Escalations (30d)</div>
+        <div class="text-xs text-slate-500 mt-1">{{ $t('assignmentRules.escalations') }}</div>
       </div>
     </div>
 
     <!-- Tabs: Assignment / Escalation / Round Robin -->
     <el-tabs v-model="activeTab" class="glass-tabs">
       <!-- Assignment Rules -->
-      <el-tab-pane label="Assignment Rules" name="assignment">
+      <el-tab-pane :label="$t('assignmentRules.assignmentRules')" name="assignment">
         <div class="space-y-4">
           <div v-for="rule in assignmentRules" :key="rule.id" class="glass-panel p-5 rounded-xl hover:border-primary-500/30 transition-all">
             <div class="flex justify-between items-start">
@@ -52,7 +52,7 @@
               </div>
               <div class="flex items-center gap-2">
                 <el-tag :type="rule.isActive ? 'success' : 'info'" effect="dark" size="small">
-                  {{ rule.isActive ? 'Active' : 'Inactive' }}
+                  {{ rule.isActive ? $t('assignmentRules.active') : $t('assignmentRules.inactive') }}
                 </el-tag>
                 <el-switch v-model="rule.isActive" size="small" />
               </div>
@@ -60,7 +60,7 @@
 
             <!-- Rule Conditions -->
             <div class="mt-4 p-3 rounded-lg bg-slate-800/40">
-              <div class="text-xs text-slate-500 mb-2">Conditions ({{ rule.matchType }})</div>
+              <div class="text-xs text-slate-500 mb-2">{{ $t('assignmentRules.conditions') }} ({{ rule.matchType }})</div>
               <div class="space-y-1">
                 <div v-for="(cond, idx) in rule.conditions" :key="idx" class="flex items-center gap-2 text-xs">
                   <el-tag effect="plain" size="small">{{ cond.field }}</el-tag>
@@ -76,13 +76,13 @@
               <div class="flex items-center gap-2 text-xs text-slate-400">
                 <Icon name="ph:arrow-right-bold" class="w-3 h-3" />
                 <span>
-                  Assign to:
+                  {{ $t('assignmentRules.assignTo') }}:
                   <strong class="text-slate-200">{{ rule.assignTo }}</strong>
                 </span>
-                <span v-if="rule.assignMethod" class="text-slate-600">| Method: {{ rule.assignMethod }}</span>
+                <span v-if="rule.assignMethod" class="text-slate-600">| {{ $t('assignmentRules.method') }}: {{ rule.assignMethod }}</span>
               </div>
               <div class="flex items-center gap-2 text-xs text-slate-500">
-                <span>Triggered {{ rule.triggerCount }}x</span>
+                <span>{{ $t('assignmentRules.triggered') }} {{ rule.triggerCount }}x</span>
                 <el-button text size="small" type="primary" @click="editRule(rule)">
                   <Icon name="ph:pencil-simple" class="w-3 h-3" />
                 </el-button>
@@ -96,7 +96,7 @@
       </el-tab-pane>
 
       <!-- Escalation Rules -->
-      <el-tab-pane label="Escalation Rules" name="escalation">
+      <el-tab-pane :label="$t('assignmentRules.escalationRules')" name="escalation">
         <div class="space-y-4">
           <div v-for="esc in escalationRules" :key="esc.id" class="glass-panel p-5 rounded-xl hover:border-primary-500/30 transition-all">
             <div class="flex justify-between items-start">
@@ -129,8 +129,8 @@
                   L{{ idx + 1 }}
                 </div>
                 <div class="flex-1">
-                  <span class="text-xs text-slate-300">After {{ level.delay }}</span>
-                  <span class="text-xs text-slate-500">→ Notify</span>
+                  <span class="text-xs text-slate-300">{{ $t('assignmentRules.after') }} {{ level.delay }}</span>
+                  <span class="text-xs text-slate-500">→ {{ $t('assignmentRules.notify') }}</span>
                   <span class="text-xs text-slate-200 font-medium">{{ level.notifyTo }}</span>
                 </div>
                 <div class="flex items-center gap-1">
@@ -143,18 +143,18 @@
 
             <div class="mt-3 flex items-center gap-2 text-xs text-slate-500">
               <span>
-                Entity:
+                {{ $t('assignmentRules.entity') }}:
                 <strong class="text-slate-300">{{ esc.entity }}</strong>
               </span>
-              <span>| Trigger: {{ esc.trigger }}</span>
-              <span>| Triggered {{ esc.triggerCount }}x</span>
+              <span>| {{ $t('assignmentRules.trigger') }}: {{ esc.trigger }}</span>
+              <span>| {{ $t('assignmentRules.triggered') }} {{ esc.triggerCount }}x</span>
             </div>
           </div>
         </div>
       </el-tab-pane>
 
       <!-- Round Robin -->
-      <el-tab-pane label="Round Robin" name="roundrobin">
+      <el-tab-pane :label="$t('assignmentRules.roundRobin')" name="roundrobin">
         <div class="space-y-4">
           <div v-for="pool in roundRobinPools" :key="pool.id" class="glass-panel p-5 rounded-xl">
             <div class="flex justify-between items-start mb-4">
@@ -177,95 +177,95 @@
 
             <!-- Pool Stats -->
             <div class="flex items-center gap-4 text-xs text-slate-500">
-              <span>Total assigned: {{ pool.totalAssigned }}</span>
+              <span>{{ $t('assignmentRules.totalAssigned') }}: {{ pool.totalAssigned }}</span>
               <span>
-                Next:
+                {{ $t('assignmentRules.next') }}:
                 <strong class="text-slate-300">{{ pool.nextAssignee }}</strong>
               </span>
-              <span>Max load: {{ pool.maxLoad }}/person</span>
+              <span>{{ $t('assignmentRules.maxLoad') }}: {{ pool.maxLoad }}/{{ $t('assignmentRules.person') }}</span>
             </div>
           </div>
 
           <div v-if="roundRobinPools.length === 0" class="glass-panel p-12 rounded-2xl text-center">
             <Icon name="ph:arrows-clockwise-bold" class="w-16 h-16 text-slate-600 mx-auto mb-4" />
-            <p class="text-slate-500">No round-robin pools configured</p>
+            <p class="text-slate-500">{{ $t('assignmentRules.noRoundRobinPools') }}</p>
           </div>
         </div>
       </el-tab-pane>
     </el-tabs>
 
     <!-- New Rule Dialog -->
-    <el-dialog v-model="showRuleDialog" title="Create Assignment Rule" width="600px">
+    <el-dialog v-model="showRuleDialog" :title="$t('assignmentRules.createRule')" width="600px">
       <el-form label-position="top">
-        <el-form-item label="Rule Name">
-          <el-input v-model="newRule.name" placeholder="e.g., High-value leads to Senior Sales" />
+        <el-form-item :label="$t('assignmentRules.ruleName')">
+          <el-input v-model="newRule.name" :placeholder="$t('assignmentRules.ruleNamePlaceholder')" />
         </el-form-item>
         <div class="grid grid-cols-2 gap-4">
-          <el-form-item label="Rule Type">
+          <el-form-item :label="$t('assignmentRules.ruleType')">
             <el-select v-model="newRule.type" class="w-full">
-              <el-option label="Assignment" value="ASSIGNMENT" />
-              <el-option label="Escalation" value="ESCALATION" />
+              <el-option :label="$t('assignmentRules.typeAssignment')" value="ASSIGNMENT" />
+              <el-option :label="$t('assignmentRules.typeEscalation')" value="ESCALATION" />
             </el-select>
           </el-form-item>
-          <el-form-item label="Entity">
+          <el-form-item :label="$t('assignmentRules.entityLabel')">
             <el-select v-model="newRule.entity" class="w-full">
-              <el-option label="Leads" value="LEAD" />
-              <el-option label="Deals" value="DEAL" />
-              <el-option label="Tickets" value="TICKET" />
-              <el-option label="Tasks" value="TASK" />
+              <el-option :label="$t('assignmentRules.entityLeads')" value="LEAD" />
+              <el-option :label="$t('assignmentRules.entityDeals')" value="DEAL" />
+              <el-option :label="$t('assignmentRules.entityTickets')" value="TICKET" />
+              <el-option :label="$t('assignmentRules.entityTasks')" value="TASK" />
             </el-select>
           </el-form-item>
         </div>
-        <el-form-item label="Match Type">
+        <el-form-item :label="$t('assignmentRules.matchType')">
           <el-radio-group v-model="newRule.matchType">
-            <el-radio value="ALL">Match ALL conditions</el-radio>
-            <el-radio value="ANY">Match ANY condition</el-radio>
+            <el-radio value="ALL">{{ $t('assignmentRules.matchAll') }}</el-radio>
+            <el-radio value="ANY">{{ $t('assignmentRules.matchAny') }}</el-radio>
           </el-radio-group>
         </el-form-item>
-        <el-form-item label="Conditions">
+        <el-form-item :label="$t('assignmentRules.conditionsLabel')">
           <div class="space-y-2 w-full">
             <div v-for="(cond, idx) in newRule.conditions" :key="idx" class="flex gap-2">
               <el-select v-model="cond.field" class="w-40">
-                <el-option label="Source" value="source" />
-                <el-option label="Industry" value="industry" />
-                <el-option label="Value" value="value" />
-                <el-option label="Priority" value="priority" />
-                <el-option label="Region" value="region" />
+                <el-option :label="$t('assignmentRules.fieldSource')" value="source" />
+                <el-option :label="$t('assignmentRules.fieldIndustry')" value="industry" />
+                <el-option :label="$t('assignmentRules.fieldValue')" value="value" />
+                <el-option :label="$t('assignmentRules.fieldPriority')" value="priority" />
+                <el-option :label="$t('assignmentRules.fieldRegion')" value="region" />
               </el-select>
               <el-select v-model="cond.operator" class="w-32">
-                <el-option label="equals" value="equals" />
-                <el-option label="contains" value="contains" />
-                <el-option label="greater than" value="gt" />
-                <el-option label="less than" value="lt" />
+                <el-option :label="$t('assignmentRules.opEquals')" value="equals" />
+                <el-option :label="$t('assignmentRules.opContains')" value="contains" />
+                <el-option :label="$t('assignmentRules.opGreaterThan')" value="gt" />
+                <el-option :label="$t('assignmentRules.opLessThan')" value="lt" />
               </el-select>
-              <el-input v-model="cond.value" placeholder="Value" class="flex-1" />
+              <el-input v-model="cond.value" :placeholder="$t('assignmentRules.valuePlaceholder')" class="flex-1" />
               <el-button text type="danger" @click="newRule.conditions.splice(idx, 1)">
                 <Icon name="ph:x-bold" class="w-4 h-4" />
               </el-button>
             </div>
             <el-button text type="primary" @click="newRule.conditions.push({ field: 'source', operator: 'equals', value: '' })">
               <Icon name="ph:plus-bold" class="w-4 h-4 mr-1" />
-              Add Condition
+              {{ $t('assignmentRules.addCondition') }}
             </el-button>
           </div>
         </el-form-item>
         <div class="grid grid-cols-2 gap-4">
-          <el-form-item label="Assign To">
-            <el-input v-model="newRule.assignTo" placeholder="User or team name" />
+          <el-form-item :label="$t('assignmentRules.assignToLabel')">
+            <el-input v-model="newRule.assignTo" :placeholder="$t('assignmentRules.assignToPlaceholder')" />
           </el-form-item>
-          <el-form-item label="Method">
+          <el-form-item :label="$t('assignmentRules.methodLabel')">
             <el-select v-model="newRule.method" class="w-full">
-              <el-option label="Direct" value="DIRECT" />
-              <el-option label="Round Robin" value="ROUND_ROBIN" />
-              <el-option label="Weighted" value="WEIGHTED" />
-              <el-option label="Least Loaded" value="LEAST_LOADED" />
+              <el-option :label="$t('assignmentRules.methodDirect')" value="DIRECT" />
+              <el-option :label="$t('assignmentRules.methodRoundRobin')" value="ROUND_ROBIN" />
+              <el-option :label="$t('assignmentRules.methodWeighted')" value="WEIGHTED" />
+              <el-option :label="$t('assignmentRules.methodLeastLoaded')" value="LEAST_LOADED" />
             </el-select>
           </el-form-item>
         </div>
       </el-form>
       <template #footer>
-        <el-button @click="showRuleDialog = false">Cancel</el-button>
-        <el-button type="primary" @click="saveRule">Save Rule</el-button>
+        <el-button @click="showRuleDialog = false">{{ $t('common.cancel') }}</el-button>
+        <el-button type="primary" @click="saveRule">{{ $t('assignmentRules.saveRule') }}</el-button>
       </template>
     </el-dialog>
   </div>
@@ -436,7 +436,7 @@ const roundRobinPools = ref([
 const totalAssignments = computed(() => rules.value.reduce((s, r) => s + r.triggerCount, 0));
 const escalationsTriggered = computed(() => escalationRules.value.reduce((s, e) => s + e.triggerCount, 0));
 
-const editRule = (rule: any) => ElMessage.info(`Editing: ${rule.name}`);
+const editRule = (rule: any) => ElMessage.info(t('assignmentRules.editingRule', { name: rule.name }));
 const deleteRule = (rule: any) => {
   rules.value = rules.value.filter(r => r.id !== rule.id);
   ElMessage.success(t('common.deleted'));

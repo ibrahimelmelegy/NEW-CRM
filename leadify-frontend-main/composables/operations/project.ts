@@ -201,10 +201,10 @@ export const fetchExistingProject = async () => {
     const opp = await getOpportunity(route.query.opportunityId as string);
     if (opp) {
       project.value = {
-        name: opp.name,
-        clientId: opp.clientId,
-        description: opp.description,
-        type: opp.type,
+        name: opp.name as string | undefined,
+        clientId: opp.clientId as string | undefined,
+        description: opp.description as string | undefined,
+        type: opp.type as string | undefined,
         status: 'ACTIVE',
         category: 'Direct' // Default or map from opp
       };

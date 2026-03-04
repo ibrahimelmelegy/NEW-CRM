@@ -143,7 +143,7 @@ describe('useNotificationCenter', () => {
       nc.activeTab.value = 'unread';
 
       expect(nc.filteredNotifications.value).toHaveLength(1);
-      expect(nc.filteredNotifications.value[0].id).toBe('1');
+      expect(nc.filteredNotifications.value[0]!.id).toBe('1');
     });
 
     it('should return only important types when tab is "important"', () => {
@@ -173,7 +173,7 @@ describe('useNotificationCenter', () => {
 
       await nc.markAllRead();
 
-      expect(nc.notifications.value[0].read).toBe('READ');
+      expect(nc.notifications.value[0]!.read).toBe('READ');
       expect(nc.unreadCount.value).toBe(0);
     });
   });
@@ -192,7 +192,7 @@ describe('useNotificationCenter', () => {
 
       await nc.markRead('1');
 
-      expect(nc.notifications.value[0].read).toBe('READ');
+      expect(nc.notifications.value[0]!.read).toBe('READ');
       expect(nc.unreadCount.value).toBe(0);
     });
   });
@@ -210,7 +210,7 @@ describe('useNotificationCenter', () => {
 
       await nc.clickNotification(notif);
 
-      expect(nc.notifications.value[0].read).toBe('CLICKED');
+      expect(nc.notifications.value[0]!.read).toBe('CLICKED');
       expect(nc.unreadCount.value).toBe(0);
     });
   });

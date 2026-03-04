@@ -35,7 +35,7 @@ describe('useAudit', () => {
 
       expect(mockApiFetch).toHaveBeenCalledWith('audit/LEAD/10?page=1&limit=20');
       expect(result.docs).toHaveLength(1);
-      expect(result.docs[0].action).toBe('CREATE');
+      expect(result.docs[0]!.action).toBe('CREATE');
     });
 
     it('should support custom pagination', async () => {

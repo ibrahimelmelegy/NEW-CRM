@@ -185,7 +185,7 @@ describe('useDealStore', () => {
       const result = await store.updateDeal('deal-1', { name: 'Updated Deal', price: 20000 });
 
       expect(result).toEqual(updated);
-      expect(store.deals[0].name).toBe('Updated Deal');
+      expect(store.deals[0]!.name).toBe('Updated Deal');
     });
 
     it('should also update currentDeal if it matches', async () => {
@@ -219,7 +219,7 @@ describe('useDealStore', () => {
 
       expect(result).toBe(true);
       expect(store.deals).toHaveLength(1);
-      expect(store.deals[0].id).toBe('deal-2');
+      expect(store.deals[0]!.id).toBe('deal-2');
     });
 
     it('should clear currentDeal if deleted deal matches', async () => {

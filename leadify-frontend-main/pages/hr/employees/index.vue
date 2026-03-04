@@ -3,25 +3,25 @@ div
   //- Header
   .flex.items-center.justify-between.mb-6
     div
-      h1.text-2xl.font-bold(style="color: var(--text-primary)") Employees
-      p.text-sm.mt-1(style="color: var(--text-muted)") Manage your organization's employees
+      h1.text-2xl.font-bold(style="color: var(--text-primary)") {{ $t('hr.employees.employees') }}
+      p.text-sm.mt-1(style="color: var(--text-muted)") {{ $t('hr.employees.manageEmployees') }}
     .flex.items-center.gap-3
       ExportButton(
         :data="exportData"
         :columns="exportColumns"
         filename="employees-export"
-        title="Employees Report"
+        :title="$t('hr.employees.employeesReport')"
       )
       el-button(type="primary" size="large" class="!rounded-2xl" @click="navigateTo('/hr/employees/create')")
         Icon(name="ph:plus-bold" size="16" class="mr-1")
-        span Add Employee
+        span {{ $t('hr.employees.addEmployee') }}
 
   //- Filters
   .glass-card.p-4.rounded-2xl.mb-6
     .flex.flex-wrap.items-center.gap-4
       el-input(
         v-model="searchQuery"
-        :placeholder="'Search employees...'"
+        :placeholder="$t('hr.employees.searchEmployees')"
         size="large"
         clearable
         class="max-w-xs"
@@ -32,7 +32,7 @@ div
 
       el-select(
         v-model="filterDepartment"
-        placeholder="All Departments"
+        :placeholder="$t('hr.employees.allDepartments')"
         size="large"
         clearable
         class="w-48"
@@ -47,7 +47,7 @@ div
 
       el-select(
         v-model="filterStatus"
-        placeholder="All Statuses"
+        :placeholder="$t('hr.employees.allStatuses')"
         size="large"
         clearable
         class="w-40"
@@ -84,28 +84,28 @@ div
         .stat-icon.bg-green-100
           Icon(name="ph:users-bold" size="20" class="text-green-600")
         div
-          p.text-xs(style="color: var(--text-muted)") Total
+          p.text-xs(style="color: var(--text-muted)") {{ $t('hr.employees.total') }}
           p.text-xl.font-bold(style="color: var(--text-primary)") {{ pagination.totalItems }}
     .glass-card.p-4.rounded-2xl
       .flex.items-center.gap-3
         .stat-icon.bg-blue-100
           Icon(name="ph:check-circle-bold" size="20" class="text-blue-600")
         div
-          p.text-xs(style="color: var(--text-muted)") Active
+          p.text-xs(style="color: var(--text-muted)") {{ $t('hr.employees.active') }}
           p.text-xl.font-bold(style="color: var(--text-primary)") {{ activeCount }}
     .glass-card.p-4.rounded-2xl
       .flex.items-center.gap-3
         .stat-icon.bg-yellow-100
           Icon(name="ph:clock-bold" size="20" class="text-yellow-600")
         div
-          p.text-xs(style="color: var(--text-muted)") On Leave
+          p.text-xs(style="color: var(--text-muted)") {{ $t('hr.employees.onLeave') }}
           p.text-xl.font-bold(style="color: var(--text-primary)") {{ onLeaveCount }}
     .glass-card.p-4.rounded-2xl
       .flex.items-center.gap-3
         .stat-icon.bg-purple-100
           Icon(name="ph:user-plus-bold" size="20" class="text-purple-600")
         div
-          p.text-xs(style="color: var(--text-muted)") Probation
+          p.text-xs(style="color: var(--text-muted)") {{ $t('hr.employees.probation') }}
           p.text-xl.font-bold(style="color: var(--text-primary)") {{ probationCount }}
 
   //- Loading
@@ -123,13 +123,13 @@ div
       )
     .text-center.py-12(v-else)
       Icon(name="ph:users-bold" size="48" style="color: var(--text-muted)")
-      p.mt-2(style="color: var(--text-muted)") No employees found
+      p.mt-2(style="color: var(--text-muted)") {{ $t('hr.employees.noEmployeesFound') }}
 
   //- List View
   template(v-else)
     .glass-card.rounded-2xl.overflow-hidden(v-if="employees.length")
       el-table(:data="employees" style="width: 100%" @row-click="(row) => navigateTo(`/hr/employees/${row.id}`)")
-        el-table-column(label="Employee" min-width="220")
+        el-table-column(:label="$t('hr.employees.employee')" min-width="220")
           template(#default="{ row }")
             .flex.items-center.gap-3
               .avatar-circle-sm
@@ -137,24 +137,24 @@ div
               div
                 p.font-semibold(style="color: var(--text-primary)") {{ row.firstName }} {{ row.lastName }}
                 p.text-xs(style="color: var(--text-muted)") {{ row.employeeNumber }}
-        el-table-column(prop="jobTitle" label="Job Title" min-width="160")
+        el-table-column(prop="jobTitle" :label="$t('hr.employees.jobTitle')" min-width="160")
           template(#default="{ row }")
             span(style="color: var(--text-primary)") {{ row.jobTitle || '---' }}
-        el-table-column(label="Department" min-width="140")
+        el-table-column(:label="$t('hr.employees.department')" min-width="140")
           template(#default="{ row }")
             span(style="color: var(--text-primary)") {{ row.department?.name || '---' }}
-        el-table-column(label="Status" width="130")
+        el-table-column(:label="$t('hr.employees.status')" width="130")
           template(#default="{ row }")
             el-tag(:type="getEmployeeStatusType(row.status)" size="small" round) {{ getEmployeeStatusLabel(row.status) }}
-        el-table-column(prop="email" label="Email" min-width="200")
+        el-table-column(prop="email" :label="$t('hr.employees.email')" min-width="200")
           template(#default="{ row }")
             span.text-sm(style="color: var(--text-muted)") {{ row.email }}
-        el-table-column(prop="phone" label="Phone" width="140")
+        el-table-column(prop="phone" :label="$t('hr.employees.phone')" width="140")
           template(#default="{ row }")
             span.text-sm(style="color: var(--text-muted)") {{ row.phone || '---' }}
     .text-center.py-12(v-else)
       Icon(name="ph:users-bold" size="48" style="color: var(--text-muted)")
-      p.mt-2(style="color: var(--text-muted)") No employees found
+      p.mt-2(style="color: var(--text-muted)") {{ $t('hr.employees.noEmployeesFound') }}
 
   //- Pagination
   .flex.justify-center.mt-6(v-if="pagination.totalPages > 1")
@@ -173,6 +173,7 @@ import type { Employee, DepartmentItem } from '~/composables/useEmployees';
 
 definePageMeta({ middleware: 'permissions' });
 
+const { t } = useI18n();
 const loading = ref(false);
 const viewMode = ref<'grid' | 'list'>('grid');
 const searchQuery = ref('');
@@ -188,15 +189,15 @@ const activeCount = computed(() => employees.value.filter(e => e.status === 'ACT
 const onLeaveCount = computed(() => employees.value.filter(e => e.status === 'ON_LEAVE').length);
 const probationCount = computed(() => employees.value.filter(e => e.status === 'PROBATION').length);
 
-const exportColumns = [
-  { prop: 'fullName', label: 'Name' },
-  { prop: 'employeeNumber', label: 'Employee #' },
-  { prop: 'jobTitle', label: 'Job Title' },
-  { prop: 'departmentName', label: 'Department' },
-  { prop: 'status', label: 'Status' },
-  { prop: 'email', label: 'Email' },
-  { prop: 'phone', label: 'Phone' }
-];
+const exportColumns = computed(() => [
+  { prop: 'fullName', label: t('hr.employees.name') },
+  { prop: 'employeeNumber', label: t('hr.employees.employeeNumber') },
+  { prop: 'jobTitle', label: t('hr.employees.jobTitle') },
+  { prop: 'departmentName', label: t('hr.employees.department') },
+  { prop: 'status', label: t('hr.employees.status') },
+  { prop: 'email', label: t('hr.employees.email') },
+  { prop: 'phone', label: t('hr.employees.phone') }
+]);
 
 const exportData = computed(() =>
   employees.value.map(e => ({

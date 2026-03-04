@@ -161,6 +161,26 @@ export async function updateVehicle(values: Vehicle, redirect: boolean = true) {
 }
 
 /**
+ * Deletes a vehicle by its ID.
+ * @param id - The ID of the vehicle to delete.
+ * @returns The API response object.
+ */
+export async function deleteVehicleById(id: string) {
+  try {
+    const response = await useApiFetch(`vehicle/${id}`, 'DELETE');
+    if (response?.success) {
+      handleSuccess('Vehicle deleted successfully', '', false);
+    } else {
+      handleError(response?.message || 'Failed to delete vehicle');
+    }
+    return response;
+  } catch (error) {
+    handleError(error instanceof Error ? error.message : 'Unknown error');
+    return { success: false, body: null, message: error instanceof Error ? error.message : 'Unknown error', code: 500 };
+  }
+}
+
+/**
  * Maps numeric fields of a Vehicle object to numbers if they are strings.
  * a number with two decimal places; otherwise, the original value is retained.
  *

@@ -224,7 +224,7 @@ export function useIntegrations() {
     try {
       const response = await useApiFetch(`integrations/hub/${type}/test`, 'POST', config);
       if (response.success) {
-        const msg = response.body?.message || 'Connection successful';
+        const msg = (response.body as any)?.message || 'Connection successful';
         ElNotification.success({ title: 'Test Passed', message: msg });
         return true;
       } else {
@@ -328,7 +328,7 @@ export function useIntegrations() {
     try {
       const response = await useApiFetch(`integrations/hub/webhooks/${id}/test`, 'POST');
       if (response.success) {
-        ElNotification.success({ title: 'Test Sent', message: response.body?.message || 'Webhook test successful' });
+        ElNotification.success({ title: 'Test Sent', message: (response.body as any)?.message || 'Webhook test successful' });
         return true;
       } else {
         ElNotification.warning({ title: 'Test Failed', message: response.message });

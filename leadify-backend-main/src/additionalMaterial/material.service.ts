@@ -192,6 +192,12 @@ class MaterialService {
       }
     });
   }
+  public async deleteAdditionalMaterial(id: number): Promise<void> {
+    const material = await AdditionalMaterial.findByPk(id);
+    if (!material) throw new BaseError(ERRORS.ADDITIONAL_MATERIAL_NOT_FOUND);
+    await material.destroy();
+  }
+
 }
 
 export default new MaterialService();

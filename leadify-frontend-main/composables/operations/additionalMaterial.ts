@@ -204,3 +204,18 @@ export async function updateAdditionalMaterial(values: AdditionalMaterial, redir
     handleError(error instanceof Error ? error.message : 'Unknown error');
   }
 }
+
+export async function deleteAdditionalMaterialById(id: string) {
+  try {
+    const response = await useApiFetch(`additional-material/${id}`, 'DELETE');
+    if (response?.success) {
+      ElNotification({ type: 'success', title: 'Success', message: 'Material deleted successfully' });
+    } else {
+      ElNotification({ type: 'error', title: 'Error', message: response?.message || 'Failed to delete material' });
+    }
+    return response;
+  } catch (error) {
+    ElNotification({ type: 'error', title: 'Error', message: error instanceof Error ? error.message : 'Unknown error' });
+    return { success: false, body: null, message: 'Unknown error', code: 500 };
+  }
+}

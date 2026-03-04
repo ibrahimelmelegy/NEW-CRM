@@ -71,7 +71,7 @@ async function handleLogin() {
     if (result.success) {
       navigateTo('/portal');
     } else {
-      error.value = result.message || 'Login failed';
+      error.value = result.message || t('portal.login.loginFailed');
     }
   } finally {
     loading.value = false;

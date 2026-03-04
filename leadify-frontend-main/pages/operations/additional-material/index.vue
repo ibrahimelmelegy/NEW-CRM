@@ -96,6 +96,12 @@
                       <p class="text-sm">{{ $t('common.edit') }}</p>
                     </nuxt-link>
                   </el-dropdown-item>
+                  <el-dropdown-item v-if="hasPermission('DELETE_ADDITIONAL_MATERIAL')" @click="deleteLeadPopup = true; deleteId = scope.row?.id">
+                    <div class="flex items-center">
+                      <icon class="text-md mr-2" name="ph:trash-bold"></icon>
+                      <p class="text-sm">{{ $t('common.delete') }}</p>
+                    </div>
+                  </el-dropdown-item>
                 </el-dropdown-menu>
               </template>
             </el-dropdown>
@@ -125,6 +131,7 @@
       ></el-pagination>
     </div>
   </div>
+  <ActionModel v-model="deleteLeadPopup" :loading="deleting" :description="$t('common.confirmDelete')" @confirm="confirmDelete" />
 </template>
 
 <script setup lang="ts">
@@ -141,6 +148,9 @@ const sort = ref<any>({});
 const pagintaion = ref<any>({});
 const finalData = ref<any>([]);
 const router = useRouter();
+const deleteLeadPopup = ref(false);
+const deleteId = ref<string | null>(null);
+const deleting = ref(false);
 const handleSizeChange = (val: any) => {
   getData();
 };
@@ -155,6 +165,20 @@ watch(
     getData();
   }
 );
+
+async function confirmDelete() {
+  if (!deleteId.value) return;
+  deleting.value = true;
+  try {
+    const response = await deleteAdditionalMaterialById(deleteId.value);
+    if (response?.success) {
+      finalData.value = finalData.value.filter((r: any) => r.id !== deleteId.value);
+    }
+  } finally {
+    deleting.value = false;
+    deleteLeadPopup.value = false;
+  }
+}
 
 async function getData() {
   isLoading.value = true;

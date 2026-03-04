@@ -124,7 +124,7 @@
           el-avatar(:size="32") {{ staff.name?.charAt(0) }}
           div.flex-1
             p.text-sm.font-medium(style="color: var(--text-primary)") {{ staff.name }}
-            p.text-xs(style="color: var(--text-muted)") {{ staff.availableSlots || 'No availability set' }}
+            p.text-xs(style="color: var(--text-muted)") {{ staff.availableSlots || $t('booking.noAvailabilitySet') }}
 
   //- Booking Pages
   .p-6.rounded-2xl.border.mt-6(style="border-color: var(--border-default); background: var(--bg-elevated);")
@@ -199,10 +199,10 @@
       el-form-item
         el-checkbox(v-model="newBooking.isRecurring") {{ $t('booking.recurringBooking') }}
         el-select(v-if="newBooking.isRecurring" v-model="newBooking.recurringPattern" class="ml-2" style="width: 150px")
-          el-option(label="Daily" value="DAILY")
-          el-option(label="Weekly" value="WEEKLY")
-          el-option(label="Bi-weekly" value="BIWEEKLY")
-          el-option(label="Monthly" value="MONTHLY")
+          el-option(:label="$t('booking.recurringDaily')" value="DAILY")
+          el-option(:label="$t('booking.recurringWeekly')" value="WEEKLY")
+          el-option(:label="$t('booking.recurringBiweekly')" value="BIWEEKLY")
+          el-option(:label="$t('booking.recurringMonthly')" value="MONTHLY")
       el-form-item(v-if="newBooking.isRecurring" :label="$t('booking.reminderConfig')")
         .flex.items-center.gap-2
           el-checkbox(v-model="newBooking.sendReminder") {{ $t('booking.sendReminder') }}
@@ -247,6 +247,7 @@ definePageMeta({
 });
 
 const { t } = useI18n();
+const config = useRuntimeConfig();
 
 const TYPE_COLORS: Record<string, string> = {
   DEMO: '#6366F1',
@@ -439,7 +440,7 @@ const goToToday = () => {
 async function fetchBookings() {
   loading.value = true;
   try {
-    const res = await useApiFetch('bookings?limit=500');
+    const res: any = await useApiFetch('bookings?limit=500');
     if (res?.success) {
       const raw: any[] = res.body?.docs || res.body || [];
       bookings.value = raw.map((b, i) => mapBooking(b, i));
@@ -455,7 +456,7 @@ async function fetchBookings() {
 
 async function fetchBookingPages() {
   try {
-    const res = await useApiFetch('bookings/pages');
+    const res: any = await useApiFetch('bookings/pages');
     if (res?.success) {
       bookingPages.value = res.body || [];
     }
@@ -613,7 +614,8 @@ const quickBook = (hour: number) => {
 };
 
 const copyBookingLink = (page: any) => {
-  navigator.clipboard?.writeText(`https://book.example.com/${page.slug || page.id}`);
+  const baseUrl = (config.public.BOOKING_BASE_URL || config.public.BASE_URL || '').replace(/\/$/, '');
+  navigator.clipboard?.writeText(`${baseUrl}/book/${page.slug || page.id}`);
   ElMessage.success(t('booking.linkCopied'));
 };
 

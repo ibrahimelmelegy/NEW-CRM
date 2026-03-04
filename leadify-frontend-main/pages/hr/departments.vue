@@ -3,11 +3,11 @@ div
   //- Header
   .flex.items-center.justify-between.mb-6
     div
-      h1.text-2xl.font-bold(style="color: var(--text-primary)") Departments
-      p.text-sm.mt-1(style="color: var(--text-muted)") Manage your organization's departments
+      h1.text-2xl.font-bold(style="color: var(--text-primary)") {{ $t('hr.departments.title') }}
+      p.text-sm.mt-1(style="color: var(--text-muted)") {{ $t('hr.departments.subtitle') }}
     el-button(type="primary" size="large" class="!rounded-2xl" @click="openAddDialog")
       Icon(name="ph:plus-bold" size="16" class="mr-1")
-      span Add Department
+      span {{ $t('hr.departments.addDepartment') }}
 
   //- Loading
   .flex.justify-center.py-12(v-if="loading")
@@ -19,7 +19,7 @@ div
     .glass-card.p-6.rounded-2xl.mb-6(v-if="flatTree.length")
       h3.font-semibold.mb-4(style="color: var(--text-primary)")
         Icon(name="ph:tree-structure-bold" size="20" class="mr-2")
-        | Department Hierarchy
+        | {{ $t('hr.departments.hierarchy') }}
       .space-y-2
         .flex.items-center.gap-3.p-3.rounded-xl.transition-all(
           v-for="item in flatTree"
@@ -31,7 +31,7 @@ div
           .flex-1
             span.font-medium(style="color: var(--text-primary)") {{ item.name }}
             el-tag.ml-2(size="small" type="info") {{ item.code }}
-            el-tag.ml-2(size="small" round :type="item.employeeCount > 0 ? 'success' : 'info'") {{ item.employeeCount || 0 }} employees
+            el-tag.ml-2(size="small" round :type="item.employeeCount > 0 ? 'success' : 'info'") {{ item.employeeCount || 0 }} {{ $t('hr.departments.employees') }}
           .flex.items-center.gap-2
             el-button(type="primary" size="small" circle @click.stop="openEditDialogById(item.id)")
               Icon(name="ph:pencil-bold" size="14")
@@ -41,29 +41,29 @@ div
     //- Flat Table
     .glass-card.rounded-2xl.overflow-hidden
       el-table(:data="departments" style="width: 100%")
-        el-table-column(prop="name" label="Department Name" min-width="200")
+        el-table-column(prop="name" :label="$t('hr.departments.name')" min-width="200")
           template(#default="{ row }")
             .flex.items-center.gap-2
               Icon(name="ph:buildings-bold" size="18" style="color: #7849ff")
               span.font-semibold(style="color: var(--text-primary)") {{ row.name }}
 
-        el-table-column(prop="code" label="Code" width="120")
+        el-table-column(prop="code" :label="$t('hr.departments.code')" width="120")
           template(#default="{ row }")
             el-tag(size="small" type="info") {{ row.code }}
 
-        el-table-column(label="Parent" width="160")
+        el-table-column(:label="$t('hr.departments.parent')" width="160")
           template(#default="{ row }")
             span(style="color: var(--text-primary)") {{ row.parent?.name || '---' }}
 
-        el-table-column(label="Employees" width="120" align="center")
+        el-table-column(:label="$t('hr.departments.employees')" width="120" align="center")
           template(#default="{ row }")
             el-tag(round size="small" :type="row.employeeCount > 0 ? 'success' : 'info'") {{ row.employeeCount || 0 }}
 
-        el-table-column(label="Description" min-width="200")
+        el-table-column(:label="$t('hr.departments.description')" min-width="200")
           template(#default="{ row }")
             span.text-sm(style="color: var(--text-muted)") {{ row.description || '---' }}
 
-        el-table-column(label="Actions" width="120" align="center")
+        el-table-column(:label="$t('hr.departments.actions')" width="120" align="center")
           template(#default="{ row }")
             .flex.items-center.justify-center.gap-2
               el-button(type="primary" size="small" circle @click.stop="openEditDialog(row)")
@@ -72,16 +72,16 @@ div
                 Icon(name="ph:trash-bold" size="14")
 
   //- Add/Edit Dialog
-  el-dialog(v-model="dialogVisible" :title="isEditing ? 'Edit Department' : 'Add Department'" width="500px")
+  el-dialog(v-model="dialogVisible" :title="isEditing ? $t('hr.departments.editDepartment') : $t('hr.departments.addDepartment')" width="500px")
     el-form(ref="formRef" :model="form" :rules="rules" label-position="top" size="large")
-      el-form-item(label="Department Name" prop="name")
-        el-input(v-model="form.name" placeholder="Enter department name")
+      el-form-item(:label="$t('hr.departments.name')" prop="name")
+        el-input(v-model="form.name" :placeholder="$t('hr.departments.namePlaceholder')")
 
-      el-form-item(label="Code" prop="code")
-        el-input(v-model="form.code" placeholder="e.g., ENG, HR, FIN")
+      el-form-item(:label="$t('hr.departments.code')" prop="code")
+        el-input(v-model="form.code" :placeholder="$t('hr.departments.codePlaceholder')")
 
-      el-form-item(label="Parent Department")
-        el-select(v-model="form.parentId" class="w-full" placeholder="None (Top Level)" clearable)
+      el-form-item(:label="$t('hr.departments.parentDepartment')")
+        el-select(v-model="form.parentId" class="w-full" :placeholder="$t('hr.departments.parentNone')" clearable)
           el-option(
             v-for="dept in availableParents"
             :key="dept.id"
@@ -89,20 +89,20 @@ div
             :value="dept.id"
           )
 
-      el-form-item(label="Description")
-        el-input(v-model="form.description" type="textarea" :rows="3" placeholder="Department description")
+      el-form-item(:label="$t('hr.departments.description')")
+        el-input(v-model="form.description" type="textarea" :rows="3" :placeholder="$t('hr.departments.descriptionPlaceholder')")
 
     template(#footer)
-      el-button(@click="dialogVisible = false") Cancel
-      el-button(type="primary" :loading="saving" @click="handleSave" class="!rounded-2xl") {{ isEditing ? 'Update' : 'Create' }}
+      el-button(@click="dialogVisible = false") {{ $t('common.cancel') }}
+      el-button(type="primary" :loading="saving" @click="handleSave" class="!rounded-2xl") {{ isEditing ? $t('common.update') : $t('common.create') }}
 
   //- Delete Confirm
-  el-dialog(v-model="deleteDialogVisible" title="Delete Department" width="400px")
-    p(style="color: var(--text-primary)") Are you sure you want to delete "{{ deletingDept?.name }}"?
-    p.text-sm.mt-2(style="color: var(--text-muted)") This action cannot be undone. Departments with employees or sub-departments cannot be deleted.
+  el-dialog(v-model="deleteDialogVisible" :title="$t('hr.departments.deleteDepartment')" width="400px")
+    p(style="color: var(--text-primary)") {{ $t('hr.departments.confirmDelete', { name: deletingDept?.name }) }}
+    p.text-sm.mt-2(style="color: var(--text-muted)") {{ $t('hr.departments.deleteWarning') }}
     template(#footer)
-      el-button(@click="deleteDialogVisible = false") Cancel
-      el-button(type="danger" :loading="deleting" @click="handleDelete" class="!rounded-2xl") Delete
+      el-button(@click="deleteDialogVisible = false") {{ $t('common.cancel') }}
+      el-button(type="danger" :loading="deleting" @click="handleDelete" class="!rounded-2xl") {{ $t('common.delete') }}
 </template>
 
 <script setup lang="ts">
@@ -118,6 +118,7 @@ import type { DepartmentItem } from '~/composables/useEmployees';
 
 definePageMeta({ middleware: 'permissions' });
 
+const { t } = useI18n();
 const loading = ref(true);
 const saving = ref(false);
 const deleting = ref(false);
@@ -167,8 +168,8 @@ const form = reactive({
 });
 
 const rules = {
-  name: [{ required: true, message: 'Department name is required', trigger: 'blur' }],
-  code: [{ required: true, message: 'Department code is required', trigger: 'blur' }]
+  name: [{ required: true, message: () => t('hr.departments.nameRequired'), trigger: 'blur' }],
+  code: [{ required: true, message: () => t('hr.departments.codeRequired'), trigger: 'blur' }]
 };
 
 const availableParents = computed(() => {
@@ -234,13 +235,13 @@ async function handleSave() {
     if (res.success) {
       ElNotification({
         type: 'success',
-        title: 'Success',
-        message: isEditing.value ? 'Department updated' : 'Department created'
+        title: t('common.success'),
+        message: isEditing.value ? t('hr.departments.updated') : t('hr.departments.created')
       });
       dialogVisible.value = false;
       await loadData();
     } else {
-      ElNotification({ type: 'error', title: 'Error', message: res.message });
+      ElNotification({ type: 'error', title: t('common.error'), message: res.message });
     }
   } finally {
     saving.value = false;
@@ -253,11 +254,11 @@ async function handleDelete() {
   try {
     const res = await deleteDepartmentApi(deletingDept.value.id);
     if (res.success) {
-      ElNotification({ type: 'success', title: 'Success', message: 'Department deleted' });
+      ElNotification({ type: 'success', title: t('common.success'), message: t('hr.departments.deleted') });
       deleteDialogVisible.value = false;
       await loadData();
     } else {
-      ElNotification({ type: 'error', title: 'Error', message: res.message });
+      ElNotification({ type: 'error', title: t('common.error'), message: res.message });
     }
   } finally {
     deleting.value = false;

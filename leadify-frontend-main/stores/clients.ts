@@ -57,7 +57,7 @@ export const useClientStore = defineStore('clients', {
             ).toString()
           : '';
 
-        const response = await useApiFetch<{ docs: Client[]; pagination: Pagination }>(
+        const response: any = await useApiFetch(
           `client${query}`
         );
 
@@ -83,7 +83,7 @@ export const useClientStore = defineStore('clients', {
       this.error = null;
 
       try {
-        const response = await useApiFetch<Client>(`client/${id}`);
+        const response: any = await useApiFetch(`client/${id}`);
 
         if (response.success && response.body) {
           this.currentClient = response.body;
@@ -104,7 +104,7 @@ export const useClientStore = defineStore('clients', {
       this.error = null;
 
       try {
-        const response = await useApiFetch<Client>('client', 'POST', data as Record<string, unknown>);
+        const response: any = await useApiFetch('client', 'POST', data as Record<string, unknown>);
 
         if (response.success && response.body) {
           this.clients.unshift(response.body);
@@ -128,7 +128,7 @@ export const useClientStore = defineStore('clients', {
       this.error = null;
 
       try {
-        const response = await useApiFetch<Client>(`client/${id}`, 'PUT', data as Record<string, unknown>);
+        const response: any = await useApiFetch(`client/${id}`, 'PUT', data as Record<string, unknown>);
 
         if (response.success && response.body) {
           const index = this.clients.findIndex((c) => c.id === id);

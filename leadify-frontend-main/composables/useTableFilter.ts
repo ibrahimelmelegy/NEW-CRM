@@ -68,7 +68,8 @@ export default async function useTableFilter(position: string = 'lead', queryPar
 
   try {
     // Fetch data based on the query parameters
-    const { body, success, message } = await useApiFetch(`${position}${queryString}`);
+    const { body: _body, success, message } = await useApiFetch(`${position}${queryString}`);
+    const body = _body as any;
 
     // Update the URL to reflect the current query parameters
     router.replace({

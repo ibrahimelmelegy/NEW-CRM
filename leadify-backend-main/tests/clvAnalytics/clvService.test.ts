@@ -147,7 +147,7 @@ describe('ClvService', () => {
   // ---------------------------------------------------------------------------
   describe('update', () => {
     it('should update and return the CLV record', async () => {
-      const mockItem = { id: 1, update: jest.fn().mockResolvedValue(true) };
+      const mockItem: any = { id: 1, update: jest.fn().mockImplementation(() => Promise.resolve(true)) };
       (ClvRecord.findByPk as jest.Mock<any>).mockResolvedValue(mockItem);
 
       const result = await clvService.update(1, { segment: 'AT_RISK' });
@@ -238,10 +238,10 @@ describe('ClvService', () => {
     });
 
     it('should update existing record instead of creating new one', async () => {
-      const mockExisting = {
+      const mockExisting: any = {
         id: 5,
         customerId: 'cust-1',
-        update: jest.fn().mockResolvedValue(true)
+        update: jest.fn().mockImplementation(() => Promise.resolve(true))
       };
       (ClvRecord.findOne as jest.Mock<any>).mockResolvedValue(mockExisting);
 

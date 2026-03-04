@@ -5,12 +5,12 @@
     .flex.items-center.gap-3
       Icon.text-3xl.glow-icon(name="ph:crosshair-bold")
       div
-        h1.war-title MISSION CONTROL
-        p.war-subtitle Real-time CRM Intelligence
+        h1.war-title {{ $t('warRoom.title') }}
+        p.war-subtitle {{ $t('warRoom.subtitle') }}
     .flex.items-center.gap-3
       .live-badge
         .pulse-dot
-        span LIVE
+        span {{ $t('warRoom.live') }}
       el-button(circle @click="toggleFullscreen")
         Icon(:name="isFullscreen ? 'ph:arrows-in-bold' : 'ph:arrows-out-bold'" size="18")
       el-button(circle @click="refreshAll")
@@ -21,7 +21,7 @@
     .metric-glass
       MetricCounter(
         :value="metrics.totalRevenue"
-        label="Total Revenue"
+        :label="$t('warRoom.totalRevenue')"
         icon="ph:currency-dollar-bold"
         color="#22c55e"
         prefix="$"
@@ -29,21 +29,21 @@
     .metric-glass
       MetricCounter(
         :value="metrics.wonDeals"
-        label="Deals Won"
+        :label="$t('warRoom.dealsWon')"
         icon="ph:trophy-bold"
         color="#8b5cf6"
       )
     .metric-glass
       MetricCounter(
         :value="metrics.openLeads"
-        label="Open Leads"
+        :label="$t('warRoom.openLeads')"
         icon="ph:users-three-bold"
         color="#3b82f6"
       )
     .metric-glass
       MetricCounter(
         :value="metrics.conversionRate"
-        label="Conversion Rate"
+        :label="$t('warRoom.conversionRate')"
         icon="ph:chart-line-up-bold"
         color="#f59e0b"
         suffix="%"
@@ -55,26 +55,26 @@
     .col-span-1(class="lg:col-span-2")
       .grid.gap-4.mb-6(class="grid-cols-1 sm:grid-cols-2")
         SparklineCard(
-          label="Revenue"
+          :label="$t('warRoom.revenue')"
           :value="metrics.totalRevenue"
           :data="sparklineData.revenue || []"
           color="#22c55e"
           prefix="$"
         )
         SparklineCard(
-          label="Deals"
+          :label="$t('warRoom.deals')"
           :value="metrics.totalDeals"
           :data="sparklineData.deals || []"
           color="#8b5cf6"
         )
         SparklineCard(
-          label="Leads"
+          :label="$t('warRoom.leads')"
           :value="metrics.openLeads"
           :data="sparklineData.leads || []"
           color="#3b82f6"
         )
         SparklineCard(
-          label="Conversion"
+          :label="$t('warRoom.conversion')"
           :value="metrics.conversionRate"
           :data="sparklineData.conversion || []"
           color="#f59e0b"
