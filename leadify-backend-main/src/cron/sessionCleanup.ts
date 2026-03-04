@@ -14,7 +14,7 @@ export const sessionCleanupCron = cron.schedule('0 * * * *', async () => {
     });
 
     if (deletedCount > 0) {
-      console.log(`[Cron] Cleaned up ${deletedCount} expired sessions.`);
+      // Expired sessions cleaned up
     }
   } catch (error) {
     console.error('[Cron] Error cleaning up expired sessions:', error);

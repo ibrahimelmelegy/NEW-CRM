@@ -45,7 +45,7 @@ export async function safeSchemaSync(sequelize: Sequelize): Promise<SyncResult> 
         try {
           await model.sync();
           result.tablesCreated++;
-          console.log(`[SchemaSync] Created table: ${tableNameStr}`);
+          // Table created
         } catch (createErr) {
           result.errors.push(`Failed to create table ${tableNameStr}: ${(createErr as Error).message}`);
         }
@@ -68,7 +68,7 @@ export async function safeSchemaSync(sequelize: Sequelize): Promise<SyncResult> 
           const columnDef = buildColumnDefinition(attrDef as ModelAttributeColumnOptions);
           await queryInterface.addColumn(tableNameStr, columnName, columnDef);
           result.columnsAdded++;
-          console.log(`[SchemaSync] Added column: ${tableNameStr}.${columnName}`);
+          // Column added
         } catch (addErr) {
           const errMsg = (addErr as Error).message;
           // Skip if column was added by another process (race condition)

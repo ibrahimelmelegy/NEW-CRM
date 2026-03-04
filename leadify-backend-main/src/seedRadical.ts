@@ -13,17 +13,16 @@ import LeadUsers from './lead/model/lead_UsersModel';
 const seedRadical = async () => {
   try {
     await sequelize.authenticate();
-    console.log('✅ DB Connected for Radical Seeding');
+    // DB Connected for Radical Seeding
 
     const admin = await User.findOne();
     if (!admin) {
-      console.error('❌ No user found. Run npm run seed first.');
+      console.error('No user found. Run npm run seed first.');
       process.exit(1);
     }
-    console.log(`👤 Using user: ${admin.name} (ID: ${admin.id})`);
+    // Using admin user
 
     // 1. Seed Leads (20)
-    console.log('🌱 Seeding Leads...');
     const leadsData = Array.from({ length: 20 }).map((_, i) => ({
       name: `Lead ${i + 1}`,
       companyName: `Company ${String.fromCharCode(65 + i)}`,
@@ -39,10 +38,9 @@ const seedRadical = async () => {
     for (const lead of createdLeads) {
       await LeadUsers.create({ leadId: lead.id, userId: admin.id });
     }
-    console.log(`✅ ${createdLeads.length} Leads created and assigned.`);
+    // Leads created and assigned
 
     // 2. Seed Opportunities (10)
-    console.log('🌱 Seeding Opportunities...');
     const oppsData = createdLeads.slice(0, 10).map((lead, i) => ({
       name: `Opp for ${lead.name}`,
       leadId: lead.id,
@@ -50,10 +48,9 @@ const seedRadical = async () => {
       expectedValue: (i + 1) * 5000
     }));
     const createdOpps = await Opportunity.bulkCreate(oppsData);
-    console.log(`✅ ${createdOpps.length} Opportunities created.`);
+    // Opportunities created
 
     // 3. Seed Deals (5)
-    console.log('🌱 Seeding Deals...');
     const dealsData = createdOpps.slice(0, 5).map((opp, i) => ({
       name: `Deal ${i + 1}`,
       opportunityId: opp.id,
@@ -64,10 +61,9 @@ const seedRadical = async () => {
       signatureDate: new Date()
     }));
     const createdDeals = await Deal.bulkCreate(dealsData);
-    console.log(`✅ ${createdDeals.length} Deals created.`);
+    // Deals created
 
     // 4. Seed Projects (5)
-    console.log('🌱 Seeding Projects...');
     const projectsData = Array.from({ length: 5 }).map((_, i) => ({
       name: `Project ${i + 1}`,
       status: i % 2 === 0 ? ProjectStatusEnum.ACTIVE : ProjectStatusEnum.ON_HOLD,
@@ -76,9 +72,9 @@ const seedRadical = async () => {
       endDate: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000)
     }));
     await Project.bulkCreate(projectsData);
-    console.log('✅ 5 Projects created.');
+    // 5 Projects created
 
-    console.log('🚀 RADICAL SEEDING COMPLETE!');
+    // RADICAL SEEDING COMPLETE
   } catch (e: any) {
     console.error('❌ Seeding Error:', e.message);
   }

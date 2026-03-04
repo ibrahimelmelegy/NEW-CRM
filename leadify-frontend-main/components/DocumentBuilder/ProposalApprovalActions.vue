@@ -33,7 +33,7 @@
     <!-- Reject Dialog -->
     <el-dialog v-model="rejectDialogVisible" title="Reject Proposal" width="420px" append-to-body>
       <p class="mb-4" style="color: var(--text-secondary)">Please provide a reason for rejection:</p>
-      <el-input v-model="rejectReason" type="textarea" :rows="3" placeholder="Enter rejection reason..." />
+      <el-input v-model="rejectReason" type="textarea" :rows="3" :placeholder="$t('proposals.rejectionReason')" />
       <template #footer>
         <el-button @click="rejectDialogVisible = false">Cancel</el-button>
         <el-button type="danger" :loading="loading" @click="handleReject">Reject</el-button>

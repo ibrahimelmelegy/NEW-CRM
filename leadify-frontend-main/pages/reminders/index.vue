@@ -3,32 +3,32 @@
   //- Header
   .flex.items-center.justify-between.mb-8
     div
-      h1.text-3xl.font-black.tracking-tight(style="color: var(--text-primary);") ⏰ Reminders & Follow-ups
-      p.text-sm.mt-1(style="color: var(--text-muted);") Never miss a deadline or follow-up again.
+      h1.text-3xl.font-black.tracking-tight(style="color: var(--text-primary);") {{ $t('reminders.title') }}
+      p.text-sm.mt-1(style="color: var(--text-muted);") {{ $t('reminders.subtitle') }}
     el-button(type="primary" size="default" @click="showCreateDialog = true" style="background: var(--bg-obsidian); border: none; border-radius: 12px;")
       Icon(name="ph:plus" size="16" style="margin-right: 4px;")
-      | New Reminder
+      | {{ $t('reminders.newReminder') }}
 
   //- Stats
   .grid.grid-cols-4.gap-4.mb-8
     .p-5.rounded-2xl.border(style="border-color: var(--border-default); background: var(--bg-elevated);")
-      p.text-xs.font-bold.uppercase.tracking-widest(style="color: var(--text-muted);") Pending
+      p.text-xs.font-bold.uppercase.tracking-widest(style="color: var(--text-muted);") {{ $t('reminders.pending') }}
       p.text-3xl.font-black.mt-1(style="color: #f59e0b;") {{ stats.pending }}
     .p-5.rounded-2xl.border(style="border-color: var(--border-default); background: var(--bg-elevated);")
-      p.text-xs.font-bold.uppercase.tracking-widest(style="color: var(--text-muted);") Overdue
+      p.text-xs.font-bold.uppercase.tracking-widest(style="color: var(--text-muted);") {{ $t('reminders.overdue') }}
       p.text-3xl.font-black.mt-1(style="color: #ef4444;") {{ stats.overdue }}
     .p-5.rounded-2xl.border(style="border-color: var(--border-default); background: var(--bg-elevated);")
-      p.text-xs.font-bold.uppercase.tracking-widest(style="color: var(--text-muted);") Today
+      p.text-xs.font-bold.uppercase.tracking-widest(style="color: var(--text-muted);") {{ $t('reminders.today') }}
       p.text-3xl.font-black.mt-1(style="color: #22c55e;") {{ stats.todayCount }}
     .p-5.rounded-2xl.border(style="border-color: var(--border-default); background: var(--bg-elevated);")
-      p.text-xs.font-bold.uppercase.tracking-widest(style="color: var(--text-muted);") Completed
+      p.text-xs.font-bold.uppercase.tracking-widest(style="color: var(--text-muted);") {{ $t('reminders.completed') }}
       p.text-3xl.font-black.mt-1(style="color: var(--text-primary);") {{ stats.completedCount }}
 
   //- Tabs
   .flex.gap-3.mb-6
-    el-button(:type="activeTab === 'upcoming' ? 'primary' : 'default'" round @click="activeTab = 'upcoming'") Upcoming ({{ upcoming.length }})
-    el-button(:type="activeTab === 'overdue' ? 'primary' : 'default'" round @click="activeTab = 'overdue'" :class="{ '!text-red-500': overdue.length > 0 }") 🔴 Overdue ({{ overdue.length }})
-    el-button(:type="activeTab === 'completed' ? 'primary' : 'default'" round @click="activeTab = 'completed'") Completed ({{ completed.length }})
+    el-button(:type="activeTab === 'upcoming' ? 'primary' : 'default'" round @click="activeTab = 'upcoming'") {{ $t('reminders.upcoming') }} ({{ upcoming.length }})
+    el-button(:type="activeTab === 'overdue' ? 'primary' : 'default'" round @click="activeTab = 'overdue'" :class="{ '!text-red-500': overdue.length > 0 }") {{ $t('reminders.overdue') }} ({{ overdue.length }})
+    el-button(:type="activeTab === 'completed' ? 'primary' : 'default'" round @click="activeTab = 'completed'") {{ $t('reminders.completed') }} ({{ completed.length }})
 
   //- List
   el-card.rounded-2xl(shadow="never" style="border: 1px solid var(--border-default);")
@@ -61,34 +61,34 @@
 
     .text-center.py-16(v-if="displayedReminders.length === 0")
       Icon(name="ph:clock" size="48" style="color: var(--text-muted);")
-      p.text-sm.mt-3(style="color: var(--text-muted);") No reminders in this category
+      p.text-sm.mt-3(style="color: var(--text-muted);") {{ $t('reminders.noReminders') }}
 
   //- Create Dialog
-  el-dialog(v-model="showCreateDialog" title="New Reminder" width="500px")
+  el-dialog(v-model="showCreateDialog" :title="$t('reminders.newReminder')" width="500px")
     el-form(label-position="top" size="large")
-      el-form-item(label="Title")
-        el-input(v-model="form.title" placeholder="e.g. Follow up with client")
-      el-form-item(label="Description")
-        el-input(v-model="form.description" type="textarea" :rows="2" placeholder="Details...")
+      el-form-item(:label="$t('common.title')")
+        el-input(v-model="form.title" :placeholder="$t('reminders.titlePlaceholder')")
+      el-form-item(:label="$t('common.description')")
+        el-input(v-model="form.description" type="textarea" :rows="2" :placeholder="$t('reminders.detailsPlaceholder')")
       .grid.grid-cols-2.gap-4
-        el-form-item(label="Type")
+        el-form-item(:label="$t('common.type')")
           el-select(v-model="form.type" class="w-full")
-            el-option(label="Follow Up" value="follow_up")
-            el-option(label="Payment" value="payment")
-            el-option(label="Deadline" value="deadline")
-            el-option(label="Meeting" value="meeting")
-            el-option(label="Custom" value="custom")
-        el-form-item(label="Priority")
+            el-option(:label="$t('reminders.typeFollowUp')" value="follow_up")
+            el-option(:label="$t('reminders.typePayment')" value="payment")
+            el-option(:label="$t('reminders.typeDeadline')" value="deadline")
+            el-option(:label="$t('reminders.typeMeeting')" value="meeting")
+            el-option(:label="$t('reminders.typeCustom')" value="custom")
+        el-form-item(:label="$t('common.priority')")
           el-select(v-model="form.priority" class="w-full")
-            el-option(label="Low" value="low")
-            el-option(label="Medium" value="medium")
-            el-option(label="High" value="high")
-            el-option(label="Urgent" value="urgent")
-      el-form-item(label="Due Date")
-        el-date-picker(v-model="form.dueDate" type="datetime" class="!w-full" placeholder="Select date & time")
+            el-option(:label="$t('common.low')" value="low")
+            el-option(:label="$t('common.medium')" value="medium")
+            el-option(:label="$t('common.high')" value="high")
+            el-option(:label="$t('reminders.urgent')" value="urgent")
+      el-form-item(:label="$t('reminders.dueDate')")
+        el-date-picker(v-model="form.dueDate" type="datetime" class="!w-full" :placeholder="$t('reminders.selectDateTime')")
     template(#footer)
-      el-button(@click="showCreateDialog = false") Cancel
-      el-button(type="primary" @click="createReminder" style="border-radius: 12px;") Create Reminder
+      el-button(@click="showCreateDialog = false") {{ $t('common.cancel') }}
+      el-button(type="primary" @click="createReminder" style="border-radius: 12px;") {{ $t('reminders.createReminder') }}
 </template>
 
 <script setup lang="ts">

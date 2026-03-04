@@ -1,10 +1,10 @@
 <template lang="pug">
 el-dialog(v-model='dialog' width='800' align-center='' :class="{ 'material': isAdditionalMaterial || isAdditionalService}" title="Create Material New Row")
   el-form.border-t.pt-4(  autocomplete="off"   @submit.prevent='onSubmit'   ref="myForm" label-position="top"  :validationSchema="formSchema" )
-    InputText.mt-4(label="Description"  placeholder="Enter Description" name="description" :value="data?.description" )
+    InputText.mt-4(:label="$t('common.description')"  :placeholder="$t('common.enterDescription')" name="description" :value="data?.description" )
     .grid.grid-cols-2.gap-3
-      InputText.mt-4(label="Material Quantity" type="number"  placeholder="Enter Material Quantity" name="quantity" :value="data?.quantity" )
-      InputText.mt-4(label="Material Unit Price"  placeholder="Enter Material Unit Price" name="unitPrice" :value="data?.unitPrice" )
+      InputText.mt-4(:label="$t('operations.projects.materialQuantity')" type="number"  :placeholder="$t('operations.projects.enterMaterialQuantity')" name="quantity" :value="data?.quantity" )
+      InputText.mt-4(:label="$t('operations.projects.materialUnitPrice')"  :placeholder="$t('operations.projects.enterMaterialUnitPrice')" name="unitPrice" :value="data?.unitPrice" )
     .bg-neutral-50.p-4.rounded-3xl.flex.items-center.justify-between.mb-6.mt-9
       p.text-base.text-neutral-500.font-semibold Additional Material
       <el-switch v-model="isAdditionalMaterial" class="ml-2"  style="--el-switch-on-color: #13ce66;"/>
@@ -28,7 +28,7 @@ el-dialog(v-model='dialog' width='800' align-center='' :class="{ 'material': isA
         InputSelect.flex-1(placeholder=" Service Type" name="serviceId" :options="services" :value="isNewlyAdded ? services[0]?.value : serviceId? services?.find((item: any) => item.value === serviceId)?.value :data?.serviceId" :key="isNewlyAdded" @change="toggleServiceSelection" )
         el-button(size='medium' :icon="Plus" native-type="button" @click="selectedService={},addService = true" class="!rounded-2xl !border-[#e9e8eb] !color-[#e9e8eb] !py-7 !px-4")
         el-button(size='medium' :icon="Edit" native-type="button" @click='selectedService=services?.find((item: any) => item.value === serviceId),addService = true' v-if="serviceId" class="!rounded-2xl !border-[#e9e8eb] !color-[#e9e8eb] !py-7 !px-4 !m-0")
-      InputText.mt-4(label="Service Price" type="number" disabled name="servicePrice" :value="services.find((service: any) => service.value === values.serviceId)?.price || 0" :key="values.serviceId" )
+      InputText.mt-4(:label="$t('operations.servicePrice')" type="number" disabled name="servicePrice" :value="services.find((service: any) => service.value === values.serviceId)?.price || 0" :key="values.serviceId" )
     .dialog-footer
         .flex.mt-4.justify-end
             el-button(  class="!rounded-2xl" @click='dialog = false' size="large"   ) Cancel

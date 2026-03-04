@@ -321,7 +321,7 @@ div(class="animate-fade-in")
         .space-y-3
           .flex.items-center.gap-2(v-for="(rule, index) in policyForm.escalationRules" :key="index")
             span.text-xs.font-semibold(style="color: var(--text-muted); min-width: 50px") Level {{ rule.level }}
-            el-input-number(v-model="rule.afterMinutes" :min="1" placeholder="After minutes" style="width: 140px")
+            el-input-number(v-model="rule.afterMinutes" :min="1" :placeholder="$t('sla.afterMinutes')" style="width: 140px")
             span.text-xs(style="color: var(--text-muted)") {{ $t('sla.minutes') }}
             el-button(size="small" type="danger" plain @click="policyForm.escalationRules.splice(index, 1)" class="!rounded-lg")
               Icon(name="ph:x-bold" size="14")

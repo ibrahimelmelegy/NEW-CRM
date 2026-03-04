@@ -31,13 +31,13 @@
           <el-dropdown-item>
             <nuxt-link class="flex items-center" :to="`/leads/1`">
               <icon class="text-md mr-2" size="20" name="IconImport"></icon>
-              <p class="text-sm">Import</p>
+              <p class="text-sm">{{ $t("common.import") }}</p>
             </nuxt-link>
           </el-dropdown-item>
           <el-dropdown-item>
             <nuxt-link class="flex items-center" :to="`/leads/1`">
               <icon class="text-md mr-2" size="20" name="IconExport"></icon>
-              <p class="text-sm">Export</p>
+              <p class="text-sm">{{ $t("common.export") }}</p>
             </nuxt-link>
           </el-dropdown-item>
           <el-dropdown-item>

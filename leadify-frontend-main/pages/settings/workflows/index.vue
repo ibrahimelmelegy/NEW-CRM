@@ -93,16 +93,16 @@
                 Icon(name="ph:x" size="14" class="text-red-400" aria-label="Remove")
             //- Dynamic config based on action type
             template(v-if="action.type === 'SEND_EMAIL'")
-              el-input.mb-2(v-model="action.config.to" placeholder="Recipient email or {{email}}")
-              el-input(v-model="action.config.subject" placeholder="Email subject")
+              el-input.mb-2(v-model="action.config.to" :placeholder="$t('workflows.recipientEmail')")
+              el-input(v-model="action.config.subject" :placeholder="$t('workflows.emailSubject')")
             template(v-else-if="action.type === 'CREATE_NOTIFICATION'")
-              el-input(v-model="action.config.message" placeholder="Notification message")
+              el-input(v-model="action.config.message" :placeholder="$t('workflows.notificationMessage')")
             template(v-else-if="action.type === 'UPDATE_FIELD'")
               .flex.gap-2
-                el-input(v-model="action.config.field" placeholder="Field name" class="flex-1")
-                el-input(v-model="action.config.value" placeholder="New value" class="flex-1")
+                el-input(v-model="action.config.field" :placeholder="$t('workflows.fieldName')" class="flex-1")
+                el-input(v-model="action.config.value" :placeholder="$t('workflows.newValue')" class="flex-1")
             template(v-else-if="action.type === 'ASSIGN_USER'")
-              el-input(v-model="action.config.userId" placeholder="User ID")
+              el-input(v-model="action.config.userId" :placeholder="$t('workflows.userId')")
 
       el-checkbox(v-model="form.isActive") {{ $t('workflows.active') }}
 

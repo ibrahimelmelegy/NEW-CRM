@@ -3,11 +3,11 @@
   //- Header
   .flex.items-center.justify-between.mb-6
     div
-      h2.text-2xl.font-bold(style="color: var(--text-primary)") Approval Workflows
-      p.text-sm(style="color: var(--text-muted)") Manage multi-step approval chains for business processes
+      h2.text-2xl.font-bold(style="color: var(--text-primary)") {{ $t('approvals.approvalWorkflows') }}
+      p.text-sm(style="color: var(--text-muted)") {{ $t('approvals.manageApprovals') }}
     el-button(type="primary" @click="showCreateRule = true" class="!bg-[#7849ff] !border-none")
       Icon(name="ph:plus" size="16")
-      span.ml-1 Create Rule
+      span.ml-1 {{ $t('approvals.createRule') }}
 
   //- Stats
   .grid.gap-4.mb-6(class="grid-cols-2 md:grid-cols-4")
@@ -26,7 +26,7 @@
       template(#label)
         .flex.items-center.gap-2
           Icon(name="ph:clock" size="16")
-          span Pending
+          span {{ $t('approvals.pending') }}
           el-badge(:value="pendingApprovals.length" :hidden="!pendingApprovals.length" type="warning")
       .space-y-3.mt-4
         .glass-card.p-5.rounded-xl(v-for="approval in pendingApprovals" :key="approval.id")
@@ -62,22 +62,22 @@
             .flex.gap-2
               el-button(type="danger" plain size="small" @click="rejectApproval(approval)")
                 Icon(name="ph:x" size="14")
-                span.ml-1 Reject
+                span.ml-1 {{ $t('common.reject') }}
               el-button(type="success" size="small" @click="approveItem(approval)")
                 Icon(name="ph:check" size="14")
-                span.ml-1 Approve
+                span.ml-1 {{ $t('approvals.approve') }}
 
         .text-center.py-12(v-if="!pendingApprovals.length")
           Icon(name="ph:check-circle" size="48" style="color: var(--text-muted)")
-          p.mt-3.font-medium(style="color: var(--text-primary)") No pending approvals
-          p.mt-1(style="color: var(--text-muted)") You're all caught up!
+          p.mt-3.font-medium(style="color: var(--text-primary)") {{ $t('approvals.noPendingApprovals') }}
+          p.mt-1(style="color: var(--text-muted)") {{ $t('approvals.allCaughtUp') }}
 
     //- Approval Rules
     el-tab-pane(name="rules")
       template(#label)
         .flex.items-center.gap-2
           Icon(name="ph:gear" size="16")
-          span Rules
+          span {{ $t('approvals.rules') }}
       .space-y-3.mt-4
         .glass-card.p-5.rounded-xl(v-for="rule in approvalRules" :key="rule.id")
           .flex.items-start.justify-between
@@ -100,65 +100,65 @@
 
         .text-center.py-12(v-if="!approvalRules.length")
           Icon(name="ph:gear" size="48" style="color: var(--text-muted)")
-          p.mt-3.font-medium(style="color: var(--text-primary)") No approval rules
-          p.mt-1(style="color: var(--text-muted)") Create rules to automate your approval processes
+          p.mt-3.font-medium(style="color: var(--text-primary)") {{ $t('approvals.noApprovalRules') }}
+          p.mt-1(style="color: var(--text-muted)") {{ $t('approvals.createRulesToAutomate') }}
 
     //- History
     el-tab-pane(name="history")
       template(#label)
         .flex.items-center.gap-2
           Icon(name="ph:clock-counter-clockwise" size="16")
-          span History
+          span {{ $t('approvals.history') }}
       .mt-4
         el-table(:data="approvalHistory" stripe)
-          el-table-column(label="Request" min-width="200")
+          el-table-column(:label="$t('approvals.request')" min-width="200")
             template(#default="{ row }")
               div
                 p.font-medium {{ row.title }}
                 p.text-xs(style="color: var(--text-muted)") {{ row.type }}
-          el-table-column(label="Requester" width="150")
+          el-table-column(:label="$t('approvals.requester')" width="150")
             template(#default="{ row }")
               span {{ row.requester }}
-          el-table-column(label="Decision" width="130" align="center")
+          el-table-column(:label="$t('approvals.decision')" width="130" align="center")
             template(#default="{ row }")
               el-tag(:type="row.decision === 'approved' ? 'success' : 'danger'" size="small" round effect="dark") {{ row.decision }}
-          el-table-column(label="Decided By" width="150")
+          el-table-column(:label="$t('approvals.decidedBy')" width="150")
             template(#default="{ row }")
               span {{ row.decidedBy }}
-          el-table-column(label="Date" width="140")
+          el-table-column(:label="$t('common.date')" width="140")
             template(#default="{ row }")
               span {{ formatDate(row.decidedAt) }}
 
   //- Create Rule Dialog
-  el-dialog(v-model="showCreateRule" title="Create Approval Rule" width="600px")
+  el-dialog(v-model="showCreateRule" :title="$t('approvals.createApprovalRule')" width="600px")
     el-form(label-position="top")
-      el-form-item(label="Rule Name")
+      el-form-item(:label="$t('approvals.ruleName')")
         el-input(v-model="newRule.name" placeholder="e.g., Discount Approval > 20%")
-      el-form-item(label="Entity Type")
+      el-form-item(:label="$t('approvals.entityType')")
         el-select(v-model="newRule.entityType" style="width: 100%")
           el-option(value="deal" label="Deal")
           el-option(value="invoice" label="Invoice")
-          el-option(value="purchase_order" label="Purchase Order")
+          el-option(value="purchase_order" :label="$t('approvals.purchaseOrder')")
           el-option(value="expense" label="Expense")
-          el-option(value="time_off" label="Time Off Request")
-      el-form-item(label="Condition")
+          el-option(value="time_off" :label="$t('approvals.timeOffRequest')")
+      el-form-item(:label="$t('approvals.condition')")
         el-input(v-model="newRule.condition" placeholder="e.g., discount > 20% OR amount > $10,000")
-      el-form-item(label="Description")
-        el-input(v-model="newRule.description" type="textarea" :rows="2" placeholder="When should this rule trigger?")
-      el-form-item(label="Approvers (in order)")
+      el-form-item(:label="$t('common.description')")
+        el-input(v-model="newRule.description" type="textarea" :rows="2" :placeholder="$t('approvals.conditionPlaceholder')")
+      el-form-item(:label="$t('approvals.approversInOrder')")
         .space-y-2
           .flex.items-center.gap-2(v-for="(approver, i) in newRule.approvers" :key="i")
             el-tag(effect="dark" round) Step {{ i + 1 }}
-            el-input(v-model="newRule.approvers[i]" placeholder="Approver name or role" class="flex-1")
+            el-input(v-model="newRule.approvers[i]" :placeholder="$t('approvals.approverPlaceholder')" class="flex-1")
             el-button(text @click="newRule.approvers.splice(i, 1)" :disabled="newRule.approvers.length <= 1")
               Icon(name="ph:x-circle" size="16" style="color: #ef4444")
           el-button(size="small" @click="newRule.approvers.push('')" style="border-style: dashed")
             Icon(name="ph:plus" size="14" class="mr-1")
-            span Add Approver
+            span {{ $t('approvals.addApprover') }}
     template(#footer)
       .flex.justify-end.gap-2
-        el-button(@click="showCreateRule = false") Cancel
-        el-button(type="primary" @click="createRule" :disabled="!newRule.name" class="!bg-[#7849ff] !border-none") Create Rule
+        el-button(@click="showCreateRule = false") {{ $t('common.cancel') }}
+        el-button(type="primary" @click="createRule" :disabled="!newRule.name" class="!bg-[#7849ff] !border-none") {{ $t('approvals.createRule') }}
 </template>
 
 <script setup lang="ts">

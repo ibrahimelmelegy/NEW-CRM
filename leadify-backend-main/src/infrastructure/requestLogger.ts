@@ -153,25 +153,7 @@ class RequestMetrics {
     const errorCount = recentEntries.filter(e => e.statusCode >= 400).length;
     const rps = (recentEntries.length / periodSec).toFixed(1);
 
-    console.log(
-      `[RequestLogger] Period: ${recentEntries.length} reqs, ` +
-        `${rps} req/s, avg ${avgDuration.toFixed(0)}ms, ` +
-        `${slowCount} slow, ${errorCount} errors`
-    );
-
-    // Log top 5 slowest endpoints
-    const sorted = Array.from(this.endpointStats.entries())
-      .filter(([_, s]) => s.count > 0)
-      .sort((a, b) => b[1].totalMs / b[1].count - a[1].totalMs / a[1].count)
-      .slice(0, 5);
-
-    if (sorted.length > 0 && sorted[0][1].totalMs / sorted[0][1].count > 500) {
-      console.log('[RequestLogger] Slowest endpoints:');
-      for (const [endpoint, stats] of sorted) {
-        const avg = (stats.totalMs / stats.count).toFixed(0);
-        console.log(`  ${endpoint}: avg ${avg}ms, max ${stats.maxMs}ms, ` + `${stats.count} calls, ${stats.slowCount} slow`);
-      }
-    }
+    // Request metrics collected (period stats available via getMetrics())
   }
 
   /**

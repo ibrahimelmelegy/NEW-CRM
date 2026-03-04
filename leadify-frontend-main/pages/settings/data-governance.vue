@@ -4,12 +4,12 @@
     <div class="glass-panel p-6 rounded-2xl">
       <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
         <div>
-          <h1 class="text-2xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-cyan-400 to-blue-400">Data Governance</h1>
-          <p class="text-slate-400 text-sm mt-1">Manage data quality, compliance, retention policies, and GDPR/privacy controls.</p>
+          <h1 class="text-2xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-cyan-400 to-blue-400">{{ $t('dataGovernance.title') }}</h1>
+          <p class="text-slate-400 text-sm mt-1">{{ $t('dataGovernance.subtitle') }}</p>
         </div>
         <el-button type="primary" class="!rounded-xl" :loading="auditing" @click="runAudit">
           <Icon name="ph:magnifying-glass-bold" class="w-4 h-4 mr-2" />
-          Run Data Audit
+          {{ $t('dataGovernance.runDataAudit') }}
         </el-button>
       </div>
     </div>
@@ -56,7 +56,7 @@
     <!-- Tabs -->
     <el-tabs v-model="activeTab" class="glass-tabs">
       <!-- Data Quality -->
-      <el-tab-pane label="Data Quality" name="quality">
+      <el-tab-pane :label="$t('dataGovernance.dataQuality')" name="quality">
         <div class="space-y-4">
           <div v-for="entity in qualityReport" :key="entity.name" class="glass-panel p-5 rounded-xl">
             <div class="flex justify-between items-center mb-3">
@@ -92,7 +92,7 @@
       </el-tab-pane>
 
       <!-- Retention Policies -->
-      <el-tab-pane label="Retention Policies" name="retention">
+      <el-tab-pane :label="$t('dataGovernance.retentionPolicies')" name="retention">
         <div class="glass-panel p-6 rounded-xl">
           <div class="flex justify-between items-center mb-4">
             <h3 class="text-lg font-medium text-slate-200">Data Retention Policies</h3>
@@ -102,22 +102,22 @@
             </el-button>
           </div>
           <el-table :data="retentionPolicies" class="glass-table" stripe>
-            <el-table-column prop="entity" label="Data Entity" width="180" />
-            <el-table-column prop="retentionPeriod" label="Retention" width="140" />
-            <el-table-column prop="action" label="Action" width="140">
+            <el-table-column prop="entity" :label="$t('dataGovernance.dataEntity')" width="180" />
+            <el-table-column prop="retentionPeriod" :label="$t('dataGovernance.retentionDays')" width="140" />
+            <el-table-column prop="action" :label="$t('common.actions')" width="140">
               <template #default="{ row }">
                 <el-tag :type="row.action === 'DELETE' ? 'danger' : row.action === 'ARCHIVE' ? 'warning' : 'info'" effect="dark" size="small">
                   {{ row.action }}
                 </el-tag>
               </template>
             </el-table-column>
-            <el-table-column prop="affectedRecords" label="Affected Records" width="140" align="center" />
-            <el-table-column prop="lastRun" label="Last Run" width="130">
+            <el-table-column prop="affectedRecords" :label="$t('dataGovernance.affectedRecords')" width="140" align="center" />
+            <el-table-column prop="lastRun" :label="$t('dataGovernance.lastRun')" width="130">
               <template #default="{ row }">
                 <span class="text-sm text-slate-400">{{ row.lastRun || 'Never' }}</span>
               </template>
             </el-table-column>
-            <el-table-column label="Active" width="80" align="center">
+            <el-table-column :label="$t('common.active')" width="80" align="center">
               <template #default="{ row }">
                 <el-switch v-model="row.isActive" size="small" />
               </template>
@@ -127,7 +127,7 @@
       </el-tab-pane>
 
       <!-- GDPR / Privacy -->
-      <el-tab-pane label="Privacy & GDPR" name="privacy">
+      <el-tab-pane :label="$t('dataGovernance.privacyGdpr')" name="privacy">
         <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
           <div class="glass-panel p-6 rounded-xl">
             <h3 class="text-lg font-medium text-slate-200 mb-4">Consent Management</h3>
@@ -183,20 +183,20 @@
       </el-tab-pane>
 
       <!-- Field-Level Encryption -->
-      <el-tab-pane label="Encryption" name="encryption">
+      <el-tab-pane :label="$t('dataGovernance.encryption')" name="encryption">
         <div class="glass-panel p-6 rounded-xl">
           <h3 class="text-lg font-medium text-slate-200 mb-4">Field-Level Encryption</h3>
-          <p class="text-sm text-slate-500 mb-4">Configure which fields should be encrypted at rest for added security.</p>
+          <p class="text-sm text-slate-500 mb-4">{{ $t('dataGovernance.configureEncryption') }}</p>
           <el-table :data="encryptionFields" class="glass-table" stripe>
-            <el-table-column prop="entity" label="Entity" width="140" />
-            <el-table-column prop="field" label="Field" width="180" />
-            <el-table-column prop="type" label="Data Type" width="120" />
-            <el-table-column label="Encrypted" width="100" align="center">
+            <el-table-column prop="entity" :label="$t('dataGovernance.dataEntity')" width="140" />
+            <el-table-column prop="field" :label="$t('dataGovernance.field')" width="180" />
+            <el-table-column prop="type" :label="$t('dataGovernance.dataType')" width="120" />
+            <el-table-column :label="$t('dataGovernance.encrypted')" width="100" align="center">
               <template #default="{ row }">
                 <el-switch v-model="row.encrypted" size="small" />
               </template>
             </el-table-column>
-            <el-table-column label="Sensitivity" width="120" align="center">
+            <el-table-column :label="$t('dataGovernance.sensitivity')" width="120" align="center">
               <template #default="{ row }">
                 <el-tag :type="row.sensitivity === 'HIGH' ? 'danger' : row.sensitivity === 'MEDIUM' ? 'warning' : 'info'" effect="dark" size="small">
                   {{ row.sensitivity }}
@@ -209,19 +209,19 @@
     </el-tabs>
 
     <!-- Policy Dialog -->
-    <el-dialog v-model="showPolicyDialog" title="Add Retention Policy" width="500px">
+    <el-dialog v-model="showPolicyDialog" :title="$t('dataGovernance.addRetentionPolicy')" width="500px">
       <el-form label-position="top">
-        <el-form-item label="Data Entity">
+        <el-form-item :label="$t('dataGovernance.dataEntityLabel')">
           <el-select v-model="newPolicy.entity" class="w-full">
-            <el-option label="Leads" value="Leads" />
-            <el-option label="Deals" value="Deals" />
-            <el-option label="Activities" value="Activities" />
-            <el-option label="Audit Logs" value="Audit Logs" />
-            <el-option label="Sessions" value="Sessions" />
+            <el-option :label="$t('kanbanBoard.leads')" value="Leads" />
+            <el-option :label="$t('kanbanBoard.deals')" value="Deals" />
+            <el-option :label="$t('dataGovernance.activities')" value="Activities" />
+            <el-option :label="$t('dataGovernance.auditLogs')" value="Audit Logs" />
+            <el-option :label="$t('dataGovernance.sessions')" value="Sessions" />
           </el-select>
         </el-form-item>
         <div class="grid grid-cols-2 gap-4">
-          <el-form-item label="Retention Period">
+          <el-form-item :label="$t('dataGovernance.retentionPeriod')">
             <el-select v-model="newPolicy.retentionPeriod" class="w-full">
               <el-option label="30 days" value="30 days" />
               <el-option label="90 days" value="90 days" />
@@ -230,18 +230,18 @@
               <el-option label="3 years" value="3 years" />
             </el-select>
           </el-form-item>
-          <el-form-item label="Action">
+          <el-form-item :label="$t('common.actions')">
             <el-select v-model="newPolicy.action" class="w-full">
-              <el-option label="Archive" value="ARCHIVE" />
-              <el-option label="Delete" value="DELETE" />
-              <el-option label="Anonymize" value="ANONYMIZE" />
+              <el-option :label="$t('dataGovernance.archive')" value="ARCHIVE" />
+              <el-option :label="$t('common.delete')" value="DELETE" />
+              <el-option :label="$t('dataGovernance.anonymize')" value="ANONYMIZE" />
             </el-select>
           </el-form-item>
         </div>
       </el-form>
       <template #footer>
-        <el-button @click="showPolicyDialog = false">Cancel</el-button>
-        <el-button type="primary" @click="savePolicy">Save Policy</el-button>
+        <el-button @click="showPolicyDialog = false">{{ $t('common.cancel') }}</el-button>
+        <el-button type="primary" @click="savePolicy">{{ $t('dataGovernance.savePolicy') }}</el-button>
       </template>
     </el-dialog>
   </div>

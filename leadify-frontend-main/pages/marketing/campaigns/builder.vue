@@ -510,7 +510,7 @@
           el-input(v-model="sampleContact.first_name" :placeholder="$t('campaignBuilder.firstName')" size="default")
           el-input(v-model="sampleContact.last_name" :placeholder="$t('campaignBuilder.lastName')" size="default")
           el-input(v-model="sampleContact.company_name" :placeholder="$t('campaignBuilder.companyName')" size="default")
-          el-input(v-model="sampleContact.email" placeholder="Email" size="default")
+          el-input(v-model="sampleContact.email" :placeholder="$t('common.email')" size="default")
 
     //- Campaign Analytics (shown when campaign.status === 'SENT')
     template(v-if="analyticsData")

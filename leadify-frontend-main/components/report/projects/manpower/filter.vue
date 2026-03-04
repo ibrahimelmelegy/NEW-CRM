@@ -1,14 +1,14 @@
 <template lang="pug">  
  el-form(@submit.prevent='onSubmit' )
   .grid.grid-cols-2.gap-3     
-   InputSelect(label="Role" name="role"  placeholder="Select role"   :options="manpowerRoles" )
-   InputSelect(label="Availability Status" name="availabilityStatus"  placeholder="Select Availability Status"   :options="manpowerAvailabilityStatus" )
-  .grid.grid-cols-2.gap-3     
-   InputDate(label="From Date" placeholder="Enter Date Range" name="fromDate" )  
-   InputDate(label="To Date" placeholder="Enter Date Range" name="toDate" ) 
+   InputSelect(:label="$t('reports.role')" name="role"  :placeholder="$t('reports.selectRole')"   :options="manpowerRoles" )
+   InputSelect(:label="$t('reports.availabilityStatus')" name="availabilityStatus"  :placeholder="$t('reports.selectAvailabilityStatus')"   :options="manpowerAvailabilityStatus" )
+  .grid.grid-cols-2.gap-3
+   InputDate(:label="$t('reports.fromDate')" :placeholder="$t('reports.enterDateRange')" name="fromDate" )
+   InputDate(:label="$t('reports.toDate')" :placeholder="$t('reports.enterDateRange')" name="toDate" )
   .flex.justify-end
-   el-button.mt-2(  native-type="submit" size='large' type="primary"  class="!rounded-2xl")  Show Filter Result 
-   el-button.mt-2(  @click="ResetFilter" size='large'   class="!rounded-2xl text-col")  Reset Filter  
+   el-button.mt-2(  native-type="submit" size='large' type="primary"  class="!rounded-2xl")  {{ $t('reports.showFilterResult') }}
+   el-button.mt-2(  @click="ResetFilter" size='large'   class="!rounded-2xl text-col")  {{ $t('reports.resetFilter') }}
 </template>
 
 <script setup lang="ts">

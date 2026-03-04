@@ -4,7 +4,7 @@
     //- Swimlane toggle
     el-select.swimlane-select(
       :model-value="swimlaneMode"
-      placeholder="Group by..."
+      :placeholder="$t('kanbanBoard.groupBy')"
       size="small"
       @change="$emit('update:swimlaneMode', $event)"
     )

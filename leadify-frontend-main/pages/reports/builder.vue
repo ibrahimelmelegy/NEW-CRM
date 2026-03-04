@@ -39,7 +39,7 @@
           el-option(value="leads" :label="$t('navigation.leads')")
           el-option(value="deals" :label="$t('navigation.deals')")
           el-option(value="clients" :label="$t('navigation.clients')")
-          el-option(value="salesOrders" label="Sales Orders")
+          el-option(value="salesOrders" :label="$t('reports.salesOrders')")
           el-option(value="invoices" :label="$t('navigation.invoices')")
           el-option(value="payments" label="Payments")
           el-option(value="tickets" label="Tickets")
@@ -112,7 +112,7 @@
               )
 
           //- Group By Tab
-          el-tab-pane(label="Group By" name="groupby")
+          el-tab-pane(:label="$t('reports.groupBy')" name="groupby")
             template(#label)
               .flex.items-center.gap-2
                 Icon(name="ph:stack" size="16" aria-hidden="true")
@@ -195,7 +195,7 @@
               )
 
           //- Schedule Tab
-          el-tab-pane(label="Schedule" name="schedule")
+          el-tab-pane(:label="$t('reports.schedule')" name="schedule")
             template(#label)
               .flex.items-center.gap-2
                 Icon(name="ph:clock" size="16" aria-hidden="true")

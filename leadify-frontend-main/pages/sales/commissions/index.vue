@@ -30,7 +30,7 @@
     el-input(v-model="filters.search" :placeholder="$t('common.search')" clearable size="large" @clear="fetchData" @keyup.enter="fetchData" style="width: 220px")
       template(#prefix)
         Icon(name="ph:magnifying-glass" size="16")
-    el-date-picker(v-model="filters.dateRange" type="daterange" range-separator="-" start-placeholder="Start" end-placeholder="End" size="large" value-format="YYYY-MM-DD" @change="fetchData" style="width: 260px")
+    el-date-picker(v-model="filters.dateRange" type="daterange" range-separator="-" :start-placeholder="$t('common.startDate')" :end-placeholder="$t('common.endDate')" size="large" value-format="YYYY-MM-DD" @change="fetchData" style="width: 260px")
 
   .glass-card.py-8.animate-entrance
     el-table(:data="items" v-loading="loading" style="width: 100%" @selection-change="handleSelectionChange")

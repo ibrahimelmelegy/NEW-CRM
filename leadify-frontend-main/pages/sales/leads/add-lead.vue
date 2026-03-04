@@ -27,6 +27,12 @@ async function submitForm(values: LeadValues) {
   const response = await createLead(values);
   if (response?.success) {
     await router.push('/sales/leads');
+  } else {
+    ElNotification({
+      type: 'error',
+      title: t('common.error'),
+      message: response?.message || t('leads.createFailed')
+    });
   }
   loading.value = false;
 }

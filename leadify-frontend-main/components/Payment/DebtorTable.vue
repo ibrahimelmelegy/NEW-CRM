@@ -1,7 +1,7 @@
 <template lang="pug">
 .p-0
   el-table(:data="debtors" v-loading="loading" style="width: 100%" :show-header="true")
-    el-table-column(prop="clientName" label="Client" min-width="180")
+    el-table-column(prop="clientName" :label="$t('customerSuccess.client')" min-width="180")
       template(#default="{ row }")
         .flex.items-center.gap-3
           .w-9.h-9.rounded-full.flex.items-center.justify-center.text-sm.font-bold(
@@ -10,17 +10,17 @@
           div
             p.text-sm.font-semibold(style="color: var(--text-primary)") {{ row.clientName }}
             p.text-xs(style="color: var(--text-muted)") {{ row.email || '-' }}
-    el-table-column(prop="totalOwed" label="Total Owed" width="150" align="right")
+    el-table-column(prop="totalOwed" :label="$t('payments.totalOwed')" width="150" align="right")
       template(#default="{ row }")
         span.font-bold(style="color: #ef4444") {{ formatCurrency(row.totalOwed) }}
-    el-table-column(prop="daysOverdue" label="Days Overdue" width="130" align="center")
+    el-table-column(prop="daysOverdue" :label="$t('payments.daysOverdue')" width="130" align="center")
       template(#default="{ row }")
         el-tag(
           size="small"
           :type="getDaysOverdueType(row.daysOverdue)"
           effect="light"
         ) {{ row.daysOverdue || 0 }} days
-    el-table-column(prop="lastPayment" label="Last Payment" width="140")
+    el-table-column(prop="lastPayment" :label="$t('payments.lastPayment')" width="140")
       template(#default="{ row }")
         span.text-sm(style="color: var(--text-muted)") {{ row.lastPayment ? formatDate(row.lastPayment) : 'Never' }}
 

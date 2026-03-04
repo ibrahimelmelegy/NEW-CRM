@@ -7,7 +7,7 @@ el-dialog(v-model="visible" title="AI Meeting Summarizer" width="600" class="gla
         v-model="rawText"
         type="textarea"
         :rows="6"
-        placeholder="Paste your meeting notes here..."
+        :placeholder="$t('ai.pasteMeetingNotes')"
         class="glass-input"
       )
     

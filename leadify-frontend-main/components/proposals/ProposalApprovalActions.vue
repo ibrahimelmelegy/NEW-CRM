@@ -98,7 +98,7 @@
           <p class="text-sm text-gray-500 mb-4">Please provide a reason for rejecting this proposal.</p>
           <textarea
             v-model="rejectReason"
-            placeholder="Enter rejection reason..."
+            :placeholder="$t('proposals.rejectionReason')"
             :rows="4"
             class="w-full px-4 py-3 border border-gray-200 rounded-xl focus:ring-2 focus:ring-red-500 focus:border-transparent mb-4 resize-none"
             autofocus

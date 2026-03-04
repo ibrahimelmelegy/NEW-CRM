@@ -236,7 +236,7 @@
 
 <script setup lang="ts">
 import { ref, computed, onMounted, nextTick } from 'vue';
-import { ElMessage } from 'element-plus';
+import { ElMessage, ElNotification } from 'element-plus';
 import { useI18n } from 'vue-i18n';
 import * as echarts from 'echarts/core';
 import { useApiFetch } from '~/composables/useApiFetch';
@@ -462,6 +462,7 @@ async function fetchBookingPages() {
     }
   } catch (e) {
     console.error('Failed to fetch booking pages:', e);
+    ElNotification({ type: 'error', title: t('common.error'), message: t('common.fetchError') });
   }
 }
 
@@ -475,6 +476,7 @@ async function fetchAnalytics() {
     }
   } catch (e) {
     console.error('Failed to fetch analytics:', e);
+    ElNotification({ type: 'error', title: t('common.error'), message: t('common.fetchError') });
   }
 }
 
@@ -671,6 +673,7 @@ async function fetchStaffAvailability() {
     }
   } catch (e) {
     console.error('Failed to fetch staff availability:', e);
+    ElNotification({ type: 'error', title: t('common.error'), message: t('common.fetchError') });
   }
 }
 

@@ -190,5 +190,4 @@ export function registerTenantHooks(sequelize: Sequelize): void {
     }
   });
 
-  console.log(`[TenantScope] Global hooks registered. ${count} tenant-scoped models detected.`);
 }

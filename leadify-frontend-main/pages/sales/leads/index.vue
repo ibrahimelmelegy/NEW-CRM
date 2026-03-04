@@ -36,7 +36,7 @@ div(class="animate-fade-in")
 
   //- Desktop Table View
   .leads-desktop-view
-    AppTable(v-slot="{data}"  v-if="!loadingAction" :externalLoading="loading" :filterOptions="filterOptions" :columns="table.columns" position="lead" :pageInfo="response.pagination"  :data="table.data" :sortOptions="table.sort" @handleRowClick="handleRowClick" :searchPlaceholder="$t('leads.title')" :key="table.data" emptyIcon="ph:user-focus-bold" emptyMessage="No leads yet" emptyDescription="Create your first lead to start building your sales pipeline" emptyActionHref="/sales/leads/create" emptyActionLabel="Create Lead" )
+    AppTable(v-slot="{data}"  v-if="!loadingAction" :externalLoading="loading" :filterOptions="filterOptions" :columns="table.columns" position="lead" :pageInfo="response.pagination"  :data="table.data" :sortOptions="table.sort" @handleRowClick="handleRowClick" :searchPlaceholder="$t('leads.title')" :key="table.data" emptyIcon="ph:user-focus-bold" :emptyMessage="$t('leads.noLeadsYet')" emptyDescription="Create your first lead to start building your sales pipeline" emptyActionHref="/sales/leads/create" emptyActionLabel="Create Lead" )
       .flex.items-center.py-2(@click.stop)
           el-dropdown(class="outline-0" trigger="click")
               span(class="el-dropdown-link")

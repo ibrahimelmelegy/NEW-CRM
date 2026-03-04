@@ -45,7 +45,7 @@ export class SalesforceProvider {
           },
         });
         await this.connection.login(process.env.SALESFORCE_USERNAME!, process.env.SALESFORCE_PASSWORD!);
-        console.log('[SalesforceProvider] Connected to Salesforce');
+        // Connected to Salesforce
       } catch (err) {
         console.error('[SalesforceProvider] Failed to connect:', err);
         this.connection = null;
@@ -55,7 +55,6 @@ export class SalesforceProvider {
   }
 
   async syncLeads(leads: Array<{ name: string; email: string; company?: string; phone?: string }>): Promise<SyncResult<{ synced: number; failed: number }>> {
-    console.log('[SalesforceProvider] syncLeads:', leads.length, 'records');
     try {
       const conn = await this.getConnection();
       if (conn) {
@@ -72,7 +71,6 @@ export class SalesforceProvider {
   }
 
   async syncContacts(contacts: Array<{ name: string; email: string; phone?: string }>): Promise<SyncResult<{ synced: number; failed: number }>> {
-    console.log('[SalesforceProvider] syncContacts:', contacts.length, 'records');
     try {
       const conn = await this.getConnection();
       if (conn) {
@@ -89,7 +87,6 @@ export class SalesforceProvider {
   }
 
   async syncDeals(deals: Array<{ name: string; amount: number; stage: string; closeDate: string }>): Promise<SyncResult<{ synced: number; failed: number }>> {
-    console.log('[SalesforceProvider] syncDeals:', deals.length, 'records');
     try {
       const conn = await this.getConnection();
       if (conn) {
@@ -106,7 +103,6 @@ export class SalesforceProvider {
   }
 
   async importFromSalesforce(objectType: 'Lead' | 'Contact' | 'Opportunity', limit = 100): Promise<SyncResult<SalesforceRecord[]>> {
-    console.log('[SalesforceProvider] importFromSalesforce:', objectType, 'limit:', limit);
     try {
       const conn = await this.getConnection();
       if (conn) {
@@ -131,7 +127,6 @@ export class SalesforceProvider {
   }
 
   async exportToSalesforce(objectType: 'Lead' | 'Contact' | 'Opportunity', records: Record<string, any>[]): Promise<SyncResult<{ exported: number; failed: number }>> {
-    console.log('[SalesforceProvider] exportToSalesforce:', objectType, records.length, 'records');
     try {
       const conn = await this.getConnection();
       if (conn) {

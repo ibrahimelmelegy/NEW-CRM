@@ -25,9 +25,9 @@ div
           el-radio-button(value="") {{ $t('common.all') }}
           el-radio-button(value="INVOICE") {{ $t('documentTemplates.invoice') }}
           el-radio-button(value="PURCHASE_ORDER") {{ $t('documentTemplates.purchaseOrder') }}
-          el-radio-button(value="QUOTE") Quote
-          el-radio-button(value="CONTRACT") Contract
-          el-radio-button(value="PROPOSAL") Proposal
+          el-radio-button(value="QUOTE") {{ $t('documentTemplates.quote') }}
+          el-radio-button(value="CONTRACT") {{ $t('documentTemplates.contract') }}
+          el-radio-button(value="PROPOSAL") {{ $t('documentTemplates.proposal') }}
         .input.table-search(class="w-full md:w-[250px]")
           el-input(
             size="large"
@@ -66,7 +66,7 @@ div
                   span.font-semibold(style="color: var(--text-primary)") {{ row.name }}
                   .flex.items-center.gap-1(v-if="row.category === 'system'" class="mt-0.5")
                     Icon(name="ph:lock-bold" size="10" style="color: var(--text-muted)")
-                    span.text-xs(style="color: var(--text-muted)") System
+                    span.text-xs(style="color: var(--text-muted)") {{ $t('documentTemplates.system') }}
 
           el-table-column(:label="$t('documentTemplates.builder.templateType')" prop="type" width="180")
             template(#default="{ row }")
@@ -77,7 +77,7 @@ div
                 :style="{ background: getTypeColor(row.type) + '20', color: '#fff', borderColor: getTypeColor(row.type) + '30' }"
               ) {{ getTypeLabel(row.type) }}
 
-          el-table-column(label="Category" width="120" align="center")
+          el-table-column(:label="$t('documentTemplates.category')" width="120" align="center")
             template(#default="{ row }")
               el-tag(
                 v-if="row.category === 'system'"
@@ -91,7 +91,7 @@ div
                 size="small"
                 effect="plain"
                 round
-              ) Custom
+              ) {{ $t('documentTemplates.custom') }}
 
           el-table-column(:label="$t('documentTemplates.default')" prop="isDefault" width="100" align="center")
             template(#default="{ row }")
@@ -162,7 +162,7 @@ div
             el-select(v-model="form.type" style="width: 100%" @change="updateVariablesForType")
               el-option(v-for="opt in templateTypeOptions" :key="opt.value" :label="opt.label" :value="opt.value")
 
-          el-form-item(label="Page Size")
+          el-form-item(:label="$t('documentTemplates.pageSize')")
             el-select(v-model="form.pageSize" style="width: 100%")
               el-option(label="A4" value="A4")
               el-option(label="Letter" value="Letter")
@@ -172,7 +172,7 @@ div
           el-checkbox(v-model="form.isDefault") {{ $t('documentTemplates.default') }}
 
         //- Variable Reference Panel
-        el-form-item(label="Available Variables")
+        el-form-item(:label="$t('documentTemplates.availableVariables')")
           .p-3.rounded-lg.border.border-slate-700.max-h-40.overflow-y-auto(style="background: var(--bg-elevated)")
             .flex.flex-wrap.gap-2
               el-tag(
@@ -184,7 +184,7 @@ div
                 @click="copyVariable(v)"
               )
                 span.font-mono.text-xs {{ formatVar(v) }}
-            p.text-xs.mt-2(style="color: var(--text-muted)") Click a variable to copy it to clipboard.
+            p.text-xs.mt-2(style="color: var(--text-muted)") {{ $t('documentTemplates.clickToCopy') }}
 
       template(#footer)
         el-button(@click="dialogVisible = false") {{ $t('common.cancel') }}

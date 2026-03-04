@@ -76,7 +76,7 @@ div.animate-fade-in
 
   //- Status Tabs
   el-tabs(v-model="statusFilter" @tab-change="onStatusChange" class="orders-tabs")
-    el-tab-pane(label="All" name="ALL")
+    el-tab-pane(:label="$t('tickets.all')" name="ALL")
     el-tab-pane(:label="$t('salesOrders.statusDraft')" name="DRAFT")
     el-tab-pane(:label="$t('salesOrders.statusConfirmed')" name="CONFIRMED")
     el-tab-pane(:label="$t('salesOrders.statusProcessing')" name="PROCESSING")

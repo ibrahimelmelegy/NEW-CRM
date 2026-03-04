@@ -59,7 +59,7 @@ function buildSetweightExpr(fields: string[], weights: Record<string, string>): 
 }
 
 async function migrate() {
-  console.log('Starting search vector migration...\n');
+  // Starting search vector migration
 
   for (const { table, fields, weights } of TABLES) {
     const vectorExpr = buildSetweightExpr(fields, weights || {});
@@ -93,7 +93,7 @@ async function migrate() {
       `UPDATE "${table}" SET search_vector = ${vectorExpr};`
     ];
 
-    console.log(`Processing table: ${table}`);
+    // Processing table
     for (const sql of queries) {
       try {
         await sequelize.query(sql);
@@ -101,10 +101,10 @@ async function migrate() {
         console.error(`  Error: ${err.message}`);
       }
     }
-    console.log(`  Done.\n`);
+    // Table done
   }
 
-  console.log('Migration complete.');
+  // Migration complete
   process.exit(0);
 }
 

@@ -147,7 +147,7 @@
           el-option(label="Deal" value="deal")
           el-option(label="Opportunity" value="opportunity")
       el-form-item(:label="$t('sequences.entityId')" required)
-        el-input(v-model="enrollForm.entityId" placeholder="Entity UUID")
+        el-input(v-model="enrollForm.entityId" :placeholder="$t('sequences.entityUuid')")
     template(#footer)
       el-button(@click="enrollDialogVisible = false") {{ $t('common.cancel') }}
       el-button(type="primary" @click="handleEnroll" :loading="saving") {{ $t('sequences.enroll') }}

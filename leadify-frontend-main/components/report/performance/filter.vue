@@ -7,11 +7,11 @@
     div(class="px-4")
      el-form(@submit.prevent='onSubmit' )
       .grid.grid-cols-2.gap-3
-       InputSelect(label="Status" placeholder="Select Status" name="status" :options="staffStatuses" )
-       InputSelect(label="Role" placeholder="Select Role" name="roleId" :options="mappedRoles" )
+       InputSelect(:label="$t('common.status')" :placeholder="$t('common.selectStatus')" name="status" :options="staffStatuses" )
+       InputSelect(:label="$t('reports.role')" :placeholder="$t('reports.selectRole')" name="roleId" :options="mappedRoles" )
       .flex.justify-end
-       el-button.my-2(native-type="submit" size='large' type="primary"  class="!rounded-2xl")  Show Filter Result
-       el-button.mt-2(@click="ResetFilter" size='large'   class="!rounded-2xl text-col")  Reset Filter
+       el-button.my-2(native-type="submit" size='large' type="primary"  class="!rounded-2xl")  {{ $t('reports.showFilterResult') }}
+       el-button.mt-2(@click="ResetFilter" size='large'   class="!rounded-2xl text-col")  {{ $t('reports.resetFilter') }}
   .flex-1.glass-card.rounded-3xl
     div.w-full.p-4
      .flex.justify-center.items-center.h-64(v-if="isLoading")

@@ -109,6 +109,7 @@ import SyncLog from '../integrations/erpnext/syncLogModel';
 import { LeadScoringRule, EntityScore } from '../leadScoring/leadScoringModel';
 import DuplicateSet from '../duplicateDetection/duplicateModel';
 import NotificationPreference from '../notification/notificationPreferenceModel';
+import PushSubscription from '../notification/pushSubscriptionModel';
 import { SLAPolicy, SLAInstance } from '../sla/slaModel';
 import Dashboard from '../dashboard/dashboardModel';
 import CustomReport from '../reports/customReportModel';
@@ -345,6 +346,7 @@ const sequelize = new Sequelize({
     EntityScore,
     DuplicateSet,
     NotificationPreference,
+    PushSubscription,
     SLAPolicy,
     SLAInstance,
     Dashboard,
@@ -474,7 +476,7 @@ const sequelize = new Sequelize({
     Stakeholder,
     DemandForecast
   ], // Path to your models
-  logging: process.env.NODE_ENV !== 'production' ? console.log : false
+  logging: false
 });
 
 // Register automatic tenant scoping hooks on all models with a tenantId column

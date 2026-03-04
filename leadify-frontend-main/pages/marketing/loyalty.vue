@@ -4,17 +4,17 @@
     <div class="glass-panel p-6 rounded-2xl">
       <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
         <div>
-          <h1 class="text-2xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-amber-400 to-yellow-400">Loyalty &amp; Rewards</h1>
-          <p class="text-slate-400 text-sm mt-1">Manage loyalty programs, track member points, and configure reward tiers.</p>
+          <h1 class="text-2xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-amber-400 to-yellow-400">{{ $t('loyalty.title') }}</h1>
+          <p class="text-slate-400 text-sm mt-1">{{ $t('loyalty.subtitle') }}</p>
         </div>
         <div class="flex gap-2">
           <el-button class="!rounded-xl" @click="showAddRewardDialog = true">
             <Icon name="ph:gift-bold" class="w-4 h-4 mr-2" />
-            Add Reward
+            {{ $t('loyalty.addReward') }}
           </el-button>
           <el-button type="primary" class="!rounded-xl" @click="showAddMemberDialog = true">
             <Icon name="ph:user-plus-bold" class="w-4 h-4 mr-2" />
-            Add Member
+            {{ $t('loyalty.addMember') }}
           </el-button>
         </div>
       </div>
@@ -24,15 +24,15 @@
     <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
       <div class="glass-panel p-4 rounded-xl text-center">
         <div class="text-2xl font-bold text-slate-200">{{ members.length }}</div>
-        <div class="text-xs text-slate-500 mt-1">Total Members</div>
+        <div class="text-xs text-slate-500 mt-1">{{ $t('loyalty.totalMembers') }}</div>
       </div>
       <div class="glass-panel p-4 rounded-xl text-center">
         <div class="text-2xl font-bold text-amber-400">{{ totalActivePoints.toLocaleString() }}</div>
-        <div class="text-xs text-slate-500 mt-1">Active Points</div>
+        <div class="text-xs text-slate-500 mt-1">{{ $t('loyalty.activePoints') }}</div>
       </div>
       <div class="glass-panel p-4 rounded-xl text-center">
         <div class="text-2xl font-bold text-emerald-400">{{ redeemedThisMonth.toLocaleString() }}</div>
-        <div class="text-xs text-slate-500 mt-1">Redeemed This Month</div>
+        <div class="text-xs text-slate-500 mt-1">{{ $t('loyalty.redeemedThisMonth') }}</div>
       </div>
       <div class="glass-panel p-4 rounded-xl text-center">
         <div class="flex justify-center gap-2">
@@ -41,31 +41,31 @@
             <div class="text-[10px] text-slate-500">{{ tier.name }}</div>
           </span>
         </div>
-        <div class="text-xs text-slate-500 mt-1">Tier Distribution</div>
+        <div class="text-xs text-slate-500 mt-1">{{ $t('loyalty.tierDistribution') }}</div>
       </div>
     </div>
 
     <!-- Tabs -->
     <el-tabs v-model="activeTab" class="glass-tabs">
       <!-- Members -->
-      <el-tab-pane label="Members" name="members">
+      <el-tab-pane :label="$t('loyalty.members')" name="members">
         <div class="glass-panel p-6 rounded-xl">
           <div class="flex justify-between items-center mb-4">
-            <el-input v-model="memberSearch" placeholder="Search members..." clearable class="!w-56" size="small">
+            <el-input v-model="memberSearch" :placeholder="$t('loyalty.searchMembers')" clearable class="!w-56" size="small">
               <template #prefix>
                 <Icon name="ph:magnifying-glass" class="w-4 h-4" />
               </template>
             </el-input>
-            <el-select v-model="filterTier" placeholder="All Tiers" clearable size="small" class="!w-36">
-              <el-option label="All Tiers" value="" />
-              <el-option label="Platinum" value="Platinum" />
-              <el-option label="Gold" value="Gold" />
-              <el-option label="Silver" value="Silver" />
-              <el-option label="Bronze" value="Bronze" />
+            <el-select v-model="filterTier" :placeholder="$t('loyalty.allTiers')" clearable size="small" class="!w-36">
+              <el-option :label="$t('loyalty.allTiers')" value="" />
+              <el-option :label="$t('loyalty.platinum')" value="Platinum" />
+              <el-option :label="$t('loyalty.gold')" value="Gold" />
+              <el-option :label="$t('loyalty.silver')" value="Silver" />
+              <el-option :label="$t('loyalty.bronze')" value="Bronze" />
             </el-select>
           </div>
           <el-table :data="filteredMembers" class="glass-table" stripe>
-            <el-table-column label="Member" min-width="200">
+            <el-table-column :label="$t('loyalty.member')" min-width="200">
               <template #default="{ row }">
                 <div class="flex items-center gap-3">
                   <el-avatar :size="32" class="bg-slate-700">{{ row.name.charAt(0) }}</el-avatar>
@@ -76,29 +76,29 @@
                 </div>
               </template>
             </el-table-column>
-            <el-table-column label="Tier" width="120" align="center">
+            <el-table-column :label="$t('loyalty.tier')" width="120" align="center">
               <template #default="{ row }">
                 <el-tag :type="getTierType(row.tier)" effect="dark" size="small" :class="getTierClass(row.tier)">
                   {{ row.tier }}
                 </el-tag>
               </template>
             </el-table-column>
-            <el-table-column label="Points Balance" width="140" align="right">
+            <el-table-column :label="$t('loyalty.pointsBalance')" width="140" align="right">
               <template #default="{ row }">
                 <span class="text-sm font-bold text-amber-400">{{ row.pointsBalance.toLocaleString() }}</span>
               </template>
             </el-table-column>
-            <el-table-column label="Lifetime Points" width="140" align="right">
+            <el-table-column :label="$t('loyalty.lifetimePoints')" width="140" align="right">
               <template #default="{ row }">
                 <span class="text-sm text-slate-300">{{ row.lifetimePoints.toLocaleString() }}</span>
               </template>
             </el-table-column>
-            <el-table-column label="Join Date" width="120">
+            <el-table-column :label="$t('loyalty.joinDate')" width="120">
               <template #default="{ row }">
                 <span class="text-sm text-slate-500">{{ row.joinDate }}</span>
               </template>
             </el-table-column>
-            <el-table-column label="Actions" width="100" align="center">
+            <el-table-column :label="$t('common.actions')" width="100" align="center">
               <template #default="{ row }">
                 <el-button text type="primary" size="small" @click="viewMember(row)">
                   <Icon name="ph:eye-bold" class="w-4 h-4" />
@@ -113,7 +113,7 @@
       </el-tab-pane>
 
       <!-- Rewards Catalog -->
-      <el-tab-pane label="Rewards Catalog" name="rewards">
+      <el-tab-pane :label="$t('loyalty.rewardsCatalog')" name="rewards">
         <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
           <div v-for="reward in rewards" :key="reward.id" class="glass-panel p-5 rounded-xl hover:border-primary-500/30 transition-all">
             <div class="flex justify-between items-start mb-3">
@@ -121,7 +121,7 @@
                 <Icon :name="reward.icon" class="w-6 h-6 text-amber-400" />
               </div>
               <el-tag :type="reward.stock > 0 ? 'success' : 'danger'" effect="dark" size="small">
-                {{ reward.stock > 0 ? `${reward.stock} left` : 'Out of Stock' }}
+                {{ reward.stock > 0 ? `${reward.stock} ${$t('loyalty.left')}` : $t('loyalty.outOfStock') }}
               </el-tag>
             </div>
             <h4 class="text-sm font-medium text-slate-200 mt-3">{{ reward.name }}</h4>
@@ -129,18 +129,18 @@
             <div class="flex justify-between items-center mt-4 pt-3 border-t border-slate-800/60">
               <div>
                 <span class="text-lg font-bold text-amber-400">{{ reward.pointsCost.toLocaleString() }}</span>
-                <span class="text-xs text-slate-500 ml-1">points</span>
+                <span class="text-xs text-slate-500 ml-1">{{ $t('loyalty.points') }}</span>
               </div>
               <el-tag effect="plain" size="small">{{ reward.category }}</el-tag>
             </div>
             <div class="flex gap-2 mt-3">
               <el-button size="small" text type="primary" @click="editReward(reward)">
                 <Icon name="ph:pencil-simple" class="w-4 h-4 mr-1" />
-                Edit
+                {{ $t('common.edit') }}
               </el-button>
               <el-button size="small" text type="danger" @click="removeReward(reward)">
                 <Icon name="ph:trash" class="w-4 h-4 mr-1" />
-                Remove
+                {{ $t('common.delete') }}
               </el-button>
             </div>
           </div>
@@ -148,7 +148,7 @@
       </el-tab-pane>
 
       <!-- Tiers -->
-      <el-tab-pane label="Tiers" name="tiers">
+      <el-tab-pane :label="$t('loyalty.tiers')" name="tiers">
         <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
           <div v-for="tier in tiers" :key="tier.name" class="glass-panel p-5 rounded-xl border" :class="tier.borderClass">
             <div class="text-center mb-4">
@@ -159,21 +159,21 @@
               <p class="text-xs text-slate-500 mt-0.5">{{ tier.minPoints.toLocaleString() }}+ points</p>
             </div>
             <div class="space-y-2">
-              <h5 class="text-xs font-medium text-slate-400">Benefits</h5>
+              <h5 class="text-xs font-medium text-slate-400">{{ $t('loyalty.benefits') }}</h5>
               <div v-for="benefit in tier.benefits" :key="benefit" class="flex items-start gap-2">
                 <Icon name="ph:check-bold" class="w-3 h-3 mt-0.5 flex-shrink-0" :class="tier.iconColor" />
                 <span class="text-xs text-slate-300">{{ benefit }}</span>
               </div>
             </div>
             <div class="mt-4 pt-3 border-t border-slate-800/60 text-center">
-              <span class="text-sm font-bold text-slate-300">{{ tier.memberCount }} members</span>
+              <span class="text-sm font-bold text-slate-300">{{ tier.memberCount }} {{ $t('loyalty.membersCount') }}</span>
             </div>
           </div>
         </div>
       </el-tab-pane>
 
       <!-- Activity -->
-      <el-tab-pane label="Activity" name="activity">
+      <el-tab-pane :label="$t('loyalty.activity')" name="activity">
         <div class="glass-panel p-6 rounded-xl">
           <div class="space-y-4">
             <div
@@ -221,54 +221,54 @@
     </el-tabs>
 
     <!-- Add Member Dialog -->
-    <el-dialog v-model="showAddMemberDialog" title="Add Loyalty Member" width="480px">
+    <el-dialog v-model="showAddMemberDialog" :title="$t('loyalty.addLoyaltyMember')" width="480px">
       <el-form label-position="top">
-        <el-form-item label="Full Name">
-          <el-input v-model="newMember.name" placeholder="Enter member name" />
+        <el-form-item :label="$t('loyalty.fullName')">
+          <el-input v-model="newMember.name" :placeholder="$t('loyalty.enterMemberName')" />
         </el-form-item>
-        <el-form-item label="Email">
-          <el-input v-model="newMember.email" placeholder="Enter email address" />
+        <el-form-item :label="$t('common.email')">
+          <el-input v-model="newMember.email" :placeholder="$t('loyalty.enterEmail')" />
         </el-form-item>
-        <el-form-item label="Initial Points">
+        <el-form-item :label="$t('loyalty.initialPoints')">
           <el-input-number v-model="newMember.points" :min="0" :step="100" class="!w-full" />
         </el-form-item>
       </el-form>
       <template #footer>
-        <el-button @click="showAddMemberDialog = false">Cancel</el-button>
-        <el-button type="primary" @click="addMember">Add Member</el-button>
+        <el-button @click="showAddMemberDialog = false">{{ $t('common.cancel') }}</el-button>
+        <el-button type="primary" @click="addMember">{{ $t('loyalty.addMember') }}</el-button>
       </template>
     </el-dialog>
 
     <!-- Add Reward Dialog -->
-    <el-dialog v-model="showAddRewardDialog" title="Add Reward" width="500px">
+    <el-dialog v-model="showAddRewardDialog" :title="$t('loyalty.addReward')" width="500px">
       <el-form label-position="top">
-        <el-form-item label="Reward Name">
+        <el-form-item :label="$t('loyalty.rewardName')">
           <el-input v-model="newReward.name" placeholder="e.g., Free Month Subscription" />
         </el-form-item>
-        <el-form-item label="Description">
-          <el-input v-model="newReward.description" type="textarea" :rows="2" placeholder="Describe the reward..." />
+        <el-form-item :label="$t('common.description')">
+          <el-input v-model="newReward.description" type="textarea" :rows="2" :placeholder="$t('loyalty.describeReward')" />
         </el-form-item>
         <div class="grid grid-cols-2 gap-4">
-          <el-form-item label="Points Cost">
+          <el-form-item :label="$t('loyalty.pointsCost')">
             <el-input-number v-model="newReward.pointsCost" :min="0" :step="100" class="!w-full" />
           </el-form-item>
-          <el-form-item label="Stock">
+          <el-form-item :label="$t('loyalty.stock')">
             <el-input-number v-model="newReward.stock" :min="0" class="!w-full" />
           </el-form-item>
         </div>
-        <el-form-item label="Category">
-          <el-select v-model="newReward.category" placeholder="Select category" class="w-full">
-            <el-option label="Discount" value="Discount" />
-            <el-option label="Product" value="Product" />
-            <el-option label="Service" value="Service" />
-            <el-option label="Experience" value="Experience" />
-            <el-option label="Gift Card" value="Gift Card" />
+        <el-form-item :label="$t('common.category')">
+          <el-select v-model="newReward.category" :placeholder="$t('loyalty.selectCategory')" class="w-full">
+            <el-option :label="$t('loyalty.discountCat')" value="Discount" />
+            <el-option :label="$t('loyalty.productCat')" value="Product" />
+            <el-option :label="$t('loyalty.serviceCat')" value="Service" />
+            <el-option :label="$t('loyalty.experienceCat')" value="Experience" />
+            <el-option :label="$t('loyalty.giftCard')" value="Gift Card" />
           </el-select>
         </el-form-item>
       </el-form>
       <template #footer>
-        <el-button @click="showAddRewardDialog = false">Cancel</el-button>
-        <el-button type="primary" @click="addReward">Add Reward</el-button>
+        <el-button @click="showAddRewardDialog = false">{{ $t('common.cancel') }}</el-button>
+        <el-button type="primary" @click="addReward">{{ $t('loyalty.addReward') }}</el-button>
       </template>
     </el-dialog>
   </div>

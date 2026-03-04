@@ -142,7 +142,7 @@ class CacheService {
       } while (cursor !== 0);
 
       if (totalDeleted > 0) {
-        console.log(`[Cache] Invalidated ${totalDeleted} keys matching "${pattern}"`);
+        // Cache keys invalidated
       }
     } catch (error) {
       console.warn(`[Cache] Failed to invalidate pattern "${pattern}":`, (error as Error).message);

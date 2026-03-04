@@ -273,7 +273,7 @@ app.use(generalLimiter);
 // 9. Request logging (development only, no query strings)
 if (process.env.NODE_ENV !== 'production') {
   app.use((req: Request, _res: Response, next: NextFunction) => {
-    console.log(`[DEV] ${req.method} ${req.path}`);
+    // Request logged for development
     next();
   });
 }

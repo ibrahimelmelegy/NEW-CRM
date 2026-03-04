@@ -112,8 +112,8 @@
                 type="daterange"
                 size="default"
                 class="w-full"
-                start-placeholder="Start"
-                end-placeholder="End"
+                :start-placeholder="$t('common.startDate')"
+                :end-placeholder="$t('common.endDate')"
                 value-format="YYYY-MM-DD"
               )
               el-date-picker(
@@ -135,7 +135,7 @@
                   @update:model-value="updateBetweenValue(i, 0, $event)"
                   size="default"
                   controls-position="right"
-                  placeholder="Min"
+                  :placeholder="$t('common.min')"
                   class="flex-1"
                 )
                 el-input-number(
@@ -143,7 +143,7 @@
                   @update:model-value="updateBetweenValue(i, 1, $event)"
                   size="default"
                   controls-position="right"
-                  placeholder="Max"
+                  :placeholder="$t('common.max')"
                   class="flex-1"
                 )
               el-input-number(

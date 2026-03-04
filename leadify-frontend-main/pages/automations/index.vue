@@ -30,18 +30,18 @@
       <div class="w-20 h-20 bg-red-900/30 rounded-full flex items-center justify-center mb-4">
         <Icon name="ph:warning-bold" class="w-10 h-10 text-red-400" />
       </div>
-      <h3 class="text-xl font-medium text-slate-200 mb-2">Failed to Load Automations</h3>
+      <h3 class="text-xl font-medium text-slate-200 mb-2">{{ $t('automations.failedToLoad') }}</h3>
       <p class="text-slate-400 max-w-sm mb-4">{{ fetchError }}</p>
-      <el-button type="primary" class="!rounded-xl" @click="fetchWorkflows">Retry</el-button>
+      <el-button type="primary" class="!rounded-xl" @click="fetchWorkflows">{{ $t('automations.retry') }}</el-button>
     </div>
 
     <div v-else-if="workflows.length === 0" class="glass-panel p-12 rounded-2xl flex flex-col items-center justify-center text-center">
       <div class="w-20 h-20 bg-slate-800/50 rounded-full flex items-center justify-center mb-4">
         <Icon name="ph:git-merge-bold" class="w-10 h-10 text-slate-400" />
       </div>
-      <h3 class="text-xl font-medium text-slate-200 mb-2">No Automations Yet</h3>
-      <p class="text-slate-400 max-w-sm mb-6">Build your first visual journey to automate repetitive tasks and scale your processes.</p>
-      <el-button type="primary" class="!rounded-xl" @click="createNewJourney">Create First Journey</el-button>
+      <h3 class="text-xl font-medium text-slate-200 mb-2">{{ $t('automations.noAutomationsYet') }}</h3>
+      <p class="text-slate-400 max-w-sm mb-6">{{ $t('automations.noAutomationsDesc') }}</p>
+      <el-button type="primary" class="!rounded-xl" @click="createNewJourney">{{ $t('automations.createFirstJourney') }}</el-button>
     </div>
 
     <div v-else class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">

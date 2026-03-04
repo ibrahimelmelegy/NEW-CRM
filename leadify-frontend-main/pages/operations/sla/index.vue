@@ -1,8 +1,8 @@
 <template lang="pug">
 .p-6.animate-entrance
   ModuleHeader(
-    title="Service Level Agreements"
-    subtitle="Manage SLA documents for service commitments"
+    :title="$t('operations.sla.title')"
+    :subtitle="$t('operations.sla.subtitle')"
   )
     template(#actions)
       NuxtLink(to="/operations/sla/create")

@@ -37,7 +37,7 @@
         //- Operator selector
         el-select(
           v-model="rule.operator"
-          placeholder="Operator"
+          :placeholder="$t('common.operator')"
           size="default"
           class="rule-operator"
         )

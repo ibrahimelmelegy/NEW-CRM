@@ -3,6 +3,7 @@
  * Track all phone calls with clients — duration, notes, outcomes, recordings, transcriptions.
  */
 import { ref, computed } from 'vue';
+import { ElNotification } from 'element-plus';
 import { useApiFetch } from './useApiFetch';
 
 export interface CallEntry {
@@ -122,6 +123,8 @@ export function useCallLog() {
       }
     } catch (error) {
       console.error('Failed to fetch call analytics:', error);
+      const { t } = useI18n();
+      ElNotification({ type: 'error', title: t('common.error'), message: t('common.fetchError') });
     }
   }
 

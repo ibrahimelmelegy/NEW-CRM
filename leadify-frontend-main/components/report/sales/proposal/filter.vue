@@ -1,7 +1,7 @@
 <template lang="pug">  
  .grid.grid-cols-2.gap-3     
-   InputSelect(label="Proposal Status" name="city"  placeholder="Select Status"  )
-   InputSelect(label="Assigned User" name="city"  placeholder="Select User"  )
+   InputSelect(:label="$t('reports.proposalStatus')" name="city"  :placeholder="$t('common.selectStatus')"  )
+   InputSelect(:label="$t('reports.assignedUser')" name="city"  :placeholder="$t('reports.selectUser')"  )
  .grid.grid-cols-1.gap-3
-   InputDate(label="Date Range" placeholder="Enter Date Range" )
+   InputDate(:label="$t('reports.dateRange')" :placeholder="$t('reports.enterDateRange')" )
 </template>

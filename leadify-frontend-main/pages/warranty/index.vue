@@ -318,6 +318,7 @@ async function fetchWarranties() {
     }
   } catch (e) {
     console.error('Failed to fetch warranties:', e);
+    ElMessage.error($t('common.fetchError'));
   } finally {
     loading.value = false;
   }

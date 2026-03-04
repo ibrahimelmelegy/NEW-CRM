@@ -227,7 +227,7 @@ class JobQueue {
       this.registerQueue(name, concurrency);
     }
 
-    console.log(`[JobQueue] Initialized ${standardQueues.length} queues (in-process mode)`);
+    // Job queues initialized
   }
 
   /**
@@ -349,7 +349,7 @@ setInterval(
   () => {
     const removed = jobQueue.cleanup();
     if (removed > 0) {
-      console.log(`[JobQueue] Cleaned up ${removed} old jobs`);
+      // Old jobs cleaned up
     }
   },
   30 * 60 * 1000

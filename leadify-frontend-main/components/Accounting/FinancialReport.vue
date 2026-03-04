@@ -9,10 +9,10 @@ el-card(shadow="never" v-loading="loading")
       h4.font-semibold.text-base(:style="{ color: section.color || '#303133' }") {{ section.title }}
 
     el-table(:data="section.items" class="w-full" :show-header="sIdx === 0")
-      el-table-column(prop="label" label="Account" min-width="300")
+      el-table-column(prop="label" :label="$t('finance.account')" min-width="300")
         template(#default="{ row }")
           span.pl-4 {{ row.label }}
-      el-table-column(label="Amount" width="180" align="right")
+      el-table-column(:label="$t('common.amount')" width="180" align="right")
         template(#default="{ row }")
           span {{ formatAmount(row.amount) }}
 

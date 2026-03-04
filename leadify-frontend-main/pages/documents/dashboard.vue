@@ -61,7 +61,7 @@
             span.font-bold 🕐 Recent Documents
             el-input(
               v-model="searchQuery"
-              placeholder="Search..."
+              :placeholder="$t('common.search')"
               size="small"
               clearable
               style="width: 200px;"
@@ -72,25 +72,25 @@
           empty-text="No documents found. Save a document from the builder to see it here!"
           size="small"
         )
-          el-table-column(label="Ref" width="140")
+          el-table-column(:label="$t('finance.reference')" width="140")
             template(#default="{ row }")
               span.font-mono.font-bold.text-xs {{ row.refNumber }}
-          el-table-column(label="Type" width="150")
+          el-table-column(:label="$t('common.type')" width="150")
             template(#default="{ row }")
               .flex.items-center.gap-2
                 .w-2.h-2.rounded-full(:style="{ backgroundColor: typeColors[row.documentType] || '#6b7280' }")
                 span.text-xs.font-semibold {{ typeLabels[row.documentType] || row.documentType }}
-          el-table-column(label="Title" min-width="200")
+          el-table-column(:label="$t('docBuilder.documentTitle')" min-width="200")
             template(#default="{ row }")
               p.text-sm.font-bold.truncate {{ row.title }}
               p.text-xs.text-gray-400 {{ row.clientName }}
-          el-table-column(label="Total" width="130" align="right")
+          el-table-column(:label="$t('common.total')" width="130" align="right")
             template(#default="{ row }")
               span.font-mono.font-bold.text-xs {{ row.total?.toLocaleString() }} {{ row.currency }}
-          el-table-column(label="Status" width="100")
+          el-table-column(:label="$t('common.status')" width="100")
             template(#default="{ row }")
               el-tag(:type="tagType(row.status)" size="small" round effect="plain") {{ row.status }}
-          el-table-column(label="Links" width="60" align="center")
+          el-table-column(:label="$t('docBuilder.links')" width="60" align="center")
             template(#default="{ row }")
               el-badge(v-if="row.linkedDocuments?.length" :value="row.linkedDocuments.length" type="primary")
               span.text-gray-300(v-else) —

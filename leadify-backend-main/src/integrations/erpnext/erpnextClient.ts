@@ -124,7 +124,7 @@ export class ERPNextClient {
 
     const startTime = Date.now();
 
-    console.log(`[ERPNext] ${method} ${url}`);
+    // ERPNext request initiated
 
     let response: { statusCode: number; body: string };
     try {
@@ -138,7 +138,7 @@ export class ERPNextClient {
     }
 
     const duration = Date.now() - startTime;
-    console.log(`[ERPNext] ${response.statusCode} (${duration}ms)`);
+    // ERPNext response received
 
     // Parse response body
     let parsed: any;

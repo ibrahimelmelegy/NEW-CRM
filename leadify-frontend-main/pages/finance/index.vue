@@ -360,6 +360,7 @@ async function loadExpenses() {
     categories.value = cats;
   } catch (e: any) {
     console.error('Failed to load expenses:', e);
+    ElNotification({ type: 'error', title: t('common.error'), message: t('common.fetchError') });
   } finally {
     loadingExpenses.value = false;
   }
@@ -372,6 +373,7 @@ async function loadBudgets() {
     budgets.value = result.docs;
   } catch (e: any) {
     console.error('Failed to load budgets:', e);
+    ElNotification({ type: 'error', title: t('common.error'), message: t('common.fetchError') });
   } finally {
     loadingBudgets.value = false;
   }
@@ -384,6 +386,7 @@ async function loadCollectionData() {
     collectionData.value = await getCollectionDashboard();
   } catch (e: any) {
     console.error('Failed to load collection data:', e);
+    ElNotification({ type: 'error', title: t('common.error'), message: t('common.fetchError') });
   } finally {
     loadingCollection.value = false;
     loadingCashFlow.value = false;

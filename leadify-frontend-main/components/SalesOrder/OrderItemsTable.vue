@@ -5,19 +5,19 @@
             template(#default="{ $index }")
                 span.text-muted.font-mono {{ $index + 1 }}
 
-        el-table-column(label="Description" min-width="250")
+        el-table-column(:label="$t('salesOrders.description')" min-width="250")
             template(#default="{ row }")
                 template(v-if="editable")
                     el-input(
                         v-model="row.description"
-                        placeholder="Item description..."
+                        :placeholder="$t('invoices.itemDescription')"
                         class="premium-input-transparent"
                         @input="emitUpdate"
                     )
                 template(v-else)
                     span.text-white {{ row.description }}
 
-        el-table-column(label="Qty" width="120" align="center")
+        el-table-column(:label="$t('salesOrders.qty')" width="120" align="center")
             template(#default="{ row }")
                 template(v-if="editable")
                     el-input-number(
@@ -31,7 +31,7 @@
                 template(v-else)
                     span {{ row.quantity }}
 
-        el-table-column(label="Unit Price" width="160" align="right")
+        el-table-column(:label="$t('salesOrders.unitPrice')" width="160" align="right")
             template(#default="{ row }")
                 template(v-if="editable")
                     el-input-number(
@@ -45,7 +45,7 @@
                 template(v-else)
                     span {{ Number(row.unitPrice).toFixed(2) }}
 
-        el-table-column(label="Tax %" width="110" align="center")
+        el-table-column(:label="$t('salesOrders.taxPercent')" width="110" align="center")
             template(#default="{ row }")
                 template(v-if="editable")
                     el-input-number(
@@ -60,7 +60,7 @@
                 template(v-else)
                     span {{ row.taxRate }}%
 
-        el-table-column(label="Discount %" width="110" align="center")
+        el-table-column(:label="$t('salesOrders.discountPercent')" width="110" align="center")
             template(#default="{ row }")
                 template(v-if="editable")
                     el-input-number(
@@ -75,7 +75,7 @@
                 template(v-else)
                     span {{ row.discountRate }}%
 
-        el-table-column(label="Line Total" width="150" align="right")
+        el-table-column(:label="$t('salesOrders.lineTotal')" width="150" align="right")
             template(#default="{ row }")
                 span.font-bold.text-purple-300 {{ calculateLineTotal(row).toFixed(2) }}
 

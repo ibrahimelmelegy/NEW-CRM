@@ -237,5 +237,5 @@ export async function addPerformanceIndexes(sequelize: Sequelize): Promise<void>
     }
   }
 
-  console.log(`[DB Index] Performance indexes: ${succeeded} created/verified, ${skipped} skipped (total: ${indexes.length})`);
+  // Performance indexes processed
 }

@@ -5,7 +5,7 @@
       v-model="name"
       style="width: 250px"
       @change="$emit('update:name', $event)"
-      placeholder="Workflow name..."
+      :placeholder="$t('workflows.workflowName')"
     )
     el-switch(
       v-model="active"

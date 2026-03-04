@@ -4,17 +4,17 @@
     <div class="glass-panel p-6 rounded-2xl">
       <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
         <div>
-          <h1 class="text-2xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-pink-400 to-rose-400">Social CRM</h1>
-          <p class="text-slate-400 text-sm mt-1">Monitor social media, track brand mentions, and engage with your audience.</p>
+          <h1 class="text-2xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-pink-400 to-rose-400">{{ $t('socialCrm.title') }}</h1>
+          <p class="text-slate-400 text-sm mt-1">{{ $t('socialCrm.subtitle') }}</p>
         </div>
         <div class="flex gap-2">
           <el-button class="!rounded-xl" @click="showComposeDialog = true">
             <Icon name="ph:pencil-line-bold" class="w-4 h-4 mr-2" />
-            Compose
+            {{ $t('socialCrm.compose') }}
           </el-button>
           <el-button type="primary" class="!rounded-xl" @click="showConnectDialog = true">
             <Icon name="ph:plugs-connected-bold" class="w-4 h-4 mr-2" />
-            Connect Account
+            {{ $t('socialCrm.connectAccount') }}
           </el-button>
         </div>
       </div>
@@ -35,7 +35,7 @@
         <div class="flex items-center justify-center gap-1 mt-1">
           <div class="w-2 h-2 rounded-full" :class="account.connected ? 'bg-emerald-400' : 'bg-red-400'"></div>
           <span class="text-[10px]" :class="account.connected ? 'text-emerald-400' : 'text-red-400'">
-            {{ account.connected ? 'Connected' : 'Disconnected' }}
+            {{ account.connected ? $t('socialCrm.connected') : $t('socialCrm.disconnected') }}
           </span>
         </div>
       </div>
@@ -44,7 +44,7 @@
     <!-- Tabs -->
     <el-tabs v-model="activeTab" class="glass-tabs">
       <!-- Social Feed / Mentions -->
-      <el-tab-pane label="Mentions & Feed" name="feed">
+      <el-tab-pane :label="$t('socialCrm.mentionsAndFeed')" name="feed">
         <div class="space-y-4">
           <div v-for="mention in mentions" :key="mention.id" class="glass-panel p-5 rounded-xl hover:border-primary-500/30 transition-all">
             <div class="flex items-start gap-3">
@@ -82,15 +82,15 @@
                   <div class="flex gap-1">
                     <el-button text size="small" type="primary" @click="replyToMention(mention)">
                       <Icon name="ph:arrow-bend-up-left" class="w-3 h-3 mr-1" />
-                      Reply
+                      {{ $t('socialCrm.reply') }}
                     </el-button>
                     <el-button text size="small" @click="convertToLead(mention)">
                       <Icon name="ph:user-plus" class="w-3 h-3 mr-1" />
-                      Convert
+                      {{ $t('socialCrm.convert') }}
                     </el-button>
                     <el-button text size="small" @click="assignMention(mention)">
                       <Icon name="ph:user-switch" class="w-3 h-3 mr-1" />
-                      Assign
+                      {{ $t('common.assign') }}
                     </el-button>
                   </div>
                 </div>
@@ -99,13 +99,13 @@
           </div>
           <div v-if="mentions.length === 0 && !loading" class="glass-panel p-12 rounded-2xl text-center">
             <Icon name="ph:chat-circle-dots-bold" class="w-16 h-16 text-slate-600 mx-auto mb-4" />
-            <p class="text-slate-500">No mentions or feed items yet</p>
+            <p class="text-slate-500">{{ $t('socialCrm.noMentions') }}</p>
           </div>
         </div>
       </el-tab-pane>
 
       <!-- Analytics -->
-      <el-tab-pane label="Analytics" name="analytics">
+      <el-tab-pane :label="$t('socialCrm.analytics')" name="analytics">
         <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
           <!-- Engagement Over Time -->
           <div class="glass-panel p-6 rounded-xl">
@@ -203,7 +203,7 @@
       </el-tab-pane>
 
       <!-- Scheduled Posts -->
-      <el-tab-pane label="Scheduled" name="scheduled">
+      <el-tab-pane :label="$t('socialCrm.scheduled')" name="scheduled">
         <div v-loading="postsLoading" class="space-y-4">
           <div v-for="post in scheduledPosts" :key="post.id" class="glass-panel p-5 rounded-xl">
             <div class="flex items-start gap-3">
@@ -234,19 +234,19 @@
           </div>
           <div v-if="scheduledPosts.length === 0" class="glass-panel p-12 rounded-2xl text-center">
             <Icon name="ph:clock-bold" class="w-16 h-16 text-slate-600 mx-auto mb-4" />
-            <p class="text-slate-500">No scheduled posts</p>
+            <p class="text-slate-500">{{ $t('socialCrm.noScheduledPosts') }}</p>
           </div>
         </div>
       </el-tab-pane>
     </el-tabs>
 
     <!-- Compose Dialog -->
-    <el-dialog v-model="showComposeDialog" title="Compose Post" width="560px">
+    <el-dialog v-model="showComposeDialog" :title="$t('socialCrm.composePost')" width="560px">
       <el-form label-position="top">
-        <el-form-item label="Content">
-          <el-input v-model="newPost.content" type="textarea" :rows="4" placeholder="What's on your mind?" show-word-limit :maxlength="280" />
+        <el-form-item :label="$t('socialCrm.content')">
+          <el-input v-model="newPost.content" type="textarea" :rows="4" :placeholder="$t('socialCrm.whatsOnYourMind')" show-word-limit :maxlength="280" />
         </el-form-item>
-        <el-form-item label="Platforms">
+        <el-form-item :label="$t('socialCrm.platforms')">
           <el-checkbox-group v-model="newPost.platforms">
             <el-checkbox v-for="acc in socialAccounts.filter(a => a.connected)" :key="acc.platform" :value="acc.platform">
               {{ acc.platform }}
@@ -254,10 +254,10 @@
           </el-checkbox-group>
         </el-form-item>
         <div class="grid grid-cols-2 gap-4">
-          <el-form-item label="Schedule Date">
+          <el-form-item :label="$t('socialCrm.scheduleDate')">
             <el-date-picker v-model="newPost.date" type="date" class="w-full" />
           </el-form-item>
-          <el-form-item label="Time">
+          <el-form-item :label="$t('common.time')">
             <el-time-picker v-model="newPost.time" format="HH:mm" class="w-full" />
           </el-form-item>
         </div>
@@ -269,15 +269,15 @@
             editingPostId = null;
           "
         >
-          Cancel
+          {{ $t('common.cancel') }}
         </el-button>
-        <el-button :loading="postSaving" @click="publishNow">Publish Now</el-button>
-        <el-button type="primary" :loading="postSaving" @click="schedulePost">Schedule</el-button>
+        <el-button :loading="postSaving" @click="publishNow">{{ $t('socialCrm.publishNow') }}</el-button>
+        <el-button type="primary" :loading="postSaving" @click="schedulePost">{{ $t('socialCrm.schedule') }}</el-button>
       </template>
     </el-dialog>
 
     <!-- Connect Account Dialog -->
-    <el-dialog v-model="showConnectDialog" title="Connect Social Account" width="480px">
+    <el-dialog v-model="showConnectDialog" :title="$t('socialCrm.connectSocialAccount')" width="480px">
       <div class="space-y-3">
         <div
           v-for="platform in availablePlatforms"
@@ -292,7 +292,7 @@
               <div class="text-xs text-slate-500">{{ platform.description }}</div>
             </div>
           </div>
-          <el-button type="primary" size="small">Connect</el-button>
+          <el-button type="primary" size="small">{{ $t('socialCrm.connect') }}</el-button>
         </div>
       </div>
     </el-dialog>

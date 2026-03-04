@@ -6,16 +6,18 @@ function normalizePhoneNumber(phone: string): string {
 }
 // Handle error during lead creation
 function handleError(message: string) {
+  const { t } = useI18n();
   ElNotification({
     type: 'error',
-    title: 'Error',
+    title: t('common.error'),
     message
   });
 }
 function handleSuccess(message: string) {
+  const { t } = useI18n();
   ElNotification({
     type: 'success',
-    title: 'Success',
+    title: t('common.success'),
     message
   });
 }
@@ -121,14 +123,15 @@ export async function getLeads(): Promise<UseLeadsResult> {
       return { leads, pagination };
     } else {
       // If the API call is unsuccessful, throw an error with the message
-      throw new Error(message || 'Failed to fetch leads');
+      const { t } = useI18n();
+      throw new Error(message || t('common.fetchError'));
     }
   } catch (error) {
     // Catch and log any errors, either from the API call or from unexpected issues
     console.error('Error fetching leads:', error instanceof Error ? error.message : error);
 
-    // Optionally, you could show a notification here if needed
-    handleError('An error occurred while fetching leads. Please try again.');
+    const { t } = useI18n();
+    handleError(t('common.fetchError'));
 
     // Return an empty array as fallback
     return { leads: [], pagination: { totalItems: 0, page: 1, limit: 10, totalPages: 1 } };
@@ -147,7 +150,8 @@ export async function getLead(id: string | string[]): Promise<Lead> {
     return lead;
   } catch (error) {
     console.error('Error fetching lead:', error instanceof Error ? error.message : error);
-    handleError('An error occurred while fetching lead. Please try again.');
+    const { t } = useI18n();
+    handleError(t('common.fetchError'));
     return {} as Lead;
   }
 }
@@ -158,7 +162,8 @@ export async function getActivity(id: string | string[]): Promise<ActivityRespon
     return activities;
   } catch (error) {
     console.error('Error fetching activity:', error instanceof Error ? error.message : error);
-    handleError('An error occurred while fetching activity. Please try again.');
+    const { t } = useI18n();
+    handleError(t('common.fetchError'));
     return { docs: [], pagination: { page: 1, totalPages: 1, totalItems: 0, limit: 10 } } as ActivityResponse;
   }
 }
@@ -204,16 +209,18 @@ export async function createLead(values: LeadValues) {
     // Call API to create the lead
     const response = await useApiFetch('lead', 'POST', cleanObject(leadData));
 
+    const { t } = useI18n();
     // Handle the API response
     if (response?.success) {
-      handleSuccess('Lead created successfully');
+      handleSuccess(t('leads.createSuccess'));
     } else {
-      handleError(response?.message || 'Something went wrong');
+      handleError(response?.message || t('leads.createFailed'));
     }
     return response;
   } catch (error) {
+    const { t } = useI18n();
     // Catch any unexpected errors and handle them
-    handleError(error instanceof Error ? error.message : 'Unknown error');
+    handleError(error instanceof Error ? error.message : t('errors.generic'));
     return { success: false, body: null, message: error instanceof Error ? error.message : 'Unknown error', code: 500 };
   }
 }
@@ -244,16 +251,18 @@ export async function updateLead(values: LeadValues) {
     // Call API to create the lead
     const response = await useApiFetch(`lead/${values.id}`, 'PUT', leadData);
 
+    const { t } = useI18n();
     // Handle the API response
     if (response?.success) {
-      handleSuccess('Lead updated successfully');
+      handleSuccess(t('leads.updateSuccess'));
     } else {
-      handleError(response?.message || 'Something went wrong');
+      handleError(response?.message || t('leads.updateFailed'));
     }
     return response;
   } catch (error) {
+    const { t } = useI18n();
     // Catch any unexpected errors and handle them
-    handleError(error instanceof Error ? error.message : 'Unknown error');
+    handleError(error instanceof Error ? error.message : t('errors.generic'));
     return { success: false, body: null, message: error instanceof Error ? error.message : 'Unknown error', code: 500 };
   }
 }
@@ -261,14 +270,16 @@ export async function updateLead(values: LeadValues) {
 export async function deleteLead(id: string) {
   try {
     const response = await useApiFetch(`lead/${id}`, 'DELETE');
+    const { t } = useI18n();
     if (response?.success) {
-      handleSuccess('Lead deleted successfully');
+      handleSuccess(t('leads.deleteSuccess'));
     } else {
-      handleError(response?.message || 'Failed to delete lead');
+      handleError(response?.message || t('leads.deleteFailed'));
     }
     return response;
   } catch (error) {
-    handleError(error instanceof Error ? error.message : 'Unknown error');
+    const { t } = useI18n();
+    handleError(error instanceof Error ? error.message : t('errors.generic'));
     return { success: false, body: null, message: error instanceof Error ? error.message : 'Unknown error', code: 500 };
   }
 }

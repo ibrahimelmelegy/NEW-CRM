@@ -249,7 +249,7 @@
     <el-dialog v-model="showBomDialog" :title="$t('manufacturing.createBom')" width="600px">
       <el-form label-position="top">
         <el-form-item :label="$t('manufacturing.productName')">
-          <el-input v-model="newBom.productName" placeholder="Finished product name" />
+          <el-input v-model="newBom.productName" :placeholder="$t('manufacturing.finishedProductName')" />
         </el-form-item>
         <div class="grid grid-cols-2 gap-4">
           <el-form-item :label="$t('manufacturing.bomCode')">
@@ -264,7 +264,7 @@
             <div v-for="(item, idx) in newBom.items" :key="idx" class="flex gap-2">
               <el-input v-model="item.name" :placeholder="$t('manufacturing.componentNamePlaceholder')" class="flex-1" />
               <el-input-number v-model="item.quantity" :min="1" class="!w-24" />
-              <el-input-number v-model="item.unitCost" :min="0" :step="10" class="!w-32" placeholder="Cost" />
+              <el-input-number v-model="item.unitCost" :min="0" :step="10" class="!w-32" :placeholder="$t('manufacturing.cost')" />
               <el-button text type="danger" @click="newBom.items.splice(idx, 1)">
                 <Icon name="ph:x-bold" class="w-4 h-4" />
               </el-button>

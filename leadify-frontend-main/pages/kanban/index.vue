@@ -9,10 +9,10 @@
       el-segmented(v-model="viewMode" :options="viewOptions" @change="onViewChange" size="default")
       //- Advanced Filters
       .flex.items-center.gap-2
-        el-select(v-model="filters.assignee" placeholder="All Assignees" clearable size="default" style="width: 160px" @change="fetchData")
+        el-select(v-model="filters.assignee" :placeholder="$t('kanbanBoard.allAssignees')" clearable size="default" style="width: 160px" @change="fetchData")
           el-option(v-for="user in assignees" :key="user.value" :label="user.label" :value="user.value")
-        el-date-picker(v-model="filters.dateRange" type="daterange" range-separator="-" start-placeholder="Start" end-placeholder="End" size="default" @change="fetchData" style="width: 240px")
-        el-select(v-model="filters.priority" placeholder="All Priorities" clearable size="default" style="width: 140px" @change="fetchData")
+        el-date-picker(v-model="filters.dateRange" type="daterange" range-separator="-" :start-placeholder="$t('common.startDate')" :end-placeholder="$t('common.endDate')" size="default" @change="fetchData" style="width: 240px")
+        el-select(v-model="filters.priority" :placeholder="$t('kanbanBoard.allPriorities')" clearable size="default" style="width: 140px" @change="fetchData")
           el-option(label="Low" value="low")
           el-option(label="Medium" value="medium")
           el-option(label="High" value="high")

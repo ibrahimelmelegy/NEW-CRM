@@ -2,12 +2,12 @@
   el-dialog(v-model='dialog' width='750' align-center='' title="Add New Item Row" append-to-body)
     .flex.gap-3.items-center.mb-3(v-for="(item, index) in checkList" :key="item.id")
       el-checkbox(v-model="selectedItems" :value="item" :selected="isSelected(item)")
-      InputText.flex-1(label="Item Name" :name="'name_' + item.id" disabled :value="item.name")
+      InputText.flex-1(:label="$t('operations.itemName')" :name="'name_' + item.id" disabled :value="item.name")
       InputText.flex-1(label="Price" type="number" :name="'price_' + item.id" disabled :value="item.price")
       InputText(
-        label="Item Quantity"
+        :label="$t('operations.itemQuantity')"
         type="number"
-        placeholder="Enter Item Quantity"
+        :placeholder="$t('operations.projects.enterItemQuantity')"
         :name="'quantity_' + item.id"
         :value="item.quantity"
         v-if="isSelected(item)"

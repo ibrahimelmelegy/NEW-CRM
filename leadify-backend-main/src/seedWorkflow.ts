@@ -4,7 +4,7 @@ import WorkflowRule, { TriggerType, ConditionLogic } from './workflow/workflowMo
 
 async function seedDelayedWorkflow() {
   await sequelize.authenticate();
-  console.log('Database connected.');
+  // Database connected
 
   const sampleRule = await WorkflowRule.create({
     name: '[DEMO] High-Value Lead Nurturing Journey',
@@ -48,7 +48,7 @@ async function seedDelayedWorkflow() {
   actions[1] = { type: 'DELAY', _testMs: 60000 } as any;
   await sampleRule.update({ actions });
 
-  console.log(`Created test workflow rule ID: ${sampleRule.id}`);
+  // Test workflow rule created
   process.exit(0);
 }
 

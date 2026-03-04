@@ -1,17 +1,17 @@
 <template lang="pug">
 .document-list
   el-table(:data="documents" stripe style="width: 100%" empty-text="No documents found")
-    el-table-column(label="Type" width="120")
+    el-table-column(:label="$t('common.type')" width="120")
       template(#default="{ row }")
         .flex.items-center.gap-2
           Icon(:name="getTypeIcon(row.type)" size="18" :style="{ color: getTypeColor(row.type) }")
           span.text-sm {{ getDocumentTypeLabel(row.type) }}
 
-    el-table-column(prop="name" label="Document Name" min-width="180")
+    el-table-column(prop="name" :label="$t('hr.documentName')" min-width="180")
       template(#default="{ row }")
         span.font-medium(style="color: var(--text-primary)") {{ row.name }}
 
-    el-table-column(label="Expiry Date" width="160")
+    el-table-column(:label="$t('hr.expiryDate')" width="160")
       template(#default="{ row }")
         template(v-if="row.expiryDate")
           .flex.items-center.gap-2
@@ -24,11 +24,11 @@
         template(v-else)
           span.text-sm(style="color: var(--text-muted)") N/A
 
-    el-table-column(label="Notes" min-width="150")
+    el-table-column(:label="$t('common.notes')" min-width="150")
       template(#default="{ row }")
         span.text-sm(style="color: var(--text-muted)") {{ row.notes || '---' }}
 
-    el-table-column(label="Actions" width="100" align="center")
+    el-table-column(:label="$t('common.actions')" width="100" align="center")
       template(#default="{ row }")
         el-button(
           type="primary"

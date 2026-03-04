@@ -46,7 +46,6 @@ export class TwilioProvider {
   }
 
   async sendSMS(input: SMSInput): Promise<SMSResult<{ sid: string; status: string }>> {
-    console.log('[TwilioProvider] sendSMS to:', input.to);
     try {
       const client = this.getClient();
       if (client) {
@@ -65,7 +64,6 @@ export class TwilioProvider {
   }
 
   async sendBulkSMS(input: BulkSMSInput): Promise<SMSResult<{ sent: number; results: Array<{ to: string; sid: string; status: string }> }>> {
-    console.log('[TwilioProvider] sendBulkSMS to', input.recipients.length, 'recipients');
     try {
       const client = this.getClient();
       if (client) {
@@ -90,7 +88,6 @@ export class TwilioProvider {
   }
 
   async getMessageStatus(messageSid: string): Promise<SMSResult<{ sid: string; status: string; to: string; dateSent: string | null }>> {
-    console.log('[TwilioProvider] getMessageStatus:', messageSid);
     try {
       const client = this.getClient();
       if (client) {
@@ -105,7 +102,6 @@ export class TwilioProvider {
   }
 
   async validatePhoneNumber(phoneNumber: string): Promise<SMSResult<{ valid: boolean; countryCode: string; phoneNumber: string; carrier: string | null }>> {
-    console.log('[TwilioProvider] validatePhoneNumber:', phoneNumber);
     try {
       const client = this.getClient();
       if (client) {

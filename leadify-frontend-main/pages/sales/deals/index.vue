@@ -39,7 +39,7 @@ div(class="animate-fade-in")
 
   //- Desktop Table View
   .deals-desktop-view
-    AppTable(v-slot="{data}" :filterOptions="filterOptions" :columns="table.columns" position="deal" :pageInfo="response.pagination" :data="table.data" :sortOptions="table.sort" @handleRowClick="handleRowClick" :searchPlaceholder="$t('deals.title')" emptyIcon="ph:handshake-bold" emptyMessage="No deals yet" emptyDescription="Create your first deal to start tracking revenue" emptyActionHref="/sales/deals/create" emptyActionLabel="Create Deal" )
+    AppTable(v-slot="{data}" :filterOptions="filterOptions" :columns="table.columns" position="deal" :pageInfo="response.pagination" :data="table.data" :sortOptions="table.sort" @handleRowClick="handleRowClick" :searchPlaceholder="$t('deals.title')" emptyIcon="ph:handshake-bold" :emptyMessage="$t('deals.noDealsYet')" :emptyDescription="$t('deals.noDealsDesc')" emptyActionHref="/sales/deals/create" :emptyActionLabel="$t('deals.createDeal')" )
       .flex.items-center.py-2(@click.stop)
           el-dropdown(class="outline-0" trigger="click")
               span(class="el-dropdown-link")

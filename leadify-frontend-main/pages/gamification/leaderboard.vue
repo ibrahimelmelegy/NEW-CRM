@@ -346,6 +346,7 @@ async function loadUsers() {
     }
   } catch (error) {
     console.error('Failed to load users', error);
+    ElNotification({ type: 'error', title: t('common.error'), message: t('common.fetchError') });
   }
 }
 
@@ -441,6 +442,7 @@ async function confirmDeleteAchievement() {
     }
   } catch (error) {
     console.error('Failed to delete achievement', error);
+    ElNotification({ type: 'error', title: t('common.error'), message: t('common.error') });
   } finally {
     deletingAchievement.value = false;
     deletePopup.value = false;

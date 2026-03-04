@@ -4,12 +4,12 @@
     <div class="glass-panel p-6 rounded-2xl">
       <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
         <div>
-          <h1 class="text-2xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-pink-400 to-rose-400">E-Signatures</h1>
-          <p class="text-slate-400 text-sm mt-1">Send, track, and manage electronic signatures for contracts and documents.</p>
+          <h1 class="text-2xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-pink-400 to-rose-400">{{ $t("eSignatures.title") }}</h1>
+          <p class="text-slate-400 text-sm mt-1">{{ $t("eSignatures.subtitle") }}</p>
         </div>
         <el-button type="primary" class="!rounded-xl" @click="showSendDialog = true">
           <Icon name="ph:paper-plane-tilt-bold" class="w-4 h-4 mr-2" />
-          Send for Signature
+          {{ $t("eSignatures.sendForSignature") }}
         </el-button>
       </div>
     </div>
@@ -18,23 +18,23 @@
     <div class="grid grid-cols-2 md:grid-cols-5 gap-4">
       <div class="glass-panel p-4 rounded-xl text-center">
         <div class="text-2xl font-bold text-slate-200">{{ documents.length }}</div>
-        <div class="text-xs text-slate-500 mt-1">Total Documents</div>
+        <div class="text-xs text-slate-500 mt-1">{{ $t("eSignatures.totalDocuments") }}</div>
       </div>
       <div class="glass-panel p-4 rounded-xl text-center">
         <div class="text-2xl font-bold text-emerald-400">{{ documents.filter(d => d.status === 'SIGNED').length }}</div>
-        <div class="text-xs text-slate-500 mt-1">Signed</div>
+        <div class="text-xs text-slate-500 mt-1">{{ $t("eSignatures.signed") }}</div>
       </div>
       <div class="glass-panel p-4 rounded-xl text-center">
         <div class="text-2xl font-bold text-amber-400">{{ documents.filter(d => d.status === 'PENDING').length }}</div>
-        <div class="text-xs text-slate-500 mt-1">Pending</div>
+        <div class="text-xs text-slate-500 mt-1">{{ $t("eSignatures.pending") }}</div>
       </div>
       <div class="glass-panel p-4 rounded-xl text-center">
         <div class="text-2xl font-bold text-red-400">{{ documents.filter(d => d.status === 'EXPIRED').length }}</div>
-        <div class="text-xs text-slate-500 mt-1">Expired</div>
+        <div class="text-xs text-slate-500 mt-1">{{ $t("eSignatures.expired") }}</div>
       </div>
       <div class="glass-panel p-4 rounded-xl text-center">
         <div class="text-2xl font-bold text-indigo-400">{{ avgSignTime }}</div>
-        <div class="text-xs text-slate-500 mt-1">Avg Sign Time</div>
+        <div class="text-xs text-slate-500 mt-1">{{ $t("eSignatures.avgSignTime") }}</div>
       </div>
     </div>
 
@@ -42,19 +42,19 @@
     <div class="glass-panel p-6 rounded-2xl">
       <div class="flex justify-between items-center mb-4">
         <div class="flex gap-2">
-          <el-select v-model="filterStatus" placeholder="Status" clearable class="w-36">
+          <el-select v-model="filterStatus" :placeholder="$t('common.status')" clearable class="w-36">
             <el-option label="All" value="" />
             <el-option label="Pending" value="PENDING" />
             <el-option label="Signed" value="SIGNED" />
             <el-option label="Declined" value="DECLINED" />
             <el-option label="Expired" value="EXPIRED" />
           </el-select>
-          <el-input v-model="searchQuery" placeholder="Search documents..." prefix-icon="Search" clearable class="!w-56" />
+          <el-input v-model="searchQuery" :placeholder="$t('eSignatures.searchDocuments')" prefix-icon="Search" clearable class="!w-56" />
         </div>
       </div>
 
       <el-table v-loading="loading" :data="filteredDocuments" class="glass-table" stripe>
-        <el-table-column label="Document" min-width="250">
+        <el-table-column :label="$t('eSignatures.document')" min-width="250">
           <template #default="{ row }">
             <div class="flex items-center gap-3">
               <div class="w-10 h-10 rounded-lg flex items-center justify-center" :class="getDocBg(row.type)">
@@ -67,7 +67,7 @@
             </div>
           </template>
         </el-table-column>
-        <el-table-column label="Recipients" width="200">
+        <el-table-column :label="$t('eSignatures.recipients')" width="200">
           <template #default="{ row }">
             <div class="flex items-center -space-x-2">
               <el-avatar v-for="(r, idx) in row.recipients?.slice(0, 3)" :key="idx" :size="28" class="border-2 border-slate-800 bg-slate-700">
@@ -77,14 +77,14 @@
             </div>
           </template>
         </el-table-column>
-        <el-table-column label="Status" width="130" align="center">
+        <el-table-column :label="$t('common.status')" width="130" align="center">
           <template #default="{ row }">
             <el-tag :type="getSignStatusType(row.status)" effect="dark" size="small">
               {{ row.status }}
             </el-tag>
           </template>
         </el-table-column>
-        <el-table-column label="Progress" width="150">
+        <el-table-column :label="$t('eSignatures.progress')" width="150">
           <template #default="{ row }">
             <div class="flex items-center gap-2">
               <el-progress
@@ -98,12 +98,12 @@
             </div>
           </template>
         </el-table-column>
-        <el-table-column label="Sent" width="120">
+        <el-table-column :label="$t('eSignatures.sent')" width="120">
           <template #default="{ row }">
             <span class="text-sm text-slate-400">{{ formatDate(row.sentDate) }}</span>
           </template>
         </el-table-column>
-        <el-table-column label="Actions" width="120" align="center">
+        <el-table-column :label="$t('common.actions')" width="120" align="center">
           <template #default="{ row }">
             <div class="flex gap-1 justify-center">
               <el-button text type="primary" size="small" @click="viewDocument(row)">
@@ -122,47 +122,47 @@
     </div>
 
     <!-- Send for Signature Dialog -->
-    <el-dialog v-model="showSendDialog" title="Send Document for Signature" width="560px">
+    <el-dialog v-model="showSendDialog" :title="$t('eSignatures.sendDocumentForSignature')" width="560px">
       <el-form label-position="top">
-        <el-form-item label="Document">
+        <el-form-item :label="$t('eSignatures.document')">
           <el-upload drag action="" :auto-upload="false" :limit="1" accept=".pdf,.doc,.docx" class="w-full">
             <div class="py-4">
               <Icon name="ph:cloud-arrow-up-bold" class="w-8 h-8 text-slate-500 mx-auto mb-2" />
-              <p class="text-sm text-slate-400">Drop your document here or click to upload</p>
-              <p class="text-xs text-slate-600 mt-1">PDF, DOC, DOCX up to 25MB</p>
+              <p class="text-sm text-slate-400">{{ $t("eSignatures.dropDocument") }}</p>
+              <p class="text-xs text-slate-600 mt-1">{{ $t("eSignatures.fileTypes") }}</p>
             </div>
           </el-upload>
         </el-form-item>
-        <el-form-item label="Document Name">
+        <el-form-item :label="$t('eSignatures.documentName')">
           <el-input v-model="newSignRequest.name" placeholder="e.g., Service Agreement - Acme Corp" />
         </el-form-item>
-        <el-form-item label="Recipients">
+        <el-form-item :label="$t('eSignatures.recipients')">
           <div class="space-y-2 w-full">
             <div v-for="(recipient, idx) in newSignRequest.recipients" :key="idx" class="flex gap-2">
-              <el-input v-model="recipient.name" placeholder="Name" class="flex-1" />
-              <el-input v-model="recipient.email" placeholder="Email" class="flex-1" />
+              <el-input v-model="recipient.name" :placeholder="$t('common.name')" class="flex-1" />
+              <el-input v-model="recipient.email" :placeholder="$t('common.email')" class="flex-1" />
               <el-button text type="danger" @click="newSignRequest.recipients.splice(idx, 1)">
                 <Icon name="ph:x-bold" class="w-4 h-4" />
               </el-button>
             </div>
             <el-button text type="primary" @click="newSignRequest.recipients.push({ name: '', email: '' })">
               <Icon name="ph:plus-bold" class="w-4 h-4 mr-1" />
-              Add Recipient
+              {{ $t("eSignatures.addRecipient") }}
             </el-button>
           </div>
         </el-form-item>
-        <el-form-item label="Message (Optional)">
-          <el-input v-model="newSignRequest.message" type="textarea" :rows="2" placeholder="Add a message for recipients..." />
+        <el-form-item :label="$t('eSignatures.messageOptional')">
+          <el-input v-model="newSignRequest.message" type="textarea" :rows="2" :placeholder="$t('eSignatures.messagePlaceholder')" />
         </el-form-item>
-        <el-form-item label="Expiry">
-          <el-date-picker v-model="newSignRequest.expiryDate" type="date" placeholder="Set expiry date" class="w-full" />
+        <el-form-item :label="$t('eSignatures.expiry')">
+          <el-date-picker v-model="newSignRequest.expiryDate" type="date" :placeholder="$t('eSignatures.setExpiryDate')" class="w-full" />
         </el-form-item>
       </el-form>
       <template #footer>
-        <el-button @click="showSendDialog = false">Cancel</el-button>
+        <el-button @click="showSendDialog = false">{{ $t("common.cancel") }}</el-button>
         <el-button type="primary" :loading="sending" @click="sendForSignature">
           <Icon name="ph:paper-plane-tilt-bold" class="w-4 h-4 mr-2" />
-          Send
+          {{ $t("common.submit") }}
         </el-button>
       </template>
     </el-dialog>

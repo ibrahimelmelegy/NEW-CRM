@@ -14,7 +14,7 @@
       .flex.items-center.gap-2
         el-button(@click="router.push(`/sales/deals/${dealId}`)" type="default" plain)
           Icon.mr-1(name="ph:arrow-left-bold" size="14")
-          | Back to Deal
+          | {{ $t("deals.backToDeal") }}
 
   template(v-if="roomData")
     .grid.gap-6(class="grid-cols-1 lg:grid-cols-3")

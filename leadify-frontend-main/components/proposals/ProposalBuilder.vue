@@ -815,7 +815,7 @@ function onNewSectionKeyDown(e: KeyboardEvent) {
                     <input
                       :value="activeCustomSection.title"
                       class="text-xl font-bold text-gray-900 border-none focus:ring-0 p-0 w-full bg-transparent outline-none placeholder-gray-300"
-                      placeholder="Section Name"
+                      :placeholder="$t('proposals.sectionName')"
                       @input="handleUpdateCustomSectionTitle(activeCustomSection!.id, ($event.target as HTMLInputElement).value)"
                     />
                   </div>
@@ -1217,7 +1217,7 @@ function onNewSectionKeyDown(e: KeyboardEvent) {
                         </label>
                         <input
                           :value="formData.clientCompany"
-                          placeholder="Company Name"
+                          :placeholder="$t('proposals.companyName')"
                           :class="[
                             'w-full px-4 py-3 bg-white border-2 rounded-xl focus:border-violet-500 outline-none text-sm font-bold text-gray-800 transition-all shadow-sm',
                             errors.clientCompany ? 'border-red-500' : 'border-transparent'
@@ -1233,7 +1233,7 @@ function onNewSectionKeyDown(e: KeyboardEvent) {
                         <label class="block text-xs font-bold text-gray-500 uppercase mb-2">Contact Name</label>
                         <input
                           :value="formData.clientName"
-                          placeholder="Contact Person"
+                          :placeholder="$t('proposals.contactPerson')"
                           class="w-full px-4 py-3 bg-white border-2 border-transparent rounded-xl focus:border-violet-500 outline-none text-sm font-bold text-gray-800 transition-all shadow-sm"
                           @input="handleChange('clientName', ($event.target as HTMLInputElement).value)"
                         />
@@ -1300,7 +1300,7 @@ function onNewSectionKeyDown(e: KeyboardEvent) {
                 <p class="text-sm text-gray-500 mb-6">A high-level overview of the proposal.</p>
                 <ProposalsProposalRichTextEditor
                   :model-value="formData.introduction"
-                  placeholder="We are pleased to submit this proposal..."
+                  :placeholder="$t('proposals.introPlaceholder')"
                   class="bg-gray-50"
                   min-height="250px"
                   @update:model-value="handleChange('introduction', $event)"
@@ -1381,19 +1381,19 @@ function onNewSectionKeyDown(e: KeyboardEvent) {
                     <div class="grid grid-cols-2 gap-4">
                       <input
                         :value="phase.name"
-                        placeholder="Phase Name"
+                        :placeholder="$t('proposals.phaseName')"
                         class="bg-white border-2 border-transparent p-3 rounded-xl text-sm font-bold focus:border-violet-500 outline-none transition-all"
                         @input="handlePhaseChange(phase.id, 'name', ($event.target as HTMLInputElement).value)"
                       />
                       <input
                         :value="phase.duration"
-                        placeholder="Duration"
+                        :placeholder="$t('proposals.duration')"
                         class="bg-white border-2 border-transparent p-3 rounded-xl text-sm font-medium focus:border-violet-500 outline-none transition-all"
                         @input="handlePhaseChange(phase.id, 'duration', ($event.target as HTMLInputElement).value)"
                       />
                       <input
                         :value="phase.deliverables"
-                        placeholder="Deliverables"
+                        :placeholder="$t('proposals.deliverables')"
                         class="col-span-2 bg-white border-2 border-transparent p-3 rounded-xl text-sm text-gray-600 focus:border-violet-500 outline-none transition-all"
                         @input="handlePhaseChange(phase.id, 'deliverables', ($event.target as HTMLInputElement).value)"
                       />
@@ -1486,7 +1486,7 @@ function onNewSectionKeyDown(e: KeyboardEvent) {
                           <input
                             :value="item.description"
                             class="w-full bg-transparent outline-none text-sm p-2 rounded-lg focus:bg-white focus:ring-2 focus:ring-violet-100 font-medium"
-                            placeholder="Item name"
+                            :placeholder="$t('proposals.itemName')"
                             @input="handleItemChange(item.id, 'description', ($event.target as HTMLInputElement).value)"
                           />
                         </td>

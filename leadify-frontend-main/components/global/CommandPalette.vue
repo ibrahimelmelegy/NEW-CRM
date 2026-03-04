@@ -9,7 +9,7 @@ Teleport(to="body")
           input.flex-1.bg-transparent.outline-none.text-base(
             ref="searchInput"
             v-model="query"
-            placeholder="Search anything... (leads, deals, invoices, contacts)"
+            :placeholder="$t('commandPalette.searchPlaceholder')"
             style="color: var(--text-primary)"
             @keydown.escape="close"
             @keydown.down.prevent="moveDown"

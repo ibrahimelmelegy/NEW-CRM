@@ -1359,7 +1359,7 @@ const SEED_TEMPLATES: SeedTemplate[] = [
  * Uses `findOrCreate` to avoid duplicates on re-runs. Matches on name + type.
  */
 export async function seedTemplates(): Promise<void> {
-  console.log('[seedTemplates] Starting template seed...');
+  // Starting template seed
 
   let created = 0;
   let skipped = 0;
@@ -1380,14 +1380,14 @@ export async function seedTemplates(): Promise<void> {
 
     if (wasCreated) {
       created++;
-      console.log(`  [+] Created: ${tpl.name} (${tpl.type})`);
+      // Template created
     } else {
       skipped++;
-      console.log(`  [=] Exists:  ${tpl.name} (${tpl.type})`);
+      // Template already exists
     }
   }
 
-  console.log(`[seedTemplates] Done. Created: ${created}, Skipped: ${skipped}, Total: ${SEED_TEMPLATES.length}`);
+  // Seed templates complete
 }
 
 export default seedTemplates;
@@ -1397,11 +1397,11 @@ if (require.main === module) {
   sequelize
     .authenticate()
     .then(() => {
-      console.log('[seedTemplates] Database connected.');
+      // Database connected
       return seedTemplates();
     })
     .then(() => {
-      console.log('[seedTemplates] Seed complete. Exiting.');
+      // Seed complete
       process.exit(0);
     })
     .catch((err: Error) => {

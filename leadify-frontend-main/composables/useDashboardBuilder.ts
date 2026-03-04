@@ -251,10 +251,12 @@ export function useDashboardBuilder() {
           dashboardId.value = (body as any).id;
         }
       }
-      ElNotification({ type: 'success', title: 'Dashboard Saved', message: 'Your layout has been saved.' });
+      const { t } = useI18n();
+      ElNotification({ type: 'success', title: t('common.success'), message: t('common.saved') });
     } catch (e) {
       console.error('Failed to save dashboard layout:', e);
-      ElNotification({ type: 'error', title: 'Save Failed', message: 'Could not save dashboard layout.' });
+      const { t } = useI18n();
+      ElNotification({ type: 'error', title: t('common.error'), message: t('common.saveFailed') });
     }
   }
 

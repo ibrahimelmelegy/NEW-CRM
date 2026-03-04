@@ -17,7 +17,7 @@ el-drawer(
       .column-search
         el-input(
           v-model="searchTerm"
-          placeholder="Search columns..."
+          :placeholder="$t('common.searchColumns')"
           :prefix-icon="Search"
           size="default"
           clearable

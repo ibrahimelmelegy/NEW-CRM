@@ -36,7 +36,6 @@ export class HubSpotProvider {
   }
 
   async syncContacts(contacts: Array<{ email: string; firstName: string; lastName: string; phone?: string }>): Promise<HubSpotSyncResult<{ synced: number; failed: number }>> {
-    console.log('[HubSpotProvider] syncContacts:', contacts.length, 'records');
     try {
       const client = this.getClient();
       if (client) {
@@ -52,7 +51,6 @@ export class HubSpotProvider {
   }
 
   async syncDeals(deals: Array<{ name: string; amount: number; stage: string; closeDate: string }>): Promise<HubSpotSyncResult<{ synced: number; failed: number }>> {
-    console.log('[HubSpotProvider] syncDeals:', deals.length, 'records');
     try {
       const client = this.getClient();
       if (client) {
@@ -68,7 +66,6 @@ export class HubSpotProvider {
   }
 
   async syncCompanies(companies: Array<{ name: string; domain?: string; industry?: string }>): Promise<HubSpotSyncResult<{ synced: number; failed: number }>> {
-    console.log('[HubSpotProvider] syncCompanies:', companies.length, 'records');
     try {
       const client = this.getClient();
       if (client) {
@@ -84,7 +81,6 @@ export class HubSpotProvider {
   }
 
   async importFromHubspot(objectType: 'contacts' | 'deals' | 'companies', limit = 100): Promise<HubSpotSyncResult<HubSpotRecord[]>> {
-    console.log('[HubSpotProvider] importFromHubspot:', objectType, 'limit:', limit);
     try {
       const client = this.getClient();
       if (client) {
@@ -114,7 +110,6 @@ export class HubSpotProvider {
   }
 
   async exportToHubspot(objectType: 'contacts' | 'deals' | 'companies', records: Array<Record<string, any>>): Promise<HubSpotSyncResult<{ exported: number; failed: number }>> {
-    console.log('[HubSpotProvider] exportToHubspot:', objectType, records.length, 'records');
     try {
       const client = this.getClient();
       if (client) {

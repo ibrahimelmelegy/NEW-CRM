@@ -10,13 +10,13 @@ const ENV_VARS: EnvVar[] = [
     name: 'SECRET_KEY',
     required: true,
     validator: v => v.length >= 64,
-    hint: "Must be at least 64 characters. Generate with: node -e \"console.log(require('crypto').randomBytes(64).toString('hex'))\""
+    hint: "Must be at least 64 characters. Generate with: node -e \"process.stdout.write(require('crypto').randomBytes(64).toString('hex'))\""
   },
   {
     name: 'ENCRYPTION_KEY',
     required: true,
     validator: v => /^[0-9a-f]{64}$/i.test(v),
-    hint: "Must be exactly 64 hex characters (32 bytes). Generate with: node -e \"console.log(require('crypto').randomBytes(32).toString('hex'))\""
+    hint: "Must be exactly 64 hex characters (32 bytes). Generate with: node -e \"process.stdout.write(require('crypto').randomBytes(32).toString('hex'))\""
   },
   {
     name: 'DB_HOST',
@@ -130,5 +130,4 @@ export function validateEnvironment(): void {
     process.exit(1);
   }
 
-  console.log('Environment validation passed.');
 }

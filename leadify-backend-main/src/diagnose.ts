@@ -4,13 +4,13 @@ import Lead from './lead/leadModel';
 import Deal from './deal/model/dealModel';
 
 const diagnose = async () => {
-  console.log('--- DIAGNOSE AUDIT ---');
+  // DIAGNOSE AUDIT
   // 1. Check DB Connection
   try {
     await sequelize.authenticate();
-    console.log('✅ Database Connection: OK');
+    // Database Connection: OK
   } catch (error: any) {
-    console.error('❌ Database Connection: FAILED', error.message);
+    console.error('Database Connection: FAILED', error.message);
   }
 
   // 2. Check Redis Connection
@@ -19,20 +19,20 @@ const diagnose = async () => {
       // Fail fast if Redis is down
       await Promise.race([redisClient.connect(), new Promise((_, reject) => setTimeout(() => reject(new Error('Redis Timeout')), 2000))]);
     }
-    console.log('✅ Redis Connection: OK');
+    // Redis Connection: OK
   } catch (error: any) {
-    console.warn('⚠️  Redis Connection: FAILED (Caching will be skipped)');
+    console.warn('Redis Connection: FAILED (Caching will be skipped)');
   }
 
   // 3. Check Data
   try {
     const leadCount = await Lead.count();
-    console.log(`📊 Leads in DB: ${leadCount}`);
+    // Lead count retrieved
   } catch (error: any) {
-    console.error('❌ Data Access Error:', error.message);
+    console.error('Data Access Error:', error.message);
   }
 
-  console.log('-----------------------');
+  // Diagnose complete
   process.exit();
 };
 

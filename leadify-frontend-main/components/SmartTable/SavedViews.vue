@@ -55,7 +55,7 @@
     destroy-on-close
   )
     el-form(@submit.prevent="saveCurrentView")
-      el-form-item(label="View Name" required)
+      el-form-item(:label="$t('smartTable.viewName')" required)
         el-input(
           v-model="newViewName"
           placeholder="e.g. My Active Deals"

@@ -344,7 +344,7 @@
 <script setup lang="ts">
 import { ref, reactive, onMounted, computed, nextTick } from 'vue';
 import { useI18n } from 'vue-i18n';
-import { ElMessage, ElMessageBox } from 'element-plus';
+import { ElMessage, ElMessageBox, ElNotification } from 'element-plus';
 import * as echarts from 'echarts/core';
 
 definePageMeta({});
@@ -530,6 +530,7 @@ async function fetchCompanies() {
     }
   } catch (e) {
     console.error('Failed to fetch companies:', e);
+    ElNotification({ type: 'error', title: $t('common.error'), message: $t('common.fetchError') });
   } finally {
     loading.value = false;
   }
@@ -543,6 +544,7 @@ async function fetchAnalytics() {
     }
   } catch (e) {
     console.error('Failed to fetch analytics:', e);
+    ElNotification({ type: 'error', title: $t('common.error'), message: $t('common.fetchError') });
   }
 }
 

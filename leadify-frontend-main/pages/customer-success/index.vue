@@ -22,31 +22,31 @@
     <div class="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-7 gap-4">
       <div class="glass-panel p-4 rounded-xl text-center">
         <div class="text-2xl font-bold text-slate-200">{{ dashboard.summary.totalClients }}</div>
-        <div class="text-xs text-slate-500 mt-1">Total Clients</div>
+        <div class="text-xs text-slate-500 mt-1">{{ $t('customerSuccess.totalClients') }}</div>
       </div>
       <div class="glass-panel p-4 rounded-xl text-center border-l-2 border-emerald-500">
         <div class="text-2xl font-bold text-emerald-400">{{ dashboard.summary.healthy }}</div>
-        <div class="text-xs text-slate-500 mt-1">Healthy</div>
+        <div class="text-xs text-slate-500 mt-1">{{ $t('customerSuccess.healthy') }}</div>
       </div>
       <div class="glass-panel p-4 rounded-xl text-center border-l-2 border-amber-500">
         <div class="text-2xl font-bold text-amber-400">{{ dashboard.summary.atRisk }}</div>
-        <div class="text-xs text-slate-500 mt-1">At Risk</div>
+        <div class="text-xs text-slate-500 mt-1">{{ $t('customerSuccess.atRisk') }}</div>
       </div>
       <div class="glass-panel p-4 rounded-xl text-center border-l-2 border-red-500">
         <div class="text-2xl font-bold text-red-400">{{ dashboard.summary.critical }}</div>
-        <div class="text-xs text-slate-500 mt-1">Critical</div>
+        <div class="text-xs text-slate-500 mt-1">{{ $t('customerSuccess.critical') }}</div>
       </div>
       <div class="glass-panel p-4 rounded-xl text-center">
         <div class="text-2xl font-bold text-indigo-400">{{ dashboard.summary.avgHealthScore }}%</div>
-        <div class="text-xs text-slate-500 mt-1">Avg Health</div>
+        <div class="text-xs text-slate-500 mt-1">{{ $t('customerSuccess.avgHealth') }}</div>
       </div>
       <div class="glass-panel p-4 rounded-xl text-center">
         <div class="text-2xl font-bold text-slate-200">{{ formatRevenue(dashboard.summary.totalRevenue) }}</div>
-        <div class="text-xs text-slate-500 mt-1">Total Revenue</div>
+        <div class="text-xs text-slate-500 mt-1">{{ $t('customerSuccess.totalRevenue') }}</div>
       </div>
       <div class="glass-panel p-4 rounded-xl text-center">
         <div class="text-2xl font-bold text-teal-400">{{ dashboard.summary.avgNps }}/10</div>
-        <div class="text-xs text-slate-500 mt-1">Avg NPS</div>
+        <div class="text-xs text-slate-500 mt-1">{{ $t('customerSuccess.avgNps') }}</div>
       </div>
     </div>
 
@@ -54,19 +54,19 @@
     <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
       <!-- Health Distribution Pie -->
       <div class="glass-panel p-6 rounded-2xl">
-        <h3 class="text-sm font-medium text-slate-300 mb-4">Health Distribution</h3>
+        <h3 class="text-sm font-medium text-slate-300 mb-4">{{ $t('customerSuccess.healthDistribution') }}</h3>
         <div ref="healthChartRef" class="w-full h-64"></div>
       </div>
 
       <!-- Revenue Trend -->
       <div class="glass-panel p-6 rounded-2xl">
-        <h3 class="text-sm font-medium text-slate-300 mb-4">Client Revenue Trend</h3>
+        <h3 class="text-sm font-medium text-slate-300 mb-4">{{ $t('customerSuccess.clientRevenueTrend') }}</h3>
         <div ref="revenueChartRef" class="w-full h-64"></div>
       </div>
 
       <!-- Engagement Trend -->
       <div class="glass-panel p-6 rounded-2xl">
-        <h3 class="text-sm font-medium text-slate-300 mb-4">Engagement Trend</h3>
+        <h3 class="text-sm font-medium text-slate-300 mb-4">{{ $t('customerSuccess.engagementTrend') }}</h3>
         <div ref="engagementChartRef" class="w-full h-64"></div>
       </div>
     </div>
@@ -74,11 +74,11 @@
     <!-- At-Risk Clients Table -->
     <div class="glass-panel p-6 rounded-2xl">
       <div class="flex justify-between items-center mb-4">
-        <h3 class="text-lg font-medium text-slate-200">At-Risk Clients</h3>
-        <el-tag type="danger" effect="dark" size="small">{{ dashboard.atRiskClients.length }} clients need attention</el-tag>
+        <h3 class="text-lg font-medium text-slate-200">{{ $t('customerSuccess.atRiskClients') }}</h3>
+        <el-tag type="danger" effect="dark" size="small">{{ dashboard.atRiskClients.length }} {{ $t('customerSuccess.clientsNeedAttention') }}</el-tag>
       </div>
       <el-table :data="dashboard.atRiskClients" class="glass-table" style="width: 100%" stripe>
-        <el-table-column prop="clientName" label="Client" min-width="180">
+        <el-table-column prop="clientName" :label="$t('customerSuccess.client')" min-width="180">
           <template #default="{ row }">
             <div class="flex items-center gap-3">
               <div class="w-8 h-8 rounded-full bg-slate-700 flex items-center justify-center text-xs font-medium text-slate-300">
@@ -91,7 +91,7 @@
             </div>
           </template>
         </el-table-column>
-        <el-table-column label="Health Score" width="150" align="center">
+        <el-table-column :label="$t('customerSuccess.healthScore')" width="150" align="center">
           <template #default="{ row }">
             <div class="flex items-center gap-2">
               <el-progress
@@ -105,31 +105,31 @@
             </div>
           </template>
         </el-table-column>
-        <el-table-column label="Risk Level" width="120" align="center">
+        <el-table-column :label="$t('customerSuccess.riskLevel')" width="120" align="center">
           <template #default="{ row }">
             <el-tag :type="row.riskLevel === 'CRITICAL' ? 'danger' : 'warning'" effect="dark" size="small">
               {{ row.riskLevel }}
             </el-tag>
           </template>
         </el-table-column>
-        <el-table-column label="Last Activity" width="130" align="center">
+        <el-table-column :label="$t('customerSuccess.lastActivity')" width="130" align="center">
           <template #default="{ row }">
             <span class="text-sm text-slate-400">
-              {{ row.daysSinceLastActivity < 999 ? `${row.daysSinceLastActivity}d ago` : 'Never' }}
+              {{ row.daysSinceLastActivity < 999 ? `${row.daysSinceLastActivity}${$t('customerSuccess.dAgo')}` : $t('customerSuccess.never') }}
             </span>
           </template>
         </el-table-column>
-        <el-table-column label="Revenue" width="120" align="right">
+        <el-table-column :label="$t('customerSuccess.revenue')" width="120" align="right">
           <template #default="{ row }">
             <span class="text-sm font-medium text-slate-300">{{ formatRevenue(row.totalRevenue) }}</span>
           </template>
         </el-table-column>
-        <el-table-column label="Active Deals" width="110" align="center">
+        <el-table-column :label="$t('customerSuccess.activeDeals')" width="110" align="center">
           <template #default="{ row }">
             <span class="text-sm text-slate-400">{{ row.activeDeals }}</span>
           </template>
         </el-table-column>
-        <el-table-column label="NPS" width="80" align="center">
+        <el-table-column :label="$t('customerSuccess.nps')" width="80" align="center">
           <template #default="{ row }">
             <span class="text-sm font-medium" :class="row.npsScore >= 7 ? 'text-emerald-400' : row.npsScore >= 5 ? 'text-amber-400' : 'text-red-400'">
               {{ row.npsScore }}
@@ -142,11 +142,11 @@
     <!-- Top Healthy Clients Table -->
     <div class="glass-panel p-6 rounded-2xl">
       <div class="flex justify-between items-center mb-4">
-        <h3 class="text-lg font-medium text-slate-200">Top Performing Clients</h3>
-        <el-tag type="success" effect="dark" size="small">Top 10 by health score</el-tag>
+        <h3 class="text-lg font-medium text-slate-200">{{ $t('customerSuccess.topPerformingClients') }}</h3>
+        <el-tag type="success" effect="dark" size="small">{{ $t('customerSuccess.topByHealthScore') }}</el-tag>
       </div>
       <el-table :data="dashboard.topClients" class="glass-table" style="width: 100%" stripe>
-        <el-table-column prop="clientName" label="Client" min-width="180">
+        <el-table-column prop="clientName" :label="$t('customerSuccess.client')" min-width="180">
           <template #default="{ row }">
             <div class="flex items-center gap-3">
               <div class="w-8 h-8 rounded-full bg-emerald-900/50 flex items-center justify-center text-xs font-medium text-emerald-300">
@@ -159,7 +159,7 @@
             </div>
           </template>
         </el-table-column>
-        <el-table-column label="Health Score" width="150" align="center">
+        <el-table-column :label="$t('customerSuccess.healthScore')" width="150" align="center">
           <template #default="{ row }">
             <div class="flex items-center gap-2">
               <el-progress
@@ -173,22 +173,22 @@
             </div>
           </template>
         </el-table-column>
-        <el-table-column label="Engagement" width="120" align="center">
+        <el-table-column :label="$t('customerSuccess.engagement')" width="120" align="center">
           <template #default="{ row }">
             <span class="text-sm text-slate-300">{{ row.engagementScore }}%</span>
           </template>
         </el-table-column>
-        <el-table-column label="Revenue" width="120" align="right">
+        <el-table-column :label="$t('customerSuccess.revenue')" width="120" align="right">
           <template #default="{ row }">
             <span class="text-sm font-medium text-emerald-400">{{ formatRevenue(row.totalRevenue) }}</span>
           </template>
         </el-table-column>
-        <el-table-column label="Active Deals" width="110" align="center">
+        <el-table-column :label="$t('customerSuccess.activeDeals')" width="110" align="center">
           <template #default="{ row }">
             <span class="text-sm text-slate-400">{{ row.activeDeals }}</span>
           </template>
         </el-table-column>
-        <el-table-column label="NPS" width="80" align="center">
+        <el-table-column :label="$t('customerSuccess.nps')" width="80" align="center">
           <template #default="{ row }">
             <span class="text-sm font-medium text-emerald-400">{{ row.npsScore }}</span>
           </template>

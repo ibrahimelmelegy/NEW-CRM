@@ -54,7 +54,6 @@ export class StripeProvider {
   }
 
   async createCustomer(input: StripeCustomerInput): Promise<StripeResult<{ id: string; email: string }>> {
-    console.log('[StripeProvider] createCustomer:', input.email);
     try {
       const client = this.getClient();
       if (client) {
@@ -69,7 +68,6 @@ export class StripeProvider {
   }
 
   async createPaymentIntent(input: StripePaymentIntentInput): Promise<StripeResult<{ id: string; clientSecret: string; status: string }>> {
-    console.log('[StripeProvider] createPaymentIntent:', input.amount, input.currency);
     try {
       const client = this.getClient();
       if (client) {
@@ -90,7 +88,6 @@ export class StripeProvider {
   }
 
   async createSubscription(input: StripeSubscriptionInput): Promise<StripeResult<{ id: string; status: string; currentPeriodEnd: number }>> {
-    console.log('[StripeProvider] createSubscription for customer:', input.customerId);
     try {
       const client = this.getClient();
       if (client) {
@@ -110,7 +107,6 @@ export class StripeProvider {
   }
 
   async cancelSubscription(subscriptionId: string): Promise<StripeResult<{ id: string; status: string }>> {
-    console.log('[StripeProvider] cancelSubscription:', subscriptionId);
     try {
       const client = this.getClient();
       if (client) {
@@ -125,7 +121,6 @@ export class StripeProvider {
   }
 
   async createRefund(input: StripeRefundInput): Promise<StripeResult<{ id: string; status: string; amount: number }>> {
-    console.log('[StripeProvider] createRefund for:', input.paymentIntentId);
     try {
       const client = this.getClient();
       if (client) {
@@ -144,7 +139,6 @@ export class StripeProvider {
   }
 
   async listInvoices(customerId?: string, limit = 10): Promise<StripeResult<Array<{ id: string; amount: number; status: string; created: number }>>> {
-    console.log('[StripeProvider] listInvoices for customer:', customerId || 'all');
     try {
       const client = this.getClient();
       if (client) {

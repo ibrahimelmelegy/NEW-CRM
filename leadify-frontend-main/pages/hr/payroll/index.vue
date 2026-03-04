@@ -1,86 +1,86 @@
 <template lang="pug">
 div
   ModuleHeader(
-    title="Payroll"
-    subtitle="Manage payroll runs, calculate salaries, and process payments"
+    :title="$t('payroll.title')"
+    :subtitle="$t('payroll.subtitle')"
   )
     template(#actions)
       NuxtLink(to="/hr/payroll/salary-structures")
         el-button(size="large" class="!rounded-2xl")
           Icon(name="ph:money-bold" size="16" class="mr-1")
-          span Salary Structures
+          span {{ $t('payroll.salaryStructures') }}
       NuxtLink(to="/hr/payroll/end-of-service")
         el-button(size="large" class="!rounded-2xl")
           Icon(name="ph:calculator-bold" size="16" class="mr-1")
-          span EOS Calculator
+          span {{ $t('payroll.eosCalculator') }}
       el-button(type="primary" size="large" class="!rounded-2xl" @click="showNewRunDialog = true")
         Icon(name="ph:plus-bold" size="16" class="mr-1")
-        span New Run
+        span {{ $t('payroll.newRun') }}
 
   //- Filters
   .glass-card.p-4.rounded-2xl.mb-4
     .flex.items-center.gap-4
-      el-select(v-model="filterMonth" placeholder="Month" clearable class="w-40" size="large")
+      el-select(v-model="filterMonth" :placeholder="$t('payroll.month')" clearable class="w-40" size="large")
         el-option(v-for="m in months" :key="m.value" :label="m.label" :value="m.value")
-      el-input-number(v-model="filterYear" :min="2020" :max="2099" placeholder="Year" size="large" controls-position="right" class="w-40")
-      el-select(v-model="filterStatus" placeholder="Status" clearable class="w-40" size="large")
+      el-input-number(v-model="filterYear" :min="2020" :max="2099" :placeholder="$t('payroll.year')" size="large" controls-position="right" class="w-40")
+      el-select(v-model="filterStatus" :placeholder="$t('common.status')" clearable class="w-40" size="large")
         el-option(v-for="s in PAYROLL_RUN_STATUSES" :key="s.value" :label="s.label" :value="s.value")
       el-button(size="large" @click="applyFilters" class="!rounded-2xl")
         Icon(name="ph:funnel-bold" size="16" class="mr-1")
-        span Filter
+        span {{ $t('common.filter') }}
 
   //- Summary Stats
   .grid.gap-4.mb-6(class="grid-cols-1 md:grid-cols-4")
     .glass-card.p-5.rounded-2xl.text-center
       .text-2xl.font-bold(style="color: #7849ff") {{ runs.length }}
-      .text-sm.mt-1(style="color: var(--text-muted)") Total Runs
+      .text-sm.mt-1(style="color: var(--text-muted)") {{ $t('payroll.totalRuns') }}
     .glass-card.p-5.rounded-2xl.text-center
       .text-2xl.font-bold(style="color: #22c55e") {{ draftCount }}
-      .text-sm.mt-1(style="color: var(--text-muted)") Draft
+      .text-sm.mt-1(style="color: var(--text-muted)") {{ $t('payroll.draft') }}
     .glass-card.p-5.rounded-2xl.text-center
       .text-2xl.font-bold(style="color: #f59e0b") {{ calculatedCount }}
-      .text-sm.mt-1(style="color: var(--text-muted)") Calculated
+      .text-sm.mt-1(style="color: var(--text-muted)") {{ $t('payroll.calculated') }}
     .glass-card.p-5.rounded-2xl.text-center
       .text-2xl.font-bold(style="color: #3b82f6") {{ processedCount }}
-      .text-sm.mt-1(style="color: var(--text-muted)") Processed
+      .text-sm.mt-1(style="color: var(--text-muted)") {{ $t('payroll.processed') }}
 
   //- Runs Table
   .glass-card.rounded-2xl.overflow-hidden
     el-table(:data="runs" style="width: 100%" @row-click="handleRowClick" row-class-name="cursor-pointer" v-loading="loading")
-      el-table-column(label="Period" min-width="140")
+      el-table-column(:label="$t('payroll.period')" min-width="140")
         template(#default="{ row }")
           .font-semibold(style="color: var(--text-primary)") {{ getMonthName(row.month) }} {{ row.year }}
-      el-table-column(label="Status" width="140")
+      el-table-column(:label="$t('common.status')" width="140")
         template(#default="{ row }")
           el-tag(:type="getStatusType(row.status)" effect="light" round) {{ row.status }}
-      el-table-column(label="Employees" width="120" align="center")
+      el-table-column(:label="$t('payroll.employees')" width="120" align="center")
         template(#default="{ row }")
           span(style="color: var(--text-primary)") {{ row.employeeCount }}
-      el-table-column(label="Total Gross" width="160" align="right")
+      el-table-column(:label="$t('payroll.totalGross')" width="160" align="right")
         template(#default="{ row }")
           span.font-semibold(style="color: var(--text-primary)") {{ formatCurrency(row.totalGross) }}
-      el-table-column(label="Total Deductions" width="160" align="right")
+      el-table-column(:label="$t('payroll.totalDeductions')" width="160" align="right")
         template(#default="{ row }")
           span(style="color: #ef4444") {{ formatCurrency(row.totalDeductions) }}
-      el-table-column(label="Total Net" width="160" align="right")
+      el-table-column(:label="$t('payroll.totalNet')" width="160" align="right")
         template(#default="{ row }")
           span.font-bold(style="color: #22c55e") {{ formatCurrency(row.totalNet) }}
-      el-table-column(label="Actions" width="80" align="center")
+      el-table-column(:label="$t('common.actions')" width="80" align="center")
         template(#default="{ row }")
           el-button(link type="primary" @click.stop="router.push(`/hr/payroll/${row.id}`)")
             Icon(name="ph:arrow-right-bold" size="18")
 
   //- New Run Dialog
-  el-dialog(v-model="showNewRunDialog" title="Create Payroll Run" width="460px")
+  el-dialog(v-model="showNewRunDialog" :title="$t('payroll.createPayrollRun')" width="460px")
     el-form(label-position="top")
-      el-form-item(label="Month" required)
-        el-select(v-model="newRun.month" placeholder="Select month" class="w-full" size="large")
+      el-form-item(:label="$t('payroll.month')" required)
+        el-select(v-model="newRun.month" :placeholder="$t('payroll.selectMonth')" class="w-full" size="large")
           el-option(v-for="m in months" :key="m.value" :label="m.label" :value="m.value")
-      el-form-item(label="Year" required)
+      el-form-item(:label="$t('payroll.year')" required)
         el-input-number(v-model="newRun.year" :min="2020" :max="2099" class="w-full" size="large" controls-position="right")
     template(#footer)
-      el-button(@click="showNewRunDialog = false" size="large") Cancel
-      el-button(type="primary" :loading="creating" @click="handleCreateRun" size="large" class="!rounded-2xl") Create Run
+      el-button(@click="showNewRunDialog = false" size="large") {{ $t('common.cancel') }}
+      el-button(type="primary" :loading="creating" @click="handleCreateRun" size="large" class="!rounded-2xl") {{ $t('payroll.createRun') }}
 </template>
 
 <script setup lang="ts">

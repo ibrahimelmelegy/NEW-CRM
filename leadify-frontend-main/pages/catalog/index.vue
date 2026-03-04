@@ -156,7 +156,7 @@
   el-dialog(v-model="showDialog" :title="editingId ? $t('catalog.editProduct') : $t('catalog.addProduct')" width="560px")
     el-form(label-position="top" size="large")
       el-form-item(:label="$t('catalog.productName')")
-        el-input(v-model="form.name" placeholder="Premium Widget")
+        el-input(v-model="form.name" :placeholder="$t('catalog.namePlaceholder')")
       .grid.grid-cols-2.gap-4
         el-form-item(:label="$t('catalog.sku')")
           el-input(v-model="form.sku" placeholder="SKU-001")

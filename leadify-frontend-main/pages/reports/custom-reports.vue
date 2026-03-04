@@ -94,7 +94,7 @@
         el-table-column(:label="$t('reportsPage.lastRun')" min-width="150")
           template(#default="scope")
             span.text-sm.font-mono(style="color: var(--text-muted);") {{ formatDate(scope.row.updatedAt) }}
-        el-table-column(label="Actions" width="280" fixed="right")
+        el-table-column(:label="$t('common.actions')" width="280" fixed="right")
           template(#default="scope")
             .flex.items-center.gap-2
               el-button(
@@ -123,7 +123,7 @@
               el-button(size="small" text @click="openEditDialog(scope.row)")
                 Icon(name="ph:pencil-simple-bold" size="14")
               el-popconfirm(
-                title="Delete this report?"
+                :title="$t('reports.confirmDeleteReport')"
                 @confirm="handleDelete(scope.row.id)"
                 confirm-button-text="Delete"
                 cancel-button-text="Cancel"
@@ -210,12 +210,12 @@
           size="large"
         )
 
-      el-form-item(label="Description")
+      el-form-item(:label="$t('common.description')")
         el-input(
           v-model="reportForm.description"
           type="textarea"
           :rows="2"
-          placeholder="Optional description"
+          :placeholder="$t('reports.optionalDescription')"
         )
 
       .grid.gap-4(class="grid-cols-1 md:grid-cols-2")
@@ -234,7 +234,7 @@
               :value="key"
             )
 
-        el-form-item(label="Sort Order")
+        el-form-item(:label="$t('reports.sortOrder')")
           el-select(v-model="reportForm.sortOrder" size="large" style="width: 100%")
             el-option(label="Descending" value="DESC")
             el-option(label="Ascending" value="ASC")
@@ -264,11 +264,11 @@
               el-tag(size="small" type="info" effect="plain") {{ field.type }}
 
       //- Sort By
-      el-form-item(label="Sort By" v-if="reportForm.fields.length")
+      el-form-item(:label="$t('reports.sortBy')" v-if="reportForm.fields.length")
         el-select(
           v-model="reportForm.sortBy"
           clearable
-          placeholder="Default (createdAt)"
+          :placeholder="$t('reports.defaultSort')"
           size="large"
           style="width: 100%"
         )
@@ -325,10 +325,10 @@
               style="width: 25%"
             )
               el-option(label="Equals" value="equals")
-              el-option(label="Not Equals" value="not_equals")
+              el-option(:label="$t('reports.notEquals')" value="not_equals")
               el-option(label="Contains" value="contains")
-              el-option(label="Greater Than" value="greater_than")
-              el-option(label="Less Than" value="less_than")
+              el-option(:label="$t('reports.greaterThan')" value="greater_than")
+              el-option(:label="$t('reports.lessThan')" value="less_than")
               el-option(label="Is Null" value="is_null")
               el-option(label="Is Not Null" value="is_not_null")
             el-input(

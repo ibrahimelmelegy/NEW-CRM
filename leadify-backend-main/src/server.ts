@@ -65,7 +65,7 @@ setupCrmSocketHandlers(io);
 sequelize
   .authenticate()
   .then(async () => {
-    console.log('Database connection established successfully.');
+    // Database connection established
 
     // Automated migration for 'descripion' typo
     await runTypoMigration(sequelize);
@@ -75,11 +75,7 @@ sequelize
     try {
       const { safeSchemaSync } = require('./infrastructure/safeSchemaSync');
       const syncResult = await safeSchemaSync(sequelize);
-      console.log(
-        `[SchemaSync] Complete: ${syncResult.tablesChecked} tables checked, ` +
-        `${syncResult.columnsAdded} columns added, ${syncResult.tablesCreated} tables created` +
-        (syncResult.errors.length > 0 ? `, ${syncResult.errors.length} errors` : '')
-      );
+      // SchemaSync complete
       if (syncResult.errors.length > 0) {
         console.warn('[SchemaSync] Errors:', syncResult.errors);
       }
@@ -105,7 +101,7 @@ sequelize
 
     // Start the Server
     server.listen(PORT, () => {
-      console.log(`Server is running on port ${PORT}`);
+      // Server started
 
       // Start Background Jobs
       try {
@@ -139,12 +135,12 @@ process.on('unhandledRejection', (reason) => {
 
 // Graceful shutdown
 function gracefulShutdown(signal: string) {
-  console.log(`\n${signal} received. Starting graceful shutdown...`);
+  // Graceful shutdown initiated
 
   server.close(() => {
-    console.log('HTTP server closed');
+    // HTTP server closed
     sequelize.close().then(() => {
-      console.log('Database connection closed');
+      // Database connection closed
       process.exit(0);
     });
   });

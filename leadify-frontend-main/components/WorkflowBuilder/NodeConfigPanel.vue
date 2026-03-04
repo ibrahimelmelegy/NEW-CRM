@@ -119,10 +119,10 @@ el-drawer(
     template(v-if="nodeType === 'template'")
       .form-group
         label.form-label Template ID
-        el-input(v-model="config.templateId" placeholder="Document template ID" @change="emitConfig")
+        el-input(v-model="config.templateId" :placeholder="$t('workflows.documentTemplateId')" @change="emitConfig")
       .form-group
         label.form-label Template Name
-        el-input(v-model="config.templateName" placeholder="Template display name" @change="emitConfig")
+        el-input(v-model="config.templateName" :placeholder="$t('workflows.templateDisplayName')" @change="emitConfig")
       .form-group
         label.form-label Recipient Field
         el-input(v-model="config.recipientField" placeholder="e.g. email, client.email" @change="emitConfig")
@@ -131,13 +131,13 @@ el-drawer(
     template(v-if="nodeType === 'approval'")
       .form-group
         label.form-label Approver User ID
-        el-input(v-model="config.approverUserId" placeholder="Specific user ID (optional)" @change="emitConfig")
+        el-input(v-model="config.approverUserId" :placeholder="$t('workflows.specificUserId')" @change="emitConfig")
       .form-group
         label.form-label Approver Role
         el-input(v-model="config.approverRole" placeholder="e.g. Sales Manager" @change="emitConfig")
       .form-group
         label.form-label Approval Message
-        el-input(v-model="config.message" type="textarea" :rows="2" placeholder="Describe what needs approval" @change="emitConfig")
+        el-input(v-model="config.message" type="textarea" :rows="2" :placeholder="$t('workflows.describeApproval')" @change="emitConfig")
       .form-group
         label.form-label Timeout (hours)
         el-input-number(v-model="config.timeout" :min="0" :max="720" placeholder="0 = no timeout" @change="emitConfig")

@@ -25,7 +25,7 @@ el-dialog(
       label.text-sm.font-semibold(style="color: var(--text-primary)") Subject *
       el-input(
         v-model="form.subject"
-        placeholder="Document subject..."
+        :placeholder="$t('docBuilder.documentSubject')"
         size="large"
         class="!rounded-xl"
       )
@@ -37,7 +37,7 @@ el-dialog(
         v-model="form.message"
         type="textarea"
         :rows="4"
-        placeholder="Optional message to include in the email..."
+        :placeholder="$t('docBuilder.optionalMessage')"
         class="!rounded-xl"
       )
 

@@ -6,11 +6,11 @@ import User from './user/userModel';
 async function clean() {
   try {
     await sequelize.authenticate();
-    console.log('Connected to DB for cleanup.');
+    // Connected to DB for cleanup
 
     // Delete all users
     const deleted = await User.destroy({ where: {}, truncate: true, cascade: true, restartIdentity: true });
-    console.log(`Deleted/Truncated Users table.`);
+    // Users table truncated
   } catch (error) {
     console.error('Cleanup failed:', error);
   } finally {

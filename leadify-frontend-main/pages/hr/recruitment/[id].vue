@@ -72,13 +72,13 @@ div
         //- Conversion Table
         .glass-card.rounded-xl.overflow-hidden(style="border: 1px solid var(--border-default, rgba(255,255,255,0.06))")
           el-table(:data="funnelData.conversions || []" size="small" style="width: 100%")
-            el-table-column(label="From" min-width="120")
+            el-table-column(:label="$t('common.from')" min-width="120")
               template(#default="{ row }")
                 span.text-sm.font-medium(style="color: var(--text-primary)") {{ row.from }}
-            el-table-column(label="To" min-width="120")
+            el-table-column(:label="$t('common.to')" min-width="120")
               template(#default="{ row }")
                 span.text-sm.font-medium(style="color: var(--text-primary)") {{ row.to }}
-            el-table-column(label="Conversion Rate" width="160" align="center")
+            el-table-column(:label="$t('recruitment.conversionRate')" width="160" align="center")
               template(#default="{ row }")
                 .flex.items-center.justify-center.gap-2
                   el-progress(:percentage="row.rate || 0" :stroke-width="6" :show-text="false" :color="conversionColor(row.rate)" style="width: 80px")

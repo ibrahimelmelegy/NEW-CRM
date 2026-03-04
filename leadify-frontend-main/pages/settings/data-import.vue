@@ -4,8 +4,8 @@
     <div class="glass-panel p-6 rounded-2xl">
       <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
         <div>
-          <h1 class="text-2xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-teal-400 to-emerald-400">Data Import Center</h1>
-          <p class="text-slate-400 text-sm mt-1">Import data from CSV and Excel files into your CRM entities.</p>
+          <h1 class="text-2xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-teal-400 to-emerald-400">{{ $t("dataImport.title") }}</h1>
+          <p class="text-slate-400 text-sm mt-1">{{ $t("dataImport.subtitle") }}</p>
         </div>
       </div>
     </div>
@@ -14,28 +14,28 @@
     <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
       <div class="glass-panel p-4 rounded-xl text-center">
         <div class="text-2xl font-bold text-slate-200">{{ totalImports }}</div>
-        <div class="text-xs text-slate-500 mt-1">Total Imports</div>
+        <div class="text-xs text-slate-500 mt-1">{{ $t("dataImport.totalImports") }}</div>
       </div>
       <div class="glass-panel p-4 rounded-xl text-center">
         <div class="text-2xl font-bold text-emerald-400">{{ recordsImported.toLocaleString() }}</div>
-        <div class="text-xs text-slate-500 mt-1">Records Imported</div>
+        <div class="text-xs text-slate-500 mt-1">{{ $t("dataImport.recordsImported") }}</div>
       </div>
       <div class="glass-panel p-4 rounded-xl text-center">
         <div class="text-2xl font-bold text-red-400">{{ failedRecords }}</div>
-        <div class="text-xs text-slate-500 mt-1">Failed Records</div>
+        <div class="text-xs text-slate-500 mt-1">{{ $t("dataImport.failedRecords") }}</div>
       </div>
       <div class="glass-panel p-4 rounded-xl text-center">
         <div class="text-2xl font-bold text-blue-400">{{ lastImportDate }}</div>
-        <div class="text-xs text-slate-500 mt-1">Last Import</div>
+        <div class="text-xs text-slate-500 mt-1">{{ $t("dataImport.lastImport") }}</div>
       </div>
     </div>
 
     <!-- Tabs -->
     <el-tabs v-model="activeTab" class="glass-tabs">
       <!-- New Import -->
-      <el-tab-pane label="New Import" name="new">
+      <el-tab-pane :label="$t('dataImport.newImport')" name="new">
         <div class="glass-panel p-6 rounded-xl mb-6">
-          <h3 class="text-sm font-medium text-slate-200 mb-4">1. Select Entity Type</h3>
+          <h3 class="text-sm font-medium text-slate-200 mb-4">{{ $t("dataImport.selectEntityType") }}</h3>
           <div class="flex gap-3 mb-6">
             <div
               v-for="entity in entityTypes"
@@ -55,7 +55,7 @@
             </div>
           </div>
 
-          <h3 class="text-sm font-medium text-slate-200 mb-4">2. Upload File</h3>
+          <h3 class="text-sm font-medium text-slate-200 mb-4">{{ $t("dataImport.uploadFile") }}</h3>
           <div
             class="border-2 border-dashed rounded-xl p-8 text-center transition-all cursor-pointer"
             :class="isDragging ? 'border-indigo-500/60 bg-indigo-500/5' : 'border-slate-700 hover:border-slate-600'"
@@ -65,8 +65,8 @@
             @click="triggerFileInput"
           >
             <Icon name="ph:cloud-arrow-up-bold" class="w-12 h-12 text-slate-500 mx-auto mb-3" />
-            <p class="text-sm text-slate-400 mb-1">Drag & drop your file here, or click to browse</p>
-            <p class="text-xs text-slate-600">Supports CSV and Excel (.xlsx, .xls) files up to 10MB</p>
+            <p class="text-sm text-slate-400 mb-1">{{ $t("dataImport.dragAndDrop") }}</p>
+            <p class="text-xs text-slate-600">{{ $t("dataImport.supportedFormats") }}</p>
             <div v-if="uploadedFile" class="mt-4 flex items-center justify-center gap-2 text-sm text-emerald-400">
               <Icon name="ph:file-text-bold" class="w-4 h-4" />
               {{ uploadedFile.name }} ({{ formatFileSize(uploadedFile.size) }})
@@ -79,10 +79,10 @@
 
           <!-- Import Settings -->
           <div v-if="uploadedFile" class="mt-6">
-            <h3 class="text-sm font-medium text-slate-200 mb-4">3. Import Settings</h3>
+            <h3 class="text-sm font-medium text-slate-200 mb-4">{{ $t("dataImport.importSettings") }}</h3>
             <div class="grid grid-cols-2 gap-4">
               <div>
-                <label class="block text-xs text-slate-500 mb-2">Duplicate Handling</label>
+                <label class="block text-xs text-slate-500 mb-2">{{ $t("dataImport.duplicateHandling") }}</label>
                 <el-select v-model="importSettings.duplicateHandling" class="w-full">
                   <el-option label="Skip duplicates" value="skip" />
                   <el-option label="Update existing records" value="update" />
@@ -90,7 +90,7 @@
                 </el-select>
               </div>
               <div>
-                <label class="block text-xs text-slate-500 mb-2">Required Field Validation</label>
+                <label class="block text-xs text-slate-500 mb-2">{{ $t("dataImport.requiredFieldValidation") }}</label>
                 <el-select v-model="importSettings.validation" class="w-full">
                   <el-option label="Strict - Skip invalid rows" value="strict" />
                   <el-option label="Lenient - Import all rows" value="lenient" />
@@ -101,7 +101,7 @@
 
           <!-- Preview Table -->
           <div v-if="previewData.length" class="mt-6">
-            <h3 class="text-sm font-medium text-slate-200 mb-4">4. Preview (First 5 rows)</h3>
+            <h3 class="text-sm font-medium text-slate-200 mb-4">{{ $t("dataImport.preview") }}</h3>
             <el-table :data="previewData" class="glass-table" stripe max-height="300">
               <el-table-column v-for="col in previewColumns" :key="col" :prop="col" :label="col" min-width="150">
                 <template #default="{ row }">
@@ -113,7 +113,7 @@
             <div class="flex justify-end mt-4">
               <el-button type="primary" class="!rounded-xl" :loading="importing" @click="startImport">
                 <Icon name="ph:upload-bold" class="w-4 h-4 mr-2" />
-                Start Import ({{ previewData.length }}+ records)
+                {{ $t("dataImport.startImport") }} ({{ previewData.length }}+)
               </el-button>
             </div>
           </div>
@@ -121,20 +121,20 @@
       </el-tab-pane>
 
       <!-- Import History -->
-      <el-tab-pane label="Import History" name="history">
+      <el-tab-pane :label="$t('dataImport.importHistory')" name="history">
         <div class="glass-panel p-1 rounded-xl">
           <el-table :data="importHistory" stripe>
-            <el-table-column label="Date" width="160">
+            <el-table-column :label="$t('dataImport.date')" width="160">
               <template #default="{ row }">
                 <span class="text-sm text-slate-300">{{ row.date }}</span>
               </template>
             </el-table-column>
-            <el-table-column label="Entity" width="120">
+            <el-table-column :label="$t('dataImport.entity')" width="120">
               <template #default="{ row }">
                 <el-tag effect="plain" size="small" round>{{ row.entity }}</el-tag>
               </template>
             </el-table-column>
-            <el-table-column label="File" min-width="180">
+            <el-table-column :label="$t('dataImport.file')" min-width="180">
               <template #default="{ row }">
                 <div class="flex items-center gap-2">
                   <Icon name="ph:file-csv-bold" class="w-4 h-4 text-slate-500" />
@@ -142,27 +142,27 @@
                 </div>
               </template>
             </el-table-column>
-            <el-table-column label="Total" width="90" align="center">
+            <el-table-column :label="$t('dataImport.total')" width="90" align="center">
               <template #default="{ row }">
                 <span class="text-sm font-medium text-slate-200">{{ row.totalRecords }}</span>
               </template>
             </el-table-column>
-            <el-table-column label="Success" width="90" align="center">
+            <el-table-column :label="$t('dataImport.success')" width="90" align="center">
               <template #default="{ row }">
                 <span class="text-sm font-medium text-emerald-400">{{ row.successCount }}</span>
               </template>
             </el-table-column>
-            <el-table-column label="Failed" width="90" align="center">
+            <el-table-column :label="$t('dataImport.failed')" width="90" align="center">
               <template #default="{ row }">
                 <span class="text-sm font-medium" :class="row.failedCount > 0 ? 'text-red-400' : 'text-slate-500'">{{ row.failedCount }}</span>
               </template>
             </el-table-column>
-            <el-table-column label="Status" width="120">
+            <el-table-column :label="$t('dataImport.statusLabel')" width="120">
               <template #default="{ row }">
                 <el-tag :type="getImportStatusType(row.status)" effect="dark" size="small" round>{{ row.status }}</el-tag>
               </template>
             </el-table-column>
-            <el-table-column label="User" width="140">
+            <el-table-column :label="$t('dataImport.user')" width="140">
               <template #default="{ row }">
                 <span class="text-sm text-slate-400">{{ row.user }}</span>
               </template>
@@ -172,14 +172,14 @@
       </el-tab-pane>
 
       <!-- Field Mapping -->
-      <el-tab-pane label="Field Mapping" name="mapping">
+      <el-tab-pane :label="$t('dataImport.fieldMapping')" name="mapping">
         <div class="glass-panel p-6 rounded-xl">
           <div class="flex items-center justify-between mb-4">
             <div>
-              <h3 class="text-sm font-medium text-slate-200">Map Source Columns to CRM Fields</h3>
-              <p class="text-xs text-slate-500 mt-1">Configure how your file columns map to CRM fields for the selected entity.</p>
+              <h3 class="text-sm font-medium text-slate-200">{{ $t("dataImport.mapColumns") }}</h3>
+              <p class="text-xs text-slate-500 mt-1">{{ $t("dataImport.mapColumnsDesc") }}</p>
             </div>
-            <el-select v-model="mappingEntity" placeholder="Select Entity" class="w-44">
+            <el-select v-model="mappingEntity" :placeholder="$t('dataImport.selectEntity')" class="w-44">
               <el-option v-for="entity in entityTypes" :key="entity.value" :label="entity.label" :value="entity.value" />
             </el-select>
           </div>
@@ -199,19 +199,19 @@
               </div>
               <Icon name="ph:arrow-right-bold" class="w-4 h-4 text-slate-600" />
               <div class="flex-1">
-                <el-select v-model="mapping.target" placeholder="Select CRM field" class="w-full" clearable>
+                <el-select v-model="mapping.target" :placeholder="$t('dataImport.selectCrmField')" class="w-full" clearable>
                   <el-option v-for="field in getCrmFields(mappingEntity)" :key="field.value" :label="field.label" :value="field.value" />
                 </el-select>
               </div>
-              <el-tag v-if="mapping.required" type="danger" effect="plain" size="small">Required</el-tag>
+              <el-tag v-if="mapping.required" type="danger" effect="plain" size="small">{{ $t("dataImport.required") }}</el-tag>
             </div>
           </div>
 
           <div class="flex justify-end mt-4 gap-2">
-            <el-button @click="resetMapping">Reset</el-button>
+            <el-button @click="resetMapping">{{ $t("common.reset") }}</el-button>
             <el-button type="primary" class="!rounded-xl" @click="saveMapping">
               <Icon name="ph:floppy-disk-bold" class="w-4 h-4 mr-2" />
-              Save Mapping
+              {{ $t("dataImport.saveMapping") }}
             </el-button>
           </div>
         </div>

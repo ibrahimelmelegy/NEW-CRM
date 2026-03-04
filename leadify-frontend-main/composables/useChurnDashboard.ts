@@ -28,13 +28,15 @@ export async function getChurnDashboardData(): Promise<ChurnDashboardData | null
     if (success && body) {
       return body as ChurnDashboardData;
     }
-    throw new Error(message || 'Failed to fetch churn data');
+    const { t } = useI18n();
+    throw new Error(message || t('common.fetchError'));
   } catch (error) {
     console.error('Error fetching churn dashboard:', error instanceof Error ? error.message : error);
+    const { t } = useI18n();
     ElNotification({
       type: 'error',
-      title: 'Error',
-      message: 'Failed to load churn prediction data'
+      title: t('common.error'),
+      message: t('common.fetchError')
     });
     return null;
   }

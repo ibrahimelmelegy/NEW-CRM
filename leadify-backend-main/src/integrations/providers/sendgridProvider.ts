@@ -56,7 +56,6 @@ export class SendGridProvider {
   }
 
   async sendEmail(input: EmailInput): Promise<EmailResult<{ messageId: string }>> {
-    console.log('[SendGridProvider] sendEmail to:', input.to);
     try {
       const client = this.getClient();
       if (client) {
@@ -77,7 +76,6 @@ export class SendGridProvider {
   }
 
   async sendBulkEmail(input: BulkEmailInput): Promise<EmailResult<{ messageCount: number; messageIds: string[] }>> {
-    console.log('[SendGridProvider] sendBulkEmail to', input.recipients.length, 'recipients');
     try {
       const client = this.getClient();
       if (client) {
@@ -100,7 +98,6 @@ export class SendGridProvider {
   }
 
   async sendTemplateEmail(input: TemplateEmailInput): Promise<EmailResult<{ messageId: string }>> {
-    console.log('[SendGridProvider] sendTemplateEmail template:', input.templateId, 'to:', input.to);
     try {
       const client = this.getClient();
       if (client) {
@@ -120,7 +117,6 @@ export class SendGridProvider {
   }
 
   async getEmailStats(startDate?: string, endDate?: string): Promise<EmailResult<{ delivered: number; opens: number; clicks: number; bounces: number }>> {
-    console.log('[SendGridProvider] getEmailStats from:', startDate || 'all-time');
     try {
       if (SendGridProvider.isConfigured()) {
         const sgClient = require('@sendgrid/client');

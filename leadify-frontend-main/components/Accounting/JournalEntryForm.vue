@@ -3,33 +3,33 @@ div
   //- Header info
   el-card(shadow="never" class="mb-4")
     .grid.grid-cols-1(class="md:grid-cols-3 gap-4")
-      el-form-item(label="Date")
+      el-form-item(:label="$t('common.date')")
         el-date-picker(
           v-model="formData.date"
           type="date"
-          placeholder="Select date"
+          :placeholder="$t('common.selectDate')"
           value-format="YYYY-MM-DD"
           class="w-full"
           :disabled="readonly"
         )
-      el-form-item(label="Reference")
+      el-form-item(:label="$t('finance.reference')")
         el-input(v-model="formData.reference" placeholder="e.g. INV-001" :disabled="readonly")
-      el-form-item(label="Description")
-        el-input(v-model="formData.description" placeholder="Entry description" :disabled="readonly")
+      el-form-item(:label="$t('common.description')")
+        el-input(v-model="formData.description" :placeholder="$t('finance.journal.entryDescription')" :disabled="readonly")
 
   //- Lines table
   el-card(shadow="never")
     .flex.items-center.justify-between.mb-4
-      h3.text-lg.font-semibold Entry Lines
-      el-button(v-if="!readonly" type="primary" plain size="small" @click="addLine") Add Line
+      h3.text-lg.font-semibold {{ $t('finance.entryLines') }}
+      el-button(v-if="!readonly" type="primary" plain size="small" @click="addLine") {{ $t('finance.addLine') }}
 
     el-table(:data="formData.lines" border class="w-full")
-      el-table-column(label="Account" min-width="250")
+      el-table-column(:label="$t('finance.account')" min-width="250")
         template(#default="{ row }")
           el-select(
             v-if="!readonly"
             v-model="row.accountId"
-            placeholder="Select account"
+            :placeholder="$t('finance.journal.selectAccount')"
             filterable
             class="w-full"
           )
@@ -40,7 +40,7 @@ div
               :value="acc.id"
             )
           span(v-else) {{ row.account ? `${row.account.code} - ${row.account.name}` : row.accountId }}
-      el-table-column(label="Debit" width="160" align="right")
+      el-table-column(:label="$t('finance.debit')" width="160" align="right")
         template(#default="{ row }")
           el-input-number(
             v-if="!readonly"
@@ -51,7 +51,7 @@ div
             class="w-full"
           )
           span(v-else) {{ formatAmount(row.debit) }}
-      el-table-column(label="Credit" width="160" align="right")
+      el-table-column(:label="$t('finance.credit')" width="160" align="right")
         template(#default="{ row }")
           el-input-number(
             v-if="!readonly"
@@ -62,9 +62,9 @@ div
             class="w-full"
           )
           span(v-else) {{ formatAmount(row.credit) }}
-      el-table-column(label="Description" min-width="180")
+      el-table-column(:label="$t('common.description')" min-width="180")
         template(#default="{ row }")
-          el-input(v-if="!readonly" v-model="row.description" placeholder="Line description")
+          el-input(v-if="!readonly" v-model="row.description" :placeholder="$t('finance.journal.lineDescription')")
           span(v-else) {{ row.description || '-' }}
       el-table-column(v-if="!readonly" label="" width="60" align="center")
         template(#default="{ $index }")

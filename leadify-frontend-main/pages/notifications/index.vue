@@ -8,10 +8,10 @@
     .flex.items-center.gap-3
       el-button(size="default" @click="markAllAsRead" :disabled="unreadCount === 0" style="border-radius: 12px;")
         Icon(name="ph:checks" size="16" style="margin-right: 4px;")
-        | Mark All Read
+        | {{ $t("notifications.markAllRead") }}
       el-button(size="default" type="danger" plain @click="clearAll" :disabled="crmNotifications.length === 0" style="border-radius: 12px;")
         Icon(name="ph:trash" size="16" style="margin-right: 4px;")
-        | Clear All
+        | {{ $t("notifications.clearAll") }}
 
   //- Stats
   .grid.grid-cols-3.gap-4.mb-8

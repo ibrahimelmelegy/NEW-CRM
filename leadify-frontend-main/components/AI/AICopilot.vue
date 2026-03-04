@@ -57,7 +57,7 @@
         .flex.items-center.gap-2
           el-input(
             v-model="inputQuery"
-            placeholder="Ask Copilot..."
+            :placeholder="$t('ai.askCopilot')"
             size="large"
             @keyup.enter="handleSend"
             class="!rounded-full"

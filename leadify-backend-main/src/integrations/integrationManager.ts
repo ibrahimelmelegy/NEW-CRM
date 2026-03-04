@@ -66,7 +66,6 @@ class IntegrationManager {
   }
 
   async testConnection(provider: ProviderName): Promise<ConnectionTestResult> {
-    console.log('[IntegrationManager] testConnection:', provider);
     const start = Date.now();
     const meta = providerMeta[provider];
     if (!meta) {
@@ -103,14 +102,12 @@ class IntegrationManager {
   enableIntegration(provider: ProviderName): boolean {
     if (!providerMeta[provider]) return false;
     enabledState[provider] = true;
-    console.log('[IntegrationManager] enabled:', provider);
     return true;
   }
 
   disableIntegration(provider: ProviderName): boolean {
     if (!providerMeta[provider]) return false;
     enabledState[provider] = false;
-    console.log('[IntegrationManager] disabled:', provider);
     return true;
   }
 }

@@ -174,7 +174,7 @@
                 </h3>
                 <el-select
                   v-model="selectedClientId"
-                  placeholder="Select existing client..."
+                  :placeholder="$t('docBuilder.selectExistingClient')"
                   size="large"
                   class="w-64 !rounded-xl"
                   clearable
@@ -226,7 +226,7 @@
                   <input
                     v-model="formData.clientAddress"
                     class="w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-xl focus:border-violet-500 focus:ring-2 focus:ring-violet-200 outline-none transition-all text-sm font-bold text-gray-800"
-                    placeholder="Street, City, Country"
+                    :placeholder="$t('docBuilder.addressPlaceholder')"
                   />
                 </div>
                 <div>
@@ -252,7 +252,7 @@
                   <input
                     v-model="formData.companyName"
                     class="w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-xl focus:border-violet-500 focus:ring-2 focus:ring-violet-200 outline-none transition-all text-sm font-bold text-gray-800"
-                    placeholder="Your Company Name"
+                    :placeholder="$t('docBuilder.companyNamePlaceholder')"
                   />
                 </div>
                 <div>
@@ -269,7 +269,7 @@
                   <input
                     v-model="formData.companyAddress"
                     class="w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-xl focus:border-violet-500 focus:ring-2 focus:ring-violet-200 outline-none transition-all text-sm font-bold text-gray-800"
-                    placeholder="Riyadh, Saudi Arabia"
+                    :placeholder="$t('docBuilder.cityCountryPlaceholder')"
                   />
                 </div>
                 <div>
@@ -314,7 +314,7 @@
                   <input
                     v-model="formData.bankAccountName"
                     class="w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-xl focus:border-violet-500 focus:ring-2 focus:ring-violet-200 outline-none transition-all text-sm font-bold text-gray-800"
-                    placeholder="Company Account Name"
+                    :placeholder="$t('docBuilder.accountNamePlaceholder')"
                   />
                 </div>
                 <div>
@@ -399,22 +399,22 @@
           <div v-else-if="activeStep === 'executive'" class="space-y-8 animate-in fade-in slide-in-from-bottom-4 duration-500">
             <div class="bg-white p-8 rounded-[2rem] shadow-sm border border-gray-100">
               <h3 class="text-xl font-bold text-gray-900 mb-6">Introduction</h3>
-              <RichTextEditor v-model="formData.introduction" placeholder="Write a compelling introduction..." min-height="300px" />
+              <RichTextEditor v-model="formData.introduction" :placeholder="$t('docBuilder.introductionPlaceholder')" min-height="300px" />
             </div>
             <div class="bg-white p-8 rounded-[2rem] shadow-sm border border-gray-100">
               <h3 class="text-xl font-bold text-gray-900 mb-6">Objectives</h3>
-              <RichTextEditor v-model="formData.objectives" placeholder="What are the key goals and objectives?" min-height="200px" />
+              <RichTextEditor v-model="formData.objectives" :placeholder="$t('docBuilder.objectivesPlaceholder')" min-height="200px" />
             </div>
           </div>
 
           <div v-else-if="activeStep === 'solution'" class="space-y-8 animate-in fade-in slide-in-from-bottom-4 duration-500">
             <div class="bg-white p-8 rounded-[2rem] shadow-sm border border-gray-100">
               <h3 class="text-xl font-bold text-gray-900 mb-6">Scope of Work</h3>
-              <RichTextEditor v-model="formData.scopeOfWork" placeholder="Detail the scope of work..." min-height="300px" />
+              <RichTextEditor v-model="formData.scopeOfWork" :placeholder="$t('docBuilder.scopePlaceholder')" min-height="300px" />
             </div>
             <div class="bg-white p-8 rounded-[2rem] shadow-sm border border-gray-100">
               <h3 class="text-xl font-bold text-gray-900 mb-6">Methodology</h3>
-              <RichTextEditor v-model="formData.methodology" placeholder="Explain your methodology..." min-height="200px" />
+              <RichTextEditor v-model="formData.methodology" :placeholder="$t('docBuilder.methodologyPlaceholder')" min-height="200px" />
             </div>
           </div>
 
@@ -455,7 +455,7 @@
                         <input
                           v-model="item.description"
                           class="w-full px-3 py-2 bg-transparent border border-transparent rounded-lg focus:border-violet-300 focus:bg-white focus:ring-2 focus:ring-violet-100 outline-none transition-all text-sm font-bold text-gray-800"
-                          placeholder="Item description"
+                          :placeholder="$t('docBuilder.itemDescription')"
                         />
                       </td>
                       <td class="py-4 pr-4">
@@ -469,7 +469,7 @@
                           <input
                             v-model="item.unit"
                             class="w-full px-2 py-2 bg-gray-50 border border-gray-200 rounded-lg focus:border-violet-500 outline-none transition-all text-sm text-gray-600"
-                            placeholder="Unit"
+                            :placeholder="$t('docBuilder.unit')"
                           />
                         </div>
                       </td>
@@ -624,11 +624,11 @@
           <div v-else-if="activeStep === 'legal'" class="space-y-8 animate-in fade-in slide-in-from-bottom-4 duration-500">
             <div class="bg-white p-8 rounded-[2rem] shadow-sm border border-gray-100">
               <h3 class="text-xl font-bold text-gray-900 mb-6">Terms & Conditions</h3>
-              <RichTextEditor v-model="formData.termsAndConditions" placeholder="Enter legal terms..." min-height="300px" />
+              <RichTextEditor v-model="formData.termsAndConditions" :placeholder="$t('docBuilder.legalTermsPlaceholder')" min-height="300px" />
             </div>
             <div class="bg-white p-8 rounded-[2rem] shadow-sm border border-gray-100">
               <h3 class="text-xl font-bold text-gray-900 mb-6">Payment Terms</h3>
-              <RichTextEditor v-model="formData.paymentTerms" placeholder="Payment schedule..." min-height="200px" />
+              <RichTextEditor v-model="formData.paymentTerms" :placeholder="$t('docBuilder.paymentSchedulePlaceholder')" min-height="200px" />
             </div>
             <!-- Notes -->
             <div class="bg-white p-8 rounded-[2rem] shadow-sm border border-gray-100">
@@ -637,7 +637,7 @@
                 v-model="formData.notes"
                 class="w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-xl focus:border-violet-500 focus:ring-2 focus:ring-violet-200 outline-none transition-all text-sm text-gray-800 resize-y"
                 rows="4"
-                placeholder="Any additional notes to include on the document..."
+                :placeholder="$t('docBuilder.additionalNotes')"
               ></textarea>
             </div>
           </div>

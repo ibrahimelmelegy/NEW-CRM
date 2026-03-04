@@ -33,7 +33,7 @@ node-view-wrapper.pricing-table-node
               el-input(
                 v-if="isEditable"
                 v-model="item.description"
-                placeholder="Product/Service description"
+                :placeholder="$t('docBuilder.productServiceDesc')"
                 size="small"
                 @input="updateContent"
               )

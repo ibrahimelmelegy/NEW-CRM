@@ -131,7 +131,7 @@
           </el-select>
         </el-form-item>
         <el-form-item :label="$t('hr.performance.period')">
-          <el-date-picker v-model="newReview.period" type="daterange" start-placeholder="Start" end-placeholder="End" class="w-full" />
+          <el-date-picker v-model="newReview.period" type="daterange" :start-placeholder="$t('common.startDate')" :end-placeholder="$t('common.endDate')" class="w-full" />
         </el-form-item>
       </el-form>
       <template #footer>

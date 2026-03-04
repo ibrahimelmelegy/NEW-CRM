@@ -4,12 +4,12 @@
     <div class="glass-panel p-6 rounded-2xl">
       <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
         <div>
-          <h1 class="text-2xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-green-400 to-emerald-400">A/B Testing</h1>
-          <p class="text-slate-400 text-sm mt-1">Create experiments, test variations, and optimize your campaigns with data-driven decisions.</p>
+          <h1 class="text-2xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-green-400 to-emerald-400">{{ $t('abTesting.title') }}</h1>
+          <p class="text-slate-400 text-sm mt-1">{{ $t('abTesting.subtitle') }}</p>
         </div>
         <el-button type="primary" class="!rounded-xl" @click="showCreateDialog = true">
           <Icon name="ph:flask-bold" class="w-4 h-4 mr-2" />
-          New Experiment
+          {{ $t('abTesting.newExperiment') }}
         </el-button>
       </div>
     </div>
@@ -18,19 +18,19 @@
     <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
       <div class="glass-panel p-4 rounded-xl text-center">
         <div class="text-2xl font-bold text-slate-200">{{ experiments.length }}</div>
-        <div class="text-xs text-slate-500 mt-1">Total Experiments</div>
+        <div class="text-xs text-slate-500 mt-1">{{ $t('abTesting.totalExperiments') }}</div>
       </div>
       <div class="glass-panel p-4 rounded-xl text-center">
         <div class="text-2xl font-bold text-emerald-400">{{ experiments.filter(e => e.status === 'COMPLETED').length }}</div>
-        <div class="text-xs text-slate-500 mt-1">Completed</div>
+        <div class="text-xs text-slate-500 mt-1">{{ $t('abTesting.completed') }}</div>
       </div>
       <div class="glass-panel p-4 rounded-xl text-center">
         <div class="text-2xl font-bold text-blue-400">{{ experiments.filter(e => e.status === 'RUNNING').length }}</div>
-        <div class="text-xs text-slate-500 mt-1">Running</div>
+        <div class="text-xs text-slate-500 mt-1">{{ $t('abTesting.running') }}</div>
       </div>
       <div class="glass-panel p-4 rounded-xl text-center">
         <div class="text-2xl font-bold text-indigo-400">{{ avgLift }}%</div>
-        <div class="text-xs text-slate-500 mt-1">Avg Conversion Lift</div>
+        <div class="text-xs text-slate-500 mt-1">{{ $t('abTesting.avgConversionLift') }}</div>
       </div>
     </div>
 
@@ -46,7 +46,7 @@
             <p class="text-sm text-slate-500 mt-1">{{ exp.description }}</p>
           </div>
           <div class="text-right">
-            <div class="text-xs text-slate-500">Duration</div>
+            <div class="text-xs text-slate-500">{{ $t('abTesting.durationLabel') }}</div>
             <div class="text-sm text-slate-400">{{ exp.duration }}</div>
           </div>
         </div>
@@ -62,23 +62,23 @@
             <div class="flex justify-between items-center mb-3">
               <div class="flex items-center gap-2">
                 <span class="text-sm font-medium text-slate-200">{{ variant.name }}</span>
-                <el-tag v-if="variant.isWinner" type="success" effect="dark" size="small">Winner</el-tag>
-                <el-tag v-if="variant.isControl" type="info" effect="plain" size="small">Control</el-tag>
+                <el-tag v-if="variant.isWinner" type="success" effect="dark" size="small">{{ $t('abTesting.winner') }}</el-tag>
+                <el-tag v-if="variant.isControl" type="info" effect="plain" size="small">{{ $t('abTesting.control') }}</el-tag>
               </div>
-              <span class="text-xs text-slate-500">{{ variant.trafficShare }}% traffic</span>
+              <span class="text-xs text-slate-500">{{ variant.trafficShare }}% {{ $t('abTesting.traffic') }}</span>
             </div>
             <div class="grid grid-cols-3 gap-3 text-center">
               <div>
                 <div class="text-lg font-bold text-slate-200">{{ variant.sent }}</div>
-                <div class="text-xs text-slate-500">Sent</div>
+                <div class="text-xs text-slate-500">{{ $t('abTesting.sent') }}</div>
               </div>
               <div>
                 <div class="text-lg font-bold text-blue-400">{{ variant.openRate }}%</div>
-                <div class="text-xs text-slate-500">Open Rate</div>
+                <div class="text-xs text-slate-500">{{ $t('abTesting.openRate') }}</div>
               </div>
               <div>
                 <div class="text-lg font-bold text-emerald-400">{{ variant.conversionRate }}%</div>
-                <div class="text-xs text-slate-500">Conversion</div>
+                <div class="text-xs text-slate-500">{{ $t('abTesting.conversion') }}</div>
               </div>
             </div>
             <div class="mt-3">
@@ -99,11 +99,11 @@
         >
           <div class="flex items-center gap-2">
             <Icon name="ph:chart-bar-bold" class="w-4 h-4 text-indigo-400" />
-            <span class="text-sm text-slate-400">Statistical Confidence:</span>
+            <span class="text-sm text-slate-400">{{ $t('abTesting.statisticalConfidence') }}:</span>
             <span class="text-sm font-medium" :class="exp.confidence >= 95 ? 'text-emerald-400' : 'text-amber-400'">{{ exp.confidence }}%</span>
           </div>
           <div class="flex items-center gap-2">
-            <span class="text-sm text-slate-400">Lift:</span>
+            <span class="text-sm text-slate-400">{{ $t('abTesting.lift') }}:</span>
             <span class="text-sm font-medium" :class="exp.lift >= 0 ? 'text-emerald-400' : 'text-red-400'">
               {{ exp.lift >= 0 ? '+' : '' }}{{ exp.lift }}%
             </span>
@@ -113,25 +113,25 @@
     </div>
 
     <!-- Create Experiment Dialog -->
-    <el-dialog v-model="showCreateDialog" title="Create A/B Test Experiment" width="600px">
+    <el-dialog v-model="showCreateDialog" :title="$t('abTesting.createExperiment')" width="600px">
       <el-form label-position="top">
-        <el-form-item label="Experiment Name">
+        <el-form-item :label="$t('abTesting.experimentName')">
           <el-input v-model="newExperiment.name" placeholder="e.g., Subject Line Test - Q1 Campaign" />
         </el-form-item>
-        <el-form-item label="Description">
-          <el-input v-model="newExperiment.description" type="textarea" :rows="2" placeholder="What are you testing?" />
+        <el-form-item :label="$t('common.description')">
+          <el-input v-model="newExperiment.description" type="textarea" :rows="2" :placeholder="$t('abTesting.whatAreYouTesting')" />
         </el-form-item>
         <div class="grid grid-cols-2 gap-4">
-          <el-form-item label="Test Type">
+          <el-form-item :label="$t('abTesting.testType')">
             <el-select v-model="newExperiment.testType" class="w-full">
-              <el-option label="Email Subject" value="SUBJECT" />
-              <el-option label="Email Content" value="CONTENT" />
-              <el-option label="Send Time" value="SEND_TIME" />
-              <el-option label="CTA Button" value="CTA" />
-              <el-option label="Landing Page" value="LANDING_PAGE" />
+              <el-option :label="$t('abTesting.emailSubject')" value="SUBJECT" />
+              <el-option :label="$t('abTesting.emailContent')" value="CONTENT" />
+              <el-option :label="$t('abTesting.sendTime')" value="SEND_TIME" />
+              <el-option :label="$t('abTesting.ctaButton')" value="CTA" />
+              <el-option :label="$t('abTesting.landingPage')" value="LANDING_PAGE" />
             </el-select>
           </el-form-item>
-          <el-form-item label="Traffic Split">
+          <el-form-item :label="$t('abTesting.trafficSplit')">
             <el-select v-model="newExperiment.trafficSplit" class="w-full">
               <el-option label="50/50" value="50-50" />
               <el-option label="70/30" value="70-30" />
@@ -139,14 +139,14 @@
             </el-select>
           </el-form-item>
         </div>
-        <el-form-item label="Campaign">
-          <el-select v-model="newExperiment.campaignId" placeholder="Select campaign" class="w-full">
+        <el-form-item :label="$t('cpq.campaign')">
+          <el-select v-model="newExperiment.campaignId" :placeholder="$t('abTesting.selectCampaign')" class="w-full">
             <el-option label="Q1 Newsletter" value="1" />
             <el-option label="Product Launch" value="2" />
             <el-option label="Re-engagement Series" value="3" />
           </el-select>
         </el-form-item>
-        <el-form-item label="Duration">
+        <el-form-item :label="$t('abTesting.durationLabel')">
           <el-select v-model="newExperiment.duration" class="w-full">
             <el-option label="24 hours" value="24h" />
             <el-option label="3 days" value="3d" />
@@ -156,10 +156,10 @@
         </el-form-item>
       </el-form>
       <template #footer>
-        <el-button @click="showCreateDialog = false">Cancel</el-button>
+        <el-button @click="showCreateDialog = false">{{ $t('common.cancel') }}</el-button>
         <el-button type="primary" @click="createExperiment">
           <Icon name="ph:flask-bold" class="w-4 h-4 mr-2" />
-          Create Experiment
+          {{ $t('abTesting.createExperiment') }}
         </el-button>
       </template>
     </el-dialog>

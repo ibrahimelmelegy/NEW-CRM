@@ -4,20 +4,20 @@
     <div class="glass-panel p-6 rounded-2xl">
       <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
         <div>
-          <h1 class="text-2xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-blue-400 to-cyan-400">Kanban Board</h1>
-          <p class="text-slate-400 text-sm mt-1">Universal drag-and-drop board view for any entity.</p>
+          <h1 class="text-2xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-blue-400 to-cyan-400">{{ $t('kanbanBoard.title') }}</h1>
+          <p class="text-slate-400 text-sm mt-1">{{ $t('kanbanBoard.subtitle') }}</p>
         </div>
         <div class="flex gap-2">
           <el-select v-model="selectedEntity" class="w-44" @change="onEntityChange">
-            <el-option label="Leads" value="leads" />
-            <el-option label="Deals" value="deals" />
-            <el-option label="Tasks" value="tasks" />
-            <el-option label="Support Tickets" value="tickets" />
-            <el-option label="Projects" value="projects" />
+            <el-option :label="$t('kanbanBoard.leads')" value="leads" />
+            <el-option :label="$t('kanbanBoard.deals')" value="deals" />
+            <el-option :label="$t('kanbanBoard.tasks')" value="tasks" />
+            <el-option :label="$t('kanbanBoard.supportTickets')" value="tickets" />
+            <el-option :label="$t('kanbanBoard.projects')" value="projects" />
           </el-select>
           <el-button type="primary" class="!rounded-xl" @click="showAddDialog = true">
             <Icon name="ph:plus-bold" class="w-4 h-4 mr-2" />
-            Add Item
+            {{ $t('kanbanBoard.addItem') }}
           </el-button>
         </div>
       </div>
@@ -120,42 +120,42 @@
           </div>
 
           <!-- Empty State -->
-          <div v-if="getColumnCards(col.key).length === 0" class="text-center py-8 text-slate-600 text-xs">Drop items here</div>
+          <div v-if="getColumnCards(col.key).length === 0" class="text-center py-8 text-slate-600 text-xs">{{ $t('kanbanBoard.dropItemsHere') }}</div>
         </div>
       </div>
     </div>
 
     <!-- Add Item Dialog -->
-    <el-dialog v-model="showAddDialog" title="Add Board Item" width="480px">
+    <el-dialog v-model="showAddDialog" :title="$t('kanbanBoard.addBoardItem')" width="480px">
       <el-form label-position="top">
-        <el-form-item label="Title">
-          <el-input v-model="newCard.title" placeholder="Item title" />
+        <el-form-item :label="$t('common.title')">
+          <el-input v-model="newCard.title" :placeholder="$t('kanbanBoard.itemTitle')" />
         </el-form-item>
         <div class="grid grid-cols-2 gap-4">
-          <el-form-item label="Status">
+          <el-form-item :label="$t('common.status')">
             <el-select v-model="newCard.status" class="w-full">
               <el-option v-for="col in columns" :key="col.key" :label="col.label" :value="col.key" />
             </el-select>
           </el-form-item>
-          <el-form-item label="Priority">
+          <el-form-item :label="$t('common.priority')">
             <el-select v-model="newCard.priority" class="w-full">
-              <el-option label="Critical" value="CRITICAL" />
-              <el-option label="High" value="HIGH" />
-              <el-option label="Medium" value="MEDIUM" />
-              <el-option label="Low" value="LOW" />
+              <el-option :label="$t('kanbanBoard.criticalPriority')" value="CRITICAL" />
+              <el-option :label="$t('kanbanBoard.highPriority')" value="HIGH" />
+              <el-option :label="$t('kanbanBoard.mediumPriority')" value="MEDIUM" />
+              <el-option :label="$t('kanbanBoard.lowPriority')" value="LOW" />
             </el-select>
           </el-form-item>
         </div>
-        <el-form-item label="Assignee">
-          <el-input v-model="newCard.assignee" placeholder="Assignee name" />
+        <el-form-item :label="$t('kanbanBoard.assignee')">
+          <el-input v-model="newCard.assignee" :placeholder="$t('kanbanBoard.assigneeName')" />
         </el-form-item>
-        <el-form-item label="Due Date">
+        <el-form-item :label="$t('kanbanBoard.dueDate')">
           <el-date-picker v-model="newCard.dueDate" type="date" class="w-full" />
         </el-form-item>
       </el-form>
       <template #footer>
-        <el-button @click="showAddDialog = false">Cancel</el-button>
-        <el-button type="primary" @click="addCard">Add Item</el-button>
+        <el-button @click="showAddDialog = false">{{ $t('common.cancel') }}</el-button>
+        <el-button type="primary" @click="addCard">{{ $t('kanbanBoard.addItem') }}</el-button>
       </template>
     </el-dialog>
   </div>

@@ -46,6 +46,12 @@ export async function downloadFile(file: string) {
     })
     .catch((error: unknown) => {
       console.error('File download failed:', error);
+      const { t } = useI18n();
+      ElNotification({
+        title: t('common.error'),
+        type: 'error',
+        message: t('common.downloadFailed')
+      });
     });
 }
 

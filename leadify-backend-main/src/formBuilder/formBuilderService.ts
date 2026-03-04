@@ -90,7 +90,7 @@ class FormBuilderService {
   private async sendAutoResponseEmail(form: FormTemplate, data: Record<string, any>) {
     try {
       // TODO: Integrate with email service
-      console.log(`Auto-response email for form ${form.id} to ${data.email}`);
+      // TODO: Integrate with email service
     } catch (e) {
       console.error('Failed to send auto-response:', e);
     }

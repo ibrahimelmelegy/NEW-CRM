@@ -18,13 +18,13 @@
     //-   )
     .grid.grid-cols-1.gap-3
       InputText(
-        label="Folder Name (optional)",
-        placeholder="Enter Folder Name",
+        :label="$t('operations.folderNameOptional')",
+        :placeholder="$t('documents.folderName')",
         name="name",
         :value="folder?.name"
       )
       InputUploadFiles(
-        label="Project Files (optional)",
+        :label="$t('operations.projectFilesOptional')",
         name="file",
         :limit="4",
         :formats="fileAttachmentsFormats",

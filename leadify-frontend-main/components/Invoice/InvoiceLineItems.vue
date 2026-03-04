@@ -4,16 +4,16 @@
     el-table-column(label="#" width="50" align="center")
       template(#default="{ $index }")
         span {{ $index + 1 }}
-    el-table-column(label="Description" min-width="200")
+    el-table-column(:label="$t('common.description')" min-width="200")
       template(#default="{ row, $index }")
         el-input(
           v-if="editable"
           v-model="row.description"
-          placeholder="Item description"
+          :placeholder="$t('invoices.itemDescription')"
           @input="onItemChange($index)"
         )
         span(v-else) {{ row.description }}
-    el-table-column(label="Qty" width="100" align="center")
+    el-table-column(:label="$t('invoices.qty')" width="100" align="center")
       template(#default="{ row, $index }")
         el-input-number(
           v-if="editable"
@@ -25,7 +25,7 @@
           @change="onItemChange($index)"
         )
         span(v-else) {{ Number(row.quantity).toFixed(2) }}
-    el-table-column(label="Unit Price" width="130" align="right")
+    el-table-column(:label="$t('invoices.unitPrice')" width="130" align="right")
       template(#default="{ row, $index }")
         el-input-number(
           v-if="editable"
@@ -37,7 +37,7 @@
           @change="onItemChange($index)"
         )
         span(v-else) {{ Number(row.unitPrice).toFixed(2) }}
-    el-table-column(label="Tax %" width="100" align="center")
+    el-table-column(:label="$t('invoices.taxPercent')" width="100" align="center")
       template(#default="{ row, $index }")
         el-input-number(
           v-if="editable"
@@ -50,7 +50,7 @@
           @change="onItemChange($index)"
         )
         span(v-else) {{ Number(row.taxRate).toFixed(2) }}%
-    el-table-column(label="Discount %" width="110" align="center")
+    el-table-column(:label="$t('invoices.discountPercent')" width="110" align="center")
       template(#default="{ row, $index }")
         el-input-number(
           v-if="editable"
@@ -63,7 +63,7 @@
           @change="onItemChange($index)"
         )
         span(v-else) {{ Number(row.discountRate).toFixed(2) }}%
-    el-table-column(label="Line Total" width="140" align="right")
+    el-table-column(:label="$t('invoices.lineTotal')" width="140" align="right")
       template(#default="{ row }")
         span.font-semibold {{ Number(row.lineTotal).toFixed(2) }}
     el-table-column(v-if="editable" label="" width="60" align="center")

@@ -42,21 +42,21 @@
         template(#header)
           span.font-bold 📄 Documents
         el-table(:data="customerDocs" size="small" empty-text="No documents for this customer")
-          el-table-column(label="Ref" width="120")
+          el-table-column(:label="$t('finance.reference')" width="120")
             template(#default="{ row }")
               span.font-mono.font-bold.text-xs {{ row.refNumber }}
-          el-table-column(label="Type" width="140")
+          el-table-column(:label="$t('common.type')" width="140")
             template(#default="{ row }")
               .flex.items-center.gap-2
                 .w-2.h-2.rounded-full(:style="{ backgroundColor: typeColors[row.documentType] || '#6b7280' }")
                 span.text-xs.font-semibold {{ row.documentType }}
-          el-table-column(label="Title" min-width="180")
+          el-table-column(:label="$t('common.title')" min-width="180")
             template(#default="{ row }")
               span.text-sm.font-semibold {{ row.title }}
-          el-table-column(label="Total" width="120" align="right")
+          el-table-column(:label="$t('common.total')" width="120" align="right")
             template(#default="{ row }")
               span.font-mono.font-bold.text-xs {{ row.total?.toLocaleString() }} {{ row.currency }}
-          el-table-column(label="Status" width="100")
+          el-table-column(:label="$t('common.status')" width="100")
             template(#default="{ row }")
               el-tag(size="small" round effect="plain") {{ row.status }}
 

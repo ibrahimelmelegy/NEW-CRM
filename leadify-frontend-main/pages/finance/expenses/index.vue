@@ -30,8 +30,8 @@ div
       :searchPlaceholder="$t('finance.expenses.title')"
       :key="table.data"
       emptyIcon="ph:money-bold"
-      emptyMessage="No expenses yet"
-      emptyDescription="Record your first expense to start tracking spending"
+      :emptyMessage="$t('finance.expenses.noExpensesYet')"
+      :emptyDescription="$t('finance.expenses.noExpensesDesc')"
       emptyActionHref="/finance/expenses/create"
       :emptyActionLabel="$t('finance.expenses.addExpense')"
     )

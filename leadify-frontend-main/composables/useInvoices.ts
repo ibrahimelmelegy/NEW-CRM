@@ -1,4 +1,6 @@
 /* eslint-disable require-await */
+import { ElNotification } from 'element-plus';
+
 export interface InvoiceItem {
   id: number;
   invoiceNumber: string;
@@ -80,6 +82,8 @@ export async function downloadInvoicePdf(id: number, invoiceNumber?: string): Pr
     return true;
   } catch (error) {
     console.error('Failed to download invoice PDF:', error);
+    const { t } = useI18n();
+    ElNotification({ type: 'error', title: t('common.error'), message: t('common.downloadFailed') });
     return false;
   }
 }

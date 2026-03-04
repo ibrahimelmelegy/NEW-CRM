@@ -131,6 +131,7 @@ async function loadMessages() {
     accounts.value = accRes;
   } catch (e) {
     console.error('Failed to load emails', e);
+    ElNotification({ type: 'error', title: t('common.error'), message: t('common.fetchError') });
   } finally {
     loading.value = false;
   }

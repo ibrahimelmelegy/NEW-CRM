@@ -102,19 +102,19 @@ const industries = [
 async function seedDemo() {
   try {
     await sequelize.authenticate();
-    console.log('✅ Connected to database');
+    // Connected to database
 
     // ── 0. Ensure admin user exists ──
     const admin = await User.findOne();
     if (!admin) {
-      console.error('❌ No user found. Run "npm run seed" first.');
+      console.error('No user found. Run "npm run seed" first.');
       process.exit(1);
     }
     const adminId = admin.id;
-    console.log(`👤 Admin user: ${admin.name} (ID: ${adminId})`);
+    // Admin user found
 
     // ── 1. ROLES (4) ──
-    console.log('\n🔐 Seeding Roles...');
+    // Seeding Roles
     const allPerms = getAllPermissions();
     // Sales permissions subset
     const salesPerms = allPerms.filter(p =>
@@ -144,10 +144,10 @@ async function seedDemo() {
       });
       createdRoles.push(role);
     }
-    console.log(`   ✅ ${createdRoles.length} roles ready`);
+    // Roles ready
 
     // ── 2. STAFF / USERS (8) ──
-    console.log('\n👥 Seeding Staff...');
+    // Seeding Staff
     const superAdminRole = await (Role as any).findOne({ where: { name: 'SUPER_ADMIN' } });
     const staffData = [
       { name: 'Khalid Al-Rashid', email: 'khalid@hp-tech.com', phone: '0501234001', roleId: createdRoles[0].id, status: 'ACTIVE' },
@@ -168,14 +168,14 @@ async function seedDemo() {
       });
       createdUsers.push(user);
     }
-    console.log(`   ✅ ${createdUsers.length} staff members ready (including admin)`);
+    // Staff members ready
 
     // Helper to pick a sales user (indices 1-5 are sales)
     const salesUserIds = createdUsers.slice(1, 6).map(u => u.id);
     const pickSalesUser = () => pick(salesUserIds);
 
     // ── 3. PIPELINE STAGES (6) ──
-    console.log('\n📊 Seeding Pipeline Stages...');
+    // Seeding Pipeline Stages
     await PipelineStage.destroy({ where: {} });
     const stagesData = [
       { name: 'Qualification', order: 1, color: '#64748b', probability: 10, entityType: 'deal', isDefault: true },
@@ -186,10 +186,10 @@ async function seedDemo() {
       { name: 'Closed Lost', order: 6, color: '#ef4444', probability: 0, entityType: 'deal', isLost: true }
     ];
     const createdStages = await PipelineStage.bulkCreate(stagesData);
-    console.log(`   ✅ ${createdStages.length} pipeline stages`);
+    // Pipeline stages created
 
     // ── 4. CLIENTS (15) ──
-    console.log('\n🏢 Seeding Clients...');
+    // Seeding Clients
     const clientsData = companies.slice(0, 15).map((name, i) => ({
       clientName: name,
       email: `contact@${name.toLowerCase().replace(/[^a-z]/g, '')}.com`,
@@ -206,10 +206,10 @@ async function seedDemo() {
     for (const client of createdClients) {
       await ClientUsers.create({ clientId: client.id, userId: pick(salesUserIds) });
     }
-    console.log(`   ✅ ${createdClients.length} clients`);
+    // Clients created
 
     // ── 5. LEADS (50) ──
-    console.log('\n📋 Seeding Leads...');
+    // Seeding Leads
     const leadStatuses = Object.values(LeadStatusEnums);
     const leadSources = Object.values(LeadSourceEnums);
     const leadsData = Array.from({ length: 50 }, (_, i) => ({
@@ -227,10 +227,10 @@ async function seedDemo() {
     for (const lead of createdLeads) {
       await LeadUsers.create({ leadId: lead.id, userId: pickSalesUser() });
     }
-    console.log(`   ✅ ${createdLeads.length} leads`);
+    // Leads created
 
     // ── 6. OPPORTUNITIES (30) ──
-    console.log('\n💡 Seeding Opportunities...');
+    // Seeding Opportunities
     const oppStages = [OpportunityStageEnums.DISCOVERY, OpportunityStageEnums.PROPOSAL, OpportunityStageEnums.NEGOTIATION, OpportunityStageEnums.WON, OpportunityStageEnums.LOST];
     const priorities = Object.values(OpportunityPriorityEnums);
 
@@ -252,10 +252,10 @@ async function seedDemo() {
     for (const opp of createdOpps) {
       await OpportunityUsers.create({ opportunityId: opp.id, userId: pickSalesUser() });
     }
-    console.log(`   ✅ ${createdOpps.length} opportunities`);
+    // Opportunities created
 
     // ── 7. DEALS (25) ──
-    console.log('\n🤝 Seeding Deals...');
+    // Seeding Deals
     const wonOpps = createdOpps.filter(o => ['WON', 'NEGOTIATION', 'PROPOSAL'].includes((o as any).stage));
     const dealsData = Array.from({ length: 25 }, (_, i) => {
       const opp = wonOpps[i % wonOpps.length];
@@ -276,10 +276,10 @@ async function seedDemo() {
     for (const deal of createdDeals) {
       await DealUsers.create({ dealId: deal.id, userId: pickSalesUser() });
     }
-    console.log(`   ✅ ${createdDeals.length} deals`);
+    // Deals created
 
     // ── 8. INVOICES (20) ──
-    console.log('\n🧾 Seeding Invoices...');
+    // Seeding Invoices
     const closedDeals = createdDeals.filter(d => ['CLOSED', 'PROGRESS'].includes((d as any).stage));
     const invoicesData = Array.from({ length: 20 }, (_, i) => {
       const deal = closedDeals[i % closedDeals.length];
@@ -293,10 +293,10 @@ async function seedDemo() {
       };
     });
     await Invoice.bulkCreate(invoicesData);
-    console.log(`   ✅ ${invoicesData.length} invoices`);
+    // Invoices created
 
     // ── 9. PROPOSALS (5) ──
-    console.log('\n📄 Seeding Proposals...');
+    // Seeding Proposals
     const proposalStatuses = [ProposalStatusEnum.APPROVED, ProposalStatusEnum.APPROVED, ProposalStatusEnum.WAITING_APPROVAL, ProposalStatusEnum.REJECTED, ProposalStatusEnum.DRAFT];
     const proposalsData = Array.from({ length: 5 }, (_, i) => ({
       title: `${pick(['Enterprise CRM Implementation', 'Cloud Infrastructure Proposal', 'Digital Workplace Transformation', 'AI & Analytics Suite', 'Managed Services Agreement'])}`,
@@ -315,10 +315,10 @@ async function seedDemo() {
     for (const prop of createdProposals) {
       await ProposalUsers.create({ proposalId: prop.id, userId: pickSalesUser() });
     }
-    console.log(`   ✅ ${createdProposals.length} proposals`);
+    // Proposals created
 
     // ── 10. SALES ORDERS (8) ──
-    console.log('\n📦 Seeding Sales Orders...');
+    // Seeding Sales Orders
     const soStatuses = ['DRAFT', 'CONFIRMED', 'CONFIRMED', 'PROCESSING', 'PROCESSING', 'SHIPPED', 'DELIVERED', 'DELIVERED'];
     const createdSOs: any[] = [];
     for (let i = 0; i < 8; i++) {
@@ -360,10 +360,10 @@ async function seedDemo() {
       await so.update({ subtotal, taxAmount: tax, discountAmount: discount, total: subtotal + tax - discount });
       createdSOs.push(so);
     }
-    console.log(`   ✅ ${createdSOs.length} sales orders with line items`);
+    // Sales orders created
 
     // ── 11. PROJECTS (8) ──
-    console.log('\n📁 Seeding Projects...');
+    // Seeding Projects
     const projStatuses = [ProjectStatusEnum.ACTIVE, ProjectStatusEnum.ACTIVE, ProjectStatusEnum.ACTIVE, ProjectStatusEnum.ACTIVE, ProjectStatusEnum.ON_HOLD, ProjectStatusEnum.ON_HOLD, ProjectStatusEnum.COMPLETE, ProjectStatusEnum.COMPLETE];
     const projectNames = [
       'Aramco Digital Transformation', 'NEOM Smart City CRM', 'STC Network Upgrade',
@@ -387,10 +387,10 @@ async function seedDemo() {
     for (const proj of createdProjects) {
       await UserProjects.create({ projectId: proj.id, userId: pickSalesUser() });
     }
-    console.log(`   ✅ ${createdProjects.length} projects`);
+    // Projects created
 
     // ── 12. TASKS (30) ──
-    console.log('\n✅ Seeding Tasks...');
+    // Seeding Tasks
     const taskTitles = [
       'Prepare client demo environment', 'Follow up on proposal feedback', 'Schedule discovery call',
       'Send revised pricing to client', 'Update CRM deal notes', 'Prepare quarterly review deck',
@@ -417,10 +417,10 @@ async function seedDemo() {
       entityId: i < 8 ? createdProjects[i % createdProjects.length].id : i < 15 ? createdDeals[i % createdDeals.length].id : undefined
     }));
     await Task.bulkCreate(tasksData);
-    console.log(`   ✅ ${tasksData.length} tasks`);
+    // Tasks created
 
     // ── 13. DEPARTMENTS & EMPLOYEES (12) ──
-    console.log('\n🏛️ Seeding Departments & Employees...');
+    // Seeding Departments & Employees
     const deptsData = [
       { name: 'Sales', code: 'SALES', description: 'Sales and Business Development' },
       { name: 'Engineering', code: 'ENG', description: 'Software Engineering & IT' },
@@ -475,10 +475,10 @@ async function seedDemo() {
         await createdEmployees[i]?.update({ managerId: createdEmployees[0].id });
       }
     }
-    console.log(`   ✅ ${createdDepts.length} departments, ${createdEmployees.length} employees`);
+    // Departments and employees created
 
     // ── 14. VENDORS (6) ──
-    console.log('\n🏪 Seeding Vendors...');
+    // Seeding Vendors
     const vendorsData = [
       { name: 'Dell Technologies KSA', type: 'Vendor', firstName: 'John', lastName: 'Smith', phone: '0112345001', email: 'sales@dell-ksa.com', serviceType: 'Hardware', evaluation: 92, defaultPaymentMethod: 'Credit' },
       { name: 'Oracle Cloud ME', type: 'Distributor', firstName: 'Sarah', lastName: 'Lee', phone: '0112345002', email: 'contact@oracle-me.com', serviceType: 'Software', evaluation: 88, defaultPaymentMethod: 'Credit' },
@@ -488,10 +488,10 @@ async function seedDemo() {
       { name: 'HP Enterprise ME', type: 'Vendor', firstName: 'Lisa', lastName: 'Wang', phone: '0112345006', email: 'enterprise@hpe-me.com', serviceType: 'Both', evaluation: 90, defaultPaymentMethod: 'Credit' }
     ];
     const createdVendors = await Vendor.bulkCreate(vendorsData as any);
-    console.log(`   ✅ ${createdVendors.length} vendors`);
+    // Vendors created
 
     // ── 15. PURCHASE ORDERS (5) ──
-    console.log('\n📝 Seeding Purchase Orders...');
+    // Seeding Purchase Orders
     const poStatuses = ['Draft', 'Pending', 'Approved', 'Approved', 'Rejected'];
     for (let i = 0; i < 5; i++) {
       const vendor = createdVendors[i % createdVendors.length];
@@ -521,10 +521,10 @@ async function seedDemo() {
       }
       await po.update({ totalAmount: total });
     }
-    console.log(`   ✅ 5 purchase orders with items`);
+    // Purchase orders created
 
     // ── 16. EXPENSE CATEGORIES & EXPENSES (15) ──
-    console.log('\n💰 Seeding Expenses...');
+    // Seeding Expenses
     const catData = [
       { name: 'Travel & Transportation', color: '#3b82f6', description: 'Business travel expenses' },
       { name: 'Office Supplies', color: '#22c55e', description: 'Office equipment and supplies' },
@@ -560,10 +560,10 @@ async function seedDemo() {
       receiptNumber: `REC-${rand(10000, 99999)}`
     }));
     await Expense.bulkCreate(expensesData);
-    console.log(`   ✅ ${catData.length} categories, ${expensesData.length} expenses`);
+    // Expense categories and expenses created
 
     // ── 17. SUPPORT TICKETS (10) ──
-    console.log('\n🎫 Seeding Support Tickets...');
+    // Seeding Support Tickets
     const ticketCatsData = [
       { name: 'Technical Issue', description: 'Software bugs and technical problems' },
       { name: 'Billing Inquiry', description: 'Payment and invoicing questions' },
@@ -604,10 +604,10 @@ async function seedDemo() {
       tags: [pick(['urgent', 'escalated', 'vip', 'recurring', 'new-client'])]
     }));
     await Ticket.bulkCreate(ticketsData);
-    console.log(`   ✅ ${ticketsData.length} support tickets`);
+    // Support tickets created
 
     // ── 18. KB ARTICLES (5) ──
-    console.log('\n📚 Seeding Knowledge Base...');
+    // Seeding Knowledge Base
     const articles = [
       { title: 'Getting Started with Leadify CRM', slug: 'getting-started-crm', category: 'Onboarding', excerpt: 'A complete guide to setting up your CRM workspace' },
       { title: 'Managing Your Sales Pipeline', slug: 'managing-sales-pipeline', category: 'Sales', excerpt: 'Best practices for lead-to-deal conversion' },
@@ -626,20 +626,20 @@ async function seedDemo() {
       authorId: adminId
     }));
     await KBArticle.bulkCreate(articlesData);
-    console.log(`   ✅ ${articlesData.length} KB articles`);
+    // KB articles created
 
     // ── 19. CAMPAIGNS (3) ──
-    console.log('\n📣 Seeding Campaigns...');
+    // Seeding Campaigns
     const campaignsData = [
       { name: 'Q1 Product Launch Campaign', subject: 'Introducing Leadify CRM 3.0 — Your Enterprise Edge', status: CampaignStatus.SENT, sentAt: daysAgo(15), userId: adminId, htmlContent: '<h1>Leadify CRM 3.0</h1><p>Discover the new features.</p>' },
       { name: 'Renewal Reminder — March 2026', subject: 'Your subscription renews soon — Special offer inside', status: CampaignStatus.SCHEDULED, scheduledAt: days(10), userId: adminId, htmlContent: '<h1>Renewal Reminder</h1><p>Renew early for 15% off.</p>' },
       { name: 'Feature Announcement — AI Assistant', subject: 'Meet your new AI Sales Coach', status: CampaignStatus.DRAFT, userId: adminId, htmlContent: '<h1>AI Sales Coach</h1><p>AI-powered insights for your pipeline.</p>' }
     ];
     await Campaign.bulkCreate(campaignsData);
-    console.log(`   ✅ ${campaignsData.length} campaigns`);
+    // Campaigns created
 
     // ── 20. CALENDAR EVENTS (15) ──
-    console.log('\n📅 Seeding Calendar Events...');
+    // Seeding Calendar Events
     const eventTitles = [
       'Client Demo — Aramco Digital', 'Weekly Sales Standup', 'Quarterly Business Review',
       'Follow-up Call — NEOM', 'Team Lunch', 'Sprint Planning', 'Board Meeting Prep',
@@ -669,10 +669,10 @@ async function seedDemo() {
       };
     });
     await CalendarEvent.bulkCreate(eventsData);
-    console.log(`   ✅ ${eventsData.length} calendar events`);
+    // Calendar events created
 
     // ── 21. APPROVAL WORKFLOWS & REQUESTS (5) ──
-    console.log('\n✋ Seeding Approval Workflows...');
+    // Seeding Approval Workflows
     const workflows = [
       {
         name: 'Purchase Order Approval',
@@ -712,10 +712,10 @@ async function seedDemo() {
         requesterId: createdUsers[rand(1, 5)].id
       } as any);
     }
-    console.log(`   ✅ ${createdWorkflows.length} workflows, 5 approval requests`);
+    // Workflows and approval requests created
 
     // ── 22. WORKFLOW RULES (3) ──
-    console.log('\n⚡ Seeding Workflow Automation Rules...');
+    // Seeding Workflow Automation Rules
     const workflowRules = [
       {
         name: 'Auto-Notify on High-Value Lead',
@@ -761,10 +761,10 @@ async function seedDemo() {
       }
     ];
     await WorkflowRule.bulkCreate(workflowRules as any);
-    console.log(`   ✅ 3 workflow rules`);
+    // Workflow rules created
 
     // ── 23. NOTIFICATIONS (20) ──
-    console.log('\n🔔 Seeding Notifications...');
+    // Seeding Notifications
     const notifTypes = [
       'LEAD_ASSIGNED', 'DEAL_ASSIGNED', 'OPPORTUNITY_ASSIGNED', 'DEAL_WON',
       'PROPOSAL_APPROVED', 'PROPOSAL_REJECTED', 'TASK_DUE', 'APPROVAL_REQUESTED',
@@ -793,10 +793,10 @@ async function seedDemo() {
       target: i < 5 ? `/sales/leads` : i < 10 ? `/sales/deals` : undefined
     }));
     await Notification.bulkCreate(notifsData);
-    console.log(`   ✅ ${notifsData.length} notifications`);
+    // Notifications created
 
     // ── 24. FORECAST PERIODS (6) ──
-    console.log('\n📈 Seeding Forecast Periods...');
+    // Seeding Forecast Periods
     const months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun'];
     const forecastData = months.map((m, i) => {
       const target = money(200000, 500000);
@@ -815,10 +815,10 @@ async function seedDemo() {
       };
     });
     await ForecastPeriod.bulkCreate(forecastData);
-    console.log(`   ✅ ${forecastData.length} forecast periods`);
+    // Forecast periods created
 
     // ── 25. GAMIFICATION ──
-    console.log('\n🏆 Seeding Gamification...');
+    // Seeding Gamification
     const achievements = [
       { name: 'First Deal', description: 'Close your first deal', icon: 'trophy', pointsValue: 100, criteria: 'deals_closed >= 1' },
       { name: 'Pipeline Pro', description: 'Have 10+ deals in pipeline', icon: 'star', pointsValue: 250, criteria: 'deals_active >= 10' },
@@ -841,47 +841,10 @@ async function seedDemo() {
         });
       }
     }
-    console.log(`   ✅ ${achievements.length} achievements, user points awarded`);
+    // Achievements and user points created
 
     // ── DONE ──
-    console.log('\n' + '='.repeat(60));
-    console.log('🚀 DEMO SEED COMPLETE!');
-    console.log('='.repeat(60));
-    console.log(`
-   Summary:
-   ├─ Roles:            4 (+ SUPER_ADMIN)
-   ├─ Staff/Users:      ${createdUsers.length}
-   ├─ Pipeline Stages:  ${createdStages.length}
-   ├─ Clients:          ${createdClients.length}
-   ├─ Leads:            ${createdLeads.length}
-   ├─ Opportunities:    ${createdOpps.length}
-   ├─ Deals:            ${createdDeals.length}
-   ├─ Invoices:         ${invoicesData.length}
-   ├─ Proposals:        ${createdProposals.length}
-   ├─ Sales Orders:     ${createdSOs.length} (with line items)
-   ├─ Projects:         ${createdProjects.length}
-   ├─ Tasks:            ${tasksData.length}
-   ├─ Departments:      ${createdDepts.length}
-   ├─ Employees:        ${createdEmployees.length}
-   ├─ Vendors:          ${createdVendors.length}
-   ├─ Purchase Orders:  5 (with items)
-   ├─ Expense Cats:     ${createdCats.length}
-   ├─ Expenses:         ${expensesData.length}
-   ├─ Support Tickets:  ${ticketsData.length}
-   ├─ KB Articles:      ${articlesData.length}
-   ├─ Campaigns:        ${campaignsData.length}
-   ├─ Calendar Events:  ${eventsData.length}
-   ├─ Approval WFs:     ${createdWorkflows.length}
-   ├─ Approval Reqs:    5
-   ├─ Workflow Rules:    3
-   ├─ Notifications:    ${notifsData.length}
-   ├─ Forecast Periods: ${forecastData.length}
-   ├─ Achievements:     ${achievements.length}
-   └─ User Points:      (distributed to sales team)
-    `);
-    console.log('🔑 Login: admin@hp-tech.com / (your admin password)');
-    console.log('🔑 Staff: khalid@hp-tech.com / Demo@2026!');
-    console.log('');
+    // DEMO SEED COMPLETE
     process.exit(0);
   } catch (error: any) {
     console.error('❌ Seed failed:', error.message);

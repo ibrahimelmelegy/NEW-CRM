@@ -1,3 +1,5 @@
+import { ElNotification } from 'element-plus';
+
 export function useEmailComposer() {
   const templates = ref<any[]>([]);
   const selectedTemplate = ref<any>(null);
@@ -28,6 +30,8 @@ export function useEmailComposer() {
       }
     } catch (err) {
       console.error('Failed to fetch email templates:', err);
+      const { t } = useI18n();
+      ElNotification({ type: 'error', title: t('common.error'), message: t('common.fetchError') });
     } finally {
       loading.value = false;
     }

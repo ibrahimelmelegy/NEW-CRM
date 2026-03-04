@@ -34,7 +34,7 @@
           Icon(name="ph:magnifying-glass" size="18")
       el-select(
         v-model="statusFilter"
-        placeholder="All Statuses"
+        :placeholder="$t('common.allStatuses')"
         size="large"
         class="w-48"
         clearable
@@ -45,8 +45,8 @@
       el-date-picker(
         v-model="dateRange"
         type="daterange"
-        start-placeholder="From"
-        end-placeholder="To"
+        :start-placeholder="$t('common.from')"
+        :end-placeholder="$t('common.to')"
         size="large"
         class="!rounded-xl"
         @change="handleSearch"
@@ -67,19 +67,19 @@
         @sort-change="handleSort"
         :default-sort="{ prop: 'createdAt', order: 'descending' }"
       )
-        el-table-column(prop="reference" label="Reference" width="160" sortable="custom")
+        el-table-column(prop="reference" :label="$t('finance.reference')" width="160" sortable="custom")
           template(#default="{ row }")
             span.font-mono.font-bold.text-sm {{ row.reference }}
-        el-table-column(prop="title" label="Title" min-width="200" sortable="custom")
+        el-table-column(prop="title" :label="$t('common.title')" min-width="200" sortable="custom")
           template(#default="{ row }")
             NuxtLink(:to="`${detailBaseUrl}/${row.id}`" class="font-bold hover:text-purple-600 transition-colors")
               | {{ row.title }}
-        el-table-column(prop="clientName" label="Client" min-width="160")
+        el-table-column(prop="clientName" :label="$t('customerSuccess.client')" min-width="160")
           template(#default="{ row }")
             .flex.flex-col
               span.font-medium {{ row.clientName || '—' }}
               span.text-xs.text-gray-400(v-if="row.clientCompany") {{ row.clientCompany }}
-        el-table-column(prop="status" label="Status" width="150" sortable="custom")
+        el-table-column(prop="status" :label="$t('common.status')" width="150" sortable="custom")
           template(#default="{ row }")
             el-dropdown(trigger="click" @command="(cmd: string) => handleStatusChange(row, cmd)")
               el-tag(
@@ -96,15 +96,15 @@
                     :key="s"
                     :command="s"
                   ) {{ formatStatus(s) }}
-        el-table-column(prop="total" label="Total" width="150" sortable="custom" align="right")
+        el-table-column(prop="total" :label="$t('common.total')" width="150" sortable="custom" align="right")
           template(#default="{ row }")
             span.font-bold(v-if="row.total") {{ Number(row.total).toLocaleString('en-US', { minimumFractionDigits: 2 }) }}
             span.text-gray-400(v-else) —
             span.text-xs.text-gray-400.ml-1(v-if="row.total") {{ row.currency || 'SAR' }}
-        el-table-column(prop="createdAt" label="Created" width="140" sortable="custom")
+        el-table-column(prop="createdAt" :label="$t('support.created')" width="140" sortable="custom")
           template(#default="{ row }")
             span.text-sm {{ formatDate(row.createdAt) }}
-        el-table-column(label="Actions" width="160" fixed="right")
+        el-table-column(:label="$t('common.actions')" width="160" fixed="right")
           template(#default="{ row }")
             .flex.gap-1
               el-tooltip(content="View / Edit" placement="top")

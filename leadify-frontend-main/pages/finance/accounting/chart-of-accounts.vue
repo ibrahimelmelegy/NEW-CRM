@@ -2,13 +2,13 @@
 div
   .flex.items-center.justify-between.mb-6
     div
-      h1.text-2xl.font-bold Chart of Accounts
-      p.text-gray-500.mt-1 Manage your organization's account structure
+      h1.text-2xl.font-bold {{ $t('finance.chartOfAccountsTitle') }}
+      p.text-gray-500.mt-1 {{ $t('finance.manageAccountStructure') }}
     .flex.gap-3
       el-button(type="default" size="large" @click="handleSeedDefaults" :loading="seeding")
-        span Seed Defaults
+        span {{ $t('finance.seedDefaults') }}
       el-button(type="primary" size="large" @click="openCreateDialog")
-        span Add Account
+        span {{ $t('finance.addAccount') }}
 
   el-card(shadow="never")
     AccountingAccountTree(
@@ -19,7 +19,7 @@ div
   //- Create / Edit Dialog
   el-dialog(
     v-model="dialogVisible"
-    :title="editingAccount ? 'Edit Account' : 'New Account'"
+    :title="editingAccount ? $t('finance.editAccount') : $t('finance.newAccount')"
     width="520px"
     destroy-on-close
   )
@@ -29,37 +29,37 @@ div
       :rules="formRules"
       label-position="top"
     )
-      el-form-item(label="Account Code" prop="code")
+      el-form-item(:label="$t('finance.accountCode')" prop="code")
         el-input(v-model="formData.code" placeholder="e.g. 1100")
-      el-form-item(label="Account Name" prop="name")
+      el-form-item(:label="$t('finance.accountName')" prop="name")
         el-input(v-model="formData.name" placeholder="e.g. Cash")
-      el-form-item(label="Account Type" prop="type")
-        el-select(v-model="formData.type" placeholder="Select type" class="w-full")
+      el-form-item(:label="$t('finance.accountType')" prop="type")
+        el-select(v-model="formData.type" :placeholder="$t('finance.chartOfAccounts.selectType')" class="w-full")
           el-option(
             v-for="t in accountTypes"
             :key="t.value"
             :label="t.label"
             :value="t.value"
           )
-      el-form-item(label="Parent Account")
-        el-select(v-model="formData.parentId" placeholder="None (top-level)" clearable filterable class="w-full")
+      el-form-item(:label="$t('finance.parentAccount')")
+        el-select(v-model="formData.parentId" :placeholder="$t('finance.chartOfAccounts.noneToplevel')" clearable filterable class="w-full")
           el-option(
             v-for="acc in flatAccounts"
             :key="acc.id"
             :label="`${acc.code} - ${acc.name}`"
             :value="acc.id"
           )
-      el-form-item(label="Is Group Account")
+      el-form-item(:label="$t('finance.isGroupAccount')")
         el-switch(v-model="formData.isGroup")
-      el-form-item(label="Description")
-        el-input(v-model="formData.description" type="textarea" :rows="3" placeholder="Optional description")
+      el-form-item(:label="$t('common.description')")
+        el-input(v-model="formData.description" type="textarea" :rows="3" :placeholder="$t('finance.chartOfAccounts.optionalDescription')")
     template(#footer)
       .flex.justify-between
-        el-button(v-if="editingAccount" type="danger" plain @click="handleDelete" :loading="deleting") Delete
+        el-button(v-if="editingAccount" type="danger" plain @click="handleDelete" :loading="deleting") {{ $t('common.delete') }}
         div(v-else)
         .flex.gap-2
-          el-button(@click="dialogVisible = false") Cancel
-          el-button(type="primary" @click="handleSubmit" :loading="saving") {{ editingAccount ? 'Update' : 'Create' }}
+          el-button(@click="dialogVisible = false") {{ $t('common.cancel') }}
+          el-button(type="primary" @click="handleSubmit" :loading="saving") {{ editingAccount ? $t('common.update') : $t('common.create') }}
 </template>
 
 <script setup lang="ts">

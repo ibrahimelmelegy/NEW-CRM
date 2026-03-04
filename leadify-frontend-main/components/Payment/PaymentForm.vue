@@ -10,7 +10,7 @@ el-form(ref="formRef" :model="form" :rules="rules" label-position="top" size="la
         remote
         :remote-method="searchInvoices"
         :loading="loadingInvoices"
-        placeholder="Search invoice number or amount..."
+        :placeholder="$t('payments.searchInvoice')"
         class="w-full"
         @change="handleInvoiceChange"
       )
@@ -32,7 +32,7 @@ el-form(ref="formRef" :model="form" :rules="rules" label-position="top" size="la
         remote
         :remote-method="searchClients"
         :loading="loadingClients"
-        placeholder="Select client..."
+        :placeholder="$t('payments.selectClient')"
         class="w-full"
         :disabled="!!form.invoiceId"
       )
@@ -51,22 +51,22 @@ el-form(ref="formRef" :model="form" :rules="rules" label-position="top" size="la
         :precision="2"
         :controls="false"
         class="w-full"
-        placeholder="Enter payment amount"
+        :placeholder="$t('payments.enterAmount')"
       )
 
     //- Date
-    el-form-item(label="Payment Date" prop="date")
+    el-form-item(:label="$t('payments.paymentDate')" prop="date")
       el-date-picker(
         v-model="form.date"
         type="date"
         class="w-full"
         value-format="YYYY-MM-DD"
-        placeholder="Select date"
+        :placeholder="$t('common.selectDate')"
       )
 
     //- Payment Method
-    el-form-item(label="Payment Method" prop="method")
-      el-select(v-model="form.method" placeholder="Select method" class="w-full")
+    el-form-item(:label="$t('payments.paymentMethod')" prop="method")
+      el-select(v-model="form.method" :placeholder="$t('payments.selectMethod')" class="w-full")
         el-option(v-for="opt in paymentMethodOptions" :key="opt.value" :label="opt.label" :value="opt.value")
           .flex.items-center.gap-2
             Icon(:name="getMethodIcon(opt.value)" size="16")
@@ -82,7 +82,7 @@ el-form(ref="formRef" :model="form" :rules="rules" label-position="top" size="la
       v-model="form.notes"
       type="textarea"
       :rows="3"
-      placeholder="Additional notes about this payment..."
+      :placeholder="$t('payments.additionalNotes')"
     )
 
   //- Invoice balance hint

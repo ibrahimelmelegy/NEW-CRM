@@ -37,7 +37,7 @@ const setupWorker = () => {
   const worker = new Worker(
     'workflow-execution-queue',
     async (job: Job<WorkflowJobData>) => {
-      console.log(`[Queue] Processing workflow job ${job.id}`);
+      // Processing workflow job
       const { executionId, ruleId, entityType, entityId, actions, entityData, triggerUserId } = job.data;
 
       // Process the exact delayed actions via the service
@@ -60,7 +60,7 @@ const setupWorker = () => {
   });
 
   worker.on('completed', (job: Job) => {
-    console.log(`[Queue] Job ${job.id} completed successfully`);
+    // Job completed
   });
 
   return worker;

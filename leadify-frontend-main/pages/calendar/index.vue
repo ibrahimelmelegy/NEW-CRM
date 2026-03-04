@@ -434,8 +434,8 @@ div
       el-form-item(:label="$t('calendar.attendees')")
         .space-y-2.w-full
           .flex.items-center.gap-2(v-for="(att, ai) in form.attendees" :key="ai")
-            el-input(v-model="att.name" placeholder="Name" class="flex-1")
-            el-input(v-model="att.email" placeholder="Email" class="flex-1")
+            el-input(v-model="att.name" :placeholder="$t('common.name')" class="flex-1")
+            el-input(v-model="att.email" :placeholder="$t('common.email')" class="flex-1")
             el-button(text type="danger" @click="form.attendees.splice(ai, 1)")
               Icon(name="ph:x-bold" size="14")
           el-button(text type="primary" @click="form.attendees.push({ name: '', email: '', status: 'PENDING' })")

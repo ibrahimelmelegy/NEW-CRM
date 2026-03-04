@@ -4,12 +4,12 @@
     <div class="glass-panel p-6 rounded-2xl">
       <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
         <div>
-          <h1 class="text-2xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-blue-400 to-indigo-400">Training & LMS</h1>
-          <p class="text-slate-400 text-sm mt-1">Manage courses, track learner progress, and issue certifications.</p>
+          <h1 class="text-2xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-blue-400 to-indigo-400">{{ $t("training.title") }}</h1>
+          <p class="text-slate-400 text-sm mt-1">{{ $t("training.subtitle") }}</p>
         </div>
         <el-button type="primary" class="!rounded-xl" @click="showCourseDialog = true">
           <Icon name="ph:plus-bold" class="w-4 h-4 mr-2" />
-          Create Course
+          {{ $t("training.createCourse") }}
         </el-button>
       </div>
     </div>
@@ -18,38 +18,38 @@
     <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
       <div class="glass-panel p-4 rounded-xl text-center">
         <div class="text-2xl font-bold text-slate-200">{{ totalCourses }}</div>
-        <div class="text-xs text-slate-500 mt-1">Total Courses</div>
+        <div class="text-xs text-slate-500 mt-1">{{ $t("training.totalCourses") }}</div>
       </div>
       <div class="glass-panel p-4 rounded-xl text-center">
         <div class="text-2xl font-bold text-blue-400">{{ activeLearners }}</div>
-        <div class="text-xs text-slate-500 mt-1">Active Learners</div>
+        <div class="text-xs text-slate-500 mt-1">{{ $t("training.activeLearners") }}</div>
       </div>
       <div class="glass-panel p-4 rounded-xl text-center">
         <div class="text-2xl font-bold text-emerald-400">{{ completionRate }}%</div>
-        <div class="text-xs text-slate-500 mt-1">Completion Rate</div>
+        <div class="text-xs text-slate-500 mt-1">{{ $t("training.completionRate") }}</div>
       </div>
       <div class="glass-panel p-4 rounded-xl text-center">
         <div class="text-2xl font-bold text-amber-400">{{ certificationsIssued }}</div>
-        <div class="text-xs text-slate-500 mt-1">Certifications Issued</div>
+        <div class="text-xs text-slate-500 mt-1">{{ $t("training.certificationsIssued") }}</div>
       </div>
     </div>
 
     <!-- Tabs -->
     <el-tabs v-model="activeTab" class="glass-tabs">
       <!-- Course Catalog -->
-      <el-tab-pane label="Course Catalog" name="catalog">
+      <el-tab-pane :label="$t('training.courseCatalog')" name="catalog">
         <div class="flex items-center gap-3 mb-4">
-          <el-input v-model="courseSearch" placeholder="Search courses..." clearable class="!w-64">
+          <el-input v-model="courseSearch" :placeholder="$t('training.searchCourses')" clearable class="!w-64">
             <template #prefix>
               <Icon name="ph:magnifying-glass" class="w-4 h-4" />
             </template>
           </el-input>
-          <el-select v-model="categoryFilter" placeholder="All Categories" clearable class="w-44">
-            <el-option label="All Categories" value="" />
+          <el-select v-model="categoryFilter" :placeholder="$t('training.allCategories')" clearable class="w-44">
+            <el-option :label="$t('training.allCategories')" value="" />
             <el-option v-for="cat in categories" :key="cat" :label="cat" :value="cat" />
           </el-select>
-          <el-select v-model="difficultyFilter" placeholder="All Levels" clearable class="w-40">
-            <el-option label="All Levels" value="" />
+          <el-select v-model="difficultyFilter" :placeholder="$t('training.allLevels')" clearable class="w-40">
+            <el-option :label="$t('training.allLevels')" value="" />
             <el-option label="Beginner" value="Beginner" />
             <el-option label="Intermediate" value="Intermediate" />
             <el-option label="Advanced" value="Advanced" />
@@ -82,7 +82,7 @@
               <!-- Progress -->
               <div v-if="course.progress !== undefined" class="mb-3">
                 <div class="flex justify-between text-xs text-slate-500 mb-1">
-                  <span>Progress</span>
+                  <span>{{ $t("training.progress") }}</span>
                   <span>{{ course.progress }}%</span>
                 </div>
                 <el-progress
@@ -96,10 +96,10 @@
               <div class="flex items-center justify-between text-xs text-slate-500">
                 <span class="flex items-center gap-1">
                   <Icon name="ph:users-bold" class="w-3 h-3" />
-                  {{ course.enrolled }} enrolled
+                  {{ course.enrolled }} {{ $t("training.enrolled") }}
                 </span>
                 <el-button text type="primary" size="small" @click="enrollCourse(course)">
-                  {{ course.progress !== undefined ? 'Continue' : 'Enroll' }}
+                  {{ course.progress !== undefined ? $t("training.continue") : $t("training.enroll") }}
                 </el-button>
               </div>
             </div>
@@ -108,7 +108,7 @@
       </el-tab-pane>
 
       <!-- My Learning -->
-      <el-tab-pane label="My Learning" name="learning">
+      <el-tab-pane :label="$t('training.myLearning')" name="learning">
         <div class="space-y-4">
           <div v-for="enrollment in myEnrollments" :key="enrollment.id" class="glass-panel p-5 rounded-xl">
             <div class="flex items-start gap-4">
@@ -144,11 +144,11 @@
                       <Icon name="ph:calendar-bold" class="w-3 h-3" />
                       Due: {{ enrollment.dueDate }}
                     </span>
-                    <span v-if="enrollment.isOverdue" class="text-red-400 font-medium">Overdue</span>
+                    <span v-if="enrollment.isOverdue" class="text-red-400 font-medium">{{ $t("training.overdue") }}</span>
                   </div>
                   <el-button type="primary" size="small" class="!rounded-xl" @click="resumeCourse(enrollment)">
                     <Icon name="ph:play-bold" class="w-3 h-3 mr-1" />
-                    Resume
+                    {{ $t("training.resume") }}
                   </el-button>
                 </div>
               </div>
@@ -157,13 +157,13 @@
 
           <div v-if="!myEnrollments.length" class="text-center py-12">
             <Icon name="ph:graduation-cap-bold" class="w-16 h-16 text-slate-600 mx-auto" />
-            <p class="text-slate-500 mt-3">You haven't enrolled in any courses yet.</p>
+            <p class="text-slate-500 mt-3">{{ $t("training.noEnrollments") }}</p>
           </div>
         </div>
       </el-tab-pane>
 
       <!-- Certifications -->
-      <el-tab-pane label="Certifications" name="certifications">
+      <el-tab-pane :label="$t('training.certifications')" name="certifications">
         <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
           <div v-for="cert in certifications" :key="cert.id" class="glass-panel p-5 rounded-xl">
             <div class="flex items-start gap-4">
@@ -185,11 +185,11 @@
                 </div>
                 <div class="flex items-center justify-between">
                   <el-tag :type="cert.isExpired ? 'danger' : 'success'" effect="dark" size="small" round>
-                    {{ cert.isExpired ? 'Expired' : 'Valid' }}
+                    {{ cert.isExpired ? $t("training.expired") : $t("training.valid") }}
                   </el-tag>
                   <el-button text type="primary" size="small" @click="downloadCert(cert)">
                     <Icon name="ph:download-bold" class="w-4 h-4 mr-1" />
-                    Download
+                    {{ $t("common.download") }}
                   </el-button>
                 </div>
               </div>
@@ -198,47 +198,47 @@
 
           <div v-if="!certifications.length" class="col-span-full text-center py-12">
             <Icon name="ph:medal-bold" class="w-16 h-16 text-slate-600 mx-auto" />
-            <p class="text-slate-500 mt-3">No certifications earned yet.</p>
+            <p class="text-slate-500 mt-3">{{ $t("training.noCertifications") }}</p>
           </div>
         </div>
       </el-tab-pane>
     </el-tabs>
 
     <!-- Create Course Dialog -->
-    <el-dialog v-model="showCourseDialog" title="Create Course" width="560px">
+    <el-dialog v-model="showCourseDialog" :title="$t('training.createCourse')" width="560px">
       <el-form label-position="top">
-        <el-form-item label="Course Title">
+        <el-form-item :label="$t('training.courseTitle')">
           <el-input v-model="courseForm.title" placeholder="e.g., Introduction to CRM Best Practices" />
         </el-form-item>
-        <el-form-item label="Description">
-          <el-input v-model="courseForm.description" type="textarea" :rows="3" placeholder="Course description..." />
+        <el-form-item :label="$t('common.description')">
+          <el-input v-model="courseForm.description" type="textarea" :rows="3" :placeholder="$t('training.courseDescPlaceholder')" />
         </el-form-item>
         <div class="grid grid-cols-2 gap-4">
-          <el-form-item label="Category">
-            <el-select v-model="courseForm.category" class="w-full" placeholder="Select category">
+          <el-form-item :label="$t('common.category')">
+            <el-select v-model="courseForm.category" class="w-full" :placeholder="$t('training.selectCategory')">
               <el-option v-for="cat in categories" :key="cat" :label="cat" :value="cat" />
             </el-select>
           </el-form-item>
-          <el-form-item label="Duration">
+          <el-form-item :label="$t('training.duration')">
             <el-input v-model="courseForm.duration" placeholder="e.g., 4h 30m" />
           </el-form-item>
         </div>
         <div class="grid grid-cols-2 gap-4">
-          <el-form-item label="Difficulty Level">
+          <el-form-item :label="$t('training.difficultyLevel')">
             <el-select v-model="courseForm.difficulty" class="w-full">
               <el-option label="Beginner" value="Beginner" />
               <el-option label="Intermediate" value="Intermediate" />
               <el-option label="Advanced" value="Advanced" />
             </el-select>
           </el-form-item>
-          <el-form-item label="Instructor">
-            <el-input v-model="courseForm.instructor" placeholder="Instructor name" />
+          <el-form-item :label="$t('training.instructor')">
+            <el-input v-model="courseForm.instructor" :placeholder="$t('training.instructorPlaceholder')" />
           </el-form-item>
         </div>
       </el-form>
       <template #footer>
-        <el-button @click="showCourseDialog = false">Cancel</el-button>
-        <el-button type="primary" @click="createCourse">Create</el-button>
+        <el-button @click="showCourseDialog = false">{{ $t("common.cancel") }}</el-button>
+        <el-button type="primary" @click="createCourse">{{ $t("common.create") }}</el-button>
       </template>
     </el-dialog>
   </div>

@@ -74,7 +74,7 @@
     el-form(label-position="top" size="large")
       .grid.grid-cols-2.gap-4
         el-form-item(:label="$t('emailTemplates.templateName')")
-          el-input(v-model="form.name" placeholder="Welcome Email")
+          el-input(v-model="form.name" :placeholder="$t('emailTemplates.namePlaceholder')")
         el-form-item(:label="$t('emailTemplates.category')")
           el-select(v-model="form.category" class="w-full" allow-create filterable)
             el-option(label="Sales" value="Sales")

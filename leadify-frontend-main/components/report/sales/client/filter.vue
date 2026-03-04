@@ -1,15 +1,15 @@
 <template lang="pug">
  el-form(@submit.prevent='onSubmit' )
   .grid.grid-cols-2.gap-3     
-   InputSelect(label="Client Type" name="type"  placeholder="Select Type" :options="clientTypes" )
-   InputSelect(label="Client Status " name="status"  placeholder="Select Status" :options="clientStatuses" )
-   InputSelect(label="Assigned User" name="userId"  placeholder="Select User"  :options="mappedUsers" )
+   InputSelect(:label="$t('reports.clientType')" name="type"  :placeholder="$t('common.selectType')" :options="clientTypes" )
+   InputSelect(:label="$t('reports.clientStatus')" name="status"  :placeholder="$t('common.selectStatus')" :options="clientStatuses" )
+   InputSelect(:label="$t('reports.assignedUser')" name="userId"  :placeholder="$t('reports.selectUser')"  :options="mappedUsers" )
   .grid.grid-cols-2.gap-3
-   InputDate(label="From Last Contact Date" placeholder="Enter Date"  name="fromLastContactDate")
-   InputDate(label="To Last Contact Date" placeholder="Enter Date"  name="toLastContactDate")
+   InputDate(:label="$t('reports.fromLastContactDate')" :placeholder="$t('reports.enterDate')"  name="fromLastContactDate")
+   InputDate(:label="$t('reports.toLastContactDate')" :placeholder="$t('reports.enterDate')"  name="toLastContactDate")
   .flex.justify-end
-   el-button(  native-type="submit" size='large' type="primary"  class="!rounded-2xl")  Show Filter Result 
-   el-button(  @click="ResetFilter" size='large'   class="!rounded-2xl text-col")  Reset Filter  
+   el-button(  native-type="submit" size='large' type="primary"  class="!rounded-2xl")  {{ $t('reports.showFilterResult') }}
+   el-button(  @click="ResetFilter" size='large'   class="!rounded-2xl text-col")  {{ $t('reports.resetFilter') }}
 </template>
 
 <script setup lang="ts">

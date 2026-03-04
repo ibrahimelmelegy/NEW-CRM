@@ -161,7 +161,7 @@
             Icon(name="ph:pen-nib-bold" size="16")
       .p-3
         p.text-xs.font-bold.mb-2(style="color: var(--text-primary)") Signature Block
-        el-input.mb-2(v-model="signatureLabel" placeholder="Label (e.g. Client)" size="small")
+        el-input.mb-2(v-model="signatureLabel" :placeholder="$t('docBuilder.signatureLabelPlaceholder')" size="small")
         el-checkbox.mb-3(v-model="signatureShowDate" label="Show date line" size="small")
         el-button(type="primary" size="small" @click="insertSignature" class="!rounded-lg w-full") Insert
 </template>
